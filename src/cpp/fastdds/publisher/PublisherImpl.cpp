@@ -539,16 +539,19 @@ ReturnCode_t PublisherImpl::delete_contained_entities()
 
     bool can_be_deleted = true;
 
-    std::vector<DataWriter*> writer_vector;
-    get_datawriters(writer_vector);
+    //std::vector<DataWriter*> writer_vector;
+    //get_datawriters(writer_vector);
 
     std::lock_guard<std::mutex> lock(mtx_writers_);
-    for (DataWriter* writer: writer_vector)
+    for (auto writer: writers_)
     {
-        can_be_deleted = can_be_deleted && (writer->impl_->check_delete_preconditions() == ReturnCode_t::RETCODE_OK);
-        if (!can_be_deleted)
+        for (DataWriterImpl* dw: writer.second)
         {
-            return ReturnCode_t::RETCODE_PRECONDITION_NOT_MET;
+            can_be_deleted = dw->check_delete_preconditions() == ReturnCode_t::RETCODE_OK;
+            if (!can_be_deleted)
+            {
+                return ReturnCode_t::RETCODE_PRECONDITION_NOT_MET;
+            }
         }
     }
 
@@ -562,7 +565,7 @@ ReturnCode_t PublisherImpl::delete_contained_entities()
         ReturnCode_t ret_code = writer_impl->check_delete_preconditions();
         if (!ret_code)
         {
-            return ret_code;
+            return ReturnCode_t::RETCODE_ERROR;
         }
         writer_impl->set_listener(nullptr);
         it = writer_iterator->second.erase(it);
@@ -581,9 +584,6 @@ bool PublisherImpl::can_be_deleted()
 {
     bool can_be_deleted = true;
 
-    //std::vector<DataWriter*> writer_vector;
-    //get_datawriters(writer_vector);
-
     std::lock_guard<std::mutex> lock(mtx_writers_);
     for (auto topic_writers : writers_)
     {
@@ -598,15 +598,6 @@ bool PublisherImpl::can_be_deleted()
 
     }
 
-    /*  std::lock_guard<std::mutex> lock(mtx_writers_);
-       for (DataWriter* writer: writer_vector)
-       {
-          can_be_deleted = can_be_deleted && (writer->impl_->check_delete_preconditions() == ReturnCode_t::RETCODE_OK);
-          if (!can_be_deleted)
-          {
-              return can_be_deleted;
-          }
-       }*/
     return can_be_deleted;
 }
 

@@ -730,6 +730,8 @@ TEST(SubscriberTests, DeleteContainedEntities)
         mock_query_expression,
         mock_query_parameters
         );
+
+    // To be updated when Query Conditions are available
     ASSERT_EQ(query_condition, nullptr);
 
     std::vector<DataReader*> data_reader_list;

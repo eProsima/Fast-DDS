@@ -538,75 +538,76 @@ public:
     ReturnCode_t delete_contained_entities()
     {
         bool can_be_deleted = true;
-        {
-            std::lock_guard<std::mutex> lock(mtx_subs_);
 
-            for (auto subscriber : subscribers_)
+        std::lock_guard<std::mutex> lock_subscribers(mtx_subs_);
+
+        for (auto subscriber : subscribers_)
+        {
+            can_be_deleted = subscriber.second->can_be_deleted();
+            if (!can_be_deleted)
             {
-                can_be_deleted = can_be_deleted && subscriber.second->can_be_deleted();
+                return ReturnCode_t::RETCODE_PRECONDITION_NOT_MET;
             }
         }
+
+        std::lock_guard<std::mutex> lock_publishers(mtx_pubs_);
+
+
+
+        for (auto publisher : publishers_)
         {
-            std::lock_guard<std::mutex> lock(mtx_pubs_);
-
-            for (auto publisher : publishers_)
+            can_be_deleted = publisher.second->can_be_deleted();
+            if (!can_be_deleted)
             {
-                can_be_deleted = can_be_deleted && publisher.second->can_be_deleted();
+                return ReturnCode_t::RETCODE_PRECONDITION_NOT_MET;
             }
-
         }
-        if (!can_be_deleted)
+
+        ReturnCode_t ret_code = ReturnCode_t::RETCODE_OK;
+
+        for (auto& subscriber : subscribers_)
         {
-            return ReturnCode_t::RETCODE_PRECONDITION_NOT_MET;
+            ret_code = subscriber.first->delete_contained_entities();
+            if (!ret_code)
+            {
+                return ReturnCode_t::RETCODE_ERROR;
+            }
         }
-        else
+
+        auto it_subs = subscribers_.begin();
+        while (it_subs != subscribers_.end())
         {
+            it_subs->second->set_listener(nullptr);
+            delete it_subs->second;
+            it_subs = subscribers_.erase(it_subs);
+        }
+
+        for (auto& publisher : publishers_)
+        {
+            ret_code = publisher.first->delete_contained_entities();
+            if (!ret_code)
             {
-                std::lock_guard<std::mutex> lock(mtx_subs_);
-
-                for (auto& subscriber : subscribers_)
-                {
-                    subscriber.first->delete_contained_entities();
-                }
-
-                auto it = subscribers_.begin();
-                while (it != subscribers_.end())
-                {
-                    it->second->set_listener(nullptr);
-                    delete it->second;
-                    it = subscribers_.erase(it);
-                }
+                return ReturnCode_t::RETCODE_ERROR;
             }
+        }
 
-            {
-                std::lock_guard<std::mutex> lock(mtx_pubs_);
+        auto it_pubs = publishers_.begin();
+        while (it_pubs != publishers_.end())
+        {
+            it_pubs->second->set_listener(nullptr);
+            delete it_pubs->second;
+            it_pubs = publishers_.erase(it_pubs);
+        }
 
-                for (auto& publisher : publishers_)
-                {
-                    publisher.first->delete_contained_entities();
-                }
+        std::lock_guard<std::mutex> lock_topics(mtx_topics_);
 
-                auto it = publishers_.begin();
-                while (it != publishers_.end())
-                {
-                    it->second->set_listener(nullptr);
-                    delete it->second;
-                    it = publishers_.erase(it);
-                }
-            }
+        auto it_topics = topics_.begin();
 
-            {
-                std::lock_guard<std::mutex> lock(mtx_topics_);
-
-                auto it = topics_.begin();
-
-                while (it != topics_.end())
-                {
-                    it->second->set_listener(nullptr);
-                    delete it->second;
-                    it = topics_.erase(it);
-                }
-            }
+        while (it_topics != topics_.end())
+        {
+            it_topics->second->set_listener(nullptr);
+            delete it_topics->second;
+            it_topics = topics_.erase(it_topics);
         }
 
         return ReturnCode_t::RETCODE_OK;

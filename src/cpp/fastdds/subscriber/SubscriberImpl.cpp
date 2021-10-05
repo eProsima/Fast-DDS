@@ -633,18 +633,15 @@ ReturnCode_t SubscriberImpl::delete_contained_entities()
     // Let's be optimistic
     ReturnCode_t result = ReturnCode_t::RETCODE_OK;
 
-    bool can_be_deleted = true;
-
-    std::vector<DataReader*> reader_vector;
-    get_datareaders(reader_vector);
-
     std::lock_guard<std::mutex> lock(mtx_readers_);
-    for (DataReader* reader: reader_vector)
+    for (auto reader: readers_)
     {
-        can_be_deleted = can_be_deleted && reader->impl_->can_be_deleted();
-        if (!can_be_deleted)
+        for (DataReaderImpl* dr : reader.second)
         {
-            return ReturnCode_t::RETCODE_PRECONDITION_NOT_MET;
+            if (!dr->can_be_deleted())
+            {
+                return ReturnCode_t::RETCODE_PRECONDITION_NOT_MET;
+            }
         }
     }
 
@@ -682,10 +679,10 @@ bool SubscriberImpl::can_be_deleted() const
     {
         for (DataReaderImpl* dr : topic_readers.second)
         {
-            return_status = return_status && dr->can_be_deleted();
+            return_status = dr->can_be_deleted();
             if (!return_status)
             {
-                return return_status;
+                return false;
             }
         }
     }

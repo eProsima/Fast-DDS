@@ -2125,6 +2125,8 @@ TEST_F(DataReaderTests, delete_contained_entities)
         mock_query_expression,
         mock_query_parameters
         );
+
+    // To be updated when Query Conditions are available
     ASSERT_EQ(query_condition, nullptr);
 
     ASSERT_EQ(data_reader->delete_contained_entities(), ReturnCode_t::RETCODE_OK);
