@@ -419,11 +419,12 @@ RTPSParticipantImpl::RTPSParticipantImpl(
     if (c_GuidPrefix_Unknown != persistence_guid)
     {
         logInfo(RTPS_PARTICIPANT, "RTPSParticipant \"" << m_att.getName() << "\" with guidPrefix: " << m_guid.guidPrefix
-                << " and persistence guid: " << persistence_guid);
+                                                       << " and persistence guid: " << persistence_guid);
     }
     else
     {
-        logInfo(RTPS_PARTICIPANT, "RTPSParticipant \"" << m_att.getName() << "\" with guidPrefix: " << m_guid.guidPrefix);
+        logInfo(RTPS_PARTICIPANT,
+                "RTPSParticipant \"" << m_att.getName() << "\" with guidPrefix: " << m_guid.guidPrefix);
     }
 }
 
