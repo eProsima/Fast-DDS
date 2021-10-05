@@ -187,15 +187,15 @@ bool Log::preprocess(
 {
     if (resources_.category_filter && !regex_search(entry.context.category, *resources_.category_filter))
     {
-        return false;
+        return entry.kind <= Log::Kind::Error;
     }
     if (resources_.filename_filter && !regex_search(entry.context.filename, *resources_.filename_filter))
     {
-        return false;
+        return entry.kind <= Log::Kind::Error;
     }
     if (resources_.error_string_filter && !regex_search(entry.message, *resources_.error_string_filter))
     {
-        return false;
+        return entry.kind <= Log::Kind::Error;
     }
     if (!resources_.filenames)
     {
