@@ -266,7 +266,7 @@ DomainId_t DomainParticipant::get_domain_id() const
 
 ReturnCode_t DomainParticipant::delete_contained_entities()
 {
-    return ReturnCode_t::RETCODE_UNSUPPORTED;
+    return impl_->delete_contained_entities();
 }
 
 ReturnCode_t DomainParticipant::assert_liveliness()

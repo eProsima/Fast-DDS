@@ -148,9 +148,9 @@ public:
 
     const DomainParticipant* get_participant() const;
 
-    /* TODO
-       bool delete_contained_entities();
-     */
+
+    ReturnCode_t delete_contained_entities();
+
 
     ReturnCode_t set_default_datawriter_qos(
             const DataWriterQos& qos);
@@ -191,6 +191,8 @@ public:
      */
     PublisherListener* get_listener_for(
             const StatusMask& status);
+
+    bool can_be_deleted();
 
 protected:
 

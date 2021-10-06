@@ -182,10 +182,7 @@ ReturnCode_t Subscriber::notify_datareaders() const
 
 ReturnCode_t Subscriber::delete_contained_entities()
 {
-    return ReturnCode_t::RETCODE_UNSUPPORTED;
-    /*
-       return impl_->delete_contained_entities();
-     */
+    return impl_->delete_contained_entities();
 }
 
 ReturnCode_t Subscriber::set_default_datareader_qos(
