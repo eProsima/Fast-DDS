@@ -253,6 +253,7 @@ void RTPSReader::add_persistence_guid(
             logInfo(RTPS_READER, "Sporious record found, changing guid "
                     << guid << " for persistence guid " << persistence_guid);
             update_last_notified(guid, spourious_record->second);
+            history_state_->history_record.erase(spourious_record);
         }
     }
 }
