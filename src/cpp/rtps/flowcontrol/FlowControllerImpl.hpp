@@ -288,8 +288,15 @@ struct FlowControllerLimitedAsyncPublishMode : public FlowControllerAsyncPublish
         assert(0 < descriptor->max_bytes_per_period);
 
         max_bytes_per_period_ = descriptor->max_bytes_per_period;
-        current_accumulated_bytes = max_accumulated_bytes;
-        max_accumulated_bytes = descriptor->max_accumulated_bytes;
+        if (0 == descriptor->max_accumulated_bytes)
+        {
+            max_accumulated_bytes = max_bytes_per_period_;
+        }
+        else
+        {
+            max_accumulated_bytes = descriptor->max_accumulated_bytes;
+        }
+        current_accumulated_bytes = max_bytes_per_period_;
         period_ms = std::chrono::milliseconds(descriptor->period_ms);
         group.set_sent_bytes_limitation(static_cast<uint32_t>(current_accumulated_bytes));
     }
