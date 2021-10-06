@@ -45,6 +45,8 @@
 #include <fastrtps/types/TypeObjectFactory.h>
 #include <fastrtps/xmlparser/XMLProfileManager.h>
 
+#include <fastcdr/Cdr.h>
+
 #include "../../common/GTestPrinters.hpp"
 
 namespace eprosima {
@@ -120,6 +122,141 @@ public:
     }
 
 };
+
+class LoanableTopicDataTypeMock : public TopicDataType
+{
+public:
+
+    LoanableTopicDataTypeMock()
+        : TopicDataType()
+    {
+        m_typeSize = 4u;
+        setName("loanablefootype");
+    }
+
+    bool serialize(
+            void* /*data*/,
+            fastrtps::rtps::SerializedPayload_t* /*payload*/) override
+    {
+        return true;
+    }
+
+    bool deserialize(
+            fastrtps::rtps::SerializedPayload_t* /*payload*/,
+            void* /*data*/) override
+    {
+        return true;
+    }
+
+    std::function<uint32_t()> getSerializedSizeProvider(
+            void* /*data*/) override
+    {
+        return std::function<uint32_t()>();
+    }
+
+    void* createData() override
+    {
+        return nullptr;
+    }
+
+    void deleteData(
+            void* /*data*/) override
+    {
+    }
+
+    inline bool is_bounded() const override
+    {
+        return true;
+    }
+
+    inline bool is_plain() const override
+    {
+        return true;
+    }
+
+    bool getKey(
+            void* /*data*/,
+            fastrtps::rtps::InstanceHandle_t* /*ihandle*/,
+            bool /*force_md5*/) override
+    {
+        return true;
+    }
+
+};
+
+class BarType
+{
+public:
+
+    inline uint32_t index() const
+    {
+        return index_;
+    }
+
+    inline uint32_t& index()
+    {
+        return index_;
+    }
+
+    inline void index(
+            uint32_t value)
+    {
+        index_ = value;
+    }
+
+    inline const std::array<char, 256>& message() const
+    {
+        return message_;
+    }
+
+    inline std::array<char, 256>& message()
+    {
+        return message_;
+    }
+
+    inline void message(
+            const std::array<char, 256>& value)
+    {
+        message_ = value;
+    }
+
+    inline void serialize(
+            eprosima::fastcdr::Cdr& scdr) const
+    {
+        scdr << index_;
+        scdr << message_;
+    }
+
+    inline void deserialize(
+            eprosima::fastcdr::Cdr& dcdr)
+    {
+        dcdr >> index_;
+        dcdr >> message_;
+    }
+
+    inline bool isKeyDefined()
+    {
+        return true;
+    }
+
+    inline void serializeKey(
+            eprosima::fastcdr::Cdr& scdr) const
+    {
+        scdr << index_;
+    }
+
+    inline bool operator ==(
+            const BarType& other) const
+    {
+        return (index_ == other.index_) && (message_ == other.message_);
+    }
+
+private:
+
+    uint32_t index_ = 0;
+    std::array<char, 256> message_;
+};
+
 
 TEST(ParticipantTests, DomainParticipantFactoryGetInstance)
 {
@@ -2030,6 +2167,142 @@ TEST(ParticipantTests, RegisterRemoteTypePreconditionNotMet)
     ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), ReturnCode_t::RETCODE_OK);
 }
 
+// Delete contained entities test
+TEST(ParticipantTests, DeleteContainedEntities)
+{
+
+    // First we set up everything
+    DomainParticipant* participant =
+            DomainParticipantFactory::get_instance()->create_participant(0, PARTICIPANT_QOS_DEFAULT);
+    ASSERT_NE(participant, nullptr);
+
+    TypeSupport type(new TopicDataTypeMock());
+    type.register_type(participant);
+
+    Subscriber* subscriber = participant->create_subscriber(SUBSCRIBER_QOS_DEFAULT);
+    ASSERT_NE(subscriber, nullptr);
+
+    InstanceHandle_t subscriber_handle = subscriber->get_instance_handle();
+
+    Publisher* publisher = participant->create_publisher(PUBLISHER_QOS_DEFAULT);
+    ASSERT_NE(subscriber, nullptr);
+
+    InstanceHandle_t publisher_handle = publisher->get_instance_handle();
+
+    Topic* topic_bar = participant->create_topic("bartopic", type.get_type_name(), TOPIC_QOS_DEFAULT);
+    ASSERT_NE(topic_bar, nullptr);
+
+    DataReader* data_reader_bar = subscriber->create_datareader(topic_bar, DATAREADER_QOS_DEFAULT);
+    ASSERT_NE(data_reader_bar, nullptr);
+
+    DataWriter* data_writer_bar = publisher->create_datawriter(topic_bar, DATAWRITER_QOS_DEFAULT);
+    ASSERT_NE(data_writer_bar, nullptr);
+
+    InstanceHandle_t handle_nil = HANDLE_NIL;
+    BarType data;
+    data.index(1);
+    type.get_key(&data, &handle_nil);
+
+    TypeSupport loanable_type(new LoanableTopicDataTypeMock());
+    loanable_type.register_type(participant);
+
+    Topic* topic_foo = participant->create_topic("footopic", loanable_type.get_type_name(), TOPIC_QOS_DEFAULT);
+    ASSERT_NE(topic_foo, nullptr);
+
+    InstanceHandle_t topic_foo_handle = topic_foo->get_instance_handle();
+    InstanceHandle_t topic_bar_handle = topic_bar->get_instance_handle();
+
+    DataWriter* data_writer_foo = publisher->create_datawriter(topic_foo, DATAWRITER_QOS_DEFAULT);
+    ASSERT_NE(data_writer_foo, nullptr);
+
+    const std::vector<SampleStateKind> mock_sample_state_kind;
+    const std::vector<ViewStateKind> mock_view_state_kind;
+    const std::vector<InstanceStateKind> mock_instance_states;
+    const std::string mock_query_expression;
+    const std::vector<std::string> mock_query_parameters;
+
+    LoanableSequence<BarType> mock_coll;
+    SampleInfoSeq mock_seq;
+
+    // We test that the readers/writers are properly created
+
+    std::vector<DataWriter*> data_writer_list;
+    publisher->get_datawriters(data_writer_list);
+    ASSERT_EQ(data_writer_list.size(), 2);
+
+    std::vector<DataReader*> data_reader_list;
+    subscriber->get_datareaders(data_reader_list);
+    ASSERT_EQ(data_reader_list.size(), 1);
+
+    data_reader_list.clear();
+    data_writer_list.clear();
+
+    // Setup done, start the actual testing
+
+    void* loan_data;
+    ASSERT_EQ(data_writer_foo->loan_sample(loan_data), ReturnCode_t::RETCODE_OK);
+
+    // Writer with active loans. Fail and keep everything as is
+
+    ReturnCode_t retcode = participant->delete_contained_entities();
+
+    EXPECT_TRUE(participant->contains_entity(publisher_handle));
+    publisher->get_datawriters(data_writer_list);
+    EXPECT_EQ(data_writer_list.size(), 2);
+    subscriber->get_datareaders(data_reader_list);
+    EXPECT_EQ(data_reader_list.size(), 1);
+    ASSERT_EQ(retcode, ReturnCode_t::RETCODE_PRECONDITION_NOT_MET);
+
+    data_writer_list.clear();
+    data_reader_list.clear();
+
+    data_writer_foo->discard_loan(loan_data);
+
+    // Reader with active loans. Fail and keep everything as is
+
+    EXPECT_EQ(ReturnCode_t::RETCODE_OK, data_writer_bar->write(&data, HANDLE_NIL));
+    Duration_t wait_time(1, 0);
+    EXPECT_TRUE(data_reader_bar->wait_for_unread_message(wait_time));
+
+    ASSERT_EQ(data_reader_bar->take(mock_coll, mock_seq), ReturnCode_t::RETCODE_OK);
+
+    retcode = participant->delete_contained_entities();
+
+    EXPECT_TRUE(participant->contains_entity(subscriber_handle));
+    publisher->get_datawriters(data_writer_list);
+    EXPECT_EQ(data_writer_list.size(), 2);
+    subscriber->get_datareaders(data_reader_list);
+    EXPECT_EQ(data_reader_list.size(), 1);
+
+    ASSERT_EQ(retcode, ReturnCode_t::RETCODE_PRECONDITION_NOT_MET);
+
+    data_writer_list.clear();
+    data_reader_list.clear();
+
+    ASSERT_EQ(data_reader_bar->return_loan(mock_coll, mock_seq), ReturnCode_t::RETCODE_OK);
+
+    QueryCondition* query_condition = data_reader_bar->create_querycondition(
+        mock_sample_state_kind,
+        mock_view_state_kind,
+        mock_instance_states,
+        mock_query_expression,
+        mock_query_parameters
+        );
+    ASSERT_EQ(query_condition, nullptr);
+
+    // Try again with all preconditions met. This should succeed
+
+    retcode = participant->delete_contained_entities();
+
+    EXPECT_FALSE(participant->contains_entity(publisher_handle));
+    EXPECT_FALSE(participant->contains_entity(subscriber_handle));
+    EXPECT_FALSE(participant->contains_entity(topic_foo_handle));
+    EXPECT_FALSE(participant->contains_entity(topic_bar_handle));
+
+    ASSERT_EQ(retcode, ReturnCode_t::RETCODE_OK);
+
+}
+
 
 /*
  * This test checks that the following methods are not implemented and returns an error
@@ -2043,7 +2316,6 @@ TEST(ParticipantTests, RegisterRemoteTypePreconditionNotMet)
  *  ignore_topic
  *  ignore_publication
  *  ignore_subscription
- *  delete_contained_entities
  *  get_discovered_participants
  *  get_discovered_topics
  *
@@ -2094,8 +2366,6 @@ TEST(ParticipantTests, UnsupportedMethods)
     ASSERT_EQ(participant->ignore_topic(InstanceHandle_t()), ReturnCode_t::RETCODE_UNSUPPORTED);
     ASSERT_EQ(participant->ignore_publication(InstanceHandle_t()), ReturnCode_t::RETCODE_UNSUPPORTED);
     ASSERT_EQ(participant->ignore_subscription(InstanceHandle_t()), ReturnCode_t::RETCODE_UNSUPPORTED);
-
-    ASSERT_EQ(participant->delete_contained_entities(), ReturnCode_t::RETCODE_UNSUPPORTED);
 
     // Discovery methods
     std::vector<InstanceHandle_t> handle_vector({InstanceHandle_t()});

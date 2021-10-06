@@ -309,6 +309,9 @@ public:
     ReturnCode_t get_listening_locators(
             rtps::LocatorList& locators) const;
 
+
+    ReturnCode_t delete_contained_entities();
+
 protected:
 
     //!Subscriber
@@ -470,6 +473,7 @@ protected:
     ReturnCode_t check_datasharing_compatible(
             const fastrtps::rtps::ReaderAttributes& reader_attributes,
             bool& is_datasharing_compatible) const;
+
 
 };
 
