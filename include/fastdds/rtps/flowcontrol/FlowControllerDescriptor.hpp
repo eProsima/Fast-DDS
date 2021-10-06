@@ -45,12 +45,12 @@ struct FlowControllerDescriptor
     //! Default value: 0
     int32_t max_bytes_per_period = 0;
 
-    //!
+    //! Maximum number of bytes that can be accumulated until it is possible to send data.
     //!
     //! Range of bytes: [1, 2147483647];
     //! 0 value means no limit.
     //! Default value: 0
-    int32_t max_accumulated_bytes = 2400;
+    int32_t max_accumulated_bytes = 0;
 
     //! Period time in milliseconds.
     //!
