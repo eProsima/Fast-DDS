@@ -539,9 +539,6 @@ ReturnCode_t PublisherImpl::delete_contained_entities()
 
     bool can_be_deleted = true;
 
-    //std::vector<DataWriter*> writer_vector;
-    //get_datawriters(writer_vector);
-
     std::lock_guard<std::mutex> lock(mtx_writers_);
     for (auto writer: writers_)
     {
