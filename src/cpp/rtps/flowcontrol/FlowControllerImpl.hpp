@@ -353,7 +353,11 @@ struct FlowControllerLimitedAsyncPublishMode : public FlowControllerAsyncPublish
             last_period_ = std::chrono::steady_clock::now();
             int32_t current_processed_bytes = static_cast<int32_t>(group.get_current_bytes_processed());
             current_accumulated_bytes = max_bytes_per_period_ + (current_accumulated_bytes - current_processed_bytes);
-            if (0 > current_accumulated_bytes)
+            if (current_accumulated_bytes > max_bytes_per_period_)
+            {
+                current_accumulated_bytes = max_bytes_per_period_;
+            }
+            else if (0 > current_accumulated_bytes)
             {
                 current_accumulated_bytes = 0;
             }
