@@ -124,13 +124,13 @@ bool HelloWorldSubscriber::init(
         pqos.transport().use_builtin_transports = false;
         std::shared_ptr<TCPv4TransportDescriptor> tcp_descriptor = std::make_shared<TCPv4TransportDescriptor>();
 
-        if (tcp_client && !tcp_remote_ip.empty())
-        {
-            IPLocator::setIPv4(initial_peer_locator, tcp_remote_ip);
-            initial_peer_locator.port = tcp_remote_port;
-            pqos.wire_protocol().builtin.initialPeersList.push_back(initial_peer_locator);
-            std::cout << "Remote TCP server address -> " << tcp_remote_ip << ":" << tcp_remote_port << std::endl;
-        }
+        // if (tcp_client && !tcp_remote_ip.empty())
+        // {
+        //     IPLocator::setIPv4(initial_peer_locator, tcp_remote_ip);
+        //     initial_peer_locator.port = tcp_remote_port;
+        //     pqos.wire_protocol().builtin.initialPeersList.push_back(initial_peer_locator);
+        //     std::cout << "Remote TCP server address -> " << tcp_remote_ip << ":" << tcp_remote_port << std::endl;
+        // }
 
         if (tcp_server)
         {

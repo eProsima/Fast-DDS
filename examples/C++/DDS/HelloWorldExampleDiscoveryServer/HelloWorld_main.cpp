@@ -188,7 +188,11 @@ int main(
                     {
                         eprosima::fastrtps::rtps::IPLocator::setPhysicalPort(discovery_server_address,
                                 discovery_server_port);
+                        eprosima::fastrtps::rtps::IPLocator::setLogicalPort(discovery_server_address,
+                                discovery_server_port);
                         eprosima::fastrtps::rtps::IPLocator::setIPv4(discovery_server_address,
+                                discovery_server_ip_address);
+                        eprosima::fastrtps::rtps::IPLocator::setWan(discovery_server_address,
                                 discovery_server_ip_address);
                     }
                     break;
@@ -213,6 +217,8 @@ int main(
                     if (!discovery_remote_ip_address.empty() && discovery_remote_port > 1000)
                     {
                         eprosima::fastrtps::rtps::IPLocator::setPhysicalPort(discovery_remote_address,
+                                discovery_remote_port);
+                        eprosima::fastrtps::rtps::IPLocator::setLogicalPort(discovery_remote_address,
                                 discovery_remote_port);
                         eprosima::fastrtps::rtps::IPLocator::setIPv4(discovery_remote_address,
                                 discovery_remote_ip_address);
