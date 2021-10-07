@@ -79,38 +79,6 @@ bool HelloWorldSubscriber::init(
     DomainParticipantQos pqos;
     pqos.name("Participant_sub");
 
-    // Set participant as DS SERVER
-    pqos.wire_protocol().builtin.discovery_config.discoveryProtocol =
-            eprosima::fastrtps::rtps::DiscoveryProtocol_t::SERVER;
-
-    // Set SERVER's GUID prefix
-    std::istringstream("44.53.22.5f.45.50.52.4f.53.49.4d.41") >> pqos.wire_protocol().prefix;
-
-    if (discovery_server)
-    {
-        // Set SERVER's listening locator for PDP
-        pqos.wire_protocol().builtin.metatrafficUnicastLocatorList.push_back(discovery_server_address);
-
-        std::cout << "Discovery Server address -> " << IPLocator::toIPv4string(discovery_server_address) <<
-                ":" << discovery_server_address.port << std::endl;
-    }
-
-    if (discovery_client)
-    {
-        // Set remote SERVER's GUID prefix
-        RemoteServerAttributes remote_server_att;
-        remote_server_att.ReadguidPrefix("44.53.11.5f.45.50.52.4f.53.49.4d.41");
-
-        // Set SERVER's listening locator for PDP
-        remote_server_att.metatrafficUnicastLocatorList.push_back(discovery_remote_address);
-
-        // Add remote SERVER to CLIENT's list of SERVERs
-        pqos.wire_protocol().builtin.discovery_config.m_DiscoveryServers.push_back(remote_server_att);
-
-        std::cout << "Remote Discovery Server address -> " << IPLocator::toIPv4string(discovery_remote_address) <<
-                ":" << discovery_remote_address.port << std::endl;
-    }
-
     if (tcp_server || tcp_client)
     {
         int32_t kind = LOCATOR_KIND_TCPv4;
@@ -146,6 +114,84 @@ bool HelloWorldSubscriber::init(
         }
         pqos.transport().user_transports.push_back(tcp_descriptor);
     }
+
+    // Set participant as DS SERVER
+    pqos.wire_protocol().builtin.discovery_config.discoveryProtocol =
+            eprosima::fastrtps::rtps::DiscoveryProtocol_t::SERVER;
+
+    // Set SERVER's GUID prefix
+    std::istringstream("44.53.22.5f.45.50.52.4f.53.49.4d.41") >> pqos.wire_protocol().prefix;
+
+    if (discovery_server)
+    {
+        if (tcp_server || tcp_client)
+        {
+            discovery_server_address.kind = LOCATOR_KIND_TCPv4;
+        }
+
+        // Set SERVER's listening locator for PDP
+        pqos.wire_protocol().builtin.metatrafficUnicastLocatorList.push_back(discovery_server_address);
+
+        std::cout << "Discovery Server address -> " << IPLocator::toIPv4string(discovery_server_address) <<
+                ":" << discovery_server_address.port << std::endl;
+    }
+
+    if (discovery_client)
+    {
+        if (tcp_server || tcp_client)
+        {
+            discovery_remote_address.kind = LOCATOR_KIND_TCPv4;
+        }
+
+        // Set remote SERVER's GUID prefix
+        RemoteServerAttributes remote_server_att;
+        remote_server_att.ReadguidPrefix("44.53.11.5f.45.50.52.4f.53.49.4d.41");
+
+        // Set SERVER's listening locator for PDP
+        remote_server_att.metatrafficUnicastLocatorList.push_back(discovery_remote_address);
+
+        // Add remote SERVER to CLIENT's list of SERVERs
+        pqos.wire_protocol().builtin.discovery_config.m_DiscoveryServers.push_back(remote_server_att);
+
+        std::cout << "Remote Discovery Server address -> " << IPLocator::toIPv4string(discovery_remote_address) <<
+                ":" << discovery_remote_address.port << std::endl;
+    }
+
+    // if (tcp_server || tcp_client)
+    // {
+    //     int32_t kind = LOCATOR_KIND_TCPv4;
+    //     Locator initial_peer_locator;
+    //     initial_peer_locator.kind = kind;
+
+    //     pqos.wire_protocol().builtin.discovery_config.leaseDuration = eprosima::fastrtps::c_TimeInfinite;
+    //     pqos.wire_protocol().builtin.discovery_config.leaseDuration_announcementperiod =
+    //             eprosima::fastrtps::Duration_t(5, 0);
+
+    //     pqos.transport().use_builtin_transports = false;
+    //     std::shared_ptr<TCPv4TransportDescriptor> tcp_descriptor = std::make_shared<TCPv4TransportDescriptor>();
+
+    //     // if (tcp_client && !tcp_remote_ip.empty())
+    //     // {
+    //     //     IPLocator::setIPv4(initial_peer_locator, tcp_remote_ip);
+    //     //     initial_peer_locator.port = tcp_remote_port;
+    //     //     pqos.wire_protocol().builtin.initialPeersList.push_back(initial_peer_locator);
+    //     //     std::cout << "Remote TCP server address -> " << tcp_remote_ip << ":" << tcp_remote_port << std::endl;
+    //     // }
+
+    //     if (tcp_server)
+    //     {
+    //         tcp_descriptor->sendBufferSize = 0;
+    //         tcp_descriptor->receiveBufferSize = 0;
+    //     }
+
+    //     if (tcp_server && !tcp_server_ip.empty())
+    //     {
+    //         tcp_descriptor->set_WAN_address(tcp_server_ip);
+    //         tcp_descriptor->add_listener_port(tcp_server_port);
+    //         std::cout << "TCP server address -> " << tcp_server_ip << ":" << tcp_server_port << std::endl;
+    //     }
+    //     pqos.transport().user_transports.push_back(tcp_descriptor);
+    // }
 
     // CREATE THE PARTICIPANT
     participant_ = DomainParticipantFactory::get_instance()->create_participant(0, pqos);

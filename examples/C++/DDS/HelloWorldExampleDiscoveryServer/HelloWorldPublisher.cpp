@@ -90,6 +90,11 @@ bool HelloWorldPublisher::init(
 
     if (discovery_server)
     {
+        if (tcp_server || tcp_client)
+        {
+            discovery_server_address.kind = LOCATOR_KIND_TCPv4;
+        }
+
         // Set SERVER's listening locator for PDP
         pqos.wire_protocol().builtin.metatrafficUnicastLocatorList.push_back(discovery_server_address);
 
@@ -99,6 +104,11 @@ bool HelloWorldPublisher::init(
 
     if (discovery_client)
     {
+        if (tcp_server || tcp_client)
+        {
+            discovery_remote_address.kind = LOCATOR_KIND_TCPv4;
+        }
+
         // Set remote SERVER's GUID prefix
         RemoteServerAttributes remote_server_att;
         remote_server_att.ReadguidPrefix("44.53.22.5f.45.50.52.4f.53.49.4d.41");
