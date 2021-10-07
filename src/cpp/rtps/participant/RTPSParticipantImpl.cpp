@@ -187,9 +187,10 @@ RTPSParticipantImpl::RTPSParticipantImpl(
                 TCPTransportDescriptor* pT = dynamic_cast<TCPTransportDescriptor*>(transportDescriptor.get());
                 if (pT && pT->listening_ports.empty())
                 {
-                    logError(RTPS_PARTICIPANT,
+                    logInfo(RTPS_PARTICIPANT,
                             "Participant " << m_att.getName() << " with GUID " << m_guid
-                                           << " tries to use discovery server over TCP without providing a proper listening port");
+                                           << " tries to use discovery server over TCP"
+                                           << " without providing a proper listening port");
                 }
             }
         default:
@@ -419,11 +420,12 @@ RTPSParticipantImpl::RTPSParticipantImpl(
     if (c_GuidPrefix_Unknown != persistence_guid)
     {
         logInfo(RTPS_PARTICIPANT, "RTPSParticipant \"" << m_att.getName() << "\" with guidPrefix: " << m_guid.guidPrefix
-                << " and persistence guid: " << persistence_guid);
+                                                       << " and persistence guid: " << persistence_guid);
     }
     else
     {
-        logInfo(RTPS_PARTICIPANT, "RTPSParticipant \"" << m_att.getName() << "\" with guidPrefix: " << m_guid.guidPrefix);
+        logInfo(RTPS_PARTICIPANT,
+                "RTPSParticipant \"" << m_att.getName() << "\" with guidPrefix: " << m_guid.guidPrefix);
     }
 }
 
