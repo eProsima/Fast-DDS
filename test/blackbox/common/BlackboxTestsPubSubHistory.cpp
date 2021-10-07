@@ -940,7 +940,7 @@ TEST_P(PubSubHistory, PubSubAsReliableKeepLastWithKeyUnorderedReception)
     reader.resource_limits_max_instances(keys).
             reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).
             history_kind(eprosima::fastrtps::KEEP_LAST_HISTORY_QOS).
-            history_depth(depth).mem_policy(mem_policy_).init();
+            history_depth(depth).init();
 
     ASSERT_TRUE(reader.isInitialized());
 
@@ -950,7 +950,7 @@ TEST_P(PubSubHistory, PubSubAsReliableKeepLastWithKeyUnorderedReception)
     writer.resource_limits_max_instances(keys).
             reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).
             history_kind(eprosima::fastrtps::KEEP_LAST_HISTORY_QOS).
-            history_depth(depth).mem_policy(mem_policy_).
+            history_depth(depth).
             disable_builtin_transport().add_user_transport_to_pparams(testTransport).
             init();
 
