@@ -25,15 +25,11 @@
 #include <fastdds/dds/topic/TopicDataType.hpp>
 #include <fastdds/dds/log/Log.hpp>
 
-<<<<<<< HEAD
-#include <mutex>
-=======
 #include <fastdds/rtps/reader/RTPSReader.h>
 
 #include <fastrtps_deprecated/subscriber/SubscriberImpl.h>
 #include <rtps/reader/WriterProxy.h>
 #include <utils/collections/sorted_vector_insert.hpp>
->>>>>>> 38e8d0fb7 (Keep changes inside instances sorted by source timestamp (#2182))
 
 namespace eprosima {
 namespace fastrtps {
