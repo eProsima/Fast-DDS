@@ -76,7 +76,9 @@ bool HelloWorldPublisher::init(
     if (client && !remote_ip.empty())
     {
         IPLocator::setIPv4(initial_peer_locator, remote_ip);
-        initial_peer_locator.port = remote_port;
+        // initial_peer_locator.port = remote_port;
+        IPLocator::setLogicalPort(initial_peer_locator, remote_port);
+        // IPLocator::setPhysicalPort(initial_peer_locator, remote_port);
         pqos.wire_protocol().builtin.initialPeersList.push_back(initial_peer_locator);
         std::cout << "remote server address -> " << remote_ip << ":" << remote_port << std::endl;
     }
