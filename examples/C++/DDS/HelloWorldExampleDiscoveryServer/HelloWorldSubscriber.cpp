@@ -65,55 +65,16 @@ void HelloWorldSubscriber::stop()
 bool HelloWorldSubscriber::init(
         const std::string& topic_name,
         uint32_t max_messages,
+        bool tcp,
         bool discovery_server,
-        eprosima::fastdds::rtps::Locator discovery_server_address,
+        eprosima::fastdds::rtps::Locator discovery_server_locator,
+        const std::string& discovery_server_address,
+        unsigned short discovery_server_port,
         bool discovery_client,
-        eprosima::fastdds::rtps::Locator discovery_remote_address,
-        bool tcp_server,
-        const std::string& tcp_server_ip,
-        unsigned short tcp_server_port,
-        bool tcp_client,
-        const std::string& tcp_remote_ip,
-        unsigned short tcp_remote_port)
+        eprosima::fastdds::rtps::Locator discovery_remote_locator)
 {
     DomainParticipantQos pqos;
     pqos.name("Participant_sub");
-
-    if (tcp_server || tcp_client)
-    {
-        int32_t kind = LOCATOR_KIND_TCPv4;
-        Locator initial_peer_locator;
-        initial_peer_locator.kind = kind;
-
-        pqos.wire_protocol().builtin.discovery_config.leaseDuration = eprosima::fastrtps::c_TimeInfinite;
-        pqos.wire_protocol().builtin.discovery_config.leaseDuration_announcementperiod =
-                eprosima::fastrtps::Duration_t(5, 0);
-
-        pqos.transport().use_builtin_transports = false;
-        std::shared_ptr<TCPv4TransportDescriptor> tcp_descriptor = std::make_shared<TCPv4TransportDescriptor>();
-
-        // if (tcp_client && !tcp_remote_ip.empty())
-        // {
-        //     IPLocator::setIPv4(initial_peer_locator, tcp_remote_ip);
-        //     initial_peer_locator.port = tcp_remote_port;
-        //     pqos.wire_protocol().builtin.initialPeersList.push_back(initial_peer_locator);
-        //     std::cout << "Remote TCP server address -> " << tcp_remote_ip << ":" << tcp_remote_port << std::endl;
-        // }
-
-        if (tcp_server)
-        {
-            tcp_descriptor->sendBufferSize = 0;
-            tcp_descriptor->receiveBufferSize = 0;
-        }
-
-        if (tcp_server && !tcp_server_ip.empty())
-        {
-            tcp_descriptor->set_WAN_address(tcp_server_ip);
-            tcp_descriptor->add_listener_port(tcp_server_port);
-            std::cout << "TCP server address -> " << tcp_server_ip << ":" << tcp_server_port << std::endl;
-        }
-        pqos.transport().user_transports.push_back(tcp_descriptor);
-    }
 
     // Set participant as DS SERVER
     pqos.wire_protocol().builtin.discovery_config.discoveryProtocol =
@@ -124,23 +85,23 @@ bool HelloWorldSubscriber::init(
 
     if (discovery_server)
     {
-        if (tcp_server || tcp_client)
+        if (tcp)
         {
-            discovery_server_address.kind = LOCATOR_KIND_TCPv4;
+            discovery_server_locator.kind = LOCATOR_KIND_TCPv4;
         }
 
         // Set SERVER's listening locator for PDP
-        pqos.wire_protocol().builtin.metatrafficUnicastLocatorList.push_back(discovery_server_address);
+        pqos.wire_protocol().builtin.metatrafficUnicastLocatorList.push_back(discovery_server_locator);
 
-        std::cout << "Discovery Server address -> " << IPLocator::toIPv4string(discovery_server_address) <<
-                ":" << discovery_server_address.port << std::endl;
+        std::cout << "Discovery Server address -> " << IPLocator::toIPv4string(discovery_server_locator) <<
+                ":" << discovery_server_locator.port << std::endl;
     }
 
     if (discovery_client)
     {
-        if (tcp_server || tcp_client)
+        if (tcp)
         {
-            discovery_remote_address.kind = LOCATOR_KIND_TCPv4;
+            discovery_remote_locator.kind = LOCATOR_KIND_TCPv4;
         }
 
         // Set remote SERVER's GUID prefix
@@ -148,50 +109,34 @@ bool HelloWorldSubscriber::init(
         remote_server_att.ReadguidPrefix("44.53.11.5f.45.50.52.4f.53.49.4d.41");
 
         // Set SERVER's listening locator for PDP
-        remote_server_att.metatrafficUnicastLocatorList.push_back(discovery_remote_address);
+        remote_server_att.metatrafficUnicastLocatorList.push_back(discovery_remote_locator);
 
         // Add remote SERVER to CLIENT's list of SERVERs
         pqos.wire_protocol().builtin.discovery_config.m_DiscoveryServers.push_back(remote_server_att);
 
-        std::cout << "Remote Discovery Server address -> " << IPLocator::toIPv4string(discovery_remote_address) <<
-                ":" << discovery_remote_address.port << std::endl;
+        std::cout << "Remote Discovery Server address -> " << IPLocator::toIPv4string(discovery_remote_locator) <<
+                ":" << discovery_remote_locator.port << std::endl;
     }
 
-    // if (tcp_server || tcp_client)
-    // {
-    //     int32_t kind = LOCATOR_KIND_TCPv4;
-    //     Locator initial_peer_locator;
-    //     initial_peer_locator.kind = kind;
+    if (tcp)
+    {
+        pqos.wire_protocol().builtin.discovery_config.leaseDuration = eprosima::fastrtps::c_TimeInfinite;
+        pqos.wire_protocol().builtin.discovery_config.leaseDuration_announcementperiod =
+                eprosima::fastrtps::Duration_t(5, 0);
 
-    //     pqos.wire_protocol().builtin.discovery_config.leaseDuration = eprosima::fastrtps::c_TimeInfinite;
-    //     pqos.wire_protocol().builtin.discovery_config.leaseDuration_announcementperiod =
-    //             eprosima::fastrtps::Duration_t(5, 0);
+        pqos.transport().use_builtin_transports = false;
+        std::shared_ptr<TCPv4TransportDescriptor> tcp_descriptor = std::make_shared<TCPv4TransportDescriptor>();
 
-    //     pqos.transport().use_builtin_transports = false;
-    //     std::shared_ptr<TCPv4TransportDescriptor> tcp_descriptor = std::make_shared<TCPv4TransportDescriptor>();
+        if (discovery_server)
+        {
+            tcp_descriptor->sendBufferSize = 0;
+            tcp_descriptor->receiveBufferSize = 0;
 
-    //     // if (tcp_client && !tcp_remote_ip.empty())
-    //     // {
-    //     //     IPLocator::setIPv4(initial_peer_locator, tcp_remote_ip);
-    //     //     initial_peer_locator.port = tcp_remote_port;
-    //     //     pqos.wire_protocol().builtin.initialPeersList.push_back(initial_peer_locator);
-    //     //     std::cout << "Remote TCP server address -> " << tcp_remote_ip << ":" << tcp_remote_port << std::endl;
-    //     // }
-
-    //     if (tcp_server)
-    //     {
-    //         tcp_descriptor->sendBufferSize = 0;
-    //         tcp_descriptor->receiveBufferSize = 0;
-    //     }
-
-    //     if (tcp_server && !tcp_server_ip.empty())
-    //     {
-    //         tcp_descriptor->set_WAN_address(tcp_server_ip);
-    //         tcp_descriptor->add_listener_port(tcp_server_port);
-    //         std::cout << "TCP server address -> " << tcp_server_ip << ":" << tcp_server_port << std::endl;
-    //     }
-    //     pqos.transport().user_transports.push_back(tcp_descriptor);
-    // }
+            tcp_descriptor->set_WAN_address(discovery_server_address);
+            tcp_descriptor->add_listener_port(discovery_server_port);
+        }
+        pqos.transport().user_transports.push_back(tcp_descriptor);
+    }
 
     // CREATE THE PARTICIPANT
     participant_ = DomainParticipantFactory::get_instance()->create_participant(0, pqos);

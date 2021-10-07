@@ -132,8 +132,7 @@ enum  optionIndex
     INTERVAL,
     DISCOVERY_SERVER_LOCATOR,
     DISCOVERY_REMOTE_LOCATOR,
-    TCP_SERVER_LOCATOR,
-    TCP_REMOTE_LOCATOR
+    TCP
 };
 
 const option::Descriptor usage[] = {
@@ -155,10 +154,8 @@ const option::Descriptor usage[] = {
       "  \t--discovery-server=<IPaddress[:port number]>  \tDiscover server address." },
     { DISCOVERY_REMOTE_LOCATOR, 0, "", "discovery-remote",      Arg::Locator,
       "  \t--discovery-remote=<IPaddress[:port number]>  \tAddress of remote Discovery server." },
-    { TCP_SERVER_LOCATOR, 0, "", "tcp-server",      Arg::Locator,
-      "  \t--tcp-server=<IPaddress[:port number]>  \tTCP server address." },
-    { TCP_REMOTE_LOCATOR, 0, "", "tcp-remote",      Arg::Locator,
-      "  \t--tcp-remote=<IPaddress[:port number]>  \tAddress of remote TCP server." },
+    { TCP, 0, "", "tcp",               Arg::None,
+      "  \t--tcp \tUse TCP transport (UDP by default)." },
 
     { UNKNOWN_OPT, 0, "", "",                Arg::None,      "\nSubscriber options:"},
     { TOPIC, 0, "t", "topic",                  Arg::String,
@@ -169,10 +166,8 @@ const option::Descriptor usage[] = {
       "  \t--discovery-server=<IPaddress[:port number]>  \tDiscover server address." },
     { DISCOVERY_REMOTE_LOCATOR, 0, "", "discovery-remote",      Arg::Locator,
       "  \t--discovery-remote=<IPaddress[:port number]>  \tAddress of remote Discovery server." },
-    { TCP_SERVER_LOCATOR, 0, "", "tcp-server",      Arg::Locator,
-      "  \t--tcp-server=<IPaddress[:port number]>  \tTCP server address." },
-    { TCP_REMOTE_LOCATOR, 0, "", "tcp-remote",      Arg::Locator,
-      "  \t--tcp-remote=<IPaddress[:port number]>  \tAddress of remote TCP server." },
+    { TCP, 0, "", "tcp",               Arg::None,
+      "  \t--tcp \tUse TCP transport (UDP by default)." },
 
     { 0, 0, 0, 0, 0, 0 }
 };

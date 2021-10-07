@@ -57,33 +57,24 @@ int main(
     long sleep = 100;
     int num_wait_matched = 0;
 
+    // TCP transport
+    bool tcp = false;
+
     // Discovery Server
     bool discovery_server = false;
-    eprosima::fastdds::rtps::Locator discovery_server_address;
+    eprosima::fastdds::rtps::Locator discovery_server_locator;
     std::cmatch discovery_server_mr;
-    std::string discovery_server_ip_address;
+    std::string discovery_server_address;
     uint16_t discovery_server_port = 60006;  // default physical port
-    discovery_server_address.port = discovery_server_port;
+    discovery_server_locator.port = discovery_server_port;
 
     // Remote Discovery Server
     bool discovery_client = false;
-    eprosima::fastdds::rtps::Locator discovery_remote_address;
+    eprosima::fastdds::rtps::Locator discovery_remote_locator;
     std::cmatch discovery_remote_mr;
-    std::string discovery_remote_ip_address;
+    std::string discovery_remote_address;
     uint16_t discovery_remote_port = 60006;  // default physical port
-    discovery_remote_address.port = discovery_remote_port;
-
-    // TCP server
-    bool tcp_server = false;
-    std::cmatch tcp_server_mr;
-    std::string tcp_server_ip_address;
-    uint16_t tcp_server_port = 5100;
-
-    // Remote TCP server
-    bool tcp_client = false;
-    std::cmatch tcp_remote_mr;
-    std::string tcp_remote_ip_address;
-    uint16_t tcp_remote_port = 5100;
+    discovery_remote_locator.port = discovery_remote_port;
 
     if (argc > 1)
     {
@@ -172,7 +163,7 @@ int main(
                     if (regex_match(opt.arg, discovery_server_mr, Arg::ipv4))
                     {
                         std::cmatch::iterator it = discovery_server_mr.cbegin();
-                        discovery_server_ip_address = (++it)->str();
+                        discovery_server_address = (++it)->str();
 
                         if ((++it)->matched)
                         {
@@ -184,16 +175,16 @@ int main(
                         }
                     }
 
-                    if (!discovery_server_ip_address.empty() && discovery_server_port > 1000)
+                    if (!discovery_server_address.empty() && discovery_server_port > 1000)
                     {
-                        eprosima::fastrtps::rtps::IPLocator::setPhysicalPort(discovery_server_address,
+                        eprosima::fastrtps::rtps::IPLocator::setPhysicalPort(discovery_server_locator,
                                 discovery_server_port);
-                        eprosima::fastrtps::rtps::IPLocator::setLogicalPort(discovery_server_address,
+                        eprosima::fastrtps::rtps::IPLocator::setLogicalPort(discovery_server_locator,
                                 discovery_server_port);
-                        eprosima::fastrtps::rtps::IPLocator::setIPv4(discovery_server_address,
-                                discovery_server_ip_address);
-                        eprosima::fastrtps::rtps::IPLocator::setWan(discovery_server_address,
-                                discovery_server_ip_address);
+                        eprosima::fastrtps::rtps::IPLocator::setIPv4(discovery_server_locator,
+                                discovery_server_address);
+                        eprosima::fastrtps::rtps::IPLocator::setWan(discovery_server_locator,
+                                discovery_server_address);
                     }
                     break;
 
@@ -202,7 +193,7 @@ int main(
                     if (regex_match(opt.arg, discovery_remote_mr, Arg::ipv4))
                     {
                         std::cmatch::iterator it = discovery_remote_mr.cbegin();
-                        discovery_remote_ip_address = (++it)->str();
+                        discovery_remote_address = (++it)->str();
 
                         if ((++it)->matched)
                         {
@@ -214,51 +205,19 @@ int main(
                         }
                     }
 
-                    if (!discovery_remote_ip_address.empty() && discovery_remote_port > 1000)
+                    if (!discovery_remote_address.empty() && discovery_remote_port > 1000)
                     {
-                        eprosima::fastrtps::rtps::IPLocator::setPhysicalPort(discovery_remote_address,
+                        eprosima::fastrtps::rtps::IPLocator::setPhysicalPort(discovery_remote_locator,
                                 discovery_remote_port);
-                        eprosima::fastrtps::rtps::IPLocator::setLogicalPort(discovery_remote_address,
+                        eprosima::fastrtps::rtps::IPLocator::setLogicalPort(discovery_remote_locator,
                                 discovery_remote_port);
-                        eprosima::fastrtps::rtps::IPLocator::setIPv4(discovery_remote_address,
-                                discovery_remote_ip_address);
+                        eprosima::fastrtps::rtps::IPLocator::setIPv4(discovery_remote_locator,
+                                discovery_remote_address);
                     }
                     break;
 
-                case optionIndex::TCP_SERVER_LOCATOR:
-                    tcp_server = true;
-                    if (regex_match(opt.arg, tcp_server_mr, Arg::ipv4))
-                    {
-                        std::cmatch::iterator it = tcp_server_mr.cbegin();
-                        tcp_server_ip_address = (++it)->str();
-
-                        if ((++it)->matched)
-                        {
-                            int port_int = std::stoi(it->str());
-                            if (port_int <= 65535)
-                            {
-                                tcp_server_port = static_cast<uint16_t>(port_int);
-                            }
-                        }
-                    }
-                    break;
-
-                case optionIndex::TCP_REMOTE_LOCATOR:
-                    tcp_client = true;
-                    if (regex_match(opt.arg, tcp_remote_mr, Arg::ipv4))
-                    {
-                        std::cmatch::iterator it = tcp_remote_mr.cbegin();
-                        tcp_remote_ip_address = (++it)->str();
-
-                        if ((++it)->matched)
-                        {
-                            int port_int = std::stoi(it->str());
-                            if (port_int <= 65535)
-                            {
-                                tcp_remote_port = static_cast<uint16_t>(port_int);
-                            }
-                        }
-                    }
+                case optionIndex::TCP:
+                    tcp = true;
                     break;
 
                 case optionIndex::UNKNOWN_OPT:
@@ -288,10 +247,9 @@ int main(
         case PUBLISHER:
         {
             HelloWorldPublisher mypub;
-            if (mypub.init(topic_name, static_cast<uint32_t>(num_wait_matched), discovery_server,
-                discovery_server_address, discovery_client, discovery_remote_address, tcp_server, tcp_server_ip_address,
-                static_cast<uint16_t>(tcp_server_port), tcp_client, tcp_remote_ip_address,
-                static_cast<uint16_t>(tcp_remote_port)))
+            if (mypub.init(topic_name, static_cast<uint32_t>(num_wait_matched), tcp,
+                discovery_server, discovery_server_locator, discovery_server_address, static_cast<uint16_t>(discovery_server_port),
+                discovery_client, discovery_remote_locator))
             {
                 mypub.run(static_cast<uint32_t>(count), static_cast<uint32_t>(sleep));
             }
@@ -300,10 +258,9 @@ int main(
         case SUBSCRIBER:
         {
             HelloWorldSubscriber mysub;
-            if (mysub.init(topic_name, static_cast<uint32_t>(count), discovery_server, discovery_server_address,
-                discovery_client, discovery_remote_address, tcp_server, tcp_server_ip_address,
-                static_cast<uint16_t>(tcp_server_port), tcp_client, tcp_remote_ip_address,
-                static_cast<uint16_t>(tcp_remote_port)))
+            if (mysub.init(topic_name, static_cast<uint32_t>(count), tcp,
+                discovery_server, discovery_server_locator, discovery_server_address, static_cast<uint16_t>(discovery_server_port),
+                discovery_client, discovery_remote_locator))
             {
                 mysub.run(static_cast<uint32_t>(count));
             }

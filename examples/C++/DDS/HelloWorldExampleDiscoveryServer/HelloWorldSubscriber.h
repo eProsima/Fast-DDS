@@ -46,16 +46,13 @@ public:
     bool init(
             const std::string& topic_name,
             uint32_t max_messages,
+            bool tcp,
             bool discovery_server,
-            eprosima::fastdds::rtps::Locator discovery_server_address,
+            eprosima::fastdds::rtps::Locator discovery_server_locator,
+            const std::string& discovery_server_address,
+            unsigned short discovery_server_port,
             bool discovery_client,
-            eprosima::fastdds::rtps::Locator discovery_remote_address,
-            bool tcp_server,
-            const std::string& tcp_server_ip,
-            unsigned short tcp_server_port,
-            bool tcp_client,
-            const std::string& tcp_remote_ip,
-            unsigned short tcp_remote_port);
+            eprosima::fastdds::rtps::Locator discovery_remote_locator);
 
     //! RUN the subscriber until number samples are received
     void run(
