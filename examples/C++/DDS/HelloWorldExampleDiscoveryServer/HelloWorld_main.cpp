@@ -21,14 +21,12 @@
 
 #include "arg_configuration.h"
 #include "HelloWorldPublisher.h"
-#include "HelloWorldServer.h"
 #include "HelloWorldSubscriber.h"
 
 enum EntityType
 {
     PUBLISHER,
-    SUBSCRIBER,
-    SERVER
+    SUBSCRIBER
 };
 
 int main(
@@ -58,12 +56,35 @@ int main(
     int count = 0;
     long sleep = 100;
     int num_wait_matched = 0;
+
     // Discovery Server
-    eprosima::fastdds::rtps::Locator server_address;
-    std::cmatch mr;
-    std::string ip_address;
-    uint16_t port = 60006;  // default physical port
-    server_address.port = port;
+    bool discovery_server = false;
+    eprosima::fastdds::rtps::Locator discovery_server_address;
+    std::cmatch discovery_server_mr;
+    std::string discovery_server_ip_address;
+    uint16_t discovery_server_port = 60006;  // default physical port
+    discovery_server_address.port = discovery_server_port;
+
+    // Remote Discovery Server
+    bool discovery_client = false;
+    eprosima::fastdds::rtps::Locator discovery_remote_address;
+    std::cmatch discovery_remote_mr;
+    std::string discovery_remote_ip_address;
+    uint16_t discovery_remote_port = 60006;  // default physical port
+    discovery_remote_address.port = discovery_remote_port;
+
+    // TCP server
+    bool tcp_server = false;
+    std::cmatch tcp_server_mr;
+    std::string tcp_server_ip_address;
+    uint16_t tcp_server_port = 5100;
+
+    // Remote TCP server
+    bool tcp_client = false;
+    std::cmatch tcp_remote_mr;
+    std::string tcp_remote_ip_address;
+    uint16_t tcp_remote_port = 5100;
+
     if (argc > 1)
     {
         if (!strcmp(argv[1], "publisher"))
@@ -74,10 +95,6 @@ int main(
         {
             type = SUBSCRIBER;
         }
-        else if (!strcmp(argv[1], "server"))
-        {
-            type = SERVER;
-        }
         // check if first argument is help, needed because we skip it when parsing
         else if (!(strcmp(argv[1], "-h") && strcmp(argv[1], "--help")))
         {
@@ -86,7 +103,7 @@ int main(
         }
         else
         {
-            std::cerr << "ERROR: first argument can only be <publisher|subscriber|server>" << std::endl;
+            std::cerr << "ERROR: first argument can only be <publisher|subscriber>" << std::endl;
             option::printUsage(fwrite, stdout, usage, columns);
             return 1;
         }
@@ -121,25 +138,11 @@ int main(
                     break;
 
                 case optionIndex::TOPIC:
-                    if (type == SERVER)
-                    {
-                        print_warning("publisher|subscriber", opt.name);
-                    }
-                    else
-                    {
-                        topic_name = std::string(opt.arg);
-                    }
+                    topic_name = std::string(opt.arg);
                     break;
 
                 case optionIndex::SAMPLES:
-                    if (type == SERVER)
-                    {
-                        print_warning("publisher|subscriber", opt.name);
-                    }
-                    else
-                    {
-                        count = strtol(opt.arg, nullptr, 10);
-                    }
+                    count = strtol(opt.arg, nullptr, 10);
                     break;
 
                 case optionIndex::INTERVAL:
@@ -164,28 +167,91 @@ int main(
                     }
                     break;
 
-                case optionIndex::LOCATOR:
-                    port = static_cast<uint16_t>(server_address.port);
-
-                    if (regex_match(opt.arg, mr, Arg::ipv4))
+                case optionIndex::DISCOVERY_SERVER_LOCATOR:
+                    discovery_server = true;
+                    if (regex_match(opt.arg, discovery_server_mr, Arg::ipv4))
                     {
-                        std::cmatch::iterator it = mr.cbegin();
-                        ip_address = (++it)->str();
+                        std::cmatch::iterator it = discovery_server_mr.cbegin();
+                        discovery_server_ip_address = (++it)->str();
 
                         if ((++it)->matched)
                         {
                             int port_int = std::stoi(it->str());
                             if (port_int <= 65535)
                             {
-                                port = static_cast<uint16_t>(port_int);
+                                discovery_server_port = static_cast<uint16_t>(port_int);
                             }
                         }
                     }
 
-                    if (!ip_address.empty() && port > 1000)
+                    if (!discovery_server_ip_address.empty() && discovery_server_port > 1000)
                     {
-                        eprosima::fastrtps::rtps::IPLocator::setPhysicalPort(server_address, port);
-                        eprosima::fastrtps::rtps::IPLocator::setIPv4(server_address, ip_address);
+                        eprosima::fastrtps::rtps::IPLocator::setPhysicalPort(discovery_server_address,
+                                discovery_server_port);
+                        eprosima::fastrtps::rtps::IPLocator::setIPv4(discovery_server_address,
+                                discovery_server_ip_address);
+                    }
+                    break;
+
+                case optionIndex::DISCOVERY_REMOTE_LOCATOR:
+                    discovery_client = true;
+                    if (regex_match(opt.arg, discovery_remote_mr, Arg::ipv4))
+                    {
+                        std::cmatch::iterator it = discovery_remote_mr.cbegin();
+                        discovery_remote_ip_address = (++it)->str();
+
+                        if ((++it)->matched)
+                        {
+                            int port_int = std::stoi(it->str());
+                            if (port_int <= 65535)
+                            {
+                                discovery_remote_port = static_cast<uint16_t>(port_int);
+                            }
+                        }
+                    }
+
+                    if (!discovery_remote_ip_address.empty() && discovery_remote_port > 1000)
+                    {
+                        eprosima::fastrtps::rtps::IPLocator::setPhysicalPort(discovery_remote_address,
+                                discovery_remote_port);
+                        eprosima::fastrtps::rtps::IPLocator::setIPv4(discovery_remote_address,
+                                discovery_remote_ip_address);
+                    }
+                    break;
+
+                case optionIndex::TCP_SERVER_LOCATOR:
+                    tcp_server = true;
+                    if (regex_match(opt.arg, tcp_server_mr, Arg::ipv4))
+                    {
+                        std::cmatch::iterator it = tcp_server_mr.cbegin();
+                        tcp_server_ip_address = (++it)->str();
+
+                        if ((++it)->matched)
+                        {
+                            int port_int = std::stoi(it->str());
+                            if (port_int <= 65535)
+                            {
+                                tcp_server_port = static_cast<uint16_t>(port_int);
+                            }
+                        }
+                    }
+                    break;
+
+                case optionIndex::TCP_REMOTE_LOCATOR:
+                    tcp_client = true;
+                    if (regex_match(opt.arg, tcp_remote_mr, Arg::ipv4))
+                    {
+                        std::cmatch::iterator it = tcp_remote_mr.cbegin();
+                        tcp_remote_ip_address = (++it)->str();
+
+                        if ((++it)->matched)
+                        {
+                            int port_int = std::stoi(it->str());
+                            if (port_int <= 65535)
+                            {
+                                tcp_remote_port = static_cast<uint16_t>(port_int);
+                            }
+                        }
                     }
                     break;
 
@@ -199,15 +265,16 @@ int main(
     }
     else
     {
-        std::cerr << "ERROR: <publisher|subscriber|server> argument is required." << std::endl;
+        std::cerr << "ERROR: <publisher|subscriber> argument is required." << std::endl;
         option::printUsage(fwrite, stdout, usage, columns);
         return 1;
     }
 
-    // Set default IP address if not specified
-    if (!IsAddressDefined(server_address))
+    if (!discovery_server && !discovery_client)
     {
-        eprosima::fastrtps::rtps::IPLocator::setIPv4(server_address, 127, 0, 0, 1);
+        std::cerr << "ERROR: at least one (remote) discovery server address is required." << std::endl;
+        option::printUsage(fwrite, stdout, usage, columns);
+        return 1;
     }
 
     switch (type)
@@ -215,7 +282,10 @@ int main(
         case PUBLISHER:
         {
             HelloWorldPublisher mypub;
-            if (mypub.init(topic_name, static_cast<uint32_t>(num_wait_matched), server_address))
+            if (mypub.init(topic_name, static_cast<uint32_t>(num_wait_matched), discovery_server,
+                discovery_server_address, discovery_client, discovery_remote_address, tcp_server, tcp_server_ip_address,
+                static_cast<uint16_t>(tcp_server_port), tcp_client, tcp_remote_ip_address,
+                static_cast<uint16_t>(tcp_remote_port)))
             {
                 mypub.run(static_cast<uint32_t>(count), static_cast<uint32_t>(sleep));
             }
@@ -224,18 +294,12 @@ int main(
         case SUBSCRIBER:
         {
             HelloWorldSubscriber mysub;
-            if (mysub.init(topic_name, static_cast<uint32_t>(count), server_address))
+            if (mysub.init(topic_name, static_cast<uint32_t>(count), discovery_server, discovery_server_address,
+                discovery_client, discovery_remote_address, tcp_server, tcp_server_ip_address,
+                static_cast<uint16_t>(tcp_server_port), tcp_client, tcp_remote_ip_address,
+                static_cast<uint16_t>(tcp_remote_port)))
             {
                 mysub.run(static_cast<uint32_t>(count));
-            }
-            break;
-        }
-        case SERVER:
-        {
-            HelloWorldServer myserver;
-            if (myserver.init(server_address))
-            {
-                myserver.run();
             }
             break;
         }

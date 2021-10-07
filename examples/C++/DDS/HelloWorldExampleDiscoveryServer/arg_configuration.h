@@ -130,12 +130,15 @@ enum  optionIndex
     WAIT,
     SAMPLES,
     INTERVAL,
-    LOCATOR
+    DISCOVERY_SERVER_LOCATOR,
+    DISCOVERY_REMOTE_LOCATOR,
+    TCP_SERVER_LOCATOR,
+    TCP_REMOTE_LOCATOR
 };
 
 const option::Descriptor usage[] = {
     { UNKNOWN_OPT, 0, "", "",                Arg::None,
-      "Usage: HelloWorldExampleDiscoveryServer <publisher|subscriber|server>\n\nGeneral options:" },
+      "Usage: HelloWorldExampleDiscoveryServer <publisher|subscriber>\n\nGeneral options:" },
     { HELP,    0, "h", "help",               Arg::None,      "  -h \t--help  \tProduce help message." },
 
     { UNKNOWN_OPT, 0, "", "",                Arg::None,      "\nPublisher options:"},
@@ -148,20 +151,28 @@ const option::Descriptor usage[] = {
       "  -s <num> \t--samples=<num>  \tNumber of samples to send (Default: 0 => infinite samples)." },
     { INTERVAL, 0, "i", "interval",            Arg::Numeric,
       "  -i <num> \t--interval=<num>  \tTime between samples in milliseconds (Default: 100)." },
-    { LOCATOR, 0, "", "ip",                 Arg::Locator,
-      "  \t--ip=<IPaddress[:port number]>  \tServer address (Default address: 127.0.0.1, default port: 60006)." },
+    { DISCOVERY_SERVER_LOCATOR, 0, "", "discovery-server",      Arg::Locator,
+      "  \t--discovery-server=<IPaddress[:port number]>  \tDiscover server address." },
+    { DISCOVERY_REMOTE_LOCATOR, 0, "", "discovery-remote",      Arg::Locator,
+      "  \t--discovery-remote=<IPaddress[:port number]>  \tAddress of remote Discovery server." },
+    { TCP_SERVER_LOCATOR, 0, "", "tcp-server",      Arg::Locator,
+      "  \t--tcp-server=<IPaddress[:port number]>  \tTCP server address." },
+    { TCP_REMOTE_LOCATOR, 0, "", "tcp-remote",      Arg::Locator,
+      "  \t--tcp-remote=<IPaddress[:port number]>  \tAddress of remote TCP server." },
 
     { UNKNOWN_OPT, 0, "", "",                Arg::None,      "\nSubscriber options:"},
     { TOPIC, 0, "t", "topic",                  Arg::String,
       "  -t <topic_name> \t--topic=<topic_name>  \tTopic name (Default: HelloWorldTopic)." },
     { SAMPLES, 0, "s", "samples",              Arg::Numeric,
       "  -s <num> \t--samples=<num>  \tNumber of samples to wait for (Default: 0 => infinite samples)." },
-    { LOCATOR, 0, "", "ip",                 Arg::Locator,
-      "  \t--ip=<IPaddress[:port number]>  \tServer address (Default address: 127.0.0.1, default port: 60006)." },
-
-    { UNKNOWN_OPT, 0, "", "",                Arg::None,      "\nDiscoveryServer options:"},
-    { LOCATOR, 0, "", "ip",                 Arg::Locator,
-      "  \t--ip=<IPaddress[:port number]>  \tServer address (Default address: 127.0.0.1, default port: 60006)." },
+    { DISCOVERY_SERVER_LOCATOR, 0, "", "discovery-server",      Arg::Locator,
+      "  \t--discovery-server=<IPaddress[:port number]>  \tDiscover server address." },
+    { DISCOVERY_REMOTE_LOCATOR, 0, "", "discovery-remote",      Arg::Locator,
+      "  \t--discovery-remote=<IPaddress[:port number]>  \tAddress of remote Discovery server." },
+    { TCP_SERVER_LOCATOR, 0, "", "tcp-server",      Arg::Locator,
+      "  \t--tcp-server=<IPaddress[:port number]>  \tTCP server address." },
+    { TCP_REMOTE_LOCATOR, 0, "", "tcp-remote",      Arg::Locator,
+      "  \t--tcp-remote=<IPaddress[:port number]>  \tAddress of remote TCP server." },
 
     { 0, 0, 0, 0, 0, 0 }
 };

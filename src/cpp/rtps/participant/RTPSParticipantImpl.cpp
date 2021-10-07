@@ -180,6 +180,7 @@ RTPSParticipantImpl::RTPSParticipantImpl(
         case DiscoveryProtocol::BACKUP:
         case DiscoveryProtocol::CLIENT:
         case DiscoveryProtocol::SERVER:
+            break;
         case DiscoveryProtocol::SUPER_CLIENT:
             // Verify if listening ports are provided
             for (auto& transportDescriptor : PParam.userTransports)
