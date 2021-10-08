@@ -12,15 +12,20 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include <rtps/transport/ChannelResource.h>
+#include <chrono>
+#include <thread>
 
 #include <asio.hpp>
+
+#include <rtps/transport/ChannelResource.h>
 
 namespace eprosima {
 namespace fastdds {
 namespace rtps {
 
 using Log = fastdds::dds::Log;
+
+const uint64_t ChannelResource::MAX_WAIT_SECONDS_ON_CLOSURE_ = 5;
 
 ChannelResource::ChannelResource()
     : message_buffer_(RTPSMESSAGE_DEFAULT_SIZE)
@@ -54,6 +59,11 @@ ChannelResource::~ChannelResource()
     clear();
 }
 
+void ChannelResource::waiting_join_channel_()
+{
+    thread_.join();
+}
+
 void ChannelResource::clear()
 {
     alive_.store(false);
@@ -61,8 +71,34 @@ void ChannelResource::clear()
     {
         if (thread_.get_id() != std::this_thread::get_id())
         {
-            // wait for it to finish
-            thread_.join();
+            // Thanks to: https://stackoverflow.com/users/6255513/smeeheey
+            // https://stackoverflow.com/a/40551227/17049427
+
+            std::mutex m;
+            std::condition_variable cv;
+
+            // Wait for it to finish
+            std::thread t([&cv, this]()
+            {
+                waiting_join_channel_();
+                cv.notify_one();
+            });
+
+            // Detach the waiting thread
+            t.detach();
+
+            {
+                std::unique_lock<std::mutex> l(m);
+
+                // Wait in condition variable.
+                // If wait for is awake by timeoout, it s consider to be stucked. Thus detach it and close.
+                if(cv.wait_for(l, std::chrono::seconds(ChannelResource::MAX_WAIT_SECONDS_ON_CLOSURE_)) ==
+                        std::cv_status::timeout)
+                {
+                    logWarning(RTPS, "Channel closed before thread join");
+                    thread_.detach();
+                }
+            }
         }
         else
         {

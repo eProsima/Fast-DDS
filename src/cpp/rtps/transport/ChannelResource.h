@@ -35,6 +35,12 @@ public:
             uint32_t rec_buffer_size);
     virtual ~ChannelResource();
 
+    /**
+     * Wait for the channel thread to finish.
+     *
+     * When a thread get stucked in an asio read, detach it and close the channel after \c MAX_WAIT_SECONDS_ON_CLOSURE_
+     * seconds.
+     */
     virtual void clear();
 
     inline void thread(
@@ -64,6 +70,13 @@ public:
     }
 
 protected:
+
+    static const uint64_t MAX_WAIT_SECONDS_ON_CLOSURE_;
+
+    /**
+     * Wait for the thread to finish.
+     */
+    void waiting_join_channel_();
 
     //!Received message
     fastrtps::rtps::CDRMessage_t message_buffer_;
