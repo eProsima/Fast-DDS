@@ -159,7 +159,8 @@ public:
      */
     bool requested_changes_set(
             const SequenceNumberSet_t& seq_num_set,
-            RTPSGapBuilder& gap_builder);
+            RTPSGapBuilder& gap_builder,
+            const SequenceNumber_t& min_seq_in_history);
 
     /**
      * Performs processing of preemptive acknack

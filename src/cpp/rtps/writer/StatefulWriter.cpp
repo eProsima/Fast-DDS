@@ -1849,7 +1849,7 @@ bool StatefulWriter::process_acknack(
                                     RTPSMessageGroup group(mp_RTPSParticipant, this, remote_reader->message_sender());
                                     RTPSGapBuilder gap_builder(group);
 
-                                    if (remote_reader->requested_changes_set(sn_set, gap_builder))
+                                    if (remote_reader->requested_changes_set(sn_set, gap_builder, get_seq_num_min()))
                                     {
                                         nack_response_event_->restart_timer();
                                     }
