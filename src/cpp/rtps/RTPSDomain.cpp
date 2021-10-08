@@ -19,9 +19,10 @@
 #include <fastdds/rtps/RTPSDomain.h>
 
 #include <chrono>
-#include <thread>
 #include <cstdlib>
 #include <regex>
+#include <string>
+#include <thread>
 
 #include <fastdds/dds/log/Log.hpp>
 #include <fastdds/rtps/history/WriterHistory.h>
@@ -115,11 +116,15 @@ RTPSParticipant* RTPSDomain::createParticipant(
     // Only the first time, initialize environment file watch if the corresponding environment variable is set
     if (!RTPSDomainImpl::file_watch_handle_)
     {
-        if (!SystemInfo::get_environment_file().empty())
+        std::string filename = SystemInfo::get_environment_file();
+        if (!filename.empty() && SystemInfo::file_exists(filename))
         {
             // Create filewatch
-            RTPSDomainImpl::file_watch_handle_ = SystemInfo::watch_file(SystemInfo::get_environment_file(),
-                            RTPSDomainImpl::file_watch_callback);
+            RTPSDomainImpl::file_watch_handle_ = SystemInfo::watch_file(filename, RTPSDomainImpl::file_watch_callback);
+        }
+        else
+        {
+            logWarning(RTPS_PARTICIPANT, filename + " does not exist. File watching not initialized.");
         }
     }
 
