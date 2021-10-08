@@ -560,8 +560,14 @@ void ReaderProxy::change_has_been_removed(
     changes_for_reader_.erase(chit);
 }
 
-bool ReaderProxy::has_unacknowledged() const
+bool ReaderProxy::has_unacknowledged(
+        const SequenceNumber_t& first_seq_in_history) const
 {
+    if (first_seq_in_history > changes_low_mark_)
+    {
+        return true;
+    }
+
     for (const ChangeForReader_t& it : changes_for_reader_)
     {
         if (it.getStatus() == UNACKNOWLEDGED)

@@ -1586,38 +1586,27 @@ bool StatefulWriter::send_periodic_heartbeat(
     bool unacked_changes = false;
     if (!liveliness)
     {
-        SequenceNumber_t firstSeq, lastSeq;
+        SequenceNumber_t firstSeq;
 
         firstSeq = get_seq_num_min();
-        lastSeq = get_seq_num_max();
+        unacked_changes = for_matched_readers(matched_local_readers_, matched_datasharing_readers_,
+                        matched_remote_readers_,
+                        [firstSeq](ReaderProxy* reader)
+                        {
+                            return reader->has_unacknowledged(firstSeq);
+                        }
+                        );
 
-        if (firstSeq == c_SequenceNumber_Unknown || lastSeq == c_SequenceNumber_Unknown)
+        if (unacked_changes)
         {
-            return false;
-        }
-        else
-        {
-            assert(firstSeq <= lastSeq);
-
-            unacked_changes = for_matched_readers(matched_local_readers_, matched_datasharing_readers_,
-                            matched_remote_readers_,
-                            [](ReaderProxy* reader)
-                            {
-                                return reader->has_unacknowledged();
-                            }
-                            );
-
-            if (unacked_changes)
+            try
             {
-                try
-                {
-                    //TODO if separating, here sends periodic for all readers, instead of ones needed it.
-                    send_heartbeat_to_all_readers();
-                }
-                catch (const RTPSMessageGroup::timeout&)
-                {
-                    logError(RTPS_WRITER, "Max blocking time reached");
-                }
+                //TODO if separating, here sends periodic for all readers, instead of ones needed it.
+                send_heartbeat_to_all_readers();
+            }
+            catch (const RTPSMessageGroup::timeout&)
+            {
+                logError(RTPS_WRITER, "Max blocking time reached");
             }
         }
     }
@@ -1673,7 +1662,8 @@ void StatefulWriter::send_heartbeat_to_nts(
         bool liveliness,
         bool force /* = false */)
 {
-    if (remoteReaderProxy.is_reliable() && (force || liveliness || remoteReaderProxy.has_unacknowledged()))
+    if (remoteReaderProxy.is_reliable() &&
+            (force || liveliness || remoteReaderProxy.has_unacknowledged(get_seq_num_min())))
     {
         if (remoteReaderProxy.is_local_reader())
         {
