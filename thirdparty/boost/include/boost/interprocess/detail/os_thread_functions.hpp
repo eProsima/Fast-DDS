@@ -33,13 +33,12 @@
 #include <boost/interprocess/detail/config_begin.hpp>
 #include <boost/interprocess/detail/workaround.hpp>
 #include <boost/interprocess/streams/bufferstream.hpp>
-#include <boost/interprocess/detail/posix_time_types_wrk.hpp>
 #include <cstddef>
 #include <ostream>
 
 #if defined(BOOST_INTERPROCESS_WINDOWS)
 #  include <boost/interprocess/detail/win32_api.hpp>
-#  include <process.h>
+#  include <boost/winapi/thread.hpp>
 #else
 #  include <pthread.h>
 #  include <unistd.h>
@@ -229,7 +228,7 @@ inline long double get_current_process_creation_time()
 
 inline unsigned int get_num_cores()
 {
-   winapi::system_info sysinfo;
+   winapi::interprocess_system_info sysinfo;
    winapi::get_system_info( &sysinfo );
    //in Windows dw is long which is equal in bits to int
    return static_cast<unsigned>(sysinfo.dwNumberOfProcessors);
@@ -519,9 +518,9 @@ inline void get_pid_str(pid_str_t &pid_str)
 
 #if defined(BOOST_INTERPROCESS_WINDOWS)
 
-inline int thread_create( OS_thread_t * thread, unsigned (__stdcall * start_routine) (void*), void* arg )
+inline int thread_create( OS_thread_t * thread, boost::ipwinapiext::LPTHREAD_START_ROUTINE_ start_routine, void* arg )
 {
-   void* h = (void*)_beginthreadex( 0, 0, start_routine, arg, 0, 0 );
+   void* h = boost::ipwinapiext::CreateThread(0, 0, start_routine, arg, 0, 0);
 
    if( h != 0 ){
       thread->m_handle = h;
@@ -530,9 +529,6 @@ inline int thread_create( OS_thread_t * thread, unsigned (__stdcall * start_rout
    else{
       return 1;
    }
-
-   thread->m_handle = (void*)_beginthreadex( 0, 0, start_routine, arg, 0, 0 );
-   return thread->m_handle != 0;
 }
 
 inline void thread_join( OS_thread_t thread)
@@ -576,7 +572,7 @@ class os_thread_func_ptr_deleter
 
 #if defined(BOOST_INTERPROCESS_WINDOWS)
 
-inline unsigned __stdcall launch_thread_routine( void * pv )
+inline boost::winapi::DWORD_ __stdcall launch_thread_routine(boost::winapi::LPVOID_ pv)
 {
    os_thread_func_ptr_deleter<abstract_thread> pt( static_cast<abstract_thread *>( pv ) );
    pt->run();

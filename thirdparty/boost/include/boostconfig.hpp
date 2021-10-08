@@ -31,20 +31,32 @@
 #include <sys/stat.h>
 #include <stdexcept>
 
-//#define BOOST_INTERPROCESS_BOOTSTAMP_IS_LASTBOOTUPTIME
-
 // TODO(Adolfo): This will fail if windows system without program data in C: drive
-#define BOOST_INTERPROCESS_SHARED_DIR_PATH "C:\\ProgramData\\eprosima\\fastrtps_interprocess"
+#define CUSTOM_SHARED_DIR_PATH "C:\\ProgramData\\eprosima\\fastrtps_interprocess"
+#define CUSTOM_SHARED_DIR_PATH_W L"C:\\ProgramData\\eprosima\\fastrtps_interprocess"
 
-#include <boost/interprocess/detail/workaround.hpp>
-#define BOOST_INTERPROCESS_FORCE_GENERIC_EMULATION
-/*#if defined(BOOST_INTERPROCESS_FORCE_GENERIC_EMULATION)
- #error "BOOST_INTERPROCESS_FORCE_GENERIC_EMULATION must be disabled in boost/interprocess/detail/workarround.hpp"
- #endif*/
+#define BOOST_INTERPROCESS_SHARED_DIR_FUNC
+#define BOOST_INTERPROCESS_SHARED_DIR_FUNC_IS_TEMPLATE
 
-// Todo(Adolfo): BlackBox.SHMTransportPubSub fail with BOOST_INTERPROCESS_USE_WINDOWS
-//#define BOOST_INTERPROCESS_USE_WINDOWS
-//#define BOOST_INTERPROCESS_BOOTSTAMP_IS_SESSION_MANAGER_BASED
+namespace boost {
+namespace interprocess {
+namespace ipcdetail {
+
+template<class CharT>
+inline void get_shared_dir(std::basic_string<CharT>& shared_dir)
+{
+    shared_dir = CUSTOM_SHARED_DIR_PATH;
+}
+
+template<>
+inline void get_shared_dir(std::wstring& shared_dir)
+{
+    shared_dir = CUSTOM_SHARED_DIR_PATH_W;
+}
+
+}  // namespace ipcdetail
+}  // namespace interprocess
+}  // namespace boost
 
 #endif // _MSC_VER_
 
@@ -100,19 +112,19 @@ private:
         struct stat info;
 
         // Cannot access shared_dir_path, we assume it doesn't exist
-        if (stat(BOOST_INTERPROCESS_SHARED_DIR_PATH, &info) != 0)
+        if (stat(CUSTOM_SHARED_DIR_PATH, &info) != 0)
         {
             // Try to create it
-            if (system(("mkdir " BOOST_INTERPROCESS_SHARED_DIR_PATH)) != 0)
+            if (system(("mkdir " CUSTOM_SHARED_DIR_PATH)) != 0)
             {
-                throw std::runtime_error("couldn't access nor create " BOOST_INTERPROCESS_SHARED_DIR_PATH);
+                throw std::runtime_error("couldn't access nor create " CUSTOM_SHARED_DIR_PATH);
             }
         }
     }
 
     void clean()
     {
-        system("del " BOOST_INTERPROCESS_SHARED_DIR_PATH "\\*.* /Q");
+        system("del " CUSTOM_SHARED_DIR_PATH "\\*.* /Q");
     }
 
 #endif // ifdef _MSC_VER

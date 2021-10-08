@@ -144,6 +144,7 @@
 #  define BOOST_NO_CXX11_FINAL
 #  define BOOST_NO_CXX11_RANGE_BASED_FOR
 #  define BOOST_NO_CXX11_SCOPED_ENUMS
+#  define BOOST_NO_CXX11_OVERRIDE
 #endif // _MSC_VER < 1700
 
 // C++11 features supported by VC++ 12 (aka 2013).
@@ -280,6 +281,17 @@
 #endif
 #ifndef BOOST_ABI_SUFFIX
 #  define BOOST_ABI_SUFFIX "boost/config/abi/msvc_suffix.hpp"
+#endif
+
+//
+// Approximate compiler conformance version
+//
+#ifdef _MSVC_LANG
+#  define BOOST_CXX_VERSION _MSVC_LANG
+#elif defined(_HAS_CXX17)
+#  define BOOST_CXX_VERSION 201703L
+#elif BOOST_MSVC >= 1916
+#  define BOOST_CXX_VERSION 201402L
 #endif
 
 #ifndef BOOST_COMPILER

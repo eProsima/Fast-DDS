@@ -250,6 +250,7 @@
 
 #if !__has_feature(cxx_override_control)
 #  define BOOST_NO_CXX11_FINAL
+#  define BOOST_NO_CXX11_OVERRIDE
 #endif
 
 #if !__has_feature(cxx_unrestricted_unions)

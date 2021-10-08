@@ -110,8 +110,8 @@ class basic_managed_memory_impl
    typedef basic_managed_memory_impl
                <CharType, MemoryAlgorithm, IndexType, Offset> self_t;
    protected:
-   template<class ManagedMemory>
-   static bool grow(const char *filename, size_type extra_bytes)
+   template<class ManagedMemory, class CharT>
+   static bool grow(const CharT *filename, size_type extra_bytes)
    {
       typedef typename ManagedMemory::device_type device_type;
       //Increase file size
@@ -133,8 +133,8 @@ class basic_managed_memory_impl
       return true;
    }
 
-   template<class ManagedMemory>
-   static bool shrink_to_fit(const char *filename)
+   template<class ManagedMemory, class CharT>
+   static bool shrink_to_fit(const CharT *filename)
    {
       typedef typename ManagedMemory::device_type device_type;
       size_type new_size;
@@ -177,6 +177,7 @@ class basic_managed_memory_impl
       //throw if constructor allocates memory. So we must catch it.
       BOOST_TRY{
          //Let's construct the allocator in memory
+         BOOST_ASSERT((0 == (std::size_t)addr % boost::move_detail::alignment_of<segment_manager>::value));
          mp_header       = ::new(addr, boost_container_new_t()) segment_manager(size);
       }
       BOOST_CATCH(...){

@@ -64,7 +64,12 @@ inline boost::uint32_t atomic_cas32
 #if defined( _MSC_VER )
    extern "C" void _ReadWriteBarrier(void);
    #pragma intrinsic(_ReadWriteBarrier)
-   #define BOOST_INTERPROCESS_READ_WRITE_BARRIER _ReadWriteBarrier()
+
+#define BOOST_INTERPROCESS_READ_WRITE_BARRIER \
+            BOOST_INTERPROCESS_DISABLE_DEPRECATED_WARNING \
+            _ReadWriteBarrier() \
+            BOOST_INTERPROCESS_RESTORE_WARNING
+
 #elif defined(__GNUC__)
    #if (__GNUC__ * 10000 + __GNUC_MINOR__ * 100 + __GNUC_PATCHLEVEL__) > 40100
       #define BOOST_INTERPROCESS_READ_WRITE_BARRIER __sync_synchronize()

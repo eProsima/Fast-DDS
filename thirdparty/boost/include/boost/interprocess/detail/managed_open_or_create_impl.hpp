@@ -38,34 +38,7 @@
 
 namespace boost {
 namespace interprocess {
-
-#if !defined(BOOST_INTERPROCESS_DOXYGEN_INVOKED)
-namespace ipcdetail{ class interprocess_tester; }
-
-
-template<class DeviceAbstraction>
-struct managed_open_or_create_impl_device_id_t
-{
-   typedef const char *type;
-};
-
-#ifdef BOOST_INTERPROCESS_XSI_SHARED_MEMORY_OBJECTS
-
-class xsi_shared_memory_file_wrapper;
-class xsi_key;
-
-template<>
-struct managed_open_or_create_impl_device_id_t<xsi_shared_memory_file_wrapper>
-{
-   typedef xsi_key type;
-};
-
-#endif   //BOOST_INTERPROCESS_XSI_SHARED_MEMORY_OBJECTS
-
-#endif   //#ifndef BOOST_INTERPROCESS_DOXYGEN_INVOKED
-
 namespace ipcdetail {
-
 
 template <bool StoreDevice, class DeviceAbstraction>
 class managed_open_or_create_impl_device_holder
@@ -99,7 +72,6 @@ class managed_open_or_create_impl
    //Non-copyable
    BOOST_MOVABLE_BUT_NOT_COPYABLE(managed_open_or_create_impl)
 
-   typedef typename managed_open_or_create_impl_device_id_t<DeviceAbstraction>::type device_id_t;
    typedef managed_open_or_create_impl_device_holder<StoreDevice, DeviceAbstraction> DevHolder;
    enum
    {
@@ -109,21 +81,21 @@ class managed_open_or_create_impl
       CorruptedSegment
    };
 
+   static const std::size_t RequiredAlignment =
+      MemAlignment ? MemAlignment
+                   : boost::container::dtl::alignment_of< boost::container::dtl::max_align_t >::value
+                   ;
+
    public:
-   static const std::size_t
-      ManagedOpenOrCreateUserOffset =
-         ct_rounded_size
-            < sizeof(boost::uint32_t)
-            , MemAlignment ? (MemAlignment) :
-               (::boost::container::dtl::alignment_of
-                  < ::boost::container::dtl::max_align_t >::value)
-            >::value;
+   static const std::size_t ManagedOpenOrCreateUserOffset =
+      ct_rounded_size<sizeof(boost::uint32_t), RequiredAlignment>::value;
 
    managed_open_or_create_impl()
    {}
 
+   template <class DeviceId>
    managed_open_or_create_impl(create_only_t,
-                 const device_id_t & id,
+                 const DeviceId & id,
                  std::size_t size,
                  mode_t mode,
                  const void *addr,
@@ -139,8 +111,9 @@ class managed_open_or_create_impl
          , null_mapped_region_function());
    }
 
+   template <class DeviceId>
    managed_open_or_create_impl(open_only_t,
-                 const device_id_t & id,
+                 const DeviceId & id,
                  mode_t mode,
                  const void *addr)
    {
@@ -154,9 +127,9 @@ class managed_open_or_create_impl
          , null_mapped_region_function());
    }
 
-
+   template <class DeviceId>
    managed_open_or_create_impl(open_or_create_t,
-                 const device_id_t & id,
+                 const DeviceId & id,
                  std::size_t size,
                  mode_t mode,
                  const void *addr,
@@ -172,9 +145,9 @@ class managed_open_or_create_impl
          , null_mapped_region_function());
    }
 
-   template <class ConstructFunc>
+   template <class DeviceId, class ConstructFunc>
    managed_open_or_create_impl(create_only_t,
-                 const device_id_t & id,
+                 const DeviceId & id,
                  std::size_t size,
                  mode_t mode,
                  const void *addr,
@@ -191,9 +164,9 @@ class managed_open_or_create_impl
          , construct_func);
    }
 
-   template <class ConstructFunc>
+   template <class DeviceId, class ConstructFunc>
    managed_open_or_create_impl(open_only_t,
-                 const device_id_t & id,
+                 const DeviceId & id,
                  mode_t mode,
                  const void *addr,
                  const ConstructFunc &construct_func)
@@ -208,9 +181,9 @@ class managed_open_or_create_impl
          , construct_func);
    }
 
-   template <class ConstructFunc>
+   template <class DeviceId, class ConstructFunc>
    managed_open_or_create_impl(open_or_create_t,
-                 const device_id_t & id,
+                 const DeviceId & id,
                  std::size_t size,
                  mode_t mode,
                  const void *addr,
@@ -291,26 +264,26 @@ class managed_open_or_create_impl
    { return size == std::size_t(offset_t(size)); }
 
    //These are templatized to allow explicit instantiations
-   template<bool dummy>
-   static void create_device(DeviceAbstraction &dev, const device_id_t & id, std::size_t size, const permissions &perm, false_ file_like)
+   template<bool dummy, class DeviceId>
+   static void create_device(DeviceAbstraction &dev, const DeviceId & id, std::size_t size, const permissions &perm, false_ file_like)
    {
       (void)file_like;
       DeviceAbstraction tmp(create_only, id, read_write, size, perm);
       tmp.swap(dev);
    }
 
-   template<bool dummy>
-   static void create_device(DeviceAbstraction &dev, const device_id_t & id, std::size_t, const permissions &perm, true_ file_like)
+   template<bool dummy, class DeviceId>
+   static void create_device(DeviceAbstraction &dev, const DeviceId & id, std::size_t, const permissions &perm, true_ file_like)
    {
       (void)file_like;
       DeviceAbstraction tmp(create_only, id, read_write, perm);
       tmp.swap(dev);
    }
 
-   template <class ConstructFunc> inline
+   template <class DeviceId, class ConstructFunc> inline
    void priv_open_or_create
       (create_enum_t type,
-       const device_id_t & id,
+       const DeviceId & id,
        std::size_t size,
        mode_t mode, const void *addr,
        const permissions &perm,

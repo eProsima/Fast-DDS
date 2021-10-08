@@ -189,7 +189,7 @@ namespace date_time {
         return 29;
       } else {
         return 28;
-      };
+      }
     case 4:
     case 6:
     case 9:
@@ -197,11 +197,10 @@ namespace date_time {
       return 30;
     default:
       return 31;
-    };
-
+    }
   }
 
-  //! Provide the ymd_type specification for the calandar start
+  //! Provide the ymd_type specification for the calendar start
   template<typename ymd_type_, typename date_int_type_>
   BOOST_CXX14_CONSTEXPR
   inline
@@ -223,5 +222,3 @@ namespace date_time {
 
 
 } } //namespace gregorian
-
-

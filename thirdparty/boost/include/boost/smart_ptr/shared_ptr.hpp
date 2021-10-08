@@ -14,23 +14,16 @@
 //  See http://www.boost.org/libs/smart_ptr/ for documentation.
 //
 
-#include <boost/config.hpp>   // for broken compiler workarounds
-
-// In order to avoid circular dependencies with Boost.TR1
-// we make sure that our include of <memory> doesn't try to
-// pull in the TR1 headers: that's why we use this header 
-// rather than including <memory> directly:
-#include <boost/config/no_tr1/memory.hpp>  // std::auto_ptr
-
-#include <boost/assert.hpp>
-#include <boost/checked_delete.hpp>
-#include <boost/throw_exception.hpp>
 #include <boost/smart_ptr/detail/shared_count.hpp>
-#include <boost/config/workaround.hpp>
 #include <boost/smart_ptr/detail/sp_convertible.hpp>
 #include <boost/smart_ptr/detail/sp_nullptr_t.hpp>
 #include <boost/smart_ptr/detail/sp_disable_deprecated.hpp>
 #include <boost/smart_ptr/detail/sp_noexcept.hpp>
+#include <boost/checked_delete.hpp>
+#include <boost/throw_exception.hpp>
+#include <boost/assert.hpp>
+#include <boost/config.hpp>
+#include <boost/config/workaround.hpp>
 
 #if !defined(BOOST_SP_NO_ATOMIC_ACCESS)
 #include <boost/smart_ptr/detail/spinlock_pool.hpp>
@@ -40,6 +33,7 @@
 #include <functional>           // for std::less
 #include <typeinfo>             // for std::bad_cast
 #include <cstddef>              // for std::size_t
+#include <memory>               // for std::auto_ptr
 
 #if !defined(BOOST_NO_IOSTREAM)
 #if !defined(BOOST_NO_IOSFWD)
@@ -86,7 +80,7 @@ template< class T > struct sp_element< T[] >
     typedef T type;
 };
 
-#if !defined( __BORLANDC__ ) || !BOOST_WORKAROUND( __BORLANDC__, < 0x600 )
+#if !defined( BOOST_BORLANDC ) || !BOOST_WORKAROUND( BOOST_BORLANDC, < 0x600 )
 
 template< class T, std::size_t N > struct sp_element< T[N] >
 {
@@ -135,7 +129,7 @@ template< class T > struct sp_dereference< T[] >
     typedef void type;
 };
 
-#if !defined( __BORLANDC__ ) || !BOOST_WORKAROUND( __BORLANDC__, < 0x600 )
+#if !defined( BOOST_BORLANDC ) || !BOOST_WORKAROUND( BOOST_BORLANDC, < 0x600 )
 
 template< class T, std::size_t N > struct sp_dereference< T[N] >
 {
@@ -160,7 +154,7 @@ template< class T > struct sp_member_access< T[] >
     typedef void type;
 };
 
-#if !defined( __BORLANDC__ ) || !BOOST_WORKAROUND( __BORLANDC__, < 0x600 )
+#if !defined( BOOST_BORLANDC ) || !BOOST_WORKAROUND( BOOST_BORLANDC, < 0x600 )
 
 template< class T, std::size_t N > struct sp_member_access< T[N] >
 {
@@ -185,7 +179,7 @@ template< class T > struct sp_array_access< T[] >
     typedef T & type;
 };
 
-#if !defined( __BORLANDC__ ) || !BOOST_WORKAROUND( __BORLANDC__, < 0x600 )
+#if !defined( BOOST_BORLANDC ) || !BOOST_WORKAROUND( BOOST_BORLANDC, < 0x600 )
 
 template< class T, std::size_t N > struct sp_array_access< T[N] >
 {
@@ -777,6 +771,21 @@ public:
         return pn < rhs.pn;
     }
 
+    template<class Y> bool owner_equals( shared_ptr<Y> const & rhs ) const BOOST_SP_NOEXCEPT
+    {
+        return pn == rhs.pn;
+    }
+
+    template<class Y> bool owner_equals( weak_ptr<Y> const & rhs ) const BOOST_SP_NOEXCEPT
+    {
+        return pn == rhs.pn;
+    }
+
+    std::size_t owner_hash_value() const BOOST_SP_NOEXCEPT
+    {
+        return pn.hash_value();
+    }
+
     void * _internal_get_deleter( boost::detail::sp_typeinfo_ const & ti ) const BOOST_SP_NOEXCEPT
     {
         return pn.get_deleter( ti );
@@ -1154,6 +1163,25 @@ template< class T > std::size_t hash_value( boost::shared_ptr<T> const & p ) BOO
 }
 
 } // namespace boost
+
+// std::hash
+
+#if !defined(BOOST_NO_CXX11_HDR_FUNCTIONAL)
+
+namespace std
+{
+
+template<class T> struct hash< ::boost::shared_ptr<T> >
+{
+    std::size_t operator()( ::boost::shared_ptr<T> const & p ) const BOOST_SP_NOEXCEPT
+    {
+        return std::hash< typename ::boost::shared_ptr<T>::element_type* >()( p.get() );
+    }
+};
+
+} // namespace std
+
+#endif // #if !defined(BOOST_NO_CXX11_HDR_FUNCTIONAL)
 
 #include <boost/smart_ptr/detail/local_sp_deleter.hpp>
 

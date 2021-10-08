@@ -73,6 +73,27 @@ class shm_named_mutex
    //!interprocess_exception.
    shm_named_mutex(open_only_t open_only, const char *name);
 
+   #if defined(BOOST_INTERPROCESS_WCHAR_NAMED_RESOURCES) || defined(BOOST_INTERPROCESS_DOXYGEN_INVOKED)
+
+   //!Creates a global interprocess_mutex with a name.
+   //!Throws interprocess_exception on error.
+   shm_named_mutex(create_only_t create_only, const wchar_t *name, const permissions &perm = permissions());
+
+   //!Opens or creates a global mutex with a name.
+   //!If the mutex is created, this call is equivalent to
+   //!shm_named_mutex(create_only_t, ... )
+   //!If the mutex is already created, this call is equivalent
+   //!shm_named_mutex(open_only_t, ... )
+   //!Does not throw
+   shm_named_mutex(open_or_create_t open_or_create, const wchar_t *name, const permissions &perm = permissions());
+
+   //!Opens a global mutex with a name if that mutex is previously
+   //!created. If it is not previously created this function throws
+   //!interprocess_exception.
+   shm_named_mutex(open_only_t open_only, const wchar_t *name);
+
+   #endif   //defined(BOOST_INTERPROCESS_WCHAR_NAMED_RESOURCES) || defined(BOOST_INTERPROCESS_DOXYGEN_INVOKED)
+
    //!Destroys *this and indicates that the calling process is finished using
    //!the resource. The destructor function will deallocate
    //!any system resources allocated by the system for use by this process for
@@ -102,6 +123,14 @@ class shm_named_mutex
    //!Erases a named mutex from the system.
    //!Returns false on error. Never throws.
    static bool remove(const char *name);
+
+   #if defined(BOOST_INTERPROCESS_WCHAR_NAMED_RESOURCES) || defined(BOOST_INTERPROCESS_DOXYGEN_INVOKED)
+
+   //!Erases a named mutex from the system.
+   //!Returns false on error. Never throws.
+   static bool remove(const wchar_t *name);
+
+   #endif
 
    #if !defined(BOOST_INTERPROCESS_DOXYGEN_INVOKED)
    typedef interprocess_mutex internal_mutex_type;
@@ -155,6 +184,40 @@ inline shm_named_mutex::shm_named_mutex(open_only_t, const char *name)
                ,construct_func_t(ipcdetail::DoOpen))
 {}
 
+#if defined(BOOST_INTERPROCESS_WCHAR_NAMED_RESOURCES) || defined(BOOST_INTERPROCESS_DOXYGEN_INVOKED)
+
+inline shm_named_mutex::shm_named_mutex(create_only_t, const wchar_t *name, const permissions &perm)
+   :  m_shmem  (create_only
+               ,name
+               ,sizeof(interprocess_mutex) +
+                  open_create_impl_t::ManagedOpenOrCreateUserOffset
+               ,read_write
+               ,0
+               ,construct_func_t(ipcdetail::DoCreate)
+               ,perm)
+{}
+
+inline shm_named_mutex::shm_named_mutex(open_or_create_t, const wchar_t *name, const permissions &perm)
+   :  m_shmem  (open_or_create
+               ,name
+               ,sizeof(interprocess_mutex) +
+                  open_create_impl_t::ManagedOpenOrCreateUserOffset
+               ,read_write
+               ,0
+               ,construct_func_t(ipcdetail::DoOpenOrCreate)
+               ,perm)
+{}
+
+inline shm_named_mutex::shm_named_mutex(open_only_t, const wchar_t *name)
+   :  m_shmem  (open_only
+               ,name
+               ,read_write
+               ,0
+               ,construct_func_t(ipcdetail::DoOpen))
+{}
+
+#endif   //defined(BOOST_INTERPROCESS_WCHAR_NAMED_RESOURCES) || defined(BOOST_INTERPROCESS_DOXYGEN_INVOKED)
+
 inline void shm_named_mutex::lock()
 {  this->internal_mutex().lock();  }
 
@@ -169,6 +232,13 @@ inline bool shm_named_mutex::timed_lock(const boost::posix_time::ptime &abs_time
 
 inline bool shm_named_mutex::remove(const char *name)
 {  return shared_memory_object::remove(name); }
+
+#if defined(BOOST_INTERPROCESS_WCHAR_NAMED_RESOURCES) || defined(BOOST_INTERPROCESS_DOXYGEN_INVOKED)
+
+inline bool shm_named_mutex::remove(const wchar_t *name)
+{  return shared_memory_object::remove(name); }
+
+#endif   //defined(BOOST_INTERPROCESS_WCHAR_NAMED_RESOURCES) || defined(BOOST_INTERPROCESS_DOXYGEN_INVOKED)
 
 #endif   //#ifndef BOOST_INTERPROCESS_DOXYGEN_INVOKED
 

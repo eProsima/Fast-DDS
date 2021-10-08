@@ -31,16 +31,16 @@
 #include <boost/limits.hpp>
 #include <boost/assert.hpp>
 
-#if !defined(BOOST_INTERPROCESS_FORCE_GENERIC_EMULATION) && defined(BOOST_INTERPROCESS_POSIX_PROCESS_SHARED)
+#if   !defined(BOOST_INTERPROCESS_FORCE_GENERIC_EMULATION) && defined(BOOST_INTERPROCESS_POSIX_PROCESS_SHARED)
    #include <boost/interprocess/sync/posix/condition.hpp>
-   #define BOOST_INTERPROCESS_USE_POSIX
+   #define BOOST_INTERPROCESS_CONDITION_USE_POSIX
 //Experimental...
 #elif !defined(BOOST_INTERPROCESS_FORCE_GENERIC_EMULATION) && defined (BOOST_INTERPROCESS_WINDOWS)
    #include <boost/interprocess/sync/windows/condition.hpp>
-   #define BOOST_INTERPROCESS_USE_WINDOWS
-#elif !defined(BOOST_INTERPROCESS_DOXYGEN_INVOKED)
+   #define BOOST_INTERPROCESS_CONDITION_USE_WINAPI
+#else
+   //spin_condition is used
    #include <boost/interprocess/sync/spin/condition.hpp>
-   #define BOOST_INTERPROCESS_USE_GENERIC_EMULATION
 #endif
 
 #endif   //#ifndef BOOST_INTERPROCESS_DOXYGEN_INVOKED
@@ -141,18 +141,14 @@ class interprocess_condition
    #if !defined(BOOST_INTERPROCESS_DOXYGEN_INVOKED)
 
    private:
-   #if defined (BOOST_INTERPROCESS_USE_GENERIC_EMULATION)
-      #undef BOOST_INTERPROCESS_USE_GENERIC_EMULATION
-      ipcdetail::spin_condition m_condition;
-   #elif defined(BOOST_INTERPROCESS_USE_POSIX)
-      #undef BOOST_INTERPROCESS_USE_POSIX
+   #if defined(BOOST_INTERPROCESS_CONDITION_USE_POSIX)
       ipcdetail::posix_condition m_condition;
-   #elif defined(BOOST_INTERPROCESS_USE_WINDOWS)
-      #undef BOOST_INTERPROCESS_USE_WINDOWS
-      ipcdetail::windows_condition m_condition;
+   #elif defined(BOOST_INTERPROCESS_CONDITION_USE_WINAPI)
+      ipcdetail::winapi_condition m_condition;
    #else
-      #error "Unknown platform for interprocess_mutex"
+      ipcdetail::spin_condition m_condition;
    #endif
+
    #endif   //#ifndef BOOST_INTERPROCESS_DOXYGEN_INVOKED
 };
 

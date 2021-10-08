@@ -52,7 +52,7 @@ class spin_condition
       if (!lock)
          throw lock_exception();
       //Handle infinity absolute time here to avoid complications in do_timed_wait
-      if(abs_time == boost::posix_time::pos_infin){
+      if(abs_time.is_pos_infinity()){
          this->wait(lock);
          return true;
       }
@@ -65,7 +65,7 @@ class spin_condition
       if (!lock)
          throw lock_exception();
       //Handle infinity absolute time here to avoid complications in do_timed_wait
-      if(abs_time == boost::posix_time::pos_infin){
+      if(abs_time.is_pos_infinity()){
          this->wait(lock, pred);
          return true;
       }

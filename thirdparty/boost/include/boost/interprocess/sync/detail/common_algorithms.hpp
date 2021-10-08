@@ -32,7 +32,7 @@ template<class MutexType>
 bool try_based_timed_lock(MutexType &m, const boost::posix_time::ptime &abs_time)
 {
    //Same as lock()
-   if(abs_time == boost::posix_time::pos_infin){
+   if(abs_time.is_pos_infinity()){
       m.lock();
       return true;
    }
@@ -73,46 +73,21 @@ void try_based_lock(MutexType &m)
 }
 
 template<class MutexType>
-void timed_based_lock(MutexType &m, unsigned const uCheckPeriodSec)
+void timeout_when_locking_aware_lock(MutexType &m)
 {
-   const boost::posix_time::time_duration dur(0, 0, uCheckPeriodSec);
-   boost::posix_time::ptime deadline(microsec_clock::universal_time()+dur);
-   if(!m.timed_lock(deadline)){
-      spin_wait swait;
-      do{
-         deadline = microsec_clock::universal_time()+dur;
-         if(m.timed_lock(deadline)){
-            break;
-         }
-         else{
-            swait.yield();
-         }
+   #ifdef BOOST_INTERPROCESS_ENABLE_TIMEOUT_WHEN_LOCKING
+      boost::posix_time::ptime wait_time
+         = microsec_clock::universal_time()
+         + boost::posix_time::milliseconds(BOOST_INTERPROCESS_TIMEOUT_WHEN_LOCKING_DURATION_MS);
+      if (!m.timed_lock(wait_time))
+      {
+         throw interprocess_exception(timeout_when_locking_error
+                                     , "Interprocess mutex timeout when locking. Possible deadlock: "
+                                       "owner died without unlocking?");
       }
-      while(1);
-   }
-}
-
-template<class MutexType>
-void timed_based_timed_lock(MutexType &m, const boost::posix_time::ptime &abs_time, unsigned const uCheckPeriodSec)
-{
-   const boost::posix_time::time_duration dur(0, 0, uCheckPeriodSec);
-   boost::posix_time::ptime deadline(microsec_clock::universal_time()+dur);
-   if(abs_time <= deadline){
-      m.timed_lock(abs_time);
-   }
-   else if(!m.timed_lock(deadline)){
-      spin_wait swait;
-      do{
-         deadline = microsec_clock::universal_time()+dur;
-         if(m.timed_lock(deadline)){
-            break;
-         }
-         else{
-            swait.yield();
-         }
-      }
-      while(1);
-   }
+   #else
+      m.lock();
+   #endif
 }
 
 }  //namespace ipcdetail

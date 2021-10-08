@@ -216,7 +216,7 @@ inline bool semaphore_timed_wait(sem_t *handle, const boost::posix_time::ptime &
 {
    #ifdef BOOST_INTERPROCESS_POSIX_TIMEOUTS
    //Posix does not support infinity absolute time so handle it here
-   if(abs_time == boost::posix_time::pos_infin){
+   if(abs_time.is_pos_infinity()){
       semaphore_wait(handle);
       return true;
    }

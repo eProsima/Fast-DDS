@@ -19,12 +19,18 @@
 #  pragma once
 #endif
 
+#if defined(BOOST_INTERPROCESS_FORCE_NATIVE_EMULATION) && defined(BOOST_INTERPROCESS_FORCE_GENERIC_EMULATION) 
+#error "BOOST_INTERPROCESS_FORCE_NATIVE_EMULATION && BOOST_INTERPROCESS_FORCE_GENERIC_EMULATION can't be defined at the same time"
+#endif
+
+//#define BOOST_INTERPROCESS_FORCE_NATIVE_EMULATION
+
 #if defined(_WIN32) || defined(__WIN32__) || defined(WIN32)
    #define BOOST_INTERPROCESS_WINDOWS
-   #define BOOST_INTERPROCESS_FORCE_GENERIC_EMULATION
+   #if !defined(BOOST_INTERPROCESS_FORCE_NATIVE_EMULATION) && !defined(BOOST_INTERPROCESS_FORCE_GENERIC_EMULATION)
+      #define BOOST_INTERPROCESS_FORCE_GENERIC_EMULATION
+   #endif
    #define BOOST_INTERPROCESS_HAS_KERNEL_BOOTTIME
-   //Define this to connect with shared memory created with versions < 1.54
-   //#define BOOST_INTERPROCESS_BOOTSTAMP_IS_LASTBOOTUPTIME
 #else
    #include <unistd.h>
 
@@ -149,6 +155,14 @@
        (defined (_FILE_OFFSET_BITS) &&(_FILE_OFFSET_BITS  - 0 >= 64))
       #define BOOST_INTERPROCESS_UNIX_64_BIT_OR_BIGGER_OFF_T
    #endif
+
+   //////////////////////////////////////////////////////
+   //posix_fallocate
+   //////////////////////////////////////////////////////
+   #if (_XOPEN_SOURCE >= 600 || __POSIX_C_SOURCE >= 200112L)
+   #define BOOST_INTERPROCESS_POSIX_FALLOCATE
+   #endif
+
 #endif   //!defined(BOOST_INTERPROCESS_WINDOWS)
 
 #if defined(BOOST_INTERPROCESS_WINDOWS) || defined(BOOST_INTERPROCESS_POSIX_MAPPED_FILES)
@@ -199,5 +213,22 @@
 #else
    #define BOOST_INTERPROCESS_FORCEINLINE BOOST_FORCEINLINE
 #endif
+
+#ifdef BOOST_WINDOWS
+
+#define BOOST_INTERPROCESS_WCHAR_NAMED_RESOURCES
+
+#ifdef __clang__
+   #define BOOST_INTERPROCESS_DISABLE_DEPRECATED_WARNING _Pragma("clang diagnostic push") \
+                                                         _Pragma("clang diagnostic ignored \"-Wdeprecated-declarations\"")
+   #define BOOST_INTERPROCESS_RESTORE_WARNING            _Pragma("clang diagnostic pop")
+#else // __clang__
+   #define BOOST_INTERPROCESS_DISABLE_DEPRECATED_WARNING __pragma(warning(push)) \
+                                                         __pragma(warning(disable : 4996))
+   #define BOOST_INTERPROCESS_RESTORE_WARNING            __pragma(warning(pop))
+#endif // __clang__
+
+#endif
+
 
 #endif   //#ifndef BOOST_INTERPROCESS_DETAIL_WORKAROUND_HPP

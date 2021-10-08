@@ -41,7 +41,7 @@ struct link_dispatch
 {};
 
 template<class Hook>
-void destructor_impl(Hook &hook, detail::link_dispatch<safe_link>)
+BOOST_INTRUSIVE_FORCEINLINE void destructor_impl(Hook &hook, detail::link_dispatch<safe_link>)
 {  //If this assertion raises, you might have destroyed an object
    //while it was still inserted in a container that is alive.
    //If so, remove the object from the container before destroying it.
@@ -49,11 +49,11 @@ void destructor_impl(Hook &hook, detail::link_dispatch<safe_link>)
 }
 
 template<class Hook>
-void destructor_impl(Hook &hook, detail::link_dispatch<auto_unlink>)
+BOOST_INTRUSIVE_FORCEINLINE void destructor_impl(Hook &hook, detail::link_dispatch<auto_unlink>)
 {  hook.unlink();  }
 
 template<class Hook>
-void destructor_impl(Hook &, detail::link_dispatch<normal_link>)
+BOOST_INTRUSIVE_FORCEINLINE void destructor_impl(Hook &, detail::link_dispatch<normal_link>)
 {}
 
 }  //namespace detail {

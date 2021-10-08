@@ -34,14 +34,13 @@
 
 #include <boost/interprocess/detail/config_begin.hpp>
 #include <boost/interprocess/detail/workaround.hpp>
-#include <stdarg.h>
 #include <string>
 
 #if defined (BOOST_INTERPROCESS_WINDOWS)
 #  include <boost/interprocess/detail/win32_api.hpp>
 #else
 #  ifdef BOOST_HAS_UNISTD_H
-#    include <errno.h>        //Errors
+#    include <cerrno>         //Errors
 #    include <cstring>        //strerror
 #  else  //ifdef BOOST_HAS_UNISTD_H
 #    error Unknown platform

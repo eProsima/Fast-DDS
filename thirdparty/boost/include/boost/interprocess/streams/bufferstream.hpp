@@ -132,7 +132,7 @@ class basic_bufferbuf
             }
             else if(m_mode & std::ios_base::out) {
                this->gbump(-1);
-               *this->gptr() = c;
+               *this->gptr() = CharTraits::to_char_type(c);
                return c;
             }
             else

@@ -65,7 +65,7 @@ namespace CV {
   protected:
     value_type value_;
   private:
-    void assign(value_type value)
+    BOOST_CXX14_CONSTEXPR void assign(value_type value)
     {
       //adding 1 below gets rid of a compiler warning which occurs when the 
       //min_value is 0 and the type is unsigned....

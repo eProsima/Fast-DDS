@@ -39,11 +39,6 @@ namespace gregorian {
     BOOST_CXX14_CONSTEXPR
     date_duration(date_time::special_values sv) : base_type(sv) {}
 
-    //! Copy constructor
-    BOOST_CXX14_CONSTEXPR
-    date_duration(const date_duration& other) : base_type(static_cast< base_type const& >(other))
-    {}
-
     //! Construct from another date_duration
     BOOST_CXX14_CONSTEXPR
     date_duration(const base_type& other) : base_type(other)
@@ -84,12 +79,9 @@ namespace gregorian {
       base_type::operator-= (rhs);
       return *this;
     }
+    
     BOOST_CXX14_CONSTEXPR friend
-    date_duration operator- (date_duration rhs, date_duration const& lhs)
-    {
-      rhs -= lhs;
-      return rhs;
-    }
+    date_duration operator- (date_duration rhs, date_duration const& lhs);
 
     //! Add a duration -- result is signed
     BOOST_CXX14_CONSTEXPR date_duration& operator+= (const date_duration& rhs)
@@ -97,12 +89,9 @@ namespace gregorian {
       base_type::operator+= (rhs);
       return *this;
     }
+    
     BOOST_CXX14_CONSTEXPR friend
-    date_duration operator+ (date_duration rhs, date_duration const& lhs)
-    {
-      rhs += lhs;
-      return rhs;
-    }
+    date_duration operator+ (date_duration rhs, date_duration const& lhs);
 
     //! unary- Allows for dd = -date_duration(2); -> dd == -2
     BOOST_CXX14_CONSTEXPR date_duration operator- ()const
@@ -116,11 +105,8 @@ namespace gregorian {
       base_type::operator/= (divisor);
       return *this;
     }
-    BOOST_CXX14_CONSTEXPR friend date_duration operator/ (date_duration rhs, int lhs)
-    {
-      rhs /= lhs;
-      return rhs;
-    }
+    
+    BOOST_CXX14_CONSTEXPR friend date_duration operator/ (date_duration rhs, int lhs);
 
     //! Returns the smallest duration -- used by to calculate 'end'
     static BOOST_CXX14_CONSTEXPR date_duration unit()
@@ -128,6 +114,26 @@ namespace gregorian {
       return date_duration(base_type::unit().get_rep());
     }
   };      
+
+  inline BOOST_CXX14_CONSTEXPR 
+  date_duration operator- (date_duration rhs, date_duration const& lhs)
+    {
+      rhs -= lhs;
+      return rhs;
+    }
+
+  inline BOOST_CXX14_CONSTEXPR 
+  date_duration operator+ (date_duration rhs, date_duration const& lhs)
+    {
+      rhs += lhs;
+      return rhs;
+    }
+
+  inline BOOST_CXX14_CONSTEXPR date_duration operator/ (date_duration rhs, int lhs)
+    {
+      rhs /= lhs;
+      return rhs;
+    }
 
   //! Shorthand for date_duration
   typedef date_duration days;

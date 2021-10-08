@@ -35,7 +35,7 @@
 #endif
 
 //
-// ensure that visibility macros are always defined, thus symplifying use
+// ensure that visibility macros are always defined, thus simplifying use
 //
 #ifndef BOOST_SYMBOL_EXPORT
 # define BOOST_SYMBOL_EXPORT
@@ -54,7 +54,7 @@
 // no namespace issues from this.
 //
 #if !defined(BOOST_HAS_LONG_LONG) && !defined(BOOST_NO_LONG_LONG)                                              \
-   && !defined(BOOST_MSVC) && !defined(__BORLANDC__)
+   && !defined(BOOST_MSVC) && !defined(BOOST_BORLANDC)
 # include <limits.h>
 # if (defined(ULLONG_MAX) || defined(ULONG_LONG_MAX) || defined(ULONGLONG_MAX))
 #   define BOOST_HAS_LONG_LONG
@@ -529,10 +529,13 @@ namespace boost {
 #  define BOOST_APPEND_EXPLICIT_TEMPLATE_NON_TYPE_SPEC(t, v)
 
 // When BOOST_NO_STD_TYPEINFO is defined, we can just import
-// the global definition into std namespace:
-#if defined(BOOST_NO_STD_TYPEINFO) && defined(__cplusplus)
+// the global definition into std namespace, 
+// see https://svn.boost.org/trac10/ticket/4115
+#if defined(BOOST_NO_STD_TYPEINFO) && defined(__cplusplus) && defined(BOOST_MSVC)
 #include <typeinfo>
 namespace std{ using ::type_info; }
+// Since we do now have typeinfo, undef the macro:
+#undef BOOST_NO_STD_TYPEINFO
 #endif
 
 // ---------------------------------------------------------------------------//
@@ -634,7 +637,7 @@ namespace std{ using ::type_info; }
 #if !defined(BOOST_NORETURN)
 #  if defined(_MSC_VER)
 #    define BOOST_NORETURN __declspec(noreturn)
-#  elif defined(__GNUC__)
+#  elif defined(__GNUC__) || defined(__CODEGEARC__) && defined(__clang__)
 #    define BOOST_NORETURN __attribute__ ((__noreturn__))
 #  elif defined(__has_attribute) && defined(__SUNPRO_CC) && (__SUNPRO_CC > 0x5130)
 #    if __has_attribute(noreturn)
@@ -665,6 +668,12 @@ namespace std{ using ::type_info; }
 #endif
 #if !defined(BOOST_UNLIKELY)
 #  define BOOST_UNLIKELY(x) x
+#endif
+
+#if !defined(BOOST_NO_CXX11_OVERRIDE)
+#  define BOOST_OVERRIDE override
+#else
+#  define BOOST_OVERRIDE
 #endif
 
 // Type and data alignment specification
@@ -1081,6 +1090,11 @@ namespace std{ using ::type_info; }
 #  define BOOST_NO_CXX17_HDR_OPTIONAL
 #  define BOOST_NO_CXX17_HDR_STRING_VIEW
 #  define BOOST_NO_CXX17_HDR_VARIANT
+#  define BOOST_NO_CXX17_HDR_ANY
+#  define BOOST_NO_CXX17_HDR_MEMORY_RESOURCE
+#  define BOOST_NO_CXX17_HDR_CHARCONV
+#  define BOOST_NO_CXX17_HDR_EXECUTION
+#  define BOOST_NO_CXX17_HDR_FILESYSTEM
 #else
 #if !__has_include(<optional>)
 #  define BOOST_NO_CXX17_HDR_OPTIONAL
@@ -1091,7 +1105,34 @@ namespace std{ using ::type_info; }
 #if !__has_include(<variant>)
 #  define BOOST_NO_CXX17_HDR_VARIANT
 #endif
+#if !__has_include(<any>)
+#  define BOOST_NO_CXX17_HDR_ANY
 #endif
+#if !__has_include(<memory_resource>)
+#  define BOOST_NO_CXX17_HDR_MEMORY_RESOURCE
+#endif
+#if !__has_include(<charconv>)
+#  define BOOST_NO_CXX17_HDR_CHARCONV
+#endif
+#if !__has_include(<execution>)
+#  define BOOST_NO_CXX17_HDR_EXECUTION
+#endif
+#if !__has_include(<filesystem>)
+#  define BOOST_NO_CXX17_HDR_FILESYSTEM
+#endif
+#endif
+#endif
+
+//
+// Define composite agregate macros:
+//
+#include <boost/config/detail/cxx_composite.hpp>
+
+//
+// Define the std level that the compiler claims to support:
+//
+#ifndef BOOST_CXX_VERSION
+#  define BOOST_CXX_VERSION __cplusplus
 #endif
 
 //

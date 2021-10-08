@@ -90,7 +90,7 @@ class posix_condition
       if (!lock)
          throw lock_exception();
       //Posix does not support infinity absolute time so handle it here
-      if(abs_time == boost::posix_time::pos_infin){
+      if(abs_time.is_pos_infinity()){
          this->wait(lock);
          return true;
       }
@@ -106,7 +106,7 @@ class posix_condition
       if (!lock)
          throw lock_exception();
       //Posix does not support infinity absolute time so handle it here
-      if(abs_time == boost::posix_time::pos_infin){
+      if(abs_time.is_pos_infinity()){
          this->wait(lock, pred);
          return true;
       }

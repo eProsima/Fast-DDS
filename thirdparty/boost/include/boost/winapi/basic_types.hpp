@@ -17,7 +17,7 @@
 
 #if defined(BOOST_USE_WINDOWS_H)
 # include <windows.h>
-#elif defined(WIN32) || defined(_WIN32) || defined(__WIN32__) ||  defined(__CYGWIN__)
+#elif defined(WIN32) || defined(_WIN32) || defined(__WIN32__) || defined(__CYGWIN__)
 # ifdef UNDER_CE
 #  ifndef WINAPI
 #   ifndef _WIN32_WCE_EMULATION
@@ -30,11 +30,15 @@
 typedef int BOOL;
 typedef unsigned long DWORD;
 typedef void* HANDLE;
+typedef HANDLE HGLOBAL;
+typedef void* LPVOID;
 #  include <kfuncs.h>
 # endif // UNDER_CE
 #else
 # error "Win32 functions not available"
 #endif
+
+#include <boost/winapi/detail/header.hpp>
 
 #if defined(_M_IX86) || defined(__i386__)
 #define BOOST_WINAPI_DETAIL_STDCALL __stdcall
@@ -155,13 +159,6 @@ typedef ::LPCWSTR LPCWSTR_;
 
 #else // defined( BOOST_USE_WINDOWS_H )
 
-#if defined(__GNUC__) && !(defined(__INTEL_COMPILER) || defined(__ICL) || defined(__ICC) || defined(__ECC)) \
-    && (__GNUC__ * 100 + __GNUC_MINOR__) >= 406
-#pragma GCC diagnostic push
-// ISO C++ 1998 does not support 'long long'
-#pragma GCC diagnostic ignored "-Wlong-long"
-#endif
-
 typedef int BOOL_;
 typedef BOOL_* PBOOL_;
 typedef BOOL_* LPBOOL_;
@@ -243,11 +240,6 @@ typedef wchar_t WCHAR_;
 typedef WCHAR_ *LPWSTR_;
 typedef const WCHAR_ *LPCWSTR_;
 
-#if defined(__GNUC__) && !(defined(__INTEL_COMPILER) || defined(__ICL) || defined(__ICC) || defined(__ECC)) \
-    && (__GNUC__ * 100 + __GNUC_MINOR__) >= 406
-#pragma GCC diagnostic pop
-#endif
-
 #endif // defined( BOOST_USE_WINDOWS_H )
 
 // ::NTSTATUS is defined in ntdef.h, which is not included by windows.h by default, so alwaus use LONG_
@@ -255,11 +247,6 @@ typedef LONG_ NTSTATUS_;
 typedef NTSTATUS_ *PNTSTATUS_;
 
 typedef ::HMODULE HMODULE_;
-
-#ifdef BOOST_MSVC
-#pragma warning(push)
-#pragma warning(disable:4201) // nonstandard extension used : nameless struct/union
-#endif
 
 typedef union BOOST_MAY_ALIAS _LARGE_INTEGER {
     BOOST_WINAPI_DETAIL_EXTENSION struct {
@@ -273,10 +260,6 @@ typedef union BOOST_MAY_ALIAS _LARGE_INTEGER {
     LONGLONG_ QuadPart;
 } LARGE_INTEGER_, *PLARGE_INTEGER_;
 
-#ifdef BOOST_MSVC
-#pragma warning(pop)
-#endif
-
 typedef struct BOOST_MAY_ALIAS _SECURITY_ATTRIBUTES {
     DWORD_  nLength;
     LPVOID_ lpSecurityDescriptor;
@@ -285,5 +268,7 @@ typedef struct BOOST_MAY_ALIAS _SECURITY_ATTRIBUTES {
 
 }
 }
+
+#include <boost/winapi/detail/footer.hpp>
 
 #endif // BOOST_WINAPI_BASIC_TYPES_HPP_INCLUDED_
