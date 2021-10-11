@@ -682,12 +682,6 @@ private:
             const EndpointAttributes& param,
             IPersistenceService*& service);
 
-    template <EndpointKind_t kind, octet no_key, octet with_key>
-    bool preprocess_endpoint_attributes(
-            const EntityId_t& entity_id,
-            EndpointAttributes& att,
-            EntityId_t& entId);
-
     template<typename Functor>
     bool create_writer(
             RTPSWriter** writer_out,
@@ -938,6 +932,13 @@ public:
      * Function run when the RTPSDomain is notified that the environment file has changed.
      */
     void environment_file_has_changed();
+
+    template <EndpointKind_t kind, octet no_key, octet with_key>
+    static bool preprocess_endpoint_attributes(
+            const EntityId_t& entity_id,
+            uint32_t& id_count,
+            EndpointAttributes& att,
+            EntityId_t& entId);
 
 #if HAVE_SECURITY
     void set_endpoint_rtps_protection_supports(

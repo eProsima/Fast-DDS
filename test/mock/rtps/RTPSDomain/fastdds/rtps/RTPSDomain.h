@@ -127,6 +127,18 @@ public:
         return reader_;
     }
 
+    static RTPSReader* createRTPSReader(
+            RTPSParticipant*,
+            const EntityId_t&,
+            ReaderAttributes&,
+            const std::shared_ptr<IPayloadPool>&,
+            ReaderHistory*,
+            ReaderListener* listen = nullptr)
+    {
+        reader_->setListener(listen);
+        return reader_;
+    }
+
     static bool removeRTPSReader(
             RTPSReader*)
     {

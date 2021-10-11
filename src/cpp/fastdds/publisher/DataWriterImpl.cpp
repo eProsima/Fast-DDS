@@ -46,6 +46,8 @@
 #include <fastdds/core/policy/ParameterSerializer.hpp>
 #include <fastdds/core/policy/QosPolicyUtils.hpp>
 
+#include <fastdds/domain/DomainParticipantImpl.hpp>
+
 #include <rtps/history/TopicPayloadPoolRegistry.hpp>
 #include <rtps/DataSharing/DataSharingPayloadPool.hpp>
 #include <rtps/participant/RTPSParticipantImpl.h>
@@ -140,16 +142,33 @@ DataWriterImpl::DataWriterImpl(
     , deadline_duration_us_(qos_.deadline().period.to_ns() * 1e-3)
     , lifespan_duration_us_(qos_.lifespan().duration.to_ns() * 1e-3)
 {
+    EndpointAttributes endpoint_attributes;
+    endpoint_attributes.endpointKind = WRITER;
+    endpoint_attributes.topicKind = type_->m_isGetKeyDefined ? WITH_KEY : NO_KEY;
+    fastrtps::rtps::RTPSParticipantImpl::preprocess_endpoint_attributes<WRITER, 0x03, 0x02>(
+        EntityId_t::unknown(), publisher_->get_participant_impl()->id_counter(), endpoint_attributes, guid_.entityId);
+    guid_.guidPrefix = publisher_->get_participant_impl()->guid().guidPrefix;
 }
 
-fastrtps::rtps::RTPSWriter* DataWriterImpl::create_rtps_writer(
-        fastrtps::rtps::RTPSParticipant* p,
-        fastrtps::rtps::WriterAttributes& watt,
-        const std::shared_ptr<IPayloadPool>& payload_pool,
-        fastrtps::rtps::WriterHistory* hist,
-        fastrtps::rtps::WriterListener* listen)
+DataWriterImpl::DataWriterImpl(
+        PublisherImpl* p,
+        TypeSupport type,
+        Topic* topic,
+        const DataWriterQos& qos,
+        const fastrtps::rtps::EntityId_t& entity_id,
+        DataWriterListener* listen)
+    : publisher_(p)
+    , type_(type)
+    , topic_(topic)
+    , qos_(&qos == &DATAWRITER_QOS_DEFAULT ? publisher_->get_default_datawriter_qos() : qos)
+    , history_(get_topic_attributes(qos_, *topic_, type_), type_->m_typeSize, qos_.endpoint().history_memory_policy)
+    , listener_(listen)
+#pragma warning (disable : 4355 )
+    , writer_listener_(this)
+    , deadline_duration_us_(qos_.deadline().period.to_ns() * 1e-3)
+    , lifespan_duration_us_(qos_.lifespan().duration.to_ns() * 1e-3)
 {
-    return RTPSDomain::createRTPSWriter(p, watt, payload_pool, hist, listen);
+    guid_ = { publisher_->get_participant_impl()->guid().guidPrefix, entity_id};
 }
 
 ReturnCode_t DataWriterImpl::enable()
@@ -251,8 +270,9 @@ ReturnCode_t DataWriterImpl::enable()
         return ReturnCode_t::RETCODE_ERROR;
     }
 
-    RTPSWriter* writer = create_rtps_writer(
+    RTPSWriter* writer =  RTPSDomain::createRTPSWriter(
         publisher_->rtps_participant(),
+        guid_.entityId,
         w_att, pool,
         static_cast<WriterHistory*>(&history_),
         static_cast<WriterListener*>(&writer_listener_));
@@ -834,7 +854,7 @@ ReturnCode_t DataWriterImpl::get_sending_locators(
 
 const GUID_t& DataWriterImpl::guid() const
 {
-    return writer_ ? writer_->getGuid() : c_Guid_Unknown;
+    return guid_;
 }
 
 InstanceHandle_t DataWriterImpl::get_instance_handle() const

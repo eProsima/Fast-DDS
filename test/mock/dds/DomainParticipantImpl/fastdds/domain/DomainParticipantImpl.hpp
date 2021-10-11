@@ -634,6 +634,11 @@ public:
         return nullptr;
     }
 
+    uint32_t& id_counter()
+    {
+        return id_counter_;
+    }
+
 protected:
 
     DomainId_t domain_id_;
@@ -653,6 +658,7 @@ protected:
     std::map<std::string, TypeSupport> types_;
     mutable std::mutex mtx_types_;
     TopicQos default_topic_qos_;
+    uint32_t id_counter_ = 0;
 
     class MyRTPSParticipantListener : public fastrtps::rtps::RTPSParticipantListener
     {

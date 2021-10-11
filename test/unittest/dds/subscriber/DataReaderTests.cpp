@@ -33,6 +33,7 @@
 
 #include <fastdds/dds/domain/DomainParticipantFactory.hpp>
 #include <fastdds/dds/domain/DomainParticipant.hpp>
+#include <fastdds/dds/domain/DomainParticipantListener.hpp>
 
 #include <fastdds/dds/publisher/DataWriter.hpp>
 #include <fastdds/dds/publisher/Publisher.hpp>
@@ -546,6 +547,76 @@ protected:
     InstanceHandle_t handle_wrong_ = HANDLE_NIL;
 
 };
+
+TEST_F(DataReaderTests, get_guid)
+{
+    class DiscoveryListener : public DomainParticipantListener
+    {
+    public:
+
+        void on_subscriber_discovery(
+                DomainParticipant* participant,
+                fastrtps::rtps::ReaderDiscoveryInfo&& info)
+        {
+            std::unique_lock<std::mutex> lock(mutex);
+            if (fastrtps::rtps::ReaderDiscoveryInfo::DISCOVERED_READER == info.status)
+            {
+                guid = info.info.guid();
+                cv.notify_one();
+            }
+        }
+
+        fastrtps::rtps::GUID_t guid;
+        std::mutex mutex;
+        std::condition_variable cv;
+    }
+    discovery_listener;
+
+    DomainParticipant* listener_participant =
+            DomainParticipantFactory::get_instance()->create_participant(0, PARTICIPANT_QOS_DEFAULT,
+                    &discovery_listener,
+                    StatusMask::none());
+
+    DomainParticipantFactoryQos factory_qos;
+    DomainParticipantFactory::get_instance()->get_qos(factory_qos);
+    factory_qos.entity_factory().autoenable_created_entities = false;
+    DomainParticipantFactory::get_instance()->set_qos(factory_qos);
+    DomainParticipant* participant =
+            DomainParticipantFactory::get_instance()->create_participant(0, PARTICIPANT_QOS_DEFAULT);
+    ASSERT_NE(participant, nullptr);
+
+    Subscriber* subscriber = participant->create_subscriber(SUBSCRIBER_QOS_DEFAULT);
+    ASSERT_NE(subscriber, nullptr);
+
+    TypeSupport type(new FooTypeSupport());
+    type.register_type(participant);
+
+    Topic* topic = participant->create_topic("footopic", type.get_type_name(), TOPIC_QOS_DEFAULT);
+    ASSERT_NE(topic, nullptr);
+
+    DataReader* datareader = subscriber->create_datareader(topic, DATAREADER_QOS_DEFAULT);
+    ASSERT_NE(datareader, nullptr);
+
+    fastrtps::rtps::GUID_t guid = datareader->guid();
+
+    participant->enable();
+
+    factory_qos.entity_factory().autoenable_created_entities = true;
+    DomainParticipantFactory::get_instance()->set_qos(factory_qos);
+
+    {
+        std::unique_lock<std::mutex> lock(discovery_listener.mutex);
+        discovery_listener.cv.wait(lock);
+    }
+    ASSERT_EQ(guid, discovery_listener.guid);
+
+    ASSERT_TRUE(subscriber->delete_datareader(datareader) == ReturnCode_t::RETCODE_OK);
+    ASSERT_TRUE(participant->delete_topic(topic) == ReturnCode_t::RETCODE_OK);
+    ASSERT_TRUE(participant->delete_subscriber(subscriber) == ReturnCode_t::RETCODE_OK);
+    ASSERT_TRUE(DomainParticipantFactory::get_instance()->delete_participant(participant) == ReturnCode_t::RETCODE_OK);
+    ASSERT_TRUE(DomainParticipantFactory::get_instance()->delete_participant(
+                listener_participant) == ReturnCode_t::RETCODE_OK);
+}
 
 TEST_F(DataReaderTests, InvalidQos)
 {

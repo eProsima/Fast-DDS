@@ -44,10 +44,13 @@
 #include <fastdds/subscriber/DataReaderImpl/ReadTakeCommand.hpp>
 #include <fastdds/subscriber/DataReaderImpl/StateFilter.hpp>
 
+#include <fastdds/domain/DomainParticipantImpl.hpp>
+
 #include <fastrtps/utils/TimeConversion.h>
 #include <fastrtps/subscriber/SampleInfo.h>
 
 #include <rtps/history/TopicPayloadPoolRegistry.hpp>
+#include <rtps/participant/RTPSParticipantImpl.h>
 
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
@@ -138,6 +141,12 @@ DataReaderImpl::DataReaderImpl(
     , sample_info_pool_(qos)
     , loan_manager_(qos)
 {
+    EndpointAttributes endpoint_attributes;
+    endpoint_attributes.endpointKind = READER;
+    endpoint_attributes.topicKind = type_->m_isGetKeyDefined ? WITH_KEY : NO_KEY;
+    fastrtps::rtps::RTPSParticipantImpl::preprocess_endpoint_attributes<READER, 0x04, 0x07>(
+        EntityId_t::unknown(), subscriber_->get_participant_impl()->id_counter(), endpoint_attributes, guid_.entityId);
+    guid_.guidPrefix = subscriber_->get_participant_impl()->guid().guidPrefix;
 }
 
 ReturnCode_t DataReaderImpl::enable()
@@ -227,6 +236,7 @@ ReturnCode_t DataReaderImpl::enable()
     std::shared_ptr<IPayloadPool> pool = get_payload_pool();
     RTPSReader* reader = RTPSDomain::createRTPSReader(
         subscriber_->rtps_participant(),
+        guid_.entityId,
         att, pool,
         static_cast<ReaderHistory*>(&history_),
         static_cast<ReaderListener*>(&reader_listener_));
@@ -719,7 +729,7 @@ uint64_t DataReaderImpl::get_unread_count() const
 
 const GUID_t& DataReaderImpl::guid() const
 {
-    return reader_ ? reader_->getGuid() : c_Guid_Unknown;
+    return guid_;
 }
 
 InstanceHandle_t DataReaderImpl::get_instance_handle() const

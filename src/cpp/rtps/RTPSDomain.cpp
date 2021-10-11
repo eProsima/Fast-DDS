@@ -378,6 +378,26 @@ RTPSReader* RTPSDomain::createRTPSReader(
     return nullptr;
 }
 
+RTPSReader* RTPSDomain::createRTPSReader(
+        RTPSParticipant* p,
+        const EntityId_t& entity_id,
+        ReaderAttributes& ratt,
+        const std::shared_ptr<IPayloadPool>& payload_pool,
+        ReaderHistory* rhist,
+        ReaderListener* rlisten)
+{
+    RTPSParticipantImpl* impl = p->mp_impl;
+    if (impl)
+    {
+        RTPSReader* reader;
+        if (impl->createReader(&reader, ratt, payload_pool, rhist, rlisten, entity_id))
+        {
+            return reader;
+        }
+    }
+    return nullptr;
+}
+
 bool RTPSDomain::removeRTPSReader(
         RTPSReader* reader)
 {

@@ -52,6 +52,7 @@ class RTPSWriter;
 class RTPSReader;
 class WriterProxyData;
 class ReaderProxyData;
+class EndpointAttributes;
 class WriterAttributes;
 class ReaderAttributes;
 class ResourceEvent;
