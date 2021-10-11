@@ -207,7 +207,7 @@ To run this application once inside the Docker container run:
     $ ShapesDemo
 
 eProsima Shapes Demo usage information can be found on the
-[Shapes Demo First Steps page](https://eprosima-shapes-demo.readthedocs.io/en/latest/first_steps/first_steps.html>).
+[Shapes Demo First Steps page](https://eprosima-shapes-demo.readthedocs.io/en/latest/first_steps/first_steps.html).
 
 ### Fast DDS Monitor
 
@@ -219,7 +219,7 @@ as record and compute in real time statistical measurements on these parameters 
 standard deviation, etc.).
 
 You can read more about this application on the
-[Fast DDS Monitor documentation page](https://eprosima-shapes-demo.readthedocs.io/).
+[Fast DDS Monitor documentation page](https://fast-dds-monitor.readthedocs.io/).
 
 To run this application once inside the Docker container run:
 
@@ -227,7 +227,7 @@ To run this application once inside the Docker container run:
 
 eProsima Fast DDS Monitor usage information can be found on the
 [Fast DDS Monitor User Manual](
-https://fast-dds-monitor.readthedocs.io/en/latest/rst/user_manual/initialize_monitoring.html>).
+https://fast-dds-monitor.readthedocs.io/en/latest/rst/user_manual/initialize_monitoring.html).
 
 
 ### Fast DDS libraries and Examples
