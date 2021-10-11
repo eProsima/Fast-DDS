@@ -137,8 +137,17 @@ public:
         return listener_;
     }
 
+    Publisher* DomainParticipantImpl::create_publisher(
+            const PublisherQos& qos,
+            PublisherListener* listener,
+            const StatusMask& mask)
+    {
+        return create_publisher(qos, nullptr, listener, mask);
+    }
+
     Publisher* create_publisher(
             const PublisherQos& qos,
+            PublisherImpl** impl,
             PublisherListener* listener = nullptr,
             const StatusMask& mask = StatusMask::all())
     {
@@ -149,6 +158,12 @@ public:
         std::lock_guard<std::mutex> lock(mtx_pubs_);
         publishers_[pub] = pubimpl;
         pub->enable();
+
+        if (impl)
+        {
+            *impl = pubimpl;
+        }
+
         return pub;
     }
 
