@@ -21,7 +21,7 @@
 
 #if defined(_WIN32) || defined(__WIN32__) || defined(WIN32)
    #define BOOST_INTERPROCESS_WINDOWS
-   #define BOOST_INTERPROCESS_FORCE_GENERIC_EMULATION
+   // #define BOOST_INTERPROCESS_FORCE_GENERIC_EMULATION
    #define BOOST_INTERPROCESS_HAS_KERNEL_BOOTTIME
    //Define this to connect with shared memory created with versions < 1.54
    //#define BOOST_INTERPROCESS_BOOTSTAMP_IS_LASTBOOTUPTIME
