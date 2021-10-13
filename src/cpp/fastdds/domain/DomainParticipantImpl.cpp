@@ -491,10 +491,32 @@ ContentFilteredTopic* DomainParticipantImpl::create_contentfilteredtopic(
 }
 
 ReturnCode_t DomainParticipantImpl::delete_contentfilteredtopic(
-        const ContentFilteredTopic* a_contentfilteredtopic)
+        const ContentFilteredTopic* topic)
 {
-    static_cast<void> (a_contentfilteredtopic);
-    return ReturnCode_t::RETCODE_UNSUPPORTED;
+    if (topic == nullptr)
+    {
+        return ReturnCode_t::RETCODE_BAD_PARAMETER;
+    }
+
+    if (participant_ != topic->get_participant())
+    {
+        return ReturnCode_t::RETCODE_PRECONDITION_NOT_MET;
+    }
+
+    std::lock_guard<std::mutex> lock(mtx_topics_);
+    auto it = filtered_topics_.find(topic->get_name());
+
+    if (it != filtered_topics_.end())
+    {
+        if (it->second->get_impl()->is_referenced())
+        {
+            return ReturnCode_t::RETCODE_PRECONDITION_NOT_MET;
+        }
+        filtered_topics_.erase(it);
+        return ReturnCode_t::RETCODE_OK;
+    }
+
+    return ReturnCode_t::RETCODE_BAD_PARAMETER;
 }
 
 const InstanceHandle_t& DomainParticipantImpl::get_instance_handle() const

@@ -218,7 +218,7 @@ public:
             const std::vector<std::string>& expression_parameters);
 
     ReturnCode_t delete_contentfilteredtopic(
-            const ContentFilteredTopic* a_contentfilteredtopic);
+            const ContentFilteredTopic* topic);
 
     /**
      * Looks up an existing, locally created @ref TopicDescription, based on its name.
