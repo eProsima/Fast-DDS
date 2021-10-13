@@ -249,7 +249,7 @@ public:
      * @param _byte_value New value for member byte_value
      */
     RTPS_DllAPI void byte_value(
-        uint8_t _byte_value);
+            uint8_t _byte_value);
 
     /*!
      * @brief This function returns the value of member byte_value
@@ -269,7 +269,7 @@ public:
      * @param _int16_value New value for member int16_value
      */
     RTPS_DllAPI void int16_value(
-        int16_t _int16_value);
+            int16_t _int16_value);
 
     /*!
      * @brief This function returns the value of member int16_value
@@ -628,7 +628,7 @@ public:
     /*!
      * @brief This function tells you if the Key has been defined for this type
      */
-    RTPS_DllAPI static bool isKeyDefined(); 
+    RTPS_DllAPI static bool isKeyDefined();
 
     /*!
      * @brief This function serializes the key members of an object using CDR serialization.
@@ -1145,7 +1145,7 @@ public:
 
     RTPS_DllAPI AppliedVerbatimAnnotation& operator =(
             const AppliedVerbatimAnnotation& x);
-    
+
     RTPS_DllAPI AppliedVerbatimAnnotation& operator =(
             AppliedVerbatimAnnotation&& x);
 
@@ -1227,9 +1227,9 @@ public:
 
     RTPS_DllAPI static size_t getKeyMaxCdrSerializedSize(
             size_t current_alignment = 0);
-    
+
     RTPS_DllAPI static bool isKeyDefined();
-    
+
     RTPS_DllAPI void serializeKey(
             eprosima::fastcdr::Cdr& cdr) const;
 
