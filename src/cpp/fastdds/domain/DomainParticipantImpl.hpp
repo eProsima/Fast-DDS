@@ -28,6 +28,7 @@
 #include <fastdds/dds/subscriber/qos/SubscriberQos.hpp>
 #include <fastdds/dds/domain/qos/DomainParticipantQos.hpp>
 #include <fastdds/dds/topic/qos/TopicQos.hpp>
+#include <fastdds/dds/topic/ContentFilteredTopic.hpp>
 #include <fastdds/dds/topic/Topic.hpp>
 
 #include <fastdds/dds/topic/TypeSupport.hpp>
@@ -209,6 +210,15 @@ public:
 
     ReturnCode_t delete_topic(
             const Topic* topic);
+
+    ContentFilteredTopic* create_contentfilteredtopic(
+            const std::string& name,
+            const Topic* related_topic,
+            const std::string& filter_expression,
+            const std::vector<std::string>& expression_parameters);
+
+    ReturnCode_t delete_contentfilteredtopic(
+            const ContentFilteredTopic* a_contentfilteredtopic);
 
     /**
      * Looks up an existing, locally created @ref TopicDescription, based on its name.

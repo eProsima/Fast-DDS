@@ -173,19 +173,13 @@ ContentFilteredTopic* DomainParticipant::create_contentfilteredtopic(
         const std::string& filter_expression,
         const std::vector<std::string>& expression_parameters)
 {
-    static_cast<void> (name);
-    static_cast<void> (related_topic);
-    static_cast<void> (filter_expression);
-    static_cast<void> (expression_parameters);
-    logWarning(DOMAIN_PARTICIPANT, "create_contentfilteredtopic method not implemented");
-    return nullptr;
+    return impl_->create_contentfilteredtopic(name, related_topic, filter_expression, expression_parameters);
 }
 
 ReturnCode_t DomainParticipant::delete_contentfilteredtopic(
         const ContentFilteredTopic* a_contentfilteredtopic)
 {
-    static_cast<void> (a_contentfilteredtopic);
-    return ReturnCode_t::RETCODE_UNSUPPORTED;
+    return impl_->delete_contentfilteredtopic(a_contentfilteredtopic);
 }
 
 MultiTopic* DomainParticipant::create_multitopic(

@@ -458,6 +458,27 @@ ReturnCode_t DomainParticipantImpl::delete_topic(
     return ReturnCode_t::RETCODE_ERROR;
 }
 
+ContentFilteredTopic* DomainParticipantImpl::create_contentfilteredtopic(
+        const std::string& name,
+        const Topic* related_topic,
+        const std::string& filter_expression,
+        const std::vector<std::string>& expression_parameters)
+{
+    static_cast<void> (name);
+    static_cast<void> (related_topic);
+    static_cast<void> (filter_expression);
+    static_cast<void> (expression_parameters);
+    logWarning(DOMAIN_PARTICIPANT, "create_contentfilteredtopic method not implemented");
+    return nullptr;
+}
+
+ReturnCode_t DomainParticipantImpl::delete_contentfilteredtopic(
+        const ContentFilteredTopic* a_contentfilteredtopic)
+{
+    static_cast<void> (a_contentfilteredtopic);
+    return ReturnCode_t::RETCODE_UNSUPPORTED;
+}
+
 const InstanceHandle_t& DomainParticipantImpl::get_instance_handle() const
 {
     return static_cast<const InstanceHandle_t&>(guid_);
