@@ -17,23 +17,15 @@
  *
  */
 
-#include <fastdds/dds/topic/ContentFilteredTopic.hpp>
 #include <fastdds/dds/domain/DomainParticipant.hpp>
-#include <fastdds/topic/TopicImpl.hpp>
-
 #include <fastdds/dds/log/Log.hpp>
+#include <fastdds/dds/topic/ContentFilteredTopic.hpp>
+
+#include <fastdds/topic/ContentFilteredTopicImpl.hpp>
 
 namespace eprosima {
 namespace fastdds {
 namespace dds {
-
-class ContentFilteredTopicImpl : public TopicDescriptionImpl
-{
-public:
-    Topic* related_topic = nullptr;
-    std::string expression;
-    std::vector<std::string> parameters;
-};
 
 ContentFilteredTopic::ContentFilteredTopic(
             const std::string& name,
