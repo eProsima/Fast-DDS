@@ -22,6 +22,7 @@
 #include <string>
 
 #include <fastdds/dds/topic/Topic.hpp>
+#include <fastdds/rtps/writer/IReaderDataFilter.hpp>
 
 #include <fastdds/topic/TopicDescriptionImpl.hpp>
 
@@ -29,11 +30,20 @@ namespace eprosima {
 namespace fastdds {
 namespace dds {
 
-class ContentFilteredTopicImpl : public TopicDescriptionImpl
+class ContentFilteredTopicImpl : public TopicDescriptionImpl, public eprosima::fastdds::rtps::IReaderDataFilter
 {
 public:
 
     virtual ~ContentFilteredTopicImpl() = default;
+
+    bool is_relevant(
+            const fastrtps::rtps::CacheChange_t& change,
+            const fastrtps::rtps::GUID_t& reader_guid) const override
+    {
+        (void)change;
+        (void)reader_guid;
+        return true;
+    }
 
     Topic* related_topic = nullptr;
     std::string expression;
