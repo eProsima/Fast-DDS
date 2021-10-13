@@ -311,7 +311,7 @@ TEST(DataWriterTests, get_guid)
     public:
 
         void on_publisher_discovery(
-                DomainParticipant* participant,
+                DomainParticipant*,
                 fastrtps::rtps::WriterDiscoveryInfo&& info)
         {
             std::unique_lock<std::mutex> lock(mutex);

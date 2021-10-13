@@ -555,7 +555,7 @@ TEST_F(DataReaderTests, get_guid)
     public:
 
         void on_subscriber_discovery(
-                DomainParticipant* participant,
+                DomainParticipant*,
                 fastrtps::rtps::ReaderDiscoveryInfo&& info)
         {
             std::unique_lock<std::mutex> lock(mutex);
