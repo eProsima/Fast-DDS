@@ -223,6 +223,8 @@ DomainParticipantImpl::~DomainParticipantImpl()
     {
         std::lock_guard<std::mutex> lock(mtx_topics_);
 
+        filtered_topics_.clear();
+
         for (auto topic_it = topics_.begin(); topic_it != topics_.end(); ++topic_it)
         {
             delete topic_it->second;
@@ -1076,7 +1078,8 @@ Topic* DomainParticipantImpl::create_topic(
     std::lock_guard<std::mutex> lock(mtx_topics_);
 
     //Check there is no Topic with the same name
-    if (topics_.find(topic_name) != topics_.end())
+    if ((topics_.find(topic_name) != topics_.end()) ||
+        (filtered_topics_.find(topic_name) != filtered_topics_.end()))
     {
         logError(PARTICIPANT, "Topic with name : " << topic_name << " already exists");
         return nullptr;
@@ -1128,11 +1131,18 @@ Topic* DomainParticipantImpl::create_topic_with_profile(
 TopicDescription* DomainParticipantImpl::lookup_topicdescription(
         const std::string& topic_name) const
 {
-    auto it = topics_.find(topic_name);
+    std::lock_guard<std::mutex> lock(mtx_topics_);
 
+    auto it = topics_.find(topic_name);
     if (it != topics_.end())
     {
         return it->second->user_topic_;
+    }
+
+    auto filtered_it = filtered_topics_.find(topic_name);
+    if (filtered_it != filtered_topics_.end())
+    {
+        return filtered_it->second.get();
     }
 
     return nullptr;

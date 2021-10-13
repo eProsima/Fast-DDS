@@ -461,6 +461,7 @@ protected:
     //!Topic map
     std::map<std::string, TopicImpl*> topics_;
     std::map<InstanceHandle_t, Topic*> topics_by_handle_;
+    std::map<std::string, std::unique_ptr<ContentFilteredTopic>> filtered_topics_;
     mutable std::mutex mtx_topics_;
 
     TopicQos default_topic_qos_;
