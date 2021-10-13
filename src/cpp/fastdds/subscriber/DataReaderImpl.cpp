@@ -28,8 +28,8 @@
 #include <fastdds/dds/subscriber/SampleInfo.hpp>
 #include <fastdds/dds/subscriber/Subscriber.hpp>
 #include <fastdds/dds/subscriber/SubscriberListener.hpp>
-#include <fastdds/dds/topic/TypeSupport.hpp>
 #include <fastdds/dds/topic/Topic.hpp>
+#include <fastdds/dds/topic/TypeSupport.hpp>
 
 #include <fastdds/rtps/RTPSDomain.h>
 #include <fastdds/rtps/participant/RTPSParticipant.h>
@@ -43,6 +43,8 @@
 #include <fastdds/subscriber/SubscriberImpl.hpp>
 #include <fastdds/subscriber/DataReaderImpl/ReadTakeCommand.hpp>
 #include <fastdds/subscriber/DataReaderImpl/StateFilter.hpp>
+
+#include <fastdds/topic/ContentFilteredTopicImpl.hpp>
 
 #include <fastrtps/utils/TimeConversion.h>
 #include <fastrtps/subscriber/SampleInfo.h>
@@ -236,6 +238,13 @@ ReturnCode_t DataReaderImpl::enable()
         release_payload_pool();
         logError(DATA_READER, "Problem creating associated Reader");
         return ReturnCode_t::RETCODE_ERROR;
+    }
+
+    auto topic_impl = topic_->get_impl();
+    auto content_topic = dynamic_cast<ContentFilteredTopicImpl*>(topic_impl);
+    if (nullptr != content_topic)
+    {
+        reader->set_content_filter(content_topic);
     }
 
     reader_ = reader;
