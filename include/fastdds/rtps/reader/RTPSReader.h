@@ -27,6 +27,7 @@
 #include <fastdds/rtps/common/SequenceNumber.h>
 #include <fastdds/rtps/common/Time_t.h>
 #include <fastdds/rtps/history/ReaderHistory.h>
+#include <fastdds/rtps/writer/IReaderDataFilter.hpp>
 #include <fastrtps/qos/LivelinessChangedStatus.h>
 #include <fastrtps/utils/TimedConditionVariable.hpp>
 
@@ -251,6 +252,12 @@ public:
         return mp_history;
     }
 
+    RTPS_DllAPI void set_content_filter(
+            eprosima::fastdds::rtps::IReaderDataFilter* filter)
+    {
+        data_filter_ = filter;
+    }
+
     /*!
      * @brief Returns there is a clean state with all Writers.
      * It occurs when the Reader received all samples sent by Writers. In other words,
@@ -469,6 +476,8 @@ protected:
     bool is_datasharing_compatible_ = false;
     //! The listener for the datasharing notifications
     std::unique_ptr<IDataSharingListener> datasharing_listener_;
+
+    eprosima::fastdds::rtps::IReaderDataFilter* data_filter_ = nullptr;
 
 private:
 
