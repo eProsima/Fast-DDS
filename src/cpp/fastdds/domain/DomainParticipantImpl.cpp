@@ -462,16 +462,32 @@ ReturnCode_t DomainParticipantImpl::delete_topic(
 
 ContentFilteredTopic* DomainParticipantImpl::create_contentfilteredtopic(
         const std::string& name,
-        const Topic* related_topic,
+        Topic* related_topic,
         const std::string& filter_expression,
         const std::vector<std::string>& expression_parameters)
 {
-    static_cast<void> (name);
-    static_cast<void> (related_topic);
-    static_cast<void> (filter_expression);
-    static_cast<void> (expression_parameters);
-    logWarning(DOMAIN_PARTICIPANT, "create_contentfilteredtopic method not implemented");
-    return nullptr;
+    if (related_topic == nullptr)
+    {
+        return nullptr;
+    }
+
+    std::lock_guard<std::mutex> lock(mtx_topics_);
+
+    //Check there is no Topic with the same name
+    if ((topics_.find(name) != topics_.end()) ||
+        (filtered_topics_.find(name) != filtered_topics_.end()))
+    {
+        logError(PARTICIPANT, "Topic with name : " << name << " already exists");
+        return nullptr;
+    }
+
+    ContentFilteredTopic* topic;
+    topic = new ContentFilteredTopic(name, related_topic, filter_expression, expression_parameters);
+
+    //SAVE THE TOPIC INTO MAPS
+    filtered_topics_.emplace(std::make_pair(name, topic));
+
+    return topic;
 }
 
 ReturnCode_t DomainParticipantImpl::delete_contentfilteredtopic(
