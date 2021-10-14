@@ -811,7 +811,7 @@ bool StatefulReader::change_received(
             }
             else if (a_change->kind != eprosima::fastrtps::rtps::ChangeKind_t::ALIVE)
             {
-                logInfo(RTPS_READER, "Not alived change " << a_change->writerGUID << " has not WriterProxy");
+                logInfo(RTPS_READER, "Not alive change " << a_change->writerGUID << " has not WriterProxy");
                 return false;
             }
             else
@@ -840,7 +840,7 @@ bool StatefulReader::change_received(
 
                 logInfo(RTPS_READER, "Change received from " << a_change->writerGUID << " with sequence number: "
                                                              << a_change->sequenceNumber <<
-                        " skipped. Higher sequence numbers has being received.");
+                        " skipped. Higher sequence numbers have been received.");
                 return false;
             }
         }
