@@ -19,6 +19,8 @@
 #ifndef _FASTDDS_RTPS_READER_RTPSREADER_H_
 #define _FASTDDS_RTPS_READER_RTPSREADER_H_
 
+#include <fastdds/rtps/writer/IReaderDataFilter.hpp>
+
 #include <fastrtps/rtps/Endpoint.h>
 #include <fastrtps/rtps/history/ReaderHistory.h>
 #include <fastrtps/rtps/reader/ReaderListener.h>
@@ -112,6 +114,8 @@ public:
     MOCK_METHOD1(wait_for_unread_cache, bool (const eprosima::fastrtps::Duration_t& timeout));
 
     MOCK_METHOD0(get_unread_count, uint64_t());
+
+    MOCK_METHOD1(set_content_filter, void (eprosima::fastdds::rtps::IReaderDataFilter* filter));
 
     // *INDENT-ON*
 
