@@ -36,6 +36,11 @@ public:
 
     virtual ~ContentFilteredTopicImpl() = default;
 
+    const std::string& get_rtps_topic_name() const override
+    {
+        return related_topic->get_name();
+    }
+
     bool is_relevant(
             const fastrtps::rtps::CacheChange_t& change,
             const fastrtps::rtps::GUID_t& reader_guid) const override

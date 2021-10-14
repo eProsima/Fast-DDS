@@ -57,6 +57,8 @@ public:
         --num_refs_;
     }
 
+    virtual const std::string& get_rtps_topic_name() const = 0;
+
 private:
     std::atomic_size_t num_refs_;
 

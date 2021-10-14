@@ -179,7 +179,7 @@ ReturnCode_t DataReaderImpl::enable()
     // Insert topic_name and partitions
     Property property;
     property.name("topic_name");
-    property.value(topic_->get_name().c_str());
+    property.value(topic_->get_impl()->get_rtps_topic_name().c_str());
     att.endpoint.properties.properties().push_back(std::move(property));
 
     std::string* endpoint_partitions = PropertyPolicyHelper::find_property(qos_.properties(), "partitions");
@@ -1456,7 +1456,7 @@ fastrtps::TopicAttributes DataReaderImpl::topic_attributes() const
 {
     fastrtps::TopicAttributes topic_att;
     topic_att.topicKind = type_->m_isGetKeyDefined ? WITH_KEY : NO_KEY;
-    topic_att.topicName = topic_->get_name();
+    topic_att.topicName = topic_->get_impl()->get_rtps_topic_name();
     topic_att.topicDataType = topic_->get_type_name();
     topic_att.historyQos = qos_.history();
     topic_att.resourceLimitsQos = qos_.resource_limits();
@@ -1503,7 +1503,7 @@ std::shared_ptr<IPayloadPool> DataReaderImpl::get_payload_pool()
 
     if (!payload_pool_)
     {
-        payload_pool_ = TopicPayloadPoolRegistry::get(topic_->get_name(), config);
+        payload_pool_ = TopicPayloadPoolRegistry::get(topic_->get_impl()->get_rtps_topic_name(), config);
         sample_pool_ = std::make_shared<detail::SampleLoanManager>(config, type_);
     }
 
