@@ -18,11 +18,13 @@
 #define BOOST_DATE_TIME_NO_LIB
 #define BOOST_INTERPROCESS_ENABLE_TIMEOUT_WHEN_LOCKING
 #define BOOST_INTERPROCESS_TIMEOUT_WHEN_LOCKING_DURATION_MS 1000
+
+// We have patched part of the boost code, protecting all changes with this define
 #define BOOST_FASTDDS_PATCHES
 
-#ifdef __APPLE__
-#define BOOST_INTERPROCESS_FORCE_GENERIC_EMULATION
-#endif // ifdef __APPLE__
+// Starting on boost 1.76.0, this will force native emulation, which is what we want as
+// it is more performant
+#define BOOST_INTERPROCESS_FORCE_NATIVE_EMULATION
 
 #ifdef _MSC_VER
 
@@ -31,20 +33,14 @@
 #include <sys/stat.h>
 #include <stdexcept>
 
-//#define BOOST_INTERPROCESS_BOOTSTAMP_IS_LASTBOOTUPTIME
-
 // TODO(Adolfo): This will fail if windows system without program data in C: drive
 #define BOOST_INTERPROCESS_SHARED_DIR_PATH "C:\\ProgramData\\eprosima\\fastrtps_interprocess"
 
+// Check that generic emulation has not been accidentally enabled
 #include <boost/interprocess/detail/workaround.hpp>
-#define BOOST_INTERPROCESS_FORCE_GENERIC_EMULATION
-/*#if defined(BOOST_INTERPROCESS_FORCE_GENERIC_EMULATION)
- #error "BOOST_INTERPROCESS_FORCE_GENERIC_EMULATION must be disabled in boost/interprocess/detail/workarround.hpp"
- #endif*/
-
-// Todo(Adolfo): BlackBox.SHMTransportPubSub fail with BOOST_INTERPROCESS_USE_WINDOWS
-//#define BOOST_INTERPROCESS_USE_WINDOWS
-//#define BOOST_INTERPROCESS_BOOTSTAMP_IS_SESSION_MANAGER_BASED
+#if defined(BOOST_INTERPROCESS_FORCE_GENERIC_EMULATION)
+#  error "BOOST_INTERPROCESS_FORCE_GENERIC_EMULATION must be disabled in boost/interprocess/detail/workarround.hpp"
+#endif  // BOOST_INTERPROCESS_FORCE_GENERIC_EMULATION
 
 #endif // _MSC_VER_
 
