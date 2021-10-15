@@ -577,20 +577,17 @@ void PDPClient::update_remote_servers_list()
 
     for (const eprosima::fastdds::rtps::RemoteServerAttributes& it : mp_builtin->m_DiscoveryServers)
     {
-        if (mp_PDPReader->matched_writer_is_matched(it.GetPDPWriter()))
+        if (!mp_PDPReader->matched_writer_is_matched(it.GetPDPWriter()))
         {
-            continue;
+            match_pdp_writer_nts_(it);
         }
 
-        match_pdp_writer_nts_(it);
-
-        if (mp_PDPWriter->matched_reader_is_matched(it.GetPDPReader()))
+        if (!mp_PDPWriter->matched_reader_is_matched(it.GetPDPReader()))
         {
-            continue;
+            match_pdp_reader_nts_(it);
         }
-
-        match_pdp_reader_nts_(it);
     }
+    mp_sync->restart_timer();
 }
 
 void PDPClient::match_pdp_writer_nts_(
