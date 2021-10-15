@@ -226,13 +226,21 @@ private:
     };
 
     SharedMemManager(
-            const std::string& domain_name)
+            const std::string& domain_name,
+            uint32_t alloc_extra_size)
         : segments_mem_(0)
         , global_segment_(domain_name)
         , watch_task_(SegmentWrapper::WatchTask::get())
     {
         static_assert(std::alignment_of<BufferNode>::value % 8 == 0, "SharedMemManager::BufferNode bad alignment");
+        per_allocation_extra_size_ = alloc_extra_size;
+    }
 
+public:
+
+    static std::shared_ptr<SharedMemManager> create(
+            const std::string& domain_name)
+    {
         if (domain_name.length() > SharedMemGlobal::MAX_DOMAIN_NAME_LENGTH)
         {
             throw std::runtime_error(
@@ -242,17 +250,9 @@ private:
                       " characters");
         }
 
-        per_allocation_extra_size_ =
-                SharedMemSegment::compute_per_allocation_extra_size(std::alignment_of<BufferNode>::value,
-                        domain_name);
-    }
-
-public:
-
-    static std::shared_ptr<SharedMemManager> create(
-            const std::string& domain_name)
-    {
-        return std::shared_ptr<SharedMemManager>(new SharedMemManager(domain_name));
+        uint32_t extra_size =
+                SharedMemSegment::compute_per_allocation_extra_size(std::alignment_of<BufferNode>::value, domain_name);
+        return std::shared_ptr<SharedMemManager>(new SharedMemManager(domain_name, extra_size));
     }
 
     ~SharedMemManager()
