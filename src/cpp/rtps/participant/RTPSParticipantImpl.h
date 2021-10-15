@@ -19,20 +19,21 @@
 #ifndef _RTPS_PARTICIPANT_RTPSPARTICIPANTIMPL_H_
 #define _RTPS_PARTICIPANT_RTPSPARTICIPANTIMPL_H_
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
+#include <atomic>
+#include <chrono>
 #include <cstdio>
 #include <cstdlib>
 #include <list>
-#include <sys/types.h>
 #include <mutex>
-#include <atomic>
-#include <chrono>
-#include <fastrtps/utils/Semaphore.h>
+#include <sys/types.h>
 
 #if defined(_WIN32)
 #include <process.h>
 #else
 #include <unistd.h>
 #endif // if defined(_WIN32)
+
+#include <fastrtps/utils/Semaphore.h>
 
 #include <rtps/messages/RTPSMessageGroup_t.hpp>
 #include <rtps/messages/SendBuffersManager.hpp>
@@ -497,6 +498,7 @@ public:
     GuidPrefix_t get_persistence_guid_prefix() const
     {
         return m_persistence_guid.guidPrefix;
+
     }
 
 private:
@@ -539,7 +541,7 @@ private:
     //!Pool of send buffers
     std::unique_ptr<SendBuffersManager> send_buffers_;
     //! Whether the Participant has been enabled
-    bool enabled_;
+    std::atomic<bool> enabled_status_;
 
     /**
      * Client override flag: SIMPLE participant that has been overriden with the environment variable and transformed

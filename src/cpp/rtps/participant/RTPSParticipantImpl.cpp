@@ -129,7 +129,7 @@ RTPSParticipantImpl::RTPSParticipantImpl(
     , mp_ResourceSemaphore(new Semaphore(0))
     , IdCounter(0)
     , type_check_fn_(nullptr)
-    , enabled_(false)
+    , enabled_status_(false)
     , client_override_(false)
     , internal_metatraffic_locators_(false)
     , internal_default_locators_(false)
@@ -430,7 +430,7 @@ RTPSParticipantImpl::RTPSParticipantImpl(
 
 void RTPSParticipantImpl::enable()
 {
-    if (!enabled_)
+    if (!enabled_status_)
     {
         // Start builtin protocols
         if (!mp_builtinProtocols->initBuiltinProtocols(this, m_att.builtin))
@@ -444,13 +444,13 @@ void RTPSParticipantImpl::enable()
             receiver.Receiver->RegisterReceiver(receiver.mp_receiver);
         }
 
-        enabled_ = true;
+        enabled_status_.store(true);
     }
 }
 
 void RTPSParticipantImpl::disable()
 {
-    if (enabled_)
+    if (enabled_status_)
     {
         // Ensure that other participants will not accidentally discover this one
         if (mp_builtinProtocols && mp_builtinProtocols->mp_PDP)
@@ -484,7 +484,7 @@ void RTPSParticipantImpl::disable()
         delete(mp_builtinProtocols);
         mp_builtinProtocols = nullptr;
 
-        enabled_ = false;
+        enabled_status_.store(false);
     }
 }
 
