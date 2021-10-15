@@ -692,7 +692,7 @@ void StatefulWriter::deliver_sample_to_datasharing(
 DeliveryRetCode StatefulWriter::deliver_sample_to_network(
         CacheChange_t* change,
         RTPSMessageGroup& group,
-        LocatorSelectorSender& locator_selector,
+        LocatorSelectorSender& locator_selector, // Object locked by FlowControllerImpl
         const std::chrono::time_point<std::chrono::steady_clock>& max_blocking_time)
 {
     NetworkFactory& network = mp_RTPSParticipant->network_factory();
@@ -704,6 +704,7 @@ DeliveryRetCode StatefulWriter::deliver_sample_to_network(
     while (DeliveryRetCode::DELIVERED == ret_code &&
             min_unsent_fragment != n_fragments + 1)
     {
+        SequenceNumber_t gap_seq_for_all = SequenceNumber_t::unknown();
         locator_selector.locator_selector.reset(false);
         auto first_relevant_reader = matched_remote_readers_.begin();
         bool inline_qos = false;
@@ -735,16 +736,43 @@ DeliveryRetCode StatefulWriter::deliver_sample_to_network(
                 // send it a personal GAP.
                 if (SequenceNumber_t::unknown() != gap_seq)
                 {
-                    group.sender(this, (*remote_reader)->message_sender());
-                    group.add_gap(gap_seq, SequenceNumberSet_t(change->sequenceNumber), (*remote_reader)->guid());
-                    send_heartbeat_nts_(1u, group, disable_positive_acks_);
-                    group.sender(this, &locator_selector); // This makes the flush_and_reset().
+                    if (SequenceNumber_t::unknown() == gap_seq_for_all) // Calculate if the hole is for all readers
+                    {
+                        History::const_iterator chit = mp_history->find_change_nts(change);
+
+                        if (chit == mp_history->changesBegin())
+                        {
+                            gap_seq_for_all = gap_seq;
+                        }
+                        else
+                        {
+                            SequenceNumber_t prev = (*std::prev(chit))->sequenceNumber + 1;
+
+                            if (prev == gap_seq)
+                            {
+                                gap_seq_for_all = gap_seq;
+                            }
+                        }
+                    }
+
+                    if (gap_seq_for_all != gap_seq) // If it is an individual GAP, sent it to repective reader.
+                    {
+                        group.sender(this, (*remote_reader)->message_sender());
+                        group.add_gap(gap_seq, SequenceNumberSet_t(change->sequenceNumber), (*remote_reader)->guid());
+                        send_heartbeat_nts_(1u, group, disable_positive_acks_);
+                        group.sender(this, &locator_selector); // This makes the flush_and_reset().
+                    }
                 }
             }
             else
             {
                 (*remote_reader)->active(false);
             }
+        }
+
+        if (SequenceNumber_t::unknown() != gap_seq_for_all) // Send GAP for all readers
+        {
+            group.add_gap(gap_seq_for_all, SequenceNumberSet_t(change->sequenceNumber));
         }
 
         try
@@ -980,6 +1008,8 @@ bool StatefulWriter::matched_reader_add(
     }
 
     std::lock_guard<RecursiveTimedMutex> guard(mp_mutex);
+    std::lock_guard<LocatorSelectorSender> guard_locator_selector_general(locator_selector_general_);
+    std::lock_guard<LocatorSelectorSender> guard_locator_selector_async(locator_selector_async_);
 
     // Check if it is already matched.
     if (for_matched_readers(matched_local_readers_, matched_datasharing_readers_, matched_remote_readers_,
@@ -1153,6 +1183,8 @@ bool StatefulWriter::matched_reader_remove(
 {
     ReaderProxy* rproxy = nullptr;
     std::unique_lock<RecursiveTimedMutex> lock(mp_mutex);
+    std::lock_guard<LocatorSelectorSender> guard_locator_selector_general(locator_selector_general_);
+    std::lock_guard<LocatorSelectorSender> guard_locator_selector_async(locator_selector_async_);
 
     for (ReaderProxyIterator it = matched_local_readers_.begin();
             it != matched_local_readers_.end(); ++it)
@@ -1211,7 +1243,6 @@ bool StatefulWriter::matched_reader_remove(
         rproxy->stop();
         matched_readers_pool_.push_back(rproxy);
 
-        lock.unlock();
         check_acked_status();
 
         return true;
@@ -1550,6 +1581,7 @@ bool StatefulWriter::send_periodic_heartbeat(
         bool liveliness)
 {
     std::lock_guard<RecursiveTimedMutex> guardW(mp_mutex);
+    std::lock_guard<LocatorSelectorSender> guard_locator_selector_general(locator_selector_general_);
 
     bool unacked_changes = false;
     if (!liveliness)
@@ -1985,7 +2017,7 @@ const fastdds::rtps::IReaderDataFilter* StatefulWriter::reader_data_filter() con
 DeliveryRetCode StatefulWriter::deliver_sample_nts(
         CacheChange_t* cache_change,
         RTPSMessageGroup& group,
-        LocatorSelectorSender& locator_selector,
+        LocatorSelectorSender& locator_selector, // Object locked by FlowControllerImpl
         const std::chrono::time_point<std::chrono::steady_clock>& max_blocking_time)
 {
     DeliveryRetCode ret_code = DeliveryRetCode::DELIVERED;

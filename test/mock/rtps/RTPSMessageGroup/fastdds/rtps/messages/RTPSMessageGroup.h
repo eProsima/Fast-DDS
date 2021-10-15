@@ -35,7 +35,8 @@ class RTPSMessageGroup
 public:
 
     RTPSMessageGroup(
-            RTPSParticipantImpl*)
+            RTPSParticipantImpl*,
+            bool)
     {
     }
 

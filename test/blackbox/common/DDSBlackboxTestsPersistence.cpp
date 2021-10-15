@@ -19,6 +19,7 @@
 #include "ReqRepAsReliableHelloWorldRequester.hpp"
 #include "ReqRepAsReliableHelloWorldReplier.hpp"
 #include <fastrtps/xmlparser/XMLProfileManager.h>
+#include <fastrtps/log/Log.h>
 
 #include <gtest/gtest.h>
 
@@ -314,6 +315,146 @@ TEST_P(PersistenceLargeData, PubSubAsReliablePubPersistentWithLifespanAfter)
     // Sleep waiting samples to exceed the lifespan
     std::this_thread::sleep_for(std::chrono::seconds(2));
 
+    // Load the persistent DataWriter with the changes saved in the database
+    writer.init();
+
+    ASSERT_TRUE(writer.isInitialized());
+
+    // Wait for discovery.
+    writer.wait_discovery();
+    reader.wait_discovery();
+
+    reader.startReception(unreceived_data);
+
+    // Wait expecting not receiving data.
+    ASSERT_EQ(0u, reader.block_for_all(std::chrono::seconds(1)));
+}
+
+TEST_P(PersistenceLargeData, PubSubAsReliablePubPersistentWithStaticDiscovery)
+{
+    char* value = nullptr;
+    std::string TOPIC_RANDOM_NUMBER;
+    std::string W_UNICAST_PORT_RANDOM_NUMBER_STR;
+    std::string R_UNICAST_PORT_RANDOM_NUMBER_STR;
+    std::string MULTICAST_PORT_RANDOM_NUMBER_STR;
+    // Get environment variables.
+    value = std::getenv("TOPIC_RANDOM_NUMBER");
+    if (value != nullptr)
+    {
+        TOPIC_RANDOM_NUMBER = value;
+    }
+    else
+    {
+        TOPIC_RANDOM_NUMBER = "1";
+    }
+    value = std::getenv("W_UNICAST_PORT_RANDOM_NUMBER");
+    if (value != nullptr)
+    {
+        W_UNICAST_PORT_RANDOM_NUMBER_STR = value;
+    }
+    else
+    {
+        W_UNICAST_PORT_RANDOM_NUMBER_STR = "7411";
+    }
+    int32_t W_UNICAST_PORT_RANDOM_NUMBER = stoi(W_UNICAST_PORT_RANDOM_NUMBER_STR);
+    value = std::getenv("R_UNICAST_PORT_RANDOM_NUMBER");
+    if (value != nullptr)
+    {
+        R_UNICAST_PORT_RANDOM_NUMBER_STR = value;
+    }
+    else
+    {
+        R_UNICAST_PORT_RANDOM_NUMBER_STR = "7421";
+    }
+    int32_t R_UNICAST_PORT_RANDOM_NUMBER = stoi(R_UNICAST_PORT_RANDOM_NUMBER_STR);
+    value = std::getenv("MULTICAST_PORT_RANDOM_NUMBER");
+    if (value != nullptr)
+    {
+        MULTICAST_PORT_RANDOM_NUMBER_STR = value;
+    }
+    else
+    {
+        MULTICAST_PORT_RANDOM_NUMBER_STR = "7400";
+    }
+    int32_t MULTICAST_PORT_RANDOM_NUMBER = stoi(MULTICAST_PORT_RANDOM_NUMBER_STR);
+
+    PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
+
+    LocatorList_t WriterUnicastLocators;
+    Locator_t LocatorBuffer;
+
+    LocatorBuffer.kind = LOCATOR_KIND_UDPv4;
+    LocatorBuffer.port = static_cast<uint16_t>(W_UNICAST_PORT_RANDOM_NUMBER);
+    IPLocator::setIPv4(LocatorBuffer, 127, 0, 0, 1);
+    WriterUnicastLocators.push_back(LocatorBuffer);
+
+    LocatorList_t WriterMulticastLocators;
+
+    LocatorBuffer.port = static_cast<uint16_t>(MULTICAST_PORT_RANDOM_NUMBER);
+    WriterMulticastLocators.push_back(LocatorBuffer);
+
+    writer
+            .history_kind(eprosima::fastrtps::KEEP_ALL_HISTORY_QOS)
+            .reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS)
+            .make_persistent(db_file_name(), "78.73.69.74.65.72.5f.70.65.72.73.5f|67.75.69.1")
+            .static_discovery("file://PubSubWriterPersistence.xml")
+            .unicastLocatorList(WriterUnicastLocators)
+            .multicastLocatorList(WriterMulticastLocators)
+            .setPublisherIDs(1, 2)
+            .setManualTopicName(std::string("BlackBox_StaticDiscovery_") + TOPIC_RANDOM_NUMBER)
+            .userData({'V', 'G', 'W', 0x78, 0x73, 0x69, 0x74, 0x65, 0x72, 0x5f, 0x70, 0x65, 0x72, 0x73, 0x5f, 0x67,
+                       0x75, 0x69})
+            .init();
+
+    ASSERT_TRUE(writer.isInitialized());
+
+    PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
+
+    LocatorList_t ReaderUnicastLocators;
+
+    LocatorBuffer.port = static_cast<uint16_t>(R_UNICAST_PORT_RANDOM_NUMBER);
+    ReaderUnicastLocators.push_back(LocatorBuffer);
+
+    LocatorList_t ReaderMulticastLocators;
+
+    LocatorBuffer.port = static_cast<uint16_t>(MULTICAST_PORT_RANDOM_NUMBER);
+    ReaderMulticastLocators.push_back(LocatorBuffer);
+
+    reader
+            .history_kind(eprosima::fastrtps::KEEP_LAST_HISTORY_QOS)
+            .history_depth(10)
+            .reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS)
+            .make_persistent(db_file_name(), "78.73.69.74.65.72.5f.70.65.72.73.5f|67.75.69.3")
+            .static_discovery("file://PubSubReaderPersistence.xml")
+            .unicastLocatorList(ReaderUnicastLocators)
+            .multicastLocatorList(ReaderMulticastLocators)
+            .setSubscriberIDs(3, 4)
+            .setManualTopicName(std::string("BlackBox_StaticDiscovery_") + TOPIC_RANDOM_NUMBER)
+            .init();
+
+    ASSERT_TRUE(reader.isInitialized());
+
+    // Wait for discovery.
+    writer.wait_discovery();
+    reader.wait_discovery();
+
+    auto data = default_helloworld_data_generator();
+    auto unreceived_data = data;
+
+    // Send data
+    writer.send(data);
+    // All data should be sent
+    ASSERT_TRUE(data.empty());
+
+    reader.startReception(unreceived_data);
+
+    // Wait expecting not receiving data.
+    ASSERT_EQ(10u, reader.block_for_all(std::chrono::seconds(1)));
+
+
+    // Destroy the DataWriter
+    writer.destroy();
+    reader.stopReception();
     // Load the persistent DataWriter with the changes saved in the database
     writer.init();
 

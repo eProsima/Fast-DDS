@@ -129,10 +129,12 @@ public:
      * Check if a specific change is marked to be sent to this reader.
      *
      * @param[in]  seq_num Sequence number of the change to be checked.
-     * @param[out] next_unsent_frag,Returns next fragment to be sent.
+     * @param[out] next_unsent_frag Return next fragment to be sent.
      * @param[out] gap_seq Return, when it is its first delivery (should be relevant seq_num), the sequence number of
      * the first sequence of the gap [first, seq_num). Otherwise return SequenceNumber_t::unknown().
      * @param[out] need_reactivate_periodic_heartbeat Indicates if the heartbeat period event has to be restarted.
+     *
+     * @return true if the change is marked to be sent. False otherwise.
      */
     bool change_is_unsent(
             const SequenceNumber_t& seq_num,
@@ -151,7 +153,7 @@ public:
     /**
      * Mark all changes in the vector as requested.
      * @param seq_num_set Bitmap of sequence numbers.
-     * @parm gap_builder RTPSGapBuilder reference uses for adding  each requested change that is irrelevant for the
+     * @param gap_builder RTPSGapBuilder reference uses for adding  each requested change that is irrelevant for the
      * requester.
      * @return true if at least one change has been marked as REQUESTED, false otherwise.
      */
@@ -161,7 +163,7 @@ public:
 
     /**
      * Performs processing of preemptive acknack
-     * @func functor called, if the requester is a local reader, for each changes moved to UNSENT status.
+     * @param func functor called, if the requester is a local reader, for each changes moved to UNSENT status.
      * @return true if a heartbeat should be sent, false otherwise.
      */
     bool process_initial_acknack(
@@ -349,7 +351,7 @@ public:
         return locator_info_.locator_selector_entry();
     }
 
-    const RTPSMessageSenderInterface* message_sender() const
+    RTPSMessageSenderInterface* message_sender()
     {
         return &locator_info_;
     }

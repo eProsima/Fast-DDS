@@ -25,44 +25,37 @@
 #include <mutex>
 #include <sstream>
 
-#include <rtps/persistence/PersistenceService.h>
-#include <rtps/history/BasicPayloadPool.hpp>
-
-#include <fastrtps/utils/IPFinder.h>
-#include <fastrtps/utils/Semaphore.h>
-
-#include <fastrtps/xmlparser/XMLProfileManager.h>
-
 #include <fastdds/dds/log/Log.hpp>
-
-#include <fastdds/rtps/RTPSDomain.h>
-
-#include <fastdds/rtps/messages/MessageReceiver.h>
-
+#include <fastdds/rtps/attributes/ServerAttributes.h>
+#include <fastdds/rtps/builtin/BuiltinProtocols.h>
+#include <fastdds/rtps/builtin/discovery/participant/PDPSimple.h>
+#include <fastdds/rtps/builtin/data/ParticipantProxyData.h>
+#include <fastdds/rtps/builtin/liveliness/WLP.h>
 #include <fastdds/rtps/history/WriterHistory.h>
-
+#include <fastdds/rtps/messages/MessageReceiver.h>
 #include <fastdds/rtps/participant/RTPSParticipant.h>
-
+#include <fastdds/rtps/reader/StatelessReader.h>
+#include <fastdds/rtps/reader/StatefulReader.h>
+#include <fastdds/rtps/reader/StatelessPersistentReader.h>
+#include <fastdds/rtps/reader/StatefulPersistentReader.h>
+#include <fastdds/rtps/RTPSDomain.h>
+#include <fastdds/rtps/transport/UDPv4TransportDescriptor.h>
+#include <fastdds/rtps/transport/TCPv4TransportDescriptor.h>
+#include <fastdds/rtps/transport/TCPv6TransportDescriptor.h>
+#include <fastdds/rtps/transport/shared_mem/SharedMemTransportDescriptor.h>
 #include <fastdds/rtps/writer/StatelessWriter.h>
 #include <fastdds/rtps/writer/StatefulWriter.h>
 #include <fastdds/rtps/writer/StatelessPersistentWriter.h>
 #include <fastdds/rtps/writer/StatefulPersistentWriter.h>
 
-#include <fastdds/rtps/reader/StatelessReader.h>
-#include <fastdds/rtps/reader/StatefulReader.h>
-#include <fastdds/rtps/reader/StatelessPersistentReader.h>
-#include <fastdds/rtps/reader/StatefulPersistentReader.h>
+#include <fastrtps/utils/IPFinder.h>
+#include <fastrtps/utils/Semaphore.h>
+#include <fastrtps/xmlparser/XMLProfileManager.h>
 
-#include <fastdds/rtps/transport/UDPv4TransportDescriptor.h>
-#include <fastdds/rtps/transport/TCPv4TransportDescriptor.h>
-#include <fastdds/rtps/transport/TCPv6TransportDescriptor.h>
-#include <fastdds/rtps/transport/shared_mem/SharedMemTransportDescriptor.h>
-
-#include <fastdds/rtps/builtin/BuiltinProtocols.h>
-#include <fastdds/rtps/builtin/discovery/participant/PDPSimple.h>
-#include <fastdds/rtps/builtin/data/ParticipantProxyData.h>
-#include <fastdds/rtps/builtin/liveliness/WLP.h>
-
+#include <rtps/builtin/discovery/participant/PDPServer.hpp>
+#include <rtps/builtin/discovery/participant/PDPClient.h>
+#include <rtps/history/BasicPayloadPool.hpp>
+#include <rtps/persistence/PersistenceService.h>
 #include <statistics/rtps/GuidUtils.hpp>
 
 namespace eprosima {
@@ -434,6 +427,7 @@ RTPSParticipantImpl::RTPSParticipantImpl(
         RTPSParticipantListener* plisten)
     : RTPSParticipantImpl(domain_id, PParam, guidP, c_GuidPrefix_Unknown, par, plisten)
 {
+    client_override_ = false;
 }
 
 void RTPSParticipantImpl::enable()
@@ -1168,6 +1162,115 @@ bool RTPSParticipantImpl::registerReader(
         const ReaderQos& rqos)
 {
     return this->mp_builtinProtocols->addLocalReader(reader, topicAtt, rqos);
+}
+
+void RTPSParticipantImpl::update_attributes(
+        const RTPSParticipantAttributes& patt)
+{
+    // Check if there are changes
+    if (patt.builtin.discovery_config.m_DiscoveryServers == m_att.builtin.discovery_config.m_DiscoveryServers
+            && patt.userData == m_att.userData)
+    {
+        return;
+    }
+
+    // Check that the remote servers list is consistent: all the already known remote servers must be included in the
+    // list and only new remote servers can be added.
+    for (auto existing_server : m_att.builtin.discovery_config.m_DiscoveryServers)
+    {
+        bool contained = false;
+        bool locator_contained = false;
+        for (auto incoming_server : patt.builtin.discovery_config.m_DiscoveryServers)
+        {
+            if (existing_server.guidPrefix == incoming_server.guidPrefix)
+            {
+                for (auto incoming_locator : incoming_server.metatrafficUnicastLocatorList)
+                {
+                    for (auto existing_locator : existing_server.metatrafficUnicastLocatorList)
+                    {
+                        if (incoming_locator == existing_locator)
+                        {
+                            locator_contained = true;
+                            break;
+                        }
+                    }
+                    if (!locator_contained)
+                    {
+                        logWarning(RTPS_QOS_CHECK,
+                                "Discovery Servers cannot add/modify their locators: " << incoming_locator <<
+                                " has not been added")
+                        return;
+                    }
+                }
+                contained = true;
+                break;
+            }
+        }
+        if (!contained)
+        {
+            logWarning(RTPS_QOS_CHECK,
+                    "Discovery Servers cannot be removed from the list; they can only be added");
+            return;
+        }
+    }
+
+    // Update RTPSParticipantAttributes member
+    m_att.userData = patt.userData;
+
+    auto pdp = mp_builtinProtocols->mp_PDP;
+    {
+        std::unique_lock<std::recursive_mutex> lock(*pdp->getMutex());
+
+        // Update user data
+        auto local_participant_proxy_data = pdp->getLocalParticipantProxyData();
+        local_participant_proxy_data->m_userData.data_vec(m_att.userData);
+
+        // Update remote servers list
+        if (m_att.builtin.discovery_config.discoveryProtocol == DiscoveryProtocol::CLIENT ||
+                m_att.builtin.discovery_config.discoveryProtocol == DiscoveryProtocol::SUPER_CLIENT ||
+                m_att.builtin.discovery_config.discoveryProtocol == DiscoveryProtocol::SERVER ||
+                m_att.builtin.discovery_config.discoveryProtocol == DiscoveryProtocol::BACKUP)
+        {
+            // Add incoming servers iff we don't know about them already
+            for (auto incoming_server : patt.builtin.discovery_config.m_DiscoveryServers)
+            {
+                eprosima::fastdds::rtps::RemoteServerList_t::iterator server_it;
+                for (server_it = m_att.builtin.discovery_config.m_DiscoveryServers.begin();
+                        server_it != m_att.builtin.discovery_config.m_DiscoveryServers.end(); server_it++)
+                {
+                    if (server_it->guidPrefix == incoming_server.guidPrefix)
+                    {
+                        break;
+                    }
+                }
+                if (server_it == m_att.builtin.discovery_config.m_DiscoveryServers.end())
+                {
+                    m_att.builtin.discovery_config.m_DiscoveryServers.push_back(incoming_server);
+                }
+            }
+
+            // Update the servers list in builtin protocols
+            mp_builtinProtocols->m_DiscoveryServers = m_att.builtin.discovery_config.m_DiscoveryServers;
+
+            // Notify PDPServer
+            if (m_att.builtin.discovery_config.discoveryProtocol == DiscoveryProtocol::SERVER ||
+                    m_att.builtin.discovery_config.discoveryProtocol == DiscoveryProtocol::BACKUP)
+            {
+                fastdds::rtps::PDPServer* pdp_server = static_cast<fastdds::rtps::PDPServer*>(pdp);
+                pdp_server->update_remote_servers_list();
+            }
+            // Notify PDPClient
+            else if (m_att.builtin.discovery_config.discoveryProtocol == DiscoveryProtocol::CLIENT ||
+                    m_att.builtin.discovery_config.discoveryProtocol == DiscoveryProtocol::SUPER_CLIENT)
+            {
+                fastdds::rtps::PDPClient* pdp_client = static_cast<fastdds::rtps::PDPClient*>(pdp);
+                pdp_client->update_remote_servers_list();
+            }
+        }
+    }
+
+    // Send DATA(P)
+    pdp->announceParticipantState(true);
 }
 
 bool RTPSParticipantImpl::updateLocalWriter(
@@ -2064,6 +2167,26 @@ DurabilityKind_t RTPSParticipantImpl::get_persistence_durability_red_line(
     }
 
     return durability_red_line;
+}
+
+void RTPSParticipantImpl::environment_file_has_changed()
+{
+    RTPSParticipantAttributes patt = m_att;
+    // Only if it is a server/backup or a client override
+    if (DiscoveryProtocol_t::SERVER == m_att.builtin.discovery_config.discoveryProtocol ||
+            DiscoveryProtocol_t::BACKUP == m_att.builtin.discovery_config.discoveryProtocol ||
+            client_override_)
+    {
+        if (load_environment_server_info(patt.builtin.discovery_config.m_DiscoveryServers))
+        {
+            update_attributes(patt);
+        }
+    }
+    else
+    {
+        logWarning(RTPS_QOS_CHECK, "Trying to add Discovery Servers to a participant which is not a SERVER, BACKUP " <<
+                "or an overriden CLIENT (SIMPLE participant transformed into CLIENT with the environment variable)");
+    }
 }
 
 #ifdef FASTDDS_STATISTICS

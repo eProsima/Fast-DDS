@@ -23,10 +23,10 @@ public:
             RTPSWriter& writer,
             ResourceLimitedContainerConfig matched_readers_allocation
             )
-        : writer(writer)
-        , locator_selector(matched_readers_allocation)
+        : locator_selector(matched_readers_allocation)
         , all_remote_readers(matched_readers_allocation)
         , all_remote_participants(matched_readers_allocation)
+        , writer_(writer)
     {
     }
 
@@ -75,13 +75,35 @@ public:
             CDRMessage_t* message,
             std::chrono::steady_clock::time_point max_blocking_time_point) const override;
 
-    RTPSWriter& writer;
+    /*!
+     * Lock the object.
+     *
+     * This kind of object needs to be locked because could be used outside the writer's mutex.
+     */
+    void lock() override
+    {
+        mutex_.lock();
+    }
+
+    /*!
+     * Unlock the object.
+     */
+    void unlock() override
+    {
+        mutex_.unlock();
+    }
 
     fastrtps::rtps::LocatorSelector locator_selector;
 
     ResourceLimitedVector<GUID_t> all_remote_readers;
 
     ResourceLimitedVector<GuidPrefix_t> all_remote_participants;
+
+private:
+
+    RTPSWriter& writer_;
+
+    std::recursive_mutex mutex_;
 };
 
 } // namespace rtps

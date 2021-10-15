@@ -21,11 +21,27 @@
 #include <fastrtps/transport/test_UDPv4TransportDescriptor.h>
 #include <fastrtps/xmlparser/XMLProfileManager.h>
 
+#include <sstream>
+#include <fstream>
 #include <gtest/gtest.h>
 
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
 
+bool check_shared_file (
+        const char* shared_dir,
+        const eprosima::fastrtps::rtps::GUID_t& guid)
+{
+    bool result;
+    std::stringstream file_name;
+    std::fstream file_stream;
+
+    file_name << shared_dir << "/fast_datasharing_" << guid.guidPrefix << "_" << guid.entityId;
+    file_stream.open(file_name.str(), std::ios::in);
+    result = file_stream.is_open();
+    file_stream.close();
+    return result;
+}
 
 TEST(DDSDataSharing, BasicCommunication)
 {
@@ -38,14 +54,14 @@ TEST(DDSDataSharing, BasicCommunication)
 
     reader.history_depth(100)
             .add_user_transport_to_pparams(testTransport)
-            .datasharing_on("Unused. change when ready")
+            .datasharing_on(".")
             .reliability(BEST_EFFORT_RELIABILITY_QOS).init();
 
     ASSERT_TRUE(reader.isInitialized());
 
     writer.history_depth(100)
             .add_user_transport_to_pparams(testTransport)
-            .datasharing_on("Unused. change when ready")
+            .datasharing_on(".")
             .reliability(BEST_EFFORT_RELIABILITY_QOS).init();
 
     ASSERT_TRUE(writer.isInitialized());
@@ -55,8 +71,11 @@ TEST(DDSDataSharing, BasicCommunication)
     writer.wait_discovery();
     reader.wait_discovery();
 
-    auto data = default_fixed_sized_data_generator();
+    // Check that the shared files are created on the correct directory
+    ASSERT_TRUE(check_shared_file(".", reader.datareader_guid()));
+    ASSERT_TRUE(check_shared_file(".", writer.datawriter_guid()));
 
+    auto data = default_fixed_sized_data_generator();
     reader.startReception(data);
 
     // Send data
@@ -65,6 +84,14 @@ TEST(DDSDataSharing, BasicCommunication)
     ASSERT_TRUE(data.empty());
     // Block reader until reception finished or timeout.
     reader.block_for_all();
+
+    // Destroy reader and writer and see if there are dangling files
+    reader.destroy();
+    writer.destroy();
+
+    // Check that the shared files are created on the correct directory
+    ASSERT_FALSE(check_shared_file(".", reader.datareader_guid()));
+    ASSERT_FALSE(check_shared_file(".", writer.datawriter_guid()));
 }
 
 
@@ -82,10 +109,13 @@ TEST(DDSDataSharing, TransientReader)
 
     writer.history_depth(writer_history_depth)
             .add_user_transport_to_pparams(testTransport)
-            .datasharing_on("Unused. change when ready")
+            .datasharing_on(".")
             .reliability(BEST_EFFORT_RELIABILITY_QOS).init();
 
     ASSERT_TRUE(writer.isInitialized());
+
+    // Check that the shared files are created on the correct directory
+    ASSERT_TRUE(check_shared_file(".", writer.datawriter_guid()));
 
     // Send the data to fill the history and overwrite old changes
     // The reader only receives the last changes
@@ -100,17 +130,28 @@ TEST(DDSDataSharing, TransientReader)
 
     reader.history_depth(writer_sent_data)
             .add_user_transport_to_pparams(testTransport)
-            .datasharing_on("Unused. change when ready")
+            .datasharing_on(".")
             .reliability(BEST_EFFORT_RELIABILITY_QOS)
             .durability_kind(TRANSIENT_LOCAL_DURABILITY_QOS).init();
 
     ASSERT_TRUE(reader.isInitialized());
+
+    // Check that the shared files are created on the correct directory
+    ASSERT_TRUE(check_shared_file(".", reader.datareader_guid()));
 
     writer.wait_discovery();
     reader.wait_discovery();
 
     reader.startReception(received_data);
     reader.block_for_all();
+
+    // Destroy reader and writer and see if there are dangling files
+    reader.destroy();
+    writer.destroy();
+
+    // Check that the shared files are created on the correct directory
+    ASSERT_FALSE(check_shared_file(".", reader.datareader_guid()));
+    ASSERT_FALSE(check_shared_file(".", writer.datawriter_guid()));
 }
 
 
@@ -131,7 +172,7 @@ TEST(DDSDataSharing, BestEffortDirtyPayloads)
 
     writer.history_depth(writer_history_depth)
             .add_user_transport_to_pparams(testTransport)
-            .datasharing_on("Unused. change when ready")
+            .datasharing_on(".")
             .reliability(BEST_EFFORT_RELIABILITY_QOS)
             .resource_limits_extra_samples(1).init();
 
@@ -139,10 +180,14 @@ TEST(DDSDataSharing, BestEffortDirtyPayloads)
 
     read_reader.history_depth(writer_sent_data)
             .add_user_transport_to_pparams(testTransport)
-            .datasharing_on("Unused. change when ready")
+            .datasharing_on(".")
             .reliability(BEST_EFFORT_RELIABILITY_QOS).init();
 
     ASSERT_TRUE(read_reader.isInitialized());
+
+    // Check that the shared files are created on the correct directory
+    ASSERT_TRUE(check_shared_file(".", read_reader.datareader_guid()));
+    ASSERT_TRUE(check_shared_file(".", writer.datawriter_guid()));
 
     writer.wait_discovery();
     read_reader.wait_discovery();
@@ -160,6 +205,14 @@ TEST(DDSDataSharing, BestEffortDirtyPayloads)
     // The reader has overridden payloads in the history. Only the valid ones are returned to the user
     read_reader.startReception(valid_data);
     read_reader.block_for_all();
+
+    // Destroy reader and writer and see if there are dangling files
+    read_reader.destroy();
+    writer.destroy();
+
+    // Check that the shared files are created on the correct directory
+    ASSERT_FALSE(check_shared_file(".", read_reader.datareader_guid()));
+    ASSERT_FALSE(check_shared_file(".", writer.datawriter_guid()));
 }
 
 TEST(DDSDataSharing, ReliableDirtyPayloads)
@@ -179,7 +232,7 @@ TEST(DDSDataSharing, ReliableDirtyPayloads)
 
     writer.history_depth(writer_history_depth)
             .add_user_transport_to_pparams(testTransport)
-            .datasharing_on("Unused. change when ready")
+            .datasharing_on(".")
             .reliability(RELIABLE_RELIABILITY_QOS)
             .resource_limits_extra_samples(1).init();
 
@@ -187,10 +240,14 @@ TEST(DDSDataSharing, ReliableDirtyPayloads)
 
     read_reader.history_depth(writer_sent_data)
             .add_user_transport_to_pparams(testTransport)
-            .datasharing_on("Unused. change when ready")
+            .datasharing_on(".")
             .reliability(RELIABLE_RELIABILITY_QOS).init();
 
     ASSERT_TRUE(read_reader.isInitialized());
+
+    // Check that the shared files are created on the correct directory
+    ASSERT_TRUE(check_shared_file(".", read_reader.datareader_guid()));
+    ASSERT_TRUE(check_shared_file(".", writer.datawriter_guid()));
 
     writer.wait_discovery();
     read_reader.wait_discovery();
@@ -209,6 +266,14 @@ TEST(DDSDataSharing, ReliableDirtyPayloads)
     // but will keep them in the history.
     read_reader.startReception(valid_data);
     read_reader.block_for_all();
+
+    // Destroy reader and writer and see if there are dangling files
+    read_reader.destroy();
+    writer.destroy();
+
+    // Check that the shared files are created on the correct directory
+    ASSERT_FALSE(check_shared_file(".", read_reader.datareader_guid()));
+    ASSERT_FALSE(check_shared_file(".", writer.datawriter_guid()));
 }
 
 TEST(DDSDataSharing, DataSharingWriter_DifferentDomainReaders)
@@ -229,13 +294,13 @@ TEST(DDSDataSharing, DataSharingWriter_DifferentDomainReaders)
 
     writer.disable_builtin_transport()
             .add_user_transport_to_pparams(testTransport)
-            .datasharing_on("Unused. change when ready", writer_ids)
+            .datasharing_on(".", writer_ids)
             .resource_limits_extra_samples(5).init();
     ASSERT_TRUE(writer.isInitialized());
 
     datasharing_reader.disable_builtin_transport()
             .add_user_transport_to_pparams(testTransport)
-            .datasharing_on("Unused. change when ready", reader_ids).init();
+            .datasharing_on(".", reader_ids).init();
     ASSERT_TRUE(datasharing_reader.isInitialized());
 
     non_datasharing_reader.disable_builtin_transport()
@@ -245,8 +310,14 @@ TEST(DDSDataSharing, DataSharingWriter_DifferentDomainReaders)
 
     auto_reader.disable_builtin_transport()
             .add_user_transport_to_pparams(testTransport)
-            .datasharing_auto(reader_ids).init();
+            .datasharing_auto(".", reader_ids).init();
     ASSERT_TRUE(auto_reader.isInitialized());
+
+    // Check that the shared files are created on the correct directory
+    ASSERT_TRUE(check_shared_file(".", datasharing_reader.datareader_guid()));
+    ASSERT_FALSE(check_shared_file(".", non_datasharing_reader.datareader_guid()));
+    ASSERT_TRUE(check_shared_file(".", auto_reader.datareader_guid()));
+    ASSERT_TRUE(check_shared_file(".", writer.datawriter_guid()));
 
     writer.wait_discovery(3);
     datasharing_reader.wait_discovery();
@@ -264,6 +335,18 @@ TEST(DDSDataSharing, DataSharingWriter_DifferentDomainReaders)
     ASSERT_EQ(datasharing_reader.block_for_all(std::chrono::seconds(2)), 0u);
     ASSERT_EQ(non_datasharing_reader.block_for_all(std::chrono::seconds(2)), 0u);
     ASSERT_EQ(auto_reader.block_for_all(std::chrono::seconds(2)), 0u);
+
+    // Destroy reader and writer and see if there are dangling files
+    datasharing_reader.destroy();
+    non_datasharing_reader.destroy();
+    auto_reader.destroy();
+    writer.destroy();
+
+    // Check that the shared files are created on the correct directory
+    ASSERT_FALSE(check_shared_file(".", datasharing_reader.datareader_guid()));
+    ASSERT_FALSE(check_shared_file(".", non_datasharing_reader.datareader_guid()));
+    ASSERT_FALSE(check_shared_file(".", auto_reader.datareader_guid()));
+    ASSERT_FALSE(check_shared_file(".", writer.datawriter_guid()));
 }
 
 TEST(DDSDataSharing, DataSharingWriter_CommonDomainReaders)
@@ -286,13 +369,13 @@ TEST(DDSDataSharing, DataSharingWriter_CommonDomainReaders)
 
     writer.disable_builtin_transport()
             .add_user_transport_to_pparams(testTransport)
-            .datasharing_on("Unused. change when ready", writer_ids)
+            .datasharing_on(".", writer_ids)
             .resource_limits_extra_samples(5).init();
     ASSERT_TRUE(writer.isInitialized());
 
     datasharing_reader.disable_builtin_transport()
             .add_user_transport_to_pparams(testTransport)
-            .datasharing_on("Unused. change when ready", reader_ids).init();
+            .datasharing_on(".", reader_ids).init();
     ASSERT_TRUE(datasharing_reader.isInitialized());
 
     non_datasharing_reader.disable_builtin_transport()
@@ -302,8 +385,14 @@ TEST(DDSDataSharing, DataSharingWriter_CommonDomainReaders)
 
     auto_reader.disable_builtin_transport()
             .add_user_transport_to_pparams(testTransport)
-            .datasharing_auto(reader_ids).init();
+            .datasharing_auto(".", reader_ids).init();
     ASSERT_TRUE(auto_reader.isInitialized());
+
+    // Check that the shared files are created on the correct directory
+    ASSERT_TRUE(check_shared_file(".", datasharing_reader.datareader_guid()));
+    ASSERT_FALSE(check_shared_file(".", non_datasharing_reader.datareader_guid()));
+    ASSERT_TRUE(check_shared_file(".", auto_reader.datareader_guid()));
+    ASSERT_TRUE(check_shared_file(".", writer.datawriter_guid()));
 
     writer.wait_discovery(3);
     datasharing_reader.wait_discovery();
@@ -321,6 +410,18 @@ TEST(DDSDataSharing, DataSharingWriter_CommonDomainReaders)
     ASSERT_EQ(non_datasharing_reader.block_for_all(std::chrono::seconds(2)), 0u);
     auto_reader.block_for_all();
     auto_reader.block_for_all();
+
+    // Destroy reader and writer and see if there are dangling files
+    datasharing_reader.destroy();
+    non_datasharing_reader.destroy();
+    auto_reader.destroy();
+    writer.destroy();
+
+    // Check that the shared files are created on the correct directory
+    ASSERT_FALSE(check_shared_file(".", datasharing_reader.datareader_guid()));
+    ASSERT_FALSE(check_shared_file(".", non_datasharing_reader.datareader_guid()));
+    ASSERT_FALSE(check_shared_file(".", auto_reader.datareader_guid()));
+    ASSERT_FALSE(check_shared_file(".", writer.datawriter_guid()));
 }
 
 TEST(DDSDataSharing, DataSharingReader_DifferentDomainWriters)
@@ -341,7 +442,7 @@ TEST(DDSDataSharing, DataSharingReader_DifferentDomainWriters)
 
     datasharing_writer.disable_builtin_transport()
             .add_user_transport_to_pparams(testTransport)
-            .datasharing_on("Unused. change when ready", writer_ids)
+            .datasharing_on(".", writer_ids)
             .resource_limits_extra_samples(5).init();
     ASSERT_TRUE(datasharing_writer.isInitialized());
 
@@ -352,14 +453,20 @@ TEST(DDSDataSharing, DataSharingReader_DifferentDomainWriters)
 
     auto_writer.disable_builtin_transport()
             .add_user_transport_to_pparams(testTransport)
-            .datasharing_auto(writer_ids)
+            .datasharing_auto(".", writer_ids)
             .resource_limits_extra_samples(5).init();
     ASSERT_TRUE(datasharing_writer.isInitialized());
 
     reader.disable_builtin_transport()
             .add_user_transport_to_pparams(testTransport)
-            .datasharing_on("Unused. change when ready", reader_ids).init();
+            .datasharing_on(".", reader_ids).init();
     ASSERT_TRUE(reader.isInitialized());
+
+    // Check that the shared files are created on the correct directory
+    ASSERT_TRUE(check_shared_file(".", datasharing_writer.datawriter_guid()));
+    ASSERT_FALSE(check_shared_file(".", non_datasharing_writer.datawriter_guid()));
+    ASSERT_TRUE(check_shared_file(".", auto_writer.datawriter_guid()));
+    ASSERT_TRUE(check_shared_file(".", reader.datareader_guid()));
 
     reader.wait_discovery(std::chrono::seconds::zero(), 3);
     datasharing_writer.wait_discovery();
@@ -386,6 +493,18 @@ TEST(DDSDataSharing, DataSharingReader_DifferentDomainWriters)
     auto_writer.send(data);
     ASSERT_TRUE(data.empty());
     ASSERT_EQ(reader.block_for_all(std::chrono::seconds(2)), 0u);
+
+    // Destroy reader and writer and see if there are dangling files
+    reader.destroy();
+    datasharing_writer.destroy();
+    non_datasharing_writer.destroy();
+    auto_writer.destroy();
+
+    // Check that the shared files are created on the correct directory
+    ASSERT_FALSE(check_shared_file(".", reader.datareader_guid()));
+    ASSERT_FALSE(check_shared_file(".", datasharing_writer.datawriter_guid()));
+    ASSERT_FALSE(check_shared_file(".", non_datasharing_writer.datawriter_guid()));
+    ASSERT_FALSE(check_shared_file(".", auto_writer.datawriter_guid()));
 }
 
 TEST(DDSDataSharing, DataSharingReader_CommonDomainWriters)
@@ -408,7 +527,7 @@ TEST(DDSDataSharing, DataSharingReader_CommonDomainWriters)
 
     datasharing_writer.disable_builtin_transport()
             .add_user_transport_to_pparams(testTransport)
-            .datasharing_on("Unused. change when ready", writer_ids)
+            .datasharing_on(".", writer_ids)
             .resource_limits_extra_samples(5).init();
     ASSERT_TRUE(datasharing_writer.isInitialized());
 
@@ -419,14 +538,20 @@ TEST(DDSDataSharing, DataSharingReader_CommonDomainWriters)
 
     auto_writer.disable_builtin_transport()
             .add_user_transport_to_pparams(testTransport)
-            .datasharing_auto(writer_ids)
+            .datasharing_auto(".", writer_ids)
             .resource_limits_extra_samples(5).init();
     ASSERT_TRUE(datasharing_writer.isInitialized());
 
     reader.disable_builtin_transport()
             .add_user_transport_to_pparams(testTransport)
-            .datasharing_on("Unused. change when ready", reader_ids).init();
+            .datasharing_on(".", reader_ids).init();
     ASSERT_TRUE(reader.isInitialized());
+
+    // Check that the shared files are created on the correct directory
+    ASSERT_TRUE(check_shared_file(".", datasharing_writer.datawriter_guid()));
+    ASSERT_FALSE(check_shared_file(".", non_datasharing_writer.datawriter_guid()));
+    ASSERT_TRUE(check_shared_file(".", auto_writer.datawriter_guid()));
+    ASSERT_TRUE(check_shared_file(".", reader.datareader_guid()));
 
     reader.wait_discovery(std::chrono::seconds::zero(), 3);
     datasharing_writer.wait_discovery();
@@ -453,6 +578,18 @@ TEST(DDSDataSharing, DataSharingReader_CommonDomainWriters)
     auto_writer.send(data);
     ASSERT_TRUE(data.empty());
     reader.block_for_all();
+
+    // Destroy reader and writer and see if there are dangling files
+    reader.destroy();
+    datasharing_writer.destroy();
+    non_datasharing_writer.destroy();
+    auto_writer.destroy();
+
+    // Check that the shared files are created on the correct directory
+    ASSERT_FALSE(check_shared_file(".", reader.datareader_guid()));
+    ASSERT_FALSE(check_shared_file(".", datasharing_writer.datawriter_guid()));
+    ASSERT_FALSE(check_shared_file(".", non_datasharing_writer.datawriter_guid()));
+    ASSERT_FALSE(check_shared_file(".", auto_writer.datawriter_guid()));
 }
 
 
@@ -465,19 +602,24 @@ TEST(DDSDataSharing, DataSharingPoolError)
     writer_datasharing.resource_limits_max_samples(100000)
             .history_kind(eprosima::fastrtps::KEEP_ALL_HISTORY_QOS)
             .reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS)
-            .datasharing_on("Unused. change when ready").init();
+            .datasharing_on(".").init();
     ASSERT_FALSE(writer_datasharing.isInitialized());
 
     writer_auto.resource_limits_max_samples(100000)
             .history_kind(eprosima::fastrtps::KEEP_ALL_HISTORY_QOS)
             .reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS)
-            .datasharing_auto().init();
+            .datasharing_auto(".").init();
     ASSERT_TRUE(writer_auto.isInitialized());
 
-    reader.datasharing_on("Unused. change when ready")
+    reader.datasharing_on(".")
             .history_depth(10)
             .reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).init();
     ASSERT_TRUE(reader.isInitialized());
+
+    // Check that the shared files are created on the correct directory
+    ASSERT_FALSE(check_shared_file(".", writer_datasharing.datawriter_guid()));
+    ASSERT_FALSE(check_shared_file(".", writer_auto.datawriter_guid()));
+    ASSERT_TRUE(check_shared_file(".", reader.datareader_guid()));
 
     reader.wait_discovery();
     writer_auto.wait_discovery();
@@ -487,5 +629,58 @@ TEST(DDSDataSharing, DataSharingPoolError)
 
     writer_auto.send(data);
     ASSERT_TRUE(data.empty());
+    reader.block_for_all();
+
+    // Destroy reader and writer and see if there are dangling files
+    reader.destroy();
+    writer_datasharing.destroy();
+    writer_auto.destroy();
+
+    // Check that the shared files are created on the correct directory
+    ASSERT_FALSE(check_shared_file(".", reader.datareader_guid()));
+    ASSERT_FALSE(check_shared_file(".", writer_datasharing.datawriter_guid()));
+    ASSERT_FALSE(check_shared_file(".", writer_auto.datawriter_guid()));
+}
+
+
+TEST(DDSDataSharing, DataSharingDefaultDirectory)
+{
+    // Since the default directory heavily depends on the system,
+    // we are not checking the creation of the files in this case,
+    // only that it is working.
+    PubSubReader<FixedSizedType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<FixedSizedType> writer(TEST_TOPIC_NAME);
+
+    // Disable transports to ensure we are using datasharing
+    auto testTransport = std::make_shared<test_UDPv4TransportDescriptor>();
+    testTransport->dropDataMessagesPercentage = 100;
+
+    reader.history_depth(100)
+            .add_user_transport_to_pparams(testTransport)
+            .datasharing_auto()
+            .reliability(BEST_EFFORT_RELIABILITY_QOS).init();
+
+    ASSERT_TRUE(reader.isInitialized());
+
+    writer.history_depth(100)
+            .add_user_transport_to_pparams(testTransport)
+            .datasharing_auto()
+            .reliability(BEST_EFFORT_RELIABILITY_QOS).init();
+
+    ASSERT_TRUE(writer.isInitialized());
+
+    // Because its volatile the durability
+    // Wait for discovery.
+    writer.wait_discovery();
+    reader.wait_discovery();
+
+    auto data = default_fixed_sized_data_generator();
+    reader.startReception(data);
+
+    // Send data
+    writer.send(data);
+    // In this test all data should be sent.
+    ASSERT_TRUE(data.empty());
+    // Block reader until reception finished or timeout.
     reader.block_for_all();
 }

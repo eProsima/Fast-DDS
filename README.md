@@ -171,42 +171,113 @@ See the [Quality Declaration](https://github.com/eProsima/Fast-DDS/blob/master/Q
 
 ## Quick Demo
 
-For those who want to try a quick demonstration of *Fast DDS* libraries on Ubuntu, here is a way to launch an example
-application.
+eProsima provides the eProsima Fast DDS Suite Docker image for those who want a quick demonstration of Fast-DDS running on an Ubuntu platform. It can be downloaded from [eProsima's downloads page](https://eprosima.com/index.php/downloads-all).
 
-First, download and install **docker** application.
-Open a terminal and type the following command:
+This Docker image was built for Ubuntu 20.04 (Focal Fossa).
+
+To run this container you need **Docker installed**. From a terminal run the following command
 
 	$ sudo apt-get install docker.io
 
-Then, download the docker image files from the
-[eProsima downloads website](https://eprosima.com/index.php/downloads-all).
+Load the docker image:
 
-Load the docker images:
+	$ docker load -i ubuntu-fastdds-suite:<FastDDS-Version>.tar
+	$ docker tag ubuntu-fastdds-suite:<FastDDS-Version> ubuntu-fastdds-suite:latest
 
-	$ docker load -i ubuntu-fast-dds:<FastDDS-Version>.tar
-	$ docker tag ubuntu-fast-rtps:<FastDDS-Version> ubuntu-fast-rtps:latest
-	$ docker load -i ubuntu-fast-dds-helloworld:<FastDDS-Version>.tar
-	$ docker load -i ubuntu-fast-dds-shapesdemo:<ShapesDemo-Version>.tar
-
-Run the Docker container with the *eProsima Shapes Demo* application. Please refer to
-[Shapes Demo documentation](https://eprosima-shapes-demo.readthedocs.io)
-for further details on how to use this application.
+Run the eProsima Fast DDS Suite Docker container:
 
     $ xhost local:root
     $ docker run -it --privileged -e DISPLAY=$DISPLAY -v /tmp/.X11-unix:/tmp/.X11-unix \
-        ubuntu-fast-dds-shapesdemo:<ShapesDemo-Version>
+    ubuntu-fastdds-suite:<FastDDS-Version>
 
-It is also possible to run the *Fast DDS* HelloWorld example by executing the following command:
+This Docker Image comes bundled with the following:
 
-    $ docker run -it ubuntu-fast-dds-helloworld:<FastDDS-Version>
+### Shapes Demo
 
-Run as many images as wanted and check the communication between them.
+eProsima Shapes Demo is an application in which Publishers and Subscribers are shapes of different
+colors and sizes moving on a board. Each shape refers to its own topic: Square, Triangle or Circle.
+A single instance of the eProsima Shapes Demo can publish on or subscribe to several topics at a
+time.
 
-For instance, to run `Benchmark` example, run the following commands in the separate terminal sessions:
+You can read more about this application on the
+[Shapes Demo documentation page](https://eprosima-shapes-demo.readthedocs.io/).
 
-	$ docker run -i ubuntu-fast-rtps /usr/local/examples/C++/Benchmark/bin/Benchmark subscriber udp
-	$ docker run -i ubuntu-fast-rtps /usr/local/examples/C++/Benchmark/bin/Benchmark publisher udp
+To run this application once inside the Docker container run:
+
+    $ ShapesDemo
+
+eProsima Shapes Demo usage information can be found on the
+[Shapes Demo First Steps page](https://eprosima-shapes-demo.readthedocs.io/en/latest/first_steps/first_steps.html).
+
+### Fast DDS Monitor
+
+eProsima Fast DDS Monitor is a graphical desktop application aimed at monitoring DDS environments
+deployed using the *eProsima Fast DDS* library. Thus, the user can monitor in real time the status
+of publication/subscription communications between DDS entities. They can also choose from a wide
+variety of communication parameters to be measured (latency, throughput,packet loss, etc.), as well
+as record and compute in real time statistical measurements on these parameters (mean, variance,
+standard deviation, etc.).
+
+You can read more about this application on the
+[Fast DDS Monitor documentation page](https://fast-dds-monitor.readthedocs.io/).
+
+To run this application once inside the Docker container run:
+
+    $ fastdds_monitor
+
+eProsima Fast DDS Monitor usage information can be found on the
+[Fast DDS Monitor User Manual](
+https://fast-dds-monitor.readthedocs.io/en/latest/rst/user_manual/initialize_monitoring.html).
+
+
+### Fast DDS libraries and Examples
+
+Included in this Docker container is a set of binary examples that showcase several functionalities of the
+Fast DDS libraries. These examples' path can be accessed from a terminal by typing
+
+    $ goToExamples
+
+From this folder you can access all examples, both for DDS and RTPS. We detail the steps to launch two such
+examples below.
+
+To launch the Hello World example (a minimal example that will perform a Publisher/Subscriber match and start
+sending samples) you could run:
+
+    $ goToExamples
+    $ cd HelloWorldExample/bin
+    $ tmux new-session "./HelloWorldExample publisher 0 1000" \; \
+    split-window "./HelloWorldExample subscriber" \; \
+    select-layout even-vertical
+
+This example is not constrained to the current instance. It's possible to run several instances of this
+container to check the communication between them by running the following from each container.
+
+    $ goToExamples
+    $ cd HelloWorldExample/bin
+    $ ./HelloWorldExample publisher
+
+or
+
+    $ goToExamples
+    $ cd HelloWorldExample/bin
+    $ ./HelloWorldExample subscriber
+
+Another example you could launch is the Benchmark example. This example creates either a Publisher or a Subscriber and
+on a successful match starts sending samples. After a few seconds the process that launched the Publisher will show
+a report with the number of samples transmitted.
+
+On the subscriber side, run:
+
+    $ goToExamples
+    $ cd Benchmark/bin
+    $ ./Benchmark subscriber udp
+
+On the publisher side, run:
+
+    $ goToExamples
+    $ cd Benchmark/bin
+    $ ./Benchmark publisher udp
+
 
 ## Getting Help
 

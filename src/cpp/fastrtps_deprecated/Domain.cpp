@@ -18,28 +18,27 @@
  */
 
 #include <fastrtps/Domain.h>
+
+#include <chrono>
+#include <thread>
+
+#include <fastdds/dds/log/Log.hpp>
 #include <fastdds/rtps/RTPSDomain.h>
 #include <fastdds/rtps/participant/RTPSParticipant.h>
 
 #include <fastrtps/participant/Participant.h>
-#include <fastrtps_deprecated/participant/ParticipantImpl.h>
-
 #include <fastrtps/publisher/Publisher.h>
 #include <fastrtps/subscriber/Subscriber.h>
-
-#include <fastdds/dds/log/Log.hpp>
-
-#include <fastrtps/xmlparser/XMLProfileManager.h>
-
+#include <fastrtps/types/DynamicDataFactory.h>
 #include <fastrtps/types/DynamicPubSubType.h>
 #include <fastrtps/types/DynamicType.h>
-#include <fastrtps/types/DynamicTypeMember.h>
 #include <fastrtps/types/DynamicTypeBuilderFactory.h>
-#include <fastrtps/types/DynamicDataFactory.h>
+#include <fastrtps/types/DynamicTypeMember.h>
 #include <fastrtps/types/TypeObjectFactory.h>
+#include <fastrtps/xmlparser/XMLProfileManager.h>
 
-#include <chrono>
-#include <thread>
+#include <fastrtps_deprecated/participant/ParticipantImpl.h>
+#include <utils/SystemInfo.hpp>
 
 using namespace eprosima::fastrtps::rtps;
 using namespace eprosima::fastrtps::xmlparser;
@@ -149,6 +148,7 @@ Participant* Domain::createParticipant(
 {
     if (false == default_xml_profiles_loaded)
     {
+        SystemInfo::set_environment_file();
         XMLProfileManager::loadDefaultXMLFile();
         default_xml_profiles_loaded = true;
     }
@@ -167,6 +167,12 @@ Participant* Domain::createParticipant(
         const eprosima::fastrtps::ParticipantAttributes& att,
         ParticipantListener* listen)
 {
+    // If the user is not using XML and the environment variable is not set, this is going to be called always
+    if (!default_xml_profiles_loaded && SystemInfo::get_environment_file().empty())
+    {
+        SystemInfo::set_environment_file();
+    }
+
     Participant* pubsubpar = new Participant();
     ParticipantImpl* pspartimpl = new ParticipantImpl(att, pubsubpar, listen);
 

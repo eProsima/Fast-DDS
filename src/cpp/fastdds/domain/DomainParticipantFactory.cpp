@@ -30,7 +30,7 @@
 #include <fastdds/domain/DomainParticipantImpl.hpp>
 #include <rtps/history/TopicPayloadPoolRegistry.hpp>
 #include <statistics/fastdds/domain/DomainParticipantImpl.hpp>
-
+#include <utils/SystemInfo.hpp>
 
 
 
@@ -326,6 +326,7 @@ ReturnCode_t DomainParticipantFactory::load_profiles()
 {
     if (false == default_xml_profiles_loaded)
     {
+        SystemInfo::set_environment_file();
         XMLProfileManager::loadDefaultXMLFile();
         // Only load profile once
         default_xml_profiles_loaded = true;

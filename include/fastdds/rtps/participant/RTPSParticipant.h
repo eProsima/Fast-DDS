@@ -149,6 +149,14 @@ public:
             const ReaderQos& rqos);
 
     /**
+     * Update participant attributes.
+     * @param patt New participant attributes.
+     * @return True on success, false otherwise.
+     */
+    void update_attributes(
+            const RTPSParticipantAttributes& patt);
+
+    /**
      * Update writer QOS
      * @param Writer to update
      * @param topicAtt Topic Attributes where you want to register it.
@@ -288,6 +296,7 @@ private:
 
     //!Pointer to the implementation.
     RTPSParticipantImpl* mp_impl;
+
 };
 
 } // namespace rtps

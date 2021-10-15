@@ -12,6 +12,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#ifndef _WIN32
+#include <stdlib.h>
+#endif // _WIN32
+
 #include "BlackboxTests.hpp"
 
 #include "PubSubWriterReader.hpp"
@@ -24,6 +28,8 @@
 #include <rtps/transport/test_UDPv4Transport.h>
 
 #include <fastdds/rtps/attributes/ServerAttributes.h>
+
+#include <utils/SystemInfo.hpp>
 
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
@@ -113,7 +119,6 @@ TEST_P(Discovery, ParticipantRemoval)
 
 TEST(Discovery, StaticDiscovery)
 {
-    //Log::SetVerbosity(eprosima::fastdds::dds::Log::Info);
     char* value = nullptr;
     std::string TOPIC_RANDOM_NUMBER;
     std::string W_UNICAST_PORT_RANDOM_NUMBER_STR;
@@ -632,7 +637,8 @@ TEST(Discovery, LocalInitialPeers)
     reader.block_for_all();
 }
 
-// Test created to check bug #2010 (Github #90)
+// Test created to check bug #2010 (Github #90).
+// It also checks https://github.com/eProsima/Fast-DDS/issues/2107
 TEST_P(Discovery, PubSubAsReliableHelloworldPartitions)
 {
     PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
@@ -665,11 +671,26 @@ TEST_P(Discovery, PubSubAsReliableHelloworldPartitions)
     // Block reader until reception finished or timeout.
     reader.block_for_all();
 
+    // Change reader to different partition to check un-matching
     ASSERT_TRUE(reader.update_partition("OtherPartition"));
 
     reader.wait_writer_undiscovery();
     writer.wait_reader_undiscovery();
 
+    // Reset partition and wait for discovery to check that emptying the list triggers un-matching.
+    // This is to check Github #2107
+    ASSERT_TRUE(reader.update_partition("PartitionTests"));
+
+    writer.wait_discovery();
+    reader.wait_discovery();
+
+    ASSERT_TRUE(reader.clear_partitions());
+
+    reader.wait_writer_undiscovery();
+    writer.wait_reader_undiscovery();
+
+    // Set reader and writer in compatible partitions
+    ASSERT_TRUE(reader.update_partition("OtherPartition"));
     ASSERT_TRUE(writer.update_partition("OtherPart*"));
 
     writer.wait_discovery();
@@ -1182,7 +1203,8 @@ TEST(Discovery, ServerClientEnvironmentSetUp)
     text = "";
     output.clear();
 
-    ASSERT_FALSE(load_environment_server_info(text, output));
+    ASSERT_TRUE(load_environment_server_info(text, output));
+    ASSERT_TRUE(output.empty());
 
     // 5. check at least one server be present scenario is hadled
     text = ";;;;";
@@ -1250,7 +1272,7 @@ TEST(Discovery, ServerClientEnvironmentSetUp)
     ASSERT_TRUE(load_environment_server_info(text, output));
     ASSERT_EQ(output, standard);
 
-    // 7. check ignore some servers scenario
+    // 8. Check that env var cannot specify more than 256 servers
     text = ";;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;"
             ";;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;"
             ";;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;192.168.36.34:14520";
@@ -1258,10 +1280,49 @@ TEST(Discovery, ServerClientEnvironmentSetUp)
 
     ASSERT_FALSE(load_environment_server_info(text, output));
 
-    // 8. check non-consistent addresses scenario
+    // 9. Check addresses as dns name
+    text = "localhost:12345";
+
+    output.clear();
+    standard.clear();
+
+    att.clear();
+    IPLocator::setIPv4(loc, string("127.0.0.1"));
+    IPLocator::setPhysicalPort(loc, 12345);
+    att.metatrafficUnicastLocatorList.push_back(loc);
+    get_server_client_default_guidPrefix(0, att.guidPrefix);
+    standard.push_back(att);
+
+    ASSERT_TRUE(load_environment_server_info(text, output));
+    ASSERT_EQ(output, standard);
+
+    // 10. Check mixed scenario with addresses and dns
     text = "192.168.36.34:14520;localhost:12345;172.30.80.1:31090;";
 
     output.clear();
-    ASSERT_FALSE(load_environment_server_info(text, output));
+    standard.clear();
 
+    att.clear();
+    IPLocator::setIPv4(loc, string("192.168.36.34"));
+    IPLocator::setPhysicalPort(loc, 14520);
+    att.metatrafficUnicastLocatorList.push_back(loc);
+    get_server_client_default_guidPrefix(0, att.guidPrefix);
+    standard.push_back(att);
+
+    att.clear();
+    IPLocator::setIPv4(loc, string("127.0.0.1"));
+    IPLocator::setPhysicalPort(loc, 12345);
+    att.metatrafficUnicastLocatorList.push_back(loc);
+    get_server_client_default_guidPrefix(1, att.guidPrefix);
+    standard.push_back(att);
+
+    att.clear();
+    IPLocator::setIPv4(loc, string("172.30.80.1"));
+    IPLocator::setPhysicalPort(loc, 31090);
+    att.metatrafficUnicastLocatorList.push_back(loc);
+    get_server_client_default_guidPrefix(2, att.guidPrefix);
+    standard.push_back(att);
+
+    ASSERT_TRUE(load_environment_server_info(text, output));
+    ASSERT_EQ(output, standard);
 }

@@ -359,11 +359,7 @@ ReturnCode_t DataReader::get_sample_rejected_status(
 ReturnCode_t DataReader::get_subscription_matched_status(
         SubscriptionMatchedStatus& status) const
 {
-    static_cast<void> (status);
-    return ReturnCode_t::RETCODE_UNSUPPORTED;
-    /*
-       return impl_->get_subscription_matched_status(status);
-     */
+    return impl_->get_subscription_matched_status(status);
 }
 
 ReturnCode_t DataReader::get_matched_publication_data(
@@ -434,10 +430,7 @@ ReturnCode_t DataReader::delete_readcondition(
 
 ReturnCode_t DataReader::delete_contained_entities()
 {
-    return ReturnCode_t::RETCODE_UNSUPPORTED;
-    /*
-       return impl_->delete_contained_entities();
-     */
+    return impl_->delete_contained_entities();
 }
 
 const Subscriber* DataReader::get_subscriber() const

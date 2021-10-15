@@ -1,5 +1,12 @@
-Forthcoming
------------
+Version 2.4.0
+-------------
+
+* Implementation of WaitSet, GuardCondition and StatusCondition.
+* Flow controllers (ABI breaks on RTPS layer).
+* Resolve DNS names on locators.
+* Allow addition of discovery servers in runtime (ABI breaks on RTPS layer).
+* Allow setting custom folder for data sharing files.
+* Allow setting persistence guid with static discovery.
 
 Version 2.3.0
 -------------

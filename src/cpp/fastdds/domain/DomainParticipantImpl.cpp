@@ -29,6 +29,7 @@
 #include <fastdds/dds/subscriber/DataReader.hpp>
 #include <fastdds/dds/publisher/DataWriter.hpp>
 
+#include <fastdds/rtps/attributes/RTPSParticipantAttributes.h>
 #include <fastdds/rtps/RTPSDomain.h>
 #include <fastdds/rtps/builtin/liveliness/WLP.h>
 #include <fastdds/rtps/participant/ParticipantDiscoveryInfo.h>
@@ -343,7 +344,15 @@ ReturnCode_t DomainParticipantImpl::set_qos(
     {
         return ReturnCode_t::RETCODE_IMMUTABLE_POLICY;
     }
-    set_qos(qos_, qos_to_set, !enabled);
+
+    if (set_qos(qos_, qos_to_set, !enabled) && enabled)
+    {
+        // Notify the participant that there is a QoS update
+        fastrtps::rtps::RTPSParticipantAttributes patt;
+        set_attributes_from_qos(patt, qos_);
+        rtps_participant_->update_attributes(patt);
+    }
+
     return ReturnCode_t::RETCODE_OK;
 }
 
@@ -578,13 +587,86 @@ DomainId_t DomainParticipantImpl::get_domain_id() const
     return domain_id_;
 }
 
-/* TODO
-   bool DomainParticipantImpl::delete_contained_entities()
-   {
-    logError(PARTICIPANT, "Not implemented.");
-    return false;
-   }
- */
+ReturnCode_t DomainParticipantImpl::delete_contained_entities()
+{
+    bool can_be_deleted = true;
+
+    std::lock_guard<std::mutex> lock_subscribers(mtx_subs_);
+
+    for (auto subscriber : subscribers_)
+    {
+        can_be_deleted = subscriber.second->can_be_deleted();
+        if (!can_be_deleted)
+        {
+            return ReturnCode_t::RETCODE_PRECONDITION_NOT_MET;
+        }
+    }
+
+    std::lock_guard<std::mutex> lock_publishers(mtx_pubs_);
+
+
+
+    for (auto publisher : publishers_)
+    {
+        can_be_deleted = publisher.second->can_be_deleted();
+        if (!can_be_deleted)
+        {
+            return ReturnCode_t::RETCODE_PRECONDITION_NOT_MET;
+        }
+    }
+
+    ReturnCode_t ret_code = ReturnCode_t::RETCODE_OK;
+
+    for (auto& subscriber : subscribers_)
+    {
+        ret_code = subscriber.first->delete_contained_entities();
+        if (!ret_code)
+        {
+            return ReturnCode_t::RETCODE_ERROR;
+        }
+    }
+
+    auto it_subs = subscribers_.begin();
+    while (it_subs != subscribers_.end())
+    {
+        it_subs->second->set_listener(nullptr);
+        subscribers_by_handle_.erase(it_subs->second->get_subscriber()->get_instance_handle());
+        delete it_subs->second;
+        it_subs = subscribers_.erase(it_subs);
+    }
+
+    for (auto& publisher : publishers_)
+    {
+        ret_code = publisher.first->delete_contained_entities();
+        if (!ret_code)
+        {
+            return ReturnCode_t::RETCODE_ERROR;
+        }
+    }
+
+    auto it_pubs = publishers_.begin();
+    while (it_pubs != publishers_.end())
+    {
+        it_pubs->second->set_listener(nullptr);
+        publishers_by_handle_.erase(it_pubs->second->get_publisher()->get_instance_handle());
+        delete it_pubs->second;
+        it_pubs = publishers_.erase(it_pubs);
+    }
+
+    std::lock_guard<std::mutex> lock_topics(mtx_topics_);
+
+    auto it_topics = topics_.begin();
+
+    while (it_topics != topics_.end())
+    {
+        it_topics->second->set_listener(nullptr);
+        topics_by_handle_.erase(it_topics->second->get_topic()->get_instance_handle());
+        delete it_topics->second;
+        it_topics = topics_.erase(it_topics);
+    }
+
+    return ReturnCode_t::RETCODE_OK;
+}
 
 ReturnCode_t DomainParticipantImpl::assert_liveliness()
 {
@@ -1733,11 +1815,13 @@ bool DomainParticipantImpl::has_active_entities()
     return false;
 }
 
-void DomainParticipantImpl::set_qos(
+bool DomainParticipantImpl::set_qos(
         DomainParticipantQos& to,
         const DomainParticipantQos& from,
         bool first_time)
 {
+    bool qos_should_be_updated = false;
+
     if (!(to.entity_factory() == from.entity_factory()))
     {
         to.entity_factory() = from.entity_factory();
@@ -1746,6 +1830,10 @@ void DomainParticipantImpl::set_qos(
     {
         to.user_data() = from.user_data();
         to.user_data().hasChanged = true;
+        if (!first_time)
+        {
+            qos_should_be_updated = true;
+        }
     }
     if (first_time && !(to.allocation() == from.allocation()))
     {
@@ -1755,9 +1843,14 @@ void DomainParticipantImpl::set_qos(
     {
         to.properties() = from.properties();
     }
-    if (first_time && !(to.wire_protocol() == from.wire_protocol()))
+    if (!(to.wire_protocol() == from.wire_protocol()))
     {
         to.wire_protocol() = from.wire_protocol();
+        to.wire_protocol().hasChanged = true;
+        if (!first_time)
+        {
+            qos_should_be_updated = true;
+        }
     }
     if (first_time && !(to.transport() == from.transport()))
     {
@@ -1767,6 +1860,8 @@ void DomainParticipantImpl::set_qos(
     {
         to.name() = from.name();
     }
+
+    return qos_should_be_updated;
 }
 
 fastrtps::types::ReturnCode_t DomainParticipantImpl::check_qos(
@@ -1797,8 +1892,92 @@ bool DomainParticipantImpl::can_qos_be_updated(
     }
     if (!(to.wire_protocol() == from.wire_protocol()))
     {
-        updatable = false;
-        logWarning(RTPS_QOS_CHECK, "WireProtocolConfigQos cannot be changed after the participant is enabled");
+        // Check that the only modification was in wire_protocol().discovery_config.m_DiscoveryServers
+        if ((to.wire_protocol().builtin.discovery_config.m_DiscoveryServers ==
+                from.wire_protocol().builtin.discovery_config.m_DiscoveryServers) ||
+                (!(to.wire_protocol().builtin.discovery_config.m_DiscoveryServers ==
+                from.wire_protocol().builtin.discovery_config.m_DiscoveryServers) &&
+                (!(to.wire_protocol().prefix == from.wire_protocol().prefix) ||
+                !(to.wire_protocol().participant_id == from.wire_protocol().participant_id) ||
+                !(to.wire_protocol().port == from.wire_protocol().port) ||
+                !(to.wire_protocol().throughput_controller == from.wire_protocol().throughput_controller) ||
+                !(to.wire_protocol().default_unicast_locator_list ==
+                from.wire_protocol().default_unicast_locator_list) ||
+                !(to.wire_protocol().default_multicast_locator_list ==
+                from.wire_protocol().default_multicast_locator_list) ||
+                !(to.wire_protocol().builtin.use_WriterLivelinessProtocol ==
+                from.wire_protocol().builtin.use_WriterLivelinessProtocol) ||
+                !(to.wire_protocol().builtin.typelookup_config.use_client ==
+                from.wire_protocol().builtin.typelookup_config.use_client) ||
+                !(to.wire_protocol().builtin.typelookup_config.use_server ==
+                from.wire_protocol().builtin.typelookup_config.use_server) ||
+                !(to.wire_protocol().builtin.metatrafficUnicastLocatorList ==
+                from.wire_protocol().builtin.metatrafficUnicastLocatorList) ||
+                !(to.wire_protocol().builtin.metatrafficMulticastLocatorList ==
+                from.wire_protocol().builtin.metatrafficMulticastLocatorList) ||
+                !(to.wire_protocol().builtin.initialPeersList == from.wire_protocol().builtin.initialPeersList) ||
+                !(to.wire_protocol().builtin.readerHistoryMemoryPolicy ==
+                from.wire_protocol().builtin.readerHistoryMemoryPolicy) ||
+                !(to.wire_protocol().builtin.readerPayloadSize == from.wire_protocol().builtin.readerPayloadSize) ||
+                !(to.wire_protocol().builtin.writerHistoryMemoryPolicy ==
+                from.wire_protocol().builtin.writerHistoryMemoryPolicy) ||
+                !(to.wire_protocol().builtin.writerPayloadSize == from.wire_protocol().builtin.writerPayloadSize) ||
+                !(to.wire_protocol().builtin.mutation_tries == from.wire_protocol().builtin.mutation_tries) ||
+                !(to.wire_protocol().builtin.avoid_builtin_multicast ==
+                from.wire_protocol().builtin.avoid_builtin_multicast) ||
+                !(to.wire_protocol().builtin.discovery_config.discoveryProtocol ==
+                from.wire_protocol().builtin.discovery_config.discoveryProtocol) ||
+                !(to.wire_protocol().builtin.discovery_config.use_SIMPLE_EndpointDiscoveryProtocol ==
+                from.wire_protocol().builtin.discovery_config.use_SIMPLE_EndpointDiscoveryProtocol) ||
+                !(to.wire_protocol().builtin.discovery_config.use_STATIC_EndpointDiscoveryProtocol ==
+                from.wire_protocol().builtin.discovery_config.use_STATIC_EndpointDiscoveryProtocol) ||
+                !(to.wire_protocol().builtin.discovery_config.discoveryServer_client_syncperiod ==
+                from.wire_protocol().builtin.discovery_config.discoveryServer_client_syncperiod) ||
+                !(to.wire_protocol().builtin.discovery_config.m_PDPfactory ==
+                from.wire_protocol().builtin.discovery_config.m_PDPfactory) ||
+                !(to.wire_protocol().builtin.discovery_config.leaseDuration ==
+                from.wire_protocol().builtin.discovery_config.leaseDuration) ||
+                !(to.wire_protocol().builtin.discovery_config.leaseDuration_announcementperiod ==
+                from.wire_protocol().builtin.discovery_config.leaseDuration_announcementperiod) ||
+                !(to.wire_protocol().builtin.discovery_config.initial_announcements ==
+                from.wire_protocol().builtin.discovery_config.initial_announcements) ||
+                !(to.wire_protocol().builtin.discovery_config.m_simpleEDP ==
+                from.wire_protocol().builtin.discovery_config.m_simpleEDP) ||
+                !(strcmp(to.wire_protocol().builtin.discovery_config.static_edp_xml_config(),
+                from.wire_protocol().builtin.discovery_config.static_edp_xml_config()) == 0) ||
+                !(to.wire_protocol().builtin.discovery_config.ignoreParticipantFlags ==
+                from.wire_protocol().builtin.discovery_config.ignoreParticipantFlags))))
+        {
+            updatable = false;
+            logWarning(RTPS_QOS_CHECK, "WireProtocolConfigQos cannot be changed after the participant is enabled, "
+                    << "with the exception of builtin.discovery_config.m_DiscoveryServers");
+        }
+        else
+        {
+            // This means that the only change is in wire_protocol().builtin.discovery_config.m_DiscoveryServers
+            // In that case, we need to ensure that the current list (to) is strictly contained in the incoming
+            // list (from). For that, we check that every server in the current list (to) is also in the incoming one
+            // (from)
+            for (auto existing_server : to.wire_protocol().builtin.discovery_config.m_DiscoveryServers)
+            {
+                bool contained = false;
+                for (auto incoming_server : from.wire_protocol().builtin.discovery_config.m_DiscoveryServers)
+                {
+                    if (existing_server.guidPrefix == incoming_server.guidPrefix)
+                    {
+                        contained = true;
+                        break;
+                    }
+                }
+                if (!contained)
+                {
+                    updatable = false;
+                    logWarning(RTPS_QOS_CHECK,
+                            "Discovery Servers cannot be removed from the list; they can only be added");
+                    break;
+                }
+            }
+        }
     }
     if (!(to.transport() == from.transport()))
     {

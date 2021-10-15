@@ -29,11 +29,15 @@
 #include <fastdds/dds/subscriber/Subscriber.hpp>
 #include <fastdds/dds/subscriber/SubscriberListener.hpp>
 
+#include <fastdds/dds/publisher/Publisher.hpp>
+#include <fastdds/dds/publisher/DataWriter.hpp>
+
 #include <fastrtps/attributes/PublisherAttributes.h>
 #include <fastrtps/attributes/SubscriberAttributes.h>
 #include <fastrtps/rtps/history/ReaderHistory.h>
 #include <fastrtps/xmlparser/XMLProfileManager.h>
 
+#include <fastcdr/Cdr.h>
 
 namespace eprosima {
 namespace fastdds {
@@ -76,6 +80,79 @@ public:
 private:
 
     std::string message_;
+};
+
+class BarType
+{
+public:
+
+    inline uint32_t index() const
+    {
+        return index_;
+    }
+
+    inline uint32_t& index()
+    {
+        return index_;
+    }
+
+    inline void index(
+            uint32_t value)
+    {
+        index_ = value;
+    }
+
+    inline const std::array<char, 256>& message() const
+    {
+        return message_;
+    }
+
+    inline std::array<char, 256>& message()
+    {
+        return message_;
+    }
+
+    inline void message(
+            const std::array<char, 256>& value)
+    {
+        message_ = value;
+    }
+
+    inline void serialize(
+            eprosima::fastcdr::Cdr& scdr) const
+    {
+        scdr << index_;
+        scdr << message_;
+    }
+
+    inline void deserialize(
+            eprosima::fastcdr::Cdr& dcdr)
+    {
+        dcdr >> index_;
+        dcdr >> message_;
+    }
+
+    inline bool isKeyDefined()
+    {
+        return true;
+    }
+
+    inline void serializeKey(
+            eprosima::fastcdr::Cdr& scdr) const
+    {
+        scdr << index_;
+    }
+
+    inline bool operator ==(
+            const BarType& other) const
+    {
+        return (index_ == other.index_) && (message_ == other.message_);
+    }
+
+private:
+
+    uint32_t index_ = 0;
+    std::array<char, 256> message_;
 };
 
 class TopicDataTypeMock : public TopicDataType
@@ -488,8 +565,7 @@ TEST(SubscriberTests, SetListener)
  * This test checks that the Subscriber methods defined in the standard not yet implemented in FastDDS return
  * ReturnCode_t::RETCODE_UNSUPPORTED. The following methods are checked:
  * 1. copy_from_topic_qos
- * 2. delete_contained_entities
- * 3. begin_access
+ * 2. begin_access
  * 3. end_access
  * 4. get_datareaders (all parameters)
  */
@@ -509,7 +585,6 @@ TEST(SubscriberTests, UnsupportedPublisherMethods)
     fastdds::dds::DataReaderQos reader_qos;
     fastdds::dds::TopicQos topic_qos;
     EXPECT_EQ(ReturnCode_t::RETCODE_UNSUPPORTED, subscriber->copy_from_topic_qos(reader_qos, topic_qos));
-    EXPECT_EQ(ReturnCode_t::RETCODE_UNSUPPORTED, subscriber->delete_contained_entities());
     EXPECT_EQ(ReturnCode_t::RETCODE_UNSUPPORTED, subscriber->begin_access());
     EXPECT_EQ(ReturnCode_t::RETCODE_UNSUPPORTED, subscriber->end_access());
     EXPECT_EQ(ReturnCode_t::RETCODE_UNSUPPORTED, subscriber->get_datareaders(
@@ -520,6 +595,154 @@ TEST(SubscriberTests, UnsupportedPublisherMethods)
 
     ASSERT_EQ(participant->delete_subscriber(subscriber), ReturnCode_t::RETCODE_OK);
     ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), ReturnCode_t::RETCODE_OK);
+}
+
+/**
+ * This test checks that changing the PartitionQosPolicy on a subscriber takes effect on changing the actual QoS.
+ * It was discovered in https://github.com/eProsima/Fast-DDS/issues/2107 that this was not correctly handled when
+ * setting an empty partitions list on a subscriber that already had some partitions. The test does the following:
+ *
+ *    1. Create a subscriber with default QoS
+ *    2. Add a partition
+ *    3. Add three more partitions
+ *    4. Remove 1 partition
+ *    5. Remove 2 more partition
+ *    6. Remove all partitions
+ */
+TEST(SubscriberTests, UpdatePartitions)
+{
+    DomainParticipant* participant =
+            DomainParticipantFactory::get_instance()->create_participant(0, PARTICIPANT_QOS_DEFAULT);
+    ASSERT_NE(participant, nullptr);
+    Subscriber* subscriber = participant->create_subscriber(SUBSCRIBER_QOS_DEFAULT);
+    ASSERT_NE(subscriber, nullptr);
+    ASSERT_EQ(subscriber->get_qos().partition().size(), 0u);
+
+    // Add 1 partition to subscriber
+    SubscriberQos sub_qos;
+    PartitionQosPolicy partitions;
+    partitions.push_back("partition_1");
+    sub_qos.partition() = partitions;
+    subscriber->set_qos(sub_qos);
+    ASSERT_EQ(subscriber->get_qos().partition().size(), 1u);
+    ASSERT_EQ(partitions, subscriber->get_qos().partition());
+
+    // Add 3 more partitions to subscriber
+    partitions.push_back("partition_2");
+    partitions.push_back("partition_3");
+    partitions.push_back("partition_4");
+    sub_qos.partition() = partitions;
+    subscriber->set_qos(sub_qos);
+    ASSERT_EQ(subscriber->get_qos().partition().size(), 4u);
+    ASSERT_EQ(partitions, subscriber->get_qos().partition());
+
+    // Remove 1 partition from subscriber
+    partitions.clear();
+    ASSERT_TRUE(static_cast<bool>(partitions.empty()));
+    partitions.push_back("partition_1");
+    partitions.push_back("partition_2");
+    partitions.push_back("partition_3");
+    sub_qos.partition() = partitions;
+    subscriber->set_qos(sub_qos);
+    ASSERT_EQ(subscriber->get_qos().partition().size(), 3u);
+    ASSERT_EQ(partitions, subscriber->get_qos().partition());
+
+    // Remove 2 more partitions from the subscriber
+    partitions.clear();
+    ASSERT_TRUE(partitions.empty());
+    partitions.push_back("partition_1");
+    sub_qos.partition() = partitions;
+    subscriber->set_qos(sub_qos);
+    ASSERT_EQ(subscriber->get_qos().partition().size(), 1u);
+    ASSERT_EQ(partitions, subscriber->get_qos().partition());
+
+    // Remove all partitions from the subscriber
+    partitions.clear();
+    ASSERT_TRUE(partitions.empty());
+    sub_qos.partition() = partitions;
+    subscriber->set_qos(sub_qos);
+    ASSERT_EQ(subscriber->get_qos().partition().size(), 0u);
+    ASSERT_EQ(partitions, subscriber->get_qos().partition());
+}
+
+// Delete contained entities test
+TEST(SubscriberTests, DeleteContainedEntities)
+{
+    DomainParticipant* participant =
+            DomainParticipantFactory::get_instance()->create_participant(0, PARTICIPANT_QOS_DEFAULT);
+    ASSERT_NE(participant, nullptr);
+
+
+
+    TypeSupport type(new TopicDataTypeMock());
+    //TypeSupport type;
+    type.register_type(participant);
+
+    Subscriber* subscriber = participant->create_subscriber(SUBSCRIBER_QOS_DEFAULT);
+    ASSERT_NE(subscriber, nullptr);
+
+    Publisher* publisher = participant->create_publisher(PUBLISHER_QOS_DEFAULT);
+    ASSERT_NE(subscriber, nullptr);
+
+
+    Topic* topic_foo = participant->create_topic("footopic", type.get_type_name(), TOPIC_QOS_DEFAULT);
+    ASSERT_NE(topic_foo, nullptr);
+    Topic* topic_bar = participant->create_topic("bartopic", type.get_type_name(), TOPIC_QOS_DEFAULT);
+    ASSERT_NE(topic_bar, nullptr);
+
+    DataReader* data_reader_foo = subscriber->create_datareader(topic_foo, DATAREADER_QOS_DEFAULT);
+    ASSERT_NE(data_reader_foo, nullptr);
+    DataReader* data_reader_bar = subscriber->create_datareader(topic_bar, DATAREADER_QOS_DEFAULT);
+    ASSERT_NE(data_reader_bar, nullptr);
+
+    DataWriter* data_writer_foo = publisher->create_datawriter(topic_foo, DATAWRITER_QOS_DEFAULT);
+    ASSERT_NE(data_reader_bar, nullptr);
+
+    InstanceHandle_t handle_nil = HANDLE_NIL;
+    BarType data;
+    data.index(1);
+    type.get_key(&data, &handle_nil);
+    EXPECT_EQ(ReturnCode_t::RETCODE_OK, data_writer_foo->write(&data, HANDLE_NIL));
+
+    // Wait for data to arrive and check OK should be returned
+    Duration_t wait_time(1, 0);
+    EXPECT_TRUE(data_reader_foo->wait_for_unread_message(wait_time));
+
+    LoanableSequence<BarType> mock_coll;
+    SampleInfoSeq mock_seq;
+
+    ASSERT_EQ(data_reader_foo->take(mock_coll, mock_seq), ReturnCode_t::RETCODE_OK);
+
+    ASSERT_EQ(subscriber->delete_contained_entities(), ReturnCode_t::RETCODE_PRECONDITION_NOT_MET);
+
+    ASSERT_EQ(data_reader_foo->return_loan(mock_coll, mock_seq), ReturnCode_t::RETCODE_OK);
+
+    const std::vector<SampleStateKind> mock_sample_state_kind;
+    const std::vector<ViewStateKind> mock_view_state_kind;
+    const std::vector<InstanceStateKind> mock_instance_states;
+    const std::string mock_query_expression;
+    const std::vector<std::string> mock_query_parameters;
+
+    QueryCondition* query_condition = data_reader_foo->create_querycondition(
+        mock_sample_state_kind,
+        mock_view_state_kind,
+        mock_instance_states,
+        mock_query_expression,
+        mock_query_parameters
+        );
+
+    // To be updated when Query Conditions are available
+    ASSERT_EQ(query_condition, nullptr);
+
+    std::vector<DataReader*> data_reader_list;
+    subscriber->get_datareaders(data_reader_list);
+    ASSERT_TRUE(data_reader_list.size() == 2);
+
+    data_reader_list.clear();
+    ASSERT_EQ(subscriber->delete_contained_entities(), ReturnCode_t::RETCODE_OK);
+
+    subscriber->get_datareaders(data_reader_list);
+    ASSERT_TRUE(data_reader_list.size() == 0);
 }
 
 } // namespace dds

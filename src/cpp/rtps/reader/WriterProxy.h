@@ -241,12 +241,12 @@ public:
     /**
      * Sends a preemptive acknack to the writer represented by this proxy.
      */
-    void perform_initial_ack_nack() const;
+    void perform_initial_ack_nack();
 
     /**
      * Sends the necessary acknac and nackfrag messages to answer the last received heartbeat message.
      */
-    void perform_heartbeat_response() const;
+    void perform_heartbeat_response();
 
     /**
      * Process an incoming heartbeat from the writer represented by this proxy.
@@ -337,6 +337,22 @@ public:
         return is_datasharing_writer_;
     }
 
+    /*
+     * Do nothing.
+     * This object always is protected by reader's mutex.
+     */
+    void lock() override
+    {
+    }
+
+    /*
+     * Do nothing.
+     * This object always is protected by reader's mutex.
+     */
+    void unlock() override
+    {
+    }
+
 private:
 
     /**
@@ -399,11 +415,11 @@ private:
 
     using ChangeIterator = decltype(changes_received_)::iterator;
 
-#if !defined(NDEBUG) && defined(FASTRTPS_SOURCE) && defined(__linux__)
+#if !defined(NDEBUG) && defined(FASTRTPS_SOURCE) && defined(__unix__)
     int get_mutex_owner() const;
 
     int get_thread_id() const;
-#endif // if !defined(NDEBUG) && defined(FASTRTPS_SOURCE) && defined(__linux__)
+#endif // if !defined(NDEBUG) && defined(FASTRTPS_SOURCE) && defined(__unix__)
 };
 
 } /* namespace rtps */

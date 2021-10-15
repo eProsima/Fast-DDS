@@ -101,8 +101,8 @@ bool StatelessReader::matched_writer_add(
         }
     }
 
-    bool is_datasharing = is_datasharing_compatible_with(wdata);
     bool is_same_process = RTPSDomainImpl::should_intraprocess_between(m_guid, wdata.guid());
+    bool is_datasharing = !is_same_process && is_datasharing_compatible_with(wdata);
 
     RemoteWriterInfo_t info;
     info.guid = wdata.guid();
@@ -372,7 +372,7 @@ void StatelessReader::end_sample_access_nts(
 
 void StatelessReader::change_read_by_user(
         CacheChange_t* change,
-        const WriterProxy* /*writer*/,
+        WriterProxy* /*writer*/,
         bool mark_as_read)
 {
     // Mark change as read

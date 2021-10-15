@@ -155,8 +155,8 @@ bool StatefulReader::matched_writer_add(
         return false;
     }
 
-    bool is_datasharing = is_datasharing_compatible_with(wdata);
     bool is_same_process = RTPSDomainImpl::should_intraprocess_between(m_guid, wdata.guid());
+    bool is_datasharing = !is_same_process && is_datasharing_compatible_with(wdata);
 
     for (WriterProxy* it : matched_writers_)
     {
@@ -233,7 +233,18 @@ bool StatefulReader::matched_writer_add(
         }
 
         // Intraprocess manages durability itself
-        if (!is_same_process && m_att.durabilityKind != VOLATILE)
+        if (VOLATILE == m_att.durabilityKind)
+        {
+            std::shared_ptr<ReaderPool> pool = datasharing_listener_->get_pool_for_writer(wp->guid());
+            SequenceNumber_t last_seq = pool->get_last_read_sequence_number();
+            if (SequenceNumber_t::unknown() != last_seq)
+            {
+                SequenceNumberSet_t sns(last_seq + 1);
+                send_acknack(wp, sns, wp, false);
+                wp->lost_changes_update(last_seq + 1);
+            }
+        }
+        else if (!is_same_process)
         {
             // simulate a notification to force reading of transient changes
             datasharing_listener_->notify(false);
@@ -1112,7 +1123,7 @@ void StatefulReader::end_sample_access_nts(
 
 void StatefulReader::change_read_by_user(
         CacheChange_t* change,
-        const WriterProxy* writer,
+        WriterProxy* writer,
         bool mark_as_read)
 {
     assert(writer != nullptr);
@@ -1166,7 +1177,7 @@ void StatefulReader::change_read_by_user(
 void StatefulReader::send_acknack(
         const WriterProxy* writer,
         const SequenceNumberSet_t& sns,
-        const RTPSMessageSenderInterface* sender,
+        RTPSMessageSenderInterface* sender,
         bool is_final)
 {
 
@@ -1193,7 +1204,7 @@ void StatefulReader::send_acknack(
 
 void StatefulReader::send_acknack(
         const WriterProxy* writer,
-        const RTPSMessageSenderInterface* sender,
+        RTPSMessageSenderInterface* sender,
         bool heartbeat_was_final)
 {
     // Protect reader

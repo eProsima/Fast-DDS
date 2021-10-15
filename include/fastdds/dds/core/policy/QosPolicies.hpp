@@ -105,7 +105,7 @@ class QosPolicy
 {
 public:
 
-    //! Boolean that indicates if the Qos has been changed
+    //! Boolean that indicates if the Qos has been changed with respect to the default Qos.
     bool hasChanged;
 
     /**
@@ -1459,7 +1459,7 @@ public:
     }
 
     /**
-     * @brief Setter for the maximum size
+     * @brief Setter for the maximum size reserved for partitions (in bytes)
      * @param size Size to be set
      */
     void set_max_size (
@@ -1470,7 +1470,7 @@ public:
     }
 
     /**
-     * @brief Getter for the maximum size
+     * @brief Getter for the maximum size (in bytes)
      * @return uint32_t with the maximum size
      */
     uint32_t max_size () const
@@ -1981,7 +1981,7 @@ public:
     PublishModeQosPolicyKind kind = SYNCHRONOUS_PUBLISH_MODE;
 
     //! Name of the flow controller used when publish mode kind is ASYNCHRONOUS_PUBLISH_MODE.
-    //! @since Functionality not implemented yet. Coming soon.
+    //! @since 2.4.0
     const char* flow_controller_name = fastdds::rtps::FASTDDS_FLOW_CONTROLLER_DEFAULT;
 
     inline void clear() override

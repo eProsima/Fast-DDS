@@ -127,13 +127,6 @@ protected:
     std::mutex samples_number_mutex_;
     unsigned int samples_number_;
     SequenceNumber_t last_sequence_number_;
-
-    iterator get_first_change_with_minimum_ts(
-            const Time_t& /* timestamp */)
-    {
-        return m_changes.end();
-    }
-
 };
 
 } // namespace rtps

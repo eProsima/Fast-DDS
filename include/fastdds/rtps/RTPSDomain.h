@@ -19,14 +19,13 @@
 #ifndef _FASTDDS_RTPS_DOMAIN_H_
 #define _FASTDDS_RTPS_DOMAIN_H_
 
-#include <fastdds/rtps/common/Types.h>
-#include <fastdds/rtps/history/IPayloadPool.h>
-
-#include <fastdds/rtps/attributes/RTPSParticipantAttributes.h>
-
 #include <atomic>
 #include <mutex>
 #include <set>
+
+#include <fastdds/rtps/attributes/RTPSParticipantAttributes.h>
+#include <fastdds/rtps/common/Types.h>
+#include <fastdds/rtps/history/IPayloadPool.h>
 
 namespace eprosima {
 namespace fastrtps {
@@ -47,7 +46,7 @@ class RTPSDomainImpl;
 
 /**
  * Class RTPSDomain,it manages the creation and destruction of RTPSParticipant RTPSWriter and RTPSReader. It stores
- * a list of all created RTPSParticipant. Is has only static methods.
+ * a list of all created RTPSParticipant. It has only static methods.
  * @ingroup RTPS_MODULE
  */
 class RTPSDomain

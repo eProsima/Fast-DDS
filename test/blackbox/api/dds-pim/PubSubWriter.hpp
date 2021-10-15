@@ -32,6 +32,9 @@
 #include <Windows.h>
 #endif // _MSC_VER
 
+#include <fastdds/dds/core/condition/StatusCondition.hpp>
+#include <fastdds/dds/core/condition/GuardCondition.hpp>
+#include <fastdds/dds/core/condition/WaitSet.hpp>
 #include <fastdds/dds/domain/DomainParticipantFactory.hpp>
 #include <fastdds/dds/domain/DomainParticipant.hpp>
 #include <fastdds/dds/domain/DomainParticipantListener.hpp>
@@ -303,7 +306,7 @@ public:
         datawriter_qos_.reliability().max_blocking_time.nanosec = 0;
     }
 
-    ~PubSubWriter()
+    virtual ~PubSubWriter()
     {
         destroy();
     }
@@ -363,7 +366,7 @@ public:
         return;
     }
 
-    void createPublisher()
+    virtual void createPublisher()
     {
         if (participant_ != nullptr)
         {
@@ -426,7 +429,7 @@ public:
         return participant_;
     }
 
-    void destroy()
+    virtual void destroy()
     {
         if (participant_)
         {
@@ -1285,6 +1288,14 @@ public:
         return *this;
     }
 
+    PubSubWriter& datasharing_auto(
+            const std::string directory,
+            std::vector<uint16_t> domain_id = std::vector<uint16_t>())
+    {
+        datawriter_qos_.data_sharing().automatic(directory, domain_id);
+        return *this;
+    }
+
     PubSubWriter& datasharing_on(
             const std::string directory,
             std::vector<uint16_t> domain_id = std::vector<uint16_t>())
@@ -1387,7 +1398,7 @@ public:
 
 #endif // if HAVE_SQLITE3
 
-private:
+protected:
 
     void participant_matched()
     {
@@ -1690,5 +1701,313 @@ private:
     unsigned int unauthorized_;
 #endif // if HAVE_SECURITY
 };
+
+
+template<class TypeSupport>
+class PubSubWriterWithWaitsets : public PubSubWriter<TypeSupport>
+{
+public:
+
+    typedef TypeSupport type_support;
+    typedef typename type_support::type type;
+
+protected:
+
+    class WaitsetThread
+    {
+    public:
+
+        WaitsetThread(
+                PubSubWriterWithWaitsets& writer)
+            : writer_(writer)
+        {
+        }
+
+        ~WaitsetThread()
+        {
+            stop();
+        }
+
+        void start(
+                const eprosima::fastrtps::Duration_t& timeout)
+        {
+            waitset_.attach_condition(writer_.datawriter_->get_statuscondition());
+            waitset_.attach_condition(guard_condition_);
+
+            std::unique_lock<std::mutex> lock(mutex_);
+            if (nullptr == thread_)
+            {
+                running_ = true;
+                guard_condition_.set_trigger_value(false);
+                timeout_ = timeout;
+                thread_ = new std::thread(&WaitsetThread::run, this);
+            }
+        }
+
+        void stop()
+        {
+            std::unique_lock<std::mutex> lock(mutex_);
+            running_ = false;
+            if (nullptr != thread_)
+            {
+                lock.unlock();
+
+                // We need to trigger the wake up
+                guard_condition_.set_trigger_value(true);
+                thread_->join();
+                lock.lock();
+                delete thread_;
+                thread_ = nullptr;
+            }
+        }
+
+        void run()
+        {
+            std::unique_lock<std::mutex> lock(mutex_);
+            while (running_)
+            {
+                lock.unlock();
+                auto wait_result = waitset_.wait(active_conditions_, timeout_);
+                if (wait_result == ReturnCode_t::RETCODE_TIMEOUT)
+                {
+                    writer_.on_waitset_timeout();
+                }
+                else
+                {
+                    if (!guard_condition_.get_trigger_value())
+                    {
+                        ASSERT_FALSE(active_conditions_.empty());
+                        EXPECT_EQ(active_conditions_[0], &writer_.datawriter_->get_statuscondition());
+                        process(&writer_.datawriter_->get_statuscondition());
+                    }
+                }
+                lock.lock();
+            }
+        }
+
+        void process(
+                eprosima::fastdds::dds::StatusCondition* condition)
+        {
+            eprosima::fastdds::dds::StatusMask triggered_statuses = writer_.datawriter_->get_status_changes();
+            triggered_statuses &= condition->get_enabled_statuses();
+
+            if (triggered_statuses.is_active(eprosima::fastdds::dds::StatusMask::publication_matched()))
+            {
+                eprosima::fastdds::dds::PublicationMatchedStatus status;
+                writer_.datawriter_->get_publication_matched_status(status);
+
+                if (0 < status.current_count_change)
+                {
+                    std::cout << "Publisher matched subscriber " << status.last_subscription_handle << std::endl;
+                    writer_.matched();
+                }
+                else if (0 > status.current_count_change)
+                {
+                    std::cout << "Publisher unmatched subscriber " << status.last_subscription_handle << std::endl;
+                    writer_.unmatched();
+                }
+            }
+
+            if (triggered_statuses.is_active(eprosima::fastdds::dds::StatusMask::offered_deadline_missed()))
+            {
+                eprosima::fastdds::dds::OfferedDeadlineMissedStatus status;
+                writer_.datawriter_->get_offered_deadline_missed_status(status);
+                times_deadline_missed_ = status.total_count;
+            }
+
+            if (triggered_statuses.is_active(eprosima::fastdds::dds::StatusMask::offered_incompatible_qos()))
+            {
+                eprosima::fastdds::dds::OfferedIncompatibleQosStatus status;
+                writer_.datawriter_->get_offered_incompatible_qos_status(status);
+                writer_.incompatible_qos(status);
+            }
+
+            if (triggered_statuses.is_active(eprosima::fastdds::dds::StatusMask::liveliness_lost()))
+            {
+                eprosima::fastdds::dds::LivelinessLostStatus status;
+                writer_.datawriter_->get_liveliness_lost_status(status);
+
+                times_liveliness_lost_ = status.total_count;
+                writer_.liveliness_lost();
+            }
+        }
+
+        unsigned int missed_deadlines() const
+        {
+            return times_deadline_missed_;
+        }
+
+        unsigned int times_liveliness_lost() const
+        {
+            return times_liveliness_lost_;
+        }
+
+    protected:
+
+        // The reader this waitset thread serves
+        PubSubWriterWithWaitsets& writer_;
+
+        // The waitset where the thread will be blocked
+        eprosima::fastdds::dds::WaitSet waitset_;
+
+        // The active conditions that triggered the wake up
+        eprosima::fastdds::dds::ConditionSeq active_conditions_;
+
+        // The thread that does the job
+        std::thread* thread_ = nullptr;
+
+        // Whether the thread is running or not
+        bool running_ = false;
+
+        // A Mutex to guard the thread start/stop
+        std::mutex mutex_;
+
+        // A user-triggered condition used to signal the thread to stop
+        eprosima::fastdds::dds::GuardCondition guard_condition_;
+
+        //! The number of times deadline was missed
+        unsigned int times_deadline_missed_ = 0;
+
+        //! The number of times liveliness was lost
+        unsigned int times_liveliness_lost_ = 0;
+
+        //! The timeout for the wait operation
+        eprosima::fastrtps::Duration_t timeout_;
+    }
+    waitset_thread_;
+
+    friend class WaitsetThread;
+
+public:
+
+    PubSubWriterWithWaitsets(
+            const std::string& topic_name)
+        : PubSubWriter<TypeSupport>(topic_name)
+        , waitset_thread_(*this)
+        , timeout_(eprosima::fastrtps::c_TimeInfinite)
+        , times_waitset_timeout_(0)
+    {
+    }
+
+    ~PubSubWriterWithWaitsets() override
+    {
+    }
+
+    void createPublisher() override
+    {
+        if (participant_ != nullptr)
+        {
+            // Create publisher
+            publisher_ = participant_->create_publisher(publisher_qos_);
+            ASSERT_NE(publisher_, nullptr);
+            ASSERT_TRUE(publisher_->is_enabled());
+
+            if (!xml_file_.empty())
+            {
+                if (!datawriter_profile_.empty())
+                {
+                    datawriter_ = publisher_->create_datawriter_with_profile(topic_, datawriter_profile_, nullptr);
+                    ASSERT_NE(datawriter_, nullptr);
+                    ASSERT_TRUE(datawriter_->is_enabled());
+                }
+            }
+            if (datawriter_ == nullptr)
+            {
+                datawriter_ = publisher_->create_datawriter(topic_, datawriter_qos_, nullptr);
+            }
+
+            if (datawriter_ != nullptr)
+            {
+                initialized_ = datawriter_->is_enabled();
+                if (initialized_)
+                {
+                    std::cout << "Created datawriter " << datawriter_->guid() << " for topic " <<
+                        topic_name_ << std::endl;
+
+                    // Set the desired status condition mask and start the waitset thread
+                    datawriter_->get_statuscondition().set_enabled_statuses(status_mask_);
+                    waitset_thread_.start(timeout_);
+                }
+            }
+        }
+        return;
+    }
+
+    void destroy() override
+    {
+        if (initialized_)
+        {
+            waitset_thread_.stop();
+        }
+
+        PubSubWriter<TypeSupport>::destroy();
+    }
+
+    unsigned int missed_deadlines() const
+    {
+        return waitset_thread_.missed_deadlines();
+    }
+
+    unsigned int times_liveliness_lost() const
+    {
+        return waitset_thread_.times_liveliness_lost();
+    }
+
+    void wait_waitset_timeout(
+            unsigned int times = 1)
+    {
+        std::unique_lock<std::mutex> lock(waitset_timeout_mutex_);
+
+        waitset_timeout_cv_.wait(lock, [&]()
+                {
+                    return times_waitset_timeout_ >= times;
+                });
+    }
+
+    unsigned int times_waitset_timeout()
+    {
+        std::unique_lock<std::mutex> lock(waitset_timeout_mutex_);
+        return times_waitset_timeout_;
+    }
+
+    PubSubWriterWithWaitsets& waitset_timeout(
+            const eprosima::fastrtps::Duration_t& timeout)
+    {
+        timeout_ = timeout;
+        return *this;
+    }
+
+protected:
+
+    void on_waitset_timeout()
+    {
+        std::unique_lock<std::mutex> lock(waitset_timeout_mutex_);
+        ++times_waitset_timeout_;
+        waitset_timeout_cv_.notify_one();
+    }
+
+    //! The timeout for the waitset
+    eprosima::fastrtps::Duration_t timeout_;
+
+    //! A mutex for waitset timeout
+    std::mutex waitset_timeout_mutex_;
+    //! A condition variable to notify when the waitset has timed out
+    std::condition_variable waitset_timeout_cv_;
+    //! Number of times the waitset has timed out
+    unsigned int times_waitset_timeout_;
+
+    using PubSubWriter<TypeSupport>::xml_file_;
+    using PubSubWriter<TypeSupport>::participant_;
+    using PubSubWriter<TypeSupport>::topic_name_;
+    using PubSubWriter<TypeSupport>::topic_;
+    using PubSubWriter<TypeSupport>::publisher_;
+    using PubSubWriter<TypeSupport>::publisher_qos_;
+    using PubSubWriter<TypeSupport>::datawriter_;
+    using PubSubWriter<TypeSupport>::datawriter_qos_;
+    using PubSubWriter<TypeSupport>::datawriter_profile_;
+    using PubSubWriter<TypeSupport>::initialized_;
+    using PubSubWriter<TypeSupport>::status_mask_;
+};
+
 
 #endif // _TEST_BLACKBOX_PUBSUBWRITER_HPP_

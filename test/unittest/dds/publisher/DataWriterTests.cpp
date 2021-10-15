@@ -179,6 +179,27 @@ public:
 
 };
 
+TEST(DataWriterTests, get_type)
+{
+    DomainParticipant* participant =
+            DomainParticipantFactory::get_instance()->create_participant(0, PARTICIPANT_QOS_DEFAULT);
+    ASSERT_NE(participant, nullptr);
+
+    Publisher* publisher = participant->create_publisher(PUBLISHER_QOS_DEFAULT);
+    ASSERT_NE(publisher, nullptr);
+
+    TypeSupport type(new TopicDataTypeMock());
+    type.register_type(participant);
+
+    Topic* topic = participant->create_topic("footopic", type.get_type_name(), TOPIC_QOS_DEFAULT);
+    ASSERT_NE(topic, nullptr);
+
+    DataWriter* datawriter = publisher->create_datawriter(topic, DATAWRITER_QOS_DEFAULT);
+    ASSERT_NE(datawriter, nullptr);
+
+    ASSERT_EQ(type, datawriter->get_type());
+}
+
 TEST(DataWriterTests, ChangeDataWriterQos)
 {
     DomainParticipant* participant =
@@ -256,7 +277,7 @@ TEST(DataWriterTests, ForcedDataSharing)
     // DataSharing enabled, unbounded topic data type
     qos = DATAWRITER_QOS_DEFAULT;
     qos.endpoint().history_memory_policy = fastrtps::rtps::PREALLOCATED_MEMORY_MODE;
-    qos.data_sharing().on("path");
+    qos.data_sharing().on(".");
     datawriter = publisher->create_datawriter(topic, qos);
     ASSERT_EQ(datawriter, nullptr);
 
@@ -267,7 +288,7 @@ TEST(DataWriterTests, ForcedDataSharing)
 
     // DataSharing enabled, bounded topic data type, Dynamic memory policy
     qos = DATAWRITER_QOS_DEFAULT;
-    qos.data_sharing().on("path");
+    qos.data_sharing().on(".");
     qos.endpoint().history_memory_policy = fastrtps::rtps::DYNAMIC_RESERVE_MEMORY_MODE;
     datawriter = publisher->create_datawriter(bounded_topic, qos);
     ASSERT_EQ(datawriter, nullptr);
@@ -317,7 +338,7 @@ TEST(DataWriterTests, ForcedDataSharing)
     ASSERT_NE(bounded_topic, nullptr);
 
     qos = DATAWRITER_QOS_DEFAULT;
-    qos.data_sharing().on("path");
+    qos.data_sharing().on(".");
     qos.endpoint().history_memory_policy = fastrtps::rtps::PREALLOCATED_MEMORY_MODE;
 
 
@@ -845,14 +866,13 @@ public:
 /*
  * This test checks that the DataWriter methods defined in the standard not yet implemented in FastDDS return
  * ReturnCode_t::RETCODE_UNSUPPORTED. The following methods are checked:
- * 1. get_publication_matched_status
- * 2. get_matched_subscription_data
- * 3. write_w_timestamp
- * 4. register_instance_w_timestamp
- * 5. unregister_instance_w_timestamp
- * 6. get_matched_subscriptions
- * 7. get_key_value
- * 8. lookup_instance
+ * 1. get_matched_subscription_data
+ * 2. write_w_timestamp
+ * 3. register_instance_w_timestamp
+ * 4. unregister_instance_w_timestamp
+ * 5. get_matched_subscriptions
+ * 6. get_key_value
+ * 7. lookup_instance
  */
 TEST_F(DataWriterUnsupportedTests, UnsupportedDataWriterMethods)
 {
@@ -871,11 +891,6 @@ TEST_F(DataWriterUnsupportedTests, UnsupportedDataWriterMethods)
 
     DataWriter* data_writer = publisher->create_datawriter(topic, DATAWRITER_QOS_DEFAULT);
     ASSERT_NE(publisher, nullptr);
-
-    PublicationMatchedStatus status;
-    EXPECT_EQ(
-        ReturnCode_t::RETCODE_UNSUPPORTED,
-        data_writer->get_publication_matched_status(status));
 
     builtin::SubscriptionBuiltinTopicData subscription_data;
     fastrtps::rtps::InstanceHandle_t subscription_handle;

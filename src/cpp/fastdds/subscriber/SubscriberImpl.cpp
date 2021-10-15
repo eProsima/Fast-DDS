@@ -375,14 +375,6 @@ ReturnCode_t SubscriberImpl::notify_datareaders() const
     return ReturnCode_t::RETCODE_OK;
 }
 
-/* TODO
-   bool SubscriberImpl::delete_contained_entities()
-   {
-    logError(PUBLISHER, "Operation not implemented");
-    return false;
-   }
- */
-
 ReturnCode_t SubscriberImpl::set_default_datareader_qos(
         const DataReaderQos& qos)
 {
@@ -593,7 +585,7 @@ void SubscriberImpl::set_qos(
         to.presentation() = from.presentation();
         to.presentation().hasChanged = true;
     }
-    if (from.partition().names().size() > 0)
+    if (!(to.partition() == from.partition()))
     {
         to.partition() = from.partition();
         to.partition().hasChanged = true;
@@ -634,6 +626,67 @@ SubscriberListener* SubscriberImpl::get_listener_for(
         return listener_;
     }
     return participant_->get_listener_for(status);
+}
+
+ReturnCode_t SubscriberImpl::delete_contained_entities()
+{
+    // Let's be optimistic
+    ReturnCode_t result = ReturnCode_t::RETCODE_OK;
+
+    std::lock_guard<std::mutex> lock(mtx_readers_);
+    for (auto reader: readers_)
+    {
+        for (DataReaderImpl* dr : reader.second)
+        {
+            if (!dr->can_be_deleted())
+            {
+                return ReturnCode_t::RETCODE_PRECONDITION_NOT_MET;
+            }
+        }
+    }
+
+    // We traverse the map trying to delete all readers;
+    auto reader_iterator = readers_.begin();
+    while (reader_iterator != readers_.end())
+    {
+        //First extract the reader from the maps to free the mutex
+        auto it = reader_iterator->second.begin();
+        DataReaderImpl* reader_impl = *it;
+        bool ret_code = reader_impl->can_be_deleted();
+        if (!ret_code)
+        {
+            return ReturnCode_t::RETCODE_ERROR;
+        }
+        reader_impl->set_listener(nullptr);
+        it = reader_iterator->second.erase(it);
+        if (reader_iterator->second.empty())
+        {
+            reader_iterator = readers_.erase(reader_iterator);
+        }
+
+        reader_impl->get_topicdescription()->get_impl()->dereference();
+        delete (reader_impl);
+    }
+    return result;
+}
+
+bool SubscriberImpl::can_be_deleted() const
+{
+    bool return_status = true;
+
+    std::lock_guard<std::mutex> lock(mtx_readers_);
+    for (auto topic_readers : readers_)
+    {
+        for (DataReaderImpl* dr : topic_readers.second)
+        {
+            return_status = dr->can_be_deleted();
+            if (!return_status)
+            {
+                return false;
+            }
+        }
+    }
+    return true;
 }
 
 } /* namespace dds */

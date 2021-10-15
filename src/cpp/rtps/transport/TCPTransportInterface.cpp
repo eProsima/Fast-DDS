@@ -348,7 +348,12 @@ bool TCPTransportInterface::DoInputLocatorsMatch(
 
 bool TCPTransportInterface::init()
 {
-    apply_tls_config();
+    if (!apply_tls_config())
+    {
+        // TODO decide wether the Transport initialization should keep working after this error
+        logWarning(TLS, "Error configuring TLS, using TCP transport without security");
+    }
+
     if (configuration()->sendBufferSize == 0 || configuration()->receiveBufferSize == 0)
     {
         // Check system buffer sizes.
@@ -1492,7 +1497,7 @@ void TCPTransportInterface::shutdown()
 {
 }
 
-void TCPTransportInterface::apply_tls_config()
+bool TCPTransportInterface::apply_tls_config()
 {
 #if TLS_FOUND
     const TCPTransportDescriptor* descriptor = configuration();
@@ -1513,22 +1518,54 @@ void TCPTransportInterface::apply_tls_config()
 
         if (!config->verify_file.empty())
         {
-            ssl_context_.load_verify_file(config->verify_file);
+            try
+            {
+                ssl_context_.load_verify_file(config->verify_file);
+            }
+            catch(const std::exception& e)
+            {
+                logError(TLS, "Error configuring TLS trusted CA certificate: " << e.what());
+                return false; // TODO check wether this should skip the rest of the configuration
+            }
         }
 
         if (!config->cert_chain_file.empty())
         {
-            ssl_context_.use_certificate_chain_file(config->cert_chain_file);
+            try
+            {
+                ssl_context_.use_certificate_chain_file(config->cert_chain_file);
+            }
+            catch(const std::exception& e)
+            {
+                logError(TLS, "Error configuring TLS certificate: " << e.what());
+                return false; // TODO check wether this should skip the rest of the configuration
+            }
         }
 
         if (!config->private_key_file.empty())
         {
-            ssl_context_.use_private_key_file(config->private_key_file, ssl::context::pem);
+            try
+            {
+                ssl_context_.use_private_key_file(config->private_key_file, ssl::context::pem);
+            }
+            catch(const std::exception& e)
+            {
+                logError(TLS, "Error configuring TLS private key: " << e.what());
+                return false; // TODO check wether this should skip the rest of the configuration
+            }
         }
 
         if (!config->tmp_dh_file.empty())
         {
-            ssl_context_.use_tmp_dh_file(config->tmp_dh_file);
+            try
+            {
+                ssl_context_.use_tmp_dh_file(config->tmp_dh_file);
+            }
+            catch(const std::exception& e)
+            {
+                logError(TLS, "Error configuring TLS dh params: " << e.what());
+                return false; // TODO check wether this should skip the rest of the configuration
+            }
         }
 
         if (!config->verify_paths.empty())
@@ -1572,6 +1609,10 @@ void TCPTransportInterface::apply_tls_config()
             {
                 options |= ssl::context::no_sslv2;
             }
+            else
+            {
+                logWarning(TLS, "Allowing SSL 2.0. This version has known vulnerabilities.");
+            }
 
             if (config->get_option(TLSOptions::NO_SSLV3))
             {
@@ -1609,6 +1650,7 @@ void TCPTransportInterface::apply_tls_config()
         }
     }
 #endif // if TLS_FOUND
+    return true;
 }
 
 std::string TCPTransportInterface::get_password() const

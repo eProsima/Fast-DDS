@@ -82,8 +82,7 @@ bool HelloWorldSubscriber::init(
         using TLSVerifyMode = TCPTransportDescriptor::TLSConfig::TLSVerifyMode;
         using TLSOptions = TCPTransportDescriptor::TLSConfig::TLSOptions;
         descriptor->apply_security = true;
-        descriptor->tls_config.password = "test";
-        descriptor->tls_config.verify_file = "ca.pem";
+        descriptor->tls_config.verify_file = "cacert.pem";
         descriptor->tls_config.verify_mode = TLSVerifyMode::VERIFY_PEER;
         descriptor->tls_config.add_option(TLSOptions::DEFAULT_WORKAROUNDS);
     }

@@ -193,7 +193,7 @@ struct FlowControllerAsyncPublishMode
     FlowControllerAsyncPublishMode(
             fastrtps::rtps::RTPSParticipantImpl* participant,
             const FlowControllerDescriptor*)
-        : group(participant)
+        : group(participant, true)
     {
     }
 
@@ -1141,6 +1141,7 @@ private:
     {
         // This call should be made with writer's mutex locked.
         fastrtps::rtps::LocatorSelectorSender& locator_selector = writer->get_general_locator_selector();
+        std::lock_guard<fastrtps::rtps::LocatorSelectorSender> lock(locator_selector);
         fastrtps::rtps::RTPSMessageGroup group(participant_, writer, &locator_selector);
         if (fastrtps::rtps::DeliveryRetCode::DELIVERED !=
                 writer->deliver_sample_nts(change, group, locator_selector, max_blocking_time))
@@ -1324,6 +1325,7 @@ private:
 
                 fastrtps::rtps::LocatorSelectorSender& locator_selector =
                         current_writer->get_async_locator_selector();
+                locator_selector.lock();
                 async_mode.group.sender(current_writer, &locator_selector);
 
                 // Remove previously from queue, because deliver_sample_nts could call FlowController::remove_sample()
@@ -1349,11 +1351,13 @@ private:
 
                     async_mode.process_deliver_retcode(ret_delivery);
 
+                    locator_selector.unlock();
                     current_writer->getMutex().unlock();
                     // Unlock mutex_ and try again.
                     break;
                 }
 
+                locator_selector.unlock();
                 current_writer->getMutex().unlock();
 
                 sched.work_done();

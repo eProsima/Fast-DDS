@@ -56,6 +56,16 @@ public:
         }
 
         mem_policy_ = std::get<1>(GetParam());
+
+        switch (mem_policy_)
+        {
+            case rtps::PREALLOCATED_MEMORY_MODE:
+            case rtps::PREALLOCATED_WITH_REALLOC_MEMORY_MODE:
+                will_use_datasharing = enable_datasharing;
+                break;
+            default:
+                break;
+        }
     }
 
     void TearDown() override
@@ -74,11 +84,14 @@ public:
             default:
                 break;
         }
+        will_use_datasharing = false;
     }
 
 protected:
 
     rtps::MemoryManagementPolicy mem_policy_;
+
+    bool will_use_datasharing = false;
 };
 
 // Test created to check bug #1568 (Github #34)
@@ -935,6 +948,50 @@ TEST_P(PubSubHistory, PubSubAsReliableKeepLastReaderSmallDepthWithKey)
     }
 }
 
+// Regression test for redmine bug #12419
+// It uses a test transport to drop some DATA messages, in order to force unordered reception.
+TEST_P(PubSubHistory, PubSubAsReliableKeepLastWithKeyUnorderedReception)
+{
+    PubSubReader<KeyedHelloWorldType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<KeyedHelloWorldType> writer(TEST_TOPIC_NAME);
+
+    uint32_t keys = 2;
+    uint32_t depth = 10;
+
+    reader.resource_limits_max_instances(keys).
+            reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).
+            history_kind(eprosima::fastrtps::KEEP_LAST_HISTORY_QOS).
+            history_depth(depth).mem_policy(mem_policy_).init();
+
+    ASSERT_TRUE(reader.isInitialized());
+
+    auto testTransport = std::make_shared<test_UDPv4TransportDescriptor>();
+    testTransport->dropDataMessagesPercentage = 25;
+
+    writer.resource_limits_max_instances(keys).
+            reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).
+            history_kind(eprosima::fastrtps::KEEP_LAST_HISTORY_QOS).
+            history_depth(depth).mem_policy(mem_policy_).
+            disable_builtin_transport().add_user_transport_to_pparams(testTransport).
+            init();
+
+    ASSERT_TRUE(writer.isInitialized());
+
+    // Wait for discovery.
+    writer.wait_discovery();
+    reader.wait_discovery();
+
+    auto data = default_keyedhelloworld_data_generator(keys * depth);
+    reader.startReception(data);
+
+    // Send data
+    writer.send(data);
+    ASSERT_TRUE(data.empty());
+
+    reader.block_for_all();
+    reader.stopReception();
+}
+
 bool comparator(
         HelloWorld first,
         HelloWorld second)
@@ -1142,6 +1199,84 @@ TEST_P(PubSubHistory, WriterUnmatchClearsHistory)
     writer2.send(data);
     ASSERT_TRUE(data.empty());
     reader.block_for_all();
+}
+
+// Regression test for #11743
+/*!
+ * @fn TEST(PubSubHistory, KeepAllWriterContinueSendingAfterReaderMatched)
+ * @brief This test checks that the writer doesn't block writing samples when meet a Datasharing Volatile reader.
+ *
+ * The test creates a Reliable, Transient Local Writer with a Keep All history, and its resources limited to
+ * 1 samples.
+ * Then it creates a Reliable, Volatile Reader.
+ * Writer will be the first discovering and then sends a sample.
+ * Reader could discover the writer when the writer already put the sample in the Datasharing history for the reader.
+ * The Volatile reader should be able to acks these kind of samples.
+ *
+ * Writer will be able then to send a second sample.
+ */
+TEST_P(PubSubHistory, KeepAllWriterContinueSendingAfterReaderMatched)
+{
+    PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
+
+    reader.reliability(RELIABLE_RELIABILITY_QOS);
+
+    writer.reliability(RELIABLE_RELIABILITY_QOS)
+            .history_kind(eprosima::fastrtps::KEEP_ALL_HISTORY_QOS)
+            .resource_limits_allocated_samples(1)
+            .resource_limits_max_samples(1);
+
+    writer.mem_policy(mem_policy_).init();
+    ASSERT_TRUE(writer.isInitialized());
+
+    reader.mem_policy(mem_policy_).init();
+    ASSERT_TRUE(reader.isInitialized());
+
+    writer.wait_discovery();
+
+    HelloWorld data;
+    data.message("Hello world!");
+    data.index(1u);
+    ASSERT_TRUE(writer.send_sample(data));
+
+    reader.wait_discovery();
+
+    // Second writer sends one sample (reader should discard previous one)
+    data.index(2u);
+    uint32_t expected_value = data.index();
+
+    if (will_use_datasharing)
+    {
+        if (reader.wait_for_all_received(std::chrono::seconds(3), 1))
+        {
+            ASSERT_FALSE(writer.send_sample(data));
+            expected_value = 1;
+        }
+        else
+        {
+            ASSERT_TRUE(writer.send_sample(data));
+        }
+    }
+    else
+    {
+        ASSERT_TRUE(writer.send_sample(data));
+    }
+
+    if (will_use_datasharing)
+    {
+        reader.wait_for_all_received(std::chrono::seconds(3), expected_value);
+    }
+    else
+    {
+        writer.waitForAllAcked(std::chrono::seconds(3));
+    }
+
+    // Only one sample should be present
+    HelloWorld received;
+    ASSERT_TRUE(reader.takeNextData(&received));
+    ASSERT_EQ(received.index(), expected_value);
+    ASSERT_TRUE(writer.waitForAllAcked(std::chrono::seconds(3)));
 }
 
 #ifdef INSTANTIATE_TEST_SUITE_P

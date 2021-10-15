@@ -535,6 +535,84 @@ public:
         return false;
     }
 
+    ReturnCode_t delete_contained_entities()
+    {
+        bool can_be_deleted = true;
+
+        std::lock_guard<std::mutex> lock_subscribers(mtx_subs_);
+
+        for (auto subscriber : subscribers_)
+        {
+            can_be_deleted = subscriber.second->can_be_deleted();
+            if (!can_be_deleted)
+            {
+                return ReturnCode_t::RETCODE_PRECONDITION_NOT_MET;
+            }
+        }
+
+        std::lock_guard<std::mutex> lock_publishers(mtx_pubs_);
+
+
+
+        for (auto publisher : publishers_)
+        {
+            can_be_deleted = publisher.second->can_be_deleted();
+            if (!can_be_deleted)
+            {
+                return ReturnCode_t::RETCODE_PRECONDITION_NOT_MET;
+            }
+        }
+
+        ReturnCode_t ret_code = ReturnCode_t::RETCODE_OK;
+
+        for (auto& subscriber : subscribers_)
+        {
+            ret_code = subscriber.first->delete_contained_entities();
+            if (!ret_code)
+            {
+                return ReturnCode_t::RETCODE_ERROR;
+            }
+        }
+
+        auto it_subs = subscribers_.begin();
+        while (it_subs != subscribers_.end())
+        {
+            it_subs->second->set_listener(nullptr);
+            delete it_subs->second;
+            it_subs = subscribers_.erase(it_subs);
+        }
+
+        for (auto& publisher : publishers_)
+        {
+            ret_code = publisher.first->delete_contained_entities();
+            if (!ret_code)
+            {
+                return ReturnCode_t::RETCODE_ERROR;
+            }
+        }
+
+        auto it_pubs = publishers_.begin();
+        while (it_pubs != publishers_.end())
+        {
+            it_pubs->second->set_listener(nullptr);
+            delete it_pubs->second;
+            it_pubs = publishers_.erase(it_pubs);
+        }
+
+        std::lock_guard<std::mutex> lock_topics(mtx_topics_);
+
+        auto it_topics = topics_.begin();
+
+        while (it_topics != topics_.end())
+        {
+            it_topics->second->set_listener(nullptr);
+            delete it_topics->second;
+            it_topics = topics_.erase(it_topics);
+        }
+
+        return ReturnCode_t::RETCODE_OK;
+    }
+
     DomainParticipantListener* get_listener_for(
             const StatusMask& /*status*/)
     {
@@ -592,11 +670,12 @@ protected:
         return new SubscriberImpl(this, qos, listener);
     }
 
-    static void set_qos(
+    static bool set_qos(
             DomainParticipantQos& /*to*/,
             const DomainParticipantQos& /*from*/,
             bool /*first_time*/)
     {
+        return false;
     }
 
     static ReturnCode_t check_qos(
