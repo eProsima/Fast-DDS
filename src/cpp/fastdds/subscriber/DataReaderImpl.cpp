@@ -144,6 +144,8 @@ DataReaderImpl::DataReaderImpl(
     EndpointAttributes endpoint_attributes;
     endpoint_attributes.endpointKind = READER;
     endpoint_attributes.topicKind = type_->m_isGetKeyDefined ? WITH_KEY : NO_KEY;
+    endpoint_attributes.setEntityID(qos_.endpoint().entity_id);
+    endpoint_attributes.setUserDefinedID(qos_.endpoint().user_defined_id);
     fastrtps::rtps::RTPSParticipantImpl::preprocess_endpoint_attributes<READER, 0x04, 0x07>(
         EntityId_t::unknown(), subscriber_->get_participant_impl()->id_counter(), endpoint_attributes, guid_.entityId);
     guid_.guidPrefix = subscriber_->get_participant_impl()->guid().guidPrefix;

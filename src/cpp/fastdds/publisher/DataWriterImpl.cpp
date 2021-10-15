@@ -145,6 +145,8 @@ DataWriterImpl::DataWriterImpl(
     EndpointAttributes endpoint_attributes;
     endpoint_attributes.endpointKind = WRITER;
     endpoint_attributes.topicKind = type_->m_isGetKeyDefined ? WITH_KEY : NO_KEY;
+    endpoint_attributes.setEntityID(qos_.endpoint().entity_id);
+    endpoint_attributes.setUserDefinedID(qos_.endpoint().user_defined_id);
     fastrtps::rtps::RTPSParticipantImpl::preprocess_endpoint_attributes<WRITER, 0x03, 0x02>(
         EntityId_t::unknown(), publisher_->get_participant_impl()->id_counter(), endpoint_attributes, guid_.entityId);
     guid_.guidPrefix = publisher_->get_participant_impl()->guid().guidPrefix;
@@ -187,8 +189,8 @@ ReturnCode_t DataWriterImpl::enable()
     w_att.mode = qos_.publish_mode().kind == SYNCHRONOUS_PUBLISH_MODE ? SYNCHRONOUS_WRITER : ASYNCHRONOUS_WRITER;
     w_att.flow_controller_name = qos_.publish_mode().flow_controller_name;
     w_att.endpoint.properties = qos_.properties();
-    w_att.endpoint.setEntityID(static_cast<uint8_t>(qos_.endpoint().entity_id));
-    w_att.endpoint.setUserDefinedID(static_cast<uint8_t>(qos_.endpoint().user_defined_id));
+    w_att.endpoint.setEntityID(qos_.endpoint().entity_id);
+    w_att.endpoint.setUserDefinedID(qos_.endpoint().user_defined_id);
     w_att.times = qos_.reliable_writer_qos().times;
     w_att.liveliness_kind = qos_.liveliness().kind;
     w_att.liveliness_lease_duration = qos_.liveliness().lease_duration;
