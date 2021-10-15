@@ -30,8 +30,6 @@
 #include <fastrtps/participant/Participant.h>
 #include <fastdds/dds/log/Log.hpp>
 
-#include <utils/SystemInfo.hpp>
-
 using namespace eprosima;
 using namespace fastrtps;
 using namespace std;
@@ -229,9 +227,6 @@ int main (
             }
         }
     }
-
-    // Set environment file
-    SystemInfo::set_environment_file();
 
     // Create the server
     int return_value = 0;
