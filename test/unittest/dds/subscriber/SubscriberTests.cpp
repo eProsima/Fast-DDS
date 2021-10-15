@@ -484,44 +484,6 @@ TEST(SubscriberTests, SetListener)
     ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), ReturnCode_t::RETCODE_OK);
 }
 
-/*
- * This test checks that the Subscriber methods defined in the standard not yet implemented in FastDDS return
- * ReturnCode_t::RETCODE_UNSUPPORTED. The following methods are checked:
- * 1. copy_from_topic_qos
- * 2. delete_contained_entities
- * 3. begin_access
- * 3. end_access
- * 4. get_datareaders (all parameters)
- */
-TEST(SubscriberTests, UnsupportedPublisherMethods)
-{
-    DomainParticipant* participant =
-            DomainParticipantFactory::get_instance()->create_participant(0, PARTICIPANT_QOS_DEFAULT);
-    ASSERT_NE(participant, nullptr);
-    Subscriber* subscriber = participant->create_subscriber(SUBSCRIBER_QOS_DEFAULT);
-    ASSERT_NE(subscriber, nullptr);
-
-    std::vector<DataReader*> readers;
-    std::vector<SampleStateKind> sample_states;
-    std::vector<ViewStateKind> view_states;
-    std::vector<InstanceStateKind> instance_states;
-
-    fastdds::dds::DataReaderQos reader_qos;
-    fastdds::dds::TopicQos topic_qos;
-    EXPECT_EQ(ReturnCode_t::RETCODE_UNSUPPORTED, subscriber->copy_from_topic_qos(reader_qos, topic_qos));
-    EXPECT_EQ(ReturnCode_t::RETCODE_UNSUPPORTED, subscriber->delete_contained_entities());
-    EXPECT_EQ(ReturnCode_t::RETCODE_UNSUPPORTED, subscriber->begin_access());
-    EXPECT_EQ(ReturnCode_t::RETCODE_UNSUPPORTED, subscriber->end_access());
-    EXPECT_EQ(ReturnCode_t::RETCODE_UNSUPPORTED, subscriber->get_datareaders(
-                readers,
-                sample_states,
-                view_states,
-                instance_states));
-
-    ASSERT_EQ(participant->delete_subscriber(subscriber), ReturnCode_t::RETCODE_OK);
-    ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), ReturnCode_t::RETCODE_OK);
-}
-
 /**
  * This test checks that changing the PartitionQosPolicy on a subscriber takes effect on changing the actual QoS.
  * It was discovered in https://github.com/eProsima/Fast-DDS/issues/2107 that this was not correctly handled when
