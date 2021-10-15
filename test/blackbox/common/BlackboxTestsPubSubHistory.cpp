@@ -18,6 +18,7 @@
 #include "PubSubWriter.hpp"
 
 #include <fastrtps/xmlparser/XMLProfileManager.h>
+#include <fastrtps/transport/test_UDPv4Transport.h>
 #include <gtest/gtest.h>
 
 using namespace eprosima::fastrtps;
@@ -561,6 +562,50 @@ TEST(BlackBox, PubSubAsReliableKeepLastReaderSmallDepthWithKey)
 
         data = reader.data_not_received();
     }
+}
+
+// Regression test for redmine bug #12419
+// It uses a test transport to drop some DATA messages, in order to force unordered reception.
+TEST_P(PubSubHistory, PubSubAsReliableKeepLastWithKeyUnorderedReception)
+{
+    PubSubReader<KeyedHelloWorldType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<KeyedHelloWorldType> writer(TEST_TOPIC_NAME);
+
+    uint32_t keys = 2;
+    uint32_t depth = 10;
+
+    reader.resource_limits_max_instances(keys).
+            reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).
+            history_kind(eprosima::fastrtps::KEEP_LAST_HISTORY_QOS).
+            history_depth(depth).init();
+
+    ASSERT_TRUE(reader.isInitialized());
+
+    auto testTransport = std::make_shared<test_UDPv4TransportDescriptor>();
+    testTransport->dropDataMessagesPercentage = 25;
+
+    writer.resource_limits_max_instances(keys).
+            reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).
+            history_kind(eprosima::fastrtps::KEEP_LAST_HISTORY_QOS).
+            history_depth(depth).
+            disable_builtin_transport().add_user_transport_to_pparams(testTransport).
+            init();
+
+    ASSERT_TRUE(writer.isInitialized());
+
+    // Wait for discovery.
+    writer.wait_discovery();
+    reader.wait_discovery();
+
+    auto data = default_keyedhelloworld_data_generator(keys * depth);
+    reader.startReception(data);
+
+    // Send data
+    writer.send(data);
+    ASSERT_TRUE(data.empty());
+
+    reader.block_for_all();
+    reader.stopReception();
 }
 
 bool comparator(
