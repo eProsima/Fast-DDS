@@ -504,11 +504,6 @@ if(MSVC OR MSVC_IDE)
     endif()
 endif()
 
-if(DEFINED ENV{LIB_FUZZING_ENGINE})
-  add_executable(fuzz_processCDRMsg rtps/messages/fuzz_processCDRMsg.cpp)
-  target_link_libraries(fuzz_processCDRMsg ${PROJECT_NAME} $ENV{LIB_FUZZING_ENGINE})
-endif()
-
 ###############################################################################
 # Packaging
 ###############################################################################
