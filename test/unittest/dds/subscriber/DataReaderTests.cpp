@@ -606,7 +606,10 @@ TEST_F(DataReaderTests, get_guid)
 
     {
         std::unique_lock<std::mutex> lock(discovery_listener.mutex);
-        discovery_listener.cv.wait(lock);
+        discovery_listener.cv.wait(lock, [&]()
+                {
+                    return fastrtps::rtps::GUID_t::unknown() != discovery_listener.guid;
+                });
     }
     ASSERT_EQ(guid, discovery_listener.guid);
 
