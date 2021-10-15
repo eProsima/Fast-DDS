@@ -82,7 +82,7 @@ void ReaderQos::setQos(
         m_presentation = qos.m_presentation;
         m_presentation.hasChanged = true;
     }
-    if (qos.m_partition.names().size() > 0)
+    if (qos.m_partition.names() != m_partition.names())
     {
         m_partition = qos.m_partition;
         m_partition.hasChanged = true;
@@ -92,7 +92,7 @@ void ReaderQos::setQos(
         m_topicData = qos.m_topicData;
         m_topicData.hasChanged = true;
     }
-    if (m_groupData.getValue() != qos.m_groupData.getValue() )
+    if (m_groupData.getValue() != qos.m_groupData.getValue())
     {
         m_groupData = qos.m_groupData;
         m_groupData.hasChanged = true;
