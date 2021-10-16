@@ -126,7 +126,7 @@ ReturnCode_t DomainParticipantFactory::delete_participant(
             for (PartVectorIt pit = vit->second.begin(); pit != vit->second.end();)
             {
                 if ((*pit)->get_participant() == part
-                        || (*pit)->get_participant()->guid() == part->guid())
+                        && (*pit)->get_participant()->guid() == part->guid())
                 {
                     (*pit)->disable();
                     delete (*pit);
