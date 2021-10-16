@@ -263,7 +263,7 @@ bool RTPSDomain::removeRTPSParticipant(
         std::unique_lock<std::mutex> lock(m_mutex);
         for (auto it = m_RTPSParticipants.begin(); it != m_RTPSParticipants.end(); ++it)
         {
-            if (it->second->getGuid().guidPrefix == p->getGuid().guidPrefix)
+            if (it->first == p && it->second->getGuid().guidPrefix == p->getGuid().guidPrefix)
             {
                 RTPSDomain::t_p_RTPSParticipant participant = *it;
                 m_RTPSParticipants.erase(it);
