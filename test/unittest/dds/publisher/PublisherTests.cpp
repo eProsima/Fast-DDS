@@ -31,6 +31,8 @@
 #include <fastdds/dds/publisher/PublisherListener.hpp>
 #include <fastdds/dds/publisher/qos/DataWriterQos.hpp>
 
+#include <fastdds/rtps/attributes/PropertyPolicy.h>
+
 #include <fastrtps/attributes/PublisherAttributes.h>
 #include <fastrtps/attributes/SubscriberAttributes.h>
 #include <fastrtps/xmlparser/XMLProfileManager.h>
@@ -41,6 +43,7 @@ namespace fastdds {
 namespace dds {
 
 using fastrtps::PublisherAttributes;
+using fastrtps::rtps::PropertyPolicyHelper;
 using fastrtps::xmlparser::XMLProfileManager;
 using fastrtps::xmlparser::XMLP_ret;
 
@@ -305,7 +308,19 @@ void check_datawriter_with_profile (
     ASSERT_TRUE(
         qos.writer_resource_limits().matched_subscriber_allocation ==
         publisher_atts.matched_subscriber_allocation);
-    ASSERT_TRUE(qos.properties() == publisher_atts.properties);
+    if (publisher_atts.qos.m_partition.names().empty())
+    {
+        ASSERT_TRUE(qos.properties() == publisher_atts.properties);
+    }
+    else
+    {
+        ASSERT_NE(PropertyPolicyHelper::find_property(qos.properties(), "partitions"), nullptr);
+        for (auto partition: publisher_atts.qos.m_partition.names())
+        {
+            ASSERT_NE(PropertyPolicyHelper::find_property(qos.properties(), "partitions")->find(
+                        partition), std::string::npos);
+        }
+    }
     ASSERT_TRUE(qos.throughput_controller() == publisher_atts.throughputController);
     ASSERT_TRUE(qos.endpoint().unicast_locator_list == publisher_atts.unicastLocatorList);
     ASSERT_TRUE(qos.endpoint().multicast_locator_list == publisher_atts.multicastLocatorList);

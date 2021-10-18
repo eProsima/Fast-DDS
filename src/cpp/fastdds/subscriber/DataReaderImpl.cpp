@@ -179,7 +179,16 @@ ReturnCode_t DataReaderImpl::enable()
     property.name("topic_name");
     property.value(topic_->get_name().c_str());
     att.endpoint.properties.properties().push_back(std::move(property));
-    if (subscriber_->get_qos().partition().names().size() > 0)
+
+    std::string* endpoint_partitions = PropertyPolicyHelper::find_property(qos_.properties(), "partitions");
+
+    if (endpoint_partitions)
+    {
+        property.name("partitions");
+        property.value(*endpoint_partitions);
+        att.endpoint.properties.properties().push_back(std::move(property));
+    }
+    else if (subscriber_->get_qos().partition().names().size() > 0)
     {
         property.name("partitions");
         std::string partitions;
@@ -250,6 +259,27 @@ ReturnCode_t DataReaderImpl::enable()
     if (!is_datasharing_compatible)
     {
         rqos.data_sharing.off();
+    }
+    if (endpoint_partitions)
+    {
+        std::string partition_string = *endpoint_partitions;
+        size_t last_pos = 0;
+        rqos.m_partition.clear();
+
+        while (!partition_string.empty())
+        {
+            last_pos = partition_string.find_first_of(";");
+            std::string partition_name = partition_string.substr(0, last_pos);
+            if (last_pos != std::string::npos)
+            {
+                partition_string = partition_string.substr(last_pos + 1);
+            }
+            else
+            {
+                partition_string = "";
+            }
+            rqos.m_partition.push_back(partition_name.c_str());
+        }
     }
     subscriber_->rtps_participant()->registerReader(reader_, topic_attributes(), rqos);
 
