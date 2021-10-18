@@ -589,7 +589,7 @@ ReturnCode_t DataWriterImpl::unregister_instance(
     ReturnCode_t returned_value = ReturnCode_t::RETCODE_ERROR;
     InstanceHandle_t ih = handle;
 
-#if !defined(NDEBUG)
+#if defined(NDEBUG)
     if (c_InstanceHandle_Unknown == ih)
 #endif // if !defined(NDEBUG)
     {
@@ -604,7 +604,7 @@ ReturnCode_t DataWriterImpl::unregister_instance(
     if (c_InstanceHandle_Unknown != handle && ih != handle)
     {
         logError(PUBLISHER, "handle differs from data's key.");
-        return ReturnCode_t::RETCODE_BAD_PARAMETER;
+        return ReturnCode_t::RETCODE_PRECONDITION_NOT_MET;
     }
 #endif // if !defined(NDEBUG)
 
