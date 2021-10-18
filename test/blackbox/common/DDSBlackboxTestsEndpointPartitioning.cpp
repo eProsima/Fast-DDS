@@ -14,11 +14,6 @@
 
 #include <gtest/gtest.h>
 
-#include <fastdds/rtps/common/Types.h>
-#include <fastdds/rtps/participant/ParticipantDiscoveryInfo.h>
-#include <fastrtps/attributes/LibrarySettingsAttributes.h>
-#include <fastrtps/xmlparser/XMLProfileManager.h>
-
 #include "BlackboxTests.hpp"
 #include "PubSubReader.hpp"
 #include "PubSubWriter.hpp"
@@ -93,7 +88,6 @@ TEST(EndpointPartitioning, SinglePartition)
     reader_a.destroy();
     reader_b.destroy();
     reader_a_from_subscriber.destroy();
-
 }
 
 /**
@@ -206,7 +200,6 @@ TEST(EndpointPartitioning, MultiplePartitions)
     EXPECT_TRUE(writer_b.isInitialized());
 
     reader_a_b.set_xml_filename("partitions.xml");
-    //reader_a_b.set_participant_profile("participant");
     reader_a_b.set_datareader_profile("partition_a_b_reader");
     reader_a_b.init();
     EXPECT_TRUE(reader_a_b.isInitialized());
@@ -218,5 +211,4 @@ TEST(EndpointPartitioning, MultiplePartitions)
     ASSERT_TRUE(writer_a.is_matched());
     ASSERT_TRUE(writer_b.is_matched());
     ASSERT_TRUE(reader_a_b.is_matched());
-
 }
