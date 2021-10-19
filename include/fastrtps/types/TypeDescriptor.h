@@ -25,26 +25,10 @@ namespace eprosima {
 namespace fastrtps {
 namespace types {
 
-enum FSM_INPUTS
-{
-    LETTER = 1,
-    NUMBER,
-    UNDERSCORE,
-    COLON,
-    OTHER
-};
-
-enum FSM_STATES
-{
-    INVALID = 0,
-    SINGLECOLON,
-    DOUBLECOLON,
-    VALID
-};
-
 class TypeDescriptor
 {
 protected:
+
     TypeKind kind_;                         // Type Kind.
     std::string name_;                      // Type Name.
     DynamicType_ptr base_type_;             // SuperType of an structure or base type of an alias type.
@@ -54,16 +38,10 @@ protected:
     DynamicType_ptr key_element_type_;      // Key Type for maps.
     std::vector<AnnotationDescriptor*> annotation_; // Annotations to apply
 
-    const int stateTable[4][6] = {
-        /* Input:     letter,  number,  underscore, colon,       other */
-        {INVALID,     VALID,   INVALID, INVALID,    INVALID,     INVALID},
-        {SINGLECOLON, INVALID, INVALID, INVALID,    DOUBLECOLON, INVALID},
-        {DOUBLECOLON, VALID,   INVALID, INVALID,    INVALID,     INVALID},
-        {VALID,       VALID,   VALID,   VALID,      SINGLECOLON, INVALID}};
-
     void clean();
 
-    bool is_type_name_consistent(const std::string& sName) const;
+    bool is_type_name_consistent(
+            const std::string& sName) const;
 
     friend class DynamicTypeBuilderFactory;
     friend class TypeObjectFactory;
@@ -72,9 +50,11 @@ protected:
     friend class DynamicDataHelper;
 
 public:
+
     TypeDescriptor();
 
-    TypeDescriptor(const TypeDescriptor* other);
+    TypeDescriptor(
+            const TypeDescriptor* other);
 
     TypeDescriptor(
             const std::string& name,
@@ -82,15 +62,18 @@ public:
 
     ~TypeDescriptor();
 
-    ReturnCode_t copy_from(const TypeDescriptor* descriptor);
+    ReturnCode_t copy_from(
+            const TypeDescriptor* descriptor);
 
-    bool equals(const TypeDescriptor* descriptor) const;
+    bool equals(
+            const TypeDescriptor* descriptor) const;
 
     bool is_consistent() const;
 
     DynamicType_ptr get_base_type() const;
 
-    uint32_t get_bounds(uint32_t index = 0) const;
+    uint32_t get_bounds(
+            uint32_t index = 0) const;
 
     uint32_t get_bounds_size() const;
 
@@ -106,18 +89,22 @@ public:
 
     uint32_t get_total_bounds() const;
 
-    void set_kind(TypeKind kind);
+    void set_kind(
+            TypeKind kind);
 
-    void set_name(std::string name);
+    void set_name(
+            std::string name);
 
-    ReturnCode_t apply_annotation(AnnotationDescriptor& descriptor);
+    ReturnCode_t apply_annotation(
+            AnnotationDescriptor& descriptor);
 
     ReturnCode_t apply_annotation(
             const std::string& annotation_name,
             const std::string& key,
             const std::string& value);
 
-    AnnotationDescriptor* get_annotation(const std::string& name) const;
+    AnnotationDescriptor* get_annotation(
+            const std::string& name) const;
 
     // Annotations application
     bool annotation_is_extensibility() const;
@@ -146,7 +133,8 @@ public:
     bool annotation_get_key() const;
 
     // Annotation setters
-    void annotation_set_extensibility(const std::string& extensibility);
+    void annotation_set_extensibility(
+            const std::string& extensibility);
 
     void annotation_set_mutable();
 
@@ -154,13 +142,17 @@ public:
 
     void annotation_set_appendable();
 
-    void annotation_set_nested(bool nested);
+    void annotation_set_nested(
+            bool nested);
 
-    void annotation_set_bit_bound(uint16_t bit_bound);
+    void annotation_set_bit_bound(
+            uint16_t bit_bound);
 
-    void annotation_set_key(bool key);
+    void annotation_set_key(
+            bool key);
 
-    void annotation_set_non_serialized(bool non_serialized);
+    void annotation_set_non_serialized(
+            bool non_serialized);
 };
 
 } // namespace types
