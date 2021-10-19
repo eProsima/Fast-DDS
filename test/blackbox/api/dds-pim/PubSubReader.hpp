@@ -349,26 +349,27 @@ public:
                 participant_qos_,
                 &participant_listener_,
                 eprosima::fastdds::dds::StatusMask::none());
-            ASSERT_NE(participant_, nullptr);
-            ASSERT_TRUE(participant_->is_enabled());
         }
 
-        participant_guid_ = participant_->guid();
+        if (participant_ != nullptr)
+        {
+            participant_guid_ = participant_->guid();
 
-        type_.reset(new type_support());
+            type_.reset(new type_support());
 
-        // Register type
-        ASSERT_EQ(participant_->register_type(type_), ReturnCode_t::RETCODE_OK);
+            // Register type
+            ASSERT_EQ(participant_->register_type(type_), ReturnCode_t::RETCODE_OK);
 
-        // Create topic
-        topic_ =
-                participant_->create_topic(topic_name_, type_->getName(),
-                        eprosima::fastdds::dds::TOPIC_QOS_DEFAULT);
-        ASSERT_NE(topic_, nullptr);
-        ASSERT_TRUE(topic_->is_enabled());
+            // Create topic
+            topic_ =
+                    participant_->create_topic(topic_name_, type_->getName(),
+                            eprosima::fastdds::dds::TOPIC_QOS_DEFAULT);
+            ASSERT_NE(topic_, nullptr);
+            ASSERT_TRUE(topic_->is_enabled());
 
-        // Create publisher
-        createSubscriber();
+            // Create publisher
+            createSubscriber();
+        }
     }
 
     virtual void createSubscriber()
