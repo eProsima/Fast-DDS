@@ -262,22 +262,12 @@ ReturnCode_t DataReaderImpl::enable()
     }
     if (endpoint_partitions)
     {
-        std::string partition_string = *endpoint_partitions;
-        size_t last_pos = 0;
+        std::istringstream partition_string(*endpoint_partitions);
+        std::string partition_name;
         rqos.m_partition.clear();
 
-        while (!partition_string.empty())
+        while (std::getline(partition_string, partition_name, ';'))
         {
-            last_pos = partition_string.find_first_of(";");
-            std::string partition_name = partition_string.substr(0, last_pos);
-            if (last_pos != std::string::npos)
-            {
-                partition_string = partition_string.substr(last_pos + 1);
-            }
-            else
-            {
-                partition_string = "";
-            }
             rqos.m_partition.push_back(partition_name.c_str());
         }
     }
