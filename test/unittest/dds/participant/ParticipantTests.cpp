@@ -12,6 +12,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#include <chrono>
+#include <fstream>
+#include <memory>
+#include <string>
+#include <thread>
+
+#include <fastcdr/Cdr.h>
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
 
@@ -28,6 +35,7 @@
 #include <fastdds/dds/domain/DomainParticipantFactory.hpp>
 #include <fastdds/dds/domain/DomainParticipantListener.hpp>
 #include <fastdds/dds/domain/qos/DomainParticipantQos.hpp>
+#include <fastdds/dds/log/Log.hpp>
 #include <fastdds/dds/publisher/DataWriter.hpp>
 #include <fastdds/dds/publisher/Publisher.hpp>
 #include <fastdds/dds/publisher/qos/PublisherQos.hpp>
@@ -36,6 +44,9 @@
 #include <fastdds/dds/subscriber/Subscriber.hpp>
 #include <fastdds/dds/topic/qos/TopicQos.hpp>
 #include <fastdds/rtps/attributes/RTPSParticipantAttributes.h>
+#include <fastdds/rtps/attributes/ServerAttributes.h>
+#include <fastdds/rtps/common/Locator.h>
+#include <fastdds/rtps/participant/RTPSParticipant.h>
 #include <fastrtps/attributes/PublisherAttributes.h>
 #include <fastrtps/attributes/SubscriberAttributes.h>
 #include <fastrtps/types/DynamicDataFactory.h>
@@ -43,9 +54,13 @@
 #include <fastrtps/types/DynamicTypePtr.h>
 #include <fastrtps/types/TypeDescriptor.h>
 #include <fastrtps/types/TypeObjectFactory.h>
+#include <fastrtps/utils/IPLocator.h>
 #include <fastrtps/xmlparser/XMLProfileManager.h>
 
-#include <fastcdr/Cdr.h>
+#include <fastdds/domain/DomainParticipantImpl.hpp>
+#include <utils/SystemInfo.hpp>
+
+#include "../../logging/mock/MockConsumer.h"
 
 namespace eprosima {
 namespace fastdds {
@@ -510,6 +525,355 @@ TEST(ParticipantTests, ChangePSMDomainParticipantQos)
     ASSERT_EQ(qos, pqos);
     ASSERT_EQ(qos.entity_factory().autoenable_created_entities, false);
 
+}
+
+class DomainParticipantTest : public DomainParticipant
+{
+public:
+
+    const DomainParticipantImpl* get_impl() const
+    {
+        return impl_;
+    }
+};
+
+void get_rtps_attributes(
+        const DomainParticipant* participant,
+        fastrtps::rtps::RTPSParticipantAttributes& att)
+{
+    const DomainParticipantTest* participant_test = static_cast<const DomainParticipantTest*>(participant);
+    ASSERT_NE(nullptr, participant_test);
+    const DomainParticipantImpl* participant_impl = participant_test->get_impl();
+    ASSERT_NE(nullptr, participant_impl);
+    att = participant_impl->rtps_participant()->getRTPSParticipantAttributes();
+}
+
+void helper_wait_for_at_least_entries(
+        const MockConsumer* mockConsumer,
+        uint32_t amount)
+{
+    const uint32_t AsyncTries = 5;
+    const uint32_t AsyncWaitMs = 25;
+    size_t entries = 0;
+    for (uint32_t i = 0; i != AsyncTries; i++)
+    {
+        entries = mockConsumer->ConsumedEntries().size();
+        if (entries >= amount)
+        {
+            break;
+        }
+        std::this_thread::sleep_for(std::chrono::milliseconds(AsyncWaitMs));
+    }
+    EXPECT_LE(amount, mockConsumer->ConsumedEntries().size());
+}
+
+/**
+ * Test that checks the configuration of remote server list using both the API and the environment variable
+ */
+TEST(ParticipantTests, RemoteServersListConfiguration)
+{
+    Log::ClearConsumers();
+    MockConsumer* mockConsumer = new MockConsumer("RTPS_QOS_CHECK");
+    Log::RegisterConsumer(std::unique_ptr<LogConsumer>(mockConsumer));
+    Log::SetVerbosity(Log::Warning);
+
+    // Set environment variables
+    /**
+     * FASTDDS_ENVIRONMENT_FILE_ENV_VAR should be defined from the start because it is only loaded once (when the XML
+     * profiles are loaded). The file is not going to exist until a later case. However, the filewatch is initialized
+     * even though the file does not exist ()
+     */
+    std::string environment_servers = "84.22.253.128:8888;;localhost:1234";
+    std::string filename = "environment_file.json";
+#ifdef _WIN32
+    ASSERT_EQ(0, _putenv_s(rtps::DEFAULT_ROS2_MASTER_URI, environment_servers.c_str()));
+    ASSERT_EQ(0, _putenv_s(FASTDDS_ENVIRONMENT_FILE_ENV_VAR, filename.c_str()));
+#else
+    ASSERT_EQ(0, setenv(rtps::DEFAULT_ROS2_MASTER_URI, environment_servers.c_str(), 1));
+    ASSERT_EQ(0, setenv(FASTDDS_ENVIRONMENT_FILE_ENV_VAR, filename.c_str(), 1));
+#endif // _WIN32
+
+    // Expected output
+    rtps::RemoteServerList_t output;
+    rtps::RemoteServerAttributes server;
+    fastrtps::rtps::Locator_t locator;
+    fastrtps::rtps::IPLocator::setIPv4(locator, "84.22.253.128");
+    locator.port = 8888;
+    server.metatrafficUnicastLocatorList.push_back(locator);
+    get_server_client_default_guidPrefix(0, server.guidPrefix);
+    output.push_back(server);
+
+    server.clear();
+    fastrtps::rtps::IPLocator::setIPv4(locator, "127.0.0.1");
+    locator.port = 1234;
+    server.metatrafficUnicastLocatorList.push_back(locator);
+    get_server_client_default_guidPrefix(2, server.guidPrefix);
+    output.push_back(server);
+
+    /* 1. SIMPLE Participant */
+    // Configuration set by code/XML is overriden by the environment variable
+    std::cout << "1. SIMPLE Participant" << std::endl;
+    DomainParticipantQos qos;
+
+    // Add remote server with a prefix not used by the environment variable
+    server.clear();
+    server.ReadguidPrefix("44.53.00.5f.45.50.52.4f.53.49.4d.00");
+    fastrtps::rtps::IPLocator::setIPv4(locator, "192.168.1.133");
+    locator.port = 64863;
+    server.metatrafficUnicastLocatorList.push_back(locator);
+    qos.wire_protocol().builtin.discovery_config.m_DiscoveryServers.push_back(server);
+
+    rtps::RemoteServerList_t qos_output;
+    qos_output.push_back(server);
+
+    // Create participant
+    DomainParticipant* participant = DomainParticipantFactory::get_instance()->create_participant(0, qos);
+    ASSERT_NE(nullptr, participant);
+
+    // Access attributes
+    fastrtps::rtps::RTPSParticipantAttributes attributes;
+    get_rtps_attributes(participant, attributes);
+    EXPECT_EQ(attributes.builtin.discovery_config.discoveryProtocol, fastrtps::rtps::DiscoveryProtocol::CLIENT);
+    EXPECT_EQ(attributes.builtin.discovery_config.m_DiscoveryServers, output);
+
+    // Check that get_qos/set_qos returns without complaining
+    DomainParticipantQos result_qos = participant->get_qos();
+    EXPECT_EQ(result_qos.wire_protocol().builtin.discovery_config.m_DiscoveryServers, qos_output);
+    EXPECT_EQ(ReturnCode_t::RETCODE_OK, participant->set_qos(result_qos));
+
+    EXPECT_EQ(ReturnCode_t::RETCODE_OK, DomainParticipantFactory::get_instance()->delete_participant(participant));
+
+    /* 2. SIMPLE Participant Dynamic addition of servers */
+    std::cout << "2. SIMPLE Participant: dynamic addition of servers" << std::endl;
+    // Create environment file so the watch file is initialized
+    std::ofstream file;
+    file.open(filename);
+    file.close();
+    participant = DomainParticipantFactory::get_instance()->create_participant(0, qos);
+    ASSERT_NE(nullptr, participant);
+    get_rtps_attributes(participant, attributes);
+    // As the environment file does not have the ROS_DISCOVERY_SERVER variable set, this variable has been loaded from
+    // the environment
+    EXPECT_EQ(attributes.builtin.discovery_config.m_DiscoveryServers, output);
+    // Modify environment file
+    server.clear();
+    fastrtps::rtps::IPLocator::setIPv4(locator, "192.168.1.133");
+    locator.port = 64863;
+    server.metatrafficUnicastLocatorList.push_back(locator);
+    get_server_client_default_guidPrefix(1, server.guidPrefix);
+    output.push_back(server);
+    std::this_thread::sleep_for(std::chrono::milliseconds(1100));
+    file.open(filename);
+    file << "{\"ROS_DISCOVERY_SERVER\": \"84.22.253.128:8888;192.168.1.133:64863;localhost:1234\"}";
+    file.close();
+    std::this_thread::sleep_for(std::chrono::milliseconds(1100));
+    get_rtps_attributes(participant, attributes);
+    EXPECT_EQ(attributes.builtin.discovery_config.m_DiscoveryServers, output);
+    result_qos = participant->get_qos();
+    EXPECT_EQ(ReturnCode_t::RETCODE_OK, participant->set_qos(result_qos));
+    EXPECT_EQ(ReturnCode_t::RETCODE_OK, DomainParticipantFactory::get_instance()->delete_participant(participant));
+    std::remove(filename.c_str());
+
+    /* 3. CLIENT Participant */
+    // Environment variable does not apply. Dynamic addition of servers does not apply.
+    std::cout << "3. CLIENT Participant" << std::endl;
+
+    qos.wire_protocol().builtin.discovery_config.discoveryProtocol = fastrtps::rtps::DiscoveryProtocol::CLIENT;
+    participant = DomainParticipantFactory::get_instance()->create_participant(0, qos);
+    ASSERT_NE(nullptr, participant);
+    get_rtps_attributes(participant, attributes);
+    EXPECT_EQ(attributes.builtin.discovery_config.discoveryProtocol, fastrtps::rtps::DiscoveryProtocol::CLIENT);
+    EXPECT_EQ(attributes.builtin.discovery_config.m_DiscoveryServers, qos_output);
+    result_qos = participant->get_qos();
+    EXPECT_EQ(ReturnCode_t::RETCODE_OK, participant->set_qos(result_qos));
+    EXPECT_EQ(ReturnCode_t::RETCODE_OK, DomainParticipantFactory::get_instance()->delete_participant(participant));
+
+    /* 4. SERVER Participant without initial remote server list */
+    // Servers are added but the attributes are not updated. There is no access to BuiltinProtocols to check
+    std::cout << "4. SERVER Participant without initial remote server list" << std::endl;
+    DomainParticipantQos server_qos;
+    server_qos.wire_protocol().builtin.discovery_config.discoveryProtocol = fastrtps::rtps::DiscoveryProtocol::SERVER;
+    // Listening locator: requirement for SERVERs
+    fastrtps::rtps::IPLocator::setIPv4(locator, "127.0.0.1");
+    locator.port = 5432;
+    server_qos.wire_protocol().builtin.metatrafficUnicastLocatorList.push_back(locator);
+    std::istringstream(rtps::DEFAULT_ROS2_SERVER_GUIDPREFIX) >> server_qos.wire_protocol().prefix;
+    participant = DomainParticipantFactory::get_instance()->create_participant(0, server_qos);
+    ASSERT_NE(nullptr, participant);
+    get_rtps_attributes(participant, attributes);
+    EXPECT_EQ(attributes.builtin.discovery_config.discoveryProtocol, fastrtps::rtps::DiscoveryProtocol::SERVER);
+    EXPECT_TRUE(attributes.builtin.discovery_config.m_DiscoveryServers.empty());
+    result_qos = participant->get_qos();
+    EXPECT_EQ(ReturnCode_t::RETCODE_OK, participant->set_qos(result_qos));
+    EXPECT_EQ(ReturnCode_t::RETCODE_OK, DomainParticipantFactory::get_instance()->delete_participant(participant));
+
+    /* 5. SERVER Participant with initial remote server list */
+    // Servers set with the environment variable are added but not updated in the attributes
+    std::cout << "5. SERVER Participant with initial remote server list" << std::endl;
+    qos.wire_protocol().builtin.discovery_config.discoveryProtocol = fastrtps::rtps::DiscoveryProtocol::SERVER;
+    fastrtps::rtps::IPLocator::setIPv4(locator, "127.0.0.1");
+    locator.port = 5432;
+    qos.wire_protocol().builtin.metatrafficUnicastLocatorList.push_back(locator);
+    std::istringstream(rtps::DEFAULT_ROS2_SERVER_GUIDPREFIX) >> qos.wire_protocol().prefix;
+    participant = DomainParticipantFactory::get_instance()->create_participant(0, qos);
+    ASSERT_NE(nullptr, participant);
+    get_rtps_attributes(participant, attributes);
+    EXPECT_EQ(attributes.builtin.discovery_config.discoveryProtocol, fastrtps::rtps::DiscoveryProtocol::SERVER);
+    EXPECT_EQ(attributes.builtin.discovery_config.m_DiscoveryServers, qos_output);
+    result_qos = participant->get_qos();
+    EXPECT_EQ(ReturnCode_t::RETCODE_OK, participant->set_qos(result_qos));
+    EXPECT_EQ(ReturnCode_t::RETCODE_OK, DomainParticipantFactory::get_instance()->delete_participant(participant));
+
+    /* 6. SERVER Participant with initial server with inconsistent GUID prefix. Dynamic addition of servers failure */
+    // Write environment file
+    std::cout << "6. SERVER Participant with initial server with inconsistent GUID prefix"
+            << std::endl;
+    file.open(filename);
+    file << "{\"ROS_DISCOVERY_SERVER\": \"84.22.253.128:8888;;localhost:1234\"}";
+    file.close();
+
+    participant = DomainParticipantFactory::get_instance()->create_participant(0, qos);
+    ASSERT_NE(nullptr, participant);
+    get_rtps_attributes(participant, attributes);
+    EXPECT_EQ(attributes.builtin.discovery_config.discoveryProtocol, fastrtps::rtps::DiscoveryProtocol::SERVER);
+    EXPECT_EQ(attributes.builtin.discovery_config.m_DiscoveryServers, qos_output);
+
+    // Modify environment file: fails cause the initial guid prefix did not comply with the schema
+    std::this_thread::sleep_for(std::chrono::milliseconds(1100));
+    file.open(filename);
+    file << "{\"ROS_DISCOVERY_SERVER\": \"84.22.253.128:8888;192.168.1.133:64863;localhost:1234\"}";
+    file.close();
+    std::this_thread::sleep_for(std::chrono::milliseconds(1100));
+    get_rtps_attributes(participant, attributes);
+    EXPECT_EQ(attributes.builtin.discovery_config.m_DiscoveryServers, qos_output);
+    // Capture log warning
+    helper_wait_for_at_least_entries(mockConsumer, 1);
+    result_qos = participant->get_qos();
+    EXPECT_EQ(ReturnCode_t::RETCODE_OK, participant->set_qos(result_qos));
+    EXPECT_EQ(ReturnCode_t::RETCODE_OK, DomainParticipantFactory::get_instance()->delete_participant(participant));
+    std::remove(filename.c_str());
+
+    /* 7. SERVER Participant with same server in QoS and in evironment file, but with different locators */
+    // There is no conflict: it is treated as two different servers though the environment variable locator seems to be
+    // the one pinged.
+    // However, the locator which is checked in order to add a new server is the one set by QoS.
+    std::cout << "7. SERVER Participant: same remote server, different locators"
+            << std::endl;
+    qos.wire_protocol().builtin.discovery_config.m_DiscoveryServers.clear();
+    server.clear();
+    server.ReadguidPrefix(rtps::DEFAULT_ROS2_SERVER_GUIDPREFIX);
+    fastrtps::rtps::IPLocator::setIPv4(locator, "172.17.0.5");
+    locator.port = 4321;
+    server.metatrafficUnicastLocatorList.push_back(locator);
+    qos.wire_protocol().builtin.discovery_config.m_DiscoveryServers.push_back(server);
+
+    output.clear();
+    server.clear();
+    fastrtps::rtps::IPLocator::setIPv4(locator, "172.17.0.5");
+    locator.port = 4321;
+    server.metatrafficUnicastLocatorList.push_back(locator);
+    get_server_client_default_guidPrefix(0, server.guidPrefix);
+    output.push_back(server);
+    server.clear();
+    fastrtps::rtps::IPLocator::setIPv4(locator, "192.168.1.133");
+    locator.port = 64863;
+    server.metatrafficUnicastLocatorList.push_back(locator);
+    get_server_client_default_guidPrefix(1, server.guidPrefix);
+    output.push_back(server);
+
+    file.open(filename);
+    file << "{\"ROS_DISCOVERY_SERVER\": \"localhost:1234\"}";
+    file.close();
+
+    participant = DomainParticipantFactory::get_instance()->create_participant(0, qos);
+    ASSERT_NE(nullptr, participant);
+    // Try adding a new remote server
+    std::this_thread::sleep_for(std::chrono::milliseconds(1100));
+    file.open(filename);
+    file << "{\"ROS_DISCOVERY_SERVER\": \"172.17.0.5:4321;192.168.1.133:64863\"}";
+    file.close();
+    std::this_thread::sleep_for(std::chrono::milliseconds(1100));
+    get_rtps_attributes(participant, attributes);
+    EXPECT_EQ(attributes.builtin.discovery_config.m_DiscoveryServers, output);
+    result_qos = participant->get_qos();
+    EXPECT_EQ(ReturnCode_t::RETCODE_OK, participant->set_qos(result_qos));
+    EXPECT_EQ(ReturnCode_t::RETCODE_OK, DomainParticipantFactory::get_instance()->delete_participant(participant));
+    std::remove(filename.c_str());
+
+    /* 8. SERVER Participant: intended use */
+    std::cout << "8. SERVER Participant: intended use" << std::endl;
+    file.open(filename);
+    file << "{\"ROS_DISCOVERY_SERVER\": \";localhost:1234\"}";
+    file.close();
+
+    output.clear();
+    server.clear();
+    fastrtps::rtps::IPLocator::setIPv4(locator, "172.17.0.5");
+    locator.port = 4321;
+    server.metatrafficUnicastLocatorList.push_back(locator);
+    get_server_client_default_guidPrefix(0, server.guidPrefix);
+    output.push_back(server);
+
+    participant = DomainParticipantFactory::get_instance()->create_participant(0, qos);
+    ASSERT_NE(nullptr, participant);
+    get_rtps_attributes(participant, attributes);
+    EXPECT_EQ(attributes.builtin.discovery_config.m_DiscoveryServers, output);
+    // Add new server through environment file
+    // Even though the server added previously through the environment file is being pinged, it is not really being
+    // checked because it is not included in the attributes.
+    std::this_thread::sleep_for(std::chrono::milliseconds(1100));
+    file.open(filename);
+    file << "{\"ROS_DISCOVERY_SERVER\": \"172.17.0.5:4321;;192.168.1.133:64863\"}";
+    file.close();
+    std::this_thread::sleep_for(std::chrono::milliseconds(1100));
+    server.clear();
+    fastrtps::rtps::IPLocator::setIPv4(locator, "192.168.1.133");
+    locator.port = 64863;
+    server.metatrafficUnicastLocatorList.push_back(locator);
+    get_server_client_default_guidPrefix(2, server.guidPrefix);
+    output.push_back(server);
+    get_rtps_attributes(participant, attributes);
+    EXPECT_EQ(attributes.builtin.discovery_config.m_DiscoveryServers, output);
+    // Try to be consistent: add already known server
+    std::this_thread::sleep_for(std::chrono::milliseconds(1100));
+    file.open(filename);
+    file << "{\"ROS_DISCOVERY_SERVER\": \"172.17.0.5:4321;localhost:1234;192.168.1.133:64863\"}";
+    file.close();
+    std::this_thread::sleep_for(std::chrono::milliseconds(1100));
+    server.clear();
+    fastrtps::rtps::IPLocator::setIPv4(locator, "127.0.0.1");
+    locator.port = 1234;
+    server.metatrafficUnicastLocatorList.push_back(locator);
+    get_server_client_default_guidPrefix(1, server.guidPrefix);
+    output.push_back(server);
+    get_rtps_attributes(participant, attributes);
+    EXPECT_EQ(attributes.builtin.discovery_config.m_DiscoveryServers, output);
+    result_qos = participant->get_qos();
+    EXPECT_EQ(ReturnCode_t::RETCODE_OK, participant->set_qos(result_qos));
+    // Add new server using API
+    result_qos.wire_protocol().builtin.discovery_config.m_DiscoveryServers.push_back(server);
+    // RTPS layer issues a Warning because a server has been removed. However, DDS layer returns OK
+    EXPECT_EQ(ReturnCode_t::RETCODE_OK, participant->set_qos(result_qos));
+    server.clear();
+    fastrtps::rtps::IPLocator::setIPv4(locator, "192.168.1.133");
+    locator.port = 64863;
+    server.metatrafficUnicastLocatorList.push_back(locator);
+    get_server_client_default_guidPrefix(2, server.guidPrefix);
+    result_qos.wire_protocol().builtin.discovery_config.m_DiscoveryServers.push_back(server);
+    server.clear();
+    fastrtps::rtps::IPLocator::setIPv4(locator, "84.22.253.128");
+    locator.port = 8888;
+    server.metatrafficUnicastLocatorList.push_back(locator);
+    get_server_client_default_guidPrefix(3, server.guidPrefix);
+    result_qos.wire_protocol().builtin.discovery_config.m_DiscoveryServers.push_back(server);
+    EXPECT_EQ(ReturnCode_t::RETCODE_OK, participant->set_qos(result_qos));
+    output.push_back(server);
+    get_rtps_attributes(participant, attributes);
+    EXPECT_EQ(attributes.builtin.discovery_config.m_DiscoveryServers, output);
+    result_qos = participant->get_qos();
+    EXPECT_EQ(ReturnCode_t::RETCODE_OK, participant->set_qos(result_qos));
+    EXPECT_EQ(ReturnCode_t::RETCODE_OK, DomainParticipantFactory::get_instance()->delete_participant(participant));
+    std::remove(filename.c_str());
 }
 
 /** This test checks that the only mutable element in WireProtocolQosPolicy is the list of remote servers.
