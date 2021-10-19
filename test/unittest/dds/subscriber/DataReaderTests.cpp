@@ -1729,6 +1729,8 @@ TEST_F(DataReaderTests, sample_info)
             }
         },
         {
+            // 0 - Unregistering while having another alive writer should not change state
+            // 1 - Disposing while having another alive writer is always done
             { {0, TestCmd::UNREGISTER, 0}, {1, TestCmd::DISPOSE, 1} },
             {
                 {ReturnCode_t::RETCODE_OK, NOT_NEW_VIEW_STATE, ALIVE_INSTANCE_STATE, 1, 1},
@@ -1736,6 +1738,8 @@ TEST_F(DataReaderTests, sample_info)
             }
         },
         {
+            // 0 - Writing and unregistering while having another alive writer should not change state
+            // 1 - Unregister a disposed instance should not change state
             { {0, TestCmd::WRITE, 0}, {0, TestCmd::UNREGISTER, 1}, {1, TestCmd::UNREGISTER, 0} },
             {
                 {ReturnCode_t::RETCODE_OK, NOT_NEW_VIEW_STATE, ALIVE_INSTANCE_STATE, 1, 1},
@@ -1743,6 +1747,8 @@ TEST_F(DataReaderTests, sample_info)
             }
         },
         {
+            // 0 - Closing both writers should return NOT_ALIVE_NO_WRITERS
+            // 1 - Closing both writers on a disposed instance should not change state
             { {0, TestCmd::CLOSE, 0}, {1, TestCmd::CLOSE, 0} },
             {
                 {ReturnCode_t::RETCODE_OK, NOT_NEW_VIEW_STATE, NOT_ALIVE_NO_WRITERS_INSTANCE_STATE, 1, 1},
