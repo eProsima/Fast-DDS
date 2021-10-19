@@ -535,6 +535,7 @@ public:
     {
         return impl_;
     }
+
 };
 
 void get_rtps_attributes(
@@ -727,7 +728,7 @@ TEST(ParticipantTests, RemoteServersListConfiguration)
     /* 6. SERVER Participant with initial server with inconsistent GUID prefix. Dynamic addition of servers failure */
     // Write environment file
     std::cout << "6. SERVER Participant with initial server with inconsistent GUID prefix"
-            << std::endl;
+              << std::endl;
     file.open(filename);
     file << "{\"ROS_DISCOVERY_SERVER\": \"84.22.253.128:8888;;localhost:1234\"}";
     file.close();
@@ -758,7 +759,7 @@ TEST(ParticipantTests, RemoteServersListConfiguration)
     // the one pinged.
     // However, the locator which is checked in order to add a new server is the one set by QoS.
     std::cout << "7. SERVER Participant: same remote server, different locators"
-            << std::endl;
+              << std::endl;
     qos.wire_protocol().builtin.discovery_config.m_DiscoveryServers.clear();
     server.clear();
     server.ReadguidPrefix(rtps::DEFAULT_ROS2_SERVER_GUIDPREFIX);
