@@ -464,9 +464,10 @@ ContentFilteredTopic* DomainParticipantImpl::create_contentfilteredtopic(
         const std::string& name,
         Topic* related_topic,
         const std::string& filter_expression,
-        const std::vector<std::string>& expression_parameters)
+        const std::vector<std::string>& expression_parameters,
+        const char* filter_name)
 {
-    if (related_topic == nullptr)
+    if (nullptr == related_topic)
     {
         return nullptr;
     }
@@ -480,6 +481,19 @@ ContentFilteredTopic* DomainParticipantImpl::create_contentfilteredtopic(
         logError(PARTICIPANT, "Topic with name : " << name << " already exists");
         return nullptr;
     }
+
+    if (nullptr == filter_name)
+    {
+        filter_name = FASTDDS_SQLFILTER_NAME;
+    }
+
+    // TODO(Miguel C): Find ContentFilter in registry
+
+    // TODO(Miguel C): Tell ContentFilter to compile the expression
+
+    TopicImpl* topic_impl = dynamic_cast<TopicImpl*>(related_topic->get_impl());
+    assert(nullptr != topic_impl);
+    const TypeSupport& type = topic_impl->get_type();
 
     ContentFilteredTopic* topic;
     topic = new ContentFilteredTopic(name, related_topic, filter_expression, expression_parameters);

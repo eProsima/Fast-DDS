@@ -23,6 +23,8 @@
 #include <fastdds/dds/topic/TopicDescription.hpp>
 #include <fastdds/dds/topic/Topic.hpp>
 
+#define FASTDDS_SQLFILTER_NAME "DDSSQL"
+
 using eprosima::fastrtps::types::ReturnCode_t;
 
 namespace eprosima {
