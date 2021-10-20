@@ -7,7 +7,7 @@
 #include <fastrtps/rtps/messages/MessageReceiver.h>
 #include <fastdds/rtps/attributes/RTPSParticipantAttributes.h>
 
-#define MIN_SIZE 256
+#define MIN_SIZE RTPSMESSAGE_HEADER_SIZE
 #define MAX_SIZE 64000
 
 using namespace eprosima::fastrtps;
