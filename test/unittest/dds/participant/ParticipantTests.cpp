@@ -663,6 +663,7 @@ TEST(ParticipantTests, RemoteServersListConfiguration)
     server.metatrafficUnicastLocatorList.push_back(locator);
     get_server_client_default_guidPrefix(1, server.guidPrefix);
     output.push_back(server);
+#ifndef __APPLE__
     std::this_thread::sleep_for(std::chrono::milliseconds(1100));
     file.open(filename);
     file << "{\"ROS_DISCOVERY_SERVER\": \"84.22.253.128:8888;192.168.1.133:64863;localhost:1234\"}";
@@ -670,6 +671,7 @@ TEST(ParticipantTests, RemoteServersListConfiguration)
     std::this_thread::sleep_for(std::chrono::milliseconds(1100));
     get_rtps_attributes(participant, attributes);
     EXPECT_EQ(attributes.builtin.discovery_config.m_DiscoveryServers, output);
+#endif // APPLE
     result_qos = participant->get_qos();
     EXPECT_EQ(ReturnCode_t::RETCODE_OK, participant->set_qos(result_qos));
     EXPECT_EQ(ReturnCode_t::RETCODE_OK, DomainParticipantFactory::get_instance()->delete_participant(participant));
@@ -748,7 +750,9 @@ TEST(ParticipantTests, RemoteServersListConfiguration)
     get_rtps_attributes(participant, attributes);
     EXPECT_EQ(attributes.builtin.discovery_config.m_DiscoveryServers, qos_output);
     // Capture log warning
+#ifndef __APPLE__
     helper_wait_for_at_least_entries(mockConsumer, 1);
+#endif // APPLE
     result_qos = participant->get_qos();
     EXPECT_EQ(ReturnCode_t::RETCODE_OK, participant->set_qos(result_qos));
     EXPECT_EQ(ReturnCode_t::RETCODE_OK, DomainParticipantFactory::get_instance()->delete_participant(participant));
@@ -789,6 +793,7 @@ TEST(ParticipantTests, RemoteServersListConfiguration)
     participant = DomainParticipantFactory::get_instance()->create_participant(0, qos);
     ASSERT_NE(nullptr, participant);
     // Try adding a new remote server
+#ifndef __APPLE__
     std::this_thread::sleep_for(std::chrono::milliseconds(1100));
     file.open(filename);
     file << "{\"ROS_DISCOVERY_SERVER\": \"172.17.0.5:4321;192.168.1.133:64863\"}";
@@ -796,6 +801,7 @@ TEST(ParticipantTests, RemoteServersListConfiguration)
     std::this_thread::sleep_for(std::chrono::milliseconds(1100));
     get_rtps_attributes(participant, attributes);
     EXPECT_EQ(attributes.builtin.discovery_config.m_DiscoveryServers, output);
+#endif // APPLE
     result_qos = participant->get_qos();
     EXPECT_EQ(ReturnCode_t::RETCODE_OK, participant->set_qos(result_qos));
     EXPECT_EQ(ReturnCode_t::RETCODE_OK, DomainParticipantFactory::get_instance()->delete_participant(participant));
@@ -822,6 +828,7 @@ TEST(ParticipantTests, RemoteServersListConfiguration)
     // Add new server through environment file
     // Even though the server added previously through the environment file is being pinged, it is not really being
     // checked because it is not included in the attributes.
+#ifndef __APPLE__
     std::this_thread::sleep_for(std::chrono::milliseconds(1100));
     file.open(filename);
     file << "{\"ROS_DISCOVERY_SERVER\": \"172.17.0.5:4321;;192.168.1.133:64863\"}";
@@ -871,6 +878,7 @@ TEST(ParticipantTests, RemoteServersListConfiguration)
     output.push_back(server);
     get_rtps_attributes(participant, attributes);
     EXPECT_EQ(attributes.builtin.discovery_config.m_DiscoveryServers, output);
+#endif // APPLE
     result_qos = participant->get_qos();
     EXPECT_EQ(ReturnCode_t::RETCODE_OK, participant->set_qos(result_qos));
     EXPECT_EQ(ReturnCode_t::RETCODE_OK, DomainParticipantFactory::get_instance()->delete_participant(participant));
