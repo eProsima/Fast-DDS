@@ -723,10 +723,20 @@ bool StatefulReader::processHeartbeatMsg(
     if (acceptMsgFrom(writerGUID, &writer) && writer)
     {
         bool assert_liveliness = false;
+        int32_t current_sample_lost = 0;
         if (writer->process_heartbeat(
-                    hbCount, firstSN, lastSN, finalFlag, livelinessFlag, disable_positive_acks_, assert_liveliness))
+                    hbCount, firstSN, lastSN, finalFlag, livelinessFlag, disable_positive_acks_, assert_liveliness,
+                    current_sample_lost))
         {
             mp_history->remove_fragmented_changes_until(firstSN, writerGUID);
+
+            if (0 < current_sample_lost)
+            {
+                if (getListener() != nullptr)
+                {
+                    getListener()->on_sample_lost((RTPSReader*)this, current_sample_lost);
+                }
+            }
 
             // Maybe now we have to notify user from new CacheChanges.
             NotifyChanges(writer);

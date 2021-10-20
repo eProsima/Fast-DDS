@@ -206,7 +206,7 @@ void WriterProxy::missing_changes_update(
     }
 }
 
-void WriterProxy::lost_changes_update(
+int32_t WriterProxy::lost_changes_update(
         const SequenceNumber_t& seq_num)
 {
 #ifdef SHOULD_DEBUG_LINUX
@@ -214,12 +214,29 @@ void WriterProxy::lost_changes_update(
 #endif // SHOULD_DEBUG_LINUX
 
     logInfo(RTPS_READER, guid().entityId << ": up to seq_num: " << seq_num);
+    int32_t current_sample_lost = 0;
 
     // Check was not removed from container.
-    if (seq_num > changes_from_writer_low_mark_)
+    if (seq_num > (changes_from_writer_low_mark_ + 1))
     {
         // Remove all received changes with a sequence lower than seq_num
         ChangeIterator it = std::lower_bound(changes_received_.begin(), changes_received_.end(), seq_num);
+        if (!changes_received_.empty())
+        {
+            current_sample_lost =
+                    static_cast<int32_t>((*changes_received_.begin()).to64long() -
+                    (changes_from_writer_low_mark_.to64long() + 1));
+            auto distance = std::distance(changes_received_.begin(), it);
+            current_sample_lost +=
+                    static_cast<int32_t>(seq_num.to64long() - (*changes_received_.begin()).to64long() + 1 -
+                    distance);
+        }
+        else
+        {
+            current_sample_lost =
+                    static_cast<int32_t>(seq_num.to64long() -
+                    (changes_from_writer_low_mark_.to64long() + 1));
+        }
         changes_received_.erase(changes_received_.begin(), it);
 
         // Update low mark
@@ -232,6 +249,8 @@ void WriterProxy::lost_changes_update(
         // Next could need to be removed.
         cleanup();
     }
+
+    return current_sample_lost;
 }
 
 bool WriterProxy::received_change_set(
@@ -518,7 +537,8 @@ bool WriterProxy::process_heartbeat(
         bool final_flag,
         bool liveliness_flag,
         bool disable_positive,
-        bool& assert_liveliness)
+        bool& assert_liveliness,
+        int32_t& current_sample_lost)
 {
 #ifdef SHOULD_DEBUG_LINUX
     assert(get_mutex_owner() == get_thread_id());
@@ -534,7 +554,7 @@ bool WriterProxy::process_heartbeat(
         // initial_acknack_->cancel_timer();
 
         last_heartbeat_count_ = count;
-        lost_changes_update(first_seq);
+        current_sample_lost = lost_changes_update(first_seq);
         missing_changes_update(last_seq);
         heartbeat_final_flag_.store(final_flag);
 

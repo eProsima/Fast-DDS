@@ -121,6 +121,7 @@ TEST(WriterProxyTests, MissingChangesUpdate)
     // and lastSN.value < firstSN.value
     bool assert_liveliness = false;
     uint32_t heartbeat_count = 1;
+    int32_t current_sample_lost = 0;
     EXPECT_CALL(*wproxy.heartbeat_response_, restart_timer()).Times(1u);
     wproxy.process_heartbeat(
         heartbeat_count++,
@@ -129,7 +130,8 @@ TEST(WriterProxyTests, MissingChangesUpdate)
         false,
         false,
         false,
-        assert_liveliness );
+        assert_liveliness,
+        current_sample_lost);
 
     SequenceNumberSet_t t2 (SequenceNumber_t(0, 1));
     t2.add(SequenceNumber_t(0, 1));
@@ -147,7 +149,8 @@ TEST(WriterProxyTests, MissingChangesUpdate)
         false,
         false,
         false,
-        assert_liveliness);
+        assert_liveliness,
+        current_sample_lost);
 
     t2.add(SequenceNumber_t(0, 2));
     t2.add(SequenceNumber_t(0, 3));
@@ -180,7 +183,8 @@ TEST(WriterProxyTests, MissingChangesUpdate)
         false,
         false,
         false,
-        assert_liveliness);
+        assert_liveliness,
+        current_sample_lost);
 
     ASSERT_THAT(t2, wproxy.missing_changes());
     ASSERT_EQ(SequenceNumber_t(), wproxy.available_changes_max());
@@ -197,7 +201,8 @@ TEST(WriterProxyTests, MissingChangesUpdate)
         false,
         false,
         false,
-        assert_liveliness);
+        assert_liveliness,
+        current_sample_lost);
 
     t2.add(SequenceNumber_t(0, 7));
     ASSERT_THAT(t2, wproxy.missing_changes());
@@ -230,7 +235,8 @@ TEST(WriterProxyTests, MissingChangesUpdate)
         false,
         false,
         false,
-        assert_liveliness );
+        assert_liveliness,
+        current_sample_lost);
 
     ASSERT_THAT(t6, wproxy.missing_changes());
     ASSERT_EQ(SequenceNumber_t(0, 6), wproxy.available_changes_max());
@@ -258,7 +264,8 @@ TEST(WriterProxyTests, MissingChangesUpdate)
         false,
         false,
         false,
-        assert_liveliness );
+        assert_liveliness,
+        current_sample_lost);
 
     t6.add(SequenceNumber_t(0, 6));
     t6.add(SequenceNumber_t(0, 7));
@@ -281,6 +288,7 @@ TEST(WriterProxyTests, LostChangesUpdate)
     // 1. Simulate reception of a HEARTBEAT(3,3)
     uint32_t heartbeat_count = 1;
     bool assert_liveliness = false;
+    int32_t current_sample_lost = false;
     EXPECT_CALL(*wproxy.heartbeat_response_, restart_timer()).Times(1u);
     wproxy.process_heartbeat(
         heartbeat_count++,
@@ -289,7 +297,8 @@ TEST(WriterProxyTests, LostChangesUpdate)
         false,
         false,
         false,
-        assert_liveliness);
+        assert_liveliness,
+        current_sample_lost);
 
     SequenceNumberSet_t t1(SequenceNumber_t(0, 3));
     t1.add(SequenceNumber_t(0, 3));
@@ -308,7 +317,8 @@ TEST(WriterProxyTests, LostChangesUpdate)
         false,
         false,
         false,
-        assert_liveliness);
+        assert_liveliness,
+        current_sample_lost);
 
     ASSERT_THAT( SequenceNumberSet_t(SequenceNumber_t( 0, 6)), wproxy.missing_changes());
     ASSERT_EQ( SequenceNumber_t( 0, 5 ), wproxy.available_changes_max());
@@ -324,7 +334,8 @@ TEST(WriterProxyTests, LostChangesUpdate)
         false,
         false,
         false,
-        assert_liveliness);
+        assert_liveliness,
+        current_sample_lost);
 
     ASSERT_THAT(SequenceNumberSet_t( SequenceNumber_t(0, 6)), wproxy.missing_changes());
     ASSERT_EQ(SequenceNumber_t(0, 5), wproxy.available_changes_max());
@@ -351,7 +362,8 @@ TEST(WriterProxyTests, LostChangesUpdate)
         false,
         false,
         false,
-        assert_liveliness);
+        assert_liveliness,
+        current_sample_lost);
 
     SequenceNumberSet_t t5(SequenceNumber_t(0, 8));
     t5.add(SequenceNumber_t(0, 8));
@@ -367,7 +379,8 @@ TEST(WriterProxyTests, LostChangesUpdate)
         false,
         false,
         false,
-        assert_liveliness);
+        assert_liveliness,
+        current_sample_lost);
 
     SequenceNumberSet_t t6(SequenceNumber_t(0, 10));
     t6.add(SequenceNumber_t(0, 10));
@@ -476,6 +489,7 @@ TEST(WriterProxyTests, ReceivedChangeSet)
     // Sequence number 6 should be RECEIVED
     bool assert_liveliness = false;
     uint32_t heartbeat_count = 1;
+    int32_t current_sample_lost = 0;
     EXPECT_CALL(*wproxy.heartbeat_response_, restart_timer()).Times(1u);
     wproxy.process_heartbeat(
         heartbeat_count++,
@@ -484,7 +498,8 @@ TEST(WriterProxyTests, ReceivedChangeSet)
         false,
         false,
         false,
-        assert_liveliness);
+        assert_liveliness,
+        current_sample_lost);
 
     ASSERT_THAT(t4, wproxy.missing_changes());
     ASSERT_EQ(wproxy.are_there_missing_changes(), true);
