@@ -444,3 +444,6 @@ compile_commands.json
 
 # Visual Studio Code
 .vscode
+
+# Uncrustify
+uncrustify.cfg

@@ -7,17 +7,29 @@
 #include <fastrtps/rtps/messages/MessageReceiver.h>
 #include <fastdds/rtps/attributes/RTPSParticipantAttributes.h>
 
+#define MIN_SIZE RTPSMESSAGE_HEADER_SIZE
+#define MAX_SIZE 64000
+
+using namespace eprosima::fastrtps;
+using namespace eprosima::fastrtps::rtps;
+
+static const Locator_t remoteLocator;
+static const Locator_t recvLocator;
+
 extern "C" int LLVMFuzzerTestOneInput(
         const uint8_t* data,
         size_t size)
 {
-    const eprosima::fastrtps::rtps::Locator_t remoteLocator;
-    const eprosima::fastrtps::rtps::Locator_t recvLocator;
-    eprosima::fastrtps::rtps::MessageReceiver* rcv = new eprosima::fastrtps::rtps::MessageReceiver(NULL, 4096);
+    if (size < MIN_SIZE || size > MAX_SIZE)
+    {
+        return 0;
+    }
 
-    eprosima::fastrtps::rtps::CDRMessage_t msg(0);
+    MessageReceiver* rcv = new MessageReceiver(NULL, MAX_SIZE);
+
+    CDRMessage_t msg(0);
     msg.wraps = true;
-    msg.buffer = const_cast<eprosima::fastrtps::rtps::octet*>(data);
+    msg.buffer = const_cast<octet*>(data);
     msg.length = size;
     msg.max_size = size;
     msg.reserved_size = size;
@@ -25,5 +37,6 @@ extern "C" int LLVMFuzzerTestOneInput(
     // TODO: Should we unlock in case UnregisterReceiver is called from callback ?
     rcv->processCDRMsg(remoteLocator, recvLocator, &msg);
     delete rcv;
+
     return 0;
 }
