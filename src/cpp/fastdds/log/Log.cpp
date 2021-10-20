@@ -16,6 +16,8 @@
 #include <iomanip>
 #include <mutex>
 
+#include <fastrtps/utils/DBQueue.h>
+
 #include <fastdds/dds/log/Log.hpp>
 #include <fastdds/dds/log/OStreamConsumer.hpp>
 #include <fastdds/dds/log/StdoutConsumer.hpp>
@@ -28,27 +30,53 @@ namespace eprosima {
 namespace fastdds {
 namespace dds {
 
-struct Log::Resources Log::resources_;
-
-Log::Resources::Resources()
-    : logging(false)
-    , work(false)
-    , current_loop(0)
-    , filenames(false)
-    , functions(true)
-    , verbosity(Log::Error)
+struct Resources
 {
+    fastrtps::DBQueue<Log::Entry> logs;
+    std::vector<std::unique_ptr<LogConsumer>> consumers;
+    std::unique_ptr<std::thread> logging_thread;
+
+    // Condition variable segment.
+    std::condition_variable cv;
+    std::mutex cv_mutex;
+    bool logging;
+    bool work;
+    int current_loop;
+
+    // Context configuration.
+    std::mutex config_mutex;
+    bool filenames;
+    bool functions;
+    std::unique_ptr<std::regex> category_filter;
+    std::unique_ptr<std::regex> filename_filter;
+    std::unique_ptr<std::regex> error_string_filter;
+
+    std::atomic<Log::Kind> verbosity;
+
+    Resources()
+        : logging(false)
+        , work(false)
+        , current_loop(0)
+        , filenames(false)
+        , functions(true)
+        , verbosity(Log::Error)
+    {
 #if STDOUTERR_LOG_CONSUMER
-    resources_.consumers.emplace_back(new StdoutErrConsumer);
+        consumers.emplace_back(new StdoutErrConsumer);
 #else
-    resources_.consumers.emplace_back(new StdoutConsumer);
+        consumers.emplace_back(new StdoutConsumer);
 #endif // STDOUTERR_LOG_CONSUMER
-}
+    }
 
-Log::Resources::~Resources()
-{
-    Log::KillThread();
-}
+    ~Resources()
+    {
+        Log::KillThread();
+    }
+
+};
+
+static struct Resources resources_;
+
 
 void Log::RegisterConsumer(
         std::unique_ptr<LogConsumer>&& consumer)
