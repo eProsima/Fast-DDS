@@ -24,13 +24,14 @@
 #include <fastdds/dds/domain/DomainParticipantListener.hpp>
 #include <fastdds/dds/domain/DomainParticipantFactory.hpp>
 #include <fastdds/dds/log/Log.hpp>
-#include <fastdds/dds/publisher/Publisher.hpp>
-#include <fastdds/dds/subscriber/Subscriber.hpp>
-#include <fastdds/dds/subscriber/DataReader.hpp>
 #include <fastdds/dds/publisher/DataWriter.hpp>
+#include <fastdds/dds/publisher/Publisher.hpp>
+#include <fastdds/dds/subscriber/DataReader.hpp>
+#include <fastdds/dds/subscriber/Subscriber.hpp>
+#include <fastdds/dds/topic/IContentFilterFactory.hpp>
 
-#include <fastdds/rtps/attributes/RTPSParticipantAttributes.h>
 #include <fastdds/rtps/RTPSDomain.h>
+#include <fastdds/rtps/attributes/RTPSParticipantAttributes.h>
 #include <fastdds/rtps/builtin/liveliness/WLP.h>
 #include <fastdds/rtps/participant/ParticipantDiscoveryInfo.h>
 #include <fastdds/rtps/participant/RTPSParticipant.h>
@@ -40,11 +41,11 @@
 #include <fastrtps/attributes/PublisherAttributes.h>
 #include <fastrtps/attributes/SubscriberAttributes.h>
 
-#include <fastrtps/types/TypeObjectFactory.h>
 #include <fastrtps/types/DynamicTypeBuilderFactory.h>
 #include <fastrtps/types/DynamicPubSubType.h>
 #include <fastrtps/types/DynamicType.h>
 #include <fastrtps/types/DynamicTypeMember.h>
+#include <fastrtps/types/TypeObjectFactory.h>
 
 #include <fastrtps/xmlparser/XMLProfileManager.h>
 
@@ -467,6 +468,8 @@ ContentFilteredTopic* DomainParticipantImpl::create_contentfilteredtopic(
         const std::vector<std::string>& expression_parameters,
         const char* filter_name)
 {
+    using TypeDescriptor = IContentFilterFactory::TypeDescriptor;
+
     if (nullptr == related_topic)
     {
         return nullptr;
@@ -487,14 +490,35 @@ ContentFilteredTopic* DomainParticipantImpl::create_contentfilteredtopic(
         filter_name = FASTDDS_SQLFILTER_NAME;
     }
 
-    // TODO(Miguel C): Find ContentFilter in registry
-
-    // TODO(Miguel C): Tell ContentFilter to compile the expression
+    IContentFilterFactory* filter_factory = nullptr;
+    // TODO(Miguel C): Find filter factory in registry
+    // filter_factory = find_filter_factory(filter_name);
+    if (nullptr == filter_factory)
+    {
+        logError(PARTICIPANT, "Could not find factory for filter " << filter_name);
+        return nullptr;
+    }
 
     TopicImpl* topic_impl = dynamic_cast<TopicImpl*>(related_topic->get_impl());
     assert(nullptr != topic_impl);
     const TypeSupport& type = topic_impl->get_type();
+    const IContentFilterFactory::TypeDescriptor* type_descriptor = nullptr;
+    // TODO(Miguel C): type_descriptor = type.get_descriptor();
+    LoanableSequence<const char*> filter_parameters(expression_parameters.size());
+    for (size_t i = 0; i < expression_parameters.size(); ++i)
+    {
+        filter_parameters[i] = expression_parameters[i].c_str();
+    }
 
+    // Tell filter factory to compile the expression
+    IContentFilter* filter_instance = nullptr;
+    if (ReturnCode_t::RETCODE_OK != filter_factory->create_content_filter(related_topic->get_type_name().c_str(),
+        type_descriptor, filter_expression.c_str(), filter_parameters, filter_instance))
+    {
+        return nullptr;
+    }
+
+    // TODO(Miguel C): Pass filter_factory and filter_instance to the returned object
     ContentFilteredTopic* topic;
     topic = new ContentFilteredTopic(name, related_topic, filter_expression, expression_parameters);
 
