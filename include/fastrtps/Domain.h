@@ -60,6 +60,7 @@ class DynamicPubSubType;
 class Domain
 {
 public:
+
     /**
      * Create a Participant from a profile name.
      * @param participant_profile Participant profile name.
@@ -184,7 +185,7 @@ public:
      */
     RTPS_DllAPI static bool registerType(
             Participant* part,
-            fastdds::dds::TopicDataType * type);
+            fastdds::dds::TopicDataType* type);
 
     /**
      * Register a type in a participant.
