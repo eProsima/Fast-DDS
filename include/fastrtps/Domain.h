@@ -36,8 +36,8 @@
 #define DEPRECATED
 #endif // ifdef USE_DEPRECATION
 
-namespace eprosima{
-namespace fastrtps{
+namespace eprosima {
+namespace fastrtps {
 
 class ParticipantListener;
 class Participant;
@@ -49,7 +49,7 @@ class Subscriber;
 class SubscriberAttributes;
 class SubscriberListener;
 
-namespace types{
+namespace types {
 class DynamicPubSubType;
 } // namespace types
 
@@ -81,7 +81,8 @@ public:
             ParticipantListener* listen = nullptr);
 
     //!Fills participant_attributes with the default values.
-    RTPS_DllAPI static void getDefaultParticipantAttributes(ParticipantAttributes& participant_attributes);
+    RTPS_DllAPI static void getDefaultParticipantAttributes(
+            ParticipantAttributes& participant_attributes);
 
     /**
      * Create a Publisher in a Participant from a profile name.
@@ -108,7 +109,8 @@ public:
             PublisherListener* listen = nullptr);
 
     //!Fills publisher_attributes with the default values.
-    RTPS_DllAPI static void getDefaultPublisherAttributes(PublisherAttributes& publisher_attributes);
+    RTPS_DllAPI static void getDefaultPublisherAttributes(
+            PublisherAttributes& publisher_attributes);
 
     /**
      * Create a Subscriber in a Participant from a profile name.
@@ -135,28 +137,32 @@ public:
             SubscriberListener* listen = nullptr);
 
     //!Fills subscriber_attributes with the default values.
-    RTPS_DllAPI static void getDefaultSubscriberAttributes(SubscriberAttributes& subscriber_attributes);
+    RTPS_DllAPI static void getDefaultSubscriberAttributes(
+            SubscriberAttributes& subscriber_attributes);
 
     /**
      * Remove a Participant and all associated publishers and subscribers.
      * @param part Pointer to the participant.
      * @return True if correctly removed.
      */
-    RTPS_DllAPI static bool removeParticipant(Participant* part);
+    RTPS_DllAPI static bool removeParticipant(
+            Participant* part);
 
     /**
      * Remove a Publisher.
      * @param pub Pointer to the Publisher.
      * @return True if correctly removed.
      */
-    RTPS_DllAPI static bool removePublisher(Publisher* pub);
+    RTPS_DllAPI static bool removePublisher(
+            Publisher* pub);
 
     /**
      * Remove a Subscriber.
      * @param sub Pointer to the Subscriber.
      * @return True if correctly removed.
      */
-    RTPS_DllAPI static bool removeSubscriber(Subscriber* sub);
+    RTPS_DllAPI static bool removeSubscriber(
+            Subscriber* sub);
 
     /**
      * Return a registered type.
@@ -210,7 +216,8 @@ public:
      * @param xml_profile_file XML profile file.
      * @return True if correctly loaded.
      */
-    RTPS_DllAPI static bool loadXMLProfilesFile(const std::string& xml_profile_file);
+    RTPS_DllAPI static bool loadXMLProfilesFile(
+            const std::string& xml_profile_file);
 
     /**
      * Load profiles from XML string.
@@ -218,11 +225,13 @@ public:
      * @param length length of data.
      * @return True if correctly loaded.
      */
-    RTPS_DllAPI static bool loadXMLProfilesString(const char* data, size_t length);
+    RTPS_DllAPI static bool loadXMLProfilesString(
+            const char* data,
+            size_t length);
 
 private:
 
-    typedef std::pair<Participant*,ParticipantImpl*> t_p_Participant;
+    typedef std::pair<Participant*, ParticipantImpl*> t_p_Participant;
 
     Domain();
 
