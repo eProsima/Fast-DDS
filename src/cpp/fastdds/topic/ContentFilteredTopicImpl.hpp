@@ -21,6 +21,8 @@
 
 #include <string>
 
+#include <fastdds/dds/topic/IContentFilter.hpp>
+#include <fastdds/dds/topic/IContentFilterFactory.hpp>
 #include <fastdds/dds/topic/Topic.hpp>
 #include <fastdds/rtps/writer/IReaderDataFilter.hpp>
 
@@ -30,26 +32,32 @@ namespace eprosima {
 namespace fastdds {
 namespace dds {
 
-class ContentFilteredTopicImpl : public TopicDescriptionImpl, public eprosima::fastdds::rtps::IReaderDataFilter
+class ContentFilteredTopicImpl final : public TopicDescriptionImpl, public eprosima::fastdds::rtps::IReaderDataFilter
 {
 public:
 
-    virtual ~ContentFilteredTopicImpl() = default;
+    virtual ~ContentFilteredTopicImpl() final = default;
 
-    const std::string& get_rtps_topic_name() const override
+    const std::string& get_rtps_topic_name() const final
     {
         return related_topic->get_name();
     }
 
     bool is_relevant(
             const fastrtps::rtps::CacheChange_t& change,
-            const fastrtps::rtps::GUID_t& reader_guid) const override
+            const fastrtps::rtps::GUID_t& reader_guid) const final
     {
-        (void)change;
         (void)reader_guid;
-        return true;
+        IContentFilter::FilterSampleInfo filter_info
+        {
+            change.write_params.sample_identity(),
+            change.write_params.related_sample_identity()
+        };
+        return filter_instance->evaluate(change.serializedPayload, filter_info);
     }
 
+    IContentFilterFactory* filter_factory = nullptr;
+    IContentFilter* filter_instance = nullptr;
     Topic* related_topic = nullptr;
     std::string expression;
     std::vector<std::string> parameters;

@@ -53,6 +53,7 @@
 #include <fastdds/publisher/PublisherImpl.hpp>
 #include <fastdds/subscriber/SubscriberImpl.hpp>
 #include <fastdds/topic/TopicImpl.hpp>
+#include <fastdds/topic/ContentFilteredTopicImpl.hpp>
 
 #include <rtps/RTPSDomainImpl.hpp>
 
@@ -518,9 +519,11 @@ ContentFilteredTopic* DomainParticipantImpl::create_contentfilteredtopic(
         return nullptr;
     }
 
-    // TODO(Miguel C): Pass filter_factory and filter_instance to the returned object
     ContentFilteredTopic* topic;
     topic = new ContentFilteredTopic(name, related_topic, filter_expression, expression_parameters);
+    ContentFilteredTopicImpl* content_topic_impl = static_cast<ContentFilteredTopicImpl*>(topic->get_impl());
+    content_topic_impl->filter_factory = filter_factory;
+    content_topic_impl->filter_instance = filter_instance;
 
     //SAVE THE TOPIC INTO MAPS
     filtered_topics_.emplace(std::make_pair(name, topic));
