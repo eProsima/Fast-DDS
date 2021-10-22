@@ -13,16 +13,16 @@
 // limitations under the License.
 
 /**
- * @file HelloWorld_main.cpp
+ * @file DiscoveryServer_main.cpp
  *
  */
 
 #include <string>
 
 #include "arg_configuration.h"
-#include "HelloWorldPublisher.h"
-#include "HelloWorldServer.h"
-#include "HelloWorldSubscriber.h"
+#include "DiscoveryServerPublisher.h"
+#include "DiscoveryServerServer.h"
+#include "DiscoveryServerSubscriber.h"
 
 enum EntityType
 {
@@ -238,7 +238,7 @@ int main(
         }
         case SERVER:
         {
-            HelloWorldServer myserver;
+            DiscoveryServer myserver;
             if (myserver.init(server_address, server_port, tcp))
             {
                 myserver.run();

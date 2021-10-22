@@ -1,4 +1,4 @@
-# Helloworld Example Discovery Server
+# Discovery Server Example
 
 This example demonstrates how communication between a publisher and subscriber can be established through the Discovery
 Server mechanism.
@@ -7,16 +7,16 @@ Server mechanism.
 
 To launch this test open three different consoles:
 
-In the first one launch: ./HelloWorldExampleDiscoveryServer publisher (or HelloWorldExampleDiscoveryServer.exe publisher on windows).
-In the second one: ./HelloWorldExampleDiscoveryServer subscriber (or HelloWorldExampleDiscoveryServer.exe subscriber on windows).
-In the third one: ./HelloWorldExampleDiscoveryServer server (or HelloWorldExampleDiscoveryServer.exe server on windows).
+In the first one launch: ./DiscoveryServerExample publisher (or DiscoveryServerExample.exe publisher on windows).
+In the second one: ./DiscoveryServerExample subscriber (or DiscoveryServerExample.exe subscriber on windows).
+In the third one: ./DiscoveryServerExample server (or DiscoveryServerExample.exe server on windows).
 
 ## Arguments
 
 First argument is `publisher`, `subscriber` or `server` and then the rest of arguments are read unordered
 
 ```sh
-Usage: HelloWorldExampleDiscoveryServer <publisher|subscriber|server>
+Usage: DiscoveryServerExample <publisher|subscriber|server>
 
 General options:
   -h              --help
