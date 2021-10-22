@@ -21,11 +21,9 @@
 #define _EPROSIMA_FASTDDS_EXAMPLES_CPP_DDS_HELLOWORLDEXAMPLEDISCOVERYSERVER_HELLOWORLDPUBLISHER_H_
 
 #include <atomic>
-#include <condition_variable>
-#include <mutex>
 
 #include <fastdds/dds/domain/DomainParticipant.hpp>
-#include <fastdds/dds/publisher/DataWriterListener.hpp>
+#include <fastdds/dds/domain/DomainParticipantListener.hpp>
 #include <fastdds/dds/topic/TypeSupport.hpp>
 
 #include "HelloWorldPubSubTypes.h"
@@ -45,8 +43,9 @@ public:
     //! Initialize the publisher
     bool init(
             const std::string& topic_name,
-            uint32_t num_wait_matched,
-            eprosima::fastdds::rtps::Locator server_address);
+            const std::string& server_address,
+            unsigned short server_port,
+            bool tcp);
 
     //! Publish a sample
     void publish();
@@ -77,15 +76,14 @@ private:
     eprosima::fastdds::dds::TypeSupport type_;
 
     /**
-     * Class handling discovery events and dataflow
+     * Class handling discovery events
      */
-    class PubListener : public eprosima::fastdds::dds::DataWriterListener
+    class PubListener : public eprosima::fastdds::dds::DomainParticipantListener
     {
     public:
 
         PubListener()
             : matched_(0)
-            , num_wait_matched_(0)
         {
         }
 
@@ -98,32 +96,15 @@ private:
                 eprosima::fastdds::dds::DataWriter* writer,
                 const eprosima::fastdds::dds::PublicationMatchedStatus& info) override;
 
-        //! Set the number of matched DataReaders required for publishing
-        void set_num_wait_matched(
-                uint32_t num_wait_matched);
-
-        //! Return true if there are at least num_wait_matched_ matched DataReaders
-        bool enough_matched();
-
-        //! Block the thread until enough DataReaders are matched
-        void wait();
-
-        //! Unblock the thread so publication of samples begins/resumes
-        static void awake();
+        //! Callback executed when a DomainParticipant is discovered, dropped or removed
+        void on_participant_discovery(
+                eprosima::fastdds::dds::DomainParticipant* /*participant*/,
+                eprosima::fastrtps::rtps::ParticipantDiscoveryInfo&& info) override;
 
     private:
 
         //! Number of DataReaders matched to the associated DataWriter
         std::atomic<std::uint32_t> matched_;
-
-        //! Number of matched DataReaders required for publishing
-        uint32_t num_wait_matched_;
-
-        //! Protects wait_matched condition variable
-        static std::mutex wait_matched_cv_mtx_;
-
-        //! Waits until enough DataReaders are matched
-        static std::condition_variable wait_matched_cv_;
     }
     listener_;
 
