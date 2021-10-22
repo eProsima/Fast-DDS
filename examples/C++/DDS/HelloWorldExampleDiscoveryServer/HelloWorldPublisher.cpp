@@ -25,8 +25,10 @@
 #include <fastdds/dds/publisher/Publisher.hpp>
 #include <fastdds/dds/publisher/qos/DataWriterQos.hpp>
 #include <fastdds/dds/publisher/qos/PublisherQos.hpp>
+#include <fastdds/rtps/transport/TCPv4TransportDescriptor.h>
 #include <fastrtps/attributes/ParticipantAttributes.h>
 #include <fastrtps/attributes/PublisherAttributes.h>
+#include <fastrtps/utils/IPLocator.h>
 
 #include "HelloWorldPublisher.h"
 
@@ -34,8 +36,6 @@ using namespace eprosima::fastdds::dds;
 using namespace eprosima::fastdds::rtps;
 
 std::atomic<bool> HelloWorldPublisher::stop_(false);
-std::mutex HelloWorldPublisher::PubListener::wait_matched_cv_mtx_;
-std::condition_variable HelloWorldPublisher::PubListener::wait_matched_cv_;
 
 HelloWorldPublisher::HelloWorldPublisher()
     : participant_(nullptr)
@@ -54,19 +54,32 @@ bool HelloWorldPublisher::is_stopped()
 void HelloWorldPublisher::stop()
 {
     stop_ = true;
-    PubListener::awake();
 }
 
 bool HelloWorldPublisher::init(
         const std::string& topic_name,
-        uint32_t num_wait_matched,
-        eprosima::fastdds::rtps::Locator server_address)
+        const std::string& server_address,
+        unsigned short server_port,
+        bool tcp)
 {
     hello_.index(0);
     hello_.message("HelloWorld");
     DomainParticipantQos pqos;
-    pqos.name("Participant_pub");
-    listener_.set_num_wait_matched(num_wait_matched);
+    pqos.name("DS-Client_pub");
+
+    // Create DS SERVER locator
+    eprosima::fastdds::rtps::Locator server_locator;
+    eprosima::fastrtps::rtps::IPLocator::setPhysicalPort(server_locator, server_port);
+    eprosima::fastrtps::rtps::IPLocator::setLogicalPort(server_locator, server_port);
+    eprosima::fastrtps::rtps::IPLocator::setIPv4(server_locator, server_address);
+    if (tcp)
+    {
+        server_locator.kind = LOCATOR_KIND_TCPv4;
+    }
+    else
+    {
+        server_locator.kind = LOCATOR_KIND_UDPv4;   // default
+    }
 
     // Set participant as DS CLIENT
     pqos.wire_protocol().builtin.discovery_config.discoveryProtocol =
@@ -74,21 +87,36 @@ bool HelloWorldPublisher::init(
 
     // Set SERVER's GUID prefix
     RemoteServerAttributes remote_server_att;
-    remote_server_att.ReadguidPrefix("44.53.00.5f.45.50.52.4f.53.49.4d.41");
+    remote_server_att.ReadguidPrefix(DEFAULT_ROS2_SERVER_GUIDPREFIX);
 
     // Set SERVER's listening locator for PDP
-    remote_server_att.metatrafficUnicastLocatorList.push_back(server_address);
+    remote_server_att.metatrafficUnicastLocatorList.push_back(server_locator);
 
     // Add remote SERVER to CLIENT's list of SERVERs
     pqos.wire_protocol().builtin.discovery_config.m_DiscoveryServers.push_back(remote_server_att);
 
+    // TCP CONFIGURATION
+    if (tcp)
+    {
+        pqos.wire_protocol().builtin.discovery_config.leaseDuration = eprosima::fastrtps::c_TimeInfinite;
+        pqos.wire_protocol().builtin.discovery_config.leaseDuration_announcementperiod =
+                eprosima::fastrtps::Duration_t(5, 0);
+
+        pqos.transport().use_builtin_transports = false;
+        std::shared_ptr<TCPv4TransportDescriptor> tcp_descriptor = std::make_shared<TCPv4TransportDescriptor>();
+
+        pqos.transport().user_transports.push_back(tcp_descriptor);
+    }
+
     // CREATE THE PARTICIPANT
-    participant_ = DomainParticipantFactory::get_instance()->create_participant(0, pqos);
+    participant_ = DomainParticipantFactory::get_instance()->create_participant(0, pqos, &listener_);
 
     if (participant_ == nullptr)
     {
         return false;
     }
+
+    std::cout << "Participant " << pqos.name() << " created with GUID " << participant_->guid() << std::endl;
 
     // REGISTER THE TYPE
     type_.register_type(participant_);
@@ -148,10 +176,6 @@ void HelloWorldPublisher::PubListener::on_publication_matched(
     {
         matched_ = info.current_count;
         std::cout << "Publisher matched." << std::endl;
-        if (enough_matched())
-        {
-            awake();
-        }
     }
     else if (info.current_count_change == -1)
     {
@@ -165,29 +189,19 @@ void HelloWorldPublisher::PubListener::on_publication_matched(
     }
 }
 
-void HelloWorldPublisher::PubListener::set_num_wait_matched(
-        uint32_t num_wait_matched)
+void HelloWorldPublisher::PubListener::on_participant_discovery(
+        eprosima::fastdds::dds::DomainParticipant* /*participant*/,
+        eprosima::fastrtps::rtps::ParticipantDiscoveryInfo&& info)
 {
-    num_wait_matched_ = num_wait_matched;
-}
-
-bool HelloWorldPublisher::PubListener::enough_matched()
-{
-    return matched_ >= num_wait_matched_;
-}
-
-void HelloWorldPublisher::PubListener::wait()
-{
-    std::unique_lock<std::mutex> lck(wait_matched_cv_mtx_);
-    wait_matched_cv_.wait(lck, [this]
-            {
-                return enough_matched() || is_stopped();
-            });
-}
-
-void HelloWorldPublisher::PubListener::awake()
-{
-    wait_matched_cv_.notify_all();
+    if (info.status == eprosima::fastrtps::rtps::ParticipantDiscoveryInfo::DISCOVERED_PARTICIPANT)
+    {
+        std::cout << "Discovered Participant with GUID " << info.info.m_guid << std::endl;
+    }
+    else if (info.status == eprosima::fastrtps::rtps::ParticipantDiscoveryInfo::DROPPED_PARTICIPANT ||
+            info.status == eprosima::fastrtps::rtps::ParticipantDiscoveryInfo::REMOVED_PARTICIPANT)
+    {
+        std::cout << "Dropped Participant with GUID " << info.info.m_guid << std::endl;
+    }
 }
 
 void HelloWorldPublisher::runThread(
@@ -196,17 +210,10 @@ void HelloWorldPublisher::runThread(
 {
     while (!is_stopped() && (samples == 0 || hello_.index() < samples))
     {
-        if (listener_.enough_matched())
-        {
-            publish();
-            std::cout << "Message: " << hello_.message() << " with index: " << hello_.index()
-                      << " SENT" << std::endl;
-            std::this_thread::sleep_for(std::chrono::milliseconds(sleep));
-        }
-        else
-        {
-            listener_.wait();
-        }
+        publish();
+        std::cout << "Message: " << hello_.message() << " with index: " << hello_.index()
+                  << " SENT" << std::endl;
+        std::this_thread::sleep_for(std::chrono::milliseconds(sleep));
     }
 }
 

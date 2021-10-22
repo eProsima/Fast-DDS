@@ -26,8 +26,10 @@
 #include <fastdds/dds/subscriber/qos/DataReaderQos.hpp>
 #include <fastdds/dds/subscriber/SampleInfo.hpp>
 #include <fastdds/dds/subscriber/Subscriber.hpp>
+#include <fastdds/rtps/transport/TCPv4TransportDescriptor.h>
 #include <fastrtps/attributes/ParticipantAttributes.h>
 #include <fastrtps/attributes/SubscriberAttributes.h>
+#include <fastrtps/utils/IPLocator.h>
 
 #include "HelloWorldSubscriber.h"
 
@@ -61,10 +63,26 @@ void HelloWorldSubscriber::stop()
 bool HelloWorldSubscriber::init(
         const std::string& topic_name,
         uint32_t max_messages,
-        eprosima::fastdds::rtps::Locator server_address)
+        const std::string& server_address,
+        unsigned short server_port,
+        bool tcp)
 {
     DomainParticipantQos pqos;
-    pqos.name("Participant_sub");
+    pqos.name("DS-Client_sub");
+
+    // Create DS SERVER locator
+    eprosima::fastdds::rtps::Locator server_locator;
+    eprosima::fastrtps::rtps::IPLocator::setPhysicalPort(server_locator, server_port);
+    eprosima::fastrtps::rtps::IPLocator::setLogicalPort(server_locator, server_port);
+    eprosima::fastrtps::rtps::IPLocator::setIPv4(server_locator, server_address);
+    if (tcp)
+    {
+        server_locator.kind = LOCATOR_KIND_TCPv4;
+    }
+    else
+    {
+        server_locator.kind = LOCATOR_KIND_UDPv4;   // default
+    }
 
     // Set participant as DS CLIENT
     pqos.wire_protocol().builtin.discovery_config.discoveryProtocol =
@@ -72,21 +90,37 @@ bool HelloWorldSubscriber::init(
 
     // Set SERVER's GUID prefix
     RemoteServerAttributes remote_server_att;
-    remote_server_att.ReadguidPrefix("44.53.00.5f.45.50.52.4f.53.49.4d.41");
+    remote_server_att.ReadguidPrefix(DEFAULT_ROS2_SERVER_GUIDPREFIX);
 
     // Set SERVER's listening locator for PDP
-    remote_server_att.metatrafficUnicastLocatorList.push_back(server_address);
+    remote_server_att.metatrafficUnicastLocatorList.push_back(server_locator);
 
     // Add remote SERVER to CLIENT's list of SERVERs
     pqos.wire_protocol().builtin.discovery_config.m_DiscoveryServers.push_back(remote_server_att);
 
+    // TCP CONFIGURATION
+    if (tcp)
+    {
+        pqos.wire_protocol().builtin.discovery_config.leaseDuration = eprosima::fastrtps::c_TimeInfinite;
+        pqos.wire_protocol().builtin.discovery_config.leaseDuration_announcementperiod =
+                eprosima::fastrtps::Duration_t(5, 0);
+
+        pqos.transport().use_builtin_transports = false;
+        std::shared_ptr<TCPv4TransportDescriptor> tcp_descriptor = std::make_shared<TCPv4TransportDescriptor>();
+
+        pqos.transport().user_transports.push_back(tcp_descriptor);
+    }
+
     // CREATE THE PARTICIPANT
-    participant_ = DomainParticipantFactory::get_instance()->create_participant(0, pqos);
+    participant_ = DomainParticipantFactory::get_instance()->create_participant(0, pqos, &listener_,
+                    StatusMask::all() >> StatusMask::data_on_readers());
 
     if (participant_ == nullptr)
     {
         return false;
     }
+
+    std::cout << "Participant " << pqos.name() << " created with GUID " << participant_->guid() << std::endl;
 
     // REGISTER THE TYPE
     type_.register_type(participant_);
@@ -189,6 +223,21 @@ void HelloWorldSubscriber::SubListener::on_data_available(
                 stop();
             }
         }
+    }
+}
+
+void HelloWorldSubscriber::SubListener::on_participant_discovery(
+        eprosima::fastdds::dds::DomainParticipant* /*participant*/,
+        eprosima::fastrtps::rtps::ParticipantDiscoveryInfo&& info)
+{
+    if (info.status == eprosima::fastrtps::rtps::ParticipantDiscoveryInfo::DISCOVERED_PARTICIPANT)
+    {
+        std::cout << "Discovered Participant with GUID " << info.info.m_guid << std::endl;
+    }
+    else if (info.status == eprosima::fastrtps::rtps::ParticipantDiscoveryInfo::DROPPED_PARTICIPANT ||
+            info.status == eprosima::fastrtps::rtps::ParticipantDiscoveryInfo::REMOVED_PARTICIPANT)
+    {
+        std::cout << "Dropped Participant with GUID " << info.info.m_guid << std::endl;
     }
 }
 

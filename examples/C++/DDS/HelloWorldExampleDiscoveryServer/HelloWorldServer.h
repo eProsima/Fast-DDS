@@ -25,6 +25,7 @@
 #include <mutex>
 
 #include <fastdds/dds/domain/DomainParticipant.hpp>
+#include <fastdds/dds/domain/DomainParticipantListener.hpp>
 
 /**
  * Class with a partipant configured to function as server in the Discovery Server mechanism
@@ -39,7 +40,9 @@ public:
 
     //! Initialize the server
     bool init(
-            eprosima::fastdds::rtps::Locator server_address);
+            const std::string& server_address,
+            unsigned short server_port,
+            bool tcp);
 
     //! Run
     void run();
@@ -53,6 +56,28 @@ public:
 private:
 
     eprosima::fastdds::dds::DomainParticipant* participant_;
+
+    /**
+     * Class handling discovery events
+     */
+    class ServerListener : public eprosima::fastdds::dds::DomainParticipantListener
+    {
+    public:
+
+        ServerListener()
+        {
+        }
+
+        ~ServerListener() override
+        {
+        }
+
+        //! Callback executed when a DomainParticipant is discovered, dropped or removed
+        void on_participant_discovery(
+                eprosima::fastdds::dds::DomainParticipant* /*participant*/,
+                eprosima::fastrtps::rtps::ParticipantDiscoveryInfo&& info) override;
+    }
+    listener_;
 
     //! Member used for control flow purposes
     static std::atomic<bool> stop_;
