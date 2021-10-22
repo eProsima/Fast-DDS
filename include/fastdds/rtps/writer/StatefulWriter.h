@@ -22,7 +22,7 @@
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 
 #include <fastdds/rtps/writer/RTPSWriter.h>
-#include <fastdds/rtps/writer/IReaderDataFilter.hpp>
+#include <fastdds/rtps/IReaderDataFilter.hpp>
 #include <fastdds/rtps/history/IChangePool.h>
 #include <fastdds/rtps/history/IPayloadPool.h>
 #include <fastrtps/utils/collections/ResourceLimitedVector.hpp>

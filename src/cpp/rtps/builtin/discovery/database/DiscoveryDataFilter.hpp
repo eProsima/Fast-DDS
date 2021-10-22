@@ -20,7 +20,7 @@
 #ifndef _FASTDDS_RTPS_DISCOVERY_DATA_FILTER_H_
 #define _FASTDDS_RTPS_DISCOVERY_DATA_FILTER_H_
 
-#include <fastdds/rtps/writer/IReaderDataFilter.hpp>
+#include <fastdds/rtps/IReaderDataFilter.hpp>
 
 namespace eprosima {
 namespace fastdds {

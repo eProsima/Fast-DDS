@@ -18,8 +18,9 @@
  */
 
 #include <fastdds/rtps/writer/StatefulWriter.h>
+
+#include <fastdds/rtps/IReaderDataFilter.hpp>
 #include <fastdds/rtps/writer/WriterListener.h>
-#include <fastdds/rtps/writer/IReaderDataFilter.hpp>
 #include <fastdds/rtps/writer/ReaderProxy.h>
 #include <fastdds/rtps/history/WriterHistory.h>
 

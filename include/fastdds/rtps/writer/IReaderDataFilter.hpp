@@ -14,48 +14,7 @@
 
 /**
  * @file IReaderDataFilter.hpp
- *
  */
 
-#ifndef _FASTDDS_RTPS_IREADERDATA_FILTER_H_
-#define _FASTDDS_RTPS_IREADERDATA_FILTER_H_
-
-#include <fastdds/rtps/common/CacheChange.h>
-#include <fastdds/rtps/common/Guid.h>
-
-
-namespace eprosima {
-namespace fastdds {
-namespace rtps {
-
-/**
- * Abstract class IReaderDataFilter that acts as virtual interface for data filters in ReaderProxy.
- *@ingroup WRITER_MODULE
- */
-class IReaderDataFilter
-{
-public:
-
-    /**
-     * This method checks whether a CacheChange_t is relevant for the remote reader
-     * This callback should return always the same result given the same arguments
-     * @param change The CacheChange_t to be evaluated
-     * @param reader_guid remote reader GUID_t
-     * @return true if relevant, false otherwise.
-     */
-    virtual bool is_relevant(
-            const fastrtps::rtps::CacheChange_t& change,
-            const fastrtps::rtps::GUID_t& reader_guid) const
-    {
-        (void)change;
-        (void)reader_guid;
-        return true;
-    }
-
-};
-
-} /* namespace rtps */
-} /* namespace fastdds */
-} /* namespace eprosima */
-
-#endif /* _FASTDDS_RTPS_IREADERDATA_FILTER_H_ */
+// This file was moved as part of the implementation of content filtered topics
+#include <fastdds/rtps/IReaderDataFilter.hpp>

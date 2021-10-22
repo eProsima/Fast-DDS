@@ -24,7 +24,7 @@
 #include <fastdds/dds/topic/IContentFilter.hpp>
 #include <fastdds/dds/topic/IContentFilterFactory.hpp>
 #include <fastdds/dds/topic/Topic.hpp>
-#include <fastdds/rtps/writer/IReaderDataFilter.hpp>
+#include <fastdds/rtps/IReaderDataFilter.hpp>
 
 #include <fastdds/topic/TopicDescriptionImpl.hpp>
 

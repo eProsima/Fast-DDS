@@ -27,7 +27,7 @@
 #include <fastdds/rtps/common/SequenceNumber.h>
 #include <fastdds/rtps/common/Time_t.h>
 #include <fastdds/rtps/history/ReaderHistory.h>
-#include <fastdds/rtps/writer/IReaderDataFilter.hpp>
+#include <fastdds/rtps/IReaderDataFilter.hpp>
 #include <fastrtps/qos/LivelinessChangedStatus.h>
 #include <fastrtps/utils/TimedConditionVariable.hpp>
 
