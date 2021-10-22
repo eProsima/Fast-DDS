@@ -869,9 +869,41 @@ bool EDP::checkTypeValidation(
         return checkTypeObject(wdata, rdata);
     }
     // Not explicitely said in the standard, but is not done, what's the intention of TypeIdV1?
-    if (hasTypeIdentifier(wdata, rdata))
+    TypeIdV1 writer_type_id;
+    TypeIdV1 reader_type_id;
+    if (wdata->has_type_id())
     {
-        return checkTypeIdentifier(wdata, rdata);
+        writer_type_id = wdata->type_id();
+    }
+    else
+    {
+        const TypeIdentifier* writer_type =
+                types::TypeObjectFactory::get_instance()->get_type_identifier_trying_complete(
+            wdata->typeName().c_str());
+        if (writer_type)
+        {
+            writer_type_id = *writer_type;
+        }
+    }
+    if (rdata->has_type_id())
+    {
+        reader_type_id = rdata->type_id();
+    }
+    else
+    {
+        const TypeIdentifier* reader_type =
+                types::TypeObjectFactory::get_instance()->get_type_identifier_trying_complete(
+            rdata->typeName().c_str());
+        if (reader_type)
+        {
+            reader_type_id = *reader_type;
+        }
+    }
+
+    if (writer_type_id.m_type_identifier._d() != static_cast<uint8_t>(0x00) &&
+            reader_type_id.m_type_identifier._d() != static_cast<uint8_t>(0x00))
+    {
+        return checkTypeIdentifier(writer_type_id, reader_type_id);
     }
 
     // Step 2: Writer or reader doesn't specify a TypeObject
@@ -1653,8 +1685,8 @@ bool EDP::pairing_remote_writer_with_local_reader_after_security(
 #endif // if HAVE_SECURITY
 
 bool EDP::checkTypeIdentifier(
-        const WriterProxyData* wdata,
-        const ReaderProxyData* rdata) const
+        const TypeIdV1& writer_type_id,
+        const TypeIdV1& reader_type_id) const
 {
     // TODO - Remove once XCDR or XCDR2 is implemented.
     TypeConsistencyEnforcementQosPolicy coercion;
@@ -1664,10 +1696,10 @@ bool EDP::checkTypeIdentifier(
     coercion.m_force_type_validation = true;
     coercion.m_prevent_type_widening = true;
     coercion.m_ignore_sequence_bounds = false;
-    return wdata->type_id().m_type_identifier._d() != static_cast<uint8_t>(0x00) &&
-           wdata->type_id().m_type_identifier.consistent(
+    return writer_type_id.m_type_identifier._d() != static_cast<uint8_t>(0x00) &&
+           writer_type_id.m_type_identifier.consistent(
         //rdata->type_id().m_type_identifier, rdata->m_qos.type_consistency);
-        rdata->type_id().m_type_identifier, coercion);
+        reader_type_id.m_type_identifier, coercion);
 }
 
 bool EDP::hasTypeIdentifier(

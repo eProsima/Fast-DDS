@@ -394,8 +394,8 @@ private:
             const ReaderProxyData* rdata) const;
 
     bool checkTypeIdentifier(
-            const WriterProxyData* wdata,
-            const ReaderProxyData* rdata) const;
+            const TypeIdV1& writer_type_id,
+            const TypeIdV1& reader_type_id) const;
 
     bool hasTypeIdentifier(
             const WriterProxyData* wdata,
