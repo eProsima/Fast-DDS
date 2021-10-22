@@ -28,6 +28,7 @@
 #include <fastdds/dds/core/Entity.hpp>
 #include <fastdds/dds/domain/qos/DomainParticipantQos.hpp>
 #include <fastdds/dds/topic/ContentFilteredTopic.hpp>
+#include <fastdds/dds/topic/IContentFilterFactory.hpp>
 #include <fastdds/dds/topic/TypeSupport.hpp>
 #include <fastdds/dds/topic/Topic.hpp>
 #include <fastdds/rtps/attributes/RTPSParticipantAttributes.h>
@@ -267,6 +268,21 @@ public:
             Topic* related_topic,
             const std::string& filter_expression,
             const std::vector<std::string>& expression_parameters);
+
+    /**
+     * Create a ContentFilteredTopic in this Participant using a custom filter.
+     * @param name Name of the ContentFilteredTopic
+     * @param related_topic Related Topic to being subscribed
+     * @param filter_expression Logic expression to create filter
+     * @param expression_parameters Parameters to filter content
+     * @return Pointer to the created ContentFilteredTopic, nullptr in error case
+     */
+    RTPS_DllAPI ContentFilteredTopic* create_contentfilteredtopic(
+            const std::string& name,
+            Topic* related_topic,
+            const std::string& filter_expression,
+            const std::vector<std::string>& expression_parameters,
+            const char* filter_name);
 
     /**
      * Deletes an existing ContentFilteredTopic.
@@ -717,6 +733,72 @@ public:
             const fastrtps::types::TypeInformation& type_information,
             const std::string& type_name,
             std::function<void(const std::string& name, const fastrtps::types::DynamicType_ptr type)>& callback);
+
+    /**
+     * Register a custom content filter factory, which can be used to create a ContentFilteredTopic.
+     *
+     * DDS specifies a SQL-like content filter for use by content filtered topics.
+     * If this filter does not meet your filtering requirements, you can register a custom filter.
+     *
+     * To use a custom filter, it must be registered in the following places:
+     * - In any application that uses the custom filter to create a ContentFilteredTopic and the corresponding
+     *   DataReader.
+     * - In each application that writes the data to the applications mentioned above.
+     *
+     * For example, suppose Application A on the subscription side creates a Topic named X and a ContentFilteredTopic
+     * named filteredX (and a corresponding DataReader), using a previously registered content filter, myFilter.
+     * With only that, you will have filtering at the subscription side.
+     * If you also want to perform filtering in any application that publishes Topic X, then you also need to register
+     * the same definition of the ContentFilter myFilter in that application.
+     *
+     * Each @c filter_name can only be used to register a content filter once per DomainParticipant.
+     *
+     * @param filter_name     Name of the filter. Cannot be nullptr, must not exceed 255 characters, and must be
+     *                        unique within this DomainParticipant.
+     * @param filter_factory  Factory of content filters to be registered. Cannot be nullptr.
+     *
+     * @return RETCODE_BAD_PARAMETER if any parameter is nullptr, or the filter_name exceeds 255 characters.
+     * @return RERCODE_PRECONDITION_NOT_MET if the filter_name has been already registered.
+     * @return RETCODE_OK if the filter is correctly registered.
+     */
+    RTPS_DllAPI ReturnCode_t register_content_filter(
+            const char* filter_name,
+            const IContentFilterFactory* filter_factory);
+
+    /**
+     * Lookup a custom content filter factory previously registered with register_content_filter.
+     *
+     * @param filter_name Name of the filter. Cannot be nullptr.
+     *
+     * @return nullptr if the given filter_name has not been previously registered on this DomainParticipant.
+     *         Otherwise, the content filter factory previously registered with the given filter_name.
+     */
+    RTPS_DllAPI IContentFilterFactory* lookup_content_filter(
+            const char* filter_name);
+
+    /**
+     * Unregister a custom content filter factory previously registered with register_content_filter.
+     *
+     * A filter_name can be unregistered only if it has been previously registered to the DomainParticipant with
+     * register_content_filter.
+     *
+     * The unregistration of filter is not allowed if there are any existing ContentFilteredTopic objects that are
+     * using the filter.
+     * If the operation is called on a filter with existing ContentFilteredTopic objects attached to it, it will fail
+     * with RETCODE_PRECONDITION_NOT_MET.
+     *
+     * If there is any existing discovered DataReader with the same filter_name, filtering on the writer side will be
+     * stopped, but this operation will not fail.
+     *
+     * @param filter_name Name of the filter. Cannot be nullptr.
+     *
+     * @return RETCODE_BAD_PARAMETER if the filter_name is nullptr.
+     * @return RERCODE_PRECONDITION_NOT_MET if the filter_name has not been previously registered.
+     * @return RERCODE_PRECONDITION_NOT_MET if there is any ContentFilteredTopic referencing the filter.
+     * @return RETCODE_OK if the filter is correctly unregistered.
+     */
+    RTPS_DllAPI ReturnCode_t unregister_content_filter(
+            const char* filter_name);
 
     /**
      * @brief Check if the Participant has any Publisher, Subscriber or Topic
