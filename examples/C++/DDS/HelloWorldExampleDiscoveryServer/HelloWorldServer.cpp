@@ -22,7 +22,9 @@
 #include <mutex>
 
 #include <fastdds/dds/domain/DomainParticipantFactory.hpp>
+#include <fastdds/rtps/transport/TCPv4TransportDescriptor.h>
 #include <fastrtps/attributes/ParticipantAttributes.h>
+#include <fastrtps/utils/IPLocator.h>
 
 #include "HelloWorldServer.h"
 
@@ -50,28 +52,65 @@ void HelloWorldServer::stop()
 }
 
 bool HelloWorldServer::init(
-        eprosima::fastdds::rtps::Locator server_address)
+        const std::string& server_address,
+        unsigned short server_port,
+        bool tcp)
 {
     DomainParticipantQos pqos;
-    pqos.name("Participant_server");
+    pqos.name("DS-Server");
+
+    // Create DS SERVER locator
+    eprosima::fastdds::rtps::Locator server_locator;
+    eprosima::fastrtps::rtps::IPLocator::setPhysicalPort(server_locator, server_port);
+    eprosima::fastrtps::rtps::IPLocator::setLogicalPort(server_locator, server_port);
+    eprosima::fastrtps::rtps::IPLocator::setIPv4(server_locator, server_address);
+    eprosima::fastrtps::rtps::IPLocator::setWan(server_locator, server_address);
+    if (tcp)
+    {
+        server_locator.kind = LOCATOR_KIND_TCPv4;
+    }
+    else
+    {
+        server_locator.kind = LOCATOR_KIND_UDPv4;   // default
+    }
 
     // Set participant as SERVER
     pqos.wire_protocol().builtin.discovery_config.discoveryProtocol =
             eprosima::fastrtps::rtps::DiscoveryProtocol_t::SERVER;
 
     // Set SERVER's GUID prefix
-    std::istringstream("44.53.00.5f.45.50.52.4f.53.49.4d.41") >> pqos.wire_protocol().prefix;
+    std::istringstream(DEFAULT_ROS2_SERVER_GUIDPREFIX) >> pqos.wire_protocol().prefix;
 
     // Set SERVER's listening locator for PDP
-    pqos.wire_protocol().builtin.metatrafficUnicastLocatorList.push_back(server_address);
+    pqos.wire_protocol().builtin.metatrafficUnicastLocatorList.push_back(server_locator);
+
+    // TCP CONFIGURATION
+    if (tcp)
+    {
+        pqos.wire_protocol().builtin.discovery_config.leaseDuration = eprosima::fastrtps::c_TimeInfinite;
+        pqos.wire_protocol().builtin.discovery_config.leaseDuration_announcementperiod =
+                eprosima::fastrtps::Duration_t(5, 0);
+
+        pqos.transport().use_builtin_transports = false;
+        std::shared_ptr<TCPv4TransportDescriptor> tcp_descriptor = std::make_shared<TCPv4TransportDescriptor>();
+
+        tcp_descriptor->sendBufferSize = 0;
+        tcp_descriptor->receiveBufferSize = 0;
+        tcp_descriptor->set_WAN_address(server_address);
+        tcp_descriptor->add_listener_port(server_port);
+
+        pqos.transport().user_transports.push_back(tcp_descriptor);
+    }
 
     // CREATE THE PARTICIPANT
-    participant_ = DomainParticipantFactory::get_instance()->create_participant(0, pqos);
+    participant_ = DomainParticipantFactory::get_instance()->create_participant(0, pqos, &listener_);
 
     if (participant_ == nullptr)
     {
         return false;
     }
+
+    std::cout << "Participant " << pqos.name() << " created with GUID " << participant_->guid() << std::endl;
 
     return true;
 }
@@ -81,6 +120,21 @@ HelloWorldServer::~HelloWorldServer()
     if (participant_ != nullptr)
     {
         DomainParticipantFactory::get_instance()->delete_participant(participant_);
+    }
+}
+
+void HelloWorldServer::ServerListener::on_participant_discovery(
+        eprosima::fastdds::dds::DomainParticipant* /*participant*/,
+        eprosima::fastrtps::rtps::ParticipantDiscoveryInfo&& info)
+{
+    if (info.status == eprosima::fastrtps::rtps::ParticipantDiscoveryInfo::DISCOVERED_PARTICIPANT)
+    {
+        std::cout << "Discovered Participant with GUID " << info.info.m_guid << std::endl;
+    }
+    else if (info.status == eprosima::fastrtps::rtps::ParticipantDiscoveryInfo::DROPPED_PARTICIPANT ||
+            info.status == eprosima::fastrtps::rtps::ParticipantDiscoveryInfo::REMOVED_PARTICIPANT)
+    {
+        std::cout << "Dropped Participant with GUID " << info.info.m_guid << std::endl;
     }
 }
 

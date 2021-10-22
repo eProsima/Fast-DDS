@@ -57,13 +57,15 @@ int main(
     std::string topic_name = "HelloWorldTopic";
     int count = 0;
     long sleep = 100;
-    int num_wait_matched = 0;
+
+    // TCP transport
+    bool tcp = false;
+
     // Discovery Server
-    eprosima::fastdds::rtps::Locator server_address;
     std::cmatch mr;
-    std::string ip_address;
-    uint16_t port = 60006;  // default physical port
-    server_address.port = port;
+    std::string server_address = "127.0.0.1";   // default ip address
+    uint16_t server_port = 60006;   // default physical port
+
     if (argc > 1)
     {
         if (!strcmp(argv[1], "publisher"))
@@ -153,40 +155,50 @@ int main(
                     }
                     break;
 
-                case optionIndex::WAIT:
-                    if (type == PUBLISHER)
+                case optionIndex::SERVER_LOCATOR:
+                    if ((type == PUBLISHER || type == SUBSCRIBER) &&
+                            !std::string("--listening-address").compare(0, std::string::npos, opt.name, opt.namelen))
                     {
-                        num_wait_matched = strtol(opt.arg, nullptr, 10);
+                        print_warning("server", opt.name);
+                    }
+                    else if (type == SERVER &&
+                            !std::string("--connection-address").compare(0, std::string::npos, opt.name, opt.namelen))
+                    {
+                        print_warning("publisher|subscriber", opt.name);
                     }
                     else
                     {
-                        print_warning("publisher", opt.name);
-                    }
-                    break;
-
-                case optionIndex::LOCATOR:
-                    port = static_cast<uint16_t>(server_address.port);
-
-                    if (regex_match(opt.arg, mr, Arg::ipv4))
-                    {
-                        std::cmatch::iterator it = mr.cbegin();
-                        ip_address = (++it)->str();
-
-                        if ((++it)->matched)
+                        if (regex_match(opt.arg, mr, Arg::ipv4))
                         {
-                            int port_int = std::stoi(it->str());
-                            if (port_int <= 65535)
+                            std::cmatch::iterator it = mr.cbegin();
+                            server_address = (++it)->str();
+                            if (server_address.empty())
                             {
-                                port = static_cast<uint16_t>(port_int);
+                                std::cerr << "ERROR: " << opt.arg << " is an invalid server address." << std::endl;
+                                option::printUsage(fwrite, stdout, usage, columns);
+                                return 1;
+                            }
+
+                            if ((++it)->matched)
+                            {
+                                int port_int = std::stoi(it->str());
+                                if (port_int > 1000 && port_int <= 65535)
+                                {
+                                    server_port = static_cast<uint16_t>(port_int);
+                                }
+                                else
+                                {
+                                    std::cerr << "ERROR: " << port_int << " is an invalid port number." << std::endl;
+                                    option::printUsage(fwrite, stdout, usage, columns);
+                                    return 1;
+                                }
                             }
                         }
                     }
+                    break;
 
-                    if (!ip_address.empty() && port > 1000)
-                    {
-                        eprosima::fastrtps::rtps::IPLocator::setPhysicalPort(server_address, port);
-                        eprosima::fastrtps::rtps::IPLocator::setIPv4(server_address, ip_address);
-                    }
+                case optionIndex::TCP:
+                    tcp = true;
                     break;
 
                 case optionIndex::UNKNOWN_OPT:
@@ -204,18 +216,12 @@ int main(
         return 1;
     }
 
-    // Set default IP address if not specified
-    if (!IsAddressDefined(server_address))
-    {
-        eprosima::fastrtps::rtps::IPLocator::setIPv4(server_address, 127, 0, 0, 1);
-    }
-
     switch (type)
     {
         case PUBLISHER:
         {
             HelloWorldPublisher mypub;
-            if (mypub.init(topic_name, static_cast<uint32_t>(num_wait_matched), server_address))
+            if (mypub.init(topic_name, server_address, server_port, tcp))
             {
                 mypub.run(static_cast<uint32_t>(count), static_cast<uint32_t>(sleep));
             }
@@ -224,7 +230,7 @@ int main(
         case SUBSCRIBER:
         {
             HelloWorldSubscriber mysub;
-            if (mysub.init(topic_name, static_cast<uint32_t>(count), server_address))
+            if (mysub.init(topic_name, static_cast<uint32_t>(count), server_address, server_port, tcp))
             {
                 mysub.run(static_cast<uint32_t>(count));
             }
@@ -233,7 +239,7 @@ int main(
         case SERVER:
         {
             HelloWorldServer myserver;
-            if (myserver.init(server_address))
+            if (myserver.init(server_address, server_port, tcp))
             {
                 myserver.run();
             }

@@ -26,7 +26,7 @@
 
 #include <fastdds/dds/core/status/SubscriptionMatchedStatus.hpp>
 #include <fastdds/dds/domain/DomainParticipant.hpp>
-#include <fastdds/dds/subscriber/DataReaderListener.hpp>
+#include <fastdds/dds/domain/DomainParticipantListener.hpp>
 
 #include "HelloWorldPubSubTypes.h"
 
@@ -46,7 +46,9 @@ public:
     bool init(
             const std::string& topic_name,
             uint32_t max_messages,
-            eprosima::fastdds::rtps::Locator server_address);
+            const std::string& server_address,
+            unsigned short server_port,
+            bool tcp);
 
     //! RUN the subscriber until number samples are received
     void run(
@@ -73,7 +75,7 @@ private:
     /**
      * Class handling discovery and dataflow events
      */
-    class SubListener : public eprosima::fastdds::dds::DataReaderListener
+    class SubListener : public eprosima::fastdds::dds::DomainParticipantListener
     {
     public:
 
@@ -100,6 +102,11 @@ private:
         void on_subscription_matched(
                 eprosima::fastdds::dds::DataReader* reader,
                 const eprosima::fastdds::dds::SubscriptionMatchedStatus& info) override;
+
+        //! Callback executed when a DomainParticipant is discovered, dropped or removed
+        void on_participant_discovery(
+                eprosima::fastdds::dds::DomainParticipant* /*participant*/,
+                eprosima::fastrtps::rtps::ParticipantDiscoveryInfo&& info) override;
 
     private:
 

@@ -127,10 +127,10 @@ enum  optionIndex
     UNKNOWN_OPT,
     HELP,
     TOPIC,
-    WAIT,
     SAMPLES,
     INTERVAL,
-    LOCATOR
+    SERVER_LOCATOR,
+    TCP
 };
 
 const option::Descriptor usage[] = {
@@ -141,27 +141,30 @@ const option::Descriptor usage[] = {
     { UNKNOWN_OPT, 0, "", "",                Arg::None,      "\nPublisher options:"},
     { TOPIC, 0, "t", "topic",                  Arg::String,
       "  -t <topic_name> \t--topic=<topic_name>  \tTopic name (Default: HelloWorldTopic)." },
-    { WAIT, 0, "w", "wait",                 Arg::Numeric,
-      "  -w <num> \t--wait=<num> \tNumber of matched subscribers required to publish"
-      " (Default: 0 => does not wait)." },
     { SAMPLES, 0, "s", "samples",              Arg::Numeric,
       "  -s <num> \t--samples=<num>  \tNumber of samples to send (Default: 0 => infinite samples)." },
     { INTERVAL, 0, "i", "interval",            Arg::Numeric,
       "  -i <num> \t--interval=<num>  \tTime between samples in milliseconds (Default: 100)." },
-    { LOCATOR, 0, "", "ip",                 Arg::Locator,
-      "  \t--ip=<IPaddress[:port number]>  \tServer address (Default address: 127.0.0.1, default port: 60006)." },
+    { SERVER_LOCATOR, 0, "", "connection-address",                 Arg::Locator,
+      "  \t--connection-address=<IPaddress[:port number]>  \tServer address (Default address: 127.0.0.1, default port: 60006)." },
+    { TCP, 0, "", "tcp",               Arg::None,
+      "  \t--tcp \tUse TCP transport (UDP by default)." },
 
     { UNKNOWN_OPT, 0, "", "",                Arg::None,      "\nSubscriber options:"},
     { TOPIC, 0, "t", "topic",                  Arg::String,
       "  -t <topic_name> \t--topic=<topic_name>  \tTopic name (Default: HelloWorldTopic)." },
     { SAMPLES, 0, "s", "samples",              Arg::Numeric,
       "  -s <num> \t--samples=<num>  \tNumber of samples to wait for (Default: 0 => infinite samples)." },
-    { LOCATOR, 0, "", "ip",                 Arg::Locator,
-      "  \t--ip=<IPaddress[:port number]>  \tServer address (Default address: 127.0.0.1, default port: 60006)." },
+    { SERVER_LOCATOR, 0, "", "connection-address",                 Arg::Locator,
+      "  \t--connection-address=<IPaddress[:port number]>  \tServer address (Default address: 127.0.0.1, default port: 60006)." },
+    { TCP, 0, "", "tcp",               Arg::None,
+      "  \t--tcp \tUse TCP transport (UDP by default)." },
 
     { UNKNOWN_OPT, 0, "", "",                Arg::None,      "\nDiscoveryServer options:"},
-    { LOCATOR, 0, "", "ip",                 Arg::Locator,
-      "  \t--ip=<IPaddress[:port number]>  \tServer address (Default address: 127.0.0.1, default port: 60006)." },
+    { SERVER_LOCATOR, 0, "", "listening-address",                 Arg::Locator,
+      "  \t--listening-address=<IPaddress[:port number]>  \tServer address (Default address: 127.0.0.1, default port: 60006)." },
+    { TCP, 0, "", "tcp",               Arg::None,
+      "  \t--tcp \tUse TCP transport (UDP by default)." },
 
     { 0, 0, 0, 0, 0, 0 }
 };
