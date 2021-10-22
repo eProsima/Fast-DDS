@@ -28,10 +28,10 @@ namespace fastdds {
 namespace dds {
 
 ContentFilteredTopic::ContentFilteredTopic(
-            const std::string& name,
-            Topic* related_topic,
-            const std::string& filter_expression,
-            const std::vector<std::string>& expression_parameters)
+        const std::string& name,
+        Topic* related_topic,
+        const std::string& filter_expression,
+        const std::vector<std::string>& expression_parameters)
     : TopicDescription(name, related_topic->get_type_name())
     , impl_(nullptr)
 {

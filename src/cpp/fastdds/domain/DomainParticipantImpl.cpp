@@ -481,7 +481,7 @@ ContentFilteredTopic* DomainParticipantImpl::create_contentfilteredtopic(
 
     //Check there is no Topic with the same name
     if ((topics_.find(name) != topics_.end()) ||
-        (filtered_topics_.find(name) != filtered_topics_.end()))
+            (filtered_topics_.find(name) != filtered_topics_.end()))
     {
         logError(PARTICIPANT, "Topic with name : " << name << " already exists");
         return nullptr;
@@ -514,7 +514,7 @@ ContentFilteredTopic* DomainParticipantImpl::create_contentfilteredtopic(
     // Tell filter factory to compile the expression
     IContentFilter* filter_instance = nullptr;
     if (ReturnCode_t::RETCODE_OK != filter_factory->create_content_filter(related_topic->get_type_name().c_str(),
-        type_descriptor, filter_expression.c_str(), filter_parameters, filter_instance))
+            type_descriptor, filter_expression.c_str(), filter_parameters, filter_instance))
     {
         return nullptr;
     }
@@ -1158,7 +1158,7 @@ Topic* DomainParticipantImpl::create_topic(
 
     //Check there is no Topic with the same name
     if ((topics_.find(topic_name) != topics_.end()) ||
-        (filtered_topics_.find(topic_name) != filtered_topics_.end()))
+            (filtered_topics_.find(topic_name) != filtered_topics_.end()))
     {
         logError(PARTICIPANT, "Topic with name : " << topic_name << " already exists");
         return nullptr;
