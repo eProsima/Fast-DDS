@@ -13,7 +13,7 @@
 // limitations under the License.
 
 /**
- * @file HelloWorldSubscriber.cpp
+ * @file DiscoveryServerSubscriber.cpp
  *
  */
 
@@ -31,7 +31,7 @@
 #include <fastrtps/attributes/SubscriberAttributes.h>
 #include <fastrtps/utils/IPLocator.h>
 
-#include "HelloWorldSubscriber.h"
+#include "DiscoveryServerSubscriber.h"
 
 using namespace eprosima::fastdds::dds;
 using namespace eprosima::fastdds::rtps;

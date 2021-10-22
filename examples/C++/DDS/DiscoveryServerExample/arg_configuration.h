@@ -17,8 +17,8 @@
  *
  */
 
-#ifndef _EPROSIMA_FASTDDS_EXAMPLES_CPP_DDS_HELLOWORLDEXAMPLEDISCOVERYSERVER_ARG_CONFIGURATION_H_
-#define _EPROSIMA_FASTDDS_EXAMPLES_CPP_DDS_HELLOWORLDEXAMPLEDISCOVERYSERVER_ARG_CONFIGURATION_H_
+#ifndef _EPROSIMA_FASTDDS_EXAMPLES_CPP_DDS_DISCOVERYSERVEREXAMPLE_ARG_CONFIGURATION_H_
+#define _EPROSIMA_FASTDDS_EXAMPLES_CPP_DDS_DISCOVERYSERVEREXAMPLE_ARG_CONFIGURATION_H_
 
 #include "optionparser.h"
 
@@ -135,7 +135,7 @@ enum  optionIndex
 
 const option::Descriptor usage[] = {
     { UNKNOWN_OPT, 0, "", "",                Arg::None,
-      "Usage: HelloWorldExampleDiscoveryServer <publisher|subscriber|server>\n\nGeneral options:" },
+      "Usage: DiscoveryServerExample <publisher|subscriber|server>\n\nGeneral options:" },
     { HELP,    0, "h", "help",               Arg::None,      "  -h \t--help  \tProduce help message." },
 
     { UNKNOWN_OPT, 0, "", "",                Arg::None,      "\nPublisher options:"},
@@ -178,4 +178,4 @@ void print_warning(
     std::cerr << "WARNING: " << opt << " is a " << type << " option, ignoring argument." << std::endl;
 }
 
-#endif /* _EPROSIMA_FASTDDS_EXAMPLES_CPP_DDS_HELLOWORLDEXAMPLEDISCOVERYSERVER_ARG_CONFIGURATION_H_ */
+#endif /* _EPROSIMA_FASTDDS_EXAMPLES_CPP_DDS_DISCOVERYSERVEREXAMPLE_ARG_CONFIGURATION_H_ */

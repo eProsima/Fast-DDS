@@ -13,7 +13,7 @@
 // limitations under the License.
 
 /**
- * @file HelloWorldPublisher.cpp
+ * @file DiscoveryServerPublisher.cpp
  *
  */
 
@@ -30,7 +30,7 @@
 #include <fastrtps/attributes/PublisherAttributes.h>
 #include <fastrtps/utils/IPLocator.h>
 
-#include "HelloWorldPublisher.h"
+#include "DiscoveryServerPublisher.h"
 
 using namespace eprosima::fastdds::dds;
 using namespace eprosima::fastdds::rtps;

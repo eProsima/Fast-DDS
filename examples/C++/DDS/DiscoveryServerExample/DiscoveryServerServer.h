@@ -13,12 +13,12 @@
 // limitations under the License.
 
 /**
- * @file HelloWorldServer.h
+ * @file DiscoveryServerServer.h
  *
  */
 
-#ifndef _EPROSIMA_FASTDDS_EXAMPLES_CPP_DDS_HELLOWORLDEXAMPLEDISCOVERYSERVER_HELLOWORLDSERVER_H_
-#define _EPROSIMA_FASTDDS_EXAMPLES_CPP_DDS_HELLOWORLDEXAMPLEDISCOVERYSERVER_HELLOWORLDSERVER_H_
+#ifndef _EPROSIMA_FASTDDS_EXAMPLES_CPP_DDS_DISCOVERYSERVEREXAMPLE_DISCOVERYSERVERSERVER_H_
+#define _EPROSIMA_FASTDDS_EXAMPLES_CPP_DDS_DISCOVERYSERVEREXAMPLE_DISCOVERYSERVERSERVER_H_
 
 #include <atomic>
 #include <condition_variable>
@@ -30,13 +30,13 @@
 /**
  * Class with a partipant configured to function as server in the Discovery Server mechanism
  */
-class HelloWorldServer
+class DiscoveryServer
 {
 public:
 
-    HelloWorldServer();
+    DiscoveryServer();
 
-    virtual ~HelloWorldServer();
+    virtual ~DiscoveryServer();
 
     //! Initialize the server
     bool init(
@@ -91,4 +91,4 @@ private:
 
 
 
-#endif /* _EPROSIMA_FASTDDS_EXAMPLES_CPP_DDS_HELLOWORLDEXAMPLEDISCOVERYSERVER_HELLOWORLDSERVER_H_ */
+#endif /* _EPROSIMA_FASTDDS_EXAMPLES_CPP_DDS_DISCOVERYSERVEREXAMPLE_DISCOVERYSERVERSERVER_H_ */

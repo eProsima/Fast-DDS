@@ -13,7 +13,7 @@
 // limitations under the License.
 
 /**
- * @file HelloWorldServer.cpp
+ * @file DiscoveryServerServer.cpp
  *
  */
 
@@ -26,32 +26,32 @@
 #include <fastrtps/attributes/ParticipantAttributes.h>
 #include <fastrtps/utils/IPLocator.h>
 
-#include "HelloWorldServer.h"
+#include "DiscoveryServerServer.h"
 
 using namespace eprosima::fastdds::dds;
 using namespace eprosima::fastdds::rtps;
 
-std::atomic<bool> HelloWorldServer::stop_(false);
-std::mutex HelloWorldServer::terminate_cv_mtx_;
-std::condition_variable HelloWorldServer::terminate_cv_;
+std::atomic<bool> DiscoveryServer::stop_(false);
+std::mutex DiscoveryServer::terminate_cv_mtx_;
+std::condition_variable DiscoveryServer::terminate_cv_;
 
-HelloWorldServer::HelloWorldServer()
+DiscoveryServer::DiscoveryServer()
     : participant_(nullptr)
 {
 }
 
-bool HelloWorldServer::is_stopped()
+bool DiscoveryServer::is_stopped()
 {
     return stop_;
 }
 
-void HelloWorldServer::stop()
+void DiscoveryServer::stop()
 {
     stop_ = true;
     terminate_cv_.notify_all();
 }
 
-bool HelloWorldServer::init(
+bool DiscoveryServer::init(
         const std::string& server_address,
         unsigned short server_port,
         bool tcp)
@@ -115,7 +115,7 @@ bool HelloWorldServer::init(
     return true;
 }
 
-HelloWorldServer::~HelloWorldServer()
+DiscoveryServer::~DiscoveryServer()
 {
     if (participant_ != nullptr)
     {
@@ -123,7 +123,7 @@ HelloWorldServer::~HelloWorldServer()
     }
 }
 
-void HelloWorldServer::ServerListener::on_participant_discovery(
+void DiscoveryServer::ServerListener::on_participant_discovery(
         eprosima::fastdds::dds::DomainParticipant* /*participant*/,
         eprosima::fastrtps::rtps::ParticipantDiscoveryInfo&& info)
 {
@@ -138,14 +138,14 @@ void HelloWorldServer::ServerListener::on_participant_discovery(
     }
 }
 
-void HelloWorldServer::run()
+void DiscoveryServer::run()
 {
     stop_ = false;
     std::cout << "Server running. Please press CTRL+C to stop the Server." << std::endl;
     signal(SIGINT, [](int signum)
             {
                 std::cout << "SIGINT received, stopping Server execution." << std::endl;
-                static_cast<void>(signum); HelloWorldServer::stop();
+                static_cast<void>(signum); DiscoveryServer::stop();
             });
     std::unique_lock<std::mutex> lck(terminate_cv_mtx_);
     terminate_cv_.wait(lck, []
