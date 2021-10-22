@@ -29,6 +29,7 @@
 #include <fastdds/dds/subscriber/DataReader.hpp>
 #include <fastdds/dds/subscriber/Subscriber.hpp>
 #include <fastdds/dds/topic/IContentFilterFactory.hpp>
+#include <fastdds/dds/topic/TypeSupport.hpp>
 
 #include <fastdds/rtps/RTPSDomain.h>
 #include <fastdds/rtps/attributes/RTPSParticipantAttributes.h>
@@ -502,8 +503,7 @@ ContentFilteredTopic* DomainParticipantImpl::create_contentfilteredtopic(
     TopicImpl* topic_impl = dynamic_cast<TopicImpl*>(related_topic->get_impl());
     assert(nullptr != topic_impl);
     const TypeSupport& type = topic_impl->get_type();
-    const IContentFilterFactory::TypeDescriptor* type_descriptor = nullptr;
-    // TODO(Miguel C): type_descriptor = type.get_descriptor();
+    const IContentFilterFactory::TypeDescriptor* type_descriptor = type->get_desciptor();
     LoanableSequence<const char*> filter_parameters(expression_parameters.size());
     for (size_t i = 0; i < expression_parameters.size(); ++i)
     {
