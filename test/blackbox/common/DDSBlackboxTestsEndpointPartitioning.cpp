@@ -212,3 +212,41 @@ TEST(EndpointPartitioning, MultiplePartitions)
     ASSERT_TRUE(writer_b.is_matched());
     ASSERT_TRUE(reader_a_b.is_matched());
 }
+
+/**
+ * This test checks that partition configuration can be modified via the PropertyPolicyQos API
+ */
+TEST(EndpointPartitioning, PropertyQos)
+{
+    PubSubWriter<HelloWorldType> writer_a(TEST_TOPIC_NAME);
+    PubSubReader<HelloWorldType> reader_a(TEST_TOPIC_NAME);
+    PubSubReader<HelloWorldType> reader_b(TEST_TOPIC_NAME);
+
+    eprosima::fastdds::dds::PropertyPolicyQos writer_a_policy;
+    writer_a_policy.properties().emplace_back("partitions", "partition_b");
+    writer_a.entity_property_policy(writer_a_policy);
+    writer_a.init();
+    EXPECT_TRUE(writer_a.isInitialized());
+
+    reader_a.set_xml_filename("partitions.xml");
+    reader_a.set_datareader_profile("partition_a_reader");
+    reader_a.init();
+    EXPECT_TRUE(reader_a.isInitialized());
+
+    reader_b.set_xml_filename("partitions.xml");
+    reader_b.set_datareader_profile("partition_b_reader");
+    reader_b.init();
+    EXPECT_TRUE(reader_b.isInitialized());
+
+    writer_a.wait_discovery(std::chrono::seconds(2));
+    reader_a.wait_discovery(std::chrono::seconds(2));
+    reader_b.wait_discovery(std::chrono::seconds(2));
+
+    ASSERT_TRUE(writer_a.is_matched());
+    ASSERT_FALSE(reader_a.is_matched());
+    ASSERT_TRUE(reader_b.is_matched());
+
+    writer_a.destroy();
+    reader_a.destroy();
+    reader_b.destroy();
+}
