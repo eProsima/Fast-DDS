@@ -21,6 +21,7 @@
 
 #include <chrono>
 #include <cstdint>
+#include <map>
 
 #include <fastdds/dds/subscriber/InstanceState.hpp>
 #include <fastdds/dds/subscriber/ViewState.hpp>
@@ -38,9 +39,14 @@ namespace detail {
 struct DataReaderInstance
 {
     using ChangeCollection = eprosima::fastrtps::ResourceLimitedVector<DataReaderCacheChange, std::true_type>;
+    using WriterCollection = std::map<fastrtps::rtps::GUID_t, uint32_t>;
 
     //! A vector of DataReader changes belonging to the same instance
     ChangeCollection cache_changes;
+    //! The list of alive writers for this instance
+    WriterCollection alive_writers;
+    //! GUID and strength of the current maximum strength writer
+    std::pair<fastrtps::rtps::GUID_t, uint32_t> current_owner{ {}, 0 };
     //! The time when the group will miss the deadline
     std::chrono::steady_clock::time_point next_deadline_us;
     //! Current view state of the instance
