@@ -147,9 +147,25 @@ private:
     }
 
     bool writer_unregister(
-            const fastrtps::rtps::GUID_t& /*writer_guid*/)
+            const fastrtps::rtps::GUID_t& writer_guid)
     {
-        return false;
+        bool ret_val = false;
+
+        alive_writers.erase(writer_guid);
+
+        if (writer_guid == current_owner.first)
+        {
+            current_owner.second = 0;
+            current_owner.first = fastrtps::rtps::c_Guid_Unknown;
+        }
+
+        if (alive_writers.empty() && (InstanceStateKind::ALIVE_INSTANCE_STATE == instance_state))
+        {
+            ret_val = true;
+            instance_state = InstanceStateKind::NOT_ALIVE_NO_WRITERS_INSTANCE_STATE;
+        }
+
+        return ret_val;
     }
 
 };
