@@ -1759,20 +1759,17 @@ void DiscoveryDataBase::unmatch_participant_(
     // IMPORTANT: This is not for every relevant participant, as participant A could be in other participant's B info
     // and B not be relevant for A
     // Using for with a map does copy the values, do not give references. Find is needed.
-    for (auto participant_it : participants_)
+    for (auto& participant_it : participants_)
     {
-        auto it = participants_.find(participant_it.first);
-        it->second.remove_participant(guid_prefix);
+        participant_it.second.remove_participant(guid_prefix);
     }
-    for (auto writer_it : writers_)
+    for (auto& writer_it : writers_)
     {
-        auto it = writers_.find(writer_it.first);
-        it->second.remove_participant(guid_prefix);
+        writer_it.second.remove_participant(guid_prefix);
     }
-    for (auto reader_it : readers_)
+    for (auto& reader_it : readers_)
     {
-        auto it = readers_.find(reader_it.first);
-        it->second.remove_participant(guid_prefix);
+        reader_it.second.remove_participant(guid_prefix);
     }
 }
 
