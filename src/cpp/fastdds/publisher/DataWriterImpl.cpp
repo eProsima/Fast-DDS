@@ -192,7 +192,15 @@ ReturnCode_t DataWriterImpl::enable()
     property.value(topic_->get_name().c_str());
     w_att.endpoint.properties.properties().push_back(std::move(property));
 
-    if (publisher_->get_qos().partition().names().size() > 0)
+    std::string* endpoint_partitions = PropertyPolicyHelper::find_property(qos_.properties(), "partitions");
+
+    if (endpoint_partitions)
+    {
+        property.name("partitions");
+        property.value(*endpoint_partitions);
+        w_att.endpoint.properties.properties().push_back(std::move(property));
+    }
+    else if (publisher_->get_qos().partition().names().size() > 0)
     {
         property.name("partitions");
         std::string partitions;
@@ -311,6 +319,17 @@ ReturnCode_t DataWriterImpl::enable()
     if (!is_data_sharing_compatible_)
     {
         wqos.data_sharing.off();
+    }
+    if (endpoint_partitions)
+    {
+        std::istringstream partition_string(*endpoint_partitions);
+        std::string partition_name;
+        wqos.m_partition.clear();
+
+        while (std::getline(partition_string, partition_name, ';'))
+        {
+            wqos.m_partition.push_back(partition_name.c_str());
+        }
     }
     publisher_->rtps_participant()->registerWriter(writer_, get_topic_attributes(qos_, *topic_, type_), wqos);
 
