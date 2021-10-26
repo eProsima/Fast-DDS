@@ -79,6 +79,12 @@ public:
         return true;
     }
 
+    virtual bool completed_change(
+            rtps::CacheChange_t*)
+    {
+        return true;
+    }
+    
     bool remove_change(
             CacheChange_t* change)
     {
