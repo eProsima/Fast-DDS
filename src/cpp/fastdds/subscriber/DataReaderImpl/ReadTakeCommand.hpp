@@ -180,6 +180,7 @@ struct ReadTakeCommand
 
         if (current_slot_ > first_slot)
         {
+            instance_.second->view_state = ViewStateKind::NOT_NEW_VIEW_STATE;
             ret_val = true;
 
             // complete sample infos
