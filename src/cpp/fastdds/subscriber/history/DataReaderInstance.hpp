@@ -125,10 +125,25 @@ private:
     }
 
     bool writer_dispose(
-            const fastrtps::rtps::GUID_t& /*writer_guid*/,
-            const uint32_t /*ownership_strength*/)
+            const fastrtps::rtps::GUID_t& writer_guid,
+            const uint32_t ownership_strength)
     {
-        return false;
+        bool ret_val = false;
+
+        alive_writers[writer_guid] = ownership_strength;
+        if (ownership_strength >= current_owner.second)
+        {
+            current_owner.first = writer_guid;
+            current_owner.second = ownership_strength;
+
+            if (InstanceStateKind::ALIVE_INSTANCE_STATE == instance_state)
+            {
+                ret_val = true;
+                instance_state = InstanceStateKind::NOT_ALIVE_DISPOSED_INSTANCE_STATE;
+            }
+        }
+
+        return ret_val;
     }
 
     bool writer_unregister(
