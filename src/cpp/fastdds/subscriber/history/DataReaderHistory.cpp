@@ -532,6 +532,16 @@ ReaderHistory::iterator DataReaderHistory::remove_change_nts(
     return ReaderHistory::remove_change_nts(removal, release);
 }
 
+void DataReaderHistory::update_instance_nts(
+        const CacheChange_t* const change)
+{
+    InstanceCollection::iterator vit;
+    vit = keyed_changes_.find(change->instanceHandle);
+    
+    assert(vit != keyed_changes_.end());
+    vit->second.update_state(change->kind, change->writerGUID);
+}
+
 } // namespace detail
 } // namsepace dds
 } // namespace fastdds

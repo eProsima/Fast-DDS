@@ -160,6 +160,9 @@ public:
             const InstanceHandle_t& handle,
             bool exact);
 
+    void update_instance_nts(
+            const CacheChange_t* const change);
+
 private:
 
     using InstanceCollection = std::map<InstanceHandle_t, DataReaderInstance>;

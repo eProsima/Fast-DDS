@@ -841,10 +841,10 @@ void DataReaderImpl::InnerDataReaderListener::on_requested_incompatible_qos(
 bool DataReaderImpl::on_new_cache_change_added(
         const CacheChange_t* const change)
 {
+    std::lock_guard<RecursiveTimedMutex> guard(reader_->getMutex());
+
     if (qos_.deadline().period != c_TimeInfinite)
     {
-        std::unique_lock<RecursiveTimedMutex> lock(reader_->getMutex());
-
         if (!history_.set_next_deadline(
                     change->instanceHandle,
                     steady_clock::now() + duration_cast<system_clock::duration>(deadline_duration_us_)))
@@ -860,6 +860,8 @@ bool DataReaderImpl::on_new_cache_change_added(
             }
         }
     }
+
+    history_.update_instance_nts(change);
 
     CacheChange_t* new_change = const_cast<CacheChange_t*>(change);
 

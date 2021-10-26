@@ -51,6 +51,63 @@ struct DataReaderInstance
     int32_t disposed_generation_count = 0;
     //! Current no_writers generation of the instance
     int32_t no_writers_generation_count = 0;
+
+    bool update_state(
+            const fastrtps::rtps::ChangeKind_t change_kind,
+            const fastrtps::rtps::GUID_t& writer_guid,
+            const uint32_t ownership_strength = 0)
+    {
+        bool ret_val = false;
+
+        switch (change_kind)
+        {
+            case fastrtps::rtps::ALIVE:
+                ret_val = writer_alive(writer_guid, ownership_strength);
+                break;
+
+            case fastrtps::rtps::NOT_ALIVE_DISPOSED:
+                ret_val = writer_dispose(writer_guid, ownership_strength);
+                break;
+
+            case fastrtps::rtps::NOT_ALIVE_DISPOSED_UNREGISTERED:
+                ret_val = writer_dispose(writer_guid, ownership_strength);
+                ret_val |= writer_unregister(writer_guid);
+                break;
+
+            case fastrtps::rtps::NOT_ALIVE_UNREGISTERED:
+                ret_val = writer_unregister(writer_guid);
+                break;
+
+            default:
+                // TODO (Miguel C): log error / assert
+                break;
+        }
+
+        return ret_val;
+    }
+
+private:
+
+    bool writer_alive(
+            const fastrtps::rtps::GUID_t& /*writer_guid*/,
+            const uint32_t /*ownership_strength*/)
+    {
+        return false;
+    }
+
+    bool writer_dispose(
+            const fastrtps::rtps::GUID_t& /*writer_guid*/,
+            const uint32_t /*ownership_strength*/)
+    {
+        return false;
+    }
+
+    bool writer_unregister(
+            const fastrtps::rtps::GUID_t& /*writer_guid*/)
+    {
+        return false;
+    }
+
 };
 
 } /* namespace detail */
