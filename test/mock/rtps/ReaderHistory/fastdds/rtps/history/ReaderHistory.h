@@ -84,7 +84,7 @@ public:
     {
         return true;
     }
-    
+
     bool remove_change(
             CacheChange_t* change)
     {
