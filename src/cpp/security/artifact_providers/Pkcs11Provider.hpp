@@ -17,7 +17,7 @@
  */
 
 #ifndef SECURITY_ARTIFACTPROVIDERS_PKCS11PROVIDER_HPP
-#define SECURITY_ARTIFACTS_PKCS11PROVIDER_HPP
+#define SECURITY_ARTIFACTPROVIDERS_PKCS11PROVIDER_HPP
 
 #include <openssl/engine.h>
 #include <openssl/err.h>
@@ -38,24 +38,17 @@ class Pkcs11Provider
 
 public:
 
-    static EVP_PKEY* load_private_key(
+    EVP_PKEY* load_private_key(
             X509* certificate,
             const std::string& file,
             const std::string& password,
             SecurityException& exception);
 
+    Pkcs11Provider();
+
     ~Pkcs11Provider();
 
 private:
-
-    /// @return reference to singleton instance
-    static Pkcs11Provider& instance()
-    {
-        static Pkcs11Provider instance;
-        return instance;
-    }
-
-    Pkcs11Provider();
 
     EVP_PKEY* load_private_key_impl(
             X509* certificate,
@@ -75,4 +68,4 @@ private:
 } //namespace fastrtps
 } //namespace eprosima
 
-#endif  // SECURITY_ARTIFACTS_PKCS11PROVIDER_HPP
+#endif  // SECURITY_ARTIFACTPROVIDERS_PKCS11PROVIDER_HPP

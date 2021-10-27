@@ -131,15 +131,6 @@ Pkcs11Provider::~Pkcs11Provider()
 EVP_PKEY* Pkcs11Provider::load_private_key(
         X509* certificate,
         const std::string& pkey,
-        const std::string& password,
-        SecurityException& exception)
-{
-    return Pkcs11Provider::instance().load_private_key_impl(certificate, pkey, password, exception);
-}
-
-EVP_PKEY* Pkcs11Provider::load_private_key_impl(
-        X509* certificate,
-        const std::string& pkey,
         const std::string& /*password*/,
         SecurityException& exception)
 {

@@ -22,6 +22,7 @@
 #include <fastdds/rtps/security/authentication/Authentication.h>
 #include <fastdds/rtps/attributes/PropertyPolicy.h>
 #include <security/authentication/PKIHandshakeHandle.h>
+#include <security/artifact_providers/Pkcs11Provider.hpp>
 
 namespace eprosima {
 namespace fastrtps {
@@ -96,6 +97,8 @@ class PKIDH : public Authentication
 
         bool return_authenticated_peer_credential_token(PermissionsCredentialToken* token,
                 SecurityException& ex) override;
+
+        std::unique_ptr<detail::Pkcs11Provider> pkcs11_provider;
 
     private:
 
