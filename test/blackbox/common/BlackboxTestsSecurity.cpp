@@ -23,6 +23,8 @@
 
 #include <gtest/gtest.h>
 #include <fstream>
+#include <map>
+#include <algorithm>
 
 #include <fastrtps/xmlparser/XMLProfileManager.h>
 #include <fastdds/rtps/transport/shared_mem/SharedMemTransportDescriptor.h>
@@ -80,21 +82,32 @@ public:
             default:
                 break;
         }
-
-        //Delete the HSM token if initialized
-        if (!hsm_token_serial.empty())
-        {
-            delete_hsm_token();
-        }
     }
+};
 
-    // Initializes an HSM token with the given label and PIN, and returns its serial
-    void prepare_hsm_token()
+
+class SecurityPkcs : public ::testing::Test
+{
+public:
+
+    struct HsmToken
+    {
+        std::string pin;
+        std::string id;
+        std::string serial;
+        std::map<std::string, std::string> urls;
+    };
+
+    static void create_hsm_token(
+            const char* token_id)
     {
         // Init the token
         std::stringstream cmd;
-        cmd << "softhsm2-util --init-token --slot 0 --label '" << hsm_token_label << "' --pin '" << hsm_token_pin << "' --so-pin '" << hsm_token_pin << "'";
-        ASSERT_EQ(0, std::system (cmd.str()));
+        cmd << "softhsm2-util --init-token --free --label '" << token_id << "' --pin '" << hsm_token_pin << "' --so-pin '" << hsm_token_pin << "'";
+        ASSERT_EQ(0, std::system (cmd.str().c_str()));
+        tokens[token_id] = HsmToken();
+        tokens[token_id].pin = hsm_token_pin;
+        tokens[token_id].id = token_id;
 
         // Get the serial number of the HSM slot
         std::stringstream serial_stream;
@@ -102,25 +115,99 @@ public:
         serial_stream << std::ifstream("softhsm_serial").rdbuf();
         std::remove ("softhsm_serial");
 
-        //Remove possible trailing new line
-        hsm_token_serial = serial_stream.str();
-        hsm_token_serial.erase(hsm_token_serial.find_last_not_of(" \n\t\r\f\v") + 1);
+        // Read each serial number one by one
+        while(!serial_stream.eof())
+        {
+            std::string serial;
+            serial_stream >> serial;
+            if (!serial.empty())
+            {
+                if (tokens.end() == std::find_if(tokens.begin(), tokens.end(), [&serial](std::pair<const char* const, const HsmToken> t){ return t.second.serial == serial; }))
+                {
+                    tokens[token_id].serial = serial;
+                    break;
+                }
+            }
+        }
     }
 
-    void delete_hsm_token()
+    static void delete_hsm_token(
+            const char* token_id)
     {
-        // Delete the token
-        std::stringstream cmd;
-        cmd << "softhsm2-util --delete-token --token '" << hsm_token_label << "' --pin '" << hsm_token_pin << "' --so-pin '" << hsm_token_pin << "'";
-        ASSERT_EQ(0, std::system (cmd.str()));
-        hsm_token_serial.clear();
+        if (tokens.find(token_id) != tokens.end())
+        {
+            // Delete the token
+            std::stringstream cmd;
+            cmd << "softhsm2-util --delete-token --token '" << token_id << "' --pin '" << hsm_token_pin << "' --so-pin '" << hsm_token_pin << "'";
+            ASSERT_EQ(0, std::system (cmd.str().c_str()));
+        }
     }
 
-    const char* hsm_token_label = "testing-token";
-    const char* hsm_token_pin = "1234";
-    std::string hsm_token_serial;
+    static void SetUpTestCase()
+    {
+        // Init the tokens
+        create_hsm_token(hsm_token_id_no_pin);
+        create_hsm_token(hsm_token_id_url_pin);
+        create_hsm_token(hsm_token_id_env_pin);
 
+        // Add the keys to the tokens
+        import_private_key(std::string(certs_path) + "/mainsubkey.pem", hsm_mainsubkey_label,
+                "1A2B3C", hsm_token_id_no_pin);
+        import_private_key(std::string(certs_path) + "/mainpubkey.pem", hsm_mainpubkey_label,
+                "ABCDEF", hsm_token_id_no_pin);
+        import_private_key(std::string(certs_path) + "/mainsubkey.pem", hsm_mainsubkey_label,
+                "123456", hsm_token_id_url_pin);
+        import_private_key(std::string(certs_path) + "/mainpubkey.pem", hsm_mainpubkey_label,
+                "789ABC", hsm_token_id_url_pin);
+        import_private_key(std::string(certs_path) + "/mainsubkey.pem", hsm_mainsubkey_label,
+                "2468AC", hsm_token_id_env_pin);
+        import_private_key(std::string(certs_path) + "/mainpubkey.pem", hsm_mainpubkey_label,
+                "13579B", hsm_token_id_env_pin);
+    }
+
+    static void TearDownTestCase()
+    {
+        // delete the tokens
+        delete_hsm_token(hsm_token_id_no_pin);
+        delete_hsm_token(hsm_token_id_url_pin);
+        delete_hsm_token(hsm_token_id_env_pin);
+    }
+
+    static void import_private_key(
+        const std::string& key_file,
+        const char* key_label,
+        const char* key_id,
+        const char* token_id)
+    {
+        ASSERT_NE(tokens.end(), tokens.find(token_id));
+
+        // Import the key
+        ASSERT_EQ(0, std::system(("softhsm2-util --import " + key_file + " --token " + token_id + " --label " + key_label + " --pin " + hsm_token_pin + " --id " + key_id).c_str()));
+
+        // Construct the key URL
+        std::stringstream id_url;
+        for (unsigned int i = 0; i < strlen(key_id); i+=2)
+        {
+            id_url << "%" << key_id[i] << key_id[i+1];
+        }
+
+        tokens[token_id].urls[key_label] = "pkcs11:model=SoftHSM%20v2;manufacturer=SoftHSM%20project;serial=" + tokens[token_id].serial + ";token=" + token_id + ";id=" + id_url.str() + ";object=" + key_label + ";type=private";
+    }
+
+    static constexpr const char* hsm_token_pin = "1234";
+    static constexpr const char* hsm_token_id_no_pin = "testing_token_no_pin";
+    static constexpr const char* hsm_token_id_url_pin = "testing_token_url_pin";
+    static constexpr const char* hsm_token_id_env_pin = "testing_token_env_pin";
+    static constexpr const char* hsm_mainsubkey_label = "mainsubkey";
+    static constexpr const char* hsm_mainpubkey_label = "mainpubkey";
+
+    static std::map<const char*, HsmToken> tokens;
 };
+
+std::map<const char*, SecurityPkcs::HsmToken> SecurityPkcs::tokens;
+const char* const SecurityPkcs::hsm_token_id_no_pin;
+const char* const SecurityPkcs::hsm_token_id_url_pin;
+const char* const SecurityPkcs::hsm_token_id_env_pin;
 
 TEST_P(Security, BuiltinAuthenticationPlugin_PKIDH_validation_ok)
 {
@@ -2935,19 +3022,9 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_valid
     }
 }
 
-TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_pkcs11_key)
+TEST_F(SecurityPkcs, BuiltinAuthenticationAndAccessAndCryptoPlugin_pkcs11_key)
 {
-    prepare_hsm_token();
-
-    //Import the keys
-    ASSERT_EQ(0, std::system(("softhsm2-util --import " + std::string(certs_path) + "/mainpubkey.pem --token " + hsm_token_label + " --label mainpubkey --pin " + hsm_token_pin + " --id 8CBC4F03F2BD5CC4F852BCF171EA9BAC12DA0A9A").c_str()));
-    ASSERT_EQ(0, std::system(("softhsm2-util --import " + std::string(certs_path) + "/mainsubkey.pem --token " + hsm_token_label + " --label mainsubkey --pin " + hsm_token_pin + " --id 409DAD1C9D36C2C4AB9C7EAA824397D6A5C17D37").c_str()));
-
-    //The keys' URLs
-    std::string mainsubkey = "pkcs11:model=SoftHSM%20v2;manufacturer=SoftHSM%20project;serial=" + hsm_token_serial + ";token=" + hsm_token_label + ";id=%40%9D%AD%1C%9D%36%C2%C4%AB%9C%7E%AA%82%43%97%D6%A5%C1%7D%37;object=mainsubkey;type=private";
-    std::string mainpubkey = "pkcs11:model=SoftHSM%20v2;manufacturer=SoftHSM%20project;serial=" + hsm_token_serial + ";token=" + hsm_token_label + ";id=%8C%BC%4F%03%F2%BD%5C%C4%F8%52%BC%F1%71%EA%9B%AC%12%DA%0A%9A;object=mainpubkey;type=private";
     {
-        
         PubSubReader<HelloWorldType> reader("HelloWorldTopic");
         PubSubWriter<HelloWorldType> writer("HelloWorldTopic");
         std::string governance_file("governance_helloworld_all_enable.smime");
@@ -2961,7 +3038,7 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_pkcs11_key)
                 "file://" + std::string(certs_path) + "/maincacert.pem"));
         sub_property_policy.properties().emplace_back(Property("dds.sec.auth.builtin.PKI-DH.identity_certificate",
                 "file://" + std::string(certs_path) + "/mainsubcert.pem"));
-        sub_property_policy.properties().emplace_back(Property("dds.sec.auth.builtin.PKI-DH.private_key", mainsubkey));
+        sub_property_policy.properties().emplace_back(Property("dds.sec.auth.builtin.PKI-DH.private_key", tokens[hsm_token_id_no_pin].urls[hsm_mainsubkey_label]));
         sub_property_policy.properties().emplace_back(Property("dds.sec.crypto.plugin",
                 "builtin.AES-GCM-GMAC"));
         sub_property_policy.properties().emplace_back(Property("dds.sec.access.plugin",
@@ -2986,7 +3063,7 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_pkcs11_key)
                 "file://" + std::string(certs_path) + "/maincacert.pem"));
         pub_property_policy.properties().emplace_back(Property("dds.sec.auth.builtin.PKI-DH.identity_certificate",
                 "file://" + std::string(certs_path) + "/mainpubcert.pem"));
-        pub_property_policy.properties().emplace_back(Property("dds.sec.auth.builtin.PKI-DH.private_key", mainpubkey));
+        pub_property_policy.properties().emplace_back(Property("dds.sec.auth.builtin.PKI-DH.private_key", tokens[hsm_token_id_no_pin].urls[hsm_mainpubkey_label]));
         pub_property_policy.properties().emplace_back(Property("dds.sec.crypto.plugin",
                 "builtin.AES-GCM-GMAC"));
         pub_property_policy.properties().emplace_back(Property("dds.sec.access.plugin",
@@ -3003,6 +3080,7 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_pkcs11_key)
                 property_policy(pub_property_policy).init();
 
         ASSERT_FALSE(writer.isInitialized());
+
     }
     {
         PubSubReader<HelloWorldType> reader("HelloWorldTopic");
@@ -3019,7 +3097,7 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_pkcs11_key)
                 "file://" + std::string(certs_path) + "/maincacert.pem"));
         sub_property_policy.properties().emplace_back(Property("dds.sec.auth.builtin.PKI-DH.identity_certificate",
                 "file://" + std::string(certs_path) + "/mainsubcert.pem"));
-        sub_property_policy.properties().emplace_back(Property("dds.sec.auth.builtin.PKI-DH.private_key", mainsubkey + "?pin-value=" + hsm_token_pin));
+        sub_property_policy.properties().emplace_back(Property("dds.sec.auth.builtin.PKI-DH.private_key", tokens[hsm_token_id_url_pin].urls[hsm_mainsubkey_label] + "?pin-value=" + hsm_token_pin));
         sub_property_policy.properties().emplace_back(Property("dds.sec.crypto.plugin",
                 "builtin.AES-GCM-GMAC"));
         sub_property_policy.properties().emplace_back(Property("dds.sec.access.plugin",
@@ -3044,7 +3122,7 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_pkcs11_key)
                 "file://" + std::string(certs_path) + "/maincacert.pem"));
         pub_property_policy.properties().emplace_back(Property("dds.sec.auth.builtin.PKI-DH.identity_certificate",
                 "file://" + std::string(certs_path) + "/mainpubcert.pem"));
-        pub_property_policy.properties().emplace_back(Property("dds.sec.auth.builtin.PKI-DH.private_key", mainpubkey + "?pin-value=" + hsm_token_pin));
+        pub_property_policy.properties().emplace_back(Property("dds.sec.auth.builtin.PKI-DH.private_key", tokens[hsm_token_id_url_pin].urls[hsm_mainpubkey_label] + "?pin-value=" + hsm_token_pin));
         pub_property_policy.properties().emplace_back(Property("dds.sec.crypto.plugin",
                 "builtin.AES-GCM-GMAC"));
         pub_property_policy.properties().emplace_back(Property("dds.sec.access.plugin",
@@ -3080,6 +3158,7 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_pkcs11_key)
         ASSERT_TRUE(data.empty());
         // Block reader until reception finished or timeout.
         reader.block_for_all();
+
     }
     {
         PubSubReader<HelloWorldType> reader("HelloWorldTopic");
@@ -3097,7 +3176,7 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_pkcs11_key)
                 "file://" + std::string(certs_path) + "/maincacert.pem"));
         sub_property_policy.properties().emplace_back(Property("dds.sec.auth.builtin.PKI-DH.identity_certificate",
                 "file://" + std::string(certs_path) + "/mainsubcert.pem"));
-        sub_property_policy.properties().emplace_back(Property("dds.sec.auth.builtin.PKI-DH.private_key", mainsubkey));
+        sub_property_policy.properties().emplace_back(Property("dds.sec.auth.builtin.PKI-DH.private_key", tokens[hsm_token_id_env_pin].urls[hsm_mainsubkey_label]));
         sub_property_policy.properties().emplace_back(Property("dds.sec.crypto.plugin",
                 "builtin.AES-GCM-GMAC"));
         sub_property_policy.properties().emplace_back(Property("dds.sec.access.plugin",
@@ -3122,7 +3201,7 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_pkcs11_key)
                 "file://" + std::string(certs_path) + "/maincacert.pem"));
         pub_property_policy.properties().emplace_back(Property("dds.sec.auth.builtin.PKI-DH.identity_certificate",
                 "file://" + std::string(certs_path) + "/mainpubcert.pem"));
-        pub_property_policy.properties().emplace_back(Property("dds.sec.auth.builtin.PKI-DH.private_key", mainpubkey));
+        pub_property_policy.properties().emplace_back(Property("dds.sec.auth.builtin.PKI-DH.private_key", tokens[hsm_token_id_env_pin].urls[hsm_mainpubkey_label]));
         pub_property_policy.properties().emplace_back(Property("dds.sec.crypto.plugin",
                 "builtin.AES-GCM-GMAC"));
         pub_property_policy.properties().emplace_back(Property("dds.sec.access.plugin",
@@ -3158,6 +3237,9 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_pkcs11_key)
         ASSERT_TRUE(data.empty());
         // Block reader until reception finished or timeout.
         reader.block_for_all();
+
+        // unset the PIN environment variable for the next round
+        unsetenv("FASTDDS_PKCS11_PIN");
     }
 }
 
