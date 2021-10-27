@@ -543,6 +543,21 @@ void DataReaderHistory::update_instance_nts(
     change->reader_info.no_writers_generation_count = vit->second.no_writers_generation_count;
 }
 
+void DataReaderHistory::writer_liveliness_lost(
+        const fastrtps::rtps::GUID_t& writer_guid)
+{
+    for (auto& it : keyed_changes_)
+    {
+        it.second.writer_removed(writer_guid);
+    }
+}
+
+void DataReaderHistory::writer_unmatched(
+        const fastrtps::rtps::GUID_t& writer_guid)
+{
+    writer_liveliness_lost(writer_guid);
+}
+
 } // namespace detail
 } // namsepace dds
 } // namespace fastdds

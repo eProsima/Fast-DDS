@@ -34,6 +34,7 @@
 #include <fastdds/dds/topic/TypeSupport.hpp>
 
 #include <fastdds/rtps/common/CacheChange.h>
+#include <fastdds/rtps/common/Guid.h>
 #include <fastdds/rtps/common/InstanceHandle.h>
 #include <fastdds/rtps/history/ReaderHistory.h>
 #include <fastdds/rtps/resources/ResourceManagement.h>
@@ -162,6 +163,12 @@ public:
 
     void update_instance_nts(
             CacheChange_t* const change);
+
+    void writer_liveliness_lost(
+            const fastrtps::rtps::GUID_t& writer_guid);
+
+    void writer_unmatched(
+            const fastrtps::rtps::GUID_t& writer_guid);
 
 private:
 

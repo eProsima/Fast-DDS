@@ -92,6 +92,12 @@ struct DataReaderInstance
         return ret_val;
     }
 
+    bool writer_removed(
+            const fastrtps::rtps::GUID_t& writer_guid)
+    {
+        return writer_unregister(writer_guid);
+    }
+
 private:
 
     bool writer_alive(

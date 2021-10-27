@@ -918,6 +918,11 @@ void DataReaderImpl::update_subscription_matched_status(
         subscription_matched_status_.last_publication_handle = status.last_publication_handle;
     }
 
+    if (count_change < 0)
+    {
+        history_.writer_unmatched(iHandle2GUID(status.last_publication_handle));
+    }
+
     StatusMask notify_status = StatusMask::subscription_matched();
     DataReaderListener* listener = get_listener_for(notify_status);
     if (listener != nullptr)
@@ -1185,6 +1190,11 @@ RequestedIncompatibleQosStatus& DataReaderImpl::update_requested_incompatible_qo
 LivelinessChangedStatus& DataReaderImpl::update_liveliness_status(
         const fastrtps::LivelinessChangedStatus& status)
 {
+    if (0 < status.not_alive_count_change)
+    {
+        history_.writer_liveliness_lost(iHandle2GUID(status.last_publication_handle));
+    }
+
     liveliness_changed_status_.alive_count = status.alive_count;
     liveliness_changed_status_.not_alive_count = status.not_alive_count;
     liveliness_changed_status_.alive_count_change += status.alive_count_change;
