@@ -264,11 +264,17 @@ static EVP_PKEY* load_private_key(
     }
     else if (file.size() >= 7 && file.compare(0, 7, "pkcs11:") == 0)
     {
+#if HAVE_LIBP11
         if (!pkidh.pkcs11_provider)
         {
             pkidh.pkcs11_provider.reset(new detail::Pkcs11Provider());
         }
         return pkidh.pkcs11_provider->load_private_key(certificate, file, password, exception);
+#endif // HAVE_LIBP11
+    static_cast<void>(pkidh);
+    exception = _SecurityException_(std::string("PKCS11 URIs require libp11 ") + file);
+    return nullptr;
+
     }
 
     exception = _SecurityException_(std::string("Unsupported URI format ") + file);

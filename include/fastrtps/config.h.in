@@ -73,6 +73,10 @@
 #define HAVE_SECURITY @HAVE_SECURITY@
 #endif
 
+#ifndef HAVE_LIBP11
+#define HAVE_LIBP11 @HAVE_LIBP11@
+#endif
+
 //Sqlite3 support
 #ifndef HAVE_SQLITE3
 #define HAVE_SQLITE3 @HAVE_SQLITE3@

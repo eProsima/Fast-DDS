@@ -20,8 +20,6 @@
 
 #include <iostream>
 
-#include <libp11.h>
-
 #include <fastdds/dds/log/Log.hpp>
 #include <utils/SystemInfo.hpp>
 
@@ -164,4 +162,3 @@ EVP_PKEY* Pkcs11Provider::load_private_key(
 } // namespace rtps
 } // namespace fastrtps
 } // namespace eprosima
-

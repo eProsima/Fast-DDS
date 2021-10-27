@@ -3022,6 +3022,8 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_valid
     }
 }
 
+#if HAVE_LIBP11
+
 TEST_F(SecurityPkcs, BuiltinAuthenticationAndAccessAndCryptoPlugin_pkcs11_key)
 {
     {
@@ -3242,6 +3244,7 @@ TEST_F(SecurityPkcs, BuiltinAuthenticationAndAccessAndCryptoPlugin_pkcs11_key)
         unsetenv("FASTDDS_PKCS11_PIN");
     }
 }
+#endif // HAVE_LIBP11
 
 static void BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(
         PubSubReader<HelloWorldType>& reader,

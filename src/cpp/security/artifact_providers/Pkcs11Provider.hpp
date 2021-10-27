@@ -22,7 +22,10 @@
 #include <openssl/engine.h>
 #include <openssl/err.h>
 #include <openssl/ssl.h>
+
+#if HAVE_LIBP11
 #include <libp11.h>
+#endif // HAVE_LIBP11
 
 #include <fastdds/rtps/security/exceptions/SecurityException.h>
 
@@ -68,4 +71,4 @@ private:
 } //namespace fastrtps
 } //namespace eprosima
 
-#endif  // SECURITY_ARTIFACTPROVIDERS_PKCS11PROVIDER_HPP
+#endif  // _SECURITY_ARTIFACTPROVIDERS_PKCS11PROVIDER_HPP_
