@@ -271,9 +271,9 @@ static EVP_PKEY* load_private_key(
         }
         return pkidh.pkcs11_provider->load_private_key(certificate, file, password, exception);
 #endif // HAVE_LIBP11
-    static_cast<void>(pkidh);
-    exception = _SecurityException_(std::string("PKCS11 URIs require libp11 ") + file);
-    return nullptr;
+        static_cast<void>(pkidh);
+        exception = _SecurityException_(std::string("PKCS11 URIs require libp11 ") + file);
+        return nullptr;
 
     }
 
