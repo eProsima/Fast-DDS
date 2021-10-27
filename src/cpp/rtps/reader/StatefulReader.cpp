@@ -583,6 +583,7 @@ bool StatefulReader::processDataFragMsg(
             // If change has been fully reassembled, mark as received and add notify user
             if (work_change != nullptr && work_change->is_fully_assembled())
             {
+                mp_history->completed_change(work_change);
                 pWP->received_change_set(work_change->sequenceNumber);
                 NotifyChanges(pWP);
             }

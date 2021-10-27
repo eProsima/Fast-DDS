@@ -34,6 +34,7 @@
 #include "../types/StringType.h"
 #include "../types/Data64kbType.h"
 #include "../types/Data1mbType.h"
+#include "../types/KeyedData1mbType.h"
 
 #include <algorithm>
 #include <cstddef>
@@ -85,6 +86,10 @@ template<>
 void default_receive_print(
         const Data1mb& data);
 
+template<>
+void default_receive_print(
+        const KeyedData1mb& data);
+
 template<class Type>
 void default_send_print(
         const Type&)
@@ -120,6 +125,10 @@ template<>
 void default_send_print(
         const Data1mb& data);
 
+template<>
+void default_send_print(
+        const KeyedData1mb& data);
+
 /****** Auxiliary data generators *******/
 std::list<HelloWorld> default_helloworld_data_generator(
         size_t max = 0);
@@ -146,6 +155,9 @@ std::list<Data1mb> default_data300kb_mix_data_generator(
         size_t max = 0);
 
 std::list<Data1mb> default_data96kb_data300kb_data_generator(
+        size_t max = 0);
+
+std::list<KeyedData1mb> default_keyeddata300kb_data_generator(
         size_t max = 0);
 
 /****** Auxiliary lambda functions  ******/

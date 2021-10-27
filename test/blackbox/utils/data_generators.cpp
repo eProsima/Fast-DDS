@@ -221,3 +221,27 @@ std::list<Data1mb> default_data96kb_data300kb_data_generator(
 
     return returnedValue;
 }
+
+std::list<KeyedData1mb> default_keyeddata300kb_data_generator(
+        size_t max)
+{
+    uint16_t index = 1;
+    size_t maximum = max ? max : 10;
+    std::list<KeyedData1mb> returnedValue(maximum);
+
+    std::generate(returnedValue.begin(), returnedValue.end(), [&index]
+            {
+                KeyedData1mb data;
+                data.key(index % 2 + 1);
+                data.data().resize(data300kb_length);
+                data.data()[0] = static_cast<unsigned char>(index);
+                for (size_t i = 1; i < data300kb_length; ++i)
+                {
+                    data.data()[i] = static_cast<unsigned char>(i + data.data()[0]);
+                }
+                ++index;
+                return data;
+            });
+
+    return returnedValue;
+}

@@ -47,3 +47,8 @@ const std::function<void(const Data1mb&)> default_data300kb_print = [](const Dat
         {
             std::cout << (uint16_t)data.data()[0] << " ";
         };
+
+const std::function<void(const KeyedData1mb&)> default_keyeddata300kb_print = [](const KeyedData1mb& data)
+        {
+            std::cout << data.key() << " " << (uint16_t)data.data()[0] << " ";
+        };
