@@ -181,6 +181,7 @@ public:
     RTPS_DllAPI virtual bool matches_change(
             const CacheChange_t* ch_inner,
             CacheChange_t* ch_outer);
+
     /**
      * Remove a specific change from the history.
      * @param removal iterator to the CacheChange_t to remove.
