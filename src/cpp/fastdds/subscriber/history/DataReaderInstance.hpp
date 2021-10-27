@@ -106,8 +106,6 @@ private:
     {
         bool ret_val = false;
 
-        alive_writers[writer_guid] = ownership_strength;
-
         if (ownership_strength >= current_owner.second)
         {
             current_owner.first = writer_guid;
@@ -116,16 +114,19 @@ private:
             if (InstanceStateKind::NOT_ALIVE_DISPOSED_INSTANCE_STATE == instance_state)
             {
                 ++disposed_generation_count;
+                alive_writers.clear();
                 view_state = ViewStateKind::NEW_VIEW_STATE;
                 ret_val = true;
             }
             else if (InstanceStateKind::NOT_ALIVE_NO_WRITERS_INSTANCE_STATE == instance_state)
             {
                 ++no_writers_generation_count;
+                alive_writers.clear();
                 view_state = ViewStateKind::NEW_VIEW_STATE;
                 ret_val = true;
             }
 
+            alive_writers[writer_guid] = ownership_strength;
             instance_state = InstanceStateKind::ALIVE_INSTANCE_STATE;
         }
 
