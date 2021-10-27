@@ -329,11 +329,10 @@ private:
                     deserialization_error = true;
                     return false;
                 }
-
-                // Mark that some data is available
-                return_value_ = ReturnCode_t::RETCODE_OK;
             }
 
+            // Mark that some data is available
+            return_value_ = ReturnCode_t::RETCODE_OK;
             ++current_slot_;
             --remaining_samples_;
             ret_val = true;
