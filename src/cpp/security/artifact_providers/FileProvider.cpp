@@ -16,11 +16,10 @@
  * @file FileProvider.cpp
  */
 
-#include <cassert>
-#include <cstring>
-
 #include <security/artifact_providers/FileProvider.hpp>
 
+#include <cassert>
+#include <cstring>
 #include <iostream>
 
 #define S1(x) #x

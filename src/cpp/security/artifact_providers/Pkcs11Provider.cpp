@@ -110,7 +110,7 @@ Pkcs11Provider::Pkcs11Provider()
     if (!ENGINE_init(pkcs11_))
     {
         has_initialization_error_ = true;
-        initialization_exception_ = _SecurityException_(std::string("Error initializeing the HSM provider library"));
+        initialization_exception_ = _SecurityException_(std::string("Error initializing the HSM provider library"));
         ENGINE_free(pkcs11_);
     }
 }
