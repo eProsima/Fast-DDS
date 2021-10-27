@@ -109,13 +109,15 @@ private:
 
             if (InstanceStateKind::NOT_ALIVE_DISPOSED_INSTANCE_STATE == instance_state)
             {
-                ret_val = true;
                 ++disposed_generation_count;
+                view_state = ViewStateKind::NEW_VIEW_STATE;
+                ret_val = true;
             }
             else if (InstanceStateKind::NOT_ALIVE_NO_WRITERS_INSTANCE_STATE == instance_state)
             {
-                ret_val = true;
                 ++no_writers_generation_count;
+                view_state = ViewStateKind::NEW_VIEW_STATE;
+                ret_val = true;
             }
 
             instance_state = InstanceStateKind::ALIVE_INSTANCE_STATE;
