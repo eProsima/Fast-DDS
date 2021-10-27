@@ -255,7 +255,8 @@ static EVP_PKEY* load_private_key(
         X509* certificate,
         const std::string& file,
         const std::string& password,
-        SecurityException& exception)
+        SecurityException& exception,
+        PKIDH& pkidh)
 {
     if (file.size() >= 7 && file.compare(0, 7, "file://") == 0)
     {
@@ -263,7 +264,11 @@ static EVP_PKEY* load_private_key(
     }
     else if (file.size() >= 7 && file.compare(0, 7, "pkcs11:") == 0)
     {
-        return detail::Pkcs11Provider::load_private_key(certificate, file, password, exception);
+        if (!pkidh.pkcs11_provider)
+        {
+            pkidh.pkcs11_provider.reset(new detail::Pkcs11Provider());
+        }
+        return pkidh.pkcs11_provider->load_private_key(certificate, file, password, exception);
     }
 
     exception = _SecurityException_(std::string("Unsupported URI format ") + file);
@@ -1074,7 +1079,7 @@ ValidationResult_t PKIDH::validate_local_identity(
                 {
                     if (get_signature_algorithm((*ih)->cert_, (*ih)->sign_alg_, exception))
                     {
-                        (*ih)->pkey_ = load_private_key((*ih)->cert_, *private_key, *password, exception);
+                        (*ih)->pkey_ = load_private_key((*ih)->cert_, *private_key, *password, exception, *this);
 
                         if ((*ih)->pkey_ != nullptr)
                         {
