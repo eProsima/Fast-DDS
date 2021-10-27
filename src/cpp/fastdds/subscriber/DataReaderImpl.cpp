@@ -861,9 +861,8 @@ bool DataReaderImpl::on_new_cache_change_added(
         }
     }
 
-    history_.update_instance_nts(change);
-
     CacheChange_t* new_change = const_cast<CacheChange_t*>(change);
+    history_.update_instance_nts(new_change);
 
     if (qos_.lifespan().duration == c_TimeInfinite)
     {

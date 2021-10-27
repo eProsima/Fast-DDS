@@ -161,7 +161,7 @@ public:
             bool exact);
 
     void update_instance_nts(
-            const CacheChange_t* const change);
+            CacheChange_t* const change);
 
 private:
 
