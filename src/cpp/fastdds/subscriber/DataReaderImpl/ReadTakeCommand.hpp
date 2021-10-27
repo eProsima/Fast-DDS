@@ -111,7 +111,7 @@ struct ReadTakeCommand
         auto it = instance_.second->cache_changes.begin();
         while (!finished_ && it != instance_.second->cache_changes.end())
         {
-            CacheChange_t* change = it->change;
+            CacheChange_t* change = *it;
             SampleStateKind check;
             check = change->isRead ? SampleStateKind::READ_SAMPLE_STATE : SampleStateKind::NOT_READ_SAMPLE_STATE;
             if ((check & states_.sample_states) != 0)
@@ -213,24 +213,24 @@ struct ReadTakeCommand
             const DataReaderInstance& instance,
             const DataReaderCacheChange& item)
     {
-        info.sample_state = item.change->isRead ? READ_SAMPLE_STATE : NOT_READ_SAMPLE_STATE;
+        info.sample_state = item->isRead ? READ_SAMPLE_STATE : NOT_READ_SAMPLE_STATE;
         info.instance_state = instance.instance_state;
         info.view_state = instance.view_state;
-        info.disposed_generation_count = item.disposed_generation_count;
-        info.no_writers_generation_count = item.no_writers_generation_count;
+        info.disposed_generation_count = item->reader_info.disposed_generation_count;
+        info.no_writers_generation_count = item->reader_info.no_writers_generation_count;
         info.sample_rank = 0;
         info.generation_rank = 0;
         info.absoulte_generation_rank = 0;
-        info.source_timestamp = item.change->sourceTimestamp;
-        info.reception_timestamp = item.change->reader_info.receptionTimestamp;
-        info.instance_handle = item.change->instanceHandle;
-        info.publication_handle = InstanceHandle_t(item.change->writerGUID);
-        info.sample_identity.writer_guid(item.change->writerGUID);
-        info.sample_identity.sequence_number(item.change->sequenceNumber);
-        info.related_sample_identity = item.change->write_params.sample_identity();
+        info.source_timestamp = item->sourceTimestamp;
+        info.reception_timestamp = item->reader_info.receptionTimestamp;
+        info.instance_handle = item->instanceHandle;
+        info.publication_handle = InstanceHandle_t(item->writerGUID);
+        info.sample_identity.writer_guid(item->writerGUID);
+        info.sample_identity.sequence_number(item->sequenceNumber);
+        info.related_sample_identity = item->write_params.sample_identity();
         info.valid_data = true;
 
-        switch (item.change->kind)
+        switch (item->kind)
         {
             case eprosima::fastrtps::rtps::NOT_ALIVE_DISPOSED:
             case eprosima::fastrtps::rtps::NOT_ALIVE_DISPOSED_UNREGISTERED:
@@ -321,7 +321,7 @@ private:
             generate_info(item);
             if (sample_infos_[current_slot_].valid_data)
             {
-                if (!deserialize_sample(item.change))
+                if (!deserialize_sample(item))
                 {
                     // Decrement length of collections
                     data_values_.length(current_slot_);

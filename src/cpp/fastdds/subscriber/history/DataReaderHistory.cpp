@@ -203,7 +203,7 @@ bool DataReaderHistory::received_change_keep_last(
         else
         {
             // Try to substitute the oldest sample.
-            CacheChange_t* first_change = instance_changes.at(0).change;
+            CacheChange_t* first_change = instance_changes.at(0);
             if (a_change->sourceTimestamp < first_change->sourceTimestamp)
             {
                 // Received change is older than oldest, and should be discarded
@@ -248,12 +248,11 @@ bool DataReaderHistory::add_received_change_with_key(
         }
 
         //ADD TO KEY VECTOR
-        DataReaderCacheChange item{ a_change, instance.disposed_generation_count,
-                                    instance.no_writers_generation_count };
+        DataReaderCacheChange item = a_change;
         eprosima::utilities::collections::sorted_vector_insert(instance.cache_changes, item,
                 [](const DataReaderCacheChange& lhs, const DataReaderCacheChange& rhs)
                 {
-                    return lhs.change->sourceTimestamp < rhs.change->sourceTimestamp;
+                    return lhs->sourceTimestamp < rhs->sourceTimestamp;
                 });
 
         logInfo(SUBSCRIBER, mp_reader->getGuid().entityId
@@ -289,7 +288,7 @@ bool DataReaderHistory::get_first_untaken_info(
                 std::find_if(instance_changes.cbegin(), instance_changes.cend(),
                         [change](const DataReaderCacheChange& v)
                         {
-                            return v.change == change;
+                            return v == change;
                         });
         ReadTakeCommand::generate_info(info, it->second, *item);
         mp_reader->change_read_by_user(change, wp, false);
@@ -347,8 +346,8 @@ bool DataReaderHistory::remove_change_sub(
     {
         for (auto chit = vit->second.cache_changes.begin(); chit != vit->second.cache_changes.end(); ++chit)
         {
-            if (chit->change->sequenceNumber == change->sequenceNumber &&
-                    chit->change->writerGUID == change->writerGUID)
+            if ((*chit)->sequenceNumber == change->sequenceNumber &&
+                    (*chit)->writerGUID == change->writerGUID)
             {
                 vit->second.cache_changes.erase(chit);
                 found = true;
@@ -387,8 +386,8 @@ bool DataReaderHistory::remove_change_sub(
     {
         for (auto chit = vit->second.cache_changes.begin(); chit != vit->second.cache_changes.end(); ++chit)
         {
-            if (chit->change->sequenceNumber == change->sequenceNumber &&
-                    chit->change->writerGUID == change->writerGUID)
+            if ((*chit)->sequenceNumber == change->sequenceNumber &&
+                    (*chit)->writerGUID == change->writerGUID)
             {
                 assert(it == chit);
                 it = vit->second.cache_changes.erase(chit);
@@ -524,7 +523,7 @@ ReaderHistory::iterator DataReaderHistory::remove_change_nts(
         auto& c = it->second.cache_changes;
         c.erase(std::remove_if(c.begin(), c.end(), [p_sample](DataReaderCacheChange& elem)
                 {
-                    return elem.change == p_sample;
+                    return elem == p_sample;
                 }), c.end());
     }
 

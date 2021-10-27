@@ -29,15 +29,7 @@ namespace dds {
 namespace detail {
 
 /// A DataReader cache entry
-struct DataReaderCacheChange
-{
-    //! Low level cache entry
-    fastrtps::rtps::CacheChange_t* change;
-    //! Disposed generation of the instance when this entry was added to it
-    int32_t disposed_generation_count;
-    //! No-writers generation of the instance when this entry was added to it
-    int32_t no_writers_generation_count;
-};
+using DataReaderCacheChange = fastrtps::rtps::CacheChange_t*;
 
 } /* namespace detail */
 } /* namespace dds */
