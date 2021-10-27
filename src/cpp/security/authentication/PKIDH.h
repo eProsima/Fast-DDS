@@ -98,7 +98,9 @@ class PKIDH : public Authentication
         bool return_authenticated_peer_credential_token(PermissionsCredentialToken* token,
                 SecurityException& ex) override;
 
+#if HAVE_LIBP11
         std::unique_ptr<detail::Pkcs11Provider> pkcs11_provider;
+#endif // HAVE_LIBP11
 
     private:
 

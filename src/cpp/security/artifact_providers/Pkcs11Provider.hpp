@@ -19,6 +19,8 @@
 #ifndef SECURITY_ARTIFACTPROVIDERS_PKCS11PROVIDER_HPP
 #define SECURITY_ARTIFACTPROVIDERS_PKCS11PROVIDER_HPP
 
+#if HAVE_LIBP11
+
 #include <openssl/engine.h>
 #include <openssl/err.h>
 #include <openssl/ssl.h>
@@ -67,5 +69,7 @@ private:
 } //namespace rtps
 } //namespace fastrtps
 } //namespace eprosima
+
+#endif // HAVE_LIBP11
 
 #endif  // SECURITY_ARTIFACTPROVIDERS_PKCS11PROVIDER_HPP

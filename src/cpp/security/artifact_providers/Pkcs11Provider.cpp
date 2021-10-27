@@ -16,6 +16,8 @@
  * @file Pkcs11Provider.cpp
  */
 
+#if HAVE_LIBP11
+
 #include <security/artifact_providers/Pkcs11Provider.hpp>
 
 #include <iostream>
@@ -165,3 +167,4 @@ EVP_PKEY* Pkcs11Provider::load_private_key(
 } // namespace fastrtps
 } // namespace eprosima
 
+#endif // HAVE_LIBP11
