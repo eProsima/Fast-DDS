@@ -552,10 +552,11 @@ void DataReaderHistory::writer_liveliness_lost(
     }
 }
 
-void DataReaderHistory::writer_unmatched(
+bool DataReaderHistory::writer_unmatched(
         const fastrtps::rtps::GUID_t& writer_guid)
 {
     writer_liveliness_lost(writer_guid);
+    return ReaderHistory::writer_unmatched(writer_guid);
 }
 
 } // namespace detail

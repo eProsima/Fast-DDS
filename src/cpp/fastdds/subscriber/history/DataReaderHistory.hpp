@@ -167,8 +167,8 @@ public:
     void writer_liveliness_lost(
             const fastrtps::rtps::GUID_t& writer_guid);
 
-    void writer_unmatched(
-            const fastrtps::rtps::GUID_t& writer_guid);
+    bool writer_unmatched(
+            const fastrtps::rtps::GUID_t& writer_guid) override;
 
 private:
 

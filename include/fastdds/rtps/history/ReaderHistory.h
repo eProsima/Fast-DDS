@@ -152,6 +152,12 @@ public:
             CacheChange_t** min_change,
             const GUID_t& writerGuid);
 
+    RTPS_DllAPI virtual bool writer_unmatched(
+            const GUID_t& writer_guid)
+    {
+        return remove_changes_with_guid(writer_guid);
+    }
+
 protected:
 
     RTPS_DllAPI bool do_reserve_cache(

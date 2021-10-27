@@ -178,7 +178,7 @@ bool StatelessReader::matched_writer_remove(
     std::lock_guard<RecursiveTimedMutex> guard(mp_mutex);
 
     //Remove cachechanges belonging to the unmatched writer
-    mp_history->remove_changes_with_guid(writer_guid);
+    mp_history->writer_unmatched(writer_guid);
 
     if (liveliness_lease_duration_ < c_TimeInfinite)
     {
