@@ -1527,6 +1527,7 @@ TEST_F(DataReaderTests, sample_info)
             writer_qos_.resource_limits().max_instances = 2;
             writer_qos_.resource_limits().max_samples_per_instance = 1;
             writer_qos_.resource_limits().max_samples = 2;
+            writer_qos_.writer_data_lifecycle().autodispose_unregistered_instances = false;
 
             data_[0].index(1);
             data_[1].index(2);
