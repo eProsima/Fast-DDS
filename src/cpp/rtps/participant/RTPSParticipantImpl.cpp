@@ -243,13 +243,7 @@ RTPSParticipantImpl::RTPSParticipantImpl(
     /* INSERT DEFAULT MANDATORY MULTICAST LOCATORS HERE */
     if (m_att.builtin.metatrafficMulticastLocatorList.empty() && m_att.builtin.metatrafficUnicastLocatorList.empty())
     {
-        m_network_Factory.getDefaultMetatrafficMulticastLocators(m_att.builtin.metatrafficMulticastLocatorList,
-                metatraffic_multicast_port);
-        m_network_Factory.NormalizeLocators(m_att.builtin.metatrafficMulticastLocatorList);
-
-        m_network_Factory.getDefaultMetatrafficUnicastLocators(m_att.builtin.metatrafficUnicastLocatorList,
-                metatraffic_unicast_port);
-        m_network_Factory.NormalizeLocators(m_att.builtin.metatrafficUnicastLocatorList);
+        get_default_metatraffic_locators(metatraffic_multicast_port, metatraffic_unicast_port);
     }
     else
     {
@@ -291,7 +285,6 @@ RTPSParticipantImpl::RTPSParticipantImpl(
     }
 
     // Creation of user locator and receiver resources
-    bool hasLocatorsDefined = true;
     //If no default locators are defined we define some.
     /* The reasoning here is the following.
        If the parameters of the RTPS Participant don't hold default listening locators for the creation
@@ -303,9 +296,7 @@ RTPSParticipantImpl::RTPSParticipantImpl(
     {
         //Default Unicast Locators in case they have not been provided
         /* INSERT DEFAULT UNICAST LOCATORS FOR THE PARTICIPANT */
-        hasLocatorsDefined = false;
-
-        m_network_Factory.getDefaultUnicastLocators(domain_id_, m_att.defaultUnicastLocatorList, m_att);
+        get_default_unicast_locators();
     }
     else
     {
@@ -315,22 +306,14 @@ RTPSParticipantImpl::RTPSParticipantImpl(
                 {
                     m_network_Factory.fill_default_locator_port(domain_id_, loc, m_att, false);
                 });
+        m_network_Factory.NormalizeLocators(m_att.defaultUnicastLocatorList);
 
         std::for_each(m_att.defaultMulticastLocatorList.begin(), m_att.defaultMulticastLocatorList.end(),
                 [&](Locator_t& loc)
                 {
                     m_network_Factory.fill_default_locator_port(domain_id_, loc, m_att, true);
                 });
-
-    }
-
-    // Normalize unicast locators.
-    m_network_Factory.NormalizeLocators(m_att.defaultUnicastLocatorList);
-
-    if (!hasLocatorsDefined)
-    {
-        logInfo(RTPS_PARTICIPANT, m_att.getName() << " Created with NO default Unicast Locator List, adding Locators:"
-                                                  << m_att.defaultUnicastLocatorList);
+        m_network_Factory.NormalizeLocators(m_att.defaultMulticastLocatorList);
     }
 
 #if HAVE_SECURITY
@@ -2187,6 +2170,27 @@ void RTPSParticipantImpl::environment_file_has_changed()
         logWarning(RTPS_QOS_CHECK, "Trying to add Discovery Servers to a participant which is not a SERVER, BACKUP " <<
                 "or an overriden CLIENT (SIMPLE participant transformed into CLIENT with the environment variable)");
     }
+}
+
+void RTPSParticipantImpl::get_default_metatraffic_locators(
+        uint32_t metatraffic_multicast_port,
+        uint32_t metatraffic_unicast_port)
+{
+    m_network_Factory.getDefaultMetatrafficMulticastLocators(m_att.builtin.metatrafficMulticastLocatorList,
+            metatraffic_multicast_port);
+    m_network_Factory.NormalizeLocators(m_att.builtin.metatrafficMulticastLocatorList);
+
+    m_network_Factory.getDefaultMetatrafficUnicastLocators(m_att.builtin.metatrafficUnicastLocatorList,
+            metatraffic_unicast_port);
+    m_network_Factory.NormalizeLocators(m_att.builtin.metatrafficUnicastLocatorList);
+}
+
+void RTPSParticipantImpl::get_default_unicast_locators()
+{
+    m_network_Factory.getDefaultUnicastLocators(domain_id_, m_att.defaultUnicastLocatorList, m_att);
+    m_network_Factory.NormalizeLocators(m_att.defaultUnicastLocatorList);
+    logInfo(RTPS_PARTICIPANT, m_att.getName() << " Created with NO default Unicast Locator List, adding Locators:"
+                                                << m_att.defaultUnicastLocatorList);
 }
 
 #ifdef FASTDDS_STATISTICS
