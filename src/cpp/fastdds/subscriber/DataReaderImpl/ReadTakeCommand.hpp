@@ -286,6 +286,7 @@ private:
 
     bool next_instance()
     {
+        history_.check_and_remove_instance(instance_);
         if (single_instance_)
         {
             finished_ = true;

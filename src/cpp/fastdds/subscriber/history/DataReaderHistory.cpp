@@ -506,6 +506,19 @@ std::pair<bool, DataReaderHistory::instance_info> DataReaderHistory::lookup_inst
     return { false, {InstanceHandle_t(), nullptr} };
 }
 
+void DataReaderHistory::check_and_remove_instance(
+        DataReaderHistory::instance_info& instance_info)
+{
+    DataReaderInstance* instance = instance_info.second;
+    if (instance->cache_changes.empty() && 
+        (InstanceStateKind::ALIVE_INSTANCE_STATE != instance->instance_state) &&
+        instance_info.first.isDefined())
+    {
+        keyed_changes_.erase(instance_info.first);
+        instance_info.second = nullptr;
+    }
+}
+
 ReaderHistory::iterator DataReaderHistory::remove_change_nts(
         ReaderHistory::const_iterator removal,
         bool release)
