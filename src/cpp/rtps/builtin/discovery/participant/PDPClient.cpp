@@ -801,6 +801,32 @@ bool get_server_client_default_guidPrefix(
     return false;
 }
 
+bool PDPClient::remove_remote_participant(
+        const GUID_t& partGUID,
+        ParticipantDiscoveryInfo::DISCOVERY_STATUS reason)
+{
+    if(PDP::remove_remote_participant(partGUID, reason))
+    {
+        // If it works fine, return
+        return true;
+    }
+
+    // Erase Proxies created before having the Participant
+    GUID_t wguid;
+    wguid.guidPrefix = partGUID.guidPrefix;
+    wguid.entityId = c_EntityId_SPDPWriter;
+    mp_PDPReader->matched_writer_remove(wguid);
+
+    GUID_t rguid;
+    rguid.guidPrefix = partGUID.guidPrefix;
+    rguid.entityId = c_EntityId_SPDPReader;
+    mp_PDPWriter->matched_reader_remove(rguid);
+
+    update_remote_servers_list();
+
+    return false;
+}
+
 } /* namespace rtps */
 } /* namespace fastdds */
 } /* namespace eprosima */
