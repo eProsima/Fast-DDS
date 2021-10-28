@@ -234,6 +234,7 @@ struct ReadTakeCommand
         {
             case eprosima::fastrtps::rtps::NOT_ALIVE_DISPOSED:
             case eprosima::fastrtps::rtps::NOT_ALIVE_DISPOSED_UNREGISTERED:
+            case eprosima::fastrtps::rtps::NOT_ALIVE_UNREGISTERED:
                 info.valid_data = false;
                 break;
             case eprosima::fastrtps::rtps::ALIVE:
