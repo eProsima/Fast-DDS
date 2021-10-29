@@ -285,7 +285,7 @@ bool StatefulReader::matched_writer_remove(
     if (is_alive_)
     {
         //Remove cachechanges belonging to the unmatched writer
-        mp_history->writer_unmatched(writer_guid);
+        mp_history->writer_unmatched(writer_guid, get_last_notified(writer_guid));
 
         if (liveliness_lease_duration_ < c_TimeInfinite)
         {

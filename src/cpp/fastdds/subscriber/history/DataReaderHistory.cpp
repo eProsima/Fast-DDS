@@ -565,13 +565,6 @@ void DataReaderHistory::writer_not_alive(
     }
 }
 
-bool DataReaderHistory::writer_unmatched(
-        const fastrtps::rtps::GUID_t& writer_guid)
-{
-    static_cast<void>(writer_guid);
-    return true;
-}
-
 } // namespace detail
 } // namsepace dds
 } // namespace fastdds

@@ -167,9 +167,6 @@ public:
     void writer_not_alive(
             const fastrtps::rtps::GUID_t& writer_guid);
 
-    bool writer_unmatched(
-            const fastrtps::rtps::GUID_t& writer_guid) override;
-
     void check_and_remove_instance(
             instance_info& instance_info);
 

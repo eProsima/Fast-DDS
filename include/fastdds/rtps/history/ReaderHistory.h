@@ -153,9 +153,15 @@ public:
             const GUID_t& writerGuid);
 
     RTPS_DllAPI virtual bool writer_unmatched(
-            const GUID_t& writer_guid)
+            const GUID_t& writer_guid,
+            const SequenceNumber_t& last_notified_seq)
     {
-        return remove_changes_with_guid(writer_guid);
+        return remove_changes_with_pred(
+            [writer_guid, last_notified_seq](CacheChange_t* ch)
+            {
+                return (writer_guid == ch->writerGUID) &&
+                (last_notified_seq < ch->sequenceNumber);
+            });
     }
 
 protected:
@@ -166,6 +172,38 @@ protected:
 
     RTPS_DllAPI void do_release_cache(
             CacheChange_t* ch) override;
+
+    template<typename Pred>
+    inline bool remove_changes_with_pred(
+            Pred pred)
+    {
+        assert(nullptr != mp_reader);
+        assert(nullptr != mp_mutex);
+
+        // Lock scope
+        std::vector<CacheChange_t*> changes_to_remove;
+        {
+            std::lock_guard<RecursiveTimedMutex> guard(*mp_mutex);
+            for (std::vector<CacheChange_t*>::iterator chit = m_changes.begin(); chit != m_changes.end(); ++chit)
+            {
+                if (pred(*chit))
+                {
+                    changes_to_remove.push_back(*chit);
+                }
+            }
+        }
+        // End lock scope
+
+        bool ret_val = true;
+        for (CacheChange_t* ch : changes_to_remove)
+        {
+            if (!remove_change(ch))
+            {
+                ret_val = false;
+            }
+        }
+        return ret_val;
+    }
 
     //!Pointer to the reader
     RTPSReader* mp_reader;
