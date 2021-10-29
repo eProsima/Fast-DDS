@@ -797,8 +797,8 @@ bool StatefulReader::change_removed_by_history(
         }
 
         if (a_change->is_fully_assembled() &&
-            !a_change->isRead &&
-            get_last_notified(a_change->writerGUID) >= a_change->sequenceNumber)
+                !a_change->isRead &&
+                get_last_notified(a_change->writerGUID) >= a_change->sequenceNumber)
         {
             if (0 < total_unread_)
             {

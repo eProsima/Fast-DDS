@@ -132,7 +132,8 @@ public:
     }
 
     virtual bool writer_unmatched(
-           const GUID_t& /*writer_guid*/)
+            const GUID_t& /*writer_guid*/,
+            const SequenceNumber_t& /*last_notified_seq*/)
     {
         return true;
     }

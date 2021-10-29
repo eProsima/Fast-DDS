@@ -122,7 +122,7 @@ public:
     /**
      * Insert value before pos.
      *
-     * @param pos 	iterator before which the content will be inserted. pos may be the end() iterator.
+     * @param pos   iterator before which the content will be inserted. pos may be the end() iterator.
      * @param value element value to insert.
      *
      * @return Iterator pointing to the inserted value. end() if insertion couldn't be done due to collection limits.
@@ -142,7 +142,7 @@ public:
     /**
      * Insert value before pos.
      *
-     * @param pos 	iterator before which the content will be inserted. pos may be the end() iterator.
+     * @param pos   iterator before which the content will be inserted. pos may be the end() iterator.
      * @param value element value to insert.
      *
      * @return Iterator pointing to the inserted value. end() if insertion couldn't be done due to collection limits.

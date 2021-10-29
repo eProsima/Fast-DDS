@@ -126,7 +126,7 @@ DataReaderHistory::DataReaderHistory(
                     {
                         return true;
                     }
-                    
+
                     if (type_ != nullptr)
                     {
                         logInfo(SUBSCRIBER, "Getting Key of change with no Key transmitted");
@@ -139,7 +139,7 @@ DataReaderHistory::DataReaderHistory(
                     }
 
                     logWarning(SUBSCRIBER, "NO KEY in topic: " << topic_name_
-                                                                << " and no method to obtain it"; );
+                                                               << " and no method to obtain it"; );
                     return false;
                 };
     }
@@ -510,9 +510,9 @@ void DataReaderHistory::check_and_remove_instance(
         DataReaderHistory::instance_info& instance_info)
 {
     DataReaderInstance* instance = instance_info.second;
-    if (instance->cache_changes.empty() && 
-        (InstanceStateKind::ALIVE_INSTANCE_STATE != instance->instance_state) &&
-        instance_info.first.isDefined())
+    if (instance->cache_changes.empty() &&
+            (InstanceStateKind::ALIVE_INSTANCE_STATE != instance->instance_state) &&
+            instance_info.first.isDefined())
     {
         keyed_changes_.erase(instance_info.first);
         instance_info.second = nullptr;
@@ -549,7 +549,7 @@ void DataReaderHistory::update_instance_nts(
 {
     InstanceCollection::iterator vit;
     vit = keyed_changes_.find(change->instanceHandle);
-    
+
     assert(vit != keyed_changes_.end());
     vit->second.update_state(change->kind, change->writerGUID);
     change->reader_info.disposed_generation_count = vit->second.disposed_generation_count;
