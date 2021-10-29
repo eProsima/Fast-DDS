@@ -556,7 +556,7 @@ void DataReaderHistory::update_instance_nts(
     change->reader_info.no_writers_generation_count = vit->second.no_writers_generation_count;
 }
 
-void DataReaderHistory::writer_liveliness_lost(
+void DataReaderHistory::writer_not_alive(
         const fastrtps::rtps::GUID_t& writer_guid)
 {
     for (auto& it : keyed_changes_)
@@ -568,7 +568,6 @@ void DataReaderHistory::writer_liveliness_lost(
 bool DataReaderHistory::writer_unmatched(
         const fastrtps::rtps::GUID_t& writer_guid)
 {
-    writer_liveliness_lost(writer_guid);
     return ReaderHistory::writer_unmatched(writer_guid);
 }
 

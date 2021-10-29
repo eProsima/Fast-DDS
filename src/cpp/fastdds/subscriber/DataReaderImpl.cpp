@@ -920,7 +920,7 @@ void DataReaderImpl::update_subscription_matched_status(
 
     if (count_change < 0)
     {
-        history_.writer_unmatched(iHandle2GUID(status.last_publication_handle));
+        history_.writer_not_alive(iHandle2GUID(status.last_publication_handle));
     }
 
     StatusMask notify_status = StatusMask::subscription_matched();
@@ -1192,7 +1192,7 @@ LivelinessChangedStatus& DataReaderImpl::update_liveliness_status(
 {
     if (0 < status.not_alive_count_change)
     {
-        history_.writer_liveliness_lost(iHandle2GUID(status.last_publication_handle));
+        history_.writer_not_alive(iHandle2GUID(status.last_publication_handle));
     }
 
     liveliness_changed_status_.alive_count = status.alive_count;

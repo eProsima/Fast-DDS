@@ -164,7 +164,7 @@ public:
     void update_instance_nts(
             CacheChange_t* const change);
 
-    void writer_liveliness_lost(
+    void writer_not_alive(
             const fastrtps::rtps::GUID_t& writer_guid);
 
     bool writer_unmatched(
