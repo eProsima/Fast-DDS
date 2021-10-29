@@ -297,6 +297,8 @@ RTPSParticipantImpl::RTPSParticipantImpl(
         //Default Unicast Locators in case they have not been provided
         /* INSERT DEFAULT UNICAST LOCATORS FOR THE PARTICIPANT */
         get_default_unicast_locators();
+        logInfo(RTPS_PARTICIPANT, m_att.getName() << " Created with NO default Unicast Locator List, adding Locators:"
+                                                    << m_att.defaultUnicastLocatorList);
     }
     else
     {
@@ -1150,6 +1152,35 @@ bool RTPSParticipantImpl::registerReader(
 void RTPSParticipantImpl::update_attributes(
         const RTPSParticipantAttributes& patt)
 {
+    // Check if new interfaces has been added
+    if (patt.builtin.metatrafficMulticastLocatorList.empty() && patt.builtin.metatrafficUnicastLocatorList.empty())
+    {
+        LocatorList_t metatraffic_multicast_locator_list = m_att.builtin.metatrafficMulticastLocatorList;
+        LocatorList_t metatraffic_unicast_locator_list = m_att.builtin.metatrafficUnicastLocatorList;
+
+        uint32_t metatraffic_multicast_port = m_att.port.getMulticastPort(domain_id_);
+        uint32_t metatraffic_unicast_port = m_att.port.getUnicastPort(domain_id_,
+                        static_cast<uint32_t>(m_att.participantID));
+
+        get_default_metatraffic_locators(metatraffic_multicast_port, metatraffic_unicast_port);
+
+        if (!(metatraffic_multicast_locator_list == m_att.builtin.metatrafficMulticastLocatorList) ||
+                !(metatraffic_unicast_locator_list == m_att.builtin.metatrafficUnicastLocatorList))
+        {
+            logInfo(RTPS_PARTICIPANT, m_att.getName() << " updated its metatraffic locators");
+        }
+    }
+    if (patt.defaultUnicastLocatorList.empty() && patt.defaultMulticastLocatorList.empty())
+    {
+        LocatorList_t default_unicast_locator_list = m_att.defaultUnicastLocatorList;
+        get_default_unicast_locators();
+        if (!(default_unicast_locator_list == m_att.defaultUnicastLocatorList))
+        {
+            logInfo(RTPS_PARTICIPANT, m_att.getName() << " updated default unicast locator list, current locators: "
+                                                        << m_att.defaultUnicastLocatorList);
+        }
+    }
+
     // Check if there are changes
     if (patt.builtin.discovery_config.m_DiscoveryServers == m_att.builtin.discovery_config.m_DiscoveryServers
             && patt.userData == m_att.userData)
@@ -2189,8 +2220,6 @@ void RTPSParticipantImpl::get_default_unicast_locators()
 {
     m_network_Factory.getDefaultUnicastLocators(domain_id_, m_att.defaultUnicastLocatorList, m_att);
     m_network_Factory.NormalizeLocators(m_att.defaultUnicastLocatorList);
-    logInfo(RTPS_PARTICIPANT, m_att.getName() << " Created with NO default Unicast Locator List, adding Locators:"
-                                                << m_att.defaultUnicastLocatorList);
 }
 
 #ifdef FASTDDS_STATISTICS
