@@ -470,8 +470,6 @@ ContentFilteredTopic* DomainParticipantImpl::create_contentfilteredtopic(
         const std::vector<std::string>& expression_parameters,
         const char* filter_name)
 {
-    using TypeDescriptor = IContentFilterFactory::TypeDescriptor;
-
     if (nullptr == related_topic)
     {
         return nullptr;
