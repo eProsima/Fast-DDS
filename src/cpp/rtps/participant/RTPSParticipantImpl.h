@@ -491,6 +491,28 @@ public:
             const LocatorList_t& MulticastLocatorList,
             const LocatorList_t& UnicastLocatorList) const;
 
+<<<<<<< HEAD
+=======
+    //! Getter client_override flag
+    bool client_override()
+    {
+        return client_override_;
+    }
+
+    //! Setter client_override flag
+    void client_override(
+            bool value)
+    {
+        client_override_ = value;
+    }
+
+    //! Retrieve persistence guid prefix
+    GuidPrefix_t get_persistence_guid_prefix() const
+    {
+        return m_persistence_guid.guidPrefix;
+    }
+
+>>>>>>> 7280e1de2 (Persistence guid hotfixes (#2244))
 private:
 
     //! DomainId

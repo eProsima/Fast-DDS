@@ -285,8 +285,16 @@ void PDP::initializeParticipantProxyData(
 
     // Keep persistence Guid_Prefix_t in a specific property. This info must be propagated to all builtin endpoints
     {
-        GuidPrefix_t persistent = mp_RTPSParticipant->getAttributes().prefix;
+        // Use user set persistence guid
+        GuidPrefix_t persistent = mp_RTPSParticipant->get_persistence_guid_prefix();
 
+        // If it has not been set, use guid
+        if (persistent == c_GuidPrefix_Unknown)
+        {
+            persistent = mp_RTPSParticipant->getAttributes().prefix;
+        }
+
+        // If persistent is set, set it into the participant proxy
         if (persistent != c_GuidPrefix_Unknown)
         {
             participant_data->set_persistence_guid(
