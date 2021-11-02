@@ -1757,8 +1757,7 @@ void DiscoveryDataBase::unmatch_participant_(
 
     // For each participant remove it
     // IMPORTANT: This is not for every relevant participant, as participant A could be in other participant's B info
-    // and B not be relevant for A
-    // Using for with a map does copy the values, do not give references. Find is needed.
+    // and B not be relevant for A. So it must be done for every Participant.
     for (auto& participant_it : participants_)
     {
         participant_it.second.remove_participant(guid_prefix);
