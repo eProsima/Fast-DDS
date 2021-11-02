@@ -38,6 +38,9 @@ class Cdr;
 namespace fastrtps {
 namespace types {
 
+//! A special value indicating an unlimited quantity
+constexpr uint32_t BOUND_UNLIMITED = 0;
+
 using eprosima::fastrtps::rtps::octet;
 
 using OctetSeq = std::vector<octet>;
