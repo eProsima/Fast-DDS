@@ -805,7 +805,7 @@ bool PDPClient::remove_remote_participant(
         const GUID_t& partGUID,
         ParticipantDiscoveryInfo::DISCOVERY_STATUS reason)
 {
-    if(PDP::remove_remote_participant(partGUID, reason))
+    if (PDP::remove_remote_participant(partGUID, reason))
     {
         // If it works fine, return
         return true;
