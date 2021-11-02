@@ -493,6 +493,12 @@ public:
         client_override_ = value;
     }
 
+    //! Retrieve persistence guid prefix
+    GuidPrefix_t get_persistence_guid_prefix() const
+    {
+        return m_persistence_guid.guidPrefix;
+    }
+
 private:
 
     //! DomainId
