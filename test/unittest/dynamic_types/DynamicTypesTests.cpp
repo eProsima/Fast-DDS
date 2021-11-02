@@ -32,8 +32,6 @@
 #include "idl/BasicTypeObject.h"
 #include <tinyxml2.h>
 
-#include <dds/core/LengthUnlimited.hpp>
-
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
 using namespace eprosima::fastrtps::types;
@@ -330,7 +328,7 @@ TEST_F(DynamicTypesTests, DynamicTypeBuilderFactory_unit_tests)
         ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data2) == ReturnCode_t::RETCODE_OK);
 
         created_builder =
-                DynamicTypeBuilderFactory::get_instance()->create_string_builder(::dds::core::LENGTH_UNLIMITED);
+                DynamicTypeBuilderFactory::get_instance()->create_string_builder(BOUND_UNLIMITED);
         ASSERT_TRUE(created_builder != nullptr);
         type = created_builder->build();
         ASSERT_TRUE(type != nullptr);
@@ -346,8 +344,7 @@ TEST_F(DynamicTypesTests, DynamicTypeBuilderFactory_unit_tests)
         ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data) == ReturnCode_t::RETCODE_OK);
         ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data2) == ReturnCode_t::RETCODE_OK);
 
-        created_builder = DynamicTypeBuilderFactory::get_instance()->create_wstring_builder(
-            ::dds::core::LENGTH_UNLIMITED);
+        created_builder = DynamicTypeBuilderFactory::get_instance()->create_wstring_builder(BOUND_UNLIMITED);
         ASSERT_TRUE(created_builder != nullptr);
         type = created_builder->build();
         ASSERT_TRUE(type != nullptr);

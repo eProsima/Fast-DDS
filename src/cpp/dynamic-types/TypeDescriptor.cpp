@@ -19,8 +19,6 @@
 #include <fastdds/dds/log/Log.hpp>
 #include <fastrtps/types/TypesBase.h>
 
-#include <dds/core/LengthUnlimited.hpp>
-
 namespace eprosima {
 namespace fastrtps {
 namespace types {
@@ -164,7 +162,7 @@ uint32_t TypeDescriptor::get_bounds(
     else
     {
         logError(DYN_TYPES, "Error getting bounds value. Index out of range.");
-        return ::dds::core::LENGTH_UNLIMITED;
+        return BOUND_UNLIMITED;
     }
 }
 
@@ -209,7 +207,7 @@ uint32_t TypeDescriptor::get_total_bounds() const
         }
         return bounds;
     }
-    return ::dds::core::LENGTH_UNLIMITED;
+    return BOUND_UNLIMITED;
 }
 
 bool TypeDescriptor::is_consistent() const

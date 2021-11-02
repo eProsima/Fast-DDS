@@ -23,8 +23,6 @@
 #include <fastdds/dds/log/Log.hpp>
 #include <fastcdr/Cdr.h>
 
-#include <dds/core/LengthUnlimited.hpp>
-
 #include <locale>
 #include <codecvt>
 
@@ -3523,7 +3521,7 @@ ReturnCode_t DynamicData::set_bool_value(
                 uint64_value_ = 0;
             }
         }
-        else if (type_->get_bounds() == ::dds::core::LENGTH_UNLIMITED || id < type_->get_bounds())
+        else if (type_->get_bounds() == BOUND_UNLIMITED || id < type_->get_bounds())
         {
             if (value)
             {
@@ -3596,7 +3594,7 @@ ReturnCode_t DynamicData::set_bool_value(
                 }
                 return ReturnCode_t::RETCODE_OK;
             }
-            else if (type_->get_bounds() == ::dds::core::LENGTH_UNLIMITED || id < type_->get_bounds())
+            else if (type_->get_bounds() == BOUND_UNLIMITED || id < type_->get_bounds())
             {
                 auto m_id = descriptors_.find(id);
                 MemberDescriptor* member = m_id->second;
@@ -4747,7 +4745,7 @@ ReturnCode_t DynamicData::insert_complex_value(
 {
     if (get_kind() == TK_SEQUENCE && type_->get_element_type()->equals(value->type_.get()))
     {
-        if (type_->get_bounds() == ::dds::core::LENGTH_UNLIMITED || get_item_count() < type_->get_bounds())
+        if (type_->get_bounds() == BOUND_UNLIMITED || get_item_count() < type_->get_bounds())
         {
 #ifdef DYNAMIC_TYPES_CHECKING
             outId = static_cast<MemberId>(complex_values_.size());
@@ -4778,7 +4776,7 @@ ReturnCode_t DynamicData::insert_complex_value(
 {
     if (get_kind() == TK_SEQUENCE && type_->get_element_type()->equals(value->type_.get()))
     {
-        if (type_->get_bounds() == ::dds::core::LENGTH_UNLIMITED || get_item_count() < type_->get_bounds())
+        if (type_->get_bounds() == BOUND_UNLIMITED || get_item_count() < type_->get_bounds())
         {
 #ifdef DYNAMIC_TYPES_CHECKING
             outId = static_cast<MemberId>(complex_values_.size());
@@ -4809,7 +4807,7 @@ ReturnCode_t DynamicData::insert_complex_value(
 {
     if (get_kind() == TK_SEQUENCE && type_->get_element_type()->equals(value->type_.get()))
     {
-        if (type_->get_bounds() == ::dds::core::LENGTH_UNLIMITED || get_item_count() < type_->get_bounds())
+        if (type_->get_bounds() == BOUND_UNLIMITED || get_item_count() < type_->get_bounds())
         {
 #ifdef DYNAMIC_TYPES_CHECKING
             outId = static_cast<MemberId>(complex_values_.size());
@@ -4840,7 +4838,7 @@ ReturnCode_t DynamicData::insert_sequence_data(
     outId = MEMBER_ID_INVALID;
     if (get_kind() == TK_SEQUENCE)
     {
-        if (type_->get_bounds() == ::dds::core::LENGTH_UNLIMITED || get_item_count() < type_->get_bounds())
+        if (type_->get_bounds() == BOUND_UNLIMITED || get_item_count() < type_->get_bounds())
         {
 #ifdef DYNAMIC_TYPES_CHECKING
             DynamicData* new_element = DynamicDataFactory::get_instance()->create_data(type_->get_element_type());
@@ -4908,7 +4906,7 @@ ReturnCode_t DynamicData::insert_map_data(
 {
     if (get_kind() == TK_MAP && type_->get_key_element_type()->equals(key->type_.get()))
     {
-        if (type_->get_bounds() == ::dds::core::LENGTH_UNLIMITED || get_item_count() < type_->get_bounds())
+        if (type_->get_bounds() == BOUND_UNLIMITED || get_item_count() < type_->get_bounds())
         {
 #ifdef DYNAMIC_TYPES_CHECKING
             for (auto it = complex_values_.begin(); it != complex_values_.end(); ++it)
@@ -4971,7 +4969,7 @@ ReturnCode_t DynamicData::insert_map_data(
     if (get_kind() == TK_MAP && type_->get_key_element_type()->equals(key->type_.get()) &&
             type_->get_element_type()->equals(value->type_.get()))
     {
-        if (type_->get_bounds() == ::dds::core::LENGTH_UNLIMITED || get_item_count() < type_->get_bounds())
+        if (type_->get_bounds() == BOUND_UNLIMITED || get_item_count() < type_->get_bounds())
         {
 #ifdef DYNAMIC_TYPES_CHECKING
             for (auto it = complex_values_.begin(); it != complex_values_.end(); ++it)
@@ -5032,7 +5030,7 @@ ReturnCode_t DynamicData::insert_map_data(
     if (get_kind() == TK_MAP && type_->get_key_element_type()->equals(key->type_.get()) &&
             type_->get_element_type()->equals(value->type_.get()))
     {
-        if (type_->get_bounds() == ::dds::core::LENGTH_UNLIMITED || get_item_count() < type_->get_bounds())
+        if (type_->get_bounds() == BOUND_UNLIMITED || get_item_count() < type_->get_bounds())
         {
 #ifdef DYNAMIC_TYPES_CHECKING
             for (auto it = complex_values_.begin(); it != complex_values_.end(); ++it)
