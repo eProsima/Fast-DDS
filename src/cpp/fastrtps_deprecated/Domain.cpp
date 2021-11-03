@@ -218,6 +218,7 @@ void Domain::getDefaultParticipantAttributes(
 {
     if (false == default_xml_profiles_loaded)
     {
+        SystemInfo::set_environment_file();
         XMLProfileManager::loadDefaultXMLFile();
         default_xml_profiles_loaded = true;
     }
@@ -262,6 +263,7 @@ void Domain::getDefaultPublisherAttributes(
 {
     if (false == default_xml_profiles_loaded)
     {
+        SystemInfo::set_environment_file();
         XMLProfileManager::loadDefaultXMLFile();
         default_xml_profiles_loaded = true;
     }
@@ -274,6 +276,7 @@ void Domain::getDefaultSubscriberAttributes(
 {
     if (false == default_xml_profiles_loaded)
     {
+        SystemInfo::set_environment_file();
         XMLProfileManager::loadDefaultXMLFile();
         default_xml_profiles_loaded = true;
     }
@@ -409,6 +412,7 @@ bool Domain::loadXMLProfilesFile(
 {
     if (false == default_xml_profiles_loaded)
     {
+        SystemInfo::set_environment_file();
         XMLProfileManager::loadDefaultXMLFile();
         default_xml_profiles_loaded = true;
     }
