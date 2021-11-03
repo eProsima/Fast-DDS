@@ -36,9 +36,6 @@ class DynamicType;
 class DynamicType_ptr;
 class AnnotationParameterValue;
 
-//! A special value indicating an unlimited quantity
-constexpr uint32_t BOUND_UNLIMITED = 0;
-
 class DynamicTypeBuilderFactory
 {
 protected:
