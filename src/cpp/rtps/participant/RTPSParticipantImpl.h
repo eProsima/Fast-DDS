@@ -491,6 +491,12 @@ public:
             const LocatorList_t& MulticastLocatorList,
             const LocatorList_t& UnicastLocatorList) const;
 
+    //! Retrieve persistence guid prefix
+    GuidPrefix_t get_persistence_guid_prefix() const
+    {
+        return m_persistence_guid.guidPrefix;
+    }
+
 private:
 
     //! DomainId
