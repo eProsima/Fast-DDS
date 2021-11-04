@@ -937,6 +937,7 @@ TEST(ParticipantTests, ServerParticipantCorrectRemoteServerListConfiguration)
     // Add new server through environment file
     // Even though the server added previously through the environment file is being pinged, it is not really being
     // checked because it is not included in the attributes.
+    DomainParticipantQos result_qos;
 #ifndef __APPLE__
     std::this_thread::sleep_for(std::chrono::milliseconds(1100));
     file.open(filename);
@@ -965,7 +966,7 @@ TEST(ParticipantTests, ServerParticipantCorrectRemoteServerListConfiguration)
     output.push_back(server);
     get_rtps_attributes(participant, attributes);
     EXPECT_EQ(attributes.builtin.discovery_config.m_DiscoveryServers, output);
-    DomainParticipantQos result_qos = participant->get_qos();
+    result_qos = participant->get_qos();
     EXPECT_EQ(ReturnCode_t::RETCODE_OK, participant->set_qos(result_qos));
     // Add new server using API
     result_qos.wire_protocol().builtin.discovery_config.m_DiscoveryServers.push_back(server);
