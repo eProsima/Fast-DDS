@@ -289,7 +289,7 @@ public:
         return *subscriber_;
     }
 
-    void init(bool must_fail = false)
+    void init()
     {
         participant_attr_.domainId = (uint32_t)GET_PID() % 230;
 
