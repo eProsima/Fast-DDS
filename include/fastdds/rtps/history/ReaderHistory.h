@@ -61,7 +61,7 @@ public:
      *
      * @pre change should not be present in the history
      *
-     * @return Whether a call to received_change will succeed when called with the same arguments. 
+     * @return Whether a call to received_change will succeed when called with the same arguments.
      */
     RTPS_DllAPI virtual bool can_change_be_added_nts(
             const CacheChange_t* change,

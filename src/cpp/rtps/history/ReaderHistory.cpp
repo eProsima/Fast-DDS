@@ -52,9 +52,9 @@ bool ReaderHistory::can_change_be_added_nts(
     if (m_att.memoryPolicy == PREALLOCATED_MEMORY_MODE && change->serializedPayload.length > m_att.payloadMaxSize)
     {
         logError(RTPS_READER_HISTORY,
-            "Change payload size of '" << change->serializedPayload.length <<
-            "' bytes is larger than the history payload size of '" << m_att.payloadMaxSize <<
-            "' bytes and cannot be resized.");
+                "Change payload size of '" << change->serializedPayload.length <<
+                "' bytes is larger than the history payload size of '" << m_att.payloadMaxSize <<
+                "' bytes and cannot be resized.");
         return false;
     }
 
