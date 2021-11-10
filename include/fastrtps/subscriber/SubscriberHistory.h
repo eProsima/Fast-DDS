@@ -75,6 +75,21 @@ public:
             bool release = true) override;
 
     /**
+     * Check if a new change can be added to this history.
+     *
+     * @param change                         Pointer to the change to be added.
+     * @param unknown_missing_changes_up_to  The number of changes from the same writer with a lower sequence number
+     *                                       that could potentially be received in the future.
+     *
+     * @pre change should not be present in the history
+     *
+     * @return Whether a call to received_change will succeed when called with the same arguments. 
+     */
+    bool can_change_be_added(
+            const rtps::CacheChange_t* change,
+            size_t unknown_missing_changes_up_to) override;
+
+    /**
      * Called when a change is received by the Subscriber. Will add the change to the history.
      * @pre Change should not be already present in the history.
      * @param[in] change The received change

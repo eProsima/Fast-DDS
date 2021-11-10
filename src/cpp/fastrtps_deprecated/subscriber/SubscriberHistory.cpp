@@ -137,6 +137,15 @@ SubscriberHistory::~SubscriberHistory()
     }
 }
 
+bool SubscriberHistory::can_change_be_added(
+        const CacheChange_t* change,
+        size_t unknown_missing_changes_up_to)
+{
+    bool ret_val = (KEEP_ALL_HISTORY_QOS != history_qos_.kind) || 
+        (m_changes.size() + unknown_missing_changes_up_to < static_cast<size_t>(resource_limited_qos_.max_samples));
+    return ret_val && ReaderHistory::can_change_be_added(change, unknown_missing_changes_up_to);
+}
+
 bool SubscriberHistory::received_change(
         CacheChange_t* a_change,
         size_t unknown_missing_changes_up_to)
