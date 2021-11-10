@@ -345,12 +345,19 @@ ReturnCode_t DomainParticipantImpl::set_qos(
         return ReturnCode_t::RETCODE_IMMUTABLE_POLICY;
     }
 
-    if (set_qos(qos_, qos_to_set, !enabled) && enabled)
+    if (enabled)
     {
-        // Notify the participant that there is a QoS update
-        fastrtps::rtps::RTPSParticipantAttributes patt;
-        set_attributes_from_qos(patt, qos_);
-        rtps_participant_->update_attributes(patt);
+        if (set_qos(qos_, qos_to_set, !enabled))
+        {
+            // Notify the participant that there is a QoS update
+            fastrtps::rtps::RTPSParticipantAttributes patt;
+            set_attributes_from_qos(patt, qos_);
+            rtps_participant_->update_attributes(patt);
+        }
+        else
+        {
+            rtps_participant_->update_attributes(rtps_participant_->getRTPSParticipantAttributes());
+        }
     }
 
     return ReturnCode_t::RETCODE_OK;
