@@ -30,6 +30,8 @@
 #include <fastdds/dds/core/LoanableSequence.hpp>
 
 #include <fastdds/dds/domain/DomainParticipant.hpp>
+#include <fastdds/dds/domain/DomainParticipantFactory.hpp>
+#include <fastdds/dds/domain/qos/DomainParticipantFactoryQos.hpp>
 #include <fastdds/dds/subscriber/DataReader.hpp>
 #include <fastdds/dds/subscriber/Subscriber.hpp>
 #include <fastdds/dds/topic/TopicDescription.hpp>
@@ -288,6 +290,76 @@ TEST(DDSStatistics, simple_statistics_second_writer)
     disable_statistics(statistics_p1, subscriber_p1, physical_data_reader_1, statistics::PHYSICAL_DATA_TOPIC);
     disable_statistics(statistics_p2, subscriber_p2, physical_data_reader_2, statistics::PHYSICAL_DATA_TOPIC);
 
+    p2->delete_subscriber(subscriber_p2);
+    p1->delete_subscriber(subscriber_p1);
+
+    participant_factory->delete_participant(p2);
+    participant_factory->delete_participant(p1);
+
+#endif // FASTDDS_STATISTICS
+}
+
+// Regression test for #12390. Mostly a replication of test simple_statistics_second_writer but creating
+// and additional publisher with partitions before the creation of the builtin publisher
+TEST(DDSStatistics, statistics_with_partition_on_user)
+{
+#ifdef FASTDDS_STATISTICS
+    auto transport = std::make_shared<UDPv4TransportDescriptor>();
+    auto domain_id = GET_PID() % 100;
+
+    DomainParticipantQos p_qos = PARTICIPANT_QOS_DEFAULT;
+    p_qos.transport().use_builtin_transports = false;
+    p_qos.transport().user_transports.push_back(transport);
+
+    DomainParticipantFactory* participant_factory = DomainParticipantFactory::get_instance();
+
+    // We disable the auto-enabling so the builtin entities do not get created.
+    DomainParticipantFactoryQos factory_qos;
+    participant_factory->get_qos(factory_qos);
+    factory_qos.entity_factory().autoenable_created_entities = false;
+    participant_factory->set_qos(factory_qos);
+
+    DomainParticipant* p1 = participant_factory->create_participant(domain_id, p_qos);
+    DomainParticipant* p2 = participant_factory->create_participant(domain_id, p_qos);
+
+    ASSERT_NE(nullptr, p1);
+    ASSERT_NE(nullptr, p2);
+
+    // Now we create a Publisher with a partition
+    PublisherQos pub_qos = PUBLISHER_QOS_DEFAULT;
+    pub_qos.partition().push_back("partition_a");
+    auto user_pub_1 = p1->create_publisher(pub_qos);
+
+    // We enable the participants
+    ASSERT_EQ(ReturnCode_t::RETCODE_OK, p1->enable());
+    ASSERT_EQ(ReturnCode_t::RETCODE_OK, p2->enable());
+
+    auto statistics_p1 = statistics::dds::DomainParticipant::narrow(p1);
+    auto statistics_p2 = statistics::dds::DomainParticipant::narrow(p2);
+
+    ASSERT_NE(nullptr, statistics_p1);
+    ASSERT_NE(nullptr, statistics_p2);
+
+    auto subscriber_p1 = p1->create_subscriber(SUBSCRIBER_QOS_DEFAULT);
+    auto subscriber_p2 = p2->create_subscriber(SUBSCRIBER_QOS_DEFAULT);
+    ASSERT_NE(nullptr, subscriber_p1);
+    ASSERT_NE(nullptr, subscriber_p2);
+
+    // We enable the Publisher so we have everything enabled prior to enabling statistics
+    user_pub_1->enable();
+
+    auto physical_data_reader_1 = enable_statistics(statistics_p1, subscriber_p1, statistics::PHYSICAL_DATA_TOPIC);
+    auto physical_data_reader_2 = enable_statistics(statistics_p2, subscriber_p2, statistics::PHYSICAL_DATA_TOPIC);
+    ASSERT_NE(nullptr, physical_data_reader_1);
+    ASSERT_NE(nullptr, physical_data_reader_2);
+
+    wait_statistics(physical_data_reader_1, 2, "PHYSICAL_DATA_TOPIC", 10u);
+    wait_statistics(physical_data_reader_2, 2, "PHYSICAL_DATA_TOPIC", 10u);
+
+    disable_statistics(statistics_p1, subscriber_p1, physical_data_reader_1, statistics::PHYSICAL_DATA_TOPIC);
+    disable_statistics(statistics_p2, subscriber_p2, physical_data_reader_2, statistics::PHYSICAL_DATA_TOPIC);
+
+    p1->delete_publisher(user_pub_1);
     p2->delete_subscriber(subscriber_p2);
     p1->delete_subscriber(subscriber_p1);
 

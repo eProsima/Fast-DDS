@@ -137,7 +137,7 @@ public:
         return listener_;
     }
 
-    Publisher* DomainParticipantImpl::create_publisher(
+    Publisher* create_publisher(
             const PublisherQos& qos,
             PublisherListener* listener,
             const StatusMask& mask)
