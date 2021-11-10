@@ -72,6 +72,13 @@ public:
         return ret;
     }
 
+    virtual bool can_change_be_added(
+            const CacheChange_t*,
+            size_t)
+    {
+        return true;
+    }
+
     virtual bool received_change(
             CacheChange_t*,
             size_t)

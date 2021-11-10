@@ -53,6 +53,21 @@ public:
     RTPS_DllAPI ~ReaderHistory() override;
 
     /**
+     * Check if a new change can be added to this history.
+     *
+     * @param change                         Pointer to the change to be added.
+     * @param unknown_missing_changes_up_to  The number of changes from the same writer with a lower sequence number
+     *                                       that could potentially be received in the future.
+     *
+     * @pre change should not be present in the history
+     *
+     * @return Whether a call to received_change will succeed when called with the same arguments. 
+     */
+    RTPS_DllAPI virtual bool can_change_be_added(
+            const CacheChange_t* change,
+            size_t unknown_missing_changes_up_to);
+
+    /**
      * Virtual method that is called when a new change is received.
      * In this implementation this method just calls add_change. The user can overload this method in case
      * he needs to perform additional checks before adding the change.
@@ -61,7 +76,7 @@ public:
      */
     RTPS_DllAPI virtual bool received_change(
             CacheChange_t* change,
-            size_t);
+            size_t unknown_missing_changes_up_to);
 
     /**
      * Called when a fragmented change is received completely by the Subscriber. Will find its instance and store it.
