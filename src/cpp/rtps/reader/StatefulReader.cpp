@@ -495,7 +495,7 @@ bool StatefulReader::processDataMsg(
                 }
 
                 // Perform reception of cache change
-                if (!change_received(change_to_add, pWP))
+                if (!change_received(change_to_add, pWP, unknown_missing_changes_up_to))
                 {
                     logInfo(RTPS_MSG_IN,
                             IDSTRING "Change " << change_to_add->sequenceNumber << " not added to history");
@@ -574,7 +574,8 @@ bool StatefulReader::processDataFragMsg(
             // If this is the first time we have received fragments for this change, add it to history
             if (change_created != nullptr)
             {
-                if (!change_received(change_created, pWP))
+                size_t changes_up_to = pWP->unknown_missing_changes_up_to(change_created->sequenceNumber);
+                if (!change_received(change_created, pWP, changes_up_to))
                 {
 
                     logInfo(RTPS_MSG_IN,
@@ -801,7 +802,8 @@ bool StatefulReader::change_removed_by_history(
 
 bool StatefulReader::change_received(
         CacheChange_t* a_change,
-        WriterProxy* prox)
+        WriterProxy* prox,
+        size_t unknown_missing_changes_up_to)
 {
     //First look for WriterProxy in case is not provided
     if (prox == nullptr)
@@ -851,9 +853,6 @@ bool StatefulReader::change_received(
             }
         }
     }
-
-    // TODO (Miguel C): Refactor this inside WriterProxy
-    size_t unknown_missing_changes_up_to = prox->unknown_missing_changes_up_to(a_change->sequenceNumber);
 
     // NOTE: Depending on QoS settings, one change can be removed from history
     // inside the call to mp_history->received_change

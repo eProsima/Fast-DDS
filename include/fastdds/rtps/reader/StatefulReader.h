@@ -171,7 +171,8 @@ public:
      */
     bool change_received(
             CacheChange_t* a_change,
-            WriterProxy* prox);
+            WriterProxy* prox,
+            size_t unknown_missing_changes_up_to);
 
     /**
      * Get the RTPS participant
