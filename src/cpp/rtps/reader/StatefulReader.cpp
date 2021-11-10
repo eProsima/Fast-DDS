@@ -852,6 +852,10 @@ bool StatefulReader::change_received(
                 return false;
             }
         }
+        else
+        {
+            unknown_missing_changes_up_to = prox->unknown_missing_changes_up_to(a_change->sequenceNumber);
+        }
     }
 
     // NOTE: Depending on QoS settings, one change can be removed from history

@@ -318,7 +318,7 @@ void EDPSimple::processPersistentData(
                     return;
                 }
 
-                if (!reader.first->change_received(change_to_add, nullptr))
+                if (!reader.first->change_received(change_to_add, nullptr, 0))
                 {
                     logInfo(RTPS_EDP, "EDPServer couldn't process database data not add change "
                         << change_to_add->sequenceNumber);
