@@ -744,10 +744,13 @@ TEST(ParticipantTests, ClientParticipantRemoteServerListConfiguration)
 
 /**
  * SERVER Participant without initial remote server list set by QoS.
- * The environment variable applies and adds those remote servers to the list.
+ * The environment variable applies and adds those remote servers to the list even though the attributes are not
+ * updated.
  */
 TEST(ParticipantTests, ServerParticipantEnvironmentConfiguration)
 {
+    set_environment_variable();
+
     DomainParticipantQos server_qos;
     server_qos.wire_protocol().builtin.discovery_config.discoveryProtocol = fastrtps::rtps::DiscoveryProtocol::SERVER;
     // Listening locator: requirement for SERVERs
