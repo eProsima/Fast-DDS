@@ -701,7 +701,7 @@ private:
 
     /**
      * Get default metatraffic locators when not provided by the user.
-     * 
+     *
      * @param [in] metatraffic_multicast_port well known multicast metatraffic port following DDS standard
      * @param [in] metatraffic_unicast_port well known unicast metatraffic port following DDS standard
      */

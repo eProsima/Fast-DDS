@@ -298,7 +298,7 @@ RTPSParticipantImpl::RTPSParticipantImpl(
         /* INSERT DEFAULT UNICAST LOCATORS FOR THE PARTICIPANT */
         get_default_unicast_locators();
         logInfo(RTPS_PARTICIPANT, m_att.getName() << " Created with NO default Unicast Locator List, adding Locators:"
-                                                    << m_att.defaultUnicastLocatorList);
+                                                  << m_att.defaultUnicastLocatorList);
     }
     else
     {
@@ -1177,7 +1177,7 @@ void RTPSParticipantImpl::update_attributes(
         if (!(default_unicast_locator_list == m_att.defaultUnicastLocatorList))
         {
             logInfo(RTPS_PARTICIPANT, m_att.getName() << " updated default unicast locator list, current locators: "
-                                                        << m_att.defaultUnicastLocatorList);
+                                                      << m_att.defaultUnicastLocatorList);
         }
     }
 
