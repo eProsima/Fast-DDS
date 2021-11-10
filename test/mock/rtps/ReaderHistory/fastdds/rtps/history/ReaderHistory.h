@@ -72,9 +72,9 @@ public:
         return ret;
     }
 
-    virtual bool can_change_be_added(
+    virtual bool can_change_be_added_nts(
             const CacheChange_t*,
-            size_t)
+            size_t) const
     {
         return true;
     }

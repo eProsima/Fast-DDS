@@ -63,9 +63,9 @@ public:
      *
      * @return Whether a call to received_change will succeed when called with the same arguments. 
      */
-    RTPS_DllAPI virtual bool can_change_be_added(
+    RTPS_DllAPI virtual bool can_change_be_added_nts(
             const CacheChange_t* change,
-            size_t unknown_missing_changes_up_to);
+            size_t unknown_missing_changes_up_to) const;
 
     /**
      * Virtual method that is called when a new change is received.

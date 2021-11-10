@@ -399,7 +399,7 @@ bool StatelessReader::processDataMsg(
         logInfo(RTPS_MSG_IN, IDSTRING "Trying to add change " << change->sequenceNumber << " TO reader: " << m_guid);
 
         // Check rejection by history
-        if (mp_history->can_change_be_added(change, 0) &&
+        if (mp_history->can_change_be_added_nts(change, 0) &&
                 !thereIsUpperRecordOf(change->writerGUID, change->sequenceNumber))
         {
             // Ask the pool for a cache change

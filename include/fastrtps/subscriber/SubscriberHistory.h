@@ -85,9 +85,9 @@ public:
      *
      * @return Whether a call to received_change will succeed when called with the same arguments. 
      */
-    bool can_change_be_added(
+    bool can_change_be_added_nts(
             const rtps::CacheChange_t* change,
-            size_t unknown_missing_changes_up_to) override;
+            size_t unknown_missing_changes_up_to) const override;
 
     /**
      * Called when a change is received by the Subscriber. Will add the change to the history.

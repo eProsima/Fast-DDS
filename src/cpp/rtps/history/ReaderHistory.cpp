@@ -43,9 +43,9 @@ ReaderHistory::~ReaderHistory()
 {
 }
 
-bool ReaderHistory::can_change_be_added(
+bool ReaderHistory::can_change_be_added_nts(
         const CacheChange_t* change,
-        size_t unknown_missing_changes_up_to)
+        size_t unknown_missing_changes_up_to) const
 {
     static_cast<void>(unknown_missing_changes_up_to);
 
