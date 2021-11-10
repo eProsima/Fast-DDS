@@ -43,6 +43,30 @@ ReaderHistory::~ReaderHistory()
 {
 }
 
+bool ReaderHistory::can_change_be_added(
+        const CacheChange_t* change,
+        size_t unknown_missing_changes_up_to)
+{
+    static_cast<void>(unknown_missing_changes_up_to);
+
+    if (m_att.memoryPolicy == PREALLOCATED_MEMORY_MODE && change->serializedPayload.length > m_att.payloadMaxSize)
+    {
+        logError(RTPS_READER_HISTORY,
+            "Change payload size of '" << change->serializedPayload.length <<
+            "' bytes is larger than the history payload size of '" << m_att.payloadMaxSize <<
+            "' bytes and cannot be resized.");
+        return false;
+    }
+
+    if (change->writerGUID == c_Guid_Unknown)
+    {
+        logError(RTPS_READER_HISTORY, "The Writer GUID_t must be defined");
+        return false;
+    }
+
+    return true;
+}
+
 bool ReaderHistory::received_change(
         CacheChange_t* change,
         size_t)
