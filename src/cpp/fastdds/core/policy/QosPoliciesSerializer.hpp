@@ -890,7 +890,8 @@ inline bool QosPoliciesSerializer<TypeIdV1>::add_to_cdr_message(
         const TypeIdV1& qos_policy,
         fastrtps::rtps::CDRMessage_t* cdr_message)
 {
-    size_t size = fastrtps::types::TypeIdentifier::getCdrSerializedSize(qos_policy.m_type_identifier);
+    size_t size = fastrtps::types::TypeIdentifier::getCdrSerializedSize(qos_policy.m_type_identifier)
+            + eprosima::fastrtps::rtps::SerializedPayload_t::representation_header_size;
     fastrtps::rtps::SerializedPayload_t payload(static_cast<uint32_t>(size));
     eprosima::fastcdr::FastBuffer fastbuffer((char*) payload.data, payload.max_size);
 
@@ -905,7 +906,7 @@ inline bool QosPoliciesSerializer<TypeIdV1>::add_to_cdr_message(
     size = (ser.getSerializedDataLength() + 3) & ~3;
 
     bool valid = fastrtps::rtps::CDRMessage::addUInt16(cdr_message, qos_policy.Pid);
-    valid &= fastrtps::rtps::CDRMessage::addUInt16(cdr_message, static_cast<uint16_t>(size + 4));
+    valid &= fastrtps::rtps::CDRMessage::addUInt16(cdr_message, static_cast<uint16_t>(size));
     valid &= fastrtps::rtps::CDRMessage::addData(cdr_message, payload.data, payload.length);
 
     for (uint32_t count = payload.length; count < size; ++count)
@@ -959,7 +960,8 @@ inline bool QosPoliciesSerializer<TypeObjectV1>::add_to_cdr_message(
         const TypeObjectV1& qos_policy,
         fastrtps::rtps::CDRMessage_t* cdr_message)
 {
-    size_t size = fastrtps::types::TypeObject::getCdrSerializedSize(qos_policy.m_type_object);
+    size_t size = fastrtps::types::TypeObject::getCdrSerializedSize(qos_policy.m_type_object)
+            + eprosima::fastrtps::rtps::SerializedPayload_t::representation_header_size;
     fastrtps::rtps::SerializedPayload_t payload(static_cast<uint32_t>(size));
     eprosima::fastcdr::FastBuffer fastbuffer((char*) payload.data, payload.max_size);
 
@@ -974,7 +976,7 @@ inline bool QosPoliciesSerializer<TypeObjectV1>::add_to_cdr_message(
     size = (ser.getSerializedDataLength() + 3) & ~3;
 
     bool valid = fastrtps::rtps::CDRMessage::addUInt16(cdr_message, qos_policy.Pid);
-    valid &= fastrtps::rtps::CDRMessage::addUInt16(cdr_message, static_cast<uint16_t>(size + 4));
+    valid &= fastrtps::rtps::CDRMessage::addUInt16(cdr_message, static_cast<uint16_t>(size));
     valid &= fastrtps::rtps::CDRMessage::addData(cdr_message, payload.data, payload.length);
 
     for (uint32_t count = payload.length; count < size; ++count)
@@ -1028,7 +1030,8 @@ inline bool QosPoliciesSerializer<xtypes::TypeInformation>::add_to_cdr_message(
         const xtypes::TypeInformation& qos_policy,
         fastrtps::rtps::CDRMessage_t* cdr_message)
 {
-    size_t size = fastrtps::types::TypeInformation::getCdrSerializedSize(qos_policy.type_information);
+    size_t size = fastrtps::types::TypeInformation::getCdrSerializedSize(qos_policy.type_information)
+            + eprosima::fastrtps::rtps::SerializedPayload_t::representation_header_size;
     fastrtps::rtps::SerializedPayload_t payload(static_cast<uint32_t>(size));
     eprosima::fastcdr::FastBuffer fastbuffer((char*) payload.data, payload.max_size);
 
@@ -1043,7 +1046,7 @@ inline bool QosPoliciesSerializer<xtypes::TypeInformation>::add_to_cdr_message(
     size = (ser.getSerializedDataLength() + 3) & ~3;
 
     bool valid = fastrtps::rtps::CDRMessage::addUInt16(cdr_message, qos_policy.Pid);
-    valid &= fastrtps::rtps::CDRMessage::addUInt16(cdr_message, static_cast<uint16_t>(size + 4));
+    valid &= fastrtps::rtps::CDRMessage::addUInt16(cdr_message, static_cast<uint16_t>(size));
     valid &= fastrtps::rtps::CDRMessage::addData(cdr_message, payload.data, payload.length);
 
     for (uint32_t count = payload.length; count < size; ++count)
