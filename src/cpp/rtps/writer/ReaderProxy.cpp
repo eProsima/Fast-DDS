@@ -410,6 +410,7 @@ bool ReaderProxy::requested_changes_set(
                     }
                     else if (sit > min_seq_in_history)
                     {
+                        assert(sit > changes_low_mark_);
                         gap_builder.add(sit);
                     }
                 });
