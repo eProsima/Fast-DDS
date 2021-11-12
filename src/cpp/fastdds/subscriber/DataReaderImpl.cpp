@@ -287,6 +287,8 @@ void DataReaderImpl::disable()
 
 DataReaderImpl::~DataReaderImpl()
 {
+    // Disable the datareader to prevent receiving data in the middle of deleting it
+    disable();
     delete lifespan_timer_;
     delete deadline_timer_;
 
