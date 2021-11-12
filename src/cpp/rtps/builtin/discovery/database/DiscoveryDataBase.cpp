@@ -1721,17 +1721,24 @@ void DiscoveryDataBase::AckedFunctor::operator () (
             {
                 if (reader_proxy->guid().guidPrefix == *it)
                 {
-                    // If the participant is already in the DB it means it has answered to the pinging
-                    // or that is pinging us and we have already received its DATA(p)
-                    // If either of both has happenned we should not wait for it to ack this data, so we
-                    // skip it and leave it as acked
+                    /*
+                     * If the participant is already in the DB it means it has answered to the pinging
+                     * or that is pinging us and we have already received its DATA(p)
+                     * If neither has happenned (participant is not in DB)
+                     * we should not wait for it to ack this data, or it could get stucked in an endless loop
+                     * (this Remote Server could not exist and/or never be discovered)
+                     * Nevertheless, the ack is still pending for this participant and once it is discovered this
+                     * data will be sent again
+                     */
                     auto remote_server_it = db_->participants_.find(*it);
-                    if (remote_server_it != db_->participants_.end())
+                    if (remote_server_it == db_->participants_.end())
                     {
                         logInfo(DISCOVERY_DATABASE, "Change " << change_->instanceHandle <<
                                 "check as acked for " << reader_proxy->guid() << " as it has not answered pinging yet");
-                        remote_server_it->second.add_or_update_ack_participant(db_->server_guid_prefix_, true);
+                        return;
                     }
+
+                    break;
                 }
             }
 
@@ -1747,13 +1754,6 @@ void DiscoveryDataBase::unmatch_participant_(
         const eprosima::fastrtps::rtps::GuidPrefix_t& guid_prefix)
 {
     logInfo(DISCOVERY_DATABASE, "unmatching participant: " << guid_prefix);
-
-    auto pit = participants_.find(guid_prefix);
-    if (pit == participants_.end())
-    {
-        logWarning(DISCOVERY_DATABASE,
-                "Attempting to unmatch an unexisting participant: " << guid_prefix);
-    }
 
     // For each participant remove it
     // IMPORTANT: This is not for every relevant participant, as participant A could be in other participant's B info
