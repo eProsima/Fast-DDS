@@ -19,6 +19,8 @@
 #ifndef _FASTDDS_RTPS_INSTANCEHANDLE_H_
 #define _FASTDDS_RTPS_INSTANCEHANDLE_H_
 
+#include <array>
+
 #include <fastrtps/fastrtps_dll.h>
 #include <fastdds/rtps/common/Types.h>
 #include <fastdds/rtps/common/Guid.h>
@@ -26,6 +28,8 @@
 namespace eprosima {
 namespace fastrtps {
 namespace rtps {
+
+using KeyHash_t = std::array<octet, 16>;
 
 /**
  * Struct InstanceHandle_t, used to contain the key for WITH_KEY topics.
