@@ -191,7 +191,7 @@ class RTPS_DllAPI ReturnCode_t
 
 public:
 
-    enum
+    enum ReturnCodeValue
     {
         RETCODE_OK = 0,
         RETCODE_ERROR = 1,
