@@ -31,6 +31,45 @@ namespace rtps {
 
 using KeyHash_t = std::array<octet, 16>;
 
+struct RTPS_DllAPI InstanceHandleValue_t
+{
+    octet& operator [] (
+            size_t i)
+    {
+        has_been_set_ = true;
+        return value_[i];
+    }
+
+    octet operator [] (
+            size_t i) const
+    {
+        return value_[i];
+    }
+
+    operator octet* ()
+    {
+        has_been_set_ = true;
+        return value_.data();
+    }
+
+    operator const octet* () const
+    {
+        return value_.data();
+    }
+
+    bool has_been_set() const
+    {
+        return has_been_set_;
+    }
+
+private:
+
+    //! Hash value
+    KeyHash_t value_ { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    //! Flag indicating if value_ has been modified since the creation of this object
+    bool has_been_set_ = false;
+};
+
 /**
  * Struct InstanceHandle_t, used to contain the key for WITH_KEY topics.
  * @ingroup COMMON_MODULE
