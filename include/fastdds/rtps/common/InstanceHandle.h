@@ -77,38 +77,17 @@ private:
 struct RTPS_DllAPI InstanceHandle_t
 {
     //!Value
-    octet value[16];
-    InstanceHandle_t()
-    {
-        for (uint8_t i = 0; i < 16; i++)
-        {
-            value[i] = 0;
-        }
-    }
+    InstanceHandleValue_t value;
+
+    InstanceHandle_t() = default;
 
     InstanceHandle_t(
-            const InstanceHandle_t& ihandle)
-    {
-        for (uint8_t i = 0; i < 16; i++)
-        {
-            value[i] = ihandle.value[i];
-        }
-    }
+            const InstanceHandle_t& ihandle) = default;
 
     InstanceHandle_t(
             const GUID_t& guid)
     {
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            if (i < 12)
-            {
-                value[i] = guid.guidPrefix.value[i];
-            }
-            else
-            {
-                value[i] = guid.entityId.value[i - 12];
-            }
-        }
+        *this = guid;
     }
 
     /**
@@ -116,15 +95,7 @@ struct RTPS_DllAPI InstanceHandle_t
      * @param ihandle Instance handle to copy the data from
      */
     InstanceHandle_t& operator =(
-            const InstanceHandle_t& ihandle)
-    {
-
-        for (uint8_t i = 0; i < 16; i++)
-        {
-            value[i] = ihandle.value[i];
-        }
-        return *this;
-    }
+            const InstanceHandle_t& ihandle) = default;
 
     /**
      * Assignment operator
@@ -133,17 +104,9 @@ struct RTPS_DllAPI InstanceHandle_t
     InstanceHandle_t& operator =(
             const GUID_t& guid)
     {
-        for (uint8_t i = 0; i < 16; i++)
-        {
-            if (i < 12)
-            {
-                value[i] = guid.guidPrefix.value[i];
-            }
-            else
-            {
-                value[i] = guid.entityId.value[i - 12];
-            }
-        }
+        octet* dst = value;
+        memcpy(dst, guid.guidPrefix.value, 12);
+        memcpy(&dst[12], guid.entityId.value, 4);
         return *this;
     }
 
@@ -153,14 +116,7 @@ struct RTPS_DllAPI InstanceHandle_t
      */
     bool isDefined() const
     {
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            if (value[i] != 0)
-            {
-                return true;
-            }
-        }
-        return false;
+        return value.has_been_set();
     }
 
     // TODO Review this conversion once InstanceHandle_t is implemented as DDS standard defines
@@ -185,14 +141,7 @@ inline bool operator ==(
         const InstanceHandle_t& ihandle1,
         const InstanceHandle_t& ihandle2)
 {
-    for (uint8_t i = 0; i < 16; ++i)
-    {
-        if (ihandle1.value[i] != ihandle2.value[i])
-        {
-            return false;
-        }
-    }
-    return true;
+    return ihandle1.value == ihandle2.value;
 }
 
 inline bool operator !=(
@@ -213,18 +162,9 @@ inline void iHandle2GUID(
         GUID_t& guid,
         const InstanceHandle_t& ihandle)
 {
-    for (uint8_t i = 0; i < 16; ++i)
-    {
-        if (i < 12)
-        {
-            guid.guidPrefix.value[i] = ihandle.value[i];
-        }
-        else
-        {
-            guid.entityId.value[i - 12] = ihandle.value[i];
-        }
-    }
-    return;
+    const octet* value = ihandle.value;
+    memcpy(guid.guidPrefix.value, value, 12);
+    memcpy(guid.entityId.value, &value[12], 4);
 }
 
 /**
@@ -236,17 +176,7 @@ inline GUID_t iHandle2GUID(
         const InstanceHandle_t& ihandle)
 {
     GUID_t guid;
-    for (uint8_t i = 0; i < 16; ++i)
-    {
-        if (i < 12)
-        {
-            guid.guidPrefix.value[i] = ihandle.value[i];
-        }
-        else
-        {
-            guid.entityId.value[i - 12] = ihandle.value[i];
-        }
-    }
+    iHandle2GUID(guid, ihandle);
     return guid;
 }
 
@@ -254,7 +184,12 @@ inline bool operator <(
         const InstanceHandle_t& h1,
         const InstanceHandle_t& h2)
 {
-    return memcmp(h1.value, h2.value, 16) < 0;
+    if (h1.isDefined())
+    {
+        return h2.isDefined() && memcmp(h1.value, h2.value, 16) < 0;
+    }
+
+    return h2.isDefined();
 }
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
