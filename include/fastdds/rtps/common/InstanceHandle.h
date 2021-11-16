@@ -62,6 +62,23 @@ struct RTPS_DllAPI InstanceHandleValue_t
         return has_been_set_;
     }
 
+    bool operator == (
+            const InstanceHandleValue_t& other) const
+    {
+        return (has_been_set_ == other.has_been_set_) && (value_ == other.value_);
+    }
+
+    bool operator < (
+            const InstanceHandleValue_t& other) const
+    {
+        if (has_been_set_)
+        {
+            return other.has_been_set_ && value_ < other.value_;
+        }
+
+        return other.has_been_set_;
+    }
+
 private:
 
     //! Hash value
@@ -184,12 +201,7 @@ inline bool operator <(
         const InstanceHandle_t& h1,
         const InstanceHandle_t& h2)
 {
-    if (h1.isDefined())
-    {
-        return h2.isDefined() && memcmp(h1.value, h2.value, 16) < 0;
-    }
-
-    return h2.isDefined();
+    return h1.value < h2.value;
 }
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
