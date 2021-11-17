@@ -304,13 +304,9 @@ TEST(DDSStatistics, simple_statistics_second_writer)
 TEST(DDSStatistics, statistics_with_partition_on_user)
 {
 #ifdef FASTDDS_STATISTICS
-    auto transport = std::make_shared<UDPv4TransportDescriptor>();
     auto domain_id = GET_PID() % 100;
 
     DomainParticipantQos p_qos = PARTICIPANT_QOS_DEFAULT;
-    p_qos.transport().use_builtin_transports = false;
-    p_qos.transport().user_transports.push_back(transport);
-
     DomainParticipantFactory* participant_factory = DomainParticipantFactory::get_instance();
 
     // We disable the auto-enabling so the builtin entities do not get created.
@@ -344,9 +340,6 @@ TEST(DDSStatistics, statistics_with_partition_on_user)
     auto subscriber_p2 = p2->create_subscriber(SUBSCRIBER_QOS_DEFAULT);
     ASSERT_NE(nullptr, subscriber_p1);
     ASSERT_NE(nullptr, subscriber_p2);
-
-    // We enable the Publisher so we have everything enabled prior to enabling statistics
-    user_pub_1->enable();
 
     auto physical_data_reader_1 = enable_statistics(statistics_p1, subscriber_p1, statistics::PHYSICAL_DATA_TOPIC);
     auto physical_data_reader_2 = enable_statistics(statistics_p2, subscriber_p2, statistics::PHYSICAL_DATA_TOPIC);
