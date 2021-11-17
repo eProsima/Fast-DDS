@@ -34,42 +34,42 @@ using KeyHash_t = std::array<octet, 16>;
 struct RTPS_DllAPI InstanceHandleValue_t
 {
     octet& operator [] (
-            size_t i)
+            size_t i) noexcept
     {
         has_been_set_ = true;
         return value_[i];
     }
 
     octet operator [] (
-            size_t i) const
+            size_t i) const noexcept
     {
         return value_[i];
     }
 
-    operator octet* ()
+    operator octet* () noexcept
     {
         has_been_set_ = true;
         return value_.data();
     }
 
-    operator const octet* () const
+    operator const octet* () const noexcept
     {
         return value_.data();
     }
 
-    bool has_been_set() const
+    bool has_been_set() const noexcept
     {
         return has_been_set_;
     }
 
     bool operator == (
-            const InstanceHandleValue_t& other) const
+            const InstanceHandleValue_t& other) const noexcept
     {
         return (has_been_set_ == other.has_been_set_) && (value_ == other.value_);
     }
 
     bool operator < (
-            const InstanceHandleValue_t& other) const
+            const InstanceHandleValue_t& other) const noexcept
     {
         if (has_been_set_)
         {
@@ -96,13 +96,13 @@ struct RTPS_DllAPI InstanceHandle_t
     //!Value
     InstanceHandleValue_t value;
 
-    InstanceHandle_t() = default;
+    InstanceHandle_t() noexcept = default;
 
     InstanceHandle_t(
-            const InstanceHandle_t& ihandle) = default;
+            const InstanceHandle_t& ihandle) noexcept = default;
 
     InstanceHandle_t(
-            const GUID_t& guid)
+            const GUID_t& guid) noexcept
     {
         *this = guid;
     }
@@ -112,14 +112,14 @@ struct RTPS_DllAPI InstanceHandle_t
      * @param ihandle Instance handle to copy the data from
      */
     InstanceHandle_t& operator =(
-            const InstanceHandle_t& ihandle) = default;
+            const InstanceHandle_t& ihandle) noexcept = default;
 
     /**
      * Assignment operator
      * @param guid GUID to copy the data from
      */
     InstanceHandle_t& operator =(
-            const GUID_t& guid)
+            const GUID_t& guid) noexcept
     {
         octet* dst = value;
         memcpy(dst, guid.guidPrefix.value, 12);
@@ -131,13 +131,13 @@ struct RTPS_DllAPI InstanceHandle_t
      * Know if the instance handle is defined
      * @return True if the values are not zero.
      */
-    bool isDefined() const
+    bool isDefined() const noexcept
     {
         return value.has_been_set();
     }
 
     // TODO Review this conversion once InstanceHandle_t is implemented as DDS standard defines
-    explicit operator const GUID_t&() const
+    explicit operator const GUID_t&() const noexcept
     {
         return *reinterpret_cast<const GUID_t*>(this);
     }
@@ -156,14 +156,14 @@ const InstanceHandle_t c_InstanceHandle_Unknown;
  */
 inline bool operator ==(
         const InstanceHandle_t& ihandle1,
-        const InstanceHandle_t& ihandle2)
+        const InstanceHandle_t& ihandle2) noexcept
 {
     return ihandle1.value == ihandle2.value;
 }
 
 inline bool operator !=(
         const InstanceHandle_t& ihandle1,
-        const InstanceHandle_t& ihandle2)
+        const InstanceHandle_t& ihandle2) noexcept
 {
     return !(ihandle1 == ihandle2);
 }
@@ -177,7 +177,7 @@ inline bool operator !=(
  */
 inline void iHandle2GUID(
         GUID_t& guid,
-        const InstanceHandle_t& ihandle)
+        const InstanceHandle_t& ihandle) noexcept
 {
     const octet* value = ihandle.value;
     memcpy(guid.guidPrefix.value, value, 12);
@@ -190,7 +190,7 @@ inline void iHandle2GUID(
  * @return GUID_t
  */
 inline GUID_t iHandle2GUID(
-        const InstanceHandle_t& ihandle)
+        const InstanceHandle_t& ihandle) noexcept
 {
     GUID_t guid;
     iHandle2GUID(guid, ihandle);
@@ -199,7 +199,7 @@ inline GUID_t iHandle2GUID(
 
 inline bool operator <(
         const InstanceHandle_t& h1,
-        const InstanceHandle_t& h2)
+        const InstanceHandle_t& h2) noexcept
 {
     return h1.value < h2.value;
 }
