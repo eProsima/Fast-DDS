@@ -172,7 +172,7 @@ TEST(DDSStatistics, simple_statistics_datareaders)
         {"RTPS_SENT_TOPIC",                 statistics::RTPS_SENT_TOPIC,                num_samples},
         {"NETWORK_LATENCY_TOPIC",           statistics::NETWORK_LATENCY_TOPIC,          num_samples},
         {"PUBLICATION_THROUGHPUT_TOPIC",    statistics::PUBLICATION_THROUGHPUT_TOPIC,   num_samples},
-        {"HEARTBEAT_COUNT_TOPIC",           statistics::HEARTBEAT_COUNT_TOPIC,          num_samples},
+        {"HEARTBEAT_COUNT_TOPIC",           statistics::HEARTBEAT_COUNT_TOPIC,          1},
         {"SAMPLE_DATAS_TOPIC",              statistics::SAMPLE_DATAS_TOPIC,             num_samples},
         {"DISCOVERY_TOPIC",                 statistics::DISCOVERY_TOPIC,                1},
         {"PDP_PACKETS_TOPIC",               statistics::PDP_PACKETS_TOPIC,              1},
