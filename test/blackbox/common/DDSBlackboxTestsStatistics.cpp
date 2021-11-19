@@ -61,8 +61,10 @@ static DataReader* enable_statistics(
         Subscriber* subscriber,
         const std::string& topic_name)
 {
+    auto qos = statistics::dds::STATISTICS_DATAWRITER_QOS;
+    qos.history().depth = 10;
     EXPECT_EQ(ReturnCode_t::RETCODE_OK, participant->enable_statistics_datawriter(
-                topic_name, statistics::dds::STATISTICS_DATAWRITER_QOS));
+                topic_name, qos));
 
     auto topic_desc = participant->lookup_topicdescription(topic_name);
     EXPECT_NE(nullptr, topic_desc);
