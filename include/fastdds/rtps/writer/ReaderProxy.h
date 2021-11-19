@@ -219,9 +219,11 @@ public:
 
     /*!
      * @brief Returns there is some UNACKNOWLEDGED change.
+     * @param first_seq_in_history Minimum sequence number in the writer history.
      * @return There is some UNACKNOWLEDGED change.
      */
-    bool has_unacknowledged() const;
+    bool has_unacknowledged(
+            const SequenceNumber_t& first_seq_in_history) const;
 
     /**
      * Get the GUID of the reader represented by this proxy.
