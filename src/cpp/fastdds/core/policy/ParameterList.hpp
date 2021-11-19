@@ -106,7 +106,7 @@ public:
         {
             msg.pos = original_pos + qos_size;
 
-            ParameterId_t pid;
+            ParameterId_t pid{PID_SENTINEL};
             uint16_t plength = 0;
             bool valid = true;
             valid &= fastrtps::rtps::CDRMessage::readUInt16(&msg, (uint16_t*)&pid);
