@@ -1863,28 +1863,16 @@ public:
  * ReturnCode_t::RETCODE_UNSUPPORTED. The following methods are checked:
  * 1. get_sample_lost_status
  * 2. get_sample_rejected_status
-<<<<<<< HEAD
  * 3. get_subscription_matched_status
  * 4. get_subscription_matched_status
  * 5. get_matched_publication_data
  * 6. create_readcondition
  * 7. create_querycondition
  * 8. delete_readcondition
- * 9. delete_contained_entities
- * 10. get_matched_publications
- * 11. get_key_value
- * 12. lookup_instance
- * 13. wait_for_historical_data
-=======
- * 3. get_matched_publication_data
- * 4. create_readcondition
- * 5. create_querycondition
- * 6. delete_readcondition
- * 7. get_matched_publications
- * 8. get_key_value
- * 9. lookup_instance
- * 10. wait_for_historical_data
->>>>>>> af0ff6896 (delete_contained_entities implementation (#2223))
+ * 9. get_matched_publications
+ * 10. get_key_value
+ * 11. lookup_instance
+ * 12. wait_for_historical_data
  */
 TEST_F(DataReaderUnsupportedTests, UnsupportedDataReaderMethods)
 {

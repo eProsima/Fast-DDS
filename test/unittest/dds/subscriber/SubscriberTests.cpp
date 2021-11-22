@@ -29,13 +29,10 @@
 #include <fastdds/dds/subscriber/Subscriber.hpp>
 #include <fastdds/dds/subscriber/SubscriberListener.hpp>
 
-<<<<<<< HEAD
 #include <fastdds/rtps/attributes/PropertyPolicy.h>
-=======
 #include <fastdds/dds/publisher/Publisher.hpp>
 #include <fastdds/dds/publisher/DataWriter.hpp>
 
->>>>>>> af0ff6896 (delete_contained_entities implementation (#2223))
 #include <fastrtps/attributes/PublisherAttributes.h>
 #include <fastrtps/attributes/SubscriberAttributes.h>
 #include <fastrtps/rtps/history/ReaderHistory.h>
