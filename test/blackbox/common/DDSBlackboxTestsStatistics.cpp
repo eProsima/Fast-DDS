@@ -30,6 +30,8 @@
 #include <fastdds/dds/core/LoanableSequence.hpp>
 
 #include <fastdds/dds/domain/DomainParticipant.hpp>
+#include <fastdds/dds/domain/DomainParticipantFactory.hpp>
+#include <fastdds/dds/domain/qos/DomainParticipantFactoryQos.hpp>
 #include <fastdds/dds/subscriber/DataReader.hpp>
 #include <fastdds/dds/subscriber/Subscriber.hpp>
 #include <fastdds/dds/topic/TopicDescription.hpp>
@@ -59,8 +61,10 @@ static DataReader* enable_statistics(
         Subscriber* subscriber,
         const std::string& topic_name)
 {
+    auto qos = statistics::dds::STATISTICS_DATAWRITER_QOS;
+    qos.history().depth = 10;
     EXPECT_EQ(ReturnCode_t::RETCODE_OK, participant->enable_statistics_datawriter(
-                topic_name, statistics::dds::STATISTICS_DATAWRITER_QOS));
+                topic_name, qos));
 
     auto topic_desc = participant->lookup_topicdescription(topic_name);
     EXPECT_NE(nullptr, topic_desc);
@@ -168,7 +172,7 @@ TEST(DDSStatistics, simple_statistics_datareaders)
         {"RTPS_SENT_TOPIC",                 statistics::RTPS_SENT_TOPIC,                num_samples},
         {"NETWORK_LATENCY_TOPIC",           statistics::NETWORK_LATENCY_TOPIC,          num_samples},
         {"PUBLICATION_THROUGHPUT_TOPIC",    statistics::PUBLICATION_THROUGHPUT_TOPIC,   num_samples},
-        {"HEARTBEAT_COUNT_TOPIC",           statistics::HEARTBEAT_COUNT_TOPIC,          num_samples},
+        {"HEARTBEAT_COUNT_TOPIC",           statistics::HEARTBEAT_COUNT_TOPIC,          1},
         {"SAMPLE_DATAS_TOPIC",              statistics::SAMPLE_DATAS_TOPIC,             num_samples},
         {"DISCOVERY_TOPIC",                 statistics::DISCOVERY_TOPIC,                1},
         {"PDP_PACKETS_TOPIC",               statistics::PDP_PACKETS_TOPIC,              1},
@@ -288,6 +292,69 @@ TEST(DDSStatistics, simple_statistics_second_writer)
     disable_statistics(statistics_p1, subscriber_p1, physical_data_reader_1, statistics::PHYSICAL_DATA_TOPIC);
     disable_statistics(statistics_p2, subscriber_p2, physical_data_reader_2, statistics::PHYSICAL_DATA_TOPIC);
 
+    p2->delete_subscriber(subscriber_p2);
+    p1->delete_subscriber(subscriber_p1);
+
+    participant_factory->delete_participant(p2);
+    participant_factory->delete_participant(p1);
+
+#endif // FASTDDS_STATISTICS
+}
+
+// Regression test for #12390. Mostly a replication of test simple_statistics_second_writer but creating
+// and additional publisher with partitions before the creation of the builtin publisher
+TEST(DDSStatistics, statistics_with_partition_on_user)
+{
+#ifdef FASTDDS_STATISTICS
+    auto domain_id = GET_PID() % 100;
+
+    DomainParticipantQos p_qos = PARTICIPANT_QOS_DEFAULT;
+    DomainParticipantFactory* participant_factory = DomainParticipantFactory::get_instance();
+
+    // We disable the auto-enabling so the builtin entities do not get created.
+    DomainParticipantFactoryQos factory_qos;
+    participant_factory->get_qos(factory_qos);
+    factory_qos.entity_factory().autoenable_created_entities = false;
+    participant_factory->set_qos(factory_qos);
+
+    DomainParticipant* p1 = participant_factory->create_participant(domain_id, p_qos);
+    DomainParticipant* p2 = participant_factory->create_participant(domain_id, p_qos);
+
+    ASSERT_NE(nullptr, p1);
+    ASSERT_NE(nullptr, p2);
+
+    // Now we create a Publisher with a partition
+    PublisherQos pub_qos = PUBLISHER_QOS_DEFAULT;
+    pub_qos.partition().push_back("partition_a");
+    auto user_pub_1 = p1->create_publisher(pub_qos);
+
+    // We enable the participants
+    ASSERT_EQ(ReturnCode_t::RETCODE_OK, p1->enable());
+    ASSERT_EQ(ReturnCode_t::RETCODE_OK, p2->enable());
+
+    auto statistics_p1 = statistics::dds::DomainParticipant::narrow(p1);
+    auto statistics_p2 = statistics::dds::DomainParticipant::narrow(p2);
+
+    ASSERT_NE(nullptr, statistics_p1);
+    ASSERT_NE(nullptr, statistics_p2);
+
+    auto subscriber_p1 = p1->create_subscriber(SUBSCRIBER_QOS_DEFAULT);
+    auto subscriber_p2 = p2->create_subscriber(SUBSCRIBER_QOS_DEFAULT);
+    ASSERT_NE(nullptr, subscriber_p1);
+    ASSERT_NE(nullptr, subscriber_p2);
+
+    auto physical_data_reader_1 = enable_statistics(statistics_p1, subscriber_p1, statistics::PHYSICAL_DATA_TOPIC);
+    auto physical_data_reader_2 = enable_statistics(statistics_p2, subscriber_p2, statistics::PHYSICAL_DATA_TOPIC);
+    ASSERT_NE(nullptr, physical_data_reader_1);
+    ASSERT_NE(nullptr, physical_data_reader_2);
+
+    wait_statistics(physical_data_reader_1, 2, "PHYSICAL_DATA_TOPIC", 10u);
+    wait_statistics(physical_data_reader_2, 2, "PHYSICAL_DATA_TOPIC", 10u);
+
+    disable_statistics(statistics_p1, subscriber_p1, physical_data_reader_1, statistics::PHYSICAL_DATA_TOPIC);
+    disable_statistics(statistics_p2, subscriber_p2, physical_data_reader_2, statistics::PHYSICAL_DATA_TOPIC);
+
+    p1->delete_publisher(user_pub_1);
     p2->delete_subscriber(subscriber_p2);
     p1->delete_subscriber(subscriber_p1);
 

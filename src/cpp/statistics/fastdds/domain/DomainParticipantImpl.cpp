@@ -226,12 +226,7 @@ efd::PublisherImpl* DomainParticipantImpl::create_publisher_impl(
         const efd::PublisherQos& qos,
         efd::PublisherListener* listener)
 {
-    auto impl = new PublisherImpl(this, qos, listener, statistics_listener_);
-    if (nullptr == builtin_publisher_impl_)
-    {
-        builtin_publisher_impl_ = impl;
-    }
-    return impl;
+    return new PublisherImpl(this, qos, listener, statistics_listener_);
 }
 
 efd::SubscriberImpl* DomainParticipantImpl::create_subscriber_impl(
@@ -243,8 +238,13 @@ efd::SubscriberImpl* DomainParticipantImpl::create_subscriber_impl(
 
 void DomainParticipantImpl::create_statistics_builtin_entities()
 {
+    efd::PublisherImpl* builtin_publisher_impl = nullptr;
+
     // Builtin publisher
-    builtin_publisher_ = create_publisher(efd::PUBLISHER_QOS_DEFAULT);
+    builtin_publisher_ = create_publisher(efd::PUBLISHER_QOS_DEFAULT, &builtin_publisher_impl);
+
+    builtin_publisher_impl_ = dynamic_cast<PublisherImpl*>(builtin_publisher_impl);
+    assert(nullptr != builtin_publisher_impl_);
 
     // Enable statistics datawriters
     // 1. Find fastdds_statistics PropertyPolicyQos

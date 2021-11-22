@@ -473,6 +473,15 @@ Publisher* DomainParticipantImpl::create_publisher(
         PublisherListener* listener,
         const StatusMask& mask)
 {
+    return create_publisher(qos, nullptr, listener, mask);
+}
+
+Publisher* DomainParticipantImpl::create_publisher(
+        const PublisherQos& qos,
+        PublisherImpl** impl,
+        PublisherListener* listener,
+        const StatusMask& mask)
+{
     if (!PublisherImpl::check_qos(qos))
     {
         // The PublisherImpl::check_qos() function is not yet implemented and always returns ReturnCode_t::RETCODE_OK.
@@ -505,6 +514,11 @@ Publisher* DomainParticipantImpl::create_publisher(
         ReturnCode_t ret_publisher_enable = pub->enable();
         assert(ReturnCode_t::RETCODE_OK == ret_publisher_enable);
         (void)ret_publisher_enable;
+    }
+
+    if (impl)
+    {
+        *impl = pubimpl;
     }
 
     return pub;
