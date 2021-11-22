@@ -67,12 +67,18 @@ public:
     struct BufferDescriptor
     {
         BufferDescriptor()
-        : buffer_node_offset(0), validity_id(0)
+            : buffer_node_offset(0)
+            , validity_id(0)
         {
         }
 
-        BufferDescriptor(const SharedMemSegment::Id & segment_id, SharedMemSegment::Offset offset, uint32_t validity)
-        : source_segment_id(segment_id), buffer_node_offset(offset), validity_id(validity)
+        BufferDescriptor(
+                const SharedMemSegment::Id& segment_id,
+                SharedMemSegment::Offset offset,
+                uint32_t validity)
+            : source_segment_id(segment_id)
+            , buffer_node_offset(offset)
+            , validity_id(validity)
         {
         }
 
@@ -118,7 +124,11 @@ public:
         struct ListenerStatus
         {
             ListenerStatus()
-            : is_in_use(0), is_waiting(0), is_processing(0), counter(0), last_verified_counter(0)
+                : is_in_use(0)
+                , is_waiting(0)
+                , is_processing(0)
+                , counter(0)
+                , last_verified_counter(0)
             {
             }
 

@@ -166,6 +166,6 @@ public:
 } // namespace fastdds
 } // namespace eprosima
 
-#endif
+#endif // DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 
 #endif // _FASTDDS_DDS_QOS_PARAMETERLIST_HPP_

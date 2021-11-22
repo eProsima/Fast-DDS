@@ -281,7 +281,8 @@ public:
 
         typedef UUID<8> type;
 
-        Id() : uuid_(type::null_t{})
+        Id()
+            : uuid_(type::null_t{})
         {
         }
 
