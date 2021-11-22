@@ -855,7 +855,7 @@ void DiscoveryDataBase::create_writers_from_change_(
         }
         else
         {
-            logError(DISCOVERY_DATABASE, "Writer " << writer_guid << " as no associated participant. Skipping");
+            logError(DISCOVERY_DATABASE, "Writer " << writer_guid << " has no associated participant. Skipping");
             return;
         }
 
@@ -972,7 +972,7 @@ void DiscoveryDataBase::create_readers_from_change_(
         }
         else
         {
-            logError(DISCOVERY_DATABASE, "Writer " << reader_guid << " as no associated participant. Skipping");
+            logError(DISCOVERY_DATABASE, "Reader " << reader_guid << " has no associated participant. Skipping");
             return;
         }
 
@@ -1704,10 +1704,15 @@ void DiscoveryDataBase::AckedFunctor::operator () (
             {
                 if (reader_proxy->guid().guidPrefix == *it)
                 {
-                    // If the participant is already in the DB it means it has answered to the pinging
-                    // or that is pinging us and we have already received its DATA(p)
-                    // If neither of both has happenned we should not wait for it to ack this data, so we
-                    // skip it and leave it as acked
+                    /*
+                     * If the participant is already in the DB it means it has answered to the pinging
+                     * or that is pinging us and we have already received its DATA(p)
+                     * If neither has happenned (participant is not in DB)
+                     * we should not wait for it to ack this data, or it could get stucked in an endless loop
+                     * (this Remote Server could not exist and/or never be discovered)
+                     * Nevertheless, the ack is still pending for this participant and once it is discovered this
+                     * data will be sent again
+                     */
                     auto remote_server_it = db_->participants_.find(*it);
                     if (remote_server_it == db_->participants_.end())
                     {
@@ -1715,6 +1720,8 @@ void DiscoveryDataBase::AckedFunctor::operator () (
                                 "check as acked for " << reader_proxy->guid() << " as it has not answered pinging yet");
                         return;
                     }
+
+                    break;
                 }
             }
 
@@ -1731,32 +1738,20 @@ void DiscoveryDataBase::unmatch_participant_(
 {
     logInfo(DISCOVERY_DATABASE, "unmatching participant: " << guid_prefix);
 
-    auto pit = participants_.find(guid_prefix);
-    if (pit == participants_.end())
+    // For each participant remove it
+    // IMPORTANT: This is not for every relevant participant, as participant A could be in other participant's B info
+    // and B not be relevant for A. So it must be done for every Participant.
+    for (auto& participant_it : participants_)
     {
-        logWarning(DISCOVERY_DATABASE,
-                "Attempting to unmatch an unexisting participant: " << guid_prefix);
+        participant_it.second.remove_participant(guid_prefix);
     }
-
-    // For each relevant participant make not relevant
-    for (eprosima::fastrtps::rtps::GuidPrefix_t relevant_participant : pit->second.relevant_participants())
+    for (auto& writer_it : writers_)
     {
-        if (relevant_participant != guid_prefix)
-        {
-            auto rpit = participants_.find(relevant_participant);
-            if (rpit == participants_.end())
-            {
-                // This is not an error. Remote participants will try to unmatch with participants even
-                // when the match is not reciprocal
-                logInfo(DISCOVERY_DATABASE,
-                        "Participant " << relevant_participant << " matched with an unexisting participant: " <<
-                        guid_prefix);
-            }
-            else
-            {
-                rpit->second.remove_participant(guid_prefix);
-            }
-        }
+        writer_it.second.remove_participant(guid_prefix);
+    }
+    for (auto& reader_it : readers_)
+    {
+        reader_it.second.remove_participant(guid_prefix);
     }
 }
 

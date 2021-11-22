@@ -120,6 +120,16 @@ public:
             const ParticipantProxyData& pdata) override;
 
     /**
+     * This method removes a remote RTPSParticipant and all its writers and readers.
+     * @param participant_guid GUID_t of the remote RTPSParticipant.
+     * @param reason Why the participant is being removed (dropped vs removed)
+     * @return true if correct.
+     */
+    bool remove_remote_participant(
+            const GUID_t& participant_guid,
+            ParticipantDiscoveryInfo::DISCOVERY_STATUS reason) override;
+
+    /**
      * Matching server EDP endpoints
      * @return true if all servers have been discovered
      */
