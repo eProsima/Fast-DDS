@@ -161,10 +161,11 @@ FileWatchHandle SystemInfo::watch_file(
                                break;
                        }
                    }));
-#endif // defined(_WIN32) || defined(__unix__)
+#else // defined(_WIN32) || defined(__unix__)
     static_cast<void>(filename);
     static_cast<void>(callback);
     return FileWatchHandle();
+#endif // defined(_WIN32) || defined(__unix__)
 }
 
 void SystemInfo::stop_watching_file(

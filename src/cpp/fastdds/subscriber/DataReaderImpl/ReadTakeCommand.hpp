@@ -220,7 +220,7 @@ struct ReadTakeCommand
         info.no_writers_generation_count = item->reader_info.no_writers_generation_count;
         info.sample_rank = 0;
         info.generation_rank = 0;
-        info.absoulte_generation_rank = 0;
+        info.absolute_generation_rank = 0;
         info.source_timestamp = item->sourceTimestamp;
         info.reception_timestamp = item->reader_info.receptionTimestamp;
         info.instance_handle = item->instanceHandle;
