@@ -408,9 +408,8 @@ bool ReaderProxy::requested_changes_set(
                             isSomeoneWasSetRequested = true;
                         }
                     }
-                    else if (sit > min_seq_in_history)
+                    else if ((sit > min_seq_in_history) && (sit > changes_low_mark_))
                     {
-                        assert(sit > changes_low_mark_);
                         gap_builder.add(sit);
                     }
                 });
