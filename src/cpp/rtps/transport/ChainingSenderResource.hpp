@@ -33,8 +33,10 @@ public:
         , low_sender_resource_(std::move(low_sender_resource))
     {
         // Implementation functions are bound to the right transport parameters
-        clean_up = [this, &transport]()
+        clean_up = []()
                 {
+                    // No cleanup is required.
+                    // low_sender_resources_ makes its clean up on destruction.
                 };
 
         send_lambda_ = [this, &transport](
