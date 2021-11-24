@@ -15,6 +15,7 @@
 #ifndef _FASTDDS_SHAREDMEM_GLOBAL_H_
 #define _FASTDDS_SHAREDMEM_GLOBAL_H_
 
+#include <algorithm>
 #include <vector>
 #include <mutex>
 #include <memory>
@@ -65,6 +66,22 @@ public:
      */
     struct BufferDescriptor
     {
+        BufferDescriptor()
+            : buffer_node_offset(0)
+            , validity_id(0)
+        {
+        }
+
+        BufferDescriptor(
+                const SharedMemSegment::Id& segment_id,
+                SharedMemSegment::Offset offset,
+                uint32_t validity)
+            : source_segment_id(segment_id)
+            , buffer_node_offset(offset)
+            , validity_id(validity)
+        {
+        }
+
         SharedMemSegment::Id source_segment_id;
         SharedMemSegment::Offset buffer_node_offset;
         uint32_t validity_id;
@@ -106,6 +123,15 @@ public:
         // Status of each listener
         struct ListenerStatus
         {
+            ListenerStatus()
+                : is_in_use(0)
+                , is_waiting(0)
+                , is_processing(0)
+                , counter(0)
+                , last_verified_counter(0)
+            {
+            }
+
             // True if this slot is taken by an active listener
             uint8_t is_in_use               : 1;
 
@@ -1164,7 +1190,7 @@ private:
             std::chrono::high_resolution_clock::now().time_since_epoch()).count();
         port_node->port_wait_timeout_ms = healthy_check_timeout_ms / 3;
         port_node->max_buffer_descriptors = max_buffer_descriptors;
-        memset(port_node->listeners_status, 0, sizeof(port_node->listeners_status));
+        std::fill_n(port_node->listeners_status, PortNode::LISTENERS_STATUS_SIZE, PortNode::ListenerStatus());
 #ifdef _MSC_VER
         strncpy_s(port_node->domain_name, sizeof(port_node->domain_name),
                 domain_name_.c_str(), sizeof(port_node->domain_name) - 1);

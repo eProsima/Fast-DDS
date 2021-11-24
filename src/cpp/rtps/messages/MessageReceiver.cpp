@@ -1039,7 +1039,11 @@ bool MessageReceiver::proc_Submsg_Heartbeat(
         return false;
     }
     uint32_t HBCount;
-    CDRMessage::readUInt32(msg, &HBCount);
+    if (!CDRMessage::readUInt32(msg, &HBCount))
+    {
+        logWarning(RTPS_MSG_IN, IDSTRING "Unable to read heartbeat count from heartbeat message");
+        return false;
+    }
 
     std::lock_guard<std::mutex> guard(mtx_);
     //Look for the correct reader and writers:
@@ -1077,7 +1081,11 @@ bool MessageReceiver::proc_Submsg_Acknack(
 
     SequenceNumberSet_t SNSet = CDRMessage::readSequenceNumberSet(msg);
     uint32_t Ackcount;
-    CDRMessage::readUInt32(msg, &Ackcount);
+    if (!CDRMessage::readUInt32(msg, &Ackcount))
+    {
+        logWarning(RTPS_MSG_IN, IDSTRING "Unable to read ackcount from message");
+        return false;
+    }
 
     std::lock_guard<std::mutex> guard(mtx_);
     //Look for the correct writer to use the acknack
@@ -1093,7 +1101,7 @@ bool MessageReceiver::proc_Submsg_Acknack(
             return result;
         }
     }
-    logInfo(RTPS_MSG_IN, IDSTRING "Acknack msg to UNKNOWN writer (I loooked through "
+    logInfo(RTPS_MSG_IN, IDSTRING "Acknack msg to UNKNOWN writer (I looked through "
             << associated_writers_.size() << " writers in this ListenResource)");
     return false;
 }
@@ -1248,7 +1256,11 @@ bool MessageReceiver::proc_Submsg_NackFrag(
     CDRMessage::readFragmentNumberSet(msg, &fnState);
 
     uint32_t Ackcount;
-    CDRMessage::readUInt32(msg, &Ackcount);
+    if (!CDRMessage::readUInt32(msg, &Ackcount))
+    {
+        logInfo(RTPS_MSG_IN, IDSTRING "Unable to read ackcount from message");
+        return false;
+    }
 
     std::lock_guard<std::mutex> guard(mtx_);
     //Look for the correct writer to use the acknack
