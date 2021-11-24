@@ -65,6 +65,8 @@ public:
             void* data,
             eprosima::fastrtps::rtps::SerializedPayload_t* payload) override;
 
+    RTPS_DllAPI const TypeDescriptor* get_desciptor() const override;
+
     RTPS_DllAPI void CleanDynamicType();
 
     RTPS_DllAPI DynamicType_ptr GetDynamicType() const;
