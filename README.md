@@ -16,7 +16,7 @@
 ![Status](https://nexus.lab.fiware.org/static/badges/statuses/incubating.svg)
 [![Linux ci](http://jenkins.eprosima.com:8080/job/nightly_fastdds_sec_master_linux/badge/icon?subject=%20%20%20Linux%20CI%20)](http://jenkins.eprosima.com:8080/job/nightly_fastdds_sec_master_linux)
 [![Linux arm64 ci](http://jenkins.eprosima.com:8080/job/nightly_fastdds_sec_master_linux_aarch64/badge/icon?subject=%20%20%20Linux-aarch64%20CI%20)](http://jenkins.eprosima.com:8080/view/Nightly/job/nightly_fastdds_sec_master_linux_aarch64/)
-[![Windows ci](http://jenkins.eprosima.com:8080/job/nightly_fastdds_sec_master_windows/label=windows-secure,platform=x64,toolset=v141/badge/icon?subject=%20%20%20%20Windows%20CI%20)](http://jenkins.eprosima.com:8080/job/nightly_fastdds_sec_master_windows/label=windows-secure,platform=x64,toolset=v141)
+[![Windows ci](http://jenkins.eprosima.com:8080/job/nightly_fastdds_sec_master_windows/label=windows-secure,platform=x64,toolset=v142/badge/icon?subject=%20%20%20%20Windows%20CI%20)](http://jenkins.eprosima.com:8080/job/nightly_fastdds_sec_master_windows/label=windows-secure,platform=x64,toolset=v142)
 [![Mac ci](http://jenkins.eprosima.com:8080/job/nightly_fastdds_sec_master_mac/badge/icon?subject=%20%20%20%20%20%20%20Mac%20CI%20)](http://jenkins.eprosima.com:8080/job/nightly_fastdds_sec_master_mac)
 [![Coverage](https://img.shields.io/jenkins/coverage/cobertura.svg?jobUrl=http%3A%2F%2Fjenkins.eprosima.com%3A8080%2Fjob%2Fnightly_fastdds_coverage_linux)](http://jenkins.eprosima.com:8080/job/nightly_fastdds_coverage_linux)
 
@@ -56,7 +56,7 @@ We are curious to get to know your use case!
 
 * Linux [![Linux ci](http://jenkins.eprosima.com:8080/job/nightly_fastdds_sec_master_linux/badge/icon?subject=%20%20%20Linux%20CI%20)](http://jenkins.eprosima.com:8080/job/nightly_fastdds_sec_master_linux)
 * Linux-aarch64 [![Linux arm64 ci](http://jenkins.eprosima.com:8080/job/nightly_fastdds_sec_master_linux_aarch64/badge/icon?subject=%20%20%20Linux-aarch64%20CI%20)](http://jenkins.eprosima.com:8080/view/Nightly/job/nightly_fastdds_sec_master_linux_aarch64/)
-* Windows [![Windows ci](http://jenkins.eprosima.com:8080/job/nightly_fastdds_sec_master_windows/label=windows-secure,platform=x64,toolset=v141/badge/icon?subject=%20%20%20%20Windows%20CI%20)](http://jenkins.eprosima.com:8080/job/nightly_fastdds_sec_master_windows/label=windows-secure,platform=x64,toolset=v141)
+* Windows [![Windows ci](http://jenkins.eprosima.com:8080/job/nightly_fastdds_sec_master_windows/label=windows-secure,platform=x64,toolset=v142/badge/icon?subject=%20%20%20%20Windows%20CI%20)](http://jenkins.eprosima.com:8080/job/nightly_fastdds_sec_master_windows/label=windows-secure,platform=x64,toolset=v142)
 * Mac [![Mac ci](http://jenkins.eprosima.com:8080/job/nightly_fastdds_sec_master_mac/badge/icon?subject=%20%20%20%20%20%20%20Mac%20CI%20)](http://jenkins.eprosima.com:8080/job/nightly_fastdds_sec_master_mac)
 
 ## Installation Guide
