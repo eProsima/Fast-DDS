@@ -848,9 +848,11 @@ public:
 
             try
             {
-                ret = global_port_->try_push( {shared_mem_buffer->segment_id(), shared_mem_buffer->node_offset(),
-                                               validity_id},
-                                &are_listeners_active);
+                ret = global_port_->try_push(
+                    SharedMemGlobal::BufferDescriptor{shared_mem_buffer->segment_id(),
+                                                      shared_mem_buffer->node_offset(),
+                                                      validity_id},
+                    &are_listeners_active);
 
                 if (!are_listeners_active)
                 {
