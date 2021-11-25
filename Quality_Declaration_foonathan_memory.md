@@ -21,12 +21,12 @@ The latest release can be found [here](https://github.com/foonathan/memory/relea
 Even though the current version is `< 1.0.0`, `foonathan_memory` is in [maintenance mode](https://www.jonathanmueller.dev/project/).
 
 *eprosima Fast DDS* ensures `foonathan_memory` version stability by pinning to a specific [release](https://github.com/foonathan/memory/releases/tag/v0.7-1).
-Both *eprosima* `foonathan_memory_vendor` utility and *eprosima Fast DDS* CI tests use this specific commit.
+Both *eprosima* `foonathan_memory_vendor` utility and *eprosima Fast DDS* CI tests use this specific release.
 The specific tag was released September 5th, 2021.
 
 *eprosima Fast DDS* maintainers will keep a continuous watch over new releases in order to assess the impact they could have over *eprosima Fast DDS*.
 Any `bugfix` or security vulnerability corrected that affects the API used by *eprosima Fast DDS* will be analyzed by the maintainers.
-Decision about updating the used commit rests in *eprosima Fast DDS* maintainers.
+Decision about updating the used commit/release rests in *eprosima Fast DDS* maintainers.
 
 ### Version Stability [1.ii]
 
@@ -45,7 +45,7 @@ However, by pinning *eprosima Fast DDS* CI tests and `foonathan_memory_vendor` u
 ## Change Control Process [2]
 
 `foonathan_memory` does not have a stated change control process.
-Nevertheless, only when the pinned commit is updated is *eprosima Fast DDS* affected.
+Nevertheless, only when the pinned commit/release is updated is *eprosima Fast DDS* affected.
 The change control process for the  update of the `foonathan_memory_vendor` utility follows [eProsima Contributing guidelines](https://github.com/eProsima/policies/blob/main/CONTRIBUTING.md).
 
 ### Change Requests [2.i]
@@ -126,14 +126,14 @@ Regardless, *eprosima Fast DDS* tests these features in the [PersistenceTests](h
 `foonathan_memory` tracks testing coverage on [codecov](https://codecov.io/github/foonathan/memory).
 
 Apart from this, *eprosima Fast DDS* ensures that every feature and API used within the library has been tested by running its own [coverage analysis](http://jenkins.eprosima.com:8080/job/nightly_fastdds_coverage_linux/), which completely covers all API used by Fast DDS.
-In order to change the `foonathan_memory` commit used in Fast DDS, maintainers must ensure that all new API is tested accordingly.
+In order to change the `foonathan_memory` commit/release used in Fast DDS, maintainers must ensure that all new API is tested accordingly.
 
 ### Performance [4.iv]
 
 `foonathan_memory` does not conduct performance tests.
 
-*eprosima Fast DDS* will run its [performance tests](test/performance) and analyze their results before deciding to change the pinned commit to prevent performance regression.
-Being pinned to a specific commit, any performance regression in *eprosima Fast DDS* could not be blamed on `foonathan_memory`.
+*eprosima Fast DDS* will run its [performance tests](test/performance) and analyze their results before deciding to change the pinned commit/release to prevent performance regression.
+Being pinned to a specific release, any performance regression in *eprosima Fast DDS* could not be blamed on `foonathan_memory`.
 
 ### Linters and Static Analysis [4.v]
 
