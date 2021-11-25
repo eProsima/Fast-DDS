@@ -125,6 +125,9 @@ public:
     //!Information for data sharing compatibility check.
     DataSharingQosPolicy data_sharing;
 
+    //! Disable heartbeat piggyback mechanism.
+    bool disable_heartbeat_piggyback = false;
+
     /**
      * Set Qos from another class
      * @param qos Reference from a WriterQos object.
