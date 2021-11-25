@@ -101,6 +101,7 @@ private:
     {
         return fm::detail::memory_block_stack::implementation_offset;
     }
+
 #endif  // FOONATHAN_MEMORY_MEMORY_POOL_HAS_MIN_BLOCK_SIZE
 
 };
