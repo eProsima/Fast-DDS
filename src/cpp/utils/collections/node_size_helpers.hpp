@@ -70,15 +70,20 @@ struct pool_size_helper
     static CONSTEXPR_FUNC size_t min_pool_size(
             size_t num_nodes)
     {
+#ifdef FOONATHAN_MEMORY_MEMORY_POOL_HAS_MIN_BLOCK_SIZE
+        return Pool::min_block_size(node_size, num_nodes ? num_nodes : 1);
+#else
         return
             // Book-keeping area for a block in the memory arena
             additional_size_per_pool() +
             // At least one node
             (num_nodes ? num_nodes : 1) * min_size_per_node<Pool>();
+#endif  // FOONATHAN_MEMORY_MEMORY_POOL_HAS_MIN_BLOCK_SIZE
     }
 
 private:
 
+#if !defined(FOONATHAN_MEMORY_MEMORY_POOL_HAS_MIN_BLOCK_SIZE)
     template<typename Pool>
     static CONSTEXPR_FUNC size_t min_size_per_node()
     {
@@ -94,12 +99,9 @@ private:
 
     static CONSTEXPR_FUNC size_t additional_size_per_pool()
     {
-#ifdef FOONATHAN_MEMORY_MEMORY_POOL_HAS_MIN_BLOCK_SIZE
-        return fm::detail::memory_block_stack::implementation_offset();
-#else
         return fm::detail::memory_block_stack::implementation_offset;
-#endif  // FOONATHAN_MEMORY_MEMORY_POOL_HAS_MIN_BLOCK_SIZE
     }
+#endif  // FOONATHAN_MEMORY_MEMORY_POOL_HAS_MIN_BLOCK_SIZE
 
 };
 
