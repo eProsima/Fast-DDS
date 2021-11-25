@@ -30,12 +30,3 @@ This document will be updated if new features are included and used in *eprosima
 1. Struct [foonathan::memory::map_node_size](https://foonathan.net/memory/structfoonathan_1_1memory_1_1map__node__size.html)
 1. Struct [foonathan::memory::set_node_size](https://foonathan.net/memory/structfoonathan_1_1memory_1_1set__node__size.html)
 1. Struct [foonathan::memory::unordered_map_node_size](https://foonathan.net/memory/structfoonathan_1_1memory_1_1unordered__map__node__size.html)
-
-## Internal methods
-
-When the library allocates memory blocks, some of this memory is reserved by `foonathan_memory` for internal uses and, consequently, is not available to the user.
-The following methods provide information about the internal needs of `foonathan_memory`. 
-
-1. foonathan::memory::detail::debug_fence_size
-1. foonathan::memory::detail::max_alignment
-1. foonathan::memory::detail::memory_block_stack::implementation_offset
