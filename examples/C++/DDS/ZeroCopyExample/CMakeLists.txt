@@ -50,4 +50,4 @@ target_compile_definitions(DDSZeroCopyExample PRIVATE
     )
 target_link_libraries(DDSZeroCopyExample fastrtps fastcdr)
 install(TARGETS DDSZeroCopyExample
-    RUNTIME DESTINATION examples/C++/DDS/HelloWorldExample/${BIN_INSTALL_DIR})
+    RUNTIME DESTINATION examples/C++/DDS/ZeroCopyExample/${BIN_INSTALL_DIR})

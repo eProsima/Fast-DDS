@@ -18,7 +18,7 @@ if(NOT CMAKE_VERSION VERSION_LESS 3.0)
     cmake_policy(SET CMP0048 NEW)
 endif()
 
-project(UseCaseDemonstrator)
+project(Configurability)
 
 # Find requirements
 if(NOT fastcdr_FOUND)
@@ -46,22 +46,22 @@ endif()
 message(STATUS "Configuring DDS Configurability example...")
 file(GLOB DDS_CONFIGURABILITY_EXAMPLE_SOURCES "*.cxx")
 
-add_executable(DDSUseCasePublisher ${DDS_CONFIGURABILITY_EXAMPLE_SOURCES} UseCasePublisher.cpp)
-target_compile_definitions(DDSUseCasePublisher PRIVATE
+add_executable(DDSConfigurabilityPublisher ${DDS_CONFIGURABILITY_EXAMPLE_SOURCES} ConfigurabilityPublisher.cpp)
+target_compile_definitions(DDSConfigurabilityPublisher PRIVATE
     $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
     $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
 )
-target_link_libraries(DDSUseCasePublisher fastrtps fastcdr foonathan_memory)
-install(TARGETS DDSUseCasePublisher
-    RUNTIME DESTINATION examples/C++/DDS/UseCaseDemonstrator/${BIN_INSTALL_DIR}
+target_link_libraries(DDSConfigurabilityPublisher fastrtps fastcdr foonathan_memory)
+install(TARGETS DDSConfigurabilityPublisher
+    RUNTIME DESTINATION examples/C++/DDS/Configurability/${BIN_INSTALL_DIR}
     )
 
-add_executable(DDSUseCaseSubscriber ${DDS_CONFIGURABILITY_EXAMPLE_SOURCES} UseCaseSubscriber.cpp)
-target_compile_definitions(DDSUseCaseSubscriber PRIVATE
+add_executable(DDSConfigurabilitySubscriber ${DDS_CONFIGURABILITY_EXAMPLE_SOURCES} ConfigurabilitySubscriber.cpp)
+target_compile_definitions(DDSConfigurabilitySubscriber PRIVATE
     $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
     $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
 )
-target_link_libraries(DDSUseCaseSubscriber fastrtps fastcdr foonathan_memory)
-install(TARGETS DDSUseCaseSubscriber
-    RUNTIME DESTINATION examples/C++/DDS/UseCaseDemonstrator/${BIN_INSTALL_DIR}
+target_link_libraries(DDSConfigurabilitySubscriber fastrtps fastcdr foonathan_memory)
+install(TARGETS DDSConfigurabilitySubscriber
+    RUNTIME DESTINATION examples/C++/DDS/Configurability/${BIN_INSTALL_DIR}
     )

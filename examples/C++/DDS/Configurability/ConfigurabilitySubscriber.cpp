@@ -11,9 +11,11 @@
 
 #include <fastdds/dds/domain/DomainParticipant.hpp>
 #include <fastdds/dds/domain/DomainParticipantFactory.hpp>
-#include <fastdds/dds/publisher/Publisher.hpp>
-#include <fastdds/dds/publisher/DataWriter.hpp>
-#include <fastdds/dds/publisher/DataWriterListener.hpp>
+#include <fastdds/dds/subscriber/Subscriber.hpp>
+#include <fastdds/dds/subscriber/DataReader.hpp>
+#include <fastdds/dds/subscriber/DataReaderListener.hpp>
+#include <fastdds/dds/subscriber/SampleInfo.hpp>
+#include <fastdds/dds/subscriber/qos/DataReaderQos.hpp>
 #include <fastdds/dds/topic/Topic.hpp>
 
 #include "samplePubSubTypes.h"
@@ -21,7 +23,7 @@
 using namespace eprosima::fastdds::dds;
 using namespace eprosima::fastrtps::rtps;
 
-//Enums and configuration structuredepth
+//Enums and configuration structure
 enum Reliability_type
 {
     Best_Effort, Reliable
@@ -46,6 +48,8 @@ struct example_configuration
     uint16_t max_samples_per_key = 1;
 };
 
+
+
 int main()
 {
 
@@ -54,8 +58,8 @@ int main()
     example_configuration user_configuration = {};
 
 
-    std::cout << "Welcome to eProsima Fast RTPS Use Case Demonstrator" << std::endl;
-    std::cout << "---------------------------------------------------" << std::endl;
+    std::cout << "Welcome to eProsima Fast DDS Configurability Example" << std::endl;
+    std::cout << "----------------------------------------------------" << std::endl;
     std::cout << "Choose your desired reliability type:" << std::endl;
     std::cout <<
         "1 - Best Effort: Messages are sent with no arrival confirmation. If a sample is lost it cannot be recovered"
@@ -67,10 +71,12 @@ int main()
     {
         std::cin >> userchoice;
         int choice;
-        try{
+        try
+        {
             choice = std::stoi(userchoice);
         }
-        catch (std::invalid_argument&){
+        catch (std::invalid_argument&)
+        {
             std::cout << "Please input a valid argument" << std::endl;
             continue;
         }
@@ -101,10 +107,12 @@ int main()
     {
         std::cin >> userchoice;
         int choice;
-        try{
+        try
+        {
             choice = std::stoi(userchoice);
         }
-        catch (std::invalid_argument&){
+        catch (std::invalid_argument&)
+        {
             std::cout << "Please input a valid argument" << std::endl;
             continue;
         }
@@ -135,10 +143,12 @@ int main()
     {
         std::cin >> userchoice;
         int choice;
-        try{
+        try
+        {
             choice = std::stoi(userchoice);
         }
-        catch (std::invalid_argument&){
+        catch (std::invalid_argument&)
+        {
             std::cout << "Please input a valid argument" << std::endl;
             continue;
         }
@@ -169,10 +179,12 @@ int main()
         {
             std::cin >> userchoice;
             int choice;
-            try{
+            try
+            {
                 choice = std::stoi(userchoice);
             }
-            catch (std::invalid_argument&){
+            catch (std::invalid_argument&)
+            {
                 std::cout << "Please input a valid argument" << std::endl;
                 continue;
             }
@@ -190,10 +202,12 @@ int main()
     {
         std::cin >> userchoice;
         int choice;
-        try{
+        try
+        {
             choice = std::stoi(userchoice);
         }
-        catch (std::invalid_argument&){
+        catch (std::invalid_argument&)
+        {
             std::cout << "Please input a valid argument" << std::endl;
             continue;
         }
@@ -221,10 +235,12 @@ int main()
         {
             std::cin >> userchoice;
             int choice;
-            try{
+            try
+            {
                 choice = std::stoi(userchoice);
             }
-            catch (std::invalid_argument&){
+            catch (std::invalid_argument&)
+            {
                 std::cout << "Please input a valid argument" << std::endl;
                 continue;
             }
@@ -242,10 +258,12 @@ int main()
     {
         std::cin >> userchoice;
         int choice;
-        try{
+        try
+        {
             choice = std::stoi(userchoice);
         }
-        catch (std::invalid_argument&){
+        catch (std::invalid_argument&)
+        {
             std::cout << "Please input a valid argument" << std::endl;
             continue;
         }
@@ -255,122 +273,108 @@ int main()
 
     TypeSupport sampleType(new samplePubSubType());
 
-    //Create Participant
     DomainParticipantQos pqos;
-    pqos.wire_protocol().builtin.discovery_config.leaseDuration = eprosima::fastrtps::c_TimeInfinite;
-    pqos.name("PublisherParticipant");
 
-    DomainParticipant* PubParticipant = DomainParticipantFactory::get_instance()->create_participant(0, pqos);
-    if (PubParticipant == nullptr)
+    pqos.wire_protocol().builtin.discovery_config.leaseDuration = eprosima::fastrtps::c_TimeInfinite;
+    pqos.name("SubscriberParticipant");
+
+    DomainParticipant* SubParticipant = DomainParticipantFactory::get_instance()->create_participant(0, pqos);
+    if (SubParticipant == nullptr)
     {
-        std::cout << " Something went wrong while creating the Publisher Participant..." << std::endl;
+        std::cout << " Something went wrong while creating the Subscriber Participant..." << std::endl;
         return 1;
     }
     //Register the type
-    sampleType.register_type(PubParticipant);
+    sampleType.register_type(SubParticipant);
 
-    //Create the Publisher
-    Publisher* myPub = PubParticipant->create_publisher(PUBLISHER_QOS_DEFAULT);
-    if (myPub == nullptr)
+    //Create Subscriber
+    Subscriber* EarlySubscriber = SubParticipant->create_subscriber(SUBSCRIBER_QOS_DEFAULT);
+    if (EarlySubscriber == nullptr)
     {
-        std::cout << "Something went wrong while creating the Publisher..." << std::endl;
+        std::cout << "Something went wrong while creating the Subscriber..." << std::endl;
         return 1;
     }
 
     //Create Topic
-    Topic* PubTopic = PubParticipant->create_topic("samplePubSubTopic", sampleType.get_type_name(), TOPIC_QOS_DEFAULT);
+    Topic* SubTopic = SubParticipant->create_topic("samplePubSubTopic", sampleType.get_type_name(), TOPIC_QOS_DEFAULT);
 
-    if (PubTopic == nullptr)
+    if (SubTopic == nullptr)
     {
-        std::cout << "Something went wrong while creating the Publisher Topic..." << std::endl;
+        std::cout << "Something went wrong while creating the Subscriber Topic..." << std::endl;
         return 1;
     }
 
-    //Create DataWriter
-    DataWriterQos wqos;
-    wqos.endpoint().history_memory_policy = DYNAMIC_RESERVE_MEMORY_MODE;
+    //Create DataReader
+    DataReaderQos rqos;
+    rqos.endpoint().history_memory_policy = DYNAMIC_RESERVE_MEMORY_MODE;
 
     if (user_configuration.historykind == Keep_Last)
     {
-        wqos.history().kind = KEEP_LAST_HISTORY_QOS;
+        rqos.history().kind = KEEP_LAST_HISTORY_QOS;
     }
     else
     {
-        wqos.history().kind = KEEP_ALL_HISTORY_QOS;
+        rqos.history().kind = KEEP_ALL_HISTORY_QOS;
     }
 
     if (user_configuration.durability == Transient_Local)
     {
-        wqos.durability().kind = TRANSIENT_LOCAL_DURABILITY_QOS;
+        rqos.durability().kind = TRANSIENT_LOCAL_DURABILITY_QOS;
     }
     else
     {
-        wqos.durability().kind = VOLATILE_DURABILITY_QOS;
+        rqos.durability().kind = VOLATILE_DURABILITY_QOS;
     }
 
     if (user_configuration.reliability == Reliable)
     {
-        wqos.reliability().kind = RELIABLE_RELIABILITY_QOS;
+        rqos.reliability().kind = RELIABLE_RELIABILITY_QOS;
     }
     else
     {
-        wqos.reliability().kind = BEST_EFFORT_RELIABILITY_QOS;
+        rqos.reliability().kind = BEST_EFFORT_RELIABILITY_QOS;
     }
 
-    wqos.history().depth = user_configuration.depth;
-    wqos.resource_limits().max_samples = user_configuration.history_size;
-    wqos.resource_limits().max_instances = user_configuration.no_keys;
-    wqos.resource_limits().max_samples_per_instance = user_configuration.no_keys > 1 ?
+    rqos.history().depth = user_configuration.depth;
+    rqos.resource_limits().max_samples = user_configuration.history_size;
+    rqos.resource_limits().max_instances = user_configuration.no_keys;
+    rqos.resource_limits().max_samples_per_instance = user_configuration.no_keys > 1 ?
             user_configuration.max_samples_per_key : user_configuration.history_size;
 
-    DataWriter* myWriter = myPub->create_datawriter(PubTopic, wqos);
-
-    if (myWriter == nullptr)
+    DataReader* EarlyReader = EarlySubscriber->create_datareader(SubTopic, rqos);
+    if (EarlyReader == nullptr)
     {
-        std::cout << "Something went wrong while creating the Publisher DataWriter..." << std::endl;
+        std::cout << "Something went wrong while creating the Subscriber DataReader..." << std::endl;
         return 1;
     }
 
-    int no_keys = 1;
-    sample my_sample;
-
+    std::cout << "Subscriber online" << std::endl;
     std::string c;
     bool condition = true;
-    int no;
+    sample my_sample;
+    SampleInfo sample_info;
     while (condition)
     {
-        std::cout << "Enter a number to send samples (0 - 255), 'q' to exit" << std::endl;
+        std::cout << "Press 'r' to read Messages from the History or 'q' to quit" << std::endl;
         std::cin >> c;
-        if (c == std::string("q"))
+        if ( c == std::string("q"))
         {
             condition = false;
         }
-        else
+        else if ( c == std::string("r"))
         {
-            try{
-                no = std::stoi(c);
-            }
-            catch (std::invalid_argument&){
-                std::cout << "Please input a valid argument" << std::endl;
-                continue;
-            }
-            for (uint8_t j = 0; j < no; j++)
+            while (EarlyReader->read_next_sample(&my_sample, &sample_info) == ReturnCode_t::RETCODE_OK)
             {
-                for (uint8_t i = 0; i < no_keys; i++)
-                {
-                    my_sample.index(j + 1);
-                    my_sample.key_value(i);
-                    myWriter->write(&my_sample);
-                }
+                std::cout << "Sample Received! Index:" << std::to_string(my_sample.index()) << " Key:" <<
+                    std::to_string(my_sample.key_value()) << std::endl;
             }
-            std::cout << "Sent " << std::to_string(no) << " samples." << std::endl;
         }
     }
 
-    myPub->delete_datawriter(myWriter);
-    PubParticipant->delete_publisher(myPub);
-    PubParticipant->delete_topic(PubTopic);
-    DomainParticipantFactory::get_instance()->delete_participant(PubParticipant);
+    EarlySubscriber->delete_datareader(EarlyReader);
+    SubParticipant->delete_subscriber(EarlySubscriber);
+    SubParticipant->delete_topic(SubTopic);
+    DomainParticipantFactory::get_instance()->delete_participant(SubParticipant);
 
     return 0;
 }

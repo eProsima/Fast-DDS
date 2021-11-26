@@ -11,11 +11,9 @@
 
 #include <fastdds/dds/domain/DomainParticipant.hpp>
 #include <fastdds/dds/domain/DomainParticipantFactory.hpp>
-#include <fastdds/dds/subscriber/Subscriber.hpp>
-#include <fastdds/dds/subscriber/DataReader.hpp>
-#include <fastdds/dds/subscriber/DataReaderListener.hpp>
-#include <fastdds/dds/subscriber/SampleInfo.hpp>
-#include <fastdds/dds/subscriber/qos/DataReaderQos.hpp>
+#include <fastdds/dds/publisher/Publisher.hpp>
+#include <fastdds/dds/publisher/DataWriter.hpp>
+#include <fastdds/dds/publisher/DataWriterListener.hpp>
 #include <fastdds/dds/topic/Topic.hpp>
 
 #include "samplePubSubTypes.h"
@@ -23,7 +21,7 @@
 using namespace eprosima::fastdds::dds;
 using namespace eprosima::fastrtps::rtps;
 
-//Enums and configuration structure
+//Enums and configuration structuredepth
 enum Reliability_type
 {
     Best_Effort, Reliable
@@ -48,8 +46,6 @@ struct example_configuration
     uint16_t max_samples_per_key = 1;
 };
 
-
-
 int main()
 {
 
@@ -58,8 +54,8 @@ int main()
     example_configuration user_configuration = {};
 
 
-    std::cout << "Welcome to eProsima Fast RTPS Use Case Demonstrator" << std::endl;
-    std::cout << "---------------------------------------------------" << std::endl;
+    std::cout << "Welcome to eProsima Fast DDS Configurability Example" << std::endl;
+    std::cout << "----------------------------------------------------" << std::endl;
     std::cout << "Choose your desired reliability type:" << std::endl;
     std::cout <<
         "1 - Best Effort: Messages are sent with no arrival confirmation. If a sample is lost it cannot be recovered"
@@ -273,108 +269,124 @@ int main()
 
     TypeSupport sampleType(new samplePubSubType());
 
+    //Create Participant
     DomainParticipantQos pqos;
-
     pqos.wire_protocol().builtin.discovery_config.leaseDuration = eprosima::fastrtps::c_TimeInfinite;
-    pqos.name("SubscriberParticipant");
+    pqos.name("PublisherParticipant");
 
-    DomainParticipant* SubParticipant = DomainParticipantFactory::get_instance()->create_participant(0, pqos);
-    if (SubParticipant == nullptr)
+    DomainParticipant* PubParticipant = DomainParticipantFactory::get_instance()->create_participant(0, pqos);
+    if (PubParticipant == nullptr)
     {
-        std::cout << " Something went wrong while creating the Subscriber Participant..." << std::endl;
+        std::cout << " Something went wrong while creating the Publisher Participant..." << std::endl;
         return 1;
     }
     //Register the type
-    sampleType.register_type(SubParticipant);
+    sampleType.register_type(PubParticipant);
 
-    //Create Subscriber
-    Subscriber* EarlySubscriber = SubParticipant->create_subscriber(SUBSCRIBER_QOS_DEFAULT);
-    if (EarlySubscriber == nullptr)
+    //Create the Publisher
+    Publisher* myPub = PubParticipant->create_publisher(PUBLISHER_QOS_DEFAULT);
+    if (myPub == nullptr)
     {
-        std::cout << "Something went wrong while creating the Subscriber..." << std::endl;
+        std::cout << "Something went wrong while creating the Publisher..." << std::endl;
         return 1;
     }
 
     //Create Topic
-    Topic* SubTopic = SubParticipant->create_topic("samplePubSubTopic", sampleType.get_type_name(), TOPIC_QOS_DEFAULT);
+    Topic* PubTopic = PubParticipant->create_topic("samplePubSubTopic", sampleType.get_type_name(), TOPIC_QOS_DEFAULT);
 
-    if (SubTopic == nullptr)
+    if (PubTopic == nullptr)
     {
-        std::cout << "Something went wrong while creating the Subscriber Topic..." << std::endl;
+        std::cout << "Something went wrong while creating the Publisher Topic..." << std::endl;
         return 1;
     }
 
-    //Create DataReader
-    DataReaderQos rqos;
-    rqos.endpoint().history_memory_policy = DYNAMIC_RESERVE_MEMORY_MODE;
+    //Create DataWriter
+    DataWriterQos wqos;
+    wqos.endpoint().history_memory_policy = DYNAMIC_RESERVE_MEMORY_MODE;
 
     if (user_configuration.historykind == Keep_Last)
     {
-        rqos.history().kind = KEEP_LAST_HISTORY_QOS;
+        wqos.history().kind = KEEP_LAST_HISTORY_QOS;
     }
     else
     {
-        rqos.history().kind = KEEP_ALL_HISTORY_QOS;
+        wqos.history().kind = KEEP_ALL_HISTORY_QOS;
     }
 
     if (user_configuration.durability == Transient_Local)
     {
-        rqos.durability().kind = TRANSIENT_LOCAL_DURABILITY_QOS;
+        wqos.durability().kind = TRANSIENT_LOCAL_DURABILITY_QOS;
     }
     else
     {
-        rqos.durability().kind = VOLATILE_DURABILITY_QOS;
+        wqos.durability().kind = VOLATILE_DURABILITY_QOS;
     }
 
     if (user_configuration.reliability == Reliable)
     {
-        rqos.reliability().kind = RELIABLE_RELIABILITY_QOS;
+        wqos.reliability().kind = RELIABLE_RELIABILITY_QOS;
     }
     else
     {
-        rqos.reliability().kind = BEST_EFFORT_RELIABILITY_QOS;
+        wqos.reliability().kind = BEST_EFFORT_RELIABILITY_QOS;
     }
 
-    rqos.history().depth = user_configuration.depth;
-    rqos.resource_limits().max_samples = user_configuration.history_size;
-    rqos.resource_limits().max_instances = user_configuration.no_keys;
-    rqos.resource_limits().max_samples_per_instance = user_configuration.no_keys > 1 ?
+    wqos.history().depth = user_configuration.depth;
+    wqos.resource_limits().max_samples = user_configuration.history_size;
+    wqos.resource_limits().max_instances = user_configuration.no_keys;
+    wqos.resource_limits().max_samples_per_instance = user_configuration.no_keys > 1 ?
             user_configuration.max_samples_per_key : user_configuration.history_size;
 
-    DataReader* EarlyReader = EarlySubscriber->create_datareader(SubTopic, rqos);
-    if (EarlyReader == nullptr)
+    DataWriter* myWriter = myPub->create_datawriter(PubTopic, wqos);
+
+    if (myWriter == nullptr)
     {
-        std::cout << "Something went wrong while creating the Subscriber DataReader..." << std::endl;
+        std::cout << "Something went wrong while creating the Publisher DataWriter..." << std::endl;
         return 1;
     }
 
-    std::cout << "Subscriber online" << std::endl;
+    int no_keys = 1;
+    sample my_sample;
+
     std::string c;
     bool condition = true;
-    sample my_sample;
-    SampleInfo sample_info;
+    int no;
     while (condition)
     {
-        std::cout << "Press 'r' to read Messages from the History or 'q' to quit" << std::endl;
+        std::cout << "Enter a number to send samples (0 - 255), 'q' to exit" << std::endl;
         std::cin >> c;
-        if ( c == std::string("q"))
+        if (c == std::string("q"))
         {
             condition = false;
         }
-        else if ( c == std::string("r"))
+        else
         {
-            while (EarlyReader->read_next_sample(&my_sample, &sample_info) == ReturnCode_t::RETCODE_OK)
+            try
             {
-                std::cout << "Sample Received! Index:" << std::to_string(my_sample.index()) << " Key:" <<
-                    std::to_string(my_sample.key_value()) << std::endl;
+                no = std::stoi(c);
             }
+            catch (std::invalid_argument&)
+            {
+                std::cout << "Please input a valid argument" << std::endl;
+                continue;
+            }
+            for (uint8_t j = 0; j < no; j++)
+            {
+                for (uint8_t i = 0; i < no_keys; i++)
+                {
+                    my_sample.index(j + 1);
+                    my_sample.key_value(i);
+                    myWriter->write(&my_sample);
+                }
+            }
+            std::cout << "Sent " << std::to_string(no) << " samples." << std::endl;
         }
     }
 
-    EarlySubscriber->delete_datareader(EarlyReader);
-    SubParticipant->delete_subscriber(EarlySubscriber);
-    SubParticipant->delete_topic(SubTopic);
-    DomainParticipantFactory::get_instance()->delete_participant(SubParticipant);
+    myPub->delete_datawriter(myWriter);
+    PubParticipant->delete_publisher(myPub);
+    PubParticipant->delete_topic(PubTopic);
+    DomainParticipantFactory::get_instance()->delete_participant(PubParticipant);
 
     return 0;
 }

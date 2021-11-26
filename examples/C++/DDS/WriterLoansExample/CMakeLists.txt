@@ -50,4 +50,4 @@ target_compile_definitions(DDSWriterLoansExample PRIVATE
     )
 target_link_libraries(DDSWriterLoansExample fastrtps fastcdr)
 install(TARGETS DDSWriterLoansExample
-    RUNTIME DESTINATION examples/C++/DDS/HelloWorldExample/${BIN_INSTALL_DIR})
+    RUNTIME DESTINATION examples/C++/DDS/WriterLoansExample/${BIN_INSTALL_DIR})
