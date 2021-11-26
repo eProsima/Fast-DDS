@@ -1,5 +1,5 @@
 --------------------------------------------------------
-- ConfigurabilityPublisher Publisher-Subscriber for eProsima Fast DDS -
+- Configurability Publisher-Subscriber for eProsima Fast DDS -
 --------------------------------------------------------
 
 1 - Application description
