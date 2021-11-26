@@ -67,10 +67,12 @@ int main()
     {
         std::cin >> userchoice;
         int choice;
-        try{
+        try
+        {
             choice = std::stoi(userchoice);
         }
-        catch (std::invalid_argument&){
+        catch (std::invalid_argument&)
+        {
             std::cout << "Please input a valid argument" << std::endl;
             continue;
         }
@@ -101,10 +103,12 @@ int main()
     {
         std::cin >> userchoice;
         int choice;
-        try{
+        try
+        {
             choice = std::stoi(userchoice);
         }
-        catch (std::invalid_argument&){
+        catch (std::invalid_argument&)
+        {
             std::cout << "Please input a valid argument" << std::endl;
             continue;
         }
@@ -135,10 +139,12 @@ int main()
     {
         std::cin >> userchoice;
         int choice;
-        try{
+        try
+        {
             choice = std::stoi(userchoice);
         }
-        catch (std::invalid_argument&){
+        catch (std::invalid_argument&)
+        {
             std::cout << "Please input a valid argument" << std::endl;
             continue;
         }
@@ -169,10 +175,12 @@ int main()
         {
             std::cin >> userchoice;
             int choice;
-            try{
+            try
+            {
                 choice = std::stoi(userchoice);
             }
-            catch (std::invalid_argument&){
+            catch (std::invalid_argument&)
+            {
                 std::cout << "Please input a valid argument" << std::endl;
                 continue;
             }
@@ -190,10 +198,12 @@ int main()
     {
         std::cin >> userchoice;
         int choice;
-        try{
+        try
+        {
             choice = std::stoi(userchoice);
         }
-        catch (std::invalid_argument&){
+        catch (std::invalid_argument&)
+        {
             std::cout << "Please input a valid argument" << std::endl;
             continue;
         }
@@ -221,10 +231,12 @@ int main()
         {
             std::cin >> userchoice;
             int choice;
-            try{
+            try
+            {
                 choice = std::stoi(userchoice);
             }
-            catch (std::invalid_argument&){
+            catch (std::invalid_argument&)
+            {
                 std::cout << "Please input a valid argument" << std::endl;
                 continue;
             }
@@ -242,10 +254,12 @@ int main()
     {
         std::cin >> userchoice;
         int choice;
-        try{
+        try
+        {
             choice = std::stoi(userchoice);
         }
-        catch (std::invalid_argument&){
+        catch (std::invalid_argument&)
+        {
             std::cout << "Please input a valid argument" << std::endl;
             continue;
         }
@@ -347,10 +361,12 @@ int main()
         }
         else
         {
-            try{
+            try
+            {
                 no = std::stoi(c);
             }
-            catch (std::invalid_argument&){
+            catch (std::invalid_argument&)
+            {
                 std::cout << "Please input a valid argument" << std::endl;
                 continue;
             }
