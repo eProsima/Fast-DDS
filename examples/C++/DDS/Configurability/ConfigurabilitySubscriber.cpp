@@ -58,8 +58,8 @@ int main()
     example_configuration user_configuration = {};
 
 
-    std::cout << "Welcome to eProsima Fast RTPS Use Case Demonstrator" << std::endl;
-    std::cout << "---------------------------------------------------" << std::endl;
+    std::cout << "Welcome to eProsima Fast DDS Configurability Example" << std::endl;
+    std::cout << "----------------------------------------------------" << std::endl;
     std::cout << "Choose your desired reliability type:" << std::endl;
     std::cout <<
         "1 - Best Effort: Messages are sent with no arrival confirmation. If a sample is lost it cannot be recovered"
