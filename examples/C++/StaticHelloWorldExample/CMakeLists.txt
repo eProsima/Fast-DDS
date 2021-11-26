@@ -62,3 +62,5 @@ install(TARGETS StaticHelloWorldExample
     RUNTIME DESTINATION examples/C++/HelloWorldExample/${BIN_INSTALL_DIR})
 install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/HelloWorldPublisher.xml
     DESTINATION examples/C++/HelloWorldExample/${BIN_INSTALL_DIR})
+install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/HelloWorldSubscriber.xml
+    DESTINATION examples/C++/HelloWorldExample/${BIN_INSTALL_DIR})
