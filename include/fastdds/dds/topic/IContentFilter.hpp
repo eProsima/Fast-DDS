@@ -23,6 +23,7 @@
 
 #include <fastdds/dds/core/LoanableTypedCollection.hpp>
 
+#include <fastdds/rtps/common/Guid.h>
 #include <fastdds/rtps/common/SampleIdentity.h>
 #include <fastdds/rtps/common/SerializedPayload.h>
 
@@ -49,7 +50,8 @@ struct IContentFilter
 
     virtual bool evaluate(
             const SerializedPayload& payload,
-            const FilterSampleInfo& sample_info) const = 0;
+            const FilterSampleInfo& sample_info,
+            const fastrtps::rtps::GUID_t& reader_guid) const = 0;
 };
 
 } // namespace dds
