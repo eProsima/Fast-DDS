@@ -789,15 +789,14 @@ bool StatefulReader::change_removed_by_history(
 {
     std::lock_guard<RecursiveTimedMutex> guard(mp_mutex);
 
-    if (is_alive_)
+    if (is_alive_ && a_change->is_fully_assembled())
     {
         if (wp != nullptr || matched_writer_lookup(a_change->writerGUID, &wp))
         {
             wp->change_removed_from_history(a_change->sequenceNumber);
         }
 
-        if (a_change->is_fully_assembled() &&
-                !a_change->isRead &&
+        if (!a_change->isRead &&
                 get_last_notified(a_change->writerGUID) >= a_change->sequenceNumber)
         {
             if (0 < total_unread_)
