@@ -503,10 +503,13 @@ ContentFilteredTopic* DomainParticipantImpl::create_contentfilteredtopic(
     assert(nullptr != topic_impl);
     const TypeSupport& type = topic_impl->get_type();
     const IContentFilterFactory::TypeDescriptor* type_descriptor = type->get_desciptor();
-    LoanableSequence<const char*> filter_parameters(expression_parameters.size());
-    for (size_t i = 0; i < expression_parameters.size(); ++i)
+    LoanableSequence<const char*>::size_type n_params;
+    n_params = static_cast<LoanableSequence<const char*>::size_type>(expression_parameters.size());
+    LoanableSequence<const char*> filter_parameters(n_params);
+    while(n_params > 0)
     {
-        filter_parameters[i] = expression_parameters[i].c_str();
+        n_params--;
+        filter_parameters[n_params] = expression_parameters[n_params].c_str();
     }
 
     // Tell filter factory to compile the expression
