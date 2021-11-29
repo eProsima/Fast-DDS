@@ -39,7 +39,7 @@ ContentFilteredTopic::ContentFilteredTopic(
 
     impl_ = new ContentFilteredTopicImpl();
     impl_->related_topic = related_topic;
-    set_expression(filter_expression, expression_parameters);
+    set_filter_expression(filter_expression, expression_parameters);
 }
 
 ContentFilteredTopic::~ContentFilteredTopic()
@@ -54,7 +54,7 @@ Topic* ContentFilteredTopic::get_related_topic() const
     return impl_->related_topic;
 }
 
-const std::string& ContentFilteredTopic::get_expression() const
+const std::string& ContentFilteredTopic::get_filter_expression() const
 {
     return impl_->expression;
 }
@@ -76,7 +76,7 @@ ReturnCode_t ContentFilteredTopic::set_expression_parameters(
     return ReturnCode_t::RETCODE_OK;
 }
 
-ReturnCode_t ContentFilteredTopic::set_expression(
+ReturnCode_t ContentFilteredTopic::set_filter_expression(
         const std::string& filter_expression,
         const std::vector<std::string>& expression_parameters)
 {

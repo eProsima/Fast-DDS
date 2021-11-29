@@ -64,7 +64,7 @@ public:
      */
     RTPS_DllAPI Topic* get_related_topic() const;
 
-    RTPS_DllAPI const std::string& get_expression() const;
+    RTPS_DllAPI const std::string& get_filter_expression() const;
 
     RTPS_DllAPI ReturnCode_t get_expression_parameters(
             std::vector<std::string>& expression_parameters) const;
@@ -72,7 +72,7 @@ public:
     RTPS_DllAPI ReturnCode_t set_expression_parameters(
             const std::vector<std::string>& expression_parameters);
 
-    RTPS_DllAPI ReturnCode_t set_expression(
+    RTPS_DllAPI ReturnCode_t set_filter_expression(
             const std::string& filter_expression,
             const std::vector<std::string>& expression_parameters);
 
