@@ -23,7 +23,7 @@
 #include <fastdds/dds/topic/TopicDescription.hpp>
 #include <fastdds/dds/topic/Topic.hpp>
 
-#define FASTDDS_SQLFILTER_NAME "DDSSQL"
+#define FASTDDS_SQLFILTER_NAME eprosima::fastdds::dds::sqlfilter_name
 
 using eprosima::fastrtps::types::ReturnCode_t;
 
@@ -34,6 +34,8 @@ namespace dds {
 class DomainParticipant;
 class DomainParticipantImpl;
 class ContentFilteredTopicImpl;
+
+constexpr const char* const sqlfilter_name = "DDSSQL";
 
 /**
  * Specialization of TopicDescription that allows for content-based subscriptions
