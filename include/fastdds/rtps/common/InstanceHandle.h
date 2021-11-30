@@ -33,6 +33,18 @@ using KeyHash_t = std::array<octet, 16>;
 
 struct RTPS_DllAPI InstanceHandleValue_t
 {
+    /**
+     * Write access indexing operator.
+     *
+     * Provides a reference to the byte value at position @c i.
+     *
+     * @param [in] i index of the byte to return.
+     *
+     * @post Method has_been_set() returns @c true.
+     *
+     * @remark Do not use this method to check if this value has been set.
+     *         Use method has_been_set() instead.
+     */
     octet& operator [] (
             size_t i) noexcept
     {
@@ -40,34 +52,71 @@ struct RTPS_DllAPI InstanceHandleValue_t
         return value_[i];
     }
 
+    /**
+     * Read access indexing operator.
+     *
+     * Provides the byte value at position @c i.
+     *
+     * @param [in] i index of the byte to return.
+     *
+     * @remark Do not use this method to check if this value has been set.
+     *         Use method has_been_set() instead.
+     */
     octet operator [] (
             size_t i) const noexcept
     {
         return value_[i];
     }
 
+    /**
+     * Write access pointer cast operator.
+     *
+     * Provides a pointer to the start of the raw data.
+     *
+     * @post Method has_been_set() returns @c true.
+     *
+     * @remark Do not use this method to check if this value has been set.
+     *         Use method has_been_set() instead.
+     */
     operator octet* () noexcept
     {
         has_been_set_ = true;
         return value_.data();
     }
 
+    /**
+     * Read access pointer cast operator.
+     *
+     * Provides a pointer to the start of the raw data.
+     *
+     * @remark Do not use this method to check if this value has been set.
+     *         Use method has_been_set() instead.
+     */
     operator const octet* () const noexcept
     {
         return value_.data();
     }
 
+    /**
+     * Return whether any of the write access operators of this value has been used.
+     */
     bool has_been_set() const noexcept
     {
         return has_been_set_;
     }
 
+    /**
+     * Equality comparison operator.
+     */
     bool operator == (
             const InstanceHandleValue_t& other) const noexcept
     {
         return (has_been_set_ == other.has_been_set_) && (value_ == other.value_);
     }
 
+    /**
+     * Less than comparisor operator.
+     */
     bool operator < (
             const InstanceHandleValue_t& other) const noexcept
     {
