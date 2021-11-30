@@ -82,7 +82,7 @@ struct RTPS_DllAPI InstanceHandleValue_t
 private:
 
     //! Hash value
-    KeyHash_t value_ { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    KeyHash_t value_ {};
     //! Flag indicating if value_ has been modified since the creation of this object
     bool has_been_set_ = false;
 };
