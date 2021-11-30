@@ -2105,13 +2105,17 @@ TEST_F(DataReaderTests, check_key_history_wholesomeness_on_unmatch)
                 SampleInfoSeq infos;
 
                 res = data_reader_->take_instance(samples, infos, LENGTH_UNLIMITED, handle_ok_);
+
+                // If the DataWriter is destroyed only the non-notified samples must be removed
+                // this operation MUST succeed
+                ASSERT_EQ(res, ReturnCode_t::RETCODE_OK);
+
+                data_reader_->return_loan(samples, infos);
             });
 
     // Check if the thread hangs
     // wait for termination
     std::this_thread::sleep_for(std::chrono::milliseconds(500));
-    // check expected result, if query thread hangs res = ReturnCode_t::RETCODE_OK
-    ASSERT_NE(res, ReturnCode_t::RETCODE_OK);
     query.join();
 }
 
