@@ -1,6 +1,7 @@
 Forthcoming
 -----------
 
+* Allow zero-valued InstanceHandle_t (ABI break)
 * 
 
 Version 2.4.0

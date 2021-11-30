@@ -151,7 +151,7 @@ protected:
     {
         FooType data;
 
-        data.index(1);
+        data.index(0);
         type_.get_key(&data, &handle_ok_);
 
         data.index(2);
@@ -512,7 +512,7 @@ protected:
 
         // Send data
         DataType data;
-        data.index(1);
+        data.index(0);
         EXPECT_EQ(ReturnCode_t::RETCODE_OK, data_writer_->write(&data, HANDLE_NIL));
 
         // Wait for data to arrive and check OK should be returned
@@ -883,7 +883,7 @@ TEST_F(DataReaderTests, return_loan)
     EXPECT_EQ(ok_code, reader2->enable());
 
     FooType data;
-    data.index(1);
+    data.index(0);
 
     // Send a bunch of samples
     for (int32_t i = 0; i < num_samples; ++i)
@@ -1030,7 +1030,7 @@ TEST_F(DataReaderTests, resource_limits)
     create_entities(nullptr, reader_qos, SUBSCRIBER_QOS_DEFAULT, writer_qos);
 
     FooType data;
-    data.index(1);
+    data.index(0);
 
     // Send a bunch of samples
     for (int32_t i = 0; i < num_samples; ++i)
@@ -1232,7 +1232,7 @@ TEST_F(DataReaderTests, read_unread)
     create_entities(nullptr, reader_qos, SUBSCRIBER_QOS_DEFAULT, writer_qos);
 
     FooType data;
-    data.index(1);
+    data.index(0);
     data.message()[1] = '\0';
 
     // Send a bunch of samples
@@ -1527,7 +1527,7 @@ TEST_F(DataReaderTests, Deserialization_errors)
     create_entities(nullptr, reader_qos, SUBSCRIBER_QOS_DEFAULT, writer_qos);
 
     FooType data;
-    data.index(1);
+    data.index(0);
     data.message()[1] = '\0';
 
     // Check deserialization errors without loans
@@ -1780,7 +1780,7 @@ TEST_F(DataReaderTests, check_key_history_wholesomeness_on_unmatch)
     FooType sample;
     std::array<char, 256> msg = {"checking robustness"};
 
-    sample.index(1);
+    sample.index(0);
     sample.message(msg);
 
     ASSERT_TRUE(data_writer_->write(&sample));
@@ -2053,7 +2053,7 @@ TEST_F(DataReaderTests, read_samples_with_future_changes)
     std::this_thread::sleep_for(std::chrono::milliseconds(100)); // Wait discovery
 
     FooType data;
-    data.index(1);
+    data.index(0);
     data.message()[0] = '\0';
     data.message()[1] = '\0';
 
