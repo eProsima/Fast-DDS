@@ -244,9 +244,6 @@ RTPSParticipantImpl::RTPSParticipantImpl(
     if (m_att.builtin.metatrafficMulticastLocatorList.empty() && m_att.builtin.metatrafficUnicastLocatorList.empty())
     {
         get_default_metatraffic_locators(metatraffic_multicast_port, metatraffic_unicast_port);
-        std::cout << m_att.getName() << " created with NO default metatraffic Locator List, adding Locators:\n\t"
-                                                    << m_att.builtin.metatrafficMulticastLocatorList << "\n\t"
-                                                    << m_att.builtin.metatrafficUnicastLocatorList << std::endl;
     }
     else
     {
@@ -301,9 +298,7 @@ RTPSParticipantImpl::RTPSParticipantImpl(
         /* INSERT DEFAULT UNICAST LOCATORS FOR THE PARTICIPANT */
         get_default_unicast_locators();
         logInfo(RTPS_PARTICIPANT, m_att.getName() << " Created with NO default Unicast Locator List, adding Locators:"
-                                                    << m_att.defaultUnicastLocatorList);
-        std::cout << m_att.getName() << " created with NO default Unicast Locator List, adding Locators:"
-                                                    << m_att.defaultUnicastLocatorList << std::endl;
+                                                  << m_att.defaultUnicastLocatorList);
     }
     else
     {
