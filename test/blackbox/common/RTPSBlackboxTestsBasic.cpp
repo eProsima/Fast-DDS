@@ -569,7 +569,7 @@ TEST_P(RTPS, RTPSAsReliableTransientLocalTwoWritersConsecutives)
     writer.destroy();
 }
 
-TEST_P(RTPS, RTPSNetworkInterfaceChangesAtRunTime)
+TEST(RTPS, RTPSNetworkInterfaceChangesAtRunTime)
 {
     RTPSWithRegistrationReader<HelloWorldType> reader(TEST_TOPIC_NAME);
     RTPSWithRegistrationWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
