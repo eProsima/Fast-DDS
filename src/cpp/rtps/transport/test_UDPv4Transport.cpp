@@ -18,6 +18,7 @@
 #include <functional>
 
 #include <asio.hpp>
+#include <fastrtps/utils/IPLocator.h>
 
 using namespace std;
 
@@ -221,7 +222,11 @@ bool test_UDPv4Transport::send(
         bool only_multicast_purpose,
         const std::chrono::microseconds& timeout)
 {
-    if (packet_should_drop(send_buffer, send_buffer_size))
+    if (packet_should_drop(send_buffer, send_buffer_size) ||
+            // If there are no interfaces (simulate_no_interfaces), only multicast and localhost traffic is sent
+            (simulate_no_interfaces &&
+            !fastrtps::rtps::IPLocator::isMulticast(remote_locator) &&
+            !fastrtps::rtps::IPLocator::isLocal(remote_locator)))
     {
         statistics_info_.set_statistics_message_data(remote_locator, send_buffer, send_buffer_size);
         log_drop(send_buffer, send_buffer_size);
