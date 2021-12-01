@@ -107,6 +107,12 @@ struct RTPS_DllAPI InstanceHandleValue_t
         return has_been_set_;
     }
 
+    void clear() noexcept
+    {
+        value_.fill(0);
+        has_been_set_ = false;
+    }
+
     /**
      * Equality comparison operator.
      */
@@ -185,6 +191,11 @@ struct RTPS_DllAPI InstanceHandle_t
     bool isDefined() const noexcept
     {
         return value.has_been_set();
+    }
+
+    void clear() noexcept
+    {
+        value.clear();
     }
 
     // TODO Review this conversion once InstanceHandle_t is implemented as DDS standard defines

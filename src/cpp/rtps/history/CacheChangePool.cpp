@@ -97,7 +97,7 @@ void CacheChangePool::return_cache_to_pool(
     ch->sequenceNumber.high = 0;
     ch->sequenceNumber.low = 0;
     ch->writerGUID = c_Guid_Unknown;
-    memset(ch->instanceHandle.value, 0, 16);
+    ch->instanceHandle.clear();
     ch->isRead = 0;
     ch->sourceTimestamp.seconds(0);
     ch->sourceTimestamp.fraction(0);
