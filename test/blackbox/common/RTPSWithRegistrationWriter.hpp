@@ -232,19 +232,26 @@ public:
         cv_.notify_one();
     }
 
-    void wait_discovery()
+    void wait_discovery(
+            std::chrono::seconds timeout = std::chrono::seconds::zero())
     {
         std::unique_lock<std::mutex> lock(mutex_);
 
-        if (matched_ == 0)
+        if (matched_ == 0 && timeout == std::chrono::seconds::zero())
         {
             cv_.wait(lock, [this]() -> bool
                     {
                         return matched_ != 0;
                     });
+            ASSERT_NE(matched_, 0u);
         }
-
-        ASSERT_NE(matched_, 0u);
+        else
+        {
+            cv_.wait_for(lock, timeout, [&]()
+                    {
+                        return matched_ != 0;
+                    });
+        }
     }
 
     void wait_undiscovery()
@@ -398,6 +405,16 @@ public:
     {
         participant_attr_.userTransports.push_back(userTransportDescriptor);
         return *this;
+    }
+
+    bool is_matched() const
+    {
+        return matched_ > 0;
+    }
+
+    void participant_update_attributes()
+    {
+        participant_->update_attributes(participant_attr_);
     }
 
 private:

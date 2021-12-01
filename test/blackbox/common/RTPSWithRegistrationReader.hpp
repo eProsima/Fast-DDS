@@ -296,19 +296,26 @@ public:
         return last_seq_;
     }
 
-    void wait_discovery()
+    void wait_discovery(
+            std::chrono::seconds timeout = std::chrono::seconds::zero())
     {
         std::unique_lock<std::mutex> lock(mutexDiscovery_);
 
-        if (matched_ == 0)
+        if (matched_ == 0 && timeout == std::chrono::seconds::zero())
         {
             cvDiscovery_.wait(lock, [this]() -> bool
                     {
                         return matched_ != 0;
                     });
+            EXPECT_NE(matched_, 0u);
         }
-
-        EXPECT_NE(matched_, 0u);
+        else
+        {
+            cv_.wait_for(lock, timeout, [&]()
+                    {
+                        return matched_ != 0;
+                    });
+        }
     }
 
     void wait_undiscovery()
@@ -421,6 +428,11 @@ public:
         reader_attr_.endpoint.persistence_guid.guidPrefix = guidPrefix;
         reader_attr_.endpoint.persistence_guid.entityId = entityId;
         return *this;
+    }
+
+    bool is_matched() const
+    {
+        return matched_ > 0;
     }
 
 #if HAVE_SQLITE3
