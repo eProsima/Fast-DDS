@@ -357,6 +357,7 @@ ReturnCode_t DomainParticipantImpl::set_qos(
         }
         else
         {
+            // Trigger update of network interfaces by calling update_attributes
             rtps_participant_->update_attributes(rtps_participant_->getRTPSParticipantAttributes());
         }
     }

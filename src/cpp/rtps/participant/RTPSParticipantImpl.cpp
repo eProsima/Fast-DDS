@@ -1152,7 +1152,7 @@ bool RTPSParticipantImpl::registerReader(
 void RTPSParticipantImpl::update_attributes(
         const RTPSParticipantAttributes& patt)
 {
-    // Check if new interfaces has been added
+    // Check if new interfaces have been added
     if (patt.builtin.metatrafficMulticastLocatorList.empty() && patt.builtin.metatrafficUnicastLocatorList.empty())
     {
         LocatorList_t metatraffic_multicast_locator_list = m_att.builtin.metatrafficMulticastLocatorList;
