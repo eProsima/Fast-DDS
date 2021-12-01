@@ -153,6 +153,28 @@ void test_UDPv4Transport::get_ips(
     }
 }
 
+LocatorList test_UDPv4Transport::NormalizeLocator(
+        const Locator& locator)
+{
+    if (!simulate_no_interfaces)
+    {
+        return UDPv4Transport::NormalizeLocator(locator);
+    }
+
+    LocatorList list;
+    if (fastrtps::rtps::IPLocator::isAny(locator))
+    {
+        Locator newloc(locator);
+        fastrtps::rtps::IPLocator::setIPv4(newloc, "127.0.0.1");
+        list.push_back(newloc);
+    }
+    else
+    {
+        list.push_back(locator);
+    }
+    return list;
+}
+
 bool test_UDPv4Transport::send(
         const octet* send_buffer,
         uint32_t send_buffer_size,
