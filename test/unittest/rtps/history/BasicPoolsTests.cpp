@@ -156,11 +156,11 @@ TEST_P(BasicPoolsTest, change_reset_on_release)
     ASSERT_EQ(ch->writerGUID, c_Guid_Unknown);
     ASSERT_EQ(ch->serializedPayload.length, 0U);
     ASSERT_EQ(ch->serializedPayload.pos, 0U);
+    ASSERT_FALSE(ch->instanceHandle.isDefined());
     for (uint8_t i = 0; i < 16; ++i)
     {
         ASSERT_EQ(ch->instanceHandle.value[i], 0U);
     }
-
     ASSERT_FALSE(ch->isRead);
     ASSERT_EQ(ch->sourceTimestamp.seconds(), 0);
     ASSERT_EQ(ch->sourceTimestamp.fraction(), 0U);
@@ -176,6 +176,7 @@ TEST_P(BasicPoolsTest, change_reset_on_release)
     {
         ch->instanceHandle.value[i] = 1;
     }
+    ASSERT_TRUE(ch->instanceHandle.isDefined());
     ch->isRead = true;
     ch->sourceTimestamp.seconds(1);
     ch->sourceTimestamp.fraction(1);
@@ -191,11 +192,11 @@ TEST_P(BasicPoolsTest, change_reset_on_release)
         ASSERT_EQ(ch->writerGUID, c_Guid_Unknown);
         ASSERT_EQ(ch->serializedPayload.length, 0U);
         ASSERT_EQ(ch->serializedPayload.pos, 0U);
+        ASSERT_FALSE(ch->instanceHandle.isDefined());
         for (uint8_t i = 0; i < 16; ++i)
         {
             ASSERT_EQ(ch->instanceHandle.value[i], 0U);
         }
-
         ASSERT_FALSE(ch->isRead);
         ASSERT_EQ(ch->sourceTimestamp.seconds(), 0);
         ASSERT_EQ(ch->sourceTimestamp.fraction(), 0U);
