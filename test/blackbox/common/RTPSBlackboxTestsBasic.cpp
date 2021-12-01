@@ -12,6 +12,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#include <chrono>
+#include <thread>
+
+#include <gtest/gtest.h>
+
 #include "BlackboxTests.hpp"
 
 #include "RTPSAsSocketReader.hpp"
@@ -21,10 +26,6 @@
 #include <fastrtps/xmlparser/XMLProfileManager.h>
 #include <fastrtps/transport/test_UDPv4TransportDescriptor.h>
 #include <rtps/transport/test_UDPv4Transport.h>
-
-#include <gtest/gtest.h>
-
-#include <thread>
 
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
@@ -555,6 +556,52 @@ TEST_P(RTPS, RTPSAsReliableTransientLocalTwoWritersConsecutives)
     reader.wait_discovery();
 
     complete_data = default_helloworld_data_generator();
+
+    reader.expected_data(complete_data, true);
+    reader.startReception();
+
+    writer.send(complete_data);
+    EXPECT_TRUE(complete_data.empty());
+
+    reader.block_for_all();
+
+    reader.destroy();
+    writer.destroy();
+}
+
+TEST_P(RTPS, RTPSNetworkInterfaceChangesAtRunTime)
+{
+    RTPSWithRegistrationReader<HelloWorldType> reader(TEST_TOPIC_NAME);
+    RTPSWithRegistrationWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
+
+    // reader is initialized with all the network interfaces
+    reader.init();
+    ASSERT_TRUE(reader.isInitialized());
+
+    // writer: launch without interfaces
+    test_UDPv4Transport::simulate_no_interfaces = true;
+    auto test_transport = std::make_shared<test_UDPv4TransportDescriptor>();
+    writer.disable_builtin_transport().add_user_transport_to_pparams(test_transport).init();
+    ASSERT_TRUE(writer.isInitialized());
+
+    // no discovery
+    writer.wait_discovery(std::chrono::seconds(3));
+    reader.wait_discovery(std::chrono::seconds(3));
+
+    EXPECT_FALSE(writer.is_matched());
+    EXPECT_FALSE(reader.is_matched());
+
+    // enable interfaces
+    test_UDPv4Transport::simulate_no_interfaces = false;
+    writer.participant_update_attributes();
+
+    // Wait for discovery
+    writer.wait_discovery(std::chrono::seconds(3));
+    reader.wait_discovery(std::chrono::seconds(3));
+    ASSERT_TRUE(writer.is_matched());
+    ASSERT_TRUE(reader.is_matched());
+
+    auto complete_data = default_helloworld_data_generator();
 
     reader.expected_data(complete_data, true);
     reader.startReception();
