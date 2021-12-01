@@ -45,8 +45,9 @@ struct RTPS_DllAPI InstanceHandleValue_t
      * @remark Do not use this method to check if this value has been set.
      *         Use method has_been_set() instead.
      */
+    template<typename T>
     octet& operator [] (
-            size_t i) noexcept
+            T i) noexcept
     {
         has_been_set_ = true;
         return value_[i];
@@ -62,8 +63,9 @@ struct RTPS_DllAPI InstanceHandleValue_t
      * @remark Do not use this method to check if this value has been set.
      *         Use method has_been_set() instead.
      */
+    template<typename T>
     octet operator [] (
-            size_t i) const noexcept
+            T i) const noexcept
     {
         return value_[i];
     }
