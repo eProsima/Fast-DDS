@@ -447,62 +447,64 @@ bool StatefulReader::processDataMsg(
                     IDSTRING "Trying to add change " << change->sequenceNumber << " TO reader: " << getGuid().entityId);
 
             size_t unknown_missing_changes_up_to = pWP ? pWP->unknown_missing_changes_up_to(change->sequenceNumber) : 0;
-            if (mp_history->can_change_be_added_nts(change, unknown_missing_changes_up_to))
+            if (!mp_history->can_change_be_added_nts(change, unknown_missing_changes_up_to))
             {
-                // Ask the pool for a cache change
-                CacheChange_t* change_to_add = nullptr;
-                if (!change_pool_->reserve_cache(change_to_add))
-                {
-                    logError(RTPS_MSG_IN, IDSTRING "Problem reserving CacheChange in reader: " << m_guid);
-                    return false;
-                }
+                return false;
+            }
 
-                // Copy metadata to reserved change
-                change_to_add->copy_not_memcpy(change);
+            // Ask the pool for a cache change
+            CacheChange_t* change_to_add = nullptr;
+            if (!change_pool_->reserve_cache(change_to_add))
+            {
+                logError(RTPS_MSG_IN, IDSTRING "Problem reserving CacheChange in reader: " << m_guid);
+                return false;
+            }
 
-                // Ask payload pool to copy the payload
-                IPayloadPool* payload_owner = change->payload_owner();
+            // Copy metadata to reserved change
+            change_to_add->copy_not_memcpy(change);
 
-                if (is_datasharing_compatible_ && datasharing_listener_->writer_is_matched(change->writerGUID))
+            // Ask payload pool to copy the payload
+            IPayloadPool* payload_owner = change->payload_owner();
+
+            if (is_datasharing_compatible_ && datasharing_listener_->writer_is_matched(change->writerGUID))
+            {
+                // We may receive the change from the listener (with owner a ReaderPool) or intraprocess (with owner a WriterPool)
+                ReaderPool* datasharing_pool = dynamic_cast<ReaderPool*>(payload_owner);
+                if (!datasharing_pool)
                 {
-                    // We may receive the change from the listener (with owner a ReaderPool) or intraprocess (with owner a WriterPool)
-                    ReaderPool* datasharing_pool = dynamic_cast<ReaderPool*>(payload_owner);
-                    if (!datasharing_pool)
-                    {
-                        datasharing_pool = datasharing_listener_->get_pool_for_writer(change->writerGUID).get();
-                    }
-                    if (!datasharing_pool)
-                    {
-                        logWarning(RTPS_MSG_IN, IDSTRING "Problem copying DataSharing CacheChange from writer "
-                                << change->writerGUID);
-                        change_pool_->release_cache(change_to_add);
-                        return false;
-                    }
-                    datasharing_pool->get_payload(change->serializedPayload, payload_owner, *change_to_add);
+                    datasharing_pool = datasharing_listener_->get_pool_for_writer(change->writerGUID).get();
                 }
-                else if (payload_pool_->get_payload(change->serializedPayload, payload_owner, *change_to_add))
+                if (!datasharing_pool)
                 {
-                    change->payload_owner(payload_owner);
-                }
-                else
-                {
-                    logWarning(RTPS_MSG_IN, IDSTRING "Problem copying CacheChange, received data is: "
-                            << change->serializedPayload.length << " bytes and max size in reader "
-                            << m_guid << " is "
-                            << (fixed_payload_size_ > 0 ? fixed_payload_size_ : std::numeric_limits<uint32_t>::max()));
+                    logWarning(RTPS_MSG_IN, IDSTRING "Problem copying DataSharing CacheChange from writer "
+                            << change->writerGUID);
                     change_pool_->release_cache(change_to_add);
                     return false;
                 }
+                datasharing_pool->get_payload(change->serializedPayload, payload_owner, *change_to_add);
+            }
+            else if (payload_pool_->get_payload(change->serializedPayload, payload_owner, *change_to_add))
+            {
+                change->payload_owner(payload_owner);
+            }
+            else
+            {
+                logWarning(RTPS_MSG_IN, IDSTRING "Problem copying CacheChange, received data is: "
+                        << change->serializedPayload.length << " bytes and max size in reader "
+                        << m_guid << " is "
+                        << (fixed_payload_size_ > 0 ? fixed_payload_size_ : std::numeric_limits<uint32_t>::max()));
+                change_pool_->release_cache(change_to_add);
+                return false;
+            }
 
-                // Perform reception of cache change
-                if (!change_received(change_to_add, pWP, unknown_missing_changes_up_to))
-                {
-                    logInfo(RTPS_MSG_IN,
-                            IDSTRING "Change " << change_to_add->sequenceNumber << " not added to history");
-                    change_to_add->payload_owner()->release_payload(*change_to_add);
-                    change_pool_->release_cache(change_to_add);
-                    return false;
-                }
+            // Perform reception of cache change
+            if (!change_received(change_to_add, pWP, unknown_missing_changes_up_to))
+            {
+                logInfo(RTPS_MSG_IN,
+                        IDSTRING "Change " << change_to_add->sequenceNumber << " not added to history");
+                change_to_add->payload_owner()->release_payload(*change_to_add);
+                change_pool_->release_cache(change_to_add);
+                return false;
             }
         }
 
