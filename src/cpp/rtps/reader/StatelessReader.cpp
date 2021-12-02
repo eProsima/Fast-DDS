@@ -398,10 +398,10 @@ bool StatelessReader::processDataMsg(
     {
         // Always assert liveliness on scope exit
         auto assert_liveliness_lambda = [&lock, this, change](void*)
-        {
-            lock.unlock(); // Avoid deadlock with LivelinessManager.
-            assert_writer_liveliness(change->writerGUID);
-        };
+                {
+                    lock.unlock(); // Avoid deadlock with LivelinessManager.
+                    assert_writer_liveliness(change->writerGUID);
+                };
         std::unique_ptr<void, decltype(assert_liveliness_lambda)> p{ this, assert_liveliness_lambda };
 
         logInfo(RTPS_MSG_IN, IDSTRING "Trying to add change " << change->sequenceNumber << " TO reader: " << m_guid);
@@ -497,10 +497,10 @@ bool StatelessReader::processDataFragMsg(
         {
             // Always assert liveliness on scope exit
             auto assert_liveliness_lambda = [&lock, this, &writer_guid](void*)
-            {
-                lock.unlock(); // Avoid deadlock with LivelinessManager.
-                assert_writer_liveliness(writer_guid);
-            };
+                    {
+                        lock.unlock(); // Avoid deadlock with LivelinessManager.
+                        assert_writer_liveliness(writer_guid);
+                    };
             std::unique_ptr<void, decltype(assert_liveliness_lambda)> p{ this, assert_liveliness_lambda };
 
             // Datasharing communication will never send fragments

@@ -445,10 +445,10 @@ bool StatefulReader::processDataMsg(
         {
             // Always assert liveliness on scope exit
             auto assert_liveliness_lambda = [&lock, this, change](void*)
-            {
-                lock.unlock(); // Avoid deadlock with LivelinessManager.
-                assert_writer_liveliness(change->writerGUID);
-            };
+                    {
+                        lock.unlock(); // Avoid deadlock with LivelinessManager.
+                        assert_writer_liveliness(change->writerGUID);
+                    };
             std::unique_ptr<void, decltype(assert_liveliness_lambda)> p{ this, assert_liveliness_lambda };
 
             logInfo(RTPS_MSG_IN,
@@ -543,10 +543,10 @@ bool StatefulReader::processDataFragMsg(
     {
         // Always assert liveliness on scope exit
         auto assert_liveliness_lambda = [&lock, this, incomingChange](void*)
-        {
-            lock.unlock(); // Avoid deadlock with LivelinessManager.
-            assert_writer_liveliness(incomingChange->writerGUID);
-        };
+                {
+                    lock.unlock(); // Avoid deadlock with LivelinessManager.
+                    assert_writer_liveliness(incomingChange->writerGUID);
+                };
         std::unique_ptr<void, decltype(assert_liveliness_lambda)> p{ this, assert_liveliness_lambda };
 
         // Check if CacheChange was received.
