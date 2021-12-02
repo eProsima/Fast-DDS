@@ -113,8 +113,9 @@ WLP::WLP(
         p->mp_participantImpl->getRTPSParticipantAttributes().allocation.locators.max_multicast_locators,
         p->mp_participantImpl->getRTPSParticipantAttributes().allocation.data_limits)
 {
-    automatic_instance_handle_ = p->mp_participantImpl->getGuid();
-    memset(&automatic_instance_handle_.value[12], 0, 3);
+    GUID_t tmp_guid = p->mp_participantImpl->getGuid();
+    tmp_guid.entityId = 0;
+    automatic_instance_handle_ = tmp_guid;
     manual_by_participant_instance_handle_ = automatic_instance_handle_;
 
     automatic_instance_handle_.value[15] = AUTOMATIC_LIVELINESS_QOS + 0x01;

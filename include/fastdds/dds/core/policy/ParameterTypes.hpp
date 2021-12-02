@@ -454,17 +454,7 @@ public:
             const fastrtps::rtps::InstanceHandle_t& iH)
         : Parameter_t(pid, in_length)
     {
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            if (i < 12)
-            {
-                guid.guidPrefix.value[i] = iH.value[i];
-            }
-            else
-            {
-                guid.entityId.value[i - 12] = iH.value[i];
-            }
-        }
+        fastrtps::rtps::iHandle2GUID(guid, iH);
     }
 
 };

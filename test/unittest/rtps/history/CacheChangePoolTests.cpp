@@ -179,6 +179,7 @@ TEST_P(CacheChangePoolTests, change_reset_on_release)
     ASSERT_EQ(ch->sequenceNumber.high, 0);
     ASSERT_EQ(ch->sequenceNumber.low, 0U);
     ASSERT_EQ(ch->writerGUID, c_Guid_Unknown);
+    ASSERT_FALSE(ch->instanceHandle.isDefined());
     for (uint8_t i = 0; i < 16; ++i)
     {
         ASSERT_EQ(ch->instanceHandle.value[i], 0U);
@@ -197,6 +198,7 @@ TEST_P(CacheChangePoolTests, change_reset_on_release)
     {
         ch->instanceHandle.value[i] = 1;
     }
+    ASSERT_TRUE(ch->instanceHandle.isDefined());
     ch->isRead = true;
     ch->sourceTimestamp.seconds(1);
     ch->sourceTimestamp.fraction(1);
@@ -210,6 +212,7 @@ TEST_P(CacheChangePoolTests, change_reset_on_release)
         ASSERT_EQ(ch->sequenceNumber.high, 0);
         ASSERT_EQ(ch->sequenceNumber.low, 0U);
         ASSERT_EQ(ch->writerGUID, c_Guid_Unknown);
+        ASSERT_FALSE(ch->instanceHandle.isDefined());
         for (uint8_t i = 0; i < 16; ++i)
         {
             ASSERT_EQ(ch->instanceHandle.value[i], 0U);

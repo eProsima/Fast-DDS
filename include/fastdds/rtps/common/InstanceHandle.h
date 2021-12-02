@@ -45,8 +45,9 @@ struct RTPS_DllAPI InstanceHandleValue_t
      * @remark Do not use this method to check if this value has been set.
      *         Use method has_been_set() instead.
      */
+    template<typename T>
     octet& operator [] (
-            size_t i) noexcept
+            T i) noexcept
     {
         has_been_set_ = true;
         return value_[i];
@@ -62,8 +63,9 @@ struct RTPS_DllAPI InstanceHandleValue_t
      * @remark Do not use this method to check if this value has been set.
      *         Use method has_been_set() instead.
      */
+    template<typename T>
     octet operator [] (
-            size_t i) const noexcept
+            T i) const noexcept
     {
         return value_[i];
     }
@@ -103,6 +105,12 @@ struct RTPS_DllAPI InstanceHandleValue_t
     bool has_been_set() const noexcept
     {
         return has_been_set_;
+    }
+
+    void clear() noexcept
+    {
+        value_.fill(0);
+        has_been_set_ = false;
     }
 
     /**
@@ -183,6 +191,11 @@ struct RTPS_DllAPI InstanceHandle_t
     bool isDefined() const noexcept
     {
         return value.has_been_set();
+    }
+
+    void clear() noexcept
+    {
+        value.clear();
     }
 
     // TODO Review this conversion once InstanceHandle_t is implemented as DDS standard defines

@@ -788,8 +788,7 @@ bool ReaderProxyData::readFromCDRMessage(
                             return false;
                         }
 
-                        memcpy(m_RTPSParticipantKey.value, p.guid.guidPrefix.value, 12);
-                        memcpy(m_RTPSParticipantKey.value + 12, p.guid.entityId.value, 4);
+                        m_RTPSParticipantKey = p.guid;
                         break;
                     }
                     case fastdds::dds::PID_ENDPOINT_GUID:
@@ -802,8 +801,7 @@ bool ReaderProxyData::readFromCDRMessage(
                         }
 
                         m_guid = p.guid;
-                        memcpy(m_key.value, p.guid.guidPrefix.value, 12);
-                        memcpy(m_key.value + 12, p.guid.entityId.value, 4);
+                        m_key = p.guid;
                         break;
                     }
                     case fastdds::dds::PID_UNICAST_LOCATOR:
@@ -999,8 +997,7 @@ bool ReaderProxyData::readFromCDRMessage(
             {
                 GUID_t tmp_guid = m_guid;
                 tmp_guid.entityId = c_EntityId_RTPSParticipant;
-                memcpy(m_RTPSParticipantKey.value, tmp_guid.guidPrefix.value, 12);
-                memcpy(m_RTPSParticipantKey.value + 12, tmp_guid.entityId.value, 4);
+                m_RTPSParticipantKey = tmp_guid;
             }
 
             return true;
