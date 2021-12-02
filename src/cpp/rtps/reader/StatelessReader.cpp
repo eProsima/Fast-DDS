@@ -409,8 +409,13 @@ bool StatelessReader::processDataMsg(
         // Check rejection by history
         if (!thereIsUpperRecordOf(change->writerGUID, change->sequenceNumber))
         {
-            if (!mp_history->can_change_be_added_nts(change, 0))
+            bool will_never_be_accepted = false;
+            if (!mp_history->can_change_be_added_nts(change, 0, will_never_be_accepted))
             {
+                if (will_never_be_accepted)
+                {
+                    update_last_notified(change->writerGUID, change->sequenceNumber);
+                }
                 return false;
             }
 

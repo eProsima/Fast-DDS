@@ -74,7 +74,8 @@ public:
 
     virtual bool can_change_be_added_nts(
             const CacheChange_t*,
-            size_t) const
+            size_t,
+            bool&) const
     {
         return true;
     }

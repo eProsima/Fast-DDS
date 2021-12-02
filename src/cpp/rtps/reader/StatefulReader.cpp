@@ -455,8 +455,13 @@ bool StatefulReader::processDataMsg(
                     IDSTRING "Trying to add change " << change->sequenceNumber << " TO reader: " << getGuid().entityId);
 
             size_t unknown_missing_changes_up_to = pWP ? pWP->unknown_missing_changes_up_to(change->sequenceNumber) : 0;
-            if (!mp_history->can_change_be_added_nts(change, unknown_missing_changes_up_to))
+            bool will_never_be_accepted = false;
+            if (!mp_history->can_change_be_added_nts(change, unknown_missing_changes_up_to, will_never_be_accepted))
             {
+                if (will_never_be_accepted && pWP)
+                {
+                    pWP->irrelevant_change_set(change->sequenceNumber);
+                }
                 return false;
             }
 

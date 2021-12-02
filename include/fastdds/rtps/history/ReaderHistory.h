@@ -55,9 +55,11 @@ public:
     /**
      * Check if a new change can be added to this history.
      *
-     * @param change                         Pointer to the change to be added.
-     * @param unknown_missing_changes_up_to  The number of changes from the same writer with a lower sequence number
-     *                                       that could potentially be received in the future.
+     * @param [in]  change                         Pointer to the change to be added.
+     * @param [in]  unknown_missing_changes_up_to  The number of changes from the same writer with a lower sequence
+     *                                             number that could potentially be received in the future.
+     * @param [out] will_never_be_accepted         When the method returns @c false, this parameter will inform
+     *                                             whether the change could be accepted in the future or not.
      *
      * @pre change should not be present in the history
      *
@@ -65,7 +67,8 @@ public:
      */
     RTPS_DllAPI virtual bool can_change_be_added_nts(
             const CacheChange_t* change,
-            size_t unknown_missing_changes_up_to) const;
+            size_t unknown_missing_changes_up_to,
+            bool& will_never_be_accepted) const;
 
     /**
      * Virtual method that is called when a new change is received.

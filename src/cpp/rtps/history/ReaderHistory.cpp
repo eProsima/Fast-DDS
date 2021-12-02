@@ -45,9 +45,12 @@ ReaderHistory::~ReaderHistory()
 
 bool ReaderHistory::can_change_be_added_nts(
         const CacheChange_t* change,
-        size_t unknown_missing_changes_up_to) const
+        size_t unknown_missing_changes_up_to,
+        bool& will_never_be_accepted) const
 {
     static_cast<void>(unknown_missing_changes_up_to);
+
+    will_never_be_accepted = false;
 
     if (m_att.memoryPolicy == PREALLOCATED_MEMORY_MODE && change->serializedPayload.length > m_att.payloadMaxSize)
     {
@@ -55,12 +58,14 @@ bool ReaderHistory::can_change_be_added_nts(
                 "Change payload size of '" << change->serializedPayload.length <<
                 "' bytes is larger than the history payload size of '" << m_att.payloadMaxSize <<
                 "' bytes and cannot be resized.");
+        will_never_be_accepted = true;
         return false;
     }
 
     if (change->writerGUID == c_Guid_Unknown)
     {
         logError(RTPS_READER_HISTORY, "The Writer GUID_t must be defined");
+        will_never_be_accepted = true;
         return false;
     }
 
