@@ -443,6 +443,14 @@ bool StatefulReader::processDataMsg(
         // Check if CacheChange was received or is framework data
         if (!pWP || !pWP->change_was_received(change->sequenceNumber))
         {
+            // Always assert liveliness on scope exit
+            auto assert_liveliness_lambda = [&lock, this, change](void*)
+            {
+                lock.unlock(); // Avoid deadlock with LivelinessManager.
+                assert_writer_liveliness(change->writerGUID);
+            };
+            std::unique_ptr<void, decltype(assert_liveliness_lambda)> p{ this, assert_liveliness_lambda };
+
             logInfo(RTPS_MSG_IN,
                     IDSTRING "Trying to add change " << change->sequenceNumber << " TO reader: " << getGuid().entityId);
 
@@ -508,9 +516,6 @@ bool StatefulReader::processDataMsg(
             }
         }
 
-        lock.unlock(); // Avoid deadlock with LivelinessManager.
-        assert_writer_liveliness(change->writerGUID);
-
         return true;
     }
 
@@ -536,6 +541,14 @@ bool StatefulReader::processDataFragMsg(
     // TODO: see if we need manage framework fragmented DATA message
     if (acceptMsgFrom(incomingChange->writerGUID, &pWP) && pWP)
     {
+        // Always assert liveliness on scope exit
+        auto assert_liveliness_lambda = [&lock, this, incomingChange](void*)
+        {
+            lock.unlock(); // Avoid deadlock with LivelinessManager.
+            assert_writer_liveliness(incomingChange->writerGUID);
+        };
+        std::unique_ptr<void, decltype(assert_liveliness_lambda)> p{ this, assert_liveliness_lambda };
+
         // Check if CacheChange was received.
         if (!pWP->change_was_received(incomingChange->sequenceNumber))
         {
@@ -596,10 +609,6 @@ bool StatefulReader::processDataFragMsg(
                 NotifyChanges(pWP);
             }
         }
-
-        lock.unlock(); // Avoid deadlock with LivelinessManager;
-        assert_writer_liveliness(incomingChange->writerGUID);
-
     }
 
     return true;
