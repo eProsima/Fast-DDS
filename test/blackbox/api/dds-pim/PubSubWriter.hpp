@@ -1383,6 +1383,11 @@ public:
         datawriter_profile_ = profile;
     }
 
+    void participant_set_qos()
+    {
+        participant_->set_qos(participant_qos_);
+    }
+
 #if HAVE_SQLITE3
     PubSubWriter& make_persistent(
             const std::string& filename,

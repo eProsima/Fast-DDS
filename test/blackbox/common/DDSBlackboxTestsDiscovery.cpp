@@ -15,6 +15,7 @@
 #include <chrono>
 #include <cstdlib>
 #include <ctime>
+#include <memory>
 #include <string>
 
 #include <gtest/gtest.h>
@@ -22,9 +23,12 @@
 #include "BlackboxTests.hpp"
 #include "PubSubParticipant.hpp"
 #include "PubSubReader.hpp"
+#include "PubSubWriter.hpp"
 
 #include <fastdds/dds/core/policy/QosPolicies.hpp>
 #include <fastdds/rtps/common/Locator.h>
+#include <fastdds/rtps/transport/test_UDPv4TransportDescriptor.h>
+#include <rtps/transport/test_UDPv4Transport.h>
 #include <utils/SystemInfo.hpp>
 
 // Regression test for redmine issue 11857
@@ -168,3 +172,61 @@ TEST(DDSDiscovery, AddDiscoveryServerToList)
     server_2.wait_discovery(std::chrono::seconds::zero(), 2, true);
 }
 
+/**
+ * This test checks the addition of network interfaces at run-time.
+ * 
+ * After launching the reader with the network interfaces enabled,
+ * the writer is launched with the transport simulating that there
+ * are no interfaces.
+ * No participant discovery occurs.
+ * 
+ * In a second step, the flag to simulate no interfaces is disabled and
+ * DomainParticipant::set_qos() called to add the "new" interfaces.
+ * Discovery is succesful and communication is established.
+ */
+TEST(DDSDiscovery, DDSNetworkInterfaceChangesAtRunTime)
+{
+    using namespace eprosima::fastdds::rtps;
+
+    PubSubWriter<HelloWorldType> datawriter(TEST_TOPIC_NAME);
+    PubSubReader<HelloWorldType> datareader(TEST_TOPIC_NAME);
+
+    // datareader is initialized with all the network interfaces
+    datareader.init();
+    ASSERT_TRUE(datareader.isInitialized());
+
+    // datawriter: launch without interfaces
+    test_UDPv4Transport::simulate_no_interfaces = true;
+    auto test_transport = std::make_shared<test_UDPv4TransportDescriptor>();
+    datawriter.disable_builtin_transport().add_user_transport_to_pparams(test_transport).init();
+    ASSERT_TRUE(datawriter.isInitialized());
+
+    // no discovery
+    datawriter.wait_discovery(std::chrono::seconds(3));
+    datareader.wait_discovery(std::chrono::seconds(3));
+
+    EXPECT_FALSE(datawriter.is_matched());
+    EXPECT_FALSE(datareader.is_matched());
+
+    // enable interfaces
+    test_UDPv4Transport::simulate_no_interfaces = false;
+    datawriter.participant_set_qos();
+
+    // Wait for discovery
+    datawriter.wait_discovery(std::chrono::seconds(3));
+    datareader.wait_discovery(std::chrono::seconds(3));
+    ASSERT_TRUE(datawriter.is_matched());
+    ASSERT_TRUE(datareader.is_matched());
+
+    auto complete_data = default_helloworld_data_generator();
+
+    datareader.startReception(complete_data);
+
+    datawriter.send(complete_data);
+    EXPECT_TRUE(complete_data.empty());
+
+    datareader.block_for_all();
+
+    datareader.destroy();
+    datawriter.destroy();
+}
