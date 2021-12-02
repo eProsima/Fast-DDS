@@ -569,6 +569,18 @@ TEST_P(RTPS, RTPSAsReliableTransientLocalTwoWritersConsecutives)
     writer.destroy();
 }
 
+/**
+ * This test checks the addition of network interfaces at run-time.
+ * 
+ * After launching the reader with the network interfaces enabled,
+ * the writer is launched with the transport simulating that there
+ * are no interfaces.
+ * No participant discovery occurs.
+ * 
+ * In a second step, the flag to simulate no interfaces is disabled and
+ * RTPSParticipant::update_attributes() called to add the "new" interfaces.
+ * Discovery is succesful and communication is established.
+ */
 TEST(RTPS, RTPSNetworkInterfaceChangesAtRunTime)
 {
     RTPSWithRegistrationReader<HelloWorldType> reader(TEST_TOPIC_NAME);
