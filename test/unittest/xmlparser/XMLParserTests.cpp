@@ -50,6 +50,13 @@ using eprosima::fastrtps::xmlparser::XMLParser;
 using eprosima::fastdds::dds::Log;
 using eprosima::fastdds::dds::LogConsumer;
 
+TEST_F(XMLParserTests, regressions)
+{
+    std::unique_ptr<BaseNode> root;
+
+    EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParser::loadXML("regressions/12736.xml", root));
+}
+
 TEST_F(XMLParserTests, NoFile)
 {
     std::unique_ptr<BaseNode> root;
