@@ -443,8 +443,28 @@ bool StatefulReader::processDataMsg(
         // Check if CacheChange was received or is framework data
         if (!pWP || !pWP->change_was_received(change->sequenceNumber))
         {
+            // Always assert liveliness on scope exit
+            auto assert_liveliness_lambda = [&lock, this, change](void*)
+                    {
+                        lock.unlock(); // Avoid deadlock with LivelinessManager.
+                        assert_writer_liveliness(change->writerGUID);
+                    };
+            std::unique_ptr<void, decltype(assert_liveliness_lambda)> p{ this, assert_liveliness_lambda };
+
             logInfo(RTPS_MSG_IN,
                     IDSTRING "Trying to add change " << change->sequenceNumber << " TO reader: " << getGuid().entityId);
+
+            size_t unknown_missing_changes_up_to = pWP ? pWP->unknown_missing_changes_up_to(change->sequenceNumber) : 0;
+            bool will_never_be_accepted = false;
+            if (!mp_history->can_change_be_added_nts(change->writerGUID, change->serializedPayload.length,
+                    unknown_missing_changes_up_to, will_never_be_accepted))
+            {
+                if (will_never_be_accepted && pWP)
+                {
+                    pWP->irrelevant_change_set(change->sequenceNumber);
+                }
+                return false;
+            }
 
             // Ask the pool for a cache change
             CacheChange_t* change_to_add = nullptr;
@@ -492,17 +512,15 @@ bool StatefulReader::processDataMsg(
             }
 
             // Perform reception of cache change
-            if (!change_received(change_to_add, pWP))
+            if (!change_received(change_to_add, pWP, unknown_missing_changes_up_to))
             {
-                logInfo(RTPS_MSG_IN, IDSTRING "Change " << change_to_add->sequenceNumber << " not added to history");
+                logInfo(RTPS_MSG_IN,
+                        IDSTRING "Change " << change_to_add->sequenceNumber << " not added to history");
                 change_to_add->payload_owner()->release_payload(*change_to_add);
                 change_pool_->release_cache(change_to_add);
                 return false;
             }
         }
-
-        lock.unlock(); // Avoid deadlock with LivelinessManager.
-        assert_writer_liveliness(change->writerGUID);
 
         return true;
     }
@@ -529,12 +547,32 @@ bool StatefulReader::processDataFragMsg(
     // TODO: see if we need manage framework fragmented DATA message
     if (acceptMsgFrom(incomingChange->writerGUID, &pWP) && pWP)
     {
+        // Always assert liveliness on scope exit
+        auto assert_liveliness_lambda = [&lock, this, incomingChange](void*)
+                {
+                    lock.unlock(); // Avoid deadlock with LivelinessManager.
+                    assert_writer_liveliness(incomingChange->writerGUID);
+                };
+        std::unique_ptr<void, decltype(assert_liveliness_lambda)> p{ this, assert_liveliness_lambda };
+
         // Check if CacheChange was received.
         if (!pWP->change_was_received(incomingChange->sequenceNumber))
         {
             logInfo(RTPS_MSG_IN,
                     IDSTRING "Trying to add fragment " << incomingChange->sequenceNumber.to64long() << " TO reader: " <<
                     getGuid().entityId);
+
+            size_t changes_up_to = pWP->unknown_missing_changes_up_to(incomingChange->sequenceNumber);
+            bool will_never_be_accepted = false;
+            if (!mp_history->can_change_be_added_nts(incomingChange->writerGUID, sampleSize, changes_up_to,
+                    will_never_be_accepted))
+            {
+                if (will_never_be_accepted)
+                {
+                    pWP->irrelevant_change_set(incomingChange->sequenceNumber);
+                }
+                return false;
+            }
 
             CacheChange_t* change_to_add = incomingChange;
 
@@ -569,7 +607,7 @@ bool StatefulReader::processDataFragMsg(
             // If this is the first time we have received fragments for this change, add it to history
             if (change_created != nullptr)
             {
-                if (!change_received(change_created, pWP))
+                if (!change_received(change_created, pWP, changes_up_to))
                 {
 
                     logInfo(RTPS_MSG_IN,
@@ -588,10 +626,6 @@ bool StatefulReader::processDataFragMsg(
                 NotifyChanges(pWP);
             }
         }
-
-        lock.unlock(); // Avoid deadlock with LivelinessManager;
-        assert_writer_liveliness(incomingChange->writerGUID);
-
     }
 
     return true;
@@ -796,7 +830,8 @@ bool StatefulReader::change_removed_by_history(
 
 bool StatefulReader::change_received(
         CacheChange_t* a_change,
-        WriterProxy* prox)
+        WriterProxy* prox,
+        size_t unknown_missing_changes_up_to)
 {
     //First look for WriterProxy in case is not provided
     if (prox == nullptr)
@@ -845,10 +880,11 @@ bool StatefulReader::change_received(
                 return false;
             }
         }
+        else
+        {
+            unknown_missing_changes_up_to = prox->unknown_missing_changes_up_to(a_change->sequenceNumber);
+        }
     }
-
-    // TODO (Miguel C): Refactor this inside WriterProxy
-    size_t unknown_missing_changes_up_to = prox->unknown_missing_changes_up_to(a_change->sequenceNumber);
 
     // NOTE: Depending on QoS settings, one change can be removed from history
     // inside the call to mp_history->received_change

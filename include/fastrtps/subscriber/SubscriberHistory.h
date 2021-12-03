@@ -75,6 +75,26 @@ public:
             bool release = true) override;
 
     /**
+     * Check if a new change can be added to this history.
+     *
+     * @param [in]  writer_guid                    GUID of the writer where the change came from.
+     * @param [in]  total_payload_size             Total payload size of the incoming change.
+     * @param [in]  unknown_missing_changes_up_to  The number of changes from the same writer with a lower sequence
+     *                                             number that could potentially be received in the future.
+     * @param [out] will_never_be_accepted         When the method returns @c false, this parameter will inform
+     *                                             whether the change could be accepted in the future or not.
+     *
+     * @pre change should not be present in the history
+     *
+     * @return Whether a call to received_change will succeed when called with the same arguments.
+     */
+    bool can_change_be_added_nts(
+            const rtps::GUID_t& writer_guid,
+            uint32_t total_payload_size,
+            size_t unknown_missing_changes_up_to,
+            bool& will_never_be_accepted) const override;
+
+    /**
      * Called when a change is received by the Subscriber. Will add the change to the history.
      * @pre Change should not be already present in the history.
      * @param[in] change The received change

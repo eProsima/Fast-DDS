@@ -72,6 +72,15 @@ public:
         return ret;
     }
 
+    virtual bool can_change_be_added_nts(
+            const GUID_t&,
+            uint32_t,
+            size_t,
+            bool&) const
+    {
+        return true;
+    }
+
     virtual bool received_change(
             CacheChange_t*,
             size_t)
