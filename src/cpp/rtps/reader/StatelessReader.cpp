@@ -518,11 +518,21 @@ bool StatelessReader::processDataFragMsg(
                 logInfo(RTPS_MSG_IN, IDSTRING "Trying to add fragment " << incomingChange->sequenceNumber.to64long() <<
                         " TO reader: " << m_guid);
 
-                // Early return if we already know abount a greater sequence number
+                // Early return if we already know about a greater sequence number
                 CacheChange_t* work_change = writer.fragmented_change;
                 if (work_change != nullptr && work_change->sequenceNumber > incomingChange->sequenceNumber)
                 {
                     return true;
+                }
+
+                bool will_never_be_accepted = false;
+                if (!mp_history->can_change_be_added_nts(writer_guid, sampleSize, 0, will_never_be_accepted))
+                {
+                    if (will_never_be_accepted)
+                    {
+                        update_last_notified(writer_guid, incomingChange->sequenceNumber);
+                    }
+                    return false;
                 }
 
                 CacheChange_t* change_to_add = incomingChange;

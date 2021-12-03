@@ -562,6 +562,17 @@ bool StatefulReader::processDataFragMsg(
                     IDSTRING "Trying to add fragment " << incomingChange->sequenceNumber.to64long() << " TO reader: " <<
                     getGuid().entityId);
 
+            size_t changes_up_to = pWP->unknown_missing_changes_up_to(incomingChange->sequenceNumber);
+            bool will_never_be_accepted = false;
+            if (!mp_history->can_change_be_added_nts(incomingChange->writerGUID, sampleSize, changes_up_to, will_never_be_accepted))
+            {
+                if (will_never_be_accepted)
+                {
+                    pWP->irrelevant_change_set(incomingChange->sequenceNumber);
+                }
+                return false;
+            }
+
             CacheChange_t* change_to_add = incomingChange;
 
             CacheChange_t* change_created = nullptr;
@@ -595,7 +606,6 @@ bool StatefulReader::processDataFragMsg(
             // If this is the first time we have received fragments for this change, add it to history
             if (change_created != nullptr)
             {
-                size_t changes_up_to = pWP->unknown_missing_changes_up_to(change_created->sequenceNumber);
                 if (!change_received(change_created, pWP, changes_up_to))
                 {
 
