@@ -73,7 +73,8 @@ public:
     }
 
     virtual bool can_change_be_added_nts(
-            const CacheChange_t*,
+            const GUID_t&,
+            uint32_t,
             size_t,
             bool&) const
     {

@@ -410,7 +410,8 @@ bool StatelessReader::processDataMsg(
         if (!thereIsUpperRecordOf(change->writerGUID, change->sequenceNumber))
         {
             bool will_never_be_accepted = false;
-            if (!mp_history->can_change_be_added_nts(change, 0, will_never_be_accepted))
+            if (!mp_history->can_change_be_added_nts(change->writerGUID, change->serializedPayload.length, 0,
+                    will_never_be_accepted))
             {
                 if (will_never_be_accepted)
                 {

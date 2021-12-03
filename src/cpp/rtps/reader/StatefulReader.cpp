@@ -456,7 +456,8 @@ bool StatefulReader::processDataMsg(
 
             size_t unknown_missing_changes_up_to = pWP ? pWP->unknown_missing_changes_up_to(change->sequenceNumber) : 0;
             bool will_never_be_accepted = false;
-            if (!mp_history->can_change_be_added_nts(change, unknown_missing_changes_up_to, will_never_be_accepted))
+            if (!mp_history->can_change_be_added_nts(change->writerGUID, change->serializedPayload.length,
+                    unknown_missing_changes_up_to, will_never_be_accepted))
             {
                 if (will_never_be_accepted && pWP)
                 {

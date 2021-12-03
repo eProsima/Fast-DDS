@@ -138,11 +138,13 @@ SubscriberHistory::~SubscriberHistory()
 }
 
 bool SubscriberHistory::can_change_be_added_nts(
-        const CacheChange_t* change,
+        const rtps::GUID_t& writer_guid,
+        uint32_t total_payload_size,
         size_t unknown_missing_changes_up_to,
         bool& will_never_be_accepted) const
 {
-    if (!ReaderHistory::can_change_be_added_nts(change, unknown_missing_changes_up_to, will_never_be_accepted))
+    if (!ReaderHistory::can_change_be_added_nts(writer_guid, total_payload_size, unknown_missing_changes_up_to,
+            will_never_be_accepted))
     {
         return false;
     }
