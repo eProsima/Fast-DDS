@@ -564,7 +564,8 @@ bool StatefulReader::processDataFragMsg(
 
             size_t changes_up_to = pWP->unknown_missing_changes_up_to(incomingChange->sequenceNumber);
             bool will_never_be_accepted = false;
-            if (!mp_history->can_change_be_added_nts(incomingChange->writerGUID, sampleSize, changes_up_to, will_never_be_accepted))
+            if (!mp_history->can_change_be_added_nts(incomingChange->writerGUID, sampleSize, changes_up_to,
+                    will_never_be_accepted))
             {
                 if (will_never_be_accepted)
                 {
