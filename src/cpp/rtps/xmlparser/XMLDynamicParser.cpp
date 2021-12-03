@@ -606,6 +606,10 @@ XMLP_ret XMLParser::parseXMLBitmaskDynamicType(
     }
 
     const char* name = p_root->Attribute(NAME);
+    if (!name)
+    {
+        return XMLP_ret::XML_ERROR;
+    }
     p_dynamictypebuilder_t typeBuilder =
             types::DynamicTypeBuilderFactory::get_instance()->create_bitmask_builder(bit_bound);
     typeBuilder->set_name(name);
