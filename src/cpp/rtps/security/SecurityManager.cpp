@@ -728,6 +728,40 @@ void SecurityManager::remove_participant(
     {
         SecurityException exception;
 
+        for (auto& local_reader : reader_handles_)
+        {
+            for (auto wit = local_reader.second.associated_writers.begin();
+                    local_reader.second.associated_writers.end() != wit;
+                    )
+            {
+                if (wit->first.guidPrefix == participant_data.m_guid.guidPrefix)
+                {
+                    wit = local_reader.second.associated_writers.erase(wit);
+                }
+                else
+                {
+                    ++wit;
+                }
+            }
+        }
+
+        for (auto& local_writer : writer_handles_)
+        {
+            for (auto rit = local_writer.second.associated_readers.begin();
+                    local_writer.second.associated_readers.end() != rit;
+                    )
+            {
+                if (rit->first.guidPrefix == participant_data.m_guid.guidPrefix)
+                {
+                    rit = local_writer.second.associated_readers.erase(rit);
+                }
+                else
+                {
+                    ++rit;
+                }
+            }
+        }
+
         ParticipantCryptoHandle* participant_crypto_handle =
                 dp_it->second.get_participant_crypto();
         if (participant_crypto_handle != nullptr)
