@@ -63,8 +63,16 @@ target_include_directories(BuiltinPKIDH PRIVATE
     ${OPENSSL_INCLUDE_DIR}
     ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include
     ${PROJECT_SOURCE_DIR}/src/cpp
+    ${LIBP11_INCLUDE_DIR}
     )
-target_link_libraries(BuiltinPKIDH GTest::gtest ${OPENSSL_LIBRARIES} fastcdr foonathan_memory $<$<BOOL:${WIN32}>:ws2_32>)
+target_link_libraries(BuiltinPKIDH
+    GTest::gtest
+    ${OPENSSL_LIBRARIES}
+    fastcdr
+    foonathan_memory
+    $<$<BOOL:${WIN32}>:ws2_32>
+    ${LIBP11_LIBRARIES}
+    )
 add_gtest(BuiltinPKIDH
     SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/BuiltinPKIDHTests.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/AuthenticationPluginTests.hpp

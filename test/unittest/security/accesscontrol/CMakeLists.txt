@@ -85,6 +85,7 @@ target_include_directories(AccessControlTests PRIVATE
     ${OPENSSL_INCLUDE_DIR}
     ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include
     ${PROJECT_SOURCE_DIR}/src/cpp
+    ${LIBP11_INCLUDE_DIR}
     )
 
 target_link_libraries(AccessControlTests
@@ -94,6 +95,7 @@ target_link_libraries(AccessControlTests
     foonathan_memory
     $<$<BOOL:${WIN32}>:ws2_32>
     ${TINYXML2_LIBRARY}
+    ${LIBP11_LIBRARIES}
     )
 
 if(MSVC OR MSVC_IDE)

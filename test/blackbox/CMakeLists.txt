@@ -279,8 +279,9 @@ if(FASTRTPS_API_TESTS)
         )
     target_include_directories(BlackboxTests_FastRTPS PRIVATE
         ${Asio_INCLUDE_DIR}
+        ${LIBP11_INCLUDE_DIR}
         api/fastrtps_deprecated)
-    target_link_libraries(BlackboxTests_FastRTPS fastrtps fastcdr foonathan_memory GTest::gtest)
+    target_link_libraries(BlackboxTests_FastRTPS fastrtps fastcdr foonathan_memory GTest::gtest ${LIBP11_LIBRARIES})
     add_blackbox_gtest(BlackboxTests_FastRTPS SOURCES ${BLACKBOXTESTS_TEST_SOURCE}
         ENVIRONMENTS "CERTS_PATH=${PROJECT_SOURCE_DIR}/test/certs"
         "TOPIC_RANDOM_NUMBER=${TOPIC_RANDOM_NUMBER}"
@@ -318,8 +319,9 @@ if(FASTDDS_PIM_API_TESTS)
         )
     target_include_directories(BlackboxTests_DDS_PIM PRIVATE
         ${Asio_INCLUDE_DIR}
+        ${LIBP11_INCLUDE_DIR}
         api/dds-pim)
-    target_link_libraries(BlackboxTests_DDS_PIM fastrtps fastcdr foonathan_memory GTest::gtest)
+    target_link_libraries(BlackboxTests_DDS_PIM fastrtps fastcdr foonathan_memory GTest::gtest ${LIBP11_LIBRARIES})
     add_blackbox_gtest(BlackboxTests_DDS_PIM SOURCES ${DDS_BLACKBOXTESTS_SOURCE}
         ENVIRONMENTS "CERTS_PATH=${PROJECT_SOURCE_DIR}/test/certs"
         "TOPIC_RANDOM_NUMBER=${TOPIC_RANDOM_NUMBER}"
