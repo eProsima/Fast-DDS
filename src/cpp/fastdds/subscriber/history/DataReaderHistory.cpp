@@ -110,7 +110,7 @@ DataReaderHistory::DataReaderHistory(
         key_changes_allocation_.maximum = resource_limited_qos_.max_samples;
 
         keyed_changes_.emplace(c_InstanceHandle_Unknown,
-            DataReaderInstance{ key_changes_allocation_, key_writers_allocation_ });
+                DataReaderInstance{ key_changes_allocation_, key_writers_allocation_ });
     }
 
     using std::placeholders::_1;

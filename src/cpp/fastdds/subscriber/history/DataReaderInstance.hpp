@@ -193,9 +193,9 @@ private:
             const uint32_t ownership_strength)
     {
         auto it = std::find_if(alive_writers.begin(), alive_writers.end(), [&writer_guid](const WriterOwnership& item)
-                {
-                    return item.first == writer_guid;
-                });
+                        {
+                            return item.first == writer_guid;
+                        });
         if (it == alive_writers.end())
         {
             alive_writers.emplace_back(writer_guid, ownership_strength);
