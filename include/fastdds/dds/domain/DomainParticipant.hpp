@@ -764,7 +764,7 @@ public:
      * If you also want to perform filtering in any application that publishes Topic X, then you also need to register
      * the same definition of the ContentFilter myFilter in that application.
      *
-     * Each @c filter_name can only be used to register a content filter once per DomainParticipant.
+     * Each @c filter_name can only be used to register a content filter factory once per DomainParticipant.
      *
      * @param filter_name     Name of the filter. Cannot be nullptr, must not exceed 255 characters, and must be
      *                        unique within this DomainParticipant.
@@ -774,19 +774,19 @@ public:
      * @return RERCODE_PRECONDITION_NOT_MET if the filter_name has been already registered.
      * @return RETCODE_OK if the filter is correctly registered.
      */
-    RTPS_DllAPI ReturnCode_t register_content_filter(
+    RTPS_DllAPI ReturnCode_t register_content_filter_factory(
             const char* filter_name,
             const IContentFilterFactory* filter_factory);
 
     /**
-     * Lookup a custom content filter factory previously registered with register_content_filter.
+     * Lookup a custom content filter factory previously registered with register_content_filter_factory.
      *
      * @param filter_name Name of the filter. Cannot be nullptr.
      *
      * @return nullptr if the given filter_name has not been previously registered on this DomainParticipant.
      *         Otherwise, the content filter factory previously registered with the given filter_name.
      */
-    RTPS_DllAPI IContentFilterFactory* lookup_content_filter(
+    RTPS_DllAPI IContentFilterFactory* lookup_content_filter_factory(
             const char* filter_name);
 
     /**
@@ -808,7 +808,7 @@ public:
      * @return RERCODE_PRECONDITION_NOT_MET if there is any ContentFilteredTopic referencing the filter.
      * @return RETCODE_OK if the filter is correctly unregistered.
      */
-    RTPS_DllAPI ReturnCode_t unregister_content_filter(
+    RTPS_DllAPI ReturnCode_t unregister_content_filter_factory(
             const char* filter_name);
 
     /**
