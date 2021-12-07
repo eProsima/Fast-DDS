@@ -21,7 +21,6 @@
 
 #include <chrono>
 #include <cstdint>
-#include <map>
 
 #include <fastdds/dds/subscriber/InstanceState.hpp>
 #include <fastdds/dds/subscriber/ViewState.hpp>
@@ -39,14 +38,15 @@ namespace detail {
 struct DataReaderInstance
 {
     using ChangeCollection = eprosima::fastrtps::ResourceLimitedVector<DataReaderCacheChange, std::true_type>;
-    using WriterCollection = std::map<fastrtps::rtps::GUID_t, uint32_t>;
+    using WriterOwnership = std::pair<fastrtps::rtps::GUID_t, uint32_t>;
+    using WriterCollection = eprosima::fastrtps::ResourceLimitedVector<WriterOwnership, std::false_type>;
 
     //! A vector of DataReader changes belonging to the same instance
     ChangeCollection cache_changes;
     //! The list of alive writers for this instance
     WriterCollection alive_writers;
     //! GUID and strength of the current maximum strength writer
-    std::pair<fastrtps::rtps::GUID_t, uint32_t> current_owner{ {}, 0 };
+    WriterOwnership current_owner{ {}, 0 };
     //! The time when the group will miss the deadline
     std::chrono::steady_clock::time_point next_deadline_us;
     //! Current view state of the instance
@@ -126,7 +126,7 @@ private:
                 ret_val = true;
             }
 
-            alive_writers[writer_guid] = ownership_strength;
+            writer_set(writer_guid, ownership_strength);
             instance_state = InstanceStateKind::ALIVE_INSTANCE_STATE;
         }
 
@@ -139,7 +139,7 @@ private:
     {
         bool ret_val = false;
 
-        alive_writers[writer_guid] = ownership_strength;
+        writer_set(writer_guid, ownership_strength);
         if (ownership_strength >= current_owner.second)
         {
             current_owner.first = writer_guid;
@@ -160,7 +160,10 @@ private:
     {
         bool ret_val = false;
 
-        alive_writers.erase(writer_guid);
+        alive_writers.remove_if([&writer_guid](const WriterOwnership& item)
+                {
+                    return item.first == writer_guid;
+                });
 
         if (writer_guid == current_owner.first)
         {
@@ -175,6 +178,24 @@ private:
         }
 
         return ret_val;
+    }
+
+    void writer_set(
+            const fastrtps::rtps::GUID_t& writer_guid,
+            const uint32_t ownership_strength)
+    {
+        auto it = std::find_if(alive_writers.begin(), alive_writers.end(), [&writer_guid](const WriterOwnership& item)
+                {
+                    return item.first == writer_guid;
+                });
+        if (it == alive_writers.end())
+        {
+            alive_writers.emplace_back(writer_guid, ownership_strength);
+        }
+        else
+        {
+            it->second = ownership_strength;
+        }
     }
 
 };
