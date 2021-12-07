@@ -506,7 +506,7 @@ ContentFilteredTopic* DomainParticipantImpl::create_contentfilteredtopic(
     LoanableSequence<const char*>::size_type n_params;
     n_params = static_cast<LoanableSequence<const char*>::size_type>(expression_parameters.size());
     LoanableSequence<const char*> filter_parameters(n_params);
-    while(n_params > 0)
+    while (n_params > 0)
     {
         n_params--;
         filter_parameters[n_params] = expression_parameters[n_params].c_str();
