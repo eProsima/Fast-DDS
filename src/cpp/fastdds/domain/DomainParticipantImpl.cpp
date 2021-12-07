@@ -477,7 +477,7 @@ ContentFilteredTopic* DomainParticipantImpl::create_contentfilteredtopic(
 
     std::lock_guard<std::mutex> lock(mtx_topics_);
 
-    //Check there is no Topic with the same name
+    // Check there is no Topic with the same name
     if ((topics_.find(name) != topics_.end()) ||
             (filtered_topics_.find(name) != filtered_topics_.end()))
     {
@@ -526,7 +526,7 @@ ContentFilteredTopic* DomainParticipantImpl::create_contentfilteredtopic(
     content_topic_impl->filter_factory = filter_factory;
     content_topic_impl->filter_instance = filter_instance;
 
-    //SAVE THE TOPIC INTO MAPS
+    // Save the topic into the map
     filtered_topics_.emplace(std::make_pair(name, topic));
 
     return topic;
@@ -558,7 +558,7 @@ ReturnCode_t DomainParticipantImpl::delete_contentfilteredtopic(
         return ReturnCode_t::RETCODE_OK;
     }
 
-    return ReturnCode_t::RETCODE_BAD_PARAMETER;
+    return ReturnCode_t::RETCODE_PRECONDITION_NOT_MET;
 }
 
 const InstanceHandle_t& DomainParticipantImpl::get_instance_handle() const
@@ -1157,7 +1157,7 @@ Topic* DomainParticipantImpl::create_topic(
 
     std::lock_guard<std::mutex> lock(mtx_topics_);
 
-    //Check there is no Topic with the same name
+    // Check there is no Topic with the same name
     if ((topics_.find(topic_name) != topics_.end()) ||
             (filtered_topics_.find(topic_name) != filtered_topics_.end()))
     {

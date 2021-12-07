@@ -264,7 +264,11 @@ public:
      * @param related_topic Related Topic to being subscribed
      * @param filter_expression Logic expression to create filter
      * @param expression_parameters Parameters to filter content
-     * @return Pointer to the created ContentFilteredTopic, nullptr in error case
+     * @return Pointer to the created ContentFilteredTopic.
+     * @return nullptr if @c related_topic does not belong to this participant.
+     * @return nullptr if a topic with the specified @c name has already been created.
+     * @return nullptr if a filter cannot be created with the specified @c filter_expression and
+     *                 @c expression_parameters.
      */
     RTPS_DllAPI ContentFilteredTopic* create_contentfilteredtopic(
             const std::string& name,
@@ -278,7 +282,13 @@ public:
      * @param related_topic Related Topic to being subscribed
      * @param filter_expression Logic expression to create filter
      * @param expression_parameters Parameters to filter content
-     * @return Pointer to the created ContentFilteredTopic, nullptr in error case
+     *
+     * @return Pointer to the created ContentFilteredTopic.
+     * @return nullptr if @c related_topic does not belong to this participant.
+     * @return nullptr if a topic with the specified @c name has already been created.
+     * @return nullptr if a filter cannot be created with the specified @c filter_expression and
+     *                 @c expression_parameters.
+     * @return nullptr if the specified @c filter_name has not been registered.
      */
     RTPS_DllAPI ContentFilteredTopic* create_contentfilteredtopic(
             const std::string& name,
@@ -740,7 +750,7 @@ public:
     /**
      * Register a custom content filter factory, which can be used to create a ContentFilteredTopic.
      *
-     * DDS specifies a SQL-like content filter for use by content filtered topics.
+     * DDS specifies a SQL-like content filter to be used by content filtered topics.
      * If this filter does not meet your filtering requirements, you can register a custom filter.
      *
      * To use a custom filter, it must be registered in the following places:
@@ -787,8 +797,6 @@ public:
      *
      * The unregistration of filter is not allowed if there are any existing ContentFilteredTopic objects that are
      * using the filter.
-     * If the operation is called on a filter with existing ContentFilteredTopic objects attached to it, it will fail
-     * with RETCODE_PRECONDITION_NOT_MET.
      *
      * If there is any existing discovered DataReader with the same filter_name, filtering on the writer side will be
      * stopped, but this operation will not fail.
