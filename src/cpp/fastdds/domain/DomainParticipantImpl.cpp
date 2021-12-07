@@ -470,7 +470,7 @@ ContentFilteredTopic* DomainParticipantImpl::create_contentfilteredtopic(
         const std::vector<std::string>& expression_parameters,
         const char* filter_name)
 {
-    if (nullptr == related_topic)
+    if ((nullptr == related_topic) || (nullptr == filter_name))
     {
         return nullptr;
     }
@@ -483,11 +483,6 @@ ContentFilteredTopic* DomainParticipantImpl::create_contentfilteredtopic(
     {
         logError(PARTICIPANT, "Topic with name : " << name << " already exists");
         return nullptr;
-    }
-
-    if (nullptr == filter_name)
-    {
-        filter_name = FASTDDS_SQLFILTER_NAME;
     }
 
     IContentFilterFactory* filter_factory = nullptr;
