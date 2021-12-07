@@ -173,7 +173,19 @@ ContentFilteredTopic* DomainParticipant::create_contentfilteredtopic(
         const std::string& filter_expression,
         const std::vector<std::string>& expression_parameters)
 {
-    return impl_->create_contentfilteredtopic(name, related_topic, filter_expression, expression_parameters);
+    return impl_->create_contentfilteredtopic(name, related_topic, filter_expression, expression_parameters,
+                   FASTDDS_SQLFILTER_NAME);
+}
+
+ContentFilteredTopic* DomainParticipant::create_contentfilteredtopic(
+        const std::string& name,
+        Topic* related_topic,
+        const std::string& filter_expression,
+        const std::vector<std::string>& expression_parameters,
+        const char* filter_name)
+{
+    return impl_->create_contentfilteredtopic(name, related_topic, filter_expression, expression_parameters,
+                   filter_name);
 }
 
 ReturnCode_t DomainParticipant::delete_contentfilteredtopic(
