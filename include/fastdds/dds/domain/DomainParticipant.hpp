@@ -20,7 +20,10 @@
 #ifndef _FASTDDS_DOMAIN_PARTICIPANT_HPP_
 #define _FASTDDS_DOMAIN_PARTICIPANT_HPP_
 
+#include <functional>
+#include <string>
 #include <utility>
+#include <vector>
 
 #include <fastdds/dds/builtin/topic/ParticipantBuiltinTopicData.hpp>
 #include <fastdds/dds/builtin/topic/TopicBuiltinTopicData.hpp>
