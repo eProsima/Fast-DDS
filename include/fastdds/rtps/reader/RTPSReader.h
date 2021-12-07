@@ -255,6 +255,7 @@ public:
     RTPS_DllAPI void set_content_filter(
             eprosima::fastdds::rtps::IReaderDataFilter* filter)
     {
+        std::lock_guard<RecursiveTimedMutex> guard(mp_mutex);
         data_filter_ = filter;
     }
 

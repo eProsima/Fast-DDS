@@ -240,8 +240,7 @@ ReturnCode_t DataReaderImpl::enable()
         return ReturnCode_t::RETCODE_ERROR;
     }
 
-    auto topic_impl = topic_->get_impl();
-    auto content_topic = dynamic_cast<ContentFilteredTopicImpl*>(topic_impl);
+    auto content_topic = dynamic_cast<ContentFilteredTopicImpl*>(topic_->get_impl());
     if (nullptr != content_topic)
     {
         reader->set_content_filter(content_topic);
