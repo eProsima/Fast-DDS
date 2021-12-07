@@ -156,7 +156,7 @@ public:
             return end();
         }
 
-        return collection_.insert(pos, value);
+        return collection_.insert(pos, std::move(value));
     }
 
     /**
