@@ -40,6 +40,7 @@
 #include <fastdds/rtps/resources/ResourceManagement.h>
 
 #include <fastrtps/utils/fixed_size_string.hpp>
+#include <fastrtps/utils/collections/ResourceLimitedContainerConfig.hpp>
 
 #include "DataReaderInstance.hpp"
 
@@ -174,6 +175,10 @@ private:
 
     using InstanceCollection = std::map<InstanceHandle_t, DataReaderInstance>;
 
+    //!Resource limits for allocating the array of changes per instance
+    eprosima::fastrtps::ResourceLimitedContainerConfig key_changes_allocation_;
+    //!Resource limits for allocating the array of alive writers per instance
+    eprosima::fastrtps::ResourceLimitedContainerConfig key_writers_allocation_;
     //!Map where keys are instance handles and values vectors of cache changes
     InstanceCollection keyed_changes_;
     //!HistoryQosPolicy values.

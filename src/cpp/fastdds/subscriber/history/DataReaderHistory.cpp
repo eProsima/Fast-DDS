@@ -69,6 +69,7 @@ DataReaderHistory::DataReaderHistory(
         const TopicDescription& topic,
         const DataReaderQos& qos)
     : ReaderHistory(to_history_attributes(type, qos))
+    , key_writers_allocation_(qos.reader_resource_limits().matched_publisher_allocation)
     , history_qos_(qos.history())
     , resource_limited_qos_(qos.resource_limits())
     , topic_name_(topic.get_name())
@@ -82,16 +83,6 @@ DataReaderHistory::DataReaderHistory(
         resource_limited_qos_.max_samples = std::numeric_limits<int32_t>::max();
     }
 
-    if (type_->m_isGetKeyDefined)
-    {
-        get_key_object_ = type_->createData();
-    }
-    else
-    {
-        resource_limited_qos_.max_instances = 1;
-        resource_limited_qos_.max_samples_per_instance = resource_limited_qos_.max_samples;
-    }
-
     if (resource_limited_qos_.max_instances == 0)
     {
         resource_limited_qos_.max_instances = std::numeric_limits<int32_t>::max();
@@ -100,6 +91,26 @@ DataReaderHistory::DataReaderHistory(
     if (resource_limited_qos_.max_samples_per_instance == 0)
     {
         resource_limited_qos_.max_samples_per_instance = std::numeric_limits<int32_t>::max();
+    }
+
+    if (type_->m_isGetKeyDefined)
+    {
+        get_key_object_ = type_->createData();
+
+        if (resource_limited_qos_.max_samples_per_instance < std::numeric_limits<int32_t>::max())
+        {
+            key_changes_allocation_.maximum = resource_limited_qos_.max_samples_per_instance;
+        }
+    }
+    else
+    {
+        resource_limited_qos_.max_instances = 1;
+        resource_limited_qos_.max_samples_per_instance = resource_limited_qos_.max_samples;
+        key_changes_allocation_.initial = resource_limited_qos_.allocated_samples;
+        key_changes_allocation_.maximum = resource_limited_qos_.max_samples;
+
+        keyed_changes_.emplace(c_InstanceHandle_Unknown,
+            DataReaderInstance{ key_changes_allocation_, key_writers_allocation_ });
     }
 
     using std::placeholders::_1;
@@ -226,7 +237,7 @@ bool DataReaderHistory::received_change_keep_last(
 bool DataReaderHistory::add_received_change(
         CacheChange_t* a_change)
 {
-    return add_received_change_with_key(a_change, keyed_changes_[c_InstanceHandle_Unknown]);
+    return add_received_change_with_key(a_change, keyed_changes_.begin()->second);
 }
 
 bool DataReaderHistory::add_received_change_with_key(
@@ -312,7 +323,8 @@ bool DataReaderHistory::find_key(
 
     if (keyed_changes_.size() < static_cast<size_t>(resource_limited_qos_.max_instances))
     {
-        vit_out = keyed_changes_.insert(std::make_pair(handle, DataReaderInstance())).first;
+        vit_out = keyed_changes_.emplace(handle,
+                        DataReaderInstance{key_changes_allocation_, key_writers_allocation_}).first;
         return true;
     }
 
@@ -321,7 +333,8 @@ bool DataReaderHistory::find_key(
         if (vit->second.cache_changes.size() == 0)
         {
             keyed_changes_.erase(vit);
-            vit_out = keyed_changes_.insert(std::make_pair(handle, DataReaderInstance())).first;
+            vit_out = keyed_changes_.emplace(handle,
+                            DataReaderInstance{ key_changes_allocation_, key_writers_allocation_ }).first;
             return true;
         }
     }
@@ -424,12 +437,13 @@ bool DataReaderHistory::set_next_deadline(
         return false;
     }
     std::lock_guard<RecursiveTimedMutex> guard(*mp_mutex);
-    if (keyed_changes_.find(handle) == keyed_changes_.end())
+    auto it = keyed_changes_.find(handle);
+    if (it == keyed_changes_.end())
     {
         return false;
     }
 
-    keyed_changes_[handle].next_deadline_us = next_deadline_us;
+    it->second.next_deadline_us = next_deadline_us;
     return true;
 }
 

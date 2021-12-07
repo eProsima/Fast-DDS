@@ -58,6 +58,14 @@ struct DataReaderInstance
     //! Current no_writers generation of the instance
     int32_t no_writers_generation_count = 0;
 
+    DataReaderInstance(
+            const eprosima::fastrtps::ResourceLimitedContainerConfig& changes_allocation,
+            const eprosima::fastrtps::ResourceLimitedContainerConfig& writers_allocation)
+        : cache_changes(changes_allocation)
+        , alive_writers(writers_allocation)
+    {
+    }
+
     bool update_state(
             const fastrtps::rtps::ChangeKind_t change_kind,
             const fastrtps::rtps::GUID_t& writer_guid,
