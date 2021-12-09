@@ -252,6 +252,15 @@ public:
         return mp_history;
     }
 
+    //! @return The content filter associated to this reader.
+    RTPS_DllAPI eprosima::fastdds::rtps::IReaderDataFilter* get_content_filter() const
+    {
+        std::lock_guard<RecursiveTimedMutex> guard(mp_mutex);
+        return data_filter_;
+    }
+
+    //! Set the content filter associated to this reader.
+    //! @param filter Pointer to the content filter to associate to this reader.
     RTPS_DllAPI void set_content_filter(
             eprosima::fastdds::rtps::IReaderDataFilter* filter)
     {
