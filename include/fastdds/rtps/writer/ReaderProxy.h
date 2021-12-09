@@ -155,6 +155,8 @@ public:
      * @param seq_num_set Bitmap of sequence numbers.
      * @param gap_builder RTPSGapBuilder reference uses for adding  each requested change that is irrelevant for the
      * requester.
+     * @param[in] min_seq_in_history Minimum SequenceNumber_t in the writer's history. If writer's history is empty,
+     * SequenceNumber_t::unknown() is expected.
      * @return true if at least one change has been marked as REQUESTED, false otherwise.
      */
     bool requested_changes_set(

@@ -167,6 +167,8 @@ public:
      * and depending on the implementation performs different actions.
      * @param a_change Pointer of the change to add.
      * @param prox Pointer to the WriterProxy that adds the Change.
+     * @param unknown_missing_changes_up_to The number of changes from the same writer with a lower sequence number that
+     *                                      could potentially be received in the future.
      * @return True if added.
      */
     bool change_received(

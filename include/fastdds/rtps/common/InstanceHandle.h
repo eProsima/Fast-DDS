@@ -223,6 +223,13 @@ inline bool operator ==(
     return ihandle1.value == ihandle2.value;
 }
 
+/**
+ * @brief Comparison operator
+ *
+ * @param ihandle1 First InstanceHandle_t to compare
+ * @param ihandle2 Second InstanceHandle_t to compare
+ * @return True if not equal
+ */
 inline bool operator !=(
         const InstanceHandle_t& ihandle1,
         const InstanceHandle_t& ihandle2) noexcept
@@ -259,6 +266,13 @@ inline GUID_t iHandle2GUID(
     return guid;
 }
 
+/**
+ * @brief Comparison operator: checks if a InstanceHandle_t is less than another.
+ *
+ * @param h1 First InstanceHandle_t to compare.
+ * @param h2 Second InstanceHandle_t to compare.
+ * @return True if the first InstanceHandle_t is less than the second.
+ */
 inline bool operator <(
         const InstanceHandle_t& h1,
         const InstanceHandle_t& h2) noexcept
@@ -269,9 +283,11 @@ inline bool operator <(
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 
 /**
+ * Stream operator: print an InstanceHandle_t.
  *
- * @param output
- * @param iHandle
+ * @param output Output stream.
+ * @param iHandle InstanceHandle_t to print.
+ * @return Stream operator.
  */
 inline std::ostream& operator <<(
         std::ostream& output,
@@ -287,9 +303,11 @@ inline std::ostream& operator <<(
 }
 
 /**
+ * Stream operator: retrieve an InstanceHandle_t.
  *
- * @param input
- * @param iHandle
+ * @param input Input stream.
+ * @param iHandle InstanceHandle_t that will receive the input as its new value.
+ * @return Stream operator.
  */
 inline std::istream& operator >>(
         std::istream& input,
