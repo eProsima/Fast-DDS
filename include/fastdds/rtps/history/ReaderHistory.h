@@ -77,6 +77,8 @@ public:
      * In this implementation this method just calls add_change. The user can overload this method in case
      * he needs to perform additional checks before adding the change.
      * @param change Pointer to the change
+     * @param unknown_missing_changes_up_to The number of changes from the same writer with a lower sequence number that
+     *                                     could potentially be received in the future.
      * @return True if added.
      */
     RTPS_DllAPI virtual bool received_change(
