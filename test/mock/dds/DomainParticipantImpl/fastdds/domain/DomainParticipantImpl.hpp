@@ -311,15 +311,15 @@ public:
         return ReturnCode_t::RETCODE_ERROR;
     }
 
-    MOCK_METHOD5(create_contentfilteredtopic, ContentFilteredTopic* (
-        const std::string& name,
-        Topic* related_topic,
-        const std::string& filter_expression,
-        const std::vector<std::string>& expression_parameters,
-        const char* filter_class_name));
+    MOCK_METHOD5(create_contentfilteredtopic, ContentFilteredTopic * (
+                const std::string& name,
+                Topic * related_topic,
+                const std::string& filter_expression,
+                const std::vector<std::string>& expression_parameters,
+                const char* filter_class_name));
 
     MOCK_METHOD1(delete_contentfilteredtopic, ReturnCode_t(
-        const ContentFilteredTopic* topic));
+                const ContentFilteredTopic * topic));
 
     TopicDescription* lookup_topicdescription(
             const std::string& topic_name) const
