@@ -45,7 +45,7 @@ ContentFilteredTopic::ContentFilteredTopic(
 ContentFilteredTopic::~ContentFilteredTopic()
 {
     impl_->related_topic->get_impl()->dereference();
-    impl_->filter_factory->delete_content_filter(impl_->filter_instance);
+    impl_->filter_factory->delete_content_filter(impl_->filter_class_name.c_str(), impl_->filter_instance);
     delete impl_;
 }
 

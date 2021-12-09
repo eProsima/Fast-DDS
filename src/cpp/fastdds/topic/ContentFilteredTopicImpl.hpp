@@ -58,6 +58,7 @@ public:
     IContentFilterFactory* filter_factory = nullptr;
     IContentFilter* filter_instance = nullptr;
     Topic* related_topic = nullptr;
+    std::string filter_class_name;
     std::string expression;
     std::vector<std::string> parameters;
 };

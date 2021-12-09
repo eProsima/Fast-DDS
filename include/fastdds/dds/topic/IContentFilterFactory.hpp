@@ -43,6 +43,7 @@ struct IContentFilterFactory
     virtual ~IContentFilterFactory() = default;
 
     virtual ReturnCode_t create_content_filter(
+            const char* filter_class_name,
             const char* type_name,
             const TypeDescriptor* type_description,
             const char* filter_expression,
@@ -50,6 +51,7 @@ struct IContentFilterFactory
             IContentFilter*& filter_instance) = 0;
 
     virtual ReturnCode_t delete_content_filter(
+            const char* filter_class_name,
             IContentFilter* filter_instance) = 0;
 };
 
