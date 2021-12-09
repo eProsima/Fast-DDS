@@ -63,7 +63,6 @@ target_include_directories(BuiltinPKIDH PRIVATE
     ${OPENSSL_INCLUDE_DIR}
     ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include
     ${PROJECT_SOURCE_DIR}/src/cpp
-    ${LIBP11_INCLUDE_DIR}
     )
 target_link_libraries(BuiltinPKIDH
     GTest::gtest
@@ -71,7 +70,7 @@ target_link_libraries(BuiltinPKIDH
     fastcdr
     foonathan_memory
     $<$<BOOL:${WIN32}>:ws2_32>
-    ${LIBP11_LIBRARIES}
+    $<TARGET_NAME_IF_EXISTS:eProsima_p11>
     )
 add_gtest(BuiltinPKIDH
     SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/BuiltinPKIDHTests.cpp
