@@ -468,9 +468,9 @@ ContentFilteredTopic* DomainParticipantImpl::create_contentfilteredtopic(
         Topic* related_topic,
         const std::string& filter_expression,
         const std::vector<std::string>& expression_parameters,
-        const char* filter_name)
+        const char* filter_class_name)
 {
-    if ((nullptr == related_topic) || (nullptr == filter_name))
+    if ((nullptr == related_topic) || (nullptr == filter_class_name))
     {
         return nullptr;
     }
@@ -487,10 +487,10 @@ ContentFilteredTopic* DomainParticipantImpl::create_contentfilteredtopic(
 
     IContentFilterFactory* filter_factory = nullptr;
     // TODO(Miguel C): Find filter factory in registry
-    // filter_factory = find_filter_factory(filter_name);
+    // filter_factory = find_filter_factory(filter_class_name);
     if (nullptr == filter_factory)
     {
-        logError(PARTICIPANT, "Could not find factory for filter " << filter_name);
+        logError(PARTICIPANT, "Could not find factory for filter " << filter_class_name);
         return nullptr;
     }
 

@@ -282,20 +282,21 @@ public:
      * @param related_topic Related Topic to being subscribed
      * @param filter_expression Logic expression to create filter
      * @param expression_parameters Parameters to filter content
+     * @param filter_class_name Name of the filter class to use
      *
      * @return Pointer to the created ContentFilteredTopic.
      * @return nullptr if @c related_topic does not belong to this participant.
      * @return nullptr if a topic with the specified @c name has already been created.
      * @return nullptr if a filter cannot be created with the specified @c filter_expression and
      *                 @c expression_parameters.
-     * @return nullptr if the specified @c filter_name has not been registered.
+     * @return nullptr if the specified @c filter_class_name has not been registered.
      */
     RTPS_DllAPI ContentFilteredTopic* create_contentfilteredtopic(
             const std::string& name,
             Topic* related_topic,
             const std::string& filter_expression,
             const std::vector<std::string>& expression_parameters,
-            const char* filter_name);
+            const char* filter_class_name);
 
     /**
      * Deletes an existing ContentFilteredTopic.
@@ -764,52 +765,52 @@ public:
      * If you also want to perform filtering in any application that publishes Topic X, then you also need to register
      * the same definition of the ContentFilter myFilter in that application.
      *
-     * Each @c filter_name can only be used to register a content filter factory once per DomainParticipant.
+     * Each @c filter_class_name can only be used to register a content filter factory once per DomainParticipant.
      *
-     * @param filter_name     Name of the filter. Cannot be nullptr, must not exceed 255 characters, and must be
-     *                        unique within this DomainParticipant.
-     * @param filter_factory  Factory of content filters to be registered. Cannot be nullptr.
+     * @param filter_class_name Name of the filter class. Cannot be nullptr, must not exceed 255 characters, and must
+     *                          be unique within this DomainParticipant.
+     * @param filter_factory    Factory of content filters to be registered. Cannot be nullptr.
      *
-     * @return RETCODE_BAD_PARAMETER if any parameter is nullptr, or the filter_name exceeds 255 characters.
-     * @return RERCODE_PRECONDITION_NOT_MET if the filter_name has been already registered.
+     * @return RETCODE_BAD_PARAMETER if any parameter is nullptr, or the filter_class_name exceeds 255 characters.
+     * @return RERCODE_PRECONDITION_NOT_MET if the filter_class_name has been already registered.
      * @return RETCODE_OK if the filter is correctly registered.
      */
     RTPS_DllAPI ReturnCode_t register_content_filter_factory(
-            const char* filter_name,
+            const char* filter_class_name,
             const IContentFilterFactory* filter_factory);
 
     /**
      * Lookup a custom content filter factory previously registered with register_content_filter_factory.
      *
-     * @param filter_name Name of the filter. Cannot be nullptr.
+     * @param filter_class_name Name of the filter class. Cannot be nullptr.
      *
-     * @return nullptr if the given filter_name has not been previously registered on this DomainParticipant.
-     *         Otherwise, the content filter factory previously registered with the given filter_name.
+     * @return nullptr if the given filter_class_name has not been previously registered on this DomainParticipant.
+     *         Otherwise, the content filter factory previously registered with the given filter_class_name.
      */
     RTPS_DllAPI IContentFilterFactory* lookup_content_filter_factory(
-            const char* filter_name);
+            const char* filter_class_name);
 
     /**
      * Unregister a custom content filter factory previously registered with register_content_filter.
      *
-     * A filter_name can be unregistered only if it has been previously registered to the DomainParticipant with
+     * A filter_class_name can be unregistered only if it has been previously registered to the DomainParticipant with
      * register_content_filter.
      *
      * The unregistration of filter is not allowed if there are any existing ContentFilteredTopic objects that are
      * using the filter.
      *
-     * If there is any existing discovered DataReader with the same filter_name, filtering on the writer side will be
+     * If there is any existing discovered DataReader with the same filter_class_name, filtering on the writer side will be
      * stopped, but this operation will not fail.
      *
-     * @param filter_name Name of the filter. Cannot be nullptr.
+     * @param filter_class_name Name of the filter class. Cannot be nullptr.
      *
-     * @return RETCODE_BAD_PARAMETER if the filter_name is nullptr.
-     * @return RERCODE_PRECONDITION_NOT_MET if the filter_name has not been previously registered.
+     * @return RETCODE_BAD_PARAMETER if the filter_class_name is nullptr.
+     * @return RERCODE_PRECONDITION_NOT_MET if the filter_class_name has not been previously registered.
      * @return RERCODE_PRECONDITION_NOT_MET if there is any ContentFilteredTopic referencing the filter.
      * @return RETCODE_OK if the filter is correctly unregistered.
      */
     RTPS_DllAPI ReturnCode_t unregister_content_filter_factory(
-            const char* filter_name);
+            const char* filter_class_name);
 
     /**
      * @brief Check if the Participant has any Publisher, Subscriber or Topic

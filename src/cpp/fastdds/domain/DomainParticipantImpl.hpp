@@ -216,7 +216,7 @@ public:
             Topic* related_topic,
             const std::string& filter_expression,
             const std::vector<std::string>& expression_parameters,
-            const char* filter_name = nullptr);
+            const char* filter_class_name);
 
     ReturnCode_t delete_contentfilteredtopic(
             const ContentFilteredTopic* topic);
