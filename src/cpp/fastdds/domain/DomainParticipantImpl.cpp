@@ -567,6 +567,25 @@ ReturnCode_t DomainParticipantImpl::delete_contentfilteredtopic(
     return ReturnCode_t::RETCODE_PRECONDITION_NOT_MET;
 }
 
+ReturnCode_t DomainParticipantImpl::register_content_filter_factory(
+        const char* filter_class_name,
+        const IContentFilterFactory* filter_factory)
+{
+    return ReturnCode_t::RETCODE_UNSUPPORTED;
+}
+
+IContentFilterFactory* DomainParticipantImpl::lookup_content_filter_factory(
+        const char* filter_class_name)
+{
+    return nullptr;
+}
+
+ReturnCode_t DomainParticipantImpl::unregister_content_filter_factory(
+        const char* filter_class_name)
+{
+    return ReturnCode_t::RETCODE_UNSUPPORTED;
+}
+
 const InstanceHandle_t& DomainParticipantImpl::get_instance_handle() const
 {
     return static_cast<const InstanceHandle_t&>(guid_);

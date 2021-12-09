@@ -29,6 +29,7 @@
 #include <fastdds/dds/domain/qos/DomainParticipantQos.hpp>
 #include <fastdds/dds/topic/qos/TopicQos.hpp>
 #include <fastdds/dds/topic/ContentFilteredTopic.hpp>
+#include <fastdds/dds/topic/IContentFilterFactory.hpp>
 #include <fastdds/dds/topic/Topic.hpp>
 
 #include <fastdds/dds/topic/TypeSupport.hpp>
@@ -220,6 +221,16 @@ public:
 
     ReturnCode_t delete_contentfilteredtopic(
             const ContentFilteredTopic* topic);
+
+    ReturnCode_t register_content_filter_factory(
+            const char* filter_class_name,
+            const IContentFilterFactory* filter_factory);
+
+    IContentFilterFactory* lookup_content_filter_factory(
+            const char* filter_class_name);
+
+    ReturnCode_t unregister_content_filter_factory(
+            const char* filter_class_name);
 
     /**
      * Looks up an existing, locally created @ref TopicDescription, based on its name.

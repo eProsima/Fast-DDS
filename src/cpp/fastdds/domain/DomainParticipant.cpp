@@ -215,6 +215,25 @@ ReturnCode_t DomainParticipant::delete_multitopic(
     return ReturnCode_t::RETCODE_UNSUPPORTED;
 }
 
+ReturnCode_t DomainParticipant::register_content_filter_factory(
+        const char* filter_class_name,
+        const IContentFilterFactory* filter_factory)
+{
+    return impl_->register_content_filter_factory(filter_class_name, filter_factory);
+}
+
+IContentFilterFactory* DomainParticipant::lookup_content_filter_factory(
+        const char* filter_class_name)
+{
+    return impl_->lookup_content_filter_factory(filter_class_name);
+}
+
+ReturnCode_t DomainParticipant::unregister_content_filter_factory(
+        const char* filter_class_name)
+{
+    return impl_->unregister_content_filter_factory(filter_class_name);
+}
+
 Topic* DomainParticipant::find_topic(
         const std::string& topic_name,
         const fastrtps::Duration_t& timeout)
