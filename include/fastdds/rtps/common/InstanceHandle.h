@@ -306,7 +306,7 @@ inline std::ostream& operator <<(
  * Stream operator: retrieve an InstanceHandle_t.
  *
  * @param input Input stream.
- * @param iHandle InstanceHandle_t to print.
+ * @param iHandle InstanceHandle_t that will receive the input as its new value.
  * @return Stream operator.
  */
 inline std::istream& operator >>(
