@@ -485,6 +485,13 @@ ContentFilteredTopic* DomainParticipantImpl::create_contentfilteredtopic(
         return nullptr;
     }
 
+    if (related_topic->get_participant() != this->participant_)
+    {
+        logError(PARTICIPANT, "Creating ContentFilteredTopic with name " << name <<
+                ": related_topic not from this participant");
+        return nullptr;
+    }
+
     IContentFilterFactory* filter_factory = nullptr;
     // TODO(Miguel C): Find filter factory in registry
     // filter_factory = find_filter_factory(filter_class_name);
@@ -512,6 +519,8 @@ ContentFilteredTopic* DomainParticipantImpl::create_contentfilteredtopic(
     if (ReturnCode_t::RETCODE_OK != filter_factory->create_content_filter(related_topic->get_type_name().c_str(),
             type_descriptor, filter_expression.c_str(), filter_parameters, filter_instance))
     {
+        logError(PARTICIPANT, "Could not create filter of class " << filter_class_name << " for expression \"" <<
+                filter_expression);
         return nullptr;
     }
 
