@@ -217,7 +217,7 @@ ReturnCode_t DomainParticipant::delete_multitopic(
 
 ReturnCode_t DomainParticipant::register_content_filter_factory(
         const char* filter_class_name,
-        const IContentFilterFactory* filter_factory)
+        IContentFilterFactory* const filter_factory)
 {
     return impl_->register_content_filter_factory(filter_class_name, filter_factory);
 }

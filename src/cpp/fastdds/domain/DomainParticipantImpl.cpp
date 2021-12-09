@@ -569,21 +569,67 @@ ReturnCode_t DomainParticipantImpl::delete_contentfilteredtopic(
 
 ReturnCode_t DomainParticipantImpl::register_content_filter_factory(
         const char* filter_class_name,
-        const IContentFilterFactory* filter_factory)
+        IContentFilterFactory* const filter_factory)
 {
-    return ReturnCode_t::RETCODE_UNSUPPORTED;
+    if (nullptr == filter_class_name || strlen(filter_class_name) > 255)
+    {
+        return ReturnCode_t::RETCODE_BAD_PARAMETER;
+    }
+
+    std::lock_guard<std::mutex> lock(mtx_topics_);
+    auto it = filter_factories_.find(filter_class_name);
+    if ((it != filter_factories_.end()) || (0 == strcmp(filter_class_name, FASTDDS_SQLFILTER_NAME)))
+    {
+        return ReturnCode_t::RETCODE_PRECONDITION_NOT_MET;
+    }
+
+    filter_factories_[filter_class_name] = filter_factory;
+    return ReturnCode_t::RETCODE_OK;
 }
 
 IContentFilterFactory* DomainParticipantImpl::lookup_content_filter_factory(
         const char* filter_class_name)
 {
-    return nullptr;
+    if (nullptr == filter_class_name)
+    {
+        return nullptr;
+    }
+
+    std::lock_guard<std::mutex> lock(mtx_topics_);
+    auto it = filter_factories_.find(filter_class_name);
+    if ((it == filter_factories_.end()) || (it->first == FASTDDS_SQLFILTER_NAME))
+    {
+        return nullptr;
+    }
+    return it->second;
 }
 
 ReturnCode_t DomainParticipantImpl::unregister_content_filter_factory(
         const char* filter_class_name)
 {
-    return ReturnCode_t::RETCODE_UNSUPPORTED;
+    if (nullptr == filter_class_name)
+    {
+        return ReturnCode_t::RETCODE_BAD_PARAMETER;
+    }
+
+    std::lock_guard<std::mutex> lock(mtx_topics_);
+    auto it = filter_factories_.find(filter_class_name);
+    if ((it == filter_factories_.end()) || (it->first == FASTDDS_SQLFILTER_NAME))
+    {
+        return ReturnCode_t::RETCODE_PRECONDITION_NOT_MET;
+    }
+
+    for (auto& topic : filtered_topics_)
+    {
+        if (topic.second->impl_->filter_class_name == filter_class_name)
+        {
+            return ReturnCode_t::RETCODE_PRECONDITION_NOT_MET;
+        }
+    }
+
+    filter_factories_.erase(it);
+
+    return ReturnCode_t::RETCODE_OK;
 }
 
 const InstanceHandle_t& DomainParticipantImpl::get_instance_handle() const

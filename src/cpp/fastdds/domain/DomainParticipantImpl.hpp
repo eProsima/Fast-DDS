@@ -224,7 +224,7 @@ public:
 
     ReturnCode_t register_content_filter_factory(
             const char* filter_class_name,
-            const IContentFilterFactory* filter_factory);
+            IContentFilterFactory* const filter_factory);
 
     IContentFilterFactory* lookup_content_filter_factory(
             const char* filter_class_name);
@@ -474,6 +474,7 @@ protected:
     std::map<std::string, TopicImpl*> topics_;
     std::map<InstanceHandle_t, Topic*> topics_by_handle_;
     std::map<std::string, std::unique_ptr<ContentFilteredTopic>> filtered_topics_;
+    std::map<std::string, IContentFilterFactory*> filter_factories_;
     mutable std::mutex mtx_topics_;
 
     TopicQos default_topic_qos_;

@@ -777,7 +777,7 @@ public:
      */
     RTPS_DllAPI ReturnCode_t register_content_filter_factory(
             const char* filter_class_name,
-            const IContentFilterFactory* filter_factory);
+            IContentFilterFactory* const filter_factory);
 
     /**
      * Lookup a custom content filter factory previously registered with register_content_filter_factory.
