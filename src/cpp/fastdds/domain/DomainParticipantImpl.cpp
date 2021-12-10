@@ -492,12 +492,10 @@ ContentFilteredTopic* DomainParticipantImpl::create_contentfilteredtopic(
         return nullptr;
     }
 
-    IContentFilterFactory* filter_factory = nullptr;
-    // TODO(Miguel C): Find filter factory in registry
-    // filter_factory = find_filter_factory(filter_class_name);
+    IContentFilterFactory* filter_factory = find_content_filter_factory(filter_class_name);
     if (nullptr == filter_factory)
     {
-        logError(PARTICIPANT, "Could not find factory for filter " << filter_class_name);
+        logError(PARTICIPANT, "Could not find factory for filter class " << filter_class_name);
         return nullptr;
     }
 
@@ -630,6 +628,24 @@ ReturnCode_t DomainParticipantImpl::unregister_content_filter_factory(
     filter_factories_.erase(it);
 
     return ReturnCode_t::RETCODE_OK;
+}
+
+IContentFilterFactory* DomainParticipantImpl::find_content_filter_factory(
+        const char* filter_class_name) const
+{
+    auto it = filter_factories_.find(filter_class_name);
+    if (it != filter_factories_.end())
+    {
+        return it->second;
+    }
+
+    if (0 != strcmp(filter_class_name, FASTDDS_SQLFILTER_NAME))
+    {
+        return nullptr;
+    }
+
+    // TODO(Miguel C): Create SQLFilter::DDSFilterFactory
+    return nullptr;
 }
 
 const InstanceHandle_t& DomainParticipantImpl::get_instance_handle() const

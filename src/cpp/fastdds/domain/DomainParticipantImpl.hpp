@@ -597,6 +597,9 @@ protected:
     std::string get_inner_type_name(
             const fastrtps::rtps::SampleIdentity& id) const;
 
+    IContentFilterFactory* find_content_filter_factory(
+            const char* filter_class_name) const;
+
     /**
      * Set the DomainParticipantQos checking if the Qos can be updated or not
      *
