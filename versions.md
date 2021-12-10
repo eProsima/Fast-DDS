@@ -3,6 +3,8 @@ Forthcoming
 
 * Allow zero-valued InstanceHandle_t (ABI break)
 * Allow concatenation of transports (new exported symbols + ABI breaks on transport layer)
+* New DomainParticipantFactory API for loading XML profiles from a string data buffer (extends DomainParticipantFactory
+  API, implies ABI break)
 *
 
 Version 2.4.0
