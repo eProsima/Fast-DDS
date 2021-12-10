@@ -37,11 +37,6 @@ struct IContentFilterFactory
     using ParameterSeq = LoanableTypedCollection<const char*>;
     using TypeDescriptor = eprosima::fastrtps::types::TypeDescriptor;
 
-    /**
-     * @brief Destructor
-     */
-    virtual ~IContentFilterFactory() = default;
-
     virtual ReturnCode_t create_content_filter(
             const char* filter_class_name,
             const char* type_name,

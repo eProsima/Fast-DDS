@@ -47,8 +47,6 @@ struct IContentFilter
         SampleIdentity related_sample_identity;
     };
 
-    virtual ~IContentFilter() = default;
-
     virtual bool evaluate(
             const SerializedPayload& payload,
             const FilterSampleInfo& sample_info,
