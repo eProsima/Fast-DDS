@@ -754,16 +754,16 @@ public:
      * DDS specifies a SQL-like content filter to be used by content filtered topics.
      * If this filter does not meet your filtering requirements, you can register a custom filter.
      *
-     * To use a custom filter, it must be registered in the following places:
-     * - In any application that uses the custom filter to create a ContentFilteredTopic and the corresponding
+     * To use a custom filter, a factory for it must be registered in the following places:
+     * - In any application that uses the custom filter factory to create a ContentFilteredTopic and the corresponding
      *   DataReader.
      * - In each application that writes the data to the applications mentioned above.
      *
      * For example, suppose Application A on the subscription side creates a Topic named X and a ContentFilteredTopic
-     * named filteredX (and a corresponding DataReader), using a previously registered content filter, myFilter.
+     * named filteredX (and a corresponding DataReader), using a previously registered content filter factory, myFilterFactory.
      * With only that, you will have filtering at the subscription side.
      * If you also want to perform filtering in any application that publishes Topic X, then you also need to register
-     * the same definition of the ContentFilter myFilter in that application.
+     * the same definition of the ContentFilterFactory myFilterFactory in that application.
      *
      * Each @c filter_class_name can only be used to register a content filter factory once per DomainParticipant.
      *
@@ -791,10 +791,10 @@ public:
             const char* filter_class_name);
 
     /**
-     * Unregister a custom content filter factory previously registered with register_content_filter.
+     * Unregister a custom content filter factory previously registered with register_content_filter_factory.
      *
      * A filter_class_name can be unregistered only if it has been previously registered to the DomainParticipant with
-     * register_content_filter.
+     * register_content_filter_factory.
      *
      * The unregistration of filter is not allowed if there are any existing ContentFilteredTopic objects that are
      * using the filter.
