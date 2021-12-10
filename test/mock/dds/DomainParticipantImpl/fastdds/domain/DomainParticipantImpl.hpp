@@ -323,7 +323,7 @@ public:
 
     MOCK_METHOD2(register_content_filter_factory, ReturnCode_t(
                 const char* filter_class_name,
-                IContentFilterFactory * const filter_factory));
+                IContentFilterFactory* const filter_factory));
 
     MOCK_METHOD1(lookup_content_filter_factory, IContentFilterFactory * (
                 const char* filter_class_name));
