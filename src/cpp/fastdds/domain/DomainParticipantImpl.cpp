@@ -24,13 +24,15 @@
 #include <fastdds/dds/domain/DomainParticipantListener.hpp>
 #include <fastdds/dds/domain/DomainParticipantFactory.hpp>
 #include <fastdds/dds/log/Log.hpp>
-#include <fastdds/dds/publisher/Publisher.hpp>
-#include <fastdds/dds/subscriber/Subscriber.hpp>
-#include <fastdds/dds/subscriber/DataReader.hpp>
 #include <fastdds/dds/publisher/DataWriter.hpp>
+#include <fastdds/dds/publisher/Publisher.hpp>
+#include <fastdds/dds/subscriber/DataReader.hpp>
+#include <fastdds/dds/subscriber/Subscriber.hpp>
+#include <fastdds/dds/topic/IContentFilterFactory.hpp>
+#include <fastdds/dds/topic/TypeSupport.hpp>
 
-#include <fastdds/rtps/attributes/RTPSParticipantAttributes.h>
 #include <fastdds/rtps/RTPSDomain.h>
+#include <fastdds/rtps/attributes/RTPSParticipantAttributes.h>
 #include <fastdds/rtps/builtin/liveliness/WLP.h>
 #include <fastdds/rtps/participant/ParticipantDiscoveryInfo.h>
 #include <fastdds/rtps/participant/RTPSParticipant.h>
@@ -40,17 +42,18 @@
 #include <fastrtps/attributes/PublisherAttributes.h>
 #include <fastrtps/attributes/SubscriberAttributes.h>
 
-#include <fastrtps/types/TypeObjectFactory.h>
 #include <fastrtps/types/DynamicTypeBuilderFactory.h>
 #include <fastrtps/types/DynamicPubSubType.h>
 #include <fastrtps/types/DynamicType.h>
 #include <fastrtps/types/DynamicTypeMember.h>
+#include <fastrtps/types/TypeObjectFactory.h>
 
 #include <fastrtps/xmlparser/XMLProfileManager.h>
 
 #include <fastdds/publisher/PublisherImpl.hpp>
 #include <fastdds/subscriber/SubscriberImpl.hpp>
 #include <fastdds/topic/TopicImpl.hpp>
+#include <fastdds/topic/ContentFilteredTopicImpl.hpp>
 
 #include <rtps/RTPSDomainImpl.hpp>
 
@@ -222,6 +225,8 @@ DomainParticipantImpl::~DomainParticipantImpl()
 
     {
         std::lock_guard<std::mutex> lock(mtx_topics_);
+
+        filtered_topics_.clear();
 
         for (auto topic_it = topics_.begin(); topic_it != topics_.end(); ++topic_it)
         {
@@ -465,6 +470,191 @@ ReturnCode_t DomainParticipantImpl::delete_topic(
     }
 
     return ReturnCode_t::RETCODE_ERROR;
+}
+
+ContentFilteredTopic* DomainParticipantImpl::create_contentfilteredtopic(
+        const std::string& name,
+        Topic* related_topic,
+        const std::string& filter_expression,
+        const std::vector<std::string>& expression_parameters,
+        const char* filter_class_name)
+{
+    if ((nullptr == related_topic) || (nullptr == filter_class_name))
+    {
+        return nullptr;
+    }
+
+    std::lock_guard<std::mutex> lock(mtx_topics_);
+
+    // Check there is no Topic with the same name
+    if ((topics_.find(name) != topics_.end()) ||
+            (filtered_topics_.find(name) != filtered_topics_.end()))
+    {
+        logError(PARTICIPANT, "Topic with name : " << name << " already exists");
+        return nullptr;
+    }
+
+    if (related_topic->get_participant() != this->participant_)
+    {
+        logError(PARTICIPANT, "Creating ContentFilteredTopic with name " << name <<
+                ": related_topic not from this participant");
+        return nullptr;
+    }
+
+    IContentFilterFactory* filter_factory = find_content_filter_factory(filter_class_name);
+    if (nullptr == filter_factory)
+    {
+        logError(PARTICIPANT, "Could not find factory for filter class " << filter_class_name);
+        return nullptr;
+    }
+
+    TopicImpl* topic_impl = dynamic_cast<TopicImpl*>(related_topic->get_impl());
+    assert(nullptr != topic_impl);
+    const TypeSupport& type = topic_impl->get_type();
+    const IContentFilterFactory::TypeDescriptor* type_descriptor = type->get_desciptor();
+    LoanableSequence<const char*>::size_type n_params;
+    n_params = static_cast<LoanableSequence<const char*>::size_type>(expression_parameters.size());
+    LoanableSequence<const char*> filter_parameters(n_params);
+    while (n_params > 0)
+    {
+        n_params--;
+        filter_parameters[n_params] = expression_parameters[n_params].c_str();
+    }
+
+    // Tell filter factory to compile the expression
+    IContentFilter* filter_instance = nullptr;
+    if (ReturnCode_t::RETCODE_OK !=
+            filter_factory->create_content_filter(filter_class_name, related_topic->get_type_name().c_str(),
+            type_descriptor, filter_expression.c_str(), filter_parameters, filter_instance))
+    {
+        logError(PARTICIPANT, "Could not create filter of class " << filter_class_name << " for expression \"" <<
+                filter_expression);
+        return nullptr;
+    }
+
+    ContentFilteredTopic* topic;
+    topic = new ContentFilteredTopic(name, related_topic, filter_expression, expression_parameters);
+    ContentFilteredTopicImpl* content_topic_impl = static_cast<ContentFilteredTopicImpl*>(topic->get_impl());
+    content_topic_impl->filter_class_name = filter_class_name;
+    content_topic_impl->filter_factory = filter_factory;
+    content_topic_impl->filter_instance = filter_instance;
+
+    // Save the topic into the map
+    filtered_topics_.emplace(std::make_pair(name, topic));
+
+    return topic;
+}
+
+ReturnCode_t DomainParticipantImpl::delete_contentfilteredtopic(
+        const ContentFilteredTopic* topic)
+{
+    if (topic == nullptr)
+    {
+        return ReturnCode_t::RETCODE_BAD_PARAMETER;
+    }
+
+    if (participant_ != topic->get_participant())
+    {
+        return ReturnCode_t::RETCODE_PRECONDITION_NOT_MET;
+    }
+
+    std::lock_guard<std::mutex> lock(mtx_topics_);
+    auto it = filtered_topics_.find(topic->get_name());
+
+    if (it != filtered_topics_.end())
+    {
+        if (it->second->get_impl()->is_referenced())
+        {
+            return ReturnCode_t::RETCODE_PRECONDITION_NOT_MET;
+        }
+        filtered_topics_.erase(it);
+        return ReturnCode_t::RETCODE_OK;
+    }
+
+    return ReturnCode_t::RETCODE_PRECONDITION_NOT_MET;
+}
+
+ReturnCode_t DomainParticipantImpl::register_content_filter_factory(
+        const char* filter_class_name,
+        IContentFilterFactory* const filter_factory)
+{
+    if (nullptr == filter_class_name || strlen(filter_class_name) > 255)
+    {
+        return ReturnCode_t::RETCODE_BAD_PARAMETER;
+    }
+
+    std::lock_guard<std::mutex> lock(mtx_topics_);
+    auto it = filter_factories_.find(filter_class_name);
+    if ((it != filter_factories_.end()) || (0 == strcmp(filter_class_name, FASTDDS_SQLFILTER_NAME)))
+    {
+        return ReturnCode_t::RETCODE_PRECONDITION_NOT_MET;
+    }
+
+    filter_factories_[filter_class_name] = filter_factory;
+    return ReturnCode_t::RETCODE_OK;
+}
+
+IContentFilterFactory* DomainParticipantImpl::lookup_content_filter_factory(
+        const char* filter_class_name)
+{
+    if (nullptr == filter_class_name)
+    {
+        return nullptr;
+    }
+
+    std::lock_guard<std::mutex> lock(mtx_topics_);
+    auto it = filter_factories_.find(filter_class_name);
+    if ((it == filter_factories_.end()) || (it->first == FASTDDS_SQLFILTER_NAME))
+    {
+        return nullptr;
+    }
+    return it->second;
+}
+
+ReturnCode_t DomainParticipantImpl::unregister_content_filter_factory(
+        const char* filter_class_name)
+{
+    if (nullptr == filter_class_name)
+    {
+        return ReturnCode_t::RETCODE_BAD_PARAMETER;
+    }
+
+    std::lock_guard<std::mutex> lock(mtx_topics_);
+    auto it = filter_factories_.find(filter_class_name);
+    if ((it == filter_factories_.end()) || (it->first == FASTDDS_SQLFILTER_NAME))
+    {
+        return ReturnCode_t::RETCODE_PRECONDITION_NOT_MET;
+    }
+
+    for (auto& topic : filtered_topics_)
+    {
+        if (topic.second->impl_->filter_class_name == filter_class_name)
+        {
+            return ReturnCode_t::RETCODE_PRECONDITION_NOT_MET;
+        }
+    }
+
+    filter_factories_.erase(it);
+
+    return ReturnCode_t::RETCODE_OK;
+}
+
+IContentFilterFactory* DomainParticipantImpl::find_content_filter_factory(
+        const char* filter_class_name) const
+{
+    auto it = filter_factories_.find(filter_class_name);
+    if (it != filter_factories_.end())
+    {
+        return it->second;
+    }
+
+    if (0 != strcmp(filter_class_name, FASTDDS_SQLFILTER_NAME))
+    {
+        return nullptr;
+    }
+
+    // TODO(Miguel C): Create SQLFilter::DDSFilterFactory
+    return nullptr;
 }
 
 const InstanceHandle_t& DomainParticipantImpl::get_instance_handle() const
@@ -1063,8 +1253,9 @@ Topic* DomainParticipantImpl::create_topic(
 
     std::lock_guard<std::mutex> lock(mtx_topics_);
 
-    //Check there is no Topic with the same name
-    if (topics_.find(topic_name) != topics_.end())
+    // Check there is no Topic with the same name
+    if ((topics_.find(topic_name) != topics_.end()) ||
+            (filtered_topics_.find(topic_name) != filtered_topics_.end()))
     {
         logError(PARTICIPANT, "Topic with name : " << topic_name << " already exists");
         return nullptr;
@@ -1116,11 +1307,18 @@ Topic* DomainParticipantImpl::create_topic_with_profile(
 TopicDescription* DomainParticipantImpl::lookup_topicdescription(
         const std::string& topic_name) const
 {
-    auto it = topics_.find(topic_name);
+    std::lock_guard<std::mutex> lock(mtx_topics_);
 
+    auto it = topics_.find(topic_name);
     if (it != topics_.end())
     {
         return it->second->user_topic_;
+    }
+
+    auto filtered_it = filtered_topics_.find(topic_name);
+    if (filtered_it != filtered_topics_.end())
+    {
+        return filtered_it->second.get();
     }
 
     return nullptr;

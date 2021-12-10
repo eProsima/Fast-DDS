@@ -237,6 +237,16 @@ public:
         return get()->is_plain();
     }
 
+    /**
+     * Get the structure representing the description of the type
+     *
+     * @return pointer to the type descriptor
+     */
+    RTPS_DllAPI virtual inline const TopicDataType::TypeDescriptor* get_desciptor() const
+    {
+        return get()->get_desciptor();
+    }
+
     RTPS_DllAPI bool operator !=(
             std::nullptr_t) const
     {

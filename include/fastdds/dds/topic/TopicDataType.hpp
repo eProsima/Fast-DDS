@@ -19,13 +19,15 @@
 #ifndef _FASTDDS_TOPICDATATYPE_HPP_
 #define _FASTDDS_TOPICDATATYPE_HPP_
 
-#include <string>
 #include <functional>
+#include <memory>
+#include <string>
 
 #include <fastdds/dds/core/policy/QosPolicies.hpp>
 #include <fastdds/rtps/common/InstanceHandle.h>
 
 #include <fastrtps/fastrtps_dll.h>
+#include <fastrtps/types/TypeDescriptor.h>
 #include <fastrtps/utils/md5.h>
 
 // This version of TypeSupport has `is_bounded()`
@@ -36,6 +38,9 @@
 
 // This version of TypeSupport has `construct_sample()`
 #define TOPIC_DATA_TYPE_API_HAS_CONSTRUCT_SAMPLE
+
+// This version of TypeSupport has `get_descriptor()`
+#define TOPIC_DATA_TYPE_API_HAS_GET_DESCRIPTOR
 
 namespace eprosima {
 namespace fastrtps {
@@ -59,6 +64,8 @@ class TypeSupport;
 class TopicDataType
 {
 public:
+
+    using TypeDescriptor = eprosima::fastrtps::types::TypeDescriptor;
 
     /**
      * @brief Constructor
@@ -303,6 +310,16 @@ public:
     {
         static_cast<void>(memory);
         return false;
+    }
+
+    /**
+     * Get the structure representing the description of the type
+     *
+     * @return pointer to the type descriptor
+     */
+    RTPS_DllAPI virtual inline const TypeDescriptor* get_desciptor() const
+    {
+        return nullptr;
     }
 
     //! Maximum serialized size of the type in bytes.
