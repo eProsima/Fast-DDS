@@ -5,6 +5,8 @@ Forthcoming
 * Allow concatenation of transports (new exported symbols + ABI breaks on transport layer)
 * New DomainParticipantFactory API for loading XML profiles from a string data buffer (extends DomainParticipantFactory
   API, implies ABI break)
+* New DataWriter API allowing to wait for acknowledgements for a specific instance (extends DataWriter API, implies ABI
+  break)
 *
 
 Version 2.4.0
