@@ -37,6 +37,7 @@ namespace dds {
 struct IContentFilter
 {
     using SerializedPayload = eprosima::fastrtps::rtps::SerializedPayload_t;
+    using GUID_t = fastrtps::rtps::GUID_t;
 
     struct FilterSampleInfo
     {
@@ -51,7 +52,7 @@ struct IContentFilter
     virtual bool evaluate(
             const SerializedPayload& payload,
             const FilterSampleInfo& sample_info,
-            const fastrtps::rtps::GUID_t& reader_guid) const = 0;
+            const GUID_t& reader_guid) const = 0;
 };
 
 } // namespace dds
