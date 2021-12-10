@@ -772,7 +772,8 @@ public:
      * @param filter_factory    Factory of content filters to be registered. Cannot be nullptr.
      *
      * @return RETCODE_BAD_PARAMETER if any parameter is nullptr, or the filter_class_name exceeds 255 characters.
-     * @return RERCODE_PRECONDITION_NOT_MET if the filter_class_name has been already registered.
+     * @return RETCODE_PRECONDITION_NOT_MET if the filter_class_name has been already registered.
+     * @return RETCODE_PRECONDITION_NOT_MET if filter_class_name is FASTDDS_SQLFILTER_NAME.
      * @return RETCODE_OK if the filter is correctly registered.
      */
     RTPS_DllAPI ReturnCode_t register_content_filter_factory(
