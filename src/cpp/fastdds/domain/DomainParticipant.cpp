@@ -169,23 +169,29 @@ ReturnCode_t DomainParticipant::delete_topic(
 
 ContentFilteredTopic* DomainParticipant::create_contentfilteredtopic(
         const std::string& name,
-        const Topic* related_topic,
+        Topic* related_topic,
         const std::string& filter_expression,
         const std::vector<std::string>& expression_parameters)
 {
-    static_cast<void> (name);
-    static_cast<void> (related_topic);
-    static_cast<void> (filter_expression);
-    static_cast<void> (expression_parameters);
-    logWarning(DOMAIN_PARTICIPANT, "create_contentfilteredtopic method not implemented");
-    return nullptr;
+    return impl_->create_contentfilteredtopic(name, related_topic, filter_expression, expression_parameters,
+                   FASTDDS_SQLFILTER_NAME);
+}
+
+ContentFilteredTopic* DomainParticipant::create_contentfilteredtopic(
+        const std::string& name,
+        Topic* related_topic,
+        const std::string& filter_expression,
+        const std::vector<std::string>& expression_parameters,
+        const char* filter_class_name)
+{
+    return impl_->create_contentfilteredtopic(name, related_topic, filter_expression, expression_parameters,
+                   filter_class_name);
 }
 
 ReturnCode_t DomainParticipant::delete_contentfilteredtopic(
         const ContentFilteredTopic* a_contentfilteredtopic)
 {
-    static_cast<void> (a_contentfilteredtopic);
-    return ReturnCode_t::RETCODE_UNSUPPORTED;
+    return impl_->delete_contentfilteredtopic(a_contentfilteredtopic);
 }
 
 MultiTopic* DomainParticipant::create_multitopic(
@@ -207,6 +213,25 @@ ReturnCode_t DomainParticipant::delete_multitopic(
 {
     static_cast<void> (a_multitopic);
     return ReturnCode_t::RETCODE_UNSUPPORTED;
+}
+
+ReturnCode_t DomainParticipant::register_content_filter_factory(
+        const char* filter_class_name,
+        IContentFilterFactory* const filter_factory)
+{
+    return impl_->register_content_filter_factory(filter_class_name, filter_factory);
+}
+
+IContentFilterFactory* DomainParticipant::lookup_content_filter_factory(
+        const char* filter_class_name)
+{
+    return impl_->lookup_content_filter_factory(filter_class_name);
+}
+
+ReturnCode_t DomainParticipant::unregister_content_filter_factory(
+        const char* filter_class_name)
+{
+    return impl_->unregister_content_filter_factory(filter_class_name);
 }
 
 Topic* DomainParticipant::find_topic(

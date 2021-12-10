@@ -420,6 +420,12 @@ bool StatelessReader::processDataMsg(
                 return false;
             }
 
+            if (data_filter_ && !data_filter_->is_relevant(*change, m_guid))
+            {
+                update_last_notified(change->writerGUID, change->sequenceNumber);
+                return true;
+            }
+
             // Ask the pool for a cache change
             CacheChange_t* change_to_add = nullptr;
             if (!change_pool_->reserve_cache(change_to_add))
@@ -595,7 +601,12 @@ bool StatelessReader::processDataFragMsg(
                 // If the change was completed, process it.
                 if (change_completed != nullptr)
                 {
-                    if (!change_received(change_completed))
+                    if (data_filter_ && !data_filter_->is_relevant(*change_completed, m_guid))
+                    {
+                        update_last_notified(change_completed->writerGUID, change_completed->sequenceNumber);
+                        releaseCache(change_completed);
+                    }
+                    else if (!change_received(change_completed))
                     {
                         logInfo(RTPS_MSG_IN,
                                 IDSTRING "MessageReceiver not add change " <<

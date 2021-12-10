@@ -82,6 +82,11 @@ public:
 
     const TypeSupport& get_type() const;
 
+    const std::string& get_rtps_topic_name() const override
+    {
+        return user_topic_->get_name();
+    }
+
     /**
      * Returns the most appropriate listener to handle the callback for the given status,
      * or nullptr if there is no appropriate listener.

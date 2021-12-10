@@ -28,6 +28,8 @@
 #include <fastdds/dds/subscriber/qos/SubscriberQos.hpp>
 #include <fastdds/dds/domain/qos/DomainParticipantQos.hpp>
 #include <fastdds/dds/topic/qos/TopicQos.hpp>
+#include <fastdds/dds/topic/ContentFilteredTopic.hpp>
+#include <fastdds/dds/topic/IContentFilterFactory.hpp>
 #include <fastdds/dds/topic/Topic.hpp>
 
 #include <fastdds/dds/topic/TypeSupport.hpp>
@@ -209,6 +211,26 @@ public:
 
     ReturnCode_t delete_topic(
             const Topic* topic);
+
+    ContentFilteredTopic* create_contentfilteredtopic(
+            const std::string& name,
+            Topic* related_topic,
+            const std::string& filter_expression,
+            const std::vector<std::string>& expression_parameters,
+            const char* filter_class_name);
+
+    ReturnCode_t delete_contentfilteredtopic(
+            const ContentFilteredTopic* topic);
+
+    ReturnCode_t register_content_filter_factory(
+            const char* filter_class_name,
+            IContentFilterFactory* const filter_factory);
+
+    IContentFilterFactory* lookup_content_filter_factory(
+            const char* filter_class_name);
+
+    ReturnCode_t unregister_content_filter_factory(
+            const char* filter_class_name);
 
     /**
      * Looks up an existing, locally created @ref TopicDescription, based on its name.
@@ -451,6 +473,8 @@ protected:
     //!Topic map
     std::map<std::string, TopicImpl*> topics_;
     std::map<InstanceHandle_t, Topic*> topics_by_handle_;
+    std::map<std::string, std::unique_ptr<ContentFilteredTopic>> filtered_topics_;
+    std::map<std::string, IContentFilterFactory*> filter_factories_;
     mutable std::mutex mtx_topics_;
 
     TopicQos default_topic_qos_;
@@ -572,6 +596,9 @@ protected:
 
     std::string get_inner_type_name(
             const fastrtps::rtps::SampleIdentity& id) const;
+
+    IContentFilterFactory* find_content_filter_factory(
+            const char* filter_class_name) const;
 
     /**
      * Set the DomainParticipantQos checking if the Qos can be updated or not

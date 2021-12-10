@@ -466,6 +466,15 @@ bool StatefulReader::processDataMsg(
                 return false;
             }
 
+            if (data_filter_ && !data_filter_->is_relevant(*change, m_guid))
+            {
+                if (pWP)
+                {
+                    pWP->irrelevant_change_set(change->sequenceNumber);
+                }
+                return true;
+            }
+
             // Ask the pool for a cache change
             CacheChange_t* change_to_add = nullptr;
             if (!change_pool_->reserve_cache(change_to_add))
@@ -623,6 +632,10 @@ bool StatefulReader::processDataFragMsg(
             {
                 mp_history->completed_change(work_change);
                 pWP->received_change_set(work_change->sequenceNumber);
+                if (data_filter_ && !data_filter_->is_relevant(*work_change, m_guid))
+                {
+                    mp_history->remove_change(work_change);
+                }
                 NotifyChanges(pWP);
             }
         }
