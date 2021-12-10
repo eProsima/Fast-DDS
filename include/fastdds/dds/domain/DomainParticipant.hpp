@@ -752,7 +752,7 @@ public:
      * Register a custom content filter factory, which can be used to create a ContentFilteredTopic.
      *
      * DDS specifies a SQL-like content filter to be used by content filtered topics.
-     * If this filter does not meet your filtering requirements, you can register a custom filter.
+     * If this filter does not meet your filtering requirements, you can register a custom filter factory.
      *
      * To use a custom filter, a factory for it must be registered in the following places:
      * - In any application that uses the custom filter factory to create a ContentFilteredTopic and the corresponding
