@@ -43,8 +43,9 @@ constexpr const char* const sqlfilter_name = "DDSSQL";
  */
 class ContentFilteredTopic : public TopicDescription
 {
-    friend class ContentFilteredTopicImpl;
     friend class DomainParticipantImpl;
+
+private:
 
     RTPS_DllAPI ContentFilteredTopic(
             const std::string& name,
