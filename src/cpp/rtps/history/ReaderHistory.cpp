@@ -167,15 +167,11 @@ bool ReaderHistory::remove_changes_with_guid(
         return false;
     }
 
-    if (!remove_changes_with_pred(
-                [a_guid](CacheChange_t* ch)
-                {
-                    return a_guid == ch->writerGUID;
-                }))
-    {
-        logError(RTPS_READER_HISTORY, "One of the cachechanged in the GUID removal bulk could not be removed");
-        return false;
-    }
+    remove_changes_with_pred(
+        [a_guid](CacheChange_t* ch)
+        {
+            return a_guid == ch->writerGUID;
+        });
 
     return true;
 }

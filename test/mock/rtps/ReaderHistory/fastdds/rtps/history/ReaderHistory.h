@@ -131,11 +131,10 @@ public:
         return m_changes.erase(removal);
     }
 
-    virtual bool writer_unmatched(
+    virtual void writer_unmatched(
             const GUID_t& /*writer_guid*/,
             const SequenceNumber_t& /*last_notified_seq*/)
     {
-        return true;
     }
 
     HistoryAttributes m_att;

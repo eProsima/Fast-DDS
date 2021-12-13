@@ -152,11 +152,20 @@ public:
             CacheChange_t** min_change,
             const GUID_t& writerGuid);
 
-    RTPS_DllAPI virtual bool writer_unmatched(
+    /**
+     * Called when a writer is unmatched from the reader holding this history.
+     *
+     * This method will remove all the changes on the history that came from the writer being unmatched and which have
+     * not yet been notified to the user.
+     *
+     * @param writer_guid        GUID of the writer being unmatched.
+     * @param last_notified_seq  Last sequence number from the specified writer that was notified to the user.
+     */
+    RTPS_DllAPI virtual void writer_unmatched(
             const GUID_t& writer_guid,
             const SequenceNumber_t& last_notified_seq)
     {
-        return remove_changes_with_pred(
+        remove_changes_with_pred(
             [writer_guid, last_notified_seq](CacheChange_t* ch)
             {
                 return (writer_guid == ch->writerGUID) &&
@@ -174,7 +183,7 @@ protected:
             CacheChange_t* ch) override;
 
     template<typename Pred>
-    inline bool remove_changes_with_pred(
+    inline void remove_changes_with_pred(
             Pred pred)
     {
         assert(nullptr != mp_reader);
@@ -186,8 +195,6 @@ protected:
         {
             new_end = remove_change_nts(new_end);
         }
-
-        return true;
     }
 
     //!Pointer to the reader
