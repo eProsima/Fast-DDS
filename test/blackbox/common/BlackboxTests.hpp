@@ -139,6 +139,9 @@ std::list<FixedSized> default_fixed_sized_data_generator(
 std::list<KeyedHelloWorld> default_keyedhelloworld_data_generator(
         size_t max = 0);
 
+std::list<KeyedHelloWorld> uniquekey_keyedhelloworld_data_generator(
+        size_t max = 0);
+
 std::list<String> default_large_string_data_generator(
         size_t max = 0);
 

@@ -806,6 +806,13 @@ public:
         return *this;
     }
 
+    PubSubWriter& disable_heartbeat_piggyback(
+            bool value)
+    {
+        datawriter_qos_.reliable_writer_qos().disable_heartbeat_piggyback = value;
+        return *this;
+    }
+
     PubSubWriter& max_blocking_time(
             const eprosima::fastrtps::Duration_t time)
     {
