@@ -164,6 +164,23 @@ DataReaderHistory::~DataReaderHistory()
     }
 }
 
+bool DataReaderHistory::can_change_be_added_nts(
+        const GUID_t& writer_guid,
+        uint32_t total_payload_size,
+        size_t unknown_missing_changes_up_to,
+        bool& will_never_be_accepted) const
+{
+    if (!ReaderHistory::can_change_be_added_nts(writer_guid, total_payload_size, unknown_missing_changes_up_to,
+            will_never_be_accepted))
+    {
+        return false;
+    }
+
+    will_never_be_accepted = false;
+    return (KEEP_ALL_HISTORY_QOS != history_qos_.kind) ||
+           (m_changes.size() + unknown_missing_changes_up_to < static_cast<size_t>(resource_limited_qos_.max_samples));
+}
+
 bool DataReaderHistory::received_change(
         CacheChange_t* a_change,
         size_t unknown_missing_changes_up_to)
