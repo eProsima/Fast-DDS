@@ -131,12 +131,13 @@ public:
             const_iterator pos,
             const value_type& value)
     {
-        if (capacity() >= configuration_.maximum)
+        auto dist = std::distance(collection_.cbegin(), pos);
+        if (!ensure_capacity())
         {
             return end();
         }
 
-        return collection_.insert(pos, value);
+        return collection_.insert(collection_.cbegin() + dist, value);
     }
 
     /**
@@ -151,7 +152,7 @@ public:
             const_iterator pos,
             value_type&& value)
     {
-        if (capacity() >= configuration_.maximum)
+        if (!ensure_capacity())
         {
             return end();
         }
