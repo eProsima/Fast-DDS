@@ -1,4 +1,4 @@
-// Copyright 2018 Proyectos y Sistemas de Mantenimiento SL (eProsima).
+// Copyright 2021 Proyectos y Sistemas de Mantenimiento SL (eProsima).
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -12,13 +12,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#ifndef CHAINING_TRANSPORT_DESCRIPTOR
+#ifndef _FASTDDS_RTPS_TRANSPORT_CHAININGTRANSPORTDESCRIPTOR_H_
 #define CHAINING_TRANSPORT_DESCRIPTOR
-
-#include "TransportInterface.h"
 
 #include <memory>
 #include <vector>
+
+#include "TransportInterface.h"
 
 namespace eprosima {
 namespace fastdds {
@@ -36,8 +36,7 @@ namespace rtps {
  */
 typedef struct ChainingTransportDescriptor : public TransportDescriptorInterface
 {
-    RTPS_DllAPI
-    ChainingTransportDescriptor(
+    RTPS_DllAPI ChainingTransportDescriptor(
             std::shared_ptr<TransportDescriptorInterface> low_level)
         : TransportDescriptorInterface(low_level->maxMessageSize, low_level->maxInitialPeersRange)
         , low_level_descriptor(low_level)
@@ -66,10 +65,7 @@ typedef struct ChainingTransportDescriptor : public TransportDescriptorInterface
         return low_level_descriptor->max_message_size();
     }
 
-    RTPS_DllAPI
-    virtual ~ChainingTransportDescriptor()
-    {
-    }
+    RTPS_DllAPI virtual ~ChainingTransportDescriptor() = default;
 
     //! Descriptor for lower level transport
     std::shared_ptr<TransportDescriptorInterface> low_level_descriptor;

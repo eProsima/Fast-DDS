@@ -1,4 +1,4 @@
-// Copyright 2018 Proyectos y Sistemas de Mantenimiento SL (eProsima).
+// Copyright 2021 Proyectos y Sistemas de Mantenimiento SL (eProsima).
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#ifndef CHAINING_TRANSPORT_H
+#ifndef _FASTDDS_RTPS_TRANSPORT_CHAININGTRANSPORT_H_
 #define CHAINING_TRANSPORT_H
 
 #include "TransportInterface.h"
@@ -38,8 +38,7 @@ class ChainingTransport : public TransportInterface
 
 public:
 
-    RTPS_DllAPI
-    ChainingTransport(
+    RTPS_DllAPI ChainingTransport(
             const ChainingTransportDescriptor& t)
         : TransportInterface(0)
         , low_level_transport_(t.low_level_descriptor->create_transport())
@@ -47,10 +46,7 @@ public:
         transport_kind_ = low_level_transport_->kind();
     }
 
-    RTPS_DllAPI
-    virtual ~ChainingTransport()
-    {
-    }
+    RTPS_DllAPI virtual ~ChainingTransport() = default;
 
     RTPS_DllAPI
     bool init(
