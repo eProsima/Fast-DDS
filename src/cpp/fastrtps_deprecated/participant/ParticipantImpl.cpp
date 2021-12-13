@@ -193,6 +193,7 @@ Publisher* ParticipantImpl::createPublisher(
     watt.liveliness_lease_duration = att.qos.m_liveliness.lease_duration;
     watt.liveliness_announcement_period = att.qos.m_liveliness.announcement_period;
     watt.matched_readers_allocation = att.matched_subscriber_allocation;
+    watt.disable_heartbeat_piggyback = att.qos.disable_heartbeat_piggyback;
 
     // TODO(Ricardo) Remove in future
     // Insert topic_name and partitions
