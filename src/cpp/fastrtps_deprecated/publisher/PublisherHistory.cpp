@@ -483,9 +483,9 @@ bool PublisherHistory::wait_for_acknowledgement_last_change(
 {
     if (WITH_KEY == topic_att_.getTopicKind())
     {
-        t_m_Inst_Caches::iterator vit;
         // Find the instance
-        if (find_or_add_key(handle, &vit))
+        t_m_Inst_Caches::iterator vit = keyed_changes_.find(handle);
+        if (vit != keyed_changes_.end())
         {
             SequenceNumber_t seq = vit->second.cache_changes.back()->sequenceNumber;
             return mp_writer->wait_for_acknowledgement(seq, max_blocking_time, lock);

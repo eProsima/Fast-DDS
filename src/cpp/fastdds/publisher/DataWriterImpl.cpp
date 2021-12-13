@@ -1057,7 +1057,7 @@ ReturnCode_t DataWriterImpl::wait_for_acknowledgments(
     }
 #endif // NDEBUG */
 
-    // Block lowlevel writer
+    // Block low-level writer
     auto max_blocking_time = steady_clock::now() +
             microseconds(::TimeConv::Time_t2MicroSecondsInt64(max_wait));
 
@@ -1081,7 +1081,7 @@ ReturnCode_t DataWriterImpl::wait_for_acknowledgments(
         return ReturnCode_t::RETCODE_OK;
     }
 
-    return ReturnCode_t::RETCODE_ERROR;
+    return ReturnCode_t::RETCODE_TIMEOUT;
 }
 
 void DataWriterImpl::update_publication_matched_status(

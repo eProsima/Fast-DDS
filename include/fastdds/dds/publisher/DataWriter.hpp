@@ -554,8 +554,8 @@ public:
      * @return RETCODE_BAD_PARAMETER if `instance` is not a valid pointer.
      * @return RETCODE_PRECONDITION_NOT_MET if the topic does not have a key, the key is unknown to the writer,
      *         or the key is not consistent with `handle`.
-     * @return RETCODE_OK if the DataWriter receive the acknowledgments before the time expires.
-     * @return RETCODE_ERROR otherwise.
+     * @return RETCODE_OK if the DataWriter received the acknowledgments before the time expired.
+     * @return RETCODE_TIMEOUT otherwise.
      */
     RTPS_DllAPI ReturnCode_t wait_for_acknowledgments(
             void* instance,

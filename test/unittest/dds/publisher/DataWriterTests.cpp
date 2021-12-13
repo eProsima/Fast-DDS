@@ -1159,10 +1159,10 @@ TEST(DataWriterTests, InstanceWaitForAcknowledgement)
     EXPECT_EQ(ReturnCode_t::RETCODE_OK, instance_datawriter->wait_for_acknowledgments(&data, handle, max_wait));
 
     // 7. Calling wait_for_acknowledgments in a keyed topic with a known handle timeouts if some reader has not
-    // acknowledged before max_wait time (mock) returns RETCODE_ERROR
+    // acknowledged before max_wait time (mock) returns RETCODE_TIMEOUT
     // Expectations
     EXPECT_CALL(*history, wait_for_acknowledgement_last_change(_, _, _)).WillOnce(testing::Return(false));
-    EXPECT_EQ(ReturnCode_t::RETCODE_ERROR, instance_datawriter->wait_for_acknowledgments(&data, handle, max_wait));
+    EXPECT_EQ(ReturnCode_t::RETCODE_TIMEOUT, instance_datawriter->wait_for_acknowledgments(&data, handle, max_wait));
 }
 
 class DataWriterUnsupportedTests : public ::testing::Test
