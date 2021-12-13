@@ -180,29 +180,14 @@ protected:
         assert(nullptr != mp_reader);
         assert(nullptr != mp_mutex);
 
-        // Lock scope
-        std::vector<CacheChange_t*> changes_to_remove;
+        std::lock_guard<RecursiveTimedMutex> guard(*mp_mutex);
+        std::vector<CacheChange_t*>::iterator new_end = std::remove_if(m_changes.begin(), m_changes.end(), pred);
+        while (new_end != m_changes.end())
         {
-            std::lock_guard<RecursiveTimedMutex> guard(*mp_mutex);
-            for (std::vector<CacheChange_t*>::iterator chit = m_changes.begin(); chit != m_changes.end(); ++chit)
-            {
-                if (pred(*chit))
-                {
-                    changes_to_remove.push_back(*chit);
-                }
-            }
+            new_end = remove_change_nts(new_end);
         }
-        // End lock scope
 
-        bool ret_val = true;
-        for (CacheChange_t* ch : changes_to_remove)
-        {
-            if (!remove_change(ch))
-            {
-                ret_val = false;
-            }
-        }
-        return ret_val;
+        return true;
     }
 
     //!Pointer to the reader
