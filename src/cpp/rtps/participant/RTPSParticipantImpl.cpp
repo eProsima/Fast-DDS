@@ -400,7 +400,7 @@ RTPSParticipantImpl::RTPSParticipantImpl(
 
     mp_builtinProtocols = new BuiltinProtocols();
 
-    // Start builtin protocols
+    // Initialize builtin protocols
     if (!mp_builtinProtocols->initBuiltinProtocols(this, m_att.builtin))
     {
         logError(RTPS_PARTICIPANT, "The builtin protocols were not correctly initialized");
