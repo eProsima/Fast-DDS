@@ -119,6 +119,15 @@ public:
             size_t unknown_missing_changes_up_to) override;
 
     /**
+     * Called when a fragmented change is received completely by the Subscriber. Will find its instance and store it.
+     * @pre Change should be already present in the history.
+     * @param[in] change The received change
+     * @return
+     */
+    bool completed_change(
+            CacheChange_t* change) override;
+
+    /**
      * @brief Returns information about the first untaken sample.
      * @param [out] info SampleInfo structure to store first untaken sample information.
      * @return true if sample info was returned. false if there is no sample to take.
@@ -222,6 +231,8 @@ private:
     std::function<bool(CacheChange_t*, size_t)> receive_fn_;
     /// Function to compute the instance handle of a received change
     std::function<bool(CacheChange_t*)> compute_key_for_change_fn_;
+    /// Function processing a completed fragmented change
+    std::function<bool(CacheChange_t*, DataReaderInstance&)> complete_fn_;
 
     /**
      * @brief Method that finds a key in m_keyedChanges or tries to add it if not found
@@ -231,16 +242,6 @@ private:
      */
     bool find_key(
             const InstanceHandle_t& handle,
-            InstanceCollection::iterator& map_it);
-
-    /**
-     * @brief Method that finds a key in m_keyedChanges or tries to add it if not found
-     * @param a_change The change to get the key from
-     * @param map_it A map iterator to the given key
-     * @return True if it was found or could be added to the map
-     */
-    bool find_key_for_change(
-            CacheChange_t* a_change,
             InstanceCollection::iterator& map_it);
 
     /**
@@ -258,11 +259,27 @@ private:
     bool received_change_keep_last(
             CacheChange_t* change,
             size_t unknown_missing_changes_up_to);
+
+    bool completed_change_keep_all(
+            CacheChange_t* change,
+            DataReaderInstance& instance);
+
+    bool completed_change_keep_last(
+            CacheChange_t* change,
+            DataReaderInstance& instance);
     ///@}
 
     bool add_received_change_with_key(
             CacheChange_t* a_change,
             DataReaderInstance& instance);
+
+    bool add_to_reader_history_if_not_full(
+            CacheChange_t* a_change);
+
+    void add_to_instance(
+            CacheChange_t* a_change,
+            DataReaderInstance& instance);
+
 };
 
 } // namespace detail

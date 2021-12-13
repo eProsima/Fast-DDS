@@ -120,6 +120,10 @@ DataReaderHistory::DataReaderHistory(
             std::bind(&DataReaderHistory::received_change_keep_all, this, _1, _2) :
             std::bind(&DataReaderHistory::received_change_keep_last, this, _1, _2);
 
+    complete_fn_ = qos.history().kind == KEEP_ALL_HISTORY_QOS ?
+        std::bind(&DataReaderHistory::completed_change_keep_all, this, _1, _2) :
+        std::bind(&DataReaderHistory::completed_change_keep_last, this, _1, _2);
+
     if (!has_keys_)
     {
         compute_key_for_change_fn_ = [](CacheChange_t* change)
@@ -136,6 +140,11 @@ DataReaderHistory::DataReaderHistory(
                     if (a_change->instanceHandle.isDefined())
                     {
                         return true;
+                    }
+
+                    if (!a_change->is_fully_assembled())
+                    {
+                        return false;
                     }
 
                     if (type_ != nullptr)
@@ -199,8 +208,14 @@ bool DataReaderHistory::received_change_keep_all(
         CacheChange_t* a_change,
         size_t unknown_missing_changes_up_to)
 {
+    if (!compute_key_for_change_fn_(a_change))
+    {
+        // Store the sample temporally only in ReaderHistory. When completed it will be stored in SubscriberHistory too.
+        return add_to_reader_history_if_not_full(a_change);
+    }
+
     InstanceCollection::iterator vit;
-    if (find_key_for_change(a_change, vit))
+    if (find_key(a_change->instanceHandle, vit))
     {
         DataReaderInstance::ChangeCollection& instance_changes = vit->second.cache_changes;
         size_t total_size = instance_changes.size() + unknown_missing_changes_up_to;
@@ -219,8 +234,14 @@ bool DataReaderHistory::received_change_keep_last(
         CacheChange_t* a_change,
         size_t /* unknown_missing_changes_up_to */)
 {
+    if (!compute_key_for_change_fn_(a_change))
+    {
+        // Store the sample temporally only in ReaderHistory. When completed it will be stored in SubscriberHistory too.
+        return add_to_reader_history_if_not_full(a_change);
+    }
+
     InstanceCollection::iterator vit;
-    if (find_key_for_change(a_change, vit))
+    if (find_key(a_change->instanceHandle, vit))
     {
         bool add = false;
         DataReaderInstance::ChangeCollection& instance_changes = vit->second.cache_changes;
@@ -255,43 +276,48 @@ bool DataReaderHistory::add_received_change_with_key(
         CacheChange_t* a_change,
         DataReaderInstance& instance)
 {
-    if (m_isHistoryFull)
+    if (add_to_reader_history_if_not_full(a_change))
     {
-        // Discarting the sample.
-        logWarning(SUBSCRIBER, "Attempting to add Data to Full ReaderHistory: " << type_name_);
-        return false;
-    }
-
-    if (add_change(a_change))
-    {
-        if (m_changes.size() == static_cast<size_t>(m_att.maximumReservedCaches))
-        {
-            m_isHistoryFull = true;
-        }
-
-        //ADD TO KEY VECTOR
-        DataReaderCacheChange item = a_change;
-        eprosima::utilities::collections::sorted_vector_insert(instance.cache_changes, item,
-                [](const DataReaderCacheChange& lhs, const DataReaderCacheChange& rhs)
-                {
-                    return lhs->sourceTimestamp < rhs->sourceTimestamp;
-                });
-
-        logInfo(SUBSCRIBER, mp_reader->getGuid().entityId
-                << ": Change " << a_change->sequenceNumber << " added from: "
-                << a_change->writerGUID << " with KEY: " << a_change->instanceHandle; );
-
+        add_to_instance(a_change, instance);
         return true;
     }
 
     return false;
 }
 
-bool DataReaderHistory::find_key_for_change(
-        CacheChange_t* a_change,
-        InstanceCollection::iterator& map_it)
+bool DataReaderHistory::add_to_reader_history_if_not_full(
+        CacheChange_t* a_change)
 {
-    return compute_key_for_change_fn_(a_change) && find_key(a_change->instanceHandle, map_it);
+    if (m_isHistoryFull)
+    {
+        // Discarding the sample.
+        logWarning(SUBSCRIBER, "Attempting to add Data to Full ReaderHistory: " << type_name_);
+        return false;
+    }
+
+    bool ret_value = add_change(a_change);
+    if (m_changes.size() == static_cast<size_t>(m_att.maximumReservedCaches))
+    {
+        m_isHistoryFull = true;
+    }
+    return ret_value;
+}
+
+void DataReaderHistory::add_to_instance(
+        CacheChange_t* a_change,
+        DataReaderInstance& instance)
+{
+    // ADD TO KEY VECTOR
+    DataReaderCacheChange item = a_change;
+    eprosima::utilities::collections::sorted_vector_insert(instance.cache_changes, item,
+            [](const DataReaderCacheChange& lhs, const DataReaderCacheChange& rhs)
+            {
+                return lhs->sourceTimestamp < rhs->sourceTimestamp;
+            });
+
+    logInfo(SUBSCRIBER, mp_reader->getGuid().entityId
+            << ": Change " << a_change->sequenceNumber << " added from: "
+            << a_change->writerGUID << " with KEY: " << a_change->instanceHandle; );
 }
 
 bool DataReaderHistory::get_first_untaken_info(
@@ -567,6 +593,80 @@ ReaderHistory::iterator DataReaderHistory::remove_change_nts(
 
     // call the base class
     return ReaderHistory::remove_change_nts(removal, release);
+}
+
+bool DataReaderHistory::completed_change(
+        CacheChange_t* change)
+{
+    bool ret_value = true;
+
+    if (!change->instanceHandle.isDefined())
+    {
+        InstanceCollection::iterator vit;
+        ret_value = compute_key_for_change_fn_(change) && find_key(change->instanceHandle, vit);
+        if (ret_value)
+        {
+            ret_value = complete_fn_(change, vit->second);
+        }
+
+        if (!ret_value)
+        {
+            const_iterator chit = find_change_nts(change);
+            if (chit != changesEnd())
+            {
+                m_isHistoryFull = false;
+                remove_change_nts(chit);
+            }
+            else
+            {
+                logError(SUBSCRIBER, "Change should exist but didn't find it");
+            }
+        }
+    }
+
+    return ret_value;
+}
+
+bool DataReaderHistory::completed_change_keep_all(
+        CacheChange_t* change,
+        DataReaderInstance& instance)
+{
+    DataReaderInstance::ChangeCollection& instance_changes = instance.cache_changes;
+    if (instance_changes.size() < static_cast<size_t>(resource_limited_qos_.max_samples_per_instance))
+    {
+        add_to_instance(change, instance);
+        return true;
+    }
+
+    logWarning(SUBSCRIBER, "Change not added due to maximum number of samples per instance");
+    return false;
+}
+
+bool DataReaderHistory::completed_change_keep_last(
+        CacheChange_t* change,
+        DataReaderInstance& instance)
+{
+    bool add = false;
+    DataReaderInstance::ChangeCollection& instance_changes = instance.cache_changes;
+    if (instance_changes.size() < static_cast<size_t>(history_qos_.depth))
+    {
+        add = true;
+    }
+    else
+    {
+        // Try to substitute the oldest sample.
+
+        // As the instance should be ordered following the presentation QoS, we can always remove the first one.
+        add = remove_change_sub(instance_changes.at(0));
+    }
+
+    if (add)
+    {
+        add_to_instance(change, instance);
+        return true;
+    }
+
+    return false;
 }
 
 void DataReaderHistory::update_instance_nts(
