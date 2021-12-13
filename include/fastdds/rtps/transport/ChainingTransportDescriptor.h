@@ -13,7 +13,7 @@
 // limitations under the License.
 
 #ifndef _FASTDDS_RTPS_TRANSPORT_CHAININGTRANSPORTDESCRIPTOR_H_
-#define CHAINING_TRANSPORT_DESCRIPTOR
+#define _FASTDDS_RTPS_TRANSPORT_CHAININGTRANSPORTDESCRIPTOR_H_
 
 #include <memory>
 #include <vector>
@@ -75,4 +75,4 @@ typedef struct ChainingTransportDescriptor : public TransportDescriptorInterface
 } // namespace fastrtps
 } // namespace eprosima
 
-#endif // ifndef CHAINING_TRANSPORT_DESCRIPTOR
+#endif // _FASTDDS_RTPS_TRANSPORT_CHAININGTRANSPORTDESCRIPTOR_H_

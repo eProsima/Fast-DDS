@@ -84,7 +84,7 @@ public:
     /**
      * Initialize this transport. This method will prepare all the internals of the transport.
      * @param properties Optional policy to specify additional parameters of the created transport.
-     * @return True when the transport was correctly intialized.
+     * @return True when the transport was correctly initialized.
      */
     virtual bool init(
             const fastrtps::rtps::PropertyPolicy* properties = nullptr) = 0;

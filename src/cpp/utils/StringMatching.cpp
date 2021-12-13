@@ -175,22 +175,6 @@ std::vector<std::string> StringMatching::split(
     return tokens;
 }
 
-bool StringMatching::readUint32(
-        uint32_t& n,
-        std::string const& str,
-        int base)
-{
-    char* endp;
-    unsigned long value = strtoul(str.c_str(), &endp, base);
-    if ((endp == str.c_str()) || (value == ULONG_MAX && errno == ERANGE))
-    {
-        return false;
-    }
-
-    n = value;
-    return true;
-}
-
 } // namespace rtps
 } /* namespace rtps */
 } /* namespace eprosima */

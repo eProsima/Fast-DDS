@@ -60,11 +60,6 @@ public:
     static std::vector<std::string> split(
             const std::string& str,
             const std::string& delim);
-
-    static bool readUint32(
-            uint32_t& n,
-            std::string const& str,
-            int base = 10);
 };
 
 } // namespace rtps

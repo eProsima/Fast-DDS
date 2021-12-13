@@ -13,7 +13,7 @@
 // limitations under the License.
 
 #ifndef _RTPS_TRANSPORT_CHAININGSENDERRESOURCE_HPP_
-#define __TRANSPORT_CHAININGSENDERRESOURCE_HPP__
+#define _RTPS_TRANSPORT_CHAININGSENDERRESOURCE_HPP_
 
 #include <fastdds/rtps/network/SenderResource.h>
 #include <fastdds/rtps/transport/ChainingTransport.h>
@@ -81,4 +81,4 @@ private:
 } // namespace fastrtps
 } // namespace eprosima
 
-#endif // __TRANSPORT_CHAININGSENDERRESOURCE_HPP__
+#endif // _RTPS_TRANSPORT_CHAININGSENDERRESOURCE_HPP_
