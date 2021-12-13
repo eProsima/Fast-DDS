@@ -585,10 +585,7 @@ ReaderHistory::iterator DataReaderHistory::remove_change_nts(
         assert(it != keyed_changes_.end());
 
         auto& c = it->second.cache_changes;
-        c.erase(std::remove_if(c.begin(), c.end(), [p_sample](DataReaderCacheChange& elem)
-                {
-                    return elem == p_sample;
-                }), c.end());
+        c.erase(std::remove(c.begin(), c.end(), p_sample), c.end());
     }
 
     // call the base class
