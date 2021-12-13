@@ -121,8 +121,8 @@ DataReaderHistory::DataReaderHistory(
             std::bind(&DataReaderHistory::received_change_keep_last, this, _1, _2);
 
     complete_fn_ = qos.history().kind == KEEP_ALL_HISTORY_QOS ?
-        std::bind(&DataReaderHistory::completed_change_keep_all, this, _1, _2) :
-        std::bind(&DataReaderHistory::completed_change_keep_last, this, _1, _2);
+            std::bind(&DataReaderHistory::completed_change_keep_all, this, _1, _2) :
+            std::bind(&DataReaderHistory::completed_change_keep_last, this, _1, _2);
 
     if (!has_keys_)
     {
