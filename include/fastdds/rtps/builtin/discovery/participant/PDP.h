@@ -351,11 +351,6 @@ public:
      */
     std::list<eprosima::fastdds::rtps::RemoteServerAttributes>& remote_server_attributes();
 
-    bool is_enable()
-    {
-        return enable_;
-    }
-
 protected:
 
     //!Pointer to the builtin protocols object.

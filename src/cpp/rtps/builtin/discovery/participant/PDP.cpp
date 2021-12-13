@@ -419,17 +419,63 @@ void PDP::announceParticipantState(
         bool dispose,
         WriteParams& wparams)
 {
-    // logInfo(RTPS_PDP, "Announcing RTPSParticipant State (new change: " << new_change << ")");
-    CacheChange_t* change = nullptr;
-
-    if (!dispose)
+    if (enable_)
     {
-        if (m_hasChangedLocalPDP.exchange(false) || new_change)
+        // logInfo(RTPS_PDP, "Announcing RTPSParticipant State (new change: " << new_change << ")");
+        CacheChange_t* change = nullptr;
+
+        if (!dispose)
+        {
+            if (m_hasChangedLocalPDP.exchange(false) || new_change)
+            {
+                this->mp_mutex->lock();
+                ParticipantProxyData* local_participant_data = getLocalParticipantProxyData();
+                InstanceHandle_t key = local_participant_data->m_key;
+                ParticipantProxyData proxy_data_copy(*local_participant_data);
+                this->mp_mutex->unlock();
+
+                if (mp_PDPWriterHistory->getHistorySize() > 0)
+                {
+                    mp_PDPWriterHistory->remove_min_change();
+                }
+                uint32_t cdr_size = proxy_data_copy.get_serialized_size(true);
+                change = mp_PDPWriter->new_change(
+                    [cdr_size]() -> uint32_t
+                    {
+                        return cdr_size;
+                    },
+                    ALIVE, key);
+
+                if (change != nullptr)
+                {
+                    CDRMessage_t aux_msg(change->serializedPayload);
+
+#if __BIG_ENDIAN__
+                    change->serializedPayload.encapsulation = (uint16_t)PL_CDR_BE;
+                    aux_msg.msg_endian = BIGEND;
+#else
+                    change->serializedPayload.encapsulation = (uint16_t)PL_CDR_LE;
+                    aux_msg.msg_endian =  LITTLEEND;
+#endif // if __BIG_ENDIAN__
+
+                    if (proxy_data_copy.writeToCDRMessage(&aux_msg, true))
+                    {
+                        change->serializedPayload.length = (uint16_t)aux_msg.length;
+
+                        mp_PDPWriterHistory->add_change(change, wparams);
+                    }
+                    else
+                    {
+                        logError(RTPS_PDP, "Cannot serialize ParticipantProxyData.");
+                    }
+                }
+            }
+
+        }
+        else
         {
             this->mp_mutex->lock();
-            ParticipantProxyData* local_participant_data = getLocalParticipantProxyData();
-            InstanceHandle_t key = local_participant_data->m_key;
-            ParticipantProxyData proxy_data_copy(*local_participant_data);
+            ParticipantProxyData proxy_data_copy(*getLocalParticipantProxyData());
             this->mp_mutex->unlock();
 
             if (mp_PDPWriterHistory->getHistorySize() > 0)
@@ -437,12 +483,11 @@ void PDP::announceParticipantState(
                 mp_PDPWriterHistory->remove_min_change();
             }
             uint32_t cdr_size = proxy_data_copy.get_serialized_size(true);
-            change = mp_PDPWriter->new_change(
-                [cdr_size]() -> uint32_t
-                {
-                    return cdr_size;
-                },
-                ALIVE, key);
+            change = mp_PDPWriter->new_change([cdr_size]() -> uint32_t
+                            {
+                                return cdr_size;
+                            },
+                            NOT_ALIVE_DISPOSED_UNREGISTERED, getLocalParticipantProxyData()->m_key);
 
             if (change != nullptr)
             {
@@ -466,48 +511,6 @@ void PDP::announceParticipantState(
                 {
                     logError(RTPS_PDP, "Cannot serialize ParticipantProxyData.");
                 }
-            }
-        }
-
-    }
-    else
-    {
-        this->mp_mutex->lock();
-        ParticipantProxyData proxy_data_copy(*getLocalParticipantProxyData());
-        this->mp_mutex->unlock();
-
-        if (mp_PDPWriterHistory->getHistorySize() > 0)
-        {
-            mp_PDPWriterHistory->remove_min_change();
-        }
-        uint32_t cdr_size = proxy_data_copy.get_serialized_size(true);
-        change = mp_PDPWriter->new_change([cdr_size]() -> uint32_t
-                        {
-                            return cdr_size;
-                        },
-                        NOT_ALIVE_DISPOSED_UNREGISTERED, getLocalParticipantProxyData()->m_key);
-
-        if (change != nullptr)
-        {
-            CDRMessage_t aux_msg(change->serializedPayload);
-
-#if __BIG_ENDIAN__
-            change->serializedPayload.encapsulation = (uint16_t)PL_CDR_BE;
-            aux_msg.msg_endian = BIGEND;
-#else
-            change->serializedPayload.encapsulation = (uint16_t)PL_CDR_LE;
-            aux_msg.msg_endian =  LITTLEEND;
-#endif // if __BIG_ENDIAN__
-
-            if (proxy_data_copy.writeToCDRMessage(&aux_msg, true))
-            {
-                change->serializedPayload.length = (uint16_t)aux_msg.length;
-
-                mp_PDPWriterHistory->add_change(change, wparams);
-            }
-            else
-            {
-                logError(RTPS_PDP, "Cannot serialize ParticipantProxyData.");
             }
         }
     }
