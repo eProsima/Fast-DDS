@@ -251,12 +251,6 @@ bool DataReaderHistory::received_change_keep_last(
     return false;
 }
 
-bool DataReaderHistory::add_received_change(
-        CacheChange_t* a_change)
-{
-    return add_received_change_with_key(a_change, keyed_changes_.begin()->second);
-}
-
 bool DataReaderHistory::add_received_change_with_key(
         CacheChange_t* a_change,
         DataReaderInstance& instance)

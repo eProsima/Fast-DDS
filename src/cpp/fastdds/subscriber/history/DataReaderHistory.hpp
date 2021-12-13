@@ -260,9 +260,6 @@ private:
             size_t unknown_missing_changes_up_to);
     ///@}
 
-    bool add_received_change(
-            CacheChange_t* a_change);
-
     bool add_received_change_with_key(
             CacheChange_t* a_change,
             DataReaderInstance& instance);
