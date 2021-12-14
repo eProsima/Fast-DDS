@@ -603,7 +603,7 @@ bool DataReaderHistory::completed_change(
         ret_value = compute_key_for_change_fn_(change) && find_key(change->instanceHandle, vit);
         if (ret_value)
         {
-            ret_value = complete_fn_(change, vit->second);
+            ret_value = !change->instanceHandle.isDefined() || complete_fn_(change, vit->second);
         }
 
         if (!ret_value)
