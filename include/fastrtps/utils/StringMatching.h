@@ -56,10 +56,6 @@ public:
     static bool matchPattern(
             const char* pattern,
             const char* input);
-
-    static std::vector<std::string> split(
-            const std::string& str,
-            const std::string& delim);
 };
 
 } // namespace rtps

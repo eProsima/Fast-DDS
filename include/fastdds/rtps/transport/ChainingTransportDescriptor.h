@@ -43,8 +43,7 @@ typedef struct ChainingTransportDescriptor : public TransportDescriptorInterface
     {
     }
 
-    RTPS_DllAPI
-    ChainingTransportDescriptor(
+    RTPS_DllAPI ChainingTransportDescriptor(
             const ChainingTransportDescriptor& t)
         : TransportDescriptorInterface(t)
         , low_level_descriptor(t.low_level_descriptor)
@@ -52,15 +51,13 @@ typedef struct ChainingTransportDescriptor : public TransportDescriptorInterface
     }
 
     //! Returns the minimum size required for a send operation.
-    RTPS_DllAPI
-    virtual uint32_t min_send_buffer_size() const override
+    RTPS_DllAPI virtual uint32_t min_send_buffer_size() const override
     {
         return low_level_descriptor->min_send_buffer_size();
     }
 
     //! Returns the maximum size expected for received messages.
-    RTPS_DllAPI
-    virtual uint32_t max_message_size() const override
+    RTPS_DllAPI virtual uint32_t max_message_size() const override
     {
         return low_level_descriptor->max_message_size();
     }
