@@ -548,6 +548,9 @@ protected:
 
 };
 
+/*!
+ * This test checks `DataReader::get_guid` function works when the entity was created but not enabled.
+ */
 TEST_F(DataReaderTests, get_guid)
 {
     class DiscoveryListener : public DomainParticipantListener

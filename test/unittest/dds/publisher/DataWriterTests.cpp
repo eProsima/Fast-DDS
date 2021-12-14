@@ -304,6 +304,9 @@ TEST(DataWriterTests, get_type)
     ASSERT_TRUE(DomainParticipantFactory::get_instance()->delete_participant(participant) == ReturnCode_t::RETCODE_OK);
 }
 
+/*!
+ * This test checks `DataWriter::get_guid` function works when the entity was created but not enabled.
+ */
 TEST(DataWriterTests, get_guid)
 {
     class DiscoveryListener : public DomainParticipantListener
