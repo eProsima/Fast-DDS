@@ -262,10 +262,10 @@ public:
 
     template <EndpointKind_t kind, octet no_key, octet with_key>
     static bool preprocess_endpoint_attributes(
-        const EntityId_t&,
-        uint32_t&,
-        EndpointAttributes&,
-        EntityId_t&)
+            const EntityId_t&,
+            uint32_t&,
+            EndpointAttributes&,
+            EntityId_t&)
     {
         return true;
     }
