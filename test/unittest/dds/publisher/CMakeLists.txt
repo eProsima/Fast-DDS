@@ -295,7 +295,7 @@ target_compile_definitions(DataWriterTests PRIVATE FASTRTPS_NO_LIB
     $<$<BOOL:${STDOUTERR_LOG_CONSUMER}>:STDOUTERR_LOG_CONSUMER> # Enable StdoutErrConsumer as default LogConsumer
 )
 target_include_directories(DataWriterTests PRIVATE
-    ${OPENSSL_INCLUDE_DIR}
+    $<$<BOOL:${OPENSSL_INCLUDE_DIR}>:${OPENSSL_INCLUDE_DIR}>
     ${PROJECT_SOURCE_DIR}/test/mock/rtps/PublisherHistory
     ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include
     ${Asio_INCLUDE_DIR}
