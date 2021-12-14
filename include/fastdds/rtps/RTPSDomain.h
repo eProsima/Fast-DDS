@@ -202,7 +202,7 @@ public:
     /**
      * Create a RTPSReader in a participant using a custom payload pool.
      * @param p Pointer to the RTPSParticipant.
-     * @param entity_id Specific entity id to use for the created writer.
+     * @param entity_id Specific entity id to use for the created reader.
      * @param ratt Reader Attributes.
      * @param payload_pool Shared pointer to the IPayloadPool
      * @param hist Pointer to the ReaderHistory.
