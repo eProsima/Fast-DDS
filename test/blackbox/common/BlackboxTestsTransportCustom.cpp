@@ -57,7 +57,7 @@ public:
     {
     }
 
-    eprosima::fastdds::rtps::TransportDescriptorInterface* get_configuration()
+    eprosima::fastdds::rtps::TransportDescriptorInterface* get_configuration() override
     {
         return &descriptor_;
     }
