@@ -23,9 +23,9 @@
 
 #include <fastdds/dds/core/LoanableTypedCollection.hpp>
 #include <fastdds/dds/topic/IContentFilter.hpp>
+#include <fastdds/dds/topic/TopicDataType.hpp>
 
 #include <fastrtps/types/TypesBase.h>
-#include <fastrtps/types/TypeDescriptor.h>
 
 namespace eprosima {
 namespace fastdds {
@@ -40,7 +40,7 @@ struct IContentFilterFactory
     virtual ReturnCode_t create_content_filter(
             const char* filter_class_name,
             const char* type_name,
-            const TypeDescriptor* type_description,
+            const TopicDataType* type_description,
             const char* filter_expression,
             const ParameterSeq& filter_parameters,
             IContentFilter*& filter_instance) = 0;
