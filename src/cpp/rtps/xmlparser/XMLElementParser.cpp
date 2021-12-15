@@ -1094,7 +1094,7 @@ XMLP_ret XMLParser::getXMLWriterQosPolicies(
                 <xs:element name="groupData" type="groupDataQosPolicyType" minOccurs="0"/>
                 <xs:element name="publishMode" type="publishModeQosPolicyType" minOccurs="0"/>
                 <xs:element name="data_sharing" type="dataSharingQosPolicyType" minOccurs="0"/>
-                <xs:element name="disable_positive_acks" type="disablePositiveAcksQosPolicyType" minOccurs="0"/>
+                <xs:element name="disablePositiveAcks" type="disablePositiveAcksQosPolicyType" minOccurs="0"/>
                 <xs:element name="disable_heartbeat_piggyback" type="boolType" minOccurs="0"/>
             </xs:all>
         </xs:complexType>
@@ -1244,7 +1244,7 @@ XMLP_ret XMLParser::getXMLReaderQosPolicies(
                 <xs:element name="topicData" type="topicDataQosPolicyType" minOccurs="0"/>
                 <xs:element name="groupData" type="groupDataQosPolicyType" minOccurs="0"/>
                 <xs:element name="data_sharing" type="dataSharingQosPolicyType" minOccurs="0"/>
-                <xs:element name="disable_positive_acks" type="disablePositiveAcksQosPolicyType" minOccurs="0"/>
+                <xs:element name="disablePositiveAcks" type="disablePositiveAcksQosPolicyType" minOccurs="0"/>
             </xs:all>
         </xs:complexType>
      */
