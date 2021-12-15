@@ -578,14 +578,17 @@ ReaderHistory::iterator DataReaderHistory::remove_change_nts(
     {
         CacheChange_t* p_sample = *removal;
 
-        // clean any references to this CacheChange in the key state collection
-        auto it = keyed_changes_.find(p_sample->instanceHandle);
+        if (!has_keys_ || p_sample->is_fully_assembled())
+        {
+            // clean any references to this CacheChange in the key state collection
+            auto it = keyed_changes_.find(p_sample->instanceHandle);
 
-        // if keyed and in history must be in the map
-        assert(it != keyed_changes_.end());
+            // if keyed and in history must be in the map
+            assert(it != keyed_changes_.end());
 
-        auto& c = it->second.cache_changes;
-        c.erase(std::remove(c.begin(), c.end(), p_sample), c.end());
+            auto& c = it->second.cache_changes;
+            c.erase(std::remove(c.begin(), c.end(), p_sample), c.end());
+        }
     }
 
     // call the base class
