@@ -502,7 +502,6 @@ ContentFilteredTopic* DomainParticipantImpl::create_contentfilteredtopic(
     TopicImpl* topic_impl = dynamic_cast<TopicImpl*>(related_topic->get_impl());
     assert(nullptr != topic_impl);
     const TypeSupport& type = topic_impl->get_type();
-    const IContentFilterFactory::TypeDescriptor* type_descriptor = type->get_desciptor();
     LoanableSequence<const char*>::size_type n_params;
     n_params = static_cast<LoanableSequence<const char*>::size_type>(expression_parameters.size());
     LoanableSequence<const char*> filter_parameters(n_params);
@@ -516,7 +515,7 @@ ContentFilteredTopic* DomainParticipantImpl::create_contentfilteredtopic(
     IContentFilter* filter_instance = nullptr;
     if (ReturnCode_t::RETCODE_OK !=
             filter_factory->create_content_filter(filter_class_name, related_topic->get_type_name().c_str(),
-            type_descriptor, filter_expression.c_str(), filter_parameters, filter_instance))
+            type.get(), filter_expression.c_str(), filter_parameters, filter_instance))
     {
         logError(PARTICIPANT, "Could not create filter of class " << filter_class_name << " for expression \"" <<
                 filter_expression);
