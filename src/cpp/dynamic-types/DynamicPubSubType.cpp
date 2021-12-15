@@ -200,11 +200,6 @@ bool DynamicPubSubType::serialize(
     return true;
 }
 
-const TypeDescriptor* DynamicPubSubType::get_desciptor() const
-{
-    return nullptr == dynamic_type_ ? nullptr : dynamic_type_->get_descriptor();
-}
-
 void DynamicPubSubType::UpdateDynamicTypeInfo()
 {
     if (dynamic_type_ != nullptr)
