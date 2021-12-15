@@ -79,7 +79,7 @@ void reliability_disable_heartbeat_piggyback(
 
     std::this_thread::sleep_for(std::chrono::seconds(1));
 
-    auto data = uniquekey_keyedhelloworld_data_generator();
+    auto data = default_keyedhelloworld_data_generator(10, true);
     reader.startReception(data);
     start_reception = true;
     // Send data

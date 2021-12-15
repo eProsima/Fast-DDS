@@ -60,39 +60,20 @@ std::list<FixedSized> default_fixed_sized_data_generator(
 }
 
 std::list<KeyedHelloWorld> default_keyedhelloworld_data_generator(
-        size_t max)
+        size_t max,
+        bool unique_key)
 {
     uint16_t index = 0;
     size_t maximum = max ? max : 10;
     std::list<KeyedHelloWorld> returnedValue(maximum);
 
-    std::generate(returnedValue.begin(), returnedValue.end(), [&index]
+    std::generate(returnedValue.begin(), returnedValue.end(), [&index, unique_key]
             {
                 KeyedHelloWorld hello;
                 hello.index(index);
-                hello.key(index % 2 + 1);
-                std::stringstream ss;
-                ss << "HelloWorld " << index;
-                hello.message(ss.str());
-                ++index;
-                return hello;
-            });
-
-    return returnedValue;
-}
-
-std::list<KeyedHelloWorld> uniquekey_keyedhelloworld_data_generator(
-        size_t max)
-{
-    uint16_t index = 0;
-    size_t maximum = max ? max : 10;
-    std::list<KeyedHelloWorld> returnedValue(maximum);
-
-    std::generate(returnedValue.begin(), returnedValue.end(), [&index]
-            {
-                KeyedHelloWorld hello;
-                hello.index(index);
-                hello.key(index + 1);
+                hello.key(unique_key
+                        ? (index + 1)
+                        : (index % 2 + 1));
                 std::stringstream ss;
                 ss << "HelloWorld " << index;
                 hello.message(ss.str());
