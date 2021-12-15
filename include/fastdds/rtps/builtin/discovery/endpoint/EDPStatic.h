@@ -32,55 +32,6 @@ class XMLEndpointParser;
 
 namespace rtps {
 
-
-/**
- * Class EDPStaticProperty, used to read and write the strings from the properties used to transmit the EntityId_t.
- *@ingroup DISCOVERY_MODULE
- */
-class EDPStaticProperty
-{
-public:
-
-    EDPStaticProperty()
-        : m_userId(0)
-    {
-    }
-
-    ~EDPStaticProperty()
-    {
-    }
-
-    //!Endpoint type
-    std::string m_endpointType;
-    //!Status
-    std::string m_status;
-    //!User ID as string
-    std::string m_userIdStr;
-    //!User ID
-    uint16_t m_userId;
-    //!Entity ID
-    EntityId_t m_entityId;
-    /**
-     * Convert information to a property
-     * @param type Type of endpoint
-     * @param status Status of the endpoint
-     * @param id User Id
-     * @param ent EntityId
-     * @return Pair of two strings.
-     */
-    static std::pair<std::string, std::string> toProperty(
-            std::string type,
-            std::string status,
-            uint16_t id,
-            const EntityId_t& ent);
-    /**
-     * @param in_property Input property-
-     * @return True if correctly read
-     */
-    bool fromProperty(
-            std::pair<std::string, std::string> in_property);
-};
-
 /**
  * Class EDPStatic, implements a static endpoint discovery module.
  * @ingroup DISCOVERYMODULE
@@ -88,6 +39,12 @@ public:
 class EDPStatic : public EDP
 {
 public:
+
+    enum class ExchangeFormat : uint32_t
+    {
+        v1,
+        v1_Reduced
+    };
 
     /**
      * Constructor.
@@ -192,7 +149,10 @@ public:
 private:
 
     xmlparser::XMLEndpointParser* mp_edpXML;
+
     BuiltinAttributes m_attributes;
+
+    ExchangeFormat exchange_format_ = ExchangeFormat::v1;
 };
 
 } // namespace rtps
