@@ -27,31 +27,48 @@
 
 #include <optionparser.h>
 
-struct Arg: public option::Arg
+struct Arg : public option::Arg
 {
-    static void print_error(const char* msg1, const option::Option& opt, const char* msg2)
+    static void print_error(
+            const char* msg1,
+            const option::Option& opt,
+            const char* msg2)
     {
         fprintf(stderr, "%s", msg1);
         fwrite(opt.name, opt.namelen, 1, stderr);
         fprintf(stderr, "%s", msg2);
     }
 
-    static option::ArgStatus Unknown(const option::Option& option, bool msg)
+    static option::ArgStatus Unknown(
+            const option::Option& option,
+            bool msg)
     {
-        if (msg) print_error("Unknown option '", option, "'\n");
+        if (msg)
+        {
+            print_error("Unknown option '", option, "'\n");
+        }
         return option::ARG_ILLEGAL;
     }
 
-    static option::ArgStatus Required(const option::Option& option, bool msg)
+    static option::ArgStatus Required(
+            const option::Option& option,
+            bool msg)
     {
         if (option.arg != 0 && option.arg[0] != 0)
-        return option::ARG_OK;
+        {
+            return option::ARG_OK;
+        }
 
-        if (msg) print_error("Option '", option, "' requires an argument\n");
+        if (msg)
+        {
+            print_error("Option '", option, "' requires an argument\n");
+        }
         return option::ARG_ILLEGAL;
     }
 
-    static option::ArgStatus Numeric(const option::Option& option, bool msg)
+    static option::ArgStatus Numeric(
+            const option::Option& option,
+            bool msg)
     {
         char* endptr = 0;
         if (option.arg != 0 && strtol(option.arg, &endptr, 10))
@@ -69,7 +86,9 @@ struct Arg: public option::Arg
         return option::ARG_ILLEGAL;
     }
 
-    static option::ArgStatus String(const option::Option& option, bool msg)
+    static option::ArgStatus String(
+            const option::Option& option,
+            bool msg)
     {
         if (option.arg != 0)
         {
@@ -81,11 +100,13 @@ struct Arg: public option::Arg
         }
         return option::ARG_ILLEGAL;
     }
+
 };
 
 
 
-enum  optionIndex {
+enum  optionIndex
+{
     UNKNOWN_OPT,
     HELP,
     SAMPLES,
@@ -118,30 +139,30 @@ enum  optionIndex {
         std::cout << "The optional arguments are: subscriber [server_ip] [port] " << std::endl;
         std::cout << "\t- server_ip: IP Address of the publisher. " << std::endl;
         std::cout << "\t- port: Physical Port where the publisher is listening for connections." << std::endl << std::endl;
-*/
+ */
 
 const option::Descriptor usage[] = {
-    { UNKNOWN_OPT, 0,"", "",                Arg::None,
-        "Usage: HelloWorldExampleTCP <publisher|subscriber>\n\nGeneral options:" },
-    { HELP,    0,"h", "help",               Arg::None,      "  -h \t--help  \tProduce help message." },
+    { UNKNOWN_OPT, 0, "", "",                Arg::None,
+      "Usage: HelloWorldExampleTCP <publisher|subscriber>\n\nGeneral options:" },
+    { HELP,    0, "h", "help",               Arg::None,      "  -h \t--help  \tProduce help message." },
     { TLS, 0, "t", "tls",          Arg::None,      "  -t \t--tls \tUse TLS." },
     { WHITELIST, 0, "w", "whitelist",       Arg::String,    "  -w \t--whitelist \tUse Whitelist." },
 
-    { UNKNOWN_OPT, 0,"", "",                Arg::None,      "\nPublisher options:"},
-    { SAMPLES,0,"s","samples",              Arg::Numeric,
-        "  -s <num>, \t--samples=<num>  \tNumber of samples (0, default, infinite)." },
-    { INTERVAL,0,"i","interval",            Arg::Numeric,
-        "  -i <num>, \t--interval=<num>  \tTime between samples in milliseconds (Default: 100)." },
-    { IP,0,"a","address",                   Arg::String,
-        "  -a <address>, \t--address=<address> \tPublic IP Address of the publisher (Default: None)." },
+    { UNKNOWN_OPT, 0, "", "",                Arg::None,      "\nPublisher options:"},
+    { SAMPLES, 0, "s", "samples",              Arg::Numeric,
+      "  -s <num>, \t--samples=<num>  \tNumber of samples (0, default, infinite)." },
+    { INTERVAL, 0, "i", "interval",            Arg::Numeric,
+      "  -i <num>, \t--interval=<num>  \tTime between samples in milliseconds (Default: 100)." },
+    { IP, 0, "a", "address",                   Arg::String,
+      "  -a <address>, \t--address=<address> \tPublic IP Address of the publisher (Default: None)." },
     { PORT, 0, "p", "port",                 Arg::Numeric,
-        "  -p <num>, \t--port=<num>  \tPhysical Port to listening incoming connections (Default: 5100)." },
+      "  -p <num>, \t--port=<num>  \tPhysical Port to listening incoming connections (Default: 5100)." },
 
-    { UNKNOWN_OPT, 0,"", "",                Arg::None,      "\nSubscriber options:"},
-    { IP,0,"a","address",                   Arg::String,
-        "  -a <address>, \t--address=<address> \tIP Address of the publisher (Default: 127.0.0.1)." },
+    { UNKNOWN_OPT, 0, "", "",                Arg::None,      "\nSubscriber options:"},
+    { IP, 0, "a", "address",                   Arg::String,
+      "  -a <address>, \t--address=<address> \tIP Address of the publisher (Default: 127.0.0.1)." },
     { PORT, 0, "p", "port",                 Arg::Numeric,
-        "  -p <num>, \t--port=<num>  \tPhysical Port where the publisher is listening for connections (Default: 5100)." },
+      "  -p <num>, \t--port=<num>  \tPhysical Port where the publisher is listening for connections (Default: 5100)." },
 
     { 0, 0, 0, 0, 0, 0 }
 };
@@ -149,7 +170,9 @@ const option::Descriptor usage[] = {
 using namespace eprosima;
 using namespace fastrtps;
 using namespace rtps;
-int main(int argc, char** argv)
+int main(
+        int argc,
+        char** argv)
 {
     int columns;
 
@@ -167,7 +190,7 @@ int main(int argc, char** argv)
     }
 #else
     columns = getenv("COLUMNS") ? atoi(getenv("COLUMNS")) : 80;
-#endif
+#endif // if defined(_WIN32)
 
     std::cout << "Starting " << std::endl;
     int type = 1;
@@ -268,23 +291,23 @@ int main(int argc, char** argv)
     switch (type)
     {
         case 1:
+        {
+            HelloWorldPublisher mypub;
+            if (mypub.init(wan_ip, static_cast<uint16_t>(port), use_tls, whitelist))
             {
-                HelloWorldPublisher mypub;
-                if (mypub.init(wan_ip, static_cast<uint16_t>(port), use_tls, whitelist))
-                {
-                    mypub.run(count, sleep);
-                }
-                break;
+                mypub.run(count, sleep);
             }
+            break;
+        }
         case 2:
+        {
+            HelloWorldSubscriber mysub;
+            if (mysub.init(wan_ip, static_cast<uint16_t>(port), use_tls, whitelist))
             {
-                HelloWorldSubscriber mysub;
-                if (mysub.init(wan_ip, static_cast<uint16_t>(port), use_tls, whitelist))
-                {
-                    mysub.run();
-                }
-                break;
+                mysub.run();
             }
+            break;
+        }
     }
     Domain::stopAll();
     return 0;
