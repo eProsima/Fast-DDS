@@ -36,6 +36,7 @@
 #include <fastdds/rtps/common/CacheChange.h>
 #include <fastdds/rtps/common/Guid.h>
 #include <fastdds/rtps/common/InstanceHandle.h>
+#include <fastdds/rtps/common/SequenceNumber.h>
 #include <fastdds/rtps/history/ReaderHistory.h>
 #include <fastdds/rtps/resources/ResourceManagement.h>
 
@@ -60,6 +61,7 @@ public:
     using InstanceHandle_t = eprosima::fastrtps::rtps::InstanceHandle_t;
     using CacheChange_t = eprosima::fastrtps::rtps::CacheChange_t;
     using GUID_t = eprosima::fastrtps::rtps::GUID_t;
+    using SequenceNumber_t = eprosima::fastrtps::rtps::SequenceNumber_t;
 
     using instance_info = std::pair<InstanceHandle_t, DataReaderInstance*>;
 
@@ -152,6 +154,19 @@ public:
     bool remove_change_sub(
             CacheChange_t* change,
             DataReaderInstance::ChangeCollection::iterator& it);
+
+    /**
+     * Called when a writer is unmatched from the reader holding this history.
+     *
+     * This method will remove all the changes on the history that came from the writer being unmatched and which have
+     * not yet been notified to the user.
+     *
+     * @param writer_guid        GUID of the writer being unmatched.
+     * @param last_notified_seq  Last sequence number from the specified writer that was notified to the user.
+     */
+    void writer_unmatched(
+            const GUID_t& writer_guid,
+            const SequenceNumber_t& last_notified_seq) override;
 
     /**
      * @brief A method to set the next deadline for the given instance

@@ -141,6 +141,12 @@ public:
 
 protected:
 
+    template<typename Pred>
+    inline void remove_changes_with_pred(
+            Pred pred)
+    {
+    }
+
     RTPSReader* mp_reader;
     RecursiveTimedMutex* mp_mutex;
     std::vector<CacheChange_t*> m_changes;

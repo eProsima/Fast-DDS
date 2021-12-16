@@ -163,15 +163,7 @@ public:
      */
     RTPS_DllAPI virtual void writer_unmatched(
             const GUID_t& writer_guid,
-            const SequenceNumber_t& last_notified_seq)
-    {
-        remove_changes_with_pred(
-            [writer_guid, last_notified_seq](CacheChange_t* ch)
-            {
-                return (writer_guid == ch->writerGUID) &&
-                (last_notified_seq < ch->sequenceNumber);
-            });
-    }
+            const SequenceNumber_t& last_notified_seq);
 
 protected:
 

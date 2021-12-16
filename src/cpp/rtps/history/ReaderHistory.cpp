@@ -158,6 +158,18 @@ History::iterator ReaderHistory::remove_change_nts(
     return ret_val;
 }
 
+void ReaderHistory::writer_unmatched(
+        const GUID_t& writer_guid,
+        const SequenceNumber_t& last_notified_seq)
+{
+    static_cast<void>(last_notified_seq);
+    remove_changes_with_pred(
+        [&writer_guid](CacheChange_t* ch)
+        {
+            return writer_guid == ch->writerGUID;
+        });
+}
+
 bool ReaderHistory::remove_changes_with_guid(
         const GUID_t& a_guid)
 {
