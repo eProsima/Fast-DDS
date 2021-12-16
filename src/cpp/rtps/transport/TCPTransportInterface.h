@@ -238,7 +238,8 @@ public:
 
     virtual uint16_t GetMaxLogicalPort() const = 0;
 
-    bool init() override;
+    bool init(
+            const fastrtps::rtps::PropertyPolicy* properties = nullptr) override;
 
     //! Checks whether there are open and bound sockets for the given port.
     virtual bool IsInputChannelOpen(

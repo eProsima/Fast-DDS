@@ -50,7 +50,8 @@ public:
 
     const SharedMemTransportDescriptor* configuration() const;
 
-    bool init() override;
+    bool init(
+            const fastrtps::rtps::PropertyPolicy* properties = nullptr) override;
 
     virtual ~SharedMemTransport() override;
 

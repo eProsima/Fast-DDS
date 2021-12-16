@@ -19,9 +19,9 @@
 
 #include <fastdds/rtps/transport/test_UDPv4TransportDescriptor.h>
 
-namespace eprosima{
-namespace fastrtps{
-namespace rtps{
+namespace eprosima {
+namespace fastrtps {
+namespace rtps {
 
 using test_UDPv4TransportDescriptor = fastdds::rtps::test_UDPv4TransportDescriptor;
 
@@ -29,4 +29,4 @@ using test_UDPv4TransportDescriptor = fastdds::rtps::test_UDPv4TransportDescript
 } // namespace fastrtps
 } // namespace eprosima
 
-#endif
+#endif // ifndef TEST_UDPV4_TRANSPORT_DESCRIPTOR

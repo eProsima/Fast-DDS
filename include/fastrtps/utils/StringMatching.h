@@ -19,6 +19,13 @@
 
 #ifndef STRINGMATCHING_H_
 #define STRINGMATCHING_H_
+
+#include <fastrtps/fastrtps_dll.h>
+
+#include <string>
+#include <vector>
+#include <stdint.h>
+
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 namespace eprosima {
 namespace fastrtps {
@@ -28,12 +35,14 @@ namespace rtps {
    section B.6).
    @ingroup UTILITIES_MODULE
  */
-class StringMatching
+class RTPS_DllAPI StringMatching
 {
 public:
 
     StringMatching();
+
     virtual ~StringMatching();
+
     /** Static method to match two strings.
      * It checks if the input strings match. Any of the strings or both can be a pattern.
      */
@@ -48,8 +57,10 @@ public:
             const char* pattern,
             const char* input);
 };
+
 } // namespace rtps
 } /* namespace rtps */
 } /* namespace eprosima */
+
 #endif // ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
-#endif /* STRINGMATCHING_H_ */
+#endif // ifndef STRINGMATCHING_H_

@@ -346,7 +346,8 @@ bool TCPTransportInterface::DoInputLocatorsMatch(
     return IPLocator::getPhysicalPort(left) ==  IPLocator::getPhysicalPort(right);
 }
 
-bool TCPTransportInterface::init()
+bool TCPTransportInterface::init(
+        const fastrtps::rtps::PropertyPolicy*)
 {
     if (!apply_tls_config())
     {
@@ -1522,7 +1523,7 @@ bool TCPTransportInterface::apply_tls_config()
             {
                 ssl_context_.load_verify_file(config->verify_file);
             }
-            catch(const std::exception& e)
+            catch (const std::exception& e)
             {
                 logError(TLS, "Error configuring TLS trusted CA certificate: " << e.what());
                 return false; // TODO check wether this should skip the rest of the configuration
@@ -1535,7 +1536,7 @@ bool TCPTransportInterface::apply_tls_config()
             {
                 ssl_context_.use_certificate_chain_file(config->cert_chain_file);
             }
-            catch(const std::exception& e)
+            catch (const std::exception& e)
             {
                 logError(TLS, "Error configuring TLS certificate: " << e.what());
                 return false; // TODO check wether this should skip the rest of the configuration
@@ -1548,7 +1549,7 @@ bool TCPTransportInterface::apply_tls_config()
             {
                 ssl_context_.use_private_key_file(config->private_key_file, ssl::context::pem);
             }
-            catch(const std::exception& e)
+            catch (const std::exception& e)
             {
                 logError(TLS, "Error configuring TLS private key: " << e.what());
                 return false; // TODO check wether this should skip the rest of the configuration
@@ -1561,7 +1562,7 @@ bool TCPTransportInterface::apply_tls_config()
             {
                 ssl_context_.use_tmp_dh_file(config->tmp_dh_file);
             }
-            catch(const std::exception& e)
+            catch (const std::exception& e)
             {
                 logError(TLS, "Error configuring TLS dh params: " << e.what());
                 return false; // TODO check wether this should skip the rest of the configuration

@@ -234,7 +234,8 @@ bool SharedMemTransport::DoInputLocatorsMatch(
     return left.kind == right.kind && left.port == right.port;
 }
 
-bool SharedMemTransport::init()
+bool SharedMemTransport::init(
+        const fastrtps::rtps::PropertyPolicy*)
 {
     // TODO(Adolfo): Calculate this value from UDP sockets buffers size.
     static constexpr uint32_t shm_default_segment_size = 512 * 1024;

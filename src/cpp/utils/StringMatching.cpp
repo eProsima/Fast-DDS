@@ -18,6 +18,8 @@
  */
 
 #include <fastrtps/utils/StringMatching.h>
+#include <limits.h>
+#include <errno.h>
 
 #if defined(__cplusplus_winrt)
 #include <algorithm>

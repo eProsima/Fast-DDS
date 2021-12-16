@@ -20,9 +20,9 @@
 
 #include <fastdds/rtps/transport/TransportInterface.h>
 
-namespace eprosima{
-namespace fastrtps{
-namespace rtps{
+namespace eprosima {
+namespace fastrtps {
+namespace rtps {
 
 using SendResourceList = fastdds::rtps::SendResourceList;
 using TransportInterface = fastdds::rtps::TransportInterface;
@@ -37,4 +37,4 @@ static const std::string s_IPv6AddressAny = fastdds::rtps::s_IPv6AddressAny;
 } // namespace fastrtps
 } // namespace eprosima
 
-#endif
+#endif // ifndef TRANSPORT_INTERFACE_H

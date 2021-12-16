@@ -85,7 +85,8 @@ bool NetworkFactory::BuildReceiverResources(
 }
 
 bool NetworkFactory::RegisterTransport(
-        const TransportDescriptorInterface* descriptor)
+        const TransportDescriptorInterface* descriptor,
+        const fastrtps::rtps::PropertyPolicy* properties)
 {
     bool wasRegistered = false;
     uint32_t minSendBufferSize = std::numeric_limits<uint32_t>::max();
@@ -94,7 +95,7 @@ bool NetworkFactory::RegisterTransport(
 
     if (transport)
     {
-        if (transport->init())
+        if (transport->init(properties))
         {
             minSendBufferSize = transport->get_configuration()->min_send_buffer_size();
             mRegisteredTransports.emplace_back(std::move(transport));

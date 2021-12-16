@@ -27,15 +27,27 @@
 #include <cstdio>
 #include <cstdint>
 
-class TestWriterSocket {
+class TestWriterSocket
+{
+
 public:
-	TestWriterSocket();
-	virtual ~TestWriterSocket();
-	eprosima::fastrtps::rtps::RTPSParticipant* mp_participant;
-	eprosima::fastrtps::rtps::RTPSWriter* mp_writer;
-	eprosima::fastrtps::rtps::WriterHistory* mp_history;
-	bool init(std::string ip,uint32_t port);
-	void run(uint16_t nmsgs);
+
+    TestWriterSocket();
+
+    virtual ~TestWriterSocket();
+
+    eprosima::fastrtps::rtps::RTPSParticipant* mp_participant;
+
+    eprosima::fastrtps::rtps::RTPSWriter* mp_writer;
+
+    eprosima::fastrtps::rtps::WriterHistory* mp_history;
+
+    bool init(
+            std::string ip,
+            uint32_t port);
+
+    void run(
+            uint16_t nmsgs);
 };
 
 #endif /* TESTWRITER_H_ */
