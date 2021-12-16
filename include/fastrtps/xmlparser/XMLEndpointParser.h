@@ -31,6 +31,7 @@
 #include <fastdds/rtps/builtin/data/ReaderProxyData.h>
 #include <fastdds/rtps/builtin/data/WriterProxyData.h>
 #include <fastrtps/xmlparser/XMLParserCommon.h>
+#include <fastrtps/xmlparser/XMLParser.h>
 
 namespace tinyxml2 {
 class XMLElement;
@@ -76,7 +77,7 @@ public:
  * Class XMLEndpointParser used to parse the XML file that contains information about remote endpoints.
  * @ingroup DISCVOERYMODULE
  */
-class XMLEndpointParser
+class XMLEndpointParser : XMLParser
 {
 public:
 
@@ -143,6 +144,10 @@ public:
             rtps::WriterProxyData** wdataptr);
 
 private:
+
+    XMLP_ret get_disable_positive_acks_qos(
+            tinyxml2::XMLElement* elem,
+            DisablePositiveACKsQosPolicy& disable_positive_acks_qos);
 
     std::set<int16_t> m_endpointIds;
     std::set<uint32_t> m_entityIds;
