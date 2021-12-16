@@ -626,7 +626,7 @@ TEST(RTPS, RTPSNetworkInterfaceChangesAtRunTime)
     ASSERT_EQ(reader.get_matched(), 1u);
 
     reader.block_for_all();
-    EXPECT_EQ(reader.getReceivedCount(), samples);
+    EXPECT_EQ(reader.getReceivedCount(), static_cast<unsigned int>(samples));
 
     reader.destroy();
     writer.destroy();
