@@ -575,7 +575,7 @@ TEST_P(RTPS, RTPSAsReliableTransientLocalTwoWritersConsecutives)
  * After launching the reader with the network interfaces enabled,
  * the writer is launched with the transport simulating that there
  * are no interfaces.
- * No participant discovery occurs.
+ * No participant discovery occurs, nor is communication established.
  *
  * In a second step, the flag to simulate no interfaces is disabled and
  * RTPSParticipant::update_attributes() called to add the "new" interfaces.
@@ -599,10 +599,10 @@ TEST(RTPS, RTPSNetworkInterfaceChangesAtRunTime)
     // no discovery
     writer.wait_discovery(std::chrono::seconds(3));
     reader.wait_discovery(std::chrono::seconds(3));
-
     EXPECT_EQ(writer.get_matched(), 0u);
     EXPECT_EQ(reader.get_matched(), 0u);
 
+    // send data
     auto complete_data = default_helloworld_data_generator();
     size_t samples = complete_data.size();
 
@@ -612,6 +612,7 @@ TEST(RTPS, RTPSNetworkInterfaceChangesAtRunTime)
     writer.send(complete_data);
     EXPECT_TRUE(complete_data.empty());
 
+    // no data received
     reader.block_for_all(std::chrono::seconds(3));
     EXPECT_EQ(reader.getReceivedCount(), 0u);
 
@@ -625,6 +626,7 @@ TEST(RTPS, RTPSNetworkInterfaceChangesAtRunTime)
     ASSERT_EQ(writer.get_matched(), 1u);
     ASSERT_EQ(reader.get_matched(), 1u);
 
+    // data received
     reader.block_for_all();
     EXPECT_EQ(reader.getReceivedCount(), static_cast<unsigned int>(samples));
 

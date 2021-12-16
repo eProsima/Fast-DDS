@@ -178,7 +178,7 @@ TEST(DDSDiscovery, AddDiscoveryServerToList)
  * After launching the reader with the network interfaces enabled,
  * the writer is launched with the transport simulating that there
  * are no interfaces.
- * No participant discovery occurs.
+ * No participant discovery occurs, nor is communication established.
  *
  * In a second step, the flag to simulate no interfaces is disabled and
  * DomainParticipant::set_qos() called to add the "new" interfaces.
@@ -205,10 +205,10 @@ TEST(DDSDiscovery, DDSNetworkInterfaceChangesAtRunTime)
     // no discovery
     datawriter.wait_discovery(std::chrono::seconds(3));
     datareader.wait_discovery(std::chrono::seconds(3));
-
     EXPECT_EQ(datawriter.get_matched(), 0u);
     EXPECT_EQ(datareader.get_matched(), 0u);
 
+    // send data
     auto complete_data = default_helloworld_data_generator();
     size_t samples = complete_data.size();
 
@@ -217,6 +217,7 @@ TEST(DDSDiscovery, DDSNetworkInterfaceChangesAtRunTime)
     datawriter.send(complete_data);
     EXPECT_TRUE(complete_data.empty());
 
+    // no data received
     EXPECT_EQ(datareader.block_for_all(std::chrono::seconds(3)), 0);
 
     // enable interfaces
@@ -229,6 +230,7 @@ TEST(DDSDiscovery, DDSNetworkInterfaceChangesAtRunTime)
     ASSERT_EQ(datawriter.get_matched(), 1u);
     ASSERT_EQ(datareader.get_matched(), 1u);
 
+    // data received
     EXPECT_EQ(datareader.block_for_all(std::chrono::seconds(3)), samples);
 
     datareader.destroy();
