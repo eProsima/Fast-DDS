@@ -199,8 +199,8 @@ public:
 
         // Import the key
         ASSERT_EQ(0,
-                std::system(("softhsm2-util --import " + key_file + " --token " + token_id + " --label " + key_label +
-                " --pin " + hsm_token_pin + " --id " + key_id).c_str()));
+                std::system(("softhsm2-util --import " + key_file + " --token '" + token_id + "' --label " + key_label +
+                " --pin '" + hsm_token_pin + "' --id " + key_id).c_str()));
         // Construct the key URL
         std::stringstream id_url;
         for (unsigned int i = 0; i < strlen(key_id); i += 2)
