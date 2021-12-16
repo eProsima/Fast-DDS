@@ -32,7 +32,7 @@
 #include <statistics/fastdds/domain/DomainParticipantImpl.hpp>
 #include <utils/SystemInfo.hpp>
 
- // We include boost through this internal header, to ensure we use our custom boost config file
+// We include boost through this internal header, to ensure we use our custom boost config file
 #include <utils/shared_memory/SharedMemSegment.hpp>
 #include <boost/interprocess/sync/interprocess_mutex.hpp>
 
@@ -119,6 +119,7 @@ DomainParticipantFactory* DomainParticipantFactory::get_instance()
         {
             boost::interprocess::interprocess_mutex mtx;
         }
+
     };
     static AuxiliaryBoostFunctor boost_functor;
 
