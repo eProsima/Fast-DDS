@@ -94,7 +94,7 @@ target_link_libraries(AccessControlTests
     foonathan_memory
     $<$<BOOL:${WIN32}>:ws2_32>
     ${TINYXML2_LIBRARY}
-    $<TARGET_NAME_IF_EXISTS:eProsima_p11>
+    $<$<BOOL:${LibP11_FOUND}>:eProsima_p11>  # $<TARGET_NAME_IF_EXISTS:eProsima_p11>
     )
 
 if(MSVC OR MSVC_IDE)
