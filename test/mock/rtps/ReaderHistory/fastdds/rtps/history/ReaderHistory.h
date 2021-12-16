@@ -143,7 +143,7 @@ protected:
 
     template<typename Pred>
     inline void remove_changes_with_pred(
-            Pred pred)
+            Pred)
     {
     }
 
