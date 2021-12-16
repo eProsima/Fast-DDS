@@ -15,7 +15,6 @@ jobs:
           path: src/Fast-DDS
 
       - uses: ./src/Fast-DDS/.github/actions/install-apt-packages
-      - uses: ./src/Fast-DDS/.github/actions/install-gtest
       - uses: ./src/Fast-DDS/.github/actions/install-python-packages
       - uses: ./src/Fast-DDS/.github/actions/fetch-fastdds-repos
 
