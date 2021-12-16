@@ -11,7 +11,6 @@
                 "-DSECURITY=ON",
                 "-DTHIRDPARTY=ON",
                 "-DGTEST_INDIVIDUAL=ON",
-                "-DEPROSIMA_GTEST=ON",
                 "-DFASTDDS_PIM_API_TESTS=ON",
                 "-DFASTDDS_STATISTICS=ON",
             ]

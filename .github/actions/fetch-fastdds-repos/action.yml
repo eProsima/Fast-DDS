@@ -8,5 +8,6 @@ runs:
         cd src
         git clone https://github.com/eProsima/foonathan_memory_vendor.git
         git clone https://github.com/eProsima/Fast-CDR.git
+        git clone https://github.com/google/googletest.git --branch release-1.10.0
         cd ..
       shell: bash
