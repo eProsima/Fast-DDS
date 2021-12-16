@@ -587,7 +587,7 @@ TEST(RTPS, RTPSNetworkInterfaceChangesAtRunTime)
     RTPSWithRegistrationWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
 
     // reader is initialized with all the network interfaces
-    reader.init();
+    reader.reliability(ReliabilityKind_t::RELIABLE).durability(DurabilityKind_t::TRANSIENT_LOCAL).init();
     ASSERT_TRUE(reader.isInitialized());
 
     // writer: launch without interfaces
@@ -600,8 +600,20 @@ TEST(RTPS, RTPSNetworkInterfaceChangesAtRunTime)
     writer.wait_discovery(std::chrono::seconds(3));
     reader.wait_discovery(std::chrono::seconds(3));
 
-    EXPECT_FALSE(writer.is_matched());
-    EXPECT_FALSE(reader.is_matched());
+    EXPECT_EQ(writer.get_matched(), 0u);
+    EXPECT_EQ(reader.get_matched(), 0u);
+
+    auto complete_data = default_helloworld_data_generator();
+    size_t samples = complete_data.size();
+
+    reader.expected_data(complete_data, true);
+    reader.startReception();
+
+    writer.send(complete_data);
+    EXPECT_TRUE(complete_data.empty());
+
+    reader.block_for_all(std::chrono::seconds(3));
+    EXPECT_EQ(reader.getReceivedCount(), 0u);
 
     // enable interfaces
     test_UDPv4Transport::simulate_no_interfaces = false;
@@ -610,18 +622,11 @@ TEST(RTPS, RTPSNetworkInterfaceChangesAtRunTime)
     // Wait for discovery
     writer.wait_discovery(std::chrono::seconds(3));
     reader.wait_discovery(std::chrono::seconds(3));
-    ASSERT_TRUE(writer.is_matched());
-    ASSERT_TRUE(reader.is_matched());
-
-    auto complete_data = default_helloworld_data_generator();
-
-    reader.expected_data(complete_data, true);
-    reader.startReception();
-
-    writer.send(complete_data);
-    EXPECT_TRUE(complete_data.empty());
+    ASSERT_EQ(writer.get_matched(), 1u);
+    ASSERT_EQ(reader.get_matched(), 1u);
 
     reader.block_for_all();
+    EXPECT_EQ(reader.getReceivedCount(), samples);
 
     reader.destroy();
     writer.destroy();

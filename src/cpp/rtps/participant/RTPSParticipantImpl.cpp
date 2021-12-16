@@ -243,7 +243,7 @@ RTPSParticipantImpl::RTPSParticipantImpl(
     /* INSERT DEFAULT MANDATORY MULTICAST LOCATORS HERE */
     if (m_att.builtin.metatrafficMulticastLocatorList.empty() && m_att.builtin.metatrafficUnicastLocatorList.empty())
     {
-        get_default_metatraffic_locators(metatraffic_multicast_port, metatraffic_unicast_port);
+        get_default_metatraffic_locators();
     }
     else
     {
@@ -315,7 +315,6 @@ RTPSParticipantImpl::RTPSParticipantImpl(
                 {
                     m_network_Factory.fill_default_locator_port(domain_id_, loc, m_att, true);
                 });
-        m_network_Factory.NormalizeLocators(m_att.defaultMulticastLocatorList);
     }
 
 #if HAVE_SECURITY
@@ -1159,11 +1158,7 @@ void RTPSParticipantImpl::update_attributes(
         LocatorList_t metatraffic_multicast_locator_list = m_att.builtin.metatrafficMulticastLocatorList;
         LocatorList_t metatraffic_unicast_locator_list = m_att.builtin.metatrafficUnicastLocatorList;
 
-        uint32_t metatraffic_multicast_port = m_att.port.getMulticastPort(domain_id_);
-        uint32_t metatraffic_unicast_port = m_att.port.getUnicastPort(domain_id_,
-                        static_cast<uint32_t>(m_att.participantID));
-
-        get_default_metatraffic_locators(metatraffic_multicast_port, metatraffic_unicast_port);
+        get_default_metatraffic_locators();
 
         if (!(metatraffic_multicast_locator_list == m_att.builtin.metatrafficMulticastLocatorList) ||
                 !(metatraffic_unicast_locator_list == m_att.builtin.metatrafficUnicastLocatorList))
@@ -2208,10 +2203,12 @@ void RTPSParticipantImpl::environment_file_has_changed()
     }
 }
 
-void RTPSParticipantImpl::get_default_metatraffic_locators(
-        uint32_t metatraffic_multicast_port,
-        uint32_t metatraffic_unicast_port)
+void RTPSParticipantImpl::get_default_metatraffic_locators()
 {
+    uint32_t metatraffic_multicast_port = m_att.port.getMulticastPort(domain_id_);
+    uint32_t metatraffic_unicast_port = m_att.port.getUnicastPort(domain_id_,
+                    static_cast<uint32_t>(m_att.participantID));
+
     m_network_Factory.getDefaultMetatrafficMulticastLocators(m_att.builtin.metatrafficMulticastLocatorList,
             metatraffic_multicast_port);
     m_network_Factory.NormalizeLocators(m_att.builtin.metatrafficMulticastLocatorList);

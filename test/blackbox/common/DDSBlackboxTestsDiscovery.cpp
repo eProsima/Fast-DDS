@@ -192,21 +192,32 @@ TEST(DDSDiscovery, DDSNetworkInterfaceChangesAtRunTime)
     PubSubReader<HelloWorldType> datareader(TEST_TOPIC_NAME);
 
     // datareader is initialized with all the network interfaces
-    datareader.init();
+    datareader.durability_kind(eprosima::fastrtps::TRANSIENT_LOCAL_DURABILITY_QOS).history_depth(100).
+            reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).init();
     ASSERT_TRUE(datareader.isInitialized());
 
     // datawriter: launch without interfaces
     test_UDPv4Transport::simulate_no_interfaces = true;
     auto test_transport = std::make_shared<test_UDPv4TransportDescriptor>();
-    datawriter.disable_builtin_transport().add_user_transport_to_pparams(test_transport).init();
+    datawriter.disable_builtin_transport().add_user_transport_to_pparams(test_transport).history_depth(100).init();
     ASSERT_TRUE(datawriter.isInitialized());
 
     // no discovery
     datawriter.wait_discovery(std::chrono::seconds(3));
     datareader.wait_discovery(std::chrono::seconds(3));
 
-    EXPECT_FALSE(datawriter.is_matched());
-    EXPECT_FALSE(datareader.is_matched());
+    EXPECT_EQ(datawriter.get_matched(), 0u);
+    EXPECT_EQ(datareader.get_matched(), 0u);
+
+    auto complete_data = default_helloworld_data_generator();
+    size_t samples = complete_data.size();
+
+    datareader.startReception(complete_data);
+
+    datawriter.send(complete_data);
+    EXPECT_TRUE(complete_data.empty());
+
+    EXPECT_EQ(datareader.block_for_all(std::chrono::seconds(3)), 0);
 
     // enable interfaces
     test_UDPv4Transport::simulate_no_interfaces = false;
@@ -215,17 +226,10 @@ TEST(DDSDiscovery, DDSNetworkInterfaceChangesAtRunTime)
     // Wait for discovery
     datawriter.wait_discovery(std::chrono::seconds(3));
     datareader.wait_discovery(std::chrono::seconds(3));
-    ASSERT_TRUE(datawriter.is_matched());
-    ASSERT_TRUE(datareader.is_matched());
+    ASSERT_EQ(datawriter.get_matched(), 1u);
+    ASSERT_EQ(datareader.get_matched(), 1u);
 
-    auto complete_data = default_helloworld_data_generator();
-
-    datareader.startReception(complete_data);
-
-    datawriter.send(complete_data);
-    EXPECT_TRUE(complete_data.empty());
-
-    datareader.block_for_all();
+    EXPECT_EQ(datareader.block_for_all(std::chrono::seconds(3)), samples);
 
     datareader.destroy();
     datawriter.destroy();

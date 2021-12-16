@@ -701,13 +701,8 @@ private:
 
     /**
      * Get default metatraffic locators when not provided by the user.
-     *
-     * @param [in] metatraffic_multicast_port well known multicast metatraffic port following DDS standard
-     * @param [in] metatraffic_unicast_port well known unicast metatraffic port following DDS standard
      */
-    void get_default_metatraffic_locators(
-            uint32_t metatraffic_multicast_port,
-            uint32_t metatraffic_unicast_port);
+    void get_default_metatraffic_locators();
 
     /**
      * Get default unicast locators when not provided by the user.

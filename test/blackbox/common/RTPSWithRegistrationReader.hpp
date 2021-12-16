@@ -258,18 +258,28 @@ public:
     }
 
     void block(
-            std::function<bool()> checker)
+            std::function<bool()> checker,
+            std::chrono::seconds timeout = std::chrono::seconds::zero())
     {
         std::unique_lock<std::mutex> lock(mutex_);
-        cv_.wait(lock, checker);
+
+        if (std::chrono::seconds::zero() == timeout)
+        {
+            cv_.wait(lock, checker);
+        }
+        else
+        {
+            cv_.wait_for(lock, timeout, checker);
+        }
     }
 
-    void block_for_all()
+    void block_for_all(
+            std::chrono::seconds timeout = std::chrono::seconds::zero())
     {
         block([this]() -> bool
                 {
                     return number_samples_expected_ == current_received_count_;
-                });
+                }, timeout);
     }
 
     size_t block_for_at_least(
@@ -430,9 +440,9 @@ public:
         return *this;
     }
 
-    bool is_matched() const
+    uint32_t get_matched() const
     {
-        return matched_ > 0;
+        return matched_;
     }
 
 #if HAVE_SQLITE3
@@ -522,7 +532,7 @@ private:
     std::mutex mutexDiscovery_;
     std::condition_variable cvDiscovery_;
     bool receiving_;
-    unsigned int matched_;
+    uint32_t matched_;
     eprosima::fastrtps::rtps::SequenceNumber_t last_seq_;
     size_t current_received_count_;
     size_t number_samples_expected_;

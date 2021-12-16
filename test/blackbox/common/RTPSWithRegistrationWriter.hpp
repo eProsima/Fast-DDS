@@ -407,9 +407,9 @@ public:
         return *this;
     }
 
-    bool is_matched() const
+    uint32_t get_matched() const
     {
-        return matched_ > 0;
+        return matched_;
     }
 
     void participant_update_attributes()
@@ -433,7 +433,7 @@ private:
     bool initialized_;
     std::mutex mutex_;
     std::condition_variable cv_;
-    unsigned int matched_;
+    uint32_t matched_;
     type_support type_;
     std::shared_ptr<eprosima::fastrtps::rtps::IPayloadPool> payload_pool_;
     bool has_payload_pool_ = false;
