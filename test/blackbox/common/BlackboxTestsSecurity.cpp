@@ -113,8 +113,14 @@ public:
 
         // Get the serial number of the HSM slot
         std::stringstream serial_stream;
+#ifdef _WIN32 // We are running windows
         ASSERT_EQ(0,
-                std::system ("softhsm2-util --show-slots | grep -oP 'Serial number:\\s*\\K(\\d|\\w)+' > softhsm_serial"));
+                std::system ("powershell -C \"softhsm2-util --show-slots | sls 'Serial number:\\s*([\\d\\w]+)' | " \
+                             "% { $_.Matches.Groups[1].Value } | Out-File -FilePath softhsm_serial -Encoding ASCII\""));
+#else // We are running something with sh
+        ASSERT_EQ(0,
+                std::system ("softhsm2-util --show-slots | grep -oP 'Serial number:\\s*\\K(\\d|\\w)+' > softhsm_seria"));
+#endif // _WIN32
         serial_stream << std::ifstream("softhsm_serial").rdbuf();
         std::remove ("softhsm_serial");
 
