@@ -109,7 +109,7 @@ DomainParticipantFactory* DomainParticipantFactory::get_instance()
      * We need to ensure that the boost singleton is destroyed after the instance of DomainParticipantFactory, to
      * ensure that the interprocess objects keep working until all the participants are destroyed.
      *
-     * We achieve this behavior by having an static instance of an auxiliary struct that instantiates a synchornization
+     * We achieve this behavior by having an static instance of an auxiliary struct that instantiates a synchronization
      * object on the constructor, just to ensure that the boost singleton is instantiated before the
      * DomainParticipantFactory.
      */
