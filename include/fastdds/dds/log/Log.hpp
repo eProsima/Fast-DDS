@@ -15,7 +15,6 @@
 #ifndef _FASTDDS_DDS_LOG_LOG_HPP_
 #define _FASTDDS_DDS_LOG_LOG_HPP_
 
-#include <fastrtps/utils/DBQueue.h>
 #include <fastrtps/fastrtps_dll.h>
 #include <thread>
 #include <sstream>
@@ -153,36 +152,6 @@ public:
             Log::Kind);
 
 private:
-
-    struct Resources
-    {
-        fastrtps::DBQueue<Entry> logs;
-        std::vector<std::unique_ptr<LogConsumer>> consumers;
-        std::unique_ptr<std::thread> logging_thread;
-
-        // Condition variable segment.
-        std::condition_variable cv;
-        std::mutex cv_mutex;
-        bool logging;
-        bool work;
-        int current_loop;
-
-        // Context configuration.
-        std::mutex config_mutex;
-        bool filenames;
-        bool functions;
-        std::unique_ptr<std::regex> category_filter;
-        std::unique_ptr<std::regex> filename_filter;
-        std::unique_ptr<std::regex> error_string_filter;
-
-        std::atomic<Log::Kind> verbosity;
-
-        Resources();
-
-        ~Resources();
-    };
-
-    static struct Resources resources_;
 
     // Applies transformations to the entries compliant with the options selected (such as
     // erasure of certain context information, or filtering by category. Returns false

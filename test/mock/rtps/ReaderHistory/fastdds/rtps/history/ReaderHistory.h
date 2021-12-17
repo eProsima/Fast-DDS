@@ -23,6 +23,8 @@
 #include <fastrtps/rtps/attributes/HistoryAttributes.h>
 #include <fastrtps/utils/TimedMutex.hpp>
 
+#include <mutex>
+
 #include <gmock/gmock.h>
 
 namespace eprosima {

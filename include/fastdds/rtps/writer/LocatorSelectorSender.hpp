@@ -5,6 +5,8 @@
 #include <fastdds/rtps/messages/RTPSMessageSenderInterface.hpp>
 #include <fastrtps/utils/collections/ResourceLimitedVector.hpp>
 
+#include <mutex>
+
 namespace eprosima {
 namespace fastrtps {
 namespace rtps {
