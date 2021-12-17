@@ -705,6 +705,16 @@ private:
             bool enable,
             const Functor& callback);
 
+    /**
+     * Get default metatraffic locators when not provided by the user.
+     */
+    void get_default_metatraffic_locators();
+
+    /**
+     * Get default unicast locators when not provided by the user.
+     */
+    void get_default_unicast_locators();
+
 public:
 
     const RTPSParticipantAttributes& getRTPSParticipantAttributes() const

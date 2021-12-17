@@ -18,6 +18,7 @@
 #include <functional>
 
 #include <asio.hpp>
+#include <fastrtps/utils/IPLocator.h>
 
 using namespace std;
 
@@ -153,6 +154,28 @@ void test_UDPv4Transport::get_ips(
     }
 }
 
+LocatorList test_UDPv4Transport::NormalizeLocator(
+        const Locator& locator)
+{
+    if (!simulate_no_interfaces)
+    {
+        return UDPv4Transport::NormalizeLocator(locator);
+    }
+
+    LocatorList list;
+    if (fastrtps::rtps::IPLocator::isAny(locator))
+    {
+        Locator newloc(locator);
+        fastrtps::rtps::IPLocator::setIPv4(newloc, "127.0.0.1");
+        list.push_back(newloc);
+    }
+    else
+    {
+        list.push_back(locator);
+    }
+    return list;
+}
+
 bool test_UDPv4Transport::send(
         const octet* send_buffer,
         uint32_t send_buffer_size,
@@ -199,7 +222,11 @@ bool test_UDPv4Transport::send(
         bool only_multicast_purpose,
         const std::chrono::microseconds& timeout)
 {
-    if (packet_should_drop(send_buffer, send_buffer_size))
+    if (packet_should_drop(send_buffer, send_buffer_size) ||
+            // If there are no interfaces (simulate_no_interfaces), only multicast and localhost traffic is sent
+            (simulate_no_interfaces &&
+            !fastrtps::rtps::IPLocator::isMulticast(remote_locator) &&
+            !fastrtps::rtps::IPLocator::isLocal(remote_locator)))
     {
         statistics_info_.set_statistics_message_data(remote_locator, send_buffer, send_buffer_size);
         log_drop(send_buffer, send_buffer_size);

@@ -258,18 +258,28 @@ public:
     }
 
     void block(
-            std::function<bool()> checker)
+            std::function<bool()> checker,
+            std::chrono::seconds timeout = std::chrono::seconds::zero())
     {
         std::unique_lock<std::mutex> lock(mutex_);
-        cv_.wait(lock, checker);
+
+        if (std::chrono::seconds::zero() == timeout)
+        {
+            cv_.wait(lock, checker);
+        }
+        else
+        {
+            cv_.wait_for(lock, timeout, checker);
+        }
     }
 
-    void block_for_all()
+    void block_for_all(
+            std::chrono::seconds timeout = std::chrono::seconds::zero())
     {
         block([this]() -> bool
                 {
                     return number_samples_expected_ == current_received_count_;
-                });
+                }, timeout);
     }
 
     size_t block_for_at_least(
@@ -296,19 +306,26 @@ public:
         return last_seq_;
     }
 
-    void wait_discovery()
+    void wait_discovery(
+            std::chrono::seconds timeout = std::chrono::seconds::zero())
     {
         std::unique_lock<std::mutex> lock(mutexDiscovery_);
 
-        if (matched_ == 0)
+        if (matched_ == 0 && timeout == std::chrono::seconds::zero())
         {
             cvDiscovery_.wait(lock, [this]() -> bool
                     {
                         return matched_ != 0;
                     });
+            EXPECT_NE(matched_, 0u);
         }
-
-        EXPECT_NE(matched_, 0u);
+        else
+        {
+            cv_.wait_for(lock, timeout, [&]()
+                    {
+                        return matched_ != 0;
+                    });
+        }
     }
 
     void wait_undiscovery()
@@ -348,7 +365,7 @@ public:
 
     unsigned int getReceivedCount() const
     {
-        return current_received_count_;
+        return static_cast<unsigned int>(current_received_count_);
     }
 
     /*** Function to change QoS ***/
@@ -421,6 +438,11 @@ public:
         reader_attr_.endpoint.persistence_guid.guidPrefix = guidPrefix;
         reader_attr_.endpoint.persistence_guid.entityId = entityId;
         return *this;
+    }
+
+    uint32_t get_matched() const
+    {
+        return matched_;
     }
 
 #if HAVE_SQLITE3
@@ -510,7 +532,7 @@ private:
     std::mutex mutexDiscovery_;
     std::condition_variable cvDiscovery_;
     bool receiving_;
-    unsigned int matched_;
+    uint32_t matched_;
     eprosima::fastrtps::rtps::SequenceNumber_t last_seq_;
     size_t current_received_count_;
     size_t number_samples_expected_;

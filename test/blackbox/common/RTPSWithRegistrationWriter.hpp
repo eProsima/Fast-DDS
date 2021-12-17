@@ -232,19 +232,26 @@ public:
         cv_.notify_one();
     }
 
-    void wait_discovery()
+    void wait_discovery(
+            std::chrono::seconds timeout = std::chrono::seconds::zero())
     {
         std::unique_lock<std::mutex> lock(mutex_);
 
-        if (matched_ == 0)
+        if (matched_ == 0 && timeout == std::chrono::seconds::zero())
         {
             cv_.wait(lock, [this]() -> bool
                     {
                         return matched_ != 0;
                     });
+            ASSERT_NE(matched_, 0u);
         }
-
-        ASSERT_NE(matched_, 0u);
+        else
+        {
+            cv_.wait_for(lock, timeout, [&]()
+                    {
+                        return matched_ != 0;
+                    });
+        }
     }
 
     void wait_undiscovery()
@@ -400,6 +407,16 @@ public:
         return *this;
     }
 
+    uint32_t get_matched() const
+    {
+        return matched_;
+    }
+
+    void participant_update_attributes()
+    {
+        participant_->update_attributes(participant_attr_);
+    }
+
 private:
 
     RTPSWithRegistrationWriter& operator =(
@@ -416,7 +433,7 @@ private:
     bool initialized_;
     std::mutex mutex_;
     std::condition_variable cv_;
-    unsigned int matched_;
+    uint32_t matched_;
     type_support type_;
     std::shared_ptr<eprosima::fastrtps::rtps::IPayloadPool> payload_pool_;
     bool has_payload_pool_ = false;

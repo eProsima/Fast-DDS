@@ -12,6 +12,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#include <chrono>
+#include <thread>
+
+#include <gtest/gtest.h>
+
 #include "BlackboxTests.hpp"
 
 #include "RTPSAsSocketReader.hpp"
@@ -21,10 +26,6 @@
 #include <fastrtps/xmlparser/XMLProfileManager.h>
 #include <fastrtps/transport/test_UDPv4TransportDescriptor.h>
 #include <rtps/transport/test_UDPv4Transport.h>
-
-#include <gtest/gtest.h>
-
-#include <thread>
 
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
@@ -563,6 +564,71 @@ TEST_P(RTPS, RTPSAsReliableTransientLocalTwoWritersConsecutives)
     EXPECT_TRUE(complete_data.empty());
 
     reader.block_for_all();
+
+    reader.destroy();
+    writer.destroy();
+}
+
+/**
+ * This test checks the addition of network interfaces at run-time.
+ *
+ * After launching the reader with the network interfaces enabled,
+ * the writer is launched with the transport simulating that there
+ * are no interfaces.
+ * No participant discovery occurs, nor is communication established.
+ *
+ * In a second step, the flag to simulate no interfaces is disabled and
+ * RTPSParticipant::update_attributes() called to add the "new" interfaces.
+ * Discovery is succesful and communication is established.
+ */
+TEST(RTPS, RTPSNetworkInterfaceChangesAtRunTime)
+{
+    RTPSWithRegistrationReader<HelloWorldType> reader(TEST_TOPIC_NAME);
+    RTPSWithRegistrationWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
+
+    // reader is initialized with all the network interfaces
+    reader.reliability(ReliabilityKind_t::RELIABLE).durability(DurabilityKind_t::TRANSIENT_LOCAL).init();
+    ASSERT_TRUE(reader.isInitialized());
+
+    // writer: launch without interfaces
+    test_UDPv4Transport::simulate_no_interfaces = true;
+    auto test_transport = std::make_shared<test_UDPv4TransportDescriptor>();
+    writer.disable_builtin_transport().add_user_transport_to_pparams(test_transport).init();
+    ASSERT_TRUE(writer.isInitialized());
+
+    // no discovery
+    writer.wait_discovery(std::chrono::seconds(3));
+    reader.wait_discovery(std::chrono::seconds(3));
+    EXPECT_EQ(writer.get_matched(), 0u);
+    EXPECT_EQ(reader.get_matched(), 0u);
+
+    // send data
+    auto complete_data = default_helloworld_data_generator();
+    size_t samples = complete_data.size();
+
+    reader.expected_data(complete_data, true);
+    reader.startReception();
+
+    writer.send(complete_data);
+    EXPECT_TRUE(complete_data.empty());
+
+    // no data received
+    reader.block_for_all(std::chrono::seconds(3));
+    EXPECT_EQ(reader.getReceivedCount(), 0u);
+
+    // enable interfaces
+    test_UDPv4Transport::simulate_no_interfaces = false;
+    writer.participant_update_attributes();
+
+    // Wait for discovery
+    writer.wait_discovery(std::chrono::seconds(3));
+    reader.wait_discovery(std::chrono::seconds(3));
+    ASSERT_EQ(writer.get_matched(), 1u);
+    ASSERT_EQ(reader.get_matched(), 1u);
+
+    // data received
+    reader.block_for_all();
+    EXPECT_EQ(reader.getReceivedCount(), static_cast<unsigned int>(samples));
 
     reader.destroy();
     writer.destroy();
