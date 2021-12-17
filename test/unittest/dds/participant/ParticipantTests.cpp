@@ -3175,6 +3175,28 @@ TEST(ParticipantTests, ContentFilterInterfaces)
                 participant->unregister_content_filter_factory(TEST_FILTER_CLASS));
     }
 
+    // Custom filter factory registration
+    {
+        // Register filter factory
+        EXPECT_EQ(ReturnCode_t::RETCODE_OK,
+                participant->register_content_filter_factory(TEST_FILTER_CLASS, &test_filter));
+        // Lookup should return same pointer as the one registered
+        EXPECT_EQ(&test_filter, participant->lookup_content_filter_factory(TEST_FILTER_CLASS));
+        // But not for other filter class name
+        EXPECT_EQ(nullptr, participant->lookup_content_filter_factory(OTHER_FILTER_CLASS));
+        // Should not be able to register twice
+        EXPECT_EQ(ReturnCode_t::RETCODE_PRECONDITION_NOT_MET,
+                participant->register_content_filter_factory(TEST_FILTER_CLASS, &test_filter));
+        // Unregister filter factory
+        EXPECT_EQ(ReturnCode_t::RETCODE_OK,
+                participant->unregister_content_filter_factory(TEST_FILTER_CLASS));
+        // Lookup should now return nullptr
+        EXPECT_EQ(nullptr, participant->lookup_content_filter_factory(TEST_FILTER_CLASS));
+        // Unregister twice should fail
+        EXPECT_EQ(ReturnCode_t::RETCODE_PRECONDITION_NOT_MET,
+                participant->unregister_content_filter_factory(TEST_FILTER_CLASS));
+    }
+
     ASSERT_EQ(participant->delete_topic(topic), ReturnCode_t::RETCODE_OK);
     ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), ReturnCode_t::RETCODE_OK);
 }
