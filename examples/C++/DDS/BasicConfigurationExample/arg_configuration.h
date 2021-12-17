@@ -106,11 +106,11 @@ struct Arg : public option::Arg
         if (option.arg != 0)
         {
             std::string transport = std::string(option.arg);
-            if (transport != "shm" && transport != "udp")
+            if (transport != "dsh" && transport != "shm" && transport != "udp" && transport != "udpv6")
             {
                 if (msg)
                 {
-                    print_error("Option '", option, "' only accepts <shm|udp> values\n");
+                    print_error("Option '", option, "' only accepts <dsh|shm|ud|udpv6p> values\n");
                 }
                 return option::ARG_ILLEGAL;
             }
@@ -160,8 +160,8 @@ const option::Descriptor usage[] = {
     { ASYNC, 0, "a", "async",               Arg::None,
       "  -a \t--async \tAsynchronous publish mode (synchronous by default)." },
     { TRANSPORT, 0, "", "transport",        Arg::Transport,
-      "  \t--transport=<shm|udp> \tUse shared-memory|UDP transport (Default: data-sharing > shared-memory > UDP "
-      "in this order of priority depending on execution context)." },
+      "  \t--transport=<dsh|shm|udp|udpv6> \tUse only data-sharing, shared-memory, UDP, UDPv6 transport."
+      "If not set, use Fast DDS default transport (depending on the scenario it will use the most efficient one)." },
 
     { UNKNOWN_OPT, 0, "", "",                Arg::None,      "\nSubscriber options:"},
     { TOPIC, 0, "t", "topic",                  Arg::String,
@@ -171,8 +171,8 @@ const option::Descriptor usage[] = {
     { SAMPLES, 0, "s", "samples",              Arg::Numeric,
       "  -s <num> \t--samples=<num>  \tNumber of samples to wait for (Default: 0 => infinite samples)." },
     { TRANSPORT, 0, "", "transport",        Arg::Transport,
-      "  \t--transport=<shm|udp> \tUse shared-memory|UDP transport (Default: data-sharing > shared-memory > UDP "
-      "in this order of priority depending on execution context)." },
+      "  \t--transport=<dsh|shm|udp|udpv6> \tUse only data-sharing, shared-memory, UDP, UDPv6 transport."
+      "If not set, use Fast DDS default transport (depending on the scenario it will use the most efficient one)." },
 
     { UNKNOWN_OPT, 0, "", "",                Arg::None,      "\nQoS options:"},
     { RELIABLE, 0, "r", "reliable",         Arg::None,

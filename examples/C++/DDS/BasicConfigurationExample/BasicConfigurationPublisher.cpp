@@ -27,6 +27,7 @@
 #include <fastdds/dds/publisher/qos/PublisherQos.hpp>
 #include <fastdds/rtps/transport/shared_mem/SharedMemTransportDescriptor.h>
 #include <fastdds/rtps/transport/UDPv4TransportDescriptor.h>
+#include <fastdds/rtps/transport/UDPv6TransportDescriptor.h>
 #include <fastrtps/attributes/ParticipantAttributes.h>
 #include <fastrtps/attributes/PublisherAttributes.h>
 
@@ -64,28 +65,36 @@ bool HelloWorldPublisher::init(
         uint32_t domain,
         uint32_t num_wait_matched,
         bool async,
-        const std::string& transport,
+        TransportType transport,
         bool reliable,
         bool transient)
 {
     hello_.index(0);
-    hello_.message("HelloWorld");
+    memcpy(hello_.message().data(), "HelloWorld ", strlen("HelloWorld") + 1);
+
     DomainParticipantQos pqos;
     pqos.name("Participant_pub");
     listener_.set_num_wait_matched(num_wait_matched);
 
     // TRANSPORT CONFIG
-    if (!transport.empty())
+    // If it is set, not use default and set the transport
+    if (transport != DEFAULT)
     {
         pqos.transport().use_builtin_transports = false;
-        if (transport == "shm")
+
+        if (transport == SHM || transport == DATA_SHARING)
         {
             auto shm_transport = std::make_shared<SharedMemTransportDescriptor>();
             pqos.transport().user_transports.push_back(shm_transport);
         }
-        else
+        else if (transport == UDP)
         {
             auto udp_transport = std::make_shared<UDPv4TransportDescriptor>();
+            pqos.transport().user_transports.push_back(udp_transport);
+        }
+        else if (transport == UDPv6)
+        {
+            auto udp_transport = std::make_shared<UDPv6TransportDescriptor>();
             pqos.transport().user_transports.push_back(udp_transport);
         }
     }
@@ -119,7 +128,9 @@ bool HelloWorldPublisher::init(
 
     // CREATE THE WRITER
     DataWriterQos wqos = DATAWRITER_QOS_DEFAULT;
-    if (!transport.empty())
+
+    // Data sharing set in endpoint. If it is not default or datasharing, set it to off
+    if (transport != DEFAULT && transport != DATA_SHARING)
     {
         wqos.data_sharing().off();
     }
@@ -248,7 +259,7 @@ void HelloWorldPublisher::runThread(
         if (listener_.enough_matched())
         {
             publish();
-            std::cout << "Message: " << hello_.message() << " with index: " << hello_.index()
+            std::cout << "Message: " << hello_.message().data() << " with index: " << hello_.index()
                       << " SENT" << std::endl;
             std::this_thread::sleep_for(std::chrono::milliseconds(sleep));
         }

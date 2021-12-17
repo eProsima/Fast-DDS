@@ -29,6 +29,7 @@
 #include <fastdds/dds/subscriber/DataReaderListener.hpp>
 
 #include "HelloWorldPubSubTypes.h"
+#include "types.hpp"
 
 /**
  * Class used to group into a single working unit a Subscriber with a DataReader, its listener, and a TypeSupport member
@@ -47,7 +48,7 @@ public:
             const std::string& topic_name,
             uint32_t max_messages,
             uint32_t domain,
-            const std::string& transport,
+            TransportType transport,
             bool reliable,
             bool transient);
 

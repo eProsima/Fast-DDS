@@ -22,6 +22,7 @@
 #include "arg_configuration.h"
 #include "BasicConfigurationPublisher.h"
 #include "BasicConfigurationSubscriber.h"
+#include "types.hpp"
 
 enum EntityType
 {
@@ -58,7 +59,7 @@ int main(
     int num_wait_matched = 0;
     int domain = 0;
     bool async = false;
-    std::string transport;
+    TransportType transport = DEFAULT;
     bool reliable = false;
     bool transient = false; // transient local
     if (argc > 1)
@@ -159,7 +160,22 @@ int main(
                     break;
 
                 case optionIndex::TRANSPORT:
-                    transport = std::string(opt.arg);
+                    if (strcmp(opt.arg, "dsh") == 0)
+                    {
+                        transport = DATA_SHARING;
+                    }
+                    else if (strcmp(opt.arg, "shm") == 0)
+                    {
+                        transport = SHM;
+                    }
+                    else if (strcmp(opt.arg, "udp") == 0)
+                    {
+                        transport = UDP;
+                    }
+                    else if (strcmp(opt.arg, "udpv6") == 0)
+                    {
+                        transport = UDPv6;
+                    }
                     break;
 
                 case optionIndex::RELIABLE:

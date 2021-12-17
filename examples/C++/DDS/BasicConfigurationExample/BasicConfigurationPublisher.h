@@ -29,6 +29,7 @@
 #include <fastdds/dds/topic/TypeSupport.hpp>
 
 #include "HelloWorldPubSubTypes.h"
+#include "types.hpp"
 
 /**
  * Class used to group into a single working unit a Publisher with a DataWriter, its listener, and a TypeSupport member
@@ -48,7 +49,7 @@ public:
             uint32_t domain,
             uint32_t num_wait_matched,
             bool async,
-            const std::string& transport,
+            TransportType transport,
             bool reliable,
             bool transient);
 

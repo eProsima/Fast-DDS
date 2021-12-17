@@ -26,6 +26,7 @@
 #include <fastdds/dds/subscriber/Subscriber.hpp>
 #include <fastdds/rtps/transport/shared_mem/SharedMemTransportDescriptor.h>
 #include <fastdds/rtps/transport/UDPv4TransportDescriptor.h>
+#include <fastdds/rtps/transport/UDPv6TransportDescriptor.h>
 #include <fastrtps/attributes/ParticipantAttributes.h>
 #include <fastrtps/attributes/SubscriberAttributes.h>
 
@@ -62,7 +63,7 @@ bool HelloWorldSubscriber::init(
         const std::string& topic_name,
         uint32_t max_messages,
         uint32_t domain,
-        const std::string& transport,
+        TransportType transport,
         bool reliable,
         bool transient)
 {
@@ -70,19 +71,24 @@ bool HelloWorldSubscriber::init(
     pqos.name("Participant_sub");
 
     // TRANSPORT CONFIG
-    if (!transport.empty())
+    // If it is set, not use default and set the transport
+    if (transport != DEFAULT)
     {
         pqos.transport().use_builtin_transports = false;
-        // SHARED-MEMORY
-        if (transport == "shm")
+
+        if (transport == SHM || transport == DATA_SHARING)
         {
             auto shm_transport = std::make_shared<SharedMemTransportDescriptor>();
             pqos.transport().user_transports.push_back(shm_transport);
         }
-        // UDP
-        else
+        else if (transport == UDP)
         {
             auto udp_transport = std::make_shared<UDPv4TransportDescriptor>();
+            pqos.transport().user_transports.push_back(udp_transport);
+        }
+        else if (transport == UDPv6)
+        {
+            auto udp_transport = std::make_shared<UDPv6TransportDescriptor>();
             pqos.transport().user_transports.push_back(udp_transport);
         }
     }
@@ -123,13 +129,15 @@ bool HelloWorldSubscriber::init(
         listener_.set_max_messages(max_messages);
     }
     DataReaderQos rqos = DATAREADER_QOS_DEFAULT;
-    if (!transport.empty())
+
+    // Data sharing set in endpoint. If it is not default or datasharing, set it to off
+    if (transport != DEFAULT && transport != DATA_SHARING)
     {
         rqos.data_sharing().off();
     }
     else
     {
-        rqos.data_sharing().automatic();    // default
+        rqos.data_sharing().automatic();  // default
     }
 
     if (reliable)
@@ -217,7 +225,7 @@ void HelloWorldSubscriber::SubListener::on_data_available(
         {
             samples_++;
             // Print your structure data here.
-            std::cout << "Message " << hello_.message() << " " << hello_.index() << " RECEIVED" << std::endl;
+            std::cout << "Message " << hello_.message().data() << " " << hello_.index() << " RECEIVED" << std::endl;
             if (max_messages_ > 0 && (samples_ >= max_messages_))
             {
                 stop();

@@ -1,5 +1,5 @@
 struct HelloWorld
 {
 	unsigned long index;
-	string message;
+	char message[20];
 };
