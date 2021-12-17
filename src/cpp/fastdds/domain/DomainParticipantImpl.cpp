@@ -577,7 +577,7 @@ ReturnCode_t DomainParticipantImpl::register_content_filter_factory(
         const char* filter_class_name,
         IContentFilterFactory* const filter_factory)
 {
-    if (nullptr == filter_class_name || strlen(filter_class_name) > 255)
+    if (nullptr == filter_factory || nullptr == filter_class_name || strlen(filter_class_name) > 255)
     {
         return ReturnCode_t::RETCODE_BAD_PARAMETER;
     }
