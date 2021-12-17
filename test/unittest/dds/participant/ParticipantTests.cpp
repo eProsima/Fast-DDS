@@ -3066,6 +3066,9 @@ TEST(ParticipantTests, DeleteContainedEntities)
  */
 TEST(ParticipantTests, ContentFilterInterfaces)
 {
+    static const char* TEST_FILTER_CLASS = "TESTFILTER";
+    static const char* OTHER_FILTER_CLASS = "OTHERFILTER";
+
     struct MockFilter : public IContentFilter, public IContentFilterFactory
     {
         bool evaluate(
@@ -3112,6 +3115,8 @@ TEST(ParticipantTests, ContentFilterInterfaces)
     };
 
     MockFilter test_filter;
+    std::string very_long_name(512, ' ');
+
     // Create the participant
     DomainParticipant* participant =
             DomainParticipantFactory::get_instance()->create_participant(0, PARTICIPANT_QOS_DEFAULT);
@@ -3140,6 +3145,18 @@ TEST(ParticipantTests, ContentFilterInterfaces)
                     std::vector<std::string>({ "a", "b" })));
 
         EXPECT_EQ(ReturnCode_t::RETCODE_BAD_PARAMETER, participant->delete_contentfilteredtopic(nullptr));
+    }
+
+    // Negative tests for register_content_filter_factory
+    {
+        EXPECT_EQ(ReturnCode_t::RETCODE_BAD_PARAMETER,
+                participant->register_content_filter_factory(nullptr, &test_filter));
+        EXPECT_EQ(ReturnCode_t::RETCODE_BAD_PARAMETER,
+                participant->register_content_filter_factory(very_long_name.c_str(), &test_filter));
+        EXPECT_EQ(ReturnCode_t::RETCODE_BAD_PARAMETER,
+                participant->register_content_filter_factory(TEST_FILTER_CLASS, nullptr));
+        EXPECT_EQ(ReturnCode_t::RETCODE_PRECONDITION_NOT_MET,
+                participant->register_content_filter_factory(FASTDDS_SQLFILTER_NAME, &test_filter));
     }
 
     ASSERT_EQ(participant->delete_topic(topic), ReturnCode_t::RETCODE_OK);
