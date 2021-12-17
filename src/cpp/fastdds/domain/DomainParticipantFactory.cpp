@@ -32,8 +32,9 @@
 #include <statistics/fastdds/domain/DomainParticipantImpl.hpp>
 
 
-
-
+// We include boost through this internal header, to ensure we use our custom boost config file
+#include <utils/shared_memory/SharedMemSegment.hpp>
+#include <boost/interprocess/sync/interprocess_mutex.hpp>
 
 using namespace eprosima::fastrtps::xmlparser;
 
@@ -100,6 +101,27 @@ DomainParticipantFactory::~DomainParticipantFactory()
 
 DomainParticipantFactory* DomainParticipantFactory::get_instance()
 {
+    /*
+     * The first time an interprocess synchronization object is created by boost, a singleton is instantiated and
+     * its destructor is registered with std::atexit(&atexit_work).
+     *
+     * We need to ensure that the boost singleton is destroyed after the instance of DomainParticipantFactory, to
+     * ensure that the interprocess objects keep working until all the participants are destroyed.
+     *
+     * We achieve this behavior by having an static instance of an auxiliary struct that instantiates a synchronization
+     * object on the constructor, just to ensure that the boost singleton is instantiated before the
+     * DomainParticipantFactory.
+     */
+    struct AuxiliaryBoostFunctor
+    {
+        AuxiliaryBoostFunctor()
+        {
+            boost::interprocess::interprocess_mutex mtx;
+        }
+
+    };
+    static AuxiliaryBoostFunctor boost_functor;
+
     // Keep a reference to the topic payload pool to avoid it to be destroyed before our own instance
     using pool_registry_ref = eprosima::fastrtps::rtps::TopicPayloadPoolRegistry::reference;
     static pool_registry_ref topic_pool_registry = eprosima::fastrtps::rtps::TopicPayloadPoolRegistry::instance();

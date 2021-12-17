@@ -171,3 +171,76 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
 
     endif()
 endif()
+<<<<<<< HEAD
+=======
+
+# External sources
+if(TINYXML2_SOURCE_DIR)
+    list(APPEND LISTENERTESTS_SOURCE
+        ${TINYXML2_SOURCE_DIR}/tinyxml2.cpp
+        )
+endif()
+
+include_directories(${TINYXML2_INCLUDE_DIR})
+
+if(WIN32)
+    add_definitions(-D_WIN32_WINNT=0x0601)
+endif()
+
+add_executable(ListenerTests ${LISTENERTESTS_SOURCE})
+target_compile_definitions(ListenerTests PRIVATE FASTRTPS_NO_LIB
+    BOOST_ASIO_STANDALONE
+    ASIO_STANDALONE
+    ASIO_DISABLE_VISIBILITY
+    SQLITE_WIN32_GETVERSIONEX=0
+    $<$<AND:$<BOOL:${ANDROID}>,$<NOT:$<BOOL:${HAVE_CXX14}>>,$<NOT:$<BOOL:${HAVE_CXX1Y}>>>:ASIO_DISABLE_STD_STRING_VIEW>
+    $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
+    $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
+    $<$<BOOL:${WIN32}>:_ENABLE_ATOMIC_ALIGNMENT_FIX>
+    )
+target_include_directories(ListenerTests PRIVATE
+    ${Asio_INCLUDE_DIR}
+    ${PROJECT_SOURCE_DIR}/test/mock/rtps/DataSharingPayloadPool
+    ${PROJECT_SOURCE_DIR}/test/mock/rtps/RTPSReader
+    ${PROJECT_SOURCE_DIR}/test/mock/rtps/RTPSWriter
+    ${PROJECT_SOURCE_DIR}/test/mock/rtps/RTPSDomain
+    ${PROJECT_SOURCE_DIR}/test/mock/rtps/RTPSDomainImpl
+    ${PROJECT_SOURCE_DIR}/test/mock/rtps/RTPSParticipant
+    ${PROJECT_SOURCE_DIR}/test/mock/rtps/RTPSParticipantImpl
+    ${PROJECT_SOURCE_DIR}/test/mock/rtps/Endpoint
+    ${PROJECT_SOURCE_DIR}/test/mock/rtps/PDP
+    ${PROJECT_SOURCE_DIR}/test/mock/rtps/PDPSimple
+    ${PROJECT_SOURCE_DIR}/test/mock/rtps/StatefulWriter
+    ${PROJECT_SOURCE_DIR}/test/mock/rtps/StatelessWriter
+    ${PROJECT_SOURCE_DIR}/test/mock/rtps/StatefulReader
+    ${PROJECT_SOURCE_DIR}/test/mock/rtps/StatelessReader
+    ${PROJECT_SOURCE_DIR}/test/mock/rtps/WriterHistory
+    ${PROJECT_SOURCE_DIR}/test/mock/rtps/ReaderHistory
+    ${PROJECT_SOURCE_DIR}/test/mock/rtps/ResourceEvent
+    ${PROJECT_SOURCE_DIR}/test/mock/rtps/TimedEvent
+    ${PROJECT_SOURCE_DIR}/test/mock/rtps/UDPTransportDescriptor
+    ${PROJECT_SOURCE_DIR}/test/mock/rtps/UDPv4TransportDescriptor
+    ${PROJECT_SOURCE_DIR}/test/mock/rtps/UDPv6TransportDescriptor
+    ${PROJECT_SOURCE_DIR}/test/mock/rtps/TCPTransportDescriptor
+    ${PROJECT_SOURCE_DIR}/test/mock/rtps/TCPv4TransportDescriptor
+    ${PROJECT_SOURCE_DIR}/test/mock/rtps/TCPv6TransportDescriptor
+    ${PROJECT_SOURCE_DIR}/test/mock/rtps/SharedMemTransportDescriptor
+    ${PROJECT_SOURCE_DIR}/test/mock/rtps/TypeLookupManager
+    ${PROJECT_SOURCE_DIR}/test/mock/rtps/WLP
+    ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include
+    ${PROJECT_SOURCE_DIR}/src/cpp
+    ${THIRDPARTY_BOOST_INCLUDE_DIR}
+    )
+
+target_link_libraries(ListenerTests fastcdr foonathan_memory
+    ${TINYXML2_LIBRARY}
+    GTest::gmock
+    ${CMAKE_DL_LIBS}
+    ${THIRDPARTY_BOOST_LINK_LIBS}
+    )
+if(MSVC OR MSVC_IDE)
+    target_link_libraries(ListenerTests iphlpapi Shlwapi ws2_32)
+endif()
+
+add_gtest(ListenerTests SOURCES ${LISTENERTESTS_SOURCE})
+>>>>>>> 80a44fe34 (Ensure correct boost singleton destruction order (#2356))
