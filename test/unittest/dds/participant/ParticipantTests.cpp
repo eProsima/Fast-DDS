@@ -3166,6 +3166,15 @@ TEST(ParticipantTests, ContentFilterInterfaces)
         EXPECT_EQ(nullptr, participant->lookup_content_filter_factory(TEST_FILTER_CLASS));
     }
 
+    // Negative tests for unregister_content_filter_factory
+    {
+        EXPECT_EQ(ReturnCode_t::RETCODE_BAD_PARAMETER, participant->unregister_content_filter_factory(nullptr));
+        EXPECT_EQ(ReturnCode_t::RETCODE_PRECONDITION_NOT_MET,
+                participant->unregister_content_filter_factory(FASTDDS_SQLFILTER_NAME));
+        EXPECT_EQ(ReturnCode_t::RETCODE_PRECONDITION_NOT_MET,
+                participant->unregister_content_filter_factory(TEST_FILTER_CLASS));
+    }
+
     ASSERT_EQ(participant->delete_topic(topic), ReturnCode_t::RETCODE_OK);
     ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), ReturnCode_t::RETCODE_OK);
 }
