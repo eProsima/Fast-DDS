@@ -3056,11 +3056,34 @@ TEST(ParticipantTests, DeleteContainedEntities)
 
 }
 
+/*
+ * This test checks the following methods:
+ *  create_contentfilteredtopic
+ *  delete_contentfilteredtopic
+ *  register_content_filter_factory
+ *  lookup_content_filter_factory
+ *  unregister_content_filter_factory
+ */
+TEST(ParticipantTests, ContentFilterInterfaces)
+{
+    // Create the participant
+    DomainParticipant* participant =
+            DomainParticipantFactory::get_instance()->create_participant(0, PARTICIPANT_QOS_DEFAULT);
+    ASSERT_NE(participant, nullptr);
+
+    // Create a type and a topic
+    TypeSupport type(new TopicDataTypeMock());
+    ASSERT_EQ(type.register_type(participant), ReturnCode_t::RETCODE_OK);
+
+    Topic* topic = participant->create_topic("topic", type.get_type_name(), TOPIC_QOS_DEFAULT);
+    ASSERT_NE(topic, nullptr);
+
+    ASSERT_EQ(participant->delete_topic(topic), ReturnCode_t::RETCODE_OK);
+    ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), ReturnCode_t::RETCODE_OK);
+}
 
 /*
  * This test checks that the following methods are not implemented and returns an error
- *  create_contentfilteredtopic
- *  delete_contentfilteredtopic
  *  create_multitopic
  *  delete_multitopic
  *  find_topic
@@ -3088,17 +3111,6 @@ TEST(ParticipantTests, UnsupportedMethods)
 
     Topic* topic = participant->create_topic("topic", type.get_type_name(), TOPIC_QOS_DEFAULT);
     ASSERT_NE(topic, nullptr);
-
-    ASSERT_EQ(
-        participant->create_contentfilteredtopic(
-            "contentfilteredtopic",
-            topic,
-            "filter_expression",
-            std::vector<std::string>({"a", "b"})),
-        nullptr);
-
-    // nullptr use as there are not such a class
-    ASSERT_EQ(participant->delete_contentfilteredtopic(nullptr), ReturnCode_t::RETCODE_UNSUPPORTED);
 
     ASSERT_EQ(
         participant->create_multitopic(
