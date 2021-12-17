@@ -3066,6 +3066,52 @@ TEST(ParticipantTests, DeleteContainedEntities)
  */
 TEST(ParticipantTests, ContentFilterInterfaces)
 {
+    struct MockFilter : public IContentFilter, public IContentFilterFactory
+    {
+        bool evaluate(
+                const SerializedPayload& /*payload*/,
+                const FilterSampleInfo& /*sample_info*/,
+                const GUID_t& /*reader_guid*/) const override
+        {
+            return true;
+        }
+
+        ReturnCode_t create_content_filter(
+                const char* /*filter_class_name*/,
+                const char* /*type_name*/,
+                const TopicDataType* /*data_type*/,
+                const char* filter_expression,
+                const ParameterSeq& filter_parameters,
+                IContentFilter*& filter_instance) override
+        {
+            if (nullptr != filter_expression)
+            {
+                std::string s(filter_expression);
+                if (filter_parameters.length() == std::count(s.begin(), s.end(), '%'))
+                {
+                    filter_instance = this;
+                    return ReturnCode_t::RETCODE_OK;
+                }
+            }
+
+            return ReturnCode_t::RETCODE_BAD_PARAMETER;
+        }
+
+        virtual ReturnCode_t delete_content_filter(
+                const char* /*filter_class_name*/,
+                IContentFilter* filter_instance) override
+        {
+            if (this == filter_instance)
+            {
+                return ReturnCode_t::RETCODE_OK;
+            }
+
+            return ReturnCode_t::RETCODE_BAD_PARAMETER;
+        }
+
+    };
+
+    MockFilter test_filter;
     // Create the participant
     DomainParticipant* participant =
             DomainParticipantFactory::get_instance()->create_participant(0, PARTICIPANT_QOS_DEFAULT);
