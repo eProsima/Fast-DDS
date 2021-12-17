@@ -3078,6 +3078,24 @@ TEST(ParticipantTests, ContentFilterInterfaces)
     Topic* topic = participant->create_topic("topic", type.get_type_name(), TOPIC_QOS_DEFAULT);
     ASSERT_NE(topic, nullptr);
 
+    // Negative tests for create_contentfilteredtopic and delete_contentfilteredtopic
+    {
+        EXPECT_EQ(nullptr,
+                participant->create_contentfilteredtopic(
+                    "contentfilteredtopic",
+                    topic,
+                    "INVALID SQL EXPRESSION",
+                    std::vector<std::string>({ "a", "b" })));
+        EXPECT_EQ(nullptr,
+                participant->create_contentfilteredtopic(
+                    "contentfilteredtopic",
+                    nullptr,
+                    "INVALID SQL EXPRESSION",
+                    std::vector<std::string>({ "a", "b" })));
+
+        EXPECT_EQ(ReturnCode_t::RETCODE_BAD_PARAMETER, participant->delete_contentfilteredtopic(nullptr));
+    }
+
     ASSERT_EQ(participant->delete_topic(topic), ReturnCode_t::RETCODE_OK);
     ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), ReturnCode_t::RETCODE_OK);
 }
