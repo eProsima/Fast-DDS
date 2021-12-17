@@ -365,7 +365,7 @@ public:
 
     unsigned int getReceivedCount() const
     {
-        return current_received_count_;
+        return static_cast<unsigned int>(current_received_count_);
     }
 
     /*** Function to change QoS ***/
