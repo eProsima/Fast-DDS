@@ -319,24 +319,24 @@ void TypeObjectFactory::fill_minimal_information(
     switch (ident->_d())
     {
         /*
-        case TK_BOOLEAN:
-        case TK_BYTE:
-        case TK_INT16:
-        case TK_INT32:
-        case TK_INT64:
-        case TK_UINT16:
-        case TK_UINT32:
-        case TK_UINT64:
-        case TK_FLOAT32:
-        case TK_FLOAT64:
-        case TK_FLOAT128:
-        case TK_CHAR8:
-        case TK_CHAR16:
-        case TK_STRING8:
-        case TK_STRING16:
+           case TK_BOOLEAN:
+           case TK_BYTE:
+           case TK_INT16:
+           case TK_INT32:
+           case TK_INT64:
+           case TK_UINT16:
+           case TK_UINT32:
+           case TK_UINT64:
+           case TK_FLOAT32:
+           case TK_FLOAT64:
+           case TK_FLOAT128:
+           case TK_CHAR8:
+           case TK_CHAR16:
+           case TK_STRING8:
+           case TK_STRING16:
             info->minimal().dependent_typeid_count(0);
             break;
-        */
+         */
         case TK_SEQUENCE:
         {
             info->minimal().dependent_typeid_count(1);
@@ -587,24 +587,24 @@ void TypeObjectFactory::fill_complete_information(
     switch (ident->_d())
     {
         /*
-        case TK_BOOLEAN:
-        case TK_BYTE:
-        case TK_INT16:
-        case TK_INT32:
-        case TK_INT64:
-        case TK_UINT16:
-        case TK_UINT32:
-        case TK_UINT64:
-        case TK_FLOAT32:
-        case TK_FLOAT64:
-        case TK_FLOAT128:
-        case TK_CHAR8:
-        case TK_CHAR16:
-        case TK_STRING8:
-        case TK_STRING16:
+           case TK_BOOLEAN:
+           case TK_BYTE:
+           case TK_INT16:
+           case TK_INT32:
+           case TK_INT64:
+           case TK_UINT16:
+           case TK_UINT32:
+           case TK_UINT64:
+           case TK_FLOAT32:
+           case TK_FLOAT64:
+           case TK_FLOAT128:
+           case TK_CHAR8:
+           case TK_CHAR16:
+           case TK_STRING8:
+           case TK_STRING16:
             info->complete().dependent_typeid_count(0);
             break;
-        */
+         */
         case TK_SEQUENCE:
         {
             info->complete().dependent_typeid_count(1);
