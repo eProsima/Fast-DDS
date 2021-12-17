@@ -3159,6 +3159,13 @@ TEST(ParticipantTests, ContentFilterInterfaces)
                 participant->register_content_filter_factory(FASTDDS_SQLFILTER_NAME, &test_filter));
     }
 
+    // Negative tests for lookup_content_filter_factory
+    {
+        EXPECT_EQ(nullptr, participant->lookup_content_filter_factory(nullptr));
+        EXPECT_EQ(nullptr, participant->lookup_content_filter_factory(FASTDDS_SQLFILTER_NAME));
+        EXPECT_EQ(nullptr, participant->lookup_content_filter_factory(TEST_FILTER_CLASS));
+    }
+
     ASSERT_EQ(participant->delete_topic(topic), ReturnCode_t::RETCODE_OK);
     ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), ReturnCode_t::RETCODE_OK);
 }
