@@ -3197,6 +3197,34 @@ TEST(ParticipantTests, ContentFilterInterfaces)
                 participant->unregister_content_filter_factory(TEST_FILTER_CLASS));
     }
 
+    // Custom filter registration and creation of filtered topic
+    {
+        EXPECT_EQ(nullptr,
+                participant->create_contentfilteredtopic("contentfilteredtopic", topic, "", {}, TEST_FILTER_CLASS));
+
+        // Register filter factory
+        EXPECT_EQ(ReturnCode_t::RETCODE_OK,
+                participant->register_content_filter_factory(TEST_FILTER_CLASS, &test_filter));
+
+        // Negative tests for custom filtered topic creation
+        EXPECT_EQ(nullptr,
+                participant->create_contentfilteredtopic("contentfilteredtopic", nullptr, "", {}, TEST_FILTER_CLASS));
+        EXPECT_EQ(nullptr,
+                participant->create_contentfilteredtopic("contentfilteredtopic", topic, "", {""}, TEST_FILTER_CLASS));
+        EXPECT_EQ(nullptr,
+                participant->create_contentfilteredtopic("contentfilteredtopic", topic, "%%", {""}, TEST_FILTER_CLASS));
+
+        ContentFilteredTopic* filtered_topic = participant->create_contentfilteredtopic("contentfilteredtopic", topic,
+                        "", {}, TEST_FILTER_CLASS);
+        ASSERT_NE(nullptr, filtered_topic);
+
+        EXPECT_EQ(ReturnCode_t::RETCODE_OK, participant->delete_contentfilteredtopic(filtered_topic));
+
+        // Unregister filter factory
+        EXPECT_EQ(ReturnCode_t::RETCODE_OK,
+                participant->unregister_content_filter_factory(TEST_FILTER_CLASS));
+    }
+
     ASSERT_EQ(participant->delete_topic(topic), ReturnCode_t::RETCODE_OK);
     ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), ReturnCode_t::RETCODE_OK);
 }
