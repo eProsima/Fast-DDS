@@ -584,8 +584,13 @@ TEST_F(DataReaderTests, get_guid)
     DomainParticipantFactory::get_instance()->get_qos(factory_qos);
     factory_qos.entity_factory().autoenable_created_entities = false;
     DomainParticipantFactory::get_instance()->set_qos(factory_qos);
+    DomainParticipantQos participant_qos = PARTICIPANT_QOS_DEFAULT;
+    participant_qos.wire_protocol().builtin.discovery_config.ignoreParticipantFlags =
+            static_cast<eprosima::fastrtps::rtps::ParticipantFilteringFlags_t>(
+        eprosima::fastrtps::rtps::ParticipantFilteringFlags_t::FILTER_DIFFERENT_HOST |
+        eprosima::fastrtps::rtps::ParticipantFilteringFlags_t::FILTER_DIFFERENT_PROCESS);
     DomainParticipant* participant =
-            DomainParticipantFactory::get_instance()->create_participant(0, PARTICIPANT_QOS_DEFAULT);
+            DomainParticipantFactory::get_instance()->create_participant(0, participant_qos);
     ASSERT_NE(participant, nullptr);
 
     Subscriber* subscriber = participant->create_subscriber(SUBSCRIBER_QOS_DEFAULT);
