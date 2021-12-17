@@ -16,6 +16,10 @@ configure_file(${CMAKE_CURRENT_SOURCE_DIR}/../profiles/test_xml_profiles.xml
     ${CMAKE_CURRENT_BINARY_DIR}/test_xml_profiles.xml
     COPYONLY)
 
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/../profiles/test_xml_profiles_for_string.xml
+        ${CMAKE_CURRENT_BINARY_DIR}/test_xml_profiles_for_string.xml
+        COPYONLY)
+
 set(PUBLISHERTESTS_SOURCE PublisherTests.cpp)
 set(DATAWRITERTESTS_SOURCE DataWriterTests.cpp)
 set(PUBLISHERTESTS_SOURCE PublisherTests.cpp

@@ -71,6 +71,17 @@ public:
             const std::string& filename);
 
     /**
+     * Load a profiles XML string.
+     * @param data Buffer containing the data.
+     * @param length Length of data.
+     * @return XMLP_ret::XML_OK if all profiles are correct, XMLP_ret::XML_NOK if some are and some are not,
+     *         XMLP_ret::XML_ERROR in other case.
+     */
+    RTPS_DllAPI static XMLP_ret loadXMLString(
+            const char* data,
+            size_t length);
+
+    /**
      * Load a profiles XML node.
      * @param doc Node to be loaded.
      * @return XMLP_ret::XML_OK if all profiles are correct, XMLP_ret::XML_NOK if some are and some are not,

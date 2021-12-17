@@ -36,6 +36,7 @@
 #include <fastrtps/attributes/PublisherAttributes.h>
 #include <fastrtps/attributes/SubscriberAttributes.h>
 #include <fastrtps/xmlparser/XMLProfileManager.h>
+#include <fstream>
 
 
 namespace eprosima {
@@ -371,6 +372,38 @@ TEST(PublisherTests, CreateDataWriterWithProfile)
     DataWriter* datawriter = publisher->create_datawriter_with_profile(topic, "test_publisher_profile");
     ASSERT_NE(datawriter, nullptr);
     check_datawriter_with_profile(datawriter, "test_publisher_profile");
+    ASSERT_TRUE(publisher->delete_datawriter(datawriter) == ReturnCode_t::RETCODE_OK);
+
+    ASSERT_EQ(participant->delete_publisher(publisher), ReturnCode_t::RETCODE_OK);
+    ASSERT_EQ(participant->delete_topic(topic), ReturnCode_t::RETCODE_OK);
+    ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), ReturnCode_t::RETCODE_OK);
+}
+
+TEST(PublisherTests, CreateDataWriterWithProfileFromString)
+{
+
+    std::ifstream t("test_xml_profiles_for_string.xml");
+    std::stringstream buffer;
+    buffer << t.rdbuf();
+
+    DomainParticipantFactory::get_instance()->load_XML_profiles_string(buffer.str().c_str(), buffer.str().length());
+    DomainParticipant* participant =
+            DomainParticipantFactory::get_instance()->create_participant(0, PARTICIPANT_QOS_DEFAULT);
+    Publisher* publisher = participant->create_publisher(PUBLISHER_QOS_DEFAULT);
+    TypeSupport type(new TopicDataTypeMock());
+    type.register_type(participant);
+    Topic* topic = participant->create_topic("footopic", type.get_type_name(), TOPIC_QOS_DEFAULT);
+
+    //Datawriter using the default profile
+    DataWriter* default_datawriter = publisher->create_datawriter(topic, DATAWRITER_QOS_DEFAULT);
+    ASSERT_NE(default_datawriter, nullptr);
+    check_datawriter_with_profile(default_datawriter, "test_default_publisher_profile_string");
+    ASSERT_TRUE(publisher->delete_datawriter(default_datawriter) == ReturnCode_t::RETCODE_OK);
+
+    //participant using non-default profile
+    DataWriter* datawriter = publisher->create_datawriter_with_profile(topic, "test_publisher_profile_string");
+    ASSERT_NE(datawriter, nullptr);
+    check_datawriter_with_profile(datawriter, "test_publisher_profile_string");
     ASSERT_TRUE(publisher->delete_datawriter(datawriter) == ReturnCode_t::RETCODE_OK);
 
     ASSERT_EQ(participant->delete_publisher(publisher), ReturnCode_t::RETCODE_OK);
