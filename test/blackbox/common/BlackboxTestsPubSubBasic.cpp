@@ -26,6 +26,7 @@
 
 #include <gtest/gtest.h>
 
+#include <cstdlib>
 #include <string>
 #include <tuple>
 #include <vector>
@@ -127,8 +128,7 @@ void env_file_warning(const char* env_file_name, size_t expected_logs)
     EXPECT_EQ(helper_consumer->ConsumedEntries().size(), expected_logs);
 
     /* Clean-up */
-    helper_consumer->ClearEntries(); // This calls to ClearConsumers, which deletes the registered consumer
-    Log::Reset();
+    Log::Reset();  // This calls to ClearConsumers, which deletes the registered consumer
 }
 
 TEST_P(PubSubBasic, PubSubAsNonReliableHelloworld)
@@ -809,7 +809,7 @@ TEST_P(PubSubBasic, ReliableTransientLocalTwoWritersConsecutives)
 /*
  * Check that setting FASTDDS_ENVIRONMENT_FILE to an unexisting file issues 1 logWarning
  */
-TEST_P(PubSubBasic, EnvFileWarningWrongFile)
+TEST(PubSubBasic, EnvFileWarningWrongFile)
 {
     env_file_warning("unexisting_file", 1);
 }
@@ -817,7 +817,7 @@ TEST_P(PubSubBasic, EnvFileWarningWrongFile)
 /*
  * Check that setting FASTDDS_ENVIRONMENT_FILE to an empty string issues 0 logWarning
  */
-TEST_P(PubSubBasic, EnvFileWarningEmpty)
+TEST(PubSubBasic, EnvFileWarningEmpty)
 {
     env_file_warning("", 0);
 }
