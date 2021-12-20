@@ -553,11 +553,6 @@ ReturnCode_t DomainParticipantImpl::delete_contentfilteredtopic(
         return ReturnCode_t::RETCODE_BAD_PARAMETER;
     }
 
-    if (participant_ != topic->get_participant())
-    {
-        return ReturnCode_t::RETCODE_PRECONDITION_NOT_MET;
-    }
-
     std::lock_guard<std::mutex> lock(mtx_topics_);
     auto it = filtered_topics_.find(topic->get_name());
 
