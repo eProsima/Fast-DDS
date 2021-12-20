@@ -3143,6 +3143,8 @@ TEST(ParticipantTests, ContentFilterInterfaces)
                     nullptr,
                     "INVALID SQL EXPRESSION",
                     std::vector<std::string>({ "a", "b" })));
+        EXPECT_EQ(nullptr,
+                participant->create_contentfilteredtopic("contentfilteredtopic", topic, "", {}, nullptr));
 
         EXPECT_EQ(ReturnCode_t::RETCODE_BAD_PARAMETER, participant->delete_contentfilteredtopic(nullptr));
     }
@@ -3208,17 +3210,45 @@ TEST(ParticipantTests, ContentFilterInterfaces)
 
         // Negative tests for custom filtered topic creation
         EXPECT_EQ(nullptr,
+                participant->create_contentfilteredtopic(topic->get_name(), topic, "", {}, TEST_FILTER_CLASS));
+        EXPECT_EQ(nullptr,
                 participant->create_contentfilteredtopic("contentfilteredtopic", nullptr, "", {}, TEST_FILTER_CLASS));
         EXPECT_EQ(nullptr,
                 participant->create_contentfilteredtopic("contentfilteredtopic", topic, "", {""}, TEST_FILTER_CLASS));
         EXPECT_EQ(nullptr,
                 participant->create_contentfilteredtopic("contentfilteredtopic", topic, "%%", {""}, TEST_FILTER_CLASS));
 
+        // Possitive test
         ContentFilteredTopic* filtered_topic = participant->create_contentfilteredtopic("contentfilteredtopic", topic,
                         "", {}, TEST_FILTER_CLASS);
         ASSERT_NE(nullptr, filtered_topic);
 
+        // Should fail to create same filter twice
+        EXPECT_EQ(nullptr,
+                participant->create_contentfilteredtopic("contentfilteredtopic", topic, "", {}, TEST_FILTER_CLASS));
+
+        // Should not be able to delete topic, since it is referenced by filtered_topic
+        EXPECT_EQ(ReturnCode_t::RETCODE_PRECONDITION_NOT_MET, participant->delete_topic(topic));
+
+        // Should not be able to unregister filter factory, since it is referenced by filtered_topic
+        EXPECT_EQ(ReturnCode_t::RETCODE_PRECONDITION_NOT_MET,
+                participant->unregister_content_filter_factory(TEST_FILTER_CLASS));
+
+        // Reference filtered_topic by creating a DataReader
+        auto subscriber = participant->create_subscriber(SUBSCRIBER_QOS_DEFAULT);
+        ASSERT_NE(nullptr, subscriber);
+        auto data_reader = subscriber->create_datareader(filtered_topic, DATAREADER_QOS_DEFAULT);
+        ASSERT_NE(nullptr, data_reader);
+
+        // Should not be able to delete filtered_topic, since it is referenced by data_reader
+        EXPECT_EQ(ReturnCode_t::RETCODE_PRECONDITION_NOT_MET, participant->delete_contentfilteredtopic(filtered_topic));
+
+        EXPECT_EQ(ReturnCode_t::RETCODE_OK, subscriber->delete_datareader(data_reader));
+        EXPECT_EQ(ReturnCode_t::RETCODE_OK, participant->delete_subscriber(subscriber));
+
+        // Should be able to delete filtered_topic, but not twice
         EXPECT_EQ(ReturnCode_t::RETCODE_OK, participant->delete_contentfilteredtopic(filtered_topic));
+        EXPECT_EQ(ReturnCode_t::RETCODE_PRECONDITION_NOT_MET, participant->delete_contentfilteredtopic(filtered_topic));
 
         // Unregister filter factory
         EXPECT_EQ(ReturnCode_t::RETCODE_OK,
