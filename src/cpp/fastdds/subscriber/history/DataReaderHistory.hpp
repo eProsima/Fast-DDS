@@ -23,7 +23,6 @@
 #include <functional>
 #include <map>
 #include <utility>
-#include <vector>
 
 #include <fastdds/dds/core/policy/QosPolicies.hpp>
 #include <fastdds/dds/subscriber/qos/DataReaderQos.hpp>
