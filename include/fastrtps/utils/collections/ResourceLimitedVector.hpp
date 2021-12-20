@@ -152,12 +152,13 @@ public:
             const_iterator pos,
             value_type&& value)
     {
+        auto dist = std::distance(collection_.cbegin(), pos);
         if (!ensure_capacity())
         {
             return end();
         }
 
-        return collection_.insert(pos, std::move(value));
+        return collection_.insert(collection_.cbegin() + dist, std::move(value));
     }
 
     /**
