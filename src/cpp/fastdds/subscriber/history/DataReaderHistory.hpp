@@ -282,7 +282,7 @@ private:
      * @return true when the change was added to the instance.
      * @return false when the change could not be added to the instance and has been removed from the history.
      */
-     ///@{
+    ///@{
     bool completed_change_keep_all(
             CacheChange_t* change,
             DataReaderInstance& instance);
