@@ -21,14 +21,15 @@ using namespace eprosima::fastrtps;
 // some implementations of std::vector would enforce power of two capacities
 constexpr size_t NUM_ITEMS = 32;
 
-class ResourceLimitedVectorTests: public ::testing::Test
+class ResourceLimitedVectorTests : public ::testing::Test
 {
-    public:
-        const int testbed[NUM_ITEMS] = 
-        {
-             1,  2,  3,  4,  5,  6,  7,  8,  9, 10, 11, 12, 13, 14, 15, 16,
-            17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32
-        };
+public:
+
+    const int testbed[NUM_ITEMS] =
+    {
+        1,  2,  3,  4,  5,  6,  7,  8,  9, 10, 11, 12, 13, 14, 15, 16,
+        17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32
+    };
 };
 
 TEST_F(ResourceLimitedVectorTests, default_constructor)
@@ -71,14 +72,14 @@ TEST_F(ResourceLimitedVectorTests, default_constructor)
     }
 
     // Vector should be filled
-    ASSERT_EQ(uut.size(), 2*NUM_ITEMS);
-    ASSERT_EQ(uut.capacity(), 2*NUM_ITEMS);
+    ASSERT_EQ(uut.size(), 2 * NUM_ITEMS);
+    ASSERT_EQ(uut.capacity(), 2 * NUM_ITEMS);
 
     uut.clear();
 
     // Should be empty but allocated
     ASSERT_TRUE(uut.empty());
-    ASSERT_EQ(uut.capacity(), 2*NUM_ITEMS);
+    ASSERT_EQ(uut.capacity(), 2 * NUM_ITEMS);
 }
 
 TEST_F(ResourceLimitedVectorTests, static_config)
@@ -123,7 +124,7 @@ TEST_F(ResourceLimitedVectorTests, static_config)
 
 TEST_F(ResourceLimitedVectorTests, prealocated_growing_1_config)
 {
-    ResourceLimitedVector<int> uut(ResourceLimitedContainerConfig{ NUM_ITEMS, NUM_ITEMS*2, 1});
+    ResourceLimitedVector<int> uut(ResourceLimitedContainerConfig{ NUM_ITEMS, NUM_ITEMS * 2, 1});
 
     ASSERT_TRUE(uut.empty());
 
@@ -150,8 +151,8 @@ TEST_F(ResourceLimitedVectorTests, prealocated_growing_1_config)
     }
 
     // Vector should be filled
-    ASSERT_EQ(uut.size(), NUM_ITEMS*2);
-    ASSERT_EQ(uut.capacity(), NUM_ITEMS*2);
+    ASSERT_EQ(uut.size(), NUM_ITEMS * 2);
+    ASSERT_EQ(uut.capacity(), NUM_ITEMS * 2);
 
     // Adding more values should return error
     for (int i : testbed)
@@ -247,7 +248,10 @@ TEST_F(ResourceLimitedVectorTests, remove_if)
     ASSERT_EQ(uut.size(), NUM_ITEMS);
     ASSERT_EQ(uut.capacity(), NUM_ITEMS);
 
-    auto is_odd = [](int i) { return (i & 1) != 0; };
+    auto is_odd = [](int i)
+            {
+                return (i & 1) != 0;
+            };
 
     // Remove all odd items and check no errors
     for (size_t i = 0; i < NUM_ITEMS / 2; i++)
@@ -267,7 +271,9 @@ TEST_F(ResourceLimitedVectorTests, remove_if)
 }
 
 
-int main(int argc, char **argv)
+int main(
+        int argc,
+        char** argv)
 {
     testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();
