@@ -68,6 +68,14 @@ public:
         return cv_;
     }
 
+    template<typename Pred>
+    void wait(
+            Pred pred)
+    {
+        std::unique_lock<std::mutex> lock(mMutex);
+        cv_.wait(lock, pred);
+    }
+
     void clear_entries()
     {
         std::unique_lock<std::mutex> guard(mMutex);
