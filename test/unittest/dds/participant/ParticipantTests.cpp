@@ -3230,6 +3230,7 @@ TEST(ParticipantTests, ContentFilterInterfaces)
         ContentFilteredTopic* filtered_topic = participant->create_contentfilteredtopic("contentfilteredtopic", topic,
                         "", {}, TEST_FILTER_CLASS);
         ASSERT_NE(nullptr, filtered_topic);
+        EXPECT_EQ(filtered_topic, participant->lookup_topicdescription("contentfilteredtopic"));
 
         // Should fail to create same filter twice
         EXPECT_EQ(nullptr,
@@ -3250,13 +3251,16 @@ TEST(ParticipantTests, ContentFilterInterfaces)
 
         // Should not be able to delete filtered_topic, since it is referenced by data_reader
         EXPECT_EQ(ReturnCode_t::RETCODE_PRECONDITION_NOT_MET, participant->delete_contentfilteredtopic(filtered_topic));
+        EXPECT_EQ(filtered_topic, participant->lookup_topicdescription("contentfilteredtopic"));
 
         EXPECT_EQ(ReturnCode_t::RETCODE_OK, subscriber->delete_datareader(data_reader));
         EXPECT_EQ(ReturnCode_t::RETCODE_OK, participant->delete_subscriber(subscriber));
 
         // Should be able to delete filtered_topic, but only on correct participant and not twice
         EXPECT_EQ(ReturnCode_t::RETCODE_PRECONDITION_NOT_MET, participant2->delete_contentfilteredtopic(filtered_topic));
+        EXPECT_EQ(filtered_topic, participant->lookup_topicdescription("contentfilteredtopic"));
         EXPECT_EQ(ReturnCode_t::RETCODE_OK, participant->delete_contentfilteredtopic(filtered_topic));
+        EXPECT_EQ(nullptr, participant->lookup_topicdescription("contentfilteredtopic"));
         EXPECT_EQ(ReturnCode_t::RETCODE_PRECONDITION_NOT_MET, participant->delete_contentfilteredtopic(filtered_topic));
 
         // Unregister filter factory
