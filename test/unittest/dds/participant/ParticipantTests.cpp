@@ -3218,6 +3218,8 @@ TEST(ParticipantTests, ContentFilterInterfaces)
         EXPECT_EQ(nullptr,
                 participant->create_contentfilteredtopic(topic->get_name(), topic, "", {}, TEST_FILTER_CLASS));
         EXPECT_EQ(nullptr,
+                participant->create_contentfilteredtopic("contentfilteredtopic", topic2, "", {}, TEST_FILTER_CLASS));
+        EXPECT_EQ(nullptr,
                 participant->create_contentfilteredtopic("contentfilteredtopic", nullptr, "", {}, TEST_FILTER_CLASS));
         EXPECT_EQ(nullptr,
                 participant->create_contentfilteredtopic("contentfilteredtopic", topic, "", {""}, TEST_FILTER_CLASS));
@@ -3252,7 +3254,8 @@ TEST(ParticipantTests, ContentFilterInterfaces)
         EXPECT_EQ(ReturnCode_t::RETCODE_OK, subscriber->delete_datareader(data_reader));
         EXPECT_EQ(ReturnCode_t::RETCODE_OK, participant->delete_subscriber(subscriber));
 
-        // Should be able to delete filtered_topic, but not twice
+        // Should be able to delete filtered_topic, but only on correct participant and not twice
+        EXPECT_EQ(ReturnCode_t::RETCODE_PRECONDITION_NOT_MET, participant2->delete_contentfilteredtopic(filtered_topic));
         EXPECT_EQ(ReturnCode_t::RETCODE_OK, participant->delete_contentfilteredtopic(filtered_topic));
         EXPECT_EQ(ReturnCode_t::RETCODE_PRECONDITION_NOT_MET, participant->delete_contentfilteredtopic(filtered_topic));
 
