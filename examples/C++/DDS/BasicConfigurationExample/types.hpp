@@ -23,9 +23,8 @@
 enum TransportType
 {
     DEFAULT,
-    DATA_SHARING,
     SHM,
-    UDP,
+    UDPv4,
     UDPv6,
 };
 

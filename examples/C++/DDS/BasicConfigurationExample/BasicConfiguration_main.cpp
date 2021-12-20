@@ -160,17 +160,13 @@ int main(
                     break;
 
                 case optionIndex::TRANSPORT:
-                    if (strcmp(opt.arg, "dsh") == 0)
-                    {
-                        transport = DATA_SHARING;
-                    }
-                    else if (strcmp(opt.arg, "shm") == 0)
+                    if (strcmp(opt.arg, "shm") == 0)
                     {
                         transport = SHM;
                     }
-                    else if (strcmp(opt.arg, "udp") == 0)
+                    else if (strcmp(opt.arg, "udp") == 0 || (strcmp(opt.arg, "udpv4") == 0))
                     {
-                        transport = UDP;
+                        transport = UDPv4;
                     }
                     else if (strcmp(opt.arg, "udpv6") == 0)
                     {

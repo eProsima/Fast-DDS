@@ -76,12 +76,7 @@ bool HelloWorldSubscriber::init(
     {
         pqos.transport().use_builtin_transports = false;
 
-        if (transport == SHM || transport == DATA_SHARING)
-        {
-            auto shm_transport = std::make_shared<SharedMemTransportDescriptor>();
-            pqos.transport().user_transports.push_back(shm_transport);
-        }
-        else if (transport == UDP)
+        if (transport == UDPv4)
         {
             auto udp_transport = std::make_shared<UDPv4TransportDescriptor>();
             pqos.transport().user_transports.push_back(udp_transport);
@@ -130,8 +125,8 @@ bool HelloWorldSubscriber::init(
     }
     DataReaderQos rqos = DATAREADER_QOS_DEFAULT;
 
-    // Data sharing set in endpoint. If it is not default or datasharing, set it to off
-    if (transport != DEFAULT && transport != DATA_SHARING)
+    // Data sharing set in endpoint. If it is not default, set it to off
+    if (transport != DEFAULT)
     {
         rqos.data_sharing().off();
     }
