@@ -99,7 +99,9 @@ public:
  * @param expected_logs The number of expected logs (error or warning) matching
  *                      ".*does not exist. File watching not initialized."
  */
-void env_file_warning(const char* env_file_name, size_t expected_logs)
+void env_file_warning(
+        const char* env_file_name,
+        size_t expected_logs)
 {
     /* Set environment variable */
 #ifdef _WIN32
