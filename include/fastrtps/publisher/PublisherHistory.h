@@ -21,12 +21,16 @@
 #define PUBLISHERHISTORY_H_
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 
-#include <fastdds/rtps/resources/ResourceManagement.h>
+#include <chrono>
+#include <mutex>
 
+#include <fastdds/rtps/common/InstanceHandle.h>
+#include <fastdds/rtps/common/Time_t.h>
 #include <fastdds/rtps/history/WriterHistory.h>
-#include <fastrtps/qos/QosPolicies.h>
-#include <fastrtps/common/KeyedChanges.h>
+#include <fastdds/rtps/resources/ResourceManagement.h>
 #include <fastrtps/attributes/TopicAttributes.h>
+#include <fastrtps/common/KeyedChanges.h>
+#include <fastrtps/qos/QosPolicies.h>
 
 namespace eprosima {
 namespace fastrtps {
@@ -140,6 +144,18 @@ public:
      */
     bool is_key_registered(
             const rtps::InstanceHandle_t& handle);
+
+    /**
+     * Waits till the last change in the instance history has been acknowledged.
+     * @param handle Instance's handle.
+     * @param lock Lock which should be unlock in case the operation has to wait.
+     * @param max_blocking_time Maximum time the operation should be waiting.
+     * @return true when the last change of the instance history is acknowleged, false when timeout is reached.
+     */
+    bool wait_for_acknowledgement_last_change(
+            const rtps::InstanceHandle_t& handle,
+            std::unique_lock<RecursiveTimedMutex>& lock,
+            const std::chrono::time_point<std::chrono::steady_clock>& max_blocking_time);
 
 private:
 

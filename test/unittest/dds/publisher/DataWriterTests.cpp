@@ -23,6 +23,8 @@
 #include <fastdds/dds/publisher/DataWriterListener.hpp>
 #include <fastdds/dds/publisher/Publisher.hpp>
 #include <fastdds/dds/publisher/qos/DataWriterQos.hpp>
+#include <fastdds/rtps/writer/RTPSWriter.h>
+#include <fastdds/rtps/writer/StatefulWriter.h>
 
 #include <dds/domain/DomainParticipant.hpp>
 #include <dds/pub/AnyDataWriter.hpp>
@@ -31,11 +33,14 @@
 
 #include "../../logging/mock/MockConsumer.h"
 
+#include <fastdds/publisher/DataWriterImpl.hpp>
+
 namespace eprosima {
 namespace fastdds {
 namespace dds {
 
 using namespace eprosima::fastrtps::rtps;
+using ::testing::_;
 
 class FooType
 {
@@ -1047,6 +1052,117 @@ TEST(DataWriterTests, LoanNegativeTests)
     ASSERT_TRUE(participant->delete_topic(topic) == ReturnCode_t::RETCODE_OK);
     ASSERT_TRUE(participant->delete_publisher(publisher) == ReturnCode_t::RETCODE_OK);
     ASSERT_TRUE(DomainParticipantFactory::get_instance()->delete_participant(participant) == ReturnCode_t::RETCODE_OK);
+}
+
+class DataWriterTest : public DataWriter
+{
+public:
+
+    DataWriterImpl* get_impl() const
+    {
+        return impl_;
+    }
+
+};
+
+class DataWriterImplTest : public DataWriterImpl
+{
+public:
+
+    fastrtps::PublisherHistory* get_history()
+    {
+        return &history_;
+    }
+
+};
+
+/**
+ * This test checks instance wait_for_acknowledgements API
+ */
+TEST(DataWriterTests, InstanceWaitForAcknowledgement)
+{
+    // Test parameters
+    Duration_t max_wait(2, 0);
+    InstanceHandle_t handle;
+    InstanceFooType data;
+    data.message("HelloWorld");
+
+    // Create participant
+    DomainParticipant* participant =
+            DomainParticipantFactory::get_instance()->create_participant(0, PARTICIPANT_QOS_DEFAULT);
+    ASSERT_NE(nullptr, participant);
+
+    // Create publisher
+    PublisherQos pqos = PUBLISHER_QOS_DEFAULT;
+    pqos.entity_factory().autoenable_created_entities = false;
+    Publisher* publisher = participant->create_publisher(pqos);
+    ASSERT_NE(nullptr, publisher);
+
+    // Register types and topics
+    TypeSupport type(new TopicDataTypeMock());
+    type.register_type(participant);
+    TypeSupport instance_type(new InstanceTopicDataTypeMock());
+    instance_type.register_type(participant);
+
+    Topic* topic = participant->create_topic("footopic", type.get_type_name(), TOPIC_QOS_DEFAULT);
+    ASSERT_NE(topic, nullptr);
+    Topic* instance_topic = participant->create_topic("instancefootopic", instance_type.get_type_name(),
+                    TOPIC_QOS_DEFAULT);
+    ASSERT_NE(instance_topic, nullptr);
+
+    // Create disabled DataWriters
+    DataWriter* datawriter = publisher->create_datawriter(topic, DATAWRITER_QOS_DEFAULT);
+    ASSERT_NE(nullptr, datawriter);
+    DataWriter* instance_datawriter = publisher->create_datawriter(instance_topic, DATAWRITER_QOS_DEFAULT);
+    ASSERT_NE(nullptr, instance_datawriter);
+
+    // 1. Calling wait_for_acknowledgments in a disable writer returns RETCODE_NOT_ENABLED
+    EXPECT_EQ(ReturnCode_t::RETCODE_NOT_ENABLED, datawriter->wait_for_acknowledgments(&data, handle, max_wait));
+
+    // 2. Calling wait_for_acknowledgments in a non keyed topic returns RETCODE_PRECONDITION_NOT MET
+    ASSERT_EQ(ReturnCode_t::RETCODE_OK, datawriter->enable());
+    EXPECT_EQ(ReturnCode_t::RETCODE_PRECONDITION_NOT_MET, datawriter->wait_for_acknowledgments(&data, handle,
+            max_wait));
+
+    // 3. Calling wait_for_acknowledgments with an invalid sample returns RETCODE_BAD_PARAMETER
+    ASSERT_EQ(ReturnCode_t::RETCODE_OK, instance_datawriter->enable());
+    EXPECT_EQ(ReturnCode_t::RETCODE_BAD_PARAMETER, instance_datawriter->wait_for_acknowledgments(nullptr, handle,
+            max_wait));
+
+#if !defined(NDEBUG)
+    // 4. Calling wait_for_acknowledgments with an inconsistent handle returns RETCODE_BAD_PARAMETER
+    EXPECT_EQ(ReturnCode_t::RETCODE_PRECONDITION_NOT_MET, instance_datawriter->wait_for_acknowledgments(&data,
+            datawriter->get_instance_handle(), max_wait));
+#endif // NDEBUG
+
+    // Access PublisherHistory
+    DataWriterTest* instance_datawriter_test = static_cast<DataWriterTest*>(instance_datawriter);
+    ASSERT_NE(nullptr, instance_datawriter_test);
+    DataWriterImpl* datawriter_impl = instance_datawriter_test->get_impl();
+    ASSERT_NE(nullptr, datawriter_impl);
+    DataWriterImplTest* datawriter_impl_test = static_cast<DataWriterImplTest*>(datawriter_impl);
+    ASSERT_NE(nullptr, datawriter_impl_test);
+    fastrtps::PublisherHistory* history = datawriter_impl_test->get_history();
+
+    // 5. Calling wait_for_acknowledgments in a keyed topic with c_InstanceHandle_Unknown returns
+    // RETCODE_OK
+    EXPECT_CALL(*history, wait_for_acknowledgement_last_change(_, _, _)).WillOnce(testing::Return(true));
+    ASSERT_EQ(ReturnCode_t::RETCODE_OK, instance_datawriter->write(&data, c_InstanceHandle_Unknown));
+    EXPECT_EQ(ReturnCode_t::RETCODE_OK, instance_datawriter->wait_for_acknowledgments(&data, handle,
+            max_wait));
+
+    // 6. Calling wait_for_acknowledgments in a keyed topic with a known handle returns RETCODE_OK (no matched readers)
+    // Expectations
+    EXPECT_CALL(*history, wait_for_acknowledgement_last_change(_, _, _)).WillOnce(testing::Return(true));
+
+    instance_type.get_key(&data, &handle);
+    EXPECT_EQ(ReturnCode_t::RETCODE_OK, instance_datawriter->wait_for_acknowledgments(&data, handle, max_wait));
+
+    // 7. Calling wait_for_acknowledgments in a keyed topic with a known handle timeouts if some reader has not
+    // acknowledged before max_wait time (mock) returns RETCODE_TIMEOUT
+    // Expectations
+    EXPECT_CALL(*history, wait_for_acknowledgement_last_change(_, _, _)).WillOnce(testing::Return(false));
+    EXPECT_EQ(ReturnCode_t::RETCODE_TIMEOUT, instance_datawriter->wait_for_acknowledgments(&data, handle, max_wait));
 }
 
 class DataWriterUnsupportedTests : public ::testing::Test

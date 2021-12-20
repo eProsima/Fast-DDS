@@ -1014,6 +1014,77 @@ ReturnCode_t DataWriterImpl::wait_for_acknowledgments(
     return ReturnCode_t::RETCODE_ERROR;
 }
 
+ReturnCode_t DataWriterImpl::wait_for_acknowledgments(
+        void* instance,
+        const InstanceHandle_t& handle,
+        const Duration_t& max_wait)
+{
+    /// Preconditions
+    if (nullptr == writer_)
+    {
+        return ReturnCode_t::RETCODE_NOT_ENABLED;
+    }
+
+    if (nullptr == instance)
+    {
+        logError(PUBLISHER, "Data pointer not valid");
+        return ReturnCode_t::RETCODE_BAD_PARAMETER;
+    }
+
+    if (!type_->m_isGetKeyDefined)
+    {
+        logError(PUBLISHER, "Topic is NO_KEY, operation not permitted");
+        return ReturnCode_t::RETCODE_PRECONDITION_NOT_MET;
+    }
+
+    InstanceHandle_t ih = handle;
+
+#if defined(NDEBUG)
+    if (c_InstanceHandle_Unknown == ih)
+#endif // NDEBUG
+    {
+        bool is_key_protected = false;
+#if HAVE_SECURITY
+        is_key_protected = writer_->getAttributes().security_attributes().is_key_protected;
+#endif // HAVE_SECURITY
+        type_->getKey(instance, &ih, is_key_protected);
+    }
+
+#if !defined(NDEBUG)
+    if (c_InstanceHandle_Unknown != handle && ih != handle)
+    {
+        logError(PUBLISHER, "handle differs from data's key");
+        return ReturnCode_t::RETCODE_PRECONDITION_NOT_MET;
+    }
+#endif // NDEBUG */
+
+    // Block low-level writer
+    auto max_blocking_time = steady_clock::now() +
+            microseconds(::TimeConv::Time_t2MicroSecondsInt64(max_wait));
+
+# if HAVE_STRICT_REALTIME
+    std::unique_lock<RecursiveTimedMutex> lock(writer_->getMutex(), std::defer_lock);
+    if (!lock.try_lock_until(max_blocking_time))
+    {
+        return ReturnCode_t::RETCODE_TIMEOUT;
+    }
+#else
+    std::unique_lock<RecursiveTimedMutex> lock(writer_->getMutex());
+#endif // HAVE_STRICT_REALTIME
+
+    if (!history_.is_key_registered(ih))
+    {
+        return ReturnCode_t::RETCODE_PRECONDITION_NOT_MET;
+    }
+
+    if (history_.wait_for_acknowledgement_last_change(ih, lock, max_blocking_time))
+    {
+        return ReturnCode_t::RETCODE_OK;
+    }
+
+    return ReturnCode_t::RETCODE_TIMEOUT;
+}
+
 void DataWriterImpl::update_publication_matched_status(
         const PublicationMatchedStatus& status)
 {

@@ -321,7 +321,7 @@ if (SQLITE3_SUPPORT AND FASTDDS_STATISTICS)
         $<$<BOOL:${STDOUTERR_LOG_CONSUMER}>:STDOUTERR_LOG_CONSUMER> # Enable StdoutErrConsumer as default LogConsumer
         )
     target_include_directories(StatisticsDomainParticipantMockTests PRIVATE
-        ${OPENSSL_INCLUDE_DIR}
+        $<$<BOOL:${OPENSSL_INCLUDE_DIR}>:${OPENSSL_INCLUDE_DIR}>
         StatisticsDomainParticipantMockTests/mock/
         ${PROJECT_SOURCE_DIR}/test/mock/dds/Publisher/
         ${PROJECT_SOURCE_DIR}/test/mock/dds/DomainParticipantImpl/

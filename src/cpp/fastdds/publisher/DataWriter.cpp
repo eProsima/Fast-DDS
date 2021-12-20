@@ -303,6 +303,14 @@ ReturnCode_t DataWriter::get_sending_locators(
     return impl_->get_sending_locators(locators);
 }
 
+ReturnCode_t DataWriter::wait_for_acknowledgments(
+        void* instance,
+        const InstanceHandle_t& handle,
+        const fastrtps::Duration_t& max_wait)
+{
+    return impl_->wait_for_acknowledgments(instance, handle, max_wait);
+}
+
 } // namespace dds
 } // namespace fastdds
 } // namespace eprosima
