@@ -58,16 +58,6 @@ public:
         return mEntriesConsumed;
     }
 
-    size_t ConsumedEntriesSize_nts() const
-    {
-        return mEntriesConsumed.size();
-    }
-
-    std::condition_variable& cv()
-    {
-        return cv_;
-    }
-
     template<typename Pred>
     void wait(
             Pred pred)
