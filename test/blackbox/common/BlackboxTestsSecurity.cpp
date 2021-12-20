@@ -104,8 +104,8 @@ public:
     {
         // Init the token
         std::stringstream cmd;
-        cmd << "softhsm2-util --init-token --free --label '" << token_id << "' --pin '" << hsm_token_pin <<
-            "' --so-pin '" << hsm_token_pin << "'";
+        cmd << "softhsm2-util --init-token --free --label " << token_id << " --pin " << hsm_token_pin
+            << " --so-pin " << hsm_token_pin << "";
         ASSERT_EQ(0, std::system (cmd.str().c_str()));
         tokens[token_id] = HsmToken();
         tokens[token_id].pin = hsm_token_pin;
@@ -119,7 +119,7 @@ public:
                              "% { $_.Matches.Groups[1].Value } | Out-File -FilePath softhsm_serial -Encoding ASCII\""));
 #else // We are running something with sh
         ASSERT_EQ(0,
-                std::system ("softhsm2-util --show-slots | grep -oP 'Serial number:\\s*\\K(\\d|\\w)+' > softhsm_seria"));
+                std::system ("softhsm2-util --show-slots | grep -oP 'Serial number:\\s*\\K(\\d|\\w)+' > softhsm_serial"));
 #endif // _WIN32
         serial_stream << std::ifstream("softhsm_serial").rdbuf();
         std::remove ("softhsm_serial");
@@ -152,8 +152,8 @@ public:
         {
             // Delete the token
             std::stringstream cmd;
-            cmd << "softhsm2-util --delete-token --token '" << token_id << "' --pin '" << hsm_token_pin <<
-                "' --so-pin '" << hsm_token_pin << "'";
+            cmd << "softhsm2-util --delete-token --token " << token_id << " --pin " << hsm_token_pin
+                << " --so-pin " << hsm_token_pin << "";
             ASSERT_EQ(0, std::system (cmd.str().c_str()));
             tokens.erase(it);
         }
@@ -197,10 +197,12 @@ public:
     {
         ASSERT_NE(tokens.end(), tokens.find(token_id));
 
+	std::stringstream cmd;
+	cmd << "softhsm2-util --import " << key_file << " --token " << token_id << " --label " << key_label
+            << " --pin " << hsm_token_pin << " --id " << key_id << "";
         // Import the key
         ASSERT_EQ(0,
-                std::system(("softhsm2-util --import " + key_file + " --token '" + token_id + "' --label " + key_label +
-                " --pin '" + hsm_token_pin + "' --id " + key_id).c_str()));
+                std::system(cmd.str().c_str()));
         // Construct the key URL
         std::stringstream id_url;
         for (unsigned int i = 0; i < strlen(key_id); i += 2)
