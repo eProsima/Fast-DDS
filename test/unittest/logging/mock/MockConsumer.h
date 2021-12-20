@@ -47,7 +47,7 @@ public:
         {
             std::unique_lock<std::mutex> guard(mMutex);
             mEntriesConsumed.push_back(entry);
-            cv_.notify_one();
+            cv_.notify_all();
         }
         StdoutConsumer::Consume(entry);
     }
@@ -89,6 +89,7 @@ public:
     {
         std::unique_lock<std::mutex> guard(mMutex);
         mEntriesConsumed.clear();
+        cv_.notify_all();
     }
 
 private:
