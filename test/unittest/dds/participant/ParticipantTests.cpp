@@ -3117,17 +3117,23 @@ TEST(ParticipantTests, ContentFilterInterfaces)
     MockFilter test_filter;
     std::string very_long_name(512, ' ');
 
-    // Create the participant
+    // Create two participants
     DomainParticipant* participant =
             DomainParticipantFactory::get_instance()->create_participant(0, PARTICIPANT_QOS_DEFAULT);
     ASSERT_NE(participant, nullptr);
+    DomainParticipant* participant2 =
+            DomainParticipantFactory::get_instance()->create_participant(0, PARTICIPANT_QOS_DEFAULT);
+    ASSERT_NE(participant2, nullptr);
 
-    // Create a type and a topic
+    // Create a type and a topics
     TypeSupport type(new TopicDataTypeMock());
     ASSERT_EQ(type.register_type(participant), ReturnCode_t::RETCODE_OK);
+    ASSERT_EQ(type.register_type(participant2), ReturnCode_t::RETCODE_OK);
 
     Topic* topic = participant->create_topic("topic", type.get_type_name(), TOPIC_QOS_DEFAULT);
     ASSERT_NE(topic, nullptr);
+    Topic* topic2 = participant2->create_topic("topic", type.get_type_name(), TOPIC_QOS_DEFAULT);
+    ASSERT_NE(topic2, nullptr);
 
     // Negative tests for create_contentfilteredtopic and delete_contentfilteredtopic
     {
@@ -3255,6 +3261,8 @@ TEST(ParticipantTests, ContentFilterInterfaces)
                 participant->unregister_content_filter_factory(TEST_FILTER_CLASS));
     }
 
+    ASSERT_EQ(participant2->delete_topic(topic2), ReturnCode_t::RETCODE_OK);
+    ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant2), ReturnCode_t::RETCODE_OK);
     ASSERT_EQ(participant->delete_topic(topic), ReturnCode_t::RETCODE_OK);
     ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), ReturnCode_t::RETCODE_OK);
 }
