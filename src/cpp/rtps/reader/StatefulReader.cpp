@@ -285,7 +285,7 @@ bool StatefulReader::matched_writer_remove(
     if (is_alive_)
     {
         //Remove cachechanges belonging to the unmatched writer
-        mp_history->remove_changes_with_guid(writer_guid);
+        mp_history->writer_unmatched(writer_guid, get_last_notified(writer_guid));
 
         if (liveliness_lease_duration_ < c_TimeInfinite)
         {
@@ -789,34 +789,23 @@ bool StatefulReader::change_removed_by_history(
 {
     std::lock_guard<RecursiveTimedMutex> guard(mp_mutex);
 
-    if (is_alive_)
+    if (is_alive_ && a_change->is_fully_assembled())
     {
         if (wp != nullptr || matched_writer_lookup(a_change->writerGUID, &wp))
         {
-            if (a_change->is_fully_assembled())
-            {
-                if (!a_change->isRead && wp->available_changes_max() >= a_change->sequenceNumber)
-                {
-                    if (0 < total_unread_)
-                    {
-                        --total_unread_;
-                    }
-                }
-
-
-                wp->change_removed_from_history(a_change->sequenceNumber);
-            }
-            return true;
+            wp->change_removed_from_history(a_change->sequenceNumber);
         }
-        else
+
+        if (!a_change->isRead &&
+                get_last_notified(a_change->writerGUID) >= a_change->sequenceNumber)
         {
-            if (a_change->writerGUID.entityId != m_trustedWriterEntityId)
+            if (0 < total_unread_)
             {
-                // trusted entities messages mean no havoc
-                logError(RTPS_READER,
-                        " You should always find the WP associated with a change, something is very wrong");
+                --total_unread_;
             }
+
         }
+        return true;
     }
 
     //Simulate a datasharing notification to process any pending payloads that were waiting due to full history
@@ -1143,16 +1132,14 @@ bool StatefulReader::begin_sample_access_nts(
     const GUID_t& writer_guid = change->writerGUID;
     is_future_change = false;
 
-    if (!matched_writer_lookup(writer_guid, &wp))
+    if (matched_writer_lookup(writer_guid, &wp))
     {
-        return false;
-    }
-
-    SequenceNumber_t seq;
-    seq = wp->available_changes_max();
-    if (seq < change->sequenceNumber)
-    {
-        is_future_change = true;
+        SequenceNumber_t seq;
+        seq = wp->available_changes_max();
+        if (seq < change->sequenceNumber)
+        {
+            is_future_change = true;
+        }
     }
 
     return true;
@@ -1171,8 +1158,7 @@ void StatefulReader::change_read_by_user(
         WriterProxy* writer,
         bool mark_as_read)
 {
-    assert(writer != nullptr);
-    assert(change->writerGUID == writer->guid());
+    assert(!writer || change->writerGUID == writer->guid());
 
     // Mark change as read
     if (mark_as_read && !change->isRead)
@@ -1185,7 +1171,7 @@ void StatefulReader::change_read_by_user(
     }
 
     // If not datasharing, we are done
-    if (!writer->is_datasharing_writer())
+    if (!writer || !writer->is_datasharing_writer())
     {
         return;
     }

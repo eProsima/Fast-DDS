@@ -841,10 +841,10 @@ void DataReaderImpl::InnerDataReaderListener::on_requested_incompatible_qos(
 bool DataReaderImpl::on_new_cache_change_added(
         const CacheChange_t* const change)
 {
+    std::lock_guard<RecursiveTimedMutex> guard(reader_->getMutex());
+
     if (qos_.deadline().period != c_TimeInfinite)
     {
-        std::unique_lock<RecursiveTimedMutex> lock(reader_->getMutex());
-
         if (!history_.set_next_deadline(
                     change->instanceHandle,
                     steady_clock::now() + duration_cast<system_clock::duration>(deadline_duration_us_)))
@@ -862,6 +862,7 @@ bool DataReaderImpl::on_new_cache_change_added(
     }
 
     CacheChange_t* new_change = const_cast<CacheChange_t*>(change);
+    history_.update_instance_nts(new_change);
 
     if (qos_.lifespan().duration == c_TimeInfinite)
     {
@@ -915,6 +916,11 @@ void DataReaderImpl::update_subscription_matched_status(
         subscription_matched_status_.total_count += count_change;
         subscription_matched_status_.total_count_change += count_change;
         subscription_matched_status_.last_publication_handle = status.last_publication_handle;
+    }
+
+    if (count_change < 0)
+    {
+        history_.writer_not_alive(iHandle2GUID(status.last_publication_handle));
     }
 
     StatusMask notify_status = StatusMask::subscription_matched();
@@ -1184,6 +1190,11 @@ RequestedIncompatibleQosStatus& DataReaderImpl::update_requested_incompatible_qo
 LivelinessChangedStatus& DataReaderImpl::update_liveliness_status(
         const fastrtps::LivelinessChangedStatus& status)
 {
+    if (0 < status.not_alive_count_change)
+    {
+        history_.writer_not_alive(iHandle2GUID(status.last_publication_handle));
+    }
+
     liveliness_changed_status_.alive_count = status.alive_count;
     liveliness_changed_status_.not_alive_count = status.not_alive_count;
     liveliness_changed_status_.alive_count_change += status.alive_count_change;

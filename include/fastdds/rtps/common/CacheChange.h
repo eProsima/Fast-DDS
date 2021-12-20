@@ -57,6 +57,10 @@ struct CacheChangeReaderInfo_t
 {
     //!Reception TimeStamp (only used in Readers)
     Time_t receptionTimestamp;
+    //! Disposed generation of the instance when this entry was added to it
+    int32_t disposed_generation_count;
+    //! No-writers generation of the instance when this entry was added to it
+    int32_t no_writers_generation_count;
 };
 
 /**

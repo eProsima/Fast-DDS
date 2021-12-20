@@ -158,38 +158,33 @@ History::iterator ReaderHistory::remove_change_nts(
     return ret_val;
 }
 
+void ReaderHistory::writer_unmatched(
+        const GUID_t& writer_guid,
+        const SequenceNumber_t& last_notified_seq)
+{
+    static_cast<void>(last_notified_seq);
+    remove_changes_with_pred(
+        [&writer_guid](CacheChange_t* ch)
+        {
+            return writer_guid == ch->writerGUID;
+        });
+}
+
 bool ReaderHistory::remove_changes_with_guid(
         const GUID_t& a_guid)
 {
-    std::vector<CacheChange_t*> changes_to_remove;
-
     if (mp_reader == nullptr || mp_mutex == nullptr)
     {
         logError(RTPS_READER_HISTORY, "You need to create a Reader with History before removing any changes");
         return false;
     }
 
-    {
-        //Lock scope
-        std::lock_guard<RecursiveTimedMutex> guard(*mp_mutex);
-        for (std::vector<CacheChange_t*>::iterator chit = m_changes.begin(); chit != m_changes.end(); ++chit)
+    remove_changes_with_pred(
+        [a_guid](CacheChange_t* ch)
         {
-            if ((*chit)->writerGUID == a_guid)
-            {
-                changes_to_remove.push_back((*chit));
-            }
-        }
-    }//End lock scope
+            return a_guid == ch->writerGUID;
+        });
 
-    for (std::vector<CacheChange_t*>::iterator chit = changes_to_remove.begin(); chit != changes_to_remove.end();
-            ++chit)
-    {
-        if (!remove_change(*chit))
-        {
-            logError(RTPS_READER_HISTORY, "One of the cachechanged in the GUID removal bulk could not be removed");
-            return false;
-        }
-    }
     return true;
 }
 

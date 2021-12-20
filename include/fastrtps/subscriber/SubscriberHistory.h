@@ -44,8 +44,6 @@ class SubscriberHistory : public rtps::ReaderHistory
 {
 public:
 
-    using instance_info = std::pair<rtps::InstanceHandle_t, std::vector<rtps::CacheChange_t*>*>;
-
     /**
      * Constructor. Requires information about the subscriber.
      * @param topic_att TopicAttributes.
@@ -178,25 +176,6 @@ public:
     bool get_next_deadline(
             rtps::InstanceHandle_t& handle,
             std::chrono::steady_clock::time_point& next_deadline_us);
-
-    /**
-     * @brief Get the list of changes corresponding to an instance handle.
-     * @param handle The handle to the instance.
-     * @param exact  Indicates if the handle should match exactly (true) or if the first instance greater than the
-     *               input handle should be returned.
-     * @return A pair where:
-     *         - @c first is a boolean indicating if an instance was found
-     *         - @c second is a pair where:
-     *           - @c first is the handle of the returned instance
-     *           - @c second is a pointer to a std::vector<rtps::CacheChange_t*> with the list of changes for the
-     *             returned instance
-     *
-     * @remarks When used on a NO_KEY topic, an instance will only be returned when called with
-     *          `handle = HANDLE_NIL` and `exact = false`.
-     */
-    std::pair<bool, instance_info> lookup_instance(
-            const rtps::InstanceHandle_t& handle,
-            bool exact);
 
 private:
 

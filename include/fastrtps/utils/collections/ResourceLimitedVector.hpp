@@ -120,6 +120,47 @@ public:
     }
 
     /**
+     * Insert value before pos.
+     *
+     * @param pos   iterator before which the content will be inserted. pos may be the end() iterator.
+     * @param value element value to insert.
+     *
+     * @return Iterator pointing to the inserted value. end() if insertion couldn't be done due to collection limits.
+     */
+    iterator insert(
+            const_iterator pos,
+            const value_type& value)
+    {
+        auto dist = std::distance(collection_.cbegin(), pos);
+        if (!ensure_capacity())
+        {
+            return end();
+        }
+
+        return collection_.insert(collection_.cbegin() + dist, value);
+    }
+
+    /**
+     * Insert value before pos.
+     *
+     * @param pos   iterator before which the content will be inserted. pos may be the end() iterator.
+     * @param value element value to insert.
+     *
+     * @return Iterator pointing to the inserted value. end() if insertion couldn't be done due to collection limits.
+     */
+    iterator insert(
+            const_iterator pos,
+            value_type&& value)
+    {
+        if (!ensure_capacity())
+        {
+            return end();
+        }
+
+        return collection_.insert(pos, std::move(value));
+    }
+
+    /**
      * Add element at the end.
      *
      * Adds a new element at the end of the vector, after its current last element.

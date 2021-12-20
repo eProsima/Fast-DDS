@@ -133,9 +133,21 @@ public:
         return m_changes.erase(removal);
     }
 
+    virtual void writer_unmatched(
+            const GUID_t& /*writer_guid*/,
+            const SequenceNumber_t& /*last_notified_seq*/)
+    {
+    }
+
     HistoryAttributes m_att;
 
 protected:
+
+    template<typename Pred>
+    inline void remove_changes_with_pred(
+            Pred)
+    {
+    }
 
     RTPSReader* mp_reader;
     RecursiveTimedMutex* mp_mutex;

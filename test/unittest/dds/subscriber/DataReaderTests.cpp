@@ -1527,6 +1527,7 @@ TEST_F(DataReaderTests, sample_info)
             writer_qos_.resource_limits().max_instances = 2;
             writer_qos_.resource_limits().max_samples_per_instance = 1;
             writer_qos_.resource_limits().max_samples = 2;
+            writer_qos_.writer_data_lifecycle().autodispose_unregistered_instances = false;
 
             data_[0].index(1);
             data_[1].index(2);
@@ -2104,13 +2105,17 @@ TEST_F(DataReaderTests, check_key_history_wholesomeness_on_unmatch)
                 SampleInfoSeq infos;
 
                 res = data_reader_->take_instance(samples, infos, LENGTH_UNLIMITED, handle_ok_);
+
+                // If the DataWriter is destroyed only the non-notified samples must be removed
+                // this operation MUST succeed
+                ASSERT_EQ(res, ReturnCode_t::RETCODE_OK);
+
+                data_reader_->return_loan(samples, infos);
             });
 
     // Check if the thread hangs
     // wait for termination
     std::this_thread::sleep_for(std::chrono::milliseconds(500));
-    // check expected result, if query thread hangs res = ReturnCode_t::RETCODE_OK
-    ASSERT_NE(res, ReturnCode_t::RETCODE_OK);
     query.join();
 }
 

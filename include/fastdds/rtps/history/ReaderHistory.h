@@ -152,6 +152,19 @@ public:
             CacheChange_t** min_change,
             const GUID_t& writerGuid);
 
+    /**
+     * Called when a writer is unmatched from the reader holding this history.
+     *
+     * This method will remove all the changes on the history that came from the writer being unmatched and which have
+     * not yet been notified to the user.
+     *
+     * @param writer_guid        GUID of the writer being unmatched.
+     * @param last_notified_seq  Last sequence number from the specified writer that was notified to the user.
+     */
+    RTPS_DllAPI virtual void writer_unmatched(
+            const GUID_t& writer_guid,
+            const SequenceNumber_t& last_notified_seq);
+
 protected:
 
     RTPS_DllAPI bool do_reserve_cache(
@@ -160,6 +173,21 @@ protected:
 
     RTPS_DllAPI void do_release_cache(
             CacheChange_t* ch) override;
+
+    template<typename Pred>
+    inline void remove_changes_with_pred(
+            Pred pred)
+    {
+        assert(nullptr != mp_reader);
+        assert(nullptr != mp_mutex);
+
+        std::lock_guard<RecursiveTimedMutex> guard(*mp_mutex);
+        std::vector<CacheChange_t*>::iterator new_end = std::remove_if(m_changes.begin(), m_changes.end(), pred);
+        while (new_end != m_changes.end())
+        {
+            new_end = remove_change_nts(new_end);
+        }
+    }
 
     //!Pointer to the reader
     RTPSReader* mp_reader;
