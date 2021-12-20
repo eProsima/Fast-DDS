@@ -1513,6 +1513,11 @@ public:
         return matched_ > 0;
     }
 
+    unsigned int get_matched() const
+    {
+        return matched_;
+    }
+
     void set_xml_filename(
             const std::string& name)
     {

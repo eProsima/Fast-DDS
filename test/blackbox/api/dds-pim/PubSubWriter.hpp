@@ -1345,6 +1345,11 @@ public:
         return matched_ > 0;
     }
 
+    unsigned int get_matched() const
+    {
+        return matched_;
+    }
+
     unsigned int missed_deadlines() const
     {
         return listener_.missed_deadlines();
@@ -1388,6 +1393,11 @@ public:
             const std::string& profile)
     {
         datawriter_profile_ = profile;
+    }
+
+    void participant_set_qos()
+    {
+        participant_->set_qos(participant_qos_);
     }
 
 #if HAVE_SQLITE3

@@ -1207,6 +1207,11 @@ public:
         return matched_ > 0;
     }
 
+    unsigned int get_matched() const
+    {
+        return matched_;
+    }
+
 private:
 
     const eprosima::fastrtps::rtps::GUID_t& participant_guid() const
