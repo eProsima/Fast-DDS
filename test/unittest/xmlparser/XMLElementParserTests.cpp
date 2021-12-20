@@ -148,10 +148,9 @@ TEST_F(XMLParserTests, getXMLLifespanQos)
  * This test checks the proper parsing of the <disablePositiveACKs> xml element to DisablePositiveACKsQosPolicy,
  * and negative cases.
  * 1. Correct parsing of a valid element.
- * 2. Check an empty definition of <sec> and <nanosec> in <duration> child xml element and empty <enabled>.
- * 3. Check an empty definition of <enabled>.
+ * 2. Check an empty definition of <enabled>.
+ * 3. Check an empty definition of <sec> and <nanosec> in <duration> child xml element and empty <enabled>.
  * 4. Check an bad element as a child xml element.
- * 5. Check an  empty xml definition.
  */
 TEST_F(XMLParserTests, getXMLDisablePositiveAcksQos)
 {
@@ -205,6 +204,57 @@ TEST_F(XMLParserTests, getXMLDisablePositiveAcksQos)
     titleElement = xml_doc.RootElement();
     EXPECT_EQ(XMLP_ret::XML_ERROR,
             XMLParserTest::getXMLDisablePositiveAcksQos_wrapper(titleElement, disablePositiveACKs, ident));
+}
+
+/*
+ * This test checks the proper parsing of the <disable_heartbeat_piggyback> xml element to WriterQos,
+ * and negative cases.
+ * 1. Correct parsing of a valid element.
+ * 2. Check an bad element as a child xml element.
+ * 3. Check an  empty xml definition.
+ */
+TEST_F(XMLParserTests, get_xml_disable_heartbeat_piggyback)
+{
+    uint8_t ident = 1;
+    WriterQos writer_qos;
+    tinyxml2::XMLDocument xml_doc;
+    tinyxml2::XMLElement* titleElement;
+
+    // Parametrized XML
+    const char* xml_p =
+            "\
+            <qos>\
+                <disable_heartbeat_piggyback>%s</disable_heartbeat_piggyback>\
+            </qos>\
+            ";
+    char xml[500];
+
+    // Valid XML
+    sprintf(xml, xml_p, "true");
+    ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
+    titleElement = xml_doc.RootElement();
+    EXPECT_EQ(XMLP_ret::XML_OK,
+            XMLParserTest::getXMLWriterQosPolicies_wrapper(titleElement, writer_qos, ident));
+    EXPECT_EQ(true, writer_qos.disable_heartbeat_piggyback);
+
+    // Invalid element
+    sprintf(xml, xml_p, "fail");
+    ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
+    titleElement = xml_doc.RootElement();
+    EXPECT_EQ(XMLP_ret::XML_ERROR,
+            XMLParserTest::getXMLWriterQosPolicies_wrapper(titleElement, writer_qos, ident));
+
+    // Missing element
+    const char* miss_xml =
+            "\
+            <qos>\
+                <disable_heartbeat_piggyback></disable_heartbeat_piggyback>\
+            </qos>\
+            ";
+    ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(miss_xml));
+    titleElement = xml_doc.RootElement();
+    EXPECT_EQ(XMLP_ret::XML_ERROR,
+            XMLParserTest::getXMLWriterQosPolicies_wrapper(titleElement, writer_qos, ident));
 }
 
 /*

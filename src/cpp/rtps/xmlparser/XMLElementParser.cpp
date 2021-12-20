@@ -1094,6 +1094,8 @@ XMLP_ret XMLParser::getXMLWriterQosPolicies(
                 <xs:element name="groupData" type="groupDataQosPolicyType" minOccurs="0"/>
                 <xs:element name="publishMode" type="publishModeQosPolicyType" minOccurs="0"/>
                 <xs:element name="data_sharing" type="dataSharingQosPolicyType" minOccurs="0"/>
+                <xs:element name="disablePositiveAcks" type="disablePositiveAcksQosPolicyType" minOccurs="0"/>
+                <xs:element name="disable_heartbeat_piggyback" type="boolType" minOccurs="0"/>
             </xs:all>
         </xs:complexType>
      */
@@ -1201,6 +1203,14 @@ XMLP_ret XMLParser::getXMLWriterQosPolicies(
                 return XMLP_ret::XML_ERROR;
             }
         }
+        else if (strcmp(name, DISABLE_HEARTBEAT_PIGGYBACK) == 0)
+        {
+            // Disable heartbeat piggyback
+            if (XMLP_ret::XML_OK != getXMLBool(p_aux0, &qos.disable_heartbeat_piggyback, ident))
+            {
+                return XMLP_ret::XML_ERROR;
+            }
+        }
         else
         {
             logError(XMLPARSER, "Invalid element found into 'writerQosPoliciesType'. Name: " << name);
@@ -1234,6 +1244,7 @@ XMLP_ret XMLParser::getXMLReaderQosPolicies(
                 <xs:element name="topicData" type="topicDataQosPolicyType" minOccurs="0"/>
                 <xs:element name="groupData" type="groupDataQosPolicyType" minOccurs="0"/>
                 <xs:element name="data_sharing" type="dataSharingQosPolicyType" minOccurs="0"/>
+                <xs:element name="disablePositiveAcks" type="disablePositiveAcksQosPolicyType" minOccurs="0"/>
             </xs:all>
         </xs:complexType>
      */
@@ -1806,7 +1817,7 @@ XMLP_ret XMLParser::getXMLDisablePositiveAcksQos(
     /*
         <xs:complexType name="disablePositiveAcksQosPolicyType">
             <xs:all>
-                <xs:element name="enabled" type="bool"/>
+                <xs:element name="enabled" type="boolType"/>
                 <xs:element name="duration" type="durationType"/>
             </xs:all>
         </xs:complexType>

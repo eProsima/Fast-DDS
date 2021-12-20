@@ -62,6 +62,9 @@ public:
 
     //!Disable positive acks QoS, implemented in the library.
     DisablePositiveACKsQosPolicy disable_positive_acks;
+
+    //! Disable heartbeat piggyback mechanism.
+    bool disable_heartbeat_piggyback = false;
 };
 
 /**
