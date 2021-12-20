@@ -104,6 +104,14 @@ protected:
             const DataWriterQos& qos,
             DataWriterListener* listener = nullptr);
 
+    DataWriterImpl(
+            PublisherImpl* p,
+            TypeSupport type,
+            Topic* topic,
+            const DataWriterQos& qos,
+            const fastrtps::rtps::EntityId_t& entity_id,
+            DataWriterListener* listener = nullptr);
+
 public:
 
     virtual ~DataWriterImpl();
@@ -374,12 +382,7 @@ protected:
 
     std::unique_ptr<LoanCollection> loans_;
 
-    virtual fastrtps::rtps::RTPSWriter* create_rtps_writer(
-            fastrtps::rtps::RTPSParticipant* p,
-            fastrtps::rtps::WriterAttributes& watt,
-            const std::shared_ptr<IPayloadPool>& payload_pool,
-            fastrtps::rtps::WriterHistory* hist,
-            fastrtps::rtps::WriterListener* listen);
+    fastrtps::rtps::GUID_t guid_;
 
     /**
      *

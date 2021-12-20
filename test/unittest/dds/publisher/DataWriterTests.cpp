@@ -18,6 +18,7 @@
 #include <fastdds/dds/builtin/topic/SubscriptionBuiltinTopicData.hpp>
 #include <fastdds/dds/domain/DomainParticipant.hpp>
 #include <fastdds/dds/domain/DomainParticipantFactory.hpp>
+#include <fastdds/dds/domain/DomainParticipantListener.hpp>
 #include <fastdds/dds/domain/qos/DomainParticipantQos.hpp>
 #include <fastdds/dds/publisher/DataWriter.hpp>
 #include <fastdds/dds/publisher/DataWriterListener.hpp>
@@ -34,6 +35,9 @@
 #include "../../logging/mock/MockConsumer.h"
 
 #include <fastdds/publisher/DataWriterImpl.hpp>
+
+#include <mutex>
+#include <condition_variable>
 
 namespace eprosima {
 namespace fastdds {
@@ -293,6 +297,93 @@ TEST(DataWriterTests, get_type)
     ASSERT_NE(datawriter, nullptr);
 
     ASSERT_EQ(type, datawriter->get_type());
+
+    ASSERT_TRUE(publisher->delete_datawriter(datawriter) == ReturnCode_t::RETCODE_OK);
+    ASSERT_TRUE(participant->delete_topic(topic) == ReturnCode_t::RETCODE_OK);
+    ASSERT_TRUE(participant->delete_publisher(publisher) == ReturnCode_t::RETCODE_OK);
+    ASSERT_TRUE(DomainParticipantFactory::get_instance()->delete_participant(participant) == ReturnCode_t::RETCODE_OK);
+}
+
+/*!
+ * This test checks `DataWriter::get_guid` function works when the entity was created but not enabled.
+ */
+TEST(DataWriterTests, get_guid)
+{
+    class DiscoveryListener : public DomainParticipantListener
+    {
+    public:
+
+        void on_publisher_discovery(
+                DomainParticipant*,
+                fastrtps::rtps::WriterDiscoveryInfo&& info)
+        {
+            std::unique_lock<std::mutex> lock(mutex);
+            if (fastrtps::rtps::WriterDiscoveryInfo::DISCOVERED_WRITER == info.status)
+            {
+                guid = info.info.guid();
+                cv.notify_one();
+            }
+        }
+
+        fastrtps::rtps::GUID_t guid;
+        std::mutex mutex;
+        std::condition_variable cv;
+    }
+    discovery_listener;
+
+    DomainParticipantQos participant_qos = PARTICIPANT_QOS_DEFAULT;
+    participant_qos.wire_protocol().builtin.discovery_config.ignoreParticipantFlags =
+            static_cast<eprosima::fastrtps::rtps::ParticipantFilteringFlags_t>(
+        eprosima::fastrtps::rtps::ParticipantFilteringFlags_t::FILTER_DIFFERENT_HOST |
+        eprosima::fastrtps::rtps::ParticipantFilteringFlags_t::FILTER_DIFFERENT_PROCESS);
+
+    DomainParticipant* listener_participant =
+            DomainParticipantFactory::get_instance()->create_participant(0, participant_qos,
+                    &discovery_listener,
+                    StatusMask::none());
+
+    DomainParticipantFactoryQos factory_qos;
+    DomainParticipantFactory::get_instance()->get_qos(factory_qos);
+    factory_qos.entity_factory().autoenable_created_entities = false;
+    DomainParticipantFactory::get_instance()->set_qos(factory_qos);
+    DomainParticipant* participant =
+            DomainParticipantFactory::get_instance()->create_participant(0, participant_qos);
+    ASSERT_NE(participant, nullptr);
+
+    Publisher* publisher = participant->create_publisher(PUBLISHER_QOS_DEFAULT);
+    ASSERT_NE(publisher, nullptr);
+
+    TypeSupport type(new TopicDataTypeMock());
+    type.register_type(participant);
+
+    Topic* topic = participant->create_topic("footopic", type.get_type_name(), TOPIC_QOS_DEFAULT);
+    ASSERT_NE(topic, nullptr);
+
+    DataWriter* datawriter = publisher->create_datawriter(topic, DATAWRITER_QOS_DEFAULT);
+    ASSERT_NE(datawriter, nullptr);
+
+    fastrtps::rtps::GUID_t guid = datawriter->guid();
+
+    participant->enable();
+
+    factory_qos.entity_factory().autoenable_created_entities = true;
+    DomainParticipantFactory::get_instance()->set_qos(factory_qos);
+
+    {
+        std::unique_lock<std::mutex> lock(discovery_listener.mutex);
+        discovery_listener.cv.wait(lock, [&]()
+                {
+                    return fastrtps::rtps::GUID_t::unknown() != discovery_listener.guid;
+                });
+    }
+    ASSERT_EQ(guid, discovery_listener.guid);
+
+    ASSERT_TRUE(publisher->delete_datawriter(datawriter) == ReturnCode_t::RETCODE_OK);
+    ASSERT_TRUE(participant->delete_topic(topic) == ReturnCode_t::RETCODE_OK);
+    ASSERT_TRUE(participant->delete_publisher(publisher) == ReturnCode_t::RETCODE_OK);
+    ASSERT_TRUE(DomainParticipantFactory::get_instance()->delete_participant(participant) == ReturnCode_t::RETCODE_OK);
+    ASSERT_TRUE(DomainParticipantFactory::get_instance()->delete_participant(
+                listener_participant) == ReturnCode_t::RETCODE_OK);
 }
 
 TEST(DataWriterTests, ChangeDataWriterQos)

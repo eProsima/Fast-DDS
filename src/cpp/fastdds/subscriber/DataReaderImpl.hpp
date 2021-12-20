@@ -336,6 +336,8 @@ protected:
     //!Listener
     DataReaderListener* listener_ = nullptr;
 
+    fastrtps::rtps::GUID_t guid_;
+
     class InnerDataReaderListener : public fastrtps::rtps::ReaderListener
     {
     public:

@@ -404,6 +404,11 @@ public:
     DomainParticipantListener* get_listener_for(
             const StatusMask& status);
 
+    uint32_t& id_counter()
+    {
+        return id_counter_;
+    }
+
 protected:
 
     //!Domain id
@@ -469,6 +474,8 @@ protected:
 
     // All parent's child requests
     std::map<fastrtps::rtps::SampleIdentity, std::vector<fastrtps::rtps::SampleIdentity>> parent_requests_;
+
+    uint32_t id_counter_ = 0;
 
     class MyRTPSParticipantListener : public fastrtps::rtps::RTPSParticipantListener
     {

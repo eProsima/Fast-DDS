@@ -506,6 +506,7 @@ RTPSParticipantImpl::~RTPSParticipantImpl()
 template <EndpointKind_t kind, octet no_key, octet with_key>
 bool RTPSParticipantImpl::preprocess_endpoint_attributes(
         const EntityId_t& entity_id,
+        uint32_t& id_counter,
         EndpointAttributes& att,
         EntityId_t& entId)
 {
@@ -531,11 +532,11 @@ bool RTPSParticipantImpl::preprocess_endpoint_attributes(
     {
         if (att.topicKind == NO_KEY)
         {
-            entId.value[3] = no_key;
+            entId.value[3] = (-2 == att.getUserDefinedID() && 0 < att.getEntityID()) ? (0x60) | no_key : no_key;
         }
         else if (att.topicKind == WITH_KEY)
         {
-            entId.value[3] = with_key;
+            entId.value[3] = (-2 == att.getUserDefinedID() && 0 < att.getEntityID()) ? (0x60) | with_key : with_key;
         }
         uint32_t idnum;
         if (att.getEntityID() > 0)
@@ -544,19 +545,12 @@ bool RTPSParticipantImpl::preprocess_endpoint_attributes(
         }
         else
         {
-            IdCounter++;
-            idnum = IdCounter;
+            idnum = ++id_counter;
         }
 
         entId.value[2] = octet(idnum);
         entId.value[1] = octet(idnum >> 8);
         entId.value[0] = octet(idnum >> 16);
-        if (this->existsEntityId(entId, kind))
-        {
-            logError(RTPS_PARTICIPANT,
-                    "A " << debug_label << " with the same entityId already exists in this RTPSParticipant");
-            return false;
-        }
     }
     else
     {
@@ -600,8 +594,15 @@ bool RTPSParticipantImpl::create_writer(
     std::string type = (param.endpoint.reliabilityKind == RELIABLE) ? "RELIABLE" : "BEST_EFFORT";
     logInfo(RTPS_PARTICIPANT, "Creating writer of type " << type);
     EntityId_t entId;
-    if (!preprocess_endpoint_attributes<WRITER, 0x03, 0x02>(entity_id, param.endpoint, entId))
+    if (!preprocess_endpoint_attributes<WRITER, 0x03, 0x02>(entity_id, IdCounter, param.endpoint, entId))
     {
+        return false;
+    }
+
+    if (existsEntityId(entId, WRITER))
+    {
+        logError(RTPS_PARTICIPANT,
+                "A writer with the same entityId already exists in this RTPSParticipant");
         return false;
     }
 
@@ -785,8 +786,15 @@ bool RTPSParticipantImpl::create_reader(
     std::string type = (param.endpoint.reliabilityKind == RELIABLE) ? "RELIABLE" : "BEST_EFFORT";
     logInfo(RTPS_PARTICIPANT, "Creating reader of type " << type);
     EntityId_t entId;
-    if (!preprocess_endpoint_attributes<READER, 0x04, 0x07>(entity_id, param.endpoint, entId))
+    if (!preprocess_endpoint_attributes<READER, 0x04, 0x07>(entity_id, IdCounter, param.endpoint, entId))
     {
+        return false;
+    }
+
+    if (existsEntityId(entId, READER))
+    {
+        logError(RTPS_PARTICIPANT,
+                "A reader with the same entityId already exists in this RTPSParticipant");
         return false;
     }
 

@@ -44,10 +44,13 @@
 #include <fastdds/subscriber/DataReaderImpl/ReadTakeCommand.hpp>
 #include <fastdds/subscriber/DataReaderImpl/StateFilter.hpp>
 
+#include <fastdds/domain/DomainParticipantImpl.hpp>
+
 #include <fastrtps/utils/TimeConversion.h>
 #include <fastrtps/subscriber/SampleInfo.h>
 
 #include <rtps/history/TopicPayloadPoolRegistry.hpp>
+#include <rtps/participant/RTPSParticipantImpl.h>
 
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
@@ -138,6 +141,14 @@ DataReaderImpl::DataReaderImpl(
     , sample_info_pool_(qos)
     , loan_manager_(qos)
 {
+    EndpointAttributes endpoint_attributes;
+    endpoint_attributes.endpointKind = READER;
+    endpoint_attributes.topicKind = type_->m_isGetKeyDefined ? WITH_KEY : NO_KEY;
+    endpoint_attributes.setEntityID(qos_.endpoint().entity_id);
+    endpoint_attributes.setUserDefinedID(qos_.endpoint().user_defined_id);
+    fastrtps::rtps::RTPSParticipantImpl::preprocess_endpoint_attributes<READER, 0x04, 0x07>(
+        EntityId_t::unknown(), subscriber_->get_participant_impl()->id_counter(), endpoint_attributes, guid_.entityId);
+    guid_.guidPrefix = subscriber_->get_participant_impl()->guid().guidPrefix;
 }
 
 ReturnCode_t DataReaderImpl::enable()
@@ -154,17 +165,8 @@ ReturnCode_t DataReaderImpl::enable()
     att.endpoint.unicastLocatorList = qos_.endpoint().unicast_locator_list;
     att.endpoint.remoteLocatorList = qos_.endpoint().remote_locator_list;
     att.endpoint.properties = qos_.properties();
-
-    if (qos_.endpoint().entity_id > 0)
-    {
-        att.endpoint.setEntityID(static_cast<uint8_t>(qos_.endpoint().entity_id));
-    }
-
-    if (qos_.endpoint().user_defined_id > 0)
-    {
-        att.endpoint.setUserDefinedID(static_cast<uint8_t>(qos_.endpoint().user_defined_id));
-    }
-
+    att.endpoint.setEntityID(qos_.endpoint().entity_id);
+    att.endpoint.setUserDefinedID(qos_.endpoint().user_defined_id);
     att.times = qos_.reliable_reader_qos().times;
     att.liveliness_lease_duration = qos_.liveliness().lease_duration;
     att.liveliness_kind_ = qos_.liveliness().kind;
@@ -227,6 +229,7 @@ ReturnCode_t DataReaderImpl::enable()
     std::shared_ptr<IPayloadPool> pool = get_payload_pool();
     RTPSReader* reader = RTPSDomain::createRTPSReader(
         subscriber_->rtps_participant(),
+        guid_.entityId,
         att, pool,
         static_cast<ReaderHistory*>(&history_),
         static_cast<ReaderListener*>(&reader_listener_));
@@ -719,7 +722,7 @@ uint64_t DataReaderImpl::get_unread_count() const
 
 const GUID_t& DataReaderImpl::guid() const
 {
-    return reader_ ? reader_->getGuid() : c_Guid_Unknown;
+    return guid_;
 }
 
 InstanceHandle_t DataReaderImpl::get_instance_handle() const
