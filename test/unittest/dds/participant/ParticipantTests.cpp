@@ -3257,7 +3257,8 @@ TEST(ParticipantTests, ContentFilterInterfaces)
         EXPECT_EQ(ReturnCode_t::RETCODE_OK, participant->delete_subscriber(subscriber));
 
         // Should be able to delete filtered_topic, but only on correct participant
-        EXPECT_EQ(ReturnCode_t::RETCODE_PRECONDITION_NOT_MET, participant2->delete_contentfilteredtopic(filtered_topic));
+        EXPECT_EQ(ReturnCode_t::RETCODE_PRECONDITION_NOT_MET,
+                participant2->delete_contentfilteredtopic(filtered_topic));
         EXPECT_EQ(filtered_topic, participant->lookup_topicdescription("contentfilteredtopic"));
         EXPECT_EQ(ReturnCode_t::RETCODE_OK, participant->delete_contentfilteredtopic(filtered_topic));
         EXPECT_EQ(nullptr, participant->lookup_topicdescription("contentfilteredtopic"));
