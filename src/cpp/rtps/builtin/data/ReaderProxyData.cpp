@@ -980,11 +980,11 @@ bool ReaderProxyData::readFromCDRMessage(
     {
         if (ParameterList::readParameterListfromCDRMsg(*msg, param_process, true, qos_size))
         {
-            if (m_guid.entityId.value[3] == 0x04)
+            if (0x04 == (0x0F & m_guid.entityId.value[3]))
             {
                 m_topicKind = NO_KEY;
             }
-            else if (m_guid.entityId.value[3] == 0x07)
+            else if (0x07 == (0x0F & m_guid.entityId.value[3]))
             {
                 m_topicKind = WITH_KEY;
             }

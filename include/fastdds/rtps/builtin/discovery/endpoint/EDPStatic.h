@@ -191,6 +191,17 @@ public:
 
 private:
 
+    WriterProxyData* generate_statistics_builtin_writer(
+            const EntityId_t& entity_id);
+
+    ReaderProxyData* generate_statistics_builtin_reader(
+            const EntityId_t& entity_id);
+
+    void retrieve_statistics_builtin_topic(
+            const EntityId_t& entity_id,
+            const char*& topic_name,
+            const char*& type_name);
+
     xmlparser::XMLEndpointParser* mp_edpXML;
     BuiltinAttributes m_attributes;
 };

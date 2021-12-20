@@ -1554,10 +1554,8 @@ bool DiscoveryDataBase::is_reader(
     // For readers: NO_KEY = 0x04, WITH_KEY = 0x07
     // For built-in readers: NO_KEY = 0xc4, WITH_KEY = 0xc7
     const eprosima::fastrtps::rtps::octet identifier = guid.entityId.value[3];
-    return ((identifier == 0x04) ||
-           (identifier == 0xc4) ||
-           (identifier == 0x07) ||
-           (identifier == 0xc7));
+    return (0x04 == (0x0F & identifier)) ||
+           (0x07 == (0x0F & identifier));
 }
 
 bool DiscoveryDataBase::is_participant(
