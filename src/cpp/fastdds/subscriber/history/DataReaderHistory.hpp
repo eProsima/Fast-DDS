@@ -196,8 +196,7 @@ public:
      *         - @c first is a boolean indicating if an instance was found
      *         - @c second is a pair where:
      *           - @c first is the handle of the returned instance
-     *           - @c second is a pointer to a std::vector<CacheChange_t*> with the list of changes for the
-     *             returned instance
+     *           - @c second is a pointer to a DataReaderInstance that holds information about the returned instance
      *
      * @remarks When used on a NO_KEY topic, an instance will only be returned when called with
      *          `handle = HANDLE_NIL` and `exact = false`.
@@ -273,7 +272,17 @@ private:
     bool received_change_keep_last(
             CacheChange_t* change,
             size_t unknown_missing_changes_up_to);
+    ///@}
 
+    /**
+     * @name Variants of change reconstruction completion processing.
+     *       Will be called with the history mutex taken.
+     * @param change The change for which the last missing fragment has been processed.
+     * @param instance Instance where the change should be added.
+     * @return true when the change was added to the instance.
+     * @return false when the change could not be added to the instance and has been removed from the history.
+     */
+     ///@{
     bool completed_change_keep_all(
             CacheChange_t* change,
             DataReaderInstance& instance);
