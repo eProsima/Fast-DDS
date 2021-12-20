@@ -82,7 +82,12 @@ bool HelloWorldPublisher::init(
     {
         pqos.transport().use_builtin_transports = false;
 
-        if (transport == UDPv4)
+        if (transport == SHM)
+        {
+            auto shm_transport = std::make_shared<SharedMemTransportDescriptor>();
+            pqos.transport().user_transports.push_back(shm_transport);
+        }
+        else if (transport == UDPv4)
         {
             auto udp_transport = std::make_shared<UDPv4TransportDescriptor>();
             pqos.transport().user_transports.push_back(udp_transport);
