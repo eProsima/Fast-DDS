@@ -59,6 +59,26 @@ TEST_F(ResourceLimitedVectorTests, default_constructor)
     // Should be empty
     ASSERT_TRUE(uut.empty());
     ASSERT_EQ(uut.capacity(), NUM_ITEMS);
+
+    // Add all items using insert
+    auto it = uut.cbegin();
+    for (int i : testbed)
+    {
+        it = uut.insert(it, i);
+        ASSERT_NE(it, uut.cend());
+        it = uut.insert(it, std::move(i));
+        ASSERT_NE(it, uut.cend());
+    }
+
+    // Vector should be filled
+    ASSERT_EQ(uut.size(), 2*NUM_ITEMS);
+    ASSERT_EQ(uut.capacity(), 2*NUM_ITEMS);
+
+    uut.clear();
+
+    // Should be empty but allocated
+    ASSERT_TRUE(uut.empty());
+    ASSERT_EQ(uut.capacity(), 2*NUM_ITEMS);
 }
 
 TEST_F(ResourceLimitedVectorTests, static_config)
