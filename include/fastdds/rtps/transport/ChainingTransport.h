@@ -317,6 +317,8 @@ public:
      * @param next_receiver Next resource receiver to be called.
      * @param receive_buffer vector with enough capacity (not size) to accommodate a full receive buffer. That
      * capacity must not be less than the receiveBufferSize supplied to this class during construction.
+     * @param receive_buffer_size Size of the raw data. It will be used as bounds check for the previous argument.
+     * It must not exceed the receiveBufferSize fed to this class during construction.
      * @param local_locator Locator mapping to the local channel we're listening to.
      * @param[out] remote_locator Locator describing the remote destination we received a packet from.
      */
