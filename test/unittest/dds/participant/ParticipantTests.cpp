@@ -3210,9 +3210,11 @@ TEST(ParticipantTests, ContentFilterInterfaces)
         EXPECT_EQ(nullptr,
                 participant->create_contentfilteredtopic("contentfilteredtopic", topic, "", {}, TEST_FILTER_CLASS));
 
-        // Register filter factory
+        // Register two filter factories to ensure traversal of collections
         EXPECT_EQ(ReturnCode_t::RETCODE_OK,
                 participant->register_content_filter_factory(TEST_FILTER_CLASS, &test_filter));
+        EXPECT_EQ(ReturnCode_t::RETCODE_OK,
+                participant->register_content_filter_factory(OTHER_FILTER_CLASS, &test_filter));
 
         // Negative tests for custom filtered topic creation
         EXPECT_EQ(nullptr,
@@ -3236,12 +3238,20 @@ TEST(ParticipantTests, ContentFilterInterfaces)
         EXPECT_EQ(nullptr,
                 participant->create_contentfilteredtopic("contentfilteredtopic", topic, "", {}, TEST_FILTER_CLASS));
 
+        // Create on the other filter class to ensure traversal of collections
+        ContentFilteredTopic* filtered_topic2 = participant->create_contentfilteredtopic("contentfilteredtopic2",
+                        topic, "", {}, OTHER_FILTER_CLASS);
+        ASSERT_NE(nullptr, filtered_topic2);
+        EXPECT_EQ(filtered_topic2, participant->lookup_topicdescription("contentfilteredtopic2"));
+
         // Should not be able to delete topic, since it is referenced by filtered_topic
         EXPECT_EQ(ReturnCode_t::RETCODE_PRECONDITION_NOT_MET, participant->delete_topic(topic));
 
         // Should not be able to unregister filter factory, since it is referenced by filtered_topic
         EXPECT_EQ(ReturnCode_t::RETCODE_PRECONDITION_NOT_MET,
                 participant->unregister_content_filter_factory(TEST_FILTER_CLASS));
+        EXPECT_EQ(ReturnCode_t::RETCODE_PRECONDITION_NOT_MET,
+                participant->unregister_content_filter_factory(OTHER_FILTER_CLASS));
 
         // Reference filtered_topic by creating a DataReader
         auto subscriber = participant->create_subscriber(SUBSCRIBER_QOS_DEFAULT);
@@ -3262,10 +3272,13 @@ TEST(ParticipantTests, ContentFilterInterfaces)
         EXPECT_EQ(filtered_topic, participant->lookup_topicdescription("contentfilteredtopic"));
         EXPECT_EQ(ReturnCode_t::RETCODE_OK, participant->delete_contentfilteredtopic(filtered_topic));
         EXPECT_EQ(nullptr, participant->lookup_topicdescription("contentfilteredtopic"));
+        EXPECT_EQ(ReturnCode_t::RETCODE_OK, participant->delete_contentfilteredtopic(filtered_topic2));
 
-        // Unregister filter factory
+        // Unregister filter factories
         EXPECT_EQ(ReturnCode_t::RETCODE_OK,
                 participant->unregister_content_filter_factory(TEST_FILTER_CLASS));
+        EXPECT_EQ(ReturnCode_t::RETCODE_OK,
+                participant->unregister_content_filter_factory(OTHER_FILTER_CLASS));
     }
 
     ASSERT_EQ(participant2->delete_topic(topic2), ReturnCode_t::RETCODE_OK);
