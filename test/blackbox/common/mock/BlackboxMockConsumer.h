@@ -42,6 +42,12 @@ public:
         return mEntriesConsumed;
     }
 
+    void ClearEntries()
+    {
+        std::unique_lock<std::mutex> guard(mMutex);
+        mEntriesConsumed.clear();
+    }
+
     std::condition_variable& cv()
     {
         return cv_;
