@@ -76,6 +76,15 @@ public:
         cv_.wait(lock, pred);
     }
 
+    void wait_for_at_least_entries(
+            size_t num_entries)
+    {
+        return wait([this, num_entries]() -> bool
+                       {
+                           return mEntriesConsumed.size() >= num_entries;
+                       });
+    }
+
     void clear_entries()
     {
         std::unique_lock<std::mutex> guard(mMutex);
