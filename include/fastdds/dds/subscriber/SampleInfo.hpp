@@ -89,7 +89,7 @@ struct SampleInfo
 
     //! the generation difference between the time the sample was received, and the time the most recent sample was received.
     //! The most recent sample used for the calculation may or may not be in the returned collection
-    int32_t absoulte_generation_rank;
+    int32_t absolute_generation_rank;
 
     //! time provided by the DataWriter when the sample was written
     fastrtps::rtps::Time_t source_timestamp;

@@ -7,6 +7,8 @@ Forthcoming
   API, implies ABI break)
 * New DataWriter API allowing to wait for acknowledgements for a specific instance (extends DataWriter API, implies ABI
   break)
+* Generation of GUID on entity creation (ABI break on RTPS layer)
+* Adding DataReader history with correct implementation of instance_state and view_state (ABI break on RTPS layer)
 *
 
 Version 2.4.0

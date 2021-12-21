@@ -36,7 +36,6 @@
 #include <fastdds/rtps/reader/ReaderListener.h>
 
 #include <fastrtps/attributes/TopicAttributes.h>
-#include <fastrtps/subscriber/SubscriberHistory.h>
 #include <fastrtps/qos/LivelinessChangedStatus.h>
 #include <fastrtps/types/TypesBase.h>
 
@@ -45,6 +44,8 @@
 #include <fastdds/subscriber/DataReaderImpl/SampleLoanManager.hpp>
 #include <fastdds/subscriber/SubscriberImpl.hpp>
 #include <rtps/history/ITopicPayloadPool.h>
+
+#include <fastdds/subscriber/history/DataReaderHistory.hpp>
 
 using eprosima::fastrtps::types::ReturnCode_t;
 
@@ -331,7 +332,7 @@ protected:
     DataReaderQos qos_;
 
     //!History
-    fastrtps::SubscriberHistory history_;
+    detail::DataReaderHistory history_;
 
     //!Listener
     DataReaderListener* listener_ = nullptr;

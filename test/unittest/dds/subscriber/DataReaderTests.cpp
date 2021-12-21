@@ -1550,6 +1550,311 @@ TEST_F(DataReaderTests, read_unread)
     }
 }
 
+TEST_F(DataReaderTests, sample_info)
+{
+    DataReaderQos reader_qos = DATAREADER_QOS_DEFAULT;
+    reader_qos.reliability().kind = RELIABLE_RELIABILITY_QOS;
+    reader_qos.durability().kind = TRANSIENT_LOCAL_DURABILITY_QOS;
+    reader_qos.history().kind = KEEP_LAST_HISTORY_QOS;
+    reader_qos.history().depth = 1;
+    reader_qos.resource_limits().max_instances = 2;
+    reader_qos.resource_limits().max_samples_per_instance = 1;
+    reader_qos.resource_limits().max_samples = 2;
+
+    create_entities(nullptr, reader_qos);
+    publisher_->delete_datawriter(data_writer_);
+    data_writer_ = nullptr;
+
+    struct TestCmd
+    {
+        enum Operation
+        {
+            WRITE, UNREGISTER, DISPOSE, CLOSE
+        };
+
+        size_t writer_index;
+        Operation operation;
+        size_t instance_index;
+    };
+
+    struct TestInstanceResult
+    {
+        ReturnCode_t ret_code;
+        ViewStateKind view_state;
+        InstanceStateKind instance_state;
+        int32_t disposed_generation_count;
+        int32_t no_writers_generation_count;
+    };
+
+    struct TestStep
+    {
+        std::vector<TestCmd> operations;
+        TestInstanceResult instance_state[2];
+    };
+
+    struct TestState
+    {
+        TestState(
+                TypeSupport& type,
+                Topic* topic,
+                Publisher* publisher)
+            : topic_(topic)
+            , publisher_(publisher)
+        {
+            writer_qos_ = DATAWRITER_QOS_DEFAULT;
+            writer_qos_.publish_mode().kind = SYNCHRONOUS_PUBLISH_MODE;
+            writer_qos_.reliability().kind = RELIABLE_RELIABILITY_QOS;
+            writer_qos_.durability().kind = TRANSIENT_LOCAL_DURABILITY_QOS;
+            writer_qos_.history().kind = KEEP_LAST_HISTORY_QOS;
+            writer_qos_.history().depth = 1;
+            writer_qos_.resource_limits().max_instances = 2;
+            writer_qos_.resource_limits().max_samples_per_instance = 1;
+            writer_qos_.resource_limits().max_samples = 2;
+            writer_qos_.writer_data_lifecycle().autodispose_unregistered_instances = false;
+
+            data_[0].index(1);
+            data_[1].index(2);
+
+            type.get_key(&data_[0], &handles_[0]);
+            type.get_key(&data_[1], &handles_[1]);
+        }
+
+        ~TestState()
+        {
+            close_writer(0);
+            close_writer(1);
+        }
+
+        void run_test(
+                DataReader* reader,
+                const std::vector<TestStep>& steps)
+        {
+            for (const TestStep& step : steps)
+            {
+                for (const TestCmd& cmd : step.operations)
+                {
+                    execute(cmd);
+                    std::this_thread::sleep_for(std::chrono::milliseconds(100));
+                }
+                check(reader, 0, step.instance_state[0]);
+                check(reader, 1, step.instance_state[1]);
+            }
+
+        }
+
+        void execute(
+                const TestCmd& cmd)
+        {
+            DataWriter* writer = nullptr;
+            ReturnCode_t ret_code;
+
+            switch (cmd.operation)
+            {
+                case TestCmd::CLOSE:
+                    close_writer(cmd.writer_index);
+                    break;
+
+                case TestCmd::DISPOSE:
+                    writer = open_writer(cmd.writer_index);
+                    ret_code = writer->dispose(&data_[cmd.instance_index], handles_[cmd.instance_index]);
+                    EXPECT_EQ(ReturnCode_t::RETCODE_OK, ret_code);
+                    break;
+
+                case TestCmd::UNREGISTER:
+                    writer = open_writer(cmd.writer_index);
+                    ret_code = writer->unregister_instance(&data_[cmd.instance_index], handles_[cmd.instance_index]);
+                    EXPECT_EQ(ReturnCode_t::RETCODE_OK, ret_code);
+                    break;
+
+                case TestCmd::WRITE:
+                    writer = open_writer(cmd.writer_index);
+                    ret_code = writer->write(&data_[cmd.instance_index], handles_[cmd.instance_index]);
+                    EXPECT_EQ(ReturnCode_t::RETCODE_OK, ret_code);
+                    break;
+            }
+        }
+
+        void check(
+                DataReader* reader,
+                size_t instance_index,
+                const TestInstanceResult& instance_result)
+        {
+            FooSeq values;
+            SampleInfoSeq infos;
+            ReturnCode_t ret_code;
+
+            ret_code = reader->read_instance(values, infos, LENGTH_UNLIMITED, handles_[instance_index]);
+            EXPECT_EQ(ret_code, instance_result.ret_code);
+            if (ReturnCode_t::RETCODE_OK == ret_code)
+            {
+                EXPECT_EQ(instance_result.instance_state, infos[0].instance_state);
+                EXPECT_EQ(instance_result.view_state, infos[0].view_state);
+                EXPECT_EQ(instance_result.disposed_generation_count, infos[0].disposed_generation_count);
+                EXPECT_EQ(instance_result.no_writers_generation_count, infos[0].no_writers_generation_count);
+                EXPECT_EQ(ReturnCode_t::RETCODE_OK, reader->return_loan(values, infos));
+            }
+        }
+
+    private:
+
+        Topic* topic_;
+        Publisher* publisher_;
+        DataWriterQos writer_qos_;
+        DataWriter* writers_[2] = { nullptr, nullptr };
+
+        InstanceHandle_t handles_[2];
+        FooType data_[2];
+
+        void close_writer(
+                size_t index)
+        {
+            DataWriter*& writer = writers_[index];
+            if (writer != nullptr)
+            {
+                publisher_->delete_datawriter(writer);
+                writer = nullptr;
+            }
+        }
+
+        DataWriter* open_writer(
+                size_t index)
+        {
+            DataWriter*& writer = writers_[index];
+            if (writer == nullptr)
+            {
+                writer = publisher_->create_datawriter(topic_, writer_qos_);
+            }
+            return writer;
+        }
+
+    };
+
+    static const std::vector<TestStep> steps =
+    {
+        {
+            // Instances have never been written
+            {},
+            {
+                {ReturnCode_t::RETCODE_BAD_PARAMETER, NEW_VIEW_STATE, ALIVE_INSTANCE_STATE, 0, 0},
+                {ReturnCode_t::RETCODE_BAD_PARAMETER, NEW_VIEW_STATE, ALIVE_INSTANCE_STATE, 0, 0},
+            }
+        },
+        {
+            // One writer writes on first instance => that instance should be NEW and ALIVE
+            { {0, TestCmd::WRITE, 0} },
+            {
+                {ReturnCode_t::RETCODE_OK, NEW_VIEW_STATE, ALIVE_INSTANCE_STATE, 0, 0},
+                {ReturnCode_t::RETCODE_BAD_PARAMETER, NEW_VIEW_STATE, ALIVE_INSTANCE_STATE, 0, 0},
+            }
+        },
+        {
+            // Same writer writes on first instance => instance becomes NOT_NEW
+            { {0, TestCmd::WRITE, 0} },
+            {
+                {ReturnCode_t::RETCODE_OK, NOT_NEW_VIEW_STATE, ALIVE_INSTANCE_STATE, 0, 0},
+                {ReturnCode_t::RETCODE_BAD_PARAMETER, NEW_VIEW_STATE, ALIVE_INSTANCE_STATE, 0, 0},
+            }
+        },
+        {
+            // Same writer disposes first instance => instance becomes NOT_ALIVE_DISPOSED
+            { {0, TestCmd::DISPOSE, 0} },
+            {
+                {ReturnCode_t::RETCODE_OK, NOT_NEW_VIEW_STATE, NOT_ALIVE_DISPOSED_INSTANCE_STATE, 0, 0},
+                {ReturnCode_t::RETCODE_BAD_PARAMETER, NEW_VIEW_STATE, ALIVE_INSTANCE_STATE, 0, 0},
+            }
+        },
+        {
+            // First writer writes second instance => NEW and ALIVE
+            // Second writer writes first instance => NEW and ALIVE
+            { {0, TestCmd::WRITE, 1}, {1, TestCmd::WRITE, 0} },
+            {
+                {ReturnCode_t::RETCODE_OK, NEW_VIEW_STATE, ALIVE_INSTANCE_STATE, 1, 0},
+                {ReturnCode_t::RETCODE_OK, NEW_VIEW_STATE, ALIVE_INSTANCE_STATE, 0, 0},
+            }
+        },
+        {
+            // Both writers write on second instance => NOT_NEW and ALIVE
+            { {0, TestCmd::WRITE, 1}, {1, TestCmd::WRITE, 1} },
+            {
+                {ReturnCode_t::RETCODE_OK, NOT_NEW_VIEW_STATE, ALIVE_INSTANCE_STATE, 1, 0},
+                {ReturnCode_t::RETCODE_OK, NOT_NEW_VIEW_STATE, ALIVE_INSTANCE_STATE, 0, 0},
+            }
+        },
+        {
+            // Second writer closes => first instance becomes NOT_ALIVE_NO_WRITERS
+            { {1, TestCmd::CLOSE, 0} },
+            {
+                {ReturnCode_t::RETCODE_OK, NOT_NEW_VIEW_STATE, NOT_ALIVE_NO_WRITERS_INSTANCE_STATE, 1, 0},
+                {ReturnCode_t::RETCODE_OK, NOT_NEW_VIEW_STATE, ALIVE_INSTANCE_STATE, 0, 0},
+            }
+        },
+        {
+            // First writer unregisters second instance => NOT_ALIVE_NO_WRITERS
+            { {0, TestCmd::UNREGISTER, 1} },
+            {
+                {ReturnCode_t::RETCODE_OK, NOT_NEW_VIEW_STATE, NOT_ALIVE_NO_WRITERS_INSTANCE_STATE, 1, 0},
+                {ReturnCode_t::RETCODE_OK, NOT_NEW_VIEW_STATE, NOT_ALIVE_NO_WRITERS_INSTANCE_STATE, 0, 0},
+            }
+        },
+        {
+            // Both writers write both instances
+            { {0, TestCmd::WRITE, 0}, {1, TestCmd::WRITE, 0}, {0, TestCmd::WRITE, 1}, {1, TestCmd::WRITE, 1} },
+            {
+                {ReturnCode_t::RETCODE_OK, NEW_VIEW_STATE, ALIVE_INSTANCE_STATE, 1, 1},
+                {ReturnCode_t::RETCODE_OK, NEW_VIEW_STATE, ALIVE_INSTANCE_STATE, 0, 1},
+            }
+        },
+        {
+            // Reading twice should return NOT_NEW
+            {},
+            {
+                {ReturnCode_t::RETCODE_OK, NOT_NEW_VIEW_STATE, ALIVE_INSTANCE_STATE, 1, 1},
+                {ReturnCode_t::RETCODE_OK, NOT_NEW_VIEW_STATE, ALIVE_INSTANCE_STATE, 0, 1},
+            }
+        },
+        {
+            // 0 - Unregistering while having another alive writer should not change state
+            // 1 - Disposing while having another alive writer is always done
+            { {0, TestCmd::UNREGISTER, 0}, {1, TestCmd::DISPOSE, 1} },
+            {
+                {ReturnCode_t::RETCODE_OK, NOT_NEW_VIEW_STATE, ALIVE_INSTANCE_STATE, 1, 1},
+                {ReturnCode_t::RETCODE_OK, NOT_NEW_VIEW_STATE, NOT_ALIVE_DISPOSED_INSTANCE_STATE, 0, 1},
+            }
+        },
+        {
+            // 0 - Writing and unregistering while having another alive writer should not change state
+            // 1 - Unregister a disposed instance should not change state
+            { {0, TestCmd::WRITE, 0}, {0, TestCmd::UNREGISTER, 1}, {1, TestCmd::UNREGISTER, 0} },
+            {
+                {ReturnCode_t::RETCODE_OK, NOT_NEW_VIEW_STATE, ALIVE_INSTANCE_STATE, 1, 1},
+                {ReturnCode_t::RETCODE_OK, NOT_NEW_VIEW_STATE, NOT_ALIVE_DISPOSED_INSTANCE_STATE, 0, 1},
+            }
+        },
+        {
+            // 0 - Closing both writers should return NOT_ALIVE_NO_WRITERS
+            // 1 - Closing both writers on a disposed instance should not change state
+            { {0, TestCmd::CLOSE, 0}, {1, TestCmd::CLOSE, 0} },
+            {
+                {ReturnCode_t::RETCODE_OK, NOT_NEW_VIEW_STATE, NOT_ALIVE_NO_WRITERS_INSTANCE_STATE, 1, 1},
+                {ReturnCode_t::RETCODE_OK, NOT_NEW_VIEW_STATE, NOT_ALIVE_DISPOSED_INSTANCE_STATE, 0, 1},
+            }
+        },
+    };
+
+    // Run test once
+    TestState state(type_, topic_, publisher_);
+    state.run_test(data_reader_, steps);
+
+    // Taking all data should remove instance information
+    FooSeq data;
+    SampleInfoSeq infos;
+    EXPECT_EQ(ReturnCode_t::RETCODE_OK, data_reader_->take(data, infos));
+    EXPECT_EQ(ReturnCode_t::RETCODE_OK, data_reader_->return_loan(data, infos));
+
+    // Run test again
+    state.run_test(data_reader_, steps);
+}
+
 /*
  * This type fails deserialization on odd samples
  */
@@ -1883,13 +2188,17 @@ TEST_F(DataReaderTests, check_key_history_wholesomeness_on_unmatch)
                 SampleInfoSeq infos;
 
                 res = data_reader_->take_instance(samples, infos, LENGTH_UNLIMITED, handle_ok_);
+
+                // If the DataWriter is destroyed only the non-notified samples must be removed
+                // this operation MUST succeed
+                ASSERT_EQ(res, ReturnCode_t::RETCODE_OK);
+
+                data_reader_->return_loan(samples, infos);
             });
 
     // Check if the thread hangs
     // wait for termination
     std::this_thread::sleep_for(std::chrono::milliseconds(500));
-    // check expected result, if query thread hangs res = ReturnCode_t::RETCODE_OK
-    ASSERT_NE(res, ReturnCode_t::RETCODE_OK);
     query.join();
 }
 

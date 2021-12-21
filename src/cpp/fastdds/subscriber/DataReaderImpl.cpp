@@ -62,40 +62,6 @@ namespace eprosima {
 namespace fastdds {
 namespace dds {
 
-static void sample_info_to_dds (
-        const SampleInfo_t& rtps_info,
-        SampleInfo* dds_info)
-{
-    dds_info->sample_state = NOT_READ_SAMPLE_STATE;
-    dds_info->view_state = NOT_NEW_VIEW_STATE;
-    dds_info->disposed_generation_count = 0;
-    dds_info->no_writers_generation_count = 1;
-    dds_info->sample_rank = 0;
-    dds_info->generation_rank = 0;
-    dds_info->absoulte_generation_rank = 0;
-    dds_info->source_timestamp = rtps_info.sourceTimestamp;
-    dds_info->reception_timestamp = rtps_info.receptionTimestamp;
-    dds_info->instance_handle = rtps_info.iHandle;
-    dds_info->publication_handle = fastrtps::rtps::InstanceHandle_t(rtps_info.sample_identity.writer_guid());
-    dds_info->sample_identity = rtps_info.sample_identity;
-    dds_info->related_sample_identity = rtps_info.related_sample_identity;
-    dds_info->valid_data = rtps_info.sampleKind == eprosima::fastrtps::rtps::ALIVE ? true : false;
-
-    switch (rtps_info.sampleKind)
-    {
-        case eprosima::fastrtps::rtps::ALIVE:
-            dds_info->instance_state = ALIVE_INSTANCE_STATE;
-            break;
-        case eprosima::fastrtps::rtps::NOT_ALIVE_DISPOSED:
-            dds_info->instance_state = NOT_ALIVE_DISPOSED_INSTANCE_STATE;
-            break;
-        default:
-            //TODO [ILG] change this if the other kinds ever get implemented
-            dds_info->instance_state = ALIVE_INSTANCE_STATE;
-            break;
-    }
-}
-
 static bool collections_have_same_properties(
         const LoanableCollection& data_values,
         const SampleInfoSeq& sample_infos)
@@ -131,11 +97,7 @@ DataReaderImpl::DataReaderImpl(
     , topic_(topic)
     , qos_(&qos == &DATAREADER_QOS_DEFAULT ? subscriber_->get_default_datareader_qos() : qos)
 #pragma warning (disable : 4355 )
-    , history_(topic_attributes(),
-            type_.get(),
-            qos_.get_readerqos(subscriber_->get_qos()),
-            type_->m_typeSize + 3,    /* Possible alignment */
-            qos_.endpoint().history_memory_policy)
+    , history_(type, *topic, qos_)
     , listener_(listener)
     , reader_listener_(this)
     , deadline_duration_us_(qos_.deadline().period.to_ns() * 1e-3)
@@ -714,10 +676,8 @@ ReturnCode_t DataReaderImpl::get_first_untaken_info(
         return ReturnCode_t::RETCODE_NOT_ENABLED;
     }
 
-    SampleInfo_t rtps_info;
-    if (history_.get_first_untaken_info(&rtps_info))
+    if (history_.get_first_untaken_info(*info))
     {
-        sample_info_to_dds(rtps_info, info);
         return ReturnCode_t::RETCODE_OK;
     }
     return ReturnCode_t::RETCODE_NO_DATA;
@@ -892,10 +852,10 @@ void DataReaderImpl::InnerDataReaderListener::on_requested_incompatible_qos(
 bool DataReaderImpl::on_new_cache_change_added(
         const CacheChange_t* const change)
 {
+    std::lock_guard<RecursiveTimedMutex> guard(reader_->getMutex());
+
     if (qos_.deadline().period != c_TimeInfinite)
     {
-        std::unique_lock<RecursiveTimedMutex> lock(reader_->getMutex());
-
         if (!history_.set_next_deadline(
                     change->instanceHandle,
                     steady_clock::now() + duration_cast<system_clock::duration>(deadline_duration_us_)))
@@ -913,6 +873,7 @@ bool DataReaderImpl::on_new_cache_change_added(
     }
 
     CacheChange_t* new_change = const_cast<CacheChange_t*>(change);
+    history_.update_instance_nts(new_change);
 
     if (qos_.lifespan().duration == c_TimeInfinite)
     {
@@ -966,6 +927,11 @@ void DataReaderImpl::update_subscription_matched_status(
         subscription_matched_status_.total_count += count_change;
         subscription_matched_status_.total_count_change += count_change;
         subscription_matched_status_.last_publication_handle = status.last_publication_handle;
+    }
+
+    if (count_change < 0)
+    {
+        history_.writer_not_alive(iHandle2GUID(status.last_publication_handle));
     }
 
     StatusMask notify_status = StatusMask::subscription_matched();
@@ -1235,6 +1201,11 @@ RequestedIncompatibleQosStatus& DataReaderImpl::update_requested_incompatible_qo
 LivelinessChangedStatus& DataReaderImpl::update_liveliness_status(
         const fastrtps::LivelinessChangedStatus& status)
 {
+    if (0 < status.not_alive_count_change)
+    {
+        history_.writer_not_alive(iHandle2GUID(status.last_publication_handle));
+    }
+
     liveliness_changed_status_.alive_count = status.alive_count;
     liveliness_changed_status_.not_alive_count = status.not_alive_count;
     liveliness_changed_status_.alive_count_change += status.alive_count_change;
