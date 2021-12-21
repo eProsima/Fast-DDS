@@ -14,6 +14,7 @@
 
 set(fastrtps_FOUND TRUE)
 
+add_subdirectory(BasicConfigurationExample)
 add_subdirectory(Benchmark)
 add_subdirectory(ClientServerTest)
 add_subdirectory(Configurability)
