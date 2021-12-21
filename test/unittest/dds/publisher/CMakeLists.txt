@@ -235,6 +235,7 @@ set(DATAWRITERTESTS_SOURCE DataWriterTests.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/rtps/security/logging/Logging.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/rtps/security/SecurityManager.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/rtps/security/SecurityPluginFactory.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/security/artifact_providers/Pkcs11Provider.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/security/authentication/PKIDH.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/security/accesscontrol/Permissions.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/security/cryptography/AESGCMGMAC.cpp
@@ -319,6 +320,7 @@ target_link_libraries(DataWriterTests fastcdr foonathan_memory
     $<$<BOOL:${LINK_SSL}>:OpenSSL::SSL$<SEMICOLON>OpenSSL::Crypto>
     $<$<BOOL:${WIN32}>:iphlpapi$<SEMICOLON>Shlwapi>
     ${THIRDPARTY_BOOST_LINK_LIBS}
+    $<$<BOOL:${LibP11_FOUND}>:eProsima_p11>  # $<TARGET_NAME_IF_EXISTS:eProsima_p11>
     eProsima_atomic
     )
 if(MSVC OR MSVC_IDE)
