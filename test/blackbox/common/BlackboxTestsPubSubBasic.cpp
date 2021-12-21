@@ -14,16 +14,22 @@
 
 #include "BlackboxTests.hpp"
 
+#include "mock/BlackboxMockConsumer.h"
 #include "PubSubParticipant.hpp"
 #include "PubSubReader.hpp"
 #include "PubSubWriter.hpp"
-#include "ReqRepAsReliableHelloWorldRequester.hpp"
 #include "ReqRepAsReliableHelloWorldReplier.hpp"
+#include "ReqRepAsReliableHelloWorldRequester.hpp"
+
+#include <fastdds/dds/log/Log.hpp>
 #include <fastrtps/xmlparser/XMLProfileManager.h>
 
 #include <gtest/gtest.h>
 
+#include <cstdlib>
+#include <string>
 #include <tuple>
+#include <vector>
 
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
@@ -80,6 +86,52 @@ public:
     }
 
 };
+
+/**
+ * @brief Test function for EnvFileWarning* tests
+ *
+ * Sets environment variable @c FASTDDS_ENVIRONMENT_FILE to @c env_file_name, and then initializes a DomainParticipant,
+ * using a custom log consumer to check how many logWarnings matching
+ * ".*does not exist. File watching not initialized." are issued, comparing that number with @c expected_logs.
+ * Finally, it resets the log module
+ *
+ * @param env_file_name The value to assign to @c FASTDDS_ENVIRONMENT_FILE
+ * @param expected_logs The number of expected logs (error or warning) matching
+ *                      ".*does not exist. File watching not initialized."
+ */
+void env_file_warning(
+        const char* env_file_name,
+        size_t expected_logs)
+{
+    /* Set environment variable */
+#ifdef _WIN32
+    _putenv_s("FASTDDS_ENVIRONMENT_FILE", env_file_name);
+#else
+    setenv("FASTDDS_ENVIRONMENT_FILE", env_file_name, 1);
+#endif // _WIN32
+
+    using namespace eprosima::fastdds::dds;
+    /* Set up log */
+    BlackboxMockConsumer* helper_consumer = new BlackboxMockConsumer();
+    Log::ClearConsumers();  // Remove default consumers
+    Log::RegisterConsumer(std::unique_ptr<LogConsumer>(helper_consumer)); // Registering a consumer transfer ownership
+    // Filter specific message
+    Log::SetVerbosity(Log::Kind::Warning);
+    Log::SetCategoryFilter(std::regex("RTPS_PARTICIPANT"));
+    Log::SetErrorStringFilter(std::regex(".*does not exist. File watching not initialized."));
+
+    /* Create and enable DomainParticipant */
+    PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
+    reader.init();
+    EXPECT_TRUE(reader.isInitialized());
+
+    /* Check logs */
+    Log::Flush();
+    EXPECT_EQ(helper_consumer->ConsumedEntries().size(), expected_logs);
+
+    /* Clean-up */
+    Log::Reset();  // This calls to ClearConsumers, which deletes the registered consumer
+}
 
 TEST_P(PubSubBasic, PubSubAsNonReliableHelloworld)
 {
@@ -754,6 +806,22 @@ TEST_P(PubSubBasic, ReliableTransientLocalTwoWritersConsecutives)
         writer.history_depth(10).reliability(RELIABLE_RELIABILITY_QOS);
         two_consecutive_writers(reader, writer, true);
     }
+}
+
+/*
+ * Check that setting FASTDDS_ENVIRONMENT_FILE to an unexisting file issues 1 logWarning
+ */
+TEST(PubSubBasic, EnvFileWarningWrongFile)
+{
+    env_file_warning("unexisting_file", 1);
+}
+
+/*
+ * Check that setting FASTDDS_ENVIRONMENT_FILE to an empty string issues 0 logWarning
+ */
+TEST(PubSubBasic, EnvFileWarningEmpty)
+{
+    env_file_warning("", 0);
 }
 
 #ifdef INSTANTIATE_TEST_SUITE_P

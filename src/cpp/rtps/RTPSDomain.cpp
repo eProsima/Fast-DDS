@@ -122,7 +122,7 @@ RTPSParticipant* RTPSDomain::createParticipant(
             // Create filewatch
             RTPSDomainImpl::file_watch_handle_ = SystemInfo::watch_file(filename, RTPSDomainImpl::file_watch_callback);
         }
-        else
+        else if (!filename.empty())
         {
             logWarning(RTPS_PARTICIPANT, filename + " does not exist. File watching not initialized.");
         }
