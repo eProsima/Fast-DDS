@@ -37,10 +37,10 @@ Publisher options:
   -a              --async
                     Asynchronous publish mode (synchronous by default).
                   --transport=<shm|udp|udpv6>
-                    Use only data-sharing, shared-memory, UDPv4, UDPv6
-                    transport.If not set, use Fast DDS default transports
-                    (depending on the scenario it will use the most efficient
-                    one).
+                    Use only shared-memory, UDPv4, or UDPv6 transport.If not
+                    set, use Fast DDS default transports (depending on the
+                    scenario it will use the most efficient one:  data-sharing
+                    delivery mechanism > shared-memory > UDP ).
 
 Subscriber options:
   -t <topic_name> --topic=<topic_name>
@@ -51,10 +51,10 @@ Subscriber options:
                     Number of samples to wait for (Default: 0 => infinite
                     samples).
                   --transport=<shm|udp|udpv6>
-                    Use only data-sharing, shared-memory, UDPv4, UDPv6
-                    transport.If not set, use Fast DDS default transports
-                    (depending on the scenario it will use the most efficient
-                    one).
+                    Use only shared-memory, UDPv4, or UDPv6 transport.If not
+                    set, use Fast DDS default transports (depending on the
+                    scenario it will use the most efficient one:  data-sharing
+                    delivery mechanism > shared-memory > UDP ).
 
 QoS options:
   -r              --reliable

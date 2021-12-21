@@ -160,8 +160,9 @@ const option::Descriptor usage[] = {
     { ASYNC, 0, "a", "async",               Arg::None,
       "  -a \t--async \tAsynchronous publish mode (synchronous by default)." },
     { TRANSPORT, 0, "", "transport",        Arg::Transport,
-      "  \t--transport=<shm|udp|udpv6> \tUse only data-sharing, shared-memory, UDPv4, UDPv6 transport."
-      "If not set, use Fast DDS default transports (depending on the scenario it will use the most efficient one)." },
+      "  \t--transport=<shm|udp|udpv6> \tUse only shared-memory, UDPv4, or UDPv6 transport."
+      "If not set, use Fast DDS default transports (depending on the scenario it will use the most efficient one: "
+      " data-sharing delivery mechanism > shared-memory > UDP )." },
 
     { UNKNOWN_OPT, 0, "", "",                Arg::None,      "\nSubscriber options:"},
     { TOPIC, 0, "t", "topic",                  Arg::String,
@@ -171,8 +172,9 @@ const option::Descriptor usage[] = {
     { SAMPLES, 0, "s", "samples",              Arg::Numeric,
       "  -s <num> \t--samples=<num>  \tNumber of samples to wait for (Default: 0 => infinite samples)." },
     { TRANSPORT, 0, "", "transport",        Arg::Transport,
-      "  \t--transport=<shm|udp|udpv6> \tUse only data-sharing, shared-memory, UDPv4, UDPv6 transport."
-      "If not set, use Fast DDS default transports (depending on the scenario it will use the most efficient one)." },
+      "  \t--transport=<shm|udp|udpv6> \tUse only shared-memory, UDPv4, or UDPv6 transport."
+      "If not set, use Fast DDS default transports (depending on the scenario it will use the most efficient one: "
+      " data-sharing delivery mechanism > shared-memory > UDP )." },
 
     { UNKNOWN_OPT, 0, "", "",                Arg::None,      "\nQoS options:"},
     { RELIABLE, 0, "r", "reliable",         Arg::None,
