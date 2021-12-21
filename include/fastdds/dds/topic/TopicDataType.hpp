@@ -19,8 +19,9 @@
 #ifndef _FASTDDS_TOPICDATATYPE_HPP_
 #define _FASTDDS_TOPICDATATYPE_HPP_
 
-#include <string>
 #include <functional>
+#include <memory>
+#include <string>
 
 #include <fastdds/dds/core/policy/QosPolicies.hpp>
 #include <fastdds/rtps/common/InstanceHandle.h>

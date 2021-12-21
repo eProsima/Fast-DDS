@@ -28,8 +28,8 @@
 #include <fastdds/dds/subscriber/SampleInfo.hpp>
 #include <fastdds/dds/subscriber/Subscriber.hpp>
 #include <fastdds/dds/subscriber/SubscriberListener.hpp>
-#include <fastdds/dds/topic/TypeSupport.hpp>
 #include <fastdds/dds/topic/Topic.hpp>
+#include <fastdds/dds/topic/TypeSupport.hpp>
 
 #include <fastdds/rtps/RTPSDomain.h>
 #include <fastdds/rtps/participant/RTPSParticipant.h>
@@ -40,11 +40,13 @@
 #include <fastdds/core/condition/StatusConditionImpl.hpp>
 #include <fastdds/core/policy/QosPolicyUtils.hpp>
 
+#include <fastdds/domain/DomainParticipantImpl.hpp>
+
 #include <fastdds/subscriber/SubscriberImpl.hpp>
 #include <fastdds/subscriber/DataReaderImpl/ReadTakeCommand.hpp>
 #include <fastdds/subscriber/DataReaderImpl/StateFilter.hpp>
 
-#include <fastdds/domain/DomainParticipantImpl.hpp>
+#include <fastdds/topic/ContentFilteredTopicImpl.hpp>
 
 #include <fastrtps/utils/TimeConversion.h>
 #include <fastrtps/subscriber/SampleInfo.h>
@@ -179,7 +181,7 @@ ReturnCode_t DataReaderImpl::enable()
     // Insert topic_name and partitions
     Property property;
     property.name("topic_name");
-    property.value(topic_->get_name().c_str());
+    property.value(topic_->get_impl()->get_rtps_topic_name().c_str());
     att.endpoint.properties.properties().push_back(std::move(property));
 
     std::string* endpoint_partitions = PropertyPolicyHelper::find_property(qos_.properties(), "partitions");
@@ -239,6 +241,12 @@ ReturnCode_t DataReaderImpl::enable()
         release_payload_pool();
         logError(DATA_READER, "Problem creating associated Reader");
         return ReturnCode_t::RETCODE_ERROR;
+    }
+
+    auto content_topic = dynamic_cast<ContentFilteredTopicImpl*>(topic_->get_impl());
+    if (nullptr != content_topic)
+    {
+        reader->set_content_filter(content_topic);
     }
 
     reader_ = reader;
@@ -1450,7 +1458,7 @@ fastrtps::TopicAttributes DataReaderImpl::topic_attributes() const
 {
     fastrtps::TopicAttributes topic_att;
     topic_att.topicKind = type_->m_isGetKeyDefined ? WITH_KEY : NO_KEY;
-    topic_att.topicName = topic_->get_name();
+    topic_att.topicName = topic_->get_impl()->get_rtps_topic_name();
     topic_att.topicDataType = topic_->get_type_name();
     topic_att.historyQos = qos_.history();
     topic_att.resourceLimitsQos = qos_.resource_limits();
@@ -1497,7 +1505,7 @@ std::shared_ptr<IPayloadPool> DataReaderImpl::get_payload_pool()
 
     if (!payload_pool_)
     {
-        payload_pool_ = TopicPayloadPoolRegistry::get(topic_->get_name(), config);
+        payload_pool_ = TopicPayloadPoolRegistry::get(topic_->get_impl()->get_rtps_topic_name(), config);
         sample_pool_ = std::make_shared<detail::SampleLoanManager>(config, type_);
     }
 

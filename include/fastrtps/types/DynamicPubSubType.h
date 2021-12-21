@@ -47,7 +47,7 @@ public:
     RTPS_DllAPI void* createData() override;
 
     RTPS_DllAPI void deleteData (
-            void * data) override;
+            void* data) override;
 
     RTPS_DllAPI bool deserialize (
             eprosima::fastrtps::rtps::SerializedPayload_t* payload,

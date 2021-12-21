@@ -3056,11 +3056,239 @@ TEST(ParticipantTests, DeleteContainedEntities)
 
 }
 
+/*
+ * This test checks the following methods:
+ *  create_contentfilteredtopic
+ *  delete_contentfilteredtopic
+ *  register_content_filter_factory
+ *  lookup_content_filter_factory
+ *  unregister_content_filter_factory
+ */
+TEST(ParticipantTests, ContentFilterInterfaces)
+{
+    static const char* TEST_FILTER_CLASS = "TESTFILTER";
+    static const char* OTHER_FILTER_CLASS = "OTHERFILTER";
+
+    struct MockFilter : public IContentFilter, public IContentFilterFactory
+    {
+        bool evaluate(
+                const SerializedPayload& /*payload*/,
+                const FilterSampleInfo& /*sample_info*/,
+                const GUID_t& /*reader_guid*/) const override
+        {
+            return true;
+        }
+
+        ReturnCode_t create_content_filter(
+                const char* /*filter_class_name*/,
+                const char* /*type_name*/,
+                const TopicDataType* /*data_type*/,
+                const char* filter_expression,
+                const ParameterSeq& filter_parameters,
+                IContentFilter*& filter_instance) override
+        {
+            if (nullptr != filter_expression)
+            {
+                std::string s(filter_expression);
+                if (filter_parameters.length() == std::count(s.begin(), s.end(), '%'))
+                {
+                    filter_instance = this;
+                    return ReturnCode_t::RETCODE_OK;
+                }
+            }
+
+            return ReturnCode_t::RETCODE_BAD_PARAMETER;
+        }
+
+        virtual ReturnCode_t delete_content_filter(
+                const char* /*filter_class_name*/,
+                IContentFilter* filter_instance) override
+        {
+            if (this == filter_instance)
+            {
+                return ReturnCode_t::RETCODE_OK;
+            }
+
+            return ReturnCode_t::RETCODE_BAD_PARAMETER;
+        }
+
+    };
+
+    MockFilter test_filter;
+    std::string very_long_name(512, ' ');
+
+    // Create two participants
+    DomainParticipant* participant =
+            DomainParticipantFactory::get_instance()->create_participant(0, PARTICIPANT_QOS_DEFAULT);
+    ASSERT_NE(participant, nullptr);
+    DomainParticipant* participant2 =
+            DomainParticipantFactory::get_instance()->create_participant(0, PARTICIPANT_QOS_DEFAULT);
+    ASSERT_NE(participant2, nullptr);
+
+    // Create a type and a topics
+    TypeSupport type(new TopicDataTypeMock());
+    ASSERT_EQ(type.register_type(participant), ReturnCode_t::RETCODE_OK);
+    ASSERT_EQ(type.register_type(participant2), ReturnCode_t::RETCODE_OK);
+
+    Topic* topic = participant->create_topic("topic", type.get_type_name(), TOPIC_QOS_DEFAULT);
+    ASSERT_NE(topic, nullptr);
+    Topic* topic2 = participant2->create_topic("topic", type.get_type_name(), TOPIC_QOS_DEFAULT);
+    ASSERT_NE(topic2, nullptr);
+
+    // Negative tests for create_contentfilteredtopic and delete_contentfilteredtopic
+    {
+        EXPECT_EQ(nullptr,
+                participant->create_contentfilteredtopic(
+                    "contentfilteredtopic",
+                    topic,
+                    "INVALID SQL EXPRESSION",
+                    std::vector<std::string>({ "a", "b" })));
+        EXPECT_EQ(nullptr,
+                participant->create_contentfilteredtopic(
+                    "contentfilteredtopic",
+                    nullptr,
+                    "INVALID SQL EXPRESSION",
+                    std::vector<std::string>({ "a", "b" })));
+        EXPECT_EQ(nullptr,
+                participant->create_contentfilteredtopic("contentfilteredtopic", topic, "", {}, nullptr));
+
+        EXPECT_EQ(ReturnCode_t::RETCODE_BAD_PARAMETER, participant->delete_contentfilteredtopic(nullptr));
+    }
+
+    // Negative tests for register_content_filter_factory
+    {
+        EXPECT_EQ(ReturnCode_t::RETCODE_BAD_PARAMETER,
+                participant->register_content_filter_factory(nullptr, &test_filter));
+        EXPECT_EQ(ReturnCode_t::RETCODE_BAD_PARAMETER,
+                participant->register_content_filter_factory(very_long_name.c_str(), &test_filter));
+        EXPECT_EQ(ReturnCode_t::RETCODE_BAD_PARAMETER,
+                participant->register_content_filter_factory(TEST_FILTER_CLASS, nullptr));
+        EXPECT_EQ(ReturnCode_t::RETCODE_PRECONDITION_NOT_MET,
+                participant->register_content_filter_factory(FASTDDS_SQLFILTER_NAME, &test_filter));
+    }
+
+    // Negative tests for lookup_content_filter_factory
+    {
+        EXPECT_EQ(nullptr, participant->lookup_content_filter_factory(nullptr));
+        EXPECT_EQ(nullptr, participant->lookup_content_filter_factory(FASTDDS_SQLFILTER_NAME));
+        EXPECT_EQ(nullptr, participant->lookup_content_filter_factory(TEST_FILTER_CLASS));
+    }
+
+    // Negative tests for unregister_content_filter_factory
+    {
+        EXPECT_EQ(ReturnCode_t::RETCODE_BAD_PARAMETER, participant->unregister_content_filter_factory(nullptr));
+        EXPECT_EQ(ReturnCode_t::RETCODE_PRECONDITION_NOT_MET,
+                participant->unregister_content_filter_factory(FASTDDS_SQLFILTER_NAME));
+        EXPECT_EQ(ReturnCode_t::RETCODE_PRECONDITION_NOT_MET,
+                participant->unregister_content_filter_factory(TEST_FILTER_CLASS));
+    }
+
+    // Custom filter factory registration
+    {
+        // Register filter factory
+        EXPECT_EQ(ReturnCode_t::RETCODE_OK,
+                participant->register_content_filter_factory(TEST_FILTER_CLASS, &test_filter));
+        // Lookup should return same pointer as the one registered
+        EXPECT_EQ(&test_filter, participant->lookup_content_filter_factory(TEST_FILTER_CLASS));
+        // But not for other filter class name
+        EXPECT_EQ(nullptr, participant->lookup_content_filter_factory(OTHER_FILTER_CLASS));
+        // Should not be able to register twice
+        EXPECT_EQ(ReturnCode_t::RETCODE_PRECONDITION_NOT_MET,
+                participant->register_content_filter_factory(TEST_FILTER_CLASS, &test_filter));
+        // Unregister filter factory
+        EXPECT_EQ(ReturnCode_t::RETCODE_OK,
+                participant->unregister_content_filter_factory(TEST_FILTER_CLASS));
+        // Lookup should now return nullptr
+        EXPECT_EQ(nullptr, participant->lookup_content_filter_factory(TEST_FILTER_CLASS));
+        // Unregister twice should fail
+        EXPECT_EQ(ReturnCode_t::RETCODE_PRECONDITION_NOT_MET,
+                participant->unregister_content_filter_factory(TEST_FILTER_CLASS));
+    }
+
+    // Custom filter registration and creation of filtered topic
+    {
+        EXPECT_EQ(nullptr,
+                participant->create_contentfilteredtopic("contentfilteredtopic", topic, "", {}, TEST_FILTER_CLASS));
+
+        // Register two filter factories to ensure traversal of collections
+        EXPECT_EQ(ReturnCode_t::RETCODE_OK,
+                participant->register_content_filter_factory(TEST_FILTER_CLASS, &test_filter));
+        EXPECT_EQ(ReturnCode_t::RETCODE_OK,
+                participant->register_content_filter_factory(OTHER_FILTER_CLASS, &test_filter));
+
+        // Negative tests for custom filtered topic creation
+        EXPECT_EQ(nullptr,
+                participant->create_contentfilteredtopic(topic->get_name(), topic, "", {}, TEST_FILTER_CLASS));
+        EXPECT_EQ(nullptr,
+                participant->create_contentfilteredtopic("contentfilteredtopic", topic2, "", {}, TEST_FILTER_CLASS));
+        EXPECT_EQ(nullptr,
+                participant->create_contentfilteredtopic("contentfilteredtopic", nullptr, "", {}, TEST_FILTER_CLASS));
+        EXPECT_EQ(nullptr,
+                participant->create_contentfilteredtopic("contentfilteredtopic", topic, "", {""}, TEST_FILTER_CLASS));
+        EXPECT_EQ(nullptr,
+                participant->create_contentfilteredtopic("contentfilteredtopic", topic, "%%", {""}, TEST_FILTER_CLASS));
+
+        // Possitive test
+        ContentFilteredTopic* filtered_topic = participant->create_contentfilteredtopic("contentfilteredtopic", topic,
+                        "", {}, TEST_FILTER_CLASS);
+        ASSERT_NE(nullptr, filtered_topic);
+        EXPECT_EQ(filtered_topic, participant->lookup_topicdescription("contentfilteredtopic"));
+
+        // Should fail to create same filter twice
+        EXPECT_EQ(nullptr,
+                participant->create_contentfilteredtopic("contentfilteredtopic", topic, "", {}, TEST_FILTER_CLASS));
+
+        // Create on the other filter class to ensure traversal of collections
+        ContentFilteredTopic* filtered_topic2 = participant->create_contentfilteredtopic("contentfilteredtopic2",
+                        topic, "", {}, OTHER_FILTER_CLASS);
+        ASSERT_NE(nullptr, filtered_topic2);
+        EXPECT_EQ(filtered_topic2, participant->lookup_topicdescription("contentfilteredtopic2"));
+
+        // Should not be able to delete topic, since it is referenced by filtered_topic
+        EXPECT_EQ(ReturnCode_t::RETCODE_PRECONDITION_NOT_MET, participant->delete_topic(topic));
+
+        // Should not be able to unregister filter factory, since it is referenced by filtered_topic
+        EXPECT_EQ(ReturnCode_t::RETCODE_PRECONDITION_NOT_MET,
+                participant->unregister_content_filter_factory(TEST_FILTER_CLASS));
+        EXPECT_EQ(ReturnCode_t::RETCODE_PRECONDITION_NOT_MET,
+                participant->unregister_content_filter_factory(OTHER_FILTER_CLASS));
+
+        // Reference filtered_topic by creating a DataReader
+        auto subscriber = participant->create_subscriber(SUBSCRIBER_QOS_DEFAULT);
+        ASSERT_NE(nullptr, subscriber);
+        auto data_reader = subscriber->create_datareader(filtered_topic, DATAREADER_QOS_DEFAULT);
+        ASSERT_NE(nullptr, data_reader);
+
+        // Should not be able to delete filtered_topic, since it is referenced by data_reader
+        EXPECT_EQ(ReturnCode_t::RETCODE_PRECONDITION_NOT_MET, participant->delete_contentfilteredtopic(filtered_topic));
+        EXPECT_EQ(filtered_topic, participant->lookup_topicdescription("contentfilteredtopic"));
+
+        EXPECT_EQ(ReturnCode_t::RETCODE_OK, subscriber->delete_datareader(data_reader));
+        EXPECT_EQ(ReturnCode_t::RETCODE_OK, participant->delete_subscriber(subscriber));
+
+        // Should be able to delete filtered_topic, but only on correct participant
+        EXPECT_EQ(ReturnCode_t::RETCODE_PRECONDITION_NOT_MET,
+                participant2->delete_contentfilteredtopic(filtered_topic));
+        EXPECT_EQ(filtered_topic, participant->lookup_topicdescription("contentfilteredtopic"));
+        EXPECT_EQ(ReturnCode_t::RETCODE_OK, participant->delete_contentfilteredtopic(filtered_topic));
+        EXPECT_EQ(nullptr, participant->lookup_topicdescription("contentfilteredtopic"));
+        EXPECT_EQ(ReturnCode_t::RETCODE_OK, participant->delete_contentfilteredtopic(filtered_topic2));
+
+        // Unregister filter factories
+        EXPECT_EQ(ReturnCode_t::RETCODE_OK,
+                participant->unregister_content_filter_factory(TEST_FILTER_CLASS));
+        EXPECT_EQ(ReturnCode_t::RETCODE_OK,
+                participant->unregister_content_filter_factory(OTHER_FILTER_CLASS));
+    }
+
+    ASSERT_EQ(participant2->delete_topic(topic2), ReturnCode_t::RETCODE_OK);
+    ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant2), ReturnCode_t::RETCODE_OK);
+    ASSERT_EQ(participant->delete_topic(topic), ReturnCode_t::RETCODE_OK);
+    ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), ReturnCode_t::RETCODE_OK);
+}
 
 /*
  * This test checks that the following methods are not implemented and returns an error
- *  create_contentfilteredtopic
- *  delete_contentfilteredtopic
  *  create_multitopic
  *  delete_multitopic
  *  find_topic
@@ -3088,17 +3316,6 @@ TEST(ParticipantTests, UnsupportedMethods)
 
     Topic* topic = participant->create_topic("topic", type.get_type_name(), TOPIC_QOS_DEFAULT);
     ASSERT_NE(topic, nullptr);
-
-    ASSERT_EQ(
-        participant->create_contentfilteredtopic(
-            "contentfilteredtopic",
-            topic,
-            "filter_expression",
-            std::vector<std::string>({"a", "b"})),
-        nullptr);
-
-    // nullptr use as there are not such a class
-    ASSERT_EQ(participant->delete_contentfilteredtopic(nullptr), ReturnCode_t::RETCODE_UNSUPPORTED);
 
     ASSERT_EQ(
         participant->create_multitopic(
