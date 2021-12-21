@@ -116,7 +116,7 @@ public:
 #ifdef _WIN32 // We are running windows
         ASSERT_EQ(0,
                 std::system ("powershell -C \"softhsm2-util --show-slots | sls 'Serial number:\\s*([\\d\\w]+)' | " \
-                             "% { $_.Matches.Groups[1].Value } | Out-File -FilePath softhsm_serial -Encoding ASCII\""));
+                "% { $_.Matches.Groups[1].Value } | Out-File -FilePath softhsm_serial -Encoding ASCII\""));
 #else // We are running something with sh
         ASSERT_EQ(0,
                 std::system ("softhsm2-util --show-slots | grep -oP 'Serial number:\\s*\\K(\\d|\\w)+' > softhsm_serial"));
@@ -197,8 +197,8 @@ public:
     {
         ASSERT_NE(tokens.end(), tokens.find(token_id));
 
-	std::stringstream cmd;
-	cmd << "softhsm2-util --import " << key_file << " --token " << token_id << " --label " << key_label
+        std::stringstream cmd;
+        cmd << "softhsm2-util --import " << key_file << " --token " << token_id << " --label " << key_label
             << " --pin " << hsm_token_pin << " --id " << key_id << "";
         // Import the key
         ASSERT_EQ(0,
