@@ -203,6 +203,13 @@ if(WIN32)
         )
 endif()
 
+# OpenSSL on Windows requires a hint on which config file to load
+if(WIN32 AND OPENSSL_FOUND)
+    get_filename_component(OPENSSL_DIR "${OPENSSL_INCLUDE_DIR}" DIRECTORY)
+    set(OPENSSL_CONF "${OPENSSL_DIR}/bin/cnf/openssl.cnf")
+    unset(OPENSSL_DIR)
+endif()
+
 ###############################################################################
 # Blackbox tests
 ###############################################################################
@@ -343,6 +350,7 @@ if(FASTRTPS_API_TESTS)
         "W_UNICAST_PORT_RANDOM_NUMBER=${W_UNICAST_PORT_RANDOM_NUMBER}"
         "R_UNICAST_PORT_RANDOM_NUMBER=${R_UNICAST_PORT_RANDOM_NUMBER}"
         "MULTICAST_PORT_RANDOM_NUMBER=${MULTICAST_PORT_RANDOM_NUMBER}"
+        $<$<BOOL:${OPENSSL_CONF}>:"OPENSSL_CONF=${OPENSSL_CONF}">
         IGNORE ${pkcs_filter}
         )
 endif(FASTRTPS_API_TESTS)
@@ -389,6 +397,7 @@ if(FASTDDS_PIM_API_TESTS)
         "W_UNICAST_PORT_RANDOM_NUMBER=${W_UNICAST_PORT_RANDOM_NUMBER}"
         "R_UNICAST_PORT_RANDOM_NUMBER=${R_UNICAST_PORT_RANDOM_NUMBER}"
         "MULTICAST_PORT_RANDOM_NUMBER=${MULTICAST_PORT_RANDOM_NUMBER}"
+        $<$<BOOL:${OPENSSL_CONF}>:"OPENSSL_CONF=${OPENSSL_CONF}">
         IGNORE ${pkcs_filter}
         )
 endif(FASTDDS_PIM_API_TESTS)
