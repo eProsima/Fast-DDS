@@ -215,7 +215,9 @@ endif()
 ###############################################################################
 
 # Filter pksc11 related tests if library is not available
-if(NOT LibP11_FOUND)
+# TODO: restore for windows when CI gets operational
+#if(NOT LibP11_FOUND)
+if(WIN32 OR NOT LibP11_FOUND)
     if(GTEST_INDIVIDUAL)
         set(pkcs_filter "[Pp][Kk][Cc][Ss]")
     else()
