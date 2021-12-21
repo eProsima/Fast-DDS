@@ -398,8 +398,7 @@ private:
         if (!is_valid)
         {
             logWarning(RTPS_READER,
-                    "Change " << change->sequenceNumber << " from " << wp->guid() <<
-                    " is overidden");
+                    "Change " << change->sequenceNumber << " from " << change->writerGUID << " is overidden");
             return false;
         }
 
