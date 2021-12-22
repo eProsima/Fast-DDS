@@ -96,7 +96,7 @@ void ReqRepHelloWorldReplier::init()
     ASSERT_TRUE(participant_->is_enabled());
 
     // Register type
-    type_.reset(new HelloWorldType());
+    type_.reset(new HelloWorldPubSubType());
     ASSERT_EQ(participant_->register_type(type_), ReturnCode_t::RETCODE_OK);
 
     configDatareader("Request");

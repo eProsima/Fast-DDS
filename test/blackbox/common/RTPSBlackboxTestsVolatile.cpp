@@ -67,8 +67,8 @@ public:
 // Test created to check a bug with writers that use BEST_EFFORT WITH VOLATILE that don't remove messages from history.
 TEST_P(Volatile, AsyncPubSubAsNonReliableVolatileKeepAllHelloworld)
 {
-    RTPSAsSocketReader<HelloWorldType> reader(TEST_TOPIC_NAME);
-    RTPSAsSocketWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
+    RTPSAsSocketReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+    RTPSAsSocketWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
     std::string ip("239.255.1.4");
 
     reader.reliability(eprosima::fastrtps::rtps::ReliabilityKind_t::BEST_EFFORT).

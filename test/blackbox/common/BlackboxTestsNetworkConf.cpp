@@ -95,7 +95,7 @@ static void GetIP6s(
 
 TEST_P(NetworkConfig, pub_unique_network_flows)
 {
-    PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
 
     PropertyPolicy properties;
     properties.properties().emplace_back("fastdds.unique_network_flows", "");
@@ -115,7 +115,7 @@ TEST_P(NetworkConfig, sub_unique_network_flows)
 {
     // Two readers on the same participant requesting unique flows should give different listening locators
     {
-        PubSubParticipant<HelloWorldType> participant(0, 2, 0, 0);
+        PubSubParticipant<HelloWorldPubSubType> participant(0, 2, 0, 0);
 
         PropertyPolicy properties;
         properties.properties().emplace_back("fastdds.unique_network_flows", "");
@@ -142,7 +142,7 @@ TEST_P(NetworkConfig, sub_unique_network_flows)
 
     // Two readers on the same participant not requesting unique flows should give the same listening locators
     {
-        PubSubParticipant<HelloWorldType> participant(0, 2, 0, 0);
+        PubSubParticipant<HelloWorldPubSubType> participant(0, 2, 0, 0);
 
         participant.sub_topic_name(TEST_TOPIC_NAME);
 
@@ -168,8 +168,8 @@ TEST_P(NetworkConfig, sub_unique_network_flows)
 //Verify that outLocatorList is used to select the desired output channel
 TEST_P(NetworkConfig, PubSubOutLocatorSelection)
 {
-    PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
-    PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
 
     Locator_t locator;
     locator.kind = use_udpv4 ? LOCATOR_KIND_UDPv4 : LOCATOR_KIND_UDPv6;
@@ -216,8 +216,8 @@ TEST_P(NetworkConfig, PubSubOutLocatorSelection)
 
 TEST_P(NetworkConfig, PubSubInterfaceWhitelistLocalhost)
 {
-    PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
-    PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
 
     ip = use_udpv4 ? "127.0.0.1" : "::1";
 
@@ -253,8 +253,8 @@ TEST_P(NetworkConfig, PubSubInterfaceWhitelistLocalhost)
 
 TEST_P(NetworkConfig, PubSubInterfaceWhitelistUnicast)
 {
-    PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
-    PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
 
     std::vector<IPFinder::info_IP> interfaces;
     use_udpv4 ? GetIP4s(interfaces) : GetIP6s(interfaces);
@@ -292,7 +292,7 @@ TEST_P(NetworkConfig, PubSubInterfaceWhitelistUnicast)
 
 TEST_P(NetworkConfig, SubGetListeningLocators)
 {
-    PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
 
     if (!use_udpv4)
     {
@@ -325,7 +325,7 @@ TEST_P(NetworkConfig, SubGetListeningLocators)
 
 TEST_P(NetworkConfig, PubGetSendingLocators)
 {
-    PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
 
     constexpr uint32_t port = 31337u;
 
@@ -349,7 +349,7 @@ TEST_P(NetworkConfig, PubGetSendingLocators)
 
 TEST_P(NetworkConfig, PubGetSendingLocatorsWhitelist)
 {
-    PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
 
     std::vector<IPFinder::info_IP> interfaces;
     use_udpv4 ? GetIP4s(interfaces) : GetIP6s(interfaces);

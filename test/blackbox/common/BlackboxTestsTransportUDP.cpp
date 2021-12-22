@@ -76,7 +76,7 @@ public:
 
 TEST_P(TransportUDP, UDPTransportWrongConfigMaxMessageSize)
 {
-    PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
 
     test_transport_->maxMessageSize = 100000;
 
@@ -88,7 +88,7 @@ TEST_P(TransportUDP, UDPTransportWrongConfigMaxMessageSize)
 
 TEST_P(TransportUDP, UDPTransportWrongConfigSendBufferSize)
 {
-    PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
 
     test_transport_->sendBufferSize = 64000;
 
@@ -100,7 +100,7 @@ TEST_P(TransportUDP, UDPTransportWrongConfigSendBufferSize)
 
 TEST_P(TransportUDP, UDPTransportWrongConfigReceiveBufferSize)
 {
-    PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
 
     test_transport_->receiveBufferSize = 64000;
 
@@ -113,8 +113,8 @@ TEST_P(TransportUDP, UDPTransportWrongConfigReceiveBufferSize)
 // TODO - GASCO: UDPMaxInitialPeer tests should use static discovery through initial peers.
 TEST_P(TransportUDP, UDPMaxInitialPeer_P0_4_P3)
 {
-    PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
-    PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
 
     // Disallow multicast discovery
     eprosima::fastrtps::rtps::LocatorList_t loc;
@@ -144,8 +144,8 @@ TEST_P(TransportUDP, UDPMaxInitialPeer_P0_4_P3)
 
 TEST_P(TransportUDP, UDPMaxInitialPeer_P0_4_P4)
 {
-    PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
-    PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
 
     // Disallow multicast discovery
     eprosima::fastrtps::rtps::LocatorList_t loc;
@@ -175,8 +175,8 @@ TEST_P(TransportUDP, UDPMaxInitialPeer_P0_4_P4)
 
 TEST_P(TransportUDP, UDPMaxInitialPeer_P5_4_P4)
 {
-    PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
-    PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
 
     // Disallow multicast discovery
     eprosima::fastrtps::rtps::LocatorList_t loc;
@@ -205,8 +205,8 @@ TEST_P(TransportUDP, UDPMaxInitialPeer_P5_4_P4)
 
 TEST_P(TransportUDP, UDPMaxInitialPeer_P5_6_P4)
 {
-    PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
-    PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
 
     // Disallow multicast discovery
     eprosima::fastrtps::rtps::LocatorList_t loc;
@@ -237,7 +237,7 @@ TEST_P(TransportUDP, UDPMaxInitialPeer_P5_6_P4)
 // Used to reproduce VPN environment issue with multicast.
 TEST_P(TransportUDP, MulticastCommunicationBadReader)
 {
-    PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
 
     ip0 = use_udpv4 ? "127.0.0.1" : "::1";
     ip1 = use_udpv4 ? "239.255.1.4" : "ff1e::ffff:efff:104";
@@ -251,7 +251,7 @@ TEST_P(TransportUDP, MulticastCommunicationBadReader)
 
     ASSERT_TRUE(writer.isInitialized());
 
-    PubSubReader<HelloWorldType> readerMultiBad(TEST_TOPIC_NAME);
+    PubSubReader<HelloWorldPubSubType> readerMultiBad(TEST_TOPIC_NAME);
     readerMultiBad.disable_builtin_transport().add_user_transport_to_pparams(test_transport_);
     readerMultiBad.add_to_metatraffic_multicast_locator_list(ip1, global_port);
     readerMultiBad.init();
@@ -268,7 +268,7 @@ TEST_P(TransportUDP, MulticastCommunicationBadReader)
 // Used to reproduce VPN environment issue with multicast.
 TEST_P(TransportUDP, MulticastCommunicationOkReader)
 {
-    PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
 
     ip0 = use_udpv4 ? "127.0.0.1" : "::1";
     ip2 = use_udpv4 ? "239.255.1.5" : "ff1e::ffff:efff:105";
@@ -287,7 +287,7 @@ TEST_P(TransportUDP, MulticastCommunicationOkReader)
 
         ASSERT_TRUE(writer.isInitialized());
 
-        PubSubReader<HelloWorldType> readerMultiOk(TEST_TOPIC_NAME);
+        PubSubReader<HelloWorldPubSubType> readerMultiOk(TEST_TOPIC_NAME);
         readerMultiOk.disable_builtin_transport().add_user_transport_to_pparams(test_transport_);
         readerMultiOk.add_to_metatraffic_multicast_locator_list(ip2, global_port);
         readerMultiOk.init();
@@ -304,7 +304,7 @@ TEST_P(TransportUDP, MulticastCommunicationOkReader)
 // #4420 Using whitelists in localhost sometimes UDP doesn't receive the release input channel message.
 TEST_P(TransportUDP, whitelisting_udp_localhost_multi)
 {
-    PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
 
     ip0 = use_udpv4 ? "127.0.0.1" : "::1";
 
@@ -323,7 +323,7 @@ TEST_P(TransportUDP, whitelisting_udp_localhost_multi)
 
         for (int i = 0; i < 200; ++i)
         {
-            PubSubReader<HelloWorldType> readerMultiOk(TEST_TOPIC_NAME);
+            PubSubReader<HelloWorldPubSubType> readerMultiOk(TEST_TOPIC_NAME);
             readerMultiOk.disable_builtin_transport().add_user_transport_to_pparams(test_transport_);
             readerMultiOk.init();
 
@@ -340,8 +340,8 @@ TEST_P(TransportUDP, whitelisting_udp_localhost_multi)
 // Checking correct copying of participant user data locators to the writers/readers
 TEST_P(TransportUDP, DefaultMulticastLocatorsParticipant)
 {
-    PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
-    PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
     size_t writer_samples = 5;
 
     ip1 = use_udpv4 ? "239.255.0.1" : "ff1e::ffff:efff:1";
@@ -385,13 +385,13 @@ TEST_P(TransportUDP, MetatrafficMulticastLocatorsParticipant)
 
     ip1 = use_udpv4 ? "239.255.1.1" : "ff1e::ffff:efff:101";
 
-    PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
     writer.disable_builtin_transport().add_user_transport_to_pparams(test_transport_);
     writer.add_to_metatraffic_multicast_locator_list(ip1, 22222);
     writer.init();
     ASSERT_TRUE(writer.isInitialized());
 
-    PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
     reader.disable_builtin_transport().add_user_transport_to_pparams(test_transport_);
     reader.add_to_metatraffic_multicast_locator_list(ip1, 22222);
     reader.init();
@@ -417,8 +417,8 @@ TEST_P(TransportUDP, MetatrafficMulticastLocatorsParticipant)
 // Checking correct copying of participant user data locators to the writers/readers
 TEST_P(TransportUDP, DefaultMulticastLocatorsParticipantZeroPort)
 {
-    PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
-    PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
     size_t writer_samples = 5;
 
     ip1 = use_udpv4 ? "239.255.0.1" : "ff1e::ffff:efff:1";
@@ -462,13 +462,13 @@ TEST_P(TransportUDP, MetatrafficMulticastLocatorsParticipantZeroPort)
 
     ip1 = use_udpv4 ? "239.255.1.1" : "ff1e::ffff:efff:101";
 
-    PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
     writer.disable_builtin_transport().add_user_transport_to_pparams(test_transport_);
     writer.add_to_metatraffic_multicast_locator_list(ip1, 0);
     writer.init();
     ASSERT_TRUE(writer.isInitialized());
 
-    PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
     reader.disable_builtin_transport().add_user_transport_to_pparams(test_transport_);
     reader.add_to_metatraffic_multicast_locator_list(ip1, 0);
     reader.init();
@@ -500,7 +500,7 @@ TEST_P(TransportUDP, whitelisting_udp_localhost_alone)
 
     for (int i = 0; i < 200; ++i)
     {
-        PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
+        PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
         writer.disable_builtin_transport().add_user_transport_to_pparams(test_transport_);
         writer.init();
         ASSERT_TRUE(writer.isInitialized());

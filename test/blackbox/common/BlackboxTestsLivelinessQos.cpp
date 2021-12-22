@@ -91,8 +91,8 @@ public:
 //! Tests that when kind is automatic liveliness is never lost, even if the writer never sends data
 TEST_P(LivelinessQos, Liveliness_Automatic_Reliable)
 {
-    PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
-    PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
 
     config_pdp(writer, reader);
 
@@ -145,8 +145,8 @@ TEST_P(LivelinessQos, Liveliness_Automatic_Reliable)
 //! Same as above using best-effort reliability
 TEST_P(LivelinessQos, Liveliness_Automatic_BestEffort)
 {
-    PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
-    PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
 
     config_pdp(writer, reader);
 
@@ -201,8 +201,8 @@ TEST_P(LivelinessQos, Liveliness_Automatic_BestEffort)
 //! Reader is reliable, and MANUAL_BY_PARTICIPANT
 TEST_P(LivelinessQos, ShortLiveliness_ManualByParticipant_Reliable)
 {
-    PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
-    PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
 
     config_pdp(writer, reader);
 
@@ -287,8 +287,8 @@ TEST_P(LivelinessQos, ShortLiveliness_ManualByParticipant_Reliable)
 //! Reader is best-effort, and MANUAL_BY_PARTICIPANT
 TEST_P(LivelinessQos, ShortLiveliness_ManualByParticipant_BestEffort)
 {
-    PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
-    PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
 
     config_pdp(writer, reader);
 
@@ -373,8 +373,8 @@ TEST_P(LivelinessQos, ShortLiveliness_ManualByParticipant_BestEffort)
 //! Reader is best-effort, and MANUAL_BY_PARTICIPANT
 TEST_P(LivelinessQos, LongLiveliness_ManualByParticipant_Reliable)
 {
-    PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
-    PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
 
     config_pdp(writer, reader);
 
@@ -453,8 +453,8 @@ TEST_P(LivelinessQos, LongLiveliness_ManualByParticipant_Reliable)
 //! Reader is best-effort, and MANUAL_BY_PARTICIPANT
 TEST_P(LivelinessQos, LongLiveliness_ManualByParticipant_BestEffort)
 {
-    PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
-    PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
 
     config_pdp(writer, reader);
 
@@ -533,8 +533,8 @@ TEST_P(LivelinessQos, LongLiveliness_ManualByParticipant_BestEffort)
 //! Reader is reliable, and MANUAL_BY_TOPIC
 TEST_P(LivelinessQos, ShortLiveliness_ManualByTopic_Reliable)
 {
-    PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
-    PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
 
     config_pdp(writer, reader);
 
@@ -617,8 +617,8 @@ TEST_P(LivelinessQos, ShortLiveliness_ManualByTopic_Reliable)
 //! Reader is best-effort, and MANUAL_BY_TOPIC
 TEST_P(LivelinessQos, ShortLiveliness_ManualByTopic_BestEffort)
 {
-    PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
-    PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
 
     config_pdp(writer, reader);
 
@@ -699,8 +699,8 @@ TEST_P(LivelinessQos, ShortLiveliness_ManualByTopic_BestEffort)
 //! Reader is reliable, and MANUAL_BY_TOPIC
 TEST_P(LivelinessQos, LongLiveliness_ManualByTopic_Reliable)
 {
-    PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
-    PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
 
     config_pdp(writer, reader);
 
@@ -779,8 +779,8 @@ TEST_P(LivelinessQos, LongLiveliness_ManualByTopic_Reliable)
 //! Reader is best-effort, and MANUAL_BY_TOPIC
 TEST_P(LivelinessQos, LongLiveliness_ManualByTopic_BestEffort)
 {
-    PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
-    PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
 
     config_pdp(writer, reader);
 
@@ -859,8 +859,8 @@ TEST_P(LivelinessQos, LongLiveliness_ManualByTopic_BestEffort)
 //! Reader is reliable, liveliness is automatic
 TEST_P(LivelinessQos, LongLiveliness_ManualByParticipant_Automatic_Reliable)
 {
-    PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
-    PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
 
     config_pdp(writer, reader);
 
@@ -917,8 +917,8 @@ TEST_P(LivelinessQos, LongLiveliness_ManualByParticipant_Automatic_Reliable)
 //! Reader is reliable, liveliness is automatic
 TEST_P(LivelinessQos, ShortLiveliness_ManualByParticipant_Automatic_Reliable)
 {
-    PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
-    PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
 
     config_pdp(writer, reader);
 
@@ -979,8 +979,8 @@ TEST_P(LivelinessQos, ShortLiveliness_ManualByParticipant_Automatic_Reliable)
 //! Reader is best-effort, liveliness is automatic
 TEST_P(LivelinessQos, LongLiveliness_ManualByParticipant_Automatic_BestEffort)
 {
-    PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
-    PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
 
     config_pdp(writer, reader);
 
@@ -1038,8 +1038,8 @@ TEST_P(LivelinessQos, LongLiveliness_ManualByParticipant_Automatic_BestEffort)
 //! Liveliness is short in comparison to the writer write/assert rate
 TEST_P(LivelinessQos, ShortLiveliness_ManualByParticipant_Automatic_BestEffort)
 {
-    PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
-    PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
 
     config_pdp(writer, reader);
 
@@ -1100,8 +1100,8 @@ TEST_P(LivelinessQos, ShortLiveliness_ManualByParticipant_Automatic_BestEffort)
 //! Reader is reliable, and uses automatic liveliness kind
 TEST_P(LivelinessQos, ShortLiveliness_ManualByTopic_Automatic_Reliable)
 {
-    PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
-    PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
 
     config_pdp(writer, reader);
 
@@ -1161,8 +1161,8 @@ TEST_P(LivelinessQos, ShortLiveliness_ManualByTopic_Automatic_Reliable)
 //! Reader is best-effort, and uses automatic liveliness kind
 TEST_P(LivelinessQos, ShortLiveliness_ManualByTopic_Automatic_BestEffort)
 {
-    PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
-    PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
 
     config_pdp(writer, reader);
 
@@ -1222,8 +1222,8 @@ TEST_P(LivelinessQos, ShortLiveliness_ManualByTopic_Automatic_BestEffort)
 //! Reader is reliable, and uses manual by participant liveliness kind
 TEST_P(LivelinessQos, ShortLiveliness_ManualByTopic_ManualByParticipant_Reliable)
 {
-    PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
-    PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
 
     config_pdp(writer, reader);
 
@@ -1283,8 +1283,8 @@ TEST_P(LivelinessQos, ShortLiveliness_ManualByTopic_ManualByParticipant_Reliable
 //! Reader is best-effort, and uses manual by participant liveliness kind
 TEST_P(LivelinessQos, ShortLiveliness_ManualByTopic_ManualByParticipant_BestEffort)
 {
-    PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
-    PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
 
     config_pdp(writer, reader);
 
@@ -1351,7 +1351,7 @@ TEST_P(LivelinessQos, TwoWriters_OneReader_ManualByParticipant)
     unsigned int announcement_period_ms = 1;
 
     // Publishers
-    PubSubParticipant<HelloWorldType> publishers(num_pub, 0u, 2u, 0u);
+    PubSubParticipant<HelloWorldPubSubType> publishers(num_pub, 0u, 2u, 0u);
     ASSERT_TRUE(publishers.init_participant());
     publishers.pub_topic_name(TEST_TOPIC_NAME)
             .reliability(RELIABLE_RELIABILITY_QOS)
@@ -1367,7 +1367,7 @@ TEST_P(LivelinessQos, TwoWriters_OneReader_ManualByParticipant)
     ASSERT_TRUE(publishers.init_publisher(1u));
 
     // Subscribers
-    PubSubParticipant<HelloWorldType> subscribers(0u, num_sub, 0u, 2u);
+    PubSubParticipant<HelloWorldPubSubType> subscribers(0u, num_sub, 0u, 2u);
     ASSERT_TRUE(subscribers.init_participant());
     subscribers.sub_topic_name(TEST_TOPIC_NAME)
             .reliability(RELIABLE_RELIABILITY_QOS)
@@ -1399,7 +1399,7 @@ TEST_P(LivelinessQos, TwoWriters_TwoReaders_ManualByParticipant)
     unsigned int announcement_period_ms = 1;
 
     // Publishers
-    PubSubParticipant<HelloWorldType> publishers(num_pub, 0u, num_sub, 0u);
+    PubSubParticipant<HelloWorldPubSubType> publishers(num_pub, 0u, num_sub, 0u);
     ASSERT_TRUE(publishers.init_participant());
     publishers.pub_topic_name(TEST_TOPIC_NAME + "1")
             .pub_liveliness_announcement_period(announcement_period_ms * 1e-3)
@@ -1413,7 +1413,7 @@ TEST_P(LivelinessQos, TwoWriters_TwoReaders_ManualByParticipant)
     ASSERT_TRUE(publishers.init_publisher(1u));
 
     // Subscribers
-    PubSubParticipant<HelloWorldType> subscribers(0u, num_sub, 0u, num_pub);
+    PubSubParticipant<HelloWorldPubSubType> subscribers(0u, num_sub, 0u, num_pub);
     ASSERT_TRUE(subscribers.init_participant());
     subscribers.sub_topic_name(TEST_TOPIC_NAME + "1")
             .sub_liveliness_lease_duration(lease_duration_ms * 1e-3)
@@ -1455,7 +1455,7 @@ TEST_P(LivelinessQos, TwoWriters_TwoReaders_ManualByTopic)
     unsigned int announcement_period_ms = 1;
 
     // Publishers
-    PubSubParticipant<HelloWorldType> publishers(num_pub, 0u, num_sub, 0u);
+    PubSubParticipant<HelloWorldPubSubType> publishers(num_pub, 0u, num_sub, 0u);
     ASSERT_TRUE(publishers.init_participant());
     publishers.pub_topic_name(TEST_TOPIC_NAME + "1")
             .reliability(RELIABLE_RELIABILITY_QOS)
@@ -1471,7 +1471,7 @@ TEST_P(LivelinessQos, TwoWriters_TwoReaders_ManualByTopic)
     ASSERT_TRUE(publishers.init_publisher(1u));
 
     // Subscribers
-    PubSubParticipant<HelloWorldType> subscribers(0u, num_sub, 0u, num_pub);
+    PubSubParticipant<HelloWorldPubSubType> subscribers(0u, num_sub, 0u, num_pub);
     ASSERT_TRUE(subscribers.init_participant());
     subscribers.sub_topic_name(TEST_TOPIC_NAME + "1")
             .reliability(RELIABLE_RELIABILITY_QOS)
@@ -1516,7 +1516,7 @@ TEST_P(LivelinessQos, TwoWriters_TwoReaders)
     unsigned int announcement_period_ms = 1;
 
     // Publishers
-    PubSubParticipant<HelloWorldType> publishers(num_pub, 0u, 3u, 0u);
+    PubSubParticipant<HelloWorldPubSubType> publishers(num_pub, 0u, 3u, 0u);
     ASSERT_TRUE(publishers.init_participant());
     publishers.pub_topic_name(TEST_TOPIC_NAME)
             .reliability(RELIABLE_RELIABILITY_QOS)
@@ -1532,7 +1532,7 @@ TEST_P(LivelinessQos, TwoWriters_TwoReaders)
     ASSERT_TRUE(publishers.init_publisher(1u));
 
     // Subscribers
-    PubSubParticipant<HelloWorldType> subscribers(0u, num_sub, 0u, 3u);
+    PubSubParticipant<HelloWorldPubSubType> subscribers(0u, num_sub, 0u, 3u);
     ASSERT_TRUE(subscribers.init_participant());
     subscribers.sub_topic_name(TEST_TOPIC_NAME)
             .reliability(RELIABLE_RELIABILITY_QOS)
@@ -1570,7 +1570,7 @@ TEST_P(LivelinessQos, ThreeWriters_ThreeReaders)
     unsigned int announcement_period_ms = 1;
 
     // Publishers
-    PubSubParticipant<HelloWorldType> publishers(num_pub, 0u, 6u, 0u);
+    PubSubParticipant<HelloWorldPubSubType> publishers(num_pub, 0u, 6u, 0u);
     ASSERT_TRUE(publishers.init_participant());
     publishers.pub_topic_name(TEST_TOPIC_NAME)
             .reliability(RELIABLE_RELIABILITY_QOS)
@@ -1592,7 +1592,7 @@ TEST_P(LivelinessQos, ThreeWriters_ThreeReaders)
     ASSERT_TRUE(publishers.init_publisher(2u));
 
     // Subscribers
-    PubSubParticipant<HelloWorldType> subscribers(0u, num_sub, 0u, 6u);
+    PubSubParticipant<HelloWorldPubSubType> subscribers(0u, num_sub, 0u, 6u);
     ASSERT_TRUE(subscribers.init_participant());
     subscribers.sub_topic_name(TEST_TOPIC_NAME)
             .reliability(RELIABLE_RELIABILITY_QOS)
@@ -1649,7 +1649,7 @@ TEST_P(LivelinessQos, UnmatchedWriter)
     unsigned int announcement_period_ms = 250;
 
     // Publishers
-    PubSubParticipant<HelloWorldType> publishers(num_pub, 0u, 2u, 0u);
+    PubSubParticipant<HelloWorldPubSubType> publishers(num_pub, 0u, 2u, 0u);
     ASSERT_TRUE(publishers.init_participant());
     publishers.pub_topic_name(TEST_TOPIC_NAME)
             .pub_liveliness_lease_duration(lease_duration_ms * 1e-3)
@@ -1659,7 +1659,7 @@ TEST_P(LivelinessQos, UnmatchedWriter)
     ASSERT_TRUE(publishers.init_publisher(0u));
 
     // Subscribers
-    PubSubParticipant<HelloWorldType> subscribers(0u, num_sub, 0u, 2u);
+    PubSubParticipant<HelloWorldPubSubType> subscribers(0u, num_sub, 0u, 2u);
     ASSERT_TRUE(subscribers.init_participant());
     subscribers.sub_topic_name(TEST_TOPIC_NAME)
             .sub_liveliness_lease_duration(lease_duration_ms * 1e-3)
@@ -1688,8 +1688,8 @@ TEST_P(LivelinessQos, UnmatchedWriter)
 //! Reader is reliable, and MANUAL_BY_TOPIC
 TEST_P(LivelinessQos, LivelinessChangedStatus_Alive_NotAlive)
 {
-    PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
-    PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
 
     config_pdp(writer, reader);
 
@@ -1745,8 +1745,8 @@ TEST_P(LivelinessQos, LivelinessChangedStatus_Alive_NotAlive)
 //! Reader is reliable, and MANUAL_BY_TOPIC
 TEST_P(LivelinessQos, LivelinessChangedStatus_Alive_Unmatched)
 {
-    PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
-    PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
 
     config_pdp(writer, reader);
 
@@ -1798,8 +1798,8 @@ TEST_P(LivelinessQos, LivelinessChangedStatus_Alive_Unmatched)
 //! Reader is reliable, and MANUAL_BY_TOPIC
 TEST_P(LivelinessQos, LivelinessChangedStatus_NotAlive_Unmatched)
 {
-    PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
-    PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
 
     config_pdp(writer, reader);
 
@@ -1859,7 +1859,7 @@ TEST_P(LivelinessQos, AssertLivelinessParticipant)
     unsigned int announcement_period_ms = 10;
 
     // Publishers
-    PubSubParticipant<HelloWorldType> publishers(num_pub, 0u, 0u, 0u);
+    PubSubParticipant<HelloWorldPubSubType> publishers(num_pub, 0u, 0u, 0u);
     ASSERT_TRUE(publishers.init_participant());
     publishers.pub_topic_name(TEST_TOPIC_NAME)
             .reliability(RELIABLE_RELIABILITY_QOS)

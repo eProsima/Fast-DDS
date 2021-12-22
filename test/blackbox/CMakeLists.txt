@@ -227,20 +227,20 @@ endif() # LibP11_FOUND
 
 file(GLOB RTPS_BLACKBOXTESTS_TEST_SOURCE "common/RTPSBlackboxTests*.cpp")
 set(RTPS_BLACKBOXTESTS_SOURCE ${RTPS_BLACKBOXTESTS_TEST_SOURCE}
-    types/HelloWorld.cpp
-    types/HelloWorldType.cpp
-    types/KeyedHelloWorld.cpp
-    types/KeyedHelloWorldType.cpp
-    types/String.cpp
-    types/StringType.cpp
-    types/Data64kb.cpp
-    types/Data64kbType.cpp
-    types/Data1mb.cpp
-    types/Data1mbType.cpp
-    types/KeyedData1mb.cpp
-    types/KeyedData1mbType.cpp
-    types/FixedSized.cpp
-    types/FixedSizedType.cpp
+    types/HelloWorld.cxx
+    types/HelloWorldPubSubTypes.cxx
+    types/KeyedHelloWorld.cxx
+    types/KeyedHelloWorldPubSubTypes.cxx
+    types/String.cxx
+    types/StringPubSubTypes.cxx
+    types/Data64kb.cxx
+    types/Data64kbPubSubTypes.cxx
+    types/Data1mb.cxx
+    types/Data1mbPubSubTypes.cxx
+    types/KeyedData1mb.cxx
+    types/KeyedData1mbPubSubTypes.cxx
+    types/FixedSized.cxx
+    types/FixedSizedPubSubTypes.cxx
 
     utils/data_generators.cpp
     utils/lambda_functions.cpp
@@ -261,20 +261,20 @@ add_blackbox_gtest(BlackboxTests_RTPS SOURCES ${RTPS_BLACKBOXTESTS_TEST_SOURCE} 
 
 file(GLOB BLACKBOXTESTS_TEST_SOURCE "common/BlackboxTests*.cpp")
 set(BLACKBOXTESTS_SOURCE ${BLACKBOXTESTS_TEST_SOURCE}
-    types/HelloWorld.cpp
-    types/HelloWorldType.cpp
-    types/KeyedHelloWorld.cpp
-    types/KeyedHelloWorldType.cpp
-    types/String.cpp
-    types/StringType.cpp
-    types/Data64kb.cpp
-    types/Data64kbType.cpp
-    types/Data1mb.cpp
-    types/Data1mbType.cpp
-    types/KeyedData1mb.cpp
-    types/KeyedData1mbType.cpp
-    types/FixedSized.cpp
-    types/FixedSizedType.cpp
+    types/HelloWorld.cxx
+    types/HelloWorldPubSubTypes.cxx
+    types/KeyedHelloWorld.cxx
+    types/KeyedHelloWorldPubSubTypes.cxx
+    types/String.cxx
+    types/StringPubSubTypes.cxx
+    types/Data64kb.cxx
+    types/Data64kbPubSubTypes.cxx
+    types/Data1mb.cxx
+    types/Data1mbPubSubTypes.cxx
+    types/KeyedData1mb.cxx
+    types/KeyedData1mbPubSubTypes.cxx
+    types/FixedSized.cxx
+    types/FixedSizedPubSubTypes.cxx
 
     utils/data_generators.cpp
     utils/lambda_functions.cpp

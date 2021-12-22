@@ -28,13 +28,13 @@
 #include <unistd.h>
 #endif // if defined(_WIN32)
 
-#include "../types/HelloWorldType.h"
-#include "../types/FixedSizedType.h"
-#include "../types/KeyedHelloWorldType.h"
-#include "../types/StringType.h"
-#include "../types/Data64kbType.h"
-#include "../types/Data1mbType.h"
-#include "../types/KeyedData1mbType.h"
+#include "../types/HelloWorldPubSubTypes.h"
+#include "../types/FixedSizedPubSubTypes.h"
+#include "../types/KeyedHelloWorldPubSubTypes.h"
+#include "../types/StringPubSubTypes.h"
+#include "../types/Data64kbPubSubTypes.h"
+#include "../types/Data1mbPubSubTypes.h"
+#include "../types/KeyedData1mbPubSubTypes.h"
 
 #include <algorithm>
 #include <cstddef>
@@ -99,7 +99,7 @@ void default_send_print(
 
 template<>
 void default_send_print(
-        const StringType&);
+        const String&);
 
 template<>
 void default_send_print(

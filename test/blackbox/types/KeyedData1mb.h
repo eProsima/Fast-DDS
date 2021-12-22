@@ -107,8 +107,19 @@ public:
     eProsima_user_DllExport KeyedData1mb& operator =(
             KeyedData1mb&& x);
 
-    bool operator ==(
-            const KeyedData1mb& x) const;
+    /*!
+     * @brief Comparison operator.
+     * @param x KeyedData1mb object to compare.
+     */
+    eProsima_user_DllExport bool operator ==(
+            const KeyedData1mb& x);
+
+    /*!
+     * @brief Comparison operator.
+     * @param x KeyedData1mb object to compare.
+     */
+    eProsima_user_DllExport bool operator !=(
+            const KeyedData1mb& x);
 
     /*!
      * @brief This function sets a value in member key

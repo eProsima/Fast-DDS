@@ -20,7 +20,7 @@
 #ifndef _TEST_BLACKBOX_REQREPHELLOWORLDREPLIER_HPP_
 #define _TEST_BLACKBOX_REQREPHELLOWORLDREPLIER_HPP_
 
-#include "../../types/HelloWorldType.h"
+#include "../../types/HelloWorldPubSubTypes.h"
 
 #include <fastdds/dds/subscriber/DataReaderListener.hpp>
 #include <fastdds/dds/subscriber/qos/DataReaderQos.hpp>

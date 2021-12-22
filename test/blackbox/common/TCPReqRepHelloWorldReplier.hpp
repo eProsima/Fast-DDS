@@ -20,7 +20,7 @@
 #ifndef _TEST_BLACKBOX_TCPReqRepHelloWorldReplier_HPP_
 #define _TEST_BLACKBOX_TCPReqRepHelloWorldReplier_HPP_
 
-#include "../types/HelloWorldType.h"
+#include "../types/HelloWorldPubSubTypes.h"
 
 #include <fastrtps/fastrtps_fwd.h>
 #include <fastrtps/subscriber/SubscriberListener.h>
@@ -181,7 +181,7 @@ private:
     std::mutex mutexDiscovery_;
     std::condition_variable cvDiscovery_;
     std::atomic<unsigned int> matched_;
-    HelloWorldType type_;
+    HelloWorldPubSubType type_;
 };
 
 #endif // _TEST_BLACKBOX_TCPReqRepHelloWorldReplier_HPP_

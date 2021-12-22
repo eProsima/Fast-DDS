@@ -31,8 +31,8 @@ using test_SharedMemTransportDescriptor = eprosima::fastdds::rtps::test_SharedMe
 
 TEST(SHM, TransportPubSub)
 {
-    PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
-    PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
 
     // Number of samples written by writer
     uint32_t writer_samples = 15;
@@ -72,8 +72,8 @@ TEST(SHM, TransportPubSub)
 
 TEST(SHM, Test300KFragmentation)
 {
-    PubSubReader<Data1mbType> reader(TEST_TOPIC_NAME);
-    PubSubWriter<Data1mbType> writer(TEST_TOPIC_NAME);
+    PubSubReader<Data1mbPubSubType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<Data1mbPubSubType> writer(TEST_TOPIC_NAME);
 
     auto data = default_data300kb_data_generator(1);
     auto data_size = data.front().data().size();
@@ -124,8 +124,8 @@ TEST(SHM, Test300KFragmentation)
 
 TEST(SHM, Test300KNoFragmentation)
 {
-    PubSubReader<Data1mbType> reader(TEST_TOPIC_NAME);
-    PubSubWriter<Data1mbType> writer(TEST_TOPIC_NAME);
+    PubSubReader<Data1mbPubSubType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<Data1mbPubSubType> writer(TEST_TOPIC_NAME);
 
     auto data = default_data300kb_data_generator(1);
     auto data_size = data.front().data().size();
@@ -182,8 +182,8 @@ TEST(SHM, Test300KNoFragmentation)
 
 TEST(SHM, SHM_UDP_300KFragmentation)
 {
-    PubSubReader<Data1mbType> reader(TEST_TOPIC_NAME);
-    PubSubWriter<Data1mbType> writer(TEST_TOPIC_NAME);
+    PubSubReader<Data1mbPubSubType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<Data1mbPubSubType> writer(TEST_TOPIC_NAME);
 
     // Number of samples written by writer
     uint32_t writer_samples = 1;
@@ -246,8 +246,8 @@ TEST(SHM, SHM_UDP_300KFragmentation)
 
 TEST(SHM, UDPvsSHM_UDP)
 {
-    PubSubReader<Data1mbType> reader(TEST_TOPIC_NAME);
-    PubSubWriter<Data1mbType> writer(TEST_TOPIC_NAME);
+    PubSubReader<Data1mbPubSubType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<Data1mbPubSubType> writer(TEST_TOPIC_NAME);
 
     // Number of samples written by writer
     uint32_t writer_samples = 1;
@@ -308,8 +308,8 @@ TEST(SHM, UDPvsSHM_UDP)
 
 TEST(SHM, SHM_UDPvsUDP)
 {
-    PubSubReader<Data1mbType> reader(TEST_TOPIC_NAME);
-    PubSubWriter<Data1mbType> writer(TEST_TOPIC_NAME);
+    PubSubReader<Data1mbPubSubType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<Data1mbPubSubType> writer(TEST_TOPIC_NAME);
 
     // Number of samples written by writer
     uint32_t writer_samples = 1;

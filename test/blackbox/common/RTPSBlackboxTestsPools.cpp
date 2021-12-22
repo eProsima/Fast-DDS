@@ -302,8 +302,8 @@ void do_test(
 TEST_P(RTPSCustomPools, CreateFailsWithInvalidPool)
 {
     std::shared_ptr<IPayloadPool> no_pool;
-    RTPSWithRegistrationReader<HelloWorldType> reader(TEST_TOPIC_NAME);
-    RTPSWithRegistrationWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
+    RTPSWithRegistrationReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+    RTPSWithRegistrationWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
 
     reader.payload_pool(no_pool).init();
     EXPECT_FALSE(reader.isInitialized());
@@ -315,49 +315,49 @@ TEST_P(RTPSCustomPools, CreateFailsWithInvalidPool)
 TEST_P(RTPSCustomPools, RTPSAsReliableWithRegistrationNoPools)
 {
     auto data = default_helloworld_data_generator();
-    do_test<HelloWorld, HelloWorldType>(TEST_TOPIC_NAME, data, false, false, false);
+    do_test<HelloWorld, HelloWorldPubSubType>(TEST_TOPIC_NAME, data, false, false, false);
 }
 
 TEST_P(RTPSCustomPools, RTPSAsReliableWithRegistrationReaderPool)
 {
     auto data = default_helloworld_data_generator();
-    do_test<HelloWorld, HelloWorldType>(TEST_TOPIC_NAME, data, false, true, false);
+    do_test<HelloWorld, HelloWorldPubSubType>(TEST_TOPIC_NAME, data, false, true, false);
 }
 
 TEST_P(RTPSCustomPools, RTPSAsReliableWithRegistrationWriterPool)
 {
     auto data = default_helloworld_data_generator();
-    do_test<HelloWorld, HelloWorldType>(TEST_TOPIC_NAME, data, true, false, false);
+    do_test<HelloWorld, HelloWorldPubSubType>(TEST_TOPIC_NAME, data, true, false, false);
 }
 
 TEST_P(RTPSCustomPools, RTPSAsReliableWithRegistrationBothPools)
 {
     auto data = default_helloworld_data_generator();
-    do_test<HelloWorld, HelloWorldType>(TEST_TOPIC_NAME, data, true, true, GetParam() == INTRAPROCESS);
+    do_test<HelloWorld, HelloWorldPubSubType>(TEST_TOPIC_NAME, data, true, true, GetParam() == INTRAPROCESS);
 }
 
 TEST_P(RTPSCustomPools, RTPSAsReliableWithRegistrationNoPools300Kb)
 {
     auto data = default_data300kb_data_generator();
-    do_test<Data1mb, Data1mbType>(TEST_TOPIC_NAME, data, false, false, false);
+    do_test<Data1mb, Data1mbPubSubType>(TEST_TOPIC_NAME, data, false, false, false);
 }
 
 TEST_P(RTPSCustomPools, RTPSAsReliableWithRegistrationReaderPool300Kb)
 {
     auto data = default_data300kb_data_generator();
-    do_test<Data1mb, Data1mbType>(TEST_TOPIC_NAME, data, false, true, false);
+    do_test<Data1mb, Data1mbPubSubType>(TEST_TOPIC_NAME, data, false, true, false);
 }
 
 TEST_P(RTPSCustomPools, RTPSAsReliableWithRegistrationWriterPool300Kb)
 {
     auto data = default_data300kb_data_generator();
-    do_test<Data1mb, Data1mbType>(TEST_TOPIC_NAME, data, true, false, false);
+    do_test<Data1mb, Data1mbPubSubType>(TEST_TOPIC_NAME, data, true, false, false);
 }
 
 TEST_P(RTPSCustomPools, RTPSAsReliableWithRegistrationBothPools300Kb)
 {
     auto data = default_data300kb_data_generator();
-    do_test<Data1mb, Data1mbType>(TEST_TOPIC_NAME, data, true, true, false);
+    do_test<Data1mb, Data1mbPubSubType>(TEST_TOPIC_NAME, data, true, true, false);
 }
 
 #ifdef INSTANTIATE_TEST_SUITE_P

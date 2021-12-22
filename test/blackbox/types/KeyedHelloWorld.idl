@@ -1,0 +1,7 @@
+struct KeyedHelloWorld
+{
+    @Key
+    unsigned short key;
+	unsigned short index;
+	string<128> message;
+};

@@ -94,7 +94,7 @@ void ReqRepHelloWorldRequester::init()
     ASSERT_TRUE(participant_->is_enabled());
 
     // Register type
-    type_.reset(new HelloWorldType());
+    type_.reset(new HelloWorldPubSubType());
     ASSERT_EQ(participant_->register_type(type_), ReturnCode_t::RETCODE_OK);
 
     reply_subscriber_ = participant_->create_subscriber(eprosima::fastdds::dds::SUBSCRIBER_QOS_DEFAULT);

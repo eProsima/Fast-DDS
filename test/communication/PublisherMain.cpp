@@ -1,6 +1,7 @@
 #include "Publisher.hpp"
 
 #include <fastrtps/Domain.h>
+#include <fastrtps/TopicDataType.h>
 
 int main(
         int argc,

@@ -85,7 +85,7 @@ public:
  */
 TEST_P(DDSStatus, IncompatibleQosConditions)
 {
-    PubSubWriterWithWaitsets<HelloWorldType> writer(TEST_TOPIC_NAME);
+    PubSubWriterWithWaitsets<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
     writer.reliability(eprosima::fastrtps::BEST_EFFORT_RELIABILITY_QOS)
             .durability_kind(eprosima::fastrtps::VOLATILE_DURABILITY_QOS)
             .init();
@@ -93,7 +93,7 @@ TEST_P(DDSStatus, IncompatibleQosConditions)
 
     // A Reader on the same Topic but with incompatible QoS
     // Should not match and trigger incompatible QoS conditions on both Writer and Reader
-    PubSubReaderWithWaitsets<HelloWorldType> incompatible_reliability_reader(TEST_TOPIC_NAME);
+    PubSubReaderWithWaitsets<HelloWorldPubSubType> incompatible_reliability_reader(TEST_TOPIC_NAME);
     incompatible_reliability_reader.reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS)
             .init();
     ASSERT_TRUE(incompatible_reliability_reader.isInitialized());
@@ -114,7 +114,7 @@ TEST_P(DDSStatus, IncompatibleQosConditions)
     // Should not match and trigger incompatible QoS condition on both Writer and Reader
     // Total count of incompatible QoS occurrences in Writer increments, and updates the latest incompatible QoS ID,
     // but old Reader stays the same
-    PubSubReaderWithWaitsets<HelloWorldType> incompatible_durability_reader(TEST_TOPIC_NAME);
+    PubSubReaderWithWaitsets<HelloWorldPubSubType> incompatible_durability_reader(TEST_TOPIC_NAME);
     incompatible_durability_reader.reliability(eprosima::fastrtps::BEST_EFFORT_RELIABILITY_QOS)
             .durability_kind(eprosima::fastrtps::TRANSIENT_LOCAL_DURABILITY_QOS)
             .init();
@@ -138,13 +138,13 @@ TEST_P(DDSStatus, IncompatibleQosConditions)
 
     // Create another two writers equal to the first one.
     // Incompatible readers increase incompatible QoS occurrences by two
-    PubSubWriterWithWaitsets<HelloWorldType> writer2(TEST_TOPIC_NAME);
+    PubSubWriterWithWaitsets<HelloWorldPubSubType> writer2(TEST_TOPIC_NAME);
     writer2.reliability(eprosima::fastrtps::BEST_EFFORT_RELIABILITY_QOS)
             .durability_kind(eprosima::fastrtps::VOLATILE_DURABILITY_QOS)
             .init();
     ASSERT_TRUE(writer2.isInitialized());
 
-    PubSubWriterWithWaitsets<HelloWorldType> writer3(TEST_TOPIC_NAME);
+    PubSubWriterWithWaitsets<HelloWorldPubSubType> writer3(TEST_TOPIC_NAME);
     writer3.reliability(eprosima::fastrtps::BEST_EFFORT_RELIABILITY_QOS)
             .durability_kind(eprosima::fastrtps::VOLATILE_DURABILITY_QOS)
             .init();
@@ -153,7 +153,7 @@ TEST_P(DDSStatus, IncompatibleQosConditions)
     // A compatible Reader on another Topic
     // Should not match but never trigger incompatible QoS conditions
     // Total count of incompatible QoS occurrences and latest incompatible QoS ID stay the same
-    PubSubReaderWithWaitsets<HelloWorldType> compatible_reader(INCOMPATIBLE_TEST_TOPIC_NAME);
+    PubSubReaderWithWaitsets<HelloWorldPubSubType> compatible_reader(INCOMPATIBLE_TEST_TOPIC_NAME);
     compatible_reader.reliability(eprosima::fastrtps::BEST_EFFORT_RELIABILITY_QOS)
             .durability_kind(eprosima::fastrtps::VOLATILE_DURABILITY_QOS)
             .deactivate_status_listener(eprosima::fastdds::dds::StatusMask::requested_incompatible_qos())
@@ -191,14 +191,14 @@ TEST_P(DDSStatus, IncompatibleQosConditions)
 
 TEST_P(DDSStatus, IncompatibleQosListeners)
 {
-    PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
     writer.reliability(eprosima::fastrtps::BEST_EFFORT_RELIABILITY_QOS)
             .durability_kind(eprosima::fastrtps::VOLATILE_DURABILITY_QOS).init();
     ASSERT_TRUE(writer.isInitialized());
 
     // A Reader on the same Topic but with incompatible QoS
     // Should not match and call incompatible QoS callback on both Writer and Reader
-    PubSubReader<HelloWorldType> incompatible_reliability_reader(TEST_TOPIC_NAME);
+    PubSubReader<HelloWorldPubSubType> incompatible_reliability_reader(TEST_TOPIC_NAME);
     incompatible_reliability_reader.reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).init();
     ASSERT_TRUE(incompatible_reliability_reader.isInitialized());
 
@@ -218,7 +218,7 @@ TEST_P(DDSStatus, IncompatibleQosListeners)
     // Should not match and call incompatible QoS callback on both Writer and Reader
     // Total count of incompatible QoS occurrences in Writer increments, and updates the latest incompatible QoS ID,
     // but old Reader stays the same
-    PubSubReader<HelloWorldType> incompatible_durability_reader(TEST_TOPIC_NAME);
+    PubSubReader<HelloWorldPubSubType> incompatible_durability_reader(TEST_TOPIC_NAME);
     incompatible_durability_reader.reliability(eprosima::fastrtps::BEST_EFFORT_RELIABILITY_QOS)
             .durability_kind(eprosima::fastrtps::TRANSIENT_LOCAL_DURABILITY_QOS).init();
     ASSERT_TRUE(incompatible_durability_reader.isInitialized());
@@ -241,12 +241,12 @@ TEST_P(DDSStatus, IncompatibleQosListeners)
 
     // Create another two writers equal to the first one.
     // Incompatible readers increase incompatible QoS occurrences by two
-    PubSubWriter<HelloWorldType> writer2(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldPubSubType> writer2(TEST_TOPIC_NAME);
     writer2.reliability(eprosima::fastrtps::BEST_EFFORT_RELIABILITY_QOS)
             .durability_kind(eprosima::fastrtps::VOLATILE_DURABILITY_QOS).init();
     ASSERT_TRUE(writer2.isInitialized());
 
-    PubSubWriter<HelloWorldType> writer3(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldPubSubType> writer3(TEST_TOPIC_NAME);
     writer3.reliability(eprosima::fastrtps::BEST_EFFORT_RELIABILITY_QOS)
             .durability_kind(eprosima::fastrtps::VOLATILE_DURABILITY_QOS).init();
     ASSERT_TRUE(writer3.isInitialized());
@@ -254,7 +254,7 @@ TEST_P(DDSStatus, IncompatibleQosListeners)
     // A compatible Reader on another Topic
     // Should not match but never call incompatible QoS callbacks
     // Total count of incompatible QoS occurrences and latest incompatible QoS ID stay the same
-    PubSubReader<HelloWorldType> compatible_reader(INCOMPATIBLE_TEST_TOPIC_NAME);
+    PubSubReader<HelloWorldPubSubType> compatible_reader(INCOMPATIBLE_TEST_TOPIC_NAME);
     compatible_reader.reliability(eprosima::fastrtps::BEST_EFFORT_RELIABILITY_QOS)
             .durability_kind(eprosima::fastrtps::VOLATILE_DURABILITY_QOS).init();
     ASSERT_TRUE(compatible_reader.isInitialized());
@@ -321,7 +321,7 @@ TEST_P(DDSStatus, IncompatibleQosGetters)
     eprosima::fastdds::dds::RequestedIncompatibleQosStatus wstatus;
     eprosima::fastdds::dds::RequestedIncompatibleQosStatus rstatus;
 
-    PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
     writer.reliability(eprosima::fastrtps::BEST_EFFORT_RELIABILITY_QOS)
             .durability_kind(eprosima::fastrtps::VOLATILE_DURABILITY_QOS)
             .deactivate_status_listener(eprosima::fastdds::dds::StatusMask::offered_incompatible_qos()).init();
@@ -329,7 +329,7 @@ TEST_P(DDSStatus, IncompatibleQosGetters)
 
     // A Reader on the same Topic but with incompatible QoS
     // Should not match and increase the incompatible QoS occurrences on both Writer and Reader
-    PubSubReader<HelloWorldType> incompatible_reliability_reader(TEST_TOPIC_NAME);
+    PubSubReader<HelloWorldPubSubType> incompatible_reliability_reader(TEST_TOPIC_NAME);
     incompatible_reliability_reader.reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS)
             .deactivate_status_listener(eprosima::fastdds::dds::StatusMask::requested_incompatible_qos()).init();
     ASSERT_TRUE(incompatible_reliability_reader.isInitialized());
@@ -361,7 +361,7 @@ TEST_P(DDSStatus, IncompatibleQosGetters)
     // Should not match and increase incompatible QoS occurrences on both Writer and Reader
     // Total count of incompatible QoS occurrences in Writer increments, and updates the latest incompatible QoS ID,
     // but old Reader stays the same
-    PubSubReader<HelloWorldType> incompatible_durability_reader(TEST_TOPIC_NAME);
+    PubSubReader<HelloWorldPubSubType> incompatible_durability_reader(TEST_TOPIC_NAME);
     incompatible_durability_reader.reliability(eprosima::fastrtps::BEST_EFFORT_RELIABILITY_QOS)
             .durability_kind(eprosima::fastrtps::TRANSIENT_LOCAL_DURABILITY_QOS)
             .deactivate_status_listener(eprosima::fastdds::dds::StatusMask::requested_incompatible_qos()).init();
@@ -403,13 +403,13 @@ TEST_P(DDSStatus, IncompatibleQosGetters)
 
     // Create another two writers equal to the first one.
     // Incompatible readers increase incompatible QoS occurrences by two
-    PubSubWriter<HelloWorldType> writer2(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldPubSubType> writer2(TEST_TOPIC_NAME);
     writer2.reliability(eprosima::fastrtps::BEST_EFFORT_RELIABILITY_QOS)
             .durability_kind(eprosima::fastrtps::VOLATILE_DURABILITY_QOS)
             .deactivate_status_listener(eprosima::fastdds::dds::StatusMask::offered_incompatible_qos()).init();
     ASSERT_TRUE(writer2.isInitialized());
 
-    PubSubWriter<HelloWorldType> writer3(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldPubSubType> writer3(TEST_TOPIC_NAME);
     writer3.reliability(eprosima::fastrtps::BEST_EFFORT_RELIABILITY_QOS)
             .durability_kind(eprosima::fastrtps::VOLATILE_DURABILITY_QOS)
             .deactivate_status_listener(eprosima::fastdds::dds::StatusMask::offered_incompatible_qos()).init();
@@ -417,7 +417,7 @@ TEST_P(DDSStatus, IncompatibleQosGetters)
 
     // A compatible Reader on another Topic
     // Should not match but never increase incompatible QoS occurrences
-    PubSubReader<HelloWorldType> compatible_reader(INCOMPATIBLE_TEST_TOPIC_NAME);
+    PubSubReader<HelloWorldPubSubType> compatible_reader(INCOMPATIBLE_TEST_TOPIC_NAME);
     compatible_reader.reliability(eprosima::fastrtps::BEST_EFFORT_RELIABILITY_QOS)
             .durability_kind(eprosima::fastrtps::VOLATILE_DURABILITY_QOS)
             .deactivate_status_listener(eprosima::fastdds::dds::StatusMask::requested_incompatible_qos()).init();
@@ -490,8 +490,8 @@ TEST_P(DDSStatus, IncompatibleQosGetters)
 
 TEST_P(DDSStatus, LivelinessConditions)
 {
-    PubSubReaderWithWaitsets<HelloWorldType> reader(TEST_TOPIC_NAME);
-    PubSubWriterWithWaitsets<HelloWorldType> writer(TEST_TOPIC_NAME);
+    PubSubReaderWithWaitsets<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+    PubSubWriterWithWaitsets<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
 
     constexpr unsigned int participant_announcement_period_ms = 50000;
 
@@ -576,8 +576,8 @@ TEST_P(DDSStatus, DeadlineConditions)
     // makes the writer send a few samples and checks that the deadline was missed every time
     // Uses a topic with no key
 
-    PubSubReaderWithWaitsets<HelloWorldType> reader(TEST_TOPIC_NAME);
-    PubSubWriterWithWaitsets<HelloWorldType> writer(TEST_TOPIC_NAME);
+    PubSubReaderWithWaitsets<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+    PubSubWriterWithWaitsets<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
 
     // Write rate in milliseconds
     uint32_t writer_sleep_ms = 1000;
@@ -617,9 +617,9 @@ TEST_P(DDSStatus, DeadlineConditions)
 
 TEST_P(DDSStatus, DataAvailableConditions)
 {
-    PubSubReaderWithWaitsets<HelloWorldType> reader(TEST_TOPIC_NAME);
-    PubSubWriterWithWaitsets<HelloWorldType> writer(TEST_TOPIC_NAME);
-    PubSubReaderWithWaitsets<HelloWorldType> subscriber_reader(TEST_TOPIC_NAME);
+    PubSubReaderWithWaitsets<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+    PubSubWriterWithWaitsets<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+    PubSubReaderWithWaitsets<HelloWorldPubSubType> subscriber_reader(TEST_TOPIC_NAME);
 
     // Waitset timeout in seconds
     uint32_t timeout_s = 2;

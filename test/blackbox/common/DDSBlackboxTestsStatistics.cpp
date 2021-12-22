@@ -23,7 +23,7 @@
 #include "BlackboxTests.hpp"
 
 #include "../types/HelloWorld.h"
-#include "../types/HelloWorldType.h"
+#include "../types/HelloWorldPubSubTypes.h"
 #include "PubSubReader.hpp"
 #include "PubSubWriter.hpp"
 
@@ -122,8 +122,8 @@ TEST(DDSStatistics, simple_statistics_datareaders)
 
     auto transport = std::make_shared<UDPv4TransportDescriptor>();
 
-    PubSubReader<HelloWorldType> data_reader(TEST_TOPIC_NAME);
-    PubSubWriter<HelloWorldType> data_writer(TEST_TOPIC_NAME);
+    PubSubReader<HelloWorldPubSubType> data_reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldPubSubType> data_writer(TEST_TOPIC_NAME);
 
     data_reader.disable_builtin_transport().add_user_transport_to_pparams(transport);
     data_writer.disable_builtin_transport().add_user_transport_to_pparams(transport);

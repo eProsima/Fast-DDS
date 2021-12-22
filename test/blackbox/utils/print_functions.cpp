@@ -68,7 +68,7 @@ void default_receive_print(
 
 template<>
 void default_send_print(
-        const StringType&)
+        const StringPubSubType&)
 {
     std::cout << "Sent StringType" << std::endl;
 }
