@@ -301,22 +301,23 @@ public:
 
         participant_ = eprosima::fastrtps::Domain::createParticipant(participant_attr, &participant_listener_);
 
-        ASSERT_NE(participant_, nullptr);
-
-        participant_guid_ = participant_->getGuid();
-
-        // Register type
-        ASSERT_EQ(eprosima::fastrtps::Domain::registerType(participant_, &type_), true);
-
-        //Create subscribe r
-        subscriber_ = eprosima::fastrtps::Domain::createSubscriber(participant_, subscriber_attr, &listener_);
-
-        if (subscriber_ != nullptr)
+        if (participant_ != nullptr)
         {
-            std::cout << "Created subscriber " << subscriber_->getGuid() << " for topic " <<
-                subscriber_attr_.topic.topicName << std::endl;
+            participant_guid_ = participant_->getGuid();
 
-            initialized_ = true;
+            // Register type
+            ASSERT_EQ(eprosima::fastrtps::Domain::registerType(participant_, &type_), true);
+
+            //Create subscribe r
+            subscriber_ = eprosima::fastrtps::Domain::createSubscriber(participant_, subscriber_attr, &listener_);
+
+            if (subscriber_ != nullptr)
+            {
+                std::cout << "Created subscriber " << subscriber_->getGuid() << " for topic " <<
+                    subscriber_attr_.topic.topicName << std::endl;
+
+                initialized_ = true;
+            }
         }
     }
 

@@ -56,10 +56,13 @@ add_executable(AccessControlTests ${COMMON_SOURCES_ACCESS_CONTROL_TEST_SOURCE}
     ${PROJECT_SOURCE_DIR}/src/cpp/security/accesscontrol/GovernanceParser.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/security/accesscontrol/Permissions.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/security/accesscontrol/PermissionsParser.cpp
+    ${PROJECT_SOURCE_DIR}/src/cpp/security/artifact_providers/FileProvider.cpp
+    ${PROJECT_SOURCE_DIR}/src/cpp/security/artifact_providers/Pkcs11Provider.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/utils/md5.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/utils/IPFinder.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/utils/IPLocator.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/utils/StringMatching.cpp
+    ${PROJECT_SOURCE_DIR}/src/cpp/utils/SystemInfo.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/publisher/qos/WriterQos.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/AccessControlTests.cpp)
 
@@ -91,6 +94,7 @@ target_link_libraries(AccessControlTests
     foonathan_memory
     $<$<BOOL:${WIN32}>:ws2_32>
     ${TINYXML2_LIBRARY}
+    $<$<BOOL:${LibP11_FOUND}>:eProsima_p11>  # $<TARGET_NAME_IF_EXISTS:eProsima_p11>
     )
 
 if(MSVC OR MSVC_IDE)

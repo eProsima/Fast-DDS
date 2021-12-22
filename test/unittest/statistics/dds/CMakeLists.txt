@@ -280,6 +280,7 @@ if (SQLITE3_SUPPORT AND FASTDDS_STATISTICS)
             ${PROJECT_SOURCE_DIR}/src/cpp/rtps/security/logging/Logging.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/rtps/security/SecurityManager.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/rtps/security/SecurityPluginFactory.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/security/artifact_providers/FileProvider.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/security/authentication/PKIDH.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/security/accesscontrol/Permissions.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/security/cryptography/AESGCMGMAC.cpp

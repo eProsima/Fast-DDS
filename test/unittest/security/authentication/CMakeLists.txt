@@ -44,9 +44,12 @@ add_executable(BuiltinPKIDH ${COMMON_SOURCES_AUTH_PLUGIN_TEST_SOURCE}
     ${PROJECT_SOURCE_DIR}/src/cpp/security/authentication/PKIDH.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/security/authentication/PKIIdentityHandle.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/security/authentication/PKIHandshakeHandle.cpp
+    ${PROJECT_SOURCE_DIR}/src/cpp/security/artifact_providers/FileProvider.cpp
+    ${PROJECT_SOURCE_DIR}/src/cpp/security/artifact_providers/Pkcs11Provider.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/utils/md5.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/utils/IPFinder.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/utils/IPLocator.cpp
+    ${PROJECT_SOURCE_DIR}/src/cpp/utils/SystemInfo.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/BuiltinPKIDHTests.cpp)
 target_compile_definitions(BuiltinPKIDH PRIVATE FASTRTPS_NO_LIB
     BOOST_ASIO_STANDALONE
@@ -61,7 +64,14 @@ target_include_directories(BuiltinPKIDH PRIVATE
     ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include
     ${PROJECT_SOURCE_DIR}/src/cpp
     )
-target_link_libraries(BuiltinPKIDH GTest::gtest ${OPENSSL_LIBRARIES} fastcdr foonathan_memory $<$<BOOL:${WIN32}>:ws2_32>)
+target_link_libraries(BuiltinPKIDH
+    GTest::gtest
+    ${OPENSSL_LIBRARIES}
+    fastcdr
+    foonathan_memory
+    $<$<BOOL:${WIN32}>:ws2_32>
+    $<$<BOOL:${LibP11_FOUND}>:eProsima_p11>  # $<TARGET_NAME_IF_EXISTS:eProsima_p11>
+    )
 add_gtest(BuiltinPKIDH
     SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/BuiltinPKIDHTests.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/AuthenticationPluginTests.hpp

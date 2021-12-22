@@ -93,6 +93,22 @@ choco install -y -s <PATH\TO\DOWNLOADS\> asio tinyxml2
 
 Please replace `<PATH\TO\DOWNLOADS>` with the folder you downloaded the packages to.
 
+##### Libp11 library
+
+Libp11 provides PKCS#11 support for openSSL. This is an optional dependency,
+that is needed only when *eprosima Fast DDS* is used with security and PKCS#11 URLs.
+
+On Linux, you can install libp11 using the package manager of your Linux distribution.
+For example, on Ubuntu you can install them by using its package manager with the next command.
+
+```bash
+sudo apt install libp11-dev libengine-pkcs11-openssl
+```
+
+On Windows, you can download and compile the library from this
+[ROS2 Github repository](https://github.com/OpenSC/libp11).
+Follow the instructions on the repository to compile it on your platform.
+
 #### Colcon installation
 
 [colcon](https://colcon.readthedocs.io) is a command line tool to build sets of software packages.

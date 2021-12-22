@@ -21,13 +21,19 @@ macro(add_blackbox_gtest)
         set(test "${ARGV0}")
         set(command "${test}")
     endif()
-    set(multiValueArgs SOURCES ENVIRONMENTS DEPENDENCIES LABELS)
+    set(multiValueArgs SOURCES ENVIRONMENTS DEPENDENCIES LABELS IGNORE)
     cmake_parse_arguments(GTEST "" "${uniValueArgs}" "${multiValueArgs}" ${ARGN})
 
     if(GTEST_NAME)
         set(test ${GTEST_NAME})
         set(command ${GTEST_COMMAND})
     endif()
+
+    # IGNORE keeps a filter expression for the test list:
+    #   +   if GTEST_INDIVIDUAL is enforced the expressions are regular expression and the matching tests would be disabled
+    #       using cmake add_test DISABLE property
+    #   +   if no GTEST_INDIVIDUAL is enforce the filtering will be added to gtest command via --gtest_filter and it's
+    #       own filtering syntax
 
     if(GTEST_INDIVIDUAL)
         if(WIN32)
@@ -55,6 +61,15 @@ macro(add_blackbox_gtest)
                 add_test(NAME ${test}.${GTEST_GROUP_NAME}.${GTEST_TEST_NAME}
                     COMMAND ${command} --gtest_filter=${GTEST_GROUP_NAME}.${GTEST_TEST_NAME})
 
+                # decide if disable
+                unset(GTEST_USER_DISABLED)
+                foreach(GTEST_USER_FILTER ${GTEST_IGNORE})
+                    string(REGEX MATCH ${GTEST_USER_FILTER} GTEST_USER_DISABLED ${GTEST_TEST_NAME})
+                    if(GTEST_USER_DISABLED)
+                        break()
+                    endif()
+                endforeach()
+
                 # Add environment
                 if(WIN32)
                     set_property(TEST ${test}.${GTEST_GROUP_NAME}.${GTEST_TEST_NAME} APPEND PROPERTY ENVIRONMENT "PATH=${WIN_PATH}")
@@ -64,8 +79,10 @@ macro(add_blackbox_gtest)
                     set_property(TEST ${test}.${GTEST_GROUP_NAME}.${GTEST_TEST_NAME} APPEND PROPERTY ENVIRONMENT "${property}")
                 endforeach()
 
-                # Add labels
-                set_property(TEST ${test}.${GTEST_GROUP_NAME}.${GTEST_TEST_NAME} PROPERTY LABELS "${GTEST_LABELS}")
+                # Add labels and enable
+                set_tests_properties(${test}.${GTEST_GROUP_NAME}.${GTEST_TEST_NAME} PROPERTIES
+                    LABELS "${GTEST_LABELS}"
+                    DISABLED $<BOOL:${GTEST_USER_DISABLED}>)
 
             endforeach()
             file(STRINGS ${GTEST_SOURCE_FILE} GTEST_TEST_NAMES REGEX "^TEST_P" )
@@ -77,6 +94,15 @@ macro(add_blackbox_gtest)
                 add_test(NAME ${test}.${GTEST_GROUP_NAME}.${GTEST_TEST_NAME}.Transport
                     COMMAND ${command} --gtest_filter=*/${GTEST_GROUP_NAME}.${GTEST_TEST_NAME}/Transport*)
 
+                # decide if disable
+                unset(GTEST_USER_DISABLED)
+                foreach(GTEST_USER_FILTER ${GTEST_IGNORE})
+                    string(REGEX MATCH ${GTEST_USER_FILTER} GTEST_USER_DISABLED ${GTEST_TEST_NAME})
+                    if(GTEST_USER_DISABLED)
+                        break()
+                    endif()
+                endforeach()
+
                 # Add environment
                 if(WIN32)
                     set_property(TEST ${test}.${GTEST_GROUP_NAME}.${GTEST_TEST_NAME}.Transport APPEND PROPERTY ENVIRONMENT "PATH=${WIN_PATH}")
@@ -86,8 +112,10 @@ macro(add_blackbox_gtest)
                     set_property(TEST ${test}.${GTEST_GROUP_NAME}.${GTEST_TEST_NAME}.Transport APPEND PROPERTY ENVIRONMENT "${property}")
                 endforeach()
 
-                # Add labels
-                set_property(TEST ${test}.${GTEST_GROUP_NAME}.${GTEST_TEST_NAME}.Transport PROPERTY LABELS "${GTEST_LABELS}")
+                # Add labels and enable
+                set_tests_properties(${test}.${GTEST_GROUP_NAME}.${GTEST_TEST_NAME}.Transport PROPERTIES
+                    LABELS "${GTEST_LABELS}"
+                    DISABLED $<BOOL:${GTEST_USER_DISABLED}>)
 
                 add_test(NAME ${test}.${GTEST_GROUP_NAME}.${GTEST_TEST_NAME}.Intraprocess
                     COMMAND ${command} --gtest_filter=*/${GTEST_GROUP_NAME}.${GTEST_TEST_NAME}/Intraprocess*)
@@ -101,8 +129,10 @@ macro(add_blackbox_gtest)
                     set_property(TEST ${test}.${GTEST_GROUP_NAME}.${GTEST_TEST_NAME}.Intraprocess APPEND PROPERTY ENVIRONMENT "${property}")
                 endforeach()
 
-                # Add labels
-                set_property(TEST ${test}.${GTEST_GROUP_NAME}.${GTEST_TEST_NAME}.Intraprocess PROPERTY LABELS "${GTEST_LABELS}")
+                # Add labels and enable
+                set_tests_properties(${test}.${GTEST_GROUP_NAME}.${GTEST_TEST_NAME}.Intraprocess PROPERTIES
+                    LABELS "${GTEST_LABELS}"
+                    DISABLED $<BOOL:${GTEST_USER_DISABLED}>)
 
                 if(${test} MATCHES ".*_DDS_PIM$")
                     add_test(NAME ${test}.${GTEST_GROUP_NAME}.${GTEST_TEST_NAME}.Datasharing
@@ -117,13 +147,22 @@ macro(add_blackbox_gtest)
                         set_property(TEST ${test}.${GTEST_GROUP_NAME}.${GTEST_TEST_NAME}.Datasharing APPEND PROPERTY ENVIRONMENT "${property}")
                     endforeach()
 
-                    # Add labels
-                    set_property(TEST ${test}.${GTEST_GROUP_NAME}.${GTEST_TEST_NAME}.Datasharing PROPERTY LABELS "${GTEST_LABELS}")
+                    # Add labels and enable
+                    set_tests_properties(${test}.${GTEST_GROUP_NAME}.${GTEST_TEST_NAME}.Datasharing PROPERTIES
+                        LABELS "${GTEST_LABELS}"
+                        DISABLED $<BOOL:${GTEST_USER_DISABLED}>)
+
                 endif()
 
             endforeach()
         endforeach()
     else()
+
+        # add filtering statement if required
+        if(GTEST_IGNORE)
+            set(command "${command} --gtest_filter=${GTEST_IGNORE}")
+        endif()
+
         add_test(NAME ${test} COMMAND ${command})
 
         # Add environment
@@ -164,9 +203,28 @@ if(WIN32)
         )
 endif()
 
+# OpenSSL on Windows requires a hint on which config file to load
+if(WIN32 AND OPENSSL_FOUND)
+    get_filename_component(OPENSSL_DIR "${OPENSSL_INCLUDE_DIR}" DIRECTORY)
+    set(OPENSSL_CONF "${OPENSSL_DIR}/bin/cnf/openssl.cnf")
+    unset(OPENSSL_DIR)
+endif()
+
 ###############################################################################
-# Unit tests
+# Blackbox tests
 ###############################################################################
+
+# Filter pksc11 related tests if library is not available
+# TODO: restore for windows when CI gets operational
+#if(NOT LibP11_FOUND)
+if(WIN32 OR NOT LibP11_FOUND)
+    if(GTEST_INDIVIDUAL)
+        set(pkcs_filter "[Pp][Kk][Cc][Ss]")
+    else()
+        set(pkcs_filter "-*pcks*")
+    endif() # GTEST_INDIVIDUAL
+endif() # LibP11_FOUND
+
 file(GLOB RTPS_BLACKBOXTESTS_TEST_SOURCE "common/RTPSBlackboxTests*.cpp")
 set(RTPS_BLACKBOXTESTS_SOURCE ${RTPS_BLACKBOXTESTS_TEST_SOURCE}
     types/HelloWorld.cpp
@@ -199,7 +257,7 @@ target_compile_definitions(BlackboxTests_RTPS PRIVATE
 target_include_directories(BlackboxTests_RTPS PRIVATE
     ${Asio_INCLUDE_DIR})
 target_link_libraries(BlackboxTests_RTPS fastrtps fastcdr foonathan_memory GTest::gtest)
-add_blackbox_gtest(BlackboxTests_RTPS SOURCES ${RTPS_BLACKBOXTESTS_TEST_SOURCE})
+add_blackbox_gtest(BlackboxTests_RTPS SOURCES ${RTPS_BLACKBOXTESTS_TEST_SOURCE} IGNORE ${pkcs_filter})
 
 file(GLOB BLACKBOXTESTS_TEST_SOURCE "common/BlackboxTests*.cpp")
 set(BLACKBOXTESTS_SOURCE ${BLACKBOXTESTS_TEST_SOURCE}
@@ -280,13 +338,22 @@ if(FASTRTPS_API_TESTS)
     target_include_directories(BlackboxTests_FastRTPS PRIVATE
         ${Asio_INCLUDE_DIR}
         api/fastrtps_deprecated)
-    target_link_libraries(BlackboxTests_FastRTPS fastrtps fastcdr foonathan_memory GTest::gtest)
+    target_link_libraries(BlackboxTests_FastRTPS
+        fastrtps
+        fastcdr
+        foonathan_memory
+        GTest::gtest
+        $<$<BOOL:${LibP11_FOUND}>:eProsima_p11>  # $<TARGET_NAME_IF_EXISTS:eProsima_p11>
+        )
+       
     add_blackbox_gtest(BlackboxTests_FastRTPS SOURCES ${BLACKBOXTESTS_TEST_SOURCE}
         ENVIRONMENTS "CERTS_PATH=${PROJECT_SOURCE_DIR}/test/certs"
         "TOPIC_RANDOM_NUMBER=${TOPIC_RANDOM_NUMBER}"
         "W_UNICAST_PORT_RANDOM_NUMBER=${W_UNICAST_PORT_RANDOM_NUMBER}"
         "R_UNICAST_PORT_RANDOM_NUMBER=${R_UNICAST_PORT_RANDOM_NUMBER}"
         "MULTICAST_PORT_RANDOM_NUMBER=${MULTICAST_PORT_RANDOM_NUMBER}"
+        $<$<BOOL:${OPENSSL_CONF}>:OPENSSL_CONF=${OPENSSL_CONF}>
+        IGNORE ${pkcs_filter}
         )
 endif(FASTRTPS_API_TESTS)
 
@@ -319,13 +386,21 @@ if(FASTDDS_PIM_API_TESTS)
     target_include_directories(BlackboxTests_DDS_PIM PRIVATE
         ${Asio_INCLUDE_DIR}
         api/dds-pim)
-    target_link_libraries(BlackboxTests_DDS_PIM fastrtps fastcdr foonathan_memory GTest::gtest)
+    target_link_libraries(BlackboxTests_DDS_PIM
+        fastrtps
+        fastcdr
+        foonathan_memory
+        GTest::gtest
+        $<$<BOOL:${LibP11_FOUND}>:eProsima_p11>  # $<TARGET_NAME_IF_EXISTS:eProsima_p11>
+        )
     add_blackbox_gtest(BlackboxTests_DDS_PIM SOURCES ${DDS_BLACKBOXTESTS_SOURCE}
         ENVIRONMENTS "CERTS_PATH=${PROJECT_SOURCE_DIR}/test/certs"
         "TOPIC_RANDOM_NUMBER=${TOPIC_RANDOM_NUMBER}"
         "W_UNICAST_PORT_RANDOM_NUMBER=${W_UNICAST_PORT_RANDOM_NUMBER}"
         "R_UNICAST_PORT_RANDOM_NUMBER=${R_UNICAST_PORT_RANDOM_NUMBER}"
         "MULTICAST_PORT_RANDOM_NUMBER=${MULTICAST_PORT_RANDOM_NUMBER}"
+        $<$<BOOL:${OPENSSL_CONF}>:OPENSSL_CONF=${OPENSSL_CONF}>
+        IGNORE ${pkcs_filter}
         )
 endif(FASTDDS_PIM_API_TESTS)
 

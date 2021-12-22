@@ -22,6 +22,9 @@
 #include "PubSubParticipant.hpp"
 
 #include <gtest/gtest.h>
+#include <fstream>
+#include <map>
+#include <algorithm>
 
 #include <fastrtps/xmlparser/XMLProfileManager.h>
 #include <fastdds/rtps/transport/shared_mem/SharedMemTransportDescriptor.h>
@@ -82,6 +85,151 @@ public:
     }
 
 };
+
+
+class SecurityPkcs : public ::testing::Test
+{
+public:
+
+    struct HsmToken
+    {
+        std::string pin;
+        std::string id;
+        std::string serial;
+        std::map<std::string, std::string> urls;
+    };
+
+    static void create_hsm_token(
+            const char* token_id)
+    {
+        // Init the token
+        std::stringstream cmd;
+        cmd << "softhsm2-util --init-token --free --label " << token_id << " --pin " << hsm_token_pin
+            << " --so-pin " << hsm_token_pin << "";
+        ASSERT_EQ(0, std::system (cmd.str().c_str()));
+        tokens[token_id] = HsmToken();
+        tokens[token_id].pin = hsm_token_pin;
+        tokens[token_id].id = token_id;
+
+        // Get the serial number of the HSM slot
+        std::stringstream serial_stream;
+#ifdef _WIN32 // We are running windows
+        ASSERT_EQ(0,
+                std::system ("powershell -C \"softhsm2-util --show-slots | sls 'Serial number:\\s*([\\d\\w]+)' | " \
+                "% { $_.Matches.Groups[1].Value } | Out-File -FilePath softhsm_serial -Encoding ASCII\""));
+#else // We are running something with sh
+        ASSERT_EQ(0,
+                std::system ("softhsm2-util --show-slots | grep -oP 'Serial number:\\s*\\K(\\d|\\w)+' > softhsm_serial"));
+#endif // _WIN32
+        serial_stream << std::ifstream("softhsm_serial").rdbuf();
+        std::remove ("softhsm_serial");
+
+        // Read each serial number one by one
+        while (!serial_stream.eof())
+        {
+            std::string serial;
+            serial_stream >> serial;
+            if (!serial.empty())
+            {
+                if (tokens.end() == std::find_if(tokens.begin(), tokens.end(), [&serial](std::pair<const char* const,
+                        const HsmToken> t)
+                        {
+                            return t.second.serial == serial;
+                        }))
+                {
+                    tokens[token_id].serial = serial;
+                    break;
+                }
+            }
+        }
+    }
+
+    static void delete_hsm_token(
+            const char* token_id)
+    {
+        auto it = tokens.find(token_id);
+        if (it != tokens.end())
+        {
+            // Delete the token
+            std::stringstream cmd;
+            cmd << "softhsm2-util --delete-token --token " << token_id << " --pin " << hsm_token_pin
+                << " --so-pin " << hsm_token_pin << "";
+            ASSERT_EQ(0, std::system (cmd.str().c_str()));
+            tokens.erase(it);
+        }
+    }
+
+    static void SetUpTestCase()
+    {
+        // Init the tokens
+        create_hsm_token(hsm_token_id_no_pin);
+        create_hsm_token(hsm_token_id_url_pin);
+        create_hsm_token(hsm_token_id_env_pin);
+
+        // Add the keys to the tokens
+        import_private_key(std::string(certs_path) + "/mainsubkey.pem", hsm_mainsubkey_label,
+                "1A2B3C", hsm_token_id_no_pin);
+        import_private_key(std::string(certs_path) + "/mainpubkey.pem", hsm_mainpubkey_label,
+                "ABCDEF", hsm_token_id_no_pin);
+        import_private_key(std::string(certs_path) + "/mainsubkey.pem", hsm_mainsubkey_label,
+                "123456", hsm_token_id_url_pin);
+        import_private_key(std::string(certs_path) + "/mainpubkey.pem", hsm_mainpubkey_label,
+                "789ABC", hsm_token_id_url_pin);
+        import_private_key(std::string(certs_path) + "/mainsubkey.pem", hsm_mainsubkey_label,
+                "2468AC", hsm_token_id_env_pin);
+        import_private_key(std::string(certs_path) + "/mainpubkey.pem", hsm_mainpubkey_label,
+                "13579B", hsm_token_id_env_pin);
+    }
+
+    static void TearDownTestCase()
+    {
+        // delete the tokens
+        delete_hsm_token(hsm_token_id_no_pin);
+        delete_hsm_token(hsm_token_id_url_pin);
+        delete_hsm_token(hsm_token_id_env_pin);
+    }
+
+    static void import_private_key(
+            const std::string& key_file,
+            const char* key_label,
+            const char* key_id,
+            const char* token_id)
+    {
+        ASSERT_NE(tokens.end(), tokens.find(token_id));
+
+        std::stringstream cmd;
+        cmd << "softhsm2-util --import " << key_file << " --token " << token_id << " --label " << key_label
+            << " --pin " << hsm_token_pin << " --id " << key_id << "";
+        // Import the key
+        ASSERT_EQ(0,
+                std::system(cmd.str().c_str()));
+        // Construct the key URL
+        std::stringstream id_url;
+        for (unsigned int i = 0; i < strlen(key_id); i += 2)
+        {
+            id_url << "%" << key_id[i] << key_id[i + 1];
+        }
+
+        tokens[token_id].urls[key_label] = "pkcs11:model=SoftHSM%20v2;manufacturer=SoftHSM%20project;serial=" +
+                tokens[token_id].serial + ";token=" + token_id + ";id=" + id_url.str() + ";object=" + key_label +
+                ";type=private";
+    }
+
+    static const char* const hsm_token_id_no_pin;
+    static const char* const hsm_token_id_url_pin;
+    static const char* const hsm_token_id_env_pin;
+
+    static constexpr const char* hsm_token_pin = "1234";
+    static constexpr const char* hsm_mainsubkey_label = "mainsubkey";
+    static constexpr const char* hsm_mainpubkey_label = "mainpubkey";
+
+    static std::map<const char*, HsmToken> tokens;
+};
+
+std::map<const char*, SecurityPkcs::HsmToken> SecurityPkcs::tokens;
+const char* const SecurityPkcs::hsm_token_id_no_pin = "testing_token_no_pin";
+const char* const SecurityPkcs::hsm_token_id_url_pin = "testing_token_url_pin";
+const char* const SecurityPkcs::hsm_token_id_env_pin = "testing_token_env_pin";
 
 TEST_P(Security, BuiltinAuthenticationPlugin_PKIDH_validation_ok)
 {
@@ -2895,6 +3043,157 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_valid
         reader.block_for_all();
     }
 }
+
+#if HAVE_LIBP11
+
+template <typename DataType>
+void prepare_pkcs11_nodes(
+        PubSubReader<DataType>& reader,
+        PubSubWriter<DataType>& writer,
+        const std::string& reader_private_key_url,
+        const std::string& writer_private_key_url)
+{
+    std::string governance_file("governance_helloworld_all_enable.smime");
+
+    // With no PIN, the load of the private key fails
+    PropertyPolicy pub_property_policy;
+    PropertyPolicy sub_property_policy;
+
+    sub_property_policy.properties().emplace_back(Property("dds.sec.auth.plugin",
+            "builtin.PKI-DH"));
+    sub_property_policy.properties().emplace_back(Property("dds.sec.auth.builtin.PKI-DH.identity_ca",
+            "file://" + std::string(certs_path) + "/maincacert.pem"));
+    sub_property_policy.properties().emplace_back(Property("dds.sec.auth.builtin.PKI-DH.identity_certificate",
+            "file://" + std::string(certs_path) + "/mainsubcert.pem"));
+    sub_property_policy.properties().emplace_back(Property("dds.sec.auth.builtin.PKI-DH.private_key",
+            reader_private_key_url));
+    sub_property_policy.properties().emplace_back(Property("dds.sec.crypto.plugin",
+            "builtin.AES-GCM-GMAC"));
+    sub_property_policy.properties().emplace_back(Property("dds.sec.access.plugin",
+            "builtin.Access-Permissions"));
+    sub_property_policy.properties().emplace_back(Property(
+                "dds.sec.access.builtin.Access-Permissions.permissions_ca",
+                "file://" + std::string(certs_path) + "/maincacert.pem"));
+    sub_property_policy.properties().emplace_back(Property("dds.sec.access.builtin.Access-Permissions.governance",
+            "file://" + std::string(certs_path) + "/" + governance_file));
+    sub_property_policy.properties().emplace_back(Property("dds.sec.access.builtin.Access-Permissions.permissions",
+            "file://" + std::string(certs_path) + "/permissions_helloworld.smime"));
+
+    reader.history_depth(10).
+            reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).
+            property_policy(sub_property_policy).init();
+
+    pub_property_policy.properties().emplace_back(Property("dds.sec.auth.plugin",
+            "builtin.PKI-DH"));
+    pub_property_policy.properties().emplace_back(Property("dds.sec.auth.builtin.PKI-DH.identity_ca",
+            "file://" + std::string(certs_path) + "/maincacert.pem"));
+    pub_property_policy.properties().emplace_back(Property("dds.sec.auth.builtin.PKI-DH.identity_certificate",
+            "file://" + std::string(certs_path) + "/mainpubcert.pem"));
+    pub_property_policy.properties().emplace_back(Property("dds.sec.auth.builtin.PKI-DH.private_key",
+            writer_private_key_url));
+    pub_property_policy.properties().emplace_back(Property("dds.sec.crypto.plugin",
+            "builtin.AES-GCM-GMAC"));
+    pub_property_policy.properties().emplace_back(Property("dds.sec.access.plugin",
+            "builtin.Access-Permissions"));
+    pub_property_policy.properties().emplace_back(Property(
+                "dds.sec.access.builtin.Access-Permissions.permissions_ca",
+                "file://" + std::string(certs_path) + "/maincacert.pem"));
+    pub_property_policy.properties().emplace_back(Property("dds.sec.access.builtin.Access-Permissions.governance",
+            "file://" + std::string(certs_path) + "/" + governance_file));
+    pub_property_policy.properties().emplace_back(Property("dds.sec.access.builtin.Access-Permissions.permissions",
+            "file://" + std::string(certs_path) + "/permissions_helloworld.smime"));
+
+    writer.history_depth(10).
+            property_policy(pub_property_policy).init();
+}
+
+TEST_F(SecurityPkcs, BuiltinAuthenticationAndAccessAndCryptoPlugin_pkcs11_key)
+{
+    {
+        PubSubReader<HelloWorldType> reader("HelloWorldTopic");
+        PubSubWriter<HelloWorldType> writer("HelloWorldTopic");
+        prepare_pkcs11_nodes(reader, writer,
+                tokens[hsm_token_id_no_pin].urls[hsm_mainsubkey_label],
+                tokens[hsm_token_id_no_pin].urls[hsm_mainpubkey_label]);
+
+        ASSERT_FALSE(reader.isInitialized());
+        ASSERT_FALSE(writer.isInitialized());
+    }
+    {
+        PubSubReader<HelloWorldType> reader("HelloWorldTopic");
+        PubSubWriter<HelloWorldType> writer("HelloWorldTopic");
+        prepare_pkcs11_nodes(reader, writer,
+                tokens[hsm_token_id_url_pin].urls[hsm_mainsubkey_label] + "?pin-value=" + hsm_token_pin,
+                tokens[hsm_token_id_url_pin].urls[hsm_mainpubkey_label] + "?pin-value=" + hsm_token_pin);
+
+        ASSERT_TRUE(reader.isInitialized());
+        ASSERT_TRUE(writer.isInitialized());
+
+        // Wait for authorization
+        reader.waitAuthorized();
+        writer.waitAuthorized();
+
+        // Wait for discovery.
+        writer.wait_discovery();
+        reader.wait_discovery();
+
+        auto data = default_helloworld_data_generator();
+
+        reader.startReception(data);
+
+        // Send data
+        writer.send(data);
+        // In this test all data should be sent.
+        ASSERT_TRUE(data.empty());
+        // Block reader until reception finished or timeout.
+        reader.block_for_all();
+
+    }
+    {
+        // Set the PIN on the environment variable
+#ifdef _WIN32
+        _putenv_s("FASTDDS_PKCS11_PIN", "1234");
+#else
+        setenv("FASTDDS_PKCS11_PIN", "1234", 1);
+#endif // ifdef _WIN32
+
+        PubSubReader<HelloWorldType> reader("HelloWorldTopic");
+        PubSubWriter<HelloWorldType> writer("HelloWorldTopic");
+        prepare_pkcs11_nodes(reader, writer,
+                tokens[hsm_token_id_env_pin].urls[hsm_mainsubkey_label],
+                tokens[hsm_token_id_env_pin].urls[hsm_mainpubkey_label]);
+
+        ASSERT_TRUE(reader.isInitialized());
+        ASSERT_TRUE(writer.isInitialized());
+
+        // Wait for authorization
+        reader.waitAuthorized();
+        writer.waitAuthorized();
+
+        // Wait for discovery.
+        writer.wait_discovery();
+        reader.wait_discovery();
+
+        auto data = default_helloworld_data_generator();
+
+        reader.startReception(data);
+
+        // Send data
+        writer.send(data);
+        // In this test all data should be sent.
+        ASSERT_TRUE(data.empty());
+        // Block reader until reception finished or timeout.
+        reader.block_for_all();
+
+        // unset the PIN environment variable for the next round
+#ifdef _WIN32
+        _putenv_s("FASTDDS_PKCS11_PIN", "");
+#else
+        unsetenv("FASTDDS_PKCS11_PIN");
+#endif // ifdef _WIN32
+    }
+}
+#endif // HAVE_LIBP11
 
 static void BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(
         PubSubReader<HelloWorldType>& reader,
