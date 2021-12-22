@@ -91,7 +91,7 @@ KeyedHelloWorld& KeyedHelloWorld::operator =(
 }
 
 bool KeyedHelloWorld::operator ==(
-        const KeyedHelloWorld& x)
+        const KeyedHelloWorld& x) const
 {
 
     return (m_key == x.m_key && m_index == x.m_index && m_message == x.m_message);

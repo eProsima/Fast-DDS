@@ -76,7 +76,7 @@ FixedSized& FixedSized::operator =(
 }
 
 bool FixedSized::operator ==(
-        const FixedSized& x)
+        const FixedSized& x) const
 {
 
     return (m_index == x.m_index);

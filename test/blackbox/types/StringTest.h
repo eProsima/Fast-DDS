@@ -112,7 +112,7 @@ public:
      * @param x StringTest object to compare.
      */
     eProsima_user_DllExport bool operator ==(
-            const StringTest& x);
+            const StringTest& x) const;
 
     /*!
      * @brief Comparison operator.

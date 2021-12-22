@@ -76,7 +76,7 @@ Data1mb& Data1mb::operator =(
 }
 
 bool Data1mb::operator ==(
-        const Data1mb& x)
+        const Data1mb& x) const
 {
 
     return (m_data == x.m_data);

@@ -84,7 +84,7 @@ KeyedData1mb& KeyedData1mb::operator =(
 }
 
 bool KeyedData1mb::operator ==(
-        const KeyedData1mb& x)
+        const KeyedData1mb& x) const
 {
 
     return (m_key == x.m_key && m_data == x.m_data);

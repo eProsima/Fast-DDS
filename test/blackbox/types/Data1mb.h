@@ -112,7 +112,7 @@ public:
      * @param x Data1mb object to compare.
      */
     eProsima_user_DllExport bool operator ==(
-            const Data1mb& x);
+            const Data1mb& x) const;
 
     /*!
      * @brief Comparison operator.

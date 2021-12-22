@@ -112,7 +112,7 @@ public:
      * @param x FixedSized object to compare.
      */
     eProsima_user_DllExport bool operator ==(
-            const FixedSized& x);
+            const FixedSized& x) const;
 
     /*!
      * @brief Comparison operator.

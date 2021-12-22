@@ -76,7 +76,7 @@ StringTest& StringTest::operator =(
 }
 
 bool StringTest::operator ==(
-        const StringTest& x)
+        const StringTest& x) const
 {
 
     return (m_message == x.m_message);

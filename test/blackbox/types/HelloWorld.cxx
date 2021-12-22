@@ -84,7 +84,7 @@ HelloWorld& HelloWorld::operator =(
 }
 
 bool HelloWorld::operator ==(
-        const HelloWorld& x)
+        const HelloWorld& x) const
 {
 
     return (m_index == x.m_index && m_message == x.m_message);

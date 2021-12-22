@@ -112,7 +112,7 @@ public:
      * @param x KeyedHelloWorld object to compare.
      */
     eProsima_user_DllExport bool operator ==(
-            const KeyedHelloWorld& x);
+            const KeyedHelloWorld& x) const;
 
     /*!
      * @brief Comparison operator.
