@@ -1,5 +1,5 @@
-Forthcoming
------------
+Version 2.5.0
+-------------
 
 * Allow zero-valued InstanceHandle_t (ABI break)
 * Allow concatenation of transports (new exported symbols + ABI breaks on transport layer)
@@ -8,8 +8,8 @@ Forthcoming
 * New DataWriter API allowing to wait for acknowledgements for a specific instance (extends DataWriter API, implies ABI
   break)
 * Generation of GUID on entity creation (ABI break on RTPS layer)
-* Adding DataReader history with correct implementation of instance_state and view_state (ABI break on RTPS layer)
-*
+* New DataReader history with correct implementation of instance_state and view_state (ABI break on RTPS layer)
+* Support for PKCS#11 format URIs for private keys
 
 Version 2.4.0
 -------------
