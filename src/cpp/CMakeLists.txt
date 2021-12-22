@@ -514,7 +514,7 @@ elseif(BUILD_SHARED_LIBS)
     unset(OLD_CMAKE_REQUIRED_FLAGS)
     if(HAS_VERSION_SCRIPT_SUPPORT)
         message(STATUS "Using linker version script to select exported symbols")
-        target_link_options(${PROJECT_NAME} ${PRIVACY} ${VERSION_SCRIPT_SUPPORT_FLAGS})
+        target_link_options(${PROJECT_NAME} PRIVATE ${VERSION_SCRIPT_SUPPORT_FLAGS})
     endif()
 endif()
 
