@@ -40,7 +40,7 @@
 #define GET_PID _getpid
 #else
 #define GET_PID getpid
-#endif
+#endif // if defined(_WIN32)
 
 namespace eprosima {
 namespace fastdds {
@@ -51,9 +51,9 @@ class Subscriber;
 class DataReader;
 class Publisher;
 class DataWriter;
-}
-}
-}
+} // namespace dds
+} // namespace fastdds
+} // namespace eprosima
 
 class ReqRepHelloWorldRequester
 {
@@ -61,7 +61,7 @@ public:
 
     class ReplyListener : public eprosima::fastdds::dds::DataReaderListener
     {
-public:
+    public:
 
         ReplyListener(
                 ReqRepHelloWorldRequester& requester)
@@ -86,17 +86,18 @@ public:
             }
         }
 
-private:
+    private:
 
         ReplyListener& operator =(
                 const ReplyListener&) = delete;
 
         ReqRepHelloWorldRequester& requester_;
-    } reply_listener_;
+    }
+    reply_listener_;
 
     class RequestListener : public eprosima::fastdds::dds::DataWriterListener
     {
-public:
+    public:
 
         RequestListener(
                 ReqRepHelloWorldRequester& requester)
@@ -118,14 +119,15 @@ public:
             }
         }
 
-private:
+    private:
 
         RequestListener& operator =(
                 const RequestListener&) = delete;
 
         ReqRepHelloWorldRequester& requester_;
 
-    } request_listener_;
+    }
+    request_listener_;
 
     ReqRepHelloWorldRequester();
     virtual ~ReqRepHelloWorldRequester();

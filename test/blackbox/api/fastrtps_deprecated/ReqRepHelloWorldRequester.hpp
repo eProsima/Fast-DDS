@@ -39,7 +39,7 @@
 #define GET_PID _getpid
 #else
 #define GET_PID getpid
-#endif
+#endif // if defined(_WIN32)
 
 
 
@@ -49,7 +49,7 @@ public:
 
     class ReplyListener : public eprosima::fastrtps::SubscriberListener
     {
-public:
+    public:
 
         ReplyListener(
                 ReqRepHelloWorldRequester& requester)
@@ -73,17 +73,18 @@ public:
             }
         }
 
-private:
+    private:
 
         ReplyListener& operator =(
                 const ReplyListener&) = delete;
 
         ReqRepHelloWorldRequester& requester_;
-    } reply_listener_;
+    }
+    reply_listener_;
 
     class RequestListener : public eprosima::fastrtps::PublisherListener
     {
-public:
+    public:
 
         RequestListener(
                 ReqRepHelloWorldRequester& requester)
@@ -105,14 +106,15 @@ public:
             }
         }
 
-private:
+    private:
 
         RequestListener& operator =(
                 const RequestListener&) = delete;
 
         ReqRepHelloWorldRequester& requester_;
 
-    } request_listener_;
+    }
+    request_listener_;
 
     ReqRepHelloWorldRequester();
     virtual ~ReqRepHelloWorldRequester();

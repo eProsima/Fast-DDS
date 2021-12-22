@@ -36,7 +36,7 @@
 #include <process.h>
 #else
 #define GET_PID getpid
-#endif
+#endif // if defined(_WIN32)
 
 
 
@@ -46,7 +46,7 @@ public:
 
     class ReplyListener : public eprosima::fastrtps::SubscriberListener
     {
-public:
+    public:
 
         ReplyListener(
                 ReqRepHelloWorldReplier& replier)
@@ -70,17 +70,18 @@ public:
             }
         }
 
-private:
+    private:
 
         ReplyListener& operator =(
                 const ReplyListener&) = delete;
 
         ReqRepHelloWorldReplier& replier_;
-    } request_listener_;
+    }
+    request_listener_;
 
     class RequestListener : public eprosima::fastrtps::PublisherListener
     {
-public:
+    public:
 
         RequestListener(
                 ReqRepHelloWorldReplier& replier)
@@ -102,14 +103,15 @@ public:
             }
         }
 
-private:
+    private:
 
         RequestListener& operator =(
                 const RequestListener&) = delete;
 
         ReqRepHelloWorldReplier& replier_;
 
-    } reply_listener_;
+    }
+    reply_listener_;
 
     ReqRepHelloWorldReplier();
     virtual ~ReqRepHelloWorldReplier();
