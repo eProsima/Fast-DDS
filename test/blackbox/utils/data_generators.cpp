@@ -84,16 +84,16 @@ std::list<KeyedHelloWorld> default_keyedhelloworld_data_generator(
     return returnedValue;
 }
 
-std::list<String> default_large_string_data_generator(
+std::list<StringTest> default_large_string_data_generator(
         size_t max)
 {
     uint16_t index = 1;
     size_t maximum = max ? max : 10;
-    std::list<String> returnedValue(maximum);
+    std::list<StringTest> returnedValue(maximum);
 
     std::generate(returnedValue.begin(), returnedValue.end(), [&index]
             {
-                String str;
+                StringTest str;
                 std::stringstream ss;
                 ss << std::string(998, 'a') << std::setw(2) << std::setfill('0') << index;
                 str.message(ss.str());

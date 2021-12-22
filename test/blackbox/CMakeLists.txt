@@ -231,8 +231,8 @@ set(RTPS_BLACKBOXTESTS_SOURCE ${RTPS_BLACKBOXTESTS_TEST_SOURCE}
     types/HelloWorldPubSubTypes.cxx
     types/KeyedHelloWorld.cxx
     types/KeyedHelloWorldPubSubTypes.cxx
-    types/String.cxx
-    types/StringPubSubTypes.cxx
+    types/StringTest.cxx
+    types/StringTestPubSubTypes.cxx
     types/Data64kb.cxx
     types/Data64kbPubSubTypes.cxx
     types/Data1mb.cxx
@@ -265,8 +265,8 @@ set(BLACKBOXTESTS_SOURCE ${BLACKBOXTESTS_TEST_SOURCE}
     types/HelloWorldPubSubTypes.cxx
     types/KeyedHelloWorld.cxx
     types/KeyedHelloWorldPubSubTypes.cxx
-    types/String.cxx
-    types/StringPubSubTypes.cxx
+    types/StringTest.cxx
+    types/StringTestPubSubTypes.cxx
     types/Data64kb.cxx
     types/Data64kbPubSubTypes.cxx
     types/Data1mb.cxx

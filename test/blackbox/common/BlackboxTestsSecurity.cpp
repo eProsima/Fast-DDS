@@ -749,8 +749,8 @@ TEST_P(Security, BuiltinAuthenticationAndCryptoPlugin_rtps_ok_same_participant)
 
 TEST_P(Security, BuiltinAuthenticationAndCryptoPlugin_besteffort_large_string)
 {
-    PubSubReader<StringPubSubType> reader(TEST_TOPIC_NAME);
-    PubSubWriter<StringPubSubType> writer(TEST_TOPIC_NAME);
+    PubSubReader<StringTestPubSubType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<StringTestPubSubType> writer(TEST_TOPIC_NAME);
 
     PropertyPolicy pub_property_policy, sub_property_policy;
 
@@ -811,8 +811,8 @@ TEST_P(Security, BuiltinAuthenticationAndCryptoPlugin_besteffort_large_string)
 
 TEST_P(Security, BuiltinAuthenticationAndCryptoPlugin_reliable_rtps_large_string)
 {
-    PubSubReader<StringPubSubType> reader(TEST_TOPIC_NAME);
-    PubSubWriter<StringPubSubType> writer(TEST_TOPIC_NAME);
+    PubSubReader<StringTestPubSubType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<StringTestPubSubType> writer(TEST_TOPIC_NAME);
 
     PropertyPolicy pub_property_policy, sub_property_policy;
 
@@ -1186,8 +1186,8 @@ TEST_P(Security, BuiltinAuthenticationAndCryptoPlugin_submessage_ok_same_partici
 
 TEST_P(Security, BuiltinAuthenticationAndCryptoPlugin_besteffort_submessage_large_string)
 {
-    PubSubReader<StringPubSubType> reader(TEST_TOPIC_NAME);
-    PubSubWriter<StringPubSubType> writer(TEST_TOPIC_NAME);
+    PubSubReader<StringTestPubSubType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<StringTestPubSubType> writer(TEST_TOPIC_NAME);
 
     PropertyPolicy pub_part_property_policy, sub_part_property_policy,
             pub_property_policy, sub_property_policy;
@@ -1251,8 +1251,8 @@ TEST_P(Security, BuiltinAuthenticationAndCryptoPlugin_besteffort_submessage_larg
 
 TEST_P(Security, BuiltinAuthenticationAndCryptoPlugin_reliable_submessage_large_string)
 {
-    PubSubReader<StringPubSubType> reader(TEST_TOPIC_NAME);
-    PubSubWriter<StringPubSubType> writer(TEST_TOPIC_NAME);
+    PubSubReader<StringTestPubSubType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<StringTestPubSubType> writer(TEST_TOPIC_NAME);
 
     PropertyPolicy pub_part_property_policy, sub_part_property_policy,
             pub_property_policy, sub_property_policy;
@@ -1678,8 +1678,8 @@ TEST_P(Security, BuiltinAuthenticationAndCryptoPlugin_payload_ok_same_participan
 
 TEST_P(Security, BuiltinAuthenticationAndCryptoPlugin_besteffort_payload_large_string)
 {
-    PubSubReader<StringPubSubType> reader(TEST_TOPIC_NAME);
-    PubSubWriter<StringPubSubType> writer(TEST_TOPIC_NAME);
+    PubSubReader<StringTestPubSubType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<StringTestPubSubType> writer(TEST_TOPIC_NAME);
 
     PropertyPolicy pub_part_property_policy, sub_part_property_policy,
             pub_property_policy, sub_property_policy;
@@ -1743,8 +1743,8 @@ TEST_P(Security, BuiltinAuthenticationAndCryptoPlugin_besteffort_payload_large_s
 
 TEST_P(Security, BuiltinAuthenticationAndCryptoPlugin_reliable_payload_large_string)
 {
-    PubSubReader<StringPubSubType> reader(TEST_TOPIC_NAME);
-    PubSubWriter<StringPubSubType> writer(TEST_TOPIC_NAME);
+    PubSubReader<StringTestPubSubType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<StringTestPubSubType> writer(TEST_TOPIC_NAME);
 
     PropertyPolicy pub_part_property_policy, sub_part_property_policy,
             pub_property_policy, sub_property_policy;
@@ -2092,8 +2092,8 @@ TEST_P(Security, BuiltinAuthenticationAndCryptoPlugin_reliable_all_ok)
 
 TEST_P(Security, BuiltinAuthenticationAndCryptoPlugin_besteffort_all_large_string)
 {
-    PubSubReader<StringPubSubType> reader(TEST_TOPIC_NAME);
-    PubSubWriter<StringPubSubType> writer(TEST_TOPIC_NAME);
+    PubSubReader<StringTestPubSubType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<StringTestPubSubType> writer(TEST_TOPIC_NAME);
 
     PropertyPolicy pub_part_property_policy, sub_part_property_policy,
             pub_property_policy, sub_property_policy;
@@ -2161,8 +2161,8 @@ TEST_P(Security, BuiltinAuthenticationAndCryptoPlugin_besteffort_all_large_strin
 
 TEST_P(Security, BuiltinAuthenticationAndCryptoPlugin_reliable_all_large_string)
 {
-    PubSubReader<StringPubSubType> reader(TEST_TOPIC_NAME);
-    PubSubWriter<StringPubSubType> writer(TEST_TOPIC_NAME);
+    PubSubReader<StringTestPubSubType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<StringTestPubSubType> writer(TEST_TOPIC_NAME);
 
     PropertyPolicy pub_part_property_policy, sub_part_property_policy,
             pub_property_policy, sub_property_policy;

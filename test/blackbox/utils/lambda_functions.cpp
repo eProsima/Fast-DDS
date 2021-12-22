@@ -32,7 +32,7 @@ const std::function<void(const KeyedHelloWorld&)>  default_keyedhelloworld_print
             std::cout << hello.message() << " " << hello.key();
         };
 
-const std::function<void(const String&)> default_string_print = [](const String& str)
+const std::function<void(const StringTest&)> default_string_print = [](const StringTest& str)
         {
             std::cout << str.message()[str.message().size() - 2]
                       << str.message()[str.message().size() - 1] << " ";
