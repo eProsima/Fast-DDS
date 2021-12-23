@@ -69,14 +69,14 @@ void ReqRepHelloWorldRequester::init()
 
     //Create subscriber
     sattr.topic.topicKind = NO_KEY;
-    sattr.topic.topicDataType = "HelloWorldType";
+    sattr.topic.topicDataType = type_.getName();
     configSubscriber("Reply");
     reply_subscriber_ = Domain::createSubscriber(participant_, sattr, &reply_listener_);
     ASSERT_NE(reply_subscriber_, nullptr);
 
     //Create publisher
     puattr.topic.topicKind = NO_KEY;
-    puattr.topic.topicDataType = "HelloWorldType";
+    puattr.topic.topicDataType = type_.getName();
     configPublisher("Request");
     request_publisher_ = Domain::createPublisher(participant_, puattr, &request_listener_);
     ASSERT_NE(request_publisher_, nullptr);
@@ -97,14 +97,14 @@ void ReqRepHelloWorldRequester::init_with_latency(
 
     //Create subscriber
     sattr.topic.topicKind = NO_KEY;
-    sattr.topic.topicDataType = "HelloWorldType";
+    sattr.topic.topicDataType = type_.getName();
     sattr.qos.m_latencyBudget.duration = latency_budget_duration_sub;
     reply_subscriber_ = Domain::createSubscriber(participant_, sattr, &reply_listener_);
     ASSERT_NE(reply_subscriber_, nullptr);
 
     //Create publisher
     puattr.topic.topicKind = NO_KEY;
-    puattr.topic.topicDataType = "HelloWorldType";
+    puattr.topic.topicDataType = type_.getName();
     puattr.qos.m_latencyBudget.duration = latency_budget_duration_pub;
     request_publisher_ = Domain::createPublisher(participant_, puattr, &request_listener_);
     ASSERT_NE(request_publisher_, nullptr);

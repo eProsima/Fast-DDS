@@ -567,7 +567,7 @@ TEST(Discovery, PubXmlLoadedPartition)
     <topic>
       <name>)" + writer.topic_name() +
             R"(</name>
-      <dataType>HelloWorldPubSubType</dataType>
+      <dataType>HelloWorld</dataType>
     </topic>
     <qos>
       <partition>
