@@ -249,7 +249,7 @@ void do_test(
     uint32_t num_samples = static_cast<uint32_t>(data.size());
     uint32_t num_endpoints = (uint32_t)pool_on_reader + (uint32_t)pool_on_writer;
     uint32_t payload_size = static_cast<uint32_t>(TData::getMaxCdrSerializedSize());
-    payload_size += eprosima::fastcdr::Cdr::alignment(payload_size, 4); /* possible submessage alignment */
+    payload_size += static_cast<uint32_t>(eprosima::fastcdr::Cdr::alignment(payload_size, 4)); /* possible submessage alignment */
     payload_size += 4u; // encapsulation header
 
     std::shared_ptr<PoolForTest> pool = std::make_shared<PoolForTest>(payload_size, num_endpoints, num_samples);
