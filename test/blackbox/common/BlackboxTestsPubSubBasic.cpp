@@ -121,7 +121,7 @@ void env_file_warning(
     Log::SetErrorStringFilter(std::regex(".*does not exist. File watching not initialized."));
 
     /* Create and enable DomainParticipant */
-    PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
     reader.init();
     EXPECT_TRUE(reader.isInitialized());
 
@@ -141,8 +141,8 @@ TEST_P(PubSubBasic, PubSubAsNonReliableHelloworld)
         return;
     }
 
-    PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
-    PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
 
     reader.init();
 
@@ -169,8 +169,8 @@ TEST_P(PubSubBasic, PubSubAsNonReliableHelloworld)
 
 TEST_P(PubSubBasic, AsyncPubSubAsNonReliableHelloworld)
 {
-    PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
-    PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
 
     reader.init();
 
@@ -199,8 +199,8 @@ TEST_P(PubSubBasic, AsyncPubSubAsNonReliableHelloworld)
 
 TEST_P(PubSubBasic, PubSubAsReliableHelloworld)
 {
-    PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
-    PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
 
     reader.history_depth(100).
             reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).init();
@@ -230,8 +230,8 @@ TEST_P(PubSubBasic, PubSubAsReliableHelloworld)
 
 TEST_P(PubSubBasic, AsyncPubSubAsReliableHelloworld)
 {
-    PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
-    PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
 
     reader.history_depth(100).
             reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).init();
@@ -286,8 +286,8 @@ TEST_P(PubSubBasic, ReqRepAsReliableHelloworld)
 
 TEST_P(PubSubBasic, PubSubAsReliableData64kb)
 {
-    PubSubReader<Data64kbType> reader(TEST_TOPIC_NAME);
-    PubSubWriter<Data64kbType> writer(TEST_TOPIC_NAME);
+    PubSubReader<Data64kbPubSubType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<Data64kbPubSubType> writer(TEST_TOPIC_NAME);
 
     reader.history_depth(10).
             reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).init();
@@ -317,7 +317,7 @@ TEST_P(PubSubBasic, PubSubAsReliableData64kb)
 
 TEST_P(PubSubBasic, PubSubMoreThan256Unacknowledged)
 {
-    PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
 
     writer.history_kind(eprosima::fastrtps::KEEP_ALL_HISTORY_QOS).
             durability_kind(eprosima::fastrtps::TRANSIENT_LOCAL_DURABILITY_QOS).init();
@@ -330,7 +330,7 @@ TEST_P(PubSubBasic, PubSubMoreThan256Unacknowledged)
     writer.send(data);
     ASSERT_TRUE(data.empty());
 
-    PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
 
     reader.reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).
             history_kind(eprosima::fastrtps::KEEP_ALL_HISTORY_QOS).
@@ -345,8 +345,8 @@ TEST_P(PubSubBasic, PubSubMoreThan256Unacknowledged)
 
 TEST_P(PubSubBasic, PubSubAsReliableHelloworldMulticastDisabled)
 {
-    PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
-    PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
 
     reader.history_depth(100).
             reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).
@@ -379,8 +379,8 @@ TEST_P(PubSubBasic, PubSubAsReliableHelloworldMulticastDisabled)
 
 TEST_P(PubSubBasic, ReceivedDynamicDataWithNoSizeLimit)
 {
-    PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
-    PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
 
     writer.history_depth(100)
             .partition("A").partition("B").partition("C")
@@ -412,8 +412,8 @@ TEST_P(PubSubBasic, ReceivedDynamicDataWithNoSizeLimit)
 
 TEST_P(PubSubBasic, ReceivedDynamicDataWithinSizeLimit)
 {
-    PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
-    PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
 
     writer.history_depth(100)
             .partition("A").partition("B").partition("C")
@@ -447,8 +447,8 @@ TEST_P(PubSubBasic, ReceivedDynamicDataWithinSizeLimit)
 
 TEST_P(PubSubBasic, ReceivedUserDataExceedsSizeLimit)
 {
-    PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
-    PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
 
     writer.history_depth(100)
             .userData({'a', 'b', 'c', 'd', 'e', 'f'}).init();
@@ -470,8 +470,8 @@ TEST_P(PubSubBasic, ReceivedUserDataExceedsSizeLimit)
 
 TEST_P(PubSubBasic, ReceivedPartitionDataExceedsSizeLimit)
 {
-    PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
-    PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
 
     writer.history_depth(100)
             .partition("A").partition("B").partition("C")
@@ -544,7 +544,7 @@ TEST_P(PubSubBasic, ReceivedPropertiesDataWithinSizeLimit)
 
     Locator_t LocatorBuffer;
 
-    PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
 
     LocatorList_t WriterUnicastLocators;
     LocatorBuffer.kind = LOCATOR_KIND_UDPv4;
@@ -563,7 +563,7 @@ TEST_P(PubSubBasic, ReceivedPropertiesDataWithinSizeLimit)
 
     ASSERT_TRUE(writer.isInitialized());
 
-    PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
 
     LocatorList_t ReaderUnicastLocators;
     LocatorBuffer.port = static_cast<uint16_t>(R_UNICAST_PORT_RANDOM_NUMBER);
@@ -641,7 +641,7 @@ TEST_P(PubSubBasic, ReceivedPropertiesDataExceedsSizeLimit)
 
     Locator_t LocatorBuffer;
 
-    PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
 
     LocatorList_t WriterUnicastLocators;
     LocatorBuffer.kind = LOCATOR_KIND_UDPv4;
@@ -660,7 +660,7 @@ TEST_P(PubSubBasic, ReceivedPropertiesDataExceedsSizeLimit)
 
     ASSERT_TRUE(writer.isInitialized());
 
-    PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
 
     LocatorList_t ReaderUnicastLocators;
     LocatorBuffer.port = static_cast<uint16_t>(R_UNICAST_PORT_RANDOM_NUMBER);
@@ -689,8 +689,8 @@ TEST_P(PubSubBasic, ReceivedPropertiesDataExceedsSizeLimit)
 
 TEST_P(PubSubBasic, unique_flows_one_writer_two_readers)
 {
-    PubSubParticipant<HelloWorldType> readers(0, 2, 0, 2);
-    PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
+    PubSubParticipant<HelloWorldPubSubType> readers(0, 2, 0, 2);
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
 
     PropertyPolicy properties;
     properties.properties().emplace_back("fastdds.unique_network_flows", "");
@@ -763,14 +763,14 @@ TEST_P(PubSubBasic, BestEffortTwoWritersConsecutives)
         return;
     }
 
-    PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
 
     reader.history_depth(10).init();
     EXPECT_TRUE(reader.isInitialized());
 
     for (int i = 0; i < 2; ++i)
     {
-        PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
+        PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
         writer.history_depth(10).reliability(BEST_EFFORT_RELIABILITY_QOS);
         two_consecutive_writers(reader, writer, false);
     }
@@ -779,14 +779,14 @@ TEST_P(PubSubBasic, BestEffortTwoWritersConsecutives)
 
 TEST_P(PubSubBasic, ReliableVolatileTwoWritersConsecutives)
 {
-    PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
 
     reader.history_depth(10).reliability(RELIABLE_RELIABILITY_QOS).init();
     EXPECT_TRUE(reader.isInitialized());
 
     for (int i = 0; i < 2; ++i)
     {
-        PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
+        PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
         writer.history_depth(10).durability_kind(VOLATILE_DURABILITY_QOS);
         two_consecutive_writers(reader, writer, true);
     }
@@ -794,7 +794,7 @@ TEST_P(PubSubBasic, ReliableVolatileTwoWritersConsecutives)
 
 TEST_P(PubSubBasic, ReliableTransientLocalTwoWritersConsecutives)
 {
-    PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
 
     reader.history_depth(10).reliability(RELIABLE_RELIABILITY_QOS).durability_kind(TRANSIENT_LOCAL_DURABILITY_QOS);
     reader.init();
@@ -802,7 +802,7 @@ TEST_P(PubSubBasic, ReliableTransientLocalTwoWritersConsecutives)
 
     for (int i = 0; i < 2; ++i)
     {
-        PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
+        PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
         writer.history_depth(10).reliability(RELIABLE_RELIABILITY_QOS);
         two_consecutive_writers(reader, writer, true);
     }

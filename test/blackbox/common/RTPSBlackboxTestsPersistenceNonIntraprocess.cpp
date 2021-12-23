@@ -48,8 +48,8 @@ public:
     }
 
     void run_partial_send_recv_test(
-            RTPSWithRegistrationReader<HelloWorldType>& reader,
-            RTPSWithRegistrationWriter<HelloWorldType>& writer)
+            RTPSWithRegistrationReader<HelloWorldPubSubType>& reader,
+            RTPSWithRegistrationWriter<HelloWorldPubSubType>& writer)
     {
         // Wait for discovery.
         writer.wait_discovery();
@@ -205,8 +205,8 @@ TEST_F(PersistenceNonIntraprocess, InconsistentAcknackReceived)
     Log::SetCategoryFilter(std::regex("(RTPS_WRITER)"));
     Log::SetErrorStringFilter(std::regex("(Inconsistent acknack)"));
 
-    RTPSWithRegistrationReader<HelloWorldType> reader(TEST_TOPIC_NAME);
-    RTPSWithRegistrationWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
+    RTPSWithRegistrationReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+    RTPSWithRegistrationWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
     std::string ip("239.255.1.4");
 
     reader.make_persistent(db_file_name_reader(), guid_prefix()).add_to_multicast_locator_list(ip, global_port).

@@ -17,10 +17,10 @@ find_package(PythonInterp 3)
 ###############################################################################
 # Binaries
 ###############################################################################
-set(COMMON_SOURCE ${PROJECT_SOURCE_DIR}/test/blackbox/types/HelloWorld.cpp
-    ${PROJECT_SOURCE_DIR}/test/blackbox/types/HelloWorldType.cpp
-    ${PROJECT_SOURCE_DIR}/test/blackbox/types/FixedSized.cpp
-    ${PROJECT_SOURCE_DIR}/test/blackbox/types/FixedSizedType.cpp
+set(COMMON_SOURCE ${PROJECT_SOURCE_DIR}/test/blackbox/types/HelloWorld.cxx
+    ${PROJECT_SOURCE_DIR}/test/blackbox/types/HelloWorldPubSubTypes.cxx
+    ${PROJECT_SOURCE_DIR}/test/blackbox/types/FixedSized.cxx
+    ${PROJECT_SOURCE_DIR}/test/blackbox/types/FixedSizedPubSubTypes.cxx
     )
 
 set(PUBLISHER_SOURCE ${COMMON_SOURCE}

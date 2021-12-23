@@ -88,8 +88,8 @@ protected:
             bool volatile_writer,
             bool small_fragments)
     {
-        PubSubReader<Data1mbType> reader(topic_name);
-        PubSubWriter<Data1mbType> writer(topic_name);
+        PubSubReader<Data1mbPubSubType> reader(topic_name);
+        PubSubWriter<Data1mbPubSubType> writer(topic_name);
 
         reader
                 .socket_buffer_size(1048576) // accomodate large and fast fragments
@@ -320,8 +320,8 @@ protected:
 
 TEST_P(PubSubFragmentsLimited, AsyncPubSubAsNonReliableData300kbWithFlowControl)
 {
-    PubSubReader<Data1mbType> reader(TEST_TOPIC_NAME);
-    PubSubWriter<Data1mbType> writer(TEST_TOPIC_NAME);
+    PubSubReader<Data1mbPubSubType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<Data1mbPubSubType> writer(TEST_TOPIC_NAME);
 
     reader.init();
 
@@ -357,8 +357,8 @@ TEST_P(PubSubFragmentsLimited, AsyncPubSubAsNonReliableData300kbWithFlowControl)
 
 TEST_P(PubSubFragmentsLimited, AsyncPubSubAsReliableData300kbWithFlowControl)
 {
-    PubSubReader<Data1mbType> reader(TEST_TOPIC_NAME);
-    PubSubWriter<Data1mbType> writer(TEST_TOPIC_NAME);
+    PubSubReader<Data1mbPubSubType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<Data1mbPubSubType> writer(TEST_TOPIC_NAME);
 
     reader.history_depth(5).
             reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).init();
@@ -395,8 +395,8 @@ TEST_P(PubSubFragmentsLimited, AsyncPubSubAsReliableData300kbWithFlowControl)
 
 TEST_P(PubSubFragmentsLimited, AsyncPubSubAsReliableData300kbInLossyConditions)
 {
-    PubSubReader<Data1mbType> reader(TEST_TOPIC_NAME);
-    PubSubWriter<Data1mbType> writer(TEST_TOPIC_NAME);
+    PubSubReader<Data1mbPubSubType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<Data1mbPubSubType> writer(TEST_TOPIC_NAME);
 
     reader.history_depth(5).
             reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).init();
@@ -449,8 +449,8 @@ TEST_P(PubSubFragmentsLimited, AsyncPubSubAsReliableData300kbInLossyConditions)
 
 TEST_P(PubSubFragmentsLimited, AsyncPubSubAsReliableVolatileData300kbInLossyConditions)
 {
-    PubSubReader<Data1mbType> reader(TEST_TOPIC_NAME);
-    PubSubWriter<Data1mbType> writer(TEST_TOPIC_NAME);
+    PubSubReader<Data1mbPubSubType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<Data1mbPubSubType> writer(TEST_TOPIC_NAME);
 
     reader.history_depth(5).
             reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).init();
@@ -504,8 +504,8 @@ TEST_P(PubSubFragmentsLimited, AsyncPubSubAsReliableVolatileData300kbInLossyCond
 
 TEST_P(PubSubFragmentsLimited, AsyncPubSubAsReliableData300kbInLossyConditionsSmallFragments)
 {
-    PubSubReader<Data1mbType> reader(TEST_TOPIC_NAME);
-    PubSubWriter<Data1mbType> writer(TEST_TOPIC_NAME);
+    PubSubReader<Data1mbPubSubType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<Data1mbPubSubType> writer(TEST_TOPIC_NAME);
 
     reader.history_depth(5).
             reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).init();
@@ -560,8 +560,8 @@ TEST_P(PubSubFragmentsLimited, AsyncPubSubAsReliableData300kbInLossyConditionsSm
 
 TEST_P(PubSubFragmentsLimited, AsyncPubSubAsReliableKeyedData300kbKeepLast1InLossyConditionsSmallFragments)
 {
-    PubSubReader<KeyedData1mbType> reader(TEST_TOPIC_NAME);
-    PubSubWriter<KeyedData1mbType> writer(TEST_TOPIC_NAME);
+    PubSubReader<KeyedData1mbPubSubType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<KeyedData1mbPubSubType> writer(TEST_TOPIC_NAME);
 
     reader.history_depth(2)
             .reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS)
@@ -615,8 +615,8 @@ TEST_P(PubSubFragmentsLimited, AsyncPubSubAsReliableKeyedData300kbKeepLast1InLos
 
 TEST_P(PubSubFragmentsLimited, AsyncPubSubAsReliableVolatileData300kbInLossyConditionsSmallFragments)
 {
-    PubSubReader<Data1mbType> reader(TEST_TOPIC_NAME);
-    PubSubWriter<Data1mbType> writer(TEST_TOPIC_NAME);
+    PubSubReader<Data1mbPubSubType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<Data1mbPubSubType> writer(TEST_TOPIC_NAME);
 
     reader.history_depth(5).
             reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).init();
@@ -674,8 +674,8 @@ TEST_P(PubSubFragmentsLimited, AsyncFragmentSizeTest)
 {
     // ThroghputController size large than maxMessageSize.
     {
-        PubSubReader<Data64kbType> reader(TEST_TOPIC_NAME);
-        PubSubWriter<Data64kbType> writer(TEST_TOPIC_NAME);
+        PubSubReader<Data64kbPubSubType> reader(TEST_TOPIC_NAME);
+        PubSubWriter<Data64kbPubSubType> writer(TEST_TOPIC_NAME);
 
         reader.history_depth(10).
                 reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).init();
@@ -720,8 +720,8 @@ TEST_P(PubSubFragmentsLimited, AsyncFragmentSizeTest)
     }
     // ThroghputController size smaller than maxMessageSize.
     {
-        PubSubReader<Data64kbType> reader(TEST_TOPIC_NAME);
-        PubSubWriter<Data64kbType> writer(TEST_TOPIC_NAME);
+        PubSubReader<Data64kbPubSubType> reader(TEST_TOPIC_NAME);
+        PubSubWriter<Data64kbPubSubType> writer(TEST_TOPIC_NAME);
 
         reader.history_depth(10).
                 reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).init();

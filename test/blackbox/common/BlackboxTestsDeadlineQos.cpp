@@ -83,8 +83,8 @@ TEST_P(DeadlineQos, NoKeyTopicLongDeadline)
     // not missed
     // Uses a topic with no key
 
-    PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
-    PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
 
     // Write rate in milliseconds
     uint32_t writer_sleep_ms = 10;
@@ -127,8 +127,8 @@ TEST_P(DeadlineQos, NoKeyTopicShortDeadline)
     // makes the writer send a few samples and checks that the deadline was missed every time
     // Uses a topic with no key
 
-    PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
-    PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
 
     // Write rate in milliseconds
     uint32_t writer_sleep_ms = 1000;
@@ -172,8 +172,8 @@ TEST_P(DeadlineQos, KeyedTopicLongDeadline)
     // makes the writer send a few samples and checks that the deadline was met
     // Uses a topic with key
 
-    PubSubReader<KeyedHelloWorldType> reader(TEST_TOPIC_NAME);
-    PubSubWriter<KeyedHelloWorldType> writer(TEST_TOPIC_NAME);
+    PubSubReader<KeyedHelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<KeyedHelloWorldPubSubType> writer(TEST_TOPIC_NAME);
 
     // Write rate in milliseconds
     uint32_t writer_sleep_ms = 10;
@@ -217,8 +217,8 @@ TEST_P(DeadlineQos, KeyedTopicShortDeadline)
     // makes the writer send a few samples and checks that the deadline was missed every time
     // Uses a topic with key
 
-    PubSubReader<KeyedHelloWorldType> reader(TEST_TOPIC_NAME);
-    PubSubWriter<KeyedHelloWorldType> writer(TEST_TOPIC_NAME);
+    PubSubReader<KeyedHelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<KeyedHelloWorldPubSubType> writer(TEST_TOPIC_NAME);
 
     // Number of samples to send
     uint32_t writer_samples = 4;
@@ -263,7 +263,7 @@ TEST_P(DeadlineQos, KeyedTopicShortDeadline)
  */
 TEST_P(DeadlineQos, KeyedTopicNoReaderVolatileWriterSetDeadline)
 {
-    PubSubWriter<KeyedHelloWorldType> writer(TEST_TOPIC_NAME);
+    PubSubWriter<KeyedHelloWorldPubSubType> writer(TEST_TOPIC_NAME);
 
     writer.durability_kind(VOLATILE_DURABILITY_QOS);
 
@@ -287,8 +287,8 @@ TEST_P(DeadlineQos, KeyedTopicNoReaderVolatileWriterSetDeadline)
  */
 TEST_P(DeadlineQos, KeyedTopicBestEffortReaderVolatileWriterSetDeadline)
 {
-    PubSubWriter<KeyedHelloWorldType> writer(TEST_TOPIC_NAME);
-    PubSubReader<KeyedHelloWorldType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<KeyedHelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+    PubSubReader<KeyedHelloWorldPubSubType> reader(TEST_TOPIC_NAME);
 
     writer.durability_kind(VOLATILE_DURABILITY_QOS);
 

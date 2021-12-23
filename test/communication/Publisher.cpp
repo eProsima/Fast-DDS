@@ -23,6 +23,7 @@
 #include <fastrtps/attributes/PublisherAttributes.h>
 #include <fastrtps/publisher/Publisher.h>
 #include <fastrtps/Domain.h>
+#include <fastrtps/TopicDataType.h>
 
 #include <fstream>
 #include <string>
@@ -58,11 +59,11 @@ bool Publisher::init(
     // Construct a FixedSizedType if fixed type is required, defult HelloWorldType
     if (fixed_type)
     {
-        type_ = new FixedSizedType();
+        type_ = new FixedSizedPubSubType();
     }
     else
     {
-        type_ = new HelloWorldType();
+        type_ = new HelloWorldPubSubType();
     }
 
     eprosima::fastrtps::Domain::registerType(participant_, type_);

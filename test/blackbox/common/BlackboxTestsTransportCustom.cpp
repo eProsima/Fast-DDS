@@ -152,8 +152,8 @@ TEST(ChainingTransportTests, basic_test)
                 reader_send_function_called = true;
             };
 
-    PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
-    PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
 
     writer.disable_builtin_transport()
             .add_user_transport_to_pparams(writer_transport)

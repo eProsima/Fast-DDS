@@ -20,7 +20,7 @@
 #ifndef _TEST_BLACKBOX_REQREPHELLOWORLDREPLIER_HPP_
 #define _TEST_BLACKBOX_REQREPHELLOWORLDREPLIER_HPP_
 
-#include "../../types/HelloWorldType.h"
+#include "../../types/HelloWorldPubSubTypes.h"
 
 #include <fastdds/dds/subscriber/DataReaderListener.hpp>
 #include <fastdds/dds/subscriber/qos/DataReaderQos.hpp>
@@ -37,7 +37,7 @@
 #include <process.h>
 #else
 #define GET_PID getpid
-#endif
+#endif // if defined(_WIN32)
 
 namespace eprosima {
 namespace fastdds {
@@ -48,9 +48,9 @@ class Subscriber;
 class DataReader;
 class Publisher;
 class DataWriter;
-}
-}
-}
+} // namespace dds
+} // namespace fastdds
+} // namespace eprosima
 
 
 class ReqRepHelloWorldReplier
@@ -59,7 +59,7 @@ public:
 
     class ReplyListener : public eprosima::fastdds::dds::DataReaderListener
     {
-public:
+    public:
 
         ReplyListener(
                 ReqRepHelloWorldReplier& replier)
@@ -84,17 +84,18 @@ public:
             }
         }
 
-private:
+    private:
 
         ReplyListener& operator =(
                 const ReplyListener&) = delete;
 
         ReqRepHelloWorldReplier& replier_;
-    } request_listener_;
+    }
+    request_listener_;
 
     class RequestListener : public eprosima::fastdds::dds::DataWriterListener
     {
-public:
+    public:
 
         RequestListener(
                 ReqRepHelloWorldReplier& replier)
@@ -116,14 +117,15 @@ public:
             }
         }
 
-private:
+    private:
 
         RequestListener& operator =(
                 const RequestListener&) = delete;
 
         ReqRepHelloWorldReplier& replier_;
 
-    } reply_listener_;
+    }
+    reply_listener_;
 
     ReqRepHelloWorldReplier();
     virtual ~ReqRepHelloWorldReplier();

@@ -21,9 +21,10 @@
 
 #include <fastrtps/publisher/PublisherListener.h>
 #include <fastrtps/participant/ParticipantListener.h>
+#include <fastrtps/TopicDataType.h>
 
-#include "types/FixedSizedType.h"
-#include "types/HelloWorldType.h"
+#include "types/FixedSizedPubSubTypes.h"
+#include "types/HelloWorldPubSubTypes.h"
 
 #include <mutex>
 #include <condition_variable>

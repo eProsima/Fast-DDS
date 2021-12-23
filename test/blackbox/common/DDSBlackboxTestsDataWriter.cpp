@@ -81,8 +81,8 @@ public:
  */
 TEST_P(DDSDataWriter, WaitForAcknowledgmentInstance)
 {
-    PubSubWriter<KeyedHelloWorldType> writer(TEST_TOPIC_NAME);
-    PubSubReader<KeyedHelloWorldType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<KeyedHelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+    PubSubReader<KeyedHelloWorldPubSubType> reader(TEST_TOPIC_NAME);
 
     auto testTransport = std::make_shared<test_UDPv4TransportDescriptor>();
 

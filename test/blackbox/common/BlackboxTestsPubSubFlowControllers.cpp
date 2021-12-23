@@ -44,8 +44,8 @@ protected:
 
 TEST_P(PubSubFlowControllers, AsyncPubSubAsReliableData64kbWithParticipantFlowControl)
 {
-    PubSubReader<Data64kbType> reader(TEST_TOPIC_NAME);
-    PubSubWriter<Data64kbType> writer(TEST_TOPIC_NAME);
+    PubSubReader<Data64kbPubSubType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<Data64kbPubSubType> writer(TEST_TOPIC_NAME);
 
     reader.history_depth(3).
             reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).init();
@@ -80,8 +80,8 @@ TEST_P(PubSubFlowControllers, AsyncPubSubAsReliableData64kbWithParticipantFlowCo
 
 TEST_P(PubSubFlowControllers, AsyncPubSubAsReliableData64kbWithParticipantFlowControlAndUserTransport)
 {
-    PubSubReader<Data64kbType> reader(TEST_TOPIC_NAME);
-    PubSubWriter<Data64kbType> writer(TEST_TOPIC_NAME);
+    PubSubReader<Data64kbPubSubType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<Data64kbPubSubType> writer(TEST_TOPIC_NAME);
 
     reader.history_depth(3).
             reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).init();
@@ -120,8 +120,8 @@ TEST_P(PubSubFlowControllers, AsyncPubSubAsReliableData64kbWithParticipantFlowCo
 
 TEST_P(PubSubFlowControllers, AsyncPubSubWithFlowController64kb)
 {
-    PubSubReader<Data64kbType> reader(TEST_TOPIC_NAME);
-    PubSubWriter<Data64kbType> slowWriter(TEST_TOPIC_NAME);
+    PubSubReader<Data64kbPubSubType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<Data64kbPubSubType> slowWriter(TEST_TOPIC_NAME);
 
     reader.history_depth(2).
             reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).init();
@@ -149,7 +149,7 @@ TEST_P(PubSubFlowControllers, AsyncPubSubWithFlowController64kb)
 
 TEST_P(PubSubFlowControllers, FlowControllerIfNotAsync)
 {
-    PubSubWriter<Data64kbType> writer(TEST_TOPIC_NAME);
+    PubSubWriter<Data64kbPubSubType> writer(TEST_TOPIC_NAME);
 
     uint32_t size = 10000;
     uint32_t periodInMs = 1000;
@@ -159,7 +159,7 @@ TEST_P(PubSubFlowControllers, FlowControllerIfNotAsync)
 
 TEST_P(PubSubFlowControllers, AsyncMultipleWritersFlowController64kb)
 {
-    PubSubWriterReader<Data64kbType> entities(TEST_TOPIC_NAME);
+    PubSubWriterReader<Data64kbPubSubType> entities(TEST_TOPIC_NAME);
 
     // Readers configuration
     entities.sub_history_depth(3).

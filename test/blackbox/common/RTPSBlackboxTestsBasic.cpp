@@ -75,8 +75,8 @@ public:
 
 TEST_P(RTPS, RTPSAsNonReliableSocket)
 {
-    RTPSAsSocketReader<HelloWorldType> reader(TEST_TOPIC_NAME);
-    RTPSAsSocketWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
+    RTPSAsSocketReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+    RTPSAsSocketWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
     std::string ip("239.255.1.4");
 
     reader.add_to_multicast_locator_list(ip, global_port).init();
@@ -102,8 +102,8 @@ TEST_P(RTPS, RTPSAsNonReliableSocket)
 
 TEST_P(RTPS, AsyncRTPSAsNonReliableSocket)
 {
-    RTPSAsSocketReader<HelloWorldType> reader(TEST_TOPIC_NAME);
-    RTPSAsSocketWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
+    RTPSAsSocketReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+    RTPSAsSocketWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
     std::string ip("239.255.1.4");
 
     reader.add_to_multicast_locator_list(ip, global_port).init();
@@ -130,8 +130,8 @@ TEST_P(RTPS, AsyncRTPSAsNonReliableSocket)
 
 TEST_P(RTPS, AsyncRTPSAsNonReliableSocketWithWriterSpecificFlowControl)
 {
-    RTPSAsSocketReader<HelloWorldType> reader(TEST_TOPIC_NAME);
-    RTPSAsSocketWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
+    RTPSAsSocketReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+    RTPSAsSocketWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
     std::string ip("239.255.1.4");
 
     reader.add_to_multicast_locator_list(ip, global_port).init();
@@ -161,8 +161,8 @@ TEST_P(RTPS, AsyncRTPSAsNonReliableSocketWithWriterSpecificFlowControl)
 
 TEST_P(RTPS, RTPSAsReliableSocket)
 {
-    RTPSAsSocketReader<HelloWorldType> reader(TEST_TOPIC_NAME);
-    RTPSAsSocketWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
+    RTPSAsSocketReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+    RTPSAsSocketWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
     std::string ip("239.255.1.4");
 
     reader.reliability(eprosima::fastrtps::rtps::ReliabilityKind_t::RELIABLE).
@@ -190,8 +190,8 @@ TEST_P(RTPS, RTPSAsReliableSocket)
 
 TEST_P(RTPS, AsyncRTPSAsReliableSocket)
 {
-    RTPSAsSocketReader<HelloWorldType> reader(TEST_TOPIC_NAME);
-    RTPSAsSocketWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
+    RTPSAsSocketReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+    RTPSAsSocketWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
     std::string ip("239.255.1.4");
 
     reader.reliability(eprosima::fastrtps::rtps::ReliabilityKind_t::RELIABLE).
@@ -220,8 +220,8 @@ TEST_P(RTPS, AsyncRTPSAsReliableSocket)
 
 TEST_P(RTPS, RTPSAsNonReliableWithRegistration)
 {
-    RTPSWithRegistrationReader<HelloWorldType> reader(TEST_TOPIC_NAME);
-    RTPSWithRegistrationWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
+    RTPSWithRegistrationReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+    RTPSWithRegistrationWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
     std::string ip("239.255.1.4");
 
     reader.add_to_multicast_locator_list(ip, global_port).init();
@@ -250,8 +250,8 @@ TEST_P(RTPS, RTPSAsNonReliableWithRegistration)
 
 TEST_P(RTPS, AsyncRTPSAsNonReliableWithRegistration)
 {
-    RTPSWithRegistrationReader<HelloWorldType> reader(TEST_TOPIC_NAME);
-    RTPSWithRegistrationWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
+    RTPSWithRegistrationReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+    RTPSWithRegistrationWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
     std::string ip("239.255.1.4");
 
     reader.add_to_multicast_locator_list(ip, global_port).init();
@@ -281,8 +281,8 @@ TEST_P(RTPS, AsyncRTPSAsNonReliableWithRegistration)
 
 TEST_P(RTPS, RTPSAsReliableWithRegistration)
 {
-    RTPSWithRegistrationReader<HelloWorldType> reader(TEST_TOPIC_NAME);
-    RTPSWithRegistrationWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
+    RTPSWithRegistrationReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+    RTPSWithRegistrationWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
     std::string ip("239.255.1.4");
 
     reader.add_to_multicast_locator_list(ip, global_port).
@@ -313,8 +313,8 @@ TEST_P(RTPS, RTPSAsReliableWithRegistration)
 
 TEST_P(RTPS, AsyncRTPSAsReliableWithRegistration)
 {
-    RTPSWithRegistrationReader<HelloWorldType> reader(TEST_TOPIC_NAME);
-    RTPSWithRegistrationWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
+    RTPSWithRegistrationReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+    RTPSWithRegistrationWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
     std::string ip("239.255.1.4");
 
     reader.add_to_multicast_locator_list(ip, global_port).
@@ -346,8 +346,8 @@ TEST_P(RTPS, AsyncRTPSAsReliableWithRegistration)
 // Regression test of Refs #2786, github issue #194
 TEST_P(RTPS, RTPSAsReliableVolatileSocket)
 {
-    RTPSAsSocketReader<HelloWorldType> reader(TEST_TOPIC_NAME);
-    RTPSAsSocketWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
+    RTPSAsSocketReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+    RTPSAsSocketWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
     std::string ip("239.255.1.4");
 
     reader.reliability(eprosima::fastrtps::rtps::ReliabilityKind_t::RELIABLE).
@@ -382,8 +382,8 @@ TEST_P(RTPS, RTPSAsReliableVolatileSocket)
 
 TEST_P(RTPS, RTPSAsReliableWithRegistrationAndHolesInHistory)
 {
-    RTPSWithRegistrationReader<HelloWorldType> reader(TEST_TOPIC_NAME);
-    RTPSWithRegistrationWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
+    RTPSWithRegistrationReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+    RTPSWithRegistrationWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
 
     // To simulate lossy conditions
     int gaps_to_drop = 2;
@@ -446,7 +446,7 @@ TEST_P(RTPS, RTPSAsReliableWithRegistrationAndHolesInHistory)
     }
 
     // Create a late joiner
-    RTPSWithRegistrationReader<HelloWorldType> late_joiner(TEST_TOPIC_NAME);
+    RTPSWithRegistrationReader<HelloWorldPubSubType> late_joiner(TEST_TOPIC_NAME);
 
     late_joiner.
             durability(eprosima::fastrtps::rtps::DurabilityKind_t::TRANSIENT_LOCAL).
@@ -466,8 +466,8 @@ TEST_P(RTPS, RTPSAsReliableWithRegistrationAndHolesInHistory)
 
 TEST_P(RTPS, RTPSAsReliableVolatileTwoWritersConsecutives)
 {
-    RTPSWithRegistrationReader<HelloWorldType> reader(TEST_TOPIC_NAME);
-    RTPSWithRegistrationWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
+    RTPSWithRegistrationReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+    RTPSWithRegistrationWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
 
     reader.reliability(ReliabilityKind_t::RELIABLE).init();
     EXPECT_TRUE(reader.isInitialized());
@@ -518,8 +518,8 @@ TEST_P(RTPS, RTPSAsReliableVolatileTwoWritersConsecutives)
 
 TEST_P(RTPS, RTPSAsReliableTransientLocalTwoWritersConsecutives)
 {
-    RTPSWithRegistrationReader<HelloWorldType> reader(TEST_TOPIC_NAME);
-    RTPSWithRegistrationWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
+    RTPSWithRegistrationReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+    RTPSWithRegistrationWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
 
     reader.reliability(ReliabilityKind_t::RELIABLE).durability(DurabilityKind_t::TRANSIENT_LOCAL).init();
     EXPECT_TRUE(reader.isInitialized());
@@ -583,8 +583,8 @@ TEST_P(RTPS, RTPSAsReliableTransientLocalTwoWritersConsecutives)
  */
 TEST(RTPS, RTPSNetworkInterfaceChangesAtRunTime)
 {
-    RTPSWithRegistrationReader<HelloWorldType> reader(TEST_TOPIC_NAME);
-    RTPSWithRegistrationWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
+    RTPSWithRegistrationReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+    RTPSWithRegistrationWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
 
     // reader is initialized with all the network interfaces
     reader.reliability(ReliabilityKind_t::RELIABLE).durability(DurabilityKind_t::TRANSIENT_LOCAL).init();

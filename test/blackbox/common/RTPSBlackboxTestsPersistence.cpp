@@ -53,8 +53,8 @@ public:
     std::list<HelloWorld> not_received_data;
 
     void run_one_send_recv_test(
-            RTPSWithRegistrationReader<HelloWorldType>& reader,
-            RTPSWithRegistrationWriter<HelloWorldType>& writer,
+            RTPSWithRegistrationReader<HelloWorldPubSubType>& reader,
+            RTPSWithRegistrationWriter<HelloWorldPubSubType>& writer,
             uint32_t seq_check = 0,
             bool reliable = false)
     {
@@ -180,8 +180,8 @@ protected:
 
 TEST_P(Persistence, RTPSAsNonReliableWithPersistence)
 {
-    RTPSWithRegistrationReader<HelloWorldType> reader(TEST_TOPIC_NAME);
-    RTPSWithRegistrationWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
+    RTPSWithRegistrationReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+    RTPSWithRegistrationWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
     std::string ip("239.255.1.4");
 
     reader.make_persistent(db_file_name(), guid_prefix()).add_to_multicast_locator_list(ip, global_port).init();
@@ -211,8 +211,8 @@ TEST_P(Persistence, RTPSAsNonReliableWithPersistence)
 
 TEST_P(Persistence, AsyncRTPSAsNonReliableWithPersistence)
 {
-    RTPSWithRegistrationReader<HelloWorldType> reader(TEST_TOPIC_NAME);
-    RTPSWithRegistrationWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
+    RTPSWithRegistrationReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+    RTPSWithRegistrationWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
     std::string ip("239.255.1.4");
 
     reader.make_persistent(db_file_name(), guid_prefix()).add_to_multicast_locator_list(ip, global_port).init();
@@ -243,8 +243,8 @@ TEST_P(Persistence, AsyncRTPSAsNonReliableWithPersistence)
 
 TEST_P(Persistence, RTPSAsReliableWithPersistence)
 {
-    RTPSWithRegistrationReader<HelloWorldType> reader(TEST_TOPIC_NAME);
-    RTPSWithRegistrationWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
+    RTPSWithRegistrationReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+    RTPSWithRegistrationWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
     std::string ip("239.255.1.4");
 
     reader.make_persistent(db_file_name(), guid_prefix()).add_to_multicast_locator_list(ip, global_port).
@@ -275,8 +275,8 @@ TEST_P(Persistence, RTPSAsReliableWithPersistence)
 
 TEST_P(Persistence, AsyncRTPSAsReliableWithPersistence)
 {
-    RTPSWithRegistrationReader<HelloWorldType> reader(TEST_TOPIC_NAME);
-    RTPSWithRegistrationWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
+    RTPSWithRegistrationReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+    RTPSWithRegistrationWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
     std::string ip("239.255.1.4");
 
     reader.make_persistent(db_file_name(), guid_prefix()).add_to_multicast_locator_list(ip, global_port).

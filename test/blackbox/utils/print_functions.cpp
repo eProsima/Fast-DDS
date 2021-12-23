@@ -39,7 +39,7 @@ void default_receive_print(
 
 template<>
 void default_receive_print(
-        const String& str)
+        const StringTest& str)
 {
     std::cout << "Received String " << str.message()[str.message().size() - 2]
               << str.message()[str.message().size() - 1] << std::endl;
@@ -68,7 +68,7 @@ void default_receive_print(
 
 template<>
 void default_send_print(
-        const StringType&)
+        const StringTestPubSubType&)
 {
     std::cout << "Sent StringType" << std::endl;
 }
@@ -96,7 +96,7 @@ void default_send_print(
 
 template<>
 void default_send_print(
-        const String& str)
+        const StringTest& str)
 {
     std::cout << "Sent String " << str.message()[str.message().size() - 2]
               << str.message()[str.message().size() - 1] << std::endl;

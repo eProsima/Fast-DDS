@@ -19,7 +19,7 @@
 
 TEST(KeyedTopic, RegistrationNonKeyedFail)
 {
-    PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
 
     writer.init();
 
@@ -36,7 +36,7 @@ TEST(KeyedTopic, RegistrationNonKeyedFail)
 
 TEST(KeyedTopic, RegistrationSuccess)
 {
-    PubSubWriter<KeyedHelloWorldType> writer(TEST_TOPIC_NAME);
+    PubSubWriter<KeyedHelloWorldPubSubType> writer(TEST_TOPIC_NAME);
 
     writer.init();
 
@@ -53,11 +53,11 @@ TEST(KeyedTopic, RegistrationSuccess)
 
 TEST(KeyedTopic, RegistrationFail)
 {
-    PubSubWriter<KeyedHelloWorldType> writer(TEST_TOPIC_NAME);
+    PubSubWriter<KeyedHelloWorldPubSubType> writer(TEST_TOPIC_NAME);
 
     writer.
-    resource_limits_max_instances(1).
-    init();
+            resource_limits_max_instances(1).
+            init();
 
     ASSERT_TRUE(writer.isInitialized());
 
@@ -70,11 +70,11 @@ TEST(KeyedTopic, RegistrationFail)
 
 TEST(KeyedTopic, UnregistrationFail)
 {
-    PubSubWriter<KeyedHelloWorldType> writer(TEST_TOPIC_NAME);
+    PubSubWriter<KeyedHelloWorldPubSubType> writer(TEST_TOPIC_NAME);
 
     writer.
-    resource_limits_max_instances(1).
-    init();
+            resource_limits_max_instances(1).
+            init();
 
     ASSERT_TRUE(writer.isInitialized());
 
@@ -88,11 +88,11 @@ TEST(KeyedTopic, UnregistrationFail)
 
 TEST(KeyedTopic, DisposeFail)
 {
-    PubSubWriter<KeyedHelloWorldType> writer(TEST_TOPIC_NAME);
+    PubSubWriter<KeyedHelloWorldPubSubType> writer(TEST_TOPIC_NAME);
 
     writer.
-    resource_limits_max_instances(1).
-    init();
+            resource_limits_max_instances(1).
+            init();
 
     ASSERT_TRUE(writer.isInitialized());
 
@@ -106,11 +106,11 @@ TEST(KeyedTopic, DisposeFail)
 
 TEST(KeyedTopic, RegistrationAfterUnregistration)
 {
-    PubSubWriter<KeyedHelloWorldType> writer(TEST_TOPIC_NAME);
+    PubSubWriter<KeyedHelloWorldPubSubType> writer(TEST_TOPIC_NAME);
 
     writer.
-    resource_limits_max_instances(1).
-    init();
+            resource_limits_max_instances(1).
+            init();
 
     ASSERT_TRUE(writer.isInitialized());
 
@@ -133,11 +133,11 @@ TEST(KeyedTopic, RegistrationAfterUnregistration)
 
 TEST(KeyedTopic, RegistrationAfterDispose)
 {
-    PubSubWriter<KeyedHelloWorldType> writer(TEST_TOPIC_NAME);
+    PubSubWriter<KeyedHelloWorldPubSubType> writer(TEST_TOPIC_NAME);
 
     writer.
-    resource_limits_max_instances(1).
-    init();
+            resource_limits_max_instances(1).
+            init();
 
     ASSERT_TRUE(writer.isInitialized());
 
@@ -157,11 +157,11 @@ TEST(KeyedTopic, RegistrationAfterDispose)
 
 TEST(KeyedTopic, UnregisterWhenHistoryKeepAll)
 {
-    PubSubWriter<KeyedHelloWorldType> writer(TEST_TOPIC_NAME);
+    PubSubWriter<KeyedHelloWorldPubSubType> writer(TEST_TOPIC_NAME);
 
     writer.
-    history_kind(eprosima::fastrtps::KEEP_ALL_HISTORY_QOS).
-    init();
+            history_kind(eprosima::fastrtps::KEEP_ALL_HISTORY_QOS).
+            init();
 
     ASSERT_TRUE(writer.isInitialized());
 
@@ -184,8 +184,8 @@ TEST(KeyedTopic, UnregisterWhenHistoryKeepAll)
 /* Uncomment when DDS API supports NO_WRITERS_ALIVE
    TEST(KeyedTopic, WriteSamplesBestEffort)
    {
-    PubSubWriter<KeyedHelloWorldType> writer(TEST_TOPIC_NAME);
-    PubSubReader<KeyedHelloWorldType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<KeyedHelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+    PubSubReader<KeyedHelloWorldPubSubType> reader(TEST_TOPIC_NAME);
 
     writer.
     resource_limits_max_instances(1).
@@ -235,8 +235,8 @@ TEST(KeyedTopic, UnregisterWhenHistoryKeepAll)
 
    TEST(KeyedTopic, WriteSamplesReliable)
    {
-    PubSubWriter<KeyedHelloWorldType> writer(TEST_TOPIC_NAME);
-    PubSubReader<KeyedHelloWorldType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<KeyedHelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+    PubSubReader<KeyedHelloWorldPubSubType> reader(TEST_TOPIC_NAME);
 
     writer.
     resource_limits_max_instances(1).

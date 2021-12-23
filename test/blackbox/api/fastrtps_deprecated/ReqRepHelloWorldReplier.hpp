@@ -20,7 +20,7 @@
 #ifndef _TEST_BLACKBOX_REQREPHELLOWORLDREPLIER_HPP_
 #define _TEST_BLACKBOX_REQREPHELLOWORLDREPLIER_HPP_
 
-#include "../../types/HelloWorldType.h"
+#include "../../types/HelloWorldPubSubTypes.h"
 
 #include <fastrtps/fastrtps_fwd.h>
 #include <fastrtps/subscriber/SubscriberListener.h>
@@ -36,7 +36,7 @@
 #include <process.h>
 #else
 #define GET_PID getpid
-#endif
+#endif // if defined(_WIN32)
 
 
 
@@ -46,7 +46,7 @@ public:
 
     class ReplyListener : public eprosima::fastrtps::SubscriberListener
     {
-public:
+    public:
 
         ReplyListener(
                 ReqRepHelloWorldReplier& replier)
@@ -70,17 +70,18 @@ public:
             }
         }
 
-private:
+    private:
 
         ReplyListener& operator =(
                 const ReplyListener&) = delete;
 
         ReqRepHelloWorldReplier& replier_;
-    } request_listener_;
+    }
+    request_listener_;
 
     class RequestListener : public eprosima::fastrtps::PublisherListener
     {
-public:
+    public:
 
         RequestListener(
                 ReqRepHelloWorldReplier& replier)
@@ -102,14 +103,15 @@ public:
             }
         }
 
-private:
+    private:
 
         RequestListener& operator =(
                 const RequestListener&) = delete;
 
         ReqRepHelloWorldReplier& replier_;
 
-    } reply_listener_;
+    }
+    reply_listener_;
 
     ReqRepHelloWorldReplier();
     virtual ~ReqRepHelloWorldReplier();
@@ -146,7 +148,7 @@ private:
     std::mutex mutexDiscovery_;
     std::condition_variable cvDiscovery_;
     unsigned int matched_;
-    HelloWorldType type_;
+    HelloWorldPubSubType type_;
 };
 
 #endif // _TEST_BLACKBOX_REQREPHELLOWORLDREPLIER_HPP_

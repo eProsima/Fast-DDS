@@ -85,7 +85,7 @@ TEST_P(DDSDataReader, LivelinessChangedStatusGet)
     static const Duration_t announcement_period(0, 100 * 1000);
 
     // Create and start reader that will not invoke listener for liveliness_changed
-    PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
     reader.liveliness_kind(AUTOMATIC_LIVELINESS_QOS)
             .liveliness_lease_duration(lease_duration)
             .deactivate_status_listener(eprosima::fastdds::dds::StatusMask::liveliness_changed());
@@ -93,8 +93,8 @@ TEST_P(DDSDataReader, LivelinessChangedStatusGet)
     ASSERT_TRUE(reader.isInitialized());
 
     // Create a participant for the writers
-    std::unique_ptr<PubSubParticipant<HelloWorldType>> writers;
-    writers.reset(new PubSubParticipant<HelloWorldType>(num_times, 0, num_times, 0));
+    std::unique_ptr<PubSubParticipant<HelloWorldPubSubType>> writers;
+    writers.reset(new PubSubParticipant<HelloWorldPubSubType>(num_times, 0, num_times, 0));
     writers->pub_topic_name(TEST_TOPIC_NAME)
             .pub_liveliness_kind(AUTOMATIC_LIVELINESS_QOS)
             .pub_liveliness_announcement_period(announcement_period)

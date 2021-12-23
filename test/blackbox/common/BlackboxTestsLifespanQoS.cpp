@@ -83,8 +83,8 @@ TEST_P(LifespanQos, LongLifespan)
     // and checks that those changes can be removed from the history
     // as they should not have been removed due to lifespan QoS
 
-    PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME, false);
-    PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME, false);
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
 
     // Write rate in milliseconds
     uint32_t writer_sleep_ms = 1;
@@ -123,7 +123,7 @@ TEST_P(LifespanQos, LongLifespan)
     EXPECT_EQ(removed_pub, writer_samples);
 
     // On the reader side we should be able to take the data
-    HelloWorldType::type msg;
+    HelloWorldPubSubType::type msg;
     for (uint32_t i = 0; i < writer_samples; ++i)
     {
         EXPECT_EQ(reader.take_first_data(&msg), true);
@@ -136,8 +136,8 @@ TEST_P(LifespanQos, ShortLifespan)
     // and checks that those samples cannot be removed from the history as
     // they have been removed by lifespan QoS
 
-    PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
-    PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
 
     // Write rate in milliseconds
     uint32_t writer_sleep_ms = 200;
@@ -171,7 +171,7 @@ TEST_P(LifespanQos, ShortLifespan)
     EXPECT_EQ(removed_pub, 0u);
 
     // On the reader side we should not be able to take the data
-    HelloWorldType::type msg;
+    HelloWorldPubSubType::type msg;
     for (uint32_t i = 0; i < writer_samples; ++i)
     {
         EXPECT_EQ(reader.take_first_data(&msg), false);

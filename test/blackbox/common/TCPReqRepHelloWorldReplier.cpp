@@ -113,14 +113,14 @@ void TCPReqRepHelloWorldReplier::init(
 
     //Create subscriber
     sattr.topic.topicKind = NO_KEY;
-    sattr.topic.topicDataType = "HelloWorldType";
+    sattr.topic.topicDataType = type_.getName();
     configSubscriber("Request");
     request_subscriber_ = Domain::createSubscriber(participant_, sattr, &request_listener_);
     ASSERT_NE(request_subscriber_, nullptr);
 
     //Create publisher
     puattr.topic.topicKind = NO_KEY;
-    puattr.topic.topicDataType = "HelloWorldType";
+    puattr.topic.topicDataType = type_.getName();
     puattr.topic.topicName = "HelloWorldTopicReply";
     configPublisher("Reply");
     reply_publisher_ = Domain::createPublisher(participant_, puattr, &reply_listener_);

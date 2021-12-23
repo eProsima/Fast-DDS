@@ -99,8 +99,8 @@ protected:
     void fragment_data(
             bool large_data)
     {
-        PubSubWriter<Data1mbType> writer(TEST_TOPIC_NAME);
-        PubSubReader<Data1mbType> reader(TEST_TOPIC_NAME);
+        PubSubWriter<Data1mbPubSubType> writer(TEST_TOPIC_NAME);
+        PubSubReader<Data1mbPubSubType> reader(TEST_TOPIC_NAME);
 
         auto testTransport = std::make_shared<UDPv4TransportDescriptor>();
         testTransport->sendBufferSize = 32768;
@@ -170,8 +170,8 @@ TEST_P(PersistenceLargeData, PubSubAsReliablePubPersistentNoFrag)
 
 TEST_P(PersistenceLargeData, PubSubAsReliablePubPersistentWithLifespanBefore)
 {
-    PubSubWriter<Data1mbType> writer(TEST_TOPIC_NAME);
-    PubSubReader<Data1mbType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<Data1mbPubSubType> writer(TEST_TOPIC_NAME);
+    PubSubReader<Data1mbPubSubType> reader(TEST_TOPIC_NAME);
 
     writer
             .history_kind(eprosima::fastrtps::KEEP_ALL_HISTORY_QOS)
@@ -221,8 +221,8 @@ TEST_P(PersistenceLargeData, PubSubAsReliablePubPersistentWithLifespanBefore)
 
 TEST_P(PersistenceLargeData, PubSubAsReliablePubPersistentWithLifespanSendingBefore)
 {
-    PubSubWriter<Data1mbType> writer(TEST_TOPIC_NAME);
-    PubSubReader<Data1mbType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<Data1mbPubSubType> writer(TEST_TOPIC_NAME);
+    PubSubReader<Data1mbPubSubType> reader(TEST_TOPIC_NAME);
 
     writer
             .history_kind(eprosima::fastrtps::KEEP_ALL_HISTORY_QOS)
@@ -280,8 +280,8 @@ TEST_P(PersistenceLargeData, PubSubAsReliablePubPersistentWithLifespanSendingBef
 
 TEST_P(PersistenceLargeData, PubSubAsReliablePubPersistentWithLifespanAfter)
 {
-    PubSubWriter<Data1mbType> writer(TEST_TOPIC_NAME);
-    PubSubReader<Data1mbType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<Data1mbPubSubType> writer(TEST_TOPIC_NAME);
+    PubSubReader<Data1mbPubSubType> reader(TEST_TOPIC_NAME);
 
     writer
             .history_kind(eprosima::fastrtps::KEEP_ALL_HISTORY_QOS)
@@ -378,7 +378,7 @@ TEST_P(PersistenceLargeData, PubSubAsReliablePubPersistentWithStaticDiscovery)
     }
     int32_t MULTICAST_PORT_RANDOM_NUMBER = stoi(MULTICAST_PORT_RANDOM_NUMBER_STR);
 
-    PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
 
     LocatorList_t WriterUnicastLocators;
     Locator_t LocatorBuffer;
@@ -408,7 +408,7 @@ TEST_P(PersistenceLargeData, PubSubAsReliablePubPersistentWithStaticDiscovery)
 
     ASSERT_TRUE(writer.isInitialized());
 
-    PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
 
     LocatorList_t ReaderUnicastLocators;
 

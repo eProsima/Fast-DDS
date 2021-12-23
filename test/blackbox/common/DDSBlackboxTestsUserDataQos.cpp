@@ -81,10 +81,10 @@ public:
  */
 TEST_P(UserDataQos, update_user_data_qos)
 {
-    PubSubParticipant<HelloWorldType> participant_1(0u, 0u, 0u, 0u);
+    PubSubParticipant<HelloWorldPubSubType> participant_1(0u, 0u, 0u, 0u);
     ASSERT_TRUE(participant_1.user_data({'a', 'b', 'c', 'd', 'e'}).init_participant());
 
-    PubSubParticipant<HelloWorldType> participant_2(0u, 0u, 0u, 0u);
+    PubSubParticipant<HelloWorldPubSubType> participant_2(0u, 0u, 0u, 0u);
 
     participant_2.set_on_discovery_function([&](const rtps::ParticipantDiscoveryInfo& info) -> bool
             {

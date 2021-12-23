@@ -45,8 +45,8 @@ bool check_shared_file (
 
 TEST(DDSDataSharing, BasicCommunication)
 {
-    PubSubReader<FixedSizedType> reader(TEST_TOPIC_NAME);
-    PubSubWriter<FixedSizedType> writer(TEST_TOPIC_NAME);
+    PubSubReader<FixedSizedPubSubType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<FixedSizedPubSubType> writer(TEST_TOPIC_NAME);
 
     // Disable transports to ensure we are using datasharing
     auto testTransport = std::make_shared<test_UDPv4TransportDescriptor>();
@@ -97,8 +97,8 @@ TEST(DDSDataSharing, BasicCommunication)
 
 TEST(DDSDataSharing, TransientReader)
 {
-    PubSubReader<FixedSizedType> reader(TEST_TOPIC_NAME);
-    PubSubWriter<FixedSizedType> writer(TEST_TOPIC_NAME);
+    PubSubReader<FixedSizedPubSubType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<FixedSizedPubSubType> writer(TEST_TOPIC_NAME);
 
     // Disable transports to ensure we are using datasharing
     auto testTransport = std::make_shared<test_UDPv4TransportDescriptor>();
@@ -160,8 +160,8 @@ TEST(DDSDataSharing, BestEffortDirtyPayloads)
     // The writer's pool is smaller than the reader history.
     // The number of samples is larger than the pool size, so some payloads get reused
     // leaving dirty payloads in the reader
-    PubSubReader<FixedSizedType> read_reader(TEST_TOPIC_NAME, false);
-    PubSubWriter<FixedSizedType> writer(TEST_TOPIC_NAME);
+    PubSubReader<FixedSizedPubSubType> read_reader(TEST_TOPIC_NAME, false);
+    PubSubWriter<FixedSizedPubSubType> writer(TEST_TOPIC_NAME);
 
     // Disable transports to ensure we are using datasharing
     auto testTransport = std::make_shared<test_UDPv4TransportDescriptor>();
@@ -220,8 +220,8 @@ TEST(DDSDataSharing, ReliableDirtyPayloads)
     // The writer's pool is smaller than the reader history.
     // The number of samples is larger than the pool size, so some payloads get rused
     // leaving dirty payloads in the reader
-    PubSubReader<FixedSizedType> read_reader(TEST_TOPIC_NAME, false);
-    PubSubWriter<FixedSizedType> writer(TEST_TOPIC_NAME);
+    PubSubReader<FixedSizedPubSubType> read_reader(TEST_TOPIC_NAME, false);
+    PubSubWriter<FixedSizedPubSubType> writer(TEST_TOPIC_NAME);
 
     // Disable transports to ensure we are using datasharing
     auto testTransport = std::make_shared<test_UDPv4TransportDescriptor>();
@@ -278,10 +278,10 @@ TEST(DDSDataSharing, ReliableDirtyPayloads)
 
 TEST(DDSDataSharing, DataSharingWriter_DifferentDomainReaders)
 {
-    PubSubWriter<FixedSizedType> writer(TEST_TOPIC_NAME);
-    PubSubReader<FixedSizedType> datasharing_reader(TEST_TOPIC_NAME);
-    PubSubReader<FixedSizedType> non_datasharing_reader(TEST_TOPIC_NAME);
-    PubSubReader<FixedSizedType> auto_reader(TEST_TOPIC_NAME);
+    PubSubWriter<FixedSizedPubSubType> writer(TEST_TOPIC_NAME);
+    PubSubReader<FixedSizedPubSubType> datasharing_reader(TEST_TOPIC_NAME);
+    PubSubReader<FixedSizedPubSubType> non_datasharing_reader(TEST_TOPIC_NAME);
+    PubSubReader<FixedSizedPubSubType> auto_reader(TEST_TOPIC_NAME);
 
     auto testTransport = std::make_shared<test_UDPv4TransportDescriptor>();
     testTransport->dropDataMessagesPercentage = 100;
@@ -351,10 +351,10 @@ TEST(DDSDataSharing, DataSharingWriter_DifferentDomainReaders)
 
 TEST(DDSDataSharing, DataSharingWriter_CommonDomainReaders)
 {
-    PubSubWriter<FixedSizedType> writer(TEST_TOPIC_NAME);
-    PubSubReader<FixedSizedType> datasharing_reader(TEST_TOPIC_NAME);
-    PubSubReader<FixedSizedType> non_datasharing_reader(TEST_TOPIC_NAME);
-    PubSubReader<FixedSizedType> auto_reader(TEST_TOPIC_NAME);
+    PubSubWriter<FixedSizedPubSubType> writer(TEST_TOPIC_NAME);
+    PubSubReader<FixedSizedPubSubType> datasharing_reader(TEST_TOPIC_NAME);
+    PubSubReader<FixedSizedPubSubType> non_datasharing_reader(TEST_TOPIC_NAME);
+    PubSubReader<FixedSizedPubSubType> auto_reader(TEST_TOPIC_NAME);
 
     auto testTransport = std::make_shared<test_UDPv4TransportDescriptor>();
     testTransport->dropDataMessagesPercentage = 100;
@@ -426,10 +426,10 @@ TEST(DDSDataSharing, DataSharingWriter_CommonDomainReaders)
 
 TEST(DDSDataSharing, DataSharingReader_DifferentDomainWriters)
 {
-    PubSubWriter<FixedSizedType> datasharing_writer(TEST_TOPIC_NAME);
-    PubSubWriter<FixedSizedType> non_datasharing_writer(TEST_TOPIC_NAME);
-    PubSubWriter<FixedSizedType> auto_writer(TEST_TOPIC_NAME);
-    PubSubReader<FixedSizedType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<FixedSizedPubSubType> datasharing_writer(TEST_TOPIC_NAME);
+    PubSubWriter<FixedSizedPubSubType> non_datasharing_writer(TEST_TOPIC_NAME);
+    PubSubWriter<FixedSizedPubSubType> auto_writer(TEST_TOPIC_NAME);
+    PubSubReader<FixedSizedPubSubType> reader(TEST_TOPIC_NAME);
 
     auto testTransport = std::make_shared<test_UDPv4TransportDescriptor>();
     testTransport->dropDataMessagesPercentage = 100;
@@ -509,10 +509,10 @@ TEST(DDSDataSharing, DataSharingReader_DifferentDomainWriters)
 
 TEST(DDSDataSharing, DataSharingReader_CommonDomainWriters)
 {
-    PubSubWriter<FixedSizedType> datasharing_writer(TEST_TOPIC_NAME);
-    PubSubWriter<FixedSizedType> non_datasharing_writer(TEST_TOPIC_NAME);
-    PubSubWriter<FixedSizedType> auto_writer(TEST_TOPIC_NAME);
-    PubSubReader<FixedSizedType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<FixedSizedPubSubType> datasharing_writer(TEST_TOPIC_NAME);
+    PubSubWriter<FixedSizedPubSubType> non_datasharing_writer(TEST_TOPIC_NAME);
+    PubSubWriter<FixedSizedPubSubType> auto_writer(TEST_TOPIC_NAME);
+    PubSubReader<FixedSizedPubSubType> reader(TEST_TOPIC_NAME);
 
     auto testTransport = std::make_shared<test_UDPv4TransportDescriptor>();
     testTransport->dropDataMessagesPercentage = 100;
@@ -595,9 +595,9 @@ TEST(DDSDataSharing, DataSharingReader_CommonDomainWriters)
 
 TEST(DDSDataSharing, DataSharingPoolError)
 {
-    PubSubWriter<Data1mbType> writer_datasharing(TEST_TOPIC_NAME);
-    PubSubWriter<Data1mbType> writer_auto(TEST_TOPIC_NAME);
-    PubSubReader<Data1mbType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<Data1mbPubSubType> writer_datasharing(TEST_TOPIC_NAME);
+    PubSubWriter<Data1mbPubSubType> writer_auto(TEST_TOPIC_NAME);
+    PubSubReader<Data1mbPubSubType> reader(TEST_TOPIC_NAME);
 
     writer_datasharing.resource_limits_max_samples(100000)
             .history_kind(eprosima::fastrtps::KEEP_ALL_HISTORY_QOS)
@@ -648,8 +648,8 @@ TEST(DDSDataSharing, DataSharingDefaultDirectory)
     // Since the default directory heavily depends on the system,
     // we are not checking the creation of the files in this case,
     // only that it is working.
-    PubSubReader<FixedSizedType> reader(TEST_TOPIC_NAME);
-    PubSubWriter<FixedSizedType> writer(TEST_TOPIC_NAME);
+    PubSubReader<FixedSizedPubSubType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<FixedSizedPubSubType> writer(TEST_TOPIC_NAME);
 
     // Disable transports to ensure we are using datasharing
     auto testTransport = std::make_shared<test_UDPv4TransportDescriptor>();

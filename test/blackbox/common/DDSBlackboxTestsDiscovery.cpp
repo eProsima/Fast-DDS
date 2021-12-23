@@ -37,7 +37,7 @@ TEST(DDSDiscovery, IgnoreParticipantFlags)
     // This participant is created with:
     // - ignoreParticipantFlags = FILTER_SAME_PROCESS (will avoid discovery of p2)
     // - metatrafficUnicastLocatorList = 127.0.0.1:7399, 127.0.0.1:7398 (to ensure two listening threads are created)
-    PubSubReader<HelloWorldType> p1(TEST_TOPIC_NAME);
+    PubSubReader<HelloWorldPubSubType> p1(TEST_TOPIC_NAME);
     p1.set_xml_filename("discovery_participant_flags.xml");
     p1.set_participant_profile("participant_1");
     p1.init();
@@ -46,7 +46,7 @@ TEST(DDSDiscovery, IgnoreParticipantFlags)
     // This participant is created with initialPeersList = 127.0.0.1:7399
     // When the announcements of this participant arrive to p1, they will be ignored, and thus p1 will not
     // announce itself back to p2.
-    PubSubReader<HelloWorldType> p2(TEST_TOPIC_NAME);
+    PubSubReader<HelloWorldPubSubType> p2(TEST_TOPIC_NAME);
     p2.set_xml_filename("discovery_participant_flags.xml");
     p2.set_participant_profile("participant_2");
     p2.init();
@@ -59,7 +59,7 @@ TEST(DDSDiscovery, IgnoreParticipantFlags)
     // - a custom guid prefix
     // The announcements of this participant will arrive to p1 on a different listening thread.
     // Due to the custom prefix, they should not be ignored, and mutual discovery should happen
-    PubSubReader<HelloWorldType> p3(TEST_TOPIC_NAME);
+    PubSubReader<HelloWorldPubSubType> p3(TEST_TOPIC_NAME);
     p3.set_xml_filename("discovery_participant_flags.xml");
     p3.set_participant_profile("participant_3");
     p3.init();
@@ -89,7 +89,7 @@ TEST(DDSDiscovery, AddDiscoveryServerToList)
     }
 
     /* Create first server */
-    PubSubParticipant<HelloWorldType> server_1(0u, 0u, 0u, 0u);
+    PubSubParticipant<HelloWorldPubSubType> server_1(0u, 0u, 0u, 0u);
     // Set participant as server
     WireProtocolConfigQos server_1_qos;
     server_1_qos.builtin.discovery_config.discoveryProtocol = DiscoveryProtocol_t::SERVER;
@@ -111,7 +111,7 @@ TEST(DDSDiscovery, AddDiscoveryServerToList)
     ASSERT_TRUE(server_1.wire_protocol(server_1_qos).init_participant());
 
     /* Create second server */
-    PubSubParticipant<HelloWorldType> server_2(0u, 0u, 0u, 0u);
+    PubSubParticipant<HelloWorldPubSubType> server_2(0u, 0u, 0u, 0u);
     // Set participant as server
     WireProtocolConfigQos server_2_qos;
     server_2_qos.builtin.discovery_config.discoveryProtocol = DiscoveryProtocol_t::SERVER;
@@ -129,7 +129,7 @@ TEST(DDSDiscovery, AddDiscoveryServerToList)
     ASSERT_TRUE(server_2.wire_protocol(server_2_qos).init_participant());
 
     /* Create a client that connects to the first server from the beginning */
-    PubSubParticipant<HelloWorldType> client(0u, 0u, 0u, 0u);
+    PubSubParticipant<HelloWorldPubSubType> client(0u, 0u, 0u, 0u);
     // Set participant as client
     WireProtocolConfigQos client_qos;
     client_qos.builtin.discovery_config.discoveryProtocol = DiscoveryProtocol_t::CLIENT;
@@ -188,8 +188,8 @@ TEST(DDSDiscovery, DDSNetworkInterfaceChangesAtRunTime)
 {
     using namespace eprosima::fastdds::rtps;
 
-    PubSubWriter<HelloWorldType> datawriter(TEST_TOPIC_NAME);
-    PubSubReader<HelloWorldType> datareader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldPubSubType> datawriter(TEST_TOPIC_NAME);
+    PubSubReader<HelloWorldPubSubType> datareader(TEST_TOPIC_NAME);
 
     // datareader is initialized with all the network interfaces
     datareader.durability_kind(eprosima::fastrtps::TRANSIENT_LOCAL_DURABILITY_QOS).history_depth(100).

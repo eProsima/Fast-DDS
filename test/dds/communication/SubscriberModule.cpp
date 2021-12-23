@@ -79,11 +79,11 @@ bool SubscriberModule::init(
     // Construct a FixedSizedType if fixed type is required, defult HelloWro
     if (fixed_type_)
     {
-        type_.reset(new FixedSizedType());
+        type_.reset(new FixedSizedPubSubType());
     }
     else
     {
-        type_.reset(new HelloWorldType());
+        type_.reset(new HelloWorldPubSubType());
     }
     type_.register_type(participant_);
 

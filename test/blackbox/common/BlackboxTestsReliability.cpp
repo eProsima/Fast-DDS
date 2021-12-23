@@ -30,8 +30,8 @@ using test_UDPv4TransportDescriptor = eprosima::fastdds::rtps::test_UDPv4Transpo
 void reliability_disable_heartbeat_piggyback(
         bool disable_heartbeat_piggyback)
 {
-    PubSubReader<KeyedHelloWorldType> reader(TEST_TOPIC_NAME);
-    PubSubWriter<KeyedHelloWorldType> writer(TEST_TOPIC_NAME);
+    PubSubReader<KeyedHelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<KeyedHelloWorldPubSubType> writer(TEST_TOPIC_NAME);
 
     bool heartbeat_found = false;
     bool start_reception = false;
