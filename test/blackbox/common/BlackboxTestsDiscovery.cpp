@@ -283,7 +283,7 @@ TEST(Discovery, StaticDiscoveryFromString)
             "<topicName>BlackBox_StaticDiscoveryFromString_" +
             TOPIC_RANDOM_NUMBER +
             std::string("</topicName>" \
-                    "<topicDataType>HelloWorldPubSubType</topicDataType>" \
+                    "<topicDataType>HelloWorld</topicDataType>" \
                     "<topicKind>NO_KEY</topicKind>" \
                     "<reliabilityQos>RELIABLE_RELIABILITY_QOS</reliabilityQos>" \
                     "<durabilityQos>TRANSIENT_LOCAL_DURABILITY_QOS</durabilityQos>" \
@@ -313,7 +313,7 @@ TEST(Discovery, StaticDiscoveryFromString)
             TOPIC_RANDOM_NUMBER +
             std::string(
         "</topicName>" \
-        "<topicDataType>HelloWorldPubSubType</topicDataType>" \
+        "<topicDataType>HelloWorld</topicDataType>" \
         "<topicKind>NO_KEY</topicKind>" \
         "<reliabilityQos>RELIABLE_RELIABILITY_QOS</reliabilityQos>" \
         "<durabilityQos>TRANSIENT_LOCAL_DURABILITY_QOS</durabilityQos>" \
