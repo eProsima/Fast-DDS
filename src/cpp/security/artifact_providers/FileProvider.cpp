@@ -202,7 +202,11 @@ EVP_PKEY* FileProvider::load_private_key(
                             (void*)password.c_str());
 
             // Verify private key.
-            if (!X509_check_private_key(certificate, returnedValue))
+            if (nullptr == returnedValue)
+            {
+                exception = _SecurityException_(std::string("Error obtaining private key ") + pkey.substr(7));
+            }
+            else if (!X509_check_private_key(certificate, returnedValue))
             {
                 exception = _SecurityException_(std::string("Error verifying private key ") + pkey.substr(7));
                 EVP_PKEY_free(returnedValue);
