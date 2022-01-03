@@ -153,7 +153,7 @@ private:
     ResourceLimitedContainerConfig total_endpoints(
             const ResourceLimitedContainerConfig& endpoints) const
     {
-        constexpr size_t max = std::numeric_limits<size_t>::max();
+        constexpr size_t max = (std::numeric_limits<size_t>::max)();
         size_t initial;
         size_t maximum;
         size_t increment;
@@ -161,7 +161,7 @@ private:
         initial = participants.initial * endpoints.initial;
         maximum = (participants.maximum == max || endpoints.maximum == max)
                 ? max : participants.maximum * endpoints.maximum;
-        increment = std::max(participants.increment, endpoints.increment);
+        increment = (std::max)(participants.increment, endpoints.increment);
 
         return { initial, maximum, increment };
     }

@@ -22,6 +22,22 @@
 #ifndef _ANNOTATIONPARAMETERVALUE_H_
 #define _ANNOTATIONPARAMETERVALUE_H_
 
+#if _MSC_VER
+
+#if defined(max)
+#pragma push_macro("max")
+#undef max
+#define FASTDDS_RESTORE_MAX
+#endif // defined(max)
+
+#if defined(min)
+#pragma push_macro("min")
+#undef min
+#define FASTDDS_RESTORE_MIN
+#endif // defined(min)
+
+#endif // if _MSC_VER
+
 #include <fastrtps/types/TypesBase.h>
 #include <fastrtps/types/TypeIdentifier.h>
 #include <fastrtps/utils/string_convert.hpp>
@@ -1348,5 +1364,19 @@ private:
 } // namespace types
 } // namespace fastrtps
 } // namespace eprosima
+
+#if _MSC_VER
+
+#if defined(FASTDDS_RESTORE_MIN)
+#pragma pop_macro("min")
+#undef FASTDDS_RESTORE_MIN
+#endif // defined(FASTDDS_RESTORE_MIN)
+
+#if defined(FASTDDS_RESTORE_MAX)
+#pragma pop_macro("max")
+#undef FASTDDS_RESTORE_MAX
+#endif // defined(FASTDDS_RESTORE_MAX)
+
+#endif // if _MSC_VER
 
 #endif // _ANNOTATIONPARAMETERVALUE_H_
