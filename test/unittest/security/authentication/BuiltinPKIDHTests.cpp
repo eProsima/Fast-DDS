@@ -436,6 +436,74 @@ TEST_F(AuthenticationPluginTest, validate_local_identity_validation_ok_with_pwd)
     ASSERT_TRUE(plugin.return_identity_handle(local_identity_handle, exception));
 }
 
+TEST_F(AuthenticationPluginTest, validate_local_identity_no_pwd)
+{
+    IdentityHandle* local_identity_handle = nullptr;
+    GUID_t adjusted_participant_key;
+    uint32_t domain_id = 0;
+    RTPSParticipantAttributes participant_attr;
+    GUID_t candidate_participant_key;
+    SecurityException exception;
+    ValidationResult_t result = ValidationResult_t::VALIDATION_FAILED;
+
+    fill_candidate_participant_key(candidate_participant_key);
+    participant_attr.properties.properties().
+            emplace_back(Property("dds.sec.auth.builtin.PKI-DH.identity_ca",
+            "file://" + std::string(certs_path) + "/maincacert.pem"));
+    participant_attr.properties.properties().
+            emplace_back(Property("dds.sec.auth.builtin.PKI-DH.identity_certificate",
+            "file://" + std::string(certs_path) + "/pwdpubcert.pem"));
+    participant_attr.properties.properties().
+            emplace_back(Property("dds.sec.auth.builtin.PKI-DH.private_key",
+            "file://" + std::string(certs_path) + "/pwdpubkey.pem"));
+
+    result = plugin.validate_local_identity(&local_identity_handle,
+                    adjusted_participant_key,
+                    domain_id,
+                    participant_attr,
+                    candidate_participant_key,
+                    exception);
+
+    ASSERT_TRUE(result == ValidationResult_t::VALIDATION_FAILED);
+    ASSERT_TRUE(local_identity_handle == nullptr);
+    ASSERT_TRUE(adjusted_participant_key == GUID_t::unknown());
+}
+
+TEST_F(AuthenticationPluginTest, validate_local_identity_wrong_pwd)
+{
+    IdentityHandle* local_identity_handle = nullptr;
+    GUID_t adjusted_participant_key;
+    uint32_t domain_id = 0;
+    RTPSParticipantAttributes participant_attr;
+    GUID_t candidate_participant_key;
+    SecurityException exception;
+    ValidationResult_t result = ValidationResult_t::VALIDATION_FAILED;
+
+    fill_candidate_participant_key(candidate_participant_key);
+    participant_attr.properties.properties().
+            emplace_back(Property("dds.sec.auth.builtin.PKI-DH.identity_ca",
+            "file://" + std::string(certs_path) + "/maincacert.pem"));
+    participant_attr.properties.properties().
+            emplace_back(Property("dds.sec.auth.builtin.PKI-DH.identity_certificate",
+            "file://" + std::string(certs_path) + "/pwdpubcert.pem"));
+    participant_attr.properties.properties().
+            emplace_back(Property("dds.sec.auth.builtin.PKI-DH.private_key",
+            "file://" + std::string(certs_path) + "/pwdpubkey.pem"));
+    participant_attr.properties.properties().
+            emplace_back(Property("dds.sec.auth.builtin.PKI-DH.password", "wrongpasswd"));
+
+    result = plugin.validate_local_identity(&local_identity_handle,
+                    adjusted_participant_key,
+                    domain_id,
+                    participant_attr,
+                    candidate_participant_key,
+                    exception);
+
+    ASSERT_TRUE(result == ValidationResult_t::VALIDATION_FAILED);
+    ASSERT_TRUE(local_identity_handle == nullptr);
+    ASSERT_TRUE(adjusted_participant_key == GUID_t::unknown());
+}
+
 TEST_F(AuthenticationPluginTest, validate_local_identity_wrong_identity_ca)
 {
     IdentityHandle* local_identity_handle = nullptr;
