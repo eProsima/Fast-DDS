@@ -122,7 +122,7 @@ struct ReadTakeCommand
                 if (reader_->begin_sample_access_nts(change, wp, is_future_change))
                 {
                     //Check if the payload is dirty
-                    remove_change = !check_datasharing_validity(change, data_values_.has_ownership(), wp);
+                    remove_change = !check_datasharing_validity(change, data_values_.has_ownership());
                 }
                 else
                 {
@@ -148,7 +148,7 @@ struct ReadTakeCommand
                     reader_->end_sample_access_nts(change, wp, added);
 
                     // Check if the payload is dirty
-                    if (added && !check_datasharing_validity(change, data_values_.has_ownership(), wp))
+                    if (added && !check_datasharing_validity(change, data_values_.has_ownership()))
                     {
                         // Decrement length of collections
                         --current_slot_;
@@ -381,8 +381,7 @@ private:
 
     bool check_datasharing_validity(
             CacheChange_t* change,
-            bool has_ownership,
-            WriterProxy* wp)
+            bool has_ownership)
     {
         bool is_valid = true;
         if (has_ownership)  //< On loans the user must check the validity anyways
@@ -398,8 +397,7 @@ private:
         if (!is_valid)
         {
             logWarning(RTPS_READER,
-                    "Change " << change->sequenceNumber << " from " << wp->guid() <<
-                    " is overidden");
+                    "Change " << change->sequenceNumber << " from " << change->writerGUID << " is overidden");
             return false;
         }
 
