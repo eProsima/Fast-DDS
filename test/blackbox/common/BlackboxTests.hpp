@@ -43,6 +43,7 @@
 #include <functional>
 
 #if HAVE_SECURITY
+extern const char* certs_path;
 extern void blackbox_security_init();
 #endif // if HAVE_SECURITY
 #if TLS_FOUND
