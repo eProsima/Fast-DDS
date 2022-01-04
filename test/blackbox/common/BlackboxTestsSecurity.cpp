@@ -30,6 +30,8 @@
 #include <fastdds/rtps/transport/shared_mem/SharedMemTransportDescriptor.h>
 #include <rtps/transport/test_UDPv4Transport.h>
 
+#include <fastdds/dds/log/Log.hpp>
+
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
 using test_UDPv4Transport = eprosima::fastdds::rtps::test_UDPv4Transport;
@@ -436,6 +438,83 @@ TEST_P(Security, BuiltinAuthenticationPlugin_PKIDH_lossy_conditions)
     // Wait for discovery.
     writer.wait_discovery();
     reader.wait_discovery();
+}
+
+// Regresion test for Refs #13295, github #2362
+TEST_P(Security, BuiltinAuthenticationPlugin_second_participant_creation_loop)
+{
+    constexpr size_t n_loops = 101;
+
+    using Log = eprosima::fastdds::dds::Log;
+    using LogConsumer = eprosima::fastdds::dds::LogConsumer;
+
+    // A LogConsumer that just counts the number of entries consumed
+    struct TestConsumer : public LogConsumer
+    {
+        TestConsumer(
+                std::atomic_size_t& n_logs_ref)
+            : n_logs_(n_logs_ref)
+        {
+        }
+
+        void Consume(
+                const Log::Entry&) override
+        {
+            ++n_logs_;
+        }
+
+    private:
+
+        std::atomic_size_t& n_logs_;
+    };
+
+    // Counter for log entries
+    std::atomic<size_t>n_logs{};
+
+    // Prepare Log module to check that no SECURITY errors are produced
+    Log::SetCategoryFilter(std::regex("SECURITY"));
+    Log::SetVerbosity(Log::Kind::Error);
+    Log::ClearConsumers();
+    Log::RegisterConsumer(std::unique_ptr<LogConsumer>(new TestConsumer(n_logs)));
+
+    // Prepare participant properties
+    PropertyPolicy property_policy;
+    property_policy.properties().emplace_back(Property("dds.sec.auth.plugin", "builtin.PKI-DH"));
+    property_policy.properties().emplace_back(Property("dds.sec.auth.builtin.PKI-DH.identity_ca",
+            "file://" + std::string(certs_path) + "/maincacert.pem"));
+    property_policy.properties().emplace_back(Property("dds.sec.auth.builtin.PKI-DH.identity_certificate",
+            "file://" + std::string(certs_path) + "/mainpubcert.pem"));
+    property_policy.properties().emplace_back(Property("dds.sec.auth.builtin.PKI-DH.private_key",
+            "file://" + std::string(certs_path) + "/mainpubkey.pem"));
+
+    // Create the participant being checked
+    PubSubReader<HelloWorldPubSubType> main_participant("HelloWorldTopic");
+    main_participant.property_policy(property_policy).init();
+    EXPECT_TRUE(main_participant.isInitialized());
+
+    // Perform a loop in which we create another participant, and destroy it just after it has been discovered.
+    // This is the best reproducer of the issue, as authentication messages should be sent when a remote participant
+    // is discovered.
+    for (size_t n = 1; n <= n_loops; ++n)
+    {
+        std::cout << "Iteration " << n << std::endl;
+
+        // Wait for undiscovery so we can wait for discovery below
+        EXPECT_TRUE(main_participant.wait_participant_undiscovery());
+
+        // Create another participant with authentication enabled
+        PubSubParticipant<HelloWorldPubSubType> other_participant(0, 0, 0, 0);
+        EXPECT_TRUE(other_participant.property_policy(property_policy).init_participant());
+
+        // Wait for the new participant to be discovered by the main one
+        EXPECT_TRUE(main_participant.wait_participant_discovery());
+
+        // The created participant gets out of scope here, and is destroyed
+    }
+
+    // No SECURITY error logs should have been produced
+    Log::Flush();
+    EXPECT_EQ(0u, n_logs);
 }
 
 TEST_P(Security, BuiltinAuthenticationAndCryptoPlugin_besteffort_rtps_ok)
