@@ -550,6 +550,12 @@ void SecurityManager::remove_discovered_participant_info(
 
         authentication_plugin_->return_identity_handle(auth_ptr->identity_handle_, exception);
         auth_ptr->identity_handle_ = nullptr;
+
+        if (auth_ptr->change_sequence_number_ != SequenceNumber_t::unknown())
+        {
+            participant_stateless_message_writer_history_->remove_change(auth_ptr->change_sequence_number_);
+            auth_ptr->change_sequence_number_ = SequenceNumber_t::unknown();
+        }
     }
 }
 
