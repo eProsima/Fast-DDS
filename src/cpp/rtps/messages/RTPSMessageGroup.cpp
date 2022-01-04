@@ -173,6 +173,9 @@ RTPSMessageGroup::RTPSMessageGroup(
     {
         encrypt_msg_ = &(send_buffer_->rtpsmsg_encrypt_);
         CDRMessage::initCDRMsg(encrypt_msg_);
+
+        // Avoid full message growing over estimated extra size for RTPS encryption
+        full_msg_->max_size -= participant->calculate_extra_size_for_rtps_message();
     }
 #endif // if HAVE_SECURITY
 }
@@ -196,6 +199,14 @@ RTPSMessageGroup::~RTPSMessageGroup() noexcept(false)
 {
     try
     {
+#if HAVE_SECURITY
+        if (participant_->is_secure())
+        {
+            // Restore RTPS encryption overhead, so it can be reused on future calls
+            full_msg_->max_size += participant_->calculate_extra_size_for_rtps_message();
+        }
+#endif // if HAVE_SECURITY
+
         send();
     }
     catch (...)

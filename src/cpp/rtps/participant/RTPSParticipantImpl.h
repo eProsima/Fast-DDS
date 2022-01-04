@@ -357,6 +357,17 @@ public:
             uint32_t length);
 
 #if HAVE_SECURITY
+    uint32_t calculate_extra_size_for_rtps_message()
+    {
+        uint32_t ret_val = 0u;
+        if (security_attributes_.is_rtps_protected)
+        {
+            ret_val = m_security_manager.calculate_extra_size_for_rtps_message();
+        }
+
+        return ret_val;
+    }
+
     security::SecurityManager& security_manager()
     {
         return m_security_manager;
