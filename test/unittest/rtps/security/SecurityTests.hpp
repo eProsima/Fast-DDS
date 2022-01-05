@@ -118,6 +118,8 @@ class SecurityTest : public ::testing::Test
 
         void final_message_process_ok(CacheChange_t** final_message_change = nullptr);
 
+        void destroy_manager_and_change(CacheChange_t*& change, bool was_added=true);
+
     public:
 
         SecurityTest() : auth_plugin_(new MockAuthenticationPlugin()),

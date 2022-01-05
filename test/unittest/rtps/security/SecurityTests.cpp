@@ -246,3 +246,18 @@ void SecurityTest::final_message_process_ok(
         *final_message_change = change2;
     }
 }
+
+void SecurityTest::destroy_manager_and_change(
+        CacheChange_t*& change,
+        bool was_added)
+{
+    if (was_added)
+    {
+        EXPECT_CALL(*stateless_writer_->history_,
+                remove_change(change->sequenceNumber)).Times(1).WillOnce(Return(true));
+    }
+
+    manager_.destroy();
+    delete change;
+    change = nullptr;
+}
