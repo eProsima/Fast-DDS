@@ -785,6 +785,7 @@ static EVP_PKEY* generate_dh_peer_key(
                     else
                     {
                         exception = _SecurityException_("OpenSSL library cannot set dh in pkey");
+                        DH_free(dh);
                     }
 
                     EVP_PKEY_free(key);
