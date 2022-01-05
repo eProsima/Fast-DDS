@@ -1,4 +1,4 @@
-// Copyright 2020 Proyectos y Sistemas de Mantenimiento SL (eProsima).
+// Copyright 2022 Proyectos y Sistemas de Mantenimiento SL (eProsima).
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -16,6 +16,8 @@
 
 #if HAVE_SECURITY
 
+#include <gtest/gtest.h>
+
 #include <fastdds/dds/domain/DomainParticipant.hpp>
 #include <fastdds/dds/domain/DomainParticipantFactory.hpp>
 #include <fastdds/dds/publisher/DataWriter.hpp>
@@ -28,8 +30,6 @@
 #include <fastrtps/types/DynamicTypeBuilder.h>
 #include <fastrtps/types/DynamicTypeBuilderFactory.h>
 #include <fastrtps/types/DynamicTypeBuilderPtr.h>
-
-#include <gtest/gtest.h>
 
 namespace fastdds = ::eprosima::fastdds::dds;
 using namespace eprosima::fastrtps;
@@ -171,7 +171,6 @@ TEST(DDSSecurity, big_message_corner_case)
     std::string topic_name = TEST_TOPIC_NAME;
     for (uint32_t len : array_lengths)
     {
-        topic_name += "_";
         test_big_message_corner_case(topic_name, len);
     }
 }
