@@ -62,9 +62,7 @@ TEST_F(SecurityTest, discovered_participant_begin_handshake_request_fail_and_the
 
     ASSERT_TRUE(manager_.discovered_participant(participant_data));
 
-    manager_.destroy();
-
-    delete change;
+    destroy_manager_and_change(change);
 }
 
 TEST_F(SecurityTest, discovered_participant_process_message_not_remote_participant_key)
@@ -457,9 +455,7 @@ TEST_F(SecurityTest, discovered_participant_process_message_add_change_fail)
 
     stateless_reader_->listener_->onNewCacheChangeAdded(stateless_reader_, change);
 
-    manager_.destroy();
-
-    delete change2;
+    destroy_manager_and_change(change2, false);
 }
 
 TEST_F(SecurityTest, discovered_participant_process_message_pending_handshake_reply_pending_message)
@@ -472,6 +468,9 @@ TEST_F(SecurityTest, discovered_participant_process_message_pending_handshake_re
             WillOnce(Return(true));
 
     reply_process_ok();
+
+    EXPECT_CALL(*stateless_writer_->history_, remove_change(SequenceNumber_t{ 0, 1 })).Times(1).
+            WillOnce(Return(true));
 }
 
 TEST_F(SecurityTest, discovered_participant_process_message_pending_handshake_reply_pending_message_resent)
@@ -492,9 +491,7 @@ TEST_F(SecurityTest, discovered_participant_process_message_pending_handshake_re
             WillOnce(Return(true));
     stateless_writer_->history_->wait_for_more_samples_than(1);
 
-    manager_.destroy();
-
-    delete reply_message_change;
+    destroy_manager_and_change(reply_message_change);
 }
 
 TEST_F(SecurityTest, discovered_participant_process_message_pending_handshake_reply_ok_with_final_message)
@@ -581,14 +578,13 @@ TEST_F(SecurityTest, discovered_participant_process_message_pending_handshake_re
 
     stateless_reader_->listener_->onNewCacheChangeAdded(stateless_reader_, change);
 
-    manager_.destroy();
-
-    delete change2;
+    destroy_manager_and_change(change2);
 }
 
 TEST_F(SecurityTest, discovered_participant_process_message_fail_process_handshake_reply)
 {
     request_process_ok();
+    EXPECT_CALL(*stateless_writer_->history_, remove_change(SequenceNumber_t{0, 1})).Times(1).WillOnce(Return(true));
 
     GUID_t remote_participant_key(participant_data_.m_guid);
 
@@ -818,9 +814,7 @@ TEST_F(SecurityTest, discovered_participant_process_message_process_handshake_re
 
     stateless_reader_->listener_->onNewCacheChangeAdded(stateless_reader_, change);
 
-    manager_.destroy();
-
-    delete change2;
+    destroy_manager_and_change(change2, false);
 }
 
 TEST_F(SecurityTest, discovered_participant_process_message_process_handshake_reply_ok_with_final_message)
@@ -833,6 +827,9 @@ TEST_F(SecurityTest, discovered_participant_process_message_process_handshake_re
             WillOnce(Return(true));
 
     final_message_process_ok();
+
+    EXPECT_CALL(*stateless_writer_->history_, remove_change(SequenceNumber_t{0, 2})).Times(1).
+            WillOnce(Return(true));
 }
 
 TEST_F(SecurityTest, discovered_participant_process_message_process_handshake_reply_ok_with_final_message_resent)
@@ -884,14 +881,13 @@ TEST_F(SecurityTest, discovered_participant_process_message_process_handshake_re
 
     stateless_reader_->listener_->onNewCacheChangeAdded(stateless_reader_, change);
 
-    manager_.destroy();
-
-    delete final_message_change;
+    destroy_manager_and_change(final_message_change);
 }
 
 TEST_F(SecurityTest, discovered_participant_process_message_bad_related_guid)
 {
     reply_process_ok();
+    EXPECT_CALL(*stateless_writer_->history_, remove_change(SequenceNumber_t{ 0, 1 })).Times(1).WillOnce(Return(true));
 
     GUID_t remote_participant_key(participant_data_.m_guid);
     remote_participant_key.guidPrefix.value[0] = 0xFF;
@@ -937,6 +933,7 @@ TEST_F(SecurityTest, discovered_participant_process_message_bad_related_guid)
 TEST_F(SecurityTest, discovered_participant_process_message_bad_related_sequence_number)
 {
     reply_process_ok();
+    EXPECT_CALL(*stateless_writer_->history_, remove_change(SequenceNumber_t{ 0, 1 })).Times(1).WillOnce(Return(true));
 
     GUID_t remote_participant_key(participant_data_.m_guid);
 
@@ -981,6 +978,7 @@ TEST_F(SecurityTest, discovered_participant_process_message_bad_related_sequence
 TEST_F(SecurityTest, discovered_participant_process_message_fail_process_handshake_final)
 {
     reply_process_ok();
+    EXPECT_CALL(*stateless_writer_->history_, remove_change(SequenceNumber_t{ 0, 1 })).Times(1).WillOnce(Return(true));
 
     GUID_t remote_participant_key(participant_data_.m_guid);
 

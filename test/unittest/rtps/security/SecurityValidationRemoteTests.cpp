@@ -219,9 +219,7 @@ TEST_F(SecurityTest, discovered_participant_validation_remote_identity_add_chang
     fill_participant_key(participant_data.m_guid);
     ASSERT_FALSE(manager_.discovered_participant(participant_data));
 
-    manager_.destroy();
-
-    delete change;
+    destroy_manager_and_change(change, false);
 }
 
 TEST_F(SecurityTest, discovered_participant_validation_remote_identity_pending_handshake_request_pending_message)
@@ -234,6 +232,9 @@ TEST_F(SecurityTest, discovered_participant_validation_remote_identity_pending_h
             WillOnce(Return(true));
 
     request_process_ok();
+
+    EXPECT_CALL(*stateless_writer_->history_, remove_change(SequenceNumber_t{ 0, 1 })).Times(1).
+            WillOnce(Return(true));
 }
 
 TEST_F(SecurityTest, discovered_participant_validation_remote_identity_pending_handshake_request_pending_message_resent)
@@ -254,9 +255,7 @@ TEST_F(SecurityTest, discovered_participant_validation_remote_identity_pending_h
             WillOnce(Return(true));
     stateless_writer_->history_->wait_for_more_samples_than(1);
 
-    manager_.destroy();
-
-    delete request_message_change;
+    destroy_manager_and_change(request_message_change);
 }
 
 TEST_F(SecurityTest, discovered_participant_validation_remote_identity_pending_handshake_request_ok_with_final_message)
@@ -313,9 +312,7 @@ TEST_F(SecurityTest, discovered_participant_validation_remote_identity_pending_h
 
     ASSERT_TRUE(manager_.discovered_participant(participant_data));
 
-    manager_.destroy();
-
-    delete change;
+    destroy_manager_and_change(change);
 }
 
 TEST_F(SecurityTest, discovered_participant_ok)
@@ -351,9 +348,7 @@ TEST_F(SecurityTest, discovered_participant_ok)
     fill_participant_key(participant_data.m_guid);
     ASSERT_TRUE(manager_.discovered_participant(participant_data));
 
-    manager_.destroy();
-
-    delete change;
+    destroy_manager_and_change(change);
 }
 
 TEST_F(SecurityTest, discovered_participant_validate_remote_fail_and_then_ok)
@@ -399,7 +394,5 @@ TEST_F(SecurityTest, discovered_participant_validate_remote_fail_and_then_ok)
 
     ASSERT_TRUE(manager_.discovered_participant(participant_data));
 
-    manager_.destroy();
-
-    delete change;
+    destroy_manager_and_change(change);
 }
