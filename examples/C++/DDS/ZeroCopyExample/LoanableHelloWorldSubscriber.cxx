@@ -141,7 +141,7 @@ void LoanableHelloWorldSubscriber::SubListener::on_data_available(
 
                 ++samples;
                 std::cout << "Sample received (count=" << samples << ") at address " << &sample
-                          << (reader->is_sample_valid(&sample,&infos[i]) ? " is valid" : " was replaced" ) << std::endl
+                          << (reader->is_sample_valid(&sample, &infos[i]) ? " is valid" : " was replaced" ) << std::endl
                           << "  index=" << sample.index() << std::endl
                           << "  message=" << sample.message().data() << std::endl;
             }

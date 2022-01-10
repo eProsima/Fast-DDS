@@ -460,7 +460,7 @@ public:
         bool ret = false;
         do
         {
-            receive(datareader_, std::ref(ret));
+            receive(datareader_, ret);
         }
         while (ret);
 
@@ -1630,8 +1630,7 @@ private:
             eprosima::fastdds::dds::SampleInfo& info = infos[i];
 
             // Validate the sample
-            bool valid_sample = info.valid_data
-                    || datareader->is_sample_valid(&data, &info);
+            bool valid_sample = datareader->is_sample_valid(&data, &info);
 
             EXPECT_TRUE(valid_sample) << "sample "
                                       << info.sample_identity.sequence_number() << " was overlapped.";
