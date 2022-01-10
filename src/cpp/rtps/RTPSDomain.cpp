@@ -183,16 +183,24 @@ RTPSParticipant* RTPSDomain::createParticipant(
     }
 
     // Above constructors create the sender resources. If a given listening port cannot be allocated an iterative
-    // mechanism will allocate another by default. Change the default listening port is unacceptable for server
-    // discovery.
+    // mechanism will allocate another by default. Change the default listening port is unacceptable for
+    // discovery server Participant.
     if ((PParam.builtin.discovery_config.discoveryProtocol == DiscoveryProtocol_t::SERVER
             || PParam.builtin.discovery_config.discoveryProtocol == DiscoveryProtocol_t::BACKUP)
             && pimpl->did_mutation_took_place_on_meta(
                 PParam.builtin.metatrafficMulticastLocatorList,
                 PParam.builtin.metatrafficUnicastLocatorList))
     {
-        // we do not log an error because the library may use participant creation as a trial for server existence
-        logError(RTPS_PARTICIPANT, "Server wasn't able to allocate the specified listening port");
+        if (PParam.builtin.metatrafficMulticastLocatorList.empty() &&
+                PParam.builtin.metatrafficUnicastLocatorList.empty())
+        {
+            logError(RTPS_PARTICIPANT, "Discovery Server requires to specify a listening address.");
+        }
+        else
+        {
+            logError(RTPS_PARTICIPANT, "Discovery Server wasn't able to allocate the specified listening port.");
+        }
+
         delete pimpl;
         return nullptr;
     }
