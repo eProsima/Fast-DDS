@@ -1336,12 +1336,13 @@ p_dynamictypebuilder_t XMLParser::parseXMLMemberDynamicType(
     {
         if (!isArray)
         {
-            logError(XMLPARSER, "Failed creating " << memberType << ": " << memberName);
+            logError(XMLPARSER, "Failed creating " << memberType << ": " << (memberName ? memberName : ""));
         }
         else
         {
-            logError(XMLPARSER, "Failed creating " << memberType << " array: " << memberName);
+            logError(XMLPARSER, "Failed creating " << memberType << " array: " << (memberName ? memberName : ""));
         }
+        return nullptr;
     }
 
     const char* memberTopicKey = p_root->Attribute(KEY);
