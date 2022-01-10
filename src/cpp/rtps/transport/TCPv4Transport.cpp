@@ -328,7 +328,7 @@ bool TCPv4Transport::compare_locator_ip_and_port(
 void TCPv4Transport::fill_local_ip(
         Locator& loc) const
 {
-    loc.kind = LOCATOR_KIND_TCPv4;
+    loc.kind = kind();
     IPLocator::setIPv4(loc, "127.0.0.1");
 }
 
