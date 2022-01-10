@@ -401,7 +401,7 @@ protected:
     std::recursive_mutex* mp_mutex;
     //!To protect callbacks (ParticipantProxyData&)
     std::mutex callback_mtx_;
-    //!Tell if object is enable
+    //!Tell if object is enabled
     bool enable_ = false;
 
     /**
