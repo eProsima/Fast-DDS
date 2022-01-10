@@ -188,8 +188,8 @@ RTPSParticipantImpl::RTPSParticipantImpl(
                 if (pT && pT->listening_ports.empty())
                 {
                     logInfo(RTPS_PARTICIPANT,
-                        "Participant " << m_att.getName() << " with GUID " << m_guid <<
-                        " tries to use discovery server over TCP without providing a proper listening port.");
+                            "Participant " << m_att.getName() << " with GUID " << m_guid <<
+                            " tries to use discovery server over TCP without providing a proper listening port.");
                 }
             }
         default:
