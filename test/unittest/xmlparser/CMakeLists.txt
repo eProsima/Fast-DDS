@@ -66,6 +66,7 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
         configure_file(${CMAKE_CURRENT_SOURCE_DIR}/SHM_transport_descriptors_config.xml
             ${CMAKE_CURRENT_BINARY_DIR}/SHM_transport_descriptors_config.xml
             COPYONLY)
+        file(COPY "${CMAKE_CURRENT_SOURCE_DIR}/regressions" DESTINATION "${CMAKE_CURRENT_BINARY_DIR}")
 
         ###################################  XMLProfileParserTests  ####################################################
         set(XMLPROFILEPARSER_SOURCE
