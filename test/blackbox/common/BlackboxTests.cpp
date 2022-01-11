@@ -34,6 +34,7 @@ uint16_t global_port = 0;
 bool enable_datasharing;
 bool use_pull_mode;
 bool use_udpv4;
+bool use_ipv6;
 
 uint16_t get_port()
 {
@@ -68,6 +69,7 @@ public:
         enable_datasharing = false;
         use_pull_mode = false;
         use_udpv4 = true;
+        use_ipv6 = false;
 
         //Log::SetVerbosity(eprosima::fastdds::dds::Log::Info);
         //Log::SetCategoryFilter(std::regex("(SECURITY)"));
