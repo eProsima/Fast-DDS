@@ -258,27 +258,32 @@ static EVP_PKEY* load_private_key(
         SecurityException& exception,
         PKIDH& pkidh)
 {
+    EVP_PKEY* key = nullptr;
+
     if (file.size() >= 7 && file.compare(0, 7, "file://") == 0)
     {
-        return detail::FileProvider::load_private_key(certificate, file, password, exception);
+        key = detail::FileProvider::load_private_key(certificate, file, password, exception);
     }
     else if (file.size() >= 7 && file.compare(0, 7, "pkcs11:") == 0)
     {
-#if HAVE_LIBP11
         if (!pkidh.pkcs11_provider)
         {
             pkidh.pkcs11_provider.reset(new detail::Pkcs11Provider());
         }
-        return pkidh.pkcs11_provider->load_private_key(certificate, file, password, exception);
-#else  // HAVE_LIBP11
-        static_cast<void>(pkidh);
-        exception = _SecurityException_(std::string("PKCS11 URIs require libp11 ") + file);
-        return nullptr;
-#endif // HAVE_LIBP11
+
+        key = pkidh.pkcs11_provider->load_private_key(certificate, file, password, exception);
+
+        if( nullptr == key )
+        {
+            exception = _SecurityException_(std::string("PKCS11 URIs require libp11 ") + file);
+        }
+    }
+    else
+    {
+        exception = _SecurityException_(std::string("Unsupported URI format ") + file);
     }
 
-    exception = _SecurityException_(std::string("Unsupported URI format ") + file);
-    return nullptr;
+    return key;
 }
 
 static bool store_certificate_in_buffer(

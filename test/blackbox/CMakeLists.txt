@@ -205,9 +205,14 @@ endif()
 
 # OpenSSL on Windows requires a hint on which config file to load
 if(WIN32 AND OPENSSL_FOUND)
-    get_filename_component(OPENSSL_DIR "${OPENSSL_INCLUDE_DIR}" DIRECTORY)
-    set(OPENSSL_CONF "${OPENSSL_DIR}/bin/cnf/openssl.cnf")
-    unset(OPENSSL_DIR)
+
+    find_package(LibP11)
+
+    if(LibP11_FOUND)
+        get_filename_component(OPENSSL_DIR "${OPENSSL_INCLUDE_DIR}" DIRECTORY)
+        set(OPENSSL_CONF "${OPENSSL_DIR}/bin/cnf/openssl.cnf")
+        unset(OPENSSL_DIR)
+    endif()
 endif()
 
 ###############################################################################
