@@ -273,7 +273,7 @@ static EVP_PKEY* load_private_key(
 
         key = pkidh.pkcs11_provider->load_private_key(certificate, file, password, exception);
 
-        if( nullptr == key )
+        if ( nullptr == key )
         {
             exception = _SecurityException_(std::string("PKCS11 URIs require libp11 ") + file);
         }
