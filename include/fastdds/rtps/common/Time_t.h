@@ -375,7 +375,7 @@ inline std::istream& operator >>(
     {
         char point;
         int32_t sec = 0;
-        int32_t nano = 0;
+        uint32_t nano = 0;
         std::ios_base::iostate excp_mask = input.exceptions();
 
         try
@@ -388,6 +388,7 @@ inline std::istream& operator >>(
             if ( point != '.' || nano > 1000000000 )
             {
                 input.setstate(std::ios_base::failbit);
+                nano = 0;
             }
         }
         catch (std::ios_base::failure& )
