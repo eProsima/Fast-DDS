@@ -68,7 +68,7 @@ public:
     RTPS_DllAPI fastrtps::rtps::GUID_t GetPDPReader() const;
     RTPS_DllAPI fastrtps::rtps::GUID_t GetPDPWriter() const;
 
-
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
     FASTDDS_DEPRECATED_UNTIL(3, "eprosima::fastrtps::rtps:GetEDPPublicationsReader()",
             "Not implemented nor used functions.")
     RTPS_DllAPI fastrtps::rtps::GUID_t GetEDPPublicationsReader() const;
@@ -82,6 +82,7 @@ public:
     FASTDDS_DEPRECATED_UNTIL(3, "eprosima::fastrtps::rtps:GetEDPSubscriptionsReader()",
             "Not implemented nor used functions.")
     RTPS_DllAPI fastrtps::rtps::GUID_t GetEDPSubscriptionsReader() const;
+#endif // ifndef DOXYGEN_SHOULD_SKIP_THIS
 
     RTPS_DllAPI inline bool ReadguidPrefix(
             const char* pfx)
