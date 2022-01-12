@@ -203,21 +203,26 @@ if(WIN32)
         )
 endif()
 
-# OpenSSL on Windows requires a hint on which config file to load
-if(WIN32 AND OPENSSL_FOUND)
-
-    find_package(LibP11)
-
-    if(LibP11_FOUND)
-        get_filename_component(OPENSSL_DIR "${OPENSSL_INCLUDE_DIR}" DIRECTORY)
-        set(OPENSSL_CONF "${OPENSSL_DIR}/bin/cnf/openssl.cnf")
-        unset(OPENSSL_DIR)
-    endif()
-endif()
-
 ###############################################################################
 # Blackbox tests
 ###############################################################################
+
+# OpenSSL on Windows requires hinting a config file on some specific tests.
+# This tests require a very specific deployment (configuration setup & dependent libraries)
+# that is only available on our CI, thus we enforced the use of EPROSIMA_BUILD to enable them.
+if(OPENSSL_FOUND)
+    if(EPROSIMA_BUILD)
+        find_package(LibP11 REQUIRED)
+
+        if(WIN32)
+                get_filename_component(OPENSSL_DIR "${OPENSSL_INCLUDE_DIR}" DIRECTORY)
+                set(OPENSSL_CONF "${OPENSSL_DIR}/bin/cnf/openssl.cnf")
+                unset(OPENSSL_DIR)
+        endif()
+    else()
+        find_package(LibP11)
+    endif()
+endif()
 
 # Filter pksc11 related tests if library is not available
 # TODO: restore for windows when CI gets operational
