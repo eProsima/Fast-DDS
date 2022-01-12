@@ -981,7 +981,15 @@ p_dynamictypebuilder_t XMLParser::parseXMLMemberDynamicType(
         uint32_t length = types::MAX_ELEMENTS_COUNT;
         if (lengthStr != nullptr)
         {
-            length = static_cast<uint32_t>(std::stoi(lengthStr));
+            try
+            {
+                length = static_cast<uint32_t>(std::stoi(lengthStr));
+            }
+            catch (const std::exception&)
+            {
+                logError(XMLPARSER, "Error parsing member sequence length in line " << p_root->GetLineNum());
+                return nullptr;
+            }
         }
 
         if (!isArray)
@@ -1057,7 +1065,15 @@ p_dynamictypebuilder_t XMLParser::parseXMLMemberDynamicType(
         uint32_t length = types::MAX_ELEMENTS_COUNT;
         if (lengthStr != nullptr)
         {
-            length = static_cast<uint32_t>(std::stoi(lengthStr));
+            try
+            {
+                length = static_cast<uint32_t>(std::stoi(lengthStr));
+            }
+            catch (const std::exception&)
+            {
+                logError(XMLPARSER, "Error parsing map member sequence length in line " << p_root->GetLineNum())
+                return nullptr;
+            }
         }
 
         if (!isArray)
