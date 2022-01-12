@@ -1592,7 +1592,7 @@ private:
             ASSERT_LT(last_seq[seq_info], info.sample_identity.sequence_number());
             last_seq[seq_info] = info.sample_identity.sequence_number();
 
-            if (info.instance_state == eprosima::fastdds::dds::ALIVE_INSTANCE_STATE)
+            if (info.valid_data)
             {
                 auto it = std::find(total_msgs_.begin(), total_msgs_.end(), data);
                 ASSERT_NE(it, total_msgs_.end());
@@ -1629,20 +1629,20 @@ private:
             type& data = datas[i];
             eprosima::fastdds::dds::SampleInfo& info = infos[i];
 
-            // Validate the sample
-            bool valid_sample = datareader->is_sample_valid(&data, &info);
+            // Check order of changes.
+            LastSeqInfo seq_info{ info.instance_handle, info.sample_identity.writer_guid() };
+            ASSERT_LT(last_seq[seq_info], info.sample_identity.sequence_number());
+            last_seq[seq_info] = info.sample_identity.sequence_number();
 
-            EXPECT_TRUE(valid_sample) << "sample "
-                                      << info.sample_identity.sequence_number() << " was overlapped.";
-
-            if (valid_sample)
+            if (info.valid_data)
             {
-                // Check order of changes.
-                LastSeqInfo seq_info{ info.instance_handle, info.sample_identity.writer_guid() };
-                ASSERT_LT(last_seq[seq_info], info.sample_identity.sequence_number());
-                last_seq[seq_info] = info.sample_identity.sequence_number();
+                // Validate the sample
+                bool valid_sample = datareader->is_sample_valid(&data, &info);
 
-                if (info.instance_state == eprosima::fastdds::dds::ALIVE_INSTANCE_STATE)
+                EXPECT_TRUE(valid_sample) << "sample "
+                                          << info.sample_identity.sequence_number() << " was overlapped.";
+
+                if (valid_sample)
                 {
                     auto it = std::find(total_msgs_.begin(), total_msgs_.end(), data);
                     ASSERT_NE(it, total_msgs_.end());
