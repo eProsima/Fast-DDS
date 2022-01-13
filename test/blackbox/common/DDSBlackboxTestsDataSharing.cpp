@@ -54,7 +54,7 @@ TEST(DDSDataSharing, BasicCommunication)
 
     reader.history_depth(100)
             .add_user_transport_to_pparams(testTransport)
-            .datasharing_on(".")
+            .datasharing_on(".").loan_sample_validation()
             .reliability(BEST_EFFORT_RELIABILITY_QOS).init();
 
     ASSERT_TRUE(reader.isInitialized());

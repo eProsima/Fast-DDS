@@ -22,6 +22,7 @@
 
 #include <atomic>
 #include <condition_variable>
+#include <functional>
 #include <list>
 #include <string>
 
@@ -173,7 +174,7 @@ protected:
                 bool ret = false;
                 do
                 {
-                    reader_.receive_one(datareader, ret);
+                    reader_.receive(datareader, ret);
                 } while (ret);
             }
         }
@@ -311,6 +312,9 @@ public:
         // By default, heartbeat period delay is 100 milliseconds.
         datareader_qos_.reliable_reader_qos().times.heartbeatResponseDelay.seconds = 0;
         datareader_qos_.reliable_reader_qos().times.heartbeatResponseDelay.nanosec = 100000000;
+
+        // By default don't check for overlapping
+        loan_sample_validation(false);
     }
 
     virtual ~PubSubReader()
@@ -456,7 +460,7 @@ public:
         bool ret = false;
         do
         {
-            receive_one(datareader_, ret);
+            receive(datareader_, ret);
         }
         while (ret);
 
@@ -793,6 +797,18 @@ public:
     PubSubReader& reset_status_listener()
     {
         status_mask_ = eprosima::fastdds::dds::StatusMask::all();
+        return *this;
+    }
+
+    PubSubReader& loan_sample_validation(
+            bool validate = true)
+    {
+        receive_ = std::bind(
+            validate ? &PubSubReader::receive_samples : &PubSubReader::receive_one,
+            this,
+            std::placeholders::_1,
+            std::placeholders::_2);
+
         return *this;
     }
 
@@ -1547,12 +1563,12 @@ public:
         return datareader_guid_;
     }
 
-protected:
-
     const eprosima::fastrtps::rtps::GUID_t& participant_guid() const
     {
         return participant_guid_;
     }
+
+private:
 
     void receive_one(
             eprosima::fastdds::dds::DataReader* datareader,
@@ -1576,7 +1592,8 @@ protected:
             ASSERT_LT(last_seq[seq_info], info.sample_identity.sequence_number());
             last_seq[seq_info] = info.sample_identity.sequence_number();
 
-            if (info.instance_state == eprosima::fastdds::dds::ALIVE_INSTANCE_STATE)
+            if (info.valid_data
+                    && info.instance_state == eprosima::fastdds::dds::ALIVE_INSTANCE_STATE)
             {
                 auto it = std::find(total_msgs_.begin(), total_msgs_.end(), data);
                 ASSERT_NE(it, total_msgs_.end());
@@ -1586,6 +1603,72 @@ protected:
                 cv_.notify_one();
             }
         }
+    }
+
+    void receive_samples(
+            eprosima::fastdds::dds::DataReader* datareader,
+            bool& returnedValue)
+    {
+        eprosima::fastdds::dds::LoanableSequence<type> datas;
+        eprosima::fastdds::dds::SampleInfoSeq infos;
+        returnedValue = true;
+
+        ReturnCode_t success = take_ ?
+                datareader->take(datas, infos) :
+                datareader->read(datas, infos);
+
+        if (!success)
+        {
+            returnedValue = false;
+            return;
+        }
+
+        // Traverse the collection
+        std::unique_lock<std::mutex> lock(mutex_);
+        for (int32_t i = 0; i < datas.length(); ++i)
+        {
+            type& data = datas[i];
+            eprosima::fastdds::dds::SampleInfo& info = infos[i];
+
+            // Check order of changes.
+            LastSeqInfo seq_info{ info.instance_handle, info.sample_identity.writer_guid() };
+            ASSERT_LT(last_seq[seq_info], info.sample_identity.sequence_number());
+            last_seq[seq_info] = info.sample_identity.sequence_number();
+
+            if (info.valid_data
+                    && info.instance_state == eprosima::fastdds::dds::ALIVE_INSTANCE_STATE)
+            {
+                // Validate the sample
+                bool valid_sample = datareader->is_sample_valid(&data, &info);
+
+                EXPECT_TRUE(valid_sample) << "sample "
+                                          << info.sample_identity.sequence_number() << " was overlapped.";
+
+                if (valid_sample)
+                {
+                    auto it = std::find(total_msgs_.begin(), total_msgs_.end(), data);
+                    ASSERT_NE(it, total_msgs_.end());
+                    total_msgs_.erase(it);
+                    ++current_processed_count_;
+                    default_receive_print<type>(data);
+                    cv_.notify_one();
+                }
+            }
+        }
+
+        datareader->return_loan(datas, infos);
+    }
+
+    //! functor to check which API to retrieve samples
+    std::function<void (eprosima::fastdds::dds::DataReader* datareader, bool&)> receive_;
+
+protected:
+
+    void receive(
+            eprosima::fastdds::dds::DataReader* datareader,
+            bool& returnedValue)
+    {
+        receive_(datareader, std::ref(returnedValue));
     }
 
     void participant_matched()
@@ -1865,7 +1948,7 @@ protected:
                     bool ret = false;
                     do
                     {
-                        reader_.receive_one(reader_.datareader_, ret);
+                        reader_.receive(reader_.datareader_, ret);
                     } while (ret);
                 }
             }
@@ -1887,7 +1970,7 @@ protected:
                     bool ret = false;
                     do
                     {
-                        reader_.receive_one(reader_.datareader_, ret);
+                        reader_.receive(reader_.datareader_, ret);
                     } while (ret);
                 }
             }
