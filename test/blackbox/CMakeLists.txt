@@ -211,7 +211,8 @@ endif()
 # This tests require a very specific deployment (configuration setup & dependent libraries)
 # that is only available on our CI, thus we enforced the use of EPROSIMA_BUILD to enable them.
 if(OPENSSL_FOUND)
-    if(EPROSIMA_BUILD)
+    # This feature is officially supported only for linux and windows OS.
+    if(EPROSIMA_BUILD AND NOT APPLE)
         find_package(LibP11 REQUIRED)
 
         if(WIN32)
