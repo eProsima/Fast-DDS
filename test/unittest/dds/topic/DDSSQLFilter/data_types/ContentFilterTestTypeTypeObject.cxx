@@ -1948,7 +1948,7 @@ const TypeObject* GetMinimalContentFilterTestTypeObject()
     mst_array_long_double_field.common().member_flags().IS_MUST_UNDERSTAND(false);
     mst_array_long_double_field.common().member_flags().IS_KEY(false);
     mst_array_long_double_field.common().member_flags().IS_DEFAULT(false); // Doesn't apply
-    mst_array_long_double_field.common().member_type_id(*TypeObjectFactory::get_instance()->get_array_identifier("long double", {max_array_size}, false));
+    mst_array_long_double_field.common().member_type_id(*TypeObjectFactory::get_instance()->get_array_identifier("longdouble", {max_array_size}, false));
 
 
     MD5 array_long_double_field_hash("array_long_double_field");
@@ -2252,7 +2252,7 @@ const TypeObject* GetMinimalContentFilterTestTypeObject()
     mst_bounded_sequence_long_double_field.common().member_flags().IS_MUST_UNDERSTAND(false);
     mst_bounded_sequence_long_double_field.common().member_flags().IS_KEY(false);
     mst_bounded_sequence_long_double_field.common().member_flags().IS_DEFAULT(false); // Doesn't apply
-    mst_bounded_sequence_long_double_field.common().member_type_id(*TypeObjectFactory::get_instance()->get_sequence_identifier("long double", max_seq_size, false));
+    mst_bounded_sequence_long_double_field.common().member_type_id(*TypeObjectFactory::get_instance()->get_sequence_identifier("longdouble", max_seq_size, false));
 
 
     MD5 bounded_sequence_long_double_field_hash("bounded_sequence_long_double_field");
@@ -2556,7 +2556,7 @@ const TypeObject* GetMinimalContentFilterTestTypeObject()
     mst_unbounded_sequence_long_double_field.common().member_flags().IS_MUST_UNDERSTAND(false);
     mst_unbounded_sequence_long_double_field.common().member_flags().IS_KEY(false);
     mst_unbounded_sequence_long_double_field.common().member_flags().IS_DEFAULT(false); // Doesn't apply
-    mst_unbounded_sequence_long_double_field.common().member_type_id(*TypeObjectFactory::get_instance()->get_sequence_identifier("long double", 0, false));
+    mst_unbounded_sequence_long_double_field.common().member_type_id(*TypeObjectFactory::get_instance()->get_sequence_identifier("longdouble", 0, false));
 
 
     MD5 unbounded_sequence_long_double_field_hash("unbounded_sequence_long_double_field");
@@ -3204,7 +3204,7 @@ const TypeObject* GetCompleteContentFilterTestTypeObject()
     cst_array_long_double_field.common().member_flags().IS_MUST_UNDERSTAND(false);
     cst_array_long_double_field.common().member_flags().IS_KEY(false);
     cst_array_long_double_field.common().member_flags().IS_DEFAULT(false); // Doesn't apply
-    cst_array_long_double_field.common().member_type_id(*TypeObjectFactory::get_instance()->get_array_identifier("long double", {max_array_size}, true));
+    cst_array_long_double_field.common().member_type_id(*TypeObjectFactory::get_instance()->get_array_identifier("longdouble", {max_array_size}, true));
 
 
     cst_array_long_double_field.detail().name("array_long_double_field");
@@ -3460,7 +3460,7 @@ const TypeObject* GetCompleteContentFilterTestTypeObject()
     cst_bounded_sequence_long_double_field.common().member_flags().IS_MUST_UNDERSTAND(false);
     cst_bounded_sequence_long_double_field.common().member_flags().IS_KEY(false);
     cst_bounded_sequence_long_double_field.common().member_flags().IS_DEFAULT(false); // Doesn't apply
-    cst_bounded_sequence_long_double_field.common().member_type_id(*TypeObjectFactory::get_instance()->get_sequence_identifier("long double", max_seq_size, true));
+    cst_bounded_sequence_long_double_field.common().member_type_id(*TypeObjectFactory::get_instance()->get_sequence_identifier("longdouble", max_seq_size, true));
 
 
     cst_bounded_sequence_long_double_field.detail().name("bounded_sequence_long_double_field");
@@ -3716,7 +3716,7 @@ const TypeObject* GetCompleteContentFilterTestTypeObject()
     cst_unbounded_sequence_long_double_field.common().member_flags().IS_MUST_UNDERSTAND(false);
     cst_unbounded_sequence_long_double_field.common().member_flags().IS_KEY(false);
     cst_unbounded_sequence_long_double_field.common().member_flags().IS_DEFAULT(false); // Doesn't apply
-    cst_unbounded_sequence_long_double_field.common().member_type_id(*TypeObjectFactory::get_instance()->get_sequence_identifier("long double", 0, true));
+    cst_unbounded_sequence_long_double_field.common().member_type_id(*TypeObjectFactory::get_instance()->get_sequence_identifier("longdouble", 0, true));
 
 
     cst_unbounded_sequence_long_double_field.detail().name("unbounded_sequence_long_double_field");
