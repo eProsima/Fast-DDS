@@ -226,7 +226,7 @@ void UDPv6Transport::endpoint_to_locator(
 void UDPv6Transport::fill_local_ip(
         Locator& loc) const
 {
-    loc.kind = LOCATOR_KIND_UDPv6;
+    loc.kind = kind();
     IPLocator::setIPv6(loc, "::1");
 }
 

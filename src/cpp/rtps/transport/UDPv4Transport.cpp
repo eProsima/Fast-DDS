@@ -221,8 +221,8 @@ void UDPv4Transport::endpoint_to_locator(
 void UDPv4Transport::fill_local_ip(
         Locator& loc) const
 {
+    loc.kind = kind();
     IPLocator::setIPv4(loc, "127.0.0.1");
-    loc.kind = LOCATOR_KIND_UDPv4;
 }
 
 const UDPTransportDescriptor* UDPv4Transport::configuration() const

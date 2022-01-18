@@ -17,6 +17,7 @@
  *
  */
 
+#include "BlackboxTests.hpp"
 #include "TCPReqRepHelloWorldRequester.hpp"
 
 #include <fastrtps/Domain.h>
@@ -29,6 +30,7 @@
 #include <fastrtps/publisher/Publisher.h>
 
 #include <fastrtps/transport/TCPv4TransportDescriptor.h>
+#include <fastrtps/transport/TCPv6TransportDescriptor.h>
 #include <fastrtps/utils/IPLocator.h>
 #include <fastrtps/utils/IPFinder.h>
 
@@ -71,26 +73,61 @@ void TCPReqRepHelloWorldRequester::init(
 {
     ParticipantAttributes pattr;
 
-    int32_t kind = LOCATOR_KIND_TCPv4;
-
+    int32_t kind;
     eprosima::fastrtps::rtps::LocatorList_t loc;
-    eprosima::fastrtps::rtps::IPFinder::getIP4Address(&loc);
+
+    if (use_ipv6)
+    {
+        kind = LOCATOR_KIND_TCPv6;
+        eprosima::fastrtps::rtps::IPFinder::getIP6Address(&loc);
+
+    }
+    else
+    {
+        kind = LOCATOR_KIND_TCPv4;
+        eprosima::fastrtps::rtps::IPFinder::getIP4Address(&loc);
+
+    }
+
 
     Locator_t initial_peer_locator;
     initial_peer_locator.kind = kind;
     if (!force_localhost && loc.size() > 0)
     {
-        IPLocator::setIPv4(initial_peer_locator, *(loc.begin()));
+        if (use_ipv6)
+        {
+            IPLocator::setIPv6(initial_peer_locator, *(loc.begin()));
+        }
+        else
+        {
+            IPLocator::setIPv4(initial_peer_locator, *(loc.begin()));
+        }
     }
     else
     {
-        IPLocator::setIPv4(initial_peer_locator, "127.0.0.1");
+        if (use_ipv6)
+        {
+            IPLocator::setIPv6(initial_peer_locator, "::1");
+        }
+        else
+        {
+            IPLocator::setIPv4(initial_peer_locator, "127.0.0.1");
+        }
     }
     initial_peer_locator.port = listeningPort;
     pattr.rtps.builtin.initialPeersList.push_back(initial_peer_locator); // Publisher's meta channel
 
     pattr.rtps.useBuiltinTransports = false;
-    std::shared_ptr<TCPv4TransportDescriptor> descriptor = std::make_shared<TCPv4TransportDescriptor>();
+    std::shared_ptr<TCPTransportDescriptor> descriptor;
+    if (use_ipv6)
+    {
+        descriptor = std::make_shared<TCPv6TransportDescriptor>();
+    }
+    else
+    {
+        descriptor = std::make_shared<TCPv4TransportDescriptor>();
+    }
+
     if (maxInitialPeer > 0)
     {
         descriptor->maxInitialPeersRange = maxInitialPeer;
@@ -178,14 +215,14 @@ void TCPReqRepHelloWorldRequester::wait_discovery(
     {
         cvDiscovery_.wait(lock, [&]()
                 {
-                    return matched_ > 1;
+                    return is_matched();
                 });
     }
     else
     {
         cvDiscovery_.wait_for(lock, timeout, [&]()
                 {
-                    return matched_ > 1;
+                    return is_matched();
                 });
     }
 
@@ -196,7 +233,7 @@ void TCPReqRepHelloWorldRequester::matched()
 {
     std::unique_lock<std::mutex> lock(mutexDiscovery_);
     ++matched_;
-    if (matched_ > 1)
+    if (is_matched())
     {
         cvDiscovery_.notify_one();
     }

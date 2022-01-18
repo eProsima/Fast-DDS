@@ -17,6 +17,7 @@
  *
  */
 
+#include "BlackboxTests.hpp"
 #include "TCPReqRepHelloWorldReplier.hpp"
 
 #include <fastrtps/Domain.h>
@@ -29,6 +30,7 @@
 #include <fastrtps/publisher/Publisher.h>
 
 #include <fastrtps/transport/TCPv4TransportDescriptor.h>
+#include <fastrtps/transport/TCPv6TransportDescriptor.h>
 #include <fastrtps/utils/IPLocator.h>
 
 #include <gtest/gtest.h>
@@ -77,8 +79,16 @@ void TCPReqRepHelloWorldReplier::init(
     //uint32_t kind = LOCATOR_KIND_TCPv4;
 
     pattr.rtps.useBuiltinTransports = false;
+    std::shared_ptr<TCPTransportDescriptor> descriptor;
+    if (use_ipv6)
+    {
+        descriptor = std::make_shared<TCPv6TransportDescriptor>();
+    }
+    else
+    {
+        descriptor = std::make_shared<TCPv4TransportDescriptor>();
+    }
 
-    std::shared_ptr<TCPv4TransportDescriptor> descriptor = std::make_shared<TCPv4TransportDescriptor>();
     descriptor->sendBufferSize = 0;
     descriptor->receiveBufferSize = 0;
     if (maxInitialPeer > 0)

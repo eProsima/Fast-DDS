@@ -289,8 +289,8 @@ bool TCPv6Transport::compare_locator_ip_and_port(
 void TCPv6Transport::fill_local_ip(
         Locator& loc) const
 {
+    loc.kind = kind();
     IPLocator::setIPv6(loc, "::1");
-    loc.kind = LOCATOR_KIND_TCPv6;
 }
 
 ip::tcp::endpoint TCPv6Transport::generate_endpoint(
