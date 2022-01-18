@@ -22,6 +22,7 @@
 #include "fastdds/dds/core/StackAllocatedSequence.hpp"
 
 #include "data_types/ContentFilterTestTypePubSubTypes.h"
+#include "data_types/ContentFilterTestTypeTypeObject.h"
 
 namespace eprosima {
 namespace fastdds {
@@ -86,5 +87,6 @@ int main(
         char** argv)
 {
     testing::InitGoogleMock(&argc, argv);
+    registerContentFilterTestTypeTypes();
     return RUN_ALL_TESTS();
 }
