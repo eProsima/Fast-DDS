@@ -13,17 +13,30 @@
 # limitations under the License.
 
 set(DDSSQLFILTERTEST_SOURCES DDSSQLFilterTests.cpp)
+file(GLOB DDSSQLFILTER_TYPE_SOURCES data_types/*.cxx)
+
 set(DDSSQLFILTER_SOURCES
     ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/topic/DDSSQLFilter/DDSFilterFactory.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/common/Time_t.cpp
     )
-    
+
+file(GLOB DDSSQLFILTER_LIB_SOURCES
+    ${PROJECT_SOURCE_DIR}/src/cpp/dynamic-types/*.cpp
+    ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/log/*.cpp
+    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/common/Time_t.cpp
+    ${PROJECT_SOURCE_DIR}/src/cpp/utils/md5.cpp
+    ${PROJECT_SOURCE_DIR}/src/cpp/utils/string_convert.cpp
+    )
 
 if(WIN32)
     add_definitions(-D_WIN32_WINNT=0x0601)
 endif()
 
-add_executable(DDSSQLFilterTests ${DDSSQLFILTERTEST_SOURCES} ${DDSSQLFILTER_SOURCES})
+add_executable(DDSSQLFilterTests
+    ${DDSSQLFILTERTEST_SOURCES}
+    ${DDSSQLFILTER_TYPE_SOURCES}
+    ${DDSSQLFILTER_SOURCES}
+    ${DDSSQLFILTER_LIB_SOURCES}
+    )
 target_compile_definitions(DDSSQLFilterTests PRIVATE FASTRTPS_NO_LIB
     $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
     $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
