@@ -60,6 +60,9 @@ class DDSSQLFilterTests : public testing::Test
 
 protected:
 
+    const ReturnCode_t ok_code = ReturnCode_t::RETCODE_OK;
+    const ReturnCode_t bad_code = ReturnCode_t::RETCODE_BAD_PARAMETER;
+
     struct TestCase
     {
         std::string expression;
@@ -83,7 +86,7 @@ protected:
         auto ret = uut.create_content_filter("DDSSQL", "ContentFilterTestType", &type_support,
                         test.expression.c_str(), params, filter_instance);
         EXPECT_EQ(ret, test.result) << " failed for expression '" << test.expression << "'";
-        if (ret == ReturnCode_t::RETCODE_OK)
+        if (ret == ok_code)
         {
             uut.delete_content_filter("DDSSQL", filter_instance);
         }
@@ -109,45 +112,45 @@ TEST_F(DDSSQLFilterTests, field_access)
     // All the entries generate a filter expression check with the form <a> = <a>
     static const std::vector<std::pair<std::string, ReturnCode_t>> checks
     {
-        {"other_field", ReturnCode_t::RETCODE_BAD_PARAMETER},
-        {"@", ReturnCode_t::RETCODE_OK},
-        {"@[0]", ReturnCode_t::RETCODE_BAD_PARAMETER},
-        {"@.other_field", ReturnCode_t::RETCODE_BAD_PARAMETER},
-        {"struct_field", ReturnCode_t::RETCODE_BAD_PARAMETER},
-        {"struct_field[0]", ReturnCode_t::RETCODE_BAD_PARAMETER},
-        {"struct_field.@", ReturnCode_t::RETCODE_OK},
-        {"struct_field.other_field", ReturnCode_t::RETCODE_BAD_PARAMETER},
-        {"struct_field.", ReturnCode_t::RETCODE_BAD_PARAMETER},
-        {"array_@", ReturnCode_t::RETCODE_BAD_PARAMETER},
-        {"array_@[0]", ReturnCode_t::RETCODE_OK},
-        {"array_@[" + max_array_size_str + "]", ReturnCode_t::RETCODE_BAD_PARAMETER},
-        {"array_struct_field", ReturnCode_t::RETCODE_BAD_PARAMETER},
-        {"array_struct_field.@", ReturnCode_t::RETCODE_BAD_PARAMETER},
-        {"array_struct_field[0]", ReturnCode_t::RETCODE_BAD_PARAMETER},
-        {"array_struct_field[0].@", ReturnCode_t::RETCODE_OK},
-        {"array_struct_field[0].other_field", ReturnCode_t::RETCODE_BAD_PARAMETER},
-        {"array_struct_field[" + max_array_size_str + "]", ReturnCode_t::RETCODE_BAD_PARAMETER},
-        {"array_struct_field[" + max_array_size_str + "].@", ReturnCode_t::RETCODE_BAD_PARAMETER},
-        {"bounded_sequence_@", ReturnCode_t::RETCODE_BAD_PARAMETER},
-        {"bounded_sequence_@[0]", ReturnCode_t::RETCODE_OK},
-        {"bounded_sequence_@[" + max_seq_size_str + "]", ReturnCode_t::RETCODE_BAD_PARAMETER},
-        {"bounded_sequence_struct_field", ReturnCode_t::RETCODE_BAD_PARAMETER},
-        {"bounded_sequence_struct_field.@", ReturnCode_t::RETCODE_BAD_PARAMETER},
-        {"bounded_sequence_struct_field[0]", ReturnCode_t::RETCODE_BAD_PARAMETER},
-        {"bounded_sequence_struct_field[0].@", ReturnCode_t::RETCODE_OK},
-        {"bounded_sequence_struct_field[0].other_field", ReturnCode_t::RETCODE_BAD_PARAMETER},
-        {"bounded_sequence_struct_field[" + max_seq_size_str + "]", ReturnCode_t::RETCODE_BAD_PARAMETER},
-        {"bounded_sequence_struct_field[" + max_seq_size_str + "].@", ReturnCode_t::RETCODE_BAD_PARAMETER},
-        {"unbounded_sequence_@", ReturnCode_t::RETCODE_BAD_PARAMETER},
-        {"unbounded_sequence_@[0]", ReturnCode_t::RETCODE_OK},
-        {"unbounded_sequence_@[" + max_seq_size_str + "]", ReturnCode_t::RETCODE_OK},
-        {"unbounded_sequence_struct_field", ReturnCode_t::RETCODE_BAD_PARAMETER},
-        {"unbounded_sequence_struct_field.@", ReturnCode_t::RETCODE_BAD_PARAMETER},
-        {"unbounded_sequence_struct_field[0]", ReturnCode_t::RETCODE_BAD_PARAMETER},
-        {"unbounded_sequence_struct_field[0].@", ReturnCode_t::RETCODE_OK},
-        {"unbounded_sequence_struct_field[0].other_field", ReturnCode_t::RETCODE_BAD_PARAMETER},
-        {"unbounded_sequence_struct_field[" + max_seq_size_str + "]", ReturnCode_t::RETCODE_BAD_PARAMETER},
-        {"unbounded_sequence_struct_field[" + max_seq_size_str + "].@", ReturnCode_t::RETCODE_OK}
+        {"other_field", bad_code},
+        {"@", ok_code},
+        {"@[0]", bad_code},
+        {"@.other_field", bad_code},
+        {"struct_field", bad_code},
+        {"struct_field[0]", bad_code},
+        {"struct_field.@", ok_code},
+        {"struct_field.other_field", bad_code},
+        {"struct_field.", bad_code},
+        {"array_@", bad_code},
+        {"array_@[0]", ok_code},
+        {"array_@[" + max_array_size_str + "]", bad_code},
+        {"array_struct_field", bad_code},
+        {"array_struct_field.@", bad_code},
+        {"array_struct_field[0]", bad_code},
+        {"array_struct_field[0].@", ok_code},
+        {"array_struct_field[0].other_field", bad_code},
+        {"array_struct_field[" + max_array_size_str + "]", bad_code},
+        {"array_struct_field[" + max_array_size_str + "].@", bad_code},
+        {"bounded_sequence_@", bad_code},
+        {"bounded_sequence_@[0]", ok_code},
+        {"bounded_sequence_@[" + max_seq_size_str + "]", bad_code},
+        {"bounded_sequence_struct_field", bad_code},
+        {"bounded_sequence_struct_field.@", bad_code},
+        {"bounded_sequence_struct_field[0]", bad_code},
+        {"bounded_sequence_struct_field[0].@", ok_code},
+        {"bounded_sequence_struct_field[0].other_field", bad_code},
+        {"bounded_sequence_struct_field[" + max_seq_size_str + "]", bad_code},
+        {"bounded_sequence_struct_field[" + max_seq_size_str + "].@", bad_code},
+        {"unbounded_sequence_@", bad_code},
+        {"unbounded_sequence_@[0]", ok_code},
+        {"unbounded_sequence_@[" + max_seq_size_str + "]", ok_code},
+        {"unbounded_sequence_struct_field", bad_code},
+        {"unbounded_sequence_struct_field.@", bad_code},
+        {"unbounded_sequence_struct_field[0]", bad_code},
+        {"unbounded_sequence_struct_field[0].@", ok_code},
+        {"unbounded_sequence_struct_field[0].other_field", bad_code},
+        {"unbounded_sequence_struct_field[" + max_seq_size_str + "]", bad_code},
+        {"unbounded_sequence_struct_field[" + max_seq_size_str + "].@", ok_code}
     };
 
     // Generate test cases from the templated checks
