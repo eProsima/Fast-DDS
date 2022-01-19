@@ -179,6 +179,76 @@ TEST_F(DDSSQLFilterTests, field_access)
     run(test_cases);
 }
 
+TEST_F(DDSSQLFilterTests, type_compatibility_like)
+{
+    // field1 LIKE field2
+    {
+        std::vector<TestCase> test_cases;
+        for (const std::string& field1 : primitive_fields)
+        {
+            for (const std::string& field2 : primitive_fields)
+            {
+                bool ok = field1 == "string_field" && field2 == "string_field";
+                ReturnCode_t ret = ok ? ok_code : bad_code;
+                test_cases.emplace_back(TestCase{ field1 + " LIKE " + field2, {}, ret });
+            }
+        }
+        run(test_cases);
+    }
+
+    // field LIKE operand
+    // operand LIKE field
+    {
+        static const std::vector<std::pair<std::string, ReturnCode_t>> checks
+        {
+            // string values
+            {"'XYZ'", ok_code},
+            {"'%XYZ'", ok_code},
+            {"'XYZ%'", ok_code},
+            {"'%X%Y%Z%'", ok_code},
+            // Char values
+            {"'A'", ok_code},
+            {"'%'", ok_code},
+            {"'''", ok_code},
+            // Boolean values
+            {"FALSE", bad_code},
+            {"TRUE", bad_code},
+            // Integer values
+            {"1", bad_code},
+            {"-1", bad_code},
+            // Floating point values
+            {"1.0", bad_code},
+            {"-1.0", bad_code},
+            {"1e2", bad_code},
+            {"-1e2", bad_code},
+        };
+
+        std::vector<TestCase> test_cases;
+        for (const std::string& field : primitive_fields)
+        {
+            bool ok = field == "string_field";
+            for (auto& check : checks)
+            {
+                ReturnCode_t ret = ok ? check.second : bad_code;
+
+                // field LIKE operand
+                test_cases.emplace_back(TestCase{ field + " LIKE " + check.first, {}, ret });
+                test_cases.emplace_back(TestCase{ field + " LIKE %0", {check.first}, ret });
+                test_cases.emplace_back(TestCase{ field + " LIKE %1", {check.first}, bad_code });
+                test_cases.emplace_back(TestCase{ field + " LIKE %0", {}, bad_code });
+
+                // operand LIKE field
+                test_cases.emplace_back(TestCase{ check.first + " LIKE " + field, {}, ret });
+                test_cases.emplace_back(TestCase{ "%0 LIKE " + field, {check.first}, ret });
+                test_cases.emplace_back(TestCase{ "%1 LIKE " + field, {check.first}, bad_code });
+                test_cases.emplace_back(TestCase{ "%0 LIKE " + field, {}, bad_code });
+            }
+        }
+
+        run(test_cases);
+    }
+}
+
 } // namespace dds
 } // namespace fastdds
 } // namespace eprosima
