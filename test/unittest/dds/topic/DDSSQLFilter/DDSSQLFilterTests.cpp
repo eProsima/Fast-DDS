@@ -270,6 +270,96 @@ TEST_F(DDSSQLFilterTests, type_compatibility_like)
     }
 }
 
+TEST_F(DDSSQLFilterTests, type_compatibility_compare)
+{
+    static const std::vector<std::string> operators
+    {
+        " = ", " > ", " >= ", " < ", " <= ", " <> ", " != "
+    };
+
+    // field1 OP field2
+    {
+        std::vector<TestCase> test_cases;
+        for (const auto& field1 : primitive_fields)
+        {
+            for (const auto& field2 : primitive_fields)
+            {
+                bool ok = are_types_compatible(field1.second, field2.second);
+                ReturnCode_t ret = ok ? ok_code : bad_code;
+                for (const std::string& op : operators)
+                {
+                    test_cases.emplace_back(TestCase{ field1.first + op + field2.first, {}, ret });
+                }
+            }
+        }
+        run(test_cases);
+    }
+
+    // field OP operand
+    // operand OP field
+    {
+        static const std::vector<std::pair<std::string, std::string>> checks
+        {
+            // string values
+            {"'XYZ'", "STRING"},
+            {"'%XYZ'", "STRING"},
+            {"'XYZ%'", "STRING"},
+            {"'%X%Y%Z%'", "STRING"},
+            // Char values
+            {"'A'", "CHAR"},
+            {"'%'", "CHAR"},
+            {"'''", "CHAR"},
+            // Boolean values
+            {"FALSE", "BOOL"},
+            {"TRUE", "BOOL"},
+            // Integer values
+            {"1", "INT"},
+            {"-1", "INT"},
+            // Floating point values
+            {"1.0", "FLOAT"},
+            {"-1.0", "FLOAT"},
+            {"1e2", "FLOAT"},
+            {"-1e2", "FLOAT"},
+            // Enum Color values
+            {"'RED'", "ENUM"},
+            {"'GREEN'", "ENUM"},
+            {"'BLUE'", "ENUM"},
+            // Enum Material values
+            {"'WOOD'", "ENUM2"},
+            {"'PLASTIC'", "ENUM2"},
+            {"'METAL'", "ENUM2"},
+            {"'CONCRETE'", "ENUM2"},
+        };
+
+        std::vector<TestCase> test_cases;
+        for (const auto& field : primitive_fields)
+        {
+            for (auto& check : checks)
+            {
+                bool ok = are_types_compatible(field.second, check.second);
+                ReturnCode_t ret = ok ? ok_code : bad_code;
+
+                for (const std::string& op : operators)
+                {
+                    // field OP operand
+                    test_cases.emplace_back(TestCase{ field.first + op + check.first, {}, ret });
+                    test_cases.emplace_back(TestCase{ field.first + op + "%0", {check.first}, ret });
+                    test_cases.emplace_back(TestCase{ field.first + op + "%1", {check.first}, bad_code });
+                    test_cases.emplace_back(TestCase{ field.first + op + "%0", {}, bad_code });
+
+                    // operand OP field
+                    test_cases.emplace_back(TestCase{ check.first + op + field.first, {}, ret });
+                    test_cases.emplace_back(TestCase{ "%0" + op + field.first, {check.first}, ret });
+                    test_cases.emplace_back(TestCase{ "%1" + op + field.first, {check.first}, bad_code });
+                    test_cases.emplace_back(TestCase{ "%0" + op + field.first, {}, bad_code });
+                }
+            }
+        }
+
+        run(test_cases);
+    }
+}
+
 } // namespace dds
 } // namespace fastdds
 } // namespace eprosima
