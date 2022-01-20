@@ -584,7 +584,7 @@ bool TCPTransportInterface::CloseInputChannel(
 void TCPTransportInterface::close_tcp_socket(
         std::shared_ptr<TCPChannelResource>& channel)
 {
-    channel->disable();
+    channel->disconnect();
     // channel.reset(); lead to race conditions because TransportInterface functions used in the callbacks doesn't check validity.
 }
 
@@ -614,6 +614,20 @@ bool TCPTransportInterface::OpenOutputChannel(
             //TODO Review with wan ip.
             if (tcp_sender_resource && physical_locator == tcp_sender_resource->channel()->locator())
             {
+                // Look for an existing channel that matches this physical locator
+                auto existing_channel = channel_resources_.find(physical_locator);
+                // If the channel exists, check if the channel reference in the sender resource needs to be updated with
+                // the found channel
+                if (existing_channel != channel_resources_.end() &&
+                        existing_channel->second != tcp_sender_resource->channel())
+                {
+                    // Disconnect the old channel
+                    tcp_sender_resource->channel()->disconnect();
+                    tcp_sender_resource->channel()->clear();
+                    // Update sender resource with new channel
+                    tcp_sender_resource->channel() = existing_channel->second;
+                }
+                // Add logical port to channel if it's not there yet
                 if (!tcp_sender_resource->channel()->is_logical_port_added(logical_port))
                 {
                     tcp_sender_resource->channel()->add_logical_port(logical_port, rtcp_message_manager_.get());
