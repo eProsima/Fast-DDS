@@ -208,7 +208,8 @@ TEST_F(DDSSQLFilterTests, type_compatibility_like)
         {
             for (const auto& field2 : primitive_fields)
             {
-                bool ok = field1.second == "STRING" && field2.second == "STRING";
+                bool ok = (field1.second == "STRING" || field2.second == "STRING") &&
+                        are_types_compatible(field1.second, field2.second);
                 ReturnCode_t ret = ok ? ok_code : bad_code;
                 test_cases.emplace_back(TestCase{ field1.first + " LIKE " + field2.first, {}, ret });
             }
