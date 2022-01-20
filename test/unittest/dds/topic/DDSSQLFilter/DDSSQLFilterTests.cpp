@@ -123,6 +123,12 @@ protected:
 
 };
 
+TEST_F(DDSSQLFilterTests, empty_expression)
+{
+    TestCase empty{ "", {}, ReturnCode_t::RETCODE_OK };
+    run(empty);
+}
+
 TEST_F(DDSSQLFilterTests, field_access)
 {
     static const std::string max_array_size_str = std::to_string(max_array_size);
