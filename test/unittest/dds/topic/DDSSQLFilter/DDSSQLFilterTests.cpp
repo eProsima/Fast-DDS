@@ -63,7 +63,7 @@ static const std::map<std::string, std::set<std::string>> type_compatibility_mat
     {"ENUM2", {"INT", "ENUM2"}}
 };
 
-static constexpr bool are_types_compatible(
+static bool are_types_compatible(
         const std::string& type1,
         const std::string& type2)
 {
@@ -86,8 +86,8 @@ protected:
     struct TestCase
     {
         std::string expression;
-        std::vector<std::string> parameters{};
-        ReturnCode_t result{};
+        std::vector<std::string> parameters;
+        ReturnCode_t result;
     };
 
     void run(
