@@ -131,20 +131,10 @@ protected:
     std::string db_file_name_reader_;
     GuidPrefix_t guid_prefix_;
 
-    void block(
-            std::function<bool()> checker)
-    {
-        std::unique_lock<std::mutex> lock(mutex_);
-        mock_consumer_->cv().wait(lock, checker);
-    }
-
     std::vector<Log::Entry> helper_block_for_at_least_entries(
             uint32_t amount)
     {
-        block([this, amount]() -> bool
-                {
-                    return mock_consumer_->ConsumedEntries().size() >= amount;
-                });
+        mock_consumer_->wait(amount);
         return mock_consumer_->ConsumedEntries();
     }
 
@@ -191,9 +181,6 @@ protected:
         std::remove(db_file_name_writer_.c_str());
     }
 
-private:
-
-    std::mutex mutex_;
 };
 
 TEST_F(PersistenceNonIntraprocess, InconsistentAcknackReceived)
