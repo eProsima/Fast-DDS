@@ -12,6 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#include <map>
+#include <set>
 #include <string>
 #include <utility>
 #include <vector>
@@ -49,6 +51,24 @@ static const std::vector<std::pair<std::string, std::string>> primitive_fields
     {"enum_field",        "ENUM"},
     {"enum2_field",       "ENUM2"}
 };
+
+static const std::map<std::string, std::set<std::string>> type_compatibility_matrix
+{
+    {"BOOL", {"BOOL", "INT"}},
+    {"INT", {"INT", "FLOAT"}},
+    {"FLOAT", {"INT", "FLOAT"}},
+    {"CHAR", {"CHAR", "STRING"}},
+    {"STRING", {"CHAR", "STRING"}},
+    {"ENUM", {"INT", "ENUM"}},
+    {"ENUM2", {"INT", "ENUM2"}}
+};
+
+static constexpr bool are_types_compatible(
+        const std::string& type1,
+        const std::string& type2)
+{
+    return type_compatibility_matrix.at(type1).count(type2) > 0;
+}
 
 using DDSFilterFactory = DDSSQLFilter::DDSFilterFactory;
 using ReturnCode_t = DDSFilterFactory::ReturnCode_t;
