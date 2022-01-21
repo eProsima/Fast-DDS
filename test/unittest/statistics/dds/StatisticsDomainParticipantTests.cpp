@@ -136,29 +136,10 @@ public:
     void helper_block_for_at_least_entries(
             uint32_t amount)
     {
-        std::unique_lock<std::mutex> lck(*mutex_);
-        mock_consumer_->cv().wait(lck, [this, amount]
-                {
-                    return mock_consumer_->ConsumedEntriesSize_nts() >= amount;
-                });
+        mock_consumer_->wait_for_at_least_entries(amount);
     }
 
     eprosima::fastdds::dds::MockConsumer* mock_consumer_;
-
-    mutable std::mutex* mutex_;
-
-protected:
-
-    void SetUp() override
-    {
-        mutex_ = new std::mutex();
-    }
-
-    void TearDown() override
-    {
-        delete mutex_;
-        mutex_ = nullptr;
-    }
 
 };
 

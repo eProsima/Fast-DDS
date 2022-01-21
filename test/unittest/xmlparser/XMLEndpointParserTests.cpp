@@ -59,31 +59,23 @@ public:
     void helper_block_for_at_least_entries(
             uint32_t amount)
     {
-        std::unique_lock<std::mutex> lck(*xml_mutex_);
-        mock_consumer->cv().wait(lck, [this, amount]
-                {
-                    return mock_consumer->ConsumedEntriesSize_nts() >= amount;
-                });
+        mock_consumer->wait_for_at_least_entries(amount);
     }
 
     eprosima::fastdds::dds::MockConsumer* mock_consumer;
 
-    mutable std::mutex* xml_mutex_;
     XMLEndpointParser* mp_edpXML;
 
 protected:
 
     void SetUp() override
     {
-        xml_mutex_ = new std::mutex();
         mp_edpXML = new xmlparser::XMLEndpointParser();
     }
 
     void TearDown() override
     {
-        delete xml_mutex_;
         delete mp_edpXML;
-        xml_mutex_ = nullptr;
         mp_edpXML = nullptr;
     }
 
