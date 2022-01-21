@@ -57,6 +57,7 @@ public:
 
     /**
      * @brief Copy Constructor
+     *
      * @param type Another instance of TypeSupport
      */
     RTPS_DllAPI TypeSupport(
@@ -64,6 +65,7 @@ public:
 
     /**
      * @brief Move Constructor
+     *
      * @param type Another instance of TypeSupport
      */
     RTPS_DllAPI TypeSupport(
@@ -71,6 +73,7 @@ public:
 
     /**
      * @brief Copy Assignment
+     *
      * @param type Another instance of TypeSupport
      */
     RTPS_DllAPI TypeSupport& operator = (
@@ -78,16 +81,18 @@ public:
 
     /**
      * @brief Move Assignment
+     *
      * @param type Another instance of TypeSupport
      */
     RTPS_DllAPI TypeSupport& operator = (
             TypeSupport&& type) noexcept = default;
 
     /*!
-     * \brief TypeSupport constructor that receives a TopicDataType pointer.
+     * @brief TypeSupport constructor that receives a TopicDataType pointer.
      * The passed pointer will be managed by the TypeSupport object, so creating two TypeSupport
      * from the same pointer or deleting the passed pointer will produce a runtime error.
-     * \param ptr
+     *
+     * @param ptr
      */
     RTPS_DllAPI explicit TypeSupport(
             fastdds::dds::TopicDataType* ptr)
@@ -96,9 +101,10 @@ public:
     }
 
     /*!
-     * \brief TypeSupport constructor that receives a DynamicPubSubType.
+     * @brief TypeSupport constructor that receives a DynamicPubSubType.
      * It will copy the instance so the user will keep the ownership of his object.
-     * \param ptr
+     *
+     * @param ptr
      */
     RTPS_DllAPI TypeSupport(
             fastrtps::types::DynamicPubSubType ptr)
@@ -109,6 +115,7 @@ public:
 
     /**
      * @brief Registers the type on a participant
+     *
      * @param participant DomainParticipant where the type is going to be registered
      * @return RETCODE_BAD_PARAMETER if the type name is empty, RETCODE_PRECONDITION_NOT_MET if there is another type with
      * the same name registered on the DomainParticipant and RETCODE_OK if it is registered correctly
@@ -118,6 +125,7 @@ public:
 
     /**
      * @brief Registers the type on a participant
+     *
      * @param participant DomainParticipant where the type is going to be registered
      * @param type_name Name of the type to register
      * @return RETCODE_BAD_PARAMETER if the type name is empty, RETCODE_PRECONDITION_NOT_MET if there is another type with
@@ -129,6 +137,7 @@ public:
 
     /**
      * @brief Getter for the type name
+     *
      * @return name of the data type
      */
     RTPS_DllAPI virtual const std::string& get_type_name() const
@@ -138,6 +147,7 @@ public:
 
     /**
      * @brief Serializes the data
+     *
      * @param data Pointer to data
      * @param payload Pointer to payload
      * @return true if it is serialized correctly, false if not
@@ -148,6 +158,7 @@ public:
 
     /**
      * @brief Deserializes the data
+     *
      * @param payload Pointer to payload
      * @param data Pointer to data
      * @return true if it is deserialized correctly, false if not
@@ -158,6 +169,7 @@ public:
 
     /**
      * @brief Getter for the SerializedSizeProvider
+     *
      * @param data Pointer to data
      * @return function
      */
@@ -169,6 +181,7 @@ public:
 
     /**
      * @brief Creates new data
+     *
      * @return Pointer to the data
      */
     RTPS_DllAPI virtual void* create_data()
@@ -178,6 +191,7 @@ public:
 
     /**
      * @brief Deletes data
+     *
      * @param data Pointer to the data to delete
      */
     RTPS_DllAPI virtual void delete_data(
@@ -188,6 +202,7 @@ public:
 
     /**
      * @brief Getter for the data key
+     *
      * @param data Pointer to data
      * @param i_handle InstanceHandle pointer to store the key
      * @param force_md5 boolean to force md5 (default: false)
@@ -214,6 +229,7 @@ public:
 
     /**
      * @brief Check if the TypeSupport is empty
+     *
      * @return true if empty, false if not
      */
     RTPS_DllAPI bool empty() const

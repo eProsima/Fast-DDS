@@ -83,6 +83,7 @@ class MultiTopic;
 
 /**
  * Class DomainParticipant used to group Publishers and Subscribers into a single working unit.
+ *
  * @ingroup FASTDDS_MODULE
  */
 class DomainParticipant : public Entity
@@ -98,6 +99,7 @@ public:
 
     /**
      * This operation returns the value of the DomainParticipant QoS policies
+     *
      * @param qos DomainParticipantQos reference where the qos is going to be returned
      * @return RETCODE_OK
      */
@@ -106,12 +108,14 @@ public:
 
     /**
      * @brief This operation returns the value of the DomainParticipant QoS policies
+     *
      * @return A reference to the DomainParticipantQos
      */
     RTPS_DllAPI const DomainParticipantQos& get_qos() const;
 
     /**
      * This operation sets the value of the DomainParticipant QoS policies.
+     *
      * @param qos DomainParticipantQos to be set
      * @return RETCODE_IMMUTABLE_POLICY if any of the Qos cannot be changed, RETCODE_INCONSISTENT_POLICY if the Qos is not
      * self consistent and RETCODE_OK if the qos is changed correctly.
@@ -121,12 +125,14 @@ public:
 
     /**
      * Allows accessing the DomainParticipantListener.
+     *
      * @return DomainParticipantListener pointer
      */
     RTPS_DllAPI const DomainParticipantListener* get_listener() const;
 
     /**
      * Modifies the DomainParticipantListener, sets the mask to StatusMask::all()
+     *
      * @param listener new value for the DomainParticipantListener
      * @return RETCODE_OK
      */
@@ -135,6 +141,7 @@ public:
 
     /**
      * Modifies the DomainParticipantListener.
+     *
      * @param listener new value for the DomainParticipantListener
      * @param mask StatusMask that holds statuses the listener responds to
      * @return RETCODE_OK
@@ -145,6 +152,7 @@ public:
 
     /**
      * @brief This operation enables the DomainParticipant
+     *
      * @return RETCODE_OK
      */
     RTPS_DllAPI ReturnCode_t enable() override;
@@ -153,6 +161,7 @@ public:
 
     /**
      * Create a Publisher in this Participant.
+     *
      * @param qos QoS of the Publisher.
      * @param listener Pointer to the listener (default: nullptr)
      * @param mask StatusMask that holds statuses the listener responds to (default: all)
@@ -165,6 +174,7 @@ public:
 
     /**
      * Create a Publisher in this Participant.
+     *
      * @param profile_name Publisher profile name.
      * @param listener Pointer to the listener (default: nullptr)
      * @param mask StatusMask that holds statuses the listener responds to (default: all)
@@ -177,6 +187,7 @@ public:
 
     /**
      * Deletes an existing Publisher.
+     *
      * @param publisher to be deleted.
      * @return RETCODE_PRECONDITION_NOT_MET if the publisher does not belong to this participant or if it has active DataWriters,
      * RETCODE_OK if it is correctly deleted and RETCODE_ERROR otherwise.
@@ -186,6 +197,7 @@ public:
 
     /**
      * Create a Subscriber in this Participant.
+     *
      * @param qos QoS of the Subscriber.
      * @param listener Pointer to the listener (default: nullptr)
      * @param mask StatusMask that holds statuses the listener responds to (default: all)
@@ -198,6 +210,7 @@ public:
 
     /**
      * Create a Subscriber in this Participant.
+     *
      * @param profile_name Subscriber profile name.
      * @param listener Pointer to the listener (default: nullptr)
      * @param mask StatusMask that holds statuses the listener responds to (default: all)
@@ -210,6 +223,7 @@ public:
 
     /**
      * Deletes an existing Subscriber.
+     *
      * @param subscriber to be deleted.
      * @return RETCODE_PRECONDITION_NOT_MET if the subscriber does not belong to this participant or if it has active DataReaders,
      * RETCODE_OK if it is correctly deleted and RETCODE_ERROR otherwise.
@@ -219,6 +233,7 @@ public:
 
     /**
      * Create a Topic in this Participant.
+     *
      * @param topic_name Name of the Topic.
      * @param type_name Data type of the Topic.
      * @param qos QoS of the Topic.
@@ -235,6 +250,7 @@ public:
 
     /**
      * Create a Topic in this Participant.
+     *
      * @param topic_name Name of the Topic.
      * @param type_name Data type of the Topic.
      * @param profile_name Topic profile name.
@@ -251,6 +267,7 @@ public:
 
     /**
      * Deletes an existing Topic.
+     *
      * @param topic to be deleted.
      * @return RETCODE_BAD_PARAMETER if the topic passed is a nullptr, RETCODE_PRECONDITION_NOT_MET if the topic does not belong to
      * this participant or if it is referenced by any entity and RETCODE_OK if the Topic was deleted.
@@ -260,6 +277,7 @@ public:
 
     /**
      * Create a ContentFilteredTopic in this Participant.
+     *
      * @param name Name of the ContentFilteredTopic
      * @param related_topic Related Topic to being subscribed
      * @param filter_expression Logic expression to create filter
@@ -278,6 +296,7 @@ public:
 
     /**
      * Create a ContentFilteredTopic in this Participant using a custom filter.
+     *
      * @param name Name of the ContentFilteredTopic
      * @param related_topic Related Topic to being subscribed
      * @param filter_expression Logic expression to create filter
@@ -300,6 +319,7 @@ public:
 
     /**
      * Deletes an existing ContentFilteredTopic.
+     *
      * @param a_contentfilteredtopic ContentFilteredTopic to be deleted
      * @return RETCODE_BAD_PARAMETER if the topic passed is a nullptr, RETCODE_PRECONDITION_NOT_MET if the topic does not belong to
      * this participant or if it is referenced by any entity and RETCODE_OK if the ContentFilteredTopic was deleted.
@@ -309,6 +329,7 @@ public:
 
     /**
      * Create a MultiTopic in this Participant.
+     *
      * @param name Name of the MultiTopic
      * @param type_name Result type of the MultiTopic
      * @param subscription_expression Logic expression to combine filter
@@ -323,6 +344,7 @@ public:
 
     /**
      * Deletes an existing MultiTopic.
+     *
      * @param a_multitopic MultiTopic to be deleted
      * @return RETCODE_BAD_PARAMETER if the topic passed is a nullptr, RETCODE_PRECONDITION_NOT_MET if the topic does not belong to
      * this participant or if it is referenced by any entity and RETCODE_OK if the Topic was deleted.
@@ -333,6 +355,7 @@ public:
     /**
      * Gives access to an existing (or ready to exist) enabled Topic.
      * Topics obtained by this method must be destroyed by delete_topic.
+     *
      * @param topic_name Topic name
      * @param timeout Maximum time to wait for the Topic
      * @return Pointer to the existing Topic, nullptr in error case
@@ -344,8 +367,10 @@ public:
     /**
      * Looks up an existing, locally created @ref TopicDescription, based on its name.
      * May be called on a disabled participant.
+     *
      * @param topic_name Name of the @ref TopicDescription to search for.
      * @return Pointer to the topic description, if it has been created locally. Otherwise, nullptr is returned.
+     *
      * @remark UNSAFE. It is unsafe to lookup a topic description while another thread is creating a topic.
      */
     RTPS_DllAPI TopicDescription* lookup_topicdescription(
@@ -353,13 +378,16 @@ public:
 
     /**
      * Allows access to the builtin Subscriber.
+     *
      * @return Pointer to the builtin Subscriber, nullptr in error case
      */
     RTPS_DllAPI const Subscriber* get_builtin_subscriber() const;
 
     /**
      * Locally ignore a remote domain participant.
+     *
      * @note This action is not required to be reversible.
+     *
      * @param handle Identifier of the remote participant to ignore
      * @return RETURN_OK code if everything correct, error code otherwise
      */
@@ -368,7 +396,9 @@ public:
 
     /**
      * Locally ignore a topic.
+     *
      * @note This action is not required to be reversible.
+     *
      * @param handle Identifier of the topic to ignore
      * @return RETURN_OK code if everything correct, error code otherwise
      */
@@ -377,7 +407,9 @@ public:
 
     /**
      * Locally ignore a datawriter.
+     *
      * @note This action is not required to be reversible.
+     *
      * @param handle Identifier of the datawriter to ignore
      * @return RETURN_OK code if everything correct, error code otherwise
      */
@@ -386,7 +418,9 @@ public:
 
     /**
      * Locally ignore a datareader.
+     *
      * @note This action is not required to be reversible.
+     *
      * @param handle Identifier of the datareader to ignore
      * @return RETURN_OK code if everything correct, error code otherwise
      */
@@ -396,12 +430,14 @@ public:
     /**
      * This operation retrieves the domain_id used to create the DomainParticipant.
      * The domain_id identifies the DDS domain to which the DomainParticipant belongs.
+     *
      * @return The Participant's domain_id
      */
     RTPS_DllAPI DomainId_t get_domain_id() const;
 
     /**
      * Deletes all the entities that were created by means of the “create” methods
+     *
      * @return RETURN_OK code if everything correct, error code otherwise
      */
     RTPS_DllAPI ReturnCode_t delete_contained_entities();
@@ -418,6 +454,7 @@ public:
      * @note Writing data via the write operation on a DataWriter asserts liveliness on the DataWriter itself and its
      * DomainParticipant. Consequently the use of assert_liveliness is only needed if the application is not
      * writing data regularly.
+     *
      * @return RETCODE_OK if the liveliness was asserted, RETCODE_ERROR otherwise.
      */
     RTPS_DllAPI ReturnCode_t assert_liveliness();
@@ -432,6 +469,7 @@ public:
      * The special value PUBLISHER_QOS_DEFAULT may be passed to this operation to indicate that the default QoS
      * should be reset back to the initial values the factory would use, that is the values that would be used
      * if the set_default_publisher_qos operation had never been called.
+     *
      * @param qos PublisherQos to be set
      * @return RETCODE_INCONSISTENT_POLICY if the Qos is not self consistent and RETCODE_OK if the qos is changed correctly.
      */
@@ -445,6 +483,7 @@ public:
      *
      * The values retrieved get_default_publisher_qos will match the set of values specified on the last successful
      * call to set_default_publisher_qos, or else, if the call was never made, the default values.
+     *
      * @return Current default publisher qos.
      */
     RTPS_DllAPI const PublisherQos& get_default_publisher_qos() const;
@@ -456,6 +495,7 @@ public:
      *
      * The values retrieved get_default_publisher_qos will match the set of values specified on the last successful
      * call to set_default_publisher_qos, or else, if the call was never made, the default values.
+     *
      * @param qos PublisherQos reference where the default_publisher_qos is returned
      * @return RETCODE_OK
      */
@@ -464,6 +504,7 @@ public:
 
     /**
      * Fills the PublisherQos with the values of the XML profile.
+     *
      * @param profile_name Publisher profile name.
      * @param qos PublisherQos object where the qos is returned.
      * @return RETCODE_OK if the profile exists. RETCODE_BAD_PARAMETER otherwise.
@@ -482,6 +523,7 @@ public:
      * The special value SUBSCRIBER_QOS_DEFAULT may be passed to this operation to indicate that the default QoS
      * should be reset back to the initial values the factory would use, that is the values that would be used
      * if the set_default_subscriber_qos operation had never been called.
+     *
      * @param qos SubscriberQos to be set
      * @return RETCODE_INCONSISTENT_POLICY if the Qos is not self consistent and RETCODE_OK if the qos is changed correctly.
      */
@@ -495,6 +537,7 @@ public:
      *
      * The values retrieved get_default_subscriber_qos will match the set of values specified on the last successful
      * call to set_default_subscriber_qos, or else, if the call was never made, the default values.
+     *
      * @return Current default subscriber qos.
      */
     RTPS_DllAPI const SubscriberQos& get_default_subscriber_qos() const;
@@ -506,6 +549,7 @@ public:
      *
      * The values retrieved get_default_subscriber_qos will match the set of values specified on the last successful
      * call to set_default_subscriber_qos, or else, if the call was never made, the default values.
+     *
      * @param qos SubscriberQos reference where the default_subscriber_qos is returned
      * @return RETCODE_OK
      */
@@ -514,6 +558,7 @@ public:
 
     /**
      * Fills the SubscriberQos with the values of the XML profile.
+     *
      * @param profile_name Subscriber profile name.
      * @param qos SubscriberQos object where the qos is returned.
      * @return RETCODE_OK if the profile exists. RETCODE_BAD_PARAMETER otherwise.
@@ -532,6 +577,7 @@ public:
      * The special value TOPIC_QOS_DEFAULT may be passed to this operation to indicate that the default QoS
      * should be reset back to the initial values the factory would use, that is the values that would be used
      * if the set_default_topic_qos operation had never been called.
+     *
      * @param qos TopicQos to be set
      * @return RETCODE_INCONSISTENT_POLICY if the Qos is not self consistent and RETCODE_OK if the qos is changed correctly.
      */
@@ -545,6 +591,7 @@ public:
      *
      * The values retrieved get_default_topic_qos will match the set of values specified on the last successful
      * call to set_default_topic_qos, or else, TOPIC_QOS_DEFAULT if the call was never made.
+     *
      * @return Current default topic qos.
      */
     RTPS_DllAPI const TopicQos& get_default_topic_qos() const;
@@ -556,6 +603,7 @@ public:
      *
      * The values retrieved get_default_topic_qos will match the set of values specified on the last successful
      * call to set_default_topic_qos, or else, TOPIC_QOS_DEFAULT if the call was never made.
+     *
      * @param qos TopicQos reference where the default_topic_qos is returned
      * @return RETCODE_OK
      */
@@ -564,6 +612,7 @@ public:
 
     /**
      * Fills the TopicQos with the values of the XML profile.
+     *
      * @param profile_name Topic profile name.
      * @param qos TopicQos object where the qos is returned.
      * @return RETCODE_OK if the profile exists. RETCODE_BAD_PARAMETER otherwise.
@@ -574,6 +623,7 @@ public:
 
     /**
      * Retrieves the list of DomainParticipants that have been discovered in the domain and are not "ignored".
+     *
      * @param[out]  participant_handles Reference to the vector where discovered participants will be returned
      * @return RETCODE_OK if everything correct, error code otherwise
      */
@@ -582,6 +632,7 @@ public:
 
     /**
      * Retrieves the DomainParticipant data of a discovered not ignored participant.
+     *
      * @param[out]  participant_data Reference to the ParticipantBuiltinTopicData object to return the data
      * @param participant_handle InstanceHandle of DomainParticipant to retrieve the data from
      * @return RETCODE_OK if everything correct, PRECONDITION_NOT_MET if participant does not exist
@@ -592,6 +643,7 @@ public:
 
     /**
      * Retrieves the list of topics that have been discovered in the domain and are not "ignored".
+     *
      * @param[out]  topic_handles Reference to the vector where discovered topics will be returned
      * @return RETCODE_OK if everything correct, error code otherwise
      */
@@ -600,6 +652,7 @@ public:
 
     /**
      * Retrieves the Topic data of a discovered not ignored topic.
+     *
      * @param[out]  topic_data Reference to the TopicBuiltinTopicData object to return the data
      * @param topic_handle InstanceHandle of Topic to retrieve the data from
      * @return RETCODE_OK if everything correct, PRECONDITION_NOT_MET if topic does not exist
@@ -611,6 +664,7 @@ public:
     /**
      * This operation checks whether or not the given handle represents an Entity that was created from the
      * DomainParticipant.
+     *
      * @param a_handle InstanceHandle of the entity to look for.
      * @param recursive The containment applies recursively. That is, it applies both to entities
      * (TopicDescription, Publisher, or Subscriber) created directly using the DomainParticipant as well as
@@ -624,6 +678,7 @@ public:
     /**
      * This operation returns the current value of the time that the service uses to time-stamp data-writes
      * and to set the reception-timestamp for the data-updates it receives.
+     *
      * @param current_time Time_t reference where the current time is returned
      * @return RETCODE_OK
      */
@@ -634,6 +689,7 @@ public:
 
     /**
      * Register a type in this participant.
+     *
      * @param type TypeSupport.
      * @param type_name The name that will be used to identify the Type.
      * @return RETCODE_BAD_PARAMETER if the size of the name is 0, RERCODE_PRECONDITION_NOT_MET if there is another TypeSupport
@@ -645,6 +701,7 @@ public:
 
     /**
      * Register a type in this participant.
+     *
      * @param type TypeSupport.
      * @return RETCODE_BAD_PARAMETER if the size of the name is 0, RERCODE_PRECONDITION_NOT_MET if there is another TypeSupport
      * with the same name and RETCODE_OK if it is correctly registered.
@@ -654,6 +711,7 @@ public:
 
     /**
      * Unregister a type in this participant.
+     *
      * @param typeName Name of the type
      * @return RETCODE_BAD_PARAMETER if the size of the name is 0, RERCODE_PRECONDITION_NOT_MET if there are entities using that
      * TypeSupport and RETCODE_OK if it is correctly unregistered.
@@ -663,6 +721,7 @@ public:
 
     /**
      * This method gives access to a registered type based on its name.
+     *
      * @param type_name Name of the type
      * @return TypeSupport corresponding to the type_name
      */
@@ -671,6 +730,7 @@ public:
 
     /**
      * Returns the DomainParticipant's handle.
+     *
      * @return InstanceHandle of this DomainParticipant.
      */
     RTPS_DllAPI const InstanceHandle_t& get_instance_handle() const;
@@ -679,12 +739,14 @@ public:
 
     /**
      * @brief Getter for the Participant GUID
+     *
      * @return A reference to the GUID
      */
     RTPS_DllAPI const fastrtps::rtps::GUID_t& guid() const;
 
     /**
      * @brief Getter for the participant names
+     *
      * @return Vector with the names
      */
     RTPS_DllAPI std::vector<std::string> get_participant_names() const;
@@ -694,6 +756,7 @@ public:
      * included in FastRTPS, for example when communicating with other implementations.
      * It indicates the Participant that an Endpoint from the XML has been discovered and
      * should be activated.
+     *
      * @param partguid Participant GUID_t.
      * @param userId User defined ID as shown in the XML file.
      * @param kind EndpointKind (WRITER or READER)
@@ -706,6 +769,7 @@ public:
 
     /**
      * @brief Getter for the resource event
+     *
      * @return A reference to the resource event
      */
     RTPS_DllAPI fastrtps::rtps::ResourceEvent& get_resource_event() const;
@@ -714,6 +778,7 @@ public:
      * When a DomainParticipant receives an incomplete list of TypeIdentifiers in a
      * PublicationBuiltinTopicData or SubscriptionBuiltinTopicData, it may request the additional type
      * dependencies by invoking the getTypeDependencies operation.
+     *
      * @param in TypeIdentifier sequence
      * @return SampleIdentity
      */
@@ -723,6 +788,7 @@ public:
     /**
      * A DomainParticipant may invoke the operation getTypes to retrieve the TypeObjects associated with a
      * list of TypeIdentifiers.
+     *
      * @param in TypeIdentifier sequence
      * @return SampleIdentity
      */
@@ -737,6 +803,7 @@ public:
      * If the type is already registered, the function will return true, but the callback will not be called.
      * If the given type_information is enough to build the type without using the typelookup service,
      * it will return true and the callback will be never called.
+     *
      * @param type_information
      * @param type_name
      * @param callback
@@ -755,8 +822,10 @@ public:
      * If this filter does not meet your filtering requirements, you can register a custom filter factory.
      *
      * To use a custom filter, a factory for it must be registered in the following places:
+     *
      * - In any application that uses the custom filter factory to create a ContentFilteredTopic and the corresponding
      *   DataReader.
+     *
      * - In each application that writes the data to the applications mentioned above.
      *
      * For example, suppose Application A on the subscription side creates a Topic named X and a ContentFilteredTopic
@@ -815,6 +884,7 @@ public:
 
     /**
      * @brief Check if the Participant has any Publisher, Subscriber or Topic
+     *
      * @return true if any, false otherwise.
      */
     bool has_active_entities();

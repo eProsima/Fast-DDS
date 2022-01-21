@@ -39,6 +39,7 @@ class DomainParticipant;
 
 /**
  * Class DomainParticipantListener, overrides behaviour towards certain events.
+ *
  * @ingroup FASTDDS_MODULE
  */
 class DomainParticipantListener :
@@ -65,6 +66,7 @@ public:
     /*!
      * This method is called when a new Participant is discovered, or a previously discovered participant changes
      * its QOS or is removed.
+     *
      * @param participant Pointer to the Participant which discovered the remote participant.
      * @param info Remote participant information. User can take ownership of the object.
      */
@@ -78,6 +80,7 @@ public:
 #if HAVE_SECURITY
     /*!
      * This method is called when a new Participant is authenticated.
+     *
      * @param participant Pointer to the authenticated Participant.
      * @param info Remote participant authentication information. User can take ownership of the object.
      */
@@ -88,11 +91,12 @@ public:
         (void)participant, (void)info;
     }
 
-#endif
+#endif // if HAVE_SECURITY
 
     /*!
      * This method is called when a new Subscriber is discovered, or a previously discovered subscriber changes
      * its QOS or is removed.
+     *
      * @param participant Pointer to the Participant which discovered the remote subscriber.
      * @param info Remote subscriber information. User can take ownership of the object.
      */
@@ -106,6 +110,7 @@ public:
     /*!
      * This method is called when a new Publisher is discovered, or a previously discovered publisher changes
      * its QOS or is removed.
+     *
      * @param participant Pointer to the Participant which discovered the remote publisher.
      * @param info Remote publisher information. User can take ownership of the object.
      */
@@ -121,7 +126,7 @@ public:
      * The ownership of all object belongs to the caller so if needs to be used after the
      * method ends, a full copy should be perform (except for dyn_type due to its shared_ptr nature.
      * For example:
-     * fastrtps::types::TypeIdentifier new_type_id = *identifier;
+     * fastrtps::types::TypeIdentifier new_type_id = \*identifier;
      */
     virtual void on_type_discovery(
             DomainParticipant* participant,

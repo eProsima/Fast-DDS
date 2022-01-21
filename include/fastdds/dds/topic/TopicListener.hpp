@@ -30,6 +30,7 @@ class Topic;
 
 /**
  * Class TopicListener, it should be used by the end user to implement specific callbacks to certain actions.
+ *
  * @ingroup FASTDDS_MODULE
  */
 class RTPS_DllAPI TopicListener
@@ -53,6 +54,7 @@ public:
     /**
      * Virtual function to be implemented by the user containing the actions to be performed when
      * another topic exists with the same name but different characteristics.
+     *
      * @param topic Topic
      * @param status The inconsistent topic status
      */

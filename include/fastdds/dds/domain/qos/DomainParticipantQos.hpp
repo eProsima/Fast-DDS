@@ -31,6 +31,7 @@ namespace dds {
 /**
  * Class DomainParticipantQos, contains all the possible Qos that can be set for a determined participant.
  * Please consult each of them to check for implementation details and default values.
+ *
  * @ingroup FASTDDS_QOS_MODULE
  */
 class DomainParticipantQos
@@ -38,6 +39,7 @@ class DomainParticipantQos
 public:
 
     //! User defined flow controllers to use alongside.
+    //
     //! @since 2.4.0
     using FlowControllerDescriptorList = std::vector<std::shared_ptr<fastdds::rtps::FlowControllerDescriptor>>;
 
@@ -70,6 +72,7 @@ public:
 
     /**
      * Getter for UserDataQosPolicy
+     *
      * @return UserDataQosPolicy reference
      */
     const UserDataQosPolicy& user_data() const
@@ -79,6 +82,7 @@ public:
 
     /**
      * Getter for UserDataQosPolicy
+     *
      * @return UserDataQosPolicy reference
      */
     UserDataQosPolicy& user_data()
@@ -88,6 +92,7 @@ public:
 
     /**
      * Setter for UserDataQosPolicy
+     *
      * @param value UserDataQosPolicy
      */
     void user_data(
@@ -98,6 +103,7 @@ public:
 
     /**
      * Getter for EntityFactoryQosPolicy
+     *
      * @return EntityFactoryQosPolicy reference
      */
     const EntityFactoryQosPolicy& entity_factory() const
@@ -107,6 +113,7 @@ public:
 
     /**
      * Getter for EntityFactoryQosPolicy
+     *
      * @return EntityFactoryQosPolicy reference
      */
     EntityFactoryQosPolicy& entity_factory()
@@ -116,6 +123,7 @@ public:
 
     /**
      * Setter for EntityFactoryQosPolicy
+     *
      * @param value EntityFactoryQosPolicy
      */
     void entity_factory(
@@ -126,6 +134,7 @@ public:
 
     /**
      * Getter for ParticipantResourceLimitsQos
+     *
      * @return ParticipantResourceLimitsQos reference
      */
     const ParticipantResourceLimitsQos& allocation() const
@@ -135,6 +144,7 @@ public:
 
     /**
      * Getter for ParticipantResourceLimitsQos
+     *
      * @return ParticipantResourceLimitsQos reference
      */
     ParticipantResourceLimitsQos& allocation()
@@ -144,6 +154,7 @@ public:
 
     /**
      * Setter for ParticipantResourceLimitsQos
+     *
      * @param allocation ParticipantResourceLimitsQos
      */
     void allocation(
@@ -154,6 +165,7 @@ public:
 
     /**
      * Getter for PropertyPolicyQos
+     *
      * @return PropertyPolicyQos reference
      */
     const PropertyPolicyQos& properties() const
@@ -163,6 +175,7 @@ public:
 
     /**
      * Getter for PropertyPolicyQos
+     *
      * @return PropertyPolicyQos reference
      */
     PropertyPolicyQos& properties()
@@ -172,6 +185,7 @@ public:
 
     /**
      * Setter for PropertyPolicyQos
+     *
      * @param properties PropertyPolicyQos
      */
     void properties(
@@ -182,6 +196,7 @@ public:
 
     /**
      * Getter for WireProtocolConfigQos
+     *
      * @return WireProtocolConfigQos reference
      */
     const WireProtocolConfigQos& wire_protocol() const
@@ -191,6 +206,7 @@ public:
 
     /**
      * Getter for WireProtocolConfigQos
+     *
      * @return WireProtocolConfigQos reference
      */
     WireProtocolConfigQos& wire_protocol()
@@ -200,6 +216,7 @@ public:
 
     /**
      * Setter for WireProtocolConfigQos
+     *
      * @param wire_protocol WireProtocolConfigQos
      */
     void wire_protocol(
@@ -210,6 +227,7 @@ public:
 
     /**
      * Getter for TransportConfigQos
+     *
      * @return TransportConfigQos reference
      */
     const TransportConfigQos& transport() const
@@ -219,6 +237,7 @@ public:
 
     /**
      * Getter for TransportConfigQos
+     *
      * @return TransportConfigQos reference
      */
     TransportConfigQos& transport()
@@ -228,6 +247,7 @@ public:
 
     /**
      * Setter for TransportConfigQos
+     *
      * @param transport TransportConfigQos
      */
     void transport(
@@ -238,6 +258,7 @@ public:
 
     /**
      * Getter for the Participant name
+     *
      * @return name
      */
     const fastrtps::string_255& name() const
@@ -247,6 +268,7 @@ public:
 
     /**
      * Getter for the Participant name
+     *
      * @return name
      */
     fastrtps::string_255& name()
@@ -256,6 +278,7 @@ public:
 
     /**
      * Setter for the Participant name
+     *
      * @return value New name to be set
      */
     void name(
@@ -266,6 +289,7 @@ public:
 
     /**
      * Getter for FlowControllerDescriptorList
+     *
      * @return FlowControllerDescriptorList reference
      */
     FlowControllerDescriptorList& flow_controllers()
@@ -275,6 +299,7 @@ public:
 
     /**
      * Getter for FlowControllerDescriptorList
+     *
      * @return FlowControllerDescriptorList reference
      */
     const FlowControllerDescriptorList& flow_controllers() const
@@ -305,8 +330,10 @@ private:
     //!Name of the participant.
     fastrtps::string_255 name_ = "RTPSParticipant";
 
-    //! User defined flow controller to use alongside.
-    //! @since 2.4.0
+    /*! User defined flow controller to use alongside.
+     *
+     *  @since 2.4.0
+     */
     FlowControllerDescriptorList flow_controllers_;
 
 };

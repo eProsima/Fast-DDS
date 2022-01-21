@@ -57,6 +57,7 @@ public:
 
     /**
      * Virtual function to be implemented by the user containing the actions to be performed when a new  Data Message is received.
+     *
      * @param reader DataReader
      */
     RTPS_DllAPI virtual void on_data_available(
@@ -67,6 +68,7 @@ public:
 
     /**
      * Virtual method to be called when the subscriber is matched with a new Writer (or unmatched); i.e., when a writer publishing in the same topic is discovered.
+     *
      * @param reader DataReader
      * @param info The subscription matched status
      */
@@ -80,6 +82,7 @@ public:
 
     /**
      * Virtual method to be called when a topic misses the deadline period
+     *
      * @param reader DataReader
      * @param status The requested deadline missed status
      */
@@ -93,6 +96,7 @@ public:
 
     /**
      * @brief Method called when the liveliness status associated to a subscriber changes
+     *
      * @param reader The DataReader
      * @param status The liveliness changed status
      */
@@ -106,6 +110,7 @@ public:
 
     /**
      * @brief Method called when a sample was rejected.
+     *
      * @param reader The DataReader
      * @param status The rejected status
      */
@@ -119,6 +124,7 @@ public:
 
     /**
      * @brief Method called an incompatible QoS was requested.
+     *
      * @param reader The DataReader
      * @param status The requested incompatible QoS status
      */
@@ -132,6 +138,7 @@ public:
 
     /**
      * @brief Method called when a sample was lost.
+     *
      * @param reader The DataReader
      * @param status The sample lost status
      */

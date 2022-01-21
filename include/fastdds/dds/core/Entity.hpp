@@ -40,6 +40,7 @@ public:
 
     /**
      * @brief Constructor
+     *
      * @param mask StatusMask (default: all)
      */
     RTPS_DllAPI Entity(
@@ -52,6 +53,7 @@ public:
 
     /**
      * @brief This operation enables the Entity
+     *
      * @return RETCODE_OK
      */
     virtual fastrtps::types::ReturnCode_t enable()
@@ -70,6 +72,7 @@ public:
 
     /**
      * @brief Retrieves the set of relevant statuses for the Entity
+     *
      * @return Reference to the StatusMask with the relevant statuses set to 1
      */
     RTPS_DllAPI const StatusMask& get_status_mask() const
@@ -95,6 +98,7 @@ public:
 
     /**
      * @brief Retrieves the instance handler that represents the Entity
+     *
      * @return Reference to the InstanceHandle
      */
     const InstanceHandle_t& get_instance_handle() const
@@ -104,6 +108,7 @@ public:
 
     /**
      * @brief Checks if the Entity is enabled
+     *
      * @return true if enabled, false if not
      */
     RTPS_DllAPI bool is_enabled() const
@@ -119,6 +124,7 @@ public:
 
     /**
      * @brief Allows access to the StatusCondition associated with the Entity
+     *
      * @return Reference to StatusCondition object
      */
     RTPS_DllAPI StatusCondition& get_statuscondition()
@@ -130,6 +136,7 @@ protected:
 
     /**
      * @brief Setter for the Instance Handle
+     *
      * @param handle Instance Handle
      */
     RTPS_DllAPI void set_instance_handle(
@@ -161,6 +168,7 @@ public:
 
     /**
      * @brief Constructor
+     *
      * @param mask StatusMask (default: all)
      */
     RTPS_DllAPI DomainEntity(

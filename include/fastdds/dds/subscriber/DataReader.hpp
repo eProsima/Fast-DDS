@@ -79,6 +79,7 @@ using SampleInfoSeq = LoanableSequence<SampleInfo>;
 
 /**
  * Class DataReader, contains the actual implementation of the behaviour of the Subscriber.
+ *
  *  @ingroup FASTDDS_MODULE
  */
 class DataReader : public DomainEntity
@@ -130,6 +131,7 @@ public:
 
     /**
      * @brief Method to block the current thread until an unread message is available.
+     *
      * @param[in] max_wait Max blocking time for this operation.
      * @return RETCODE_OK if there is new unread message, ReturnCode_t::RETCODE_TIMEOUT if timeout
      */
@@ -154,16 +156,20 @@ public:
      *
      * 1. If @ref PresentationQosPolicy::access_scope is @ref INSTANCE_PRESENTATION_QOS, then the returned
      *    collection is a 'list' where samples belonging to the same data-instance are consecutive.
+     *
      * 2. If @ref PresentationQosPolicy::access_scope is @ref TOPIC_PRESENTATION_QOS and
      *    @ref PresentationQosPolicy::ordered_access is set to @c false, then the returned collection is a
      *    'list' where samples belonging to the same data-instance are consecutive.
+     *
      * 3. If @ref PresentationQosPolicy::access_scope is @ref TOPIC_PRESENTATION_QOS and
      *    @ref PresentationQosPolicy::ordered_access is set to @c true, then the returned collection is a
      *    'list' where samples belonging to the same instance may or may not be consecutive. This is because to
      *    preserve order it may be necessary to mix samples from different instances.
+     *
      * 4. If @ref PresentationQosPolicy::access_scope is @ref GROUP_PRESENTATION_QOS and
      *    @ref PresentationQosPolicy::ordered_access is set to @c false, then the returned collection is a
      *    'list' where samples belonging to the same data instance are consecutive.
+     *
      * 5. If @ref PresentationQosPolicy::access_scope is @ref GROUP_PRESENTATION_QOS and
      *    @ref PresentationQosPolicy::ordered_access is set to @c true, then the returned collection contains at
      *    most one sample. The difference in this case is due to the fact that it is required that the application
@@ -175,6 +181,7 @@ public:
      * - If @ref DestinationOrderQosPolicy::kind is @ref BY_RECEPTION_TIMESTAMP_DESTINATIONORDER_QOS, samples
      *   belonging to the same instances will appear in the relative order in which there were received (FIFO,
      *   earlier samples ahead of the later samples).
+     *
      * - If @ref DestinationOrderQosPolicy::kind is @ref BY_SOURCE_TIMESTAMP_DESTINATIONORDER_QOS, samples
      *   belonging to the same instances will appear in the relative order implied by the source_timestamp (FIFO,
      *   smaller values of source_timestamp ahead of the larger values).
@@ -185,10 +192,13 @@ public:
      *
      * - In the case where the @ref HistoryQosPolicy::kind is KEEP_LAST_HISTORY_QOS, the call will return at most
      *   @ref HistoryQosPolicy::depth samples per instance.
+     *
      * - The maximum number of samples returned is limited by @ref ResourceLimitsQosPolicy::max_samples, and by
      *   @ref ReaderResourceLimitsQos::max_samples_per_read.
+     *
      * - For multiple instances, the number of samples returned is additionally limited by the product
      *   (@ref ResourceLimitsQosPolicy::max_samples_per_instance * @ref ResourceLimitsQosPolicy::max_instances).
+     *
      * - If ReaderResourceLimitsQos::sample_infos_allocation has a maximum limit, the number of samples returned
      *   may also be limited if insufficient @ref SampleInfo resources are available.
      *
@@ -203,8 +213,11 @@ public:
      * The initial (input) properties of the @c data_values and @c sample_infos collections will determine the
      * precise behavior of this operation. For the purposes of this description the collections are modeled as having
      * three properties:
+     *
      * - the current length (@c len, see @ref LoanableCollection::length())
+     *
      * - the maximum length (@c max_len, see @ref LoanableCollection::maximum())
+     *
      * - whether the collection container owns the memory of the elements within
      *   (@c owns, see @ref LoanableCollection::has_ownership())
      *
@@ -213,27 +226,34 @@ public:
      *
      * 1. The values of @c len, @c max_len, and @c owns for the two collections must be identical. Otherwise read
      *    will fail with RETCODE_PRECONDITION_NOT_MET.
+     *
      * 2. On successful output, the values of @c len, @c max_len, and @c owns will be the same for both collections.
+     *
      * 3. If the input <tt> max_len == 0 </tt>, then the @c data_values and @c sample_infos collections will be
      *    filled with elements that are 'loaned' by the DataReader. On output, @c owns will be @c false, @c len will
-     *    be set to the number of values returned, and @c max_len will be set to a value verifying
-     *    <tt> max_len >= len </tt>. The use of this variant allows for zero-copy access to the data and the
+     *    be set to the number of values returned, and @c max_len will be set to a value
+     *    verifying <tt> max_len >= len </tt>. The use of this variant allows for zero-copy access to the data and the
      *    application will need to return the loan to the DataReader using the @ref return_loan operation.
+     *
      * 4. If the input <tt> max_len > 0 </tt> and the input <tt> owns == false </tt>, then the read operation will
      *    fail with RETCODE_PRECONDITION_NOT_MET. This avoids the potential hard-to-detect memory leaks caused by an
      *    application forgetting to return the loan.
+     *
      * 5. If input <tt> max_len > 0 </tt> and the input <tt> owns == true </tt>, then the read operation will copy
      *    the Data values and SampleInfo values into the elements already inside the collections. On output, @c owns
      *    will be @c true, @c len will be set to the number of values copied, and @c max_len will remain unchanged.
      *    The use of this variant forces a copy but the application can control where the copy is placed and the
      *    application will not need to return the loan. The number of samples copied depends on the values of
      *    @c max_len and @c max_samples:
+     *
      *    - If <tt> max_samples == LENGTH_UNLIMITED </tt>, then at most @c max_len values will be copied. The use of
      *      this variant lets the application limit the number of samples returned to what the sequence can
      *      accommodate.
+     *
      *    - If <tt> max_samples <= max_len </tt>, then at most @c max_samples values will be copied. The use of this
      *      variant lets the application limit the number of samples returned to fewer that what the sequence can
      *      accommodate.
+     *
      *    - If <tt> max_samples > max_len </tt>, then the read operation will fail with RETCODE_PRECONDITION_NOT_MET.
      *      This avoids the potential confusion where the application expects to be able to access up to
      *      @c max_samples, but that number can never be returned, even if they are available in the DataReader,
@@ -290,7 +310,9 @@ public:
             ViewStateMask view_states = ANY_VIEW_STATE,
             InstanceStateMask instance_states = ANY_INSTANCE_STATE);
 
-    /** NOT YET IMPLEMENTED
+    /**
+     * NOT YET IMPLEMENTED
+     *
      * This operation accesses via ‘read’ the samples that match the criteria specified in the ReadCondition.
      * This operation is especially useful in combination with QueryCondition to filter data samples based on the
      * content.
@@ -427,11 +449,13 @@ public:
             ViewStateMask view_states = ANY_VIEW_STATE,
             InstanceStateMask instance_states = ANY_INSTANCE_STATE);
 
-    /** NOT YET IMPLEMENTED
+    /**
+     * NOT YET IMPLEMENTED
+     *
      * This operation accesses a collection of Data values from the DataReader. The behavior is identical to
      * @ref read_next_instance except that all samples returned satisfy the specified condition. In other words, on
-     * success all returned samples belong to the same instance, and the instance is the instance with ‘smallest’
-     *  @c instance_handle among the ones that verify (a) @c instance_handle >= @c previous_handle and (b) have samples
+     * success all returned samples belong to the same instance, and the instance is the instance with
+     * ‘smallest’ @c instance_handle among the ones that verify (a) @c instance_handle >= @c previous_handle and (b) have samples
      * for which the specified ReadCondition evaluates to TRUE.
      *
      * Similar to the operation @ref read_next_instance it is possible to call
@@ -469,8 +493,8 @@ public:
      * same as for the read operation.
      *
      * The read_next_sample operation is semantically equivalent to the read operation where the input Data sequence
-     * has <tt> max_length = 1 </tt>, the <tt> sample_states = NOT_READ_SAMPLE_STATE </tt>, the
-     * <tt> view_states = ANY_VIEW_STATE </tt>, and the <tt> instance_states = ANY_INSTANCE_STATE </tt>.
+     * has <tt> max_length = 1 </tt>, the <tt> sample_states = NOT_READ_SAMPLE_STATE </tt>,
+     * the <tt> view_states = ANY_VIEW_STATE </tt>, and the <tt> instance_states = ANY_INSTANCE_STATE </tt>.
      *
      * The read_next_sample operation provides a simplified API to ‘read’ samples avoiding the need for the
      * application to manage sequences and specify states.
@@ -525,7 +549,9 @@ public:
             ViewStateMask view_states = ANY_VIEW_STATE,
             InstanceStateMask instance_states = ANY_INSTANCE_STATE);
 
-    /** NOT YET IMPLEMENTED
+    /**
+     * NOT YET IMPLEMENTED
+     *
      * This operation is analogous to @ref read_w_condition except it accesses samples via the ‘take’ operation.
      *
      * The specified ReadCondition must be attached to the DataReader; otherwise the operation will fail and return
@@ -628,11 +654,13 @@ public:
             ViewStateMask view_states = ANY_VIEW_STATE,
             InstanceStateMask instance_states = ANY_INSTANCE_STATE);
 
-    /** NOT YET IMPLEMENTED
+    /**
+     * NOT YET IMPLEMENTED
+     *
      * This operation accesses a collection of Data values from the DataReader. The behavior is identical to
-     *  @ref read_next_instance except that all samples returned satisfy the specified condition. In other words, on
+     * @ref read_next_instance except that all samples returned satisfy the specified condition. In other words, on
      * success all returned samples belong to the same instance, and the instance is the instance with ‘smallest’
-     *  @c instance_handle among the ones that verify (a) @c instance_handle >= @c previous_handle and (b) have
+     * @c instance_handle among the ones that verify (a) @c instance_handle >= @c previous_handle and (b) have
      * samples for which the specified ReadCondition evaluates to TRUE.
      *
      * Similar to the operation @ref read_next_instance it is possible to call @ref read_next_instance_w_condition with
@@ -727,7 +755,9 @@ public:
             LoanableCollection& data_values,
             SampleInfoSeq& sample_infos);
 
-    /** NOT YET IMPLEMENTED
+    /**
+     * NOT YET IMPLEMENTED
+     *
      * This operation can be used to retrieve the instance key that corresponds to an @c instance_handle. The operation
      * will only fill the fields that form the key inside the key_holder instance.
      *
@@ -872,6 +902,7 @@ public:
             const StatusMask& mask);
     /**
      * @brief Getter for the DataReaderListener
+     *
      * @return Pointer to the DataReaderListener
      */
     RTPS_DllAPI const DataReaderListener* get_listener() const;
@@ -915,6 +946,7 @@ public:
 
     /**
      * @brief Returns the subscription matched status
+     *
      * @param[out] status subscription matched status struct
      * @return RETCODE_OK
      */
@@ -923,6 +955,7 @@ public:
 
     /**
      * @brief Retrieves in a publication associated with the DataWriter
+     *
      * @param[out] publication_data publication data struct
      * @param publication_handle InstanceHandle_t of the publication
      * @return RETCODE_OK
@@ -934,6 +967,7 @@ public:
 
     /**
      * @brief Fills the given vector with the InstanceHandle_t of matched DataReaders
+     *
      * @param[out] publication_handles Vector where the InstanceHandle_t are returned
      * @return RETCODE_OK
      */
@@ -943,6 +977,7 @@ public:
     /**
      * @brief This operation creates a ReadCondition. The returned ReadCondition will be attached and belong to the
      * DataReader.
+     *
      * @param sample_states Vector of SampleStateKind
      * @param view_states Vector of ViewStateKind
      * @param instance_states Vector of InstanceStateKind
@@ -956,6 +991,7 @@ public:
     /**
      * @brief This operation creates a QueryCondition. The returned QueryCondition will be attached and belong to the
      * DataReader.
+     *
      * @param sample_states Vector of SampleStateKind
      * @param view_states Vector of ViewStateKind
      * @param instance_states Vector of InstanceStateKind
@@ -972,6 +1008,7 @@ public:
 
     /**
      * @brief This operation deletes a ReadCondition attached to the DataReader.
+     *
      * @param a_condition pointer to a ReadCondition belonging to the DataReader
      * @return RETCODE_OK
      */
@@ -997,6 +1034,7 @@ public:
 
     /**
      * Checks whether the sample is still valid or is corrupted
+     *
      * @param data Pointer to the sample data to check
      * @param info Pointer to the SampleInfo related to \c data
      * @return true if the sample is valid

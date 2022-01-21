@@ -34,6 +34,7 @@ namespace dds {
  * Although these values can be set and are transmitted
  * during the Endpoint Discovery Protocol, not all of the behaviour associated with them has been implemented in the library.
  * Please consult each of them to check for implementation details and default values.
+ *
  * @ingroup FASTDDS_QOS_MODULE
  */
 class TopicQos
@@ -65,6 +66,7 @@ public:
 
     /**
      * Getter for TopicDataQosPolicy
+     *
      * @return TopicDataQos reference
      */
     const TopicDataQosPolicy& topic_data() const
@@ -74,6 +76,7 @@ public:
 
     /**
      * Getter for TopicDataQosPolicy
+     *
      * @return TopicDataQos reference
      */
     TopicDataQosPolicy& topic_data()
@@ -83,6 +86,7 @@ public:
 
     /**
      * Setter for TopicDataQosPolicy
+     *
      * @param value new value for the TopicDataQosPolicy
      */
     void topic_data(
@@ -93,6 +97,7 @@ public:
 
     /**
      * Getter for DurabilityQosPolicy
+     *
      * @return DurabilityQos reference
      */
     const DurabilityQosPolicy& durability() const
@@ -102,6 +107,7 @@ public:
 
     /**
      * Getter for DurabilityQosPolicy
+     *
      * @return DurabilityQos reference
      */
     DurabilityQosPolicy& durability()
@@ -111,6 +117,7 @@ public:
 
     /**
      * Setter for DurabilityQosPolicy
+     *
      * @param durability new value for the DurabilityQosPolicy
      */
     void durability(
@@ -121,6 +128,7 @@ public:
 
     /**
      * Getter for DurabilityServiceQosPolicy
+     *
      * @return DurabilityServiceQos reference
      */
     const DurabilityServiceQosPolicy& durability_service() const
@@ -130,6 +138,7 @@ public:
 
     /**
      * Getter for DurabilityServiceQosPolicy
+     *
      * @return DurabilityServiceQos reference
      */
     DurabilityServiceQosPolicy& durability_service()
@@ -139,6 +148,7 @@ public:
 
     /**
      * Setter for DurabilityServiceQosPolicy
+     *
      * @param durability_service new value for the DurabilityServiceQosPolicy
      */
     void durability_service(
@@ -149,6 +159,7 @@ public:
 
     /**
      * Getter for DeadlineQosPolicy
+     *
      * @return DeadlineQos reference
      */
     const DeadlineQosPolicy& deadline() const
@@ -158,6 +169,7 @@ public:
 
     /**
      * Getter for DeadlineQosPolicy
+     *
      * @return DeadlineQos reference
      */
     DeadlineQosPolicy& deadline()
@@ -167,6 +179,7 @@ public:
 
     /**
      * Setter for DeadlineQosPolicy
+     *
      * @param deadline new value for the DeadlineQosPolicy
      */
     void deadline(
@@ -177,6 +190,7 @@ public:
 
     /**
      * Getter for LatencyBudgetQosPolicy
+     *
      * @return LatencyBudgetQos reference
      */
     const LatencyBudgetQosPolicy& latency_budget() const
@@ -186,6 +200,7 @@ public:
 
     /**
      * Getter for LatencyBudgetQosPolicy
+     *
      * @return LatencyBudgetQos reference
      */
     LatencyBudgetQosPolicy& latency_budget()
@@ -195,6 +210,7 @@ public:
 
     /**
      * Setter for LatencyBudgetQosPolicy
+     *
      * @param latency_budget new value for the LatencyBudgetQosPolicy
      */
     void latency_budget(
@@ -205,6 +221,7 @@ public:
 
     /**
      * Getter for LivelinessQosPolicy
+     *
      * @return LivelinessQos reference
      */
     const LivelinessQosPolicy& liveliness() const
@@ -214,6 +231,7 @@ public:
 
     /**
      * Getter for LivelinessQosPolicy
+     *
      * @return LivelinessQos reference
      */
     LivelinessQosPolicy& liveliness()
@@ -223,6 +241,7 @@ public:
 
     /**
      * Setter for LivelinessQosPolicy
+     *
      * @param liveliness new value for the LivelinessQosPolicy
      */
     void liveliness(
@@ -233,6 +252,7 @@ public:
 
     /**
      * Getter for ReliabilityQosPolicy
+     *
      * @return ReliabilityQos reference
      */
     const ReliabilityQosPolicy& reliability() const
@@ -242,6 +262,7 @@ public:
 
     /**
      * Getter for ReliabilityQosPolicy
+     *
      * @return ReliabilityQos reference
      */
     ReliabilityQosPolicy& reliability()
@@ -251,6 +272,7 @@ public:
 
     /**
      * Setter for ReliabilityQosPolicy
+     *
      * @param reliability new value for the ReliabilityQosPolicy
      */
     void reliability(
@@ -261,6 +283,7 @@ public:
 
     /**
      * Getter for DestinationOrderQosPolicy
+     *
      * @return DestinationOrderQos reference
      */
     const DestinationOrderQosPolicy& destination_order() const
@@ -270,6 +293,7 @@ public:
 
     /**
      * Getter for DestinationOrderQosPolicy
+     *
      * @return DestinationOrderQos reference
      */
     DestinationOrderQosPolicy& destination_order()
@@ -279,6 +303,7 @@ public:
 
     /**
      * Setter for DestinationOrderQosPolicy
+     *
      * @param destination_order new value for the DestinationOrderQosPolicy
      */
     void destination_order(
@@ -289,6 +314,7 @@ public:
 
     /**
      * Getter for HistoryQosPolicy
+     *
      * @return HistoryQos reference
      */
     const HistoryQosPolicy& history() const
@@ -298,6 +324,7 @@ public:
 
     /**
      * Getter for HistoryQosPolicy
+     *
      * @return HistoryQos reference
      */
     HistoryQosPolicy& history()
@@ -307,6 +334,7 @@ public:
 
     /**
      * Setter for HistoryQosPolicy
+     *
      * @param history new value for the HistoryQosPolicy
      */
     void history(
@@ -317,6 +345,7 @@ public:
 
     /**
      * Getter for ResourceLimitsQosPolicy
+     *
      * @return ResourceLimitsQos reference
      */
     const ResourceLimitsQosPolicy& resource_limits() const
@@ -326,6 +355,7 @@ public:
 
     /**
      * Getter for ResourceLimitsQosPolicy
+     *
      * @return ResourceLimitsQos reference
      */
     ResourceLimitsQosPolicy& resource_limits()
@@ -335,6 +365,7 @@ public:
 
     /**
      * Setter for ResourceLimitsQosPolicy
+     *
      * @param resource_limits new value for the ResourceLimitsQosPolicy
      */
     void resource_limits(
@@ -345,6 +376,7 @@ public:
 
     /**
      * Getter for TransportPriorityQosPolicy
+     *
      * @return TransportPriorityQos reference
      */
     const TransportPriorityQosPolicy& transport_priority() const
@@ -354,6 +386,7 @@ public:
 
     /**
      * Getter for TransportPriorityQosPolicy
+     *
      * @return TransportPriorityQos reference
      */
     TransportPriorityQosPolicy& transport_priority()
@@ -363,6 +396,7 @@ public:
 
     /**
      * Setter for TransportPriorityQosPolicy
+     *
      * @param transport_priority new value for the TransportPriorityQosPolicy
      */
     void transport_priority(
@@ -373,6 +407,7 @@ public:
 
     /**
      * Getter for LifespanQosPolicy
+     *
      * @return LifespanQos reference
      */
     const LifespanQosPolicy& lifespan() const
@@ -382,6 +417,7 @@ public:
 
     /**
      * Getter for LifespanQosPolicy
+     *
      * @return LifespanQos reference
      */
     LifespanQosPolicy& lifespan()
@@ -391,6 +427,7 @@ public:
 
     /**
      * Setter for LifespanQosPolicy
+     *
      * @param lifespan new value for the LifespanQosPolicy
      */
     void lifespan(
@@ -401,6 +438,7 @@ public:
 
     /**
      * Getter for OwnershipQosPolicy
+     *
      * @return OwnershipQos reference
      */
     const OwnershipQosPolicy& ownership() const
@@ -410,6 +448,7 @@ public:
 
     /**
      * Getter for OwnershipQosPolicy
+     *
      * @return OwnershipQos reference
      */
     OwnershipQosPolicy& ownership()
@@ -419,6 +458,7 @@ public:
 
     /**
      * Setter for OwnershipQosPolicy
+     *
      * @param ownership new value for the OwnershipQosPolicy
      */
     void ownership(
@@ -429,6 +469,7 @@ public:
 
     /**
      * Getter for DataRepresentationQosPolicy
+     *
      * @return DataRepresentationQosPolicy reference
      */
     const DataRepresentationQosPolicy& representation() const
@@ -438,6 +479,7 @@ public:
 
     /**
      * Getter for DataRepresentationQosPolicy
+     *
      * @return DataRepresentationQosPolicy reference
      */
     DataRepresentationQosPolicy& representation()
@@ -447,6 +489,7 @@ public:
 
     /**
      * Setter for DataRepresentationQosPolicy
+     *
      * @param representation new value for the DataRepresentationQosPolicy
      */
     void representation(
