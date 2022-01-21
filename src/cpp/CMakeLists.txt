@@ -305,14 +305,8 @@ if(SECURITY)
         ${${PROJECT_NAME}_security_source_files}
         )
     set(HAVE_SECURITY 1)
-    if(LIBP11_FOUND)
-        set(HAVE_LIBP11 1)
-    else()
-        set(HAVE_LIBP11 0)
-    endif()
 else()
     set(HAVE_SECURITY 0)
-    set(HAVE_LIBP11 0)
 endif()
 
 if(WIN32 AND (MSVC OR MSVC_IDE))
@@ -445,7 +439,6 @@ target_link_libraries(${PROJECT_NAME} ${PRIVACY} fastcdr foonathan_memory
     $<$<BOOL:${WIN32}>:iphlpapi$<SEMICOLON>Shlwapi>
     ${THIRDPARTY_BOOST_LINK_LIBS}
     PRIVATE eProsima_atomic
-    $<$<BOOL:${LibP11_FOUND}>:eProsima_p11>  # $<TARGET_NAME_IF_EXISTS:eProsima_p11>
     )
 
 if(MSVC OR MSVC_IDE)

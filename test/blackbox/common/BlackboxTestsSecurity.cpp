@@ -3044,8 +3044,6 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_valid
     }
 }
 
-#if HAVE_LIBP11
-
 template <typename DataType>
 void prepare_pkcs11_nodes(
         PubSubReader<DataType>& reader,
@@ -3193,7 +3191,6 @@ TEST_F(SecurityPkcs, BuiltinAuthenticationAndAccessAndCryptoPlugin_pkcs11_key)
 #endif // ifdef _WIN32
     }
 }
-#endif // HAVE_LIBP11
 
 static void BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(
         PubSubReader<HelloWorldPubSubType>& reader,

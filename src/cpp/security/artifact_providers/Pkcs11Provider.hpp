@@ -23,12 +23,7 @@
 #include <openssl/err.h>
 #include <openssl/ssl.h>
 
-#if HAVE_LIBP11
-#include <libp11.h>
-#endif // HAVE_LIBP11
-
 #include <fastdds/rtps/security/exceptions/SecurityException.h>
-
 
 namespace eprosima {
 namespace fastrtps {

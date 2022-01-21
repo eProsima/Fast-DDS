@@ -165,7 +165,6 @@ if(SECURITY)
 else()
     find_package(OpenSSL)
 endif()
-find_package(LibP11)
 
 if(OPENSSL_FOUND)
     message(STATUS "OpenSSL library ${OPENSSL_VERSION} found...")

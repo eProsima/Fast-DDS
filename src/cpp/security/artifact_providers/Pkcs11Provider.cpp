@@ -91,6 +91,7 @@ Pkcs11Provider::Pkcs11Provider()
     {
         has_initialization_error_ = true;
         initialization_exception_ = _SecurityException_(std::string("Error retrieving 'pkcs11' engine"));
+        return;
     }
 
     // Load the PIN from the environment
@@ -103,6 +104,7 @@ Pkcs11Provider::Pkcs11Provider()
             initialization_exception_ =
                     _SecurityException_(std::string("Error setting the PIN in the 'pkcs11' engine"));
             ENGINE_free(pkcs11_);
+            return;
         }
     }
 
@@ -112,6 +114,7 @@ Pkcs11Provider::Pkcs11Provider()
         has_initialization_error_ = true;
         initialization_exception_ = _SecurityException_(std::string("Error initializing the HSM provider library"));
         ENGINE_free(pkcs11_);
+        return;
     }
 }
 
