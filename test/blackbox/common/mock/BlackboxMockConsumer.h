@@ -51,9 +51,14 @@ public:
         cv_.notify_all();
     }
 
-    std::condition_variable& cv()
+    void wait(
+            uint32_t amount)
     {
-        return cv_;
+        std::unique_lock<std::mutex> lock(mMutex);
+        cv_.wait(lock, [this, amount]() -> bool
+                {
+                    return mEntriesConsumed.size() >= amount;
+                });
     }
 
 private:
@@ -68,4 +73,3 @@ private:
 } // namespace eprosima
 
 #endif // ifndef MOCK_BLACKBOX_LOG_CONSUMER_H
-
