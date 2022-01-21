@@ -73,19 +73,4 @@ public:
 
     eprosima::fastdds::dds::MockConsumer* mock_consumer;
 
-    mutable std::mutex* xml_mutex_;
-
-protected:
-
-    void SetUp() override
-    {
-        xml_mutex_ = new std::mutex();
-    }
-
-    void TearDown() override
-    {
-        delete xml_mutex_;
-        xml_mutex_ = nullptr;
-    }
-
 };

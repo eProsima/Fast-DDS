@@ -64,22 +64,18 @@ public:
 
     eprosima::fastdds::dds::MockConsumer* mock_consumer;
 
-    mutable std::mutex* xml_mutex_;
     XMLEndpointParser* mp_edpXML;
 
 protected:
 
     void SetUp() override
     {
-        xml_mutex_ = new std::mutex();
         mp_edpXML = new xmlparser::XMLEndpointParser();
     }
 
     void TearDown() override
     {
-        delete xml_mutex_;
         delete mp_edpXML;
-        xml_mutex_ = nullptr;
         mp_edpXML = nullptr;
     }
 
