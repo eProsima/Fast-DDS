@@ -1264,7 +1264,7 @@ public:
         , Nproperties_ (0)
         , limit_size_ (false)
     {
-        (void)pid;
+        static_cast<void>(pid);
     }
 
     /**
