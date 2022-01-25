@@ -724,7 +724,7 @@ public:
             eprosima::fastdds::dds::OfferedIncompatibleQosStatus status)
     {
         std::unique_lock<std::mutex> lock(incompatible_qos_mutex_);
-        times_incompatible_qos_++;
+        times_incompatible_qos_ += status.total_count_change;
         last_incompatible_qos_ = status.last_policy_id;
         incompatible_qos_cv_.notify_one();
     }
@@ -1926,12 +1926,10 @@ protected:
                 if (status.alive_count_change == 1)
                 {
                     reader_.liveliness_recovered();
-
                 }
                 else if (status.not_alive_count_change == 1)
                 {
                     reader_.liveliness_lost();
-
                 }
             }
 
