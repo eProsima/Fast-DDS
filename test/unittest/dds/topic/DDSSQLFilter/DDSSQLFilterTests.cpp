@@ -225,6 +225,7 @@ TEST_F(DDSSQLFilterTests, type_compatibility_like)
 
     // field LIKE operand
     // operand LIKE field
+    // operand LIKE operand
     {
         static const std::vector<std::pair<std::string, ReturnCode_t>> checks
         {
@@ -272,6 +273,24 @@ TEST_F(DDSSQLFilterTests, type_compatibility_like)
             }
         }
 
+        for (const auto& check1 : checks)
+        {
+            for (auto& check2 : checks)
+            {
+                // op1 LIKE op2
+                test_cases.emplace_back(TestCase{ check1.first + " LIKE " + check2.first, {}, bad_code });
+                test_cases.emplace_back(TestCase{ check1.first + " LIKE %0", {check2.first}, bad_code });
+                test_cases.emplace_back(TestCase{ check1.first + " LIKE %1", {check2.first}, bad_code });
+                test_cases.emplace_back(TestCase{ check1.first + " LIKE %0", {}, bad_code });
+
+                // op2 LIKE op1
+                test_cases.emplace_back(TestCase{ check2.first + " LIKE " + check1.first, {}, bad_code });
+                test_cases.emplace_back(TestCase{ "%0 LIKE " + check1.first, {check2.first}, bad_code });
+                test_cases.emplace_back(TestCase{ "%1 LIKE " + check1.first, {check2.first}, bad_code });
+                test_cases.emplace_back(TestCase{ "%0 LIKE " + check1.first, {}, bad_code });
+            }
+        }
+
         run(test_cases);
     }
 }
@@ -303,6 +322,7 @@ TEST_F(DDSSQLFilterTests, type_compatibility_compare)
 
     // field OP operand
     // operand OP field
+    // operand OP operand
     {
         static const std::vector<std::pair<std::string, std::string>> checks
         {
@@ -358,6 +378,27 @@ TEST_F(DDSSQLFilterTests, type_compatibility_compare)
                     test_cases.emplace_back(TestCase{ "%0" + op + field.first, {check.first}, ret });
                     test_cases.emplace_back(TestCase{ "%1" + op + field.first, {check.first}, bad_code });
                     test_cases.emplace_back(TestCase{ "%0" + op + field.first, {}, bad_code });
+                }
+            }
+        }
+
+        for (const auto& check1 : checks)
+        {
+            for (auto& check2 : checks)
+            {
+                for (const std::string& op : operators)
+                {
+                    // op1 OP op2
+                    test_cases.emplace_back(TestCase{ check1.first + op + check2.first, {}, bad_code });
+                    test_cases.emplace_back(TestCase{ check1.first + op + "%0", {check2.first}, bad_code });
+                    test_cases.emplace_back(TestCase{ check1.first + op + "%1", {check2.first}, bad_code });
+                    test_cases.emplace_back(TestCase{ check1.first + op + "%0", {}, bad_code });
+
+                    // op2 OP op1
+                    test_cases.emplace_back(TestCase{ check2.first + op + check1.first, {}, bad_code });
+                    test_cases.emplace_back(TestCase{ "%0" + op + check1.first, {check2.first}, bad_code });
+                    test_cases.emplace_back(TestCase{ "%1" + op + check1.first, {check2.first}, bad_code });
+                    test_cases.emplace_back(TestCase{ "%0" + op + check1.first, {}, bad_code });
                 }
             }
         }
