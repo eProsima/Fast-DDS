@@ -230,7 +230,7 @@ if(NOT LibP11_FOUND)
     if(GTEST_INDIVIDUAL)
         set(pkcs_filter "[Pp][Kk][Cc][Ss]")
     else()
-        set(pkcs_filter "-*pcks*")
+        set(pkcs_filter "-*pkcs*")
     endif() # GTEST_INDIVIDUAL
 endif() # LibP11_FOUND
 
