@@ -721,7 +721,7 @@ public:
     }
 
     void incompatible_qos(
-            eprosima::fastdds::dds::OfferedIncompatibleQosStatus status)
+            eprosima::fastdds::dds::RequestedIncompatibleQosStatus status)
     {
         std::unique_lock<std::mutex> lock(incompatible_qos_mutex_);
         times_incompatible_qos_ += status.total_count_change;
