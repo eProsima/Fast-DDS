@@ -22,6 +22,8 @@
 #include <fastdds/dds/topic/IContentFilterFactory.hpp>
 #include <fastdds/dds/topic/TopicDataType.hpp>
 
+#include "DDSFilterGrammar.hpp"
+
 namespace eprosima {
 namespace fastdds {
 namespace dds {
