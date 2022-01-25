@@ -128,8 +128,11 @@ enum ParameterId_t : uint16_t
     PID_DATASHARING = 0x8006,
 };
 
-//!Base Parameter class with parameter PID and parameter length in bytes.
-//!@ingroup PARAMETER_MODULE
+/*!
+ * Base Parameter class with parameter PID and parameter length in bytes.
+ *
+ * @ingroup PARAMETER_MODULE
+ */
 class Parameter_t
 {
 public:
@@ -145,6 +148,7 @@ public:
 
     /**
      * Constructor using a parameter PID and the parameter length
+     *
      * @param pid Pid of the parameter
      * @param length Its associated length
      */
@@ -196,6 +200,7 @@ public:
 
     /**
      * Constructor using a parameter PID and the parameter length
+     *
      * @param pid Pid of the parameter
      * @param in_length Its associated length
      */
@@ -208,6 +213,7 @@ public:
 
     /**
      * @brief Constructor using a parameter PID, parameter length and Instance Handle
+     *
      * @param pid Pid of the parameter
      * @param in_length Its associated length
      * @param ke Instance Handle to be set
@@ -244,6 +250,7 @@ public:
 
     /**
      * Constructor using a parameter PID and the parameter length
+     *
      * @param pid Pid of the parameter
      * @param in_length Its associated length
      */
@@ -256,6 +263,7 @@ public:
 
     /**
      * @brief Constructor using a parameter PID, the parameter length and a Locator
+     *
      * @param pid Pid of the parameter
      * @param in_length Its associated length
      * @param loc Locator to be set
@@ -289,6 +297,7 @@ public:
 
     /**
      * Constructor using a parameter PID and the parameter length
+     *
      * @param pid Pid of the parameter
      * @param in_length Its associated length
      */
@@ -301,6 +310,7 @@ public:
 
     /**
      * @brief Constructor using a parameter PID, the parameter length and a string
+     *
      * @param pid Pid of the parameter
      * @param in_length Its associated length
      * @param strin Parameter name
@@ -316,6 +326,7 @@ public:
 
     /**
      * @brief Getter for the name
+     *
      * @return current name associated
      */
     inline const char* getName() const
@@ -325,6 +336,7 @@ public:
 
     /**
      * @brief Setter for the name
+     *
      * @param name String to be set
      */
     inline void setName(
@@ -335,6 +347,7 @@ public:
 
     /**
      * @brief Getter for the name size
+     *
      * @return size_t
      */
     inline size_t size() const
@@ -368,6 +381,7 @@ public:
 
     /**
      * Constructor using a parameter PID and the parameter length
+     *
      * @param pid Pid of the parameter
      * @param in_length Its associated length
      */
@@ -381,6 +395,7 @@ public:
 
     /**
      * @brief Constructor using a parameter PID, the parameter length and a port
+     *
      * @param pid Pid of the parameter
      * @param in_length Its associated length
      * @param po Port to be set
@@ -417,6 +432,7 @@ public:
 
     /**
      * Constructor using a parameter PID and the parameter length
+     *
      * @param pid Pid of the parameter
      * @param in_length Its associated length
      */
@@ -429,6 +445,7 @@ public:
 
     /**
      * @brief Constructor using a parameter PID, the parameter length and a GUID
+     *
      * @param pid Pid of the parameter
      * @param in_length Its associated length
      * @param guidin GUID to be set
@@ -444,6 +461,7 @@ public:
 
     /**
      * @brief Constructor using a parameter PID, the parameter length and a Instance Handle
+     *
      * @param pid Pid of the parameter
      * @param in_length Its associated length
      * @param iH Instance Handle to be set as GUID
@@ -481,6 +499,7 @@ public:
 
     /**
      * Constructor using a parameter PID and the parameter length
+     *
      * @param pid Pid of the parameter
      * @param in_length Its associated length
      */
@@ -516,6 +535,7 @@ public:
 
     /**
      * Constructor using a parameter PID and the parameter length
+     *
      * @param pid Pid of the parameter
      * @param in_length Its associated length
      */
@@ -551,6 +571,7 @@ public:
 
     /**
      * Constructor using a parameter PID and the parameter length
+     *
      * @param pid Pid of the parameter
      * @param in_length Its associated length
      */
@@ -564,6 +585,7 @@ public:
 
     /**
      * @brief Setter for the address
+     *
      * @param o1 First octet
      * @param o2 Second octet
      * @param o3 Third octet
@@ -605,6 +627,7 @@ public:
 
     /**
      * Constructor using a parameter PID and the parameter length
+     *
      * @param pid Pid of the parameter
      * @param in_length Its associated length
      */
@@ -618,6 +641,7 @@ public:
 
     /**
      * @brief Constructor using a parameter PID, the parameter length and a boolean
+     *
      * @param pid Pid of the parameter
      * @param in_length Its associated length
      * @param inbool Boolean to be set
@@ -655,6 +679,7 @@ public:
 
     /**
      * Constructor using a parameter PID and the parameter length
+     *
      * @param pid Pid of the parameter
      * @param in_length Its associated length
      */
@@ -668,6 +693,7 @@ public:
 
     /**
      * @brief Constructor using a parameter PID, the parameter length and status value
+     *
      * @param pid Pid of the parameter
      * @param in_length Its associated length
      * @param instatus uint8_t to be set as status
@@ -705,6 +731,7 @@ public:
 
     /**
      * Constructor using a parameter PID and the parameter length
+     *
      * @param pid Pid of the parameter
      * @param in_length Its associated length
      */
@@ -740,6 +767,7 @@ public:
 
     /**
      * Constructor using a parameter PID and the parameter length
+     *
      * @param pid Pid of the parameter
      * @param in_length Its associated length
      */
@@ -774,6 +802,7 @@ public:
 
     /**
      * Constructor using a parameter PID and the parameter length
+     *
      * @param pid Pid of the parameter
      * @param in_length Its associated length
      */
@@ -808,6 +837,7 @@ public:
 
     /**
      * Constructor using a parameter PID and the parameter length
+     *
      * @param pid Pid of the parameter
      * @param in_length Its associated length
      */
@@ -849,6 +879,7 @@ public:
 
     /**
      * @brief Constructor using a pointer
+     *
      * @param ptr Pointer to be set as data
      */
     explicit ParameterProperty_t(
@@ -859,6 +890,7 @@ public:
 
     /**
      * @brief Getter for the first element in data
+     *
      * @return string with the data
      */
     std::string first() const
@@ -869,6 +901,7 @@ public:
 
     /**
      * @brief Getter for the second element in data
+     *
      * @return string with the data
      */
     std::string second() const
@@ -882,6 +915,7 @@ public:
 
     /**
      * @brief Setter using a pair of strings
+     *
      * @param new_value Pair of strings with the new values
      * @return true if the modification is done correctly and false if the size of the new_value is not valid
      */
@@ -916,6 +950,7 @@ public:
 
     /**
      * @brief Getter that returns a pair of the first and second elements in data
+     *
      * @return Pair of strings with the first and second elements data
      */
     std::pair<const std::string, const std::string> pair() const
@@ -925,6 +960,7 @@ public:
 
     /**
      * @brief Getter for data size
+     *
      * @return uint32_t with the size
      */
     uint32_t size() const
@@ -954,6 +990,7 @@ private:
 
     /**
      * @brief Getter for the size of a specific octet pointer
+     *
      * @param ptr Octet pointer to measure
      * @return Size of the pointer data
      */
@@ -969,24 +1006,28 @@ private:
 
 /**
  * Parameter property ID for persistence GUID
+ *
  * @ingroup PARAMETER_MODULE
  */
 const std::string parameter_property_persistence_guid = "PID_PERSISTENCE_GUID";
 
 /**
  * Parameter property ID for participant type
+ *
  * @ingroup PARAMETER_MODULE
  */
 const std::string parameter_property_participant_type = "PARTICIPANT_TYPE";
 
 /**
  * Parameter property ID for Discovery Server version
+ *
  * @ingroup PARAMETER_MODULE
  */
 const std::string parameter_property_ds_version = "DS_VERSION";
 
 /**
  * Parameter property value for Discovery Server version
+ *
  * @ingroup PARAMETER_MODULE
  */
 const std::string parameter_property_current_ds_version = "2.0";
@@ -1020,6 +1061,7 @@ public:
 
         /**
          * @brief Constructor using an octet pointer
+         *
          * @param ptr Octet pointer to be set
          */
         iterator(
@@ -1078,6 +1120,7 @@ public:
 
         /**
          * @brief Getter for the pointer
+         *
          * @return the pointer
          */
         fastrtps::rtps::octet* address() const
@@ -1106,6 +1149,7 @@ public:
 
         /**
          * @brief Constructor using a pointer
+         *
          * @param ptr Pointer to be set
          */
         const_iterator(
@@ -1164,6 +1208,7 @@ public:
 
         /**
          * @brief Getter for the pointer
+         *
          * @return the pointer
          */
         const fastrtps::rtps::octet* address() const
@@ -1194,6 +1239,7 @@ public:
 
     /**
      * Constructor with a defined maximum size
+     *
      * @param size Size to be set as maximum
      */
     ParameterPropertyList_t(
@@ -1207,19 +1253,23 @@ public:
 
     /**
      * Constructor using a parameter PID and the parameter length
+     *
+     * @param pid Pid of the parameter
      * @param in_length Its associated length
      */
     ParameterPropertyList_t(
-            ParameterId_t /*pid*/,
+            ParameterId_t pid,
             uint16_t in_length)
         : Parameter_t(PID_PROPERTY_LIST, in_length)
         , Nproperties_ (0)
         , limit_size_ (false)
     {
+        static_cast<void>(pid);
     }
 
     /**
      * @brief Constructor using a Parameter Property List
+     *
      * @param parameter_properties Properties to be set
      */
     ParameterPropertyList_t(
@@ -1249,6 +1299,7 @@ public:
 
     /**
      * @brief Getter for the first position of the ParameterPropertyList
+     *
      * @return iterator
      */
     iterator begin()
@@ -1258,6 +1309,7 @@ public:
 
     /**
      * @brief Getter for the end of the ParameterPropertyList
+     *
      * @return iterator
      */
     iterator end()
@@ -1267,6 +1319,7 @@ public:
 
     /**
      * @brief Getter for the first position of the ParameterPropertyList
+     *
      * @return const_iterator
      */
     const_iterator begin() const
@@ -1276,6 +1329,7 @@ public:
 
     /**
      * @brief Getter for the end of the ParameterPropertyList
+     *
      * @return const_iterator
      */
     const_iterator end() const
@@ -1285,6 +1339,7 @@ public:
 
     /**
      * @brief Introduce a new property in the ParameterPropertyList
+     *
      * @param p Pair with the values of the new property
      * @return true if it is introduced, false if not.
      */
@@ -1296,6 +1351,7 @@ public:
 
     /**
      * @brief Introduce a new property in the ParameterPropertyList
+     *
      * @param key Key part of the new property
      * @param value Value part of the new property
      * @return true if it is introduced, false if not.
@@ -1314,6 +1370,7 @@ public:
 
     /**
      * @brief Introduce a new property in the ParameterPropertyList
+     *
      * @param str1 Name of the property
      * @param str1_size Size of the first string
      * @param str2 Value of the property
@@ -1348,6 +1405,7 @@ public:
 
     /**
      * @brief Setter of a new property value on a specific position
+     *
      * @param pos Iterator with the position of the property to be changed
      * @param new_value Value to be set
      * @return true if changed, false if not
@@ -1370,6 +1428,7 @@ public:
 
     /**
      * @brief Getter for the size of the ParameterPropertyList
+     *
      * @return uint32_t with the size
      */
     uint32_t size() const
@@ -1389,6 +1448,7 @@ public:
 
     /**
      * @brief Getter for the maximum size of the ParameterPropertyList
+     *
      * @return uint32_t with the size
      */
     uint32_t max_size ()
@@ -1440,6 +1500,7 @@ public:
 
     /**
      * Constructor using a parameter PID and the parameter length
+     *
      * @param pid Pid of the parameter
      * @param in_length Its associated length
      */
@@ -1453,6 +1514,7 @@ public:
 
     /**
      * Add the parameter to a CDRMessage_t message.
+     *
      * @param[in,out] msg Pointer to the message where the parameter should be added.
      * @return True if the parameter was correctly added.
      */
@@ -1461,6 +1523,7 @@ public:
 
     /**
      * Read the parameter from a CDRMessage_t message.
+     *
      * @param[in,out] msg Pointer to the message from where the parameter should be taken.
      * @param size Size of the parameter field to read
      * @return True if the parameter was correctly taken.
@@ -1495,6 +1558,7 @@ public:
 
     /**
      * Constructor using a parameter PID and the parameter length
+     *
      * @param pid Pid of the parameter
      * @param in_length Its associated length
      */
@@ -1534,6 +1598,7 @@ public:
 
     /**
      * Constructor using a parameter PID and the parameter length
+     *
      * @param pid Pid of the parameter
      * @param in_length Its associated length
      */
@@ -1571,6 +1636,7 @@ public:
 
     /**
      * Constructor using a parameter PID and the parameter length
+     *
      * @param pid Pid of the parameter
      * @param in_length Its associated length
      */

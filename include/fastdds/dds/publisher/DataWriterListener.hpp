@@ -55,6 +55,7 @@ public:
 
     /**
      * This method is called when the Publisher is matched (or unmatched) against an endpoint.
+     *
      * @param writer Pointer to the associated Publisher
      * @param info Information regarding the matched subscriber
      */
@@ -68,6 +69,7 @@ public:
 
     /**
      * A method called when a deadline is missed
+     *
      * @param writer Pointer to the associated Publisher
      * @param status The deadline missed status
      */
@@ -81,6 +83,7 @@ public:
 
     /**
      * A method called when an incompatible QoS is offered
+     *
      * @param writer Pointer to the associated Publisher
      * @param status The deadline missed status
      */
@@ -94,6 +97,7 @@ public:
 
     /**
      * @brief Method called when the liveliness of a publisher is lost
+     *
      * @param writer The publisher
      * @param status The liveliness lost status
      */

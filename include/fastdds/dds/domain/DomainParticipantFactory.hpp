@@ -41,6 +41,7 @@ class DomainParticipantImpl;
 
 /**
  * Class DomainParticipantFactory
+ *
  *  @ingroup FASTDDS_MODULE
  */
 class DomainParticipantFactory
@@ -50,12 +51,14 @@ public:
 
     /**
      * Returns the DomainParticipantFactory singleton.
+     *
      * @return The DomainParticipantFactory singleton.
      */
     RTPS_DllAPI static DomainParticipantFactory* get_instance();
 
     /**
      * Create a Participant.
+     *
      * @param domain_id Domain Id.
      * @param qos DomainParticipantQos Reference.
      * @param listener DomainParticipantListener Pointer (default: nullptr)
@@ -70,6 +73,7 @@ public:
 
     /**
      * Create a Participant.
+     *
      * @param domain_id Domain Id.
      * @param profile_name Participant profile name.
      * @param listener DomainParticipantListener Pointer (default: nullptr)
@@ -84,6 +88,7 @@ public:
 
     /**
      * Create a Participant.
+     *
      * @param profile_name Participant profile name.
      * @param listener DomainParticipantListener Pointer (default: nullptr)
      * @param mask StatusMask Reference (default: all)
@@ -99,6 +104,7 @@ public:
      * If no such DomainParticipant exists, the operation will return 'nullptr'.
      * If multiple DomainParticipant entities belonging to that domain_id exist,
      * then the operation will return one of them. It is not specified which one.
+     *
      * @param domain_id
      * @return previously created DomainParticipant within the specified domain
      */
@@ -107,6 +113,7 @@ public:
 
     /**
      * Returns all participants that belongs to the specified domain_id.
+     *
      * @param domain_id
      * @return previously created DomainParticipants within the specified domain
      */
@@ -119,6 +126,7 @@ public:
      * create_participant operation.
      * The values retrieved get_default_participant_qos will match the set of values specified on the last successful call
      * to set_default_participant_qos, or else, if the call was never made, the default values.
+     *
      * @param qos DomainParticipantQos where the qos is returned
      * @return RETCODE_OK
      */
@@ -131,6 +139,7 @@ public:
      * create_participant operation.
      * The values retrieved get_default_participant_qos will match the set of values specified on the last successful call
      * to set_default_participant_qos, or else, if the call was never made, the default values.
+     *
      * @return A reference to the default DomainParticipantQos
      */
     RTPS_DllAPI const DomainParticipantQos& get_default_participant_qos() const;
@@ -155,6 +164,7 @@ public:
 
     /**
      * Fills the DomainParticipantQos with the values of the XML profile.
+     *
      * @param profile_name DomainParticipant profile name.
      * @param qos DomainParticipantQos object where the qos is returned.
      * @return RETCODE_OK if the profile exists. RETCODE_BAD_PARAMETER otherwise.
@@ -165,6 +175,7 @@ public:
 
     /**
      * Remove a Participant and all associated publishers and subscribers.
+     *
      * @param part Pointer to the participant.
      * @return RETCODE_PRECONDITION_NOT_MET if the participant has active entities, RETCODE_OK if the participant is correctly
      * deleted and RETCODE_ERROR otherwise.
@@ -174,12 +185,14 @@ public:
 
     /**
      * Load profiles from default XML file.
+     *
      * @return RETCODE_OK
      */
     RTPS_DllAPI ReturnCode_t load_profiles();
 
     /**
      * Load profiles from XML file.
+     *
      * @param xml_profile_file XML profile file.
      * @return RETCODE_OK if it is correctly loaded, RETCODE_ERROR otherwise.
      */
@@ -188,6 +201,7 @@ public:
 
     /**
      * Load profiles from XML string.
+     *
      * @param data buffer containing xml data.
      * @param length length of data
      * @return RETCODE_OK if it is correctly loaded, RETCODE_ERROR otherwise.
@@ -198,6 +212,7 @@ public:
 
     /**
      * This operation returns the value of the DomainParticipantFactory QoS policies.
+     *
      * @param qos DomaParticipantFactoryQos reference where the qos is returned
      * @return RETCODE_OK
      */
@@ -212,6 +227,7 @@ public:
      *
      * This operation will check that the resulting policies are self consistent; if they are not,
      * the operation will have no effect and return INCONSISTENT_POLICY.
+     *
      * @param qos DomainParticipantFactoryQos to be set.
      * @return RETCODE_IMMUTABLE_POLICY if any of the Qos cannot be changed, RETCODE_INCONSISTENT_POLICY if the Qos is not
      * self consistent and RETCODE_OK if the qos is changed correctly.

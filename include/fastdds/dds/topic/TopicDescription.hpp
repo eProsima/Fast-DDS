@@ -31,6 +31,7 @@ class TopicDescriptionImpl;
 /**
  * Class TopicDescription, represents the fact that both publications
  * and subscriptions are tied to a single data-type
+ *
  * @ingroup FASTDDS_MODULE
  */
 class TopicDescription
@@ -39,12 +40,14 @@ public:
 
     /**
      * Get the DomainParticipant to which the TopicDescription belongs.
+     *
      * @return The DomainParticipant to which the TopicDescription belongs.
      */
     virtual DomainParticipant* get_participant() const = 0;
 
     /**
      * Get the name used to create this TopicDescription.
+     *
      * @return the name used to create this TopicDescription.
      */
     const std::string& get_name() const
@@ -54,6 +57,7 @@ public:
 
     /**
      * Get the associated type name.
+     *
      * @return the type name.
      */
     const std::string& get_type_name() const
@@ -63,6 +67,7 @@ public:
 
     /**
      * Get the TopicDescriptionImpl
+     *
      * @return pointer to TopicDescriptionImpl
      */
     virtual TopicDescriptionImpl* get_impl() const = 0;
@@ -71,6 +76,7 @@ protected:
 
     /**
      * @brief Constructor using topic name and data type name
+     *
      * @param name Name for the topic
      * @param type_name Data type name
      */
