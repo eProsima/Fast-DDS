@@ -24,7 +24,10 @@
 #include <fastdds/dds/topic/IContentFilterFactory.hpp>
 #include <fastdds/dds/topic/TopicDataType.hpp>
 
+#include <fastrtps/types/TypeObjectFactory.h>
+
 #include "DDSFilterGrammar.hpp"
+#include "DDSFilterExpressionParser.hpp"
 
 #include "DDSFilterExpression.hpp"
 #include "DDSFilterCompoundCondition.hpp"
@@ -60,6 +63,8 @@ IContentFilterFactory::ReturnCode_t DDSFilterFactory::create_content_filter(
         const IContentFilterFactory::ParameterSeq& filter_parameters,
         IContentFilter*& filter_instance)
 {
+    using eprosima::fastrtps::types::TypeObjectFactory;
+
     static_cast<void>(filter_class_name);
     static_cast<void>(type_name);
     static_cast<void>(data_type);
@@ -73,6 +78,26 @@ IContentFilterFactory::ReturnCode_t DDSFilterFactory::create_content_filter(
     {
         filter_instance = &empty_expression_;
         ret = ReturnCode_t::RETCODE_OK;
+    }
+    else
+    {
+        auto type_object = TypeObjectFactory::get_instance()->get_type_object(type_name, true);
+        if (!type_object)
+        {
+            logError(DDSSQLFILTER, "No TypeObject found for type " << type_name);
+            ret = ReturnCode_t::RETCODE_BAD_PARAMETER;
+        }
+        else
+        {
+            auto node = parser::parse_filter_expression(filter_expression);
+            if (node)
+            {
+            }
+            else
+            {
+                ret = ReturnCode_t::RETCODE_BAD_PARAMETER;
+            }
+        }
     }
 
     return ret;
