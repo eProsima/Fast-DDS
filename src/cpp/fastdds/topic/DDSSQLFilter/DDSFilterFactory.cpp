@@ -75,7 +75,8 @@ IContentFilterFactory::ReturnCode_t DDSFilterFactory::delete_content_filter(
     static_cast<void>(filter_class_name);
     static_cast<void>(filter_instance);
 
-    return ReturnCode_t::RETCODE_UNSUPPORTED;
+    expression_pool_.put(static_cast<DDSFilterExpression*>(filter_instance));
+    return ReturnCode_t::RETCODE_OK;
 }
 
 }  // namespace DDSSQLFilter
