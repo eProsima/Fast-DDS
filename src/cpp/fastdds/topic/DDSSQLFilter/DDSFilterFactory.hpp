@@ -23,6 +23,9 @@
 #include <fastdds/dds/topic/IContentFilterFactory.hpp>
 #include <fastdds/dds/topic/TopicDataType.hpp>
 
+#include "utils/collections/ObjectPool.hpp"
+#include "DDSFilterExpression.hpp"
+
 namespace eprosima {
 namespace fastdds {
 namespace dds {
@@ -30,6 +33,8 @@ namespace DDSSQLFilter {
 
 struct DDSFilterFactory final : public IContentFilterFactory
 {
+    ~DDSFilterFactory();
+
     ReturnCode_t create_content_filter(
             const char* filter_class_name,
             const char* type_name,
@@ -41,6 +46,18 @@ struct DDSFilterFactory final : public IContentFilterFactory
     ReturnCode_t delete_content_filter(
             const char* filter_class_name,
             IContentFilter* filter_instance) override;
+
+private:
+
+    DDSFilterExpression* get_expression()
+    {
+        return expression_pool_.get([]
+                       {
+                           return new DDSFilterExpression();
+                       });
+    }
+
+    ObjectPool<DDSFilterExpression*> expression_pool_;
 
 };
 

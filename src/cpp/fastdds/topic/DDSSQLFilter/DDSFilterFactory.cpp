@@ -40,6 +40,16 @@ namespace fastdds {
 namespace dds {
 namespace DDSSQLFilter {
 
+DDSFilterFactory::~DDSFilterFactory()
+{
+    auto& pool = expression_pool_.collection();
+    for (DDSFilterExpression* item : pool)
+    {
+        delete item;
+    }
+    pool.clear();
+}
+
 IContentFilterFactory::ReturnCode_t DDSFilterFactory::create_content_filter(
         const char* filter_class_name,
         const char* type_name,
