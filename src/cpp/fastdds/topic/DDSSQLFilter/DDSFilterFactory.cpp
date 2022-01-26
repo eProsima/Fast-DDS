@@ -24,6 +24,17 @@
 
 #include "DDSFilterGrammar.hpp"
 
+#include "DDSFilterExpression.hpp"
+#include "DDSFilterCompoundCondition.hpp"
+#include "DDSFilterCondition.hpp"
+#include "DDSFilterConditionState.hpp"
+#include "DDSFilterEmptyExpression.hpp"
+#include "DDSFilterExpression.hpp"
+#include "DDSFilterField.hpp"
+#include "DDSFilterParameter.hpp"
+#include "DDSFilterPredicate.hpp"
+#include "DDSFilterValue.hpp"
+
 namespace eprosima {
 namespace fastdds {
 namespace dds {
