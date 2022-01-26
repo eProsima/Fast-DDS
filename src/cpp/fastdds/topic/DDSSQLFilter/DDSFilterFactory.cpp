@@ -18,6 +18,8 @@
 
 #include "DDSFilterFactory.hpp"
 
+#include <cstring>
+
 #include <fastdds/dds/topic/IContentFilter.hpp>
 #include <fastdds/dds/topic/IContentFilterFactory.hpp>
 #include <fastdds/dds/topic/TopicDataType.hpp>
@@ -65,7 +67,15 @@ IContentFilterFactory::ReturnCode_t DDSFilterFactory::create_content_filter(
     static_cast<void>(filter_parameters);
     static_cast<void>(filter_instance);
 
-    return ReturnCode_t::RETCODE_UNSUPPORTED;
+    ReturnCode_t ret = ReturnCode_t::RETCODE_UNSUPPORTED;
+
+    if ((filter_expression == nullptr) || (std::strlen(filter_expression) == 0))
+    {
+        filter_instance = &empty_expression_;
+        ret = ReturnCode_t::RETCODE_OK;
+    }
+
+    return ret;
 }
 
 IContentFilterFactory::ReturnCode_t DDSFilterFactory::delete_content_filter(
@@ -75,7 +85,10 @@ IContentFilterFactory::ReturnCode_t DDSFilterFactory::delete_content_filter(
     static_cast<void>(filter_class_name);
     static_cast<void>(filter_instance);
 
-    expression_pool_.put(static_cast<DDSFilterExpression*>(filter_instance));
+    if (&empty_expression_ != filter_instance)
+    {
+        expression_pool_.put(static_cast<DDSFilterExpression*>(filter_instance));
+    }
     return ReturnCode_t::RETCODE_OK;
 }
 
