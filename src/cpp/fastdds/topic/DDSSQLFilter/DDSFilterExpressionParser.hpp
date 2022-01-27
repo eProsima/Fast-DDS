@@ -19,9 +19,13 @@
 #ifndef _FASTDDS_TOPIC_DDSSQLFILTER_DDSFILTEREXPRESSIONPARSER_HPP_
 #define _FASTDDS_TOPIC_DDSSQLFILTER_DDSFILTEREXPRESSIONPARSER_HPP_
 
+#include <algorithm>
 #include <memory>
 
 #include <fastdds/dds/log/Log.hpp>
+
+#include <fastrtps/types/TypeIdentifier.h>
+#include <fastrtps/types/TypeObject.h>
 
 #include "pegtl.hpp"
 #include "pegtl/contrib/parse_tree.hpp"
@@ -30,6 +34,7 @@
 #include "DDSFilterParseNode.hpp"
 
 #include "DDSFilterValue.hpp"
+#include "DDSFilterField.hpp"
 
 namespace eprosima {
 namespace fastdds {
@@ -38,9 +43,11 @@ namespace DDSSQLFilter {
 namespace parser {
 
 using namespace tao::TAO_PEGTL_NAMESPACE;
+using namespace eprosima::fastrtps::types;
 
 #include "DDSFilterExpressionParserImpl/rearrange.hpp"
 #include "DDSFilterExpressionParserImpl/literal_values.hpp"
+#include "DDSFilterExpressionParserImpl/identifiers.hpp"
 
 // select which rules in the grammar will produce parse tree nodes:
 template< typename Rule >
@@ -56,10 +63,10 @@ using selector = parse_tree::selector <
     parse_tree::store_content::on<
         string_content,
         parameter_value,
+        integer,
         index_part,
         identifier >,
     parse_tree::remove_content::on<
-        fieldname_part,
         eq_op,
         gt_op,
         ge_op,
@@ -75,13 +82,15 @@ using selector = parse_tree::selector <
         not_between_op >,
     rearrange::on<
         boolean_value,
-        fieldname,
         ComparisonPredicate,
         BetweenPredicate,
         Range,
         Condition,
-        FilterExpression >
->;
+        FilterExpression >,
+    identifier_processor::on<
+        fieldname_part,
+        fieldname >
+    >;
 
 std::unique_ptr<ParseNode> parse_filter_expression(
         const char* expression,
@@ -90,7 +99,8 @@ std::unique_ptr<ParseNode> parse_filter_expression(
     memory_input<> in(expression, "");
     try
     {
-        return parse_tree::parse< FilterExpressionGrammar, ParseNode, selector >(in);
+        CurrentIdentifierState identifier_state { type_object, nullptr, {} };
+        return parse_tree::parse< FilterExpressionGrammar, ParseNode, selector >(in, identifier_state);
     }
     catch (const parse_error& e)
     {
