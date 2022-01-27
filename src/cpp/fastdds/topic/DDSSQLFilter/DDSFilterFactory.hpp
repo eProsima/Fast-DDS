@@ -58,6 +58,12 @@ private:
                        });
     }
 
+    template<typename _Parser, typename _ParserNode, typename _State, typename _Output>
+    ReturnCode_t convert_tree(
+            _State& filter,
+            _Output& parse_output,
+            const _ParserNode& node);
+
     DDSFilterEmptyExpression empty_expression_;
     ObjectPool<DDSFilterExpression*> expression_pool_;
 
