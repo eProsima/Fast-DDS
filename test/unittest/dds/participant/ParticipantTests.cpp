@@ -62,6 +62,24 @@
 
 #include "../../logging/mock/MockConsumer.h"
 
+/**
+ * Workaround for GCC to behave properly and let Google Test know what to do with null_types
+ * when printing an ASSERT/EXPECT result
+ */
+namespace dds {
+namespace core {
+void PrintTo(
+        const null_type,
+        std::ostream* os)
+{
+    *os << "::dds::core::null_type";
+}
+
+} // namespace core
+} // namespace dds
+
+
+
 namespace eprosima {
 namespace fastdds {
 namespace dds {
