@@ -40,7 +40,7 @@ struct rearrange
     // becomes a single child, which then replaces the parent node and the recursion ends.
     template< typename ... States >
     static void transform(
-            std::unique_ptr< parse_tree::node >& n,
+            std::unique_ptr< ParseNode >& n,
             States&&... st)
     {
         if (n->children.size() == 1)

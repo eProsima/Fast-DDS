@@ -27,6 +27,7 @@
 #include "pegtl/contrib/parse_tree.hpp"
 
 #include "DDSFilterGrammar.hpp"
+#include "DDSFilterParseNode.hpp"
 
 namespace eprosima {
 namespace fastdds {
@@ -68,13 +69,13 @@ using selector = parse_tree::selector <
         not_between_op >,
     rearrange::on< fieldname, ComparisonPredicate, BetweenPredicate, Range, Condition, FilterExpression >>;
 
-std::unique_ptr<parse_tree::node> parse_filter_expression(
+std::unique_ptr<ParseNode> parse_filter_expression(
         const char* expression)
 {
     memory_input<> in(expression, "");
     try
     {
-        return parse_tree::parse< FilterExpressionGrammar, selector >(in);
+        return parse_tree::parse< FilterExpressionGrammar, ParseNode, selector >(in);
     }
     catch (const parse_error& e)
     {
