@@ -21,7 +21,7 @@ else()
 endif()
 
 find_path(LIBP11_INCLUDE_DIR NAMES libp11.h HINTS ${LibP11_ROOT})
-find_library(LIBP11_LIBRARY NAMES libp11.a libp11.lib HINTS ${LibP11_ROOT})
+find_library(LIBP11_LIBRARY NAMES libp11.a libp11.so libp11.lib HINTS ${LibP11_ROOT})
 
 include(FindPackageHandleStandardArgs)
 find_package_handle_standard_args(LibP11 DEFAULT_MSG LIBP11_LIBRARY LIBP11_INCLUDE_DIR)
