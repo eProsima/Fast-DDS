@@ -19,6 +19,8 @@
 #ifndef _FASTDDS_TOPIC_DDSSQLFILTER_DDSFILTERVALUE_HPP_
 #define _FASTDDS_TOPIC_DDSSQLFILTER_DDSFILTERVALUE_HPP_
 
+#include <fastrtps/utils/fixed_size_string.hpp>
+
 namespace eprosima {
 namespace fastdds {
 namespace dds {
@@ -26,11 +28,51 @@ namespace DDSSQLFilter {
 
 struct DDSFilterValue
 {
+	enum class ValueKind
+	{
+		BOOLEAN,
+		CHAR,
+		SIGNED_INTEGER,
+		UNSIGNED_INTEGER,
+		FLOAT,
+		STRING,
+		ENUM
+	};
+
+	ValueKind kind;
+	union
+	{
+		bool boolean_value;
+		char char_value;
+		int64_t signed_integer_value;
+		uint64_t unsigned_integer_value;
+		long double float_value;
+		eprosima::fastrtps::string_255 string_value;
+	};
+
+	DDSFilterValue()
+		: kind(ValueKind::STRING)
+		, string_value()
+	{
+	}
+
+	explicit DDSFilterValue(
+			ValueKind data_kind)
+		: kind(data_kind)
+		, string_value()
+	{
+	}
+
 	virtual ~DDSFilterValue() = default;
 
-	virtual bool has_value() const noexcept;
+	virtual bool has_value() const noexcept
+	{
+		return true;
+	}
 
-	virtual void reset() noexcept;
+	virtual void reset() noexcept
+	{
+	}
 };
 
 }  // namespace DDSSQLFilter
