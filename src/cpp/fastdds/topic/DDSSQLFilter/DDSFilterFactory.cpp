@@ -89,7 +89,7 @@ IContentFilterFactory::ReturnCode_t DDSFilterFactory::create_content_filter(
         }
         else
         {
-            auto node = parser::parse_filter_expression(filter_expression);
+            auto node = parser::parse_filter_expression(filter_expression, type_object);
             if (node)
             {
             }

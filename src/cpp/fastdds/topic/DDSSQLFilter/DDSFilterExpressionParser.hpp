@@ -84,7 +84,8 @@ using selector = parse_tree::selector <
 >;
 
 std::unique_ptr<ParseNode> parse_filter_expression(
-        const char* expression)
+        const char* expression,
+        const TypeObject* type_object)
 {
     memory_input<> in(expression, "");
     try
