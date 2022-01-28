@@ -19,15 +19,18 @@
 #include "DDSFilterFactory.hpp"
 
 #include <cstring>
+#include <string>
 
 #include <fastdds/dds/topic/IContentFilter.hpp>
 #include <fastdds/dds/topic/IContentFilterFactory.hpp>
 #include <fastdds/dds/topic/TopicDataType.hpp>
 
+#include <fastrtps/types/TypeObject.h>
 #include <fastrtps/types/TypeObjectFactory.h>
 
 #include "DDSFilterGrammar.hpp"
 #include "DDSFilterExpressionParser.hpp"
+#include "DDSFilterParseNode.hpp"
 
 #include "DDSFilterExpression.hpp"
 #include "DDSFilterCompoundCondition.hpp"
@@ -44,6 +47,120 @@ namespace eprosima {
 namespace fastdds {
 namespace dds {
 namespace DDSSQLFilter {
+
+struct ExpressionParsingState
+{
+    const eprosima::fastrtps::types::TypeObject* type_object;
+    const IContentFilterFactory::ParameterSeq& filter_parameters;
+    DDSFilterExpression* filter;
+};
+
+template<>
+IContentFilterFactory::ReturnCode_t DDSFilterFactory::convert_tree<DDSFilterValue>(
+        ExpressionParsingState& state,
+        std::shared_ptr<DDSFilterValue>& value,
+        const parser::ParseNode& node)
+{
+    if (node.value)
+    {
+        value = std::make_shared<DDSFilterValue>(*node.value.get());
+    }
+    else if (nullptr != node.type_id)
+    {
+        std::string field_name = node.content();
+        auto it = state.filter->fields.find(field_name);
+        if (it == state.filter->fields.end())
+        {
+            value = state.filter->fields[field_name] =
+                    std::make_shared<DDSFilterField>(state.type_object, node.field_access_path, node.field_kind);
+        }
+        else
+        {
+            value = it->second;
+        }
+    }
+    else
+    {
+        // Check parameter index
+        if (node.parameter_index >= state.filter_parameters.length())
+        {
+            return ReturnCode_t::RETCODE_BAD_PARAMETER;
+        }
+
+        if (state.filter->parameters[node.parameter_index])
+        {
+            value = state.filter->parameters[node.parameter_index];
+        }
+        else
+        {
+            auto param_value = std::make_shared<DDSFilterParameter>();
+            if (!param_value->set_value(state.filter_parameters[node.parameter_index]))
+            {
+                return ReturnCode_t::RETCODE_BAD_PARAMETER;
+            }
+            value = state.filter->parameters[node.parameter_index] = param_value;
+        }
+    }
+
+    return ReturnCode_t::RETCODE_OK;
+}
+
+template<>
+IContentFilterFactory::ReturnCode_t DDSFilterFactory::convert_tree<DDSFilterPredicate>(
+        ExpressionParsingState& state,
+        std::unique_ptr<DDSFilterCondition>& condition,
+        const parser::ParseNode& node)
+{
+    static_cast<void>(condition);
+
+    std::shared_ptr<DDSFilterValue> left;
+    std::shared_ptr<DDSFilterValue> right;
+    ReturnCode_t ret = convert_tree<DDSFilterValue>(state, left, node.left());
+    if (ReturnCode_t::RETCODE_OK == ret)
+    {
+        ret = convert_tree<DDSFilterValue>(state, right, node.right());
+        if (ReturnCode_t::RETCODE_OK == ret)
+        {
+            // condition = new DDSFilterPredicate(left, right);
+            // condition = new DDSFilterPredicate();
+        }
+    }
+
+    return ret;
+}
+
+template<>
+IContentFilterFactory::ReturnCode_t DDSFilterFactory::convert_tree<DDSFilterCompoundCondition>(
+        ExpressionParsingState& state,
+        std::unique_ptr<DDSFilterCondition>& condition,
+        const parser::ParseNode& node)
+{
+    static_cast<void>(state);
+    static_cast<void>(condition);
+    static_cast<void>(node);
+
+    // TODO (Miguel C): Compound conditions
+    return ReturnCode_t::RETCODE_UNSUPPORTED;
+}
+
+template<>
+IContentFilterFactory::ReturnCode_t DDSFilterFactory::convert_tree<DDSFilterCondition>(
+        ExpressionParsingState& state,
+        std::unique_ptr<DDSFilterCondition>& condition,
+        const parser::ParseNode& node)
+{
+    if (node.is<and_op>() || node.is<or_op>() || node.is<not_op>())
+    {
+        return convert_tree<DDSFilterCompoundCondition>(state, condition, node);
+    }
+    else if (node.is<between_op>() || node.is<not_between_op>())
+    {
+        // TODO (Miguel C): BETWEEN ops
+        return ReturnCode_t::RETCODE_UNSUPPORTED;
+    }
+
+    return convert_tree<DDSFilterPredicate>(state, condition, node);
+}
 
 DDSFilterFactory::~DDSFilterFactory()
 {
@@ -92,6 +209,23 @@ IContentFilterFactory::ReturnCode_t DDSFilterFactory::create_content_filter(
             auto node = parser::parse_filter_expression(filter_expression, type_object);
             if (node)
             {
+                DDSFilterExpression* expr = get_expression();
+                size_t n_params = filter_parameters.length();
+                expr->parameters.reserve(n_params);
+                while (expr->parameters.size() < n_params)
+                {
+                    expr->parameters.emplace_back();
+                }
+                ExpressionParsingState state{ type_object, filter_parameters, expr };
+                ret = convert_tree<DDSFilterCondition>(state, expr->root, *(node->children[0]));
+                if (ReturnCode_t::RETCODE_OK == ret)
+                {
+                    filter_instance = expr;
+                }
+                else
+                {
+                    delete_content_filter(filter_class_name, expr);
+                }
             }
             else
             {
