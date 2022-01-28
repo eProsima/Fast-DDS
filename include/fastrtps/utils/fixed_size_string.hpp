@@ -55,6 +55,27 @@ struct fixed_string
 
         // We don't need to define copy/move constructors/assignment operators as the default ones would be enough
 
+        // Construct / assign from a char array
+        fixed_string(
+                const char* c_array,
+                size_t n_chars) noexcept
+        {
+            assign(c_array, n_chars);
+        }
+
+        fixed_string& assign(
+                const char* c_array,
+                size_t n_chars) noexcept
+        {
+            string_len = (nullptr == c_array) ? 0 :
+                (MAX_CHARS < n_chars) ? MAX_CHARS : n_chars;
+            if (0 < string_len)
+            {
+                memcpy(string_data, c_array, string_len);
+            }
+            return *this;
+        }
+
         // Construct / assign from a C string
         fixed_string (const char* c_string) noexcept : fixed_string() 
         { 

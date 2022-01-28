@@ -29,6 +29,8 @@
 #include "DDSFilterGrammar.hpp"
 #include "DDSFilterParseNode.hpp"
 
+#include "DDSFilterValue.hpp"
+
 namespace eprosima {
 namespace fastdds {
 namespace dds {
@@ -38,20 +40,24 @@ namespace parser {
 using namespace tao::TAO_PEGTL_NAMESPACE;
 
 #include "DDSFilterExpressionParserImpl/rearrange.hpp"
+#include "DDSFilterExpressionParserImpl/literal_values.hpp"
 
 // select which rules in the grammar will produce parse tree nodes:
 template< typename Rule >
 using selector = parse_tree::selector <
     Rule,
-    parse_tree::store_content::on<
-        boolean_value,
+    literal_value_processor::on<
+        true_value,
+        false_value,
         integer_value,
         float_value,
         char_value,
-        string_value,
+        string_value >,
+    parse_tree::store_content::on<
+        string_content,
         parameter_value,
         index_part,
-        identifier>,
+        identifier >,
     parse_tree::remove_content::on<
         fieldname_part,
         eq_op,
@@ -67,7 +73,15 @@ using selector = parse_tree::selector <
         dot_op,
         between_op,
         not_between_op >,
-    rearrange::on< fieldname, ComparisonPredicate, BetweenPredicate, Range, Condition, FilterExpression >>;
+    rearrange::on<
+        boolean_value,
+        fieldname,
+        ComparisonPredicate,
+        BetweenPredicate,
+        Range,
+        Condition,
+        FilterExpression >
+>;
 
 std::unique_ptr<ParseNode> parse_filter_expression(
         const char* expression)

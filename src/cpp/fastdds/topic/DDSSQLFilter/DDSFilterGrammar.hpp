@@ -44,7 +44,8 @@ struct fieldname : list<fieldname_part, dot_op> {};
 struct open_quote : one< '`', '\'' > {};
 struct close_quote : one< '\'' > {};
 struct char_value : seq< open_quote, any, close_quote > {};
-struct string_value : seq< open_quote, star< not_one< '\'', '\r', '\n'> >, close_quote > {};
+struct string_content : star< not_one< '\'', '\r', '\n'> > {};
+struct string_value : seq< open_quote, string_content, close_quote > {};
 
 // BOOLEANVALUE
 struct false_value : pad< TAO_PEGTL_KEYWORD("FALSE"), space > {};
