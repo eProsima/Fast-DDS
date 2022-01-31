@@ -48,6 +48,56 @@ namespace fastdds {
 namespace dds {
 namespace DDSSQLFilter {
 
+static constexpr bool check_value_compatibility(
+        DDSFilterValue::ValueKind left,
+        DDSFilterValue::ValueKind right,
+        bool ignore_enum)
+{
+    if (!ignore_enum && DDSFilterValue::ValueKind::ENUM == right)
+    {
+        return DDSFilterValue::ValueKind::ENUM == left ||
+               DDSFilterValue::ValueKind::SIGNED_INTEGER == left ||
+               DDSFilterValue::ValueKind::UNSIGNED_INTEGER == left ||
+               DDSFilterValue::ValueKind::STRING == left;
+    }
+
+    switch (left)
+    {
+        case DDSFilterValue::ValueKind::BOOLEAN:
+            return DDSFilterValue::ValueKind::BOOLEAN == right ||
+                   DDSFilterValue::ValueKind::SIGNED_INTEGER == right ||
+                   DDSFilterValue::ValueKind::UNSIGNED_INTEGER == right;
+
+        case DDSFilterValue::ValueKind::SIGNED_INTEGER:
+        case DDSFilterValue::ValueKind::UNSIGNED_INTEGER:
+            return DDSFilterValue::ValueKind::SIGNED_INTEGER == right ||
+                   DDSFilterValue::ValueKind::UNSIGNED_INTEGER == right ||
+                   DDSFilterValue::ValueKind::BOOLEAN == right ||
+                   DDSFilterValue::ValueKind::FLOAT == right;
+
+        case DDSFilterValue::ValueKind::CHAR:
+        case DDSFilterValue::ValueKind::STRING:
+            return DDSFilterValue::ValueKind::CHAR == right ||
+                   DDSFilterValue::ValueKind::STRING == right;
+
+        case DDSFilterValue::ValueKind::FLOAT:
+            return DDSFilterValue::ValueKind::FLOAT == right ||
+                   DDSFilterValue::ValueKind::SIGNED_INTEGER == right ||
+                   DDSFilterValue::ValueKind::UNSIGNED_INTEGER == right;
+
+        case DDSFilterValue::ValueKind::ENUM:
+            if (!ignore_enum)
+            {
+                return DDSFilterValue::ValueKind::ENUM == right ||
+                       DDSFilterValue::ValueKind::SIGNED_INTEGER == right ||
+                       DDSFilterValue::ValueKind::UNSIGNED_INTEGER == right ||
+                       DDSFilterValue::ValueKind::STRING == right;
+            }
+    }
+
+    return false;
+}
+
 struct ExpressionParsingState
 {
     const eprosima::fastrtps::types::TypeObject* type_object;
@@ -121,6 +171,27 @@ IContentFilterFactory::ReturnCode_t DDSFilterFactory::convert_tree<DDSFilterPred
         ret = convert_tree<DDSFilterValue>(state, right, node.right());
         if (ReturnCode_t::RETCODE_OK == ret)
         {
+            if (node.is<like_op>())
+            {
+                // At least one fieldname should be a string
+                if ( !( (node.left().is<fieldname>() && (DDSFilterValue::ValueKind::STRING == left->kind)) ||
+                    (node.right().is<fieldname>() && (DDSFilterValue::ValueKind::STRING == right->kind)) ) )
+                {
+                    return ReturnCode_t::RETCODE_BAD_PARAMETER;
+                }
+            }
+
+            if ((DDSFilterValue::ValueKind::ENUM == left->kind) && (DDSFilterValue::ValueKind::ENUM == right->kind))
+            {
+                if (node.left().type_id != node.right().type_id)
+                {
+                    return ReturnCode_t::RETCODE_BAD_PARAMETER;
+                }
+            }
+            else if (!check_value_compatibility(left->kind, right->kind, node.is<like_op>()))
+            {
+                return ReturnCode_t::RETCODE_BAD_PARAMETER;
+            }
             // condition = new DDSFilterPredicate(left, right);
             // condition = new DDSFilterPredicate();
         }
