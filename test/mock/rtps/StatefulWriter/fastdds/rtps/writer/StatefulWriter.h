@@ -85,7 +85,7 @@ public:
 
     SequenceNumber_t get_seq_num_min()
     {
-        return SequenceNumber_t(0, 0);
+        return SequenceNumber_t::unknown();
     }
 
     SequenceNumber_t next_sequence_number() const

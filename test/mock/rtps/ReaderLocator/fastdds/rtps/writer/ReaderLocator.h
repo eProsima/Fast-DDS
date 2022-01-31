@@ -28,6 +28,7 @@
 #include <fastrtps/rtps/common/SequenceNumber.h>
 #include <fastrtps/rtps/messages/RTPSMessageGroup.h>
 #include <fastrtps/rtps/common/LocatorSelectorEntry.hpp>
+#include <fastrtps/rtps/messages/RTPSMessageSenderInterface.hpp>
 
 
 namespace eprosima {
