@@ -93,6 +93,7 @@ set(${PROJECT_NAME}_source_files
     fastdds/topic/TypeSupport.cpp
     fastdds/topic/DDSSQLFilter/DDSFilterExpressionParser.cpp
     fastdds/topic/DDSSQLFilter/DDSFilterFactory.cpp
+    fastdds/topic/DDSSQLFilter/DDSFilterParameter.cpp
     fastdds/topic/qos/TopicQos.cpp
     fastdds/publisher/qos/DataWriterQos.cpp
     fastdds/subscriber/qos/DataReaderQos.cpp

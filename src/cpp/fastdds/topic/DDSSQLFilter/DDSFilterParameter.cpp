@@ -13,30 +13,28 @@
 // limitations under the License.
 
 /**
- * @file DDSFilterParameter.hpp
+ * @file DDSFilterParameter.cpp
  */
 
-#ifndef _FASTDDS_TOPIC_DDSSQLFILTER_DDSFILTERPARAMETER_HPP_
-#define _FASTDDS_TOPIC_DDSSQLFILTER_DDSFILTERPARAMETER_HPP_
-
-#include "DDSFilterValue.hpp"
+#include "DDSFilterParameter.hpp"
 
 namespace eprosima {
 namespace fastdds {
 namespace dds {
 namespace DDSSQLFilter {
 
-struct DDSFilterParameter final : public DDSFilterValue
+bool DDSFilterParameter::set_value(
+        const char* parameter)
 {
-    virtual ~DDSFilterParameter() = default;
+    static_cast<void>(parameter);
 
-    bool set_value(
-            const char* parameter);
-};
+    // TODO: implement
+    {
+        return false;
+    }
+}
 
 }  // namespace DDSSQLFilter
 }  // namespace dds
 }  // namespace fastdds
 }  // namespace eprosima
-
-#endif  // _FASTDDS_TOPIC_DDSSQLFILTER_DDSFILTERPARAMETER_HPP_
