@@ -20,14 +20,14 @@
 #define _FASTDDS_TOPIC_DDSSQLFILTER_DDSFILTERPARSENODE_HPP_
 
 #include <memory>
+#include <vector>
 
-#include <fastdds/dds/log/Log.hpp>
+#include <fastrtps/types/TypeIdentifier.h>
 
 #include "pegtl/contrib/parse_tree.hpp"
 
 #include "DDSFilterField.hpp"
 #include "DDSFilterValue.hpp"
-#include "DDSFilterParameter.hpp"
 
 namespace eprosima {
 namespace fastdds {
@@ -39,9 +39,16 @@ using namespace tao::TAO_PEGTL_NAMESPACE;
 
 struct ParseNode : parse_tree::basic_node< ParseNode >
 {
-    std::unique_ptr<DDSFilterField> field;
+    // When the node is a literal value, it will hold a pointer to it
     std::unique_ptr<DDSFilterValue> value;
-    std::unique_ptr<DDSFilterParameter> parameter;
+
+    // When the node is a fieldname, it will hold the access path to the field, the data kind, and the type id
+    std::vector<DDSFilterField::FieldAccessor> field_access_path;
+    DDSFilterValue::ValueKind field_kind = DDSFilterValue::ValueKind::STRING;
+    const eprosima::fastrtps::types::TypeIdentifier* type_id = nullptr;
+
+    // When the node is a parameter, it will hold the parameter index
+    int32_t parameter_index = 0;
 
     const ParseNode& left() const
     {
