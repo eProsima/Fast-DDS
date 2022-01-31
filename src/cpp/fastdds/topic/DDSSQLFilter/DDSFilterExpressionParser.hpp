@@ -48,6 +48,7 @@ using namespace eprosima::fastrtps::types;
 #include "DDSFilterExpressionParserImpl/rearrange.hpp"
 #include "DDSFilterExpressionParserImpl/literal_values.hpp"
 #include "DDSFilterExpressionParserImpl/identifiers.hpp"
+#include "DDSFilterExpressionParserImpl/parameters.hpp"
 
 // select which rules in the grammar will produce parse tree nodes:
 template< typename Rule >
@@ -60,9 +61,10 @@ using selector = parse_tree::selector <
         float_value,
         char_value,
         string_value >,
+    parameter_processor::on<
+        parameter_value>,
     parse_tree::store_content::on<
         string_content,
-        parameter_value,
         integer,
         index_part,
         identifier >,
