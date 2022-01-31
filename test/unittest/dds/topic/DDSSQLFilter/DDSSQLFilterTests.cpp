@@ -24,6 +24,7 @@
 #include "fastdds/topic/DDSSQLFilter/DDSFilterFactory.hpp"
 
 #include "fastdds/dds/core/StackAllocatedSequence.hpp"
+#include "fastdds/dds/log/Log.hpp"
 
 #include "data_types/ContentFilterTestTypePubSubTypes.h"
 #include "data_types/ContentFilterTestTypeTypeObject.h"
@@ -105,7 +106,8 @@ protected:
 
         auto ret = uut.create_content_filter("DDSSQL", "ContentFilterTestType", &type_support,
                         test.expression.c_str(), params, filter_instance);
-        EXPECT_EQ(ret, test.result) << " failed for expression '" << test.expression << "'";
+        EXPECT_EQ(ret, test.result)
+            << " failed for expression \"" << test.expression << "\" [" << test.parameters.size() << "]";
         if (ret == ok_code)
         {
             uut.delete_content_filter("DDSSQL", filter_instance);
@@ -417,5 +419,6 @@ int main(
 {
     testing::InitGoogleMock(&argc, argv);
     registerContentFilterTestTypeTypes();
+    eprosima::fastdds::dds::Log::ClearConsumers();
     return RUN_ALL_TESTS();
 }
