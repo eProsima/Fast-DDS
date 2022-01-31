@@ -19,7 +19,17 @@
 #ifndef _FASTDDS_TOPIC_DDSSQLFILTER_DDSFILTEREXPRESSION_HPP_
 #define _FASTDDS_TOPIC_DDSSQLFILTER_DDSFILTEREXPRESSION_HPP_
 
+#include <map>
+#include <memory>
+#include <string>
+#include <vector>
+
 #include <fastdds/dds/topic/IContentFilter.hpp>
+
+#include "DDSFilterCondition.hpp"
+
+#include "DDSFilterField.hpp"
+#include "DDSFilterParameter.hpp"
 
 namespace eprosima {
 namespace fastdds {
@@ -40,6 +50,9 @@ struct DDSFilterExpression final : public IContentFilter
         return false;
     }
 
+    std::unique_ptr<DDSFilterCondition> root;
+    std::map<std::string, std::shared_ptr<DDSFilterField>> fields;
+    std::vector<std::shared_ptr<DDSFilterParameter>> parameters;
 };
 
 }  // namespace DDSSQLFilter
