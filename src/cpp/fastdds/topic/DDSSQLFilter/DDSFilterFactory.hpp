@@ -24,6 +24,7 @@
 #include <fastdds/dds/topic/TopicDataType.hpp>
 
 #include "utils/collections/ObjectPool.hpp"
+#include "DDSFilterEmptyExpression.hpp"
 #include "DDSFilterExpression.hpp"
 
 namespace eprosima {
@@ -57,6 +58,7 @@ private:
                        });
     }
 
+    DDSFilterEmptyExpression empty_expression_;
     ObjectPool<DDSFilterExpression*> expression_pool_;
 
 };
