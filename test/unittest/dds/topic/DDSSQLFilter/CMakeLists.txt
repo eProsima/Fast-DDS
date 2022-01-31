@@ -15,8 +15,8 @@
 set(DDSSQLFILTERTEST_SOURCES DDSSQLFilterTests.cpp)
 file(GLOB DDSSQLFILTER_TYPE_SOURCES data_types/*.cxx)
 
-set(DDSSQLFILTER_SOURCES
-    ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/topic/DDSSQLFilter/DDSFilterFactory.cpp
+file(GLOB DDSSQLFILTER_SOURCES
+    ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/topic/DDSSQLFilter/*.cpp
     )
 
 file(GLOB DDSSQLFILTER_LIB_SOURCES

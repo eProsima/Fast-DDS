@@ -19,22 +19,11 @@
 #ifndef _FASTDDS_TOPIC_DDSSQLFILTER_DDSFILTEREXPRESSIONPARSER_HPP_
 #define _FASTDDS_TOPIC_DDSSQLFILTER_DDSFILTEREXPRESSIONPARSER_HPP_
 
-#include <algorithm>
 #include <memory>
 
-#include <fastdds/dds/log/Log.hpp>
-
-#include <fastrtps/types/TypeIdentifier.h>
 #include <fastrtps/types/TypeObject.h>
 
-#include "pegtl.hpp"
-#include "pegtl/contrib/parse_tree.hpp"
-
-#include "DDSFilterGrammar.hpp"
 #include "DDSFilterParseNode.hpp"
-
-#include "DDSFilterValue.hpp"
-#include "DDSFilterField.hpp"
 
 namespace eprosima {
 namespace fastdds {
@@ -42,82 +31,9 @@ namespace dds {
 namespace DDSSQLFilter {
 namespace parser {
 
-using namespace tao::TAO_PEGTL_NAMESPACE;
-using namespace eprosima::fastrtps::types;
-
-#include "DDSFilterExpressionParserImpl/rearrange.hpp"
-#include "DDSFilterExpressionParserImpl/literal_values.hpp"
-#include "DDSFilterExpressionParserImpl/identifiers.hpp"
-#include "DDSFilterExpressionParserImpl/parameters.hpp"
-
-// select which rules in the grammar will produce parse tree nodes:
-template< typename Rule >
-using selector = parse_tree::selector <
-    Rule,
-    literal_value_processor::on<
-        true_value,
-        false_value,
-        integer_value,
-        float_value,
-        char_value,
-        string_value >,
-    parameter_processor::on<
-        parameter_value>,
-    parse_tree::store_content::on<
-        string_content,
-        integer,
-        index_part,
-        identifier >,
-    parse_tree::remove_content::on<
-        eq_op,
-        gt_op,
-        ge_op,
-        lt_op,
-        le_op,
-        ne_op,
-        like_op,
-        and_op,
-        or_op,
-        not_op,
-        dot_op,
-        between_op,
-        not_between_op >,
-    rearrange::on<
-        boolean_value,
-        ComparisonPredicate,
-        BetweenPredicate,
-        Range,
-        Condition,
-        FilterExpression >,
-    identifier_processor::on<
-        fieldname_part,
-        fieldname >
-    >;
-
 std::unique_ptr<ParseNode> parse_filter_expression(
         const char* expression,
-        const TypeObject* type_object)
-{
-    memory_input<> in(expression, "");
-    try
-    {
-        CurrentIdentifierState identifier_state { type_object, nullptr, {} };
-        return parse_tree::parse< FilterExpressionGrammar, ParseNode, selector >(in, identifier_state);
-    }
-    catch (const parse_error& e)
-    {
-        const auto p = e.positions.front();
-        logError(DDSSQLFILTER, "PARSE ERROR: " << e.what() << std::endl
-                                               << in.line_at(p) << std::endl
-                                               << std::string(p.byte_in_line, ' ') << '^');
-    }
-    catch (const std::exception& e)
-    {
-        logError(DDSSQLFILTER, "ERROR '" << e.what() << "' while parsing " << expression);
-    }
-
-    return nullptr;
-}
+        const eprosima::fastrtps::types::TypeObject* type_object);
 
 }  // namespace parser
 }  // namespace DDSSQLFilter
