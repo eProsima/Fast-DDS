@@ -19,7 +19,10 @@
 #ifndef _FASTDDS_TOPIC_DDSSQLFILTER_DDSFILTERFIELD_HPP_
 #define _FASTDDS_TOPIC_DDSSQLFILTER_DDSFILTERFIELD_HPP_
 
+#include <vector>
+
 #include <fastdds/rtps/common/SerializedPayload.h>
+#include <fastrtps/types/TypeObject.h>
 
 #include "DDSFilterValue.hpp"
 
@@ -30,14 +33,50 @@ namespace DDSSQLFilter {
 
 struct DDSFilterField final : public DDSFilterValue
 {
+    struct FieldAccessor final
+    {
+        size_t member_index;
+        size_t array_index;
+    };
+
+    DDSFilterField(
+            const eprosima::fastrtps::types::TypeObject* type_object,
+            const std::vector<FieldAccessor>& access_path,
+            ValueKind data_kind)
+        : DDSFilterValue(data_kind)
+        , access_path_(access_path)
+        , type_object_(type_object)
+    {
+    }
+
     virtual ~DDSFilterField() = default;
 
-    bool has_value() const noexcept final;
+    bool has_value() const noexcept final
+    {
+        return has_value_;
+    }
 
-    void reset() noexcept final;
+    void reset() noexcept final
+    {
+        has_value_ = false;
+    }
 
     void set_value(
-            const eprosima::fastrtps::rtps::SerializedPayload_t& payload);
+            const eprosima::fastrtps::rtps::SerializedPayload_t& payload)
+    {
+        // TODO: Set value from payload
+        static_cast<void>(payload);
+
+        has_value_ = true;
+
+        // TODO: Inform parent predicates
+    }
+
+private:
+
+    bool has_value_ = false;
+    std::vector<FieldAccessor> access_path_;
+    const eprosima::fastrtps::types::TypeObject* type_object_ = nullptr;
 };
 
 }  // namespace DDSSQLFilter
