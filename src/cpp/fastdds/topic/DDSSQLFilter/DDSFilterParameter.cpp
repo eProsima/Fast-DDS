@@ -18,6 +18,8 @@
 
 #include "DDSFilterParameter.hpp"
 
+#include "DDSFilterExpressionParser.hpp"
+
 namespace eprosima {
 namespace fastdds {
 namespace dds {
@@ -26,12 +28,14 @@ namespace DDSSQLFilter {
 bool DDSFilterParameter::set_value(
         const char* parameter)
 {
-    static_cast<void>(parameter);
-
-    // TODO: implement
+    auto node = parser::parse_literal_value(parameter);
+    if (!node)
     {
         return false;
     }
+
+    *static_cast<DDSFilterValue*>(this) = *node->left().value;
+    return true;
 }
 
 }  // namespace DDSSQLFilter
