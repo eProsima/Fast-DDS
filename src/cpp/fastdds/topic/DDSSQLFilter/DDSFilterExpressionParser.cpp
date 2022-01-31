@@ -118,6 +118,30 @@ std::unique_ptr<ParseNode> parse_filter_expression(
     return nullptr;
 }
 
+std::unique_ptr<ParseNode> parse_literal_value(
+        const char* expression)
+{
+    memory_input<> in(expression, "");
+    try
+    {
+        CurrentIdentifierState identifier_state{ nullptr, nullptr, {} };
+        return parse_tree::parse< LiteralGrammar, ParseNode, selector >(in, identifier_state);
+    }
+    catch (const parse_error& e)
+    {
+        const auto p = e.positions.front();
+        logError(DDSSQLFILTER, "PARSE ERROR: " << e.what() << std::endl
+                                               << in.line_at(p) << std::endl
+                                               << std::string(p.byte_in_line, ' ') << '^');
+    }
+    catch (const std::exception& e)
+    {
+        logError(DDSSQLFILTER, "ERROR '" << e.what() << "' while parsing " << expression);
+    }
+
+    return nullptr;
+}
+
 }  // namespace parser
 }  // namespace DDSSQLFilter
 }  // namespace dds

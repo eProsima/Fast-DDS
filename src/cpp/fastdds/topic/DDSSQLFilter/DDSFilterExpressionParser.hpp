@@ -35,6 +35,9 @@ std::unique_ptr<ParseNode> parse_filter_expression(
         const char* expression,
         const eprosima::fastrtps::types::TypeObject* type_object);
 
+std::unique_ptr<ParseNode> parse_literal_value(
+        const char* value);
+
 }  // namespace parser
 }  // namespace DDSSQLFilter
 }  // namespace dds
