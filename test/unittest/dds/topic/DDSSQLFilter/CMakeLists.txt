@@ -44,6 +44,7 @@ target_compile_definitions(DDSSQLFilterTests PRIVATE FASTRTPS_NO_LIB
 target_include_directories(DDSSQLFilterTests PRIVATE
     ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include
     ${PROJECT_SOURCE_DIR}/src/cpp
+    ${PROJECT_SOURCE_DIR}/thirdparty/taocpp-pegtl
     )
 target_link_libraries(DDSSQLFilterTests fastcdr foonathan_memory
     GTest::gmock

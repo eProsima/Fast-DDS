@@ -285,6 +285,7 @@ target_compile_definitions(PublisherTests PRIVATE FASTRTPS_NO_LIB
 target_include_directories(PublisherTests PRIVATE
     ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include
     ${PROJECT_SOURCE_DIR}/src/cpp
+    ${PROJECT_SOURCE_DIR}/thirdparty/taocpp-pegtl
     )
 target_link_libraries(PublisherTests fastrtps fastcdr foonathan_memory
     GTest::gmock
@@ -315,6 +316,7 @@ target_include_directories(DataWriterTests PRIVATE
     ${Asio_INCLUDE_DIR}
     ${PROJECT_SOURCE_DIR}/src/cpp
     ${THIRDPARTY_BOOST_INCLUDE_DIR}
+    ${PROJECT_SOURCE_DIR}/thirdparty/taocpp-pegtl
     )
 target_link_libraries(DataWriterTests fastcdr foonathan_memory
     GTest::gmock

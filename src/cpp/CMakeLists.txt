@@ -427,6 +427,7 @@ target_include_directories(${PROJECT_NAME} PUBLIC
     ${TINYXML2_INCLUDE_DIR}
     $<$<BOOL:${ANDROID}>:${ANDROID_IFADDRS_INCLUDE_DIR}>
     ${THIRDPARTY_BOOST_INCLUDE_DIR}
+    ${PROJECT_SOURCE_DIR}/thirdparty/taocpp-pegtl
     )
 
 # No need to expose linked libs when target is a shared library on MSVC.
