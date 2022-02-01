@@ -55,7 +55,7 @@ static const std::vector<std::pair<std::string, std::string>> primitive_fields
 static const std::map<std::string, std::set<std::string>> type_compatibility_matrix
 {
     {"BOOL", {"BOOL", "INT"}},
-    {"INT", {"BOOL", "INT", "FLOAT"}},
+    {"INT", {"BOOL", "INT", "FLOAT", "ENUM", "ENUM2"}},
     {"FLOAT", {"INT", "FLOAT"}},
     {"CHAR", {"CHAR", "STRING"}},
     {"STRING", {"CHAR", "STRING"}},
