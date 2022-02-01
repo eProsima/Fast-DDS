@@ -117,7 +117,10 @@ if(TINYXML2_SOURCE_DIR)
         )
 endif()
 
-include_directories(${TINYXML2_INCLUDE_DIR})
+# Only include tinyxml2 headers manually if the associated config predates the use of CMake targets
+if(TINYXML2_INCLUDE_DIR)
+    include_directories(${TINYXML2_INCLUDE_DIR})
+endif(TINYXML2_INCLUDE_DIR)
 
 if(WIN32)
     add_definitions(-D_WIN32_WINNT=0x0601)

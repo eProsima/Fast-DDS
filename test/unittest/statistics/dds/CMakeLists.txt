@@ -306,7 +306,10 @@ if (SQLITE3_SUPPORT AND FASTDDS_STATISTICS)
             )
     endif()
 
-    include_directories(${TINYXML2_INCLUDE_DIR})
+    # Only include tinyxml2 headers manually if the associated config predates the use of CMake targets
+    if(TINYXML2_INCLUDE_DIR)
+        include_directories(${TINYXML2_INCLUDE_DIR})
+    endif(TINYXML2_INCLUDE_DIR)
 
     add_executable(StatisticsDomainParticipantMockTests ${STATISTICS_DOMAINPARTICIPANT_MOCK_TESTS_SOURCE})
     target_compile_definitions(StatisticsDomainParticipantMockTests PRIVATE FASTRTPS_NO_LIB

@@ -45,7 +45,10 @@ if(TINYXML2_SOURCE_DIR)
         )
 endif()
 
-include_directories(${TINYXML2_INCLUDE_DIR})
+# Only include tinyxml2 headers manually if the associated config predates the use of CMake targets
+if(TINYXML2_INCLUDE_DIR)
+    include_directories(${TINYXML2_INCLUDE_DIR})
+endif(TINYXML2_INCLUDE_DIR)
 
 add_executable(AccessControlTests ${COMMON_SOURCES_ACCESS_CONTROL_TEST_SOURCE}
     ${PROJECT_SOURCE_DIR}/src/cpp/security/authentication/PKIDH.cpp

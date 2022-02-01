@@ -114,7 +114,10 @@ if(TINYXML2_SOURCE_DIR)
         )
 endif()
 
-include_directories(${TINYXML2_INCLUDE_DIR})
+# Only include tinyxml2 headers manually if the associated config predates the use of CMake targets
+if(TINYXML2_INCLUDE_DIR)
+    include_directories(${TINYXML2_INCLUDE_DIR})
+endif(TINYXML2_INCLUDE_DIR)
 
 add_executable(XMLProfileParserTests ${XMLPROFILEPARSER_SOURCE})
 target_compile_definitions(XMLProfileParserTests PRIVATE FASTRTPS_NO_LIB
@@ -202,8 +205,6 @@ if(TINYXML2_SOURCE_DIR)
         )
 endif()
 
-include_directories(${TINYXML2_INCLUDE_DIR})
-
 add_executable(XMLParserTests ${XMLPARSER_SOURCE})
 target_compile_definitions(XMLParserTests PRIVATE FASTRTPS_NO_LIB
     BOOST_ASIO_STANDALONE
@@ -238,8 +239,6 @@ set(XMLTREE_SOURCE
     XMLTreeTests.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/utils/string_convert.cpp
     )
-
-include_directories(${TINYXML2_INCLUDE_DIR})
 
 add_executable(XMLTreeTests ${XMLTREE_SOURCE})
 target_compile_definitions(XMLTreeTests PRIVATE FASTRTPS_NO_LIB
@@ -314,8 +313,6 @@ if(TINYXML2_SOURCE_DIR)
         ${TINYXML2_SOURCE_DIR}/tinyxml2.cpp
         )
 endif()
-
-include_directories(${TINYXML2_INCLUDE_DIR})
 
 add_executable(XMLEndpointParserTests ${XMLENDPOINTPARSERTESTS_SOURCE})
 target_compile_definitions(XMLEndpointParserTests PRIVATE FASTRTPS_NO_LIB

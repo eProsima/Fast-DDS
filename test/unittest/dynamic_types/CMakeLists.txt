@@ -113,7 +113,7 @@ target_include_directories(DynamicTypesTests PRIVATE
     ${PROJECT_SOURCE_DIR}/test/mock/rtps/UDPv4TransportDescriptor
     ${PROJECT_SOURCE_DIR}/test/mock/rtps/UDPv6TransportDescriptor
     ${PROJECT_SOURCE_DIR}/test/mock/rtps/SharedMemTransportDescriptor
-    ${TINYXML2_INCLUDE_DIR}
+    $<$<BOOL:${TINYXML2_INCLUDE_DIR}>:${TINYXML2_INCLUDE_DIR}>
     ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include
     )
 target_link_libraries(DynamicTypesTests GTest::gtest
