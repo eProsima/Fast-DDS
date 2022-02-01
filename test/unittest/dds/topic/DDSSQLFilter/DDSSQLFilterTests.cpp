@@ -58,10 +58,12 @@ static const std::map<std::string, std::set<std::string>> type_compatibility_mat
     {"BOOL", {"BOOL", "INT"}},
     {"INT", {"BOOL", "INT", "FLOAT", "ENUM", "ENUM2"}},
     {"FLOAT", {"INT", "FLOAT"}},
-    {"CHAR", {"CHAR", "STRING"}},
-    {"STRING", {"CHAR", "STRING"}},
-    {"ENUM", {"INT", "ENUM"}},
-    {"ENUM2", {"INT", "ENUM2"}}
+    {"CHAR", {"CHAR", "STRING", "ENUM_STR", "ENUM2_STR"}},
+    {"STRING", {"CHAR", "STRING", "ENUM_STR", "ENUM2_STR"}},
+    {"ENUM", {"INT", "ENUM", "ENUM_STR"}},
+    {"ENUM2", {"INT", "ENUM2", "ENUM2_STR"}},
+    {"ENUM_STR", {"ENUM", "CHAR", "STRING"}},
+    {"ENUM2_STR", {"ENUM2", "CHAR", "STRING"}}
 };
 
 static bool are_types_compatible(
@@ -349,14 +351,14 @@ TEST_F(DDSSQLFilterTests, type_compatibility_compare)
             {"1e2", "FLOAT"},
             {"-1e2", "FLOAT"},
             // Enum Color values
-            {"'RED'", "ENUM"},
-            {"'GREEN'", "ENUM"},
-            {"'BLUE'", "ENUM"},
+            {"'RED'", "ENUM_STR"},
+            {"'GREEN'", "ENUM_STR"},
+            {"'BLUE'", "ENUM_STR"},
             // Enum Material values
-            {"'WOOD'", "ENUM2"},
-            {"'PLASTIC'", "ENUM2"},
-            {"'METAL'", "ENUM2"},
-            {"'CONCRETE'", "ENUM2"},
+            {"'WOOD'", "ENUM2_STR"},
+            {"'PLASTIC'", "ENUM2_STR"},
+            {"'METAL'", "ENUM2_STR"},
+            {"'CONCRETE'", "ENUM2_STR"},
         };
 
         std::vector<TestCase> test_cases;
