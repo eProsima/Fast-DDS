@@ -317,7 +317,9 @@ IContentFilterFactory::ReturnCode_t DDSFilterFactory::delete_content_filter(
 
     if (&empty_expression_ != filter_instance)
     {
-        expression_pool_.put(static_cast<DDSFilterExpression*>(filter_instance));
+        auto expr = static_cast<DDSFilterExpression*>(filter_instance);
+        expr->clear();
+        expression_pool_.put(expr);
     }
     return ReturnCode_t::RETCODE_OK;
 }

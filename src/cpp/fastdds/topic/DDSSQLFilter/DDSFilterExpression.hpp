@@ -50,6 +50,13 @@ struct DDSFilterExpression final : public IContentFilter
         return false;
     }
 
+    void clear()
+    {
+        parameters.clear();
+        fields.clear();
+        root.reset();
+    }
+
     std::unique_ptr<DDSFilterCondition> root;
     std::map<std::string, std::shared_ptr<DDSFilterField>> fields;
     std::vector<std::shared_ptr<DDSFilterParameter>> parameters;
