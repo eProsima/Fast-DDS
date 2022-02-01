@@ -48,6 +48,47 @@ namespace fastdds {
 namespace dds {
 namespace DDSSQLFilter {
 
+static IContentFilterFactory::ReturnCode_t transform_enum(
+        std::shared_ptr<DDSFilterValue>& value,
+        const eprosima::fastrtps::types::TypeIdentifier* type,
+        const eprosima::fastrtps::string_255& string_value)
+{
+    const char* str_value = string_value.c_str();
+    auto type_obj = eprosima::fastrtps::types::TypeObjectFactory::get_instance()->get_type_object(type);
+    for (const auto& enum_value : type_obj->complete().enumerated_type().literal_seq())
+    {
+        if (enum_value.detail().name() == str_value)
+        {
+            value->kind = DDSFilterValue::ValueKind::SIGNED_INTEGER;
+            value->signed_integer_value = enum_value.common().value();
+            return IContentFilterFactory::ReturnCode_t::RETCODE_OK;
+        }
+    }
+
+    return IContentFilterFactory::ReturnCode_t::RETCODE_BAD_PARAMETER;
+}
+
+static IContentFilterFactory::ReturnCode_t transform_enums(
+        std::shared_ptr<DDSFilterValue>& left_value,
+        const eprosima::fastrtps::types::TypeIdentifier* left_type,
+        std::shared_ptr<DDSFilterValue>& right_value,
+        const eprosima::fastrtps::types::TypeIdentifier* right_type)
+{
+    if ( (DDSFilterValue::ValueKind::ENUM == left_value->kind) &&
+        (DDSFilterValue::ValueKind::STRING == right_value->kind))
+    {
+        return transform_enum(right_value, left_type, right_value->string_value);
+    }
+
+    if ( (DDSFilterValue::ValueKind::ENUM == right_value->kind) &&
+        (DDSFilterValue::ValueKind::STRING == left_value->kind))
+    {
+        return transform_enum(left_value, right_type, left_value->string_value);
+    }
+
+    return IContentFilterFactory::ReturnCode_t::RETCODE_OK;
+}
+    
 static constexpr bool check_value_compatibility(
         DDSFilterValue::ValueKind left,
         DDSFilterValue::ValueKind right,
@@ -192,8 +233,12 @@ IContentFilterFactory::ReturnCode_t DDSFilterFactory::convert_tree<DDSFilterPred
             {
                 return ReturnCode_t::RETCODE_BAD_PARAMETER;
             }
-            // condition = new DDSFilterPredicate(left, right);
-            // condition = new DDSFilterPredicate();
+
+            ret = transform_enums(left, node.left().type_id, right, node.right().type_id);
+            if (ReturnCode_t::RETCODE_OK == ret)
+            {
+                // condition = new DDSFilterPredicate(left, right);
+            }
         }
     }
 
