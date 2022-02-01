@@ -19,23 +19,72 @@
 #ifndef _FASTDDS_TOPIC_DDSSQLFILTER_DDSFILTERPREDICATE_HPP_
 #define _FASTDDS_TOPIC_DDSSQLFILTER_DDSFILTERPREDICATE_HPP_
 
+#include <memory>
+
 #include "DDSFilterCondition.hpp"
+#include "DDSFilterValue.hpp"
 
 namespace eprosima {
 namespace fastdds {
 namespace dds {
 namespace DDSSQLFilter {
 
+/**
+ * A DDSFilterCondition for binary predicates (i.e. <op1> <operator> <op2>).
+ */
 struct DDSFilterPredicate final : public DDSFilterCondition
 {
+    /**
+     * Possible kinds of binary operations
+     */
+    enum class OperationKind : uint8_t
+    {
+        EQUAL,          ///< left = right
+        NOT_EQUAL,      ///< left <> right
+        LESS_THAN,      ///< left < right
+        LESS_EQUAL,     ///< left <= right
+        GREATER_THAN,   ///< left > right
+        GREATER_EQUAL,  ///< left >= right
+        LIKE            ///< left LIKE right
+    };
+
+    /**
+     * Construct a DDSFilterPredicate.
+     *
+     * @param[in]  op     Operation to perform.
+     * @param[in]  left   Left operand.
+     * @param[in]  right  Right operand.
+     */
+    DDSFilterPredicate(
+            OperationKind op,
+            const std::shared_ptr<DDSFilterValue>& left,
+            const std::shared_ptr<DDSFilterValue>& right);
+
     virtual ~DDSFilterPredicate() = default;
 
-    void reset() noexcept final;
+    /**
+     * Called when the value of an operand is changed.
+     *
+     * @param[in]  value  The DDSFilterValue that changed.
+     */
+    void value_has_changed(
+            const DDSFilterValue& value);
 
 protected:
 
+    void propagate_reset() noexcept final;
+
     void child_has_changed(
-            const DDSFilterCondition& child) noexcept final;
+            const DDSFilterCondition& child) noexcept final
+    {
+        static_cast<void>(child);
+    }
+
+private:
+
+    OperationKind op_;
+    std::shared_ptr<DDSFilterValue> left_;
+    std::shared_ptr<DDSFilterValue> right_;
 
 };
 

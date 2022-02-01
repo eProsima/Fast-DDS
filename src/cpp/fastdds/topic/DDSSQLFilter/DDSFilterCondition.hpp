@@ -26,21 +26,86 @@ namespace fastdds {
 namespace dds {
 namespace DDSSQLFilter {
 
+/**
+ * Base class for conditions on a filter expression.
+ */
 struct DDSFilterCondition
 {
     virtual ~DDSFilterCondition() = default;
 
-    DDSFilterConditionState get_state() const noexcept;
+    /**
+     * @return the current state of this condition.
+     */
+    inline DDSFilterConditionState get_state() const noexcept
+    {
+        return state_;
+    }
 
-    virtual void reset() noexcept = 0;
+    /**
+     * Instruct this condition to reset.
+     * Will propagate the reset command down the expression tree.
+     *
+     * @post The state of this condition will be UNDECIDED.
+     */
+    inline void reset() noexcept
+    {
+        state_ = DDSFilterConditionState::UNDECIDED;
+        propagate_reset();
+    }
 
 protected:
 
-    void set_state(
-            DDSFilterConditionState state) noexcept;
+    /**
+     * Set a new state for this condition.
+     * May propagate the change up the expression tree by calling
+     * @ref child_has_changed on the parent of this condition.
+     *
+     * @param[in] state New state for this condition.
+     *
+     * @post The state of this condition will be @c state.
+     */
+    inline void set_state(
+            DDSFilterConditionState state) noexcept
+    {
+        if (state != state_)
+        {
+            state_ = state;
+            if (nullptr != parent_)
+            {
+                parent_->child_has_changed(*this);
+            }
+        }
+    }
 
+    /**
+     * Set a new parent for this condition.
+     *
+     * @param parent  New parent to set.
+     */
+    inline void set_parent(
+            DDSFilterCondition* parent) noexcept
+    {
+        parent_ = parent;
+    }
+
+    /**
+     * Propagates the reset command down the expression tree.
+     */
+    virtual void propagate_reset() noexcept = 0;
+
+
+    /**
+     * A child condition will call this method whenever its state is changed.
+     *
+     * @param[in] child The child condition
+     */
     virtual void child_has_changed(
             const DDSFilterCondition& child) noexcept = 0;
+
+private:
+
+    DDSFilterConditionState state_ = DDSFilterConditionState::UNDECIDED;
+    DDSFilterCondition* parent_ = nullptr;
 
 };
 
