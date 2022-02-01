@@ -31,14 +31,30 @@ namespace fastdds {
 namespace dds {
 namespace DDSSQLFilter {
 
+/**
+ * A DDSFilterValue for fieldname-based expression values.
+ */
 struct DDSFilterField final : public DDSFilterValue
 {
+    /**
+     * An element on the access path to the final field.
+     */
     struct FieldAccessor final
     {
+        /// Index of the member to access
         size_t member_index;
+
+        /// Element index for array / sequence members
         size_t array_index;
     };
 
+    /**
+     * Construct a DDSFilterField.
+     *
+     * @param[in]  type_object   TypeObject representing the data type the fieldname belongs to.
+     * @param[in]  access_path   Access path to the field.
+     * @param[in]  data_kind     Kind of data the field represents.
+     */
     DDSFilterField(
             const eprosima::fastrtps::types::TypeObject* type_object,
             const std::vector<FieldAccessor>& access_path,
@@ -51,17 +67,35 @@ struct DDSFilterField final : public DDSFilterValue
 
     virtual ~DDSFilterField() = default;
 
+    /**
+     * This method is used by a DDSFilterPredicate to check if this DDSFilterField can be used.
+     *
+     * @return whether this DDSFilterField has a value that can be used on a predicate.
+     */
     bool has_value() const noexcept final
     {
         return has_value_;
     }
 
+    /**
+     * Instruct this value to reset.
+     */
     void reset() noexcept final
     {
         has_value_ = false;
     }
 
-    void set_value(
+    /**
+     * Performs the deserialization of the field represented by this DDSFilterField.
+     * Will notify the predicates where this DDSFilterField is being used.
+     *
+     * @param[in]  payload  The payload from where to deserialize this field.
+     *
+     * @return Whether the deserialization process succeeded
+     *
+     * @post Method @c has_value returns true.
+     */
+    bool set_value(
             const eprosima::fastrtps::rtps::SerializedPayload_t& payload)
     {
         // TODO: Set value from payload
@@ -70,6 +104,8 @@ struct DDSFilterField final : public DDSFilterValue
         has_value_ = nullptr != type_object_;
 
         // TODO: Inform parent predicates
+
+        return true;
     }
 
 private:

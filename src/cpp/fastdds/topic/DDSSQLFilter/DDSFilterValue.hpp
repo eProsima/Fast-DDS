@@ -26,38 +26,56 @@ namespace fastdds {
 namespace dds {
 namespace DDSSQLFilter {
 
+/**
+ * Represents a value (either constant, parameter or fieldname) on a filter expression.
+ */
 struct DDSFilterValue
 {
+    /**
+     * The high-level kind of a DDSFilterValue.
+     */
     enum class ValueKind
     {
-        BOOLEAN,
-        CHAR,
-        SIGNED_INTEGER,
-        UNSIGNED_INTEGER,
-        FLOAT,
-        STRING,
-        ENUM
+        BOOLEAN,            ///< Value is a bool
+        CHAR,               ///< Value is a char
+        SIGNED_INTEGER,     ///< Value is a int16_t, int32_t, or int64_t
+        UNSIGNED_INTEGER,   ///< Value is a uint8_t, uint16_t, uint32_t, or uint64_t
+        FLOAT,              ///< Value is a float, double, or long double
+        STRING,             ///< Value is a string
+        ENUM                ///< Value is an int32_t with the value of an enumeration
     };
 
+    /// The kind of value held by this DDSFilterValue
     ValueKind kind;
+
     union
     {
-        bool boolean_value;
-        char char_value;
-        int64_t signed_integer_value;
-        uint64_t unsigned_integer_value;
-        long double float_value;
-        eprosima::fastrtps::string_255 string_value;
+        bool boolean_value;                            ///< Value when kind == BOOL
+        char char_value;                               ///< Value when kind == CHAR
+        int64_t signed_integer_value;                  ///< Value when kind == SIGNED_INTEGER / ENUM
+        uint64_t unsigned_integer_value;               ///< Value when kind == UNSIGNED_INTEGER
+        long double float_value;                       ///< Value when kind == FLOAT
+        eprosima::fastrtps::string_255 string_value;   ///< Value when kind == STRING
     };
 
-    DDSFilterValue()
+    /**
+     * Default constructor.
+     * Constructs an empty string DDSFilterValue
+     */
+    DDSFilterValue() noexcept
         : kind(ValueKind::STRING)
         , string_value()
     {
     }
 
+    /**
+     * Explicit kind constructor.
+     * Constructs a zero-valued, specific kind DDSFilterValue.
+     *
+     * @param[in] kind  The kind with which to construct the DDSFilterValue.
+     */
     explicit DDSFilterValue(
-            ValueKind data_kind)
+            ValueKind data_kind) noexcept
         : kind(data_kind)
         , string_value()
     {
@@ -65,11 +83,22 @@ struct DDSFilterValue
 
     virtual ~DDSFilterValue() = default;
 
+    /**
+     * This method is used by a DDSFilterPredicate to check if this DDSFilterValue can be used.
+     * Constants and parameters will always have a value, but fieldname-based values can only be
+     * used after deserialization.
+     *
+     * @return whether this DDSFilterValue has a value that can be used on a predicate.
+     */
     virtual bool has_value() const noexcept
     {
         return true;
     }
 
+    /**
+     * Instruct this value to reset.
+     * Will only have effect on fieldname-based values.
+     */
     virtual void reset() noexcept
     {
     }
