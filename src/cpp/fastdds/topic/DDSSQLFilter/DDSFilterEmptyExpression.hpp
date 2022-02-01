@@ -42,6 +42,7 @@ struct DDSFilterEmptyExpression final : public IContentFilter
 
         return true;
     }
+
 };
 
 }  // namespace DDSSQLFilter

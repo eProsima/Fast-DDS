@@ -177,7 +177,7 @@ struct identifier_processor
                     return DDSFilterValue::ValueKind::ENUM;
                 }
                 break;
-                
+
         }
 
         throw parse_error("type is not primitive", pos);

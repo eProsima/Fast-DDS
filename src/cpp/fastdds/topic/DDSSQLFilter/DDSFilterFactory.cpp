@@ -74,21 +74,21 @@ static IContentFilterFactory::ReturnCode_t transform_enums(
         std::shared_ptr<DDSFilterValue>& right_value,
         const eprosima::fastrtps::types::TypeIdentifier* right_type)
 {
-    if ( (DDSFilterValue::ValueKind::ENUM == left_value->kind) &&
-        (DDSFilterValue::ValueKind::STRING == right_value->kind))
+    if ((DDSFilterValue::ValueKind::ENUM == left_value->kind) &&
+            (DDSFilterValue::ValueKind::STRING == right_value->kind))
     {
         return transform_enum(right_value, left_type, right_value->string_value);
     }
 
-    if ( (DDSFilterValue::ValueKind::ENUM == right_value->kind) &&
-        (DDSFilterValue::ValueKind::STRING == left_value->kind))
+    if ((DDSFilterValue::ValueKind::ENUM == right_value->kind) &&
+            (DDSFilterValue::ValueKind::STRING == left_value->kind))
     {
         return transform_enum(left_value, right_type, left_value->string_value);
     }
 
     return IContentFilterFactory::ReturnCode_t::RETCODE_OK;
 }
-    
+
 static constexpr bool check_value_compatibility(
         DDSFilterValue::ValueKind left,
         DDSFilterValue::ValueKind right,
@@ -215,8 +215,8 @@ IContentFilterFactory::ReturnCode_t DDSFilterFactory::convert_tree<DDSFilterPred
             if (node.is<like_op>())
             {
                 // At least one fieldname should be a string
-                if ( !( (node.left().is<fieldname>() && (DDSFilterValue::ValueKind::STRING == left->kind)) ||
-                    (node.right().is<fieldname>() && (DDSFilterValue::ValueKind::STRING == right->kind)) ) )
+                if ( !((node.left().is<fieldname>() && (DDSFilterValue::ValueKind::STRING == left->kind)) ||
+                        (node.right().is<fieldname>() && (DDSFilterValue::ValueKind::STRING == right->kind))))
                 {
                     return ReturnCode_t::RETCODE_BAD_PARAMETER;
                 }

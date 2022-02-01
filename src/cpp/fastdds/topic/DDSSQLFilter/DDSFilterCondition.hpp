@@ -28,19 +28,19 @@ namespace DDSSQLFilter {
 
 struct DDSFilterCondition
 {
-	virtual ~DDSFilterCondition() = default;
+    virtual ~DDSFilterCondition() = default;
 
-	DDSFilterConditionState get_state() const noexcept;
+    DDSFilterConditionState get_state() const noexcept;
 
-	virtual void reset() noexcept = 0;
+    virtual void reset() noexcept = 0;
 
 protected:
 
-	void set_state(
-			DDSFilterConditionState state) noexcept;
+    void set_state(
+            DDSFilterConditionState state) noexcept;
 
-	virtual void child_has_changed(
-			const DDSFilterCondition& child) noexcept = 0;
+    virtual void child_has_changed(
+            const DDSFilterCondition& child) noexcept = 0;
 
 };
 
