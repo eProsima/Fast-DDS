@@ -67,7 +67,7 @@ struct DDSFilterField final : public DDSFilterValue
         // TODO: Set value from payload
         static_cast<void>(payload);
 
-        has_value_ = true;
+        has_value_ = nullptr != type_object_;
 
         // TODO: Inform parent predicates
     }

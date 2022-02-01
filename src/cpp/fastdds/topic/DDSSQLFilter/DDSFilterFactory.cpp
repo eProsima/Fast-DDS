@@ -89,7 +89,7 @@ static IContentFilterFactory::ReturnCode_t transform_enums(
     return IContentFilterFactory::ReturnCode_t::RETCODE_OK;
 }
 
-static constexpr bool check_value_compatibility(
+static bool check_value_compatibility(
         DDSFilterValue::ValueKind left,
         DDSFilterValue::ValueKind right,
         bool ignore_enum)
