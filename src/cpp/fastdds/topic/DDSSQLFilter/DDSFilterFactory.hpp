@@ -32,6 +32,9 @@ namespace fastdds {
 namespace dds {
 namespace DDSSQLFilter {
 
+/**
+ * An IContentFilterFactory that processes DDS-SQL filter expressions.
+ */
 struct DDSFilterFactory final : public IContentFilterFactory
 {
     ~DDSFilterFactory();
@@ -50,6 +53,11 @@ struct DDSFilterFactory final : public IContentFilterFactory
 
 private:
 
+    /**
+     * Retrieve a DDSFilterExpression from the pool.
+     *
+     * @return A pointer to an empty DDSFilterExpression.
+     */
     DDSFilterExpression* get_expression()
     {
         return expression_pool_.get([]
@@ -58,13 +66,22 @@ private:
                        });
     }
 
+    /**
+     * Generic method to perform processing of an AST node resulting from the parsing of a DDS-SQL filter expression.
+     * Provides a generic mechanism for methods that perform post-processing of the generated AST tree, so they could
+     * have access to the private fields of DDSFilterFactory.
+     *
+     * @return return code indicating the conversion result.
+     */
     template<typename _Parser, typename _ParserNode, typename _State, typename _Output>
     ReturnCode_t convert_tree(
-            _State& filter,
+            _State& state,
             _Output& parse_output,
             const _ParserNode& node);
 
+    /// Empty expressions content filter
     DDSFilterEmptyExpression empty_expression_;
+    /// Pool of DDSFilterExpression objects
     ObjectPool<DDSFilterExpression*> expression_pool_;
 
 };
