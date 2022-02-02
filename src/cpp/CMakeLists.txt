@@ -29,8 +29,12 @@ add_definitions(-DNOMINMAX)
 
 endif(WIN32)
 
+file(GLOB DDSSQLFILTER_SOURCES fastdds/topic/DDSSQLFilter/*.cpp)
+
 set(${PROJECT_NAME}_source_files
     ${ALL_HEADERS}
+
+    ${DDSSQLFILTER_SOURCES}
 
     fastdds/log/Log.cpp
     fastdds/log/OStreamConsumer.cpp
@@ -91,9 +95,6 @@ set(${PROJECT_NAME}_source_files
     fastdds/topic/Topic.cpp
     fastdds/topic/TopicImpl.cpp
     fastdds/topic/TypeSupport.cpp
-    fastdds/topic/DDSSQLFilter/DDSFilterExpressionParser.cpp
-    fastdds/topic/DDSSQLFilter/DDSFilterFactory.cpp
-    fastdds/topic/DDSSQLFilter/DDSFilterParameter.cpp
     fastdds/topic/qos/TopicQos.cpp
     fastdds/publisher/qos/DataWriterQos.cpp
     fastdds/subscriber/qos/DataReaderQos.cpp

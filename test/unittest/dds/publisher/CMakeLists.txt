@@ -21,7 +21,12 @@ configure_file(${CMAKE_CURRENT_SOURCE_DIR}/../profiles/test_xml_profiles_for_str
         COPYONLY)
 
 set(PUBLISHERTESTS_SOURCE PublisherTests.cpp)
+
+file(GLOB DDSSQLFILTER_SOURCES ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/topic/DDSSQLFilter/*.cpp)
+
 set(DATAWRITERTESTS_SOURCE DataWriterTests.cpp
+    ${DDSSQLFILTER_SOURCES}
+
     ${PROJECT_SOURCE_DIR}/src/cpp/dynamic-types/AnnotationDescriptor.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/dynamic-types/AnnotationParameterValue.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/dynamic-types/BuiltinAnnotationsTypeObject.cpp
@@ -85,9 +90,6 @@ set(DATAWRITERTESTS_SOURCE DataWriterTests.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/topic/Topic.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/topic/TopicImpl.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/topic/TypeSupport.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/topic/DDSSQLFilter/DDSFilterExpressionParser.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/topic/DDSSQLFilter/DDSFilterFactory.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/topic/DDSSQLFilter/DDSFilterParameter.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/topic/qos/TopicQos.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps_deprecated/subscriber/SubscriberHistory.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/attributes/PropertyPolicy.cpp
