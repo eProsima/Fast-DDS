@@ -13,13 +13,17 @@
 // limitations under the License.
 
 #include <fastdds/rtps/network/NetworkFactory.h>
-#include <fastdds/rtps/transport/TransportDescriptorInterface.h>
-#include <fastdds/rtps/participant/RTPSParticipant.h>
+
+#include <limits>
+#include <utility>
+
 #include <fastdds/rtps/common/Guid.h>
+#include <fastdds/rtps/participant/RTPSParticipant.h>
+#include <fastdds/rtps/transport/TransportDescriptorInterface.h>
 #include <fastrtps/utils/IPFinder.h>
 #include <fastrtps/utils/IPLocator.h>
-#include <utility>
-#include <limits>
+
+#include <rtps/transport/UDPv4Transport.h>
 
 using namespace std;
 using namespace eprosima::fastdds::rtps;
@@ -89,29 +93,44 @@ bool NetworkFactory::RegisterTransport(
         const fastrtps::rtps::PropertyPolicy* properties)
 {
     bool wasRegistered = false;
-    uint32_t minSendBufferSize = std::numeric_limits<uint32_t>::max();
 
-    std::unique_ptr<TransportInterface> transport(descriptor->create_transport());
-
-    if (transport)
+    if (nullptr != descriptor)
     {
-        if (transport->init(properties))
-        {
-            minSendBufferSize = transport->get_configuration()->min_send_buffer_size();
-            mRegisteredTransports.emplace_back(std::move(transport));
-            wasRegistered = true;
-        }
+        uint32_t minSendBufferSize = std::numeric_limits<uint32_t>::max();
 
-        if (wasRegistered)
+        std::unique_ptr<TransportInterface> transport(descriptor->create_transport());
+
+        if (transport)
         {
-            if (descriptor->max_message_size() < maxMessageSizeBetweenTransports_)
+            if (transport->init(properties))
             {
-                maxMessageSizeBetweenTransports_ = descriptor->max_message_size();
+                minSendBufferSize = transport->get_configuration()->min_send_buffer_size();
+                mRegisteredTransports.emplace_back(std::move(transport));
+                wasRegistered = true;
             }
 
-            if (minSendBufferSize < minSendBufferSize_)
+            if (wasRegistered)
             {
-                minSendBufferSize_ = minSendBufferSize;
+                if (descriptor->max_message_size() < maxMessageSizeBetweenTransports_)
+                {
+                    maxMessageSizeBetweenTransports_ = descriptor->max_message_size();
+                }
+
+                if (minSendBufferSize < minSendBufferSize_)
+                {
+                    minSendBufferSize_ = minSendBufferSize;
+                }
+            }
+        }
+    }
+    // Update network interfaces
+    else
+    {
+        for (auto& transport : mRegisteredTransports)
+        {
+            if (LOCATOR_KIND_UDPv4 == transport->kind())
+            {
+                static_cast<UDPv4Transport*>(transport.get())->update_network_interfaces();
             }
         }
     }
