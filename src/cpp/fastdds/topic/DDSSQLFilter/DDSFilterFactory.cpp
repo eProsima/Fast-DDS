@@ -246,6 +246,72 @@ IContentFilterFactory::ReturnCode_t DDSFilterFactory::convert_tree<DDSFilterPred
 }
 
 template<>
+IContentFilterFactory::ReturnCode_t DDSFilterFactory::convert_tree<between_op>(
+        ExpressionParsingState& state,
+        std::unique_ptr<DDSFilterCondition>& condition,
+        const parser::ParseNode& node)
+{
+    /* The nodes here will be in the following situation:
+     *
+     *          between_op
+     *          /         \
+     * fieldname           and_op
+     *                    /      \
+     *                 op1        op2
+     */
+
+    std::shared_ptr<DDSFilterValue> field;
+    ReturnCode_t ret = convert_tree<DDSFilterValue>(state, field, node.left());
+    if (ReturnCode_t::RETCODE_OK == ret)
+    {
+        const parser::ParseNode& and_node = node.right();
+        assert(and_node.is<and_op>());
+
+        std::shared_ptr<DDSFilterValue> op1;
+        std::shared_ptr<DDSFilterValue> op2;
+
+        ret = convert_tree<DDSFilterValue>(state, op1, and_node.left());
+        if (ReturnCode_t::RETCODE_OK == ret)
+        {
+            ret = convert_tree<DDSFilterValue>(state, op2, and_node.right());
+        }
+
+        if (ReturnCode_t::RETCODE_OK == ret)
+        {
+            if (!check_value_compatibility(field->kind, op1->kind, false) ||
+                    !check_value_compatibility(field->kind, op2->kind, false) ||
+                    !check_value_compatibility(op1->kind, op2->kind, false))
+            {
+                return ReturnCode_t::RETCODE_BAD_PARAMETER;
+            }
+
+            ret = transform_enums(field, node.left().type_id, op1, and_node.left().type_id);
+            if (ReturnCode_t::RETCODE_OK == ret)
+            {
+                ret = transform_enums(field, node.left().type_id, op2, and_node.right().type_id);
+            }
+        }
+
+        if (ReturnCode_t::RETCODE_OK == ret)
+        {
+            DDSFilterPredicate::OperationKind binary_op = node.is<between_op>() ?
+                    DDSFilterPredicate::OperationKind::LESS_EQUAL :
+                    DDSFilterPredicate::OperationKind::GREATER_THAN;
+            DDSFilterCompoundCondition::OperationKind logical_op = node.is<between_op>() ?
+                    DDSFilterCompoundCondition::OperationKind::AND :
+                    DDSFilterCompoundCondition::OperationKind::OR;
+
+            std::unique_ptr<DDSFilterCondition> left_cond(new DDSFilterPredicate(binary_op, op1, field));
+            std::unique_ptr<DDSFilterCondition> right_cond(new DDSFilterPredicate(binary_op, field, op2));
+            auto cond = new DDSFilterCompoundCondition(logical_op, std::move(left_cond), std::move(right_cond));
+            condition.reset(cond);
+        }
+    }
+
+    return ret;
+}
+
+template<>
 IContentFilterFactory::ReturnCode_t DDSFilterFactory::convert_tree<DDSFilterCompoundCondition>(
         ExpressionParsingState& state,
         std::unique_ptr<DDSFilterCondition>& condition,
@@ -271,8 +337,7 @@ IContentFilterFactory::ReturnCode_t DDSFilterFactory::convert_tree<DDSFilterCond
     }
     else if (node.is<between_op>() || node.is<not_between_op>())
     {
-        // TODO (Miguel C): BETWEEN ops
-        return ReturnCode_t::RETCODE_UNSUPPORTED;
+        return convert_tree<between_op>(state, condition, node);
     }
 
     return convert_tree<DDSFilterPredicate>(state, condition, node);
