@@ -46,12 +46,21 @@ struct DDSFilterExpression final : public IContentFilter
             const FilterSampleInfo& sample_info,
             const GUID_t& reader_guid) const final
     {
-        static_cast<void>(payload);
         static_cast<void>(sample_info);
         static_cast<void>(reader_guid);
 
-        // TODO(Miguel C): Implement this
-        return false;
+        root->reset();
+        for (auto it = fields.begin();
+                it != fields.end() && DDSFilterConditionState::UNDECIDED == root->get_state();
+                ++it)
+        {
+            if (!it->second->set_value(payload))
+            {
+                return false;
+            }
+        }
+
+        return DDSFilterConditionState::RESULT_TRUE == root->get_state();
     }
 
     /**
