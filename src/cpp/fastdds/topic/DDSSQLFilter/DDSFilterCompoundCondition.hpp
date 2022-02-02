@@ -69,6 +69,7 @@ private:
     OperationKind op_;
     std::unique_ptr<DDSFilterCondition> left_;
     std::unique_ptr<DDSFilterCondition> right_;
+    uint8_t num_children_decided_ = 0;
 
 };
 

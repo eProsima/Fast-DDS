@@ -80,6 +80,19 @@ protected:
     }
 
     /**
+     * Set the result of this condition.
+     *
+     * @param[in]  result   The result to be set.
+     *
+     * @post The state of this condition will not be UNDECIDED.
+     */
+    inline void set_result(
+            bool result) noexcept
+    {
+        set_state(result ? DDSFilterConditionState::RESULT_TRUE : DDSFilterConditionState::RESULT_FALSE);
+    }
+
+    /**
      * Set a new parent for this condition.
      *
      * @param parent  New parent to set.
