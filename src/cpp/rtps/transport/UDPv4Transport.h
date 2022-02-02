@@ -85,6 +85,11 @@ public:
             LocatorList& locators,
             uint32_t unicast_port) const override;
 
+    /**
+     * @brief Update network interfaces, binding the new interfaces to the multicast group.
+     */
+    void update_network_interfaces();
+
 protected:
 
     //! Constructor with no descriptor is necessary for implementations derived from this class.
@@ -157,6 +162,8 @@ protected:
             eProsimaUDPSocket&,
             const std::string&) override;
 };
+
+const char* const DEFAULT_METATRAFFIC_MULTICAST_ADDRESS = "239.255.0.1";
 
 } // namespace rtps
 } // namespace fastdds
