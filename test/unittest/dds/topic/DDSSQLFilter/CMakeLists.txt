@@ -15,8 +15,8 @@
 set(DDSSQLFILTERTEST_SOURCES DDSSQLFilterTests.cpp)
 file(GLOB DDSSQLFILTER_TYPE_SOURCES data_types/*.cxx)
 
-set(DDSSQLFILTER_SOURCES
-    ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/topic/DDSSQLFilter/DDSFilterFactory.cpp
+file(GLOB DDSSQLFILTER_SOURCES
+    ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/topic/DDSSQLFilter/*.cpp
     )
 
 file(GLOB DDSSQLFILTER_LIB_SOURCES
@@ -44,6 +44,7 @@ target_compile_definitions(DDSSQLFilterTests PRIVATE FASTRTPS_NO_LIB
 target_include_directories(DDSSQLFilterTests PRIVATE
     ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include
     ${PROJECT_SOURCE_DIR}/src/cpp
+    ${PROJECT_SOURCE_DIR}/thirdparty/taocpp-pegtl
     )
 target_link_libraries(DDSSQLFilterTests fastcdr foonathan_memory
     GTest::gmock
