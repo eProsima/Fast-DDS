@@ -175,6 +175,9 @@ protected:
     uint32_t mReceiveBufferSize;
     eprosima::fastdds::statistics::rtps::OutputTrafficManager statistics_info_;
 
+    //! First time flag
+    bool first_time_open_output_channel_;
+
     UDPTransportInterface(
             int32_t transport_kind);
 

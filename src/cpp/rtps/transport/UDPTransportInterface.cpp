@@ -61,6 +61,7 @@ UDPTransportInterface::UDPTransportInterface(
     : TransportInterface(transport_kind)
     , mSendBufferSize(0)
     , mReceiveBufferSize(0)
+    , first_time_open_output_channel_(true)
 {
 }
 
@@ -264,49 +265,66 @@ bool UDPTransportInterface::OpenOutputChannel(
         return false;
     }
 
+    std::vector<IPFinder::info_IP> locNames;
+    get_ips(locNames);
     // We try to find a SenderResource that can be reuse to this locator.
     // Note: This is done in this level because if we do in NetworkFactory level, we have to mantain what transport
     // already reuses a SenderResource.
     for (auto& sender_resource : sender_resource_list)
     {
-        if (sender_resource->kind() == this->kind())
+        UDPSenderResource* udp_sender_resource = UDPSenderResource::cast(*this, sender_resource.get());
+        if (nullptr != udp_sender_resource)
         {
-            statistics_info_.add_entry(locator);
-            return true;
+            for (auto it = locNames.begin(); it!= locNames.end();)
+            {
+                if (udp_sender_resource->check_ip_address(it->locator))
+                {
+                    locNames.erase(it);
+                }
+                else
+                {
+                    ++it;
+                }
+            }
         }
+    }
+
+    if (locNames.empty())
+    {
+        statistics_info_.add_entry(locator);
+        return true;
     }
 
     try
     {
         uint16_t port = configuration()->m_output_udp_socket;
-        std::vector<IPFinder::info_IP> locNames;
-        get_ips(locNames);
         // If there is no whitelist, we can simply open a generic output socket
         // and gain efficiency.
         if (is_interface_whitelist_empty())
         {
-            eProsimaUDPSocket unicastSocket = OpenAndBindUnicastOutputSocket(GenerateAnyAddressEndpoint(port), port);
-            getSocketPtr(unicastSocket)->set_option(ip::multicast::enable_loopback(true));
+            if (first_time_open_output_channel_)
+            {
+                eProsimaUDPSocket unicastSocket = OpenAndBindUnicastOutputSocket(GenerateAnyAddressEndpoint(port), port);
 
-            // Outbounding first interface with already created socket.
-            if (!locNames.empty())
-            {
-                SetSocketOutboundInterface(unicastSocket, (*locNames.begin()).name);
-            }
-            else
-            {
-                SetSocketOutboundInterface(unicastSocket, localhost_name());
+                // Outbounding first interface with already created socket.
+                if (!locNames.empty())
+                {
+                    SetSocketOutboundInterface(unicastSocket, (*locNames.begin()).name);
+                }
+                else
+                {
+                    SetSocketOutboundInterface(unicastSocket, localhost_name());
+                    first_time_open_output_channel_ = false;
+                }
+                sender_resource_list.emplace_back(
+                    static_cast<SenderResource*>(new UDPSenderResource(*this, unicastSocket)));
             }
 
             // If more than one interface, then create sockets for outbounding multicast.
-            if (locNames.size() > 1)
+            if (!locNames.empty())
             {
-                auto locIt = locNames.begin();
-                sender_resource_list.emplace_back(
-                    static_cast<SenderResource*>(new UDPSenderResource(*this, unicastSocket)));
-
                 // Create other socket for outbounding rest of interfaces.
-                for (++locIt; locIt != locNames.end(); ++locIt)
+                for (auto locIt = locNames.begin(); locIt != locNames.end(); ++locIt)
                 {
                     uint16_t new_port = 0;
                     try
@@ -326,15 +344,10 @@ bool UDPTransportInterface::OpenOutputChannel(
                     }
                 }
             }
-            else
-            {
-                // Multicast data will be sent for the only one interface.
-                sender_resource_list.emplace_back(
-                    static_cast<SenderResource*>(new UDPSenderResource(*this, unicastSocket)));
-            }
 
-            if (!locNames.empty())
+            if (!locNames.empty() && first_time_open_output_channel_)
             {
+                first_time_open_output_channel_ = false;
                 // We add localhost output for multicast, so in case the network cable is unplugged, local
                 // participants keep receiving DATA(p) announcements
                 const std::string& localhost = localhost_name();
@@ -343,6 +356,7 @@ bool UDPTransportInterface::OpenOutputChannel(
                 {
                     eProsimaUDPSocket multicastSocket =
                             OpenAndBindUnicastOutputSocket(generate_endpoint(localhost, new_port), new_port);
+                    getSocketPtr(multicastSocket)->set_option(ip::multicast::enable_loopback(true));
                     SetSocketOutboundInterface(multicastSocket, localhost);
 
                     sender_resource_list.emplace_back(
@@ -499,7 +513,7 @@ bool UDPTransportInterface::send(
     bool success = false;
     bool is_multicast_remote_address = IPLocator::isMulticast(remote_locator);
 
-    if (is_multicast_remote_address || !only_multicast_purpose)
+    if (is_multicast_remote_address == only_multicast_purpose)
     {
         auto destinationEndpoint = generate_endpoint(remote_locator, IPLocator::getPhysicalPort(remote_locator));
 
