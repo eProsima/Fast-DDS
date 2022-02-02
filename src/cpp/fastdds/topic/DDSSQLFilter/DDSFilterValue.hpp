@@ -26,11 +26,15 @@ namespace fastdds {
 namespace dds {
 namespace DDSSQLFilter {
 
+struct DDSFilterPredicate;
+
 /**
  * Represents a value (either constant, parameter or fieldname) on a filter expression.
  */
 struct DDSFilterValue
 {
+    friend struct DDSFilterPredicate;
+
     /**
      * The high-level kind of a DDSFilterValue.
      */
@@ -101,6 +105,14 @@ struct DDSFilterValue
      */
     virtual void reset() noexcept
     {
+    }
+
+protected:
+
+    virtual void add_parent(
+            DDSFilterPredicate* parent)
+    {
+        static_cast<void>(parent);
     }
 
 };

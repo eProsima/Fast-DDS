@@ -18,6 +18,8 @@
 
 #include "DDSFilterPredicate.hpp"
 
+#include <cassert>
+
 namespace eprosima {
 namespace fastdds {
 namespace dds {
@@ -31,6 +33,11 @@ DDSFilterPredicate::DDSFilterPredicate(
     , left_(left)
     , right_(right)
 {
+    assert(left_);
+    assert(right_);
+
+    left_->add_parent(this);
+    right_->add_parent(this);
 }
 
 void DDSFilterPredicate::value_has_changed(

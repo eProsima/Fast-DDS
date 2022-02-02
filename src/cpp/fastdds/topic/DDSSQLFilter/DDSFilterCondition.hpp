@@ -31,6 +31,8 @@ namespace DDSSQLFilter {
  */
 struct DDSFilterCondition
 {
+    friend struct DDSFilterCompoundCondition;
+
     virtual ~DDSFilterCondition() = default;
 
     /**

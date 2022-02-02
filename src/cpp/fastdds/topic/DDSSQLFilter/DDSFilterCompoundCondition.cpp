@@ -36,6 +36,14 @@ DDSFilterCompoundCondition::DDSFilterCompoundCondition(
     , left_(std::move(left))
     , right_(std::move(right))
 {
+    assert(left_);
+    assert(right_ || OperationKind::NOT == op_);
+
+    left_->set_parent(this);
+    if (right_)
+    {
+        right_->set_parent(this);
+    }
 }
 
 void DDSFilterCompoundCondition::propagate_reset() noexcept

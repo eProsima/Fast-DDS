@@ -19,12 +19,15 @@
 #ifndef _FASTDDS_TOPIC_DDSSQLFILTER_DDSFILTERFIELD_HPP_
 #define _FASTDDS_TOPIC_DDSSQLFILTER_DDSFILTERFIELD_HPP_
 
+#include <cassert>
+#include <unordered_set>
 #include <vector>
 
 #include <fastdds/rtps/common/SerializedPayload.h>
 #include <fastrtps/types/TypeObject.h>
 
 #include "DDSFilterValue.hpp"
+#include "DDSFilterPredicate.hpp"
 
 namespace eprosima {
 namespace fastdds {
@@ -103,9 +106,22 @@ struct DDSFilterField final : public DDSFilterValue
 
         has_value_ = nullptr != type_object_;
 
-        // TODO: Inform parent predicates
+        // Inform parent predicates
+        for (DDSFilterPredicate* parent : parents_)
+        {
+            parent->value_has_changed(*this);
+        }
 
         return true;
+    }
+
+protected:
+
+    void add_parent(
+            DDSFilterPredicate* parent) final
+    {
+        assert(nullptr != parent);
+        parents_.emplace(parent);
     }
 
 private:
@@ -113,6 +129,7 @@ private:
     bool has_value_ = false;
     std::vector<FieldAccessor> access_path_;
     const eprosima::fastrtps::types::TypeObject* type_object_ = nullptr;
+    std::unordered_set<DDSFilterPredicate*> parents_;
 };
 
 }  // namespace DDSSQLFilter
