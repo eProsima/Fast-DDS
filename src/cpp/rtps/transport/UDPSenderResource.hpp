@@ -72,6 +72,15 @@ public:
         locators.push_back(locator);
     }
 
+    bool check_ip_address(
+            const Locator& locator) const
+    {
+        Locator sender_resource_locator;
+        auto local_endpoint = getSocketPtr(socket_)->local_endpoint();
+        transport_.endpoint_to_locator(local_endpoint, sender_resource_locator);
+        return memcmp(&sender_resource_locator.address[12], &locator.address[12], 4) == 0;
+    }
+
     static UDPSenderResource* cast(
             TransportInterface& transport,
             SenderResource* sender_resource)
