@@ -48,7 +48,11 @@ DDSFilterCompoundCondition::DDSFilterCompoundCondition(
 
 void DDSFilterCompoundCondition::propagate_reset() noexcept
 {
-    // TODO(Miguel C): Implement this
+    left_->reset();
+    if (right_)
+    {
+        right_->reset();
+    }
 }
 
 void DDSFilterCompoundCondition::child_has_changed(

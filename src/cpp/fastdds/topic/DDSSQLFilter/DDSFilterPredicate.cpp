@@ -49,7 +49,8 @@ void DDSFilterPredicate::value_has_changed(
 
 void DDSFilterPredicate::propagate_reset() noexcept
 {
-    // TODO(Miguel C): Implement this
+    left_->reset();
+    right_->reset();
 }
 
 }  // namespace DDSSQLFilter
