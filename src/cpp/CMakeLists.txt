@@ -91,10 +91,10 @@ set(${PROJECT_NAME}_source_files
     fastdds/topic/Topic.cpp
     fastdds/topic/TopicImpl.cpp
     fastdds/topic/TypeSupport.cpp
+    fastdds/topic/DDSSQLFilter/DDSFilterFactory.cpp
     fastdds/topic/qos/TopicQos.cpp
     fastdds/publisher/qos/DataWriterQos.cpp
     fastdds/subscriber/qos/DataReaderQos.cpp
-    fastdds/topic/TypeSupport.cpp
     fastdds/publisher/PublisherImpl.cpp
     fastdds/publisher/qos/PublisherQos.cpp
     fastdds/publisher/Publisher.cpp
