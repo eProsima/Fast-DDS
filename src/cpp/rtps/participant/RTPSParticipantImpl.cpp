@@ -129,6 +129,9 @@ RTPSParticipantImpl::RTPSParticipantImpl(
     , mp_ResourceSemaphore(new Semaphore(0))
     , IdCounter(0)
     , type_check_fn_(nullptr)
+    , client_override_(false)
+    , internal_metatraffic_locators_(false)
+    , internal_default_locators_(false)
 #if HAVE_SECURITY
     , m_security_manager(this)
 #endif // if HAVE_SECURITY
@@ -244,6 +247,7 @@ RTPSParticipantImpl::RTPSParticipantImpl(
     if (m_att.builtin.metatrafficMulticastLocatorList.empty() && m_att.builtin.metatrafficUnicastLocatorList.empty())
     {
         get_default_metatraffic_locators();
+        internal_metatraffic_locators_ = true;
     }
     else
     {
@@ -297,6 +301,7 @@ RTPSParticipantImpl::RTPSParticipantImpl(
         //Default Unicast Locators in case they have not been provided
         /* INSERT DEFAULT UNICAST LOCATORS FOR THE PARTICIPANT */
         get_default_unicast_locators();
+        internal_default_locators_ = true;
         logInfo(RTPS_PARTICIPANT, m_att.getName() << " Created with NO default Unicast Locator List, adding Locators:"
                                                   << m_att.defaultUnicastLocatorList);
     }
@@ -420,7 +425,6 @@ RTPSParticipantImpl::RTPSParticipantImpl(
         RTPSParticipantListener* plisten)
     : RTPSParticipantImpl(domain_id, PParam, guidP, c_GuidPrefix_Unknown, par, plisten)
 {
-    client_override_ = false;
 }
 
 void RTPSParticipantImpl::enable()
@@ -1170,21 +1174,17 @@ void RTPSParticipantImpl::update_attributes(
 {
     bool update_pdp = false;
     // Check if new interfaces have been added
-    if (patt.builtin.metatrafficMulticastLocatorList.empty() && patt.builtin.metatrafficUnicastLocatorList.empty())
+    if (internal_metatraffic_locators_)
     {
-        LocatorList_t metatraffic_multicast_locator_list = m_att.builtin.metatrafficMulticastLocatorList;
         LocatorList_t metatraffic_unicast_locator_list = m_att.builtin.metatrafficUnicastLocatorList;
-
         get_default_metatraffic_locators();
-
-        if (!(metatraffic_multicast_locator_list == m_att.builtin.metatrafficMulticastLocatorList) ||
-                !(metatraffic_unicast_locator_list == m_att.builtin.metatrafficUnicastLocatorList))
+        if (!(metatraffic_unicast_locator_list == m_att.builtin.metatrafficUnicastLocatorList))
         {
             update_pdp = true;
             logInfo(RTPS_PARTICIPANT, m_att.getName() << " updated its metatraffic locators");
         }
     }
-    if (patt.defaultUnicastLocatorList.empty() && patt.defaultMulticastLocatorList.empty())
+    if (internal_default_locators_)
     {
         LocatorList_t default_unicast_locator_list = m_att.defaultUnicastLocatorList;
         get_default_unicast_locators();
@@ -1199,7 +1199,8 @@ void RTPSParticipantImpl::update_attributes(
     auto pdp = mp_builtinProtocols->mp_PDP;
     // Check if there are changes
     if (patt.builtin.discovery_config.m_DiscoveryServers != m_att.builtin.discovery_config.m_DiscoveryServers
-            || patt.userData != m_att.userData)
+            || patt.userData != m_att.userData
+            || update_pdp)
     {
         update_pdp = true;
         // Check that the remote servers list is consistent: all the already known remote servers must be included in the
@@ -1251,6 +1252,26 @@ void RTPSParticipantImpl::update_attributes(
             // Update user data
             auto local_participant_proxy_data = pdp->getLocalParticipantProxyData();
             local_participant_proxy_data->m_userData.data_vec(m_att.userData);
+
+            // Update metatraffic locators
+            for (auto locator : m_att.builtin.metatrafficMulticastLocatorList)
+            {
+                local_participant_proxy_data->metatraffic_locators.add_multicast_locator(locator);
+            }
+            for (auto locator : m_att.builtin.metatrafficUnicastLocatorList)
+            {
+                local_participant_proxy_data->metatraffic_locators.add_unicast_locator(locator);
+            }
+
+            m_network_Factory.RegisterTransport(nullptr);
+            createSenderResources(m_att.builtin.metatrafficMulticastLocatorList);
+            createSenderResources(m_att.builtin.metatrafficUnicastLocatorList);
+
+            // Update default locators
+            for (auto locator : m_att.defaultUnicastLocatorList)
+            {
+                local_participant_proxy_data->default_locators.add_unicast_locator(locator);
+            }
 
             // Update remote servers list
             if (m_att.builtin.discovery_config.discoveryProtocol == DiscoveryProtocol::CLIENT ||
