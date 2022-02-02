@@ -36,6 +36,9 @@ namespace fastdds {
 namespace dds {
 namespace DDSSQLFilter {
 
+/**
+ * An IContentFilter that evaluates DDS-SQL filter expressions
+ */
 struct DDSFilterExpression final : public IContentFilter
 {
     bool evaluate(
@@ -47,9 +50,13 @@ struct DDSFilterExpression final : public IContentFilter
         static_cast<void>(sample_info);
         static_cast<void>(reader_guid);
 
+        // TODO(Miguel C): Implement this
         return false;
     }
 
+    /**
+     * Clear the information held by this object.
+     */
     void clear()
     {
         parameters.clear();
@@ -57,8 +64,11 @@ struct DDSFilterExpression final : public IContentFilter
         root.reset();
     }
 
+    /// The root condition of the expression tree.
     std::unique_ptr<DDSFilterCondition> root;
+    /// The fields referenced by this expression.
     std::map<std::string, std::shared_ptr<DDSFilterField>> fields;
+    /// The parameters referenced by this expression.
     std::vector<std::shared_ptr<DDSFilterParameter>> parameters;
 };
 
