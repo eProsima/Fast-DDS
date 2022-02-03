@@ -355,6 +355,11 @@ IContentFilterFactory::ReturnCode_t DDSFilterFactory::delete_content_filter(
 {
     static_cast<void>(filter_class_name);
 
+    if (nullptr == filter_instance)
+    {
+        return ReturnCode_t::RETCODE_BAD_PARAMETER;
+    }
+
     if (&empty_expression_ != filter_instance)
     {
         auto expr = static_cast<DDSFilterExpression*>(filter_instance);
