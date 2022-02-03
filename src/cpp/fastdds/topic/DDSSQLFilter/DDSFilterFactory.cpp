@@ -299,11 +299,7 @@ IContentFilterFactory::ReturnCode_t DDSFilterFactory::create_content_filter(
     using eprosima::fastrtps::types::TypeObjectFactory;
 
     static_cast<void>(filter_class_name);
-    static_cast<void>(type_name);
     static_cast<void>(data_type);
-    static_cast<void>(filter_expression);
-    static_cast<void>(filter_parameters);
-    static_cast<void>(filter_instance);
 
     ReturnCode_t ret = ReturnCode_t::RETCODE_UNSUPPORTED;
 
@@ -358,7 +354,6 @@ IContentFilterFactory::ReturnCode_t DDSFilterFactory::delete_content_filter(
         IContentFilter* filter_instance)
 {
     static_cast<void>(filter_class_name);
-    static_cast<void>(filter_instance);
 
     if (&empty_expression_ != filter_instance)
     {
