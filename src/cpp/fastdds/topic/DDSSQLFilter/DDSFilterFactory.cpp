@@ -139,6 +139,46 @@ static bool check_value_compatibility(
     return false;
 }
 
+static DDSFilterPredicate::OperationKind get_predicate_op(
+        const parser::ParseNode& node)
+{
+    DDSFilterPredicate::OperationKind ret_val = DDSFilterPredicate::OperationKind::EQUAL;
+    if (node.is<eq_op>())
+    {
+        ret_val = DDSFilterPredicate::OperationKind::EQUAL;
+    }
+    else if (node.is<ne_op>())
+    {
+        ret_val = DDSFilterPredicate::OperationKind::NOT_EQUAL;
+    }
+    else if (node.is<lt_op>())
+    {
+        ret_val = DDSFilterPredicate::OperationKind::LESS_THAN;
+    }
+    else if (node.is<le_op>())
+    {
+        ret_val = DDSFilterPredicate::OperationKind::LESS_EQUAL;
+    }
+    else if (node.is<gt_op>())
+    {
+        ret_val = DDSFilterPredicate::OperationKind::GREATER_THAN;
+    }
+    else if (node.is<ge_op>())
+    {
+        ret_val = DDSFilterPredicate::OperationKind::GREATER_EQUAL;
+    }
+    else if (node.is<like_op>())
+    {
+        ret_val = DDSFilterPredicate::OperationKind::LIKE;
+    }
+    else
+    {
+        assert(false);
+    }
+
+    return ret_val;
+}
+
 struct ExpressionParsingState
 {
     const eprosima::fastrtps::types::TypeObject* type_object;
@@ -202,8 +242,6 @@ IContentFilterFactory::ReturnCode_t DDSFilterFactory::convert_tree<DDSFilterPred
         std::unique_ptr<DDSFilterCondition>& condition,
         const parser::ParseNode& node)
 {
-    static_cast<void>(condition);
-
     std::shared_ptr<DDSFilterValue> left;
     std::shared_ptr<DDSFilterValue> right;
     ReturnCode_t ret = convert_tree<DDSFilterValue>(state, left, node.left());
@@ -237,7 +275,7 @@ IContentFilterFactory::ReturnCode_t DDSFilterFactory::convert_tree<DDSFilterPred
             ret = transform_enums(left, node.left().type_id, right, node.right().type_id);
             if (ReturnCode_t::RETCODE_OK == ret)
             {
-                // condition = new DDSFilterPredicate(left, right);
+                condition.reset(new DDSFilterPredicate(get_predicate_op(node), left, right));
             }
         }
     }
