@@ -107,6 +107,45 @@ struct DDSFilterValue
     {
     }
 
+    inline bool operator ==(
+            const DDSFilterValue& other) const noexcept
+    {
+        return compare(*this, other) == 0;
+    }
+
+    inline bool operator !=(
+            const DDSFilterValue& other) const noexcept
+    {
+        return compare(*this, other) != 0;
+    }
+
+    inline bool operator <(
+            const DDSFilterValue& other) const noexcept
+    {
+        return compare(*this, other) < 0;
+    }
+
+    inline bool operator <=(
+            const DDSFilterValue& other) const noexcept
+    {
+        return compare(*this, other) <= 0;
+    }
+
+    inline bool operator >(
+            const DDSFilterValue& other) const noexcept
+    {
+        return compare(*this, other) > 0;
+    }
+
+    inline bool operator >=(
+            const DDSFilterValue& other) const noexcept
+    {
+        return compare(*this, other) >= 0;
+    }
+
+    bool is_like(
+            const DDSFilterValue& other) const noexcept;
+
 protected:
 
     virtual void add_parent(
@@ -114,6 +153,12 @@ protected:
     {
         static_cast<void>(parent);
     }
+
+private:
+
+    static int compare(
+            const DDSFilterValue& lhs,
+            const DDSFilterValue& rhs) noexcept;
 
 };
 
