@@ -100,9 +100,9 @@ struct close_bracket : seq< star< space >, one< ')' > > {};
 struct Condition;
 struct ConditionList : list_must< Condition, sor< and_op, or_op > > {};
 struct Condition : sor<
-                        Predicate,
                         seq< open_bracket, ConditionList, close_bracket >,
-                        seq< not_op, ConditionList >
+                        seq< not_op, ConditionList >,
+                        Predicate
                       > {};
 struct FilterExpression : ConditionList {};
 
