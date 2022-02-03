@@ -45,7 +45,8 @@ struct DDSFilterPredicate final : public DDSFilterCondition
         LESS_EQUAL,     ///< left <= right
         GREATER_THAN,   ///< left > right
         GREATER_EQUAL,  ///< left >= right
-        LIKE            ///< left LIKE right
+        LIKE,           ///< left LIKE right
+        MATCH           ///< left MATCH right
     };
 
     /**

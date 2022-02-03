@@ -76,7 +76,8 @@ struct lt_op : pad< one<'<'>, space> {};
 struct le_op : pad< TAO_PEGTL_KEYWORD("<="), space> {};
 struct ne_op : pad< sor< TAO_PEGTL_KEYWORD("<>"), TAO_PEGTL_KEYWORD("!=") >, space> {};
 struct like_op : pad< sor< TAO_PEGTL_KEYWORD("LIKE"), TAO_PEGTL_KEYWORD("like") >, space> {};
-struct rel_op : sor< like_op, ne_op, le_op, ge_op, lt_op, gt_op, eq_op > {};
+struct match_op : pad< sor< TAO_PEGTL_KEYWORD("MATCH"), TAO_PEGTL_KEYWORD("match") >, space> {};
+struct rel_op : sor< match_op, like_op, ne_op, le_op, ge_op, lt_op, gt_op, eq_op > {};
 
 // Parameter, Range
 struct Literal : sor< boolean_value, float_value, integer_value, char_value, string_value > {};

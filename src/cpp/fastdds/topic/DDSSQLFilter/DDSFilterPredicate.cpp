@@ -77,6 +77,7 @@ void DDSFilterPredicate::value_has_changed(
                 break;
 
             case OperationKind::LIKE:
+            case OperationKind::MATCH:
                 set_result(left_->is_like(*right_));
                 break;
 

@@ -171,6 +171,10 @@ static DDSFilterPredicate::OperationKind get_predicate_op(
     {
         ret_val = DDSFilterPredicate::OperationKind::LIKE;
     }
+    else if (node.is<match_op>())
+    {
+        ret_val = DDSFilterPredicate::OperationKind::MATCH;
+    }
     else
     {
         assert(false);
@@ -258,7 +262,8 @@ IContentFilterFactory::ReturnCode_t DDSFilterFactory::convert_tree<DDSFilterPred
         ret = convert_tree<DDSFilterValue>(state, right, node.right());
         if (ReturnCode_t::RETCODE_OK == ret)
         {
-            if (node.is<like_op>())
+            bool ignore_enum = false;
+            if (node.is<like_op>() || node.is<match_op>())
             {
                 // At least one fieldname should be a string
                 if ( !((node.left().is<fieldname>() && (DDSFilterValue::ValueKind::STRING == left->kind)) ||
@@ -266,6 +271,8 @@ IContentFilterFactory::ReturnCode_t DDSFilterFactory::convert_tree<DDSFilterPred
                 {
                     return ReturnCode_t::RETCODE_BAD_PARAMETER;
                 }
+
+                ignore_enum = true;
             }
 
             if ((DDSFilterValue::ValueKind::ENUM == left->kind) && (DDSFilterValue::ValueKind::ENUM == right->kind))
@@ -275,7 +282,7 @@ IContentFilterFactory::ReturnCode_t DDSFilterFactory::convert_tree<DDSFilterPred
                     return ReturnCode_t::RETCODE_BAD_PARAMETER;
                 }
             }
-            else if (!check_value_compatibility(left->kind, right->kind, node.is<like_op>()))
+            else if (!check_value_compatibility(left->kind, right->kind, ignore_enum))
             {
                 return ReturnCode_t::RETCODE_BAD_PARAMETER;
             }
