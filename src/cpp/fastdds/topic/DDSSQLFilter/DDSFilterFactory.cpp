@@ -298,13 +298,13 @@ IContentFilterFactory::ReturnCode_t DDSFilterFactory::create_content_filter(
 {
     using eprosima::fastrtps::types::TypeObjectFactory;
 
-    static_cast<void>(filter_class_name);
     static_cast<void>(data_type);
 
     ReturnCode_t ret = ReturnCode_t::RETCODE_UNSUPPORTED;
 
     if ((filter_expression == nullptr) || (std::strlen(filter_expression) == 0))
     {
+        delete_content_filter(filter_class_name, filter_instance);
         filter_instance = &empty_expression_;
         ret = ReturnCode_t::RETCODE_OK;
     }
@@ -332,6 +332,7 @@ IContentFilterFactory::ReturnCode_t DDSFilterFactory::create_content_filter(
                 ret = convert_tree<DDSFilterCondition>(state, expr->root, *(node->children[0]));
                 if (ReturnCode_t::RETCODE_OK == ret)
                 {
+                    delete_content_filter(filter_class_name, filter_instance);
                     filter_instance = expr;
                 }
                 else
