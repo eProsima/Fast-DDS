@@ -187,6 +187,13 @@ struct ExpressionParsingState
 };
 
 template<>
+IContentFilterFactory::ReturnCode_t DDSFilterFactory::convert_tree<DDSFilterCondition>(
+        ExpressionParsingState& state,
+        std::unique_ptr<DDSFilterCondition>& condition,
+        const parser::ParseNode& node);
+
+
+template<>
 IContentFilterFactory::ReturnCode_t DDSFilterFactory::convert_tree<DDSFilterValue>(
         ExpressionParsingState& state,
         std::shared_ptr<DDSFilterValue>& value,
@@ -355,12 +362,45 @@ IContentFilterFactory::ReturnCode_t DDSFilterFactory::convert_tree<DDSFilterComp
         std::unique_ptr<DDSFilterCondition>& condition,
         const parser::ParseNode& node)
 {
-    static_cast<void>(state);
-    static_cast<void>(condition);
-    static_cast<void>(node);
+    ReturnCode_t ret = ReturnCode_t::RETCODE_UNSUPPORTED;
+    DDSFilterCompoundCondition::OperationKind op = DDSFilterCompoundCondition::OperationKind::NOT;
+    std::unique_ptr<DDSFilterCondition> left;
+    std::unique_ptr<DDSFilterCondition> right;
 
-    // TODO (Miguel C): Compound conditions
-    return ReturnCode_t::RETCODE_UNSUPPORTED;
+    if (node.is<not_op>())
+    {
+        op = DDSFilterCompoundCondition::OperationKind::NOT;
+        ret = convert_tree<DDSFilterCondition>(state, left, node.left());
+    }
+    else if (node.is<and_op>())
+    {
+        op = DDSFilterCompoundCondition::OperationKind::AND;
+        ret = convert_tree<DDSFilterCondition>(state, left, node.left());
+        if (ReturnCode_t::RETCODE_OK == ret)
+        {
+            ret = convert_tree<DDSFilterCondition>(state, right, node.right());
+        }
+    }
+    else if (node.is<or_op>())
+    {
+        op = DDSFilterCompoundCondition::OperationKind::OR;
+        ret = convert_tree<DDSFilterCondition>(state, left, node.left());
+        if (ReturnCode_t::RETCODE_OK == ret)
+        {
+            ret = convert_tree<DDSFilterCondition>(state, right, node.right());
+        }
+    }
+    else
+    {
+        assert(false);
+    }
+
+    if (ReturnCode_t::RETCODE_OK == ret)
+    {
+        condition.reset(new DDSFilterCompoundCondition(op, std::move(left), std::move(right)));
+    }
+
+    return ret;
 }
 
 template<>
