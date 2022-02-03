@@ -19,6 +19,9 @@
 #include "DDSFilterPredicate.hpp"
 
 #include <cassert>
+#include <memory>
+
+#include "DDSFilterValue.hpp"
 
 namespace eprosima {
 namespace fastdds {
@@ -43,8 +46,44 @@ DDSFilterPredicate::DDSFilterPredicate(
 void DDSFilterPredicate::value_has_changed(
         const DDSFilterValue& value)
 {
-    // TODO(Miguel C): Implement this
     static_cast<void>(value);
+
+    if (left_->has_value() && right_->has_value())
+    {
+        switch (op_)
+        {
+            case OperationKind::EQUAL:
+                set_result(*left_ == *right_);
+                break;
+
+            case OperationKind::NOT_EQUAL:
+                set_result(*left_ != *right_);
+                break;
+
+            case OperationKind::LESS_THAN:
+                set_result(*left_ < *right_);
+                break;
+
+            case OperationKind::LESS_EQUAL:
+                set_result(*left_ <= *right_);
+                break;
+
+            case OperationKind::GREATER_THAN:
+                set_result(*left_ > *right_);
+                break;
+
+            case OperationKind::GREATER_EQUAL:
+                set_result(*left_ >= *right_);
+                break;
+
+            case OperationKind::LIKE:
+                set_result(left_->is_like(*right_));
+                break;
+
+            default:
+                assert(false);
+        }
+    }
 }
 
 void DDSFilterPredicate::propagate_reset() noexcept
