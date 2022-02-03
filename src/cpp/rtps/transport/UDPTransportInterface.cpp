@@ -62,6 +62,7 @@ UDPTransportInterface::UDPTransportInterface(
     , mSendBufferSize(0)
     , mReceiveBufferSize(0)
     , first_time_open_output_channel_(true)
+    , whitelisted_(false)
 {
 }
 
@@ -380,6 +381,7 @@ bool UDPTransportInterface::OpenOutputChannel(
             {
                 if (is_interface_allowed(infoIP.name))
                 {
+                    whitelisted_ = true;
                     eProsimaUDPSocket unicastSocket =
                             OpenAndBindUnicastOutputSocket(generate_endpoint(infoIP.name, port), port);
                     SetSocketOutboundInterface(unicastSocket, infoIP.name);
@@ -513,7 +515,8 @@ bool UDPTransportInterface::send(
     bool success = false;
     bool is_multicast_remote_address = IPLocator::isMulticast(remote_locator);
 
-    if (is_multicast_remote_address == only_multicast_purpose)
+//    if (is_multicast_remote_address || !only_multicast_purpose)
+    if (is_multicast_remote_address == only_multicast_purpose || whitelisted_)
     {
         auto destinationEndpoint = generate_endpoint(remote_locator, IPLocator::getPhysicalPort(remote_locator));
 

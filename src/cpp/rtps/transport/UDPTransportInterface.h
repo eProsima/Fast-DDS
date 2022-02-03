@@ -175,8 +175,10 @@ protected:
     uint32_t mReceiveBufferSize;
     eprosima::fastdds::statistics::rtps::OutputTrafficManager statistics_info_;
 
-    //! First time flag
+    //! First time open output channel flag: open unicast and localhost socket when not whitelisted
     bool first_time_open_output_channel_;
+    //! Whitelist feature is being used 
+    bool whitelisted_;
 
     UDPTransportInterface(
             int32_t transport_kind);
