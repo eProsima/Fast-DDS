@@ -29,6 +29,6 @@ The table below outlines the *eProsima Fast DDS* minor releases and their suppor
 |v2.3.x|March 2021|November 2022|
 |v2.4.x|September 2021|March 2022|
 |v2.5.x|December 2021|June 2022|
-|v2.6.x|March 2022|May 2023 [*]|
+|v2.6.x|March 2022|May 2023 [^*]|
 
-" [*] " This release support could be extended.
+[^*]: This release support could be extended.
