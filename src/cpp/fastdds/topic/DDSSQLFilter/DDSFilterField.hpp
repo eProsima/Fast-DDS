@@ -105,6 +105,7 @@ struct DDSFilterField final : public DDSFilterValue
         static_cast<void>(payload);
 
         has_value_ = nullptr != type_object_;
+        value_has_changed();
 
         // Inform parent predicates
         for (DDSFilterPredicate* parent : parents_)

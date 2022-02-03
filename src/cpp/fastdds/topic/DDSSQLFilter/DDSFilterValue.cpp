@@ -275,11 +275,77 @@ int64_t DDSFilterValue::compare(
     return 0;
 }
 
+void DDSFilterValue::as_regular_expression(
+        bool is_like_operand)
+{
+    regular_expr_kind_ = is_like_operand ? RegExpKind::LIKE : RegExpKind::MATCH;
+    if (has_value())
+    {
+        value_has_changed();
+    }
+}
+
+void DDSFilterValue::value_has_changed()
+{
+    if (RegExpKind::NONE != regular_expr_kind_)
+    {
+        std::string expr;
+
+        switch (kind)
+        {
+            case ValueKind::CHAR:
+                expr = char_value;
+                break;
+
+            case ValueKind::STRING:
+                expr = string_value.c_str();
+                break;
+
+            default:
+                assert(false);
+        }
+
+        if (RegExpKind::LIKE == regular_expr_kind_)
+        {
+            expr = std::regex_replace(expr, std::regex("\\*"), ".*");
+            expr = std::regex_replace(expr, std::regex("\\?"), ".");
+            expr = std::regex_replace(expr, std::regex("%"), ".*");
+            expr = std::regex_replace(expr, std::regex("_"), ".");
+        }
+
+        regular_expr_.reset(new std::regex(expr));
+    }
+}
+
 bool DDSFilterValue::is_like(
         const DDSFilterValue& other) const noexcept
 {
-    // TODO(Miguel C): Implement this
-    static_cast<void>(other);
+    assert(other.regular_expr_);
+
+    eprosima::fastrtps::string_255 char_string_value;
+
+    switch (kind)
+    {
+        case ValueKind::CHAR:
+            assert(ValueKind::STRING == other.kind);
+            to_string_value(*this, char_string_value);
+            return std::regex_match(char_string_value.c_str(), *other.regular_expr_);
+
+        case ValueKind::STRING:
+            switch (other.kind)
+            {
+                case ValueKind::CHAR:
+                case ValueKind::STRING:
+                    return std::regex_match(string_value.c_str(), *other.regular_expr_);
+
+                default:
+                    assert(false);
+            }
+            break;
+
+        default:
+            assert(false);
+    }
 
     return false;
 }

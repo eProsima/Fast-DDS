@@ -41,6 +41,15 @@ DDSFilterPredicate::DDSFilterPredicate(
 
     left_->add_parent(this);
     right_->add_parent(this);
+
+    if (OperationKind::LIKE == op_)
+    {
+        right_->as_regular_expression(true);
+    }
+    else if (OperationKind::MATCH == op_)
+    {
+        right_->as_regular_expression(false);
+    }
 }
 
 void DDSFilterPredicate::value_has_changed(

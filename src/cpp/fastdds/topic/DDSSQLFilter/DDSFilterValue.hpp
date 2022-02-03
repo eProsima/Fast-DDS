@@ -19,6 +19,9 @@
 #ifndef _FASTDDS_TOPIC_DDSSQLFILTER_DDSFILTERVALUE_HPP_
 #define _FASTDDS_TOPIC_DDSSQLFILTER_DDSFILTERVALUE_HPP_
 
+#include <memory>
+#include <regex>
+
 #include <fastrtps/utils/fixed_size_string.hpp>
 
 namespace eprosima {
@@ -117,6 +120,9 @@ struct DDSFilterValue
     {
     }
 
+    void as_regular_expression(
+            bool is_like_operand);
+
     inline bool operator ==(
             const DDSFilterValue& other) const noexcept
     {
@@ -164,7 +170,17 @@ protected:
         static_cast<void>(parent);
     }
 
+    void value_has_changed();
+
 private:
+
+    enum class RegExpKind
+    {
+        NONE, LIKE, MATCH
+    };
+
+    RegExpKind regular_expr_kind_ = RegExpKind::NONE;
+    std::unique_ptr<std::regex> regular_expr_;
 
     static int64_t compare(
             const DDSFilterValue& lhs,

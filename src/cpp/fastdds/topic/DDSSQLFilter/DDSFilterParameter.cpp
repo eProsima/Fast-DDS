@@ -35,6 +35,8 @@ bool DDSFilterParameter::set_value(
     }
 
     copy_from(*node->left().value);
+    value_has_changed();
+
     return true;
 }
 
