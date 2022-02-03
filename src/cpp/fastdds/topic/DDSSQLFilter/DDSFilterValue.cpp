@@ -157,6 +157,42 @@ static void to_string_value(
     out.assign(&in.char_value, 1);
 }
 
+void DDSFilterValue::copy_from(
+        const DDSFilterValue& other) noexcept
+{
+    kind = other.kind;
+    switch (kind)
+    {
+        case ValueKind::BOOLEAN:
+            boolean_value = other.boolean_value;
+            break;
+
+        case ValueKind::CHAR:
+            char_value = other.char_value;
+            break;
+
+        case ValueKind::ENUM:
+        case ValueKind::SIGNED_INTEGER:
+            signed_integer_value = other.signed_integer_value;
+            break;
+
+        case ValueKind::UNSIGNED_INTEGER:
+            unsigned_integer_value = other.unsigned_integer_value;
+            break;
+
+        case ValueKind::FLOAT:
+            float_value = other.float_value;
+            break;
+
+        case ValueKind::STRING:
+            string_value = other.string_value;
+            break;
+
+        default:
+            assert(false);
+    }
+}
+
 int64_t DDSFilterValue::compare(
         const DDSFilterValue& lhs,
         const DDSFilterValue& rhs) noexcept

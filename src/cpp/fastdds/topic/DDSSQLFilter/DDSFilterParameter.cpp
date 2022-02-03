@@ -34,7 +34,7 @@ bool DDSFilterParameter::set_value(
         return false;
     }
 
-    *static_cast<DDSFilterValue*>(this) = *node->left().value;
+    copy_from(*node->left().value);
     return true;
 }
 

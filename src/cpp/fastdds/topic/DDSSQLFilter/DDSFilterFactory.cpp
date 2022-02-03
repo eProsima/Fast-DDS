@@ -201,7 +201,8 @@ IContentFilterFactory::ReturnCode_t DDSFilterFactory::convert_tree<DDSFilterValu
 {
     if (node.value)
     {
-        value = std::make_shared<DDSFilterValue>(*node.value.get());
+        value = std::make_shared<DDSFilterValue>();
+        value->copy_from(*node.value.get());
     }
     else if (nullptr != node.type_id)
     {

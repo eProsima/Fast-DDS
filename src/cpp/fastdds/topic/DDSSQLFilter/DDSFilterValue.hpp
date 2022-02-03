@@ -85,7 +85,17 @@ struct DDSFilterValue
     {
     }
 
+    // *INDENT-OFF*
+    DDSFilterValue(const DDSFilterValue&) = delete;
+    DDSFilterValue& operator=(const DDSFilterValue&) = delete;
+    DDSFilterValue(DDSFilterValue&&) = default;
+    DDSFilterValue& operator=(DDSFilterValue&&) = default;
+    // *INDENT-ON*
+
     virtual ~DDSFilterValue() = default;
+
+    void copy_from(
+            const DDSFilterValue& other) noexcept;
 
     /**
      * This method is used by a DDSFilterPredicate to check if this DDSFilterValue can be used.
