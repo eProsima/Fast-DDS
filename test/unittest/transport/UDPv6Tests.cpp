@@ -178,11 +178,19 @@ TEST_F(UDPv6Tests, send_and_receive_between_ports)
                 LocatorList_t locator_list;
                 locator_list.push_back(multicastLocator);
 
-                Locators locators_begin(locator_list.begin());
-                Locators locators_end(locator_list.end());
-
-                EXPECT_TRUE(send_resource_list.at(0)->send(message, 5, &locators_begin, &locators_end,
-                        (std::chrono::steady_clock::now() + std::chrono::microseconds(100))));
+                bool sended = false;
+                for (auto& send_resource : send_resource_list)
+                {
+                    Locators locators_begin(locator_list.begin());
+                    Locators locators_end(locator_list.end());
+                    sended |= send_resource->send(message, 5, &locators_begin, &locators_end,
+                        (std::chrono::steady_clock::now() + std::chrono::microseconds(100)));
+                    if (sended)
+                    {
+                        break;
+                    }
+                }
+                EXPECT_TRUE(sended);
             };
 
     senderThread.reset(new std::thread(sendThreadFunction));
@@ -229,11 +237,19 @@ TEST_F(UDPv6Tests, send_to_loopback)
                 LocatorList_t locator_list;
                 locator_list.push_back(multicastLocator);
 
-                Locators locators_begin(locator_list.begin());
-                Locators locators_end(locator_list.end());
-
-                EXPECT_TRUE(send_resource_list.at(0)->send(message, 5, &locators_begin, &locators_end,
-                        (std::chrono::steady_clock::now() + std::chrono::microseconds(100))));
+                bool sended = false;
+                for (auto& send_resource : send_resource_list)
+                {
+                    Locators locators_begin(locator_list.begin());
+                    Locators locators_end(locator_list.end());
+                    sended |= send_resource->send(message, 5, &locators_begin, &locators_end,
+                        (std::chrono::steady_clock::now() + std::chrono::microseconds(100)));
+                    if (sended)
+                    {
+                        break;
+                    }
+                }
+                EXPECT_TRUE(sended);
             };
 
     senderThread.reset(new std::thread(sendThreadFunction));
