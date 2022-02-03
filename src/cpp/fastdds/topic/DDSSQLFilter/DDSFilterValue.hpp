@@ -156,7 +156,7 @@ protected:
 
 private:
 
-    static int compare(
+    static int64_t compare(
             const DDSFilterValue& lhs,
             const DDSFilterValue& rhs) noexcept;
 
