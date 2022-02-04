@@ -4,12 +4,12 @@ Please, refer to the [master branch](https://github.com/eProsima/Fast-DDS/blob/m
 
 *eProsima Fast DDS* maintains several releases with different support cycles.
 Major releases are scarce and they are made when public API is broken (more information about *eProsima Fast DDS* versioning can be found [here](https://github.com/eProsima/Fast-DDS/blob/master/VERSIONING.md)).
-Latest major release is v2.0.0 (June 2020) which introduced DDS compliant API.
+Latest major release is v2.0.0 (June 2020), which introduced the DDS compliant API.
 
 Each quarter, a new Fast DDS minor version with new features is released.
 By default, *eProsima Fast DDS* minor releases have a lifecycle of **6 months**.
 However, the life of certain branches can be extended depending on costumer and user needs.
-Within the support period of any minor version, there may be several patch releases that either add new functionalities in an ABI compatible way, or fix possible issues.
+Within the support period of any minor version, there may be several patch releases that either add new functionalities in an ABI compatible way or fix possible issues.
 Before the minor release end of life (EOL) date, a final patch release including the latest fixes will be make available if there are any changes not included in any previous patch release of the same minor version.
 
 The table below outlines the *eProsima Fast DDS* minor releases and their support cycles:
