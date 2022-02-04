@@ -17,6 +17,7 @@
 
 #include <fastrtps/rtps/writer/ReaderProxy.h>
 #include <fastrtps/rtps/writer/StatefulWriter.h>
+#include <rtps/messages/RTPSGapBuilder.hpp>
 
 //using namespace eprosima::fastrtps::rtps;
 namespace eprosima {
@@ -109,6 +110,42 @@ TEST(ReaderProxyTests, find_change_removed_test)
     ASSERT_TRUE(rproxy.change_is_acked(SequenceNumber_t(0, 2)));
     ASSERT_FALSE(rproxy.change_is_acked(SequenceNumber_t(0, 3)));
     ASSERT_FALSE(rproxy.change_is_acked(SequenceNumber_t(0, 4)));
+}
+
+// Regression test for #13556 (Github #2423)
+TEST(ReaderProxyTests, requested_changes_set_test)
+{
+    StatefulWriter writerMock;
+    WriterTimes wTimes;
+    RemoteLocatorsAllocationAttributes alloc;
+    ReaderProxy rproxy(wTimes, alloc, &writerMock);
+    CacheChange_t seq1; seq1.sequenceNumber = {0, 1};
+    CacheChange_t seq2; seq2.sequenceNumber = {0, 2};
+    CacheChange_t seq3; seq3.sequenceNumber = {0, 3};
+    CacheChange_t seq4; seq4.sequenceNumber = {0, 4};
+    RTPSMessageGroup message_group(nullptr, false);
+    RTPSGapBuilder gap_builder(message_group);
+
+    ReaderProxyData reader_attributes(0, 0);
+    reader_attributes.m_qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
+    rproxy.start(reader_attributes);
+
+
+    rproxy.add_change(ChangeForReader_t(&seq1), false, false);
+    rproxy.add_change(ChangeForReader_t(&seq2), true, false);
+    rproxy.add_change(ChangeForReader_t(&seq3), true, false);
+    rproxy.add_change(ChangeForReader_t(&seq4), false, false);
+
+    SequenceNumberSet_t set({0, 1});
+    set.add({0, 1});
+    set.add({0, 2});
+    set.add({0, 3});
+    set.add({0, 4});
+
+    EXPECT_CALL(gap_builder, add(SequenceNumber_t(0, 1))).Times(1).WillOnce(testing::Return(true));
+    EXPECT_CALL(gap_builder, add(SequenceNumber_t(0, 4))).Times(1).WillOnce(testing::Return(true));
+
+    rproxy.requested_changes_set(set, gap_builder, {0, 1});
 }
 
 } // namespace rtps
