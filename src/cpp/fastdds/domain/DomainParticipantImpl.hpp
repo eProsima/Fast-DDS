@@ -36,6 +36,8 @@
 #include <fastdds/dds/core/status/StatusMask.hpp>
 #include <fastrtps/types/TypesBase.h>
 
+#include "fastdds/topic/DDSSQLFilter/DDSFilterFactory.hpp"
+
 using eprosima::fastrtps::types::ReturnCode_t;
 
 namespace eprosima {
@@ -480,6 +482,7 @@ protected:
     std::map<InstanceHandle_t, Topic*> topics_by_handle_;
     std::map<std::string, std::unique_ptr<ContentFilteredTopic>> filtered_topics_;
     std::map<std::string, IContentFilterFactory*> filter_factories_;
+    DDSSQLFilter::DDSFilterFactory dds_sql_filter_factory_;
     mutable std::mutex mtx_topics_;
 
     TopicQos default_topic_qos_;
@@ -605,7 +608,7 @@ protected:
             const fastrtps::rtps::SampleIdentity& id) const;
 
     IContentFilterFactory* find_content_filter_factory(
-            const char* filter_class_name) const;
+            const char* filter_class_name);
 
     /**
      * Set the DomainParticipantQos checking if the Qos can be updated or not

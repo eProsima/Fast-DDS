@@ -635,7 +635,7 @@ ReturnCode_t DomainParticipantImpl::unregister_content_filter_factory(
 }
 
 IContentFilterFactory* DomainParticipantImpl::find_content_filter_factory(
-        const char* filter_class_name) const
+        const char* filter_class_name)
 {
     auto it = filter_factories_.find(filter_class_name);
     if (it != filter_factories_.end())
@@ -648,8 +648,7 @@ IContentFilterFactory* DomainParticipantImpl::find_content_filter_factory(
         return nullptr;
     }
 
-    // TODO(Miguel C): Create SQLFilter::DDSFilterFactory
-    return nullptr;
+    return &dds_sql_filter_factory_;
 }
 
 const InstanceHandle_t& DomainParticipantImpl::get_instance_handle() const
