@@ -31,10 +31,12 @@ public:
     UDPSenderResource(
             UDPTransportInterface& transport,
             eProsimaUDPSocket& socket,
-            bool only_multicast_purpose = false)
+            bool only_multicast_purpose = false,
+            bool whitelisted = false)
         : SenderResource(transport.kind())
         , socket_(moveSocket(socket))
         , only_multicast_purpose_(only_multicast_purpose)
+        , whitelisted_(whitelisted)
         , transport_(transport)
     {
         // Implementation functions are bound to the right transport parameters
@@ -51,7 +53,8 @@ public:
             const std::chrono::steady_clock::time_point& max_blocking_time_point) -> bool
                 {
                     return transport.send(data, dataSize, socket_, destination_locators_begin,
-                                   destination_locators_end, only_multicast_purpose_, max_blocking_time_point);
+                                   destination_locators_end, only_multicast_purpose_, whitelisted_,
+                                   max_blocking_time_point);
                 };
     }
 
@@ -108,6 +111,7 @@ private:
     eProsimaUDPSocket socket_;
 
     bool only_multicast_purpose_;
+    bool whitelisted_;
 
     UDPTransportInterface& transport_;
 };
