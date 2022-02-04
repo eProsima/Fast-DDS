@@ -19,6 +19,7 @@ import logging
 import os
 import subprocess
 import sys
+import time
 
 script_dir = os.path.dirname(os.path.realpath(__file__))
 seed = str(os.getpid())
@@ -56,7 +57,8 @@ def define_args(tests_definition):
         possible_arguments = ['samples',
                               'wait',
                               'magic',
-                              'publishers']
+                              'publishers',
+                              'sleep_before_exec']
 
         for argument in possible_arguments:
             if argument in test.keys():
@@ -158,6 +160,15 @@ def define_commands(pub_args, sub_args, pubsub_args):
     )
 
 
+def execute_command(command):
+    """Execute command after possibly waiting some time."""
+    sleep_tag = '--sleep_before_exec'
+    if sleep_tag in command:
+        time.sleep(int(command.pop(command.index(sleep_tag) + 1)))
+        command.remove(sleep_tag)
+    return subprocess.Popen(command)
+
+
 def execute_commands(pub_commands, sub_commands, pubsub_commands, logger):
     """Get test definitions in command lists and execute each process."""
     pubs_proc = []
@@ -166,18 +177,15 @@ def execute_commands(pub_commands, sub_commands, pubsub_commands, logger):
 
     for subscriber_command in sub_commands:
         logger.info(f'Executing subcriber: {subscriber_command}')
-        proc = subprocess.Popen(subscriber_command)
-        subs_proc.append(proc)
+        subs_proc.append(execute_command(subscriber_command))
 
     for pubsub_command in pubsub_commands:
         logger.info(f'Executing pubsub: {pubsub_command}')
-        proc = subprocess.Popen(pubsub_command)
-        pubsubs_proc.append(proc)
+        pubsubs_proc.append(execute_command(pubsub_command))
 
     for publisher_command in pub_commands:
         logger.info(f'Executing publisher: {publisher_command}')
-        proc = subprocess.Popen(publisher_command)
-        pubs_proc.append(proc)
+        pubs_proc.append(execute_command(publisher_command))
 
     ret_value = 0
 
@@ -211,7 +219,7 @@ if __name__ == '__main__':
 
     test_definitions = test_definition(args[0])
 
-    logger.error(test_definition)
+    logger.error(test_definitions)
 
     pub_args, sub_args, pubsub_args = define_args(test_definitions)
 
