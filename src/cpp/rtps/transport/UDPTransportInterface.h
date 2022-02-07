@@ -267,6 +267,17 @@ protected:
             bool only_multicast_purpose,
             bool whitelisted,
             const std::chrono::microseconds& timeout);
+
+    /**
+     * @brief Remove already opened network interfaces
+     *
+     * @param sender_resource_list List of SenderResources already registered in the transport
+     * @param locNames List of available network interfaces
+     */
+    void remove_known_network_interfaces(
+            const SendResourceList& sender_resource_list,
+            std::vector<fastrtps::rtps::IPFinder::info_IP>& locNames,
+            bool return_loopback = false);
 };
 
 } // namespace rtps

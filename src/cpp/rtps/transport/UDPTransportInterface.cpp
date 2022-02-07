@@ -267,28 +267,7 @@ bool UDPTransportInterface::OpenOutputChannel(
     }
 
     std::vector<IPFinder::info_IP> locNames;
-    get_ips(locNames);
-    // We try to find a SenderResource that can be reuse to this locator.
-    // Note: This is done in this level because if we do in NetworkFactory level, we have to mantain what transport
-    // already reuses a SenderResource.
-    for (auto& sender_resource : sender_resource_list)
-    {
-        UDPSenderResource* udp_sender_resource = UDPSenderResource::cast(*this, sender_resource.get());
-        if (nullptr != udp_sender_resource)
-        {
-            for (auto it = locNames.begin(); it!= locNames.end();)
-            {
-                if (udp_sender_resource->check_ip_address(it->locator))
-                {
-                    locNames.erase(it);
-                }
-                else
-                {
-                    ++it;
-                }
-            }
-        }
-    }
+    remove_known_network_interfaces(sender_resource_list, locNames);
 
     if (locNames.empty() && !first_time_open_output_channel_)
     {
@@ -305,6 +284,7 @@ bool UDPTransportInterface::OpenOutputChannel(
         {
             if (first_time_open_output_channel_)
             {
+                first_time_open_output_channel_ = false;
                 // We add localhost output for multicast, so in case the network cable is unplugged, local
                 // participants keep receiving DATA(p) announcements
                 // Also in case that no network interfaces were found
@@ -313,7 +293,6 @@ bool UDPTransportInterface::OpenOutputChannel(
                     eProsimaUDPSocket unicastSocket = OpenAndBindUnicastOutputSocket(GenerateAnyAddressEndpoint(port), port);
                     getSocketPtr(unicastSocket)->set_option(ip::multicast::enable_loopback(true));
                     SetSocketOutboundInterface(unicastSocket, localhost_name());
-                    first_time_open_output_channel_ = false;
                     sender_resource_list.emplace_back(
                         static_cast<SenderResource*>(new UDPSenderResource(*this, unicastSocket, false, true)));
                 }
@@ -353,21 +332,19 @@ bool UDPTransportInterface::OpenOutputChannel(
         else
         {
             locNames.clear();
-            get_ips(locNames, true);
+            remove_known_network_interfaces(sender_resource_list, locNames, true);
 
-            bool firstInterface = false;
             for (const auto& infoIP : locNames)
             {
                 if (is_interface_allowed(infoIP.name))
                 {
-                    first_time_open_output_channel_ = false;
                     eProsimaUDPSocket unicastSocket =
                             OpenAndBindUnicastOutputSocket(generate_endpoint(infoIP.name, port), port);
                     SetSocketOutboundInterface(unicastSocket, infoIP.name);
-                    if (!firstInterface)
+                    if (first_time_open_output_channel_)
                     {
                         getSocketPtr(unicastSocket)->set_option(ip::multicast::enable_loopback(true));
-                        firstInterface = true;
+                        first_time_open_output_channel_ = false;
                     }
                     sender_resource_list.emplace_back(
                         static_cast<SenderResource*>(new UDPSenderResource(*this, unicastSocket, false, true)));
@@ -694,6 +671,33 @@ bool UDPTransportInterface::fillUnicastLocator(
         locator.port = well_known_port;
     }
     return true;
+}
+
+void UDPTransportInterface::remove_known_network_interfaces(
+        const SendResourceList& sender_resource_list,
+        std::vector<IPFinder::info_IP>& locNames,
+        bool return_loopback)
+{
+    get_ips(locNames, return_loopback);
+    for (auto& sender_resource : sender_resource_list)
+    {
+        UDPSenderResource* udp_sender_resource = UDPSenderResource::cast(*this, sender_resource.get());
+        if (nullptr != udp_sender_resource)
+        {
+            for (auto it = locNames.begin(); it!= locNames.end();)
+            {
+                if (udp_sender_resource->check_ip_address(it->locator))
+                {
+                    it = locNames.erase(it);
+                }
+                else
+                {
+                    ++it;
+                }
+            }
+        }
+    }
+
 }
 
 } // namespace rtps
