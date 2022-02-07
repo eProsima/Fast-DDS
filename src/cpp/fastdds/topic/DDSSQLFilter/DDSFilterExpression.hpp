@@ -73,7 +73,7 @@ struct DDSFilterExpression final : public IContentFilter
                 it != fields.end() && DDSFilterConditionState::UNDECIDED == root->get_state();
                 ++it)
         {
-            if (!it->second->set_value(payload))
+            if (!it->second->set_value(data))
             {
                 return false;
             }

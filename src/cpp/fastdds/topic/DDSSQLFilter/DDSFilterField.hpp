@@ -24,6 +24,7 @@
 #include <vector>
 
 #include <fastdds/rtps/common/SerializedPayload.h>
+#include <fastrtps/types/DynamicData.h>
 #include <fastrtps/types/TypeObject.h>
 
 #include "DDSFilterValue.hpp"
@@ -92,19 +93,19 @@ struct DDSFilterField final : public DDSFilterValue
      * Performs the deserialization of the field represented by this DDSFilterField.
      * Will notify the predicates where this DDSFilterField is being used.
      *
-     * @param[in]  payload  The payload from where to deserialize this field.
+     * @param[in]  data  The deserialization of the payload being filtered.
      *
      * @return Whether the deserialization process succeeded
      *
      * @post Method @c has_value returns true.
      */
     bool set_value(
-            const eprosima::fastrtps::rtps::SerializedPayload_t& payload)
+            const eprosima::fastrtps::types::DynamicData& data)
     {
         // TODO: Set value from payload
-        static_cast<void>(payload);
+        static_cast<void>(data);
 
-        has_value_ = nullptr != type_object_;
+        has_value_ = true;
         value_has_changed();
 
         // Inform parent predicates
