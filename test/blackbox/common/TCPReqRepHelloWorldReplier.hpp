@@ -68,6 +68,9 @@ public:
             if (info.status == eprosima::fastrtps::rtps::MATCHED_MATCHING)
             {
                 replier_.matched();
+            } else if (info.status == eprosima::fastrtps::rtps::REMOVED_MATCHING)
+            {
+                replier_.unmatched();
             }
         }
 
@@ -132,7 +135,10 @@ public:
             uint16_t number);
     void wait_discovery(
             std::chrono::seconds timeout = std::chrono::seconds::zero());
+    void wait_unmatched(
+            std::chrono::seconds timeout = std::chrono::seconds::zero());
     void matched();
+    void unmatched();
     bool is_matched();
 
     virtual void configSubscriber(

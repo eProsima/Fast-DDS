@@ -70,6 +70,10 @@ public:
             {
                 requester_.matched();
             }
+            else if (info.status == eprosima::fastrtps::rtps::REMOVED_MATCHING)
+            {
+                requester_.unmatched();
+            }
         }
 
     private:
@@ -136,6 +140,7 @@ public:
     void wait_discovery(
             std::chrono::seconds timeout = std::chrono::seconds::zero());
     void matched();
+    void unmatched();
     void send(
             const uint16_t number);
     bool is_matched();
