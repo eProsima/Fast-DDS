@@ -290,13 +290,14 @@ bool UDPTransportInterface::OpenOutputChannel(
                 // Also in case that no network interfaces were found
                 try
                 {
-                    eProsimaUDPSocket unicastSocket = OpenAndBindUnicastOutputSocket(GenerateAnyAddressEndpoint(port), port);
+                    eProsimaUDPSocket unicastSocket = OpenAndBindUnicastOutputSocket(GenerateAnyAddressEndpoint(
+                                        port), port);
                     getSocketPtr(unicastSocket)->set_option(ip::multicast::enable_loopback(true));
                     SetSocketOutboundInterface(unicastSocket, localhost_name());
                     sender_resource_list.emplace_back(
                         static_cast<SenderResource*>(new UDPSenderResource(*this, unicastSocket, false, true)));
                 }
-                catch(asio::system_error const& e)
+                catch (asio::system_error const& e)
                 {
                     (void)e;
                     logWarning(RTPS_MSG_OUT, "UDPTransport Error binding interface "
@@ -684,7 +685,7 @@ void UDPTransportInterface::remove_known_network_interfaces(
         UDPSenderResource* udp_sender_resource = UDPSenderResource::cast(*this, sender_resource.get());
         if (nullptr != udp_sender_resource)
         {
-            for (auto it = locNames.begin(); it!= locNames.end();)
+            for (auto it = locNames.begin(); it != locNames.end();)
             {
                 if (udp_sender_resource->check_ip_address(it->locator))
                 {

@@ -178,7 +178,7 @@ protected:
 
     //! First time open output channel flag: open unicast and localhost socket when not whitelisted
     bool first_time_open_output_channel_;
-    //! Whitelist feature is being used 
+    //! Whitelist feature is being used
     bool whitelisted_;
 
     UDPTransportInterface(

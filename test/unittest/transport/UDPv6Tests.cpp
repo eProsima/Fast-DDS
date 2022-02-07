@@ -184,7 +184,7 @@ TEST_F(UDPv6Tests, send_and_receive_between_ports)
                     Locators locators_begin(locator_list.begin());
                     Locators locators_end(locator_list.end());
                     sended |= send_resource->send(message, 5, &locators_begin, &locators_end,
-                        (std::chrono::steady_clock::now() + std::chrono::microseconds(100)));
+                                    (std::chrono::steady_clock::now() + std::chrono::microseconds(100)));
                     if (sended)
                     {
                         break;
@@ -243,7 +243,7 @@ TEST_F(UDPv6Tests, send_to_loopback)
                     Locators locators_begin(locator_list.begin());
                     Locators locators_end(locator_list.end());
                     sended |= send_resource->send(message, 5, &locators_begin, &locators_end,
-                        (std::chrono::steady_clock::now() + std::chrono::microseconds(100)));
+                                    (std::chrono::steady_clock::now() + std::chrono::microseconds(100)));
                     if (sended)
                     {
                         break;

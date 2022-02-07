@@ -570,7 +570,7 @@ void UDPv4Transport::update_network_interfaces()
                     try
                     {
                         channelResource->socket()->set_option(ip::multicast::join_group(
-                                ip::address_v4::from_string(DEFAULT_METATRAFFIC_MULTICAST_ADDRESS), ip));
+                                    ip::address_v4::from_string(DEFAULT_METATRAFFIC_MULTICAST_ADDRESS), ip));
                     }
                     catch (std::system_error& ex)
                     {
@@ -585,7 +585,7 @@ void UDPv4Transport::update_network_interfaces()
                 try
                 {
                     channelResource->socket()->set_option(ip::multicast::join_group(
-                            ip::address_v4::from_string(DEFAULT_METATRAFFIC_MULTICAST_ADDRESS), ip));
+                                ip::address_v4::from_string(DEFAULT_METATRAFFIC_MULTICAST_ADDRESS), ip));
                 }
                 catch (std::system_error& ex)
                 {
