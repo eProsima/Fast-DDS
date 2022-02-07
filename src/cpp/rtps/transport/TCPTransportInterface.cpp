@@ -911,6 +911,10 @@ bool receive_header(
         {
             return false;
         }
+        else if (!channel->connection_status())
+        {
+            return false;
+        }
     }
 
     bytes_needed = TCPHeader::size() - 4;
@@ -923,6 +927,10 @@ bool receive_header(
             bytes_needed -= bytes_read;
         }
         else if (ec)
+        {
+            return false;
+        }
+        else if (!channel->connection_status())
         {
             return false;
         }
@@ -961,7 +969,7 @@ bool TCPTransportInterface::Receive(
         do
         {
             header_found = receive_header(channel, tcp_header, ec);
-        } while (!header_found && !ec);
+        } while (!header_found && !ec && channel->connection_status());
 
         if (ec)
         {
@@ -970,6 +978,11 @@ bool TCPTransportInterface::Receive(
                 logWarning(DEBUG, "Error reading TCP header: " << ec.message());
             }
             close_tcp_socket(channel);
+            success = false;
+        }
+        else if (!channel->connection_status())
+        {
+            logWarning(DEBUG, "Error reading TCP header: channel disconnected while reading.");
             success = false;
         }
         else
