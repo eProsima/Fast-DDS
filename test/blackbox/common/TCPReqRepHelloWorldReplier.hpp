@@ -68,7 +68,8 @@ public:
             if (info.status == eprosima::fastrtps::rtps::MATCHED_MATCHING)
             {
                 replier_.matched();
-            } else if (info.status == eprosima::fastrtps::rtps::REMOVED_MATCHING)
+            }
+            else if (info.status == eprosima::fastrtps::rtps::REMOVED_MATCHING)
             {
                 replier_.unmatched();
             }

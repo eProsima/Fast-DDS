@@ -67,7 +67,8 @@ bool SubscriberModule::init(
             << StatusMask::liveliness_changed();
 
     participant_ =
-            DomainParticipantFactory::get_instance()->create_participant(seed % 230, PARTICIPANT_QOS_DEFAULT, this, mask);
+            DomainParticipantFactory::get_instance()->create_participant(seed % 230, PARTICIPANT_QOS_DEFAULT, this,
+                    mask);
 
     if (participant_ == nullptr)
     {

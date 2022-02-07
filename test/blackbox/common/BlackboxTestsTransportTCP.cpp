@@ -545,8 +545,8 @@ TEST_P(TransportTCP, TCPv6_copy)
 // Issue -> https://github.com/eProsima/Fast-DDS/issues/2409
 TEST(TransportTCP, Client_reconnection)
 {
-    TCPReqRepHelloWorldReplier *replier;
-    TCPReqRepHelloWorldRequester *requester;
+    TCPReqRepHelloWorldReplier* replier;
+    TCPReqRepHelloWorldRequester* requester;
     const uint16_t nmsgs = 5;
 
     replier = new TCPReqRepHelloWorldReplier;
