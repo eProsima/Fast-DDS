@@ -1,5 +1,5 @@
 {
-    "description" : "Test that TCP client does not get stuck when being deleted in the following case: client launched before server and deleted also before server",
+    "description" : "[13540] Test that TCP client does not get stuck when being deleted in the following case: client launched before server and deleted also before server",
     "participants" : [
         {
             "kind" : "subscriber",

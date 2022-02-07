@@ -542,6 +542,7 @@ TEST_P(TransportTCP, TCPv6_copy)
 }
 
 // Test connection is successfully restablished after dropping and relaunching a TCP client (requester)
+// Issue -> https://github.com/eProsima/Fast-DDS/issues/2409
 TEST(TransportTCP, Client_reconnection)
 {
     TCPReqRepHelloWorldReplier *replier;
