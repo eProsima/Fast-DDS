@@ -10,7 +10,7 @@ Each quarter, a new Fast DDS minor version with new features is released.
 By default, *eProsima Fast DDS* minor releases have a lifecycle of **6 months**.
 However, the life of certain branches can be extended depending on costumer and user needs.
 Within the support period of any minor version, there may be several patch releases that either add new functionalities in an ABI compatible way or fix possible issues.
-Before the minor release end of life (EOL) date, a final patch release including the latest fixes will be make available if there are any changes not included in any previous patch release of the same minor version.
+Before the minor release end of life (EOL) date, a final patch release including the latest fixes will be made available if there are any changes not included in any previous patch release of the same minor version.
 
 The table below outlines the *eProsima Fast DDS* minor releases and their support cycles:
 
