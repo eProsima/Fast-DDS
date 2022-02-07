@@ -34,7 +34,7 @@ Community members may provide assistance with these platforms.
 |Architecture|Ubuntu Focal (20.04)|MacOS Mojave (10.14)|Windows 10 (VS2019)|Debian Buster (10)|
 |------------|--------------------|--------------------|-------------------|------------------|
 |amd64       |Tier 1 [^a][^s]     |Tier 1 [^s]         |Tier 1 [^a][^s]    |Tier 3 [^s]       |
-|amd32       |                    |                    |Tier 1 [^a][^s]    |                  |
+|amd32       |                    |                    |Tier 2 [^a][^s]    |                  |
 |arm64       |Tier 1 [^a][^s]     |                    |                   |Tier 3 [^s]       |
 |arm32       |Tier 3 [^s]         |                    |                   |Tier 3 [^s]       |
 
