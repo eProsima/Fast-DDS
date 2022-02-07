@@ -25,6 +25,7 @@
 #include <vector>
 
 #include <fastdds/dds/topic/IContentFilter.hpp>
+#include <fastrtps/types/DynamicTypePtr.h>
 
 #include "DDSFilterCondition.hpp"
 
@@ -68,6 +69,7 @@ struct DDSFilterExpression final : public IContentFilter
      */
     void clear()
     {
+        dyn_type.reset();
         parameters.clear();
         fields.clear();
         root.reset();
@@ -79,6 +81,8 @@ struct DDSFilterExpression final : public IContentFilter
     std::map<std::string, std::shared_ptr<DDSFilterField>> fields;
     /// The parameters referenced by this expression.
     std::vector<std::shared_ptr<DDSFilterParameter>> parameters;
+    /// The Dynamic type used to deserialize the payloads
+    eprosima::fastrtps::types::DynamicType_ptr dyn_type;
 };
 
 }  // namespace DDSSQLFilter

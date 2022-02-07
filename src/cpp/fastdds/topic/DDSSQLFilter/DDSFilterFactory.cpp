@@ -516,7 +516,10 @@ IContentFilterFactory::ReturnCode_t DDSFilterFactory::create_content_filter(
             auto node = parser::parse_filter_expression(filter_expression, type_object);
             if (node)
             {
+                auto type_id = TypeObjectFactory::get_instance()->get_type_identifier(type_name, true);
+                auto dyn_type = TypeObjectFactory::get_instance()->build_dynamic_type(type_name, type_id, type_object);
                 DDSFilterExpression* expr = get_expression();
+                expr->dyn_type = dyn_type;
                 size_t n_params = filter_parameters.length();
                 expr->parameters.reserve(n_params);
                 while (expr->parameters.size() < n_params)
