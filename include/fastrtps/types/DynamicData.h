@@ -22,6 +22,18 @@
 //#define DYNAMIC_TYPES_CHECKING
 
 namespace eprosima {
+namespace fastdds {
+namespace dds {
+namespace DDSSQLFilter {
+
+struct DDSFilterExpression;
+
+}  // namespace DDSSQLFilter
+}  // namespace dds
+}  // namespace fastdds
+}  // namespace eprosima
+
+namespace eprosima {
 namespace fastrtps {
 namespace types {
 
@@ -163,6 +175,7 @@ protected:
     friend class DynamicDataFactory;
     friend class DynamicPubSubType;
     friend class DynamicDataHelper;
+    friend struct eprosima::fastdds::dds::DDSSQLFilter::DDSFilterExpression;
 
 public:
 

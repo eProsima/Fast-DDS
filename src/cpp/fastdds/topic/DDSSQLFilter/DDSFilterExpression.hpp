@@ -25,7 +25,9 @@
 #include <vector>
 
 #include <fastdds/dds/topic/IContentFilter.hpp>
+#include <fastrtps/types/DynamicData.h>
 #include <fastrtps/types/DynamicTypePtr.h>
+#include <fastcdr/Cdr.h>
 
 #include "DDSFilterCondition.hpp"
 
@@ -49,6 +51,22 @@ struct DDSFilterExpression final : public IContentFilter
     {
         static_cast<void>(sample_info);
         static_cast<void>(reader_guid);
+
+        using namespace eprosima::fastrtps::types;
+        using namespace eprosima::fastcdr;
+
+        DynamicData data(dyn_type);
+        try
+        {
+            FastBuffer fastbuffer((char* const)(payload.data), payload.length);
+            Cdr deser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN, eprosima::fastcdr::Cdr::DDS_CDR);
+            deser.read_encapsulation();
+            data.deserialize(deser);
+        }
+        catch (eprosima::fastcdr::exception::NotEnoughMemoryException& /*exception*/)
+        {
+            return false;
+        }
 
         root->reset();
         for (auto it = fields.begin();
