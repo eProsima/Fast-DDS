@@ -20,6 +20,7 @@
 
 #include <cstring>
 #include <string>
+#include <vector>
 
 #include <fastdds/dds/topic/IContentFilter.hpp>
 #include <fastdds/dds/topic/IContentFilterFactory.hpp>
@@ -453,7 +454,50 @@ IContentFilterFactory::ReturnCode_t DDSFilterFactory::create_content_filter(
 
     ReturnCode_t ret = ReturnCode_t::RETCODE_UNSUPPORTED;
 
-    if ((filter_expression == nullptr) || (std::strlen(filter_expression) == 0))
+    if (nullptr == filter_expression)
+    {
+        if (nullptr == filter_instance)
+        {
+            ret = ReturnCode_t::RETCODE_BAD_PARAMETER;
+        }
+        else
+        {
+            ret = ReturnCode_t::RETCODE_OK;
+            if (&empty_expression_ != filter_instance)
+            {
+                auto expr = static_cast<DDSFilterExpression*>(filter_instance);
+                auto n_params = static_cast<LoanableCollection::size_type>(expr->parameters.size());
+                if (filter_parameters.length() < n_params)
+                {
+                    ret = ReturnCode_t::RETCODE_BAD_PARAMETER;
+                }
+                else
+                {
+                    std::vector<DDSFilterValue> old_values(n_params);
+                    LoanableCollection::size_type n = n_params;
+                    while ((n > 0) && (ReturnCode_t::RETCODE_OK == ret))
+                    {
+                        --n;
+                        if (expr->parameters[n])
+                        {
+                            old_values[n].copy_from(*(expr->parameters[n]));
+                            ret = expr->parameters[n]->set_value(filter_parameters[n]);
+                        }
+                    }
+
+                    if (ReturnCode_t::RETCODE_OK != ret)
+                    {
+                        while (n < n_params)
+                        {
+                            expr->parameters[n]->copy_from(old_values[n]);
+                            ++n;
+                        }
+                    }
+                }
+            }
+        }
+    }
+    else if (std::strlen(filter_expression) == 0)
     {
         delete_content_filter(filter_class_name, filter_instance);
         filter_instance = &empty_expression_;
