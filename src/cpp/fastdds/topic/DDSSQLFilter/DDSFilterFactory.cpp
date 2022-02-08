@@ -216,7 +216,7 @@ IContentFilterFactory::ReturnCode_t DDSFilterFactory::convert_tree<DDSFilterValu
         if (it == state.filter->fields.end())
         {
             value = state.filter->fields[field_name] =
-                    std::make_shared<DDSFilterField>(state.type_object, node.field_access_path, node.field_kind);
+                    std::make_shared<DDSFilterField>(node.type_id, node.field_access_path, node.field_kind);
         }
         else
         {

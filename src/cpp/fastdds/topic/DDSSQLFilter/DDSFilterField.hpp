@@ -60,12 +60,12 @@ struct DDSFilterField final : public DDSFilterValue
      * @param[in]  data_kind     Kind of data the field represents.
      */
     DDSFilterField(
-            const eprosima::fastrtps::types::TypeObject* type_object,
+            const eprosima::fastrtps::types::TypeIdentifier* type_id,
             const std::vector<FieldAccessor>& access_path,
             ValueKind data_kind)
         : DDSFilterValue(data_kind)
         , access_path_(access_path)
-        , type_object_(type_object)
+        , type_id_(type_id)
     {
     }
 
@@ -100,10 +100,11 @@ struct DDSFilterField final : public DDSFilterValue
      * @post Method @c has_value returns true.
      */
     bool set_value(
-            const eprosima::fastrtps::types::DynamicData& data)
+            eprosima::fastrtps::types::DynamicData& data_value)
     {
-        // TODO: Set value from payload
-        static_cast<void>(data);
+        using namespace eprosima::fastrtps::types;
+
+        DynamicData* data = &data_value;
 
         size_t num_steps = access_path_.size() - 1;
         size_t n;
@@ -113,10 +114,20 @@ struct DDSFilterField final : public DDSFilterValue
         }
 
         uint32_t index = static_cast<uint32_t>(access_path_[n].member_index);
-        auto member_id = data.get_member_id_at_index(index);
-        auto& member_type_id = type_object_->complete().struct_type().member_seq()[index].common().member_type_id();
+        auto member_id = data->get_member_id_at_index(index);
+        bool ret = false;
+        if (access_path_[n].array_index < std::numeric_limits<MemberId>::max())
+        {
+            DynamicData* array_data = data->loan_value(member_id);
+            member_id = static_cast<MemberId>(access_path_[n].array_index);
+            ret = set_value(array_data, member_id);
+            data->return_loaned_value(array_data);
+        }
+        else
+        {
+            ret = set_value(data, member_id);
+        }
         
-        bool ret = set_value(&data, member_id, member_type_id);
         if (ret)
         {
             has_value_ = true;
@@ -145,15 +156,14 @@ private:
 
     bool set_value(
         const eprosima::fastrtps::types::DynamicData* data,
-        eprosima::fastrtps::types::MemberId member_id,
-        const eprosima::fastrtps::types::TypeIdentifier& type_id)
+        eprosima::fastrtps::types::MemberId member_id)
     {
         using namespace eprosima::fastrtps::types;
 
         bool ret = true;
         try
         {
-            switch (type_id._d())
+            switch (type_id_->_d())
             {
                 case TK_BOOLEAN:
                     boolean_value = data->get_bool_value(member_id);
@@ -224,7 +234,7 @@ private:
 
     bool has_value_ = false;
     std::vector<FieldAccessor> access_path_;
-    const eprosima::fastrtps::types::TypeObject* type_object_ = nullptr;
+    const eprosima::fastrtps::types::TypeIdentifier* type_id_ = nullptr;
     std::unordered_set<DDSFilterPredicate*> parents_;
 };
 
