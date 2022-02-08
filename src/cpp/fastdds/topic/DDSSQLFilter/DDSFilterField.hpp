@@ -102,33 +102,60 @@ struct DDSFilterField final : public DDSFilterValue
     bool set_value(
             eprosima::fastrtps::types::DynamicData& data_value)
     {
+        return set_value(data_value, 0);
+    }
+
+    bool set_value(
+            eprosima::fastrtps::types::DynamicData& data,
+            size_t n)
+    {
         using namespace eprosima::fastrtps::types;
 
-        DynamicData* data = &data_value;
-
-        size_t num_steps = access_path_.size() - 1;
-        size_t n;
-        for (n = 0; n < num_steps; ++n)
-        {
-            // TODO: Advance
-        }
-
         uint32_t index = static_cast<uint32_t>(access_path_[n].member_index);
-        auto member_id = data->get_member_id_at_index(index);
+        auto member_id = data.get_member_id_at_index(index);
+        bool last_step = access_path_.size() - 1 == n;
         bool ret = false;
+
         if (access_path_[n].array_index < std::numeric_limits<MemberId>::max())
         {
-            DynamicData* array_data = data->loan_value(member_id);
-            member_id = static_cast<MemberId>(access_path_[n].array_index);
-            ret = set_value(array_data, member_id);
-            data->return_loaned_value(array_data);
+            DynamicData* array_data = data.loan_value(member_id);
+            if (nullptr != array_data)
+            {
+                member_id = static_cast<MemberId>(access_path_[n].array_index);
+                if (last_step)
+                {
+                    ret = set_value(array_data, member_id);
+                }
+                else
+                {
+                    DynamicData* struct_data = array_data->loan_value(member_id);
+                    if (nullptr != struct_data)
+                    {
+                        ret = set_value(*struct_data, n + 1);
+                        data.return_loaned_value(struct_data);
+                    }
+                }
+                data.return_loaned_value(array_data);
+            }
         }
         else
         {
-            ret = set_value(data, member_id);
+            if (last_step)
+            {
+                ret = set_value(&data, member_id);
+            }
+            else
+            {
+                DynamicData* struct_data = data.loan_value(member_id);
+                if (nullptr != struct_data)
+                {
+                    ret = set_value(*struct_data, n + 1);
+                    data.return_loaned_value(struct_data);
+                }
+            }
         }
         
-        if (ret)
+        if (ret && last_step)
         {
             has_value_ = true;
             value_has_changed();
