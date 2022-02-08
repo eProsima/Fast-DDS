@@ -55,13 +55,13 @@ struct DDSFilterExpression final : public IContentFilter
         using namespace eprosima::fastrtps::types;
         using namespace eprosima::fastcdr;
 
-        DynamicData data(dyn_type);
+        dyn_data_->clear_all_values();
         try
         {
             FastBuffer fastbuffer((char* const)(payload.data), payload.length);
             Cdr deser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN, eprosima::fastcdr::Cdr::DDS_CDR);
             deser.read_encapsulation();
-            data.deserialize(deser);
+            dyn_data_->deserialize(deser);
         }
         catch (eprosima::fastcdr::exception::NotEnoughMemoryException& /*exception*/)
         {
@@ -73,7 +73,7 @@ struct DDSFilterExpression final : public IContentFilter
                 it != fields.end() && DDSFilterConditionState::UNDECIDED == root->get_state();
                 ++it)
         {
-            if (!it->second->set_value(data))
+            if (!it->second->set_value(*dyn_data_))
             {
                 return false;
             }
@@ -87,10 +87,18 @@ struct DDSFilterExpression final : public IContentFilter
      */
     void clear()
     {
-        dyn_type.reset();
+        dyn_data_.reset();
+        dyn_type_.reset();
         parameters.clear();
         fields.clear();
         root.reset();
+    }
+
+    void set_type(
+            const eprosima::fastrtps::types::DynamicType_ptr& type)
+    {
+        dyn_type_ = type;
+        dyn_data_.reset(new eprosima::fastrtps::types::DynamicData(type));
     }
 
     /// The root condition of the expression tree.
@@ -99,8 +107,21 @@ struct DDSFilterExpression final : public IContentFilter
     std::map<std::string, std::shared_ptr<DDSFilterField>> fields;
     /// The parameters referenced by this expression.
     std::vector<std::shared_ptr<DDSFilterParameter>> parameters;
+
+private:
+
+    struct DynDataDeleter
+    {
+        void operator ()(eprosima::fastrtps::types::DynamicData* ptr)
+        {
+            delete ptr;
+        }
+    };
+
     /// The Dynamic type used to deserialize the payloads
-    eprosima::fastrtps::types::DynamicType_ptr dyn_type;
+    eprosima::fastrtps::types::DynamicType_ptr dyn_type_;
+    /// The Dynamic data used to deserialize the payloads
+    std::unique_ptr<eprosima::fastrtps::types::DynamicData, DynDataDeleter> dyn_data_;
 };
 
 }  // namespace DDSSQLFilter
