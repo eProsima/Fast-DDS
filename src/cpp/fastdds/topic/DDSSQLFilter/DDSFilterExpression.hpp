@@ -26,6 +26,7 @@
 
 #include <fastdds/dds/topic/IContentFilter.hpp>
 #include <fastrtps/types/DynamicData.h>
+#include <fastrtps/types/DynamicDataFactory.h>
 #include <fastrtps/types/DynamicTypePtr.h>
 #include <fastcdr/Cdr.h>
 
@@ -98,7 +99,7 @@ struct DDSFilterExpression final : public IContentFilter
             const eprosima::fastrtps::types::DynamicType_ptr& type)
     {
         dyn_type_ = type;
-        dyn_data_.reset(new eprosima::fastrtps::types::DynamicData(type));
+        dyn_data_.reset(eprosima::fastrtps::types::DynamicDataFactory::get_instance()->create_data(type));
     }
 
     /// The root condition of the expression tree.
@@ -114,7 +115,7 @@ private:
     {
         void operator ()(eprosima::fastrtps::types::DynamicData* ptr)
         {
-            delete ptr;
+            eprosima::fastrtps::types::DynamicDataFactory::get_instance()->delete_data(ptr);
         }
     };
 
