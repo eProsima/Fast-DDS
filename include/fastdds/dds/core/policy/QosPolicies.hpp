@@ -2052,6 +2052,14 @@ public:
         std::swap(*this, reset);
     }
 
+    bool operator ==(
+            const PublishModeQosPolicy& b) const
+    {
+        return (this->kind == b.kind) &&
+               0 == strcmp(flow_controller_name, b.flow_controller_name) &&
+               QosPolicy::operator ==(b);
+    }
+
 };
 
 /**
