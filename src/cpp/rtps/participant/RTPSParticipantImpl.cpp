@@ -187,9 +187,9 @@ RTPSParticipantImpl::RTPSParticipantImpl(
                 TCPTransportDescriptor* pT = dynamic_cast<TCPTransportDescriptor*>(transportDescriptor.get());
                 if (pT && pT->listening_ports.empty())
                 {
-                    logError(RTPS_PARTICIPANT,
-                            "Participant " << m_att.getName() << " with GUID " << m_guid
-                                           << " tries to use discovery server over TCP without providing a proper listening port");
+                    logInfo(RTPS_PARTICIPANT,
+                            "Participant " << m_att.getName() << " with GUID " << m_guid <<
+                            " tries to use discovery server over TCP without providing a proper listening port.");
                 }
             }
         default:
