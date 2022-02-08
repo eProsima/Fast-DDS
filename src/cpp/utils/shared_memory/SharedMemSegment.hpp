@@ -356,6 +356,175 @@ private:
     std::string name_;
 };
 
+<<<<<<< HEAD
+=======
+template<typename T, typename U>
+class SharedSegment : public SharedSegmentBase
+{
+public:
+
+    typedef T managed_shared_memory_type;
+    typedef U managed_shared_object_type;
+
+    SharedSegment(
+            boost::interprocess::create_only_t,
+            const std::string& name,
+            size_t size)
+        : SharedSegmentBase(name)
+    {
+        segment_ = std::unique_ptr<managed_shared_memory_type>(
+            new managed_shared_memory_type(boost::interprocess::create_only, name.c_str(),
+            static_cast<Offset>(size + EXTRA_SEGMENT_SIZE)));
+    }
+
+    SharedSegment(
+            boost::interprocess::open_only_t,
+            const std::string& name)
+        : SharedSegmentBase(name)
+    {
+        segment_ = std::unique_ptr<managed_shared_memory_type>(
+            new managed_shared_memory_type(boost::interprocess::open_only, name.c_str()));
+    }
+
+    SharedSegment(
+            boost::interprocess::open_read_only_t,
+            const std::string& name)
+        : SharedSegmentBase(name)
+    {
+        segment_ = std::unique_ptr<managed_shared_memory_type>(
+            new managed_shared_memory_type(boost::interprocess::open_read_only, name.c_str()));
+    }
+
+    SharedSegment(
+            boost::interprocess::open_or_create_t,
+            const std::string& name,
+            size_t size)
+        : SharedSegmentBase(name)
+    {
+        segment_ = std::unique_ptr<managed_shared_memory_type>(
+            new managed_shared_memory_type(boost::interprocess::create_only, name.c_str(), static_cast<Offset>(size)));
+    }
+
+    ~SharedSegment()
+    {
+        // no need of exception handling cause never throws
+        segment_.reset();
+    }
+
+    static void remove(
+            const std::string& name)
+    {
+        managed_shared_object_type::remove(name.c_str());
+    }
+
+    void remove() override
+    {
+        managed_shared_object_type::remove(name().c_str());
+    }
+
+    void* get_address_from_offset(
+            SharedSegment::Offset offset) const override
+    {
+        return segment_->get_address_from_handle(offset);
+    }
+
+    SharedSegment::Offset get_offset_from_address(
+            void* address) const override
+    {
+        return segment_->get_handle_from_address(address);
+    }
+
+    managed_shared_memory_type& get()
+    {
+        return *segment_;
+    }
+
+    /**
+     * Estimates the extra segment space required for an allocation
+     */
+    static uint32_t compute_per_allocation_extra_size(
+            size_t allocation_alignment,
+            const std::string& domain_name)
+    {
+        Id uuid;
+
+        try
+        {
+            static uint32_t extra_size = 0;
+
+            if (extra_size == 0)
+            {
+                uuid.generate();
+
+                auto name = domain_name + "_" + uuid.to_string();
+
+                SharedMemEnvironment::get().init();
+
+                {
+                    managed_shared_memory_type
+                            test_segment(boost::interprocess::create_only, name.c_str(),
+                            (std::max)((uint32_t)1024, static_cast<uint32_t>(allocation_alignment * 4)));
+
+                    auto m1 = test_segment.get_free_memory();
+                    test_segment.allocate_aligned(1, static_cast<uint32_t>(allocation_alignment));
+                    auto m2 = test_segment.get_free_memory();
+                    extra_size = static_cast<uint32_t>(m1 - m2);
+                }
+
+                managed_shared_object_type::remove(name.c_str());
+            }
+
+            return extra_size;
+
+        }
+        catch (const std::exception& e)
+        {
+            logError(RTPS_TRANSPORT_SHM, "Failed to create segment " << uuid.to_string()
+                                                                     << ": " << e.what());
+
+            throw;
+        }
+    }
+
+    /**
+     * Check the allocator internal structures
+     * @return true if structures are ok, false otherwise
+     */
+    bool check_sanity()
+    {
+        return segment_->check_sanity();
+    }
+
+    /**
+     * @return The segment's size in bytes, including internal structures overhead.
+     */
+    Offset mem_size() const
+    {
+        return segment_->get_size();
+    }
+
+private:
+
+    std::unique_ptr<managed_shared_memory_type> segment_;
+};
+
+using SharedMemSegment = SharedSegment<
+    boost::interprocess::basic_managed_shared_memory<
+        char,
+        boost::interprocess::rbtree_best_fit<boost::interprocess::mutex_family,
+        boost::interprocess::offset_ptr<void, SharedSegmentBase::Offset, std::uint64_t>>,
+        boost::interprocess::iset_index>,
+    boost::interprocess::shared_memory_object>;
+
+using SharedFileSegment = SharedSegment<
+    boost::interprocess::basic_managed_mapped_file<
+        char,
+        boost::interprocess::rbtree_best_fit<boost::interprocess::mutex_family,
+        boost::interprocess::offset_ptr<void, SharedSegmentBase::Offset, std::uint64_t>>,
+        boost::interprocess::iset_index>,
+    boost::interprocess::file_mapping>;
+
+>>>>>>> 6505a51ff (Enable memory protection on DataSharing readers (#2405))
 } // namespace rtps
 } // namespace fastdds
 } // namespace eprosima
