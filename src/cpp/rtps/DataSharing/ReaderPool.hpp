@@ -94,7 +94,7 @@ public:
         try
         {
             local_segment = std::unique_ptr<T>(
-                new T(boost::interprocess::open_only,
+                new T(boost::interprocess::open_read_only,
                 segment_name_.c_str()));
         }
         catch (const std::exception& e)

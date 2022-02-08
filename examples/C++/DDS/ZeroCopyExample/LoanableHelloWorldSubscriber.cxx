@@ -126,7 +126,7 @@ void LoanableHelloWorldSubscriber::SubListener::on_subscription_matched(
 void LoanableHelloWorldSubscriber::SubListener::on_data_available(
         DataReader* reader)
 {
-    FASTDDS_SEQUENCE(DataSeq, LoanableHelloWorld);
+    FASTDDS_CONST_SEQUENCE(DataSeq, LoanableHelloWorld);
 
     DataSeq data;
     SampleInfoSeq infos;
