@@ -22,6 +22,7 @@
 #include <cassert>
 #include <cstdint>
 #include <vector>
+#include <type_traits>
 
 #include <fastdds/dds/core/LoanableTypedCollection.hpp>
 #include <fastdds/dds/log/Log.hpp>
@@ -57,8 +58,8 @@ namespace dds {
  *         the sequence is loaning the buffer. The sequence should not be destroyed until the loan is returned.
  *     @li A sequence with a zero maximum always has has_ownership == true
  */
-template<typename T>
-class LoanableSequence : public LoanableTypedCollection<T>
+template<typename T, typename _NonConstEnabler = std::true_type>
+class LoanableSequence : public LoanableTypedCollection<T, _NonConstEnabler>
 {
 public:
 
@@ -226,5 +227,7 @@ private:
 
 // Macro to easily declare a LoanableSequence for a data type
 #define FASTDDS_SEQUENCE(FooSeq, Foo) using FooSeq = eprosima::fastdds::dds::LoanableSequence<Foo>
+#define FASTDDS_CONST_SEQUENCE(FooSeq, Foo) using FooSeq = eprosima::fastdds::dds::LoanableSequence<Foo, \
+                    std::false_type>
 
 #endif // _FASTDDS_DDS_CORE_LOANABLESEQUENCE_HPP_
