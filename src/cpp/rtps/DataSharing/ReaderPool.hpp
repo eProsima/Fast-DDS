@@ -91,13 +91,8 @@ public:
         // Open the segment
         try
         {
-<<<<<<< HEAD
             segment_ = std::unique_ptr<fastdds::rtps::SharedMemSegment>(
-                new fastdds::rtps::SharedMemSegment(boost::interprocess::open_only,
-=======
-            local_segment = std::unique_ptr<T>(
-                new T(boost::interprocess::open_read_only,
->>>>>>> 6505a51ff (Enable memory protection on DataSharing readers (#2405))
+                new fastdds::rtps::SharedMemSegment(boost::interprocess::open_read_only,
                 segment_name_.c_str()));
         }
         catch (const std::exception& e)
