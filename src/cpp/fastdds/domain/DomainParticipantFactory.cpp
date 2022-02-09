@@ -26,6 +26,7 @@
 #include <fastrtps/types/DynamicTypeBuilderFactory.h>
 #include <fastrtps/types/TypeObjectFactory.h>
 #include <fastrtps/xmlparser/XMLProfileManager.h>
+#include <fastrtps/xmlparser/XMLEndpointParser.h>
 
 #include <fastdds/domain/DomainParticipantImpl.hpp>
 #include <rtps/history/TopicPayloadPoolRegistry.hpp>
@@ -410,6 +411,18 @@ ReturnCode_t DomainParticipantFactory::load_XML_profiles_string(
     if (XMLP_ret::XML_ERROR == XMLProfileManager::loadXMLString(data, length))
     {
         logError(DOMAIN, "Problem loading XML string");
+        return ReturnCode_t::RETCODE_ERROR;
+    }
+    return ReturnCode_t::RETCODE_OK;
+}
+
+ReturnCode_t DomainParticipantFactory::check_xml_static_discovery(
+    std::string& xml_file)
+{
+    XMLEndpointParser parser;
+    if (XMLP_ret::XML_ERROR == parser.loadXMLFile(xml_file))
+    {
+        logError(DOMAIN, "Error parsing xml file");
         return ReturnCode_t::RETCODE_ERROR;
     }
     return ReturnCode_t::RETCODE_OK;
