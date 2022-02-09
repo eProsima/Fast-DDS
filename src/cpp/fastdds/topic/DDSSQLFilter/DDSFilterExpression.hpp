@@ -59,7 +59,7 @@ struct DDSFilterExpression final : public IContentFilter
         dyn_data_->clear_all_values();
         try
         {
-            FastBuffer fastbuffer((char* const)(payload.data), payload.length);
+            FastBuffer fastbuffer((char*)payload.data, payload.length);
             Cdr deser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN, eprosima::fastcdr::Cdr::DDS_CDR);
             deser.read_encapsulation();
             dyn_data_->deserialize(deser);
