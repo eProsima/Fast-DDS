@@ -92,7 +92,7 @@ public:
         try
         {
             segment_ = std::unique_ptr<fastdds::rtps::SharedMemSegment>(
-                new fastdds::rtps::SharedMemSegment(boost::interprocess::open_only,
+                new fastdds::rtps::SharedMemSegment(boost::interprocess::open_read_only,
                 segment_name_.c_str()));
         }
         catch (const std::exception& e)

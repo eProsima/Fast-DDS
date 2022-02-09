@@ -104,6 +104,15 @@ public:
     }
 
     SharedMemSegment(
+            boost::interprocess::open_read_only_t,
+            const std::string& name)
+        : name_(name)
+    {
+        segment_ = std::unique_ptr<managed_shared_memory_type>(
+            new managed_shared_memory_type(boost::interprocess::open_read_only, name.c_str()));
+    }
+
+    SharedMemSegment(
             boost::interprocess::open_or_create_t,
             const std::string& name,
             size_t size)
