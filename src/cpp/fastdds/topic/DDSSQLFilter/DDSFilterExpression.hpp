@@ -113,10 +113,12 @@ private:
 
     struct DynDataDeleter
     {
-        void operator ()(eprosima::fastrtps::types::DynamicData* ptr)
+        void operator ()(
+                eprosima::fastrtps::types::DynamicData* ptr)
         {
             eprosima::fastrtps::types::DynamicDataFactory::get_instance()->delete_data(ptr);
         }
+
     };
 
     /// The Dynamic type used to deserialize the payloads

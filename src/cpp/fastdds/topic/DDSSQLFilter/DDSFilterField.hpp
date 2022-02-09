@@ -154,7 +154,7 @@ struct DDSFilterField final : public DDSFilterValue
                 }
             }
         }
-        
+
         if (ret && last_step)
         {
             has_value_ = true;
@@ -182,8 +182,8 @@ protected:
 private:
 
     bool set_value(
-        const eprosima::fastrtps::types::DynamicData* data,
-        eprosima::fastrtps::types::MemberId member_id)
+            const eprosima::fastrtps::types::DynamicData* data,
+            eprosima::fastrtps::types::MemberId member_id)
     {
         using namespace eprosima::fastrtps::types;
 
