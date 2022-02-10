@@ -23,17 +23,17 @@ namespace eprosima {
 namespace fastrtps {
 namespace rtps {
 
-class TCPChannelResourceMock;
+class MockTCPChannelResource;
 
 using TCPChannelResource = eprosima::fastdds::rtps::TCPChannelResource;
 using TCPTransportDescriptor = eprosima::fastdds::rtps::TCPTransportDescriptor;
 using TCPTransportInterface = eprosima::fastdds::rtps::TCPTransportInterface;
 
-class TCPChannelResourceMock : public TCPChannelResource
+class MockTCPChannelResource : public TCPChannelResource
 {
 public:
 
-    TCPChannelResourceMock(
+    MockTCPChannelResource(
             TCPTransportInterface* parent,
             const Locator_t& locator,
             uint32_t maxMsgSize);

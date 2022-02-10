@@ -18,7 +18,7 @@ namespace eprosima {
 namespace fastrtps {
 namespace rtps {
 
-TCPChannelResourceMock::TCPChannelResourceMock(
+MockTCPChannelResource::MockTCPChannelResource(
         TCPTransportInterface* parent,
         const Locator_t& locator,
         uint32_t maxMsgSize)
@@ -26,18 +26,18 @@ TCPChannelResourceMock::TCPChannelResourceMock(
 {
 }
 
-void TCPChannelResourceMock::connect(
+void MockTCPChannelResource::connect(
         const std::shared_ptr<TCPChannelResource>&)
 {
     connection_status_.exchange(eConnectionStatus::eConnecting);
 }
 
-void TCPChannelResourceMock::disconnect()
+void MockTCPChannelResource::disconnect()
 {
     connection_status_.exchange(eConnectionStatus::eDisconnected);
 }
 
-uint32_t TCPChannelResourceMock::read(
+uint32_t MockTCPChannelResource::read(
         octet*,
         std::size_t,
         asio::error_code&)
@@ -45,7 +45,7 @@ uint32_t TCPChannelResourceMock::read(
     return 0;
 }
 
-size_t TCPChannelResourceMock::send(
+size_t MockTCPChannelResource::send(
         const octet*,
         size_t,
         const octet*,
@@ -55,32 +55,32 @@ size_t TCPChannelResourceMock::send(
     return 0;
 }
 
-asio::ip::tcp::endpoint TCPChannelResourceMock::remote_endpoint() const
+asio::ip::tcp::endpoint MockTCPChannelResource::remote_endpoint() const
 {
     asio::ip::tcp::endpoint ep;
     return ep;
 }
 
-asio::ip::tcp::endpoint TCPChannelResourceMock::local_endpoint() const
+asio::ip::tcp::endpoint MockTCPChannelResource::local_endpoint() const
 {
     asio::ip::tcp::endpoint ep;
     return ep;
 }
 
-void TCPChannelResourceMock::set_options(
+void MockTCPChannelResource::set_options(
         const TCPTransportDescriptor*)
 {
 }
 
-void TCPChannelResourceMock::cancel()
+void MockTCPChannelResource::cancel()
 {
 }
 
-void TCPChannelResourceMock::close()
+void MockTCPChannelResource::close()
 {
 }
 
-void TCPChannelResourceMock::shutdown(
+void MockTCPChannelResource::shutdown(
         asio::socket_base::shutdown_type)
 {
 }

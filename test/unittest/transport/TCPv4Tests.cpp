@@ -1486,7 +1486,7 @@ TEST_F(TCPv4Tests, header_read_interrumption)
 
     std::weak_ptr<eprosima::fastdds::rtps::RTCPMessageManager> rtcp_manager =
             std::make_shared<eprosima::fastdds::rtps::RTCPMessageManager>(&transportUnderTest);
-    std::shared_ptr<TCPChannelResource> channel = std::make_shared<TCPChannelResourceMock>(&transportUnderTest, locator,
+    std::shared_ptr<TCPChannelResource> channel = std::make_shared<MockTCPChannelResource>(&transportUnderTest, locator,
                     32767);
     octet* buffer = {};
     uint32_t receive_buffer_capacity = 65500;
