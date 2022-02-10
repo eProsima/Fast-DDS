@@ -109,7 +109,8 @@ public:
      * so should not be reuse.
      * @param destination_locators_end pointer to destination locators iterator end, the iterator can be advanced inside this fuction
      * so should not be reuse.
-     * @param only_multicast_purpose
+     * @param only_multicast_purpose multicast network interface
+     * @param whitelisted network interface included in the user whitelist
      * @param max_blocking_time_point maximum blocking time.
      */
     virtual bool send(
@@ -176,10 +177,8 @@ protected:
     uint32_t mReceiveBufferSize;
     eprosima::fastdds::statistics::rtps::OutputTrafficManager statistics_info_;
 
-    //! First time open output channel flag: open unicast and localhost socket when not whitelisted
+    //! First time open output channel flag: open the first socket with the ip::multicast::enable_loopback
     bool first_time_open_output_channel_;
-    //! Whitelist feature is being used
-    bool whitelisted_;
 
     UDPTransportInterface(
             int32_t transport_kind);
@@ -269,12 +268,13 @@ protected:
             const std::chrono::microseconds& timeout);
 
     /**
-     * @brief Remove already opened network interfaces
+     * @brief Return list of not yet open network interfaces
      *
-     * @param sender_resource_list List of SenderResources already registered in the transport
-     * @param locNames List of available network interfaces
+     * @param [in] sender_resource_list List of SenderResources already registered in the transport
+     * @param [out] locNames Return the list of new available network interfaces
+     * @param [in] return_loopback return the lo network interface 
      */
-    void remove_known_network_interfaces(
+    void get_unknown_network_interfaces(
             const SendResourceList& sender_resource_list,
             std::vector<fastrtps::rtps::IPFinder::info_IP>& locNames,
             bool return_loopback = false);

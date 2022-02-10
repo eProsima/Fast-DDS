@@ -62,7 +62,6 @@ UDPTransportInterface::UDPTransportInterface(
     , mSendBufferSize(0)
     , mReceiveBufferSize(0)
     , first_time_open_output_channel_(true)
-    , whitelisted_(false)
 {
 }
 
@@ -267,7 +266,7 @@ bool UDPTransportInterface::OpenOutputChannel(
     }
 
     std::vector<IPFinder::info_IP> locNames;
-    remove_known_network_interfaces(sender_resource_list, locNames);
+    get_unknown_network_interfaces(sender_resource_list, locNames);
 
     if (locNames.empty() && !first_time_open_output_channel_)
     {
@@ -332,8 +331,7 @@ bool UDPTransportInterface::OpenOutputChannel(
         }
         else
         {
-            locNames.clear();
-            remove_known_network_interfaces(sender_resource_list, locNames, true);
+            get_unknown_network_interfaces(sender_resource_list, locNames, true);
 
             for (const auto& infoIP : locNames)
             {
@@ -674,11 +672,12 @@ bool UDPTransportInterface::fillUnicastLocator(
     return true;
 }
 
-void UDPTransportInterface::remove_known_network_interfaces(
+void UDPTransportInterface::get_unknown_network_interfaces(
         const SendResourceList& sender_resource_list,
         std::vector<IPFinder::info_IP>& locNames,
         bool return_loopback)
 {
+    locNames.clear();
     get_ips(locNames, return_loopback);
     for (auto& sender_resource : sender_resource_list)
     {

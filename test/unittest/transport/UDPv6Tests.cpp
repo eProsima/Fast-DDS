@@ -178,19 +178,19 @@ TEST_F(UDPv6Tests, send_and_receive_between_ports)
                 LocatorList_t locator_list;
                 locator_list.push_back(multicastLocator);
 
-                bool sended = false;
+                bool sent = false;
                 for (auto& send_resource : send_resource_list)
                 {
                     Locators locators_begin(locator_list.begin());
                     Locators locators_end(locator_list.end());
-                    sended |= send_resource->send(message, 5, &locators_begin, &locators_end,
+                    sent |= send_resource->send(message, 5, &locators_begin, &locators_end,
                                     (std::chrono::steady_clock::now() + std::chrono::microseconds(100)));
-                    if (sended)
+                    if (sent)
                     {
                         break;
                     }
                 }
-                EXPECT_TRUE(sended);
+                EXPECT_TRUE(sent);
             };
 
     senderThread.reset(new std::thread(sendThreadFunction));
@@ -237,19 +237,19 @@ TEST_F(UDPv6Tests, send_to_loopback)
                 LocatorList_t locator_list;
                 locator_list.push_back(multicastLocator);
 
-                bool sended = false;
+                bool sent = false;
                 for (auto& send_resource : send_resource_list)
                 {
                     Locators locators_begin(locator_list.begin());
                     Locators locators_end(locator_list.end());
-                    sended |= send_resource->send(message, 5, &locators_begin, &locators_end,
+                    sent |= send_resource->send(message, 5, &locators_begin, &locators_end,
                                     (std::chrono::steady_clock::now() + std::chrono::microseconds(100)));
-                    if (sended)
+                    if (sent)
                     {
                         break;
                     }
                 }
-                EXPECT_TRUE(sended);
+                EXPECT_TRUE(sent);
             };
 
     senderThread.reset(new std::thread(sendThreadFunction));
