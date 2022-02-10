@@ -1466,7 +1466,7 @@ TEST_F(TCPv4Tests, receive_unordered_data)
 }
 
 // This test verifies that disabling a TCPChannelResource in the middle of a Receive call (invoked in
-// perform_listen_operation) does not result in a hungup state.
+// perform_listen_operation) does not result in a hungup state [13721].
 TEST_F(TCPv4Tests, header_read_interrumption)
 {
     eprosima::fastdds::dds::Log::SetVerbosity(eprosima::fastdds::dds::Log::Kind::Info);
