@@ -24,12 +24,16 @@
 #include <condition_variable>
 #include <csignal>
 
-#include <fastrtps/Domain.h>
-#include <fastrtps/participant/Participant.h>
+#include <fastdds/dds/domain/DomainParticipant.hpp>
+#include <fastdds/dds/domain/DomainParticipantFactory.hpp>
 #include <fastdds/dds/log/Log.hpp>
 
+<<<<<<< HEAD
 #include "server.h"
 
+=======
+using namespace eprosima::fastdds::dds;
+>>>>>>> f6df9e099... refs 13782 Port fastdds-discovery-server to DDS API
 using namespace eprosima;
 using namespace fastrtps;
 using namespace std;
@@ -92,10 +96,7 @@ int main (
         return 0;
     }
 
-    // auto att = make_unique<ParticipantAttributes>();
-    // C++11 constrains
-    unique_ptr<ParticipantAttributes> att(new ParticipantAttributes());
-    rtps::RTPSParticipantAttributes& rtps = att->rtps;
+    DomainParticipantQos participantQos;
 
     // Retrieve server Id: is mandatory and only specified once
     // Note there is a specific cast to pointer if the Option is valid
@@ -120,7 +121,7 @@ int main (
         // validation have been already done
         // Name the server according with the identifier
         if ( !( is >> server_id
-                && eprosima::fastdds::rtps::get_server_client_default_guidPrefix(server_id, rtps.prefix)))
+                && eprosima::fastdds::rtps::get_server_client_default_guidPrefix(server_id, participantQos.wire_protocol().prefix)))
         {
             cout << "The provided server identifier is not valid" << endl;
             return 1;
@@ -132,11 +133,11 @@ int main (
 
         // Set Participant Name
         is << "eProsima Default Server number " << server_id;
-        rtps.setName(is.str().c_str());
+        participantQos.name(is.str().c_str());
     }
 
     // Choose the kind of server to create
-    rtps.builtin.discovery_config.discoveryProtocol =
+    participantQos.wire_protocol().builtin.discovery_config.discoveryProtocol =
             options[BACKUP] ? rtps::DiscoveryProtocol_t::BACKUP : rtps::DiscoveryProtocol_t::SERVER;
 
     // Set up listening locators.
@@ -168,7 +169,7 @@ int main (
     if ( nullptr == pOp )
     {
         // add default locator
-        rtps.builtin.metatrafficUnicastLocatorList.push_back(locator);
+       participantQos.wire_protocol().builtin.metatrafficUnicastLocatorList.push_back(locator);
     }
     else
     {
@@ -213,7 +214,7 @@ int main (
             }
 
             // add the locator
-            rtps.builtin.metatrafficUnicastLocatorList.push_back(locator);
+            participantQos.wire_protocol().builtin.metatrafficUnicastLocatorList.push_back(locator);
 
             pOp = pOp->next();
             if (pO_port)
@@ -230,7 +231,8 @@ int main (
 
     // Create the server
     int return_value = 0;
-    Participant* pServer = Domain::createParticipant(*att, nullptr);
+    // Participant* pServer = Domain::createParticipant(*att, nullptr);
+    DomainParticipant* pServer = DomainParticipantFactory::get_instance()->create_participant(0, participantQos);
 
     if ( nullptr == pServer )
     {
@@ -246,15 +248,15 @@ int main (
 
         // Print running server attributes
         cout << "### Server is running ###" << endl;
-        cout << "  Participant Type:   " << rtps.builtin.discovery_config.discoveryProtocol << endl;
+        cout << "  Participant Type:   " << participantQos.wire_protocol().builtin.discovery_config.discoveryProtocol << endl;
         cout << "  Server ID:          " << server_id << endl;
-        cout << "  Server GUID prefix: " << pServer->getGuid().guidPrefix << endl;
+        cout << "  Server GUID prefix: " << pServer->guid().guidPrefix << endl;
         cout << "  Server Addresses:   ";
-        for (auto locator_it = att->rtps.builtin.metatrafficUnicastLocatorList.begin();
-                locator_it != att->rtps.builtin.metatrafficUnicastLocatorList.end();)
+        for (auto locator_it = participantQos.wire_protocol().builtin.metatrafficUnicastLocatorList.begin();
+                locator_it != participantQos.wire_protocol().builtin.metatrafficUnicastLocatorList.end();)
         {
             cout << *locator_it;
-            if (++locator_it != att->rtps.builtin.metatrafficUnicastLocatorList.end())
+            if (++locator_it != participantQos.wire_protocol().builtin.metatrafficUnicastLocatorList.end())
             {
                 cout << std::endl << "                      ";
             }
@@ -269,10 +271,8 @@ int main (
         cout << endl << "### Server shut down ###" << endl;
     }
 
-    att.reset();
     fastdds::dds::Log::Flush();
     cout.flush();
-    Domain::stopAll();
 
     return return_value;
 }
