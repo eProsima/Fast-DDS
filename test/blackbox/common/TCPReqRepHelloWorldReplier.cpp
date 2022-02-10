@@ -167,11 +167,46 @@ void TCPReqRepHelloWorldReplier::wait_discovery(
     std::cout << "Replier discovery phase finished" << std::endl;
 }
 
+void TCPReqRepHelloWorldReplier::wait_unmatched(
+        std::chrono::seconds timeout)
+{
+    std::unique_lock<std::mutex> lock(mutexDiscovery_);
+
+    std::cout << "Replier waiting until being unmatched..." << std::endl;
+
+    if (timeout == std::chrono::seconds::zero())
+    {
+        cvDiscovery_.wait(lock, [&]()
+                {
+                    return !is_matched();
+                });
+    }
+    else
+    {
+        cvDiscovery_.wait_for(lock, timeout, [&]()
+                {
+                    return !is_matched();
+                });
+    }
+
+    std::cout << "Replier unmatched" << std::endl;
+}
+
 void TCPReqRepHelloWorldReplier::matched()
 {
     std::unique_lock<std::mutex> lock(mutexDiscovery_);
     ++matched_;
     if (matched_ > 1)
+    {
+        cvDiscovery_.notify_one();
+    }
+}
+
+void TCPReqRepHelloWorldReplier::unmatched()
+{
+    std::unique_lock<std::mutex> lock(mutexDiscovery_);
+    --matched_;
+    if (!is_matched())
     {
         cvDiscovery_.notify_one();
     }

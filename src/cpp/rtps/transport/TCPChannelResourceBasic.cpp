@@ -107,12 +107,13 @@ void TCPChannelResourceBasic::disconnect()
     {
         auto socket = socket_;
 
+        std::error_code ec;
+        socket->shutdown(asio::ip::tcp::socket::shutdown_both, ec);
+
         service_.post([&, socket]()
                 {
                     try
                     {
-                        std::error_code ec;
-                        socket->shutdown(asio::ip::tcp::socket::shutdown_both, ec);
                         socket->cancel();
 
                         // This method was added on the version 1.12.0
@@ -125,7 +126,6 @@ void TCPChannelResourceBasic::disconnect()
                     {
                     }
                 });
-
     }
 }
 
