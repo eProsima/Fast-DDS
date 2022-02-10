@@ -30,10 +30,6 @@
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
 
-#if TLS_FOUND
-static const char* certs_path = nullptr;
-#endif // if TLS_FOUND
-
 enum communication_type
 {
     TRANSPORT
