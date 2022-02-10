@@ -239,6 +239,12 @@ void TCPReqRepHelloWorldRequester::matched()
     }
 }
 
+void TCPReqRepHelloWorldRequester::unmatched()
+{
+    std::unique_lock<std::mutex> lock(mutexDiscovery_);
+    --matched_;
+}
+
 bool TCPReqRepHelloWorldRequester::is_matched()
 {
     return matched_ > 1;
