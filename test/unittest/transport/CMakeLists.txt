@@ -80,6 +80,7 @@ set(UDPV6TESTS_SOURCE
 set(TCPV4TESTS_SOURCE
     TCPv4Tests.cpp
     mock/MockReceiverResource.cpp
+    mock/MockTCPChannelResource.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/messages/RTPSMessageCreator.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/log/Log.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/log/OStreamConsumer.cpp
