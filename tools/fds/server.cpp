@@ -121,7 +121,8 @@ int main (
         // validation have been already done
         // Name the server according with the identifier
         if ( !( is >> server_id
-                && eprosima::fastdds::rtps::get_server_client_default_guidPrefix(server_id, participantQos.wire_protocol().prefix)))
+                && eprosima::fastdds::rtps::get_server_client_default_guidPrefix(server_id,
+                participantQos.wire_protocol().prefix)))
         {
             cout << "The provided server identifier is not valid" << endl;
             return 1;
@@ -248,7 +249,8 @@ int main (
 
         // Print running server attributes
         cout << "### Server is running ###" << endl;
-        cout << "  Participant Type:   " << participantQos.wire_protocol().builtin.discovery_config.discoveryProtocol << endl;
+        cout << "  Participant Type:   " << participantQos.wire_protocol().builtin.discovery_config.discoveryProtocol <<
+                endl;
         cout << "  Server ID:          " << server_id << endl;
         cout << "  Server GUID prefix: " << pServer->guid().guidPrefix << endl;
         cout << "  Server Addresses:   ";
