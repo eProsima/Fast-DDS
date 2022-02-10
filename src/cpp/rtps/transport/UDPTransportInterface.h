@@ -272,7 +272,7 @@ protected:
      *
      * @param [in] sender_resource_list List of SenderResources already registered in the transport
      * @param [out] locNames Return the list of new available network interfaces
-     * @param [in] return_loopback return the lo network interface 
+     * @param [in] return_loopback return the lo network interface
      */
     void get_unknown_network_interfaces(
             const SendResourceList& sender_resource_list,
