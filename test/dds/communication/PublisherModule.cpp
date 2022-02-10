@@ -60,9 +60,8 @@ bool PublisherModule::init(
 {
     std::cout << "Initializing Publisher" << std::endl;
 
-    DomainParticipantQos participant_qos;
     participant_ =
-            DomainParticipantFactory::get_instance()->create_participant(seed % 230, participant_qos, this);
+            DomainParticipantFactory::get_instance()->create_participant(seed % 230, PARTICIPANT_QOS_DEFAULT, this);
 
     if (participant_ == nullptr)
     {
