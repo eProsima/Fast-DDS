@@ -975,14 +975,14 @@ bool TCPTransportInterface::Receive(
         {
             if (ec != asio::error::eof)
             {
-                logWarning(DEBUG, "Error reading TCP header: " << ec.message());
+                logWarning(DEBUG, "Failed to read TCP header: " << ec.message());
             }
             close_tcp_socket(channel);
             success = false;
         }
         else if (!channel->connection_status())
         {
-            logWarning(DEBUG, "Error reading TCP header: channel disconnected while reading.");
+            logWarning(DEBUG, "Failed to read TCP header: channel disconnected while reading.");
             success = false;
         }
         else
