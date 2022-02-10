@@ -170,7 +170,7 @@ int main (
     if ( nullptr == pOp )
     {
         // add default locator
-       participantQos.wire_protocol().builtin.metatrafficUnicastLocatorList.push_back(locator);
+        participantQos.wire_protocol().builtin.metatrafficUnicastLocatorList.push_back(locator);
     }
     else
     {
@@ -250,7 +250,7 @@ int main (
         // Print running server attributes
         cout << "### Server is running ###" << endl;
         cout << "  Participant Type:   " << participantQos.wire_protocol().builtin.discovery_config.discoveryProtocol <<
-                endl;
+            endl;
         cout << "  Server ID:          " << server_id << endl;
         cout << "  Server GUID prefix: " << pServer->guid().guidPrefix << endl;
         cout << "  Server Addresses:   ";
