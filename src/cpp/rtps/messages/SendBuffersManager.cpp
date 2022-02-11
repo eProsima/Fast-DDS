@@ -100,7 +100,7 @@ std::unique_ptr<RTPSMessageGroup_t> SendBuffersManager::get_buffer(
         else
         {
             logInfo(RTPS_PARTICIPANT, "Waiting for send buffer");
-            if (!available_cv_.wait_until(lock, max_blocking_time))
+            if (std::cv_status::timeout == available_cv_.wait_until(lock, max_blocking_time))
             {
                 throw RTPSMessageGroup::timeout();
             }

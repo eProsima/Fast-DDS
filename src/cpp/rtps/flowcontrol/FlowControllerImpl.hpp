@@ -321,7 +321,7 @@ struct FlowControllerLimitedAsyncPublishMode : public FlowControllerAsyncPublish
 
         if (lapse < period_ms)
         {
-            if (cv.wait_for(lock, period_ms - lapse))
+            if (std::cv_status::no_timeout == cv.wait_for(lock, period_ms - lapse))
             {
                 reset_limit = false;
             }
