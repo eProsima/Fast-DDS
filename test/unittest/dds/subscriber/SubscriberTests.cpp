@@ -323,7 +323,14 @@ TEST(SubscriberTests, ChangeDefaultDataReaderQos)
     qos.reliable_reader_qos().disable_positive_ACKs.enabled = true;
     qos.reliable_reader_qos().disable_positive_ACKs.duration.seconds = 13;
     qos.reliable_reader_qos().disable_positive_ACKs.duration.nanosec = 320;
-    // TODO .type_consistency
+    // .type_consistency
+    qos.type_consistency().representation.m_value.push_back(XML_DATA_REPRESENTATION);
+    qos.type_consistency().representation.m_value.push_back(XCDR_DATA_REPRESENTATION);
+    qos.type_consistency().type_consistency.m_ignore_sequence_bounds = false;
+    qos.type_consistency().type_consistency.m_ignore_string_bounds = false;
+    qos.type_consistency().type_consistency.m_ignore_member_names = true;
+    qos.type_consistency().type_consistency.m_prevent_type_widening = true;
+    qos.type_consistency().type_consistency.m_force_type_validation = true;
     // .expects_inline_qos
     qos.expects_inline_qos(true);
     // .properties
@@ -437,6 +444,14 @@ TEST(SubscriberTests, ChangeDefaultDataReaderQos)
     ASSERT_TRUE(wqos.reliable_reader_qos().disable_positive_ACKs.enabled);
     ASSERT_EQ(13, wqos.reliable_reader_qos().disable_positive_ACKs.duration.seconds);
     ASSERT_EQ(320, wqos.reliable_reader_qos().disable_positive_ACKs.duration.nanosec);
+    // .type_consistency
+    ASSERT_EQ(XML_DATA_REPRESENTATION, wqos.type_consistency().representation.m_value.at(0));
+    ASSERT_EQ(XCDR_DATA_REPRESENTATION, wqos.type_consistency().representation.m_value.at(1));
+    ASSERT_FALSE(wqos.type_consistency().type_consistency.m_ignore_sequence_bounds);
+    ASSERT_FALSE(wqos.type_consistency().type_consistency.m_ignore_string_bounds);
+    ASSERT_TRUE(wqos.type_consistency().type_consistency.m_ignore_member_names);
+    ASSERT_TRUE(wqos.type_consistency().type_consistency.m_prevent_type_widening);
+    ASSERT_TRUE(wqos.type_consistency().type_consistency.m_force_type_validation);
     // .expects_inline_qos
     ASSERT_TRUE(wqos.expects_inline_qos());
     // .properties
