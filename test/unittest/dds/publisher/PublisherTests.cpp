@@ -196,14 +196,213 @@ TEST(PublisherTests, ChangeDefaultDataWriterQos)
     publisher->get_default_datawriter_qos(qos);
     ASSERT_EQ(qos, DATAWRITER_QOS_DEFAULT);
 
-    qos.deadline().period = 260;
+    // .durability
+    qos.durability().kind = eprosima::fastdds::dds::TRANSIENT_DURABILITY_QOS;
+    // .durability_service
+    qos.durability_service().history_kind = eprosima::fastdds::dds::KEEP_ALL_HISTORY_QOS;
+    qos.durability_service().history_depth = 10;
+    qos.durability_service().max_samples = 5;
+    qos.durability_service().max_instances = 20;
+    qos.durability_service().max_samples_per_instance = 30;
+    // .deadline
+    qos.deadline().period.seconds = 10;
+    qos.deadline().period.nanosec = 20;
+    // .latency_budget
+    qos.latency_budget().duration.seconds = 20;
+    qos.latency_budget().duration.nanosec = 30;
+    // .liveliness
+    qos.liveliness().kind = eprosima::fastdds::dds::MANUAL_BY_PARTICIPANT_LIVELINESS_QOS;
+    qos.liveliness().lease_duration.seconds = 40;
+    qos.liveliness().lease_duration.nanosec = 61;
+    qos.liveliness().announcement_period.seconds = 30;
+    qos.liveliness().announcement_period.nanosec = 50;
+    // .reliability
+    qos.reliability().kind = eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS;
+    qos.reliability().max_blocking_time.seconds = 100;
+    qos.reliability().max_blocking_time.nanosec = eprosima::fastrtps::Time_t::INFINITE_NANOSECONDS;
+    // .destination_order
+    qos.destination_order().kind = eprosima::fastdds::dds::BY_RECEPTION_TIMESTAMP_DESTINATIONORDER_QOS;
+    // .history
+    qos.history().kind = eprosima::fastdds::dds::KEEP_ALL_HISTORY_QOS;
+    qos.history().depth = 1000;
+    // .resource_limits
+    qos.resource_limits().max_samples = 3000;
+    qos.resource_limits().max_instances = 100;
+    qos.resource_limits().max_samples_per_instance = 500;
+    qos.resource_limits().allocated_samples = 50;
+    qos.resource_limits().extra_samples = 2;
+    // .transport_priority
+    qos.transport_priority().value = 10;
+    // .lifespan
+    qos.lifespan().duration.seconds = 10;
+    qos.lifespan().duration.nanosec = 33;
+    // .user_data
+    qos.user_data().push_back(0);
+    qos.user_data().push_back(1);
+    qos.user_data().push_back(2);
+    qos.user_data().push_back(3);
+    // .ownership
+    qos.ownership().kind = eprosima::fastdds::dds::EXCLUSIVE_OWNERSHIP_QOS;
+    // .ownership_strength
+    qos.ownership_strength().value = 30;
+    // .writer_data_lifecycle
+    qos.writer_data_lifecycle().autodispose_unregistered_instances = false;
+    // .publish_mode
+    qos.publish_mode().kind = eprosima::fastdds::dds::ASYNCHRONOUS_PUBLISH_MODE;
+    qos.publish_mode().flow_controller_name = "Prueba";
+
+    // .properties
+    eprosima::fastrtps::rtps::Property property;
+    property.name("Property1");
+    property.value("Value1");
+    qos.properties().properties().push_back(property);
+    property.name("Property2");
+    property.value("Value2");
+    qos.properties().properties().push_back(property);
+    // .reliable_writer_qos
+    qos.reliable_writer_qos().times.initialHeartbeatDelay.seconds = 2;
+    qos.reliable_writer_qos().times.initialHeartbeatDelay.nanosec = 15;
+    qos.reliable_writer_qos().times.heartbeatPeriod.seconds = 3;
+    qos.reliable_writer_qos().times.heartbeatPeriod.nanosec = 16;
+    qos.reliable_writer_qos().times.nackResponseDelay.seconds = 4;
+    qos.reliable_writer_qos().times.nackResponseDelay.nanosec = 17;
+    qos.reliable_writer_qos().times.nackSupressionDuration.seconds = 5;
+    qos.reliable_writer_qos().times.nackSupressionDuration.nanosec = 18;
+    qos.reliable_writer_qos().disable_positive_acks.enabled = true;
+    qos.reliable_writer_qos().disable_positive_acks.duration.seconds = 13;
+    qos.reliable_writer_qos().disable_positive_acks.duration.nanosec = 320;
+    qos.reliable_writer_qos().disable_heartbeat_piggyback = true;
+    // .endpoint
+    qos.endpoint().user_defined_id = 1;
+    qos.endpoint().entity_id = 2;
+    qos.endpoint().history_memory_policy = eprosima::fastrtps::rtps::PREALLOCATED_WITH_REALLOC_MEMORY_MODE;
+    // . writer_resource_limits
+    qos.writer_resource_limits().matched_subscriber_allocation.initial = 30;
+    qos.writer_resource_limits().matched_subscriber_allocation.maximum = 300;
+    qos.writer_resource_limits().matched_subscriber_allocation.increment = 400;
+    // . data_sharing
+    qos.data_sharing().on("/");
 
     ASSERT_TRUE(publisher->set_default_datawriter_qos(qos) == ReturnCode_t::RETCODE_OK);
     DataWriterQos wqos;
     publisher->get_default_datawriter_qos(wqos);
 
+    // .durability
+    ASSERT_EQ(eprosima::fastdds::dds::TRANSIENT_DURABILITY_QOS, wqos.durability().kind);
+    // .durability_service
+    ASSERT_EQ(eprosima::fastdds::dds::KEEP_ALL_HISTORY_QOS, wqos.durability_service().history_kind);
+    ASSERT_EQ(10, wqos.durability_service().history_depth);
+    ASSERT_EQ(5, wqos.durability_service().max_samples);
+    ASSERT_EQ(20, wqos.durability_service().max_instances);
+    ASSERT_EQ(30, wqos.durability_service().max_samples_per_instance);
+    // .deadline
+    ASSERT_EQ(10, wqos.deadline().period.seconds);
+    ASSERT_EQ(20, wqos.deadline().period.nanosec);
+    // .latency_budget
+    ASSERT_EQ(20, wqos.latency_budget().duration.seconds);
+    ASSERT_EQ(30, wqos.latency_budget().duration.nanosec);
+    // .liveliness
+    ASSERT_EQ(eprosima::fastdds::dds::MANUAL_BY_PARTICIPANT_LIVELINESS_QOS, wqos.liveliness().kind);
+    ASSERT_EQ(40, wqos.liveliness().lease_duration.seconds);
+    ASSERT_EQ(61, wqos.liveliness().lease_duration.nanosec);
+    ASSERT_EQ(30, wqos.liveliness().announcement_period.seconds);
+    ASSERT_EQ(50, wqos.liveliness().announcement_period.nanosec);
+    // .reliability
+    ASSERT_EQ(eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS, wqos.reliability().kind);
+    ASSERT_EQ(100, wqos.reliability().max_blocking_time.seconds);
+    ASSERT_EQ(eprosima::fastrtps::Time_t::INFINITE_NANOSECONDS, wqos.reliability().max_blocking_time.nanosec);
+    // .destination_order
+    ASSERT_EQ(eprosima::fastdds::dds::BY_RECEPTION_TIMESTAMP_DESTINATIONORDER_QOS, wqos.destination_order().kind);
+    // .history
+    ASSERT_EQ(eprosima::fastdds::dds::KEEP_ALL_HISTORY_QOS, wqos.history().kind);
+    ASSERT_EQ(1000, wqos.history().depth);
+    // .resource_limits
+    ASSERT_EQ(3000, wqos.resource_limits().max_samples);
+    ASSERT_EQ(100, wqos.resource_limits().max_instances);
+    ASSERT_EQ(500, wqos.resource_limits().max_samples_per_instance);
+    ASSERT_EQ(50, wqos.resource_limits().allocated_samples);
+    ASSERT_EQ(2, wqos.resource_limits().extra_samples);
+    // .transport_priority
+    ASSERT_EQ(10, wqos.transport_priority().value);
+    // .lifespan
+    ASSERT_EQ(10, wqos.lifespan().duration.seconds);
+    ASSERT_EQ(33, wqos.lifespan().duration.nanosec);
+    // .user_data
+    size_t count = 1;
+    for (auto user_value : wqos.user_data())
+    {
+        switch (count)
+        {
+            case 1:
+                ASSERT_EQ(0, user_value);
+                break;
+            case 2:
+                ASSERT_EQ(1, user_value);
+                break;
+            case 3:
+                ASSERT_EQ(2, user_value);
+                break;
+            case 4:
+                ASSERT_EQ(3, user_value);
+                break;
+            default:
+                ASSERT_TRUE(false);
+        }
+        ++count;
+    }
+    // .ownership
+    ASSERT_EQ(eprosima::fastdds::dds::EXCLUSIVE_OWNERSHIP_QOS, wqos.ownership().kind);
+    // .ownership_strength
+    ASSERT_EQ(30, wqos.ownership_strength().value);
+    // .writer_data_lifecycle
+    ASSERT_FALSE(wqos.writer_data_lifecycle().autodispose_unregistered_instances);
+    // .publish_mode
+    ASSERT_EQ(eprosima::fastdds::dds::ASYNCHRONOUS_PUBLISH_MODE, wqos.publish_mode().kind);
+    ASSERT_EQ(0, strcmp(wqos.publish_mode().flow_controller_name, "Prueba"));
+    count = 1;
+    for (auto prop : wqos.properties().properties())
+    {
+        switch (count)
+        {
+            case 1:
+                ASSERT_EQ(0, prop.name().compare("Property1"));
+                ASSERT_EQ(0, prop.value().compare("Value1"));
+                break;
+            case 2:
+                ASSERT_EQ(0, prop.name().compare("Property2"));
+                ASSERT_EQ(0, prop.value().compare("Value2"));
+                break;
+            default:
+                ASSERT_TRUE(false);
+        }
+        ++count;
+    }
+    // .reliable_writer_qos
+    ASSERT_EQ(2, wqos.reliable_writer_qos().times.initialHeartbeatDelay.seconds);
+    ASSERT_EQ(15, wqos.reliable_writer_qos().times.initialHeartbeatDelay.nanosec);
+    ASSERT_EQ(3, wqos.reliable_writer_qos().times.heartbeatPeriod.seconds);
+    ASSERT_EQ(16, wqos.reliable_writer_qos().times.heartbeatPeriod.nanosec);
+    ASSERT_EQ(4, wqos.reliable_writer_qos().times.nackResponseDelay.seconds);
+    ASSERT_EQ(17, wqos.reliable_writer_qos().times.nackResponseDelay.nanosec);
+    ASSERT_EQ(5, wqos.reliable_writer_qos().times.nackSupressionDuration.seconds);
+    ASSERT_EQ(18, wqos.reliable_writer_qos().times.nackSupressionDuration.nanosec);
+    ASSERT_TRUE(wqos.reliable_writer_qos().disable_positive_acks.enabled);
+    ASSERT_EQ(13, wqos.reliable_writer_qos().disable_positive_acks.duration.seconds);
+    ASSERT_EQ(320, wqos.reliable_writer_qos().disable_positive_acks.duration.nanosec);
+    ASSERT_TRUE(wqos.reliable_writer_qos().disable_heartbeat_piggyback);
+    // .endpoint
+    ASSERT_EQ(1, wqos.endpoint().user_defined_id);
+    ASSERT_EQ(2, wqos.endpoint().entity_id);
+    ASSERT_EQ(eprosima::fastrtps::rtps::PREALLOCATED_WITH_REALLOC_MEMORY_MODE, wqos.endpoint().history_memory_policy);
+    // . writer_resource_limits
+    ASSERT_EQ(30, wqos.writer_resource_limits().matched_subscriber_allocation.initial);
+    ASSERT_EQ(300, wqos.writer_resource_limits().matched_subscriber_allocation.maximum);
+    ASSERT_EQ(400, wqos.writer_resource_limits().matched_subscriber_allocation.increment);
+    // . data_sharing
+    ASSERT_EQ(eprosima::fastdds::dds::ON, wqos.data_sharing().kind());
+    ASSERT_EQ(0, wqos.data_sharing().shm_directory().compare("/"));
+
     ASSERT_TRUE(qos == wqos);
-    ASSERT_EQ(wqos.deadline().period, 260);
 
     ASSERT_TRUE(participant->delete_publisher(publisher) == ReturnCode_t::RETCODE_OK);
     ASSERT_TRUE(DomainParticipantFactory::get_instance()->delete_participant(participant) == ReturnCode_t::RETCODE_OK);
