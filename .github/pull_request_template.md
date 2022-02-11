@@ -49,4 +49,6 @@
 ## Reviewer Checklist
 - [ ] Check contributor checklist is correct.
 
-- [ ] Check CI results.
+- [ ] Check CI results: changes do not issue any warning.
+
+- [ ] Check CI results: failing tests are unrelated with the changes.
