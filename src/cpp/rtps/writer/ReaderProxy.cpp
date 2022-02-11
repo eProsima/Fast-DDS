@@ -438,6 +438,7 @@ void ReaderProxy::from_unsent_to_status(
         const SequenceNumber_t& seq_num,
         ChangeForReaderStatus_t status,
         bool restart_nack_supression,
+        const std::chrono::steady_clock::time_point& max_blocking_time,
         bool delivered)
 {
     // This function must not be called by a best-effort reader.
@@ -447,7 +448,7 @@ void ReaderProxy::from_unsent_to_status(
     if (restart_nack_supression && is_remote_and_reliable())
     {
         assert(timers_enabled_.load());
-        nack_supression_event_->restart_timer();
+        nack_supression_event_->restart_timer(max_blocking_time);
     }
 
     // Called when delivering an UNSENT sample, the seq_number must exists in the ReaderProxy.

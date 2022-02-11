@@ -154,7 +154,8 @@ protected:
             CacheChange_t* ch = new CacheChange_t();
             cache_changes.push_back(ch);
 
-            ASSERT_TRUE(pool->get_payload(data_size, *ch));
+            ASSERT_TRUE(pool->get_payload(data_size, *ch, std::chrono::steady_clock::now() + std::chrono::hours(
+                        24)));
             ASSERT_NE(ch->serializedPayload.data, nullptr);
 
             switch (memory_policy)
@@ -180,13 +181,15 @@ protected:
             CacheChange_t* ch = new CacheChange_t();
             cache_changes.push_back(ch);
 
-            ASSERT_TRUE(pool->get_payload(payload_size, *ch));
+            ASSERT_TRUE(pool->get_payload(payload_size, *ch, std::chrono::steady_clock::now() + std::chrono::hours(
+                        24)));
         }
         else
         {
             CacheChange_t* ch = new CacheChange_t();
 
-            ASSERT_FALSE(pool->get_payload(payload_size, *ch));
+            ASSERT_FALSE(pool->get_payload(payload_size, *ch, std::chrono::steady_clock::now() + std::chrono::hours(
+                        24)));
             delete ch;
         }
 

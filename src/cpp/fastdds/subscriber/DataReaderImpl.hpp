@@ -435,8 +435,10 @@ protected:
             SampleInfo* info,
             bool should_take);
 
-    void set_read_communication_status(
-            bool trigger_value);
+    void set_read_communication_status_triggering();
+
+    void set_read_communication_status_no_triggering(
+            const std::chrono::steady_clock::time_point& max_blocking_time);
 
     void update_subscription_matched_status(
             const SubscriptionMatchedStatus& status);

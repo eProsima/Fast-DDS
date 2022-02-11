@@ -150,7 +150,7 @@ RTPSParticipantImpl::RTPSParticipantImpl(
         descriptor.receiveBufferSize = m_att.listenSocketBufferSize;
         m_network_Factory.RegisterTransport(&descriptor, &m_att.properties);
 
-#ifdef SHM_TRANSPORT_BUILTIN
+#if defined(SHM_TRANSPORT_BUILTIN) && not defined(HAVE_STRICT_REALTIME)
         SharedMemTransportDescriptor shm_transport;
         // We assume (Linux) UDP doubles the user socket buffer size in kernel, so
         // the equivalent segment size in SHM would be socket buffer size x 2
@@ -2006,9 +2006,10 @@ void RTPSParticipantImpl::set_check_type_function(
     type_check_fn_ = std::move(check_type);
 }
 
-std::unique_ptr<RTPSMessageGroup_t> RTPSParticipantImpl::get_send_buffer()
+std::unique_ptr<RTPSMessageGroup_t> RTPSParticipantImpl::get_send_buffer(
+        const std::chrono::steady_clock::time_point& max_blocking_time)
 {
-    return send_buffers_->get_buffer(this);
+    return send_buffers_->get_buffer(this, max_blocking_time);
 }
 
 void RTPSParticipantImpl::return_send_buffer(

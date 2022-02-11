@@ -32,19 +32,30 @@ namespace rtps {
 
 bool TopicPayloadPool::get_payload(
         uint32_t size,
-        CacheChange_t& cache_change)
+        CacheChange_t& cache_change,
+        const std::chrono::time_point<std::chrono::steady_clock>& max_blocking_time)
 {
-    return do_get_payload(size, cache_change, false);
+    return do_get_payload(size, cache_change, false, max_blocking_time);
 }
 
 bool TopicPayloadPool::do_get_payload(
         uint32_t size,
         CacheChange_t& cache_change,
-        bool resizeable)
+        bool resizeable,
+        const std::chrono::steady_clock::time_point& max_blocking_time)
 {
     PayloadNode* payload = nullptr;
 
-    std::unique_lock<std::mutex> lock(mutex_);
+# if HAVE_STRICT_REALTIME
+    std::unique_lock<TimedMutex> lock(mutex_, std::defer_lock);
+    if (!lock.try_lock_until(max_blocking_time))
+    {
+        return false;
+    }
+#else
+    std::unique_lock<TimedMutex> lock(mutex_);
+#endif // HAVE_STRICT_REALTIME
+
     if (free_payloads_.empty())
     {
         payload = allocate(size); //Allocates a single payload
@@ -109,7 +120,7 @@ bool TopicPayloadPool::get_payload(
     }
     else
     {
-        if (get_payload(data.length, cache_change))
+        if (get_payload(data.length, cache_change, std::chrono::steady_clock::now() + std::chrono::hours(24)))
         {
             if (!cache_change.serializedPayload.copy(&data, true))
             {
@@ -132,15 +143,23 @@ bool TopicPayloadPool::get_payload(
 }
 
 bool TopicPayloadPool::release_payload(
-        CacheChange_t& cache_change)
+        CacheChange_t& cache_change,
+        std::chrono::steady_clock::time_point max_blocking_time)
 {
     assert(cache_change.payload_owner() == this);
 
     if (PayloadNode::dereference(cache_change.serializedPayload.data))
     {
-        std::lock_guard<std::mutex> lock(mutex_);
-        PayloadNode* payload = all_payloads_.at(PayloadNode::data_index(cache_change.serializedPayload.data));
-        free_payloads_.push_back(payload);
+#if HAVE_STRICT_REALTIME
+        std::unique_lock<fastrtps::TimedMutex> lock(mutex_, std::defer_lock);
+        if (lock.try_lock_until(max_blocking_time))
+#else
+        std::unique_lock<TimedMutex> lock(mutex_);
+#endif // if HAVE_STRICT_REALTIME{
+        {
+            PayloadNode* payload = all_payloads_.at(PayloadNode::data_index(cache_change.serializedPayload.data));
+            free_payloads_.push_back(payload);
+        }
     }
 
     cache_change.serializedPayload.length = 0;
@@ -157,7 +176,7 @@ bool TopicPayloadPool::reserve_history(
 {
     assert(config.memory_policy == memory_policy());
 
-    std::lock_guard<std::mutex> lock(mutex_);
+    std::lock_guard<TimedMutex> lock(mutex_);
     update_maximum_size(config, true);
     return true;
 }
@@ -168,7 +187,7 @@ bool TopicPayloadPool::release_history(
 {
     assert(config.memory_policy == memory_policy());
 
-    std::lock_guard<std::mutex> lock(mutex_);
+    std::lock_guard<TimedMutex> lock(mutex_);
     update_maximum_size(config, false);
 
     return shrink(max_pool_size_);

@@ -695,7 +695,8 @@ bool SubscriberHistory::get_next_deadline(
 
 ReaderHistory::iterator SubscriberHistory::remove_change_nts(
         ReaderHistory::const_iterator removal,
-        bool release)
+        bool release,
+        std::chrono::steady_clock::time_point max_blocking_time)
 {
     CacheChange_t* p_sample = nullptr;
 
@@ -714,7 +715,7 @@ ReaderHistory::iterator SubscriberHistory::remove_change_nts(
     }
 
     // call the base class
-    return ReaderHistory::remove_change_nts(removal, release);
+    return ReaderHistory::remove_change_nts(removal, release, max_blocking_time);
 }
 
 bool SubscriberHistory::completed_change(

@@ -19,10 +19,9 @@
 #ifndef _FASTDDS_CORE_CONDITION_STATUSCONDITIONIMPL_HPP_
 #define _FASTDDS_CORE_CONDITION_STATUSCONDITIONIMPL_HPP_
 
-#include <mutex>
-
 #include <fastdds/dds/core/status/StatusMask.hpp>
 #include <fastrtps/types/TypesBase.h>
+#include <fastrtps/utils/TimedMutex.hpp>
 
 #include <fastdds/core/condition/ConditionNotifier.hpp>
 
@@ -94,9 +93,18 @@ struct StatusConditionImpl
             const StatusMask& status,
             bool trigger_value);
 
+    /**
+     * @brief Timed function which sets the trigger value of a specific status without triggering.
+     * @param status The status for which to change the trigger value
+     * @param max_blocking_time Maximum time the function can be blocked.
+     */
+    void set_status(
+            const StatusMask& status,
+            const std::chrono::steady_clock::time_point& max_blocking_time);
+
 private:
 
-    mutable std::mutex mutex_;
+    mutable fastrtps::TimedMutex mutex_;
     StatusMask mask_{};
     StatusMask status_{};
     ConditionNotifier* notifier_;

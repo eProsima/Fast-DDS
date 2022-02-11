@@ -25,11 +25,11 @@
 #include <fastdds/dds/log/Log.hpp>
 #include <rtps/history/PoolConfig.h>
 #include <rtps/history/ITopicPayloadPool.h>
+#include <fastrtps/utils/TimedMutex.hpp>
 
 #include <atomic>
 #include <cstddef>
 #include <memory>
-#include <mutex>
 #include <vector>
 
 namespace eprosima {
@@ -55,7 +55,8 @@ public:
 
     bool get_payload(
             uint32_t size,
-            CacheChange_t& cache_change) override;
+            CacheChange_t& cache_change,
+            const std::chrono::steady_clock::time_point& max_blocking_time) override;
 
     bool get_payload(
             SerializedPayload_t& data,
@@ -63,7 +64,9 @@ public:
             CacheChange_t& cache_change) override;
 
     bool release_payload(
-            CacheChange_t& cache_change) override;
+            CacheChange_t& cache_change,
+            std::chrono::steady_clock::time_point max_blocking_time =
+            std::chrono::steady_clock::now() + std::chrono::hours(24)) override;
 
     /**
      * @brief Ensures the pool has capacity to fullfill the requirements of a new history.
@@ -327,6 +330,7 @@ protected:
      * @param [in]     size          Number of bytes required for the serialized payload
      * @param [in,out] cache_change  Cache change to assign the payload to
      * @param [in]     resizable     Whether payloads recycled from the pool are resizable to accomodate larger sizes
+     * @param [in]     max_blocking_time Maximum time the function can be blocked.
      *
      * @returns whether the operation succeeded or not
      *
@@ -339,7 +343,8 @@ protected:
     virtual bool do_get_payload(
             uint32_t size,
             CacheChange_t& cache_change,
-            bool resizeable);
+            bool resizeable,
+            const std::chrono::time_point<std::chrono::steady_clock>& max_blocking_time);
 
     virtual MemoryManagementPolicy_t memory_policy() const = 0;
 
@@ -350,7 +355,7 @@ protected:
     std::vector<PayloadNode*> free_payloads_; //< Payloads that are free
     std::vector<PayloadNode*> all_payloads_;  //< All payloads
 
-    std::mutex mutex_;
+    TimedMutex mutex_;
 
 };
 

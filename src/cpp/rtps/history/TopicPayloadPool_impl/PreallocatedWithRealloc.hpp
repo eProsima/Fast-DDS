@@ -39,9 +39,10 @@ public:
 
     bool get_payload(
             uint32_t size,
-            CacheChange_t& cache_change) override
+            CacheChange_t& cache_change,
+            const std::chrono::time_point<std::chrono::steady_clock>& max_blocking_time) override
     {
-        return do_get_payload(std::max(size, min_payload_size_), cache_change, true);
+        return do_get_payload(std::max(size, min_payload_size_), cache_change, true, max_blocking_time);
     }
 
     bool reserve_history(
@@ -53,7 +54,7 @@ public:
             return false;
         }
 
-        std::lock_guard<std::mutex> lock(mutex_);
+        std::lock_guard<TimedMutex> lock(mutex_);
         minimum_pool_size_ += config.initial_size;
         reserve(minimum_pool_size_, min_payload_size_);
         return true;
@@ -64,7 +65,7 @@ public:
             bool is_reader) override
     {
         {
-            std::lock_guard<std::mutex> lock(mutex_);
+            std::lock_guard<TimedMutex> lock(mutex_);
             minimum_pool_size_ -= config.initial_size;
         }
 

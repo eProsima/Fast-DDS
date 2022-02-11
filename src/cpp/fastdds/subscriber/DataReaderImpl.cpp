@@ -292,14 +292,23 @@ bool DataReaderImpl::wait_for_unread_message(
     return reader_ ? reader_->wait_for_unread_cache(timeout) : false;
 }
 
-void DataReaderImpl::set_read_communication_status(
-        bool trigger_value)
+void DataReaderImpl::set_read_communication_status_triggering()
 {
     StatusMask notify_status = StatusMask::data_on_readers();
-    subscriber_->user_subscriber_->get_statuscondition().get_impl()->set_status(notify_status, trigger_value);
+    subscriber_->user_subscriber_->get_statuscondition().get_impl()->set_status(notify_status, true);
 
     notify_status = StatusMask::data_available();
-    user_datareader_->get_statuscondition().get_impl()->set_status(notify_status, trigger_value);
+    user_datareader_->get_statuscondition().get_impl()->set_status(notify_status, true);
+}
+
+void DataReaderImpl::set_read_communication_status_no_triggering(
+        const std::chrono::steady_clock::time_point& max_blocking_time)
+{
+    StatusMask notify_status = StatusMask::data_on_readers();
+    subscriber_->user_subscriber_->get_statuscondition().get_impl()->set_status(notify_status, max_blocking_time);
+
+    notify_status = StatusMask::data_available();
+    user_datareader_->get_statuscondition().get_impl()->set_status(notify_status, max_blocking_time);
 }
 
 ReturnCode_t DataReaderImpl::check_collection_preconditions_and_calc_max_samples(
@@ -433,21 +442,19 @@ ReturnCode_t DataReaderImpl::read_or_take(
         return code;
     }
 
-    auto max_blocking_time = std::chrono::steady_clock::now() +
 #if HAVE_STRICT_REALTIME
-            std::chrono::microseconds(::TimeConv::Time_t2MicroSecondsInt64(qos_.reliability().max_blocking_time));
-#else
-            std::chrono::hours(24);
-#endif // if HAVE_STRICT_REALTIME
-
     std::unique_lock<RecursiveTimedMutex> lock(reader_->getMutex(), std::defer_lock);
-
+    auto max_blocking_time = std::chrono::steady_clock::now() +
+            std::chrono::microseconds(::TimeConv::Time_t2MicroSecondsInt64(qos_.reliability().max_blocking_time));
     if (!lock.try_lock_until(max_blocking_time))
     {
         return ReturnCode_t::RETCODE_TIMEOUT;
     }
+#else
+    std::unique_lock<RecursiveTimedMutex> lock(reader_->getMutex());
+#endif // if HAVE_STRICT_REALTIME
 
-    set_read_communication_status(false);
+    set_read_communication_status_no_triggering(max_blocking_time);
 
     auto it = history_.lookup_instance(handle, exact_instance);
     if (!it.first)
@@ -465,7 +472,7 @@ ReturnCode_t DataReaderImpl::read_or_take(
     detail::ReadTakeCommand cmd(*this, data_values, sample_infos, max_samples, states, it.second, single_instance);
     while (!cmd.is_finished())
     {
-        cmd.add_instance(should_take);
+        cmd.add_instance(should_take, max_blocking_time);
     }
     return cmd.return_value();
 }
@@ -608,26 +615,24 @@ ReturnCode_t DataReaderImpl::read_or_take_next_sample(
         return ReturnCode_t::RETCODE_NOT_ENABLED;
     }
 
+#if HAVE_STRICT_REALTIME
+    std::unique_lock<RecursiveTimedMutex> lock(reader_->getMutex(), std::defer_lock);
+    auto max_blocking_time = std::chrono::steady_clock::now() +
+            std::chrono::microseconds(::TimeConv::Time_t2MicroSecondsInt64(qos_.reliability().max_blocking_time));
+    if (!lock.try_lock_until(max_blocking_time))
+    {
+        return ReturnCode_t::RETCODE_TIMEOUT;
+    }
+#else
+    std::unique_lock<RecursiveTimedMutex> lock(reader_->getMutex());
+#endif // if HAVE_STRICT_REALTIME
+
     if (history_.getHistorySize() == 0)
     {
         return ReturnCode_t::RETCODE_NO_DATA;
     }
 
-    auto max_blocking_time = std::chrono::steady_clock::now() +
-#if HAVE_STRICT_REALTIME
-            std::chrono::microseconds(::TimeConv::Time_t2MicroSecondsInt64(qos_.reliability().max_blocking_time));
-#else
-            std::chrono::hours(24);
-#endif // if HAVE_STRICT_REALTIME
-
-    std::unique_lock<RecursiveTimedMutex> lock(reader_->getMutex(), std::defer_lock);
-
-    if (!lock.try_lock_until(max_blocking_time))
-    {
-        return ReturnCode_t::RETCODE_TIMEOUT;
-    }
-
-    set_read_communication_status(false);
+    set_read_communication_status_no_triggering(max_blocking_time);
 
     auto it = history_.lookup_instance(HANDLE_NIL, false);
     if (!it.first)
@@ -643,7 +648,7 @@ ReturnCode_t DataReaderImpl::read_or_take_next_sample(
     detail::ReadTakeCommand cmd(*this, data_values, sample_infos, 1, states, it.second, false);
     while (!cmd.is_finished())
     {
-        cmd.add_instance(should_take);
+        cmd.add_instance(should_take, max_blocking_time);
     }
 
     ReturnCode_t code = cmd.return_value();
@@ -802,7 +807,7 @@ void DataReaderImpl::InnerDataReaderListener::onNewCacheChangeAdded(
             }
         }
 
-        data_reader_->set_read_communication_status(true);
+        data_reader_->set_read_communication_status_triggering();
     }
 }
 

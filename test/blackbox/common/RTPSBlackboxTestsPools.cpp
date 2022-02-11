@@ -97,7 +97,8 @@ public:
 
     bool get_payload(
             uint32_t size,
-            CacheChange_t& cache_change) override
+            CacheChange_t& cache_change,
+            const std::chrono::time_point<std::chrono::steady_clock>&) override
     {
         std::lock_guard<std::mutex> lock(mutex_);
         return do_get_payload(size, cache_change);
@@ -151,7 +152,9 @@ public:
     }
 
     bool release_payload(
-            CacheChange_t& cache_change) override
+            CacheChange_t& cache_change,
+            std::chrono::steady_clock::time_point =
+            std::chrono::steady_clock::now() + std::chrono::hours(24)) override
     {
         std::lock_guard<std::mutex> lock(mutex_);
 

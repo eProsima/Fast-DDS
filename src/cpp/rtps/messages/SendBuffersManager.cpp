@@ -18,6 +18,7 @@
 
 #include "SendBuffersManager.hpp"
 #include "../participant/RTPSParticipantImpl.h"
+#include <fastdds/rtps/messages/RTPSMessageGroup.h>
 
 namespace eprosima {
 namespace fastrtps {
@@ -34,7 +35,7 @@ SendBuffersManager::SendBuffersManager(
 void SendBuffersManager::init(
         const RTPSParticipantImpl* participant)
 {
-    std::lock_guard<std::mutex> guard(mutex_);
+    std::lock_guard<TimedMutex> guard(mutex_);
 
     if (n_created_ < pool_.capacity())
     {
@@ -53,20 +54,20 @@ void SendBuffersManager::init(
         advance *= secure ? 3 : 2;
 #else
         advance *= 2;
-#endif
+#endif // if HAVE_SECURITY
         size_t data_size = advance * (pool_.capacity() - n_created_);
         common_buffer_.assign(data_size, 0);
 
         octet* raw_buffer = common_buffer_.data();
-        while(n_created_ < pool_.capacity())
+        while (n_created_ < pool_.capacity())
         {
             pool_.emplace_back(new RTPSMessageGroup_t(
-                raw_buffer,
+                        raw_buffer,
 #if HAVE_SECURITY
-                secure,
-#endif
-                payload_size, guid_prefix
-            ));
+                        secure,
+#endif // if HAVE_SECURITY
+                        payload_size, guid_prefix
+                        ));
             raw_buffer += advance;
             ++n_created_;
         }
@@ -74,11 +75,21 @@ void SendBuffersManager::init(
 }
 
 std::unique_ptr<RTPSMessageGroup_t> SendBuffersManager::get_buffer(
-        const RTPSParticipantImpl* participant)
+        const RTPSParticipantImpl* participant,
+        const std::chrono::steady_clock::time_point& max_blocking_time)
 {
-    std::unique_lock<std::mutex> lock(mutex_);
-
     std::unique_ptr<RTPSMessageGroup_t> ret_val;
+
+#if HAVE_STRICT_REALTIME
+    std::unique_lock<TimedMutex> lock(mutex_, std::defer_lock);
+    if (!lock.try_lock_until(max_blocking_time))
+    {
+        throw RTPSMessageGroup::timeout();
+    }
+#else
+    std::unique_lock<TimedMutex> lock(mutex_, std::defer_lock);
+#endif // if HAVE_STRICT_REALTIME
+
 
     while (pool_.empty())
     {
@@ -89,7 +100,10 @@ std::unique_ptr<RTPSMessageGroup_t> SendBuffersManager::get_buffer(
         else
         {
             logInfo(RTPS_PARTICIPANT, "Waiting for send buffer");
-            available_cv_.wait(lock);
+            if (!available_cv_.wait_until(lock, max_blocking_time))
+            {
+                throw RTPSMessageGroup::timeout();
+            }
         }
     }
 
@@ -102,7 +116,7 @@ std::unique_ptr<RTPSMessageGroup_t> SendBuffersManager::get_buffer(
 void SendBuffersManager::return_buffer(
         std::unique_ptr <RTPSMessageGroup_t>&& buffer)
 {
-    std::lock_guard<std::mutex> guard(mutex_);
+    std::lock_guard<TimedMutex> guard(mutex_);
     pool_.push_back(std::move(buffer));
     available_cv_.notify_one();
 }
@@ -113,7 +127,7 @@ void SendBuffersManager::add_one_buffer(
     RTPSMessageGroup_t* new_item = new RTPSMessageGroup_t(
 #if HAVE_SECURITY
         participant->is_secure(),
-#endif
+#endif // if HAVE_SECURITY
         participant->getMaxMessageSize(), participant->getGuid().guidPrefix);
     pool_.emplace_back(new_item);
     ++n_created_;

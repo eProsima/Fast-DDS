@@ -29,9 +29,10 @@ class DynamicReusableTopicPayloadPool : public TopicPayloadPool
 {
     bool get_payload(
             uint32_t size,
-            CacheChange_t& cache_change) override
+            CacheChange_t& cache_change,
+            const std::chrono::time_point<std::chrono::steady_clock>& max_blocking_time) override
     {
-        return (size > 0u) && do_get_payload(size, cache_change, true);
+        return (size > 0u) && do_get_payload(size, cache_change, true, max_blocking_time);
     }
 
 protected:

@@ -35,7 +35,8 @@ public:
 
     bool get_payload(
             uint32_t size,
-            CacheChange_t& cache_change) override
+            CacheChange_t& cache_change,
+            const std::chrono::time_point<std::chrono::steady_clock>&) override
     {
         bool result = get_payload_delegate(size, cache_change);
         if (result)
@@ -66,7 +67,9 @@ public:
             bool(SerializedPayload_t & data, IPayloadPool * &data_owner, CacheChange_t & cache_change));
 
     bool release_payload (
-            CacheChange_t& cache_change) override
+            CacheChange_t& cache_change,
+            std::chrono::steady_clock::time_point =
+            std::chrono::steady_clock::now() + std::chrono::hours(24)) override
     {
         bool result = release_payload_delegate(cache_change);
         if (result)
@@ -144,7 +147,8 @@ void pool_initialization_test (
             .Times(1)
             .WillOnce(Return(true));
 
-    writer->release_change(ch);
+    writer->release_change(ch,
+            std::chrono::steady_clock::now() + std::chrono::hours(24));
 
     RTPSDomain::removeRTPSWriter(writer);
     RTPSDomain::removeRTPSParticipant(participant);

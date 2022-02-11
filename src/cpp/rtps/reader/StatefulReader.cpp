@@ -594,7 +594,7 @@ bool StatefulReader::processDataFragMsg(
                 {
                     if (work_change->serializedPayload.max_size < sampleSize)
                     {
-                        releaseCache(work_change);
+                        releaseCache(work_change, std::chrono::steady_clock::now() + std::chrono::hours(24));
                         work_change = nullptr;
                     }
                     else
@@ -622,7 +622,7 @@ bool StatefulReader::processDataFragMsg(
                     logInfo(RTPS_MSG_IN,
                             IDSTRING "MessageReceiver not add change " << change_created->sequenceNumber.to64long());
 
-                    releaseCache(change_created);
+                    releaseCache(change_created, std::chrono::steady_clock::now() + std::chrono::hours(24));
                     work_change = nullptr;
                 }
             }

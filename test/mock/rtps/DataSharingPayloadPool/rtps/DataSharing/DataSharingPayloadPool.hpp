@@ -38,7 +38,8 @@ public:
 
     bool get_payload(
             uint32_t size,
-            CacheChange_t& cache_change) override
+            CacheChange_t& cache_change,
+            const std::chrono::time_point<std::chrono::steady_clock>&) override
     {
         cache_change.serializedPayload.data = new octet[size];
         cache_change.serializedPayload.max_size = size;
@@ -64,7 +65,9 @@ public:
     }
 
     bool release_payload(
-            CacheChange_t& cache_change) override
+            CacheChange_t& cache_change,
+            std::chrono::steady_clock::time_point =
+            std::chrono::steady_clock::now() + std::chrono::hours(24)) override
     {
         delete[] cache_change.serializedPayload.data;
         cache_change.serializedPayload.max_size = 0;
@@ -117,7 +120,7 @@ public:
     bool get_next_unread_payload(
             CacheChange_t& cache_change)
     {
-        return get_payload(1, cache_change);
+        return get_payload(1, cache_change, std::chrono::steady_clock::now() + std::chrono::hours(24));
     }
 
     uint32_t advance(

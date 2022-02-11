@@ -22,7 +22,9 @@ class Impl<DYNAMIC_RESERVE_MEMORY_MODE> : public BaseImpl
 public:
 
     bool release_payload(
-            CacheChange_t& cache_change) override
+            CacheChange_t& cache_change,
+            std::chrono::steady_clock::time_point =
+            std::chrono::steady_clock::now() + std::chrono::hours(24)) override
     {
         assert(cache_change.payload_owner() == this);
 

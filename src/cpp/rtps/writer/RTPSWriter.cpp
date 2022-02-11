@@ -155,9 +155,10 @@ void RTPSWriter::deinit()
             flow_controller_->remove_change(*it);
         }
     }
+    auto infinite_timeout = std::chrono::steady_clock::now() + std::chrono::hours(24);
     for (auto it = mp_history->changesBegin(); it != mp_history->changesEnd(); ++it)
     {
-        release_change(*it);
+        release_change(*it, infinite_timeout);
     }
 
     mp_history->m_changes.clear();
@@ -167,7 +168,8 @@ void RTPSWriter::deinit()
 CacheChange_t* RTPSWriter::new_change(
         const std::function<uint32_t()>& dataCdrSerializedSize,
         ChangeKind_t changeKind,
-        InstanceHandle_t handle)
+        InstanceHandle_t handle,
+        const std::chrono::steady_clock::time_point max_blocking_time)
 {
     logInfo(RTPS_WRITER, "Creating new change");
 
@@ -180,7 +182,7 @@ CacheChange_t* RTPSWriter::new_change(
     }
 
     uint32_t payload_size = fixed_payload_size_ ? fixed_payload_size_ : dataCdrSerializedSize();
-    if (!payload_pool_->get_payload(payload_size, *reserved_change))
+    if (!payload_pool_->get_payload(payload_size, *reserved_change, max_blocking_time))
     {
         change_pool_->release_cache(reserved_change);
         logWarning(RTPS_WRITER, "Problem reserving payload from pool");
@@ -228,7 +230,8 @@ CacheChange_t* RTPSWriter::new_change(
 }
 
 bool RTPSWriter::release_change(
-        CacheChange_t* change)
+        CacheChange_t* change,
+        const std::chrono::steady_clock::time_point& max_blocking_time)
 {
     // Asserting preconditions
     assert(change != nullptr);
@@ -239,7 +242,7 @@ bool RTPSWriter::release_change(
     IPayloadPool* pool = change->payload_owner();
     if (pool)
     {
-        pool->release_payload(*change);
+        pool->release_payload(*change, max_blocking_time);
     }
     return change_pool_->release_cache(change);
 }

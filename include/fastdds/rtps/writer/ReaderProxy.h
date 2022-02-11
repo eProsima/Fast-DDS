@@ -177,12 +177,14 @@ public:
      * @param seq_num Sequence number of the change to update.
      * @param status Status to apply.
      * @param restart_nack_supression Whether nack supression event should be restarted or not.
+     * @param max_blocking_time Maximum time the function can be blocked.
      * @param delivered true if change was able to be delivered to its addressees. false otherwise.
      */
     void from_unsent_to_status(
             const SequenceNumber_t& seq_num,
             ChangeForReaderStatus_t status,
             bool restart_nack_supression,
+            const std::chrono::steady_clock::time_point& max_blocking_time,
             bool delivered = true);
 
     /**

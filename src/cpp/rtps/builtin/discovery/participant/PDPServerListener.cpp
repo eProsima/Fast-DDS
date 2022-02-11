@@ -271,7 +271,8 @@ void PDPServerListener::onNewCacheChangeAdded(
                 else
                 {
                     // If the database doesn't take the ownership, then return the CacheChante_t to the pool.
-                    pdp_reader->releaseCache(change.release());
+                    pdp_reader->releaseCache(change.release(),
+                            std::chrono::steady_clock::now() + std::chrono::hours(24));
                 }
 
             }

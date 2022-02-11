@@ -103,7 +103,7 @@ public:
     RTPS_DllAPI inline void release_Cache(
             CacheChange_t* ch)
     {
-        do_release_cache(ch);
+        do_release_cache(ch, std::chrono::steady_clock::now() + std::chrono::hours(24));
     }
 
     /**
@@ -139,11 +139,14 @@ public:
      * No Thread Safe
      * @param removal iterator to the CacheChange_t to remove.
      * @param release defaults to true and hints if the CacheChange_t should return to the pool
+     * @param max_blocking_time Maximum time the function can be blocked
      * @return iterator to the next CacheChange_t or end iterator.
      */
     RTPS_DllAPI virtual iterator remove_change_nts(
             const_iterator removal,
-            bool release = true);
+            bool release = true,
+            std::chrono::steady_clock::time_point max_blocking_time = std::chrono::steady_clock::now() +
+            std::chrono::hours(24));
 
     /**
      * Remove all changes from the History
@@ -297,7 +300,8 @@ protected:
             uint32_t size) = 0;
 
     RTPS_DllAPI virtual void do_release_cache(
-            CacheChange_t* ch) = 0;
+            CacheChange_t* ch,
+            const std::chrono::steady_clock::time_point& max_blocking_time) = 0;
 
 };
 

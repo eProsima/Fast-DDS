@@ -27,8 +27,8 @@
 #include <fastdds/rtps/writer/ReaderLocator.h>
 #include <fastdds/rtps/writer/RTPSWriter.h>
 #include <fastrtps/utils/collections/ResourceLimitedVector.hpp>
+#include <fastrtps/utils/TimedConditionVariable.hpp>
 
-#include <condition_variable>
 #include <list>
 #include <memory>
 #include <mutex>
@@ -226,7 +226,7 @@ private:
     LocatorList_t fixed_locators_;
     ResourceLimitedVector<std::unique_ptr<ReaderLocator>> matched_remote_readers_;
 
-    std::condition_variable_any unsent_changes_cond_;
+    TimedConditionVariable unsent_changes_cond_;
 
     uint64_t current_sequence_number_sent_ = 0;
 

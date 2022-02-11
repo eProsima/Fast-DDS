@@ -127,7 +127,9 @@ public:
 
     virtual iterator remove_change_nts(
             const_iterator removal,
-            bool release = true)
+            bool release = true,
+            std::chrono::steady_clock::time_point = std::chrono::steady_clock::now() +
+            std::chrono::hours(24))
     {
         (void)release;
         return m_changes.erase(removal);

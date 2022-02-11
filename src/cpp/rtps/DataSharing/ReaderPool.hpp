@@ -44,7 +44,8 @@ public:
 
     bool get_payload(
             uint32_t /*size*/,
-            CacheChange_t& /*cache_change*/) override
+            CacheChange_t& /*cache_change*/,
+            const std::chrono::time_point<std::chrono::steady_clock>&) override
     {
         // Only WriterPool can return new payloads
         return false;
@@ -74,11 +75,13 @@ public:
     }
 
     bool release_payload(
-            CacheChange_t& cache_change) override
+            CacheChange_t& cache_change,
+            std::chrono::steady_clock::time_point max_blocking_time =
+            std::chrono::steady_clock::now() + std::chrono::hours(24)) override
     {
         assert(cache_change.payload_owner() == this);
 
-        return DataSharingPayloadPool::release_payload(cache_change);
+        return DataSharingPayloadPool::release_payload(cache_change, max_blocking_time);
     }
 
     template <typename T>

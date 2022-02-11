@@ -87,9 +87,10 @@ public:
 
     bool get_payload(
             uint32_t size,
-            CacheChange_t& cache_change) override
+            CacheChange_t& cache_change,
+            const std::chrono::steady_clock::time_point& max_blocking_time) override
     {
-        return inner_pool_->get_payload(size, cache_change);
+        return inner_pool_->get_payload(size, cache_change, max_blocking_time);
     }
 
     bool get_payload(
@@ -101,9 +102,11 @@ public:
     }
 
     bool release_payload(
-            CacheChange_t& cache_change) override
+            CacheChange_t& cache_change,
+            std::chrono::steady_clock::time_point max_blocking_time =
+            std::chrono::steady_clock::now() + std::chrono::hours(24)) override
     {
-        return inner_pool_->release_payload(cache_change);
+        return inner_pool_->release_payload(cache_change, max_blocking_time);
     }
 
     bool reserve_history(

@@ -70,7 +70,8 @@ bool History::matches_change(
 
 History::iterator History::remove_change_nts(
         const_iterator removal,
-        bool release)
+        bool release,
+        std::chrono::steady_clock::time_point max_blocking_time)
 {
     if (nullptr == mp_mutex)
     {
@@ -88,7 +89,7 @@ History::iterator History::remove_change_nts(
 
     if (release)
     {
-        do_release_cache(change);
+        do_release_cache(change, max_blocking_time);
     }
 
     return m_changes.erase(removal);

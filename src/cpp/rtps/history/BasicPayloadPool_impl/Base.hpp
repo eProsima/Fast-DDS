@@ -20,7 +20,8 @@ class BaseImpl : public IPayloadPool
 {
     bool get_payload(
             uint32_t size,
-            CacheChange_t& cache_change) override
+            CacheChange_t& cache_change,
+            const std::chrono::steady_clock::time_point&) override
     {
         cache_change.serializedPayload.reserve(size);
         cache_change.payload_owner(this);
@@ -44,7 +45,9 @@ class BaseImpl : public IPayloadPool
     }
 
     bool release_payload(
-            CacheChange_t& cache_change) override
+            CacheChange_t& cache_change,
+            std::chrono::steady_clock::time_point =
+            std::chrono::steady_clock::now() + std::chrono::hours(24)) override
     {
         assert(cache_change.payload_owner() == this);
 

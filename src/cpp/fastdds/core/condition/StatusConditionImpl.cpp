@@ -41,7 +41,7 @@ StatusConditionImpl::~StatusConditionImpl()
 
 bool StatusConditionImpl::get_trigger_value() const
 {
-    std::lock_guard<std::mutex> guard(mutex_);
+    std::lock_guard<fastrtps::TimedMutex> guard(mutex_);
     return (mask_ & status_).any();
 }
 
@@ -50,7 +50,7 @@ ReturnCode_t StatusConditionImpl::set_enabled_statuses(
 {
     bool notify = false;
     {
-        std::lock_guard<std::mutex> guard(mutex_);
+        std::lock_guard<fastrtps::TimedMutex> guard(mutex_);
         bool old_trigger = (mask_ & status_).any();
         mask_ = mask;
         bool new_trigger = (mask_ & status_).any();
@@ -66,7 +66,7 @@ ReturnCode_t StatusConditionImpl::set_enabled_statuses(
 
 const StatusMask& StatusConditionImpl::get_enabled_statuses() const
 {
-    std::lock_guard<std::mutex> guard(mutex_);
+    std::lock_guard<fastrtps::TimedMutex> guard(mutex_);
     return mask_;
 }
 
@@ -78,7 +78,7 @@ void StatusConditionImpl::set_status(
     {
         bool notify = false;
         {
-            std::lock_guard<std::mutex> guard(mutex_);
+            std::lock_guard<fastrtps::TimedMutex> guard(mutex_);
             bool old_trigger = (mask_ & status_).any();
             status_ |= status;
             bool new_trigger = (mask_ & status_).any();
@@ -92,7 +92,22 @@ void StatusConditionImpl::set_status(
     }
     else
     {
-        std::lock_guard<std::mutex> guard(mutex_);
+        std::lock_guard<fastrtps::TimedMutex> guard(mutex_);
+        status_ &= ~status;
+    }
+}
+
+void StatusConditionImpl::set_status(
+        const StatusMask& status,
+        const std::chrono::steady_clock::time_point& max_blocking_time)
+{
+#if HAVE_STRICT_REALTIME
+    std::unique_lock<fastrtps::TimedMutex> lock(mutex_, std::defer_lock);
+    if (lock.try_lock_until(max_blocking_time))
+#else
+    std::lock_guard<fastrtps::TimedMutex> guard(mutex_);
+#endif // if HAVE_STRICT_REALTIME
+    {
         status_ &= ~status;
     }
 }

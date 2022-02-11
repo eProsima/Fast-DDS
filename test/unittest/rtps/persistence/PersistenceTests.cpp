@@ -32,7 +32,8 @@ class NoOpPayloadPool : public IPayloadPool
 {
     virtual bool get_payload(
             uint32_t,
-            CacheChange_t&) override
+            CacheChange_t&,
+            const std::chrono::time_point<std::chrono::steady_clock>&) override
     {
         return true;
     }
@@ -46,7 +47,9 @@ class NoOpPayloadPool : public IPayloadPool
     }
 
     virtual bool release_payload(
-            CacheChange_t&) override
+            CacheChange_t&,
+            std::chrono::steady_clock::time_point =
+            std::chrono::steady_clock::now() + std::chrono::hours(24)) override
     {
         return true;
     }

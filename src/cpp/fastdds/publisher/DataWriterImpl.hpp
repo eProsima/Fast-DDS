@@ -499,7 +499,8 @@ protected:
     template<typename SizeFunctor>
     bool get_free_payload_from_pool(
             const SizeFunctor& size_getter,
-            PayloadInfo_t& payload)
+            PayloadInfo_t& payload,
+            const std::chrono::time_point<std::chrono::steady_clock>& max_blocking_time)
     {
         CacheChange_t change;
         if (!payload_pool_)
@@ -508,7 +509,7 @@ protected:
         }
 
         uint32_t size = fixed_payload_size_ ? fixed_payload_size_ : size_getter();
-        if (!payload_pool_->get_payload(size, change))
+        if (!payload_pool_->get_payload(size, change, max_blocking_time))
         {
             return false;
         }

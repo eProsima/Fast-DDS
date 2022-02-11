@@ -211,7 +211,8 @@ public:
      * Release a cacheChange.
      */
     RTPS_DllAPI void releaseCache(
-            CacheChange_t* change);
+            CacheChange_t* change,
+            const std::chrono::steady_clock::time_point& max_blocking_time);
 
     /**
      * Read the next unread CacheChange_t from the history

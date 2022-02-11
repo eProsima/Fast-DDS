@@ -31,13 +31,16 @@ public:
 
     bool get_payload(
             uint32_t size,
-            CacheChange_t& cache_change) override
+            CacheChange_t& cache_change,
+            const std::chrono::steady_clock::time_point& max_blocking_time) override
     {
-        return (size > 0u) && do_get_payload(size, cache_change, true);
+        return (size > 0u) && do_get_payload(size, cache_change, true, max_blocking_time);
     }
 
     bool release_payload(
-            CacheChange_t& cache_change) override
+            CacheChange_t& cache_change,
+            std::chrono::steady_clock::time_point max_blocking_time =
+            std::chrono::steady_clock::now() + std::chrono::hours(24)) override
     {
         assert(cache_change.payload_owner() == this);
 
@@ -45,16 +48,23 @@ public:
             if (PayloadNode::dereference(cache_change.serializedPayload.data))
             {
                 //First remove it from all_payloads
-                std::unique_lock<std::mutex> lock(mutex_);
-                uint32_t data_index = PayloadNode::data_index(cache_change.serializedPayload.data);
-                PayloadNode* payload = all_payloads_.at(data_index);
-                all_payloads_.at(data_index) = all_payloads_.back();
-                all_payloads_.back()->data_index(data_index);
-                all_payloads_.pop_back();
-                lock.unlock();
+#if HAVE_STRICT_REALTIME
+                std::unique_lock<fastrtps::TimedMutex> lock(mutex_, std::defer_lock);
+                if (lock.try_lock_until(max_blocking_time))
+#else
+                std::unique_lock<TimedMutex> lock(mutex_);
+#endif // if HAVE_STRICT_REALTIME{
+                {
+                    uint32_t data_index = PayloadNode::data_index(cache_change.serializedPayload.data);
+                    PayloadNode* payload = all_payloads_.at(data_index);
+                    all_payloads_.at(data_index) = all_payloads_.back();
+                    all_payloads_.back()->data_index(data_index);
+                    all_payloads_.pop_back();
+                    lock.unlock();
 
-                // Now delete the data
-                delete(payload);
+                    // Now delete the data
+                    delete(payload);
+                }
             }
         }
 
@@ -73,7 +83,7 @@ public:
     {
         assert(config.memory_policy == memory_policy());
 
-        std::lock_guard<std::mutex> lock(mutex_);
+        std::lock_guard<TimedMutex> lock(mutex_);
         update_maximum_size(config, false);
 
         return true;

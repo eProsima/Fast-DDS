@@ -143,7 +143,8 @@ bool WriterHistory::matches_change(
 
 History::iterator WriterHistory::remove_change_nts(
         const_iterator removal,
-        bool release)
+        bool release,
+        std::chrono::steady_clock::time_point max_blocking_time)
 {
     if (mp_writer == nullptr || mp_mutex == nullptr)
     {
@@ -168,7 +169,7 @@ History::iterator WriterHistory::remove_change_nts(
     // Release from pools
     if ( release )
     {
-        mp_writer->release_change(change);
+        mp_writer->release_change(change, max_blocking_time);
     }
 
     return ret_val;
@@ -187,7 +188,7 @@ bool WriterHistory::remove_change(
 
     if (nullptr != p )
     {
-        mp_writer->release_change(p);
+        mp_writer->release_change(p, std::chrono::steady_clock::now() + std::chrono::hours(24));
         return true;
     }
 
@@ -257,9 +258,10 @@ bool WriterHistory::do_reserve_cache(
 }
 
 void WriterHistory::do_release_cache(
-        CacheChange_t* ch)
+        CacheChange_t* ch,
+        const std::chrono::steady_clock::time_point& max_blocking_time)
 {
-    mp_writer->release_change(ch);
+    mp_writer->release_change(ch, max_blocking_time);
 }
 
 void WriterHistory::set_fragments(

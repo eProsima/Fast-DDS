@@ -70,7 +70,9 @@ public:
      */
     iterator remove_change_nts(
             const_iterator removal,
-            bool release = true) override;
+            bool release = true,
+            std::chrono::steady_clock::time_point max_blocking_time = std::chrono::steady_clock::now() +
+            std::chrono::hours(24)) override;
 
     /**
      * Check if a new change can be added to this history.

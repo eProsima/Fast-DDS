@@ -131,7 +131,8 @@ bool ReaderHistory::matches_change(
 
 History::iterator ReaderHistory::remove_change_nts(
         const_iterator removal,
-        bool release)
+        bool release,
+        std::chrono::steady_clock::time_point max_blocking_time)
 {
     if ( mp_reader == nullptr || mp_mutex == nullptr)
     {
@@ -152,7 +153,7 @@ History::iterator ReaderHistory::remove_change_nts(
     mp_reader->change_removed_by_history(change);
     if (release)
     {
-        mp_reader->releaseCache(change);
+        mp_reader->releaseCache(change, max_blocking_time);
     }
 
     return ret_val;
@@ -253,9 +254,10 @@ bool ReaderHistory::do_reserve_cache(
 }
 
 void ReaderHistory::do_release_cache(
-        CacheChange_t* ch)
+        CacheChange_t* ch,
+        const std::chrono::steady_clock::time_point& max_blocking_time)
 {
-    mp_reader->releaseCache(ch);
+    mp_reader->releaseCache(ch, max_blocking_time);
 }
 
 } /* namespace rtps */

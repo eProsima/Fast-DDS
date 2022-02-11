@@ -80,7 +80,9 @@ public:
      */
     RTPS_DllAPI iterator remove_change_nts(
             const_iterator removal,
-            bool release = true) override;
+            bool release = true,
+            std::chrono::steady_clock::time_point max_blocking_time = std::chrono::steady_clock::now() +
+            std::chrono::hours(24)) override;
 
     /**
      * Criteria to search a specific CacheChange_t on history
@@ -122,7 +124,8 @@ protected:
             uint32_t size) override;
 
     RTPS_DllAPI void do_release_cache(
-            CacheChange_t* ch) override;
+            CacheChange_t* ch,
+            const std::chrono::steady_clock::time_point& maximum_blocking_time) override;
 
     bool add_change_(
             CacheChange_t* a_change,

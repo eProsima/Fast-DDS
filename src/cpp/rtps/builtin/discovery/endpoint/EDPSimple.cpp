@@ -283,7 +283,8 @@ void EDPSimple::processPersistentData(
                         << change->serializedPayload.length << " bytes and max size in EDPServer reader"
                         << " is " << change_to_add->serializedPayload.max_size);
 
-                    reader.first->releaseCache(change_to_add);
+                    reader.first->releaseCache(change_to_add,
+                    std::chrono::steady_clock::now() + std::chrono::hours(24));
                     return;
                 }
 
@@ -291,7 +292,8 @@ void EDPSimple::processPersistentData(
                 {
                     logInfo(RTPS_EDP, "EDPServer couldn't process database data not add change "
                         << change_to_add->sequenceNumber);
-                    reader.first->releaseCache(change_to_add);
+                    reader.first->releaseCache(change_to_add,
+                    std::chrono::steady_clock::now() + std::chrono::hours(24));
                 }
 
                 // change_to_add would be released within change_received

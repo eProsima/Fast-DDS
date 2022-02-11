@@ -111,11 +111,14 @@ public:
      * No Thread Safe
      * @param removal iterator to the change for removal
      * @param release specifies if the change must be returned to the pool
+     * @param max_blocking_time Maximum time the function can be blocked
      * @return iterator to the next change if any
      */
     RTPS_DllAPI iterator remove_change_nts(
             const_iterator removal,
-            bool release = true) override;
+            bool release = true,
+            std::chrono::steady_clock::time_point max_blocking_time = std::chrono::steady_clock::now() +
+            std::chrono::hours(24)) override;
 
     /**
      * Criteria to search a specific CacheChange_t on history
@@ -172,7 +175,8 @@ protected:
             uint32_t size) override;
 
     RTPS_DllAPI void do_release_cache(
-            CacheChange_t* ch) override;
+            CacheChange_t* ch,
+            const std::chrono::steady_clock::time_point& max_blocking_time) override;
 
     template<typename Pred>
     inline void remove_changes_with_pred(

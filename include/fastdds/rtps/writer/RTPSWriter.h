@@ -120,7 +120,8 @@ public:
     RTPS_DllAPI CacheChange_t* new_change(
             const std::function<uint32_t()>& dataCdrSerializedSize,
             ChangeKind_t changeKind,
-            InstanceHandle_t handle = c_InstanceHandle_Unknown);
+            InstanceHandle_t handle = c_InstanceHandle_Unknown,
+            const std::chrono::steady_clock::time_point max_blocking_time = std::chrono::steady_clock::now() + std::chrono::hours(24));
 
     RTPS_DllAPI CacheChange_t* new_change(
             ChangeKind_t changeKind,
@@ -131,6 +132,8 @@ public:
      *
      * @param change Pointer to the cache change to be released.
      *
+     * @param[in] max_blocking_time Maximum time the function can be blocked.
+     *
      * @returns whether the operation succeeded or not
      *
      * @pre
@@ -140,7 +143,8 @@ public:
      * @post memory pointed to by @c change is not accessed
      */
     RTPS_DllAPI bool release_change(
-            CacheChange_t* change);
+            CacheChange_t* change,
+            const std::chrono::steady_clock::time_point& max_blocking_time);
 
     /**
      * Add a matched reader.

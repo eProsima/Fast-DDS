@@ -491,7 +491,8 @@ void PDPClient::announceParticipantState(
         }
 
         // free change
-        mp_PDPWriter->release_change(change);
+        mp_PDPWriter->release_change(change,
+                std::chrono::steady_clock::now() + std::chrono::hours(24));
     }
     else
     {

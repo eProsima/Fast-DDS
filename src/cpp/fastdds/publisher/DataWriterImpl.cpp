@@ -388,6 +388,10 @@ ReturnCode_t DataWriterImpl::loan_sample(
         void*& sample,
         LoanInitializationKind initialization)
 {
+    // Block lowlevel writer
+    auto max_blocking_time = steady_clock::now() +
+            microseconds(::TimeConv::Time_t2MicroSecondsInt64(qos_.reliability().max_blocking_time));
+
     // Type should be plain and have space for the representation header
     if (!type_->is_plain() || SerializedPayload_t::representation_header_size > type_->m_typeSize)
     {
@@ -400,7 +404,15 @@ ReturnCode_t DataWriterImpl::loan_sample(
         return ReturnCode_t::RETCODE_NOT_ENABLED;
     }
 
-    std::lock_guard<RecursiveTimedMutex> lock(writer_->getMutex());
+#if HAVE_STRICT_REALTIME
+    std::unique_lock<RecursiveTimedMutex> lock(writer_->getMutex(), std::defer_lock);
+    if (!lock.try_lock_until(max_blocking_time))
+    {
+        return ReturnCode_t::RETCODE_TIMEOUT;
+    }
+#else
+    std::unique_lock<RecursiveTimedMutex> lock(writer_->getMutex());
+#endif // if HAVE_STRICT_REALTIME
 
     // Get one payload from the pool
     PayloadInfo_t payload;
@@ -408,7 +420,7 @@ ReturnCode_t DataWriterImpl::loan_sample(
     if (!get_free_payload_from_pool([size]()
             {
                 return size;
-            }, payload))
+            }, payload, max_blocking_time))
     {
         return ReturnCode_t::RETCODE_OUT_OF_RESOURCES;
     }
@@ -719,7 +731,7 @@ ReturnCode_t DataWriterImpl::perform_create_new_change(
     bool was_loaned = check_and_remove_loan(data, payload);
     if (!was_loaned)
     {
-        if (!get_free_payload_from_pool(type_->getSerializedSizeProvider(data), payload))
+        if (!get_free_payload_from_pool(type_->getSerializedSizeProvider(data), payload, max_blocking_time))
         {
             return ReturnCode_t::RETCODE_OUT_OF_RESOURCES;
         }
@@ -744,7 +756,7 @@ ReturnCode_t DataWriterImpl::perform_create_new_change(
                 payload.move_from_change(*ch);
                 add_loan(data, payload);
             }
-            writer_->release_change(ch);
+            writer_->release_change(ch, max_blocking_time);
             return ReturnCode_t::RETCODE_TIMEOUT;
         }
 

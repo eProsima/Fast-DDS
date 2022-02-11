@@ -630,7 +630,8 @@ void StatefulWriter::send_heartbeat_to_all_readers()
 }
 
 void StatefulWriter::deliver_sample_to_intraprocesses(
-        CacheChange_t* change)
+        CacheChange_t* change,
+        const std::chrono::time_point<std::chrono::steady_clock>& max_blocking_time)
 {
     for (ReaderProxy* remoteReader : matched_local_readers_)
     {
@@ -658,6 +659,7 @@ void StatefulWriter::deliver_sample_to_intraprocesses(
                     change->sequenceNumber,
                     delivered ? ACKNOWLEDGED : UNACKNOWLEDGED,
                     false,
+                    max_blocking_time,
                     delivered);
             }
         }
@@ -665,7 +667,8 @@ void StatefulWriter::deliver_sample_to_intraprocesses(
 }
 
 void StatefulWriter::deliver_sample_to_datasharing(
-        CacheChange_t* change)
+        CacheChange_t* change,
+        const std::chrono::time_point<std::chrono::steady_clock>& max_blocking_time)
 {
     for (ReaderProxy* remoteReader : matched_datasharing_readers_)
     {
@@ -683,7 +686,8 @@ void StatefulWriter::deliver_sample_to_datasharing(
                 remoteReader->from_unsent_to_status(
                     change->sequenceNumber,
                     UNACKNOWLEDGED,
-                    false);
+                    false,
+                    max_blocking_time);
             }
             remoteReader->datasharing_notify();
         }
@@ -818,7 +822,8 @@ DeliveryRetCode StatefulWriter::deliver_sample_to_network(
                                                     (*remote_reader)->from_unsent_to_status(
                                                         change->sequenceNumber,
                                                         UNDERWAY,
-                                                        true);
+                                                        true,
+                                                        max_blocking_time);
                                                 }
                                             }
                                         }
@@ -850,7 +855,8 @@ DeliveryRetCode StatefulWriter::deliver_sample_to_network(
                                             (*remote_reader)->from_unsent_to_status(
                                                 change->sequenceNumber,
                                                 UNDERWAY,
-                                                true);
+                                                true,
+                                                max_blocking_time);
                                         }
                                     }
                                 }
@@ -898,7 +904,8 @@ DeliveryRetCode StatefulWriter::deliver_sample_to_network(
                                                 (*remote_reader)->from_unsent_to_status(
                                                     change->sequenceNumber,
                                                     UNDERWAY,
-                                                    true);
+                                                    true,
+                                                    max_blocking_time);
                                             }
                                         }
                                         add_statistics_sent_submessage(change, (*remote_reader)->locators_size());
@@ -922,7 +929,8 @@ DeliveryRetCode StatefulWriter::deliver_sample_to_network(
                                         (*remote_reader)->from_unsent_to_status(
                                             change->sequenceNumber,
                                             UNDERWAY,
-                                            true);
+                                            true,
+                                            max_blocking_time);
                                     }
                                     add_statistics_sent_submessage(change, (*remote_reader)->locators_size());
                                 }
@@ -2023,13 +2031,13 @@ DeliveryRetCode StatefulWriter::deliver_sample_nts(
 
     if (there_are_local_readers_)
     {
-        deliver_sample_to_intraprocesses(cache_change);
+        deliver_sample_to_intraprocesses(cache_change, max_blocking_time);
     }
 
     // Process datasharing then
     if (there_are_datasharing_readers_)
     {
-        deliver_sample_to_datasharing(cache_change);
+        deliver_sample_to_datasharing(cache_change, max_blocking_time);
     }
 
     if (there_are_remote_readers_)

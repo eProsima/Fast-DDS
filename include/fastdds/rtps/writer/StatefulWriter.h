@@ -26,7 +26,7 @@
 #include <fastdds/rtps/history/IChangePool.h>
 #include <fastdds/rtps/history/IPayloadPool.h>
 #include <fastrtps/utils/collections/ResourceLimitedVector.hpp>
-#include <condition_variable>
+#include <fastrtps/utils/TimedConditionVariable.hpp>
 #include <mutex>
 
 namespace eprosima {
@@ -123,10 +123,10 @@ private:
 
     // TODO Join this mutex when main mutex would not be recursive.
     std::mutex all_acked_mutex_;
-    std::condition_variable all_acked_cond_;
+    fastrtps::TimedConditionVariable all_acked_cond_;
     // TODO Also remove when main mutex not recursive.
     bool all_acked_;
-    std::condition_variable_any may_remove_change_cond_;
+    fastrtps::TimedConditionVariable may_remove_change_cond_;
     unsigned int may_remove_change_;
 
 public:
@@ -443,10 +443,12 @@ private:
     void send_heartbeat_to_all_readers();
 
     void deliver_sample_to_intraprocesses(
-            CacheChange_t* change);
+            CacheChange_t* change,
+            const std::chrono::time_point<std::chrono::steady_clock>& max_blocking_time);
 
     void deliver_sample_to_datasharing(
-            CacheChange_t* change);
+            CacheChange_t* change,
+            const std::chrono::time_point<std::chrono::steady_clock>& max_blocking_time);
 
     DeliveryRetCode deliver_sample_to_network(
             CacheChange_t* change,

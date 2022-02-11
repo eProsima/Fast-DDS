@@ -97,7 +97,8 @@ struct ReadTakeCommand
     }
 
     bool add_instance(
-            bool take_samples)
+            bool take_samples,
+            const std::chrono::steady_clock::time_point& max_blocking_time)
     {
         // Advance to the first instance with a valid state
         if (!go_to_first_valid_instance())
@@ -132,7 +133,7 @@ struct ReadTakeCommand
                 if (remove_change)
                 {
                     // Remove from history
-                    history_.remove_change_sub(change, it);
+                    history_.remove_change_sub(change, it, max_blocking_time);
 
                     // Current iterator will point to change next to the one removed. Avoid incrementing.
                     continue;
@@ -166,7 +167,7 @@ struct ReadTakeCommand
                     if (remove_change || (added && take_samples))
                     {
                         // Remove from history
-                        history_.remove_change_sub(change, it);
+                        history_.remove_change_sub(change, it, max_blocking_time);
 
                         // Current iterator will point to change next to the one removed. Avoid incrementing.
                         continue;

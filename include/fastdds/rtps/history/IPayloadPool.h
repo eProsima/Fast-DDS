@@ -23,6 +23,7 @@
 
 #include <cstdint>
 #include <memory>
+#include <chrono>
 
 namespace eprosima {
 namespace fastrtps {
@@ -52,6 +53,8 @@ public:
      *                               Should be greater than 0.
      * @param [in,out] cache_change  Cache change to assign the payload to
      *
+     * @param [in]     max_blocking_time Maximum time the function can be blocked.
+     *
      * @returns whether the operation succeeded or not
      *
      * @pre Fields @c writerGUID and @c sequenceNumber of @c cache_change are either:
@@ -65,7 +68,8 @@ public:
      */
     virtual bool get_payload(
             uint32_t size,
-            CacheChange_t& cache_change) = 0;
+            CacheChange_t& cache_change,
+            const std::chrono::steady_clock::time_point& max_blocking_time) = 0;
 
     /**
      * @brief Assign a serialized payload to a new sample.
@@ -114,6 +118,8 @@ public:
      *
      * @param [in,out] cache_change  Cache change to assign the payload to
      *
+     * @param [in]     max_blocking_time Maximum time the function can be blocked.
+     *
      * @returns whether the operation succeeded or not
      *
      * @pre @li Field @c payload_owner of @c cache_change equals this
@@ -121,7 +127,9 @@ public:
      * @post @li Field @c payload_owner of @c cache_change is @c nullptr
      */
     virtual bool release_payload(
-            CacheChange_t& cache_change) = 0;
+            CacheChange_t& cache_change,
+            std::chrono::steady_clock::time_point max_blocking_time =
+            std::chrono::steady_clock::now() + std::chrono::hours(24)) = 0;
 };
 
 } /* namespace rtps */

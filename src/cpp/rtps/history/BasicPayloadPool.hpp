@@ -59,7 +59,8 @@ public:
                                 [&payload_pool, &config](
                                     CacheChange_t* change)
                                 {
-                                    if (payload_pool->get_payload(config.payload_initial_size, *change))
+                                    if (payload_pool->get_payload(config.payload_initial_size, *change,
+                                    std::chrono::steady_clock::now() + std::chrono::hours(24)))
                                     {
                                         payload_pool->release_payload(*change);
                                     }

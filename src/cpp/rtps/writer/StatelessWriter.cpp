@@ -328,7 +328,7 @@ void StatelessWriter::unsent_change_added_to_history(
         logInfo(RTPS_WRITER, "No reader to add change.");
         if (mp_listener != nullptr)
         {
-            mp_listener->onWriterChangeReceivedByAll(this, change);
+            mp_listener->onWriterChangeReceivedByAll(this, change); // TODO (richiware) realtime
         }
     }
 

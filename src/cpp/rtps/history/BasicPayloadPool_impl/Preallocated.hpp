@@ -30,7 +30,8 @@ public:
 
     bool get_payload(
             uint32_t /* size */,
-            CacheChange_t& cache_change) override
+            CacheChange_t& cache_change,
+            const std::chrono::time_point<std::chrono::steady_clock>&) override
     {
         cache_change.serializedPayload.reserve(payload_size_);
         cache_change.payload_owner(this);

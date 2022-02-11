@@ -53,7 +53,9 @@ public:
     ~DataSharingPayloadPool() = default;
 
     virtual bool release_payload(
-            CacheChange_t& cache_change) override;
+            CacheChange_t& cache_change,
+            std::chrono::steady_clock::time_point max_blocking_time =
+            std::chrono::steady_clock::now() + std::chrono::hours(24)) override;
 
     static std::shared_ptr<DataSharingPayloadPool> get_reader_pool(
             bool is_reader_volatile);

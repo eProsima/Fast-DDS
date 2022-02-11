@@ -645,7 +645,8 @@ void PDPServer::announceParticipantState(
                 {
                     // Already there, dispose
                     logError(RTPS_PDP_SERVER, "DiscoveryDatabase already initialized with local DATA(p) on creation");
-                    mp_PDPWriter->release_change(change);
+                    mp_PDPWriter->release_change(change,
+                            std::chrono::steady_clock::now() + std::chrono::hours(24));
                 }
             }
             // Doesn't make sense to send the DATA directly if it hasn't been introduced in the history yet (missing
@@ -715,7 +716,8 @@ void PDPServer::announceParticipantState(
             {
                 // Dispose if already there
                 // It may happen if the participant is not removed fast enough
-                mp_PDPWriter->release_change(change);
+                mp_PDPWriter->release_change(change,
+                        std::chrono::steady_clock::now() + std::chrono::hours(24));
                 return;
             }
         }
@@ -799,7 +801,8 @@ bool PDPServer::remove_remote_participant(
             else
             {
                 // if the database doesn't take the ownership remove
-                mp_PDPReader->releaseCache(pC);
+                mp_PDPReader->releaseCache(pC,
+                        std::chrono::steady_clock::now() + std::chrono::hours(24));
             }
         }
     }
@@ -1126,7 +1129,8 @@ void PDPServer::process_changes_release_(
                 // Normally Data(Up) will not be in history except in Own Server destruction
                 if (!remove_change_from_writer_history(mp_PDPWriter, mp_PDPWriterHistory, ch))
                 {
-                    mp_PDPWriter->release_change(ch);
+                    mp_PDPWriter->release_change(ch,
+                            std::chrono::steady_clock::now() + std::chrono::hours(24));
                 }
             }
             else if (discovery_db_.is_writer(ch))
@@ -1138,7 +1142,8 @@ void PDPServer::process_changes_release_(
                             edp->publications_writer_.second,
                             ch))
                 {
-                    edp->publications_writer_.first->release_change(ch);
+                    edp->publications_writer_.first->release_change(ch,
+                            std::chrono::steady_clock::now() + std::chrono::hours(24));
                 }
             }
             else if (discovery_db_.is_reader(ch))
@@ -1150,7 +1155,8 @@ void PDPServer::process_changes_release_(
                             edp->subscriptions_writer_.second,
                             ch))
                 {
-                    edp->subscriptions_writer_.first->release_change(ch);
+                    edp->subscriptions_writer_.first->release_change(ch,
+                            std::chrono::steady_clock::now() + std::chrono::hours(24));
                 }
             }
             else
@@ -1169,7 +1175,8 @@ void PDPServer::process_changes_release_(
             if (discovery_db_.is_participant(ch))
             {
                 remove_change_from_writer_history(mp_PDPWriter, mp_PDPWriterHistory, ch, false);
-                mp_PDPReader->releaseCache(ch);
+                mp_PDPReader->releaseCache(ch,
+                        std::chrono::steady_clock::now() + std::chrono::hours(24));
             }
             else if (discovery_db_.is_writer(ch))
             {
@@ -1178,7 +1185,8 @@ void PDPServer::process_changes_release_(
                     edp->publications_writer_.second,
                     ch,
                     false);
-                edp->publications_reader_.first->releaseCache(ch);
+                edp->publications_reader_.first->releaseCache(ch,
+                        std::chrono::steady_clock::now() + std::chrono::hours(24));
             }
             else if (discovery_db_.is_reader(ch))
             {
@@ -1187,7 +1195,8 @@ void PDPServer::process_changes_release_(
                     edp->subscriptions_writer_.second,
                     ch,
                     false);
-                edp->subscriptions_reader_.first->releaseCache(ch);
+                edp->subscriptions_reader_.first->releaseCache(ch,
+                        std::chrono::steady_clock::now() + std::chrono::hours(24));
             }
             else
             {

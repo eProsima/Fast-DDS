@@ -42,12 +42,14 @@
 #if HAVE_STRICT_REALTIME && defined(__unix__)
 #include <pthread.h>
 
-#define CV_INIT_(x) pthread_cond_init(x, NULL);
+#define CV_INIT_(x) pthread_condattr_init(&cv_attr_); \
+    pthread_condattr_setclock(&cv_attr_, CLOCK_MONOTONIC); \
+    pthread_cond_init(x, &cv_attr_);
 #define CV_WAIT_(cv, x) pthread_cond_wait(&cv, x)
 #define CV_TIMEDWAIT_(cv, x, y) pthread_cond_timedwait(&cv, x, y)
 #define CV_SIGNAL_(cv) pthread_cond_signal(&cv)
 #define CV_BROADCAST_(cv) pthread_cond_broadcast(&cv)
-#define CV_T_ pthread_cond_t
+#define CV_T_ pthread_condattr_t cv_attr_; pthread_cond_t
 #else
 #include <condition_variable>
 #endif // if HAVE_STRICT_REALTIME && defined(__unix__)
@@ -99,7 +101,7 @@ public:
         struct timespec max_wait = {
             0, 0
         };
-        clock_gettime(CLOCK_REALTIME, &max_wait);
+        clock_gettime(CLOCK_MONOTONIC, &max_wait);
         nsecs = nsecs + std::chrono::nanoseconds(max_wait.tv_nsec);
         auto secs = std::chrono::duration_cast<std::chrono::seconds>(nsecs);
         nsecs -= secs;
@@ -111,6 +113,24 @@ public:
         }
 
         return ret_value;
+    }
+
+    template<typename Mutex>
+    bool wait_for(
+            std::unique_lock<Mutex>& lock,
+            const std::chrono::nanoseconds& max_blocking_time)
+    {
+        auto nsecs = max_blocking_time;
+        struct timespec max_wait = {
+            0, 0
+        };
+        clock_gettime(CLOCK_MONOTONIC, &max_wait);
+        nsecs = nsecs + std::chrono::nanoseconds(max_wait.tv_nsec);
+        auto secs = std::chrono::duration_cast<std::chrono::seconds>(nsecs);
+        nsecs -= secs;
+        max_wait.tv_sec += secs.count();
+        max_wait.tv_nsec = (long)nsecs.count();
+        return (CV_TIMEDWAIT_(cv_, lock.mutex()->native_handle(), &max_wait) == 0);
     }
 
     template<typename Mutex>

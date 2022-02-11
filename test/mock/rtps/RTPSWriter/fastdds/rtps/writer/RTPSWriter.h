@@ -114,7 +114,9 @@ public:
             const std::function<uint32_t()>&,
             ChangeKind_t));
 
-    MOCK_METHOD1(release_change, void(CacheChange_t*));
+    MOCK_METHOD2(release_change, void(
+                CacheChange_t*, 
+        const std::chrono::steady_clock::time_point& max_blocking_time));
 
     MOCK_METHOD1(set_separate_sending, void(bool));
 

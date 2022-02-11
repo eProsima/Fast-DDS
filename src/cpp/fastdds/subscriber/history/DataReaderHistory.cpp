@@ -432,7 +432,8 @@ bool DataReaderHistory::remove_change_sub(
 
 bool DataReaderHistory::remove_change_sub(
         CacheChange_t* change,
-        DataReaderInstance::ChangeCollection::iterator& it)
+        DataReaderInstance::ChangeCollection::iterator& it,
+        const std::chrono::steady_clock::time_point& max_blocking_time)
 {
     if (mp_reader == nullptr || mp_mutex == nullptr)
     {
@@ -470,7 +471,7 @@ bool DataReaderHistory::remove_change_sub(
     }
 
     m_isHistoryFull = false;
-    ReaderHistory::remove_change_nts(chit);
+    ReaderHistory::remove_change_nts(chit, true, max_blocking_time);
 
     return true;
 }
@@ -583,7 +584,8 @@ void DataReaderHistory::check_and_remove_instance(
 
 ReaderHistory::iterator DataReaderHistory::remove_change_nts(
         ReaderHistory::const_iterator removal,
-        bool release)
+        bool release,
+        std::chrono::steady_clock::time_point max_blocking_time)
 {
     if (removal != changesEnd())
     {
@@ -603,7 +605,7 @@ ReaderHistory::iterator DataReaderHistory::remove_change_nts(
     }
 
     // call the base class
-    return ReaderHistory::remove_change_nts(removal, release);
+    return ReaderHistory::remove_change_nts(removal, release, max_blocking_time);
 }
 
 bool DataReaderHistory::completed_change(

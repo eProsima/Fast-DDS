@@ -28,7 +28,8 @@ namespace fastrtps {
 namespace rtps {
 
 bool DataSharingPayloadPool::release_payload(
-        CacheChange_t& cache_change)
+        CacheChange_t& cache_change,
+        std::chrono::steady_clock::time_point)
 {
     cache_change.serializedPayload.length = 0;
     cache_change.serializedPayload.pos = 0;

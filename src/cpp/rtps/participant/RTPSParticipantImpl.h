@@ -469,7 +469,8 @@ public:
         return false;
     }
 
-    std::unique_ptr<RTPSMessageGroup_t> get_send_buffer();
+    std::unique_ptr<RTPSMessageGroup_t> get_send_buffer(
+            const std::chrono::steady_clock::time_point& max_blocking_time);
     void return_send_buffer(
             std::unique_ptr <RTPSMessageGroup_t>&& buffer);
 

@@ -86,7 +86,9 @@ public:
      */
     iterator remove_change_nts(
             const_iterator removal,
-            bool release = true) override;
+            bool release = true,
+            std::chrono::steady_clock::time_point max_blocking_time = std::chrono::steady_clock::now() +
+            std::chrono::hours(24)) override;
 
     /**
      * Check if a new change can be added to this history.
@@ -148,11 +150,13 @@ public:
      * This method is called to remove a change from the SubscriberHistory.
      * @param [in]     change Pointer to the CacheChange_t.
      * @param [in,out] it     Iterator pointing to change on input. Will point to next valid change on output.
+     * @param [in]     maximum_blocking_time Maximum time the function can be blocked.
      * @return True if removed.
      */
     bool remove_change_sub(
             CacheChange_t* change,
-            DataReaderInstance::ChangeCollection::iterator& it);
+            DataReaderInstance::ChangeCollection::iterator& it,
+            const std::chrono::steady_clock::time_point& maximum_blocking_time);
 
     /**
      * Called when a writer is unmatched from the reader holding this history.

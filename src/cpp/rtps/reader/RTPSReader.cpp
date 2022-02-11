@@ -150,9 +150,10 @@ RTPSReader::~RTPSReader()
 {
     logInfo(RTPS_READER, "Removing reader " << this->getGuid().entityId; );
 
+    auto infinite_timeout = std::chrono::steady_clock::now() + std::chrono::hours(24);
     for (auto it = mp_history->changesBegin(); it != mp_history->changesEnd(); ++it)
     {
-        releaseCache(*it);
+        releaseCache(*it, infinite_timeout);
     }
 
     delete history_state_;
@@ -176,7 +177,8 @@ bool RTPSReader::reserveCache(
     }
 
     uint32_t payload_size = fixed_payload_size_ ? fixed_payload_size_ : dataCdrSerializedSize;
-    if (!payload_pool_->get_payload(payload_size, *reserved_change))
+    if (!payload_pool_->get_payload(payload_size, *reserved_change, //TODO
+            std::chrono::steady_clock::now() + std::chrono::hours(24)))
     {
         change_pool_->release_cache(reserved_change);
         logWarning(RTPS_READER, "Problem reserving payload from pool");
@@ -188,14 +190,15 @@ bool RTPSReader::reserveCache(
 }
 
 void RTPSReader::releaseCache(
-        CacheChange_t* change)
+        CacheChange_t* change,
+        const std::chrono::steady_clock::time_point& max_blocking_time)
 {
     std::lock_guard<RecursiveTimedMutex> guard(mp_mutex);
 
     IPayloadPool* pool = change->payload_owner();
     if (pool)
     {
-        pool->release_payload(*change);
+        pool->release_payload(*change, max_blocking_time);
     }
     change_pool_->release_cache(change);
 }

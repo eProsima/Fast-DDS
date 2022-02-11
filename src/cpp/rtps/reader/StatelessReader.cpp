@@ -559,7 +559,7 @@ bool StatelessReader::processDataFragMsg(
                         else
                         {
                             // Release change, and let it be reserved later
-                            releaseCache(work_change);
+                            releaseCache(work_change, std::chrono::steady_clock::now() + std::chrono::hours(24));
                             work_change = nullptr;
                         }
                     }
@@ -572,7 +572,7 @@ bool StatelessReader::processDataFragMsg(
                     {
                         if (work_change->serializedPayload.max_size < sampleSize)
                         {
-                            releaseCache(work_change);
+                            releaseCache(work_change, std::chrono::steady_clock::now() + std::chrono::hours(24));
                             work_change = nullptr;
                         }
                         else
@@ -604,7 +604,7 @@ bool StatelessReader::processDataFragMsg(
                     if (data_filter_ && !data_filter_->is_relevant(*change_completed, m_guid))
                     {
                         update_last_notified(change_completed->writerGUID, change_completed->sequenceNumber);
-                        releaseCache(change_completed);
+                        releaseCache(change_completed, std::chrono::steady_clock::now() + std::chrono::hours(24));
                     }
                     else if (!change_received(change_completed))
                     {
@@ -613,7 +613,7 @@ bool StatelessReader::processDataFragMsg(
                                 change_completed->sequenceNumber.to64long());
 
                         // Release CacheChange_t.
-                        releaseCache(change_completed);
+                        releaseCache(change_completed, std::chrono::steady_clock::now() + std::chrono::hours(24));
                     }
                 }
             }
