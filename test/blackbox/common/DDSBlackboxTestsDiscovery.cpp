@@ -218,7 +218,7 @@ TEST(DDSDiscovery, DDSNetworkInterfaceChangesAtRunTime)
     EXPECT_TRUE(complete_data.empty());
 
     // no data received
-    EXPECT_EQ(datareader.block_for_all(std::chrono::seconds(3)), 0);
+    EXPECT_EQ(datareader.block_for_all(std::chrono::seconds(3)), 0u);
 
     // enable interfaces
     test_UDPv4Transport::simulate_no_interfaces = false;

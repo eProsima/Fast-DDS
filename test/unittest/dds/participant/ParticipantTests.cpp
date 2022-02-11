@@ -2981,11 +2981,11 @@ TEST(ParticipantTests, DeleteContainedEntities)
 
     std::vector<DataWriter*> data_writer_list;
     publisher->get_datawriters(data_writer_list);
-    ASSERT_EQ(data_writer_list.size(), 2);
+    ASSERT_EQ(data_writer_list.size(), 2u);
 
     std::vector<DataReader*> data_reader_list;
     subscriber->get_datareaders(data_reader_list);
-    ASSERT_EQ(data_reader_list.size(), 1);
+    ASSERT_EQ(data_reader_list.size(), 1u);
 
     data_reader_list.clear();
     data_writer_list.clear();
@@ -3001,9 +3001,9 @@ TEST(ParticipantTests, DeleteContainedEntities)
 
     EXPECT_TRUE(participant->contains_entity(publisher_handle));
     publisher->get_datawriters(data_writer_list);
-    EXPECT_EQ(data_writer_list.size(), 2);
+    EXPECT_EQ(data_writer_list.size(), 2u);
     subscriber->get_datareaders(data_reader_list);
-    EXPECT_EQ(data_reader_list.size(), 1);
+    EXPECT_EQ(data_reader_list.size(), 1u);
     ASSERT_EQ(retcode, ReturnCode_t::RETCODE_PRECONDITION_NOT_MET);
 
     data_writer_list.clear();
@@ -3023,9 +3023,9 @@ TEST(ParticipantTests, DeleteContainedEntities)
 
     EXPECT_TRUE(participant->contains_entity(subscriber_handle));
     publisher->get_datawriters(data_writer_list);
-    EXPECT_EQ(data_writer_list.size(), 2);
+    EXPECT_EQ(data_writer_list.size(), 2u);
     subscriber->get_datareaders(data_reader_list);
-    EXPECT_EQ(data_reader_list.size(), 1);
+    EXPECT_EQ(data_reader_list.size(), 1u);
 
     ASSERT_EQ(retcode, ReturnCode_t::RETCODE_PRECONDITION_NOT_MET);
 
