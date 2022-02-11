@@ -481,7 +481,10 @@ IContentFilterFactory::ReturnCode_t DDSFilterFactory::create_content_filter(
                         if (expr->parameters[n])
                         {
                             old_values[n].copy_from(*(expr->parameters[n]));
-                            ret = expr->parameters[n]->set_value(filter_parameters[n]);
+                            if (!expr->parameters[n]->set_value(filter_parameters[n]))
+                            {
+                                ret = ReturnCode_t::RETCODE_BAD_PARAMETER;
+                            }
                         }
                     }
 
