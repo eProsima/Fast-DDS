@@ -23,7 +23,8 @@
 #include <dlfcn.h>
 #include <ctime>
 
-int pthread_mutex_lock(pthread_mutex_t* mutex)
+int pthread_mutex_lock(
+        pthread_mutex_t* mutex)
 {
     pid_t pid = eprosima::fastrtps::g_tmutex_thread_pid;
 
@@ -35,15 +36,17 @@ int pthread_mutex_lock(pthread_mutex_t* mutex)
         }
     }
 
-    if(eprosima::fastrtps::g_origin_lock_func == nullptr)
+    if (eprosima::fastrtps::g_origin_lock_func == nullptr)
     {
-        eprosima::fastrtps::g_origin_lock_func = (int(*)(pthread_mutex_t*))dlsym(RTLD_NEXT, "pthread_mutex_lock");
+        eprosima::fastrtps::g_origin_lock_func = (int (*)(pthread_mutex_t*))dlsym(RTLD_NEXT, "pthread_mutex_lock");
     }
 
     return (*eprosima::fastrtps::g_origin_lock_func)(mutex);
 }
 
-int pthread_mutex_timedlock(pthread_mutex_t* mutex, const struct timespec* abs_timeout)
+int pthread_mutex_timedlock(
+        pthread_mutex_t* mutex,
+        const struct timespec* abs_timeout)
 {
     pid_t pid = eprosima::fastrtps::g_tmutex_thread_pid;
 
@@ -55,10 +58,10 @@ int pthread_mutex_timedlock(pthread_mutex_t* mutex, const struct timespec* abs_t
         }
     }
 
-    if(eprosima::fastrtps::g_origin_timedlock_func == nullptr)
+    if (eprosima::fastrtps::g_origin_timedlock_func == nullptr)
     {
         eprosima::fastrtps::g_origin_timedlock_func =
-            (int(*)(pthread_mutex_t*, const struct timespec*))dlsym(RTLD_NEXT, "pthread_mutex_timedlock");
+                (int (*)(pthread_mutex_t*, const struct timespec*))dlsym(RTLD_NEXT, "pthread_mutex_timedlock");
     }
 
     return (*eprosima::fastrtps::g_origin_timedlock_func)(mutex, abs_timeout);

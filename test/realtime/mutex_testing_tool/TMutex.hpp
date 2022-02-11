@@ -36,7 +36,7 @@ using pid_t = int;
 #define GET_TID() syscall(SYS_gettid)
 #else
 #error "SYS_gettid unavailable on this system"
-#endif
+#endif // ifdef SYS_gettid
 
 #endif //_WIN32
 
@@ -55,10 +55,13 @@ enum LockType : int32_t
 extern std::atomic<pid_t> g_tmutex_thread_pid;
 
 //! Store the original pthread_mutex_lock function
-extern int (*g_origin_lock_func)(pthread_mutex_t*);
+extern int (* g_origin_lock_func)(
+        pthread_mutex_t*);
 
 //! Store the original pthread_mutex_timedlock function
-extern int (*g_origin_timedlock_func)(pthread_mutex_t*, const struct timespec*);
+extern int (* g_origin_timedlock_func)(
+        pthread_mutex_t*,
+        const struct timespec*);
 
 /*!
  * @brief Records all mutexes used by the thread that calls this function.
@@ -75,26 +78,31 @@ void tmutex_stop_recording();
  * @param[in] type Type of the lock used by the mutex.
  * @param[in] mutex Pointer of the mutex to be recorded.
  */
-void tmutex_record_mutex_(LockType type, pthread_mutex_t* mutex);
+void tmutex_record_mutex_(
+        LockType type,
+        pthread_mutex_t* mutex);
 
 /*!
  * @brief Gets the pointer of the selected recorded mutex.
  * @param[in] index Position of the recorded mutex.
  * @return Pointer to the selected mutex.
  */
-pthread_mutex_t* tmutex_get_mutex(size_t index);
+pthread_mutex_t* tmutex_get_mutex(
+        size_t index);
 
 /*!
  * @brief Locks the selected recorded mutex.
  * @param[in] index Position of the recorded mutex.
  */
-void tmutex_lock_mutex(size_t index);
+void tmutex_lock_mutex(
+        size_t index);
 
 /*!
  * @brief Unlocks the selected recorded mutex.
  * @param[in] index Position of the recorded mutex.
  */
-void tmutex_unlock_mutex(size_t index);
+void tmutex_unlock_mutex(
+        size_t index);
 
 /*!
  * @brief Returns the number of mutex recorded.
@@ -113,6 +121,14 @@ size_t tmutex_get_num_lock_type();
  * @return Number of mutex.
  */
 size_t tmutex_get_num_timedlock_type();
+
+/*!
+ * @brief Return the backtrace where the lock was done.
+ * @param[in] index Position of the recorded mutex.
+ * @return String with the backtrace info.
+ */
+const char* tmux_get_mutex_trace(
+        size_t index);
 
 } //namespace fastrtps
 } //namespace eprosima
