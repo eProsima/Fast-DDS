@@ -533,8 +533,10 @@ ContentFilteredTopic* DomainParticipantImpl::create_contentfilteredtopic(
     }
 
     ContentFilteredTopic* topic;
-    topic = new ContentFilteredTopic(name, related_topic, filter_expression, expression_parameters);
+    topic = new ContentFilteredTopic(name, related_topic);
     ContentFilteredTopicImpl* content_topic_impl = static_cast<ContentFilteredTopicImpl*>(topic->get_impl());
+    content_topic_impl->expression = filter_expression;
+    content_topic_impl->parameters = expression_parameters;
     content_topic_impl->filter_class_name = filter_class_name;
     content_topic_impl->filter_factory = filter_factory;
     content_topic_impl->filter_instance = filter_instance;

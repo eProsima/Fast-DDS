@@ -29,9 +29,7 @@ namespace dds {
 
 ContentFilteredTopic::ContentFilteredTopic(
         const std::string& name,
-        Topic* related_topic,
-        const std::string& filter_expression,
-        const std::vector<std::string>& expression_parameters)
+        Topic* related_topic)
     : TopicDescription(name, related_topic->get_type_name())
     , impl_(nullptr)
 {
@@ -39,7 +37,6 @@ ContentFilteredTopic::ContentFilteredTopic(
 
     impl_ = new ContentFilteredTopicImpl();
     impl_->related_topic = related_topic;
-    set_filter_expression(filter_expression, expression_parameters);
 }
 
 ContentFilteredTopic::~ContentFilteredTopic()
