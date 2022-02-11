@@ -47,6 +47,7 @@ public:
             fastrtps::rtps::LocatorsIterator* destination_locators_begin,
             fastrtps::rtps::LocatorsIterator* destination_locators_end,
             bool only_multicast_purpose,
+            bool whitelisted,
             const std::chrono::steady_clock::time_point& max_blocking_time_point) override;
 
     virtual LocatorList NormalizeLocator(
@@ -116,6 +117,7 @@ private:
             eProsimaUDPSocket& socket,
             const Locator& remote_locator,
             bool only_multicast_purpose,
+            bool whitelisted,
             const std::chrono::microseconds& timeout);
 };
 

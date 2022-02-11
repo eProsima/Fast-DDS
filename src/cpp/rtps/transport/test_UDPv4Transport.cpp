@@ -183,6 +183,7 @@ bool test_UDPv4Transport::send(
         fastrtps::rtps::LocatorsIterator* destination_locators_begin,
         fastrtps::rtps::LocatorsIterator* destination_locators_end,
         bool only_multicast_purpose,
+        bool whitelisted,
         const std::chrono::steady_clock::time_point& max_blocking_time_point)
 {
     fastrtps::rtps::LocatorsIterator& it = *destination_locators_begin;
@@ -200,6 +201,7 @@ bool test_UDPv4Transport::send(
                             socket,
                             *it,
                             only_multicast_purpose,
+                            whitelisted,
                             std::chrono::duration_cast<std::chrono::microseconds>(now - max_blocking_time_point));
 
             ++it;
@@ -220,6 +222,7 @@ bool test_UDPv4Transport::send(
         eProsimaUDPSocket& socket,
         const Locator& remote_locator,
         bool only_multicast_purpose,
+        bool whitelisted,
         const std::chrono::microseconds& timeout)
 {
     if (packet_should_drop(send_buffer, send_buffer_size) ||
@@ -235,7 +238,7 @@ bool test_UDPv4Transport::send(
     else
     {
         return UDPv4Transport::send(send_buffer, send_buffer_size, socket, remote_locator, only_multicast_purpose,
-                       timeout);
+                       whitelisted, timeout);
     }
 }
 

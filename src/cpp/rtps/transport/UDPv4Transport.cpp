@@ -155,7 +155,7 @@ bool UDPv4Transport::getDefaultMetatrafficMulticastLocators(
     Locator locator;
     locator.kind = LOCATOR_KIND_UDPv4;
     locator.port = static_cast<uint16_t>(metatraffic_multicast_port);
-    IPLocator::setIPv4(locator, 239, 255, 0, 1);
+    IPLocator::setIPv4(locator, DEFAULT_METATRAFFIC_MULTICAST_ADDRESS);
     locators.push_back(locator);
     return true;
 }
@@ -190,7 +190,8 @@ void UDPv4Transport::AddDefaultOutputLocator(
         LocatorList& defaultList)
 {
     Locator locator;
-    IPLocator::createLocator(LOCATOR_KIND_UDPv4, "239.255.0.1", configuration_.m_output_udp_socket, locator);
+    IPLocator::createLocator(LOCATOR_KIND_UDPv4, DEFAULT_METATRAFFIC_MULTICAST_ADDRESS,
+            configuration_.m_output_udp_socket, locator);
     defaultList.push_back(locator);
 }
 
@@ -551,6 +552,49 @@ void UDPv4Transport::SetSocketOutboundInterface(
         const std::string& sIp)
 {
     getSocketPtr(socket)->set_option(ip::multicast::outbound_interface(asio::ip::address_v4::from_string(sIp)));
+}
+
+void UDPv4Transport::update_network_interfaces()
+{
+    for (auto& channelResources : mInputSockets)
+    {
+        for (UDPChannelResource* channelResource : channelResources.second)
+        {
+            if (channelResource->interface() == s_IPv4AddressAny)
+            {
+                std::vector<IPFinder::info_IP> locNames;
+                get_ipv4s_unique_interfaces(locNames, true);
+                for (const auto& infoIP : locNames)
+                {
+                    auto ip = asio::ip::address_v4::from_string(infoIP.name);
+                    try
+                    {
+                        channelResource->socket()->set_option(ip::multicast::join_group(
+                                    ip::address_v4::from_string(DEFAULT_METATRAFFIC_MULTICAST_ADDRESS), ip));
+                    }
+                    catch (std::system_error& ex)
+                    {
+                        (void)ex;
+                        logWarning(RTPS_MSG_OUT, "Error joining multicast group on " << ip << ": " << ex.what());
+                    }
+                }
+            }
+            else
+            {
+                auto ip = asio::ip::address_v4::from_string(channelResource->interface());
+                try
+                {
+                    channelResource->socket()->set_option(ip::multicast::join_group(
+                                ip::address_v4::from_string(DEFAULT_METATRAFFIC_MULTICAST_ADDRESS), ip));
+                }
+                catch (std::system_error& ex)
+                {
+                    (void)ex;
+                    logWarning(RTPS_MSG_OUT, "Error joining multicast group on " << ip << ": " << ex.what());
+                }
+            }
+        }
+    }
 }
 
 } // namespace rtps
