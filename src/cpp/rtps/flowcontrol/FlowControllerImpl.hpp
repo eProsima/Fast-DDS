@@ -1109,6 +1109,7 @@ private:
         std::unique_lock<fastrtps::TimedMutex> lock(async_mode.changes_interested_mutex, std::defer_lock);
         if (lock.try_lock_until(max_blocking_time))
 #else
+        static_cast<void>(max_blocking_time);
         std::unique_lock<fastrtps::TimedMutex> lock(async_mode.changes_interested_mutex);
 #endif // if HAVE_STRICT_REALTIME{
         {
@@ -1215,6 +1216,7 @@ private:
             std::unique_lock<fastrtps::TimedMutex> lock(async_mode.changes_interested_mutex, std::defer_lock);
             if (lock.try_lock_until(max_blocking_time))
 #else
+            static_cast<void>(max_blocking_time);
             std::unique_lock<fastrtps::TimedMutex> lock(async_mode.changes_interested_mutex);
 #endif // if HAVE_STRICT_REALTIME{
             {

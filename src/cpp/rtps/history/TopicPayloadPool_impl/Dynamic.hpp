@@ -52,6 +52,7 @@ public:
                 std::unique_lock<fastrtps::TimedMutex> lock(mutex_, std::defer_lock);
                 if (lock.try_lock_until(max_blocking_time))
 #else
+                static_cast<void>(max_blocking_time);
                 std::unique_lock<TimedMutex> lock(mutex_);
 #endif // if HAVE_STRICT_REALTIME{
                 {

@@ -150,7 +150,7 @@ RTPSParticipantImpl::RTPSParticipantImpl(
         descriptor.receiveBufferSize = m_att.listenSocketBufferSize;
         m_network_Factory.RegisterTransport(&descriptor, &m_att.properties);
 
-#if defined(SHM_TRANSPORT_BUILTIN) && not defined(HAVE_STRICT_REALTIME)
+#if defined(SHM_TRANSPORT_BUILTIN) && !defined(HAVE_STRICT_REALTIME)
         SharedMemTransportDescriptor shm_transport;
         // We assume (Linux) UDP doubles the user socket buffer size in kernel, so
         // the equivalent segment size in SHM would be socket buffer size x 2
