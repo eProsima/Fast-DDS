@@ -61,6 +61,9 @@ static void current_time_since_unix_epoch(
 namespace eprosima {
 namespace fastrtps {
 
+constexpr int32_t Time_t::INFINITE_SECONDS;
+constexpr uint32_t Time_t::INFINITE_NANOSECONDS;
+
 Time_t::Time_t()
 {
     seconds = 0;

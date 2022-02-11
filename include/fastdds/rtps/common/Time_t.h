@@ -23,10 +23,6 @@
 #include <cstdint>
 #include <iostream>
 
-// defines to avoid the "static initialization order fiasco"
-#define TIME_T_INFINITE_SECONDS 0x7fffffff
-#define TIME_T_INFINITE_NANOSECONDS 0xffffffff
-
 namespace eprosima {
 namespace fastrtps {
 
@@ -36,6 +32,9 @@ namespace fastrtps {
  */
 struct RTPS_DllAPI Time_t
 {
+    static constexpr int32_t INFINITE_SECONDS = 0x7fffffff;
+    static constexpr uint32_t INFINITE_NANOSECONDS = 0xffffffffu;
+
     int32_t seconds;
     uint32_t nanosec;
 
@@ -663,13 +662,17 @@ static inline Time_t operator -(
 #endif // ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 
 //! Time_t (Duration_t) representing an infinite time. DONT USE IT IN CONSTRUCTORS
-const Time_t c_TimeInfinite{TIME_T_INFINITE_SECONDS, TIME_T_INFINITE_NANOSECONDS};
+const Time_t c_TimeInfinite{Time_t::INFINITE_SECONDS, Time_t::INFINITE_NANOSECONDS};
 //! Time_t (Duration_t) representing a zero time. DONT USE IT IN CONSTRUCTORS
 const Time_t c_TimeZero{0, 0};
 //! Time_t (Duration_t) representing an invalid time. DONT USE IT IN CONSTRUCTORS
-const Time_t c_TimeInvalid{-1, TIME_T_INFINITE_NANOSECONDS};
+const Time_t c_TimeInvalid{-1, Time_t::INFINITE_NANOSECONDS};
 
 } // namespace fastrtps
 } // namespace eprosima
+
+// defines to avoid the "static initialization order fiasco"
+#define TIME_T_INFINITE_SECONDS (eprosima::fastrtps::Time_t::INFINITE_SECONDS)
+#define TIME_T_INFINITE_NANOSECONDS (eprosima::fastrtps::Time_t::INFINITE_NANOSECONDS)
 
 #endif /* _FASTDDS_RTPS_TIME_T_H_ */
