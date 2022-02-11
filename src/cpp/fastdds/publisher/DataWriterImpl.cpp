@@ -1472,6 +1472,10 @@ void DataWriterImpl::set_qos(
     {
         to.throughput_controller() = from.throughput_controller();
     }
+    if (is_default && !(to.data_sharing() == from.data_sharing()))
+    {
+        to.data_sharing() = from.data_sharing();
+    }
 }
 
 ReturnCode_t DataWriterImpl::check_qos(
