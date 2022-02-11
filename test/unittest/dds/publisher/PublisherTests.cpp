@@ -554,7 +554,7 @@ TEST(Publisher, DeleteContainedEntities)
 
     std::vector<DataWriter*> data_writer_list;
     publisher->get_datawriters(data_writer_list);
-    ASSERT_EQ(data_writer_list.size(), 2);
+    ASSERT_EQ(data_writer_list.size(), 2u);
 
     data_writer_list.clear();
     void* loan_data;
@@ -562,7 +562,7 @@ TEST(Publisher, DeleteContainedEntities)
 
     ASSERT_EQ(publisher->delete_contained_entities(), ReturnCode_t::RETCODE_PRECONDITION_NOT_MET);
     publisher->get_datawriters(data_writer_list);
-    ASSERT_EQ(data_writer_list.size(), 2);
+    ASSERT_EQ(data_writer_list.size(), 2u);
 
     data_writer_list.clear();
     data_writer_bar->discard_loan(loan_data);
