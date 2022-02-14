@@ -51,6 +51,12 @@ class RTPSReader : public Endpoint
 
         virtual bool matched_writer_remove(const GUID_t& wdata) = 0;
 
+        void releaseCache(
+                CacheChange_t* change)
+        {
+            static_cast<void>(change);
+        }
+
         MOCK_METHOD1(change_removed_by_history, bool(CacheChange_t* change));
 
         MOCK_METHOD0(getHistory_mock, ReaderHistory*());

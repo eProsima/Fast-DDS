@@ -55,15 +55,7 @@ protected:
 
     RTPSReader* mp_reader;
     RecursiveTimedMutex* mp_mutex;
-<<<<<<< HEAD
     HistoryAttributes m_att;
-=======
-    std::vector<CacheChange_t*> m_changes;
-    bool m_isHistoryFull;
-    std::mutex samples_number_mutex_;
-    unsigned int samples_number_;
-    SequenceNumber_t last_sequence_number_;
->>>>>>> 38e8d0fb7 (Keep changes inside instances sorted by source timestamp (#2182))
 };
 
 } // namespace rtps
