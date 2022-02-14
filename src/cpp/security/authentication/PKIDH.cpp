@@ -601,11 +601,21 @@ static EVP_PKEY* generate_dh_key(
         params = EVP_PKEY_new();
         if (params != nullptr)
         {
-            if (1 != EVP_PKEY_set1_DH(params, DH_get_2048_256()))
+            DH* dh = DH_get_2048_256();
+            if (dh != nullptr)
             {
-                exception = _SecurityException_("Cannot set default parameters: ");
-                EVP_PKEY_free(params);
-                return nullptr;
+#if IS_OPENSSL_1_1_1d
+                int dh_type = DH_get0_q(dh) == NULL ? EVP_PKEY_DH : EVP_PKEY_DHX;
+                if (EVP_PKEY_assign(params, dh_type, dh) <= 0)
+#else
+                if (EVP_PKEY_assign_DH(params, dh) <= 0)
+#endif // if IS_OPENSSL_1_1_1d
+                {
+                    exception = _SecurityException_("Cannot set default parameters: ");
+                    DH_free(dh);
+                    EVP_PKEY_free(params);
+                    return nullptr;
+                }
             }
         }
         else
@@ -775,6 +785,7 @@ static EVP_PKEY* generate_dh_peer_key(
                     else
                     {
                         exception = _SecurityException_("OpenSSL library cannot set dh in pkey");
+                        DH_free(dh);
                     }
 
                     EVP_PKEY_free(key);
