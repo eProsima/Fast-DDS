@@ -153,7 +153,7 @@ ReturnCode_t SubscriberImpl::set_qos(
 {
     bool enabled = user_subscriber_->is_enabled();
     const SubscriberQos& qos_to_set = (&qos == &SUBSCRIBER_QOS_DEFAULT) ?
-        participant_->get_default_subscriber_qos() : qos;
+            participant_->get_default_subscriber_qos() : qos;
 
     if (&qos != &SUBSCRIBER_QOS_DEFAULT)
     {
@@ -534,7 +534,6 @@ bool SubscriberImpl::type_in_use(
     return false;
 }
 
-
 void SubscriberImpl::set_qos(
         SubscriberQos& to,
         const SubscriberQos& from,
@@ -550,7 +549,7 @@ void SubscriberImpl::set_qos(
         to.partition() = from.partition();
         to.partition().hasChanged = true;
     }
-    if (to.group_data().getValue() != from.group_data().getValue() )
+    if (to.group_data().getValue() != from.group_data().getValue())
     {
         to.group_data() = from.group_data();
         to.group_data().hasChanged = true;
