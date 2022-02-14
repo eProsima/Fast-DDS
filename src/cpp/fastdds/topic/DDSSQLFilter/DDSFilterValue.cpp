@@ -20,6 +20,7 @@
 
 #include <cassert>
 #include <cstring>
+#include <limits>
 
 namespace eprosima {
 namespace fastdds {
@@ -216,9 +217,10 @@ int64_t DDSFilterValue::compare(
 
             case ValueKind::FLOAT:
             {
-                auto diff = lhs.float_value - rhs.float_value;
-                return diff > 0.0 ? 1 :
-                       diff < 0.0 ? -1 :
+                auto diff = static_cast<float>(lhs.float_value) - static_cast<float>(rhs.float_value);
+                auto epsilon = std::numeric_limits<float>::epsilon();
+                return diff > epsilon ? 1 :
+                       diff < -epsilon ? -1 :
                        0;
             }
 
@@ -254,9 +256,11 @@ int64_t DDSFilterValue::compare(
 
             case ValueKind::FLOAT:
             {
-                auto diff = lhs.float_value - to_float(rhs);
-                return diff > 0.0 ? 1 :
-                       diff < 0.0 ? -1 :
+                auto rvalue = to_float(rhs);
+                auto diff = static_cast<float>(lhs.float_value) - static_cast<float>(rvalue);
+                auto epsilon = std::numeric_limits<float>::epsilon();
+                return diff > epsilon ? 1 :
+                       diff < -epsilon ? -1 :
                        0;
             }
 
