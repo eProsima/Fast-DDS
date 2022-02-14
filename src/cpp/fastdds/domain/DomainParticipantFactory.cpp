@@ -419,8 +419,8 @@ ReturnCode_t DomainParticipantFactory::load_XML_profiles_string(
 ReturnCode_t DomainParticipantFactory::check_xml_static_discovery(
     std::string& xml_file)
 {
-    XMLEndpointParser parser;
-    if (XMLP_ret::XML_ERROR == parser.loadXMLFile(xml_file))
+    eprosima::fastrtps::xmlparser::XMLEndpointParser parser;
+    if (XMLP_ret::XML_OK != parser.loadXMLFile(xml_file))
     {
         logError(DOMAIN, "Error parsing xml file");
         return ReturnCode_t::RETCODE_ERROR;
