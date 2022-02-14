@@ -211,13 +211,13 @@ public:
             size_t length);
 
     /**
-    * Check xml file for static discovery
-    *
-    * @param xml_file xml file path 
-    * @return RETCODE_OK if it is correct, RETCODE_ERROR otherwise.
-    */
+     * Check xml file for static discovery
+     *
+     * @param xml_file xml file path 
+     * @return RETCODE_OK if it is correct, RETCODE_ERROR otherwise.
+     */
     RTPS_DllAPI ReturnCode_t check_xml_static_discovery(
-        std::string& xml_file);
+            std::string& xml_file);
 
     /**
      * This operation returns the value of the DomainParticipantFactory QoS policies.
