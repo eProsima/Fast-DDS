@@ -34,44 +34,50 @@ namespace rtps {
 
 class RTPSReader : public Endpoint
 {
-    public:
+public:
 
-        RTPSReader() {}
+    RTPSReader()
+    {
+    }
 
-        RTPSReader(ReaderHistory* history, RecursiveTimedMutex* mutex)
-        {
-            history->mp_reader = this;
-            history->mp_mutex = mutex;
-        }
+    RTPSReader(
+            ReaderHistory* history,
+            RecursiveTimedMutex* mutex)
+    {
+        history->mp_reader = this;
+        history->mp_mutex = mutex;
+    }
 
-        virtual ~RTPSReader() = default;
+    virtual ~RTPSReader() = default;
 
 
-        virtual bool matched_writer_add(const WriterProxyData& wdata) = 0;
+    virtual bool matched_writer_add(
+            const WriterProxyData& wdata) = 0;
 
-        virtual bool matched_writer_remove(const GUID_t& wdata) = 0;
+    virtual bool matched_writer_remove(
+            const GUID_t& wdata) = 0;
 
-        void releaseCache(
-                CacheChange_t* change)
-        {
-            static_cast<void>(change);
-        }
+    void releaseCache(
+            CacheChange_t* change)
+    {
+        static_cast<void>(change);
+    }
 
-        MOCK_METHOD1(change_removed_by_history, bool(CacheChange_t* change));
+    MOCK_METHOD1(change_removed_by_history, bool(CacheChange_t * change));
 
-        MOCK_METHOD0(getHistory_mock, ReaderHistory*());
+    MOCK_METHOD0(getHistory_mock, ReaderHistory * ());
 
-        MOCK_CONST_METHOD0(getGuid, const GUID_t&());
+    MOCK_CONST_METHOD0(getGuid, const GUID_t& ());
 
-        ReaderHistory* getHistory()
-        {
-            getHistory_mock();
-            return history_;
-        }
+    ReaderHistory* getHistory()
+    {
+        getHistory_mock();
+        return history_;
+    }
 
-        ReaderHistory* history_;
+    ReaderHistory* history_;
 
-        ReaderListener* listener_;
+    ReaderListener* listener_;
 };
 
 } // namespace rtps
