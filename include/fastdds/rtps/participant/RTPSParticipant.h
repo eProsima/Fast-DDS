@@ -156,6 +156,7 @@ public:
     /**
      * Update participant attributes.
      * @param patt New participant attributes.
+     * @return True on success, false otherwise.
      */
     void update_attributes(
             const RTPSParticipantAttributes& patt);

@@ -293,7 +293,6 @@ public:
     /**
      * Setter for the Participant name
      *
-     * @param value Participant name
      */
     void name(
             const fastrtps::string_255& value)
