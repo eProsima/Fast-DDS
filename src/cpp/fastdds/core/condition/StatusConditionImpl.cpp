@@ -106,6 +106,7 @@ void StatusConditionImpl::set_status(
     if (lock.try_lock_until(max_blocking_time))
 #else
     std::lock_guard<fastrtps::TimedMutex> guard(mutex_);
+    static_cast<void>(max_blocking_time);
 #endif // if HAVE_STRICT_REALTIME
     {
         status_ &= ~status;
