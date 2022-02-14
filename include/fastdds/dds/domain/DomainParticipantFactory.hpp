@@ -213,7 +213,7 @@ public:
     /**
      * Check xml file for static discovery
      *
-     * @param xml_file xml file path 
+     * @param xml_file xml file path
      * @return RETCODE_OK if it is correct, RETCODE_ERROR otherwise.
      */
     RTPS_DllAPI ReturnCode_t check_xml_static_discovery(
