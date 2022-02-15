@@ -22,6 +22,10 @@ if(PYTHONINTERP_FOUND)
 
     set(TESTS
         test_fast_discovery_closure
+        test_fast_discovery_parse_XML_file_prefix_OK
+        test_fast_discovery_parse_XML_file_server_address
+        test_fast_discovery_parse_XML_file_prefix_OK_URI
+        test_fast_discovery_parse_XML_file_server_address_URI
     )
 
     # windows auxiliary script to fork test execution
@@ -84,6 +88,7 @@ if(PYTHONINTERP_FOUND)
 
     endforeach()
 
+    configure_file("test_xml_discovery_server.xml" "test_xml_discovery_server.xml" COPYONLY)
     unset(TEST_ENVIRONMENT)
 
 endif()

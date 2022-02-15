@@ -1,0 +1,63 @@
+<profiles>
+        <participant profile_name="UDP_server" is_default_profile="true">
+        <rtps>
+            <prefix>44.49.53.43.53.45.52.56.45.52.5F.31</prefix>
+            <builtin>
+                <discovery_config>
+                    <clientAnnouncementPeriod>
+                        <sec>0</sec>
+                        <nanosec>20000000</nanosec>
+                    </clientAnnouncementPeriod>
+                    <discoveryProtocol>SERVER</discoveryProtocol>
+                    <initialAnnouncements>
+                        <count>0</count>
+                    </initialAnnouncements>
+                    <leaseAnnouncement>DURATION_INFINITY</leaseAnnouncement>
+                    <leaseDuration>DURATION_INFINITY</leaseDuration>
+                </discovery_config>
+                <metatrafficUnicastLocatorList>
+                    <locator>
+                        <udpv4>
+                            <address>127.0.0.9</address>
+                            <port>02811</port>
+                        </udpv4>
+                    </locator>
+                    <locator>
+                        <udpv4>
+                            <address>127.0.3.1</address>
+                            <port>05511</port>
+                        </udpv4>p
+                    </locator>
+                </metatrafficUnicastLocatorList>
+            </builtin>
+        </rtps>
+        </participant>
+
+        <participant profile_name="UDP_server_two" is_default_profile="false">
+            <rtps>
+                <prefix>EE.49.53.42.52.4A.52.56.45.52.5F.31</prefix>
+                <builtin>
+                    <discovery_config>
+                        <clientAnnouncementPeriod>
+                            <sec>0</sec>
+                            <nanosec>20000000</nanosec>
+                        </clientAnnouncementPeriod>
+                        <discoveryProtocol>SERVER</discoveryProtocol>
+                        <initialAnnouncements>
+                            <count>0</count>
+                        </initialAnnouncements>
+                        <leaseAnnouncement>DURATION_INFINITY</leaseAnnouncement>
+                        <leaseDuration>DURATION_INFINITY</leaseDuration>
+                    </discovery_config>
+                    <metatrafficUnicastLocatorList>
+                        <locator>
+                            <udpv4>
+                                <address>127.0.0.5</address>
+                                <port>02811</port>
+                            </udpv4>
+                        </locator>
+                    </metatrafficUnicastLocatorList>
+                </builtin>
+            </rtps>
+            </participant>
+</profiles>

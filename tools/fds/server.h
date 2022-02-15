@@ -27,7 +27,8 @@ enum  optionIndex
     SERVERID,
     IPADDRESS,
     PORT,
-    BACKUP
+    BACKUP,
+    XML_FILE
 };
 
 struct Arg : public option::Arg
@@ -41,6 +42,10 @@ struct Arg : public option::Arg
             bool msg);
 
     static option::ArgStatus check_udp_port(
+            const option::Option& option,
+            bool msg);
+
+    static option::ArgStatus check_xml_file(
             const option::Option& option,
             bool msg);
 };
@@ -68,6 +73,13 @@ const option::Descriptor usage[] = {
 
     { BACKUP,    0, "b",  "backup",       Arg::None,
       "  -b  \t--backup     Creates a server with a backup file associated.\n" },
+
+    { XML_FILE,    0, "x",  "xml-file",       Arg::check_xml_file,
+      "  -x  \t--xml-file   Gets config from XML file. If there is any argument in \n"
+      "\t             common with the config of the XML, the argument will \n"
+      "\t             have prior over the xml. A XML file with several profiles \n"
+      "\t             will take the profile with \"is_default_profile=\"true\"\"\n"
+      "\t             unless define other profile using uri with \"@\" character\n"},
 
     { UNKNOWN,   0, "",  "",              Arg::None,
       "Examples:\n"
@@ -97,7 +109,15 @@ const option::Descriptor usage[] = {
       "\t5. Launch a default server with id 0 (first on ROS_DISCOVERY_SERVER)\n"
       "\t   listening on localhost with UDP port 14520. Only localhost clients\n"
       "\t   can reach the server defining as ROS_DISCOVERY_SERVER=localhost:14520.\n\n"
-      "\t$ " FAST_SERVER_BINARY " -i 0 -l localhost -p 14520"},
+      "\t$ " FAST_SERVER_BINARY " -i 0 -l localhost -p 14520\n\n"
+
+      "\t6. Launch a default server with id 0 (first on ROS_DISCOVERY_SERVER)\n"
+      "\t   gets configuration from XML file.\n\n"
+      "\t$ " FAST_SERVER_BINARY " -i 0 -x config.xml\n\n"
+
+      "\t6. Launch a default server with id 0 (first on ROS_DISCOVERY_SERVER)\n"
+      "\t   gets configuration from XML file using profile2.\n\n"
+      "\t$ " FAST_SERVER_BINARY " -i 0 -x config.xml@profile2"},
 
     { 0, 0, 0, 0, 0, 0 }
 };
