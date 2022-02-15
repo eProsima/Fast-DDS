@@ -524,6 +524,7 @@ private:
     {
         ContentFilterTestType data;
         data.float_field(0.0f);
+        data.struct_field().float_field(0.0f);
         add_value(data);
     }
 
@@ -531,6 +532,7 @@ private:
     {
         ContentFilterTestType data;
         data.float_field(-3.14159f);
+        data.struct_field().float_field(-3.14159f);
         add_value(data);
     }
 
@@ -538,6 +540,7 @@ private:
     {
         ContentFilterTestType data;
         data.float_field(-1e38f);
+        data.struct_field().float_field(-1e38f);
         add_value(data);
     }
 
@@ -545,6 +548,7 @@ private:
     {
         ContentFilterTestType data;
         data.float_field(3.14159f);
+        data.struct_field().float_field(3.14159f);
         add_value(data);
     }
 
@@ -552,6 +556,7 @@ private:
     {
         ContentFilterTestType data;
         data.float_field(1e38f);
+        data.struct_field().float_field(1e38f);
         add_value(data);
     }
 
@@ -611,7 +616,8 @@ TEST_P(DDSSQLFilterValueTests, test_filtered_value)
 }
 
 static void add_test_filtered_value_inputs(
-        const std::string field_name,
+        const std::string& test_prefix,
+        const std::string& field_name,
         const std::array<std::pair<std::string, std::string>, 5>& values,
         std::vector<DDSSQLFilterValueParams>& inputs)
 {
@@ -624,7 +630,7 @@ static void add_test_filtered_value_inputs(
             auto& results = DDSSQLFilterValueGlobalData::results()[i][j];
             DDSSQLFilterValueParams input
             {
-                field_name + "_" + op.second + "_" + values[j].second,
+                test_prefix + "_" + op.second + "_" + values[j].second,
                 field_name + " " + op.first + " " + values[j].first,
                 {},
                 { results.begin(), results.end() }
@@ -651,7 +657,8 @@ static std::vector<DDSSQLFilterValueParams> get_test_filtered_value_float_inputs
     };
 
     std::vector<DDSSQLFilterValueParams> inputs;
-    add_test_filtered_value_inputs("float_field", values, inputs);
+    add_test_filtered_value_inputs("float_field", "float_field", values, inputs);
+    add_test_filtered_value_inputs("struct__float_field", "struct_field.float_field", values, inputs);
     return inputs;
 }
 
