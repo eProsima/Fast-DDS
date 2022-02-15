@@ -420,6 +420,36 @@ TEST_F(DDSSQLFilterTests, type_compatibility_compare)
     }
 }
 
+struct DDSSQLFilterValueParams
+{
+    std::string test_case_name;
+    std::string expression;
+    std::vector<std::string> params;
+    std::vector<bool> samples_filtered;
+};
+
+class DDSSQLFilterValueTests : public testing::TestWithParam<DDSSQLFilterValueParams>
+{
+public:
+
+    struct PrintToStringParamName
+    {
+        template<class ParamType>
+        std::string operator ()(
+                const ::testing::TestParamInfo<ParamType>& info) const
+        {
+            const auto& test_params = static_cast<const DDSSQLFilterValueParams&>(info.param);
+            return test_params.test_case_name;
+        }
+
+    };
+
+protected:
+
+    DDSFilterFactory uut;
+    ContentFilterTestTypePubSubType type_support;
+};
+
 } // namespace dds
 } // namespace fastdds
 } // namespace eprosima
