@@ -76,6 +76,25 @@ static bool are_types_compatible(
 using DDSFilterFactory = DDSSQLFilter::DDSFilterFactory;
 using ReturnCode_t = DDSFilterFactory::ReturnCode_t;
 
+static ReturnCode_t create_content_filter(
+        DDSFilterFactory& factory,
+        const std::string& expression,
+        const std::vector<std::string>& parameters,
+        const ContentFilterTestTypePubSubType* type,
+        IContentFilter*& filter_instance)
+{
+    StackAllocatedSequence<const char*, 10> params;
+    LoanableCollection::size_type n_params = static_cast<LoanableCollection::size_type>(parameters.size());
+    params.length(n_params);
+    for (LoanableCollection::size_type n = 0; n < n_params; ++n)
+    {
+        params[n] = parameters[n].c_str();
+    }
+
+    return factory.create_content_filter("DDSSQL", "ContentFilterTestType", type,
+                   expression.c_str(), params, filter_instance);
+}
+
 class DDSSQLFilterTests : public testing::Test
 {
     DDSFilterFactory uut;
@@ -97,17 +116,7 @@ protected:
             const TestCase& test)
     {
         IContentFilter* filter_instance = nullptr;
-
-        StackAllocatedSequence<const char*, 10> params;
-        LoanableCollection::size_type n_params = static_cast<LoanableCollection::size_type>(test.parameters.size());
-        params.length(n_params);
-        for (LoanableCollection::size_type n = 0; n < n_params; ++n)
-        {
-            params[n] = test.parameters[n].c_str();
-        }
-
-        auto ret = uut.create_content_filter("DDSSQL", "ContentFilterTestType", &type_support,
-                        test.expression.c_str(), params, filter_instance);
+        auto ret = create_content_filter(uut, test.expression, test.parameters, &type_support, filter_instance);
         EXPECT_EQ(ret, test.result)
             << " failed for expression \"" << test.expression << "\" [" << test.parameters.size() << "]";
         if (ret == ok_code)
