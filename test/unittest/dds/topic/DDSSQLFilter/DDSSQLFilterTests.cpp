@@ -527,6 +527,7 @@ private:
         data.struct_field().float_field(0.0f);
         data.array_float_field()[0] = 0.0f;
         data.bounded_sequence_float_field().push_back(0.0f);
+        data.unbounded_sequence_float_field().push_back(0.0f);
         add_value(data);
     }
 
@@ -537,6 +538,7 @@ private:
         data.struct_field().float_field(-3.14159f);
         data.array_float_field()[0] = -3.14159f;
         data.bounded_sequence_float_field().push_back(-3.14159f);
+        data.unbounded_sequence_float_field().push_back(-3.14159f);
         add_value(data);
     }
 
@@ -547,6 +549,7 @@ private:
         data.struct_field().float_field(-1e38f);
         data.array_float_field()[0] = -1e38f;
         data.bounded_sequence_float_field().push_back(-1e38f);
+        data.unbounded_sequence_float_field().push_back(-1e38f);
         add_value(data);
     }
 
@@ -557,6 +560,7 @@ private:
         data.struct_field().float_field(3.14159f);
         data.array_float_field()[0] = 3.14159f;
         data.bounded_sequence_float_field().push_back(3.14159f);
+        data.unbounded_sequence_float_field().push_back(3.14159f);
         add_value(data);
     }
 
@@ -567,6 +571,7 @@ private:
         data.struct_field().float_field(1e38f);
         data.array_float_field()[0] = 1e38f;
         data.bounded_sequence_float_field().push_back(1e38f);
+        data.unbounded_sequence_float_field().push_back(1e38f);
         add_value(data);
     }
 
@@ -667,10 +672,11 @@ static std::vector<DDSSQLFilterValueParams> get_test_filtered_value_float_inputs
     };
 
     std::vector<DDSSQLFilterValueParams> inputs;
-    add_test_filtered_value_inputs("float_field", "float_field", values, inputs);
-    add_test_filtered_value_inputs("struct__float_field", "struct_field.float_field", values, inputs);
-    add_test_filtered_value_inputs("array_float_field", "array_float_field[0]", values, inputs);
-    add_test_filtered_value_inputs("bounded_sequence_float_field", "bounded_sequence_float_field[0]", values, inputs);
+    add_test_filtered_value_inputs("plain_field", "float_field", values, inputs);
+    add_test_filtered_value_inputs("in_struct", "struct_field.float_field", values, inputs);
+    add_test_filtered_value_inputs("array", "array_float_field[0]", values, inputs);
+    add_test_filtered_value_inputs("bounded_sequence", "bounded_sequence_float_field[0]", values, inputs);
+    add_test_filtered_value_inputs("unbounded_sequence", "unbounded_sequence_float_field[0]", values, inputs);
     return inputs;
 }
 
