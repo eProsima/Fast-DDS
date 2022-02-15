@@ -18,15 +18,18 @@
  */
 
 #include <fastrtps/subscriber/SubscriberHistory.h>
-#include <fastrtps_deprecated/subscriber/SubscriberImpl.h>
 
-#include <fastdds/rtps/reader/RTPSReader.h>
-#include <rtps/reader/WriterProxy.h>
+#include <limits>
+#include <mutex>
 
 #include <fastdds/dds/topic/TopicDataType.hpp>
 #include <fastdds/dds/log/Log.hpp>
 
-#include <mutex>
+#include <fastdds/rtps/reader/RTPSReader.h>
+
+#include <fastrtps_deprecated/subscriber/SubscriberImpl.h>
+#include <rtps/reader/WriterProxy.h>
+#include <utils/collections/sorted_vector_insert.hpp>
 
 namespace eprosima {
 namespace fastrtps {
@@ -135,7 +138,7 @@ bool SubscriberHistory::received_change_keep_all_no_key(
         size_t unknown_missing_changes_up_to)
 {
     // TODO(Ricardo) Check
-    if (m_changes.size() + unknown_missing_changes_up_to < static_cast<size_t>(resource_limited_qos_.max_samples) )
+    if (m_changes.size() + unknown_missing_changes_up_to < static_cast<size_t>(resource_limited_qos_.max_samples))
     {
         return add_received_change(a_change);
     }
@@ -148,7 +151,7 @@ bool SubscriberHistory::received_change_keep_last_no_key(
         size_t /* unknown_missing_changes_up_to */ )
 {
     bool add = false;
-    if (m_changes.size() < static_cast<size_t>(history_qos_.depth) )
+    if (m_changes.size() < static_cast<size_t>(history_qos_.depth))
     {
         add = true;
     }
@@ -178,7 +181,7 @@ bool SubscriberHistory::received_change_keep_all_with_key(
     if (find_key_for_change(a_change, vit))
     {
         std::vector<CacheChange_t*>& instance_changes = vit->second.cache_changes;
-        if (instance_changes.size() < static_cast<size_t>(resource_limited_qos_.max_samples_per_instance) )
+        if (instance_changes.size() < static_cast<size_t>(resource_limited_qos_.max_samples_per_instance))
         {
             return add_received_change_with_key(a_change, vit->second.cache_changes);
         }
@@ -198,7 +201,7 @@ bool SubscriberHistory::received_change_keep_last_with_key(
     {
         bool add = false;
         std::vector<CacheChange_t*>& instance_changes = vit->second.cache_changes;
-        if (instance_changes.size() < static_cast<size_t>(history_qos_.depth) )
+        if (instance_changes.size() < static_cast<size_t>(history_qos_.depth))
         {
             add = true;
         }
@@ -265,10 +268,11 @@ bool SubscriberHistory::add_received_change_with_key(
         }
 
         //ADD TO KEY VECTOR
-
-        // As the instance should be ordered following the presentation QoS, and
-        // we only support ordering by reception timestamp, we can always add at the end.
-        instance_changes.push_back(a_change);
+        eprosima::utilities::collections::sorted_vector_insert(instance_changes, a_change,
+                [](const CacheChange_t* lhs, const CacheChange_t* rhs)
+                {
+                    return lhs->sourceTimestamp < rhs->sourceTimestamp;
+                });
 
         logInfo(SUBSCRIBER, mp_reader->getGuid().entityId
                 << ": Change " << a_change->sequenceNumber << " added from: "

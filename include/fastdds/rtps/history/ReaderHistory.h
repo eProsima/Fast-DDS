@@ -119,6 +119,9 @@ public:
 
 protected:
 
+    RTPS_DllAPI void do_release_cache(
+            CacheChange_t* ch);
+
     //!Pointer to the reader
     RTPSReader* mp_reader;
 };
