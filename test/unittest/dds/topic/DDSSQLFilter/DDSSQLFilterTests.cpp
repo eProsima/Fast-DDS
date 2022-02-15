@@ -610,18 +610,11 @@ TEST_P(DDSSQLFilterValueTests, test_filtered_value)
     EXPECT_EQ(ReturnCode_t::RETCODE_OK, ret);
 }
 
-static std::vector<DDSSQLFilterValueParams> get_test_filtered_value_float_inputs()
+static void add_test_filtered_value_inputs(
+        const std::string field_name,
+        const std::array<std::pair<std::string, std::string>, 5>& values,
+        std::vector<DDSSQLFilterValueParams>& inputs)
 {
-    static const std::array<std::pair<std::string, std::string>, 5> values =
-    { 
-        std::pair<std::string, std::string>{"-1e38", "minus_2"},
-        std::pair<std::string, std::string>{"-3.14159", "minus_1"},
-        std::pair<std::string, std::string>{"0", "0"},
-        std::pair<std::string, std::string>{"3.14159", "plus_1"},
-        std::pair<std::string, std::string>{"1e38", "plus_2"}
-    };
-
-    std::vector<DDSSQLFilterValueParams> inputs;
     auto& ops = DDSSQLFilterValueGlobalData::ops();
     for (size_t i = 0; i < ops.size(); ++i)
     {
@@ -631,15 +624,34 @@ static std::vector<DDSSQLFilterValueParams> get_test_filtered_value_float_inputs
             auto& results = DDSSQLFilterValueGlobalData::results()[i][j];
             DDSSQLFilterValueParams input
             {
-                "float_field_" + op.second + "_" + values[j].second,
-                 "float_field " + op.first + " " + values[j].first,
+                field_name + "_" + op.second + "_" + values[j].second,
+                field_name + " " + op.first + " " + values[j].first,
                 {},
                 { results.begin(), results.end() }
             };
-            inputs.emplace_back(std::move(input));
+            inputs.emplace_back(input);
+
+            input.test_case_name += "_P0";
+            input.expression = field_name + " " + op.first + " %0";
+            input.params.push_back(values[j].first);
+            inputs.emplace_back(input);
         }
     }
+}
 
+static std::vector<DDSSQLFilterValueParams> get_test_filtered_value_float_inputs()
+{
+    static const std::array<std::pair<std::string, std::string>, 5> values =
+    {
+        std::pair<std::string, std::string>{"-1e38", "minus_2"},
+        std::pair<std::string, std::string>{"-3.14159", "minus_1"},
+        std::pair<std::string, std::string>{"0", "0"},
+        std::pair<std::string, std::string>{"3.14159", "plus_1"},
+        std::pair<std::string, std::string>{"1e38", "plus_2"}
+    };
+
+    std::vector<DDSSQLFilterValueParams> inputs;
+    add_test_filtered_value_inputs("float_field", values, inputs);
     return inputs;
 }
 
