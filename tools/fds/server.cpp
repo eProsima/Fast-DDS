@@ -232,7 +232,6 @@ int main (
 
     // Create the server
     int return_value = 0;
-    // Participant* pServer = Domain::createParticipant(*att, nullptr);
     DomainParticipant* pServer = DomainParticipantFactory::get_instance()->create_participant(0, participantQos);
 
     if ( nullptr == pServer )
