@@ -431,6 +431,71 @@ struct DDSSQLFilterValueGlobalData
         return the_instance.values_;
     }
 
+    static const std::array<std::array<std::array<bool, 5>, 5>, 6>& results()
+    {
+        static std::array<std::array<std::array<bool, 5>, 5>, 6> the_results;
+        static bool generated = false;
+
+        if (!generated)
+        {
+            generated = true;
+
+            // EQ
+            the_results[0][0] = {true, false, false, false, false};
+            the_results[0][1] = {false, true, false, false, false};
+            the_results[0][2] = {false, false, true, false, false};
+            the_results[0][3] = {false, false, false, true, false};
+            the_results[0][4] = {false, false, false, false, true};
+            // NE
+            the_results[1][0] = {false, true, true, true, true};
+            the_results[1][1] = {true, false, true, true, true};
+            the_results[1][2] = {true, true, false, true, true};
+            the_results[1][3] = {true, true, true, false, true};
+            the_results[1][4] = {true, true, true, true, false};
+            // LT
+            the_results[2][0] = {false, false, false, false, false};
+            the_results[2][1] = {true, false, false, false, false};
+            the_results[2][2] = {true, true, false, false, false};
+            the_results[2][3] = {true, true, true, false, false};
+            the_results[2][4] = {true, true, true, true, false};
+            // LE
+            the_results[3][0] = {true, false, false, false, false};
+            the_results[3][1] = {true, true, false, false, false};
+            the_results[3][2] = {true, true, true, false, false};
+            the_results[3][3] = {true, true, true, true, false};
+            the_results[3][4] = {true, true, true, true, true};
+            // GT
+            the_results[4][0] = {false, true, true, true, true};
+            the_results[4][1] = {false, false, true, true, true};
+            the_results[4][2] = {false, false, false, true, true};
+            the_results[4][3] = {false, false, false, false, true};
+            the_results[4][4] = {false, false, false, false, false};
+            // GE
+            the_results[5][0] = {true, true, true, true, true};
+            the_results[5][1] = {false, true, true, true, true};
+            the_results[5][2] = {false, false, true, true, true};
+            the_results[5][3] = {false, false, false, true, true};
+            the_results[5][4] = {false, false, false, false, true};
+        }
+
+        return the_results;
+    }
+
+    static const std::array<std::pair<std::string, std::string>, 6>& ops()
+    {
+        static const std::array < std::pair<std::string, std::string>, 6 > the_ops =
+        {
+            std::pair<std::string, std::string>{"=",  "eq"},
+            std::pair<std::string, std::string>{"<>", "ne"},
+            std::pair<std::string, std::string>{"<",  "lt"},
+            std::pair<std::string, std::string>{"<=", "le"},
+            std::pair<std::string, std::string>{">",  "gt"},
+            std::pair<std::string, std::string>{">=", "ge"}
+        };
+
+        return the_ops;
+    }
+
 private:
 
     std::vector<std::unique_ptr<IContentFilter::SerializedPayload>> values_;
@@ -538,12 +603,51 @@ TEST_P(DDSSQLFilterValueTests, test_filtered_value)
     {
         IContentFilter::FilterSampleInfo info;
         IContentFilter::GUID_t guid;
-        EXPECT_EQ(results[i], filter_instance->evaluate(*values[i], info, guid));
+        EXPECT_EQ(results[i], filter_instance->evaluate(*values[i], info, guid)) << "with i = " << i;
     }
 
     ret = uut.delete_content_filter("DDSSQL", filter_instance);
     EXPECT_EQ(ReturnCode_t::RETCODE_OK, ret);
 }
+
+static std::vector<DDSSQLFilterValueParams> get_test_filtered_value_float_inputs()
+{
+    static const std::array<std::pair<std::string, std::string>, 5> values =
+    { 
+        std::pair<std::string, std::string>{"-1e38", "minus_2"},
+        std::pair<std::string, std::string>{"-3.14159", "minus_1"},
+        std::pair<std::string, std::string>{"0", "0"},
+        std::pair<std::string, std::string>{"3.14159", "plus_1"},
+        std::pair<std::string, std::string>{"1e38", "plus_2"}
+    };
+
+    std::vector<DDSSQLFilterValueParams> inputs;
+    auto& ops = DDSSQLFilterValueGlobalData::ops();
+    for (size_t i = 0; i < ops.size(); ++i)
+    {
+        auto& op = ops[i];
+        for (size_t j = 0; j < values.size(); ++j)
+        {
+            auto& results = DDSSQLFilterValueGlobalData::results()[i][j];
+            DDSSQLFilterValueParams input
+            {
+                "float_field_" + op.second + "_" + values[j].second,
+                 "float_field " + op.first + " " + values[j].first,
+                {},
+                { results.begin(), results.end() }
+            };
+            inputs.emplace_back(std::move(input));
+        }
+    }
+
+    return inputs;
+}
+
+INSTANTIATE_TEST_SUITE_P(
+    DDSSQLFilterValueTestsFloats,
+    DDSSQLFilterValueTests,
+    ::testing::ValuesIn(get_test_filtered_value_float_inputs()),
+    DDSSQLFilterValueTests::PrintToStringParamName());
 
 } // namespace dds
 } // namespace fastdds
