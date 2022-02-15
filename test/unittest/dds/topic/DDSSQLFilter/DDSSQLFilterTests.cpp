@@ -660,6 +660,35 @@ static void add_test_filtered_value_inputs(
     }
 }
 
+static void add_negative_test_filtered_value_inputs(
+        const std::string& test_prefix,
+        const std::string& field_name,
+        const std::array<std::pair<std::string, std::string>, 5>& values,
+        std::vector<DDSSQLFilterValueParams>& inputs)
+{
+    auto& ops = DDSSQLFilterValueGlobalData::ops();
+    for (size_t i = 0; i < ops.size(); ++i)
+    {
+        auto& op = ops[i];
+        for (size_t j = 0; j < values.size(); ++j)
+        {
+            DDSSQLFilterValueParams input
+            {
+                test_prefix + "_" + op.second + "_" + values[j].second,
+                field_name + " " + op.first + " " + values[j].first,
+                {},
+                { false, false, false, false, false }
+            };
+            inputs.emplace_back(input);
+
+            input.test_case_name += "_P0";
+            input.expression = field_name + " " + op.first + " %0";
+            input.params.push_back(values[j].first);
+            inputs.emplace_back(input);
+        }
+    }
+}
+
 static std::vector<DDSSQLFilterValueParams> get_test_filtered_value_float_inputs()
 {
     static const std::array<std::pair<std::string, std::string>, 5> values =
@@ -676,7 +705,9 @@ static std::vector<DDSSQLFilterValueParams> get_test_filtered_value_float_inputs
     add_test_filtered_value_inputs("in_struct", "struct_field.float_field", values, inputs);
     add_test_filtered_value_inputs("array", "array_float_field[0]", values, inputs);
     add_test_filtered_value_inputs("bounded_sequence", "bounded_sequence_float_field[0]", values, inputs);
+    add_negative_test_filtered_value_inputs("neg_bounded_sequence", "bounded_sequence_float_field[2]", values, inputs);
     add_test_filtered_value_inputs("unbounded_sequence", "unbounded_sequence_float_field[0]", values, inputs);
+    add_negative_test_filtered_value_inputs("neg_unbounded_sequence", "unbounded_sequence_float_field[2]", values, inputs);
     return inputs;
 }
 
