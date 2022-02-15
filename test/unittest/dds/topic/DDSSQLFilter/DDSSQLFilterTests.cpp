@@ -420,6 +420,78 @@ TEST_F(DDSSQLFilterTests, type_compatibility_compare)
     }
 }
 
+/**
+ * Singleton that holds the serialized payloads to be evaluated
+ */
+struct DDSSQLFilterValueGlobalData
+{
+    static const std::vector<std::unique_ptr<IContentFilter::SerializedPayload>>& values()
+    {
+        static DDSSQLFilterValueGlobalData the_instance;
+        return the_instance.values_;
+    }
+
+private:
+
+    std::vector<std::unique_ptr<IContentFilter::SerializedPayload>> values_;
+
+    DDSSQLFilterValueGlobalData()
+    {
+        create_sample_minus_2();
+        create_sample_minus_1();
+        create_sample_0();
+        create_sample_plus_1();
+        create_sample_plus_2();
+    }
+
+    void add_value(
+            const ContentFilterTestType& data)
+    {
+        static ContentFilterTestTypePubSubType type_support;
+        auto data_ptr = const_cast<ContentFilterTestType*>(&data);
+        auto data_size = type_support.getSerializedSizeProvider(data_ptr)();
+        auto payload = new IContentFilter::SerializedPayload(data_size);
+        values_.emplace_back(payload);
+        type_support.serialize(data_ptr, payload);
+    }
+
+    void create_sample_0()
+    {
+        ContentFilterTestType data;
+        data.float_field(0.0f);
+        add_value(data);
+    }
+
+    void create_sample_minus_1()
+    {
+        ContentFilterTestType data;
+        data.float_field(-3.14159f);
+        add_value(data);
+    }
+
+    void create_sample_minus_2()
+    {
+        ContentFilterTestType data;
+        data.float_field(-1e38f);
+        add_value(data);
+    }
+
+    void create_sample_plus_1()
+    {
+        ContentFilterTestType data;
+        data.float_field(3.14159f);
+        add_value(data);
+    }
+
+    void create_sample_plus_2()
+    {
+        ContentFilterTestType data;
+        data.float_field(1e38f);
+        add_value(data);
+    }
+
+};
+
 struct DDSSQLFilterValueParams
 {
     std::string test_case_name;
