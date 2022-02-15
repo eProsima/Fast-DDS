@@ -522,6 +522,29 @@ protected:
     ContentFilterTestTypePubSubType type_support;
 };
 
+TEST_P(DDSSQLFilterValueTests, test_filtered_value)
+{
+    const auto& input = GetParam();
+    const auto& values = DDSSQLFilterValueGlobalData::values();
+    const auto& results = input.samples_filtered;
+    ASSERT_EQ(results.size(), values.size());
+
+    IContentFilter* filter_instance = nullptr;
+    auto ret = create_content_filter(uut, input.expression, input.params, &type_support, filter_instance);
+    EXPECT_EQ(ReturnCode_t::RETCODE_OK, ret);
+    ASSERT_NE(nullptr, filter_instance);
+
+    for (size_t i = 0; i < values.size(); ++i)
+    {
+        IContentFilter::FilterSampleInfo info;
+        IContentFilter::GUID_t guid;
+        EXPECT_EQ(results[i], filter_instance->evaluate(*values[i], info, guid));
+    }
+
+    ret = uut.delete_content_filter("DDSSQL", filter_instance);
+    EXPECT_EQ(ReturnCode_t::RETCODE_OK, ret);
+}
+
 } // namespace dds
 } // namespace fastdds
 } // namespace eprosima
