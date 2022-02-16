@@ -33,6 +33,15 @@ static constexpr DDSFilterValue::ValueKind effective_kind(
     return DDSFilterValue::ValueKind::ENUM == kind ? DDSFilterValue::ValueKind::SIGNED_INTEGER : kind;
 }
 
+template<typename T>
+int64_t compare_values(
+        T lvalue,
+        T rvalue)
+{
+    return lvalue < rvalue ? -1 :
+        lvalue > rvalue ? 1 : 0;
+}
+
 /**
  * Check if a value is negative.
  * Only used during promotion to UNSIGNED_INTEGER.
@@ -210,10 +219,10 @@ int64_t DDSFilterValue::compare(
 
             case ValueKind::SIGNED_INTEGER:
             case ValueKind::ENUM:
-                return lhs.signed_integer_value - rhs.signed_integer_value;
+                return compare_values(lhs.signed_integer_value, rhs.signed_integer_value);
 
             case ValueKind::UNSIGNED_INTEGER:
-                return lhs.unsigned_integer_value - rhs.unsigned_integer_value;
+                return compare_values(lhs.unsigned_integer_value, rhs.unsigned_integer_value);
 
             case ValueKind::FLOAT:
             {
@@ -249,10 +258,12 @@ int64_t DDSFilterValue::compare(
 
             case ValueKind::ENUM:
             case ValueKind::SIGNED_INTEGER:
-                return lhs.signed_integer_value - to_signed_integer(rhs);
+            {
+                return compare_values(lhs.signed_integer_value, to_signed_integer(rhs));
+            }
 
             case ValueKind::UNSIGNED_INTEGER:
-                return is_negative(rhs) ? 1 : lhs.unsigned_integer_value - to_unsigned_integer(rhs);
+                return is_negative(rhs) ? 1 : compare_values(lhs.unsigned_integer_value, to_unsigned_integer(rhs));
 
             case ValueKind::FLOAT:
             {
