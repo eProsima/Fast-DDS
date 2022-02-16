@@ -13,6 +13,7 @@
 // limitations under the License.
 
 #include <array>
+#include <limits>
 #include <map>
 #include <set>
 #include <string>
@@ -590,11 +591,14 @@ private:
     void add_float_values(
             std::array<ContentFilterTestType, 5>& data)
     {
-        data[0].float_field(-1e38f);
-        data[0].struct_field().float_field(-1e38f);
-        data[0].array_float_field()[0] = -1e38f;
-        data[0].bounded_sequence_float_field().push_back(-1e38f);
-        data[0].unbounded_sequence_float_field().push_back(-1e38f);
+        float min = std::numeric_limits<float>::lowest();
+        float max = std::numeric_limits<float>::max();
+
+        data[0].float_field(min);
+        data[0].struct_field().float_field(min);
+        data[0].array_float_field()[0] = min;
+        data[0].bounded_sequence_float_field().push_back(min);
+        data[0].unbounded_sequence_float_field().push_back(min);
 
         data[1].float_field(-3.14159f);
         data[1].struct_field().float_field(-3.14159f);
@@ -614,11 +618,11 @@ private:
         data[3].bounded_sequence_float_field().push_back(3.14159f);
         data[3].unbounded_sequence_float_field().push_back(3.14159f);
 
-        data[4].float_field(1e38f);
-        data[4].struct_field().float_field(1e38f);
-        data[4].array_float_field()[0] = 1e38f;
-        data[4].bounded_sequence_float_field().push_back(1e38f);
-        data[4].unbounded_sequence_float_field().push_back(1e38f);
+        data[4].float_field(max);
+        data[4].struct_field().float_field(max);
+        data[4].array_float_field()[0] = max;
+        data[4].bounded_sequence_float_field().push_back(max);
+        data[4].unbounded_sequence_float_field().push_back(max);
     }
 
     void add_double_values(
@@ -775,11 +779,11 @@ static std::vector<DDSSQLFilterValueParams> get_test_filtered_value_float_inputs
 {
     static const std::array<std::pair<std::string, std::string>, 5> values =
     {
-        std::pair<std::string, std::string>{"-1e38", "minus_2"},
+        std::pair<std::string, std::string>{std::to_string(std::numeric_limits<float>::lowest()), "minus_2"},
         std::pair<std::string, std::string>{"-3.14159", "minus_1"},
         std::pair<std::string, std::string>{"0", "0"},
         std::pair<std::string, std::string>{"3.14159", "plus_1"},
-        std::pair<std::string, std::string>{"1e38", "plus_2"}
+        std::pair<std::string, std::string>{std::to_string(std::numeric_limits<float>::max()), "plus_2"}
     };
 
     std::vector<DDSSQLFilterValueParams> inputs;
