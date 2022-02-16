@@ -36,7 +36,7 @@ struct literal_value_processor
         else if (n->is<false_value>())
         {
             n->value->kind = DDSFilterValue::ValueKind::BOOLEAN;
-            n->value->boolean_value = true;
+            n->value->boolean_value = false;
         }
         else if (n->is<integer_value>())
         {
