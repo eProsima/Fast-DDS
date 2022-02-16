@@ -460,6 +460,7 @@ void RTPSParticipantImpl::disable()
         block.disable();
     }
 
+    std::unique_lock<std::recursive_mutex> lock(*mp_mutex);
     while (m_userReaderList.size() > 0)
     {
         deleteUserEndpoint(static_cast<Endpoint*>(*m_userReaderList.begin()));
@@ -469,6 +470,7 @@ void RTPSParticipantImpl::disable()
     {
         deleteUserEndpoint(static_cast<Endpoint*>(*m_userWriterList.begin()));
     }
+    lock.unlock();
 
     delete(mp_builtinProtocols);
     mp_builtinProtocols = nullptr;
@@ -751,10 +753,12 @@ bool RTPSParticipantImpl::create_writer(
         }
     }
 
-    std::lock_guard<std::recursive_mutex> guard(*mp_mutex);
+    std::unique_lock<std::mutex> lock(endpoints_list_mutex);
     m_allWriterList.push_back(SWriter);
+    lock.unlock();
     if (!is_builtin)
     {
+        std::lock_guard<std::recursive_mutex> guard(*mp_mutex);
         m_userWriterList.push_back(SWriter);
     }
     *writer_out = SWriter;
@@ -886,10 +890,12 @@ bool RTPSParticipantImpl::create_reader(
         }
     }
 
-    std::lock_guard<std::recursive_mutex> guard(*mp_mutex);
+    std::unique_lock<std::mutex> lock(endpoints_list_mutex);
     m_allReaderList.push_back(SReader);
+    lock.unlock();
     if (!is_builtin)
     {
+        std::lock_guard<std::recursive_mutex> guard(*mp_mutex);
         m_userReaderList.push_back(SReader);
     }
     *reader_out = SReader;
@@ -1098,9 +1104,7 @@ bool RTPSParticipantImpl::createReader(
 RTPSReader* RTPSParticipantImpl::find_local_reader(
         const GUID_t& reader_guid)
 {
-    // As this is only called from RTPSDomainImpl::find_local_reader, and it has
-    // the domain mutex taken, there is no need to take the participant mutex
-    // std::lock_guard<std::recursive_mutex> guard(*mp_mutex);
+    std::lock_guard<std::mutex> guard(endpoints_list_mutex);
 
     for (auto reader : m_allReaderList)
     {
@@ -1116,9 +1120,7 @@ RTPSReader* RTPSParticipantImpl::find_local_reader(
 RTPSWriter* RTPSParticipantImpl::find_local_writer(
         const GUID_t& writer_guid)
 {
-    // As this is only called from RTPSDomainImpl::find_local_reader, and it has
-    // the domain mutex taken, there is no need to take the participant mutex
-    // std::lock_guard<std::recursive_mutex> guard(*mp_mutex);
+    std::lock_guard<std::mutex> guard(endpoints_list_mutex);
 
     for (auto writer : m_allWriterList)
     {
@@ -1354,6 +1356,7 @@ bool RTPSParticipantImpl::existsEntityId(
         const EntityId_t& ent,
         EndpointKind_t kind) const
 {
+    std::lock_guard<std::recursive_mutex> guard(*mp_mutex);
     if (kind == WRITER)
     {
         for (std::vector<RTPSWriter*>::const_iterator it = m_userWriterList.begin(); it != m_userWriterList.end(); ++it)
@@ -1609,45 +1612,55 @@ bool RTPSParticipantImpl::deleteUserEndpoint(
     {
         if (p_endpoint->getAttributes().endpointKind == WRITER)
         {
-            std::lock_guard<std::recursive_mutex> guard(*mp_mutex);
-            for (auto wit = m_userWriterList.begin(); wit != m_userWriterList.end(); ++wit)
             {
-                if ((*wit)->getGuid().entityId == p_endpoint->getGuid().entityId) //Found it
+                std::lock_guard<std::recursive_mutex> guard(*mp_mutex);
+                for (auto wit = m_userWriterList.begin(); wit != m_userWriterList.end(); ++wit)
                 {
-                    m_userWriterList.erase(wit);
-                    found_in_users = true;
-                    break;
+                    if ((*wit)->getGuid().entityId == p_endpoint->getGuid().entityId) //Found it
+                    {
+                        m_userWriterList.erase(wit);
+                        found_in_users = true;
+                        break;
+                    }
                 }
             }
-            for (auto wit = m_allWriterList.begin(); wit != m_allWriterList.end(); ++wit)
             {
-                if ((*wit)->getGuid().entityId == p_endpoint->getGuid().entityId) //Found it
+                std::lock_guard<std::mutex> lock(endpoints_list_mutex);
+                for (auto wit = m_allWriterList.begin(); wit != m_allWriterList.end(); ++wit)
                 {
-                    m_allWriterList.erase(wit);
-                    found = true;
-                    break;
+                    if ((*wit)->getGuid().entityId == p_endpoint->getGuid().entityId) //Found it
+                    {
+                        m_allWriterList.erase(wit);
+                        found = true;
+                        break;
+                    }
                 }
             }
         }
         else
         {
-            std::lock_guard<std::recursive_mutex> guard(*mp_mutex);
-            for (auto rit = m_userReaderList.begin(); rit != m_userReaderList.end(); ++rit)
             {
-                if ((*rit)->getGuid().entityId == p_endpoint->getGuid().entityId) //Found it
+                std::lock_guard<std::recursive_mutex> guard(*mp_mutex);
+                for (auto rit = m_userReaderList.begin(); rit != m_userReaderList.end(); ++rit)
                 {
-                    m_userReaderList.erase(rit);
-                    found_in_users = true;
-                    break;
+                    if ((*rit)->getGuid().entityId == p_endpoint->getGuid().entityId) //Found it
+                    {
+                        m_userReaderList.erase(rit);
+                        found_in_users = true;
+                        break;
+                    }
                 }
             }
-            for (auto rit = m_allReaderList.begin(); rit != m_allReaderList.end(); ++rit)
             {
-                if ((*rit)->getGuid().entityId == p_endpoint->getGuid().entityId) //Found it
+                std::lock_guard<std::mutex> lock(endpoints_list_mutex);
+                for (auto rit = m_allReaderList.begin(); rit != m_allReaderList.end(); ++rit)
                 {
-                    m_allReaderList.erase(rit);
-                    found = true;
-                    break;
+                    if ((*rit)->getGuid().entityId == p_endpoint->getGuid().entityId) //Found it
+                    {
+                        m_allReaderList.erase(rit);
+                        found = true;
+                        break;
+                    }
                 }
             }
         }
@@ -2269,6 +2282,7 @@ bool RTPSParticipantImpl::register_in_writer(
         std::shared_ptr<fastdds::statistics::IListener> listener,
         GUID_t writer_guid)
 {
+    std::lock_guard<std::recursive_mutex> guard(*mp_mutex);
     bool res = false;
 
     if ( GUID_t::unknown() == writer_guid )
@@ -2295,6 +2309,7 @@ bool RTPSParticipantImpl::register_in_reader(
         std::shared_ptr<fastdds::statistics::IListener> listener,
         GUID_t reader_guid)
 {
+    std::lock_guard<std::recursive_mutex> guard(*mp_mutex);
     bool res = false;
 
     if ( GUID_t::unknown() == reader_guid )
@@ -2320,7 +2335,7 @@ bool RTPSParticipantImpl::register_in_reader(
 bool RTPSParticipantImpl::unregister_in_writer(
         std::shared_ptr<fastdds::statistics::IListener> listener)
 {
-    std::lock_guard<std::recursive_mutex> guard(*getParticipantMutex());
+    std::lock_guard<std::recursive_mutex> guard(*mp_mutex);
     bool res = true;
 
     for ( auto writer : m_userWriterList)
@@ -2337,7 +2352,7 @@ bool RTPSParticipantImpl::unregister_in_writer(
 bool RTPSParticipantImpl::unregister_in_reader(
         std::shared_ptr<fastdds::statistics::IListener> listener)
 {
-    std::lock_guard<std::recursive_mutex> guard(*getParticipantMutex());
+    std::lock_guard<std::recursive_mutex> guard(*mp_mutex);
     bool res = true;
 
     for ( auto reader : m_userReaderList)
