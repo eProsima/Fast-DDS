@@ -1169,6 +1169,28 @@ TEST_F(DDSSQLFilterValueTests, test_compound_not)
 
 }
 
+TEST_F(DDSSQLFilterValueTests, test_compound_and)
+{
+    static const std::string expression = "float_field BETWEEN %0 AND %1 AND int16_field < 0";
+
+    IContentFilter* filter = nullptr;
+    auto ret = create_content_filter(uut, expression, { "-3.14159", "3.14159" }, &type_support, filter);
+    EXPECT_EQ(ReturnCode_t::RETCODE_OK, ret);
+    ASSERT_NE(nullptr, filter);
+
+    const auto& values = DDSSQLFilterValueGlobalData::values();
+    std::array<bool, 5> results{false, true, false, false, false};
+
+    ASSERT_EQ(results.size(), values.size());
+
+    for (size_t i = 0; i < values.size(); ++i)
+    {
+        IContentFilter::FilterSampleInfo info;
+        IContentFilter::GUID_t guid;
+        EXPECT_EQ(results[i], filter->evaluate(*values[i], info, guid)) << "with i = " << i;
+    }
+}
+
 static void add_test_filtered_value_inputs(
         const std::string& test_prefix,
         const std::string& field_name,
