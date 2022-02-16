@@ -246,6 +246,14 @@ private:
                     float_value = data->get_float128_value(member_id);
                     break;
 
+                case EK_COMPLETE:
+                {
+                    uint32_t enum_value;
+                    ret = !!data->get_enum_value(enum_value, member_id);
+                    signed_integer_value = enum_value;
+                    break;
+                }
+
                 default:
                     ret = false;
                     break;
