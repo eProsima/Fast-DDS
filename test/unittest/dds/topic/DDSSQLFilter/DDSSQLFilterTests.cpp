@@ -1123,6 +1123,52 @@ TEST_P(DDSSQLFilterValueTests, test_filtered_value)
     EXPECT_EQ(ReturnCode_t::RETCODE_OK, ret);
 }
 
+TEST_F(DDSSQLFilterValueTests, test_compound_not)
+{
+    static const std::string expression = "NOT (float_field = %0)";
+
+    static const std::array<std::string, 5> param_values =
+    {
+        std::to_string(std::numeric_limits<float>::lowest()),
+        "-3.14159",
+        "0",
+        "3.14159",
+        std::to_string(std::numeric_limits<float>::max())
+    };
+
+    IContentFilter* filter = nullptr;
+    auto ret = create_content_filter(uut, expression, { param_values.back() }, &type_support, filter);
+    EXPECT_EQ(ReturnCode_t::RETCODE_OK, ret);
+    ASSERT_NE(nullptr, filter);
+
+    const auto& values = DDSSQLFilterValueGlobalData::values();
+    std::array<bool, 5> results;
+    StackAllocatedSequence<const char*, 1> params;
+    params.length(1);
+
+    ASSERT_EQ(results.size(), values.size());
+
+    for (size_t i = 0; i < param_values.size(); ++i)
+    {
+        // Update parameter value
+        params[0] = param_values[i].c_str();
+        ret = uut.create_content_filter("DDSSQL", "ContentFilterTestType", &type_support, nullptr, params, filter);
+        EXPECT_EQ(ReturnCode_t::RETCODE_OK, ret);
+        ASSERT_NE(nullptr, filter);
+
+        // Update expected results
+        results.fill(true);
+        results[i] = false;
+        for (size_t j = 0; j < values.size(); ++j)
+        {
+            IContentFilter::FilterSampleInfo info;
+            IContentFilter::GUID_t guid;
+            EXPECT_EQ(results[j], filter->evaluate(*values[j], info, guid)) << "with i = " << i << ", j = " << j;
+        }
+    }
+
+}
+
 static void add_test_filtered_value_inputs(
         const std::string& test_prefix,
         const std::string& field_name,
