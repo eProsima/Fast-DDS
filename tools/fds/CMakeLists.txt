@@ -59,7 +59,7 @@ if (MSVC)
     endif()
 
     # add project headers to enable class view on visual studio IDE
-    set(FAST_SERVER_HEADERS server.h optionparser.h)
+    set(FAST_SERVER_HEADERS server.h)
 
 endif(MSVC)
 
@@ -73,7 +73,7 @@ target_compile_definitions(${PROJECT_NAME}
     PRIVATE FAST_SERVER_VERSION=\"${PROJECT_VERSION}\"
     PRIVATE FAST_SERVER_BINARY=\"$<TARGET_FILE_NAME:${PROJECT_NAME}>\" )
 
-target_link_libraries(${PROJECT_NAME} fastrtps fastcdr)
+target_link_libraries(${PROJECT_NAME} fastrtps fastcdr fastdds::optionparser)
 
 # Properties that change bin names depending on current config.
 # This is convenient because on installation all bins share folder

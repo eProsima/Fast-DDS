@@ -267,6 +267,11 @@ option(FASTDDS_STATISTICS "Enable Fast DDS Statistics Module" OFF)
 add_subdirectory(src/cpp)
 
 ###############################################################################
+# Add http://optionparser.sourceforge.net/ as unified cli parser 
+###############################################################################
+add_subdirectory(thirdparty/optionparser)
+
+###############################################################################
 # Testing options
 ###############################################################################
 enable_testing()

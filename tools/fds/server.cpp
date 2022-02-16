@@ -15,8 +15,6 @@
 #ifndef FASTDDS_SERVER_SERVER_CPP_
 #define FASTDDS_SERVER_SERVER_CPP_
 
-#include "server.h"
-
 #include <iostream>
 #include <sstream>
 #include <regex>
@@ -29,6 +27,8 @@
 #include <fastrtps/Domain.h>
 #include <fastrtps/participant/Participant.h>
 #include <fastdds/dds/log/Log.hpp>
+
+#include "server.h"
 
 using namespace eprosima;
 using namespace fastrtps;

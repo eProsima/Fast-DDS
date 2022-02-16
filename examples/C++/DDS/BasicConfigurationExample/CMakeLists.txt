@@ -16,6 +16,7 @@ cmake_minimum_required(VERSION 2.8.12)
 
 if(NOT CMAKE_VERSION VERSION_LESS 3.0)
     cmake_policy(SET CMP0048 NEW)
+    cmake_policy(SET CMP0028 NEW) 
 endif()
 
 project(BasicConfigurationExample)
@@ -48,6 +49,6 @@ target_compile_definitions(${PROJECT_NAME} PRIVATE
     $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
     $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
 )
-target_link_libraries(${PROJECT_NAME} fastrtps fastcdr)
+target_link_libraries(${PROJECT_NAME} fastrtps fastcdr fastdds::optionparser)
 install(TARGETS ${PROJECT_NAME}
     RUNTIME DESTINATION examples/C++/DDS/${PROJECT_NAME}/${BIN_INSTALL_DIR})

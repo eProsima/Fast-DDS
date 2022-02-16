@@ -618,8 +618,12 @@ else()
     set(FASTRTPS_PACKAGE_OPT_BIN_DIR_CONDITION "if(0)")
 endif()
 
+# include the option parser targets
+set(INCLUDE_FASTDDS_TARGETS "include(\${CMAKE_CURRENT_LIST_DIR}/optionparser-targets.cmake)")
+
 if(COMPILE_TOOLS)
-    set(INCLUDE_FASTDS_TARGETS "include(\${CMAKE_CURRENT_LIST_DIR}/fast-discovery-server-targets.cmake)")
+    # include the fast-discovery-server targets (not for linking but to hint binaries location and other target properties)
+    set(INCLUDE_FASTDDS_TARGETS "${INCLUDE_FASTDDS_TARGETS}\ninclude(\${CMAKE_CURRENT_LIST_DIR}/fast-discovery-server-targets.cmake)")
 endif()
 
 # Add fastrtps dependencies in its CMake config file.

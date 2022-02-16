@@ -15,7 +15,7 @@
 #include "VideoTestPublisher.hpp"
 #include "VideoTestSubscriber.hpp"
 
-#include "../optionparser.h"
+#include <optionparser.hpp>
 
 #include <stdio.h>
 #include <string>

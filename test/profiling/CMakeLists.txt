@@ -42,7 +42,7 @@ set(MEMORYTEST_SOURCE MemoryTestPublisher.cpp
     )
 add_executable(MemoryTest ${MEMORYTEST_SOURCE})
 target_include_directories(MemoryTest PRIVATE ${Asio_INCLUDE_DIR})
-target_link_libraries(MemoryTest fastrtps foonathan_memory ${CMAKE_THREAD_LIBS_INIT} ${CMAKE_DL_LIBS})
+target_link_libraries(MemoryTest fastrtps foonathan_memory fastdds::optionparser ${CMAKE_THREAD_LIBS_INIT} ${CMAKE_DL_LIBS})
 
 configure_file("cycles_tests.py" "cycles_tests.py")
 configure_file("memory_tests.py" "memory_tests.py")

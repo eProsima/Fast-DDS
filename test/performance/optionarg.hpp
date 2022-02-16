@@ -1,7 +1,7 @@
 #ifndef _TEST_PERFORMANCE_OPTIONARG_HPP_
 #define _TEST_PERFORMANCE_OPTIONARG_HPP_
 
-#include "optionparser.h"
+#include <optionparser.hpp>
 
 #include <stdio.h>
 #include <cstdint>

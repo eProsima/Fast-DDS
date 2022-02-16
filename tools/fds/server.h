@@ -16,7 +16,9 @@
 #define FASTDDS_SERVER_SERVER_H_
 
 // Parsing setup
-#include "optionparser.h"
+#include <optionparser.hpp>
+
+namespace option = eprosima::option;
 
 enum  optionIndex
 {

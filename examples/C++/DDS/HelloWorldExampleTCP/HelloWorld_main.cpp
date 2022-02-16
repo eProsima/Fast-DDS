@@ -25,7 +25,9 @@
 
 #include <string>
 
-#include "optionparser.h"
+#include <optionparser.hpp>
+
+namespace option = eprosima::option;
 
 struct Arg: public option::Arg
 {
