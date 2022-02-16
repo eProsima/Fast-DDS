@@ -931,13 +931,69 @@ private:
     void add_enum_values(
             std::array<ContentFilterTestType, 5>& data)
     {
-        static_cast<void>(data);
+        data[0].enum_field(Color::RED);
+        data[0].struct_field().enum_field(Color::RED);
+        data[0].array_enum_field()[0] = Color::RED;
+        data[0].bounded_sequence_enum_field().push_back(Color::RED);
+        data[0].unbounded_sequence_enum_field().push_back(Color::RED);
+
+        data[1].enum_field(Color::GREEN);
+        data[1].struct_field().enum_field(Color::GREEN);
+        data[1].array_enum_field()[0] = Color::GREEN;
+        data[1].bounded_sequence_enum_field().push_back(Color::GREEN);
+        data[1].unbounded_sequence_enum_field().push_back(Color::GREEN);
+
+        data[2].enum_field(Color::BLUE);
+        data[2].struct_field().enum_field(Color::BLUE);
+        data[2].array_enum_field()[0] = Color::BLUE;
+        data[2].bounded_sequence_enum_field().push_back(Color::BLUE);
+        data[2].unbounded_sequence_enum_field().push_back(Color::BLUE);
+
+        data[3].enum_field(Color::YELLOW);
+        data[3].struct_field().enum_field(Color::YELLOW);
+        data[3].array_enum_field()[0] = Color::YELLOW;
+        data[3].bounded_sequence_enum_field().push_back(Color::YELLOW);
+        data[3].unbounded_sequence_enum_field().push_back(Color::YELLOW);
+
+        data[4].enum_field(Color::MAGENTA);
+        data[4].struct_field().enum_field(Color::MAGENTA);
+        data[4].array_enum_field()[0] = Color::MAGENTA;
+        data[4].bounded_sequence_enum_field().push_back(Color::MAGENTA);
+        data[4].unbounded_sequence_enum_field().push_back(Color::MAGENTA);
     }
 
     void add_enum2_values(
             std::array<ContentFilterTestType, 5>& data)
     {
-        static_cast<void>(data);
+        data[0].enum2_field(Material::WOOD);
+        data[0].struct_field().enum2_field(Material::WOOD);
+        data[0].array_enum2_field()[0] = Material::WOOD;
+        data[0].bounded_sequence_enum2_field().push_back(Material::WOOD);
+        data[0].unbounded_sequence_enum2_field().push_back(Material::WOOD);
+
+        data[1].enum2_field(Material::PLASTIC);
+        data[1].struct_field().enum2_field(Material::PLASTIC);
+        data[1].array_enum2_field()[0] = Material::PLASTIC;
+        data[1].bounded_sequence_enum2_field().push_back(Material::PLASTIC);
+        data[1].unbounded_sequence_enum2_field().push_back(Material::PLASTIC);
+
+        data[2].enum2_field(Material::METAL);
+        data[2].struct_field().enum2_field(Material::METAL);
+        data[2].array_enum2_field()[0] = Material::METAL;
+        data[2].bounded_sequence_enum2_field().push_back(Material::METAL);
+        data[2].unbounded_sequence_enum2_field().push_back(Material::METAL);
+
+        data[3].enum2_field(Material::CONCRETE);
+        data[3].struct_field().enum2_field(Material::CONCRETE);
+        data[3].array_enum2_field()[0] = Material::CONCRETE;
+        data[3].bounded_sequence_enum2_field().push_back(Material::CONCRETE);
+        data[3].unbounded_sequence_enum2_field().push_back(Material::CONCRETE);
+
+        data[4].enum2_field(Material::STONE);
+        data[4].struct_field().enum2_field(Material::STONE);
+        data[4].array_enum2_field()[0] = Material::STONE;
+        data[4].bounded_sequence_enum2_field().push_back(Material::STONE);
+        data[4].unbounded_sequence_enum2_field().push_back(Material::STONE);
     }
 
 };
