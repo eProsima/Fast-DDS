@@ -869,10 +869,32 @@ static std::vector<DDSSQLFilterValueParams> get_test_filtered_value_float_inputs
     return get_test_filtered_value_float_inputs<float>("float_field");
 }
 
+static std::vector<DDSSQLFilterValueParams> get_test_filtered_value_double_inputs()
+{
+    return get_test_filtered_value_float_inputs<double>("double_field");
+}
+
+static std::vector<DDSSQLFilterValueParams> get_test_filtered_value_long_double_inputs()
+{
+    return get_test_filtered_value_float_inputs<long double>("long_double_field");
+}
+
 INSTANTIATE_TEST_SUITE_P(
-    DDSSQLFilterValueTestsFloats,
+    DDSSQLFilterValueTestsFloat,
     DDSSQLFilterValueTests,
     ::testing::ValuesIn(get_test_filtered_value_float_inputs()),
+    DDSSQLFilterValueTests::PrintToStringParamName());
+
+INSTANTIATE_TEST_SUITE_P(
+    DDSSQLFilterValueTestsDouble,
+    DDSSQLFilterValueTests,
+    ::testing::ValuesIn(get_test_filtered_value_double_inputs()),
+    DDSSQLFilterValueTests::PrintToStringParamName());
+
+INSTANTIATE_TEST_SUITE_P(
+    DDSSQLFilterValueTestsLongDouble,
+    DDSSQLFilterValueTests,
+    ::testing::ValuesIn(get_test_filtered_value_long_double_inputs()),
     DDSSQLFilterValueTests::PrintToStringParamName());
 
 } // namespace dds
