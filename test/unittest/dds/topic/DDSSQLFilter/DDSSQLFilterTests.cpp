@@ -1127,7 +1127,8 @@ static void add_test_filtered_value_inputs(
         const std::string& test_prefix,
         const std::string& field_name,
         const std::array<std::pair<std::string, std::string>, 5>& values,
-        std::vector<DDSSQLFilterValueParams>& inputs)
+        std::vector<DDSSQLFilterValueParams>& inputs,
+        const std::array<std::array<std::array<bool, 5>, 5>, 6>& results = DDSSQLFilterValueGlobalData::results())
 {
     auto& ops = DDSSQLFilterValueGlobalData::ops();
     for (size_t i = 0; i < ops.size(); ++i)
@@ -1135,13 +1136,13 @@ static void add_test_filtered_value_inputs(
         auto& op = ops[i];
         for (size_t j = 0; j < values.size(); ++j)
         {
-            auto& results = DDSSQLFilterValueGlobalData::results()[i][j];
+            auto& results_row = results[i][j];
             DDSSQLFilterValueParams input
             {
                 test_prefix + "_" + op.second + "_" + values[j].second,
                 field_name + " " + op.first + " " + values[j].first,
                 {},
-                { results.begin(), results.end() }
+                { results_row.begin(), results_row.end() }
             };
             inputs.emplace_back(input);
 
@@ -1230,6 +1231,70 @@ static std::vector<DDSSQLFilterValueParams> get_test_filtered_value_string_input
     add_test_filtered_value_inputs("bounded_sequence", bounded_seq_name + "[0]", values, inputs);
     add_negative_test_filtered_value_inputs("neg_bounded_sequence", bounded_seq_name + "[2]", values, inputs);
     add_test_filtered_value_inputs("unbounded_sequence", unbounded_seq_name + "[0]", values, inputs);
+    add_negative_test_filtered_value_inputs("neg_unbounded_sequence", unbounded_seq_name + "[2]", values, inputs);
+    return inputs;
+}
+
+static std::vector<DDSSQLFilterValueParams> get_test_filtered_value_boolean_inputs()
+{
+    static const std::array<std::pair<std::string, std::string>, 5> values =
+    {
+        std::pair<std::string, std::string>{"FALSE", "minus_2"},
+        std::pair<std::string, std::string>{"FALSE", "minus_1"},
+        std::pair<std::string, std::string>{"TRUE", "0"},
+        std::pair<std::string, std::string>{"TRUE", "plus_1"},
+        std::pair<std::string, std::string>{"TRUE", "plus_2"}
+    };
+
+    std::array<std::array<std::array<bool, 5>, 5>, 6> results;
+    // EQ
+    results[0][0] = { true, true, false, false, false };
+    results[0][1] = { true, true, false, false, false };
+    results[0][2] = { false, false, true, true, true };
+    results[0][3] = { false, false, true, true, true };
+    results[0][4] = { false, false, true, true, true };
+    // NE
+    results[1][0] = { false, false, true, true, true };
+    results[1][1] = { false, false, true, true, true };
+    results[1][2] = { true, true, false, false, false };
+    results[1][3] = { true, true, false, false, false };
+    results[1][4] = { true, true, false, false, false };
+    // LT
+    results[2][0] = { false, false, false, false, false };
+    results[2][1] = { false, false, false, false, false };
+    results[2][2] = { true, true, false, false, false };
+    results[2][3] = { true, true, false, false, false };
+    results[2][4] = { true, true, false, false, false };
+    // LE
+    results[3][0] = { true, true, false, false, false };
+    results[3][1] = { true, true, false, false, false };
+    results[3][2] = { true, true, true, true, true };
+    results[3][3] = { true, true, true, true, true };
+    results[3][4] = { true, true, true, true, true };
+    // GT
+    results[4][0] = { false, false, true, true, true };
+    results[4][1] = { false, false, true, true, true };
+    results[4][2] = { false, false, false, false, false };
+    results[4][3] = { false, false, false, false, false };
+    results[4][4] = { false, false, false, false, false };
+    // GE
+    results[5][0] = { true, true, true, true, true };
+    results[5][1] = { true, true, true, true, true };
+    results[5][2] = { false, false, true, true, true };
+    results[5][3] = { false, false, true, true, true };
+    results[5][4] = { false, false, true, true, true };
+
+    std::string field_name = "bool_field";
+    std::string bounded_seq_name = "bounded_sequence_" + field_name;
+    std::string unbounded_seq_name = "unbounded_sequence_" + field_name;
+
+    std::vector<DDSSQLFilterValueParams> inputs;
+    add_test_filtered_value_inputs("plain_field", field_name, values, inputs, results);
+    add_test_filtered_value_inputs("in_struct", "struct_field." + field_name, values, inputs, results);
+    add_test_filtered_value_inputs("array", "array_" + field_name + "[0]", values, inputs, results);
+    add_test_filtered_value_inputs("bounded_sequence", bounded_seq_name + "[0]", values, inputs, results);
+    add_negative_test_filtered_value_inputs("neg_bounded_sequence", bounded_seq_name + "[2]", values, inputs);
+    add_test_filtered_value_inputs("unbounded_sequence", unbounded_seq_name + "[0]", values, inputs, results);
     add_negative_test_filtered_value_inputs("neg_unbounded_sequence", unbounded_seq_name + "[2]", values, inputs);
     return inputs;
 }
@@ -1428,6 +1493,12 @@ INSTANTIATE_TEST_SUITE_P(
     DDSSQLFilterValueTestsString,
     DDSSQLFilterValueTests,
     ::testing::ValuesIn(get_test_filtered_value_string_inputs()),
+    DDSSQLFilterValueTests::PrintToStringParamName());
+
+INSTANTIATE_TEST_SUITE_P(
+    DDSSQLFilterValueTestsBool,
+    DDSSQLFilterValueTests,
+    ::testing::ValuesIn(get_test_filtered_value_boolean_inputs()),
     DDSSQLFilterValueTests::PrintToStringParamName());
 
 INSTANTIATE_TEST_SUITE_P(
