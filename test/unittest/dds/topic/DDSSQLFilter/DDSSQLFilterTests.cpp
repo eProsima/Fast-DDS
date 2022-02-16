@@ -1192,6 +1192,32 @@ static std::vector<DDSSQLFilterValueParams> get_test_filtered_value_char_inputs(
     return inputs;
 }
 
+static std::vector<DDSSQLFilterValueParams> get_test_filtered_value_string_inputs()
+{
+    static const std::array<std::pair<std::string, std::string>, 5> values =
+    {
+        std::pair<std::string, std::string>{"''", "minus_2"},
+        std::pair<std::string, std::string>{"'   '", "minus_1"},
+        std::pair<std::string, std::string>{"' AA'", "0"},
+        std::pair<std::string, std::string>{"' AZ'", "plus_1"},
+        std::pair<std::string, std::string>{"'ZZZ'", "plus_2"}
+    };
+
+    std::string field_name = "string_field";
+    std::string bounded_seq_name = "bounded_sequence_" + field_name;
+    std::string unbounded_seq_name = "unbounded_sequence_" + field_name;
+
+    std::vector<DDSSQLFilterValueParams> inputs;
+    add_test_filtered_value_inputs("plain_field", field_name, values, inputs);
+    add_test_filtered_value_inputs("in_struct", "struct_field." + field_name, values, inputs);
+    add_test_filtered_value_inputs("array", "array_" + field_name + "[0]", values, inputs);
+    add_test_filtered_value_inputs("bounded_sequence", bounded_seq_name + "[0]", values, inputs);
+    add_negative_test_filtered_value_inputs("neg_bounded_sequence", bounded_seq_name + "[2]", values, inputs);
+    add_test_filtered_value_inputs("unbounded_sequence", unbounded_seq_name + "[0]", values, inputs);
+    add_negative_test_filtered_value_inputs("neg_unbounded_sequence", unbounded_seq_name + "[2]", values, inputs);
+    return inputs;
+}
+
 template<typename T>
 static std::vector<DDSSQLFilterValueParams> get_test_filtered_value_unsigned_integer_inputs(
         const std::string& field_name)
@@ -1380,6 +1406,12 @@ INSTANTIATE_TEST_SUITE_P(
     DDSSQLFilterValueTestsChar,
     DDSSQLFilterValueTests,
     ::testing::ValuesIn(get_test_filtered_value_char_inputs()),
+    DDSSQLFilterValueTests::PrintToStringParamName());
+
+INSTANTIATE_TEST_SUITE_P(
+    DDSSQLFilterValueTestsString,
+    DDSSQLFilterValueTests,
+    ::testing::ValuesIn(get_test_filtered_value_string_inputs()),
     DDSSQLFilterValueTests::PrintToStringParamName());
 
 INSTANTIATE_TEST_SUITE_P(
