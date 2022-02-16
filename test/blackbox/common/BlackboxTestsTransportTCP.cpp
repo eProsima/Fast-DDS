@@ -508,8 +508,6 @@ TEST(BlackBox, TCPv6_copy)
     TCPv6TransportDescriptor tcpv6_transport_copy = tcpv6_transport;
     EXPECT_EQ(tcpv6_transport_copy, tcpv6_transport);
 }
-<<<<<<< HEAD
-=======
 
 // Test connection is successfully restablished after dropping and relaunching a TCP client (requester)
 // Issue -> https://github.com/eProsima/Fast-DDS/issues/2409
@@ -571,26 +569,3 @@ TEST(TransportTCP, Client_reconnection)
     delete replier;
     delete requester;
 }
-
-#ifdef INSTANTIATE_TEST_SUITE_P
-#define GTEST_INSTANTIATE_TEST_MACRO(x, y, z, w) INSTANTIATE_TEST_SUITE_P(x, y, z, w)
-#else
-#define GTEST_INSTANTIATE_TEST_MACRO(x, y, z, w) INSTANTIATE_TEST_CASE_P(x, y, z, w)
-#endif // ifdef INSTANTIATE_TEST_SUITE_P
-
-GTEST_INSTANTIATE_TEST_MACRO(TransportTCP,
-        TransportTCP,
-        testing::Combine(testing::Values(TRANSPORT), testing::Values(false, true)),
-        [](const testing::TestParamInfo<TransportTCP::ParamType>& info)
-        {
-            bool ipv6 = std::get<1>(info.param);
-            std::string suffix = ipv6 ? "TCPv6" : "TCPv4";
-            switch (std::get<0>(info.param))
-            {
-                case TRANSPORT:
-                default:
-                    return "Transport" + suffix;
-            }
-
-        });
->>>>>>> 6639a84b7 (Fix TCP infinite loop, client shutdown and reconnection (#2470))
