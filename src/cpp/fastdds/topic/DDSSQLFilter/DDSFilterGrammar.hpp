@@ -56,7 +56,7 @@ struct boolean_value : sor<false_value, true_value> {};
 struct integer_value : seq< opt< sign >, integer > {};
 struct fractional : seq< dot_op, integer > {};
 struct exponent : seq< one< 'e', 'E' >, integer_value > {};
-struct float_value : seq< integer_value, opt< fractional >, opt< exponent > > {};
+struct float_value : seq < opt< sign >, integer, sor < exponent, seq< fractional, opt< exponent > > > > {};
 
 // PARAMETER
 struct parameter_value : seq< one< '%' >, digit, opt< digit > > {};
