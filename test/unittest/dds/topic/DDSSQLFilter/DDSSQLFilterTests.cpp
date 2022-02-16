@@ -947,7 +947,23 @@ private:
     void add_bool_values(
             std::array<ContentFilterTestType, 5>& data)
     {
-        static_cast<void>(data);
+        for (size_t i = 0; i < 2; ++i)
+        {
+            data[i].bool_field(false);
+            data[i].struct_field().bool_field(false);
+            data[i].array_bool_field()[0] = false;
+            data[i].bounded_sequence_bool_field().push_back(false);
+            data[i].unbounded_sequence_bool_field().push_back(false);
+        }
+
+        for (size_t i = 2; i < 5; ++i)
+        {
+            data[i].bool_field(true);
+            data[i].struct_field().bool_field(true);
+            data[i].array_bool_field()[0] = true;
+            data[i].bounded_sequence_bool_field().push_back(true);
+            data[i].unbounded_sequence_bool_field().push_back(true);
+        }
     }
 
     void add_string_values(
