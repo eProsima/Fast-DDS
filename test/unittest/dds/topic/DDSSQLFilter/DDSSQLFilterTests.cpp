@@ -503,7 +503,22 @@ private:
     DDSSQLFilterValueGlobalData()
     {
         std::array<ContentFilterTestType, 5> data;
+
+        add_char_values(data);
+        add_uint8_values(data);
+        add_int16_values(data);
+        add_uint16_values(data);
+        add_int32_values(data);
+        add_uint32_values(data);
+        add_int64_values(data);
+        add_uint64_values(data);
         add_float_values(data);
+        add_double_values(data);
+        add_long_double_values(data);
+        add_bool_values(data);
+        add_string_values(data);
+        add_enum_values(data);
+        add_enum2_values(data);
 
         for (size_t i = 0; i < data.size(); ++i)
         {
@@ -520,6 +535,54 @@ private:
         auto payload = new IContentFilter::SerializedPayload(data_size);
         values_.emplace_back(payload);
         type_support.serialize(data_ptr, payload);
+    }
+
+    void add_char_values(
+            std::array<ContentFilterTestType, 5>& data)
+    {
+        static_cast<void>(data);
+    }
+
+    void add_uint8_values(
+            std::array<ContentFilterTestType, 5>& data)
+    {
+        static_cast<void>(data);
+    }
+
+    void add_int16_values(
+            std::array<ContentFilterTestType, 5>& data)
+    {
+        static_cast<void>(data);
+    }
+
+    void add_uint16_values(
+            std::array<ContentFilterTestType, 5>& data)
+    {
+        static_cast<void>(data);
+    }
+
+    void add_int32_values(
+            std::array<ContentFilterTestType, 5>& data)
+    {
+        static_cast<void>(data);
+    }
+
+    void add_uint32_values(
+            std::array<ContentFilterTestType, 5>& data)
+    {
+        static_cast<void>(data);
+    }
+
+    void add_int64_values(
+            std::array<ContentFilterTestType, 5>& data)
+    {
+        static_cast<void>(data);
+    }
+
+    void add_uint64_values(
+            std::array<ContentFilterTestType, 5>& data)
+    {
+        static_cast<void>(data);
     }
 
     void add_float_values(
@@ -554,6 +617,42 @@ private:
         data[4].array_float_field()[0] = 1e38f;
         data[4].bounded_sequence_float_field().push_back(1e38f);
         data[4].unbounded_sequence_float_field().push_back(1e38f);
+    }
+
+    void add_double_values(
+            std::array<ContentFilterTestType, 5>& data)
+    {
+        static_cast<void>(data);
+    }
+
+    void add_long_double_values(
+            std::array<ContentFilterTestType, 5>& data)
+    {
+        static_cast<void>(data);
+    }
+
+    void add_bool_values(
+            std::array<ContentFilterTestType, 5>& data)
+    {
+        static_cast<void>(data);
+    }
+
+    void add_string_values(
+            std::array<ContentFilterTestType, 5>& data)
+    {
+        static_cast<void>(data);
+    }
+
+    void add_enum_values(
+            std::array<ContentFilterTestType, 5>& data)
+    {
+        static_cast<void>(data);
+    }
+
+    void add_enum2_values(
+            std::array<ContentFilterTestType, 5>& data)
+    {
+        static_cast<void>(data);
     }
 
 };
