@@ -152,6 +152,38 @@ const TypeObject* GetMinimalColorObject()
     }
     type_object->minimal().enumerated_type().literal_seq().emplace_back(mel_BLUE);
 
+    MinimalEnumeratedLiteral mel_YELLOW;
+    mel_YELLOW.common().flags().TRY_CONSTRUCT1(false); // Doesn't apply
+    mel_YELLOW.common().flags().TRY_CONSTRUCT2(false); // Doesn't apply
+    mel_YELLOW.common().flags().IS_EXTERNAL(false); // Doesn't apply
+    mel_YELLOW.common().flags().IS_OPTIONAL(false); // Doesn't apply
+    mel_YELLOW.common().flags().IS_MUST_UNDERSTAND(false); // Doesn't apply
+    mel_YELLOW.common().flags().IS_KEY(false); // Doesn't apply
+    mel_YELLOW.common().flags().IS_DEFAULT(false);
+    mel_YELLOW.common().value(value++);
+    MD5 YELLOW_hash("YELLOW");
+    for(int i = 0; i < 4; ++i)
+    {
+        mel_YELLOW.detail().name_hash()[i] = YELLOW_hash.digest[i];
+    }
+    type_object->minimal().enumerated_type().literal_seq().emplace_back(mel_YELLOW);
+
+    MinimalEnumeratedLiteral mel_MAGENTA;
+    mel_MAGENTA.common().flags().TRY_CONSTRUCT1(false); // Doesn't apply
+    mel_MAGENTA.common().flags().TRY_CONSTRUCT2(false); // Doesn't apply
+    mel_MAGENTA.common().flags().IS_EXTERNAL(false); // Doesn't apply
+    mel_MAGENTA.common().flags().IS_OPTIONAL(false); // Doesn't apply
+    mel_MAGENTA.common().flags().IS_MUST_UNDERSTAND(false); // Doesn't apply
+    mel_MAGENTA.common().flags().IS_KEY(false); // Doesn't apply
+    mel_MAGENTA.common().flags().IS_DEFAULT(false);
+    mel_MAGENTA.common().value(value++);
+    MD5 MAGENTA_hash("MAGENTA");
+    for(int i = 0; i < 4; ++i)
+    {
+        mel_MAGENTA.detail().name_hash()[i] = MAGENTA_hash.digest[i];
+    }
+    type_object->minimal().enumerated_type().literal_seq().emplace_back(mel_MAGENTA);
+
 
     TypeIdentifier identifier;
     identifier._d(EK_MINIMAL);
@@ -242,6 +274,32 @@ const TypeObject* GetCompleteColorObject()
     cel_BLUE.detail().name("BLUE");
 
     type_object->complete().enumerated_type().literal_seq().emplace_back(cel_BLUE);
+
+    CompleteEnumeratedLiteral cel_YELLOW;
+    cel_YELLOW.common().flags().TRY_CONSTRUCT1(false); // Doesn't apply
+    cel_YELLOW.common().flags().TRY_CONSTRUCT2(false); // Doesn't apply
+    cel_YELLOW.common().flags().IS_EXTERNAL(false); // Doesn't apply
+    cel_YELLOW.common().flags().IS_OPTIONAL(false); // Doesn't apply
+    cel_YELLOW.common().flags().IS_MUST_UNDERSTAND(false); // Doesn't apply
+    cel_YELLOW.common().flags().IS_KEY(false); // Doesn't apply
+    cel_YELLOW.common().flags().IS_DEFAULT(false);
+    cel_YELLOW.common().value(value++);
+    cel_YELLOW.detail().name("YELLOW");
+
+    type_object->complete().enumerated_type().literal_seq().emplace_back(cel_YELLOW);
+
+    CompleteEnumeratedLiteral cel_MAGENTA;
+    cel_MAGENTA.common().flags().TRY_CONSTRUCT1(false); // Doesn't apply
+    cel_MAGENTA.common().flags().TRY_CONSTRUCT2(false); // Doesn't apply
+    cel_MAGENTA.common().flags().IS_EXTERNAL(false); // Doesn't apply
+    cel_MAGENTA.common().flags().IS_OPTIONAL(false); // Doesn't apply
+    cel_MAGENTA.common().flags().IS_MUST_UNDERSTAND(false); // Doesn't apply
+    cel_MAGENTA.common().flags().IS_KEY(false); // Doesn't apply
+    cel_MAGENTA.common().flags().IS_DEFAULT(false);
+    cel_MAGENTA.common().value(value++);
+    cel_MAGENTA.detail().name("MAGENTA");
+
+    type_object->complete().enumerated_type().literal_seq().emplace_back(cel_MAGENTA);
 
 
     TypeIdentifier identifier;
@@ -384,6 +442,22 @@ const TypeObject* GetMinimalMaterialObject()
     }
     type_object->minimal().enumerated_type().literal_seq().emplace_back(mel_CONCRETE);
 
+    MinimalEnumeratedLiteral mel_STONE;
+    mel_STONE.common().flags().TRY_CONSTRUCT1(false); // Doesn't apply
+    mel_STONE.common().flags().TRY_CONSTRUCT2(false); // Doesn't apply
+    mel_STONE.common().flags().IS_EXTERNAL(false); // Doesn't apply
+    mel_STONE.common().flags().IS_OPTIONAL(false); // Doesn't apply
+    mel_STONE.common().flags().IS_MUST_UNDERSTAND(false); // Doesn't apply
+    mel_STONE.common().flags().IS_KEY(false); // Doesn't apply
+    mel_STONE.common().flags().IS_DEFAULT(false);
+    mel_STONE.common().value(value++);
+    MD5 STONE_hash("STONE");
+    for(int i = 0; i < 4; ++i)
+    {
+        mel_STONE.detail().name_hash()[i] = STONE_hash.digest[i];
+    }
+    type_object->minimal().enumerated_type().literal_seq().emplace_back(mel_STONE);
+
 
     TypeIdentifier identifier;
     identifier._d(EK_MINIMAL);
@@ -487,6 +561,19 @@ const TypeObject* GetCompleteMaterialObject()
     cel_CONCRETE.detail().name("CONCRETE");
 
     type_object->complete().enumerated_type().literal_seq().emplace_back(cel_CONCRETE);
+
+    CompleteEnumeratedLiteral cel_STONE;
+    cel_STONE.common().flags().TRY_CONSTRUCT1(false); // Doesn't apply
+    cel_STONE.common().flags().TRY_CONSTRUCT2(false); // Doesn't apply
+    cel_STONE.common().flags().IS_EXTERNAL(false); // Doesn't apply
+    cel_STONE.common().flags().IS_OPTIONAL(false); // Doesn't apply
+    cel_STONE.common().flags().IS_MUST_UNDERSTAND(false); // Doesn't apply
+    cel_STONE.common().flags().IS_KEY(false); // Doesn't apply
+    cel_STONE.common().flags().IS_DEFAULT(false);
+    cel_STONE.common().value(value++);
+    cel_STONE.detail().name("STONE");
+
+    type_object->complete().enumerated_type().literal_seq().emplace_back(cel_STONE);
 
 
     TypeIdentifier identifier;
