@@ -502,11 +502,13 @@ private:
 
     DDSSQLFilterValueGlobalData()
     {
-        create_sample_minus_2();
-        create_sample_minus_1();
-        create_sample_0();
-        create_sample_plus_1();
-        create_sample_plus_2();
+        std::array<ContentFilterTestType, 5> data;
+        add_float_values(data);
+
+        for (size_t i = 0; i < data.size(); ++i)
+        {
+            add_value(data[i]);
+        }
     }
 
     void add_value(
@@ -520,59 +522,38 @@ private:
         type_support.serialize(data_ptr, payload);
     }
 
-    void create_sample_0()
+    void add_float_values(
+            std::array<ContentFilterTestType, 5>& data)
     {
-        ContentFilterTestType data;
-        data.float_field(0.0f);
-        data.struct_field().float_field(0.0f);
-        data.array_float_field()[0] = 0.0f;
-        data.bounded_sequence_float_field().push_back(0.0f);
-        data.unbounded_sequence_float_field().push_back(0.0f);
-        add_value(data);
-    }
+        data[0].float_field(-1e38f);
+        data[0].struct_field().float_field(-1e38f);
+        data[0].array_float_field()[0] = -1e38f;
+        data[0].bounded_sequence_float_field().push_back(-1e38f);
+        data[0].unbounded_sequence_float_field().push_back(-1e38f);
 
-    void create_sample_minus_1()
-    {
-        ContentFilterTestType data;
-        data.float_field(-3.14159f);
-        data.struct_field().float_field(-3.14159f);
-        data.array_float_field()[0] = -3.14159f;
-        data.bounded_sequence_float_field().push_back(-3.14159f);
-        data.unbounded_sequence_float_field().push_back(-3.14159f);
-        add_value(data);
-    }
+        data[1].float_field(-3.14159f);
+        data[1].struct_field().float_field(-3.14159f);
+        data[1].array_float_field()[0] = -3.14159f;
+        data[1].bounded_sequence_float_field().push_back(-3.14159f);
+        data[1].unbounded_sequence_float_field().push_back(-3.14159f);
 
-    void create_sample_minus_2()
-    {
-        ContentFilterTestType data;
-        data.float_field(-1e38f);
-        data.struct_field().float_field(-1e38f);
-        data.array_float_field()[0] = -1e38f;
-        data.bounded_sequence_float_field().push_back(-1e38f);
-        data.unbounded_sequence_float_field().push_back(-1e38f);
-        add_value(data);
-    }
+        data[2].float_field(0.0f);
+        data[2].struct_field().float_field(0.0f);
+        data[2].array_float_field()[0] = 0.0f;
+        data[2].bounded_sequence_float_field().push_back(0.0f);
+        data[2].unbounded_sequence_float_field().push_back(0.0f);
 
-    void create_sample_plus_1()
-    {
-        ContentFilterTestType data;
-        data.float_field(3.14159f);
-        data.struct_field().float_field(3.14159f);
-        data.array_float_field()[0] = 3.14159f;
-        data.bounded_sequence_float_field().push_back(3.14159f);
-        data.unbounded_sequence_float_field().push_back(3.14159f);
-        add_value(data);
-    }
+        data[3].float_field(3.14159f);
+        data[3].struct_field().float_field(3.14159f);
+        data[3].array_float_field()[0] = 3.14159f;
+        data[3].bounded_sequence_float_field().push_back(3.14159f);
+        data[3].unbounded_sequence_float_field().push_back(3.14159f);
 
-    void create_sample_plus_2()
-    {
-        ContentFilterTestType data;
-        data.float_field(1e38f);
-        data.struct_field().float_field(1e38f);
-        data.array_float_field()[0] = 1e38f;
-        data.bounded_sequence_float_field().push_back(1e38f);
-        data.unbounded_sequence_float_field().push_back(1e38f);
-        add_value(data);
+        data[4].float_field(1e38f);
+        data[4].struct_field().float_field(1e38f);
+        data[4].array_float_field()[0] = 1e38f;
+        data[4].bounded_sequence_float_field().push_back(1e38f);
+        data[4].unbounded_sequence_float_field().push_back(1e38f);
     }
 
 };
