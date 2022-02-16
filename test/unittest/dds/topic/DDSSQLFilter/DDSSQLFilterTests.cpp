@@ -1242,6 +1242,58 @@ static std::vector<DDSSQLFilterValueParams> get_test_filtered_value_long_double_
     return get_test_filtered_value_float_inputs<long double>("long_double_field");
 }
 
+static std::vector<DDSSQLFilterValueParams> get_test_filtered_value_enum_inputs()
+{
+    static const std::array<std::pair<std::string, std::string>, 5> values =
+    {
+        std::pair<std::string, std::string>{"'RED'", "minus_2"},
+        std::pair<std::string, std::string>{"'GREEN'", "minus_1"},
+        std::pair<std::string, std::string>{"'BLUE'", "0"},
+        std::pair<std::string, std::string>{"'YELLOW'", "plus_1"},
+        std::pair<std::string, std::string>{"'MAGENTA'", "plus_2"}
+    };
+
+    std::string field_name = "enum_field";
+    std::string bounded_seq_name = "bounded_sequence_" + field_name;
+    std::string unbounded_seq_name = "unbounded_sequence_" + field_name;
+
+    std::vector<DDSSQLFilterValueParams> inputs;
+    add_test_filtered_value_inputs("plain_field", field_name, values, inputs);
+    add_test_filtered_value_inputs("in_struct", "struct_field." + field_name, values, inputs);
+    add_test_filtered_value_inputs("array", "array_" + field_name + "[0]", values, inputs);
+    add_test_filtered_value_inputs("bounded_sequence", bounded_seq_name + "[0]", values, inputs);
+    add_negative_test_filtered_value_inputs("neg_bounded_sequence", bounded_seq_name + "[2]", values, inputs);
+    add_test_filtered_value_inputs("unbounded_sequence", unbounded_seq_name + "[0]", values, inputs);
+    add_negative_test_filtered_value_inputs("neg_unbounded_sequence", unbounded_seq_name + "[2]", values, inputs);
+    return inputs;
+}
+
+static std::vector<DDSSQLFilterValueParams> get_test_filtered_value_enum2_inputs()
+{
+    static const std::array<std::pair<std::string, std::string>, 5> values =
+    {
+        std::pair<std::string, std::string>{"'WOOD'", "minus_2"},
+        std::pair<std::string, std::string>{"'PLASTIC'", "minus_1"},
+        std::pair<std::string, std::string>{"'METAL'", "0"},
+        std::pair<std::string, std::string>{"'CONCRETE'", "plus_1"},
+        std::pair<std::string, std::string>{"'STONE'", "plus_2"}
+    };
+
+    std::string field_name = "enum2_field";
+    std::string bounded_seq_name = "bounded_sequence_" + field_name;
+    std::string unbounded_seq_name = "unbounded_sequence_" + field_name;
+
+    std::vector<DDSSQLFilterValueParams> inputs;
+    add_test_filtered_value_inputs("plain_field", field_name, values, inputs);
+    add_test_filtered_value_inputs("in_struct", "struct_field." + field_name, values, inputs);
+    add_test_filtered_value_inputs("array", "array_" + field_name + "[0]", values, inputs);
+    add_test_filtered_value_inputs("bounded_sequence", bounded_seq_name + "[0]", values, inputs);
+    add_negative_test_filtered_value_inputs("neg_bounded_sequence", bounded_seq_name + "[2]", values, inputs);
+    add_test_filtered_value_inputs("unbounded_sequence", unbounded_seq_name + "[0]", values, inputs);
+    add_negative_test_filtered_value_inputs("neg_unbounded_sequence", unbounded_seq_name + "[2]", values, inputs);
+    return inputs;
+}
+
 INSTANTIATE_TEST_SUITE_P(
     DDSSQLFilterValueTestsUInt8,
     DDSSQLFilterValueTests,
@@ -1300,6 +1352,18 @@ INSTANTIATE_TEST_SUITE_P(
     DDSSQLFilterValueTestsLongDouble,
     DDSSQLFilterValueTests,
     ::testing::ValuesIn(get_test_filtered_value_long_double_inputs()),
+    DDSSQLFilterValueTests::PrintToStringParamName());
+
+INSTANTIATE_TEST_SUITE_P(
+    DDSSQLFilterValueTestsEnum,
+    DDSSQLFilterValueTests,
+    ::testing::ValuesIn(get_test_filtered_value_enum_inputs()),
+    DDSSQLFilterValueTests::PrintToStringParamName());
+
+INSTANTIATE_TEST_SUITE_P(
+    DDSSQLFilterValueTestsEnum2,
+    DDSSQLFilterValueTests,
+    ::testing::ValuesIn(get_test_filtered_value_enum2_inputs()),
     DDSSQLFilterValueTests::PrintToStringParamName());
 
 } // namespace dds
