@@ -628,13 +628,75 @@ private:
     void add_double_values(
             std::array<ContentFilterTestType, 5>& data)
     {
-        static_cast<void>(data);
+        double min = std::numeric_limits<double>::lowest();
+        double max = std::numeric_limits<double>::max();
+
+        data[0].double_field(min);
+        data[0].struct_field().double_field(min);
+        data[0].array_double_field()[0] = min;
+        data[0].bounded_sequence_double_field().push_back(min);
+        data[0].unbounded_sequence_double_field().push_back(min);
+
+        data[1].double_field(-3.14159);
+        data[1].struct_field().double_field(-3.14159);
+        data[1].array_double_field()[0] = -3.14159;
+        data[1].bounded_sequence_double_field().push_back(-3.14159);
+        data[1].unbounded_sequence_double_field().push_back(-3.14159);
+
+        data[2].double_field(0.0);
+        data[2].struct_field().double_field(0.0);
+        data[2].array_double_field()[0] = 0.0;
+        data[2].bounded_sequence_double_field().push_back(0.0);
+        data[2].unbounded_sequence_double_field().push_back(0.0);
+
+        data[3].double_field(3.14159);
+        data[3].struct_field().double_field(3.14159);
+        data[3].array_double_field()[0] = 3.14159;
+        data[3].bounded_sequence_double_field().push_back(3.14159);
+        data[3].unbounded_sequence_double_field().push_back(3.14159);
+
+        data[4].double_field(max);
+        data[4].struct_field().double_field(max);
+        data[4].array_double_field()[0] = max;
+        data[4].bounded_sequence_double_field().push_back(max);
+        data[4].unbounded_sequence_double_field().push_back(max);
     }
 
     void add_long_double_values(
             std::array<ContentFilterTestType, 5>& data)
     {
-        static_cast<void>(data);
+        long double min = std::numeric_limits<long double>::lowest();
+        long double max = std::numeric_limits<long double>::max();
+
+        data[0].long_double_field(min);
+        data[0].struct_field().long_double_field(min);
+        data[0].array_long_double_field()[0] = min;
+        data[0].bounded_sequence_long_double_field().push_back(min);
+        data[0].unbounded_sequence_long_double_field().push_back(min);
+
+        data[1].long_double_field(-3.14159);
+        data[1].struct_field().long_double_field(-3.14159);
+        data[1].array_long_double_field()[0] = -3.14159;
+        data[1].bounded_sequence_long_double_field().push_back(-3.14159);
+        data[1].unbounded_sequence_long_double_field().push_back(-3.14159);
+
+        data[2].long_double_field(0.0);
+        data[2].struct_field().long_double_field(0.0);
+        data[2].array_long_double_field()[0] = 0.0;
+        data[2].bounded_sequence_long_double_field().push_back(0.0);
+        data[2].unbounded_sequence_long_double_field().push_back(0.0);
+
+        data[3].long_double_field(3.14159);
+        data[3].struct_field().long_double_field(3.14159);
+        data[3].array_long_double_field()[0] = 3.14159;
+        data[3].bounded_sequence_long_double_field().push_back(3.14159);
+        data[3].unbounded_sequence_long_double_field().push_back(3.14159);
+
+        data[4].long_double_field(max);
+        data[4].struct_field().long_double_field(max);
+        data[4].array_long_double_field()[0] = max;
+        data[4].bounded_sequence_long_double_field().push_back(max);
+        data[4].unbounded_sequence_long_double_field().push_back(max);
     }
 
     void add_bool_values(
