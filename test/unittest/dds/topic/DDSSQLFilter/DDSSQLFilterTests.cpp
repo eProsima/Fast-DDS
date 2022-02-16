@@ -555,7 +555,38 @@ private:
     void add_int16_values(
             std::array<ContentFilterTestType, 5>& data)
     {
-        static_cast<void>(data);
+        int16_t min = std::numeric_limits<int16_t>::lowest();
+        int16_t max = std::numeric_limits<int16_t>::max();
+
+        data[0].int16_field(min);
+        data[0].struct_field().int16_field(min);
+        data[0].array_int16_field()[0] = min;
+        data[0].bounded_sequence_int16_field().push_back(min);
+        data[0].unbounded_sequence_int16_field().push_back(min);
+
+        data[1].int16_field(-100);
+        data[1].struct_field().int16_field(-100);
+        data[1].array_int16_field()[0] = -100;
+        data[1].bounded_sequence_int16_field().push_back(-100);
+        data[1].unbounded_sequence_int16_field().push_back(-100);
+
+        data[2].int16_field(0);
+        data[2].struct_field().int16_field(0);
+        data[2].array_int16_field()[0] = 0;
+        data[2].bounded_sequence_int16_field().push_back(0);
+        data[2].unbounded_sequence_int16_field().push_back(0);
+
+        data[3].int16_field(100);
+        data[3].struct_field().int16_field(100);
+        data[3].array_int16_field()[0] = 100;
+        data[3].bounded_sequence_int16_field().push_back(100);
+        data[3].unbounded_sequence_int16_field().push_back(100);
+
+        data[4].int16_field(max);
+        data[4].struct_field().int16_field(max);
+        data[4].array_int16_field()[0] = max;
+        data[4].bounded_sequence_int16_field().push_back(max);
+        data[4].unbounded_sequence_int16_field().push_back(max);
     }
 
     void add_uint16_values(
@@ -567,7 +598,38 @@ private:
     void add_int32_values(
             std::array<ContentFilterTestType, 5>& data)
     {
-        static_cast<void>(data);
+        int32_t min = std::numeric_limits<int32_t>::lowest();
+        int32_t max = std::numeric_limits<int32_t>::max();
+
+        data[0].int32_field(min);
+        data[0].struct_field().int32_field(min);
+        data[0].array_int32_field()[0] = min;
+        data[0].bounded_sequence_int32_field().push_back(min);
+        data[0].unbounded_sequence_int32_field().push_back(min);
+
+        data[1].int32_field(-100);
+        data[1].struct_field().int32_field(-100);
+        data[1].array_int32_field()[0] = -100;
+        data[1].bounded_sequence_int32_field().push_back(-100);
+        data[1].unbounded_sequence_int32_field().push_back(-100);
+
+        data[2].int32_field(0);
+        data[2].struct_field().int32_field(0);
+        data[2].array_int32_field()[0] = 0;
+        data[2].bounded_sequence_int32_field().push_back(0);
+        data[2].unbounded_sequence_int32_field().push_back(0);
+
+        data[3].int32_field(100);
+        data[3].struct_field().int32_field(100);
+        data[3].array_int32_field()[0] = 100;
+        data[3].bounded_sequence_int32_field().push_back(100);
+        data[3].unbounded_sequence_int32_field().push_back(100);
+
+        data[4].int32_field(max);
+        data[4].struct_field().int32_field(max);
+        data[4].array_int32_field()[0] = max;
+        data[4].bounded_sequence_int32_field().push_back(max);
+        data[4].unbounded_sequence_int32_field().push_back(max);
     }
 
     void add_uint32_values(
@@ -579,7 +641,38 @@ private:
     void add_int64_values(
             std::array<ContentFilterTestType, 5>& data)
     {
-        static_cast<void>(data);
+        int64_t min = std::numeric_limits<int64_t>::lowest();
+        int64_t max = std::numeric_limits<int64_t>::max();
+
+        data[0].int64_field(min);
+        data[0].struct_field().int64_field(min);
+        data[0].array_int64_field()[0] = min;
+        data[0].bounded_sequence_int64_field().push_back(min);
+        data[0].unbounded_sequence_int64_field().push_back(min);
+
+        data[1].int64_field(-100);
+        data[1].struct_field().int64_field(-100);
+        data[1].array_int64_field()[0] = -100;
+        data[1].bounded_sequence_int64_field().push_back(-100);
+        data[1].unbounded_sequence_int64_field().push_back(-100);
+
+        data[2].int64_field(0);
+        data[2].struct_field().int64_field(0);
+        data[2].array_int64_field()[0] = 0;
+        data[2].bounded_sequence_int64_field().push_back(0);
+        data[2].unbounded_sequence_int64_field().push_back(0);
+
+        data[3].int64_field(100);
+        data[3].struct_field().int64_field(100);
+        data[3].array_int64_field()[0] = 100;
+        data[3].bounded_sequence_int64_field().push_back(100);
+        data[3].unbounded_sequence_int64_field().push_back(100);
+
+        data[4].int64_field(max);
+        data[4].struct_field().int64_field(max);
+        data[4].array_int64_field()[0] = max;
+        data[4].bounded_sequence_int64_field().push_back(max);
+        data[4].unbounded_sequence_int64_field().push_back(max);
     }
 
     void add_uint64_values(
