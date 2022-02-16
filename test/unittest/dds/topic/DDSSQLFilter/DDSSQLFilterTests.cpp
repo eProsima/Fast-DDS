@@ -543,7 +543,35 @@ private:
     void add_char_values(
             std::array<ContentFilterTestType, 5>& data)
     {
-        static_cast<void>(data);
+        data[0].char_field(' ');
+        data[0].struct_field().char_field(' ');
+        data[0].array_char_field()[0] = ' ';
+        data[0].bounded_sequence_char_field().push_back(' ');
+        data[0].unbounded_sequence_char_field().push_back(' ');
+
+        data[1].char_field('A');
+        data[1].struct_field().char_field('A');
+        data[1].array_char_field()[0] = 'A';
+        data[1].bounded_sequence_char_field().push_back('A');
+        data[1].unbounded_sequence_char_field().push_back('A');
+
+        data[2].char_field('Z');
+        data[2].struct_field().char_field('Z');
+        data[2].array_char_field()[0] = 'Z';
+        data[2].bounded_sequence_char_field().push_back('Z');
+        data[2].unbounded_sequence_char_field().push_back('Z');
+
+        data[3].char_field('a');
+        data[3].struct_field().char_field('a');
+        data[3].array_char_field()[0] = 'a';
+        data[3].bounded_sequence_char_field().push_back('a');
+        data[3].unbounded_sequence_char_field().push_back('a');
+
+        data[4].char_field('z');
+        data[4].struct_field().char_field('z');
+        data[4].array_char_field()[0] = 'z';
+        data[4].bounded_sequence_char_field().push_back('z');
+        data[4].unbounded_sequence_char_field().push_back('z');
     }
 
     void add_uint8_values(
