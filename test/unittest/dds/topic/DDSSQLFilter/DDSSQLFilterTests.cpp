@@ -931,6 +931,48 @@ static void add_negative_test_filtered_value_inputs(
 }
 
 template<typename T>
+static std::vector<DDSSQLFilterValueParams> get_test_filtered_value_signed_integer_inputs(
+        const std::string& field_name)
+{
+    static const std::array<std::pair<std::string, std::string>, 5> values =
+    {
+        std::pair<std::string, std::string>{std::to_string(std::numeric_limits<T>::lowest()), "minus_2"},
+        std::pair<std::string, std::string>{"-100", "minus_1"},
+        std::pair<std::string, std::string>{"0", "0"},
+        std::pair<std::string, std::string>{"100", "plus_1"},
+        std::pair<std::string, std::string>{std::to_string(std::numeric_limits<T>::max()), "plus_2"}
+    };
+
+    std::string bounded_seq_name = "bounded_sequence_" + field_name;
+    std::string unbounded_seq_name = "unbounded_sequence_" + field_name;
+
+    std::vector<DDSSQLFilterValueParams> inputs;
+    add_test_filtered_value_inputs("plain_field", field_name, values, inputs);
+    add_test_filtered_value_inputs("in_struct", "struct_field." + field_name, values, inputs);
+    add_test_filtered_value_inputs("array", "array_" + field_name + "[0]", values, inputs);
+    add_test_filtered_value_inputs("bounded_sequence", bounded_seq_name + "[0]", values, inputs);
+    add_negative_test_filtered_value_inputs("neg_bounded_sequence", bounded_seq_name + "[2]", values, inputs);
+    add_test_filtered_value_inputs("unbounded_sequence", unbounded_seq_name + "[0]", values, inputs);
+    add_negative_test_filtered_value_inputs("neg_unbounded_sequence", unbounded_seq_name + "[2]", values, inputs);
+    return inputs;
+}
+
+static std::vector<DDSSQLFilterValueParams> get_test_filtered_value_int16_inputs()
+{
+    return get_test_filtered_value_signed_integer_inputs<int16_t>("int16_field");
+}
+
+static std::vector<DDSSQLFilterValueParams> get_test_filtered_value_int32_inputs()
+{
+    return get_test_filtered_value_signed_integer_inputs<int32_t>("int32_field");
+}
+
+static std::vector<DDSSQLFilterValueParams> get_test_filtered_value_int64_inputs()
+{
+    return get_test_filtered_value_signed_integer_inputs<int64_t>("int64_field");
+}
+
+template<typename T>
 static std::vector<DDSSQLFilterValueParams> get_test_filtered_value_float_inputs(
         const std::string& field_name)
 {
@@ -971,6 +1013,24 @@ static std::vector<DDSSQLFilterValueParams> get_test_filtered_value_long_double_
 {
     return get_test_filtered_value_float_inputs<long double>("long_double_field");
 }
+
+INSTANTIATE_TEST_SUITE_P(
+    DDSSQLFilterValueTestsInt16,
+    DDSSQLFilterValueTests,
+    ::testing::ValuesIn(get_test_filtered_value_int16_inputs()),
+    DDSSQLFilterValueTests::PrintToStringParamName());
+
+INSTANTIATE_TEST_SUITE_P(
+    DDSSQLFilterValueTestsInt32,
+    DDSSQLFilterValueTests,
+    ::testing::ValuesIn(get_test_filtered_value_int32_inputs()),
+    DDSSQLFilterValueTests::PrintToStringParamName());
+
+INSTANTIATE_TEST_SUITE_P(
+    DDSSQLFilterValueTestsInt64,
+    DDSSQLFilterValueTests,
+    ::testing::ValuesIn(get_test_filtered_value_int64_inputs()),
+    DDSSQLFilterValueTests::PrintToStringParamName());
 
 INSTANTIATE_TEST_SUITE_P(
     DDSSQLFilterValueTestsFloat,
