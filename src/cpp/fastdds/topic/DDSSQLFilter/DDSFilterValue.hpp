@@ -182,7 +182,7 @@ private:
     RegExpKind regular_expr_kind_ = RegExpKind::NONE;
     std::unique_ptr<std::regex> regular_expr_;
 
-    static int64_t compare(
+    static int compare(
             const DDSFilterValue& lhs,
             const DDSFilterValue& rhs) noexcept;
 

@@ -34,7 +34,7 @@ static constexpr DDSFilterValue::ValueKind effective_kind(
 }
 
 template<typename T>
-int64_t compare_values(
+int compare_values(
         T lvalue,
         T rvalue)
 {
@@ -203,7 +203,7 @@ void DDSFilterValue::copy_from(
     }
 }
 
-int64_t DDSFilterValue::compare(
+int DDSFilterValue::compare(
         const DDSFilterValue& lhs,
         const DDSFilterValue& rhs) noexcept
 {
