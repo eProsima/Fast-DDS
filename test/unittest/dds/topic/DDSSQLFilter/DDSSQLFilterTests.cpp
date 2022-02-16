@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#include <array>
 #include <map>
 #include <set>
 #include <string>
@@ -26,6 +27,7 @@
 #include "fastdds/dds/core/StackAllocatedSequence.hpp"
 #include "fastdds/dds/log/Log.hpp"
 
+#include "data_types/ContentFilterTestType.h"
 #include "data_types/ContentFilterTestTypePubSubTypes.h"
 #include "data_types/ContentFilterTestTypeTypeObject.h"
 
