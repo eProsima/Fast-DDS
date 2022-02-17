@@ -516,8 +516,11 @@ TEST_F(DDSSQLFilterTests, type_compatibility_compare)
 /**
  * Singleton that holds the serialized payloads to be evaluated
  */
-struct DDSSQLFilterValueGlobalData
+class DDSSQLFilterValueGlobalData
 {
+
+public:
+
     static const std::vector<std::unique_ptr<IContentFilter::SerializedPayload>>& values()
     {
         static DDSSQLFilterValueGlobalData the_instance;
