@@ -1473,9 +1473,9 @@ TEST_F(TCPv4Tests, header_read_interrumption)
     std::regex filter("RTCP(?!_SEQ)");
     eprosima::fastdds::dds::Log::SetCategoryFilter(filter);
 
-    TCPv4TransportDescriptor descriptor;
-    descriptor.add_listener_port(g_default_port);
-    TCPv4Transport transportUnderTest(descriptor);
+    TCPv4TransportDescriptor test_descriptor;
+    test_descriptor.add_listener_port(g_default_port);
+    TCPv4Transport transportUnderTest(test_descriptor);
     transportUnderTest.init();
 
     Locator_t locator;
