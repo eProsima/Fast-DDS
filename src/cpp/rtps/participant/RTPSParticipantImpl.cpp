@@ -460,17 +460,18 @@ void RTPSParticipantImpl::disable()
         block.disable();
     }
 
-    std::unique_lock<std::recursive_mutex> lock(*mp_mutex);
-    while (m_userReaderList.size() > 0)
     {
-        deleteUserEndpoint(static_cast<Endpoint*>(*m_userReaderList.begin()));
-    }
+        std::lock_guard<std::recursive_mutex> lock(*mp_mutex);
+        while (m_userReaderList.size() > 0)
+        {
+            deleteUserEndpoint(static_cast<Endpoint*>(*m_userReaderList.begin()));
+        }
 
-    while (m_userWriterList.size() > 0)
-    {
-        deleteUserEndpoint(static_cast<Endpoint*>(*m_userWriterList.begin()));
+        while (m_userWriterList.size() > 0)
+        {
+            deleteUserEndpoint(static_cast<Endpoint*>(*m_userWriterList.begin()));
+        }
     }
-    lock.unlock();
 
     delete(mp_builtinProtocols);
     mp_builtinProtocols = nullptr;
@@ -753,9 +754,10 @@ bool RTPSParticipantImpl::create_writer(
         }
     }
 
-    std::unique_lock<std::mutex> lock(endpoints_list_mutex);
-    m_allWriterList.push_back(SWriter);
-    lock.unlock();
+    {
+        std::lock_guard<std::mutex> lock(endpoints_list_mutex);
+        m_allWriterList.push_back(SWriter);
+    }
     if (!is_builtin)
     {
         std::lock_guard<std::recursive_mutex> guard(*mp_mutex);
@@ -890,9 +892,10 @@ bool RTPSParticipantImpl::create_reader(
         }
     }
 
-    std::unique_lock<std::mutex> lock(endpoints_list_mutex);
-    m_allReaderList.push_back(SReader);
-    lock.unlock();
+    {
+        std::lock_guard<std::mutex> lock(endpoints_list_mutex);
+        m_allReaderList.push_back(SReader);
+    }
     if (!is_builtin)
     {
         std::lock_guard<std::recursive_mutex> guard(*mp_mutex);
@@ -1250,7 +1253,7 @@ void RTPSParticipantImpl::update_attributes(
         m_att.userData = patt.userData;
 
         {
-            std::unique_lock<std::recursive_mutex> lock(*pdp->getMutex());
+            std::lock_guard<std::recursive_mutex> lock(*pdp->getMutex());
 
             // Update user data
             auto local_participant_proxy_data = pdp->getLocalParticipantProxyData();
@@ -1582,7 +1585,7 @@ bool RTPSParticipantImpl::createReceiverResources(
 void RTPSParticipantImpl::createSenderResources(
         const LocatorList_t& locator_list)
 {
-    std::unique_lock<std::timed_mutex> lock(m_send_resources_mutex_);
+    std::lock_guard<std::timed_mutex> lock(m_send_resources_mutex_);
 
     for (auto it_loc = locator_list.begin(); it_loc != locator_list.end(); ++it_loc)
     {
@@ -1593,7 +1596,7 @@ void RTPSParticipantImpl::createSenderResources(
 void RTPSParticipantImpl::createSenderResources(
         const Locator_t& locator)
 {
-    std::unique_lock<std::timed_mutex> lock(m_send_resources_mutex_);
+    std::lock_guard<std::timed_mutex> lock(m_send_resources_mutex_);
 
     m_network_Factory.build_send_resources(send_resource_list_, locator);
 }
