@@ -1664,7 +1664,7 @@ static std::vector<DDSSQLFilterValueParams> get_test_filtered_value_int64_inputs
 }
 
 template<typename T>
-static std::vector<DDSSQLFilterValueParams> get_test_filtered_value_float_inputs(
+static std::vector<DDSSQLFilterValueParams> get_test_filtered_value_floating_point_inputs(
         const std::string& field_name)
 {
     static const std::array<std::pair<std::string, std::string>, 5> values =
@@ -1692,17 +1692,17 @@ static std::vector<DDSSQLFilterValueParams> get_test_filtered_value_float_inputs
 
 static std::vector<DDSSQLFilterValueParams> get_test_filtered_value_float_inputs()
 {
-    return get_test_filtered_value_float_inputs<float>("float_field");
+    return get_test_filtered_value_floating_point_inputs<float>("float_field");
 }
 
 static std::vector<DDSSQLFilterValueParams> get_test_filtered_value_double_inputs()
 {
-    return get_test_filtered_value_float_inputs<double>("double_field");
+    return get_test_filtered_value_floating_point_inputs<double>("double_field");
 }
 
 static std::vector<DDSSQLFilterValueParams> get_test_filtered_value_long_double_inputs()
 {
-    return get_test_filtered_value_float_inputs<long double>("long_double_field");
+    return get_test_filtered_value_floating_point_inputs<long double>("long_double_field");
 }
 
 static std::vector<DDSSQLFilterValueParams> get_test_filtered_value_enum_inputs()
