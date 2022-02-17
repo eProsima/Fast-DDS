@@ -1405,6 +1405,8 @@ static std::vector<DDSSQLFilterValueParams> get_test_filtered_value_string_input
     std::string unbounded_seq_name = "unbounded_sequence_" + field_name;
 
     std::vector<DDSSQLFilterValueParams> inputs;
+
+    // Adding standard tests
     add_test_filtered_value_inputs("plain_field", field_name, values, inputs);
     add_test_filtered_value_inputs("in_struct", "struct_field." + field_name, values, inputs);
     add_test_filtered_value_inputs("array", "array_" + field_name + "[0]", values, inputs);
@@ -1412,6 +1414,54 @@ static std::vector<DDSSQLFilterValueParams> get_test_filtered_value_string_input
     add_negative_test_filtered_value_inputs("neg_bounded_sequence", bounded_seq_name + "[2]", values, inputs);
     add_test_filtered_value_inputs("unbounded_sequence", unbounded_seq_name + "[0]", values, inputs);
     add_negative_test_filtered_value_inputs("neg_unbounded_sequence", unbounded_seq_name + "[2]", values, inputs);
+
+    // Adding tests for LIKE operator
+    DDSSQLFilterValueParams input;
+    input.test_case_name = "like_any_percent";
+    input.expression = "string_field LIKE '%'";
+    input.samples_filtered.assign(5, true);
+    inputs.push_back(input);
+
+    input.test_case_name = "like_any_star";
+    input.expression = "string_field LIKE '*'";
+    input.samples_filtered.assign(5, true);
+    inputs.push_back(input);
+
+    input.test_case_name = "like_space_percent";
+    input.expression = "string_field LIKE ' %'";
+    input.samples_filtered.assign({ false, true, true, true, false });
+    inputs.push_back(input);
+
+    input.test_case_name = "like_space_star";
+    input.expression = "string_field LIKE ' *'";
+    input.samples_filtered.assign({ false, true, true, true, false });
+    inputs.push_back(input);
+
+    input.test_case_name = "like_A_question";
+    input.expression = "string_field LIKE '?A?'";
+    input.samples_filtered.assign({ false, false, true, true, false });
+    inputs.push_back(input);
+
+    input.test_case_name = "like_A_underscore";
+    input.expression = "string_field LIKE '_A_'";
+    input.samples_filtered.assign({ false, false, true, true, false });
+    inputs.push_back(input);
+
+    input.test_case_name = "like_exact_empty";
+    input.expression = "string_field LIKE ''";
+    input.samples_filtered.assign({ true, false, false, false, false });
+    inputs.push_back(input);
+
+    input.test_case_name = "like_exact_ZZZ";
+    input.expression = "string_field LIKE 'ZZZ'";
+    input.samples_filtered.assign({ false, false, false, false, true });
+    inputs.push_back(input);
+
+    input.test_case_name = "like_exact_none";
+    input.expression = "string_field LIKE 'BBB'";
+    input.samples_filtered.assign({ false, false, false, false, false });
+    inputs.push_back(input);
+
     return inputs;
 }
 
