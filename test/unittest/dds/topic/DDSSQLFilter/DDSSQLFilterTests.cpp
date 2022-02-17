@@ -311,6 +311,96 @@ TEST_F(DDSSQLFilterTests, type_compatibility_like)
     }
 }
 
+TEST_F(DDSSQLFilterTests, type_compatibility_match)
+{
+    // field1 MATCH field2
+    {
+        std::vector<TestCase> test_cases;
+        for (const auto& field1 : primitive_fields)
+        {
+            for (const auto& field2 : primitive_fields)
+            {
+                bool ok = (field1.second == "STRING" || field2.second == "STRING") &&
+                        are_types_compatible(field1.second, field2.second);
+                ReturnCode_t ret = ok ? ok_code : bad_code;
+                test_cases.emplace_back(TestCase{ field1.first + " MATCH " + field2.first, {}, ret });
+            }
+        }
+        run(test_cases);
+    }
+
+    // field MATCH operand
+    // operand MATCH field
+    // operand MATCH operand
+    {
+        static const std::vector<std::pair<std::string, ReturnCode_t>> checks
+        {
+            // string values
+            {"'XYZ'", ok_code},
+            {"'%XYZ'", ok_code},
+            {"'XYZ%'", ok_code},
+            {"'%X%Y%Z%'", ok_code},
+            // Char values
+            {"'A'", ok_code},
+            {"'%'", ok_code},
+            {"'''", ok_code},
+            // Boolean values
+            {"FALSE", bad_code},
+            {"TRUE", bad_code},
+            // Integer values
+            {"1", bad_code},
+            {"-1", bad_code},
+            // Floating point values
+            {"1.0", bad_code},
+            {"-1.0", bad_code},
+            {"1e2", bad_code},
+            {"-1e2", bad_code},
+        };
+
+        std::vector<TestCase> test_cases;
+        for (const auto& field : primitive_fields)
+        {
+            bool ok = field.second == "STRING";
+            for (auto& check : checks)
+            {
+                ReturnCode_t ret = ok ? check.second : bad_code;
+
+                // field MATCH operand
+                test_cases.emplace_back(TestCase{ field.first + " MATCH " + check.first, {}, ret });
+                test_cases.emplace_back(TestCase{ field.first + " MATCH %0", {check.first}, ret });
+                test_cases.emplace_back(TestCase{ field.first + " MATCH %1", {check.first}, bad_code });
+                test_cases.emplace_back(TestCase{ field.first + " MATCH %0", {}, bad_code });
+
+                // operand MATCH field
+                test_cases.emplace_back(TestCase{ check.first + " MATCH " + field.first, {}, ret });
+                test_cases.emplace_back(TestCase{ "%0 MATCH " + field.first, {check.first}, ret });
+                test_cases.emplace_back(TestCase{ "%1 MATCH " + field.first, {check.first}, bad_code });
+                test_cases.emplace_back(TestCase{ "%0 MATCH " + field.first, {}, bad_code });
+            }
+        }
+
+        for (const auto& check1 : checks)
+        {
+            for (auto& check2 : checks)
+            {
+                // op1 MATCH op2
+                test_cases.emplace_back(TestCase{ check1.first + " MATCH " + check2.first, {}, bad_code });
+                test_cases.emplace_back(TestCase{ check1.first + " MATCH %0", {check2.first}, bad_code });
+                test_cases.emplace_back(TestCase{ check1.first + " MATCH %1", {check2.first}, bad_code });
+                test_cases.emplace_back(TestCase{ check1.first + " MATCH %0", {}, bad_code });
+
+                // op2 MATCH op1
+                test_cases.emplace_back(TestCase{ check2.first + " MATCH " + check1.first, {}, bad_code });
+                test_cases.emplace_back(TestCase{ "%0 MATCH " + check1.first, {check2.first}, bad_code });
+                test_cases.emplace_back(TestCase{ "%1 MATCH " + check1.first, {check2.first}, bad_code });
+                test_cases.emplace_back(TestCase{ "%0 MATCH " + check1.first, {}, bad_code });
+            }
+        }
+
+        run(test_cases);
+    }
+}
+
 TEST_F(DDSSQLFilterTests, type_compatibility_compare)
 {
     static const std::vector<std::string> operators
