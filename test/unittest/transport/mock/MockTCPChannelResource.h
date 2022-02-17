@@ -16,8 +16,8 @@
 #define MOCK_TCP_CHANNEL_RESOURCE_H
 
 #include <asio.hpp>
-#include <rtps/transport/TCPChannelResource.h>
-#include <rtps/transport/TCPTransportInterface.h>
+#include <fastdds/rtps/transport/TCPChannelResource.h>
+#include <fastdds/rtps/transport/TCPTransportInterface.h>
 
 namespace eprosima {
 namespace fastrtps {

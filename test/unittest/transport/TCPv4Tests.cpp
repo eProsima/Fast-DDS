@@ -12,8 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-<<<<<<< HEAD
-=======
 #include <memory>
 #include <thread>
 
@@ -24,21 +22,11 @@
 #include "mock/MockTCPv4Transport.h"
 #include <fastdds/dds/log/Log.hpp>
 #include <fastrtps/transport/TCPv4TransportDescriptor.h>
->>>>>>> 6639a84b7 (Fix TCP infinite loop, client shutdown and reconnection (#2470))
 #include <fastrtps/utils/Semaphore.h>
 #include <fastrtps/transport/TCPv4Transport.h>
-#include "mock/MockTCPv4Transport.h"
 #include <fastrtps/utils/IPFinder.h>
 #include <fastrtps/utils/IPLocator.h>
-#include <fastdds/dds/log/Log.hpp>
-#include <MockReceiverResource.h>
-#include "../../../src/cpp/rtps/transport/TCPSenderResource.hpp"
 #include <fastdds/rtps/transport/tcp/RTCPHeader.h>
-
-#include <memory>
-#include <asio.hpp>
-#include <gtest/gtest.h>
-#include <thread>
 
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
@@ -1492,9 +1480,9 @@ TEST_F(TCPv4Tests, header_read_interrumption)
     std::regex filter("RTCP(?!_SEQ)");
     eprosima::fastdds::dds::Log::SetCategoryFilter(filter);
 
-    TCPv4TransportDescriptor descriptor;
-    descriptor.add_listener_port(g_default_port);
-    TCPv4Transport transportUnderTest(descriptor);
+    TCPv4TransportDescriptor test_descriptor;
+    test_descriptor.add_listener_port(g_default_port);
+    TCPv4Transport transportUnderTest(test_descriptor);
     transportUnderTest.init();
 
     Locator_t locator;
