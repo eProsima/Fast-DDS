@@ -47,6 +47,7 @@ using std::endl;
 #define COPYSTR strcpy
 #endif // if defined(_WIN32)
 
+namespace option = eprosima::option;
 
 struct Arg : public option::Arg
 {

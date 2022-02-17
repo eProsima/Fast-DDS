@@ -12,6 +12,8 @@
 #define strncasecmp _strnicmp
 #endif // ifdef WIN32
 
+namespace option = eprosima::option;
+
 struct Arg : public option::Arg
 {
     enum class EnablerValue : int32_t
