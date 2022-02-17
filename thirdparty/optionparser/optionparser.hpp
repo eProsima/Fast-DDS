@@ -24,7 +24,7 @@ namespace eprosima {
 
 #include <optionparser/optionparser.h>
 
-}
+} // namespace eprosima
 
 
 #endif // OPTIONPARSER_HPP_
