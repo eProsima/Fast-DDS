@@ -2,7 +2,9 @@ enum Color
 {
     RED,
     GREEN,
-    BLUE
+    BLUE,
+    YELLOW,
+    MAGENTA
 };
 
 enum Material
@@ -10,7 +12,8 @@ enum Material
     WOOD,
     PLASTIC,
     METAL,
-    CONCRETE
+    CONCRETE,
+    STONE
 };
 
 @nested

@@ -69,7 +69,9 @@ enum Color : uint32_t
 {
     RED,
     GREEN,
-    BLUE
+    BLUE,
+    YELLOW,
+    MAGENTA
 };
 /*!
  * @brief This class represents the enumeration Material defined by the user in the IDL file.
@@ -80,7 +82,8 @@ enum Material : uint32_t
     WOOD,
     PLASTIC,
     METAL,
-    CONCRETE
+    CONCRETE,
+    STONE
 };
 /*!
  * @brief This class represents the structure StructType defined by the user in the IDL file.
