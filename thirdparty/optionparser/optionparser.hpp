@@ -17,14 +17,26 @@
  *
  */
 
-#ifndef OPTIONPARSER_HPP_
-#define OPTIONPARSER_HPP_
+#ifndef FASTDDS_OPTIONPARSER_HPP_
+#define FASTDDS_OPTIONPARSER_HPP_
 
 namespace eprosima {
 
+#ifdef OPTIONPARSER_H_
+#define NESTED_OPTIONPARSER_H_INCLUDED_
+// allow including again the header because is in another namespace
+#undef OPTIONPARSER_H_
+#endif
+
 #include <optionparser/optionparser.h>
+
+#ifndef NESTED_OPTIONPARSER_H_INCLUDED_
+// restore original state
+#undef OPTIONPARSER_H_
+#else
+#undef NESTED_OPTIONPARSER_H_INCLUDED_
+#endif
 
 } // namespace eprosima
 
-
-#endif // OPTIONPARSER_HPP_
+#endif // FASTDDS_OPTIONPARSER_HPP_
