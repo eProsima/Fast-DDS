@@ -1311,7 +1311,7 @@ static void add_test_filtered_value_inputs(
         const std::string& field_name,
         const std::array<std::pair<std::string, std::string>, 5>& values,
         std::vector<DDSSQLFilterValueParams>& inputs,
-        const std::array<std::array<std::array<bool, 5>, 5>, 6>& results = DDSSQLFilterValueGlobalData::results())
+        const std::array<std::array<std::array<bool, 5>, 5>, 6>& results)
 {
     auto& ops = DDSSQLFilterValueGlobalData::ops();
     for (size_t i = 0; i < ops.size(); ++i)
@@ -1366,6 +1366,25 @@ static void add_negative_test_filtered_value_inputs(
     }
 }
 
+static std::vector<DDSSQLFilterValueParams> get_test_filtered_value_inputs_given_values_and_results(
+        const std::string& field_name,
+        const std::array<std::pair<std::string, std::string>, 5>& values,
+        const std::array<std::array<std::array<bool, 5>, 5>, 6>& results = DDSSQLFilterValueGlobalData::results())
+{
+    std::string bounded_seq_name = "bounded_sequence_" + field_name;
+    std::string unbounded_seq_name = "unbounded_sequence_" + field_name;
+
+    std::vector<DDSSQLFilterValueParams> inputs;
+    add_test_filtered_value_inputs("plain_field", field_name, values, inputs, results);
+    add_test_filtered_value_inputs("in_struct", "struct_field." + field_name, values, inputs, results);
+    add_test_filtered_value_inputs("array", "array_" + field_name + "[0]", values, inputs, results);
+    add_test_filtered_value_inputs("bounded_sequence", bounded_seq_name + "[0]", values, inputs, results);
+    add_negative_test_filtered_value_inputs("neg_bounded_sequence", bounded_seq_name + "[2]", values, inputs);
+    add_test_filtered_value_inputs("unbounded_sequence", unbounded_seq_name + "[0]", values, inputs, results);
+    add_negative_test_filtered_value_inputs("neg_unbounded_sequence", unbounded_seq_name + "[2]", values, inputs);
+    return inputs;
+}
+
 static std::vector<DDSSQLFilterValueParams> get_test_filtered_value_char_inputs()
 {
     static const std::array<std::pair<std::string, std::string>, 5> values =
@@ -1377,19 +1396,7 @@ static std::vector<DDSSQLFilterValueParams> get_test_filtered_value_char_inputs(
         std::pair<std::string, std::string>{"'z'", "plus_2"}
     };
 
-    std::string field_name = "char_field";
-    std::string bounded_seq_name = "bounded_sequence_" + field_name;
-    std::string unbounded_seq_name = "unbounded_sequence_" + field_name;
-
-    std::vector<DDSSQLFilterValueParams> inputs;
-    add_test_filtered_value_inputs("plain_field", field_name, values, inputs);
-    add_test_filtered_value_inputs("in_struct", "struct_field." + field_name, values, inputs);
-    add_test_filtered_value_inputs("array", "array_" + field_name + "[0]", values, inputs);
-    add_test_filtered_value_inputs("bounded_sequence", bounded_seq_name + "[0]", values, inputs);
-    add_negative_test_filtered_value_inputs("neg_bounded_sequence", bounded_seq_name + "[2]", values, inputs);
-    add_test_filtered_value_inputs("unbounded_sequence", unbounded_seq_name + "[0]", values, inputs);
-    add_negative_test_filtered_value_inputs("neg_unbounded_sequence", unbounded_seq_name + "[2]", values, inputs);
-    return inputs;
+    return get_test_filtered_value_inputs_given_values_and_results("char_field", values);
 }
 
 static std::vector<DDSSQLFilterValueParams> get_test_filtered_value_string_inputs()
@@ -1403,20 +1410,9 @@ static std::vector<DDSSQLFilterValueParams> get_test_filtered_value_string_input
         std::pair<std::string, std::string>{"'ZZZ'", "plus_2"}
     };
 
-    std::string field_name = "string_field";
-    std::string bounded_seq_name = "bounded_sequence_" + field_name;
-    std::string unbounded_seq_name = "unbounded_sequence_" + field_name;
-
-    std::vector<DDSSQLFilterValueParams> inputs;
-
     // Adding standard tests
-    add_test_filtered_value_inputs("plain_field", field_name, values, inputs);
-    add_test_filtered_value_inputs("in_struct", "struct_field." + field_name, values, inputs);
-    add_test_filtered_value_inputs("array", "array_" + field_name + "[0]", values, inputs);
-    add_test_filtered_value_inputs("bounded_sequence", bounded_seq_name + "[0]", values, inputs);
-    add_negative_test_filtered_value_inputs("neg_bounded_sequence", bounded_seq_name + "[2]", values, inputs);
-    add_test_filtered_value_inputs("unbounded_sequence", unbounded_seq_name + "[0]", values, inputs);
-    add_negative_test_filtered_value_inputs("neg_unbounded_sequence", unbounded_seq_name + "[2]", values, inputs);
+    std::vector<DDSSQLFilterValueParams> inputs;
+    inputs = get_test_filtered_value_inputs_given_values_and_results("string_field", values);
 
     // Adding tests for LIKE operator
     DDSSQLFilterValueParams input;
@@ -1558,19 +1554,7 @@ static std::vector<DDSSQLFilterValueParams> get_test_filtered_value_boolean_inpu
     results[5][3] = { false, false, true, true, true };
     results[5][4] = { false, false, true, true, true };
 
-    std::string field_name = "bool_field";
-    std::string bounded_seq_name = "bounded_sequence_" + field_name;
-    std::string unbounded_seq_name = "unbounded_sequence_" + field_name;
-
-    std::vector<DDSSQLFilterValueParams> inputs;
-    add_test_filtered_value_inputs("plain_field", field_name, values, inputs, results);
-    add_test_filtered_value_inputs("in_struct", "struct_field." + field_name, values, inputs, results);
-    add_test_filtered_value_inputs("array", "array_" + field_name + "[0]", values, inputs, results);
-    add_test_filtered_value_inputs("bounded_sequence", bounded_seq_name + "[0]", values, inputs, results);
-    add_negative_test_filtered_value_inputs("neg_bounded_sequence", bounded_seq_name + "[2]", values, inputs);
-    add_test_filtered_value_inputs("unbounded_sequence", unbounded_seq_name + "[0]", values, inputs, results);
-    add_negative_test_filtered_value_inputs("neg_unbounded_sequence", unbounded_seq_name + "[2]", values, inputs);
-    return inputs;
+    return get_test_filtered_value_inputs_given_values_and_results("bool_field", values, results);
 }
 
 template<typename T>
@@ -1587,18 +1571,7 @@ static std::vector<DDSSQLFilterValueParams> get_test_filtered_value_unsigned_int
         std::pair<std::string, std::string>{std::to_string(max), "plus_2"}
     };
 
-    std::string bounded_seq_name = "bounded_sequence_" + field_name;
-    std::string unbounded_seq_name = "unbounded_sequence_" + field_name;
-
-    std::vector<DDSSQLFilterValueParams> inputs;
-    add_test_filtered_value_inputs("plain_field", field_name, values, inputs);
-    add_test_filtered_value_inputs("in_struct", "struct_field." + field_name, values, inputs);
-    add_test_filtered_value_inputs("array", "array_" + field_name + "[0]", values, inputs);
-    add_test_filtered_value_inputs("bounded_sequence", bounded_seq_name + "[0]", values, inputs);
-    add_negative_test_filtered_value_inputs("neg_bounded_sequence", bounded_seq_name + "[2]", values, inputs);
-    add_test_filtered_value_inputs("unbounded_sequence", unbounded_seq_name + "[0]", values, inputs);
-    add_negative_test_filtered_value_inputs("neg_unbounded_sequence", unbounded_seq_name + "[2]", values, inputs);
-    return inputs;
+    return get_test_filtered_value_inputs_given_values_and_results(field_name, values);
 }
 
 static std::vector<DDSSQLFilterValueParams> get_test_filtered_value_uint8_inputs()
@@ -1634,18 +1607,7 @@ static std::vector<DDSSQLFilterValueParams> get_test_filtered_value_signed_integ
         std::pair<std::string, std::string>{std::to_string(std::numeric_limits<T>::max()), "plus_2"}
     };
 
-    std::string bounded_seq_name = "bounded_sequence_" + field_name;
-    std::string unbounded_seq_name = "unbounded_sequence_" + field_name;
-
-    std::vector<DDSSQLFilterValueParams> inputs;
-    add_test_filtered_value_inputs("plain_field", field_name, values, inputs);
-    add_test_filtered_value_inputs("in_struct", "struct_field." + field_name, values, inputs);
-    add_test_filtered_value_inputs("array", "array_" + field_name + "[0]", values, inputs);
-    add_test_filtered_value_inputs("bounded_sequence", bounded_seq_name + "[0]", values, inputs);
-    add_negative_test_filtered_value_inputs("neg_bounded_sequence", bounded_seq_name + "[2]", values, inputs);
-    add_test_filtered_value_inputs("unbounded_sequence", unbounded_seq_name + "[0]", values, inputs);
-    add_negative_test_filtered_value_inputs("neg_unbounded_sequence", unbounded_seq_name + "[2]", values, inputs);
-    return inputs;
+    return get_test_filtered_value_inputs_given_values_and_results(field_name, values);
 }
 
 static std::vector<DDSSQLFilterValueParams> get_test_filtered_value_int16_inputs()
@@ -1676,18 +1638,7 @@ static std::vector<DDSSQLFilterValueParams> get_test_filtered_value_floating_poi
         std::pair<std::string, std::string>{std::to_string(std::numeric_limits<T>::max()), "plus_2"}
     };
 
-    std::string bounded_seq_name = "bounded_sequence_" + field_name;
-    std::string unbounded_seq_name = "unbounded_sequence_" + field_name;
-
-    std::vector<DDSSQLFilterValueParams> inputs;
-    add_test_filtered_value_inputs("plain_field", field_name, values, inputs);
-    add_test_filtered_value_inputs("in_struct", "struct_field." + field_name, values, inputs);
-    add_test_filtered_value_inputs("array", "array_" + field_name + "[0]", values, inputs);
-    add_test_filtered_value_inputs("bounded_sequence", bounded_seq_name + "[0]", values, inputs);
-    add_negative_test_filtered_value_inputs("neg_bounded_sequence", bounded_seq_name + "[2]", values, inputs);
-    add_test_filtered_value_inputs("unbounded_sequence", unbounded_seq_name + "[0]", values, inputs);
-    add_negative_test_filtered_value_inputs("neg_unbounded_sequence", unbounded_seq_name + "[2]", values, inputs);
-    return inputs;
+    return get_test_filtered_value_inputs_given_values_and_results(field_name, values);
 }
 
 static std::vector<DDSSQLFilterValueParams> get_test_filtered_value_float_inputs()
@@ -1716,19 +1667,7 @@ static std::vector<DDSSQLFilterValueParams> get_test_filtered_value_enum_inputs(
         std::pair<std::string, std::string>{"'MAGENTA'", "plus_2"}
     };
 
-    std::string field_name = "enum_field";
-    std::string bounded_seq_name = "bounded_sequence_" + field_name;
-    std::string unbounded_seq_name = "unbounded_sequence_" + field_name;
-
-    std::vector<DDSSQLFilterValueParams> inputs;
-    add_test_filtered_value_inputs("plain_field", field_name, values, inputs);
-    add_test_filtered_value_inputs("in_struct", "struct_field." + field_name, values, inputs);
-    add_test_filtered_value_inputs("array", "array_" + field_name + "[0]", values, inputs);
-    add_test_filtered_value_inputs("bounded_sequence", bounded_seq_name + "[0]", values, inputs);
-    add_negative_test_filtered_value_inputs("neg_bounded_sequence", bounded_seq_name + "[2]", values, inputs);
-    add_test_filtered_value_inputs("unbounded_sequence", unbounded_seq_name + "[0]", values, inputs);
-    add_negative_test_filtered_value_inputs("neg_unbounded_sequence", unbounded_seq_name + "[2]", values, inputs);
-    return inputs;
+    return get_test_filtered_value_inputs_given_values_and_results("enum_field", values);
 }
 
 static std::vector<DDSSQLFilterValueParams> get_test_filtered_value_enum2_inputs()
@@ -1742,19 +1681,7 @@ static std::vector<DDSSQLFilterValueParams> get_test_filtered_value_enum2_inputs
         std::pair<std::string, std::string>{"'STONE'", "plus_2"}
     };
 
-    std::string field_name = "enum2_field";
-    std::string bounded_seq_name = "bounded_sequence_" + field_name;
-    std::string unbounded_seq_name = "unbounded_sequence_" + field_name;
-
-    std::vector<DDSSQLFilterValueParams> inputs;
-    add_test_filtered_value_inputs("plain_field", field_name, values, inputs);
-    add_test_filtered_value_inputs("in_struct", "struct_field." + field_name, values, inputs);
-    add_test_filtered_value_inputs("array", "array_" + field_name + "[0]", values, inputs);
-    add_test_filtered_value_inputs("bounded_sequence", bounded_seq_name + "[0]", values, inputs);
-    add_negative_test_filtered_value_inputs("neg_bounded_sequence", bounded_seq_name + "[2]", values, inputs);
-    add_test_filtered_value_inputs("unbounded_sequence", unbounded_seq_name + "[0]", values, inputs);
-    add_negative_test_filtered_value_inputs("neg_unbounded_sequence", unbounded_seq_name + "[2]", values, inputs);
-    return inputs;
+    return get_test_filtered_value_inputs_given_values_and_results("enum2_field", values);
 }
 
 static std::vector<DDSSQLFilterValueParams> get_test_filtered_value_promotion_inputs()
