@@ -206,16 +206,16 @@ TEST(PublisherTests, ChangeDefaultDataWriterQos)
     qos.durability_service().max_samples_per_instance = 30;
     // .deadline
     qos.deadline().period.seconds = 10;
-    qos.deadline().period.nanosec = 20;
+    qos.deadline().period.nanosec = 20u;
     // .latency_budget
     qos.latency_budget().duration.seconds = 20;
-    qos.latency_budget().duration.nanosec = 30;
+    qos.latency_budget().duration.nanosec = 30u;
     // .liveliness
     qos.liveliness().kind = eprosima::fastdds::dds::MANUAL_BY_PARTICIPANT_LIVELINESS_QOS;
     qos.liveliness().lease_duration.seconds = 40;
-    qos.liveliness().lease_duration.nanosec = 61;
+    qos.liveliness().lease_duration.nanosec = 61u;
     qos.liveliness().announcement_period.seconds = 30;
-    qos.liveliness().announcement_period.nanosec = 50;
+    qos.liveliness().announcement_period.nanosec = 50u;
     // .reliability
     qos.reliability().kind = eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS;
     qos.reliability().max_blocking_time.seconds = 100;
@@ -235,7 +235,7 @@ TEST(PublisherTests, ChangeDefaultDataWriterQos)
     qos.transport_priority().value = 10;
     // .lifespan
     qos.lifespan().duration.seconds = 10;
-    qos.lifespan().duration.nanosec = 33;
+    qos.lifespan().duration.nanosec = 33u;
     // .user_data
     qos.user_data().push_back(0);
     qos.user_data().push_back(1);
@@ -261,16 +261,16 @@ TEST(PublisherTests, ChangeDefaultDataWriterQos)
     qos.properties().properties().push_back(property);
     // .reliable_writer_qos
     qos.reliable_writer_qos().times.initialHeartbeatDelay.seconds = 2;
-    qos.reliable_writer_qos().times.initialHeartbeatDelay.nanosec = 15;
+    qos.reliable_writer_qos().times.initialHeartbeatDelay.nanosec = 15u;
     qos.reliable_writer_qos().times.heartbeatPeriod.seconds = 3;
-    qos.reliable_writer_qos().times.heartbeatPeriod.nanosec = 16;
+    qos.reliable_writer_qos().times.heartbeatPeriod.nanosec = 16u;
     qos.reliable_writer_qos().times.nackResponseDelay.seconds = 4;
-    qos.reliable_writer_qos().times.nackResponseDelay.nanosec = 17;
+    qos.reliable_writer_qos().times.nackResponseDelay.nanosec = 17u;
     qos.reliable_writer_qos().times.nackSupressionDuration.seconds = 5;
-    qos.reliable_writer_qos().times.nackSupressionDuration.nanosec = 18;
+    qos.reliable_writer_qos().times.nackSupressionDuration.nanosec = 18u;
     qos.reliable_writer_qos().disable_positive_acks.enabled = true;
     qos.reliable_writer_qos().disable_positive_acks.duration.seconds = 13;
-    qos.reliable_writer_qos().disable_positive_acks.duration.nanosec = 320;
+    qos.reliable_writer_qos().disable_positive_acks.duration.nanosec = 320u;
     qos.reliable_writer_qos().disable_heartbeat_piggyback = true;
     // .endpoint
     qos.endpoint().user_defined_id = 1;
@@ -297,16 +297,16 @@ TEST(PublisherTests, ChangeDefaultDataWriterQos)
     EXPECT_EQ(30, wqos.durability_service().max_samples_per_instance);
     // .deadline
     EXPECT_EQ(10, wqos.deadline().period.seconds);
-    EXPECT_EQ(20, wqos.deadline().period.nanosec);
+    EXPECT_EQ(20u, wqos.deadline().period.nanosec);
     // .latency_budget
     EXPECT_EQ(20, wqos.latency_budget().duration.seconds);
-    EXPECT_EQ(30, wqos.latency_budget().duration.nanosec);
+    EXPECT_EQ(30u, wqos.latency_budget().duration.nanosec);
     // .liveliness
     EXPECT_EQ(eprosima::fastdds::dds::MANUAL_BY_PARTICIPANT_LIVELINESS_QOS, wqos.liveliness().kind);
     EXPECT_EQ(40, wqos.liveliness().lease_duration.seconds);
-    EXPECT_EQ(61, wqos.liveliness().lease_duration.nanosec);
+    EXPECT_EQ(61u, wqos.liveliness().lease_duration.nanosec);
     EXPECT_EQ(30, wqos.liveliness().announcement_period.seconds);
-    EXPECT_EQ(50, wqos.liveliness().announcement_period.nanosec);
+    EXPECT_EQ(50u, wqos.liveliness().announcement_period.nanosec);
     // .reliability
     EXPECT_EQ(eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS, wqos.reliability().kind);
     EXPECT_EQ(100, wqos.reliability().max_blocking_time.seconds);
@@ -326,7 +326,7 @@ TEST(PublisherTests, ChangeDefaultDataWriterQos)
     EXPECT_EQ(10, wqos.transport_priority().value);
     // .lifespan
     EXPECT_EQ(10, wqos.lifespan().duration.seconds);
-    EXPECT_EQ(33, wqos.lifespan().duration.nanosec);
+    EXPECT_EQ(33u, wqos.lifespan().duration.nanosec);
     // .user_data
     size_t count = 1;
     for (auto user_value : wqos.user_data())
@@ -379,16 +379,16 @@ TEST(PublisherTests, ChangeDefaultDataWriterQos)
     }
     // .reliable_writer_qos
     EXPECT_EQ(2, wqos.reliable_writer_qos().times.initialHeartbeatDelay.seconds);
-    EXPECT_EQ(15, wqos.reliable_writer_qos().times.initialHeartbeatDelay.nanosec);
+    EXPECT_EQ(15u, wqos.reliable_writer_qos().times.initialHeartbeatDelay.nanosec);
     EXPECT_EQ(3, wqos.reliable_writer_qos().times.heartbeatPeriod.seconds);
-    EXPECT_EQ(16, wqos.reliable_writer_qos().times.heartbeatPeriod.nanosec);
+    EXPECT_EQ(16u, wqos.reliable_writer_qos().times.heartbeatPeriod.nanosec);
     EXPECT_EQ(4, wqos.reliable_writer_qos().times.nackResponseDelay.seconds);
-    EXPECT_EQ(17, wqos.reliable_writer_qos().times.nackResponseDelay.nanosec);
+    EXPECT_EQ(17u, wqos.reliable_writer_qos().times.nackResponseDelay.nanosec);
     EXPECT_EQ(5, wqos.reliable_writer_qos().times.nackSupressionDuration.seconds);
-    EXPECT_EQ(18, wqos.reliable_writer_qos().times.nackSupressionDuration.nanosec);
+    EXPECT_EQ(18u, wqos.reliable_writer_qos().times.nackSupressionDuration.nanosec);
     EXPECT_TRUE(wqos.reliable_writer_qos().disable_positive_acks.enabled);
     EXPECT_EQ(13, wqos.reliable_writer_qos().disable_positive_acks.duration.seconds);
-    EXPECT_EQ(320, wqos.reliable_writer_qos().disable_positive_acks.duration.nanosec);
+    EXPECT_EQ(320u, wqos.reliable_writer_qos().disable_positive_acks.duration.nanosec);
     EXPECT_TRUE(wqos.reliable_writer_qos().disable_heartbeat_piggyback);
     // .endpoint
     EXPECT_EQ(1, wqos.endpoint().user_defined_id);

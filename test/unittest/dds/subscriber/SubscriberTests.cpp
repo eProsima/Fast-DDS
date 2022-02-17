@@ -268,16 +268,16 @@ TEST(SubscriberTests, ChangeDefaultDataReaderQos)
     qos.durability().kind = eprosima::fastdds::dds::TRANSIENT_DURABILITY_QOS;
     // .deadline
     qos.deadline().period.seconds = 10;
-    qos.deadline().period.nanosec = 20;
+    qos.deadline().period.nanosec = 20u;
     // .latency_budget
     qos.latency_budget().duration.seconds = 20;
-    qos.latency_budget().duration.nanosec = 30;
+    qos.latency_budget().duration.nanosec = 30u;
     // .liveliness
     qos.liveliness().kind = eprosima::fastdds::dds::MANUAL_BY_PARTICIPANT_LIVELINESS_QOS;
     qos.liveliness().lease_duration.seconds = 40;
-    qos.liveliness().lease_duration.nanosec = 61;
+    qos.liveliness().lease_duration.nanosec = 61u;
     qos.liveliness().announcement_period.seconds = 30;
-    qos.liveliness().announcement_period.nanosec = 50;
+    qos.liveliness().announcement_period.nanosec = 50u;
     // .reliability
     qos.reliability().kind = eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS;
     // .destination_order
@@ -303,12 +303,12 @@ TEST(SubscriberTests, ChangeDefaultDataReaderQos)
     qos.time_based_filter().minimum_separation.nanosec = eprosima::fastrtps::Time_t::INFINITE_NANOSECONDS;
     // .reader_data_lifecycle
     qos.reader_data_lifecycle().autopurge_disposed_samples_delay.seconds = 100;
-    qos.reader_data_lifecycle().autopurge_disposed_samples_delay.nanosec = 30000;
+    qos.reader_data_lifecycle().autopurge_disposed_samples_delay.nanosec = 30000u;
     qos.reader_data_lifecycle().autopurge_no_writer_samples_delay.seconds = 30000;
-    qos.reader_data_lifecycle().autopurge_no_writer_samples_delay.nanosec = 100;
+    qos.reader_data_lifecycle().autopurge_no_writer_samples_delay.nanosec = 100u;
     // .lifespan
     qos.lifespan().duration.seconds = 10;
-    qos.lifespan().duration.nanosec = 33;
+    qos.lifespan().duration.nanosec = 33u;
     // .durability_service
     qos.durability_service().history_kind = eprosima::fastdds::dds::KEEP_ALL_HISTORY_QOS;
     qos.durability_service().history_depth = 10;
@@ -317,12 +317,12 @@ TEST(SubscriberTests, ChangeDefaultDataReaderQos)
     qos.durability_service().max_samples_per_instance = 30;
     // .reliable_reader_qos
     qos.reliable_reader_qos().times.initialAcknackDelay.seconds = 34;
-    qos.reliable_reader_qos().times.initialAcknackDelay.nanosec = 32;
+    qos.reliable_reader_qos().times.initialAcknackDelay.nanosec = 32u;
     qos.reliable_reader_qos().times.heartbeatResponseDelay.seconds = 432;
-    qos.reliable_reader_qos().times.heartbeatResponseDelay.nanosec = 43;
+    qos.reliable_reader_qos().times.heartbeatResponseDelay.nanosec = 43u;
     qos.reliable_reader_qos().disable_positive_ACKs.enabled = true;
     qos.reliable_reader_qos().disable_positive_ACKs.duration.seconds = 13;
-    qos.reliable_reader_qos().disable_positive_ACKs.duration.nanosec = 320;
+    qos.reliable_reader_qos().disable_positive_ACKs.duration.nanosec = 320u;
     // .type_consistency
     qos.type_consistency().representation.m_value.push_back(XML_DATA_REPRESENTATION);
     qos.type_consistency().representation.m_value.push_back(XCDR_DATA_REPRESENTATION);
@@ -371,16 +371,16 @@ TEST(SubscriberTests, ChangeDefaultDataReaderQos)
     EXPECT_EQ(eprosima::fastdds::dds::TRANSIENT_DURABILITY_QOS, wqos.durability().kind);
     // .deadline
     EXPECT_EQ(10, wqos.deadline().period.seconds);
-    EXPECT_EQ(20, wqos.deadline().period.nanosec);
+    EXPECT_EQ(20u, wqos.deadline().period.nanosec);
     // .latency_budget
     EXPECT_EQ(20, wqos.latency_budget().duration.seconds);
-    EXPECT_EQ(30, wqos.latency_budget().duration.nanosec);
+    EXPECT_EQ(30u, wqos.latency_budget().duration.nanosec);
     // .liveliness
     EXPECT_EQ(eprosima::fastdds::dds::MANUAL_BY_PARTICIPANT_LIVELINESS_QOS, wqos.liveliness().kind);
     EXPECT_EQ(40, wqos.liveliness().lease_duration.seconds);
-    EXPECT_EQ(61, wqos.liveliness().lease_duration.nanosec);
+    EXPECT_EQ(61u, wqos.liveliness().lease_duration.nanosec);
     EXPECT_EQ(30, wqos.liveliness().announcement_period.seconds);
-    EXPECT_EQ(50, wqos.liveliness().announcement_period.nanosec);
+    EXPECT_EQ(50u, wqos.liveliness().announcement_period.nanosec);
     // .reliability
     EXPECT_EQ(eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS, wqos.reliability().kind);
     // .destination_order
@@ -424,12 +424,12 @@ TEST(SubscriberTests, ChangeDefaultDataReaderQos)
     EXPECT_EQ(eprosima::fastrtps::Time_t::INFINITE_NANOSECONDS, wqos.time_based_filter().minimum_separation.nanosec);
     // .reader_data_lifecycle
     EXPECT_EQ(100, wqos.reader_data_lifecycle().autopurge_disposed_samples_delay.seconds);
-    EXPECT_EQ(30000, wqos.reader_data_lifecycle().autopurge_disposed_samples_delay.nanosec);
+    EXPECT_EQ(30000u, wqos.reader_data_lifecycle().autopurge_disposed_samples_delay.nanosec);
     EXPECT_EQ(30000, wqos.reader_data_lifecycle().autopurge_no_writer_samples_delay.seconds);
-    EXPECT_EQ(100, wqos.reader_data_lifecycle().autopurge_no_writer_samples_delay.nanosec);
+    EXPECT_EQ(100u, wqos.reader_data_lifecycle().autopurge_no_writer_samples_delay.nanosec);
     // .lifespan
     EXPECT_EQ(10, wqos.lifespan().duration.seconds);
-    EXPECT_EQ(33, wqos.lifespan().duration.nanosec);
+    EXPECT_EQ(33u, wqos.lifespan().duration.nanosec);
     // .durability_service
     EXPECT_EQ(eprosima::fastdds::dds::KEEP_ALL_HISTORY_QOS, wqos.durability_service().history_kind);
     EXPECT_EQ(10, wqos.durability_service().history_depth);
@@ -438,12 +438,12 @@ TEST(SubscriberTests, ChangeDefaultDataReaderQos)
     EXPECT_EQ(30, wqos.durability_service().max_samples_per_instance);
     // .reliable_reader_qos
     EXPECT_EQ(34, wqos.reliable_reader_qos().times.initialAcknackDelay.seconds);
-    EXPECT_EQ(32, wqos.reliable_reader_qos().times.initialAcknackDelay.nanosec);
+    EXPECT_EQ(32u, wqos.reliable_reader_qos().times.initialAcknackDelay.nanosec);
     EXPECT_EQ(432, wqos.reliable_reader_qos().times.heartbeatResponseDelay.seconds);
-    EXPECT_EQ(43, wqos.reliable_reader_qos().times.heartbeatResponseDelay.nanosec);
+    EXPECT_EQ(43u, wqos.reliable_reader_qos().times.heartbeatResponseDelay.nanosec);
     EXPECT_TRUE(wqos.reliable_reader_qos().disable_positive_ACKs.enabled);
     EXPECT_EQ(13, wqos.reliable_reader_qos().disable_positive_ACKs.duration.seconds);
-    EXPECT_EQ(320, wqos.reliable_reader_qos().disable_positive_ACKs.duration.nanosec);
+    EXPECT_EQ(320u, wqos.reliable_reader_qos().disable_positive_ACKs.duration.nanosec);
     // .type_consistency
     EXPECT_EQ(XML_DATA_REPRESENTATION, wqos.type_consistency().representation.m_value.at(0));
     EXPECT_EQ(XCDR_DATA_REPRESENTATION, wqos.type_consistency().representation.m_value.at(1));
