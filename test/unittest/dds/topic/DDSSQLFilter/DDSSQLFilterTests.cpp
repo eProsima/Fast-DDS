@@ -1462,6 +1462,47 @@ static std::vector<DDSSQLFilterValueParams> get_test_filtered_value_string_input
     input.samples_filtered.assign({ false, false, false, false, false });
     inputs.push_back(input);
 
+    // Adding tests for MATCH operator
+    input.test_case_name = "match_any";
+    input.expression = "string_field match '.*'";
+    input.samples_filtered.assign(5, true);
+    inputs.push_back(input);
+
+    input.test_case_name = "match_space";
+    input.expression = "string_field match ' .*'";
+    input.samples_filtered.assign({ false, true, true, true, false });
+    inputs.push_back(input);
+
+    input.test_case_name = "match_A";
+    input.expression = "string_field match '.A.'";
+    input.samples_filtered.assign({ false, false, true, true, false });
+    inputs.push_back(input);
+
+    input.test_case_name = "match_exact_empty";
+    input.expression = "string_field match ''";
+    input.samples_filtered.assign({ true, false, false, false, false });
+    inputs.push_back(input);
+
+    input.test_case_name = "match_exact_ZZZ";
+    input.expression = "string_field match 'ZZZ'";
+    input.samples_filtered.assign({ false, false, false, false, true });
+    inputs.push_back(input);
+
+    input.test_case_name = "match_exact_none";
+    input.expression = "string_field match 'BBB'";
+    input.samples_filtered.assign({ false, false, false, false, false });
+    inputs.push_back(input);
+
+    input.test_case_name = "match_range";
+    input.expression = "string_field match '([A-Z])+'";
+    input.samples_filtered.assign({ false, false, false, false, true });
+    inputs.push_back(input);
+
+    input.test_case_name = "match_space_and_range";
+    input.expression = "string_field match ' ([A-Z])+'";
+    input.samples_filtered.assign({ false, false, true, true, false });
+    inputs.push_back(input);
+
     return inputs;
 }
 
