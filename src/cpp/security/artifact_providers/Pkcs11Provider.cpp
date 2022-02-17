@@ -16,6 +16,10 @@
  * @file Pkcs11Provider.cpp
  */
 
+// TODO This isn't a proper fix for compatibility with OpenSSL 3.0, but
+// suppresses the warnings until true OpenSSL 3.0 APIs can be used.
+#define OPENSSL_API_COMPAT 10101
+
 #include <security/artifact_providers/Pkcs11Provider.hpp>
 
 #include <iostream>
