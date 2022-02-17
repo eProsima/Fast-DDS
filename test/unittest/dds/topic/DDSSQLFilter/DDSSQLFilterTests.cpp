@@ -1754,6 +1754,343 @@ static std::vector<DDSSQLFilterValueParams> get_test_filtered_value_enum2_inputs
     return inputs;
 }
 
+static std::vector<DDSSQLFilterValueParams> get_test_filtered_value_promotion_inputs()
+{
+    std::vector<DDSSQLFilterValueParams> inputs;
+
+    DDSSQLFilterValueParams input;
+
+    // BOOLEAN promotions
+    input.test_case_name = "bool_field_int16_field";
+    input.expression = "bool_field > int16_field";
+    input.samples_filtered.assign({true, true, true, false, false});
+    inputs.push_back(input);
+
+    input.test_case_name = "bool_field_int32_field";
+    input.expression = "bool_field > int32_field";
+    input.samples_filtered.assign({true, true, true, false, false});
+    inputs.push_back(input);
+
+    input.test_case_name = "bool_field_int64_field";
+    input.expression = "bool_field > int64_field";
+    input.samples_filtered.assign({true, true, true, false, false});
+    inputs.push_back(input);
+
+    input.test_case_name = "bool_field_signed_int_constant";
+    input.expression = "bool_field > -1";
+    input.samples_filtered.assign({true, true, true, true, true});
+    inputs.push_back(input);
+
+    input.test_case_name = "bool_field_uint8_field";
+    input.expression = "bool_field < uint8_field";
+    input.samples_filtered.assign({false, true, true, true, true});
+    inputs.push_back(input);
+
+    input.test_case_name = "bool_field_uint16_field";
+    input.expression = "bool_field < uint16_field";
+    input.samples_filtered.assign({false, true, true, true, true});
+    inputs.push_back(input);
+
+    input.test_case_name = "bool_field_uint32_field";
+    input.expression = "bool_field < uint32_field";
+    input.samples_filtered.assign({false, true, true, true, true});
+    inputs.push_back(input);
+
+    input.test_case_name = "bool_field_uint64_field";
+    input.expression = "bool_field < uint64_field";
+    input.samples_filtered.assign({false, true, true, true, true});
+    inputs.push_back(input);
+
+    input.test_case_name = "bool_field_unsigned_int_constant";
+    input.expression = "bool_field < 1";
+    input.samples_filtered.assign({true, true, false, false, false});
+    inputs.push_back(input);
+
+    // INT - INT promotions
+    input.test_case_name = "int16_field_int32_field";
+    input.expression = "int16_field > int32_field";
+    input.samples_filtered.assign({true, false, false, false, false});
+    inputs.push_back(input);
+
+    input.test_case_name = "int16_field_int64_field";
+    input.expression = "int16_field > int64_field";
+    input.samples_filtered.assign({true, false, false, false, false});
+    inputs.push_back(input);
+
+    input.test_case_name = "int32_field_int64_field";
+    input.expression = "int32_field > int64_field";
+    input.samples_filtered.assign({true, false, false, false, false});
+    inputs.push_back(input);
+
+    // INT - UINT promotions
+    input.test_case_name = "int16_field_uint8_field";
+    input.expression = "int16_field < uint8_field";
+    input.samples_filtered.assign({true, true, true, true, false});
+    inputs.push_back(input);
+
+    input.test_case_name = "int16_field_uint16_field";
+    input.expression = "int16_field < uint16_field";
+    input.samples_filtered.assign({true, true, true, true, true});
+    inputs.push_back(input);
+
+    input.test_case_name = "int16_field_uint32_field";
+    input.expression = "int16_field < uint32_field";
+    input.samples_filtered.assign({true, true, true, true, true});
+    inputs.push_back(input);
+
+    input.test_case_name = "int16_field_uint64_field";
+    input.expression = "int16_field < uint64_field";
+    input.samples_filtered.assign({true, true, true, true, true});
+    inputs.push_back(input);
+
+    input.test_case_name = "int32_field_uint8_field";
+    input.expression = "int32_field < uint8_field";
+    input.samples_filtered.assign({true, true, true, true, false});
+    inputs.push_back(input);
+
+    input.test_case_name = "int32_field_uint16_field";
+    input.expression = "int32_field < uint16_field";
+    input.samples_filtered.assign({true, true, true, true, false});
+    inputs.push_back(input);
+
+    input.test_case_name = "int32_field_uint32_field";
+    input.expression = "int32_field < uint32_field";
+    input.samples_filtered.assign({true, true, true, true, true});
+    inputs.push_back(input);
+
+    input.test_case_name = "int32_field_uint64_field";
+    input.expression = "int32_field < uint64_field";
+    input.samples_filtered.assign({true, true, true, true, true});
+    inputs.push_back(input);
+
+    input.test_case_name = "int64_field_uint8_field";
+    input.expression = "int64_field < uint8_field";
+    input.samples_filtered.assign({true, true, true, true, false});
+    inputs.push_back(input);
+
+    input.test_case_name = "int64_field_uint16_field";
+    input.expression = "int64_field < uint16_field";
+    input.samples_filtered.assign({true, true, true, true, false});
+    inputs.push_back(input);
+
+    input.test_case_name = "int64_field_uint32_field";
+    input.expression = "int64_field < uint32_field";
+    input.samples_filtered.assign({true, true, true, true, false});
+    inputs.push_back(input);
+
+    input.test_case_name = "int64_field_uint64_field";
+    input.expression = "int64_field < uint64_field";
+    input.samples_filtered.assign({true, true, true, true, true});
+    inputs.push_back(input);
+
+    input.test_case_name = "int16_field_unsigned_int_constant";
+    input.expression = "int16_field < 1";
+    input.samples_filtered.assign({true, true, true, false, false});
+    inputs.push_back(input);
+
+    input.test_case_name = "int32_field_unsigned_int_constant";
+    input.expression = "int32_field < 1";
+    input.samples_filtered.assign({true, true, true, false, false});
+    inputs.push_back(input);
+
+    input.test_case_name = "int64_field_unsigned_int_constant";
+    input.expression = "int64_field < 1";
+    input.samples_filtered.assign({true, true, true, false, false});
+    inputs.push_back(input);
+
+    // INT - FLOAT promotions
+    input.test_case_name = "int16_field_float_field";
+    input.expression = "int16_field < float_field";
+    input.samples_filtered.assign({false, true, false, false, true});
+    inputs.push_back(input);
+
+    input.test_case_name = "int32_field_float_field";
+    input.expression = "int32_field < float_field";
+    input.samples_filtered.assign({false, true, false, false, true});
+    inputs.push_back(input);
+
+    input.test_case_name = "int64_field_float_field";
+    input.expression = "int64_field < float_field";
+    input.samples_filtered.assign({false, true, false, false, true});
+    inputs.push_back(input);
+
+    input.test_case_name = "int16_field_double_field";
+    input.expression = "int16_field < double_field";
+    input.samples_filtered.assign({false, true, false, false, true});
+    inputs.push_back(input);
+
+    input.test_case_name = "int32_field_double_field";
+    input.expression = "int32_field < double_field";
+    input.samples_filtered.assign({false, true, false, false, true});
+    inputs.push_back(input);
+
+    input.test_case_name = "int64_field_double_field";
+    input.expression = "int64_field < double_field";
+    input.samples_filtered.assign({false, true, false, false, true});
+    inputs.push_back(input);
+
+    input.test_case_name = "int16_field_long_double_field";
+    input.expression = "int16_field < long_double_field";
+    input.samples_filtered.assign({false, true, false, false, true});
+    inputs.push_back(input);
+
+    input.test_case_name = "int32_field_long_double_field";
+    input.expression = "int32_field < long_double_field";
+    input.samples_filtered.assign({false, true, false, false, true});
+    inputs.push_back(input);
+
+    input.test_case_name = "int64_field_long_double_field";
+    input.expression = "int64_field < long_double_field";
+    input.samples_filtered.assign({false, true, false, false, true});
+    inputs.push_back(input);
+
+    input.test_case_name = "int16_field_float_constant";
+    input.expression = "int16_field < -0.5";
+    input.samples_filtered.assign({true, true, false, false, false});
+    inputs.push_back(input);
+
+    input.test_case_name = "int32_field_float_constant";
+    input.expression = "int32_field < -0.5";
+    input.samples_filtered.assign({true, true, false, false, false});
+    inputs.push_back(input);
+
+    input.test_case_name = "int64_field_float_constant";
+    input.expression = "int64_field < -0.5";
+    input.samples_filtered.assign({true, true, false, false, false});
+    inputs.push_back(input);
+
+    // UINT - FLOAT promotions
+    input.test_case_name = "uint8_field_float_field";
+    input.expression = "uint8_field < float_field";
+    input.samples_filtered.assign({false, false, false, false, true});
+    inputs.push_back(input);
+
+    input.test_case_name = "uint16_field_float_field";
+    input.expression = "uint16_field < float_field";
+    input.samples_filtered.assign({false, false, false, false, true});
+    inputs.push_back(input);
+
+    input.test_case_name = "uint32_field_float_field";
+    input.expression = "uint32_field < float_field";
+    input.samples_filtered.assign({false, false, false, false, true});
+    inputs.push_back(input);
+
+    input.test_case_name = "uint64_field_float_field";
+    input.expression = "uint64_field < float_field";
+    input.samples_filtered.assign({false, false, false, false, true});
+    inputs.push_back(input);
+
+    input.test_case_name = "uint16_field_double_field";
+    input.expression = "uint16_field < double_field";
+    input.samples_filtered.assign({false, false, false, false, true});
+    inputs.push_back(input);
+
+    input.test_case_name = "uint32_field_double_field";
+    input.expression = "uint32_field < double_field";
+    input.samples_filtered.assign({false, false, false, false, true});
+    inputs.push_back(input);
+
+    input.test_case_name = "uint64_field_double_field";
+    input.expression = "uint64_field < double_field";
+    input.samples_filtered.assign({false, false, false, false, true});
+    inputs.push_back(input);
+
+    input.test_case_name = "uint16_field_long_double_field";
+    input.expression = "uint16_field < long_double_field";
+    input.samples_filtered.assign({false, false, false, false, true});
+    inputs.push_back(input);
+
+    input.test_case_name = "uint32_field_long_double_field";
+    input.expression = "uint32_field < long_double_field";
+    input.samples_filtered.assign({false, false, false, false, true});
+    inputs.push_back(input);
+
+    input.test_case_name = "uint64_field_long_double_field";
+    input.expression = "uint64_field < long_double_field";
+    input.samples_filtered.assign({false, false, false, false, true});
+    inputs.push_back(input);
+
+    input.test_case_name = "uint16_field_float_constant";
+    input.expression = "uint16_field > 3E4";
+    input.samples_filtered.assign({false, false, false, true, true});
+    inputs.push_back(input);
+
+    input.test_case_name = "uint32_field_float_constant";
+    input.expression = "uint32_field > 2E9";
+    input.samples_filtered.assign({false, false, false, true, true});
+    inputs.push_back(input);
+
+    input.test_case_name = "uint64_field_float_constant";
+    input.expression = "uint64_field > 8e18";
+    input.samples_filtered.assign({false, false, false, true, true});
+    inputs.push_back(input);
+
+    // ENUM - INT promotions
+    input.test_case_name = "enum_field_int16_field";
+    input.expression = "enum_field > int16_field";
+    input.samples_filtered.assign({true, true, true, false, false});
+    inputs.push_back(input);
+
+    input.test_case_name = "enum_field_int32_field";
+    input.expression = "enum_field > int32_field";
+    input.samples_filtered.assign({true, true, true, false, false});
+    inputs.push_back(input);
+
+    input.test_case_name = "enum_field_int64_field";
+    input.expression = "enum_field > int64_field";
+    input.samples_filtered.assign({true, true, true, false, false});
+    inputs.push_back(input);
+
+    input.test_case_name = "enum_field_signed_int_constant";
+    input.expression = "enum_field > -1";
+    input.samples_filtered.assign({true, true, true, true, true});
+    inputs.push_back(input);
+
+    // ENUM - UINT promotions
+    input.test_case_name = "enum_field_uint8_field";
+    input.expression = "enum_field >= uint8_field";
+    input.samples_filtered.assign({true, false, false, false, false});
+    inputs.push_back(input);
+
+    input.test_case_name = "enum_field_uint16_field";
+    input.expression = "enum_field >= uint16_field";
+    input.samples_filtered.assign({true, false, false, false, false});
+    inputs.push_back(input);
+
+    input.test_case_name = "enum_field_uint32_field";
+    input.expression = "enum_field >= uint32_field";
+    input.samples_filtered.assign({true, false, false, false, false});
+    inputs.push_back(input);
+
+    input.test_case_name = "enum_field_uint64_field";
+    input.expression = "enum_field >= uint64_field";
+    input.samples_filtered.assign({true, false, false, false, false});
+    inputs.push_back(input);
+
+    input.test_case_name = "enum_field_unsigned_int_constant";
+    input.expression = "enum_field > 1";
+    input.samples_filtered.assign({false, false, true, true, true});
+    inputs.push_back(input);
+
+    // CHAR - STRING promotions
+    input.test_case_name = "char_field_string_field";
+    input.expression = "string_field < char_field";
+    input.samples_filtered.assign({true, true, true, true, true});
+    inputs.push_back(input);
+
+    input.test_case_name = "char_field_string_constant";
+    input.expression = "char_field < 'ZZ'";
+    input.samples_filtered.assign({true, true, true, false, false});
+    inputs.push_back(input);
+
+    input.test_case_name = "string_field_char_constant";
+    input.expression = "string_field < 'Z'";
+    input.samples_filtered.assign({true, true, true, true, false});
+    inputs.push_back(input);
+
+    return inputs;
+}
+
 INSTANTIATE_TEST_SUITE_P(
     DDSSQLFilterValueTestsChar,
     DDSSQLFilterValueTests,
@@ -1842,6 +2179,12 @@ INSTANTIATE_TEST_SUITE_P(
     DDSSQLFilterValueTestsEnum2,
     DDSSQLFilterValueTests,
     ::testing::ValuesIn(get_test_filtered_value_enum2_inputs()),
+    DDSSQLFilterValueTests::PrintToStringParamName());
+
+INSTANTIATE_TEST_SUITE_P(
+    DDSSQLFilterValueTestsPromotion,
+    DDSSQLFilterValueTests,
+    ::testing::ValuesIn(get_test_filtered_value_promotion_inputs()),
     DDSSQLFilterValueTests::PrintToStringParamName());
 
 } // namespace dds
