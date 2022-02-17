@@ -53,7 +53,7 @@ struct literal_value_processor
         }
         else if (n->is<float_value>())
         {
-            n->value->kind = DDSFilterValue::ValueKind::FLOAT;
+            n->value->kind = DDSFilterValue::ValueKind::FLOAT_CONST;
             n->value->float_value = std::stold(n->content());
         }
         else if (n->is<char_value>())

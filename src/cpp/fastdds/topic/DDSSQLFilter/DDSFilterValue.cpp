@@ -39,7 +39,7 @@ int compare_values(
         T rvalue)
 {
     return lvalue < rvalue ? -1 :
-        lvalue > rvalue ? 1 : 0;
+                   lvalue > rvalue ? 1 : 0;
 }
 
 /**
@@ -148,6 +148,12 @@ static long double to_float(
         case DDSFilterValue::ValueKind::UNSIGNED_INTEGER:
             return static_cast<long double>(value.unsigned_integer_value);
 
+        case DDSFilterValue::ValueKind::FLOAT_CONST:
+        case DDSFilterValue::ValueKind::FLOAT_FIELD:
+        case DDSFilterValue::ValueKind::DOUBLE_FIELD:
+        case DDSFilterValue::ValueKind::LONG_DOUBLE_FIELD:
+            return value.float_value;
+
         // The rest of the types shall never be promoted to FLOAT
         default:
             assert(false);
@@ -190,7 +196,10 @@ void DDSFilterValue::copy_from(
             unsigned_integer_value = other.unsigned_integer_value;
             break;
 
-        case ValueKind::FLOAT:
+        case ValueKind::FLOAT_CONST:
+        case ValueKind::FLOAT_FIELD:
+        case ValueKind::DOUBLE_FIELD:
+        case ValueKind::LONG_DOUBLE_FIELD:
             float_value = other.float_value;
             break;
 
@@ -224,14 +233,14 @@ int DDSFilterValue::compare(
             case ValueKind::UNSIGNED_INTEGER:
                 return compare_values(lhs.unsigned_integer_value, rhs.unsigned_integer_value);
 
-            case ValueKind::FLOAT:
-            {
-                auto diff = static_cast<float>(lhs.float_value) - static_cast<float>(rhs.float_value);
-                auto epsilon = std::numeric_limits<float>::epsilon();
-                return diff > epsilon ? 1 :
-                       diff < -epsilon ? -1 :
-                       0;
-            }
+            case ValueKind::FLOAT_FIELD:
+                return compare_values(static_cast<float>(lhs.float_value), static_cast<float>(rhs.float_value));
+
+            case ValueKind::DOUBLE_FIELD:
+                return compare_values(static_cast<double>(lhs.float_value), static_cast<double>(rhs.float_value));
+
+            case ValueKind::LONG_DOUBLE_FIELD:
+                return compare_values(lhs.float_value, rhs.float_value);
 
             case ValueKind::STRING:
                 return std::strcmp(lhs.string_value.c_str(), rhs.string_value.c_str());
@@ -265,15 +274,15 @@ int DDSFilterValue::compare(
             case ValueKind::UNSIGNED_INTEGER:
                 return is_negative(rhs) ? 1 : compare_values(lhs.unsigned_integer_value, to_unsigned_integer(rhs));
 
-            case ValueKind::FLOAT:
-            {
-                auto rvalue = to_float(rhs);
-                auto diff = static_cast<float>(lhs.float_value) - static_cast<float>(rvalue);
-                auto epsilon = std::numeric_limits<float>::epsilon();
-                return diff > epsilon ? 1 :
-                       diff < -epsilon ? -1 :
-                       0;
-            }
+            case ValueKind::FLOAT_CONST:
+            case ValueKind::FLOAT_FIELD:
+                return compare_values(static_cast<float>(lhs.float_value), static_cast<float>(to_float(rhs)));
+
+            case ValueKind::DOUBLE_FIELD:
+                return compare_values(static_cast<double>(lhs.float_value), static_cast<double>(to_float(rhs)));
+
+            case ValueKind::LONG_DOUBLE_FIELD:
+                return compare_values(lhs.float_value, to_float(rhs));
 
             case ValueKind::STRING:
             {

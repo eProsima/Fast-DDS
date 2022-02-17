@@ -115,15 +115,24 @@ static bool check_value_compatibility(
             return DDSFilterValue::ValueKind::SIGNED_INTEGER == right ||
                    DDSFilterValue::ValueKind::UNSIGNED_INTEGER == right ||
                    DDSFilterValue::ValueKind::BOOLEAN == right ||
-                   DDSFilterValue::ValueKind::FLOAT == right;
+                   DDSFilterValue::ValueKind::FLOAT_CONST == right ||
+                   DDSFilterValue::ValueKind::FLOAT_FIELD == right ||
+                   DDSFilterValue::ValueKind::DOUBLE_FIELD == right ||
+                   DDSFilterValue::ValueKind::LONG_DOUBLE_FIELD == right;
 
         case DDSFilterValue::ValueKind::CHAR:
         case DDSFilterValue::ValueKind::STRING:
             return DDSFilterValue::ValueKind::CHAR == right ||
                    DDSFilterValue::ValueKind::STRING == right;
 
-        case DDSFilterValue::ValueKind::FLOAT:
-            return DDSFilterValue::ValueKind::FLOAT == right ||
+        case DDSFilterValue::ValueKind::FLOAT_CONST:
+        case DDSFilterValue::ValueKind::FLOAT_FIELD:
+        case DDSFilterValue::ValueKind::DOUBLE_FIELD:
+        case DDSFilterValue::ValueKind::LONG_DOUBLE_FIELD:
+            return DDSFilterValue::ValueKind::FLOAT_CONST == right ||
+                   DDSFilterValue::ValueKind::FLOAT_FIELD == right ||
+                   DDSFilterValue::ValueKind::DOUBLE_FIELD == right ||
+                   DDSFilterValue::ValueKind::LONG_DOUBLE_FIELD == right ||
                    DDSFilterValue::ValueKind::SIGNED_INTEGER == right ||
                    DDSFilterValue::ValueKind::UNSIGNED_INTEGER == right;
 
