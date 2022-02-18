@@ -16,6 +16,7 @@ cmake_minimum_required(VERSION 2.8.12)
 
 if(NOT CMAKE_VERSION VERSION_LESS 3.0)
     cmake_policy(SET CMP0048 NEW)
+    cmake_policy(SET CMP0028 NEW) 
 endif()
 
 project("HelloWorldExampleTCP")
@@ -60,6 +61,6 @@ target_compile_definitions(DDSHelloWorldExampleTCP PRIVATE
     $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
     $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
     )
-target_link_libraries(DDSHelloWorldExampleTCP fastrtps fastcdr foonathan_memory)
+target_link_libraries(DDSHelloWorldExampleTCP fastrtps fastcdr foonathan_memory fastdds::optionparser)
 install(TARGETS DDSHelloWorldExampleTCP
     RUNTIME DESTINATION examples/C++/DDS/HelloWorldExampleTCP/${BIN_INSTALL_DIR})

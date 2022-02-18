@@ -261,7 +261,11 @@ set(DATAWRITERTESTS_SOURCE DataWriterTests.cpp
             )
     endif()
 
-    include_directories(${TINYXML2_INCLUDE_DIR})
+    # Only include tinyxml2 headers manually if the associated config predates the use of CMake targets
+    if(TINYXML2_INCLUDE_DIR)
+        include_directories(${TINYXML2_INCLUDE_DIR})
+    endif(TINYXML2_INCLUDE_DIR)
+
     set(PUBLISHERTESTS_SOURCE PublisherTests.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/dds/pub/DataWriter.cpp
     )

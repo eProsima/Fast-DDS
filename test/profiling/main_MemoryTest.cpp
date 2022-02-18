@@ -15,7 +15,7 @@
 #include "MemoryTestPublisher.h"
 #include "MemoryTestSubscriber.h"
 
-#include "optionparser.h"
+#include <optionparser.hpp>
 
 #include <stdio.h>
 #include <string>
@@ -52,6 +52,7 @@ const Endianness_t DEFAULT_ENDIAN = LITTLEEND;
 #define COPYSTR strcpy
 #endif // if defined(_WIN32)
 
+namespace option = eprosima::option;
 
 struct Arg : public option::Arg
 {

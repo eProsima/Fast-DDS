@@ -59,7 +59,10 @@ if(TINYXML2_SOURCE_DIR)
         )
 endif()
 
-include_directories(${TINYXML2_INCLUDE_DIR})
+# Only include tinyxml2 headers manually if the associated config predates the use of CMake targets
+if(TINYXML2_INCLUDE_DIR)
+    include_directories(${TINYXML2_INCLUDE_DIR})
+endif(TINYXML2_INCLUDE_DIR)
 
 add_executable(LogFileTests ${LOGFILETESTS_SOURCE})
 target_compile_definitions(LogFileTests PRIVATE FASTRTPS_NO_LIB

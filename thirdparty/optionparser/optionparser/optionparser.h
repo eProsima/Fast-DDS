@@ -936,6 +936,15 @@ struct Arg
     else
       return ARG_IGNORE;
   }
+
+  //! @brief Returns ARG_OK if the argument is present and ARG_IGNORE otherwise.
+  static ArgStatus OptionalAny(const Option& option, bool)
+  {
+    if (option.arg)
+      return ARG_OK;
+    else
+      return ARG_IGNORE;
+  }
 };
 
 /**

@@ -1,7 +1,7 @@
 #ifndef _TEST_PERFORMANCE_OPTIONARG_HPP_
 #define _TEST_PERFORMANCE_OPTIONARG_HPP_
 
-#include "optionparser.h"
+#include <optionparser.hpp>
 
 #include <stdio.h>
 #include <cstdint>
@@ -11,6 +11,8 @@
 #ifdef WIN32
 #define strncasecmp _strnicmp
 #endif // ifdef WIN32
+
+namespace option = eprosima::option;
 
 struct Arg : public option::Arg
 {
