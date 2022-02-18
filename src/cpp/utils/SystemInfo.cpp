@@ -104,7 +104,7 @@ ReturnCode_t SystemInfo::get_username(
 #define INFO_BUFFER_SIZE 32767
     char user[INFO_BUFFER_SIZE];
     DWORD bufCharCount = INFO_BUFFER_SIZE;
-    if (!GetUserName(user, &bufCharCount))
+    if (!GetUserNameA(user, &bufCharCount))
     {
         return ReturnCode_t::RETCODE_ERROR;
     }

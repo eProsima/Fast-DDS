@@ -101,7 +101,7 @@ bool StringMatching::matchPattern(
         const char* pattern,
         const char* str)
 {
-    if (PathMatchSpec(str, pattern))
+    if (PathMatchSpecA(str, pattern))
     {
         return true;
     }
@@ -112,11 +112,11 @@ bool StringMatching::matchString(
         const char* str1,
         const char* str2)
 {
-    if (PathMatchSpec(str1, str2))
+    if (PathMatchSpecA(str1, str2))
     {
         return true;
     }
-    if (PathMatchSpec(str2, str1))
+    if (PathMatchSpecA(str2, str1))
     {
         return true;
     }
