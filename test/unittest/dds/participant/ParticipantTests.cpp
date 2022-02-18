@@ -60,6 +60,7 @@
 #include <fastdds/domain/DomainParticipantImpl.hpp>
 #include <utils/SystemInfo.hpp>
 
+#include "../../common/GTestPrinters.hpp"
 #include "../../logging/mock/MockConsumer.h"
 
 namespace eprosima {
