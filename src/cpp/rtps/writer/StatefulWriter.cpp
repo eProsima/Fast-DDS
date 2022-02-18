@@ -493,7 +493,7 @@ bool StatefulWriter::intraprocess_heartbeat(
     bool returned_value = false;
 
     std::lock_guard<RecursiveTimedMutex> guardW(mp_mutex);
-    RTPSReader* reader = reader_proxy->local_reader();
+    RTPSReader* reader = RTPSDomainImpl::find_local_reader(reader_proxy->guid());
 
     if (reader)
     {
