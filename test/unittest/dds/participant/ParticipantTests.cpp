@@ -45,6 +45,14 @@
 #include <fastrtps/types/TypeObjectFactory.h>
 #include <fastrtps/xmlparser/XMLProfileManager.h>
 
+<<<<<<< HEAD
+=======
+#include <fastdds/domain/DomainParticipantImpl.hpp>
+#include <utils/SystemInfo.hpp>
+
+#include "../../common/GTestPrinters.hpp"
+#include "../../logging/mock/MockConsumer.h"
+>>>>>>> 53ac0123a (Added PrintTo function for null_type (#2462))
 
 namespace eprosima {
 namespace fastdds {
