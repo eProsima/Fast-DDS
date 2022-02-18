@@ -1012,23 +1012,23 @@ private:
         data[0].bounded_sequence_long_double_field().push_back(min);
         data[0].unbounded_sequence_long_double_field().push_back(min);
 
-        data[1].long_double_field(-3.14159);
-        data[1].struct_field().long_double_field(-3.14159);
-        data[1].array_long_double_field()[0] = -3.14159;
-        data[1].bounded_sequence_long_double_field().push_back(-3.14159);
-        data[1].unbounded_sequence_long_double_field().push_back(-3.14159);
+        data[1].long_double_field(-3.14159l);
+        data[1].struct_field().long_double_field(-3.14159l);
+        data[1].array_long_double_field()[0] = -3.14159l;
+        data[1].bounded_sequence_long_double_field().push_back(-3.14159l);
+        data[1].unbounded_sequence_long_double_field().push_back(-3.14159l);
 
-        data[2].long_double_field(0.0);
-        data[2].struct_field().long_double_field(0.0);
-        data[2].array_long_double_field()[0] = 0.0;
-        data[2].bounded_sequence_long_double_field().push_back(0.0);
-        data[2].unbounded_sequence_long_double_field().push_back(0.0);
+        data[2].long_double_field(0.0l);
+        data[2].struct_field().long_double_field(0.0l);
+        data[2].array_long_double_field()[0] = 0.0l;
+        data[2].bounded_sequence_long_double_field().push_back(0.0l);
+        data[2].unbounded_sequence_long_double_field().push_back(0.0l);
 
-        data[3].long_double_field(3.14159);
-        data[3].struct_field().long_double_field(3.14159);
-        data[3].array_long_double_field()[0] = 3.14159;
-        data[3].bounded_sequence_long_double_field().push_back(3.14159);
-        data[3].unbounded_sequence_long_double_field().push_back(3.14159);
+        data[3].long_double_field(3.14159l);
+        data[3].struct_field().long_double_field(3.14159l);
+        data[3].array_long_double_field()[0] = 3.14159l;
+        data[3].bounded_sequence_long_double_field().push_back(3.14159l);
+        data[3].unbounded_sequence_long_double_field().push_back(3.14159l);
 
         data[4].long_double_field(max);
         data[4].struct_field().long_double_field(max);
