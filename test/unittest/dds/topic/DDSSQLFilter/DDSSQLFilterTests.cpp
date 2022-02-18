@@ -1260,6 +1260,8 @@ TEST_F(DDSSQLFilterValueTests, test_compound_not)
         }
     }
 
+    ret = uut.delete_content_filter("DDSSQL", filter);
+    EXPECT_EQ(ReturnCode_t::RETCODE_OK, ret);
 }
 
 TEST_F(DDSSQLFilterValueTests, test_compound_and)
@@ -1282,6 +1284,9 @@ TEST_F(DDSSQLFilterValueTests, test_compound_and)
         IContentFilter::GUID_t guid;
         EXPECT_EQ(results[i], filter->evaluate(*values[i], info, guid)) << "with i = " << i;
     }
+
+    ret = uut.delete_content_filter("DDSSQL", filter);
+    EXPECT_EQ(ReturnCode_t::RETCODE_OK, ret);
 }
 
 TEST_F(DDSSQLFilterValueTests, test_compound_or)
@@ -1304,6 +1309,9 @@ TEST_F(DDSSQLFilterValueTests, test_compound_or)
         IContentFilter::GUID_t guid;
         EXPECT_EQ(results[i], filter->evaluate(*values[i], info, guid)) << "with i = " << i;
     }
+
+    ret = uut.delete_content_filter("DDSSQL", filter);
+    EXPECT_EQ(ReturnCode_t::RETCODE_OK, ret);
 }
 
 static void add_test_filtered_value_inputs(
