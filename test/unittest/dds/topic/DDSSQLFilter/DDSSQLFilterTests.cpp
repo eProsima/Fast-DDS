@@ -1333,8 +1333,9 @@ static void add_test_filtered_value_inputs(
                 test_prefix + "_" + op.second + "_" + values[j].second,
                 field_name + " " + op.first + " " + values[j].first,
                 {},
-                { results_row.begin(), results_row.end() }
+                {}
             };
+            input.samples_filtered.assign(results_row.begin(), results_row.end());
             inputs.emplace_back(input);
 
             input.test_case_name += "_P0";
@@ -1362,8 +1363,9 @@ static void add_negative_test_filtered_value_inputs(
                 test_prefix + "_" + op.second + "_" + values[j].second,
                 field_name + " " + op.first + " " + values[j].first,
                 {},
-                { false, false, false, false, false }
+                {}
             };
+            input.samples_filtered.assign(5, false);
             inputs.emplace_back(input);
 
             input.test_case_name += "_P0";
