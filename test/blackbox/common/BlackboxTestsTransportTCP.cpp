@@ -424,3 +424,64 @@ TEST(BlackBox, TCPLocalhost)
         requester.block();
     }
 }
+
+// Test connection is successfully restablished after dropping and relaunching a TCP client (requester)
+// Issue -> https://github.com/eProsima/Fast-DDS/issues/2409
+TEST(TransportTCP, Client_reconnection)
+{
+    TCPReqRepHelloWorldReplier* replier;
+    TCPReqRepHelloWorldRequester* requester;
+    const uint16_t nmsgs = 5;
+
+    replier = new TCPReqRepHelloWorldReplier;
+    replier->init(1, 0, global_port);
+
+    ASSERT_TRUE(replier->isInitialized());
+
+    requester = new TCPReqRepHelloWorldRequester;
+    requester->init(0, 0, global_port);
+
+    ASSERT_TRUE(requester->isInitialized());
+
+    // Wait for discovery.
+    replier->wait_discovery();
+    requester->wait_discovery();
+
+    ASSERT_TRUE(replier->is_matched());
+    ASSERT_TRUE(requester->is_matched());
+
+    for (uint16_t count = 0; count < nmsgs; ++count)
+    {
+        requester->send(count);
+        requester->block();
+    }
+
+    // Release TCP client resources.
+    delete requester;
+
+    // Wait until unmatched.
+    replier->wait_unmatched();
+    ASSERT_FALSE(replier->is_matched());
+
+    // Create new TCP client instance.
+    requester = new TCPReqRepHelloWorldRequester;
+    requester->init(0, 0, global_port);
+
+    ASSERT_TRUE(requester->isInitialized());
+
+    // Wait for discovery.
+    replier->wait_discovery();
+    requester->wait_discovery();
+
+    ASSERT_TRUE(replier->is_matched());
+    ASSERT_TRUE(requester->is_matched());
+
+    for (uint16_t count = 0; count < nmsgs; ++count)
+    {
+        requester->send(count);
+        requester->block();
+    }
+
+    delete replier;
+    delete requester;
+}
