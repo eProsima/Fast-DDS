@@ -353,7 +353,7 @@ TEST(PublisherTests, ChangeDefaultDataWriterQos)
     // .ownership
     EXPECT_EQ(eprosima::fastdds::dds::EXCLUSIVE_OWNERSHIP_QOS, wqos.ownership().kind);
     // .ownership_strength
-    EXPECT_EQ(30, wqos.ownership_strength().value);
+    EXPECT_EQ(30u, wqos.ownership_strength().value);
     // .writer_data_lifecycle
     EXPECT_FALSE(wqos.writer_data_lifecycle().autodispose_unregistered_instances);
     // .publish_mode
