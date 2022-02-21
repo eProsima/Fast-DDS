@@ -540,7 +540,7 @@ ContentFilteredTopic* DomainParticipantImpl::create_contentfilteredtopic(
     content_topic_impl->filter_instance = filter_instance;
 
     // Save the topic into the map
-    filtered_topics_.emplace(std::make_pair(name, topic));
+    filtered_topics_.emplace(std::make_pair(name, std::unique_ptr<ContentFilteredTopic>(topic)));
 
     return topic;
 }
