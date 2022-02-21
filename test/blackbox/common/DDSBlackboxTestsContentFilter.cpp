@@ -16,6 +16,8 @@
 
 #include "PubSubWriter.hpp"
 
+#include "../types/HelloWorldTypeObject.h"
+
 #include <fastdds/dds/subscriber/DataReader.hpp>
 #include <fastdds/dds/subscriber/Subscriber.hpp>
 #include <fastdds/dds/subscriber/qos/DataReaderQos.hpp>
@@ -30,6 +32,8 @@ using ReturnCode_t = eprosima::fastrtps::types::ReturnCode_t;
 
 TEST(DDSContentFilter, BasicTest)
 {
+    registerHelloWorldTypes();
+
     PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
     writer.history_depth(10).init();
 
