@@ -53,6 +53,47 @@ TEST(DDSContentFilter, BasicTest)
     auto reader = subscriber->create_datareader(filtered_topic, reader_qos);
     ASSERT_NE(nullptr, reader);
 
+    auto send_data = [&](uint64_t expected_samples, const std::vector<uint16_t>& index_values)
+            {
+                auto data = default_helloworld_data_generator();
+                writer.send(data);
+                EXPECT_TRUE(data.empty());
+                do
+                {
+                    EXPECT_TRUE(reader->wait_for_unread_message({ 1 }));
+                } while (reader->get_unread_count() < expected_samples);
+
+                FASTDDS_CONST_SEQUENCE(HelloWorldSeq, HelloWorld);
+                HelloWorldSeq recv_data;
+                SampleInfoSeq recv_info;
+
+                EXPECT_EQ(ReturnCode_t::RETCODE_OK, reader->take(recv_data, recv_info));
+                EXPECT_EQ(recv_data.length(), expected_samples);
+                for (HelloWorldSeq::size_type i = 0; i < recv_data.length(); ++i)
+                {
+                    EXPECT_EQ(index_values[i], recv_data[i].index());
+                }
+                EXPECT_EQ(ReturnCode_t::RETCODE_OK, reader->return_loan(recv_data, recv_info));
+            };
+
+    std::cout << std::endl << "TEST empty expression..." << std::endl;
+    send_data(10u, {1, 2, 3, 4, 5, 6, 7, 8, 9, 10});
+
+    std::cout << std::endl << "Test 'index BETWEEN %0 AND %1', {\"2\", \"4\"}..." << std::endl;
+    EXPECT_EQ(ReturnCode_t::RETCODE_OK,
+            filtered_topic->set_filter_expression("index BETWEEN %0 AND %1", { "2", "4" }));
+    send_data(3u, {2, 3, 4});
+
+    std::cout << std::endl << "Test 'index BETWEEN %0 AND %1', {\"6\", \"9\"}..." << std::endl;
+    EXPECT_EQ(ReturnCode_t::RETCODE_OK,
+            filtered_topic->set_expression_parameters({ "6", "9" }));
+    send_data(4u, {6, 7, 8, 9});
+
+    std::cout << std::endl << "Test 'message match %0', {\"'HelloWorld 1.*'\"}..." << std::endl;
+    EXPECT_EQ(ReturnCode_t::RETCODE_OK,
+            filtered_topic->set_filter_expression("message match %0", { "'HelloWorld 1.*'" }));
+    send_data(2u, {1, 10});
+
     EXPECT_EQ(ReturnCode_t::RETCODE_OK, subscriber->delete_datareader(reader));
     EXPECT_EQ(ReturnCode_t::RETCODE_OK, participant->delete_subscriber(subscriber));
     EXPECT_EQ(ReturnCode_t::RETCODE_OK, participant->delete_contentfilteredtopic(filtered_topic));
