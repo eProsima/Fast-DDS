@@ -521,6 +521,8 @@ private:
     Semaphore* mp_ResourceSemaphore;
     //!Id counter to correctly assign the ids to writers and readers.
     uint32_t IdCounter;
+    //! Mutex to safely access endpoints collections
+    std::mutex endpoints_list_mutex;
     //!Writer List.
     std::vector<RTPSWriter*> m_allWriterList;
     //!Reader List
