@@ -54,9 +54,6 @@ static bool is_negative(
         case DDSFilterValue::ValueKind::BOOLEAN:
             return false;
 
-        case DDSFilterValue::ValueKind::CHAR:
-            return value.char_value < 0;
-
         case DDSFilterValue::ValueKind::ENUM:
         case DDSFilterValue::ValueKind::SIGNED_INTEGER:
             return value.signed_integer_value < 0;
@@ -70,16 +67,6 @@ static bool is_negative(
 }
 
 /**
- * Performs promotion to CHAR
- */
-static char to_char(
-        const DDSFilterValue& value)
-{
-    assert(DDSFilterValue::ValueKind::BOOLEAN == value.kind);
-    return value.boolean_value ? 1 : 0;
-}
-
-/**
  * Performs promotion to SIGNED_INTEGER
  */
 static int64_t to_signed_integer(
@@ -89,9 +76,6 @@ static int64_t to_signed_integer(
     {
         case DDSFilterValue::ValueKind::BOOLEAN:
             return value.boolean_value ? 1 : 0;
-
-        case DDSFilterValue::ValueKind::CHAR:
-            return value.char_value;
 
         // The rest of the types shall never be promoted to SIGNED_INTEGER
         default:
@@ -111,9 +95,6 @@ static uint64_t to_unsigned_integer(
     {
         case DDSFilterValue::ValueKind::BOOLEAN:
             return value.boolean_value ? 1 : 0;
-
-        case DDSFilterValue::ValueKind::CHAR:
-            return static_cast<uint64_t>(value.char_value);
 
         case DDSFilterValue::ValueKind::ENUM:
         case DDSFilterValue::ValueKind::SIGNED_INTEGER:
@@ -135,12 +116,6 @@ static long double to_float(
 {
     switch (value.kind)
     {
-        case DDSFilterValue::ValueKind::BOOLEAN:
-            return value.boolean_value ? 1. : 0.;
-
-        case DDSFilterValue::ValueKind::CHAR:
-            return static_cast<long double>(value.char_value);
-
         case DDSFilterValue::ValueKind::ENUM:
         case DDSFilterValue::ValueKind::SIGNED_INTEGER:
             return static_cast<long double>(value.signed_integer_value);
@@ -263,7 +238,8 @@ int DDSFilterValue::compare(
                 assert(false);
 
             case ValueKind::CHAR:
-                return lhs.char_value - to_char(rhs);
+                // Only boolean is below char, and it is not allowed to be promoted to char
+                assert(false);
 
             case ValueKind::ENUM:
             case ValueKind::SIGNED_INTEGER:
