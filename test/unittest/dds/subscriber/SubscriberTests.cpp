@@ -264,15 +264,235 @@ TEST(SubscriberTests, ChangeDefaultDataReaderQos)
     subscriber->get_default_datareader_qos(qos);
     ASSERT_EQ(qos, DATAREADER_QOS_DEFAULT);
 
-    qos.reliability().kind = BEST_EFFORT_RELIABILITY_QOS;
+    // .durability
+    qos.durability().kind = eprosima::fastdds::dds::TRANSIENT_DURABILITY_QOS;
+    // .deadline
+    qos.deadline().period.seconds = 10;
+    qos.deadline().period.nanosec = 20u;
+    // .latency_budget
+    qos.latency_budget().duration.seconds = 20;
+    qos.latency_budget().duration.nanosec = 30u;
+    // .liveliness
+    qos.liveliness().kind = eprosima::fastdds::dds::MANUAL_BY_PARTICIPANT_LIVELINESS_QOS;
+    qos.liveliness().lease_duration.seconds = 40;
+    qos.liveliness().lease_duration.nanosec = 61u;
+    qos.liveliness().announcement_period.seconds = 30;
+    qos.liveliness().announcement_period.nanosec = 50u;
+    // .reliability
+    qos.reliability().kind = eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS;
+    // .destination_order
+    qos.destination_order().kind = eprosima::fastdds::dds::BY_RECEPTION_TIMESTAMP_DESTINATIONORDER_QOS;
+    // . history
+    qos.history().kind = eprosima::fastdds::dds::KEEP_ALL_HISTORY_QOS;
+    qos.history().depth = 1000;
+    // .resource_limits
+    qos.resource_limits().max_samples = 3000;
+    qos.resource_limits().max_instances = 100;
+    qos.resource_limits().max_samples_per_instance = 500;
+    qos.resource_limits().allocated_samples = 50;
+    qos.resource_limits().extra_samples = 2;
+    // .user_data
+    qos.user_data().push_back(0);
+    qos.user_data().push_back(1);
+    qos.user_data().push_back(2);
+    qos.user_data().push_back(3);
+    // .ownership
+    qos.ownership().kind = eprosima::fastdds::dds::EXCLUSIVE_OWNERSHIP_QOS;
+    // .time_based_filter
+    qos.time_based_filter().minimum_separation.seconds = eprosima::fastrtps::Time_t::INFINITE_SECONDS;
+    qos.time_based_filter().minimum_separation.nanosec = eprosima::fastrtps::Time_t::INFINITE_NANOSECONDS;
+    // .reader_data_lifecycle
+    qos.reader_data_lifecycle().autopurge_disposed_samples_delay.seconds = 100;
+    qos.reader_data_lifecycle().autopurge_disposed_samples_delay.nanosec = 30000u;
+    qos.reader_data_lifecycle().autopurge_no_writer_samples_delay.seconds = 30000;
+    qos.reader_data_lifecycle().autopurge_no_writer_samples_delay.nanosec = 100u;
+    // .lifespan
+    qos.lifespan().duration.seconds = 10;
+    qos.lifespan().duration.nanosec = 33u;
+    // .durability_service
+    qos.durability_service().history_kind = eprosima::fastdds::dds::KEEP_ALL_HISTORY_QOS;
+    qos.durability_service().history_depth = 10;
+    qos.durability_service().max_samples = 5;
+    qos.durability_service().max_instances = 20;
+    qos.durability_service().max_samples_per_instance = 30;
+    // .reliable_reader_qos
+    qos.reliable_reader_qos().times.initialAcknackDelay.seconds = 34;
+    qos.reliable_reader_qos().times.initialAcknackDelay.nanosec = 32u;
+    qos.reliable_reader_qos().times.heartbeatResponseDelay.seconds = 432;
+    qos.reliable_reader_qos().times.heartbeatResponseDelay.nanosec = 43u;
+    qos.reliable_reader_qos().disable_positive_ACKs.enabled = true;
+    qos.reliable_reader_qos().disable_positive_ACKs.duration.seconds = 13;
+    qos.reliable_reader_qos().disable_positive_ACKs.duration.nanosec = 320u;
+    // .type_consistency
+    qos.type_consistency().representation.m_value.push_back(XML_DATA_REPRESENTATION);
+    qos.type_consistency().representation.m_value.push_back(XCDR_DATA_REPRESENTATION);
+    qos.type_consistency().type_consistency.m_ignore_sequence_bounds = false;
+    qos.type_consistency().type_consistency.m_ignore_string_bounds = false;
+    qos.type_consistency().type_consistency.m_ignore_member_names = true;
+    qos.type_consistency().type_consistency.m_prevent_type_widening = true;
+    qos.type_consistency().type_consistency.m_force_type_validation = true;
+    // .expects_inline_qos
+    qos.expects_inline_qos(true);
+    // .properties
+    eprosima::fastrtps::rtps::Property property;
+    property.name("Property1");
+    property.value("Value1");
+    qos.properties().properties().push_back(property);
+    property.name("Property2");
+    property.value("Value2");
+    qos.properties().properties().push_back(property);
+
+    // .endpoint
+    qos.endpoint().user_defined_id = 1;
+    qos.endpoint().entity_id = 2;
+    qos.endpoint().history_memory_policy = eprosima::fastrtps::rtps::PREALLOCATED_WITH_REALLOC_MEMORY_MODE;
+
+    // .reader_resource_limits
+    qos.reader_resource_limits().matched_publisher_allocation.initial = 30;
+    qos.reader_resource_limits().matched_publisher_allocation.maximum = 300;
+    qos.reader_resource_limits().matched_publisher_allocation.increment = 4;
+    qos.reader_resource_limits().sample_infos_allocation.initial = 40;
+    qos.reader_resource_limits().sample_infos_allocation.maximum = 400;
+    qos.reader_resource_limits().sample_infos_allocation.increment = 5;
+    qos.reader_resource_limits().outstanding_reads_allocation.initial = 50;
+    qos.reader_resource_limits().outstanding_reads_allocation.maximum = 500;
+    qos.reader_resource_limits().outstanding_reads_allocation.increment = 6;
+    qos.reader_resource_limits().max_samples_per_read = 33;
+
+    // .data_sharing
+    qos.data_sharing().on("/");
 
     ASSERT_TRUE(subscriber->set_default_datareader_qos(qos) == ReturnCode_t::RETCODE_OK);
 
     DataReaderQos wqos;
     subscriber->get_default_datareader_qos(wqos);
 
-    ASSERT_EQ(qos, wqos);
-    ASSERT_EQ(wqos.reliability().kind, BEST_EFFORT_RELIABILITY_QOS);
+    // .durability
+    EXPECT_EQ(eprosima::fastdds::dds::TRANSIENT_DURABILITY_QOS, wqos.durability().kind);
+    // .deadline
+    EXPECT_EQ(10, wqos.deadline().period.seconds);
+    EXPECT_EQ(20u, wqos.deadline().period.nanosec);
+    // .latency_budget
+    EXPECT_EQ(20, wqos.latency_budget().duration.seconds);
+    EXPECT_EQ(30u, wqos.latency_budget().duration.nanosec);
+    // .liveliness
+    EXPECT_EQ(eprosima::fastdds::dds::MANUAL_BY_PARTICIPANT_LIVELINESS_QOS, wqos.liveliness().kind);
+    EXPECT_EQ(40, wqos.liveliness().lease_duration.seconds);
+    EXPECT_EQ(61u, wqos.liveliness().lease_duration.nanosec);
+    EXPECT_EQ(30, wqos.liveliness().announcement_period.seconds);
+    EXPECT_EQ(50u, wqos.liveliness().announcement_period.nanosec);
+    // .reliability
+    EXPECT_EQ(eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS, wqos.reliability().kind);
+    // .destination_order
+    EXPECT_EQ(eprosima::fastdds::dds::BY_RECEPTION_TIMESTAMP_DESTINATIONORDER_QOS, wqos.destination_order().kind);
+    // . history
+    EXPECT_EQ(eprosima::fastdds::dds::KEEP_ALL_HISTORY_QOS, wqos.history().kind);
+    EXPECT_EQ(1000, wqos.history().depth);
+    // .resource_limits
+    EXPECT_EQ(3000, wqos.resource_limits().max_samples);
+    EXPECT_EQ(100, wqos.resource_limits().max_instances);
+    EXPECT_EQ(500, wqos.resource_limits().max_samples_per_instance);
+    EXPECT_EQ(50, wqos.resource_limits().allocated_samples);
+    EXPECT_EQ(2, wqos.resource_limits().extra_samples);
+    // .user_data
+    size_t count = 1;
+    for (auto user_value : wqos.user_data())
+    {
+        switch (count)
+        {
+            case 1:
+                EXPECT_EQ(0, user_value);
+                break;
+            case 2:
+                EXPECT_EQ(1, user_value);
+                break;
+            case 3:
+                EXPECT_EQ(2, user_value);
+                break;
+            case 4:
+                EXPECT_EQ(3, user_value);
+                break;
+            default:
+                EXPECT_TRUE(false);
+        }
+        ++count;
+    }
+    // .ownership
+    EXPECT_EQ(eprosima::fastdds::dds::EXCLUSIVE_OWNERSHIP_QOS, wqos.ownership().kind);
+    // .time_based_filter
+    EXPECT_EQ(eprosima::fastrtps::Time_t::INFINITE_SECONDS, wqos.time_based_filter().minimum_separation.seconds);
+    EXPECT_EQ(eprosima::fastrtps::Time_t::INFINITE_NANOSECONDS, wqos.time_based_filter().minimum_separation.nanosec);
+    // .reader_data_lifecycle
+    EXPECT_EQ(100, wqos.reader_data_lifecycle().autopurge_disposed_samples_delay.seconds);
+    EXPECT_EQ(30000u, wqos.reader_data_lifecycle().autopurge_disposed_samples_delay.nanosec);
+    EXPECT_EQ(30000, wqos.reader_data_lifecycle().autopurge_no_writer_samples_delay.seconds);
+    EXPECT_EQ(100u, wqos.reader_data_lifecycle().autopurge_no_writer_samples_delay.nanosec);
+    // .lifespan
+    EXPECT_EQ(10, wqos.lifespan().duration.seconds);
+    EXPECT_EQ(33u, wqos.lifespan().duration.nanosec);
+    // .durability_service
+    EXPECT_EQ(eprosima::fastdds::dds::KEEP_ALL_HISTORY_QOS, wqos.durability_service().history_kind);
+    EXPECT_EQ(10, wqos.durability_service().history_depth);
+    EXPECT_EQ(5, wqos.durability_service().max_samples);
+    EXPECT_EQ(20, wqos.durability_service().max_instances);
+    EXPECT_EQ(30, wqos.durability_service().max_samples_per_instance);
+    // .reliable_reader_qos
+    EXPECT_EQ(34, wqos.reliable_reader_qos().times.initialAcknackDelay.seconds);
+    EXPECT_EQ(32u, wqos.reliable_reader_qos().times.initialAcknackDelay.nanosec);
+    EXPECT_EQ(432, wqos.reliable_reader_qos().times.heartbeatResponseDelay.seconds);
+    EXPECT_EQ(43u, wqos.reliable_reader_qos().times.heartbeatResponseDelay.nanosec);
+    EXPECT_TRUE(wqos.reliable_reader_qos().disable_positive_ACKs.enabled);
+    EXPECT_EQ(13, wqos.reliable_reader_qos().disable_positive_ACKs.duration.seconds);
+    EXPECT_EQ(320u, wqos.reliable_reader_qos().disable_positive_ACKs.duration.nanosec);
+    // .type_consistency
+    EXPECT_EQ(XML_DATA_REPRESENTATION, wqos.type_consistency().representation.m_value.at(0));
+    EXPECT_EQ(XCDR_DATA_REPRESENTATION, wqos.type_consistency().representation.m_value.at(1));
+    EXPECT_FALSE(wqos.type_consistency().type_consistency.m_ignore_sequence_bounds);
+    EXPECT_FALSE(wqos.type_consistency().type_consistency.m_ignore_string_bounds);
+    EXPECT_TRUE(wqos.type_consistency().type_consistency.m_ignore_member_names);
+    EXPECT_TRUE(wqos.type_consistency().type_consistency.m_prevent_type_widening);
+    EXPECT_TRUE(wqos.type_consistency().type_consistency.m_force_type_validation);
+    // .expects_inline_qos
+    EXPECT_TRUE(wqos.expects_inline_qos());
+    // .properties
+    count = 1;
+    for (auto prop : wqos.properties().properties())
+    {
+        switch (count)
+        {
+            case 1:
+                EXPECT_EQ(0, prop.name().compare("Property1"));
+                EXPECT_EQ(0, prop.value().compare("Value1"));
+                break;
+            case 2:
+                EXPECT_EQ(0, prop.name().compare("Property2"));
+                EXPECT_EQ(0, prop.value().compare("Value2"));
+                break;
+            default:
+                EXPECT_TRUE(false);
+        }
+        ++count;
+    }
+    // .endpoint
+    EXPECT_EQ(1, wqos.endpoint().user_defined_id);
+    EXPECT_EQ(2, wqos.endpoint().entity_id);
+    EXPECT_EQ(eprosima::fastrtps::rtps::PREALLOCATED_WITH_REALLOC_MEMORY_MODE, wqos.endpoint().history_memory_policy);
+    // .reader_resource_limits
+    EXPECT_EQ(30, wqos.reader_resource_limits().matched_publisher_allocation.initial);
+    EXPECT_EQ(300, wqos.reader_resource_limits().matched_publisher_allocation.maximum);
+    EXPECT_EQ(4, wqos.reader_resource_limits().matched_publisher_allocation.increment);
+    EXPECT_EQ(40, wqos.reader_resource_limits().sample_infos_allocation.initial);
+    EXPECT_EQ(400, wqos.reader_resource_limits().sample_infos_allocation.maximum);
+    EXPECT_EQ(5, wqos.reader_resource_limits().sample_infos_allocation.increment);
+    EXPECT_EQ(50, wqos.reader_resource_limits().outstanding_reads_allocation.initial);
+    EXPECT_EQ(500, wqos.reader_resource_limits().outstanding_reads_allocation.maximum);
+    EXPECT_EQ(6, wqos.reader_resource_limits().outstanding_reads_allocation.increment);
+    EXPECT_EQ(33, wqos.reader_resource_limits().max_samples_per_read);
+    // .data_sharing
+    EXPECT_EQ(eprosima::fastdds::dds::ON, wqos.data_sharing().kind());
+    EXPECT_EQ(0, wqos.data_sharing().shm_directory().compare("/"));
+
+    EXPECT_EQ(qos, wqos);
 
     ASSERT_TRUE(participant->delete_subscriber(subscriber) == ReturnCode_t::RETCODE_OK);
     ASSERT_TRUE(DomainParticipantFactory::get_instance()->delete_participant(participant) == ReturnCode_t::RETCODE_OK);

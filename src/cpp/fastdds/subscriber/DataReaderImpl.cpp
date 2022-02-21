@@ -1423,6 +1423,11 @@ void DataReaderImpl::set_qos(
     {
         to.reader_resource_limits() = from.reader_resource_limits();
     }
+
+    if (first_time && !(to.data_sharing() == from.data_sharing()))
+    {
+        to.data_sharing() = from.data_sharing();
+    }
 }
 
 fastrtps::TopicAttributes DataReaderImpl::topic_attributes() const
