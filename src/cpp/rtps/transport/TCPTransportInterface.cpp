@@ -583,7 +583,7 @@ bool TCPTransportInterface::CloseInputChannel(
 void TCPTransportInterface::close_tcp_socket(
         std::shared_ptr<TCPChannelResource>& channel)
 {
-    channel->disable();
+    channel->disconnect();
     // channel.reset(); lead to race conditions because TransportInterface functions used in the callbacks doesn't check validity.
 }
 
@@ -613,6 +613,20 @@ bool TCPTransportInterface::OpenOutputChannel(
             //TODO Review with wan ip.
             if (tcp_sender_resource && physical_locator == tcp_sender_resource->channel()->locator())
             {
+                // Look for an existing channel that matches this physical locator
+                auto existing_channel = channel_resources_.find(physical_locator);
+                // If the channel exists, check if the channel reference in the sender resource needs to be updated with
+                // the found channel
+                if (existing_channel != channel_resources_.end() &&
+                        existing_channel->second != tcp_sender_resource->channel())
+                {
+                    // Disconnect the old channel
+                    tcp_sender_resource->channel()->disconnect();
+                    tcp_sender_resource->channel()->clear();
+                    // Update sender resource with new channel
+                    tcp_sender_resource->channel() = existing_channel->second;
+                }
+                // Add logical port to channel if it's not there yet
                 if (!tcp_sender_resource->channel()->is_logical_port_added(logical_port))
                 {
                     tcp_sender_resource->channel()->add_logical_port(logical_port, rtcp_message_manager_.get());
@@ -910,6 +924,10 @@ bool receive_header(
         {
             return false;
         }
+        else if (!channel->connection_status())
+        {
+            return false;
+        }
     }
 
     bytes_needed = TCPHeader::size() - 4;
@@ -922,6 +940,10 @@ bool receive_header(
             bytes_needed -= bytes_read;
         }
         else if (ec)
+        {
+            return false;
+        }
+        else if (!channel->connection_status())
         {
             return false;
         }
@@ -960,15 +982,20 @@ bool TCPTransportInterface::Receive(
         do
         {
             header_found = receive_header(channel, tcp_header, ec);
-        } while (!header_found && !ec);
+        } while (!header_found && !ec && channel->connection_status());
 
         if (ec)
         {
             if (ec != asio::error::eof)
             {
-                logWarning(DEBUG, "Error reading TCP header: " << ec.message());
+                logWarning(DEBUG, "Failed to read TCP header: " << ec.message());
             }
             close_tcp_socket(channel);
+            success = false;
+        }
+        else if (!channel->connection_status())
+        {
+            logWarning(DEBUG, "Failed to read TCP header: channel disconnected while reading.");
             success = false;
         }
         else
@@ -1350,7 +1377,7 @@ void TCPTransportInterface::SocketConnected(
             }
             else
             {
-                channel->disable();
+                channel->disconnect();
             }
         }
     }
@@ -1522,7 +1549,7 @@ bool TCPTransportInterface::apply_tls_config()
             {
                 ssl_context_.load_verify_file(config->verify_file);
             }
-            catch(const std::exception& e)
+            catch (const std::exception& e)
             {
                 logError(TLS, "Error configuring TLS trusted CA certificate: " << e.what());
                 return false; // TODO check wether this should skip the rest of the configuration
@@ -1535,7 +1562,7 @@ bool TCPTransportInterface::apply_tls_config()
             {
                 ssl_context_.use_certificate_chain_file(config->cert_chain_file);
             }
-            catch(const std::exception& e)
+            catch (const std::exception& e)
             {
                 logError(TLS, "Error configuring TLS certificate: " << e.what());
                 return false; // TODO check wether this should skip the rest of the configuration
@@ -1548,7 +1575,7 @@ bool TCPTransportInterface::apply_tls_config()
             {
                 ssl_context_.use_private_key_file(config->private_key_file, ssl::context::pem);
             }
-            catch(const std::exception& e)
+            catch (const std::exception& e)
             {
                 logError(TLS, "Error configuring TLS private key: " << e.what());
                 return false; // TODO check wether this should skip the rest of the configuration
@@ -1561,7 +1588,7 @@ bool TCPTransportInterface::apply_tls_config()
             {
                 ssl_context_.use_tmp_dh_file(config->tmp_dh_file);
             }
-            catch(const std::exception& e)
+            catch (const std::exception& e)
             {
                 logError(TLS, "Error configuring TLS dh params: " << e.what());
                 return false; // TODO check wether this should skip the rest of the configuration
