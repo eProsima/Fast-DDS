@@ -45,6 +45,7 @@
 #include <fastrtps/types/TypeObjectFactory.h>
 #include <fastrtps/xmlparser/XMLProfileManager.h>
 
+#include "../../common/GTestPrinters.hpp"
 
 namespace eprosima {
 namespace fastdds {
