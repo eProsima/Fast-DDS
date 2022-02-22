@@ -408,20 +408,7 @@ bool MemberDescriptor::is_default_value_consistent(
 bool MemberDescriptor::is_type_name_consistent(
         const std::string& sName) const
 {
-    // The first letter must start with a letter ( uppercase or lowercase )
-    if (sName.length() > 0 && std::isalpha(sName[0]))
-    {
-        // All characters must be letters, numbers or underscore.
-        for (uint32_t i = 1; i < sName.length(); ++i)
-        {
-            if (!std::isalnum(sName[i]) && sName[i] != 95)
-            {
-                return false;
-            }
-        }
-        return true;
-    }
-    return false;
+    return TypeDescriptor::is_type_name_consistent(sName);
 }
 
 void MemberDescriptor::set_id(
