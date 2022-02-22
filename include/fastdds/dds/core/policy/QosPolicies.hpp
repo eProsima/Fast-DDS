@@ -38,8 +38,8 @@ namespace eprosima {
 namespace fastrtps {
 namespace rtps {
 class EDP;
-}
-}
+} // namespace rtps
+} // namespace fastrtps
 
 namespace fastdds {
 namespace dds {
@@ -901,7 +901,7 @@ public:
 #define TEMPLATE_DATA_QOS_POLICY(TClassName, TPid)                                     \
     class TClassName : public GenericDataQosPolicy                                         \
     {                                                                                      \
-public:                                                                                \
+    public:                                                                                \
                                                                                        \
         RTPS_DllAPI TClassName()                                                           \
             : GenericDataQosPolicy(TPid)                                                   \
@@ -923,7 +923,7 @@ public:                                                                         
          * @param data data to copy in the newly created object \
          */                                                                            \
         RTPS_DllAPI TClassName(                                                            \
-            const TClassName &data) = default;                                         \
+            const TClassName& data) = default;                                         \
                                                                                        \
         /** \
          * Construct from underlying collection type. \
@@ -934,7 +934,7 @@ public:                                                                         
          * @param data data to copy in the newly created object \
          */                                                                            \
         RTPS_DllAPI TClassName(                                                            \
-            const collection_type &data)                                               \
+            const collection_type& data)                                               \
             : GenericDataQosPolicy(TPid, data)                                             \
         {                                                                                  \
         }                                                                                  \
@@ -951,7 +951,7 @@ public:                                                                         
          * @return reference to the current object. \
          */                                                                            \
         TClassName& operator =(                                                            \
-            const TClassName &b) = default;                                            \
+            const TClassName& b) = default;                                            \
                                                                                        \
     };
 
@@ -997,7 +997,7 @@ class TopicDataQosPolicy : public GenericDataQosPolicy
 class GroupDataQosPolicy : public GenericDataQosPolicy
 {
 };
-#endif
+#endif // ifdef DOXYGEN_DOCUMENTATION
 
 TEMPLATE_DATA_QOS_POLICY(UserDataQosPolicy, PID_USER_DATA)
 TEMPLATE_DATA_QOS_POLICY(TopicDataQosPolicy, PID_TOPIC_DATA)
@@ -1217,7 +1217,7 @@ public:
 
     class const_iterator
     {
-public:
+    public:
 
         typedef const_iterator self_type;
         typedef const Partition_t value_type;
@@ -1273,7 +1273,7 @@ public:
             return ptr_ != rhs.ptr_;
         }
 
-protected:
+    protected:
 
         /**
          * @brief Shift the pointer to the next element
@@ -1286,7 +1286,7 @@ protected:
             value_ = Partition_t(ptr_);
         }
 
-private:
+    private:
 
         //!Pointer
         const fastrtps::rtps::octet* ptr_;
@@ -1406,7 +1406,7 @@ public:
     }
 
     /**
-     * @brief Setter for the maximum size
+     * @brief Setter for the maximum size reserved for partitions (in bytes)
      * @param size Size to be set
      */
     void set_max_size (
@@ -1417,7 +1417,7 @@ public:
     }
 
     /**
-     * @brief Getter for the maximum size
+     * @brief Getter for the maximum size (in bytes)
      * @return uint32_t with the maximum size
      */
     uint32_t max_size () const
@@ -2609,7 +2609,7 @@ public:
     }
 
     //!User defined transports to use alongside or in place of builtins.
-    std::vector<std::shared_ptr<fastdds::rtps::TransportDescriptorInterface> > user_transports;
+    std::vector<std::shared_ptr<fastdds::rtps::TransportDescriptorInterface>> user_transports;
 
     //!Set as false to disable the default UDPv4 implementation. <br> By default, true.
     bool use_builtin_transports;
