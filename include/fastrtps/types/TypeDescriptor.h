@@ -40,8 +40,8 @@ protected:
 
     void clean();
 
-    bool is_type_name_consistent(
-            const std::string& sName) const;
+    static bool is_type_name_consistent(
+            const std::string& sName);
 
     friend class DynamicTypeBuilderFactory;
     friend class TypeObjectFactory;
