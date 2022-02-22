@@ -273,7 +273,7 @@ bool TypeDescriptor::is_consistent() const
 }
 
 bool TypeDescriptor::is_type_name_consistent(
-        const std::string& sName) const
+        const std::string& sName)
 {
     // Implement an FSM string parser to deal with both a plain type name
     // and a fully qualified name. According to the DDS xtypes standard,
