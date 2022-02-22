@@ -402,6 +402,10 @@ if(FASTDDS_PIM_API_TESTS)
         GTest::gtest
         $<$<BOOL:${LibP11_FOUND}>:eProsima_p11>  # $<TARGET_NAME_IF_EXISTS:eProsima_p11>
         )
+    if(ANDROID)
+        message("Setting up CROSSCOMPILING_EMULATOR")
+        set_property(TARGET BlackboxTests_DDS_PIM PROPERTY CROSSCOMPILING_EMULATOR "adb;shell;LD_LIBRARY_PATH=${ANDROID_TESTING_ROOT}/install/lib")
+    endif()
     add_blackbox_gtest(BlackboxTests_DDS_PIM SOURCES ${DDS_BLACKBOXTESTS_SOURCE}
         ENVIRONMENTS "CERTS_PATH=${PROJECT_SOURCE_DIR}/test/certs"
         "TOPIC_RANDOM_NUMBER=${TOPIC_RANDOM_NUMBER}"

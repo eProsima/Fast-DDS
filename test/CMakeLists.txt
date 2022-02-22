@@ -68,3 +68,12 @@ if(SYSTEM_TESTS)
     add_subdirectory(system/tools/fastdds)
     add_subdirectory(system/tools/fds)
 endif()
+
+install(CODE "set(ANDROID \"${ANDROID}\")")
+install(CODE "set(ANDROID_TESTING_ROOT \"${ANDROID_TESTING_ROOT}\")")
+install(CODE "set(CMAKE_BINARY_DIR \"${CMAKE_BINARY_DIR}\")")
+
+install(SCRIPT ${CMAKE_SOURCE_DIR}/cmake/common/android_ci.cmake)
+
+install(CODE "execute_process(COMMAND adb push ${CMAKE_INSTALL_PREFIX} ${ANDROID_TESTING_ROOT}/install)")
+install(CODE "execute_process(COMMAND adb push ${CMAKE_BINARY_DIR}/test ${ANDROID_TESTING_ROOT})")

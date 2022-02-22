@@ -51,6 +51,12 @@ set(XTYPES_SOURCE
     ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/log/StdoutErrConsumer.cpp
     )
 
+if(ANDROID)
+    list(APPEND XTYPES_SOURCE
+        ${ANDROID_IFADDRS_SOURCE_DIR}/ifaddrs.c
+        )
+endif()
+
 set(XTYPES_TEST_SOURCE
     XTypesTests.cpp
     idl/TypesTypeObject.cxx

@@ -151,6 +151,9 @@ set(TCPV6TESTS_SOURCE
     ${PROJECT_SOURCE_DIR}/src/cpp/utils/md5.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/utils/System.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/utils/TimedConditionVariable.cpp
+    ${PROJECT_SOURCE_DIR}/src/cpp/utils/md5.cpp
+    ${PROJECT_SOURCE_DIR}/src/cpp/utils/System.cpp
+    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/common/Time_t.cpp
     )
 
 if(TLS_FOUND)
@@ -202,6 +205,26 @@ set(SHAREDMEMTESTS_SOURCE
     ${PROJECT_SOURCE_DIR}/src/cpp/utils/md5.cpp
     )
 
+
+if(ANDROID)
+    list(APPEND TCPV6TESTS_SOURCE
+        ${ANDROID_IFADDRS_SOURCE_DIR}/ifaddrs.c
+        )
+    list(APPEND TCPV4TESTS_SOURCE
+        ${ANDROID_IFADDRS_SOURCE_DIR}/ifaddrs.c
+        )
+    list(APPEND UDPV6TESTS_SOURCE
+        ${ANDROID_IFADDRS_SOURCE_DIR}/ifaddrs.c
+        )
+    list(APPEND UDPV4TESTS_SOURCE
+        ${ANDROID_IFADDRS_SOURCE_DIR}/ifaddrs.c
+        )
+    list(APPEND SHAREDMEMTESTS_SOURCE
+        ${ANDROID_IFADDRS_SOURCE_DIR}/ifaddrs.c
+        )
+
+endif()
+
 include_directories(mock/)
 
 add_executable(UDPv4Tests ${UDPV4TESTS_SOURCE})
@@ -217,6 +240,7 @@ target_include_directories(UDPv4Tests PRIVATE
     ${PROJECT_SOURCE_DIR}/test/mock/rtps/ReceiverResource
     ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include
     ${PROJECT_SOURCE_DIR}/src/cpp
+    $<$<BOOL:${ANDROID}>:${ANDROID_IFADDRS_INCLUDE_DIR}>
     )
 target_link_libraries(UDPv4Tests GTest::gtest ${MOCKS})
 if(MSVC OR MSVC_IDE)
@@ -241,6 +265,7 @@ if(NOT DISABLE_UDPV6_TESTS)
         ${PROJECT_SOURCE_DIR}/test/mock/rtps/ReceiverResource
         ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include
         ${PROJECT_SOURCE_DIR}/src/cpp
+	$<$<BOOL:${ANDROID}>:${ANDROID_IFADDRS_INCLUDE_DIR}>
         )
     target_link_libraries(UDPv6Tests GTest::gtest ${MOCKS})
     if(MSVC OR MSVC_IDE)
@@ -264,6 +289,7 @@ if(NOT DISABLE_UDPV6_TESTS)
         ${PROJECT_SOURCE_DIR}/test/mock/rtps/ReceiverResource
         ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include
         ${PROJECT_SOURCE_DIR}/src/cpp
+    	$<$<BOOL:${ANDROID}>:${ANDROID_IFADDRS_INCLUDE_DIR}>
         )
     target_link_libraries(TCPv6Tests GTest::gtest ${MOCKS}
         $<$<BOOL:${TLS_FOUND}>:OpenSSL::SSL$<SEMICOLON>OpenSSL::Crypto>)
@@ -291,6 +317,7 @@ target_include_directories(test_UDPv4Tests PRIVATE
     ${PROJECT_SOURCE_DIR}/test/mock/rtps/ReceiverResource
     ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include
     ${PROJECT_SOURCE_DIR}/src/cpp
+    $<$<BOOL:${ANDROID}>:${ANDROID_IFADDRS_INCLUDE_DIR}>
     )
 target_link_libraries(test_UDPv4Tests GTest::gtest ${MOCKS})
 if(MSVC OR MSVC_IDE)
@@ -316,6 +343,7 @@ target_include_directories(TCPv4Tests PRIVATE
     ${PROJECT_SOURCE_DIR}/test/mock/rtps/ReceiverResource
     ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include
     ${PROJECT_SOURCE_DIR}/src/cpp
+    $<$<BOOL:${ANDROID}>:${ANDROID_IFADDRS_INCLUDE_DIR}>
     )
 target_link_libraries(TCPv4Tests GTest::gtest ${MOCKS}
     $<$<BOOL:${TLS_FOUND}>:OpenSSL::SSL$<SEMICOLON>OpenSSL::Crypto>)
@@ -345,6 +373,7 @@ if(IS_THIRDPARTY_BOOST_OK)
         ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include
         ${PROJECT_SOURCE_DIR}/src/cpp
         ${THIRDPARTY_BOOST_INCLUDE_DIR}
+        $<$<BOOL:${ANDROID}>:${ANDROID_IFADDRS_INCLUDE_DIR}>
         )
     target_link_libraries(SharedMemTests GTest::gtest ${MOCKS}
         $<$<BOOL:${TLS_FOUND}>:OpenSSL::SSL$<SEMICOLON>OpenSSL::Crypto>

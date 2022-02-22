@@ -31,6 +31,13 @@ set(ENTITY_TESTS_SOURCE
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/common/Time_t.cpp
     EntityTests.cpp)
 
+if(ANDROID)
+    list(APPEND ENTITY_TESTS_SOURCE
+        ${ANDROID_IFADDRS_SOURCE_DIR}/ifaddrs.c
+        )
+endif()
+
+
 add_executable(EntityTests ${ENTITY_TESTS_SOURCE})
 target_compile_definitions(EntityTests PRIVATE FASTRTPS_NO_LIB
     $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>

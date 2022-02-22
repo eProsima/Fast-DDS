@@ -97,6 +97,12 @@ set(LISTENERTESTS_SOURCE ListenerTests.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/statistics/fastdds/publisher/qos/DataWriterQos.cpp
     )
 
+if(ANDROID)
+    list(APPEND LISTENERTESTS_SOURCE
+        ${ANDROID_IFADDRS_SOURCE_DIR}/ifaddrs.c
+        )
+endif()
+
 if (FASTDDS_STATISTICS)
 
     set(statistics_sources
@@ -166,6 +172,7 @@ target_include_directories(ListenerTests PRIVATE
     ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include
     ${PROJECT_SOURCE_DIR}/src/cpp
     ${THIRDPARTY_BOOST_INCLUDE_DIR}
+    $<$<BOOL:${ANDROID}>:${ANDROID_IFADDRS_INCLUDE_DIR}>
     )
 
 target_link_libraries(ListenerTests fastcdr foonathan_memory

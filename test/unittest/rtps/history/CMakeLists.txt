@@ -48,6 +48,11 @@ set(TOPICPAYLOADPOOLTESTS_SOURCE
     ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/log/StdoutErrConsumer.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/common/Time_t.cpp)
 
+if(ANDROID)
+    list(APPEND BASICPOOLSTESTS_SOURCE
+        ${ANDROID_IFADDRS_SOURCE_DIR}/ifaddrs.c
+        )
+endif()
 if(WIN32)
     add_definitions(-D_WIN32_WINNT=0x0601)
 endif()

@@ -22,6 +22,18 @@ set(GUID_UTILS_TESTS_SOURCE GuidUtilsTests.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/utils/IPFinder.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/utils/IPLocator.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/utils/md5.cpp)
+
+if(ANDROID)
+    list(APPEND GUID_UTILS_TESTS_SOURCE
+        ${ANDROID_IFADDRS_SOURCE_DIR}/ifaddrs.c
+        )
+    list(APPEND CACHECHANGETESTS_SOURCE
+        ${ANDROID_IFADDRS_SOURCE_DIR}/ifaddrs.c
+        )
+    message(STATUS "foo include dir: ${GUID_UTILS_TESTS_SOURCE}")
+endif()
+
+
 set(SEQUENCENUMBERTESTS_SOURCE SequenceNumberTests.cpp)
 set(PORTPARAMETERSTESTS_SOURCE PortParametersTests.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/log/Log.cpp
@@ -49,6 +61,7 @@ target_compile_definitions(GuidUtilsTests PRIVATE FASTRTPS_NO_LIB
 target_include_directories(GuidUtilsTests PRIVATE
     ${PROJECT_SOURCE_DIR}/src/cpp
     ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include
+    $<$<BOOL:${ANDROID}>:${ANDROID_IFADDRS_INCLUDE_DIR}>
     ${Asio_INCLUDE_DIR})
 target_link_libraries(GuidUtilsTests GTest::gtest)
 if(MSVC OR MSVC_IDE)

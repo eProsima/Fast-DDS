@@ -19,6 +19,12 @@ configure_file(${CMAKE_CURRENT_SOURCE_DIR}/../profiles/test_xml_profiles.xml
 set(PARTICIPANTTESTS_SOURCE ParticipantTests.cpp
     )
 
+if(ANDROID)
+    list(APPEND PARTICIPANTTESTS_SOURCE
+        ${ANDROID_IFADDRS_SOURCE_DIR}/ifaddrs.c
+        )
+endif()
+
 if(WIN32)
     add_definitions(-D_WIN32_WINNT=0x0601)
 endif()

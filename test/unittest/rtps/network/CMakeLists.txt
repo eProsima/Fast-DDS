@@ -63,6 +63,12 @@ if(TLS_FOUND)
         )
 endif()
 
+if(ANDROID)
+    list(APPEND NETWORKFACTORYTESTS_SOURCE
+        ${ANDROID_IFADDRS_SOURCE_DIR}/ifaddrs.c
+        )
+endif()
+
 include_directories(mock/)
 
 add_executable(NetworkFactoryTests ${NETWORKFACTORYTESTS_SOURCE})
@@ -80,6 +86,7 @@ target_include_directories(NetworkFactoryTests PRIVATE
     ${PROJECT_SOURCE_DIR}/test/mock/rtps/ReceiverResource
     ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include
     ${PROJECT_SOURCE_DIR}/src/cpp
+    $<$<BOOL:${ANDROID}>:${ANDROID_IFADDRS_INCLUDE_DIR}>
     )
 target_link_libraries(NetworkFactoryTests fastcdr foonathan_memory
     GTest::gtest ${MOCKS}

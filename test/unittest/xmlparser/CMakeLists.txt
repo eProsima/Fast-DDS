@@ -107,6 +107,12 @@ set(XMLPROFILEPARSER_SOURCE
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/common/Time_t.cpp
     )
 
+if(ANDROID)
+    list(APPEND XMLPROFILEPARSER_SOURCE
+        ${ANDROID_IFADDRS_SOURCE_DIR}/ifaddrs.c
+        )
+endif()
+
 # External sources
 if(TINYXML2_SOURCE_DIR)
     list(APPEND XMLPROFILEPARSER_SOURCE
@@ -134,6 +140,7 @@ target_include_directories(XMLProfileParserTests PRIVATE
     ${PROJECT_SOURCE_DIR}/test/mock/rtps/SharedMemTransportDescriptor
     ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include
     ${Asio_INCLUDE_DIR}
+    $<$<BOOL:${ANDROID}>:${ANDROID_IFADDRS_INCLUDE_DIR}>
     )
 
 target_link_libraries(XMLProfileParserTests GTest::gmock
@@ -202,6 +209,13 @@ if(TINYXML2_SOURCE_DIR)
         )
 endif()
 
+if(ANDROID)
+    list(APPEND XMLPARSER_SOURCE
+        ${ANDROID_IFADDRS_SOURCE_DIR}/ifaddrs.c
+        )
+endif()
+
+
 include_directories(${TINYXML2_INCLUDE_DIR})
 
 add_executable(XMLParserTests ${XMLPARSER_SOURCE})
@@ -222,6 +236,7 @@ target_include_directories(XMLParserTests PRIVATE
     ${PROJECT_SOURCE_DIR}/include
     ${PROJECT_BINARY_DIR}/include
     ${Asio_INCLUDE_DIR}
+    $<$<BOOL:${ANDROID}>:${ANDROID_IFADDRS_INCLUDE_DIR}>
     )
 
 target_link_libraries(XMLParserTests GTest::gtest
@@ -239,6 +254,13 @@ set(XMLTREE_SOURCE
     ${PROJECT_SOURCE_DIR}/src/cpp/utils/string_convert.cpp
     )
 
+if(ANDROID)
+    list(APPEND XMLTREE_SOURCE
+        ${ANDROID_IFADDRS_SOURCE_DIR}/ifaddrs.c
+        )
+endif()
+
+
 include_directories(${TINYXML2_INCLUDE_DIR})
 
 add_executable(XMLTreeTests ${XMLTREE_SOURCE})
@@ -249,6 +271,7 @@ target_compile_definitions(XMLTreeTests PRIVATE FASTRTPS_NO_LIB
 target_include_directories(XMLTreeTests PRIVATE
     ${PROJECT_SOURCE_DIR}/include
     ${PROJECT_BINARY_DIR}/include
+    $<$<BOOL:${ANDROID}>:${ANDROID_IFADDRS_INCLUDE_DIR}>
     )
 
 target_link_libraries(XMLTreeTests GTest::gtest
@@ -315,6 +338,12 @@ if(TINYXML2_SOURCE_DIR)
         )
 endif()
 
+if(ANDROID)
+    list(APPEND XMLENDPOINTPARSERTESTS_SOURCE
+        ${ANDROID_IFADDRS_SOURCE_DIR}/ifaddrs.c
+        )
+endif()
+
 include_directories(${TINYXML2_INCLUDE_DIR})
 
 add_executable(XMLEndpointParserTests ${XMLENDPOINTPARSERTESTS_SOURCE})
@@ -328,6 +357,7 @@ target_include_directories(XMLEndpointParserTests PRIVATE
     ${PROJECT_SOURCE_DIR}/include
     ${PROJECT_BINARY_DIR}/include
     ${Asio_INCLUDE_DIR}
+    $<$<BOOL:${ANDROID}>:${ANDROID_IFADDRS_INCLUDE_DIR}>
     )
 
 target_link_libraries(XMLEndpointParserTests GTest::gtest

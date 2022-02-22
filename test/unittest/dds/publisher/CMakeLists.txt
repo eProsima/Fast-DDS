@@ -189,6 +189,15 @@ set(DATAWRITERTESTS_SOURCE DataWriterTests.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/utils/SystemInfo.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/utils/TimedConditionVariable.cpp
     )
+if(ANDROID)
+    list(APPEND PUBLISHERTESTS_SOURCE
+        ${ANDROID_IFADDRS_SOURCE_DIR}/ifaddrs.c
+        )
+    list(APPEND DATAWRITERTESTS_SOURCE
+        ${ANDROID_IFADDRS_SOURCE_DIR}/ifaddrs.c
+        )
+
+endif()
 
     if (FASTDDS_STATISTICS)
 
@@ -312,6 +321,7 @@ target_include_directories(DataWriterTests PRIVATE
     ${Asio_INCLUDE_DIR}
     ${PROJECT_SOURCE_DIR}/src/cpp
     ${THIRDPARTY_BOOST_INCLUDE_DIR}
+    $<$<BOOL:${ANDROID}>:${ANDROID_IFADDRS_INCLUDE_DIR}>
     )
 target_link_libraries(DataWriterTests fastcdr foonathan_memory
     GTest::gmock
