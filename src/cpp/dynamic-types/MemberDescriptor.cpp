@@ -24,12 +24,12 @@ namespace fastrtps {
 namespace types {
 
 MemberDescriptor::MemberDescriptor()
-: name_("")
-, id_(MEMBER_ID_INVALID)
-, type_(nullptr)
-, default_value_("")
-, index_(INDEX_INVALID)
-, default_label_(false)
+    : name_("")
+    , id_(MEMBER_ID_INVALID)
+    , type_(nullptr)
+    , default_value_("")
+    , index_(INDEX_INVALID)
+    , default_label_(false)
 {
 }
 
@@ -45,13 +45,14 @@ MemberDescriptor::MemberDescriptor(
 {
 }
 
-MemberDescriptor::MemberDescriptor(const MemberDescriptor* descriptor)
-: name_("")
-, id_(MEMBER_ID_INVALID)
-, type_(nullptr)
-, default_value_("")
-, index_(INDEX_INVALID)
-, default_label_(false)
+MemberDescriptor::MemberDescriptor(
+        const MemberDescriptor* descriptor)
+    : name_("")
+    , id_(MEMBER_ID_INVALID)
+    , type_(nullptr)
+    , default_value_("")
+    , index_(INDEX_INVALID)
+    , default_label_(false)
 {
     copy_from(descriptor);
 }
@@ -111,12 +112,14 @@ MemberDescriptor::~MemberDescriptor()
     type_ = nullptr;
 }
 
-void MemberDescriptor::add_union_case_index(uint64_t value)
+void MemberDescriptor::add_union_case_index(
+        uint64_t value)
 {
     labels_.push_back(value);
 }
 
-bool MemberDescriptor::check_union_labels(const std::vector<uint64_t>& labels) const
+bool MemberDescriptor::check_union_labels(
+        const std::vector<uint64_t>& labels) const
 {
     for (auto it = labels.begin(); it != labels.end(); ++it)
     {
@@ -128,7 +131,8 @@ bool MemberDescriptor::check_union_labels(const std::vector<uint64_t>& labels) c
     return true;
 }
 
-ReturnCode_t MemberDescriptor::copy_from(const MemberDescriptor* other)
+ReturnCode_t MemberDescriptor::copy_from(
+        const MemberDescriptor* other)
 {
     if (other != nullptr)
     {
@@ -169,17 +173,21 @@ ReturnCode_t MemberDescriptor::copy_from(const MemberDescriptor* other)
     }
 }
 
-bool MemberDescriptor::equals(const MemberDescriptor* other) const
+bool MemberDescriptor::equals(
+        const MemberDescriptor* other) const
 {
     if (other != nullptr && name_ == other->name_ && id_ == other->id_ &&
-        ((type_ == nullptr && other->type_ == nullptr) || type_->equals(other->type_.get())) &&
-        default_value_ == other->default_value_ && index_ == other->index_ && default_label_ == other->default_label_ &&
-        labels_.size() == other->labels_.size())
+            ((type_ == nullptr && other->type_ == nullptr) || type_->equals(other->type_.get())) &&
+            default_value_ == other->default_value_ && index_ == other->index_ &&
+            default_label_ == other->default_label_ &&
+            labels_.size() == other->labels_.size())
     {
         for (auto it = labels_.begin(), it2 = other->labels_.begin(); it != labels_.end(); ++it, ++it2)
         {
             if (*it != *it2)
+            {
                 return false;
+            }
         }
         return true;
     }
@@ -215,7 +223,8 @@ std::vector<uint64_t> MemberDescriptor::get_union_labels() const
     return labels_;
 }
 
-bool MemberDescriptor::is_consistent(TypeKind parentKind) const
+bool MemberDescriptor::is_consistent(
+        TypeKind parentKind) const
 {
     // The type field is mandatory in every type except bitmasks and enums.
     if ((parentKind != TK_BITMASK && parentKind != TK_ENUM) && type_ == nullptr)
@@ -225,7 +234,7 @@ bool MemberDescriptor::is_consistent(TypeKind parentKind) const
 
     // Only aggregated types must use the ID value.
     if (id_ != MEMBER_ID_INVALID && parentKind != TK_UNION && parentKind != TK_STRUCTURE &&
-        parentKind != TK_BITSET && parentKind != TK_ANNOTATION)
+            parentKind != TK_BITSET && parentKind != TK_ANNOTATION)
     {
         return false;
     }
@@ -259,7 +268,8 @@ bool MemberDescriptor::is_default_union_value() const
     return default_label_;
 }
 
-bool MemberDescriptor::is_default_value_consistent(const std::string& sDefaultValue) const
+bool MemberDescriptor::is_default_value_consistent(
+        const std::string& sDefaultValue) const
 {
     if (sDefaultValue.length() > 0)
     {
@@ -267,109 +277,124 @@ bool MemberDescriptor::is_default_value_consistent(const std::string& sDefaultVa
         {
             switch (get_kind())
             {
-            default:
-                return true;
-            case TK_INT32:
-            {
-                int32_t value(0);
-                value = stoi(sDefaultValue);
-                (void)value;
-            }
-            break;
-            case TK_UINT32:
-            {
-                uint32_t value(0);
-                value = stoul(sDefaultValue);
-                (void)value;
-            }
-            break;
-            case TK_INT16:
-            {
-                int16_t value(0);
-                value = static_cast<int16_t>(stoi(sDefaultValue));
-                (void)value;
-            }
-            break;
-            case TK_UINT16:
-            {
-                uint16_t value(0);
-                value = static_cast<uint16_t>(stoul(sDefaultValue));
-                (void)value;
-            }
-            break;
-            case TK_INT64:
-            {
-                int64_t value(0);
-                value = stoll(sDefaultValue);
-                (void)value;
-            }
-            break;
-            case TK_UINT64:
-            {
-                uint64_t value(0);
-                value = stoul(sDefaultValue);
-                (void)value;
-            }
-            break;
-            case TK_FLOAT32:
-            {
-                float value(0.0f);
-                value = stof(sDefaultValue);
-                (void)value;
-            }
-            break;
-            case TK_FLOAT64:
-            {
-                double value(0.0f);
-                value = stod(sDefaultValue);
-                (void)value;
-            }
-            break;
-            case TK_FLOAT128:
-            {
-                long double value(0.0f);
-                value = stold(sDefaultValue);
-                (void)value;
-            }
-            break;
-            case TK_CHAR8: {   return sDefaultValue.length() >= 1; }
-            case TK_CHAR16:
-            {
-                std::wstring temp = std::wstring(sDefaultValue.begin(), sDefaultValue.end());
-                (void)temp;
-            }
-            break;
-            case TK_BOOLEAN:
-            {
-                if (sDefaultValue == CONST_TRUE || sDefaultValue == CONST_FALSE)
+                default:
+                    return true;
+                case TK_INT32:
                 {
+                    int32_t value(0);
+                    value = stoi(sDefaultValue);
+                    (void)value;
+                }
+                break;
+                case TK_UINT32:
+                {
+                    uint32_t value(0);
+                    value = stoul(sDefaultValue);
+                    (void)value;
+                }
+                break;
+                case TK_INT16:
+                {
+                    int16_t value(0);
+                    value = static_cast<int16_t>(stoi(sDefaultValue));
+                    (void)value;
+                }
+                break;
+                case TK_UINT16:
+                {
+                    uint16_t value(0);
+                    value = static_cast<uint16_t>(stoul(sDefaultValue));
+                    (void)value;
+                }
+                break;
+                case TK_INT64:
+                {
+                    int64_t value(0);
+                    value = stoll(sDefaultValue);
+                    (void)value;
+                }
+                break;
+                case TK_UINT64:
+                {
+                    uint64_t value(0);
+                    value = stoul(sDefaultValue);
+                    (void)value;
+                }
+                break;
+                case TK_FLOAT32:
+                {
+                    float value(0.0f);
+                    value = stof(sDefaultValue);
+                    (void)value;
+                }
+                break;
+                case TK_FLOAT64:
+                {
+                    double value(0.0f);
+                    value = stod(sDefaultValue);
+                    (void)value;
+                }
+                break;
+                case TK_FLOAT128:
+                {
+                    long double value(0.0f);
+                    value = stold(sDefaultValue);
+                    (void)value;
+                }
+                break;
+                case TK_CHAR8: {
+                    return sDefaultValue.length() >= 1;
+                }
+                case TK_CHAR16:
+                {
+                    std::wstring temp = std::wstring(sDefaultValue.begin(), sDefaultValue.end());
+                    (void)temp;
+                }
+                break;
+                case TK_BOOLEAN:
+                {
+                    if (sDefaultValue == CONST_TRUE || sDefaultValue == CONST_FALSE)
+                    {
+                        return true;
+                    }
+                    int value(0);
+                    value = stoi(sDefaultValue);
+                    (void)value;
+                }
+                break;
+                case TK_BYTE: {
+                    return sDefaultValue.length() >= 1;
+                }
+                break;
+                case TK_STRING16: {
                     return true;
                 }
-                int value(0);
-                value = stoi(sDefaultValue);
-                (void)value;
-            }
-            break;
-            case TK_BYTE: {   return sDefaultValue.length() >= 1; }   break;
-            case TK_STRING16: {   return true;    }
-            case TK_STRING8: {   return true;    }
-            case TK_ENUM:
-            {
-                uint32_t value(0);
-                value = stoul(sDefaultValue);
-                (void)value;
-            }
-            break;
-            case TK_BITMASK:
-            {
-                int value(0);
-                value = stoi(sDefaultValue);
-                (void)value;
-            }
-            break;
-            case TK_ARRAY: {   return true;    }
-            case TK_SEQUENCE: {   return true;    }
-            case TK_MAP: {   return true;    }
+                case TK_STRING8: {
+                    return true;
+                }
+                case TK_ENUM:
+                {
+                    uint32_t value(0);
+                    value = stoul(sDefaultValue);
+                    (void)value;
+                }
+                break;
+                case TK_BITMASK:
+                {
+                    int value(0);
+                    value = stoi(sDefaultValue);
+                    (void)value;
+                }
+                break;
+                case TK_ARRAY: {
+                    return true;
+                }
+                case TK_SEQUENCE: {
+                    return true;
+                }
+                case TK_MAP: {
+                    return true;
+                }
             }
         }
         catch (...)
@@ -380,7 +405,8 @@ bool MemberDescriptor::is_default_value_consistent(const std::string& sDefaultVa
     return true;
 }
 
-bool MemberDescriptor::is_type_name_consistent(const std::string& sName) const
+bool MemberDescriptor::is_type_name_consistent(
+        const std::string& sName) const
 {
     // The first letter must start with a letter ( uppercase or lowercase )
     if (sName.length() > 0 && std::isalpha(sName[0]))
@@ -398,27 +424,32 @@ bool MemberDescriptor::is_type_name_consistent(const std::string& sName) const
     return false;
 }
 
-void MemberDescriptor::set_id(MemberId id)
+void MemberDescriptor::set_id(
+        MemberId id)
 {
     id_ = id;
 }
 
-void MemberDescriptor::set_index(uint32_t index)
+void MemberDescriptor::set_index(
+        uint32_t index)
 {
     index_ = index;
 }
 
-void MemberDescriptor::set_name(const std::string& name)
+void MemberDescriptor::set_name(
+        const std::string& name)
 {
     name_ = name;
 }
 
-void MemberDescriptor::set_type(DynamicType_ptr type)
+void MemberDescriptor::set_type(
+        DynamicType_ptr type)
 {
     type_ = type;
 }
 
-void MemberDescriptor::set_default_union_value(bool bDefault)
+void MemberDescriptor::set_default_union_value(
+        bool bDefault)
 {
     default_label_ = bDefault;
 }
@@ -548,7 +579,8 @@ uint16_t MemberDescriptor::annotation_get_position() const
 }
 
 // Annotations setters
-void MemberDescriptor::annotation_set_optional(bool optional)
+void MemberDescriptor::annotation_set_optional(
+        bool optional)
 {
     AnnotationDescriptor* ann = get_annotation(ANNOTATION_OPTIONAL_ID);
     if (ann == nullptr)
@@ -562,7 +594,8 @@ void MemberDescriptor::annotation_set_optional(bool optional)
     ann->set_value("value", optional ? "true" : "false");
 }
 
-void MemberDescriptor::annotation_set_key(bool key)
+void MemberDescriptor::annotation_set_key(
+        bool key)
 {
     AnnotationDescriptor* ann = get_annotation(ANNOTATION_KEY_ID);
     if (ann == nullptr)
@@ -576,7 +609,8 @@ void MemberDescriptor::annotation_set_key(bool key)
     ann->set_value("value", key ? "true" : "false");
 }
 
-void MemberDescriptor::annotation_set_must_understand(bool must_understand)
+void MemberDescriptor::annotation_set_must_understand(
+        bool must_understand)
 {
     AnnotationDescriptor* ann = get_annotation(ANNOTATION_MUST_UNDERSTAND_ID);
     if (ann == nullptr)
@@ -591,7 +625,8 @@ void MemberDescriptor::annotation_set_must_understand(bool must_understand)
     ann->set_value("value", must_understand ? "true" : "false");
 }
 
-void MemberDescriptor::annotation_set_non_serialized(bool non_serialized)
+void MemberDescriptor::annotation_set_non_serialized(
+        bool non_serialized)
 {
     AnnotationDescriptor* ann = get_annotation(ANNOTATION_NON_SERIALIZED_ID);
     if (ann == nullptr)
@@ -606,7 +641,8 @@ void MemberDescriptor::annotation_set_non_serialized(bool non_serialized)
     ann->set_value("value", non_serialized ? "true" : "false");
 }
 
-void MemberDescriptor::annotation_set_value(const std::string& value)
+void MemberDescriptor::annotation_set_value(
+        const std::string& value)
 {
     AnnotationDescriptor* ann = get_annotation(ANNOTATION_VALUE_ID);
     if (ann == nullptr)
@@ -635,7 +671,8 @@ void MemberDescriptor::annotation_set_default_literal()
     ann->set_value("value", "true");
 }
 
-void MemberDescriptor::annotation_set_position(uint16_t position)
+void MemberDescriptor::annotation_set_position(
+        uint16_t position)
 {
     AnnotationDescriptor* ann = get_annotation(ANNOTATION_POSITION_ID);
     if (ann == nullptr)
@@ -649,7 +686,8 @@ void MemberDescriptor::annotation_set_position(uint16_t position)
     ann->set_value("value", std::to_string(position));
 }
 
-void MemberDescriptor::annotation_set_default(const std::string& default_value)
+void MemberDescriptor::annotation_set_default(
+        const std::string& default_value)
 {
     AnnotationDescriptor* ann = get_annotation(ANNOTATION_DEFAULT_ID);
     if (ann == nullptr)
@@ -682,7 +720,8 @@ uint16_t MemberDescriptor::annotation_get_bit_bound() const
     return 32; // Default value
 }
 
-void MemberDescriptor::annotation_set_bit_bound(uint16_t bit_bound)
+void MemberDescriptor::annotation_set_bit_bound(
+        uint16_t bit_bound)
 {
     AnnotationDescriptor* ann = get_annotation(ANNOTATION_BIT_BOUND_ID);
     if (ann == nullptr)
@@ -696,7 +735,8 @@ void MemberDescriptor::annotation_set_bit_bound(uint16_t bit_bound)
     ann->set_value("value", std::to_string(bit_bound));
 }
 
-ReturnCode_t MemberDescriptor::apply_annotation(AnnotationDescriptor& descriptor)
+ReturnCode_t MemberDescriptor::apply_annotation(
+        AnnotationDescriptor& descriptor)
 {
     if (descriptor.is_consistent())
     {
@@ -733,11 +773,12 @@ ReturnCode_t MemberDescriptor::apply_annotation(
     return ReturnCode_t::RETCODE_OK;
 }
 
-AnnotationDescriptor* MemberDescriptor::get_annotation(const std::string& name) const
+AnnotationDescriptor* MemberDescriptor::get_annotation(
+        const std::string& name) const
 {
     auto it = annotation_.begin();
 
-    for(; it != annotation_.end(); ++it)
+    for (; it != annotation_.end(); ++it)
     {
         AnnotationDescriptor* ann = *it;
         if (ann->type()->get_name().compare(name) == 0)
