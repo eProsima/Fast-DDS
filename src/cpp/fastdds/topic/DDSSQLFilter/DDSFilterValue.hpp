@@ -40,19 +40,20 @@ struct DDSFilterValue
 
     /**
      * The high-level kind of a DDSFilterValue.
+     * Please note that the constants here should follow the promotion order.
      */
     enum class ValueKind
     {
         BOOLEAN,            ///< Value is a bool
-        CHAR,               ///< Value is a char
+        ENUM,               ///< Value is an int32_t with the value of an enumeration
         SIGNED_INTEGER,     ///< Value is a int16_t, int32_t, or int64_t
         UNSIGNED_INTEGER,   ///< Value is a uint8_t, uint16_t, uint32_t, or uint64_t
         FLOAT_CONST,        ///< Value is a long double constant
         FLOAT_FIELD,        ///< Value is a float field
         DOUBLE_FIELD,       ///< Value is a double field
         LONG_DOUBLE_FIELD,  ///< Value is a long double field
-        STRING,             ///< Value is a string
-        ENUM                ///< Value is an int32_t with the value of an enumeration
+        CHAR,               ///< Value is a char
+        STRING              ///< Value is a string
     };
 
     /// The kind of value held by this DDSFilterValue
