@@ -29,6 +29,8 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER) AND fastcdr_FOUND)
         $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG>
         )
     target_link_libraries(DDSParticipantDiscovery fastrtps ${CMAKE_DL_LIBS})
+    set_property(TARGET DDSParticipantDiscovery PROPERTY CROSSCOMPILING_EMULATOR "adb;shell;cd;${CMAKE_CURRENT_BINARY_DIR}; ;&&;LD_LIBRARY_PATH=${ANDROID_TESTING_ROOT}/install/lib")
+
 
     ###########################################################################
     # Necessary files

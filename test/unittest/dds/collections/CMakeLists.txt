@@ -31,4 +31,6 @@ target_compile_definitions(LoanableSequenceTests PRIVATE FASTRTPS_NO_LIB
 target_include_directories(LoanableSequenceTests PRIVATE
     ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include)
 target_link_libraries(LoanableSequenceTests GTest::gtest)
+set_property(TARGET LoanableSequenceTests PROPERTY CROSSCOMPILING_EMULATOR "adb;shell;cd;${CMAKE_CURRENT_BINARY_DIR}; ;&&;LD_LIBRARY_PATH=${ANDROID_TESTING_ROOT}/install/lib")
+
 add_gtest(LoanableSequenceTests SOURCES ${LOANABLE_SEQUENCE_TESTS_SOURCE})

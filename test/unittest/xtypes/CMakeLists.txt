@@ -85,4 +85,6 @@ if(MSVC OR MSVC_IDE)
 else()
     target_link_libraries(XTypesTests ${PRIVACY} fastcdr)
 endif()
+set_property(TARGET XTypesTests PROPERTY CROSSCOMPILING_EMULATOR "adb;shell;cd;${CMAKE_CURRENT_BINARY_DIR}; ;&&;LD_LIBRARY_PATH=${ANDROID_TESTING_ROOT}/install/lib")
+
 add_gtest(XTypesTests SOURCES ${XTYPES_TEST_SOURCE})

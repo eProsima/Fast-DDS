@@ -8,6 +8,8 @@ target_compile_definitions(user_thread_nonblocked_test PRIVATE
     $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
     )
 target_link_libraries(user_thread_nonblocked_test mutex_testing_tool fastrtps fastcdr GTest::gtest)
+set_property(TARGET user_thread_nonblocked_test PROPERTY CROSSCOMPILING_EMULATOR "adb;shell;cd;${CMAKE_CURRENT_BINARY_DIR}; ;&&;LD_LIBRARY_PATH=${ANDROID_TESTING_ROOT}/install/lib")
+
 
 STRING(REPLACE " " "\\ " MUTEX_PRELOAD_LIBRARY_FILE "$<TARGET_FILE:mutex_testing_tool_preload>")
 add_gtest(NAME UserThreadNonBlockedTest COMMAND user_thread_nonblocked_test SOURCES ${USER_THREAD_NONBLOCKED_TEST}
@@ -21,6 +23,8 @@ set(TIMED_CONDITION_VARIABLE_UNIT_TEST_SOURCE TimedConditionVariableUnitTest.cpp
 
 add_executable(TimedConditionVariableUnitTest ${TIMED_CONDITION_VARIABLE_UNIT_TEST_SOURCE})
 target_link_libraries(TimedConditionVariableUnitTest fastrtps GTest::gtest)
+set_property(TARGET TimedConditionVariableUnitTest PROPERTY CROSSCOMPILING_EMULATOR "adb;shell;cd;${CMAKE_CURRENT_BINARY_DIR}; ;&&;LD_LIBRARY_PATH=${ANDROID_TESTING_ROOT}/install/lib")
+
 add_gtest(NAME TimedConditionVariableUnitTest COMMAND TimedConditionVariableUnitTest
     SOURCES ${TIMED_CONDITION_VARIABLE_UNIT_TEST_SOURCE}
     )

@@ -131,6 +131,8 @@ if(GST_FOUND)
             ${GST_LIBRARIES}
             gstapp-1.0
         )
+        set_property(TARGET VideoTest PROPERTY CROSSCOMPILING_EMULATOR "adb;shell;cd;${CMAKE_CURRENT_BINARY_DIR}; ;&&;LD_LIBRARY_PATH=${ANDROID_TESTING_ROOT}/install/lib")
+
     endif()
 
     ###########################################################################
