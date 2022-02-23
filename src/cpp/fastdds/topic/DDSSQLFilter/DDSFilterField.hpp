@@ -26,6 +26,7 @@
 #include <fastdds/rtps/common/SerializedPayload.h>
 #include <fastrtps/types/DynamicData.h>
 #include <fastrtps/types/TypeObject.h>
+#include <fastrtps/types/TypesBase.h>
 
 #include "DDSFilterPredicate.hpp"
 #include "DDSFilterValue.hpp"
@@ -116,7 +117,7 @@ struct DDSFilterField final : public DDSFilterValue
         bool last_step = access_path_.size() - 1 == n;
         bool ret = false;
 
-        if (access_path_[n].array_index < std::numeric_limits<MemberId>::max())
+        if (access_path_[n].array_index < MEMBER_ID_INVALID)
         {
             DynamicData* array_data = data.loan_value(member_id);
             if (nullptr != array_data)
