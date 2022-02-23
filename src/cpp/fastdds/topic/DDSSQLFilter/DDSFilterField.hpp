@@ -132,7 +132,7 @@ struct DDSFilterField final : public DDSFilterValue
                     if (nullptr != struct_data)
                     {
                         ret = set_value(*struct_data, n + 1);
-                        data.return_loaned_value(struct_data);
+                        array_data->return_loaned_value(struct_data);
                     }
                 }
                 data.return_loaned_value(array_data);
