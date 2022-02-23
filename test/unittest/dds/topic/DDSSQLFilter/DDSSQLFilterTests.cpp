@@ -1191,6 +1191,20 @@ protected:
 
     DDSFilterFactory uut;
     ContentFilterTestTypePubSubType type_support;
+
+    template<typename T>
+    void perform_basic_check(
+            const IContentFilter* filter_instance,
+            const T& results,
+            const std::vector<std::unique_ptr<IContentFilter::SerializedPayload>>& values)
+    {
+        for (size_t i = 0; i < values.size(); ++i)
+        {
+            IContentFilter::FilterSampleInfo info;
+            IContentFilter::GUID_t guid;
+            EXPECT_EQ(results[i], filter_instance->evaluate(*values[i], info, guid)) << "with i = " << i;
+        }
+    }
 };
 
 TEST_P(DDSSQLFilterValueTests, test_filtered_value)
@@ -1205,12 +1219,7 @@ TEST_P(DDSSQLFilterValueTests, test_filtered_value)
     EXPECT_EQ(ReturnCode_t::RETCODE_OK, ret);
     ASSERT_NE(nullptr, filter_instance);
 
-    for (size_t i = 0; i < values.size(); ++i)
-    {
-        IContentFilter::FilterSampleInfo info;
-        IContentFilter::GUID_t guid;
-        EXPECT_EQ(results[i], filter_instance->evaluate(*values[i], info, guid)) << "with i = " << i;
-    }
+    perform_basic_check(filter_instance, results, values);
 
     ret = uut.delete_content_filter("DDSSQL", filter_instance);
     EXPECT_EQ(ReturnCode_t::RETCODE_OK, ret);
@@ -1277,13 +1286,7 @@ TEST_F(DDSSQLFilterValueTests, test_compound_and)
     std::array<bool, 5> results{false, true, false, false, false};
 
     ASSERT_EQ(results.size(), values.size());
-
-    for (size_t i = 0; i < values.size(); ++i)
-    {
-        IContentFilter::FilterSampleInfo info;
-        IContentFilter::GUID_t guid;
-        EXPECT_EQ(results[i], filter->evaluate(*values[i], info, guid)) << "with i = " << i;
-    }
+    perform_basic_check(filter, results, values);
 
     ret = uut.delete_content_filter("DDSSQL", filter);
     EXPECT_EQ(ReturnCode_t::RETCODE_OK, ret);
@@ -1302,13 +1305,65 @@ TEST_F(DDSSQLFilterValueTests, test_compound_or)
     std::array<bool, 5> results{false, true, true, true, true};
 
     ASSERT_EQ(results.size(), values.size());
+    perform_basic_check(filter, results, values);
 
-    for (size_t i = 0; i < values.size(); ++i)
-    {
-        IContentFilter::FilterSampleInfo info;
-        IContentFilter::GUID_t guid;
-        EXPECT_EQ(results[i], filter->evaluate(*values[i], info, guid)) << "with i = " << i;
-    }
+    ret = uut.delete_content_filter("DDSSQL", filter);
+    EXPECT_EQ(ReturnCode_t::RETCODE_OK, ret);
+}
+
+TEST_F(DDSSQLFilterValueTests, test_update_params)
+{
+    static const std::string expression = "string_field MATCH %0 OR string_field LIKE %1";
+
+    IContentFilter* filter = nullptr;
+    auto ret = create_content_filter(uut, expression, { "'BBB'", "'X'" }, &type_support, filter);
+    EXPECT_EQ(ReturnCode_t::RETCODE_OK, ret);
+    ASSERT_NE(nullptr, filter);
+
+    const auto& values = DDSSQLFilterValueGlobalData::values();
+    std::array<bool, 5> results{false, false, false, false, false};
+
+    ASSERT_EQ(results.size(), values.size());
+    perform_basic_check(filter, results, values);
+
+    StackAllocatedSequence<const char*, 2> params;
+    params.length(2);
+
+    // Change %0 to a wrong parameter should preserve filter state and results
+    params[0] = "'Z??"; // Wrong (missing ending quote)
+    params[1] = "'X'";  // Unchanged
+    ret = uut.create_content_filter("DDSSQL", "ContentFilterTestType", &type_support, nullptr, params, filter);
+    EXPECT_EQ(ReturnCode_t::RETCODE_BAD_PARAMETER, ret);
+    perform_basic_check(filter, results, values);
+
+    // Change %0 to a wrong parameter should preserve filter state and results
+    params[0] = "'Z??"; // Wrong (missing ending quote)
+    params[1] = "'%'";   // Changed
+    ret = uut.create_content_filter("DDSSQL", "ContentFilterTestType", &type_support, nullptr, params, filter);
+    EXPECT_EQ(ReturnCode_t::RETCODE_BAD_PARAMETER, ret);
+    perform_basic_check(filter, results, values);
+
+    // Change %1 to a wrong parameter should preserve filter state and results
+    params[0] = "'BBB'"; // Unchanged
+    params[1] = "'";  // Wrong (missing ending quote)
+    ret = uut.create_content_filter("DDSSQL", "ContentFilterTestType", &type_support, nullptr, params, filter);
+    EXPECT_EQ(ReturnCode_t::RETCODE_BAD_PARAMETER, ret);
+    perform_basic_check(filter, results, values);
+
+    // Change %1 to a wrong parameter should preserve filter state and results
+    params[0] = "'.*'"; // Changed
+    params[1] = "'";  // Wrong (missing ending quote)
+    ret = uut.create_content_filter("DDSSQL", "ContentFilterTestType", &type_support, nullptr, params, filter);
+    EXPECT_EQ(ReturnCode_t::RETCODE_BAD_PARAMETER, ret);
+    perform_basic_check(filter, results, values);
+
+    // Correctly changing both parameters should change results
+    params[0] = "'Z..'"; // Only last value matches
+    params[1] = "''";  // Only first value matches
+    results[0] = results[4] = true;
+    ret = uut.create_content_filter("DDSSQL", "ContentFilterTestType", &type_support, nullptr, params, filter);
+    EXPECT_EQ(ReturnCode_t::RETCODE_OK, ret);
+    perform_basic_check(filter, results, values);
 
     ret = uut.delete_content_filter("DDSSQL", filter);
     EXPECT_EQ(ReturnCode_t::RETCODE_OK, ret);
