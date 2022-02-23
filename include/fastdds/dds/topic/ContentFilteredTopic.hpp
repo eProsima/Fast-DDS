@@ -49,7 +49,9 @@ private:
 
     RTPS_DllAPI ContentFilteredTopic(
             const std::string& name,
-            Topic* related_topic);
+            Topic* related_topic,
+            const std::string& filter_expression,
+            const std::vector<std::string>& expression_parameters);
 
 public:
 
