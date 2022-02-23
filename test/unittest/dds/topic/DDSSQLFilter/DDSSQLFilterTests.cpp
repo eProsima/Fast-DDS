@@ -888,35 +888,19 @@ private:
     void add_string_values(
             std::array<ContentFilterTestType, 5>& data)
     {
-        data[0].string_field("");
-        data[0].struct_field().string_field("");
-        data[0].array_string_field()[0] = "";
-        data[0].bounded_sequence_string_field().push_back("");
-        data[0].unbounded_sequence_string_field().push_back("");
+        std::array<std::string, 5> values{ "", "   ", " AA", " AZ", "ZZZ"};
 
-        data[1].string_field("   ");
-        data[1].struct_field().string_field("   ");
-        data[1].array_string_field()[0] = "   ";
-        data[1].bounded_sequence_string_field().push_back("   ");
-        data[1].unbounded_sequence_string_field().push_back("   ");
-
-        data[2].string_field(" AA");
-        data[2].struct_field().string_field(" AA");
-        data[2].array_string_field()[0] = " AA";
-        data[2].bounded_sequence_string_field().push_back(" AA");
-        data[2].unbounded_sequence_string_field().push_back(" AA");
-
-        data[3].string_field(" AZ");
-        data[3].struct_field().string_field(" AZ");
-        data[3].array_string_field()[0] = " AZ";
-        data[3].bounded_sequence_string_field().push_back(" AZ");
-        data[3].unbounded_sequence_string_field().push_back(" AZ");
-
-        data[4].string_field("ZZZ");
-        data[4].struct_field().string_field("ZZZ");
-        data[4].array_string_field()[0] = "ZZZ";
-        data[4].bounded_sequence_string_field().push_back("ZZZ");
-        data[4].unbounded_sequence_string_field().push_back("ZZZ");
+        for (size_t i = 0; i < values.size(); ++i)
+        {
+            data[i].string_field(values[i]);
+            data[i].struct_field().string_field(values[i]);
+            data[i].array_struct_field()[0].string_field(values[i]);
+            data[i].bounded_sequence_struct_field()[0].string_field(values[i]);
+            data[i].unbounded_sequence_struct_field()[0].string_field(values[i]);
+            data[i].array_string_field()[0] = values[i];
+            data[i].bounded_sequence_string_field().push_back(values[i]);
+            data[i].unbounded_sequence_string_field().push_back(values[i]);
+        }
     }
 
     void add_enum_values(
