@@ -163,7 +163,7 @@ struct DDSFilterField final : public DDSFilterValue
             // Inform parent predicates
             for (DDSFilterPredicate* parent : parents_)
             {
-                parent->value_has_changed(*this);
+                parent->value_has_changed();
             }
         }
 

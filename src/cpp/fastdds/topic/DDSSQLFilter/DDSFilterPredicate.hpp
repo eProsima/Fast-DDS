@@ -65,11 +65,8 @@ struct DDSFilterPredicate final : public DDSFilterCondition
 
     /**
      * Called when the value of an operand is changed.
-     *
-     * @param[in]  value  The DDSFilterValue that changed.
      */
-    void value_has_changed(
-            const DDSFilterValue& value);
+    void value_has_changed();
 
 protected:
 

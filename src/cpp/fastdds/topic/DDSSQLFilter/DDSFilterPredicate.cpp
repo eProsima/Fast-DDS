@@ -52,11 +52,8 @@ DDSFilterPredicate::DDSFilterPredicate(
     }
 }
 
-void DDSFilterPredicate::value_has_changed(
-        const DDSFilterValue& value)
+void DDSFilterPredicate::value_has_changed()
 {
-    static_cast<void>(value);
-
     if (left_->has_value() && right_->has_value())
     {
         switch (op_)
