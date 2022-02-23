@@ -28,10 +28,8 @@
 #include <fastrtps/types/DynamicData.h>
 #include <fastrtps/types/DynamicDataFactory.h>
 #include <fastrtps/types/DynamicTypePtr.h>
-#include <fastcdr/Cdr.h>
 
 #include "DDSFilterCondition.hpp"
-
 #include "DDSFilterField.hpp"
 #include "DDSFilterParameter.hpp"
 
@@ -48,59 +46,20 @@ struct DDSFilterExpression final : public IContentFilter
     bool evaluate(
             const SerializedPayload& payload,
             const FilterSampleInfo& sample_info,
-            const GUID_t& reader_guid) const final
-    {
-        static_cast<void>(sample_info);
-        static_cast<void>(reader_guid);
-
-        using namespace eprosima::fastrtps::types;
-        using namespace eprosima::fastcdr;
-
-        dyn_data_->clear_all_values();
-        try
-        {
-            FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
-            Cdr deser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN, eprosima::fastcdr::Cdr::DDS_CDR);
-            deser.read_encapsulation();
-            dyn_data_->deserialize(deser);
-        }
-        catch (eprosima::fastcdr::exception::NotEnoughMemoryException& /*exception*/)
-        {
-            return false;
-        }
-
-        root->reset();
-        for (auto it = fields.begin();
-                it != fields.end() && DDSFilterConditionState::UNDECIDED == root->get_state();
-                ++it)
-        {
-            if (!it->second->set_value(*dyn_data_))
-            {
-                return false;
-            }
-        }
-
-        return DDSFilterConditionState::RESULT_TRUE == root->get_state();
-    }
+            const GUID_t& reader_guid) const final;
 
     /**
      * Clear the information held by this object.
      */
-    void clear()
-    {
-        dyn_data_.reset();
-        dyn_type_.reset();
-        parameters.clear();
-        fields.clear();
-        root.reset();
-    }
+    void clear();
 
+    /**
+     * Set the DynamicType to be used when evaluating this expression.
+     *
+     * @param [in] type  The DynamicType to assign.
+     */
     void set_type(
-            const eprosima::fastrtps::types::DynamicType_ptr& type)
-    {
-        dyn_type_ = type;
-        dyn_data_.reset(eprosima::fastrtps::types::DynamicDataFactory::get_instance()->create_data(type));
-    }
+            const eprosima::fastrtps::types::DynamicType_ptr& type);
 
     /// The root condition of the expression tree.
     std::unique_ptr<DDSFilterCondition> root;
