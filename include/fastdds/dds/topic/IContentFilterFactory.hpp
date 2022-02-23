@@ -80,6 +80,8 @@ struct IContentFilterFactory
      * @param [in]  filter_instance     A pointer to a filter instance previously returned by create_content_filter.
      *                                  The factory takes ownership of the filter instance, and can decide to destroy
      *                                  it or keep it for future use.
+     *
+     * @return A return code indicating the result of the operation.
      */
     virtual ReturnCode_t delete_content_filter(
             const char* filter_class_name,
