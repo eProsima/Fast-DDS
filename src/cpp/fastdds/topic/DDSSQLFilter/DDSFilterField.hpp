@@ -27,8 +27,8 @@
 #include <fastrtps/types/DynamicData.h>
 #include <fastrtps/types/TypeObject.h>
 
-#include "DDSFilterValue.hpp"
 #include "DDSFilterPredicate.hpp"
+#include "DDSFilterValue.hpp"
 
 namespace eprosima {
 namespace fastdds {
