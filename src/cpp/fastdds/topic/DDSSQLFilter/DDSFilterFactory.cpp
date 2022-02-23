@@ -216,7 +216,7 @@ IContentFilterFactory::ReturnCode_t DDSFilterFactory::convert_tree<DDSFilterValu
     if (node.value)
     {
         value = std::make_shared<DDSFilterValue>();
-        value->copy_from(*node.value.get());
+        value->copy_from(*node.value.get(), true);
     }
     else if (nullptr != node.type_id)
     {
@@ -489,7 +489,7 @@ IContentFilterFactory::ReturnCode_t DDSFilterFactory::create_content_filter(
                         --n;
                         if (expr->parameters[n])
                         {
-                            old_values[n].copy_from(*(expr->parameters[n]));
+                            old_values[n].copy_from(*(expr->parameters[n]), true);
                             if (!expr->parameters[n]->set_value(filter_parameters[n]))
                             {
                                 ret = ReturnCode_t::RETCODE_BAD_PARAMETER;
@@ -501,7 +501,7 @@ IContentFilterFactory::ReturnCode_t DDSFilterFactory::create_content_filter(
                     {
                         while (n < n_params)
                         {
-                            expr->parameters[n]->copy_from(old_values[n]);
+                            expr->parameters[n]->copy_from(old_values[n], true);
                             ++n;
                         }
                     }

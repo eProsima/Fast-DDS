@@ -147,7 +147,8 @@ static void to_string_value(
 }
 
 void DDSFilterValue::copy_from(
-        const DDSFilterValue& other) noexcept
+        const DDSFilterValue& other,
+        bool copy_regular_expression) noexcept
 {
     kind = other.kind;
     switch (kind)
@@ -182,6 +183,15 @@ void DDSFilterValue::copy_from(
 
         default:
             assert(false);
+    }
+
+    if (copy_regular_expression)
+    {
+        regular_expr_kind_ = other.regular_expr_kind_;
+        if (has_value())
+        {
+            value_has_changed();
+        }
     }
 }
 

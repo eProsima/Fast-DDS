@@ -108,10 +108,12 @@ public:
     /**
      * Copy the state of this object from another one.
      *
-     * @param [in] other  The DDSFilterValue from where to copy the state.
+     * @param [in] other                    The DDSFilterValue from where to copy the state.
+     * @param [in] copy_regular_expression  Whether the regular expression state should be copied or not
      */
     void copy_from(
-            const DDSFilterValue& other) noexcept;
+            const DDSFilterValue& other,
+            bool copy_regular_expression) noexcept;
 
     /**
      * This method is used by a DDSFilterPredicate to check if this DDSFilterValue can be used.
