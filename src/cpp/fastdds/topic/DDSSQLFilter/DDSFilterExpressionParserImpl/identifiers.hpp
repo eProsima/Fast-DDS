@@ -166,9 +166,13 @@ struct identifier_processor
                 return DDSFilterValue::ValueKind::UNSIGNED_INTEGER;
 
             case TK_FLOAT32:
+                return DDSFilterValue::ValueKind::FLOAT_FIELD;
+
             case TK_FLOAT64:
+                return DDSFilterValue::ValueKind::DOUBLE_FIELD;
+
             case TK_FLOAT128:
-                return DDSFilterValue::ValueKind::FLOAT;
+                return DDSFilterValue::ValueKind::LONG_DOUBLE_FIELD;
 
             case EK_COMPLETE:
                 const TypeObject* type_object = TypeObjectFactory::get_instance()->get_type_object(&ti);

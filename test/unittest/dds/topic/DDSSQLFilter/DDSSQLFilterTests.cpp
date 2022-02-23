@@ -600,6 +600,12 @@ private:
     {
         std::array<ContentFilterTestType, 5> data;
 
+        for (ContentFilterTestType& d : data)
+        {
+            d.bounded_sequence_struct_field().emplace_back();
+            d.unbounded_sequence_struct_field().emplace_back();
+        }
+
         add_char_values(data);
         add_uint8_values(data);
         add_int16_values(data);
@@ -616,9 +622,9 @@ private:
         add_enum_values(data);
         add_enum2_values(data);
 
-        for (size_t i = 0; i < data.size(); ++i)
+        for (const ContentFilterTestType& d : data)
         {
-            add_value(data[i]);
+            add_value(d);
         }
     }
 
@@ -636,529 +642,304 @@ private:
     void add_char_values(
             std::array<ContentFilterTestType, 5>& data)
     {
-        data[0].char_field(' ');
-        data[0].struct_field().char_field(' ');
-        data[0].array_char_field()[0] = ' ';
-        data[0].bounded_sequence_char_field().push_back(' ');
-        data[0].unbounded_sequence_char_field().push_back(' ');
+        std::array<char, 5> values{ ' ', 'A', 'Z', 'a', 'z' };
 
-        data[1].char_field('A');
-        data[1].struct_field().char_field('A');
-        data[1].array_char_field()[0] = 'A';
-        data[1].bounded_sequence_char_field().push_back('A');
-        data[1].unbounded_sequence_char_field().push_back('A');
-
-        data[2].char_field('Z');
-        data[2].struct_field().char_field('Z');
-        data[2].array_char_field()[0] = 'Z';
-        data[2].bounded_sequence_char_field().push_back('Z');
-        data[2].unbounded_sequence_char_field().push_back('Z');
-
-        data[3].char_field('a');
-        data[3].struct_field().char_field('a');
-        data[3].array_char_field()[0] = 'a';
-        data[3].bounded_sequence_char_field().push_back('a');
-        data[3].unbounded_sequence_char_field().push_back('a');
-
-        data[4].char_field('z');
-        data[4].struct_field().char_field('z');
-        data[4].array_char_field()[0] = 'z';
-        data[4].bounded_sequence_char_field().push_back('z');
-        data[4].unbounded_sequence_char_field().push_back('z');
+        for (size_t i = 0; i < values.size(); ++i)
+        {
+            data[i].char_field(values[i]);
+            data[i].struct_field().char_field(values[i]);
+            data[i].array_struct_field()[0].char_field(values[i]);
+            data[i].bounded_sequence_struct_field()[0].char_field(values[i]);
+            data[i].unbounded_sequence_struct_field()[0].char_field(values[i]);
+            data[i].array_char_field()[0] = values[i];
+            data[i].bounded_sequence_char_field().push_back(values[i]);
+            data[i].unbounded_sequence_char_field().push_back(values[i]);
+        }
     }
 
     void add_uint8_values(
             std::array<ContentFilterTestType, 5>& data)
     {
-        uint8_t min = std::numeric_limits<uint8_t>::lowest();
-        uint8_t max = std::numeric_limits<uint8_t>::max();
+        constexpr uint8_t min = std::numeric_limits<uint8_t>::lowest();
+        constexpr uint8_t max = std::numeric_limits<uint8_t>::max();
 
-        data[0].uint8_field(min);
-        data[0].struct_field().uint8_field(min);
-        data[0].array_uint8_field()[0] = min;
-        data[0].bounded_sequence_uint8_field().push_back(min);
-        data[0].unbounded_sequence_uint8_field().push_back(min);
+        std::array<uint8_t, 5> values{ min, max / 4, max / 3, max / 2, max };
 
-        data[1].uint8_field(max / 4);
-        data[1].struct_field().uint8_field(max / 4);
-        data[1].array_uint8_field()[0] = max / 4;
-        data[1].bounded_sequence_uint8_field().push_back(max / 4);
-        data[1].unbounded_sequence_uint8_field().push_back(max / 4);
-
-        data[2].uint8_field(max / 3);
-        data[2].struct_field().uint8_field(max / 3);
-        data[2].array_uint8_field()[0] = max / 3;
-        data[2].bounded_sequence_uint8_field().push_back(max / 3);
-        data[2].unbounded_sequence_uint8_field().push_back(max / 3);
-
-        data[3].uint8_field(max / 2);
-        data[3].struct_field().uint8_field(max / 2);
-        data[3].array_uint8_field()[0] = max / 2;
-        data[3].bounded_sequence_uint8_field().push_back(max / 2);
-        data[3].unbounded_sequence_uint8_field().push_back(max / 2);
-
-        data[4].uint8_field(max);
-        data[4].struct_field().uint8_field(max);
-        data[4].array_uint8_field()[0] = max;
-        data[4].bounded_sequence_uint8_field().push_back(max);
-        data[4].unbounded_sequence_uint8_field().push_back(max);
+        for (size_t i = 0; i < values.size(); ++i)
+        {
+            data[i].uint8_field(values[i]);
+            data[i].struct_field().uint8_field(values[i]);
+            data[i].array_struct_field()[0].uint8_field(values[i]);
+            data[i].bounded_sequence_struct_field()[0].uint8_field(values[i]);
+            data[i].unbounded_sequence_struct_field()[0].uint8_field(values[i]);
+            data[i].array_uint8_field()[0] = values[i];
+            data[i].bounded_sequence_uint8_field().push_back(values[i]);
+            data[i].unbounded_sequence_uint8_field().push_back(values[i]);
+        }
     }
 
     void add_int16_values(
             std::array<ContentFilterTestType, 5>& data)
     {
-        int16_t min = std::numeric_limits<int16_t>::lowest();
-        int16_t max = std::numeric_limits<int16_t>::max();
+        constexpr int16_t min = std::numeric_limits<int16_t>::lowest();
+        constexpr int16_t max = std::numeric_limits<int16_t>::max();
 
-        data[0].int16_field(min);
-        data[0].struct_field().int16_field(min);
-        data[0].array_int16_field()[0] = min;
-        data[0].bounded_sequence_int16_field().push_back(min);
-        data[0].unbounded_sequence_int16_field().push_back(min);
+        std::array<int16_t, 5> values{ min, -100, 0, 100, max };
 
-        data[1].int16_field(-100);
-        data[1].struct_field().int16_field(-100);
-        data[1].array_int16_field()[0] = -100;
-        data[1].bounded_sequence_int16_field().push_back(-100);
-        data[1].unbounded_sequence_int16_field().push_back(-100);
-
-        data[2].int16_field(0);
-        data[2].struct_field().int16_field(0);
-        data[2].array_int16_field()[0] = 0;
-        data[2].bounded_sequence_int16_field().push_back(0);
-        data[2].unbounded_sequence_int16_field().push_back(0);
-
-        data[3].int16_field(100);
-        data[3].struct_field().int16_field(100);
-        data[3].array_int16_field()[0] = 100;
-        data[3].bounded_sequence_int16_field().push_back(100);
-        data[3].unbounded_sequence_int16_field().push_back(100);
-
-        data[4].int16_field(max);
-        data[4].struct_field().int16_field(max);
-        data[4].array_int16_field()[0] = max;
-        data[4].bounded_sequence_int16_field().push_back(max);
-        data[4].unbounded_sequence_int16_field().push_back(max);
+        for (size_t i = 0; i < values.size(); ++i)
+        {
+            data[i].int16_field(values[i]);
+            data[i].struct_field().int16_field(values[i]);
+            data[i].array_struct_field()[0].int16_field(values[i]);
+            data[i].bounded_sequence_struct_field()[0].int16_field(values[i]);
+            data[i].unbounded_sequence_struct_field()[0].int16_field(values[i]);
+            data[i].array_int16_field()[0] = values[i];
+            data[i].bounded_sequence_int16_field().push_back(values[i]);
+            data[i].unbounded_sequence_int16_field().push_back(values[i]);
+        }
     }
 
     void add_uint16_values(
             std::array<ContentFilterTestType, 5>& data)
     {
-        uint16_t min = std::numeric_limits<uint16_t>::lowest();
-        uint16_t max = std::numeric_limits<uint16_t>::max();
+        constexpr uint16_t min = std::numeric_limits<uint16_t>::lowest();
+        constexpr uint16_t max = std::numeric_limits<uint16_t>::max();
 
-        data[0].uint16_field(min);
-        data[0].struct_field().uint16_field(min);
-        data[0].array_uint16_field()[0] = min;
-        data[0].bounded_sequence_uint16_field().push_back(min);
-        data[0].unbounded_sequence_uint16_field().push_back(min);
+        std::array<uint16_t, 5> values{ min, max / 4, max / 3, max / 2, max };
 
-        data[1].uint16_field(max / 4);
-        data[1].struct_field().uint16_field(max / 4);
-        data[1].array_uint16_field()[0] = max / 4;
-        data[1].bounded_sequence_uint16_field().push_back(max / 4);
-        data[1].unbounded_sequence_uint16_field().push_back(max / 4);
-
-        data[2].uint16_field(max / 3);
-        data[2].struct_field().uint16_field(max / 3);
-        data[2].array_uint16_field()[0] = max / 3;
-        data[2].bounded_sequence_uint16_field().push_back(max / 3);
-        data[2].unbounded_sequence_uint16_field().push_back(max / 3);
-
-        data[3].uint16_field(max / 2);
-        data[3].struct_field().uint16_field(max / 2);
-        data[3].array_uint16_field()[0] = max / 2;
-        data[3].bounded_sequence_uint16_field().push_back(max / 2);
-        data[3].unbounded_sequence_uint16_field().push_back(max / 2);
-
-        data[4].uint16_field(max);
-        data[4].struct_field().uint16_field(max);
-        data[4].array_uint16_field()[0] = max;
-        data[4].bounded_sequence_uint16_field().push_back(max);
-        data[4].unbounded_sequence_uint16_field().push_back(max);
+        for (size_t i = 0; i < values.size(); ++i)
+        {
+            data[i].uint16_field(values[i]);
+            data[i].struct_field().uint16_field(values[i]);
+            data[i].array_struct_field()[0].uint16_field(values[i]);
+            data[i].bounded_sequence_struct_field()[0].uint16_field(values[i]);
+            data[i].unbounded_sequence_struct_field()[0].uint16_field(values[i]);
+            data[i].array_uint16_field()[0] = values[i];
+            data[i].bounded_sequence_uint16_field().push_back(values[i]);
+            data[i].unbounded_sequence_uint16_field().push_back(values[i]);
+        }
     }
 
     void add_int32_values(
             std::array<ContentFilterTestType, 5>& data)
     {
-        int32_t min = std::numeric_limits<int32_t>::lowest();
-        int32_t max = std::numeric_limits<int32_t>::max();
+        constexpr int32_t min = std::numeric_limits<int32_t>::lowest();
+        constexpr int32_t max = std::numeric_limits<int32_t>::max();
 
-        data[0].int32_field(min);
-        data[0].struct_field().int32_field(min);
-        data[0].array_int32_field()[0] = min;
-        data[0].bounded_sequence_int32_field().push_back(min);
-        data[0].unbounded_sequence_int32_field().push_back(min);
+        std::array<int32_t, 5> values{ min, -100, 0, 100, max };
 
-        data[1].int32_field(-100);
-        data[1].struct_field().int32_field(-100);
-        data[1].array_int32_field()[0] = -100;
-        data[1].bounded_sequence_int32_field().push_back(-100);
-        data[1].unbounded_sequence_int32_field().push_back(-100);
-
-        data[2].int32_field(0);
-        data[2].struct_field().int32_field(0);
-        data[2].array_int32_field()[0] = 0;
-        data[2].bounded_sequence_int32_field().push_back(0);
-        data[2].unbounded_sequence_int32_field().push_back(0);
-
-        data[3].int32_field(100);
-        data[3].struct_field().int32_field(100);
-        data[3].array_int32_field()[0] = 100;
-        data[3].bounded_sequence_int32_field().push_back(100);
-        data[3].unbounded_sequence_int32_field().push_back(100);
-
-        data[4].int32_field(max);
-        data[4].struct_field().int32_field(max);
-        data[4].array_int32_field()[0] = max;
-        data[4].bounded_sequence_int32_field().push_back(max);
-        data[4].unbounded_sequence_int32_field().push_back(max);
+        for (size_t i = 0; i < values.size(); ++i)
+        {
+            data[i].int32_field(values[i]);
+            data[i].struct_field().int32_field(values[i]);
+            data[i].array_struct_field()[0].int32_field(values[i]);
+            data[i].bounded_sequence_struct_field()[0].int32_field(values[i]);
+            data[i].unbounded_sequence_struct_field()[0].int32_field(values[i]);
+            data[i].array_int32_field()[0] = values[i];
+            data[i].bounded_sequence_int32_field().push_back(values[i]);
+            data[i].unbounded_sequence_int32_field().push_back(values[i]);
+        }
     }
 
     void add_uint32_values(
             std::array<ContentFilterTestType, 5>& data)
     {
-        uint32_t min = std::numeric_limits<uint32_t>::lowest();
-        uint32_t max = std::numeric_limits<uint32_t>::max();
+        constexpr uint32_t min = std::numeric_limits<uint32_t>::lowest();
+        constexpr uint32_t max = std::numeric_limits<uint32_t>::max();
 
-        data[0].uint32_field(min);
-        data[0].struct_field().uint32_field(min);
-        data[0].array_uint32_field()[0] = min;
-        data[0].bounded_sequence_uint32_field().push_back(min);
-        data[0].unbounded_sequence_uint32_field().push_back(min);
+        std::array<uint32_t, 5> values{ min, max / 4, max / 3, max / 2, max };
 
-        data[1].uint32_field(max / 4);
-        data[1].struct_field().uint32_field(max / 4);
-        data[1].array_uint32_field()[0] = max / 4;
-        data[1].bounded_sequence_uint32_field().push_back(max / 4);
-        data[1].unbounded_sequence_uint32_field().push_back(max / 4);
-
-        data[2].uint32_field(max / 3);
-        data[2].struct_field().uint32_field(max / 3);
-        data[2].array_uint32_field()[0] = max / 3;
-        data[2].bounded_sequence_uint32_field().push_back(max / 3);
-        data[2].unbounded_sequence_uint32_field().push_back(max / 3);
-
-        data[3].uint32_field(max / 2);
-        data[3].struct_field().uint32_field(max / 2);
-        data[3].array_uint32_field()[0] = max / 2;
-        data[3].bounded_sequence_uint32_field().push_back(max / 2);
-        data[3].unbounded_sequence_uint32_field().push_back(max / 2);
-
-        data[4].uint32_field(max);
-        data[4].struct_field().uint32_field(max);
-        data[4].array_uint32_field()[0] = max;
-        data[4].bounded_sequence_uint32_field().push_back(max);
-        data[4].unbounded_sequence_uint32_field().push_back(max);
+        for (size_t i = 0; i < values.size(); ++i)
+        {
+            data[i].uint32_field(values[i]);
+            data[i].struct_field().uint32_field(values[i]);
+            data[i].array_struct_field()[0].uint32_field(values[i]);
+            data[i].bounded_sequence_struct_field()[0].uint32_field(values[i]);
+            data[i].unbounded_sequence_struct_field()[0].uint32_field(values[i]);
+            data[i].array_uint32_field()[0] = values[i];
+            data[i].bounded_sequence_uint32_field().push_back(values[i]);
+            data[i].unbounded_sequence_uint32_field().push_back(values[i]);
+        }
     }
 
     void add_int64_values(
             std::array<ContentFilterTestType, 5>& data)
     {
-        int64_t min = std::numeric_limits<int64_t>::lowest();
-        int64_t max = std::numeric_limits<int64_t>::max();
+        constexpr int64_t min = std::numeric_limits<int64_t>::lowest();
+        constexpr int64_t max = std::numeric_limits<int64_t>::max();
 
-        data[0].int64_field(min);
-        data[0].struct_field().int64_field(min);
-        data[0].array_int64_field()[0] = min;
-        data[0].bounded_sequence_int64_field().push_back(min);
-        data[0].unbounded_sequence_int64_field().push_back(min);
+        std::array<int64_t, 5> values{ min, -100, 0, 100, max };
 
-        data[1].int64_field(-100);
-        data[1].struct_field().int64_field(-100);
-        data[1].array_int64_field()[0] = -100;
-        data[1].bounded_sequence_int64_field().push_back(-100);
-        data[1].unbounded_sequence_int64_field().push_back(-100);
-
-        data[2].int64_field(0);
-        data[2].struct_field().int64_field(0);
-        data[2].array_int64_field()[0] = 0;
-        data[2].bounded_sequence_int64_field().push_back(0);
-        data[2].unbounded_sequence_int64_field().push_back(0);
-
-        data[3].int64_field(100);
-        data[3].struct_field().int64_field(100);
-        data[3].array_int64_field()[0] = 100;
-        data[3].bounded_sequence_int64_field().push_back(100);
-        data[3].unbounded_sequence_int64_field().push_back(100);
-
-        data[4].int64_field(max);
-        data[4].struct_field().int64_field(max);
-        data[4].array_int64_field()[0] = max;
-        data[4].bounded_sequence_int64_field().push_back(max);
-        data[4].unbounded_sequence_int64_field().push_back(max);
+        for (size_t i = 0; i < values.size(); ++i)
+        {
+            data[i].int64_field(values[i]);
+            data[i].struct_field().int64_field(values[i]);
+            data[i].array_struct_field()[0].int64_field(values[i]);
+            data[i].bounded_sequence_struct_field()[0].int64_field(values[i]);
+            data[i].unbounded_sequence_struct_field()[0].int64_field(values[i]);
+            data[i].array_int64_field()[0] = values[i];
+            data[i].bounded_sequence_int64_field().push_back(values[i]);
+            data[i].unbounded_sequence_int64_field().push_back(values[i]);
+        }
     }
 
     void add_uint64_values(
             std::array<ContentFilterTestType, 5>& data)
     {
-        uint64_t min = std::numeric_limits<uint64_t>::lowest();
-        uint64_t max = std::numeric_limits<uint64_t>::max();
+        constexpr uint64_t min = std::numeric_limits<uint64_t>::lowest();
+        constexpr uint64_t max = std::numeric_limits<uint64_t>::max();
 
-        data[0].uint64_field(min);
-        data[0].struct_field().uint64_field(min);
-        data[0].array_uint64_field()[0] = min;
-        data[0].bounded_sequence_uint64_field().push_back(min);
-        data[0].unbounded_sequence_uint64_field().push_back(min);
+        std::array<uint64_t, 5> values{ min, max / 4, max / 3, max / 2, max };
 
-        data[1].uint64_field(max / 4);
-        data[1].struct_field().uint64_field(max / 4);
-        data[1].array_uint64_field()[0] = max / 4;
-        data[1].bounded_sequence_uint64_field().push_back(max / 4);
-        data[1].unbounded_sequence_uint64_field().push_back(max / 4);
-
-        data[2].uint64_field(max / 3);
-        data[2].struct_field().uint64_field(max / 3);
-        data[2].array_uint64_field()[0] = max / 3;
-        data[2].bounded_sequence_uint64_field().push_back(max / 3);
-        data[2].unbounded_sequence_uint64_field().push_back(max / 3);
-
-        data[3].uint64_field(max / 2);
-        data[3].struct_field().uint64_field(max / 2);
-        data[3].array_uint64_field()[0] = max / 2;
-        data[3].bounded_sequence_uint64_field().push_back(max / 2);
-        data[3].unbounded_sequence_uint64_field().push_back(max / 2);
-
-        data[4].uint64_field(max);
-        data[4].struct_field().uint64_field(max);
-        data[4].array_uint64_field()[0] = max;
-        data[4].bounded_sequence_uint64_field().push_back(max);
-        data[4].unbounded_sequence_uint64_field().push_back(max);
+        for (size_t i = 0; i < values.size(); ++i)
+        {
+            data[i].uint64_field(values[i]);
+            data[i].struct_field().uint64_field(values[i]);
+            data[i].array_struct_field()[0].uint64_field(values[i]);
+            data[i].bounded_sequence_struct_field()[0].uint64_field(values[i]);
+            data[i].unbounded_sequence_struct_field()[0].uint64_field(values[i]);
+            data[i].array_uint64_field()[0] = values[i];
+            data[i].bounded_sequence_uint64_field().push_back(values[i]);
+            data[i].unbounded_sequence_uint64_field().push_back(values[i]);
+        }
     }
 
     void add_float_values(
             std::array<ContentFilterTestType, 5>& data)
     {
-        float min = std::numeric_limits<float>::lowest();
-        float max = std::numeric_limits<float>::max();
+        constexpr float min = std::numeric_limits<float>::lowest();
+        constexpr float max = std::numeric_limits<float>::max();
 
-        data[0].float_field(min);
-        data[0].struct_field().float_field(min);
-        data[0].array_float_field()[0] = min;
-        data[0].bounded_sequence_float_field().push_back(min);
-        data[0].unbounded_sequence_float_field().push_back(min);
+        std::array<float, 5> values{ min, -3.14159f, 0.0f, 3.14159f, max };
 
-        data[1].float_field(-3.14159f);
-        data[1].struct_field().float_field(-3.14159f);
-        data[1].array_float_field()[0] = -3.14159f;
-        data[1].bounded_sequence_float_field().push_back(-3.14159f);
-        data[1].unbounded_sequence_float_field().push_back(-3.14159f);
-
-        data[2].float_field(0.0f);
-        data[2].struct_field().float_field(0.0f);
-        data[2].array_float_field()[0] = 0.0f;
-        data[2].bounded_sequence_float_field().push_back(0.0f);
-        data[2].unbounded_sequence_float_field().push_back(0.0f);
-
-        data[3].float_field(3.14159f);
-        data[3].struct_field().float_field(3.14159f);
-        data[3].array_float_field()[0] = 3.14159f;
-        data[3].bounded_sequence_float_field().push_back(3.14159f);
-        data[3].unbounded_sequence_float_field().push_back(3.14159f);
-
-        data[4].float_field(max);
-        data[4].struct_field().float_field(max);
-        data[4].array_float_field()[0] = max;
-        data[4].bounded_sequence_float_field().push_back(max);
-        data[4].unbounded_sequence_float_field().push_back(max);
+        for (size_t i = 0; i < values.size(); ++i)
+        {
+            data[i].float_field(values[i]);
+            data[i].struct_field().float_field(values[i]);
+            data[i].array_struct_field()[0].float_field(values[i]);
+            data[i].bounded_sequence_struct_field()[0].float_field(values[i]);
+            data[i].unbounded_sequence_struct_field()[0].float_field(values[i]);
+            data[i].array_float_field()[0] = values[i];
+            data[i].bounded_sequence_float_field().push_back(values[i]);
+            data[i].unbounded_sequence_float_field().push_back(values[i]);
+        }
     }
 
     void add_double_values(
             std::array<ContentFilterTestType, 5>& data)
     {
-        double min = std::numeric_limits<double>::lowest();
-        double max = std::numeric_limits<double>::max();
+        constexpr double min = std::numeric_limits<double>::lowest();
+        constexpr double max = std::numeric_limits<double>::max();
 
-        data[0].double_field(min);
-        data[0].struct_field().double_field(min);
-        data[0].array_double_field()[0] = min;
-        data[0].bounded_sequence_double_field().push_back(min);
-        data[0].unbounded_sequence_double_field().push_back(min);
+        std::array<double, 5> values{ min, -3.14159, 0.0, 3.14159, max };
 
-        data[1].double_field(-3.14159);
-        data[1].struct_field().double_field(-3.14159);
-        data[1].array_double_field()[0] = -3.14159;
-        data[1].bounded_sequence_double_field().push_back(-3.14159);
-        data[1].unbounded_sequence_double_field().push_back(-3.14159);
-
-        data[2].double_field(0.0);
-        data[2].struct_field().double_field(0.0);
-        data[2].array_double_field()[0] = 0.0;
-        data[2].bounded_sequence_double_field().push_back(0.0);
-        data[2].unbounded_sequence_double_field().push_back(0.0);
-
-        data[3].double_field(3.14159);
-        data[3].struct_field().double_field(3.14159);
-        data[3].array_double_field()[0] = 3.14159;
-        data[3].bounded_sequence_double_field().push_back(3.14159);
-        data[3].unbounded_sequence_double_field().push_back(3.14159);
-
-        data[4].double_field(max);
-        data[4].struct_field().double_field(max);
-        data[4].array_double_field()[0] = max;
-        data[4].bounded_sequence_double_field().push_back(max);
-        data[4].unbounded_sequence_double_field().push_back(max);
+        for (size_t i = 0; i < values.size(); ++i)
+        {
+            data[i].double_field(values[i]);
+            data[i].struct_field().double_field(values[i]);
+            data[i].array_struct_field()[0].double_field(values[i]);
+            data[i].bounded_sequence_struct_field()[0].double_field(values[i]);
+            data[i].unbounded_sequence_struct_field()[0].double_field(values[i]);
+            data[i].array_double_field()[0] = values[i];
+            data[i].bounded_sequence_double_field().push_back(values[i]);
+            data[i].unbounded_sequence_double_field().push_back(values[i]);
+        }
     }
 
     void add_long_double_values(
             std::array<ContentFilterTestType, 5>& data)
     {
-        long double min = std::numeric_limits<long double>::lowest();
-        long double max = std::numeric_limits<long double>::max();
+        constexpr long double min = std::numeric_limits<long double>::lowest();
+        constexpr long double max = std::numeric_limits<long double>::max();
 
-        data[0].long_double_field(min);
-        data[0].struct_field().long_double_field(min);
-        data[0].array_long_double_field()[0] = min;
-        data[0].bounded_sequence_long_double_field().push_back(min);
-        data[0].unbounded_sequence_long_double_field().push_back(min);
+        std::array<long double, 5> values{ min, -3.14159l, 0.0, 3.14159l, max };
 
-        data[1].long_double_field(-3.14159);
-        data[1].struct_field().long_double_field(-3.14159);
-        data[1].array_long_double_field()[0] = -3.14159;
-        data[1].bounded_sequence_long_double_field().push_back(-3.14159);
-        data[1].unbounded_sequence_long_double_field().push_back(-3.14159);
-
-        data[2].long_double_field(0.0);
-        data[2].struct_field().long_double_field(0.0);
-        data[2].array_long_double_field()[0] = 0.0;
-        data[2].bounded_sequence_long_double_field().push_back(0.0);
-        data[2].unbounded_sequence_long_double_field().push_back(0.0);
-
-        data[3].long_double_field(3.14159);
-        data[3].struct_field().long_double_field(3.14159);
-        data[3].array_long_double_field()[0] = 3.14159;
-        data[3].bounded_sequence_long_double_field().push_back(3.14159);
-        data[3].unbounded_sequence_long_double_field().push_back(3.14159);
-
-        data[4].long_double_field(max);
-        data[4].struct_field().long_double_field(max);
-        data[4].array_long_double_field()[0] = max;
-        data[4].bounded_sequence_long_double_field().push_back(max);
-        data[4].unbounded_sequence_long_double_field().push_back(max);
+        for (size_t i = 0; i < values.size(); ++i)
+        {
+            data[i].long_double_field(values[i]);
+            data[i].struct_field().long_double_field(values[i]);
+            data[i].array_struct_field()[0].long_double_field(values[i]);
+            data[i].bounded_sequence_struct_field()[0].long_double_field(values[i]);
+            data[i].unbounded_sequence_struct_field()[0].long_double_field(values[i]);
+            data[i].array_long_double_field()[0] = values[i];
+            data[i].bounded_sequence_long_double_field().push_back(values[i]);
+            data[i].unbounded_sequence_long_double_field().push_back(values[i]);
+        }
     }
 
     void add_bool_values(
             std::array<ContentFilterTestType, 5>& data)
     {
-        for (size_t i = 0; i < 2; ++i)
-        {
-            data[i].bool_field(false);
-            data[i].struct_field().bool_field(false);
-            data[i].array_bool_field()[0] = false;
-            data[i].bounded_sequence_bool_field().push_back(false);
-            data[i].unbounded_sequence_bool_field().push_back(false);
-        }
+        std::array<bool, 5> values{ false, false, true, true, true };
 
-        for (size_t i = 2; i < 5; ++i)
+        for (size_t i = 0; i < values.size(); ++i)
         {
-            data[i].bool_field(true);
-            data[i].struct_field().bool_field(true);
-            data[i].array_bool_field()[0] = true;
-            data[i].bounded_sequence_bool_field().push_back(true);
-            data[i].unbounded_sequence_bool_field().push_back(true);
+            data[i].bool_field(values[i]);
+            data[i].struct_field().bool_field(values[i]);
+            data[i].array_struct_field()[0].bool_field(values[i]);
+            data[i].bounded_sequence_struct_field()[0].bool_field(values[i]);
+            data[i].unbounded_sequence_struct_field()[0].bool_field(values[i]);
+            data[i].array_bool_field()[0] = values[i];
+            data[i].bounded_sequence_bool_field().push_back(values[i]);
+            data[i].unbounded_sequence_bool_field().push_back(values[i]);
         }
     }
 
     void add_string_values(
             std::array<ContentFilterTestType, 5>& data)
     {
-        data[0].string_field("");
-        data[0].struct_field().string_field("");
-        data[0].array_string_field()[0] = "";
-        data[0].bounded_sequence_string_field().push_back("");
-        data[0].unbounded_sequence_string_field().push_back("");
+        std::array<std::string, 5> values{ "", "   ", " AA", " AZ", "ZZZ"};
 
-        data[1].string_field("   ");
-        data[1].struct_field().string_field("   ");
-        data[1].array_string_field()[0] = "   ";
-        data[1].bounded_sequence_string_field().push_back("   ");
-        data[1].unbounded_sequence_string_field().push_back("   ");
-
-        data[2].string_field(" AA");
-        data[2].struct_field().string_field(" AA");
-        data[2].array_string_field()[0] = " AA";
-        data[2].bounded_sequence_string_field().push_back(" AA");
-        data[2].unbounded_sequence_string_field().push_back(" AA");
-
-        data[3].string_field(" AZ");
-        data[3].struct_field().string_field(" AZ");
-        data[3].array_string_field()[0] = " AZ";
-        data[3].bounded_sequence_string_field().push_back(" AZ");
-        data[3].unbounded_sequence_string_field().push_back(" AZ");
-
-        data[4].string_field("ZZZ");
-        data[4].struct_field().string_field("ZZZ");
-        data[4].array_string_field()[0] = "ZZZ";
-        data[4].bounded_sequence_string_field().push_back("ZZZ");
-        data[4].unbounded_sequence_string_field().push_back("ZZZ");
+        for (size_t i = 0; i < values.size(); ++i)
+        {
+            data[i].string_field(values[i]);
+            data[i].struct_field().string_field(values[i]);
+            data[i].array_struct_field()[0].string_field(values[i]);
+            data[i].bounded_sequence_struct_field()[0].string_field(values[i]);
+            data[i].unbounded_sequence_struct_field()[0].string_field(values[i]);
+            data[i].array_string_field()[0] = values[i];
+            data[i].bounded_sequence_string_field().push_back(values[i]);
+            data[i].unbounded_sequence_string_field().push_back(values[i]);
+        }
     }
 
     void add_enum_values(
             std::array<ContentFilterTestType, 5>& data)
     {
-        data[0].enum_field(Color::RED);
-        data[0].struct_field().enum_field(Color::RED);
-        data[0].array_enum_field()[0] = Color::RED;
-        data[0].bounded_sequence_enum_field().push_back(Color::RED);
-        data[0].unbounded_sequence_enum_field().push_back(Color::RED);
+        std::array<Color, 5> values{ Color::RED, Color::GREEN, Color::BLUE, Color::YELLOW, Color::MAGENTA };
 
-        data[1].enum_field(Color::GREEN);
-        data[1].struct_field().enum_field(Color::GREEN);
-        data[1].array_enum_field()[0] = Color::GREEN;
-        data[1].bounded_sequence_enum_field().push_back(Color::GREEN);
-        data[1].unbounded_sequence_enum_field().push_back(Color::GREEN);
-
-        data[2].enum_field(Color::BLUE);
-        data[2].struct_field().enum_field(Color::BLUE);
-        data[2].array_enum_field()[0] = Color::BLUE;
-        data[2].bounded_sequence_enum_field().push_back(Color::BLUE);
-        data[2].unbounded_sequence_enum_field().push_back(Color::BLUE);
-
-        data[3].enum_field(Color::YELLOW);
-        data[3].struct_field().enum_field(Color::YELLOW);
-        data[3].array_enum_field()[0] = Color::YELLOW;
-        data[3].bounded_sequence_enum_field().push_back(Color::YELLOW);
-        data[3].unbounded_sequence_enum_field().push_back(Color::YELLOW);
-
-        data[4].enum_field(Color::MAGENTA);
-        data[4].struct_field().enum_field(Color::MAGENTA);
-        data[4].array_enum_field()[0] = Color::MAGENTA;
-        data[4].bounded_sequence_enum_field().push_back(Color::MAGENTA);
-        data[4].unbounded_sequence_enum_field().push_back(Color::MAGENTA);
+        for (size_t i = 0; i < values.size(); ++i)
+        {
+            data[i].enum_field(values[i]);
+            data[i].struct_field().enum_field(values[i]);
+            data[i].array_struct_field()[0].enum_field(values[i]);
+            data[i].bounded_sequence_struct_field()[0].enum_field(values[i]);
+            data[i].unbounded_sequence_struct_field()[0].enum_field(values[i]);
+            data[i].array_enum_field()[0] = values[i];
+            data[i].bounded_sequence_enum_field().push_back(values[i]);
+            data[i].unbounded_sequence_enum_field().push_back(values[i]);
+        }
     }
 
     void add_enum2_values(
             std::array<ContentFilterTestType, 5>& data)
     {
-        data[0].enum2_field(Material::WOOD);
-        data[0].struct_field().enum2_field(Material::WOOD);
-        data[0].array_enum2_field()[0] = Material::WOOD;
-        data[0].bounded_sequence_enum2_field().push_back(Material::WOOD);
-        data[0].unbounded_sequence_enum2_field().push_back(Material::WOOD);
+        std::array<Material, 5> values
+        {
+            Material::WOOD, Material::PLASTIC, Material::METAL, Material::CONCRETE, Material::STONE
+        };
 
-        data[1].enum2_field(Material::PLASTIC);
-        data[1].struct_field().enum2_field(Material::PLASTIC);
-        data[1].array_enum2_field()[0] = Material::PLASTIC;
-        data[1].bounded_sequence_enum2_field().push_back(Material::PLASTIC);
-        data[1].unbounded_sequence_enum2_field().push_back(Material::PLASTIC);
-
-        data[2].enum2_field(Material::METAL);
-        data[2].struct_field().enum2_field(Material::METAL);
-        data[2].array_enum2_field()[0] = Material::METAL;
-        data[2].bounded_sequence_enum2_field().push_back(Material::METAL);
-        data[2].unbounded_sequence_enum2_field().push_back(Material::METAL);
-
-        data[3].enum2_field(Material::CONCRETE);
-        data[3].struct_field().enum2_field(Material::CONCRETE);
-        data[3].array_enum2_field()[0] = Material::CONCRETE;
-        data[3].bounded_sequence_enum2_field().push_back(Material::CONCRETE);
-        data[3].unbounded_sequence_enum2_field().push_back(Material::CONCRETE);
-
-        data[4].enum2_field(Material::STONE);
-        data[4].struct_field().enum2_field(Material::STONE);
-        data[4].array_enum2_field()[0] = Material::STONE;
-        data[4].bounded_sequence_enum2_field().push_back(Material::STONE);
-        data[4].unbounded_sequence_enum2_field().push_back(Material::STONE);
+        for (size_t i = 0; i < values.size(); ++i)
+        {
+            data[i].enum2_field(values[i]);
+            data[i].struct_field().enum2_field(values[i]);
+            data[i].array_struct_field()[0].enum2_field(values[i]);
+            data[i].bounded_sequence_struct_field()[0].enum2_field(values[i]);
+            data[i].unbounded_sequence_struct_field()[0].enum2_field(values[i]);
+            data[i].array_enum2_field()[0] = values[i];
+            data[i].bounded_sequence_enum2_field().push_back(values[i]);
+            data[i].unbounded_sequence_enum2_field().push_back(values[i]);
+        }
     }
 
 };
@@ -1191,6 +972,21 @@ protected:
 
     DDSFilterFactory uut;
     ContentFilterTestTypePubSubType type_support;
+
+    template<typename T>
+    void perform_basic_check(
+            const IContentFilter* filter_instance,
+            const T& results,
+            const std::vector<std::unique_ptr<IContentFilter::SerializedPayload>>& values)
+    {
+        for (size_t i = 0; i < values.size(); ++i)
+        {
+            IContentFilter::FilterSampleInfo info;
+            IContentFilter::GUID_t guid;
+            EXPECT_EQ(results[i], filter_instance->evaluate(*values[i], info, guid)) << "with i = " << i;
+        }
+    }
+
 };
 
 TEST_P(DDSSQLFilterValueTests, test_filtered_value)
@@ -1205,12 +1001,7 @@ TEST_P(DDSSQLFilterValueTests, test_filtered_value)
     EXPECT_EQ(ReturnCode_t::RETCODE_OK, ret);
     ASSERT_NE(nullptr, filter_instance);
 
-    for (size_t i = 0; i < values.size(); ++i)
-    {
-        IContentFilter::FilterSampleInfo info;
-        IContentFilter::GUID_t guid;
-        EXPECT_EQ(results[i], filter_instance->evaluate(*values[i], info, guid)) << "with i = " << i;
-    }
+    perform_basic_check(filter_instance, results, values);
 
     ret = uut.delete_content_filter("DDSSQL", filter_instance);
     EXPECT_EQ(ReturnCode_t::RETCODE_OK, ret);
@@ -1260,6 +1051,8 @@ TEST_F(DDSSQLFilterValueTests, test_compound_not)
         }
     }
 
+    ret = uut.delete_content_filter("DDSSQL", filter);
+    EXPECT_EQ(ReturnCode_t::RETCODE_OK, ret);
 }
 
 TEST_F(DDSSQLFilterValueTests, test_compound_and)
@@ -1275,13 +1068,10 @@ TEST_F(DDSSQLFilterValueTests, test_compound_and)
     std::array<bool, 5> results{false, true, false, false, false};
 
     ASSERT_EQ(results.size(), values.size());
+    perform_basic_check(filter, results, values);
 
-    for (size_t i = 0; i < values.size(); ++i)
-    {
-        IContentFilter::FilterSampleInfo info;
-        IContentFilter::GUID_t guid;
-        EXPECT_EQ(results[i], filter->evaluate(*values[i], info, guid)) << "with i = " << i;
-    }
+    ret = uut.delete_content_filter("DDSSQL", filter);
+    EXPECT_EQ(ReturnCode_t::RETCODE_OK, ret);
 }
 
 TEST_F(DDSSQLFilterValueTests, test_compound_or)
@@ -1297,13 +1087,68 @@ TEST_F(DDSSQLFilterValueTests, test_compound_or)
     std::array<bool, 5> results{false, true, true, true, true};
 
     ASSERT_EQ(results.size(), values.size());
+    perform_basic_check(filter, results, values);
 
-    for (size_t i = 0; i < values.size(); ++i)
-    {
-        IContentFilter::FilterSampleInfo info;
-        IContentFilter::GUID_t guid;
-        EXPECT_EQ(results[i], filter->evaluate(*values[i], info, guid)) << "with i = " << i;
-    }
+    ret = uut.delete_content_filter("DDSSQL", filter);
+    EXPECT_EQ(ReturnCode_t::RETCODE_OK, ret);
+}
+
+TEST_F(DDSSQLFilterValueTests, test_update_params)
+{
+    static const std::string expression = "string_field MATCH %0 OR string_field LIKE %1";
+
+    IContentFilter* filter = nullptr;
+    auto ret = create_content_filter(uut, expression, { "'BBB'", "'X'" }, &type_support, filter);
+    EXPECT_EQ(ReturnCode_t::RETCODE_OK, ret);
+    ASSERT_NE(nullptr, filter);
+
+    const auto& values = DDSSQLFilterValueGlobalData::values();
+    std::array<bool, 5> results{false, false, false, false, false};
+
+    ASSERT_EQ(results.size(), values.size());
+    perform_basic_check(filter, results, values);
+
+    StackAllocatedSequence<const char*, 2> params;
+    params.length(2);
+
+    // Change %0 to a wrong parameter should preserve filter state and results
+    params[0] = "'Z??"; // Wrong (missing ending quote)
+    params[1] = "'X'";  // Unchanged
+    ret = uut.create_content_filter("DDSSQL", "ContentFilterTestType", &type_support, nullptr, params, filter);
+    EXPECT_EQ(ReturnCode_t::RETCODE_BAD_PARAMETER, ret);
+    perform_basic_check(filter, results, values);
+
+    // Change %0 to a wrong parameter should preserve filter state and results
+    params[0] = "'Z??"; // Wrong (missing ending quote)
+    params[1] = "'%'";   // Changed
+    ret = uut.create_content_filter("DDSSQL", "ContentFilterTestType", &type_support, nullptr, params, filter);
+    EXPECT_EQ(ReturnCode_t::RETCODE_BAD_PARAMETER, ret);
+    perform_basic_check(filter, results, values);
+
+    // Change %1 to a wrong parameter should preserve filter state and results
+    params[0] = "'BBB'"; // Unchanged
+    params[1] = "'";  // Wrong (missing ending quote)
+    ret = uut.create_content_filter("DDSSQL", "ContentFilterTestType", &type_support, nullptr, params, filter);
+    EXPECT_EQ(ReturnCode_t::RETCODE_BAD_PARAMETER, ret);
+    perform_basic_check(filter, results, values);
+
+    // Change %1 to a wrong parameter should preserve filter state and results
+    params[0] = "'.*'"; // Changed
+    params[1] = "'";  // Wrong (missing ending quote)
+    ret = uut.create_content_filter("DDSSQL", "ContentFilterTestType", &type_support, nullptr, params, filter);
+    EXPECT_EQ(ReturnCode_t::RETCODE_BAD_PARAMETER, ret);
+    perform_basic_check(filter, results, values);
+
+    // Correctly changing both parameters should change results
+    params[0] = "'Z..'"; // Only last value matches
+    params[1] = "''";  // Only first value matches
+    results[0] = results[4] = true;
+    ret = uut.create_content_filter("DDSSQL", "ContentFilterTestType", &type_support, nullptr, params, filter);
+    EXPECT_EQ(ReturnCode_t::RETCODE_OK, ret);
+    perform_basic_check(filter, results, values);
+
+    ret = uut.delete_content_filter("DDSSQL", filter);
+    EXPECT_EQ(ReturnCode_t::RETCODE_OK, ret);
 }
 
 static void add_test_filtered_value_inputs(
@@ -1325,8 +1170,9 @@ static void add_test_filtered_value_inputs(
                 test_prefix + "_" + op.second + "_" + values[j].second,
                 field_name + " " + op.first + " " + values[j].first,
                 {},
-                { results_row.begin(), results_row.end() }
+                {}
             };
+            input.samples_filtered.assign(results_row.begin(), results_row.end());
             inputs.emplace_back(input);
 
             input.test_case_name += "_P0";
@@ -1354,8 +1200,9 @@ static void add_negative_test_filtered_value_inputs(
                 test_prefix + "_" + op.second + "_" + values[j].second,
                 field_name + " " + op.first + " " + values[j].first,
                 {},
-                { false, false, false, false, false }
+                {}
             };
+            input.samples_filtered.assign(5, false);
             inputs.emplace_back(input);
 
             input.test_case_name += "_P0";
@@ -1373,10 +1220,16 @@ static std::vector<DDSSQLFilterValueParams> get_test_filtered_value_inputs_given
 {
     std::string bounded_seq_name = "bounded_sequence_" + field_name;
     std::string unbounded_seq_name = "unbounded_sequence_" + field_name;
+    std::string array_struct_name = "array_struct_field[0]." + field_name;
+    std::string bounded_seq_struct_name = "bounded_sequence_struct_field[0]." + field_name;
+    std::string unbounded_seq_struct_name = "unbounded_sequence_struct_field[0]." + field_name;
 
     std::vector<DDSSQLFilterValueParams> inputs;
     add_test_filtered_value_inputs("plain_field", field_name, values, inputs, results);
     add_test_filtered_value_inputs("in_struct", "struct_field." + field_name, values, inputs, results);
+    add_test_filtered_value_inputs("in_array_struct", array_struct_name, values, inputs, results);
+    add_test_filtered_value_inputs("in_bounded_sequence_struct", bounded_seq_struct_name, values, inputs, results);
+    add_test_filtered_value_inputs("in_unbounded_sequence_struct", unbounded_seq_struct_name, values, inputs, results);
     add_test_filtered_value_inputs("array", "array_" + field_name + "[0]", values, inputs, results);
     add_test_filtered_value_inputs("bounded_sequence", bounded_seq_name + "[0]", values, inputs, results);
     add_negative_test_filtered_value_inputs("neg_bounded_sequence", bounded_seq_name + "[2]", values, inputs);

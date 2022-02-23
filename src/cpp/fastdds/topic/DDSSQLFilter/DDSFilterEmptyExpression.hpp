@@ -29,8 +29,11 @@ namespace DDSSQLFilter {
 /**
  * An IContentFilter for empty expressions that always evaluates to true.
  */
-struct DDSFilterEmptyExpression final : public IContentFilter
+class DDSFilterEmptyExpression final : public IContentFilter
 {
+
+public:
+
     bool evaluate(
             const SerializedPayload& payload,
             const FilterSampleInfo& sample_info,

@@ -36,7 +36,7 @@ struct literal_value_processor
         else if (n->is<false_value>())
         {
             n->value->kind = DDSFilterValue::ValueKind::BOOLEAN;
-            n->value->boolean_value = true;
+            n->value->boolean_value = false;
         }
         else if (n->is<integer_value>())
         {
@@ -53,15 +53,8 @@ struct literal_value_processor
         }
         else if (n->is<float_value>())
         {
-            if (n->children.size() == 1)
-            {
-                n = std::move(n->children.back());
-            }
-            else
-            {
-                n->value->kind = DDSFilterValue::ValueKind::FLOAT;
-                n->value->float_value = std::stold(n->content());
-            }
+            n->value->kind = DDSFilterValue::ValueKind::FLOAT_CONST;
+            n->value->float_value = std::stold(n->content());
         }
         else if (n->is<char_value>())
         {

@@ -31,8 +31,11 @@ namespace DDSSQLFilter {
 /**
  * A DDSFilterCondition that performs a logical operation over one or two DDSFilterCondition objects.
  */
-struct DDSFilterCompoundCondition final : public DDSFilterCondition
+class DDSFilterCompoundCondition final : public DDSFilterCondition
 {
+
+public:
+
     /**
      * Possible kinds of logical operations
      */
@@ -69,6 +72,7 @@ private:
     OperationKind op_;
     std::unique_ptr<DDSFilterCondition> left_;
     std::unique_ptr<DDSFilterCondition> right_;
+    uint8_t num_children_decided_ = 0;
 
 };
 

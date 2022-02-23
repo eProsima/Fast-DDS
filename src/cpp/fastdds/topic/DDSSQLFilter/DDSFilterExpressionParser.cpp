@@ -75,6 +75,7 @@ using selector = parse_tree::selector <
         le_op,
         ne_op,
         like_op,
+        match_op,
         and_op,
         or_op,
         not_op,

@@ -29,8 +29,13 @@ namespace DDSSQLFilter {
 /**
  * Base class for conditions on a filter expression.
  */
-struct DDSFilterCondition
+class DDSFilterCondition
 {
+
+public:
+
+    friend class DDSFilterCompoundCondition;
+
     virtual ~DDSFilterCondition() = default;
 
     /**
@@ -75,6 +80,19 @@ protected:
                 parent_->child_has_changed(*this);
             }
         }
+    }
+
+    /**
+     * Set the result of this condition.
+     *
+     * @param[in]  result   The result to be set.
+     *
+     * @post The state of this condition will not be UNDECIDED.
+     */
+    inline void set_result(
+            bool result) noexcept
+    {
+        set_state(result ? DDSFilterConditionState::RESULT_TRUE : DDSFilterConditionState::RESULT_FALSE);
     }
 
     /**

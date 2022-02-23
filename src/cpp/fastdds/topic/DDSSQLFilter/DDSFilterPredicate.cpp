@@ -18,6 +18,11 @@
 
 #include "DDSFilterPredicate.hpp"
 
+#include <cassert>
+#include <memory>
+
+#include "DDSFilterValue.hpp"
+
 namespace eprosima {
 namespace fastdds {
 namespace dds {
@@ -31,18 +36,67 @@ DDSFilterPredicate::DDSFilterPredicate(
     , left_(left)
     , right_(right)
 {
+    assert(left_);
+    assert(right_);
+
+    left_->add_parent(this);
+    right_->add_parent(this);
+
+    if (OperationKind::LIKE == op_)
+    {
+        right_->as_regular_expression(true);
+    }
+    else if (OperationKind::MATCH == op_)
+    {
+        right_->as_regular_expression(false);
+    }
 }
 
-void DDSFilterPredicate::value_has_changed(
-        const DDSFilterValue& value)
+void DDSFilterPredicate::value_has_changed()
 {
-    // TODO(Miguel C): Implement this
-    static_cast<void>(value);
+    if (left_->has_value() && right_->has_value())
+    {
+        switch (op_)
+        {
+            case OperationKind::EQUAL:
+                set_result(*left_ == *right_);
+                break;
+
+            case OperationKind::NOT_EQUAL:
+                set_result(*left_ != *right_);
+                break;
+
+            case OperationKind::LESS_THAN:
+                set_result(*left_ < *right_);
+                break;
+
+            case OperationKind::LESS_EQUAL:
+                set_result(*left_ <= *right_);
+                break;
+
+            case OperationKind::GREATER_THAN:
+                set_result(*left_ > *right_);
+                break;
+
+            case OperationKind::GREATER_EQUAL:
+                set_result(*left_ >= *right_);
+                break;
+
+            case OperationKind::LIKE:
+            case OperationKind::MATCH:
+                set_result(left_->is_like(*right_));
+                break;
+
+            default:
+                assert(false);
+        }
+    }
 }
 
 void DDSFilterPredicate::propagate_reset() noexcept
 {
-    // TODO(Miguel C): Implement this
+    left_->reset();
+    right_->reset();
 }
 
 }  // namespace DDSSQLFilter

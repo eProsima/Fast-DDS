@@ -32,8 +32,11 @@ namespace DDSSQLFilter {
 /**
  * A DDSFilterCondition for binary predicates (i.e. <op1> <operator> <op2>).
  */
-struct DDSFilterPredicate final : public DDSFilterCondition
+class DDSFilterPredicate final : public DDSFilterCondition
 {
+
+public:
+
     /**
      * Possible kinds of binary operations
      */
@@ -45,7 +48,8 @@ struct DDSFilterPredicate final : public DDSFilterCondition
         LESS_EQUAL,     ///< left <= right
         GREATER_THAN,   ///< left > right
         GREATER_EQUAL,  ///< left >= right
-        LIKE            ///< left LIKE right
+        LIKE,           ///< left LIKE right
+        MATCH           ///< left MATCH right
     };
 
     /**
@@ -64,11 +68,8 @@ struct DDSFilterPredicate final : public DDSFilterCondition
 
     /**
      * Called when the value of an operand is changed.
-     *
-     * @param[in]  value  The DDSFilterValue that changed.
      */
-    void value_has_changed(
-            const DDSFilterValue& value);
+    void value_has_changed();
 
 protected:
 

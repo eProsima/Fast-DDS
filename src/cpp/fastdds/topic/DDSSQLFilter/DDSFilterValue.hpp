@@ -19,6 +19,9 @@
 #ifndef _FASTDDS_TOPIC_DDSSQLFILTER_DDSFILTERVALUE_HPP_
 #define _FASTDDS_TOPIC_DDSSQLFILTER_DDSFILTERVALUE_HPP_
 
+#include <memory>
+#include <regex>
+
 #include <fastrtps/utils/fixed_size_string.hpp>
 
 namespace eprosima {
@@ -26,23 +29,35 @@ namespace fastdds {
 namespace dds {
 namespace DDSSQLFilter {
 
+class DDSFilterPredicate;
+
 /**
  * Represents a value (either constant, parameter or fieldname) on a filter expression.
  */
-struct DDSFilterValue
+class DDSFilterValue
 {
+
+public:
+
+    // DDSFilterPredicate needs to call protected method add_parent
+    friend class DDSFilterPredicate;
+
     /**
      * The high-level kind of a DDSFilterValue.
+     * Please note that the constants here should follow the promotion order.
      */
     enum class ValueKind
     {
         BOOLEAN,            ///< Value is a bool
-        CHAR,               ///< Value is a char
+        ENUM,               ///< Value is an int32_t with the value of an enumeration
         SIGNED_INTEGER,     ///< Value is a int16_t, int32_t, or int64_t
         UNSIGNED_INTEGER,   ///< Value is a uint8_t, uint16_t, uint32_t, or uint64_t
-        FLOAT,              ///< Value is a float, double, or long double
-        STRING,             ///< Value is a string
-        ENUM                ///< Value is an int32_t with the value of an enumeration
+        FLOAT_CONST,        ///< Value is a long double constant
+        FLOAT_FIELD,        ///< Value is a float field
+        DOUBLE_FIELD,       ///< Value is a double field
+        LONG_DOUBLE_FIELD,  ///< Value is a long double field
+        CHAR,               ///< Value is a char
+        STRING              ///< Value is a string
     };
 
     /// The kind of value held by this DDSFilterValue
@@ -81,7 +96,24 @@ struct DDSFilterValue
     {
     }
 
+    // *INDENT-OFF*
+    DDSFilterValue(const DDSFilterValue&) = delete;
+    DDSFilterValue& operator=(const DDSFilterValue&) = delete;
+    DDSFilterValue(DDSFilterValue&&) = default;
+    DDSFilterValue& operator=(DDSFilterValue&&) = default;
+    // *INDENT-ON*
+
     virtual ~DDSFilterValue() = default;
+
+    /**
+     * Copy the state of this object from another one.
+     *
+     * @param [in] other                    The DDSFilterValue from where to copy the state.
+     * @param [in] copy_regular_expression  Whether the regular expression state should be copied or not
+     */
+    void copy_from(
+            const DDSFilterValue& other,
+            bool copy_regular_expression) noexcept;
 
     /**
      * This method is used by a DDSFilterPredicate to check if this DDSFilterValue can be used.
@@ -102,6 +134,94 @@ struct DDSFilterValue
     virtual void reset() noexcept
     {
     }
+
+    /**
+     * Mark that this value should be handled as a regular expression.
+     *
+     * @param [in] is_like_operand  Whether this value is used on a LIKE or MATCH operation.
+     */
+    void as_regular_expression(
+            bool is_like_operand);
+
+    /**
+     * @name Comparison operations
+     * Methods implementing the comparison operators of binary predicates.
+     * Should only be called against a DDSFilterValue of a compatible kind,
+     * according to the type promotion restrictions.
+     */
+    ///@{
+    inline bool operator ==(
+            const DDSFilterValue& other) const noexcept
+    {
+        return compare(*this, other) == 0;
+    }
+
+    inline bool operator !=(
+            const DDSFilterValue& other) const noexcept
+    {
+        return compare(*this, other) != 0;
+    }
+
+    inline bool operator <(
+            const DDSFilterValue& other) const noexcept
+    {
+        return compare(*this, other) < 0;
+    }
+
+    inline bool operator <=(
+            const DDSFilterValue& other) const noexcept
+    {
+        return compare(*this, other) <= 0;
+    }
+
+    inline bool operator >(
+            const DDSFilterValue& other) const noexcept
+    {
+        return compare(*this, other) > 0;
+    }
+
+    inline bool operator >=(
+            const DDSFilterValue& other) const noexcept
+    {
+        return compare(*this, other) >= 0;
+    }
+
+    bool is_like(
+            const DDSFilterValue& other) const noexcept;
+    ///@}
+
+protected:
+
+    /**
+     * Called when this DDSFilterValue is used on a DDSFilterPredicate.
+     *
+     * @param parent [in]  The DDSFilterPredicate referencing this DDSFilterValue.
+     */
+    virtual void add_parent(
+            DDSFilterPredicate* parent)
+    {
+        static_cast<void>(parent);
+    }
+
+    /**
+     * Called when the value of this DDSFilterValue has changed.
+     * Will regenerate the regular expression object if as_regular_expression was called.
+     */
+    void value_has_changed();
+
+private:
+
+    enum class RegExpKind
+    {
+        NONE, LIKE, MATCH
+    };
+
+    RegExpKind regular_expr_kind_ = RegExpKind::NONE;
+    std::unique_ptr<std::regex> regular_expr_;
+
+    static int compare(
+            const DDSFilterValue& lhs,
+            const DDSFilterValue& rhs) noexcept;
 
 };
 

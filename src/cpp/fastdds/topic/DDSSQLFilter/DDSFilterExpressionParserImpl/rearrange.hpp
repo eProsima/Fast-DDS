@@ -55,10 +55,18 @@ struct rearrange
             c.pop_back();
             auto o = std::move(c.back());
             c.pop_back();
-            o->children.emplace_back(std::move(n));
-            o->children.emplace_back(std::move(r));
-            n = std::move(o);
-            transform(n->children.front(), st ...);
+            if (c.empty())
+            {
+                o->children.emplace_back(std::move(r));
+                n = std::move(o);
+            }
+            else
+            {
+                o->children.emplace_back(std::move(n));
+                o->children.emplace_back(std::move(r));
+                n = std::move(o);
+                transform(n->children.front(), st ...);
+            }
         }
     }
 

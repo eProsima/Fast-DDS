@@ -29,8 +29,11 @@ namespace DDSSQLFilter {
 /**
  * A DDSFilterValue for expression parameters (i.e. %nn).
  */
-struct DDSFilterParameter final : public DDSFilterValue
+class DDSFilterParameter final : public DDSFilterValue
 {
+
+public:
+
     virtual ~DDSFilterParameter() = default;
 
     /**
