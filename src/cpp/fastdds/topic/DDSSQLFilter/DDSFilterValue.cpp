@@ -228,16 +228,12 @@ int DDSFilterValue::compare(
     }
     else
     {
+        /* Type promotion rules are enforced during the construction of the expression tree on
+         * DDSFilterFactory. For the types on which promotion is supported, a corresponding to_xxx method exists
+         * that will assert if an invalid promotion is performed.
+         */
         switch (lhs.kind)
         {
-            case ValueKind::BOOLEAN:
-                // Boolean is the lowest kind, so promotion to boolean should never happen
-                assert(false);
-
-            case ValueKind::CHAR:
-                // Only boolean is below char, and it is not allowed to be promoted to char
-                assert(false);
-
             case ValueKind::ENUM:
             case ValueKind::SIGNED_INTEGER:
             {
@@ -264,8 +260,12 @@ int DDSFilterValue::compare(
                 return std::strcmp(lhs.string_value.c_str(), rvalue.c_str());
             }
 
+            // Promotion to boolean or char are not allowed.
+            case ValueKind::BOOLEAN:
+            case ValueKind::CHAR:
             default:
                 assert(false);
+                break;
         }
     }
 
