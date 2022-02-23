@@ -36,6 +36,7 @@
 #include <fastrtps/attributes/SubscriberAttributes.h>
 #include <fastrtps/xmlparser/XMLProfileManager.h>
 
+#include "../../common/GTestPrinters.hpp"
 
 namespace eprosima {
 namespace fastdds {
