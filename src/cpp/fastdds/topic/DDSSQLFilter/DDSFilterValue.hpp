@@ -39,6 +39,7 @@ class DDSFilterValue
 
 public:
 
+    // DDSFilterPredicate needs to call protected method add_parent
     friend class DDSFilterPredicate;
 
     /**
@@ -104,6 +105,11 @@ public:
 
     virtual ~DDSFilterValue() = default;
 
+    /**
+     * Copy the state of this object from another one.
+     *
+     * @param [in] other  The DDSFilterValue from where to copy the state.
+     */
     void copy_from(
             const DDSFilterValue& other) noexcept;
 
@@ -127,9 +133,21 @@ public:
     {
     }
 
+    /**
+     * Mark that this value should be handled as a regular expression.
+     *
+     * @param [in] is_like_operand  Whether this value is used on a LIKE or MATCH operation.
+     */
     void as_regular_expression(
             bool is_like_operand);
 
+    /**
+     * @name Comparison operations
+     * Methods implementing the comparison operators of binary predicates.
+     * Should only be called against a DDSFilterValue of a compatible kind,
+     * according to the type promotion restrictions.
+     */
+    ///@{
     inline bool operator ==(
             const DDSFilterValue& other) const noexcept
     {
@@ -168,15 +186,25 @@ public:
 
     bool is_like(
             const DDSFilterValue& other) const noexcept;
+    ///@}
 
 protected:
 
+    /**
+     * Called when this DDSFilterValue is used on a DDSFilterPredicate.
+     *
+     * @param parent [in]  The DDSFilterPredicate referencing this DDSFilterValue.
+     */
     virtual void add_parent(
             DDSFilterPredicate* parent)
     {
         static_cast<void>(parent);
     }
 
+    /**
+     * Called when the value of this DDSFilterValue has changed.
+     * Will regenerate the regular expression object if as_regular_expression was called.
+     */
     void value_has_changed();
 
 private:
