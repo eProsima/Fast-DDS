@@ -41,8 +41,11 @@ namespace DDSSQLFilter {
 /**
  * An IContentFilter that evaluates DDS-SQL filter expressions
  */
-struct DDSFilterExpression final : public IContentFilter
+class DDSFilterExpression final : public IContentFilter
 {
+
+public:
+
     bool evaluate(
             const SerializedPayload& payload,
             const FilterSampleInfo& sample_info,
@@ -70,8 +73,11 @@ struct DDSFilterExpression final : public IContentFilter
 
 private:
 
-    struct DynDataDeleter
+    class DynDataDeleter
     {
+
+    public:
+
         void operator ()(
                 eprosima::fastrtps::types::DynamicData* ptr)
         {

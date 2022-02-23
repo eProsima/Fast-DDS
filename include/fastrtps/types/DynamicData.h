@@ -26,7 +26,7 @@ namespace fastdds {
 namespace dds {
 namespace DDSSQLFilter {
 
-struct DDSFilterExpression;
+class DDSFilterExpression;
 
 }  // namespace DDSSQLFilter
 }  // namespace dds
@@ -175,7 +175,7 @@ protected:
     friend class DynamicDataFactory;
     friend class DynamicPubSubType;
     friend class DynamicDataHelper;
-    friend struct eprosima::fastdds::dds::DDSSQLFilter::DDSFilterExpression;
+    friend class eprosima::fastdds::dds::DDSSQLFilter::DDSFilterExpression;
 
 public:
 

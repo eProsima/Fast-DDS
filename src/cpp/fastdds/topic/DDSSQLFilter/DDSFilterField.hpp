@@ -39,8 +39,11 @@ namespace DDSSQLFilter {
 /**
  * A DDSFilterValue for fieldname-based expression values.
  */
-struct DDSFilterField final : public DDSFilterValue
+class DDSFilterField final : public DDSFilterValue
 {
+
+public:
+
     /**
      * An element on the access path to the final field.
      */

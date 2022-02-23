@@ -35,8 +35,11 @@ namespace DDSSQLFilter {
 /**
  * An IContentFilterFactory that processes DDS-SQL filter expressions.
  */
-struct DDSFilterFactory final : public IContentFilterFactory
+class DDSFilterFactory final : public IContentFilterFactory
 {
+
+public:
+
     ~DDSFilterFactory();
 
     ReturnCode_t create_content_filter(

@@ -31,8 +31,11 @@ namespace DDSSQLFilter {
 /**
  * A DDSFilterCondition that performs a logical operation over one or two DDSFilterCondition objects.
  */
-struct DDSFilterCompoundCondition final : public DDSFilterCondition
+class DDSFilterCompoundCondition final : public DDSFilterCondition
 {
+
+public:
+
     /**
      * Possible kinds of logical operations
      */

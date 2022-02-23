@@ -29,14 +29,17 @@ namespace fastdds {
 namespace dds {
 namespace DDSSQLFilter {
 
-struct DDSFilterPredicate;
+class DDSFilterPredicate;
 
 /**
  * Represents a value (either constant, parameter or fieldname) on a filter expression.
  */
-struct DDSFilterValue
+class DDSFilterValue
 {
-    friend struct DDSFilterPredicate;
+
+public:
+
+    friend class DDSFilterPredicate;
 
     /**
      * The high-level kind of a DDSFilterValue.

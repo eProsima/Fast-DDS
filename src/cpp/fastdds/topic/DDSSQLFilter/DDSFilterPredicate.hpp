@@ -32,8 +32,11 @@ namespace DDSSQLFilter {
 /**
  * A DDSFilterCondition for binary predicates (i.e. <op1> <operator> <op2>).
  */
-struct DDSFilterPredicate final : public DDSFilterCondition
+class DDSFilterPredicate final : public DDSFilterCondition
 {
+
+public:
+
     /**
      * Possible kinds of binary operations
      */

@@ -29,9 +29,12 @@ namespace DDSSQLFilter {
 /**
  * Base class for conditions on a filter expression.
  */
-struct DDSFilterCondition
+class DDSFilterCondition
 {
-    friend struct DDSFilterCompoundCondition;
+
+public:
+
+    friend class DDSFilterCompoundCondition;
 
     virtual ~DDSFilterCondition() = default;
 
