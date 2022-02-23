@@ -12,17 +12,17 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include "BlackboxTests.hpp"
-
-#include "PubSubWriter.hpp"
-
-#include "../types/HelloWorldTypeObject.h"
+#include <gtest/gtest.h>
 
 #include <fastdds/dds/subscriber/DataReader.hpp>
 #include <fastdds/dds/subscriber/Subscriber.hpp>
 #include <fastdds/dds/subscriber/qos/DataReaderQos.hpp>
 
-#include <gtest/gtest.h>
+#include "BlackboxTests.hpp"
+
+#include "PubSubWriter.hpp"
+
+#include "../types/HelloWorldTypeObject.h"
 
 namespace eprosima {
 namespace fastdds {
