@@ -20,7 +20,8 @@
 
 #include <cassert>
 #include <cstring>
-#include <limits>
+#include <string>
+#include <regex>
 
 namespace eprosima {
 namespace fastdds {
