@@ -218,6 +218,8 @@ int DDSFilterValue::compare(
             case ValueKind::STRING:
                 return std::strcmp(lhs.string_value.c_str(), rhs.string_value.c_str());
 
+            // As the grammar does not allow constant vs constant comparisons, FLOAT_CONST should never reach here
+            case ValueKind::FLOAT_CONST:
             default:
                 assert(false);
         }
