@@ -807,112 +807,64 @@ private:
     void add_float_values(
             std::array<ContentFilterTestType, 5>& data)
     {
-        float min = std::numeric_limits<float>::lowest();
-        float max = std::numeric_limits<float>::max();
+        constexpr float min = std::numeric_limits<float>::lowest();
+        constexpr float max = std::numeric_limits<float>::max();
 
-        data[0].float_field(min);
-        data[0].struct_field().float_field(min);
-        data[0].array_float_field()[0] = min;
-        data[0].bounded_sequence_float_field().push_back(min);
-        data[0].unbounded_sequence_float_field().push_back(min);
+        std::array<float, 5> values{ min, -3.14159f, 0.0f, 3.14159f, max };
 
-        data[1].float_field(-3.14159f);
-        data[1].struct_field().float_field(-3.14159f);
-        data[1].array_float_field()[0] = -3.14159f;
-        data[1].bounded_sequence_float_field().push_back(-3.14159f);
-        data[1].unbounded_sequence_float_field().push_back(-3.14159f);
-
-        data[2].float_field(0.0f);
-        data[2].struct_field().float_field(0.0f);
-        data[2].array_float_field()[0] = 0.0f;
-        data[2].bounded_sequence_float_field().push_back(0.0f);
-        data[2].unbounded_sequence_float_field().push_back(0.0f);
-
-        data[3].float_field(3.14159f);
-        data[3].struct_field().float_field(3.14159f);
-        data[3].array_float_field()[0] = 3.14159f;
-        data[3].bounded_sequence_float_field().push_back(3.14159f);
-        data[3].unbounded_sequence_float_field().push_back(3.14159f);
-
-        data[4].float_field(max);
-        data[4].struct_field().float_field(max);
-        data[4].array_float_field()[0] = max;
-        data[4].bounded_sequence_float_field().push_back(max);
-        data[4].unbounded_sequence_float_field().push_back(max);
+        for (size_t i = 0; i < values.size(); ++i)
+        {
+            data[i].float_field(values[i]);
+            data[i].struct_field().float_field(values[i]);
+            data[i].array_struct_field()[0].float_field(values[i]);
+            data[i].bounded_sequence_struct_field()[0].float_field(values[i]);
+            data[i].unbounded_sequence_struct_field()[0].float_field(values[i]);
+            data[i].array_float_field()[0] = values[i];
+            data[i].bounded_sequence_float_field().push_back(values[i]);
+            data[i].unbounded_sequence_float_field().push_back(values[i]);
+        }
     }
 
     void add_double_values(
             std::array<ContentFilterTestType, 5>& data)
     {
-        double min = std::numeric_limits<double>::lowest();
-        double max = std::numeric_limits<double>::max();
+        constexpr double min = std::numeric_limits<double>::lowest();
+        constexpr double max = std::numeric_limits<double>::max();
 
-        data[0].double_field(min);
-        data[0].struct_field().double_field(min);
-        data[0].array_double_field()[0] = min;
-        data[0].bounded_sequence_double_field().push_back(min);
-        data[0].unbounded_sequence_double_field().push_back(min);
+        std::array<double, 5> values{ min, -3.14159, 0.0, 3.14159, max };
 
-        data[1].double_field(-3.14159);
-        data[1].struct_field().double_field(-3.14159);
-        data[1].array_double_field()[0] = -3.14159;
-        data[1].bounded_sequence_double_field().push_back(-3.14159);
-        data[1].unbounded_sequence_double_field().push_back(-3.14159);
-
-        data[2].double_field(0.0);
-        data[2].struct_field().double_field(0.0);
-        data[2].array_double_field()[0] = 0.0;
-        data[2].bounded_sequence_double_field().push_back(0.0);
-        data[2].unbounded_sequence_double_field().push_back(0.0);
-
-        data[3].double_field(3.14159);
-        data[3].struct_field().double_field(3.14159);
-        data[3].array_double_field()[0] = 3.14159;
-        data[3].bounded_sequence_double_field().push_back(3.14159);
-        data[3].unbounded_sequence_double_field().push_back(3.14159);
-
-        data[4].double_field(max);
-        data[4].struct_field().double_field(max);
-        data[4].array_double_field()[0] = max;
-        data[4].bounded_sequence_double_field().push_back(max);
-        data[4].unbounded_sequence_double_field().push_back(max);
+        for (size_t i = 0; i < values.size(); ++i)
+        {
+            data[i].double_field(values[i]);
+            data[i].struct_field().double_field(values[i]);
+            data[i].array_struct_field()[0].double_field(values[i]);
+            data[i].bounded_sequence_struct_field()[0].double_field(values[i]);
+            data[i].unbounded_sequence_struct_field()[0].double_field(values[i]);
+            data[i].array_double_field()[0] = values[i];
+            data[i].bounded_sequence_double_field().push_back(values[i]);
+            data[i].unbounded_sequence_double_field().push_back(values[i]);
+        }
     }
 
     void add_long_double_values(
             std::array<ContentFilterTestType, 5>& data)
     {
-        long double min = std::numeric_limits<long double>::lowest();
-        long double max = std::numeric_limits<long double>::max();
+        constexpr long double min = std::numeric_limits<long double>::lowest();
+        constexpr long double max = std::numeric_limits<long double>::max();
 
-        data[0].long_double_field(min);
-        data[0].struct_field().long_double_field(min);
-        data[0].array_long_double_field()[0] = min;
-        data[0].bounded_sequence_long_double_field().push_back(min);
-        data[0].unbounded_sequence_long_double_field().push_back(min);
+        std::array<long double, 5> values{ min, -3.14159l, 0.0, 3.14159l, max };
 
-        data[1].long_double_field(-3.14159l);
-        data[1].struct_field().long_double_field(-3.14159l);
-        data[1].array_long_double_field()[0] = -3.14159l;
-        data[1].bounded_sequence_long_double_field().push_back(-3.14159l);
-        data[1].unbounded_sequence_long_double_field().push_back(-3.14159l);
-
-        data[2].long_double_field(0.0l);
-        data[2].struct_field().long_double_field(0.0l);
-        data[2].array_long_double_field()[0] = 0.0l;
-        data[2].bounded_sequence_long_double_field().push_back(0.0l);
-        data[2].unbounded_sequence_long_double_field().push_back(0.0l);
-
-        data[3].long_double_field(3.14159l);
-        data[3].struct_field().long_double_field(3.14159l);
-        data[3].array_long_double_field()[0] = 3.14159l;
-        data[3].bounded_sequence_long_double_field().push_back(3.14159l);
-        data[3].unbounded_sequence_long_double_field().push_back(3.14159l);
-
-        data[4].long_double_field(max);
-        data[4].struct_field().long_double_field(max);
-        data[4].array_long_double_field()[0] = max;
-        data[4].bounded_sequence_long_double_field().push_back(max);
-        data[4].unbounded_sequence_long_double_field().push_back(max);
+        for (size_t i = 0; i < values.size(); ++i)
+        {
+            data[i].long_double_field(values[i]);
+            data[i].struct_field().long_double_field(values[i]);
+            data[i].array_struct_field()[0].long_double_field(values[i]);
+            data[i].bounded_sequence_struct_field()[0].long_double_field(values[i]);
+            data[i].unbounded_sequence_struct_field()[0].long_double_field(values[i]);
+            data[i].array_long_double_field()[0] = values[i];
+            data[i].bounded_sequence_long_double_field().push_back(values[i]);
+            data[i].unbounded_sequence_long_double_field().push_back(values[i]);
+        }
     }
 
     void add_bool_values(
