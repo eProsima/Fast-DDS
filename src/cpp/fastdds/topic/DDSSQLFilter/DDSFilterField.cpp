@@ -52,17 +52,20 @@ bool DDSFilterField::set_value(
         if (nullptr != array_data)
         {
             member_id = static_cast<MemberId>(access_path_[n].array_index);
-            if (last_step)
+            if (array_data->get_item_count() > member_id)
             {
-                ret = set_value(array_data, member_id);
-            }
-            else
-            {
-                DynamicData* struct_data = array_data->loan_value(member_id);
-                if (nullptr != struct_data)
+                if (last_step)
                 {
-                    ret = set_value(*struct_data, n + 1);
-                    array_data->return_loaned_value(struct_data);
+                    ret = set_value(array_data, member_id);
+                }
+                else
+                {
+                    DynamicData* struct_data = array_data->loan_value(member_id);
+                    if (nullptr != struct_data)
+                    {
+                        ret = set_value(*struct_data, n + 1);
+                        array_data->return_loaned_value(struct_data);
+                    }
                 }
             }
             data.return_loaned_value(array_data);
