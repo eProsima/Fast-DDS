@@ -870,22 +870,18 @@ private:
     void add_bool_values(
             std::array<ContentFilterTestType, 5>& data)
     {
-        for (size_t i = 0; i < 2; ++i)
-        {
-            data[i].bool_field(false);
-            data[i].struct_field().bool_field(false);
-            data[i].array_bool_field()[0] = false;
-            data[i].bounded_sequence_bool_field().push_back(false);
-            data[i].unbounded_sequence_bool_field().push_back(false);
-        }
+        std::array<bool, 5> values{ false, false, true, true, true };
 
-        for (size_t i = 2; i < 5; ++i)
+        for (size_t i = 0; i < values.size(); ++i)
         {
-            data[i].bool_field(true);
-            data[i].struct_field().bool_field(true);
-            data[i].array_bool_field()[0] = true;
-            data[i].bounded_sequence_bool_field().push_back(true);
-            data[i].unbounded_sequence_bool_field().push_back(true);
+            data[i].bool_field(values[i]);
+            data[i].struct_field().bool_field(values[i]);
+            data[i].array_struct_field()[0].bool_field(values[i]);
+            data[i].bounded_sequence_struct_field()[0].bool_field(values[i]);
+            data[i].unbounded_sequence_struct_field()[0].bool_field(values[i]);
+            data[i].array_bool_field()[0] = values[i];
+            data[i].bounded_sequence_bool_field().push_back(values[i]);
+            data[i].unbounded_sequence_bool_field().push_back(values[i]);
         }
     }
 
