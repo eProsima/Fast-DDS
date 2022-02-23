@@ -600,6 +600,12 @@ private:
     {
         std::array<ContentFilterTestType, 5> data;
 
+        for (ContentFilterTestType& d : data)
+        {
+            d.bounded_sequence_struct_field().emplace_back();
+            d.unbounded_sequence_struct_field().emplace_back();
+        }
+
         add_char_values(data);
         add_uint8_values(data);
         add_int16_values(data);
@@ -616,9 +622,9 @@ private:
         add_enum_values(data);
         add_enum2_values(data);
 
-        for (size_t i = 0; i < data.size(); ++i)
+        for (const ContentFilterTestType& d : data)
         {
-            add_value(data[i]);
+            add_value(d);
         }
     }
 
