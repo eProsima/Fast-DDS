@@ -906,69 +906,40 @@ private:
     void add_enum_values(
             std::array<ContentFilterTestType, 5>& data)
     {
-        data[0].enum_field(Color::RED);
-        data[0].struct_field().enum_field(Color::RED);
-        data[0].array_enum_field()[0] = Color::RED;
-        data[0].bounded_sequence_enum_field().push_back(Color::RED);
-        data[0].unbounded_sequence_enum_field().push_back(Color::RED);
+        std::array<Color, 5> values{ Color::RED, Color::GREEN, Color::BLUE, Color::YELLOW, Color::MAGENTA };
 
-        data[1].enum_field(Color::GREEN);
-        data[1].struct_field().enum_field(Color::GREEN);
-        data[1].array_enum_field()[0] = Color::GREEN;
-        data[1].bounded_sequence_enum_field().push_back(Color::GREEN);
-        data[1].unbounded_sequence_enum_field().push_back(Color::GREEN);
-
-        data[2].enum_field(Color::BLUE);
-        data[2].struct_field().enum_field(Color::BLUE);
-        data[2].array_enum_field()[0] = Color::BLUE;
-        data[2].bounded_sequence_enum_field().push_back(Color::BLUE);
-        data[2].unbounded_sequence_enum_field().push_back(Color::BLUE);
-
-        data[3].enum_field(Color::YELLOW);
-        data[3].struct_field().enum_field(Color::YELLOW);
-        data[3].array_enum_field()[0] = Color::YELLOW;
-        data[3].bounded_sequence_enum_field().push_back(Color::YELLOW);
-        data[3].unbounded_sequence_enum_field().push_back(Color::YELLOW);
-
-        data[4].enum_field(Color::MAGENTA);
-        data[4].struct_field().enum_field(Color::MAGENTA);
-        data[4].array_enum_field()[0] = Color::MAGENTA;
-        data[4].bounded_sequence_enum_field().push_back(Color::MAGENTA);
-        data[4].unbounded_sequence_enum_field().push_back(Color::MAGENTA);
+        for (size_t i = 0; i < values.size(); ++i)
+        {
+            data[i].enum_field(values[i]);
+            data[i].struct_field().enum_field(values[i]);
+            data[i].array_struct_field()[0].enum_field(values[i]);
+            data[i].bounded_sequence_struct_field()[0].enum_field(values[i]);
+            data[i].unbounded_sequence_struct_field()[0].enum_field(values[i]);
+            data[i].array_enum_field()[0] = values[i];
+            data[i].bounded_sequence_enum_field().push_back(values[i]);
+            data[i].unbounded_sequence_enum_field().push_back(values[i]);
+        }
     }
 
     void add_enum2_values(
             std::array<ContentFilterTestType, 5>& data)
     {
-        data[0].enum2_field(Material::WOOD);
-        data[0].struct_field().enum2_field(Material::WOOD);
-        data[0].array_enum2_field()[0] = Material::WOOD;
-        data[0].bounded_sequence_enum2_field().push_back(Material::WOOD);
-        data[0].unbounded_sequence_enum2_field().push_back(Material::WOOD);
+        std::array<Material, 5> values
+        {
+            Material::WOOD, Material::PLASTIC, Material::METAL, Material::CONCRETE, Material::STONE
+        };
 
-        data[1].enum2_field(Material::PLASTIC);
-        data[1].struct_field().enum2_field(Material::PLASTIC);
-        data[1].array_enum2_field()[0] = Material::PLASTIC;
-        data[1].bounded_sequence_enum2_field().push_back(Material::PLASTIC);
-        data[1].unbounded_sequence_enum2_field().push_back(Material::PLASTIC);
-
-        data[2].enum2_field(Material::METAL);
-        data[2].struct_field().enum2_field(Material::METAL);
-        data[2].array_enum2_field()[0] = Material::METAL;
-        data[2].bounded_sequence_enum2_field().push_back(Material::METAL);
-        data[2].unbounded_sequence_enum2_field().push_back(Material::METAL);
-
-        data[3].enum2_field(Material::CONCRETE);
-        data[3].struct_field().enum2_field(Material::CONCRETE);
-        data[3].array_enum2_field()[0] = Material::CONCRETE;
-        data[3].bounded_sequence_enum2_field().push_back(Material::CONCRETE);
-        data[3].unbounded_sequence_enum2_field().push_back(Material::CONCRETE);
-
-        data[4].enum2_field(Material::STONE);
-        data[4].struct_field().enum2_field(Material::STONE);
-        data[4].array_enum2_field()[0] = Material::STONE;
-        data[4].bounded_sequence_enum2_field().push_back(Material::STONE);
-        data[4].unbounded_sequence_enum2_field().push_back(Material::STONE);
+        for (size_t i = 0; i < values.size(); ++i)
+        {
+            data[i].enum2_field(values[i]);
+            data[i].struct_field().enum2_field(values[i]);
+            data[i].array_struct_field()[0].enum2_field(values[i]);
+            data[i].bounded_sequence_struct_field()[0].enum2_field(values[i]);
+            data[i].unbounded_sequence_struct_field()[0].enum2_field(values[i]);
+            data[i].array_enum2_field()[0] = values[i];
+            data[i].bounded_sequence_enum2_field().push_back(values[i]);
+            data[i].unbounded_sequence_enum2_field().push_back(values[i]);
+        }
     }
 
 };
@@ -1015,6 +986,7 @@ protected:
             EXPECT_EQ(results[i], filter_instance->evaluate(*values[i], info, guid)) << "with i = " << i;
         }
     }
+
 };
 
 TEST_P(DDSSQLFilterValueTests, test_filtered_value)
