@@ -27,12 +27,6 @@ namespace fastdds {
 namespace dds {
 namespace DDSSQLFilter {
 
-static constexpr DDSFilterValue::ValueKind effective_kind(
-        DDSFilterValue::ValueKind kind)
-{
-    return DDSFilterValue::ValueKind::ENUM == kind ? DDSFilterValue::ValueKind::SIGNED_INTEGER : kind;
-}
-
 template<typename T>
 int compare_values(
         T lvalue,
@@ -76,6 +70,9 @@ static int64_t to_signed_integer(
     {
         case DDSFilterValue::ValueKind::BOOLEAN:
             return value.boolean_value ? 1 : 0;
+
+        case DDSFilterValue::ValueKind::ENUM:
+            return value.signed_integer_value;
 
         // The rest of the types shall never be promoted to SIGNED_INTEGER
         default:
@@ -191,7 +188,7 @@ int DDSFilterValue::compare(
         const DDSFilterValue& lhs,
         const DDSFilterValue& rhs) noexcept
 {
-    if (effective_kind(lhs.kind) == effective_kind(rhs.kind))
+    if (lhs.kind == rhs.kind)
     {
         switch (lhs.kind)
         {
@@ -224,7 +221,7 @@ int DDSFilterValue::compare(
                 assert(false);
         }
     }
-    else if (effective_kind(lhs.kind) < effective_kind(rhs.kind))
+    else if (lhs.kind < rhs.kind)
     {
         // We want to always promote rhs
         return -compare(rhs, lhs);
