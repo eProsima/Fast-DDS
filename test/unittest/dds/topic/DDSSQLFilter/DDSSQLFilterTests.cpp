@@ -660,260 +660,148 @@ private:
     void add_uint8_values(
             std::array<ContentFilterTestType, 5>& data)
     {
-        uint8_t min = std::numeric_limits<uint8_t>::lowest();
-        uint8_t max = std::numeric_limits<uint8_t>::max();
+        constexpr uint8_t min = std::numeric_limits<uint8_t>::lowest();
+        constexpr uint8_t max = std::numeric_limits<uint8_t>::max();
 
-        data[0].uint8_field(min);
-        data[0].struct_field().uint8_field(min);
-        data[0].array_uint8_field()[0] = min;
-        data[0].bounded_sequence_uint8_field().push_back(min);
-        data[0].unbounded_sequence_uint8_field().push_back(min);
+        std::array<uint8_t, 5> values{ min, max / 4, max / 3, max / 2, max };
 
-        data[1].uint8_field(max / 4);
-        data[1].struct_field().uint8_field(max / 4);
-        data[1].array_uint8_field()[0] = max / 4;
-        data[1].bounded_sequence_uint8_field().push_back(max / 4);
-        data[1].unbounded_sequence_uint8_field().push_back(max / 4);
-
-        data[2].uint8_field(max / 3);
-        data[2].struct_field().uint8_field(max / 3);
-        data[2].array_uint8_field()[0] = max / 3;
-        data[2].bounded_sequence_uint8_field().push_back(max / 3);
-        data[2].unbounded_sequence_uint8_field().push_back(max / 3);
-
-        data[3].uint8_field(max / 2);
-        data[3].struct_field().uint8_field(max / 2);
-        data[3].array_uint8_field()[0] = max / 2;
-        data[3].bounded_sequence_uint8_field().push_back(max / 2);
-        data[3].unbounded_sequence_uint8_field().push_back(max / 2);
-
-        data[4].uint8_field(max);
-        data[4].struct_field().uint8_field(max);
-        data[4].array_uint8_field()[0] = max;
-        data[4].bounded_sequence_uint8_field().push_back(max);
-        data[4].unbounded_sequence_uint8_field().push_back(max);
+        for (size_t i = 0; i < values.size(); ++i)
+        {
+            data[i].uint8_field(values[i]);
+            data[i].struct_field().uint8_field(values[i]);
+            data[i].array_struct_field()[0].uint8_field(values[i]);
+            data[i].bounded_sequence_struct_field()[0].uint8_field(values[i]);
+            data[i].unbounded_sequence_struct_field()[0].uint8_field(values[i]);
+            data[i].array_uint8_field()[0] = values[i];
+            data[i].bounded_sequence_uint8_field().push_back(values[i]);
+            data[i].unbounded_sequence_uint8_field().push_back(values[i]);
+        }
     }
 
     void add_int16_values(
             std::array<ContentFilterTestType, 5>& data)
     {
-        int16_t min = std::numeric_limits<int16_t>::lowest();
-        int16_t max = std::numeric_limits<int16_t>::max();
+        constexpr int16_t min = std::numeric_limits<int16_t>::lowest();
+        constexpr int16_t max = std::numeric_limits<int16_t>::max();
 
-        data[0].int16_field(min);
-        data[0].struct_field().int16_field(min);
-        data[0].array_int16_field()[0] = min;
-        data[0].bounded_sequence_int16_field().push_back(min);
-        data[0].unbounded_sequence_int16_field().push_back(min);
+        std::array<int16_t, 5> values{ min, -100, 0, 100, max };
 
-        data[1].int16_field(-100);
-        data[1].struct_field().int16_field(-100);
-        data[1].array_int16_field()[0] = -100;
-        data[1].bounded_sequence_int16_field().push_back(-100);
-        data[1].unbounded_sequence_int16_field().push_back(-100);
-
-        data[2].int16_field(0);
-        data[2].struct_field().int16_field(0);
-        data[2].array_int16_field()[0] = 0;
-        data[2].bounded_sequence_int16_field().push_back(0);
-        data[2].unbounded_sequence_int16_field().push_back(0);
-
-        data[3].int16_field(100);
-        data[3].struct_field().int16_field(100);
-        data[3].array_int16_field()[0] = 100;
-        data[3].bounded_sequence_int16_field().push_back(100);
-        data[3].unbounded_sequence_int16_field().push_back(100);
-
-        data[4].int16_field(max);
-        data[4].struct_field().int16_field(max);
-        data[4].array_int16_field()[0] = max;
-        data[4].bounded_sequence_int16_field().push_back(max);
-        data[4].unbounded_sequence_int16_field().push_back(max);
+        for (size_t i = 0; i < values.size(); ++i)
+        {
+            data[i].int16_field(values[i]);
+            data[i].struct_field().int16_field(values[i]);
+            data[i].array_struct_field()[0].int16_field(values[i]);
+            data[i].bounded_sequence_struct_field()[0].int16_field(values[i]);
+            data[i].unbounded_sequence_struct_field()[0].int16_field(values[i]);
+            data[i].array_int16_field()[0] = values[i];
+            data[i].bounded_sequence_int16_field().push_back(values[i]);
+            data[i].unbounded_sequence_int16_field().push_back(values[i]);
+        }
     }
 
     void add_uint16_values(
             std::array<ContentFilterTestType, 5>& data)
     {
-        uint16_t min = std::numeric_limits<uint16_t>::lowest();
-        uint16_t max = std::numeric_limits<uint16_t>::max();
+        constexpr uint16_t min = std::numeric_limits<uint16_t>::lowest();
+        constexpr uint16_t max = std::numeric_limits<uint16_t>::max();
 
-        data[0].uint16_field(min);
-        data[0].struct_field().uint16_field(min);
-        data[0].array_uint16_field()[0] = min;
-        data[0].bounded_sequence_uint16_field().push_back(min);
-        data[0].unbounded_sequence_uint16_field().push_back(min);
+        std::array<uint16_t, 5> values{ min, max / 4, max / 3, max / 2, max };
 
-        data[1].uint16_field(max / 4);
-        data[1].struct_field().uint16_field(max / 4);
-        data[1].array_uint16_field()[0] = max / 4;
-        data[1].bounded_sequence_uint16_field().push_back(max / 4);
-        data[1].unbounded_sequence_uint16_field().push_back(max / 4);
-
-        data[2].uint16_field(max / 3);
-        data[2].struct_field().uint16_field(max / 3);
-        data[2].array_uint16_field()[0] = max / 3;
-        data[2].bounded_sequence_uint16_field().push_back(max / 3);
-        data[2].unbounded_sequence_uint16_field().push_back(max / 3);
-
-        data[3].uint16_field(max / 2);
-        data[3].struct_field().uint16_field(max / 2);
-        data[3].array_uint16_field()[0] = max / 2;
-        data[3].bounded_sequence_uint16_field().push_back(max / 2);
-        data[3].unbounded_sequence_uint16_field().push_back(max / 2);
-
-        data[4].uint16_field(max);
-        data[4].struct_field().uint16_field(max);
-        data[4].array_uint16_field()[0] = max;
-        data[4].bounded_sequence_uint16_field().push_back(max);
-        data[4].unbounded_sequence_uint16_field().push_back(max);
+        for (size_t i = 0; i < values.size(); ++i)
+        {
+            data[i].uint16_field(values[i]);
+            data[i].struct_field().uint16_field(values[i]);
+            data[i].array_struct_field()[0].uint16_field(values[i]);
+            data[i].bounded_sequence_struct_field()[0].uint16_field(values[i]);
+            data[i].unbounded_sequence_struct_field()[0].uint16_field(values[i]);
+            data[i].array_uint16_field()[0] = values[i];
+            data[i].bounded_sequence_uint16_field().push_back(values[i]);
+            data[i].unbounded_sequence_uint16_field().push_back(values[i]);
+        }
     }
 
     void add_int32_values(
             std::array<ContentFilterTestType, 5>& data)
     {
-        int32_t min = std::numeric_limits<int32_t>::lowest();
-        int32_t max = std::numeric_limits<int32_t>::max();
+        constexpr int32_t min = std::numeric_limits<int32_t>::lowest();
+        constexpr int32_t max = std::numeric_limits<int32_t>::max();
 
-        data[0].int32_field(min);
-        data[0].struct_field().int32_field(min);
-        data[0].array_int32_field()[0] = min;
-        data[0].bounded_sequence_int32_field().push_back(min);
-        data[0].unbounded_sequence_int32_field().push_back(min);
+        std::array<int32_t, 5> values{ min, -100, 0, 100, max };
 
-        data[1].int32_field(-100);
-        data[1].struct_field().int32_field(-100);
-        data[1].array_int32_field()[0] = -100;
-        data[1].bounded_sequence_int32_field().push_back(-100);
-        data[1].unbounded_sequence_int32_field().push_back(-100);
-
-        data[2].int32_field(0);
-        data[2].struct_field().int32_field(0);
-        data[2].array_int32_field()[0] = 0;
-        data[2].bounded_sequence_int32_field().push_back(0);
-        data[2].unbounded_sequence_int32_field().push_back(0);
-
-        data[3].int32_field(100);
-        data[3].struct_field().int32_field(100);
-        data[3].array_int32_field()[0] = 100;
-        data[3].bounded_sequence_int32_field().push_back(100);
-        data[3].unbounded_sequence_int32_field().push_back(100);
-
-        data[4].int32_field(max);
-        data[4].struct_field().int32_field(max);
-        data[4].array_int32_field()[0] = max;
-        data[4].bounded_sequence_int32_field().push_back(max);
-        data[4].unbounded_sequence_int32_field().push_back(max);
+        for (size_t i = 0; i < values.size(); ++i)
+        {
+            data[i].int32_field(values[i]);
+            data[i].struct_field().int32_field(values[i]);
+            data[i].array_struct_field()[0].int32_field(values[i]);
+            data[i].bounded_sequence_struct_field()[0].int32_field(values[i]);
+            data[i].unbounded_sequence_struct_field()[0].int32_field(values[i]);
+            data[i].array_int32_field()[0] = values[i];
+            data[i].bounded_sequence_int32_field().push_back(values[i]);
+            data[i].unbounded_sequence_int32_field().push_back(values[i]);
+        }
     }
 
     void add_uint32_values(
             std::array<ContentFilterTestType, 5>& data)
     {
-        uint32_t min = std::numeric_limits<uint32_t>::lowest();
-        uint32_t max = std::numeric_limits<uint32_t>::max();
+        constexpr uint32_t min = std::numeric_limits<uint32_t>::lowest();
+        constexpr uint32_t max = std::numeric_limits<uint32_t>::max();
 
-        data[0].uint32_field(min);
-        data[0].struct_field().uint32_field(min);
-        data[0].array_uint32_field()[0] = min;
-        data[0].bounded_sequence_uint32_field().push_back(min);
-        data[0].unbounded_sequence_uint32_field().push_back(min);
+        std::array<uint32_t, 5> values{ min, max / 4, max / 3, max / 2, max };
 
-        data[1].uint32_field(max / 4);
-        data[1].struct_field().uint32_field(max / 4);
-        data[1].array_uint32_field()[0] = max / 4;
-        data[1].bounded_sequence_uint32_field().push_back(max / 4);
-        data[1].unbounded_sequence_uint32_field().push_back(max / 4);
-
-        data[2].uint32_field(max / 3);
-        data[2].struct_field().uint32_field(max / 3);
-        data[2].array_uint32_field()[0] = max / 3;
-        data[2].bounded_sequence_uint32_field().push_back(max / 3);
-        data[2].unbounded_sequence_uint32_field().push_back(max / 3);
-
-        data[3].uint32_field(max / 2);
-        data[3].struct_field().uint32_field(max / 2);
-        data[3].array_uint32_field()[0] = max / 2;
-        data[3].bounded_sequence_uint32_field().push_back(max / 2);
-        data[3].unbounded_sequence_uint32_field().push_back(max / 2);
-
-        data[4].uint32_field(max);
-        data[4].struct_field().uint32_field(max);
-        data[4].array_uint32_field()[0] = max;
-        data[4].bounded_sequence_uint32_field().push_back(max);
-        data[4].unbounded_sequence_uint32_field().push_back(max);
+        for (size_t i = 0; i < values.size(); ++i)
+        {
+            data[i].uint32_field(values[i]);
+            data[i].struct_field().uint32_field(values[i]);
+            data[i].array_struct_field()[0].uint32_field(values[i]);
+            data[i].bounded_sequence_struct_field()[0].uint32_field(values[i]);
+            data[i].unbounded_sequence_struct_field()[0].uint32_field(values[i]);
+            data[i].array_uint32_field()[0] = values[i];
+            data[i].bounded_sequence_uint32_field().push_back(values[i]);
+            data[i].unbounded_sequence_uint32_field().push_back(values[i]);
+        }
     }
 
     void add_int64_values(
             std::array<ContentFilterTestType, 5>& data)
     {
-        int64_t min = std::numeric_limits<int64_t>::lowest();
-        int64_t max = std::numeric_limits<int64_t>::max();
+        constexpr int64_t min = std::numeric_limits<int64_t>::lowest();
+        constexpr int64_t max = std::numeric_limits<int64_t>::max();
 
-        data[0].int64_field(min);
-        data[0].struct_field().int64_field(min);
-        data[0].array_int64_field()[0] = min;
-        data[0].bounded_sequence_int64_field().push_back(min);
-        data[0].unbounded_sequence_int64_field().push_back(min);
+        std::array<int64_t, 5> values{ min, -100, 0, 100, max };
 
-        data[1].int64_field(-100);
-        data[1].struct_field().int64_field(-100);
-        data[1].array_int64_field()[0] = -100;
-        data[1].bounded_sequence_int64_field().push_back(-100);
-        data[1].unbounded_sequence_int64_field().push_back(-100);
-
-        data[2].int64_field(0);
-        data[2].struct_field().int64_field(0);
-        data[2].array_int64_field()[0] = 0;
-        data[2].bounded_sequence_int64_field().push_back(0);
-        data[2].unbounded_sequence_int64_field().push_back(0);
-
-        data[3].int64_field(100);
-        data[3].struct_field().int64_field(100);
-        data[3].array_int64_field()[0] = 100;
-        data[3].bounded_sequence_int64_field().push_back(100);
-        data[3].unbounded_sequence_int64_field().push_back(100);
-
-        data[4].int64_field(max);
-        data[4].struct_field().int64_field(max);
-        data[4].array_int64_field()[0] = max;
-        data[4].bounded_sequence_int64_field().push_back(max);
-        data[4].unbounded_sequence_int64_field().push_back(max);
+        for (size_t i = 0; i < values.size(); ++i)
+        {
+            data[i].int64_field(values[i]);
+            data[i].struct_field().int64_field(values[i]);
+            data[i].array_struct_field()[0].int64_field(values[i]);
+            data[i].bounded_sequence_struct_field()[0].int64_field(values[i]);
+            data[i].unbounded_sequence_struct_field()[0].int64_field(values[i]);
+            data[i].array_int64_field()[0] = values[i];
+            data[i].bounded_sequence_int64_field().push_back(values[i]);
+            data[i].unbounded_sequence_int64_field().push_back(values[i]);
+        }
     }
 
     void add_uint64_values(
             std::array<ContentFilterTestType, 5>& data)
     {
-        uint64_t min = std::numeric_limits<uint64_t>::lowest();
-        uint64_t max = std::numeric_limits<uint64_t>::max();
+        constexpr uint64_t min = std::numeric_limits<uint64_t>::lowest();
+        constexpr uint64_t max = std::numeric_limits<uint64_t>::max();
 
-        data[0].uint64_field(min);
-        data[0].struct_field().uint64_field(min);
-        data[0].array_uint64_field()[0] = min;
-        data[0].bounded_sequence_uint64_field().push_back(min);
-        data[0].unbounded_sequence_uint64_field().push_back(min);
+        std::array<uint64_t, 5> values{ min, max / 4, max / 3, max / 2, max };
 
-        data[1].uint64_field(max / 4);
-        data[1].struct_field().uint64_field(max / 4);
-        data[1].array_uint64_field()[0] = max / 4;
-        data[1].bounded_sequence_uint64_field().push_back(max / 4);
-        data[1].unbounded_sequence_uint64_field().push_back(max / 4);
-
-        data[2].uint64_field(max / 3);
-        data[2].struct_field().uint64_field(max / 3);
-        data[2].array_uint64_field()[0] = max / 3;
-        data[2].bounded_sequence_uint64_field().push_back(max / 3);
-        data[2].unbounded_sequence_uint64_field().push_back(max / 3);
-
-        data[3].uint64_field(max / 2);
-        data[3].struct_field().uint64_field(max / 2);
-        data[3].array_uint64_field()[0] = max / 2;
-        data[3].bounded_sequence_uint64_field().push_back(max / 2);
-        data[3].unbounded_sequence_uint64_field().push_back(max / 2);
-
-        data[4].uint64_field(max);
-        data[4].struct_field().uint64_field(max);
-        data[4].array_uint64_field()[0] = max;
-        data[4].bounded_sequence_uint64_field().push_back(max);
-        data[4].unbounded_sequence_uint64_field().push_back(max);
+        for (size_t i = 0; i < values.size(); ++i)
+        {
+            data[i].uint64_field(values[i]);
+            data[i].struct_field().uint64_field(values[i]);
+            data[i].array_struct_field()[0].uint64_field(values[i]);
+            data[i].bounded_sequence_struct_field()[0].uint64_field(values[i]);
+            data[i].unbounded_sequence_struct_field()[0].uint64_field(values[i]);
+            data[i].array_uint64_field()[0] = values[i];
+            data[i].bounded_sequence_uint64_field().push_back(values[i]);
+            data[i].unbounded_sequence_uint64_field().push_back(values[i]);
+        }
     }
 
     void add_float_values(
