@@ -55,14 +55,18 @@ TEST(DDSContentFilter, BasicTest)
 
     auto send_data = [&](uint64_t expected_samples, const std::vector<uint16_t>& index_values)
             {
+                // Send 10 samples with index 1 to 10
                 auto data = default_helloworld_data_generator();
                 writer.send(data);
                 EXPECT_TRUE(data.empty());
-                do
-                {
-                    EXPECT_TRUE(reader->wait_for_unread_message({ 1 }));
-                } while (reader->get_unread_count() < expected_samples);
 
+                // Waiting for all samples to be acknowledged ensures the reader has processed all samples sent
+                EXPECT_TRUE(writer.waitForAllAcked(std::chrono::seconds(5)));
+
+                // Only the expected samples should have made its way into the history
+                EXPECT_EQ(reader->get_unread_count(), expected_samples);
+
+                // Take and check the received samples
                 FASTDDS_CONST_SEQUENCE(HelloWorldSeq, HelloWorld);
                 HelloWorldSeq recv_data;
                 SampleInfoSeq recv_info;
