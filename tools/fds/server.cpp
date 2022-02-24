@@ -12,9 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#ifndef FASTDDS_SERVER_SERVER_CPP_
-#define FASTDDS_SERVER_SERVER_CPP_
-
 #include "server.h"
 
 #include <condition_variable>
@@ -373,5 +370,3 @@ option::ArgStatus Arg::check_udp_port(
 
     return option::ARG_ILLEGAL;
 }
-
-#endif // FASTDDS_SERVER_SERVER_CPP_
