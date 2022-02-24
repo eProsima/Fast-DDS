@@ -9,14 +9,15 @@
 #include <iostream>
 #include <string>
 
-#include <fastrtps/participant/Participant.h>
 #include <fastrtps/attributes/ParticipantAttributes.h>
-#include <fastrtps/subscriber/Subscriber.h>
-#include <fastrtps/attributes/SubscriberAttributes.h>
-#include <fastrtps/publisher/Publisher.h>
 #include <fastrtps/attributes/PublisherAttributes.h>
+#include <fastrtps/attributes/SubscriberAttributes.h>
 #include <fastrtps/Domain.h>
+#include <fastrtps/participant/Participant.h>
+#include <fastrtps/publisher/Publisher.h>
+#include <fastrtps/subscriber/Subscriber.h>
 #include <fastrtps/subscriber/SampleInfo.h>
+#include <fastrtps/TopicDataType.h>
 
 #include "samplePubSubTypes.h"
 
