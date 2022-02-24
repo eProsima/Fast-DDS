@@ -20,8 +20,8 @@
  */
 
 
-#ifndef _KEYEDHELLOWORLD_PUBSUBTYPES_H_
-#define _KEYEDHELLOWORLD_PUBSUBTYPES_H_
+#ifndef _FAST_DDS_GENERATED_KEYEDHELLOWORLD_PUBSUBTYPES_H_
+#define _FAST_DDS_GENERATED_KEYEDHELLOWORLD_PUBSUBTYPES_H_
 
 #include <fastdds/dds/topic/TopicDataType.hpp>
 #include <fastrtps/utils/md5.h>
@@ -98,4 +98,4 @@ public:
     unsigned char* m_keyBuffer;
 };
 
-#endif // _KEYEDHELLOWORLD_PUBSUBTYPES_H_
+#endif // _FAST_DDS_GENERATED_KEYEDHELLOWORLD_PUBSUBTYPES_H_

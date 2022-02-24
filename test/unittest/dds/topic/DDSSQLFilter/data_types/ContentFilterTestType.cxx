@@ -27,7 +27,6 @@ char dummy;
 #endif  // _WIN32
 
 #include "ContentFilterTestType.h"
-#include "ContentFilterTestTypeTypeObject.h"
 #include <fastcdr/Cdr.h>
 
 #include <fastcdr/exceptions/BadParamException.h>
@@ -39,39 +38,37 @@ using namespace eprosima::fastcdr::exception;
 
 StructType::StructType()
 {
-    // m_char_field com.eprosima.idl.parser.typecode.PrimitiveTypeCode@14ddd49
+    // m_char_field com.eprosima.idl.parser.typecode.PrimitiveTypeCode@799d4f69
     m_char_field = 0;
-    // m_uint8_field com.eprosima.idl.parser.typecode.PrimitiveTypeCode@14e1548
+    // m_uint8_field com.eprosima.idl.parser.typecode.PrimitiveTypeCode@12028586
     m_uint8_field = 0;
-    // m_int16_field com.eprosima.idl.parser.typecode.PrimitiveTypeCode@3a4799
+    // m_int16_field com.eprosima.idl.parser.typecode.PrimitiveTypeCode@17776a8
     m_int16_field = 0;
-    // m_uint16_field com.eprosima.idl.parser.typecode.PrimitiveTypeCode@11276c2
+    // m_uint16_field com.eprosima.idl.parser.typecode.PrimitiveTypeCode@69a10787
     m_uint16_field = 0;
-    // m_int32_field com.eprosima.idl.parser.typecode.PrimitiveTypeCode@1d7a715
+    // m_int32_field com.eprosima.idl.parser.typecode.PrimitiveTypeCode@11c20519
     m_int32_field = 0;
-    // m_uint32_field com.eprosima.idl.parser.typecode.PrimitiveTypeCode@11f39f9
+    // m_uint32_field com.eprosima.idl.parser.typecode.PrimitiveTypeCode@70beb599
     m_uint32_field = 0;
-    // m_int64_field com.eprosima.idl.parser.typecode.PrimitiveTypeCode@1bbf57e
+    // m_int64_field com.eprosima.idl.parser.typecode.PrimitiveTypeCode@4e41089d
     m_int64_field = 0;
-    // m_uint64_field com.eprosima.idl.parser.typecode.PrimitiveTypeCode@1f13d6e
+    // m_uint64_field com.eprosima.idl.parser.typecode.PrimitiveTypeCode@32a068d1
     m_uint64_field = 0;
-    // m_float_field com.eprosima.idl.parser.typecode.PrimitiveTypeCode@11cdd8a
+    // m_float_field com.eprosima.idl.parser.typecode.PrimitiveTypeCode@33cb5951
     m_float_field = 0.0;
-    // m_double_field com.eprosima.idl.parser.typecode.PrimitiveTypeCode@144fc21
+    // m_double_field com.eprosima.idl.parser.typecode.PrimitiveTypeCode@365c30cc
     m_double_field = 0.0;
-    // m_long_double_field com.eprosima.idl.parser.typecode.PrimitiveTypeCode@1faf8f2
+    // m_long_double_field com.eprosima.idl.parser.typecode.PrimitiveTypeCode@701fc37a
     m_long_double_field = 0.0;
-    // m_bool_field com.eprosima.idl.parser.typecode.PrimitiveTypeCode@16eabae
+    // m_bool_field com.eprosima.idl.parser.typecode.PrimitiveTypeCode@4148db48
     m_bool_field = false;
-    // m_string_field com.eprosima.idl.parser.typecode.StringTypeCode@7dc304
+    // m_string_field com.eprosima.idl.parser.typecode.StringTypeCode@282003e1
     m_string_field ="";
-    // m_enum_field com.eprosima.idl.parser.typecode.EnumTypeCode@729b1e
+    // m_enum_field com.eprosima.idl.parser.typecode.EnumTypeCode@7fad8c79
     m_enum_field = ::RED;
-    // m_enum2_field com.eprosima.idl.parser.typecode.EnumTypeCode@bbd20a
+    // m_enum2_field com.eprosima.idl.parser.typecode.EnumTypeCode@71a794e5
     m_enum2_field = ::WOOD;
 
-    // Just to register all known types
-    registerContentFilterTestTypeTypes();
 }
 
 StructType::~StructType()
@@ -177,6 +174,19 @@ StructType& StructType::operator =(
     m_enum2_field = x.m_enum2_field;
 
     return *this;
+}
+
+bool StructType::operator ==(
+        const StructType& x) const
+{
+
+    return (m_char_field == x.m_char_field && m_uint8_field == x.m_uint8_field && m_int16_field == x.m_int16_field && m_uint16_field == x.m_uint16_field && m_int32_field == x.m_int32_field && m_uint32_field == x.m_uint32_field && m_int64_field == x.m_int64_field && m_uint64_field == x.m_uint64_field && m_float_field == x.m_float_field && m_double_field == x.m_double_field && m_long_double_field == x.m_long_double_field && m_bool_field == x.m_bool_field && m_string_field == x.m_string_field && m_enum_field == x.m_enum_field && m_enum2_field == x.m_enum2_field);
+}
+
+bool StructType::operator !=(
+        const StructType& x) const
+{
+    return !(*this == x);
 }
 
 size_t StructType::getMaxCdrSerializedSize(
@@ -811,137 +821,135 @@ void StructType::serializeKey(
 
 ContentFilterTestType::ContentFilterTestType()
 {
-    // m_char_field com.eprosima.idl.parser.typecode.PrimitiveTypeCode@285225
+    // m_char_field com.eprosima.idl.parser.typecode.PrimitiveTypeCode@55040f2f
     m_char_field = 0;
-    // m_uint8_field com.eprosima.idl.parser.typecode.PrimitiveTypeCode@1820e51
+    // m_uint8_field com.eprosima.idl.parser.typecode.PrimitiveTypeCode@275710fc
     m_uint8_field = 0;
-    // m_int16_field com.eprosima.idl.parser.typecode.PrimitiveTypeCode@d8062c
+    // m_int16_field com.eprosima.idl.parser.typecode.PrimitiveTypeCode@525f1e4e
     m_int16_field = 0;
-    // m_uint16_field com.eprosima.idl.parser.typecode.PrimitiveTypeCode@43cd28
+    // m_uint16_field com.eprosima.idl.parser.typecode.PrimitiveTypeCode@75f9eccc
     m_uint16_field = 0;
-    // m_int32_field com.eprosima.idl.parser.typecode.PrimitiveTypeCode@1906517
+    // m_int32_field com.eprosima.idl.parser.typecode.PrimitiveTypeCode@67e2d983
     m_int32_field = 0;
-    // m_uint32_field com.eprosima.idl.parser.typecode.PrimitiveTypeCode@1fbf16f
+    // m_uint32_field com.eprosima.idl.parser.typecode.PrimitiveTypeCode@5d47c63f
     m_uint32_field = 0;
-    // m_int64_field com.eprosima.idl.parser.typecode.PrimitiveTypeCode@1af5db5
+    // m_int64_field com.eprosima.idl.parser.typecode.PrimitiveTypeCode@5ea434c8
     m_int64_field = 0;
-    // m_uint64_field com.eprosima.idl.parser.typecode.PrimitiveTypeCode@12cdcf4
+    // m_uint64_field com.eprosima.idl.parser.typecode.PrimitiveTypeCode@3bbc39f8
     m_uint64_field = 0;
-    // m_float_field com.eprosima.idl.parser.typecode.PrimitiveTypeCode@1cea91b
+    // m_float_field com.eprosima.idl.parser.typecode.PrimitiveTypeCode@4ae3c1cd
     m_float_field = 0.0;
-    // m_double_field com.eprosima.idl.parser.typecode.PrimitiveTypeCode@13a4b84
+    // m_double_field com.eprosima.idl.parser.typecode.PrimitiveTypeCode@29f69090
     m_double_field = 0.0;
-    // m_long_double_field com.eprosima.idl.parser.typecode.PrimitiveTypeCode@27f723
+    // m_long_double_field com.eprosima.idl.parser.typecode.PrimitiveTypeCode@568bf312
     m_long_double_field = 0.0;
-    // m_bool_field com.eprosima.idl.parser.typecode.PrimitiveTypeCode@10b40af
+    // m_bool_field com.eprosima.idl.parser.typecode.PrimitiveTypeCode@ca263c2
     m_bool_field = false;
-    // m_string_field com.eprosima.idl.parser.typecode.StringTypeCode@123ab24
+    // m_string_field com.eprosima.idl.parser.typecode.StringTypeCode@589b3632
     m_string_field ="";
-    // m_enum_field com.eprosima.idl.parser.typecode.EnumTypeCode@729b1e
+    // m_enum_field com.eprosima.idl.parser.typecode.EnumTypeCode@7fad8c79
     m_enum_field = ::RED;
-    // m_enum2_field com.eprosima.idl.parser.typecode.EnumTypeCode@bbd20a
+    // m_enum2_field com.eprosima.idl.parser.typecode.EnumTypeCode@71a794e5
     m_enum2_field = ::WOOD;
-    // m_struct_field com.eprosima.fastdds.idl.parser.typecode.StructTypeCode@c8afef
+    // m_struct_field com.eprosima.fastdds.idl.parser.typecode.StructTypeCode@45f45fa1
 
-    // m_array_char_field com.eprosima.idl.parser.typecode.ArrayTypeCode@169c6ba
+    // m_array_char_field com.eprosima.idl.parser.typecode.ArrayTypeCode@4c6e276e
     memset(&m_array_char_field, 0, (max_array_size) * 1);
-    // m_array_uint8_field com.eprosima.idl.parser.typecode.ArrayTypeCode@daef40
+    // m_array_uint8_field com.eprosima.idl.parser.typecode.ArrayTypeCode@534df152
     memset(&m_array_uint8_field, 0, (max_array_size) * 1);
-    // m_array_int16_field com.eprosima.idl.parser.typecode.ArrayTypeCode@f41634
+    // m_array_int16_field com.eprosima.idl.parser.typecode.ArrayTypeCode@52e677af
     memset(&m_array_int16_field, 0, (max_array_size) * 2);
-    // m_array_uint16_field com.eprosima.idl.parser.typecode.ArrayTypeCode@1c27452
+    // m_array_uint16_field com.eprosima.idl.parser.typecode.ArrayTypeCode@35083305
     memset(&m_array_uint16_field, 0, (max_array_size) * 2);
-    // m_array_int32_field com.eprosima.idl.parser.typecode.ArrayTypeCode@2b2c86
+    // m_array_int32_field com.eprosima.idl.parser.typecode.ArrayTypeCode@8e0379d
     memset(&m_array_int32_field, 0, (max_array_size) * 4);
-    // m_array_uint32_field com.eprosima.idl.parser.typecode.ArrayTypeCode@11a67ec
+    // m_array_uint32_field com.eprosima.idl.parser.typecode.ArrayTypeCode@341b80b2
     memset(&m_array_uint32_field, 0, (max_array_size) * 4);
-    // m_array_int64_field com.eprosima.idl.parser.typecode.ArrayTypeCode@1ed828d
+    // m_array_int64_field com.eprosima.idl.parser.typecode.ArrayTypeCode@55a1c291
     memset(&m_array_int64_field, 0, (max_array_size) * 8);
-    // m_array_uint64_field com.eprosima.idl.parser.typecode.ArrayTypeCode@10d0686
+    // m_array_uint64_field com.eprosima.idl.parser.typecode.ArrayTypeCode@2145433b
     memset(&m_array_uint64_field, 0, (max_array_size) * 8);
-    // m_array_float_field com.eprosima.idl.parser.typecode.ArrayTypeCode@3d45bd
+    // m_array_float_field com.eprosima.idl.parser.typecode.ArrayTypeCode@1b083826
     memset(&m_array_float_field, 0, (max_array_size) * 4);
-    // m_array_double_field com.eprosima.idl.parser.typecode.ArrayTypeCode@7c7811
+    // m_array_double_field com.eprosima.idl.parser.typecode.ArrayTypeCode@105fece7
     memset(&m_array_double_field, 0, (max_array_size) * 8);
-    // m_array_long_double_field com.eprosima.idl.parser.typecode.ArrayTypeCode@1ec78b9
+    // m_array_long_double_field com.eprosima.idl.parser.typecode.ArrayTypeCode@3ec300f1
     memset(&m_array_long_double_field, 0, (max_array_size) * 16);
-    // m_array_bool_field com.eprosima.idl.parser.typecode.ArrayTypeCode@3869f4
+    // m_array_bool_field com.eprosima.idl.parser.typecode.ArrayTypeCode@482cd91f
     memset(&m_array_bool_field, 0, (max_array_size) * 1);
-    // m_array_string_field com.eprosima.idl.parser.typecode.ArrayTypeCode@38d7a3
+    // m_array_string_field com.eprosima.idl.parser.typecode.ArrayTypeCode@123f1134
 
-    // m_array_enum_field com.eprosima.idl.parser.typecode.ArrayTypeCode@1f99a05
+    // m_array_enum_field com.eprosima.idl.parser.typecode.ArrayTypeCode@7d68ef40
     memset(&m_array_enum_field, 0, (max_array_size) * 4);
-    // m_array_enum2_field com.eprosima.idl.parser.typecode.ArrayTypeCode@1440df3
+    // m_array_enum2_field com.eprosima.idl.parser.typecode.ArrayTypeCode@5b0abc94
     memset(&m_array_enum2_field, 0, (max_array_size) * 4);
-    // m_array_struct_field com.eprosima.idl.parser.typecode.ArrayTypeCode@a3e297
+    // m_array_struct_field com.eprosima.idl.parser.typecode.ArrayTypeCode@25b485ba
 
-    // m_bounded_sequence_char_field com.eprosima.idl.parser.typecode.SequenceTypeCode@d9d034
+    // m_bounded_sequence_char_field com.eprosima.idl.parser.typecode.SequenceTypeCode@214b199c
 
-    // m_bounded_sequence_uint8_field com.eprosima.idl.parser.typecode.SequenceTypeCode@121c9d6
+    // m_bounded_sequence_uint8_field com.eprosima.idl.parser.typecode.SequenceTypeCode@20d3d15a
 
-    // m_bounded_sequence_int16_field com.eprosima.idl.parser.typecode.SequenceTypeCode@7f383f
+    // m_bounded_sequence_int16_field com.eprosima.idl.parser.typecode.SequenceTypeCode@2893de87
 
-    // m_bounded_sequence_uint16_field com.eprosima.idl.parser.typecode.SequenceTypeCode@b7f003
+    // m_bounded_sequence_uint16_field com.eprosima.idl.parser.typecode.SequenceTypeCode@55ca8de8
 
-    // m_bounded_sequence_int32_field com.eprosima.idl.parser.typecode.SequenceTypeCode@afc191
+    // m_bounded_sequence_int32_field com.eprosima.idl.parser.typecode.SequenceTypeCode@2c34f934
 
-    // m_bounded_sequence_uint32_field com.eprosima.idl.parser.typecode.SequenceTypeCode@12fc6eb
+    // m_bounded_sequence_uint32_field com.eprosima.idl.parser.typecode.SequenceTypeCode@12d3a4e9
 
-    // m_bounded_sequence_int64_field com.eprosima.idl.parser.typecode.SequenceTypeCode@60b431
+    // m_bounded_sequence_int64_field com.eprosima.idl.parser.typecode.SequenceTypeCode@240237d2
 
-    // m_bounded_sequence_uint64_field com.eprosima.idl.parser.typecode.SequenceTypeCode@12679d6
+    // m_bounded_sequence_uint64_field com.eprosima.idl.parser.typecode.SequenceTypeCode@25a65b77
 
-    // m_bounded_sequence_float_field com.eprosima.idl.parser.typecode.SequenceTypeCode@1758f2a
+    // m_bounded_sequence_float_field com.eprosima.idl.parser.typecode.SequenceTypeCode@2ed0fbae
 
-    // m_bounded_sequence_double_field com.eprosima.idl.parser.typecode.SequenceTypeCode@720b71
+    // m_bounded_sequence_double_field com.eprosima.idl.parser.typecode.SequenceTypeCode@212bf671
 
-    // m_bounded_sequence_long_double_field com.eprosima.idl.parser.typecode.SequenceTypeCode@126f7b2
+    // m_bounded_sequence_long_double_field com.eprosima.idl.parser.typecode.SequenceTypeCode@14a2f921
 
-    // m_bounded_sequence_bool_field com.eprosima.idl.parser.typecode.SequenceTypeCode@11cc5c9
+    // m_bounded_sequence_bool_field com.eprosima.idl.parser.typecode.SequenceTypeCode@3c87521
 
-    // m_bounded_sequence_string_field com.eprosima.idl.parser.typecode.SequenceTypeCode@ad1f1f
+    // m_bounded_sequence_string_field com.eprosima.idl.parser.typecode.SequenceTypeCode@2aece37d
 
-    // m_bounded_sequence_enum_field com.eprosima.idl.parser.typecode.SequenceTypeCode@1aab78
+    // m_bounded_sequence_enum_field com.eprosima.idl.parser.typecode.SequenceTypeCode@548a102f
 
-    // m_bounded_sequence_enum2_field com.eprosima.idl.parser.typecode.SequenceTypeCode@2d5aee
+    // m_bounded_sequence_enum2_field com.eprosima.idl.parser.typecode.SequenceTypeCode@5762806e
 
-    // m_bounded_sequence_struct_field com.eprosima.idl.parser.typecode.SequenceTypeCode@1b0fd6f
+    // m_bounded_sequence_struct_field com.eprosima.idl.parser.typecode.SequenceTypeCode@17c386de
 
-    // m_unbounded_sequence_char_field com.eprosima.idl.parser.typecode.SequenceTypeCode@17942a1
+    // m_unbounded_sequence_char_field com.eprosima.idl.parser.typecode.SequenceTypeCode@5af97850
 
-    // m_unbounded_sequence_uint8_field com.eprosima.idl.parser.typecode.SequenceTypeCode@87761d
+    // m_unbounded_sequence_uint8_field com.eprosima.idl.parser.typecode.SequenceTypeCode@5ef60048
 
-    // m_unbounded_sequence_int16_field com.eprosima.idl.parser.typecode.SequenceTypeCode@d1af89
+    // m_unbounded_sequence_int16_field com.eprosima.idl.parser.typecode.SequenceTypeCode@1d548a08
 
-    // m_unbounded_sequence_uint16_field com.eprosima.idl.parser.typecode.SequenceTypeCode@646db9
+    // m_unbounded_sequence_uint16_field com.eprosima.idl.parser.typecode.SequenceTypeCode@16aa0a0a
 
-    // m_unbounded_sequence_int32_field com.eprosima.idl.parser.typecode.SequenceTypeCode@1374a5e
+    // m_unbounded_sequence_int32_field com.eprosima.idl.parser.typecode.SequenceTypeCode@780cb77
 
-    // m_unbounded_sequence_uint32_field com.eprosima.idl.parser.typecode.SequenceTypeCode@71e53b
+    // m_unbounded_sequence_uint32_field com.eprosima.idl.parser.typecode.SequenceTypeCode@691a7f8f
 
-    // m_unbounded_sequence_int64_field com.eprosima.idl.parser.typecode.SequenceTypeCode@1b7a79b
+    // m_unbounded_sequence_int64_field com.eprosima.idl.parser.typecode.SequenceTypeCode@50a7bc6e
 
-    // m_unbounded_sequence_uint64_field com.eprosima.idl.parser.typecode.SequenceTypeCode@950e31
+    // m_unbounded_sequence_uint64_field com.eprosima.idl.parser.typecode.SequenceTypeCode@161b062a
 
-    // m_unbounded_sequence_float_field com.eprosima.idl.parser.typecode.SequenceTypeCode@17dd107
+    // m_unbounded_sequence_float_field com.eprosima.idl.parser.typecode.SequenceTypeCode@17c1bced
 
-    // m_unbounded_sequence_double_field com.eprosima.idl.parser.typecode.SequenceTypeCode@eca56e
+    // m_unbounded_sequence_double_field com.eprosima.idl.parser.typecode.SequenceTypeCode@2d9d4f9d
 
-    // m_unbounded_sequence_long_double_field com.eprosima.idl.parser.typecode.SequenceTypeCode@f759d7
+    // m_unbounded_sequence_long_double_field com.eprosima.idl.parser.typecode.SequenceTypeCode@4034c28c
 
-    // m_unbounded_sequence_bool_field com.eprosima.idl.parser.typecode.SequenceTypeCode@bd213e
+    // m_unbounded_sequence_bool_field com.eprosima.idl.parser.typecode.SequenceTypeCode@e50a6f6
 
-    // m_unbounded_sequence_string_field com.eprosima.idl.parser.typecode.SequenceTypeCode@12d3247
+    // m_unbounded_sequence_string_field com.eprosima.idl.parser.typecode.SequenceTypeCode@14ec4505
 
-    // m_unbounded_sequence_enum_field com.eprosima.idl.parser.typecode.SequenceTypeCode@cd23d9
+    // m_unbounded_sequence_enum_field com.eprosima.idl.parser.typecode.SequenceTypeCode@53ca01a2
 
-    // m_unbounded_sequence_enum2_field com.eprosima.idl.parser.typecode.SequenceTypeCode@9cfc36
+    // m_unbounded_sequence_enum2_field com.eprosima.idl.parser.typecode.SequenceTypeCode@358c99f5
 
-    // m_unbounded_sequence_struct_field com.eprosima.idl.parser.typecode.SequenceTypeCode@1bd930a
+    // m_unbounded_sequence_struct_field com.eprosima.idl.parser.typecode.SequenceTypeCode@3ee0fea4
 
 
-    // Just to register all known types
-    registerContentFilterTestTypeTypes();
 }
 
 ContentFilterTestType::~ContentFilterTestType()
@@ -1292,6 +1300,19 @@ ContentFilterTestType& ContentFilterTestType::operator =(
     m_unbounded_sequence_struct_field = std::move(x.m_unbounded_sequence_struct_field);
 
     return *this;
+}
+
+bool ContentFilterTestType::operator ==(
+        const ContentFilterTestType& x) const
+{
+
+    return (m_char_field == x.m_char_field && m_uint8_field == x.m_uint8_field && m_int16_field == x.m_int16_field && m_uint16_field == x.m_uint16_field && m_int32_field == x.m_int32_field && m_uint32_field == x.m_uint32_field && m_int64_field == x.m_int64_field && m_uint64_field == x.m_uint64_field && m_float_field == x.m_float_field && m_double_field == x.m_double_field && m_long_double_field == x.m_long_double_field && m_bool_field == x.m_bool_field && m_string_field == x.m_string_field && m_enum_field == x.m_enum_field && m_enum2_field == x.m_enum2_field && m_struct_field == x.m_struct_field && m_array_char_field == x.m_array_char_field && m_array_uint8_field == x.m_array_uint8_field && m_array_int16_field == x.m_array_int16_field && m_array_uint16_field == x.m_array_uint16_field && m_array_int32_field == x.m_array_int32_field && m_array_uint32_field == x.m_array_uint32_field && m_array_int64_field == x.m_array_int64_field && m_array_uint64_field == x.m_array_uint64_field && m_array_float_field == x.m_array_float_field && m_array_double_field == x.m_array_double_field && m_array_long_double_field == x.m_array_long_double_field && m_array_bool_field == x.m_array_bool_field && m_array_string_field == x.m_array_string_field && m_array_enum_field == x.m_array_enum_field && m_array_enum2_field == x.m_array_enum2_field && m_array_struct_field == x.m_array_struct_field && m_bounded_sequence_char_field == x.m_bounded_sequence_char_field && m_bounded_sequence_uint8_field == x.m_bounded_sequence_uint8_field && m_bounded_sequence_int16_field == x.m_bounded_sequence_int16_field && m_bounded_sequence_uint16_field == x.m_bounded_sequence_uint16_field && m_bounded_sequence_int32_field == x.m_bounded_sequence_int32_field && m_bounded_sequence_uint32_field == x.m_bounded_sequence_uint32_field && m_bounded_sequence_int64_field == x.m_bounded_sequence_int64_field && m_bounded_sequence_uint64_field == x.m_bounded_sequence_uint64_field && m_bounded_sequence_float_field == x.m_bounded_sequence_float_field && m_bounded_sequence_double_field == x.m_bounded_sequence_double_field && m_bounded_sequence_long_double_field == x.m_bounded_sequence_long_double_field && m_bounded_sequence_bool_field == x.m_bounded_sequence_bool_field && m_bounded_sequence_string_field == x.m_bounded_sequence_string_field && m_bounded_sequence_enum_field == x.m_bounded_sequence_enum_field && m_bounded_sequence_enum2_field == x.m_bounded_sequence_enum2_field && m_bounded_sequence_struct_field == x.m_bounded_sequence_struct_field && m_unbounded_sequence_char_field == x.m_unbounded_sequence_char_field && m_unbounded_sequence_uint8_field == x.m_unbounded_sequence_uint8_field && m_unbounded_sequence_int16_field == x.m_unbounded_sequence_int16_field && m_unbounded_sequence_uint16_field == x.m_unbounded_sequence_uint16_field && m_unbounded_sequence_int32_field == x.m_unbounded_sequence_int32_field && m_unbounded_sequence_uint32_field == x.m_unbounded_sequence_uint32_field && m_unbounded_sequence_int64_field == x.m_unbounded_sequence_int64_field && m_unbounded_sequence_uint64_field == x.m_unbounded_sequence_uint64_field && m_unbounded_sequence_float_field == x.m_unbounded_sequence_float_field && m_unbounded_sequence_double_field == x.m_unbounded_sequence_double_field && m_unbounded_sequence_long_double_field == x.m_unbounded_sequence_long_double_field && m_unbounded_sequence_bool_field == x.m_unbounded_sequence_bool_field && m_unbounded_sequence_string_field == x.m_unbounded_sequence_string_field && m_unbounded_sequence_enum_field == x.m_unbounded_sequence_enum_field && m_unbounded_sequence_enum2_field == x.m_unbounded_sequence_enum2_field && m_unbounded_sequence_struct_field == x.m_unbounded_sequence_struct_field);
+}
+
+bool ContentFilterTestType::operator !=(
+        const ContentFilterTestType& x) const
+{
+    return !(*this == x);
 }
 
 size_t ContentFilterTestType::getMaxCdrSerializedSize(
@@ -1647,29 +1668,65 @@ size_t ContentFilterTestType::getCdrSerializedSize(
 
 
     current_alignment += StructType::getCdrSerializedSize(data.struct_field(), current_alignment);
-    current_alignment += ((max_array_size) * 1) + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
+    if ((max_array_size) > 0)
+    {
+        current_alignment += ((max_array_size) * 1) + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
+    }
 
-    current_alignment += ((max_array_size) * 1) + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
+    if ((max_array_size) > 0)
+    {
+        current_alignment += ((max_array_size) * 1) + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
+    }
 
-    current_alignment += ((max_array_size) * 2) + eprosima::fastcdr::Cdr::alignment(current_alignment, 2);
+    if ((max_array_size) > 0)
+    {
+        current_alignment += ((max_array_size) * 2) + eprosima::fastcdr::Cdr::alignment(current_alignment, 2);
+    }
 
-    current_alignment += ((max_array_size) * 2) + eprosima::fastcdr::Cdr::alignment(current_alignment, 2);
+    if ((max_array_size) > 0)
+    {
+        current_alignment += ((max_array_size) * 2) + eprosima::fastcdr::Cdr::alignment(current_alignment, 2);
+    }
 
-    current_alignment += ((max_array_size) * 4) + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
+    if ((max_array_size) > 0)
+    {
+        current_alignment += ((max_array_size) * 4) + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
+    }
 
-    current_alignment += ((max_array_size) * 4) + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
+    if ((max_array_size) > 0)
+    {
+        current_alignment += ((max_array_size) * 4) + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
+    }
 
-    current_alignment += ((max_array_size) * 8) + eprosima::fastcdr::Cdr::alignment(current_alignment, 8);
+    if ((max_array_size) > 0)
+    {
+        current_alignment += ((max_array_size) * 8) + eprosima::fastcdr::Cdr::alignment(current_alignment, 8);
+    }
 
-    current_alignment += ((max_array_size) * 8) + eprosima::fastcdr::Cdr::alignment(current_alignment, 8);
+    if ((max_array_size) > 0)
+    {
+        current_alignment += ((max_array_size) * 8) + eprosima::fastcdr::Cdr::alignment(current_alignment, 8);
+    }
 
-    current_alignment += ((max_array_size) * 4) + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
+    if ((max_array_size) > 0)
+    {
+        current_alignment += ((max_array_size) * 4) + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
+    }
 
-    current_alignment += ((max_array_size) * 8) + eprosima::fastcdr::Cdr::alignment(current_alignment, 8);
+    if ((max_array_size) > 0)
+    {
+        current_alignment += ((max_array_size) * 8) + eprosima::fastcdr::Cdr::alignment(current_alignment, 8);
+    }
 
-    current_alignment += ((max_array_size) * 16) + eprosima::fastcdr::Cdr::alignment(current_alignment, 16);
+    if ((max_array_size) > 0)
+    {
+        current_alignment += ((max_array_size) * 16) + eprosima::fastcdr::Cdr::alignment(current_alignment, 16);
+    }
 
-    current_alignment += ((max_array_size) * 1) + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
+    if ((max_array_size) > 0)
+    {
+        current_alignment += ((max_array_size) * 1) + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
+    }
 
 
     for(size_t a = 0; a < data.array_string_field().size(); ++a)
@@ -1677,9 +1734,15 @@ size_t ContentFilterTestType::getCdrSerializedSize(
             current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4) + data.array_string_field().at(a).size() + 1;
 
     }
-    current_alignment += ((max_array_size) * 4) + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
+    if ((max_array_size) > 0)
+    {
+        current_alignment += ((max_array_size) * 4) + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
+    }
 
-    current_alignment += ((max_array_size) * 4) + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
+    if ((max_array_size) > 0)
+    {
+        current_alignment += ((max_array_size) * 4) + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
+    }
 
 
     for(size_t a = 0; a < data.array_struct_field().size(); ++a)

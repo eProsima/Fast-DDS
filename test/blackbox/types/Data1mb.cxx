@@ -36,7 +36,7 @@ using namespace eprosima::fastcdr::exception;
 
 Data1mb::Data1mb()
 {
-    // m_data com.eprosima.idl.parser.typecode.SequenceTypeCode@6eceb130
+    // m_data com.eprosima.idl.parser.typecode.SequenceTypeCode@53ca01a2
 
 
 }
@@ -83,7 +83,7 @@ bool Data1mb::operator ==(
 }
 
 bool Data1mb::operator !=(
-        const Data1mb& x)
+        const Data1mb& x) const
 {
     return !(*this == x);
 }

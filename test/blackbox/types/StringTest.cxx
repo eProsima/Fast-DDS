@@ -36,7 +36,7 @@ using namespace eprosima::fastcdr::exception;
 
 StringTest::StringTest()
 {
-    // m_message com.eprosima.idl.parser.typecode.StringTypeCode@69b0fd6f
+    // m_message com.eprosima.idl.parser.typecode.StringTypeCode@4b44655e
     m_message ="";
 
 }
@@ -83,7 +83,7 @@ bool StringTest::operator ==(
 }
 
 bool StringTest::operator !=(
-        const StringTest& x)
+        const StringTest& x) const
 {
     return !(*this == x);
 }

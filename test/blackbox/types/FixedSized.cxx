@@ -36,7 +36,7 @@ using namespace eprosima::fastcdr::exception;
 
 FixedSized::FixedSized()
 {
-    // m_index com.eprosima.idl.parser.typecode.PrimitiveTypeCode@4a87761d
+    // m_index com.eprosima.idl.parser.typecode.PrimitiveTypeCode@5db45159
     m_index = 0;
 
 }
@@ -83,7 +83,7 @@ bool FixedSized::operator ==(
 }
 
 bool FixedSized::operator !=(
-        const FixedSized& x)
+        const FixedSized& x) const
 {
     return !(*this == x);
 }

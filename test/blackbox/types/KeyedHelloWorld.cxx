@@ -36,11 +36,11 @@ using namespace eprosima::fastcdr::exception;
 
 KeyedHelloWorld::KeyedHelloWorld()
 {
-    // m_key com.eprosima.idl.parser.typecode.PrimitiveTypeCode@2f490758
+    // m_key com.eprosima.idl.parser.typecode.PrimitiveTypeCode@8e0379d
     m_key = 0;
-    // m_index com.eprosima.idl.parser.typecode.PrimitiveTypeCode@101df177
+    // m_index com.eprosima.idl.parser.typecode.PrimitiveTypeCode@341b80b2
     m_index = 0;
-    // m_message com.eprosima.idl.parser.typecode.StringTypeCode@166fa74d
+    // m_message com.eprosima.idl.parser.typecode.StringTypeCode@55a1c291
     m_message ="";
 
 }
@@ -98,7 +98,7 @@ bool KeyedHelloWorld::operator ==(
 }
 
 bool KeyedHelloWorld::operator !=(
-        const KeyedHelloWorld& x)
+        const KeyedHelloWorld& x) const
 {
     return !(*this == x);
 }
