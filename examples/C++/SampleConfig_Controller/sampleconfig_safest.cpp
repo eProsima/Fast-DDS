@@ -119,7 +119,7 @@ void safest()
     while (mySub1->readNextData(&my_sample, &sample_info))
     {
         std::cout << std::to_string(my_sample.index()) << " (key " << static_cast<int>(my_sample.key_value()) << ")" <<
-                std::endl;
+            std::endl;
     }
     std::cout << std::endl;
 

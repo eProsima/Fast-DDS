@@ -298,7 +298,7 @@ void keys()
     std::this_thread::sleep_for(std::chrono::milliseconds(1500));
 
     //Read the contents of both histories:
-    std::vector< std::pair<int, int> > sampleList;
+    std::vector< std::pair<int, int>> sampleList;
     std::cout << "The Subscriber holds: " << std::endl;
     while (mySub->readNextData(&my_sample, &sample_info))
     {
