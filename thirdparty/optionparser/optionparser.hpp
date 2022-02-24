@@ -28,7 +28,7 @@ namespace eprosima {
 #undef OPTIONPARSER_H_
 #endif
 
-#include <optionparser/optionparser.h>
+#include "./optionparser/optionparser.h"
 
 #ifndef NESTED_OPTIONPARSER_H_INCLUDED_
 // restore original state
