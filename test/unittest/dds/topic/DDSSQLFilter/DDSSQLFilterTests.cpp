@@ -15,6 +15,7 @@
 #include <array>
 #include <limits>
 #include <map>
+#include <memory>
 #include <set>
 #include <string>
 #include <utility>
@@ -991,6 +992,19 @@ protected:
 
 TEST_P(DDSSQLFilterValueTests, test_filtered_value)
 {
+    class ErrorLogChecker : public LogConsumer
+    {
+        void Consume(
+                const Log::Entry& entry) override
+        {
+            EXPECT_NE(Log::Kind::Error, entry.kind);
+        }
+
+    };
+
+    std::unique_ptr<ErrorLogChecker> consumer(new ErrorLogChecker());
+    Log::RegisterConsumer(std::move(consumer));
+
     const auto& input = GetParam();
     const auto& values = DDSSQLFilterValueGlobalData::values();
     const auto& results = input.samples_filtered;
@@ -1005,6 +1019,9 @@ TEST_P(DDSSQLFilterValueTests, test_filtered_value)
 
     ret = uut.delete_content_filter("DDSSQL", filter_instance);
     EXPECT_EQ(ReturnCode_t::RETCODE_OK, ret);
+
+    Log::Flush();
+    Log::ClearConsumers();
 }
 
 TEST_F(DDSSQLFilterValueTests, test_compound_not)
