@@ -272,6 +272,7 @@ file(GLOB BLACKBOXTESTS_TEST_SOURCE "common/BlackboxTests*.cpp")
 set(BLACKBOXTESTS_SOURCE ${BLACKBOXTESTS_TEST_SOURCE}
     types/HelloWorld.cxx
     types/HelloWorldPubSubTypes.cxx
+    types/HelloWorldTypeObject.cxx
     types/KeyedHelloWorld.cxx
     types/KeyedHelloWorldPubSubTypes.cxx
     types/StringTest.cxx
