@@ -29,6 +29,7 @@
 #include <fastdds/dds/log/Log.hpp>
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 #include "server.h"
 
 =======
@@ -38,9 +39,11 @@ using namespace eprosima;
 using namespace fastrtps;
 using namespace std;
 
+=======
+>>>>>>> c14fd1ca6... Refs 13782: Encapsulate functionality in function within namespace
 volatile sig_atomic_t g_signal_status = 0;
-mutex g_signal_mutex;
-condition_variable g_signal_cv;
+std::mutex g_signal_mutex;
+std::condition_variable g_signal_cv;
 
 void sigint_handler(
         int signum)
@@ -51,16 +54,25 @@ void sigint_handler(
     g_signal_cv.notify_one();
 }
 
-int main (
+namespace eprosima {
+namespace fastdds {
+namespace dds {
+
+int fastdds_discovery_server(
         int argc,
         char* argv[])
 {
+    // Convenience aliases
+    using Locator = fastrtps::rtps::Locator_t;
+    using DiscoveryProtocol = fastrtps::rtps::DiscoveryProtocol_t;
+    using IPLocator = fastrtps::rtps::IPLocator;
+
     // skip program name argv[0] if present
     argc -= (argc > 0);
     argv += (argc > 0);
     option::Stats stats(usage, argc, argv);
-    vector<option::Option> options(stats.options_max);
-    vector<option::Option> buffer(stats.buffer_max);
+    std::vector<option::Option> options(stats.options_max);
+    std::vector<option::Option> buffer(stats.buffer_max);
     option::Parser parse(usage, argc, argv, &options[0], &buffer[0]);
 
     // check the command line options
@@ -73,17 +85,17 @@ int main (
     int noopts = parse.nonOptionsCount();
     if ( noopts )
     {
-        string sep( noopts == 1 ? "argument: " : "arguments: " );
+        std::string sep( noopts == 1 ? "argument: " : "arguments: " );
 
-        cout << "Unknown ";
+        std::cout << "Unknown ";
 
         while ( noopts-- )
         {
-            cout << sep << parse.nonOption(noopts);
+            std::cout << sep << parse.nonOption(noopts);
             sep = ", ";
         }
 
-        endl(cout);
+        std::endl(std::cout);
 
         return 1;
     }
@@ -105,17 +117,17 @@ int main (
 
     if ( nullptr == pOp )
     {
-        cout << "Specify server id is mandatory: use -i or --server-id option." << endl;
+        std::cout << "Specify server id is mandatory: use -i or --server-id option." << std::endl;
         return 1;
     }
     else if ( pOp->count() != 1)
     {
-        cout << "Only one server can be created, thus, only one server id can be specified." << endl;
+        std::cout << "Only one server can be created, thus, only one server id can be specified." << std::endl;
         return 1;
     }
     else
     {
-        stringstream is;
+        std::stringstream is;
         is << pOp->arg;
 
         // validation have been already done
@@ -124,11 +136,11 @@ int main (
                 && eprosima::fastdds::rtps::get_server_client_default_guidPrefix(server_id,
                 participantQos.wire_protocol().prefix)))
         {
-            cout << "The provided server identifier is not valid" << endl;
+            std::cout << "The provided server identifier is not valid" << std::endl;
             return 1;
         }
 
-        // Clear the stringstream state and reset it to an empty string
+        // Clear the std::stringstream state and reset it to an empty string
         is.clear();
         is.str("");
 
@@ -139,31 +151,31 @@ int main (
 
     // Choose the kind of server to create
     participantQos.wire_protocol().builtin.discovery_config.discoveryProtocol =
-            options[BACKUP] ? rtps::DiscoveryProtocol_t::BACKUP : rtps::DiscoveryProtocol_t::SERVER;
+            options[BACKUP] ? DiscoveryProtocol::BACKUP : DiscoveryProtocol::SERVER;
 
     // Set up listening locators.
     // If the number of specify ports doesn't match the number of IPs the last port is used.
     // If at least one port specified replace the default one
-    rtps::Locator_t locator(eprosima::fastdds::rtps::DEFAULT_ROS2_SERVER_PORT);
+    Locator locator(rtps::DEFAULT_ROS2_SERVER_PORT);
 
     // retrieve first UDP port
     option::Option* pO_port = options[PORT];
     if ( nullptr != pO_port )
     {
-        stringstream is;
+        std::stringstream is;
         is << pO_port->arg;
         uint16_t id;
 
         if ( !(is >> id
                 && is.eof()
-                && rtps::IPLocator::setPhysicalPort(locator, id)))
+                && IPLocator::setPhysicalPort(locator, id)))
         {
-            cout << "Invalid listening locator port specified:" << id << endl;
+            std::cout << "Invalid listening locator port specified:" << id << std::endl;
             return 1;
         }
     }
 
-    rtps::IPLocator::setIPv4(locator, 0, 0, 0, 0);
+    IPLocator::setIPv4(locator, 0, 0, 0, 0);
 
     // retrieve first IP address
     pOp = options[IPADDRESS];
@@ -177,12 +189,12 @@ int main (
         while ( pOp )
         {
             // Get next address
-            std::string address = string(pOp->arg);
+            std::string address = std::string(pOp->arg);
 
             // Check whether the address is IPv4
-            if (!rtps::IPLocator::isIPv4(address))
+            if (!IPLocator::isIPv4(address))
             {
-                auto response = rtps::IPLocator::resolveNameDNS(address);
+                auto response = IPLocator::resolveNameDNS(address);
 
                 // Add the first valid IPv4 address that we can find
                 if (response.first.size() > 0)
@@ -192,24 +204,24 @@ int main (
             }
 
             // Update locator address
-            if (!rtps::IPLocator::setIPv4(locator, address))
+            if (!IPLocator::setIPv4(locator, address))
             {
-                cout << "Invalid listening locator address specified:" << address << endl;
+                std::cout << "Invalid listening locator address specified:" << address << std::endl;
                 return 1;
             }
 
             // Update UDP port
             if ( nullptr != pO_port )
             {
-                stringstream is;
+                std::stringstream is;
                 is << pO_port->arg;
                 uint16_t id;
 
                 if ( !(is >> id
                         && is.eof()
-                        && rtps::IPLocator::setPhysicalPort(locator, id)))
+                        && IPLocator::setPhysicalPort(locator, id)))
                 {
-                    cout << "Invalid listening locator port specified:" << id << endl;
+                    std::cout << "Invalid listening locator port specified:" << id << std::endl;
                     return 1;
                 }
             }
@@ -224,8 +236,8 @@ int main (
             }
             else
             {
-                cout << "warning: the number of specified ports doesn't match the ip" << endl
-                     << "         addresses provided. Locators share its port number." << endl;
+                std::cout << "warning: the number of specified ports doesn't match the ip" << std::endl
+                          << "         addresses provided. Locators share its port number." << std::endl;
             }
         }
     }
@@ -236,47 +248,59 @@ int main (
 
     if ( nullptr == pServer )
     {
-        cout << "Server creation failed with the given settings. Please review locators setup." << endl;
+        std::cout << "Server creation failed with the given settings. Please review locators setup." << std::endl;
         return_value = 1;
     }
     else
     {
-        unique_lock<mutex> lock(g_signal_mutex);
+        std::unique_lock<std::mutex> lock(g_signal_mutex);
 
         // handle signal SIGINT for every thread
         signal(SIGINT, sigint_handler);
 
         // Print running server attributes
-        cout << "### Server is running ###" << endl;
-        cout << "  Participant Type:   " << participantQos.wire_protocol().builtin.discovery_config.discoveryProtocol <<
-            endl;
-        cout << "  Server ID:          " << server_id << endl;
-        cout << "  Server GUID prefix: " << pServer->guid().guidPrefix << endl;
-        cout << "  Server Addresses:   ";
+        std::cout << "### Server is running ###" << std::endl;
+        std::cout << "  Participant Type:   " <<
+            participantQos.wire_protocol().builtin.discovery_config.discoveryProtocol <<
+            std::endl;
+        std::cout << "  Server ID:          " << server_id << std::endl;
+        std::cout << "  Server GUID prefix: " << pServer->guid().guidPrefix << std::endl;
+        std::cout << "  Server Addresses:   ";
         for (auto locator_it = participantQos.wire_protocol().builtin.metatrafficUnicastLocatorList.begin();
                 locator_it != participantQos.wire_protocol().builtin.metatrafficUnicastLocatorList.end();)
         {
-            cout << *locator_it;
+            std::cout << *locator_it;
             if (++locator_it != participantQos.wire_protocol().builtin.metatrafficUnicastLocatorList.end())
             {
-                cout << std::endl << "                      ";
+                std::cout << std::endl << "                      ";
             }
         }
-        cout << std::endl;
+        std::cout << std::endl;
 
         g_signal_cv.wait(lock, []
                 {
                     return 0 != g_signal_status;
                 });
 
-        cout << endl << "### Server shut down ###" << endl;
+        std::cout << std::endl << "### Server shut down ###" << std::endl;
         DomainParticipantFactory::get_instance()->delete_participant(pServer);
     }
 
-    fastdds::dds::Log::Flush();
-    cout.flush();
+    Log::Flush();
+    std::cout.flush();
 
     return return_value;
+}
+
+} // namespace dds
+} // namespace fastdds
+} // namespace eprosima
+
+int main (
+        int argc,
+        char* argv[])
+{
+    return eprosima::fastdds::dds::fastdds_discovery_server(argc, argv);
 }
 
 // argument validation function definitions
@@ -289,7 +313,7 @@ option::ArgStatus Arg::check_server_id(
     if ( nullptr != option.arg )
     {
         // It must be a number within 0 and 255
-        stringstream is;
+        std::stringstream is;
         is << option.arg;
         int id;
 
@@ -304,8 +328,8 @@ option::ArgStatus Arg::check_server_id(
 
     if (msg)
     {
-        cout << "Option '" << option.name
-             << "' is mandatory. Should be a key identifier between 0 and 255." << endl;
+        std::cout << "Option '" << option.name
+                  << "' is mandatory. Should be a key identifier between 0 and 255." << std::endl;
     }
 
     return option::ARG_ILLEGAL;
@@ -323,7 +347,7 @@ option::ArgStatus Arg::required(
 
     if (msg)
     {
-        cout << "Option '" << option << "' requires an argument" << endl;
+        std::cout << "Option '" << option << "' requires an argument" << std::endl;
     }
     return option::ARG_ILLEGAL;
 }
@@ -337,7 +361,7 @@ option::ArgStatus Arg::check_udp_port(
     if ( nullptr != option.arg )
     {
         // It must be in an ephemeral port range
-        stringstream is;
+        std::stringstream is;
         is << option.arg;
         int id;
 
@@ -352,8 +376,8 @@ option::ArgStatus Arg::check_udp_port(
 
     if (msg)
     {
-        cout << "Option '" << option.name
-             << "' value should be an UDP port between 1025 and 65535." << endl;
+        std::cout << "Option '" << option.name
+                  << "' value should be an UDP port between 1025 and 65535." << std::endl;
     }
 
     return option::ARG_ILLEGAL;
