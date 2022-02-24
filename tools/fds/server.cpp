@@ -15,32 +15,28 @@
 #ifndef FASTDDS_SERVER_SERVER_CPP_
 #define FASTDDS_SERVER_SERVER_CPP_
 
-#include <iostream>
-#include <sstream>
-#include <regex>
-#include <vector>
+#include "server.h"
 
-#include <mutex>
 #include <condition_variable>
 #include <csignal>
+#include <iostream>
+#include <mutex>
+#include <regex>
+#include <sstream>
+#include <string>
+#include <vector>
+
+#include "optionparser.h"
 
 #include <fastdds/dds/domain/DomainParticipant.hpp>
 #include <fastdds/dds/domain/DomainParticipantFactory.hpp>
+#include <fastdds/dds/domain/qos/DomainParticipantQos.hpp>
 #include <fastdds/dds/log/Log.hpp>
+#include <fastdds/rtps/attributes/RTPSParticipantAttributes.h>
+#include <fastdds/rtps/attributes/ServerAttributes.h>
+#include <fastdds/rtps/common/Locator.h>
+#include <fastrtps/utils/IPLocator.h>
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-#include "server.h"
-
-=======
-using namespace eprosima::fastdds::dds;
->>>>>>> f6df9e099... refs 13782 Port fastdds-discovery-server to DDS API
-using namespace eprosima;
-using namespace fastrtps;
-using namespace std;
-
-=======
->>>>>>> c14fd1ca6... Refs 13782: Encapsulate functionality in function within namespace
 volatile sig_atomic_t g_signal_status = 0;
 std::mutex g_signal_mutex;
 std::condition_variable g_signal_cv;
@@ -87,7 +83,7 @@ int fastdds_discovery_server(
         std::string sep(noopts == 1 ? "argument: " : "arguments: ");
         std::cout << "Unknown ";
 
-        while ( noopts-- )
+        while (noopts--)
         {
             std::cout << sep << parse.nonOption(noopts);
             sep = ", ";
