@@ -12,7 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include "server.h"
 
 #include <condition_variable>
 #include <csignal>
@@ -23,6 +22,7 @@
 #include <string>
 #include <vector>
 
+#include "server.h"
 #include <optionparser.hpp>
 
 #include <fastdds/dds/domain/DomainParticipant.hpp>
