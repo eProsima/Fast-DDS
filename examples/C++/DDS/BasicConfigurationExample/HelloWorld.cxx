@@ -36,9 +36,9 @@ using namespace eprosima::fastcdr::exception;
 
 HelloWorld::HelloWorld()
 {
-    // m_index com.eprosima.idl.parser.typecode.PrimitiveTypeCode@43738a82
+    // m_index com.eprosima.idl.parser.typecode.PrimitiveTypeCode@51c8530f
     m_index = 0;
-    // m_message com.eprosima.idl.parser.typecode.ArrayTypeCode@75881071
+    // m_message com.eprosima.idl.parser.typecode.ArrayTypeCode@c81cdd1
     memset(&m_message, 0, (20) * 1);
 
 }
@@ -83,6 +83,19 @@ HelloWorld& HelloWorld::operator =(
     return *this;
 }
 
+bool HelloWorld::operator ==(
+        const HelloWorld& x) const
+{
+
+    return (m_index == x.m_index && m_message == x.m_message);
+}
+
+bool HelloWorld::operator !=(
+        const HelloWorld& x) const
+{
+    return !(*this == x);
+}
+
 size_t HelloWorld::getMaxCdrSerializedSize(
         size_t current_alignment)
 {
@@ -110,12 +123,10 @@ size_t HelloWorld::getCdrSerializedSize(
     current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
 
 
-    // Constant expresion. Change to avoid warning in windows.
-    // if ((20) > 0)
-    // {
-    //     current_alignment += ((20) * 1) + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
-    // }
-    current_alignment += ((20) * 1) + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
+    if ((20) > 0)
+    {
+        current_alignment += ((20) * 1) + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
+    }
 
 
     return current_alignment - initial_alignment;
@@ -227,5 +238,5 @@ void HelloWorld::serializeKey(
         eprosima::fastcdr::Cdr& scdr) const
 {
     (void) scdr;
-
+      
 }

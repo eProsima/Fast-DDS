@@ -21,8 +21,10 @@
 
 #ifdef _WIN32
 // Remove linker warning LNK4221 on Visual Studio
-namespace { char dummy; }
-#endif
+namespace {
+char dummy;
+}  // namespace
+#endif  // _WIN32
 
 #include "Benchmark_medium.h"
 #include <fastcdr/Cdr.h>
@@ -34,9 +36,9 @@ using namespace eprosima::fastcdr::exception;
 
 BenchMarkMedium::BenchMarkMedium()
 {
-    // m_data com.eprosima.idl.parser.typecode.ArrayTypeCode@353d0772
+    // m_data com.eprosima.idl.parser.typecode.ArrayTypeCode@50de0926
     memset(&m_data, 0, (524288) * 1);
-    // m_index com.eprosima.idl.parser.typecode.PrimitiveTypeCode@57c758ac
+    // m_index com.eprosima.idl.parser.typecode.PrimitiveTypeCode@140e5a13
     m_index = 0;
 
 }
@@ -47,19 +49,22 @@ BenchMarkMedium::~BenchMarkMedium()
 
 }
 
-BenchMarkMedium::BenchMarkMedium(const BenchMarkMedium &x)
+BenchMarkMedium::BenchMarkMedium(
+        const BenchMarkMedium& x)
 {
     m_data = x.m_data;
     m_index = x.m_index;
 }
 
-BenchMarkMedium::BenchMarkMedium(BenchMarkMedium &&x)
+BenchMarkMedium::BenchMarkMedium(
+        BenchMarkMedium&& x)
 {
     m_data = std::move(x.m_data);
     m_index = x.m_index;
 }
 
-BenchMarkMedium& BenchMarkMedium::operator=(const BenchMarkMedium &x)
+BenchMarkMedium& BenchMarkMedium::operator =(
+        const BenchMarkMedium& x)
 {
 
     m_data = x.m_data;
@@ -68,7 +73,8 @@ BenchMarkMedium& BenchMarkMedium::operator=(const BenchMarkMedium &x)
     return *this;
 }
 
-BenchMarkMedium& BenchMarkMedium::operator=(BenchMarkMedium &&x)
+BenchMarkMedium& BenchMarkMedium::operator =(
+        BenchMarkMedium&& x)
 {
 
     m_data = std::move(x.m_data);
@@ -77,7 +83,21 @@ BenchMarkMedium& BenchMarkMedium::operator=(BenchMarkMedium &&x)
     return *this;
 }
 
-size_t BenchMarkMedium::getMaxCdrSerializedSize(size_t current_alignment)
+bool BenchMarkMedium::operator ==(
+        const BenchMarkMedium& x) const
+{
+
+    return (m_data == x.m_data && m_index == x.m_index);
+}
+
+bool BenchMarkMedium::operator !=(
+        const BenchMarkMedium& x) const
+{
+    return !(*this == x);
+}
+
+size_t BenchMarkMedium::getMaxCdrSerializedSize(
+        size_t current_alignment)
 {
     size_t initial_alignment = current_alignment;
 
@@ -92,14 +112,18 @@ size_t BenchMarkMedium::getMaxCdrSerializedSize(size_t current_alignment)
     return current_alignment - initial_alignment;
 }
 
-size_t BenchMarkMedium::getCdrSerializedSize(const BenchMarkMedium& data, size_t current_alignment)
+size_t BenchMarkMedium::getCdrSerializedSize(
+        const BenchMarkMedium& data,
+        size_t current_alignment)
 {
     (void)data;
     size_t initial_alignment = current_alignment;
 
 
-
-    current_alignment += ((524288) * 1) + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
+    if ((524288) > 0)
+    {
+        current_alignment += ((524288) * 1) + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
+    }
 
     current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
 
@@ -108,15 +132,18 @@ size_t BenchMarkMedium::getCdrSerializedSize(const BenchMarkMedium& data, size_t
     return current_alignment - initial_alignment;
 }
 
-void BenchMarkMedium::serialize(eprosima::fastcdr::Cdr &scdr) const
+void BenchMarkMedium::serialize(
+        eprosima::fastcdr::Cdr& scdr) const
 {
 
     scdr << m_data;
 
     scdr << m_index;
+
 }
 
-void BenchMarkMedium::deserialize(eprosima::fastcdr::Cdr &dcdr)
+void BenchMarkMedium::deserialize(
+        eprosima::fastcdr::Cdr& dcdr)
 {
 
     dcdr >> m_data;
@@ -128,18 +155,20 @@ void BenchMarkMedium::deserialize(eprosima::fastcdr::Cdr &dcdr)
  * @brief This function copies the value in member data
  * @param _data New value to be copied in member data
  */
-void BenchMarkMedium::data(const std::array<char, 524288> &_data)
+void BenchMarkMedium::data(
+        const std::array<char, 524288>& _data)
 {
-m_data = _data;
+    m_data = _data;
 }
 
 /*!
  * @brief This function moves the value in member data
  * @param _data New value to be moved in member data
  */
-void BenchMarkMedium::data(std::array<char, 524288> &&_data)
+void BenchMarkMedium::data(
+        std::array<char, 524288>&& _data)
 {
-m_data = std::move(_data);
+    m_data = std::move(_data);
 }
 
 /*!
@@ -163,9 +192,10 @@ std::array<char, 524288>& BenchMarkMedium::data()
  * @brief This function sets a value in member index
  * @param _index New value for member index
  */
-void BenchMarkMedium::index(uint32_t _index)
+void BenchMarkMedium::index(
+        uint32_t _index)
 {
-m_index = _index;
+    m_index = _index;
 }
 
 /*!
@@ -187,7 +217,8 @@ uint32_t& BenchMarkMedium::index()
 }
 
 
-size_t BenchMarkMedium::getKeyMaxCdrSerializedSize(size_t current_alignment)
+size_t BenchMarkMedium::getKeyMaxCdrSerializedSize(
+        size_t current_alignment)
 {
     size_t current_align = current_alignment;
 
@@ -200,12 +231,12 @@ size_t BenchMarkMedium::getKeyMaxCdrSerializedSize(size_t current_alignment)
 
 bool BenchMarkMedium::isKeyDefined()
 {
-   return false;
+    return false;
 }
 
-void BenchMarkMedium::serializeKey(eprosima::fastcdr::Cdr &scdr) const
+void BenchMarkMedium::serializeKey(
+        eprosima::fastcdr::Cdr& scdr) const
 {
     (void) scdr;
-     
-     
+      
 }

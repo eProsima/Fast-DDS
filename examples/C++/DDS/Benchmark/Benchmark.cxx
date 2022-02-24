@@ -21,8 +21,10 @@
 
 #ifdef _WIN32
 // Remove linker warning LNK4221 on Visual Studio
-namespace { char dummy; }
-#endif
+namespace {
+char dummy;
+}  // namespace
+#endif  // _WIN32
 
 #include "Benchmark.h"
 #include <fastcdr/Cdr.h>
@@ -34,7 +36,7 @@ using namespace eprosima::fastcdr::exception;
 
 BenchMark::BenchMark()
 {
-    // m_index com.eprosima.idl.parser.typecode.PrimitiveTypeCode@3c130745
+    // m_index com.eprosima.idl.parser.typecode.PrimitiveTypeCode@52f759d7
     m_index = 0;
 
 }
@@ -43,25 +45,20 @@ BenchMark::~BenchMark()
 {
 }
 
-BenchMark::BenchMark(const BenchMark &x)
+BenchMark::BenchMark(
+        const BenchMark& x)
 {
     m_index = x.m_index;
 }
 
-BenchMark::BenchMark(BenchMark &&x)
+BenchMark::BenchMark(
+        BenchMark&& x)
 {
     m_index = x.m_index;
 }
 
-BenchMark& BenchMark::operator=(const BenchMark &x)
-{
-
-    m_index = x.m_index;
-
-    return *this;
-}
-
-BenchMark& BenchMark::operator=(BenchMark &&x)
+BenchMark& BenchMark::operator =(
+        const BenchMark& x)
 {
 
     m_index = x.m_index;
@@ -69,7 +66,30 @@ BenchMark& BenchMark::operator=(BenchMark &&x)
     return *this;
 }
 
-size_t BenchMark::getMaxCdrSerializedSize(size_t current_alignment)
+BenchMark& BenchMark::operator =(
+        BenchMark&& x)
+{
+
+    m_index = x.m_index;
+
+    return *this;
+}
+
+bool BenchMark::operator ==(
+        const BenchMark& x) const
+{
+
+    return (m_index == x.m_index);
+}
+
+bool BenchMark::operator !=(
+        const BenchMark& x) const
+{
+    return !(*this == x);
+}
+
+size_t BenchMark::getMaxCdrSerializedSize(
+        size_t current_alignment)
 {
     size_t initial_alignment = current_alignment;
 
@@ -80,7 +100,9 @@ size_t BenchMark::getMaxCdrSerializedSize(size_t current_alignment)
     return current_alignment - initial_alignment;
 }
 
-size_t BenchMark::getCdrSerializedSize(const BenchMark& data, size_t current_alignment)
+size_t BenchMark::getCdrSerializedSize(
+        const BenchMark& data,
+        size_t current_alignment)
 {
     (void)data;
     size_t initial_alignment = current_alignment;
@@ -92,13 +114,16 @@ size_t BenchMark::getCdrSerializedSize(const BenchMark& data, size_t current_ali
     return current_alignment - initial_alignment;
 }
 
-void BenchMark::serialize(eprosima::fastcdr::Cdr &scdr) const
+void BenchMark::serialize(
+        eprosima::fastcdr::Cdr& scdr) const
 {
 
     scdr << m_index;
+
 }
 
-void BenchMark::deserialize(eprosima::fastcdr::Cdr &dcdr)
+void BenchMark::deserialize(
+        eprosima::fastcdr::Cdr& dcdr)
 {
 
     dcdr >> m_index;
@@ -108,9 +133,10 @@ void BenchMark::deserialize(eprosima::fastcdr::Cdr &dcdr)
  * @brief This function sets a value in member index
  * @param _index New value for member index
  */
-void BenchMark::index(uint32_t _index)
+void BenchMark::index(
+        uint32_t _index)
 {
-m_index = _index;
+    m_index = _index;
 }
 
 /*!
@@ -132,7 +158,8 @@ uint32_t& BenchMark::index()
 }
 
 
-size_t BenchMark::getKeyMaxCdrSerializedSize(size_t current_alignment)
+size_t BenchMark::getKeyMaxCdrSerializedSize(
+        size_t current_alignment)
 {
     size_t current_align = current_alignment;
 
@@ -143,10 +170,11 @@ size_t BenchMark::getKeyMaxCdrSerializedSize(size_t current_alignment)
 
 bool BenchMark::isKeyDefined()
 {
-   return false;
+    return false;
 }
 
-void BenchMark::serializeKey(eprosima::fastcdr::Cdr &scdr) const
+void BenchMark::serializeKey(
+        eprosima::fastcdr::Cdr& scdr) const
 {
     (void) scdr;
      

@@ -21,8 +21,10 @@
 
 #ifdef _WIN32
 // Remove linker warning LNK4221 on Visual Studio
-namespace { char dummy; }
-#endif
+namespace {
+char dummy;
+}  // namespace
+#endif  // _WIN32
 
 #include "FlowControlExample.h"
 #include <fastcdr/Cdr.h>
@@ -34,9 +36,9 @@ using namespace eprosima::fastcdr::exception;
 
 FlowControlExample::FlowControlExample()
 {
-    // m_message com.eprosima.idl.parser.typecode.ArrayTypeCode@703580bf
+    // m_message com.eprosima.idl.parser.typecode.ArrayTypeCode@43bd930a
     memset(&m_message, 0, (600000) * 1);
-    // m_wasFast com.eprosima.idl.parser.typecode.PrimitiveTypeCode@72a7c7e0
+    // m_wasFast com.eprosima.idl.parser.typecode.PrimitiveTypeCode@553a3d88
     m_wasFast = 0;
 
 }
@@ -47,19 +49,22 @@ FlowControlExample::~FlowControlExample()
 
 }
 
-FlowControlExample::FlowControlExample(const FlowControlExample &x)
+FlowControlExample::FlowControlExample(
+        const FlowControlExample& x)
 {
     m_message = x.m_message;
     m_wasFast = x.m_wasFast;
 }
 
-FlowControlExample::FlowControlExample(FlowControlExample &&x)
+FlowControlExample::FlowControlExample(
+        FlowControlExample&& x)
 {
     m_message = std::move(x.m_message);
     m_wasFast = x.m_wasFast;
 }
 
-FlowControlExample& FlowControlExample::operator=(const FlowControlExample &x)
+FlowControlExample& FlowControlExample::operator =(
+        const FlowControlExample& x)
 {
 
     m_message = x.m_message;
@@ -68,7 +73,8 @@ FlowControlExample& FlowControlExample::operator=(const FlowControlExample &x)
     return *this;
 }
 
-FlowControlExample& FlowControlExample::operator=(FlowControlExample &&x)
+FlowControlExample& FlowControlExample::operator =(
+        FlowControlExample&& x)
 {
 
     m_message = std::move(x.m_message);
@@ -77,7 +83,21 @@ FlowControlExample& FlowControlExample::operator=(FlowControlExample &&x)
     return *this;
 }
 
-size_t FlowControlExample::getMaxCdrSerializedSize(size_t current_alignment)
+bool FlowControlExample::operator ==(
+        const FlowControlExample& x) const
+{
+
+    return (m_message == x.m_message && m_wasFast == x.m_wasFast);
+}
+
+bool FlowControlExample::operator !=(
+        const FlowControlExample& x) const
+{
+    return !(*this == x);
+}
+
+size_t FlowControlExample::getMaxCdrSerializedSize(
+        size_t current_alignment)
 {
     size_t initial_alignment = current_alignment;
 
@@ -92,12 +112,18 @@ size_t FlowControlExample::getMaxCdrSerializedSize(size_t current_alignment)
     return current_alignment - initial_alignment;
 }
 
-size_t FlowControlExample::getCdrSerializedSize(const FlowControlExample& data, size_t current_alignment)
+size_t FlowControlExample::getCdrSerializedSize(
+        const FlowControlExample& data,
+        size_t current_alignment)
 {
     (void)data;
     size_t initial_alignment = current_alignment;
 
-    current_alignment += ((600000) * 1) + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
+
+    if ((600000) > 0)
+    {
+        current_alignment += ((600000) * 1) + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
+    }
 
     current_alignment += 1 + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
 
@@ -106,15 +132,18 @@ size_t FlowControlExample::getCdrSerializedSize(const FlowControlExample& data, 
     return current_alignment - initial_alignment;
 }
 
-void FlowControlExample::serialize(eprosima::fastcdr::Cdr &scdr) const
+void FlowControlExample::serialize(
+        eprosima::fastcdr::Cdr& scdr) const
 {
 
     scdr << m_message;
 
     scdr << m_wasFast;
+
 }
 
-void FlowControlExample::deserialize(eprosima::fastcdr::Cdr &dcdr)
+void FlowControlExample::deserialize(
+        eprosima::fastcdr::Cdr& dcdr)
 {
 
     dcdr >> m_message;
@@ -126,18 +155,20 @@ void FlowControlExample::deserialize(eprosima::fastcdr::Cdr &dcdr)
  * @brief This function copies the value in member message
  * @param _message New value to be copied in member message
  */
-void FlowControlExample::message(const std::array<char, 600000> &_message)
+void FlowControlExample::message(
+        const std::array<char, 600000>& _message)
 {
-m_message = _message;
+    m_message = _message;
 }
 
 /*!
  * @brief This function moves the value in member message
  * @param _message New value to be moved in member message
  */
-void FlowControlExample::message(std::array<char, 600000> &&_message)
+void FlowControlExample::message(
+        std::array<char, 600000>&& _message)
 {
-m_message = std::move(_message);
+    m_message = std::move(_message);
 }
 
 /*!
@@ -161,9 +192,10 @@ std::array<char, 600000>& FlowControlExample::message()
  * @brief This function sets a value in member wasFast
  * @param _wasFast New value for member wasFast
  */
-void FlowControlExample::wasFast(char _wasFast)
+void FlowControlExample::wasFast(
+        char _wasFast)
 {
-m_wasFast = _wasFast;
+    m_wasFast = _wasFast;
 }
 
 /*!
@@ -185,7 +217,8 @@ char& FlowControlExample::wasFast()
 }
 
 
-size_t FlowControlExample::getKeyMaxCdrSerializedSize(size_t current_alignment)
+size_t FlowControlExample::getKeyMaxCdrSerializedSize(
+        size_t current_alignment)
 {
     size_t current_align = current_alignment;
 
@@ -198,12 +231,12 @@ size_t FlowControlExample::getKeyMaxCdrSerializedSize(size_t current_alignment)
 
 bool FlowControlExample::isKeyDefined()
 {
-   return false;
+    return false;
 }
 
-void FlowControlExample::serializeKey(eprosima::fastcdr::Cdr &scdr) const
+void FlowControlExample::serializeKey(
+        eprosima::fastcdr::Cdr& scdr) const
 {
     (void) scdr;
-     
-     
+      
 }

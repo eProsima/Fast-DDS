@@ -23,8 +23,8 @@
 // Remove linker warning LNK4221 on Visual Studio
 namespace {
 char dummy;
-} // namespace
-#endif // ifdef _WIN32
+}  // namespace
+#endif  // _WIN32
 
 #include "HelloWorld.h"
 #include <fastcdr/Cdr.h>
@@ -36,10 +36,10 @@ using namespace eprosima::fastcdr::exception;
 
 HelloWorld::HelloWorld()
 {
-    // m_index com.eprosima.idl.parser.typecode.PrimitiveTypeCode@1622f1b
+    // m_index com.eprosima.idl.parser.typecode.PrimitiveTypeCode@64f6106c
     m_index = 0;
-    // m_message com.eprosima.idl.parser.typecode.StringTypeCode@70e8f8e
-    m_message = "";
+    // m_message com.eprosima.idl.parser.typecode.StringTypeCode@5891e32e
+    m_message ="";
 
 }
 
@@ -83,6 +83,19 @@ HelloWorld& HelloWorld::operator =(
     return *this;
 }
 
+bool HelloWorld::operator ==(
+        const HelloWorld& x) const
+{
+
+    return (m_index == x.m_index && m_message == x.m_message);
+}
+
+bool HelloWorld::operator !=(
+        const HelloWorld& x) const
+{
+    return !(*this == x);
+}
+
 size_t HelloWorld::getMaxCdrSerializedSize(
         size_t current_alignment)
 {
@@ -121,6 +134,7 @@ void HelloWorld::serialize(
 
     scdr << m_index;
     scdr << m_message;
+
 }
 
 void HelloWorld::deserialize(
@@ -218,6 +232,5 @@ void HelloWorld::serializeKey(
         eprosima::fastcdr::Cdr& scdr) const
 {
     (void) scdr;
-
-
+      
 }

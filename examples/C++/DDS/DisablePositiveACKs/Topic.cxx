@@ -21,8 +21,10 @@
 
 #ifdef _WIN32
 // Remove linker warning LNK4221 on Visual Studio
-namespace { char dummy; }
-#endif
+namespace {
+char dummy;
+}  // namespace
+#endif  // _WIN32
 
 #include "Topic.h"
 #include <fastcdr/Cdr.h>
@@ -34,9 +36,9 @@ using namespace eprosima::fastcdr::exception;
 
 Topic::Topic()
 {
-    // m_index com.eprosima.idl.parser.typecode.PrimitiveTypeCode@1622f1b
+    // m_index com.eprosima.idl.parser.typecode.PrimitiveTypeCode@64f6106c
     m_index = 0;
-    // m_message com.eprosima.idl.parser.typecode.StringTypeCode@70e8f8e
+    // m_message com.eprosima.idl.parser.typecode.StringTypeCode@5891e32e
     m_message ="";
 
 }
@@ -47,19 +49,22 @@ Topic::~Topic()
 
 }
 
-Topic::Topic(const Topic &x)
+Topic::Topic(
+        const Topic& x)
 {
     m_index = x.m_index;
     m_message = x.m_message;
 }
 
-Topic::Topic(Topic &&x)
+Topic::Topic(
+        Topic&& x)
 {
     m_index = x.m_index;
     m_message = std::move(x.m_message);
 }
 
-Topic& Topic::operator=(const Topic &x)
+Topic& Topic::operator =(
+        const Topic& x)
 {
 
     m_index = x.m_index;
@@ -68,7 +73,8 @@ Topic& Topic::operator=(const Topic &x)
     return *this;
 }
 
-Topic& Topic::operator=(Topic &&x)
+Topic& Topic::operator =(
+        Topic&& x)
 {
 
     m_index = x.m_index;
@@ -77,7 +83,21 @@ Topic& Topic::operator=(Topic &&x)
     return *this;
 }
 
-size_t Topic::getMaxCdrSerializedSize(size_t current_alignment)
+bool Topic::operator ==(
+        const Topic& x) const
+{
+
+    return (m_index == x.m_index && m_message == x.m_message);
+}
+
+bool Topic::operator !=(
+        const Topic& x) const
+{
+    return !(*this == x);
+}
+
+size_t Topic::getMaxCdrSerializedSize(
+        size_t current_alignment)
 {
     size_t initial_alignment = current_alignment;
 
@@ -91,7 +111,9 @@ size_t Topic::getMaxCdrSerializedSize(size_t current_alignment)
     return current_alignment - initial_alignment;
 }
 
-size_t Topic::getCdrSerializedSize(const Topic& data, size_t current_alignment)
+size_t Topic::getCdrSerializedSize(
+        const Topic& data,
+        size_t current_alignment)
 {
     (void)data;
     size_t initial_alignment = current_alignment;
@@ -106,14 +128,17 @@ size_t Topic::getCdrSerializedSize(const Topic& data, size_t current_alignment)
     return current_alignment - initial_alignment;
 }
 
-void Topic::serialize(eprosima::fastcdr::Cdr &scdr) const
+void Topic::serialize(
+        eprosima::fastcdr::Cdr& scdr) const
 {
 
     scdr << m_index;
     scdr << m_message;
+
 }
 
-void Topic::deserialize(eprosima::fastcdr::Cdr &dcdr)
+void Topic::deserialize(
+        eprosima::fastcdr::Cdr& dcdr)
 {
 
     dcdr >> m_index;
@@ -124,9 +149,10 @@ void Topic::deserialize(eprosima::fastcdr::Cdr &dcdr)
  * @brief This function sets a value in member index
  * @param _index New value for member index
  */
-void Topic::index(uint32_t _index)
+void Topic::index(
+        uint32_t _index)
 {
-m_index = _index;
+    m_index = _index;
 }
 
 /*!
@@ -151,18 +177,20 @@ uint32_t& Topic::index()
  * @brief This function copies the value in member message
  * @param _message New value to be copied in member message
  */
-void Topic::message(const std::string &_message)
+void Topic::message(
+        const std::string& _message)
 {
-m_message = _message;
+    m_message = _message;
 }
 
 /*!
  * @brief This function moves the value in member message
  * @param _message New value to be moved in member message
  */
-void Topic::message(std::string &&_message)
+void Topic::message(
+        std::string&& _message)
 {
-m_message = std::move(_message);
+    m_message = std::move(_message);
 }
 
 /*!
@@ -183,7 +211,8 @@ std::string& Topic::message()
     return m_message;
 }
 
-size_t Topic::getKeyMaxCdrSerializedSize(size_t current_alignment)
+size_t Topic::getKeyMaxCdrSerializedSize(
+        size_t current_alignment)
 {
     size_t current_align = current_alignment;
 
@@ -196,12 +225,12 @@ size_t Topic::getKeyMaxCdrSerializedSize(size_t current_alignment)
 
 bool Topic::isKeyDefined()
 {
-   return false;
+    return false;
 }
 
-void Topic::serializeKey(eprosima::fastcdr::Cdr &scdr) const
+void Topic::serializeKey(
+        eprosima::fastcdr::Cdr& scdr) const
 {
     (void) scdr;
-     
-     
+      
 }

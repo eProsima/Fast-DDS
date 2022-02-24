@@ -25,63 +25,82 @@
 
 #include "LifespanPubSubTypes.h"
 
-using namespace eprosima::fastrtps;
-using namespace eprosima::fastrtps::rtps;
+using SerializedPayload_t = eprosima::fastrtps::rtps::SerializedPayload_t;
+using InstanceHandle_t = eprosima::fastrtps::rtps::InstanceHandle_t;
 
 LifespanPubSubType::LifespanPubSubType()
 {
     setName("Lifespan");
-    m_typeSize = static_cast<uint32_t>(Lifespan::getMaxCdrSerializedSize()) + 4 /*encapsulation*/;
+    auto type_size = Lifespan::getMaxCdrSerializedSize();
+    type_size += eprosima::fastcdr::Cdr::alignment(type_size, 4); /* possible submessage alignment */
+    m_typeSize = static_cast<uint32_t>(type_size) + 4; /*encapsulation*/
     m_isGetKeyDefined = Lifespan::isKeyDefined();
-    size_t keyLength = Lifespan::getKeyMaxCdrSerializedSize()>16 ? Lifespan::getKeyMaxCdrSerializedSize() : 16;
+    size_t keyLength = Lifespan::getKeyMaxCdrSerializedSize() > 16 ?
+            Lifespan::getKeyMaxCdrSerializedSize() : 16;
     m_keyBuffer = reinterpret_cast<unsigned char*>(malloc(keyLength));
     memset(m_keyBuffer, 0, keyLength);
 }
 
 LifespanPubSubType::~LifespanPubSubType()
 {
-    if(m_keyBuffer!=nullptr)
+    if (m_keyBuffer != nullptr)
+    {
         free(m_keyBuffer);
+    }
 }
 
-bool LifespanPubSubType::serialize(void *data, SerializedPayload_t *payload)
+bool LifespanPubSubType::serialize(
+        void* data,
+        SerializedPayload_t* payload)
 {
-    Lifespan *p_type = static_cast<Lifespan*>(data);
-    eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->max_size); // Object that manages the raw buffer.
-    eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN,
-            eprosima::fastcdr::Cdr::DDS_CDR); // Object that serializes the data.
+    Lifespan* p_type = static_cast<Lifespan*>(data);
+
+    // Object that manages the raw buffer.
+    eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->max_size);
+    // Object that serializes the data.
+    eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN, eprosima::fastcdr::Cdr::DDS_CDR);
     payload->encapsulation = ser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
     // Serialize encapsulation
     ser.serialize_encapsulation();
 
     try
     {
-        p_type->serialize(ser); // Serialize the object:
+        // Serialize the object.
+        p_type->serialize(ser);
     }
-    catch(eprosima::fastcdr::exception::NotEnoughMemoryException& /*exception*/)
+    catch (eprosima::fastcdr::exception::NotEnoughMemoryException& /*exception*/)
     {
         return false;
     }
 
-    payload->length = static_cast<uint32_t>(ser.getSerializedDataLength()); //Get the serialized length
+    // Get the serialized length
+    payload->length = static_cast<uint32_t>(ser.getSerializedDataLength());
     return true;
 }
 
-bool LifespanPubSubType::deserialize(SerializedPayload_t* payload, void* data)
+bool LifespanPubSubType::deserialize(
+        SerializedPayload_t* payload,
+        void* data)
 {
-    Lifespan* p_type = static_cast<Lifespan*>(data); //Convert DATA to pointer of your type
-    eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->length); // Object that manages the raw buffer.
-    eprosima::fastcdr::Cdr deser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN,
-            eprosima::fastcdr::Cdr::DDS_CDR); // Object that deserializes the data.
-    // Deserialize encapsulation.
-    deser.read_encapsulation();
-    payload->encapsulation = deser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
-
     try
     {
-        p_type->deserialize(deser); //Deserialize the object:
+        //Convert DATA to pointer of your type
+        Lifespan* p_type = static_cast<Lifespan*>(data);
+
+        // Object that manages the raw buffer.
+        eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->length);
+
+        // Object that deserializes the data.
+        eprosima::fastcdr::Cdr deser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN, eprosima::fastcdr::Cdr::DDS_CDR);
+
+        // Deserialize encapsulation.
+        deser.read_encapsulation();
+        payload->encapsulation = deser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
+
+        // Deserialize the object.
+        p_type->deserialize(deser);
     }
-    catch(eprosima::fastcdr::exception::NotEnoughMemoryException& /*exception*/)
+    catch (eprosima::fastcdr::exception::NotEnoughMemoryException& /*exception*/)
     {
         return false;
     }
@@ -89,12 +108,14 @@ bool LifespanPubSubType::deserialize(SerializedPayload_t* payload, void* data)
     return true;
 }
 
-std::function<uint32_t()> LifespanPubSubType::getSerializedSizeProvider(void* data)
+std::function<uint32_t()> LifespanPubSubType::getSerializedSizeProvider(
+        void* data)
 {
     return [data]() -> uint32_t
-    {
-        return static_cast<uint32_t>(type::getCdrSerializedSize(*static_cast<Lifespan*>(data))) + 4 /*encapsulation*/;
-    };
+           {
+               return static_cast<uint32_t>(type::getCdrSerializedSize(*static_cast<Lifespan*>(data))) +
+                      4u /*encapsulation*/;
+           };
 }
 
 void* LifespanPubSubType::createData()
@@ -102,29 +123,45 @@ void* LifespanPubSubType::createData()
     return reinterpret_cast<void*>(new Lifespan());
 }
 
-void LifespanPubSubType::deleteData(void* data)
+void LifespanPubSubType::deleteData(
+        void* data)
 {
     delete(reinterpret_cast<Lifespan*>(data));
 }
 
-bool LifespanPubSubType::getKey(void *data, InstanceHandle_t* handle, bool force_md5)
+bool LifespanPubSubType::getKey(
+        void* data,
+        InstanceHandle_t* handle,
+        bool force_md5)
 {
-    if(!m_isGetKeyDefined)
+    if (!m_isGetKeyDefined)
+    {
         return false;
+    }
+
     Lifespan* p_type = static_cast<Lifespan*>(data);
-    eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(m_keyBuffer),Lifespan::getKeyMaxCdrSerializedSize());     // Object that manages the raw buffer.
-    eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::BIG_ENDIANNESS);     // Object that serializes the data.
+
+    // Object that manages the raw buffer.
+    eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(m_keyBuffer),
+            Lifespan::getKeyMaxCdrSerializedSize());
+
+    // Object that serializes the data.
+    eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::BIG_ENDIANNESS);
     p_type->serializeKey(ser);
-    if(force_md5 || Lifespan::getKeyMaxCdrSerializedSize()>16)    {
+    if (force_md5 || Lifespan::getKeyMaxCdrSerializedSize() > 16)
+    {
         m_md5.init();
         m_md5.update(m_keyBuffer, static_cast<unsigned int>(ser.getSerializedDataLength()));
         m_md5.finalize();
-        for(uint8_t i = 0;i<16;++i)        {
+        for (uint8_t i = 0; i < 16; ++i)
+        {
             handle->value[i] = m_md5.digest[i];
         }
     }
-    else    {
-        for(uint8_t i = 0;i<16;++i)        {
+    else
+    {
+        for (uint8_t i = 0; i < 16; ++i)
+        {
             handle->value[i] = m_keyBuffer[i];
         }
     }
