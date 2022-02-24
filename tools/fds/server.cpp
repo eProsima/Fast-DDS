@@ -89,7 +89,7 @@ int fastdds_discovery_server(
             sep = ", ";
         }
 
-        std::endl(std::cout);
+        std::cout << std::endl;
         return 1;
     }
 
