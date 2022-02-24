@@ -26,7 +26,7 @@
 #include <string>
 #include <vector>
 
-#include "optionparser.h"
+#include <optionparser.hpp>
 
 #include <fastdds/dds/domain/DomainParticipant.hpp>
 #include <fastdds/dds/domain/DomainParticipantFactory.hpp>
