@@ -5,7 +5,7 @@ The following documents constitutes a set of guidelines to which contributors mu
 * [Contributions Licensing](#contributions-licensing)
 * [Developer Certificate of Origin](#developer-certificate-of-origin)
 * [Code Coverage](#code-coverage)
-* [Issues and Support](#issue-and-support)
+* [Issues and Support](#issues-and-support)
 
 ## Contributions Licensing
 
@@ -37,21 +37,21 @@ Because of this, contributors are asked to locally run a coverage assessment tha
 
 ## Issues and Support
 
-*eProsima Fast DDS* developers welcome all contributions but we will be grateful if you follow the guidelines below while contributing in this project.
+*eProsima Fast DDS* developers welcome all contributions, and we will be grateful if you follow the guidelines below while contributing in this project.
 This project classifies user issues in the following categories.
 Please, help us giving you a better support by opening your issue in the corresponding category:
 
 ### Issues
 
-Fast DDS issues are understood mostly as bug reports and may be opened by anyone [here](https://github.com/JLBuenoLopez-eProsima/rmw_fastrtps/issues/new/choose).
+Fast DDS issues are understood mostly as bug reports and may be opened by anyone [here](https://github.com/eProsima/Fast-DDS/issues/new/choose).
 Consequently, this section handles malfunctions in the current documented behavior of the library or non-compliances to the DDS specification.
-If not sure if it is a proper issue, please open it in the [Support](#support) discussion forum and, if it is a malfunction, an issue will be opened with the provided report.
+If you are unsure on whether your experienced behavior falls into this category, please open a ticket in the [Support](#support) discussion forum and, if it is a malfunction, an issue will be opened on your behalf with the provided report.
 
 An issue template is provided and it is really appreciated if all related information is provided so the issue may be reproduced.
 Otherwise, more information could be required in order to reproduce and solve the issue.
-If this is the case, the issue would be labeled with `need more info`.
-Please, be aware that in case that no response is received in the next month, the issue would be closed due to inactivity.
-The issue could be reopened if the required information is provided.
+If this is the case, the issue will be labeled with `need more info`.
+Please, be advised that in case that no response is received within a month, the issue would be closed due to inactivity.
+The issue may be reopened if the required information is provided.
 
 ### Feature request
 
