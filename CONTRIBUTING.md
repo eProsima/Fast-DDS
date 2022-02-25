@@ -56,7 +56,7 @@ Please, help us giving you a better support by opening your issue in the corresp
 
 ### Issues
 
-Fast DDS issues are understood mostly as bug reports and may be opened by anyone [here](https://github.com/eProsima/Fast-DDS/issues/new/choose).
+Fast DDS issues are understood as bug reports and may be opened by anyone [here](https://github.com/eProsima/Fast-DDS/issues/new/choose).
 Consequently, this section handles malfunctions in the current documented behavior of the library or non-compliances to the DDS specification.
 If you are unsure on whether your experienced behavior falls into this category, please open a ticket in the [Support](#support) discussion forum and, if it is a malfunction, an issue will be opened on your behalf with the provided report.
 
