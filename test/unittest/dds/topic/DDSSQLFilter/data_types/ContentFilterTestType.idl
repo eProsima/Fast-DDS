@@ -1,0 +1,115 @@
+enum Color
+{
+    RED,
+    GREEN,
+    BLUE,
+    YELLOW,
+    MAGENTA
+};
+
+enum Material
+{
+    WOOD,
+    PLASTIC,
+    METAL,
+    CONCRETE,
+    STONE
+};
+
+@nested
+struct StructType
+{
+    char               char_field;
+    octet              uint8_field;
+    short              int16_field;
+    unsigned short     uint16_field;
+    long               int32_field;
+    unsigned long      uint32_field;
+    long long          int64_field;
+    unsigned long long uint64_field;
+    float              float_field;
+    double             double_field;
+    long double        long_double_field;
+    boolean            bool_field;
+    string             string_field;
+    Color              enum_field;
+    Material           enum2_field;
+};
+
+const unsigned long max_array_size = 3;
+const unsigned long max_seq_size = 5;
+
+struct ContentFilterTestType
+{
+    // Direct fields
+    char               char_field;
+    octet              uint8_field;
+    short              int16_field;
+    unsigned short     uint16_field;
+    long               int32_field;
+    unsigned long      uint32_field;
+    long long          int64_field;
+    unsigned long long uint64_field;
+    float              float_field;
+    double             double_field;
+    long double        long_double_field;
+    boolean            bool_field;
+    string             string_field;
+    Color              enum_field;
+    Material           enum2_field;
+    StructType         struct_field;
+
+    // Array fields
+    char               array_char_field[max_array_size];
+    octet              array_uint8_field[max_array_size];
+    short              array_int16_field[max_array_size];
+    unsigned short     array_uint16_field[max_array_size];
+    long               array_int32_field[max_array_size];
+    unsigned long      array_uint32_field[max_array_size];
+    long long          array_int64_field[max_array_size];
+    unsigned long long array_uint64_field[max_array_size];
+    float              array_float_field[max_array_size];
+    double             array_double_field[max_array_size];
+    long double        array_long_double_field[max_array_size];
+    boolean            array_bool_field[max_array_size];
+    string             array_string_field[max_array_size];
+    Color              array_enum_field[max_array_size];
+    Material           array_enum2_field[max_array_size];
+    StructType         array_struct_field[max_array_size];
+
+    // Bounded sequence fields
+    sequence<char, max_seq_size>               bounded_sequence_char_field;
+    sequence<octet, max_seq_size>              bounded_sequence_uint8_field;
+    sequence<short, max_seq_size>              bounded_sequence_int16_field;
+    sequence<unsigned short, max_seq_size>     bounded_sequence_uint16_field;
+    sequence<long, max_seq_size>               bounded_sequence_int32_field;
+    sequence<unsigned long, max_seq_size>      bounded_sequence_uint32_field;
+    sequence<long long, max_seq_size>          bounded_sequence_int64_field;
+    sequence<unsigned long long, max_seq_size> bounded_sequence_uint64_field;
+    sequence<float, max_seq_size>              bounded_sequence_float_field;
+    sequence<double, max_seq_size>             bounded_sequence_double_field;
+    sequence<long double, max_seq_size>        bounded_sequence_long_double_field;
+    sequence<boolean, max_seq_size>            bounded_sequence_bool_field;
+    sequence<string, max_seq_size>             bounded_sequence_string_field;
+    sequence<Color, max_seq_size>              bounded_sequence_enum_field;
+    sequence<Material, max_seq_size>           bounded_sequence_enum2_field;
+    sequence<StructType, max_seq_size>         bounded_sequence_struct_field;
+
+    // Unbounded sequence fields
+    sequence<char>               unbounded_sequence_char_field;
+    sequence<octet>              unbounded_sequence_uint8_field;
+    sequence<short>              unbounded_sequence_int16_field;
+    sequence<unsigned short>     unbounded_sequence_uint16_field;
+    sequence<long>               unbounded_sequence_int32_field;
+    sequence<unsigned long>      unbounded_sequence_uint32_field;
+    sequence<long long>          unbounded_sequence_int64_field;
+    sequence<unsigned long long> unbounded_sequence_uint64_field;
+    sequence<float>              unbounded_sequence_float_field;
+    sequence<double>             unbounded_sequence_double_field;
+    sequence<long double>        unbounded_sequence_long_double_field;
+    sequence<boolean>            unbounded_sequence_bool_field;
+    sequence<string>             unbounded_sequence_string_field;
+    sequence<Color>              unbounded_sequence_enum_field;
+    sequence<Material>           unbounded_sequence_enum2_field;
+    sequence<StructType>         unbounded_sequence_struct_field;
+};

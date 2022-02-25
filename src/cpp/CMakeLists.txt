@@ -29,8 +29,12 @@ add_definitions(-DNOMINMAX)
 
 endif(WIN32)
 
+file(GLOB DDSSQLFILTER_SOURCES fastdds/topic/DDSSQLFilter/*.cpp)
+
 set(${PROJECT_NAME}_source_files
     ${ALL_HEADERS}
+
+    ${DDSSQLFILTER_SOURCES}
 
     fastdds/log/Log.cpp
     fastdds/log/OStreamConsumer.cpp
@@ -94,7 +98,6 @@ set(${PROJECT_NAME}_source_files
     fastdds/topic/qos/TopicQos.cpp
     fastdds/publisher/qos/DataWriterQos.cpp
     fastdds/subscriber/qos/DataReaderQos.cpp
-    fastdds/topic/TypeSupport.cpp
     fastdds/publisher/PublisherImpl.cpp
     fastdds/publisher/qos/PublisherQos.cpp
     fastdds/publisher/Publisher.cpp
@@ -419,6 +422,7 @@ target_include_directories(${PROJECT_NAME} PUBLIC
     $<$<BOOL:${TINYXML2_INCLUDE_DIR}>:${TINYXML2_INCLUDE_DIR}>
     $<$<BOOL:${ANDROID}>:${ANDROID_IFADDRS_INCLUDE_DIR}>
     ${THIRDPARTY_BOOST_INCLUDE_DIR}
+    ${PROJECT_SOURCE_DIR}/thirdparty/taocpp-pegtl
     )
 
 # No need to expose linked libs when target is a shared library on MSVC.

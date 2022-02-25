@@ -31,12 +31,39 @@ namespace eprosima {
 namespace fastdds {
 namespace dds {
 
+/**
+ * The interface that a factory of IContentFilter objects should implement.
+ */
 struct IContentFilterFactory
 {
     using ReturnCode_t = eprosima::fastrtps::types::ReturnCode_t;
     using ParameterSeq = LoanableTypedCollection<const char*>;
     using TypeDescriptor = eprosima::fastrtps::types::TypeDescriptor;
 
+    /**
+     * Create or update an IContentFilter instance.
+     *
+     * @param [in]       filter_class_name   Filter class name for which the factory is being called.
+     *                                       Allows using the same factory for different filter classes.
+     * @param [in]       type_name           Type name of the topic being filtered.
+     * @param [in]       data_type           Type support object of the topic being filtered.
+     * @param [in]       filter_expression   Content filter expression.
+     *                                       May be nullptr when updating the parameters of a filter instance.
+     * @param [in]       filter_parameters   Values to set for the filter parameters (%n on the filter expression).
+     * @param [in, out]  filter_instance     When a filter is being created, it will be nullptr on input,
+     *                                       and will have the pointer to the created filter instance on output.
+     *                                       The caller takes ownership of the filter instance returned.
+     *                                       When a filter is being updated, it will have a previously returned pointer
+     *                                       on input. The method takes ownership of the filter instance during its
+     *                                       execution, and can update the filter instance or even destroy it and
+     *                                       create a new one.
+     *                                       The caller takes ownership of the filter instance returned.
+     *                                       It should always have a valid pointer upon return.
+     *                                       The original state of the filter instance should be preserved when an
+     *                                       error is returned.
+     *
+     * @return A return code indicating the result of the operation.
+     */
     virtual ReturnCode_t create_content_filter(
             const char* filter_class_name,
             const char* type_name,
@@ -45,6 +72,17 @@ struct IContentFilterFactory
             const ParameterSeq& filter_parameters,
             IContentFilter*& filter_instance) = 0;
 
+    /**
+     * Delete an IContentFilter instance.
+     *
+     * @param [in]  filter_class_name   Filter class name for which the factory is being called.
+     *                                  Allows using the same factory for different filter classes.
+     * @param [in]  filter_instance     A pointer to a filter instance previously returned by create_content_filter.
+     *                                  The factory takes ownership of the filter instance, and can decide to destroy
+     *                                  it or keep it for future use.
+     *
+     * @return A return code indicating the result of the operation.
+     */
     virtual ReturnCode_t delete_content_filter(
             const char* filter_class_name,
             IContentFilter* filter_instance) = 0;

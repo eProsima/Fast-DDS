@@ -21,7 +21,12 @@ configure_file(${CMAKE_CURRENT_SOURCE_DIR}/../profiles/test_xml_profiles_for_str
         COPYONLY)
 
 set(PUBLISHERTESTS_SOURCE PublisherTests.cpp)
+
+file(GLOB DDSSQLFILTER_SOURCES ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/topic/DDSSQLFilter/*.cpp)
+
 set(DATAWRITERTESTS_SOURCE DataWriterTests.cpp
+    ${DDSSQLFILTER_SOURCES}
+
     ${PROJECT_SOURCE_DIR}/src/cpp/dynamic-types/AnnotationDescriptor.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/dynamic-types/AnnotationParameterValue.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/dynamic-types/BuiltinAnnotationsTypeObject.cpp
@@ -286,6 +291,7 @@ target_compile_definitions(PublisherTests PRIVATE FASTRTPS_NO_LIB
 target_include_directories(PublisherTests PRIVATE
     ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include
     ${PROJECT_SOURCE_DIR}/src/cpp
+    ${PROJECT_SOURCE_DIR}/thirdparty/taocpp-pegtl
     )
 target_link_libraries(PublisherTests fastrtps fastcdr foonathan_memory
     GTest::gmock
@@ -316,6 +322,7 @@ target_include_directories(DataWriterTests PRIVATE
     ${Asio_INCLUDE_DIR}
     ${PROJECT_SOURCE_DIR}/src/cpp
     ${THIRDPARTY_BOOST_INCLUDE_DIR}
+    ${PROJECT_SOURCE_DIR}/thirdparty/taocpp-pegtl
     )
 target_link_libraries(DataWriterTests fastcdr foonathan_memory
     GTest::gmock
