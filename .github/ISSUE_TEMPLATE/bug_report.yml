@@ -1,5 +1,5 @@
 name: Bug Report
-description: File a bug report. Please check the contributing guidelines before opening an issue.
+description: File a bug report.
 labels: ["triage"]
 body:
   - type: markdown
