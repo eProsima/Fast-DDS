@@ -1,5 +1,5 @@
-name: Issue Report
-description: File an issue report. Please check the contributing guidelines before opening an issue.
+name: Bug Report
+description: File a bug report. Please check the contributing guidelines before opening an issue.
 labels: ["triage"]
 body:
   - type: markdown
@@ -85,7 +85,7 @@ body:
     id: xml-profiles
     attributes:
       label: XML configuration file
-      description: Please copy and paste the XML configuration file being used if applicable. This will be automatically formatted into code, so no need for backticks.
+      description: Please copy and paste the XML configuration file being used if applicable. This will be automatically formatted into code, so no need for backquotes.
       render: xml
     validations:
       required: false
@@ -93,7 +93,7 @@ body:
     id: logs
     attributes:
       label: Relevant log output
-      description: Please copy and paste any relevant log output. This will be automatically formatted into code, so no need for backticks.
+      description: Please copy and paste any relevant log output. This will be automatically formatted into code, so no need for backquotes.
       render: shell
     validations:
       required: false

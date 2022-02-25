@@ -37,9 +37,22 @@ Because of this, contributors are asked to locally run a coverage assessment tha
 
 ## Issues and Support
 
-*eProsima Fast DDS* developers welcome all contributions, and we will be grateful if you follow the guidelines below while contributing in this project.
-This project classifies user issues in the following categories.
-Please, help us giving you a better support by opening your issue in the corresponding category:
+*eProsima Fast DDS* developers welcome all contributions, and we will be grateful if you follow the guidelines below while contributing to this project.
+Firs of all, there are several products related with Fast DDS.
+Please, open the issue in the corresponding repository:
+
+- [Fast DDS documentation](https://github.com/eProsima/Fast-DDS-docs/issues/new)
+- [Fast DDS-Gen](https://github.com/eProsima/Fast-DDS-Gen/issues/new)
+- [Foonathan memory vendor](https://github.com/eProsima/foonathan_memory_vendor/issues/new)
+- [Fast CDR](https://github.com/eProsima/Fast-CDR/issues/new)
+- [Shapes Demo](https://github.com/eProsima/ShapesDemo/issues/new)
+- [ROS 2 Fast DDS RMW](https://github.com/ros2/rmw_fastrtps/issues/new)
+- [Fast DDS Statistics Backend](https://github.com/eProsima/Fast-DDS-statistics-backend/issues/new)
+- [Fast DDS Monitor](https://github.com/eProsima/Fast-DDS-monitor/issues/new)
+- [DDS Router](https://github.com/eProsima/DDS-Router/issues/new)
+
+Also, this project classifies user issues in the following categories.
+Please, help us giving you a better support by opening your issue in the corresponding category.
 
 ### Issues
 
