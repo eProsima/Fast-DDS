@@ -31,7 +31,9 @@ using InstanceHandle_t = eprosima::fastrtps::rtps::InstanceHandle_t;
 LoanableHelloWorldPubSubType::LoanableHelloWorldPubSubType()
 {
     setName("LoanableHelloWorld");
-    m_typeSize = static_cast<uint32_t>(LoanableHelloWorld::getMaxCdrSerializedSize()) + 4 /*encapsulation*/;
+    auto type_size = LoanableHelloWorld::getMaxCdrSerializedSize();
+    type_size += eprosima::fastcdr::Cdr::alignment(type_size, 4); /* possible submessage alignment */
+    m_typeSize = static_cast<uint32_t>(type_size) + 4; /*encapsulation*/
     m_isGetKeyDefined = LoanableHelloWorld::isKeyDefined();
     size_t keyLength = LoanableHelloWorld::getKeyMaxCdrSerializedSize() > 16 ?
             LoanableHelloWorld::getKeyMaxCdrSerializedSize() : 16;
@@ -80,21 +82,21 @@ bool LoanableHelloWorldPubSubType::deserialize(
         SerializedPayload_t* payload,
         void* data)
 {
-    //Convert DATA to pointer of your type
-    LoanableHelloWorld* p_type = static_cast<LoanableHelloWorld*>(data);
-
-    // Object that manages the raw buffer.
-    eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->length);
-
-    // Object that deserializes the data.
-    eprosima::fastcdr::Cdr deser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN, eprosima::fastcdr::Cdr::DDS_CDR);
-
-    // Deserialize encapsulation.
-    deser.read_encapsulation();
-    payload->encapsulation = deser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
-
     try
     {
+        //Convert DATA to pointer of your type
+        LoanableHelloWorld* p_type = static_cast<LoanableHelloWorld*>(data);
+
+        // Object that manages the raw buffer.
+        eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->length);
+
+        // Object that deserializes the data.
+        eprosima::fastcdr::Cdr deser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN, eprosima::fastcdr::Cdr::DDS_CDR);
+
+        // Deserialize encapsulation.
+        deser.read_encapsulation();
+        payload->encapsulation = deser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
+
         // Deserialize the object.
         p_type->deserialize(deser);
     }

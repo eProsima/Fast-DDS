@@ -83,7 +83,7 @@ bool Data64kb::operator ==(
 }
 
 bool Data64kb::operator !=(
-        const Data64kb& x)
+        const Data64kb& x) const
 {
     return !(*this == x);
 }

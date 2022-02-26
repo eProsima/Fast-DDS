@@ -2,16 +2,17 @@
 #include <string>
 #include <condition_variable>
 
-#include <fastrtps/participant/Participant.h>
 #include <fastrtps/attributes/ParticipantAttributes.h>
-#include <fastrtps/subscriber/Subscriber.h>
-#include <fastrtps/subscriber/SubscriberListener.h>
+#include <fastrtps/attributes/PublisherAttributes.h>
 #include <fastrtps/attributes/SubscriberAttributes.h>
+#include <fastrtps/Domain.h>
+#include <fastrtps/participant/Participant.h>
 #include <fastrtps/publisher/Publisher.h>
 #include <fastrtps/publisher/PublisherListener.h>
-#include <fastrtps/attributes/PublisherAttributes.h>
-#include <fastrtps/Domain.h>
 #include <fastrtps/subscriber/SampleInfo.h>
+#include <fastrtps/subscriber/Subscriber.h>
+#include <fastrtps/subscriber/SubscriberListener.h>
+#include <fastrtps/TopicDataType.h>
 
 #include "samplePubSubTypes.h"
 
@@ -297,7 +298,7 @@ void keys()
     std::this_thread::sleep_for(std::chrono::milliseconds(1500));
 
     //Read the contents of both histories:
-    std::vector< std::pair<int, int> > sampleList;
+    std::vector< std::pair<int, int>> sampleList;
     std::cout << "The Subscriber holds: " << std::endl;
     while (mySub->readNextData(&my_sample, &sample_info))
     {

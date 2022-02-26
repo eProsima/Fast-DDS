@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-/*! 
+/*!
  * @file AllocTestType.cpp
  * This source file contains the definition of the described types in the IDL file.
  *
@@ -21,11 +21,12 @@
 
 #ifdef _WIN32
 // Remove linker warning LNK4221 on Visual Studio
-namespace { char dummy; }
-#endif
+namespace {
+char dummy;
+}  // namespace
+#endif  // _WIN32
 
 #include "AllocTestType.h"
-
 #include <fastcdr/Cdr.h>
 
 #include <fastcdr/exceptions/BadParamException.h>
@@ -35,73 +36,134 @@ using namespace eprosima::fastcdr::exception;
 
 AllocTestType::AllocTestType()
 {
+    // m_index com.eprosima.idl.parser.typecode.PrimitiveTypeCode@52f759d7
     m_index = 0;
+
 }
 
 AllocTestType::~AllocTestType()
 {
 }
 
-AllocTestType::AllocTestType(const AllocTestType &x)
+AllocTestType::AllocTestType(
+        const AllocTestType& x)
 {
     m_index = x.m_index;
 }
 
-AllocTestType::AllocTestType(AllocTestType &&x)
+AllocTestType::AllocTestType(
+        AllocTestType&& x)
 {
     m_index = x.m_index;
 }
 
-AllocTestType& AllocTestType::operator=(const AllocTestType &x)
+AllocTestType& AllocTestType::operator =(
+        const AllocTestType& x)
 {
+
     m_index = x.m_index;
-    
+
     return *this;
 }
 
-AllocTestType& AllocTestType::operator=(AllocTestType &&x)
+AllocTestType& AllocTestType::operator =(
+        AllocTestType&& x)
 {
+
     m_index = x.m_index;
-    
+
     return *this;
 }
 
-size_t AllocTestType::getMaxCdrSerializedSize(size_t current_alignment)
+bool AllocTestType::operator ==(
+        const AllocTestType& x) const
+{
+
+    return (m_index == x.m_index);
+}
+
+bool AllocTestType::operator !=(
+        const AllocTestType& x) const
+{
+    return !(*this == x);
+}
+
+size_t AllocTestType::getMaxCdrSerializedSize(
+        size_t current_alignment)
 {
     size_t initial_alignment = current_alignment;
-            
+
+
     current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
 
 
     return current_alignment - initial_alignment;
 }
 
-size_t AllocTestType::getCdrSerializedSize(const AllocTestType& data, size_t current_alignment)
+size_t AllocTestType::getCdrSerializedSize(
+        const AllocTestType& data,
+        size_t current_alignment)
 {
     (void)data;
-
     size_t initial_alignment = current_alignment;
-            
+
+
     current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
 
 
     return current_alignment - initial_alignment;
 }
 
-void AllocTestType::serialize(eprosima::fastcdr::Cdr &scdr) const
+void AllocTestType::serialize(
+        eprosima::fastcdr::Cdr& scdr) const
 {
+
     scdr << m_index;
+
 }
 
-void AllocTestType::deserialize(eprosima::fastcdr::Cdr &dcdr)
+void AllocTestType::deserialize(
+        eprosima::fastcdr::Cdr& dcdr)
 {
+
     dcdr >> m_index;
 }
 
-size_t AllocTestType::getKeyMaxCdrSerializedSize(size_t current_alignment)
+/*!
+ * @brief This function sets a value in member index
+ * @param _index New value for member index
+ */
+void AllocTestType::index(
+        uint32_t _index)
 {
-	size_t current_align = current_alignment;
-            
+    m_index = _index;
+}
+
+/*!
+ * @brief This function returns the value of member index
+ * @return Value of member index
+ */
+uint32_t AllocTestType::index() const
+{
+    return m_index;
+}
+
+/*!
+ * @brief This function returns a reference to member index
+ * @return Reference to member index
+ */
+uint32_t& AllocTestType::index()
+{
+    return m_index;
+}
+
+
+size_t AllocTestType::getKeyMaxCdrSerializedSize(
+        size_t current_alignment)
+{
+    size_t current_align = current_alignment;
+
+
 
     return current_align;
 }
@@ -111,8 +173,9 @@ bool AllocTestType::isKeyDefined()
     return false;
 }
 
-void AllocTestType::serializeKey(eprosima::fastcdr::Cdr &scdr) const
+void AllocTestType::serializeKey(
+        eprosima::fastcdr::Cdr& scdr) const
 {
-	(void) scdr;
-	 
+    (void) scdr;
+     
 }

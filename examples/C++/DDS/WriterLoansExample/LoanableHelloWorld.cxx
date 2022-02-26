@@ -36,9 +36,9 @@ using namespace eprosima::fastcdr::exception;
 
 LoanableHelloWorld::LoanableHelloWorld()
 {
-    // m_index com.eprosima.idl.parser.typecode.PrimitiveTypeCode@1e88b3c
+    // m_index com.eprosima.idl.parser.typecode.PrimitiveTypeCode@51c8530f
     m_index = 0;
-    // m_message com.eprosima.idl.parser.typecode.ArrayTypeCode@1fdc050
+    // m_message com.eprosima.idl.parser.typecode.ArrayTypeCode@c81cdd1
     memset(&m_message, 0, (256) * 1);
 
 }
@@ -81,6 +81,19 @@ LoanableHelloWorld& LoanableHelloWorld::operator =(
     m_message = std::move(x.m_message);
 
     return *this;
+}
+
+bool LoanableHelloWorld::operator ==(
+        const LoanableHelloWorld& x) const
+{
+
+    return (m_index == x.m_index && m_message == x.m_message);
+}
+
+bool LoanableHelloWorld::operator !=(
+        const LoanableHelloWorld& x) const
+{
+    return !(*this == x);
 }
 
 size_t LoanableHelloWorld::getMaxCdrSerializedSize(

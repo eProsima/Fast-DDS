@@ -36,9 +36,9 @@ using namespace eprosima::fastcdr::exception;
 
 KeyedData1mb::KeyedData1mb()
 {
-    // m_key com.eprosima.idl.parser.typecode.PrimitiveTypeCode@29f69090
+    // m_key com.eprosima.idl.parser.typecode.PrimitiveTypeCode@5d20e46
     m_key = 0;
-    // m_data com.eprosima.idl.parser.typecode.SequenceTypeCode@568bf312
+    // m_data com.eprosima.idl.parser.typecode.SequenceTypeCode@709ba3fb
 
 
 }
@@ -91,7 +91,7 @@ bool KeyedData1mb::operator ==(
 }
 
 bool KeyedData1mb::operator !=(
-        const KeyedData1mb& x)
+        const KeyedData1mb& x) const
 {
     return !(*this == x);
 }

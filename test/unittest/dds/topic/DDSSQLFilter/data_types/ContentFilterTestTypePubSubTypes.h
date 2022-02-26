@@ -20,8 +20,8 @@
  */
 
 
-#ifndef _CONTENTFILTERTESTTYPE_PUBSUBTYPES_H_
-#define _CONTENTFILTERTESTTYPE_PUBSUBTYPES_H_
+#ifndef _FAST_DDS_GENERATED_CONTENTFILTERTESTTYPE_PUBSUBTYPES_H_
+#define _FAST_DDS_GENERATED_CONTENTFILTERTESTTYPE_PUBSUBTYPES_H_
 
 #include <fastdds/dds/topic/TopicDataType.hpp>
 #include <fastrtps/utils/md5.h>
@@ -29,7 +29,8 @@
 #include "ContentFilterTestType.h"
 
 #if !defined(GEN_API_VER) || (GEN_API_VER != 1)
-#error Generated ContentFilterTestType is not compatible with current installed Fast DDS. Please, regenerate it with fastddsgen.
+#error \
+    Generated ContentFilterTestType is not compatible with current installed Fast DDS. Please, regenerate it with fastddsgen.
 #endif  // GEN_API_VER
 
 
@@ -165,4 +166,4 @@ public:
     unsigned char* m_keyBuffer;
 };
 
-#endif // _CONTENTFILTERTESTTYPE_PUBSUBTYPES_H_
+#endif // _FAST_DDS_GENERATED_CONTENTFILTERTESTTYPE_PUBSUBTYPES_H_

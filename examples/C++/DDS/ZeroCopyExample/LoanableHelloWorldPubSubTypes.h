@@ -1,4 +1,4 @@
-// Copyright 2021 Proyectos y Sistemas de Mantenimiento SL (eProsima).
+// Copyright 2016 Proyectos y Sistemas de Mantenimiento SL (eProsima).
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -20,8 +20,8 @@
  */
 
 
-#ifndef _LOANABLEHELLOWORLD_PUBSUBTYPES_H_
-#define _LOANABLEHELLOWORLD_PUBSUBTYPES_H_
+#ifndef _FAST_DDS_GENERATED_LOANABLEHELLOWORLD_PUBSUBTYPES_H_
+#define _FAST_DDS_GENERATED_LOANABLEHELLOWORLD_PUBSUBTYPES_H_
 
 #include <fastdds/dds/topic/TopicDataType.hpp>
 #include <fastrtps/utils/md5.h>
@@ -29,7 +29,8 @@
 #include "LoanableHelloWorld.h"
 
 #if !defined(GEN_API_VER) || (GEN_API_VER != 1)
-#error Generated LoanableHelloWorld is not compatible with current installed Fast DDS. Please, regenerate it with fastddsgen.
+#error \
+    Generated LoanableHelloWorld is not compatible with current installed Fast DDS. Please, regenerate it with fastddsgen.
 #endif  // GEN_API_VER
 
 /*!
@@ -97,4 +98,4 @@ public:
     unsigned char* m_keyBuffer;
 };
 
-#endif // _LOANABLEHELLOWORLD_PUBSUBTYPES_H_
+#endif // _FAST_DDS_GENERATED_LOANABLEHELLOWORLD_PUBSUBTYPES_H_

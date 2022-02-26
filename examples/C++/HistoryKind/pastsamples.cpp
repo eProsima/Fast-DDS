@@ -1,14 +1,15 @@
 #include <iostream>
 #include <string>
 
-#include <fastrtps/participant/Participant.h>
 #include <fastrtps/attributes/ParticipantAttributes.h>
-#include <fastrtps/subscriber/Subscriber.h>
-#include <fastrtps/attributes/SubscriberAttributes.h>
-#include <fastrtps/publisher/Publisher.h>
 #include <fastrtps/attributes/PublisherAttributes.h>
+#include <fastrtps/attributes/SubscriberAttributes.h>
 #include <fastrtps/Domain.h>
+#include <fastrtps/participant/Participant.h>
+#include <fastrtps/publisher/Publisher.h>
 #include <fastrtps/subscriber/SampleInfo.h>
+#include <fastrtps/subscriber/Subscriber.h>
+#include <fastrtps/TopicDataType.h>
 
 #include "samplePubSubTypes.h"
 
@@ -16,10 +17,22 @@ using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
 
 //Enums and configuration structure
-enum Reliability_type { Best_Effort, Reliable };
-enum Durability_type { Transient_Local, Volatile };
-enum HistoryKind_type { Keep_Last, Keep_All };
-enum Key_type { No_Key, With_Key};
+enum Reliability_type
+{
+    Best_Effort, Reliable
+};
+enum Durability_type
+{
+    Transient_Local, Volatile
+};
+enum HistoryKind_type
+{
+    Keep_Last, Keep_All
+};
+enum Key_type
+{
+    No_Key, With_Key
+};
 
 typedef struct
 {

@@ -36,9 +36,9 @@ using namespace eprosima::fastcdr::exception;
 
 HelloWorld::HelloWorld()
 {
-    // m_index com.eprosima.idl.parser.typecode.PrimitiveTypeCode@dbd940d
+    // m_index com.eprosima.idl.parser.typecode.PrimitiveTypeCode@1a052a00
     m_index = 0;
-    // m_message com.eprosima.idl.parser.typecode.StringTypeCode@71d15f18
+    // m_message com.eprosima.idl.parser.typecode.StringTypeCode@4d826d77
     m_message ="";
 
 }
@@ -91,7 +91,7 @@ bool HelloWorld::operator ==(
 }
 
 bool HelloWorld::operator !=(
-        const HelloWorld& x)
+        const HelloWorld& x) const
 {
     return !(*this == x);
 }
