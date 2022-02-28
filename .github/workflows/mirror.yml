@@ -6,7 +6,7 @@ on:
 jobs:
   mirror_job:
     runs-on: ubuntu-latest
-    name: Mirror master branch to 2.5.x branch
+    name: Mirror master branch to latest minor branch
     steps:
     - name: Mirror action step
       id: mirror
