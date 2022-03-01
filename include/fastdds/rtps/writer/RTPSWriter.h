@@ -28,6 +28,7 @@
 #include <fastdds/rtps/Endpoint.h>
 #include <fastdds/rtps/attributes/HistoryAttributes.h>
 #include <fastdds/rtps/attributes/WriterAttributes.h>
+#include <fastdds/rtps/interfaces/IReaderDataFilter.hpp>
 #include <fastdds/rtps/messages/RTPSMessageGroup.h>
 #include "DeliveryRetCode.hpp"
 #include "LocatorSelectorSender.hpp"
@@ -165,6 +166,18 @@ public:
      */
     RTPS_DllAPI virtual bool matched_reader_is_matched(
             const GUID_t& reader_guid) = 0;
+
+    /**
+     * @brief Set a reader data filter to perform content filtering on this writer
+     * @param reader_data_filter The reader data filter
+     */
+    RTPS_DllAPI virtual void reader_data_filter(
+            fastdds::rtps::IReaderDataFilter* reader_data_filter) = 0;
+
+    /**
+     * @brief Get the reader data filter used to perform content filtering on this writer
+     */
+    RTPS_DllAPI virtual const fastdds::rtps::IReaderDataFilter* reader_data_filter() const = 0;
 
     /**
      * Check if a specific change has been acknowledged by all Readers.

@@ -372,16 +372,16 @@ public:
             bool& result) override;
 
     /**
-     * @brief Set a reader data filter to filter data in ReaderProxies
+     * @brief Set a reader data filter to perform content filtering on this writer
      * @param reader_data_filter The reader data filter
      */
-    void reader_data_filter(
-            fastdds::rtps::IReaderDataFilter* reader_data_filter);
+    RTPS_DllAPI virtual void reader_data_filter(
+            fastdds::rtps::IReaderDataFilter* reader_data_filter) final;
 
     /**
-     * @brief Get the reader data filter used to filter data in ReaderProxies
+     * @brief Get the reader data filter used to perform content filtering on this writer
      */
-    const fastdds::rtps::IReaderDataFilter* reader_data_filter() const;
+    RTPS_DllAPI virtual const fastdds::rtps::IReaderDataFilter* reader_data_filter() const final;
 
     /*!
      * Tells writer the sample can be sent to the network.

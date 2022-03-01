@@ -23,6 +23,7 @@
 #include <fastdds/rtps/common/Time_t.h>
 #include <fastdds/rtps/history/IChangePool.h>
 #include <fastdds/rtps/history/IPayloadPool.h>
+#include <fastdds/rtps/interfaces/IReaderDataFilter.hpp>
 #include <fastdds/rtps/writer/ChangeForReader.h>
 #include <fastdds/rtps/writer/ReaderLocator.h>
 #include <fastdds/rtps/writer/RTPSWriter.h>
@@ -119,6 +120,24 @@ public:
      */
     bool matched_reader_is_matched(
             const GUID_t& reader_guid) override;
+
+    /**
+     * @brief Set a reader data filter to perform content filtering on this writer
+     * @param reader_data_filter The reader data filter
+     */
+    RTPS_DllAPI virtual void reader_data_filter(
+            fastdds::rtps::IReaderDataFilter* reader_data_filter) final
+    {
+        static_cast<void>(reader_data_filter);
+    }
+
+    /**
+     * @brief Get the reader data filter used to perform content filtering on this writer
+     */
+    RTPS_DllAPI virtual const fastdds::rtps::IReaderDataFilter* reader_data_filter() const final
+    {
+        return nullptr;
+    }
 
     /**
      * Update the Attributes of the Writer.
