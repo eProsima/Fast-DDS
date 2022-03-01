@@ -171,7 +171,7 @@ public:
      *
      * @param mask StatusMask (default: all)
      */
-    RTPS_DllAPI DomainEntity(
+    DomainEntity(
             const StatusMask& mask = StatusMask::all())
         : Entity(mask)
     {

@@ -93,11 +93,11 @@ protected:
      * Create a data reader, assigning its pointer to the associated implementation.
      * Don't use directly, create DataReader using create_datareader from Subscriber.
      */
-    RTPS_DllAPI DataReader(
+    DataReader(
             DataReaderImpl* impl,
             const StatusMask& mask = StatusMask::all());
 
-    RTPS_DllAPI DataReader(
+    DataReader(
             Subscriber* s,
             TopicDescription* topic,
             const DataReaderQos& qos,
@@ -109,7 +109,7 @@ public:
     /**
      * @brief Destructor.
      */
-    RTPS_DllAPI virtual ~DataReader();
+    virtual ~DataReader();
 
     /**
      * @brief This operation enables the DataReader.

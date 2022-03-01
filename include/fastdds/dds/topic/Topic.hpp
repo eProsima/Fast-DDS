@@ -59,13 +59,13 @@ class Topic : public DomainEntity, public TopicDescription
      * Create a topic, assigning its pointer to the associated implementation.
      * Don't use directly, create Topic using create_topic from DomainParticipant.
      */
-    RTPS_DllAPI Topic(
+    Topic(
             const std::string& topic_name,
             const std::string& type_name,
             TopicImpl* p,
             const StatusMask& mask = StatusMask::all());
 
-    RTPS_DllAPI Topic(
+    Topic(
             DomainParticipant* dp,
             const std::string& topic_name,
             const std::string& type_name,
@@ -78,7 +78,7 @@ public:
     /**
      * @brief Destructor
      */
-    RTPS_DllAPI virtual ~Topic();
+    virtual ~Topic();
 
     /**
      * @brief Getter for the DomainParticipant
