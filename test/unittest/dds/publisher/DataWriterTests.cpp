@@ -484,7 +484,7 @@ TEST(DataWriterTests, ForcedDataSharing)
     ASSERT_EQ(participant->delete_publisher(publisher), ReturnCode_t::RETCODE_OK);
     ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), ReturnCode_t::RETCODE_OK);
 
-
+#ifdef HAS_SECURITY
     // DataSharing forced, bounded topic data type, security enabled
     static const char* certs_path = std::getenv("CERTS_PATH");
     if (certs_path == nullptr)
@@ -493,7 +493,6 @@ TEST(DataWriterTests, ForcedDataSharing)
         ASSERT_TRUE(false);
     }
 
-#ifdef HAS_SECURITY
     fastrtps::rtps::PropertyPolicy security_property;
     security_property.properties().emplace_back(fastrtps::rtps::Property("dds.sec.auth.plugin",
             "builtin.PKI-DH"));
@@ -658,9 +657,14 @@ TEST(DataWriterTests, Write)
 
     FooType data;
     data.message("HelloWorld");
+
+    InstanceHandle_t temporary_handle = participant->get_instance_handle();
+    // As the name implies. This just exists for the purpose of setting the has_been_defined member
+    octet useless = temporary_handle.value[0];
+     
     ASSERT_TRUE(datawriter->write(&data, fastrtps::rtps::c_InstanceHandle_Unknown) ==
             ReturnCode_t::RETCODE_OK);
-    ASSERT_TRUE(datawriter->write(&data, participant->get_instance_handle()) ==
+    ASSERT_TRUE(datawriter->write(&data, temporary_handle) ==
             ReturnCode_t::RETCODE_PRECONDITION_NOT_MET);
 
     ASSERT_TRUE(publisher->delete_datawriter(datawriter) == ReturnCode_t::RETCODE_OK);

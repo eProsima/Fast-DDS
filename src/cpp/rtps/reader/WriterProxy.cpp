@@ -33,7 +33,7 @@
 #include "rtps/RTPSDomainImpl.hpp"
 #include "utils/collections/node_size_helpers.hpp"
 
-#if !defined(NDEBUG) && defined(FASTRTPS_SOURCE) && defined(__unix__)
+#if !defined(NDEBUG) && !defined(ANDROID) && defined(FASTRTPS_SOURCE) && defined(__unix__)
 #define SHOULD_DEBUG_LINUX
 #endif // SHOULD_DEBUG_LINUX
 
@@ -600,7 +600,6 @@ int WriterProxy::get_mutex_owner() const
     auto mutex = reader_->getMutex().native_handle();
     return mutex->__data.__owner;
 }
-
 int WriterProxy::get_thread_id() const
 {
     return syscall(__NR_gettid);
