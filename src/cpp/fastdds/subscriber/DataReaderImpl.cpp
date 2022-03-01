@@ -954,8 +954,8 @@ void DataReaderImpl::update_subscription_matched_status(
     {
         subscription_matched_status_.total_count += count_change;
         subscription_matched_status_.total_count_change += count_change;
-        subscription_matched_status_.last_publication_handle = status.last_publication_handle;
     }
+    subscription_matched_status_.last_publication_handle = status.last_publication_handle;
 
     StatusMask notify_status = StatusMask::subscription_matched();
     DataReaderListener* listener = get_listener_for(notify_status);

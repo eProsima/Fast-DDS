@@ -1023,8 +1023,8 @@ void DataWriterImpl::update_publication_matched_status(
     {
         publication_matched_status_.total_count += count_change;
         publication_matched_status_.total_count_change += count_change;
-        publication_matched_status_.last_subscription_handle = status.last_subscription_handle;
     }
+    publication_matched_status_.last_subscription_handle = status.last_subscription_handle;
 
     StatusMask notify_status = StatusMask::publication_matched();
     DataWriterListener* listener = get_listener_for(notify_status);

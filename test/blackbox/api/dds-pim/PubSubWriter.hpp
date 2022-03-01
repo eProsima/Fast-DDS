@@ -599,7 +599,8 @@ public:
         return ret_value;
     }
 
-    void wait_reader_undiscovery()
+    void wait_reader_undiscovery(
+            unsigned int matched = 0)
     {
         std::unique_lock<std::mutex> lock(mutexDiscovery_);
 
@@ -607,7 +608,7 @@ public:
 
         cv_.wait(lock, [&]()
                 {
-                    return matched_ == 0;
+                    return matched_ <= matched;
                 });
 
         std::cout << "Writer removal finished..." << std::endl;
@@ -1319,6 +1320,11 @@ public:
         return datawriter_guid_;
     }
 
+    eprosima::fastrtps::rtps::InstanceHandle_t datawriter_ihandle()
+    {
+        return eprosima::fastrtps::rtps::InstanceHandle_t(datawriter_guid());
+    }
+
     bool update_partition(
             const std::string& partition)
     {
@@ -1362,6 +1368,13 @@ public:
     {
         eprosima::fastdds::dds::OfferedIncompatibleQosStatus status;
         datawriter_->get_offered_incompatible_qos_status(status);
+        return status;
+    }
+
+    eprosima::fastdds::dds::PublicationMatchedStatus get_publication_matched_status() const
+    {
+        eprosima::fastdds::dds::PublicationMatchedStatus status;
+        datawriter_->get_publication_matched_status(status);
         return status;
     }
 
