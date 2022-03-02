@@ -18,10 +18,13 @@
 #ifndef _FASTDDS_RTPS_WRITERLISTENER_H_
 #define _FASTDDS_RTPS_WRITERLISTENER_H_
 
-#include <fastdds/rtps/common/MatchingInfo.h>
-#include <fastrtps/qos/LivelinessLostStatus.h>
+#include <fastdds/dds/core/status/BaseStatus.hpp>
 #include <fastdds/dds/core/status/PublicationMatchedStatus.hpp>
 #include <fastdds/dds/core/status/IncompatibleQosStatus.hpp>
+#include <fastdds/rtps/builtin/data/ReaderProxyData.h>
+#include <fastdds/rtps/common/Guid.h>
+#include <fastdds/rtps/common/MatchingInfo.h>
+#include <fastdds/rtps/reader/ReaderDiscoveryInfo.h>
 
 namespace eprosima {
 namespace fastrtps {
@@ -51,8 +54,8 @@ public:
             RTPSWriter* writer,
             MatchingInfo& info)
     {
-        (void)writer;
-        (void)info;
+        static_cast<void>(writer);
+        static_cast<void>(info);
     }
 
     /**
@@ -64,8 +67,8 @@ public:
             RTPSWriter* writer,
             const eprosima::fastdds::dds::PublicationMatchedStatus& info)
     {
-        (void)writer;
-        (void)info;
+        static_cast<void>(writer);
+        static_cast<void>(info);
     }
 
     /**
@@ -79,8 +82,8 @@ public:
             RTPSWriter* writer,
             eprosima::fastdds::dds::PolicyMask qos)
     {
-        (void)writer;
-        (void)qos;
+        static_cast<void>(writer);
+        static_cast<void>(qos);
     }
 
     /**
@@ -93,8 +96,8 @@ public:
             RTPSWriter* writer,
             CacheChange_t* change)
     {
-        (void)writer;
-        (void)change;
+        static_cast<void>(writer);
+        static_cast<void>(change);
     }
 
     /**
@@ -106,8 +109,27 @@ public:
             RTPSWriter* writer,
             const LivelinessLostStatus& status)
     {
-        (void)writer;
-        (void)status;
+        static_cast<void>(writer);
+        static_cast<void>(status);
+    }
+
+    /**
+     * @brief Method called when the discovery information of a reader regarding a writer changes.
+     * @param writer       The writer.
+     * @param reason       The reason motivating this method to be called.
+     * @param reader_guid  The GUID of the reader for which the discovery information changed.
+     * @param reader_info  Discovery information about the reader. Will be @c nullptr for reason @c REMOVED_READER.
+     */
+    virtual void on_reader_discovery(
+            RTPSWriter* writer,
+            ReaderDiscoveryInfo::DISCOVERY_STATUS reason,
+            const GUID_t& reader_guid,
+            const ReaderProxyData* reader_info)
+    {
+        static_cast<void>(writer);
+        static_cast<void>(reason);
+        static_cast<void>(reader_guid);
+        static_cast<void>(reader_info);
     }
 
 };
