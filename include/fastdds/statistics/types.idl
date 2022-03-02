@@ -65,6 +65,9 @@ struct DiscoveryTime
     @Key detail::GUID_s local_participant_guid;
     @Key detail::GUID_s remote_entity_guid;
     unsigned long long time;
+    string host;
+    string user;
+    string process;
 };
 
 struct EntityCount

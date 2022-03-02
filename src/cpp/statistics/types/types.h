@@ -1183,6 +1183,81 @@ namespace eprosima {
                  */
                 eProsima_user_DllExport uint64_t& time();
 
+                /*!
+                 * @brief This function copies the value in member host
+                 * @param _host New value to be copied in member host
+                 */
+                eProsima_user_DllExport void host(
+                        const std::string& _host);
+
+                /*!
+                 * @brief This function moves the value in member host
+                 * @param _host New value to be moved in member host
+                 */
+                eProsima_user_DllExport void host(
+                        std::string&& _host);
+
+                /*!
+                 * @brief This function returns a constant reference to member host
+                 * @return Constant reference to member host
+                 */
+                eProsima_user_DllExport const std::string& host() const;
+
+                /*!
+                 * @brief This function returns a reference to member host
+                 * @return Reference to member host
+                 */
+                eProsima_user_DllExport std::string& host();
+                /*!
+                 * @brief This function copies the value in member user
+                 * @param _user New value to be copied in member user
+                 */
+                eProsima_user_DllExport void user(
+                        const std::string& _user);
+
+                /*!
+                 * @brief This function moves the value in member user
+                 * @param _user New value to be moved in member user
+                 */
+                eProsima_user_DllExport void user(
+                        std::string&& _user);
+
+                /*!
+                 * @brief This function returns a constant reference to member user
+                 * @return Constant reference to member user
+                 */
+                eProsima_user_DllExport const std::string& user() const;
+
+                /*!
+                 * @brief This function returns a reference to member user
+                 * @return Reference to member user
+                 */
+                eProsima_user_DllExport std::string& user();
+                /*!
+                 * @brief This function copies the value in member process
+                 * @param _process New value to be copied in member process
+                 */
+                eProsima_user_DllExport void process(
+                        const std::string& _process);
+
+                /*!
+                 * @brief This function moves the value in member process
+                 * @param _process New value to be moved in member process
+                 */
+                eProsima_user_DllExport void process(
+                        std::string&& _process);
+
+                /*!
+                 * @brief This function returns a constant reference to member process
+                 * @return Constant reference to member process
+                 */
+                eProsima_user_DllExport const std::string& process() const;
+
+                /*!
+                 * @brief This function returns a reference to member process
+                 * @return Reference to member process
+                 */
+                eProsima_user_DllExport std::string& process();
 
                 /*!
                  * @brief This function returns the maximum serialized size of an object
@@ -1246,6 +1321,9 @@ namespace eprosima {
                 eprosima::fastdds::statistics::detail::GUID_s m_local_participant_guid;
                 eprosima::fastdds::statistics::detail::GUID_s m_remote_entity_guid;
                 uint64_t m_time;
+                std::string m_host;
+                std::string m_user;
+                std::string m_process;
             };
             /*!
              * @brief This class represents the structure EntityCount defined by the user in the IDL file.
