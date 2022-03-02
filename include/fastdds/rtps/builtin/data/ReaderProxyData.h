@@ -26,12 +26,13 @@
 
 #include <fastdds/rtps/attributes/WriterAttributes.h>
 #include <fastdds/rtps/attributes/RTPSParticipantAllocationAttributes.hpp>
+#include <fastdds/rtps/common/RemoteLocators.hpp>
+#include <fastdds/rtps/builtin/data/ContentFilterProperty.hpp>
 
 #if HAVE_SECURITY
 #include <fastdds/rtps/security/accesscontrol/EndpointSecurityAttributes.h>
 #endif // if HAVE_SECURITY
 
-#include <fastdds/rtps/common/RemoteLocators.hpp>
 
 namespace eprosima {
 namespace fastrtps {
@@ -51,12 +52,14 @@ public:
 
     RTPS_DllAPI ReaderProxyData(
             const size_t max_unicast_locators,
-            const size_t max_multicast_locators);
+            const size_t max_multicast_locators,
+            const ContentFilterProperty::AllocationConfiguration& content_filter_limits = {});
 
     RTPS_DllAPI ReaderProxyData(
             const size_t max_unicast_locators,
             const size_t max_multicast_locators,
-            const VariableLengthDataLimits& data_limits);
+            const VariableLengthDataLimits& data_limits,
+            const ContentFilterProperty::AllocationConfiguration& content_filter_limits);
 
     RTPS_DllAPI virtual ~ReaderProxyData();
 
@@ -458,6 +461,7 @@ private:
     xtypes::TypeInformation* m_type_information;
     //!
     ParameterPropertyList_t m_properties;
+    ContentFilterProperty content_filter_;
 };
 
 } // namespace rtps

@@ -107,7 +107,8 @@ WLP::WLP(
     , temp_reader_proxy_data_(
         p->mp_participantImpl->getRTPSParticipantAttributes().allocation.locators.max_unicast_locators,
         p->mp_participantImpl->getRTPSParticipantAttributes().allocation.locators.max_multicast_locators,
-        p->mp_participantImpl->getRTPSParticipantAttributes().allocation.data_limits)
+        p->mp_participantImpl->getRTPSParticipantAttributes().allocation.data_limits,
+        p->mp_participantImpl->getRTPSParticipantAttributes().allocation.content_filter)
     , temp_writer_proxy_data_(
         p->mp_participantImpl->getRTPSParticipantAttributes().allocation.locators.max_unicast_locators,
         p->mp_participantImpl->getRTPSParticipantAttributes().allocation.locators.max_multicast_locators,

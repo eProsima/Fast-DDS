@@ -158,7 +158,8 @@ PDPServer* EDPServerSUBListener::get_pdp()
 EDPServerSUBListener::EDPServerSUBListener(
         EDPServer* sedp)
     : EDPBaseSUBListener(sedp->mp_RTPSParticipant->getAttributes().allocation.locators,
-            sedp->mp_RTPSParticipant->getAttributes().allocation.data_limits)
+            sedp->mp_RTPSParticipant->getAttributes().allocation.data_limits,
+            sedp->mp_RTPSParticipant->getAttributes().allocation.content_filter)
     , sedp_(sedp)
 {
 }

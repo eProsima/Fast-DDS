@@ -37,7 +37,8 @@ namespace rtps {
 
 ReaderProxyData::ReaderProxyData (
         const size_t max_unicast_locators,
-        const size_t max_multicast_locators)
+        const size_t max_multicast_locators,
+        const ContentFilterProperty::AllocationConfiguration& content_filter_limits)
     : m_expectsInlineQos(false)
 #if HAVE_SECURITY
     , security_attributes_(0UL)
@@ -50,6 +51,7 @@ ReaderProxyData::ReaderProxyData (
     , m_type_id(nullptr)
     , m_type(nullptr)
     , m_type_information(nullptr)
+    , content_filter_(content_filter_limits)
 {
     // As DDS-XTypes, v1.2 (page 182) document stablishes, local default is ALLOW_TYPE_COERCION,
     // but when remotes doesn't send TypeConsistencyQos, we must assume DISALLOW.
@@ -59,8 +61,9 @@ ReaderProxyData::ReaderProxyData (
 ReaderProxyData::ReaderProxyData (
         const size_t max_unicast_locators,
         const size_t max_multicast_locators,
-        const VariableLengthDataLimits& data_limits)
-    : ReaderProxyData(max_unicast_locators, max_multicast_locators)
+        const VariableLengthDataLimits& data_limits,
+        const ContentFilterProperty::AllocationConfiguration& content_filter_limits)
+    : ReaderProxyData(max_unicast_locators, max_multicast_locators, content_filter_limits)
 {
     m_qos.m_userData.set_max_size(static_cast<uint32_t>(data_limits.max_user_data));
     m_qos.m_partition.set_max_size(static_cast<uint32_t>(data_limits.max_partitions));
@@ -97,6 +100,7 @@ ReaderProxyData::ReaderProxyData(
     , m_type(nullptr)
     , m_type_information(nullptr)
     , m_properties(readerInfo.m_properties)
+    , content_filter_(readerInfo.content_filter_)
 {
     if (readerInfo.m_type_id)
     {
@@ -1070,6 +1074,7 @@ void ReaderProxyData::update(
     m_qos.setQos(rdata->m_qos, false);
     m_isAlive = rdata->m_isAlive;
     m_expectsInlineQos = rdata->m_expectsInlineQos;
+    content_filter_ = rdata->content_filter_;
 }
 
 void ReaderProxyData::copy(
@@ -1087,6 +1092,7 @@ void ReaderProxyData::copy(
     m_isAlive = rdata->m_isAlive;
     m_topicKind = rdata->m_topicKind;
     m_properties = rdata->m_properties;
+    content_filter_ = rdata->content_filter_;
 
     if (rdata->m_type_id)
     {
