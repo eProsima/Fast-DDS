@@ -93,15 +93,28 @@ public:
         return mp_history->next_sequence_number();
     }
 
-    void reader_data_filter(
-            fastdds::rtps::IReaderDataFilter* reader_data_filter)
+    void content_filter(
+            fastdds::rtps::IReaderDataFilter* filter)
     {
-        reader_data_filter_ = reader_data_filter;
+        reader_data_filter_ = filter;
     }
 
-    const fastdds::rtps::IReaderDataFilter* reader_data_filter() const
+    const fastdds::rtps::IReaderDataFilter* content_filter() const
     {
         return reader_data_filter_;
+    }
+
+    bool reader_content_filter(
+            const GUID_t& /* reader_guid */,
+            fastdds::rtps::IReaderDataFilter* /* reader_filter */)
+    {
+        return false;
+    }
+
+    const fastdds::rtps::IReaderDataFilter* reader_content_filter(
+            const GUID_t& /* reader_guid */) const
+    {
+        return nullptr;
     }
 
 private:

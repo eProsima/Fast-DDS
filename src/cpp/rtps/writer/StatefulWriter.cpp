@@ -2002,13 +2002,13 @@ void StatefulWriter::print_inconsistent_acknack(
     static_cast<void>(next_sequence_number);
 }
 
-void StatefulWriter::reader_data_filter(
+void StatefulWriter::content_filter(
         fastdds::rtps::IReaderDataFilter* reader_data_filter)
 {
     reader_data_filter_ = reader_data_filter;
 }
 
-const fastdds::rtps::IReaderDataFilter* StatefulWriter::reader_data_filter() const
+const fastdds::rtps::IReaderDataFilter* StatefulWriter::content_filter() const
 {
     return reader_data_filter_;
 }

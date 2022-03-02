@@ -81,9 +81,10 @@ ReaderProxy::ReaderProxy(
 bool ReaderProxy::rtps_is_relevant(
         CacheChange_t* change) const
 {
-    if (nullptr != writer_->reader_data_filter())
+    auto filter = writer_->content_filter();
+    if (nullptr != filter)
     {
-        bool ret = writer_->reader_data_filter()->is_relevant(*change, guid());
+        bool ret = filter->is_relevant(*change, guid());
         logInfo(RTPS_READER_PROXY,
                 "Change " << change->instanceHandle << " is relevant for reader " << guid() << "? " << ret);
         return ret;
