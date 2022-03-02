@@ -19,13 +19,14 @@
 
 #include <gtest/gtest.h>
 
-#include "BlackboxTests.hpp"
-#include "PubSubParticipant.hpp"
-#include "PubSubReader.hpp"
-
 #include <fastdds/dds/core/policy/QosPolicies.hpp>
 #include <fastdds/rtps/common/Locator.h>
 #include <utils/SystemInfo.hpp>
+
+#include "BlackboxTests.hpp"
+#include "PubSubParticipant.hpp"
+#include "PubSubReader.hpp"
+#include "PubSubWriter.hpp"
 
 // Regression test for redmine issue 11857
 TEST(DDSDiscovery, IgnoreParticipantFlags)
@@ -168,73 +169,6 @@ TEST(DDSDiscovery, AddDiscoveryServerToList)
     server_2.wait_discovery(std::chrono::seconds::zero(), 2, true);
 }
 
-<<<<<<< HEAD
-=======
-/**
- * This test checks the addition of network interfaces at run-time.
- *
- * After launching the reader with the network interfaces enabled,
- * the writer is launched with the transport simulating that there
- * are no interfaces.
- * No participant discovery occurs, nor is communication established.
- *
- * In a second step, the flag to simulate no interfaces is disabled and
- * DomainParticipant::set_qos() called to add the "new" interfaces.
- * Discovery is succesful and communication is established.
- */
-TEST(DDSDiscovery, DDSNetworkInterfaceChangesAtRunTime)
-{
-    using namespace eprosima::fastdds::rtps;
-
-    PubSubWriter<HelloWorldPubSubType> datawriter(TEST_TOPIC_NAME);
-    PubSubReader<HelloWorldPubSubType> datareader(TEST_TOPIC_NAME);
-
-    // datareader is initialized with all the network interfaces
-    datareader.durability_kind(eprosima::fastrtps::TRANSIENT_LOCAL_DURABILITY_QOS).history_depth(100).
-            reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).init();
-    ASSERT_TRUE(datareader.isInitialized());
-
-    // datawriter: launch without interfaces
-    test_UDPv4Transport::simulate_no_interfaces = true;
-    auto test_transport = std::make_shared<test_UDPv4TransportDescriptor>();
-    datawriter.disable_builtin_transport().add_user_transport_to_pparams(test_transport).history_depth(100).init();
-    ASSERT_TRUE(datawriter.isInitialized());
-
-    // no discovery
-    datawriter.wait_discovery(std::chrono::seconds(3));
-    datareader.wait_discovery(std::chrono::seconds(3));
-    EXPECT_EQ(datawriter.get_matched(), 0u);
-    EXPECT_EQ(datareader.get_matched(), 0u);
-
-    // send data
-    auto complete_data = default_helloworld_data_generator();
-    size_t samples = complete_data.size();
-
-    datareader.startReception(complete_data);
-
-    datawriter.send(complete_data);
-    EXPECT_TRUE(complete_data.empty());
-
-    // no data received
-    EXPECT_EQ(datareader.block_for_all(std::chrono::seconds(3)), 0u);
-
-    // enable interfaces
-    test_UDPv4Transport::simulate_no_interfaces = false;
-    datawriter.participant_set_qos();
-
-    // Wait for discovery
-    datawriter.wait_discovery(std::chrono::seconds(3));
-    datareader.wait_discovery(std::chrono::seconds(3));
-    ASSERT_EQ(datawriter.get_matched(), 1u);
-    ASSERT_EQ(datareader.get_matched(), 1u);
-
-    // data received
-    EXPECT_EQ(datareader.block_for_all(std::chrono::seconds(3)), samples);
-
-    datareader.destroy();
-    datawriter.destroy();
-}
-
 /*
  * This tests checks that DataReader::get_subscription_matched_status() and
  * DataWriter::get_publication_matched_status() return the correct last_publication_handle
@@ -256,10 +190,10 @@ TEST(DDSDiscovery, DDSNetworkInterfaceChangesAtRunTime)
 TEST(DDSDiscovery, UpdateMatchedStatus)
 {
     /* Create DataReaders and DataWriters */
-    PubSubWriter<HelloWorldPubSubType> datawriter_1(TEST_TOPIC_NAME);
-    PubSubReader<HelloWorldPubSubType> datareader_1(TEST_TOPIC_NAME);
-    PubSubWriter<HelloWorldPubSubType> datawriter_2(TEST_TOPIC_NAME);
-    PubSubReader<HelloWorldPubSubType> datareader_2(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldType> datawriter_1(TEST_TOPIC_NAME);
+    PubSubReader<HelloWorldType> datareader_1(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldType> datawriter_2(TEST_TOPIC_NAME);
+    PubSubReader<HelloWorldType> datareader_2(TEST_TOPIC_NAME);
 
     /* Init first pair of DataReader-DataWriter */
     datareader_1
@@ -359,4 +293,3 @@ TEST(DDSDiscovery, UpdateMatchedStatus)
     datawriter_1.destroy();
     datawriter_2.destroy();
 }
->>>>>>> ba01ca6a8 (Correct reporting of MatchedStatus last_*_handle (#2544))

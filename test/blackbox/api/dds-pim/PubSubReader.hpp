@@ -1514,6 +1514,11 @@ public:
         return matched_ > 0;
     }
 
+    unsigned int get_matched() const
+    {
+        return matched_;
+    }
+
     void set_xml_filename(
             const std::string& name)
     {
@@ -1542,22 +1547,11 @@ public:
         return datareader_guid_;
     }
 
-<<<<<<< HEAD
-protected:
-=======
     eprosima::fastrtps::rtps::InstanceHandle_t datareader_ihandle()
     {
         return eprosima::fastrtps::rtps::InstanceHandle_t(datareader_guid());
     }
->>>>>>> ba01ca6a8 (Correct reporting of MatchedStatus last_*_handle (#2544))
 
-    const eprosima::fastrtps::rtps::GUID_t& participant_guid() const
-    {
-        return participant_guid_;
-    }
-
-<<<<<<< HEAD
-=======
     eprosima::fastdds::dds::SubscriptionMatchedStatus get_subscription_matched_status() const
     {
         eprosima::fastdds::dds::SubscriptionMatchedStatus status;
@@ -1565,9 +1559,13 @@ protected:
         return status;
     }
 
-private:
+protected:
 
->>>>>>> ba01ca6a8 (Correct reporting of MatchedStatus last_*_handle (#2544))
+    const eprosima::fastrtps::rtps::GUID_t& participant_guid() const
+    {
+        return participant_guid_;
+    }
+
     void receive_one(
             eprosima::fastdds::dds::DataReader* datareader,
             bool& returnedValue)
