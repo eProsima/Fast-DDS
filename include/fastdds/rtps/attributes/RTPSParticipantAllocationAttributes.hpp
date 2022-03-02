@@ -19,6 +19,8 @@
 #ifndef _FASTDDS_RTPS_RTPSPARTICIPANTALLOCATIONATTRIBUTES_HPP_
 #define _FASTDDS_RTPS_RTPSPARTICIPANTALLOCATIONATTRIBUTES_HPP_
 
+#include <fastdds/rtps/builtin/data/ContentFilterProperty.hpp>
+
 #include <fastrtps/utils/collections/ResourceLimitedContainerConfig.hpp>
 
 namespace eprosima {
@@ -127,6 +129,8 @@ struct RTPSParticipantAllocationAttributes
     SendBuffersAllocationAttributes send_buffers;
     //! Holds limits for variable-length data
     VariableLengthDataLimits data_limits;
+    //! Defines the allocation behavior of content filter discovery information
+    ContentFilterProperty::AllocationConfiguration content_filter;
 
     //! @return the allocation config for the total of readers in the system (participants * readers)
     ResourceLimitedContainerConfig total_readers() const
