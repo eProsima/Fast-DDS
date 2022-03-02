@@ -12,7 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include "server.h"
 
 #include <condition_variable>
 #include <csignal>
@@ -23,6 +22,9 @@
 #include <string>
 #include <vector>
 
+// Even though this header should be the first, as it includes optionparser.hpp, a conflict arises between this file
+// and <condition_variable> in Windows platform.
+#include "server.h"
 #include <optionparser.hpp>
 
 #include <fastdds/dds/domain/DomainParticipant.hpp>
@@ -33,10 +35,6 @@
 #include <fastdds/rtps/common/Locator.h>
 #include <fastrtps/utils/IPLocator.h>
 #include <fastrtps/xmlparser/XMLProfileManager.h>
-
-using namespace eprosima::fastdds::dds;
-using namespace eprosima;
-using namespace fastrtps;
 
 volatile sig_atomic_t g_signal_status = 0;
 std::mutex g_signal_mutex;
@@ -70,7 +68,9 @@ int fastdds_discovery_server(
     std::vector<option::Option> options(stats.options_max);
     std::vector<option::Option> buffer(stats.buffer_max);
     option::Parser parse(usage, argc, argv, &options[0], &buffer[0]);
-    std::string sXMLConfigFile = "", delimiter = "@", profile = "";
+    std::string sXMLConfigFile = "";
+    std::string delimiter = "@";
+    std::string profile = "";
 
     // Check the command line options
     if (parse.error())
@@ -104,27 +104,33 @@ int fastdds_discovery_server(
 
     DomainParticipantQos participantQos;
 
-    if ( nullptr != options[XML_FILE])
+    if (nullptr != options[XML_FILE])
     {
         sXMLConfigFile = options[XML_FILE].arg;
         if (sXMLConfigFile.length() > 0)
         {
-            if (sXMLConfigFile.find(delimiter) != std::string::npos)
+            size_t delimiter_pos = sXMLConfigFile.find(delimiter);
+            if (std::string::npos != delimiter_pos)
             {
-                profile = sXMLConfigFile.substr(sXMLConfigFile.find(delimiter) + 1, sXMLConfigFile.length());
-                sXMLConfigFile = sXMLConfigFile.substr(0, sXMLConfigFile.find(delimiter));
+                profile = sXMLConfigFile.substr(delimiter_pos + 1, sXMLConfigFile.length());
+                sXMLConfigFile = sXMLConfigFile.substr(0, delimiter_pos);
             }
 
-            // if (xmlparser::XMLP_ret::XML_OK != xmlparser::XMLProfileManager::loadXMLFile(sXMLConfigFile))
-            if (true != eprosima::fastrtps::Domain::loadXMLProfilesFile(sXMLConfigFile))
+            if (ReturnCode_t::RETCODE_OK != DomainParticipantFactory::get_instance()->load_XML_profiles_file(
+                    sXMLConfigFile))
             {
                 std::cout << "Cannot open XML file " << sXMLConfigFile << ". Please, check the path of this "
                           << "XML file." << std::endl;
                 return 1;
             }
-            DomainParticipantFactory::get_instance()->load_profiles();
             if (profile.empty())
             {
+                // Set default participant QoS from XML file
+                if (ReturnCode_t::RETCODE_OK != DomainParticipantFactory::get_instance()->load_profiles())
+                {
+                    std::cout << "Error setting default DomainParticipantQos from XML default profile." << std::endl;
+                    return 1;
+                }
                 participantQos = DomainParticipantFactory::get_instance()->get_default_participant_qos();
             }
             else
@@ -138,16 +144,17 @@ int fastdds_discovery_server(
     // Retrieve server Id: is mandatory and only specified once
     // Note there is a specific cast to pointer if the Option is valid
     option::Option* pOp = options[SERVERID];
-    int server_id;
-    fastrtps::rtps::GuidPrefix_t prefix_cero;
+    int server_id = 0;
 
-    if ( nullptr == pOp)
+    if (nullptr == pOp)
     {
+        fastrtps::rtps::GuidPrefix_t prefix_cero;
         if (participantQos.wire_protocol().builtin.discovery_config.discoveryProtocol !=
                 eprosima::fastrtps::rtps::DiscoveryProtocol::SERVER ||
                 participantQos.wire_protocol().prefix == prefix_cero)
         {
-            std::cout << "Specify server id is mandatory: use -i or --server-id option." << std::endl;
+            std::cout << "Server id is mandatory if not defined in the XML file: use -i or --server-id option."
+                    << std::endl;
             return 1;
         }
     }
@@ -212,7 +219,7 @@ int fastdds_discovery_server(
     pOp = options[IPADDRESS];
     if (nullptr == pOp && nullptr == options[XML_FILE])
     {
-        // add default locator
+        // Add default locator
         participantQos.wire_protocol().builtin.metatrafficUnicastLocatorList.push_back(locator);
     }
     else
@@ -412,33 +419,3 @@ option::ArgStatus Arg::check_udp_port(
 
     return option::ARG_ILLEGAL;
 }
-
-/*static*/
-option::ArgStatus Arg::check_xml_file(
-        const option::Option& option,
-        bool msg)
-{
-    // the argument is required
-    if (nullptr != option.arg )
-    {
-
-        // if (xmlparser::XMLP_ret::XML_OK !=
-        //     xmlparser::XMLProfileManager::loadXMLFile(option.arg))
-        // {
-        //     std::cout << "Cannot open XML file " << option.arg << ". Please, check the path of this "
-        //             << "XML file." << std::endl;
-        //     return option::ARG_ILLEGAL;
-        // }
-        return option::ARG_OK;
-
-    }
-
-    if (msg)
-    {
-        cout << "Option -" << option.name << " The path of the XML file is necesary" << endl;
-    }
-
-    return option::ARG_ILLEGAL;
-}
-
-#endif // FASTDDS_SERVER_SERVER_CPP_

@@ -44,24 +44,20 @@ struct Arg : public option::Arg
     static option::ArgStatus check_udp_port(
             const option::Option& option,
             bool msg);
-
-    static option::ArgStatus check_xml_file(
-            const option::Option& option,
-            bool msg);
 };
 
 const option::Descriptor usage[] = {
 
     { UNKNOWN,   0, "",   "",             Arg::None,
       "\neProsima Server-Client discovery auxiliary generator tool version " FAST_SERVER_VERSION "\n"
-      "\nUsage: " FAST_SERVER_BINARY " -i {0-255} [optional parameters] \nGeneral options:" },
+      "\nUsage: " FAST_SERVER_BINARY " [optional parameters] \nGeneral options:" },
 
     { HELP,      0, "h",  "help",         Arg::None,
       "  -h  \t--help       Produce help message.\n" },
 
     { SERVERID,  0, "i", "server-id",    Arg::check_server_id,
-      "  -i \t--server-id  Mandatory unique server identifier. Specifies zero based\n"
-      "\t             server position in ROS_DISCOVERY_SERVER environment variable.\n" },
+      "  -i \t--server-id  Unique server identifier. Specifies zero based server\n"
+      "\t             position in ROS_DISCOVERY_SERVER environment variable.\n" },
 
     { IPADDRESS, 0, "l", "ip-address",   Arg::required,
       "  -l \t--ip-address IPv4 address chosen to listen the clients. Defaults\n"
@@ -74,12 +70,12 @@ const option::Descriptor usage[] = {
     { BACKUP,    0, "b",  "backup",       Arg::None,
       "  -b  \t--backup     Creates a server with a backup file associated.\n" },
 
-    { XML_FILE,    0, "x",  "xml-file",       Arg::check_xml_file,
+    { XML_FILE,  0, "x",  "xml-file",     Arg::required,
       "  -x  \t--xml-file   Gets config from XML file. If there is any argument in \n"
-      "\t             common with the config of the XML, the argument will \n"
-      "\t             have prior over the xml. A XML file with several profiles \n"
-      "\t             will take the profile with \"is_default_profile=\"true\"\"\n"
-      "\t             unless define other profile using uri with \"@\" character\n"},
+      "\t             common with the config of the XML, the XML argument will \n"
+      "\t             be overriden. A XML file with several profiles will take\n"
+      "\t             the profile with \"is_default_profile=\"true\"\" unless \n"
+      "\t             another profile using uri with \"@\" character is defined.\n"},
 
     { UNKNOWN,   0, "",  "",              Arg::None,
       "Examples:\n"
@@ -111,13 +107,13 @@ const option::Descriptor usage[] = {
       "\t   can reach the server defining as ROS_DISCOVERY_SERVER=localhost:14520.\n\n"
       "\t$ " FAST_SERVER_BINARY " -i 0 -l localhost -p 14520\n\n"
 
-      "\t6. Launch a default server with id 0 (first on ROS_DISCOVERY_SERVER)\n"
-      "\t   gets configuration from XML file.\n\n"
+      "\t6. Launch a server with id 0 (first on ROS_DISCOVERY_SERVER) reading\n"
+      "\t   configuration from XML file.\n\n"
       "\t$ " FAST_SERVER_BINARY " -i 0 -x config.xml\n\n"
 
-      "\t6. Launch a default server with id 0 (first on ROS_DISCOVERY_SERVER)\n"
-      "\t   gets configuration from XML file using profile2.\n\n"
-      "\t$ " FAST_SERVER_BINARY " -i 0 -x config.xml@profile2"},
+      "\t6. Launch a server with id 0 (first on ROS_DISCOVERY_SERVER) reading\n"
+      "\t   specific profile_name configuration from XML file.\n\n"
+      "\t$ " FAST_SERVER_BINARY " -i 0 -x config.xml@profile_name"},
 
     { 0, 0, 0, 0, 0, 0 }
 };
