@@ -33,8 +33,6 @@ namespace eprosima {
 namespace fastrtps {
 namespace rtps {
 
-class ReaderProxyData;
-
 typedef enum RTPSWriterPublishMode : octet
 {
     SYNCHRONOUS_WRITER,
