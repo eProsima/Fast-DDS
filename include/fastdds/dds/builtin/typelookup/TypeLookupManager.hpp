@@ -20,7 +20,9 @@
 #ifndef _FASTDDS_TYPELOOKUP_SERVICE_MANAGER_HPP
 #define _FASTDDS_TYPELOOKUP_SERVICE_MANAGER_HPP
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
+
 #include <vector>
+#include <mutex>
 
 #include <fastdds/dds/builtin/typelookup/TypeLookupRequestListener.hpp>
 #include <fastdds/dds/builtin/typelookup/TypeLookupReplyListener.hpp>
