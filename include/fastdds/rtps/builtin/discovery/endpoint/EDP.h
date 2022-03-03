@@ -22,6 +22,7 @@
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 
 #include <fastdds/rtps/attributes/RTPSParticipantAttributes.h>
+#include <fastdds/rtps/builtin/data/ContentFilterProperty.hpp>
 #include <fastdds/rtps/builtin/data/ReaderProxyData.h>
 #include <fastdds/rtps/builtin/data/WriterProxyData.h>
 #include <fastdds/rtps/common/Guid.h>
@@ -158,15 +159,17 @@ public:
 
     /**
      * Create a new ReaderPD for a local Reader.
-     * @param R Pointer to the RTPSReader.
-     * @param att Attributes of the associated topic
-     * @param qos QoS policies dictated by the subscriber
+     * @param R               Pointer to the RTPSReader.
+     * @param att             Attributes of the associated topic
+     * @param qos             QoS policies dictated by the subscriber
+     * @param content_filter  Optional content filtering information.
      * @return True if correct.
      */
     bool newLocalReaderProxyData(
             RTPSReader* R,
             const TopicAttributes& att,
-            const ReaderQos& qos);
+            const ReaderQos& qos,
+            const ContentFilterProperty* content_filter = nullptr);
     /**
      * Create a new ReaderPD for a local Writer.
      * @param W Pointer to the RTPSWriter.
@@ -180,15 +183,17 @@ public:
             const WriterQos& qos);
     /**
      * A previously created Reader has been updated
-     * @param R Pointer to the reader;
-     * @param att Attributes of the associated topic
-     * @param qos QoS policies dictated by the subscriber
+     * @param R               Pointer to the reader
+     * @param att             Attributes of the associated topic
+     * @param qos             QoS policies dictated by the subscriber
+     * @param content_filter  Optional content filtering information.
      * @return True if correctly updated
      */
     bool updatedLocalReader(
             RTPSReader* R,
             const TopicAttributes& att,
-            const ReaderQos& qos);
+            const ReaderQos& qos,
+            const ContentFilterProperty* content_filter = nullptr);
     /**
      * A previously created Writer has been updated
      * @param W Pointer to the Writer

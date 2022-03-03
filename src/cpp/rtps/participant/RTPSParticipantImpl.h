@@ -42,6 +42,7 @@
 #include <fastdds/rtps/attributes/RTPSParticipantAttributes.h>
 
 #include <fastdds/rtps/builtin/discovery/endpoint/EDPSimple.h>
+#include <fastdds/rtps/builtin/data/ContentFilterProperty.hpp>
 #include <fastdds/rtps/builtin/data/ReaderProxyData.h>
 #include <fastdds/rtps/builtin/data/WriterProxyData.h>
 
@@ -823,15 +824,17 @@ public:
 
     /**
      * Register a Reader in the BuiltinProtocols.
-     * @param Reader Pointer to the RTPSReader.
-     * @param topicAtt TopicAttributes of the Reader.
-     * @param rqos ReaderQos.
-     * @return  True if correctly registered.
+     * @param Reader          Pointer to the RTPSReader.
+     * @param topicAtt        TopicAttributes of the Reader.
+     * @param rqos            ReaderQos.
+     * @param content_filter  Optional content filtering information.
+     * @return True if correctly registered.
      */
     bool registerReader(
             RTPSReader* Reader,
             const TopicAttributes& topicAtt,
-            const ReaderQos& rqos);
+            const ReaderQos& rqos,
+            const ContentFilterProperty* content_filter = nullptr);
 
     /**
      * Update participant attributes.
@@ -854,14 +857,17 @@ public:
 
     /**
      * Update local reader QoS
-     * @param Reader Reader to update
-     * @param rqos New QoS for the reader
+     * @param Reader          Reader to update
+     * @param topicAtt        TopicAttributes of the Reader.
+     * @param rqos            New QoS for the reader
+     * @param content_filter  Optional content filtering information.
      * @return True on success
      */
     bool updateLocalReader(
             RTPSReader* Reader,
             const TopicAttributes& topicAtt,
-            const ReaderQos& rqos);
+            const ReaderQos& rqos,
+            const ContentFilterProperty* content_filter = nullptr);
 
     /**
      * Get the participant attributes

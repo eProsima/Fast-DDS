@@ -1171,9 +1171,10 @@ bool RTPSParticipantImpl::registerWriter(
 bool RTPSParticipantImpl::registerReader(
         RTPSReader* reader,
         const TopicAttributes& topicAtt,
-        const ReaderQos& rqos)
+        const ReaderQos& rqos,
+        const ContentFilterProperty* content_filter)
 {
-    return this->mp_builtinProtocols->addLocalReader(reader, topicAtt, rqos);
+    return this->mp_builtinProtocols->addLocalReader(reader, topicAtt, rqos, content_filter);
 }
 
 void RTPSParticipantImpl::update_attributes(
@@ -1370,9 +1371,10 @@ bool RTPSParticipantImpl::updateLocalWriter(
 bool RTPSParticipantImpl::updateLocalReader(
         RTPSReader* reader,
         const TopicAttributes& topicAtt,
-        const ReaderQos& rqos)
+        const ReaderQos& rqos,
+        const ContentFilterProperty* content_filter)
 {
-    return this->mp_builtinProtocols->updateLocalReader(reader, topicAtt, rqos);
+    return this->mp_builtinProtocols->updateLocalReader(reader, topicAtt, rqos, content_filter);
 }
 
 /*

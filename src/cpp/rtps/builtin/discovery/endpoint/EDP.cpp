@@ -98,8 +98,11 @@ EDP::~EDP()
 bool EDP::newLocalReaderProxyData(
         RTPSReader* reader,
         const TopicAttributes& att,
-        const ReaderQos& rqos)
+        const ReaderQos& rqos,
+        const ContentFilterProperty* content_filter)
 {
+    static_cast<void>(content_filter);
+
     logInfo(RTPS_EDP, "Adding " << reader->getGuid().entityId << " in topic " << att.topicName);
 
     auto init_fun = [this, reader, &att, &rqos](
@@ -355,8 +358,11 @@ bool EDP::newLocalWriterProxyData(
 bool EDP::updatedLocalReader(
         RTPSReader* reader,
         const TopicAttributes& att,
-        const ReaderQos& rqos)
+        const ReaderQos& rqos,
+        const ContentFilterProperty* content_filter)
 {
+    static_cast<void>(content_filter);
+
     auto init_fun = [this, reader, &rqos, &att](
         ReaderProxyData* rdata,
         bool updating,
