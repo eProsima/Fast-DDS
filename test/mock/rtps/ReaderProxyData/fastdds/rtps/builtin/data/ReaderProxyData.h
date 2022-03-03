@@ -58,7 +58,8 @@ public:
     ReaderProxyData(
             size_t max_unicast_locators,
             size_t max_multicast_locators,
-            const VariableLengthDataLimits& data_limits)
+            const VariableLengthDataLimits& data_limits,
+            const ContentFilterProperty::AllocationConfiguration filter_allocation)
         : remote_locators_(max_unicast_locators, max_multicast_locators)
         , m_expectsInlineQos(false)
         , topic_kind_(NO_KEY)
@@ -68,6 +69,8 @@ public:
         , type_info_()
         , m_userDefinedId(0)
     {
+        static_cast<void>(filter_allocation);
+
         m_qos.m_userData.set_max_size(data_limits.max_user_data);
     }
 
