@@ -17,6 +17,8 @@
  *
  */
 
+#include <string>
+
 #include <fastdds/dds/domain/qos/DomainParticipantQos.hpp>
 
 namespace eprosima {

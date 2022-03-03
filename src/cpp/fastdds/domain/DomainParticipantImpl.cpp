@@ -168,14 +168,16 @@ DomainParticipantImpl::DomainParticipantImpl(
     eprosima::fastrtps::rtps::RTPSDomainImpl::create_participant_guid(participant_id_, guid_);
 
     /* Fill physical data properties if they are found and empty */
-    std::string* property_value = fastrtps::rtps::PropertyPolicyHelper::find_property(qos_.properties(), "fastdds.physical_data.host");
-    if (property_value->empty())
+    std::string* property_value = fastrtps::rtps::PropertyPolicyHelper::find_property(
+        qos_.properties(), parameter_policy_physical_data_host);
+    if (nullptr != property_value && property_value->empty())
     {
         property_value->assign(asio::ip::host_name() + ":" + std::to_string(utils::default_domain_id()));
     }
 
-    property_value = fastrtps::rtps::PropertyPolicyHelper::find_property(qos_.properties(), "fastdds.physical_data.user");
-    if (property_value->empty())
+    property_value = fastrtps::rtps::PropertyPolicyHelper::find_property(
+        qos_.properties(), parameter_policy_physical_data_user);
+    if (nullptr != property_value && property_value->empty())
     {
         std::string username = "unknown";
         if (ReturnCode_t::RETCODE_OK == SystemInfo::get_username(username))
@@ -184,8 +186,9 @@ DomainParticipantImpl::DomainParticipantImpl(
         }
     }
 
-    std::string* property_value = fastrtps::rtps::PropertyPolicyHelper::find_property(qos_.properties(), "fastdds.physical_data.host");
-    if (property_value->empty())
+    property_value = fastrtps::rtps::PropertyPolicyHelper::find_property(
+        qos_.properties(), parameter_policy_physical_data_process);
+    if (nullptr != property_value && property_value->empty())
     {
         property_value->assign(std::to_string(SystemInfo::instance().process_id()));
     }

@@ -1033,6 +1033,27 @@ const std::string parameter_property_ds_version = "DS_VERSION";
 const std::string parameter_property_current_ds_version = "2.0";
 
 /**
+ * Parameter property value for Host physical data
+ *
+ * @ingroup PARAMETER_MODULE
+ */
+const char* const parameter_policy_physical_data_host = "fastdds.physical_data.host";
+
+/**
+ * Parameter property value for User physical data
+ *
+ * @ingroup PARAMETER_MODULE
+ */
+const char* const parameter_policy_physical_data_user = "fastdds.physical_data.user";
+
+/**
+ * Parameter property value for Process physical data
+ *
+ * @ingroup PARAMETER_MODULE
+ */
+const char* const parameter_policy_physical_data_process = "fastdds.physical_data.process";
+
+/**
  * @ingroup PARAMETER_MODULE
  */
 class ParameterPropertyList_t : public Parameter_t
