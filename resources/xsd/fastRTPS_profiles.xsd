@@ -652,7 +652,7 @@
     <xs:complexType name="disablePositiveAcksQosPolicyType">
         <xs:all>
             <xs:element name="enabled" type="boolType"/>
-            <xs:element name="duration" type="durationType"/>
+            <xs:element name="duration" type="durationType" minOccurs="0"/>
         </xs:all>
     </xs:complexType>
 
