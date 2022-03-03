@@ -19,13 +19,14 @@
 
 #include <gtest/gtest.h>
 
-#include "BlackboxTests.hpp"
-#include "PubSubParticipant.hpp"
-#include "PubSubReader.hpp"
-
 #include <fastdds/dds/core/policy/QosPolicies.hpp>
 #include <fastdds/rtps/common/Locator.h>
 #include <utils/SystemInfo.hpp>
+
+#include "BlackboxTests.hpp"
+#include "PubSubParticipant.hpp"
+#include "PubSubReader.hpp"
+#include "PubSubWriter.hpp"
 
 // Regression test for redmine issue 11857
 TEST(DDSDiscovery, IgnoreParticipantFlags)
@@ -168,3 +169,127 @@ TEST(DDSDiscovery, AddDiscoveryServerToList)
     server_2.wait_discovery(std::chrono::seconds::zero(), 2, true);
 }
 
+/*
+ * This tests checks that DataReader::get_subscription_matched_status() and
+ * DataWriter::get_publication_matched_status() return the correct last_publication_handle
+ * and last_subscription_handle respectively; that is, the handle to the last DataWriter/DataReader which
+ * discovery/un-discovery triggered a change in the DataReader/DataWriter MatchedStatus.
+ *
+ * It does so by creating two pairs of DataReader-DataWriter at different times, waiting for matching/unmatching
+ * and check the last_publication_handle and last_subscription_handle respectively:
+ *
+ * 1. Create a DR and DW in the same partition and wait for discovery
+ * 2. Check that the last_*_handle is the correct one
+ * 3. Create another DR and DW in the same partition and wait for discovery
+ * 4. Check that old DR and DW report the new DW and DR as last_*_handle
+ * 5. Change old DW to a different partition and wait for undiscovery
+ * 6. Check that both DR report the old DW as last_publication_handle
+ * 7. Change old DR to a partition different than the other two and wait for undiscovery
+ * 8. Check that old DR and new DW report each other as last_*_handle
+ */
+TEST(DDSDiscovery, UpdateMatchedStatus)
+{
+    /* Create DataReaders and DataWriters */
+    PubSubWriter<HelloWorldType> datawriter_1(TEST_TOPIC_NAME);
+    PubSubReader<HelloWorldType> datareader_1(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldType> datawriter_2(TEST_TOPIC_NAME);
+    PubSubReader<HelloWorldType> datareader_2(TEST_TOPIC_NAME);
+
+    /* Init first pair of DataReader-DataWriter */
+    datareader_1
+            .partition("A")
+            .init();
+    ASSERT_TRUE(datareader_1.isInitialized());
+
+    datawriter_1
+            .partition("A")
+            .init();
+    ASSERT_TRUE(datawriter_1.isInitialized());
+
+    /* Wait for discovery */
+    datareader_1.wait_discovery(std::chrono::seconds(3), 1);
+    datawriter_1.wait_discovery(1, std::chrono::seconds(3));
+    ASSERT_EQ(datareader_1.get_matched(), 1u);
+    ASSERT_EQ(datawriter_1.get_matched(), 1u);
+
+    /* Check that the reported last_*_handle are correct */
+    ASSERT_EQ(datareader_1.get_subscription_matched_status().last_publication_handle,
+            datawriter_1.datawriter_ihandle());
+    ASSERT_EQ(datawriter_1.get_publication_matched_status().last_subscription_handle,
+            datareader_1.datareader_ihandle());
+
+    /* Init second pair of DataReader-DataWriter */
+    datareader_2
+            .partition("A")
+            .init();
+    ASSERT_TRUE(datareader_2.isInitialized());
+
+    datawriter_2
+            .partition("A")
+            .init();
+    ASSERT_TRUE(datawriter_2.isInitialized());
+
+    /*
+     * Wait for discovery:
+     *   - DR_1: DW_1, DW_2
+     *   - DR_2: DW_1, DW_2
+     *   - DW_1: DR_1, DR_2
+     *   - DW_2: DR_1, DR_2
+     */
+    datareader_1.wait_discovery(std::chrono::seconds(3), 2);
+    datawriter_1.wait_discovery(2, std::chrono::seconds(3));
+    datareader_2.wait_discovery(std::chrono::seconds(3), 2);
+    datawriter_2.wait_discovery(2, std::chrono::seconds(3));
+
+    ASSERT_EQ(datareader_1.get_matched(), 2u);
+    ASSERT_EQ(datawriter_1.get_matched(), 2u);
+    ASSERT_EQ(datareader_2.get_matched(), 2u);
+    ASSERT_EQ(datawriter_2.get_matched(), 2u);
+
+    /* Check that the reported last_*_handle are correct */
+    ASSERT_EQ(datareader_1.get_subscription_matched_status().last_publication_handle,
+            datawriter_2.datawriter_ihandle());
+    ASSERT_EQ(datawriter_1.get_publication_matched_status().last_subscription_handle,
+            datareader_2.datareader_ihandle());
+
+    /*
+     * Change DW_1's partition and wait for undiscovery:
+     *   - DR_1: DW_2
+     *   - DR_2: DW_2
+     *   - DW_1:
+     *   - DW_2: DR_1, DR_2
+     */
+    datawriter_1.update_partition("B");
+    datawriter_1.wait_reader_undiscovery(0);
+    datareader_1.wait_writer_undiscovery(1);
+    datareader_2.wait_writer_undiscovery(1);
+
+    /* Check that the reported last_*_handle are correct */
+    ASSERT_EQ(datareader_1.get_subscription_matched_status().last_publication_handle,
+            datawriter_1.datawriter_ihandle());
+    ASSERT_EQ(datareader_2.get_subscription_matched_status().last_publication_handle,
+            datawriter_1.datawriter_ihandle());
+
+    /*
+     * Change DR_1 partition and wait for undiscovery:
+     *   - DR_1:
+     *   - DR_2: DW_2
+     *   - DW_1:
+     *   - DW_2: DR_2
+     */
+    datareader_1.update_partition("C");
+    datareader_1.wait_writer_undiscovery(0);
+    datawriter_2.wait_reader_undiscovery(1);
+
+    /* Check that the reported last_*_handle are correct */
+    ASSERT_EQ(datareader_1.get_subscription_matched_status().last_publication_handle,
+            datawriter_2.datawriter_ihandle());
+    ASSERT_EQ(datawriter_2.get_publication_matched_status().last_subscription_handle,
+            datareader_1.datareader_ihandle());
+
+    /* Clean up entities */
+    datareader_1.destroy();
+    datareader_2.destroy();
+    datawriter_1.destroy();
+    datawriter_2.destroy();
+}
