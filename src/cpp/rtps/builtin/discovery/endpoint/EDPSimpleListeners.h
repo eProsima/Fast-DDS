@@ -27,13 +27,14 @@
 #include <fastdds/rtps/builtin/data/ReaderProxyData.h>
 #include <fastdds/rtps/builtin/data/WriterProxyData.h>
 
+#include <fastdds/rtps/builtin/discovery/endpoint/EDPSimple.h>
+
 #include <rtps/participant/RTPSParticipantImpl.h>
 
 namespace eprosima {
 namespace fastrtps {
 namespace rtps {
 
-class EDPSimple;
 class RTPSReader;
 struct CacheChange_t;
 

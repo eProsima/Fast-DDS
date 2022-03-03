@@ -28,6 +28,7 @@
 #include <fastdds/dds/log/Log.hpp>
 #include <fastdds/rtps/attributes/ServerAttributes.h>
 #include <fastdds/rtps/builtin/BuiltinProtocols.h>
+#include <fastdds/rtps/builtin/discovery/endpoint/EDP.h>
 #include <fastdds/rtps/builtin/discovery/participant/PDPSimple.h>
 #include <fastdds/rtps/builtin/data/ParticipantProxyData.h>
 #include <fastdds/rtps/builtin/liveliness/WLP.h>
