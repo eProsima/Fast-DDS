@@ -521,7 +521,7 @@ protected:
 
     RTPS_DllAPI static XMLP_ret getXMLOctetVector(
             tinyxml2::XMLElement* elem,
-            std::vector<rtps::octet>& octetVector,
+            std::vector<rtps::octet>& octet_vector,
             uint8_t ident);
 
     RTPS_DllAPI static XMLP_ret getXMLInt(
