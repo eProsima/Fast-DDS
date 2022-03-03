@@ -171,6 +171,10 @@ bool StatefulReader::matched_writer_add(
                     getRTPSParticipant()->createSenderResources(locator);
                 }
             }
+            if (nullptr != mp_listener)
+            {
+                mp_listener->on_writer_discovery(this, WriterDiscoveryInfo::CHANGED_QOS_WRITER, wdata.guid(), &wdata);
+            }
             return false;
         }
     }
@@ -273,6 +277,10 @@ bool StatefulReader::matched_writer_add(
         }
     }
 
+    if (nullptr != mp_listener)
+    {
+        mp_listener->on_writer_discovery(this, WriterDiscoveryInfo::DISCOVERED_WRITER, wdata.guid(), &wdata);
+    }
     return true;
 }
 
@@ -331,6 +339,10 @@ bool StatefulReader::matched_writer_remove(
             }
             wproxy->stop();
             matched_writers_pool_.push_back(wproxy);
+            if (nullptr != mp_listener)
+            {
+                mp_listener->on_writer_discovery(this, WriterDiscoveryInfo::REMOVED_WRITER, writer_guid, nullptr);
+            }
         }
         else
         {
