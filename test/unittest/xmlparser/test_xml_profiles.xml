@@ -135,7 +135,7 @@
                 <useBuiltinTransports>true</useBuiltinTransports>
                 <name>test_name</name>
                 <userData>
-                    <value>0x56,0x30,0x0,0x1</value>
+                    <value>56.30.0.CE</value>
                 </userData>
             </rtps>
         </participant>
@@ -188,13 +188,13 @@
                     <kind>ASYNCHRONOUS</kind>
                 </publishMode>
                 <userData>
-                    <value>56,30,0,1</value>
+                    <value>56.30.0.1</value>
                 </userData>
                 <topicData>
-                    <value>5,3,1,0</value>
+                    <value>5.3.1.0</value>
                 </topicData>
                 <groupData>
-                    <value>5,3,1,0,254</value>
+                    <value>5.3.1.0.F1</value>
                 </groupData>
             </qos>
             <times>
@@ -305,13 +305,13 @@
                     </names>
                 </partition>
                 <userData>
-                    <value>56,30,0,1</value>
+                    <value>56.30.0.1</value>
                 </userData>
                 <topicData>
-                    <value>5,3,1,0</value>
+                    <value>5.3.1.0</value>
                 </topicData>
                 <groupData>
-                    <value>5,3,1,0,254</value>
+                    <value>5.3.1.0.F1</value>
                 </groupData>
             </qos>
             <times>

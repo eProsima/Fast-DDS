@@ -3310,12 +3310,7 @@ XMLP_ret XMLParser::getXMLOctetVector(
             std::string text = p_aux0->GetText();
             std::istringstream ss(text);
 
-            // Detect if it is in hexadecimal
-            if (2 < text.size() && '0' == text.at(0) &&
-                    ('x' == text.at(1) || 'X' == text.at(1)))
-            {
-                ss >> std::hex;
-            }
+            ss >> std::hex;
 
             while (!ss.eof())
             {
@@ -3337,9 +3332,9 @@ XMLP_ret XMLParser::getXMLOctetVector(
                     char c = 0;
                     ss >> c;
 
-                    if (!ss || ',' != c)
+                    if (!ss || '.' != c)
                     {
-                        logError(XMLPARSER, "Expected a ',' separator on line " << p_aux0->GetLineNum());
+                        logError(XMLPARSER, "Expected a '.' separator on line " << p_aux0->GetLineNum());
                         ret_value = XMLP_ret::XML_ERROR;
                         break;
                     }

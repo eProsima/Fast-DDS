@@ -415,7 +415,7 @@ TEST_F(XMLParserTests, Data)
     EXPECT_EQ(rtps_atts.throughputController.periodMillisecs, 45u);
     EXPECT_EQ(rtps_atts.useBuiltinTransports, true);
     EXPECT_EQ(std::string(rtps_atts.getName()), "test_name");
-    EXPECT_EQ(rtps_atts.userData, std::vector<octet>({0x56, 0x30, 0x0, 0x1}));
+    EXPECT_EQ(rtps_atts.userData, std::vector<octet>({0x56, 0x30, 0x0, 0xce}));
 }
 
 TEST_F(XMLParserTests, DataBuffer)
@@ -509,7 +509,7 @@ TEST_F(XMLParserTests, DataBuffer)
     EXPECT_EQ(rtps_atts.throughputController.periodMillisecs, 45u);
     EXPECT_EQ(rtps_atts.useBuiltinTransports, true);
     EXPECT_EQ(std::string(rtps_atts.getName()), "test_name");
-    EXPECT_EQ(rtps_atts.userData, std::vector<octet>({0x56, 0x30, 0x0, 0x1}));
+    EXPECT_EQ(rtps_atts.userData, std::vector<octet>({0x56, 0x30, 0x0, 0xce}));
 }
 
 /*

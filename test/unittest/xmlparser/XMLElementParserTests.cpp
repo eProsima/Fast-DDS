@@ -127,12 +127,11 @@ TEST_F(XMLParserTests, getXMLLifespanQos)
 
 /*
  * This test checks the proper parsing of an octet vecotr xml element, and negative cases.
- * 1. Correct parsing of a valid element with decimal numbers.
- * 2. Correct parsing of a valid element with hexadecimal numbers.
- * 3. Check an bad element with a wrong separator.
+ * 1. Correct parsing of a valid element with hexadecimal numbers.
+ * 2. Check an bad element with a wrong separator.
  * 3. Check an bad element with a wrong number.
- * 3. Check an bad element with a number too high.
- * 4. Check an  empty xml definition.
+ * 4. Check an bad element with a number too high.
+ * 5. Check an  empty xml definition.
  */
 TEST_F(XMLParserTests, getXMLOctetVector)
 {
@@ -150,16 +149,8 @@ TEST_F(XMLParserTests, getXMLOctetVector)
             ";
     char xml[500];
 
-    // Valid XML with decimal numbers
-    sprintf(xml, xml_p, "1,2,3,4,5");
-    ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
-    titleElement = xml_doc.RootElement();
-    EXPECT_EQ(XMLP_ret::XML_OK, XMLParserTest::getXMLOctetVector_wrapper(titleElement, octet_vector, ident));
-    ASSERT_EQ(octet_vector, std::vector<octet>({1, 2, 3, 4, 5}));
-    octet_vector.clear();
-
     // Valid XML with hexadecimal numbers
-    sprintf(xml, xml_p, "0x10,0x20,0x30,0x40,0x50");
+    sprintf(xml, xml_p, "10.20.30.40.50");
     ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
     titleElement = xml_doc.RootElement();
     EXPECT_EQ(XMLP_ret::XML_OK, XMLParserTest::getXMLOctetVector_wrapper(titleElement, octet_vector, ident));
@@ -181,7 +172,7 @@ TEST_F(XMLParserTests, getXMLOctetVector)
     octet_vector.clear();
 
     // Invalid XML with too high number
-    sprintf(xml, xml_p, "1,256,3");
+    sprintf(xml, xml_p, "1,1F1,3");
     ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
     titleElement = xml_doc.RootElement();
     EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::getXMLOctetVector_wrapper(titleElement, octet_vector, ident));
