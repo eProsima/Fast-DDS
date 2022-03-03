@@ -436,6 +436,10 @@ bool StatelessWriter::matched_reader_add(
             }
             ))
     {
+        if (nullptr != mp_listener)
+        {
+            mp_listener->on_reader_discovery(this, ReaderDiscoveryInfo::CHANGED_QOS_READER, data.guid(), &data);
+        }
         return false;
     }
 
@@ -496,6 +500,10 @@ bool StatelessWriter::matched_reader_add(
 
     update_reader_info(true);
 
+    if (nullptr != mp_listener)
+    {
+        mp_listener->on_reader_discovery(this, ReaderDiscoveryInfo::DISCOVERED_READER, data.guid(), &data);
+    }
     return true;
 }
 
@@ -574,6 +582,10 @@ bool StatelessWriter::matched_reader_remove(
         matched_readers_pool_.push_back(std::move(reader));
         update_reader_info(false);
         logInfo(RTPS_WRITER, "Reader Proxy removed: " << reader_guid);
+        if (nullptr != mp_listener)
+        {
+            mp_listener->on_reader_discovery(this, ReaderDiscoveryInfo::REMOVED_READER, reader_guid, nullptr);
+        }
         return true;
     }
 
