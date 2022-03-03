@@ -97,6 +97,10 @@ bool StatelessReader::matched_writer_add(
         if (writer.guid == wdata.guid())
         {
             logWarning(RTPS_READER, "Attempting to add existing writer");
+            if (nullptr != mp_listener)
+            {
+                mp_listener->on_writer_discovery(this, WriterDiscoveryInfo::CHANGED_QOS_WRITER, wdata.guid(), &wdata);
+            }
             return false;
         }
     }
@@ -168,6 +172,10 @@ bool StatelessReader::matched_writer_add(
         datasharing_listener_->notify(false);
     }
 
+    if (nullptr != mp_listener)
+    {
+        mp_listener->on_writer_discovery(this, WriterDiscoveryInfo::DISCOVERED_WRITER, wdata.guid(), &wdata);
+    }
     return true;
 }
 
@@ -212,6 +220,10 @@ bool StatelessReader::matched_writer_remove(
 
             remove_persistence_guid(it->guid, it->persistence_guid, removed_by_lease);
             matched_writers_.erase(it);
+            if (nullptr != mp_listener)
+            {
+                mp_listener->on_writer_discovery(this, WriterDiscoveryInfo::REMOVED_WRITER, writer_guid, nullptr);
+            }
             return true;
         }
     }
