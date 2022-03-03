@@ -35,7 +35,7 @@ target_compile_definitions(DDSSimpleCommunicationDynamicPublisher PRIVATE
     $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
     )
 target_link_libraries(DDSSimpleCommunicationDynamicPublisher fastrtps fastcdr foonathan_memory ${CMAKE_DL_LIBS})
-set_property(TARGET DDSSimpleCommunicationDynamicPublisher PROPERTY CROSSCOMPILING_EMULATOR "adb;shell;cd;${CMAKE_CURRENT_BINARY_DIR}; ;&&;LD_LIBRARY_PATH=${ANDROID_TESTING_ROOT}/install/lib")
+set_property(TARGET DDSSimpleCommunicationDynamicPublisher PROPERTY CROSSCOMPILING_EMULATOR "adb;shell;cd;${CMAKE_CURRENT_BINARY_DIR}; ;&&;LD_LIBRARY_PATH=${ANDROID_TESTING_ROOT}/install/x86_64/lib")
 
 set(DDS_SUBSCRIBER_DYNAMIC_SOURCE
     SubscriberDynamic.cpp
@@ -46,7 +46,7 @@ target_compile_definitions(DDSSimpleCommunicationDynamicSubscriber PRIVATE
     $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
     )
 target_link_libraries(DDSSimpleCommunicationDynamicSubscriber fastrtps fastcdr foonathan_memory ${CMAKE_DL_LIBS})
-set_property(TARGET DDSSimpleCommunicationDynamicSubscriber PROPERTY CROSSCOMPILING_EMULATOR "adb;shell;cd;${CMAKE_CURRENT_BINARY_DIR}; ;&&;LD_LIBRARY_PATH=${ANDROID_TESTING_ROOT}/install/lib")
+set_property(TARGET DDSSimpleCommunicationDynamicSubscriber PROPERTY CROSSCOMPILING_EMULATOR "adb;shell;cd;${CMAKE_CURRENT_BINARY_DIR}; ;&&;LD_LIBRARY_PATH=${ANDROID_TESTING_ROOT}/install/x86_64/lib")
 
 
 # Standar tests
@@ -67,7 +67,7 @@ target_compile_definitions(DDSCommunicationPublisher PRIVATE
     )
 target_include_directories(DDSCommunicationPublisher PRIVATE ${PROJECT_SOURCE_DIR}/test/blackbox)
 target_link_libraries(DDSCommunicationPublisher fastrtps fastcdr foonathan_memory ${CMAKE_DL_LIBS})
-set_property(TARGET DDSCommunicationPublisher PROPERTY CROSSCOMPILING_EMULATOR "adb;shell;cd;${CMAKE_CURRENT_BINARY_DIR}; ;&&;LD_LIBRARY_PATH=${ANDROID_TESTING_ROOT}/install/lib")
+set_property(TARGET DDSCommunicationPublisher PROPERTY CROSSCOMPILING_EMULATOR "adb;shell;cd;${CMAKE_CURRENT_BINARY_DIR}; ;&&;LD_LIBRARY_PATH=${ANDROID_TESTING_ROOT}/install/x86_64/lib")
 
 set(DDS_SUBSCRIBER_SOURCE ${COMMON_SOURCE}
     SubscriberModule.cpp
@@ -80,7 +80,7 @@ target_compile_definitions(DDSCommunicationSubscriber PRIVATE
     )
 target_include_directories(DDSCommunicationSubscriber PRIVATE ${PROJECT_SOURCE_DIR}/test/blackbox)
 target_link_libraries(DDSCommunicationSubscriber fastrtps fastcdr foonathan_memory ${CMAKE_DL_LIBS})
-set_property(TARGET DDSCommunicationSubscriber PROPERTY CROSSCOMPILING_EMULATOR "adb;shell;cd;${CMAKE_CURRENT_BINARY_DIR}; ;&&;LD_LIBRARY_PATH=${ANDROID_TESTING_ROOT}/install/lib")
+set_property(TARGET DDSCommunicationSubscriber PROPERTY CROSSCOMPILING_EMULATOR "adb;shell;cd;${CMAKE_CURRENT_BINARY_DIR}; ;&&;LD_LIBRARY_PATH=${ANDROID_TESTING_ROOT}/install/x86_64/lib")
 
 
 set(DDS_PUBSUB_SOURCE ${COMMON_SOURCE}
@@ -95,7 +95,7 @@ target_compile_definitions(DDSCommunicationPubSub PRIVATE
     )
 target_include_directories(DDSCommunicationPubSub PRIVATE ${PROJECT_SOURCE_DIR}/test/blackbox)
 target_link_libraries(DDSCommunicationPubSub fastrtps fastcdr foonathan_memory ${CMAKE_DL_LIBS})
-set_property(TARGET DDSCommunicationPubSub PROPERTY CROSSCOMPILING_EMULATOR "adb;shell;cd;${CMAKE_CURRENT_BINARY_DIR}; ;&&;LD_LIBRARY_PATH=${ANDROID_TESTING_ROOT}/install/lib")
+set_property(TARGET DDSCommunicationPubSub PROPERTY CROSSCOMPILING_EMULATOR "adb;shell;cd;${CMAKE_CURRENT_BINARY_DIR}; ;&&;LD_LIBRARY_PATH=${ANDROID_TESTING_ROOT}/install/x86_64/lib")
 
 
 ###############################################################################

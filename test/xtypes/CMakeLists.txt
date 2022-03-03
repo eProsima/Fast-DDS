@@ -104,6 +104,6 @@ target_compile_definitions(XTypesBlackBoxTests PRIVATE
     )
 target_include_directories(XTypesBlackBoxTests PRIVATE ${Asio_INCLUDE_DIR})
 target_link_libraries(XTypesBlackBoxTests fastrtps fastcdr GTest::gtest)
-set_property(TARGET XTypesBlackBoxTests PROPERTY CROSSCOMPILING_EMULATOR "adb;shell;cd;${CMAKE_CURRENT_BINARY_DIR}; ;&&;LD_LIBRARY_PATH=${ANDROID_TESTING_ROOT}/install/lib")
+set_property(TARGET XTypesBlackBoxTests PROPERTY CROSSCOMPILING_EMULATOR "adb;shell;cd;${CMAKE_CURRENT_BINARY_DIR}; ;&&;LD_LIBRARY_PATH=${ANDROID_TESTING_ROOT}/install/x86_64/lib")
 
 add_xtypes_gtest(XTypesBlackBoxTests SOURCES ${XTYPES_TESTS_SOURCE})

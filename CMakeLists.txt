@@ -160,6 +160,13 @@ include_directories(thirdparty/filewatch)
 ###############################################################################
 option(SECURITY "Activate security" OFF)
 
+if(ANDROID)
+    set(OPENSSL_ROOT_DIR ${PROJECT_SOURCE_DIR}/../openssl )   
+    set(OPENSSL_INCLUDE_DIR ${PROJECT_SOURCE_DIR}/../openssl/include )
+    set(OPENSSL_CRYPTO_LIBRARY ${PROJECT_SOURCE_DIR}/../openssl/libcrypto.so) 
+    set(OPENSSL_SSL_LIBRARY ${PROJECT_SOURCE_DIR}/../openssl/libssl.so)
+endif()
+
 if(SECURITY)
     find_package(OpenSSL REQUIRED)
 else()

@@ -59,8 +59,8 @@ target_compile_definitions(DeadlineQoSExample PRIVATE
 )
 target_include_directories(DeadlineQoSExample PRIVATE ${Asio_INCLUDE_DIR})
 target_link_libraries(DeadlineQoSExample fastrtps fastcdr foonathan_memory)
-if(UNIX AND NOT(QNXNTO))
-  target_link_libraries(DeadlineQoSExample pthread)
+if(UNIX AND NOT(QNXNTO) AND NOT(ANDROID))
+    target_link_libraries(DeadlineQoSExample pthread)
 endif()
 
 install(TARGETS DeadlineQoSExample

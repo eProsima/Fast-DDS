@@ -20,8 +20,8 @@ target_link_libraries(mutex_testing_tool_preload PRIVATE mutex_testing_tool ${CM
 add_executable(TMutexTests TMutexTests.cpp)
 target_link_libraries(TMutexTests mutex_testing_tool GTest::gtest)
 
-set_property(TARGET mutex_testing_tool_preload PROPERTY CROSSCOMPILING_EMULATOR "adb;shell;cd;${CMAKE_CURRENT_BINARY_DIR}; ;&&;LD_LIBRARY_PATH=${ANDROID_TESTING_ROOT}/install/lib")
-set_property(TARGET TMutexTests PROPERTY CROSSCOMPILING_EMULATOR "adb;shell;cd;${CMAKE_CURRENT_BINARY_DIR}; ;&&;LD_LIBRARY_PATH=${ANDROID_TESTING_ROOT}/install/lib")
+set_property(TARGET mutex_testing_tool_preload PROPERTY CROSSCOMPILING_EMULATOR "adb;shell;cd;${CMAKE_CURRENT_BINARY_DIR}; ;&&;LD_LIBRARY_PATH=${ANDROID_TESTING_ROOT}/install/x86_64/lib")
+set_property(TARGET TMutexTests PROPERTY CROSSCOMPILING_EMULATOR "adb;shell;cd;${CMAKE_CURRENT_BINARY_DIR}; ;&&;LD_LIBRARY_PATH=${ANDROID_TESTING_ROOT}/install/x86_64/lib")
 
 STRING(REPLACE " " "\\ " MUTEX_PRELOAD_LIBRARY_FILE "$<TARGET_FILE:mutex_testing_tool_preload>")
 add_gtest(TMutexTests SOURCES TMutexTests.cpp

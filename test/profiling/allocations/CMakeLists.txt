@@ -45,7 +45,7 @@ if (osrf_testing_tools_cpp_FOUND)
 
     add_executable(AllocationTest ${ALLOCTEST_EXAMPLE_SOURCES_CXX} ${ALLOCTEST_EXAMPLE_SOURCES_CPP})
     target_link_libraries(AllocationTest fastrtps fastcdr foonathan_memory osrf_testing_tools_cpp::memory_tools)
-    set_property(TARGET AllocationTest PROPERTY CROSSCOMPILING_EMULATOR "adb;shell;cd;${CMAKE_CURRENT_BINARY_DIR}; ;&&;LD_LIBRARY_PATH=${ANDROID_TESTING_ROOT}/install/lib")
+    set_property(TARGET AllocationTest PROPERTY CROSSCOMPILING_EMULATOR "adb;shell;cd;${CMAKE_CURRENT_BINARY_DIR}; ;&&;LD_LIBRARY_PATH=${ANDROID_TESTING_ROOT}/install/x86_64/lib")
     install(TARGETS AllocationTest
         RUNTIME DESTINATION test/profiling/allocations/${BIN_INSTALL_DIR})
 else(osrf_testing_tools_cpp_FOUND)

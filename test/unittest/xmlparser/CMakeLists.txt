@@ -149,7 +149,7 @@ target_link_libraries(XMLProfileParserTests GTest::gmock
     ${TINYXML2_LIBRARY}
     fastcdr
     )
-    set_property(TARGET XMLProfileParserTests PROPERTY CROSSCOMPILING_EMULATOR "adb;shell;cd;${CMAKE_CURRENT_BINARY_DIR}; ;&&;LD_LIBRARY_PATH=${ANDROID_TESTING_ROOT}/install/lib")
+    set_property(TARGET XMLProfileParserTests PROPERTY CROSSCOMPILING_EMULATOR "adb;shell;cd;${CMAKE_CURRENT_BINARY_DIR}; ;&&;LD_LIBRARY_PATH=${ANDROID_TESTING_ROOT}/install/x86_64/lib")
 
 add_gtest(XMLProfileParserTests SOURCES XMLProfileParserTests.cpp)
 ###################################  XMLProfileParserTests  ####################################################
@@ -248,7 +248,7 @@ target_link_libraries(XMLParserTests GTest::gtest
     fastcdr
     )
 
-    set_property(TARGET XMLParserTests PROPERTY CROSSCOMPILING_EMULATOR "adb;shell;cd;${CMAKE_CURRENT_BINARY_DIR}; ;&&;LD_LIBRARY_PATH=${ANDROID_TESTING_ROOT}/install/lib")
+    set_property(TARGET XMLParserTests PROPERTY CROSSCOMPILING_EMULATOR "adb;shell;cd;${CMAKE_CURRENT_BINARY_DIR}; ;&&;LD_LIBRARY_PATH=${ANDROID_TESTING_ROOT}/install/x86_64/lib")
 
 add_gtest(XMLParserTests SOURCES XMLParserTests.cpp XMLElementParserTests.cpp)
 ######################################  XMLParserTests  ########################################################
@@ -284,7 +284,7 @@ target_link_libraries(XMLTreeTests GTest::gtest
     $<$<BOOL:${WIN32}>:ws2_32>
     )
 
-    set_property(TARGET XMLTreeTests PROPERTY CROSSCOMPILING_EMULATOR "adb;shell;cd;${CMAKE_CURRENT_BINARY_DIR}; ;&&;LD_LIBRARY_PATH=${ANDROID_TESTING_ROOT}/install/lib")
+    set_property(TARGET XMLTreeTests PROPERTY CROSSCOMPILING_EMULATOR "adb;shell;cd;${CMAKE_CURRENT_BINARY_DIR}; ;&&;LD_LIBRARY_PATH=${ANDROID_TESTING_ROOT}/install/x86_64/lib")
 
 add_gtest(XMLTreeTests SOURCES XMLTreeTests.cpp)
 #######################################  XMLTreeTests  #########################################################
@@ -375,6 +375,6 @@ target_link_libraries(XMLEndpointParserTests GTest::gtest
     fastcdr
     )
 
-set_property(TARGET XMLEndpointParserTests PROPERTY CROSSCOMPILING_EMULATOR "adb;shell;cd;${CMAKE_CURRENT_BINARY_DIR}; ;&&;LD_LIBRARY_PATH=${ANDROID_TESTING_ROOT}/install/lib")
+set_property(TARGET XMLEndpointParserTests PROPERTY CROSSCOMPILING_EMULATOR "adb;shell;cd;${CMAKE_CURRENT_BINARY_DIR}; ;&&;LD_LIBRARY_PATH=${ANDROID_TESTING_ROOT}/install/x86_64/lib")
     
 add_gtest(XMLEndpointParserTests SOURCES XMLEndpointParserTests.cpp)

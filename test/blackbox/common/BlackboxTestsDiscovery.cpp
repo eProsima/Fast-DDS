@@ -180,6 +180,10 @@ TEST(Discovery, StaticDiscovery)
     LocatorBuffer.port = static_cast<uint16_t>(MULTICAST_PORT_RANDOM_NUMBER);
     WriterMulticastLocators.push_back(LocatorBuffer);
 
+    //writer.disable_builtin_transport();
+
+    //writer.add_user_transport_to_pparams(std::make_shared<UDPv4TransportDescriptor>());
+
     writer.history_kind(eprosima::fastrtps::KEEP_ALL_HISTORY_QOS).
             durability_kind(eprosima::fastrtps::TRANSIENT_LOCAL_DURABILITY_QOS);
     writer.static_discovery("file://PubSubWriter.xml").reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).
@@ -202,6 +206,9 @@ TEST(Discovery, StaticDiscovery)
     LocatorBuffer.port = static_cast<uint16_t>(MULTICAST_PORT_RANDOM_NUMBER);
     ReaderMulticastLocators.push_back(LocatorBuffer);
 
+    //reader.disable_builtin_transport();
+
+    //reader.add_user_transport_to_pparams(std::make_shared<UDPv4TransportDescriptor>());
 
     reader.reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).
             history_kind(eprosima::fastrtps::KEEP_ALL_HISTORY_QOS).
