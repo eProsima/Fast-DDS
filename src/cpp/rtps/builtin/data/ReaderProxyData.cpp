@@ -140,6 +140,7 @@ ReaderProxyData& ReaderProxyData::operator =(
     m_topicKind = readerInfo.m_topicKind;
     m_qos.setQos(readerInfo.m_qos, true);
     m_properties = readerInfo.m_properties;
+    content_filter_ = readerInfo.content_filter_;
 
     if (readerInfo.m_type_id)
     {
