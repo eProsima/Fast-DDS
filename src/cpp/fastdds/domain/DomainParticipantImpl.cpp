@@ -17,12 +17,18 @@
  *
  */
 
+#include <chrono>
+#include <string>
+
+#include <asio.hpp>
+
 #include <fastdds/domain/DomainParticipantImpl.hpp>
 
+#include <fastdds/core/policy/QosPolicyUtils.hpp>
 #include <fastdds/dds/builtin/typelookup/TypeLookupManager.hpp>
 #include <fastdds/dds/domain/DomainParticipant.hpp>
-#include <fastdds/dds/domain/DomainParticipantListener.hpp>
 #include <fastdds/dds/domain/DomainParticipantFactory.hpp>
+#include <fastdds/dds/domain/DomainParticipantListener.hpp>
 #include <fastdds/dds/log/Log.hpp>
 #include <fastdds/dds/publisher/DataWriter.hpp>
 #include <fastdds/dds/publisher/Publisher.hpp>
@@ -30,34 +36,28 @@
 #include <fastdds/dds/subscriber/Subscriber.hpp>
 #include <fastdds/dds/topic/IContentFilterFactory.hpp>
 #include <fastdds/dds/topic/TypeSupport.hpp>
-
-#include <fastdds/rtps/RTPSDomain.h>
+#include <fastdds/publisher/PublisherImpl.hpp>
+#include <fastdds/rtps/attributes/PropertyPolicy.h>
 #include <fastdds/rtps/attributes/RTPSParticipantAttributes.h>
 #include <fastdds/rtps/builtin/liveliness/WLP.h>
 #include <fastdds/rtps/participant/ParticipantDiscoveryInfo.h>
 #include <fastdds/rtps/participant/RTPSParticipant.h>
 #include <fastdds/rtps/reader/ReaderDiscoveryInfo.h>
+#include <fastdds/rtps/RTPSDomain.h>
 #include <fastdds/rtps/writer/WriterDiscoveryInfo.h>
-
+#include <fastdds/subscriber/SubscriberImpl.hpp>
+#include <fastdds/topic/ContentFilteredTopicImpl.hpp>
+#include <fastdds/topic/TopicImpl.hpp>
 #include <fastrtps/attributes/PublisherAttributes.h>
 #include <fastrtps/attributes/SubscriberAttributes.h>
-
-#include <fastrtps/types/DynamicTypeBuilderFactory.h>
 #include <fastrtps/types/DynamicPubSubType.h>
 #include <fastrtps/types/DynamicType.h>
+#include <fastrtps/types/DynamicTypeBuilderFactory.h>
 #include <fastrtps/types/DynamicTypeMember.h>
 #include <fastrtps/types/TypeObjectFactory.h>
-
 #include <fastrtps/xmlparser/XMLProfileManager.h>
-
-#include <fastdds/publisher/PublisherImpl.hpp>
-#include <fastdds/subscriber/SubscriberImpl.hpp>
-#include <fastdds/topic/TopicImpl.hpp>
-#include <fastdds/topic/ContentFilteredTopicImpl.hpp>
-
 #include <rtps/RTPSDomainImpl.hpp>
-
-#include <chrono>
+#include <utils/SystemInfo.hpp>
 
 namespace eprosima {
 namespace fastdds {
@@ -166,6 +166,29 @@ DomainParticipantImpl::DomainParticipantImpl(
     // Pre calculate participant id and generated guid
     participant_id_ = qos_.wire_protocol().participant_id;
     eprosima::fastrtps::rtps::RTPSDomainImpl::create_participant_guid(participant_id_, guid_);
+
+    /* Fill physical data properties if they are found and empty */
+    std::string* property_value = fastrtps::rtps::PropertyPolicyHelper::find_property(qos_.properties(), "fastdds.physical_data.host");
+    if (property_value->empty())
+    {
+        property_value->assign(asio::ip::host_name() + ":" + std::to_string(utils::default_domain_id()));
+    }
+
+    property_value = fastrtps::rtps::PropertyPolicyHelper::find_property(qos_.properties(), "fastdds.physical_data.user");
+    if (property_value->empty())
+    {
+        std::string username = "unknown";
+        if (ReturnCode_t::RETCODE_OK == SystemInfo::get_username(username))
+        {
+            property_value->assign(username);
+        }
+    }
+
+    std::string* property_value = fastrtps::rtps::PropertyPolicyHelper::find_property(qos_.properties(), "fastdds.physical_data.host");
+    if (property_value->empty())
+    {
+        property_value->assign(std::to_string(SystemInfo::instance().process_id()));
+    }
 }
 
 void DomainParticipantImpl::disable()
