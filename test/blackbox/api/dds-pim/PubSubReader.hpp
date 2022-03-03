@@ -673,7 +673,8 @@ public:
         return ret_value;
     }
 
-    void wait_writer_undiscovery()
+    void wait_writer_undiscovery(
+            unsigned int matched = 0)
     {
         std::unique_lock<std::mutex> lock(mutexDiscovery_);
 
@@ -681,7 +682,7 @@ public:
 
         cvDiscovery_.wait(lock, [&]()
                 {
-                    return matched_ == 0;
+                    return matched_ <= matched;
                 });
 
         std::cout << "Reader removal finished..." << std::endl;
@@ -1563,9 +1564,21 @@ public:
         return datareader_guid_;
     }
 
+    eprosima::fastrtps::rtps::InstanceHandle_t datareader_ihandle()
+    {
+        return eprosima::fastrtps::rtps::InstanceHandle_t(datareader_guid());
+    }
+
     const eprosima::fastrtps::rtps::GUID_t& participant_guid() const
     {
         return participant_guid_;
+    }
+
+    eprosima::fastdds::dds::SubscriptionMatchedStatus get_subscription_matched_status() const
+    {
+        eprosima::fastdds::dds::SubscriptionMatchedStatus status;
+        datareader_->get_subscription_matched_status(status);
+        return status;
     }
 
 private:
