@@ -717,8 +717,39 @@ public:
     static uint32_t cdr_serialized_size(
             const fastdds::rtps::ContentFilterProperty& parameter)
     {
-        static_cast<void>(parameter);
-        return 0;
+        uint32_t ret_val = 0;
+
+        if (0 < parameter.filter_class_name.size() &&
+                0 < parameter.content_filtered_topic_name.size() &&
+                0 < parameter.related_topic_name.size() &&
+                0 < parameter.filter_expression.size())
+        {
+            // p_id + p_length
+            ret_val = 2 + 2;
+            // content_filtered_topic_name
+            ret_val += cdr_serialized_size(parameter.content_filtered_topic_name);
+            // related_topic_name
+            ret_val += cdr_serialized_size(parameter.related_topic_name);
+            // filter_class_name
+            ret_val += cdr_serialized_size(parameter.filter_class_name);
+
+            // filter_expression
+            // str_len + null_char + str_data
+            ret_val += 4 + 1 + static_cast<uint32_t>(parameter.filter_expression.size());
+            // align
+            ret_val = (ret_val + 3) & ~3;
+
+            // expression_parameters
+            // sequence length
+            ret_val += 4;
+            // Add all parameters
+            for (const fastrtps::string_255& param : parameter.expression_parameters)
+            {
+                ret_val += cdr_serialized_size(param);
+            }
+        }
+
+        return ret_val;
     }
 
     static bool add_to_cdr_message(
@@ -739,6 +770,19 @@ public:
         static_cast<void>(cdr_message);
         static_cast<void>(parameter_length);
         return true;
+    }
+
+private:
+
+    static inline uint32_t cdr_serialized_size(
+            const fastrtps::string_255& str)
+    {
+        // Size including NUL char at the end
+        uint32_t str_siz = static_cast<uint32_t>(str.size()) + 1;
+        // Align to next 4 byte
+        str_siz = (str_siz + 3u) & ~3u;
+        // str_length + str_data
+        return 4u + str_siz;
     }
 
 };
