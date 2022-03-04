@@ -171,7 +171,9 @@ set_property(TARGET BuiltinDataSerializationTests PROPERTY CROSSCOMPILING_EMULAT
 set_property(TARGET BuiltinDataSerializationTests PROPERTY CROSSCOMPILING_EMULATOR "adb;shell;cd;${CMAKE_CURRENT_BINARY_DIR}/unittest/rtps/builtin; ;&&;LD_LIBRARY_PATH=${ANDROID_TESTING_ROOT}/install/x86_64/lib")
 set_property(TARGET TimedEventTests PROPERTY CROSSCOMPILING_EMULATOR "adb;shell;cd;${CMAKE_CURRENT_BINARY_DIR}/unittest/rtps/resources/timedevent; ;&&;LD_LIBRARY_PATH=${ANDROID_TESTING_ROOT}/install/x86_64/lib")
 
+if (SECURITY)
 set_property(TARGET SecurityAuthentication PROPERTY CROSSCOMPILING_EMULATOR "adb;shell;cd;${CMAKE_CURRENT_BINARY_DIR}/; ;&&;LD_LIBRARY_PATH=${ANDROID_TESTING_ROOT}/install/x86_64/lib;;CERTS_PATH=/data/local/tmp/test/certs")
+endif()
 
 set_property(TARGET ReaderHistoryTests PROPERTY CROSSCOMPILING_EMULATOR "adb;shell;cd;${CMAKE_CURRENT_BINARY_DIR}/unittest/rtps/history; ;&&;LD_LIBRARY_PATH=${ANDROID_TESTING_ROOT}/install/x86_64/lib")
 set_property(TARGET BasicPoolsTests PROPERTY CROSSCOMPILING_EMULATOR "adb;shell;cd;${CMAKE_CURRENT_BINARY_DIR}/unittest/rtps/history; ;&&;LD_LIBRARY_PATH=${ANDROID_TESTING_ROOT}/install/x86_64/lib")
