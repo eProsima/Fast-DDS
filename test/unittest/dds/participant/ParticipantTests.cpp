@@ -311,6 +311,35 @@ TEST(ParticipantTests, CreateDomainParticipant)
 
 }
 
+/**
+ * @brief Check whether two @ref DomainParticipantQos are equivalent properties wise and equal elsewhere.
+ *
+ * @c qos_1 and @c qos_2 have equivalent properties if:
+ *
+ * 1. They have equal binary properties
+ * 2. All the non-binary properties of @c qos_2 are present (by name) in @c qos_1
+ *
+ * @param[in] qos_1 LHS @ref DomainParticipantQos
+ * @param[in] qos_2 RHS @ref DomainParticipantQos
+ */
+void check_equivalent_qos(
+        const DomainParticipantQos& qos_1,
+        const DomainParticipantQos& qos_2)
+{
+    ASSERT_EQ(qos_1.user_data(), qos_2.user_data());
+    ASSERT_EQ(qos_1.entity_factory(), qos_2.entity_factory());
+    ASSERT_EQ(qos_1.allocation(), qos_2.allocation());
+    for (auto property : qos_2.properties().properties())
+    {
+        ASSERT_NE(nullptr, fastrtps::rtps::PropertyPolicyHelper::find_property(qos_1.properties(), property.name()));
+    }
+    ASSERT_EQ(qos_1.properties().binary_properties(), qos_2.properties().binary_properties());
+    ASSERT_EQ(qos_1.wire_protocol(), qos_2.wire_protocol());
+    ASSERT_EQ(qos_1.transport(), qos_2.transport());
+    ASSERT_EQ(qos_1.name(), qos_2.name());
+    ASSERT_EQ(qos_1.flow_controllers(), qos_2.flow_controllers());
+}
+
 void check_participant_with_profile (
         DomainParticipant* participant,
         const std::string& profile_name)
@@ -321,9 +350,14 @@ void check_participant_with_profile (
     ParticipantAttributes participant_atts;
     XMLProfileManager::fillParticipantAttributes(profile_name, participant_atts);
 
-    //Values taken from profile
+    /* Values taken from profile */
     ASSERT_TRUE(qos.allocation() == participant_atts.rtps.allocation);
-    ASSERT_TRUE(qos.properties() == participant_atts.rtps.properties);
+    // Check that all the non-binary properties in participant_atts are present (by name) in qos
+    for (auto property : participant_atts.rtps.properties.properties())
+    {
+        ASSERT_NE(nullptr, fastrtps::rtps::PropertyPolicyHelper::find_property(qos.properties(), property.name()));
+    }
+    ASSERT_TRUE(qos.properties().binary_properties() == participant_atts.rtps.properties.binary_properties());
     ASSERT_TRUE(qos.name().to_string() == participant_atts.rtps.getName());
     ASSERT_TRUE(qos.wire_protocol().prefix == participant_atts.rtps.prefix);
     ASSERT_TRUE(qos.wire_protocol().participant_id == participant_atts.rtps.participantID);
@@ -342,6 +376,41 @@ void check_participant_with_profile (
 
     //Values not implemented on attributes (taken from default QoS)
     ASSERT_TRUE(qos.entity_factory() == PARTICIPANT_QOS_DEFAULT.entity_factory());
+}
+
+/**
+ * This test checks that:
+ *
+ * 1. In the case of disabled Statistics, none of the physical data related properties are present in a default
+ *    constructed DomainParticipantQos.
+ * 2. In the case of enabled Statistics, all of the physical data related properties are present in a default
+ *    constructed DomainParticipantQos, and that their default value is empty.
+ */
+TEST(ParticipantTests, DomainParticipantQosPhysicalProperties)
+{
+    std::vector<std::string> property_names = {
+        parameter_policy_physical_data_host,
+        parameter_policy_physical_data_user,
+        parameter_policy_physical_data_process
+    };
+#ifndef FASTDDS_STATISTICS
+    /* Check the behaviour when FASTDDS_STATISTICS is NOT defined */
+    DomainParticipantQos qos_1;
+    for (std::string property_name : property_names)
+    {
+        std::string* property = fastrtps::rtps::PropertyPolicyHelper::find_property(qos_1.properties(), property_name);
+        ASSERT_EQ(nullptr, property);
+    }
+#else
+    /* Check the behaviour when FASTDDS_STATISTICS is defined */
+    DomainParticipantQos qos_2;
+    for (std::string property_name : property_names)
+    {
+        std::string* property = fastrtps::rtps::PropertyPolicyHelper::find_property(qos_2.properties(), property_name);
+        ASSERT_NE(nullptr, property);
+        ASSERT_TRUE(property->empty());
+    }
+#endif // ifndef FASTDDS_STATISTICS
 }
 
 TEST(ParticipantTests, CreateDomainParticipantWithProfile)
@@ -494,7 +563,7 @@ TEST(ParticipantTests, ChangeDomainParticipantQos)
     DomainParticipantQos qos;
     participant->get_qos(qos);
 
-    ASSERT_EQ(qos, PARTICIPANT_QOS_DEFAULT);
+    check_equivalent_qos(qos, PARTICIPANT_QOS_DEFAULT);
 
     qos.entity_factory().autoenable_created_entities = false;
     ASSERT_TRUE(participant->set_qos(qos) == ReturnCode_t::RETCODE_OK);
@@ -515,7 +584,7 @@ TEST(ParticipantTests, ChangePSMDomainParticipantQos)
     participant = ::dds::domain::DomainParticipant(0, PARTICIPANT_QOS_DEFAULT);
     ::dds::domain::qos::DomainParticipantQos qos = participant.qos();
 
-    ASSERT_EQ(qos, PARTICIPANT_QOS_DEFAULT);
+    check_equivalent_qos(qos, PARTICIPANT_QOS_DEFAULT);
 
     qos.entity_factory().autoenable_created_entities = false;
     ASSERT_NO_THROW(participant.qos(qos));
@@ -1012,7 +1081,7 @@ TEST(ParticipantTests, ChangeWireProtocolQos)
     DomainParticipantQos qos;
     participant->get_qos(qos);
 
-    ASSERT_EQ(qos, PARTICIPANT_QOS_DEFAULT);
+    check_equivalent_qos(qos, PARTICIPANT_QOS_DEFAULT);
 
     // Check that just adding two servers is OK
     rtps::RemoteServerAttributes server;
@@ -1985,7 +2054,7 @@ TEST(ParticipantTests, ChangeAllocationDomainParticipantQos)
     DomainParticipantQos qos;
     participant->get_qos(qos);
 
-    ASSERT_EQ(qos, PARTICIPANT_QOS_DEFAULT);
+    check_equivalent_qos(qos, PARTICIPANT_QOS_DEFAULT);
 
     qos.allocation().data_limits.max_properties = 10;
     ASSERT_EQ(participant->set_qos(qos), ReturnCode_t::RETCODE_OK);
@@ -2023,7 +2092,7 @@ TEST(ParticipantTests, ChangeDomainParcipantName)
     DomainParticipantQos qos;
     participant->get_qos(qos);
 
-    ASSERT_EQ(qos, PARTICIPANT_QOS_DEFAULT);
+    check_equivalent_qos(qos, PARTICIPANT_QOS_DEFAULT);
 
     qos.name() = "part1";
     ASSERT_EQ(participant->set_qos(qos), ReturnCode_t::RETCODE_OK);
