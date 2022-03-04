@@ -187,7 +187,16 @@ public:
     RTPS_DllAPI ReturnCode_t write_w_timestamp(
             void* data,
             const InstanceHandle_t& handle,
+            const fastrtps::Time_t& timestamp);
+
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
+    FASTDDS_DEPRECATED_UNTIL(3, "eprosima::fastdds::dds:DataWriter::write_w_timestamp()",
+            "In favor of version using eprosima::fastrtps::Time_t.")
+    RTPS_DllAPI ReturnCode_t write_w_timestamp(
+            void* data,
+            const InstanceHandle_t& handle,
             const fastrtps::rtps::Time_t& timestamp);
+#endif // DOXYGEN_SHOULD_SKIP_THIS
 
     /*!
      * @brief Informs that the application will be modifying a particular instance.
@@ -223,7 +232,15 @@ public:
      */
     RTPS_DllAPI InstanceHandle_t register_instance_w_timestamp(
             void* instance,
+            const fastrtps::Time_t& timestamp);
+
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
+    FASTDDS_DEPRECATED_UNTIL(3, "eprosima::fastdds::dds:DataWriter::register_instance_w_timestamp()",
+            "In favor of version using eprosima::fastrtps::Time_t.")
+    RTPS_DllAPI InstanceHandle_t register_instance_w_timestamp(
+            void* instance,
             const fastrtps::rtps::Time_t& timestamp);
+#endif // DOXYGEN_SHOULD_SKIP_THIS
 
     /*!
      * @brief This operation reverses the action of `register_instance`.
@@ -264,7 +281,16 @@ public:
     RTPS_DllAPI ReturnCode_t unregister_instance_w_timestamp(
             void* instance,
             const InstanceHandle_t& handle,
+            const fastrtps::Time_t& timestamp);
+
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
+    FASTDDS_DEPRECATED_UNTIL(3, "eprosima::fastdds::dds:DataWriter::unregister_instance_w_timestamp()",
+            "In favor of version using eprosima::fastrtps::Time_t.")
+    RTPS_DllAPI ReturnCode_t unregister_instance_w_timestamp(
+            void* instance,
+            const InstanceHandle_t& handle,
             const fastrtps::rtps::Time_t& timestamp);
+#endif // DOXYGEN_SHOULD_SKIP_THIS
 
     /**
      * NOT YET IMPLEMENTED
