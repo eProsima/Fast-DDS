@@ -230,6 +230,28 @@ public:
         return m_userDefinedId;
     }
 
+    RTPS_DllAPI void content_filter(
+            const ContentFilterProperty& filter)
+    {
+        content_filter_ = filter;
+    }
+
+    RTPS_DllAPI void content_filter(
+            ContentFilterProperty&& filter)
+    {
+        content_filter_ = std::move(filter);
+    }
+
+    RTPS_DllAPI const ContentFilterProperty& content_filter() const
+    {
+        return content_filter_;
+    }
+
+    RTPS_DllAPI ContentFilterProperty& content_filter()
+    {
+        return content_filter_;
+    }
+
     RTPS_DllAPI void isAlive(
             bool isAlive)
     {
