@@ -109,12 +109,14 @@ set_property(TARGET DynamicTypesTests PROPERTY CROSSCOMPILING_EMULATOR "adb;shel
 set_property(TARGET DynamicComplexTypesTests PROPERTY CROSSCOMPILING_EMULATOR "adb;shell;cd;${CMAKE_CURRENT_BINARY_DIR}/unittest/dynamic_types; ;&&;LD_LIBRARY_PATH=${ANDROID_TESTING_ROOT}/install/x86_64/lib")
 set_property(TARGET DynamicTypes_4_2_Tests PROPERTY CROSSCOMPILING_EMULATOR "adb;shell;cd;${CMAKE_CURRENT_BINARY_DIR}/unittest/dynamic_types; ;&&;LD_LIBRARY_PATH=${ANDROID_TESTING_ROOT}/install/x86_64/lib")
 
+if (SECURITY)
 set_property(TARGET BuiltinAESGCMGMAC PROPERTY CROSSCOMPILING_EMULATOR "adb;shell;cd;${CMAKE_CURRENT_BINARY_DIR}/; ;&&;LD_LIBRARY_PATH=${ANDROID_TESTING_ROOT}/install/x86_64/lib;CERTS_PATH=/data/local/tmp/test/certs")
 set_property(TARGET AccessControlTests PROPERTY CROSSCOMPILING_EMULATOR "adb;shell;cd;${CMAKE_CURRENT_BINARY_DIR}/; ;&&;LD_LIBRARY_PATH=${ANDROID_TESTING_ROOT}/install/x86_64/lib;CERTS_PATH=/data/local/tmp/test/certs")
 set_property(TARGET AccessControlTests PROPERTY CROSSCOMPILING_EMULATOR "adb;shell;cd;${CMAKE_CURRENT_BINARY_DIR}/; ;&&;LD_LIBRARY_PATH=${ANDROID_TESTING_ROOT}/install/x86_64/lib;CERTS_PATH=/data/local/tmp/test/certs")
 set_property(TARGET BuiltinLogging PROPERTY CROSSCOMPILING_EMULATOR "adb;shell;cd;${CMAKE_CURRENT_BINARY_DIR}/; ;&&;LD_LIBRARY_PATH=${ANDROID_TESTING_ROOT}/install/x86_64/lib;CERTS_PATH=/data/local/tmp/test/certs")
 set_property(TARGET BuiltinPKIDH PROPERTY CROSSCOMPILING_EMULATOR "adb;shell;cd;${CMAKE_CURRENT_BINARY_DIR}/; ;&&;LD_LIBRARY_PATH=${ANDROID_TESTING_ROOT}/install/x86_64/lib;CERTS_PATH=/data/local/tmp/test/certs")
-#
+endif()
+
 set_property(TARGET EntityTests PROPERTY CROSSCOMPILING_EMULATOR "adb;shell;cd;${CMAKE_CURRENT_BINARY_DIR}/unittest/dds/core/entity; ;&&;LD_LIBRARY_PATH=${ANDROID_TESTING_ROOT}/install/x86_64/lib")
 set_property(TARGET ConditionTests PROPERTY CROSSCOMPILING_EMULATOR "adb;shell;cd;${CMAKE_CURRENT_BINARY_DIR}/unittest/dds/core/condition; ;&&;LD_LIBRARY_PATH=${ANDROID_TESTING_ROOT}/install/x86_64/lib")
 set_property(TARGET ConditionNotifierTests PROPERTY CROSSCOMPILING_EMULATOR "adb;shell;cd;${CMAKE_CURRENT_BINARY_DIR}/unittest/dds/core/condition; ;&&;LD_LIBRARY_PATH=${ANDROID_TESTING_ROOT}/install/x86_64/lib")
