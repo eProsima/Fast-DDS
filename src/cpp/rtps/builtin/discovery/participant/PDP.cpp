@@ -355,6 +355,22 @@ void PDP::initializeParticipantProxyData(
     participant_type << mp_RTPSParticipant->getAttributes().builtin.discovery_config.discoveryProtocol;
     auto ptype = participant_type.str();
     participant_data->m_properties.push_back(fastdds::dds::parameter_property_participant_type, ptype);
+
+    /* Add physical properties if present */
+    std::vector<std::string> physical_property_names = {
+        fastdds::dds::parameter_policy_physical_data_host,
+        fastdds::dds::parameter_policy_physical_data_user,
+        fastdds::dds::parameter_policy_physical_data_process
+    };
+    for (auto physical_property_name : physical_property_names)
+    {
+        std::string* physical_property = PropertyPolicyHelper::find_property(
+            mp_RTPSParticipant->getAttributes().properties, physical_property_name);
+        if (nullptr != physical_property)
+        {
+            participant_data->m_properties.push_back(physical_property_name, *physical_property);
+        }
+    }
 }
 
 bool PDP::initPDP(
