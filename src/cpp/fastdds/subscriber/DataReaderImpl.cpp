@@ -244,7 +244,20 @@ ReturnCode_t DataReaderImpl::enable()
             rqos.m_partition.push_back(partition_name.c_str());
         }
     }
-    subscriber_->rtps_participant()->registerReader(reader_, topic_attributes(), rqos);
+
+    eprosima::fastdds::rtps::ContentFilterProperty filter_property({});
+    if (nullptr != content_topic)
+    {
+        filter_property.filter_class_name = content_topic->filter_class_name;
+        filter_property.content_filtered_topic_name = topic_->get_name();
+        filter_property.related_topic_name = topic_->get_impl()->get_rtps_topic_name();
+        filter_property.filter_expression = content_topic->expression;
+        for (const std::string& param : content_topic->parameters)
+        {
+            filter_property.expression_parameters.emplace_back(param);
+        }
+    }
+    subscriber_->rtps_participant()->registerReader(reader_, topic_attributes(), rqos, &filter_property);
 
     return ReturnCode_t::RETCODE_OK;
 }
