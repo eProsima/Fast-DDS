@@ -29,6 +29,7 @@
 #include "ProxyDataFilters.hpp"
 
 using ParameterList = eprosima::fastdds::dds::ParameterList;
+using ContentFilterProperty = eprosima::fastdds::rtps::ContentFilterProperty;
 
 namespace eprosima {
 namespace fastrtps {
@@ -311,6 +312,9 @@ uint32_t ReaderProxyData::get_serialized_size(
         ret_val += fastdds::dds::ParameterSerializer<ParameterPropertyList_t>::cdr_serialized_size(m_properties);
     }
 
+    // PID_CONTENT_FILTER_PROPERTY
+    ret_val += fastdds::dds::ParameterSerializer<ContentFilterProperty>::cdr_serialized_size(content_filter_);
+
 #if HAVE_SECURITY
     if ((this->security_attributes_ != 0UL) || (this->plugin_security_attributes_ != 0UL))
     {
@@ -547,6 +551,11 @@ bool ReaderProxyData::writeToCDRMessage(
         {
             return false;
         }
+    }
+
+    if (!fastdds::dds::ParameterSerializer<ContentFilterProperty>::add_to_cdr_message(content_filter_, msg))
+    {
+        return false;
     }
 
 #if HAVE_SECURITY
@@ -958,6 +967,16 @@ bool ReaderProxyData::readFromCDRMessage(
                         break;
                     }
 
+                    case fastdds::dds::PID_CONTENT_FILTER_PROPERTY:
+                    {
+                        if (!fastdds::dds::ParameterSerializer<ContentFilterProperty>::read_from_cdr_message(
+                                    content_filter_, msg, plength))
+                        {
+                            return false;
+                        }
+                        break;
+                    }
+
                     case fastdds::dds::PID_DATASHARING:
                     {
                         if (!fastdds::dds::QosPoliciesSerializer<DataSharingQosPolicy>::read_from_cdr_message(
@@ -1036,6 +1055,11 @@ void ReaderProxyData::clear()
     m_qos.clear();
     m_properties.clear();
     m_properties.length = 0;
+    content_filter_.filter_class_name = "";
+    content_filter_.content_filtered_topic_name = "";
+    content_filter_.related_topic_name = "";
+    content_filter_.filter_expression = "";
+    content_filter_.expression_parameters.clear();
 
     if (m_type_id)
     {

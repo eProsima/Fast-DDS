@@ -21,6 +21,8 @@
 #define FASTDDS_CORE_POLICY__PARAMETERSERIALIZER_HPP_
 
 #include "ParameterList.hpp"
+
+#include <fastdds/rtps/builtin/data/ContentFilterProperty.hpp>
 #include <fastdds/rtps/common/CDRMessage_t.h>
 
 namespace eprosima {
@@ -706,6 +708,40 @@ inline bool ParameterSerializer<ParameterSampleIdentity_t>::read_content_from_cd
     valid &= fastrtps::rtps::CDRMessage::readUInt32(cdr_message, &parameter.sample_id.sequence_number().low);
     return valid;
 }
+
+template<>
+class ParameterSerializer<fastdds::rtps::ContentFilterProperty>
+{
+public:
+
+    static uint32_t cdr_serialized_size(
+            const fastdds::rtps::ContentFilterProperty& parameter)
+    {
+        static_cast<void>(parameter);
+        return 0;
+    }
+
+    static bool add_to_cdr_message(
+            const fastdds::rtps::ContentFilterProperty& parameter,
+            fastrtps::rtps::CDRMessage_t* cdr_message)
+    {
+        static_cast<void>(parameter);
+        static_cast<void>(cdr_message);
+        return true;
+    }
+
+    static bool read_from_cdr_message(
+            fastdds::rtps::ContentFilterProperty& parameter,
+            fastrtps::rtps::CDRMessage_t* cdr_message,
+            const uint16_t parameter_length)
+    {
+        static_cast<void>(parameter);
+        static_cast<void>(cdr_message);
+        static_cast<void>(parameter_length);
+        return true;
+    }
+
+};
 
 #if HAVE_SECURITY
 
