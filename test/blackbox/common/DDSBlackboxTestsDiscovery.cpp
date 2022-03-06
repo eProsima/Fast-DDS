@@ -444,7 +444,7 @@ TEST(DDSDiscovery, ParticipantProxyPhysicalData)
         std::atomic<bool>* found_;
     };
 
-    std::srand(std::time(nullptr));
+    std::srand(static_cast<unsigned int>(std::time(nullptr)));
     int domain_id = std::rand() % 100;
 
     std::vector<std::string> physical_property_names =
