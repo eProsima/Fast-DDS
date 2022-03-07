@@ -720,6 +720,11 @@ InstanceHandle_t DataReaderImpl::get_instance_handle() const
 
 void DataReaderImpl::subscriber_qos_updated()
 {
+    update_rtps_reader_qos();
+}
+
+void DataReaderImpl::update_rtps_reader_qos()
+{
     if (reader_)
     {
         //NOTIFY THE BUILTIN PROTOCOLS THAT THE READER HAS CHANGED
@@ -761,9 +766,8 @@ ReturnCode_t DataReaderImpl::set_qos(
 
     if (enabled)
     {
-        //NOTIFY THE BUILTIN PROTOCOLS THAT THE READER HAS CHANGED
-        ReaderQos rqos = qos.get_readerqos(get_subscriber()->get_qos());
-        subscriber_->rtps_participant()->updateReader(reader_, topic_attributes(), rqos);
+        // NOTIFY THE BUILTIN PROTOCOLS THAT THE READER HAS CHANGED
+        update_rtps_reader_qos();
 
         // Deadline
         if (qos_.deadline().period != c_TimeInfinite)

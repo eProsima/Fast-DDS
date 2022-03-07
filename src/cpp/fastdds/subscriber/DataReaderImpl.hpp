@@ -489,6 +489,9 @@ protected:
             const fastrtps::rtps::ReaderAttributes& reader_attributes,
             bool& is_datasharing_compatible) const;
 
+private:
+
+    void update_rtps_reader_qos();
 
 };
 
