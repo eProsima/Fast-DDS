@@ -20,9 +20,12 @@
 
 #include <cmath>
 
-#include <rtps/participant/RTPSParticipantImpl.h>
+#include <algorithm>
+#include <string>
 
 #include <fastdds/dds/log/Log.hpp>
+#include <fastrtps/qos/ParameterTypes.h>
+#include <rtps/participant/RTPSParticipantImpl.h>
 
 using namespace eprosima::fastdds::statistics;
 using eprosima::fastrtps::rtps::RTPSParticipantImpl;
@@ -474,15 +477,44 @@ void StatisticsParticipantImpl::on_rtps_sent(
 }
 
 void StatisticsParticipantImpl::on_entity_discovery(
-        const fastrtps::rtps::GUID_t& id)
+        const fastrtps::rtps::GUID_t& id,
+        const fastdds::dds::ParameterPropertyList_t& properties)
 {
-    using namespace std;
     using namespace fastrtps;
+
+    /**
+     * @brief Get the value of a property from a property list.
+     *
+     * @param properties The list of properties
+     * @param property_name The name of the property
+     *
+     * @return The value of the property. If the property is not found, then return "".
+     *
+     */
+    auto get_physical_property_value =
+            [](const dds::ParameterPropertyList_t& properties, const std::string& property_name)
+            {
+                auto property = std::find_if(
+                    properties.begin(),
+                    properties.end(),
+                    [&](const dds::ParameterProperty_t& property)
+                    {
+                        return property.first() == property_name;
+                    });
+                if (property != properties.end())
+                {
+                    return property->second();
+                }
+                return std::string("");
+            };
 
     // Compose callback and update the inner state
     DiscoveryTime notification;
     notification.local_participant_guid(to_statistics_type(get_guid()));
     notification.remote_entity_guid(to_statistics_type(id));
+    notification.host(get_physical_property_value(properties, dds::parameter_policy_physical_data_host));
+    notification.user(get_physical_property_value(properties, dds::parameter_policy_physical_data_user));
+    notification.process(get_physical_property_value(properties, dds::parameter_policy_physical_data_process));
 
     {
         // generate callback timestamp

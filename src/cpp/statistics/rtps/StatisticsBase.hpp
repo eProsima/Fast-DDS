@@ -27,9 +27,8 @@
 #include <fastdds/rtps/common/Guid.h>
 #include <fastdds/rtps/common/Locator.h>
 #include <fastdds/rtps/common/SampleIdentity.h>
-
 #include <fastdds/statistics/rtps/StatisticsCommon.hpp>
-
+#include <fastrtps/qos/ParameterTypes.h>
 #include <statistics/rtps/GuidUtils.hpp>
 #include <statistics/rtps/messages/RTPSStatisticsMessages.hpp>
 #include <statistics/types/types.h>
@@ -332,12 +331,14 @@ protected:
         }
     }
 
-    /*
-     * Report that a new entity is discovered
+    /**
+     * @brief Report that a new entity is discovered
      * @param id discovered entity GUID_t
+     * @param properties The property list of the discoved entity
      */
     void on_entity_discovery(
-            const GUID_t& id);
+            const GUID_t& id,
+            const fastdds::dds::ParameterPropertyList_t& properties);
 
     /*
      * Auxiliary method to report PDP message exchange.

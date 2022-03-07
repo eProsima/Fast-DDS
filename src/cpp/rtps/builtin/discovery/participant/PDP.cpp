@@ -221,7 +221,7 @@ ParticipantProxyData* PDP::add_participant_proxy_data(
     participant_proxies_.push_back(ret_val);
 
     // notify statistics module
-    getRTPSParticipant()->on_entity_discovery(participant_guid);
+    getRTPSParticipant()->on_entity_discovery(participant_guid, ret_val->m_properties);
 
     return ret_val;
 }
@@ -729,7 +729,7 @@ ReaderProxyData* PDP::addReaderProxyData(
     ReaderProxyData* ret_val = nullptr;
 
     // notify statistics module
-    getRTPSParticipant()->on_entity_discovery(reader_guid);
+    getRTPSParticipant()->on_entity_discovery(reader_guid, ParameterPropertyList_t());
 
     std::lock_guard<std::recursive_mutex> guardPDP(*this->mp_mutex);
 
@@ -824,7 +824,7 @@ WriterProxyData* PDP::addWriterProxyData(
     WriterProxyData* ret_val = nullptr;
 
     // notify statistics module
-    getRTPSParticipant()->on_entity_discovery(writer_guid);
+    getRTPSParticipant()->on_entity_discovery(writer_guid, ParameterPropertyList_t());
 
     std::lock_guard<std::recursive_mutex> guardPDP(*this->mp_mutex);
 
