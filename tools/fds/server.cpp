@@ -164,6 +164,8 @@ int fastdds_discovery_server(
         fastrtps::rtps::GuidPrefix_t prefix_cero;
         if (participantQos.wire_protocol().builtin.discovery_config.discoveryProtocol !=
                 eprosima::fastrtps::rtps::DiscoveryProtocol::SERVER ||
+                participantQos.wire_protocol().builtin.discovery_config.discoveryProtocol !=
+                eprosima::fastrtps::rtps::DiscoveryProtocol::BACKUP ||
                 participantQos.wire_protocol().prefix == prefix_cero)
         {
             std::cout << "Server id is mandatory if not defined in the XML file: use -i or --server-id option."
@@ -201,8 +203,27 @@ int fastdds_discovery_server(
     }
 
     // Choose the kind of server to create
-    participantQos.wire_protocol().builtin.discovery_config.discoveryProtocol =
-            options[BACKUP] ? DiscoveryProtocol::BACKUP : DiscoveryProtocol::SERVER;
+    pOp = options[BACKUP];
+    if (nullptr != pOp)
+    {
+        participantQos.wire_protocol().builtin.discovery_config.discoveryProtocol = DiscoveryProtocol::BACKUP;
+    }
+    else if (nullptr != options[XML_FILE])
+    {
+        if (participantQos.wire_protocol().builtin.discovery_config.discoveryProtocol !=
+                eprosima::fastrtps::rtps::DiscoveryProtocol::SERVER ||
+                participantQos.wire_protocol().builtin.discovery_config.discoveryProtocol !=
+                eprosima::fastrtps::rtps::DiscoveryProtocol::BACKUP)
+        {
+            std::cout << "The provided configuration is not valid. Participant must be either SERVER or BACKUP." <<
+                    std::endl;
+            return 1;
+        }
+    }
+    else
+    {
+        participantQos.wire_protocol().builtin.discovery_config.discoveryProtocol = DiscoveryProtocol::SERVER;
+    }
 
     // Set up listening locators.
     // If the number of specify ports doesn't match the number of IPs the last port is used.
@@ -237,58 +258,62 @@ int fastdds_discovery_server(
     }
     else
     {
-        while (pOp)
+        if (nullptr != pOp)
         {
-            // Get next address
-            std::string address = std::string(pOp->arg);
-
-            // Check whether the address is IPv4
-            if (!IPLocator::isIPv4(address))
+            participantQos.wire_protocol().builtin.metatrafficUnicastLocatorList.clear();
+            while (pOp)
             {
-                auto response = IPLocator::resolveNameDNS(address);
+                // Get next address
+                std::string address = std::string(pOp->arg);
 
-                // Add the first valid IPv4 address that we can find
-                if (response.first.size() > 0)
+                // Check whether the address is IPv4
+                if (!IPLocator::isIPv4(address))
                 {
-                    address = response.first.begin()->data();
+                    auto response = IPLocator::resolveNameDNS(address);
+
+                    // Add the first valid IPv4 address that we can find
+                    if (response.first.size() > 0)
+                    {
+                        address = response.first.begin()->data();
+                    }
                 }
-            }
 
-            // Update locator address
-            if (!IPLocator::setIPv4(locator, address))
-            {
-                std::cout << "Invalid listening locator address specified:" << address << std::endl;
-                return 1;
-            }
-
-            // Update UDP port
-            if (nullptr != pO_port)
-            {
-                std::stringstream is;
-                is << pO_port->arg;
-                uint16_t id;
-
-                if (!(is >> id
-                        && is.eof()
-                        && IPLocator::setPhysicalPort(locator, id)))
+                // Update locator address
+                if (!IPLocator::setIPv4(locator, address))
                 {
-                    std::cout << "Invalid listening locator port specified:" << id << std::endl;
+                    std::cout << "Invalid listening locator address specified:" << address << std::endl;
                     return 1;
                 }
-            }
 
-            // Add the locator
-            participantQos.wire_protocol().builtin.metatrafficUnicastLocatorList.push_back(locator);
+                // Update UDP port
+                if (nullptr != pO_port)
+                {
+                    std::stringstream is;
+                    is << pO_port->arg;
+                    uint16_t id;
 
-            pOp = pOp->next();
-            if (pO_port)
-            {
-                pO_port = pO_port->next();
-            }
-            else
-            {
-                std::cout << "Warning: the number of specified ports doesn't match the ip" << std::endl
-                          << "         addresses provided. Locators share its port number." << std::endl;
+                    if (!(is >> id
+                            && is.eof()
+                            && IPLocator::setPhysicalPort(locator, id)))
+                    {
+                        std::cout << "Invalid listening locator port specified:" << id << std::endl;
+                        return 1;
+                    }
+                }
+
+                // Add the locator
+                participantQos.wire_protocol().builtin.metatrafficUnicastLocatorList.push_back(locator);
+
+                pOp = pOp->next();
+                if (pO_port)
+                {
+                    pO_port = pO_port->next();
+                }
+                else
+                {
+                    std::cout << "Warning: the number of specified ports doesn't match the ip" << std::endl
+                            << "         addresses provided. Locators share its port number." << std::endl;
+                }
             }
         }
     }
