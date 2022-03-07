@@ -566,6 +566,7 @@ ContentFilteredTopic* DomainParticipantImpl::create_contentfilteredtopic(
     content_topic_impl->filter_property.filter_class_name = filter_class_name;
     content_topic_impl->filter_factory = filter_factory;
     content_topic_impl->filter_instance = filter_instance;
+    content_topic_impl->update_signature();
 
     // Save the topic into the map
     filtered_topics_.emplace(std::make_pair(name, std::unique_ptr<ContentFilteredTopic>(topic)));

@@ -19,6 +19,8 @@
 #ifndef _FASTDDS_TOPIC_CONTENTFILTEREDTOPICIMPL_HPP_
 #define _FASTDDS_TOPIC_CONTENTFILTEREDTOPICIMPL_HPP_
 
+#include <cstdint>
+#include <array>
 #include <string>
 
 #include <fastdds/dds/core/LoanableSequence.hpp>
@@ -71,6 +73,8 @@ public:
         readers_.erase(reader);
     }
 
+    void update_signature();
+
     ReturnCode_t set_expression_parameters(
             const char* new_expression,
             const std::vector<std::string>& new_expression_parameters);
@@ -83,6 +87,8 @@ public:
 private:
 
     std::set<DataReaderImpl*> readers_;
+    std::array<uint8_t, 16> filter_signature_;
+    std::array<uint8_t, 16> filter_signature_rti_connext_;
 };
 
 } /* namespace dds */
