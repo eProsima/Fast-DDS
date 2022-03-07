@@ -283,10 +283,10 @@ TEST_F(DDSSQLFilterTests, type_compatibility_like)
                 test_cases.emplace_back(TestCase{ field.first + " LIKE %0", {}, bad_code });
 
                 // operand LIKE field
-                test_cases.emplace_back(TestCase{ check.first + " LIKE " + field.first, {}, ret });
-                test_cases.emplace_back(TestCase{ "%0 LIKE " + field.first, {check.first}, ret });
-                test_cases.emplace_back(TestCase{ "%1 LIKE " + field.first, {check.first}, bad_code });
-                test_cases.emplace_back(TestCase{ "%0 LIKE " + field.first, {}, bad_code });
+                test_cases.emplace_back(TestCase{ check.first + " like " + field.first, {}, ret });
+                test_cases.emplace_back(TestCase{ "%0 like " + field.first, {check.first}, ret });
+                test_cases.emplace_back(TestCase{ "%1 like " + field.first, {check.first}, bad_code });
+                test_cases.emplace_back(TestCase{ "%0 like " + field.first, {}, bad_code });
             }
         }
 
@@ -346,8 +346,8 @@ TEST_F(DDSSQLFilterTests, type_compatibility_match)
             {"'%'", ok_code},
             {"'''", ok_code},
             // Boolean values
-            {"FALSE", bad_code},
-            {"TRUE", bad_code},
+            {"false", bad_code},
+            {"true", bad_code},
             // Integer values
             {"1", bad_code},
             {"-1", bad_code},
@@ -373,10 +373,10 @@ TEST_F(DDSSQLFilterTests, type_compatibility_match)
                 test_cases.emplace_back(TestCase{ field.first + " MATCH %0", {}, bad_code });
 
                 // operand MATCH field
-                test_cases.emplace_back(TestCase{ check.first + " MATCH " + field.first, {}, ret });
-                test_cases.emplace_back(TestCase{ "%0 MATCH " + field.first, {check.first}, ret });
-                test_cases.emplace_back(TestCase{ "%1 MATCH " + field.first, {check.first}, bad_code });
-                test_cases.emplace_back(TestCase{ "%0 MATCH " + field.first, {}, bad_code });
+                test_cases.emplace_back(TestCase{ check.first + " match " + field.first, {}, ret });
+                test_cases.emplace_back(TestCase{ "%0 match " + field.first, {check.first}, ret });
+                test_cases.emplace_back(TestCase{ "%1 match " + field.first, {check.first}, bad_code });
+                test_cases.emplace_back(TestCase{ "%0 match " + field.first, {}, bad_code });
             }
         }
 
@@ -444,7 +444,9 @@ TEST_F(DDSSQLFilterTests, type_compatibility_compare)
             {"'''", "CHAR"},
             // Boolean values
             {"FALSE", "BOOL"},
+            {"false", "BOOL"},
             {"TRUE", "BOOL"},
+            {"true", "BOOL"},
             // Integer values
             {"1", "INT"},
             {"-1", "INT"},
@@ -1026,7 +1028,11 @@ TEST_P(DDSSQLFilterValueTests, test_filtered_value)
 
 TEST_F(DDSSQLFilterValueTests, test_compound_not)
 {
-    static const std::string expression = "NOT (float_field = %0)";
+    static const std::string expressions[2] =
+    {
+        "NOT (float_field = %0)",
+        "not (float_field = %0)"
+    };
 
     static const std::array<std::string, 5> param_values =
     {
@@ -1037,77 +1043,94 @@ TEST_F(DDSSQLFilterValueTests, test_compound_not)
         std::to_string(std::numeric_limits<float>::max())
     };
 
-    IContentFilter* filter = nullptr;
-    auto ret = create_content_filter(uut, expression, { param_values.back() }, &type_support, filter);
-    EXPECT_EQ(ReturnCode_t::RETCODE_OK, ret);
-    ASSERT_NE(nullptr, filter);
-
-    const auto& values = DDSSQLFilterValueGlobalData::values();
-    std::array<bool, 5> results;
-    StackAllocatedSequence<const char*, 1> params;
-    params.length(1);
-
-    ASSERT_EQ(results.size(), values.size());
-
-    for (size_t i = 0; i < param_values.size(); ++i)
+    for (const std::string& expression : expressions)
     {
-        // Update parameter value
-        params[0] = param_values[i].c_str();
-        ret = uut.create_content_filter("DDSSQL", "ContentFilterTestType", &type_support, nullptr, params, filter);
+        IContentFilter* filter = nullptr;
+        auto ret = create_content_filter(uut, expression, { param_values.back() }, &type_support, filter);
         EXPECT_EQ(ReturnCode_t::RETCODE_OK, ret);
         ASSERT_NE(nullptr, filter);
 
-        // Update expected results
-        results.fill(true);
-        results[i] = false;
-        for (size_t j = 0; j < values.size(); ++j)
-        {
-            IContentFilter::FilterSampleInfo info;
-            IContentFilter::GUID_t guid;
-            EXPECT_EQ(results[j], filter->evaluate(*values[j], info, guid)) << "with i = " << i << ", j = " << j;
-        }
-    }
+        const auto& values = DDSSQLFilterValueGlobalData::values();
+        std::array<bool, 5> results;
+        StackAllocatedSequence<const char*, 1> params;
+        params.length(1);
 
-    ret = uut.delete_content_filter("DDSSQL", filter);
-    EXPECT_EQ(ReturnCode_t::RETCODE_OK, ret);
+        ASSERT_EQ(results.size(), values.size());
+
+        for (size_t i = 0; i < param_values.size(); ++i)
+        {
+            // Update parameter value
+            params[0] = param_values[i].c_str();
+            ret = uut.create_content_filter("DDSSQL", "ContentFilterTestType", &type_support, nullptr, params, filter);
+            EXPECT_EQ(ReturnCode_t::RETCODE_OK, ret);
+            ASSERT_NE(nullptr, filter);
+
+            // Update expected results
+            results.fill(true);
+            results[i] = false;
+            for (size_t j = 0; j < values.size(); ++j)
+            {
+                IContentFilter::FilterSampleInfo info;
+                IContentFilter::GUID_t guid;
+                EXPECT_EQ(results[j], filter->evaluate(*values[j], info, guid)) << "with i = " << i << ", j = " << j;
+            }
+        }
+
+        ret = uut.delete_content_filter("DDSSQL", filter);
+        EXPECT_EQ(ReturnCode_t::RETCODE_OK, ret);
+    }
 }
 
 TEST_F(DDSSQLFilterValueTests, test_compound_and)
 {
-    static const std::string expression = "float_field BETWEEN %0 AND %1 AND int16_field < 0";
+    static const std::string expressions[2] =
+    {
+        "float_field BETWEEN %0 AND %1 AND int16_field < 0",
+        "float_field between %0 and %1 and int16_field < 0"
+    };
 
-    IContentFilter* filter = nullptr;
-    auto ret = create_content_filter(uut, expression, { "-3.14159", "3.14159" }, &type_support, filter);
-    EXPECT_EQ(ReturnCode_t::RETCODE_OK, ret);
-    ASSERT_NE(nullptr, filter);
+    for (const std::string& expression : expressions)
+    {
+        IContentFilter* filter = nullptr;
+        auto ret = create_content_filter(uut, expression, { "-3.14159", "3.14159" }, &type_support, filter);
+        EXPECT_EQ(ReturnCode_t::RETCODE_OK, ret);
+        ASSERT_NE(nullptr, filter);
 
-    const auto& values = DDSSQLFilterValueGlobalData::values();
-    std::array<bool, 5> results{false, true, false, false, false};
+        const auto& values = DDSSQLFilterValueGlobalData::values();
+        std::array<bool, 5> results{false, true, false, false, false};
 
-    ASSERT_EQ(results.size(), values.size());
-    perform_basic_check(filter, results, values);
+        ASSERT_EQ(results.size(), values.size());
+        perform_basic_check(filter, results, values);
 
-    ret = uut.delete_content_filter("DDSSQL", filter);
-    EXPECT_EQ(ReturnCode_t::RETCODE_OK, ret);
+        ret = uut.delete_content_filter("DDSSQL", filter);
+        EXPECT_EQ(ReturnCode_t::RETCODE_OK, ret);
+    }
 }
 
 TEST_F(DDSSQLFilterValueTests, test_compound_or)
 {
-    static const std::string expression = "float_field BETWEEN %0 AND %1 OR int16_field > 0";
+    static const std::string expressions[2] =
+    {
+        "float_field NOT BETWEEN %0 AND %1 OR int16_field > 0",
+        "float_field not between %0 and %1 or int16_field > 0"
+    };
 
-    IContentFilter* filter = nullptr;
-    auto ret = create_content_filter(uut, expression, { "-3.14159", "3.14159" }, &type_support, filter);
-    EXPECT_EQ(ReturnCode_t::RETCODE_OK, ret);
-    ASSERT_NE(nullptr, filter);
+    for (const std::string& expression : expressions)
+    {
+        IContentFilter* filter = nullptr;
+        auto ret = create_content_filter(uut, expression, { "-3.14159", "3.14159" }, &type_support, filter);
+        EXPECT_EQ(ReturnCode_t::RETCODE_OK, ret);
+        ASSERT_NE(nullptr, filter);
 
-    const auto& values = DDSSQLFilterValueGlobalData::values();
-    std::array<bool, 5> results{false, true, true, true, true};
+        const auto& values = DDSSQLFilterValueGlobalData::values();
+        std::array<bool, 5> results{ true, false, false, true, true };
 
-    ASSERT_EQ(results.size(), values.size());
-    perform_basic_check(filter, results, values);
+        ASSERT_EQ(results.size(), values.size());
+        perform_basic_check(filter, results, values);
 
-    ret = uut.delete_content_filter("DDSSQL", filter);
-    EXPECT_EQ(ReturnCode_t::RETCODE_OK, ret);
+        ret = uut.delete_content_filter("DDSSQL", filter);
+        EXPECT_EQ(ReturnCode_t::RETCODE_OK, ret);
+    }
 }
 
 TEST_F(DDSSQLFilterValueTests, test_update_params)
