@@ -118,7 +118,7 @@ int fastdds_discovery_server(
             }
 
             if (ReturnCode_t::RETCODE_OK != DomainParticipantFactory::get_instance()->load_XML_profiles_file(
-                    sXMLConfigFile))
+                        sXMLConfigFile))
             {
                 std::cout << "Cannot open XML file " << sXMLConfigFile << ". Please, check the path of this "
                           << "XML file." << std::endl;
@@ -129,11 +129,11 @@ int fastdds_discovery_server(
                 // Set environment variables to prevent loading the default XML file
 #ifdef _WIN32
                 if (0 != _putenv_s(fastrtps::xmlparser::DEFAULT_FASTRTPS_ENV_VARIABLE, "") ||
-                        0!= _putenv_s(fastrtps::xmlparser::SKIP_DEFAULT_XML_FILE, "1"));
+                        0 != _putenv_s(fastrtps::xmlparser::SKIP_DEFAULT_XML_FILE, "1"))
 #else
                 if (0 != setenv(fastrtps::xmlparser::DEFAULT_FASTRTPS_ENV_VARIABLE, "", 1) ||
                         0 != setenv(fastrtps::xmlparser::SKIP_DEFAULT_XML_FILE, "1", 1))
-#endif
+#endif // ifdef _WIN32
                 {
                     std::cout << "Error setting environment variables: " << std::strerror(errno) << std::endl;
                     return 1;
@@ -169,7 +169,7 @@ int fastdds_discovery_server(
                 participantQos.wire_protocol().prefix == prefix_cero)
         {
             std::cout << "Server id is mandatory if not defined in the XML file: use -i or --server-id option."
-                    << std::endl;
+                      << std::endl;
             return 1;
         }
     }
@@ -216,7 +216,7 @@ int fastdds_discovery_server(
                 eprosima::fastrtps::rtps::DiscoveryProtocol::BACKUP)
         {
             std::cout << "The provided configuration is not valid. Participant must be either SERVER or BACKUP." <<
-                    std::endl;
+                std::endl;
             return 1;
         }
     }
@@ -312,7 +312,7 @@ int fastdds_discovery_server(
                 else
                 {
                     std::cout << "Warning: the number of specified ports doesn't match the ip" << std::endl
-                            << "         addresses provided. Locators share its port number." << std::endl;
+                              << "         addresses provided. Locators share its port number." << std::endl;
                 }
             }
         }
