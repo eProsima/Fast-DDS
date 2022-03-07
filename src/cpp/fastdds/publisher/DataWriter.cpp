@@ -199,6 +199,17 @@ ReturnCode_t DataWriter::dispose(
     return impl_->unregister_instance(data, handle, true);
 }
 
+ReturnCode_t DataWriter::dispose_w_timestamp(
+        void* instance,
+        const InstanceHandle_t& handle,
+        const fastrtps::Time_t& timestamp)
+{
+    static_cast<void> (instance);
+    static_cast<void> (handle);
+    static_cast<void> (timestamp);
+    return ReturnCode_t::RETCODE_UNSUPPORTED;
+}
+
 const fastrtps::rtps::GUID_t& DataWriter::guid() const
 {
     return impl_->guid();

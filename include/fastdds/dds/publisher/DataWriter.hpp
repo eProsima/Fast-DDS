@@ -483,13 +483,15 @@ public:
      * This operation may return RETCODE_TIMEOUT and RETCODE_OUT_OF_RESOURCES under the same circumstances described
      * for the @ref write operation.
      *
-     * @param data Pointer to the data.
-     * @param handle InstanceHandle_t
+     * @param instance  Sample used to deduce instance's key in case of `handle` parameter is HANDLE_NIL.
+     * @param handle Instance's key to be disposed.
+     * @param timestamp Time_t used to set the source_timestamp.
      * @return RTPS_DllAPI
      */
     RTPS_DllAPI ReturnCode_t dispose_w_timestamp(
-            void* data,
-            const InstanceHandle_t& handle);
+            void* instance,
+            const InstanceHandle_t& handle,
+            const fastrtps::Time_t& timestamp);
     /**
      * @brief Returns the liveliness lost status
      *
