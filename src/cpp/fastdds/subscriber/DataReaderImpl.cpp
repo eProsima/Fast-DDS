@@ -727,9 +727,21 @@ void DataReaderImpl::update_rtps_reader_qos()
 {
     if (reader_)
     {
-        //NOTIFY THE BUILTIN PROTOCOLS THAT THE READER HAS CHANGED
+        eprosima::fastdds::rtps::ContentFilterProperty filter_property({});
+        auto content_topic = dynamic_cast<ContentFilteredTopicImpl*>(topic_->get_impl());
+        if (nullptr != content_topic)
+        {
+            filter_property.filter_class_name = content_topic->filter_class_name;
+            filter_property.content_filtered_topic_name = topic_->get_name();
+            filter_property.related_topic_name = topic_->get_impl()->get_rtps_topic_name();
+            filter_property.filter_expression = content_topic->expression;
+            for (const std::string& param : content_topic->parameters)
+            {
+                filter_property.expression_parameters.emplace_back(param);
+            }
+        }
         ReaderQos rqos = qos_.get_readerqos(get_subscriber()->get_qos());
-        subscriber_->rtps_participant()->updateReader(reader_, topic_attributes(), rqos);
+        subscriber_->rtps_participant()->updateReader(reader_, topic_attributes(), rqos, &filter_property);
     }
 }
 
