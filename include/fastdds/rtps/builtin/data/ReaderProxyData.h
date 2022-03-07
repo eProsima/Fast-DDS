@@ -59,7 +59,7 @@ public:
             const size_t max_unicast_locators,
             const size_t max_multicast_locators,
             const VariableLengthDataLimits& data_limits,
-            const ContentFilterProperty::AllocationConfiguration& content_filter_limits);
+            const ContentFilterProperty::AllocationConfiguration& content_filter_limits = {});
 
     RTPS_DllAPI virtual ~ReaderProxyData();
 
