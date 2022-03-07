@@ -59,40 +59,7 @@ public:
 
     ReturnCode_t set_expression_parameters(
             const char* new_expression,
-            const std::vector<std::string>& new_expression_parameters)
-    {
-        TopicImpl* topic_impl = dynamic_cast<TopicImpl*>(related_topic->get_impl());
-        assert(nullptr != topic_impl);
-        const TypeSupport& type = topic_impl->get_type();
-
-        LoanableSequence<const char*>::size_type n_params;
-        n_params = static_cast<LoanableSequence<const char*>::size_type>(new_expression_parameters.size());
-        LoanableSequence<const char*> filter_parameters(n_params);
-        filter_parameters.length(n_params);
-        while (n_params > 0)
-        {
-            n_params--;
-            filter_parameters[n_params] = new_expression_parameters[n_params].c_str();
-        }
-
-        ReturnCode_t ret = filter_factory->create_content_filter(
-            filter_class_name.c_str(),
-            related_topic->get_type_name().c_str(),
-            type.get(), new_expression, filter_parameters, filter_instance);
-
-        if (ReturnCode_t::RETCODE_OK == ret)
-        {
-            parameters = new_expression_parameters;
-            if (nullptr != new_expression)
-            {
-                expression = new_expression;
-            }
-
-            // TODO: inform data readers
-        }
-
-        return ret;
-    }
+            const std::vector<std::string>& new_expression_parameters);
 
     IContentFilterFactory* filter_factory = nullptr;
     IContentFilter* filter_instance = nullptr;

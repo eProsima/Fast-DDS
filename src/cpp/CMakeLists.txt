@@ -92,6 +92,7 @@ set(${PROJECT_NAME}_source_files
     fastdds/publisher/DataWriter.cpp
     fastdds/publisher/DataWriterImpl.cpp
     fastdds/topic/ContentFilteredTopic.cpp
+    fastdds/topic/ContentFilteredTopicImpl.cpp
     fastdds/topic/Topic.cpp
     fastdds/topic/TopicImpl.cpp
     fastdds/topic/TypeSupport.cpp
