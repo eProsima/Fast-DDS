@@ -130,7 +130,7 @@ public:
      * @param filter  The content filter to use on this writer. May be @c nullptr to remove the content filter
      *                (i.e. treat all samples as valid).
      */
-    RTPS_DllAPI virtual void content_filter(
+    virtual void content_filter(
             fastdds::rtps::IReaderDataFilter* filter) final
     {
         static_cast<void>(filter);
@@ -141,7 +141,7 @@ public:
      *
      * @return The content filter used on this writer.
      */
-    RTPS_DllAPI virtual const fastdds::rtps::IReaderDataFilter* content_filter() const final
+    virtual const fastdds::rtps::IReaderDataFilter* content_filter() const final
     {
         return nullptr;
     }
@@ -160,7 +160,7 @@ public:
      *
      * @return Whether the operation was successful or not.
      */
-    RTPS_DllAPI virtual bool reader_content_filter(
+    virtual bool reader_content_filter(
             const GUID_t& reader_guid,
             fastdds::rtps::IReaderDataFilter* reader_filter) final
     {
@@ -177,7 +177,7 @@ public:
      *
      * @return The content filter used on this writer for the specified reader.
      */
-    RTPS_DllAPI virtual const fastdds::rtps::IReaderDataFilter* reader_content_filter(
+    virtual const fastdds::rtps::IReaderDataFilter* reader_content_filter(
             const GUID_t& reader_guid) const final
     {
         static_cast<void>(reader_guid);

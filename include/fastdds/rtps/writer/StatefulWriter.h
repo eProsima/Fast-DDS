@@ -384,7 +384,7 @@ public:
      * @param filter  The content filter to use on this writer. May be @c nullptr to remove the content filter
      *                (i.e. treat all samples as valid).
      */
-    RTPS_DllAPI void content_filter(
+    void content_filter(
             fastdds::rtps::IReaderDataFilter* filter) final;
 
     /**
@@ -392,7 +392,7 @@ public:
      *
      * @return The content filter used on this writer.
      */
-    RTPS_DllAPI const fastdds::rtps::IReaderDataFilter* content_filter() const final;
+    const fastdds::rtps::IReaderDataFilter* content_filter() const final;
 
     /**
      * @brief Set a content filter to perform content filtering on this writer for a specific reader.
@@ -408,7 +408,7 @@ public:
      *
      * @return Whether the operation was successful or not.
      */
-    RTPS_DllAPI bool reader_content_filter(
+    bool reader_content_filter(
             const GUID_t& reader_guid,
             fastdds::rtps::IReaderDataFilter* reader_filter) final
     {
@@ -425,7 +425,7 @@ public:
      *
      * @return The content filter used on this writer for the specified reader.
      */
-    RTPS_DllAPI const fastdds::rtps::IReaderDataFilter* reader_content_filter(
+    const fastdds::rtps::IReaderDataFilter* reader_content_filter(
             const GUID_t& reader_guid) const final
     {
         static_cast<void>(reader_guid);
