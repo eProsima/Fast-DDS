@@ -25,11 +25,11 @@
 
 #include <fastdds/rtps/builtin/discovery/endpoint/EDP.h>
 #include <fastdds/rtps/history/ReaderHistory.h>
-#include <fastdds/rtps/reader/RTPSReader.h>
 #include <fastdds/rtps/participant/RTPSParticipantListener.h>
+#include <fastdds/rtps/reader/RTPSReader.h>
 
-#include <rtps/builtin/discovery/participant/PDPServer.hpp>
 #include <rtps/builtin/discovery/database/DiscoveryParticipantChangeData.hpp>
+#include <rtps/builtin/discovery/participant/PDPServer.hpp>
 #include <rtps/participant/RTPSParticipantImpl.h>
 
 namespace eprosima {
