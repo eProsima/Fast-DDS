@@ -33,6 +33,7 @@ enum class XMLP_ret
 
 extern const char* DEFAULT_FASTRTPS_ENV_VARIABLE;
 extern const char* DEFAULT_FASTRTPS_PROFILES;
+extern const char* SKIP_DEFAULT_XML_FILE;
 
 extern const char* ROOT;
 extern const char* PROFILES;
