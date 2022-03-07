@@ -62,6 +62,7 @@ class TimedEvent;
 namespace fastdds {
 namespace dds {
 
+class ContentFilteredTopicImpl;
 class Subscriber;
 class SubscriberImpl;
 class TopicDescription;
@@ -315,6 +316,8 @@ public:
 
 
     ReturnCode_t delete_contained_entities();
+
+    void filter_has_been_updated();
 
 protected:
 

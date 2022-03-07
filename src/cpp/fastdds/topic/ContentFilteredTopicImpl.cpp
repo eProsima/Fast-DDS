@@ -18,6 +18,8 @@
 
 #include "ContentFilteredTopicImpl.hpp"
 
+#include <fastdds/subscriber/DataReaderImpl.hpp>
+
 namespace eprosima {
 namespace fastdds {
 namespace dds {
@@ -53,7 +55,13 @@ ReturnCode_t ContentFilteredTopicImpl::set_expression_parameters(
             expression = new_expression;
         }
 
-        // TODO: inform data readers
+        // TODO(Miguel C): update filter hash
+
+        // Inform data readers
+        for (DataReaderImpl* reader : readers_)
+        {
+            reader->filter_has_been_updated();
+        }
     }
 
     return ret;
