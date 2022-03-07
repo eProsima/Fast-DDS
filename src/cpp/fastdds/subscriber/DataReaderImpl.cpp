@@ -209,6 +209,7 @@ ReturnCode_t DataReaderImpl::enable()
     if (nullptr != content_topic)
     {
         reader->set_content_filter(content_topic);
+        content_topic->add_reader(this);
     }
 
     reader_ = reader;
@@ -277,6 +278,12 @@ DataReaderImpl::~DataReaderImpl()
     disable();
     delete lifespan_timer_;
     delete deadline_timer_;
+
+    auto content_topic = dynamic_cast<ContentFilteredTopicImpl*>(topic_->get_impl());
+    if (nullptr != content_topic)
+    {
+        content_topic->remove_reader(this);
+    }
 
     if (reader_ != nullptr)
     {

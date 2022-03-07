@@ -27,6 +27,7 @@
 #include <fastdds/dds/topic/Topic.hpp>
 #include <fastdds/rtps/interfaces/IReaderDataFilter.hpp>
 
+#include <fastdds/subscriber/DataReaderImpl.hpp>
 #include <fastdds/topic/TopicDescriptionImpl.hpp>
 #include <fastdds/topic/TopicImpl.hpp>
 
@@ -57,6 +58,18 @@ public:
         return filter_instance->evaluate(change.serializedPayload, filter_info, reader_guid);
     }
 
+    void add_reader(
+            DataReaderImpl* reader)
+    {
+        readers_.insert(reader);
+    }
+
+    void remove_reader(
+            DataReaderImpl* reader)
+    {
+        readers_.erase(reader);
+    }
+
     ReturnCode_t set_expression_parameters(
             const char* new_expression,
             const std::vector<std::string>& new_expression_parameters);
@@ -67,6 +80,10 @@ public:
     std::string filter_class_name;
     std::string expression;
     std::vector<std::string> parameters;
+
+private:
+
+    std::set<DataReaderImpl*> readers_;
 };
 
 } /* namespace dds */
