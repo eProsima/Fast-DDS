@@ -43,16 +43,17 @@ ReturnCode_t ContentFilteredTopicImpl::set_expression_parameters(
     }
 
     ReturnCode_t ret = filter_factory->create_content_filter(
-        filter_class_name.c_str(),
+        filter_property.filter_class_name.c_str(),
         related_topic->get_type_name().c_str(),
         type.get(), new_expression, filter_parameters, filter_instance);
 
     if (ReturnCode_t::RETCODE_OK == ret)
     {
-        parameters = new_expression_parameters;
+        filter_property.expression_parameters.assign(new_expression_parameters.begin(),
+                new_expression_parameters.end());
         if (nullptr != new_expression)
         {
-            expression = new_expression;
+            filter_property.filter_expression = new_expression;
         }
 
         // TODO(Miguel C): update filter hash

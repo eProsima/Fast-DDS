@@ -26,6 +26,7 @@
 #include <fastdds/dds/topic/IContentFilterFactory.hpp>
 #include <fastdds/dds/topic/Topic.hpp>
 #include <fastdds/rtps/interfaces/IReaderDataFilter.hpp>
+#include <fastdds/rtps/builtin/data/ContentFilterProperty.hpp>
 
 #include <fastdds/subscriber/DataReaderImpl.hpp>
 #include <fastdds/topic/TopicDescriptionImpl.hpp>
@@ -77,9 +78,7 @@ public:
     IContentFilterFactory* filter_factory = nullptr;
     IContentFilter* filter_instance = nullptr;
     Topic* related_topic = nullptr;
-    std::string filter_class_name;
-    std::string expression;
-    std::vector<std::string> parameters;
+    eprosima::fastdds::rtps::ContentFilterProperty filter_property{{}};
 
 private:
 

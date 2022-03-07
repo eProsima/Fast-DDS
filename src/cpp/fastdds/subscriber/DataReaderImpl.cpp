@@ -246,19 +246,12 @@ ReturnCode_t DataReaderImpl::enable()
         }
     }
 
-    eprosima::fastdds::rtps::ContentFilterProperty filter_property({});
+    eprosima::fastdds::rtps::ContentFilterProperty* filter_property = nullptr;
     if (nullptr != content_topic)
     {
-        filter_property.filter_class_name = content_topic->filter_class_name;
-        filter_property.content_filtered_topic_name = topic_->get_name();
-        filter_property.related_topic_name = topic_->get_impl()->get_rtps_topic_name();
-        filter_property.filter_expression = content_topic->expression;
-        for (const std::string& param : content_topic->parameters)
-        {
-            filter_property.expression_parameters.emplace_back(param);
-        }
+        filter_property = &content_topic->filter_property;
     }
-    subscriber_->rtps_participant()->registerReader(reader_, topic_attributes(), rqos, &filter_property);
+    subscriber_->rtps_participant()->registerReader(reader_, topic_attributes(), rqos, filter_property);
 
     return ReturnCode_t::RETCODE_OK;
 }
@@ -727,21 +720,14 @@ void DataReaderImpl::update_rtps_reader_qos()
 {
     if (reader_)
     {
-        eprosima::fastdds::rtps::ContentFilterProperty filter_property({});
+        eprosima::fastdds::rtps::ContentFilterProperty* filter_property = nullptr;
         auto content_topic = dynamic_cast<ContentFilteredTopicImpl*>(topic_->get_impl());
         if (nullptr != content_topic)
         {
-            filter_property.filter_class_name = content_topic->filter_class_name;
-            filter_property.content_filtered_topic_name = topic_->get_name();
-            filter_property.related_topic_name = topic_->get_impl()->get_rtps_topic_name();
-            filter_property.filter_expression = content_topic->expression;
-            for (const std::string& param : content_topic->parameters)
-            {
-                filter_property.expression_parameters.emplace_back(param);
-            }
+            filter_property = &content_topic->filter_property;
         }
         ReaderQos rqos = qos_.get_readerqos(get_subscriber()->get_qos());
-        subscriber_->rtps_participant()->updateReader(reader_, topic_attributes(), rqos, &filter_property);
+        subscriber_->rtps_participant()->updateReader(reader_, topic_attributes(), rqos, filter_property);
     }
 }
 

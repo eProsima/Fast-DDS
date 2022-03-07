@@ -39,14 +39,17 @@ ContentFilteredTopic::ContentFilteredTopic(
 
     impl_ = new ContentFilteredTopicImpl();
     impl_->related_topic = related_topic;
-    impl_->expression = filter_expression;
-    impl_->parameters = expression_parameters;
+    impl_->filter_property.content_filtered_topic_name = name;
+    impl_->filter_property.related_topic_name = related_topic->get_name();
+    impl_->filter_property.filter_expression = filter_expression;
+    impl_->filter_property.expression_parameters.assign(expression_parameters.begin(), expression_parameters.end());
 }
 
 ContentFilteredTopic::~ContentFilteredTopic()
 {
     impl_->related_topic->get_impl()->dereference();
-    impl_->filter_factory->delete_content_filter(impl_->filter_class_name.c_str(), impl_->filter_instance);
+    impl_->filter_factory->delete_content_filter(
+        impl_->filter_property.filter_class_name.c_str(), impl_->filter_instance);
     delete impl_;
 }
 
@@ -57,13 +60,18 @@ Topic* ContentFilteredTopic::get_related_topic() const
 
 const std::string& ContentFilteredTopic::get_filter_expression() const
 {
-    return impl_->expression;
+    return impl_->filter_property.filter_expression;
 }
 
 ReturnCode_t ContentFilteredTopic::get_expression_parameters(
         std::vector<std::string>& expression_parameters) const
 {
-    expression_parameters = impl_->parameters;
+    expression_parameters.clear();
+    expression_parameters.reserve(impl_->filter_property.expression_parameters.size());
+    for (const auto& param : impl_->filter_property.expression_parameters)
+    {
+        expression_parameters.emplace_back(param.c_str());
+    }
     return ReturnCode_t::RETCODE_OK;
 }
 
