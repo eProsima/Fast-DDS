@@ -120,6 +120,7 @@ public:
 
     /**
      * @brief Method called when the discovery information of a writer regarding a reader changes.
+     *
      * @param reader       The reader.
      * @param reason       The reason motivating this method to be called.
      * @param writer_guid  The GUID of the writer for which the discovery information changed.

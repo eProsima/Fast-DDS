@@ -102,6 +102,7 @@ public:
 
     /**
      * @brief Method called when the liveliness of a writer is lost
+     *
      * @param writer The writer
      * @param status The liveliness lost status
      */
@@ -115,6 +116,7 @@ public:
 
     /**
      * @brief Method called when the discovery information of a reader regarding a writer changes.
+     *
      * @param writer       The writer.
      * @param reason       The reason motivating this method to be called.
      * @param reader_guid  The GUID of the reader for which the discovery information changed.
@@ -134,7 +136,7 @@ public:
 
 };
 
-} /* namespace rtps */
+}  /* namespace rtps */
 }  /* namespace fastrtps */
 }  /* namespace eprosima */
 

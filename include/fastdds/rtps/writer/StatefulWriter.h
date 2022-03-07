@@ -293,6 +293,7 @@ public:
 
     /**
      * @brief Returns true if disable positive ACKs QoS is enabled
+     *
      * @return True if positive acks are disabled, false otherwise
      */
     inline bool get_disable_positive_acks() const
@@ -311,8 +312,10 @@ public:
 
     /**
      * @brief Sends a periodic heartbeat
+     *
      * @param final Final flag
      * @param liveliness Liveliness flag
+     *
      * @return True on success
      */
     bool send_periodic_heartbeat(
@@ -321,6 +324,7 @@ public:
 
     /*!
      * @brief Sends a heartbeat to a remote reader.
+     *
      * @remarks This function is non thread-safe.
      */
     void send_heartbeat_to_nts(
@@ -373,6 +377,7 @@ public:
 
     /**
      * @brief Set a content filter to perform content filtering on this writer.
+     *
      * This method will set a global content filter that will be applied to readers not having a specific
      * content filter assigned (i.e. @ref reader_content_filter has not been called with their GUID).
      *
@@ -391,6 +396,7 @@ public:
 
     /**
      * @brief Set a content filter to perform content filtering on this writer for a specific reader.
+     *
      * This method will set a content filter that will be applied to the reader specified by @c reader_guid.
      *
      * @param reader_guid    GUID of the reader for which the filter should be applied.
@@ -480,6 +486,7 @@ private:
 
     /**
      * @brief A method called when the ack timer expires
+     *
      * @details Only used if disable positive ACKs QoS is enabled
      */
     bool ack_timer_expired();

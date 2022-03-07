@@ -170,6 +170,7 @@ public:
 
     /**
      * @brief Set a content filter to perform content filtering on this writer.
+     *
      * This method will set a global content filter that will be applied to readers not having a specific
      * content filter assigned (i.e. @ref reader_content_filter has not been called with their GUID).
      *
@@ -188,6 +189,7 @@ public:
 
     /**
      * @brief Set a content filter to perform content filtering on this writer for a specific reader.
+     *
      * This method will set a content filter that will be applied to the reader specified by @c reader_guid.
      *
      * @param reader_guid    GUID of the reader for which the filter should be applied.
@@ -422,18 +424,21 @@ public:
 
     /**
      * @brief A method to retrieve the liveliness kind
+     *
      * @return Liveliness kind
      */
     const LivelinessQosPolicyKind& get_liveliness_kind() const;
 
     /**
      * @brief A method to retrieve the liveliness lease duration
+     *
      * @return Lease duration
      */
     const Duration_t& get_liveliness_lease_duration() const;
 
     /**
      * @brief A method to return the liveliness announcement period
+     *
      * @return The announcement period
      */
     const Duration_t& get_liveliness_announcement_period() const;
