@@ -19,6 +19,7 @@
 #include <mutex>
 #include <regex>
 #include <sstream>
+#include <stdlib.h>
 #include <string>
 #include <vector>
 
@@ -125,6 +126,18 @@ int fastdds_discovery_server(
             }
             if (profile.empty())
             {
+                // Set environment variables to prevent loading the default XML file
+#ifdef _WIN32
+                if (0 != _putenv_s(fastrtps::xmlparser::DEFAULT_FASTRTPS_ENV_VARIABLE, "") ||
+                        0!= _putenv_s(fastrtps::xmlparser::SKIP_DEFAULT_XML_FILE, "1"));
+#else
+                if (0 != setenv(fastrtps::xmlparser::DEFAULT_FASTRTPS_ENV_VARIABLE, "", 1) ||
+                        0 != setenv(fastrtps::xmlparser::SKIP_DEFAULT_XML_FILE, "1", 1))
+#endif
+                {
+                    std::cout << "Error setting environment variables: " << std::strerror(errno) << std::endl;
+                    return 1;
+                }
                 // Set default participant QoS from XML file
                 if (ReturnCode_t::RETCODE_OK != DomainParticipantFactory::get_instance()->load_profiles())
                 {

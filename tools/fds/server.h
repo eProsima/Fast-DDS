@@ -108,7 +108,7 @@ const option::Descriptor usage[] = {
       "\t$ " FAST_SERVER_BINARY " -i 0 -l localhost -p 14520\n\n"
 
       "\t6. Launch a server with id 0 (first on ROS_DISCOVERY_SERVER) reading\n"
-      "\t   configuration from XML file.\n\n"
+      "\t   default configuration from XML file.\n\n"
       "\t$ " FAST_SERVER_BINARY " -i 0 -x config.xml\n\n"
 
       "\t6. Launch a server with id 0 (first on ROS_DISCOVERY_SERVER) reading\n"
