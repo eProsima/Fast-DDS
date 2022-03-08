@@ -5,6 +5,8 @@ Version 2.6.0
   and transport layers)
 * Removed dll export for constructors and destructors of factory created entities (breaks ABI)
 * Allow modifying the remote server locator in runtime.
+* Add physical information in DATA[p] using properties
+* Extension of `DISCOVERY_TOPIC` to include physical information about the discovered entity (ABI break)
 
 Version 2.5.0
 -------------
