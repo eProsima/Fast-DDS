@@ -1173,7 +1173,7 @@ bool RTPSParticipantImpl::registerReader(
         RTPSReader* reader,
         const TopicAttributes& topicAtt,
         const ReaderQos& rqos,
-        const ContentFilterProperty* content_filter)
+        const fastdds::rtps::ContentFilterProperty* content_filter)
 {
     return this->mp_builtinProtocols->addLocalReader(reader, topicAtt, rqos, content_filter);
 }
@@ -1373,7 +1373,7 @@ bool RTPSParticipantImpl::updateLocalReader(
         RTPSReader* reader,
         const TopicAttributes& topicAtt,
         const ReaderQos& rqos,
-        const ContentFilterProperty* content_filter)
+        const fastdds::rtps::ContentFilterProperty* content_filter)
 {
     return this->mp_builtinProtocols->updateLocalReader(reader, topicAtt, rqos, content_filter);
 }

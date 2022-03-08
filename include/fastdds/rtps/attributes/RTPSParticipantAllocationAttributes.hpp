@@ -130,7 +130,7 @@ struct RTPSParticipantAllocationAttributes
     //! Holds limits for variable-length data
     VariableLengthDataLimits data_limits;
     //! Defines the allocation behavior of content filter discovery information
-    ContentFilterProperty::AllocationConfiguration content_filter;
+    fastdds::rtps::ContentFilterProperty::AllocationConfiguration content_filter;
 
     //! @return the allocation config for the total of readers in the system (participants * readers)
     ResourceLimitedContainerConfig total_readers() const

@@ -53,13 +53,13 @@ public:
     RTPS_DllAPI ReaderProxyData(
             const size_t max_unicast_locators,
             const size_t max_multicast_locators,
-            const ContentFilterProperty::AllocationConfiguration& content_filter_limits = {});
+            const fastdds::rtps::ContentFilterProperty::AllocationConfiguration& content_filter_limits = {});
 
     RTPS_DllAPI ReaderProxyData(
             const size_t max_unicast_locators,
             const size_t max_multicast_locators,
             const VariableLengthDataLimits& data_limits,
-            const ContentFilterProperty::AllocationConfiguration& content_filter_limits = {});
+            const fastdds::rtps::ContentFilterProperty::AllocationConfiguration& content_filter_limits = {});
 
     RTPS_DllAPI virtual ~ReaderProxyData();
 
@@ -231,23 +231,23 @@ public:
     }
 
     RTPS_DllAPI void content_filter(
-            const ContentFilterProperty& filter)
+            const fastdds::rtps::ContentFilterProperty& filter)
     {
         content_filter_ = filter;
     }
 
     RTPS_DllAPI void content_filter(
-            ContentFilterProperty&& filter)
+            fastdds::rtps::ContentFilterProperty&& filter)
     {
         content_filter_ = std::move(filter);
     }
 
-    RTPS_DllAPI const ContentFilterProperty& content_filter() const
+    RTPS_DllAPI const fastdds::rtps::ContentFilterProperty& content_filter() const
     {
         return content_filter_;
     }
 
-    RTPS_DllAPI ContentFilterProperty& content_filter()
+    RTPS_DllAPI fastdds::rtps::ContentFilterProperty& content_filter()
     {
         return content_filter_;
     }
@@ -483,7 +483,8 @@ private:
     xtypes::TypeInformation* m_type_information;
     //!
     ParameterPropertyList_t m_properties;
-    ContentFilterProperty content_filter_;
+    //!Information on the content filter applied by the reader.
+    fastdds::rtps::ContentFilterProperty content_filter_;
 };
 
 } // namespace rtps

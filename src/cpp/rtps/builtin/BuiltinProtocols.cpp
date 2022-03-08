@@ -213,7 +213,7 @@ bool BuiltinProtocols::addLocalReader(
         RTPSReader* R,
         const fastrtps::TopicAttributes& topicAtt,
         const fastrtps::ReaderQos& rqos,
-        const ContentFilterProperty* content_filter)
+        const fastdds::rtps::ContentFilterProperty* content_filter)
 {
     bool ok = false;
     if (mp_PDP != nullptr)
@@ -248,7 +248,7 @@ bool BuiltinProtocols::updateLocalReader(
         RTPSReader* R,
         const TopicAttributes& topicAtt,
         const ReaderQos& rqos,
-        const ContentFilterProperty* content_filter)
+        const fastdds::rtps::ContentFilterProperty* content_filter)
 {
     bool ok = false;
     if (mp_PDP != nullptr && mp_PDP->getEDP() != nullptr)

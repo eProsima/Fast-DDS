@@ -104,7 +104,7 @@ public:
     EDPBaseSUBListener(
             const RemoteLocatorsAllocationAttributes& locators_allocation,
             const VariableLengthDataLimits& data_limits,
-            const ContentFilterProperty::AllocationConfiguration& filter_allocation)
+            const fastdds::rtps::ContentFilterProperty::AllocationConfiguration& filter_allocation)
         : temp_reader_data_(
             locators_allocation.max_unicast_locators,
             locators_allocation.max_multicast_locators,

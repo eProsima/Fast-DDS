@@ -169,7 +169,7 @@ public:
             RTPSReader* R,
             const TopicAttributes& att,
             const ReaderQos& qos,
-            const ContentFilterProperty* content_filter = nullptr);
+            const fastdds::rtps::ContentFilterProperty* content_filter = nullptr);
     /**
      * Create a new ReaderPD for a local Writer.
      * @param W Pointer to the RTPSWriter.
@@ -193,7 +193,7 @@ public:
             RTPSReader* R,
             const TopicAttributes& att,
             const ReaderQos& qos,
-            const ContentFilterProperty* content_filter = nullptr);
+            const fastdds::rtps::ContentFilterProperty* content_filter = nullptr);
     /**
      * A previously created Writer has been updated
      * @param W Pointer to the Writer

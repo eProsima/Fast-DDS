@@ -99,7 +99,7 @@ bool EDP::newLocalReaderProxyData(
         RTPSReader* reader,
         const TopicAttributes& att,
         const ReaderQos& rqos,
-        const ContentFilterProperty* content_filter)
+        const fastdds::rtps::ContentFilterProperty* content_filter)
 {
     static_cast<void>(content_filter);
 
@@ -359,7 +359,7 @@ bool EDP::updatedLocalReader(
         RTPSReader* reader,
         const TopicAttributes& att,
         const ReaderQos& rqos,
-        const ContentFilterProperty* content_filter)
+        const fastdds::rtps::ContentFilterProperty* content_filter)
 {
     static_cast<void>(content_filter);
 

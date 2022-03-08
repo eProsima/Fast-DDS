@@ -833,7 +833,7 @@ public:
             RTPSReader* Reader,
             const TopicAttributes& topicAtt,
             const ReaderQos& rqos,
-            const ContentFilterProperty* content_filter = nullptr);
+            const fastdds::rtps::ContentFilterProperty* content_filter = nullptr);
 
     /**
      * Update participant attributes.
@@ -866,7 +866,7 @@ public:
             RTPSReader* Reader,
             const TopicAttributes& topicAtt,
             const ReaderQos& rqos,
-            const ContentFilterProperty* content_filter = nullptr);
+            const fastdds::rtps::ContentFilterProperty* content_filter = nullptr);
 
     /**
      * Get the participant attributes

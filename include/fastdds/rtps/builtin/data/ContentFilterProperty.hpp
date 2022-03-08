@@ -26,7 +26,7 @@
 #include <fastrtps/utils/collections/ResourceLimitedVector.hpp>
 
 namespace eprosima {
-namespace fastrtps {
+namespace fastdds {
 namespace rtps {
 
 /**
@@ -40,7 +40,7 @@ public:
     struct AllocationConfiguration
     {
         size_t expression_initial_size = 0;
-        ResourceLimitedContainerConfig expression_parameters{ 0, 100, 1 };
+        fastrtps::ResourceLimitedContainerConfig expression_parameters{ 0, 100, 1 };
     };
 
     explicit ContentFilterProperty(
@@ -50,15 +50,15 @@ public:
         filter_expression.reserve(config.expression_initial_size);
     }
 
-    string_255 content_filtered_topic_name;
-    string_255 related_topic_name;
-    string_255 filter_class_name;
+    fastrtps::string_255 content_filtered_topic_name;
+    fastrtps::string_255 related_topic_name;
+    fastrtps::string_255 filter_class_name;
     std::string filter_expression;
-    ResourceLimitedVector<string_255, std::true_type> expression_parameters;
+    fastrtps::ResourceLimitedVector<fastrtps::string_255, std::true_type> expression_parameters;
 };
 
 }  // namespace rtps
-}  // namespace fastrtps
+}  // namespace fastdds
 }  // namespace eprosima
 
 #endif // FASTDDS_RTPS_BUILTIN_DATA_CONTENTFILTERPROPERTY_HPP_
