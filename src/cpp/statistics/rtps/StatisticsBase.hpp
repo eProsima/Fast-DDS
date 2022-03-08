@@ -479,12 +479,14 @@ protected:
     {
     }
 
-    /*
-     * Report that a new entity is discovered
+    /**
+     * @brief Report that a new entity is discovered
      * @param discovered entity GUID_t
+     * @param properties The property list of the discoved entity
      */
     inline void on_entity_discovery(
-            const fastrtps::rtps::GUID_t&)
+            const fastrtps::rtps::GUID_t&,
+            const fastdds::dds::ParameterPropertyList_t&)
     {
     }
 
