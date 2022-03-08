@@ -178,7 +178,8 @@ PDP::~PDP()
 
 ParticipantProxyData* PDP::add_participant_proxy_data(
         const GUID_t& participant_guid,
-        bool with_lease_duration)
+        bool with_lease_duration,
+        const ParticipantProxyData* participant_proxy_data)
 {
     ParticipantProxyData* ret_val = nullptr;
 
@@ -218,10 +219,14 @@ ParticipantProxyData* PDP::add_participant_proxy_data(
     // Add returned entry to the collection
     ret_val->should_check_lease_duration = with_lease_duration;
     ret_val->m_guid = participant_guid;
+    if (nullptr != participant_proxy_data)
+    {
+        ret_val->copy(*participant_proxy_data);
+        ret_val->isAlive = true;
+        // Notify discovery of remote participant
+        getRTPSParticipant()->on_entity_discovery(participant_guid, ret_val->m_properties);
+    }
     participant_proxies_.push_back(ret_val);
-
-    // notify statistics module
-    getRTPSParticipant()->on_entity_discovery(participant_guid, ret_val->m_properties);
 
     return ret_val;
 }
@@ -389,7 +394,7 @@ bool PDP::initPDP(
     mp_builtin->updateMetatrafficLocators(this->mp_PDPReader->getAttributes().unicastLocatorList);
 
     mp_mutex->lock();
-    ParticipantProxyData* pdata = add_participant_proxy_data(mp_RTPSParticipant->getGuid(), false);
+    ParticipantProxyData* pdata = add_participant_proxy_data(mp_RTPSParticipant->getGuid(), false, nullptr);
     mp_mutex->unlock();
 
     if (pdata == nullptr)
@@ -426,6 +431,9 @@ bool PDP::enable()
     set_initial_announcement_interval();
 
     enable_  = true;
+    // Notify "self-discovery"
+    getRTPSParticipant()->on_entity_discovery(mp_RTPSParticipant->getGuid(),
+            get_participant_proxy_data(mp_RTPSParticipant->getGuid().guidPrefix)->m_properties);
 
     return mp_RTPSParticipant->enableReader(mp_PDPReader);
 }
