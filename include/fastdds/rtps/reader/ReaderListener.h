@@ -118,6 +118,21 @@ public:
     }
 
     /**
+     * This method is called when the reader detects that one or more samples have been lost.
+     *
+     * @param reader                         Pointer to the RTPSReader.
+     * @param sample_lost_since_last_update  The number of samples that were lost since the last time this
+     *                                       method was called for the same reader.
+     */
+    virtual void on_sample_lost(
+            RTPSReader* reader,
+            int32_t sample_lost_since_last_update)
+    {
+        static_cast<void>(reader);
+        static_cast<void>(sample_lost_since_last_update);
+    }
+
+    /**
      * @brief Method called when the discovery information of a writer regarding a reader changes.
      *
      * @param reader       The reader.
