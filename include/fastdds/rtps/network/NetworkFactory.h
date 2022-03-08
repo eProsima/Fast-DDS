@@ -215,7 +215,6 @@ public:
      */
     void update_network_interfaces();
 
-
 private:
 
     std::vector<std::unique_ptr<fastdds::rtps::TransportInterface>> mRegisteredTransports;
