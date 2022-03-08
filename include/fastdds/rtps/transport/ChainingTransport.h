@@ -276,7 +276,7 @@ public:
      * Call the low-level transport `max_recv_buffer_size()`.
      * @return The maximum datagram size for reception supported by the transport
      */
-    RTPS_DllAPI virtual uint32_t max_recv_buffer_size() const override
+    RTPS_DllAPI uint32_t max_recv_buffer_size() const override
     {
         return low_level_transport_->max_recv_buffer_size();
     }
@@ -329,7 +329,7 @@ public:
             const fastrtps::rtps::Locator_t& local_locator,
             const fastrtps::rtps::Locator_t& remote_locator) = 0;
 
-    RTPS_DllAPI virtual void update_network_interfaces() override
+    RTPS_DllAPI void update_network_interfaces() override
     {
         low_level_transport_->update_network_interfaces();
     }
