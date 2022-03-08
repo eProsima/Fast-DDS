@@ -21,7 +21,6 @@
 #include <cstdlib>
 
 #include <fastrtps/xmlparser/XMLEndpointParser.h>
-#include <fastrtps/xmlparser/XMLParserCommon.h>
 
 #include <fastdds/dds/log/Log.hpp>
 #include <fastrtps/utils/TimeConversion.h>
@@ -442,6 +441,15 @@ XMLP_ret XMLEndpointParser::loadXMLReaderEndpoint(
                 }
             }
         }
+        else if (key == DISABLE_POSITIVE_ACKS)
+        {
+            // Disable positive acks
+            if (XMLP_ret::XML_OK !=
+                    XMLParser::getXMLDisablePositiveAcksQos(element, rdata->m_qos.m_disablePositiveACKs, 0))
+            {
+                return XMLP_ret::XML_ERROR;
+            }
+        }
         else
         {
             logWarning(RTPS_EDP, "Unkown Endpoint-XML tag, ignoring " << key);
@@ -723,6 +731,15 @@ XMLP_ret XMLEndpointParser::loadXMLWriterEndpoint(
                 {
                     logWarning(RTPS_EDP, "BAD XML:livelinessQos leaseDuration is 0");
                 }
+            }
+        }
+        else if (key == DISABLE_POSITIVE_ACKS)
+        {
+            // Disable positive acks
+            if (XMLP_ret::XML_OK !=
+                    XMLParser::getXMLDisablePositiveAcksQos(element, wdata->m_qos.m_disablePositiveACKs, 0))
+            {
+                return XMLP_ret::XML_ERROR;
             }
         }
         else

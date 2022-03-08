@@ -135,6 +135,9 @@ TEST_F(XMLEndpointParserTests, loadXMLNode)
                             <durabilityQos>VOLATILE_DURABILITY_QOS</durabilityQos>\
                             <ownershipQos kind=\"SHARED_OWNERSHIP_QOS\"/>\
                             <livelinessQos kind=\"AUTOMATIC_LIVELINESS_QOS\" leaseDuration_ms=\"1000\"/>\
+                            <disablePositiveAcks>\
+                                <enabled>true</enabled>\
+                            </disablePositiveAcks>\
                         </reader>\
                     </participant>\
                     <participant>\
@@ -154,6 +157,12 @@ TEST_F(XMLEndpointParserTests, loadXMLNode)
                             <durabilityQos>VOLATILE_DURABILITY_QOS</durabilityQos>\
                             <ownershipQos kind=\"SHARED_OWNERSHIP_QOS\" strength=\"50\"/>\
                             <livelinessQos kind=\"AUTOMATIC_LIVELINESS_QOS\" leaseDuration_ms=\"1000\"/>\
+                            <disablePositiveAcks>\
+                                <enabled>true</enabled>\
+                                <duration>\
+                                <sec>300</sec>\
+                                </duration>\
+                            </disablePositiveAcks>\
                         </writer>\
                     </participant>\
                 </staticdiscovery>\
@@ -301,6 +310,9 @@ TEST_F(XMLEndpointParserTests, loadXMLReaderEndpoint)
                     <durabilityQos>VOLATILE_DURABILITY_QOS</durabilityQos>\
                     <ownershipQos kind=\"SHARED_OWNERSHIP_QOS\"/>\
                     <livelinessQos kind=\"AUTOMATIC_LIVELINESS_QOS\" leaseDuration_ms=\"1000\"/>\
+                    <disablePositiveAcks>\
+                        <enabled>true</enabled>\
+                    </disablePositiveAcks>\
                 </reader>\
                 ";
         ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
@@ -330,6 +342,7 @@ TEST_F(XMLEndpointParserTests, loadXMLReaderEndpoint)
         EXPECT_EQ(pdata->m_readers[0]->m_qos.m_durability.kind,  VOLATILE_DURABILITY_QOS);
         EXPECT_EQ(pdata->m_readers[0]->m_qos.m_ownership.kind,  SHARED_OWNERSHIP_QOS);
         EXPECT_EQ(pdata->m_readers[0]->m_qos.m_liveliness.kind,  AUTOMATIC_LIVELINESS_QOS);
+        EXPECT_TRUE(pdata->m_readers[0]->m_qos.m_disablePositiveACKs.enabled);
 
         // Delete the ReaderProxyData created inside loadXMLParticipantEndpoint
         delete pdata->m_readers[0];
@@ -539,6 +552,12 @@ TEST_F(XMLEndpointParserTests, loadXMLWriterEndpoint)
                     <durabilityQos>VOLATILE_DURABILITY_QOS</durabilityQos>\
                     <ownershipQos kind=\"SHARED_OWNERSHIP_QOS\"/>\
                     <livelinessQos kind=\"AUTOMATIC_LIVELINESS_QOS\" leaseDuration_ms=\"1000\"/>\
+                    <disablePositiveAcks>\
+                        <enabled>true</enabled>\
+                        <duration>\
+                            <sec>300</sec>\
+                        </duration>\
+                    </disablePositiveAcks>\
                 </writer>\
                 ";
         ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
@@ -567,6 +586,9 @@ TEST_F(XMLEndpointParserTests, loadXMLWriterEndpoint)
         EXPECT_EQ(pdata->m_writers[0]->m_qos.m_durability.kind,  VOLATILE_DURABILITY_QOS);
         EXPECT_EQ(pdata->m_writers[0]->m_qos.m_ownership.kind,  SHARED_OWNERSHIP_QOS);
         EXPECT_EQ(pdata->m_writers[0]->m_qos.m_liveliness.kind,  AUTOMATIC_LIVELINESS_QOS);
+        EXPECT_TRUE(pdata->m_writers[0]->m_qos.m_disablePositiveACKs.enabled);
+        EXPECT_EQ(pdata->m_writers[0]->m_qos.m_disablePositiveACKs.duration.seconds, 300);
+        EXPECT_EQ(pdata->m_writers[0]->m_qos.m_disablePositiveACKs.duration.nanosec, 0u);
 
         // Delete the WriterProxyData created inside loadXMLWriterEndpoint
         delete pdata->m_writers[0];
@@ -622,7 +644,6 @@ TEST_F(XMLEndpointParserTests, loadXMLWriterEndpoint)
         ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
         titleElement = xml_doc.FirstChildElement();
         EXPECT_EQ(XMLP_ret::XML_OK, mp_edpXML->loadXMLWriterEndpoint(titleElement, pdata));
-
 
         // Delete the WriterProxyData created inside loadXMLWriterEndpoint
         for (auto wdata : pdata->m_writers)

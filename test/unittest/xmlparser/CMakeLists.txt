@@ -128,13 +128,13 @@ target_compile_definitions(XMLProfileParserTests PRIVATE FASTRTPS_NO_LIB
     )
 target_include_directories(XMLProfileParserTests PRIVATE
     ${PROJECT_SOURCE_DIR}/test/mock/rtps/Log
+    ${PROJECT_SOURCE_DIR}/test/mock/rtps/SharedMemTransportDescriptor
     ${PROJECT_SOURCE_DIR}/test/mock/rtps/TCPTransportDescriptor
     ${PROJECT_SOURCE_DIR}/test/mock/rtps/TCPv4TransportDescriptor
     ${PROJECT_SOURCE_DIR}/test/mock/rtps/TCPv6TransportDescriptor
     ${PROJECT_SOURCE_DIR}/test/mock/rtps/UDPTransportDescriptor
     ${PROJECT_SOURCE_DIR}/test/mock/rtps/UDPv4TransportDescriptor
     ${PROJECT_SOURCE_DIR}/test/mock/rtps/UDPv6TransportDescriptor
-    ${PROJECT_SOURCE_DIR}/test/mock/rtps/SharedMemTransportDescriptor
     ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include
     ${Asio_INCLUDE_DIR}
     )
@@ -265,6 +265,7 @@ set(XMLENDPOINTPARSERTESTS_SOURCE
     # parser
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/xmlparser/XMLEndpointParser.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/xmlparser/XMLParserCommon.cpp
+    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/xmlparser/XMLElementParser.cpp
 
     # log
     ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/log/Log.cpp
@@ -321,6 +322,14 @@ target_compile_definitions(XMLEndpointParserTests PRIVATE FASTRTPS_NO_LIB
     )
 target_include_directories(XMLEndpointParserTests PRIVATE
     ${PROJECT_SOURCE_DIR}/test/mock/rtps/ReaderProxyData
+    ${PROJECT_SOURCE_DIR}/test/mock/rtps/SharedMemTransportDescriptor
+    ${PROJECT_SOURCE_DIR}/test/mock/rtps/TCPTransportDescriptor
+    ${PROJECT_SOURCE_DIR}/test/mock/rtps/TCPv4TransportDescriptor
+    ${PROJECT_SOURCE_DIR}/test/mock/rtps/TCPv6TransportDescriptor
+    ${PROJECT_SOURCE_DIR}/test/mock/rtps/UDPTransportDescriptor
+    ${PROJECT_SOURCE_DIR}/test/mock/rtps/UDPv4TransportDescriptor
+    ${PROJECT_SOURCE_DIR}/test/mock/rtps/UDPv6TransportDescriptor
+    ${PROJECT_SOURCE_DIR}/test/mock/rtps/XMLProfileManager
     ${PROJECT_SOURCE_DIR}/test/mock/rtps/WriterProxyData
     ${PROJECT_SOURCE_DIR}/include
     ${PROJECT_BINARY_DIR}/include
