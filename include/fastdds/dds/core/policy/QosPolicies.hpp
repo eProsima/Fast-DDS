@@ -2832,7 +2832,7 @@ public:
             const WriterResourceLimitsQos& b) const
     {
         return (matched_subscriber_allocation == b.matched_subscriber_allocation) &&
-            (reader_filters_allocation == b.reader_filters_allocation);
+               (reader_filters_allocation == b.reader_filters_allocation);
     }
 
     //!Matched subscribers allocation limits.
