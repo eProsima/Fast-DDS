@@ -1188,7 +1188,7 @@ void RTPSParticipantImpl::update_attributes(
         if (!(metatraffic_unicast_locator_list == m_att.builtin.metatrafficUnicastLocatorList))
         {
             update_pdp = true;
-            m_network_Factory.RegisterTransport(nullptr);
+            m_network_Factory.update_network_interfaces();
             logInfo(RTPS_PARTICIPANT, m_att.getName() << " updated its metatraffic locators");
         }
     }
