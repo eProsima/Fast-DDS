@@ -972,7 +972,7 @@ public:
      * @return RETCODE_OK
      */
     RTPS_DllAPI ReturnCode_t get_matched_publications(
-            std::vector<fastrtps::rtps::InstanceHandle_t>& publication_handles) const;
+            std::vector<InstanceHandle_t>& publication_handles) const;
 
     /**
      * @brief This operation creates a ReadCondition. The returned ReadCondition will be attached and belong to the

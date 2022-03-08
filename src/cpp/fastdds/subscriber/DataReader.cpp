@@ -375,7 +375,7 @@ ReturnCode_t DataReader::get_matched_publication_data(
 }
 
 ReturnCode_t DataReader::get_matched_publications(
-        std::vector<fastrtps::rtps::InstanceHandle_t>& publication_handles) const
+        std::vector<InstanceHandle_t>& publication_handles) const
 {
     static_cast<void> (publication_handles);
     return ReturnCode_t::RETCODE_UNSUPPORTED;

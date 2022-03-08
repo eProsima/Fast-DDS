@@ -532,7 +532,7 @@ public:
      */
     RTPS_DllAPI ReturnCode_t get_matched_subscription_data(
             builtin::SubscriptionBuiltinTopicData& subscription_data,
-            const fastrtps::rtps::InstanceHandle_t& subscription_handle) const;
+            const InstanceHandle_t& subscription_handle) const;
 
     /**
      * @brief Fills the given vector with the InstanceHandle_t of matched DataReaders
@@ -541,7 +541,14 @@ public:
      * @return RETCODE_OK
      */
     RTPS_DllAPI ReturnCode_t get_matched_subscriptions(
-            std::vector<fastrtps::rtps::InstanceHandle_t*>& subscription_handles) const;
+            std::vector<InstanceHandle_t>& subscription_handles) const;
+
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
+    FASTDDS_DEPRECATED_UNTIL(3, "eprosima::fastdds::dds:DataWriter::get_matched_subscriptions()",
+            "In favor of version using std::vector<fastrtps::rtps::InstanceHandle_t>.")
+    RTPS_DllAPI ReturnCode_t get_matched_subscriptions(
+            std::vector<InstanceHandle_t*>& subscription_handles) const;
+#endif // DOXYGEN_SHOULD_SKIP_THIS
 
     /**
      * @brief Clears the DataWriter history

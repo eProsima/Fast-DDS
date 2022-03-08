@@ -314,7 +314,7 @@ ReturnCode_t DataWriter::assert_liveliness()
 
 ReturnCode_t DataWriter::get_matched_subscription_data(
         builtin::SubscriptionBuiltinTopicData& subscription_data,
-        const fastrtps::rtps::InstanceHandle_t& subscription_handle) const
+        const InstanceHandle_t& subscription_handle) const
 {
     static_cast<void> (subscription_data);
     static_cast<void> (subscription_handle);
@@ -325,7 +325,17 @@ ReturnCode_t DataWriter::get_matched_subscription_data(
 }
 
 ReturnCode_t DataWriter::get_matched_subscriptions(
-        std::vector<fastrtps::rtps::InstanceHandle_t*>& subscription_handles) const
+        std::vector<InstanceHandle_t>& subscription_handles) const
+{
+    static_cast<void> (subscription_handles);
+    return ReturnCode_t::RETCODE_UNSUPPORTED;
+    /*
+       return impl_->get_matched_subscription_data(subscription_handles);
+     */
+}
+
+ReturnCode_t DataWriter::get_matched_subscriptions(
+        std::vector<InstanceHandle_t*>& subscription_handles) const
 {
     static_cast<void> (subscription_handles);
     return ReturnCode_t::RETCODE_UNSUPPORTED;
