@@ -1343,14 +1343,14 @@ TEST_F(DataWriterUnsupportedTests, UnsupportedDataWriterMethods)
 
     {
         InstanceHandle_t handle;
-        fastrtps::rtps::Time_t timestamp;
+        fastrtps::Time_t timestamp;
         EXPECT_EQ(
             ReturnCode_t::RETCODE_UNSUPPORTED,
             data_writer->write_w_timestamp(nullptr /* data */, handle, timestamp));
     }
 
     {
-        fastrtps::rtps::Time_t timestamp;
+        fastrtps::Time_t timestamp;
         EXPECT_EQ(
             HANDLE_NIL,
             data_writer->register_instance_w_timestamp(nullptr /* instance */, timestamp));
@@ -1358,14 +1358,14 @@ TEST_F(DataWriterUnsupportedTests, UnsupportedDataWriterMethods)
 
     {
         InstanceHandle_t handle;
-        fastrtps::rtps::Time_t timestamp;
+        fastrtps::Time_t timestamp;
         EXPECT_EQ(
             ReturnCode_t::RETCODE_UNSUPPORTED,
             data_writer->unregister_instance_w_timestamp(nullptr /* instance */, handle, timestamp));
     }
 
 
-    std::vector<fastrtps::rtps::InstanceHandle_t*> subscription_handles;
+    std::vector<InstanceHandle_t> subscription_handles;
     EXPECT_EQ(ReturnCode_t::RETCODE_UNSUPPORTED, data_writer->get_matched_subscriptions(subscription_handles));
 
     fastrtps::rtps::InstanceHandle_t key_handle;
