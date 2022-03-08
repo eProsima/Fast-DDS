@@ -19,6 +19,7 @@
 #include <fastdds/statistics/dds/subscriber/qos/DataReaderQos.hpp>
 
 #include <fastdds/dds/core/policy/QosPolicies.hpp>
+#include <fastdds/rtps/resources/ResourceManagement.h>
 
 namespace eprosima {
 namespace fastdds {
@@ -27,11 +28,14 @@ namespace dds {
 
 DataReaderQos::DataReaderQos()
 {
-    // Specific implementation for recommended statistics DataReaderQos
+    /* Specific implementation for recommended statistics DataReaderQos */
     reliability().kind = eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS;
     durability().kind = eprosima::fastdds::dds::TRANSIENT_LOCAL_DURABILITY_QOS;
     history().kind = eprosima::fastdds::dds::KEEP_LAST_HISTORY_QOS;
     history().depth = 100;
+    // Setting history memory policy to PREALLOCATED_WITH_REALLOC_MEMORY_MODE allows for future type
+    // extension with backwards compatibility
+    endpoint().history_memory_policy = eprosima::fastrtps::rtps::PREALLOCATED_WITH_REALLOC_MEMORY_MODE;
 }
 
 } // dds
