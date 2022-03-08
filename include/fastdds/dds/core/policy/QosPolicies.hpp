@@ -2831,11 +2831,14 @@ public:
     bool operator ==(
             const WriterResourceLimitsQos& b) const
     {
-        return (this->matched_subscriber_allocation == b.matched_subscriber_allocation);
+        return (matched_subscriber_allocation == b.matched_subscriber_allocation) &&
+            (reader_filters_allocation == b.reader_filters_allocation);
     }
 
     //!Matched subscribers allocation limits.
     fastrtps::ResourceLimitedContainerConfig matched_subscriber_allocation;
+    //!Reader filters allocation limits.
+    fastrtps::ResourceLimitedContainerConfig reader_filters_allocation;
 };
 
 /**
