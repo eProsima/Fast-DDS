@@ -624,10 +624,6 @@ bool SharedMemTransport::fillUnicastLocator(
     return true;
 }
 
-void SharedMemTransport::update_network_interfaces()
-{
-}
-
 }  // namsepace rtps
 }  // namespace fastdds
 }  // namespace eprosima
