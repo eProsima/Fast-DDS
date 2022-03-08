@@ -12,7 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-
 #include <condition_variable>
 #include <csignal>
 #include <iostream>
@@ -128,16 +127,22 @@ int fastdds_discovery_server(
             {
                 // Set environment variables to prevent loading the default XML file
 #ifdef _WIN32
-                if (0 != _putenv_s(fastrtps::xmlparser::DEFAULT_FASTRTPS_ENV_VARIABLE, "") ||
-                        0 != _putenv_s(fastrtps::xmlparser::SKIP_DEFAULT_XML_FILE, "1"))
+                if (0 != _putenv_s("FASTRTPS_DEFAULT_PROFILES_FILE", "") ||
+                        0 != _putenv_s("SKIP_DEFAULT_XML_FILE", "1"))
+                {
+                    char errmsg[1024];
+                    strerror_s(errmsg, sizeof(errmsg), errno);
+                    std::cout << "Error setting environment variables: " << errmsg << std::endl;
+                    return 1;
+                }
 #else
                 if (0 != unsetenv(fastrtps::xmlparser::DEFAULT_FASTRTPS_ENV_VARIABLE) ||
                         0 != setenv(fastrtps::xmlparser::SKIP_DEFAULT_XML_FILE, "1", 1))
-#endif // ifdef _WIN32
                 {
                     std::cout << "Error setting environment variables: " << std::strerror(errno) << std::endl;
                     return 1;
                 }
+#endif // ifdef _WIN32
                 // Set default participant QoS from XML file
                 if (ReturnCode_t::RETCODE_OK != DomainParticipantFactory::get_instance()->load_profiles())
                 {
