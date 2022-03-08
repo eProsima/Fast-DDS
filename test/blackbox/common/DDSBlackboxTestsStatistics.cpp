@@ -134,7 +134,8 @@ enum class DiscoveryTopicPhysicalDataTest : uint8_t
 {
     AUTO_PHYSICAL_DATA = 1,
     USER_DEFINED_PHYSICAL_DATA = 2,
-    NO_PHYSICAL_DATA = 3
+    USER_DEFINED_PHYSICAL_DATA_XML = 3,
+    NO_PHYSICAL_DATA = 4
 };
 
 void test_discovery_topic_physical_data(
@@ -148,7 +149,42 @@ void test_discovery_topic_physical_data(
     std::string user_defined_user = "test_user";
     std::string user_defined_process = "test_process";
 
-    DomainParticipantQos pqos = PARTICIPANT_QOS_DEFAULT;
+    if (test_kind == DiscoveryTopicPhysicalDataTest::USER_DEFINED_PHYSICAL_DATA_XML)
+    {
+        std::string xml_profile =
+            "\
+            <?xml version=\"1.0\" encoding=\"utf-8\"?>\
+            <dds xmlns=\"http://www.eprosima.com/XMLSchemas/fastRTPS_Profiles\">\
+                <profiles>\
+                    <participant profile_name=\"statistics_participant\" is_default_profile=\"true\">\
+                        <rtps>\
+                            <propertiesPolicy>\
+                                <properties>\
+                                    <property>\
+                                        <name>" + std::string(parameter_policy_physical_data_host) + "</name>\
+                                        <value>" + user_defined_host + "</value>\
+                                    </property>\
+                                    <property>\
+                                        <name>" + std::string(parameter_policy_physical_data_user) + "</name>\
+                                        <value>" + user_defined_user + "</value>\
+                                    </property>\
+                                    <property>\
+                                        <name>" + std::string(parameter_policy_physical_data_process) + "</name>\
+                                        <value>" + user_defined_process + "</value>\
+                                    </property>\
+                                </properties>\
+                            </propertiesPolicy>\
+                        </rtps>\
+                    </participant>\
+                </profiles>\
+            </dds>\
+            ";
+
+        participant_factory->load_XML_profiles_string(xml_profile.c_str(), xml_profile.length());
+        participant_factory->load_profiles();
+    }
+
+    DomainParticipantQos pqos = participant_factory->get_default_participant_qos();
 
     // Avoid discovery of participants external to the test
     pqos.wire_protocol().builtin.discovery_config.ignoreParticipantFlags =
@@ -224,6 +260,7 @@ void test_discovery_topic_physical_data(
             break;
         }
         case DiscoveryTopicPhysicalDataTest::USER_DEFINED_PHYSICAL_DATA:
+        case DiscoveryTopicPhysicalDataTest::USER_DEFINED_PHYSICAL_DATA_XML:
         {
             ASSERT_NE(nullptr, p2_host);
             ASSERT_NE(nullptr, p2_user);
@@ -607,25 +644,41 @@ TEST(DDSStatistics, statistics_with_partition_on_user)
 }
 
 /*
- * This test checks that the DISCOVERY_TOPIC carries the correct physical data, i.e.:
+ * The following tests check that the DISCOVERY_TOPIC carries the correct physical data, i.e.:
  *
  * 1. When FASTDDS_STATISTICS is defined and the user does not configure anything, the DISCOVERY_TOPIC carries
  *    physical information for participants, and nothing for writers and reader.
- * 2. When FASTDDS_STATISTICS is defined and the user does configure the physical properties, the DISCOVERY_TOPIC
- *    carries physical information for participants, and nothing for writers and reader.
- * 3. When FASTDDS_STATISTICS is defined and the user removes the physical properties, the DISCOVERY_TOPIC
+ * 2. When FASTDDS_STATISTICS is defined and the user does configure the physical properties using API, the
+ *    DISCOVERY_TOPIC carries physical information for participants, and nothing for writers and reader.
+ * 3. When FASTDDS_STATISTICS is defined and the user does configure the physical properties using XML, the
+ *    DISCOVERY_TOPIC carries physical information for participants, and nothing for writers and reader.
+ * 4. When FASTDDS_STATISTICS is defined and the user removes the physical properties, the DISCOVERY_TOPIC
  *    carries no physical information for participants, writers, or reader.
  */
-TEST(DDSStatistics, discovery_topic_physical_data)
+TEST(DDSStatistics, discovery_topic_physical_data_auto)
 {
 #ifdef FASTDDS_STATISTICS
-    std::cout << "Running test for AUTO_PHYSICAL_DATA" << std::endl;
     test_discovery_topic_physical_data(DiscoveryTopicPhysicalDataTest::AUTO_PHYSICAL_DATA);
+#endif // FASTDDS_STATISTICS
+}
 
-    std::cout << "Running test for USER_DEFINED_PHYSICAL_DATA" << std::endl;
+TEST(DDSStatistics, discovery_topic_physical_data_user_defined)
+{
+#ifdef FASTDDS_STATISTICS
     test_discovery_topic_physical_data(DiscoveryTopicPhysicalDataTest::USER_DEFINED_PHYSICAL_DATA);
+#endif // FASTDDS_STATISTICS
+}
 
-    std::cout << "Running test for NO_PHYSICAL_DATA" << std::endl;
+TEST(DDSStatistics, discovery_topic_physical_data_user_defined_xml)
+{
+#ifdef FASTDDS_STATISTICS
+    test_discovery_topic_physical_data(DiscoveryTopicPhysicalDataTest::USER_DEFINED_PHYSICAL_DATA_XML);
+#endif // FASTDDS_STATISTICS
+}
+
+TEST(DDSStatistics, discovery_topic_physical_data_delete_physical_properties)
+{
+#ifdef FASTDDS_STATISTICS
     test_discovery_topic_physical_data(DiscoveryTopicPhysicalDataTest::NO_PHYSICAL_DATA);
 #endif // FASTDDS_STATISTICS
 }
