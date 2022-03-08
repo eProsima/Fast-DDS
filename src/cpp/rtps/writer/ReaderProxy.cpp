@@ -81,7 +81,7 @@ ReaderProxy::ReaderProxy(
 bool ReaderProxy::rtps_is_relevant(
         CacheChange_t* change) const
 {
-    auto filter = writer_->content_filter();
+    auto filter = writer_->reader_data_filter();
     if (nullptr != filter)
     {
         bool ret = filter->is_relevant(*change, guid());

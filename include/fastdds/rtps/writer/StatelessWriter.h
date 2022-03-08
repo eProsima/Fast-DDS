@@ -130,7 +130,7 @@ public:
      * @param filter  The content filter to use on this writer. May be @c nullptr to remove the content filter
      *                (i.e. treat all samples as valid).
      */
-    virtual void content_filter(
+    virtual void reader_data_filter(
             fastdds::rtps::IReaderDataFilter* filter) final
     {
         static_cast<void>(filter);
@@ -141,47 +141,8 @@ public:
      *
      * @return The content filter used on this writer.
      */
-    virtual const fastdds::rtps::IReaderDataFilter* content_filter() const final
+    virtual const fastdds::rtps::IReaderDataFilter* reader_data_filter() const final
     {
-        return nullptr;
-    }
-
-    /**
-     * @brief Set a content filter to perform content filtering on this writer for a specific reader.
-     *
-     * This method will set a content filter that will be applied to the reader specified by @c reader_guid.
-     *
-     * @param reader_guid    GUID of the reader for which the filter should be applied.
-     *                       If the specified reader is not matched with this writer, the method will return
-     *                       @c false.
-     * @param reader_filter  The content filter to use for the specified reader. May be @c nullptr to remove
-     *                       the content filter (i.e. fallback to the global content filter set by
-     *                       @ref content_filter).
-     *
-     * @return Whether the operation was successful or not.
-     */
-    virtual bool reader_content_filter(
-            const GUID_t& reader_guid,
-            fastdds::rtps::IReaderDataFilter* reader_filter) final
-    {
-        static_cast<void>(reader_guid);
-        static_cast<void>(reader_filter);
-
-        return false;
-    }
-
-    /**
-     * @brief Get the content filter used to perform content filtering on this writer for a specific reader.
-     *
-     * @param reader_guid    GUID of the reader for which the filter should be returned.
-     *
-     * @return The content filter used on this writer for the specified reader.
-     */
-    virtual const fastdds::rtps::IReaderDataFilter* reader_content_filter(
-            const GUID_t& reader_guid) const final
-    {
-        static_cast<void>(reader_guid);
-
         return nullptr;
     }
 

@@ -177,7 +177,7 @@ public:
      * @param filter  The content filter to use on this writer. May be @c nullptr to remove the content filter
      *                (i.e. treat all samples as valid).
      */
-    RTPS_DllAPI virtual void content_filter(
+    RTPS_DllAPI virtual void reader_data_filter(
             fastdds::rtps::IReaderDataFilter* filter) = 0;
 
     /**
@@ -185,35 +185,7 @@ public:
      *
      * @return The content filter used on this writer.
      */
-    RTPS_DllAPI virtual const fastdds::rtps::IReaderDataFilter* content_filter() const = 0;
-
-    /**
-     * @brief Set a content filter to perform content filtering on this writer for a specific reader.
-     *
-     * This method will set a content filter that will be applied to the reader specified by @c reader_guid.
-     *
-     * @param reader_guid    GUID of the reader for which the filter should be applied.
-     *                       If the specified reader is not matched with this writer, the method will return
-     *                       @c false.
-     * @param reader_filter  The content filter to use for the specified reader. May be @c nullptr to remove
-     *                       the content filter (i.e. fallback to the global content filter set by
-     *                       @ref content_filter).
-     *
-     * @return Whether the operation was successful or not.
-     */
-    RTPS_DllAPI virtual bool reader_content_filter(
-            const GUID_t& reader_guid,
-            fastdds::rtps::IReaderDataFilter* reader_filter) = 0;
-
-    /**
-     * @brief Get the content filter used to perform content filtering on this writer for a specific reader.
-     *
-     * @param reader_guid    GUID of the reader for which the filter should be returned.
-     *
-     * @return The content filter used on this writer for the specified reader.
-     */
-    RTPS_DllAPI virtual const fastdds::rtps::IReaderDataFilter* reader_content_filter(
-            const GUID_t& reader_guid) const = 0;
+    RTPS_DllAPI virtual const fastdds::rtps::IReaderDataFilter* reader_data_filter() const = 0;
 
     /**
      * Check if a specific change has been acknowledged by all Readers.
