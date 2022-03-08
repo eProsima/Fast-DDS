@@ -169,7 +169,7 @@ int fastdds_discovery_server(
                 participantQos.wire_protocol().prefix == prefix_cero)
         {
             std::cout << "The provided configuration is not valid. Participant must be either SERVER or BACKUP. " <<
-                    "Server id is mandatory if not defined in the XML file: use -i or --server-id option." << std::endl;
+                "Server id is mandatory if not defined in the XML file: use -i or --server-id option." << std::endl;
             return 1;
         }
     }
