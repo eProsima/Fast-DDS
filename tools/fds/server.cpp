@@ -131,7 +131,7 @@ int fastdds_discovery_server(
                 if (0 != _putenv_s(fastrtps::xmlparser::DEFAULT_FASTRTPS_ENV_VARIABLE, "") ||
                         0 != _putenv_s(fastrtps::xmlparser::SKIP_DEFAULT_XML_FILE, "1"))
 #else
-                if (0 != setenv(fastrtps::xmlparser::DEFAULT_FASTRTPS_ENV_VARIABLE, "", 1) ||
+                if (0 != unsetenv(fastrtps::xmlparser::DEFAULT_FASTRTPS_ENV_VARIABLE) ||
                         0 != setenv(fastrtps::xmlparser::SKIP_DEFAULT_XML_FILE, "1", 1))
 #endif // ifdef _WIN32
                 {
@@ -162,14 +162,14 @@ int fastdds_discovery_server(
     if (nullptr == pOp)
     {
         fastrtps::rtps::GuidPrefix_t prefix_cero;
-        if (participantQos.wire_protocol().builtin.discovery_config.discoveryProtocol !=
+        if (!(participantQos.wire_protocol().builtin.discovery_config.discoveryProtocol ==
                 eprosima::fastrtps::rtps::DiscoveryProtocol::SERVER ||
-                participantQos.wire_protocol().builtin.discovery_config.discoveryProtocol !=
-                eprosima::fastrtps::rtps::DiscoveryProtocol::BACKUP ||
+                participantQos.wire_protocol().builtin.discovery_config.discoveryProtocol ==
+                eprosima::fastrtps::rtps::DiscoveryProtocol::BACKUP) ||
                 participantQos.wire_protocol().prefix == prefix_cero)
         {
-            std::cout << "Server id is mandatory if not defined in the XML file: use -i or --server-id option."
-                      << std::endl;
+            std::cout << "The provided configuration is not valid. Participant must be either SERVER or BACKUP. " <<
+                    "Server id is mandatory if not defined in the XML file: use -i or --server-id option." << std::endl;
             return 1;
         }
     }
@@ -208,19 +208,7 @@ int fastdds_discovery_server(
     {
         participantQos.wire_protocol().builtin.discovery_config.discoveryProtocol = DiscoveryProtocol::BACKUP;
     }
-    else if (nullptr != options[XML_FILE])
-    {
-        if (participantQos.wire_protocol().builtin.discovery_config.discoveryProtocol !=
-                eprosima::fastrtps::rtps::DiscoveryProtocol::SERVER ||
-                participantQos.wire_protocol().builtin.discovery_config.discoveryProtocol !=
-                eprosima::fastrtps::rtps::DiscoveryProtocol::BACKUP)
-        {
-            std::cout << "The provided configuration is not valid. Participant must be either SERVER or BACKUP." <<
-                std::endl;
-            return 1;
-        }
-    }
-    else
+    else if (nullptr == options[XML_FILE])
     {
         participantQos.wire_protocol().builtin.discovery_config.discoveryProtocol = DiscoveryProtocol::SERVER;
     }
@@ -251,9 +239,10 @@ int fastdds_discovery_server(
 
     // Retrieve first IP address
     pOp = options[IPADDRESS];
-    if (nullptr == pOp && nullptr == options[XML_FILE])
+    if (nullptr == pOp && (nullptr == options[XML_FILE] || nullptr != pO_port))
     {
         // Add default locator
+        participantQos.wire_protocol().builtin.metatrafficUnicastLocatorList.clear();
         participantQos.wire_protocol().builtin.metatrafficUnicastLocatorList.push_back(locator);
     }
     else
