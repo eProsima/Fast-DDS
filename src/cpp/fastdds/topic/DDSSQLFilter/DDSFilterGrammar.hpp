@@ -48,8 +48,8 @@ struct string_content : star< not_one< '\'', '\r', '\n'> > {};
 struct string_value : seq< open_quote, string_content, close_quote > {};
 
 // BOOLEANVALUE
-struct false_value : pad< TAO_PEGTL_KEYWORD("FALSE"), space > {};
-struct true_value : pad< TAO_PEGTL_KEYWORD("TRUE"), space > {};
+struct false_value : pad< sor< TAO_PEGTL_KEYWORD("FALSE"), TAO_PEGTL_KEYWORD("false") >, space > {};
+struct true_value : pad< sor< TAO_PEGTL_KEYWORD("TRUE"), TAO_PEGTL_KEYWORD("true") >, space > {};
 struct boolean_value : sor<false_value, true_value> {};
 
 // INTEGERVALUE, FLOATVALUE
@@ -62,11 +62,11 @@ struct float_value : seq < opt< sign >, integer, sor < exponent, seq< fractional
 struct parameter_value : seq< one< '%' >, digit, opt< digit > > {};
 
 // Keyword based operators
-struct and_op : pad< TAO_PEGTL_KEYWORD("AND"), space > {};
-struct or_op : pad< TAO_PEGTL_KEYWORD("OR"), space> {};
-struct not_op : pad< TAO_PEGTL_KEYWORD("NOT"), space> {};
-struct between_op : pad< TAO_PEGTL_KEYWORD("BETWEEN"), space> {};
-struct not_between_op : pad< TAO_PEGTL_KEYWORD("NOT BETWEEN"), space> {};
+struct and_op : pad< sor< TAO_PEGTL_KEYWORD("AND"), TAO_PEGTL_KEYWORD("and") >, space > {};
+struct or_op : pad< sor< TAO_PEGTL_KEYWORD("OR"), TAO_PEGTL_KEYWORD("or") >, space> {};
+struct not_op : pad< sor< TAO_PEGTL_KEYWORD("NOT"), TAO_PEGTL_KEYWORD("not") >, space> {};
+struct between_op : pad< sor< TAO_PEGTL_KEYWORD("BETWEEN"), TAO_PEGTL_KEYWORD("between") >, space> {};
+struct not_between_op : pad< sor< TAO_PEGTL_KEYWORD("NOT BETWEEN"), TAO_PEGTL_KEYWORD("not between") >, space> {};
 
 // RelOp
 struct eq_op : pad< one<'='>, space> {};
