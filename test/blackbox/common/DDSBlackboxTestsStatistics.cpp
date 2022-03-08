@@ -20,37 +20,45 @@
 
 #include <gtest/gtest.h>
 
-#include "BlackboxTests.hpp"
-
-#include "../types/HelloWorld.h"
-#include "../types/HelloWorldPubSubTypes.h"
-#include "../types/statistics/typesPubSubTypes.h"
-#include "../types/statistics/types.h"
-#include "PubSubReader.hpp"
-#include "PubSubWriter.hpp"
-
-#include <fastdds/dds/core/LoanableSequence.hpp>
-#include <fastdds/dds/core/condition/WaitSet.hpp>
 #include <fastdds/dds/core/condition/Condition.hpp>
 #include <fastdds/dds/core/condition/StatusCondition.hpp>
+#include <fastdds/dds/core/condition/WaitSet.hpp>
 #include <fastdds/dds/core/LoanableSequence.hpp>
+#include <fastdds/dds/core/LoanableSequence.hpp>
+#include <fastdds/dds/core/status/StatusMask.hpp>
 #include <fastdds/dds/domain/DomainParticipant.hpp>
 #include <fastdds/dds/domain/DomainParticipantFactory.hpp>
 #include <fastdds/dds/domain/qos/DomainParticipantFactoryQos.hpp>
+#include <fastdds/dds/domain/qos/DomainParticipantQos.hpp>
+#include <fastdds/dds/publisher/DataWriter.hpp>
+#include <fastdds/dds/publisher/Publisher.hpp>
+#include <fastdds/dds/publisher/qos/DataWriterQos.hpp>
+#include <fastdds/dds/publisher/qos/PublisherQos.hpp>
 #include <fastdds/dds/subscriber/DataReader.hpp>
 #include <fastdds/dds/subscriber/Subscriber.hpp>
+#include <fastdds/dds/topic/qos/TopicQos.hpp>
+#include <fastdds/dds/topic/Topic.hpp>
 #include <fastdds/dds/topic/TopicDescription.hpp>
+#include <fastdds/dds/topic/TypeSupport.hpp>
 #include <fastdds/rtps/attributes/PropertyPolicy.h>
+#include <fastdds/rtps/attributes/RTPSParticipantAttributes.h>
+#include <fastdds/rtps/common/EntityId_t.hpp>
+#include <fastdds/rtps/common/GuidPrefix_t.hpp>
 #include <fastdds/rtps/common/Time_t.h>
-#include <fastdds/rtps/common/Guid.h>
 #include <fastdds/rtps/transport/UDPv4TransportDescriptor.h>
-
-#include <fastdds/statistics/topic_names.hpp>
 #include <fastdds/statistics/dds/domain/DomainParticipant.hpp>
 #include <fastdds/statistics/dds/publisher/qos/DataWriterQos.hpp>
 #include <fastdds/statistics/dds/subscriber/qos/DataReaderQos.hpp>
-
+#include <fastdds/statistics/topic_names.hpp>
 #include <fastrtps/types/TypesBase.h>
+
+#include "../types/HelloWorld.h"
+#include "../types/HelloWorldPubSubTypes.h"
+#include "../types/statistics/types.h"
+#include "../types/statistics/typesPubSubTypes.h"
+#include "BlackboxTests.hpp"
+#include "PubSubReader.hpp"
+#include "PubSubWriter.hpp"
 
 #ifdef FASTDDS_STATISTICS
 
@@ -387,9 +395,11 @@ TEST(DDSStatistics, discovery_topic_physical_data)
     auto domain_id = GET_PID() % 100;
 
     DomainParticipantQos pqos = PARTICIPANT_QOS_DEFAULT;
-    pqos.transport().use_builtin_transports = false;
-    auto udp_transport = std::make_shared<UDPv4TransportDescriptor>();
-    pqos.transport().user_transports.push_back(udp_transport);
+    // Avoid discovery of participants external to the test
+    pqos.wire_protocol().builtin.discovery_config.ignoreParticipantFlags =
+            static_cast<eprosima::fastrtps::rtps::ParticipantFilteringFlags_t>(
+        eprosima::fastrtps::rtps::ParticipantFilteringFlags_t::FILTER_DIFFERENT_PROCESS |
+        eprosima::fastrtps::rtps::ParticipantFilteringFlags_t::FILTER_DIFFERENT_PROCESS);
     DomainParticipantFactory* participant_factory = DomainParticipantFactory::get_instance();
 
     /* Enable DISCOVERY_TOPIC DataWriter in the first DomainParticipant */
@@ -397,7 +407,7 @@ TEST(DDSStatistics, discovery_topic_physical_data)
     ASSERT_NE(nullptr, p1);
     auto statistics_p1 = statistics::dds::DomainParticipant::narrow(p1);
     ASSERT_NE(nullptr, statistics_p1);
-    auto publisher_p1 = p1->create_publisher(PUBLISHER_QOS_DEFAULT);
+    Publisher* publisher_p1 = p1->create_publisher(PUBLISHER_QOS_DEFAULT);
     ASSERT_NE(nullptr, publisher_p1);
     EXPECT_EQ(ReturnCode_t::RETCODE_OK,
             statistics_p1->enable_statistics_datawriter(statistics::DISCOVERY_TOPIC,
@@ -414,11 +424,21 @@ TEST(DDSStatistics, discovery_topic_physical_data)
     Topic* topic = statistics_p2->create_topic(statistics::DISCOVERY_TOPIC,
                     discovery_type.get_type_name(), TOPIC_QOS_DEFAULT);
     ASSERT_NE(nullptr, topic);
-    auto subscriber_p2 = p2->create_subscriber(SUBSCRIBER_QOS_DEFAULT);
+    Subscriber* subscriber_p2 = p2->create_subscriber(SUBSCRIBER_QOS_DEFAULT);
     ASSERT_NE(nullptr, subscriber_p2);
     DataReader* discovery_data_reader = subscriber_p2->create_datareader(topic,
                     statistics::dds::STATISTICS_DATAREADER_QOS);
     EXPECT_NE(nullptr, discovery_data_reader);
+
+    /* Create a DataWriter in the second participant */
+    TypeSupport helloworld_type(new HelloWorldPubSubType());
+    ASSERT_NE(nullptr, helloworld_type);
+    helloworld_type.register_type(statistics_p2);
+    Topic* helloworld_topic = statistics_p2->create_topic("helloworld",
+                    helloworld_type.get_type_name(), TOPIC_QOS_DEFAULT);
+    Publisher* publisher_p2 = p2->create_publisher(PUBLISHER_QOS_DEFAULT);
+    ASSERT_NE(nullptr, publisher_p2);
+    DataWriter* datawriter_p2 = publisher_p2->create_datawriter(helloworld_topic, DATAWRITER_QOS_DEFAULT);
 
     /* Create waitset for the DataReader */
     WaitSet waitset;
@@ -429,10 +449,6 @@ TEST(DDSStatistics, discovery_topic_physical_data)
 
     ConditionSeq triggered_conditions;
     waitset.wait(triggered_conditions, eprosima::fastrtps::c_TimeInfinite);
-
-    FASTDDS_SEQUENCE(DiscoveryTimeSeq, statistics::DiscoveryTime);
-    DiscoveryTimeSeq discovery_time_seq;
-    SampleInfoSeq info_seq;
 
     auto to_guid_prefix = [](const statistics::detail::GuidPrefix_s& prefix)
             {
@@ -454,36 +470,57 @@ TEST(DDSStatistics, discovery_topic_physical_data)
                 return entity_id;
             };
 
+    LoanableSequence<statistics::DiscoveryTime> discovery_time_seq;
+    SampleInfoSeq info_seq;
+
     while (ReturnCode_t::RETCODE_OK == discovery_data_reader->take(discovery_time_seq, info_seq))
     {
-        for (DiscoveryTimeSeq::size_type n = 0; n < info_seq.length(); n++)
+        for (LoanableSequence<statistics::DiscoveryTime>::size_type n = 0; n < info_seq.length(); n++)
         {
             if (info_seq[n].valid_data)
             {
-                EXPECT_EQ(statistics_p1->guid().guidPrefix,
-                        to_guid_prefix(discovery_time_seq[n].local_participant_guid().guidPrefix()));
-                EXPECT_EQ(statistics_p2->guid().guidPrefix,
-                        to_guid_prefix(discovery_time_seq[n].remote_entity_guid().guidPrefix()));
+                /* Get discovery information from the sample */
+                eprosima::fastrtps::rtps::GuidPrefix_t local_prefix = to_guid_prefix(
+                    discovery_time_seq[n].local_participant_guid().guidPrefix());
+                eprosima::fastrtps::rtps::GuidPrefix_t remote_prefix = to_guid_prefix(
+                    discovery_time_seq[n].remote_entity_guid().guidPrefix());
                 eprosima::fastrtps::rtps::EntityId_t remote_entity_id = to_entity_id(
                     discovery_time_seq[n].remote_entity_guid().entityId());
-                if (remote_entity_id != ENTITYID_RTPSParticipant)
-                {
-                    EXPECT_EQ(discovery_data_reader->guid().entityId, remote_entity_id);
-                }
-                const std::string* host = eprosima::fastrtps::rtps::PropertyPolicyHelper::find_property(
+
+                const std::string* p1_host = eprosima::fastrtps::rtps::PropertyPolicyHelper::find_property(
                     statistics_p1->get_qos().properties(), parameter_policy_physical_data_host);
-                ASSERT_NE(nullptr, host);
-                EXPECT_EQ(*host, discovery_time_seq[n].host());
-
-                const std::string* user = eprosima::fastrtps::rtps::PropertyPolicyHelper::find_property(
+                const std::string* p1_user = eprosima::fastrtps::rtps::PropertyPolicyHelper::find_property(
                     statistics_p1->get_qos().properties(), parameter_policy_physical_data_user);
-                ASSERT_NE(nullptr, user);
-                EXPECT_EQ(*user, discovery_time_seq[n].user());
-
-                const std::string* process = eprosima::fastrtps::rtps::PropertyPolicyHelper::find_property(
+                const std::string* p1_process = eprosima::fastrtps::rtps::PropertyPolicyHelper::find_property(
                     statistics_p1->get_qos().properties(), parameter_policy_physical_data_process);
-                ASSERT_NE(nullptr, process);
-                EXPECT_EQ(*process, discovery_time_seq[n].process());
+
+                /* Validate discovery sample */
+                EXPECT_EQ(statistics_p1->guid().guidPrefix, local_prefix);
+                EXPECT_EQ(statistics_p2->guid().guidPrefix, remote_prefix);
+
+                // If the remote entity is a participant, then host, user, and process should have the values of
+                // that participant
+                if (remote_entity_id == ENTITYID_RTPSParticipant)
+                {
+                    ASSERT_NE(nullptr, p1_host);
+                    EXPECT_EQ(*p1_host, discovery_time_seq[n].host());
+
+                    ASSERT_NE(nullptr, p1_user);
+                    EXPECT_EQ(*p1_user, discovery_time_seq[n].user());
+
+                    ASSERT_NE(nullptr, p1_process);
+                    EXPECT_EQ(*p1_process, discovery_time_seq[n].process());
+                }
+                // If the remote entity is not a participant, then host, user, and process should be empty
+                else
+                {
+                    EXPECT_TRUE(
+                        remote_entity_id == discovery_data_reader->guid().entityId ||
+                        remote_entity_id == datawriter_p2->guid().entityId);
+                    EXPECT_EQ(discovery_time_seq[n].host(), "");
+                    EXPECT_EQ(discovery_time_seq[n].user(), "");
+                    EXPECT_EQ(discovery_time_seq[n].process(), "");
+                }
             }
         }
         discovery_data_reader->return_loan(discovery_time_seq, info_seq);
@@ -492,12 +529,10 @@ TEST(DDSStatistics, discovery_topic_physical_data)
     /* Delete first DomainParticipant */
     statistics_p1->disable_statistics_datawriter(statistics::DISCOVERY_TOPIC);
     statistics_p1->delete_contained_entities();
-    DomainParticipantFactory::get_instance()->delete_participant(p1);
-    statistics_p1 = nullptr;
+    participant_factory->delete_participant(p1);
 
     /* Delete second DomainParticipant */
     statistics_p2->delete_contained_entities();
-    DomainParticipantFactory::get_instance()->delete_participant(p2);
-    statistics_p2 = nullptr;
+    participant_factory->delete_participant(p2);
 #endif // FASTDDS_STATISTICS
 }
