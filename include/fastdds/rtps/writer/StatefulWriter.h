@@ -378,11 +378,11 @@ public:
     /**
      * @brief Set a content filter to perform content filtering on this writer.
      *
-     * This method will set a global content filter that will be applied to readers not having a specific
-     * content filter assigned (i.e. @ref reader_content_filter has not been called with their GUID).
+     * This method sets a content filter that will be used to check whether a cache change is relevant
+     * for a reader or not.
      *
      * @param filter  The content filter to use on this writer. May be @c nullptr to remove the content filter
-     *                (i.e. treat all samples as valid).
+     *                (i.e. treat all samples as relevant).
      */
     void reader_data_filter(
             fastdds::rtps::IReaderDataFilter* filter) final;
