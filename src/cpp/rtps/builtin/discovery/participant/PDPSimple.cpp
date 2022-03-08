@@ -212,19 +212,22 @@ void PDPSimple::announceParticipantState(
         bool dispose,
         WriteParams& wp)
 {
-    PDP::announceParticipantState(new_change, dispose, wp);
-
-    if (!(dispose || new_change))
+    if (enable_)
     {
-        StatelessWriter* pW = dynamic_cast<StatelessWriter*>(mp_PDPWriter);
+        PDP::announceParticipantState(new_change, dispose, wp);
 
-        if (pW != nullptr)
+        if (!(dispose || new_change))
         {
-            pW->unsent_changes_reset();
-        }
-        else
-        {
-            logError(RTPS_PDP, "Using PDPSimple protocol with a reliable writer");
+            StatelessWriter* pW = dynamic_cast<StatelessWriter*>(mp_PDPWriter);
+
+            if (pW != nullptr)
+            {
+                pW->unsent_changes_reset();
+            }
+            else
+            {
+                logError(RTPS_PDP, "Using PDPSimple protocol with a reliable writer");
+            }
         }
     }
 }

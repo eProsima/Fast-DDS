@@ -202,12 +202,12 @@ ReturnCode_t DomainParticipantImpl::disable_statistics_datawriter(
 
 ReturnCode_t DomainParticipantImpl::enable()
 {
+    create_statistics_builtin_entities();
     ReturnCode_t ret = efd::DomainParticipantImpl::enable();
 
     if (ReturnCode_t::RETCODE_OK == ret)
     {
         rtps_participant_->add_statistics_listener(statistics_listener_, participant_statistics_mask);
-        create_statistics_builtin_entities();
     }
 
     return ret;

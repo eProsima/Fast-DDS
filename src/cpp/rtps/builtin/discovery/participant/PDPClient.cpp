@@ -413,129 +413,132 @@ void PDPClient::announceParticipantState(
         bool dispose,
         WriteParams& )
 {
-    /*
-       Protect writer sequence number. Make sure in order to prevent AB BA deadlock that the
-       writer mutex is systematically lock before the PDP one (if needed):
-        - transport callbacks on PDPListener
-        - initialization and removal on BuiltinProtocols::initBuiltinProtocols and ~BuiltinProtocols
-        - DSClientEvent (own thread)
-        - ResendParticipantProxyDataPeriod (participant event thread)
-     */
-    std::lock_guard<RecursiveTimedMutex> wlock(mp_PDPWriter->getMutex());
-
-    WriteParams wp;
-    SampleIdentity local;
-    local.writer_guid(mp_PDPWriter->getGuid());
-    local.sequence_number(mp_PDPWriterHistory->next_sequence_number());
-    wp.sample_identity(local);
-    wp.related_sample_identity(local);
-
-    // Add the write params to the sample
-    if (dispose)
+    if (enable_)
     {
-        // we must assure when the server is dying that all client are send at least a DATA(p)
-        // note here we can no longer receive and DATA or ACKNACK from clients.
-        // In order to avoid that we send the message directly as in the standard stateless PDP
+        /*
+           Protect writer sequence number. Make sure in order to prevent AB BA deadlock that the
+           writer mutex is systematically lock before the PDP one (if needed):
+            - transport callbacks on PDPListener
+            - initialization and removal on BuiltinProtocols::initBuiltinProtocols and ~BuiltinProtocols
+            - DSClientEvent (own thread)
+            - ResendParticipantProxyDataPeriod (participant event thread)
+         */
+        std::lock_guard<RecursiveTimedMutex> wlock(mp_PDPWriter->getMutex());
 
-        fastrtps::rtps::StatefulWriter* pW = dynamic_cast<fastrtps::rtps::StatefulWriter*>(mp_PDPWriter);
-        assert(pW);
+        WriteParams wp;
+        SampleIdentity local;
+        local.writer_guid(mp_PDPWriter->getGuid());
+        local.sequence_number(mp_PDPWriterHistory->next_sequence_number());
+        wp.sample_identity(local);
+        wp.related_sample_identity(local);
 
-        CacheChange_t* change = nullptr;
-
-        if ((change = pW->new_change(
-                    [this]() -> uint32_t
-                    {
-                        return mp_builtin->m_att.writerPayloadSize;
-                    },
-                    NOT_ALIVE_DISPOSED_UNREGISTERED, getLocalParticipantProxyData()->m_key)))
+        // Add the write params to the sample
+        if (dispose)
         {
-            // update the sequence number
-            change->sequenceNumber = mp_PDPWriterHistory->next_sequence_number();
-            change->write_params = wp;
+            // we must assure when the server is dying that all client are send at least a DATA(p)
+            // note here we can no longer receive and DATA or ACKNACK from clients.
+            // In order to avoid that we send the message directly as in the standard stateless PDP
 
-            std::vector<GUID_t> remote_readers;
-            LocatorList locators;
+            fastrtps::rtps::StatefulWriter* pW = dynamic_cast<fastrtps::rtps::StatefulWriter*>(mp_PDPWriter);
+            assert(pW);
 
-            //  TODO: modify announcement mechanism to allow direct message sending
-            //for (auto it = pW->matchedReadersBegin(); it != pW->matchedReadersEnd(); ++it)
-            //{
-            //    RemoteReaderAttributes & att = (*it)->m_att;
-            //    remote_readers.push_back(att.guid);
+            CacheChange_t* change = nullptr;
 
-            //    EndpointAttributes & ep = att.endpoint;
-            //    locators.push_back(ep.unicastLocatorList);
-            //    //locators.push_back(ep.multicastLocatorList);
-            //}
+            if ((change = pW->new_change(
+                        [this]() -> uint32_t
+                        {
+                            return mp_builtin->m_att.writerPayloadSize;
+                        },
+                        NOT_ALIVE_DISPOSED_UNREGISTERED, getLocalParticipantProxyData()->m_key)))
             {
-                // temporary workaround
-                std::lock_guard<std::recursive_mutex> lock(*getMutex());
-
-                for (auto& svr : mp_builtin->m_DiscoveryServers)
-                {
-                    // if we are matched to a server report demise
-                    if (svr.proxy != nullptr)
-                    {
-                        remote_readers.push_back(svr.GetPDPReader());
-                        //locators.push_back(svr.metatrafficMulticastLocatorList);
-                        locators.push_back(svr.metatrafficUnicastLocatorList);
-                    }
-                }
-            }
-
-            DirectMessageSender sender(getRTPSParticipant(), &remote_readers, &locators);
-            RTPSMessageGroup group(getRTPSParticipant(), mp_PDPWriter, &sender);
-            if (!group.add_data(*change, false))
-            {
-                logError(RTPS_PDP, "Error sending announcement from client to servers");
-            }
-        }
-
-        // free change
-        mp_PDPWriter->release_change(change);
-    }
-    else
-    {
-        PDP::announceParticipantState(new_change, dispose, wp);
-
-        if (!new_change)
-        {
-            // retrieve the participant discovery data
-            CacheChange_t* pPD;
-            if (mp_PDPWriterHistory->get_min_change(&pPD))
-            {
-                std::lock_guard<std::recursive_mutex> lock(*getMutex());
+                // update the sequence number
+                change->sequenceNumber = mp_PDPWriterHistory->next_sequence_number();
+                change->write_params = wp;
 
                 std::vector<GUID_t> remote_readers;
                 LocatorList locators;
 
-                for (auto& svr : mp_builtin->m_DiscoveryServers)
+                //  TODO: modify announcement mechanism to allow direct message sending
+                //for (auto it = pW->matchedReadersBegin(); it != pW->matchedReadersEnd(); ++it)
+                //{
+                //    RemoteReaderAttributes & att = (*it)->m_att;
+                //    remote_readers.push_back(att.guid);
+
+                //    EndpointAttributes & ep = att.endpoint;
+                //    locators.push_back(ep.unicastLocatorList);
+                //    //locators.push_back(ep.multicastLocatorList);
+                //}
                 {
-                    // non-pinging announcements like lease duration ones must be
-                    // broadcast to all servers
-                    if (svr.proxy == nullptr || !_serverPing)
+                    // temporary workaround
+                    std::lock_guard<std::recursive_mutex> lock(*getMutex());
+
+                    for (auto& svr : mp_builtin->m_DiscoveryServers)
                     {
-                        remote_readers.push_back(svr.GetPDPReader());
-                        locators.push_back(svr.metatrafficMulticastLocatorList);
-                        locators.push_back(svr.metatrafficUnicastLocatorList);
+                        // if we are matched to a server report demise
+                        if (svr.proxy != nullptr)
+                        {
+                            remote_readers.push_back(svr.GetPDPReader());
+                            //locators.push_back(svr.metatrafficMulticastLocatorList);
+                            locators.push_back(svr.metatrafficUnicastLocatorList);
+                        }
                     }
                 }
 
                 DirectMessageSender sender(getRTPSParticipant(), &remote_readers, &locators);
                 RTPSMessageGroup group(getRTPSParticipant(), mp_PDPWriter, &sender);
-
-                if (!group.add_data(*pPD, false))
+                if (!group.add_data(*change, false))
                 {
                     logError(RTPS_PDP, "Error sending announcement from client to servers");
                 }
-
-                // ping done independtly of which triggered the announcement
-                // note all event callbacks are currently serialized
-                _serverPing = false;
             }
-            else
+
+            // free change
+            mp_PDPWriter->release_change(change);
+        }
+        else
+        {
+            PDP::announceParticipantState(new_change, dispose, wp);
+
+            if (!new_change)
             {
-                logError(RTPS_PDP, "ParticipantProxy data should have been added to client PDP history "
-                        "cache by a previous call to announceParticipantState()");
+                // retrieve the participant discovery data
+                CacheChange_t* pPD;
+                if (mp_PDPWriterHistory->get_min_change(&pPD))
+                {
+                    std::lock_guard<std::recursive_mutex> lock(*getMutex());
+
+                    std::vector<GUID_t> remote_readers;
+                    LocatorList locators;
+
+                    for (auto& svr : mp_builtin->m_DiscoveryServers)
+                    {
+                        // non-pinging announcements like lease duration ones must be
+                        // broadcast to all servers
+                        if (svr.proxy == nullptr || !_serverPing)
+                        {
+                            remote_readers.push_back(svr.GetPDPReader());
+                            locators.push_back(svr.metatrafficMulticastLocatorList);
+                            locators.push_back(svr.metatrafficUnicastLocatorList);
+                        }
+                    }
+
+                    DirectMessageSender sender(getRTPSParticipant(), &remote_readers, &locators);
+                    RTPSMessageGroup group(getRTPSParticipant(), mp_PDPWriter, &sender);
+
+                    if (!group.add_data(*pPD, false))
+                    {
+                        logError(RTPS_PDP, "Error sending announcement from client to servers");
+                    }
+
+                    // ping done independtly of which triggered the announcement
+                    // note all event callbacks are currently serialized
+                    _serverPing = false;
+                }
+                else
+                {
+                    logError(RTPS_PDP, "ParticipantProxy data should have been added to client PDP history "
+                            "cache by a previous call to announceParticipantState()");
+                }
             }
         }
     }
