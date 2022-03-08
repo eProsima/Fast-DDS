@@ -82,9 +82,15 @@ static void set_qos_from_attributes(
     {
         for (auto property : attr.properties.properties())
         {
-            if (nullptr == fastrtps::rtps::PropertyPolicyHelper::find_property(qos.properties(), property.name()))
+            // If the property from attr does not exist in the qos, then append it; if it does, then the XML one takes preference
+            std::string* property_value = fastrtps::rtps::PropertyPolicyHelper::find_property(qos.properties(), property.name());
+            if (nullptr == property_value)
             {
                 qos.properties().properties().emplace_back(property);
+            }
+            else
+            {
+                *property_value = property.value();
             }
         }
         qos.properties().binary_properties() = attr.properties.binary_properties();
