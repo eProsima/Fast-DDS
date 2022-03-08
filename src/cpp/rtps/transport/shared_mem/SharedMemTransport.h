@@ -192,6 +192,8 @@ public:
         return (std::numeric_limits<uint32_t>::max)();
     }
 
+    void update_network_interfaces() override;
+
 private:
 
     //! Constructor with no descriptor is necessary for implementations derived from this class.

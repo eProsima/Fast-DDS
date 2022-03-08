@@ -185,6 +185,10 @@ public:
         return true;
     }
 
+    virtual void update_network_interfaces() override
+    {
+    }
+
     //Helpers and message record
     typedef struct
     {

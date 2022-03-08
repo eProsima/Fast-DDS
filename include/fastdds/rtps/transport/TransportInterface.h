@@ -232,6 +232,11 @@ public:
     {
     }
 
+    /**
+     * @brief Update network interfaces.
+     */
+    virtual void update_network_interfaces() = 0;
+
     //! Return the transport kind
     int32_t kind() const
     {

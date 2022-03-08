@@ -85,6 +85,8 @@ public:
     virtual void AddDefaultOutputLocator(
             LocatorList& defaultList) override;
 
+    virtual void update_network_interfaces() override;
+
 protected:
 
     //! Constructor with no descriptor is necessary for implementations derived from this class.

@@ -329,6 +329,11 @@ public:
             const fastrtps::rtps::Locator_t& local_locator,
             const fastrtps::rtps::Locator_t& remote_locator) = 0;
 
+    RTPS_DllAPI virtual void update_network_interfaces() override
+    {
+        low_level_transport_->update_network_interfaces();
+    }
+
 protected:
 
     std::unique_ptr<TransportInterface> low_level_transport_;

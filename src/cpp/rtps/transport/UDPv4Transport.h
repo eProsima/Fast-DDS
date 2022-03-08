@@ -88,7 +88,7 @@ public:
     /**
      * @brief Update network interfaces, binding the new interfaces to the multicast group.
      */
-    void update_network_interfaces();
+    virtual void update_network_interfaces() override;
 
 protected:
 

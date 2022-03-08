@@ -424,6 +424,8 @@ public:
     virtual TCPTransportDescriptor* configuration() = 0;
 
     void keep_alive();
+
+    virtual void update_network_interfaces() override;
 };
 
 } // namespace rtps

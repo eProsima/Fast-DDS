@@ -1686,6 +1686,11 @@ std::string TCPTransportInterface::get_password() const
     return configuration()->tls_config.password;
 }
 
+void TCPTransportInterface::update_network_interfaces()
+{
+    // TODO(jlbueno)
+}
+
 } // namespace rtps
 } // namespace fastrtps
 } // namespace eprosima
