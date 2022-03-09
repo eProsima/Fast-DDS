@@ -56,7 +56,7 @@ namespace dds {
  *
  * - If any property from the RTPSParticipantAttributes is not in the DomainParticipantQos, then it is appended
  *   to the DomainParticipantQos.
- * - If any property from the RTPSParticipantAttributes property is also in the DomainParticipantQos, the the
+ * - If any property from the RTPSParticipantAttributes property is also in the DomainParticipantQos, then the
  *   value in the DomainParticipantQos is overridden with that of the RTPSParticipantAttributes.
  *
  * @param[in, out] qos The DomainParticipantQos to set
