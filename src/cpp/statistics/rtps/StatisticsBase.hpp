@@ -481,6 +481,7 @@ protected:
 
     /**
      * @brief Report that a new entity is discovered
+     *
      * @param discovered entity GUID_t
      * @param properties The property list of the discoved entity
      */

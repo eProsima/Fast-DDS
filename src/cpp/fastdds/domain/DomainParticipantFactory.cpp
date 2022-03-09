@@ -51,16 +51,20 @@ namespace dds {
 /**
  * @brief Fill DomainParticipantQos from a given attributes RTPSParticipantAttributes object
  *
+ * For the case of the non-binary properties, instead of the RTPSParticipantAttributes overriding the
+ * property list in the DomainParticipantQos, a merge is performed in the following manner:
+ *
+ * - If any property from the RTPSParticipantAttributes is not in the DomainParticipantQos, then it is appended
+ *   to the DomainParticipantQos.
+ * - If any property from the RTPSParticipantAttributes property is also in the DomainParticipantQos, the the
+ *   value in the DomainParticipantQos is overridden with that of the RTPSParticipantAttributes.
+ *
  * @param[in, out] qos The DomainParticipantQos to set
  * @param[in] attr The RTPSParticipantAttributes from which the @c qos is set.
- * @param[out] merge_properties Whether the non-binary properties should be merged or overriden.
- *        If set to false @c qos will contain the properties from @c attr. If set to true, the non-binary properties
- *        are combined by adding to @c qos those from @c attr that are not present (by name) in @c qos.
  */
 static void set_qos_from_attributes(
         DomainParticipantQos& qos,
-        const eprosima::fastrtps::rtps::RTPSParticipantAttributes& attr,
-        bool merge_properties)
+        const eprosima::fastrtps::rtps::RTPSParticipantAttributes& attr)
 {
     qos.user_data().setValue(attr.userData);
     qos.allocation() = attr.allocation;
@@ -78,27 +82,21 @@ static void set_qos_from_attributes(
     qos.name() = attr.getName();
     qos.flow_controllers() = attr.flow_controllers;
 
-    if (merge_properties)
+    // Merge attributes and qos properties
+    for (auto property : attr.properties.properties())
     {
-        for (auto property : attr.properties.properties())
+        std::string* property_value = fastrtps::rtps::PropertyPolicyHelper::find_property(
+            qos.properties(), property.name());
+        if (nullptr == property_value)
         {
-            // If the property from attr does not exist in the qos, then append it; if it does, then the XML one takes preference
-            std::string* property_value = fastrtps::rtps::PropertyPolicyHelper::find_property(qos.properties(), property.name());
-            if (nullptr == property_value)
-            {
-                qos.properties().properties().emplace_back(property);
-            }
-            else
-            {
-                *property_value = property.value();
-            }
+            qos.properties().properties().emplace_back(property);
         }
-        qos.properties().binary_properties() = attr.properties.binary_properties();
+        else
+        {
+            *property_value = property.value();
+        }
     }
-    else
-    {
-        qos.properties() = attr.properties;
-    }
+    qos.properties().binary_properties() = attr.properties.binary_properties();
 }
 
 DomainParticipantFactory::DomainParticipantFactory()
@@ -271,7 +269,7 @@ DomainParticipant* DomainParticipantFactory::create_participant_with_profile(
     if (XMLP_ret::XML_OK == XMLProfileManager::fillParticipantAttributes(profile_name, attr))
     {
         DomainParticipantQos qos = default_participant_qos_;
-        set_qos_from_attributes(qos, attr.rtps, true);
+        set_qos_from_attributes(qos, attr.rtps);
         return create_participant(did, qos, listen, mask);
     }
 
@@ -290,7 +288,7 @@ DomainParticipant* DomainParticipantFactory::create_participant_with_profile(
     if (XMLP_ret::XML_OK == XMLProfileManager::fillParticipantAttributes(profile_name, attr))
     {
         DomainParticipantQos qos = default_participant_qos_;
-        set_qos_from_attributes(qos, attr.rtps, true);
+        set_qos_from_attributes(qos, attr.rtps);
         return create_participant(attr.domainId, qos, listen, mask);
     }
 
@@ -368,7 +366,7 @@ ReturnCode_t DomainParticipantFactory::get_participant_qos_from_profile(
     if (XMLP_ret::XML_OK == XMLProfileManager::fillParticipantAttributes(profile_name, attr))
     {
         qos = default_participant_qos_;
-        set_qos_from_attributes(qos, attr.rtps, true);
+        set_qos_from_attributes(qos, attr.rtps);
         return ReturnCode_t::RETCODE_OK;
     }
 
@@ -448,7 +446,7 @@ void DomainParticipantFactory::reset_default_participant_qos()
     {
         eprosima::fastrtps::ParticipantAttributes attr;
         XMLProfileManager::getDefaultParticipantAttributes(attr);
-        set_qos_from_attributes(default_participant_qos_, attr.rtps, true);
+        set_qos_from_attributes(default_participant_qos_, attr.rtps);
     }
 }
 

@@ -312,7 +312,7 @@ TEST(ParticipantTests, CreateDomainParticipant)
 }
 
 /**
- * @brief Check whether two @ref DomainParticipantQos are equivalent properties wise and equal elsewhere.
+ * @brief Check whether two @ref DomainParticipantQos are equivalent property-wise and equal elsewhere.
  *
  * @c qos_1 and @c qos_2 have equivalent properties if:
  *
@@ -379,7 +379,7 @@ void check_participant_with_profile (
 }
 
 /**
- * This test checks that:
+ * This test checks two different things depending on whether FASTDDS_STATISTICS is defined when compiling the test:
  *
  * 1. In the case of disabled Statistics, none of the physical data related properties are present in a default
  *    constructed DomainParticipantQos.

@@ -54,7 +54,7 @@ public:
     {
 #ifdef FASTDDS_STATISTICS
         /*
-         * In the case of Statistics, the following properties are set with an empty value. This because if these
+         * In the case of Statistics, the following properties are set with an empty value. This is because if these
          * properties are set and empty during the enabling of the DomainParticipant, they are fill with the default
          * mechanism
          */

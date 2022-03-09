@@ -417,7 +417,7 @@ protected:
     ParticipantProxyData* add_participant_proxy_data(
             const GUID_t& participant_guid,
             bool with_lease_duration,
-            const ParticipantProxyData* participant_proxy_data);
+            const ParticipantProxyData* participant_proxy_data = nullptr);
 
     /**
      * Gets the key of a participant proxy data.

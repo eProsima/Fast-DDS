@@ -484,7 +484,7 @@ TEST(DDSDiscovery, ParticipantProxyPhysicalData)
         // Reset participant found flag
         participant_found.store(false);
 
-        // Prevent assertion on spurios discovery of a participant from elsewhere
+        // Prevent assertion on spurious discovery of a participant from elsewhere
         if (part_1->guid() == listener.remote_participant_info->info.m_guid)
         {
             // Check that all three properties are present in the ParticipantProxyData, and that their value
@@ -544,7 +544,7 @@ TEST(DDSDiscovery, ParticipantProxyPhysicalData)
         // Reset participant found flag
         participant_found.store(false);
 
-        // Prevent assertion on spurios discovery of a participant from elsewhere
+        // Prevent assertion on spurious discovery of a participant from elsewhere
         if (part_1->guid() == listener.remote_participant_info->info.m_guid)
         {
             // Check that none of the three properties are present in the ParticipantProxyData.

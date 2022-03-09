@@ -152,7 +152,7 @@ void test_discovery_topic_physical_data(
     if (test_kind == DiscoveryTopicPhysicalDataTest::USER_DEFINED_PHYSICAL_DATA_XML)
     {
         std::string xml_profile =
-            "\
+                "\
             <?xml version=\"1.0\" encoding=\"utf-8\"?>\
             <dds xmlns=\"http://www.eprosima.com/XMLSchemas/fastRTPS_Profiles\">\
                 <profiles>\
@@ -161,16 +161,22 @@ void test_discovery_topic_physical_data(
                             <propertiesPolicy>\
                                 <properties>\
                                     <property>\
-                                        <name>" + std::string(parameter_policy_physical_data_host) + "</name>\
-                                        <value>" + user_defined_host + "</value>\
+                                        <name>" + std::string(parameter_policy_physical_data_host) +
+                "</name>\
+                                        <value>" + user_defined_host +
+                "</value>\
                                     </property>\
                                     <property>\
-                                        <name>" + std::string(parameter_policy_physical_data_user) + "</name>\
-                                        <value>" + user_defined_user + "</value>\
+                                        <name>" + std::string(parameter_policy_physical_data_user) +
+                "</name>\
+                                        <value>" + user_defined_user +
+                "</value>\
                                     </property>\
                                     <property>\
-                                        <name>" + std::string(parameter_policy_physical_data_process) + "</name>\
-                                        <value>" + user_defined_process + "</value>\
+                                        <name>" + std::string(parameter_policy_physical_data_process) +
+                "</name>\
+                                        <value>" + user_defined_process +
+                "</value>\
                                     </property>\
                                 </properties>\
                             </propertiesPolicy>\
@@ -189,7 +195,7 @@ void test_discovery_topic_physical_data(
     // Avoid discovery of participants external to the test
     pqos.wire_protocol().builtin.discovery_config.ignoreParticipantFlags =
             static_cast<eprosima::fastrtps::rtps::ParticipantFilteringFlags_t>(
-        eprosima::fastrtps::rtps::ParticipantFilteringFlags_t::FILTER_DIFFERENT_PROCESS |
+        eprosima::fastrtps::rtps::ParticipantFilteringFlags_t::FILTER_DIFFERENT_HOST |
         eprosima::fastrtps::rtps::ParticipantFilteringFlags_t::FILTER_DIFFERENT_PROCESS);
 
     // Configure physical properties according to test case
@@ -227,12 +233,10 @@ void test_discovery_topic_physical_data(
     /* Create DISCOVERY_TOPIC DataReader in the second DomainParticipant */
     DomainParticipant* p2 = participant_factory->create_participant(domain_id, pqos);
     ASSERT_NE(nullptr, p2);
-    auto statistics_p2 = statistics::dds::DomainParticipant::narrow(p2);
-    ASSERT_NE(nullptr, statistics_p2);
     TypeSupport discovery_type(new statistics::DiscoveryTimePubSubType);
     ASSERT_NE(nullptr, discovery_type);
-    discovery_type.register_type(statistics_p2);
-    Topic* topic = statistics_p2->create_topic(statistics::DISCOVERY_TOPIC,
+    discovery_type.register_type(p2);
+    Topic* topic = p2->create_topic(statistics::DISCOVERY_TOPIC,
                     discovery_type.get_type_name(), TOPIC_QOS_DEFAULT);
     ASSERT_NE(nullptr, topic);
     Subscriber* subscriber_p2 = p2->create_subscriber(SUBSCRIBER_QOS_DEFAULT);
@@ -243,13 +247,13 @@ void test_discovery_topic_physical_data(
 
     // Get the second participant's physical properties
     const std::string* p2_host = eprosima::fastrtps::rtps::PropertyPolicyHelper::find_property(
-        statistics_p2->get_qos().properties(), parameter_policy_physical_data_host);
+        p2->get_qos().properties(), parameter_policy_physical_data_host);
     const std::string* p2_user = eprosima::fastrtps::rtps::PropertyPolicyHelper::find_property(
-        statistics_p2->get_qos().properties(), parameter_policy_physical_data_user);
+        p2->get_qos().properties(), parameter_policy_physical_data_user);
     const std::string* p2_process = eprosima::fastrtps::rtps::PropertyPolicyHelper::find_property(
-        statistics_p2->get_qos().properties(), parameter_policy_physical_data_process);
+        p2->get_qos().properties(), parameter_policy_physical_data_process);
 
-    // Verify the the second participant's physical properties are set according to specification
+    // Verify that the second participant's physical properties are set according to specification
     switch (test_kind)
     {
         case DiscoveryTopicPhysicalDataTest::AUTO_PHYSICAL_DATA:
@@ -287,8 +291,8 @@ void test_discovery_topic_physical_data(
     /* Create a DataWriter in the second participant */
     TypeSupport helloworld_type(new HelloWorldPubSubType());
     ASSERT_NE(nullptr, helloworld_type);
-    helloworld_type.register_type(statistics_p2);
-    Topic* helloworld_topic = statistics_p2->create_topic("helloworld",
+    helloworld_type.register_type(p2);
+    Topic* helloworld_topic = p2->create_topic("helloworld",
                     helloworld_type.get_type_name(), TOPIC_QOS_DEFAULT);
     Publisher* publisher_p2 = p2->create_publisher(PUBLISHER_QOS_DEFAULT);
     ASSERT_NE(nullptr, publisher_p2);
@@ -343,7 +347,7 @@ void test_discovery_topic_physical_data(
 
                 /* Validate discovery sample */
                 EXPECT_EQ(statistics_p1->guid().guidPrefix, local_prefix);
-                EXPECT_EQ(statistics_p2->guid().guidPrefix, remote_prefix);
+                EXPECT_EQ(p2->guid().guidPrefix, remote_prefix);
 
                 // Check expectations depending of the test case
                 switch (test_kind)
@@ -389,7 +393,7 @@ void test_discovery_topic_physical_data(
     participant_factory->delete_participant(p1);
 
     /* Delete second DomainParticipant */
-    statistics_p2->delete_contained_entities();
+    p2->delete_contained_entities();
     participant_factory->delete_participant(p2);
 }
 
@@ -647,13 +651,13 @@ TEST(DDSStatistics, statistics_with_partition_on_user)
  * The following tests check that the DISCOVERY_TOPIC carries the correct physical data, i.e.:
  *
  * 1. When FASTDDS_STATISTICS is defined and the user does not configure anything, the DISCOVERY_TOPIC carries
- *    physical information for participants, and nothing for writers and reader.
+ *    physical information for participants, and nothing for writers and readers.
  * 2. When FASTDDS_STATISTICS is defined and the user does configure the physical properties using API, the
- *    DISCOVERY_TOPIC carries physical information for participants, and nothing for writers and reader.
+ *    DISCOVERY_TOPIC carries physical information for participants, and nothing for writers and readers.
  * 3. When FASTDDS_STATISTICS is defined and the user does configure the physical properties using XML, the
- *    DISCOVERY_TOPIC carries physical information for participants, and nothing for writers and reader.
+ *    DISCOVERY_TOPIC carries physical information for participants, and nothing for writers and readers.
  * 4. When FASTDDS_STATISTICS is defined and the user removes the physical properties, the DISCOVERY_TOPIC
- *    carries no physical information for participants, writers, or reader.
+ *    carries no physical information for participants, writers, or readers.
  */
 TEST(DDSStatistics, discovery_topic_physical_data_auto)
 {

@@ -45,9 +45,6 @@
 #include <fastdds/rtps/reader/ReaderDiscoveryInfo.h>
 #include <fastdds/rtps/RTPSDomain.h>
 #include <fastdds/rtps/writer/WriterDiscoveryInfo.h>
-#include <fastdds/subscriber/SubscriberImpl.hpp>
-#include <fastdds/topic/ContentFilteredTopicImpl.hpp>
-#include <fastdds/topic/TopicImpl.hpp>
 #include <fastrtps/attributes/PublisherAttributes.h>
 #include <fastrtps/attributes/SubscriberAttributes.h>
 #include <fastrtps/types/DynamicPubSubType.h>
@@ -56,6 +53,10 @@
 #include <fastrtps/types/DynamicTypeMember.h>
 #include <fastrtps/types/TypeObjectFactory.h>
 #include <fastrtps/xmlparser/XMLProfileManager.h>
+
+#include <fastdds/subscriber/SubscriberImpl.hpp>
+#include <fastdds/topic/ContentFilteredTopicImpl.hpp>
+#include <fastdds/topic/TopicImpl.hpp>
 #include <rtps/RTPSDomainImpl.hpp>
 #include <utils/SystemInfo.hpp>
 
