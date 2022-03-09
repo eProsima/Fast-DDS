@@ -23,7 +23,7 @@
 #include <fastdds/rtps/common/all_common.h>
 
 #include <functional>
-#include <shared_mutex>
+#include <fastrtps/utils/shared_mutex.hpp>
 #include <unordered_map>
 
 namespace eprosima {
@@ -73,7 +73,7 @@ public:
 
 private:
 
-    mutable std::shared_mutex mtx_;
+    mutable eprosima::shared_mutex mtx_;
     std::vector<RTPSWriter*> associated_writers_;
     std::unordered_map<EntityId_t, std::vector<RTPSReader*>> associated_readers_;
 
