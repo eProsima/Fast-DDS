@@ -70,11 +70,11 @@ protected:
      * Create a publisher, assigning its pointer to the associated implementation.
      * Don't use directly, create Publisher using create_publisher from DomainParticipant.
      */
-    RTPS_DllAPI Publisher(
+    Publisher(
             PublisherImpl* p,
             const StatusMask& mask = StatusMask::all());
 
-    RTPS_DllAPI Publisher(
+    Publisher(
             DomainParticipant* dp,
             const PublisherQos& qos = PUBLISHER_QOS_DEFAULT,
             PublisherListener* listener = nullptr,
@@ -85,7 +85,7 @@ public:
     /**
      * @brief Destructor
      */
-    RTPS_DllAPI virtual ~Publisher();
+    virtual ~Publisher();
 
     /**
      * @brief This operation enables the Publisher

@@ -75,11 +75,11 @@ protected:
      * Create a subscriber, assigning its pointer to the associated implementation.
      * Don't use directly, create Subscriber using create_subscriber from DomainParticipant.
      */
-    RTPS_DllAPI Subscriber(
+    Subscriber(
             SubscriberImpl* pimpl,
             const StatusMask& mask = StatusMask::all());
 
-    RTPS_DllAPI Subscriber(
+    Subscriber(
             DomainParticipant* dp,
             const SubscriberQos& qos = SUBSCRIBER_QOS_DEFAULT,
             SubscriberListener* listener = nullptr,
@@ -90,7 +90,7 @@ public:
     /**
      * @brief Destructor
      */
-    RTPS_DllAPI virtual ~Subscriber()
+    virtual ~Subscriber()
     {
     }
 

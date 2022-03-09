@@ -77,11 +77,11 @@ protected:
      * Create a data writer, assigning its pointer to the associated implementation.
      * Don't use directly, create DataWriter using create_datawriter from Publisher.
      */
-    RTPS_DllAPI DataWriter(
+    DataWriter(
             DataWriterImpl* impl,
             const StatusMask& mask = StatusMask::all());
 
-    RTPS_DllAPI DataWriter(
+    DataWriter(
             Publisher* pub,
             Topic* topic,
             const DataWriterQos& qos = DATAWRITER_QOS_DEFAULT,
@@ -121,7 +121,7 @@ public:
         CONSTRUCTED_LOAN_INITIALIZATION
     };
 
-    RTPS_DllAPI virtual ~DataWriter();
+    virtual ~DataWriter();
 
     /**
      * @brief This operation enables the DataWriter

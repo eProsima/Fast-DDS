@@ -93,7 +93,7 @@ public:
     /**
      * @brief Destructor
      */
-    RTPS_DllAPI virtual ~DomainParticipant();
+    virtual ~DomainParticipant();
 
     // Superclass methods
 
@@ -891,7 +891,7 @@ public:
 
 protected:
 
-    RTPS_DllAPI DomainParticipant(
+    DomainParticipant(
             const StatusMask& mask = StatusMask::all());
 
     DomainParticipantImpl* impl_;
