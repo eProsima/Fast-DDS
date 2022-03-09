@@ -22,9 +22,9 @@
 
 #include <fastdds/rtps/common/all_common.h>
 
-#include <unordered_map>
-#include <mutex>
 #include <functional>
+#include <shared_mutex>
+#include <unordered_map>
 
 namespace eprosima {
 namespace fastrtps {
@@ -73,7 +73,7 @@ public:
 
 private:
 
-    std::mutex mtx_;
+    mutable std::shared_mutex mtx_;
     std::vector<RTPSWriter*> associated_writers_;
     std::unordered_map<EntityId_t, std::vector<RTPSReader*>> associated_readers_;
 
@@ -130,7 +130,7 @@ private:
      */
     bool readSubmessageHeader(
             CDRMessage_t* msg,
-            SubmessageHeader_t* smh);
+            SubmessageHeader_t* smh) const;
 
     /**
      * Find if there is a reader (in associated_readers_) that will accept a msg directed
@@ -138,7 +138,7 @@ private:
      */
     bool willAReaderAcceptMsgDirectedTo(
             const EntityId_t& readerID,
-            RTPSReader*& first_reader);
+            RTPSReader*& first_reader) const;
 
     /**
      * Find all readers (in associated_readers_), with the given entity ID, and call the
@@ -147,7 +147,7 @@ private:
     template<typename Functor>
     void findAllReaders(
             const EntityId_t& readerID,
-            const Functor& callback);
+            const Functor& callback) const;
 
     /**@name Processing methods.
      * These methods are designed to read a part of the message
@@ -169,19 +169,19 @@ private:
      */
     bool proc_Submsg_Data(
             CDRMessage_t* msg,
-            SubmessageHeader_t* smh);
+            SubmessageHeader_t* smh) const;
     bool proc_Submsg_DataFrag(
             CDRMessage_t* msg,
-            SubmessageHeader_t* smh);
-    bool proc_Submsg_Acknack(
-            CDRMessage_t* msg,
-            SubmessageHeader_t* smh);
+            SubmessageHeader_t* smh) const;
     bool proc_Submsg_Heartbeat(
             CDRMessage_t* msg,
-            SubmessageHeader_t* smh);
+            SubmessageHeader_t* smh) const;
+    bool proc_Submsg_Acknack(
+            CDRMessage_t* msg,
+            SubmessageHeader_t* smh) const;
     bool proc_Submsg_Gap(
             CDRMessage_t* msg,
-            SubmessageHeader_t* smh);
+            SubmessageHeader_t* smh) const;
     bool proc_Submsg_InfoTS(
             CDRMessage_t* msg,
             SubmessageHeader_t* smh);
@@ -193,10 +193,10 @@ private:
             SubmessageHeader_t* smh);
     bool proc_Submsg_NackFrag(
             CDRMessage_t* msg,
-            SubmessageHeader_t* smh);
+            SubmessageHeader_t* smh) const;
     bool proc_Submsg_HeartbeatFrag(
             CDRMessage_t* msg,
-            SubmessageHeader_t* smh);
+            SubmessageHeader_t* smh) const;
     ///@}
 
 
@@ -258,7 +258,7 @@ private:
     void notify_network_statistics(
             const Locator_t& source_locator,
             const Locator_t& reception_locator,
-            CDRMessage_t* msg);
+            CDRMessage_t* msg) const;
 
 };
 
