@@ -130,6 +130,8 @@ public:
             const fastrtps::Duration_t& timeout);
 
     /**
+     * NOT YET IMPLEMENTED
+     *
      * @brief Method to block the current thread until an unread message is available.
      *
      * @param[in] max_wait Max blocking time for this operation.
