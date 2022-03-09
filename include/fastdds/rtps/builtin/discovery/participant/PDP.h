@@ -410,12 +410,14 @@ protected:
      *
      * @param participant_guid GUID of the participant for which to create the proxy object.
      * @param with_lease_duration indicates whether lease duration event should be created.
+     * @param participant_proxy_data The participant proxy data from which the copy is made (if provided)
      *
      * @return pointer to the currently inserted entry, nullptr if allocation limits were reached.
      */
     ParticipantProxyData* add_participant_proxy_data(
             const GUID_t& participant_guid,
-            bool with_lease_duration);
+            bool with_lease_duration,
+            const ParticipantProxyData* participant_proxy_data = nullptr);
 
     /**
      * Gets the key of a participant proxy data.

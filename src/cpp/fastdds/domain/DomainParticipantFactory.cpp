@@ -48,13 +48,26 @@ namespace eprosima {
 namespace fastdds {
 namespace dds {
 
+/**
+ * @brief Fill DomainParticipantQos from a given attributes RTPSParticipantAttributes object
+ *
+ * For the case of the non-binary properties, instead of the RTPSParticipantAttributes overriding the
+ * property list in the DomainParticipantQos, a merge is performed in the following manner:
+ *
+ * - If any property from the RTPSParticipantAttributes is not in the DomainParticipantQos, then it is appended
+ *   to the DomainParticipantQos.
+ * - If any property from the RTPSParticipantAttributes property is also in the DomainParticipantQos, then the
+ *   value in the DomainParticipantQos is overridden with that of the RTPSParticipantAttributes.
+ *
+ * @param[in, out] qos The DomainParticipantQos to set
+ * @param[in] attr The RTPSParticipantAttributes from which the @c qos is set.
+ */
 static void set_qos_from_attributes(
         DomainParticipantQos& qos,
         const eprosima::fastrtps::rtps::RTPSParticipantAttributes& attr)
 {
     qos.user_data().setValue(attr.userData);
     qos.allocation() = attr.allocation;
-    qos.properties() = attr.properties;
     qos.wire_protocol().prefix = attr.prefix;
     qos.wire_protocol().participant_id = attr.participantID;
     qos.wire_protocol().builtin = attr.builtin;
@@ -68,6 +81,22 @@ static void set_qos_from_attributes(
     qos.transport().listen_socket_buffer_size = attr.listenSocketBufferSize;
     qos.name() = attr.getName();
     qos.flow_controllers() = attr.flow_controllers;
+
+    // Merge attributes and qos properties
+    for (auto property : attr.properties.properties())
+    {
+        std::string* property_value = fastrtps::rtps::PropertyPolicyHelper::find_property(
+            qos.properties(), property.name());
+        if (nullptr == property_value)
+        {
+            qos.properties().properties().emplace_back(property);
+        }
+        else
+        {
+            *property_value = property.value();
+        }
+    }
+    qos.properties().binary_properties() = attr.properties.binary_properties();
 }
 
 DomainParticipantFactory::DomainParticipantFactory()

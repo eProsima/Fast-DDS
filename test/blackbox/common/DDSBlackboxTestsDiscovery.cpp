@@ -12,11 +12,16 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include <chrono>
 #include <cstdlib>
 #include <ctime>
+
+#include <atomic>
+#include <chrono>
+#include <condition_variable>
 #include <memory>
+#include <mutex>
 #include <string>
+#include <vector>
 
 #include <gtest/gtest.h>
 
@@ -25,8 +30,14 @@
 #include "PubSubReader.hpp"
 #include "PubSubWriter.hpp"
 
+#include <fastdds/dds/core/policy/ParameterTypes.hpp>
 #include <fastdds/dds/core/policy/QosPolicies.hpp>
+#include <fastdds/dds/domain/DomainParticipant.hpp>
+#include <fastdds/dds/domain/DomainParticipantFactory.hpp>
+#include <fastdds/dds/domain/DomainParticipantListener.hpp>
+#include <fastdds/dds/domain/qos/DomainParticipantQos.hpp>
 #include <fastdds/rtps/common/Locator.h>
+#include <fastdds/rtps/participant/ParticipantDiscoveryInfo.h>
 #include <fastdds/rtps/transport/test_UDPv4TransportDescriptor.h>
 #include <rtps/transport/test_UDPv4Transport.h>
 #include <utils/SystemInfo.hpp>
@@ -360,4 +371,199 @@ TEST(DDSDiscovery, UpdateMatchedStatus)
     datareader_2.destroy();
     datawriter_1.destroy();
     datawriter_2.destroy();
+}
+
+/**
+ * This test checks that the physical properties are correctly sent on the DATA[p], and that the
+ * ParticipantProxyData on the receiver side has the correct values.
+ *
+ * This is done by creating two different participants, one of them overloading
+ * DomainParticipantListener::on_participant_discovery(). This callback is used to check the
+ * ParticipantProxyData from the other participant, asserting that the received physical information
+ * is the same as the one in the sending participant.
+ *
+ * Additionally, it checks that whenever the properties are not in the QoS, they are not in the
+ * received ParticipantProxyData either.
+ *
+ */
+TEST(DDSDiscovery, ParticipantProxyPhysicalData)
+{
+    using namespace eprosima::fastdds::dds;
+    using namespace eprosima::fastrtps::rtps;
+
+    class CustomDomainParticipantListener : public DomainParticipantListener
+    {
+    public:
+
+        CustomDomainParticipantListener(
+                std::condition_variable* cv,
+                std::mutex* mtx,
+                std::atomic<bool>* found)
+            : remote_participant_info(nullptr)
+            , cv_(cv)
+            , mtx_(mtx)
+            , found_(found)
+        {
+        }
+
+        ~CustomDomainParticipantListener()
+        {
+            if (nullptr != remote_participant_info)
+            {
+                delete remote_participant_info;
+            }
+            remote_participant_info = nullptr;
+            cv_ = nullptr;
+            mtx_ = nullptr;
+            found_ = nullptr;
+        }
+
+        void on_participant_discovery(
+                DomainParticipant* participant,
+                ParticipantDiscoveryInfo&& info)
+        {
+            std::unique_lock<std::mutex> lck(*mtx_);
+            static_cast<void>(participant);
+            if (nullptr != remote_participant_info)
+            {
+                delete remote_participant_info;
+            }
+            remote_participant_info = new ParticipantDiscoveryInfo(info);
+            found_->store(true);
+            cv_->notify_one();
+        }
+
+        ParticipantDiscoveryInfo* remote_participant_info;
+
+    private:
+
+        std::condition_variable* cv_;
+
+        std::mutex* mtx_;
+
+        std::atomic<bool>* found_;
+    };
+
+    std::srand(static_cast<unsigned int>(std::time(nullptr)));
+    int domain_id = std::rand() % 100;
+
+    std::vector<std::string> physical_property_names =
+    {
+        parameter_policy_physical_data_host,
+        parameter_policy_physical_data_user,
+        parameter_policy_physical_data_process
+    };
+
+    DomainParticipantQos qos;
+#ifndef FASTDDS_STATISTICS
+    // Make sure the physical properties are there even when there are no statistics
+    for (auto physical_property_name : physical_property_names)
+    {
+        qos.properties().properties().emplace_back(physical_property_name, "");
+    }
+#endif // ifndef FASTDDS_STATISTICS
+
+    std::atomic<bool> participant_found = {false};
+    std::condition_variable cv;
+    std::mutex listener_mutex;
+    CustomDomainParticipantListener listener(&cv, &listener_mutex, &participant_found);
+
+    /* Positive case, i.e. the properties are in the QoS and thus in the ParticipantProxyData */
+    DomainParticipant* part_1 = DomainParticipantFactory::get_instance()->create_participant(domain_id, qos);
+    DomainParticipant* part_2 = DomainParticipantFactory::get_instance()->create_participant(domain_id, qos, &listener);
+
+    // This loops runs until part_2 receives a on_participant_discovery holding information about part_1
+    while (true)
+    {
+        // Wait until some participant is found
+        std::unique_lock<std::mutex> lck(listener_mutex);
+        cv.wait(lck, [&]
+                {
+                    return participant_found.load() == true;
+                });
+        // Reset participant found flag
+        participant_found.store(false);
+
+        // Prevent assertion on spurious discovery of a participant from elsewhere
+        if (part_1->guid() == listener.remote_participant_info->info.m_guid)
+        {
+            // Check that all three properties are present in the ParticipantProxyData, and that their value
+            // is that of the property in part_1 (the original property value)
+            for (auto physical_property_name : physical_property_names)
+            {
+                // Find property in ParticipantProxyData
+                auto received_property = std::find_if(
+                    listener.remote_participant_info->info.m_properties.begin(),
+                    listener.remote_participant_info->info.m_properties.end(),
+                    [&](const ParameterProperty_t& property)
+                    {
+                        return property.first() == physical_property_name;
+                    });
+                ASSERT_NE(received_property, listener.remote_participant_info->info.m_properties.end());
+
+                // Find property in first participant
+                auto part_1_property = PropertyPolicyHelper::find_property(
+                    part_1->get_qos().properties(), physical_property_name);
+                ASSERT_NE(nullptr, part_1_property);
+
+                // Check that the property in the first participant has the same value as the one in
+                // the ParticipantProxyData representing the first participant in the second one
+                ASSERT_EQ(received_property->second(), *part_1_property);
+            }
+            break;
+        }
+    }
+
+    DomainParticipantFactory::get_instance()->delete_participant(part_1);
+    DomainParticipantFactory::get_instance()->delete_participant(part_2);
+
+    /* Negative case, i.e. the properties are in not the QoS and thus not in the ParticipantProxyData */
+    // Remove properties from QoS
+    qos.properties().properties().clear();
+    part_1 = DomainParticipantFactory::get_instance()->create_participant(domain_id, qos);
+    part_2 = DomainParticipantFactory::get_instance()->create_participant(domain_id, qos, &listener);
+
+    // Check that first participant does not have the properties
+    for (auto physical_property_name : physical_property_names)
+    {
+        // Find property in first participant
+        auto part_1_property = PropertyPolicyHelper::find_property(
+            part_1->get_qos().properties(), physical_property_name);
+        ASSERT_EQ(nullptr, part_1_property);
+    }
+
+    // This loops runs until part_2 receives a on_participant_discovery holding information about part_1
+    while (true)
+    {
+        // Wait until some participant is found
+        std::unique_lock<std::mutex> lck(listener_mutex);
+        cv.wait(lck, [&]
+                {
+                    return participant_found.load() == true;
+                });
+        // Reset participant found flag
+        participant_found.store(false);
+
+        // Prevent assertion on spurious discovery of a participant from elsewhere
+        if (part_1->guid() == listener.remote_participant_info->info.m_guid)
+        {
+            // Check that none of the three properties are present in the ParticipantProxyData.
+            for (auto physical_property_name : physical_property_names)
+            {
+                // Look for property in ParticipantProxyData
+                auto received_property = std::find_if(
+                    listener.remote_participant_info->info.m_properties.begin(),
+                    listener.remote_participant_info->info.m_properties.end(),
+                    [&](const ParameterProperty_t& property)
+                    {
+                        return property.first() == physical_property_name;
+                    });
+                ASSERT_EQ(received_property, listener.remote_participant_info->info.m_properties.end());
+            }
+            break;
+        }
+    }
+
+    DomainParticipantFactory::get_instance()->delete_participant(part_1);
+    DomainParticipantFactory::get_instance()->delete_participant(part_2);
 }

@@ -20,6 +20,8 @@
 #ifndef _FASTDDS_PARTICIPANTQOS_HPP_
 #define _FASTDDS_PARTICIPANTQOS_HPP_
 
+#include <string>
+
 #include <fastrtps/fastrtps_dll.h>
 #include <fastdds/dds/core/policy/QosPolicies.hpp>
 #include <fastdds/rtps/flowcontrol/FlowControllerDescriptor.hpp>
@@ -50,6 +52,16 @@ public:
      */
     RTPS_DllAPI DomainParticipantQos()
     {
+#ifdef FASTDDS_STATISTICS
+        /*
+         * In the case of Statistics, the following properties are set with an empty value. This is because if these
+         * properties are set and empty during the enabling of the DomainParticipant, they are fill with the default
+         * mechanism
+         */
+        properties_.properties().emplace_back(parameter_policy_physical_data_host, "");
+        properties_.properties().emplace_back(parameter_policy_physical_data_user, "");
+        properties_.properties().emplace_back(parameter_policy_physical_data_process, "");
+#endif // ifdef FASTDDS_STATISTICS
     }
 
     /**

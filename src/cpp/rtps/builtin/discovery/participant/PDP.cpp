@@ -178,7 +178,8 @@ PDP::~PDP()
 
 ParticipantProxyData* PDP::add_participant_proxy_data(
         const GUID_t& participant_guid,
-        bool with_lease_duration)
+        bool with_lease_duration,
+        const ParticipantProxyData* participant_proxy_data)
 {
     ParticipantProxyData* ret_val = nullptr;
 
@@ -218,10 +219,14 @@ ParticipantProxyData* PDP::add_participant_proxy_data(
     // Add returned entry to the collection
     ret_val->should_check_lease_duration = with_lease_duration;
     ret_val->m_guid = participant_guid;
+    if (nullptr != participant_proxy_data)
+    {
+        ret_val->copy(*participant_proxy_data);
+        ret_val->isAlive = true;
+        // Notify discovery of remote participant
+        getRTPSParticipant()->on_entity_discovery(participant_guid, ret_val->m_properties);
+    }
     participant_proxies_.push_back(ret_val);
-
-    // notify statistics module
-    getRTPSParticipant()->on_entity_discovery(participant_guid);
 
     return ret_val;
 }
@@ -355,6 +360,22 @@ void PDP::initializeParticipantProxyData(
     participant_type << mp_RTPSParticipant->getAttributes().builtin.discovery_config.discoveryProtocol;
     auto ptype = participant_type.str();
     participant_data->m_properties.push_back(fastdds::dds::parameter_property_participant_type, ptype);
+
+    /* Add physical properties if present */
+    std::vector<std::string> physical_property_names = {
+        fastdds::dds::parameter_policy_physical_data_host,
+        fastdds::dds::parameter_policy_physical_data_user,
+        fastdds::dds::parameter_policy_physical_data_process
+    };
+    for (auto physical_property_name : physical_property_names)
+    {
+        std::string* physical_property = PropertyPolicyHelper::find_property(
+            mp_RTPSParticipant->getAttributes().properties, physical_property_name);
+        if (nullptr != physical_property)
+        {
+            participant_data->m_properties.push_back(physical_property_name, *physical_property);
+        }
+    }
 }
 
 bool PDP::initPDP(
@@ -373,7 +394,7 @@ bool PDP::initPDP(
     mp_builtin->updateMetatrafficLocators(this->mp_PDPReader->getAttributes().unicastLocatorList);
 
     mp_mutex->lock();
-    ParticipantProxyData* pdata = add_participant_proxy_data(mp_RTPSParticipant->getGuid(), false);
+    ParticipantProxyData* pdata = add_participant_proxy_data(mp_RTPSParticipant->getGuid(), false, nullptr);
     mp_mutex->unlock();
 
     if (pdata == nullptr)
@@ -410,6 +431,9 @@ bool PDP::enable()
     set_initial_announcement_interval();
 
     enable_  = true;
+    // Notify "self-discovery"
+    getRTPSParticipant()->on_entity_discovery(mp_RTPSParticipant->getGuid(),
+            get_participant_proxy_data(mp_RTPSParticipant->getGuid().guidPrefix)->m_properties);
 
     return mp_RTPSParticipant->enableReader(mp_PDPReader);
 }
@@ -713,7 +737,7 @@ ReaderProxyData* PDP::addReaderProxyData(
     ReaderProxyData* ret_val = nullptr;
 
     // notify statistics module
-    getRTPSParticipant()->on_entity_discovery(reader_guid);
+    getRTPSParticipant()->on_entity_discovery(reader_guid, ParameterPropertyList_t());
 
     std::lock_guard<std::recursive_mutex> guardPDP(*this->mp_mutex);
 
@@ -808,7 +832,7 @@ WriterProxyData* PDP::addWriterProxyData(
     WriterProxyData* ret_val = nullptr;
 
     // notify statistics module
-    getRTPSParticipant()->on_entity_discovery(writer_guid);
+    getRTPSParticipant()->on_entity_discovery(writer_guid, ParameterPropertyList_t());
 
     std::lock_guard<std::recursive_mutex> guardPDP(*this->mp_mutex);
 

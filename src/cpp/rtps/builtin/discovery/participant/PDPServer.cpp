@@ -206,11 +206,9 @@ ParticipantProxyData* PDPServer::createParticipantProxyData(
         }
     }
 
-    ParticipantProxyData* pdata = add_participant_proxy_data(participant_data.m_guid, do_lease);
+    ParticipantProxyData* pdata = add_participant_proxy_data(participant_data.m_guid, do_lease, &participant_data);
     if (pdata != nullptr)
     {
-        pdata->copy(participant_data);
-        pdata->isAlive = true;
         if (do_lease)
         {
             pdata->lease_duration_event->update_interval(pdata->m_leaseDuration);
