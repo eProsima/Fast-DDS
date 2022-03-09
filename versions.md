@@ -7,9 +7,11 @@ Version 2.6.0
 * Allow modifying the remote server locator in runtime.
 * Add physical information in DATA[p] using properties
 * Extension of `DISCOVERY_TOPIC` to include physical information about the discovered entity (ABI break)
-* Added methods getting `fastrtps::Time_t` as parameters instead of `fastrtps::rtps::Time_t`.
-* Changed signature of eprosima::fastdds::dds::DataWriter::dispose_w_timestamp. (ABI break).
-* Added method getting `std::vector<InstanceHandle_t>&` instead of `std::vector<InstanceHandle_t*>&`.
+* Added methods getting `fastrtps::Time_t` as parameters instead of `fastrtps::rtps::Time_t` (API extension, API
+  deprecations).
+* Changed signature of eprosima::fastdds::dds::DataWriter::dispose_w_timestamp (ABI break).
+* Added method getting `std::vector<InstanceHandle_t>&` instead of `std::vector<InstanceHandle_t*>&` (API extension, API
+  deprecations).
 
 Version 2.5.0
 -------------
