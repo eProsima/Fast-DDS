@@ -4,6 +4,7 @@ Version 2.6.0
 * New TransportInterface and NetworkFactory API to allow updating the network interfaces at runtime (ABI breaks on RPTS
   and transport layers)
 * Removed dll export for constructors and destructors of factory created entities (breaks ABI)
+* Allow modifying the remote server locator in runtime.
 
 Version 2.5.0
 -------------

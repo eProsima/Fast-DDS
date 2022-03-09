@@ -178,7 +178,7 @@ def fourth_step(outq):
             if 'Trying to add Discovery Servers to a participant which is not a SERVER, BACKUP or an' in line \
                 and 'overriden CLIENT (SIMPLE participant transformed into CLIENT with the environment variable)' in line:
                 warning_client_2 = True
-            elif 'Discovery Servers cannot add/modify their locators' in line:
+            elif 'Discovery Servers cannot be removed from the list; they can only be added' in line:
                 warning_client_1 = True
             elif 'discovered participant' in line:
                 count = count + 1
@@ -211,76 +211,6 @@ def fifth_step(outq):
             print(line)
             sys.stdout.flush()
 
-            if 'Discovery Servers cannot add/modify their locators' in line:
-                warning = True
-            elif 'discovered participant' in line:
-                count = count + 1
-        except queue.Empty:
-            # Ensure that 2 s has passed so the file watch can detect that the file has changed
-            if warning and count == 0 and (time.time() - initial_time) > 2:
-                fifth_step_fulfilled = True
-            elif count > 0:
-                print('ERROR: More discoveries than expected')
-                stop_threads = True
-                sys.exit(1)
-            sys.stdout.flush()
-        except AssertionError:
-            print('ASSERTION ERROR: ' + line)
-            stop_threads = True
-            sys.exit(1)
-        time.sleep(0.1)
-
-def sixth_step(outq):
-    sixth_step_fulfilled = False
-    warning_client_1 = False
-    warning_client_2 = False
-    count = 0
-    initial_time = time.time()
-    while not sixth_step_fulfilled:
-        global stop_threads
-        if stop_threads:
-            break
-        try:
-            line = outq.get(block=False).rstrip()
-            print(line)
-            sys.stdout.flush()
-
-            if 'Trying to add Discovery Servers to a participant which is not a SERVER, BACKUP or an' in line \
-                and 'overriden CLIENT (SIMPLE participant transformed into CLIENT with the environment variable)' in line:
-                warning_client_2 = True
-            elif 'Discovery Servers cannot be removed from the list; they can only be added' in line:
-                warning_client_1 = True
-            elif 'discovered participant' in line:
-                count = count + 1
-        except queue.Empty:
-            # Ensure that 2 s has passed so the file watch can detect that the file has changed
-            if warning_client_1 and warning_client_2 and count == 0 and (time.time() - initial_time) > 2:
-                sixth_step_fulfilled = True
-            elif count > 0:
-                print('ERROR: More discoveries than expected')
-                stop_threads = True
-                sys.exit(1)
-            sys.stdout.flush()
-        except AssertionError:
-            print('ASSERTION ERROR: ' + line)
-            stop_threads = True
-            sys.exit(1)
-        time.sleep(0.1)
-
-def seventh_step(outq):
-    seventh_step_fulfilled = False
-    warning = False
-    count = 0
-    initial_time = time.time()
-    while not seventh_step_fulfilled:
-        global stop_threads
-        if stop_threads:
-            break
-        try:
-            line = outq.get(block=False).rstrip()
-            print(line)
-            sys.stdout.flush()
-
             if 'Discovery Servers cannot be removed from the list; they can only be added' in line:
                 warning = True
             elif 'discovered participant' in line:
@@ -288,7 +218,7 @@ def seventh_step(outq):
         except queue.Empty:
             # Ensure that 2 s has passed so the file watch can detect that the file has changed
             if warning and count == 0 and (time.time() - initial_time) > 2:
-                seventh_step_fulfilled = True
+                fifth_step_fulfilled = True
             elif count > 0:
                 print('ERROR: More discoveries than expected')
                 stop_threads = True
@@ -349,16 +279,6 @@ def communication(proc, outq, outt, cv):
                     cv.release()
                 elif "FIFTH STEP" in line:
                     fifth_step(outq)
-                    cv.acquire()
-                    cv.notify()
-                    cv.release()
-                elif "SIXTH STEP" in line:
-                    sixth_step(outq)
-                    cv.acquire()
-                    cv.notify()
-                    cv.release()
-                elif "SEVENTH STEP" in line:
-                    seventh_step(outq)
                     cv.acquire()
                     cv.notify()
                     cv.release()
@@ -471,31 +391,7 @@ result = cv.wait(10)
 if result == False:
     exit(cv)
 
-outt.put("FOURTH STEP: Changing a Server locator from the Client list outputs a Log Warning\n")
-
-# Change first server locator from client list
-f = open(client_env_file, 'w+')
-f.write('{"ROS_DISCOVERY_SERVER": "localhost:11811;localhost:')
-f.write(random_port_server_2)
-f.write('"}')
-f.close()
-
-result = cv.wait(10)
-if result == False:
-    exit(cv)
-
-outt.put("FIFTH STEP: Changing a Server locator from the Server list outputs a Log Warning\n")
-
-# Change server locator from server list
-f = open(server_1_env_file, 'w+')
-f.write('{"ROS_DISCOVERY_SERVER": ";localhost:11811"}')
-f.close()
-
-result = cv.wait(10)
-if result == False:
-    exit(cv)
-
-outt.put("SIXTH STEP: Removing a Server from the Client list outputs a Log Warning\n")
+outt.put("FOURTH STEP: Removing a Server from the Client list outputs a Log Warning\n")
 
 # Remove first server from client list
 f = open(client_env_file, 'w+')
@@ -508,7 +404,7 @@ result = cv.wait(10)
 if result == False:
     exit(cv)
 
-outt.put("SEVENTH STEP: Removing a Server from the  Server list outputs a Log Warning\n")
+outt.put("FIFTH STEP: Removing a Server from the  Server list outputs a Log Warning\n")
 
 # Remove server from the server 1 list
 f = open(server_1_env_file, 'w+')
