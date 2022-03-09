@@ -171,7 +171,7 @@ protected:
     /**
      * Shutdown method to close the connections of the transports.
      */
-    virtual void shutdown() override;
+    void shutdown() override;
 
     /**
      * Applies TLS configuration to ssl_context
@@ -205,7 +205,7 @@ public:
             std::shared_ptr<TCPChannelResource>&);
 
     //! Removes the listening socket for the specified port.
-    virtual bool CloseInputChannel(
+    bool CloseInputChannel(
             const Locator&) override;
 
     //! Removes all outbound sockets on the given port.
@@ -213,7 +213,7 @@ public:
             std::shared_ptr<TCPChannelResource>& channel);
 
     //! Reports whether Locators correspond to the same port.
-    virtual bool DoInputLocatorsMatch(
+    bool DoInputLocatorsMatch(
             const Locator&,
             const Locator&) const override;
 
@@ -242,7 +242,7 @@ public:
             const fastrtps::rtps::PropertyPolicy* properties = nullptr) override;
 
     //! Checks whether there are open and bound sockets for the given port.
-    virtual bool IsInputChannelOpen(
+    bool IsInputChannelOpen(
             const Locator&) const override;
 
     //! Checks if the interfaces white list is empty.
@@ -260,7 +260,7 @@ public:
             const std::string& interface) const = 0;
 
     //! Checks for TCP kinds.
-    virtual bool IsLocatorSupported(
+    bool IsLocatorSupported(
             const Locator&) const override;
 
     //! Checks whether there are open and bound sockets for the given port.
@@ -276,7 +276,7 @@ public:
             uint32_t) override;
 
     //! Opens a socket on the given address and port (as long as they are white listed).
-    virtual bool OpenOutputChannel(
+    bool OpenOutputChannel(
             SendResourceList& send_resource_list,
             const Locator&) override;
 
@@ -285,7 +285,7 @@ public:
      * destination) to the main local locator whose channel can write to that
      * destination. In this case it will return a 0.0.0.0 address on that port.
      */
-    virtual Locator RemoteToMainLocal(
+    Locator RemoteToMainLocal(
             const Locator&) const override;
 
     /**
@@ -299,7 +299,7 @@ public:
      *
      * @return false if the input locator is not supported/allowed by this transport, true otherwise.
      */
-    virtual bool transform_remote_locator(
+    bool transform_remote_locator(
             const Locator& remote_locator,
             Locator& result_locator) const override;
 
@@ -353,7 +353,7 @@ public:
      *
      * @param [in, out] selector Locator selector.
      */
-    virtual void select_locators(
+    void select_locators(
             fastrtps::rtps::LocatorSelector& selector) const override;
 
     //! Callback called each time that an incomming connection is accepted.
@@ -381,11 +381,11 @@ public:
      */
     virtual std::vector<std::string> get_binding_interfaces_list() = 0;
 
-    virtual bool getDefaultMetatrafficMulticastLocators(
+    bool getDefaultMetatrafficMulticastLocators(
             LocatorList& locators,
             uint32_t metatraffic_multicast_port) const override;
 
-    virtual bool getDefaultMetatrafficUnicastLocators(
+    bool getDefaultMetatrafficUnicastLocators(
             LocatorList& locators,
             uint32_t metatraffic_unicast_port) const override;
 
@@ -393,25 +393,25 @@ public:
             LocatorList& locators,
             uint32_t unicast_port) const override;
 
-    virtual bool fillMetatrafficMulticastLocator(
+    bool fillMetatrafficMulticastLocator(
             Locator& locator,
             uint32_t metatraffic_multicast_port) const override;
 
-    virtual bool fillMetatrafficUnicastLocator(
+    bool fillMetatrafficUnicastLocator(
             Locator& locator,
             uint32_t metatraffic_unicast_port) const override;
 
-    virtual bool configureInitialPeerLocator(
+    bool configureInitialPeerLocator(
             Locator& locator,
             const fastrtps::rtps::PortParameters& port_params,
             uint32_t domainId,
             LocatorList& list) const override;
 
-    virtual bool fillUnicastLocator(
+    bool fillUnicastLocator(
             Locator& locator,
             uint32_t well_known_port) const override;
 
-    virtual uint32_t max_recv_buffer_size() const override
+    uint32_t max_recv_buffer_size() const override
     {
         return configuration()->maxMessageSize;
     }
@@ -424,6 +424,8 @@ public:
     virtual TCPTransportDescriptor* configuration() = 0;
 
     void keep_alive();
+
+    void update_network_interfaces() override;
 };
 
 } // namespace rtps

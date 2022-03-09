@@ -585,6 +585,11 @@ bool UDPv6Transport::compare_ips(
     return false;
 }
 
+void UDPv6Transport::update_network_interfaces()
+{
+    // TODO(jlbueno)
+}
+
 } // namespace rtps
 } // namespace fastrtps
 } // namespace eprosima

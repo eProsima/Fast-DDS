@@ -94,43 +94,29 @@ bool NetworkFactory::RegisterTransport(
 {
     bool wasRegistered = false;
 
-    if (nullptr != descriptor)
+    uint32_t minSendBufferSize = std::numeric_limits<uint32_t>::max();
+
+    std::unique_ptr<TransportInterface> transport(descriptor->create_transport());
+
+    if (transport)
     {
-        uint32_t minSendBufferSize = std::numeric_limits<uint32_t>::max();
-
-        std::unique_ptr<TransportInterface> transport(descriptor->create_transport());
-
-        if (transport)
+        if (transport->init(properties))
         {
-            if (transport->init(properties))
-            {
-                minSendBufferSize = transport->get_configuration()->min_send_buffer_size();
-                mRegisteredTransports.emplace_back(std::move(transport));
-                wasRegistered = true;
-            }
-
-            if (wasRegistered)
-            {
-                if (descriptor->max_message_size() < maxMessageSizeBetweenTransports_)
-                {
-                    maxMessageSizeBetweenTransports_ = descriptor->max_message_size();
-                }
-
-                if (minSendBufferSize < minSendBufferSize_)
-                {
-                    minSendBufferSize_ = minSendBufferSize;
-                }
-            }
+            minSendBufferSize = transport->get_configuration()->min_send_buffer_size();
+            mRegisteredTransports.emplace_back(std::move(transport));
+            wasRegistered = true;
         }
-    }
-    // Update network interfaces
-    else
-    {
-        for (auto& transport : mRegisteredTransports)
+
+        if (wasRegistered)
         {
-            if (LOCATOR_KIND_UDPv4 == transport->kind())
+            if (descriptor->max_message_size() < maxMessageSizeBetweenTransports_)
             {
-                static_cast<UDPv4Transport*>(transport.get())->update_network_interfaces();
+                maxMessageSizeBetweenTransports_ = descriptor->max_message_size();
+            }
+
+            if (minSendBufferSize < minSendBufferSize_)
+            {
+                minSendBufferSize_ = minSendBufferSize;
             }
         }
     }
@@ -400,6 +386,14 @@ uint16_t NetworkFactory::calculate_well_known_port(
     }
 
     return static_cast<uint16_t>(port);
+}
+
+void NetworkFactory::update_network_interfaces()
+{
+    for (auto& transport : mRegisteredTransports)
+    {
+        transport->update_network_interfaces();
+    }
 }
 
 } // namespace rtps

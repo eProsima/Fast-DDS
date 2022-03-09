@@ -61,10 +61,8 @@ public:
 
     /**
      * Allow registration of a transport dynamically.
-     * It also allows to update the network interfaces.
      *
      * @param descriptor Structure that defines all initial configuration for a given transport.
-     *                   If nullptr is passed the network interfaces are re-scanned.
      * @param properties Optional policy to specify additional parameters for the created transport.
      */
     bool RegisterTransport(
@@ -211,6 +209,11 @@ public:
      * Shutdown method to close the connections of the transports.
      */
     void Shutdown();
+
+    /**
+     * Re-scan network interfaces
+     */
+    void update_network_interfaces();
 
 private:
 

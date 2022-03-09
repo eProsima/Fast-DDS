@@ -53,7 +53,7 @@ public:
     bool init(
             const fastrtps::rtps::PropertyPolicy* properties = nullptr) override;
 
-    virtual ~SharedMemTransport() override;
+    ~SharedMemTransport() override;
 
     /**
      * Starts listening on the specified port, and if the specified address is in the

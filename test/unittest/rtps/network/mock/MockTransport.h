@@ -62,33 +62,33 @@ public:
             const PropertyPolicy* properties = nullptr) override;
 
     //API implementation
-    virtual bool IsInputChannelOpen(
+    bool IsInputChannelOpen(
             const Locator_t&)  const override;
 
-    virtual bool OpenOutputChannel(
+    bool OpenOutputChannel(
             SendResourceList& sender_resource_list,
             const Locator_t&) override;
 
-    virtual bool OpenInputChannel(
+    bool OpenInputChannel(
             const Locator_t&,
             TransportReceiverInterface*,
             uint32_t) override;
 
-    virtual bool CloseInputChannel(
+    bool CloseInputChannel(
             const Locator_t&) override;
 
-    virtual Locator_t RemoteToMainLocal(
+    Locator_t RemoteToMainLocal(
             const Locator_t&) const override;
 
-    virtual bool IsLocatorSupported(
+    bool IsLocatorSupported(
             const Locator_t&)  const override;
-    virtual bool is_locator_allowed(
+    bool is_locator_allowed(
             const Locator_t& locator) const override;
-    virtual bool DoInputLocatorsMatch(
+    bool DoInputLocatorsMatch(
             const Locator_t&,
             const Locator_t&) const override;
 
-    virtual LocatorList_t NormalizeLocator(
+    LocatorList_t NormalizeLocator(
             const Locator_t& locator) override;
 
     /**
@@ -103,61 +103,61 @@ public:
      *
      * @param [in, out] selector Locator selector.
      */
-    virtual void select_locators(
+    void select_locators(
             LocatorSelector& selector) const override;
 
-    virtual bool is_local_locator(
+    bool is_local_locator(
             const Locator_t&) const override
     {
         return false;
     }
 
-    virtual TransportDescriptorInterface* get_configuration() override
+    TransportDescriptorInterface* get_configuration() override
     {
         return nullptr;
     }
 
-    virtual void AddDefaultOutputLocator(
+    void AddDefaultOutputLocator(
             LocatorList_t&) override
     {
     }
 
-    virtual bool getDefaultMetatrafficMulticastLocators(
+    bool getDefaultMetatrafficMulticastLocators(
             LocatorList_t&,
             uint32_t ) const override
     {
         return true;
     }
 
-    virtual bool getDefaultMetatrafficUnicastLocators(
+    bool getDefaultMetatrafficUnicastLocators(
             LocatorList_t&,
             uint32_t ) const override
     {
         return true;
     }
 
-    virtual bool getDefaultUnicastLocators(
+    bool getDefaultUnicastLocators(
             LocatorList_t&,
             uint32_t ) const override
     {
         return true;
     }
 
-    virtual bool fillMetatrafficUnicastLocator(
+    bool fillMetatrafficUnicastLocator(
             Locator_t&,
             uint32_t ) const override
     {
         return true;
     }
 
-    virtual bool fillMetatrafficMulticastLocator(
+    bool fillMetatrafficMulticastLocator(
             Locator_t&,
             uint32_t ) const override
     {
         return true;
     }
 
-    virtual bool configureInitialPeerLocator(
+    bool configureInitialPeerLocator(
             Locator_t&,
             const PortParameters&,
             uint32_t,
@@ -166,14 +166,14 @@ public:
         return true;
     }
 
-    virtual bool fillUnicastLocator(
+    bool fillUnicastLocator(
             Locator_t&,
             uint32_t) const override
     {
         return true;
     }
 
-    virtual uint32_t max_recv_buffer_size() const override
+    uint32_t max_recv_buffer_size() const override
     {
         return 0x8FFF;
     }
@@ -220,7 +220,7 @@ public:
 
     int maximumChannels;
     int supportedKind;
-    virtual TransportInterface* create_transport() const override
+    TransportInterface* create_transport() const override
     {
         return new MockTransport(*this);
     }

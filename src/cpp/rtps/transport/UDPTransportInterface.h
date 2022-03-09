@@ -40,12 +40,12 @@ class UDPTransportInterface : public TransportInterface
 
 public:
 
-    virtual ~UDPTransportInterface() override;
+    ~UDPTransportInterface() override;
 
     void clean();
 
     //! Removes the listening socket for the specified port.
-    virtual bool CloseInputChannel(
+    bool CloseInputChannel(
             const Locator&) override;
 
     //! Removes all outbound sockets on the given port.
@@ -53,7 +53,7 @@ public:
             eProsimaUDPSocket& socket);
 
     //! Reports whether Locators correspond to the same port.
-    virtual bool DoInputLocatorsMatch(
+    bool DoInputLocatorsMatch(
             const Locator&,
             const Locator&) const override;
 
@@ -63,15 +63,15 @@ public:
             const fastrtps::rtps::PropertyPolicy* properties = nullptr) override;
 
     //! Checks whether there are open and bound sockets for the given port.
-    virtual bool IsInputChannelOpen(
+    bool IsInputChannelOpen(
             const Locator&) const override;
 
     //! Checks for TCP kinds.
-    virtual bool IsLocatorSupported(
+    bool IsLocatorSupported(
             const Locator&) const override;
 
     //! Opens a socket on the given address and port (as long as they are white listed).
-    virtual bool OpenOutputChannel(
+    bool OpenOutputChannel(
             SendResourceList& sender_resource_list,
             const Locator&) override;
 
@@ -80,7 +80,7 @@ public:
      * destination) to the main local locator whose channel can write to that
      * destination. In this case it will return a 0.0.0.0 address on that port.
      */
-    virtual Locator RemoteToMainLocal(
+    Locator RemoteToMainLocal(
             const Locator&) const override;
 
     /**
@@ -94,7 +94,7 @@ public:
      *
      * @return false if the input locator is not supported/allowed by this transport, true otherwise.
      */
-    virtual bool transform_remote_locator(
+    bool transform_remote_locator(
             const Locator& remote_locator,
             Locator& result_locator) const override;
 
@@ -136,28 +136,28 @@ public:
      *
      * @param [in, out] selector Locator selector.
      */
-    virtual void select_locators(
+    void select_locators(
             fastrtps::rtps::LocatorSelector& selector) const override;
 
-    virtual bool fillMetatrafficMulticastLocator(
+    bool fillMetatrafficMulticastLocator(
             Locator& locator,
             uint32_t metatraffic_multicast_port) const override;
 
-    virtual bool fillMetatrafficUnicastLocator(
+    bool fillMetatrafficUnicastLocator(
             Locator& locator,
             uint32_t metatraffic_unicast_port) const override;
 
-    virtual bool configureInitialPeerLocator(
+    bool configureInitialPeerLocator(
             Locator& locator,
             const fastrtps::rtps::PortParameters& port_params,
             uint32_t domainId,
             LocatorList& list) const override;
 
-    virtual bool fillUnicastLocator(
+    bool fillUnicastLocator(
             Locator& locator,
             uint32_t well_known_port) const override;
 
-    virtual uint32_t max_recv_buffer_size() const override
+    uint32_t max_recv_buffer_size() const override
     {
         return configuration()->maxMessageSize;
     }
