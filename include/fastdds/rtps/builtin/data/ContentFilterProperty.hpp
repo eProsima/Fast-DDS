@@ -30,19 +30,30 @@ namespace fastdds {
 namespace rtps {
 
 /**
- * Class ContentFilterProperty.
- * *@ingroup BUILTIN_MODULE
+ * Information about the content filter being applied by a reader.
+ * @ingroup BUILTIN_MODULE
  */
 class ContentFilterProperty
 {
 public:
 
+    /**
+     * Allocation configuration for a ContentFilterProperty.
+     * @ingroup BUILTIN_MODULE
+     */
     struct AllocationConfiguration
     {
+        /// Preallocated size of the filter expression
         size_t expression_initial_size = 0;
+        /// Allocation configuration for the list of expression parameters
         fastrtps::ResourceLimitedContainerConfig expression_parameters{ 0, 100, 1 };
     };
 
+    /**
+     * Construct a ContentFilterProperty.
+     *
+     * @param config  Allocation configuration for the new object.
+     */
     explicit ContentFilterProperty(
             const AllocationConfiguration& config)
         : expression_parameters(config.expression_parameters)
@@ -50,10 +61,15 @@ public:
         filter_expression.reserve(config.expression_initial_size);
     }
 
+    /// Name of the content filtered topic on which the reader was created
     fastrtps::string_255 content_filtered_topic_name;
+    /// Name of the related topic being filtered
     fastrtps::string_255 related_topic_name;
+    /// Class name of the filter being used
     fastrtps::string_255 filter_class_name;
+    /// Filter expression indicating which content the reader wants to receive
     std::string filter_expression;
+    /// List of values for the parameters present on the filter expression
     fastrtps::ResourceLimitedVector<fastrtps::string_255, std::true_type> expression_parameters;
 };
 
