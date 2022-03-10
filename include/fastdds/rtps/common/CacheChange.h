@@ -79,6 +79,8 @@ struct RTPS_DllAPI CacheChange_t
     SequenceNumber_t sequenceNumber{};
     //!Serialized Payload associated with the change.
     SerializedPayload_t serializedPayload{};
+    //!CDR serialization of inlined QoS for this change.
+    SerializedPayload_t inline_qos{};
     //!Indicates if the cache has been read (only used in READERS)
     bool isRead = false;
     //!Source TimeStamp

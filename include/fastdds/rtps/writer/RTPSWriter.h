@@ -28,6 +28,8 @@
 #include <fastdds/rtps/Endpoint.h>
 #include <fastdds/rtps/attributes/HistoryAttributes.h>
 #include <fastdds/rtps/attributes/WriterAttributes.h>
+#include <fastdds/rtps/builtin/data/ReaderProxyData.h>
+#include <fastdds/rtps/interfaces/IReaderDataFilter.hpp>
 #include <fastdds/rtps/messages/RTPSMessageGroup.h>
 #include "DeliveryRetCode.hpp"
 #include "LocatorSelectorSender.hpp"
@@ -165,6 +167,25 @@ public:
      */
     RTPS_DllAPI virtual bool matched_reader_is_matched(
             const GUID_t& reader_guid) = 0;
+
+    /**
+     * @brief Set a content filter to perform content filtering on this writer.
+     *
+     * This method sets a content filter that will be used to check whether a cache change is relevant
+     * for a reader or not.
+     *
+     * @param filter  The content filter to use on this writer. May be @c nullptr to remove the content filter
+     *                (i.e. treat all samples as relevant).
+     */
+    RTPS_DllAPI virtual void reader_data_filter(
+            fastdds::rtps::IReaderDataFilter* filter) = 0;
+
+    /**
+     * @brief Get the content filter used to perform content filtering on this writer.
+     *
+     * @return The content filter used on this writer.
+     */
+    RTPS_DllAPI virtual const fastdds::rtps::IReaderDataFilter* reader_data_filter() const = 0;
 
     /**
      * Check if a specific change has been acknowledged by all Readers.
@@ -375,18 +396,21 @@ public:
 
     /**
      * @brief A method to retrieve the liveliness kind
+     *
      * @return Liveliness kind
      */
     const LivelinessQosPolicyKind& get_liveliness_kind() const;
 
     /**
      * @brief A method to retrieve the liveliness lease duration
+     *
      * @return Lease duration
      */
     const Duration_t& get_liveliness_lease_duration() const;
 
     /**
      * @brief A method to return the liveliness announcement period
+     *
      * @return The announcement period
      */
     const Duration_t& get_liveliness_announcement_period() const;

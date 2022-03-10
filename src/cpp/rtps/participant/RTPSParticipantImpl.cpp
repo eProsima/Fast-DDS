@@ -28,6 +28,7 @@
 #include <fastdds/dds/log/Log.hpp>
 #include <fastdds/rtps/attributes/ServerAttributes.h>
 #include <fastdds/rtps/builtin/BuiltinProtocols.h>
+#include <fastdds/rtps/builtin/discovery/endpoint/EDP.h>
 #include <fastdds/rtps/builtin/discovery/participant/PDPSimple.h>
 #include <fastdds/rtps/builtin/data/ParticipantProxyData.h>
 #include <fastdds/rtps/builtin/liveliness/WLP.h>
@@ -1171,9 +1172,10 @@ bool RTPSParticipantImpl::registerWriter(
 bool RTPSParticipantImpl::registerReader(
         RTPSReader* reader,
         const TopicAttributes& topicAtt,
-        const ReaderQos& rqos)
+        const ReaderQos& rqos,
+        const fastdds::rtps::ContentFilterProperty* content_filter)
 {
-    return this->mp_builtinProtocols->addLocalReader(reader, topicAtt, rqos);
+    return this->mp_builtinProtocols->addLocalReader(reader, topicAtt, rqos, content_filter);
 }
 
 void RTPSParticipantImpl::update_attributes(
@@ -1370,9 +1372,10 @@ bool RTPSParticipantImpl::updateLocalWriter(
 bool RTPSParticipantImpl::updateLocalReader(
         RTPSReader* reader,
         const TopicAttributes& topicAtt,
-        const ReaderQos& rqos)
+        const ReaderQos& rqos,
+        const fastdds::rtps::ContentFilterProperty* content_filter)
 {
-    return this->mp_builtinProtocols->updateLocalReader(reader, topicAtt, rqos);
+    return this->mp_builtinProtocols->updateLocalReader(reader, topicAtt, rqos, content_filter);
 }
 
 /*

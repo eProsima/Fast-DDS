@@ -153,10 +153,22 @@ public:
                 const TopicAttributes& topicAtt,
                 const ReaderQos& rqos));
 
+    MOCK_METHOD4(registerReader, bool(
+                RTPSReader * Reader,
+                const TopicAttributes& topicAtt,
+                const ReaderQos& rqos,
+                const fastdds::rtps::ContentFilterProperty* content_filter));
+
     MOCK_METHOD3(updateReader, bool(
                 RTPSReader * Reader,
                 const TopicAttributes& topicAtt,
                 const ReaderQos& rqos));
+
+    MOCK_METHOD4(updateReader, bool(
+                RTPSReader * Reader,
+                const TopicAttributes& topicAtt,
+                const ReaderQos& rqos,
+                const fastdds::rtps::ContentFilterProperty* content_filter));
 
     const RTPSParticipantAttributes& getRTPSParticipantAttributes()
     {

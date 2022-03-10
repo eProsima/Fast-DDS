@@ -86,9 +86,10 @@ bool RTPSParticipant::registerWriter(
 bool RTPSParticipant::registerReader(
         RTPSReader* Reader,
         const TopicAttributes& topicAtt,
-        const ReaderQos& rqos)
+        const ReaderQos& rqos,
+        const fastdds::rtps::ContentFilterProperty* content_filter)
 {
-    return mp_impl->registerReader(Reader, topicAtt, rqos);
+    return mp_impl->registerReader(Reader, topicAtt, rqos, content_filter);
 }
 
 void RTPSParticipant::update_attributes(
@@ -108,9 +109,10 @@ bool RTPSParticipant::updateWriter(
 bool RTPSParticipant::updateReader(
         RTPSReader* Reader,
         const TopicAttributes& topicAtt,
-        const ReaderQos& rqos)
+        const ReaderQos& rqos,
+        const fastdds::rtps::ContentFilterProperty* content_filter)
 {
-    return mp_impl->updateLocalReader(Reader, topicAtt, rqos);
+    return mp_impl->updateLocalReader(Reader, topicAtt, rqos, content_filter);
 }
 
 std::vector<std::string> RTPSParticipant::getParticipantNames() const

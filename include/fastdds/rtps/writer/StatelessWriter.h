@@ -23,6 +23,7 @@
 #include <fastdds/rtps/common/Time_t.h>
 #include <fastdds/rtps/history/IChangePool.h>
 #include <fastdds/rtps/history/IPayloadPool.h>
+#include <fastdds/rtps/interfaces/IReaderDataFilter.hpp>
 #include <fastdds/rtps/writer/ChangeForReader.h>
 #include <fastdds/rtps/writer/ReaderLocator.h>
 #include <fastdds/rtps/writer/RTPSWriter.h>
@@ -119,6 +120,31 @@ public:
      */
     bool matched_reader_is_matched(
             const GUID_t& reader_guid) override;
+
+    /**
+     * @brief Set a content filter to perform content filtering on this writer.
+     *
+     * This method sets a content filter that will be used to check whether a cache change is relevant
+     * for a reader or not.
+     *
+     * @param filter  The content filter to use on this writer. May be @c nullptr to remove the content filter
+     *                (i.e. treat all samples as relevant).
+     */
+    virtual void reader_data_filter(
+            fastdds::rtps::IReaderDataFilter* filter) final
+    {
+        static_cast<void>(filter);
+    }
+
+    /**
+     * @brief Get the content filter used to perform content filtering on this writer.
+     *
+     * @return The content filter used on this writer.
+     */
+    virtual const fastdds::rtps::IReaderDataFilter* reader_data_filter() const final
+    {
+        return nullptr;
+    }
 
     /**
      * Update the Attributes of the Writer.

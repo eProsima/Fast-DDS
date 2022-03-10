@@ -26,12 +26,13 @@
 
 #include <fastdds/rtps/attributes/WriterAttributes.h>
 #include <fastdds/rtps/attributes/RTPSParticipantAllocationAttributes.hpp>
+#include <fastdds/rtps/common/RemoteLocators.hpp>
+#include <fastdds/rtps/builtin/data/ContentFilterProperty.hpp>
 
 #if HAVE_SECURITY
 #include <fastdds/rtps/security/accesscontrol/EndpointSecurityAttributes.h>
 #endif // if HAVE_SECURITY
 
-#include <fastdds/rtps/common/RemoteLocators.hpp>
 
 namespace eprosima {
 namespace fastrtps {
@@ -51,12 +52,14 @@ public:
 
     RTPS_DllAPI ReaderProxyData(
             const size_t max_unicast_locators,
-            const size_t max_multicast_locators);
+            const size_t max_multicast_locators,
+            const fastdds::rtps::ContentFilterProperty::AllocationConfiguration& content_filter_limits = {});
 
     RTPS_DllAPI ReaderProxyData(
             const size_t max_unicast_locators,
             const size_t max_multicast_locators,
-            const VariableLengthDataLimits& data_limits);
+            const VariableLengthDataLimits& data_limits,
+            const fastdds::rtps::ContentFilterProperty::AllocationConfiguration& content_filter_limits = {});
 
     RTPS_DllAPI virtual ~ReaderProxyData();
 
@@ -225,6 +228,28 @@ public:
     RTPS_DllAPI uint16_t& userDefinedId()
     {
         return m_userDefinedId;
+    }
+
+    RTPS_DllAPI void content_filter(
+            const fastdds::rtps::ContentFilterProperty& filter)
+    {
+        content_filter_ = filter;
+    }
+
+    RTPS_DllAPI void content_filter(
+            fastdds::rtps::ContentFilterProperty&& filter)
+    {
+        content_filter_ = std::move(filter);
+    }
+
+    RTPS_DllAPI const fastdds::rtps::ContentFilterProperty& content_filter() const
+    {
+        return content_filter_;
+    }
+
+    RTPS_DllAPI fastdds::rtps::ContentFilterProperty& content_filter()
+    {
+        return content_filter_;
     }
 
     RTPS_DllAPI void isAlive(
@@ -458,6 +483,8 @@ private:
     xtypes::TypeInformation* m_type_information;
     //!
     ParameterPropertyList_t m_properties;
+    //!Information on the content filter applied by the reader.
+    fastdds::rtps::ContentFilterProperty content_filter_;
 };
 
 } // namespace rtps

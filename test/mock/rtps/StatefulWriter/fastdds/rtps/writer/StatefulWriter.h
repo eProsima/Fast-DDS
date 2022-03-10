@@ -94,9 +94,9 @@ public:
     }
 
     void reader_data_filter(
-            fastdds::rtps::IReaderDataFilter* reader_data_filter)
+            fastdds::rtps::IReaderDataFilter* filter)
     {
-        reader_data_filter_ = reader_data_filter;
+        reader_data_filter_ = filter;
     }
 
     const fastdds::rtps::IReaderDataFilter* reader_data_filter() const

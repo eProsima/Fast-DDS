@@ -21,11 +21,13 @@
 #define EDPSIMPLELISTENER_H_
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 
-#include <fastdds/rtps/reader/ReaderListener.h>
-#include <fastdds/rtps/writer/WriterListener.h>
-
 #include <fastdds/rtps/builtin/data/ReaderProxyData.h>
 #include <fastdds/rtps/builtin/data/WriterProxyData.h>
+
+#include <fastdds/rtps/builtin/discovery/endpoint/EDPSimple.h>
+
+#include <fastdds/rtps/reader/ReaderListener.h>
+#include <fastdds/rtps/writer/WriterListener.h>
 
 #include <rtps/participant/RTPSParticipantImpl.h>
 
@@ -33,7 +35,6 @@ namespace eprosima {
 namespace fastrtps {
 namespace rtps {
 
-class EDPSimple;
 class RTPSReader;
 struct CacheChange_t;
 
@@ -102,11 +103,13 @@ public:
 
     EDPBaseSUBListener(
             const RemoteLocatorsAllocationAttributes& locators_allocation,
-            const VariableLengthDataLimits& data_limits)
+            const VariableLengthDataLimits& data_limits,
+            const fastdds::rtps::ContentFilterProperty::AllocationConfiguration& filter_allocation)
         : temp_reader_data_(
             locators_allocation.max_unicast_locators,
             locators_allocation.max_multicast_locators,
-            data_limits)
+            data_limits,
+            filter_allocation)
     {
     }
 
@@ -188,7 +191,8 @@ public:
     EDPSimpleSUBListener(
             EDPSimple* sedp)
         : EDPBaseSUBListener(sedp->mp_RTPSParticipant->getAttributes().allocation.locators,
-                sedp->mp_RTPSParticipant->getAttributes().allocation.data_limits)
+                sedp->mp_RTPSParticipant->getAttributes().allocation.data_limits,
+                sedp->mp_RTPSParticipant->getAttributes().allocation.content_filter)
         , sedp_(sedp)
     {
     }

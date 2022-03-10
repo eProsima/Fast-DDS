@@ -21,12 +21,14 @@
 
 #include <cstdlib>
 #include <memory>
+
 #include <fastrtps/fastrtps_dll.h>
 #include <fastdds/rtps/common/Guid.h>
 #include <fastdds/rtps/attributes/RTPSParticipantAttributes.h>
+#include <fastdds/rtps/builtin/data/ContentFilterProperty.hpp>
+#include <fastdds/statistics/IListeners.hpp>
 #include <fastrtps/qos/ReaderQos.h>
 #include <fastrtps/qos/WriterQos.h>
-#include <fastdds/statistics/IListeners.hpp>
 
 namespace eprosima {
 
@@ -139,15 +141,17 @@ public:
 
     /**
      * Register a RTPSReader in the builtin Protocols.
-     * @param Reader Pointer to the RTPSReader.
-     * @param topicAtt Topic Attributes where you want to register it.
-     * @param rqos ReaderQos.
+     * @param Reader          Pointer to the RTPSReader.
+     * @param topicAtt        Topic Attributes where you want to register it.
+     * @param rqos            ReaderQos.
+     * @param content_filter  Optional content filtering information.
      * @return True if correctly registered.
      */
     bool registerReader(
             RTPSReader* Reader,
             const TopicAttributes& topicAtt,
-            const ReaderQos& rqos);
+            const ReaderQos& rqos,
+            const fastdds::rtps::ContentFilterProperty* content_filter = nullptr);
 
     /**
      * Update participant attributes.
@@ -170,15 +174,17 @@ public:
 
     /**
      * Update reader QOS
-     * @param Reader to update
-     * @param topicAtt Topic Attributes where you want to register it.
-     * @param rqos New reader QoS
+     * @param Reader          Pointer to the RTPSReader to update
+     * @param topicAtt        Topic Attributes where you want to register it.
+     * @param rqos            New reader QoS
+     * @param content_filter  Optional content filtering information.
      * @return true on success
      */
     bool updateReader(
             RTPSReader* Reader,
             const TopicAttributes& topicAtt,
-            const ReaderQos& rqos);
+            const ReaderQos& rqos,
+            const fastdds::rtps::ContentFilterProperty* content_filter = nullptr);
 
     /**
      * Returns a list with the participant names.

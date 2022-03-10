@@ -293,6 +293,7 @@ public:
 
     /**
      * @brief Returns true if disable positive ACKs QoS is enabled
+     *
      * @return True if positive acks are disabled, false otherwise
      */
     inline bool get_disable_positive_acks() const
@@ -311,8 +312,10 @@ public:
 
     /**
      * @brief Sends a periodic heartbeat
+     *
      * @param final Final flag
      * @param liveliness Liveliness flag
+     *
      * @return True on success
      */
     bool send_periodic_heartbeat(
@@ -321,6 +324,7 @@ public:
 
     /*!
      * @brief Sends a heartbeat to a remote reader.
+     *
      * @remarks This function is non thread-safe.
      */
     void send_heartbeat_to_nts(
@@ -372,16 +376,23 @@ public:
             bool& result) override;
 
     /**
-     * @brief Set a reader data filter to filter data in ReaderProxies
-     * @param reader_data_filter The reader data filter
+     * @brief Set a content filter to perform content filtering on this writer.
+     *
+     * This method sets a content filter that will be used to check whether a cache change is relevant
+     * for a reader or not.
+     *
+     * @param filter  The content filter to use on this writer. May be @c nullptr to remove the content filter
+     *                (i.e. treat all samples as relevant).
      */
     void reader_data_filter(
-            fastdds::rtps::IReaderDataFilter* reader_data_filter);
+            fastdds::rtps::IReaderDataFilter* filter) final;
 
     /**
-     * @brief Get the reader data filter used to filter data in ReaderProxies
+     * @brief Get the content filter used to perform content filtering on this writer.
+     *
+     * @return The content filter used on this writer.
      */
-    const fastdds::rtps::IReaderDataFilter* reader_data_filter() const;
+    const fastdds::rtps::IReaderDataFilter* reader_data_filter() const final;
 
     /*!
      * Tells writer the sample can be sent to the network.
@@ -436,6 +447,7 @@ private:
 
     /**
      * @brief A method called when the ack timer expires
+     *
      * @details Only used if disable positive ACKs QoS is enabled
      */
     bool ack_timer_expired();

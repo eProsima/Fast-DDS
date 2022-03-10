@@ -17,40 +17,38 @@
  */
 
 #include <rtps/security/SecurityManager.h>
-#include <security/OpenSSLInit.hpp>
-
-// TODO Include relative path and fix SecurityTest
-//#include <fastrtps_deprecated/participant/ParticipantImpl.h>
-#include <rtps/participant/RTPSParticipantImpl.h>
-
-#include <fastdds/rtps/security/authentication/Authentication.h>
-#include <fastdds/rtps/security/accesscontrol/AccessControl.h>
-#include <fastdds/rtps/security/accesscontrol/SecurityMaskUtilities.h>
-#include <fastdds/dds/log/Log.hpp>
-#include <fastdds/rtps/participant/RTPSParticipantListener.h>
-#include <fastdds/rtps/network/NetworkFactory.h>
-
-#include <fastdds/rtps/writer/StatelessWriter.h>
-#include <fastdds/rtps/reader/StatelessReader.h>
-#include <fastdds/rtps/writer/StatefulWriter.h>
-#include <fastdds/rtps/reader/StatefulReader.h>
-#include <fastdds/rtps/history/WriterHistory.h>
-#include <fastdds/rtps/history/ReaderHistory.h>
-#include <fastdds/rtps/attributes/HistoryAttributes.h>
-#include <fastdds/rtps/builtin/data/WriterProxyData.h>
-#include <fastdds/rtps/builtin/data/ReaderProxyData.h>
-#include <fastdds/rtps/builtin/data/ParticipantProxyData.h>
-#include <fastdds/rtps/builtin/discovery/participant/PDPSimple.h>
-#include <fastdds/rtps/messages/CDRMessage.h>
-#include <fastdds/rtps/security/accesscontrol/ParticipantSecurityAttributes.h>
-#include <fastdds/rtps/security/accesscontrol/EndpointSecurityAttributes.h>
-
-#include <rtps/history/TopicPayloadPoolRegistry.hpp>
 
 #include <cassert>
 #include <chrono>
 #include <thread>
 #include <mutex>
+
+#include <fastdds/dds/log/Log.hpp>
+
+#include <fastdds/rtps/attributes/HistoryAttributes.h>
+#include <fastdds/rtps/builtin/data/ParticipantProxyData.h>
+#include <fastdds/rtps/builtin/data/ReaderProxyData.h>
+#include <fastdds/rtps/builtin/data/WriterProxyData.h>
+#include <fastdds/rtps/builtin/discovery/endpoint/EDP.h>
+#include <fastdds/rtps/builtin/discovery/participant/PDPSimple.h>
+#include <fastdds/rtps/history/ReaderHistory.h>
+#include <fastdds/rtps/history/WriterHistory.h>
+#include <fastdds/rtps/messages/CDRMessage.h>
+#include <fastdds/rtps/network/NetworkFactory.h>
+#include <fastdds/rtps/participant/RTPSParticipantListener.h>
+#include <fastdds/rtps/reader/StatefulReader.h>
+#include <fastdds/rtps/reader/StatelessReader.h>
+#include <fastdds/rtps/security/accesscontrol/AccessControl.h>
+#include <fastdds/rtps/security/accesscontrol/EndpointSecurityAttributes.h>
+#include <fastdds/rtps/security/accesscontrol/ParticipantSecurityAttributes.h>
+#include <fastdds/rtps/security/accesscontrol/SecurityMaskUtilities.h>
+#include <fastdds/rtps/security/authentication/Authentication.h>
+#include <fastdds/rtps/writer/StatefulWriter.h>
+#include <fastdds/rtps/writer/StatelessWriter.h>
+
+#include <rtps/history/TopicPayloadPoolRegistry.hpp>
+#include <rtps/participant/RTPSParticipantImpl.h>
+#include <security/OpenSSLInit.hpp>
 
 #define BUILTIN_ENDPOINT_PARTICIPANT_MESSAGE_SECURE_WRITER (1 << 20)
 #define BUILTIN_ENDPOINT_PARTICIPANT_MESSAGE_SECURE_READER (1 << 21)
@@ -102,7 +100,8 @@ SecurityManager::SecurityManager(
     , temp_stateless_reader_proxy_data_(
         participant->getRTPSParticipantAttributes().allocation.locators.max_unicast_locators,
         participant->getRTPSParticipantAttributes().allocation.locators.max_multicast_locators,
-        participant->getRTPSParticipantAttributes().allocation.data_limits)
+        participant->getRTPSParticipantAttributes().allocation.data_limits,
+        participant->getRTPSParticipantAttributes().allocation.content_filter)
     , temp_stateless_writer_proxy_data_(
         participant->getRTPSParticipantAttributes().allocation.locators.max_unicast_locators,
         participant->getRTPSParticipantAttributes().allocation.locators.max_multicast_locators,
@@ -110,7 +109,8 @@ SecurityManager::SecurityManager(
     , temp_volatile_reader_proxy_data_(
         participant->getRTPSParticipantAttributes().allocation.locators.max_unicast_locators,
         participant->getRTPSParticipantAttributes().allocation.locators.max_multicast_locators,
-        participant->getRTPSParticipantAttributes().allocation.data_limits)
+        participant->getRTPSParticipantAttributes().allocation.data_limits,
+        participant->getRTPSParticipantAttributes().allocation.content_filter)
     , temp_volatile_writer_proxy_data_(
         participant->getRTPSParticipantAttributes().allocation.locators.max_unicast_locators,
         participant->getRTPSParticipantAttributes().allocation.locators.max_multicast_locators,
