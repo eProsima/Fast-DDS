@@ -826,7 +826,7 @@ public:
      *
      * @return TypeSupport associated to the DataReader.
      */
-    TypeSupport type();
+    RTPS_DllAPI TypeSupport type();
 
     /**
      * Get TopicDescription.
