@@ -187,7 +187,16 @@ public:
     RTPS_DllAPI ReturnCode_t write_w_timestamp(
             void* data,
             const InstanceHandle_t& handle,
+            const fastrtps::Time_t& timestamp);
+
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
+    FASTDDS_DEPRECATED_UNTIL(3, "eprosima::fastdds::dds:DataWriter::write_w_timestamp()",
+            "In favor of version using eprosima::fastrtps::Time_t.")
+    RTPS_DllAPI ReturnCode_t write_w_timestamp(
+            void* data,
+            const InstanceHandle_t& handle,
             const fastrtps::rtps::Time_t& timestamp);
+#endif // DOXYGEN_SHOULD_SKIP_THIS
 
     /*!
      * @brief Informs that the application will be modifying a particular instance.
@@ -223,7 +232,15 @@ public:
      */
     RTPS_DllAPI InstanceHandle_t register_instance_w_timestamp(
             void* instance,
+            const fastrtps::Time_t& timestamp);
+
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
+    FASTDDS_DEPRECATED_UNTIL(3, "eprosima::fastdds::dds:DataWriter::register_instance_w_timestamp()",
+            "In favor of version using eprosima::fastrtps::Time_t.")
+    RTPS_DllAPI InstanceHandle_t register_instance_w_timestamp(
+            void* instance,
             const fastrtps::rtps::Time_t& timestamp);
+#endif // DOXYGEN_SHOULD_SKIP_THIS
 
     /*!
      * @brief This operation reverses the action of `register_instance`.
@@ -264,7 +281,16 @@ public:
     RTPS_DllAPI ReturnCode_t unregister_instance_w_timestamp(
             void* instance,
             const InstanceHandle_t& handle,
+            const fastrtps::Time_t& timestamp);
+
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
+    FASTDDS_DEPRECATED_UNTIL(3, "eprosima::fastdds::dds:DataWriter::unregister_instance_w_timestamp()",
+            "In favor of version using eprosima::fastrtps::Time_t.")
+    RTPS_DllAPI ReturnCode_t unregister_instance_w_timestamp(
+            void* instance,
+            const InstanceHandle_t& handle,
             const fastrtps::rtps::Time_t& timestamp);
+#endif // DOXYGEN_SHOULD_SKIP_THIS
 
     /**
      * NOT YET IMPLEMENTED
@@ -457,13 +483,15 @@ public:
      * This operation may return RETCODE_TIMEOUT and RETCODE_OUT_OF_RESOURCES under the same circumstances described
      * for the @ref write operation.
      *
-     * @param data Pointer to the data.
-     * @param handle InstanceHandle_t
+     * @param instance  Sample used to deduce instance's key in case of `handle` parameter is HANDLE_NIL.
+     * @param handle Instance's key to be disposed.
+     * @param timestamp Time_t used to set the source_timestamp.
      * @return RTPS_DllAPI
      */
     RTPS_DllAPI ReturnCode_t dispose_w_timestamp(
-            void* data,
-            const InstanceHandle_t& handle);
+            void* instance,
+            const InstanceHandle_t& handle,
+            const fastrtps::Time_t& timestamp);
     /**
      * @brief Returns the liveliness lost status
      *
@@ -504,7 +532,7 @@ public:
      */
     RTPS_DllAPI ReturnCode_t get_matched_subscription_data(
             builtin::SubscriptionBuiltinTopicData& subscription_data,
-            const fastrtps::rtps::InstanceHandle_t& subscription_handle) const;
+            const InstanceHandle_t& subscription_handle) const;
 
     /**
      * @brief Fills the given vector with the InstanceHandle_t of matched DataReaders
@@ -513,7 +541,14 @@ public:
      * @return RETCODE_OK
      */
     RTPS_DllAPI ReturnCode_t get_matched_subscriptions(
-            std::vector<fastrtps::rtps::InstanceHandle_t*>& subscription_handles) const;
+            std::vector<InstanceHandle_t>& subscription_handles) const;
+
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
+    FASTDDS_DEPRECATED_UNTIL(3, "eprosima::fastdds::dds:DataWriter::get_matched_subscriptions()",
+            "In favor of version using std::vector<fastrtps::rtps::InstanceHandle_t>.")
+    RTPS_DllAPI ReturnCode_t get_matched_subscriptions(
+            std::vector<InstanceHandle_t*>& subscription_handles) const;
+#endif // DOXYGEN_SHOULD_SKIP_THIS
 
     /**
      * @brief Clears the DataWriter history

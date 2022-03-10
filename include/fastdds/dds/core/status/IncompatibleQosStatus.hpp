@@ -34,6 +34,9 @@ namespace dds {
 struct QosPolicyCount
 {
     //!Constructor
+    QosPolicyCount() = default;
+
+    //!Constructor
     QosPolicyCount(
             QosPolicyId_t id,
             int32_t c)

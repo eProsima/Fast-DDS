@@ -101,6 +101,17 @@ ReturnCode_t DataWriter::write(
 ReturnCode_t DataWriter::write_w_timestamp(
         void* data,
         const InstanceHandle_t& handle,
+        const fastrtps::Time_t& timestamp)
+{
+    static_cast<void> (data);
+    static_cast<void> (handle);
+    static_cast<void> (timestamp);
+    return ReturnCode_t::RETCODE_UNSUPPORTED;
+}
+
+ReturnCode_t DataWriter::write_w_timestamp(
+        void* data,
+        const InstanceHandle_t& handle,
         const fastrtps::rtps::Time_t& timestamp)
 {
     static_cast<void> (data);
@@ -113,6 +124,16 @@ InstanceHandle_t DataWriter::register_instance(
         void* instance)
 {
     return impl_->register_instance(instance);
+}
+
+InstanceHandle_t DataWriter::register_instance_w_timestamp(
+        void* instance,
+        const fastrtps::Time_t& timestamp)
+{
+    static_cast<void> (instance);
+    static_cast<void> (timestamp);
+    logWarning(DATA_WRITER, "register_instance_w_timestamp method not yet implemented")
+    return HANDLE_NIL;
 }
 
 InstanceHandle_t DataWriter::register_instance_w_timestamp(
@@ -130,6 +151,17 @@ ReturnCode_t DataWriter::unregister_instance(
         const InstanceHandle_t& handle)
 {
     return impl_->unregister_instance(instance, handle);
+}
+
+ReturnCode_t DataWriter::unregister_instance_w_timestamp(
+        void* instance,
+        const InstanceHandle_t& handle,
+        const fastrtps::Time_t& timestamp)
+{
+    static_cast<void> (instance);
+    static_cast<void> (handle);
+    static_cast<void> (timestamp);
+    return ReturnCode_t::RETCODE_UNSUPPORTED;
 }
 
 ReturnCode_t DataWriter::unregister_instance_w_timestamp(
@@ -165,6 +197,17 @@ ReturnCode_t DataWriter::dispose(
         const InstanceHandle_t& handle)
 {
     return impl_->unregister_instance(data, handle, true);
+}
+
+ReturnCode_t DataWriter::dispose_w_timestamp(
+        void* instance,
+        const InstanceHandle_t& handle,
+        const fastrtps::Time_t& timestamp)
+{
+    static_cast<void> (instance);
+    static_cast<void> (handle);
+    static_cast<void> (timestamp);
+    return ReturnCode_t::RETCODE_UNSUPPORTED;
 }
 
 const fastrtps::rtps::GUID_t& DataWriter::guid() const
@@ -271,7 +314,7 @@ ReturnCode_t DataWriter::assert_liveliness()
 
 ReturnCode_t DataWriter::get_matched_subscription_data(
         builtin::SubscriptionBuiltinTopicData& subscription_data,
-        const fastrtps::rtps::InstanceHandle_t& subscription_handle) const
+        const InstanceHandle_t& subscription_handle) const
 {
     static_cast<void> (subscription_data);
     static_cast<void> (subscription_handle);
@@ -282,7 +325,17 @@ ReturnCode_t DataWriter::get_matched_subscription_data(
 }
 
 ReturnCode_t DataWriter::get_matched_subscriptions(
-        std::vector<fastrtps::rtps::InstanceHandle_t*>& subscription_handles) const
+        std::vector<InstanceHandle_t>& subscription_handles) const
+{
+    static_cast<void> (subscription_handles);
+    return ReturnCode_t::RETCODE_UNSUPPORTED;
+    /*
+       return impl_->get_matched_subscription_data(subscription_handles);
+     */
+}
+
+ReturnCode_t DataWriter::get_matched_subscriptions(
+        std::vector<InstanceHandle_t*>& subscription_handles) const
 {
     static_cast<void> (subscription_handles);
     return ReturnCode_t::RETCODE_UNSUPPORTED;

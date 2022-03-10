@@ -130,6 +130,8 @@ public:
             const fastrtps::Duration_t& timeout);
 
     /**
+     * NOT YET IMPLEMENTED
+     *
      * @brief Method to block the current thread until an unread message is available.
      *
      * @param[in] max_wait Max blocking time for this operation.
@@ -972,7 +974,7 @@ public:
      * @return RETCODE_OK
      */
     RTPS_DllAPI ReturnCode_t get_matched_publications(
-            std::vector<fastrtps::rtps::InstanceHandle_t>& publication_handles) const;
+            std::vector<InstanceHandle_t>& publication_handles) const;
 
     /**
      * @brief This operation creates a ReadCondition. The returned ReadCondition will be attached and belong to the
