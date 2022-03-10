@@ -12,6 +12,9 @@ Version 2.6.0
 * Changed signature of eprosima::fastdds::dds::DataWriter::dispose_w_timestamp (ABI break).
 * Added method getting `std::vector<InstanceHandle_t>&` instead of `std::vector<InstanceHandle_t*>&` (API extension, API
   deprecations).
+* Added RTPS APIs for content filter discovery information (API extension)
+* Added RTPS APIs for endpoint discovery (API extension)
+* Added RTPS APIs for on_sample_lost feature (API extension)
 
 Version 2.5.0
 -------------
