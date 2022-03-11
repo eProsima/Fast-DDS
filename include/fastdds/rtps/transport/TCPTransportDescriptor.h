@@ -172,7 +172,7 @@ struct TCPTransportDescriptor : public SocketTransportDescriptor
         uint8_t verify_mode = TLSVerifyMode::UNUSED;
         //! Paths where the system will look for verification files
         std::vector<std::string> verify_paths;
-        //! Look for verification files on the default paths. Do not invoke
+        //! Look for verification files on the default paths.
         bool default_verify_path = false;
         //! Maximum allowed depth for verifying intermediate certificates. Do not override
         int32_t verify_depth = -1;
