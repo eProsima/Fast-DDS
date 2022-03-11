@@ -153,7 +153,7 @@ def test_fast_discovery_closure(fast_discovery_tool):
 
     EXPECTED_CLOSURE = "### Server shut down ###"
 
-    check_output(output, err, EXPECTED_CLOSURE, False)
+    exit_code = check_output(output, err, EXPECTED_CLOSURE, False)
 
     sys.exit(exit_code)
 
@@ -519,6 +519,16 @@ def test_fast_discovery_invalid_locator(fast_discovery_tool):
     sys.exit(exit_code)
 
 
+def test_fast_discovery_non_existent_profile(fast_discovery_tool):
+    """Test failure when the profile does not exist in the XML file"""
+
+    XML_file_path = "test_xml_discovery_server.xml"
+    command = [fast_discovery_tool, '-x', XML_file_path + '@non_existent_profile']
+    output, err, exit_code = send_command(command)
+    exit_code = check_output(output, err, "Error loading specified profile from XML file", True)
+    sys.exit(exit_code)
+
+
 if __name__ == '__main__':
 
     parser = argparse.ArgumentParser(
@@ -564,6 +574,8 @@ if __name__ == '__main__':
             test_fast_discovery_several_server_ids(args.binary_path),
         'test_fast_discovery_invalid_locator': lambda:
             test_fast_discovery_invalid_locator(args.binary_path),
+        'test_fast_discovery_non_existent_profile': lambda:
+            test_fast_discovery_non_existent_profile(args.binary_path),
     }
 
     tests[args.test_name]()

@@ -153,7 +153,13 @@ int fastdds_discovery_server(
             }
             else
             {
-                DomainParticipantFactory::get_instance()->get_participant_qos_from_profile(profile, participantQos);
+                if (ReturnCode_t::RETCODE_OK !=
+                        DomainParticipantFactory::get_instance()->get_participant_qos_from_profile(
+                            profile, participantQos))
+                {
+                    std::cout << "Error loading specified profile from XML file." << std::endl;
+                    return 1;
+                }
             }
         }
 

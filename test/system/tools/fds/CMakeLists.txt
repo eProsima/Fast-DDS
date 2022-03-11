@@ -35,6 +35,7 @@ if(PYTHONINTERP_FOUND)
         test_fast_discovery_no_prefix
         test_fast_discovery_several_server_ids
         test_fast_discovery_invalid_locator
+        test_fast_discovery_non_existent_profile
     )
 
     # windows auxiliary script to fork test execution
