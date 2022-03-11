@@ -3325,7 +3325,7 @@ XMLP_ret XMLParser::getXMLOctetVector(
                 }
 
                 // Add octet in vector.
-                octet_vector.push_back(o);
+                octet_vector.push_back(static_cast<octet>(o));
 
                 if (!ss.eof())
                 {
