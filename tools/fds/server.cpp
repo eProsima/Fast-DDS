@@ -173,14 +173,18 @@ int fastdds_discovery_server(
     if (nullptr == pOp)
     {
         fastrtps::rtps::GuidPrefix_t prefix_cero;
-        if (!(participantQos.wire_protocol().builtin.discovery_config.discoveryProtocol ==
+        if (participantQos.wire_protocol().prefix == prefix_cero)
+        {
+            std::cout << "Server id is mandatory if not defined in the XML file: use -i or --server-id option." <<
+                std::endl;
+        }
+        else if (!(participantQos.wire_protocol().builtin.discovery_config.discoveryProtocol ==
                 eprosima::fastrtps::rtps::DiscoveryProtocol::SERVER ||
                 participantQos.wire_protocol().builtin.discovery_config.discoveryProtocol ==
-                eprosima::fastrtps::rtps::DiscoveryProtocol::BACKUP) ||
-                participantQos.wire_protocol().prefix == prefix_cero)
+                eprosima::fastrtps::rtps::DiscoveryProtocol::BACKUP))
         {
             std::cout << "The provided configuration is not valid. Participant must be either SERVER or BACKUP. " <<
-                "Server id is mandatory if not defined in the XML file: use -i or --server-id option." << std::endl;
+                std::endl;
             return 1;
         }
     }

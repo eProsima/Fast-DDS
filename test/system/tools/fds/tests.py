@@ -497,7 +497,7 @@ def test_fast_discovery_no_prefix(fast_discovery_tool):
     XML_file_path = "test_wrong_xml_discovery_server.xml"
     command = [fast_discovery_tool, '-x', XML_file_path + '@UDP_no_prefix']
     output, err, exit_code = send_command(command)
-    exit_code = check_output(output, err, "The provided configuration is not valid", True)
+    exit_code = check_output(output, err, "Server id is mandatory if not defined in the XML file", True)
     sys.exit(exit_code)
 
 
