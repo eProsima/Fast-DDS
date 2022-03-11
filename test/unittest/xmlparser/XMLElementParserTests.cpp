@@ -172,7 +172,7 @@ TEST_F(XMLParserTests, getXMLOctetVector)
     octet_vector.clear();
 
     // Invalid XML with too high number
-    sprintf(xml, xml_p, "1,1F1,3");
+    sprintf(xml, xml_p, "1.1F1.3");
     ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
     titleElement = xml_doc.RootElement();
     EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::getXMLOctetVector_wrapper(titleElement, octet_vector, ident));
