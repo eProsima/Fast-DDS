@@ -112,8 +112,8 @@ int fastdds_discovery_server(
             size_t delimiter_pos = sXMLConfigFile.find(delimiter);
             if (std::string::npos != delimiter_pos)
             {
-                profile = sXMLConfigFile.substr(delimiter_pos + 1, sXMLConfigFile.length());
-                sXMLConfigFile = sXMLConfigFile.substr(0, delimiter_pos);
+                profile = sXMLConfigFile.substr(0, delimiter_pos);
+                sXMLConfigFile = sXMLConfigFile.substr(delimiter_pos + 1, sXMLConfigFile.length());
             }
 
             if (ReturnCode_t::RETCODE_OK != DomainParticipantFactory::get_instance()->load_XML_profiles_file(

@@ -113,7 +113,7 @@ const option::Descriptor usage[] = {
 
       "\t6. Launch a server with id 0 (first on ROS_DISCOVERY_SERVER) reading\n"
       "\t   specific profile_name configuration from XML file.\n\n"
-      "\t$ " FAST_SERVER_BINARY " -i 0 -x config.xml@profile_name"},
+      "\t$ " FAST_SERVER_BINARY " -i 0 -x profile_name@config.xml"},
 
     { 0, 0, 0, 0, 0, 0 }
 };

@@ -213,7 +213,7 @@ def test_fast_discovery_parse_XML_file_URI_profile(fast_discovery_tool):
             port2 = port2[1:]
         EXPECTED_SERVER_ADDRESS.append("UDPv4:[" + address2 + "]:" + port2)
 
-    command = [fast_discovery_tool, '-x', XML_file_path + '@UDP_server_two']
+    command = [fast_discovery_tool, '-x', 'UDP_server_two@' + XML_file_path]
 
     output, err, exit_code = send_command(command)
 
@@ -445,7 +445,7 @@ def test_fast_discovery_backup(fast_discovery_tool):
     EXPECTED_XML_SERVER_ADDRESS = []
     EXPECTED_XML_SERVER_ADDRESS.append("UDPv4:[127.0.0.105]:11825")
 
-    command = [fast_discovery_tool, '-x', XML_file_path + '@UDP_backup']
+    command = [fast_discovery_tool, '-x', 'UDP_backup@' + XML_file_path]
     output, err, exit_code = send_command(command)
 
     exit_code = check_output(output, err, EXPECTED_PARTICIPANT_TYPE, False)
@@ -477,14 +477,14 @@ def test_fast_discovery_incorrect_participant(fast_discovery_tool):
     """Test that checks failure if the participant is not SERVER/BACKUP"""
 
     XML_file_path = "test_wrong_xml_discovery_server.xml"
-    command = [fast_discovery_tool, '-x', XML_file_path + '@UDP_simple']
+    command = [fast_discovery_tool, '-x', 'UDP_simple@' + XML_file_path]
     output, err, exit_code = send_command(command)
 
     exit_code = check_output(output, err, "The provided configuration is not valid", True)
     if exit_code != 0:
         sys.exit(exit_code)
 
-    command = [fast_discovery_tool, '-x', XML_file_path + '@UDP_client']
+    command = [fast_discovery_tool, '-x', 'UDP_client@' + XML_file_path]
     output, err, exit_code = send_command(command)
 
     exit_code = check_output(output, err, "The provided configuration is not valid", True)
@@ -495,7 +495,7 @@ def test_fast_discovery_no_prefix(fast_discovery_tool):
     """Test failure when no server ID is provided"""
 
     XML_file_path = "test_wrong_xml_discovery_server.xml"
-    command = [fast_discovery_tool, '-x', XML_file_path + '@UDP_no_prefix']
+    command = [fast_discovery_tool, '-x', 'UDP_no_prefix@' + XML_file_path]
     output, err, exit_code = send_command(command)
     exit_code = check_output(output, err, "Server id is mandatory if not defined in the XML file", True)
     sys.exit(exit_code)
@@ -523,7 +523,7 @@ def test_fast_discovery_non_existent_profile(fast_discovery_tool):
     """Test failure when the profile does not exist in the XML file"""
 
     XML_file_path = "test_xml_discovery_server.xml"
-    command = [fast_discovery_tool, '-x', XML_file_path + '@non_existent_profile']
+    command = [fast_discovery_tool, '-x', 'non_existent_profile@' + XML_file_path]
     output, err, exit_code = send_command(command)
     exit_code = check_output(output, err, "Error loading specified profile from XML file", True)
     sys.exit(exit_code)
