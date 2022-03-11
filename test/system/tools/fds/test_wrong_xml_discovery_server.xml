@@ -41,7 +41,7 @@
         <rtps>
             <builtin>
                 <discovery_config>
-                    <discoveryProtocol>CLIENT</discoveryProtocol>
+                    <discoveryProtocol>SERVER</discoveryProtocol>
                 </discovery_config>
                 <metatrafficUnicastLocatorList>
                     <locator>
