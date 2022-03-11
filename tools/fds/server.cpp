@@ -68,8 +68,8 @@ int fastdds_discovery_server(
     std::vector<option::Option> options(stats.options_max);
     std::vector<option::Option> buffer(stats.buffer_max);
     option::Parser parse(usage, argc, argv, &options[0], &buffer[0]);
+    constexpr const char* delimiter = "@";
     std::string sXMLConfigFile = "";
-    std::string delimiter = "@";
     std::string profile = "";
 
     // Check the command line options
@@ -219,6 +219,21 @@ int fastdds_discovery_server(
     }
 
     // Set up listening locators.
+    /**
+     * The metatraffic unicast locator list can be defined:
+     *    1. By means of the CLI specifying a locator address (pOp != nullptr) and port (pO_port != nullptr)
+     *          Locator: IPaddress:port
+     *    2. By means of the CLI specifying only the locator address (pOp != nullptr)
+     *          Locator: IPaddress:11811
+     *    3. By means of the CLI specifying only the port number (pO_port != nullptr)
+     *          Locator: [0.0.0.0]:port
+     *    4. By means of the XML configuration file (options[XML_FILE] != nullptr)
+     *    5. No information provided.
+     *          Locator: [0.0.0.0]:11811
+     *
+     * The CLI has priority over the XML file configuration.
+     */
+
     // If the number of specify ports doesn't match the number of IPs the last port is used.
     // If at least one port specified replace the default one
     Locator locator(rtps::DEFAULT_ROS2_SERVER_PORT);
@@ -244,6 +259,14 @@ int fastdds_discovery_server(
 
     // Retrieve first IP address
     pOp = options[IPADDRESS];
+
+    /**
+     * A locator has been initialized previously in [0.0.0.0] address using either the DEFAULT_ROS2_SERVER_PORT or the
+     * port number set in the CLI. This locator must be used:
+     *     - If there is no IP address defined in the CLI (pOp == nullptr) but the port has been defined
+     *       (pO_port != nullptr)
+     *     - If there is no locator information provided either by CLI or XML file (options[XML_FILE] == nullptr)
+     */
     if (nullptr == pOp && (nullptr == options[XML_FILE] || nullptr != pO_port))
     {
         // Add default locator
