@@ -25,7 +25,7 @@ class TransportInterface;
 
 /**
  * UDPv6 Transport configuration
- * The kind value for UDPv6TransportDescriptor is given by eprosima::fastrtps::rtps::LOCATOR_KIND_UDPv6.
+ * The kind value for UDPv6TransportDescriptor is given by \c eprosima::fastrtps::rtps::LOCATOR_KIND_UDPv6.
  *
  * @ingroup TRANSPORT_MODULE
  */

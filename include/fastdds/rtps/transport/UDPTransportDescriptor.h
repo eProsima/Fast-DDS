@@ -25,9 +25,9 @@ namespace rtps {
 /**
  * UDP Transport configuration
  *
- * - m_output_udp_socket: source port to use for outgoing datagrams.
+ * - \c m_output_udp_socket: source port to use for outgoing datagrams.
  *
- * - non_blocking_send: do not block on send operations. When it is set to true, send operations will return
+ * - \c non_blocking_send: do not block on send operations. When it is set to true, send operations will return
  * immediately if the buffer is full, but no error will be returned to the upper layer. This means that the
  * application will behave as if the datagram is sent and lost.
  *
@@ -59,7 +59,7 @@ struct UDPTransportDescriptor : public SocketTransportDescriptor
     /**
      * Whether to use non-blocking calls to send_to().
      *
-     * When set to true, calls to send_to() will return inmediately if the buffer is full, but
+     * When set to true, calls to send_to() will return immediately if the buffer is full, but
      * no error will be returned to the upper layer. This means that the application will behave
      * as if the datagram is sent but lost (i.e. throughput may be reduced). This value is
      * specially useful on high-frequency best-effort writers.

@@ -134,7 +134,7 @@ public:
             SendResourceList& sender_resource_list,
             const Locator&) = 0;
 
-    /** Opens an input channel to receive incomming connections.
+    /** Opens an input channel to receive incoming connections.
      *   If there is an existing channel it registers the receiver interface.
      */
     virtual bool OpenInputChannel(
@@ -203,7 +203,7 @@ public:
             Locator& locator,
             uint32_t metatraffic_multicast_port) const = 0;
 
-    //! Assign port to the given matatraffic unicast locator if not already defined
+    //! Assign port to the given metatraffic unicast locator if not already defined
     virtual bool fillMetatrafficUnicastLocator(
             Locator& locator,
             uint32_t metatraffic_unicast_port) const = 0;

@@ -52,7 +52,7 @@ class TCPChannelResource;
  *       will ever be able to interact with. If left empty, all interfaces are allowed.
  *
  *    - Opening an input channel by passing a locator will open a socket listening on the given physical port on every
- *       whitelisted interface, it will wait for incomming connections until the receiver closes the channel.
+ *       whitelisted interface, it will wait for incoming connections until the receiver closes the channel.
  *       Several endpoints can connect to other to the same physical port, because the OS creates a connection socket
  *       after each establishment.
  * @ingroup TRANSPORT_MODULE
@@ -134,7 +134,7 @@ protected:
     void close_tcp_socket(
             std::shared_ptr<TCPChannelResource>& channel);
 
-    //! Creates a TCP acceptor to wait for incomming connections by the given locator.
+    //! Creates a TCP acceptor to wait for incoming connections by the given locator.
     bool create_acceptor_socket(
             const Locator& locator);
 
@@ -267,7 +267,7 @@ public:
     bool is_output_channel_open_for(
             const Locator&) const;
 
-    /** Opens an input channel to receive incomming connections.
+    /** Opens an input channel to receive incoming connections.
      *   If there is an existing channel it registers the receiver resource.
      */
     virtual bool OpenInputChannel(
@@ -356,14 +356,14 @@ public:
     void select_locators(
             fastrtps::rtps::LocatorSelector& selector) const override;
 
-    //! Callback called each time that an incomming connection is accepted.
+    //! Callback called each time that an incoming connection is accepted.
     void SocketAccepted(
             std::shared_ptr<asio::ip::tcp::socket> socket,
             const Locator& locator,
             const asio::error_code& error);
 
 #if TLS_FOUND
-    //! Callback called each time that an incomming connection is accepted (secure).
+    //! Callback called each time that an incoming connection is accepted (secure).
     void SecureSocketAccepted(
             std::shared_ptr<asio::ssl::stream<asio::ip::tcp::socket>> socket,
             const Locator& locator,

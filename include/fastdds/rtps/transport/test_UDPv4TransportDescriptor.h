@@ -26,7 +26,7 @@ namespace fastdds {
 namespace rtps {
 
 /**
- * test_UDPv4 Transport configuration
+ * UDP v4 Test Transport configuration
  * @ingroup TRANSPORT_MODULE
  */
 struct test_UDPv4TransportDescriptor : public SocketTransportDescriptor
@@ -51,7 +51,7 @@ struct test_UDPv4TransportDescriptor : public SocketTransportDescriptor
     filter drop_data_frag_messages_filter_;
     //! Percentage of heartbeats being dropped
     uint8_t dropHeartbeatMessagesPercentage;
-    //! Filtering function for dropping heartbet messages
+    //! Filtering function for dropping heartbeat messages
     filter drop_heartbeat_messages_filter_;
     //! Percentage of AckNacks being dropped
     uint8_t dropAckNackMessagesPercentage;
@@ -59,7 +59,7 @@ struct test_UDPv4TransportDescriptor : public SocketTransportDescriptor
     filter drop_ack_nack_messages_filter_;
     //! Percentage of gap messages being dropped
     uint8_t dropGapMessagesPercentage;
-    //! Filtering funtion for dropping gap messages
+    //! Filtering function for dropping gap messages
     filter drop_gap_messages_filter_;
 
     // General drop percentage (indiscriminate)
@@ -67,7 +67,7 @@ struct test_UDPv4TransportDescriptor : public SocketTransportDescriptor
     // General filtering function for all kind of messages (indiscriminate)
     filter messages_filter_;
 
-    //! Vector containing the messsage's sequence numbers being dropped
+    //! Vector containing the message's sequence numbers being dropped
     std::vector<fastrtps::rtps::SequenceNumber_t> sequenceNumberDataMessagesToDrop;
 
     //! Log dropped packets

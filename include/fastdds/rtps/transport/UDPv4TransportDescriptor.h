@@ -23,7 +23,7 @@ namespace rtps {
 
 /**
  * UDPv4 Transport configuration
- * The kind value for UDPv4TransportDescriptor is given by eprosima::fastrtps::rtps::LOCATOR_KIND_UDPv4.
+ * The kind value for UDPv4TransportDescriptor is given by \c eprosima::fastrtps::rtps::LOCATOR_KIND_UDPv4.
  *
  * @ingroup TRANSPORT_MODULE
  */

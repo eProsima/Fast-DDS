@@ -1359,7 +1359,7 @@ ValidationResult_t PKIDH::begin_handshake_reply(
         return ValidationResult_t::VALIDATION_FAILED;
     }
 
-    // Check incomming handshake.
+    // Check incoming handshake.
     // Check c.id
     const std::vector<uint8_t>* cid = DataHolderHelper::find_binary_property_value(handshake_message_in, "c.id");
     if (cid == nullptr)
@@ -1785,7 +1785,7 @@ ValidationResult_t PKIDH::process_handshake_request(
         return ValidationResult_t::VALIDATION_FAILED;
     }
 
-    // Check incomming handshake.
+    // Check incoming handshake.
     // Check c.id
     const std::vector<uint8_t>* cid = DataHolderHelper::find_binary_property_value(handshake_message_in, "c.id");
     if (cid == nullptr)
@@ -2217,7 +2217,7 @@ ValidationResult_t PKIDH::process_handshake_reply(
         return ValidationResult_t::VALIDATION_FAILED;
     }
 
-    // Check incomming handshake.
+    // Check incoming handshake.
 
     // challenge1 (mandatory)
     BinaryProperty* challenge1 = DataHolderHelper::find_binary_property(handshake_message_in, "challenge1");

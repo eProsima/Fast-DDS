@@ -23,7 +23,7 @@ namespace rtps {
 
 /**
  * TCPv6 Transport configuration
- * The kind value for TCPv6TransportDescriptor is given by eprosima::fastrtps::rtps::LOCATOR_KIND_TCPv6.
+ * The kind value for TCPv6TransportDescriptor is given by \c eprosima::fastrtps::rtps::LOCATOR_KIND_TCPv6.
  *
  * @ingroup TRANSPORT_MODULE
  */
