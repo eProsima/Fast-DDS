@@ -177,6 +177,7 @@ int fastdds_discovery_server(
         {
             std::cout << "Server id is mandatory if not defined in the XML file: use -i or --server-id option." <<
                 std::endl;
+            return 1;
         }
         else if (!(participantQos.wire_protocol().builtin.discovery_config.discoveryProtocol ==
                 eprosima::fastrtps::rtps::DiscoveryProtocol::SERVER ||
