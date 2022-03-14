@@ -15,7 +15,7 @@ at any time.
 
 Disclaimer:
 
-* This section has been last updated in Sep 2021.
+* This section has been last updated in March 2022.
   Please take into account its content could be obsolete.
 
 ## Short term
@@ -23,11 +23,16 @@ Disclaimer:
 The following list of features are planned to be addressed in the short term, and incorporated into the following
 minor release of the product:
 
-* Content filtered topic support on DataReader
-* PKCS#11 support for private keys
-* Python binding
-* Support for dynamic network interfaces
+* Content filtered topic support on DataWriter
+* Complete support for dynamic network interfaces
 * ReadCondition implementation
+* Secure Discovery Server
+* DataReader and DataWriter DDS API implementation:
+    - `DataReader::get_sample_lost_status`
+    - `DataReader::lookup_instance`
+    - `DataWriter::get_key_value`
+    - `DataWriter::write_w_timestamp`
+* Android support
 
 ## Medium term
 
@@ -35,8 +40,7 @@ The following list of features are planned to be addressed in the medium term, t
 release(s) generated in the next **9 months** after next planned release:
 
 * Service aware DataWriter
-* Partition QoS on DataReader and DataWriter
-* DDS x-types 1.2
+* DDS-XTypes 1.3
 
 ## Long term
 
