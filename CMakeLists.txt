@@ -94,13 +94,23 @@ endif()
 ###############################################################################
 # Test system configuration
 ###############################################################################
-include(${PROJECT_SOURCE_DIR}/cmake/common/check_configuration.cmake)
-
 set(FORCE_CXX "11" CACHE STRING "C++ standard fulfillment selection")
+
+include(${PROJECT_SOURCE_DIR}/cmake/common/check_configuration.cmake)
 check_stdcxx()
 
-check_compile_feature()
-check_endianness()
+# Check constexpr
+list(FIND CMAKE_CXX_COMPILE_FEATURES "cxx_constexpr" CXX_CONSTEXPR_SUPPORTED)
+if(${CXX_CONSTEXPR_SUPPORTED} GREATER -1)
+    set(HAVE_CXX_CONSTEXPR 1)
+else()
+    set(HAVE_CXX_CONSTEXPR 0)
+endif()
+
+# Test endianness
+include(TestBigEndian)
+test_big_endian(BIG_ENDIAN)
+set(FASTDDS_IS_BIG_ENDIAN_TARGET ${BIG_ENDIAN})
 
 ###############################################################################
 # Installation paths

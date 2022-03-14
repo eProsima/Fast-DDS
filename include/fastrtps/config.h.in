@@ -42,16 +42,6 @@
 #define HAVE_CXX1Y @HAVE_CXX1Y@
 #endif /* ifndef HAVE_CXX1Y */
 
-// C++11 support defines
-#ifndef HAVE_CXX11
-#define HAVE_CXX11 @HAVE_CXX11@
-#endif /* ifndef HAVE_CXX11 */
-
-// C++0x support defines
-#ifndef HAVE_CXX0X
-#define HAVE_CXX0X @HAVE_CXX0X@
-#endif /* ifndef HAVE_CXX0X */
-
 // C++ constexpr support
 #ifndef HAVE_CXX_CONSTEXPR
 #define HAVE_CXX_CONSTEXPR @HAVE_CXX_CONSTEXPR@

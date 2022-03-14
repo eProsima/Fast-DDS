@@ -39,21 +39,6 @@ set(ATOMIC_TEST_CODE
 include(CheckLibraryExists)
 include(CheckCXXSourceCompiles)
 
-# preserve some framework variables values
-set(OLD_CMAKE_REQUIRED_FLAGS ${CMAKE_REQUIRED_FLAGS})
-set(OLD_CMAKE_C_COMPILER_LOADED ${CMAKE_C_COMPILER_LOADED})
-set(OLD_CMAKE_REQUIRED_LIBRARIES ${CMAKE_REQUIRED_LIBRARIES})
-
-# Test linking with atomic, note that it will try first build using C if the C compiler is enabled (as is the case in
-# fastrtps project). C compiler will complain if C++ flags are passed via CMAKE_REQUIRED_FLAGS ruining the check. We
-# must locally change CMAKE_C_COMPILER_LOADED value to force the use of C++ compiler. Note that future changes in
-# CheckLibraryExists module may alter this workaround.
-set(CMAKE_REQUIRED_FLAGS ${CMAKE_REQUIRED_FLAGS} ${FASTDDS_REQUIRED_FLAGS})
-
-if(MSVC OR MSVC_IDE OR (CMAKE_CXX_COMPILER_ID MATCHES "Clang"))
-    set(CMAKE_C_COMPILER_LOADED 0)
-endif()
-
 # Test linking without atomic
 check_cxx_source_compiles(
     "${ATOMIC_TEST_CODE}"
@@ -87,11 +72,6 @@ if (NOT ATOMIC_WITHOUT_LIB)
         message(FATAL_ERROR "Unable to create binaries with atomic dependencies")
     endif()
 endif()
-
-# restore some framework variables values
-set(CMAKE_REQUIRED_FLAGS ${OLD_CMAKE_REQUIRED_FLAGS})
-set(CMAKE_C_COMPILER_LOADED ${OLD_CMAKE_C_COMPILER_LOADED})
-set(CMAKE_REQUIRED_LIBRARIES ${OLD_CMAKE_REQUIRED_LIBRARIES})
 
 # clean local variables
 unset(ATOMIC_TEST_CODE)
