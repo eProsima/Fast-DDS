@@ -182,6 +182,14 @@ RTPSParticipant* RTPSDomain::createParticipant(
         pimpl = new RTPSParticipantImpl(domain_id, PParam, guidP, p, listen);
     }
 
+    // Check implementation was correctly initialized
+    if (!pimpl->is_initialized())
+    {
+        logError(RTPS_PARTICIPANT, "Cannot create participant due to initialization error");
+        delete pimpl;
+        return nullptr;
+    }
+
     // Above constructors create the sender resources. If a given listening port cannot be allocated an iterative
     // mechanism will allocate another by default. Change the default listening port is unacceptable for
     // discovery server Participant.
@@ -212,16 +220,6 @@ RTPSParticipant* RTPSDomain::createParticipant(
         delete pimpl;
         return nullptr;
     }
-
-#if HAVE_SECURITY
-    // Check security was correctly initialized
-    if (!pimpl->is_security_initialized())
-    {
-        logError(RTPS_PARTICIPANT, "Cannot create participant due to security initialization error");
-        delete pimpl;
-        return nullptr;
-    }
-#endif // if HAVE_SECURITY
 
     {
         std::lock_guard<std::mutex> guard(m_mutex);

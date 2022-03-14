@@ -128,6 +128,8 @@ bool PDPSimple::init(
         if (!mp_EDP->initEDP(m_discovery))
         {
             logError(RTPS_PDP, "Endpoint discovery configuration failed");
+            delete mp_EDP;
+            mp_EDP = nullptr;
             return false;
         }
     }
@@ -137,6 +139,8 @@ bool PDPSimple::init(
         if (!mp_EDP->initEDP(m_discovery))
         {
             logError(RTPS_PDP, "Endpoint discovery configuration failed");
+            delete mp_EDP;
+            mp_EDP = nullptr;
             return false;
         }
     }

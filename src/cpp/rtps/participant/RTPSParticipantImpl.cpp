@@ -325,10 +325,8 @@ RTPSParticipantImpl::RTPSParticipantImpl(
 
 #if HAVE_SECURITY
     // Start security
-    // TODO(Ricardo) Get returned value in future.
-    m_security_manager_initialized = m_security_manager.init(security_attributes_, PParam.properties,
-                    m_is_security_active);
-    if (!m_security_manager_initialized)
+    if (!m_security_manager.init(security_attributes_, PParam.properties,
+            m_is_security_active))
     {
         // Participant will be deleted, no need to allocate buffers or create builtin endpoints
         return;
@@ -398,7 +396,6 @@ RTPSParticipantImpl::RTPSParticipantImpl(
         if (!m_is_security_active)
         {
             // Participant will be deleted, no need to create builtin endpoints
-            m_security_manager_initialized = false;
             return;
         }
     }
@@ -410,6 +407,7 @@ RTPSParticipantImpl::RTPSParticipantImpl(
     if (!mp_builtinProtocols->initBuiltinProtocols(this, m_att.builtin))
     {
         logError(RTPS_PARTICIPANT, "The builtin protocols were not correctly initialized");
+        return;
     }
 
     if (c_GuidPrefix_Unknown != persistence_guid)
@@ -422,6 +420,8 @@ RTPSParticipantImpl::RTPSParticipantImpl(
         logInfo(RTPS_PARTICIPANT,
                 "RTPSParticipant \"" << m_att.getName() << "\" with guidPrefix: " << m_guid.guidPrefix);
     }
+
+    initialized_ = true;
 }
 
 RTPSParticipantImpl::RTPSParticipantImpl(
@@ -1945,7 +1945,7 @@ bool RTPSParticipantImpl::pairing_remote_writer_with_local_reader_after_security
 bool RTPSParticipantImpl::is_security_enabled_for_writer(
         const WriterAttributes& writer_attributes)
 {
-    if (!is_security_initialized() || !is_secure())
+    if (!is_initialized() || !is_secure())
     {
         return false;
     }
@@ -1968,7 +1968,7 @@ bool RTPSParticipantImpl::is_security_enabled_for_writer(
 bool RTPSParticipantImpl::is_security_enabled_for_reader(
         const ReaderAttributes& reader_attributes)
 {
-    if (!is_security_initialized() || !is_secure())
+    if (!is_initialized() || !is_secure())
     {
         return false;
     }

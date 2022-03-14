@@ -117,7 +117,10 @@ TEST_P(Discovery, ParticipantRemoval)
     reader.wait_participant_undiscovery();
 }
 
-TEST(Discovery, StaticDiscovery_v1)
+void static_discovery_test(
+        const std::string& reader_property_value,
+        const std::string& writer_property_value,
+        bool discovery_will_be_success = true)
 {
     char* value = nullptr;
     std::string TOPIC_RANDOM_NUMBER;
@@ -164,6 +167,9 @@ TEST(Discovery, StaticDiscovery_v1)
         MULTICAST_PORT_RANDOM_NUMBER_STR = "7400";
     }
     int32_t MULTICAST_PORT_RANDOM_NUMBER = stoi(MULTICAST_PORT_RANDOM_NUMBER_STR);
+
+    PropertyPolicy writer_property_policy;
+    writer_property_policy.properties().push_back({"dds.discovery.static_edp.exchange_format", writer_property_value});
 
     PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
 
@@ -180,15 +186,26 @@ TEST(Discovery, StaticDiscovery_v1)
     LocatorBuffer.port = static_cast<uint16_t>(MULTICAST_PORT_RANDOM_NUMBER);
     WriterMulticastLocators.push_back(LocatorBuffer);
 
-    writer.history_kind(eprosima::fastrtps::KEEP_ALL_HISTORY_QOS).
-            durability_kind(eprosima::fastrtps::TRANSIENT_LOCAL_DURABILITY_QOS);
+    writer.history_kind(eprosima::fastrtps::KEEP_ALL_HISTORY_QOS)
+            .durability_kind(eprosima::fastrtps::TRANSIENT_LOCAL_DURABILITY_QOS)
+            .property_policy(writer_property_policy);
     writer.static_discovery("file://PubSubWriter.xml").reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).
             unicastLocatorList(WriterUnicastLocators).multicastLocatorList(WriterMulticastLocators).
             setPublisherIDs(1,
             2).setManualTopicName(std::string("BlackBox_StaticDiscovery_") + TOPIC_RANDOM_NUMBER).init();
 
 
-    ASSERT_TRUE(writer.isInitialized());
+    if (discovery_will_be_success)
+    {
+        ASSERT_TRUE(writer.isInitialized());
+    }
+    else
+    {
+        ASSERT_FALSE(writer.isInitialized());
+    }
+
+    PropertyPolicy reader_property_policy;
+    reader_property_policy.properties().push_back({"dds.discovery.static_edp.exchange_format", reader_property_value});
 
     PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
 
@@ -203,361 +220,57 @@ TEST(Discovery, StaticDiscovery_v1)
     ReaderMulticastLocators.push_back(LocatorBuffer);
 
 
-    reader.reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).
-            history_kind(eprosima::fastrtps::KEEP_ALL_HISTORY_QOS).
-            durability_kind(eprosima::fastrtps::TRANSIENT_LOCAL_DURABILITY_QOS);
+    reader.reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS)
+            .history_kind(eprosima::fastrtps::KEEP_ALL_HISTORY_QOS)
+            .durability_kind(eprosima::fastrtps::TRANSIENT_LOCAL_DURABILITY_QOS)
+            .property_policy(reader_property_policy);
     reader.static_discovery("file://PubSubReader.xml").
             unicastLocatorList(ReaderUnicastLocators).multicastLocatorList(ReaderMulticastLocators).
             setSubscriberIDs(3,
             4).setManualTopicName(std::string("BlackBox_StaticDiscovery_") + TOPIC_RANDOM_NUMBER).init();
 
-    ASSERT_TRUE(reader.isInitialized());
+    if (discovery_will_be_success)
+    {
+        ASSERT_TRUE(reader.isInitialized());
 
-    // Because its volatile the durability
-    // Wait for discovery.
-    writer.wait_discovery();
-    reader.wait_discovery();
+        // Because its volatile the durability
+        // Wait for discovery.
+        writer.wait_discovery();
+        reader.wait_discovery();
 
-    auto data = default_helloworld_data_generator();
-    auto expected_data(data);
+        auto data = default_helloworld_data_generator();
+        auto expected_data(data);
 
-    writer.send(data);
-    ASSERT_TRUE(data.empty());
+        writer.send(data);
+        ASSERT_TRUE(data.empty());
 
-    reader.startReception(expected_data);
-    reader.block_for_all();
+        reader.startReception(expected_data);
+        reader.block_for_all();
+    }
+    else
+    {
+        ASSERT_FALSE(reader.isInitialized());
+    }
+}
+
+TEST(Discovery, StaticDiscovery_v1)
+{
+    static_discovery_test("v1", "v1");
 }
 
 TEST(Discovery, StaticDiscovery_v1_Reduced)
 {
-    char* value = nullptr;
-    std::string TOPIC_RANDOM_NUMBER;
-    std::string W_UNICAST_PORT_RANDOM_NUMBER_STR;
-    std::string R_UNICAST_PORT_RANDOM_NUMBER_STR;
-    std::string MULTICAST_PORT_RANDOM_NUMBER_STR;
-    // Get environment variables.
-    value = std::getenv("TOPIC_RANDOM_NUMBER");
-    if (value != nullptr)
-    {
-        TOPIC_RANDOM_NUMBER = value;
-    }
-    else
-    {
-        TOPIC_RANDOM_NUMBER = "1";
-    }
-    value = std::getenv("W_UNICAST_PORT_RANDOM_NUMBER");
-    if (value != nullptr)
-    {
-        W_UNICAST_PORT_RANDOM_NUMBER_STR = value;
-    }
-    else
-    {
-        W_UNICAST_PORT_RANDOM_NUMBER_STR = "7411";
-    }
-    int32_t W_UNICAST_PORT_RANDOM_NUMBER = stoi(W_UNICAST_PORT_RANDOM_NUMBER_STR);
-    value = std::getenv("R_UNICAST_PORT_RANDOM_NUMBER");
-    if (value != nullptr)
-    {
-        R_UNICAST_PORT_RANDOM_NUMBER_STR = value;
-    }
-    else
-    {
-        R_UNICAST_PORT_RANDOM_NUMBER_STR = "7421";
-    }
-    int32_t R_UNICAST_PORT_RANDOM_NUMBER = stoi(R_UNICAST_PORT_RANDOM_NUMBER_STR);
-    value = std::getenv("MULTICAST_PORT_RANDOM_NUMBER");
-    if (value != nullptr)
-    {
-        MULTICAST_PORT_RANDOM_NUMBER_STR = value;
-    }
-    else
-    {
-        MULTICAST_PORT_RANDOM_NUMBER_STR = "7400";
-    }
-    int32_t MULTICAST_PORT_RANDOM_NUMBER = stoi(MULTICAST_PORT_RANDOM_NUMBER_STR);
-
-    PropertyPolicy property_policy;
-    property_policy.properties().push_back({"dds.discovery.static_edp.exchange_format", "v1_Reduced"});
-
-    PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
-
-    LocatorList_t WriterUnicastLocators;
-    Locator_t LocatorBuffer;
-
-    LocatorBuffer.kind = LOCATOR_KIND_UDPv4;
-    LocatorBuffer.port = static_cast<uint16_t>(W_UNICAST_PORT_RANDOM_NUMBER);
-    IPLocator::setIPv4(LocatorBuffer, 127, 0, 0, 1);
-    WriterUnicastLocators.push_back(LocatorBuffer);
-
-    LocatorList_t WriterMulticastLocators;
-
-    LocatorBuffer.port = static_cast<uint16_t>(MULTICAST_PORT_RANDOM_NUMBER);
-    WriterMulticastLocators.push_back(LocatorBuffer);
-
-    writer.history_kind(eprosima::fastrtps::KEEP_ALL_HISTORY_QOS)
-            .durability_kind(eprosima::fastrtps::TRANSIENT_LOCAL_DURABILITY_QOS)
-            .property_policy(property_policy);
-    writer.static_discovery("file://PubSubWriter.xml").reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).
-            unicastLocatorList(WriterUnicastLocators).multicastLocatorList(WriterMulticastLocators).
-            setPublisherIDs(1,
-            2).setManualTopicName(std::string("BlackBox_StaticDiscovery_") + TOPIC_RANDOM_NUMBER).init();
-
-
-    ASSERT_TRUE(writer.isInitialized());
-
-    PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
-
-    LocatorList_t ReaderUnicastLocators;
-
-    LocatorBuffer.port = static_cast<uint16_t>(R_UNICAST_PORT_RANDOM_NUMBER);
-    ReaderUnicastLocators.push_back(LocatorBuffer);
-
-    LocatorList_t ReaderMulticastLocators;
-
-    LocatorBuffer.port = static_cast<uint16_t>(MULTICAST_PORT_RANDOM_NUMBER);
-    ReaderMulticastLocators.push_back(LocatorBuffer);
-
-
-    reader.reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS)
-            .history_kind(eprosima::fastrtps::KEEP_ALL_HISTORY_QOS)
-            .durability_kind(eprosima::fastrtps::TRANSIENT_LOCAL_DURABILITY_QOS)
-            .property_policy(property_policy);
-    reader.static_discovery("file://PubSubReader.xml").
-            unicastLocatorList(ReaderUnicastLocators).multicastLocatorList(ReaderMulticastLocators).
-            setSubscriberIDs(3,
-            4).setManualTopicName(std::string("BlackBox_StaticDiscovery_") + TOPIC_RANDOM_NUMBER).init();
-
-    ASSERT_TRUE(reader.isInitialized());
-
-    // Because its volatile the durability
-    // Wait for discovery.
-    writer.wait_discovery();
-    reader.wait_discovery();
-
-    auto data = default_helloworld_data_generator();
-    auto expected_data(data);
-
-    writer.send(data);
-    ASSERT_TRUE(data.empty());
-
-    reader.startReception(expected_data);
-    reader.block_for_all();
+    static_discovery_test("v1_Reduced", "v1_Reduced");
 }
 
 TEST(Discovery, StaticDiscovery_v1_Mixed)
 {
-    char* value = nullptr;
-    std::string TOPIC_RANDOM_NUMBER;
-    std::string W_UNICAST_PORT_RANDOM_NUMBER_STR;
-    std::string R_UNICAST_PORT_RANDOM_NUMBER_STR;
-    std::string MULTICAST_PORT_RANDOM_NUMBER_STR;
-    // Get environment variables.
-    value = std::getenv("TOPIC_RANDOM_NUMBER");
-    if (value != nullptr)
-    {
-        TOPIC_RANDOM_NUMBER = value;
-    }
-    else
-    {
-        TOPIC_RANDOM_NUMBER = "1";
-    }
-    value = std::getenv("W_UNICAST_PORT_RANDOM_NUMBER");
-    if (value != nullptr)
-    {
-        W_UNICAST_PORT_RANDOM_NUMBER_STR = value;
-    }
-    else
-    {
-        W_UNICAST_PORT_RANDOM_NUMBER_STR = "7411";
-    }
-    int32_t W_UNICAST_PORT_RANDOM_NUMBER = stoi(W_UNICAST_PORT_RANDOM_NUMBER_STR);
-    value = std::getenv("R_UNICAST_PORT_RANDOM_NUMBER");
-    if (value != nullptr)
-    {
-        R_UNICAST_PORT_RANDOM_NUMBER_STR = value;
-    }
-    else
-    {
-        R_UNICAST_PORT_RANDOM_NUMBER_STR = "7421";
-    }
-    int32_t R_UNICAST_PORT_RANDOM_NUMBER = stoi(R_UNICAST_PORT_RANDOM_NUMBER_STR);
-    value = std::getenv("MULTICAST_PORT_RANDOM_NUMBER");
-    if (value != nullptr)
-    {
-        MULTICAST_PORT_RANDOM_NUMBER_STR = value;
-    }
-    else
-    {
-        MULTICAST_PORT_RANDOM_NUMBER_STR = "7400";
-    }
-    int32_t MULTICAST_PORT_RANDOM_NUMBER = stoi(MULTICAST_PORT_RANDOM_NUMBER_STR);
-
-    PropertyPolicy property_policy;
-    property_policy.properties().push_back({"dds.discovery.static_edp.exchange_format", "v1_Reduced"});
-
-    PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
-
-    LocatorList_t WriterUnicastLocators;
-    Locator_t LocatorBuffer;
-
-    LocatorBuffer.kind = LOCATOR_KIND_UDPv4;
-    LocatorBuffer.port = static_cast<uint16_t>(W_UNICAST_PORT_RANDOM_NUMBER);
-    IPLocator::setIPv4(LocatorBuffer, 127, 0, 0, 1);
-    WriterUnicastLocators.push_back(LocatorBuffer);
-
-    LocatorList_t WriterMulticastLocators;
-
-    LocatorBuffer.port = static_cast<uint16_t>(MULTICAST_PORT_RANDOM_NUMBER);
-    WriterMulticastLocators.push_back(LocatorBuffer);
-
-    writer.history_kind(eprosima::fastrtps::KEEP_ALL_HISTORY_QOS)
-            .durability_kind(eprosima::fastrtps::TRANSIENT_LOCAL_DURABILITY_QOS)
-            .property_policy(property_policy);
-    writer.static_discovery("file://PubSubWriter.xml").reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).
-            unicastLocatorList(WriterUnicastLocators).multicastLocatorList(WriterMulticastLocators).
-            setPublisherIDs(1,
-            2).setManualTopicName(std::string("BlackBox_StaticDiscovery_") + TOPIC_RANDOM_NUMBER).init();
-
-
-    ASSERT_TRUE(writer.isInitialized());
-
-    PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
-
-    LocatorList_t ReaderUnicastLocators;
-
-    LocatorBuffer.port = static_cast<uint16_t>(R_UNICAST_PORT_RANDOM_NUMBER);
-    ReaderUnicastLocators.push_back(LocatorBuffer);
-
-    LocatorList_t ReaderMulticastLocators;
-
-    LocatorBuffer.port = static_cast<uint16_t>(MULTICAST_PORT_RANDOM_NUMBER);
-    ReaderMulticastLocators.push_back(LocatorBuffer);
-
-
-    reader.reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS)
-            .history_kind(eprosima::fastrtps::KEEP_ALL_HISTORY_QOS)
-            .durability_kind(eprosima::fastrtps::TRANSIENT_LOCAL_DURABILITY_QOS);
-    reader.static_discovery("file://PubSubReader.xml").
-            unicastLocatorList(ReaderUnicastLocators).multicastLocatorList(ReaderMulticastLocators).
-            setSubscriberIDs(3,
-            4).setManualTopicName(std::string("BlackBox_StaticDiscovery_") + TOPIC_RANDOM_NUMBER).init();
-
-    ASSERT_TRUE(reader.isInitialized());
-
-    // Because its volatile the durability
-    // Wait for discovery.
-    writer.wait_discovery();
-    reader.wait_discovery();
-
-    auto data = default_helloworld_data_generator();
-    auto expected_data(data);
-
-    writer.send(data);
-    ASSERT_TRUE(data.empty());
-
-    reader.startReception(expected_data);
-    reader.block_for_all();
+    static_discovery_test("v1", "v1_Reduced");
 }
 
 TEST(Discovery, StaticDiscovery_wrong_exchange_format)
 {
-    char* value = nullptr;
-    std::string TOPIC_RANDOM_NUMBER;
-    std::string W_UNICAST_PORT_RANDOM_NUMBER_STR;
-    std::string R_UNICAST_PORT_RANDOM_NUMBER_STR;
-    std::string MULTICAST_PORT_RANDOM_NUMBER_STR;
-    // Get environment variables.
-    value = std::getenv("TOPIC_RANDOM_NUMBER");
-    if (value != nullptr)
-    {
-        TOPIC_RANDOM_NUMBER = value;
-    }
-    else
-    {
-        TOPIC_RANDOM_NUMBER = "1";
-    }
-    value = std::getenv("W_UNICAST_PORT_RANDOM_NUMBER");
-    if (value != nullptr)
-    {
-        W_UNICAST_PORT_RANDOM_NUMBER_STR = value;
-    }
-    else
-    {
-        W_UNICAST_PORT_RANDOM_NUMBER_STR = "7411";
-    }
-    int32_t W_UNICAST_PORT_RANDOM_NUMBER = stoi(W_UNICAST_PORT_RANDOM_NUMBER_STR);
-    value = std::getenv("R_UNICAST_PORT_RANDOM_NUMBER");
-    if (value != nullptr)
-    {
-        R_UNICAST_PORT_RANDOM_NUMBER_STR = value;
-    }
-    else
-    {
-        R_UNICAST_PORT_RANDOM_NUMBER_STR = "7421";
-    }
-    int32_t R_UNICAST_PORT_RANDOM_NUMBER = stoi(R_UNICAST_PORT_RANDOM_NUMBER_STR);
-    value = std::getenv("MULTICAST_PORT_RANDOM_NUMBER");
-    if (value != nullptr)
-    {
-        MULTICAST_PORT_RANDOM_NUMBER_STR = value;
-    }
-    else
-    {
-        MULTICAST_PORT_RANDOM_NUMBER_STR = "7400";
-    }
-    int32_t MULTICAST_PORT_RANDOM_NUMBER = stoi(MULTICAST_PORT_RANDOM_NUMBER_STR);
-
-    PropertyPolicy property_policy;
-    property_policy.properties().push_back({"dds.discovery.static_edp.exchange_format", "wrong"});
-
-    PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
-
-    LocatorList_t WriterUnicastLocators;
-    Locator_t LocatorBuffer;
-
-    LocatorBuffer.kind = LOCATOR_KIND_UDPv4;
-    LocatorBuffer.port = static_cast<uint16_t>(W_UNICAST_PORT_RANDOM_NUMBER);
-    IPLocator::setIPv4(LocatorBuffer, 127, 0, 0, 1);
-    WriterUnicastLocators.push_back(LocatorBuffer);
-
-    LocatorList_t WriterMulticastLocators;
-
-    LocatorBuffer.port = static_cast<uint16_t>(MULTICAST_PORT_RANDOM_NUMBER);
-    WriterMulticastLocators.push_back(LocatorBuffer);
-
-    writer.history_kind(eprosima::fastrtps::KEEP_ALL_HISTORY_QOS)
-            .durability_kind(eprosima::fastrtps::TRANSIENT_LOCAL_DURABILITY_QOS)
-            .property_policy(property_policy);
-    writer.static_discovery("file://PubSubWriter.xml").reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).
-            unicastLocatorList(WriterUnicastLocators).multicastLocatorList(WriterMulticastLocators).
-            setPublisherIDs(1,
-            2).setManualTopicName(std::string("BlackBox_StaticDiscovery_") + TOPIC_RANDOM_NUMBER).init();
-
-
-    PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
-
-    LocatorList_t ReaderUnicastLocators;
-
-    LocatorBuffer.port = static_cast<uint16_t>(R_UNICAST_PORT_RANDOM_NUMBER);
-    ReaderUnicastLocators.push_back(LocatorBuffer);
-
-    LocatorList_t ReaderMulticastLocators;
-
-    LocatorBuffer.port = static_cast<uint16_t>(MULTICAST_PORT_RANDOM_NUMBER);
-    ReaderMulticastLocators.push_back(LocatorBuffer);
-
-
-    reader.reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS)
-            .history_kind(eprosima::fastrtps::KEEP_ALL_HISTORY_QOS)
-            .durability_kind(eprosima::fastrtps::TRANSIENT_LOCAL_DURABILITY_QOS)
-            .property_policy(property_policy);
-    reader.static_discovery("file://PubSubReader.xml").
-            unicastLocatorList(ReaderUnicastLocators).multicastLocatorList(ReaderMulticastLocators).
-            setSubscriberIDs(3,
-            4).setManualTopicName(std::string("BlackBox_StaticDiscovery_") + TOPIC_RANDOM_NUMBER).init();
-
-    writer.wait_discovery(std::chrono::seconds(1));
-    ASSERT_FALSE(writer.is_matched());
+    static_discovery_test("wrong", "wrong", false);
 }
 
 /*!

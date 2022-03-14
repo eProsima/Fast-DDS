@@ -44,7 +44,6 @@ const char* exchange_format_property_name = "dds.discovery.static_edp.exchange_f
 const char* exchange_format_property_value_v1 = "v1";
 const char* exchange_format_property_value_v1_reduced = "v1_Reduced";
 
-
 /**
  * Class Property, used to read and write the strings from the properties used to transmit the EntityId_t.
  */

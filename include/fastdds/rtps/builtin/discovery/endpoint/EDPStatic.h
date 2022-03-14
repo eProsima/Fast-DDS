@@ -40,10 +40,11 @@ class EDPStatic : public EDP
 {
 public:
 
+    //! Different exchange formats supported by Static Discovery.
     enum class ExchangeFormat : uint32_t
     {
-        v1,
-        v1_Reduced
+        v1, //! Standard exchange format for Static Discovery.
+        v1_Reduced //! Exchange format that reduce the used network bandwidth.
     };
 
     /**

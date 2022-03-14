@@ -129,6 +129,8 @@ bool BuiltinProtocols::initBuiltinProtocols(
     if (!mp_PDP->init(mp_participantImpl))
     {
         logError(RTPS_PDP, "Participant discovery configuration failed");
+        delete mp_PDP;
+        mp_PDP = nullptr;
         return false;
     }
 
