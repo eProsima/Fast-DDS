@@ -305,10 +305,10 @@ bool EDPStaticProperty::fromProperty(
         ss.clear();
         ss.str(std::string());
         ss << prop.second;
-        int count = std::count(prop.second.begin(), prop.second.end(), '.');
+        size_t count = std::count(prop.second.begin(), prop.second.end(), '.');
         int value = 0;
         char ch = 0;
-        for (int it = 0; it <= count; ++it)
+        for (size_t it = 0; it <= count; ++it)
         {
             ss >> value;
             m_entityId.value[3 - (count - it)] = (octet)value;
