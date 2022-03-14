@@ -31,13 +31,13 @@ constexpr uint8_t s_defaultTTL = 1;
 /**
  * Virtual base class for the data type used to define configuration of transports using sockets.
  *
- * - sendBufferSize: size of the sending buffer of the socket (in octets).
+ * - \c sendBufferSize: size of the sending buffer of the socket (in octets).
  *
- * - receiveBufferSize: size of the receiving buffer of the socket (in octets).
+ * - \c receiveBufferSize: size of the receiving buffer of the socket (in octets).
  *
- * - interfaceWhiteList: list of allowed interfaces.
+ * - \c interfaceWhiteList: list of allowed interfaces.
  *
- * - TTL: time to live, in number of hops.
+ * - \c TTL: time to live, in number of hops.
  *
  * @ingroup RTPS_MODULE
  * */

@@ -60,14 +60,21 @@ public:
 
     /*!
      * @brief Specifies the locator type. Valid values are:
+     *
      * LOCATOR_KIND_UDPv4
+     *
      * LOCATOR_KIND_UDPv6
+     *
      * LOCATOR_KIND_TCPv4
+     *
      * LOCATOR_KIND_TCPv6
+     *
      * LOCATOR_KIND_SHM
      */
     int32_t kind;
+    //! Network port
     uint32_t port;
+    //! IP address
     octet address[16];
 
     //!Default constructor

@@ -39,7 +39,7 @@ namespace rtps {
  *       will ever be able to interact with. If left empty, all interfaces are allowed.
  *
  *    - Opening an input channel by passing a locator will open a socket listening on the given physical port on every
- *       whitelisted interface, it will wait for incomming connections until the receiver closes the channel.
+ *       whitelisted interface, it will wait for incoming connections until the receiver closes the channel.
  *       Several endpoints can connect to other to the same physical port, because the OS creates a connection socket
  *       after each establishment.
  * @ingroup TRANSPORT_MODULE

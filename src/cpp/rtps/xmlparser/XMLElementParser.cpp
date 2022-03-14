@@ -93,7 +93,7 @@ XMLP_ret XMLParser::getXMLParticipantAllocationAttributes(
         }
         else if (strcmp(name, MAX_PROPERTIES) == 0)
         {
-            // max number of properties in incomming message - uint32Type
+            // max number of properties in incoming message - uint32Type
             if (XMLP_ret::XML_OK != getXMLUint(p_aux0, &tmp, ident))
             {
                 return XMLP_ret::XML_ERROR;
@@ -102,7 +102,7 @@ XMLP_ret XMLParser::getXMLParticipantAllocationAttributes(
         }
         else if (strcmp(name, MAX_USER_DATA) == 0)
         {
-            // max number of user data in incomming message - uint32Type
+            // max number of user data in incoming message - uint32Type
             if (XMLP_ret::XML_OK != getXMLUint(p_aux0, &tmp, ident))
             {
                 return XMLP_ret::XML_ERROR;
@@ -111,7 +111,7 @@ XMLP_ret XMLParser::getXMLParticipantAllocationAttributes(
         }
         else if (strcmp(name, MAX_PARTITIONS) == 0)
         {
-            // max number of user data in incomming message - uint32Type
+            // max number of user data in incoming message - uint32Type
             if (XMLP_ret::XML_OK != getXMLUint(p_aux0, &tmp, ident))
             {
                 return XMLP_ret::XML_ERROR;
