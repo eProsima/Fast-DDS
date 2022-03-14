@@ -367,11 +367,6 @@ public:
         return security_attributes_;
     }
 
-    bool is_initialized() const
-    {
-        return initialized_;
-    }
-
     bool is_secure() const
     {
         return m_is_security_active;
@@ -497,6 +492,11 @@ public:
     GuidPrefix_t get_persistence_guid_prefix() const
     {
         return m_persistence_guid.guidPrefix;
+    }
+
+    bool is_initialized() const
+    {
+        return initialized_;
     }
 
 private:
