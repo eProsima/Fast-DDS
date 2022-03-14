@@ -56,6 +56,14 @@ if(MSVC OR MSVC_IDE)
         set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${EPROSIMA_EXTRA_CMAKE_CXX_FLAGS}")
     endif()
 
+    # make visual studio more gcc and clang like.
+    # C4101 'identifier' : unreferenced local variable 
+    # C4189 'identifier' : local variable is initialized but not referenced
+    # C4555  expression has no effect; expected expression with side-effect
+    # C4715: 'Test': not all control paths return a value
+    # C5038 data member 'member1' will be initialized after data member 'member2'
+    add_compile_options(/w34101 /w34189 /w34555 /w34715 /w35038)
+
     if(EPROSIMA_BUILD)
         string(REPLACE "/DNDEBUG" "" CMAKE_CXX_FLAGS_RELWITHDEBINFO "${CMAKE_CXX_FLAGS_RELWITHDEBINFO}")
     endif()
