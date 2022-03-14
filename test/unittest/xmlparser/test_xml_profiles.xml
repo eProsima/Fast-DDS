@@ -134,6 +134,9 @@
                 </throughputController>
                 <useBuiltinTransports>true</useBuiltinTransports>
                 <name>test_name</name>
+                <userData>
+                    <value>56.30.0.CE</value>
+                </userData>
             </rtps>
         </participant>
 
@@ -184,6 +187,15 @@
                 <publishMode>
                     <kind>ASYNCHRONOUS</kind>
                 </publishMode>
+                <userData>
+                    <value>56.30.0.1</value>
+                </userData>
+                <topicData>
+                    <value>5.3.1.0</value>
+                </topicData>
+                <groupData>
+                    <value>5.3.1.0.F1</value>
+                </groupData>
             </qos>
             <times>
                 <initialHeartbeatDelay>
@@ -292,6 +304,15 @@
                         <name>partition_name_f</name>
                     </names>
                 </partition>
+                <userData>
+                    <value>56.30.0.1</value>
+                </userData>
+                <topicData>
+                    <value>5.3.1.0</value>
+                </topicData>
+                <groupData>
+                    <value>5.3.1.0.F1</value>
+                </groupData>
             </qos>
             <times>
                 <initialAcknackDelay>

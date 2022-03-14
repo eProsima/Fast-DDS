@@ -1831,12 +1831,11 @@ XMLP_ret XMLParser::fillDataNode(
                 return XMLP_ret::XML_ERROR;
             }
         }
-        else if (strcmp(name, USER_DATA) == 0)
+        else if (0 == strcmp(name, USER_DATA))
         {
             // userData
             if (XMLP_ret::XML_OK != getXMLOctetVector(p_aux0, participant_node.get()->rtps.userData, ident))
             {
-                // Not supported for now - returns Error
                 return XMLP_ret::XML_ERROR;
             }
         }

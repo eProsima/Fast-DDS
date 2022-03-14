@@ -120,9 +120,11 @@
         </xs:all>
     </xs:complexType>
 
-    <xs:simpleType name="octetVectorType">
-        <xs:restriction base="xs:string"/><!-- std::vector<octet> -->
-    </xs:simpleType>
+    <xs:complexType name="octetVectorType">
+        <xs:all>
+            <xs:element name="value" type="xs:string"/>
+        </xs:all>
+    </xs:complexType>
 
     <xs:complexType name="propertyType">
         <xs:all>
@@ -538,12 +540,6 @@
         </xs:all>
     </xs:complexType>
 
-    <xs:complexType name="userDataQosPolicyType">
-        <xs:all>
-            <xs:element name="dataVec" type="octetVectorType"/>
-        </xs:all>
-    </xs:complexType>
-
     <xs:complexType name="timeBasedFilterQosPolicyType">
         <xs:all>
             <xs:element name="minimum_separation" type="durationType"/>
@@ -610,18 +606,6 @@
         </xs:all>
     </xs:complexType>
 
-    <xs:complexType name="topicDataQosPolicyType">
-        <xs:all>
-            <xs:element name="value" type="octetVectorType"/>
-        </xs:all>
-    </xs:complexType>
-
-    <xs:complexType name="groupDataQosPolicyType">
-        <xs:all>
-            <xs:element name="value" type="octetVectorType"/>
-        </xs:all>
-    </xs:complexType>
-
     <xs:simpleType name="publishModeQosKindType">
         <xs:restriction base="xs:string">
             <xs:enumeration value="SYNCHRONOUS"/>
@@ -668,7 +652,7 @@
     <xs:complexType name="disablePositiveAcksQosPolicyType">
         <xs:all>
             <xs:element name="enabled" type="boolType"/>
-            <xs:element name="duration" type="durationType"/>
+            <xs:element name="duration" type="durationType" minOccurs="0"/>
         </xs:all>
     </xs:complexType>
 
@@ -681,15 +665,15 @@
             <xs:element name="liveliness" type="livelinessQosPolicyType" minOccurs="0"/>
             <xs:element name="reliability" type="reliabilityQosPolicyType" minOccurs="0"/>
             <xs:element name="lifespan" type="lifespanQosPolicyType" minOccurs="0"/>
-            <xs:element name="userData" type="userDataQosPolicyType" minOccurs="0"/>
+            <xs:element name="userData" type="octetVectorType" minOccurs="0"/>
             <xs:element name="timeBasedFilter" type="timeBasedFilterQosPolicyType" minOccurs="0"/>
             <xs:element name="ownership" type="ownershipQosPolicyType" minOccurs="0"/>
             <xs:element name="ownershipStrength" type="ownershipStrengthQosPolicyType" minOccurs="0"/>
             <xs:element name="destinationOrder" type="destinationOrderQosPolicyType" minOccurs="0"/>
             <xs:element name="presentation" type="presentationQosPolicyType" minOccurs="0"/>
             <xs:element name="partition" type="partitionQosPolicyType" minOccurs="0"/>
-            <xs:element name="topicData" type="topicDataQosPolicyType" minOccurs="0"/>
-            <xs:element name="groupData" type="groupDataQosPolicyType" minOccurs="0"/>
+            <xs:element name="topicData" type="octetVectorType" minOccurs="0"/>
+            <xs:element name="groupData" type="octetVectorType" minOccurs="0"/>
             <xs:element name="publishMode" type="publishModeQosPolicyType" minOccurs="0"/>
             <xs:element name="data_sharing" type="dataSharingQosPolicyType" minOccurs="0"/>
             <xs:element name="disablePositiveAcks" type="disablePositiveAcksQosPolicyType" minOccurs="0"/>
@@ -706,14 +690,14 @@
             <xs:element name="liveliness" type="livelinessQosPolicyType" minOccurs="0"/>
             <xs:element name="reliability" type="reliabilityQosPolicyType" minOccurs="0"/>
             <xs:element name="lifespan" type="lifespanQosPolicyType" minOccurs="0"/>
-            <xs:element name="userData" type="userDataQosPolicyType" minOccurs="0"/>
+            <xs:element name="userData" type="octetVectorType" minOccurs="0"/>
             <xs:element name="timeBasedFilter" type="timeBasedFilterQosPolicyType" minOccurs="0"/>
             <xs:element name="ownership" type="ownershipQosPolicyType" minOccurs="0"/>
             <xs:element name="destinationOrder" type="destinationOrderQosPolicyType" minOccurs="0"/>
             <xs:element name="presentation" type="presentationQosPolicyType" minOccurs="0"/>
             <xs:element name="partition" type="partitionQosPolicyType" minOccurs="0"/>
-            <xs:element name="topicData" type="topicDataQosPolicyType" minOccurs="0"/>
-            <xs:element name="groupData" type="groupDataQosPolicyType" minOccurs="0"/>
+            <xs:element name="topicData" type="octetVectorType" minOccurs="0"/>
+            <xs:element name="groupData" type="octetVectorType" minOccurs="0"/>
             <xs:element name="data_sharing" type="dataSharingQosPolicyType" minOccurs="0"/>
             <xs:element name="disablePositiveAcks" type="disablePositiveAcksQosPolicyType" minOccurs="0"/>
         </xs:all>

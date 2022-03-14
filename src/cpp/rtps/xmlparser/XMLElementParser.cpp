@@ -1177,22 +1177,18 @@ XMLP_ret XMLParser::getXMLWriterQosPolicies(
                 return XMLP_ret::XML_ERROR;
             }
         }
-        else if (strcmp(name, DURABILITY_SRV) == 0 || strcmp(name, USER_DATA) == 0 ||
+        else if (strcmp(name, DURABILITY_SRV) == 0 ||
                 strcmp(name, TIME_FILTER) == 0 || strcmp(name, OWNERSHIP) == 0 ||
                 strcmp(name, OWNERSHIP_STRENGTH) == 0 || strcmp(name, DEST_ORDER) == 0 ||
-                strcmp(name, PRESENTATION) == 0 || strcmp(name, TOPIC_DATA) == 0 ||
-                strcmp(name, GROUP_DATA) == 0)
+                strcmp(name, PRESENTATION) == 0)
         {
             // TODO: Do not supported for now
             //if (nullptr != (p_aux = elem->FirstChildElement(    DURABILITY_SRV))) getXMLDurabilityServiceQos(p_aux, ident);
-            //if (nullptr != (p_aux = elem->FirstChildElement(         USER_DATA))) getXMLUserDataQos(p_aux, ident);
             //if (nullptr != (p_aux = elem->FirstChildElement(       TIME_FILTER))) getXMLTimeBasedFilterQos(p_aux, ident);
             //if (nullptr != (p_aux = elem->FirstChildElement(         OWNERSHIP))) getXMLOwnershipQos(p_aux, ident);
             //if (nullptr != (p_aux = elem->FirstChildElement(OWNERSHIP_STRENGTH))) getXMLOwnershipStrengthQos(p_aux, ident);
             //if (nullptr != (p_aux = elem->FirstChildElement(        DEST_ORDER))) getXMLDestinationOrderQos(p_aux, ident);
             //if (nullptr != (p_aux = elem->FirstChildElement(      PRESENTATION))) getXMLPresentationQos(p_aux, ident);
-            //if (nullptr != (p_aux = elem->FirstChildElement(        TOPIC_DATA))) getXMLTopicDataQos(p_aux, ident);
-            //if (nullptr != (p_aux = elem->FirstChildElement(        GROUP_DATA))) getXMLGroupDataQos(p_aux, ident);
             logError(XMLPARSER, "Quality of Service '" << p_aux0->Value() << "' do not supported for now");
         }
         else if (strcmp(name, DATA_SHARING) == 0)
@@ -1207,6 +1203,30 @@ XMLP_ret XMLParser::getXMLWriterQosPolicies(
         {
             // Disable heartbeat piggyback
             if (XMLP_ret::XML_OK != getXMLBool(p_aux0, &qos.disable_heartbeat_piggyback, ident))
+            {
+                return XMLP_ret::XML_ERROR;
+            }
+        }
+        else if (0 == strcmp(name, USER_DATA))
+        {
+            // userData
+            if (XMLP_ret::XML_OK != getXMLOctetVector(p_aux0, qos.m_userData.data_vec(), ident))
+            {
+                return XMLP_ret::XML_ERROR;
+            }
+        }
+        else if (0 == strcmp(name, TOPIC_DATA))
+        {
+            // userData
+            if (XMLP_ret::XML_OK != getXMLOctetVector(p_aux0, qos.m_topicData.data_vec(), ident))
+            {
+                return XMLP_ret::XML_ERROR;
+            }
+        }
+        else if (0 == strcmp(name, GROUP_DATA))
+        {
+            // userData
+            if (XMLP_ret::XML_OK != getXMLOctetVector(p_aux0, qos.m_groupData.data_vec(), ident))
             {
                 return XMLP_ret::XML_ERROR;
             }
@@ -1317,27 +1337,47 @@ XMLP_ret XMLParser::getXMLReaderQosPolicies(
                 return XMLP_ret::XML_ERROR;
             }
         }
-        else if (strcmp(name, DURABILITY_SRV) == 0 || strcmp(name, USER_DATA) == 0 ||
+        else if (strcmp(name, DURABILITY_SRV) == 0 ||
                 strcmp(name, TIME_FILTER) == 0 || strcmp(name, OWNERSHIP) == 0 ||
                 strcmp(name, OWNERSHIP_STRENGTH) == 0 || strcmp(name, DEST_ORDER) == 0 ||
-                strcmp(name, PRESENTATION) == 0 || strcmp(name, TOPIC_DATA) == 0 ||
-                strcmp(name, GROUP_DATA) == 0)
+                strcmp(name, PRESENTATION) == 0)
         {
             // TODO: Do not supported for now
             //if (nullptr != (p_aux = elem->FirstChildElement(    DURABILITY_SRV))) getXMLDurabilityServiceQos(p_aux, ident);
-            //if (nullptr != (p_aux = elem->FirstChildElement(         USER_DATA))) getXMLUserDataQos(p_aux, ident);
             //if (nullptr != (p_aux = elem->FirstChildElement(       TIME_FILTER))) getXMLTimeBasedFilterQos(p_aux, ident);
             //if (nullptr != (p_aux = elem->FirstChildElement(         OWNERSHIP))) getXMLOwnershipQos(p_aux, ident);
             //if (nullptr != (p_aux = elem->FirstChildElement(        DEST_ORDER))) getXMLDestinationOrderQos(p_aux, ident);
             //if (nullptr != (p_aux = elem->FirstChildElement(      PRESENTATION))) getXMLPresentationQos(p_aux, ident);
-            //if (nullptr != (p_aux = elem->FirstChildElement(        TOPIC_DATA))) getXMLTopicDataQos(p_aux, ident);
-            //if (nullptr != (p_aux = elem->FirstChildElement(        GROUP_DATA))) getXMLGroupDataQos(p_aux, ident);
             logError(XMLPARSER, "Quality of Service '" << p_aux0->Value() << "' do not supported for now");
         }
         else if (strcmp(name, DATA_SHARING) == 0)
         {
             //data sharing
             if (XMLP_ret::XML_OK != getXMLDataSharingQos(p_aux0, qos.data_sharing, ident))
+            {
+                return XMLP_ret::XML_ERROR;
+            }
+        }
+        else if (0 == strcmp(name, USER_DATA))
+        {
+            // userData
+            if (XMLP_ret::XML_OK != getXMLOctetVector(p_aux0, qos.m_userData.data_vec(), ident))
+            {
+                return XMLP_ret::XML_ERROR;
+            }
+        }
+        else if (0 == strcmp(name, TOPIC_DATA))
+        {
+            // userData
+            if (XMLP_ret::XML_OK != getXMLOctetVector(p_aux0, qos.m_topicData.data_vec(), ident))
+            {
+                return XMLP_ret::XML_ERROR;
+            }
+        }
+        else if (0 == strcmp(name, GROUP_DATA))
+        {
+            // userData
+            if (XMLP_ret::XML_OK != getXMLOctetVector(p_aux0, qos.m_groupData.data_vec(), ident))
             {
                 return XMLP_ret::XML_ERROR;
             }
@@ -3243,15 +3283,72 @@ XMLP_ret XMLParser::getXMLPropertiesPolicy(
     return XMLP_ret::XML_OK;
 }
 
-// TODO
 XMLP_ret XMLParser::getXMLOctetVector(
         tinyxml2::XMLElement* elem,
-        std::vector<octet>& /*octetVector*/,
+        std::vector<octet>& octet_vector,
         uint8_t /*ident*/)
 {
-    (void)(elem);
-    logError(XMLPARSER, "octetVector do not supported for now");
-    return XMLP_ret::XML_ERROR;
+    if (nullptr == elem)
+    {
+        logError(XMLPARSER, "preconditions error");
+        return XMLP_ret::XML_ERROR;
+    }
+
+    tinyxml2::XMLElement* p_aux0 = nullptr;
+    XMLP_ret ret_value = XMLP_ret::XML_OK;
+    size_t num_elems = 0;
+
+    for (p_aux0 = elem->FirstChildElement(); nullptr != p_aux0; p_aux0 = p_aux0->NextSiblingElement())
+    {
+        if (1 < ++num_elems)
+        {
+            logError(XMLPARSER, "More than one tag on " << p_aux0->GetLineNum());
+            ret_value = XMLP_ret::XML_ERROR;
+        }
+        if (0 == strcmp(p_aux0->Name(), VALUE))
+        {
+            std::string text = p_aux0->GetText();
+            std::istringstream ss(text);
+
+            ss >> std::hex;
+
+            while (!ss.eof())
+            {
+                uint16_t o = 0;
+                ss >> o;
+
+                if (!ss || std::numeric_limits<octet>::max() < o)
+                {
+                    logError(XMLPARSER, "Expected an octet value on line " << p_aux0->GetLineNum());
+                    ret_value = XMLP_ret::XML_ERROR;
+                    break;
+                }
+
+                // Add octet in vector.
+                octet_vector.push_back(static_cast<octet>(o));
+
+                if (!ss.eof())
+                {
+                    char c = 0;
+                    ss >> c;
+
+                    if (!ss || '.' != c)
+                    {
+                        logError(XMLPARSER, "Expected a '.' separator on line " << p_aux0->GetLineNum());
+                        ret_value = XMLP_ret::XML_ERROR;
+                        break;
+                    }
+                }
+            }
+        }
+        else
+        {
+            logError(XMLPARSER, "Invalid tag with name of " << p_aux0->Name() << " on line " << p_aux0->GetLineNum());
+            ret_value = XMLP_ret::XML_ERROR;
+        }
+    }
+
+    return ret_value;
 }
 
 XMLP_ret XMLParser::getXMLInt(
