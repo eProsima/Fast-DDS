@@ -44,7 +44,7 @@ public:
     enum class ExchangeFormat : uint32_t
     {
         v1, //! Standard exchange format for Static Discovery.
-        v1_Reduced //! Exchange format that reduce the used network bandwidth.
+        v1_Reduced //! Exchange format that reduces the used network bandwidth.
     };
 
     /**

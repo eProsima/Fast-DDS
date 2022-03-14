@@ -571,7 +571,7 @@ private:
     //!Pointer to the user participant
     RTPSParticipant* mp_userParticipant;
 
-    //! Determine if was initialized successfully.
+    //! Determine if the RTPSParticipantImpl was initialized successfully.
     bool initialized_ = false;
 
     RTPSParticipantImpl& operator =(
