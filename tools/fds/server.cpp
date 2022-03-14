@@ -12,16 +12,18 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-
 #include <condition_variable>
 #include <csignal>
 #include <iostream>
 #include <mutex>
 #include <regex>
 #include <sstream>
+#include <stdlib.h>
 #include <string>
 #include <vector>
 
+// Even though this header should be the first, as it includes optionparser.hpp, a conflict arises between this file
+// and <condition_variable> in Windows platform.
 #include "server.h"
 #include <optionparser.hpp>
 
@@ -29,10 +31,10 @@
 #include <fastdds/dds/domain/DomainParticipantFactory.hpp>
 #include <fastdds/dds/domain/qos/DomainParticipantQos.hpp>
 #include <fastdds/dds/log/Log.hpp>
-#include <fastdds/rtps/attributes/RTPSParticipantAttributes.h>
 #include <fastdds/rtps/attributes/ServerAttributes.h>
 #include <fastdds/rtps/common/Locator.h>
 #include <fastrtps/utils/IPLocator.h>
+#include <fastrtps/xmlparser/XMLProfileManager.h>
 
 volatile sig_atomic_t g_signal_status = 0;
 std::mutex g_signal_mutex;
@@ -66,6 +68,9 @@ int fastdds_discovery_server(
     std::vector<option::Option> options(stats.options_max);
     std::vector<option::Option> buffer(stats.buffer_max);
     option::Parser parse(usage, argc, argv, &options[0], &buffer[0]);
+    constexpr const char* delimiter = "@";
+    std::string sXMLConfigFile = "";
+    std::string profile = "";
 
     // Check the command line options
     if (parse.error())
@@ -99,15 +104,90 @@ int fastdds_discovery_server(
 
     DomainParticipantQos participantQos;
 
+    if (nullptr != options[XML_FILE])
+    {
+        sXMLConfigFile = options[XML_FILE].arg;
+        if (sXMLConfigFile.length() > 0)
+        {
+            size_t delimiter_pos = sXMLConfigFile.find(delimiter);
+            if (std::string::npos != delimiter_pos)
+            {
+                profile = sXMLConfigFile.substr(0, delimiter_pos);
+                sXMLConfigFile = sXMLConfigFile.substr(delimiter_pos + 1, sXMLConfigFile.length());
+            }
+
+            if (ReturnCode_t::RETCODE_OK != DomainParticipantFactory::get_instance()->load_XML_profiles_file(
+                        sXMLConfigFile))
+            {
+                std::cout << "Cannot open XML file " << sXMLConfigFile << ". Please, check the path of this "
+                          << "XML file." << std::endl;
+                return 1;
+            }
+            if (profile.empty())
+            {
+                // Set environment variables to prevent loading the default XML file
+#ifdef _WIN32
+                if (0 != _putenv_s("FASTRTPS_DEFAULT_PROFILES_FILE", "") ||
+                        0 != _putenv_s("SKIP_DEFAULT_XML_FILE", "1"))
+                {
+                    char errmsg[1024];
+                    strerror_s(errmsg, sizeof(errmsg), errno);
+                    std::cout << "Error setting environment variables: " << errmsg << std::endl;
+                    return 1;
+                }
+#else
+                if (0 != unsetenv(fastrtps::xmlparser::DEFAULT_FASTRTPS_ENV_VARIABLE) ||
+                        0 != setenv(fastrtps::xmlparser::SKIP_DEFAULT_XML_FILE, "1", 1))
+                {
+                    std::cout << "Error setting environment variables: " << std::strerror(errno) << std::endl;
+                    return 1;
+                }
+#endif // ifdef _WIN32
+                // Set default participant QoS from XML file
+                if (ReturnCode_t::RETCODE_OK != DomainParticipantFactory::get_instance()->load_profiles())
+                {
+                    std::cout << "Error setting default DomainParticipantQos from XML default profile." << std::endl;
+                    return 1;
+                }
+                participantQos = DomainParticipantFactory::get_instance()->get_default_participant_qos();
+            }
+            else
+            {
+                if (ReturnCode_t::RETCODE_OK !=
+                        DomainParticipantFactory::get_instance()->get_participant_qos_from_profile(
+                            profile, participantQos))
+                {
+                    std::cout << "Error loading specified profile from XML file." << std::endl;
+                    return 1;
+                }
+            }
+        }
+
+    }
+
     // Retrieve server Id: is mandatory and only specified once
     // Note there is a specific cast to pointer if the Option is valid
     option::Option* pOp = options[SERVERID];
-    int server_id;
+    int server_id = 0;
 
     if (nullptr == pOp)
     {
-        std::cout << "Specify server id is mandatory: use -i or --server-id option." << std::endl;
-        return 1;
+        fastrtps::rtps::GuidPrefix_t prefix_cero;
+        if (participantQos.wire_protocol().prefix == prefix_cero)
+        {
+            std::cout << "Server id is mandatory if not defined in the XML file: use -i or --server-id option." <<
+                std::endl;
+            return 1;
+        }
+        else if (!(participantQos.wire_protocol().builtin.discovery_config.discoveryProtocol ==
+                eprosima::fastrtps::rtps::DiscoveryProtocol::SERVER ||
+                participantQos.wire_protocol().builtin.discovery_config.discoveryProtocol ==
+                eprosima::fastrtps::rtps::DiscoveryProtocol::BACKUP))
+        {
+            std::cout << "The provided configuration is not valid. Participant must be either SERVER or BACKUP. " <<
+                std::endl;
+            return 1;
+        }
     }
     else if (pOp->count() != 1)
     {
@@ -139,10 +219,32 @@ int fastdds_discovery_server(
     }
 
     // Choose the kind of server to create
-    participantQos.wire_protocol().builtin.discovery_config.discoveryProtocol =
-            options[BACKUP] ? DiscoveryProtocol::BACKUP : DiscoveryProtocol::SERVER;
+    pOp = options[BACKUP];
+    if (nullptr != pOp)
+    {
+        participantQos.wire_protocol().builtin.discovery_config.discoveryProtocol = DiscoveryProtocol::BACKUP;
+    }
+    else if (nullptr == options[XML_FILE])
+    {
+        participantQos.wire_protocol().builtin.discovery_config.discoveryProtocol = DiscoveryProtocol::SERVER;
+    }
 
     // Set up listening locators.
+    /**
+     * The metatraffic unicast locator list can be defined:
+     *    1. By means of the CLI specifying a locator address (pOp != nullptr) and port (pO_port != nullptr)
+     *          Locator: IPaddress:port
+     *    2. By means of the CLI specifying only the locator address (pOp != nullptr)
+     *          Locator: IPaddress:11811
+     *    3. By means of the CLI specifying only the port number (pO_port != nullptr)
+     *          Locator: [0.0.0.0]:port
+     *    4. By means of the XML configuration file (options[XML_FILE] != nullptr)
+     *    5. No information provided.
+     *          Locator: [0.0.0.0]:11811
+     *
+     * The CLI has priority over the XML file configuration.
+     */
+
     // If the number of specify ports doesn't match the number of IPs the last port is used.
     // If at least one port specified replace the default one
     Locator locator(rtps::DEFAULT_ROS2_SERVER_PORT);
@@ -168,65 +270,78 @@ int fastdds_discovery_server(
 
     // Retrieve first IP address
     pOp = options[IPADDRESS];
-    if (nullptr == pOp)
+
+    /**
+     * A locator has been initialized previously in [0.0.0.0] address using either the DEFAULT_ROS2_SERVER_PORT or the
+     * port number set in the CLI. This locator must be used:
+     *     - If there is no IP address defined in the CLI (pOp == nullptr) but the port has been defined
+     *       (pO_port != nullptr)
+     *     - If there is no locator information provided either by CLI or XML file (options[XML_FILE] == nullptr)
+     */
+    if (nullptr == pOp && (nullptr == options[XML_FILE] || nullptr != pO_port))
     {
         // Add default locator
+        participantQos.wire_protocol().builtin.metatrafficUnicastLocatorList.clear();
         participantQos.wire_protocol().builtin.metatrafficUnicastLocatorList.push_back(locator);
     }
     else
     {
-        while (pOp)
+        if (nullptr != pOp)
         {
-            // Get next address
-            std::string address = std::string(pOp->arg);
-
-            // Check whether the address is IPv4
-            if (!IPLocator::isIPv4(address))
+            participantQos.wire_protocol().builtin.metatrafficUnicastLocatorList.clear();
+            while (pOp)
             {
-                auto response = IPLocator::resolveNameDNS(address);
+                // Get next address
+                std::string address = std::string(pOp->arg);
 
-                // Add the first valid IPv4 address that we can find
-                if (response.first.size() > 0)
+                // Check whether the address is IPv4
+                if (!IPLocator::isIPv4(address))
                 {
-                    address = response.first.begin()->data();
+                    auto response = IPLocator::resolveNameDNS(address);
+
+                    // Add the first valid IPv4 address that we can find
+                    if (response.first.size() > 0)
+                    {
+                        address = response.first.begin()->data();
+                    }
                 }
-            }
 
-            // Update locator address
-            if (!IPLocator::setIPv4(locator, address))
-            {
-                std::cout << "Invalid listening locator address specified:" << address << std::endl;
-                return 1;
-            }
-
-            // Update UDP port
-            if (nullptr != pO_port)
-            {
-                std::stringstream is;
-                is << pO_port->arg;
-                uint16_t id;
-
-                if (!(is >> id
-                        && is.eof()
-                        && IPLocator::setPhysicalPort(locator, id)))
+                // Update locator address
+                if (!IPLocator::setIPv4(locator, address))
                 {
-                    std::cout << "Invalid listening locator port specified:" << id << std::endl;
+                    std::cout << "Invalid listening locator address specified:" << address << std::endl;
                     return 1;
                 }
-            }
 
-            // Add the locator
-            participantQos.wire_protocol().builtin.metatrafficUnicastLocatorList.push_back(locator);
+                // Update UDP port
+                if (nullptr != pO_port)
+                {
+                    std::stringstream is;
+                    is << pO_port->arg;
+                    uint16_t id;
 
-            pOp = pOp->next();
-            if (pO_port)
-            {
-                pO_port = pO_port->next();
-            }
-            else
-            {
-                std::cout << "Warning: the number of specified ports doesn't match the ip" << std::endl
-                          << "         addresses provided. Locators share its port number." << std::endl;
+                    if (!(is >> id
+                            && is.eof()
+                            && IPLocator::setPhysicalPort(locator, id)))
+                    {
+                        std::cout << "Invalid listening locator port specified:" << id << std::endl;
+                        return 1;
+                    }
+                }
+
+                // Add the locator
+                participantQos.wire_protocol().builtin.metatrafficUnicastLocatorList.push_back(locator);
+
+                pOp = pOp->next();
+                if (pO_port)
+                {
+                    pO_port = pO_port->next();
+                }
+                else
+                {
+                    std::cout << "Warning: the number of specified ports doesn't match the ip" << std::endl
+                              << "         addresses provided. Locators share its port number." << std::endl;
+                }
             }
         }
     }

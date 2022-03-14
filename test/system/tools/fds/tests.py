@@ -26,24 +26,30 @@
     Available tests:
 
         test_fast_discovery_closure
-
+        test_fast_discovery_parse_XML_file_prefix_OK
+        test_fast_discovery_parse_XML_file_prefix_OK_URI
+        test_fast_discovery_parse_XML_file_server_address
+        test_fast_discovery_parse_XML_file_server_address_URI
 """
 
 import argparse
 import subprocess
 import sys
+from tabnanny import check
 import time
 import signal
 import os
+
+from xml.dom import minidom
+from xml.etree.ElementTree import XML
+
 
 def signal_handler(signum, frame):
     # ignore signals if the test generates them
     pass
 
-def test_fast_discovery_closure(fast_discovery_tool):
-    """Test that discovery command closes correctly."""
-    command = [fast_discovery_tool, '-i', '0']
 
+def send_command(command):
     print("Executing command: " + str(command))
 
     # this subprocess cannot be executed in shell=True or using bash
@@ -52,7 +58,7 @@ def test_fast_discovery_closure(fast_discovery_tool):
     proc = subprocess.Popen(command,
                             stdout=subprocess.PIPE,
                             universal_newlines=True
-                           )
+                            )
 
     # sleep to let the server run
     time.sleep(1)
@@ -64,18 +70,6 @@ def test_fast_discovery_closure(fast_discovery_tool):
     # 4. An exit code of 3 means the signal terminated the process, but the
     #    output was different than expected
     exit_code = 0
-
-    # Check whether the process has terminated already
-    if not proc.poll() is None:
-        # If the process has already exit means something has gone wrong.
-        # Capture and print output for traceability and exit with code s1.
-        output, err = proc.communicate()
-        print('test_fast_discovery_closure FAILED on launching tool')
-        print('STDOUT:')
-        print(output)
-        print('STDERR:')
-        print(err)
-        sys.exit(1)
 
     # direct this script to ignore SIGINT
     signal.signal(signal.SIGINT, signal_handler)
@@ -107,23 +101,433 @@ def test_fast_discovery_closure(fast_discovery_tool):
 
     # Get process output
     output, err = proc.communicate()
+    return output, err, exit_code
+
+
+def XML_parse_profile(XMLfile, profile_name):
+
+    XML_file = minidom.parse(XMLfile)
+
+    participants = XML_file.getElementsByTagName("participant")
+    for participant in participants:
+        if not profile_name:
+            if participant.getAttribute("is_default_profile") == "true":
+                participant_profile = participant
+        else:
+            if participant.getAttribute("profile_name") == profile_name:
+                participant_profile = participant
+
+    return participant_profile
+
+
+def check_output(output, err, output_to_check, override):
 
     EXPECTED_CLOSURE = "### Server shut down ###"
-
-    # Check whether everything closed down nicely
-    if EXPECTED_CLOSURE in output:
-        # Success
-        print('test_fast_discovery_closure SUCCEED')
+    if EXPECTED_CLOSURE in output or override:
+        if output_to_check in output:
+            # Success
+            exit_code = 0
+        else:
+            # Failure
+            print('STDOUT:')
+            print(output)
+            print('STDERR:')
+            print(err)
+            exit_code = 3
     else:
         # Failure
-        print('test_fast_discovery_closure FAILED')
         print('STDOUT:')
         print(output)
         print('STDERR:')
         print(err)
         exit_code = 3
 
+    return exit_code
+
+
+def test_fast_discovery_closure(fast_discovery_tool):
+    """Test that discovery command closes correctly."""
+    command = [fast_discovery_tool, '-i', '0']
+
+    output, err, exit_code = send_command(command)
+
+    EXPECTED_CLOSURE = "### Server shut down ###"
+
+    exit_code = check_output(output, err, EXPECTED_CLOSURE, False)
+
     sys.exit(exit_code)
+
+
+def test_fast_discovery_parse_XML_file_default_profile(fast_discovery_tool):
+    """Test that discovery command read XML default profile correctly."""
+
+    XML_file_path = 'test_xml_discovery_server.xml'
+    default_profile = XML_parse_profile(XML_file_path, "")
+
+    prefix = default_profile.getElementsByTagName('prefix')
+    PREFIX = prefix[0].firstChild.data
+
+    EXPECTED_SERVER_ADDRESS = []
+    udpv4 = default_profile.getElementsByTagName('udpv4')
+    for elem in udpv4:
+        address2 = elem.getElementsByTagName('address')[0].firstChild.data
+        port2 = elem.getElementsByTagName('port')[0].firstChild.data
+        if port2[0] == '0':
+            port2 = port2[1:]
+        EXPECTED_SERVER_ADDRESS.append("UDPv4:[" + address2 + "]:" + port2)
+
+    command = [fast_discovery_tool, '-x', XML_file_path]
+
+    output, err, exit_code = send_command(command)
+
+    EXPECTED_SERVER_ID = "Server GUID prefix: " + PREFIX.lower()
+    print(EXPECTED_SERVER_ID)
+
+    exit_code = check_output(output, err, EXPECTED_SERVER_ID, False)
+    if exit_code != 0:
+        sys.exit(exit_code)
+
+    for add in EXPECTED_SERVER_ADDRESS:
+        exit_code = check_output(output, err, add, False)
+        if exit_code != 0:
+            sys.exit(exit_code)
+
+    sys.exit(exit_code)
+
+
+def test_fast_discovery_parse_XML_file_URI_profile(fast_discovery_tool):
+    """Test that discovery command read XML profile using URI."""
+
+    XML_file_path = 'test_xml_discovery_server.xml'
+    uri_profile = XML_parse_profile(XML_file_path, "UDP_server_two")
+
+    prefix = uri_profile.getElementsByTagName('prefix')
+    PREFIX = prefix[0].firstChild.data
+
+    EXPECTED_SERVER_ADDRESS = []
+    udpv4 = uri_profile.getElementsByTagName('udpv4')
+    for elem in udpv4:
+        address2 = elem.getElementsByTagName('address')[0].firstChild.data
+        port2 = elem.getElementsByTagName('port')[0].firstChild.data
+        if port2[0] == '0':
+            port2 = port2[1:]
+        EXPECTED_SERVER_ADDRESS.append("UDPv4:[" + address2 + "]:" + port2)
+
+    command = [fast_discovery_tool, '-x', 'UDP_server_two@' + XML_file_path]
+
+    output, err, exit_code = send_command(command)
+
+    EXPECTED_SERVER_ID = "Server GUID prefix: " + PREFIX.lower()
+    print(EXPECTED_SERVER_ID)
+
+    exit_code = check_output(output, err, EXPECTED_SERVER_ID, False)
+    if exit_code != 0:
+        sys.exit(exit_code)
+
+    for add in EXPECTED_SERVER_ADDRESS:
+        exit_code = check_output(output, err, add, False)
+        if exit_code != 0:
+            sys.exit(exit_code)    
+    sys.exit(exit_code)
+
+
+def test_fast_discovery_prefix_override(fast_discovery_tool):
+    """Test that discovery command overrides prefix given in XML file"""
+
+    XML_file_path = 'test_xml_discovery_server.xml'
+    default_profile = XML_parse_profile(XML_file_path, "")
+
+    EXPECTED_SERVER_ID = "Server GUID prefix: 44.53.00.5f.45.50.52.4f.53.49.4d.41"
+    EXPECTED_SERVER_ADDRESS = []
+    udpv4 = default_profile.getElementsByTagName('udpv4')
+    for elem in udpv4:
+        address2 = elem.getElementsByTagName('address')[0].firstChild.data
+        port2 = elem.getElementsByTagName('port')[0].firstChild.data
+        if port2[0] == '0':
+            port2 = port2[1:]
+        EXPECTED_SERVER_ADDRESS.append("UDPv4:[" + address2 + "]:" + port2)
+
+    command = [fast_discovery_tool, '-i', '0', '-x', XML_file_path]
+    output, err, exit_code = send_command(command)
+
+    exit_code = check_output(output, err, EXPECTED_SERVER_ID, False)
+    if exit_code != 0:
+        sys.exit(exit_code)
+
+    for add in EXPECTED_SERVER_ADDRESS:
+        exit_code = check_output(output, err, add, False)
+        if exit_code != 0:
+            sys.exit(exit_code)
+
+    sys.exit(exit_code)
+
+
+def test_fast_discovery_locator_address_override(fast_discovery_tool):
+    """Test that discovery command overrides locator given in XML file when using -l option"""
+
+    XML_file_path = 'test_xml_discovery_server.xml'
+    default_profile = XML_parse_profile(XML_file_path, "")
+   
+    prefix = default_profile.getElementsByTagName('prefix')
+    PREFIX = prefix[0].firstChild.data
+    EXPECTED_SERVER_ID = "Server GUID prefix: " + PREFIX.lower()
+    EXPECTED_SERVER_ADDRESS = []
+    EXPECTED_SERVER_ADDRESS.append("UDPv4:[172.168.43.125]:11811")
+    XML_SERVER_ADDRESS = []
+    udpv4 = default_profile.getElementsByTagName('udpv4')
+    for elem in udpv4:
+        address2 = elem.getElementsByTagName('address')[0].firstChild.data
+        port2 = elem.getElementsByTagName('port')[0].firstChild.data
+        if port2[0] == '0':
+            port2 = port2[1:]
+        XML_SERVER_ADDRESS.append("UDPv4:[" + address2 + "]:" + port2)
+
+    command = [fast_discovery_tool, '-x', XML_file_path, '-l', '172.168.43.125']
+    output, err, exit_code = send_command(command)
+
+    exit_code = check_output(output, err, EXPECTED_SERVER_ID, False)
+    if exit_code != 0:
+        sys.exit(exit_code)
+
+    for add in EXPECTED_SERVER_ADDRESS:
+        exit_code = check_output(output, err, add, False)
+        if exit_code != 0:
+            sys.exit(exit_code)
+    for add in XML_SERVER_ADDRESS:
+        exit_code = check_output(output, err, add, False)
+        if exit_code != 3:
+            sys.exit(3)
+
+    sys.exit(0)
+
+
+def test_fast_discovery_locator_override_same_address(fast_discovery_tool):
+    """Test that discovery command overrides locator given in XML file even if the address is the same"""
+
+    XML_file_path = 'test_xml_discovery_server.xml'
+    default_profile = XML_parse_profile(XML_file_path, "")
+   
+    prefix = default_profile.getElementsByTagName('prefix')
+    PREFIX = prefix[0].firstChild.data
+    EXPECTED_SERVER_ID = "Server GUID prefix: " + PREFIX.lower()
+    EXPECTED_SERVER_ADDRESS = []
+    EXPECTED_SERVER_ADDRESS.append("UDPv4:[127.0.0.9]:11811")
+    XML_SERVER_ADDRESS = []
+    udpv4 = default_profile.getElementsByTagName('udpv4')
+    for elem in udpv4:
+        address2 = elem.getElementsByTagName('address')[0].firstChild.data
+        port2 = elem.getElementsByTagName('port')[0].firstChild.data
+        if port2[0] == '0':
+            port2 = port2[1:]
+        XML_SERVER_ADDRESS.append("UDPv4:[" + address2 + "]:" + port2)
+
+    command = [fast_discovery_tool, '-x', XML_file_path, '-l', '127.0.0.9']
+    output, err, exit_code = send_command(command)
+
+    exit_code = check_output(output, err, EXPECTED_SERVER_ID, False)
+    if exit_code != 0:
+        sys.exit(exit_code)
+
+    for add in EXPECTED_SERVER_ADDRESS:
+        exit_code = check_output(output, err, add, False)
+        if exit_code != 0:
+            sys.exit(exit_code)
+    for add in XML_SERVER_ADDRESS:
+        exit_code = check_output(output, err, add, False)
+        if exit_code != 3:
+            sys.exit(3)
+
+    sys.exit(0)
+
+
+def test_fast_discovery_locator_port_override(fast_discovery_tool):
+    """Test that discovery command overrides locator given in XML file when using -p option"""
+
+    XML_file_path = 'test_xml_discovery_server.xml'
+    default_profile = XML_parse_profile(XML_file_path, "")
+   
+    prefix = default_profile.getElementsByTagName('prefix')
+    PREFIX = prefix[0].firstChild.data
+    EXPECTED_SERVER_ID = "Server GUID prefix: " + PREFIX.lower()
+    EXPECTED_SERVER_ADDRESS = []
+    EXPECTED_SERVER_ADDRESS.append("UDPv4:[0.0.0.0]:1234")
+    XML_SERVER_ADDRESS = []
+    udpv4 = default_profile.getElementsByTagName('udpv4')
+    for elem in udpv4:
+        address2 = elem.getElementsByTagName('address')[0].firstChild.data
+        port2 = elem.getElementsByTagName('port')[0].firstChild.data
+        if port2[0] == '0':
+            port2 = port2[1:]
+        XML_SERVER_ADDRESS.append("UDPv4:[" + address2 + "]:" + port2)
+
+    command = [fast_discovery_tool, '-x', XML_file_path, '-p', '1234']
+    output, err, exit_code = send_command(command)
+
+    exit_code = check_output(output, err, EXPECTED_SERVER_ID, False)
+    if exit_code != 0:
+        sys.exit(exit_code)
+
+    for add in EXPECTED_SERVER_ADDRESS:
+        exit_code = check_output(output, err, add, False)
+        if exit_code != 0:
+            sys.exit(exit_code)
+    for add in XML_SERVER_ADDRESS:
+        exit_code = check_output(output, err, add, False)
+        if exit_code != 3:
+            sys.exit(3)
+
+    sys.exit(0)
+
+
+def test_fast_discovery_locator_override_same_port(fast_discovery_tool):
+    """Test that discovery command overrides locator given in XML file even if the port is the same"""
+
+    XML_file_path = 'test_xml_discovery_server.xml'
+    default_profile = XML_parse_profile(XML_file_path, "")
+   
+    prefix = default_profile.getElementsByTagName('prefix')
+    PREFIX = prefix[0].firstChild.data
+    EXPECTED_SERVER_ID = "Server GUID prefix: " + PREFIX.lower()
+    EXPECTED_SERVER_ADDRESS = []
+    EXPECTED_SERVER_ADDRESS.append("UDPv4:[0.0.0.0]:2811")
+    XML_SERVER_ADDRESS = []
+    udpv4 = default_profile.getElementsByTagName('udpv4')
+    for elem in udpv4:
+        address2 = elem.getElementsByTagName('address')[0].firstChild.data
+        port2 = elem.getElementsByTagName('port')[0].firstChild.data
+        if port2[0] == '0':
+            port2 = port2[1:]
+        XML_SERVER_ADDRESS.append("UDPv4:[" + address2 + "]:" + port2)
+
+    command = [fast_discovery_tool, '-x', XML_file_path, '-p', '2811']
+    output, err, exit_code = send_command(command)
+
+    exit_code = check_output(output, err, EXPECTED_SERVER_ID, False)
+    if exit_code != 0:
+        sys.exit(exit_code)
+
+    for add in EXPECTED_SERVER_ADDRESS:
+        exit_code = check_output(output, err, add, False)
+        if exit_code != 0:
+            sys.exit(exit_code)
+    for add in XML_SERVER_ADDRESS:
+        exit_code = check_output(output, err, add, False)
+        if exit_code != 3:
+            sys.exit(3)
+
+    sys.exit(0)
+
+
+def test_fast_discovery_backup(fast_discovery_tool):
+    """Test that launches a BACKUP using CLI and XML"""
+
+    XML_file_path = "test_xml_discovery_server.xml"
+    EXPECTED_PARTICIPANT_TYPE = "Participant Type:   BACKUP"
+    EXPECTED_SERVER_ID = "Server GUID prefix: 44.53.00.5f.45.50.52.4f.53.49.4d.41"
+    EXPECTED_SERVER_ADDRESS = []
+    EXPECTED_SERVER_ADDRESS.append("UDPv4:[0.0.0.0]:11811")
+
+    command = [fast_discovery_tool, '-b', '-i', '0']
+    output, err, exit_code = send_command(command)
+
+    exit_code = check_output(output, err, EXPECTED_PARTICIPANT_TYPE, False)
+    if exit_code != 0:
+        sys.exit(exit_code)
+    exit_code = check_output(output, err, EXPECTED_SERVER_ID, False)
+    if exit_code != 0:
+        sys.exit(exit_code)
+    for add in EXPECTED_SERVER_ADDRESS:
+        exit_code = check_output(output, err, add, False)    
+        if exit_code != 0:
+            sys.exit(exit_code)
+
+    EXPECTED_XML_SERVER_ID = "Server GUID prefix: 44.53.33.5f.45.50.52.4f.53.49.4d.41"
+    EXPECTED_XML_SERVER_ADDRESS = []
+    EXPECTED_XML_SERVER_ADDRESS.append("UDPv4:[127.0.0.105]:11825")
+
+    command = [fast_discovery_tool, '-x', 'UDP_backup@' + XML_file_path]
+    output, err, exit_code = send_command(command)
+
+    exit_code = check_output(output, err, EXPECTED_PARTICIPANT_TYPE, False)
+    if exit_code != 0:
+        sys.exit(exit_code)
+    exit_code = check_output(output, err, EXPECTED_XML_SERVER_ID, False)
+    if exit_code != 0:
+        sys.exit(exit_code)
+    for add in EXPECTED_XML_SERVER_ADDRESS:
+        exit_code = check_output(output, err, add, False)    
+        if exit_code != 0:
+            sys.exit(exit_code)
+
+    sys.exit(exit_code)
+
+
+def test_fast_discovery_no_XML(fast_discovery_tool):
+    """Test that checks output when the XML file provided does not exist"""
+
+    XML_file_path = "non_existent_xml_file.xml"
+    command = [fast_discovery_tool, '-x', XML_file_path]
+    output, err, exit_code = send_command(command)
+
+    exit_code = check_output(output, err, "Cannot open XML file", True)
+    sys.exit(exit_code)
+
+
+def test_fast_discovery_incorrect_participant(fast_discovery_tool):
+    """Test that checks failure if the participant is not SERVER/BACKUP"""
+
+    XML_file_path = "test_wrong_xml_discovery_server.xml"
+    command = [fast_discovery_tool, '-x', 'UDP_simple@' + XML_file_path]
+    output, err, exit_code = send_command(command)
+
+    exit_code = check_output(output, err, "The provided configuration is not valid", True)
+    if exit_code != 0:
+        sys.exit(exit_code)
+
+    command = [fast_discovery_tool, '-x', 'UDP_client@' + XML_file_path]
+    output, err, exit_code = send_command(command)
+
+    exit_code = check_output(output, err, "The provided configuration is not valid", True)
+    sys.exit(exit_code)
+
+
+def test_fast_discovery_no_prefix(fast_discovery_tool):
+    """Test failure when no server ID is provided"""
+
+    XML_file_path = "test_wrong_xml_discovery_server.xml"
+    command = [fast_discovery_tool, '-x', 'UDP_no_prefix@' + XML_file_path]
+    output, err, exit_code = send_command(command)
+    exit_code = check_output(output, err, "Server id is mandatory if not defined in the XML file", True)
+    sys.exit(exit_code)
+
+
+def test_fast_discovery_several_server_ids(fast_discovery_tool):
+    """Test failure when several Server IDs are provided"""
+
+    command = [fast_discovery_tool, '-i', '0', '-i', '1']
+    output, err, exit_code = send_command(command)
+    exit_code = check_output(output, err, "only one server id can be specified", True)
+    sys.exit(exit_code)
+
+
+def test_fast_discovery_invalid_locator(fast_discovery_tool):
+    """Test failure when the locator is invalid"""
+
+    command = [fast_discovery_tool, '-i', '0', '-l', '256.0.0.1']
+    output, err, exit_code = send_command(command)
+    exit_code = check_output(output, err, "Invalid listening locator address specified", True)
+    sys.exit(exit_code)
+
+
+def test_fast_discovery_non_existent_profile(fast_discovery_tool):
+    """Test failure when the profile does not exist in the XML file"""
+
+    XML_file_path = "test_xml_discovery_server.xml"
+    command = [fast_discovery_tool, '-x', 'non_existent_profile@' + XML_file_path]
+    output, err, exit_code = send_command(command)
+    exit_code = check_output(output, err, "Error loading specified profile from XML file", True)
+    sys.exit(exit_code)
+
 
 if __name__ == '__main__':
 
@@ -144,6 +548,34 @@ if __name__ == '__main__':
     tests = {
         'test_fast_discovery_closure': lambda: test_fast_discovery_closure(
             args.binary_path),
+        'test_fast_discovery_parse_XML_file_default_profile': lambda:
+            test_fast_discovery_parse_XML_file_default_profile(args.binary_path),
+        'test_fast_discovery_parse_XML_file_URI_profile': lambda:
+            test_fast_discovery_parse_XML_file_URI_profile(args.binary_path),
+        'test_fast_discovery_prefix_override': lambda:
+            test_fast_discovery_prefix_override(args.binary_path),
+        'test_fast_discovery_locator_address_override': lambda:
+            test_fast_discovery_locator_address_override(args.binary_path),
+        'test_fast_discovery_locator_override_same_address': lambda:
+            test_fast_discovery_locator_override_same_address(args.binary_path),
+        'test_fast_discovery_locator_port_override': lambda:
+            test_fast_discovery_locator_port_override(args.binary_path),
+        'test_fast_discovery_locator_override_same_port': lambda:
+            test_fast_discovery_locator_override_same_port(args.binary_path),
+        'test_fast_discovery_backup': lambda:
+            test_fast_discovery_backup(args.binary_path),
+        'test_fast_discovery_no_XML': lambda:
+            test_fast_discovery_no_XML(args.binary_path),
+        'test_fast_discovery_incorrect_participant': lambda:
+            test_fast_discovery_incorrect_participant(args.binary_path),
+        'test_fast_discovery_no_prefix': lambda:
+            test_fast_discovery_no_prefix(args.binary_path),
+        'test_fast_discovery_several_server_ids': lambda:
+            test_fast_discovery_several_server_ids(args.binary_path),
+        'test_fast_discovery_invalid_locator': lambda:
+            test_fast_discovery_invalid_locator(args.binary_path),
+        'test_fast_discovery_non_existent_profile': lambda:
+            test_fast_discovery_non_existent_profile(args.binary_path),
     }
 
     tests[args.test_name]()

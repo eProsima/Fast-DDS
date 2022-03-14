@@ -22,6 +22,20 @@ if(PYTHONINTERP_FOUND)
 
     set(TESTS
         test_fast_discovery_closure
+        test_fast_discovery_parse_XML_file_default_profile
+        test_fast_discovery_parse_XML_file_URI_profile
+        test_fast_discovery_prefix_override
+        test_fast_discovery_locator_address_override
+        test_fast_discovery_locator_override_same_address
+        test_fast_discovery_locator_port_override
+        test_fast_discovery_locator_override_same_port
+        test_fast_discovery_backup
+        test_fast_discovery_no_XML
+        test_fast_discovery_incorrect_participant
+        test_fast_discovery_no_prefix
+        test_fast_discovery_several_server_ids
+        test_fast_discovery_invalid_locator
+        test_fast_discovery_non_existent_profile
     )
 
     # windows auxiliary script to fork test execution
@@ -84,6 +98,8 @@ if(PYTHONINTERP_FOUND)
 
     endforeach()
 
+    configure_file("test_xml_discovery_server.xml" "test_xml_discovery_server.xml" COPYONLY)
+    configure_file("test_wrong_xml_discovery_server.xml" "test_wrong_xml_discovery_server.xml" COPYONLY)
     unset(TEST_ENVIRONMENT)
 
 endif()
