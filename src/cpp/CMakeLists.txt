@@ -382,16 +382,6 @@ set_target_properties(${PROJECT_NAME} PROPERTIES SOVERSION ${PROJECT_VERSION_MAJ
 
 option(INTERNAL_DEBUG "Activate developer debug messages" OFF)
 
-# make visual studio more gcc and clang like. Propagated to dependent targets.
-if(MSVC)
-    # C4101 'identifier' : unreferenced local variable 
-    # C4189 'identifier' : local variable is initialized but not referenced
-    # C4555  expression has no effect; expected expression with side-effect
-    # C4715: 'Test': not all control paths return a value
-    # C5038 data member 'member1' will be initialized after data member 'member2'
-    target_compile_options(${PROJECT_NAME} PUBLIC /w34101 /w34555 /w34189 /w35038 /w34715)
-endif(MSVC)
-
 target_compile_definitions(${PROJECT_NAME} PRIVATE
     ${PROJECT_NAME_UPPER}_SOURCE
     BOOST_ASIO_STANDALONE
