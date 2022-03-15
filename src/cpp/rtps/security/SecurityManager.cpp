@@ -339,7 +339,7 @@ bool SecurityManager::init(
                 }
                 else
                 {
-                    log_info_message("Cryptography plugin not configured. Security will be disabled");
+                    log_info_message("Cryptography plugin not configured");
                 }
 
                 if ((access_plugin_ == nullptr || local_permissions_handle_ != nullptr) &&
