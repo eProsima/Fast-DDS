@@ -1,7 +1,7 @@
 # **External Dependency Quality Declaration** `foonathan_memory`
 
 This document is a declaration of software quality for the `foonathan_memory` external dependency, inspired on the
-guidelines provided in the [ROS2 REP-2004 document](https://ros.org/reps/rep-2004.html).
+guidelines provided in the [ROS 2 REP-2004 document](https://ros.org/reps/rep-2004.html).
 
 Foonathan's [`memory`](https://github.com/foonathan/memory) is a C++ library to manage memory allocations that improves upon the STL.
 *eprosima Fast DDS* started using this library following the advice of ROS's and eProsima's partner, Apex.AI.
