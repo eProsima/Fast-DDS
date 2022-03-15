@@ -94,10 +94,11 @@ endif()
 ###############################################################################
 # Test system configuration
 ###############################################################################
-set(FORCE_CXX "11" CACHE STRING "C++ standard fulfillment selection")
 
 include(${PROJECT_SOURCE_DIR}/cmake/common/check_configuration.cmake)
-check_stdcxx()
+
+set(FORCE_CXX "11" CACHE STRING "C++ standard fulfillment selection")
+check_stdcxx(${FORCE_CXX})
 
 # Check constexpr
 list(FIND CMAKE_CXX_COMPILE_FEATURES "cxx_constexpr" CXX_CONSTEXPR_SUPPORTED)

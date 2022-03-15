@@ -333,6 +333,8 @@ if(SQLITE3_SUPPORT)
         ${${PROJECT_NAME}_sqlite3_source_files}
         )
     set(HAVE_SQLITE3 1)
+    # sqlite.c requires a C compiler
+    enable_language(C)
 else()
     set(HAVE_SQLITE3 0)
 endif()

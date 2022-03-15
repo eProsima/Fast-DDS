@@ -7,7 +7,7 @@ if(TARGET eProsima_atomic)
     return()
 endif()
 
-set(Atomic_FOUND FALSE)
+set(Atomic_FOUND FALSE CACHE BOOL "The atomic module testing have already been performed")
 
 set(ATOMIC_TEST_CODE
     "#define _ENABLE_ATOMIC_ALIGNMENT_FIX
@@ -36,20 +36,19 @@ set(ATOMIC_TEST_CODE
     }"
 )
 
-include(CheckLibraryExists)
 include(CheckCXXSourceCompiles)
 
 # Test linking without atomic
+unset(ATOMIC_WITHOUT_LIB)
 check_cxx_source_compiles(
     "${ATOMIC_TEST_CODE}"
     ATOMIC_WITHOUT_LIB
 )
 
-check_library_exists(atomic __atomic_load_8 "" HAVE_LIBATOMIC)
-set(Atomic_FOUND HAVE_LIBATOMIC)
-
-if (HAVE_LIBATOMIC)
-    set(CMAKE_REQUIRED_LIBRARIES atomic ${CMAKE_REQUIRED_LIBRARIES})
+if(NOT ATOMIC_WITHOUT_LIB) 
+    unset(ATOMIC_WITH_LIB)
+    set(CMAKE_REQUIRED_LIBRARIES -latomic)
+    # Test linking with atomic
     check_cxx_source_compiles(
         "${ATOMIC_TEST_CODE}"
         ATOMIC_WITH_LIB
@@ -60,17 +59,15 @@ endif()
 add_library(eProsima_atomic INTERFACE)
 
 # Populate the interface target properties
-if (NOT ATOMIC_WITHOUT_LIB)
-    if (ATOMIC_WITH_LIB)
-        # force to link to atomic when the dummy target is present
-        if (NOT (CMAKE_VERSION VERSION_LESS "3.11.4"))
-            target_link_libraries(eProsima_atomic INTERFACE atomic)
-        else()
-            set_property(TARGET eProsima_atomic PROPERTY INTERFACE_LINK_LIBRARIES atomic)
-        endif()
+if (ATOMIC_WITH_LIB)
+    # force to link to atomic when the dummy target is present
+    if (NOT (CMAKE_VERSION VERSION_LESS "3.11.4"))
+        target_link_libraries(eProsima_atomic INTERFACE atomic)
     else()
-        message(FATAL_ERROR "Unable to create binaries with atomic dependencies")
+        set_property(TARGET eProsima_atomic PROPERTY INTERFACE_LINK_LIBRARIES atomic)
     endif()
+elseif(NOT ATOMIC_WITHOUT_LIB)
+    message(FATAL_ERROR "Unable to create binaries with atomic dependencies")
 endif()
 
 # clean local variables
