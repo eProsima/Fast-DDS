@@ -30,9 +30,12 @@ int main(
         int argc,
         char** argv)
 {
+    Log::SetVerbosity(Log::Kind::Info);
+    Log::SetCategoryFilter(std::regex("RTPS_PARTICIPANT"));
     std::cout << "Starting " << std::endl;
     int type = 1;
     int count = 10;
+    uint32_t count_sub = 0;
     int sleep = 100;
     if (argc > 1)
     {
@@ -51,6 +54,10 @@ int main(
         else if (strcmp(argv[1], "subscriber") == 0)
         {
             type = 2;
+            if (argc == 3)
+            {
+                count_sub = atoi(argv[2]);
+            }
         }
     }
     else
@@ -76,7 +83,14 @@ int main(
                 HelloWorldSubscriber mysub;
                 if(mysub.init())
                 {
-                    mysub.run();
+                    if (0 == count_sub)
+                    {
+                        mysub.run();
+                    }
+                    else
+                    {
+                        mysub.run(count_sub);
+                    }
                 }
                 break;
             }

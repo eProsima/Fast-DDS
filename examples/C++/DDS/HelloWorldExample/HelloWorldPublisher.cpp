@@ -25,10 +25,12 @@
 #include <fastdds/dds/publisher/qos/PublisherQos.hpp>
 #include <fastdds/dds/publisher/DataWriter.hpp>
 #include <fastdds/dds/publisher/qos/DataWriterQos.hpp>
+#include <fastdds/rtps/transport/UDPv4TransportDescriptor.h>
 
 #include <thread>
 
 using namespace eprosima::fastdds::dds;
+using namespace eprosima::fastdds::rtps;
 
 HelloWorldPublisher::HelloWorldPublisher()
     : participant_(nullptr)
@@ -45,7 +47,11 @@ bool HelloWorldPublisher::init()
     hello_.message("HelloWorld");
     DomainParticipantQos pqos;
     pqos.name("Participant_pub");
-    participant_ = DomainParticipantFactory::get_instance()->create_participant(0, pqos);
+    //DISABLE SHM
+    auto udp_transport = std::make_shared<UDPv4TransportDescriptor>();
+    pqos.transport().user_transports.push_back(udp_transport);
+    pqos.transport().use_builtin_transports = false;
+    participant_ = DomainParticipantFactory::get_instance()->create_participant(27, pqos);
 
     if (participant_ == nullptr)
     {
@@ -127,6 +133,12 @@ void HelloWorldPublisher::runThread(
     {
         while (!stop_)
         {
+            ReturnCode_t ret = participant_->set_qos(participant_->get_qos());
+            if (ReturnCode_t::RETCODE_OK != ret)
+            {
+                std::cout << "ERROR setting QoS: " << ret() << std::endl;
+            }
+
             if (publish(false))
             {
                 std::cout << "Message: " << hello_.message() << " with index: " << hello_.index()

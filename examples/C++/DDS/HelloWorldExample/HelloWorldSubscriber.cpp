@@ -25,8 +25,12 @@
 #include <fastdds/dds/subscriber/DataReader.hpp>
 #include <fastdds/dds/subscriber/SampleInfo.hpp>
 #include <fastdds/dds/subscriber/qos/DataReaderQos.hpp>
+#include <fastdds/rtps/transport/UDPv4TransportDescriptor.h>
+#include <fastrtps/types/TypesBase.h>
 
 using namespace eprosima::fastdds::dds;
+using namespace eprosima::fastdds::rtps;
+using namespace eprosima::fastrtps::types;
 
 HelloWorldSubscriber::HelloWorldSubscriber()
     : participant_(nullptr)
@@ -41,7 +45,11 @@ bool HelloWorldSubscriber::init()
 {
     DomainParticipantQos pqos;
     pqos.name("Participant_sub");
-    participant_ = DomainParticipantFactory::get_instance()->create_participant(0, pqos);
+    //DISABLE SHM
+    auto udp_transport = std::make_shared<UDPv4TransportDescriptor>();
+    pqos.transport().user_transports.push_back(udp_transport);
+    pqos.transport().use_builtin_transports = false;
+    participant_ = DomainParticipantFactory::get_instance()->create_participant(27, pqos);
 
     if (participant_ == nullptr)
     {
@@ -149,5 +157,10 @@ void HelloWorldSubscriber::run(
     while (number > listener_.samples_)
     {
         std::this_thread::sleep_for(std::chrono::milliseconds(500));
+        ReturnCode_t ret = participant_->set_qos(participant_->get_qos());
+        if (ReturnCode_t::RETCODE_OK != ret)
+        {
+            std::cout << "ERROR setting QoS: " << ret() << std::endl;
+        }
     }
 }
