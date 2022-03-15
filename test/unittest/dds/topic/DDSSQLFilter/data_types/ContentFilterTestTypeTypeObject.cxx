@@ -41,17 +41,27 @@ using namespace eprosima::fastrtps::rtps;
 void registerContentFilterTestTypeTypes()
 {
     TypeObjectFactory *factory = TypeObjectFactory::get_instance();
-    factory->add_type_object("Color", GetColorIdentifier(true), GetColorObject(true));
-    factory->add_type_object("Color", GetColorIdentifier(false), GetColorObject(false));
+    factory->add_type_object("Color", GetColorIdentifier(true),
+    GetColorObject(true));
+    factory->add_type_object("Color", GetColorIdentifier(false),
+    GetColorObject(false));
 
-    factory->add_type_object("Material", GetMaterialIdentifier(true), GetMaterialObject(true));
-    factory->add_type_object("Material", GetMaterialIdentifier(false), GetMaterialObject(false));
+    factory->add_type_object("Material", GetMaterialIdentifier(true),
+    GetMaterialObject(true));
+    factory->add_type_object("Material", GetMaterialIdentifier(false),
+    GetMaterialObject(false));
 
-    factory->add_type_object("StructType", GetStructTypeIdentifier(true), GetStructTypeObject(true));
-    factory->add_type_object("StructType", GetStructTypeIdentifier(false), GetStructTypeObject(false));
+    factory->add_type_object("StructType", GetStructTypeIdentifier(true),
+    GetStructTypeObject(true));
+    factory->add_type_object("StructType", GetStructTypeIdentifier(false),
+    GetStructTypeObject(false));
 
-    factory->add_type_object("ContentFilterTestType", GetContentFilterTestTypeIdentifier(true), GetContentFilterTestTypeObject(true));
-    factory->add_type_object("ContentFilterTestType", GetContentFilterTestTypeIdentifier(false), GetContentFilterTestTypeObject(false));
+
+
+    factory->add_type_object("ContentFilterTestType", GetContentFilterTestTypeIdentifier(true),
+    GetContentFilterTestTypeObject(true));
+    factory->add_type_object("ContentFilterTestType", GetContentFilterTestTypeIdentifier(false),
+    GetContentFilterTestTypeObject(false));
 
 }
 
@@ -658,14 +668,7 @@ const TypeObject* GetMinimalStructTypeObject()
     mst_char_field.common().member_flags().IS_MUST_UNDERSTAND(false);
     mst_char_field.common().member_flags().IS_KEY(false);
     mst_char_field.common().member_flags().IS_DEFAULT(false); // Doesn't apply
-    {
-        std::string cppType = "char";
-        if (cppType == "long double")
-        {
-            cppType = "longdouble";
-        }
-        mst_char_field.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier(cppType, false));
-    }
+    mst_char_field.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier("char", false));
 
     MD5 char_field_hash("char_field");
     for(int i = 0; i < 4; ++i)
@@ -683,14 +686,7 @@ const TypeObject* GetMinimalStructTypeObject()
     mst_uint8_field.common().member_flags().IS_MUST_UNDERSTAND(false);
     mst_uint8_field.common().member_flags().IS_KEY(false);
     mst_uint8_field.common().member_flags().IS_DEFAULT(false); // Doesn't apply
-    {
-        std::string cppType = "uint8_t";
-        if (cppType == "long double")
-        {
-            cppType = "longdouble";
-        }
-        mst_uint8_field.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier(cppType, false));
-    }
+    mst_uint8_field.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier("uint8_t", false));
 
     MD5 uint8_field_hash("uint8_field");
     for(int i = 0; i < 4; ++i)
@@ -708,14 +704,7 @@ const TypeObject* GetMinimalStructTypeObject()
     mst_int16_field.common().member_flags().IS_MUST_UNDERSTAND(false);
     mst_int16_field.common().member_flags().IS_KEY(false);
     mst_int16_field.common().member_flags().IS_DEFAULT(false); // Doesn't apply
-    {
-        std::string cppType = "int16_t";
-        if (cppType == "long double")
-        {
-            cppType = "longdouble";
-        }
-        mst_int16_field.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier(cppType, false));
-    }
+    mst_int16_field.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier("int16_t", false));
 
     MD5 int16_field_hash("int16_field");
     for(int i = 0; i < 4; ++i)
@@ -733,14 +722,7 @@ const TypeObject* GetMinimalStructTypeObject()
     mst_uint16_field.common().member_flags().IS_MUST_UNDERSTAND(false);
     mst_uint16_field.common().member_flags().IS_KEY(false);
     mst_uint16_field.common().member_flags().IS_DEFAULT(false); // Doesn't apply
-    {
-        std::string cppType = "uint16_t";
-        if (cppType == "long double")
-        {
-            cppType = "longdouble";
-        }
-        mst_uint16_field.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier(cppType, false));
-    }
+    mst_uint16_field.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier("uint16_t", false));
 
     MD5 uint16_field_hash("uint16_field");
     for(int i = 0; i < 4; ++i)
@@ -758,14 +740,7 @@ const TypeObject* GetMinimalStructTypeObject()
     mst_int32_field.common().member_flags().IS_MUST_UNDERSTAND(false);
     mst_int32_field.common().member_flags().IS_KEY(false);
     mst_int32_field.common().member_flags().IS_DEFAULT(false); // Doesn't apply
-    {
-        std::string cppType = "int32_t";
-        if (cppType == "long double")
-        {
-            cppType = "longdouble";
-        }
-        mst_int32_field.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier(cppType, false));
-    }
+    mst_int32_field.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier("int32_t", false));
 
     MD5 int32_field_hash("int32_field");
     for(int i = 0; i < 4; ++i)
@@ -783,14 +758,7 @@ const TypeObject* GetMinimalStructTypeObject()
     mst_uint32_field.common().member_flags().IS_MUST_UNDERSTAND(false);
     mst_uint32_field.common().member_flags().IS_KEY(false);
     mst_uint32_field.common().member_flags().IS_DEFAULT(false); // Doesn't apply
-    {
-        std::string cppType = "uint32_t";
-        if (cppType == "long double")
-        {
-            cppType = "longdouble";
-        }
-        mst_uint32_field.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier(cppType, false));
-    }
+    mst_uint32_field.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier("uint32_t", false));
 
     MD5 uint32_field_hash("uint32_field");
     for(int i = 0; i < 4; ++i)
@@ -808,14 +776,7 @@ const TypeObject* GetMinimalStructTypeObject()
     mst_int64_field.common().member_flags().IS_MUST_UNDERSTAND(false);
     mst_int64_field.common().member_flags().IS_KEY(false);
     mst_int64_field.common().member_flags().IS_DEFAULT(false); // Doesn't apply
-    {
-        std::string cppType = "int64_t";
-        if (cppType == "long double")
-        {
-            cppType = "longdouble";
-        }
-        mst_int64_field.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier(cppType, false));
-    }
+    mst_int64_field.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier("int64_t", false));
 
     MD5 int64_field_hash("int64_field");
     for(int i = 0; i < 4; ++i)
@@ -833,14 +794,7 @@ const TypeObject* GetMinimalStructTypeObject()
     mst_uint64_field.common().member_flags().IS_MUST_UNDERSTAND(false);
     mst_uint64_field.common().member_flags().IS_KEY(false);
     mst_uint64_field.common().member_flags().IS_DEFAULT(false); // Doesn't apply
-    {
-        std::string cppType = "uint64_t";
-        if (cppType == "long double")
-        {
-            cppType = "longdouble";
-        }
-        mst_uint64_field.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier(cppType, false));
-    }
+    mst_uint64_field.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier("uint64_t", false));
 
     MD5 uint64_field_hash("uint64_field");
     for(int i = 0; i < 4; ++i)
@@ -858,14 +812,7 @@ const TypeObject* GetMinimalStructTypeObject()
     mst_float_field.common().member_flags().IS_MUST_UNDERSTAND(false);
     mst_float_field.common().member_flags().IS_KEY(false);
     mst_float_field.common().member_flags().IS_DEFAULT(false); // Doesn't apply
-    {
-        std::string cppType = "float";
-        if (cppType == "long double")
-        {
-            cppType = "longdouble";
-        }
-        mst_float_field.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier(cppType, false));
-    }
+    mst_float_field.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier("float", false));
 
     MD5 float_field_hash("float_field");
     for(int i = 0; i < 4; ++i)
@@ -883,14 +830,7 @@ const TypeObject* GetMinimalStructTypeObject()
     mst_double_field.common().member_flags().IS_MUST_UNDERSTAND(false);
     mst_double_field.common().member_flags().IS_KEY(false);
     mst_double_field.common().member_flags().IS_DEFAULT(false); // Doesn't apply
-    {
-        std::string cppType = "double";
-        if (cppType == "long double")
-        {
-            cppType = "longdouble";
-        }
-        mst_double_field.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier(cppType, false));
-    }
+    mst_double_field.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier("double", false));
 
     MD5 double_field_hash("double_field");
     for(int i = 0; i < 4; ++i)
@@ -908,14 +848,7 @@ const TypeObject* GetMinimalStructTypeObject()
     mst_long_double_field.common().member_flags().IS_MUST_UNDERSTAND(false);
     mst_long_double_field.common().member_flags().IS_KEY(false);
     mst_long_double_field.common().member_flags().IS_DEFAULT(false); // Doesn't apply
-    {
-        std::string cppType = "long double";
-        if (cppType == "long double")
-        {
-            cppType = "longdouble";
-        }
-        mst_long_double_field.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier(cppType, false));
-    }
+    mst_long_double_field.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier("longdouble", false));
 
     MD5 long_double_field_hash("long_double_field");
     for(int i = 0; i < 4; ++i)
@@ -933,14 +866,7 @@ const TypeObject* GetMinimalStructTypeObject()
     mst_bool_field.common().member_flags().IS_MUST_UNDERSTAND(false);
     mst_bool_field.common().member_flags().IS_KEY(false);
     mst_bool_field.common().member_flags().IS_DEFAULT(false); // Doesn't apply
-    {
-        std::string cppType = "bool";
-        if (cppType == "long double")
-        {
-            cppType = "longdouble";
-        }
-        mst_bool_field.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier(cppType, false));
-    }
+    mst_bool_field.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier("bool", false));
 
     MD5 bool_field_hash("bool_field");
     for(int i = 0; i < 4; ++i)
@@ -1063,14 +989,7 @@ const TypeObject* GetCompleteStructTypeObject()
     cst_char_field.common().member_flags().IS_MUST_UNDERSTAND(false);
     cst_char_field.common().member_flags().IS_KEY(false);
     cst_char_field.common().member_flags().IS_DEFAULT(false); // Doesn't apply
-    {
-        std::string cppType = "char";
-        if (cppType == "long double")
-        {
-            cppType = "longdouble";
-        }
-        cst_char_field.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier(cppType, false));
-    }
+    cst_char_field.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier("char", false));
 
     cst_char_field.detail().name("char_field");
 
@@ -1085,14 +1004,7 @@ const TypeObject* GetCompleteStructTypeObject()
     cst_uint8_field.common().member_flags().IS_MUST_UNDERSTAND(false);
     cst_uint8_field.common().member_flags().IS_KEY(false);
     cst_uint8_field.common().member_flags().IS_DEFAULT(false); // Doesn't apply
-    {
-        std::string cppType = "uint8_t";
-        if (cppType == "long double")
-        {
-            cppType = "longdouble";
-        }
-        cst_uint8_field.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier(cppType, false));
-    }
+    cst_uint8_field.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier("uint8_t", false));
 
     cst_uint8_field.detail().name("uint8_field");
 
@@ -1107,14 +1019,7 @@ const TypeObject* GetCompleteStructTypeObject()
     cst_int16_field.common().member_flags().IS_MUST_UNDERSTAND(false);
     cst_int16_field.common().member_flags().IS_KEY(false);
     cst_int16_field.common().member_flags().IS_DEFAULT(false); // Doesn't apply
-    {
-        std::string cppType = "int16_t";
-        if (cppType == "long double")
-        {
-            cppType = "longdouble";
-        }
-        cst_int16_field.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier(cppType, false));
-    }
+    cst_int16_field.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier("int16_t", false));
 
     cst_int16_field.detail().name("int16_field");
 
@@ -1129,14 +1034,7 @@ const TypeObject* GetCompleteStructTypeObject()
     cst_uint16_field.common().member_flags().IS_MUST_UNDERSTAND(false);
     cst_uint16_field.common().member_flags().IS_KEY(false);
     cst_uint16_field.common().member_flags().IS_DEFAULT(false); // Doesn't apply
-    {
-        std::string cppType = "uint16_t";
-        if (cppType == "long double")
-        {
-            cppType = "longdouble";
-        }
-        cst_uint16_field.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier(cppType, false));
-    }
+    cst_uint16_field.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier("uint16_t", false));
 
     cst_uint16_field.detail().name("uint16_field");
 
@@ -1151,14 +1049,7 @@ const TypeObject* GetCompleteStructTypeObject()
     cst_int32_field.common().member_flags().IS_MUST_UNDERSTAND(false);
     cst_int32_field.common().member_flags().IS_KEY(false);
     cst_int32_field.common().member_flags().IS_DEFAULT(false); // Doesn't apply
-    {
-        std::string cppType = "int32_t";
-        if (cppType == "long double")
-        {
-            cppType = "longdouble";
-        }
-        cst_int32_field.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier(cppType, false));
-    }
+    cst_int32_field.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier("int32_t", false));
 
     cst_int32_field.detail().name("int32_field");
 
@@ -1173,14 +1064,7 @@ const TypeObject* GetCompleteStructTypeObject()
     cst_uint32_field.common().member_flags().IS_MUST_UNDERSTAND(false);
     cst_uint32_field.common().member_flags().IS_KEY(false);
     cst_uint32_field.common().member_flags().IS_DEFAULT(false); // Doesn't apply
-    {
-        std::string cppType = "uint32_t";
-        if (cppType == "long double")
-        {
-            cppType = "longdouble";
-        }
-        cst_uint32_field.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier(cppType, false));
-    }
+    cst_uint32_field.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier("uint32_t", false));
 
     cst_uint32_field.detail().name("uint32_field");
 
@@ -1195,14 +1079,7 @@ const TypeObject* GetCompleteStructTypeObject()
     cst_int64_field.common().member_flags().IS_MUST_UNDERSTAND(false);
     cst_int64_field.common().member_flags().IS_KEY(false);
     cst_int64_field.common().member_flags().IS_DEFAULT(false); // Doesn't apply
-    {
-        std::string cppType = "int64_t";
-        if (cppType == "long double")
-        {
-            cppType = "longdouble";
-        }
-        cst_int64_field.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier(cppType, false));
-    }
+    cst_int64_field.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier("int64_t", false));
 
     cst_int64_field.detail().name("int64_field");
 
@@ -1217,14 +1094,7 @@ const TypeObject* GetCompleteStructTypeObject()
     cst_uint64_field.common().member_flags().IS_MUST_UNDERSTAND(false);
     cst_uint64_field.common().member_flags().IS_KEY(false);
     cst_uint64_field.common().member_flags().IS_DEFAULT(false); // Doesn't apply
-    {
-        std::string cppType = "uint64_t";
-        if (cppType == "long double")
-        {
-            cppType = "longdouble";
-        }
-        cst_uint64_field.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier(cppType, false));
-    }
+    cst_uint64_field.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier("uint64_t", false));
 
     cst_uint64_field.detail().name("uint64_field");
 
@@ -1239,14 +1109,7 @@ const TypeObject* GetCompleteStructTypeObject()
     cst_float_field.common().member_flags().IS_MUST_UNDERSTAND(false);
     cst_float_field.common().member_flags().IS_KEY(false);
     cst_float_field.common().member_flags().IS_DEFAULT(false); // Doesn't apply
-    {
-        std::string cppType = "float";
-        if (cppType == "long double")
-        {
-            cppType = "longdouble";
-        }
-        cst_float_field.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier(cppType, false));
-    }
+    cst_float_field.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier("float", false));
 
     cst_float_field.detail().name("float_field");
 
@@ -1261,14 +1124,7 @@ const TypeObject* GetCompleteStructTypeObject()
     cst_double_field.common().member_flags().IS_MUST_UNDERSTAND(false);
     cst_double_field.common().member_flags().IS_KEY(false);
     cst_double_field.common().member_flags().IS_DEFAULT(false); // Doesn't apply
-    {
-        std::string cppType = "double";
-        if (cppType == "long double")
-        {
-            cppType = "longdouble";
-        }
-        cst_double_field.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier(cppType, false));
-    }
+    cst_double_field.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier("double", false));
 
     cst_double_field.detail().name("double_field");
 
@@ -1283,14 +1139,7 @@ const TypeObject* GetCompleteStructTypeObject()
     cst_long_double_field.common().member_flags().IS_MUST_UNDERSTAND(false);
     cst_long_double_field.common().member_flags().IS_KEY(false);
     cst_long_double_field.common().member_flags().IS_DEFAULT(false); // Doesn't apply
-    {
-        std::string cppType = "long double";
-        if (cppType == "long double")
-        {
-            cppType = "longdouble";
-        }
-        cst_long_double_field.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier(cppType, false));
-    }
+    cst_long_double_field.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier("longdouble", false));
 
     cst_long_double_field.detail().name("long_double_field");
 
@@ -1305,14 +1154,7 @@ const TypeObject* GetCompleteStructTypeObject()
     cst_bool_field.common().member_flags().IS_MUST_UNDERSTAND(false);
     cst_bool_field.common().member_flags().IS_KEY(false);
     cst_bool_field.common().member_flags().IS_DEFAULT(false); // Doesn't apply
-    {
-        std::string cppType = "bool";
-        if (cppType == "long double")
-        {
-            cppType = "longdouble";
-        }
-        cst_bool_field.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier(cppType, false));
-    }
+    cst_bool_field.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier("bool", false));
 
     cst_bool_field.detail().name("bool_field");
 
@@ -1367,12 +1209,10 @@ const TypeObject* GetCompleteStructTypeObject()
     type_object->complete().struct_type().header().detail().type_name("StructType");
     // TODO inheritance
 
-
     {
         AppliedAnnotation ann;
         //ann.annotation_typeid(GetnestedIdentifier(true));
         ann.annotation_typeid(*TypeObjectFactory::get_instance()->get_type_identifier_trying_complete("nested"));
-
         {
             AppliedAnnotationParameter annParam;
             MD5 message_hash("value");
@@ -1475,14 +1315,7 @@ const TypeObject* GetMinimalContentFilterTestTypeObject()
     mst_char_field.common().member_flags().IS_MUST_UNDERSTAND(false);
     mst_char_field.common().member_flags().IS_KEY(false);
     mst_char_field.common().member_flags().IS_DEFAULT(false); // Doesn't apply
-    {
-        std::string cppType = "char";
-        if (cppType == "long double")
-        {
-            cppType = "longdouble";
-        }
-        mst_char_field.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier(cppType, false));
-    }
+    mst_char_field.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier("char", false));
 
     MD5 char_field_hash("char_field");
     for(int i = 0; i < 4; ++i)
@@ -1500,14 +1333,7 @@ const TypeObject* GetMinimalContentFilterTestTypeObject()
     mst_uint8_field.common().member_flags().IS_MUST_UNDERSTAND(false);
     mst_uint8_field.common().member_flags().IS_KEY(false);
     mst_uint8_field.common().member_flags().IS_DEFAULT(false); // Doesn't apply
-    {
-        std::string cppType = "uint8_t";
-        if (cppType == "long double")
-        {
-            cppType = "longdouble";
-        }
-        mst_uint8_field.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier(cppType, false));
-    }
+    mst_uint8_field.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier("uint8_t", false));
 
     MD5 uint8_field_hash("uint8_field");
     for(int i = 0; i < 4; ++i)
@@ -1525,14 +1351,7 @@ const TypeObject* GetMinimalContentFilterTestTypeObject()
     mst_int16_field.common().member_flags().IS_MUST_UNDERSTAND(false);
     mst_int16_field.common().member_flags().IS_KEY(false);
     mst_int16_field.common().member_flags().IS_DEFAULT(false); // Doesn't apply
-    {
-        std::string cppType = "int16_t";
-        if (cppType == "long double")
-        {
-            cppType = "longdouble";
-        }
-        mst_int16_field.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier(cppType, false));
-    }
+    mst_int16_field.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier("int16_t", false));
 
     MD5 int16_field_hash("int16_field");
     for(int i = 0; i < 4; ++i)
@@ -1550,14 +1369,7 @@ const TypeObject* GetMinimalContentFilterTestTypeObject()
     mst_uint16_field.common().member_flags().IS_MUST_UNDERSTAND(false);
     mst_uint16_field.common().member_flags().IS_KEY(false);
     mst_uint16_field.common().member_flags().IS_DEFAULT(false); // Doesn't apply
-    {
-        std::string cppType = "uint16_t";
-        if (cppType == "long double")
-        {
-            cppType = "longdouble";
-        }
-        mst_uint16_field.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier(cppType, false));
-    }
+    mst_uint16_field.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier("uint16_t", false));
 
     MD5 uint16_field_hash("uint16_field");
     for(int i = 0; i < 4; ++i)
@@ -1575,14 +1387,7 @@ const TypeObject* GetMinimalContentFilterTestTypeObject()
     mst_int32_field.common().member_flags().IS_MUST_UNDERSTAND(false);
     mst_int32_field.common().member_flags().IS_KEY(false);
     mst_int32_field.common().member_flags().IS_DEFAULT(false); // Doesn't apply
-    {
-        std::string cppType = "int32_t";
-        if (cppType == "long double")
-        {
-            cppType = "longdouble";
-        }
-        mst_int32_field.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier(cppType, false));
-    }
+    mst_int32_field.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier("int32_t", false));
 
     MD5 int32_field_hash("int32_field");
     for(int i = 0; i < 4; ++i)
@@ -1600,14 +1405,7 @@ const TypeObject* GetMinimalContentFilterTestTypeObject()
     mst_uint32_field.common().member_flags().IS_MUST_UNDERSTAND(false);
     mst_uint32_field.common().member_flags().IS_KEY(false);
     mst_uint32_field.common().member_flags().IS_DEFAULT(false); // Doesn't apply
-    {
-        std::string cppType = "uint32_t";
-        if (cppType == "long double")
-        {
-            cppType = "longdouble";
-        }
-        mst_uint32_field.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier(cppType, false));
-    }
+    mst_uint32_field.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier("uint32_t", false));
 
     MD5 uint32_field_hash("uint32_field");
     for(int i = 0; i < 4; ++i)
@@ -1625,14 +1423,7 @@ const TypeObject* GetMinimalContentFilterTestTypeObject()
     mst_int64_field.common().member_flags().IS_MUST_UNDERSTAND(false);
     mst_int64_field.common().member_flags().IS_KEY(false);
     mst_int64_field.common().member_flags().IS_DEFAULT(false); // Doesn't apply
-    {
-        std::string cppType = "int64_t";
-        if (cppType == "long double")
-        {
-            cppType = "longdouble";
-        }
-        mst_int64_field.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier(cppType, false));
-    }
+    mst_int64_field.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier("int64_t", false));
 
     MD5 int64_field_hash("int64_field");
     for(int i = 0; i < 4; ++i)
@@ -1650,14 +1441,7 @@ const TypeObject* GetMinimalContentFilterTestTypeObject()
     mst_uint64_field.common().member_flags().IS_MUST_UNDERSTAND(false);
     mst_uint64_field.common().member_flags().IS_KEY(false);
     mst_uint64_field.common().member_flags().IS_DEFAULT(false); // Doesn't apply
-    {
-        std::string cppType = "uint64_t";
-        if (cppType == "long double")
-        {
-            cppType = "longdouble";
-        }
-        mst_uint64_field.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier(cppType, false));
-    }
+    mst_uint64_field.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier("uint64_t", false));
 
     MD5 uint64_field_hash("uint64_field");
     for(int i = 0; i < 4; ++i)
@@ -1675,14 +1459,7 @@ const TypeObject* GetMinimalContentFilterTestTypeObject()
     mst_float_field.common().member_flags().IS_MUST_UNDERSTAND(false);
     mst_float_field.common().member_flags().IS_KEY(false);
     mst_float_field.common().member_flags().IS_DEFAULT(false); // Doesn't apply
-    {
-        std::string cppType = "float";
-        if (cppType == "long double")
-        {
-            cppType = "longdouble";
-        }
-        mst_float_field.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier(cppType, false));
-    }
+    mst_float_field.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier("float", false));
 
     MD5 float_field_hash("float_field");
     for(int i = 0; i < 4; ++i)
@@ -1700,14 +1477,7 @@ const TypeObject* GetMinimalContentFilterTestTypeObject()
     mst_double_field.common().member_flags().IS_MUST_UNDERSTAND(false);
     mst_double_field.common().member_flags().IS_KEY(false);
     mst_double_field.common().member_flags().IS_DEFAULT(false); // Doesn't apply
-    {
-        std::string cppType = "double";
-        if (cppType == "long double")
-        {
-            cppType = "longdouble";
-        }
-        mst_double_field.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier(cppType, false));
-    }
+    mst_double_field.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier("double", false));
 
     MD5 double_field_hash("double_field");
     for(int i = 0; i < 4; ++i)
@@ -1725,14 +1495,7 @@ const TypeObject* GetMinimalContentFilterTestTypeObject()
     mst_long_double_field.common().member_flags().IS_MUST_UNDERSTAND(false);
     mst_long_double_field.common().member_flags().IS_KEY(false);
     mst_long_double_field.common().member_flags().IS_DEFAULT(false); // Doesn't apply
-    {
-        std::string cppType = "long double";
-        if (cppType == "long double")
-        {
-            cppType = "longdouble";
-        }
-        mst_long_double_field.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier(cppType, false));
-    }
+    mst_long_double_field.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier("longdouble", false));
 
     MD5 long_double_field_hash("long_double_field");
     for(int i = 0; i < 4; ++i)
@@ -1750,14 +1513,7 @@ const TypeObject* GetMinimalContentFilterTestTypeObject()
     mst_bool_field.common().member_flags().IS_MUST_UNDERSTAND(false);
     mst_bool_field.common().member_flags().IS_KEY(false);
     mst_bool_field.common().member_flags().IS_DEFAULT(false); // Doesn't apply
-    {
-        std::string cppType = "bool";
-        if (cppType == "long double")
-        {
-            cppType = "longdouble";
-        }
-        mst_bool_field.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier(cppType, false));
-    }
+    mst_bool_field.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier("bool", false));
 
     MD5 bool_field_hash("bool_field");
     for(int i = 0; i < 4; ++i)
@@ -2809,14 +2565,7 @@ const TypeObject* GetCompleteContentFilterTestTypeObject()
     cst_char_field.common().member_flags().IS_MUST_UNDERSTAND(false);
     cst_char_field.common().member_flags().IS_KEY(false);
     cst_char_field.common().member_flags().IS_DEFAULT(false); // Doesn't apply
-    {
-        std::string cppType = "char";
-        if (cppType == "long double")
-        {
-            cppType = "longdouble";
-        }
-        cst_char_field.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier(cppType, false));
-    }
+    cst_char_field.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier("char", false));
 
     cst_char_field.detail().name("char_field");
 
@@ -2831,14 +2580,7 @@ const TypeObject* GetCompleteContentFilterTestTypeObject()
     cst_uint8_field.common().member_flags().IS_MUST_UNDERSTAND(false);
     cst_uint8_field.common().member_flags().IS_KEY(false);
     cst_uint8_field.common().member_flags().IS_DEFAULT(false); // Doesn't apply
-    {
-        std::string cppType = "uint8_t";
-        if (cppType == "long double")
-        {
-            cppType = "longdouble";
-        }
-        cst_uint8_field.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier(cppType, false));
-    }
+    cst_uint8_field.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier("uint8_t", false));
 
     cst_uint8_field.detail().name("uint8_field");
 
@@ -2853,14 +2595,7 @@ const TypeObject* GetCompleteContentFilterTestTypeObject()
     cst_int16_field.common().member_flags().IS_MUST_UNDERSTAND(false);
     cst_int16_field.common().member_flags().IS_KEY(false);
     cst_int16_field.common().member_flags().IS_DEFAULT(false); // Doesn't apply
-    {
-        std::string cppType = "int16_t";
-        if (cppType == "long double")
-        {
-            cppType = "longdouble";
-        }
-        cst_int16_field.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier(cppType, false));
-    }
+    cst_int16_field.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier("int16_t", false));
 
     cst_int16_field.detail().name("int16_field");
 
@@ -2875,14 +2610,7 @@ const TypeObject* GetCompleteContentFilterTestTypeObject()
     cst_uint16_field.common().member_flags().IS_MUST_UNDERSTAND(false);
     cst_uint16_field.common().member_flags().IS_KEY(false);
     cst_uint16_field.common().member_flags().IS_DEFAULT(false); // Doesn't apply
-    {
-        std::string cppType = "uint16_t";
-        if (cppType == "long double")
-        {
-            cppType = "longdouble";
-        }
-        cst_uint16_field.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier(cppType, false));
-    }
+    cst_uint16_field.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier("uint16_t", false));
 
     cst_uint16_field.detail().name("uint16_field");
 
@@ -2897,14 +2625,7 @@ const TypeObject* GetCompleteContentFilterTestTypeObject()
     cst_int32_field.common().member_flags().IS_MUST_UNDERSTAND(false);
     cst_int32_field.common().member_flags().IS_KEY(false);
     cst_int32_field.common().member_flags().IS_DEFAULT(false); // Doesn't apply
-    {
-        std::string cppType = "int32_t";
-        if (cppType == "long double")
-        {
-            cppType = "longdouble";
-        }
-        cst_int32_field.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier(cppType, false));
-    }
+    cst_int32_field.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier("int32_t", false));
 
     cst_int32_field.detail().name("int32_field");
 
@@ -2919,14 +2640,7 @@ const TypeObject* GetCompleteContentFilterTestTypeObject()
     cst_uint32_field.common().member_flags().IS_MUST_UNDERSTAND(false);
     cst_uint32_field.common().member_flags().IS_KEY(false);
     cst_uint32_field.common().member_flags().IS_DEFAULT(false); // Doesn't apply
-    {
-        std::string cppType = "uint32_t";
-        if (cppType == "long double")
-        {
-            cppType = "longdouble";
-        }
-        cst_uint32_field.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier(cppType, false));
-    }
+    cst_uint32_field.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier("uint32_t", false));
 
     cst_uint32_field.detail().name("uint32_field");
 
@@ -2941,14 +2655,7 @@ const TypeObject* GetCompleteContentFilterTestTypeObject()
     cst_int64_field.common().member_flags().IS_MUST_UNDERSTAND(false);
     cst_int64_field.common().member_flags().IS_KEY(false);
     cst_int64_field.common().member_flags().IS_DEFAULT(false); // Doesn't apply
-    {
-        std::string cppType = "int64_t";
-        if (cppType == "long double")
-        {
-            cppType = "longdouble";
-        }
-        cst_int64_field.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier(cppType, false));
-    }
+    cst_int64_field.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier("int64_t", false));
 
     cst_int64_field.detail().name("int64_field");
 
@@ -2963,14 +2670,7 @@ const TypeObject* GetCompleteContentFilterTestTypeObject()
     cst_uint64_field.common().member_flags().IS_MUST_UNDERSTAND(false);
     cst_uint64_field.common().member_flags().IS_KEY(false);
     cst_uint64_field.common().member_flags().IS_DEFAULT(false); // Doesn't apply
-    {
-        std::string cppType = "uint64_t";
-        if (cppType == "long double")
-        {
-            cppType = "longdouble";
-        }
-        cst_uint64_field.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier(cppType, false));
-    }
+    cst_uint64_field.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier("uint64_t", false));
 
     cst_uint64_field.detail().name("uint64_field");
 
@@ -2985,14 +2685,7 @@ const TypeObject* GetCompleteContentFilterTestTypeObject()
     cst_float_field.common().member_flags().IS_MUST_UNDERSTAND(false);
     cst_float_field.common().member_flags().IS_KEY(false);
     cst_float_field.common().member_flags().IS_DEFAULT(false); // Doesn't apply
-    {
-        std::string cppType = "float";
-        if (cppType == "long double")
-        {
-            cppType = "longdouble";
-        }
-        cst_float_field.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier(cppType, false));
-    }
+    cst_float_field.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier("float", false));
 
     cst_float_field.detail().name("float_field");
 
@@ -3007,14 +2700,7 @@ const TypeObject* GetCompleteContentFilterTestTypeObject()
     cst_double_field.common().member_flags().IS_MUST_UNDERSTAND(false);
     cst_double_field.common().member_flags().IS_KEY(false);
     cst_double_field.common().member_flags().IS_DEFAULT(false); // Doesn't apply
-    {
-        std::string cppType = "double";
-        if (cppType == "long double")
-        {
-            cppType = "longdouble";
-        }
-        cst_double_field.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier(cppType, false));
-    }
+    cst_double_field.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier("double", false));
 
     cst_double_field.detail().name("double_field");
 
@@ -3029,14 +2715,7 @@ const TypeObject* GetCompleteContentFilterTestTypeObject()
     cst_long_double_field.common().member_flags().IS_MUST_UNDERSTAND(false);
     cst_long_double_field.common().member_flags().IS_KEY(false);
     cst_long_double_field.common().member_flags().IS_DEFAULT(false); // Doesn't apply
-    {
-        std::string cppType = "long double";
-        if (cppType == "long double")
-        {
-            cppType = "longdouble";
-        }
-        cst_long_double_field.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier(cppType, false));
-    }
+    cst_long_double_field.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier("longdouble", false));
 
     cst_long_double_field.detail().name("long_double_field");
 
@@ -3051,14 +2730,7 @@ const TypeObject* GetCompleteContentFilterTestTypeObject()
     cst_bool_field.common().member_flags().IS_MUST_UNDERSTAND(false);
     cst_bool_field.common().member_flags().IS_KEY(false);
     cst_bool_field.common().member_flags().IS_DEFAULT(false); // Doesn't apply
-    {
-        std::string cppType = "bool";
-        if (cppType == "long double")
-        {
-            cppType = "longdouble";
-        }
-        cst_bool_field.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier(cppType, false));
-    }
+    cst_bool_field.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier("bool", false));
 
     cst_bool_field.detail().name("bool_field");
 
