@@ -100,10 +100,7 @@ include(${PROJECT_SOURCE_DIR}/cmake/common/check_configuration.cmake)
 set(FORCE_CXX "11" CACHE STRING "C++ standard fulfillment selection")
 check_stdcxx(${FORCE_CXX})
 
-# Test endianness
-include(TestBigEndian)
-test_big_endian(BIG_ENDIAN)
-set(FASTDDS_IS_BIG_ENDIAN_TARGET ${BIG_ENDIAN})
+check_endianness()
 
 ###############################################################################
 # Installation paths

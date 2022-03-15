@@ -118,3 +118,18 @@ function(check_stdcxx enforced_level)
     endwhile()    
 
 endfunction()
+
+macro(check_endianness)
+    if(CMAKE_CXX_BYTE_ORDER)
+        if(CMAKE_CXX_BYTE_ORDER STREQUAL "BIG_ENDIAN")
+            set(FASTDDS_IS_BIG_ENDIAN_TARGET 1)
+        else()
+            set(FASTDDS_IS_BIG_ENDIAN_TARGET 0)
+        endif()
+    else()
+        # Test endianness
+        include(TestBigEndian)
+        test_big_endian(BIG_ENDIAN)
+        set(FASTDDS_IS_BIG_ENDIAN_TARGET ${BIG_ENDIAN})
+    endif()
+endmacro()
