@@ -192,6 +192,20 @@ bool SecurityManager::init(
             }
         }
 
+        const auto log_info_message = [this](const char* msg)
+                {
+                    if (logging_plugin_)
+                    {
+                        SecurityException logging_exception;
+                        logging_plugin_->log(LoggingLevel::INFORMATIONAL_LEVEL, msg, "SecurityManager,init",
+                                logging_exception);
+                    }
+                    else
+                    {
+                        logInfo(SECURITY, msg);
+                    }
+                };
+
         authentication_plugin_ = factory_.create_authentication_plugin(participant_properties);
 
         if (authentication_plugin_ != nullptr)
@@ -283,20 +297,14 @@ bool SecurityManager::init(
                             local_permissions_handle_ = nullptr;
                         }
                     }
-                }
-
-                if (access_plugin_ == nullptr)
-                {
-                    // Read participant properties.
-                    const std::string* property_value = PropertyPolicyHelper::find_property(participant_properties,
-                                    "rtps.participant.rtps_protection_kind");
-                    if (property_value != nullptr && property_value->compare("ENCRYPT") == 0)
+                    else
                     {
-                        attributes.is_rtps_protected = true;
-                        attributes.plugin_participant_attributes |=
-                                PLUGIN_PARTICIPANT_SECURITY_ATTRIBUTES_FLAG_IS_VALID |
-                                PLUGIN_PARTICIPANT_SECURITY_ATTRIBUTES_FLAG_IS_RTPS_ENCRYPTED;
+                        log_info_message(exception.what());
                     }
+                }
+                else
+                {
+                    log_info_message("Access control plugin not configured");
                 }
 
                 if (access_plugin_ == nullptr || local_permissions_handle_ != nullptr)
@@ -319,22 +327,15 @@ bool SecurityManager::init(
                         {
                             assert(!local_participant_crypto_handle_->nil());
                         }
-                    }
-                    else
-                    {
-                        if (logging_plugin_)
-                        {
-                            SecurityException logging_exception;
-                            logging_plugin_->log(LoggingLevel::INFORMATIONAL_LEVEL,
-                                    "Cryptography plugin not configured",
-                                    "SecurityManager,init",
-                                    logging_exception);
-                        }
                         else
                         {
-                            EPROSIMA_LOG_INFO(SECURITY, "Cryptography plugin not configured.");
+                            log_info_message(exception.what());
                         }
                     }
+                }
+                else
+                {
+                    log_info_message("Cryptography plugin not configured");
                 }
 
                 if ((access_plugin_ == nullptr || local_permissions_handle_ != nullptr) &&
@@ -349,18 +350,7 @@ bool SecurityManager::init(
         }
         else
         {
-            if (logging_plugin_)
-            {
-                SecurityException logging_exception;
-                logging_plugin_->log(LoggingLevel::INFORMATIONAL_LEVEL,
-                        "Authentication plugin not configured. Security will be disable",
-                        "SecurityManager,init",
-                        logging_exception);
-            }
-            else
-            {
-                EPROSIMA_LOG_INFO(SECURITY, "Authentication plugin not configured. Security will be disable");
-            }
+            log_info_message("Authentication plugin not configured. Security will be disabled");
         }
     }
     catch (const SecurityException& e)
