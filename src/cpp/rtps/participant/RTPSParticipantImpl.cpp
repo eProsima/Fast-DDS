@@ -58,6 +58,11 @@
 #include <rtps/persistence/PersistenceService.h>
 #include <statistics/rtps/GuidUtils.hpp>
 
+#ifdef ANDROID
+#include <boostconfig.hpp>
+#include <unistd.h>
+#endif // ifdef ANDROID
+
 namespace eprosima {
 namespace fastrtps {
 namespace rtps {
@@ -154,15 +159,22 @@ RTPSParticipantImpl::RTPSParticipantImpl(
         m_network_Factory.RegisterTransport(&descriptor, &m_att.properties);
 
 #ifdef SHM_TRANSPORT_BUILTIN
-        SharedMemTransportDescriptor shm_transport;
-        // We assume (Linux) UDP doubles the user socket buffer size in kernel, so
-        // the equivalent segment size in SHM would be socket buffer size x 2
-        auto segment_size_udp_equivalent =
-                std::max(m_att.sendSocketBufferSize, m_att.listenSocketBufferSize) * 2;
-        shm_transport.segment_size(segment_size_udp_equivalent);
-        // Use same default max_message_size on both UDP and SHM
-        shm_transport.max_message_size(descriptor.max_message_size());
-        has_shm_transport_ |= m_network_Factory.RegisterTransport(&shm_transport);
+#ifdef ANDROID
+        if (access(BOOST_INTERPROCESS_SHARED_DIR_PATH, W_OK) == F_OK)
+        {
+#endif // ifdef ANDROID
+            SharedMemTransportDescriptor shm_transport;
+            // We assume (Linux) UDP doubles the user socket buffer size in kernel, so
+            // the equivalent segment size in SHM would be socket buffer size x 2
+            auto segment_size_udp_equivalent =
+                    std::max(m_att.sendSocketBufferSize, m_att.listenSocketBufferSize) * 2;
+            shm_transport.segment_size(segment_size_udp_equivalent);
+            // Use same default max_message_size on both UDP and SHM
+            shm_transport.max_message_size(descriptor.max_message_size());
+            has_shm_transport_ |= m_network_Factory.RegisterTransport(&shm_transport);
+#ifdef ANDROID
+        }
+#endif
 #endif // ifdef SHM_TRANSPORT_BUILTIN
     }
 

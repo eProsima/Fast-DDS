@@ -41,6 +41,10 @@
 
 #include <statistics/rtps/StatisticsBase.hpp>
 
+#ifdef ANDROID
+#include <boostconfig.hpp>
+#include <unistd.h>
+#endif // ifdef ANDROID
 
 namespace eprosima {
 namespace fastrtps {
@@ -118,7 +122,18 @@ void RTPSReader::init(
         fixed_payload_size_ = mp_history->m_att.payloadMaxSize;
     }
 
-    if (att.endpoint.data_sharing_configuration().kind() != OFF)
+    bool create_datasharing_notification = (att.endpoint.data_sharing_configuration().kind() != OFF);
+#ifdef ANDROID
+    if (create_datasharing_notification)
+    {
+        if (access(att.endpoint.data_sharing_configuration().shm_directory().c_str(), W_OK) != F_OK)
+        {
+            create_datasharing_notification = false;
+            logWarning(RTPS_READER, "Disabling DataSharing due to lack of permissions on folder");
+        }
+    }
+#endif // ifdef ANDROID
+    if (create_datasharing_notification)
     {
         using std::placeholders::_1;
         std::shared_ptr<DataSharingNotification> notification =
@@ -132,7 +147,6 @@ void RTPSReader::init(
                         att.endpoint.data_sharing_configuration().shm_directory(),
                         att.matched_writers_allocation,
                         this));
-
             // We can start the listener here, as no writer can be matched already,
             // so no notification will occur until the non-virtual instance is constructed.
             // But we need to stop the listener in the non-virtual instance destructor.
