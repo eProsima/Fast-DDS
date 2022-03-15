@@ -27,11 +27,12 @@ minor release of the product:
 * Complete support for dynamic network interfaces
 * ReadCondition implementation
 * Secure Discovery Server
-* DataReader and DataWriter DDS API implementation:
+* DataReader, DataWriter and DomainParticipant DDS API implementation:
     - `DataReader::get_sample_lost_status`
     - `DataReader::lookup_instance`
     - `DataWriter::get_key_value`
     - `DataWriter::write_w_timestamp`
+    - `DomainParticipant::find_topic`
 * Android support
 
 ## Medium term
