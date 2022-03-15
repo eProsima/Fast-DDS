@@ -40,7 +40,7 @@
 using namespace eprosima::fastrtps::rtps;
 using namespace eprosima::fastrtps::rtps::security;
 
-CONSTEXPR int initialization_vector_suffix_length = 8;
+constexpr int initialization_vector_suffix_length = 8;
 
 static KeyMaterial_AES_GCM_GMAC* find_key(
         KeyMaterial_AES_GCM_GMAC_Seq& keys,
@@ -2183,15 +2183,15 @@ bool AESGCMGMAC_Transform::deserialize_SecureDataTag(
     return true;
 }
 
-CONSTEXPR uint32_t srtps_prefix_length = 4;
+constexpr uint32_t srtps_prefix_length = 4;
 // 4 bytes to serialize length of the body.
-CONSTEXPR uint32_t srtps_postfix_length = 4;
-CONSTEXPR uint32_t sec_prefix_length = 4;
+constexpr uint32_t srtps_postfix_length = 4;
+constexpr uint32_t sec_prefix_length = 4;
 // 4 bytes to serialize length of the body.
-CONSTEXPR uint32_t sec_postfix_length = 4;
-CONSTEXPR uint32_t aesgcmgmac_header_length = 20;
-CONSTEXPR uint32_t aesgcmgmac_body_length_attr = 4 + 3 /*possible alignment*/;
-CONSTEXPR uint32_t aesgcmgmac_common_tag = 16;
+constexpr uint32_t sec_postfix_length = 4;
+constexpr uint32_t aesgcmgmac_header_length = 20;
+constexpr uint32_t aesgcmgmac_body_length_attr = 4 + 3 /*possible alignment*/;
+constexpr uint32_t aesgcmgmac_common_tag = 16;
 
 uint32_t AESGCMGMAC_Transform::calculate_extra_size_for_rtps_message(
         uint32_t number_discovered_participants) const

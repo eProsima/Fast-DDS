@@ -100,14 +100,6 @@ include(${PROJECT_SOURCE_DIR}/cmake/common/check_configuration.cmake)
 set(FORCE_CXX "11" CACHE STRING "C++ standard fulfillment selection")
 check_stdcxx(${FORCE_CXX})
 
-# Check constexpr
-list(FIND CMAKE_CXX_COMPILE_FEATURES "cxx_constexpr" CXX_CONSTEXPR_SUPPORTED)
-if(${CXX_CONSTEXPR_SUPPORTED} GREATER -1)
-    set(HAVE_CXX_CONSTEXPR 1)
-else()
-    set(HAVE_CXX_CONSTEXPR 0)
-endif()
-
 # Test endianness
 include(TestBigEndian)
 test_big_endian(BIG_ENDIAN)

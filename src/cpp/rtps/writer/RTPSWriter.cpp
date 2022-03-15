@@ -295,10 +295,10 @@ bool RTPSWriter::remove_older_changes(
     return at_least_one;
 }
 
-CONSTEXPR uint32_t info_dst_message_length = 16;
-CONSTEXPR uint32_t info_ts_message_length = 12;
-CONSTEXPR uint32_t data_frag_submessage_header_length = 36;
-CONSTEXPR uint32_t heartbeat_message_length = 32;
+constexpr uint32_t info_dst_message_length = 16;
+constexpr uint32_t info_ts_message_length = 12;
+constexpr uint32_t data_frag_submessage_header_length = 36;
+constexpr uint32_t heartbeat_message_length = 32;
 
 uint32_t RTPSWriter::getMaxDataSize()
 {

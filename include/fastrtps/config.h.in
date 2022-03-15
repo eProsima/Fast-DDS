@@ -47,17 +47,6 @@
 #define HAVE_CXX11 @HAVE_CXX11@
 #endif /* ifndef HAVE_CXX11 */
 
-// C++ constexpr support
-#ifndef HAVE_CXX_CONSTEXPR
-#define HAVE_CXX_CONSTEXPR @HAVE_CXX_CONSTEXPR@
-#endif /* ifndef HAVE_CXX_CONSTEXPR */
-
-#if HAVE_CXX_CONSTEXPR
-#define CONSTEXPR constexpr
-#else
-#define CONSTEXPR const
-#endif /* if HAVE_CXX_CONSTEXPR */
-
 // Endianness defines
 #ifndef FASTDDS_IS_BIG_ENDIAN_TARGET
 #define FASTDDS_IS_BIG_ENDIAN_TARGET @FASTDDS_IS_BIG_ENDIAN_TARGET@
