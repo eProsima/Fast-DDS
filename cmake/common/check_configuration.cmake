@@ -73,12 +73,10 @@ endfunction()
 
 function(check_stdcxx enforced_level)
 
-    # keep in mind -std=c++1y support for gcc/clang
-
     # Map force values to cmake features
     set(cxx_levels 23 20 17 14 1Y 11)
     set(cxx_features cxx_std_23 cxx_std_20 cxx_std_17 cxx_std_14 NOTFOUND cxx_std_11)
-    set(gcc_flags -std=c++23 -std=c++20 -std=c++17 -std=c++14 -std=c++1y -std:c++11)
+    set(gcc_flags -std=c++23 -std=c++20 -std=c++17 -std=c++14 -std=c++1y -std=c++11)
     set(cl_flags /std=c++23 /std=c++20 /std=c++17 /std=c++14 NOTFOUND NOTFOUND)
     set(HAVE_CXX HAVE_CXX23 HAVE_CXX20 HAVE_CXX17 HAVE_CXX14 HAVE_CXX1Y HAVE_CXX11)
 
