@@ -2492,32 +2492,6 @@ bool SecurityManager::get_datawriter_sec_attributes(
             returned_value = false;
         }
     }
-    else
-    {
-        // Get properties.
-        const std::string* property_value = PropertyPolicyHelper::find_property(writer_properties,
-                        "rtps.endpoint.submessage_protection_kind");
-
-        if (property_value != nullptr && property_value->compare("ENCRYPT") == 0)
-        {
-            security_attributes.is_submessage_protected = true;
-            security_attributes.plugin_endpoint_attributes |=
-                    PLUGIN_ENDPOINT_SECURITY_ATTRIBUTES_FLAG_IS_VALID |
-                    PLUGIN_ENDPOINT_SECURITY_ATTRIBUTES_FLAG_IS_SUBMESSAGE_ENCRYPTED;
-        }
-
-        property_value = PropertyPolicyHelper::find_property(writer_properties,
-                        "rtps.endpoint.payload_protection_kind");
-
-        if (property_value != nullptr && property_value->compare("ENCRYPT") == 0)
-        {
-            security_attributes.is_payload_protected = true;
-            security_attributes.is_key_protected = true;
-            security_attributes.plugin_endpoint_attributes |=
-                    PLUGIN_ENDPOINT_SECURITY_ATTRIBUTES_FLAG_IS_VALID |
-                    PLUGIN_ENDPOINT_SECURITY_ATTRIBUTES_FLAG_IS_PAYLOAD_ENCRYPTED;
-        }
-    }
 
     return returned_value;
 }
@@ -2698,32 +2672,6 @@ bool SecurityManager::get_datareader_sec_attributes(
         {
             EPROSIMA_LOG_ERROR(SECURITY, "Error. No topic_name." << std::endl);
             returned_value = false;
-        }
-    }
-    else
-    {
-        // Get properties.
-        const std::string* property_value = PropertyPolicyHelper::find_property(reader_properties,
-                        "rtps.endpoint.submessage_protection_kind");
-
-        if (property_value != nullptr && property_value->compare("ENCRYPT") == 0)
-        {
-            security_attributes.is_submessage_protected = true;
-            security_attributes.plugin_endpoint_attributes |=
-                    PLUGIN_ENDPOINT_SECURITY_ATTRIBUTES_FLAG_IS_VALID |
-                    PLUGIN_ENDPOINT_SECURITY_ATTRIBUTES_FLAG_IS_SUBMESSAGE_ENCRYPTED;
-        }
-
-        property_value = PropertyPolicyHelper::find_property(reader_properties,
-                        "rtps.endpoint.payload_protection_kind");
-
-        if (property_value != nullptr && property_value->compare("ENCRYPT") == 0)
-        {
-            security_attributes.is_payload_protected = true;
-            security_attributes.is_key_protected = true;
-            security_attributes.plugin_endpoint_attributes |=
-                    PLUGIN_ENDPOINT_SECURITY_ATTRIBUTES_FLAG_IS_VALID |
-                    PLUGIN_ENDPOINT_SECURITY_ATTRIBUTES_FLAG_IS_PAYLOAD_ENCRYPTED;
         }
     }
 
