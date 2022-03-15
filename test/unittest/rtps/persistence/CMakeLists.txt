@@ -13,6 +13,9 @@
 # limitations under the License.
 
 if(SQLITE3_SUPPORT)
+    # this test includes C sources
+    enable_language(C)
+
     set(PERSISTENCETESTS_SOURCE
         PersistenceTests.cpp
         ${PROJECT_SOURCE_DIR}/src/cpp/rtps/persistence/PersistenceFactory.cpp

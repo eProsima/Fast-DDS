@@ -24,6 +24,12 @@ set(PUBLISHERTESTS_SOURCE PublisherTests.cpp)
 
 file(GLOB DDSSQLFILTER_SOURCES ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/topic/DDSSQLFilter/*.cpp)
 
+#SQLITE3 persistence service sources
+set(sqlite3_source_files
+    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/persistence/sqlite3.c
+    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/persistence/SQLite3PersistenceService.cpp
+    )
+
 set(DATAWRITERTESTS_SOURCE DataWriterTests.cpp
     ${DDSSQLFILTER_SOURCES}
 
@@ -145,8 +151,6 @@ set(DATAWRITERTESTS_SOURCE DataWriterTests.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/participant/RTPSParticipant.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/participant/RTPSParticipantImpl.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/persistence/PersistenceFactory.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/persistence/sqlite3.c
-    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/persistence/SQLite3PersistenceService.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/reader/RTPSReader.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/reader/StatefulPersistentReader.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/reader/StatefulReader.cpp
@@ -196,6 +200,12 @@ set(DATAWRITERTESTS_SOURCE DataWriterTests.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/utils/SystemInfo.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/utils/TimedConditionVariable.cpp
     )
+
+    if(SQLITE3_SUPPORT)
+        list(APPEND DATAWRITERTESTS_SOURCE ${sqlite3_source_files})
+        # sqlite.c requires a C compiler
+        enable_language(C)
+    endif()
 
     if (FASTDDS_STATISTICS)
 

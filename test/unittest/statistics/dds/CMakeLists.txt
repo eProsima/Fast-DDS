@@ -76,6 +76,9 @@ endif()
 
 ## StatisticsDomainParticipantMockTests
 if (SQLITE3_SUPPORT AND FASTDDS_STATISTICS)
+    # this test includes C sources
+    enable_language(C)
+
     set(STATISTICS_DOMAINPARTICIPANT_MOCK_TESTS_SOURCE
         StatisticsDomainParticipantMockTests.cpp
         ${PROJECT_SOURCE_DIR}/src/cpp/dynamic-types/AnnotationDescriptor.cpp
