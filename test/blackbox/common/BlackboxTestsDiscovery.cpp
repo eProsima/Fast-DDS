@@ -117,7 +117,10 @@ TEST_P(Discovery, ParticipantRemoval)
     reader.wait_participant_undiscovery();
 }
 
-TEST(Discovery, StaticDiscovery)
+void static_discovery_test(
+        const std::string& reader_property_value,
+        const std::string& writer_property_value,
+        bool discovery_will_be_success = true)
 {
     char* value = nullptr;
     std::string TOPIC_RANDOM_NUMBER;
@@ -165,6 +168,9 @@ TEST(Discovery, StaticDiscovery)
     }
     int32_t MULTICAST_PORT_RANDOM_NUMBER = stoi(MULTICAST_PORT_RANDOM_NUMBER_STR);
 
+    PropertyPolicy writer_property_policy;
+    writer_property_policy.properties().push_back({"dds.discovery.static_edp.exchange_format", writer_property_value});
+
     PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
 
     LocatorList_t WriterUnicastLocators;
@@ -180,15 +186,26 @@ TEST(Discovery, StaticDiscovery)
     LocatorBuffer.port = static_cast<uint16_t>(MULTICAST_PORT_RANDOM_NUMBER);
     WriterMulticastLocators.push_back(LocatorBuffer);
 
-    writer.history_kind(eprosima::fastrtps::KEEP_ALL_HISTORY_QOS).
-            durability_kind(eprosima::fastrtps::TRANSIENT_LOCAL_DURABILITY_QOS);
+    writer.history_kind(eprosima::fastrtps::KEEP_ALL_HISTORY_QOS)
+            .durability_kind(eprosima::fastrtps::TRANSIENT_LOCAL_DURABILITY_QOS)
+            .property_policy(writer_property_policy);
     writer.static_discovery("file://PubSubWriter.xml").reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).
             unicastLocatorList(WriterUnicastLocators).multicastLocatorList(WriterMulticastLocators).
             setPublisherIDs(1,
             2).setManualTopicName(std::string("BlackBox_StaticDiscovery_") + TOPIC_RANDOM_NUMBER).init();
 
 
-    ASSERT_TRUE(writer.isInitialized());
+    if (discovery_will_be_success)
+    {
+        ASSERT_TRUE(writer.isInitialized());
+    }
+    else
+    {
+        ASSERT_FALSE(writer.isInitialized());
+    }
+
+    PropertyPolicy reader_property_policy;
+    reader_property_policy.properties().push_back({"dds.discovery.static_edp.exchange_format", reader_property_value});
 
     PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
 
@@ -203,29 +220,57 @@ TEST(Discovery, StaticDiscovery)
     ReaderMulticastLocators.push_back(LocatorBuffer);
 
 
-    reader.reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).
-            history_kind(eprosima::fastrtps::KEEP_ALL_HISTORY_QOS).
-            durability_kind(eprosima::fastrtps::TRANSIENT_LOCAL_DURABILITY_QOS);
+    reader.reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS)
+            .history_kind(eprosima::fastrtps::KEEP_ALL_HISTORY_QOS)
+            .durability_kind(eprosima::fastrtps::TRANSIENT_LOCAL_DURABILITY_QOS)
+            .property_policy(reader_property_policy);
     reader.static_discovery("file://PubSubReader.xml").
             unicastLocatorList(ReaderUnicastLocators).multicastLocatorList(ReaderMulticastLocators).
             setSubscriberIDs(3,
             4).setManualTopicName(std::string("BlackBox_StaticDiscovery_") + TOPIC_RANDOM_NUMBER).init();
 
-    ASSERT_TRUE(reader.isInitialized());
+    if (discovery_will_be_success)
+    {
+        ASSERT_TRUE(reader.isInitialized());
 
-    // Because its volatile the durability
-    // Wait for discovery.
-    writer.wait_discovery();
-    reader.wait_discovery();
+        // Because its volatile the durability
+        // Wait for discovery.
+        writer.wait_discovery();
+        reader.wait_discovery();
 
-    auto data = default_helloworld_data_generator();
-    auto expected_data(data);
+        auto data = default_helloworld_data_generator();
+        auto expected_data(data);
 
-    writer.send(data);
-    ASSERT_TRUE(data.empty());
+        writer.send(data);
+        ASSERT_TRUE(data.empty());
 
-    reader.startReception(expected_data);
-    reader.block_for_all();
+        reader.startReception(expected_data);
+        reader.block_for_all();
+    }
+    else
+    {
+        ASSERT_FALSE(reader.isInitialized());
+    }
+}
+
+TEST(Discovery, StaticDiscovery_v1)
+{
+    static_discovery_test("v1", "v1");
+}
+
+TEST(Discovery, StaticDiscovery_v1_Reduced)
+{
+    static_discovery_test("v1_Reduced", "v1_Reduced");
+}
+
+TEST(Discovery, StaticDiscovery_v1_Mixed)
+{
+    static_discovery_test("v1", "v1_Reduced");
+}
+
+TEST(Discovery, StaticDiscovery_wrong_exchange_format)
+{
+    static_discovery_test("wrong", "wrong", false);
 }
 
 /*!

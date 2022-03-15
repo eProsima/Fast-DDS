@@ -367,11 +367,6 @@ public:
         return security_attributes_;
     }
 
-    bool is_security_initialized() const
-    {
-        return m_security_manager_initialized;
-    }
-
     bool is_secure() const
     {
         return m_is_security_active;
@@ -499,6 +494,11 @@ public:
         return m_persistence_guid.guidPrefix;
     }
 
+    bool is_initialized() const
+    {
+        return initialized_;
+    }
+
 private:
 
     //! DomainId
@@ -553,8 +553,6 @@ private:
 #if HAVE_SECURITY
     // Security manager
     security::SecurityManager m_security_manager;
-    // Security manager initialization result
-    bool m_security_manager_initialized = false;
     // Security activation flag
     bool m_is_security_active = false;
 #endif // if HAVE_SECURITY
@@ -572,6 +570,9 @@ private:
     RTPSParticipantListener* mp_participantListener;
     //!Pointer to the user participant
     RTPSParticipant* mp_userParticipant;
+
+    //! Determine if the RTPSParticipantImpl was initialized successfully.
+    bool initialized_ = false;
 
     RTPSParticipantImpl& operator =(
             const RTPSParticipantImpl&) = delete;

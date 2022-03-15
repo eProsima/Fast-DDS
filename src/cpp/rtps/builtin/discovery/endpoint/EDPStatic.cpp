@@ -40,6 +40,59 @@ namespace eprosima {
 namespace fastrtps {
 namespace rtps {
 
+const char* exchange_format_property_name = "dds.discovery.static_edp.exchange_format";
+const char* exchange_format_property_value_v1 = "v1";
+const char* exchange_format_property_value_v1_reduced = "v1_Reduced";
+
+/**
+ * Class Property, used to read and write the strings from the properties used to transmit the EntityId_t.
+ */
+class EDPStaticProperty
+{
+public:
+
+    EDPStaticProperty()
+        : m_userId(0)
+    {
+    }
+
+    ~EDPStaticProperty()
+    {
+    }
+
+    //!Endpoint type
+    std::string m_endpointType;
+    //!Status
+    std::string m_status;
+    //!User ID as string
+    std::string m_userIdStr;
+    //!User ID
+    uint16_t m_userId;
+    //!Entity ID
+    EntityId_t m_entityId;
+
+    /**
+     * Convert information to a property
+     * @param type Type of endpoint
+     * @param status Status of the endpoint
+     * @param id User Id
+     * @param ent EntityId
+     * @return Pair of two strings.
+     */
+    static std::pair<std::string, std::string> toProperty(
+            const EDPStatic::ExchangeFormat exchange_format,
+            std::string type,
+            std::string status,
+            uint16_t id,
+            const EntityId_t& ent);
+    /**
+     * @param in_property Input property-
+     * @return True if correctly read
+     */
+    bool fromProperty(
+            std::pair<std::string, std::string> in_property);
+};
+
 
 EDPStatic::EDPStatic(
         PDP* p,
@@ -80,10 +133,33 @@ bool EDPStatic::initEDP(
         returned_value =  (this->mp_edpXML->loadXMLFile(file_name) == xmlparser::XMLP_ret::XML_OK);
     }
 
+    // Check there is a Participant's property changing the exchange format.
+    for (auto& property : mp_RTPSParticipant->getAttributes().properties.properties())
+    {
+        if (0 == property.name().compare(exchange_format_property_name))
+        {
+            if (0 == property.value().compare(exchange_format_property_value_v1_reduced))
+            {
+                exchange_format_ = ExchangeFormat::v1_Reduced;
+            }
+            else if (0 == property.value().compare(exchange_format_property_value_v1))
+            {
+                exchange_format_ = ExchangeFormat::v1;
+            }
+            else
+            {
+                returned_value = false;
+            }
+
+            break;
+        }
+    }
+
     return returned_value;
 }
 
 std::pair<std::string, std::string> EDPStaticProperty::toProperty(
+        const EDPStatic::ExchangeFormat exchange_format,
         std::string type,
         std::string status,
         uint16_t id,
@@ -91,14 +167,86 @@ std::pair<std::string, std::string> EDPStaticProperty::toProperty(
 {
     std::pair<std::string, std::string> prop;
     std::stringstream ss;
-    ss << "eProsimaEDPStatic_" << type << "_" << status << "_ID_" << id;
+    switch (exchange_format)
+    {
+        case EDPStatic::ExchangeFormat::v1_Reduced:
+            ss << "EDS_";
+            if (0 == type.compare("Reader"))
+            {
+                ss << "R";
+            }
+            else
+            {
+                ss << "W";
+            }
+            if (0 == status.compare("ALIVE"))
+            {
+                ss << "A_";
+            }
+            else
+            {
+                ss << "E_";
+            }
+            ss << id;
+            break;
+        case EDPStatic::ExchangeFormat::v1:
+        default:
+            ss << "eProsimaEDPStatic_" << type << "_" << status << "_ID_" << id;
+            break;
+    }
     prop.first = ss.str();
     ss.clear();
     ss.str(std::string());
-    ss << (int)ent.value[0] << ".";
-    ss << (int)ent.value[1] << ".";
-    ss << (int)ent.value[2] << ".";
-    ss << (int)ent.value[3];
+    bool add_dot = false;
+    switch (exchange_format)
+    {
+        case EDPStatic::ExchangeFormat::v1_Reduced:
+            if (0 != ent.value[0])
+            {
+                ss << (int)ent.value[0];
+                add_dot = true;
+            }
+            if (add_dot || 0 != ent.value[1])
+            {
+                if (add_dot)
+                {
+                    ss << ".";
+                }
+                else
+                {
+                    add_dot = true;
+                }
+                ss << (int)ent.value[1];
+            }
+            if (add_dot || 0 != ent.value[2])
+            {
+                if (add_dot)
+                {
+                    ss << ".";
+                }
+                else
+                {
+                    add_dot = true;
+                }
+                ss << (int)ent.value[2];
+            }
+            if (add_dot || 0 != ent.value[3])
+            {
+                if (add_dot)
+                {
+                    ss << ".";
+                }
+                ss << (int)ent.value[3];
+            }
+            break;
+        case EDPStatic::ExchangeFormat::v1:
+        default:
+            ss << (int)ent.value[0] << ".";
+            ss << (int)ent.value[1] << ".";
+            ss << (int)ent.value[2] << ".";
+            ss << (int)ent.value[3];
+            break;
+    }
     prop.second = ss.str();
     return prop;
 }
@@ -124,6 +272,53 @@ bool EDPStaticProperty::fromProperty(
         m_entityId.value[2] = (octet)c; m_entityId.value[3] = (octet)d;
         return true;
     }
+    else if (0 == prop.first.compare(0, 4, "EDS_"))
+    {
+        if (0 == prop.first.compare(4, 1, "R"))
+        {
+            this->m_endpointType = "Reader";
+        }
+        else if (0 == prop.first.compare(4, 1, "W"))
+        {
+            this->m_endpointType = "Writer";
+        }
+        else
+        {
+            return false;
+        }
+        if (0 == prop.first.compare(5, 1, "A"))
+        {
+            this->m_status = "ALIVE";
+        }
+        else if (0 == prop.first.compare(5, 1, "E"))
+        {
+            this->m_status = "ENDED";
+        }
+        else
+        {
+            return false;
+        }
+        this->m_userIdStr = prop.first.substr(7, 100);
+        std::stringstream ss;
+        ss << m_userIdStr;
+        ss >> m_userId;
+        ss.clear();
+        ss.str(std::string());
+        ss << prop.second;
+        size_t count = std::count(prop.second.begin(), prop.second.end(), '.');
+        int value = 0;
+        char ch = 0;
+        for (size_t it = 0; it <= count; ++it)
+        {
+            ss >> value;
+            m_entityId.value[3 - (count - it)] = (octet)value;
+            if (it != count)
+            {
+                ss >> ch;
+            }
+        }
+        return true;
+    }
     return false;
 }
 
@@ -135,8 +330,8 @@ bool EDPStatic::processLocalReaderProxyData(
     mp_PDP->getMutex()->lock();
     //Add the property list entry to our local pdp
     ParticipantProxyData* localpdata = this->mp_PDP->getLocalParticipantProxyData();
-    localpdata->m_properties.push_back(EDPStaticProperty::toProperty("Reader", "ALIVE", rdata->userDefinedId(),
-            rdata->guid().entityId));
+    localpdata->m_properties.push_back(EDPStaticProperty::toProperty(exchange_format_, "Reader", "ALIVE",
+            rdata->userDefinedId(), rdata->guid().entityId));
     mp_PDP->getMutex()->unlock();
     this->mp_PDP->announceParticipantState(true);
     return true;
@@ -150,7 +345,7 @@ bool EDPStatic::processLocalWriterProxyData(
     mp_PDP->getMutex()->lock();
     //Add the property list entry to our local pdp
     ParticipantProxyData* localpdata = this->mp_PDP->getLocalParticipantProxyData();
-    localpdata->m_properties.push_back(EDPStaticProperty::toProperty("Writer", "ALIVE",
+    localpdata->m_properties.push_back(EDPStaticProperty::toProperty(exchange_format_, "Writer", "ALIVE",
             wdata->userDefinedId(), wdata->guid().entityId));
     mp_PDP->getMutex()->unlock();
     this->mp_PDP->announceParticipantState(true);
@@ -170,7 +365,7 @@ bool EDPStatic::removeLocalReader(
         {
             if (staticproperty.m_entityId == R->getGuid().entityId)
             {
-                auto new_property = EDPStaticProperty::toProperty("Reader", "ENDED",
+                auto new_property = EDPStaticProperty::toProperty(exchange_format_, "Reader", "ENDED",
                                 R->getAttributes().getUserDefinedID(), R->getGuid().entityId);
                 if (!pit->modify(new_property))
                 {
@@ -197,7 +392,7 @@ bool EDPStatic::removeLocalWriter(
         {
             if (staticproperty.m_entityId == W->getGuid().entityId)
             {
-                auto new_property = EDPStaticProperty::toProperty("Writer", "ENDED",
+                auto new_property = EDPStaticProperty::toProperty(exchange_format_, "Writer", "ENDED",
                                 W->getAttributes().getUserDefinedID(), W->getGuid().entityId);
                 if (!pit->modify(new_property))
                 {
@@ -281,8 +476,8 @@ void EDPStatic::assignRemoteEndpoints(
             }
             else
             {
-                logWarning(RTPS_EDP, "Property with type: " << staticproperty.m_endpointType
-                                                            << " and status " << staticproperty.m_status <<
+                logWarning(RTPS_EDP, "EDPStaticProperty with type: " << staticproperty.m_endpointType
+                                                                     << " and status " << staticproperty.m_status <<
                         " not recognized");
             }
         }
