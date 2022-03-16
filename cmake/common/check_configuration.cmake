@@ -44,30 +44,30 @@ function(get_set_stdcxx stdversion stdfeature gcc_flag cl_flag force result)
            CMAKE_COMPILER_IS_GNUCXX OR CMAKE_COMPILER_IS_CLANG OR
            CMAKE_CXX_COMPILER_ID MATCHES "Clang" OR
            CMAKE_CXX_COMPILER_ID MATCHES "QCC"))
-           # check using gcc/clang flags
-            check_cxx_compiler_flag(${gcc_flag} SUPPORTS_CXX)
-            if(SUPPORTS_CXX AND force)
+            # check using gcc/clang flags
+            check_cxx_compiler_flag(${gcc_flag} SUPPORTS_${stdfeature})
+            if(SUPPORTS_${stdfeature} AND force)
                 add_compile_options($<$<COMPILE_LANGUAGE:CXX>:${gcc_flag}>)
                 set(${result} 1 PARENT_SCOPE)
                 message(STATUS "Enforced ${gcc_flag} CMake feature")
-            elseif((NOT SUPPORTS_CXX) AND force)
+            elseif((NOT SUPPORTS_${stdfeature}) AND force)
                 message(FATAL_ERROR "Force to support ${stdfeature} but not supported by gnu compiler")
             endif()
         elseif(cl_flag AND (MSVC OR MSVC_IDE))
-           # check using cl flags
-            check_cxx_compiler_flag(${cl_flag} SUPPORTS_CXX)
-            if(SUPPORTS_CXX AND force)
+            # check using cl flags
+            check_cxx_compiler_flag(${cl_flag} SUPPORTS_${stdfeature})
+            if(SUPPORTS_${stdfeature} AND force)
                 add_compile_options($<$<COMPILE_LANGUAGE:CXX>:${cl_flag}>)
                 set(${result} 1 PARENT_SCOPE)
                 message(STATUS "Enforced ${cl_flag} CMake feature")
-            elseif((NOT SUPPORTS_CXX) AND force)
+            elseif((NOT SUPPORTS_${stdfeature}) AND force)
                 message(FATAL_ERROR "Force to support ${stdfeature} but not supported by MSVC")
             endif()
        elseif(force)
            message(WARNING "The specified C++ ${stdfeature} feature is not supported using default compiler.")
        endif()
 
-endif()
+    endif()
 
 endfunction()
 
@@ -77,7 +77,7 @@ function(check_stdcxx enforced_level)
     set(cxx_levels 23 20 17 14 1Y 11)
     set(cxx_features cxx_std_23 cxx_std_20 cxx_std_17 cxx_std_14 NOTFOUND cxx_std_11)
     set(gcc_flags -std=c++23 -std=c++20 -std=c++17 -std=c++14 -std=c++1y -std=c++11)
-    set(cl_flags /std=c++23 /std=c++20 /std=c++17 /std=c++14 NOTFOUND NOTFOUND)
+    set(cl_flags /std:c++23 /std:c++20 /std:c++17 /std:c++14 NOTFOUND NOTFOUND)
     set(HAVE_CXX HAVE_CXX23 HAVE_CXX20 HAVE_CXX17 HAVE_CXX14 HAVE_CXX1Y HAVE_CXX11)
 
     # Traverse the collection
