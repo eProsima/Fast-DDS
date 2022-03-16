@@ -202,8 +202,8 @@ ReturnCode_t DomainParticipantImpl::disable_statistics_datawriter(
 
 ReturnCode_t DomainParticipantImpl::enable()
 {
-    create_statistics_builtin_entities();
     ReturnCode_t ret = efd::DomainParticipantImpl::enable();
+    create_statistics_builtin_entities();
 
     if (ReturnCode_t::RETCODE_OK == ret)
     {
