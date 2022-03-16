@@ -408,6 +408,12 @@ bool PDP::initPDP(
 
 bool PDP::enable()
 {
+    // It is safe to call enable() on already enable PDPs
+    if (enabled_)
+    {
+        return true;
+    }
+
     // Create lease events on already created proxy data objects
     for (ParticipantProxyData* pool_item : participant_proxies_pool_)
     {
@@ -430,7 +436,7 @@ bool PDP::enable()
 
     set_initial_announcement_interval();
 
-    enable_  = true;
+    enabled_.store(true);
     // Notify "self-discovery"
     getRTPSParticipant()->on_entity_discovery(mp_RTPSParticipant->getGuid(),
             get_participant_proxy_data(mp_RTPSParticipant->getGuid().guidPrefix)->m_properties);
@@ -438,12 +444,17 @@ bool PDP::enable()
     return mp_RTPSParticipant->enableReader(mp_PDPReader);
 }
 
+bool PDP::is_enabled()
+{
+    return enabled_.load();
+}
+
 void PDP::announceParticipantState(
         bool new_change,
         bool dispose,
         WriteParams& wparams)
 {
-    if (enable_)
+    if (enabled_)
     {
         // logInfo(RTPS_PDP, "Announcing RTPSParticipant State (new change: " << new_change << ")");
         CacheChange_t* change = nullptr;

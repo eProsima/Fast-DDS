@@ -308,7 +308,10 @@ void BuiltinProtocols::stopRTPSParticipantAnnouncement()
 
     if (mp_PDP)
     {
-        mp_PDP->stopParticipantAnnouncement();
+        if (mp_PDP->is_enabled())
+        {
+            mp_PDP->stopParticipantAnnouncement();
+        }
     }
     else
     {
