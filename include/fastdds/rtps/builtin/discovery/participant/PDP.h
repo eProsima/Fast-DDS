@@ -105,13 +105,6 @@ public:
      */
     bool enable();
 
-    /**
-     * @brief Check whether this PDP is enabled
-     *
-     * @return true if already enabled; false otherwise
-     */
-    bool is_enabled();
-
     virtual bool init(
             RTPSParticipantImpl* part) = 0;
 
@@ -415,7 +408,7 @@ protected:
     //!To protect callbacks (ParticipantProxyData&)
     std::mutex callback_mtx_;
     //!Tell if object is enabled
-    std::atomic<bool> enabled_ = {false};
+    std::atomic<bool> enabled_ {false};
 
     /**
      * Adds an entry to the collection of participant proxy information.

@@ -444,11 +444,6 @@ bool PDP::enable()
     return mp_RTPSParticipant->enableReader(mp_PDPReader);
 }
 
-bool PDP::is_enabled()
-{
-    return enabled_.load();
-}
-
 void PDP::announceParticipantState(
         bool new_change,
         bool dispose,
@@ -554,7 +549,10 @@ void PDP::announceParticipantState(
 
 void PDP::stopParticipantAnnouncement()
 {
-    resend_participant_info_event_->cancel_timer();
+    if (enabled_)
+    {
+        resend_participant_info_event_->cancel_timer();
+    }
 }
 
 void PDP::resetParticipantAnnouncement()
