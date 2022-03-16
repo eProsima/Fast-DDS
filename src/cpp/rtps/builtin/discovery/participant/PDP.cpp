@@ -549,7 +549,7 @@ void PDP::announceParticipantState(
 
 void PDP::stopParticipantAnnouncement()
 {
-    if (enabled_)
+    if (resend_participant_info_event_)
     {
         resend_participant_info_event_->cancel_timer();
     }
@@ -557,7 +557,10 @@ void PDP::stopParticipantAnnouncement()
 
 void PDP::resetParticipantAnnouncement()
 {
-    resend_participant_info_event_->restart_timer();
+    if (resend_participant_info_event_)
+    {
+        resend_participant_info_event_->restart_timer();
+    }
 }
 
 bool PDP::has_reader_proxy_data(
