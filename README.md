@@ -36,8 +36,7 @@ system input/output channel combination for each deployment.
 
 *eProsima Fast DDS* has been adopted by multiple organizations in many sectors including these important cases:
 
-* Robotics: ROS (Robotic Operating System) as their default middleware for ROS2 until and including the
-  latest long term release Foxy Fitzroy.
+* Robotics: ROS (Robotic Operating System) as their default middleware for every ROS 2 long term (LTS) releases and most of the non-LTS releases.
 * EU R&D: FIWARE Incubated GE.
 
 This project is part of [FIWARE](https://www.fiware.org/). For more information check the FIWARE Catalogue entry for
@@ -50,6 +49,8 @@ We are curious to get to know your use case!
 
 ## Supported platforms
 
+More information about the official support can be found [here](https://github.com/eProsima/Fast-DDS/blob/master/PLATFORM_SUPPORT.md#platform-support)
+
 * Linux [![Linux ci](http://jenkins.eprosima.com:8080/job/nightly_fastdds_sec_master_linux/badge/icon?subject=%20%20%20Linux%20CI%20)](http://jenkins.eprosima.com:8080/job/nightly_fastdds_sec_master_linux)
 * Linux-aarch64 [![Linux arm64 ci](http://jenkins.eprosima.com:8080/job/nightly_fastdds_sec_master_linux_aarch64/badge/icon?subject=%20%20%20Linux-aarch64%20CI%20)](http://jenkins.eprosima.com:8080/view/Nightly/job/nightly_fastdds_sec_master_linux_aarch64/)
 * Windows [![Windows ci](http://jenkins.eprosima.com:8080/job/nightly_fastdds_sec_master_windows/label=windows-secure,platform=x64,toolset=v142/badge/icon?subject=%20%20%20%20Windows%20CI%20)](http://jenkins.eprosima.com:8080/job/nightly_fastdds_sec_master_windows/label=windows-secure,platform=x64,toolset=v142)
@@ -57,113 +58,10 @@ We are curious to get to know your use case!
 
 ## Installation Guide
 You can get either a binary distribution of *eprosima Fast DDS* or compile the library yourself from source.
+Please, refer to [Fast DDS documentation](https://fast-dds.docs.eprosima.com/en/latest/installation/binaries/binaries_linux.html) for the complete installation guide.
 
 ### Installation from binaries
 The latest, up to date binary release of *eprosima Fast DDS* can be obtained from the <a href='http://www.eprosima.com'>company website</a>.
-
-### Installation from Source
-
-#### Dependencies
-
-##### Asio and TinyXML2 libraries
-
-On Linux, you can install these libraries using the package manager of your Linux distribution.
-For example, on Ubuntu you can install them by using its package manager with the next command.
-
-```bash
-sudo apt install libasio-dev libtinyxml2-dev
-```
-
-On Windows, you can install these libraries using [Chocolatey](https://chocolatey.org).
-First, download the following chocolatey packages from this
-[ROS2 Github repository](https://github.com/ros2/choco-packages/releases/latest).
-
-* asio.1.12.1.nupkg
-* tinyxml2.6.0.0.nupkg
-
-Once these packages are downloaded, open an administrative shell and execute the following command:
-
-```batch
-choco install -y -s <PATH\TO\DOWNLOADS\> asio tinyxml2
-```
-
-Please replace `<PATH\TO\DOWNLOADS>` with the folder you downloaded the packages to.
-
-##### Libp11 library
-
-Libp11 provides PKCS#11 support for openSSL. This is an optional dependency,
-that is needed only when *eprosima Fast DDS* is used with security and PKCS#11 URLs.
-
-On Linux, you can install libp11 using the package manager of your Linux distribution.
-For example, on Ubuntu you can install them by using its package manager with the next command.
-
-```bash
-sudo apt install libp11-dev libengine-pkcs11-openssl
-```
-
-On Windows, you can download and compile the library from this
-[ROS2 Github repository](https://github.com/OpenSC/libp11).
-Follow the instructions on the repository to compile it on your platform.
-
-#### Colcon installation
-
-[colcon](https://colcon.readthedocs.io) is a command line tool to build sets of software packages.
-This section explains to use it to compile easily Fast-RTPS and its dependencies.
-First install ROS2 development tools (colcon and vcstool):
-
-```bash
-pip install -U colcon-common-extensions vcstool
-```
-
-Download the repos file that will be used to download Fast RTPS and its dependencies:
-
-```bash
-$ mkdir fastdds_ws
-$ cd fastdds_ws
-$ wget https://raw.githubusercontent.com/eProsima/Fast-DDS/master/fastrtps.repos
-$ mkdir src
-$ vcs import src < fastrtps.repos
-```
-
-Finally, use colcon to compile all software:
-
-```bash
-$ colcon build
-```
-
-#### Manual installation
-
-Before compiling manually Fast DDS you need to clone the following dependencies and compile them using
-[CMake](https://cmake.org).
-
-* [Fast CDR](https://github.com/eProsima/Fast-CDR.git)
-
-    ```bash
-    $ git clone https://github.com/eProsima/Fast-CDR.git
-    $ mkdir Fast-CDR/build && cd Fast-CDR/build
-    $ cmake ..
-    $ cmake --build . --target install
-    ```
-
-* [Foonathan memory](https://github.com/foonathan/memory)
-
-    ```bash
-    $ git clone https://github.com/eProsima/foonathan_memory_vendor.git
-    $ cd foonathan_memory_vendor
-    $ mkdir build && cd build
-    $ cmake ..
-    $ cmake --build . --target install
-    ```
-
-Once all dependencies are installed, you will be able to compile and install Fast DDS.
-
-```bash
-$ git clone https://github.com/eProsima/Fast-DDS.git
-$ mkdir Fast-DDS/build && cd Fast-DDS/build
-$ cmake ..
-$ cmake --build . --target install
-```
-
 
 ## Documentation
 
@@ -173,6 +71,8 @@ You can access the documentation online, which is hosted on [Read the Docs](http
 * [Installation manual](https://fast-dds.docs.eprosima.com/en/latest/installation/binaries/binaries_linux.html)
 * [User manual](https://fast-dds.docs.eprosima.com/en/latest/fastdds/getting_started/getting_started.html)
 * [Fast DDS-Gen manual](https://fast-dds.docs.eprosima.com/en/latest/fastddsgen/introduction/introduction.html)
+* [Fast DDS CLI manual](https://fast-dds.docs.eprosima.com/en/latest/fastddscli/cli/cli.html)
+* [eProsima Docker image manual](https://fast-dds.docs.eprosima.com/en/latest/docker/docker.html)
 * [Release notes](https://fast-dds.docs.eprosima.com/en/latest/notes/notes.html)
 
 ## Quality Declaration
