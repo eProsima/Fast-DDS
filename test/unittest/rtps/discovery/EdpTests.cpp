@@ -251,6 +251,16 @@ TEST_F(EdpTests, CheckPartitionCompatibility)
     rdata->m_qos.m_partition.clear();
     rdata->m_qos.m_partition.push_back("Partition");
     check_expectations(true);
+
+    // Matching empty list against empty partition
+    wdata->m_qos.m_partition.clear();
+    rdata->m_qos.m_partition.clear();
+    rdata->m_qos.m_partition.push_back("");
+    check_expectations(true);
+    wdata->m_qos.m_partition.clear();
+    wdata->m_qos.m_partition.push_back("");
+    rdata->m_qos.m_partition.clear();
+    check_expectations(true);
 }
 
 TEST_F(EdpTests, CheckDurabilityCompatibility)
