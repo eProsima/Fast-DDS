@@ -30,7 +30,7 @@ function(get_set_stdcxx stdversion stdfeature gcc_flag cl_flag force result)
         # CMake is aware let's check if is available
         if(force AND (stdfeature IN_LIST CMAKE_CXX_COMPILE_FEATURES))
             # is available report and enforce as commanded
-            set(CMAKE_CXX_STANDARD ${stdversion})
+            set(CMAKE_CXX_STANDARD ${stdversion} CACHE INTERNAL "superseded by FORCE_CXX")
             set(${result} 1 PARENT_SCOPE)
             message(STATUS "Enforced ${stdfeature} CMake feature")
         elseif(force)
