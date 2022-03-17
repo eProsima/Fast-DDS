@@ -26,7 +26,7 @@ function(get_set_stdcxx stdversion stdfeature gcc_flag cl_flag force result)
 
     # check if CMake feature management is available
     get_property(CXX_KNOWN_FEATURES GLOBAL PROPERTY CMAKE_CXX_KNOWN_FEATURES)
-    if(stdfeature IN_LIST CXX_KNOWN_FEATURES)
+    if((stdfeature IN_LIST CXX_KNOWN_FEATURES) AND NOT ("run_fallback_test" IN_LIST ARGV))
         # CMake is aware let's check if is available
         if(force AND (stdfeature IN_LIST CMAKE_CXX_COMPILE_FEATURES))
             # is available report and enforce as commanded
@@ -97,8 +97,14 @@ function(check_stdcxx enforced_level)
             set(force FALSE)
         endif()
 
+        # testing framework awareness
+        set(test)
+        if("run_fallback_test" IN_LIST ARGV)
+            set(test "run_fallback_test")
+        endif()
+
         # check
-        get_set_stdcxx(${level} ${feature} ${gcc_flag} ${cl_flag} ${force} result)
+        get_set_stdcxx(${level} ${feature} ${gcc_flag} ${cl_flag} ${force} result ${test})
 
         if(result)
             # we are done, mark all levels below as available 
