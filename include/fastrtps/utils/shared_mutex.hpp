@@ -8,8 +8,15 @@
 #ifndef _UTILS_SHARED_MUTEX_HPP_
 #define _UTILS_SHARED_MUTEX_HPP_
 
-// detect if STL version is available, note that __cplusplus is not reliable on MSVC
-#if (__cplusplus < 201402) || (defined(_MSC_VER) && _MSC_VER < 1900 )
+#if defined(__has_include) && __has_include(<version>)
+#   include <version>
+#endif
+
+// Detect if the share_mutex feature is available
+#if defined(__has_include) && __has_include(<version>) && !defined(__cpp_lib_shared_mutex) || \
+/* deprecated procedure if the good one is not available*/ \
+( !(defined(__has_include) && __has_include(<version>)) && \
+  !(defined(HAVE_CXX17) && HAVE_CXX17) &&  __cplusplus < 201703 )
 
 #include <mutex>
 #include <condition_variable>
@@ -347,7 +354,8 @@ shared_lock<Mutex>::try_lock()
 namespace eprosima {
 
 using shared_mutex = std::shared_mutex;
-using shared_lock = std::shared_lock;
+template< class Mutex >
+using shared_lock = std::shared_lock<Mutex>;
 
 } //namespace eprosima
 
