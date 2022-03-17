@@ -16,7 +16,7 @@
 # CMake modules tests
 ###############################################################################
 
-set(build_dir "${fastrtps_BINARY_DIR}/test/cmake_test")
+set(build_dir "${fastrtps_BINARY_DIR}/test/force_cxx")
 set(module_dir "${fastrtps_SOURCE_DIR}/cmake/common")
 set(script "${CMAKE_CURRENT_LIST_DIR}/force_cxx/build.cmake")
 

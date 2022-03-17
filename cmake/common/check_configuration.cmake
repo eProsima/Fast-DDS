@@ -30,7 +30,8 @@ function(get_set_stdcxx stdversion stdfeature gcc_flag cl_flag force result)
         # CMake is aware let's check if is available
         if(force AND (stdfeature IN_LIST CMAKE_CXX_COMPILE_FEATURES))
             # is available report and enforce as commanded
-            set(CMAKE_CXX_STANDARD ${stdversion} CACHE INTERNAL "superseded by FORCE_CXX")
+            # avoid using CACHE variables to avoid polute projects that use this repo as subdir
+            set(CMAKE_CXX_STANDARD ${stdversion} PARENT_SCOPE)
             set(${result} 1 PARENT_SCOPE)
             message(STATUS "Enforced ${stdfeature} CMake feature")
         elseif(force)
@@ -109,6 +110,8 @@ function(check_stdcxx enforced_level)
         if(result)
             # we are done, mark all levels below as available 
             set(${preprocessor_flag} 1 PARENT_SCOPE)
+            # upload local variable fixed by get_set_stdcxx
+            set(CMAKE_CXX_STANDARD ${CMAKE_CXX_STANDARD} PARENT_SCOPE)
             while(HAVE_CXX)
                 list(POP_FRONT HAVE_CXX preprocessor_flag)
                 set(${preprocessor_flag} 1 PARENT_SCOPE)
