@@ -15,8 +15,8 @@
 ###############################################################################
 # CMake build rules for Fast DDS
 ###############################################################################
-cmake_minimum_required(VERSION 3.5)
-cmake_policy(VERSION 3.5...3.13)
+cmake_minimum_required(VERSION 3.16.3)
+cmake_policy(VERSION 3.16.3...3.20.3)
 
 # Set CMAKE_BUILD_TYPE to Release by default.
 if(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
