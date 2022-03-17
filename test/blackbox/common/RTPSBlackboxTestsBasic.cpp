@@ -12,19 +12,23 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#include "BlackboxTests.hpp"
+
 #include <chrono>
 #include <thread>
 
 #include <gtest/gtest.h>
 
-#include "BlackboxTests.hpp"
+#include <fastrtps/rtps/attributes/RTPSParticipantAttributes.h>
+#include <fastrtps/rtps/participant/RTPSParticipant.h>
+#include <fastrtps/rtps/RTPSDomain.h>
+#include <fastrtps/transport/test_UDPv4TransportDescriptor.h>
+#include <fastrtps/xmlparser/XMLProfileManager.h>
 
 #include "RTPSAsSocketReader.hpp"
 #include "RTPSAsSocketWriter.hpp"
 #include "RTPSWithRegistrationReader.hpp"
 #include "RTPSWithRegistrationWriter.hpp"
-#include <fastrtps/xmlparser/XMLProfileManager.h>
-#include <fastrtps/transport/test_UDPv4TransportDescriptor.h>
 #include <rtps/transport/test_UDPv4Transport.h>
 
 using namespace eprosima::fastrtps;
@@ -632,6 +636,31 @@ TEST(RTPS, RTPSNetworkInterfaceChangesAtRunTime)
 
     reader.destroy();
     writer.destroy();
+}
+
+/**
+ * Regression test for checking that a not enabled RTPSParticipant can be removed
+ *
+ * https://github.com/eProsima/Fast-DDS/pull/2171 introduced this regression since with it
+ * the PDP is not enabled until calling BuiltinProtocols::enable(), which is called within
+ * RTPSParticipant::enable(). However, during RTPSDomain::removeRTPSParticipant(), there is a call
+ * to BuiltinProtocols::stopRTPSParticipantAnnouncement(), which in turn calls
+ * PDP::stopRTPSParticipantAnnouncement(). That function ends up accessing a timed event pointer,
+ * which is only instantiated on PDP::enable(). Since the RTPSParticipant was not enabled,
+ * BuiltinProtocols and in turn PDP are not either, meaning that it is not safe to call
+ * PDP::stopRTPSParticipantAnnouncement() on a not enabled PDP.
+ *
+ * The test checks that the necessary guards are in place so that it is safe to call
+ * RTPSDomain::removeRTPSParticipant() o a not enabled RTPSParticipant.
+ */
+TEST(RTPS, RemoveDisabledParticipant)
+{
+    RTPSParticipantAttributes rtps_attr;
+    RTPSParticipant* rtps_participant = RTPSDomain::createParticipant(
+        (uint32_t)GET_PID() % 230, false, rtps_attr, nullptr);
+
+    ASSERT_NE(nullptr, rtps_participant);
+    ASSERT_TRUE(RTPSDomain::removeRTPSParticipant(rtps_participant));
 }
 
 #ifdef INSTANTIATE_TEST_SUITE_P

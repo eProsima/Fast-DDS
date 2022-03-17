@@ -538,7 +538,7 @@ void PDPServer::announceParticipantState(
         bool dispose /* = false */,
         WriteParams& )
 {
-    if (enable_)
+    if (enabled_)
     {
         logInfo(RTPS_PDP_SERVER,
                 "Announcing Server " << mp_RTPSParticipant->getGuid() << " (new change: " << new_change << ")");

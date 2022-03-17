@@ -410,7 +410,7 @@ void PDPClient::announceParticipantState(
         bool dispose,
         WriteParams& )
 {
-    if (enable_)
+    if (enabled_)
     {
         /*
            Protect writer sequence number. Make sure in order to prevent AB BA deadlock that the

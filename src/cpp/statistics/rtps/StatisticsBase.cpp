@@ -492,7 +492,7 @@ void StatisticsParticipantImpl::on_entity_discovery(
      *
      */
     auto get_physical_property_value =
-            [](const dds::ParameterPropertyList_t& properties, const std::string& property_name)
+            [](const dds::ParameterPropertyList_t& properties, const std::string& property_name) -> std::string
             {
                 auto property = std::find_if(
                     properties.begin(),

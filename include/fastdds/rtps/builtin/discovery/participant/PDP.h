@@ -21,6 +21,7 @@
 #define _FASTDDS_RTPS_PDP_H_
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 
+#include <atomic>
 #include <mutex>
 #include <functional>
 
@@ -97,6 +98,11 @@ public:
     bool initPDP(
             RTPSParticipantImpl* part);
 
+    /**
+     * @brief Enable the Participant Discovery Protocol
+     *
+     * @return true if enabled correctly, or if already enabled; false otherwise
+     */
     bool enable();
 
     virtual bool init(
@@ -402,7 +408,7 @@ protected:
     //!To protect callbacks (ParticipantProxyData&)
     std::mutex callback_mtx_;
     //!Tell if object is enabled
-    bool enable_ = false;
+    std::atomic<bool> enabled_ {false};
 
     /**
      * Adds an entry to the collection of participant proxy information.

@@ -214,7 +214,7 @@ void PDPSimple::announceParticipantState(
         bool dispose,
         WriteParams& wp)
 {
-    if (enable_)
+    if (enabled_)
     {
         PDP::announceParticipantState(new_change, dispose, wp);
 
