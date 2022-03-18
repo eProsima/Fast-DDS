@@ -32,12 +32,19 @@ bool ContentFilteredTopicImpl::is_relevant(
         const fastrtps::rtps::CacheChange_t& change,
         const fastrtps::rtps::GUID_t& reader_guid) const
 {
-    IContentFilter::FilterSampleInfo filter_info
+    bool ret_val = true;
+
+    if (!check_filter_signature(change, ret_val))
     {
-        change.write_params.sample_identity(),
-        change.write_params.related_sample_identity()
-    };
-    return filter_instance->evaluate(change.serializedPayload, filter_info, reader_guid);
+        IContentFilter::FilterSampleInfo filter_info
+        {
+            change.write_params.sample_identity(),
+            change.write_params.related_sample_identity()
+        };
+        ret_val = filter_instance->evaluate(change.serializedPayload, filter_info, reader_guid);
+    }
+
+    return ret_val;
 }
 
 ReturnCode_t ContentFilteredTopicImpl::set_expression_parameters(
@@ -136,6 +143,16 @@ void ContentFilteredTopicImpl::update_signature()
 
     std::copy_n(md5_rtps.digest, filter_signature_.size(), filter_signature_.begin());
     std::copy_n(md5_connext.digest, filter_signature_rti_connext_.size(), filter_signature_rti_connext_.begin());
+}
+
+bool ContentFilteredTopicImpl::check_filter_signature(
+        const fastrtps::rtps::CacheChange_t& change,
+        bool& filter_result) const
+{
+    static_cast<void>(change);
+    static_cast<void>(filter_result);
+
+    return false;
 }
 
 } /* namespace dds */

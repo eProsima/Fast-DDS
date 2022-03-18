@@ -78,6 +78,19 @@ public:
 
 private:
 
+    /**
+     * Inspects the inline QoS of a change to check if the writer already applied this filter.
+     *
+     * @param [in]  change         The change for which the inline QoS should be checked.
+     * @param [out] filter_result  When the signature of this filter is present on the inline QoS,
+     *                             this will be set with the filter evaluation done by the writer.
+     *
+     * @return whether the signature for the current filter was found on the inline QoS of the change.
+     */
+    bool check_filter_signature(
+            const fastrtps::rtps::CacheChange_t& change,
+            bool& filter_result) const;
+
     std::set<DataReaderImpl*> readers_;
     std::array<uint8_t, 16> filter_signature_;
     std::array<uint8_t, 16> filter_signature_rti_connext_;
