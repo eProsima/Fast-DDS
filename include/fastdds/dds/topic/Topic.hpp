@@ -45,7 +45,7 @@ class DomainParticipantImpl;
 class TopicImpl;
 
 /**
- * Class TopicDescription, represents the fact that both publications
+ * Class Topic, represents the fact that both publications
  * and subscriptions are tied to a single data-type
  *
  * @ingroup FASTDDS_MODULE

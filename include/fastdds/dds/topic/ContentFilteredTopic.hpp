@@ -38,7 +38,8 @@ class ContentFilteredTopicImpl;
 constexpr const char* const sqlfilter_name = "DDSSQL";
 
 /**
- * Specialization of TopicDescription that allows for content-based subscriptions
+ * Specialization of TopicDescription that allows for content-based subscriptions.
+ *
  * @ingroup FASTDDS_MODULE
  */
 class ContentFilteredTopic : public TopicDescription
@@ -59,6 +60,7 @@ public:
 
     /**
      * @brief Getter for the related topic.
+     *
      * This operation returns the Topic associated with the ContentFilteredTopic.
      * That is, the Topic specified when the ContentFilteredTopic was created.
      */

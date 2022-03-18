@@ -69,12 +69,6 @@ public:
 
 protected:
 
-    /**
-     * @brief Constructor using topic name and data type name
-     *
-     * @param name Name for the topic
-     * @param type_name Data type name
-     */
     TopicDescription(
             const std::string& name,
             const std::string& type_name)
