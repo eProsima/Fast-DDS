@@ -75,9 +75,6 @@ class Topic : public DomainEntity, public TopicDescription
 
 public:
 
-    /**
-     * @brief Destructor
-     */
     virtual ~Topic();
 
     /**
@@ -142,11 +139,6 @@ public:
             TopicListener* listener,
             const StatusMask& mask = StatusMask::all());
 
-    /**
-     * @brief Getter for the TopicDescriptionImpl
-     *
-     * @return pointer to TopicDescriptionImpl
-     */
     TopicDescriptionImpl* get_impl() const override;
 
 protected:

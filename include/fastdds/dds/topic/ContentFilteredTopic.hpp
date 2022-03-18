@@ -55,9 +55,6 @@ private:
 
 public:
 
-    /**
-     * @brief Destructor
-     */
     RTPS_DllAPI virtual ~ContentFilteredTopic();
 
     /**
@@ -131,10 +128,6 @@ public:
      */
     virtual DomainParticipant* get_participant() const override;
 
-    /**
-     * @brief Getter for the TopicDescriptionImpl
-     * @return pointer to TopicDescriptionImpl
-     */
     TopicDescriptionImpl* get_impl() const override;
 
 protected:

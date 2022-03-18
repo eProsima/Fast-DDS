@@ -65,11 +65,6 @@ public:
         return type_name_;
     }
 
-    /**
-     * Get the TopicDescriptionImpl
-     *
-     * @return pointer to TopicDescriptionImpl
-     */
     virtual TopicDescriptionImpl* get_impl() const = 0;
 
 protected:
@@ -88,9 +83,6 @@ protected:
     {
     }
 
-    /**
-     * @brief Destructor
-     */
     virtual ~TopicDescription()
     {
     }
