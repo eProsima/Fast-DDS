@@ -85,6 +85,15 @@ public:
             rtps::CacheChange_t* change,
             size_t unknown_missing_changes_up_to) override;
 
+    /**
+     * Called when a fragmented change is received completely by the Subscriber. Will find its instance and store it.
+     * @pre Change should be already present in the history.
+     * @param[in] change The received change
+     * @return
+     */
+    bool completed_change(
+            rtps::CacheChange_t* change) override;
+
     /** @name Read or take data methods.
      * Methods to read or take data from the History.
      * @param data Pointer to the object where you want to read or take the information.
@@ -194,15 +203,18 @@ private:
     /// Function processing a received change
     std::function<bool(rtps::CacheChange_t*, size_t)> receive_fn_;
 
+    /// Function processing a completed fragmented change
+    std::function<bool(rtps::CacheChange_t*)> complete_fn_;
+
     /**
      * @brief Method that finds a key in m_keyedChanges or tries to add it if not found
      * @param a_change The change to get the key from
-     * @param map_it A map iterator to the given key
+     * @param[out] map_it A map iterator to the given key
      * @return True if it was found or could be added to the map
      */
     bool find_key(
             rtps::CacheChange_t* a_change,
-            t_m_Inst_Caches::iterator* map_it);
+            t_m_Inst_Caches::iterator& map_it);
 
     /**
      * @brief Method that finds a key in m_keyedChanges or tries to add it if not found
@@ -237,6 +249,12 @@ private:
     bool received_change_keep_last_with_key(
             rtps::CacheChange_t* change,
             size_t unknown_missing_changes_up_to);
+
+    bool completed_change_keep_all_with_key(
+            rtps::CacheChange_t* change);
+
+    bool completed_change_keep_last_with_key(
+            rtps::CacheChange_t* change);
     ///@}
 
     bool add_received_change(

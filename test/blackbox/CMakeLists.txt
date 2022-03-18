@@ -181,6 +181,8 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER) AND fastcdr_FOUND)
             types/Data64kbType.cpp
             types/Data1mb.cpp
             types/Data1mbType.cpp
+            types/KeyedData1mb.cpp
+            types/KeyedData1mbType.cpp
             types/FixedSized.cpp
             types/FixedSizedType.cpp
 
@@ -213,6 +215,8 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER) AND fastcdr_FOUND)
             types/Data64kbType.cpp
             types/Data1mb.cpp
             types/Data1mbType.cpp
+            types/KeyedData1mb.cpp
+            types/KeyedData1mbType.cpp
             types/FixedSized.cpp
             types/FixedSizedType.cpp
 
