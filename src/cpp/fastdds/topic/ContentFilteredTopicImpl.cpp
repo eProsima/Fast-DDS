@@ -28,6 +28,18 @@ namespace eprosima {
 namespace fastdds {
 namespace dds {
 
+bool ContentFilteredTopicImpl::is_relevant(
+        const fastrtps::rtps::CacheChange_t& change,
+        const fastrtps::rtps::GUID_t& reader_guid) const
+{
+    IContentFilter::FilterSampleInfo filter_info
+    {
+        change.write_params.sample_identity(),
+        change.write_params.related_sample_identity()
+    };
+    return filter_instance->evaluate(change.serializedPayload, filter_info, reader_guid);
+}
+
 ReturnCode_t ContentFilteredTopicImpl::set_expression_parameters(
         const char* new_expression,
         const std::vector<std::string>& new_expression_parameters)

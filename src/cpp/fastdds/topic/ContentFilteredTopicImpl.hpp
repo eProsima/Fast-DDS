@@ -51,15 +51,7 @@ public:
 
     bool is_relevant(
             const fastrtps::rtps::CacheChange_t& change,
-            const fastrtps::rtps::GUID_t& reader_guid) const final
-    {
-        IContentFilter::FilterSampleInfo filter_info
-        {
-            change.write_params.sample_identity(),
-            change.write_params.related_sample_identity()
-        };
-        return filter_instance->evaluate(change.serializedPayload, filter_info, reader_guid);
-    }
+            const fastrtps::rtps::GUID_t& reader_guid) const final;
 
     void add_reader(
             DataReaderImpl* reader)
