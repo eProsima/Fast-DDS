@@ -353,11 +353,11 @@ if(BUILD_DOCUMENTATION)
     endif()
 
     if(NOT CHECK_DOCUMENTATION)
-        find_program(WGET_EXE wget)
-        if(WGET_EXE)
-            message(STATUS "Found WGet: ${WGET_EXE}")
+        find_program(CURL_EXE curl)
+        if(CURL_EXE)
+            message(STATUS "Found cURL: ${CURL_EXE}")
         else()
-            message(FATAL_ERROR "wget is needed to build the documentation. Please install it correctly")
+            message(FATAL_ERROR "curl is needed to build the documentation. Please install it correctly")
         endif()
         find_program(UNZIP_EXE unzip)
         if(UNZIP_EXE)
@@ -404,7 +404,7 @@ if(BUILD_DOCUMENTATION)
     ### ReadTheDocs ########################
     if(NOT CHECK_DOCUMENTATION)
         add_custom_target(readthedocs
-            COMMAND "${WGET_EXE}" "https://media.readthedocs.org/htmlzip/eprosima-fast-rtps/v${PROJECT_VERSION}/eprosima-fast-rtps.zip"
+            COMMAND "${CURL_EXE}" "https://fast-dds.docs.eprosima.com/_/downloads/en/v${PROJECT_VERSION}/htmlzip/" "--output" "eprosima-fast-rtps.zip"
             COMMAND "${UNZIP_EXE}" "eprosima-fast-rtps.zip" -d "${PROJECT_BINARY_DIR}/doc/"
             COMMAND ${CMAKE_COMMAND} -E remove_directory "${PROJECT_BINARY_DIR}/doc/manual"
             COMMAND ${CMAKE_COMMAND} -E rename "${PROJECT_BINARY_DIR}/doc/eprosima-fast-rtps-v${PROJECT_VERSION}" "${PROJECT_BINARY_DIR}/doc/manual"
