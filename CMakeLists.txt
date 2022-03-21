@@ -404,7 +404,7 @@ if(BUILD_DOCUMENTATION)
     ### ReadTheDocs ########################
     if(NOT CHECK_DOCUMENTATION)
         add_custom_target(readthedocs
-            COMMAND "${CURL_EXE}" "https://fast-dds.docs.eprosima.com/_/downloads/en/v${PROJECT_VERSION}/htmlzip/" "--output" "eprosima-fast-rtps.zip"
+            COMMAND "${CURL_EXE}" "https://fast-dds.docs.eprosima.com/_/downloads/en/v${PROJECT_VERSION}/htmlzip/" "--silent" "--output" "eprosima-fast-rtps.zip"
             COMMAND "${UNZIP_EXE}" "eprosima-fast-rtps.zip" -d "${PROJECT_BINARY_DIR}/doc/"
             COMMAND ${CMAKE_COMMAND} -E remove_directory "${PROJECT_BINARY_DIR}/doc/manual"
             COMMAND ${CMAKE_COMMAND} -E rename "${PROJECT_BINARY_DIR}/doc/eprosima-fast-rtps-v${PROJECT_VERSION}" "${PROJECT_BINARY_DIR}/doc/manual"
