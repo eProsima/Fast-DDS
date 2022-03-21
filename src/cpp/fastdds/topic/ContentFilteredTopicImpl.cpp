@@ -20,8 +20,11 @@
 
 #include <algorithm>
 
+#include <fastdds/dds/core/policy/ParameterTypes.hpp>
 #include <fastrtps/utils/md5.h>
 
+#include <fastdds/core/policy/ParameterList.hpp>
+#include <fastdds/rtps/messages/CDRMessage.h>
 #include <fastdds/subscriber/DataReaderImpl.hpp>
 
 namespace eprosima {
@@ -149,10 +152,101 @@ bool ContentFilteredTopicImpl::check_filter_signature(
         const fastrtps::rtps::CacheChange_t& change,
         bool& filter_result) const
 {
-    static_cast<void>(change);
-    static_cast<void>(filter_result);
+    // Empty expressions always pass the filter
+    if (filter_property.filter_expression.empty())
+    {
+        filter_result = true;
+        return true;
+    }
 
-    return false;
+    // Find PID_CONTENT_FILTER_INFO on inline QoS
+    if (nullptr == change.inline_qos.data || 0 == change.inline_qos.length)
+    {
+        return false;
+    }
+
+    bool found = false;
+    auto parameter_process = [&](
+        fastrtps::rtps::CDRMessage_t* msg,
+        const ParameterId_t pid,
+        uint16_t plength)
+            {
+                if (PID_CONTENT_FILTER_INFO == pid)
+                {
+                    uint32_t num_bitmaps = 0;
+                    uint32_t num_signatures = 0;
+                    bool valid;
+
+                    // Validate and consume length for numBitmaps and numSignatures
+                    valid = 8 < plength;
+                    if (!valid)
+                    {
+                        return true;
+                    }
+                    plength -= 8;
+
+                    // Read and validate numBitmaps
+                    valid &= fastrtps::rtps::CDRMessage::readUInt32(msg, &num_bitmaps);
+                    valid &= num_bitmaps * 4 <= plength;
+                    if (!valid || 0 == num_bitmaps)
+                    {
+                        return true;
+                    }
+
+                    // Save starting position of bitmaps and skip them
+                    uint32_t bitmap_pos = msg->pos;
+                    msg->pos += num_bitmaps * 4;
+                    plength -= static_cast<uint16_t>(num_bitmaps * 4);
+
+                    // Read and validate numSignatures
+                    valid &= fastrtps::rtps::CDRMessage::readUInt32(msg, &num_signatures);
+                    valid &= num_signatures * 16 <= plength;
+                    if (!valid || 0 == num_signatures || ((num_signatures + 31) / 32) != num_bitmaps)
+                    {
+                        return true;
+                    }
+
+                    // Lookup our own signature
+                    uint32_t i;
+                    for (i = 0; i < num_signatures; ++i)
+                    {
+                        if (std::equal(filter_signature_.begin(), filter_signature_.end(), msg->buffer + msg->pos))
+                        {
+                            found = true;
+                            break;
+                        }
+                        else if (0x01 == change.writerGUID.guidPrefix.value[0] &&
+                                0x01 == change.writerGUID.guidPrefix.value[1] &&
+                                std::equal(filter_signature_rti_connext_.begin(), filter_signature_rti_connext_.end(),
+                                msg->buffer + msg->pos))
+                        {
+                            found = true;
+                            break;
+                        }
+                        msg->pos += 16;
+                    }
+
+                    // Signature found, set filter result from bitmap
+                    if (found)
+                    {
+                        uint32_t bitmap_idx = i / 32;
+                        uint32_t bitmask = 1 << (31 - (i & 31));
+                        uint32_t bitmap = 0;
+
+                        msg->pos = bitmap_pos + bitmap_idx * 4;
+                        fastrtps::rtps::CDRMessage::readUInt32(msg, &bitmap);
+                        filter_result = 0 != (bitmap & bitmask);
+                    }
+                }
+
+                return true;
+            };
+
+    uint32_t qos_size = 0;
+    fastrtps::rtps::CDRMessage_t msg(change.inline_qos);
+    ParameterList::readParameterListfromCDRMsg(msg, parameter_process, false, qos_size);
+
+    return found;
 }
 
 } /* namespace dds */
