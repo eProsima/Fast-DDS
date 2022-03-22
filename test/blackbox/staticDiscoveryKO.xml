@@ -1,317 +1,317 @@
 <?xml version="1.0" encoding="utf-8"?>
 <staticdiscovery>
-    <participant>
-        <!-- This name is for a IDT connection using the partition DefaultPartition.
+	<participant>
+		<!-- This name is for a IDT connection using the partition DefaultPartition.
         If you want to change the partition name, change the DefaulPartition string with
         the new partition name.
         -->
-        <name>SPMDEETISS10_DefaultPartition</name>
-        <reader>
-            <userId>11</userId>
-            <entityID>11</entityID>
-            <topicName>sp:mde:et:iss:siu:1:0:unit</topicName>
-            <topicDataType>sp_mde_et_iss_siu_1_0::Unit</topicDataType>
-            <topicKind>WITH_KEY</topicKind>
-            <!-- Partition's default value. Change it with your partition name -->
-            <partitionQos>DefaultPartition</partitionQos>
-            <reliabilityQos>RELIABLE_RELIABILITY_QOS</reliabilityQos>
-            <durabilityQos>TRANSIENT_LOCAL_DURABILITY_QOS</durabilityQos>
-            <!-->MULTICAST CONFIGURATION<-->
-            <!-- Specify the datareader wants to use multicast.
+		<name>SPMDEETISS10_DefaultPartition</name>
+		<reader>
+			<userId>11</userId>
+			<entityID>11</entityID>
+			<topicName>topic1</topicName>
+			<topicDataType>Topic1</topicDataType>
+			<topicKind>WITH_KEY</topicKind>
+			<!-- Partition's default value. Change it with your partition name -->
+			<partitionQos>DefaultPartition</partitionQos>
+			<reliabilityQos>RELIABLE_RELIABILITY_QOS</reliabilityQos>
+			<durabilityQos>TRANSIENT_LOCAL_DURABILITY_QOS</durabilityQos>
+			<!-->MULTICAST CONFIGURATION<-->
+			<!-- Specify the datareader wants to use multicast.
               By default it is listening in multicast address 239.255.0.1
               and port 7401 (<port base> + 1).
             -->
-            <multicastLocator address="239.255.0.1" port="7401" />
-        <readeroo>
-        <writer>
-            <userId>12</userId>
-            <entityID>12</entityID>
-            <topicName>sp:mde:et:iss:siu:1:0:unit</topicName>
-            <topicDataType>sp_mde_et_iss_siu_1_0::Unit</topicDataType>
-            <topicKind>WITH_KEY</topicKind>
-            <!-- Partition's default value. Change it with your partition name -->
-            <partitionQos>DefaultPartition</partitionQos>
-            <reliabilityQos>RELIABLE_RELIABILITY_QOS</reliabilityQos>
-            <durabilityQos>TRANSIENT_LOCAL_DURABILITY_QOS</durabilityQos>
-        </writer>
-        <reader>
-            <userId>13</userId>
-            <entityID>13</entityID>
-            <topicName>sp:mde:et:iss:siu:1:0:location</topicName>
-            <topicDataType>sp_mde_et_iss_siu_1_0::Location</topicDataType>
-            <topicKind>WITH_KEY</topicKind>
-            <!-- Partition's default value. Change it with your partition name -->
-            <partitionQos>DefaultPartition</partitionQos>
-            <reliabilityQos>BEST_EFFORT_RELIABILITY_QOS</reliabilityQos>
-            <durabilityQos>TRANSIENT_LOCAL_DURABILITY_QOS</durabilityQos>
-            <!-->MULTICAST CONFIGURATION<-->
-            <!-- Specify the datareader wants to use multicast.
+			<multicastLocator address="239.255.0.1" port="7401" />
+		<readerooo>
+		<writer>
+			<userId>12</userId>
+			<entityID>12</entityID>
+			<topicName>topic1</topicName>
+			<topicDataType>Topic1</topicDataType>
+			<topicKind>WITH_KEY</topicKind>
+			<!-- Partition's default value. Change it with your partition name -->
+			<partitionQos>DefaultPartition</partitionQos>
+			<reliabilityQos>RELIABLE_RELIABILITY_QOS</reliabilityQos>
+			<durabilityQos>TRANSIENT_LOCAL_DURABILITY_QOS</durabilityQos>
+		</writer>
+		<reader>
+			<userId>13</userId>
+			<entityID>13</entityID>
+			<topicName>topic2</topicName>
+			<topicDataType>Topic2</topicDataType>
+			<topicKind>WITH_KEY</topicKind>
+			<!-- Partition's default value. Change it with your partition name -->
+			<partitionQos>DefaultPartition</partitionQos>
+			<reliabilityQos>BEST_EFFORT_RELIABILITY_QOS</reliabilityQos>
+			<durabilityQos>TRANSIENT_LOCAL_DURABILITY_QOS</durabilityQos>
+			<!-->MULTICAST CONFIGURATION<-->
+			<!-- Specify the datareader wants to use multicast.
               By default it is listening in multicast address 239.255.0.1
               and port 7401 (<port base> + 1).
             -->
-            <multicastLocator address="239.255.0.1" port="7401" />
-        </reader>
-        <writer>
-            <userId>14</userId>
-            <entityID>14</entityID>
-            <topicName>sp:mde:et:iss:siu:1:0:location</topicName>
-            <topicDataType>sp_mde_et_iss_siu_1_0::Location</topicDataType>
-            <topicKind>WITH_KEY</topicKind>
-            <!-- Partition's default value. Change it with your partition name -->
-            <partitionQos>DefaultPartition</partitionQos>
-            <reliabilityQos>BEST_EFFORT_RELIABILITY_QOS</reliabilityQos>
-            <durabilityQos>TRANSIENT_LOCAL_DURABILITY_QOS</durabilityQos>
-        </writer>
-        <reader>
-            <userId>15</userId>
-            <entityID>15</entityID>
-            <topicName>sp:mde:et:iss:siu:1:0:structure</topicName>
-            <topicDataType>sp_mde_et_iss_siu_1_0::Structure</topicDataType>
-            <topicKind>WITH_KEY</topicKind>
-            <!-- Partition's default value. Change it with your partition name -->
-            <partitionQos>DefaultPartition</partitionQos>
-            <reliabilityQos>RELIABLE_RELIABILITY_QOS</reliabilityQos>
-            <durabilityQos>TRANSIENT_LOCAL_DURABILITY_QOS</durabilityQos>
-            <!-->MULTICAST CONFIGURATION<-->
-            <!-- Specify the datareader wants to use multicast.
+			<multicastLocator address="239.255.0.1" port="7401" />
+		</reader>
+		<writer>
+			<userId>14</userId>
+			<entityID>14</entityID>
+			<topicName>topic2</topicName>
+			<topicDataType>Topic2</topicDataType>
+			<topicKind>WITH_KEY</topicKind>
+			<!-- Partition's default value. Change it with your partition name -->
+			<partitionQos>DefaultPartition</partitionQos>
+			<reliabilityQos>BEST_EFFORT_RELIABILITY_QOS</reliabilityQos>
+			<durabilityQos>TRANSIENT_LOCAL_DURABILITY_QOS</durabilityQos>
+		</writer>
+		<reader>
+			<userId>15</userId>
+			<entityID>15</entityID>
+			<topicName>topic3</topicName>
+			<topicDataType>Topic3</topicDataType>
+			<topicKind>WITH_KEY</topicKind>
+			<!-- Partition's default value. Change it with your partition name -->
+			<partitionQos>DefaultPartition</partitionQos>
+			<reliabilityQos>RELIABLE_RELIABILITY_QOS</reliabilityQos>
+			<durabilityQos>TRANSIENT_LOCAL_DURABILITY_QOS</durabilityQos>
+			<!-->MULTICAST CONFIGURATION<-->
+			<!-- Specify the datareader wants to use multicast.
               By default it is listening in multicast address 239.255.0.1
               and port 7401 (<port base> + 1).
             -->
-            <multicastLocator address="239.255.0.1" port="7401" />
-        </reader>
-        <writer>
-            <userId>16</userId>
-            <entityID>16</entityID>
-            <topicName>sp:mde:et:iss:siu:1:0:structure</topicName>
-            <topicDataType>sp_mde_et_iss_siu_1_0::Structure</topicDataType>
-            <topicKind>WITH_KEY</topicKind>
-            <!-- Partition's default value. Change it with your partition name -->
-            <partitionQos>DefaultPartition</partitionQos>
-            <reliabilityQos>RELIABLE_RELIABILITY_QOS</reliabilityQos>
-            <durabilityQos>TRANSIENT_LOCAL_DURABILITY_QOS</durabilityQos>
-        </writer>
-        <reader>
-            <userId>21</userId>
-            <entityID>21</entityID>
-            <topicName>sp:mde:et:iss:silt:1:0:controlFeature</topicName>
-            <topicDataType>sp_mde_et_iss_silt_1_0::ControlFeature</topicDataType>
-            <topicKind>WITH_KEY</topicKind>
-            <!-- Partition's default value. Change it with your partition name -->
-            <partitionQos>DefaultPartition</partitionQos>
-            <reliabilityQos>RELIABLE_RELIABILITY_QOS</reliabilityQos>
-            <durabilityQos>TRANSIENT_LOCAL_DURABILITY_QOS</durabilityQos>
-            <!-->MULTICAST CONFIGURATION<-->
-            <!-- Specify the datareader wants to use multicast.
+			<multicastLocator address="239.255.0.1" port="7401" />
+		</reader>
+		<writer>
+			<userId>16</userId>
+			<entityID>16</entityID>
+			<topicName>topic3</topicName>
+			<topicDataType>Topic3</topicDataType>
+			<topicKind>WITH_KEY</topicKind>
+			<!-- Partition's default value. Change it with your partition name -->
+			<partitionQos>DefaultPartition</partitionQos>
+			<reliabilityQos>RELIABLE_RELIABILITY_QOS</reliabilityQos>
+			<durabilityQos>TRANSIENT_LOCAL_DURABILITY_QOS</durabilityQos>
+		</writer>
+		<reader>
+			<userId>21</userId>
+			<entityID>21</entityID>
+			<topicName>topic4</topicName>
+			<topicDataType>Topic4</topicDataType>
+			<topicKind>WITH_KEY</topicKind>
+			<!-- Partition's default value. Change it with your partition name -->
+			<partitionQos>DefaultPartition</partitionQos>
+			<reliabilityQos>RELIABLE_RELIABILITY_QOS</reliabilityQos>
+			<durabilityQos>TRANSIENT_LOCAL_DURABILITY_QOS</durabilityQos>
+			<!-->MULTICAST CONFIGURATION<-->
+			<!-- Specify the datareader wants to use multicast.
               By default it is listening in multicast address 239.255.0.1
               and port 7401 (<port base> + 1).
             -->
-            <multicastLocator address="239.255.0.1" port="7401" />
-        </reader>
-        <writer>
-            <userId>22</userId>
-            <entityID>22</entityID>
-            <topicName>sp:mde:et:iss:silt:1:0:controlFeature</topicName>
-            <topicDataType>sp_mde_et_iss_silt_1_0::ControlFeature</topicDataType>
-            <topicKind>WITH_KEY</topicKind>
-            <!-- Partition's default value. Change it with your partition name -->
-            <partitionQos>DefaultPartition</partitionQos>
-            <reliabilityQos>RELIABLE_RELIABILITY_QOS</reliabilityQos>
-            <durabilityQos>TRANSIENT_LOCAL_DURABILITY_QOS</durabilityQos>
-        </writer>
-        <reader>
-            <userId>31</userId>
-            <entityID>31</entityID>
-            <topicName>sp:mde:et:iss:sii:1:0:facility</topicName>
-            <topicDataType>sp_mde_et_iss_sii_1_0::Facility</topicDataType>
-            <topicKind>WITH_KEY</topicKind>
-            <!-- Partition's default value. Change it with your partition name -->
-            <partitionQos>DefaultPartition</partitionQos>
-            <reliabilityQos>RELIABLE_RELIABILITY_QOS</reliabilityQos>
-            <durabilityQos>TRANSIENT_LOCAL_DURABILITY_QOS</durabilityQos>
-            <!-->MULTICAST CONFIGURATION<-->
-            <!-- Specify the datareader wants to use multicast.
+			<multicastLocator address="239.255.0.1" port="7401" />
+		</reader>
+		<writer>
+			<userId>22</userId>
+			<entityID>22</entityID>
+			<topicName>topic4</topicName>
+			<topicDataType>Topic4</topicDataType>
+			<topicKind>WITH_KEY</topicKind>
+			<!-- Partition's default value. Change it with your partition name -->
+			<partitionQos>DefaultPartition</partitionQos>
+			<reliabilityQos>RELIABLE_RELIABILITY_QOS</reliabilityQos>
+			<durabilityQos>TRANSIENT_LOCAL_DURABILITY_QOS</durabilityQos>
+		</writer>
+		<reader>
+			<userId>31</userId>
+			<entityID>31</entityID>
+			<topicName>topic5</topicName>
+			<topicDataType>Topic5</topicDataType>
+			<topicKind>WITH_KEY</topicKind>
+			<!-- Partition's default value. Change it with your partition name -->
+			<partitionQos>DefaultPartition</partitionQos>
+			<reliabilityQos>RELIABLE_RELIABILITY_QOS</reliabilityQos>
+			<durabilityQos>TRANSIENT_LOCAL_DURABILITY_QOS</durabilityQos>
+			<!-->MULTICAST CONFIGURATION<-->
+			<!-- Specify the datareader wants to use multicast.
               By default it is listening in multicast address 239.255.0.1
               and port 7401 (<port base> + 1).
             -->
-            <multicastLocator address="239.255.0.1" port="7401" />
-        </reader>
-        <writer>
-            <userId>32</userId>
-            <entityID>32</entityID>
-            <topicName>sp:mde:et:iss:sii:1:0:facility</topicName>
-            <topicDataType>sp_mde_et_iss_sii_1_0::Facility</topicDataType>
-            <topicKind>WITH_KEY</topicKind>
-            <!-- Partition's default value. Change it with your partition name -->
-            <partitionQos>DefaultPartition</partitionQos>
-            <reliabilityQos>RELIABLE_RELIABILITY_QOS</reliabilityQos>
-            <durabilityQos>TRANSIENT_LOCAL_DURABILITY_QOS</durabilityQos>
-        </writer>
-        <reader>
-            <userId>33</userId>
-            <entityID>33</entityID>
-            <topicName>sp:mde:et:iss:sio:1:0:obstacle</topicName>
-            <topicDataType>sp_mde_et_iss_sio_1_0::Obstacle</topicDataType>
-            <topicKind>WITH_KEY</topicKind>
-            <!-- Partition's default value. Change it with your partition name -->
-            <partitionQos>DefaultPartition</partitionQos>
-            <reliabilityQos>RELIABLE_RELIABILITY_QOS</reliabilityQos>
-            <durabilityQos>TRANSIENT_LOCAL_DURABILITY_QOS</durabilityQos>
-            <!-->MULTICAST CONFIGURATION<-->
-            <!-- Specify the datareader wants to use multicast.
+			<multicastLocator address="239.255.0.1" port="7401" />
+		</reader>
+		<writer>
+			<userId>32</userId>
+			<entityID>32</entityID>
+			<topicName>topic5</topicName>
+			<topicDataType>Topic5</topicDataType>
+			<topicKind>WITH_KEY</topicKind>
+			<!-- Partition's default value. Change it with your partition name -->
+			<partitionQos>DefaultPartition</partitionQos>
+			<reliabilityQos>RELIABLE_RELIABILITY_QOS</reliabilityQos>
+			<durabilityQos>TRANSIENT_LOCAL_DURABILITY_QOS</durabilityQos>
+		</writer>
+		<reader>
+			<userId>33</userId>
+			<entityID>33</entityID>
+			<topicName>topic6</topicName>
+			<topicDataType>Topic6</topicDataType>
+			<topicKind>WITH_KEY</topicKind>
+			<!-- Partition's default value. Change it with your partition name -->
+			<partitionQos>DefaultPartition</partitionQos>
+			<reliabilityQos>RELIABLE_RELIABILITY_QOS</reliabilityQos>
+			<durabilityQos>TRANSIENT_LOCAL_DURABILITY_QOS</durabilityQos>
+			<!-->MULTICAST CONFIGURATION<-->
+			<!-- Specify the datareader wants to use multicast.
               By default it is listening in multicast address 239.255.0.1
               and port 7401 (<port base> + 1).
             -->
-            <multicastLocator address="239.255.0.1" port="7401" />
-        </reader>
-        <writer>
-            <userId>34</userId>
-            <entityID>34</entityID>
-            <topicName>sp:mde:et:iss:sio:1:0:obstacle</topicName>
-            <topicDataType>sp_mde_et_iss_sio_1_0::Obstacle</topicDataType>
-            <topicKind>WITH_KEY</topicKind>
-            <!-- Partition's default value. Change it with your partition name -->
-            <partitionQos>DefaultPartition</partitionQos>
-            <reliabilityQos>RELIABLE_RELIABILITY_QOS</reliabilityQos>
-            <durabilityQos>TRANSIENT_LOCAL_DURABILITY_QOS</durabilityQos>
-        </writer>
-        <reader>
-            <userId>41</userId>
-            <entityID>41</entityID>
-            <topicName>sp:mde:et:iss:sa:1:0:alarm</topicName>
-            <topicDataType>sp_mde_et_iss_sa_1_0::Alarm</topicDataType>
-            <topicKind>WITH_KEY</topicKind>
-            <!-- Partition's default value. Change it with your partition name -->
-            <partitionQos>DefaultPartition</partitionQos>
-            <reliabilityQos>RELIABLE_RELIABILITY_QOS</reliabilityQos>
-            <durabilityQos>TRANSIENT_LOCAL_DURABILITY_QOS</durabilityQos>
-            <disablePositiveAcks>
-                <enabled>true</enabled>
-            </disablePositiveAcks>
-            <!-->MULTICAST CONFIGURATION<-->
-            <!-- Specify the datareader wants to use multicast.
+			<multicastLocator address="239.255.0.1" port="7401" />
+		</reader>
+		<writer>
+			<userId>34</userId>
+			<entityID>34</entityID>
+			<topicName>topic6</topicName>
+			<topicDataType>Topic6</topicDataType>
+			<topicKind>WITH_KEY</topicKind>
+			<!-- Partition's default value. Change it with your partition name -->
+			<partitionQos>DefaultPartition</partitionQos>
+			<reliabilityQos>RELIABLE_RELIABILITY_QOS</reliabilityQos>
+			<durabilityQos>TRANSIENT_LOCAL_DURABILITY_QOS</durabilityQos>
+		</writer>
+		<reader>
+			<userId>41</userId>
+			<entityID>41</entityID>
+			<topicName>topic7</topicName>
+			<topicDataType>topic7</topicDataType>
+			<topicKind>WITH_KEY</topicKind>
+			<!-- Partition's default value. Change it with your partition name -->
+			<partitionQos>DefaultPartition</partitionQos>
+			<reliabilityQos>RELIABLE_RELIABILITY_QOS</reliabilityQos>
+			<durabilityQos>TRANSIENT_LOCAL_DURABILITY_QOS</durabilityQos>
+			<disablePositiveAcks>
+				<enabled>true</enabled>
+			</disablePositiveAcks>
+			<!-->MULTICAST CONFIGURATION<-->
+			<!-- Specify the datareader wants to use multicast.
               By default it is listening in multicast address 239.255.0.1
               and port 7401 (<port base> + 1).
             -->
-            <multicastLocator address="239.255.0.1" port="7401" />
-        </reader>
-        <writer>
-            <userId>42</userId>
-            <entityID>42</entityID>
-            <topicName>sp:mde:et:iss:sa:1:0:alarm</topicName>
-            <topicDataType>sp_mde_et_iss_sa_1_0::Alarm</topicDataType>
-            <topicKind>WITH_KEY</topicKind>
-            <!-- Partition's default value. Change it with your partition name -->
-            <partitionQos>DefaultPartition</partitionQos>
-            <reliabilityQos>RELIABLE_RELIABILITY_QOS</reliabilityQos>
-            <durabilityQos>TRANSIENT_LOCAL_DURABILITY_QOS</durabilityQos>
-            <disablePositiveAcks>
-                <enabled>true</enabled>
-                <duration>
-                    <sec>300</sec>
-                </duration>
-            </disablePositiveAcks>
-        </writer>
-        <reader>
-            <userId>61</userId>
-            <entityID>61</entityID>
-            <topicName>sp:mde:et:iss:smt:1:0:message</topicName>
-            <topicDataType>sp_mde_et_iss_smt_1_0::Message</topicDataType>
-            <topicKind>WITH_KEY</topicKind>
-            <!-- Partition's default value. Change it with your partition name -->
-            <partitionQos>DefaultPartition</partitionQos>
-            <reliabilityQos>RELIABLE_RELIABILITY_QOS</reliabilityQos>
-            <durabilityQos>TRANSIENT_LOCAL_DURABILITY_QOS</durabilityQos>
-            <disablePositiveAcks>
-                <enabled>true</enabled>
-            </disablePositiveAcks>
-            <!-->MULTICAST CONFIGURATION<-->
-            <!-- Specify the datareader wants to use multicast.
+			<multicastLocator address="239.255.0.1" port="7401" />
+		</reader>
+		<writer>
+			<userId>42</userId>
+			<entityID>42</entityID>
+			<topicName>topic7</topicName>
+			<topicDataType>Topic7</topicDataType>
+			<topicKind>WITH_KEY</topicKind>
+			<!-- Partition's default value. Change it with your partition name -->
+			<partitionQos>DefaultPartition</partitionQos>
+			<reliabilityQos>RELIABLE_RELIABILITY_QOS</reliabilityQos>
+			<durabilityQos>TRANSIENT_LOCAL_DURABILITY_QOS</durabilityQos>
+			<disablePositiveAcks>
+				<enabled>true</enabled>
+				<duration>
+					<sec>300</sec>
+				</duration>
+			</disablePositiveAcks>
+		</writer>
+		<reader>
+			<userId>61</userId>
+			<entityID>61</entityID>
+			<topicName>topic8</topicName>
+			<topicDataType>Topic8</topicDataType>
+			<topicKind>WITH_KEY</topicKind>
+			<!-- Partition's default value. Change it with your partition name -->
+			<partitionQos>DefaultPartition</partitionQos>
+			<reliabilityQos>RELIABLE_RELIABILITY_QOS</reliabilityQos>
+			<durabilityQos>TRANSIENT_LOCAL_DURABILITY_QOS</durabilityQos>
+			<disablePositiveAcks>
+				<enabled>true</enabled>
+			</disablePositiveAcks>
+			<!-->MULTICAST CONFIGURATION<-->
+			<!-- Specify the datareader wants to use multicast.
               By default it is listening in multicast address 239.255.0.1
               and port 7401 (<port base> + 1).
             -->
-            <multicastLocator address="239.255.0.1" port="7401" />
-        </reader>
-        <writer>
-            <userId>62</userId>
-            <entityID>62</entityID>
-            <topicName>sp:mde:et:iss:smt:1:0:message</topicName>
-            <topicDataType>sp_mde_et_iss_smt_1_0::Message</topicDataType>
-            <topicKind>WITH_KEY</topicKind>
-            <!-- Partition's default value. Change it with your partition name -->
-            <partitionQos>DefaultPartition</partitionQos>
-            <reliabilityQos>RELIABLE_RELIABILITY_QOS</reliabilityQos>
-            <durabilityQos>TRANSIENT_LOCAL_DURABILITY_QOS</durabilityQos>
-            <disablePositiveAcks>
-                <enabled>true</enabled>
-                <duration>
-                    <sec>300</sec>
-                </duration>
-            </disablePositiveAcks>
-        </writer>
-        <reader>
-            <userId>71</userId>
-            <entityID>71</entityID>
-            <topicName>sp:mde:et:iss:sda:1:0:file</topicName>
-            <topicDataType>sp_mde_et_iss_sda_1_0::File</topicDataType>
-            <topicKind>WITH_KEY</topicKind>
-            <!-- Partition's default value. Change it with your partition name -->
-            <partitionQos>DefaultPartition</partitionQos>
-            <reliabilityQos>RELIABLE_RELIABILITY_QOS</reliabilityQos>
-            <durabilityQos>TRANSIENT_LOCAL_DURABILITY_QOS</durabilityQos>
-            <disablePositiveAcks>
-                <enabled>true</enabled>
-            </disablePositiveAcks>
-            <!-->MULTICAST CONFIGURATION<-->
-            <!-- Specify the datareader wants to use multicast.
+			<multicastLocator address="239.255.0.1" port="7401" />
+		</reader>
+		<writer>
+			<userId>62</userId>
+			<entityID>62</entityID>
+			<topicName>topic8</topicName>
+			<topicDataType>Topic8</topicDataType>
+			<topicKind>WITH_KEY</topicKind>
+			<!-- Partition's default value. Change it with your partition name -->
+			<partitionQos>DefaultPartition</partitionQos>
+			<reliabilityQos>RELIABLE_RELIABILITY_QOS</reliabilityQos>
+			<durabilityQos>TRANSIENT_LOCAL_DURABILITY_QOS</durabilityQos>
+			<disablePositiveAcks>
+				<enabled>true</enabled>
+				<duration>
+					<sec>300</sec>
+				</duration>
+			</disablePositiveAcks>
+		</writer>
+		<reader>
+			<userId>71</userId>
+			<entityID>71</entityID>
+			<topicName>topic9</topicName>
+			<topicDataType>Topic9</topicDataType>
+			<topicKind>WITH_KEY</topicKind>
+			<!-- Partition's default value. Change it with your partition name -->
+			<partitionQos>DefaultPartition</partitionQos>
+			<reliabilityQos>RELIABLE_RELIABILITY_QOS</reliabilityQos>
+			<durabilityQos>TRANSIENT_LOCAL_DURABILITY_QOS</durabilityQos>
+			<disablePositiveAcks>
+				<enabled>true</enabled>
+			</disablePositiveAcks>
+			<!-->MULTICAST CONFIGURATION<-->
+			<!-- Specify the datareader wants to use multicast.
               By default it is listening in multicast address 239.255.0.1
               and port 7401 (<port base> + 1).
             -->
-            <multicastLocator address="239.255.0.1" port="7401" />
-        </reader>
-        <writer>
-            <userId>72</userId>
-            <entityID>72</entityID>
-            <topicName>sp:mde:et:iss:sda:1:0:file</topicName>
-            <topicDataType>sp_mde_et_iss_sda_1_0::File</topicDataType>
-            <topicKind>WITH_KEY</topicKind>
-            <!-- Partition's default value. Change it with your partition name -->
-            <partitionQos>DefaultPartition</partitionQos>
-            <reliabilityQos>RELIABLE_RELIABILITY_QOS</reliabilityQos>
-            <durabilityQos>TRANSIENT_LOCAL_DURABILITY_QOS</durabilityQos>
-            <disablePositiveAcks>
-                <enabled>true</enabled>
-                <duration>
-                    <sec>300</sec>
-                </duration>
-            </disablePositiveAcks>
-        </writer>
-        <reader>
-            <userId>81</userId>
-            <entityID>81</entityID>
-            <topicName>sp:mde:et:iss:sv:1:0:videoinfo</topicName>
-            <topicDataType>sp_mde_et_iss_sv_1_0::VideoInformation</topicDataType>
-            <topicKind>WITH_KEY</topicKind>
-            <!-- Partition's default value. Change it with your partition name -->
-            <partitionQos>DefaultPartition</partitionQos>
-            <reliabilityQos>RELIABLE_RELIABILITY_QOS</reliabilityQos>
-            <durabilityQos>TRANSIENT_LOCAL_DURABILITY_QOS</durabilityQos>
-            <!-->MULTICAST CONFIGURATION<-->
-            <!-- Specify the datareader wants to use multicast.
+			<multicastLocator address="239.255.0.1" port="7401" />
+		</reader>
+		<writer>
+			<userId>72</userId>
+			<entityID>72</entityID>
+			<topicName>topic9</topicName>
+			<topicDataType>Topic9</topicDataType>
+			<topicKind>WITH_KEY</topicKind>
+			<!-- Partition's default value. Change it with your partition name -->
+			<partitionQos>DefaultPartition</partitionQos>
+			<reliabilityQos>RELIABLE_RELIABILITY_QOS</reliabilityQos>
+			<durabilityQos>TRANSIENT_LOCAL_DURABILITY_QOS</durabilityQos>
+			<disablePositiveAcks>
+				<enabled>true</enabled>
+				<duration>
+					<sec>300</sec>
+				</duration>
+			</disablePositiveAcks>
+		</writer>
+		<reader>
+			<userId>81</userId>
+			<entityID>81</entityID>
+			<topicName>topic10</topicName>
+			<topicDataType>Topic10</topicDataType>
+			<topicKind>WITH_KEY</topicKind>
+			<!-- Partition's default value. Change it with your partition name -->
+			<partitionQos>DefaultPartition</partitionQos>
+			<reliabilityQos>RELIABLE_RELIABILITY_QOS</reliabilityQos>
+			<durabilityQos>TRANSIENT_LOCAL_DURABILITY_QOS</durabilityQos>
+			<!-->MULTICAST CONFIGURATION<-->
+			<!-- Specify the datareader wants to use multicast.
               By default it is listening in multicast address 239.255.0.1
               and port 7401 (<port base> + 1).
             -->
-            <multicastLocator address="239.255.0.1" port="7401" />
-        </reader>
-        <writer>
-            <userId>82</userId>
-            <entityID>82</entityID>
-            <topicName>sp:mde:et:iss:sv:1:0:videoinfo</topicName>
-            <topicDataType>sp_mde_et_iss_sv_1_0::VideoInformation</topicDataType>
-            <topicKind>WITH_KEY</topicKind>
-            <!-- Partition's default value. Change it with your partition name -->
-            <partitionQos>DefaultPartition</partitionQos>
-            <reliabilityQos>RELIABLE_RELIABILITY_QOS</reliabilityQos>
-            <durabilityQos>TRANSIENT_LOCAL_DURABILITY_QOS</durabilityQos>
-        </writer>
-    </participant>
+			<multicastLocator address="239.255.0.1" port="7401" />
+		</reader>
+		<writer>
+			<userId>82</userId>
+			<entityID>82</entityID>
+			<topicName>topic10</topicName>
+			<topicDataType>Topic10</topicDataType>
+			<topicKind>WITH_KEY</topicKind>
+			<!-- Partition's default value. Change it with your partition name -->
+			<partitionQos>DefaultPartition</partitionQos>
+			<reliabilityQos>RELIABLE_RELIABILITY_QOS</reliabilityQos>
+			<durabilityQos>TRANSIENT_LOCAL_DURABILITY_QOS</durabilityQos>
+		</writer>
+	</participant>
 </staticdiscovery>

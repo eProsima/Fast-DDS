@@ -37,18 +37,24 @@ class XMLEndpointParser
 {
 public:
 
-    XMLEndpointParser() {};
-    virtual ~XMLEndpointParser() {};
+    XMLEndpointParser()
+    {
+    }
+
+    virtual ~XMLEndpointParser()
+    {
+    }
+
     /**
      * Load the XML file
      * @param filename Name of the file to load and parse.
      * @return True if correct.
      */
     XMLP_ret loadXMLFile(
-        std::string&) {
+            std::string&)
+    {
         return XMLP_ret::XML_OK;
-    };
-    
+    }
 
 private:
 
