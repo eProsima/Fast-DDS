@@ -25,8 +25,8 @@ bool DiscoveryServer_Server::init(
 {
     eprosima::fastrtps::rtps::Locator_t locator;
 
-    hello_.index(0);
-    hello_.message("HelloWorld Server");
+    sent_hello_.index(0);
+    sent_hello_.message("HelloWorld Server");
 
     size_t delimiter_pos = locator_str.find(":");
     std::string address = locator_str.substr(0, delimiter_pos);
@@ -70,6 +70,11 @@ bool DiscoveryServer_Server::init(
     {
         return false;
     }
+    subscriber_ = server_->create_subscriber(eprosima::fastdds::dds::SUBSCRIBER_QOS_DEFAULT, nullptr);
+    if (nullptr == subscriber_)
+    {
+        return false;
+    }
     topic_ = server_->create_topic("HelloWorldTopic", type_.get_type_name(), eprosima::fastdds::dds::TOPIC_QOS_DEFAULT);
     if (nullptr == topic_)
     {
@@ -80,6 +85,11 @@ bool DiscoveryServer_Server::init(
     {
         return false;
     }
+    reader_ = subscriber_->create_datareader(topic_, eprosima::fastdds::dds::DATAREADER_QOS_DEFAULT, this);
+    if (nullptr == reader_)
+    {
+        return false;
+    }
     return true;
 }
 
@@ -87,6 +97,34 @@ DiscoveryServer_Server::~DiscoveryServer_Server()
 {
     server_->delete_contained_entities();
     eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->delete_participant(server_);
+}
+
+void DiscoveryServer_Server::on_subscription_matched(
+        eprosima::fastdds::dds::DataReader*,
+        const eprosima::fastdds::dds::SubscriptionMatchedStatus& info)
+{
+    if (info.current_count_change == 1)
+    {
+        std::cout << "DataReader matched" << std::endl;
+    }
+    else if (info.current_count_change == -1)
+    {
+        std::cout << "DataReader unmatched" << std::endl;
+    }
+}
+
+void DiscoveryServer_Server::on_data_available(
+        eprosima::fastdds::dds::DataReader* reader)
+{
+    eprosima::fastdds::dds::SampleInfo info;
+    if (eprosima::fastrtps::types::ReturnCode_t::RETCODE_OK == reader->take_next_sample(&received_hello_, &info))
+    {
+        if (info.valid_data && info.publication_handle != writer_->get_instance_handle())
+        {
+            std::cout << "Message " << received_hello_.message() << " RECEIVED in topic " << topic_->get_name() <<
+                    " with index: " << received_hello_.index() << std::endl;
+        }
+    }
 }
 
 void DiscoveryServer_Server::on_publication_matched(
@@ -107,10 +145,10 @@ void DiscoveryServer_Server::run_thread()
 {
     while (!stop_)
     {
-        hello_.index(++hello_.index());
-        writer_->write(&hello_);
-        std::cout << "Message: " << hello_.message() << " SENT in topic " << topic_->get_name() << " with index: " <<
-                hello_.index() << std::endl;
+        sent_hello_.index(++sent_hello_.index());
+        writer_->write(&sent_hello_);
+        std::cout << "Message: " << sent_hello_.message() << " SENT in topic " << topic_->get_name() << " with index: " <<
+                sent_hello_.index() << std::endl;
         std::this_thread::sleep_for(std::chrono::seconds(1));
     }
 }
