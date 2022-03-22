@@ -329,6 +329,10 @@ configure_file(${CMAKE_CURRENT_SOURCE_DIR}/utils/check_guid.py
     ${CMAKE_CURRENT_BINARY_DIR}/check_guid.py)
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/partitions.xml
     ${CMAKE_CURRENT_BINARY_DIR}/partitions.xml)
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/staticDiscoveryKO.xml
+    ${CMAKE_CURRENT_BINARY_DIR}/staticDiscoveryKO.xml)
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/staticDiscoveryOK.xml
+    ${CMAKE_CURRENT_BINARY_DIR}/staticDiscoveryOK.xml)
 
 if(FASTRTPS_API_TESTS)
     set(BLACKBOXTESTS_FASTRTPS_SOURCE

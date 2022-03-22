@@ -567,3 +567,29 @@ TEST(DDSDiscovery, ParticipantProxyPhysicalData)
     DomainParticipantFactory::get_instance()->delete_participant(part_1);
     DomainParticipantFactory::get_instance()->delete_participant(part_2);
 }
+
+/**
+ * This test checks the  validity of an XML static discovery file
+ *
+ * It uses the DomainParticipantFactory->check_xml_static_discovery method
+ * and checks it returns OK when xml file is valid
+ */
+TEST(DDSDiscovery, CheckCorrectXmlStaticDiscoveryFile)
+{
+    std::string file = "staticDiscoveryOK.xml";
+    DomainParticipantFactory* factory = DomainParticipantFactory::get_instance();
+    ASSERT_EQ(factory->check_xml_static_discovery(file), ReturnCode_t::RETCODE_OK);
+}
+
+/**
+ * This test checks the non validity of an XML static discovery file
+ *
+ * It uses the DomainParticipantFactory->check_xml_static_discovery method
+ * and checks it returns ERROR when xml file is not valid
+ */
+TEST(DDSDiscovery, CheckNotCorrectXmlStaticDiscoveryFile)
+{
+    std::string file = "staticDiscoveryKO.xml";
+    DomainParticipantFactory* factory = DomainParticipantFactory::get_instance();
+    ASSERT_EQ(factory->check_xml_static_discovery(file), ReturnCode_t::RETCODE_ERROR);
+}
