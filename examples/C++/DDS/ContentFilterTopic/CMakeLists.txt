@@ -38,6 +38,11 @@ set(CFT_DSF_SOURCES
     DefaultSQLFilterSubscriber.cpp
     DefaultSQLFilter_main.cpp)
 
+set(CFT_CF_SOURCES
+    CustomFilterPublisher.cpp
+    CustomFilterSubscriber.cpp
+    CustomFilter_main.cpp)
+
 
 add_executable(DefaultSQLFilter ${CFT_COMMON_SOURCES} ${CFT_DSF_SOURCES})
 target_compile_definitions(DefaultSQLFilter PRIVATE
@@ -49,12 +54,12 @@ target_link_libraries(DefaultSQLFilter fastrtps fastcdr)
 install(TARGETS DefaultSQLFilter
     RUNTIME DESTINATION examples/C++/DDS/ContentFilterTopic/${BIN_INSTALL_DIR})
 
-#add_executable(CustomFilter ${CFT_COMMON_SOURCES})
-#target_compile_definitions(CustomFilter PRIVATE
-#    $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
-#    $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
-#)
-#target_compile_features(CustomFilter PRIVATE cxx_std_11)
-#target_link_libraries(CustomFilter fastrtps fastcdr)
-#install(TARGETS CustomFilter
-#    RUNTIME DESTINATION examples/C++/DDS/ContentFilterTopic/${BIN_INSTALL_DIR})
+add_executable(CustomFilter ${CFT_COMMON_SOURCES} ${CFT_CF_SOURCES})
+target_compile_definitions(CustomFilter PRIVATE
+    $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
+    $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
+)
+target_compile_features(CustomFilter PRIVATE cxx_std_11)
+target_link_libraries(CustomFilter fastrtps fastcdr)
+install(TARGETS CustomFilter
+    RUNTIME DESTINATION examples/C++/DDS/ContentFilterTopic/${BIN_INSTALL_DIR})

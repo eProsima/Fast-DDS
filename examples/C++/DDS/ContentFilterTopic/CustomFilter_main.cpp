@@ -13,12 +13,12 @@
 // limitations under the License.
 
 /**
- * @file DefaultSQLFilter_main.cpp
+ * @file CustomFilter_main.cpp
  *
  */
 
-#include "DefaultSQLFilterPublisher.hpp"
-#include "DefaultSQLFilterSubscriber.hpp"
+#include "CustomFilterPublisher.hpp"
+#include "CustomFilterSubscriber.hpp"
 
 #include <fastdds/dds/domain/DomainParticipantFactory.hpp>
 
@@ -64,7 +64,7 @@ int main(
     {
         case 1:
         {
-            DefaultSQLFilterPublisher mypub;
+            CustomFilterPublisher mypub;
             if (mypub.init())
             {
                 mypub.run(static_cast<uint32_t>(count), static_cast<uint32_t>(sleep));
@@ -73,7 +73,7 @@ int main(
         }
         case 2:
         {
-            DefaultSQLFilterSubscriber mysub;
+            CustomFilterSubscriber mysub;
             if (mysub.init())
             {
                 mysub.run();
