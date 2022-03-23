@@ -257,6 +257,11 @@ uint64_t DataReader::get_unread_count() const
     return impl_->get_unread_count();
 }
 
+const GUID_t& DataReader::guid()
+{
+    return impl_->guid();
+}
+
 const GUID_t& DataReader::guid() const
 {
     return impl_->guid();
