@@ -261,8 +261,8 @@ TEST_F(DDSSQLFilterTests, type_compatibility_like)
             // Integer values
             {"1", bad_code},
             {"-1", bad_code},
-            {"0x10", bad_code},
-            {"-0x10", bad_code},
+            {"0x1F", bad_code},
+            {"-0x1f", bad_code},
             // Floating point values
             {"1.0", bad_code},
             {"-1.0", bad_code},
@@ -353,8 +353,8 @@ TEST_F(DDSSQLFilterTests, type_compatibility_match)
             // Integer values
             {"1", bad_code},
             {"-1", bad_code},
-            {"0x10", bad_code},
-            {"-0x10", bad_code},
+            {"0xab", bad_code},
+            {"-0xCd", bad_code},
             // Floating point values
             {"1.0", bad_code},
             {"-1.0", bad_code},
@@ -454,8 +454,8 @@ TEST_F(DDSSQLFilterTests, type_compatibility_compare)
             // Integer values
             {"1", "INT"},
             {"-1", "INT"},
-            {"0x10", "INT"},
-            {"-0x10", "INT"},
+            {"0xabcdef", "INT"},
+            {"-0xFEEDBAC0", "INT"},
             // Floating point values
             {"1.0", "FLOAT"},
             {"-1.0", "FLOAT"},
