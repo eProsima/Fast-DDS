@@ -261,6 +261,8 @@ TEST_F(DDSSQLFilterTests, type_compatibility_like)
             // Integer values
             {"1", bad_code},
             {"-1", bad_code},
+            {"0x10", bad_code},
+            {"-0x10", bad_code},
             // Floating point values
             {"1.0", bad_code},
             {"-1.0", bad_code},
@@ -351,6 +353,8 @@ TEST_F(DDSSQLFilterTests, type_compatibility_match)
             // Integer values
             {"1", bad_code},
             {"-1", bad_code},
+            {"0x10", bad_code},
+            {"-0x10", bad_code},
             // Floating point values
             {"1.0", bad_code},
             {"-1.0", bad_code},
@@ -450,6 +454,8 @@ TEST_F(DDSSQLFilterTests, type_compatibility_compare)
             // Integer values
             {"1", "INT"},
             {"-1", "INT"},
+            {"0x10", "INT"},
+            {"-0x10", "INT"},
             // Floating point values
             {"1.0", "FLOAT"},
             {"-1.0", "FLOAT"},
@@ -1608,6 +1614,11 @@ static std::vector<DDSSQLFilterValueParams> get_test_filtered_value_promotion_in
     input.samples_filtered.assign({true, true, true, true, true});
     inputs.push_back(input);
 
+    input.test_case_name = "bool_field_signed_hex_constant";
+    input.expression = "bool_field > -0x1";
+    input.samples_filtered.assign({true, true, true, true, true});
+    inputs.push_back(input);
+
     input.test_case_name = "bool_field_uint8_field";
     input.expression = "bool_field < uint8_field";
     input.samples_filtered.assign({false, true, true, true, true});
@@ -1630,6 +1641,11 @@ static std::vector<DDSSQLFilterValueParams> get_test_filtered_value_promotion_in
 
     input.test_case_name = "bool_field_unsigned_int_constant";
     input.expression = "bool_field < 1";
+    input.samples_filtered.assign({true, true, false, false, false});
+    inputs.push_back(input);
+
+    input.test_case_name = "bool_field_unsigned_hex_constant";
+    input.expression = "bool_field < 0x1";
     input.samples_filtered.assign({true, true, false, false, false});
     inputs.push_back(input);
 
@@ -1715,13 +1731,23 @@ static std::vector<DDSSQLFilterValueParams> get_test_filtered_value_promotion_in
     input.samples_filtered.assign({true, true, true, false, false});
     inputs.push_back(input);
 
-    input.test_case_name = "int32_field_unsigned_int_constant";
-    input.expression = "int32_field < 1";
+    input.test_case_name = "int16_field_unsigned_hex_constant";
+    input.expression = "int16_field < 0x1";
+    input.samples_filtered.assign({true, true, true, false, false});
+    inputs.push_back(input);
+
+    input.test_case_name = "int32_field_unsigned_hex_constant";
+    input.expression = "int32_field < 0x1";
     input.samples_filtered.assign({true, true, true, false, false});
     inputs.push_back(input);
 
     input.test_case_name = "int64_field_unsigned_int_constant";
     input.expression = "int64_field < 1";
+    input.samples_filtered.assign({true, true, true, false, false});
+    inputs.push_back(input);
+
+    input.test_case_name = "int64_field_unsigned_hex_constant";
+    input.expression = "int64_field < 0x1";
     input.samples_filtered.assign({true, true, true, false, false});
     inputs.push_back(input);
 
@@ -1873,6 +1899,11 @@ static std::vector<DDSSQLFilterValueParams> get_test_filtered_value_promotion_in
     input.samples_filtered.assign({true, true, true, true, true});
     inputs.push_back(input);
 
+    input.test_case_name = "enum_field_signed_hex_constant";
+    input.expression = "enum_field > -0x1";
+    input.samples_filtered.assign({true, true, true, true, true});
+    inputs.push_back(input);
+
     // ENUM - UINT promotions
     input.test_case_name = "enum_field_uint8_field";
     input.expression = "enum_field >= uint8_field";
@@ -1896,6 +1927,11 @@ static std::vector<DDSSQLFilterValueParams> get_test_filtered_value_promotion_in
 
     input.test_case_name = "enum_field_unsigned_int_constant";
     input.expression = "enum_field > 1";
+    input.samples_filtered.assign({false, false, true, true, true});
+    inputs.push_back(input);
+
+    input.test_case_name = "enum_field_unsigned_hex_constant";
+    input.expression = "enum_field > 0x1";
     input.samples_filtered.assign({false, false, true, true, true});
     inputs.push_back(input);
 
