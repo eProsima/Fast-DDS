@@ -1285,7 +1285,10 @@ void RTPSParticipantImpl::update_attributes(
             createSenderResources(m_att.builtin.metatrafficMulticastLocatorList);
             createSenderResources(m_att.builtin.metatrafficUnicastLocatorList);
             createSenderResources(m_att.defaultUnicastLocatorList);
-            createSenderResources(modified_locators);
+            if (!modified_locators.empty())
+            {
+                createSenderResources(modified_locators);
+            }
 
             // Update remote servers list
             if (m_att.builtin.discovery_config.discoveryProtocol == DiscoveryProtocol::CLIENT ||
