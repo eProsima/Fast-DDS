@@ -56,6 +56,7 @@ using selector = parse_tree::selector <
     literal_value_processor::on<
         true_value,
         false_value,
+        hex_value,
         integer_value,
         float_value,
         char_value,
