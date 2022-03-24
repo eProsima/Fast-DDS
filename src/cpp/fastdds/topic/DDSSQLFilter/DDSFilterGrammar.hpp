@@ -57,6 +57,7 @@ struct integer_value : seq< opt< sign >, integer > {};
 struct fractional : seq< dot_op, integer > {};
 struct exponent : seq< one< 'e', 'E' >, integer_value > {};
 struct float_value : seq < opt< sign >, integer, sor < exponent, seq< fractional, opt< exponent > > > > {};
+struct hex_value : seq< opt< sign >, one< '0' >, one< 'x', 'X' >, plus< xdigit > > {};
 
 // PARAMETER
 struct parameter_value : seq< one< '%' >, digit, opt< digit > > {};
@@ -80,7 +81,7 @@ struct match_op : pad< sor< TAO_PEGTL_KEYWORD("MATCH"), TAO_PEGTL_KEYWORD("match
 struct rel_op : sor< match_op, like_op, ne_op, le_op, ge_op, lt_op, gt_op, eq_op > {};
 
 // Parameter, Range
-struct Literal : sor< boolean_value, float_value, integer_value, char_value, string_value > {};
+struct Literal : sor< boolean_value, float_value, hex_value, integer_value, char_value, string_value > {};
 struct Parameter : sor< Literal, parameter_value > {};
 struct Range : seq< Parameter, and_op, Parameter > {};
 
