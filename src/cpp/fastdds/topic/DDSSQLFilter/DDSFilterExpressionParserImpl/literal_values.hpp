@@ -38,17 +38,17 @@ struct literal_value_processor
             n->value->kind = DDSFilterValue::ValueKind::BOOLEAN;
             n->value->boolean_value = false;
         }
-        else if (n->is<integer_value>())
+        else if (n->is<integer_value>() || n->is<hex_value>())
         {
             if (n->m_begin.data[0] == '-')
             {
                 n->value->kind = DDSFilterValue::ValueKind::SIGNED_INTEGER;
-                n->value->signed_integer_value = std::stoll(n->content());
+                n->value->signed_integer_value = std::stoll(n->content(), nullptr, 0);
             }
             else
             {
                 n->value->kind = DDSFilterValue::ValueKind::UNSIGNED_INTEGER;
-                n->value->unsigned_integer_value = std::stoull(n->content());
+                n->value->unsigned_integer_value = std::stoull(n->content(), nullptr, 0);
             }
         }
         else if (n->is<float_value>())
