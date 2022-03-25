@@ -110,6 +110,11 @@ const fastrtps::rtps::GUID_t& DataWriter::guid()
     return impl_->guid();
 }
 
+const fastrtps::rtps::GUID_t& DataWriter::guid() const
+{
+    return impl_->guid();
+}
+
 fastrtps::rtps::InstanceHandle_t DataWriter::get_instance_handle() const
 {
     return impl_->get_instance_handle();

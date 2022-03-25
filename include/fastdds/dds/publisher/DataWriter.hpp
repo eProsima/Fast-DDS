@@ -162,6 +162,12 @@ public:
     RTPS_DllAPI const fastrtps::rtps::GUID_t& guid();
 
     /**
+     * Returns the DataWriter's GUID
+     * @return Reference to the DataWriter GUID
+     */
+    RTPS_DllAPI const fastrtps::rtps::GUID_t& guid() const;
+
+    /**
      * Returns the DataWriter's InstanceHandle
      * @return Copy of the DataWriter InstanceHandle
      */
