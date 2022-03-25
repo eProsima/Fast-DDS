@@ -193,19 +193,13 @@ public:
     RTPS_DllAPI const fastrtps::rtps::GUID_t& guid();
 
     /**
-<<<<<<< HEAD
-     * @brief Getter for the associated InstanceHandle
-=======
-     * Get associated GUID.
-     *
+     * Get associated GUID
      * @return Associated GUID
      */
     RTPS_DllAPI const fastrtps::rtps::GUID_t& guid() const;
 
     /**
-     * @brief Getter for the associated InstanceHandle.
-     *
->>>>>>> e8581dbe3 (Add const overload of DataReader::guid() (#2590))
+     * @brief Getter for the associated InstanceHandle
      * @return Copy of the InstanceHandle
      */
     RTPS_DllAPI fastrtps::rtps::InstanceHandle_t get_instance_handle() const;
