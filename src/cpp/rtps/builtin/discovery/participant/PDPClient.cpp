@@ -589,6 +589,85 @@ bool PDPClient::match_servers_EDP_endpoints()
     return all;
 }
 
+void PDPClient::update_remote_servers_list()
+{
+    if (!mp_PDPReader || !mp_PDPWriter)
+    {
+        logError(SERVER_CLIENT_DISCOVERY, "Cannot update server list within an uninitialized Client");
+        return;
+    }
+
+    std::lock_guard<std::recursive_mutex> lock(*getMutex());
+
+    for (const eprosima::fastdds::rtps::RemoteServerAttributes& it : mp_builtin->m_DiscoveryServers)
+    {
+        if (!mp_PDPReader->matched_writer_is_matched(it.GetPDPWriter()))
+        {
+            match_pdp_writer_nts_(it);
+        }
+
+        if (!mp_PDPWriter->matched_reader_is_matched(it.GetPDPReader()))
+        {
+            match_pdp_reader_nts_(it);
+        }
+    }
+    mp_sync->restart_timer();
+}
+
+void PDPClient::match_pdp_writer_nts_(
+        const eprosima::fastdds::rtps::RemoteServerAttributes& server_att)
+{
+    std::lock_guard<std::mutex> data_guard(temp_data_lock_);
+    const NetworkFactory& network = mp_RTPSParticipant->network_factory();
+    temp_writer_data_.clear();
+    temp_writer_data_.guid(server_att.GetPDPWriter());
+    temp_writer_data_.set_multicast_locators(server_att.metatrafficMulticastLocatorList, network);
+    temp_writer_data_.set_remote_unicast_locators(server_att.metatrafficUnicastLocatorList, network);
+    temp_writer_data_.m_qos.m_durability.kind = TRANSIENT_DURABILITY_QOS;
+    temp_writer_data_.m_qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
+    mp_PDPReader->matched_writer_add(temp_writer_data_);
+}
+
+void PDPClient::match_pdp_reader_nts_(
+        const eprosima::fastdds::rtps::RemoteServerAttributes& server_att)
+{
+    std::lock_guard<std::mutex> data_guard(temp_data_lock_);
+    const NetworkFactory& network = mp_RTPSParticipant->network_factory();
+    temp_reader_data_.clear();
+    temp_reader_data_.guid(server_att.GetPDPReader());
+    temp_reader_data_.set_multicast_locators(server_att.metatrafficMulticastLocatorList, network);
+    temp_reader_data_.set_remote_unicast_locators(server_att.metatrafficUnicastLocatorList, network);
+    temp_reader_data_.m_qos.m_durability.kind = TRANSIENT_LOCAL_DURABILITY_QOS;
+    temp_reader_data_.m_qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
+    mp_PDPWriter->matched_reader_add(temp_reader_data_);
+}
+
+bool PDPClient::remove_remote_participant(
+        const GUID_t& partGUID,
+        ParticipantDiscoveryInfo::DISCOVERY_STATUS reason)
+{
+    if (PDP::remove_remote_participant(partGUID, reason))
+    {
+        // If it works fine, return
+        return true;
+    }
+
+    // Erase Proxies created before having the Participant
+    GUID_t wguid;
+    wguid.guidPrefix = partGUID.guidPrefix;
+    wguid.entityId = c_EntityId_SPDPWriter;
+    mp_PDPReader->matched_writer_remove(wguid);
+
+    GUID_t rguid;
+    rguid.guidPrefix = partGUID.guidPrefix;
+    rguid.entityId = c_EntityId_SPDPReader;
+    mp_PDPWriter->matched_reader_remove(rguid);
+
+    update_remote_servers_list();
+
+    return false;
+}
+
 } /* namespace rtps */
 } /* namespace fastrtps */
 } /* namespace eprosima */
