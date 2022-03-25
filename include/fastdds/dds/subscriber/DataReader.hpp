@@ -815,6 +815,13 @@ public:
     RTPS_DllAPI const fastrtps::rtps::GUID_t& guid();
 
     /**
+     * Get associated GUID.
+     *
+     * @return Associated GUID
+     */
+    RTPS_DllAPI const fastrtps::rtps::GUID_t& guid() const;
+
+    /**
      * @brief Getter for the associated InstanceHandle.
      *
      * @return Copy of the InstanceHandle

@@ -262,6 +262,11 @@ const GUID_t& DataReader::guid()
     return impl_->guid();
 }
 
+const GUID_t& DataReader::guid() const
+{
+    return impl_->guid();
+}
+
 InstanceHandle_t DataReader::get_instance_handle() const
 {
     return impl_->get_instance_handle();
