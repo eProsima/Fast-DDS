@@ -38,7 +38,8 @@ class ContentFilteredTopicImpl;
 constexpr const char* const sqlfilter_name = "DDSSQL";
 
 /**
- * Specialization of TopicDescription that allows for content-based subscriptions
+ * Specialization of TopicDescription that allows for content-based subscriptions.
+ *
  * @ingroup FASTDDS_MODULE
  */
 class ContentFilteredTopic : public TopicDescription
@@ -55,26 +56,70 @@ private:
 
 public:
 
-    /**
-     * @brief Destructor
-     */
     RTPS_DllAPI virtual ~ContentFilteredTopic();
 
     /**
      * @brief Getter for the related topic.
+     *
      * This operation returns the Topic associated with the ContentFilteredTopic.
      * That is, the Topic specified when the ContentFilteredTopic was created.
      */
     RTPS_DllAPI Topic* get_related_topic() const;
 
+    /**
+     * @brief Get the filter expression.
+     *
+     * This operation returns filter expression associated with this ContentFilteredTopic.
+     * It will return the @c filter_expression specified on the last successful call to @c set_expression or,
+     * if that method is never called, the expression specified when the ContentFilteredTopic was created.
+     *
+     * @return the @c filter_expression.
+     */
     RTPS_DllAPI const std::string& get_filter_expression() const;
 
+    /**
+     * @brief Get the expression parameters.
+     *
+     * This operation returns expression parameters associated with this ContentFilteredTopic.
+     * These will be the @c expression_parameters specified on the last successful call to @c set_expression or
+     * @c set_expression_parameters.
+     * If those methods have never been called, the expression parameters specified when the ContentFilteredTopic
+     * was created will be returned.
+     *
+     * @param [out] expression_parameters  The expression parameters currently associated with the
+     *                                     ContentFilteredTopic.
+     *
+     * @return RETCODE_OK
+     */
     RTPS_DllAPI ReturnCode_t get_expression_parameters(
             std::vector<std::string>& expression_parameters) const;
 
+    /**
+     * @brief Set the expression parameters.
+     *
+     * This operation changes expression parameters associated with this ContentFilteredTopic.
+     *
+     * @param [in] expression_parameters  The expression parameters to set.
+     *
+     * @return RETCODE_OK             if the expression parameters where correctly updated.
+     * @return RETCODE_BAD_PARAMETER  if the expression parameters do not match with the current @c filter_expression.
+     */
     RTPS_DllAPI ReturnCode_t set_expression_parameters(
             const std::vector<std::string>& expression_parameters);
 
+    /**
+     * @brief Set the filter expression and the expression parameters.
+     *
+     * This operation changes the filter expression and the expression parameters associated with this
+     * ContentFilteredTopic.
+     *
+     * @param [in] filter_expression      The filter expression to set.
+     * @param [in] expression_parameters  The expression parameters to set.
+     *
+     * @return RETCODE_OK             if the expression and parameters where correctly updated.
+     * @return RETCODE_BAD_PARAMETER  if @c filter_expression is not valid for this ContentFilteredTopic.
+     * @return RETCODE_BAD_PARAMETER  if the expression parameters do not match with the @c filter_expression.
+     */
     RTPS_DllAPI ReturnCode_t set_filter_expression(
             const std::string& filter_expression,
             const std::vector<std::string>& expression_parameters);
@@ -83,12 +128,8 @@ public:
      * @brief Getter for the DomainParticipant
      * @return DomainParticipant pointer
      */
-    virtual DomainParticipant* get_participant() const override;
+    DomainParticipant* get_participant() const override;
 
-    /**
-     * @brief Getter for the TopicDescriptionImpl
-     * @return pointer to TopicDescriptionImpl
-     */
     TopicDescriptionImpl* get_impl() const override;
 
 protected:
