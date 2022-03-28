@@ -336,10 +336,14 @@ public:
             bool mark_as_read = true) = 0;
 
     /**
-     * Checks whether the sample is still valid or is corrupted
-     * @param data Pointer to the sample data to check
-     * @param writer GUID of the writer that sent \c data
-     * @param sn Sequence number related to \c data
+     * Checks whether the sample is still valid or is corrupted.
+     *
+     * @param data    Pointer to the sample data to check.
+     *                If it does not belong to the payload pool passed to the
+     *                reader on construction, it yields undefined behavior.
+     * @param writer  GUID of the writer that sent \c data.
+     * @param sn      Sequence number related to \c data.
+     *
      * @return true if the sample is valid
      */
     RTPS_DllAPI bool is_sample_valid(
