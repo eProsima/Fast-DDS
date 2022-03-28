@@ -128,7 +128,7 @@ public:
      * @brief Getter for the DomainParticipant
      * @return DomainParticipant pointer
      */
-    virtual DomainParticipant* get_participant() const override;
+    DomainParticipant* get_participant() const override;
 
     TopicDescriptionImpl* get_impl() const override;
 
