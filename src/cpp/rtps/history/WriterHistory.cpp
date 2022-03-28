@@ -273,12 +273,24 @@ void WriterHistory::set_fragments(
 
     uint32_t final_high_mark_for_frag = high_mark_for_frag_;
 
-    // If inlineqos for related_sample_identity is required, then remove its size from the final fragment size.
+    // Calc additional size for inline QoS
+    uint32_t inline_qos_size = change->inline_qos.length;
     if (change->write_params.related_sample_identity() != SampleIdentity::unknown())
+    {
+        inline_qos_size += fastdds::dds::ParameterSerializer<Parameter_t>::PARAMETER_SAMPLE_IDENTITY_SIZE;
+    }
+    if (ChangeKind_t::ALIVE != change->kind && TopicKind_t::WITH_KEY == mp_writer->m_att.topicKind)
+    {
+        inline_qos_size += fastdds::dds::ParameterSerializer<Parameter_t>::PARAMETER_KEY_SIZE;
+        inline_qos_size += fastdds::dds::ParameterSerializer<Parameter_t>::PARAMETER_STATUS_SIZE;
+    }
+
+    // If inlineqos for related_sample_identity is required, then remove its size from the final fragment size.
+    if (0 < inline_qos_size)
     {
         final_high_mark_for_frag -= (
             fastdds::dds::ParameterSerializer<Parameter_t>::PARAMETER_SENTINEL_SIZE +
-            fastdds::dds::ParameterSerializer<Parameter_t>::PARAMETER_SAMPLE_IDENTITY_SIZE);
+            inline_qos_size);
     }
 
     // If it is big data, fragment it.
