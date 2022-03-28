@@ -68,7 +68,7 @@ using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
 using namespace eprosima::fastrtps::rtps::security;
 
-bool usleep_bool()
+inline bool usleep_bool()
 {
     std::this_thread::sleep_for (std::chrono::milliseconds(100));
     return true;
@@ -127,164 +127,158 @@ SecurityManager::~SecurityManager()
 
 bool SecurityManager::init(
         ParticipantSecurityAttributes& attributes,
-        const PropertyPolicy& participant_properties,
-        bool& security_activated)
+        const PropertyPolicy& participant_properties)
 {
-    security_activated = false;
-
-    SecurityException exception;
-    domain_id_ = participant_->get_domain_id();
-
-    const PropertyPolicy log_properties = PropertyPolicyHelper::get_properties_with_prefix(
-        participant_->getRTPSParticipantAttributes().properties,
-        "dds.sec.log.builtin.DDS_LogTopic.");
-
-    // length(log_properties) == 0 considered as logging disable.
-    if (PropertyPolicyHelper::length(log_properties) > 0)
+    try
     {
-        logging_plugin_ = factory_.create_logging_plugin(participant_properties);
+        SecurityException exception;
+        domain_id_ = participant_->get_domain_id();
+        const PropertyPolicy log_properties = PropertyPolicyHelper::get_properties_with_prefix(
+                participant_->getRTPSParticipantAttributes().properties,
+                "dds.sec.log.builtin.DDS_LogTopic.");
 
-        if (logging_plugin_ != nullptr)
+        // length(log_properties) == 0 considered as logging disable.
+        if (PropertyPolicyHelper::length(log_properties) > 0)
         {
-            LogOptions log_options;
-            log_options.distribute = false;
-            log_options.log_level = LoggingLevel::ERROR_LEVEL;
-            log_options.log_file = "";
+            logging_plugin_ = factory_.create_logging_plugin(participant_properties);
 
-            const auto init_logging_fail = [this](SecurityException& exception)
+            if (logging_plugin_ != nullptr)
+            {
+                LogOptions log_options;
+                log_options.distribute = false;
+                log_options.log_level = LoggingLevel::ERROR_LEVEL;
+                log_options.log_file = "";
+
+                const std::string* const distribute = PropertyPolicyHelper::find_property(log_properties, "distribute");
+                if (distribute != nullptr)
+                {
+                    if (!distribute->compare("true") || !distribute->compare("1"))
                     {
-                        logError(SECURITY, "Logging plugin not configured. Security logging will be disabled. ("
-                                << exception.what() << ").");
-                        delete logging_plugin_;
-                        logging_plugin_ = nullptr;
-                        return false;
-                    };
+                        log_options.distribute = true;
+                    }
+                    else if (!distribute->compare("false") || !distribute->compare("0"))
+                    {
+                        log_options.distribute = false;
+                    }
+                    else
+                    {
+                        throw SecurityException("Unknown value '" + *distribute + "' for LogOptions::distribute."); ;
+                    }
+                }
 
-            const std::string* const distribute = PropertyPolicyHelper::find_property(log_properties, "distribute");
-            if (distribute != nullptr)
-            {
-                if (!distribute->compare("true") || !distribute->compare("1"))
+                const std::string* const log_level = PropertyPolicyHelper::find_property(log_properties, "logging_level");
+                if (log_level != nullptr)
                 {
-                    log_options.distribute = true;
+                    if (!string_to_LogLevel(*log_level, log_options.log_level, exception))
+                    {
+                        throw exception;
+                    }
                 }
-                else if (!distribute->compare("false") || !distribute->compare("0"))
+
+                const std::string* const log_file = PropertyPolicyHelper::find_property(log_properties, "log_file");
+                if (log_file != nullptr)
                 {
-                    log_options.distribute = false;
+                    log_options.log_file = *log_file;
                 }
-                else
+
+                if (!(logging_plugin_->set_guid(participant_->getGuid(), exception) &&
+                            logging_plugin_->set_domain_id(domain_id_, exception)))
                 {
-                    exception = SecurityException("Unknown value '" + *distribute + "' for LogOptions::distribute.");
-                    return init_logging_fail(exception);
+                    throw exception;
+                }
+
+                if (!( logging_plugin_->set_log_options(log_options, exception) &&
+                            logging_plugin_->enable_logging(exception)))
+                {
+                    throw exception;
                 }
             }
-
-            const std::string* const log_level = PropertyPolicyHelper::find_property(log_properties, "logging_level");
-            if (log_level != nullptr)
+            else
             {
-                if (!string_to_LogLevel(*log_level, log_options.log_level, exception))
-                {
-                    return init_logging_fail(exception);
-                }
-            }
-
-            const std::string* const log_file = PropertyPolicyHelper::find_property(log_properties, "log_file");
-            if (log_file != nullptr)
-            {
-                log_options.log_file = *log_file;
-            }
-
-            if (!(logging_plugin_->set_guid(participant_->getGuid(), exception) &&
-                    logging_plugin_->set_domain_id(domain_id_, exception)))
-            {
-                return init_logging_fail(exception);
-            }
-
-            if (!( logging_plugin_->set_log_options(log_options, exception) &&
-                    logging_plugin_->enable_logging(exception)))
-            {
-                return init_logging_fail(exception);
+                //TODO(artivis): If the factory fails instantiating 'authentication_plugin_',
+                // a logInfo is issued and this init function returns true. Is it a bug?
+                // in the meantime we'll adopt a similar behavior here.
+                logInfo(SECURITY, "Could not create logging plugin. Security logging will be disabled.");
             }
         }
-        else
+
+        authentication_plugin_ = factory_.create_authentication_plugin(participant_properties);
+
+        if (authentication_plugin_ != nullptr)
         {
-            //TODO(artivis): If the factory fails instantiating 'authentication_plugin_',
-            // a logInfo is issued and this init function returns true. Is it a bug?
-            // in the meantime we'll adopt a similar behavior here.
-            logInfo(SECURITY, "Could not create logging plugin. Security logging will be disabled.");
-        }
-    }
+            authentication_plugin_->set_logger(logging_plugin_, exception);
 
-    authentication_plugin_ = factory_.create_authentication_plugin(participant_properties);
+            // Validate local participant
+            GUID_t adjusted_participant_key;
+            ValidationResult_t ret = VALIDATION_FAILED;
 
-    if (authentication_plugin_ != nullptr)
-    {
-        authentication_plugin_->set_logger(logging_plugin_, exception);
+            do
+            {
+                ret = authentication_plugin_->validate_local_identity(&local_identity_handle_,
+                        adjusted_participant_key,
+                        domain_id_,
+                        participant_->getRTPSParticipantAttributes(),
+                        participant_->getGuid(),
+                        exception);
+            } while (ret == VALIDATION_PENDING_RETRY && usleep_bool());
 
-        // Validate local participant
-        GUID_t adjusted_participant_key;
-        ValidationResult_t ret = VALIDATION_FAILED;
+            if (ret == VALIDATION_OK)
+            {
+                assert(local_identity_handle_ != nullptr);
+                assert(!local_identity_handle_->nil());
 
-        do
-        {
-            ret = authentication_plugin_->validate_local_identity(&local_identity_handle_,
-                            adjusted_participant_key,
+                // Set participant guid
+                participant_->setGuid(adjusted_participant_key);
+
+                access_plugin_ = factory_.create_access_control_plugin(participant_properties);
+
+                if (access_plugin_ != nullptr)
+                {
+                    access_plugin_->set_logger(logging_plugin_, exception);
+
+                    local_permissions_handle_ = access_plugin_->validate_local_permissions(
+                            *authentication_plugin_, *local_identity_handle_,
                             domain_id_,
                             participant_->getRTPSParticipantAttributes(),
-                            participant_->getGuid(),
                             exception);
-        } while (ret == VALIDATION_PENDING_RETRY && usleep_bool());
 
-        if (ret == VALIDATION_OK)
-        {
-            assert(local_identity_handle_ != nullptr);
-            assert(!local_identity_handle_->nil());
-
-            // Set participant guid
-            participant_->setGuid(adjusted_participant_key);
-
-            access_plugin_ = factory_.create_access_control_plugin(participant_properties);
-
-            if (access_plugin_ != nullptr)
-            {
-                access_plugin_->set_logger(logging_plugin_, exception);
-
-                local_permissions_handle_ = access_plugin_->validate_local_permissions(
-                    *authentication_plugin_, *local_identity_handle_,
-                    domain_id_,
-                    participant_->getRTPSParticipantAttributes(),
-                    exception);
-
-                if (local_permissions_handle_ != nullptr)
-                {
-                    if (!local_permissions_handle_->nil())
+                    if (local_permissions_handle_ != nullptr)
                     {
-                        if (access_plugin_->check_create_participant(*local_permissions_handle_,
-                                domain_id_,
-                                participant_->getRTPSParticipantAttributes(), exception))
+                        if (!local_permissions_handle_->nil())
                         {
-                            // Set credentials.
-                            PermissionsCredentialToken* token = nullptr;
-                            if (access_plugin_->get_permissions_credential_token(
-                                        &token, *local_permissions_handle_, exception))
+                            if (access_plugin_->check_create_participant(*local_permissions_handle_,
+                                        domain_id_,
+                                        participant_->getRTPSParticipantAttributes(), exception))
                             {
-
-                                if (authentication_plugin_->set_permissions_credential_and_token(
-                                            *local_identity_handle_, *token, exception))
+                                // Set credentials.
+                                PermissionsCredentialToken* token = nullptr;
+                                if (access_plugin_->get_permissions_credential_token(
+                                            &token, *local_permissions_handle_, exception))
                                 {
-                                    if (!access_plugin_->get_participant_sec_attributes(*local_permissions_handle_,
-                                            attributes, exception))
+
+                                    if (authentication_plugin_->set_permissions_credential_and_token(
+                                                *local_identity_handle_, *token, exception))
+                                    {
+                                        if (!access_plugin_->get_participant_sec_attributes(*local_permissions_handle_,
+                                                    attributes, exception))
+                                        {
+                                            access_plugin_->return_permissions_handle(local_permissions_handle_, exception);
+                                            local_permissions_handle_ = nullptr;
+                                        }
+                                    }
+                                    else
                                     {
                                         access_plugin_->return_permissions_handle(local_permissions_handle_, exception);
                                         local_permissions_handle_ = nullptr;
                                     }
+
+                                    access_plugin_->return_permissions_credential_token(token, exception);
                                 }
                                 else
                                 {
                                     access_plugin_->return_permissions_handle(local_permissions_handle_, exception);
                                     local_permissions_handle_ = nullptr;
                                 }
-
-                                access_plugin_->return_permissions_credential_token(token, exception);
                             }
                             else
                             {
@@ -298,98 +292,105 @@ bool SecurityManager::init(
                             local_permissions_handle_ = nullptr;
                         }
                     }
-                    else
-                    {
-                        access_plugin_->return_permissions_handle(local_permissions_handle_, exception);
-                        local_permissions_handle_ = nullptr;
-                    }
                 }
-            }
 
-            if (access_plugin_ == nullptr)
-            {
-                // Read participant properties.
-                const std::string* property_value = PropertyPolicyHelper::find_property(participant_properties,
-                                "rtps.participant.rtps_protection_kind");
-                if (property_value != nullptr && property_value->compare("ENCRYPT") == 0)
+                if (access_plugin_ == nullptr)
                 {
-                    attributes.is_rtps_protected = true;
-                    attributes.plugin_participant_attributes |=
+                    // Read participant properties.
+                    const std::string* property_value = PropertyPolicyHelper::find_property(participant_properties,
+                            "rtps.participant.rtps_protection_kind");
+                    if (property_value != nullptr && property_value->compare("ENCRYPT") == 0)
+                    {
+                        attributes.is_rtps_protected = true;
+                        attributes.plugin_participant_attributes |=
                             PLUGIN_PARTICIPANT_SECURITY_ATTRIBUTES_FLAG_IS_VALID |
                             PLUGIN_PARTICIPANT_SECURITY_ATTRIBUTES_FLAG_IS_RTPS_ENCRYPTED;
-                }
-            }
-
-            if (access_plugin_ == nullptr || local_permissions_handle_ != nullptr)
-            {
-                crypto_plugin_ = factory_.create_cryptography_plugin(participant_properties);
-
-                if (crypto_plugin_ != nullptr)
-                {
-                    crypto_plugin_->set_logger(logging_plugin_, exception);
-
-                    local_participant_crypto_handle_ = crypto_plugin_->cryptokeyfactory()->register_local_participant(
-                        *local_identity_handle_,
-                        *local_permissions_handle_,
-                        participant_properties.properties(),
-                        attributes,
-                        exception);
-
-                    if (local_participant_crypto_handle_ != nullptr)
-                    {
-                        assert(!local_participant_crypto_handle_->nil());
                     }
                 }
-                else
+
+                if (access_plugin_ == nullptr || local_permissions_handle_ != nullptr)
                 {
-                    if (logging_plugin_)
+                    crypto_plugin_ = factory_.create_cryptography_plugin(participant_properties);
+
+                    if (crypto_plugin_ != nullptr)
                     {
-                        SecurityException logging_exception;
-                        logging_plugin_->log(LoggingLevel::INFORMATIONAL_LEVEL,
-                                "Cryptography plugin not configured",
-                                "SecurityManager,init",
-                                logging_exception);
+                        crypto_plugin_->set_logger(logging_plugin_, exception);
+
+                        local_participant_crypto_handle_ = crypto_plugin_->cryptokeyfactory()->register_local_participant(
+                                *local_identity_handle_,
+                                *local_permissions_handle_,
+                                participant_properties.properties(),
+                                attributes,
+                                exception);
+
+                        if (local_participant_crypto_handle_ != nullptr)
+                        {
+                            assert(!local_participant_crypto_handle_->nil());
+                        }
                     }
                     else
                     {
-                        logInfo(SECURITY, "Cryptography plugin not configured.");
+                        if (logging_plugin_)
+                        {
+                            SecurityException logging_exception;
+                            logging_plugin_->log(LoggingLevel::INFORMATIONAL_LEVEL,
+                                    "Cryptography plugin not configured",
+                                    "SecurityManager,init",
+                                    logging_exception);
+                        }
+                        else
+                        {
+                            logInfo(SECURITY, "Cryptography plugin not configured.");
+                        }
                     }
                 }
-            }
 
-            if ((access_plugin_ == nullptr || local_permissions_handle_ != nullptr) &&
-                    (crypto_plugin_ == nullptr || local_participant_crypto_handle_ != nullptr))
+                if ((access_plugin_ == nullptr || local_permissions_handle_ != nullptr) &&
+                        (crypto_plugin_ == nullptr || local_participant_crypto_handle_ != nullptr))
+                {
+                    // Should be activated here, to enable encription buffer on created entities
+                    throw true;
+                }
+            }
+            else
             {
-                // Should be activated here, to enable encription buffer on created entities
-                security_activated = true;
-                return true;
+                throw false;
             }
-
-            cancel_init();
-            return false;
-        }
-
-        delete authentication_plugin_;
-        authentication_plugin_ = nullptr;
-
-        return false;
-    }
-    else
-    {
-        if (logging_plugin_)
-        {
-            SecurityException logging_exception;
-            logging_plugin_->log(LoggingLevel::INFORMATIONAL_LEVEL,
-                    "Authentication plugin not configured. Security will be disable",
-                    "SecurityManager,init",
-                    logging_exception);
         }
         else
         {
-            logInfo(SECURITY, "Authentication plugin not configured. Security will be disable");
+            if (logging_plugin_)
+            {
+                SecurityException logging_exception;
+                logging_plugin_->log(LoggingLevel::INFORMATIONAL_LEVEL,
+                        "Authentication plugin not configured. Security will be disable",
+                        "SecurityManager,init",
+                        logging_exception);
+            }
+            else
+            {
+                logInfo(SECURITY, "Authentication plugin not configured. Security will be disable");
+            }
+        }
+    }
+    catch(SecurityException e)
+    {
+        logError(SECURITY, "Logging plugin not configured. Security logging will be disabled. ("
+                << e.what() << ").");
+        delete logging_plugin_;
+        logging_plugin_ = nullptr;
+        return false;
+    }
+    catch(bool e)
+    {
+        if(!e)
+        {
+            cancel_init();
+            return false;
         }
     }
 
+    enable_security_manager();
     return true;
 }
 
@@ -417,18 +418,22 @@ void SecurityManager::cancel_init()
 
     delete authentication_plugin_;
     authentication_plugin_ = nullptr;
+
+    disable_security_manager();
 }
 
 void SecurityManager::destroy()
 {
+    disable_security_manager();
+
     if (authentication_plugin_ != nullptr)
     {
-        mutex_.lock();
+        shared_lock<shared_mutex> _(mutex_);
+
+        SecurityException exception;
 
         for (auto& local_reader : reader_handles_)
         {
-            SecurityException exception;
-
             for (auto& wit : local_reader.second.associated_writers)
             {
                 crypto_plugin_->cryptokeyfactory()->unregister_datawriter(std::get<1>(wit.second),
@@ -441,8 +446,6 @@ void SecurityManager::destroy()
 
         for (auto& local_writer : writer_handles_)
         {
-            SecurityException exception;
-
             for (auto& rit : local_writer.second.associated_readers)
             {
                 crypto_plugin_->cryptokeyfactory()->unregister_datareader(std::get<1>(rit.second),
@@ -453,79 +456,73 @@ void SecurityManager::destroy()
                     exception);
         }
 
-        SecurityException exception;
-
-        // AuthUniquePtr must be removed after unlock SecurityManager's mutex.
-        // This is to avoid a deadlock with TimedEvents.
-        std::vector<DiscoveredParticipantInfo::AuthUniquePtr> auths_to_remove;
-
         for (auto& dp_it : discovered_participants_)
         {
-            ParticipantCryptoHandle* participant_crypto_handle = dp_it.second.get_participant_crypto();
+            ParticipantCryptoHandle* participant_crypto_handle = dp_it.second->get_participant_crypto();
             if (participant_crypto_handle != nullptr)
             {
                 crypto_plugin_->cryptokeyfactory()->unregister_participant(participant_crypto_handle, exception);
             }
 
-            PermissionsHandle* permissions_handle = dp_it.second.get_permissions_handle();
+            PermissionsHandle* permissions_handle = dp_it.second->get_permissions_handle();
             if (permissions_handle != nullptr)
             {
                 access_plugin_->return_permissions_handle(permissions_handle, exception);
             }
 
-            SharedSecretHandle* shared_secret_handle = dp_it.second.get_shared_secret();
+            SharedSecretHandle* shared_secret_handle = dp_it.second->get_shared_secret();
             if (shared_secret_handle != nullptr)
             {
                 authentication_plugin_->return_sharedsecret_handle(shared_secret_handle, exception);
             }
 
-            DiscoveredParticipantInfo::AuthUniquePtr remote_participant_info = dp_it.second.get_auth();
-            remove_discovered_participant_info(remote_participant_info);
-            auths_to_remove.push_back(std::move(remote_participant_info));
+            remove_discovered_participant_info(dp_it.second->get_auth());
         }
-
-        discovered_participants_.clear();
 
         if (local_participant_crypto_handle_ != nullptr)
         {
             crypto_plugin_->cryptokeyfactory()->unregister_participant(local_participant_crypto_handle_, exception);
-            local_participant_crypto_handle_ = nullptr;
         }
 
         if (local_permissions_handle_ != nullptr)
         {
             access_plugin_->return_permissions_handle(local_permissions_handle_, exception);
-            local_permissions_handle_ = nullptr;
         }
 
         if (local_identity_handle_ != nullptr)
         {
             authentication_plugin_->return_identity_handle(local_identity_handle_, exception);
-            local_identity_handle_ = nullptr;
         }
 
-        mutex_.unlock();
+    }
 
-        auths_to_remove.clear(); // AuthUniquePtr must be destroyed without SecurityManager's mutex locked.
+    std::lock_guard<shared_mutex> _(mutex_);
 
-        delete_entities();
+    // check the logic
+    delete_entities();
 
-        if (crypto_plugin_ != nullptr)
-        {
-            delete crypto_plugin_;
-            crypto_plugin_ = nullptr;
-        }
+    discovered_participants_.clear();
 
-        if (access_plugin_ != nullptr)
-        {
-            delete access_plugin_;
-        }
+    local_participant_crypto_handle_ = nullptr;
+    local_permissions_handle_ = nullptr;
+    local_identity_handle_ = nullptr;
 
-        if (authentication_plugin_ != nullptr)
-        {
-            delete authentication_plugin_;
-            authentication_plugin_ = nullptr;
-        }
+    if (crypto_plugin_ != nullptr)
+    {
+        delete crypto_plugin_;
+        crypto_plugin_ = nullptr;
+    }
+
+    if (access_plugin_ != nullptr)
+    {
+        delete access_plugin_;
+        access_plugin_ = nullptr;
+    }
+
+    if (authentication_plugin_ != nullptr)
+    {
+        delete authentication_plugin_;
+        authentication_plugin_ = nullptr;
     }
 
     if (logging_plugin_ != nullptr)
@@ -538,6 +535,10 @@ void SecurityManager::destroy()
 void SecurityManager::remove_discovered_participant_info(
         const DiscoveredParticipantInfo::AuthUniquePtr& auth_ptr)
 {
+    auto sentry = is_security_manager_initialized();
+    if(!sentry)
+        return;
+
     SecurityException exception;
 
     if (auth_ptr)
@@ -566,21 +567,18 @@ bool SecurityManager::restore_discovered_participant_info(
     SecurityException exception;
     bool returned_value = false;
 
-    std::unique_lock<std::mutex> lock(mutex_);
+    shared_lock<shared_mutex> _(mutex_);
+
     auto dp_it = discovered_participants_.find(remote_participant_key);
 
     if (dp_it != discovered_participants_.end())
     {
-        dp_it->second.set_auth(auth_ptr);
+        dp_it->second->set_auth(auth_ptr);
         returned_value = true;
     }
     else
     {
-        // AuthUniquePtr must be removed after unlock SecurityManager's mutex.
-        // This is to avoid a deadlock with TimedEvents.
-        DiscoveredParticipantInfo::AuthUniquePtr remote_participant_info = std::move(auth_ptr);
-        remove_discovered_participant_info(remote_participant_info);
-        lock.unlock(); // AuthUniquePtr must be destroyed without SecurityManager's mutex locked.
+        remove_discovered_participant_info(std::move(auth_ptr));
     }
 
     return returned_value;
@@ -589,6 +587,10 @@ bool SecurityManager::restore_discovered_participant_info(
 bool SecurityManager::discovered_participant(
         const ParticipantProxyData& participant_data)
 {
+    auto sentry = is_security_manager_initialized();
+    if(!sentry)
+        return false;
+
     // Early return when ParticipantSecurityInfo does not match
     auto& sec_attrs = participant_->security_attributes();
     if (!sec_attrs.match(participant_data.security_attributes_, participant_data.plugin_security_attributes_))
@@ -606,18 +608,25 @@ bool SecurityManager::discovered_participant(
     AuthenticationStatus auth_status = AUTHENTICATION_INIT;
 
     // Create or find information
-    mutex_.lock();
-    auto map_ret = discovered_participants_.emplace(
-        std::piecewise_construct,
-        std::forward_as_tuple(participant_data.m_guid),
-        std::forward_as_tuple(auth_status, participant_data));
-    DiscoveredParticipantInfo::AuthUniquePtr remote_participant_info = map_ret.first->second.get_auth();
-    mutex_.unlock();
-
-    if (map_ret.second)
+    DiscoveredParticipantInfo::AuthUniquePtr remote_participant_info;
     {
-        assert(remote_participant_info);
+        std::lock_guard<shared_mutex> _(mutex_);
 
+        auto map_ret = discovered_participants_.insert(
+                std::make_pair(
+                    participant_data.m_guid,
+                    std::unique_ptr<DiscoveredParticipantInfo>(
+                        new DiscoveredParticipantInfo(
+                            auth_status,
+                            participant_data))));
+
+        remote_participant_info = map_ret.first->second->get_auth();
+    }
+
+    assert(remote_participant_info);
+
+    if (remote_participant_info)
+    {
         // Configure the timed event but do not start it
         const GUID_t guid = participant_data.m_guid;
         remote_participant_info->event_.reset(new TimedEvent(participant_->getEventResource(),
@@ -658,11 +667,6 @@ bool SecurityManager::discovered_participant(
                     logError(SECURITY_AUTHENTICATION, exception.what());
                 }
 
-                // Remove created element, because authentication failed.
-                mutex_.lock();
-                discovered_participants_.erase(participant_data.m_guid);
-                mutex_.unlock();
-
                 logInfo(SECURITY, "Authentication failed for participant " <<
                         participant_data.m_guid);
 
@@ -675,8 +679,13 @@ bool SecurityManager::discovered_participant(
                     participant_->getListener()->onParticipantAuthentication(
                         participant_->getUserRTPSParticipant(), std::move(info));
                 }
-                //TODO(Ricardo) cryptograhy registration in AUTHENTICAITON_OK
 
+                std::lock_guard<shared_mutex> _(mutex_);
+
+                // Remove created element, because authentication failed.
+                discovered_participants_.erase(participant_data.m_guid);
+
+                //TODO(Ricardo) cryptograhy registration in AUTHENTICAITON_OK
                 return false;
         }
 
@@ -724,15 +733,51 @@ bool SecurityManager::discovered_participant(
 void SecurityManager::remove_participant(
         const ParticipantProxyData& participant_data)
 {
+    auto sentry = is_security_manager_initialized();
+    if(!sentry)
+        return;
+
     // Unmatch from builtin endpoints.
     unmatch_builtin_endpoints(participant_data);
 
-    std::unique_lock<std::mutex> lock(mutex_);
-    auto dp_it = discovered_participants_.find(participant_data.m_guid);
-
-    if (dp_it != discovered_participants_.end())
     {
-        SecurityException exception;
+        shared_lock<shared_mutex> sl(mutex_);
+
+        auto dp_it = discovered_participants_.find(participant_data.m_guid);
+
+        if (dp_it != discovered_participants_.end())
+        {
+            SecurityException exception;
+
+            ParticipantCryptoHandle* participant_crypto_handle =
+                dp_it->second->get_participant_crypto();
+            if (participant_crypto_handle != nullptr)
+            {
+                crypto_plugin_->cryptokeyfactory()->unregister_participant(participant_crypto_handle,
+                        exception);
+            }
+
+            PermissionsHandle* permissions_handle = dp_it->second->get_permissions_handle();
+            if (permissions_handle != nullptr)
+            {
+                access_plugin_->return_permissions_handle(permissions_handle, exception);
+            }
+
+            SharedSecretHandle* shared_secret_handle = dp_it->second->get_shared_secret();
+            if (shared_secret_handle != nullptr)
+            {
+                authentication_plugin_->return_sharedsecret_handle(shared_secret_handle, exception);
+            }
+
+            remove_discovered_participant_info(dp_it->second->get_auth());
+
+        }
+    }
+
+    {
+        std::lock_guard<shared_mutex> _(mutex_);
+
+        auto dp_it = discovered_participants_.find(participant_data.m_guid);
 
         for (auto& local_reader : reader_handles_)
         {
@@ -768,33 +813,7 @@ void SecurityManager::remove_participant(
             }
         }
 
-        ParticipantCryptoHandle* participant_crypto_handle =
-                dp_it->second.get_participant_crypto();
-        if (participant_crypto_handle != nullptr)
-        {
-            crypto_plugin_->cryptokeyfactory()->unregister_participant(participant_crypto_handle,
-                    exception);
-        }
-
-        PermissionsHandle* permissions_handle = dp_it->second.get_permissions_handle();
-        if (permissions_handle != nullptr)
-        {
-            access_plugin_->return_permissions_handle(permissions_handle, exception);
-        }
-
-        SharedSecretHandle* shared_secret_handle = dp_it->second.get_shared_secret();
-        if (shared_secret_handle != nullptr)
-        {
-            authentication_plugin_->return_sharedsecret_handle(shared_secret_handle, exception);
-        }
-
-        // AuthUniquePtr must be removed after unlock SecurityManager's mutex.
-        // This is to avoid a deadlock with TimedEvents.
-        DiscoveredParticipantInfo::AuthUniquePtr remote_participant_info = dp_it->second.get_auth();
-        remove_discovered_participant_info(remote_participant_info);
-
         discovered_participants_.erase(dp_it);
-        lock.unlock(); // AuthUniquePtr must be destroyed without SecurityManager's mutex locked.
     }
 }
 
@@ -804,6 +823,10 @@ bool SecurityManager::on_process_handshake(
         MessageIdentity&& message_identity,
         HandshakeMessageToken&& message_in)
 {
+    auto sentry = is_security_manager_initialized();
+    if(!sentry)
+        return false;
+
     HandshakeMessageToken* handshake_message = nullptr;
     SecurityException exception;
 
@@ -1327,7 +1350,7 @@ void SecurityManager::delete_participant_volatile_message_secure_reader()
 ParticipantGenericMessage SecurityManager::generate_authentication_message(
         const MessageIdentity& related_message_identity,
         const GUID_t& destination_participant_key,
-        HandshakeMessageToken& handshake_message)
+        HandshakeMessageToken& handshake_message) const
 {
     ParticipantGenericMessage message;
 
@@ -1343,7 +1366,7 @@ ParticipantGenericMessage SecurityManager::generate_authentication_message(
 
 ParticipantGenericMessage SecurityManager::generate_participant_crypto_token_message(
         const GUID_t& destination_participant_key,
-        ParticipantCryptoTokenSeq& crypto_tokens)
+        ParticipantCryptoTokenSeq& crypto_tokens) const
 {
     ParticipantGenericMessage message;
 
@@ -1360,7 +1383,7 @@ ParticipantGenericMessage SecurityManager::generate_writer_crypto_token_message(
         const GUID_t& destination_participant_key,
         const GUID_t& destination_endpoint_key,
         const GUID_t& source_endpoint_key,
-        ParticipantCryptoTokenSeq& crypto_tokens)
+        ParticipantCryptoTokenSeq& crypto_tokens) const
 {
     ParticipantGenericMessage message;
 
@@ -1379,7 +1402,7 @@ ParticipantGenericMessage SecurityManager::generate_reader_crypto_token_message(
         const GUID_t& destination_participant_key,
         const GUID_t& destination_endpoint_key,
         const GUID_t& source_endpoint_key,
-        ParticipantCryptoTokenSeq& crypto_tokens)
+        ParticipantCryptoTokenSeq& crypto_tokens) const
 {
     ParticipantGenericMessage message;
 
@@ -1398,6 +1421,10 @@ void SecurityManager::process_participant_stateless_message(
         const CacheChange_t* const change)
 {
     assert(change);
+
+    auto sentry = is_security_manager_initialized();
+    if(!sentry)
+        return;
 
     // Deserialize message
     ParticipantGenericMessage message;
@@ -1456,14 +1483,16 @@ void SecurityManager::process_participant_stateless_message(
         DiscoveredParticipantInfo::AuthUniquePtr remote_participant_info;
         const ParticipantProxyData* participant_data = nullptr;
 
-        mutex_.lock();
-        auto dp_it = discovered_participants_.find(remote_participant_key);
-        if (dp_it != discovered_participants_.end())
         {
-            remote_participant_info = dp_it->second.get_auth();
-            participant_data = &(dp_it->second.participant_data());
+            shared_lock<shared_mutex> _(mutex_);
+
+            auto dp_it = discovered_participants_.find(remote_participant_key);
+            if (dp_it != discovered_participants_.end())
+            {
+                remote_participant_info = dp_it->second->get_auth();
+                participant_data = &(dp_it->second->participant_data());
+            }
         }
-        mutex_.unlock();
 
         if (remote_participant_info && participant_data)
         {
@@ -1615,6 +1644,10 @@ void SecurityManager::process_participant_volatile_message_secure(
 {
     assert(change);
 
+    auto sentry = is_security_manager_initialized();
+    if(!sentry)
+        return;
+
     // Deserialize message
     ParticipantGenericMessage message;
     CDRMessage_t aux_msg(0);
@@ -1672,21 +1705,24 @@ void SecurityManager::process_participant_volatile_message_secure(
         ParticipantCryptoHandle* remote_participant_crypto = nullptr;
 
         // Search remote participant crypto handle.
-        std::unique_lock<std::mutex> lock(mutex_);
-        auto dp_it = discovered_participants_.find(remote_participant_key);
-
-        if (dp_it != discovered_participants_.end())
         {
-            if (dp_it->second.get_participant_crypto() == nullptr)
+            std::shared_lock<std::shared_mutex> lock(mutex_);
+
+            auto dp_it = discovered_participants_.find(remote_participant_key);
+
+            if (dp_it != discovered_participants_.end())
             {
-                return;
-            }
+                if (dp_it->second->get_participant_crypto() == nullptr)
+                {
+                    return;
+                }
 
-            remote_participant_crypto = dp_it->second.get_participant_crypto();
-        }
-        else
-        {
-            logInfo(SECURITY, "Received Participant Cryptography message but not found related remote_participant_key");
+                remote_participant_crypto = dp_it->second->get_participant_crypto();
+            }
+            else
+            {
+                logInfo(SECURITY, "Received Participant Cryptography message but not found related remote_participant_key");
+            }
         }
 
         if (remote_participant_crypto != nullptr)
@@ -1705,6 +1741,7 @@ void SecurityManager::process_participant_volatile_message_secure(
         }
         else
         {
+            std::lock_guard<std::shared_mutex> _(mutex_);
             remote_participant_pending_messages_.emplace(remote_participant_key, std::move(message.message_data()));
         }
     }
@@ -1732,47 +1769,50 @@ void SecurityManager::process_participant_volatile_message_secure(
         }
 
         // Search remote writer handle.
-        mutex_.lock();
         GUID_t writer_guid;
         ReaderProxyData* reader_data = nullptr;
-        auto wr_it = writer_handles_.find(message.destination_endpoint_key());
 
-        if (wr_it != writer_handles_.end())
         {
-            auto rd_it = wr_it->second.associated_readers.find(message.source_endpoint_key());
+            std::lock_guard<std::shared_mutex> _(mutex_);
 
-            if (rd_it != wr_it->second.associated_readers.end())
+            auto wr_it = writer_handles_.find(message.destination_endpoint_key());
+
+            if (wr_it != writer_handles_.end())
             {
-                SecurityException exception;
+                auto rd_it = wr_it->second.associated_readers.find(message.source_endpoint_key());
 
-                if (crypto_plugin_->cryptkeyexchange()->set_remote_datareader_crypto_tokens(
-                            *wr_it->second.writer_handle,
-                            *std::get<1>(rd_it->second),
-                            message.message_data(),
-                            exception))
+                if (rd_it != wr_it->second.associated_readers.end())
                 {
-                    writer_guid = wr_it->first;
-                    reader_data = &(std::get<0>(rd_it->second));
+                    SecurityException exception;
+
+                    if (crypto_plugin_->cryptkeyexchange()->set_remote_datareader_crypto_tokens(
+                                *wr_it->second.writer_handle,
+                                *std::get<1>(rd_it->second),
+                                message.message_data(),
+                                exception))
+                    {
+                        writer_guid = wr_it->first;
+                        reader_data = &(std::get<0>(rd_it->second));
+                    }
+                    else
+                    {
+                        logError(SECURITY, "Cannot set remote reader crypto tokens ("
+                                << message.source_endpoint_key() << ") - (" << exception.what() << ")");
+                    }
                 }
                 else
                 {
-                    logError(SECURITY, "Cannot set remote reader crypto tokens ("
-                            << message.source_endpoint_key() << ") - (" << exception.what() << ")");
+                    remote_reader_pending_messages_.emplace(std::make_pair(message.source_endpoint_key(),
+                                message.destination_endpoint_key()),
+                            std::move(message.message_data()));
                 }
             }
             else
             {
-                remote_reader_pending_messages_.emplace(std::make_pair(message.source_endpoint_key(),
-                        message.destination_endpoint_key()),
-                        std::move(message.message_data()));
+                logInfo(SECURITY, "Received Reader Cryptography message but not found local writer " <<
+                        message.destination_endpoint_key());
             }
         }
-        else
-        {
-            logInfo(SECURITY, "Received Reader Cryptography message but not found local writer " <<
-                    message.destination_endpoint_key());
-        }
-        mutex_.unlock();
 
         // If writer was found and setting of crypto tokens works, then tell core to match writer and reader.
         if (writer_guid != GUID_t::unknown())
@@ -1805,47 +1845,49 @@ void SecurityManager::process_participant_volatile_message_secure(
         }
 
         // Search remote writer handle.
-        mutex_.lock();
         GUID_t reader_guid;
         WriterProxyData* writer_data = nullptr;
-        auto rd_it = reader_handles_.find(message.destination_endpoint_key());
 
-        if (rd_it != reader_handles_.end())
         {
-            auto wr_it = rd_it->second.associated_writers.find(message.source_endpoint_key());
+            std::lock_guard<std::shared_mutex> _(mutex_);
+            auto rd_it = reader_handles_.find(message.destination_endpoint_key());
 
-            if (wr_it != rd_it->second.associated_writers.end())
+            if (rd_it != reader_handles_.end())
             {
-                SecurityException exception;
+                auto wr_it = rd_it->second.associated_writers.find(message.source_endpoint_key());
 
-                if (crypto_plugin_->cryptkeyexchange()->set_remote_datawriter_crypto_tokens(
-                            *rd_it->second.reader_handle,
-                            *std::get<1>(wr_it->second),
-                            message.message_data(),
-                            exception))
+                if (wr_it != rd_it->second.associated_writers.end())
                 {
-                    reader_guid = rd_it->first;
-                    writer_data = &(std::get<0>(wr_it->second));
+                    SecurityException exception;
+
+                    if (crypto_plugin_->cryptkeyexchange()->set_remote_datawriter_crypto_tokens(
+                                *rd_it->second.reader_handle,
+                                *std::get<1>(wr_it->second),
+                                message.message_data(),
+                                exception))
+                    {
+                        reader_guid = rd_it->first;
+                        writer_data = &(std::get<0>(wr_it->second));
+                    }
+                    else
+                    {
+                        logError(SECURITY, "Cannot set remote writer crypto tokens ("
+                                << message.source_endpoint_key() << ") - (" << exception.what() << ")");
+                    }
                 }
                 else
                 {
-                    logError(SECURITY, "Cannot set remote writer crypto tokens ("
-                            << message.source_endpoint_key() << ") - (" << exception.what() << ")");
+                    remote_writer_pending_messages_.emplace(std::make_pair(message.source_endpoint_key(),
+                                message.destination_endpoint_key()),
+                            std::move(message.message_data()));
                 }
             }
             else
             {
-                remote_writer_pending_messages_.emplace(std::make_pair(message.source_endpoint_key(),
-                        message.destination_endpoint_key()),
-                        std::move(message.message_data()));
+                logInfo(SECURITY, "Received Writer Cryptography message but not found local reader " <<
+                        message.destination_endpoint_key());
             }
         }
-        else
-        {
-            logInfo(SECURITY, "Received Writer Cryptography message but not found local reader " <<
-                    message.destination_endpoint_key());
-        }
-        mutex_.unlock();
 
         // If reader was found and setting of crypto tokens works, then tell core to match reader and writer.
         if (reader_guid != GUID_t::unknown())
@@ -1882,9 +1924,13 @@ void SecurityManager::ParticipantVolatileMessageListener::onNewCacheChangeAdded(
 }
 
 bool SecurityManager::get_identity_token(
-        IdentityToken** identity_token)
+        IdentityToken** identity_token) const
 {
     assert(identity_token);
+
+    auto sentry = is_security_manager_initialized();
+    if(!sentry)
+        return false;
 
     if (authentication_plugin_)
     {
@@ -1897,12 +1943,16 @@ bool SecurityManager::get_identity_token(
 }
 
 bool SecurityManager::return_identity_token(
-        IdentityToken* identity_token)
+        IdentityToken* identity_token) const
 {
     if (identity_token == nullptr)
     {
         return true;
     }
+
+    auto sentry = is_security_manager_initialized();
+    if(!sentry)
+        return false;
 
     if (authentication_plugin_)
     {
@@ -1915,9 +1965,13 @@ bool SecurityManager::return_identity_token(
 }
 
 bool SecurityManager::get_permissions_token(
-        PermissionsToken** permissions_token)
+        PermissionsToken** permissions_token) const
 {
     assert(permissions_token);
+
+    auto sentry = is_security_manager_initialized();
+    if(!sentry)
+        return false;
 
     if (access_plugin_)
     {
@@ -1930,12 +1984,16 @@ bool SecurityManager::get_permissions_token(
 }
 
 bool SecurityManager::return_permissions_token(
-        PermissionsToken* permissions_token)
+        PermissionsToken* permissions_token) const
 {
     if (permissions_token == nullptr)
     {
         return true;
     }
+
+    auto sentry = is_security_manager_initialized();
+    if(!sentry)
+        return false;
 
     if (access_plugin_)
     {
@@ -1947,9 +2005,13 @@ bool SecurityManager::return_permissions_token(
     return false;
 }
 
-uint32_t SecurityManager::builtin_endpoints()
+uint32_t SecurityManager::builtin_endpoints() const
 {
     uint32_t be = 0;
+
+    auto sentry = is_security_manager_initialized();
+    if(!sentry)
+        return be;
 
     if (participant_stateless_message_reader_ != nullptr)
     {
@@ -1980,7 +2042,6 @@ void SecurityManager::match_builtin_endpoints(
     if (participant_stateless_message_reader_ != nullptr &&
             builtin_endpoints & BUILTIN_ENDPOINT_PARTICIPANT_STATELESS_MESSAGE_WRITER)
     {
-        std::lock_guard<std::mutex> data_guard(temp_stateless_data_lock_);
         temp_stateless_writer_proxy_data_.clear();
         temp_stateless_writer_proxy_data_.guid().guidPrefix = participant_data.m_guid.guidPrefix;
         temp_stateless_writer_proxy_data_.guid().entityId = participant_stateless_message_writer_entity_id;
@@ -1995,7 +2056,6 @@ void SecurityManager::match_builtin_endpoints(
     if (participant_stateless_message_writer_ != nullptr &&
             builtin_endpoints & BUILTIN_ENDPOINT_PARTICIPANT_STATELESS_MESSAGE_READER)
     {
-        std::lock_guard<std::mutex> data_guard(temp_stateless_data_lock_);
         temp_stateless_reader_proxy_data_.clear();
         temp_stateless_reader_proxy_data_.m_expectsInlineQos = false;
         temp_stateless_reader_proxy_data_.guid().guidPrefix = participant_data.m_guid.guidPrefix;
@@ -2017,7 +2077,6 @@ void SecurityManager::match_builtin_key_exchange_endpoints(
     if (participant_volatile_message_secure_reader_ != nullptr &&
             builtin_endpoints & BUILTIN_ENDPOINT_PARTICIPANT_VOLATILE_MESSAGE_SECURE_WRITER)
     {
-        std::lock_guard<std::mutex> guardPDP(temp_volatile_data_lock_);
         temp_volatile_writer_proxy_data_.clear();
         temp_volatile_writer_proxy_data_.guid().guidPrefix = participant_data.m_guid.guidPrefix;
         temp_volatile_writer_proxy_data_.guid().entityId = participant_volatile_message_secure_writer_entity_id;
@@ -2032,7 +2091,6 @@ void SecurityManager::match_builtin_key_exchange_endpoints(
     if (participant_volatile_message_secure_writer_ != nullptr &&
             builtin_endpoints & BUILTIN_ENDPOINT_PARTICIPANT_VOLATILE_MESSAGE_SECURE_READER)
     {
-        std::lock_guard<std::mutex> guardPDP(temp_volatile_data_lock_);
         temp_volatile_reader_proxy_data_.clear();
         temp_volatile_reader_proxy_data_.m_expectsInlineQos = false;
         temp_volatile_reader_proxy_data_.guid().guidPrefix = participant_data.m_guid.guidPrefix;
@@ -2092,7 +2150,6 @@ void SecurityManager::exchange_participant_crypto(
     if (crypto_plugin_->cryptkeyexchange()->create_local_participant_crypto_tokens(local_participant_crypto_tokens,
             *local_participant_crypto_handle_, *remote_participant_crypto, exception))
     {
-
         ParticipantGenericMessage message = generate_participant_crypto_token_message(remote_participant_guid,
                         local_participant_crypto_tokens);
 
@@ -2181,8 +2238,14 @@ ParticipantCryptoHandle* SecurityManager::register_and_match_crypto_endpoint(
 bool SecurityManager::encode_rtps_message(
         const CDRMessage_t& input_message,
         CDRMessage_t& output_message,
-        const std::vector<GuidPrefix_t>& receiving_list)
+        const std::vector<GuidPrefix_t>& receiving_list) const
 {
+    auto sentry = is_security_manager_initialized();
+    if(!sentry)
+        return false;
+
+    shared_lock<shared_mutex> _(mutex_);
+
     if (crypto_plugin_ == nullptr)
     {
         logError(SECURITY, "Trying to encode rtps message without set cryptography plugin.");
@@ -2190,8 +2253,6 @@ bool SecurityManager::encode_rtps_message(
     }
 
     assert(receiving_list.size() > 0);
-
-    std::unique_lock<std::mutex> lock(mutex_);
 
     std::vector<ParticipantCryptoHandle*> receiving_crypto_list;
     for (const auto& remote_participant : receiving_list)
@@ -2206,9 +2267,9 @@ bool SecurityManager::encode_rtps_message(
         {
             auto dp_it = discovered_participants_.find(remote_participant_key);
 
-            if (dp_it != discovered_participants_.end() && dp_it->second.get_participant_crypto() != nullptr)
+            if (dp_it != discovered_participants_.cend() && dp_it->second->get_participant_crypto() != nullptr)
             {
-                receiving_crypto_list.push_back(dp_it->second.get_participant_crypto());
+                receiving_crypto_list.push_back(dp_it->second->get_participant_crypto());
             }
             else
             {
@@ -2226,12 +2287,16 @@ bool SecurityManager::encode_rtps_message(
 int SecurityManager::decode_rtps_message(
         const CDRMessage_t& message,
         CDRMessage_t& out_message,
-        const GuidPrefix_t& remote_participant)
+        const GuidPrefix_t& remote_participant) const
 {
     if (message.buffer[message.pos] != SRTPS_PREFIX)
     {
         return 1;
     }
+
+    auto sentry = is_security_manager_initialized();
+    if(!sentry)
+        return 0;
 
     if (crypto_plugin_ == nullptr)
     {
@@ -2241,9 +2306,7 @@ int SecurityManager::decode_rtps_message(
     // Init output buffer
     CDRMessage::initCDRMsg(&out_message);
 
-    std::unique_lock<std::mutex> lock(mutex_);
-
-    ParticipantCryptoHandle* remote_participant_crypto_handle = nullptr;
+    const ParticipantCryptoHandle* remote_participant_crypto_handle = nullptr;
 
     const GUID_t remote_participant_key(remote_participant, c_EntityId_RTPSParticipant);
 
@@ -2253,11 +2316,13 @@ int SecurityManager::decode_rtps_message(
     }
     else
     {
+        shared_lock<shared_mutex> _(mutex_);
+
         auto dp_it = discovered_participants_.find(remote_participant_key);
 
         if (dp_it != discovered_participants_.end())
         {
-            remote_participant_crypto_handle = dp_it->second.get_participant_crypto();
+            remote_participant_crypto_handle = dp_it->second->get_participant_crypto();
         }
     }
 
@@ -2295,6 +2360,10 @@ bool SecurityManager::register_local_writer(
         const PropertyPolicy& writer_properties,
         EndpointSecurityAttributes& security_attributes)
 {
+    auto sentry = is_security_manager_initialized();
+    if(!sentry)
+        return false;
+
     SecurityException exception;
     bool returned_value = get_datawriter_sec_attributes(writer_properties, security_attributes);
 
@@ -2306,7 +2375,7 @@ bool SecurityManager::register_local_writer(
 
         if (writer_handle != nullptr && !writer_handle->nil())
         {
-            std::unique_lock<std::mutex> lock(mutex_);
+            std::lock_guard<shared_mutex> _(mutex_);
             writer_handles_.emplace(writer_guid, writer_handle);
         }
         else
@@ -2323,6 +2392,10 @@ bool SecurityManager::get_datawriter_sec_attributes(
         const PropertyPolicy& writer_properties,
         EndpointSecurityAttributes& security_attributes)
 {
+    auto sentry = is_security_manager_initialized();
+    if(!sentry)
+        return false;
+
     bool returned_value = true;
     SecurityException exception;
 
@@ -2417,6 +2490,10 @@ bool SecurityManager::register_local_builtin_writer(
         const GUID_t& writer_guid,
         EndpointSecurityAttributes& security_attributes)
 {
+    auto sentry = is_security_manager_initialized();
+    if(!sentry)
+        return false;
+
     bool returned_value = true;
     SecurityException exception;
 
@@ -2429,7 +2506,7 @@ bool SecurityManager::register_local_builtin_writer(
 
         if (writer_handle != nullptr && !writer_handle->nil())
         {
-            std::unique_lock<std::mutex> lock(mutex_);
+            std::lock_guard<shared_mutex> _(mutex_);
             writer_handles_.emplace(writer_guid, writer_handle);
         }
         else
@@ -2445,12 +2522,17 @@ bool SecurityManager::register_local_builtin_writer(
 bool SecurityManager::unregister_local_writer(
         const GUID_t& writer_guid)
 {
+    auto sentry = is_security_manager_initialized();
+    if(!sentry)
+        return false;
+
     if (crypto_plugin_ == nullptr)
     {
         return false;
     }
 
-    std::unique_lock<std::mutex> lock(mutex_);
+    std::lock_guard<shared_mutex> _(mutex_);
+
     auto local_writer = writer_handles_.find(writer_guid);
 
     if (local_writer != writer_handles_.end())
@@ -2478,6 +2560,10 @@ bool SecurityManager::register_local_reader(
         const PropertyPolicy& reader_properties,
         EndpointSecurityAttributes& security_attributes)
 {
+    auto sentry = is_security_manager_initialized();
+    if(!sentry)
+        return false;
+
     SecurityException exception;
     bool returned_value = get_datareader_sec_attributes(reader_properties, security_attributes);
 
@@ -2490,7 +2576,7 @@ bool SecurityManager::register_local_reader(
 
         if (reader_handle != nullptr && !reader_handle->nil())
         {
-            std::unique_lock<std::mutex> lock(mutex_);
+            std::lock_guard<shared_mutex> _(mutex_);
             reader_handles_.emplace(reader_guid, reader_handle);
         }
         else
@@ -2507,6 +2593,10 @@ bool SecurityManager::get_datareader_sec_attributes(
         const PropertyPolicy& reader_properties,
         EndpointSecurityAttributes& security_attributes)
 {
+    auto sentry = is_security_manager_initialized();
+    if(!sentry)
+        return false;
+
     bool returned_value = true;
     SecurityException exception;
 
@@ -2601,6 +2691,10 @@ bool SecurityManager::register_local_builtin_reader(
         const GUID_t& reader_guid,
         EndpointSecurityAttributes& security_attributes)
 {
+    auto sentry = is_security_manager_initialized();
+    if(!sentry)
+        return false;
+
     bool returned_value = true;
     SecurityException exception;
 
@@ -2613,7 +2707,7 @@ bool SecurityManager::register_local_builtin_reader(
 
         if (reader_handle != nullptr && !reader_handle->nil())
         {
-            std::unique_lock<std::mutex> lock(mutex_);
+            std::lock_guard<shared_mutex> _(mutex_);
             reader_handles_.emplace(reader_guid, reader_handle);
         }
         else
@@ -2629,12 +2723,17 @@ bool SecurityManager::register_local_builtin_reader(
 bool SecurityManager::unregister_local_reader(
         const GUID_t& reader_guid)
 {
+    auto sentry = is_security_manager_initialized();
+    if(!sentry)
+        return false;
+
     if (crypto_plugin_ == nullptr)
     {
         return false;
     }
 
-    std::unique_lock<std::mutex> lock(mutex_);
+    std::lock_guard<shared_mutex> _(mutex_);
+
     auto local_reader = reader_handles_.find(reader_guid);
 
     if (local_reader != reader_handles_.end())
@@ -2671,12 +2770,16 @@ void SecurityManager::remove_reader(
         const GUID_t& /*remote_participant_key*/,
         const GUID_t& remote_reader_guid)
 {
+    auto sentry = is_security_manager_initialized();
+    if(!sentry)
+        return;
+
     if (crypto_plugin_ == nullptr)
     {
         return;
     }
 
-    std::unique_lock<std::mutex> lock(mutex_);
+    std::lock_guard<shared_mutex> _(mutex_);
 
     auto local_writer = writer_handles_.find(writer_guid);
 
@@ -2714,7 +2817,12 @@ bool SecurityManager::discovered_reader(
         const EndpointSecurityAttributes& security_attributes,
         bool is_builtin)
 {
-    std::unique_lock<std::mutex> lock(mutex_);
+    auto sentry = is_security_manager_initialized();
+    if(!sentry)
+        return false;
+
+    std::unique_lock<shared_mutex> lock(mutex_);
+
     PermissionsHandle* remote_permissions = nullptr;
     ParticipantCryptoHandle* remote_participant_crypto_handle = nullptr;
     SharedSecretHandle* shared_secret_handle = &SharedSecretHandle::nil_handle;
@@ -2735,9 +2843,9 @@ bool SecurityManager::discovered_reader(
 
         if (dp_it != discovered_participants_.end())
         {
-            remote_permissions = dp_it->second.get_permissions_handle();
-            remote_participant_crypto_handle = dp_it->second.get_participant_crypto();
-            shared_secret_handle = dp_it->second.get_shared_secret();
+            remote_permissions = dp_it->second->get_permissions_handle();
+            remote_participant_crypto_handle = dp_it->second->get_participant_crypto();
+            shared_secret_handle = dp_it->second->get_shared_secret();
         }
     }
 
@@ -2938,7 +3046,7 @@ bool SecurityManager::discovered_reader(
                         }
 
                         // Here the mutex has to be unlock.
-                        if (lock.owns_lock())
+                        if (lock)
                         {
                             lock.unlock();
                         }
@@ -3004,12 +3112,16 @@ void SecurityManager::remove_writer(
         const GUID_t& /*remote_participant_key*/,
         const GUID_t& remote_writer_guid)
 {
+    auto sentry = is_security_manager_initialized();
+    if(!sentry)
+        return;
+
     if (crypto_plugin_ == nullptr)
     {
         return;
     }
 
-    std::unique_lock<std::mutex> lock(mutex_);
+    std::lock_guard<shared_mutex> _(mutex_);
 
     auto local_reader = reader_handles_.find(reader_guid);
 
@@ -3047,7 +3159,12 @@ bool SecurityManager::discovered_writer(
         const EndpointSecurityAttributes& security_attributes,
         bool is_builtin)
 {
-    std::unique_lock<std::mutex> lock(mutex_);
+    auto sentry = is_security_manager_initialized();
+    if(!sentry)
+        return false;
+
+    std::unique_lock<shared_mutex> lock(mutex_);
+
     PermissionsHandle* remote_permissions = nullptr;
     ParticipantCryptoHandle* remote_participant_crypto_handle = nullptr;
     SharedSecretHandle* shared_secret_handle = &SharedSecretHandle::nil_handle;
@@ -3068,9 +3185,9 @@ bool SecurityManager::discovered_writer(
 
         if (dp_it != discovered_participants_.end())
         {
-            remote_permissions = dp_it->second.get_permissions_handle();
-            remote_participant_crypto_handle = dp_it->second.get_participant_crypto();
-            shared_secret_handle = dp_it->second.get_shared_secret();
+            remote_permissions = dp_it->second->get_permissions_handle();
+            remote_participant_crypto_handle = dp_it->second->get_participant_crypto();
+            shared_secret_handle = dp_it->second->get_shared_secret();
         }
     }
 
@@ -3272,7 +3389,7 @@ bool SecurityManager::discovered_writer(
                         }
 
                         // Here the mutex has to be unlock.
-                        if (lock.owns_lock())
+                        if (lock)
                         {
                             lock.unlock();
                         }
@@ -3328,14 +3445,18 @@ bool SecurityManager::encode_writer_submessage(
         const CDRMessage_t& input_message,
         CDRMessage_t& output_message,
         const GUID_t& writer_guid,
-        const std::vector<GUID_t>& receiving_list)
+        const std::vector<GUID_t>& receiving_list) const
 {
+    auto sentry = is_security_manager_initialized();
+    if(!sentry)
+        return false;
+
     if (crypto_plugin_ == nullptr)
     {
         return false;
     }
 
-    std::unique_lock<std::mutex> lock(mutex_);
+    shared_lock<shared_mutex> _(mutex_);
 
     if (writer_guid.entityId == participant_volatile_message_secure_writer_entity_id)
     {
@@ -3346,7 +3467,7 @@ bool SecurityManager::encode_writer_submessage(
             auto part = discovered_participants_.find(participant_guid);
             if (part != discovered_participants_.end())
             {
-                auto pCrypto = part->second.get_participant_crypto();
+                auto pCrypto = part->second->get_participant_crypto();
 
                 if (pCrypto)
                 {
@@ -3417,14 +3538,18 @@ bool SecurityManager::encode_reader_submessage(
         const CDRMessage_t& input_message,
         CDRMessage_t& output_message,
         const GUID_t& reader_guid,
-        const std::vector<GUID_t>& receiving_list)
+        const std::vector<GUID_t>& receiving_list) const
 {
+    auto sentry = is_security_manager_initialized();
+    if(!sentry)
+        return false;
+
     if (crypto_plugin_ == nullptr)
     {
         return false;
     }
 
-    std::unique_lock<std::mutex> lock(mutex_);
+    shared_lock<shared_mutex> _(mutex_);
 
     if (reader_guid.entityId == participant_volatile_message_secure_reader_entity_id)
     {
@@ -3436,7 +3561,7 @@ bool SecurityManager::encode_reader_submessage(
             auto part = discovered_participants_.find(participant_guid);
             if (part != discovered_participants_.end())
             {
-                auto pCrypto = part->second.get_participant_crypto();
+                auto pCrypto = part->second->get_participant_crypto();
 
                 if (pCrypto)
                 {
@@ -3506,8 +3631,12 @@ bool SecurityManager::encode_reader_submessage(
 int SecurityManager::decode_rtps_submessage(
         CDRMessage_t& message,
         CDRMessage_t& out_message,
-        const GuidPrefix_t& sending_participant)
+        const GuidPrefix_t& sending_participant) const
 {
+    auto sentry = is_security_manager_initialized();
+    if(!sentry)
+        return false;
+
     if (message.buffer[message.pos] != SEC_PREFIX)
     {
         return 1;
@@ -3520,7 +3649,7 @@ int SecurityManager::decode_rtps_submessage(
 
     CDRMessage::initCDRMsg(&out_message);
 
-    std::unique_lock<std::mutex> lock(mutex_);
+    shared_lock<shared_mutex> _(mutex_);
 
     const GUID_t remote_participant_key(sending_participant, c_EntityId_RTPSParticipant);
     ParticipantCryptoHandle* remote_participant_crypto_handle = nullptr;
@@ -3535,7 +3664,7 @@ int SecurityManager::decode_rtps_submessage(
 
         if (dp_it != discovered_participants_.end())
         {
-            remote_participant_crypto_handle = dp_it->second.get_participant_crypto();
+            remote_participant_crypto_handle = dp_it->second->get_participant_crypto();
         }
     }
 
@@ -3546,6 +3675,7 @@ int SecurityManager::decode_rtps_submessage(
         SecureSubmessageCategory_t category = INFO_SUBMESSAGE;
         SecurityException exception;
 
+        // encoding requires modifying the handle but it takes care of its own synchronization
         if (crypto_plugin_->cryptotransform()->preprocess_secure_submsg(&writer_handle, &reader_handle,
                 category, message, *local_participant_crypto_handle_,
                 *remote_participant_crypto_handle, exception))
@@ -3592,14 +3722,18 @@ int SecurityManager::decode_rtps_submessage(
 bool SecurityManager::encode_serialized_payload(
         const SerializedPayload_t& payload,
         SerializedPayload_t& output_payload,
-        const GUID_t& writer_guid)
+        const GUID_t& writer_guid) const
 {
+    auto sentry = is_security_manager_initialized();
+    if(!sentry)
+        return false;
+
     if (crypto_plugin_ == nullptr)
     {
         return false;
     }
 
-    std::unique_lock<std::mutex> lock(mutex_);
+    shared_lock<shared_mutex> _(mutex_);
 
     const auto& wr_it = writer_handles_.find(writer_guid);
 
@@ -3633,14 +3767,18 @@ bool SecurityManager::decode_serialized_payload(
         const SerializedPayload_t& secure_payload,
         SerializedPayload_t& payload,
         const GUID_t& reader_guid,
-        const GUID_t& writer_guid)
+        const GUID_t& writer_guid) const
 {
+    auto sentry = is_security_manager_initialized();
+    if(!sentry)
+        return false;
+
     if (crypto_plugin_ == nullptr)
     {
         return false;
     }
 
-    std::unique_lock<std::mutex> lock(mutex_);
+    shared_lock<shared_mutex> _(mutex_);
 
     const auto& rd_it = reader_handles_.find(reader_guid);
 
@@ -3682,6 +3820,10 @@ bool SecurityManager::participant_authorized(
         const DiscoveredParticipantInfo::AuthUniquePtr& remote_participant_info,
         SharedSecretHandle* shared_secret_handle)
 {
+    auto sentry = is_security_manager_initialized();
+    if(!sentry)
+        return false;
+
     logInfo(SECURITY, "Authorized participant " << participant_data.m_guid);
 
     SecurityException exception;
@@ -3757,7 +3899,7 @@ bool SecurityManager::participant_authorized(
             // Store cryptography info
             if (participant_crypto_handle != nullptr && !participant_crypto_handle->nil())
             {
-                std::unique_lock<std::mutex> lock(mutex_);
+                std::lock_guard<shared_mutex> _(mutex_);
 
                 // Check there is a pending crypto message.
                 auto pending = remote_participant_pending_messages_.find(participant_data.m_guid);
@@ -3808,9 +3950,9 @@ bool SecurityManager::participant_authorized(
 
                 if (dp_it != discovered_participants_.end())
                 {
-                    dp_it->second.set_participant_crypto(participant_crypto_handle);
-                    dp_it->second.set_shared_secret(shared_secret_handle);
-                    dp_it->second.set_permissions_handle(remote_permissions);
+                    dp_it->second->set_participant_crypto(participant_crypto_handle);
+                    dp_it->second->set_shared_secret(shared_secret_handle);
+                    dp_it->second->set_permissions_handle(remote_permissions);
                 }
                 else
                 {
@@ -3832,15 +3974,15 @@ bool SecurityManager::participant_authorized(
         else
         {
             {
-                std::unique_lock<std::mutex> lock(mutex_);
+                shared_lock<shared_mutex> _(mutex_);
 
                 // Store shared_secret.
                 auto dp_it = discovered_participants_.find(participant_data.m_guid);
 
                 if (dp_it != discovered_participants_.end())
                 {
-                    dp_it->second.set_shared_secret(shared_secret_handle);
-                    dp_it->second.set_permissions_handle(remote_permissions);
+                    dp_it->second->set_shared_secret(shared_secret_handle);
+                    dp_it->second->set_permissions_handle(remote_permissions);
                 }
             }
 
@@ -3879,28 +4021,36 @@ bool SecurityManager::participant_authorized(
     return false;
 }
 
-uint32_t SecurityManager::calculate_extra_size_for_rtps_message()
+uint32_t SecurityManager::calculate_extra_size_for_rtps_message() const
 {
+    auto sentry = is_security_manager_initialized();
+    if(!sentry)
+        return 0;
+
     if (crypto_plugin_ == nullptr)
     {
         return 0;
     }
 
-    std::unique_lock<std::mutex> lock(mutex_);
+    shared_lock<shared_mutex> _(mutex_);
 
     return crypto_plugin_->cryptotransform()->calculate_extra_size_for_rtps_message(
         static_cast<uint32_t>(discovered_participants_.size()));
 }
 
 uint32_t SecurityManager::calculate_extra_size_for_rtps_submessage(
-        const GUID_t& writer_guid)
+        const GUID_t& writer_guid) const
 {
+    auto sentry = is_security_manager_initialized();
+    if(!sentry)
+        return 0;
+
     if (crypto_plugin_ == nullptr)
     {
         return 0;
     }
 
-    std::unique_lock<std::mutex> lock(mutex_);
+    shared_lock<shared_mutex> _(mutex_);
 
     auto wr_it = writer_handles_.find(writer_guid);
 
@@ -3918,14 +4068,18 @@ uint32_t SecurityManager::calculate_extra_size_for_rtps_submessage(
 }
 
 uint32_t SecurityManager::calculate_extra_size_for_encoded_payload(
-        const GUID_t& writer_guid)
+        const GUID_t& writer_guid) const
 {
+    auto sentry = is_security_manager_initialized();
+    if(!sentry)
+        return 0;
+
     if (crypto_plugin_ == nullptr)
     {
         return 0;
     }
 
-    std::unique_lock<std::mutex> lock(mutex_);
+    shared_lock<shared_mutex> _(mutex_);
 
     auto wr_it = writer_handles_.find(writer_guid);
 
@@ -3943,14 +4097,19 @@ uint32_t SecurityManager::calculate_extra_size_for_encoded_payload(
 }
 
 void SecurityManager::resend_handshake_message_token(
-        const GUID_t& remote_participant_key)
+        const GUID_t& remote_participant_key) const
 {
-    std::unique_lock<std::mutex> lock(mutex_);
+    auto sentry = is_security_manager_initialized();
+    if(!sentry)
+        return;
+
+    shared_lock<shared_mutex> _(mutex_);
+
     auto dp_it = discovered_participants_.find(remote_participant_key);
 
     if (dp_it != discovered_participants_.end())
     {
-        SecurityManager::DiscoveredParticipantInfo::AuthUniquePtr remote_participant_info = dp_it->second.get_auth();
+        SecurityManager::DiscoveredParticipantInfo::AuthUniquePtr remote_participant_info = dp_it->second->get_auth();
 
         if (remote_participant_info)
         {
@@ -3972,7 +4131,7 @@ void SecurityManager::resend_handshake_message_token(
                 }
             }
 
-            dp_it->second.set_auth(remote_participant_info);
+            dp_it->second->set_auth(remote_participant_info);
         }
     }
 }
