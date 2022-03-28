@@ -61,7 +61,7 @@
 
 /** @defgroup NETWORK_MODULE Network Module
  * @ingroup RTPS_MODULE
- * Includes the elements necessary to interface between the 
+ * Includes the elements necessary to interface between the
  * transport layer and the FastRTPS library.
  */
 
@@ -106,6 +106,11 @@
 /** @defgroup LIVELINESS_MODULE Liveliness Module
  * @ingroup MANAGEMENT_MODULE
  * This module contains the classes associated with the Writer Liveliness Protocols.
+ */
+
+/** @defgroup SECURITY_MODULE Security Module
+ * @ingroup MANAGEMENT_MODULE
+ * This module contains the classes associated with DDS Security (see https://www.omg.org/spec/DDS-SECURITY/)
  */
 
 #endif
