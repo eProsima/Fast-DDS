@@ -1035,10 +1035,13 @@ public:
     RTPS_DllAPI ReturnCode_t delete_contained_entities();
 
     /**
-     * Checks whether the sample is still valid or is corrupted
+     * Checks whether a loaned sample is still valid or is corrupted.
+     * Calling this method on a sample which has not been loaned, or one for which the loan has been returned
+     * yields undefined behavior.
      *
      * @param data Pointer to the sample data to check
      * @param info Pointer to the SampleInfo related to \c data
+     *
      * @return true if the sample is valid
      */
     RTPS_DllAPI bool is_sample_valid(
