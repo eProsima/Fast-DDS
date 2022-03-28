@@ -1888,7 +1888,7 @@ TEST_F(CryptographyPluginTest, transform_preprocess_secure_submessage)
     plain_payload.length = 18;
 
     std::vector<std::shared_ptr<DatawriterCryptoHandle>> receivers;
-    receivers.push_back(remote_writer->shared_from_this()); // hic sunt dracones
+    receivers.push_back(remote_writer->shared_from_this());
 
     EXPECT_TRUE(CryptoPlugin->cryptotransform()->encode_datareader_submessage(encoded_datareader_payload, plain_payload,
             *reader, receivers, exception));

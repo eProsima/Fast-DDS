@@ -115,7 +115,6 @@
 
 #endif // ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 
-
 /** @defgroup UTILITIES_MODULE Shared Utilities
  * @ingroup FASTRTPS_GENERAL_API
  * Shared utilities that can be used by one or more classes in different modules. They are not strictly part of the RTPS implementation
