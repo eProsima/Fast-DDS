@@ -613,7 +613,12 @@ bool StatelessReader::processDataFragMsg(
                 // If the change was completed, process it.
                 if (change_completed != nullptr)
                 {
-                    if (data_filter_ && !data_filter_->is_relevant(*change_completed, m_guid))
+                    // Temporarilly assign the inline qos while evaluating the data filter
+                    change_completed->inline_qos = incomingChange->inline_qos;
+                    bool filtered_out = data_filter_ && !data_filter_->is_relevant(*change_completed, m_guid);
+                    change_completed->inline_qos = SerializedPayload_t();
+
+                    if (filtered_out)
                     {
                         update_last_notified(change_completed->writerGUID, change_completed->sequenceNumber);
                         releaseCache(change_completed);

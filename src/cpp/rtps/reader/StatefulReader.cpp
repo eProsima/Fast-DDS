@@ -644,7 +644,13 @@ bool StatefulReader::processDataFragMsg(
             {
                 mp_history->completed_change(work_change);
                 pWP->received_change_set(work_change->sequenceNumber);
-                if (data_filter_ && !data_filter_->is_relevant(*work_change, m_guid))
+
+                // Temporarilly assign the inline qos while evaluating the data filter
+                work_change->inline_qos = incomingChange->inline_qos;
+                bool filtered_out = data_filter_ && !data_filter_->is_relevant(*work_change, m_guid);
+                work_change->inline_qos = SerializedPayload_t();
+
+                if (filtered_out)
                 {
                     mp_history->remove_change(work_change);
                 }
