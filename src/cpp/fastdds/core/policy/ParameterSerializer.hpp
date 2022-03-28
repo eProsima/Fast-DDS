@@ -24,6 +24,7 @@
 
 #include <fastdds/rtps/builtin/data/ContentFilterProperty.hpp>
 #include <fastdds/rtps/common/CDRMessage_t.h>
+#include <fastrtps/utils/fixed_size_string.hpp>
 
 namespace eprosima {
 namespace fastdds {
@@ -796,9 +797,61 @@ public:
             fastrtps::rtps::CDRMessage_t* cdr_message,
             const uint16_t parameter_length)
     {
-        static_cast<void>(parameter);
-        static_cast<void>(cdr_message);
-        static_cast<void>(parameter_length);
+        // Ensure incorrect length will result in parameter being cleared
+        clear(parameter);
+
+        // Validate minimum plength: 4 non-empty strings + number of expression parameters
+        constexpr uint16_t min_plength = (4 * 8) + 4;
+        if (parameter_length >= min_plength)
+        {
+            bool valid = true;
+            // Limit message length to parameter length, keeping old length to restore it later
+            uint32_t old_msg_len = cdr_message->length;
+            cdr_message->length = cdr_message->pos + parameter_length;
+
+            // Read four strings
+            valid = read_string(cdr_message, parameter.content_filtered_topic_name);
+            if (valid)
+            {
+                valid = read_string(cdr_message, parameter.related_topic_name);
+            }
+            if (valid)
+            {
+                valid = read_string(cdr_message, parameter.filter_class_name);
+            }
+            if (valid)
+            {
+                valid = fastrtps::rtps::CDRMessage::readString(cdr_message, &parameter.filter_expression);
+            }
+
+            // Read parameter sequence
+            if (valid)
+            {
+                uint32_t num_parameters = 0;
+                valid = fastrtps::rtps::CDRMessage::readUInt32(cdr_message, &num_parameters);
+                if (valid)
+                {
+                    valid = (num_parameters < 100) && (num_parameters < parameter.expression_parameters.max_size());
+                }
+                if (valid)
+                {
+                    parameter.expression_parameters.clear();
+                    for (uint32_t i = 0; valid && i < num_parameters; ++i)
+                    {
+                        fastrtps::string_255* p = parameter.expression_parameters.push_back({});
+                        assert(nullptr != p);
+                        valid = read_string(cdr_message, *p);
+                    }
+                }
+            }
+
+            cdr_message->length = old_msg_len;
+            if (!valid)
+            {
+                clear(parameter);
+            }
+        }
+
         return true;
     }
 
@@ -813,6 +866,41 @@ private:
         str_siz = (str_siz + 3u) & ~3u;
         // str_length + str_data
         return 4u + str_siz;
+    }
+
+    static inline void clear(
+            fastdds::rtps::ContentFilterProperty& parameter)
+    {
+        parameter.filter_class_name = "";
+        parameter.content_filtered_topic_name = "";
+        parameter.related_topic_name = "";
+        parameter.filter_expression = "";
+        parameter.expression_parameters.clear();
+    }
+
+    static inline bool read_string(
+            fastrtps::rtps::CDRMessage_t* cdr_message,
+            fastrtps::string_255& str)
+    {
+        uint32_t str_size = 0;
+        bool valid;
+        valid = fastrtps::rtps::CDRMessage::readUInt32(cdr_message, &str_size);
+        if (!valid ||
+                cdr_message->pos + str_size > cdr_message->length ||
+                str_size > str.max_size + 1)
+        {
+            return false;
+        }
+
+        str = "";
+        if (str_size > 1)
+        {
+            str = (const char*)&(cdr_message->buffer[cdr_message->pos]);
+        }
+        cdr_message->pos += str_size;
+        cdr_message->pos = (cdr_message->pos + 3u) & ~3u;
+
+        return true;
     }
 
 };
