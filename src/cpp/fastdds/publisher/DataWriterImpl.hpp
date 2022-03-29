@@ -31,6 +31,7 @@
 #include <fastdds/rtps/common/LocatorList.hpp>
 #include <fastdds/rtps/common/Guid.h>
 #include <fastdds/rtps/common/WriteParams.h>
+#include <fastdds/rtps/history/IChangePool.h>
 #include <fastdds/rtps/history/IPayloadPool.h>
 #include <fastdds/rtps/writer/WriterListener.h>
 
@@ -292,6 +293,7 @@ public:
 
 protected:
 
+    using IChangePool = eprosima::fastrtps::rtps::IChangePool;
     using IPayloadPool = eprosima::fastrtps::rtps::IPayloadPool;
     using ITopicPayloadPool = eprosima::fastrtps::rtps::ITopicPayloadPool;
 
@@ -487,6 +489,8 @@ protected:
             fastrtps::rtps::WriteParams& wparams,
             fastrtps::rtps::CacheChange_t* ch,
             const uint32_t& high_mark_for_frag);
+
+    std::shared_ptr<IChangePool> get_change_pool() const;
 
     std::shared_ptr<IPayloadPool> get_payload_pool();
 

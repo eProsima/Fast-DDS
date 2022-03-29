@@ -47,10 +47,13 @@
 #include <fastdds/core/policy/QosPolicyUtils.hpp>
 
 #include <fastdds/domain/DomainParticipantImpl.hpp>
+#include <fastdds/publisher/filtering/DataWriterChangePool.hpp>
 
-#include <rtps/history/TopicPayloadPoolRegistry.hpp>
 #include <rtps/DataSharing/DataSharingPayloadPool.hpp>
+#include <rtps/history/CacheChangePool.h>
+#include <rtps/history/TopicPayloadPoolRegistry.hpp>
 #include <rtps/participant/RTPSParticipantImpl.h>
+#include <rtps/RTPSDomainImpl.hpp>
 
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
@@ -256,6 +259,13 @@ ReturnCode_t DataWriterImpl::enable()
         w_att.endpoint.set_data_sharing_configuration(datasharing);
     }
 
+    auto change_pool = get_change_pool();
+    if (!change_pool)
+    {
+        logError(DATA_WRITER, "Problem creating change pool for associated Writer");
+        return ReturnCode_t::RETCODE_ERROR;
+    }
+
     auto pool = get_payload_pool();
     if (!pool)
     {
@@ -263,10 +273,10 @@ ReturnCode_t DataWriterImpl::enable()
         return ReturnCode_t::RETCODE_ERROR;
     }
 
-    RTPSWriter* writer =  RTPSDomain::createRTPSWriter(
+    RTPSWriter* writer =  RTPSDomainImpl::create_rtps_writer(
         publisher_->rtps_participant(),
         guid_.entityId,
-        w_att, pool,
+        w_att, pool, change_pool,
         static_cast<WriterHistory*>(&history_),
         static_cast<WriterListener*>(&writer_listener_));
 
@@ -287,9 +297,10 @@ ReturnCode_t DataWriterImpl::enable()
             return ReturnCode_t::RETCODE_ERROR;
         }
 
-        writer = RTPSDomain::createRTPSWriter(
+        writer = RTPSDomainImpl::create_rtps_writer(
             publisher_->rtps_participant(),
-            w_att, pool,
+            guid_.entityId,
+            w_att, pool, change_pool,
             static_cast<WriterHistory*>(&history_),
             static_cast<WriterListener*>(&writer_listener_));
     }
@@ -1606,6 +1617,17 @@ DataWriterListener* DataWriterImpl::get_listener_for(
         return listener_;
     }
     return publisher_->get_listener_for(status);
+}
+
+std::shared_ptr<IChangePool> DataWriterImpl::get_change_pool() const
+{
+    PoolConfig config = PoolConfig::from_history_attributes(history_.m_att);
+    if (0 < qos_.writer_resource_limits().reader_filters_allocation.maximum)
+    {
+        return std::make_shared<DataWriterChangePool>(config, qos_.writer_resource_limits().reader_filters_allocation);
+    }
+
+    return std::make_shared<fastrtps::rtps::CacheChangePool>(config);
 }
 
 std::shared_ptr<IPayloadPool> DataWriterImpl::get_payload_pool()
