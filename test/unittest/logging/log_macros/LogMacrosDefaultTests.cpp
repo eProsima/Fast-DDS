@@ -41,9 +41,9 @@ TEST_F(LogMacrosTests, default_macros_test)
     logInfo(SampleCategory, "Sample info message");
 
 #if defined(NDEBUG) && !HAVE_LOG_NO_INFO
-#    if !defined(_MSC_VER )
-#        error "Unexpected default values for NDEBUG and HAVE_LOG_NO_INFO"
-#    endif  // Visual Studio specific behavior
+# if !defined(_MSC_VER )
+    GTEST_SKIP() << "Unexpected default values for NDEBUG and HAVE_LOG_NO_INFO";
+# endif  // Visual Studio specific behavior
 #endif  // Check default macro values
 
 #if !HAVE_LOG_NO_INFO && (defined(_DEBUG) || defined(__DEBUG) || !defined(NDEBUG))
