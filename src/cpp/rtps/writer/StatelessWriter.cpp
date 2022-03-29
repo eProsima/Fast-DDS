@@ -291,7 +291,10 @@ bool StatelessWriter::datasharing_delivery(
     logInfo(RTPS_WRITER, "Notifying readers of cache change with SN " << change->sequenceNumber);
     for (std::unique_ptr<ReaderLocator>& reader : matched_datasharing_readers_)
     {
-        reader->datasharing_notify();
+        if (!reader_data_filter_ || reader_data_filter_->is_relevant(*change, reader->remote_guid()))
+        {
+            reader->datasharing_notify();
+        }
     }
     return true;
 }
