@@ -19,6 +19,8 @@
 #ifndef _FASTRTPS_DATAWRITERIMPL_HPP_
 #define _FASTRTPS_DATAWRITERIMPL_HPP_
 
+#include <memory>
+
 #include <fastdds/dds/core/status/BaseStatus.hpp>
 #include <fastdds/dds/core/status/IncompatibleQosStatus.hpp>
 #include <fastdds/dds/publisher/DataWriter.hpp>
@@ -40,6 +42,8 @@
 #include <fastrtps/qos/LivelinessLostStatus.h>
 
 #include <fastrtps/types/TypesBase.h>
+
+#include <fastdds/publisher/filtering/ReaderFilterCollection.hpp>
 
 #include <rtps/common/PayloadInfo_t.hpp>
 #include <rtps/history/ITopicPayloadPool.h>
@@ -392,7 +396,7 @@ protected:
 
     fastrtps::rtps::GUID_t guid_;
 
-    bool is_writer_side_filtering_enabled_ = false;
+    std::unique_ptr<ReaderFilterCollection> reader_filters_;
 
     /**
      *

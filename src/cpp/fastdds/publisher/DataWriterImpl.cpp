@@ -259,9 +259,14 @@ ReturnCode_t DataWriterImpl::enable()
         w_att.endpoint.set_data_sharing_configuration(datasharing);
     }
 
-    is_writer_side_filtering_enabled_ =
+    bool filtering_enabled =
             qos_.liveliness().lease_duration.is_infinite() &&
             (0 < qos_.writer_resource_limits().reader_filters_allocation.maximum);
+    if (filtering_enabled)
+    {
+        reader_filters_.reset(new ReaderFilterCollection(qos_.writer_resource_limits().reader_filters_allocation));
+    }
+
     auto change_pool = get_change_pool();
     if (!change_pool)
     {
@@ -1650,7 +1655,7 @@ DataWriterListener* DataWriterImpl::get_listener_for(
 std::shared_ptr<IChangePool> DataWriterImpl::get_change_pool() const
 {
     PoolConfig config = PoolConfig::from_history_attributes(history_.m_att);
-    if (is_writer_side_filtering_enabled_)
+    if (reader_filters_)
     {
         return std::make_shared<DataWriterChangePool>(config, qos_.writer_resource_limits().reader_filters_allocation);
     }
@@ -1830,7 +1835,7 @@ void DataWriterImpl::add_reader_filter(
 {
     static_cast<void>(reader_guid);
 
-    if (is_writer_side_filtering_enabled_ &&
+    if (reader_filters_ &&
             !writer_->is_datasharing_compatible_with(reader_info) &&
             reader_info.remote_locators().multicast.empty())
     {
@@ -1844,7 +1849,7 @@ void DataWriterImpl::update_reader_filter(
 {
     static_cast<void>(reader_guid);
 
-    if (is_writer_side_filtering_enabled_ &&
+    if (reader_filters_ &&
             !writer_->is_datasharing_compatible_with(reader_info) &&
             reader_info.remote_locators().multicast.empty())
     {
