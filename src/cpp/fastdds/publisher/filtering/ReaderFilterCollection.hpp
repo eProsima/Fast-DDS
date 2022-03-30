@@ -50,6 +50,12 @@ public:
     {
     }
 
+    void remove_reader(
+            const fastrtps::rtps::GUID_t& guid)
+    {
+        reader_filters_.erase(guid);
+    }
+
 private:
 
     using pool_allocator_t =

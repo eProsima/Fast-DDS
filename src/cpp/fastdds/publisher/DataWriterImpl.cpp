@@ -1825,8 +1825,10 @@ ReturnCode_t DataWriterImpl::check_datasharing_compatible(
 void DataWriterImpl::remove_reader_filter(
         const fastrtps::rtps::GUID_t& reader_guid)
 {
-    static_cast<void>(reader_guid);
-    // TODO: Remove filter information
+    if (reader_filters_)
+    {
+        reader_filters_->remove_reader(reader_guid);
+    }
 }
 
 void DataWriterImpl::add_reader_filter(
