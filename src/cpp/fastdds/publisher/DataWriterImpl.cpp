@@ -320,6 +320,10 @@ ReturnCode_t DataWriterImpl::enable()
     }
 
     writer_ = writer;
+    if (filtering_enabled)
+    {
+        writer_->reader_data_filter(this);
+    }
 
     // In case it has been loaded from the persistence DB, rebuild instances on history
     history_.rebuild_instances();
@@ -1839,6 +1843,15 @@ void DataWriterImpl::update_reader_filter(
         reader_filters_->update_reader(reader_guid, reader_info.content_filter(),
                 publisher_->get_participant_impl(), topic_);
     }
+}
+
+bool DataWriterImpl::is_relevant(
+        const fastrtps::rtps::CacheChange_t& change,
+        const fastrtps::rtps::GUID_t& reader_guid) const
+{
+    assert(reader_filters_);
+    const DataWriterCacheChange& writer_change = static_cast<const DataWriterCacheChange&>(change);
+    return writer_change.is_relevant_for(reader_guid);
 }
 
 } // namespace dds

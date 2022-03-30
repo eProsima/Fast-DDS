@@ -23,6 +23,7 @@
 #include <fastrtps/rtps/writer/WriterListener.h>
 #include <fastrtps/rtps/Endpoint.h>
 #include <fastrtps/rtps/common/CacheChange.h>
+#include <fastdds/rtps/interfaces/IReaderDataFilter.hpp>
 #include <fastdds/rtps/messages/RTPSMessageGroup.h>
 #include <fastdds/rtps/writer/DeliveryRetCode.hpp>
 #include <fastdds/rtps/writer/LocatorSelectorSender.hpp>
@@ -145,6 +146,9 @@ public:
 
     MOCK_CONST_METHOD1(is_datasharing_compatible_with, bool(
             const ReaderProxyData& rdata));
+
+    MOCK_METHOD1(reader_data_filter, void(
+            fastdds::rtps::IReaderDataFilter* filter));
 
     // *INDENT-ON*
 

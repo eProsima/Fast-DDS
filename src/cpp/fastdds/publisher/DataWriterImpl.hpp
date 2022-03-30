@@ -35,6 +35,7 @@
 #include <fastdds/rtps/common/WriteParams.h>
 #include <fastdds/rtps/history/IChangePool.h>
 #include <fastdds/rtps/history/IPayloadPool.h>
+#include <fastdds/rtps/interfaces/IReaderDataFilter.hpp>
 #include <fastdds/rtps/writer/WriterListener.h>
 
 #include <fastrtps/publisher/PublisherHistory.h>
@@ -83,7 +84,7 @@ class Publisher;
  * Class DataWriterImpl, contains the actual implementation of the behaviour of the DataWriter.
  * @ingroup FASTDDS_MODULE
  */
-class DataWriterImpl
+class DataWriterImpl : protected rtps::IReaderDataFilter
 {
     using LoanInitializationKind = DataWriter::LoanInitializationKind;
     using PayloadInfo_t = eprosima::fastrtps::rtps::detail::PayloadInfo_t;
@@ -555,6 +556,10 @@ protected:
     void update_reader_filter(
             const fastrtps::rtps::GUID_t& reader_guid,
             const fastrtps::rtps::ReaderProxyData& reader_info);
+
+    bool is_relevant(
+            const fastrtps::rtps::CacheChange_t& change,
+            const fastrtps::rtps::GUID_t& reader_guid) const override;
 
 };
 
