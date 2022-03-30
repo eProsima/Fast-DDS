@@ -38,12 +38,12 @@
 #include <fastdds/rtps/interfaces/IReaderDataFilter.hpp>
 #include <fastdds/rtps/writer/WriterListener.h>
 
-#include <fastrtps/publisher/PublisherHistory.h>
 #include <fastrtps/qos/DeadlineMissedStatus.h>
 #include <fastrtps/qos/LivelinessLostStatus.h>
 
 #include <fastrtps/types/TypesBase.h>
 
+#include <fastdds/publisher/DataWriterHistory.hpp>
 #include <fastdds/publisher/filtering/ReaderFilterCollection.hpp>
 
 #include <rtps/common/PayloadInfo_t.hpp>
@@ -188,7 +188,7 @@ public:
 
     /*!
      * @brief Implementation of the DDS `register_instance` operation.
-     * It deduces the instance's key and tries to get resources in the PublisherHistory.
+     * It deduces the instance's key and tries to get resources in the DataWriterHistory.
      * @param[in] instance Sample used to get the instance's key.
      * @return Handle containing the instance's key.
      * This handle could be used in successive `write` or `dispose` operations.
@@ -314,8 +314,8 @@ protected:
 
     DataWriterQos qos_;
 
-    //!Publisher History
-    fastrtps::PublisherHistory history_;
+    //!History
+    DataWriterHistory history_;
 
     //! DataWriterListener
     DataWriterListener* listener_ = nullptr;
