@@ -49,6 +49,7 @@ public:
             reader_filter_map_helper::node_size,
             reader_filter_map_helper::min_pool_size<pool_allocator_t>(allocation.initial))
         , reader_filters_(reader_filter_allocator_)
+        , max_filters_(allocation.maximum)
     {
     }
 
@@ -63,9 +64,52 @@ public:
             const rtps::ContentFilterProperty& filter_info,
             DomainParticipantImpl* participant)
     {
+        if (0 == filter_info.filter_class_name.size())
+        {
+            // This reader does not report a filter. Remove the filter in case it had one previously.
+            remove_reader(guid);
+        }
+        else
+        {
+            auto it = reader_filters_.find(guid);
+            if (it == reader_filters_.end())
+            {
+                if (reader_filters_.size() >= max_filters_)
+                {
+                    // Maximum number of filters reached.
+                    return;
+                }
+
+                // Insert element
+                ReaderFilterInformation entry;
+                if (update_entry(entry, filter_info, participant))
+                {
+                    reader_filters_.emplace(std::make_pair(guid, std::move(entry)));
+                }
+            }
+            else
+            {
+                if (!update_entry(it->second, filter_info, participant))
+                {
+                    remove_reader(guid);
+                }
+            }
+        }
     }
 
 private:
+
+    bool update_entry(
+            ReaderFilterInformation& entry,
+            const rtps::ContentFilterProperty& filter_info,
+            DomainParticipantImpl* participant)
+    {
+        static_cast<void>(entry);
+        static_cast<void>(filter_info);
+        static_cast<void>(participant);
+
+        return false;
+    }
 
     using pool_allocator_t =
             foonathan::memory::memory_pool<foonathan::memory::node_pool, foonathan::memory::heap_allocator>;
@@ -74,6 +118,7 @@ private:
 
     foonathan::memory::map<fastrtps::rtps::GUID_t, ReaderFilterInformation, pool_allocator_t> reader_filters_;
 
+    std::size_t max_filters_;
 };
 
 }  // namespace dds
