@@ -19,6 +19,7 @@
 #ifndef _FASTDDS_PUBLISHER_FILTERING_READERFILTERCOLLECTION_HPP_
 #define _FASTDDS_PUBLISHER_FILTERING_READERFILTERCOLLECTION_HPP_
 
+#include <fastdds/rtps/builtin/data/ContentFilterProperty.hpp>
 #include <fastdds/rtps/common/Guid.h>
 
 #include <fastrtps/utils/collections/ResourceLimitedContainerConfig.hpp>
@@ -26,6 +27,7 @@
 #include <foonathan/memory/container.hpp>
 #include <foonathan/memory/memory_pool.hpp>
 
+#include <fastdds/domain/DomainParticipantImpl.hpp>
 #include <fastdds/publisher/filtering/ReaderFilterInformation.hpp>
 
 #include <utils/collections/node_size_helpers.hpp>
@@ -54,6 +56,13 @@ public:
             const fastrtps::rtps::GUID_t& guid)
     {
         reader_filters_.erase(guid);
+    }
+
+    void update_reader(
+            const fastrtps::rtps::GUID_t& guid,
+            const rtps::ContentFilterProperty& filter_info,
+            DomainParticipantImpl* participant)
+    {
     }
 
 private:

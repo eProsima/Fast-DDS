@@ -1046,9 +1046,6 @@ void DataWriterImpl::InnerDataWriterListener::on_reader_discovery(
                 break;
 
             case fastrtps::rtps::ReaderDiscoveryInfo::DISCOVERY_STATUS::DISCOVERED_READER:
-                data_writer_->add_reader_filter(reader_guid, *reader_info);
-                break;
-
             case fastrtps::rtps::ReaderDiscoveryInfo::DISCOVERY_STATUS::CHANGED_QOS_READER:
                 data_writer_->update_reader_filter(reader_guid, *reader_info);
                 break;
@@ -1831,31 +1828,15 @@ void DataWriterImpl::remove_reader_filter(
     }
 }
 
-void DataWriterImpl::add_reader_filter(
-        const fastrtps::rtps::GUID_t& reader_guid,
-        const fastrtps::rtps::ReaderProxyData& reader_info)
-{
-    static_cast<void>(reader_guid);
-
-    if (reader_filters_ &&
-            !writer_->is_datasharing_compatible_with(reader_info) &&
-            reader_info.remote_locators().multicast.empty())
-    {
-        // TODO: Add filter information
-    }
-}
-
 void DataWriterImpl::update_reader_filter(
         const fastrtps::rtps::GUID_t& reader_guid,
         const fastrtps::rtps::ReaderProxyData& reader_info)
 {
-    static_cast<void>(reader_guid);
-
     if (reader_filters_ &&
             !writer_->is_datasharing_compatible_with(reader_info) &&
             reader_info.remote_locators().multicast.empty())
     {
-        // TODO: Update filter information
+        reader_filters_->update_reader(reader_guid, reader_info.content_filter(), publisher_->get_participant_impl());
     }
 }
 
