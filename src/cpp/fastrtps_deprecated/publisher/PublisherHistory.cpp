@@ -111,9 +111,8 @@ bool PublisherHistory::register_instance(
     return find_or_add_key(instance_handle, &vit);
 }
 
-bool PublisherHistory::add_pub_change(
+bool PublisherHistory::prepare_change(
         CacheChange_t* change,
-        WriteParams& wparams,
         std::unique_lock<RecursiveTimedMutex>& lock,
         const std::chrono::time_point<std::chrono::steady_clock>& max_blocking_time)
 {
@@ -138,8 +137,6 @@ bool PublisherHistory::add_pub_change(
     }
 
     assert(!m_isHistoryFull);
-
-    bool returnedValue = false;
 
     // For NO_KEY we can directly add the change
     bool add = (topic_att_.getTopicKind() == NO_KEY);
@@ -209,6 +206,18 @@ bool PublisherHistory::add_pub_change(
             vit->second.cache_changes.push_back(change);
         }
     }
+
+    return add;
+}
+
+bool PublisherHistory::add_pub_change(
+        CacheChange_t* change,
+        WriteParams& wparams,
+        std::unique_lock<RecursiveTimedMutex>& lock,
+        const std::chrono::time_point<std::chrono::steady_clock>& max_blocking_time)
+{
+    bool returnedValue = false;
+    bool add = prepare_change(change, lock, max_blocking_time);
 
     if (add)
     {

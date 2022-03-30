@@ -181,6 +181,18 @@ private:
     bool find_or_add_key(
             const rtps::InstanceHandle_t& instance_handle,
             t_m_Inst_Caches::iterator* map_it);
+
+    /**
+     * Add a change comming from the Publisher.
+     * @param change Pointer to the change
+     * @param lock
+     * @param max_blocking_time
+     * @return True if added.
+     */
+    bool prepare_change(
+            rtps::CacheChange_t* change,
+            std::unique_lock<RecursiveTimedMutex>& lock,
+            const std::chrono::time_point<std::chrono::steady_clock>& max_blocking_time);
 };
 
 } /* namespace fastrtps */
