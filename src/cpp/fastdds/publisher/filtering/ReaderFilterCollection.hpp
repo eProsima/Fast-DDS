@@ -53,10 +53,23 @@ public:
     {
     }
 
+    ~ReaderFilterCollection()
+    {
+        for (auto& item : reader_filters_)
+        {
+            destroy_filter(item.second);
+        }
+    }
+
     void remove_reader(
             const fastrtps::rtps::GUID_t& guid)
     {
-        reader_filters_.erase(guid);
+        auto it = reader_filters_.find(guid);
+        if (it != reader_filters_.end())
+        {
+            destroy_filter(it->second);
+            reader_filters_.erase(it);
+        }
     }
 
     void update_reader(
@@ -91,13 +104,25 @@ public:
             {
                 if (!update_entry(it->second, filter_info, participant))
                 {
-                    remove_reader(guid);
+                    destroy_filter(it->second);
+                    reader_filters_.erase(it);
                 }
             }
         }
     }
 
 private:
+
+    void destroy_filter(
+            ReaderFilterInformation& entry)
+    {
+        if (nullptr != entry.filter_factory && nullptr != entry.filter)
+        {
+            entry.filter_factory->delete_content_filter(entry.filter_class_name.c_str(), entry.filter);
+            entry.filter_factory = nullptr;
+            entry.filter = nullptr;
+        }
+    }
 
     bool update_entry(
             ReaderFilterInformation& entry,
