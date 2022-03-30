@@ -543,6 +543,17 @@ protected:
             void* data,
             PayloadInfo_t& payload);
 
+    void remove_reader_filter(
+            const fastrtps::rtps::GUID_t& reader_guid);
+
+    void add_reader_filter(
+            const fastrtps::rtps::GUID_t& reader_guid,
+            const fastrtps::rtps::ReaderProxyData& reader_info);
+
+    void update_reader_filter(
+            const fastrtps::rtps::GUID_t& reader_guid,
+            const fastrtps::rtps::ReaderProxyData& reader_info);
+
 };
 
 } /* namespace dds */

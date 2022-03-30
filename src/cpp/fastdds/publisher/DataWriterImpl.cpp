@@ -1029,9 +1029,20 @@ void DataWriterImpl::InnerDataWriterListener::on_reader_discovery(
         const fastrtps::rtps::GUID_t& reader_guid,
         const fastrtps::rtps::ReaderProxyData* reader_info)
 {
-    static_cast<void>(reason);
-    static_cast<void>(reader_guid);
-    static_cast<void>(reader_info);
+    switch (reason)
+    {
+        case fastrtps::rtps::ReaderDiscoveryInfo::DISCOVERY_STATUS::REMOVED_READER:
+            data_writer_->remove_reader_filter(reader_guid);
+            break;
+
+        case fastrtps::rtps::ReaderDiscoveryInfo::DISCOVERY_STATUS::DISCOVERED_READER:
+            data_writer_->add_reader_filter(reader_guid, *reader_info);
+            break;
+
+        case fastrtps::rtps::ReaderDiscoveryInfo::DISCOVERY_STATUS::CHANGED_QOS_READER:
+            data_writer_->update_reader_filter(reader_guid, *reader_info);
+            break;
+    }
 }
 
 ReturnCode_t DataWriterImpl::wait_for_acknowledgments(
@@ -1798,6 +1809,28 @@ ReturnCode_t DataWriterImpl::check_datasharing_compatible(
             logError(DATA_WRITER, "Unknown data sharing kind.");
             return ReturnCode_t::RETCODE_BAD_PARAMETER;
     }
+}
+
+void DataWriterImpl::remove_reader_filter(
+        const fastrtps::rtps::GUID_t& reader_guid)
+{
+    static_cast<void>(reader_guid);
+}
+
+void DataWriterImpl::add_reader_filter(
+        const fastrtps::rtps::GUID_t& reader_guid,
+        const fastrtps::rtps::ReaderProxyData& reader_info)
+{
+    static_cast<void>(reader_guid);
+    static_cast<void>(reader_info);
+}
+
+void DataWriterImpl::update_reader_filter(
+        const fastrtps::rtps::GUID_t& reader_guid,
+        const fastrtps::rtps::ReaderProxyData& reader_info)
+{
+    static_cast<void>(reader_guid);
+    static_cast<void>(reader_info);
 }
 
 } // namespace dds
