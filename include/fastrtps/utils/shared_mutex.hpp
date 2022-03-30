@@ -10,13 +10,13 @@
 
 #if defined(__has_include) && __has_include(<version>)
 #   include <version>
-#endif
+#endif // if defined(__has_include) && __has_include(<version>)
 
 // Detect if the share_mutex feature is available
 #if defined(__has_include) && __has_include(<version>) && !defined(__cpp_lib_shared_mutex) || \
-/* deprecated procedure if the good one is not available*/ \
-( !(defined(__has_include) && __has_include(<version>)) && \
-  !(defined(HAVE_CXX17) && HAVE_CXX17) &&  __cplusplus < 201703 )
+    /* deprecated procedure if the good one is not available*/ \
+    ( !(defined(__has_include) && __has_include(<version>)) && \
+    !(defined(HAVE_CXX17) && HAVE_CXX17) &&  __cplusplus < 201703 )
 
 #include <mutex>
 #include <condition_variable>
