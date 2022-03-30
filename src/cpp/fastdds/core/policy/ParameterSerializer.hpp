@@ -810,18 +810,22 @@ public:
             cdr_message->length = cdr_message->pos + parameter_length;
 
             // Read four strings
-            valid = read_string(cdr_message, parameter.content_filtered_topic_name);
+            valid = read_string(cdr_message, parameter.content_filtered_topic_name) &&
+                    (0 < parameter.content_filtered_topic_name.size());
             if (valid)
             {
-                valid = read_string(cdr_message, parameter.related_topic_name);
+                valid = read_string(cdr_message, parameter.related_topic_name) &&
+                        (0 < parameter.related_topic_name.size());
             }
             if (valid)
             {
-                valid = read_string(cdr_message, parameter.filter_class_name);
+                valid = read_string(cdr_message, parameter.filter_class_name) &&
+                        (0 < parameter.filter_class_name.size());
             }
             if (valid)
             {
-                valid = fastrtps::rtps::CDRMessage::readString(cdr_message, &parameter.filter_expression);
+                valid = fastrtps::rtps::CDRMessage::readString(cdr_message, &parameter.filter_expression) &&
+                        (0 < parameter.filter_expression.size());
             }
 
             // Read parameter sequence
