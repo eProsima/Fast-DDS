@@ -802,7 +802,7 @@ public:
 
         // Validate minimum plength: 4 non-empty strings + number of expression parameters
         constexpr uint16_t min_plength = (4 * 8) + 4;
-        if (parameter_length >= min_plength)
+        if (parameter_length >= min_plength && (cdr_message->length - cdr_message->pos) > parameter_length)
         {
             bool valid = true;
             // Limit message length to parameter length, keeping old length to restore it later
@@ -854,9 +854,11 @@ public:
             {
                 clear(parameter);
             }
+
+            return true;
         }
 
-        return true;
+        return false;
     }
 
 private:
