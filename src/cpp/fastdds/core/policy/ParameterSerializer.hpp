@@ -757,7 +757,7 @@ public:
             const fastdds::rtps::ContentFilterProperty& parameter,
             fastrtps::rtps::CDRMessage_t* cdr_message)
     {
-        bool valid = true;
+        bool valid = false;
 
         if (0 < parameter.filter_class_name.size() &&
                 0 < parameter.content_filtered_topic_name.size() &&
@@ -767,7 +767,7 @@ public:
             // p_id + p_length
             uint32_t len = cdr_serialized_size(parameter);
             assert(4 < len && 0xFFFF >= (len - 4));
-            valid &= fastrtps::rtps::CDRMessage::addUInt16(cdr_message, PID_CONTENT_FILTER_PROPERTY);
+            valid = fastrtps::rtps::CDRMessage::addUInt16(cdr_message, PID_CONTENT_FILTER_PROPERTY);
             valid &= fastrtps::rtps::CDRMessage::addUInt16(cdr_message, static_cast<uint16_t>(len - 4));
             // content_filtered_topic_name
             valid &= fastrtps::rtps::CDRMessage::add_string(cdr_message, parameter.content_filtered_topic_name);

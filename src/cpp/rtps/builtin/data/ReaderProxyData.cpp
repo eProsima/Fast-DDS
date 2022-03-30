@@ -313,7 +313,11 @@ uint32_t ReaderProxyData::get_serialized_size(
     }
 
     // PID_CONTENT_FILTER_PROPERTY
-    ret_val += fastdds::dds::ParameterSerializer<ContentFilterProperty>::cdr_serialized_size(content_filter_);
+    // Take into count only when filter_class_name and filter_expression are not empty.
+    if (0 < content_filter_.filter_class_name.size() && 0 < content_filter_.filter_expression.size())
+    {
+        ret_val += fastdds::dds::ParameterSerializer<ContentFilterProperty>::cdr_serialized_size(content_filter_);
+    }
 
 #if HAVE_SECURITY
     if ((this->security_attributes_ != 0UL) || (this->plugin_security_attributes_ != 0UL))
@@ -553,9 +557,13 @@ bool ReaderProxyData::writeToCDRMessage(
         }
     }
 
-    if (!fastdds::dds::ParameterSerializer<ContentFilterProperty>::add_to_cdr_message(content_filter_, msg))
+    // Serialize ContentFilterProperty only when filter_class_name and filter_expression are not empty.
+    if (0 < content_filter_.filter_class_name.size() && 0 < content_filter_.filter_expression.size())
     {
-        return false;
+        if (!fastdds::dds::ParameterSerializer<ContentFilterProperty>::add_to_cdr_message(content_filter_, msg))
+        {
+            return false;
+        }
     }
 
 #if HAVE_SECURITY
