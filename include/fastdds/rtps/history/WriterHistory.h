@@ -139,6 +139,10 @@ protected:
 
 private:
 
+    bool prepare_and_add_change(
+            CacheChange_t* a_change,
+            WriteParams& wparams);
+
     void set_fragments(
             CacheChange_t* change);
 };

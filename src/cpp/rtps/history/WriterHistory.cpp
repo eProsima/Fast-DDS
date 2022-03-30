@@ -58,18 +58,10 @@ bool WriterHistory::add_change(
     return add_change_(a_change, wparams);
 }
 
-bool WriterHistory::add_change_(
+bool WriterHistory::prepare_and_add_change(
         CacheChange_t* a_change,
-        WriteParams& wparams,
-        std::chrono::time_point<std::chrono::steady_clock> max_blocking_time)
+        WriteParams& wparams)
 {
-    if (mp_writer == nullptr || mp_mutex == nullptr)
-    {
-        logError(RTPS_WRITER_HISTORY, "You need to create a Writer with this History before adding any changes");
-        return false;
-    }
-
-    std::lock_guard<RecursiveTimedMutex> guard(*mp_mutex);
     if (a_change->writerGUID != mp_writer->getGuid())
     {
         logError(RTPS_WRITER_HISTORY,
@@ -113,6 +105,26 @@ bool WriterHistory::add_change_(
 
     logInfo(RTPS_WRITER_HISTORY,
             "Change " << a_change->sequenceNumber << " added with " << a_change->serializedPayload.length << " bytes");
+
+    return true;
+}
+
+bool WriterHistory::add_change_(
+        CacheChange_t* a_change,
+        WriteParams& wparams,
+        std::chrono::time_point<std::chrono::steady_clock> max_blocking_time)
+{
+    if (mp_writer == nullptr || mp_mutex == nullptr)
+    {
+        logError(RTPS_WRITER_HISTORY, "You need to create a Writer with this History before adding any changes");
+        return false;
+    }
+
+    std::lock_guard<RecursiveTimedMutex> guard(*mp_mutex);
+    if (!prepare_and_add_change(a_change, wparams))
+    {
+        return false;
+    }
 
     mp_writer->unsent_change_added_to_history(a_change, max_blocking_time);
 
