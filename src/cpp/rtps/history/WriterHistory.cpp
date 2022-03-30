@@ -109,6 +109,13 @@ bool WriterHistory::prepare_and_add_change(
     return true;
 }
 
+void WriterHistory::notify_writer(
+        CacheChange_t* a_change,
+        std::chrono::time_point<std::chrono::steady_clock> max_blocking_time)
+{
+    mp_writer->unsent_change_added_to_history(a_change, max_blocking_time);
+}
+
 bool WriterHistory::add_change_(
         CacheChange_t* a_change,
         WriteParams& wparams,
@@ -126,7 +133,7 @@ bool WriterHistory::add_change_(
         return false;
     }
 
-    mp_writer->unsent_change_added_to_history(a_change, max_blocking_time);
+    notify_writer(a_change, max_blocking_time);
 
     return true;
 }

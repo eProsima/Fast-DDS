@@ -21,6 +21,7 @@
 #define _FASTDDS_RTPS_WRITERHISTORY_H_
 
 #include <fastdds/rtps/history/History.h>
+#include <fastdds/dds/log/Log.hpp>
 
 namespace eprosima {
 namespace fastrtps {
@@ -130,6 +131,31 @@ protected:
             std::chrono::time_point<std::chrono::steady_clock> max_blocking_time
             = std::chrono::steady_clock::now() + std::chrono::hours(24));
 
+    template<typename PreCommitHook>
+    bool add_change_with_commit_hook(
+            CacheChange_t* a_change,
+            WriteParams& wparams,
+            PreCommitHook pre_commit,
+            std::chrono::time_point<std::chrono::steady_clock> max_blocking_time)
+    {
+        if (mp_writer == nullptr || mp_mutex == nullptr)
+        {
+            logError(RTPS_WRITER_HISTORY, "You need to create a Writer with this History before adding any changes");
+            return false;
+        }
+
+        std::lock_guard<RecursiveTimedMutex> guard(*mp_mutex);
+        if (!prepare_and_add_change(a_change, wparams))
+        {
+            return false;
+        }
+
+        pre_commit(*a_change);
+        notify_writer(a_change, max_blocking_time);
+
+        return true;
+    }
+
     //!Last CacheChange Sequence Number added to the History.
     SequenceNumber_t m_lastCacheChangeSeqNum;
     //!Pointer to the associated RTPSWriter;
@@ -142,6 +168,10 @@ private:
     bool prepare_and_add_change(
             CacheChange_t* a_change,
             WriteParams& wparams);
+
+    void notify_writer(
+            CacheChange_t* a_change,
+            std::chrono::time_point<std::chrono::steady_clock> max_blocking_time);
 
     void set_fragments(
             CacheChange_t* change);
