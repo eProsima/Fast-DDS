@@ -1023,6 +1023,17 @@ void DataWriterImpl::InnerDataWriterListener::on_liveliness_lost(
     data_writer_->user_datawriter_->get_statuscondition().get_impl()->set_status(notify_status, true);
 }
 
+void DataWriterImpl::InnerDataWriterListener::on_reader_discovery(
+        fastrtps::rtps::RTPSWriter* /*writer*/,
+        fastrtps::rtps::ReaderDiscoveryInfo::DISCOVERY_STATUS reason,
+        const fastrtps::rtps::GUID_t& reader_guid,
+        const fastrtps::rtps::ReaderProxyData* reader_info)
+{
+    static_cast<void>(reason);
+    static_cast<void>(reader_guid);
+    static_cast<void>(reader_info);
+}
+
 ReturnCode_t DataWriterImpl::wait_for_acknowledgments(
         const Duration_t& max_wait)
 {

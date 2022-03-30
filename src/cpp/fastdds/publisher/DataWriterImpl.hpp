@@ -346,6 +346,12 @@ protected:
                 fastrtps::rtps::RTPSWriter* writer,
                 const fastrtps::LivelinessLostStatus& status) override;
 
+        void on_reader_discovery(
+                fastrtps::rtps::RTPSWriter* writer,
+                fastrtps::rtps::ReaderDiscoveryInfo::DISCOVERY_STATUS reason,
+                const fastrtps::rtps::GUID_t& reader_guid,
+                const fastrtps::rtps::ReaderProxyData* reader_info) override;
+
         DataWriterImpl* data_writer_;
     }
     writer_listener_;
