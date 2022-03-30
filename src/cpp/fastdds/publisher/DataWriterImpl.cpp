@@ -259,6 +259,9 @@ ReturnCode_t DataWriterImpl::enable()
         w_att.endpoint.set_data_sharing_configuration(datasharing);
     }
 
+    is_writer_side_filtering_enabled_ =
+            qos_.liveliness().lease_duration.is_infinite() &&
+            (0 < qos_.writer_resource_limits().reader_filters_allocation.maximum);
     auto change_pool = get_change_pool();
     if (!change_pool)
     {
@@ -1024,24 +1027,27 @@ void DataWriterImpl::InnerDataWriterListener::on_liveliness_lost(
 }
 
 void DataWriterImpl::InnerDataWriterListener::on_reader_discovery(
-        fastrtps::rtps::RTPSWriter* /*writer*/,
+        fastrtps::rtps::RTPSWriter* writer,
         fastrtps::rtps::ReaderDiscoveryInfo::DISCOVERY_STATUS reason,
         const fastrtps::rtps::GUID_t& reader_guid,
         const fastrtps::rtps::ReaderProxyData* reader_info)
 {
-    switch (reason)
+    if (!fastrtps::rtps::RTPSDomainImpl::should_intraprocess_between(writer->getGuid(), reader_guid))
     {
-        case fastrtps::rtps::ReaderDiscoveryInfo::DISCOVERY_STATUS::REMOVED_READER:
-            data_writer_->remove_reader_filter(reader_guid);
-            break;
+        switch (reason)
+        {
+            case fastrtps::rtps::ReaderDiscoveryInfo::DISCOVERY_STATUS::REMOVED_READER:
+                data_writer_->remove_reader_filter(reader_guid);
+                break;
 
-        case fastrtps::rtps::ReaderDiscoveryInfo::DISCOVERY_STATUS::DISCOVERED_READER:
-            data_writer_->add_reader_filter(reader_guid, *reader_info);
-            break;
+            case fastrtps::rtps::ReaderDiscoveryInfo::DISCOVERY_STATUS::DISCOVERED_READER:
+                data_writer_->add_reader_filter(reader_guid, *reader_info);
+                break;
 
-        case fastrtps::rtps::ReaderDiscoveryInfo::DISCOVERY_STATUS::CHANGED_QOS_READER:
-            data_writer_->update_reader_filter(reader_guid, *reader_info);
-            break;
+            case fastrtps::rtps::ReaderDiscoveryInfo::DISCOVERY_STATUS::CHANGED_QOS_READER:
+                data_writer_->update_reader_filter(reader_guid, *reader_info);
+                break;
+        }
     }
 }
 
@@ -1644,7 +1650,7 @@ DataWriterListener* DataWriterImpl::get_listener_for(
 std::shared_ptr<IChangePool> DataWriterImpl::get_change_pool() const
 {
     PoolConfig config = PoolConfig::from_history_attributes(history_.m_att);
-    if (0 < qos_.writer_resource_limits().reader_filters_allocation.maximum)
+    if (is_writer_side_filtering_enabled_)
     {
         return std::make_shared<DataWriterChangePool>(config, qos_.writer_resource_limits().reader_filters_allocation);
     }
@@ -1815,6 +1821,7 @@ void DataWriterImpl::remove_reader_filter(
         const fastrtps::rtps::GUID_t& reader_guid)
 {
     static_cast<void>(reader_guid);
+    // TODO: Remove filter information
 }
 
 void DataWriterImpl::add_reader_filter(
@@ -1822,7 +1829,13 @@ void DataWriterImpl::add_reader_filter(
         const fastrtps::rtps::ReaderProxyData& reader_info)
 {
     static_cast<void>(reader_guid);
-    static_cast<void>(reader_info);
+
+    if (is_writer_side_filtering_enabled_ &&
+            !writer_->is_datasharing_compatible_with(reader_info) &&
+            reader_info.remote_locators().multicast.empty())
+    {
+        // TODO: Add filter information
+    }
 }
 
 void DataWriterImpl::update_reader_filter(
@@ -1830,7 +1843,13 @@ void DataWriterImpl::update_reader_filter(
         const fastrtps::rtps::ReaderProxyData& reader_info)
 {
     static_cast<void>(reader_guid);
-    static_cast<void>(reader_info);
+
+    if (is_writer_side_filtering_enabled_ &&
+            !writer_->is_datasharing_compatible_with(reader_info) &&
+            reader_info.remote_locators().multicast.empty())
+    {
+        // TODO: Update filter information
+    }
 }
 
 } // namespace dds

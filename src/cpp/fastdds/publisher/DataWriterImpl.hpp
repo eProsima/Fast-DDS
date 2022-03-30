@@ -392,6 +392,8 @@ protected:
 
     fastrtps::rtps::GUID_t guid_;
 
+    bool is_writer_side_filtering_enabled_ = false;
+
     /**
      *
      * @param kind
