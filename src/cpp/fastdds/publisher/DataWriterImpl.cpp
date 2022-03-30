@@ -1836,7 +1836,8 @@ void DataWriterImpl::update_reader_filter(
             !writer_->is_datasharing_compatible_with(reader_info) &&
             reader_info.remote_locators().multicast.empty())
     {
-        reader_filters_->update_reader(reader_guid, reader_info.content_filter(), publisher_->get_participant_impl());
+        reader_filters_->update_reader(reader_guid, reader_info.content_filter(),
+                publisher_->get_participant_impl(), topic_);
     }
 }
 

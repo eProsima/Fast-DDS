@@ -19,6 +19,11 @@
 #ifndef _FASTDDS_PUBLISHER_FILTERING_READERFILTERCOLLECTION_HPP_
 #define _FASTDDS_PUBLISHER_FILTERING_READERFILTERCOLLECTION_HPP_
 
+#include <fastdds/dds/core/LoanableSequence.hpp>
+#include <fastdds/dds/topic/IContentFilter.hpp>
+#include <fastdds/dds/topic/IContentFilterFactory.hpp>
+#include <fastdds/dds/topic/Topic.hpp>
+
 #include <fastdds/rtps/builtin/data/ContentFilterProperty.hpp>
 #include <fastdds/rtps/common/Guid.h>
 
@@ -29,6 +34,8 @@
 
 #include <fastdds/domain/DomainParticipantImpl.hpp>
 #include <fastdds/publisher/filtering/ReaderFilterInformation.hpp>
+#include <fastdds/topic/TopicImpl.hpp>
+#include <fastdds/topic/ContentFilterUtils.hpp>
 
 #include <utils/collections/node_size_helpers.hpp>
 
@@ -75,11 +82,15 @@ public:
     void update_reader(
             const fastrtps::rtps::GUID_t& guid,
             const rtps::ContentFilterProperty& filter_info,
-            DomainParticipantImpl* participant)
+            DomainParticipantImpl* participant,
+            Topic* topic)
     {
-        if (0 == filter_info.filter_class_name.size())
+        TopicImpl* writer_topic = static_cast<TopicImpl*>(topic->get_impl());
+
+        if (0 == filter_info.filter_class_name.size() ||
+                0 != writer_topic->get_rtps_topic_name().compare(filter_info.related_topic_name.c_str()))
         {
-            // This reader does not report a filter. Remove the filter in case it had one previously.
+            // This reader does not report an aplicable filter. Remove the filter in case it had one previously.
             remove_reader(guid);
         }
         else
@@ -93,17 +104,20 @@ public:
                     return;
                 }
 
-                // Insert element
+                // Prepare and insert element
                 ReaderFilterInformation entry;
-                if (update_entry(entry, filter_info, participant))
+                if (update_entry(entry, filter_info, participant, writer_topic))
                 {
                     reader_filters_.emplace(std::make_pair(guid, std::move(entry)));
                 }
             }
             else
             {
-                if (!update_entry(it->second, filter_info, participant))
+                // Update entry
+                if (!update_entry(it->second, filter_info, participant, writer_topic))
                 {
+                    // If the entry could not be updated, it means we cannot use the filter information, so
+                    // we remove the old information
                     destroy_filter(it->second);
                     reader_filters_.erase(it);
                 }
@@ -127,13 +141,57 @@ private:
     bool update_entry(
             ReaderFilterInformation& entry,
             const rtps::ContentFilterProperty& filter_info,
-            DomainParticipantImpl* participant)
+            DomainParticipantImpl* participant,
+            TopicImpl* topic)
     {
-        static_cast<void>(entry);
-        static_cast<void>(filter_info);
-        static_cast<void>(participant);
+        const char* class_name = filter_info.filter_class_name.c_str();
+        IContentFilterFactory* new_factory = participant->find_content_filter_factory(class_name);
+        if (nullptr == new_factory)
+        {
+            return false;
+        }
 
-        return false;
+        std::array<uint8_t, 16> new_signature;
+        ContentFilterUtils::compute_signature(filter_info, new_signature);
+        if (new_signature == entry.filter_signature &&
+                new_factory == entry.filter_factory &&
+                nullptr != entry.filter)
+        {
+            return true;
+        }
+
+        LoanableSequence<const char*>::size_type n_params;
+        n_params = static_cast<LoanableSequence<const char*>::size_type>(filter_info.expression_parameters.size());
+        LoanableSequence<const char*> filter_parameters(n_params);
+        filter_parameters.length(n_params);
+        while (n_params > 0)
+        {
+            n_params--;
+            filter_parameters[n_params] = filter_info.expression_parameters[n_params].c_str();
+        }
+
+        IContentFilter* new_filter = entry.filter_factory == new_factory ? entry.filter : nullptr;
+        ReturnCode_t ret = new_factory->create_content_filter(
+            class_name,
+            topic->get_type().get_type_name().c_str(),
+            topic->get_type().get(),
+            filter_info.filter_expression.c_str(), filter_parameters, new_filter);
+
+        if (ReturnCode_t::RETCODE_OK != ret)
+        {
+            return false;
+        }
+
+        if ((new_factory != entry.filter_factory) && (nullptr != entry.filter_factory))
+        {
+            entry.filter_factory->delete_content_filter(entry.filter_class_name.c_str(), entry.filter);
+        }
+        entry.filter_class_name = filter_info.filter_class_name;
+        entry.filter_signature = new_signature;
+        entry.filter_factory = new_factory;
+        entry.filter = new_filter;
+
+        return true;
     }
 
     using pool_allocator_t =
