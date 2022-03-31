@@ -36,6 +36,7 @@
 #include <fastdds/publisher/filtering/DataWriterCacheChange.hpp>
 #include <fastdds/publisher/filtering/ReaderFilterInformation.hpp>
 #include <fastdds/topic/TopicImpl.hpp>
+#include <fastdds/topic/ContentFilterInfo.hpp>
 #include <fastdds/topic/ContentFilterUtils.hpp>
 
 #include <utils/collections/node_size_helpers.hpp>
@@ -78,8 +79,47 @@ public:
             DataWriterCacheChange& change,
             const fastrtps::rtps::SampleIdentity& related_sample_identity) const
     {
-        static_cast<void>(change);
-        static_cast<void>(related_sample_identity);
+        change.filtered_out_readers.clear();
+
+        size_t num_filters = std::min(change.filtered_out_readers.max_size(), reader_filters_.size());
+        uint16_t cdr_size = 0;
+        if ((0 < num_filters) && ContentFilterInfo::cdr_serialized_size(num_filters, cdr_size))
+        {
+            // Prepare inline_qos to hold the ContentFilterInfo parameter.
+            change.inline_qos.reserve(change.inline_qos.length + cdr_size);
+
+            // Prepare the filter info to be used on the evaluation of filters
+            IContentFilter::FilterSampleInfo info;
+            info.related_sample_identity = related_sample_identity;
+            info.sample_identity.writer_guid(change.writerGUID);
+            info.sample_identity.sequence_number(change.sequenceNumber);
+
+            // Functor used from the serialization process to evaluate each filter and write its signature.
+            auto filter_process = [this, &change, &info](
+                std::size_t i,
+                uint8_t* signature) -> bool
+                    {
+                        // Point to the corresponding entry
+                        auto it = reader_filters_.cbegin();
+                        std::advance(it, i);
+                        const ReaderFilterInformation& entry = it->second;
+
+                        // Copy the signature
+                        std::copy(entry.filter_signature.begin(), entry.filter_signature.end(), signature);
+
+                        // Evaluate filter and update filtered_out_readers
+                        bool filter_result = entry.filter->evaluate(change.serializedPayload, info, it->first);
+                        if (!filter_result)
+                        {
+                            change.filtered_out_readers.emplace_back(it->first);
+                        }
+
+                        return filter_result;
+                    };
+
+            // Perform ContentFilterInfo serialization and filter evaluation
+            ContentFilterInfo::cdr_serialize(change.inline_qos, num_filters, filter_process);
+        }
     }
 
     void remove_reader(
