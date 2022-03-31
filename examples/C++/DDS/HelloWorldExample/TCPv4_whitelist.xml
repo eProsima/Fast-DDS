@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<profiles xmlns="http://www.eprosima.com/XMLSchemas/fastRTPS_Profiles">
+    <transport_descriptors>
+        <transport_descriptor>
+            <transport_id>CustomTCPTransport</transport_id>
+            <type>TCPv4</type>
+            <interfaceWhiteList>
+                <address>192.168.1.143</address>
+            </interfaceWhiteList>
+        </transport_descriptor>
+    </transport_descriptors>
+
+    <participant profile_name="CustomTCPTransportParticipant">
+        <rtps>
+            <userTransports>
+                <transport_id>CustomTCPTransport</transport_id>
+            </userTransports>
+            <useBuiltinTransports>false</useBuiltinTransports>
+        </rtps>
+    </participant>
+</profiles>
