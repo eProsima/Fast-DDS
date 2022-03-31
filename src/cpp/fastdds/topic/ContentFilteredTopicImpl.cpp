@@ -26,6 +26,7 @@
 #include <fastdds/core/policy/ParameterList.hpp>
 #include <fastdds/rtps/messages/CDRMessage.h>
 #include <fastdds/subscriber/DataReaderImpl.hpp>
+#include <fastdds/topic/ContentFilterUtils.hpp>
 
 namespace eprosima {
 namespace fastdds {
@@ -97,55 +98,7 @@ ReturnCode_t ContentFilteredTopicImpl::set_expression_parameters(
 
 void ContentFilteredTopicImpl::update_signature()
 {
-    MD5 md5_rtps;
-    MD5 md5_connext;
-
-    md5_rtps.init();
-    md5_connext.init();
-    // Add content_filtered_topic_name
-    {
-        const char* str = filter_property.content_filtered_topic_name.c_str();
-        MD5::size_type slen = static_cast<MD5::size_type>(strlen(str) + 1);
-        md5_rtps.update(str, slen);
-        md5_connext.update(str, slen);
-    }
-    // Add related_topic_name
-    {
-        const char* str = filter_property.related_topic_name.c_str();
-        MD5::size_type slen = static_cast<MD5::size_type>(strlen(str) + 1);
-        md5_rtps.update(str, slen);
-        md5_connext.update(str, slen);
-    }
-    // Add filter_class_name
-    {
-        const char* str = filter_property.filter_class_name.c_str();
-        MD5::size_type slen = static_cast<MD5::size_type>(strlen(str) + 1);
-        md5_rtps.update(str, slen);
-        md5_connext.update(str, slen);
-    }
-    // Add filter_expression
-    size_t n_params = filter_property.expression_parameters.size();
-    {
-        const char* str = filter_property.filter_expression.c_str();
-        MD5::size_type slen = static_cast<MD5::size_type>(strlen(str) + 1);
-        md5_rtps.update(str, slen);
-        md5_connext.update(str, (0 == n_params) ? slen - 1 : slen);
-    }
-    // Add expression_parameters
-    size_t i = 0;
-    for (const auto& param : filter_property.expression_parameters)
-    {
-        const char* str = param.c_str();
-        MD5::size_type slen = static_cast<MD5::size_type>(strlen(str) + 1);
-        md5_rtps.update(str, slen);
-        ++i;
-        md5_connext.update(str, i == n_params ? slen - 1 : slen);
-    }
-    md5_rtps.finalize();
-    md5_connext.finalize();
-
-    std::copy_n(md5_rtps.digest, filter_signature_.size(), filter_signature_.begin());
-    std::copy_n(md5_connext.digest, filter_signature_rti_connext_.size(), filter_signature_rti_connext_.begin());
+    ContentFilterUtils::compute_signature(filter_property, filter_signature_, filter_signature_rti_connext_);
 }
 
 bool ContentFilteredTopicImpl::check_filter_signature(
@@ -247,6 +200,107 @@ bool ContentFilteredTopicImpl::check_filter_signature(
     ParameterList::readParameterListfromCDRMsg(msg, parameter_process, false, qos_size);
 
     return found;
+}
+
+void ContentFilterUtils::compute_signature(
+        const rtps::ContentFilterProperty& filter_property,
+        std::array<uint8_t, 16>& filter_signature)
+{
+    MD5 md5_rtps;
+
+    md5_rtps.init();
+
+    // Add content_filtered_topic_name
+    {
+        const char* str = filter_property.content_filtered_topic_name.c_str();
+        MD5::size_type slen = static_cast<MD5::size_type>(strlen(str) + 1);
+        md5_rtps.update(str, slen);
+    }
+    // Add related_topic_name
+    {
+        const char* str = filter_property.related_topic_name.c_str();
+        MD5::size_type slen = static_cast<MD5::size_type>(strlen(str) + 1);
+        md5_rtps.update(str, slen);
+    }
+    // Add filter_class_name
+    {
+        const char* str = filter_property.filter_class_name.c_str();
+        MD5::size_type slen = static_cast<MD5::size_type>(strlen(str) + 1);
+        md5_rtps.update(str, slen);
+    }
+    // Add filter_expression
+    {
+        const char* str = filter_property.filter_expression.c_str();
+        MD5::size_type slen = static_cast<MD5::size_type>(strlen(str) + 1);
+        md5_rtps.update(str, slen);
+    }
+    // Add expression_parameters
+    for (const auto& param : filter_property.expression_parameters)
+    {
+        const char* str = param.c_str();
+        MD5::size_type slen = static_cast<MD5::size_type>(strlen(str) + 1);
+        md5_rtps.update(str, slen);
+    }
+    md5_rtps.finalize();
+
+    std::copy_n(md5_rtps.digest, filter_signature.size(), filter_signature.begin());
+}
+
+void ContentFilterUtils::compute_signature(
+        const rtps::ContentFilterProperty& filter_property,
+        std::array<uint8_t, 16>& filter_signature_rtps,
+        std::array<uint8_t, 16>& filter_signature_rti_connext)
+{
+    MD5 md5_rtps;
+    MD5 md5_connext;
+
+    md5_rtps.init();
+    md5_connext.init();
+
+    // Add content_filtered_topic_name
+    {
+        const char* str = filter_property.content_filtered_topic_name.c_str();
+        MD5::size_type slen = static_cast<MD5::size_type>(strlen(str) + 1);
+        md5_rtps.update(str, slen);
+        md5_connext.update(str, slen);
+    }
+    // Add related_topic_name
+    {
+        const char* str = filter_property.related_topic_name.c_str();
+        MD5::size_type slen = static_cast<MD5::size_type>(strlen(str) + 1);
+        md5_rtps.update(str, slen);
+        md5_connext.update(str, slen);
+    }
+    // Add filter_class_name
+    {
+        const char* str = filter_property.filter_class_name.c_str();
+        MD5::size_type slen = static_cast<MD5::size_type>(strlen(str) + 1);
+        md5_rtps.update(str, slen);
+        md5_connext.update(str, slen);
+    }
+    // Add filter_expression
+    size_t n_params = filter_property.expression_parameters.size();
+    {
+        const char* str = filter_property.filter_expression.c_str();
+        MD5::size_type slen = static_cast<MD5::size_type>(strlen(str) + 1);
+        md5_rtps.update(str, slen);
+        md5_connext.update(str, (0 == n_params) ? slen - 1 : slen);
+    }
+    // Add expression_parameters
+    size_t i = 0;
+    for (const auto& param : filter_property.expression_parameters)
+    {
+        const char* str = param.c_str();
+        MD5::size_type slen = static_cast<MD5::size_type>(strlen(str) + 1);
+        md5_rtps.update(str, slen);
+        ++i;
+        md5_connext.update(str, i == n_params ? slen - 1 : slen);
+    }
+    md5_rtps.finalize();
+    md5_connext.finalize();
+
+    std::copy_n(md5_rtps.digest, filter_signature_rtps.size(), filter_signature_rtps.begin());
+    std::copy_n(md5_connext.digest, filter_signature_rti_connext.size(), filter_signature_rti_connext.begin());
 }
 
 } /* namespace dds */
