@@ -53,6 +53,12 @@ public:
     typedef TypeSupport type_support;
     typedef typename type_support::type type;
 
+    using OnWriterDiscoveryFunctor = std::function<void (
+                        eprosima::fastrtps::rtps::WriterDiscoveryInfo::DISCOVERY_STATUS,
+                        const eprosima::fastrtps::rtps::GUID_t&,
+                        const eprosima::fastrtps::rtps::WriterProxyData*
+                        )>;
+
 private:
 
     class Listener : public eprosima::fastrtps::rtps::ReaderListener
@@ -91,6 +97,15 @@ private:
             {
                 reader_.unmatched();
             }
+        }
+
+        void on_writer_discovery(
+                eprosima::fastrtps::rtps::RTPSReader* reader,
+                eprosima::fastrtps::rtps::WriterDiscoveryInfo::DISCOVERY_STATUS reason,
+                const eprosima::fastrtps::rtps::GUID_t& writer_guid,
+                const eprosima::fastrtps::rtps::WriterProxyData* writer_info)
+        {
+            reader_.on_writer_discovery(reader, reason, writer_guid, writer_info);
         }
 
     private:
@@ -173,6 +188,16 @@ public:
         ASSERT_EQ(participant_->registerReader(reader_, topic_attr_, reader_qos_), true);
 
         initialized_ = true;
+    }
+
+    void update()
+    {
+        if (reader_ == nullptr)
+        {
+            return;
+        }
+
+        ASSERT_TRUE(participant_->updateReader(reader_, topic_attr_, reader_qos_));
     }
 
     bool isInitialized() const
@@ -463,6 +488,33 @@ public:
 
 #endif // if HAVE_SQLITE3
 
+    RTPSWithRegistrationReader& user_data(
+            const std::vector<eprosima::fastrtps::rtps::octet>& user_data)
+    {
+        reader_qos_.m_userData = user_data;
+        return *this;
+    }
+
+    RTPSWithRegistrationReader& set_on_writer_discovery(
+            const OnWriterDiscoveryFunctor& functor)
+    {
+        on_writer_discovery_functor = functor;
+        return *this;
+    }
+
+
+    RTPSWithRegistrationReader& partitions(
+            std::vector<std::string>& partitions)
+    {
+        reader_qos_.m_partition.setNames(partitions);
+        return *this;
+    }
+
+    const eprosima::fastrtps::rtps::GUID_t& guid() const
+    {
+        return reader_->getGuid();
+    }
+
 private:
 
     void receive_one(
@@ -515,6 +567,20 @@ private:
         }
     }
 
+    void on_writer_discovery(
+            eprosima::fastrtps::rtps::RTPSReader* reader,
+            eprosima::fastrtps::rtps::WriterDiscoveryInfo::DISCOVERY_STATUS reason,
+            const eprosima::fastrtps::rtps::GUID_t& writer_guid,
+            const eprosima::fastrtps::rtps::WriterProxyData* writer_info)
+    {
+        ASSERT_EQ(reader_, reader);
+
+        if (on_writer_discovery_functor)
+        {
+            on_writer_discovery_functor(reason, writer_guid, writer_info);
+        }
+    }
+
     RTPSWithRegistrationReader& operator =(
             const RTPSWithRegistrationReader&) = delete;
 
@@ -539,6 +605,7 @@ private:
     type_support type_;
     std::shared_ptr<eprosima::fastrtps::rtps::IPayloadPool> payload_pool_;
     bool has_payload_pool_ = false;
+    OnWriterDiscoveryFunctor on_writer_discovery_functor;
 };
 
 #endif // _TEST_BLACKBOX_RTPSWITHREGISTRATIONREADER_HPP_
