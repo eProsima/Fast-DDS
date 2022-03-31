@@ -341,7 +341,7 @@ TEST_P(RTPSDiscovery, ReaderListenerOnWriterDiscoveryIncompatibleQoS)
     writer.destroy();
     {
         std::unique_lock<std::mutex> lock(mutex);
-        cv.wait_for(lock, std::chrono::seconds(1), [&iteration]()
+        cv.wait_for(lock, std::chrono::milliseconds(500), [&iteration]()
                 {
                     return Iterations::ERROR == iteration;
                 });
@@ -426,7 +426,7 @@ TEST_P(RTPSDiscovery, WriterListenerOnReaderDiscoveryIncompatibleQoS)
     reader.destroy();
     {
         std::unique_lock<std::mutex> lock(mutex);
-        cv.wait_for(lock, std::chrono::seconds(1), [&iteration]()
+        cv.wait_for(lock, std::chrono::milliseconds(500), [&iteration]()
                 {
                     return Iterations::ERROR == iteration;
                 });
@@ -434,11 +434,503 @@ TEST_P(RTPSDiscovery, WriterListenerOnReaderDiscoveryIncompatibleQoS)
     }
 }
 
-#ifdef INSTANTIATE_TEST_SUITE_P
-#define GTEST_INSTANTIATE_TEST_MACRO(x, y, z, w) INSTANTIATE_TEST_SUITE_P(x, y, z, w)
-#else
-#define GTEST_INSTANTIATE_TEST_MACRO(x, y, z, w) INSTANTIATE_TEST_CASE_P(x, y, z, w)
-#endif // ifdef INSTANTIATE_TEST_SUITE_P
+/*!
+ * \test RTPS-CFT-RRR-01 Tests a good `ContentFilterProperty` passed to `registerReader()` and `updateReader()` is
+ * propagated successfully through discovery.
+ */
+TEST_P(RTPSDiscovery, ContentFilterRegistration)
+{
+    std::mutex mutex;
+    std::condition_variable cv;
+    enum Iterations
+    {
+        NONE,
+        DISCOVERED_READER,
+        CHANGED_QOS_READER,
+        ERROR
+    }
+    iteration = NONE;
+    eprosima::fastdds::rtps::ContentFilterProperty::AllocationConfiguration content_filter_allocation;
+    eprosima::fastdds::rtps::ContentFilterProperty content_filter_property(content_filter_allocation);
+
+    RTPSWithRegistrationWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+    RTPSWithRegistrationReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+
+    writer.set_on_reader_discovery(
+        [&mutex, &cv, &iteration, &content_filter_property](
+            ReaderDiscoveryInfo::DISCOVERY_STATUS reason,
+            const GUID_t&,
+            const ReaderProxyData* r_data)
+        {
+            std::unique_lock<std::mutex> lock(mutex);
+            if (nullptr != r_data)
+            {
+                content_filter_property = r_data->content_filter();
+            }
+            if (Iterations::NONE == iteration && ReaderDiscoveryInfo::DISCOVERY_STATUS::DISCOVERED_READER == reason)
+            {
+                iteration = Iterations::DISCOVERED_READER;
+            }
+            else if (Iterations::DISCOVERED_READER == iteration &&
+            ReaderDiscoveryInfo::DISCOVERY_STATUS::CHANGED_QOS_READER == reason)
+            {
+                iteration = Iterations::CHANGED_QOS_READER;
+            }
+            else
+            {
+                iteration = Iterations::ERROR;
+            }
+            cv.notify_one();
+        }
+        ).init();
+    ASSERT_TRUE(writer.isInitialized());
+
+    eprosima::fastdds::rtps::ContentFilterProperty cfp(content_filter_allocation);
+
+    // Test first iteration: expect ReaderDiscoveryInfo::DISCOVERED_READER.
+    cfp.content_filtered_topic_name = "CFP_TEST";
+    cfp.related_topic_name = "TEST";
+    cfp.filter_class_name = "MyFilterClass";
+    cfp.filter_expression = "This is my custom expression";
+    reader.content_filter_property(cfp).init();
+    ASSERT_TRUE(reader.isInitialized());
+    {
+        std::unique_lock<std::mutex> lock(mutex);
+        cv.wait(lock, [&iteration]()
+                {
+                    return Iterations::DISCOVERED_READER == iteration || Iterations::ERROR == iteration;
+                });
+        ASSERT_EQ(Iterations::DISCOVERED_READER, iteration);
+        ASSERT_EQ(cfp.content_filtered_topic_name, content_filter_property.content_filtered_topic_name);
+        ASSERT_EQ(cfp.related_topic_name, content_filter_property.related_topic_name);
+        ASSERT_EQ(cfp.filter_class_name, content_filter_property.filter_class_name);
+        ASSERT_EQ(cfp.filter_expression, content_filter_property.filter_expression);
+        ASSERT_EQ(cfp.expression_parameters.size(), content_filter_property.expression_parameters.size());
+    }
+
+    // Test second iteration: expect ReaderDiscoveryInfo::CHANGED_QOS_READER.
+    cfp.filter_expression = "New custom expression";
+    cfp.expression_parameters.push_back("100");
+    cfp.expression_parameters.push_back("200");
+    reader.content_filter_property(cfp).update();
+    {
+        std::unique_lock<std::mutex> lock(mutex);
+        cv.wait(lock, [&iteration]()
+                {
+                    return Iterations::CHANGED_QOS_READER == iteration || Iterations::ERROR == iteration;
+                });
+        ASSERT_EQ(Iterations::CHANGED_QOS_READER, iteration);
+        ASSERT_EQ(cfp.content_filtered_topic_name, content_filter_property.content_filtered_topic_name);
+        ASSERT_EQ(cfp.related_topic_name, content_filter_property.related_topic_name);
+        ASSERT_EQ(cfp.filter_class_name, content_filter_property.filter_class_name);
+        ASSERT_EQ(cfp.filter_expression, content_filter_property.filter_expression);
+        ASSERT_EQ(cfp.expression_parameters.size(), content_filter_property.expression_parameters.size());
+        ASSERT_EQ(cfp.expression_parameters[0], content_filter_property.expression_parameters[0]);
+        ASSERT_EQ(cfp.expression_parameters[1], content_filter_property.expression_parameters[1]);
+    }
+}
+
+/*!
+ * \test RTPS-CFT-RRR-02 Tests a wrong `ContentFilterProperty` passed to `registerReader()` makes the function fails.
+ */
+TEST_P(RTPSDiscovery, ContentFilterWrongRegistration)
+{
+    std::mutex mutex;
+    std::condition_variable cv;
+    enum Iterations
+    {
+        NONE,
+        ERROR
+    }
+    iteration = NONE;
+
+    RTPSWithRegistrationWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+    RTPSWithRegistrationReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+
+    writer.set_on_reader_discovery(
+        [&mutex, &cv, &iteration](
+            ReaderDiscoveryInfo::DISCOVERY_STATUS,
+            const GUID_t&,
+            const ReaderProxyData*)
+        {
+            std::unique_lock<std::mutex> lock(mutex);
+            iteration = Iterations::ERROR;
+            cv.notify_one();
+        }
+        ).init();
+    ASSERT_TRUE(writer.isInitialized());
+
+    eprosima::fastdds::rtps::ContentFilterProperty::AllocationConfiguration content_filter_allocation;
+    eprosima::fastdds::rtps::ContentFilterProperty cfp(content_filter_allocation);
+
+    // wrong content_filtered_topic_name
+    cfp.content_filtered_topic_name = "";
+    cfp.related_topic_name = "TEST";
+    cfp.filter_class_name = "MyFilterClass";
+    cfp.filter_expression = "This is my custom expression";
+    reader.content_filter_property(cfp).init();
+    ASSERT_FALSE(reader.isInitialized());
+    {
+        std::unique_lock<std::mutex> lock(mutex);
+        cv.wait_for(lock, std::chrono::milliseconds(500), [&iteration]()
+                {
+                    return Iterations::ERROR == iteration;
+                });
+        ASSERT_EQ(Iterations::NONE, iteration);
+    }
+    reader.destroy();
+
+    // wrong related_topic_name
+    cfp.content_filtered_topic_name = "CFP_TEST";
+    cfp.related_topic_name = "";
+    cfp.filter_class_name = "MyFilterClass";
+    cfp.filter_expression = "This is my custom expression";
+    reader.content_filter_property(cfp).init();
+    ASSERT_FALSE(reader.isInitialized());
+    {
+        std::unique_lock<std::mutex> lock(mutex);
+        cv.wait_for(lock, std::chrono::milliseconds(500), [&iteration]()
+                {
+                    return Iterations::ERROR == iteration;
+                });
+        ASSERT_EQ(Iterations::NONE, iteration);
+    }
+    reader.destroy();
+
+    // wrong filter_class_name
+    cfp.content_filtered_topic_name = "CFT_TEST";
+    cfp.related_topic_name = "TEST";
+    cfp.filter_class_name = "";
+    cfp.filter_expression = "This is my custom expression";
+    reader.content_filter_property(cfp).init();
+    ASSERT_FALSE(reader.isInitialized());
+    {
+        std::unique_lock<std::mutex> lock(mutex);
+        cv.wait_for(lock, std::chrono::milliseconds(500), [&iteration]()
+                {
+                    return Iterations::ERROR == iteration;
+                });
+        ASSERT_EQ(Iterations::NONE, iteration);
+    }
+    reader.destroy();
+
+    // wrong filter_expression
+    cfp.content_filtered_topic_name = "CFT_TEST";
+    cfp.related_topic_name = "TEST";
+    cfp.filter_class_name = "MyFilterClass";
+    cfp.filter_expression = "";
+    reader.content_filter_property(cfp).init();
+    ASSERT_FALSE(reader.isInitialized());
+    {
+        std::unique_lock<std::mutex> lock(mutex);
+        cv.wait_for(lock, std::chrono::milliseconds(500), [&iteration]()
+                {
+                    return Iterations::ERROR == iteration;
+                });
+        ASSERT_EQ(Iterations::NONE, iteration);
+    }
+    reader.destroy();
+}
+
+/*!
+ * \test RTPS-CFT-RRR-03 Tests a wrong `ContentFilterProperty` passed to `updateReader()` makes the function fails.
+ */
+TEST_P(RTPSDiscovery, ContentFilterWrongUpdate)
+{
+    std::mutex mutex;
+    std::condition_variable cv;
+    enum Iterations
+    {
+        NONE,
+        DISCOVERED_READER,
+        ERROR
+    }
+    iteration = NONE;
+
+    RTPSWithRegistrationWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+    RTPSWithRegistrationReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+
+    writer.set_on_reader_discovery(
+        [&mutex, &cv, &iteration](
+            ReaderDiscoveryInfo::DISCOVERY_STATUS reason,
+            const GUID_t&,
+            const ReaderProxyData*)
+        {
+            std::unique_lock<std::mutex> lock(mutex);
+            if (Iterations::NONE == iteration && ReaderDiscoveryInfo::DISCOVERY_STATUS::DISCOVERED_READER == reason)
+            {
+                iteration = Iterations::DISCOVERED_READER;
+            }
+            else
+            {
+                iteration = Iterations::ERROR;
+            }
+            cv.notify_one();
+        }
+        ).init();
+    ASSERT_TRUE(writer.isInitialized());
+
+    reader.init();
+    ASSERT_TRUE(reader.isInitialized());
+    {
+        std::unique_lock<std::mutex> lock(mutex);
+        cv.wait(lock, [&iteration]()
+                {
+                    return Iterations::DISCOVERED_READER == iteration;
+                });
+        ASSERT_EQ(Iterations::DISCOVERED_READER, iteration);
+    }
+
+    eprosima::fastdds::rtps::ContentFilterProperty::AllocationConfiguration content_filter_allocation;
+    eprosima::fastdds::rtps::ContentFilterProperty cfp(content_filter_allocation);
+
+    // wrong content_filtered_topic_name
+    cfp.content_filtered_topic_name = "";
+    cfp.related_topic_name = "TEST";
+    cfp.filter_class_name = "MyFilterClass";
+    cfp.filter_expression = "This is my custom expression";
+    reader.content_filter_property(cfp).update();
+    ASSERT_FALSE(reader.isInitialized());
+    {
+        std::unique_lock<std::mutex> lock(mutex);
+        cv.wait_for(lock, std::chrono::milliseconds(500), [&iteration]()
+                {
+                    return Iterations::ERROR == iteration;
+                });
+        ASSERT_EQ(Iterations::DISCOVERED_READER, iteration);
+    }
+
+    // wrong related_topic_name
+    cfp.content_filtered_topic_name = "CFP_TEST";
+    cfp.related_topic_name = "";
+    cfp.filter_class_name = "MyFilterClass";
+    cfp.filter_expression = "This is my custom expression";
+    reader.content_filter_property(cfp).update();
+    ASSERT_FALSE(reader.isInitialized());
+    {
+        std::unique_lock<std::mutex> lock(mutex);
+        cv.wait_for(lock, std::chrono::milliseconds(500), [&iteration]()
+                {
+                    return Iterations::ERROR == iteration;
+                });
+        ASSERT_EQ(Iterations::DISCOVERED_READER, iteration);
+    }
+
+    // wrong filter_class_name
+    cfp.content_filtered_topic_name = "CFT_TEST";
+    cfp.related_topic_name = "TEST";
+    cfp.filter_class_name = "";
+    cfp.filter_expression = "This is my custom expression";
+    reader.content_filter_property(cfp).update();
+    ASSERT_FALSE(reader.isInitialized());
+    {
+        std::unique_lock<std::mutex> lock(mutex);
+        cv.wait_for(lock, std::chrono::milliseconds(500), [&iteration]()
+                {
+                    return Iterations::ERROR == iteration;
+                });
+        ASSERT_EQ(Iterations::DISCOVERED_READER, iteration);
+    }
+
+    // wrong filter_expression
+    cfp.content_filtered_topic_name = "CFT_TEST";
+    cfp.related_topic_name = "TEST";
+    cfp.filter_class_name = "MyFilterClass";
+    cfp.filter_expression = "";
+    reader.content_filter_property(cfp).update();
+    ASSERT_FALSE(reader.isInitialized());
+    {
+        std::unique_lock<std::mutex> lock(mutex);
+        cv.wait_for(lock, std::chrono::milliseconds(500), [&iteration]()
+                {
+                    return Iterations::ERROR == iteration;
+                });
+        ASSERT_EQ(Iterations::DISCOVERED_READER, iteration);
+    }
+}
+
+/*!
+ * \test RTPS-CFT-RRR-04 Tests `registerReader()` and `updateReader()` works successfully when the pointer to
+ * `ContentFilterProperty` is `nullptr`.
+ */
+TEST_P(RTPSDiscovery, ContentFilterRegistrationWithoutCFP)
+{
+    std::mutex mutex;
+    std::condition_variable cv;
+    enum Iterations
+    {
+        NONE,
+        DISCOVERED_READER,
+        CHANGED_QOS_READER,
+        ERROR
+    }
+    iteration = NONE;
+    eprosima::fastdds::rtps::ContentFilterProperty::AllocationConfiguration content_filter_allocation;
+    eprosima::fastdds::rtps::ContentFilterProperty content_filter_property(content_filter_allocation);
+
+    RTPSWithRegistrationWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+    RTPSWithRegistrationReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+
+    writer.set_on_reader_discovery(
+        [&mutex, &cv, &iteration, &content_filter_property](
+            ReaderDiscoveryInfo::DISCOVERY_STATUS reason,
+            const GUID_t&,
+            const ReaderProxyData* r_data)
+        {
+            std::unique_lock<std::mutex> lock(mutex);
+            if (nullptr != r_data)
+            {
+                content_filter_property = r_data->content_filter();
+            }
+            if (Iterations::NONE == iteration && ReaderDiscoveryInfo::DISCOVERY_STATUS::DISCOVERED_READER == reason)
+            {
+                iteration = Iterations::DISCOVERED_READER;
+            }
+            else if (Iterations::DISCOVERED_READER == iteration &&
+            ReaderDiscoveryInfo::DISCOVERY_STATUS::CHANGED_QOS_READER == reason)
+            {
+                iteration = Iterations::CHANGED_QOS_READER;
+            }
+            else
+            {
+                iteration = Iterations::ERROR;
+            }
+            cv.notify_one();
+        }
+        ).init();
+    ASSERT_TRUE(writer.isInitialized());
+
+    reader.init();
+    ASSERT_TRUE(reader.isInitialized());
+    {
+        std::unique_lock<std::mutex> lock(mutex);
+        cv.wait(lock, [&iteration]()
+                {
+                    return Iterations::DISCOVERED_READER == iteration || Iterations::ERROR == iteration;
+                });
+        ASSERT_EQ(Iterations::DISCOVERED_READER, iteration);
+        ASSERT_EQ(0, content_filter_property.content_filtered_topic_name.size());
+        ASSERT_EQ(0, content_filter_property.related_topic_name.size());
+        ASSERT_EQ(0, content_filter_property.filter_class_name.size());
+        ASSERT_EQ(0, content_filter_property.filter_expression.size());
+        ASSERT_EQ(0, content_filter_property.expression_parameters.size());
+    }
+
+    // Test second iteration: expect ReaderDiscoveryInfo::CHANGED_QOS_READER.
+    reader.update();
+    {
+        std::unique_lock<std::mutex> lock(mutex);
+        cv.wait(lock, [&iteration]()
+                {
+                    return Iterations::CHANGED_QOS_READER == iteration || Iterations::ERROR == iteration;
+                });
+        ASSERT_EQ(Iterations::CHANGED_QOS_READER, iteration);
+        ASSERT_EQ(0, content_filter_property.content_filtered_topic_name.size());
+        ASSERT_EQ(0, content_filter_property.related_topic_name.size());
+        ASSERT_EQ(0, content_filter_property.filter_class_name.size());
+        ASSERT_EQ(0, content_filter_property.filter_expression.size());
+        ASSERT_EQ(0, content_filter_property.expression_parameters.size());
+    }
+}
+
+/*!
+ * \test RTPS-CFT-RRR_05 Tests ``updateReader()` works successfully when a `ContentFilterProperty` is added for first
+ * time, because `registerReader()` passed a `nullptr`.
+ */
+TEST_P(RTPSDiscovery, ContentFilterRegistrationWithoutCFPButUpdate)
+{
+    std::mutex mutex;
+    std::condition_variable cv;
+    enum Iterations
+    {
+        NONE,
+        DISCOVERED_READER,
+        CHANGED_QOS_READER,
+        ERROR
+    }
+    iteration = NONE;
+    eprosima::fastdds::rtps::ContentFilterProperty::AllocationConfiguration content_filter_allocation;
+    eprosima::fastdds::rtps::ContentFilterProperty content_filter_property(content_filter_allocation);
+
+    RTPSWithRegistrationWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+    RTPSWithRegistrationReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+
+    writer.set_on_reader_discovery(
+        [&mutex, &cv, &iteration, &content_filter_property](
+            ReaderDiscoveryInfo::DISCOVERY_STATUS reason,
+            const GUID_t&,
+            const ReaderProxyData* r_data)
+        {
+            std::unique_lock<std::mutex> lock(mutex);
+            if (nullptr != r_data)
+            {
+                content_filter_property = r_data->content_filter();
+            }
+            if (Iterations::NONE == iteration && ReaderDiscoveryInfo::DISCOVERY_STATUS::DISCOVERED_READER == reason)
+            {
+                iteration = Iterations::DISCOVERED_READER;
+            }
+            else if (Iterations::DISCOVERED_READER == iteration &&
+            ReaderDiscoveryInfo::DISCOVERY_STATUS::CHANGED_QOS_READER == reason)
+            {
+                iteration = Iterations::CHANGED_QOS_READER;
+            }
+            else
+            {
+                iteration = Iterations::ERROR;
+            }
+            cv.notify_one();
+        }
+        ).init();
+    ASSERT_TRUE(writer.isInitialized());
+
+    reader.init();
+    ASSERT_TRUE(reader.isInitialized());
+    {
+        std::unique_lock<std::mutex> lock(mutex);
+        cv.wait(lock, [&iteration]()
+                {
+                    return Iterations::DISCOVERED_READER == iteration || Iterations::ERROR == iteration;
+                });
+        ASSERT_EQ(Iterations::DISCOVERED_READER, iteration);
+        ASSERT_EQ(0, content_filter_property.content_filtered_topic_name.size());
+        ASSERT_EQ(0, content_filter_property.related_topic_name.size());
+        ASSERT_EQ(0, content_filter_property.filter_class_name.size());
+        ASSERT_EQ(0, content_filter_property.filter_expression.size());
+        ASSERT_EQ(0, content_filter_property.expression_parameters.size());
+    }
+
+    // Test second iteration: expect ReaderDiscoveryInfo::CHANGED_QOS_READER.
+    eprosima::fastdds::rtps::ContentFilterProperty cfp(content_filter_allocation);
+    cfp.content_filtered_topic_name = "CFP_TEST";
+    cfp.related_topic_name = "TEST";
+    cfp.filter_class_name = "MyFilterClass";
+    cfp.filter_expression = "This is my custom expression";
+    cfp.expression_parameters.push_back("100");
+    cfp.expression_parameters.push_back("200");
+    reader.content_filter_property(cfp).update();
+    {
+        std::unique_lock<std::mutex> lock(mutex);
+        cv.wait(lock, [&iteration]()
+                {
+                    return Iterations::CHANGED_QOS_READER == iteration || Iterations::ERROR == iteration;
+                });
+        ASSERT_EQ(Iterations::CHANGED_QOS_READER, iteration);
+        ASSERT_EQ(cfp.content_filtered_topic_name, content_filter_property.content_filtered_topic_name);
+        ASSERT_EQ(cfp.related_topic_name, content_filter_property.related_topic_name);
+        ASSERT_EQ(cfp.filter_class_name, content_filter_property.filter_class_name);
+        ASSERT_EQ(cfp.filter_expression, content_filter_property.filter_expression);
+        ASSERT_EQ(cfp.expression_parameters.size(), content_filter_property.expression_parameters.size());
+        ASSERT_EQ(cfp.expression_parameters[0], content_filter_property.expression_parameters[0]);
+        ASSERT_EQ(cfp.expression_parameters[1], content_filter_property.expression_parameters[1]);
+    }
+}
+
+ #ifdef INSTANTIATE_TEST_SUITE_P
+ #define GTEST_INSTANTIATE_TEST_MACRO(x, y, z, w) INSTANTIATE_TEST_SUITE_P(x, y, z, w)
+ #else
+ #define GTEST_INSTANTIATE_TEST_MACRO(x, y, z, w) INSTANTIATE_TEST_CASE_P(x, y, z, w)
+ #endif // ifdef INSTANTIATE_TEST_SUITE_P
 
 GTEST_INSTANTIATE_TEST_MACRO(RTPS,
         RTPSDiscovery,

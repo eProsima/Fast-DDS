@@ -185,9 +185,7 @@ public:
             return;
         }
 
-        ASSERT_EQ(participant_->registerReader(reader_, topic_attr_, reader_qos_), true);
-
-        initialized_ = true;
+        initialized_ = participant_->registerReader(reader_, topic_attr_, reader_qos_, content_filter_property_);
     }
 
     void update()
@@ -197,7 +195,7 @@ public:
             return;
         }
 
-        ASSERT_TRUE(participant_->updateReader(reader_, topic_attr_, reader_qos_));
+        initialized_ = participant_->updateReader(reader_, topic_attr_, reader_qos_, content_filter_property_);
     }
 
     bool isInitialized() const
@@ -502,11 +500,17 @@ public:
         return *this;
     }
 
-
     RTPSWithRegistrationReader& partitions(
             std::vector<std::string>& partitions)
     {
         reader_qos_.m_partition.setNames(partitions);
+        return *this;
+    }
+
+    RTPSWithRegistrationReader& content_filter_property(
+            const eprosima::fastdds::rtps::ContentFilterProperty& content_filter_property)
+    {
+        content_filter_property_ = &content_filter_property;
         return *this;
     }
 
@@ -606,6 +610,7 @@ private:
     std::shared_ptr<eprosima::fastrtps::rtps::IPayloadPool> payload_pool_;
     bool has_payload_pool_ = false;
     OnWriterDiscoveryFunctor on_writer_discovery_functor;
+    const eprosima::fastdds::rtps::ContentFilterProperty* content_filter_property_ = nullptr;
 };
 
 #endif // _TEST_BLACKBOX_RTPSWITHREGISTRATIONREADER_HPP_
