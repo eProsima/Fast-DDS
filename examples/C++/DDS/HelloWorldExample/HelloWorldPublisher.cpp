@@ -47,10 +47,6 @@ bool HelloWorldPublisher::init()
     hello_.message("HelloWorld");
     DomainParticipantQos pqos;
     pqos.name("Participant_pub");
-    //DISABLE SHM
-    auto udp_transport = std::make_shared<UDPv4TransportDescriptor>();
-    pqos.transport().user_transports.push_back(udp_transport);
-    pqos.transport().use_builtin_transports = false;
     participant_ = DomainParticipantFactory::get_instance()->create_participant(27, pqos);
 
     if (participant_ == nullptr)
