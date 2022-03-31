@@ -178,6 +178,17 @@ public:
         return returnedValue;
     }
 
+    template<typename PreCommitHook>
+    bool add_pub_change_with_commit_hook(
+            fastrtps::rtps::CacheChange_t* change,
+            fastrtps::rtps::WriteParams& wparams,
+            PreCommitHook /*pre_commit*/,
+            std::unique_lock<fastrtps::RecursiveTimedMutex>& lock,
+            const std::chrono::time_point<std::chrono::steady_clock>& max_blocking_time)
+    {
+        return add_pub_change(change, wparams, lock, max_blocking_time);
+    }
+
     bool set_next_deadline(
             const InstanceHandle_t&,
             const std::chrono::steady_clock::time_point&)

@@ -74,7 +74,7 @@ public:
             const std::chrono::time_point<std::chrono::steady_clock>& max_blocking_time);
 
     /**
-     * Add a change comming from the Publisher.
+     * Add a change comming from the DataWriter.
      * @param change Pointer to the change
      * @param wparams Extra write parameters.
      * @param lock
@@ -86,6 +86,49 @@ public:
             fastrtps::rtps::WriteParams& wparams,
             std::unique_lock<fastrtps::RecursiveTimedMutex>& lock,
             const std::chrono::time_point<std::chrono::steady_clock>& max_blocking_time);
+
+    /**
+     * Add a change comming from the DataWriter.
+     *
+     * @param change             Pointer to the change
+     * @param wparams            Extra writer parameters.
+     * @param pre_commit         Functor receiving a CacheChange_t& to perform actions after the
+     *                           change has been added to the history, but before notifying the RTPS writer.
+     * @param lock               Lock to the history mutex.
+     * @param max_blocking_time  Maximum time point to wait for room on the history.
+     *
+     * @return True if added.
+     */
+    template<typename PreCommitHook>
+    bool add_pub_change_with_commit_hook(
+            fastrtps::rtps::CacheChange_t* change,
+            fastrtps::rtps::WriteParams& wparams,
+            PreCommitHook pre_commit,
+            std::unique_lock<fastrtps::RecursiveTimedMutex>& lock,
+            const std::chrono::time_point<std::chrono::steady_clock>& max_blocking_time)
+    {
+        bool returnedValue = false;
+        bool add = prepare_change(change, lock, max_blocking_time);
+
+        if (add)
+        {
+    #if HAVE_STRICT_REALTIME
+            if (this->add_change_with_commit_hook(change, wparams, pre_commit, max_blocking_time))
+    #else
+            auto time_point = std::chrono::steady_clock::now() + std::chrono::hours(24);
+            if (this->add_change_with_commit_hook(change, wparams, pre_commit, time_point))
+    #endif // if HAVE_STRICT_REALTIME
+            {
+                logInfo(RTPS_HISTORY,
+                        topic_att_.getTopicDataType()
+                        << " Change " << change->sequenceNumber << " added with key: " << change->instanceHandle
+                        << " and " << change->serializedPayload.length << " bytes");
+                returnedValue = true;
+            }
+        }
+
+        return returnedValue;
+    }
 
     /**
      * Remove all change from the associated history.
