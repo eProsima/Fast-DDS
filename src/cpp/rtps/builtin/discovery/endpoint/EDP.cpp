@@ -150,6 +150,16 @@ bool EDP::newLocalReaderProxyData(
                 rpd->userDefinedId(reader->getAttributes().getUserDefinedID());
                 if (nullptr != content_filter)
                 {
+                    // Check content of ContentFilterProperty.
+                    if (!(0 < content_filter->content_filtered_topic_name.size() &&
+                            0 < content_filter->related_topic_name.size() &&
+                            0 < content_filter->filter_class_name.size() &&
+                            0 < content_filter->filter_expression.size()
+                            ))
+                    {
+                        return false;
+                    }
+
                     rpd->content_filter(*content_filter);
                 }
 
@@ -387,6 +397,16 @@ bool EDP::updatedLocalReader(
                 rdata->m_qos.setQos(rqos, false);
                 if (nullptr != content_filter)
                 {
+                    // Check content of ContentFilterProperty.
+                    if (!(0 < content_filter->content_filtered_topic_name.size() &&
+                            0 < content_filter->related_topic_name.size() &&
+                            0 < content_filter->filter_class_name.size() &&
+                            0 < content_filter->filter_expression.size()
+                            ))
+                    {
+                        return false;
+                    }
+
                     rdata->content_filter(*content_filter);
                 }
                 rdata->isAlive(true);
