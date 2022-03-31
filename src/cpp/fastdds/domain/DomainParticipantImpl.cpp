@@ -54,6 +54,7 @@
 #include <fastrtps/types/TypeObjectFactory.h>
 #include <fastrtps/xmlparser/XMLProfileManager.h>
 
+#include <fastdds/publisher/DataWriterImpl.hpp>
 #include <fastdds/subscriber/SubscriberImpl.hpp>
 #include <fastdds/topic/ContentFilteredTopicImpl.hpp>
 #include <fastdds/topic/TopicImpl.hpp>
@@ -655,6 +656,17 @@ ReturnCode_t DomainParticipantImpl::unregister_content_filter_factory(
         if (topic.second->impl_->filter_property.filter_class_name == filter_class_name)
         {
             return ReturnCode_t::RETCODE_PRECONDITION_NOT_MET;
+        }
+    }
+
+    for (auto& pub : publishers_)
+    {
+        for (auto& topic : pub.second->writers_)
+        {
+            for (auto& wr : topic.second)
+            {
+                wr->filter_is_being_removed(filter_class_name);
+            }
         }
     }
 
