@@ -760,7 +760,23 @@ ReturnCode_t DataWriterImpl::perform_create_new_change(
     {
         payload.move_into_change(*ch);
 
-        if (!this->history_.add_pub_change(ch, wparams, lock, max_blocking_time))
+        bool added = false;
+        if (reader_filters_ && !reader_filters_->empty())
+        {
+            auto related_sample_identity = wparams.related_sample_identity();
+            auto filter_hook = [&related_sample_identity, this](CacheChange_t& ch)
+                    {
+                        reader_filters_->update_filter_info(static_cast<DataWriterCacheChange&>(ch),
+                                related_sample_identity);
+                    };
+            added = history_.add_pub_change_with_commit_hook(ch, wparams, filter_hook, lock, max_blocking_time);
+        }
+        else
+        {
+            added = history_.add_pub_change(ch, wparams, lock, max_blocking_time);
+        }
+
+        if (!added)
         {
             if (was_loaned)
             {
