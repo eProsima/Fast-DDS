@@ -296,6 +296,14 @@ public:
     ReturnCode_t get_sending_locators(
             rtps::LocatorList& locators) const;
 
+    /**
+     * Called from the DomainParticipant when a filter factory is being unregistered.
+     *
+     * @param filter_class_name  The class name under which the factory was registered.
+     */
+    void filter_is_being_removed(
+            const char* filter_class_name);
+
 protected:
 
     using IChangePool = eprosima::fastrtps::rtps::IChangePool;

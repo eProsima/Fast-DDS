@@ -1861,6 +1861,17 @@ void DataWriterImpl::update_reader_filter(
     }
 }
 
+void DataWriterImpl::filter_is_being_removed(
+        const char* filter_class_name)
+{
+    if (reader_filters_)
+    {
+        assert(writer_);
+        std::lock_guard<RecursiveTimedMutex> guard(writer_->getMutex());
+        reader_filters_->remove_filters(filter_class_name);
+    }
+}
+
 bool DataWriterImpl::is_relevant(
         const fastrtps::rtps::CacheChange_t& change,
         const fastrtps::rtps::GUID_t& reader_guid) const

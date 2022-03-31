@@ -122,6 +122,21 @@ public:
         }
     }
 
+    void remove_filters(
+            const char* filter_class_name)
+    {
+        auto it = reader_filters_.begin();
+        while (it != reader_filters_.end())
+        {
+            if (0 == strcmp(it->second.filter_class_name.c_str(), filter_class_name))
+            {
+                it = reader_filters_.erase(it);
+                continue;
+            }
+            ++it;
+        }
+    }
+
     void remove_reader(
             const fastrtps::rtps::GUID_t& guid)
     {
