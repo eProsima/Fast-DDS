@@ -1046,8 +1046,13 @@ TEST(BuiltinDataSerializationTests, contentfilterproperty_wrong_cdr_message_dese
                     content_filter_property, &msg, len));
     }
 }
+
+/*!
+ * \test RTPS-CFT-CFP-13 Tests the interoperability with RTI in the propagation of the RTPS's `ContentFilterProperty_t`.
+ */
 TEST(BuiltinDataSerializationTests, contentfilterproperty_interoperability)
 {
+    // pcap file located in task #14171. Captured from RTI Shapes Demo 6.1.0
     octet data_r_buffer[] =
     {
         // Encapsulation
@@ -1138,10 +1143,6 @@ TEST(BuiltinDataSerializationTests, contentfilterproperty_interoperability)
     ASSERT_EQ("100", out.content_filter().expression_parameters[2].to_string());
     ASSERT_EQ("200", out.content_filter().expression_parameters[3].to_string());
 }
-
-/*!
- * \test RTPS-CFT-CFP-13 Tests the interoperability with RTI in the propagation of the RTPS's `ContentFilterProperty_t`.
- */
 
 } // namespace rtps
 } // namespace fastrtps
