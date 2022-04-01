@@ -247,11 +247,14 @@ ReturnCode_t DataReaderImpl::enable()
     }
 
     eprosima::fastdds::rtps::ContentFilterProperty* filter_property = nullptr;
-    if (nullptr != content_topic)
+    if (nullptr != content_topic && !content_topic->filter_property.filter_expression.empty())
     {
         filter_property = &content_topic->filter_property;
     }
-    subscriber_->rtps_participant()->registerReader(reader_, topic_attributes(), rqos, filter_property);
+    if (!subscriber_->rtps_participant()->registerReader(reader_, topic_attributes(), rqos, filter_property))
+    {
+        return ReturnCode_t::RETCODE_ERROR;
+    }
 
     return ReturnCode_t::RETCODE_OK;
 }
@@ -722,7 +725,7 @@ void DataReaderImpl::update_rtps_reader_qos()
     {
         eprosima::fastdds::rtps::ContentFilterProperty* filter_property = nullptr;
         auto content_topic = dynamic_cast<ContentFilteredTopicImpl*>(topic_->get_impl());
-        if (nullptr != content_topic)
+        if (nullptr != content_topic && !content_topic->filter_property.filter_expression.empty())
         {
             filter_property = &content_topic->filter_property;
         }
