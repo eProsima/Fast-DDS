@@ -130,13 +130,18 @@ TEST(DDSContentFilter, BasicTest)
                 HelloWorldSeq recv_data;
                 SampleInfoSeq recv_info;
 
-                EXPECT_EQ(ReturnCode_t::RETCODE_OK, reader->take(recv_data, recv_info));
+                ReturnCode_t expected_ret;
+                expected_ret = expected_samples == 0 ? ReturnCode_t::RETCODE_NO_DATA : ReturnCode_t::RETCODE_OK;
+                EXPECT_EQ(expected_ret, reader->take(recv_data, recv_info));
                 EXPECT_EQ(recv_data.length(), expected_samples);
                 for (HelloWorldSeq::size_type i = 0; i < recv_data.length(); ++i)
                 {
                     EXPECT_EQ(index_values[i], recv_data[i].index());
                 }
-                EXPECT_EQ(ReturnCode_t::RETCODE_OK, reader->return_loan(recv_data, recv_info));
+                if (expected_samples > 0)
+                {
+                    EXPECT_EQ(ReturnCode_t::RETCODE_OK, reader->return_loan(recv_data, recv_info));
+                }
 
                 if (expect_wr_filters)
                 {
@@ -165,6 +170,11 @@ TEST(DDSContentFilter, BasicTest)
     EXPECT_EQ(ReturnCode_t::RETCODE_OK,
             filtered_topic->set_filter_expression("message match %0", { "'HelloWorld 1.*'" }));
     send_data(2u, {1, 10}, true);
+
+    std::cout << std::endl << "Test 'message match %0', {\"'WRONG MESSAGE .*'\"}..." << std::endl;
+    EXPECT_EQ(ReturnCode_t::RETCODE_OK,
+            filtered_topic->set_filter_expression("message match %0", { "'WRONG MESSAGE .*'" }));
+    send_data(0u, {}, false);
 
     EXPECT_EQ(ReturnCode_t::RETCODE_OK, subscriber->delete_datareader(reader));
     EXPECT_EQ(ReturnCode_t::RETCODE_OK, participant->delete_subscriber(subscriber));
