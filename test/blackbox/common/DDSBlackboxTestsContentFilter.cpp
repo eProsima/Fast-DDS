@@ -18,6 +18,8 @@
 #include <fastdds/dds/subscriber/Subscriber.hpp>
 #include <fastdds/dds/subscriber/qos/DataReaderQos.hpp>
 
+#include <fastdds/rtps/transport/test_UDPv4TransportDescriptor.h>
+
 #include "BlackboxTests.hpp"
 
 #include "PubSubWriter.hpp"
@@ -30,11 +32,66 @@ namespace dds {
 
 using ReturnCode_t = eprosima::fastrtps::types::ReturnCode_t;
 
+struct ContentFilterInfoCounter
+{
+    std::atomic_size_t content_filter_info_count;
+    std::shared_ptr<rtps::test_UDPv4TransportDescriptor> transport;
+
+    ContentFilterInfoCounter()
+        : content_filter_info_count(0)
+        , transport(std::make_shared<rtps::test_UDPv4TransportDescriptor>())
+    {
+        transport->drop_data_messages_filter_ = [this](fastrtps::rtps::CDRMessage_t& msg) -> bool
+                {
+                    // Check if it has inline_qos
+                    uint8_t flags = msg.buffer[msg.pos - 3];
+                    if (0x02 == (flags & 0x02))
+                    {
+                        auto old_pos = msg.pos;
+
+                        // Skip extraFlags, read octetsToInlineQos, and skip there.
+                        msg.pos += 2;
+                        uint16_t to_inline_qos = 0;
+                        fastrtps::rtps::CDRMessage::readUInt16(&msg, &to_inline_qos);
+                        msg.pos += to_inline_qos;
+
+                        while (msg.pos < msg.length)
+                        {
+                            uint16_t pid = 0;
+                            uint16_t plen = 0;
+
+                            fastrtps::rtps::CDRMessage::readUInt16(&msg, &pid);
+                            fastrtps::rtps::CDRMessage::readUInt16(&msg, &plen);
+                            msg.pos += plen;
+
+                            if (pid == PID_CONTENT_FILTER_INFO)
+                            {
+                                ++content_filter_info_count;
+                            }
+                            else if (pid == PID_SENTINEL)
+                            {
+                                break;
+                            }
+                        }
+
+                        msg.pos = old_pos;
+                    }
+
+                    // Never drop packet
+                    return false;
+                };
+    }
+
+};
+
 TEST(DDSContentFilter, BasicTest)
 {
     registerHelloWorldTypes();
 
+    ContentFilterInfoCounter filter_counter;
+
     PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+    writer.disable_builtin_transport().add_user_transport_to_pparams(filter_counter.transport);
     writer.history_depth(10).init();
 
     auto participant = writer.getParticipant();
@@ -53,8 +110,10 @@ TEST(DDSContentFilter, BasicTest)
     auto reader = subscriber->create_datareader(filtered_topic, reader_qos);
     ASSERT_NE(nullptr, reader);
 
-    auto send_data = [&](uint64_t expected_samples, const std::vector<uint16_t>& index_values)
+    auto send_data = [&](uint64_t expected_samples, const std::vector<uint16_t>& index_values, bool expect_wr_filters)
             {
+                filter_counter.content_filter_info_count = 0;
+
                 // Send 10 samples with index 1 to 10
                 auto data = default_helloworld_data_generator();
                 writer.send(data);
@@ -78,25 +137,34 @@ TEST(DDSContentFilter, BasicTest)
                     EXPECT_EQ(index_values[i], recv_data[i].index());
                 }
                 EXPECT_EQ(ReturnCode_t::RETCODE_OK, reader->return_loan(recv_data, recv_info));
+
+                if (expect_wr_filters)
+                {
+                    EXPECT_NE(filter_counter.content_filter_info_count, 0);
+                }
+                else
+                {
+                    EXPECT_EQ(filter_counter.content_filter_info_count, 0);
+                }
             };
 
     std::cout << std::endl << "TEST empty expression..." << std::endl;
-    send_data(10u, {1, 2, 3, 4, 5, 6, 7, 8, 9, 10});
+    send_data(10u, {1, 2, 3, 4, 5, 6, 7, 8, 9, 10}, false);
 
     std::cout << std::endl << "Test 'index BETWEEN %0 AND %1', {\"2\", \"4\"}..." << std::endl;
     EXPECT_EQ(ReturnCode_t::RETCODE_OK,
             filtered_topic->set_filter_expression("index BETWEEN %0 AND %1", { "2", "4" }));
-    send_data(3u, {2, 3, 4});
+    send_data(3u, {2, 3, 4}, true);
 
     std::cout << std::endl << "Test 'index BETWEEN %0 AND %1', {\"6\", \"9\"}..." << std::endl;
     EXPECT_EQ(ReturnCode_t::RETCODE_OK,
             filtered_topic->set_expression_parameters({ "6", "9" }));
-    send_data(4u, {6, 7, 8, 9});
+    send_data(4u, {6, 7, 8, 9}, true);
 
     std::cout << std::endl << "Test 'message match %0', {\"'HelloWorld 1.*'\"}..." << std::endl;
     EXPECT_EQ(ReturnCode_t::RETCODE_OK,
             filtered_topic->set_filter_expression("message match %0", { "'HelloWorld 1.*'" }));
-    send_data(2u, {1, 10});
+    send_data(2u, {1, 10}, true);
 
     EXPECT_EQ(ReturnCode_t::RETCODE_OK, subscriber->delete_datareader(reader));
     EXPECT_EQ(ReturnCode_t::RETCODE_OK, participant->delete_subscriber(subscriber));
