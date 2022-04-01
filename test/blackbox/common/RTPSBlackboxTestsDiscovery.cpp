@@ -80,7 +80,7 @@ TEST_P(RTPSDiscovery, ReaderListenerOnWriterDiscovery)
         DISCOVERED_WRITER,
         CHANGED_QOS_WRITER,
         REMOVED_WRITER,
-        ERROR
+        WITH_ERROR
     }
     iteration = NONE;
     eprosima::fastrtps::rtps::GUID_t writer_guid;
@@ -117,7 +117,7 @@ TEST_P(RTPSDiscovery, ReaderListenerOnWriterDiscovery)
             }
             else
             {
-                iteration = Iterations::ERROR;
+                iteration = Iterations::WITH_ERROR;
             }
             cv.notify_one();
         }
@@ -131,7 +131,7 @@ TEST_P(RTPSDiscovery, ReaderListenerOnWriterDiscovery)
         std::unique_lock<std::mutex> lock(mutex);
         cv.wait(lock, [&iteration]()
                 {
-                    return Iterations::DISCOVERED_WRITER == iteration || Iterations::ERROR == iteration;
+                    return Iterations::DISCOVERED_WRITER == iteration || Iterations::WITH_ERROR == iteration;
                 });
         ASSERT_EQ(Iterations::DISCOVERED_WRITER, iteration);
         ASSERT_EQ(writer.guid(), writer_guid);
@@ -144,7 +144,7 @@ TEST_P(RTPSDiscovery, ReaderListenerOnWriterDiscovery)
         std::unique_lock<std::mutex> lock(mutex);
         cv.wait(lock, [&iteration]()
                 {
-                    return Iterations::CHANGED_QOS_WRITER == iteration || Iterations::ERROR == iteration;
+                    return Iterations::CHANGED_QOS_WRITER == iteration || Iterations::WITH_ERROR == iteration;
                 });
         ASSERT_EQ(Iterations::CHANGED_QOS_WRITER, iteration);
         ASSERT_EQ(writer.guid(), writer_guid);
@@ -158,7 +158,7 @@ TEST_P(RTPSDiscovery, ReaderListenerOnWriterDiscovery)
         std::unique_lock<std::mutex> lock(mutex);
         cv.wait(lock, [&iteration]()
                 {
-                    return Iterations::REMOVED_WRITER == iteration || Iterations::ERROR == iteration;
+                    return Iterations::REMOVED_WRITER == iteration || Iterations::WITH_ERROR == iteration;
                 });
         ASSERT_EQ(Iterations::REMOVED_WRITER, iteration);
         ASSERT_EQ(writer_guid, w_guid);
@@ -179,7 +179,7 @@ TEST_P(RTPSDiscovery, WriterListenerOnReaderDiscovery)
         DISCOVERED_READER,
         CHANGED_QOS_READER,
         REMOVED_READER,
-        ERROR
+        WITH_ERROR
     }
     iteration = NONE;
     eprosima::fastrtps::rtps::GUID_t reader_guid;
@@ -216,7 +216,7 @@ TEST_P(RTPSDiscovery, WriterListenerOnReaderDiscovery)
             }
             else
             {
-                iteration = Iterations::ERROR;
+                iteration = Iterations::WITH_ERROR;
             }
             cv.notify_one();
         }
@@ -230,7 +230,7 @@ TEST_P(RTPSDiscovery, WriterListenerOnReaderDiscovery)
         std::unique_lock<std::mutex> lock(mutex);
         cv.wait(lock, [&iteration]()
                 {
-                    return Iterations::DISCOVERED_READER == iteration || Iterations::ERROR == iteration;
+                    return Iterations::DISCOVERED_READER == iteration || Iterations::WITH_ERROR == iteration;
                 });
         ASSERT_EQ(Iterations::DISCOVERED_READER, iteration);
         ASSERT_EQ(reader.guid(), reader_guid);
@@ -243,7 +243,7 @@ TEST_P(RTPSDiscovery, WriterListenerOnReaderDiscovery)
         std::unique_lock<std::mutex> lock(mutex);
         cv.wait(lock, [&iteration]()
                 {
-                    return Iterations::CHANGED_QOS_READER == iteration || Iterations::ERROR == iteration;
+                    return Iterations::CHANGED_QOS_READER == iteration || Iterations::WITH_ERROR == iteration;
                 });
         ASSERT_EQ(Iterations::CHANGED_QOS_READER, iteration);
         ASSERT_EQ(reader.guid(), reader_guid);
@@ -257,7 +257,7 @@ TEST_P(RTPSDiscovery, WriterListenerOnReaderDiscovery)
         std::unique_lock<std::mutex> lock(mutex);
         cv.wait(lock, [&iteration]()
                 {
-                    return Iterations::REMOVED_READER == iteration || Iterations::ERROR == iteration;
+                    return Iterations::REMOVED_READER == iteration || Iterations::WITH_ERROR == iteration;
                 });
         ASSERT_EQ(Iterations::REMOVED_READER, iteration);
         ASSERT_EQ(reader_guid, r_guid);
@@ -277,7 +277,7 @@ TEST_P(RTPSDiscovery, ReaderListenerOnWriterDiscoveryIncompatibleQoS)
         NONE,
         DISCOVERED_WRITER,
         REMOVED_WRITER,
-        ERROR
+        WITH_ERROR
     }
     iteration = NONE;
     eprosima::fastrtps::rtps::GUID_t writer_guid;
@@ -304,7 +304,7 @@ TEST_P(RTPSDiscovery, ReaderListenerOnWriterDiscoveryIncompatibleQoS)
             }
             else
             {
-                iteration = Iterations::ERROR;
+                iteration = Iterations::WITH_ERROR;
             }
             cv.notify_one();
         }
@@ -318,7 +318,7 @@ TEST_P(RTPSDiscovery, ReaderListenerOnWriterDiscoveryIncompatibleQoS)
         std::unique_lock<std::mutex> lock(mutex);
         cv.wait(lock, [&iteration]()
                 {
-                    return Iterations::DISCOVERED_WRITER == iteration || Iterations::ERROR == iteration;
+                    return Iterations::DISCOVERED_WRITER == iteration || Iterations::WITH_ERROR == iteration;
                 });
         ASSERT_EQ(Iterations::DISCOVERED_WRITER, iteration);
         ASSERT_EQ(writer.guid(), writer_guid);
@@ -331,7 +331,7 @@ TEST_P(RTPSDiscovery, ReaderListenerOnWriterDiscoveryIncompatibleQoS)
         std::unique_lock<std::mutex> lock(mutex);
         cv.wait(lock, [&iteration]()
                 {
-                    return Iterations::REMOVED_WRITER == iteration || Iterations::ERROR == iteration;
+                    return Iterations::REMOVED_WRITER == iteration || Iterations::WITH_ERROR == iteration;
                 });
         ASSERT_EQ(Iterations::REMOVED_WRITER, iteration);
         ASSERT_EQ(writer.guid(), writer_guid);
@@ -343,7 +343,7 @@ TEST_P(RTPSDiscovery, ReaderListenerOnWriterDiscoveryIncompatibleQoS)
         std::unique_lock<std::mutex> lock(mutex);
         cv.wait_for(lock, std::chrono::milliseconds(500), [&iteration]()
                 {
-                    return Iterations::ERROR == iteration;
+                    return Iterations::WITH_ERROR == iteration;
                 });
         ASSERT_EQ(Iterations::REMOVED_WRITER, iteration);
     }
@@ -362,7 +362,7 @@ TEST_P(RTPSDiscovery, WriterListenerOnReaderDiscoveryIncompatibleQoS)
         NONE,
         DISCOVERED_READER,
         REMOVED_READER,
-        ERROR
+        WITH_ERROR
     }
     iteration = NONE;
     eprosima::fastrtps::rtps::GUID_t reader_guid;
@@ -389,7 +389,7 @@ TEST_P(RTPSDiscovery, WriterListenerOnReaderDiscoveryIncompatibleQoS)
             }
             else
             {
-                iteration = Iterations::ERROR;
+                iteration = Iterations::WITH_ERROR;
             }
             cv.notify_one();
         }
@@ -403,7 +403,7 @@ TEST_P(RTPSDiscovery, WriterListenerOnReaderDiscoveryIncompatibleQoS)
         std::unique_lock<std::mutex> lock(mutex);
         cv.wait(lock, [&iteration]()
                 {
-                    return Iterations::DISCOVERED_READER == iteration || Iterations::ERROR == iteration;
+                    return Iterations::DISCOVERED_READER == iteration || Iterations::WITH_ERROR == iteration;
                 });
         ASSERT_EQ(Iterations::DISCOVERED_READER, iteration);
         ASSERT_EQ(reader.guid(), reader_guid);
@@ -416,7 +416,7 @@ TEST_P(RTPSDiscovery, WriterListenerOnReaderDiscoveryIncompatibleQoS)
         std::unique_lock<std::mutex> lock(mutex);
         cv.wait(lock, [&iteration]()
                 {
-                    return Iterations::REMOVED_READER == iteration || Iterations::ERROR == iteration;
+                    return Iterations::REMOVED_READER == iteration || Iterations::WITH_ERROR == iteration;
                 });
         ASSERT_EQ(Iterations::REMOVED_READER, iteration);
         ASSERT_EQ(reader.guid(), reader_guid);
@@ -428,7 +428,7 @@ TEST_P(RTPSDiscovery, WriterListenerOnReaderDiscoveryIncompatibleQoS)
         std::unique_lock<std::mutex> lock(mutex);
         cv.wait_for(lock, std::chrono::milliseconds(500), [&iteration]()
                 {
-                    return Iterations::ERROR == iteration;
+                    return Iterations::WITH_ERROR == iteration;
                 });
         ASSERT_EQ(Iterations::REMOVED_READER, iteration);
     }
@@ -447,7 +447,7 @@ TEST_P(RTPSDiscovery, ContentFilterRegistration)
         NONE,
         DISCOVERED_READER,
         CHANGED_QOS_READER,
-        ERROR
+        WITH_ERROR
     }
     iteration = NONE;
     eprosima::fastdds::rtps::ContentFilterProperty::AllocationConfiguration content_filter_allocation;
@@ -478,7 +478,7 @@ TEST_P(RTPSDiscovery, ContentFilterRegistration)
             }
             else
             {
-                iteration = Iterations::ERROR;
+                iteration = Iterations::WITH_ERROR;
             }
             cv.notify_one();
         }
@@ -498,7 +498,7 @@ TEST_P(RTPSDiscovery, ContentFilterRegistration)
         std::unique_lock<std::mutex> lock(mutex);
         cv.wait(lock, [&iteration]()
                 {
-                    return Iterations::DISCOVERED_READER == iteration || Iterations::ERROR == iteration;
+                    return Iterations::DISCOVERED_READER == iteration || Iterations::WITH_ERROR == iteration;
                 });
         ASSERT_EQ(Iterations::DISCOVERED_READER, iteration);
         ASSERT_EQ(cfp.content_filtered_topic_name, content_filter_property.content_filtered_topic_name);
@@ -517,7 +517,7 @@ TEST_P(RTPSDiscovery, ContentFilterRegistration)
         std::unique_lock<std::mutex> lock(mutex);
         cv.wait(lock, [&iteration]()
                 {
-                    return Iterations::CHANGED_QOS_READER == iteration || Iterations::ERROR == iteration;
+                    return Iterations::CHANGED_QOS_READER == iteration || Iterations::WITH_ERROR == iteration;
                 });
         ASSERT_EQ(Iterations::CHANGED_QOS_READER, iteration);
         ASSERT_EQ(cfp.content_filtered_topic_name, content_filter_property.content_filtered_topic_name);
@@ -540,7 +540,7 @@ TEST_P(RTPSDiscovery, ContentFilterWrongRegistration)
     enum Iterations
     {
         NONE,
-        ERROR
+        WITH_ERROR
     }
     iteration = NONE;
 
@@ -554,7 +554,7 @@ TEST_P(RTPSDiscovery, ContentFilterWrongRegistration)
             const ReaderProxyData*)
         {
             std::unique_lock<std::mutex> lock(mutex);
-            iteration = Iterations::ERROR;
+            iteration = Iterations::WITH_ERROR;
             cv.notify_one();
         }
         ).init();
@@ -574,7 +574,7 @@ TEST_P(RTPSDiscovery, ContentFilterWrongRegistration)
         std::unique_lock<std::mutex> lock(mutex);
         cv.wait_for(lock, std::chrono::milliseconds(500), [&iteration]()
                 {
-                    return Iterations::ERROR == iteration;
+                    return Iterations::WITH_ERROR == iteration;
                 });
         ASSERT_EQ(Iterations::NONE, iteration);
     }
@@ -591,7 +591,7 @@ TEST_P(RTPSDiscovery, ContentFilterWrongRegistration)
         std::unique_lock<std::mutex> lock(mutex);
         cv.wait_for(lock, std::chrono::milliseconds(500), [&iteration]()
                 {
-                    return Iterations::ERROR == iteration;
+                    return Iterations::WITH_ERROR == iteration;
                 });
         ASSERT_EQ(Iterations::NONE, iteration);
     }
@@ -608,7 +608,7 @@ TEST_P(RTPSDiscovery, ContentFilterWrongRegistration)
         std::unique_lock<std::mutex> lock(mutex);
         cv.wait_for(lock, std::chrono::milliseconds(500), [&iteration]()
                 {
-                    return Iterations::ERROR == iteration;
+                    return Iterations::WITH_ERROR == iteration;
                 });
         ASSERT_EQ(Iterations::NONE, iteration);
     }
@@ -625,7 +625,7 @@ TEST_P(RTPSDiscovery, ContentFilterWrongRegistration)
         std::unique_lock<std::mutex> lock(mutex);
         cv.wait_for(lock, std::chrono::milliseconds(500), [&iteration]()
                 {
-                    return Iterations::ERROR == iteration;
+                    return Iterations::WITH_ERROR == iteration;
                 });
         ASSERT_EQ(Iterations::NONE, iteration);
     }
@@ -643,7 +643,7 @@ TEST_P(RTPSDiscovery, ContentFilterWrongUpdate)
     {
         NONE,
         DISCOVERED_READER,
-        ERROR
+        WITH_ERROR
     }
     iteration = NONE;
 
@@ -663,7 +663,7 @@ TEST_P(RTPSDiscovery, ContentFilterWrongUpdate)
             }
             else
             {
-                iteration = Iterations::ERROR;
+                iteration = Iterations::WITH_ERROR;
             }
             cv.notify_one();
         }
@@ -695,7 +695,7 @@ TEST_P(RTPSDiscovery, ContentFilterWrongUpdate)
         std::unique_lock<std::mutex> lock(mutex);
         cv.wait_for(lock, std::chrono::milliseconds(500), [&iteration]()
                 {
-                    return Iterations::ERROR == iteration;
+                    return Iterations::WITH_ERROR == iteration;
                 });
         ASSERT_EQ(Iterations::DISCOVERED_READER, iteration);
     }
@@ -711,7 +711,7 @@ TEST_P(RTPSDiscovery, ContentFilterWrongUpdate)
         std::unique_lock<std::mutex> lock(mutex);
         cv.wait_for(lock, std::chrono::milliseconds(500), [&iteration]()
                 {
-                    return Iterations::ERROR == iteration;
+                    return Iterations::WITH_ERROR == iteration;
                 });
         ASSERT_EQ(Iterations::DISCOVERED_READER, iteration);
     }
@@ -727,7 +727,7 @@ TEST_P(RTPSDiscovery, ContentFilterWrongUpdate)
         std::unique_lock<std::mutex> lock(mutex);
         cv.wait_for(lock, std::chrono::milliseconds(500), [&iteration]()
                 {
-                    return Iterations::ERROR == iteration;
+                    return Iterations::WITH_ERROR == iteration;
                 });
         ASSERT_EQ(Iterations::DISCOVERED_READER, iteration);
     }
@@ -743,7 +743,7 @@ TEST_P(RTPSDiscovery, ContentFilterWrongUpdate)
         std::unique_lock<std::mutex> lock(mutex);
         cv.wait_for(lock, std::chrono::milliseconds(500), [&iteration]()
                 {
-                    return Iterations::ERROR == iteration;
+                    return Iterations::WITH_ERROR == iteration;
                 });
         ASSERT_EQ(Iterations::DISCOVERED_READER, iteration);
     }
@@ -762,7 +762,7 @@ TEST_P(RTPSDiscovery, ContentFilterRegistrationWithoutCFP)
         NONE,
         DISCOVERED_READER,
         CHANGED_QOS_READER,
-        ERROR
+        WITH_ERROR
     }
     iteration = NONE;
     eprosima::fastdds::rtps::ContentFilterProperty::AllocationConfiguration content_filter_allocation;
@@ -793,7 +793,7 @@ TEST_P(RTPSDiscovery, ContentFilterRegistrationWithoutCFP)
             }
             else
             {
-                iteration = Iterations::ERROR;
+                iteration = Iterations::WITH_ERROR;
             }
             cv.notify_one();
         }
@@ -806,7 +806,7 @@ TEST_P(RTPSDiscovery, ContentFilterRegistrationWithoutCFP)
         std::unique_lock<std::mutex> lock(mutex);
         cv.wait(lock, [&iteration]()
                 {
-                    return Iterations::DISCOVERED_READER == iteration || Iterations::ERROR == iteration;
+                    return Iterations::DISCOVERED_READER == iteration || Iterations::WITH_ERROR == iteration;
                 });
         ASSERT_EQ(Iterations::DISCOVERED_READER, iteration);
         ASSERT_EQ(0, content_filter_property.content_filtered_topic_name.size());
@@ -822,7 +822,7 @@ TEST_P(RTPSDiscovery, ContentFilterRegistrationWithoutCFP)
         std::unique_lock<std::mutex> lock(mutex);
         cv.wait(lock, [&iteration]()
                 {
-                    return Iterations::CHANGED_QOS_READER == iteration || Iterations::ERROR == iteration;
+                    return Iterations::CHANGED_QOS_READER == iteration || Iterations::WITH_ERROR == iteration;
                 });
         ASSERT_EQ(Iterations::CHANGED_QOS_READER, iteration);
         ASSERT_EQ(0, content_filter_property.content_filtered_topic_name.size());
@@ -846,7 +846,7 @@ TEST_P(RTPSDiscovery, ContentFilterRegistrationWithoutCFPButUpdate)
         NONE,
         DISCOVERED_READER,
         CHANGED_QOS_READER,
-        ERROR
+        WITH_ERROR
     }
     iteration = NONE;
     eprosima::fastdds::rtps::ContentFilterProperty::AllocationConfiguration content_filter_allocation;
@@ -877,7 +877,7 @@ TEST_P(RTPSDiscovery, ContentFilterRegistrationWithoutCFPButUpdate)
             }
             else
             {
-                iteration = Iterations::ERROR;
+                iteration = Iterations::WITH_ERROR;
             }
             cv.notify_one();
         }
@@ -890,7 +890,7 @@ TEST_P(RTPSDiscovery, ContentFilterRegistrationWithoutCFPButUpdate)
         std::unique_lock<std::mutex> lock(mutex);
         cv.wait(lock, [&iteration]()
                 {
-                    return Iterations::DISCOVERED_READER == iteration || Iterations::ERROR == iteration;
+                    return Iterations::DISCOVERED_READER == iteration || Iterations::WITH_ERROR == iteration;
                 });
         ASSERT_EQ(Iterations::DISCOVERED_READER, iteration);
         ASSERT_EQ(0, content_filter_property.content_filtered_topic_name.size());
@@ -913,7 +913,7 @@ TEST_P(RTPSDiscovery, ContentFilterRegistrationWithoutCFPButUpdate)
         std::unique_lock<std::mutex> lock(mutex);
         cv.wait(lock, [&iteration]()
                 {
-                    return Iterations::CHANGED_QOS_READER == iteration || Iterations::ERROR == iteration;
+                    return Iterations::CHANGED_QOS_READER == iteration || Iterations::WITH_ERROR == iteration;
                 });
         ASSERT_EQ(Iterations::CHANGED_QOS_READER, iteration);
         ASSERT_EQ(cfp.content_filtered_topic_name, content_filter_property.content_filtered_topic_name);
