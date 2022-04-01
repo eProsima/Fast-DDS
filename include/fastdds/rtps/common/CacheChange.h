@@ -99,7 +99,9 @@ struct RTPS_DllAPI CacheChange_t
      * Creates an empty CacheChange_t.
      */
     CacheChange_t()
+        : writer_info()
     {
+        inline_qos.encapsulation = DEFAULT_ENDIAN == LITTLEEND ? PL_CDR_LE : PL_CDR_BE;
     }
 
     CacheChange_t(
