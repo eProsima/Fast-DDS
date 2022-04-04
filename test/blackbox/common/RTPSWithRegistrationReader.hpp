@@ -103,7 +103,7 @@ private:
                 eprosima::fastrtps::rtps::RTPSReader* reader,
                 eprosima::fastrtps::rtps::WriterDiscoveryInfo::DISCOVERY_STATUS reason,
                 const eprosima::fastrtps::rtps::GUID_t& writer_guid,
-                const eprosima::fastrtps::rtps::WriterProxyData* writer_info)
+                const eprosima::fastrtps::rtps::WriterProxyData* writer_info) override
         {
             reader_.on_writer_discovery(reader, reason, writer_guid, writer_info);
         }
