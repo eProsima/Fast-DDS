@@ -296,6 +296,9 @@ void TCPChannelResourceSecure::set_tls_verify_mode(
             }
             secure_socket_->set_verify_mode(vm);
         }
+        if (!options->tls_config.sni_host.empty()){
+            SSL_set_tlsext_host_name(secure_socket_->native_handle(), options->tls_config.sni_host.c_str());
+        }
     }
 }
 
