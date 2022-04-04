@@ -27,6 +27,7 @@
 
 #include "BlackboxTests.hpp"
 
+#include "PubSubReader.hpp"
 #include "PubSubWriter.hpp"
 
 #include "../types/HelloWorldTypeObject.h"
@@ -192,6 +193,20 @@ TEST_P(DDSContentFilter, BasicTest)
     PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
     writer.disable_builtin_transport().add_user_transport_to_pparams(filter_counter.transport);
     writer.history_depth(10).init();
+    ASSERT_TRUE(writer.isInitialized());
+
+    PubSubReader<HelloWorldPubSubType> direct_reader(TEST_TOPIC_NAME);
+    // Ensure this reader always receives DATA messages using the test transport
+    fastrtps::rtps::GuidPrefix_t custom_prefix;
+    memset(custom_prefix.value, 0xee, custom_prefix.size);
+    direct_reader.datasharing_off().guid_prefix(custom_prefix);
+    direct_reader.disable_builtin_transport().add_user_transport_to_pparams(filter_counter.transport);
+    direct_reader.add_to_default_unicast_locator_list("127.0.0.1", 7399);
+    direct_reader.reliability(ReliabilityQosPolicyKind::RELIABLE_RELIABILITY_QOS);
+    direct_reader.durability_kind(DurabilityQosPolicyKind_t::TRANSIENT_LOCAL_DURABILITY_QOS);
+    direct_reader.history_depth(10).init();
+    ASSERT_TRUE(direct_reader.isInitialized());
+    direct_reader.wait_discovery();
 
     auto participant = writer.getParticipant();
     ASSERT_NE(nullptr, participant);
@@ -208,6 +223,8 @@ TEST_P(DDSContentFilter, BasicTest)
     reader_qos.history().depth = 10;
     auto reader = subscriber->create_datareader(filtered_topic, reader_qos);
     ASSERT_NE(nullptr, reader);
+
+    writer.wait_discovery(2);
 
     auto send_data = [&](uint64_t expected_samples, const std::vector<uint16_t>& index_values, bool expect_wr_filters)
             {
@@ -248,6 +265,7 @@ TEST_P(DDSContentFilter, BasicTest)
                     EXPECT_EQ(ReturnCode_t::RETCODE_OK, reader->return_loan(recv_data, recv_info));
                 }
 
+                EXPECT_GE(filter_counter.user_data_count, 10u);
                 if (writer_side_filter && expect_wr_filters)
                 {
                     EXPECT_NE(filter_counter.content_filter_info_count, 0);
@@ -279,7 +297,7 @@ TEST_P(DDSContentFilter, BasicTest)
     std::cout << std::endl << "Test 'message match %0', {\"'WRONG MESSAGE .*'\"}..." << std::endl;
     EXPECT_EQ(ReturnCode_t::RETCODE_OK,
             filtered_topic->set_filter_expression("message match %0", { "'WRONG MESSAGE .*'" }));
-    send_data(0u, {}, false);
+    send_data(0u, {}, true);
 
     EXPECT_EQ(ReturnCode_t::RETCODE_OK, subscriber->delete_datareader(reader));
     EXPECT_EQ(ReturnCode_t::RETCODE_OK, participant->delete_subscriber(subscriber));
