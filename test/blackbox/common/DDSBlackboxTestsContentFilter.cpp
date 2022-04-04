@@ -279,7 +279,7 @@ protected:
                     EXPECT_GE(filter_counter.user_data_count, 10u);
                     if (writer_side_filter && expect_wr_filters)
                     {
-                        EXPECT_NE(filter_counter.content_filter_info_count, 0);
+                        EXPECT_EQ(filter_counter.content_filter_info_count, filter_counter.user_data_count);
                     }
                     else
                     {
