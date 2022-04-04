@@ -12,6 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#include <atomic>
+
 #include <gtest/gtest.h>
 
 #include <fastdds/dds/subscriber/DataReader.hpp>
@@ -35,10 +37,12 @@ using ReturnCode_t = eprosima::fastrtps::types::ReturnCode_t;
 struct ContentFilterInfoCounter
 {
     std::atomic_size_t content_filter_info_count;
+    std::atomic_uint32_t max_filter_signature_number;
     std::shared_ptr<rtps::test_UDPv4TransportDescriptor> transport;
 
     ContentFilterInfoCounter()
         : content_filter_info_count(0)
+        , max_filter_signature_number(0)
         , transport(std::make_shared<rtps::test_UDPv4TransportDescriptor>())
     {
         transport->drop_data_messages_filter_ = [this](fastrtps::rtps::CDRMessage_t& msg) -> bool
@@ -62,16 +66,32 @@ struct ContentFilterInfoCounter
 
                             fastrtps::rtps::CDRMessage::readUInt16(&msg, &pid);
                             fastrtps::rtps::CDRMessage::readUInt16(&msg, &plen);
-                            msg.pos += plen;
+                            uint32_t next_pos = msg.pos + plen;
 
                             if (pid == PID_CONTENT_FILTER_INFO)
                             {
                                 ++content_filter_info_count;
+
+                                if (plen >= 4 + 4 + 4 + 16)
+                                {
+                                    uint32_t num_bitmaps = 0;
+                                    fastrtps::rtps::CDRMessage::readUInt32(&msg, &num_bitmaps);
+                                    msg.pos += 4 * num_bitmaps;
+
+                                    uint32_t num_signatures = 0;
+                                    fastrtps::rtps::CDRMessage::readUInt32(&msg, &num_signatures);
+                                    if (max_filter_signature_number < num_signatures)
+                                    {
+                                        max_filter_signature_number = num_signatures;
+                                    }
+                                }
                             }
                             else if (pid == PID_SENTINEL)
                             {
                                 break;
                             }
+
+                            msg.pos = next_pos;
                         }
 
                         msg.pos = old_pos;
@@ -113,6 +133,7 @@ TEST(DDSContentFilter, BasicTest)
     auto send_data = [&](uint64_t expected_samples, const std::vector<uint16_t>& index_values, bool expect_wr_filters)
             {
                 filter_counter.content_filter_info_count = 0;
+                filter_counter.max_filter_signature_number = 0;
 
                 // Send 10 samples with index 1 to 10
                 auto data = default_helloworld_data_generator();
