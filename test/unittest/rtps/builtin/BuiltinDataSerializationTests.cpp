@@ -997,13 +997,13 @@ TEST(BuiltinDataSerializationTests, contentfilterproperty_wrong_cdr_message_dese
     const std::string filter_class_name("MyFilterClass");
     const std::string filter_expression("This is a custom test filter expression");
     const std::vector<std::string> expression_parameters = {};
-    uint32_t len = manual_content_filter_cdr_serialized_size(
-        content_filtered_topic_name,
-        related_topic_name,
-        filter_class_name,
-        filter_expression,
-        expression_parameters
-        );
+    uint16_t len = static_cast<uint16_t>(manual_content_filter_cdr_serialized_size(
+                content_filtered_topic_name,
+                related_topic_name,
+                filter_class_name,
+                filter_expression,
+                expression_parameters
+                ));
 
     // Not initialized
     {
@@ -1015,7 +1015,7 @@ TEST(BuiltinDataSerializationTests, contentfilterproperty_wrong_cdr_message_dese
     {
         CDRMessage_t msg(20);
         fastrtps::rtps::CDRMessage::addUInt16(&msg, fastdds::dds::PID_CONTENT_FILTER_PROPERTY);
-        fastrtps::rtps::CDRMessage::addUInt16(&msg, static_cast<uint16_t>(len - 4));
+        fastrtps::rtps::CDRMessage::addUInt16(&msg, len - 4);
         // content_filtered_topic_name
         fastrtps::rtps::CDRMessage::add_string(&msg, content_filtered_topic_name);
         // related_topic_name
@@ -1032,7 +1032,7 @@ TEST(BuiltinDataSerializationTests, contentfilterproperty_wrong_cdr_message_dese
         CDRMessage_t msg(30);
         msg.pos = 10;
         fastrtps::rtps::CDRMessage::addUInt16(&msg, fastdds::dds::PID_CONTENT_FILTER_PROPERTY);
-        fastrtps::rtps::CDRMessage::addUInt16(&msg, static_cast<uint16_t>(len - 4));
+        fastrtps::rtps::CDRMessage::addUInt16(&msg, len - 4);
         // content_filtered_topic_name
         fastrtps::rtps::CDRMessage::add_string(&msg, content_filtered_topic_name);
         // related_topic_name
