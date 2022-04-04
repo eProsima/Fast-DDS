@@ -22,6 +22,9 @@
 
 #include <fastdds/rtps/transport/test_UDPv4TransportDescriptor.h>
 
+#include <fastrtps/attributes/LibrarySettingsAttributes.h>
+#include <fastrtps/xmlparser/XMLProfileManager.h>
+
 #include "BlackboxTests.hpp"
 
 #include "PubSubWriter.hpp"
@@ -104,7 +107,66 @@ struct ContentFilterInfoCounter
 
 };
 
-TEST(DDSContentFilter, BasicTest)
+enum class communication_type
+{
+    TRANSPORT,
+    INTRAPROCESS,
+    DATASHARING
+};
+
+class DDSContentFilter : public testing::TestWithParam<communication_type>
+{
+public:
+
+    void SetUp() override
+    {
+        using namespace eprosima::fastrtps;
+
+        LibrarySettingsAttributes library_settings;
+        switch (GetParam())
+        {
+            case communication_type::INTRAPROCESS:
+                library_settings.intraprocess_delivery = IntraprocessDeliveryType::INTRAPROCESS_FULL;
+                xmlparser::XMLProfileManager::library_settings(library_settings);
+                break;
+            case communication_type::DATASHARING:
+                enable_datasharing = true;
+                break;
+            case communication_type::TRANSPORT:
+            default:
+                break;
+        }
+
+        writer_side_filter = (communication_type::TRANSPORT == GetParam());
+    }
+
+    void TearDown() override
+    {
+        using namespace eprosima::fastrtps;
+
+        LibrarySettingsAttributes library_settings;
+        switch (GetParam())
+        {
+            case communication_type::INTRAPROCESS:
+                library_settings.intraprocess_delivery = IntraprocessDeliveryType::INTRAPROCESS_OFF;
+                xmlparser::XMLProfileManager::library_settings(library_settings);
+                break;
+            case communication_type::DATASHARING:
+                enable_datasharing = false;
+                break;
+            case communication_type::TRANSPORT:
+            default:
+                break;
+        }
+        writer_side_filter = false;
+    }
+
+protected:
+
+    bool writer_side_filter = false;
+};
+
+TEST_P(DDSContentFilter, BasicTest)
 {
     registerHelloWorldTypes();
 
@@ -140,8 +202,12 @@ TEST(DDSContentFilter, BasicTest)
                 writer.send(data);
                 EXPECT_TRUE(data.empty());
 
-                // Waiting for all samples to be acknowledged ensures the reader has processed all samples sent
-                EXPECT_TRUE(writer.waitForAllAcked(std::chrono::seconds(5)));
+                // On data-sharing, reader acknowledges samples on return_loan.
+                if (!enable_datasharing)
+                {
+                    // Waiting for all samples to be acknowledged ensures the reader has processed all samples sent
+                    EXPECT_TRUE(writer.waitForAllAcked(std::chrono::seconds(5)));
+                }
 
                 // Only the expected samples should have made its way into the history
                 EXPECT_EQ(reader->get_unread_count(), expected_samples);
@@ -164,7 +230,7 @@ TEST(DDSContentFilter, BasicTest)
                     EXPECT_EQ(ReturnCode_t::RETCODE_OK, reader->return_loan(recv_data, recv_info));
                 }
 
-                if (expect_wr_filters)
+                if (writer_side_filter && expect_wr_filters)
                 {
                     EXPECT_NE(filter_counter.content_filter_info_count, 0);
                 }
@@ -201,6 +267,35 @@ TEST(DDSContentFilter, BasicTest)
     EXPECT_EQ(ReturnCode_t::RETCODE_OK, participant->delete_subscriber(subscriber));
     EXPECT_EQ(ReturnCode_t::RETCODE_OK, participant->delete_contentfilteredtopic(filtered_topic));
 }
+
+#ifdef INSTANTIATE_TEST_SUITE_P
+#define GTEST_INSTANTIATE_TEST_MACRO(x, y, z, w) INSTANTIATE_TEST_SUITE_P(x, y, z, w)
+#else
+#define GTEST_INSTANTIATE_TEST_MACRO(x, y, z, w) INSTANTIATE_TEST_CASE_P(x, y, z, w)
+#endif // ifdef INSTANTIATE_TEST_SUITE_P
+
+GTEST_INSTANTIATE_TEST_MACRO(DDSContentFilter,
+        DDSContentFilter,
+        testing::Values(
+            communication_type::TRANSPORT,
+            communication_type::INTRAPROCESS,
+            communication_type::DATASHARING),
+        [](const testing::TestParamInfo<DDSContentFilter::ParamType>& info)
+        {
+            switch (info.param)
+            {
+                case communication_type::INTRAPROCESS:
+                    return "Intraprocess";
+                    break;
+                case communication_type::DATASHARING:
+                    return "Datasharing";
+                    break;
+                case communication_type::TRANSPORT:
+                default:
+                    return "Transport";
+            }
+
+        });
 
 } // namespace dds
 } // namespace fastdds
