@@ -224,6 +224,12 @@ protected:
         ASSERT_NE(nullptr, reader);
 
         writer.wait_discovery(2);
+        SubscriptionMatchedStatus status;
+        do
+        {
+            std::this_thread::sleep_for(std::chrono::milliseconds(100));
+            reader->get_subscription_matched_status(status);
+        } while (status.current_count < 1);
 
         auto send_data =
                 [&](uint64_t expected_samples, const std::vector<uint16_t>& index_values,
