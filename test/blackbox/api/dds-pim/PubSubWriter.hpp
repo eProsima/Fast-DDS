@@ -730,6 +730,11 @@ public:
                 });
     }
 
+    eprosima::fastdds::dds::DataWriterQos& qos()
+    {
+        return datawriter_qos_;
+    }
+
     PubSubWriter& deactivate_status_listener(
             eprosima::fastdds::dds::StatusMask mask)
     {

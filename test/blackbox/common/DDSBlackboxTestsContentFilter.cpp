@@ -183,13 +183,17 @@ protected:
 
     bool writer_side_filter = false;
 
-    void perform_test()
+    void perform_test(
+            fastrtps::ResourceLimitedContainerConfig filter_limits)
     {
         registerHelloWorldTypes();
+
+        bool writer_filters_allowed = filter_limits.maximum > 0;
 
         ContentFilterInfoCounter filter_counter;
 
         PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+        writer.qos().writer_resource_limits().reader_filters_allocation = filter_limits;
         writer.disable_builtin_transport().add_user_transport_to_pparams(filter_counter.transport);
         writer.history_depth(10).init();
         ASSERT_TRUE(writer.isInitialized());
@@ -289,22 +293,22 @@ protected:
         std::cout << std::endl << "Test 'index BETWEEN %0 AND %1', {\"2\", \"4\"}..." << std::endl;
         EXPECT_EQ(ReturnCode_t::RETCODE_OK,
                 filtered_topic->set_filter_expression("index BETWEEN %0 AND %1", { "2", "4" }));
-        send_data(3u, {2, 3, 4}, true);
+        send_data(3u, {2, 3, 4}, writer_filters_allowed);
 
         std::cout << std::endl << "Test 'index BETWEEN %0 AND %1', {\"6\", \"9\"}..." << std::endl;
         EXPECT_EQ(ReturnCode_t::RETCODE_OK,
                 filtered_topic->set_expression_parameters({ "6", "9" }));
-        send_data(4u, {6, 7, 8, 9}, true);
+        send_data(4u, {6, 7, 8, 9}, writer_filters_allowed);
 
         std::cout << std::endl << "Test 'message match %0', {\"'HelloWorld 1.*'\"}..." << std::endl;
         EXPECT_EQ(ReturnCode_t::RETCODE_OK,
                 filtered_topic->set_filter_expression("message match %0", { "'HelloWorld 1.*'" }));
-        send_data(2u, {1, 10}, true);
+        send_data(2u, {1, 10}, writer_filters_allowed);
 
         std::cout << std::endl << "Test 'message match %0', {\"'WRONG MESSAGE .*'\"}..." << std::endl;
         EXPECT_EQ(ReturnCode_t::RETCODE_OK,
                 filtered_topic->set_filter_expression("message match %0", { "'WRONG MESSAGE .*'" }));
-        send_data(0u, {}, true);
+        send_data(0u, {}, writer_filters_allowed);
 
         EXPECT_EQ(ReturnCode_t::RETCODE_OK, subscriber->delete_datareader(reader));
         EXPECT_EQ(ReturnCode_t::RETCODE_OK, participant->delete_subscriber(subscriber));
@@ -315,7 +319,12 @@ protected:
 
 TEST_P(DDSContentFilter, BasicTest)
 {
-    perform_test();
+    perform_test({});
+}
+
+TEST_P(DDSContentFilter, WriterFiltersDisabled)
+{
+    perform_test({0, 0, 0});
 }
 
 #ifdef INSTANTIATE_TEST_SUITE_P
