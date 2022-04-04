@@ -39,12 +39,14 @@ using ReturnCode_t = eprosima::fastrtps::types::ReturnCode_t;
 
 struct ContentFilterInfoCounter
 {
+    std::atomic_size_t user_data_count;
     std::atomic_size_t content_filter_info_count;
     std::atomic_uint32_t max_filter_signature_number;
     std::shared_ptr<rtps::test_UDPv4TransportDescriptor> transport;
 
     ContentFilterInfoCounter()
-        : content_filter_info_count(0)
+        : user_data_count(0)
+        , content_filter_info_count(0)
         , max_filter_signature_number(0)
         , transport(std::make_shared<rtps::test_UDPv4TransportDescriptor>())
     {
@@ -52,16 +54,30 @@ struct ContentFilterInfoCounter
                 {
                     // Check if it has inline_qos
                     uint8_t flags = msg.buffer[msg.pos - 3];
+                    auto old_pos = msg.pos;
+
+                    // Skip extraFlags, read octetsToInlineQos, and calculate inline qos position.
+                    msg.pos += 2;
+                    uint16_t to_inline_qos = 0;
+                    fastrtps::rtps::CDRMessage::readUInt16(&msg, &to_inline_qos);
+                    uint32_t inline_qos_pos = msg.pos + to_inline_qos;
+
+                    // Read writerId, and skip if built-in.
+                    msg.pos += 4;
+                    fastrtps::rtps::GUID_t writer_guid;
+                    fastrtps::rtps::CDRMessage::readEntityId(&msg, &writer_guid.entityId);
+                    msg.pos = old_pos;
+
+                    if (writer_guid.is_builtin())
+                    {
+                        return false;
+                    }
+
+                    ++user_data_count;
                     if (0x02 == (flags & 0x02))
                     {
-                        auto old_pos = msg.pos;
-
-                        // Skip extraFlags, read octetsToInlineQos, and skip there.
-                        msg.pos += 2;
-                        uint16_t to_inline_qos = 0;
-                        fastrtps::rtps::CDRMessage::readUInt16(&msg, &to_inline_qos);
-                        msg.pos += to_inline_qos;
-
+                        // Process inline qos
+                        msg.pos = inline_qos_pos;
                         while (msg.pos < msg.length)
                         {
                             uint16_t pid = 0;
@@ -194,6 +210,7 @@ TEST_P(DDSContentFilter, BasicTest)
 
     auto send_data = [&](uint64_t expected_samples, const std::vector<uint16_t>& index_values, bool expect_wr_filters)
             {
+                filter_counter.user_data_count = 0;
                 filter_counter.content_filter_info_count = 0;
                 filter_counter.max_filter_signature_number = 0;
 
