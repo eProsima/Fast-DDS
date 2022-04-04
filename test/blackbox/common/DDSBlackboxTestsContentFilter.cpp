@@ -50,6 +50,7 @@ struct ContentFilterInfoCounter
         , max_filter_signature_number(0)
         , transport(std::make_shared<rtps::test_UDPv4TransportDescriptor>())
     {
+        transport->interfaceWhiteList.push_back("127.0.0.1");
         transport->drop_data_messages_filter_ = [this](fastrtps::rtps::CDRMessage_t& msg) -> bool
                 {
                     // Check if it has inline_qos
