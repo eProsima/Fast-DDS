@@ -182,126 +182,134 @@ public:
 protected:
 
     bool writer_side_filter = false;
+
+    void perform_test()
+    {
+        registerHelloWorldTypes();
+
+        ContentFilterInfoCounter filter_counter;
+
+        PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+        writer.disable_builtin_transport().add_user_transport_to_pparams(filter_counter.transport);
+        writer.history_depth(10).init();
+        ASSERT_TRUE(writer.isInitialized());
+
+        PubSubReader<HelloWorldPubSubType> direct_reader(TEST_TOPIC_NAME);
+        // Ensure this reader always receives DATA messages using the test transport
+        fastrtps::rtps::GuidPrefix_t custom_prefix;
+        memset(custom_prefix.value, 0xee, custom_prefix.size);
+        direct_reader.datasharing_off().guid_prefix(custom_prefix);
+        direct_reader.disable_builtin_transport().add_user_transport_to_pparams(filter_counter.transport);
+        direct_reader.add_to_default_unicast_locator_list("127.0.0.1", 7399);
+        direct_reader.reliability(ReliabilityQosPolicyKind::RELIABLE_RELIABILITY_QOS);
+        direct_reader.durability_kind(DurabilityQosPolicyKind_t::TRANSIENT_LOCAL_DURABILITY_QOS);
+        direct_reader.history_depth(10).init();
+        ASSERT_TRUE(direct_reader.isInitialized());
+        direct_reader.wait_discovery();
+
+        auto participant = writer.getParticipant();
+        ASSERT_NE(nullptr, participant);
+        auto topic = static_cast<Topic*>(participant->lookup_topicdescription(writer.topic_name()));
+        ASSERT_NE(nullptr, topic);
+        auto filtered_topic = participant->create_contentfilteredtopic("filtered_topic", topic, "", {});
+        ASSERT_NE(nullptr, filtered_topic);
+        auto subscriber = participant->create_subscriber(SUBSCRIBER_QOS_DEFAULT);
+        ASSERT_NE(nullptr, subscriber);
+
+        DataReaderQos reader_qos = subscriber->get_default_datareader_qos();
+        reader_qos.reliability().kind = ReliabilityQosPolicyKind::RELIABLE_RELIABILITY_QOS;
+        reader_qos.durability().kind = DurabilityQosPolicyKind_t::TRANSIENT_LOCAL_DURABILITY_QOS;
+        reader_qos.history().depth = 10;
+        auto reader = subscriber->create_datareader(filtered_topic, reader_qos);
+        ASSERT_NE(nullptr, reader);
+
+        writer.wait_discovery(2);
+
+        auto send_data =
+                [&](uint64_t expected_samples, const std::vector<uint16_t>& index_values,
+                        bool expect_wr_filters)
+                {
+                    filter_counter.user_data_count = 0;
+                    filter_counter.content_filter_info_count = 0;
+                    filter_counter.max_filter_signature_number = 0;
+
+                    // Send 10 samples with index 1 to 10
+                    auto data = default_helloworld_data_generator();
+                    writer.send(data);
+                    EXPECT_TRUE(data.empty());
+
+                    // On data-sharing, reader acknowledges samples on return_loan.
+                    if (!enable_datasharing)
+                    {
+                        // Waiting for all samples to be acknowledged ensures the reader has processed all samples sent
+                        EXPECT_TRUE(writer.waitForAllAcked(std::chrono::seconds(5)));
+                    }
+
+                    // Only the expected samples should have made its way into the history
+                    EXPECT_EQ(reader->get_unread_count(), expected_samples);
+
+                    // Take and check the received samples
+                    FASTDDS_CONST_SEQUENCE(HelloWorldSeq, HelloWorld);
+                    HelloWorldSeq recv_data;
+                    SampleInfoSeq recv_info;
+
+                    ReturnCode_t expected_ret;
+                    expected_ret = expected_samples == 0 ? ReturnCode_t::RETCODE_NO_DATA : ReturnCode_t::RETCODE_OK;
+                    EXPECT_EQ(expected_ret, reader->take(recv_data, recv_info));
+                    EXPECT_EQ(recv_data.length(), expected_samples);
+                    for (HelloWorldSeq::size_type i = 0; i < recv_data.length(); ++i)
+                    {
+                        EXPECT_EQ(index_values[i], recv_data[i].index());
+                    }
+                    if (expected_samples > 0)
+                    {
+                        EXPECT_EQ(ReturnCode_t::RETCODE_OK, reader->return_loan(recv_data, recv_info));
+                    }
+
+                    EXPECT_GE(filter_counter.user_data_count, 10u);
+                    if (writer_side_filter && expect_wr_filters)
+                    {
+                        EXPECT_NE(filter_counter.content_filter_info_count, 0);
+                    }
+                    else
+                    {
+                        EXPECT_EQ(filter_counter.content_filter_info_count, 0);
+                    }
+                };
+
+        std::cout << std::endl << "TEST empty expression..." << std::endl;
+        send_data(10u, {1, 2, 3, 4, 5, 6, 7, 8, 9, 10}, false);
+
+        std::cout << std::endl << "Test 'index BETWEEN %0 AND %1', {\"2\", \"4\"}..." << std::endl;
+        EXPECT_EQ(ReturnCode_t::RETCODE_OK,
+                filtered_topic->set_filter_expression("index BETWEEN %0 AND %1", { "2", "4" }));
+        send_data(3u, {2, 3, 4}, true);
+
+        std::cout << std::endl << "Test 'index BETWEEN %0 AND %1', {\"6\", \"9\"}..." << std::endl;
+        EXPECT_EQ(ReturnCode_t::RETCODE_OK,
+                filtered_topic->set_expression_parameters({ "6", "9" }));
+        send_data(4u, {6, 7, 8, 9}, true);
+
+        std::cout << std::endl << "Test 'message match %0', {\"'HelloWorld 1.*'\"}..." << std::endl;
+        EXPECT_EQ(ReturnCode_t::RETCODE_OK,
+                filtered_topic->set_filter_expression("message match %0", { "'HelloWorld 1.*'" }));
+        send_data(2u, {1, 10}, true);
+
+        std::cout << std::endl << "Test 'message match %0', {\"'WRONG MESSAGE .*'\"}..." << std::endl;
+        EXPECT_EQ(ReturnCode_t::RETCODE_OK,
+                filtered_topic->set_filter_expression("message match %0", { "'WRONG MESSAGE .*'" }));
+        send_data(0u, {}, true);
+
+        EXPECT_EQ(ReturnCode_t::RETCODE_OK, subscriber->delete_datareader(reader));
+        EXPECT_EQ(ReturnCode_t::RETCODE_OK, participant->delete_subscriber(subscriber));
+        EXPECT_EQ(ReturnCode_t::RETCODE_OK, participant->delete_contentfilteredtopic(filtered_topic));
+    }
+
 };
 
 TEST_P(DDSContentFilter, BasicTest)
 {
-    registerHelloWorldTypes();
-
-    ContentFilterInfoCounter filter_counter;
-
-    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
-    writer.disable_builtin_transport().add_user_transport_to_pparams(filter_counter.transport);
-    writer.history_depth(10).init();
-    ASSERT_TRUE(writer.isInitialized());
-
-    PubSubReader<HelloWorldPubSubType> direct_reader(TEST_TOPIC_NAME);
-    // Ensure this reader always receives DATA messages using the test transport
-    fastrtps::rtps::GuidPrefix_t custom_prefix;
-    memset(custom_prefix.value, 0xee, custom_prefix.size);
-    direct_reader.datasharing_off().guid_prefix(custom_prefix);
-    direct_reader.disable_builtin_transport().add_user_transport_to_pparams(filter_counter.transport);
-    direct_reader.add_to_default_unicast_locator_list("127.0.0.1", 7399);
-    direct_reader.reliability(ReliabilityQosPolicyKind::RELIABLE_RELIABILITY_QOS);
-    direct_reader.durability_kind(DurabilityQosPolicyKind_t::TRANSIENT_LOCAL_DURABILITY_QOS);
-    direct_reader.history_depth(10).init();
-    ASSERT_TRUE(direct_reader.isInitialized());
-    direct_reader.wait_discovery();
-
-    auto participant = writer.getParticipant();
-    ASSERT_NE(nullptr, participant);
-    auto topic = static_cast<Topic*>(participant->lookup_topicdescription(writer.topic_name()));
-    ASSERT_NE(nullptr, topic);
-    auto filtered_topic = participant->create_contentfilteredtopic("filtered_topic", topic, "", {});
-    ASSERT_NE(nullptr, filtered_topic);
-    auto subscriber = participant->create_subscriber(SUBSCRIBER_QOS_DEFAULT);
-    ASSERT_NE(nullptr, subscriber);
-
-    DataReaderQos reader_qos = subscriber->get_default_datareader_qos();
-    reader_qos.reliability().kind = ReliabilityQosPolicyKind::RELIABLE_RELIABILITY_QOS;
-    reader_qos.durability().kind = DurabilityQosPolicyKind_t::TRANSIENT_LOCAL_DURABILITY_QOS;
-    reader_qos.history().depth = 10;
-    auto reader = subscriber->create_datareader(filtered_topic, reader_qos);
-    ASSERT_NE(nullptr, reader);
-
-    writer.wait_discovery(2);
-
-    auto send_data = [&](uint64_t expected_samples, const std::vector<uint16_t>& index_values, bool expect_wr_filters)
-            {
-                filter_counter.user_data_count = 0;
-                filter_counter.content_filter_info_count = 0;
-                filter_counter.max_filter_signature_number = 0;
-
-                // Send 10 samples with index 1 to 10
-                auto data = default_helloworld_data_generator();
-                writer.send(data);
-                EXPECT_TRUE(data.empty());
-
-                // On data-sharing, reader acknowledges samples on return_loan.
-                if (!enable_datasharing)
-                {
-                    // Waiting for all samples to be acknowledged ensures the reader has processed all samples sent
-                    EXPECT_TRUE(writer.waitForAllAcked(std::chrono::seconds(5)));
-                }
-
-                // Only the expected samples should have made its way into the history
-                EXPECT_EQ(reader->get_unread_count(), expected_samples);
-
-                // Take and check the received samples
-                FASTDDS_CONST_SEQUENCE(HelloWorldSeq, HelloWorld);
-                HelloWorldSeq recv_data;
-                SampleInfoSeq recv_info;
-
-                ReturnCode_t expected_ret;
-                expected_ret = expected_samples == 0 ? ReturnCode_t::RETCODE_NO_DATA : ReturnCode_t::RETCODE_OK;
-                EXPECT_EQ(expected_ret, reader->take(recv_data, recv_info));
-                EXPECT_EQ(recv_data.length(), expected_samples);
-                for (HelloWorldSeq::size_type i = 0; i < recv_data.length(); ++i)
-                {
-                    EXPECT_EQ(index_values[i], recv_data[i].index());
-                }
-                if (expected_samples > 0)
-                {
-                    EXPECT_EQ(ReturnCode_t::RETCODE_OK, reader->return_loan(recv_data, recv_info));
-                }
-
-                EXPECT_GE(filter_counter.user_data_count, 10u);
-                if (writer_side_filter && expect_wr_filters)
-                {
-                    EXPECT_NE(filter_counter.content_filter_info_count, 0);
-                }
-                else
-                {
-                    EXPECT_EQ(filter_counter.content_filter_info_count, 0);
-                }
-            };
-
-    std::cout << std::endl << "TEST empty expression..." << std::endl;
-    send_data(10u, {1, 2, 3, 4, 5, 6, 7, 8, 9, 10}, false);
-
-    std::cout << std::endl << "Test 'index BETWEEN %0 AND %1', {\"2\", \"4\"}..." << std::endl;
-    EXPECT_EQ(ReturnCode_t::RETCODE_OK,
-            filtered_topic->set_filter_expression("index BETWEEN %0 AND %1", { "2", "4" }));
-    send_data(3u, {2, 3, 4}, true);
-
-    std::cout << std::endl << "Test 'index BETWEEN %0 AND %1', {\"6\", \"9\"}..." << std::endl;
-    EXPECT_EQ(ReturnCode_t::RETCODE_OK,
-            filtered_topic->set_expression_parameters({ "6", "9" }));
-    send_data(4u, {6, 7, 8, 9}, true);
-
-    std::cout << std::endl << "Test 'message match %0', {\"'HelloWorld 1.*'\"}..." << std::endl;
-    EXPECT_EQ(ReturnCode_t::RETCODE_OK,
-            filtered_topic->set_filter_expression("message match %0", { "'HelloWorld 1.*'" }));
-    send_data(2u, {1, 10}, true);
-
-    std::cout << std::endl << "Test 'message match %0', {\"'WRONG MESSAGE .*'\"}..." << std::endl;
-    EXPECT_EQ(ReturnCode_t::RETCODE_OK,
-            filtered_topic->set_filter_expression("message match %0", { "'WRONG MESSAGE .*'" }));
-    send_data(0u, {}, true);
-
-    EXPECT_EQ(ReturnCode_t::RETCODE_OK, subscriber->delete_datareader(reader));
-    EXPECT_EQ(ReturnCode_t::RETCODE_OK, participant->delete_subscriber(subscriber));
-    EXPECT_EQ(ReturnCode_t::RETCODE_OK, participant->delete_contentfilteredtopic(filtered_topic));
+    perform_test();
 }
 
 #ifdef INSTANTIATE_TEST_SUITE_P
