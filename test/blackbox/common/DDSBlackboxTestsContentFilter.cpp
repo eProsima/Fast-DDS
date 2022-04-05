@@ -423,6 +423,16 @@ TEST_P(DDSContentFilter, WriterFiltersDisabled)
     test_run(reader, state, 0);
 }
 
+TEST_P(DDSContentFilter, NoLimitsSeveralReaders)
+{
+    TestState state;
+
+    auto reader = prepare_test(state, {}, 7u);
+    ASSERT_NE(nullptr, reader);
+
+    test_run(reader, state, 8u);
+}
+
 #ifdef INSTANTIATE_TEST_SUITE_P
 #define GTEST_INSTANTIATE_TEST_MACRO(x, y, z, w) INSTANTIATE_TEST_SUITE_P(x, y, z, w)
 #else
