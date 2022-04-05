@@ -433,6 +433,16 @@ TEST_P(DDSContentFilter, NoLimitsSeveralReaders)
     test_run(reader, state, 8u);
 }
 
+TEST_P(DDSContentFilter, WithLimitsSeveralReaders)
+{
+    TestState state;
+
+    auto reader = prepare_test(state, fastrtps::ResourceLimitedContainerConfig::fixed_size_configuration(4), 7u);
+    ASSERT_NE(nullptr, reader);
+
+    test_run(reader, state, 4u);
+}
+
 #ifdef INSTANTIATE_TEST_SUITE_P
 #define GTEST_INSTANTIATE_TEST_MACRO(x, y, z, w) INSTANTIATE_TEST_SUITE_P(x, y, z, w)
 #else
