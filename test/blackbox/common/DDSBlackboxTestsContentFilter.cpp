@@ -265,17 +265,31 @@ protected:
             return reader;
         }
 
-        ContentFilteredTopic* filtered_topic() const
+        void set_filter_expression(
+                const std::string& filter_expression,
+                const std::vector<std::string>& expression_parameters)
         {
-            return filtered_topic_;
+            EXPECT_EQ(ReturnCode_t::RETCODE_OK,
+                    filtered_topic_->set_filter_expression(filter_expression, expression_parameters));
+            // Avoid discovery race condition
+            std::this_thread::sleep_for(std::chrono::milliseconds(250));
         }
-
+        
+        void set_expression_parameters(
+                const std::vector<std::string>& expression_parameters)
+        {
+            EXPECT_EQ(ReturnCode_t::RETCODE_OK, filtered_topic_->set_expression_parameters(expression_parameters));
+            // Avoid discovery race condition
+            std::this_thread::sleep_for(std::chrono::milliseconds(250));
+        }
+        
         void send_data(
                 DataReader* reader,
                 ContentFilterInfoCounter& filter_counter,
                 uint64_t expected_samples,
                 const std::vector<uint16_t>& index_values,
-                bool expect_wr_filters)
+                bool expect_wr_filters,
+                uint32_t num_writer_filters)
         {
             filter_counter.user_data_count = 0;
             filter_counter.content_filter_info_count = 0;
@@ -318,10 +332,12 @@ protected:
             if (writer_side_filter_ && expect_wr_filters)
             {
                 EXPECT_EQ(filter_counter.content_filter_info_count, filter_counter.user_data_count);
+                EXPECT_EQ(filter_counter.max_filter_signature_number, num_writer_filters);
             }
             else
             {
                 EXPECT_EQ(filter_counter.content_filter_info_count, 0);
+                EXPECT_EQ(filter_counter.max_filter_signature_number, 0u);
             }
         }
 
@@ -337,41 +353,59 @@ protected:
 
     ContentFilterInfoCounter filter_counter;
 
+    DataReader* prepare_test(
+            TestState& state,
+            fastrtps::ResourceLimitedContainerConfig filter_limits,
+            uint32_t nb_of_additional_filter_readers)
+    {
+        state.init(using_transport_communication_, filter_counter.transport, filter_limits);
+
+        for (uint32_t i = 0; i < nb_of_additional_filter_readers; ++i)
+        {
+            state.create_filtered_reader();
+        }
+
+        auto reader = state.create_filtered_reader();
+
+        state.writer.wait_discovery(2 + nb_of_additional_filter_readers);
+
+        return reader;
+    }
+
+    void test_run(
+            DataReader* reader,
+            TestState& state,
+            uint32_t num_writer_filters)
+    {
+        std::cout << std::endl << "Test with empty expression..." << std::endl;
+        state.send_data(reader, filter_counter, 10u, {1, 2, 3, 4, 5, 6, 7, 8, 9, 10}, false, num_writer_filters);
+
+        std::cout << std::endl << "Test 'index BETWEEN %0 AND %1', {\"2\", \"4\"}..." << std::endl;
+        state.set_filter_expression("index BETWEEN %0 AND %1", { "2", "4" });
+        state.send_data(reader, filter_counter, 3u, {2, 3, 4}, true, num_writer_filters);
+
+        std::cout << std::endl << "Test 'index BETWEEN %0 AND %1', {\"6\", \"9\"}..." << std::endl;
+        state.set_expression_parameters({ "6", "9" });
+        state.send_data(reader, filter_counter, 4u, {6, 7, 8, 9}, true, num_writer_filters);
+
+        std::cout << std::endl << "Test 'message match %0', {\"'HelloWorld 1.*'\"}..." << std::endl;
+        state.set_filter_expression("message match %0", { "'HelloWorld 1.*'" });
+        state.send_data(reader, filter_counter, 2u, {1, 10}, true, num_writer_filters);
+
+        std::cout << std::endl << "Test 'message match %0', {\"'WRONG MESSAGE .*'\"}..." << std::endl;
+        state.set_expression_parameters({ "'WRONG MESSAGE .*'" });
+        state.send_data(reader, filter_counter, 0u, {}, true, num_writer_filters);
+    }
+
     void perform_test(
             fastrtps::ResourceLimitedContainerConfig filter_limits)
     {
         TestState state;
-        state.init(using_transport_communication_, filter_counter.transport, filter_limits);
 
-        ContentFilteredTopic* filtered_topic = state.filtered_topic();
-
-        auto reader = state.create_filtered_reader();
+        auto reader = prepare_test(state, filter_limits, 0);
         ASSERT_NE(nullptr, reader);
 
-        state.writer.wait_discovery(2);
-
-        std::cout << std::endl << "TEST empty expression..." << std::endl;
-        state.send_data(reader, filter_counter, 10u, {1, 2, 3, 4, 5, 6, 7, 8, 9, 10}, false);
-
-        std::cout << std::endl << "Test 'index BETWEEN %0 AND %1', {\"2\", \"4\"}..." << std::endl;
-        EXPECT_EQ(ReturnCode_t::RETCODE_OK,
-                filtered_topic->set_filter_expression("index BETWEEN %0 AND %1", { "2", "4" }));
-        state.send_data(reader, filter_counter, 3u, {2, 3, 4}, true);
-
-        std::cout << std::endl << "Test 'index BETWEEN %0 AND %1', {\"6\", \"9\"}..." << std::endl;
-        EXPECT_EQ(ReturnCode_t::RETCODE_OK,
-                filtered_topic->set_expression_parameters({ "6", "9" }));
-        state.send_data(reader, filter_counter, 4u, {6, 7, 8, 9}, true);
-
-        std::cout << std::endl << "Test 'message match %0', {\"'HelloWorld 1.*'\"}..." << std::endl;
-        EXPECT_EQ(ReturnCode_t::RETCODE_OK,
-                filtered_topic->set_filter_expression("message match %0", { "'HelloWorld 1.*'" }));
-        state.send_data(reader, filter_counter, 2u, {1, 10}, true);
-
-        std::cout << std::endl << "Test 'message match %0', {\"'WRONG MESSAGE .*'\"}..." << std::endl;
-        EXPECT_EQ(ReturnCode_t::RETCODE_OK,
-                filtered_topic->set_filter_expression("message match %0", { "'WRONG MESSAGE .*'" }));
-        state.send_data(reader, filter_counter, 0u, {}, true);
+        test_run(reader, state, 1);
     }
 
 };
