@@ -395,6 +395,10 @@ protected:
         std::cout << std::endl << "Test 'message match %0', {\"'WRONG MESSAGE .*'\"}..." << std::endl;
         state.set_expression_parameters({ "'WRONG MESSAGE .*'" });
         state.send_data(reader, filter_counter, 0u, {}, true, num_writer_filters);
+
+        std::cout << std::endl << "Go back to empty expression..." << std::endl;
+        state.set_filter_expression("", {});
+        state.send_data(reader, filter_counter, 10u, {1, 2, 3, 4, 5, 6, 7, 8, 9, 10}, false, num_writer_filters);
     }
 
     void perform_test(
