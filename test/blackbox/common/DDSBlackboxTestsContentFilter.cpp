@@ -479,20 +479,20 @@ TEST_P(DDSContentFilter, NoLimitsSeveralReaders)
 {
     TestState state;
 
-    auto reader = prepare_test(state, {}, 7u);
+    auto reader = prepare_test(state, {}, 3u);
     ASSERT_NE(nullptr, reader);
 
-    test_run(reader, state, 8u);
+    test_run(reader, state, 4u);
 }
 
 TEST_P(DDSContentFilter, WithLimitsSeveralReaders)
 {
     TestState state;
 
-    auto reader = prepare_test(state, fastrtps::ResourceLimitedContainerConfig::fixed_size_configuration(4), 7u);
+    auto reader = prepare_test(state, fastrtps::ResourceLimitedContainerConfig::fixed_size_configuration(2u), 3u);
     ASSERT_NE(nullptr, reader);
 
-    test_run(reader, state, 4u);
+    test_run(reader, state, 2u);
 }
 
 #ifdef INSTANTIATE_TEST_SUITE_P
