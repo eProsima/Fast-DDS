@@ -140,6 +140,8 @@ public:
     {
         using namespace eprosima::fastrtps;
 
+        enable_datasharing = false;
+
         LibrarySettingsAttributes library_settings;
         switch (GetParam())
         {
@@ -171,12 +173,13 @@ public:
                 xmlparser::XMLProfileManager::library_settings(library_settings);
                 break;
             case communication_type::DATASHARING:
-                enable_datasharing = false;
                 break;
             case communication_type::TRANSPORT:
             default:
                 break;
         }
+
+        enable_datasharing = false;
         using_transport_communication_ = false;
     }
 
@@ -249,6 +252,14 @@ protected:
             reader_qos.reliability().kind = ReliabilityQosPolicyKind::RELIABLE_RELIABILITY_QOS;
             reader_qos.durability().kind = DurabilityQosPolicyKind_t::TRANSIENT_LOCAL_DURABILITY_QOS;
             reader_qos.history().depth = 10;
+            if (enable_datasharing)
+            {
+                reader_qos.data_sharing().automatic();
+            }
+            else
+            {
+                reader_qos.data_sharing().off();
+            }
             auto reader = subscriber_->create_datareader(filtered_topic_, reader_qos);
 
             EXPECT_NE(reader, nullptr);
