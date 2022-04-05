@@ -401,27 +401,26 @@ protected:
         state.send_data(reader, filter_counter, 10u, {1, 2, 3, 4, 5, 6, 7, 8, 9, 10}, false, num_writer_filters);
     }
 
-    void perform_test(
-            fastrtps::ResourceLimitedContainerConfig filter_limits)
-    {
-        TestState state;
-
-        auto reader = prepare_test(state, filter_limits, 0);
-        ASSERT_NE(nullptr, reader);
-
-        test_run(reader, state, 1);
-    }
-
 };
 
 TEST_P(DDSContentFilter, BasicTest)
 {
-    perform_test({});
+    TestState state;
+
+    auto reader = prepare_test(state, {}, 0);
+    ASSERT_NE(nullptr, reader);
+
+    test_run(reader, state, 1);
 }
 
 TEST_P(DDSContentFilter, WriterFiltersDisabled)
 {
-    perform_test({0, 0, 0});
+    TestState state;
+
+    auto reader = prepare_test(state, {0, 0, 0}, 0);
+    ASSERT_NE(nullptr, reader);
+
+    test_run(reader, state, 0);
 }
 
 #ifdef INSTANTIATE_TEST_SUITE_P
