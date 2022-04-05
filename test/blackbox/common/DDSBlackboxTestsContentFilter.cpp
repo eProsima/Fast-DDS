@@ -285,7 +285,7 @@ protected:
             // Avoid discovery race condition
             std::this_thread::sleep_for(std::chrono::milliseconds(250));
         }
-        
+
         void set_expression_parameters(
                 const std::vector<std::string>& expression_parameters)
         {
@@ -293,7 +293,7 @@ protected:
             // Avoid discovery race condition
             std::this_thread::sleep_for(std::chrono::milliseconds(250));
         }
-        
+
         void send_data(
                 DataReader* reader,
                 ContentFilterInfoCounter& filter_counter,
@@ -306,13 +306,24 @@ protected:
             filter_counter.content_filter_info_count = 0;
             filter_counter.max_filter_signature_number = 0;
 
+            // Ensure writer is in clean state
+            EXPECT_TRUE(writer.waitForAllAcked(std::chrono::seconds(5)));
+            EXPECT_EQ(reader->get_unread_count(), 0);
+
             // Send 10 samples with index 1 to 10
             auto data = default_helloworld_data_generator();
             writer.send(data);
             EXPECT_TRUE(data.empty());
 
             // On data-sharing, reader acknowledges samples on return_loan.
-            if (!enable_datasharing)
+            if (enable_datasharing)
+            {
+                while (reader->get_unread_count() < expected_samples)
+                {
+                    std::this_thread::sleep_for(std::chrono::milliseconds(250));
+                }
+            }
+            else
             {
                 // Waiting for all samples to be acknowledged ensures the reader has processed all samples sent
                 EXPECT_TRUE(writer.waitForAllAcked(std::chrono::seconds(5)));
@@ -330,7 +341,7 @@ protected:
             expected_ret = expected_samples == 0 ? ReturnCode_t::RETCODE_NO_DATA : ReturnCode_t::RETCODE_OK;
             EXPECT_EQ(expected_ret, reader->take(recv_data, recv_info));
             EXPECT_EQ(recv_data.length(), expected_samples);
-            for (HelloWorldSeq::size_type i = 0; i < recv_data.length(); ++i)
+            for (HelloWorldSeq::size_type i = 0; i < recv_data.length() && i < expected_samples; ++i)
             {
                 EXPECT_EQ(index_values[i], recv_data[i].index());
             }
@@ -338,6 +349,10 @@ protected:
             {
                 EXPECT_EQ(ReturnCode_t::RETCODE_OK, reader->return_loan(recv_data, recv_info));
             }
+
+            // Ensure writer ends in clean state
+            drop_data_on_all_readers();
+            EXPECT_TRUE(writer.waitForAllAcked(std::chrono::seconds(5)));
 
             EXPECT_GE(filter_counter.user_data_count, 10u);
             if (writer_side_filter_ && expect_wr_filters)
@@ -358,6 +373,32 @@ protected:
         Subscriber* subscriber_ = nullptr;
         ContentFilteredTopic* filtered_topic_ = nullptr;
         bool writer_side_filter_ = false;
+
+        void drop_data_on_all_readers()
+        {
+            drop_data_on_reader(direct_reader.get_native_reader());
+
+            std::vector<DataReader*> readers;
+            subscriber_->get_datareaders(readers);
+            for (DataReader* reader : readers)
+            {
+                drop_data_on_reader(*reader);
+            }
+        }
+
+        void drop_data_on_reader(
+                DataReader& reader)
+        {
+            FASTDDS_CONST_SEQUENCE(HelloWorldSeq, HelloWorld);
+            HelloWorldSeq recv_data;
+            SampleInfoSeq recv_info;
+
+            while (ReturnCode_t::RETCODE_OK == reader.take(recv_data, recv_info))
+            {
+                reader.return_loan(recv_data, recv_info);
+            }
+        }
+
     };
 
     bool using_transport_communication_ = false;
