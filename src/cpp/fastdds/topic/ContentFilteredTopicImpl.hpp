@@ -19,8 +19,8 @@
 #ifndef _FASTDDS_TOPIC_CONTENTFILTEREDTOPICIMPL_HPP_
 #define _FASTDDS_TOPIC_CONTENTFILTEREDTOPICIMPL_HPP_
 
-#include <cstdint>
 #include <array>
+#include <cstdint>
 #include <string>
 
 #include <fastdds/dds/core/LoanableSequence.hpp>
@@ -53,20 +53,45 @@ public:
             const fastrtps::rtps::CacheChange_t& change,
             const fastrtps::rtps::GUID_t& reader_guid) const final;
 
+    /**
+     * Add an entry to the list of DataReaderImpl that should be notified of changes to this object.
+     *
+     * @param [in] reader  Pointer to the DataReaderImpl to add.
+     */
     void add_reader(
             DataReaderImpl* reader)
     {
         readers_.insert(reader);
     }
 
+    /**
+     * Remove an entry from the list of DataReaderImpl that should be notified of changes to this object.
+     *
+     * @param [in] reader  Pointer to the DataReaderImpl to remove.
+     */
     void remove_reader(
             DataReaderImpl* reader)
     {
         readers_.erase(reader);
     }
 
+    /**
+     * Compute signature values from the current configuration of this object.
+     */
     void update_signature();
 
+    /**
+     * Set new filtering configuration for this object.
+     * The filter signatures will be accordingly updated.
+     * The registered readers will be then notified.
+     *
+     * @param [in]  new_expression             New value to be set for the expression.
+     *                                         May be nullptr to indicate that only the parameters have been changed.
+     *                                         May be an empty string to indicate that filtering should be disabled.
+     * @param [in]  new_expression_parameters  New value for the expression parameters.
+     *
+     * @return a code indicating if this object was correctly updated.
+     */
     ReturnCode_t set_expression_parameters(
             const char* new_expression,
             const std::vector<std::string>& new_expression_parameters);
@@ -84,6 +109,7 @@ private:
      * @param [in]  change         The change for which the inline QoS should be checked.
      * @param [out] filter_result  When the signature of this filter is present on the inline QoS,
      *                             this will be set with the filter evaluation done by the writer.
+     *                             Only valid when the method returns true.
      *
      * @return whether the signature for the current filter was found on the inline QoS of the change.
      */
