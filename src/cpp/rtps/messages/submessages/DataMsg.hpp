@@ -26,6 +26,75 @@ namespace eprosima {
 namespace fastrtps {
 namespace rtps {
 
+namespace {
+
+struct DataMsgUtils
+{
+    static void prepare_submessage_flags(
+            CDRMessage_t* msg,
+            const CacheChange_t* change,
+            TopicKind_t topicKind,
+            bool expectsInlineQos,
+            InlineQosWriter* inlineQos,
+            octet& flags,
+            bool& dataFlag,
+            bool& keyFlag,
+            bool& inlineQosFlag,
+            octet& status)
+    {
+        flags = 0;
+
+#if FASTDDS_IS_BIG_ENDIAN_TARGET
+        msg->msg_endian = BIGEND;
+#else
+        flags = flags | BIT(0);
+        msg->msg_endian = LITTLEEND;
+#endif // if FASTDDS_IS_BIG_ENDIAN_TARGET
+
+        inlineQosFlag =
+                (nullptr != inlineQos) ||
+                ((WITH_KEY == topicKind) && (expectsInlineQos || change->kind != ALIVE)) ||
+                (change->write_params.related_sample_identity() != SampleIdentity::unknown());
+
+        dataFlag = ALIVE == change->kind &&
+                change->serializedPayload.length > 0 && nullptr != change->serializedPayload.data;
+        keyFlag = !dataFlag && !inlineQosFlag && (WITH_KEY == topicKind);
+
+        if (inlineQosFlag)
+        {
+            flags = flags | BIT(1);
+        }
+
+        if (dataFlag)
+        {
+            flags = flags | BIT(2);
+        }
+
+        if (keyFlag)
+        {
+            flags = flags | BIT(3);
+        }
+
+        status = 0;
+        if (change->kind == NOT_ALIVE_DISPOSED)
+        {
+            status = status | BIT(0);
+        }
+        if (change->kind == NOT_ALIVE_UNREGISTERED)
+        {
+            status = status | BIT(1);
+        }
+        if (change->kind == NOT_ALIVE_DISPOSED_UNREGISTERED)
+        {
+            status = status | BIT(0);
+            status = status | BIT(1);
+        }
+    }
+
+};
+
+}  // empty namespace
+
 bool RTPSMessageCreator::addMessageData(
         CDRMessage_t* msg,
         GuidPrefix_t& guidprefix,
@@ -58,74 +127,17 @@ bool RTPSMessageCreator::addSubmessageData(
         InlineQosWriter* inlineQos,
         bool* is_big_submessage)
 {
-    octet flags = 0x0;
+    octet status = 0;
+    octet flags = 0;
     //Find out flags
     bool dataFlag = false;
     bool keyFlag = false;
     bool inlineQosFlag = false;
 
     Endianness_t old_endianess = msg->msg_endian;
-#if FASTDDS_IS_BIG_ENDIAN_TARGET
-    msg->msg_endian = BIGEND;
-#else
-    flags = flags | BIT(0);
-    msg->msg_endian = LITTLEEND;
-#endif // if FASTDDS_IS_BIG_ENDIAN_TARGET
 
-    if (change->kind == ALIVE && change->serializedPayload.length > 0 && change->serializedPayload.data != NULL)
-    {
-        dataFlag = true;
-        keyFlag = false;
-    }
-    else
-    {
-        dataFlag = false;
-        keyFlag = true;
-    }
-    if (topicKind == NO_KEY)
-    {
-        keyFlag = false;
-    }
-    inlineQosFlag = false;
-    if (nullptr != inlineQos || expectsInlineQos || change->kind != ALIVE) //expects inline qos
-    {
-        if (WITH_KEY == topicKind || nullptr != inlineQos)
-        {
-            flags = flags | BIT(1);
-            inlineQosFlag = true;
-            keyFlag = false;
-        }
-    }
-    // Maybe the inline QoS because a WriteParam.
-    else if (change->write_params.related_sample_identity() != SampleIdentity::unknown())
-    {
-        inlineQosFlag = true;
-        flags = flags | BIT(1);
-    }
-
-    if (dataFlag)
-    {
-        flags = flags | BIT(2);
-    }
-    if (keyFlag)
-    {
-        flags = flags | BIT(3);
-    }
-
-    octet status = 0;
-    if (change->kind == NOT_ALIVE_DISPOSED)
-    {
-        status = status | BIT(0);
-    }
-    if (change->kind == NOT_ALIVE_UNREGISTERED)
-    {
-        status = status | BIT(1);
-    }
-    if (change->kind == NOT_ALIVE_DISPOSED_UNREGISTERED)
-    {
-        status = status | BIT(0);
-        status = status | BIT(1);
-    }
+    DataMsgUtils::prepare_submessage_flags(msg, change, topicKind, expectsInlineQos, inlineQos,
+            flags, dataFlag, keyFlag, inlineQosFlag, status);
 
     bool added_no_error = true;
 
@@ -287,69 +299,17 @@ bool RTPSMessageCreator::addSubmessageDataFrag(
         bool expectsInlineQos,
         InlineQosWriter* inlineQos)
 {
-    octet flags = 0x0;
+    octet status = 0;
+    octet flags = 0;
     //Find out flags
+    bool dataFlag = false;
     bool keyFlag = false;
     bool inlineQosFlag = false;
 
     Endianness_t old_endianess = msg->msg_endian;
-#if FASTDDS_IS_BIG_ENDIAN_TARGET
-    msg->msg_endian = BIGEND;
-#else
-    flags = flags | BIT(0);
-    msg->msg_endian = LITTLEEND;
-#endif // if FASTDDS_IS_BIG_ENDIAN_TARGET
 
-    if (change->kind == ALIVE && payload.length > 0 && payload.data != NULL)
-    {
-        keyFlag = false;
-    }
-    else
-    {
-        keyFlag = true;
-    }
-
-    if (topicKind == NO_KEY)
-    {
-        keyFlag = false;
-    }
-
-    if (nullptr != inlineQos || expectsInlineQos || change->kind != ALIVE) //expects inline qos
-    {
-        if (WITH_KEY == topicKind || nullptr != inlineQos)
-        {
-            flags = flags | BIT(1);
-            inlineQosFlag = true;
-            keyFlag = false;
-        }
-    }
-    // Maybe the inline QoS because a WriteParam.
-    else if (change->write_params.related_sample_identity() != SampleIdentity::unknown())
-    {
-        inlineQosFlag = true;
-        flags = flags | BIT(1);
-    }
-
-    if (keyFlag)
-    {
-        flags = flags | BIT(2);
-    }
-
-    octet status = 0;
-    if (change->kind == NOT_ALIVE_DISPOSED)
-    {
-        status = status | BIT(0);
-    }
-    if (change->kind == NOT_ALIVE_UNREGISTERED)
-    {
-        status = status | BIT(1);
-    }
-
-    if (change->kind == NOT_ALIVE_DISPOSED_UNREGISTERED)
-    {
-        status = status | BIT(0);
-        status = status | BIT(1);
-    }
+    DataMsgUtils::prepare_submessage_flags(msg, change, topicKind, expectsInlineQos, inlineQos,
+            flags, dataFlag, keyFlag, inlineQosFlag, status);
 
     bool added_no_error = true;
 
@@ -395,7 +355,7 @@ bool RTPSMessageCreator::addSubmessageDataFrag(
                     change->write_params.related_sample_identity());
         }
 
-        if (topicKind == WITH_KEY)
+        if (WITH_KEY == topicKind && (expectsInlineQos || ALIVE != change->kind))
         {
             fastdds::dds::ParameterSerializer<Parameter_t>::add_parameter_key(msg, change->instanceHandle);
 
