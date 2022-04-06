@@ -77,6 +77,16 @@ uint32_t manual_content_filter_cdr_serialized_size(
     return ret_val;
 }
 
+void assert_is_empty_content_filter(
+        const fastdds::rtps::ContentFilterProperty& filter_property)
+{
+    ASSERT_EQ("", filter_property.content_filtered_topic_name.to_string());
+    ASSERT_EQ("", filter_property.related_topic_name.to_string());
+    ASSERT_EQ("", filter_property.filter_class_name.to_string());
+    ASSERT_EQ("", filter_property.filter_expression);
+    ASSERT_EQ(0, filter_property.expression_parameters.size());
+}
+
 TEST(BuiltinDataSerializationTests, ok_with_defaults)
 {
     {
@@ -500,11 +510,7 @@ TEST(BuiltinDataSerializationTests, contentfilterproperty_wrong_topic_name_deser
         msg.pos = 0;
         EXPECT_TRUE(out.readFromCDRMessage(&msg, network, true));
 
-        ASSERT_EQ("", out.content_filter().content_filtered_topic_name.to_string());
-        ASSERT_EQ("", out.content_filter().related_topic_name.to_string());
-        ASSERT_EQ("", out.content_filter().filter_class_name.to_string());
-        ASSERT_EQ("", out.content_filter().filter_expression);
-        ASSERT_EQ(0, out.content_filter().expression_parameters.size());
+        assert_is_empty_content_filter(out.content_filter());
     }
 
     // Larger string than 256 characters.
@@ -553,11 +559,7 @@ TEST(BuiltinDataSerializationTests, contentfilterproperty_wrong_topic_name_deser
         msg.pos = 0;
         EXPECT_TRUE(out.readFromCDRMessage(&msg, network, true));
 
-        ASSERT_EQ("", out.content_filter().content_filtered_topic_name.to_string());
-        ASSERT_EQ("", out.content_filter().related_topic_name.to_string());
-        ASSERT_EQ("", out.content_filter().filter_class_name.to_string());
-        ASSERT_EQ("", out.content_filter().filter_expression);
-        ASSERT_EQ(0, out.content_filter().expression_parameters.size());
+        assert_is_empty_content_filter(out.content_filter());
     }
 }
 
@@ -642,11 +644,7 @@ TEST(BuiltinDataSerializationTests, contentfilterproperty_wrong_related_topic_na
         msg.pos = 0;
         EXPECT_TRUE(out.readFromCDRMessage(&msg, network, true));
 
-        ASSERT_EQ("", out.content_filter().content_filtered_topic_name.to_string());
-        ASSERT_EQ("", out.content_filter().related_topic_name.to_string());
-        ASSERT_EQ("", out.content_filter().filter_class_name.to_string());
-        ASSERT_EQ("", out.content_filter().filter_expression);
-        ASSERT_EQ(0, out.content_filter().expression_parameters.size());
+        assert_is_empty_content_filter(out.content_filter());
     }
 
     // Larger string than 256 characters.
@@ -695,11 +693,7 @@ TEST(BuiltinDataSerializationTests, contentfilterproperty_wrong_related_topic_na
         msg.pos = 0;
         EXPECT_TRUE(out.readFromCDRMessage(&msg, network, true));
 
-        ASSERT_EQ("", out.content_filter().content_filtered_topic_name.to_string());
-        ASSERT_EQ("", out.content_filter().related_topic_name.to_string());
-        ASSERT_EQ("", out.content_filter().filter_class_name.to_string());
-        ASSERT_EQ("", out.content_filter().filter_expression);
-        ASSERT_EQ(0, out.content_filter().expression_parameters.size());
+        assert_is_empty_content_filter(out.content_filter());
     }
 }
 
@@ -733,11 +727,7 @@ TEST(BuiltinDataSerializationTests, contentfilterproperty_empty_filter_class)
     msg.pos = 0;
     EXPECT_TRUE(out.readFromCDRMessage(&msg, network, true));
 
-    ASSERT_EQ("", out.content_filter().content_filtered_topic_name.to_string());
-    ASSERT_EQ("", out.content_filter().related_topic_name.to_string());
-    ASSERT_EQ("", out.content_filter().filter_class_name.to_string());
-    ASSERT_EQ("", out.content_filter().filter_expression);
-    ASSERT_EQ(0, out.content_filter().expression_parameters.size());
+    assert_is_empty_content_filter(out.content_filter());
 }
 
 /*!
@@ -792,11 +782,7 @@ TEST(BuiltinDataSerializationTests, contentfilterproperty_wrong_filter_class_des
         msg.pos = 0;
         EXPECT_TRUE(out.readFromCDRMessage(&msg, network, true));
 
-        ASSERT_EQ("", out.content_filter().content_filtered_topic_name.to_string());
-        ASSERT_EQ("", out.content_filter().related_topic_name.to_string());
-        ASSERT_EQ("", out.content_filter().filter_class_name.to_string());
-        ASSERT_EQ("", out.content_filter().filter_expression);
-        ASSERT_EQ(0, out.content_filter().expression_parameters.size());
+        assert_is_empty_content_filter(out.content_filter());
     }
 
     // Larger string than 256 characters.
@@ -845,11 +831,7 @@ TEST(BuiltinDataSerializationTests, contentfilterproperty_wrong_filter_class_des
         msg.pos = 0;
         EXPECT_TRUE(out.readFromCDRMessage(&msg, network, true));
 
-        ASSERT_EQ("", out.content_filter().content_filtered_topic_name.to_string());
-        ASSERT_EQ("", out.content_filter().related_topic_name.to_string());
-        ASSERT_EQ("", out.content_filter().filter_class_name.to_string());
-        ASSERT_EQ("", out.content_filter().filter_expression);
-        ASSERT_EQ(0, out.content_filter().expression_parameters.size());
+        assert_is_empty_content_filter(out.content_filter());
     }
 }
 
@@ -883,11 +865,7 @@ TEST(BuiltinDataSerializationTests, contentfilterproperty_empty_filter_expressio
     msg.pos = 0;
     EXPECT_TRUE(out.readFromCDRMessage(&msg, network, true));
 
-    ASSERT_EQ("", out.content_filter().content_filtered_topic_name.to_string());
-    ASSERT_EQ("", out.content_filter().related_topic_name.to_string());
-    ASSERT_EQ("", out.content_filter().filter_class_name.to_string());
-    ASSERT_EQ("", out.content_filter().filter_expression);
-    ASSERT_EQ(0, out.content_filter().expression_parameters.size());
+    assert_is_empty_content_filter(out.content_filter());
 }
 
 /*!
@@ -942,11 +920,7 @@ TEST(BuiltinDataSerializationTests, contentfilterproperty_wrong_filter_expressio
         msg.pos = 0;
         EXPECT_TRUE(out.readFromCDRMessage(&msg, network, true));
 
-        ASSERT_EQ("", out.content_filter().content_filtered_topic_name.to_string());
-        ASSERT_EQ("", out.content_filter().related_topic_name.to_string());
-        ASSERT_EQ("", out.content_filter().filter_class_name.to_string());
-        ASSERT_EQ("", out.content_filter().filter_expression);
-        ASSERT_EQ(0, out.content_filter().expression_parameters.size());
+        assert_is_empty_content_filter(out.content_filter());
     }
 }
 
