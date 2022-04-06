@@ -839,7 +839,6 @@ public:
                 }
                 if (valid)
                 {
-                    parameter.expression_parameters.clear();
                     for (uint32_t i = 0; valid && i < num_parameters; ++i)
                     {
                         fastrtps::string_255* p = parameter.expression_parameters.push_back({});
@@ -899,9 +898,10 @@ private:
         }
 
         str = "";
+        // str_size == 1 would be for an empty string, as the NUL char is always serialized
         if (str_size > 1)
         {
-            str = (const char*)&(cdr_message->buffer[cdr_message->pos]);
+            str = reinterpret_cast<const char*>(&(cdr_message->buffer[cdr_message->pos]));
         }
         cdr_message->pos += str_size;
         cdr_message->pos = (cdr_message->pos + 3u) & ~3u;
