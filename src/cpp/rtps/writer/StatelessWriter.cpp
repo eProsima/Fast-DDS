@@ -674,10 +674,8 @@ DeliveryRetCode StatelessWriter::deliver_sample_nts(
                 {
                     for (std::unique_ptr<ReaderLocator>& it : matched_remote_readers_)
                     {
-                        bool filtered_out;
-                        filtered_out = reader_data_filter_ &&
-                                !reader_data_filter_->is_relevant(*cache_change, it->remote_guid());
-                        if (!filtered_out)
+                        if ((nullptr == reader_data_filter_) ||
+                                reader_data_filter_->is_relevant(*cache_change, it->remote_guid()))
                         {
                             group.sender(this, &*it);
                             num_locators = it->locators_size();
@@ -706,10 +704,8 @@ DeliveryRetCode StatelessWriter::deliver_sample_nts(
             {
                 for (std::unique_ptr<ReaderLocator>& it : matched_remote_readers_)
                 {
-                    bool filtered_out;
-                    filtered_out = reader_data_filter_ &&
-                            !reader_data_filter_->is_relevant(*cache_change, it->remote_guid());
-                    if (!filtered_out)
+                    if ((nullptr == reader_data_filter_) ||
+                            reader_data_filter_->is_relevant(*cache_change, it->remote_guid()))
                     {
                         group.sender(this, &*it);
                         num_locators = it->locators_size();
