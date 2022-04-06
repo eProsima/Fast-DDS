@@ -125,12 +125,40 @@ protected:
     RTPS_DllAPI void do_release_cache(
             CacheChange_t* ch) override;
 
+    /**
+     * Introduce a change into the history, and let the associated writer send it.
+     *
+     * @param [in,out] a_change       The change to be added.
+     *                                Its @c sequenceNumber and sourceTimestamp will be filled by this method.
+     *                                Its @c wparams will be filled from parameter @c wparams.
+     * @param [in,out] wparams        On input, it holds the WriteParams to be copied into @c a_change.
+     *                                On output, will be filled with the sample identity assigned to @c a_change.
+     * @param [in] max_blocking_time  Maximum time point the writer is allowed to be blocked till the change is put
+     *                                into the wire or the sending queue.
+     *
+     * @return whether @c a_change could be added to the history.
+     */
     bool add_change_(
             CacheChange_t* a_change,
             WriteParams& wparams,
             std::chrono::time_point<std::chrono::steady_clock> max_blocking_time
             = std::chrono::steady_clock::now() + std::chrono::hours(24));
 
+    /**
+     * Introduce a change into the history, and let the associated writer send it.
+     *
+     * @param [in,out] a_change       The change to be added.
+     *                                Its @c sequenceNumber and sourceTimestamp will be filled by this method.
+     *                                Its @c wparams will be filled from parameter @c wparams.
+     * @param [in,out] wparams        On input, it holds the WriteParams to be copied into @c a_change.
+     *                                On output, will be filled with the sample identity assigned to @c a_change.
+     * @param [in] pre_commit         Functor called after @c a_change has been added to the history, and its
+     *                                information has been filled, but before the writer is notified of the insertion.
+     * @param [in] max_blocking_time  Maximum time point the writer is allowed to be blocked till the change is put
+     *                                into the wire or the sending queue.
+     *
+     * @return whether @c a_change could be added to the history.
+     */
     template<typename PreCommitHook>
     bool add_change_with_commit_hook(
             CacheChange_t* a_change,
@@ -165,13 +193,32 @@ protected:
 
 private:
 
+    /**
+     * Introduce a change into the history.
+     *
+     * @param [in,out] a_change  The change to be added.
+     *                           Its @c sequenceNumber and sourceTimestamp will be filled by this method.
+     *                           Its @c wparams will be filled from parameter @c wparams.
+     * @param [in,out] wparams   On input, it holds the WriteParams to be copied into @c a_change.
+     *                           On output, will be filled with the sample identity assigned to @c a_change.
+     *
+     * @return whether @c a_change could be added to the history.
+     */
     bool prepare_and_add_change(
             CacheChange_t* a_change,
             WriteParams& wparams);
 
+    /**
+     * Notifies the RTPS writer associated with this history that a change has been added.
+     * Depending on the publish mode, it will be directly sent to the wire, or put into a sending queue.
+     *
+     * @param [in] a_change           The change that has just been added to the history.
+     * @param [in] max_blocking_time  Maximum time point the writer is allowed to be blocked till the change is put
+     *                                into the wire or the sending queue.
+     */
     void notify_writer(
             CacheChange_t* a_change,
-            std::chrono::time_point<std::chrono::steady_clock> max_blocking_time);
+            const std::chrono::time_point<std::chrono::steady_clock>& max_blocking_time);
 
     void set_fragments(
             CacheChange_t* change);

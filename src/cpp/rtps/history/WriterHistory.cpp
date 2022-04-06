@@ -111,7 +111,7 @@ bool WriterHistory::prepare_and_add_change(
 
 void WriterHistory::notify_writer(
         CacheChange_t* a_change,
-        std::chrono::time_point<std::chrono::steady_clock> max_blocking_time)
+        const std::chrono::time_point<std::chrono::steady_clock>& max_blocking_time)
 {
     mp_writer->unsent_change_added_to_history(a_change, max_blocking_time);
 }
