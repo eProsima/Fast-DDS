@@ -852,8 +852,8 @@ TEST(BuiltinDataSerializationTests, contentfilterproperty_empty_filter_expressio
     fastdds::rtps::ContentFilterProperty content_filter_property(content_filter_allocation);
     content_filter_property.content_filtered_topic_name = "CFP_TEST";
     content_filter_property.related_topic_name = "TEST";
-    content_filter_property.filter_class_name = "";
-    content_filter_property.filter_expression = "This is a custom test filter expression";
+    content_filter_property.filter_class_name = "MyFilterClass";
+    content_filter_property.filter_expression = "";
     in.content_filter(content_filter_property);
 
     // Perform serialization
@@ -967,7 +967,7 @@ TEST(BuiltinDataSerializationTests, contentfilterproperty_wrong_cdr_message_dese
     fastdds::rtps::ContentFilterProperty content_filter_property(content_filter_allocation);
 
     const std::string content_filtered_topic_name("CFT_TEST");
-    const std::string related_topic_name(260, 'a');
+    const std::string related_topic_name("TEST");
     const std::string filter_class_name("MyFilterClass");
     const std::string filter_expression("This is a custom test filter expression");
     const std::vector<std::string> expression_parameters = {};
