@@ -36,8 +36,16 @@ public:
 
     virtual ~CustomFilterSubscriber();
 
-    //!Initialize the subscriber
-    bool init();
+    /**
+     * @brief Initialize the subscriber
+     * 
+     * @param custom_filter Whether the default SQL filter or the custom defined filter is used.
+     *                      By default the SQL filter is used.
+     * @return true if correctly initialized.
+     * @return false otherwise.
+     */
+    bool init(
+            bool custom_filter = false);
 
     //!RUN the subscriber
     void run();

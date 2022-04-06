@@ -28,7 +28,8 @@
 
 using namespace eprosima::fastdds::dds;
 
-bool CustomFilterSubscriber::init()
+bool CustomFilterSubscriber::init(
+        bool custom_filter)
 {
     DomainParticipantQos pqos;
     pqos.name("Participant_sub");
@@ -39,12 +40,15 @@ bool CustomFilterSubscriber::init()
         return false;
     }
 
-    // Register the filter factory
-    if (ReturnCode_t::RETCODE_OK !=
-            participant_->register_content_filter_factory("MY_CUSTOM_FILTER", &filter_factory))
+    if (custom_filter)
     {
-        // Error
-        return false;
+        // Register the filter factory
+        if (ReturnCode_t::RETCODE_OK !=
+                participant_->register_content_filter_factory("MY_CUSTOM_FILTER", &filter_factory))
+        {
+            // Error
+            return false;
+        }
     }
 
     //Register the type
@@ -69,14 +73,27 @@ bool CustomFilterSubscriber::init()
         return false;
     }
 
-    // Create a ContentFilteredTopic using an expression with no parameters
-    std::string expression = " ";
+    // Create ContentFilteredTopic
+    std::string expression;
     std::vector<std::string> parameters;
-    parameters.push_back("3");
-    parameters.push_back("5");
-    filter_topic_ =
-            participant_->create_contentfilteredtopic("HelloWorldFilteredTopic1", topic_, expression, parameters,
-                    "MY_CUSTOM_FILTER");
+    if (custom_filter)
+    {
+        // Custom filter: reject samples where index > parameters[0] and index < parameters[1]. 
+        expression = " ";
+        parameters.push_back("3");
+        parameters.push_back("5");
+        filter_topic_ =
+                participant_->create_contentfilteredtopic("HelloWorldFilteredTopic1", topic_, expression, parameters,
+                        "MY_CUSTOM_FILTER");
+    }
+    else
+    {
+        expression = "index between %0 and %1";
+        parameters.push_back("5");
+        parameters.push_back("9");
+        filter_topic_ =
+                participant_->create_contentfilteredtopic("HelloWorldFilteredTopic1", topic_, expression, parameters);
+    }
 
     if (nullptr == filter_topic_)
     {

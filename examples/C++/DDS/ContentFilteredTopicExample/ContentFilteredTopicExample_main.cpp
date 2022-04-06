@@ -34,6 +34,7 @@ int main(
     int type = 1;
     int count = 10;
     int sleep = 100;
+    bool custom_filter = false;
     if (argc > 1)
     {
         if (strcmp(argv[1], "publisher") == 0)
@@ -48,9 +49,14 @@ int main(
                 }
             }
         }
-        else if (strcmp(argv[1], "subscriber") == 0)
+        else if (strcmp(argv[1], "default_subscriber") == 0)
         {
             type = 2;
+        }
+        else if (strcmp(argv[1], "custom_subscriber") == 0)
+        {
+            type = 2;
+            custom_filter = true;
         }
     }
     else
@@ -74,7 +80,7 @@ int main(
         case 2:
         {
             CustomFilterSubscriber mysub;
-            if (mysub.init())
+            if (mysub.init(custom_filter))
             {
                 mysub.run();
             }
