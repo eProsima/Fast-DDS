@@ -87,14 +87,12 @@ bool RTPSMessageCreator::addSubmessageData(
         keyFlag = false;
     }
     inlineQosFlag = false;
-    // cout << "expects inline qos: " << expectsInlineQos << " topic KIND: " << (topicKind == WITH_KEY) << endl;
     if (nullptr != inlineQos || expectsInlineQos || change->kind != ALIVE) //expects inline qos
     {
         if (WITH_KEY == topicKind || nullptr != inlineQos)
         {
             flags = flags | BIT(1);
             inlineQosFlag = true;
-            //cout << "INLINE QOS FLAG TO 1 " << endl;
             keyFlag = false;
         }
     }
@@ -316,14 +314,12 @@ bool RTPSMessageCreator::addSubmessageDataFrag(
         keyFlag = false;
     }
 
-    // cout << "expects inline qos: " << expectsInlineQos << " topic KIND: " << (topicKind == WITH_KEY) << endl;
     if (nullptr != inlineQos || expectsInlineQos || change->kind != ALIVE) //expects inline qos
     {
         if (WITH_KEY == topicKind || nullptr != inlineQos)
         {
             flags = flags | BIT(1);
             inlineQosFlag = true;
-            //cout << "INLINE QOS FLAG TO 1 " << endl;
             keyFlag = false;
         }
     }
