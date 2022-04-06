@@ -276,6 +276,12 @@ protected:
             return reader;
         }
 
+        void delete_reader(
+                DataReader* reader)
+        {
+            EXPECT_EQ(ReturnCode_t::RETCODE_OK, subscriber_->delete_datareader(reader));
+        }
+
         void set_filter_expression(
                 const std::string& filter_expression,
                 const std::vector<std::string>& expression_parameters)
@@ -307,6 +313,7 @@ protected:
             filter_counter.max_filter_signature_number = 0;
 
             // Ensure writer is in clean state
+            drop_data_on_all_readers();
             EXPECT_TRUE(writer.waitForAllAcked(std::chrono::seconds(5)));
             EXPECT_EQ(reader->get_unread_count(), 0);
 
@@ -493,6 +500,55 @@ TEST_P(DDSContentFilter, WithLimitsSeveralReaders)
     ASSERT_NE(nullptr, reader);
 
     test_run(reader, state, 2u);
+}
+
+TEST_P(DDSContentFilter, WithLimitsDynamicReaders)
+{
+    TestState state;
+
+    // Only one filtered reader created
+    auto reader = prepare_test(state, fastrtps::ResourceLimitedContainerConfig::fixed_size_configuration(2u), 0u);
+    ASSERT_NE(nullptr, reader);
+
+    // We want a single filter to be applied, and check only for reader discovery changes
+    state.set_filter_expression("index BETWEEN %0 AND %1", { "2", "4" });
+
+    std::cout << "========= First reader =========" << std::endl;
+    state.send_data(reader, filter_counter, 3u, { 2, 3, 4 }, true, 1u);
+
+    // Adding a second reader should increase the number of writer filters
+    std::cout << "========= Create a second reader =========" << std::endl;
+    auto reader_2 = state.create_filtered_reader();
+    ASSERT_NE(nullptr, reader_2);
+
+    state.writer.wait_discovery(3);
+    std::this_thread::sleep_for(std::chrono::milliseconds(250));
+    state.send_data(reader_2, filter_counter, 3u, { 2, 3, 4 }, true, 2u);
+
+    // Adding a third reader should not increase the number of writer filters (as the limit is 2)
+    std::cout << "========= Create a third reader =========" << std::endl;
+    auto reader_3 = state.create_filtered_reader();
+    ASSERT_NE(nullptr, reader_3);
+
+    state.writer.wait_discovery(4);
+    std::this_thread::sleep_for(std::chrono::milliseconds(250));
+    state.send_data(reader_3, filter_counter, 3u, { 2, 3, 4 }, true, 2u);
+
+    // Deleting the second reader will decrease the number of writer filters
+    std::cout << "========= Delete the second reader =========" << std::endl;
+    state.delete_reader(reader_2);
+    state.writer.wait_reader_undiscovery(3);
+    std::this_thread::sleep_for(std::chrono::milliseconds(250));
+    state.send_data(reader_3, filter_counter, 3u, { 2, 3, 4 }, true, 1u);
+
+    // Adding a fourth will increase the number of writer filters again
+    std::cout << "========= Create a fourth reader =========" << std::endl;
+    auto reader_4 = state.create_filtered_reader();
+    std::this_thread::sleep_for(std::chrono::milliseconds(250));
+    ASSERT_NE(nullptr, reader_4);
+
+    state.writer.wait_discovery(4);
+    state.send_data(reader_4, filter_counter, 3u, { 2, 3, 4 }, true, 2u);
 }
 
 #ifdef INSTANTIATE_TEST_SUITE_P
