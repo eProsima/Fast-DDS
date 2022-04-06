@@ -31,26 +31,15 @@ namespace {
 struct DataMsgUtils
 {
     static void prepare_submessage_flags(
-            CDRMessage_t* msg,
             const CacheChange_t* change,
             TopicKind_t topicKind,
             bool expectsInlineQos,
             InlineQosWriter* inlineQos,
-            octet& flags,
             bool& dataFlag,
             bool& keyFlag,
             bool& inlineQosFlag,
             octet& status)
     {
-        flags = 0;
-
-#if FASTDDS_IS_BIG_ENDIAN_TARGET
-        msg->msg_endian = BIGEND;
-#else
-        flags = flags | BIT(0);
-        msg->msg_endian = LITTLEEND;
-#endif // if FASTDDS_IS_BIG_ENDIAN_TARGET
-
         inlineQosFlag =
                 (nullptr != inlineQos) ||
                 ((WITH_KEY == topicKind) && (expectsInlineQos || change->kind != ALIVE)) ||
@@ -59,21 +48,6 @@ struct DataMsgUtils
         dataFlag = ALIVE == change->kind &&
                 change->serializedPayload.length > 0 && nullptr != change->serializedPayload.data;
         keyFlag = !dataFlag && !inlineQosFlag && (WITH_KEY == topicKind);
-
-        if (inlineQosFlag)
-        {
-            flags = flags | BIT(1);
-        }
-
-        if (dataFlag)
-        {
-            flags = flags | BIT(2);
-        }
-
-        if (keyFlag)
-        {
-            flags = flags | BIT(3);
-        }
 
         status = 0;
         if (change->kind == NOT_ALIVE_DISPOSED)
@@ -183,9 +157,30 @@ bool RTPSMessageCreator::addSubmessageData(
     bool inlineQosFlag = false;
 
     Endianness_t old_endianess = msg->msg_endian;
+#if FASTDDS_IS_BIG_ENDIAN_TARGET
+    msg->msg_endian = BIGEND;
+#else
+    flags = flags | BIT(0);
+    msg->msg_endian = LITTLEEND;
+#endif // if FASTDDS_IS_BIG_ENDIAN_TARGET
 
-    DataMsgUtils::prepare_submessage_flags(msg, change, topicKind, expectsInlineQos, inlineQos,
-            flags, dataFlag, keyFlag, inlineQosFlag, status);
+    DataMsgUtils::prepare_submessage_flags(change, topicKind, expectsInlineQos, inlineQos,
+            dataFlag, keyFlag, inlineQosFlag, status);
+
+    if (inlineQosFlag)
+    {
+        flags = flags | BIT(1);
+    }
+
+    if (dataFlag)
+    {
+        flags = flags | BIT(2);
+    }
+
+    if (keyFlag)
+    {
+        flags = flags | BIT(3);
+    }
 
     // Submessage header.
     uint32_t submessage_size_pos = 0;
@@ -341,9 +336,25 @@ bool RTPSMessageCreator::addSubmessageDataFrag(
     bool inlineQosFlag = false;
 
     Endianness_t old_endianess = msg->msg_endian;
+#if FASTDDS_IS_BIG_ENDIAN_TARGET
+    msg->msg_endian = BIGEND;
+#else
+    flags = flags | BIT(0);
+    msg->msg_endian = LITTLEEND;
+#endif // if FASTDDS_IS_BIG_ENDIAN_TARGET
 
-    DataMsgUtils::prepare_submessage_flags(msg, change, topicKind, expectsInlineQos, inlineQos,
-            flags, dataFlag, keyFlag, inlineQosFlag, status);
+    DataMsgUtils::prepare_submessage_flags(change, topicKind, expectsInlineQos, inlineQos,
+            dataFlag, keyFlag, inlineQosFlag, status);
+
+    if (inlineQosFlag)
+    {
+        flags = flags | BIT(1);
+    }
+
+    if (keyFlag)
+    {
+        flags = flags | BIT(2);
+    }
 
     // Submessage header.
     uint32_t submessage_size_pos = 0;
