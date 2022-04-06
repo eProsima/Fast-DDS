@@ -1,4 +1,4 @@
-// Copyright 2019 Proyectos y Sistemas de Mantenimiento SL (eProsima).
+// Copyright 2022 Proyectos y Sistemas de Mantenimiento SL (eProsima).
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -531,7 +531,7 @@ TEST_P(RTPSDiscovery, ContentFilterRegistration)
 }
 
 /*!
- * \test RTPS-CFT-RRR-02 Tests a wrong `ContentFilterProperty` passed to `registerReader()` makes the function fails.
+ * \test RTPS-CFT-RRR-02 Tests a wrong `ContentFilterProperty` passed to `registerReader()` makes the function fail.
  */
 TEST_P(RTPSDiscovery, ContentFilterWrongRegistration)
 {
@@ -633,7 +633,7 @@ TEST_P(RTPSDiscovery, ContentFilterWrongRegistration)
 }
 
 /*!
- * \test RTPS-CFT-RRR-03 Tests a wrong `ContentFilterProperty` passed to `updateReader()` makes the function fails.
+ * \test RTPS-CFT-RRR-03 Tests a wrong `ContentFilterProperty` passed to `updateReader()` makes the function fail.
  */
 TEST_P(RTPSDiscovery, ContentFilterWrongUpdate)
 {
