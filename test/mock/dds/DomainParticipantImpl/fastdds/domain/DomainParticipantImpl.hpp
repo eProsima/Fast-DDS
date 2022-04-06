@@ -331,6 +331,9 @@ public:
     MOCK_METHOD1(unregister_content_filter_factory, ReturnCode_t (
                 const char* filter_class_name));
 
+    MOCK_METHOD1(find_content_filter_factory, IContentFilterFactory * (
+                const char* filter_class_name));
+
     TopicDescription* lookup_topicdescription(
             const std::string& topic_name) const
     {
