@@ -348,7 +348,9 @@ protected:
             expected_ret = expected_samples == 0 ? ReturnCode_t::RETCODE_NO_DATA : ReturnCode_t::RETCODE_OK;
             EXPECT_EQ(expected_ret, reader->take(recv_data, recv_info));
             EXPECT_EQ(recv_data.length(), expected_samples);
-            for (HelloWorldSeq::size_type i = 0; i < recv_data.length() && i < expected_samples; ++i)
+            for (HelloWorldSeq::size_type i = 0;
+                    i < recv_data.length() && static_cast<uint32_t>(i) < expected_samples;
+                    ++i)
             {
                 EXPECT_EQ(index_values[i], recv_data[i].index());
             }
