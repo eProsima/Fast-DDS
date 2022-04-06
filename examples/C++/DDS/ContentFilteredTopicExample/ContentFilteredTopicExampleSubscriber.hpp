@@ -1,4 +1,4 @@
-// Copyright 2021 Proyectos y Sistemas de Mantenimiento SL (eProsima).
+// Copyright 2022 Proyectos y Sistemas de Mantenimiento SL (eProsima).
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -13,28 +13,34 @@
 // limitations under the License.
 
 /**
- * @file CustomFilterSubscriber.hpp
+ * @file ContentFilteredTopicExampleSubscriber.hpp
  *
  */
 
-#ifndef _DEFAULTSQLFILTERSUBSCRIBER_HPP_
-#define _DEFAULTSQLFILTERSUBSCRIBER_HPP_
+#ifndef _CONTENTFILTEREDTOPICEXAMPLESUBSCRIBER_HPP_
+#define _CONTENTFILTEREDTOPICEXAMPLESUBSCRIBER_HPP_
 
 #include "HelloWorldPubSubTypes.h"
+
+#include <fastdds/dds/core/status/SubscriptionMatchedStatus.hpp>
+#include <fastdds/dds/domain/DomainParticipant.hpp>
+#include <fastdds/dds/subscriber/DataReader.hpp>
+#include <fastdds/dds/subscriber/DataReaderListener.hpp>
+#include <fastdds/dds/subscriber/SampleInfo.hpp>
+#include <fastdds/dds/subscriber/Subscriber.hpp>
+#include <fastdds/dds/topic/ContentFilteredTopic.hpp>
+#include <fastdds/dds/topic/Topic.hpp>
+#include <fastdds/dds/topic/TypeSupport.hpp>
+
 #include "MyCustomFilterFactory.hpp"
 
-#include <fastdds/dds/domain/DomainParticipant.hpp>
-#include <fastdds/dds/subscriber/DataReaderListener.hpp>
-#include <fastrtps/subscriber/SampleInfo.h>
-#include <fastdds/dds/core/status/SubscriptionMatchedStatus.hpp>
-
-class CustomFilterSubscriber
+class ContentFilteredTopicExampleSubscriber : public eprosima::fastdds::dds::DataReaderListener
 {
 public:
 
-    CustomFilterSubscriber() = default;
+    ContentFilteredTopicExampleSubscriber() = default;
 
-    virtual ~CustomFilterSubscriber();
+    virtual ~ContentFilteredTopicExampleSubscriber();
 
     /**
      * @brief Initialize the subscriber
@@ -47,12 +53,8 @@ public:
     bool init(
             bool custom_filter = false);
 
-    //!RUN the subscriber
+    //! Run the subscriber
     void run();
-
-    //!Run the subscriber until number samples have been received.
-    void run(
-            uint32_t number);
 
 private:
 
@@ -70,28 +72,19 @@ private:
 
     MyCustomFilterFactory filter_factory;
 
-    class SubListener : public eprosima::fastdds::dds::DataReaderListener
-    {
-    public:
+    HelloWorld hello_;
 
-        ~SubListener() override
-        {
-        }
+    int matched_ = 0;
 
-        void on_data_available(
-                eprosima::fastdds::dds::DataReader* reader) override;
+    uint32_t samples_  = 0;
 
-        void on_subscription_matched(
-                eprosima::fastdds::dds::DataReader* reader,
-                const eprosima::fastdds::dds::SubscriptionMatchedStatus& info) override;
+    void on_data_available(
+            eprosima::fastdds::dds::DataReader* reader) override;
 
-        HelloWorld hello_;
+    void on_subscription_matched(
+            eprosima::fastdds::dds::DataReader* reader,
+            const eprosima::fastdds::dds::SubscriptionMatchedStatus& info) override;
 
-        int matched_ = 0;
-
-        uint32_t samples_  = 0;
-    }
-    listener_;
 };
 
-#endif // _DEFAULTSQLFILTERSUBSCRIBER_HPP_
+#endif // _CONTENTFILTEREDTOPICEXAMPLESUBSCRIBER_HPP_

@@ -13,35 +13,39 @@
 // limitations under the License.
 
 /**
- * @file CustomFilterPublisher.hpp
+ * @file ContentFilteredTopicExamplePublisher.hpp
  *
  */
 
-#ifndef _DEFAULTSQLFILTERPUBLISHER_H_
-#define _DEFAULTSQLFILTERPUBLISHER_H_
+#ifndef _CONTENTFILTEREDTOPICEXAMPLEPUBLISHER_H_
+#define _CONTENTFILTEREDTOPICEXAMPLEPUBLISHER_H_
+
+#include <fastdds/dds/core/status/PublicationMatchedStatus.hpp>
+#include <fastdds/dds/domain/DomainParticipant.hpp>
+#include <fastdds/dds/publisher/DataWriterListener.hpp>
+#include <fastdds/dds/publisher/DataWriter.hpp>
+#include <fastdds/dds/publisher/Publisher.hpp>
+#include <fastdds/dds/topic/Topic.hpp>
+#include <fastdds/dds/topic/TypeSupport.hpp>
 
 #include "HelloWorldPubSubTypes.h"
 
-#include <fastdds/dds/publisher/DataWriterListener.hpp>
-#include <fastdds/dds/topic/TypeSupport.hpp>
-#include <fastdds/dds/domain/DomainParticipant.hpp>
-
-class CustomFilterPublisher
+class ContentFilteredTopicExamplePublisher : public eprosima::fastdds::dds::DataWriterListener
 {
 public:
 
-    CustomFilterPublisher();
+    ContentFilteredTopicExamplePublisher() = default;
 
-    virtual ~CustomFilterPublisher();
+    virtual ~ContentFilteredTopicExamplePublisher();
 
-    //!Initialize
+    //! Initialize
     bool init();
 
-    //!Publish a sample
+    //! Publish a sample
     bool publish(
             bool waitForListener = true);
 
-    //!Run for number samples
+    //! Run for number samples
     void run(
             uint32_t number,
             uint32_t sleep);
@@ -50,45 +54,30 @@ private:
 
     HelloWorld hello_;
 
-    eprosima::fastdds::dds::DomainParticipant* participant_;
+    eprosima::fastdds::dds::DomainParticipant* participant_ = nullptr;
 
-    eprosima::fastdds::dds::Publisher* publisher_;
+    eprosima::fastdds::dds::Publisher* publisher_ = nullptr;
 
-    eprosima::fastdds::dds::Topic* topic_;
+    eprosima::fastdds::dds::Topic* topic_ = nullptr;
 
-    eprosima::fastdds::dds::DataWriter* writer_;
+    eprosima::fastdds::dds::DataWriter* writer_ = nullptr;
+
+    eprosima::fastdds::dds::TypeSupport type_ = eprosima::fastdds::dds::TypeSupport(new HelloWorldPubSubType());
 
     bool stop_;
 
-    class PubListener : public eprosima::fastdds::dds::DataWriterListener
-    {
-    public:
+    int matched_;
 
-        PubListener()
-            : matched_(0)
-            , firstConnected_(false)
-        {
-        }
+    bool firstConnected_;
 
-        ~PubListener() override = default;
-
-        void on_publication_matched(
-                eprosima::fastdds::dds::DataWriter* writer,
-                const eprosima::fastdds::dds::PublicationMatchedStatus& info) override;
-
-        int matched_;
-
-        bool firstConnected_;
-    }
-    listener_;
+    void on_publication_matched(
+            eprosima::fastdds::dds::DataWriter* writer,
+            const eprosima::fastdds::dds::PublicationMatchedStatus& info) override;
 
     void runThread(
             uint32_t number,
             uint32_t sleep);
 
-    eprosima::fastdds::dds::TypeSupport type_;
 };
 
-
-
-#endif // _DEFAULTSQLFILTERPUBLISHER_H_
+#endif // _CONTENTFILTEREDTOPICEXAMPLEPUBLISHER_H_

@@ -70,7 +70,7 @@ int main(
     {
         case 1:
         {
-            CustomFilterPublisher mypub;
+            ContentFilteredTopicExamplePublisher mypub;
             if (mypub.init())
             {
                 mypub.run(static_cast<uint32_t>(count), static_cast<uint32_t>(sleep));
@@ -79,7 +79,7 @@ int main(
         }
         case 2:
         {
-            CustomFilterSubscriber mysub;
+            ContentFilteredTopicExampleSubscriber mysub;
             if (mysub.init(custom_filter))
             {
                 mysub.run();

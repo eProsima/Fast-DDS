@@ -1,9 +1,11 @@
-#ifndef _MYCUSTOMFILTERFACTORY_HPP_
-#define _MYCUSTOMFILTERFACTORY_HPP_
+#ifndef _CONTENTFILTEREDTOPICEXAMPLE_MYCUSTOMFILTERFACTORY_HPP_
+#define _CONTENTFILTEREDTOPICEXAMPLE_MYCUSTOMFILTERFACTORY_HPP_
+
+#include <fastdds/dds/topic/IContentFilter.hpp>
+#include <fastdds/dds/topic/IContentFilterFactory.hpp>
+#include <fastdds/dds/topic/TopicDataType.hpp>
 
 #include "MyCustomFilter.hpp"
-
-#include <fastdds/dds/topic/IContentFilterFactory.hpp>
 
 class MyCustomFilterFactory : public eprosima::fastdds::dds::IContentFilterFactory
 {
@@ -64,4 +66,4 @@ public:
     }
 
 };
-#endif // _MYCUSTOMFILTERFACTORY_HPP_
+#endif // _CONTENTFILTEREDTOPICEXAMPLE_MYCUSTOMFILTERFACTORY_HPP_

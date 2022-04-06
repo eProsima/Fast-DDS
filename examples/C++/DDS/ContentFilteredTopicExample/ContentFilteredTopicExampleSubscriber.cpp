@@ -13,29 +13,30 @@
 // limitations under the License.
 
 /**
- * @file CustomFilterSubscriber.cpp
+ * @file ContentFilteredTopicExampleSubscriber.cpp
  *
  */
 
 #include "ContentFilteredTopicExampleSubscriber.hpp"
-#include <fastrtps/attributes/ParticipantAttributes.h>
-#include <fastrtps/attributes/SubscriberAttributes.h>
+
+#include <fastdds/dds/core/status/SubscriptionMatchedStatus.hpp>
 #include <fastdds/dds/domain/DomainParticipantFactory.hpp>
+#include <fastdds/dds/domain/qos/DomainParticipantQos.hpp>
 #include <fastdds/dds/subscriber/Subscriber.hpp>
 #include <fastdds/dds/subscriber/DataReader.hpp>
-#include <fastdds/dds/subscriber/SampleInfo.hpp>
 #include <fastdds/dds/subscriber/qos/DataReaderQos.hpp>
+#include <fastdds/dds/subscriber/SampleInfo.hpp>
 
 using namespace eprosima::fastdds::dds;
 
-bool CustomFilterSubscriber::init(
+bool ContentFilteredTopicExampleSubscriber::init(
         bool custom_filter)
 {
     DomainParticipantQos pqos;
     pqos.name("Participant_sub");
     participant_ = DomainParticipantFactory::get_instance()->create_participant(0, pqos);
 
-    if (participant_ == nullptr)
+    if (nullptr == participant_)
     {
         return false;
     }
@@ -57,18 +58,15 @@ bool CustomFilterSubscriber::init(
     //CREATE THE SUBSCRIBER
     subscriber_ = participant_->create_subscriber(SUBSCRIBER_QOS_DEFAULT, nullptr);
 
-    if (subscriber_ == nullptr)
+    if (nullptr == subscriber_)
     {
         return false;
     }
 
     //Create the topic
-    topic_ = participant_->create_topic(
-        "HelloWorldTopic",
-        "HelloWorld",
-        TOPIC_QOS_DEFAULT);
+    topic_ = participant_->create_topic("HelloWorldTopic", type_->getName(), TOPIC_QOS_DEFAULT);
 
-    if (topic_ == nullptr)
+    if (nullptr == topic_)
     {
         return false;
     }
@@ -104,9 +102,10 @@ bool CustomFilterSubscriber::init(
     // CREATE THE READER
     DataReaderQos rqos = DATAREADER_QOS_DEFAULT;
     rqos.reliability().kind = RELIABLE_RELIABILITY_QOS;
-    reader_ = subscriber_->create_datareader(filter_topic_, rqos, &listener_);
+    rqos.durability().kind = TRANSIENT_LOCAL_DURABILITY_QOS;
+    reader_ = subscriber_->create_datareader(filter_topic_, rqos, this);
 
-    if (reader_ == nullptr)
+    if (nullptr == reader_)
     {
         return false;
     }
@@ -114,39 +113,24 @@ bool CustomFilterSubscriber::init(
     return true;
 }
 
-CustomFilterSubscriber::~CustomFilterSubscriber()
+ContentFilteredTopicExampleSubscriber::~ContentFilteredTopicExampleSubscriber()
 {
-    if (reader_ != nullptr)
-    {
-        subscriber_->delete_datareader(reader_);
-    }
-    if (nullptr != filter_topic_)
-    {
-        participant_->delete_contentfilteredtopic(filter_topic_);
-    }
-    if (topic_ != nullptr)
-    {
-        participant_->delete_topic(topic_);
-    }
-    if (subscriber_ != nullptr)
-    {
-        participant_->delete_subscriber(subscriber_);
-    }
+    participant_->delete_contained_entities();
     DomainParticipantFactory::get_instance()->delete_participant(participant_);
 }
 
-void CustomFilterSubscriber::SubListener::on_subscription_matched(
+void ContentFilteredTopicExampleSubscriber::on_subscription_matched(
         DataReader*,
         const SubscriptionMatchedStatus& info)
 {
     if (info.current_count_change == 1)
     {
-        matched_ = info.total_count;
+        matched_ = info.current_count;
         std::cout << "Subscriber matched." << std::endl;
     }
     else if (info.current_count_change == -1)
     {
-        matched_ = info.total_count;
+        matched_ = info.current_count;
         std::cout << "Subscriber unmatched." << std::endl;
     }
     else
@@ -156,13 +140,13 @@ void CustomFilterSubscriber::SubListener::on_subscription_matched(
     }
 }
 
-void CustomFilterSubscriber::SubListener::on_data_available(
+void ContentFilteredTopicExampleSubscriber::on_data_available(
         DataReader* reader)
 {
     SampleInfo info;
-    if (reader->take_next_sample(&hello_, &info) == ReturnCode_t::RETCODE_OK)
+    if (ReturnCode_t::RETCODE_OK == reader->take_next_sample(&hello_, &info))
     {
-        if (info.instance_state == ALIVE_INSTANCE_STATE)
+        if (ALIVE_INSTANCE_STATE == info.instance_state)
         {
             samples_++;
             // Print your structure data here.
@@ -171,18 +155,8 @@ void CustomFilterSubscriber::SubListener::on_data_available(
     }
 }
 
-void CustomFilterSubscriber::run()
+void ContentFilteredTopicExampleSubscriber::run()
 {
     std::cout << "Subscriber running. Please press enter to stop the Subscriber" << std::endl;
     std::cin.ignore();
-}
-
-void CustomFilterSubscriber::run(
-        uint32_t number)
-{
-    std::cout << "Subscriber running until " << number << "samples have been received" << std::endl;
-    while (number > listener_.samples_)
-    {
-        std::this_thread::sleep_for(std::chrono::milliseconds(500));
-    }
 }

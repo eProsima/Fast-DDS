@@ -13,33 +13,25 @@
 // limitations under the License.
 
 /**
- * @file CustomFilterPublisher.cpp
+ * @file ContentFilteredTopicExamplePublisher.cpp
  *
  */
 
 #include "ContentFilteredTopicExamplePublisher.hpp"
-#include <fastrtps/attributes/ParticipantAttributes.h>
-#include <fastrtps/attributes/PublisherAttributes.h>
-#include <fastdds/dds/domain/DomainParticipantFactory.hpp>
-#include <fastdds/dds/publisher/Publisher.hpp>
-#include <fastdds/dds/publisher/qos/PublisherQos.hpp>
-#include <fastdds/dds/publisher/DataWriter.hpp>
-#include <fastdds/dds/publisher/qos/DataWriterQos.hpp>
 
 #include <thread>
 
+#include <fastdds/dds/core/status/PublicationMatchedStatus.hpp>
+#include <fastdds/dds/domain/DomainParticipantFactory.hpp>
+#include <fastdds/dds/domain/qos/DomainParticipantQos.hpp>
+#include <fastdds/dds/publisher/DataWriter.hpp>
+#include <fastdds/dds/publisher/Publisher.hpp>
+#include <fastdds/dds/publisher/qos/DataWriterQos.hpp>
+#include <fastdds/dds/publisher/qos/PublisherQos.hpp>
+
 using namespace eprosima::fastdds::dds;
 
-CustomFilterPublisher::CustomFilterPublisher()
-    : participant_(nullptr)
-    , publisher_(nullptr)
-    , topic_(nullptr)
-    , writer_(nullptr)
-    , type_(new HelloWorldPubSubType())
-{
-}
-
-bool CustomFilterPublisher::init()
+bool ContentFilteredTopicExamplePublisher::init()
 {
     hello_.index(0);
     hello_.message("HelloWorld");
@@ -47,7 +39,7 @@ bool CustomFilterPublisher::init()
     pqos.name("Participant_pub");
     participant_ = DomainParticipantFactory::get_instance()->create_participant(0, pqos);
 
-    if (participant_ == nullptr)
+    if (nullptr == participant_)
     {
         return false;
     }
@@ -58,58 +50,47 @@ bool CustomFilterPublisher::init()
     //CREATE THE PUBLISHER
     publisher_ = participant_->create_publisher(PUBLISHER_QOS_DEFAULT, nullptr);
 
-    if (publisher_ == nullptr)
+    if (nullptr == publisher_)
     {
         return false;
     }
 
-    topic_ = participant_->create_topic("HelloWorldTopic", "HelloWorld", TOPIC_QOS_DEFAULT);
+    topic_ = participant_->create_topic("HelloWorldTopic", type_->getName(), TOPIC_QOS_DEFAULT);
 
-    if (topic_ == nullptr)
+    if (nullptr == topic_)
     {
         return false;
     }
 
     // CREATE THE WRITER
-    writer_ = publisher_->create_datawriter(topic_, DATAWRITER_QOS_DEFAULT, &listener_);
+    writer_ = publisher_->create_datawriter(topic_, DATAWRITER_QOS_DEFAULT, this);
 
-    if (writer_ == nullptr)
+    if (nullptr == writer_)
     {
         return false;
     }
     return true;
 }
 
-CustomFilterPublisher::~CustomFilterPublisher()
+ContentFilteredTopicExamplePublisher::~ContentFilteredTopicExamplePublisher()
 {
-    if (writer_ != nullptr)
-    {
-        publisher_->delete_datawriter(writer_);
-    }
-    if (publisher_ != nullptr)
-    {
-        participant_->delete_publisher(publisher_);
-    }
-    if (topic_ != nullptr)
-    {
-        participant_->delete_topic(topic_);
-    }
+    participant_->delete_contained_entities();
     DomainParticipantFactory::get_instance()->delete_participant(participant_);
 }
 
-void CustomFilterPublisher::PubListener::on_publication_matched(
-        eprosima::fastdds::dds::DataWriter*,
-        const eprosima::fastdds::dds::PublicationMatchedStatus& info)
+void ContentFilteredTopicExamplePublisher::on_publication_matched(
+        DataWriter*,
+        const PublicationMatchedStatus& info)
 {
     if (info.current_count_change == 1)
     {
-        matched_ = info.total_count;
+        matched_ = info.current_count;
         firstConnected_ = true;
         std::cout << "Publisher matched." << std::endl;
     }
     else if (info.current_count_change == -1)
     {
-        matched_ = info.total_count;
+        matched_ = info.current_count;
         std::cout << "Publisher unmatched." << std::endl;
     }
     else
@@ -119,7 +100,7 @@ void CustomFilterPublisher::PubListener::on_publication_matched(
     }
 }
 
-void CustomFilterPublisher::runThread(
+void ContentFilteredTopicExamplePublisher::runThread(
         uint32_t samples,
         uint32_t sleep)
 {
@@ -153,12 +134,12 @@ void CustomFilterPublisher::runThread(
     }
 }
 
-void CustomFilterPublisher::run(
+void ContentFilteredTopicExamplePublisher::run(
         uint32_t samples,
         uint32_t sleep)
 {
     stop_ = false;
-    std::thread thread(&CustomFilterPublisher::runThread, this, samples, sleep);
+    std::thread thread(&ContentFilteredTopicExamplePublisher::runThread, this, samples, sleep);
     if (samples == 0)
     {
         std::cout << "Publisher running. Please press enter to stop the Publisher at any time." << std::endl;
@@ -172,10 +153,10 @@ void CustomFilterPublisher::run(
     thread.join();
 }
 
-bool CustomFilterPublisher::publish(
+bool ContentFilteredTopicExamplePublisher::publish(
         bool waitForListener)
 {
-    if (listener_.firstConnected_ || !waitForListener || listener_.matched_ > 0)
+    if (firstConnected_ || !waitForListener || matched_ > 0)
     {
         hello_.index(hello_.index() + 1);
         writer_->write(&hello_);

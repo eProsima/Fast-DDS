@@ -19,3 +19,4 @@ Custom Subscriber should received samples which index is lower than 3 and greate
 
 First argument is mandatory and it should be one of the following values: `publisher`, `default_subscriber` and `custom_subscriber`.
 The `publisher` can be launched specifying the number of samples to be sent (10 by default) and the sleep between samples in [ms] (by default 100 ms) in that order.
+If the number of samples is 0, then the `publisher` is writing samples continously.

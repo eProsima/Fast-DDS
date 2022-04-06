@@ -1,9 +1,8 @@
-#ifndef _MYCUSTOMFILTER_HPP_
-#define _MYCUSTOMFILTER_HPP_
-
-#include <fastdds/dds/topic/IContentFilter.hpp>
+#ifndef _CONTENTFILTEREDTOPICEXAMPLE_MYCUSTOMFILTER_HPP_
+#define _CONTENTFILTEREDTOPICEXAMPLE_MYCUSTOMFILTER_HPP_
 
 #include <fastcdr/Cdr.h>
+#include <fastdds/dds/topic/IContentFilter.hpp>
 
 class MyCustomFilter : public eprosima::fastdds::dds::IContentFilter
 {
@@ -58,4 +57,4 @@ private:
 
 };
 
-#endif // _MYCUSTOMFILTER_HPP_
+#endif // _CONTENTFILTEREDTOPICEXAMPLE_MYCUSTOMFILTER_HPP_
