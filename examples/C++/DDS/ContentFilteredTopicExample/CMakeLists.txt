@@ -44,4 +44,4 @@ target_compile_definitions(DDSContentFilteredTopicExample PRIVATE
 target_compile_features(DDSContentFilteredTopicExample PRIVATE cxx_std_11)
 target_link_libraries(DDSContentFilteredTopicExample fastrtps fastcdr)
 install(TARGETS DDSContentFilteredTopicExample
-    RUNTIME DESTINATION examples/C++/DDS/ContentFilteredTopic/${BIN_INSTALL_DIR})
+    RUNTIME DESTINATION examples/C++/DDS/ContentFilteredTopicExample/${BIN_INSTALL_DIR})
