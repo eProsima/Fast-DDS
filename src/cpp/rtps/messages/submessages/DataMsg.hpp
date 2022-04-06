@@ -91,6 +91,54 @@ struct DataMsgUtils
         }
     }
 
+    static bool serialize_header(
+            uint32_t fragment_number,
+            CDRMessage_t* msg,
+            const CacheChange_t* change,
+            const EntityId_t& readerId,
+            octet flags,
+            uint32_t& submessage_size_pos,
+            uint32_t& position_size_count_size)
+    {
+        bool ok = true;
+        bool is_fragment = fragment_number > 0;
+
+        CDRMessage::addOctet(msg, is_fragment ? DATA_FRAG : DATA);
+        CDRMessage::addOctet(msg, flags);
+        submessage_size_pos = msg->pos;
+        CDRMessage::addUInt16(msg, 0);
+        position_size_count_size = msg->pos;
+
+        //extra flags. not in this version.
+        ok &= CDRMessage::addUInt16(msg, 0);
+        //octet to inline Qos is 12 or 28, may change in future versions
+        ok &= is_fragment ?
+                CDRMessage::addUInt16(msg, RTPSMESSAGE_OCTETSTOINLINEQOS_DATAFRAGSUBMSG) :
+                CDRMessage::addUInt16(msg, RTPSMESSAGE_OCTETSTOINLINEQOS_DATASUBMSG);
+        //Entity ids
+        ok &= CDRMessage::addEntityId(msg, &readerId);
+        ok &= CDRMessage::addEntityId(msg, &change->writerGUID.entityId);
+        //Add Sequence Number
+        ok &= CDRMessage::addSequenceNumber(msg, &change->sequenceNumber);
+
+        if (is_fragment)
+        {
+            // Add fragment starting number
+            ok &= CDRMessage::addUInt32(msg, fragment_number); // fragments start in 1
+
+            // Add fragments in submessage
+            ok &= CDRMessage::addUInt16(msg, 1); // we are sending one fragment
+
+            // Add fragment size
+            ok &= CDRMessage::addUInt16(msg, change->getFragmentSize());
+
+            // Add total sample size
+            ok &= CDRMessage::addUInt32(msg, change->serializedPayload.length);
+        }
+
+        return ok;
+    }
+
 };
 
 }  // empty namespace
@@ -139,28 +187,14 @@ bool RTPSMessageCreator::addSubmessageData(
     DataMsgUtils::prepare_submessage_flags(msg, change, topicKind, expectsInlineQos, inlineQos,
             flags, dataFlag, keyFlag, inlineQosFlag, status);
 
-    bool added_no_error = true;
-
     // Submessage header.
-    CDRMessage::addOctet(msg, DATA);
-    CDRMessage::addOctet(msg, flags);
-    uint32_t submessage_size_pos = msg->pos;
+    uint32_t submessage_size_pos = 0;
     uint16_t submessage_size = 0;
-    CDRMessage::addUInt16(msg, submessage_size);
-    uint32_t position_size_count_size = msg->pos;
+    uint32_t position_size_count_size = 0;
+    bool added_no_error = DataMsgUtils::serialize_header(0, msg, change, readerId, flags,
+            submessage_size_pos, position_size_count_size);
 
-    //extra flags. not in this version.
-    added_no_error &= CDRMessage::addUInt16(msg, 0);
-    //octet to inline Qos is 12, may change in future versions
-    added_no_error &= CDRMessage::addUInt16(msg, RTPSMESSAGE_OCTETSTOINLINEQOS_DATASUBMSG);
-    //Entity ids
-    added_no_error &= CDRMessage::addEntityId(msg, &readerId);
-    added_no_error &= CDRMessage::addEntityId(msg, &change->writerGUID.entityId);
-    //Add Sequence Number
-    added_no_error &= CDRMessage::addSequenceNumber(msg, &change->sequenceNumber);
     //Add INLINE QOS AND SERIALIZED PAYLOAD DEPENDING ON FLAGS:
-
-
     if (inlineQosFlag) //inlineQoS
     {
         if (change->write_params.related_sample_identity() != SampleIdentity::unknown())
@@ -311,40 +345,12 @@ bool RTPSMessageCreator::addSubmessageDataFrag(
     DataMsgUtils::prepare_submessage_flags(msg, change, topicKind, expectsInlineQos, inlineQos,
             flags, dataFlag, keyFlag, inlineQosFlag, status);
 
-    bool added_no_error = true;
-
     // Submessage header.
-    CDRMessage::addOctet(msg, DATA_FRAG);
-    CDRMessage::addOctet(msg, flags);
-    uint32_t submessage_size_pos = msg->pos;
+    uint32_t submessage_size_pos = 0;
     uint16_t submessage_size = 0;
-    CDRMessage::addUInt16(msg, submessage_size);
-    uint32_t position_size_count_size = msg->pos;
-
-    //extra flags. not in this version.
-    added_no_error &= CDRMessage::addUInt16(msg, 0);
-
-    //octet to inline Qos is 28, may change in future versions
-    added_no_error &= CDRMessage::addUInt16(msg, RTPSMESSAGE_OCTETSTOINLINEQOS_DATAFRAGSUBMSG);
-
-    //Entity ids
-    added_no_error &= CDRMessage::addEntityId(msg, &readerId);
-    added_no_error &= CDRMessage::addEntityId(msg, &change->writerGUID.entityId);
-
-    //Add Sequence Number
-    added_no_error &= CDRMessage::addSequenceNumber(msg, &change->sequenceNumber);
-
-    // Add fragment starting number
-    added_no_error &= CDRMessage::addUInt32(msg, fragment_number); // fragments start in 1
-
-    // Add fragments in submessage
-    added_no_error &= CDRMessage::addUInt16(msg, 1); // we are sending one fragment
-
-    // Add fragment size
-    added_no_error &= CDRMessage::addUInt16(msg, change->getFragmentSize());
-
-    // Add total sample size
-    added_no_error &= CDRMessage::addUInt32(msg, change->serializedPayload.length);
+    uint32_t position_size_count_size = 0;
+    bool added_no_error = DataMsgUtils::serialize_header(fragment_number, msg, change, readerId, flags,
+            submessage_size_pos, position_size_count_size);
 
     //Add INLINE QOS AND SERIALIZED PAYLOAD DEPENDING ON FLAGS:
     if (inlineQosFlag) //inlineQoS
