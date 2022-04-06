@@ -903,8 +903,9 @@ ReturnCode_t DomainParticipantImpl::delete_contained_entities()
 
     std::lock_guard<std::mutex> lock_topics(mtx_topics_);
 
-    auto it_topics = topics_.begin();
+    filtered_topics_.clear();
 
+    auto it_topics = topics_.begin();
     while (it_topics != topics_.end())
     {
         it_topics->second->set_listener(nullptr);
