@@ -76,7 +76,7 @@ bool ContentFilteredTopicExampleSubscriber::init(
     std::vector<std::string> parameters;
     if (custom_filter)
     {
-        // Custom filter: reject samples where index > parameters[0] and index < parameters[1]. 
+        // Custom filter: reject samples where index > parameters[0] and index < parameters[1].
         expression = " ";
         parameters.push_back("3");
         parameters.push_back("5");
