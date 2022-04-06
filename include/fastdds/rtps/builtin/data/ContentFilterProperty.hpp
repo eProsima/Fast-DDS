@@ -65,9 +65,11 @@ public:
     fastrtps::string_255 content_filtered_topic_name;
     /// Name of the related topic being filtered
     fastrtps::string_255 related_topic_name;
-    /// Class name of the filter being used
+    /// Class name of the filter being used.
+    /// May be empty to indicate the ContentFilterProperty is not present.
     fastrtps::string_255 filter_class_name;
-    /// Filter expression indicating which content the reader wants to receive
+    /// Filter expression indicating which content the reader wants to receive.
+    /// May be empty to indicate the ContentFilterProperty is not present.
     std::string filter_expression;
     /// List of values for the parameters present on the filter expression
     fastrtps::ResourceLimitedVector<fastrtps::string_255, std::true_type> expression_parameters;
