@@ -113,6 +113,38 @@ struct DataMsgUtils
         return ok;
     }
 
+    static void serialize_inline_qos(
+            CDRMessage_t* msg,
+            const CacheChange_t* change,
+            TopicKind_t topicKind,
+            bool expectsInlineQos,
+            InlineQosWriter* inlineQos,
+            octet status)
+    {
+        if (change->write_params.related_sample_identity() != SampleIdentity::unknown())
+        {
+            fastdds::dds::ParameterSerializer<Parameter_t>::add_parameter_sample_identity(msg,
+                    change->write_params.related_sample_identity());
+        }
+
+        if (WITH_KEY == topicKind && (expectsInlineQos || ALIVE != change->kind))
+        {
+            fastdds::dds::ParameterSerializer<Parameter_t>::add_parameter_key(msg, change->instanceHandle);
+
+            if (ALIVE != change->kind)
+            {
+                fastdds::dds::ParameterSerializer<Parameter_t>::add_parameter_status(msg, status);
+            }
+        }
+
+        if (inlineQos != nullptr)
+        {
+            inlineQos->writeQosToCDRMessage(msg);
+        }
+
+        fastdds::dds::ParameterSerializer<Parameter_t>::add_parameter_sentinel(msg);
+    }
+
 };
 
 }  // empty namespace
@@ -187,33 +219,12 @@ bool RTPSMessageCreator::addSubmessageData(
     uint16_t submessage_size = 0;
     uint32_t position_size_count_size = 0;
     bool added_no_error = DataMsgUtils::serialize_header(0, msg, change, readerId, flags,
-            submessage_size_pos, position_size_count_size);
+                    submessage_size_pos, position_size_count_size);
 
     //Add INLINE QOS AND SERIALIZED PAYLOAD DEPENDING ON FLAGS:
     if (inlineQosFlag) //inlineQoS
     {
-        if (change->write_params.related_sample_identity() != SampleIdentity::unknown())
-        {
-            fastdds::dds::ParameterSerializer<Parameter_t>::add_parameter_sample_identity(msg,
-                    change->write_params.related_sample_identity());
-        }
-
-        if (WITH_KEY == topicKind && (expectsInlineQos || ALIVE != change->kind))
-        {
-            fastdds::dds::ParameterSerializer<Parameter_t>::add_parameter_key(msg, change->instanceHandle);
-
-            if (ALIVE != change->kind)
-            {
-                fastdds::dds::ParameterSerializer<Parameter_t>::add_parameter_status(msg, status);
-            }
-        }
-
-        if (inlineQos != nullptr)
-        {
-            inlineQos->writeQosToCDRMessage(msg);
-        }
-
-        fastdds::dds::ParameterSerializer<Parameter_t>::add_parameter_sentinel(msg);
+        DataMsgUtils::serialize_inline_qos(msg, change, topicKind, expectsInlineQos, inlineQos, status);
     }
 
     //Add Serialized Payload
@@ -361,33 +372,12 @@ bool RTPSMessageCreator::addSubmessageDataFrag(
     uint16_t submessage_size = 0;
     uint32_t position_size_count_size = 0;
     bool added_no_error = DataMsgUtils::serialize_header(fragment_number, msg, change, readerId, flags,
-            submessage_size_pos, position_size_count_size);
+                    submessage_size_pos, position_size_count_size);
 
     //Add INLINE QOS AND SERIALIZED PAYLOAD DEPENDING ON FLAGS:
     if (inlineQosFlag) //inlineQoS
     {
-        if (change->write_params.related_sample_identity() != SampleIdentity::unknown())
-        {
-            fastdds::dds::ParameterSerializer<Parameter_t>::add_parameter_sample_identity(msg,
-                    change->write_params.related_sample_identity());
-        }
-
-        if (WITH_KEY == topicKind && (expectsInlineQos || ALIVE != change->kind))
-        {
-            fastdds::dds::ParameterSerializer<Parameter_t>::add_parameter_key(msg, change->instanceHandle);
-
-            if (change->kind != ALIVE)
-            {
-                fastdds::dds::ParameterSerializer<Parameter_t>::add_parameter_status(msg, status);
-            }
-        }
-
-        if (inlineQos != nullptr)
-        {
-            inlineQos->writeQosToCDRMessage(msg);
-        }
-
-        fastdds::dds::ParameterSerializer<Parameter_t>::add_parameter_sentinel(msg);
+        DataMsgUtils::serialize_inline_qos(msg, change, topicKind, expectsInlineQos, inlineQos, status);
     }
 
     //Add Serialized Payload XXX TODO
