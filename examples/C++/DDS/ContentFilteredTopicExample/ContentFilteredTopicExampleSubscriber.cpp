@@ -17,7 +17,7 @@
  *
  */
 
-#include "CustomFilterSubscriber.hpp"
+#include "ContentFilteredTopicExampleSubscriber.hpp"
 #include <fastrtps/attributes/ParticipantAttributes.h>
 #include <fastrtps/attributes/SubscriberAttributes.h>
 #include <fastdds/dds/domain/DomainParticipantFactory.hpp>

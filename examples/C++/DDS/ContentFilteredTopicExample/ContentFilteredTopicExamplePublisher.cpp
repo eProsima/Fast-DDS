@@ -17,7 +17,7 @@
  *
  */
 
-#include "CustomFilterPublisher.hpp"
+#include "ContentFilteredTopicExamplePublisher.hpp"
 #include <fastrtps/attributes/ParticipantAttributes.h>
 #include <fastrtps/attributes/PublisherAttributes.h>
 #include <fastdds/dds/domain/DomainParticipantFactory.hpp>

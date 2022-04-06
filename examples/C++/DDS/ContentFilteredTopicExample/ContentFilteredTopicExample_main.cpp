@@ -17,8 +17,8 @@
  *
  */
 
-#include "CustomFilterPublisher.hpp"
-#include "CustomFilterSubscriber.hpp"
+#include "ContentFilteredTopicExamplePublisher.hpp"
+#include "ContentFilteredTopicExampleSubscriber.hpp"
 
 #include <fastdds/dds/domain/DomainParticipantFactory.hpp>
 

@@ -13,7 +13,7 @@
 // limitations under the License.
 
 /**
- * @file DefaultSQLFilterPublisher.hpp
+ * @file CustomFilterPublisher.hpp
  *
  */
 
@@ -26,13 +26,13 @@
 #include <fastdds/dds/topic/TypeSupport.hpp>
 #include <fastdds/dds/domain/DomainParticipant.hpp>
 
-class DefaultSQLFilterPublisher
+class CustomFilterPublisher
 {
 public:
 
-    DefaultSQLFilterPublisher();
+    CustomFilterPublisher();
 
-    virtual ~DefaultSQLFilterPublisher();
+    virtual ~CustomFilterPublisher();
 
     //!Initialize
     bool init();
@@ -70,9 +70,7 @@ private:
         {
         }
 
-        ~PubListener() override
-        {
-        }
+        ~PubListener() override = default;
 
         void on_publication_matched(
                 eprosima::fastdds::dds::DataWriter* writer,
