@@ -113,7 +113,7 @@ bool ContentFilteredTopicImpl::check_filter_signature(
     }
 
     // Find PID_CONTENT_FILTER_INFO on inline QoS
-    if (nullptr == change.inline_qos.data || 0 == change.inline_qos.length)
+    if (0 == change.inline_qos.length || nullptr == change.inline_qos.data)
     {
         return false;
     }

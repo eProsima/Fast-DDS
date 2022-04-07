@@ -284,7 +284,9 @@ ReturnCode_t DataWriterImpl::enable()
     RTPSWriter* writer =  RTPSDomainImpl::create_rtps_writer(
         publisher_->rtps_participant(),
         guid_.entityId,
-        w_att, pool, change_pool,
+        w_att,
+        pool,
+        change_pool,
         static_cast<WriterHistory*>(&history_),
         static_cast<WriterListener*>(&writer_listener_));
 
@@ -308,7 +310,9 @@ ReturnCode_t DataWriterImpl::enable()
         writer = RTPSDomainImpl::create_rtps_writer(
             publisher_->rtps_participant(),
             guid_.entityId,
-            w_att, pool, change_pool,
+            w_att,
+            pool,
+            change_pool,
             static_cast<WriterHistory*>(&history_),
             static_cast<WriterListener*>(&writer_listener_));
     }
