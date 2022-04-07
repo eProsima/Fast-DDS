@@ -561,7 +561,7 @@ protected:
     void remove_reader_filter(
             const fastrtps::rtps::GUID_t& reader_guid);
 
-    void update_reader_filter(
+    void process_reader_filter_info(
             const fastrtps::rtps::GUID_t& reader_guid,
             const fastrtps::rtps::ReaderProxyData& reader_info);
 

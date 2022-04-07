@@ -1071,7 +1071,7 @@ void DataWriterImpl::InnerDataWriterListener::on_reader_discovery(
 
             case fastrtps::rtps::ReaderDiscoveryInfo::DISCOVERY_STATUS::DISCOVERED_READER:
             case fastrtps::rtps::ReaderDiscoveryInfo::DISCOVERY_STATUS::CHANGED_QOS_READER:
-                data_writer_->update_reader_filter(reader_guid, *reader_info);
+                data_writer_->process_reader_filter_info(reader_guid, *reader_info);
                 break;
         }
     }
@@ -1853,7 +1853,7 @@ void DataWriterImpl::remove_reader_filter(
     }
 }
 
-void DataWriterImpl::update_reader_filter(
+void DataWriterImpl::process_reader_filter_info(
         const fastrtps::rtps::GUID_t& reader_guid,
         const fastrtps::rtps::ReaderProxyData& reader_info)
 {
