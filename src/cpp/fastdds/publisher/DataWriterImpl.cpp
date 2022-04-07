@@ -1678,7 +1678,8 @@ std::shared_ptr<IChangePool> DataWriterImpl::get_change_pool() const
     PoolConfig config = PoolConfig::from_history_attributes(history_.m_att);
     if (reader_filters_)
     {
-        return std::make_shared<DataWriterFilteredChangePool>(config, qos_.writer_resource_limits().reader_filters_allocation);
+        return std::make_shared<DataWriterFilteredChangePool>(
+            config, qos_.writer_resource_limits().reader_filters_allocation);
     }
 
     return std::make_shared<fastrtps::rtps::CacheChangePool>(config);
