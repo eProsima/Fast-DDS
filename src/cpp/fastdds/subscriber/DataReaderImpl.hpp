@@ -488,6 +488,8 @@ protected:
 
     void release_payload_pool();
 
+    void stop();
+
     ReturnCode_t check_datasharing_compatible(
             const fastrtps::rtps::ReaderAttributes& reader_attributes,
             bool& is_datasharing_compatible) const;

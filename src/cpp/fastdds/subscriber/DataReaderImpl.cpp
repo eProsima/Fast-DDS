@@ -14,7 +14,6 @@
 
 /**
  * @file DataReaderImpl.cpp
- *
  */
 
 #include <fastrtps/config.h>
@@ -253,6 +252,11 @@ ReturnCode_t DataReaderImpl::enable()
     }
     if (!subscriber_->rtps_participant()->registerReader(reader_, topic_attributes(), rqos, filter_property))
     {
+        logError(DATA_READER, "Could not register reader on discovery protocols");
+
+        reader_->setListener(nullptr);
+        stop();
+
         return ReturnCode_t::RETCODE_ERROR;
     }
 
@@ -268,10 +272,8 @@ void DataReaderImpl::disable()
     }
 }
 
-DataReaderImpl::~DataReaderImpl()
+void DataReaderImpl::stop()
 {
-    // Disable the datareader to prevent receiving data in the middle of deleting it
-    disable();
     delete lifespan_timer_;
     delete deadline_timer_;
 
@@ -283,10 +285,19 @@ DataReaderImpl::~DataReaderImpl()
 
     if (reader_ != nullptr)
     {
-        logInfo(DATA_READER, guid().entityId << " in topic: " << topic_->get_name());
+        logInfo(DATA_READER, "Removing " << guid().entityId << " in topic: " << topic_->get_name());
         RTPSDomain::removeRTPSReader(reader_);
+        reader_ = nullptr;
         release_payload_pool();
     }
+}
+
+DataReaderImpl::~DataReaderImpl()
+{
+    // Disable the datareader to prevent receiving data in the middle of deleting it
+    disable();
+
+    stop();
 
     delete user_datareader_;
 }
