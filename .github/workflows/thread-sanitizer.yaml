@@ -1,5 +1,6 @@
 name: Thread Sanitizer analysis
 on:
+  workflow_dispatch:
   push:
     branches:
       - 'feature/tsan/fixes'
@@ -154,10 +155,10 @@ jobs:
           & {$sd; $sr} | % { $_.échantillon | Out-File (Join-Path $dir "$($_.fuzzhash).tsan") }
           # Zip an artifact
           popd
-          gci $exports | Compress-Archive -DestinationPath ./ws/artifact.zip 
+          gci $exports | Compress-Archive -DestinationPath ./ws/tsan_reports.zip 
 
       - name: Archive sanitation results
         uses: actions/upload-artifact@v3
         with:
             name: sanitation-report
-            path: /home/runner/work/ws/artifact.zip
+            path: /home/runner/work/ws/tsan_reports.zip
