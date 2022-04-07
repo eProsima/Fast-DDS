@@ -23,6 +23,7 @@
 #include <fastdds/dds/topic/IContentFilter.hpp>
 #include <fastdds/dds/topic/IContentFilterFactory.hpp>
 #include <fastdds/dds/topic/Topic.hpp>
+#include <fastdds/dds/topic/TypeSupport.hpp>
 
 #include <fastdds/rtps/builtin/data/ContentFilterProperty.hpp>
 #include <fastdds/rtps/common/Guid.h>
@@ -45,6 +46,11 @@ namespace eprosima {
 namespace fastdds {
 namespace dds {
 
+/**
+ * Class responsible for writer side filtering.
+ * Contains a resource-limited map associating a reader GUID with its filtering information.
+ * Performs the evaluation of filters when a change is added to the DataWriter's history.
+ */
 class ReaderFilterCollection
 {
     using reader_filter_map_helper =
@@ -52,6 +58,11 @@ class ReaderFilterCollection
 
 public:
 
+    /**
+     * Construct a ReaderFilterCollection.
+     *
+     * @param allocation  Allocation configuration for reader filtering information.
+     */
     explicit ReaderFilterCollection(
             const fastrtps::ResourceLimitedContainerConfig& allocation)
         : reader_filter_allocator_(
@@ -70,11 +81,26 @@ public:
         }
     }
 
+    /**
+     * @return true when there are no reader filters registered.
+     */
     bool empty() const
     {
         return reader_filters_.empty();
     }
 
+    /**
+     * Performs filter evaluation on a DataWriterFilteredChange.
+     *
+     * @param [in,out] change                   DataWriterFilteredChange being filtered.
+     *                                          This method updates two of its properties:
+     *                                          - @c filtered_out_readers will contain the GUIDs of the readers to
+     *                                            which the change should not be delivered.
+     *                                          - @c inline_qos will be updated with a relevant ContentFilterInfo
+     *                                            parameter informing about the applied filters.
+     * @param [in]     related_sample_identity  SampleIdentity of a related sample, received from on the DataWriter's
+     *                                          write call.
+     */
     void update_filter_info(
             DataWriterFilteredChange& change,
             const fastrtps::rtps::SampleIdentity& related_sample_identity) const
@@ -122,6 +148,12 @@ public:
         }
     }
 
+    /**
+     * Remove filtering information for all readers using certain factory.
+     * Called when a custom filter factory is removed.
+     *
+     * @param [in] filter_class_name  Class name used to create the filters that should be removed.
+     */
     void remove_filters(
             const char* filter_class_name)
     {
@@ -137,6 +169,13 @@ public:
         }
     }
 
+    /**
+     * Unregister a reader from writer-side filtering.
+     * Called when the reader is unmatched or when its filtering information is
+     * updated to indicate it stopped filtering.
+     *
+     * @param [in] guid  GUID of the reader to remove.
+     */
     void remove_reader(
             const fastrtps::rtps::GUID_t& guid)
     {
@@ -148,6 +187,15 @@ public:
         }
     }
 
+    /**
+     * Update filtering information about a reader.
+     * Called whenever the discovery information about a reader changes.
+     *
+     * @param [in] guid         GUID of the reader for which the discovery information has changed.
+     * @param [in] filter_info  Content filter discovery information.
+     * @param [in] participant  DomainParticipantImpl of the writer calling this method.
+     * @param [in] topic        Topic on which the writer calling this method is writing.
+     */
     void update_reader(
             const fastrtps::rtps::GUID_t& guid,
             const rtps::ContentFilterProperty& filter_info,
@@ -159,7 +207,7 @@ public:
         if (0 == filter_info.filter_class_name.size() ||
                 0 != writer_topic->get_rtps_topic_name().compare(filter_info.related_topic_name.c_str()))
         {
-            // This reader does not report an aplicable filter. Remove the filter in case it had one previously.
+            // This reader does not report an applicable filter. Remove the filter in case it had one previously.
             remove_reader(guid);
         }
         else
@@ -175,7 +223,7 @@ public:
 
                 // Prepare and insert element
                 ReaderFilterInformation entry;
-                if (update_entry(entry, filter_info, participant, writer_topic))
+                if (update_entry(entry, filter_info, participant, writer_topic->get_type()))
                 {
                     reader_filters_.emplace(std::make_pair(guid, std::move(entry)));
                 }
@@ -183,7 +231,7 @@ public:
             else
             {
                 // Update entry
-                if (!update_entry(it->second, filter_info, participant, writer_topic))
+                if (!update_entry(it->second, filter_info, participant, writer_topic->get_type()))
                 {
                     // If the entry could not be updated, it means we cannot use the filter information, so
                     // we remove the old information
@@ -196,6 +244,11 @@ public:
 
 private:
 
+    /**
+     * Ensure a filter instance is removed before an information entry is removed.
+     *
+     * @param [in,out] entry  The ReaderFilterInformation entry being removed.
+     */
     void destroy_filter(
             ReaderFilterInformation& entry)
     {
@@ -207,11 +260,19 @@ private:
         }
     }
 
+    /**
+     * Update an information entry.
+     *
+     * @param [in,out] entry        The ReaderFilterInformation entry to update.
+     * @param [in]     filter_info  Content filter discovery information to apply.
+     * @param [in]     participant  DomainParticipantImpl where the filter factory should be looked up.
+     * @param [in]     type         Type to use for the creation of the content filter.
+     */
     bool update_entry(
             ReaderFilterInformation& entry,
             const rtps::ContentFilterProperty& filter_info,
             DomainParticipantImpl* participant,
-            TopicImpl* topic)
+            const TypeSupport& type)
     {
         const char* class_name = filter_info.filter_class_name.c_str();
         IContentFilterFactory* new_factory = participant->find_content_filter_factory(class_name);
@@ -242,9 +303,11 @@ private:
         IContentFilter* new_filter = entry.filter_factory == new_factory ? entry.filter : nullptr;
         ReturnCode_t ret = new_factory->create_content_filter(
             class_name,
-            topic->get_type().get_type_name().c_str(),
-            topic->get_type().get(),
-            filter_info.filter_expression.c_str(), filter_parameters, new_filter);
+            type.get_type_name().c_str(),
+            type.get(),
+            filter_info.filter_expression.c_str(),
+            filter_parameters,
+            new_filter);
 
         if (ReturnCode_t::RETCODE_OK != ret)
         {
