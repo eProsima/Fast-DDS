@@ -30,10 +30,25 @@ namespace fastdds {
 namespace dds {
 namespace ContentFilterUtils {
 
+/**
+ * Compute a filter signature according to RTPS 2.5 section 9.6.4.1
+ *
+ * @param [in]  filter_property   Filtering discovery information from which to compute the filter signature.
+ * @param [out] filter_signature  Filter signature.
+ */
 void compute_signature(
         const rtps::ContentFilterProperty& filter_property,
         std::array<uint8_t, 16>& filter_signature);
 
+/**
+ * Compute two filter signatures, one according to RTPS 2.5 section 9.6.4.1, and one interoperable with
+ * RTI Connext 6.1 and below.
+ *
+ * @param [in]  filter_property               Filtering discovery information from which to compute the filter
+ *                                            signatures.
+ * @param [out] filter_signature_rtps         Filter signature according to RTPS 2.5 section 9.6.4.1.
+ * @param [out] filter_signature_rti_connext  Filter signature interoperable with RTI Connext 6.1 and below.
+ */
 void compute_signature(
         const rtps::ContentFilterProperty& filter_property,
         std::array<uint8_t, 16>& filter_signature_rtps,
