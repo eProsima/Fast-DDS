@@ -32,7 +32,7 @@ namespace dds {
 /**
  * A CacheChangePool that allocates DataWriterCacheChange objects.
  */
-class DataWriterChangePool : public fastrtps::rtps::CacheChangePool
+class DataWriterChangePool final : public fastrtps::rtps::CacheChangePool
 {
 public:
 
@@ -47,13 +47,13 @@ public:
 
 protected:
 
-    virtual fastrtps::rtps::CacheChange_t* create_change() const
+    fastrtps::rtps::CacheChange_t* create_change() const final
     {
         return new DataWriterCacheChange(filter_allocation_);
     }
 
-    virtual void destroy_change(
-            fastrtps::rtps::CacheChange_t* change) const
+    void destroy_change(
+            fastrtps::rtps::CacheChange_t* change) const final
     {
         DataWriterCacheChange* writer_change = static_cast<DataWriterCacheChange*>(change);
         delete writer_change;
