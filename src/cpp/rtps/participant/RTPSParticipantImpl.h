@@ -768,7 +768,7 @@ public:
     /**
      * Create a Writer in this RTPSParticipant with a custom payload pool.
      * @param Writer Pointer to pointer of the Writer, used as output. Only valid if return==true.
-     * @param param WriterAttributes to define the Writer.
+     * @param watt WriterAttributes to define the Writer.
      * @param payload_pool Shared pointer to the IPayloadPool
      * @param change_pool Shared pointer to the IChangePool
      * @param hist Pointer to the WriterHistory.
@@ -779,7 +779,7 @@ public:
      */
     bool create_writer(
             RTPSWriter** Writer,
-            WriterAttributes& param,
+            WriterAttributes& watt,
             const std::shared_ptr<IPayloadPool>& payload_pool,
             const std::shared_ptr<IChangePool>& change_pool,
             WriterHistory* hist,
