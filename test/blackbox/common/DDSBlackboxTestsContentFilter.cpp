@@ -93,12 +93,15 @@ struct ContentFilterInfoCounter
                             {
                                 ++content_filter_info_count;
 
+                                // Should have at least numBitmaps, one bitmap, numSignatures, and one signature
                                 if (plen >= 4 + 4 + 4 + 16)
                                 {
+                                    // Read numBitmaps and skip bitmaps
                                     uint32_t num_bitmaps = 0;
                                     fastrtps::rtps::CDRMessage::readUInt32(&msg, &num_bitmaps);
                                     msg.pos += 4 * num_bitmaps;
 
+                                    // Read numSignatures and keep maximum
                                     uint32_t num_signatures = 0;
                                     fastrtps::rtps::CDRMessage::readUInt32(&msg, &num_signatures);
                                     if (max_filter_signature_number < num_signatures)
@@ -541,6 +544,7 @@ TEST_P(DDSContentFilter, WithLimitsDynamicReaders)
     auto reader_2 = state.create_filtered_reader();
     ASSERT_NE(nullptr, reader_2);
 
+    // Wait for the writer to discover the new reader, and give time for old samples to be delivered.
     state.writer.wait_discovery(3);
     std::this_thread::sleep_for(std::chrono::milliseconds(250));
     state.send_data(reader_2, filter_counter, 3u, { 2, 3, 4 }, true, 2u);
@@ -550,6 +554,7 @@ TEST_P(DDSContentFilter, WithLimitsDynamicReaders)
     auto reader_3 = state.create_filtered_reader();
     ASSERT_NE(nullptr, reader_3);
 
+    // Wait for the writer to discover the new reader, and give time for old samples to be delivered.
     state.writer.wait_discovery(4);
     std::this_thread::sleep_for(std::chrono::milliseconds(250));
     state.send_data(reader_3, filter_counter, 3u, { 2, 3, 4 }, true, 2u);
@@ -558,16 +563,16 @@ TEST_P(DDSContentFilter, WithLimitsDynamicReaders)
     std::cout << "========= Delete the second reader =========" << std::endl;
     state.delete_reader(reader_2);
     state.writer.wait_reader_undiscovery(3);
-    std::this_thread::sleep_for(std::chrono::milliseconds(250));
     state.send_data(reader_3, filter_counter, 3u, { 2, 3, 4 }, true, 1u);
 
     // Adding a fourth will increase the number of writer filters again
     std::cout << "========= Create a fourth reader =========" << std::endl;
     auto reader_4 = state.create_filtered_reader();
-    std::this_thread::sleep_for(std::chrono::milliseconds(250));
     ASSERT_NE(nullptr, reader_4);
 
+    // Wait for the writer to discover the new reader, and give time for old samples to be delivered.
     state.writer.wait_discovery(4);
+    std::this_thread::sleep_for(std::chrono::milliseconds(250));
     state.send_data(reader_4, filter_counter, 3u, { 2, 3, 4 }, true, 2u);
 }
 
