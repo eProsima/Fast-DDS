@@ -13,11 +13,11 @@
 // limitations under the License.
 
 /**
- * @file DataWriterCacheChange.hpp
+ * @file DataWriterFilteredChange.hpp
  */
 
-#ifndef _FASTDDS_PUBLISHER_FILTERING_DATAWRITERCACHECHANGE_HPP_
-#define _FASTDDS_PUBLISHER_FILTERING_DATAWRITERCACHECHANGE_HPP_
+#ifndef _FASTDDS_PUBLISHER_FILTERING_DATAWRITERFILTEREDCHANGE_HPP_
+#define _FASTDDS_PUBLISHER_FILTERING_DATAWRITERFILTEREDCHANGE_HPP_
 
 #include <fastdds/rtps/common/CacheChange.h>
 
@@ -31,21 +31,21 @@ namespace dds {
 /**
  * A cache change that holds writer-side filtering information.
  */
-struct DataWriterCacheChange final : public fastrtps::rtps::CacheChange_t
+struct DataWriterFilteredChange final : public fastrtps::rtps::CacheChange_t
 {
     /**
-     * Construct a DataWriterCacheChange.
+     * Construct a DataWriterFilteredChange.
      *
      * @param filter_allocation  Allocation configuration for the collection of filtered out readers.
      */
-    explicit DataWriterCacheChange(
+    explicit DataWriterFilteredChange(
             const fastrtps::ResourceLimitedContainerConfig& filter_allocation)
         : fastrtps::rtps::CacheChange_t()
         , filtered_out_readers(filter_allocation)
     {
     }
 
-    ~DataWriterCacheChange()
+    ~DataWriterFilteredChange()
     {
     }
 
@@ -78,4 +78,4 @@ struct DataWriterCacheChange final : public fastrtps::rtps::CacheChange_t
 }  // namespace fastdds
 }  // namespace eprosima
 
-#endif  //_FASTDDS_PUBLISHER_FILTERING_DATAWRITERCACHECHANGE_HPP_
+#endif  //_FASTDDS_PUBLISHER_FILTERING_DATAWRITERFILTEREDCHANGE_HPP_

@@ -33,7 +33,7 @@
 #include <foonathan/memory/memory_pool.hpp>
 
 #include <fastdds/domain/DomainParticipantImpl.hpp>
-#include <fastdds/publisher/filtering/DataWriterCacheChange.hpp>
+#include <fastdds/publisher/filtering/DataWriterFilteredChange.hpp>
 #include <fastdds/publisher/filtering/ReaderFilterInformation.hpp>
 #include <fastdds/topic/TopicImpl.hpp>
 #include <fastdds/topic/ContentFilterInfo.hpp>
@@ -76,7 +76,7 @@ public:
     }
 
     void update_filter_info(
-            DataWriterCacheChange& change,
+            DataWriterFilteredChange& change,
             const fastrtps::rtps::SampleIdentity& related_sample_identity) const
     {
         change.filtered_out_readers.clear();

@@ -13,7 +13,7 @@
 // limitations under the License.
 
 /**
- * @file DataWriterChangePool.hpp
+ * @file DataWriterFilteredChangePool.hpp
  */
 
 #ifndef _FASTDDS_PUBLISHER_FILTERING_DATAWRITERCHANGEPOOL_HPP_
@@ -21,7 +21,7 @@
 
 #include <fastrtps/utils/collections/ResourceLimitedContainerConfig.hpp>
 
-#include <fastdds/publisher/filtering/DataWriterCacheChange.hpp>
+#include <fastdds/publisher/filtering/DataWriterFilteredChange.hpp>
 #include <rtps/history/CacheChangePool.h>
 #include <rtps/history/PoolConfig.h>
 
@@ -30,13 +30,13 @@ namespace fastdds {
 namespace dds {
 
 /**
- * A CacheChangePool that allocates DataWriterCacheChange objects.
+ * A CacheChangePool that allocates DataWriterFilteredChange objects.
  */
-class DataWriterChangePool final : public fastrtps::rtps::CacheChangePool
+class DataWriterFilteredChangePool final : public fastrtps::rtps::CacheChangePool
 {
 public:
 
-    DataWriterChangePool(
+    DataWriterFilteredChangePool(
             const fastrtps::rtps::PoolConfig& config,
             const fastrtps::ResourceLimitedContainerConfig& filter_allocation)
         : fastrtps::rtps::CacheChangePool()
@@ -49,13 +49,13 @@ protected:
 
     fastrtps::rtps::CacheChange_t* create_change() const final
     {
-        return new DataWriterCacheChange(filter_allocation_);
+        return new DataWriterFilteredChange(filter_allocation_);
     }
 
     void destroy_change(
             fastrtps::rtps::CacheChange_t* change) const final
     {
-        DataWriterCacheChange* writer_change = static_cast<DataWriterCacheChange*>(change);
+        DataWriterFilteredChange* writer_change = static_cast<DataWriterFilteredChange*>(change);
         delete writer_change;
     }
 

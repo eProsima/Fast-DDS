@@ -47,7 +47,7 @@
 #include <fastdds/core/policy/QosPolicyUtils.hpp>
 
 #include <fastdds/domain/DomainParticipantImpl.hpp>
-#include <fastdds/publisher/filtering/DataWriterChangePool.hpp>
+#include <fastdds/publisher/filtering/DataWriterFilteredChangePool.hpp>
 
 #include <rtps/DataSharing/DataSharingPayloadPool.hpp>
 #include <rtps/history/CacheChangePool.h>
@@ -770,7 +770,7 @@ ReturnCode_t DataWriterImpl::perform_create_new_change(
             auto related_sample_identity = wparams.related_sample_identity();
             auto filter_hook = [&related_sample_identity, this](CacheChange_t& ch)
                     {
-                        reader_filters_->update_filter_info(static_cast<DataWriterCacheChange&>(ch),
+                        reader_filters_->update_filter_info(static_cast<DataWriterFilteredChange&>(ch),
                                 related_sample_identity);
                     };
             added = history_.add_pub_change_with_commit_hook(ch, wparams, filter_hook, lock, max_blocking_time);
@@ -1678,7 +1678,7 @@ std::shared_ptr<IChangePool> DataWriterImpl::get_change_pool() const
     PoolConfig config = PoolConfig::from_history_attributes(history_.m_att);
     if (reader_filters_)
     {
-        return std::make_shared<DataWriterChangePool>(config, qos_.writer_resource_limits().reader_filters_allocation);
+        return std::make_shared<DataWriterFilteredChangePool>(config, qos_.writer_resource_limits().reader_filters_allocation);
     }
 
     return std::make_shared<fastrtps::rtps::CacheChangePool>(config);
@@ -1881,7 +1881,7 @@ bool DataWriterImpl::is_relevant(
         const fastrtps::rtps::GUID_t& reader_guid) const
 {
     assert(reader_filters_);
-    const DataWriterCacheChange& writer_change = static_cast<const DataWriterCacheChange&>(change);
+    const DataWriterFilteredChange& writer_change = static_cast<const DataWriterFilteredChange&>(change);
     return writer_change.is_relevant_for(reader_guid);
 }
 
