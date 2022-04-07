@@ -119,6 +119,11 @@ bool ContentFilteredTopicImpl::check_filter_signature(
     }
 
     bool found = false;
+
+    // This will be called for every parameter found on the inline QoS of the received change.
+    // If a ContentFilterInfo parameter is found, it will traverse the filter signatures trying to find one that
+    // matches our own signature, in which case found is set to true, and filter_result is set to the result present
+    // on the ContentFilterInfo parameter for that signature.
     auto parameter_process = [&](
         fastrtps::rtps::CDRMessage_t* msg,
         const ParameterId_t pid,
