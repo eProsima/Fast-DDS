@@ -43,7 +43,7 @@
 
 using namespace eprosima::fastrtps::rtps;
 
-static void send_ack_if_datashating(
+static void send_ack_if_datasharing(
         StatefulReader* reader,
         ReaderHistory* history,
         WriterProxy* writer,
@@ -511,7 +511,7 @@ bool StatefulReader::processDataMsg(
                 {
                     pWP->irrelevant_change_set(change->sequenceNumber);
                     NotifyChanges(pWP);
-                    send_ack_if_datashating(this, mp_history, pWP, change->sequenceNumber);
+                    send_ack_if_datasharing(this, mp_history, pWP, change->sequenceNumber);
                 }
                 return false;
             }
@@ -522,7 +522,7 @@ bool StatefulReader::processDataMsg(
                 {
                     pWP->irrelevant_change_set(change->sequenceNumber);
                     NotifyChanges(pWP);
-                    send_ack_if_datashating(this, mp_history, pWP, change->sequenceNumber);
+                    send_ack_if_datasharing(this, mp_history, pWP, change->sequenceNumber);
                 }
                 return true;
             }
@@ -632,7 +632,7 @@ bool StatefulReader::processDataFragMsg(
                 {
                     pWP->irrelevant_change_set(incomingChange->sequenceNumber);
                     NotifyChanges(pWP);
-                    send_ack_if_datashating(this, mp_history, pWP, incomingChange->sequenceNumber);
+                    send_ack_if_datasharing(this, mp_history, pWP, incomingChange->sequenceNumber);
                 }
                 return false;
             }
@@ -1245,7 +1245,7 @@ void StatefulReader::change_read_by_user(
 
     if (mark_as_read)
     {
-        send_ack_if_datashating(this, mp_history, writer, change->sequenceNumber);
+        send_ack_if_datasharing(this, mp_history, writer, change->sequenceNumber);
     }
 }
 
