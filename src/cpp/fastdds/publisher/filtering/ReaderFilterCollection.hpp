@@ -188,7 +188,7 @@ public:
     }
 
     /**
-     * Update filtering information about a reader.
+     * Process filtering information about a reader.
      * Called whenever the discovery information about a reader changes.
      *
      * @param [in] guid         GUID of the reader for which the discovery information has changed.
@@ -196,7 +196,7 @@ public:
      * @param [in] participant  DomainParticipantImpl of the writer calling this method.
      * @param [in] topic        Topic on which the writer calling this method is writing.
      */
-    void update_reader(
+    void process_reader_filter_info(
             const fastrtps::rtps::GUID_t& guid,
             const rtps::ContentFilterProperty& filter_info,
             DomainParticipantImpl* participant,
