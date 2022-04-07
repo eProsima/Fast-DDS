@@ -101,11 +101,9 @@ bool EDP::newLocalReaderProxyData(
         const ReaderQos& rqos,
         const fastdds::rtps::ContentFilterProperty* content_filter)
 {
-    static_cast<void>(content_filter);
-
     logInfo(RTPS_EDP, "Adding " << reader->getGuid().entityId << " in topic " << att.topicName);
 
-    auto init_fun = [this, reader, &att, &rqos](
+    auto init_fun = [this, reader, &att, &rqos, content_filter](
         ReaderProxyData* rpd,
         bool updating,
         const ParticipantProxyData& participant_data)
@@ -150,6 +148,21 @@ bool EDP::newLocalReaderProxyData(
                 }
                 rpd->m_qos.setQos(rqos, true);
                 rpd->userDefinedId(reader->getAttributes().getUserDefinedID());
+                if (nullptr != content_filter)
+                {
+                    // Check content of ContentFilterProperty.
+                    if (!(0 < content_filter->content_filtered_topic_name.size() &&
+                            0 < content_filter->related_topic_name.size() &&
+                            0 < content_filter->filter_class_name.size() &&
+                            0 < content_filter->filter_expression.size()
+                            ))
+                    {
+                        return false;
+                    }
+
+                    rpd->content_filter(*content_filter);
+                }
+
 #if HAVE_SECURITY
                 if (mp_RTPSParticipant->is_secure())
                 {
@@ -361,9 +374,7 @@ bool EDP::updatedLocalReader(
         const ReaderQos& rqos,
         const fastdds::rtps::ContentFilterProperty* content_filter)
 {
-    static_cast<void>(content_filter);
-
-    auto init_fun = [this, reader, &rqos, &att](
+    auto init_fun = [this, reader, &rqos, &att, content_filter](
         ReaderProxyData* rdata,
         bool updating,
         const ParticipantProxyData& participant_data)
@@ -384,6 +395,20 @@ bool EDP::updatedLocalReader(
                     rdata->set_announced_unicast_locators(reader->getAttributes().unicastLocatorList);
                 }
                 rdata->m_qos.setQos(rqos, false);
+                if (nullptr != content_filter)
+                {
+                    // Check content of ContentFilterProperty.
+                    if (!(0 < content_filter->content_filtered_topic_name.size() &&
+                            0 < content_filter->related_topic_name.size() &&
+                            0 < content_filter->filter_class_name.size() &&
+                            0 < content_filter->filter_expression.size()
+                            ))
+                    {
+                        return false;
+                    }
+
+                    rdata->content_filter(*content_filter);
+                }
                 rdata->isAlive(true);
                 rdata->m_expectsInlineQos = reader->expectsInlineQos();
 

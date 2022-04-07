@@ -291,7 +291,10 @@ bool StatelessWriter::datasharing_delivery(
     logInfo(RTPS_WRITER, "Notifying readers of cache change with SN " << change->sequenceNumber);
     for (std::unique_ptr<ReaderLocator>& reader : matched_datasharing_readers_)
     {
-        reader->datasharing_notify();
+        if (!reader_data_filter_ || reader_data_filter_->is_relevant(*change, reader->remote_guid()))
+        {
+            reader->datasharing_notify();
+        }
     }
     return true;
 }
@@ -342,7 +345,8 @@ bool StatelessWriter::intraprocess_delivery(
 {
     RTPSReader* reader = reader_locator.local_reader();
 
-    if (reader)
+    if (reader &&
+            (!reader_data_filter_ || reader_data_filter_->is_relevant(*change, reader_locator.remote_guid())))
     {
         if (change->write_params.related_sample_identity() != SampleIdentity::unknown())
         {
@@ -436,6 +440,10 @@ bool StatelessWriter::matched_reader_add(
             }
             ))
     {
+        if (nullptr != mp_listener)
+        {
+            mp_listener->on_reader_discovery(this, ReaderDiscoveryInfo::CHANGED_QOS_READER, data.guid(), &data);
+        }
         return false;
     }
 
@@ -496,6 +504,10 @@ bool StatelessWriter::matched_reader_add(
 
     update_reader_info(true);
 
+    if (nullptr != mp_listener)
+    {
+        mp_listener->on_reader_discovery(this, ReaderDiscoveryInfo::DISCOVERED_READER, data.guid(), &data);
+    }
     return true;
 }
 
@@ -574,6 +586,10 @@ bool StatelessWriter::matched_reader_remove(
         matched_readers_pool_.push_back(std::move(reader));
         update_reader_info(false);
         logInfo(RTPS_WRITER, "Reader Proxy removed: " << reader_guid);
+        if (nullptr != mp_listener)
+        {
+            mp_listener->on_reader_discovery(this, ReaderDiscoveryInfo::REMOVED_READER, reader_guid, nullptr);
+        }
         return true;
     }
 
@@ -626,6 +642,7 @@ DeliveryRetCode StatelessWriter::deliver_sample_nts(
 {
     size_t num_locators = locator_selector.locator_selector.selected_size() + fixed_locators_.size();
     uint64_t change_sequence_number = cache_change->sequenceNumber.to64long();
+    NetworkFactory& network = mp_RTPSParticipant->network_factory();
     DeliveryRetCode ret_code = DeliveryRetCode::DELIVERED;
 
     if (current_sequence_number_sent_ != change_sequence_number)
@@ -634,7 +651,7 @@ DeliveryRetCode StatelessWriter::deliver_sample_nts(
         current_fragment_sent_ = 0;
     }
 
-    // Send to interprocess readers the new sample.
+    // Send the new sample to intra-process readers.
     if (0 == current_fragment_sent_)
     {
         for_matched_readers(matched_local_readers_, [&, cache_change](ReaderLocator& reader)
@@ -650,7 +667,6 @@ DeliveryRetCode StatelessWriter::deliver_sample_nts(
 
         if (m_separateSendingEnabled)
         {
-            std::vector<GUID_t> guids(1);
             if (0 < n_fragments)
             {
                 for (FragmentNumber_t frag = current_fragment_sent_ + 1;
@@ -658,19 +674,23 @@ DeliveryRetCode StatelessWriter::deliver_sample_nts(
                 {
                     for (std::unique_ptr<ReaderLocator>& it : matched_remote_readers_)
                     {
-                        group.sender(this, &*it);
-                        num_locators = it->locators_size();
+                        if ((nullptr == reader_data_filter_) ||
+                                reader_data_filter_->is_relevant(*cache_change, it->remote_guid()))
+                        {
+                            group.sender(this, &*it);
+                            num_locators = it->locators_size();
 
-                        if (group.add_data_frag(*cache_change, frag, is_inline_qos_expected_))
-                        {
-                            add_statistics_sent_submessage(cache_change, num_locators);
-                        }
-                        else
-                        {
-                            logError(RTPS_WRITER,
-                                    "Error sending fragment (" << cache_change->sequenceNumber << ", " << frag <<
-                                    ")");
-                            ret_code = DeliveryRetCode::NOT_DELIVERED;
+                            if (group.add_data_frag(*cache_change, frag, is_inline_qos_expected_))
+                            {
+                                add_statistics_sent_submessage(cache_change, num_locators);
+                            }
+                            else
+                            {
+                                logError(RTPS_WRITER,
+                                        "Error sending fragment (" << cache_change->sequenceNumber << ", " << frag <<
+                                        ")");
+                                ret_code = DeliveryRetCode::NOT_DELIVERED;
+                            }
                         }
                     }
 
@@ -684,23 +704,48 @@ DeliveryRetCode StatelessWriter::deliver_sample_nts(
             {
                 for (std::unique_ptr<ReaderLocator>& it : matched_remote_readers_)
                 {
-                    group.sender(this, &*it);
-                    num_locators = it->locators_size();
+                    if ((nullptr == reader_data_filter_) ||
+                            reader_data_filter_->is_relevant(*cache_change, it->remote_guid()))
+                    {
+                        group.sender(this, &*it);
+                        num_locators = it->locators_size();
 
-                    if (group.add_data(*cache_change, is_inline_qos_expected_))
-                    {
-                        add_statistics_sent_submessage(cache_change, num_locators);
-                    }
-                    else
-                    {
-                        logError(RTPS_WRITER, "Error sending change " << cache_change->sequenceNumber);
-                        ret_code = DeliveryRetCode::NOT_DELIVERED;
+                        if (group.add_data(*cache_change, is_inline_qos_expected_))
+                        {
+                            add_statistics_sent_submessage(cache_change, num_locators);
+                        }
+                        else
+                        {
+                            logError(RTPS_WRITER, "Error sending change " << cache_change->sequenceNumber);
+                            ret_code = DeliveryRetCode::NOT_DELIVERED;
+                        }
                     }
                 }
             }
         }
         else
         {
+            bool locator_selector_should_be_reset = false;
+
+            if (nullptr != reader_data_filter_)
+            {
+                locator_selector.locator_selector.reset(false);
+                for (std::unique_ptr<ReaderLocator>& it : matched_remote_readers_)
+                {
+                    if (reader_data_filter_->is_relevant(*cache_change, it->remote_guid()))
+                    {
+                        locator_selector.locator_selector.enable(it->remote_guid());
+                    }
+                }
+                if (locator_selector.locator_selector.state_has_changed())
+                {
+                    network.select_locators(locator_selector.locator_selector);
+                    compute_selected_guids(locator_selector);
+                    locator_selector_should_be_reset = true;
+                }
+                num_locators = locator_selector.locator_selector.selected_size() + fixed_locators_.size();
+            }
+
             if (0 < num_locators)
             {
                 if (0 < n_fragments)
@@ -733,6 +778,13 @@ DeliveryRetCode StatelessWriter::deliver_sample_nts(
                         ret_code = DeliveryRetCode::NOT_DELIVERED;
                     }
                 }
+            }
+
+            if (locator_selector_should_be_reset)
+            {
+                locator_selector.locator_selector.reset(true);
+                network.select_locators(locator_selector.locator_selector);
+                compute_selected_guids(locator_selector);
             }
         }
 

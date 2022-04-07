@@ -97,6 +97,10 @@ bool StatelessReader::matched_writer_add(
         if (writer.guid == wdata.guid())
         {
             logWarning(RTPS_READER, "Attempting to add existing writer");
+            if (nullptr != mp_listener)
+            {
+                mp_listener->on_writer_discovery(this, WriterDiscoveryInfo::CHANGED_QOS_WRITER, wdata.guid(), &wdata);
+            }
             return false;
         }
     }
@@ -168,6 +172,10 @@ bool StatelessReader::matched_writer_add(
         datasharing_listener_->notify(false);
     }
 
+    if (nullptr != mp_listener)
+    {
+        mp_listener->on_writer_discovery(this, WriterDiscoveryInfo::DISCOVERED_WRITER, wdata.guid(), &wdata);
+    }
     return true;
 }
 
@@ -212,6 +220,10 @@ bool StatelessReader::matched_writer_remove(
 
             remove_persistence_guid(it->guid, it->persistence_guid, removed_by_lease);
             matched_writers_.erase(it);
+            if (nullptr != mp_listener)
+            {
+                mp_listener->on_writer_discovery(this, WriterDiscoveryInfo::REMOVED_WRITER, writer_guid, nullptr);
+            }
             return true;
         }
     }
@@ -601,7 +613,12 @@ bool StatelessReader::processDataFragMsg(
                 // If the change was completed, process it.
                 if (change_completed != nullptr)
                 {
-                    if (data_filter_ && !data_filter_->is_relevant(*change_completed, m_guid))
+                    // Temporarilly assign the inline qos while evaluating the data filter
+                    change_completed->inline_qos = incomingChange->inline_qos;
+                    bool filtered_out = data_filter_ && !data_filter_->is_relevant(*change_completed, m_guid);
+                    change_completed->inline_qos = SerializedPayload_t();
+
+                    if (filtered_out)
                     {
                         update_last_notified(change_completed->writerGUID, change_completed->sequenceNumber);
                         releaseCache(change_completed);

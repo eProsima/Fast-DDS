@@ -191,18 +191,26 @@ bool BuiltinProtocols::addLocalWriter(
         const fastrtps::TopicAttributes& topicAtt,
         const fastrtps::WriterQos& wqos)
 {
-    bool ok = false;
+    bool ok = true;
+
     if (mp_PDP != nullptr)
     {
-        ok |= mp_PDP->getEDP()->newLocalWriterProxyData(w, topicAtt, wqos);
+        ok = mp_PDP->getEDP()->newLocalWriterProxyData(w, topicAtt, wqos);
+
+        if (!ok)
+        {
+            logWarning(RTPS_EDP, "Failed register WriterProxyData in EDP");
+            return false;
+        }
     }
     else
     {
         logWarning(RTPS_EDP, "EDP is not used in this Participant, register a Writer is impossible");
     }
+
     if (mp_WLP != nullptr)
     {
-        ok |= mp_WLP->add_local_writer(w, wqos);
+        ok &= mp_WLP->add_local_writer(w, wqos);
     }
     else
     {
@@ -217,19 +225,28 @@ bool BuiltinProtocols::addLocalReader(
         const fastrtps::ReaderQos& rqos,
         const fastdds::rtps::ContentFilterProperty* content_filter)
 {
-    bool ok = false;
+    bool ok = true;
+
     if (mp_PDP != nullptr)
     {
-        ok |= mp_PDP->getEDP()->newLocalReaderProxyData(R, topicAtt, rqos, content_filter);
+        ok = mp_PDP->getEDP()->newLocalReaderProxyData(R, topicAtt, rqos, content_filter);
+
+        if (!ok)
+        {
+            logWarning(RTPS_EDP, "Failed register ReaderProxyData in EDP");
+            return false;
+        }
     }
     else
     {
         logWarning(RTPS_EDP, "EDP is not used in this Participant, register a Reader is impossible");
     }
+
     if (mp_WLP != nullptr)
     {
-        ok |= mp_WLP->add_local_reader(R, rqos);
+        ok &= mp_WLP->add_local_reader(R, rqos);
     }
+
     return ok;
 }
 
@@ -241,7 +258,7 @@ bool BuiltinProtocols::updateLocalWriter(
     bool ok = false;
     if (mp_PDP != nullptr && mp_PDP->getEDP() != nullptr)
     {
-        ok |= mp_PDP->getEDP()->updatedLocalWriter(W, topicAtt, wqos);
+        ok = mp_PDP->getEDP()->updatedLocalWriter(W, topicAtt, wqos);
     }
     return ok;
 }
@@ -255,7 +272,7 @@ bool BuiltinProtocols::updateLocalReader(
     bool ok = false;
     if (mp_PDP != nullptr && mp_PDP->getEDP() != nullptr)
     {
-        ok |= mp_PDP->getEDP()->updatedLocalReader(R, topicAtt, rqos, content_filter);
+        ok = mp_PDP->getEDP()->updatedLocalReader(R, topicAtt, rqos, content_filter);
     }
     return ok;
 }

@@ -171,6 +171,10 @@ bool StatefulReader::matched_writer_add(
                     getRTPSParticipant()->createSenderResources(locator);
                 }
             }
+            if (nullptr != mp_listener)
+            {
+                mp_listener->on_writer_discovery(this, WriterDiscoveryInfo::CHANGED_QOS_WRITER, wdata.guid(), &wdata);
+            }
             return false;
         }
     }
@@ -273,6 +277,10 @@ bool StatefulReader::matched_writer_add(
         }
     }
 
+    if (nullptr != mp_listener)
+    {
+        mp_listener->on_writer_discovery(this, WriterDiscoveryInfo::DISCOVERED_WRITER, wdata.guid(), &wdata);
+    }
     return true;
 }
 
@@ -331,6 +339,10 @@ bool StatefulReader::matched_writer_remove(
             }
             wproxy->stop();
             matched_writers_pool_.push_back(wproxy);
+            if (nullptr != mp_listener)
+            {
+                mp_listener->on_writer_discovery(this, WriterDiscoveryInfo::REMOVED_WRITER, writer_guid, nullptr);
+            }
         }
         else
         {
@@ -632,7 +644,13 @@ bool StatefulReader::processDataFragMsg(
             {
                 mp_history->completed_change(work_change);
                 pWP->received_change_set(work_change->sequenceNumber);
-                if (data_filter_ && !data_filter_->is_relevant(*work_change, m_guid))
+
+                // Temporarilly assign the inline qos while evaluating the data filter
+                work_change->inline_qos = incomingChange->inline_qos;
+                bool filtered_out = data_filter_ && !data_filter_->is_relevant(*work_change, m_guid);
+                work_change->inline_qos = SerializedPayload_t();
+
+                if (filtered_out)
                 {
                     mp_history->remove_change(work_change);
                 }

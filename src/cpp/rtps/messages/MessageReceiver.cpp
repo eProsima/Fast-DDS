@@ -765,6 +765,11 @@ bool MessageReceiver::proc_Submsg_Data(
             logInfo(RTPS_MSG_IN, IDSTRING "SubMessage Data ERROR, Inline Qos ParameterList error");
             return false;
         }
+        ch.inline_qos.data = &msg->buffer[msg->pos - inlineQosSize];
+        ch.inline_qos.max_size = inlineQosSize;
+        ch.inline_qos.length = inlineQosSize;
+        ch.inline_qos.encapsulation = endiannessFlag ? PL_CDR_LE : PL_CDR_BE;
+        ch.inline_qos.pos = 0;
     }
 
     if (dataFlag || keyFlag)
@@ -829,8 +834,9 @@ bool MessageReceiver::proc_Submsg_Data(
         payload_pool->release_payload(ch);
     }
 
-    //TODO(Ricardo) If a exception is thrown (ex, by fastcdr), this line is not executed -> segmentation fault
+    //TODO(Ricardo) If an exception is thrown (ex, by fastcdr), these lines are not executed -> segmentation fault
     ch.serializedPayload.data = nullptr;
+    ch.inline_qos.data = nullptr;
 
     logInfo(RTPS_MSG_IN, IDSTRING "Sub Message DATA processed");
     return true;
@@ -939,6 +945,11 @@ bool MessageReceiver::proc_Submsg_DataFrag(
             logInfo(RTPS_MSG_IN, IDSTRING "SubMessage Data ERROR, Inline Qos ParameterList error");
             return false;
         }
+        ch.inline_qos.data = &msg->buffer[msg->pos - inlineQosSize];
+        ch.inline_qos.max_size = inlineQosSize;
+        ch.inline_qos.length = inlineQosSize;
+        ch.inline_qos.encapsulation = endiannessFlag ? PL_CDR_LE : PL_CDR_BE;
+        ch.inline_qos.pos = 0;
     }
 
     uint32_t payload_size;
@@ -999,6 +1010,7 @@ bool MessageReceiver::proc_Submsg_DataFrag(
             associated_readers_.size());
     process_data_fragment_message_function_(readerID, ch, sampleSize, fragmentStartingNum, fragmentsInSubmessage);
     ch.serializedPayload.data = nullptr;
+    ch.inline_qos.data = nullptr;
 
     logInfo(RTPS_MSG_IN, IDSTRING "Sub Message DATA_FRAG processed");
 

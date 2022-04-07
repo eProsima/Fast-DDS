@@ -21,7 +21,10 @@
 #define FASTDDS_CORE_POLICY__PARAMETERSERIALIZER_HPP_
 
 #include "ParameterList.hpp"
+
+#include <fastdds/rtps/builtin/data/ContentFilterProperty.hpp>
 #include <fastdds/rtps/common/CDRMessage_t.h>
+#include <fastrtps/utils/fixed_size_string.hpp>
 
 namespace eprosima {
 namespace fastdds {
@@ -706,6 +709,207 @@ inline bool ParameterSerializer<ParameterSampleIdentity_t>::read_content_from_cd
     valid &= fastrtps::rtps::CDRMessage::readUInt32(cdr_message, &parameter.sample_id.sequence_number().low);
     return valid;
 }
+
+template<>
+class ParameterSerializer<fastdds::rtps::ContentFilterProperty>
+{
+public:
+
+    static uint32_t cdr_serialized_size(
+            const fastdds::rtps::ContentFilterProperty& parameter)
+    {
+        uint32_t ret_val = 0;
+
+        if (0 < parameter.filter_class_name.size() &&
+                0 < parameter.content_filtered_topic_name.size() &&
+                0 < parameter.related_topic_name.size() &&
+                0 < parameter.filter_expression.size())
+        {
+            // p_id + p_length
+            ret_val = 2 + 2;
+            // content_filtered_topic_name
+            ret_val += cdr_serialized_size(parameter.content_filtered_topic_name);
+            // related_topic_name
+            ret_val += cdr_serialized_size(parameter.related_topic_name);
+            // filter_class_name
+            ret_val += cdr_serialized_size(parameter.filter_class_name);
+
+            // filter_expression
+            // str_len + null_char + str_data
+            ret_val += 4 + 1 + static_cast<uint32_t>(parameter.filter_expression.size());
+            // align
+            ret_val = (ret_val + 3) & ~3;
+
+            // expression_parameters
+            // sequence length
+            ret_val += 4;
+            // Add all parameters
+            for (const fastrtps::string_255& param : parameter.expression_parameters)
+            {
+                ret_val += cdr_serialized_size(param);
+            }
+        }
+
+        return ret_val;
+    }
+
+    static bool add_to_cdr_message(
+            const fastdds::rtps::ContentFilterProperty& parameter,
+            fastrtps::rtps::CDRMessage_t* cdr_message)
+    {
+        bool valid = false;
+
+        if (0 < parameter.filter_class_name.size() &&
+                0 < parameter.content_filtered_topic_name.size() &&
+                0 < parameter.related_topic_name.size() &&
+                0 < parameter.filter_expression.size())
+        {
+            // p_id + p_length
+            uint32_t len = cdr_serialized_size(parameter);
+            assert(4 < len && 0xFFFF >= (len - 4));
+            valid = fastrtps::rtps::CDRMessage::addUInt16(cdr_message, PID_CONTENT_FILTER_PROPERTY);
+            valid &= fastrtps::rtps::CDRMessage::addUInt16(cdr_message, static_cast<uint16_t>(len - 4));
+            // content_filtered_topic_name
+            valid &= fastrtps::rtps::CDRMessage::add_string(cdr_message, parameter.content_filtered_topic_name);
+            // related_topic_name
+            valid &= fastrtps::rtps::CDRMessage::add_string(cdr_message, parameter.related_topic_name);
+            // filter_class_name
+            valid &= fastrtps::rtps::CDRMessage::add_string(cdr_message, parameter.filter_class_name);
+            // filter_expression
+            valid &= fastrtps::rtps::CDRMessage::add_string(cdr_message, parameter.filter_expression);
+
+            // expression_parameters
+            // sequence length
+            uint32_t num_params = static_cast<uint32_t>(parameter.expression_parameters.size());
+            valid &= fastrtps::rtps::CDRMessage::addUInt32(cdr_message, num_params);
+            // Add all parameters
+            for (const fastrtps::string_255& param : parameter.expression_parameters)
+            {
+                valid &= fastrtps::rtps::CDRMessage::add_string(cdr_message, param);
+            }
+        }
+
+        return valid;
+    }
+
+    static bool read_from_cdr_message(
+            fastdds::rtps::ContentFilterProperty& parameter,
+            fastrtps::rtps::CDRMessage_t* cdr_message,
+            const uint16_t parameter_length)
+    {
+        // Ensure incorrect length will result in parameter being cleared
+        clear(parameter);
+
+        // Validate minimum plength: 4 non-empty strings + number of expression parameters
+        constexpr uint16_t min_plength = (4 * 8) + 4;
+        if (parameter_length >= min_plength && (cdr_message->length - cdr_message->pos) > parameter_length)
+        {
+            bool valid = true;
+            // Limit message length to parameter length, keeping old length to restore it later
+            uint32_t old_msg_len = cdr_message->length;
+            cdr_message->length = cdr_message->pos + parameter_length;
+
+            // Read four strings
+            valid = read_string(cdr_message, parameter.content_filtered_topic_name) &&
+                    (0 < parameter.content_filtered_topic_name.size());
+            if (valid)
+            {
+                valid = read_string(cdr_message, parameter.related_topic_name) &&
+                        (0 < parameter.related_topic_name.size());
+            }
+            if (valid)
+            {
+                valid = read_string(cdr_message, parameter.filter_class_name) &&
+                        (0 < parameter.filter_class_name.size());
+            }
+            if (valid)
+            {
+                valid = fastrtps::rtps::CDRMessage::readString(cdr_message, &parameter.filter_expression) &&
+                        (0 < parameter.filter_expression.size());
+            }
+
+            // Read parameter sequence
+            if (valid)
+            {
+                uint32_t num_parameters = 0;
+                valid = fastrtps::rtps::CDRMessage::readUInt32(cdr_message, &num_parameters);
+                if (valid)
+                {
+                    valid = (num_parameters < 100) && (num_parameters < parameter.expression_parameters.max_size());
+                }
+                if (valid)
+                {
+                    for (uint32_t i = 0; valid && i < num_parameters; ++i)
+                    {
+                        fastrtps::string_255* p = parameter.expression_parameters.push_back({});
+                        assert(nullptr != p);
+                        valid = read_string(cdr_message, *p);
+                    }
+                }
+            }
+
+            cdr_message->length = old_msg_len;
+            if (!valid)
+            {
+                clear(parameter);
+            }
+
+            return true;
+        }
+
+        return false;
+    }
+
+private:
+
+    static inline uint32_t cdr_serialized_size(
+            const fastrtps::string_255& str)
+    {
+        // Size including NUL char at the end
+        uint32_t str_siz = static_cast<uint32_t>(str.size()) + 1;
+        // Align to next 4 byte
+        str_siz = (str_siz + 3u) & ~3u;
+        // str_length + str_data
+        return 4u + str_siz;
+    }
+
+    static inline void clear(
+            fastdds::rtps::ContentFilterProperty& parameter)
+    {
+        parameter.filter_class_name = "";
+        parameter.content_filtered_topic_name = "";
+        parameter.related_topic_name = "";
+        parameter.filter_expression = "";
+        parameter.expression_parameters.clear();
+    }
+
+    static inline bool read_string(
+            fastrtps::rtps::CDRMessage_t* cdr_message,
+            fastrtps::string_255& str)
+    {
+        uint32_t str_size = 0;
+        bool valid;
+        valid = fastrtps::rtps::CDRMessage::readUInt32(cdr_message, &str_size);
+        if (!valid ||
+                cdr_message->pos + str_size > cdr_message->length ||
+                str_size > str.max_size + 1)
+        {
+            return false;
+        }
+
+        str = "";
+        // str_size == 1 would be for an empty string, as the NUL char is always serialized
+        if (str_size > 1)
+        {
+            str = reinterpret_cast<const char*>(&(cdr_message->buffer[cdr_message->pos]));
+        }
+        cdr_message->pos += str_size;
+        cdr_message->pos = (cdr_message->pos + 3u) & ~3u;
+
+        return true;
+    }
+
+};
 
 #if HAVE_SECURITY
 
