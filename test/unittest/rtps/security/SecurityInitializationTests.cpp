@@ -27,7 +27,6 @@ TEST_F(SecurityTest, initialization_auth_nullptr)
     security_activated_ = manager_.init(security_attributes_, participant_properties_);
     ASSERT_TRUE(security_activated_);
     ASSERT_TRUE(manager_.is_security_initialized());
-    ASSERT_TRUE(!security_activated_ || manager_.create_entities());
 }
 
 TEST_F(SecurityTest, initialization_auth_failed)
