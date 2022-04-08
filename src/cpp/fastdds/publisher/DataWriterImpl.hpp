@@ -558,9 +558,22 @@ protected:
             void* data,
             PayloadInfo_t& payload);
 
+    /**
+     * Remove internal filtering information about a reader.
+     * Called whenever a non-intra-process reader is unmatched.
+     *
+     * @param reader_guid  GUID of the reader that has been unmatched.
+     */
     void remove_reader_filter(
             const fastrtps::rtps::GUID_t& reader_guid);
 
+    /**
+     * Process filtering information for a reader.
+     * Called when a new reader is matched, and whenever the discovery information of a matched reader changes.
+     *
+     * @param reader_guid  The GUID of the reader for which the discovery information changed.
+     * @param reader_info  The reader's discovery information.
+     */
     void process_reader_filter_info(
             const fastrtps::rtps::GUID_t& reader_guid,
             const fastrtps::rtps::ReaderProxyData& reader_info);
