@@ -1,4 +1,4 @@
-// Copyright 2016 Proyectos y Sistemas de Mantenimiento SL (eProsima).
+// Copyright 2022 Proyectos y Sistemas de Mantenimiento SL (eProsima).
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -13,13 +13,11 @@
 // limitations under the License.
 
 /**
- * @file PublisherHistory.h
- *
+ * @file DataWriterHistory.hpp
  */
 
-#ifndef PUBLISHERHISTORY_H_
-#define PUBLISHERHISTORY_H_
-#ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
+#ifndef _FASTDDS_PUBLISHER_DATAWRITERHISTORY_HPP_
+#define _FASTDDS_PUBLISHER_DATAWRITERHISTORY_HPP_
 
 #include <chrono>
 #include <mutex>
@@ -33,29 +31,30 @@
 #include <fastrtps/qos/QosPolicies.h>
 
 namespace eprosima {
-namespace fastrtps {
+namespace fastdds {
+namespace dds {
 
 /**
- * Class PublisherHistory, implementing a WriterHistory with support for keyed topics and HistoryQOS.
+ * Class DataWriterHistory, implementing a WriterHistory with support for keyed topics and HistoryQOS.
  * This class is created by the PublisherImpl and should not be used by the user directly.
- * @ingroup FASTRTPS_MODULE
+ * @ingroup FASTDDS_MODULE
  */
-class PublisherHistory : public rtps::WriterHistory
+class DataWriterHistory : public fastrtps::rtps::WriterHistory
 {
 public:
 
     /**
-     * Constructor of the PublisherHistory.
+     * Constructor of the DataWriterHistory.
      * @param topic_att TopicAttributed
      * @param payloadMax Maximum payload size.
      * @param mempolicy Set whether the payloads ccan dynamically resized or not.
      */
-    PublisherHistory(
-            const TopicAttributes& topic_att,
+    DataWriterHistory(
+            const fastrtps::TopicAttributes& topic_att,
             uint32_t payloadMax,
-            rtps::MemoryManagementPolicy_t mempolicy);
+            fastrtps::rtps::MemoryManagementPolicy_t mempolicy);
 
-    virtual ~PublisherHistory();
+    virtual ~DataWriterHistory();
 
     /**
      * Rebuild instances loaded from DB. Does nothing if the topic doesn't have key.
@@ -70,12 +69,12 @@ public:
      * @return True if resources was reserved successfully.
      */
     bool register_instance(
-            const rtps::InstanceHandle_t& instance_handle,
-            std::unique_lock<RecursiveTimedMutex>& lock,
+            const fastrtps::rtps::InstanceHandle_t& instance_handle,
+            std::unique_lock<fastrtps::RecursiveTimedMutex>& lock,
             const std::chrono::time_point<std::chrono::steady_clock>& max_blocking_time);
 
     /**
-     * Add a change comming from the Publisher.
+     * Add a change comming from the DataWriter.
      * @param change Pointer to the change
      * @param wparams Extra write parameters.
      * @param lock
@@ -83,10 +82,53 @@ public:
      * @return True if added.
      */
     bool add_pub_change(
-            rtps::CacheChange_t* change,
-            rtps::WriteParams& wparams,
-            std::unique_lock<RecursiveTimedMutex>& lock,
+            fastrtps::rtps::CacheChange_t* change,
+            fastrtps::rtps::WriteParams& wparams,
+            std::unique_lock<fastrtps::RecursiveTimedMutex>& lock,
             const std::chrono::time_point<std::chrono::steady_clock>& max_blocking_time);
+
+    /**
+     * Add a change comming from the DataWriter.
+     *
+     * @param change             Pointer to the change
+     * @param wparams            Extra writer parameters.
+     * @param pre_commit         Functor receiving a CacheChange_t& to perform actions after the
+     *                           change has been added to the history, but before notifying the RTPS writer.
+     * @param lock               Lock to the history mutex.
+     * @param max_blocking_time  Maximum time point to wait for room on the history.
+     *
+     * @return True if added.
+     */
+    template<typename PreCommitHook>
+    bool add_pub_change_with_commit_hook(
+            fastrtps::rtps::CacheChange_t* change,
+            fastrtps::rtps::WriteParams& wparams,
+            PreCommitHook pre_commit,
+            std::unique_lock<fastrtps::RecursiveTimedMutex>& lock,
+            const std::chrono::time_point<std::chrono::steady_clock>& max_blocking_time)
+    {
+        bool returnedValue = false;
+        bool add = prepare_change(change, lock, max_blocking_time);
+
+        if (add)
+        {
+    #if HAVE_STRICT_REALTIME
+            if (this->add_change_with_commit_hook(change, wparams, pre_commit, max_blocking_time))
+    #else
+            auto time_point = std::chrono::steady_clock::now() + std::chrono::hours(24);
+            if (this->add_change_with_commit_hook(change, wparams, pre_commit, time_point))
+    #endif // if HAVE_STRICT_REALTIME
+            {
+                logInfo(RTPS_HISTORY,
+                        topic_att_.getTopicDataType()
+                        << " Change " << change->sequenceNumber << " added with key: " << change->instanceHandle
+                        << " and " << change->serializedPayload.length << " bytes");
+                returnedValue = true;
+            }
+        }
+
+        return returnedValue;
+    }
 
     /**
      * Remove all change from the associated history.
@@ -108,14 +150,14 @@ public:
      * @return True if removed.
      */
     bool remove_change_pub(
-            rtps::CacheChange_t* change);
+            fastrtps::rtps::CacheChange_t* change);
 
     virtual bool remove_change_g(
-            rtps::CacheChange_t* a_change);
+            fastrtps::rtps::CacheChange_t* a_change);
 
     bool remove_instance_changes(
-            const rtps::InstanceHandle_t& handle,
-            const rtps::SequenceNumber_t& seq_up_to);
+            const fastrtps::rtps::InstanceHandle_t& handle,
+            const fastrtps::rtps::SequenceNumber_t& seq_up_to);
 
     /**
      * @brief Sets the next deadline for the given instance
@@ -124,7 +166,7 @@ public:
      * @return True if deadline was set successfully
      */
     bool set_next_deadline(
-            const rtps::InstanceHandle_t& handle,
+            const fastrtps::rtps::InstanceHandle_t& handle,
             const std::chrono::steady_clock::time_point& next_deadline_us);
 
     /**
@@ -134,7 +176,7 @@ public:
      * @return True if deadline could be retrieved for the given instance
      */
     bool get_next_deadline(
-            rtps::InstanceHandle_t& handle,
+            fastrtps::rtps::InstanceHandle_t& handle,
             std::chrono::steady_clock::time_point& next_deadline_us);
 
     /*!
@@ -143,7 +185,7 @@ public:
      * return `true` if instance's key is registered in the history.
      */
     bool is_key_registered(
-            const rtps::InstanceHandle_t& handle);
+            const fastrtps::rtps::InstanceHandle_t& handle);
 
     /**
      * Waits till the last change in the instance history has been acknowledged.
@@ -153,13 +195,13 @@ public:
      * @return true when the last change of the instance history is acknowleged, false when timeout is reached.
      */
     bool wait_for_acknowledgement_last_change(
-            const rtps::InstanceHandle_t& handle,
-            std::unique_lock<RecursiveTimedMutex>& lock,
+            const fastrtps::rtps::InstanceHandle_t& handle,
+            std::unique_lock<fastrtps::RecursiveTimedMutex>& lock,
             const std::chrono::time_point<std::chrono::steady_clock>& max_blocking_time);
 
 private:
 
-    typedef std::map<rtps::InstanceHandle_t, KeyedChanges> t_m_Inst_Caches;
+    typedef std::map<fastrtps::rtps::InstanceHandle_t, fastrtps::KeyedChanges> t_m_Inst_Caches;
 
     //!Map where keys are instance handles and values are vectors of cache changes associated
     t_m_Inst_Caches keyed_changes_;
@@ -170,7 +212,7 @@ private:
     //!ResourceLimitsQosPolicy values.
     ResourceLimitsQosPolicy resource_limited_qos_;
     //!Topic Attributes
-    TopicAttributes topic_att_;
+    fastrtps::TopicAttributes topic_att_;
 
     /**
      * @brief Method that finds a key in m_keyedChanges or tries to add it if not found
@@ -179,7 +221,7 @@ private:
      * @return True if the key was found or could be added to the map
      */
     bool find_or_add_key(
-            const rtps::InstanceHandle_t& instance_handle,
+            const fastrtps::rtps::InstanceHandle_t& instance_handle,
             t_m_Inst_Caches::iterator* map_it);
 
     /**
@@ -190,13 +232,13 @@ private:
      * @return True if added.
      */
     bool prepare_change(
-            rtps::CacheChange_t* change,
-            std::unique_lock<RecursiveTimedMutex>& lock,
+            fastrtps::rtps::CacheChange_t* change,
+            std::unique_lock<fastrtps::RecursiveTimedMutex>& lock,
             const std::chrono::time_point<std::chrono::steady_clock>& max_blocking_time);
 };
 
-} /* namespace fastrtps */
-} /* namespace eprosima */
+}  // namespace dds
+}  // namespace fastdds
+}  // namespace eprosima
 
-#endif // ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
-#endif // PUBLISHERHISTORY_H_
+#endif // _FASTDDS_PUBLISHER_DATAWRITERHISTORY_HPP_

@@ -13,6 +13,9 @@
 // limitations under the License.
 
 
+#ifndef _RTPS_RTPSDOMAINIMPL_HPP_
+#define _RTPS_RTPSDOMAINIMPL_HPP_
+
 #include <chrono>
 #include <thread>
 
@@ -37,6 +40,28 @@ namespace rtps {
 class RTPSDomainImpl
 {
 public:
+
+    /**
+     * Create a RTPSWriter in a participant.
+     * @param p Pointer to the RTPSParticipant.
+     * @param entity_id Specific entity id to use for the created writer.
+     * @param watt Writer Attributes.
+     * @param payload_pool Shared pointer to the IPayloadPool
+     * @param hist Pointer to the WriterHistory.
+     * @param listen Pointer to the WriterListener.
+     * @return Pointer to the created RTPSWriter.
+     *
+     * \warning The returned pointer is invalidated after a call to removeRTPSWriter() or stopAll(),
+     *          so its use may result in undefined behaviour.
+     */
+    static RTPSWriter* create_rtps_writer(
+            RTPSParticipant* p,
+            const EntityId_t& entity_id,
+            WriterAttributes& watt,
+            const std::shared_ptr<IPayloadPool>& payload_pool,
+            const std::shared_ptr<IChangePool>& change_pool,
+            WriterHistory* hist,
+            WriterListener* listen = nullptr);
 
     /**
      * Creates the guid of a participant given its identifier.
@@ -126,3 +151,5 @@ public:
 } // namespace rtps
 } // namespace fastrtps
 } // namespace eprosima
+
+#endif  // _RTPS_RTPSDOMAINIMPL_HPP_

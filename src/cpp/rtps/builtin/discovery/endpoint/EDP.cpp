@@ -409,6 +409,11 @@ bool EDP::updatedLocalReader(
 
                     rdata->content_filter(*content_filter);
                 }
+                else
+                {
+                    rdata->content_filter().filter_class_name = "";
+                    rdata->content_filter().filter_expression = "";
+                }
                 rdata->isAlive(true);
                 rdata->m_expectsInlineQos = reader->expectsInlineQos();
 

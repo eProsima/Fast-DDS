@@ -91,7 +91,9 @@ set(${PROJECT_NAME}_source_files
     fastrtps_deprecated/subscriber/SubscriberHistory.cpp
     fastdds/publisher/DataWriter.cpp
     fastdds/publisher/DataWriterImpl.cpp
+    fastdds/publisher/DataWriterHistory.cpp
     fastdds/topic/ContentFilteredTopic.cpp
+    fastdds/topic/ContentFilteredTopicImpl.cpp
     fastdds/topic/Topic.cpp
     fastdds/topic/TopicImpl.cpp
     fastdds/topic/TypeSupport.cpp

@@ -14,7 +14,6 @@
 
 /**
  * @file DataReaderImpl.cpp
- *
  */
 
 #include <fastrtps/config.h>
@@ -209,6 +208,7 @@ ReturnCode_t DataReaderImpl::enable()
     if (nullptr != content_topic)
     {
         reader->set_content_filter(content_topic);
+        content_topic->add_reader(this);
     }
 
     reader_ = reader;
@@ -244,7 +244,21 @@ ReturnCode_t DataReaderImpl::enable()
             rqos.m_partition.push_back(partition_name.c_str());
         }
     }
-    subscriber_->rtps_participant()->registerReader(reader_, topic_attributes(), rqos);
+
+    eprosima::fastdds::rtps::ContentFilterProperty* filter_property = nullptr;
+    if (nullptr != content_topic && !content_topic->filter_property.filter_expression.empty())
+    {
+        filter_property = &content_topic->filter_property;
+    }
+    if (!subscriber_->rtps_participant()->registerReader(reader_, topic_attributes(), rqos, filter_property))
+    {
+        logError(DATA_READER, "Could not register reader on discovery protocols");
+
+        reader_->setListener(nullptr);
+        stop();
+
+        return ReturnCode_t::RETCODE_ERROR;
+    }
 
     return ReturnCode_t::RETCODE_OK;
 }
@@ -258,19 +272,32 @@ void DataReaderImpl::disable()
     }
 }
 
+void DataReaderImpl::stop()
+{
+    delete lifespan_timer_;
+    delete deadline_timer_;
+
+    auto content_topic = dynamic_cast<ContentFilteredTopicImpl*>(topic_->get_impl());
+    if (nullptr != content_topic)
+    {
+        content_topic->remove_reader(this);
+    }
+
+    if (reader_ != nullptr)
+    {
+        logInfo(DATA_READER, "Removing " << guid().entityId << " in topic: " << topic_->get_name());
+        RTPSDomain::removeRTPSReader(reader_);
+        reader_ = nullptr;
+        release_payload_pool();
+    }
+}
+
 DataReaderImpl::~DataReaderImpl()
 {
     // Disable the datareader to prevent receiving data in the middle of deleting it
     disable();
-    delete lifespan_timer_;
-    delete deadline_timer_;
 
-    if (reader_ != nullptr)
-    {
-        logInfo(DATA_READER, guid().entityId << " in topic: " << topic_->get_name());
-        RTPSDomain::removeRTPSReader(reader_);
-        release_payload_pool();
-    }
+    stop();
 
     delete user_datareader_;
 }
@@ -700,11 +727,21 @@ InstanceHandle_t DataReaderImpl::get_instance_handle() const
 
 void DataReaderImpl::subscriber_qos_updated()
 {
+    update_rtps_reader_qos();
+}
+
+void DataReaderImpl::update_rtps_reader_qos()
+{
     if (reader_)
     {
-        //NOTIFY THE BUILTIN PROTOCOLS THAT THE READER HAS CHANGED
+        eprosima::fastdds::rtps::ContentFilterProperty* filter_property = nullptr;
+        auto content_topic = dynamic_cast<ContentFilteredTopicImpl*>(topic_->get_impl());
+        if (nullptr != content_topic && !content_topic->filter_property.filter_expression.empty())
+        {
+            filter_property = &content_topic->filter_property;
+        }
         ReaderQos rqos = qos_.get_readerqos(get_subscriber()->get_qos());
-        subscriber_->rtps_participant()->updateReader(reader_, topic_attributes(), rqos);
+        subscriber_->rtps_participant()->updateReader(reader_, topic_attributes(), rqos, filter_property);
     }
 }
 
@@ -741,9 +778,8 @@ ReturnCode_t DataReaderImpl::set_qos(
 
     if (enabled)
     {
-        //NOTIFY THE BUILTIN PROTOCOLS THAT THE READER HAS CHANGED
-        ReaderQos rqos = qos.get_readerqos(get_subscriber()->get_qos());
-        subscriber_->rtps_participant()->updateReader(reader_, topic_attributes(), rqos);
+        // NOTIFY THE BUILTIN PROTOCOLS THAT THE READER HAS CHANGED
+        update_rtps_reader_qos();
 
         // Deadline
         if (qos_.deadline().period != c_TimeInfinite)
@@ -1593,6 +1629,11 @@ ReturnCode_t DataReaderImpl::delete_contained_entities()
 {
     // Until Query Conditions are implemented, there are no contained entities to destroy, so return OK.
     return ReturnCode_t::RETCODE_OK;
+}
+
+void DataReaderImpl::filter_has_been_updated()
+{
+    update_rtps_reader_qos();
 }
 
 } /* namespace dds */

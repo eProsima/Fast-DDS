@@ -65,6 +65,11 @@ struct RTPS_DllAPI Time_t
      */
     int64_t to_ns() const;
 
+    inline bool is_infinite() const noexcept
+    {
+        return is_infinite(*this);
+    }
+
     /**
      * Fills a Time_t struct with a representation of the current time.
      *
@@ -72,6 +77,13 @@ struct RTPS_DllAPI Time_t
      */
     static void now(
             Time_t& ret);
+
+    static inline constexpr bool is_infinite(
+            const Time_t& t) noexcept
+    {
+        return (INFINITE_SECONDS == t.seconds) || (INFINITE_NANOSECONDS == t.nanosec);
+    }
+
 };
 
 using Duration_t = Time_t;

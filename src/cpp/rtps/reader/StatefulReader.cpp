@@ -43,6 +43,43 @@
 
 using namespace eprosima::fastrtps::rtps;
 
+static void send_ack_if_datasharing(
+        StatefulReader* reader,
+        ReaderHistory* history,
+        WriterProxy* writer,
+        const SequenceNumber_t& sequence_number)
+{
+    // If not datasharing, we are done
+    if (!writer || !writer->is_datasharing_writer())
+    {
+        return;
+    }
+
+    // This may not be the change read with highest SN,
+    // need to find largest SN to ACK
+    for (std::vector<CacheChange_t*>::iterator it = history->changesBegin(); it != history->changesEnd(); ++it)
+    {
+        if (!(*it)->isRead)
+        {
+            if ((*it)->writerGUID == writer->guid())
+            {
+                if ((*it)->sequenceNumber < sequence_number)
+                {
+                    //There are earlier changes not read yet. Do not send ACK.
+                    return;
+                }
+                SequenceNumberSet_t sns((*it)->sequenceNumber);
+                reader->send_acknack(writer, sns, writer, false);
+                return;
+            }
+        }
+    }
+
+    // Must ACK all in the writer
+    SequenceNumberSet_t sns(writer->available_changes_max() + 1);
+    reader->send_acknack(writer, sns, writer, false);
+}
+
 StatefulReader::~StatefulReader()
 {
     logInfo(RTPS_READER, "StatefulReader destructor.");
@@ -256,7 +293,6 @@ bool StatefulReader::matched_writer_add(
     }
     else
     {
-
         matched_writers_.push_back(wp);
         logInfo(RTPS_READER, "Writer Proxy " << wp->guid() << " added to " << m_guid.entityId);
     }
@@ -474,6 +510,8 @@ bool StatefulReader::processDataMsg(
                 if (will_never_be_accepted && pWP)
                 {
                     pWP->irrelevant_change_set(change->sequenceNumber);
+                    NotifyChanges(pWP);
+                    send_ack_if_datasharing(this, mp_history, pWP, change->sequenceNumber);
                 }
                 return false;
             }
@@ -483,6 +521,8 @@ bool StatefulReader::processDataMsg(
                 if (pWP)
                 {
                     pWP->irrelevant_change_set(change->sequenceNumber);
+                    NotifyChanges(pWP);
+                    send_ack_if_datasharing(this, mp_history, pWP, change->sequenceNumber);
                 }
                 return true;
             }
@@ -591,6 +631,8 @@ bool StatefulReader::processDataFragMsg(
                 if (will_never_be_accepted)
                 {
                     pWP->irrelevant_change_set(incomingChange->sequenceNumber);
+                    NotifyChanges(pWP);
+                    send_ack_if_datasharing(this, mp_history, pWP, incomingChange->sequenceNumber);
                 }
                 return false;
             }
@@ -1201,38 +1243,9 @@ void StatefulReader::change_read_by_user(
         }
     }
 
-    // If not datasharing, we are done
-    if (!writer || !writer->is_datasharing_writer())
-    {
-        return;
-    }
-
     if (mark_as_read)
     {
-        // This may not be the change read with highest SN,
-        // need to find largest SN to ACK
-        for (std::vector<CacheChange_t*>::iterator it = mp_history->changesBegin();
-                it != mp_history->changesEnd(); ++it)
-        {
-            if (!(*it)->isRead)
-            {
-                if ((*it)->writerGUID == writer->guid())
-                {
-                    if ((*it)->sequenceNumber < change->sequenceNumber)
-                    {
-                        //There are earlier changes not read yet. Do not send ACK.
-                        return;
-                    }
-                    SequenceNumberSet_t sns((*it)->sequenceNumber);
-                    send_acknack(writer, sns, writer, false);
-                    return;
-                }
-            }
-        }
-
-        // Must ACK all in the writer
-        SequenceNumberSet_t sns(writer->available_changes_max() + 1);
-        send_acknack(writer, sns, writer, false);
+        send_ack_if_datasharing(this, mp_history, writer, change->sequenceNumber);
     }
 }
 

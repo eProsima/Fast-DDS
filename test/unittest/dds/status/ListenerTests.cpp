@@ -568,6 +568,10 @@ protected:
                 participant_->create_subscriber(SUBSCRIBER_QOS_DEFAULT, &subscriber_listener_);
         ASSERT_NE(subscriber_, nullptr);
 
+        EXPECT_CALL(participant_mock_,
+                registerReader(&reader_mock_, ::testing::_, ::testing::_, nullptr)).WillRepeatedly(
+            ::testing::Return(true));
+
         datareader_ =
                 subscriber_->create_datareader(topic_, DATAREADER_QOS_DEFAULT, &datareader_listener_);
         ASSERT_NE(datareader_, nullptr);

@@ -1021,6 +1021,56 @@ bool RTPSParticipantImpl::createWriter(
     return create_writer(WriterOut, param, entityId, isBuiltin, callback);
 }
 
+bool RTPSParticipantImpl::create_writer(
+        RTPSWriter** WriterOut,
+        WriterAttributes& watt,
+        const std::shared_ptr<IPayloadPool>& payload_pool,
+        const std::shared_ptr<IChangePool>& change_pool,
+        WriterHistory* hist,
+        WriterListener* listen,
+        const EntityId_t& entityId,
+        bool isBuiltin)
+{
+    if (!payload_pool)
+    {
+        logError(RTPS_PARTICIPANT, "Trying to create writer with null payload pool");
+        return false;
+    }
+
+    auto callback = [hist, listen, &payload_pool, &change_pool, this]
+                (const GUID_t& guid, WriterAttributes& param, fastdds::rtps::FlowController* flow_controller,
+                    IPersistenceService* persistence, bool is_reliable) -> RTPSWriter*
+            {
+                if (is_reliable)
+                {
+                    if (persistence != nullptr)
+                    {
+                        return new StatefulPersistentWriter(this, guid, param, payload_pool, change_pool,
+                                       flow_controller, hist, listen, persistence);
+                    }
+                    else
+                    {
+                        return new StatefulWriter(this, guid, param, payload_pool, change_pool,
+                                       flow_controller, hist, listen);
+                    }
+                }
+                else
+                {
+                    if (persistence != nullptr)
+                    {
+                        return new StatelessPersistentWriter(this, guid, param, payload_pool, change_pool,
+                                       flow_controller, hist, listen, persistence);
+                    }
+                    else
+                    {
+                        return new StatelessWriter(this, guid, param, payload_pool, change_pool,
+                                       flow_controller, hist, listen);
+                    }
+                }
+            };
+    return create_writer(WriterOut, param, entityId, isBuiltin, callback);
+}
+
 bool RTPSParticipantImpl::createReader(
         RTPSReader** ReaderOut,
         ReaderAttributes& param,
