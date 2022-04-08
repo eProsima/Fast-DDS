@@ -533,10 +533,6 @@ void SecurityManager::destroy()
 void SecurityManager::remove_discovered_participant_info(
         const DiscoveredParticipantInfo::AuthUniquePtr& auth_ptr)
 {
-    auto sentry = is_security_manager_initialized();
-    if(!sentry)
-        return;
-
     SecurityException exception;
 
     if (auth_ptr)
@@ -606,6 +602,7 @@ bool SecurityManager::discovered_participant(
     AuthenticationStatus auth_status = AUTHENTICATION_INIT;
 
     // Create or find information
+    bool undiscovered = false;
     DiscoveredParticipantInfo::AuthUniquePtr remote_participant_info;
     {
         std::lock_guard<shared_mutex> _(mutex_);
@@ -618,12 +615,11 @@ bool SecurityManager::discovered_participant(
                             auth_status,
                             participant_data))));
 
+        undiscovered = map_ret.second;
         remote_participant_info = map_ret.first->second->get_auth();
     }
 
-    assert(remote_participant_info);
-
-    if (remote_participant_info)
+    if (undiscovered && remote_participant_info)
     {
         // Configure the timed event but do not start it
         const GUID_t guid = participant_data.m_guid;
@@ -775,8 +771,6 @@ void SecurityManager::remove_participant(
     {
         std::lock_guard<shared_mutex> _(mutex_);
 
-        auto dp_it = discovered_participants_.find(participant_data.m_guid);
-
         for (auto& local_reader : reader_handles_)
         {
             for (auto wit = local_reader.second.associated_writers.begin();
@@ -811,7 +805,7 @@ void SecurityManager::remove_participant(
             }
         }
 
-        discovered_participants_.erase(dp_it);
+        discovered_participants_.erase(participant_data.m_guid);
     }
 }
 
@@ -1704,7 +1698,7 @@ void SecurityManager::process_participant_volatile_message_secure(
 
         // Search remote participant crypto handle.
         {
-            std::shared_lock<std::shared_mutex> lock(mutex_);
+            shared_lock<shared_mutex> lock(mutex_);
 
             auto dp_it = discovered_participants_.find(remote_participant_key);
 
@@ -1739,7 +1733,7 @@ void SecurityManager::process_participant_volatile_message_secure(
         }
         else
         {
-            std::lock_guard<std::shared_mutex> _(mutex_);
+            std::lock_guard<shared_mutex> _(mutex_);
             remote_participant_pending_messages_.emplace(remote_participant_key, std::move(message.message_data()));
         }
     }
@@ -1771,7 +1765,7 @@ void SecurityManager::process_participant_volatile_message_secure(
         ReaderProxyData* reader_data = nullptr;
 
         {
-            std::lock_guard<std::shared_mutex> _(mutex_);
+            std::lock_guard<shared_mutex> _(mutex_);
 
             auto wr_it = writer_handles_.find(message.destination_endpoint_key());
 
@@ -1847,7 +1841,7 @@ void SecurityManager::process_participant_volatile_message_secure(
         WriterProxyData* writer_data = nullptr;
 
         {
-            std::lock_guard<std::shared_mutex> _(mutex_);
+            std::lock_guard<shared_mutex> _(mutex_);
             auto rd_it = reader_handles_.find(message.destination_endpoint_key());
 
             if (rd_it != reader_handles_.end())
