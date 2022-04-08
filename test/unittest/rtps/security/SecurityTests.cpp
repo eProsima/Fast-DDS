@@ -39,8 +39,10 @@ void SecurityTest::initialization_ok()
             WillOnce(DoAll(SetArgPointee<0>(stateless_reader_), Return(true))).
             WillOnce(DoAll(SetArgPointee<0>(volatile_reader_), Return(true)));
 
-    ASSERT_TRUE(manager_.init(security_attributes_, participant_properties_, security_activated_));
-    ASSERT_TRUE(!security_activated_ || manager_.create_entities());
+    security_activated_ = manager_.init(security_attributes_, participant_properties_);
+    ASSERT_TRUE(security_activated_);
+    ASSERT_TRUE(manager_.is_security_initialized());
+    ASSERT_TRUE(!manager_.is_security_initialized() || manager_.create_entities());
 }
 
 void SecurityTest::initialization_auth_ok()
@@ -60,8 +62,10 @@ void SecurityTest::initialization_auth_ok()
     EXPECT_CALL(participant_, createReader_mock(_, _, _, _, _, _, _)).Times(1).
             WillOnce(DoAll(SetArgPointee<0>(stateless_reader_), Return(true)));
 
-    ASSERT_TRUE(manager_.init(security_attributes_, participant_properties_, security_activated_));
-    ASSERT_TRUE(!security_activated_ || manager_.create_entities());
+    security_activated_ = manager_.init(security_attributes_, participant_properties_);
+    ASSERT_TRUE(security_activated_);
+    ASSERT_TRUE(manager_.is_security_initialized());
+    ASSERT_TRUE(!manager_.is_security_initialized() || manager_.create_entities());
 }
 
 void SecurityTest::request_process_ok(

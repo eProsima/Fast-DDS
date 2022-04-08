@@ -352,10 +352,8 @@ bool SecurityManager::init(
                     throw true;
                 }
             }
-            else
-            {
-                throw false;
-            }
+
+            throw false;
         }
         else
         {
