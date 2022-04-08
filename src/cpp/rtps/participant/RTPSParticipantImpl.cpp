@@ -1023,7 +1023,7 @@ bool RTPSParticipantImpl::createWriter(
 
 bool RTPSParticipantImpl::create_writer(
         RTPSWriter** WriterOut,
-        WriterAttributes& param,
+        WriterAttributes& watt,
         const std::shared_ptr<IPayloadPool>& payload_pool,
         const std::shared_ptr<IChangePool>& change_pool,
         WriterHistory* hist,
