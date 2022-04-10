@@ -374,7 +374,7 @@ bool SecurityManager::init(
             }
         }
     }
-    catch (SecurityException e)
+    catch (const SecurityException& e)
     {
         logError(SECURITY, "Logging plugin not configured. Security logging will be disabled. ("
                 << e.what() << ").");
