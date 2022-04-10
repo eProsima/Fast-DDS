@@ -294,8 +294,10 @@ public:
      */
     bool is_security_active() const
     {
-        if(ready_state_)
+        if (ready_state_)
+        {
             return *ready_state_;
+        }
         return false;
     }
 
@@ -760,10 +762,10 @@ private:
         std::weak_ptr<bool> wp(ready_state_);
         ready_state_.reset();
 
-        while(!wp.expired())
+        while (!wp.expired())
         {
             std::this_thread::yield();
-        };
+        }
     }
 
     /**

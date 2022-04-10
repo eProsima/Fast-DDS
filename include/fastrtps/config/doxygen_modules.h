@@ -21,14 +21,14 @@
 
 //Description of doxygen modules, not used in actual code.
 
- /*!
+/*!
  * @defgroup FASTRTPS_GENERAL_API eProsima Fast RTPS API Reference
  * @brief eProsima Fast RTPS API grouped in modules.
  */
 
 
 
- /*!
+/*!
  * @defgroup RTPS_MODULE RTPS
  * @ingroup FASTRTPS_GENERAL_API
  * @brief RTPS API
@@ -113,7 +113,7 @@
  * This module contains the classes associated with DDS Security (see https://www.omg.org/spec/DDS-SECURITY/)
  */
 
-#endif
+#endif // ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 
 
 /** @defgroup UTILITIES_MODULE Shared Utilities
@@ -140,6 +140,6 @@
 /**
  * @namespace eprosima::fastrtps::rtps::TimeConv Auxiliary methods to convert to Time_t to more manageable types.
  *  @ingroup UTILITIES_MODULE
-  */
+ */
 
 #endif /* RTPS_DOXYGEN_MODULES_H_ */
