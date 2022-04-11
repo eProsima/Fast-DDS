@@ -85,6 +85,7 @@ struct Arg : public option::Arg
         }
         return option::ARG_ILLEGAL;
     }
+
 };
 
 enum optionIndex
