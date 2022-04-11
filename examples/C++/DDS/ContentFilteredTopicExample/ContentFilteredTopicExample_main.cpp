@@ -40,17 +40,6 @@ struct Arg : public option::Arg
         fprintf(stderr, "%s", msg2);
     }
 
-    static option::ArgStatus Unknown(
-            const option::Option& option,
-            bool msg)
-    {
-        if (msg)
-        {
-            print_error("Unknown option '", option, "'\n");
-        }
-        return option::ARG_ILLEGAL;
-    }
-
     static option::ArgStatus Numeric(
             const option::Option& option,
             bool msg)
@@ -143,6 +132,12 @@ int main(
         option::printUsage(fwrite, stdout, usage);
         return 0;
     }
+    else if (options[UNKNOWN_OPTION])
+    {
+        std::cerr << "ERROR: " << options[UNKNOWN_OPTION].name << " is not a valid argument." << std::endl;
+        option::printUsage(fwrite, stdout, usage);
+        return 1;
+    }
 
     int type = 1;
     int count = 0;
@@ -150,7 +145,7 @@ int main(
     bool custom_filter = false;
     if (options[PUBLISHER] && options[SUBSCRIBER])
     {
-        std::cout << "ERROR: select either publisher or subscriber option" << std::endl;
+        std::cerr << "ERROR: select either publisher or subscriber option" << std::endl;
         option::printUsage(fwrite, stdout, usage);
         return 1;
     }
@@ -158,7 +153,7 @@ int main(
     {
         if (options[FILTER])
         {
-            std::cout << "ERROR: option filter is a subscriber option" << std::endl;
+            std::cerr << "ERROR: option filter is a subscriber option" << std::endl;
             option::printUsage(fwrite, stdout, usage);
             return 1;
         }
@@ -176,7 +171,7 @@ int main(
         type = 2;
         if (options[SAMPLES] || options[INTERVAL])
         {
-            std::cout << "ERROR: options samples and interval are publisher options" << std::endl;
+            std::cerr << "ERROR: options samples and interval are publisher options" << std::endl;
             option::printUsage(fwrite, stdout, usage);
             return 1;
         }
@@ -188,7 +183,7 @@ int main(
             }
             else if (0 != strcmp(options[FILTER].arg, "default"))
             {
-                std::cout << "ERROR: filter option should be either custom or default" << std::endl;
+                std::cerr << "ERROR: filter option should be either custom or default" << std::endl;
                 option::printUsage(fwrite, stdout, usage);
                 return 1;
             }
@@ -196,7 +191,7 @@ int main(
     }
     else
     {
-        std::cout << "ERROR: select either publisher or subscriber option" << std::endl;
+        std::cerr << "ERROR: select either publisher or subscriber option" << std::endl;
         option::printUsage(fwrite, stdout, usage);
         return 1;
     }
