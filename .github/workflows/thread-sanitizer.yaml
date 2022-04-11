@@ -1,0 +1,164 @@
+name: Thread Sanitizer analysis
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - 'feature/tsan/fixes'
+  pull_request:
+    branches:
+      - 'feature/tsan/fixes'
+env:
+  TSAN_OPTIONS: second_deadlock_stack=1
+  # ubuntu host doesn't have an environment SHELL value (docker and vm images does)???
+  SHELL: /bin/bash
+
+defaults:
+  run:
+    shell: pwsh
+    working-directory: /home/runner/work
+jobs:
+  ubuntu-sanitizer-run:
+    name: Sanitizer Evaluation
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download the sanitazers cmake module and apply some fixes
+        run: |
+          git config --global user.email "dummy@mail.com"
+          git config --global user.name "dummy"
+          cd (New-Item -ItemType Directory -Path ./ws)
+          git clone https://github.com/arsenm/sanitizers-cmake
+          cd sanitizers-cmake
+          git remote add efork https://github.com/MiguelBarro/sanitizers-cmake.git
+          git fetch efork
+          git merge --no-edit efork/bugfix/cmake_updates
+
+      - name: Download googletest and make it sanitizer aware
+        run: |
+          cd ws
+          git clone https://github.com/google/googletest.git
+          cd googletest
+          git remote add efork https://github.com/MiguelBarro/googletest.git
+          git fetch efork
+          git merge --no-edit efork/bugfix/add_sanitizer_support
+
+      - name: Build & install googletest
+        run: |
+          cd ws
+          cmake -DCMAKE_MODULE_PATH="$(pwd)/sanitizers-cmake/cmake" -DCMAKE_INSTALL_PREFIX="./install" `
+                -DBUILD_GMOCK=ON -DSANITIZE_THREAD=ON -DCMAKE_BUILD_TYPE=Debug `
+                -DCMAKE_VERBOSE_MAKEFILE=ON -B ./build/googletest ./googletest 
+          cmake --build ./build/googletest --target install --verbose
+
+      - name: Download Fast-CDR and make it sanitizer aware
+        run: |
+          cd ws
+          git clone https://github.com/eProsima/Fast-CDR.git
+          cd Fast-CDR
+          git remote add efork https://github.com/MiguelBarro/Fast-CDR.git
+          git fetch efork
+          git merge --no-edit efork/bugfix/add_sanitizer_support
+
+      - name: Build & install Fast-CDR
+        run: |
+          cd ws
+          cmake -DCMAKE_INSTALL_PREFIX="./install" -DCMAKE_PREFIX_PATH="./install" `
+                -DCMAKE_MODULE_PATH="$(pwd)/sanitizers-cmake/cmake" -DCMAKE_VERBOSE_MAKEFILE=ON `
+                -DSANITIZE_THREAD=ON -DCMAKE_BUILD_TYPE=Debug -B ./build/fastcdr ./Fast-CDR 
+          cmake --build ./build/fastcdr --target install --verbose
+
+      - name: Download foonathan/memory and make it sanitizer aware
+        run: |
+          cd ws
+          git clone https://github.com/foonathan/memory.git
+          cd memory
+          git remote add efork https://github.com/MiguelBarro/memory.git
+          git fetch efork
+          git merge --no-edit efork/bugfix/add_sanitizer_support
+
+      - name: Build & install foonathan/memory
+        run: |
+          cd ws
+          cmake -DCMAKE_MODULE_PATH="$(pwd)/sanitizers-cmake/cmake" -DCMAKE_VERBOSE_MAKEFILE=ON -DSANITIZE_THREAD=ON `
+                -DCMAKE_INSTALL_PREFIX="./install" -DFOONATHAN_MEMORY_BUILD_TOOLS=ON -DCMAKE_POSITION_INDEPENDENT_CODE=ON `
+                -DFOONATHAN_MEMORY_BUILD_TESTS=ON -DFOONATHAN_MEMORY_BUILD_EXAMPLES=ON -DFOONATHAN_MEMORY_BUILD_TOOLS=ON  `
+                -DCMAKE_BUILD_TYPE=Debug -B ./build/memory ./memory
+          cmake --build ./build/memory --target install --verbose
+
+      - name: Download Fast-DDS and make it sanitizer aware
+        run: |
+          cd ws
+          git clone https://github.com/eProsima/Fast-DDS.git
+          cd Fast-DDS
+          git remote add efork https://github.com/MiguelBarro/Fast-DDS.git
+          git fetch efork
+          git merge --no-edit efork/bugfix/add_sanitizer_support
+
+      - name: Build & install Fast-DDS
+        run: |
+          cd ws
+          cmake -DCMAKE_PREFIX_PATH="$(pwd)/install" -DCMAKE_INSTALL_PREFIX='./install' `
+                -DCMAKE_MODULE_PATH="$(pwd)/sanitizers-cmake/cmake" -DCMAKE_VERBOSE_MAKEFILE=ON -DSANITIZE_THREAD=ON `
+                -DGTEST_INDIVIDUAL=ON -DFASTDDS_STATISTICS=ON -DTHIRDPARTY=ON `
+                -DCOMPILE_EXAMPLES=OFF -DEPROSIMA_BUILD_TESTS=ON -DSECURITY=ON `
+                -DCMAKE_BUILD_TYPE=Debug -B ./build/fastdds ./Fast-DDS
+          # Create a symlink to the reports folder
+          $report_dir = gci -Path ./build/fastdds -Attributes D |
+            ? Name -like "$(Get-Date -Format 'MMMM-dd-yyyy')*" 
+          New-Item -ItemType SymbolicLink -Target $report_dir -Path ./build/fastdds/reports
+          cmake --build ./build/fastdds --target install -j 2 --verbose
+
+      - name: Run Fast-DDS test & generate sanitizer reports
+        run: |
+          cd ws/build/fastdds
+          ctest --timeout 30 -j 2 -V
+          # ctest fails if sanitizer reports are present
+          $LASTEXITCODE=0 
+
+      - name: Process sanitizer reports
+        run: |
+          # Create a dir for the exports
+          $exports = New-Item -ItemType Directory -Path ./ws/exports
+          # Move to the reports dir
+          pushd ./ws/build/fastdds/reports
+          # Install the report parser module
+          Find-Module -Repository PSGallery -Name SanReportParser | Install-Module -Scope CurrentUser -Force
+          # Parse the report files
+          $rp = Show-Tsan (gci) 
+          # filter duplicates
+          $rp = $rp | group md5hash | % { $_.group[0] }
+          # Export raw data
+          $rp | Export-CliXML (Join-Path $exports all_reports.xml)
+          # Group the reports by issue
+          $g = $rp | group fuzzhash
+          # Split up deadlocks and race reports
+          $gd = $rp | ? type -match dead | group fuzzhash 
+          $gr = $rp | ? type -match race | group fuzzhash 
+          # Simplified deadlock summary (only one representative report and tests associated)
+          $sd = $gd | Sort-Object count -desc | select @{l="fuzzhash";e="name"}, count, `
+              @{l="échantillon";e={$_.group[0].report}}, @{l="tests"; `
+                  e={$_.group.file | sls "(.*)\.\d+$" | % { $_.Matches.Groups[1].Value } | Sort-Object | get-unique}}
+          # Simplified race summary (only one representative report and tests associated)
+          $sr = $gr | Sort-Object count -desc | select @{l="fuzzhash";e="name"}, count, `
+              @{l="échantillon";e={$_.group[0].report}}, @{l="tests"; `
+                  e={$_.group.file | sls "(.*)\.\d+$" | % { $_.Matches.Groups[1].Value } | Sort-Object | get-unique}}
+          # Export simplified summaries
+          $sd, $sr | Export-Clixml (Join-Path $exports summary_data.xml)
+          # Export CSV summary of frequencies
+          $sd | select fuzzhash, count | Export-CSV -Path (Join-Path $exports deadlocks.csv)
+          $sr | select fuzzhash, count | Export-CSV -Path (Join-Path $exports races.csv)
+          # Export test mappings
+          & {$sd; $sr} | Sort-Object { [int]$_.fuzzhash} | % { $fuzzy=$_.fuzzhash;$_.tests |
+            select @{l="fuzzhash";e={$fuzzy}}, @{l="test";e={$_}}} |
+            Export-Csv (Join-Path $exports issue_test_map.csv)
+          # Keep a file per issue
+          $dir = New-Item -ItemType Directory -Path (Join-Path $exports reports)
+          & {$sd; $sr} | % { $_.échantillon | Out-File (Join-Path $dir "$($_.fuzzhash).tsan") }
+          # Zip an artifact
+          popd
+          gci $exports | Compress-Archive -DestinationPath ./ws/tsan_reports.zip 
+
+      - name: Archive sanitation results
+        uses: actions/upload-artifact@v3
+        with:
+            name: sanitation-report
+            path: /home/runner/work/ws/tsan_reports.zip
