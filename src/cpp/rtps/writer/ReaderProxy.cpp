@@ -445,8 +445,15 @@ bool ReaderProxy::set_change_to_status(
     // first unacknowledged change is irrelevant.
     if (status == ACKNOWLEDGED && seq_num == changes_low_mark_ + 1)
     {
+<<<<<<< HEAD
         changes_low_mark_ = seq_num;
         change_was_modified = true;
+=======
+        assert(changes_for_reader_.begin() == it);
+        changes_for_reader_.erase(it);
+        acked_changes_set(seq_num + 1);
+        return;
+>>>>>>> 23364f0b9 (Fix inconsistent ReaderProxy state on intra-process (#2626))
     }
 
     if (it != changes_for_reader_.end())
@@ -553,6 +560,12 @@ void ReaderProxy::change_has_been_removed(
 
     // Element may not be in the container when marked as irrelevant.
     changes_for_reader_.erase(chit);
+
+    // When removing the next-to-be-acknowledged, we should auto-acknowledge it.
+    if ((changes_low_mark_ + 1) == seq_num)
+    {
+        acked_changes_set(seq_num + 1);
+    }
 }
 
 bool ReaderProxy::has_unacknowledged() const
