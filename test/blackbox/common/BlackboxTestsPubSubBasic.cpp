@@ -600,6 +600,181 @@ TEST_P(PubSubBasic, ReceivedPropertiesDataExceedsSizeLimit)
     ASSERT_FALSE(reader.is_matched());
 }
 
+<<<<<<< HEAD
+=======
+TEST_P(PubSubBasic, unique_flows_one_writer_two_readers)
+{
+    PubSubParticipant<HelloWorldPubSubType> readers(0, 2, 0, 2);
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+
+    PropertyPolicy properties;
+    properties.properties().emplace_back("fastdds.unique_network_flows", "");
+
+    readers.sub_topic_name(TEST_TOPIC_NAME).sub_property_policy(properties).reliability(RELIABLE_RELIABILITY_QOS);
+
+    ASSERT_TRUE(readers.init_participant());
+    ASSERT_TRUE(readers.init_subscriber(0));
+    ASSERT_TRUE(readers.init_subscriber(1));
+
+    writer.history_depth(100).init();
+
+    ASSERT_TRUE(writer.isInitialized());
+
+    // Wait for discovery.
+    writer.wait_discovery();
+    readers.sub_wait_discovery();
+
+    // Send data
+    auto data = default_helloworld_data_generator();
+    writer.send(data);
+    // In this test all data should be sent.
+    ASSERT_TRUE(data.empty());
+    // Block until readers have acknowledged all samples.
+    EXPECT_TRUE(writer.waitForAllAcked(std::chrono::seconds(30)));
+}
+
+template<typename T>
+static void two_consecutive_writers(
+        PubSubReader<T>& reader,
+        PubSubWriter<T>& writer,
+        bool block_for_all)
+{
+    writer.init();
+    EXPECT_TRUE(writer.isInitialized());
+
+    // Wait for discovery.
+    writer.wait_discovery();
+    reader.wait_discovery();
+
+    auto complete_data = default_helloworld_data_generator();
+
+    reader.startReception(complete_data);
+
+    // Send data
+    writer.send(complete_data);
+    EXPECT_TRUE(complete_data.empty());
+
+    if (block_for_all)
+    {
+        reader.block_for_all();
+    }
+    else
+    {
+        reader.block_for_at_least(2);
+    }
+    reader.stopReception();
+
+    writer.destroy();
+
+    // Wait for undiscovery
+    reader.wait_writer_undiscovery();
+}
+
+TEST_P(PubSubBasic, BestEffortTwoWritersConsecutives)
+{
+    // Pull mode incompatible with best effort
+    if (use_pull_mode)
+    {
+        return;
+    }
+
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+
+    reader.history_depth(10).init();
+    EXPECT_TRUE(reader.isInitialized());
+
+    for (int i = 0; i < 2; ++i)
+    {
+        PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+        writer.history_depth(10).reliability(BEST_EFFORT_RELIABILITY_QOS);
+        two_consecutive_writers(reader, writer, false);
+    }
+}
+
+
+TEST_P(PubSubBasic, ReliableVolatileTwoWritersConsecutives)
+{
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+
+    reader.history_depth(10).reliability(RELIABLE_RELIABILITY_QOS).init();
+    EXPECT_TRUE(reader.isInitialized());
+
+    for (int i = 0; i < 2; ++i)
+    {
+        PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+        writer.history_depth(10).durability_kind(VOLATILE_DURABILITY_QOS);
+        two_consecutive_writers(reader, writer, true);
+    }
+}
+
+TEST_P(PubSubBasic, ReliableTransientLocalTwoWritersConsecutives)
+{
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+
+    reader.history_depth(10).reliability(RELIABLE_RELIABILITY_QOS).durability_kind(TRANSIENT_LOCAL_DURABILITY_QOS);
+    reader.init();
+    EXPECT_TRUE(reader.isInitialized());
+
+    for (int i = 0; i < 2; ++i)
+    {
+        PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+        writer.history_depth(10).reliability(RELIABLE_RELIABILITY_QOS);
+        two_consecutive_writers(reader, writer, true);
+    }
+}
+
+// Regression test for redmine issue #14346
+TEST_P(PubSubBasic, ReliableHelloworldLateJoinersStress)
+{
+    if (enable_datasharing)
+    {
+        GTEST_SKIP() << "Data-sharing needs data reception for acknowledgement";
+    }
+
+    constexpr unsigned int num_iterations = 10;
+
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+    writer.history_depth(10).init();
+    ASSERT_TRUE(writer.isInitialized());
+
+    std::vector<std::unique_ptr<PubSubReader<HelloWorldPubSubType>>> readers;
+
+    for (unsigned int i = 0; i < num_iterations; ++i)
+    {
+        readers.emplace_back(new PubSubReader<HelloWorldPubSubType>(TEST_TOPIC_NAME));
+        const auto& new_reader = readers.back();
+
+        new_reader->reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS)
+                .durability_kind(eprosima::fastrtps::TRANSIENT_LOCAL_DURABILITY_QOS)
+                .history_depth(10)
+                .init();
+        ASSERT_TRUE(new_reader->isInitialized()) << " on iteration " << i;
+        new_reader->wait_discovery();
+        writer.wait_discovery(i + 1);
+
+        auto data = default_helloworld_data_generator();
+        writer.send(data);
+        EXPECT_TRUE(data.empty()) << " on iteration " << i;
+        ASSERT_TRUE(writer.waitForAllAcked(std::chrono::seconds(5))) << " on iteration " << i;
+    }
+}
+
+/*
+ * Check that setting FASTDDS_ENVIRONMENT_FILE to an unexisting file issues 1 logWarning
+ */
+TEST(PubSubBasic, EnvFileWarningWrongFile)
+{
+    env_file_warning("unexisting_file", 1);
+}
+
+/*
+ * Check that setting FASTDDS_ENVIRONMENT_FILE to an empty string issues 0 logWarning
+ */
+TEST(PubSubBasic, EnvFileWarningEmpty)
+{
+    env_file_warning("", 0);
+}
+>>>>>>> 23364f0b9 (Fix inconsistent ReaderProxy state on intra-process (#2626))
 
 #ifdef INSTANTIATE_TEST_SUITE_P
 #define GTEST_INSTANTIATE_TEST_MACRO(x, y, z, w) INSTANTIATE_TEST_SUITE_P(x, y, z, w)
