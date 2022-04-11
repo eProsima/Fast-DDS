@@ -33,6 +33,9 @@ using namespace eprosima::fastdds::dds;
 
 bool ContentFilteredTopicExamplePublisher::init()
 {
+    // Initialize internal variables
+    matched_ = 0;
+
     // Initialize data sample
     hello_.index(0);
     hello_.message("HelloWorld");

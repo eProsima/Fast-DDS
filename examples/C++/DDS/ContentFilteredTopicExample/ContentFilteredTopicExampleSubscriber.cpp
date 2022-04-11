@@ -32,6 +32,9 @@ using namespace eprosima::fastdds::dds;
 bool ContentFilteredTopicExampleSubscriber::init(
         bool custom_filter)
 {
+    // Initialize internal variables
+    matched_ = 0;
+
     // Set DomainParticipant name
     DomainParticipantQos pqos;
     pqos.name("Participant_sub");

@@ -87,7 +87,7 @@ private:
     HelloWorld hello_;
 
     //! Number of DataWriters matched with the subscriber application
-    std::atomic<int> matched_ = 0;
+    std::atomic<int> matched_;
 
     //! Number of received samples
     uint32_t samples_  = 0;
