@@ -42,6 +42,6 @@ target_compile_definitions(DDSContentFilteredTopicExample PRIVATE
     $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
 )
 target_compile_features(DDSContentFilteredTopicExample PRIVATE cxx_std_11)
-target_link_libraries(DDSContentFilteredTopicExample fastrtps fastcdr)
+target_link_libraries(DDSContentFilteredTopicExample fastrtps fastcdr fastdds::optionparser)
 install(TARGETS DDSContentFilteredTopicExample
     RUNTIME DESTINATION examples/C++/DDS/ContentFilteredTopicExample/${BIN_INSTALL_DIR})

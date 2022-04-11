@@ -17,53 +17,187 @@
  *
  */
 
+#include <vector>
+
+#include <fastdds/dds/log/Log.hpp>
+#include <optionparser.hpp>
+
 #include "ContentFilteredTopicExamplePublisher.hpp"
 #include "ContentFilteredTopicExampleSubscriber.hpp"
 
-#include <fastdds/dds/domain/DomainParticipantFactory.hpp>
-
-#include <fastrtps/log/Log.h>
-
 using eprosima::fastdds::dds::Log;
+namespace option = eprosima::option;
+
+struct Arg : public option::Arg
+{
+    static void print_error(
+            const char* msg1,
+            const option::Option& opt,
+            const char* msg2)
+    {
+        fprintf(stderr, "%s", msg1);
+        fwrite(opt.name, opt.namelen, 1, stderr);
+        fprintf(stderr, "%s", msg2);
+    }
+
+    static option::ArgStatus Unknown(
+            const option::Option& option,
+            bool msg)
+    {
+        if (msg)
+        {
+            print_error("Unknown option '", option, "'\n");
+        }
+        return option::ARG_ILLEGAL;
+    }
+
+    static option::ArgStatus Numeric(
+            const option::Option& option,
+            bool msg)
+    {
+        char* endptr = 0;
+        if (nullptr != option.arg)
+        {
+            strtol(option.arg, &endptr, 10);
+            if (endptr != option.arg && *endptr == 0)
+            {
+                return option::ARG_OK;
+            }
+        }
+        if (msg)
+        {
+            print_error("Option '", option, "' requires a numeric argument\n");
+        }
+        return option::ARG_ILLEGAL;
+    }
+
+    static option::ArgStatus String(
+            const option::Option& option,
+            bool msg)
+    {
+        if (nullptr != option.arg)
+        {
+            return option::ARG_OK;
+        }
+        if (msg)
+        {
+            print_error("Option '", option, "' requires a string argument\n");
+        }
+        return option::ARG_ILLEGAL;
+    }
+};
+
+enum optionIndex
+{
+    UNKNOWN_OPTION,
+    HELP,
+    PUBLISHER,
+    SUBSCRIBER,
+    SAMPLES,
+    INTERVAL,
+    FILTER
+};
+
+const option::Descriptor usage[] = {
+    { UNKNOWN_OPTION, 0, "", "", Arg::None,
+      "Usage: ContentFilteredTopicExample [--publisher|--subscriber] [OPTIONS]\n\nGeneral options:" },
+    { HELP, 0, "h", "help", Arg::None, "  -h\t--help\tProduce help message." },
+    { PUBLISHER, 0, "", "publisher", Arg::None, "\t--publisher\tLaunch publisher application." },
+    { SUBSCRIBER, 0, "", "subscriber", Arg::None, "\t--subscriber\tLaunch subscriber application." },
+
+    { UNKNOWN_OPTION, 0, "", "", Arg::None, "\nPublisher options:" },
+    { SAMPLES, 0, "s", "samples", Arg::Numeric,
+      "  -s <num>\t--samples=<num>\tNumber of samples (Default: 0 => infinite samples)." },
+    { INTERVAL, 0, "i", "interval", Arg::Numeric,
+      "  -i <num>\t--interval=<num>\tTime between samples in milliseconds (Default: 100 ms)." },
+
+    { UNKNOWN_OPTION, 0, "", "", Arg::None, "\nSubscriber options:" },
+    { FILTER, 0, "f", "filter", Arg::String,
+      "  -f <default/custom>\t--filter=<default/custom>\tKind of Content Filter to use (Default: DDS SQL default filter"
+    },
+
+    { 0, 0, 0, 0, 0, 0 }
+};
 
 int main(
         int argc,
         char** argv)
 {
     std::cout << "Starting " << std::endl;
+
+    // Parse arguments using optionparser
+    argc -= (argc > 0);
+    argv += (argc > 0); // skip program name argv[0] if present
+    option::Stats stats(usage, argc, argv);
+    std::vector<option::Option> options(stats.options_max);
+    std::vector<option::Option> buffer(stats.buffer_max);
+    option::Parser parse(usage, argc, argv, &options[0], &buffer[0]);
+    if (parse.error())
+    {
+        return 1;
+    }
+
+    if (options[HELP])
+    {
+        option::printUsage(fwrite, stdout, usage);
+        return 0;
+    }
+
     int type = 1;
-    int count = 10;
+    int count = 0;
     int sleep = 100;
     bool custom_filter = false;
-    if (argc > 1)
+    if (options[PUBLISHER] && options[SUBSCRIBER])
     {
-        if (strcmp(argv[1], "publisher") == 0)
+        std::cout << "ERROR: select either publisher or subscriber option" << std::endl;
+        option::printUsage(fwrite, stdout, usage);
+        return 1;
+    }
+    else if (options[PUBLISHER])
+    {
+        if (options[FILTER])
         {
-            type = 1;
-            if (argc >= 3)
+            std::cout << "ERROR: option filter is a subscriber option" << std::endl;
+            option::printUsage(fwrite, stdout, usage);
+            return 1;
+        }
+        if (options[SAMPLES])
+        {
+            count = strtol(options[SAMPLES].arg, nullptr, 10);
+        }
+        if (options[INTERVAL])
+        {
+            sleep = strtol(options[INTERVAL].arg, nullptr, 10);
+        }
+    }
+    else if (options[SUBSCRIBER])
+    {
+        type = 2;
+        if (options[SAMPLES] || options[INTERVAL])
+        {
+            std::cout << "ERROR: options samples and interval are publisher options" << std::endl;
+            option::printUsage(fwrite, stdout, usage);
+            return 1;
+        }
+        if (options[FILTER])
+        {
+            if (0 == strcmp(options[FILTER].arg, "custom"))
             {
-                count = atoi(argv[2]);
-                if (argc == 4)
-                {
-                    sleep = atoi(argv[3]);
-                }
+                custom_filter = true;
             }
-        }
-        else if (strcmp(argv[1], "default_subscriber") == 0)
-        {
-            type = 2;
-        }
-        else if (strcmp(argv[1], "custom_subscriber") == 0)
-        {
-            type = 2;
-            custom_filter = true;
+            else if (0 != strcmp(options[FILTER].arg, "default"))
+            {
+                std::cout << "ERROR: filter option should be either custom or default" << std::endl;
+                option::printUsage(fwrite, stdout, usage);
+                return 1;
+            }
         }
     }
     else
     {
-        std::cout << "publisher OR subscriber argument needed" << std::endl;
-        Log::Reset();
-        return 0;
+        std::cout << "ERROR: select either publisher or subscriber option" << std::endl;
+        option::printUsage(fwrite, stdout, usage);
+        return 1;
     }
 
     switch (type)
