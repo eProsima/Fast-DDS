@@ -92,7 +92,7 @@ void ContentFilteredTopicExamplePublisher::on_publication_matched(
     if (info.current_count_change == 1)
     {
         matched_ = info.current_count;
-        firstConnected_ = true;
+        first_connected_ = true;
         std::cout << "Publisher matched." << std::endl;
     }
     // New remote DataReader undiscovered

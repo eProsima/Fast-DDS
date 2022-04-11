@@ -48,7 +48,7 @@ public:
 
     //! Publish a sample
     bool publish(
-            bool waitForListener = true);
+            bool wait_for_listener = true);
 
     //! Run for the given number of samples (0 => infinite samples)
     void run(
