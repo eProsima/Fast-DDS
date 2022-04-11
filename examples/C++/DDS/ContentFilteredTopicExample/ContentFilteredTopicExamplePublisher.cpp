@@ -168,10 +168,10 @@ void ContentFilteredTopicExamplePublisher::run(
 }
 
 bool ContentFilteredTopicExamplePublisher::publish(
-        bool waitForListener)
+        bool wait_for_listener)
 {
-    // Wait until there is a matched DataReader, unless waitForListener flag is set to false
-    if (firstConnected_ || !waitForListener || matched_ > 0)
+    // Wait until there is a matched DataReader, unless wait_for_listener flag is set to false
+    if (first_connected_ || !wait_for_listener || matched_ > 0)
     {
         // Update sample
         hello_.index(hello_.index() + 1);

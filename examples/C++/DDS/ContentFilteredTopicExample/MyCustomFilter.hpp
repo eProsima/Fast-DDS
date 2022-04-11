@@ -5,12 +5,14 @@
 #include <fastdds/dds/topic/IContentFilter.hpp>
 
 //! Custom filter class
+//! It requieres two parameters 'low_mark_' and 'high_mark_'.
+//! Filter samples which index is lower than 'low_mark_' and higher than 'high_mark_'.
 class MyCustomFilter : public eprosima::fastdds::dds::IContentFilter
 {
 public:
 
     /**
-     * @brief Construct a new My Custom Filter object
+     * @brief Construct a new MyCustomFilter object
      *
      * @param low_mark
      * @param high_mark
@@ -27,7 +29,8 @@ public:
     virtual ~MyCustomFilter() = default;
 
     /**
-     * @brief Evaluate filter discriminating if the sample is relevant or not meeting the filter criteria
+     * @brief Evaluate filter discriminating whether the sample is relevant or not, i.e. whether it meets the filtering
+     * criteria
      *
      * @param payload Serialized sample
      * @return true if sample meets filter requirements. false otherwise.
@@ -66,9 +69,9 @@ public:
 
 private:
 
-    //! Low mark
+    //! Low mark: lower threshold below which the samples are relevant
     uint32_t low_mark_ = 0;
-    //! High mark
+    //! High mark: upper threshold over which the samples are relevant
     uint32_t high_mark_ = 0;
 
 };

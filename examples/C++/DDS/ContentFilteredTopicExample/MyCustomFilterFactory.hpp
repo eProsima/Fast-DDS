@@ -13,13 +13,18 @@ class MyCustomFilterFactory : public eprosima::fastdds::dds::IContentFilterFacto
 public:
 
     /**
-     * @brief Create a ContentFilteredTopic using this factory. Updating the filter implies deleting the previous one
-     *        and creating a new one using the new given parameters.
+     * @brief Create a ContentFilteredTopic using this factory.
+     *        Updating the filter implies deleting the previous one and creating a new one using the new given
+     *        parameters.
      *
      * @param filter_class_name Custom filter name
      * @param type_name Data type name
      * @param filter_parameters Parameters required by the filter
      * @param filter_instance Instance of the filter to be evaluated
+     *
+     * @return eprosima::fastrtps::types::ReturnCode_t::RETCODE_BAD_PARAMETER if the requirements for creating the
+     *         ContentFilteredTopic using this factory are not met
+     *         eprosima::fastrtps::types::ReturnCode_t::RETCODE_OK if the ContentFilteredTopic is correctly created
      */
     eprosima::fastrtps::types::ReturnCode_t create_content_filter(
             const char* filter_class_name, // My custom filter class name is 'MY_CUSTOM_FILTER'.
@@ -51,7 +56,16 @@ public:
         return ReturnCode_t::RETCODE_OK;
     }
 
-    //! Delete a ContentFilteredTopic created by this factory
+    /**
+     * @brief Delete a ContentFilteredTopic created by this factory
+     *
+     * @param filter_class_name Custom filter name
+     * @param filter_instance Instance of the filter to be deleted.
+     *                        After returning, the passed pointer becomes invalid.
+     * @return eprosima::fastrtps::types::ReturnCode_t::RETCODE_BAD_PARAMETER if the instance was created with another
+     *         factory
+     *         eprosima::fastrtps::types::ReturnCode_t::RETCODE_OK if correctly deleted
+     */
     eprosima::fastrtps::types::ReturnCode_t delete_content_filter(
             const char* filter_class_name,
             eprosima::fastdds::dds::IContentFilter* filter_instance) override
@@ -65,7 +79,10 @@ public:
         }
 
         // Deletion of the Custom Filter.
-        delete(dynamic_cast<MyCustomFilter*>(filter_instance));
+        if (nullptr != filter_instance)
+        {
+            delete(dynamic_cast<MyCustomFilter*>(filter_instance));
+        }
 
         return ReturnCode_t::RETCODE_OK;
     }

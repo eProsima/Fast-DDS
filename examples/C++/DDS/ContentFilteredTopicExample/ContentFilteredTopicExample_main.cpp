@@ -119,8 +119,6 @@ int main(
         int argc,
         char** argv)
 {
-    std::cout << "Starting " << std::endl;
-
     // Parse arguments using optionparser
     // skip program name argv[0] if present (optionparser limitation)
     argc -= (argc > 0);
@@ -156,7 +154,7 @@ int main(
     // If both publisher and subscriber options are selected, print usage description and exit with error code
     if (options[PUBLISHER] && options[SUBSCRIBER])
     {
-        std::cerr << "ERROR: select either publisher or subscriber option" << std::endl;
+        std::cerr << "ERROR: select either '--publisher' or '--subscriber' option" << std::endl;
         option::printUsage(fwrite, stdout, usage);
         return 1;
     }
@@ -202,7 +200,7 @@ int main(
             // code
             else if (0 != strcmp(options[FILTER].arg, "default"))
             {
-                std::cerr << "ERROR: filter option should be either custom or default" << std::endl;
+                std::cerr << "ERROR: filter option should be either 'custom' or 'default'" << std::endl;
                 option::printUsage(fwrite, stdout, usage);
                 return 1;
             }
@@ -211,7 +209,7 @@ int main(
     // If no publisher or subscriber option has been selected, print usage description and exit with error code
     else
     {
-        std::cerr << "ERROR: select either publisher or subscriber option" << std::endl;
+        std::cerr << "ERROR: select either '--publisher' or '--subscriber' option" << std::endl;
         option::printUsage(fwrite, stdout, usage);
         return 1;
     }

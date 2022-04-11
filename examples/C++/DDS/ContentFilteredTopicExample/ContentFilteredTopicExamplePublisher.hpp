@@ -82,7 +82,7 @@ private:
     std::atomic<int> matched_;
 
     //! Flag set once the first subscriber is discovered and matched
-    std::atomic<bool> firstConnected_;
+    std::atomic<bool> first_connected_;
 
     //! Discovery callback specialization when the DataWriter received discovery information from a remote DataReader
     void on_publication_matched(

@@ -7,13 +7,13 @@ It does so by including two different Filter Factories: on the one hand, the def
 
 To launch this example, open three different terminals:
 
-In the first one launch the Subscriber using the default SQL filter:
+In the first one, launch the Subscriber using the default SQL filter:
 
 ```
 ./DDSContentFilteredTopicExample --subscriber
 ```
 
-In the second one launch the Subscriber using the custom filter:
+In the second one, launch the Subscriber using the custom filter:
 
 ```
 ./DDSContentFilteredTopicExample --subscriber -f custom
@@ -25,9 +25,9 @@ Finally, in the third terminal launch the Publisher:
 ./DDSContentFilteredTopicExample --publisher
 ```
 
-The Subscriber with the default filter should received only the samples between indexes 5 and 9, while the Subscriber with the custom filter should received samples which index is lower than 3 and greater than 5.
+The Subscriber with the default filter should received only the samples between indexes 5 and 9, while the Subscriber with the custom filter should received samples which index is lower than 3 or greater than 5.
 
-In order to know further possible arguments please run
+In order to know further possible arguments please run:
 
 ```
 ./DDSContentFilteredTopicExample --help
