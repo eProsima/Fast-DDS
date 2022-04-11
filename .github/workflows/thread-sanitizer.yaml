@@ -104,7 +104,7 @@ jobs:
           cd ws/Fast-DDS
           git remote add efork https://github.com/MiguelBarro/Fast-DDS.git
           git fetch efork
-          git merge --no-edit efork/bugfix/add_sanitizer_support
+          git merge --no-edit efork/bugfix/add_sanitizer_support --allow-unrelated-histories
 
       - name: Build & install Fast-DDS
         run: |
