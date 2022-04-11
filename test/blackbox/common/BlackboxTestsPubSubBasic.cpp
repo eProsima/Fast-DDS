@@ -756,8 +756,6 @@ TEST_P(PubSubBasic, ReliableTransientLocalTwoWritersConsecutives)
     }
 }
 
-<<<<<<< HEAD
-=======
 // Regression test for redmine issue #14346
 TEST_P(PubSubBasic, ReliableHelloworldLateJoinersStress)
 {
@@ -794,23 +792,6 @@ TEST_P(PubSubBasic, ReliableHelloworldLateJoinersStress)
     }
 }
 
-/*
- * Check that setting FASTDDS_ENVIRONMENT_FILE to an unexisting file issues 1 logWarning
- */
-TEST(PubSubBasic, EnvFileWarningWrongFile)
-{
-    env_file_warning("unexisting_file", 1);
-}
-
-/*
- * Check that setting FASTDDS_ENVIRONMENT_FILE to an empty string issues 0 logWarning
- */
-TEST(PubSubBasic, EnvFileWarningEmpty)
-{
-    env_file_warning("", 0);
-}
-
->>>>>>> 23364f0b9 (Fix inconsistent ReaderProxy state on intra-process (#2626))
 #ifdef INSTANTIATE_TEST_SUITE_P
 #define GTEST_INSTANTIATE_TEST_MACRO(x, y, z, w) INSTANTIATE_TEST_SUITE_P(x, y, z, w)
 #else
