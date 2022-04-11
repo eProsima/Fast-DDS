@@ -20,6 +20,8 @@
 #ifndef _CONTENTFILTEREDTOPICEXAMPLEPUBLISHER_H_
 #define _CONTENTFILTEREDTOPICEXAMPLEPUBLISHER_H_
 
+#include <atomic>
+
 #include <fastdds/dds/core/status/PublicationMatchedStatus.hpp>
 #include <fastdds/dds/domain/DomainParticipant.hpp>
 #include <fastdds/dds/publisher/DataWriterListener.hpp>
@@ -64,11 +66,11 @@ private:
 
     eprosima::fastdds::dds::TypeSupport type_ = eprosima::fastdds::dds::TypeSupport(new HelloWorldPubSubType());
 
-    bool stop_;
+    std::atomic<bool> stop_;
 
-    int matched_;
+    std::atomic<int> matched_;
 
-    bool firstConnected_;
+    std::atomic<bool> firstConnected_;
 
     void on_publication_matched(
             eprosima::fastdds::dds::DataWriter* writer,

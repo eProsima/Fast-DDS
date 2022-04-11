@@ -20,19 +20,11 @@ public:
             eprosima::fastdds::dds::IContentFilter*& filter_instance) override
     {
         // Check the ContentFilteredTopic should be created by my factory.
-        if (0 != strcmp(filter_class_name, "MY_CUSTOM_FILTER"))
-        {
-            return ReturnCode_t::RETCODE_BAD_PARAMETER;
-        }
-
-        // Check the ContentFilteredTopic is created for the unique type this Custom Filter supports.
-        if (0 != strcmp(type_name, "HelloWorld"))
-        {
-            return ReturnCode_t::RETCODE_BAD_PARAMETER;
-        }
-
-        // Checks there were set the two mandatory filter parameters.
-        if (2 != filter_parameters.length())
+        if (0 != strcmp(filter_class_name, "MY_CUSTOM_FILTER") ||
+                // Check the ContentFilteredTopic is created for the unique type this Custom Filter supports.
+                0 != strcmp(type_name, "HelloWorld") ||
+                // Checks there were set the two mandatory filter parameters.
+                2 != filter_parameters.length())
         {
             return ReturnCode_t::RETCODE_BAD_PARAMETER;
         }
@@ -54,7 +46,9 @@ public:
             eprosima::fastdds::dds::IContentFilter* filter_instance) override
     {
         // Check the ContentFilteredTopic should be created by my factory.
-        if (0 != strcmp(filter_class_name, "MY_CUSTOM_FILTER"))
+        if (0 != strcmp(filter_class_name, "MY_CUSTOM_FILTER") ||
+                // Check the filter instance is valid
+                nullptr != filter_instance)
         {
             return ReturnCode_t::RETCODE_BAD_PARAMETER;
         }
