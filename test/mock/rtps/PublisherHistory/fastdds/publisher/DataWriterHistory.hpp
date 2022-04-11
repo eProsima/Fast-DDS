@@ -30,8 +30,9 @@
 #include <fastdds/rtps/history/WriterHistory.h>
 #include <fastdds/rtps/resources/ResourceManagement.h>
 #include <fastrtps/attributes/TopicAttributes.h>
-#include <fastrtps/common/KeyedChanges.h>
 #include <fastrtps/utils/TimedMutex.hpp>
+
+#include <fastdds/publisher/history/DataWriterInstance.hpp>
 
 namespace eprosima {
 namespace fastdds {
@@ -273,7 +274,7 @@ public:
 
 private:
 
-    typedef std::map<InstanceHandle_t, KeyedChanges> t_m_Inst_Caches;
+    typedef std::map<InstanceHandle_t, detail::DataWriterInstance> t_m_Inst_Caches;
 
     //!Map where keys are instance handles and values are vectors of cache changes associated
     t_m_Inst_Caches keyed_changes_;
@@ -296,7 +297,7 @@ private:
         }
         else
         {
-            *vit_out = keyed_changes_.insert(std::make_pair(instance_handle, KeyedChanges())).first;
+            *vit_out = keyed_changes_.insert(std::make_pair(instance_handle, detail::DataWriterInstance())).first;
         }
         return true;
     }

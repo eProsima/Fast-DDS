@@ -27,8 +27,9 @@
 #include <fastdds/rtps/history/WriterHistory.h>
 #include <fastdds/rtps/resources/ResourceManagement.h>
 #include <fastrtps/attributes/TopicAttributes.h>
-#include <fastrtps/common/KeyedChanges.h>
 #include <fastrtps/qos/QosPolicies.h>
+
+#include <fastdds/publisher/history/DataWriterInstance.hpp>
 
 namespace eprosima {
 namespace fastdds {
@@ -218,7 +219,7 @@ public:
 
 private:
 
-    typedef std::map<fastrtps::rtps::InstanceHandle_t, fastrtps::KeyedChanges> t_m_Inst_Caches;
+    typedef std::map<fastrtps::rtps::InstanceHandle_t, detail::DataWriterInstance> t_m_Inst_Caches;
 
     //!Map where keys are instance handles and values are vectors of cache changes associated
     t_m_Inst_Caches keyed_changes_;
@@ -232,7 +233,7 @@ private:
     fastrtps::TopicAttributes topic_att_;
 
     /**
-     * @brief Method that finds a key in m_keyedChanges or tries to add it if not found
+     * @brief Method that finds a key in the DataWriterHistory or tries to add it if not found
      * @param instance_handle Instance of the key.
      * @param map_it A map iterator to the given key
      * @return True if the key was found or could be added to the map

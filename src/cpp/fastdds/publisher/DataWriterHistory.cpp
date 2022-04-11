@@ -260,7 +260,7 @@ bool DataWriterHistory::find_or_add_key(
 
     if (static_cast<int>(keyed_changes_.size()) < resource_limited_qos_.max_instances)
     {
-        *vit_out = keyed_changes_.insert(std::make_pair(instance_handle, KeyedChanges())).first;
+        *vit_out = keyed_changes_.insert(std::make_pair(instance_handle, detail::DataWriterInstance())).first;
         return true;
     }
 
@@ -454,8 +454,8 @@ bool DataWriterHistory::get_next_deadline(
             keyed_changes_.begin(),
             keyed_changes_.end(),
             [](
-                const std::pair<InstanceHandle_t, KeyedChanges>& lhs,
-                const std::pair<InstanceHandle_t, KeyedChanges>& rhs)
+                const std::pair<InstanceHandle_t, detail::DataWriterInstance>& lhs,
+                const std::pair<InstanceHandle_t, detail::DataWriterInstance>& rhs)
             {
                 return lhs.second.next_deadline_us < rhs.second.next_deadline_us;
             });
