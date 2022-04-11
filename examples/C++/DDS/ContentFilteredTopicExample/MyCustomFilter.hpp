@@ -4,10 +4,17 @@
 #include <fastcdr/Cdr.h>
 #include <fastdds/dds/topic/IContentFilter.hpp>
 
+//! Custom filter class
 class MyCustomFilter : public eprosima::fastdds::dds::IContentFilter
 {
 public:
 
+    /**
+     * @brief Construct a new My Custom Filter object
+     *
+     * @param low_mark
+     * @param high_mark
+     */
     MyCustomFilter(
             int low_mark,
             int high_mark)
@@ -16,8 +23,15 @@ public:
     {
     }
 
+    //! Destructor
     virtual ~MyCustomFilter() = default;
 
+    /**
+     * @brief Evaluate filter discriminating if the sample is relevant or not meeting the filter criteria
+     *
+     * @param payload Serialized sample
+     * @return true if sample meets filter requirements. false otherwise.
+     */
     bool evaluate(
             const SerializedPayload& payload,
             const FilterSampleInfo& /*sample_info*/,
@@ -52,7 +66,9 @@ public:
 
 private:
 
+    //! Low mark
     uint32_t low_mark_ = 0;
+    //! High mark
     uint32_t high_mark_ = 0;
 
 };

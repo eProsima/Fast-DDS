@@ -28,8 +28,10 @@
 using eprosima::fastdds::dds::Log;
 namespace option = eprosima::option;
 
+// Argument checkers
 struct Arg : public option::Arg
 {
+    // Auxiliary method for printing errors while checking arguments
     static void print_error(
             const char* msg1,
             const option::Option& opt,
@@ -40,6 +42,7 @@ struct Arg : public option::Arg
         fprintf(stderr, "%s", msg2);
     }
 
+    // Argument checker for numeric options
     static option::ArgStatus Numeric(
             const option::Option& option,
             bool msg)
@@ -60,6 +63,7 @@ struct Arg : public option::Arg
         return option::ARG_ILLEGAL;
     }
 
+    // Argument checker for string options
     static option::ArgStatus String(
             const option::Option& option,
             bool msg)
@@ -77,6 +81,7 @@ struct Arg : public option::Arg
 
 };
 
+// Possible options
 enum optionIndex
 {
     UNKNOWN_OPTION,
@@ -88,6 +93,7 @@ enum optionIndex
     FILTER
 };
 
+// Usage description
 const option::Descriptor usage[] = {
     { UNKNOWN_OPTION, 0, "", "", Arg::None,
       "Usage: ContentFilteredTopicExample [--publisher|--subscriber] [OPTIONS]\n\nGeneral options:" },
@@ -116,8 +122,9 @@ int main(
     std::cout << "Starting " << std::endl;
 
     // Parse arguments using optionparser
+    // skip program name argv[0] if present (optionparser limitation)
     argc -= (argc > 0);
-    argv += (argc > 0); // skip program name argv[0] if present
+    argv += (argc > 0);
     option::Stats stats(usage, argc, argv);
     std::vector<option::Option> options(stats.options_max);
     std::vector<option::Option> buffer(stats.buffer_max);
@@ -127,11 +134,13 @@ int main(
         return 1;
     }
 
+    // If help option selected, print usage description and exit
     if (options[HELP])
     {
         option::printUsage(fwrite, stdout, usage);
         return 0;
     }
+    // If option is not recognized, print usage description and exit with error code
     else if (options[UNKNOWN_OPTION])
     {
         std::cerr << "ERROR: " << options[UNKNOWN_OPTION].name << " is not a valid argument." << std::endl;
@@ -139,24 +148,29 @@ int main(
         return 1;
     }
 
+    // Initialize variables with default values
     int type = 1;
     int count = 0;
     int sleep = 100;
     bool custom_filter = false;
+    // If both publisher and subscriber options are selected, print usage description and exit with error code
     if (options[PUBLISHER] && options[SUBSCRIBER])
     {
         std::cerr << "ERROR: select either publisher or subscriber option" << std::endl;
         option::printUsage(fwrite, stdout, usage);
         return 1;
     }
+    // Publisher option selected
     else if (options[PUBLISHER])
     {
+        // If any subscriber option is selected, print usage description and exit with error code
         if (options[FILTER])
         {
             std::cerr << "ERROR: option filter is a subscriber option" << std::endl;
             option::printUsage(fwrite, stdout, usage);
             return 1;
         }
+        // If any optional publisher option is selected, set the corresponding value
         if (options[SAMPLES])
         {
             count = strtol(options[SAMPLES].arg, nullptr, 10);
@@ -166,21 +180,26 @@ int main(
             sleep = strtol(options[INTERVAL].arg, nullptr, 10);
         }
     }
+    // Subscriber option selected
     else if (options[SUBSCRIBER])
     {
         type = 2;
+        // If any publisher option is selected, print usage description and exit with error code
         if (options[SAMPLES] || options[INTERVAL])
         {
             std::cerr << "ERROR: options samples and interval are publisher options" << std::endl;
             option::printUsage(fwrite, stdout, usage);
             return 1;
         }
+        // If any optional subscriber option is selected, set the corresponding value
         if (options[FILTER])
         {
             if (0 == strcmp(options[FILTER].arg, "custom"))
             {
                 custom_filter = true;
             }
+            // If filter option does not have one of the expected values, print usage description and exit with error
+            // code
             else if (0 != strcmp(options[FILTER].arg, "default"))
             {
                 std::cerr << "ERROR: filter option should be either custom or default" << std::endl;
@@ -189,6 +208,7 @@ int main(
             }
         }
     }
+    // If no publisher or subscriber option has been selected, print usage description and exit with error code
     else
     {
         std::cerr << "ERROR: select either publisher or subscriber option" << std::endl;
@@ -200,6 +220,7 @@ int main(
     {
         case 1:
         {
+            // Initialize and run publisher application
             ContentFilteredTopicExamplePublisher mypub;
             if (mypub.init())
             {
@@ -209,6 +230,7 @@ int main(
         }
         case 2:
         {
+            // Initialize and run subscriber application
             ContentFilteredTopicExampleSubscriber mysub;
             if (mysub.init(custom_filter))
             {
@@ -217,6 +239,7 @@ int main(
             break;
         }
     }
+    // Flush Fast DDS Log before closing application
     Log::Reset();
     return 0;
 }

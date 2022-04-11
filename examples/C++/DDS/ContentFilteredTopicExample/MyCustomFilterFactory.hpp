@@ -7,10 +7,20 @@
 
 #include "MyCustomFilter.hpp"
 
+//! Custom filter factory
 class MyCustomFilterFactory : public eprosima::fastdds::dds::IContentFilterFactory
 {
 public:
 
+    /**
+     * @brief Create a ContentFilteredTopic using this factory. Updating the filter implies deleting the previous one
+     *        and creating a new one using the new given parameters.
+     *
+     * @param filter_class_name Custom filter name
+     * @param type_name Data type name
+     * @param filter_parameters Parameters required by the filter
+     * @param filter_instance Instance of the filter to be evaluated
+     */
     eprosima::fastrtps::types::ReturnCode_t create_content_filter(
             const char* filter_class_name, // My custom filter class name is 'MY_CUSTOM_FILTER'.
             const char* type_name, // This custom filter only supports one type: 'HelloWorld'.
@@ -19,11 +29,11 @@ public:
             const ParameterSeq& filter_parameters, // Always need two parameters to be set: low_mark and high_mark.
             eprosima::fastdds::dds::IContentFilter*& filter_instance) override
     {
-        // Check the ContentFilteredTopic should be created by my factory.
+        // Check the ContentFilteredTopic should be created by this factory.
         if (0 != strcmp(filter_class_name, "MY_CUSTOM_FILTER") ||
                 // Check the ContentFilteredTopic is created for the unique type this Custom Filter supports.
                 0 != strcmp(type_name, "HelloWorld") ||
-                // Checks there were set the two mandatory filter parameters.
+                // Check that the two mandatory filter parameters were set.
                 2 != filter_parameters.length())
         {
             return ReturnCode_t::RETCODE_BAD_PARAMETER;
@@ -41,11 +51,12 @@ public:
         return ReturnCode_t::RETCODE_OK;
     }
 
+    //! Delete a ContentFilteredTopic created by this factory
     eprosima::fastrtps::types::ReturnCode_t delete_content_filter(
             const char* filter_class_name,
             eprosima::fastdds::dds::IContentFilter* filter_instance) override
     {
-        // Check the ContentFilteredTopic should be created by my factory.
+        // Check the ContentFilteredTopic should be created by this factory.
         if (0 != strcmp(filter_class_name, "MY_CUSTOM_FILTER") ||
                 // Check the filter instance is valid
                 nullptr != filter_instance)

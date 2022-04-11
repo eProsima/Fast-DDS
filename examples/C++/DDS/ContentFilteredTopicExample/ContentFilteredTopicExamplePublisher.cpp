@@ -33,38 +33,39 @@ using namespace eprosima::fastdds::dds;
 
 bool ContentFilteredTopicExamplePublisher::init()
 {
+    // Initialize data sample
     hello_.index(0);
     hello_.message("HelloWorld");
+
+    // Set DomainParticipant name
     DomainParticipantQos pqos;
     pqos.name("Participant_pub");
+    // Create DomainParticipant in domain 0
     participant_ = DomainParticipantFactory::get_instance()->create_participant(0, pqos);
-
     if (nullptr == participant_)
     {
         return false;
     }
 
-    //REGISTER THE TYPE
+    // Register the type
     type_.register_type(participant_);
 
-    //CREATE THE PUBLISHER
+    // Create the Publisher
     publisher_ = participant_->create_publisher(PUBLISHER_QOS_DEFAULT, nullptr);
-
     if (nullptr == publisher_)
     {
         return false;
     }
 
+    // Create the Topic
     topic_ = participant_->create_topic("HelloWorldTopic", type_->getName(), TOPIC_QOS_DEFAULT);
-
     if (nullptr == topic_)
     {
         return false;
     }
 
-    // CREATE THE WRITER
+    // Create the DataWriter
     writer_ = publisher_->create_datawriter(topic_, DATAWRITER_QOS_DEFAULT, this);
-
     if (nullptr == writer_)
     {
         return false;
@@ -74,7 +75,9 @@ bool ContentFilteredTopicExamplePublisher::init()
 
 ContentFilteredTopicExamplePublisher::~ContentFilteredTopicExamplePublisher()
 {
+    // Delete DDS entities contained within the DomainParticipant
     participant_->delete_contained_entities();
+    // Delete DomainParticipant
     DomainParticipantFactory::get_instance()->delete_participant(participant_);
 }
 
@@ -82,17 +85,20 @@ void ContentFilteredTopicExamplePublisher::on_publication_matched(
         DataWriter*,
         const PublicationMatchedStatus& info)
 {
+    // New remote DataReader discovered
     if (info.current_count_change == 1)
     {
         matched_ = info.current_count;
         firstConnected_ = true;
         std::cout << "Publisher matched." << std::endl;
     }
+    // New remote DataReader undiscovered
     else if (info.current_count_change == -1)
     {
         matched_ = info.current_count;
         std::cout << "Publisher unmatched." << std::endl;
     }
+    // Non-valid option
     else
     {
         std::cout << info.current_count_change
@@ -104,6 +110,7 @@ void ContentFilteredTopicExamplePublisher::runThread(
         uint32_t samples,
         uint32_t sleep)
 {
+    // Publish samples continously until stopped by the user
     if (samples == 0)
     {
         while (!stop_)
@@ -116,6 +123,7 @@ void ContentFilteredTopicExamplePublisher::runThread(
             std::this_thread::sleep_for(std::chrono::milliseconds(sleep));
         }
     }
+    // Publish given number of samples
     else
     {
         for (uint32_t i = 0; i < samples; ++i)
@@ -138,14 +146,17 @@ void ContentFilteredTopicExamplePublisher::run(
         uint32_t samples,
         uint32_t sleep)
 {
+    // Spawn publisher application thread
     stop_ = false;
     std::thread thread(&ContentFilteredTopicExamplePublisher::runThread, this, samples, sleep);
+    // Thread runs indefinitely until stopped by the user
     if (samples == 0)
     {
         std::cout << "Publisher running. Please press enter to stop the Publisher at any time." << std::endl;
         std::cin.ignore();
         stop_ = true;
     }
+    // Thread runs only for the given samples
     else
     {
         std::cout << "Publisher running " << samples << " samples." << std::endl;
@@ -156,9 +167,12 @@ void ContentFilteredTopicExamplePublisher::run(
 bool ContentFilteredTopicExamplePublisher::publish(
         bool waitForListener)
 {
+    // Wait until there is a matched DataReader, unless waitForListener flag is set to false
     if (firstConnected_ || !waitForListener || matched_ > 0)
     {
+        // Update sample
         hello_.index(hello_.index() + 1);
+        // Write sample
         writer_->write(&hello_);
         return true;
     }

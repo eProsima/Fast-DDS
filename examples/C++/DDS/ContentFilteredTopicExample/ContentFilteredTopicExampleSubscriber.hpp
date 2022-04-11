@@ -20,7 +20,7 @@
 #ifndef _CONTENTFILTEREDTOPICEXAMPLESUBSCRIBER_HPP_
 #define _CONTENTFILTEREDTOPICEXAMPLESUBSCRIBER_HPP_
 
-#include "HelloWorldPubSubTypes.h"
+#include <atomic>
 
 #include <fastdds/dds/core/status/SubscriptionMatchedStatus.hpp>
 #include <fastdds/dds/domain/DomainParticipant.hpp>
@@ -32,14 +32,18 @@
 #include <fastdds/dds/topic/Topic.hpp>
 #include <fastdds/dds/topic/TypeSupport.hpp>
 
+#include "HelloWorldPubSubTypes.h"
 #include "MyCustomFilterFactory.hpp"
 
+// Subscriber application class
 class ContentFilteredTopicExampleSubscriber : public eprosima::fastdds::dds::DataReaderListener
 {
 public:
 
+    //! Constructor
     ContentFilteredTopicExampleSubscriber() = default;
 
+    //! Destructor
     virtual ~ContentFilteredTopicExampleSubscriber();
 
     /**
@@ -53,34 +57,46 @@ public:
     bool init(
             bool custom_filter = false);
 
-    //! Run the subscriber
+    //! Run the subscriber application
     void run();
 
 private:
 
+    //! DDS DomainParticipant pointer
     eprosima::fastdds::dds::DomainParticipant* participant_ = nullptr;
 
+    //! DDS Subscriber pointer
     eprosima::fastdds::dds::Subscriber* subscriber_ = nullptr;
 
+    //! DDS Topic pointer
     eprosima::fastdds::dds::Topic* topic_ = nullptr;
 
+    //! DDS ContentFilteredTopic pointer
     eprosima::fastdds::dds::ContentFilteredTopic* filter_topic_ = nullptr;
 
+    //! DDS DataReader pointer
     eprosima::fastdds::dds::DataReader* reader_ = nullptr;
 
+    //! DDS TypeSupport pointer
     eprosima::fastdds::dds::TypeSupport type_ = eprosima::fastdds::dds::TypeSupport(new HelloWorldPubSubType());
 
+    //! Custom filter factory
     MyCustomFilterFactory filter_factory;
 
+    //! Data type
     HelloWorld hello_;
 
-    int matched_ = 0;
+    //! Number of DataWriters matched with the subscriber application
+    std::atomic<int> matched_ = 0;
 
+    //! Number of received samples
     uint32_t samples_  = 0;
 
+    //! Callback specialization when data is notified to the DataReader
     void on_data_available(
             eprosima::fastdds::dds::DataReader* reader) override;
 
+    //! Discovery callback specialization when the DataReader receives discovery information from a remote DataWriter
     void on_subscription_matched(
             eprosima::fastdds::dds::DataReader* reader,
             const eprosima::fastdds::dds::SubscriptionMatchedStatus& info) override;

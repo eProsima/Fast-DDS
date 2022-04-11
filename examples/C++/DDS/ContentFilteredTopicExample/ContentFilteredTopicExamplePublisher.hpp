@@ -32,12 +32,15 @@
 
 #include "HelloWorldPubSubTypes.h"
 
+//! Publisher application class
 class ContentFilteredTopicExamplePublisher : public eprosima::fastdds::dds::DataWriterListener
 {
 public:
 
+    //! Constructor
     ContentFilteredTopicExamplePublisher() = default;
 
+    //! Destructor
     virtual ~ContentFilteredTopicExamplePublisher();
 
     //! Initialize
@@ -47,35 +50,46 @@ public:
     bool publish(
             bool waitForListener = true);
 
-    //! Run for number samples
+    //! Run for the given number of samples (0 => infinite samples)
     void run(
             uint32_t number,
             uint32_t sleep);
 
 private:
 
+    //! Data type
     HelloWorld hello_;
 
+    //! DDS DomainParticipant pointer
     eprosima::fastdds::dds::DomainParticipant* participant_ = nullptr;
 
+    //! DDS Publisher pointer
     eprosima::fastdds::dds::Publisher* publisher_ = nullptr;
 
+    //! DDS Topic pointer
     eprosima::fastdds::dds::Topic* topic_ = nullptr;
 
+    //! DDS DataWriter pointer
     eprosima::fastdds::dds::DataWriter* writer_ = nullptr;
 
+    //! DDS TypeSupport pointer
     eprosima::fastdds::dds::TypeSupport type_ = eprosima::fastdds::dds::TypeSupport(new HelloWorldPubSubType());
 
+    //! Flag to terminate application
     std::atomic<bool> stop_;
 
+    //! Number of DataReaders matched with the publisher application
     std::atomic<int> matched_;
 
+    //! Flag set once the first subscriber is discovered and matched
     std::atomic<bool> firstConnected_;
 
+    //! Discovery callback specialization when the DataWriter received discovery information from a remote DataReader
     void on_publication_matched(
             eprosima::fastdds::dds::DataWriter* writer,
             const eprosima::fastdds::dds::PublicationMatchedStatus& info) override;
 
+    //! Publisher application thread
     void runThread(
             uint32_t number,
             uint32_t sleep);
