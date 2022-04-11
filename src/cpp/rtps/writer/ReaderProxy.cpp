@@ -442,15 +442,8 @@ bool ReaderProxy::set_change_to_status(
     // first unacknowledged change is irrelevant.
     if (status == ACKNOWLEDGED && seq_num == changes_low_mark_ + 1)
     {
-<<<<<<< HEAD
         changes_low_mark_ = seq_num;
         change_was_modified = true;
-=======
-        assert(changes_for_reader_.begin() == it);
-        changes_for_reader_.erase(it);
-        acked_changes_set(seq_num + 1);
-        return;
->>>>>>> 23364f0b9 (Fix inconsistent ReaderProxy state on intra-process (#2626))
     }
 
     if (it != changes_for_reader_.end())
@@ -460,6 +453,7 @@ bool ReaderProxy::set_change_to_status(
             // Erase the first change when it is acknowledged
             assert(it == changes_for_reader_.begin());
             changes_for_reader_.erase(it);
+            acked_changes_set(seq_num + 1);
         }
         else
         {
