@@ -1,4 +1,4 @@
-// Copyright 2016 Proyectos y Sistemas de Mantenimiento SL (eProsima).
+// Copyright 2022 Proyectos y Sistemas de Mantenimiento SL (eProsima).
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -13,10 +13,9 @@
 // limitations under the License.
 
 /**
- * @file PublisherHistory.cpp
- *
+ * @file DataWriterHistory.cpp
  */
-#include <fastrtps/publisher/PublisherHistory.h>
+#include <fastdds/publisher/DataWriterHistory.hpp>
 
 #include <chrono>
 #include <limits>
@@ -26,13 +25,13 @@
 #include <fastdds/rtps/common/Time_t.h>
 #include <fastdds/dds/log/Log.hpp>
 #include <fastdds/rtps/writer/RTPSWriter.h>
-#include <fastrtps/config.h>
-#include <fastrtps_deprecated/publisher/PublisherImpl.h>
 
 namespace eprosima {
-namespace fastrtps {
+namespace fastdds {
+namespace dds {
 
-using namespace rtps;
+using namespace eprosima::fastrtps;
+using namespace eprosima::fastrtps::rtps;
 
 static HistoryAttributes to_history_attributes(
         const TopicAttributes& topic_att,
@@ -57,7 +56,7 @@ static HistoryAttributes to_history_attributes(
     return HistoryAttributes(mempolicy, payloadMaxSize, initial_samples, max_samples, extra_samples);
 }
 
-PublisherHistory::PublisherHistory(
+DataWriterHistory::DataWriterHistory(
         const TopicAttributes& topic_att,
         uint32_t payloadMaxSize,
         MemoryManagementPolicy_t mempolicy)
@@ -77,11 +76,11 @@ PublisherHistory::PublisherHistory(
     }
 }
 
-PublisherHistory::~PublisherHistory()
+DataWriterHistory::~DataWriterHistory()
 {
 }
 
-void PublisherHistory::rebuild_instances()
+void DataWriterHistory::rebuild_instances()
 {
     if (topic_att_.getTopicKind() == WITH_KEY)
     {
@@ -96,7 +95,7 @@ void PublisherHistory::rebuild_instances()
     }
 }
 
-bool PublisherHistory::register_instance(
+bool DataWriterHistory::register_instance(
         const InstanceHandle_t& instance_handle,
         std::unique_lock<RecursiveTimedMutex>&,
         const std::chrono::time_point<std::chrono::steady_clock>&)
@@ -111,7 +110,7 @@ bool PublisherHistory::register_instance(
     return find_or_add_key(instance_handle, &vit);
 }
 
-bool PublisherHistory::prepare_change(
+bool DataWriterHistory::prepare_change(
         CacheChange_t* change,
         std::unique_lock<RecursiveTimedMutex>& lock,
         const std::chrono::time_point<std::chrono::steady_clock>& max_blocking_time)
@@ -210,7 +209,7 @@ bool PublisherHistory::prepare_change(
     return add;
 }
 
-bool PublisherHistory::add_pub_change(
+bool DataWriterHistory::add_pub_change(
         CacheChange_t* change,
         WriteParams& wparams,
         std::unique_lock<RecursiveTimedMutex>& lock,
@@ -238,7 +237,7 @@ bool PublisherHistory::add_pub_change(
     return returnedValue;
 }
 
-bool PublisherHistory::find_or_add_key(
+bool DataWriterHistory::find_or_add_key(
         const InstanceHandle_t& instance_handle,
         t_m_Inst_Caches::iterator* vit_out)
 {
@@ -259,7 +258,7 @@ bool PublisherHistory::find_or_add_key(
     return false;
 }
 
-bool PublisherHistory::removeAllChange(
+bool DataWriterHistory::removeAllChange(
         size_t* removed)
 {
 
@@ -288,7 +287,7 @@ bool PublisherHistory::removeAllChange(
     return false;
 }
 
-bool PublisherHistory::removeMinChange()
+bool DataWriterHistory::removeMinChange()
 {
     if (mp_writer == nullptr || mp_mutex == nullptr)
     {
@@ -304,7 +303,7 @@ bool PublisherHistory::removeMinChange()
     return false;
 }
 
-bool PublisherHistory::remove_change_pub(
+bool DataWriterHistory::remove_change_pub(
         CacheChange_t* change)
 {
     if (mp_writer == nullptr || mp_mutex == nullptr)
@@ -349,15 +348,15 @@ bool PublisherHistory::remove_change_pub(
     return false;
 }
 
-bool PublisherHistory::remove_change_g(
+bool DataWriterHistory::remove_change_g(
         CacheChange_t* a_change)
 {
     return remove_change_pub(a_change);
 }
 
-bool PublisherHistory::remove_instance_changes(
-        const rtps::InstanceHandle_t& handle,
-        const rtps::SequenceNumber_t& seq_up_to)
+bool DataWriterHistory::remove_instance_changes(
+        const InstanceHandle_t& handle,
+        const SequenceNumber_t& seq_up_to)
 {
     if (mp_writer == nullptr || mp_mutex == nullptr)
     {
@@ -399,7 +398,7 @@ bool PublisherHistory::remove_instance_changes(
     return true;
 }
 
-bool PublisherHistory::set_next_deadline(
+bool DataWriterHistory::set_next_deadline(
         const InstanceHandle_t& handle,
         const std::chrono::steady_clock::time_point& next_deadline_us)
 {
@@ -429,7 +428,7 @@ bool PublisherHistory::set_next_deadline(
     return false;
 }
 
-bool PublisherHistory::get_next_deadline(
+bool DataWriterHistory::get_next_deadline(
         InstanceHandle_t& handle,
         std::chrono::steady_clock::time_point& next_deadline_us)
 {
@@ -465,7 +464,7 @@ bool PublisherHistory::get_next_deadline(
     return false;
 }
 
-bool PublisherHistory::is_key_registered(
+bool DataWriterHistory::is_key_registered(
         const InstanceHandle_t& handle)
 {
     if (mp_writer == nullptr || mp_mutex == nullptr)
@@ -485,7 +484,7 @@ bool PublisherHistory::is_key_registered(
            );
 }
 
-bool PublisherHistory::wait_for_acknowledgement_last_change(
+bool DataWriterHistory::wait_for_acknowledgement_last_change(
         const InstanceHandle_t& handle,
         std::unique_lock<RecursiveTimedMutex>& lock,
         const std::chrono::time_point<std::chrono::steady_clock>& max_blocking_time)
@@ -503,5 +502,6 @@ bool PublisherHistory::wait_for_acknowledgement_last_change(
     return false;
 }
 
+}  // namespace dds
 }  // namespace fastrtps
 }  // namespace eprosima

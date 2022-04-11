@@ -26,6 +26,129 @@ namespace eprosima {
 namespace fastrtps {
 namespace rtps {
 
+namespace {
+
+struct DataMsgUtils
+{
+    static void prepare_submessage_flags(
+            const CacheChange_t* change,
+            TopicKind_t topicKind,
+            bool expectsInlineQos,
+            InlineQosWriter* inlineQos,
+            bool& dataFlag,
+            bool& keyFlag,
+            bool& inlineQosFlag,
+            octet& status)
+    {
+        inlineQosFlag =
+                (nullptr != inlineQos) ||
+                ((WITH_KEY == topicKind) && (expectsInlineQos || change->kind != ALIVE)) ||
+                (change->write_params.related_sample_identity() != SampleIdentity::unknown());
+
+        dataFlag = ALIVE == change->kind &&
+                change->serializedPayload.length > 0 && nullptr != change->serializedPayload.data;
+        keyFlag = !dataFlag && !inlineQosFlag && (WITH_KEY == topicKind);
+
+        status = 0;
+        if (change->kind == NOT_ALIVE_DISPOSED)
+        {
+            status = status | BIT(0);
+        }
+        if (change->kind == NOT_ALIVE_UNREGISTERED)
+        {
+            status = status | BIT(1);
+        }
+        if (change->kind == NOT_ALIVE_DISPOSED_UNREGISTERED)
+        {
+            status = status | BIT(0);
+            status = status | BIT(1);
+        }
+    }
+
+    static bool serialize_header(
+            uint32_t fragment_number,
+            CDRMessage_t* msg,
+            const CacheChange_t* change,
+            const EntityId_t& readerId,
+            octet flags,
+            uint32_t& submessage_size_pos,
+            uint32_t& position_size_count_size)
+    {
+        bool ok = true;
+        bool is_fragment = fragment_number > 0;
+
+        CDRMessage::addOctet(msg, is_fragment ? DATA_FRAG : DATA);
+        CDRMessage::addOctet(msg, flags);
+        submessage_size_pos = msg->pos;
+        CDRMessage::addUInt16(msg, 0);
+        position_size_count_size = msg->pos;
+
+        //extra flags. not in this version.
+        ok &= CDRMessage::addUInt16(msg, 0);
+        //octet to inline Qos is 12 or 28, may change in future versions
+        ok &= is_fragment ?
+                CDRMessage::addUInt16(msg, RTPSMESSAGE_OCTETSTOINLINEQOS_DATAFRAGSUBMSG) :
+                CDRMessage::addUInt16(msg, RTPSMESSAGE_OCTETSTOINLINEQOS_DATASUBMSG);
+        //Entity ids
+        ok &= CDRMessage::addEntityId(msg, &readerId);
+        ok &= CDRMessage::addEntityId(msg, &change->writerGUID.entityId);
+        //Add Sequence Number
+        ok &= CDRMessage::addSequenceNumber(msg, &change->sequenceNumber);
+
+        if (is_fragment)
+        {
+            // Add fragment starting number
+            ok &= CDRMessage::addUInt32(msg, fragment_number); // fragments start in 1
+
+            // Add fragments in submessage
+            ok &= CDRMessage::addUInt16(msg, 1); // we are sending one fragment
+
+            // Add fragment size
+            ok &= CDRMessage::addUInt16(msg, change->getFragmentSize());
+
+            // Add total sample size
+            ok &= CDRMessage::addUInt32(msg, change->serializedPayload.length);
+        }
+
+        return ok;
+    }
+
+    static void serialize_inline_qos(
+            CDRMessage_t* msg,
+            const CacheChange_t* change,
+            TopicKind_t topicKind,
+            bool expectsInlineQos,
+            InlineQosWriter* inlineQos,
+            octet status)
+    {
+        if (change->write_params.related_sample_identity() != SampleIdentity::unknown())
+        {
+            fastdds::dds::ParameterSerializer<Parameter_t>::add_parameter_sample_identity(msg,
+                    change->write_params.related_sample_identity());
+        }
+
+        if (WITH_KEY == topicKind && (expectsInlineQos || ALIVE != change->kind))
+        {
+            fastdds::dds::ParameterSerializer<Parameter_t>::add_parameter_key(msg, change->instanceHandle);
+
+            if (ALIVE != change->kind)
+            {
+                fastdds::dds::ParameterSerializer<Parameter_t>::add_parameter_status(msg, status);
+            }
+        }
+
+        if (inlineQos != nullptr)
+        {
+            inlineQos->writeQosToCDRMessage(msg);
+        }
+
+        fastdds::dds::ParameterSerializer<Parameter_t>::add_parameter_sentinel(msg);
+    }
+
+};
+
+}  // empty namespace
+
 bool RTPSMessageCreator::addMessageData(
         CDRMessage_t* msg,
         GuidPrefix_t& guidprefix,
@@ -58,7 +181,8 @@ bool RTPSMessageCreator::addSubmessageData(
         InlineQosWriter* inlineQos,
         bool* is_big_submessage)
 {
-    octet flags = 0x0;
+    octet status = 0;
+    octet flags = 0;
     //Find out flags
     bool dataFlag = false;
     bool keyFlag = false;
@@ -72,36 +196,11 @@ bool RTPSMessageCreator::addSubmessageData(
     msg->msg_endian = LITTLEEND;
 #endif // if FASTDDS_IS_BIG_ENDIAN_TARGET
 
-    if (change->kind == ALIVE && change->serializedPayload.length > 0 && change->serializedPayload.data != NULL)
+    DataMsgUtils::prepare_submessage_flags(change, topicKind, expectsInlineQos, inlineQos,
+            dataFlag, keyFlag, inlineQosFlag, status);
+
+    if (inlineQosFlag)
     {
-        dataFlag = true;
-        keyFlag = false;
-    }
-    else
-    {
-        dataFlag = false;
-        keyFlag = true;
-    }
-    if (topicKind == NO_KEY)
-    {
-        keyFlag = false;
-    }
-    inlineQosFlag = false;
-    // cout << "expects inline qos: " << expectsInlineQos << " topic KIND: " << (topicKind == WITH_KEY) << endl;
-    if (inlineQos != NULL || expectsInlineQos || change->kind != ALIVE) //expects inline qos
-    {
-        if (topicKind == WITH_KEY)
-        {
-            flags = flags | BIT(1);
-            inlineQosFlag = true;
-            //cout << "INLINE QOS FLAG TO 1 " << endl;
-            keyFlag = false;
-        }
-    }
-    // Maybe the inline QoS because a WriteParam.
-    else if (change->write_params.related_sample_identity() != SampleIdentity::unknown())
-    {
-        inlineQosFlag = true;
         flags = flags | BIT(1);
     }
 
@@ -109,73 +208,23 @@ bool RTPSMessageCreator::addSubmessageData(
     {
         flags = flags | BIT(2);
     }
+
     if (keyFlag)
     {
         flags = flags | BIT(3);
     }
 
-    octet status = 0;
-    if (change->kind == NOT_ALIVE_DISPOSED)
-    {
-        status = status | BIT(0);
-    }
-    if (change->kind == NOT_ALIVE_UNREGISTERED)
-    {
-        status = status | BIT(1);
-    }
-    if (change->kind == NOT_ALIVE_DISPOSED_UNREGISTERED)
-    {
-        status = status | BIT(0);
-        status = status | BIT(1);
-    }
-
-    bool added_no_error = true;
-
     // Submessage header.
-    CDRMessage::addOctet(msg, DATA);
-    CDRMessage::addOctet(msg, flags);
-    uint32_t submessage_size_pos = msg->pos;
+    uint32_t submessage_size_pos = 0;
     uint16_t submessage_size = 0;
-    CDRMessage::addUInt16(msg, submessage_size);
-    uint32_t position_size_count_size = msg->pos;
+    uint32_t position_size_count_size = 0;
+    bool added_no_error = DataMsgUtils::serialize_header(0, msg, change, readerId, flags,
+                    submessage_size_pos, position_size_count_size);
 
-    //extra flags. not in this version.
-    added_no_error &= CDRMessage::addUInt16(msg, 0);
-    //octet to inline Qos is 12, may change in future versions
-    added_no_error &= CDRMessage::addUInt16(msg, RTPSMESSAGE_OCTETSTOINLINEQOS_DATASUBMSG);
-    //Entity ids
-    added_no_error &= CDRMessage::addEntityId(msg, &readerId);
-    added_no_error &= CDRMessage::addEntityId(msg, &change->writerGUID.entityId);
-    //Add Sequence Number
-    added_no_error &= CDRMessage::addSequenceNumber(msg, &change->sequenceNumber);
     //Add INLINE QOS AND SERIALIZED PAYLOAD DEPENDING ON FLAGS:
-
-
     if (inlineQosFlag) //inlineQoS
     {
-        if (change->write_params.related_sample_identity() != SampleIdentity::unknown())
-        {
-            fastdds::dds::ParameterSerializer<Parameter_t>::add_parameter_sample_identity(msg,
-                    change->write_params.related_sample_identity());
-        }
-
-        if (topicKind == WITH_KEY)
-        {
-            //cout << "ADDDING PARAMETER KEY " << endl;
-            fastdds::dds::ParameterSerializer<Parameter_t>::add_parameter_key(msg, change->instanceHandle);
-        }
-
-        if (change->kind != ALIVE)
-        {
-            fastdds::dds::ParameterSerializer<Parameter_t>::add_parameter_status(msg, status);
-        }
-
-        if (inlineQos != nullptr)
-        {
-            inlineQos->writeQosToCDRMessage(msg);
-        }
-
-        fastdds::dds::ParameterSerializer<Parameter_t>::add_parameter_sentinel(msg);
+        DataMsgUtils::serialize_inline_qos(msg, change, topicKind, expectsInlineQos, inlineQos, status);
     }
 
     //Add Serialized Payload
@@ -290,8 +339,10 @@ bool RTPSMessageCreator::addSubmessageDataFrag(
         bool expectsInlineQos,
         InlineQosWriter* inlineQos)
 {
-    octet flags = 0x0;
+    octet status = 0;
+    octet flags = 0;
     //Find out flags
+    bool dataFlag = false;
     bool keyFlag = false;
     bool inlineQosFlag = false;
 
@@ -303,35 +354,11 @@ bool RTPSMessageCreator::addSubmessageDataFrag(
     msg->msg_endian = LITTLEEND;
 #endif // if FASTDDS_IS_BIG_ENDIAN_TARGET
 
-    if (change->kind == ALIVE && payload.length > 0 && payload.data != NULL)
-    {
-        keyFlag = false;
-    }
-    else
-    {
-        keyFlag = true;
-    }
+    DataMsgUtils::prepare_submessage_flags(change, topicKind, expectsInlineQos, inlineQos,
+            dataFlag, keyFlag, inlineQosFlag, status);
 
-    if (topicKind == NO_KEY)
+    if (inlineQosFlag)
     {
-        keyFlag = false;
-    }
-
-    // cout << "expects inline qos: " << expectsInlineQos << " topic KIND: " << (topicKind == WITH_KEY) << endl;
-    if (inlineQos != NULL || expectsInlineQos || change->kind != ALIVE) //expects inline qos
-    {
-        if (topicKind == WITH_KEY)
-        {
-            flags = flags | BIT(1);
-            inlineQosFlag = true;
-            //cout << "INLINE QOS FLAG TO 1 " << endl;
-            keyFlag = false;
-        }
-    }
-    // Maybe the inline QoS because a WriteParam.
-    else if (change->write_params.related_sample_identity() != SampleIdentity::unknown())
-    {
-        inlineQosFlag = true;
         flags = flags | BIT(1);
     }
 
@@ -340,82 +367,17 @@ bool RTPSMessageCreator::addSubmessageDataFrag(
         flags = flags | BIT(2);
     }
 
-    octet status = 0;
-    if (change->kind == NOT_ALIVE_DISPOSED)
-    {
-        status = status | BIT(0);
-    }
-    if (change->kind == NOT_ALIVE_UNREGISTERED)
-    {
-        status = status | BIT(1);
-    }
-
-    if (change->kind == NOT_ALIVE_DISPOSED_UNREGISTERED)
-    {
-        status = status | BIT(0);
-        status = status | BIT(1);
-    }
-
-    bool added_no_error = true;
-
     // Submessage header.
-    CDRMessage::addOctet(msg, DATA_FRAG);
-    CDRMessage::addOctet(msg, flags);
-    uint32_t submessage_size_pos = msg->pos;
+    uint32_t submessage_size_pos = 0;
     uint16_t submessage_size = 0;
-    CDRMessage::addUInt16(msg, submessage_size);
-    uint32_t position_size_count_size = msg->pos;
-
-    //extra flags. not in this version.
-    added_no_error &= CDRMessage::addUInt16(msg, 0);
-
-    //octet to inline Qos is 28, may change in future versions
-    added_no_error &= CDRMessage::addUInt16(msg, RTPSMESSAGE_OCTETSTOINLINEQOS_DATAFRAGSUBMSG);
-
-    //Entity ids
-    added_no_error &= CDRMessage::addEntityId(msg, &readerId);
-    added_no_error &= CDRMessage::addEntityId(msg, &change->writerGUID.entityId);
-
-    //Add Sequence Number
-    added_no_error &= CDRMessage::addSequenceNumber(msg, &change->sequenceNumber);
-
-    // Add fragment starting number
-    added_no_error &= CDRMessage::addUInt32(msg, fragment_number); // fragments start in 1
-
-    // Add fragments in submessage
-    added_no_error &= CDRMessage::addUInt16(msg, 1); // we are sending one fragment
-
-    // Add fragment size
-    added_no_error &= CDRMessage::addUInt16(msg, change->getFragmentSize());
-
-    // Add total sample size
-    added_no_error &= CDRMessage::addUInt32(msg, change->serializedPayload.length);
+    uint32_t position_size_count_size = 0;
+    bool added_no_error = DataMsgUtils::serialize_header(fragment_number, msg, change, readerId, flags,
+                    submessage_size_pos, position_size_count_size);
 
     //Add INLINE QOS AND SERIALIZED PAYLOAD DEPENDING ON FLAGS:
     if (inlineQosFlag) //inlineQoS
     {
-        if (change->write_params.related_sample_identity() != SampleIdentity::unknown())
-        {
-            fastdds::dds::ParameterSerializer<Parameter_t>::add_parameter_sample_identity(msg,
-                    change->write_params.related_sample_identity());
-        }
-
-        if (topicKind == WITH_KEY)
-        {
-            fastdds::dds::ParameterSerializer<Parameter_t>::add_parameter_key(msg, change->instanceHandle);
-        }
-
-        if (change->kind != ALIVE)
-        {
-            fastdds::dds::ParameterSerializer<Parameter_t>::add_parameter_status(msg, status);
-        }
-
-        if (inlineQos != nullptr)
-        {
-            inlineQos->writeQosToCDRMessage(msg);
-        }
-
-        fastdds::dds::ParameterSerializer<Parameter_t>::add_parameter_sentinel(msg);
+        DataMsgUtils::serialize_inline_qos(msg, change, topicKind, expectsInlineQos, inlineQos, status);
     }
 
     //Add Serialized Payload XXX TODO

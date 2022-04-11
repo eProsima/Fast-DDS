@@ -29,6 +29,7 @@
 #include "ProxyDataFilters.hpp"
 
 using ParameterList = eprosima::fastdds::dds::ParameterList;
+using ContentFilterProperty = eprosima::fastdds::rtps::ContentFilterProperty;
 
 namespace eprosima {
 namespace fastrtps {
@@ -140,6 +141,7 @@ ReaderProxyData& ReaderProxyData::operator =(
     m_topicKind = readerInfo.m_topicKind;
     m_qos.setQos(readerInfo.m_qos, true);
     m_properties = readerInfo.m_properties;
+    content_filter_ = readerInfo.content_filter_;
 
     if (readerInfo.m_type_id)
     {
@@ -308,6 +310,13 @@ uint32_t ReaderProxyData::get_serialized_size(
     {
         // PID_PROPERTY_LIST
         ret_val += fastdds::dds::ParameterSerializer<ParameterPropertyList_t>::cdr_serialized_size(m_properties);
+    }
+
+    // PID_CONTENT_FILTER_PROPERTY
+    // Take into count only when filter_class_name and filter_expression are not empty.
+    if (0 < content_filter_.filter_class_name.size() && 0 < content_filter_.filter_expression.size())
+    {
+        ret_val += fastdds::dds::ParameterSerializer<ContentFilterProperty>::cdr_serialized_size(content_filter_);
     }
 
 #if HAVE_SECURITY
@@ -543,6 +552,15 @@ bool ReaderProxyData::writeToCDRMessage(
     if (m_properties.size() > 0)
     {
         if (!fastdds::dds::ParameterSerializer<ParameterPropertyList_t>::add_to_cdr_message(m_properties, msg))
+        {
+            return false;
+        }
+    }
+
+    // Serialize ContentFilterProperty only when filter_class_name and filter_expression are not empty.
+    if (0 < content_filter_.filter_class_name.size() && 0 < content_filter_.filter_expression.size())
+    {
+        if (!fastdds::dds::ParameterSerializer<ContentFilterProperty>::add_to_cdr_message(content_filter_, msg))
         {
             return false;
         }
@@ -957,6 +975,16 @@ bool ReaderProxyData::readFromCDRMessage(
                         break;
                     }
 
+                    case fastdds::dds::PID_CONTENT_FILTER_PROPERTY:
+                    {
+                        if (!fastdds::dds::ParameterSerializer<ContentFilterProperty>::read_from_cdr_message(
+                                    content_filter_, msg, plength))
+                        {
+                            return false;
+                        }
+                        break;
+                    }
+
                     case fastdds::dds::PID_DATASHARING:
                     {
                         if (!fastdds::dds::QosPoliciesSerializer<DataSharingQosPolicy>::read_from_cdr_message(
@@ -1035,6 +1063,11 @@ void ReaderProxyData::clear()
     m_qos.clear();
     m_properties.clear();
     m_properties.length = 0;
+    content_filter_.filter_class_name = "";
+    content_filter_.content_filtered_topic_name = "";
+    content_filter_.related_topic_name = "";
+    content_filter_.filter_expression = "";
+    content_filter_.expression_parameters.clear();
 
     if (m_type_id)
     {

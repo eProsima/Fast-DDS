@@ -2820,6 +2820,8 @@ public:
      * @brief Constructor
      */
     RTPS_DllAPI WriterResourceLimitsQos()
+        : matched_subscriber_allocation()
+        , reader_filters_allocation(0, 32u, 1u)
     {
     }
 

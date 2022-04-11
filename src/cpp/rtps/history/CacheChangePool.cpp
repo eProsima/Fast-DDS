@@ -38,14 +38,15 @@ CacheChangePool::~CacheChangePool()
     // Deletion process does not depend on the memory management policy
     for (CacheChange_t* cache : all_caches_)
     {
-        delete(cache);
+        destroy_change(cache);
     }
 }
 
-CacheChangePool::CacheChangePool(
+void CacheChangePool::init(
         const PoolConfig& config)
-    : memory_mode_(config.memory_policy)
 {
+    memory_mode_ = config.memory_policy;
+
     // Common for all modes: Set the pool size and size limit
     uint32_t pool_size = config.initial_size;
     uint32_t max_pool_size = config.maximum_size;
@@ -103,6 +104,8 @@ void CacheChangePool::return_cache_to_pool(
     ch->sourceTimestamp.fraction(0);
     ch->writer_info.num_sent_submessages = 0;
     ch->setFragmentSize(0);
+    ch->inline_qos.pos = 0;
+    ch->inline_qos.length = 0;
     free_caches_.push_back(ch);
 }
 
@@ -133,7 +136,7 @@ bool CacheChangePool::allocateGroup(
 
     while (current_pool_size_ < desired_size)
     {
-        CacheChange_t* ch = new CacheChange_t();
+        CacheChange_t* ch = create_change();
         all_caches_.push_back(ch);
         free_caches_.push_back(ch);
         ++current_pool_size_;
@@ -165,7 +168,7 @@ CacheChange_t* CacheChangePool::allocateSingle()
     if (current_pool_size_ < max_pool_size_)
     {
         ++current_pool_size_;
-        ch = new CacheChange_t();
+        ch = create_change();
         all_caches_.push_back(ch);
         added = true;
     }
@@ -243,7 +246,7 @@ bool CacheChangePool::release_cache(
                 return false;
             }
 
-            delete(cache_change);
+            destroy_change(cache_change);
             --current_pool_size_;
             break;
     }

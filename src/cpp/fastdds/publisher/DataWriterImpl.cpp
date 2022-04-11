@@ -47,10 +47,13 @@
 #include <fastdds/core/policy/QosPolicyUtils.hpp>
 
 #include <fastdds/domain/DomainParticipantImpl.hpp>
+#include <fastdds/publisher/filtering/DataWriterFilteredChangePool.hpp>
 
-#include <rtps/history/TopicPayloadPoolRegistry.hpp>
 #include <rtps/DataSharing/DataSharingPayloadPool.hpp>
+#include <rtps/history/CacheChangePool.h>
+#include <rtps/history/TopicPayloadPoolRegistry.hpp>
 #include <rtps/participant/RTPSParticipantImpl.h>
+#include <rtps/RTPSDomainImpl.hpp>
 
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
@@ -256,6 +259,21 @@ ReturnCode_t DataWriterImpl::enable()
         w_att.endpoint.set_data_sharing_configuration(datasharing);
     }
 
+    bool filtering_enabled =
+            qos_.liveliness().lease_duration.is_infinite() &&
+            (0 < qos_.writer_resource_limits().reader_filters_allocation.maximum);
+    if (filtering_enabled)
+    {
+        reader_filters_.reset(new ReaderFilterCollection(qos_.writer_resource_limits().reader_filters_allocation));
+    }
+
+    auto change_pool = get_change_pool();
+    if (!change_pool)
+    {
+        logError(DATA_WRITER, "Problem creating change pool for associated Writer");
+        return ReturnCode_t::RETCODE_ERROR;
+    }
+
     auto pool = get_payload_pool();
     if (!pool)
     {
@@ -263,10 +281,12 @@ ReturnCode_t DataWriterImpl::enable()
         return ReturnCode_t::RETCODE_ERROR;
     }
 
-    RTPSWriter* writer =  RTPSDomain::createRTPSWriter(
+    RTPSWriter* writer =  RTPSDomainImpl::create_rtps_writer(
         publisher_->rtps_participant(),
         guid_.entityId,
-        w_att, pool,
+        w_att,
+        pool,
+        change_pool,
         static_cast<WriterHistory*>(&history_),
         static_cast<WriterListener*>(&writer_listener_));
 
@@ -287,9 +307,12 @@ ReturnCode_t DataWriterImpl::enable()
             return ReturnCode_t::RETCODE_ERROR;
         }
 
-        writer = RTPSDomain::createRTPSWriter(
+        writer = RTPSDomainImpl::create_rtps_writer(
             publisher_->rtps_participant(),
-            w_att, pool,
+            guid_.entityId,
+            w_att,
+            pool,
+            change_pool,
             static_cast<WriterHistory*>(&history_),
             static_cast<WriterListener*>(&writer_listener_));
     }
@@ -301,6 +324,10 @@ ReturnCode_t DataWriterImpl::enable()
     }
 
     writer_ = writer;
+    if (filtering_enabled)
+    {
+        writer_->reader_data_filter(this);
+    }
 
     // In case it has been loaded from the persistence DB, rebuild instances on history
     history_.rebuild_instances();
@@ -737,7 +764,23 @@ ReturnCode_t DataWriterImpl::perform_create_new_change(
     {
         payload.move_into_change(*ch);
 
-        if (!this->history_.add_pub_change(ch, wparams, lock, max_blocking_time))
+        bool added = false;
+        if (reader_filters_)
+        {
+            auto related_sample_identity = wparams.related_sample_identity();
+            auto filter_hook = [&related_sample_identity, this](CacheChange_t& ch)
+                    {
+                        reader_filters_->update_filter_info(static_cast<DataWriterFilteredChange&>(ch),
+                                related_sample_identity);
+                    };
+            added = history_.add_pub_change_with_commit_hook(ch, wparams, filter_hook, lock, max_blocking_time);
+        }
+        else
+        {
+            added = history_.add_pub_change(ch, wparams, lock, max_blocking_time);
+        }
+
+        if (!added)
         {
             if (was_loaned)
             {
@@ -1010,6 +1053,28 @@ void DataWriterImpl::InnerDataWriterListener::on_liveliness_lost(
             data_writer_->user_datawriter_, status);
     }
     data_writer_->user_datawriter_->get_statuscondition().get_impl()->set_status(notify_status, true);
+}
+
+void DataWriterImpl::InnerDataWriterListener::on_reader_discovery(
+        fastrtps::rtps::RTPSWriter* writer,
+        fastrtps::rtps::ReaderDiscoveryInfo::DISCOVERY_STATUS reason,
+        const fastrtps::rtps::GUID_t& reader_guid,
+        const fastrtps::rtps::ReaderProxyData* reader_info)
+{
+    if (!fastrtps::rtps::RTPSDomainImpl::should_intraprocess_between(writer->getGuid(), reader_guid))
+    {
+        switch (reason)
+        {
+            case fastrtps::rtps::ReaderDiscoveryInfo::DISCOVERY_STATUS::REMOVED_READER:
+                data_writer_->remove_reader_filter(reader_guid);
+                break;
+
+            case fastrtps::rtps::ReaderDiscoveryInfo::DISCOVERY_STATUS::DISCOVERED_READER:
+            case fastrtps::rtps::ReaderDiscoveryInfo::DISCOVERY_STATUS::CHANGED_QOS_READER:
+                data_writer_->process_reader_filter_info(reader_guid, *reader_info);
+                break;
+        }
+    }
 }
 
 ReturnCode_t DataWriterImpl::wait_for_acknowledgments(
@@ -1608,6 +1673,18 @@ DataWriterListener* DataWriterImpl::get_listener_for(
     return publisher_->get_listener_for(status);
 }
 
+std::shared_ptr<IChangePool> DataWriterImpl::get_change_pool() const
+{
+    PoolConfig config = PoolConfig::from_history_attributes(history_.m_att);
+    if (reader_filters_)
+    {
+        return std::make_shared<DataWriterFilteredChangePool>(
+            config, qos_.writer_resource_limits().reader_filters_allocation);
+    }
+
+    return std::make_shared<fastrtps::rtps::CacheChangePool>(config);
+}
+
 std::shared_ptr<IPayloadPool> DataWriterImpl::get_payload_pool()
 {
     if (!payload_pool_)
@@ -1765,6 +1842,48 @@ ReturnCode_t DataWriterImpl::check_datasharing_compatible(
             logError(DATA_WRITER, "Unknown data sharing kind.");
             return ReturnCode_t::RETCODE_BAD_PARAMETER;
     }
+}
+
+void DataWriterImpl::remove_reader_filter(
+        const fastrtps::rtps::GUID_t& reader_guid)
+{
+    if (reader_filters_)
+    {
+        reader_filters_->remove_reader(reader_guid);
+    }
+}
+
+void DataWriterImpl::process_reader_filter_info(
+        const fastrtps::rtps::GUID_t& reader_guid,
+        const fastrtps::rtps::ReaderProxyData& reader_info)
+{
+    if (reader_filters_ &&
+            !writer_->is_datasharing_compatible_with(reader_info) &&
+            reader_info.remote_locators().multicast.empty())
+    {
+        reader_filters_->process_reader_filter_info(reader_guid, reader_info.content_filter(),
+                publisher_->get_participant_impl(), topic_);
+    }
+}
+
+void DataWriterImpl::filter_is_being_removed(
+        const char* filter_class_name)
+{
+    if (reader_filters_)
+    {
+        assert(writer_);
+        std::lock_guard<RecursiveTimedMutex> guard(writer_->getMutex());
+        reader_filters_->remove_filters(filter_class_name);
+    }
+}
+
+bool DataWriterImpl::is_relevant(
+        const fastrtps::rtps::CacheChange_t& change,
+        const fastrtps::rtps::GUID_t& reader_guid) const
+{
+    assert(reader_filters_);
+    const DataWriterFilteredChange& writer_change = static_cast<const DataWriterFilteredChange&>(change);
+    return writer_change.is_relevant_for(reader_guid);
 }
 
 } // namespace dds

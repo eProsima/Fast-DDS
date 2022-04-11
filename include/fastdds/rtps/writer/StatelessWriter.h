@@ -130,10 +130,10 @@ public:
      * @param filter  The content filter to use on this writer. May be @c nullptr to remove the content filter
      *                (i.e. treat all samples as relevant).
      */
-    virtual void reader_data_filter(
+    void reader_data_filter(
             fastdds::rtps::IReaderDataFilter* filter) final
     {
-        static_cast<void>(filter);
+        reader_data_filter_ = filter;
     }
 
     /**
@@ -141,9 +141,9 @@ public:
      *
      * @return The content filter used on this writer.
      */
-    virtual const fastdds::rtps::IReaderDataFilter* reader_data_filter() const final
+    const fastdds::rtps::IReaderDataFilter* reader_data_filter() const final
     {
-        return nullptr;
+        return reader_data_filter_;
     }
 
     /**
@@ -265,9 +265,11 @@ private:
     ResourceLimitedVector<std::unique_ptr<ReaderLocator>> matched_readers_pool_;
 
     LocatorSelectorSender locator_selector_;
+
+    fastdds::rtps::IReaderDataFilter* reader_data_filter_ = nullptr;
 };
 
-}        /* namespace rtps */
+} /* namespace rtps */
 } /* namespace fastrtps */
 } /* namespace eprosima */
 

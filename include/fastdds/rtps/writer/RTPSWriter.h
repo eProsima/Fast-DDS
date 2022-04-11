@@ -39,12 +39,18 @@
 
 namespace eprosima {
 
-namespace  fastdds {
+namespace fastdds {
 namespace rtps {
 
 class FlowController;
 
 } // namespace rtps
+
+namespace dds {
+
+class DataWriterImpl;
+
+} // namespace dds
 } // namespace fastdds
 
 namespace fastrtps {
@@ -66,6 +72,7 @@ class RTPSWriter
     friend class WriterHistory;
     friend class RTPSParticipantImpl;
     friend class RTPSMessageGroup;
+    friend class fastdds::dds::DataWriterImpl;
 
 protected:
 

@@ -62,6 +62,7 @@ class TimedEvent;
 namespace fastdds {
 namespace dds {
 
+class ContentFilteredTopicImpl;
 class Subscriber;
 class SubscriberImpl;
 class TopicDescription;
@@ -316,6 +317,8 @@ public:
 
     ReturnCode_t delete_contained_entities();
 
+    void filter_has_been_updated();
+
 protected:
 
     //!Subscriber
@@ -485,10 +488,15 @@ protected:
 
     void release_payload_pool();
 
+    void stop();
+
     ReturnCode_t check_datasharing_compatible(
             const fastrtps::rtps::ReaderAttributes& reader_attributes,
             bool& is_datasharing_compatible) const;
 
+private:
+
+    void update_rtps_reader_qos();
 
 };
 

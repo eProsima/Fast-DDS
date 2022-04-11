@@ -58,18 +58,10 @@ bool WriterHistory::add_change(
     return add_change_(a_change, wparams);
 }
 
-bool WriterHistory::add_change_(
+bool WriterHistory::prepare_and_add_change(
         CacheChange_t* a_change,
-        WriteParams& wparams,
-        std::chrono::time_point<std::chrono::steady_clock> max_blocking_time)
+        WriteParams& wparams)
 {
-    if (mp_writer == nullptr || mp_mutex == nullptr)
-    {
-        logError(RTPS_WRITER_HISTORY, "You need to create a Writer with this History before adding any changes");
-        return false;
-    }
-
-    std::lock_guard<RecursiveTimedMutex> guard(*mp_mutex);
     if (a_change->writerGUID != mp_writer->getGuid())
     {
         logError(RTPS_WRITER_HISTORY,
@@ -114,7 +106,34 @@ bool WriterHistory::add_change_(
     logInfo(RTPS_WRITER_HISTORY,
             "Change " << a_change->sequenceNumber << " added with " << a_change->serializedPayload.length << " bytes");
 
+    return true;
+}
+
+void WriterHistory::notify_writer(
+        CacheChange_t* a_change,
+        const std::chrono::time_point<std::chrono::steady_clock>& max_blocking_time)
+{
     mp_writer->unsent_change_added_to_history(a_change, max_blocking_time);
+}
+
+bool WriterHistory::add_change_(
+        CacheChange_t* a_change,
+        WriteParams& wparams,
+        std::chrono::time_point<std::chrono::steady_clock> max_blocking_time)
+{
+    if (mp_writer == nullptr || mp_mutex == nullptr)
+    {
+        logError(RTPS_WRITER_HISTORY, "You need to create a Writer with this History before adding any changes");
+        return false;
+    }
+
+    std::lock_guard<RecursiveTimedMutex> guard(*mp_mutex);
+    if (!prepare_and_add_change(a_change, wparams))
+    {
+        return false;
+    }
+
+    notify_writer(a_change, max_blocking_time);
 
     return true;
 }
@@ -273,12 +292,24 @@ void WriterHistory::set_fragments(
 
     uint32_t final_high_mark_for_frag = high_mark_for_frag_;
 
-    // If inlineqos for related_sample_identity is required, then remove its size from the final fragment size.
+    // Calc additional size for inline QoS
+    uint32_t inline_qos_size = change->inline_qos.length;
     if (change->write_params.related_sample_identity() != SampleIdentity::unknown())
+    {
+        inline_qos_size += fastdds::dds::ParameterSerializer<Parameter_t>::PARAMETER_SAMPLE_IDENTITY_SIZE;
+    }
+    if (ChangeKind_t::ALIVE != change->kind && TopicKind_t::WITH_KEY == mp_writer->m_att.topicKind)
+    {
+        inline_qos_size += fastdds::dds::ParameterSerializer<Parameter_t>::PARAMETER_KEY_SIZE;
+        inline_qos_size += fastdds::dds::ParameterSerializer<Parameter_t>::PARAMETER_STATUS_SIZE;
+    }
+
+    // If inlineqos for related_sample_identity is required, then remove its size from the final fragment size.
+    if (0 < inline_qos_size)
     {
         final_high_mark_for_frag -= (
             fastdds::dds::ParameterSerializer<Parameter_t>::PARAMETER_SENTINEL_SIZE +
-            fastdds::dds::ParameterSerializer<Parameter_t>::PARAMETER_SAMPLE_IDENTITY_SIZE);
+            inline_qos_size);
     }
 
     // If it is big data, fragment it.

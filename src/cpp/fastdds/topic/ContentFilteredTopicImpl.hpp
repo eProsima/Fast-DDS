@@ -19,6 +19,8 @@
 #ifndef _FASTDDS_TOPIC_CONTENTFILTEREDTOPICIMPL_HPP_
 #define _FASTDDS_TOPIC_CONTENTFILTEREDTOPICIMPL_HPP_
 
+#include <array>
+#include <cstdint>
 #include <string>
 
 #include <fastdds/dds/core/LoanableSequence.hpp>
@@ -26,7 +28,9 @@
 #include <fastdds/dds/topic/IContentFilterFactory.hpp>
 #include <fastdds/dds/topic/Topic.hpp>
 #include <fastdds/rtps/interfaces/IReaderDataFilter.hpp>
+#include <fastdds/rtps/builtin/data/ContentFilterProperty.hpp>
 
+#include <fastdds/subscriber/DataReaderImpl.hpp>
 #include <fastdds/topic/TopicDescriptionImpl.hpp>
 #include <fastdds/topic/TopicImpl.hpp>
 
@@ -47,59 +51,75 @@ public:
 
     bool is_relevant(
             const fastrtps::rtps::CacheChange_t& change,
-            const fastrtps::rtps::GUID_t& reader_guid) const final
+            const fastrtps::rtps::GUID_t& reader_guid) const final;
+
+    /**
+     * Add an entry to the list of DataReaderImpl that should be notified of changes to this object.
+     *
+     * @param [in] reader  Pointer to the DataReaderImpl to add.
+     */
+    void add_reader(
+            DataReaderImpl* reader)
     {
-        IContentFilter::FilterSampleInfo filter_info
-        {
-            change.write_params.sample_identity(),
-            change.write_params.related_sample_identity()
-        };
-        return filter_instance->evaluate(change.serializedPayload, filter_info, reader_guid);
+        readers_.insert(reader);
     }
 
+    /**
+     * Remove an entry from the list of DataReaderImpl that should be notified of changes to this object.
+     *
+     * @param [in] reader  Pointer to the DataReaderImpl to remove.
+     */
+    void remove_reader(
+            DataReaderImpl* reader)
+    {
+        readers_.erase(reader);
+    }
+
+    /**
+     * Compute signature values from the current configuration of this object.
+     */
+    void update_signature();
+
+    /**
+     * Set new filtering configuration for this object.
+     * The filter signatures will be accordingly updated.
+     * The registered readers will be then notified.
+     *
+     * @param [in]  new_expression             New value to be set for the expression.
+     *                                         May be nullptr to indicate that only the parameters have been changed.
+     *                                         May be an empty string to indicate that filtering should be disabled.
+     * @param [in]  new_expression_parameters  New value for the expression parameters.
+     *
+     * @return a code indicating if this object was correctly updated.
+     */
     ReturnCode_t set_expression_parameters(
             const char* new_expression,
-            const std::vector<std::string>& new_expression_parameters)
-    {
-        TopicImpl* topic_impl = dynamic_cast<TopicImpl*>(related_topic->get_impl());
-        assert(nullptr != topic_impl);
-        const TypeSupport& type = topic_impl->get_type();
-
-        LoanableSequence<const char*>::size_type n_params;
-        n_params = static_cast<LoanableSequence<const char*>::size_type>(new_expression_parameters.size());
-        LoanableSequence<const char*> filter_parameters(n_params);
-        filter_parameters.length(n_params);
-        while (n_params > 0)
-        {
-            n_params--;
-            filter_parameters[n_params] = new_expression_parameters[n_params].c_str();
-        }
-
-        ReturnCode_t ret = filter_factory->create_content_filter(
-            filter_class_name.c_str(),
-            related_topic->get_type_name().c_str(),
-            type.get(), new_expression, filter_parameters, filter_instance);
-
-        if (ReturnCode_t::RETCODE_OK == ret)
-        {
-            parameters = new_expression_parameters;
-            if (nullptr != new_expression)
-            {
-                expression = new_expression;
-            }
-
-            // TODO: inform data readers
-        }
-
-        return ret;
-    }
+            const std::vector<std::string>& new_expression_parameters);
 
     IContentFilterFactory* filter_factory = nullptr;
     IContentFilter* filter_instance = nullptr;
     Topic* related_topic = nullptr;
-    std::string filter_class_name;
-    std::string expression;
-    std::vector<std::string> parameters;
+    eprosima::fastdds::rtps::ContentFilterProperty filter_property{{}};
+
+private:
+
+    /**
+     * Inspects the inline QoS of a change to check if the writer already applied this filter.
+     *
+     * @param [in]  change         The change for which the inline QoS should be checked.
+     * @param [out] filter_result  When the signature of this filter is present on the inline QoS,
+     *                             this will be set with the filter evaluation done by the writer.
+     *                             Only valid when the method returns true.
+     *
+     * @return whether the signature for the current filter was found on the inline QoS of the change.
+     */
+    bool check_filter_signature(
+            const fastrtps::rtps::CacheChange_t& change,
+            bool& filter_result) const;
+
+    std::set<DataReaderImpl*> readers_;
+    std::array<uint8_t, 16> filter_signature_;
+    std::array<uint8_t, 16> filter_signature_rti_connext_;
 };
 
 } /* namespace dds */

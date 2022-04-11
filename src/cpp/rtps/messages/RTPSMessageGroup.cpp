@@ -35,6 +35,29 @@ namespace eprosima {
 namespace fastrtps {
 namespace rtps {
 
+/**
+ * An InlineQosWriter that puts the inline_qos of a CacheChange_t into a CDRMessage_t.
+ */
+class CacheChangeInlineQoSWriter final : public InlineQosWriter
+{
+    const CacheChange_t& change_;
+
+public:
+
+    explicit CacheChangeInlineQoSWriter(
+            const CacheChange_t& change)
+        : change_(change)
+    {
+    }
+
+    bool writeQosToCDRMessage(
+            CDRMessage_t* msg) final
+    {
+        return CDRMessage::addData(msg, change_.inline_qos.data, change_.inline_qos.length);
+    }
+
+};
+
 static bool append_message(
         CDRMessage_t* full_msg,
         CDRMessage_t* submsg)
@@ -410,12 +433,9 @@ bool RTPSMessageGroup::add_data(
     check_and_maybe_flush();
     add_info_ts_in_buffer(change.sourceTimestamp);
 
-    InlineQosWriter* inlineQos = nullptr;
-    if (expectsInlineQos)
-    {
-        //TODOG INLINEQOS
-        //inlineQos = W->getInlineQos();
-    }
+    CacheChangeInlineQoSWriter qos_writer(change);
+    InlineQosWriter* inline_qos;
+    inline_qos = (change.inline_qos.length > 0 && nullptr != change.inline_qos.data) ? &qos_writer : nullptr;
 
 #if HAVE_SECURITY
     uint32_t from_buffer_position = submessage_msg_->pos;
@@ -453,7 +473,7 @@ bool RTPSMessageGroup::add_data(
     // TODO (Ricardo). Check to create special wrapper.
     bool is_big_submessage;
     if (!RTPSMessageCreator::addSubmessageData(submessage_msg_, &change_to_add, endpoint_->getAttributes().topicKind,
-            readerId, expectsInlineQos, inlineQos, &is_big_submessage))
+            readerId, expectsInlineQos, inline_qos, &is_big_submessage))
     {
         logError(RTPS_WRITER, "Cannot add DATA submsg to the CDRMessage. Buffer too small");
         change_to_add.serializedPayload.data = nullptr;
@@ -516,12 +536,9 @@ bool RTPSMessageGroup::add_data_frag(
     check_and_maybe_flush();
     add_info_ts_in_buffer(change.sourceTimestamp);
 
-    InlineQosWriter* inlineQos = nullptr;
-    if (expectsInlineQos)
-    {
-        //TODOG INLINEQOS
-        //inlineQos = W->getInlineQos();
-    }
+    CacheChangeInlineQoSWriter qos_writer(change);
+    InlineQosWriter* inline_qos;
+    inline_qos = (change.inline_qos.length > 0 && nullptr != change.inline_qos.data) ? &qos_writer : nullptr;
 
 #if HAVE_SECURITY
     uint32_t from_buffer_position = submessage_msg_->pos;
@@ -559,7 +576,7 @@ bool RTPSMessageGroup::add_data_frag(
 
     if (!RTPSMessageCreator::addSubmessageDataFrag(submessage_msg_, &change, fragment_number,
             change_to_add.serializedPayload, endpoint_->getAttributes().topicKind, readerId,
-            expectsInlineQos, inlineQos))
+            expectsInlineQos, inline_qos))
     {
         logError(RTPS_WRITER, "Cannot add DATA_FRAG submsg to the CDRMessage. Buffer too small");
         change_to_add.serializedPayload.data = nullptr;

@@ -1160,7 +1160,7 @@ class DataWriterImplTest : public DataWriterImpl
 {
 public:
 
-    fastrtps::PublisherHistory* get_history()
+    DataWriterHistory* get_history()
     {
         return &history_;
     }
@@ -1233,7 +1233,7 @@ TEST(DataWriterTests, InstanceWaitForAcknowledgement)
     ASSERT_NE(nullptr, datawriter_impl);
     DataWriterImplTest* datawriter_impl_test = static_cast<DataWriterImplTest*>(datawriter_impl);
     ASSERT_NE(nullptr, datawriter_impl_test);
-    fastrtps::PublisherHistory* history = datawriter_impl_test->get_history();
+    auto history = datawriter_impl_test->get_history();
 
     // 5. Calling wait_for_acknowledgments in a keyed topic with c_InstanceHandle_Unknown returns
     // RETCODE_OK

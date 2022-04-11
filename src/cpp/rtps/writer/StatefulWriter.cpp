@@ -1029,6 +1029,10 @@ bool StatefulWriter::matched_reader_add(
                 return false;
             }))
     {
+        if (nullptr != mp_listener)
+        {
+            mp_listener->on_reader_discovery(this, ReaderDiscoveryInfo::CHANGED_QOS_READER, rdata.guid(), &rdata);
+        }
         return false;
     }
 
@@ -1087,6 +1091,10 @@ bool StatefulWriter::matched_reader_add(
 
     if (rp->is_datasharing_reader())
     {
+        if (nullptr != mp_listener)
+        {
+            mp_listener->on_reader_discovery(this, ReaderDiscoveryInfo::DISCOVERED_READER, rdata.guid(), &rdata);
+        }
         return true;
     }
 
@@ -1176,6 +1184,10 @@ bool StatefulWriter::matched_reader_add(
                                          << rdata.remote_locators().multicast.size() <<
             "(m) locators");
 
+    if (nullptr != mp_listener)
+    {
+        mp_listener->on_reader_discovery(this, ReaderDiscoveryInfo::DISCOVERED_READER, rdata.guid(), &rdata);
+    }
     return true;
 }
 
@@ -1246,6 +1258,10 @@ bool StatefulWriter::matched_reader_remove(
 
         check_acked_status();
 
+        if (nullptr != mp_listener)
+        {
+            mp_listener->on_reader_discovery(this, ReaderDiscoveryInfo::REMOVED_READER, reader_guid, nullptr);
+        }
         return true;
     }
 

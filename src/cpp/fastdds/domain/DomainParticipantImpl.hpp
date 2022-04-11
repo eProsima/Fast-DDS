@@ -67,6 +67,7 @@ class PublisherListener;
 class Subscriber;
 class SubscriberImpl;
 class SubscriberListener;
+class ReaderFilterCollection;
 
 /**
  * This is the implementation class of the DomainParticipant.
@@ -76,6 +77,7 @@ class DomainParticipantImpl
 {
     friend class DomainParticipantFactory;
     friend class DomainParticipant;
+    friend class ReaderFilterCollection;
 
 protected:
 
