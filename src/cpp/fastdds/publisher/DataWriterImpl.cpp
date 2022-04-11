@@ -689,6 +689,13 @@ ReturnCode_t DataWriterImpl::unregister_instance(
     return returned_value;
 }
 
+ReturnCode_t DataWriterImpl::get_key_value(
+        void* key_holder,
+        const InstanceHandle_t& handle)
+{
+    return ReturnCode_t::RETCODE_UNSUPPORTED;
+}
+
 ReturnCode_t DataWriterImpl::create_new_change(
         ChangeKind_t changeKind,
         void* data)

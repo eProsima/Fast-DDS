@@ -261,11 +261,9 @@ public:
     ReturnCode_t set_listener(
             DataWriterListener* listener);
 
-    /* TODO
-       bool get_key_value(
+    ReturnCode_t get_key_value(
             void* key_holder,
             const InstanceHandle_t& handle);
-     */
 
     ReturnCode_t get_liveliness_lost_status(
             LivelinessLostStatus& status);

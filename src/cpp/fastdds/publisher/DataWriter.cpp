@@ -179,9 +179,7 @@ ReturnCode_t DataWriter::get_key_value(
         void* key_holder,
         const InstanceHandle_t& handle)
 {
-    static_cast<void> (key_holder);
-    static_cast<void> (handle);
-    return ReturnCode_t::RETCODE_UNSUPPORTED;
+    return impl_->get_key_value(key_holder, handle);
 }
 
 InstanceHandle_t DataWriter::lookup_instance(
