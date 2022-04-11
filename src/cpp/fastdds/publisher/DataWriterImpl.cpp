@@ -693,6 +693,24 @@ ReturnCode_t DataWriterImpl::get_key_value(
         void* key_holder,
         const InstanceHandle_t& handle)
 {
+    /// Preconditions
+    if (key_holder == nullptr || !handle.isDefined())
+    {
+        logError(PUBLISHER, "Key holder pointer not valid");
+        return ReturnCode_t::RETCODE_BAD_PARAMETER;
+    }
+
+    if (!type_->m_isGetKeyDefined)
+    {
+        logError(PUBLISHER, "Topic is NO_KEY, operation not permitted");
+        return ReturnCode_t::RETCODE_ILLEGAL_OPERATION;
+    }
+
+    if (writer_ == nullptr)
+    {
+        return ReturnCode_t::RETCODE_NOT_ENABLED;
+    }
+
     return ReturnCode_t::RETCODE_UNSUPPORTED;
 }
 
