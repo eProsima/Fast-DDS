@@ -110,6 +110,15 @@ bool DataWriterHistory::register_instance(
     return find_or_add_key(instance_handle, &vit);
 }
 
+bool DataWriterHistory::get_key_value(
+        void* key_holder,
+        const fastrtps::rtps::InstanceHandle_t& handle)
+{
+    static_cast<void>(key_holder);
+    static_cast<void>(handle);
+    return false;
+}
+
 bool DataWriterHistory::prepare_change(
         CacheChange_t* change,
         std::unique_lock<RecursiveTimedMutex>& lock,

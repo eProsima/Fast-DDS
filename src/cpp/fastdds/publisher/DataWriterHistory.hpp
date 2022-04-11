@@ -74,6 +74,23 @@ public:
             const std::chrono::time_point<std::chrono::steady_clock>& max_blocking_time);
 
     /**
+     * This operation can be used to retrieve the instance key that corresponds to an
+     * @ref eprosima::fastdds::dds::Entity::instance_handle_ "instance_handle".
+     * The operation will only fill the fields that form the key inside the key_holder instance.
+     *
+     * This operation will return @c false if the InstanceHandle_t handle does not correspond to an existing
+     * data-object known to the DataWriterHistory.
+     *
+     * @param[in,out] key_holder  Sample where the key fields will be returned.
+     * @param[in] handle          Handle to the instance to retrieve the key values from.
+     *
+     * @return True if the instance represented by @c handle is present and alive in the DataWriterHistory.
+     */
+    bool get_key_value(
+            void* key_holder,
+            const fastrtps::rtps::InstanceHandle_t& handle);
+
+    /**
      * Add a change comming from the DataWriter.
      * @param change Pointer to the change
      * @param wparams Extra write parameters.

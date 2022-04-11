@@ -139,6 +139,13 @@ public:
                );
     }
 
+    bool get_key_value(
+            void* /*key_holder*/,
+            const fastrtps::rtps::InstanceHandle_t& /*handle*/)
+    {
+        return false;
+    }
+
     bool add_pub_change(
             CacheChange_t* change,
             WriteParams& wparams,

@@ -711,7 +711,7 @@ ReturnCode_t DataWriterImpl::get_key_value(
         return ReturnCode_t::RETCODE_NOT_ENABLED;
     }
 
-    return ReturnCode_t::RETCODE_UNSUPPORTED;
+    return history_.get_key_value(key_holder, handle) ? ReturnCode_t::RETCODE_OK : ReturnCode_t::RETCODE_BAD_PARAMETER;
 }
 
 ReturnCode_t DataWriterImpl::create_new_change(
