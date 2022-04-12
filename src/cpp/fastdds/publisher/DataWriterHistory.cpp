@@ -273,7 +273,9 @@ bool DataWriterHistory::find_or_add_key(
 
     if (static_cast<int>(keyed_changes_.size()) < resource_limited_qos_.max_instances)
     {
-        *vit_out = keyed_changes_.insert(std::make_pair(instance_handle, detail::DataWriterInstance())).first;
+        vit = keyed_changes_.insert(std::make_pair(instance_handle, detail::DataWriterInstance())).first;
+        vit->second.key_payload.copy(&payload, false);
+        *vit_out = vit;
         return true;
     }
 
