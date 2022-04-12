@@ -617,6 +617,22 @@ InstanceHandle_t DataWriterImpl::register_instance(
         SerializedPayload_t* payload = nullptr;
         if (history_.register_instance(instance_handle, lock, max_blocking_time, payload))
         {
+            // Keep serialization of sample inside the instance
+            assert(nullptr != payload);
+            if (0 == payload->length || nullptr == payload->data)
+            {
+                uint32_t size = fixed_payload_size_ ? fixed_payload_size_ : type_->getSerializedSizeProvider(key)();
+                payload->reserve(size);
+                if (!type_->serialize(key, payload))
+                {
+                    logWarning(DATA_WRITER, "Key data serialization failed");
+
+                    // Serialization of the sample failed. Remove the instance to keep original state.
+                    // Note that we will only end-up here if the instance has just been created, so it will be empty
+                    // and removing its changes will remove the instance completely.
+                    history_.remove_instance_changes(instance_handle, SequenceNumber_t());
+                }
+            }
             return instance_handle;
         }
     }
