@@ -403,7 +403,7 @@ DataWriterImpl::~DataWriterImpl()
 
     if (writer_ != nullptr)
     {
-        logInfo(PUBLISHER, guid().entityId << " in topic: " << type_->getName());
+        logInfo(DATA_WRITER, guid().entityId << " in topic: " << type_->getName());
         RTPSDomain::removeRTPSWriter(writer_);
         release_payload_pool();
     }
@@ -586,13 +586,13 @@ InstanceHandle_t DataWriterImpl::register_instance(
 
     if (key == nullptr)
     {
-        logError(PUBLISHER, "Data pointer not valid");
+        logError(DATA_WRITER, "Data pointer not valid");
         return c_InstanceHandle_Unknown;
     }
 
     if (!type_->m_isGetKeyDefined)
     {
-        logError(PUBLISHER, "Topic is NO_KEY, operation not permitted");
+        logError(DATA_WRITER, "Topic is NO_KEY, operation not permitted");
         return c_InstanceHandle_Unknown;
     }
 
@@ -637,13 +637,13 @@ ReturnCode_t DataWriterImpl::unregister_instance(
 
     if (instance == nullptr)
     {
-        logError(PUBLISHER, "Data pointer not valid");
+        logError(DATA_WRITER, "Data pointer not valid");
         return ReturnCode_t::RETCODE_BAD_PARAMETER;
     }
 
     if (!type_->m_isGetKeyDefined)
     {
-        logError(PUBLISHER, "Topic is NO_KEY, operation not permitted");
+        logError(DATA_WRITER, "Topic is NO_KEY, operation not permitted");
         return ReturnCode_t::RETCODE_PRECONDITION_NOT_MET;
     }
 
@@ -664,7 +664,7 @@ ReturnCode_t DataWriterImpl::unregister_instance(
 #if !defined(NDEBUG)
     if (c_InstanceHandle_Unknown != handle && ih != handle)
     {
-        logError(PUBLISHER, "handle differs from data's key.");
+        logError(DATA_WRITER, "handle differs from data's key.");
         return ReturnCode_t::RETCODE_PRECONDITION_NOT_MET;
     }
 #endif // if !defined(NDEBUG)
@@ -697,13 +697,13 @@ ReturnCode_t DataWriterImpl::get_key_value(
     /// Preconditions
     if (key_holder == nullptr || !handle.isDefined())
     {
-        logError(PUBLISHER, "Key holder pointer not valid");
+        logError(DATA_WRITER, "Key holder pointer not valid");
         return ReturnCode_t::RETCODE_BAD_PARAMETER;
     }
 
     if (!type_->m_isGetKeyDefined)
     {
-        logError(PUBLISHER, "Topic is NO_KEY, operation not permitted");
+        logError(DATA_WRITER, "Topic is NO_KEY, operation not permitted");
         return ReturnCode_t::RETCODE_ILLEGAL_OPERATION;
     }
 
@@ -730,7 +730,7 @@ ReturnCode_t DataWriterImpl::check_new_change_preconditions(
     // Preconditions
     if (data == nullptr)
     {
-        logError(PUBLISHER, "Data pointer not valid");
+        logError(DATA_WRITER, "Data pointer not valid");
         return ReturnCode_t::RETCODE_BAD_PARAMETER;
     }
 
@@ -740,7 +740,7 @@ ReturnCode_t DataWriterImpl::check_new_change_preconditions(
     {
         if (!type_->m_isGetKeyDefined)
         {
-            logError(PUBLISHER, "Topic is NO_KEY, operation not permitted");
+            logError(DATA_WRITER, "Topic is NO_KEY, operation not permitted");
             return ReturnCode_t::RETCODE_ILLEGAL_OPERATION;
         }
     }
@@ -779,7 +779,7 @@ ReturnCode_t DataWriterImpl::perform_create_new_change(
 
         if ((ALIVE == change_kind) && !type_->serialize(data, &payload.payload))
         {
-            logWarning(RTPS_WRITER, "RTPSWriter:Serialization returns false");
+            logWarning(DATA_WRITER, "Data serialization returned false");
             return_payload_to_pool(payload);
             return ReturnCode_t::RETCODE_ERROR;
         }
@@ -823,7 +823,7 @@ ReturnCode_t DataWriterImpl::perform_create_new_change(
                         handle,
                         steady_clock::now() + duration_cast<system_clock::duration>(deadline_duration_us_)))
             {
-                logError(PUBLISHER, "Could not set the next deadline in the history");
+                logError(DATA_WRITER, "Could not set the next deadline in the history");
             }
             else
             {
@@ -1131,13 +1131,13 @@ ReturnCode_t DataWriterImpl::wait_for_acknowledgments(
 
     if (nullptr == instance)
     {
-        logError(PUBLISHER, "Data pointer not valid");
+        logError(DATA_WRITER, "Data pointer not valid");
         return ReturnCode_t::RETCODE_BAD_PARAMETER;
     }
 
     if (!type_->m_isGetKeyDefined)
     {
-        logError(PUBLISHER, "Topic is NO_KEY, operation not permitted");
+        logError(DATA_WRITER, "Topic is NO_KEY, operation not permitted");
         return ReturnCode_t::RETCODE_PRECONDITION_NOT_MET;
     }
 
@@ -1157,7 +1157,7 @@ ReturnCode_t DataWriterImpl::wait_for_acknowledgments(
 #if !defined(NDEBUG)
     if (c_InstanceHandle_Unknown != handle && ih != handle)
     {
-        logError(PUBLISHER, "handle differs from data's key");
+        logError(DATA_WRITER, "handle differs from data's key");
         return ReturnCode_t::RETCODE_PRECONDITION_NOT_MET;
     }
 #endif // NDEBUG */
@@ -1242,7 +1242,7 @@ bool DataWriterImpl::deadline_timer_reschedule()
     steady_clock::time_point next_deadline_us;
     if (!history_.get_next_deadline(timer_owner_, next_deadline_us))
     {
-        logError(PUBLISHER, "Could not get the next deadline from the history");
+        logError(DATA_WRITER, "Could not get the next deadline from the history");
         return false;
     }
 
@@ -1273,7 +1273,7 @@ bool DataWriterImpl::deadline_missed()
                 timer_owner_,
                 steady_clock::now() + duration_cast<system_clock::duration>(deadline_duration_us_)))
     {
-        logError(PUBLISHER, "Could not set the next deadline in the history");
+        logError(DATA_WRITER, "Could not set the next deadline in the history");
         return false;
     }
     return deadline_timer_reschedule();
