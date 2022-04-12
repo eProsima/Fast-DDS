@@ -1264,6 +1264,7 @@ void RTPSParticipantImpl::update_attributes(
     {
         update_pdp = true;
         std::vector<GUID_t> modified_servers;
+        LocatorList_t modified_locators;
         // Check that the remote servers list is consistent: all the already known remote servers must be included in
         // the list and either new remote servers are added or remote server listening locator is modified.
         for (auto existing_server : m_att.builtin.discovery_config.m_DiscoveryServers)
@@ -1287,6 +1288,7 @@ void RTPSParticipantImpl::update_attributes(
                         if (!locator_contained)
                         {
                             modified_servers.emplace_back(incoming_server.GetParticipant());
+                            modified_locators.push_back(incoming_locator);
                             logInfo(RTPS_QOS_CHECK,
                                     "DS Server: " << incoming_server.guidPrefix << " has modified its locators: "
                                                   << incoming_locator << " being added")
@@ -1333,6 +1335,10 @@ void RTPSParticipantImpl::update_attributes(
             createSenderResources(m_att.builtin.metatrafficMulticastLocatorList);
             createSenderResources(m_att.builtin.metatrafficUnicastLocatorList);
             createSenderResources(m_att.defaultUnicastLocatorList);
+            if (!modified_locators.empty())
+            {
+                createSenderResources(modified_locators);
+            }
 
             // Update remote servers list
             if (m_att.builtin.discovery_config.discoveryProtocol == DiscoveryProtocol::CLIENT ||
