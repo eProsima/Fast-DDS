@@ -85,18 +85,28 @@ jobs:
           cmake --build ./build/memory --target install --verbose
 
       # Download Fast DDS from the triggering branch
-      - name: Download Fast DDS
-        uses: actions/checkout@v3
-        with:
-          path: ws/Fast-DDS
+      # - name: Download Fast DDS
+      #  uses: actions/checkout@v3
+      #  with:
+      #    path: ws/Fast-DDS
 
       # We do this in two steps to leverage the actions/checkout capabilities to pull the triggering branch
-      - name: Make Fast DDS sanitizer aware
+      # - name: Make Fast DDS sanitizer aware
+      #  run: |
+      #    cd ws/Fast-DDS
+      #    git remote add efork https://github.com/MiguelBarro/Fast-DDS.git
+      #    git fetch efork
+      #    git merge --no-edit efork/bugfix/add_sanitizer_support --allow-unrelated-histories
+
+      - name: Download Fast-DDS and make it sanitizer aware
         run: |
-          cd ws/Fast-DDS
+          cd ws
+          git clone https://github.com/eProsima/Fast-DDS.git
+          git checkout ${{ github.ref }}
+          cd Fast-DDS
           git remote add efork https://github.com/MiguelBarro/Fast-DDS.git
           git fetch efork
-          git merge --no-edit efork/bugfix/add_sanitizer_support --allow-unrelated-histories
+          git merge --no-edit efork/bugfix/add_sanitizer_support
 
       - name: Build & install Fast-DDS
         run: |
