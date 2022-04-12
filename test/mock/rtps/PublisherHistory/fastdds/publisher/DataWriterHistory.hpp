@@ -149,8 +149,13 @@ public:
     }
 
     fastrtps::rtps::SerializedPayload_t* get_key_value(
-            const fastrtps::rtps::InstanceHandle_t& /*handle*/)
+            const fastrtps::rtps::InstanceHandle_t& handle)
     {
+        t_m_Inst_Caches::iterator vit = keyed_changes_.find(handle);
+        if (vit != keyed_changes_.end() && vit->second.is_registered())
+        {
+            return &vit->second.key_payload;
+        }
         return nullptr;
     }
 

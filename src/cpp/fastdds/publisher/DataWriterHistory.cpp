@@ -121,8 +121,11 @@ bool DataWriterHistory::register_instance(
 fastrtps::rtps::SerializedPayload_t* DataWriterHistory::get_key_value(
         const fastrtps::rtps::InstanceHandle_t& handle)
 {
-    static_cast<void>(handle);
-
+    t_m_Inst_Caches::iterator vit = keyed_changes_.find(handle);
+    if (vit != keyed_changes_.end() && vit->second.is_registered())
+    {
+        return &vit->second.key_payload;
+    }
     return nullptr;
 }
 
