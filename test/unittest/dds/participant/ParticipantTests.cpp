@@ -1894,6 +1894,10 @@ TEST(ParticipantTests, DeleteTopicInUse)
 
     Topic* topic = participant->create_topic("footopic", "footype", TOPIC_QOS_DEFAULT);
 
+    ContentFilteredTopic* content_filtered_topic = participant->create_contentfilteredtopic("contentfilteredtopic",
+            topic, "", {});
+    ASSERT_NE(content_filtered_topic, nullptr);
+
     Subscriber* subscriber = participant->create_subscriber(SUBSCRIBER_QOS_DEFAULT);
     ASSERT_NE(subscriber, nullptr);
 
@@ -1903,6 +1907,8 @@ TEST(ParticipantTests, DeleteTopicInUse)
     ASSERT_EQ(participant->delete_topic(topic), ReturnCode_t::RETCODE_PRECONDITION_NOT_MET);
 
     ASSERT_EQ(subscriber->delete_datareader(data_reader), ReturnCode_t::RETCODE_OK);
+    ASSERT_EQ(participant->delete_topic(topic), ReturnCode_t::RETCODE_PRECONDITION_NOT_MET);
+    ASSERT_EQ(participant->delete_contentfilteredtopic(content_filtered_topic), ReturnCode_t::RETCODE_OK);
     ASSERT_EQ(participant->delete_topic(topic), ReturnCode_t::RETCODE_OK);
     ASSERT_EQ(participant->delete_subscriber(subscriber), ReturnCode_t::RETCODE_OK);
 
