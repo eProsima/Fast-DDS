@@ -88,8 +88,8 @@ jobs:
         run: |
           cd ws
           git clone https://github.com/eProsima/Fast-DDS.git
-          git checkout ${{ github.ref }}
           cd Fast-DDS
+          git checkout ${{ github.ref }}
           git remote add efork https://github.com/MiguelBarro/Fast-DDS.git
           git fetch efork
           git merge --no-edit efork/bugfix/add_sanitizer_support
