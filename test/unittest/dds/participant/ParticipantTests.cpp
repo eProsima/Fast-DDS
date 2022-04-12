@@ -3021,6 +3021,10 @@ TEST(ParticipantTests, DeleteContainedEntities)
     Topic* topic_bar = participant->create_topic("bartopic", type.get_type_name(), TOPIC_QOS_DEFAULT);
     ASSERT_NE(topic_bar, nullptr);
 
+    ContentFilteredTopic* content_filtered_topic_bar = participant->create_contentfilteredtopic("contentfilteredtopic",
+            topic_bar, "", {});
+    ASSERT_NE(content_filtered_topic_bar, nullptr);
+
     DataReader* data_reader_bar = subscriber->create_datareader(topic_bar, DATAREADER_QOS_DEFAULT);
     ASSERT_NE(data_reader_bar, nullptr);
 
@@ -3127,6 +3131,8 @@ TEST(ParticipantTests, DeleteContainedEntities)
     EXPECT_FALSE(participant->contains_entity(subscriber_handle));
     EXPECT_FALSE(participant->contains_entity(topic_foo_handle));
     EXPECT_FALSE(participant->contains_entity(topic_bar_handle));
+    // ContentFilteredTopic is not considered an entity
+    EXPECT_EQ(participant->lookup_topicdescription("contentfilteredtopic"), nullptr);
 
     ASSERT_EQ(retcode, ReturnCode_t::RETCODE_OK);
 
