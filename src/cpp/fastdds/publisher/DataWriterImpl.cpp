@@ -728,12 +728,27 @@ ReturnCode_t DataWriterImpl::get_key_value(
         return ReturnCode_t::RETCODE_NOT_ENABLED;
     }
 
+    // Block lowlevel writer
+    auto max_blocking_time = std::chrono::steady_clock::now() +
+            std::chrono::microseconds(::TimeConv::Time_t2MicroSecondsInt64(qos_.reliability().max_blocking_time));
+
+#if HAVE_STRICT_REALTIME
+    std::unique_lock<RecursiveTimedMutex> lock(writer_->getMutex(), std::defer_lock);
+    if (!lock.try_lock_until(max_blocking_time))
+    {
+        return ReturnCode_t::RETCODE_TIMEOUT;
+    }
+#else
+    std::lock_guard<RecursiveTimedMutex> lock(writer_->getMutex());
+#endif // if HAVE_STRICT_REALTIME
+
     SerializedPayload_t* payload = history_.get_key_value(handle);
     if (nullptr == payload)
     {
         return ReturnCode_t::RETCODE_BAD_PARAMETER;
     }
 
+    type_->deserialize(payload, key_holder);
     return ReturnCode_t::RETCODE_OK;
 }
 
