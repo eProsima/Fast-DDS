@@ -84,17 +84,9 @@ jobs:
                 -DCMAKE_BUILD_TYPE=Debug -B ./build/memory ./memory
           cmake --build ./build/memory --target install --verbose
 
-      # Download Fast DDS either from the current head or the triggering branch
-      - name: Download Fast DDS from Pull Request branch
+      # Download Fast DDS from the triggering branch
+      - name: Download Fast DDS
         uses: actions/checkout@v3
-        if: github.event_name == 'pull_request'
-        with:
-          path: ws/Fast-DDS
-          ref: ${{ github.event.pull_request.head.sha }}
-
-      - name: Download Fast DDS from merge branch
-        uses: actions/checkout@v3
-        if: github.event_name != 'pull_request'
         with:
           path: ws/Fast-DDS
 
