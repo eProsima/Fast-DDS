@@ -1895,7 +1895,7 @@ TEST(ParticipantTests, DeleteTopicInUse)
     Topic* topic = participant->create_topic("footopic", "footype", TOPIC_QOS_DEFAULT);
 
     ContentFilteredTopic* content_filtered_topic = participant->create_contentfilteredtopic("contentfilteredtopic",
-            topic, "", {});
+                    topic, "", {});
     ASSERT_NE(content_filtered_topic, nullptr);
 
     Subscriber* subscriber = participant->create_subscriber(SUBSCRIBER_QOS_DEFAULT);
@@ -3022,7 +3022,7 @@ TEST(ParticipantTests, DeleteContainedEntities)
     ASSERT_NE(topic_bar, nullptr);
 
     ContentFilteredTopic* content_filtered_topic_bar = participant->create_contentfilteredtopic("contentfilteredtopic",
-            topic_bar, "", {});
+                    topic_bar, "", {});
     ASSERT_NE(content_filtered_topic_bar, nullptr);
 
     DataReader* data_reader_bar = subscriber->create_datareader(topic_bar, DATAREADER_QOS_DEFAULT);
