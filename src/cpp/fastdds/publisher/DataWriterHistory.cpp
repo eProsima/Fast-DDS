@@ -484,13 +484,7 @@ bool DataWriterHistory::is_key_registered(
     std::lock_guard<RecursiveTimedMutex> guard(*this->mp_mutex);
     t_m_Inst_Caches::iterator vit;
     vit = keyed_changes_.find(handle);
-    return (vit != keyed_changes_.end() &&
-           (vit->second.cache_changes.empty() ||
-           (NOT_ALIVE_UNREGISTERED != vit->second.cache_changes.back()->kind &&
-           NOT_ALIVE_DISPOSED_UNREGISTERED != vit->second.cache_changes.back()->kind
-           )
-           )
-           );
+    return vit != keyed_changes_.end() && vit->second.is_registered();
 }
 
 bool DataWriterHistory::wait_for_acknowledgement_last_change(
