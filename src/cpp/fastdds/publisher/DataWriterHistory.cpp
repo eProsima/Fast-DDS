@@ -87,7 +87,7 @@ void DataWriterHistory::rebuild_instances()
         for (CacheChange_t* change : m_changes)
         {
             t_m_Inst_Caches::iterator vit;
-            if (find_or_add_key(change->instanceHandle, &vit))
+            if (find_or_add_key(change->instanceHandle, change->serializedPayload, &vit))
             {
                 vit->second.cache_changes.push_back(change);
             }
@@ -107,7 +107,7 @@ bool DataWriterHistory::register_instance(
     }
 
     t_m_Inst_Caches::iterator vit;
-    return find_or_add_key(instance_handle, &vit);
+    return find_or_add_key(instance_handle, {}, &vit);
 }
 
 bool DataWriterHistory::get_key_value(
@@ -158,7 +158,7 @@ bool DataWriterHistory::prepare_change(
         while (!add)
         {
             // We should have the instance
-            if (!find_or_add_key(change->instanceHandle, &vit))
+            if (!find_or_add_key(change->instanceHandle, change->serializedPayload, &vit))
             {
                 break;
             }
@@ -191,7 +191,7 @@ bool DataWriterHistory::prepare_change(
                     }
 
                     // vit may have been invalidated
-                    if (!find_or_add_key(change->instanceHandle, &vit))
+                    if (!find_or_add_key(change->instanceHandle, change->serializedPayload, &vit))
                     {
                         break;
                     }
@@ -248,8 +248,11 @@ bool DataWriterHistory::add_pub_change(
 
 bool DataWriterHistory::find_or_add_key(
         const InstanceHandle_t& instance_handle,
+        const SerializedPayload_t& payload,
         t_m_Inst_Caches::iterator* vit_out)
 {
+    static_cast<void>(payload);
+
     t_m_Inst_Caches::iterator vit;
     vit = keyed_changes_.find(instance_handle);
     if (vit != keyed_changes_.end())
@@ -335,7 +338,8 @@ bool DataWriterHistory::remove_change_pub(
     else
     {
         t_m_Inst_Caches::iterator vit;
-        if (!this->find_or_add_key(change->instanceHandle, &vit))
+        vit = keyed_changes_.find(change->instanceHandle);
+        if (vit == keyed_changes_.end())
         {
             return false;
         }

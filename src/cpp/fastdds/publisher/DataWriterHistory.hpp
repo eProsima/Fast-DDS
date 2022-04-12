@@ -234,12 +234,14 @@ private:
 
     /**
      * @brief Method that finds a key in the DataWriterHistory or tries to add it if not found
-     * @param instance_handle Instance of the key.
-     * @param map_it A map iterator to the given key
+     * @param [in]  instance_handle  Instance of the key.
+     * @param [in]  payload          Serialized payload of the sample for which the instance is being registered.
+     * @param [out] map_it           A map iterator to the given key.
      * @return True if the key was found or could be added to the map
      */
     bool find_or_add_key(
             const fastrtps::rtps::InstanceHandle_t& instance_handle,
+            const fastrtps::rtps::SerializedPayload_t& payload,
             t_m_Inst_Caches::iterator* map_it);
 
     /**
