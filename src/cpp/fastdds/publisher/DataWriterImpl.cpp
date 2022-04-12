@@ -614,7 +614,8 @@ InstanceHandle_t DataWriterImpl::register_instance(
     std::unique_lock<RecursiveTimedMutex> lock(writer_->getMutex());
 #endif // if HAVE_STRICT_REALTIME
     {
-        if (history_.register_instance(instance_handle, lock, max_blocking_time))
+        SerializedPayload_t* payload = nullptr;
+        if (history_.register_instance(instance_handle, lock, max_blocking_time, payload))
         {
             return instance_handle;
         }

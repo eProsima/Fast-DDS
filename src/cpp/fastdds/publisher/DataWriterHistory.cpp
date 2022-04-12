@@ -98,8 +98,11 @@ void DataWriterHistory::rebuild_instances()
 bool DataWriterHistory::register_instance(
         const InstanceHandle_t& instance_handle,
         std::unique_lock<RecursiveTimedMutex>&,
-        const std::chrono::time_point<std::chrono::steady_clock>&)
+        const std::chrono::time_point<std::chrono::steady_clock>&,
+        SerializedPayload_t*& payload)
 {
+    payload = nullptr;
+
     /// Preconditions
     if (topic_att_.getTopicKind() == NO_KEY)
     {
@@ -107,7 +110,12 @@ bool DataWriterHistory::register_instance(
     }
 
     t_m_Inst_Caches::iterator vit;
-    return find_or_add_key(instance_handle, {}, &vit);
+    bool result = find_or_add_key(instance_handle, {}, &vit);
+    if (result)
+    {
+        payload = &vit->second.key_payload;
+    }
+    return result;
 }
 
 bool DataWriterHistory::get_key_value(

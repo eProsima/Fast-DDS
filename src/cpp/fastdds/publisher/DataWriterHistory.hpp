@@ -64,15 +64,20 @@ public:
 
     /*!
      * @brief Tries to reserve resources for the new instance.
-     * @param instance_handle Instance's key.
-     * @param lock Lock which should be unlock in case the operation has to wait.
-     * @param max_blocking_time Maximum time the operation should be waiting.
-     * @return True if resources was reserved successfully.
+     *
+     * @param [in]  instance_handle    Instance's key.
+     * @param [in]  lock               Lock which should be unlock in case the operation has to wait.
+     * @param [in]  max_blocking_time  Maximum time the operation should be waiting.
+     * @param [out] payload            Pointer to a serialized payload structure where the serialized payload of the
+     *                                 newly allocated instance should be written.
+     *
+     * @return True if resources were reserved successfully.
      */
     bool register_instance(
             const fastrtps::rtps::InstanceHandle_t& instance_handle,
             std::unique_lock<fastrtps::RecursiveTimedMutex>& lock,
-            const std::chrono::time_point<std::chrono::steady_clock>& max_blocking_time);
+            const std::chrono::time_point<std::chrono::steady_clock>& max_blocking_time,
+            fastrtps::rtps::SerializedPayload_t*& payload);
 
     /**
      * This operation can be used to retrieve the instance key that corresponds to an
