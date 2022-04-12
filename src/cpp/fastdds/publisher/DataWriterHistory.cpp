@@ -118,13 +118,12 @@ bool DataWriterHistory::register_instance(
     return result;
 }
 
-bool DataWriterHistory::get_key_value(
-        void* key_holder,
+fastrtps::rtps::SerializedPayload_t* DataWriterHistory::get_key_value(
         const fastrtps::rtps::InstanceHandle_t& handle)
 {
-    static_cast<void>(key_holder);
     static_cast<void>(handle);
-    return false;
+
+    return nullptr;
 }
 
 bool DataWriterHistory::prepare_change(

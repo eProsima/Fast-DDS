@@ -80,20 +80,17 @@ public:
             fastrtps::rtps::SerializedPayload_t*& payload);
 
     /**
-     * This operation can be used to retrieve the instance key that corresponds to an
+     * This operation can be used to retrieve the serialized payload of the instance key that corresponds to an
      * @ref eprosima::fastdds::dds::Entity::instance_handle_ "instance_handle".
-     * The operation will only fill the fields that form the key inside the key_holder instance.
      *
-     * This operation will return @c false if the InstanceHandle_t handle does not correspond to an existing
+     * This operation will return @c nullpre if the InstanceHandle_t handle does not correspond to an existing
      * data-object known to the DataWriterHistory.
      *
-     * @param[in,out] key_holder  Sample where the key fields will be returned.
-     * @param[in] handle          Handle to the instance to retrieve the key values from.
+     * @param[in] handle  Handle to the instance to retrieve the key values from.
      *
-     * @return True if the instance represented by @c handle is present and alive in the DataWriterHistory.
+     * @return Pointer to the serialized payload of the sample with which the instance was registered.
      */
-    bool get_key_value(
-            void* key_holder,
+    fastrtps::rtps::SerializedPayload_t* get_key_value(
             const fastrtps::rtps::InstanceHandle_t& handle);
 
     /**

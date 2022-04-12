@@ -148,11 +148,10 @@ public:
                );
     }
 
-    bool get_key_value(
-            void* /*key_holder*/,
+    fastrtps::rtps::SerializedPayload_t* get_key_value(
             const fastrtps::rtps::InstanceHandle_t& /*handle*/)
     {
-        return false;
+        return nullptr;
     }
 
     bool add_pub_change(
