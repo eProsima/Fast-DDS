@@ -600,6 +600,36 @@ TEST_P(PubSubBasic, ReceivedPropertiesDataExceedsSizeLimit)
     ASSERT_FALSE(reader.is_matched());
 }
 
+// Regression test for redmine issue #14346
+TEST_P(PubSubBasic, ReliableHelloworldLateJoinersStress)
+{
+    constexpr unsigned int num_iterations = 10;
+
+    PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
+    writer.history_depth(10).init();
+    ASSERT_TRUE(writer.isInitialized());
+
+    std::vector<std::unique_ptr<PubSubReader<HelloWorldType>>> readers;
+
+    for (unsigned int i = 0; i < num_iterations; ++i)
+    {
+        readers.emplace_back(new PubSubReader<HelloWorldType>(TEST_TOPIC_NAME));
+        const auto& new_reader = readers.back();
+
+        new_reader->reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS)
+                .durability_kind(eprosima::fastrtps::TRANSIENT_LOCAL_DURABILITY_QOS)
+                .history_depth(10)
+                .init();
+        ASSERT_TRUE(new_reader->isInitialized()) << " on iteration " << i;
+        new_reader->wait_discovery();
+        writer.wait_discovery(i + 1);
+
+        auto data = default_helloworld_data_generator();
+        writer.send(data);
+        EXPECT_TRUE(data.empty()) << " on iteration " << i;
+        ASSERT_TRUE(writer.waitForAllAcked(std::chrono::seconds(5))) << " on iteration " << i;
+    }
+}
 
 #ifdef INSTANTIATE_TEST_SUITE_P
 #define GTEST_INSTANTIATE_TEST_MACRO(x, y, z, w) INSTANTIATE_TEST_SUITE_P(x, y, z, w)

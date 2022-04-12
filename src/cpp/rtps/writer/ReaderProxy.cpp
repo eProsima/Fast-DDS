@@ -453,6 +453,7 @@ bool ReaderProxy::set_change_to_status(
             // Erase the first change when it is acknowledged
             assert(it == changes_for_reader_.begin());
             changes_for_reader_.erase(it);
+            acked_changes_set(seq_num + 1);
         }
         else
         {
@@ -550,6 +551,12 @@ void ReaderProxy::change_has_been_removed(
 
     // Element may not be in the container when marked as irrelevant.
     changes_for_reader_.erase(chit);
+
+    // When removing the next-to-be-acknowledged, we should auto-acknowledge it.
+    if ((changes_low_mark_ + 1) == seq_num)
+    {
+        acked_changes_set(seq_num + 1);
+    }
 }
 
 bool ReaderProxy::has_unacknowledged() const
