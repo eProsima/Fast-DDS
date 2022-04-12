@@ -603,22 +603,17 @@ TEST_P(PubSubBasic, ReceivedPropertiesDataExceedsSizeLimit)
 // Regression test for redmine issue #14346
 TEST_P(PubSubBasic, ReliableHelloworldLateJoinersStress)
 {
-    if (enable_datasharing)
-    {
-        GTEST_SKIP() << "Data-sharing needs data reception for acknowledgement";
-    }
-
     constexpr unsigned int num_iterations = 10;
 
-    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
     writer.history_depth(10).init();
     ASSERT_TRUE(writer.isInitialized());
 
-    std::vector<std::unique_ptr<PubSubReader<HelloWorldPubSubType>>> readers;
+    std::vector<std::unique_ptr<PubSubReader<HelloWorldType>>> readers;
 
     for (unsigned int i = 0; i < num_iterations; ++i)
     {
-        readers.emplace_back(new PubSubReader<HelloWorldPubSubType>(TEST_TOPIC_NAME));
+        readers.emplace_back(new PubSubReader<HelloWorldType>(TEST_TOPIC_NAME));
         const auto& new_reader = readers.back();
 
         new_reader->reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS)
