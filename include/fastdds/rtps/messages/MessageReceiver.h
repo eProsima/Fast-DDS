@@ -20,11 +20,11 @@
 #define _FASTDDS_RTPS_MESSAGERECEIVER_H_
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 
-#include <fastdds/rtps/common/all_common.h>
-
 #include <functional>
-#include <fastrtps/utils/shared_mutex.hpp>
 #include <unordered_map>
+
+#include <fastdds/rtps/common/all_common.h>
+#include <fastrtps/utils/shared_mutex.hpp>
 
 namespace eprosima {
 namespace fastrtps {

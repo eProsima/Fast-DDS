@@ -24,9 +24,9 @@
 
 #include <fastdds/core/policy/ParameterList.hpp>
 #include <fastdds/dds/log/Log.hpp>
-
 #include <fastdds/rtps/reader/RTPSReader.h>
 #include <fastdds/rtps/writer/RTPSWriter.h>
+#include <fastrtps/utils/shared_mutex.hpp>
 
 #include <rtps/participant/RTPSParticipantImpl.h>
 #include <statistics/rtps/StatisticsBase.hpp>
@@ -316,7 +316,6 @@ void MessageReceiver::processCDRMsg(
         const Locator_t& reception_locator,
         CDRMessage_t* msg)
 {
-
 #ifdef FUZZING_BUILD_MODE_UNSAFE_FOR_PRODUCTION
     GuidPrefix_t participantGuidPrefix;
 #else
