@@ -22,7 +22,6 @@
 #include <cassert>
 #include <cstdint>
 #include <stdexcept>
-#include <type_traits>
 
 #include <fastdds/dds/core/LoanableCollection.hpp>
 
@@ -35,7 +34,7 @@ namespace dds {
  *
  * This is an abstract class. See @ref LoanableSequence for details.
  */
-template<typename T, typename _NonConstEnabler = std::true_type>
+template<typename T>
 class LoanableTypedCollection : public LoanableCollection
 {
 public:
@@ -55,8 +54,7 @@ public:
      *
      * @return a reference to the element at position @c n
      */
-    template <typename Enabler = _NonConstEnabler>
-    typename std::enable_if<Enabler::value, T>::type& operator [](
+    T& operator [](
             size_type n)
     {
         if (n >= length_)
