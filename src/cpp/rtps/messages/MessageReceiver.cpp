@@ -316,6 +316,12 @@ void MessageReceiver::processCDRMsg(
         const Locator_t& reception_locator,
         CDRMessage_t* msg)
 {
+    if (msg->length < RTPSMESSAGE_HEADER_SIZE)
+    {
+        logWarning(RTPS_MSG_IN, IDSTRING "Received message too short, ignoring");
+        return;
+    }
+
 #ifdef FUZZING_BUILD_MODE_UNSAFE_FOR_PRODUCTION
     GuidPrefix_t participantGuidPrefix;
 #else
@@ -330,12 +336,6 @@ void MessageReceiver::processCDRMsg(
 
     {
         std::lock_guard<eprosima::shared_mutex> guard(mtx_);
-
-        if (msg->length < RTPSMESSAGE_HEADER_SIZE)
-        {
-            logWarning(RTPS_MSG_IN, IDSTRING "Received message too short, ignoring");
-            return;
-        }
 
         reset();
 
