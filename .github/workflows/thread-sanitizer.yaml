@@ -165,4 +165,4 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
             name: sanitation-report
-            path: /home/runner/work/Fast-DDS/Fast-DDS/ws/tsan_reports.zip
+            path: /home/runner/work/ws/tsan_reports.zip
