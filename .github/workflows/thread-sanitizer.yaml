@@ -21,7 +21,7 @@ jobs:
     name: Sanitizer Evaluation
     runs-on: ubuntu-latest
     steps:
-      - name: Download the sanitazers cmake module and apply some fixes
+      - name: Download the sanitizers cmake module and apply some fixes
         run: |
           git config --global user.email "dummy@mail.com"
           git config --global user.name "dummy"
@@ -98,7 +98,7 @@ jobs:
 >>>>>>> b14962a01... Fixed unknown ref error during checkout in workflow execution (#2644)
           git remote add efork https://github.com/MiguelBarro/Fast-DDS.git
           git fetch efork
-          git merge --no-edit efork/bugfix/add_sanitizer_support
+          git merge --no-edit efork/bugfix/add_sanitizer_support | Out-Null
 
       - name: Build & install Fast-DDS
         run: |
