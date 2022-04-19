@@ -980,6 +980,9 @@ bool SecurityManager::on_process_handshake(
                 if (ret == VALIDATION_PENDING_HANDSHAKE_MESSAGE)
                 {
                     remote_participant_info->expected_sequence_number_ = expected_sequence_number;
+                    // Avoid DoS attack by exponentially increasing event interval
+                    auto time_ms = remote_participant_info->event_->getIntervalMilliSec();
+                    remote_participant_info->event_->update_interval_millisec(time_ms * 2);
                     remote_participant_info->event_->restart_timer();
                 }
 
