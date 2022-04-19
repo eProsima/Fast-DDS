@@ -323,7 +323,8 @@ void BuiltinProtocols::announceRTPSParticipantState()
 
 void BuiltinProtocols::stopRTPSParticipantAnnouncement()
 {
-    assert(mp_PDP);
+    // note that participants created with DiscoveryProtocol::NONE
+    // may not have mp_PDP available
 
     if (mp_PDP)
     {
