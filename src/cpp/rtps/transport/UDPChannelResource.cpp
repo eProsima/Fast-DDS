@@ -124,7 +124,7 @@ void UDPChannelResource::release()
 #if defined(__APPLE__)
     // On OSX shutdown does not seem to unblock the listening thread, but close does.
     socket()->close();
-#endif
+#endif // if defined(__APPLE__)
 }
 
 } // namespace rtps
