@@ -45,6 +45,9 @@ UDPChannelResource::UDPChannelResource(
 UDPChannelResource::~UDPChannelResource()
 {
     message_receiver_ = nullptr;
+
+    asio::error_code ec;
+    socket()->close(ec);
 }
 
 void UDPChannelResource::perform_listen_operation(
