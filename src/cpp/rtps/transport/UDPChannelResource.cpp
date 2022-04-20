@@ -120,8 +120,11 @@ void UDPChannelResource::release()
     // in Windows and Linux anyways, which is what we want.
     asio::error_code ec;
     socket()->shutdown(asio::socket_base::shutdown_type::shutdown_receive, ec);
-    // On OSX shutdown does not unblock the listening thread, but close does.
+
+#if defined(__APPLE__)
+    // On OSX shutdown does not seem to unblock the listening thread, but close does.
     socket()->close();
+#endif
 }
 
 } // namespace rtps
