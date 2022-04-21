@@ -26,8 +26,9 @@
 #include <fastdds/rtps/security/accesscontrol/ParticipantSecurityAttributes.h>
 #include <fastdds/rtps/security/accesscontrol/EndpointSecurityAttributes.h>
 
-#include <mutex>
+#include <functional>
 #include <limits>
+#include <mutex>
 
 // Fix compilation error on Windows
 #if defined(WIN32) && defined(max)
@@ -173,6 +174,19 @@ struct ParticipantKeyHandle
 {
     static const char* const class_id_;
 
+    ~ParticipantKeyHandle()
+    {
+        if(deleter_)
+        {
+            deleter_(this);
+        }
+    }
+
+    // release resources functor
+    std::function<void(ParticipantKeyHandle*)> deleter_;
+    // Reference to an auxiliary exception object on destruction
+    SecurityException* exception_ = {nullptr};
+
     //Plugin security options
     PluginParticipantSecurityAttributesMask ParticipantPluginAttributes = 0;
     //Storage for the LocalCryptoHandle master_key, not used in RemoteCryptoHandles
@@ -190,7 +204,7 @@ struct ParticipantKeyHandle
 
     //Data used to store the current session keys and to determine when it has to be updated
     KeySessionData Session;
-    uint64_t max_blocks_per_session = 0;
+    uint64_t max_blocks_per_session = {0};
     std::mutex mutex_;
 };
 

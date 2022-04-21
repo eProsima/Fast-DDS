@@ -30,6 +30,7 @@
 #include <openssl/rand.h>
 #include <fastdds/dds/log/Log.hpp>
 
+#include <cassert>
 #include <string.h>
 
 #include <security/cryptography/AESGCMGMAC_KeyFactory.h>
@@ -99,21 +100,47 @@ static bool create_kx_key(
 using namespace eprosima::fastrtps::rtps;
 using namespace eprosima::fastrtps::rtps::security;
 
+ParticipantCryptoHandleDeleter::ParticipantCryptoHandleDeleter(AESGCMGMAC_KeyFactory& factory)
+{
+    // TODO: promote to weak_from_this on C++17
+    factory_ = std::weak_ptr<AESGCMGMAC_KeyFactory>(factory.shared_from_this());
+}
+
+void ParticipantCryptoHandleDeleter::operator()(ParticipantKeyHandle* pk)
+{
+    if(nullptr == pk)
+    {
+        return;
+    }
+
+    // If the handle survives its factory something is terribly wrong
+    assert(!factory_.expired());
+
+    // Dummy exception if none provided
+    SecurityException exception;
+    if(nullptr == pk->exception_)
+    {
+        pk->exception_ = &exception;
+    }
+
+    factory_.lock()->release_participant(pk);
+}
+
 AESGCMGMAC_KeyFactory::AESGCMGMAC_KeyFactory()
 {
 }
 
-ParticipantCryptoHandle* AESGCMGMAC_KeyFactory::register_local_participant(
+std::shared_ptr<ParticipantCryptoHandle> AESGCMGMAC_KeyFactory::register_local_participant(
         const IdentityHandle& /*participant_identity*/,
         const PermissionsHandle& /*participant_permissions*/,
         const PropertySeq& participant_properties,
         const ParticipantSecurityAttributes& participant_security_attributes,
         SecurityException& /*exception*/)
 {
-    //Create ParticipantCryptoHandle, fill Participant KeyMaterial and return it
-    AESGCMGMAC_ParticipantCryptoHandle* PCrypto = nullptr;
+    // Create ParticipantCryptoHandle, fill deleter and Participant KeyMaterial and return it
+    auto PCrypto = std::make_shared<AESGCMGMAC_ParticipantCryptoHandle>();
+    (*PCrypto)->deleter_ = ParticipantCryptoHandleDeleter(*this);
 
-    PCrypto = new AESGCMGMAC_ParticipantCryptoHandle();
     auto plugin_attrs = participant_security_attributes.plugin_participant_attributes;
     (*PCrypto)->ParticipantPluginAttributes = plugin_attrs;
 
@@ -183,10 +210,10 @@ ParticipantCryptoHandle* AESGCMGMAC_KeyFactory::register_local_participant(
     (*PCrypto)->RemoteParticipant2ParticipantKeyMaterial.push_back(buffer);
     (*PCrypto)->Participant2ParticipantKxKeyMaterial.push_back(buffer);
 
-    return PCrypto;
+    return std::static_pointer_cast<ParticipantCryptoHandle>(PCrypto);
 }
 
-ParticipantCryptoHandle* AESGCMGMAC_KeyFactory::register_matched_remote_participant(
+std::shared_ptr<ParticipantCryptoHandle> AESGCMGMAC_KeyFactory::register_matched_remote_participant(
         const ParticipantCryptoHandle& local_participant_crypto_handle,
         const IdentityHandle& /*remote_participant_identity*/,
         const PermissionsHandle& /*remote_participant_permissions*/,
@@ -216,8 +243,8 @@ ParticipantCryptoHandle* AESGCMGMAC_KeyFactory::register_matched_remote_particip
             (plugin_attrs & PLUGIN_PARTICIPANT_SECURITY_ATTRIBUTES_FLAG_IS_RTPS_ORIGIN_AUTHENTICATED) != 0;
 
     // Remote Participant CryptoHandle, to be returned at the end of the function
-    AESGCMGMAC_ParticipantCryptoHandle* RPCrypto = new AESGCMGMAC_ParticipantCryptoHandle();
-
+    auto RPCrypto = std::make_shared<AESGCMGMAC_ParticipantCryptoHandle>();
+    (*RPCrypto)->deleter_ = ParticipantCryptoHandleDeleter(*this);
     (*RPCrypto)->ParticipantPluginAttributes = plugin_attrs;
 
     /*Fill values for Participant2ParticipantKeyMaterial - Used to encrypt outgoing data */
@@ -256,16 +283,14 @@ ParticipantCryptoHandle* AESGCMGMAC_KeyFactory::register_matched_remote_particip
         {
             logWarning(SECURITY_CRYPTO, "Error generating the keys to perform token transaction");
             exception = SecurityException("Encountered an error while creating KxKeyMaterials");
-            delete RPCrypto;
-            return nullptr;
+            return std::shared_ptr<ParticipantCryptoHandle>();
         }
 
         if (!create_kx_key(buffer.master_sender_key, challenge_2, "key exchange key", challenge_1, shared_secret_ss))
         {
             logWarning(SECURITY_CRYPTO, "Error generating the keys to perform token transaction");
             exception = SecurityException("Encountered an error while creating KxKeyMaterials");
-            delete RPCrypto;
-            return nullptr;
+            return std::shared_ptr<ParticipantCryptoHandle>();
         }
 
 
@@ -284,7 +309,7 @@ ParticipantCryptoHandle* AESGCMGMAC_KeyFactory::register_matched_remote_particip
         AESGCMGMAC_WriterCryptoHandle* wHandle = new AESGCMGMAC_WriterCryptoHandle();
         (*wHandle)->EndpointPluginAttributes = PLUGIN_ENDPOINT_SECURITY_ATTRIBUTES_FLAG_IS_SUBMESSAGE_ENCRYPTED;
         (*wHandle)->Participant_master_key_id = c_transformKeyIdZero;
-        (*wHandle)->Parent_participant = RPCrypto;
+        (*wHandle)->Parent_participant = RPCrypto.get();
         (*wHandle)->EntityKeyMaterial.push_back(buffer);
         (*wHandle)->Entity2RemoteKeyMaterial.push_back(buffer);
         (*wHandle)->Remote2EntityKeyMaterial.push_back(buffer);
@@ -297,7 +322,7 @@ ParticipantCryptoHandle* AESGCMGMAC_KeyFactory::register_matched_remote_particip
         AESGCMGMAC_ReaderCryptoHandle* rHandle = new AESGCMGMAC_ReaderCryptoHandle();
         (*rHandle)->EndpointPluginAttributes = PLUGIN_ENDPOINT_SECURITY_ATTRIBUTES_FLAG_IS_SUBMESSAGE_ENCRYPTED;
         (*rHandle)->Participant_master_key_id = c_transformKeyIdZero;
-        (*rHandle)->Parent_participant = RPCrypto;
+        (*rHandle)->Parent_participant = RPCrypto.get();
         (*rHandle)->EntityKeyMaterial.push_back(buffer);
         (*rHandle)->Entity2RemoteKeyMaterial.push_back(buffer);
         (*rHandle)->Remote2EntityKeyMaterial.push_back(buffer);
@@ -307,7 +332,7 @@ ParticipantCryptoHandle* AESGCMGMAC_KeyFactory::register_matched_remote_particip
         (*RPCrypto)->Readers.push_back(rHandle);
     }
 
-    return RPCrypto;
+    return std::static_pointer_cast<ParticipantCryptoHandle>(RPCrypto);
 }
 
 DatawriterCryptoHandle* AESGCMGMAC_KeyFactory::register_local_datawriter(
@@ -709,47 +734,64 @@ DatawriterCryptoHandle* AESGCMGMAC_KeyFactory::register_matched_remote_datawrite
     return RWCrypto;
 }
 
-bool AESGCMGMAC_KeyFactory::unregister_participant(
-        ParticipantCryptoHandle* participant_crypto_handle,
-        SecurityException& exception)
+void AESGCMGMAC_KeyFactory::release_participant(
+        ParticipantKeyHandle* key)
 {
-    if (participant_crypto_handle == nullptr)
-    {
-        return false;
-    }
+    assert(key != nullptr);
+    assert(key->exception_ != nullptr);
+
+    auto exception = key->exception_;
 
     //De-register the IDs
-    AESGCMGMAC_ParticipantCryptoHandle& local_participant =
-            AESGCMGMAC_ParticipantCryptoHandle::narrow(*participant_crypto_handle);
+    release_key_id(key->ParticipantKeyMaterial.sender_key_id);
 
-    if (local_participant.nil())
+    //Unregister all writers and readers
+    std::vector<DatawriterCryptoHandle*>::iterator wit = key->Writers.begin();
+    while (wit != key->Writers.end())
+    {
+        DatawriterCryptoHandle* writer = (DatawriterCryptoHandle*)(*wit);
+        unregister_datawriter(writer, *exception);
+        wit = key->Writers.begin();
+    }
+
+    std::vector<DatareaderCryptoHandle*>::iterator rit = key->Readers.begin();
+    while (rit != key->Readers.end())
+    {
+        DatareaderCryptoHandle* reader = (DatareaderCryptoHandle*)(*rit);
+        unregister_datareader(reader, *exception);
+        rit = key->Readers.begin();
+    }
+
+    return;
+}
+
+bool AESGCMGMAC_KeyFactory::unregister_participant(
+        std::shared_ptr<ParticipantCryptoHandle>& participant_crypto_handle,
+        SecurityException& exception)
+{
+    if (participant_crypto_handle)
     {
         return false;
     }
 
-    release_key_id(local_participant->ParticipantKeyMaterial.sender_key_id);
+    // Associate the exception object
+    AESGCMGMAC_ParticipantCryptoHandle& handle =
+        AESGCMGMAC_ParticipantCryptoHandle::narrow(*participant_crypto_handle);
+    // must not be nil and deleter_ associated on construction
+    assert(handle->exception_);
+    handle->exception_ = &exception;
 
-    //Unregister all writers and readers
-    std::vector<DatawriterCryptoHandle*>::iterator wit = local_participant->Writers.begin();
-    while (wit != local_participant->Writers.end())
+    // Release this copy and check outstanding ones
+    // the exception argument will be populated here
+    std::weak_ptr<ParticipantCryptoHandle> wp(participant_crypto_handle);
+    participant_crypto_handle.reset();
+    if(!wp.expired())
     {
-        DatawriterCryptoHandle* writer = (DatawriterCryptoHandle*)(*wit);
-        unregister_datawriter(writer, exception);
-        wit = local_participant->Writers.begin();
-    }
-
-    std::vector<DatareaderCryptoHandle*>::iterator rit = local_participant->Readers.begin();
-    while (rit != local_participant->Readers.end())
-    {
-        DatareaderCryptoHandle* reader = (DatareaderCryptoHandle*)(*rit);
-        unregister_datareader(reader, exception);
-        rit = local_participant->Readers.begin();
-    }
-
-    delete &local_participant;
+        exception = SecurityException("Outstanding works on the crypto handle");
+        return false;
+    };
 
     return true;
-
 }
 
 bool AESGCMGMAC_KeyFactory::unregister_datawriter(

@@ -24,25 +24,49 @@
 
 #include <security/cryptography/AESGCMGMAC_Types.h>
 
+#include <memory>
+
 namespace eprosima {
 namespace fastrtps {
 namespace rtps {
 namespace security {
 
-class AESGCMGMAC_KeyFactory : public CryptoKeyFactory
+class AESGCMGMAC_KeyFactory;
+
+namespace {
+
+// Auxiliary class to delete the handles, privy to this compilation unit
+struct ParticipantCryptoHandleDeleter
 {
+    ParticipantCryptoHandleDeleter(AESGCMGMAC_KeyFactory& factory);
+
+    void operator()(ParticipantKeyHandle* pk);
+
+    // Reference to the factory
+    std::weak_ptr<AESGCMGMAC_KeyFactory> factory_;
+};
+
+} // Unnamed namespace
+
+class AESGCMGMAC_KeyFactory : public CryptoKeyFactory, public std::enable_shared_from_this<AESGCMGMAC_KeyFactory>
+{
+    friend ParticipantCryptoHandleDeleter;
+
+    // Actual unregister_participant() implementation called from the handle destructor
+    void release_participant(ParticipantKeyHandle* key);
+
 public:
 
     AESGCMGMAC_KeyFactory();
 
-    ParticipantCryptoHandle* register_local_participant(
+    std::shared_ptr<ParticipantCryptoHandle> register_local_participant(
             const IdentityHandle& participant_identity,
             const PermissionsHandle& participant_permissions,
             const PropertySeq& participant_properties,
             const ParticipantSecurityAttributes& participant_security_attributes,
             SecurityException& exception) override;
 
-    ParticipantCryptoHandle* register_matched_remote_participant(
+    std::shared_ptr<ParticipantCryptoHandle> register_matched_remote_participant(
             const ParticipantCryptoHandle& local_participant_crypto_handle,
             const IdentityHandle& remote_participant_identity,
             const PermissionsHandle& remote_participant_permissions,
@@ -75,7 +99,7 @@ public:
             SecurityException& exception) override;
 
     bool unregister_participant(
-            ParticipantCryptoHandle* participant_crypto_handle,
+            std::shared_ptr<ParticipantCryptoHandle>& participant_crypto_handle,
             SecurityException& exception) override;
 
     bool unregister_datawriter(
