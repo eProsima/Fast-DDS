@@ -94,7 +94,6 @@ SecurityManager::SecurityManager(
     , domain_id_(0)
     , local_identity_handle_(nullptr)
     , local_permissions_handle_(nullptr)
-    , local_participant_crypto_handle_(nullptr)
     , auth_last_sequence_number_(1)
     , crypto_last_sequence_number_(1)
     , temp_stateless_reader_proxy_data_(
@@ -326,9 +325,9 @@ bool SecurityManager::init(
                             attributes,
                             exception);
 
-                        if (local_participant_crypto_handle_ != nullptr)
+                        if (local_participant_crypto_handle_)
                         {
-                            assert(!local_participant_crypto_handle_->nil());
+                            assert(!(*local_participant_crypto_handle_)->nil());
                         }
                     }
                     else
@@ -349,7 +348,7 @@ bool SecurityManager::init(
                 }
 
                 if ((access_plugin_ == nullptr || local_permissions_handle_ != nullptr) &&
-                        (crypto_plugin_ == nullptr || local_participant_crypto_handle_ != nullptr))
+                        (crypto_plugin_ == nullptr || local_participant_crypto_handle_))
                 {
                     // Should be activated here, to enable encription buffer on created entities
                     throw true;
@@ -398,9 +397,9 @@ bool SecurityManager::init(
 void SecurityManager::cancel_init()
 {
     SecurityException exception;
-    if (local_participant_crypto_handle_ != nullptr)
+    if (local_participant_crypto_handle_)
     {
-        crypto_plugin_->cryptokeyfactory()->unregister_participant(local_participant_crypto_handle_, exception);
+        crypto_plugin_->cryptokeyfactory()->unregister_participant(*local_participant_crypto_handle_, exception);
     }
 
     if (crypto_plugin_ != nullptr)
@@ -459,7 +458,7 @@ void SecurityManager::destroy()
 
         for (auto& dp_it : discovered_participants_)
         {
-            ParticipantCryptoHandle* participant_crypto_handle = dp_it.second->get_participant_crypto();
+            std::shared_ptr<ParticipantCryptoHandle> participant_crypto_handle = dp_it.second->get_participant_crypto();
             if (participant_crypto_handle != nullptr)
             {
                 crypto_plugin_->cryptokeyfactory()->unregister_participant(participant_crypto_handle, exception);
@@ -480,9 +479,9 @@ void SecurityManager::destroy()
             remove_discovered_participant_info(dp_it.second->get_auth());
         }
 
-        if (local_participant_crypto_handle_ != nullptr)
+        if (local_participant_crypto_handle_)
         {
-            crypto_plugin_->cryptokeyfactory()->unregister_participant(local_participant_crypto_handle_, exception);
+            crypto_plugin_->cryptokeyfactory()->unregister_participant(*local_participant_crypto_handle_, exception);
         }
 
         if (local_permissions_handle_ != nullptr)
@@ -504,7 +503,6 @@ void SecurityManager::destroy()
 
     discovered_participants_.clear();
 
-    local_participant_crypto_handle_ = nullptr;
     local_permissions_handle_ = nullptr;
     local_identity_handle_ = nullptr;
 
@@ -750,7 +748,7 @@ void SecurityManager::remove_participant(
         {
             SecurityException exception;
 
-            ParticipantCryptoHandle* participant_crypto_handle =
+            std::shared_ptr<ParticipantCryptoHandle> participant_crypto_handle =
                     dp_it->second->get_participant_crypto();
             if (participant_crypto_handle != nullptr)
             {
@@ -1707,7 +1705,7 @@ void SecurityManager::process_participant_volatile_message_secure(
 
         const GUID_t remote_participant_key(message.message_identity().source_guid().guidPrefix,
                 c_EntityId_RTPSParticipant);
-        ParticipantCryptoHandle* remote_participant_crypto = nullptr;
+        std::shared_ptr<ParticipantCryptoHandle> remote_participant_crypto;
 
         // Search remote participant crypto handle.
         {
@@ -2156,7 +2154,7 @@ void SecurityManager::unmatch_builtin_endpoints(
 }
 
 void SecurityManager::exchange_participant_crypto(
-        ParticipantCryptoHandle* remote_participant_crypto,
+        std::shared_ptr<ParticipantCryptoHandle> remote_participant_crypto,
         const GUID_t& remote_participant_guid)
 {
     SecurityException exception;
@@ -2222,7 +2220,7 @@ void SecurityManager::exchange_participant_crypto(
 }
 
 // TODO (Ricardo) Change participant_data
-ParticipantCryptoHandle* SecurityManager::register_and_match_crypto_endpoint(
+std::shared_ptr<ParticipantCryptoHandle> SecurityManager::register_and_match_crypto_endpoint(
         IdentityHandle& remote_participant_identity,
         SharedSecretHandle& shared_secret)
 {
@@ -2235,7 +2233,7 @@ ParticipantCryptoHandle* SecurityManager::register_and_match_crypto_endpoint(
     SecurityException exception;
 
     // Register remote participant into crypto plugin.
-    ParticipantCryptoHandle* remote_participant_crypto =
+    std::shared_ptr<ParticipantCryptoHandle> remote_participant_crypto =
             crypto_plugin_->cryptokeyfactory()->register_matched_remote_participant(*local_participant_crypto_handle_,
                     remote_participant_identity, nil_handle, shared_secret, exception);
 
@@ -2272,7 +2270,7 @@ bool SecurityManager::encode_rtps_message(
 
     assert(receiving_list.size() > 0);
 
-    std::vector<ParticipantCryptoHandle*> receiving_crypto_list;
+    std::vector<std::shared_ptr<ParticipantCryptoHandle>> receiving_crypto_list;
     for (const auto& remote_participant : receiving_list)
     {
         const GUID_t remote_participant_key(remote_participant, c_EntityId_RTPSParticipant);
@@ -2326,7 +2324,7 @@ int SecurityManager::decode_rtps_message(
     // Init output buffer
     CDRMessage::initCDRMsg(&out_message);
 
-    const ParticipantCryptoHandle* remote_participant_crypto_handle = nullptr;
+    const std::shared_ptr<ParticipantCryptoHandle> remote_participant_crypto_handle;
 
     const GUID_t remote_participant_key(remote_participant, c_EntityId_RTPSParticipant);
 
@@ -2864,7 +2862,7 @@ bool SecurityManager::discovered_reader(
     std::unique_lock<shared_mutex> lock(mutex_);
 
     PermissionsHandle* remote_permissions = nullptr;
-    ParticipantCryptoHandle* remote_participant_crypto_handle = nullptr;
+    std::shared_ptr<ParticipantCryptoHandle> remote_participant_crypto_handle;
     SharedSecretHandle* shared_secret_handle = &SharedSecretHandle::nil_handle;
 
     if (!security_attributes.match(remote_reader_data.security_attributes_,
@@ -3210,7 +3208,7 @@ bool SecurityManager::discovered_writer(
     std::unique_lock<shared_mutex> lock(mutex_);
 
     PermissionsHandle* remote_permissions = nullptr;
-    ParticipantCryptoHandle* remote_participant_crypto_handle = nullptr;
+    std::shared_ptr<ParticipantCryptoHandle> remote_participant_crypto_handle;
     SharedSecretHandle* shared_secret_handle = &SharedSecretHandle::nil_handle;
 
     if (!security_attributes.match(remote_writer_data.security_attributes_,
@@ -3702,7 +3700,7 @@ int SecurityManager::decode_rtps_submessage(
     shared_lock<shared_mutex> _(mutex_);
 
     const GUID_t remote_participant_key(sending_participant, c_EntityId_RTPSParticipant);
-    ParticipantCryptoHandle* remote_participant_crypto_handle = nullptr;
+    std::shared_ptr<ParticipantCryptoHandle> remote_participant_crypto_handle;
 
     if (remote_participant_key == participant_->getGuid())
     {
@@ -3948,7 +3946,7 @@ bool SecurityManager::participant_authorized(
             }
 
             // Starts cryptography mechanism
-            ParticipantCryptoHandle* participant_crypto_handle =
+            std::shared_ptr<ParticipantCryptoHandle> participant_crypto_handle =
                     register_and_match_crypto_endpoint(*remote_participant_info->identity_handle_,
                             *shared_secret_handle);
 

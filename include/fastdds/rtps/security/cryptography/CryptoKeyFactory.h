@@ -22,6 +22,8 @@
 #include <fastdds/rtps/security/accesscontrol/EndpointSecurityAttributes.h>
 #include <fastdds/rtps/security/accesscontrol/ParticipantSecurityAttributes.h>
 
+#include <memory>
+
 namespace eprosima {
 namespace fastrtps {
 namespace rtps {
@@ -45,7 +47,7 @@ public:
      * @param exception (out) Security exception
      * @return ParticipantCryptoHandle with generated key material
      */
-    virtual ParticipantCryptoHandle* register_local_participant(
+    virtual std::shared_ptr<ParticipantCryptoHandle> register_local_participant(
             const IdentityHandle& participant_identity,
             const PermissionsHandle& participant_permissions,
             const PropertySeq& participant_properties,
@@ -62,7 +64,7 @@ public:
      * @param exception (out) Security exception
      * @return ParticipantCryptoHandle with generated key material
      */
-    virtual ParticipantCryptoHandle* register_matched_remote_participant(
+    virtual std::shared_ptr<ParticipantCryptoHandle> register_matched_remote_participant(
             const ParticipantCryptoHandle& local_participant_crypto_handle,
             const IdentityHandle& remote_participant_identity,
             const PermissionsHandle& remote_participant_permissions,
@@ -138,7 +140,7 @@ public:
      * @return TRUE is successful
      */
     virtual bool unregister_participant(
-            ParticipantCryptoHandle* participant_crypto_handle,
+            std::shared_ptr<ParticipantCryptoHandle>& participant_crypto_handle,
             SecurityException& exception) = 0;
 
     /**

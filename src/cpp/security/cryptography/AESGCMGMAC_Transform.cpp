@@ -460,7 +460,7 @@ bool AESGCMGMAC_Transform::encode_rtps_message(
         CDRMessage_t& encoded_rtps_message,
         const CDRMessage_t& plain_rtps_message,
         ParticipantCryptoHandle& sending_crypto,
-        std::vector<ParticipantCryptoHandle*>& receiving_crypto_list,
+        std::vector<std::shared_ptr<ParticipantCryptoHandle>>& receiving_crypto_list,
         SecurityException& /*exception*/)
 {
     AESGCMGMAC_ParticipantCryptoHandle& local_participant = AESGCMGMAC_ParticipantCryptoHandle::narrow(sending_crypto);
@@ -1819,7 +1819,7 @@ bool AESGCMGMAC_Transform::serialize_SecureDataTag(
         eprosima::fastcdr::Cdr& serializer,
         const AESGCMGMAC_ParticipantCryptoHandle& local_participant,
         const std::array<uint8_t, 12>& initialization_vector,
-        std::vector<ParticipantCryptoHandle*>& receiving_crypto_list,
+        std::vector<std::shared_ptr<ParticipantCryptoHandle>>& receiving_crypto_list,
         bool update_specific_keys,
         SecureDataTag& tag)
 {

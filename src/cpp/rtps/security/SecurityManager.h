@@ -711,7 +711,7 @@ private:
 
     PermissionsHandle* local_permissions_handle_;
 
-    ParticipantCryptoHandle* local_participant_crypto_handle_;
+    std::shared_ptr<ParticipantCryptoHandle> local_participant_crypto_handle_;
 
     // collection members can be modified inside SecurityManager const calls because them take care of its own
     // synchronization
