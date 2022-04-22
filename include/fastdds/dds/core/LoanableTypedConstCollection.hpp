@@ -1,4 +1,4 @@
-// Copyright 2021 Proyectos y Sistemas de Mantenimiento SL (eProsima).
+// Copyright 2022 Proyectos y Sistemas de Mantenimiento SL (eProsima).
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -13,11 +13,11 @@
 // limitations under the License.
 
 /**
- * @file LoanableTypedCollection.hpp
+ * @file LoanableTypedConstCollection.hpp
  */
 
-#ifndef _FASTDDS_DDS_CORE_LOANABLETYPEDCOLLECTION_HPP_
-#define _FASTDDS_DDS_CORE_LOANABLETYPEDCOLLECTION_HPP_
+#ifndef _FASTDDS_DDS_CORE_LOANABLETYPEDCONSTCOLLECTION_HPP_
+#define _FASTDDS_DDS_CORE_LOANABLETYPEDCONSTCOLLECTION_HPP_
 
 #include <cassert>
 #include <cstdint>
@@ -32,38 +32,12 @@ namespace dds {
 /**
  * A type-safe accessible collection of generic opaque pointers that can receive the buffer from outside (loan).
  *
- * This is an abstract class. See @ref LoanableSequence for details.
+ * This is an abstract class. See @ref LoanableConstSequence for details.
  */
 template<typename T>
-class LoanableTypedCollection : public LoanableCollection
+class LoanableTypedConstCollection : public LoanableCollection
 {
 public:
-
-    /**
-     * Set an element of the sequence.
-     *
-     * This is the operator that is invoked when the application indexes into a @em non-const sequence:
-     * @code{.cpp}
-     * element = sequence[n];
-     * sequence[n] = element;
-     * @endcode
-     *
-     * Note that a @em reference to the element is returned (and not a copy)
-     *
-     * @param [in] n index of element to access, must be >= 0 and less than length().
-     *
-     * @return a reference to the element at position @c n
-     */
-    T& operator [](
-            size_type n)
-    {
-        if (n >= length_)
-        {
-            throw std::out_of_range("");
-        }
-
-        return *static_cast<T*>(elements_[n]);
-    }
 
     /**
      * Get an element of the sequence.
@@ -96,4 +70,4 @@ public:
 } // namespace fastdds
 } // namespace eprosima
 
-#endif // _FASTDDS_DDS_CORE_LOANABLETYPEDCOLLECTION_HPP_
+#endif // _FASTDDS_DDS_CORE_LOANABLETYPEDCONSTCOLLECTION_HPP_
