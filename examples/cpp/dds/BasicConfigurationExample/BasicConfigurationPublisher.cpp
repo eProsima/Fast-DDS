@@ -36,15 +36,16 @@
 using namespace eprosima::fastdds::dds;
 using namespace eprosima::fastdds::rtps;
 
+std::atomic<uint32_t> HelloWorldPublisher::n_topics_(0);
 std::atomic<bool> HelloWorldPublisher::stop_(false);
-std::mutex HelloWorldPublisher::PubListener::wait_matched_cv_mtx_;
-std::condition_variable HelloWorldPublisher::PubListener::wait_matched_cv_;
+std::mutex PubListener::wait_matched_cv_mtx_;
+std::condition_variable PubListener::wait_matched_cv_;
+std::mutex HelloWorldPublisher::terminate_cv_mtx_;
+std::condition_variable HelloWorldPublisher::terminate_cv_;
 
 HelloWorldPublisher::HelloWorldPublisher()
     : participant_(nullptr)
     , publisher_(nullptr)
-    , topic_(nullptr)
-    , writer_(nullptr)
     , type_(new HelloWorldPubSubType())
 {
 }
@@ -58,10 +59,11 @@ void HelloWorldPublisher::stop()
 {
     stop_ = true;
     PubListener::awake();
+    terminate_cv_.notify_all();
 }
 
 bool HelloWorldPublisher::init(
-        const std::string& topic_name,
+        std::vector<std::string> topic_names,
         uint32_t domain,
         uint32_t num_wait_matched,
         bool async,
@@ -69,12 +71,18 @@ bool HelloWorldPublisher::init(
         bool reliable,
         bool transient)
 {
-    hello_.index(0);
-    memcpy(hello_.message().data(), "HelloWorld ", strlen("HelloWorld") + 1);
+    n_topics_.store(topic_names.size());
+
+    for (uint32_t i = 0; i < n_topics_.load(); i++)
+    {
+        HelloWorld hello;
+        hello.index(0);
+        memcpy(hello.message().data(), "HelloWorld ", strlen("HelloWorld") + 1);
+        hellos_.push_back(hello);
+    }
 
     DomainParticipantQos pqos;
     pqos.name("Participant_pub");
-    listener_.set_num_wait_matched(num_wait_matched);
 
     // TRANSPORT CONFIG
     // If it is set, not use default and set the transport
@@ -118,15 +126,7 @@ bool HelloWorldPublisher::init(
         return false;
     }
 
-    // CREATE THE TOPIC
-    topic_ = participant_->create_topic(topic_name, "HelloWorld", TOPIC_QOS_DEFAULT);
-
-    if (topic_ == nullptr)
-    {
-        return false;
-    }
-
-    // CREATE THE WRITER
+    // CONFIGURE WRITER QOS
     DataWriterQos wqos = DATAWRITER_QOS_DEFAULT;
 
     // Data sharing set in endpoint. If it is not default, set it to off
@@ -171,12 +171,36 @@ bool HelloWorldPublisher::init(
                                                             // writters' qos actually is TRANSIENT_LOCAL)
     }
 
-    writer_ = publisher_->create_datawriter(topic_, wqos, &listener_);
-
-    if (writer_ == nullptr)
+    for (uint32_t i = 0; i < n_topics_.load(); i++)
     {
-        return false;
+        std::string topic_name = topic_names[i];
+        std::shared_ptr<PubListener> listener = std::make_shared<PubListener>();
+        listener->topic_name_ = topic_name;
+
+        // CREATE THE TOPIC
+        eprosima::fastdds::dds::Topic* topic = participant_->create_topic(topic_name, "HelloWorld", TOPIC_QOS_DEFAULT);
+
+        if (topic == nullptr)
+        {
+            return false;
+        }
+
+        topics_.push_back(topic);
+
+        // CREATE THE WRITER
+        listener->set_num_wait_matched(num_wait_matched);
+        listeners_.push_back(listener);
+
+        eprosima::fastdds::dds::DataWriter* writer = publisher_->create_datawriter(topic, wqos, listener.get());
+
+        if (writer == nullptr)
+        {
+            return false;
+        }
+
+        writers_.push_back(writer);
     }
+
     return true;
 }
 
@@ -184,30 +208,37 @@ HelloWorldPublisher::~HelloWorldPublisher()
 {
     if (participant_ != nullptr)
     {
+        for (uint32_t i = 0; i < n_topics_.load(); i++)
+        {
+            if (topics_[i] != nullptr)
+            {
+                participant_->delete_topic(topics_[i]);
+            }
+        }
         if (publisher_ != nullptr)
         {
-            if (writer_ != nullptr)
+            for (uint32_t i = 0; i < n_topics_.load(); i++)
             {
-                publisher_->delete_datawriter(writer_);
+                if (writers_[i] != nullptr)
+                {
+                    publisher_->delete_datawriter(writers_[i]);
+                }
             }
             participant_->delete_publisher(publisher_);
-        }
-        if (topic_ != nullptr)
-        {
-            participant_->delete_topic(topic_);
         }
         DomainParticipantFactory::get_instance()->delete_participant(participant_);
     }
 }
 
-void HelloWorldPublisher::PubListener::on_publication_matched(
+void PubListener::on_publication_matched(
         eprosima::fastdds::dds::DataWriter*,
         const eprosima::fastdds::dds::PublicationMatchedStatus& info)
 {
     if (info.current_count_change == 1)
     {
         matched_ = info.current_count;
-        std::cout << "Publisher matched." << std::endl;
+        // std::cout << "Publisher matched in " << topic_name_ << std::endl;
+        logWarning(BASIC_CONFIGURATION_PUBLISHER, "Publisher matched in " << topic_name_);
         if (enough_matched())
         {
             awake();
@@ -216,66 +247,126 @@ void HelloWorldPublisher::PubListener::on_publication_matched(
     else if (info.current_count_change == -1)
     {
         matched_ = info.current_count;
-        std::cout << "Publisher unmatched." << std::endl;
+        // std::cout << "Publisher unmatched in " << topic_name_  << std::endl;
+        logWarning(BASIC_CONFIGURATION_PUBLISHER, "Publisher unmatched in " << topic_name_);
     }
     else
     {
         std::cout << info.current_count_change
                   << " is not a valid value for PublicationMatchedStatus current count change" << std::endl;
+        logWarning(BASIC_CONFIGURATION_PUBLISHER,
+                info.current_count_change <<
+                " is not a valid value for PublicationMatchedStatus current count change");
     }
 }
 
-void HelloWorldPublisher::PubListener::set_num_wait_matched(
+void PubListener::set_num_wait_matched(
         uint32_t num_wait_matched)
 {
     num_wait_matched_ = num_wait_matched;
 }
 
-bool HelloWorldPublisher::PubListener::enough_matched()
+bool PubListener::enough_matched()
 {
     return matched_ >= num_wait_matched_;
 }
 
-void HelloWorldPublisher::PubListener::wait()
+void PubListener::wait()
 {
     std::unique_lock<std::mutex> lck(wait_matched_cv_mtx_);
     wait_matched_cv_.wait(lck, [this]
             {
-                return enough_matched() || is_stopped();
+                return enough_matched() || HelloWorldPublisher::is_stopped();
             });
 }
 
-void HelloWorldPublisher::PubListener::awake()
+void PubListener::awake()
 {
     wait_matched_cv_.notify_all();
 }
 
 void HelloWorldPublisher::runThread(
         uint32_t samples,
-        uint32_t sleep)
+        uint32_t sleep,
+        uint32_t idx)
 {
-    while (!is_stopped() && (samples == 0 || hello_.index() < samples))
+    while (!is_stopped() && (samples == 0 || hellos_[idx].index() < samples))
     {
-        if (listener_.enough_matched())
+        if (listeners_[idx]->enough_matched())
         {
-            publish();
-            std::cout << "Message: " << hello_.message().data() << " with index: " << hello_.index()
-                      << " SENT" << std::endl;
-            std::this_thread::sleep_for(std::chrono::milliseconds(sleep));
+            publish(idx);
+            // std::cout << "Message: " << hellos_[idx].message().data() << " with index: " << hellos_[idx].index()
+            //             << " SENT in " << listeners_[idx]->topic_name_ << std::endl;
+            logWarning(BASIC_CONFIGURATION_PUBLISHER,
+                    "Message: " << hellos_[idx].message().data() << " with index: " << hellos_[idx].index() << " SENT in " <<
+                    listeners_[idx]->topic_name_);
+            if (samples == 0 || hellos_[idx].index() < samples)
+            {
+                std::this_thread::sleep_for(std::chrono::milliseconds(sleep));
+            }
         }
         else
         {
-            listener_.wait();
+            listeners_[idx]->wait();
+        }
+    }
+}
+
+void HelloWorldPublisher::runSingleThread(
+        uint32_t samples,
+        uint32_t sleep)
+{
+    uint32_t n_topics = n_topics_.load();
+    uint32_t n_finished = 0;
+    while (!is_stopped() && n_finished < n_topics)
+    {
+        for (uint32_t i = 0; i < n_topics; i++)
+        {
+            if (listeners_[i]->enough_matched() && (samples == 0 || hellos_[i].index() < samples))
+            {
+                publish(i);
+                // std::cout << "Message: " << hellos_[i].message().data() << " with index: " << hellos_[i].index()
+                //         << " SENT in " << listeners_[i]->topic_name_ << std::endl;
+                logWarning(BASIC_CONFIGURATION_PUBLISHER,
+                        "Message: " << hellos_[i].message().data() << " with index: " << hellos_[i].index() << " SENT in " <<
+                        listeners_[i]->topic_name_);
+                if (hellos_[i].index() == samples)
+                {
+                    n_finished++;
+                }
+            }
+        }
+        if (n_finished < n_topics)
+        {
+            std::unique_lock<std::mutex> lck(terminate_cv_mtx_);
+            terminate_cv_.wait_for(lck, std::chrono::milliseconds(sleep), []
+                    {
+                        return is_stopped();
+                    });
         }
     }
 }
 
 void HelloWorldPublisher::run(
         uint32_t samples,
-        uint32_t sleep)
+        uint32_t sleep,
+        bool single_thread)
 {
     stop_ = false;
-    std::thread thread(&HelloWorldPublisher::runThread, this, samples, sleep);
+
+    std::vector<std::thread> threads;
+    if (single_thread)
+    {
+        threads.push_back(std::thread(&HelloWorldPublisher::runSingleThread, this, samples, sleep));
+    }
+    else
+    {
+        for (uint32_t i = 0; i < n_topics_.load(); i++)
+        {
+            threads.push_back(std::thread(&HelloWorldPublisher::runThread, this, samples, sleep, i));
+        }
+    }
+
     if (samples == 0)
     {
         std::cout << "Publisher running. Please press CTRL+C to stop the Publisher at any time." << std::endl;
@@ -285,16 +376,29 @@ void HelloWorldPublisher::run(
         std::cout << "Publisher running " << samples <<
             " samples. Please press CTRL+C to stop the Publisher at any time." << std::endl;
     }
+
     signal(SIGINT, [](int signum)
             {
                 std::cout << "SIGINT received, stopping Publisher execution." << std::endl;
                 static_cast<void>(signum); HelloWorldPublisher::stop();
             });
-    thread.join();
+
+    if (single_thread)
+    {
+        threads[0].join();
+    }
+    else
+    {
+        for (uint32_t i = 0; i < n_topics_.load(); i++)
+        {
+            threads[i].join();
+        }
+    }
 }
 
-void HelloWorldPublisher::publish()
+void HelloWorldPublisher::publish(
+        uint32_t writer_idx)
 {
-    hello_.index(hello_.index() + 1);
-    writer_->write(&hello_);
+    hellos_[writer_idx].index(hellos_[writer_idx].index() + 1);
+    writers_[writer_idx]->write(&hellos_[writer_idx]);
 }

@@ -35,15 +35,15 @@
 using namespace eprosima::fastdds::dds;
 using namespace eprosima::fastdds::rtps;
 
+std::atomic<uint32_t> HelloWorldSubscriber::n_topics_(0);
 std::atomic<bool> HelloWorldSubscriber::stop_(false);
+std::atomic<uint32_t> HelloWorldSubscriber::n_stopped_(0);
 std::mutex HelloWorldSubscriber::terminate_cv_mtx_;
 std::condition_variable HelloWorldSubscriber::terminate_cv_;
 
 HelloWorldSubscriber::HelloWorldSubscriber()
     : participant_(nullptr)
     , subscriber_(nullptr)
-    , topic_(nullptr)
-    , reader_(nullptr)
     , type_(new HelloWorldPubSubType())
 {
 }
@@ -53,20 +53,27 @@ bool HelloWorldSubscriber::is_stopped()
     return stop_;
 }
 
-void HelloWorldSubscriber::stop()
+void HelloWorldSubscriber::stop(
+        bool force)
 {
-    stop_ = true;
-    terminate_cv_.notify_all();
+    n_stopped_++;
+    if (force || (n_stopped_.load() == n_topics_.load()))
+    {
+        stop_ = true;
+        terminate_cv_.notify_all();
+    }
 }
 
 bool HelloWorldSubscriber::init(
-        const std::string& topic_name,
+        std::vector<std::string> topic_names,
         uint32_t max_messages,
         uint32_t domain,
         TransportType transport,
         bool reliable,
         bool transient)
 {
+    n_topics_.store(topic_names.size());
+
     DomainParticipantQos pqos;
     pqos.name("Participant_sub");
 
@@ -112,22 +119,7 @@ bool HelloWorldSubscriber::init(
         return false;
     }
 
-    // CREATE THE TOPIC
-    topic_ = participant_->create_topic(
-        topic_name,
-        "HelloWorld",
-        TOPIC_QOS_DEFAULT);
-
-    if (topic_ == nullptr)
-    {
-        return false;
-    }
-
-    // CREATE THE READER
-    if (max_messages > 0)
-    {
-        listener_.set_max_messages(max_messages);
-    }
+    // CONFIGURE READER QOS
     DataReaderQos rqos = DATAREADER_QOS_DEFAULT;
 
     // Data sharing set in endpoint. If it is not default, set it to off
@@ -158,11 +150,41 @@ bool HelloWorldSubscriber::init(
         rqos.durability().kind = VOLATILE_DURABILITY_QOS;   // default
     }
 
-    reader_ = subscriber_->create_datareader(topic_, rqos, &listener_);
-
-    if (reader_ == nullptr)
+    for (uint32_t i = 0; i < n_topics_.load(); i++)
     {
-        return false;
+        std::string topic_name = topic_names[i];
+        std::shared_ptr<SubListener> listener = std::make_shared<SubListener>();
+        listener->topic_name_ = topic_name;
+
+        // CREATE THE TOPIC
+        eprosima::fastdds::dds::Topic* topic = participant_->create_topic(
+            topic_name,
+            "HelloWorld",
+            TOPIC_QOS_DEFAULT);
+
+        if (topic == nullptr)
+        {
+            return false;
+        }
+
+        topics_.push_back(topic);
+
+        // CREATE THE READER
+        if (max_messages > 0)
+        {
+            listener->set_max_messages(max_messages);
+        }
+
+        listeners_.push_back(listener);
+
+        eprosima::fastdds::dds::DataReader* reader = subscriber_->create_datareader(topic, rqos, listener.get());
+
+        if (reader == nullptr)
+        {
+            return false;
+        }
+
+        readers_.push_back(reader);
     }
 
     return true;
@@ -172,15 +194,21 @@ HelloWorldSubscriber::~HelloWorldSubscriber()
 {
     if (participant_ != nullptr)
     {
-        if (topic_ != nullptr)
+        for (uint32_t i = 0; i < n_topics_.load(); i++)
         {
-            participant_->delete_topic(topic_);
+            if (topics_[i] != nullptr)
+            {
+                participant_->delete_topic(topics_[i]);
+            }
         }
         if (subscriber_ != nullptr)
         {
-            if (reader_ != nullptr)
+            for (uint32_t i = 0; i < n_topics_.load(); i++)
             {
-                subscriber_->delete_datareader(reader_);
+                if (readers_[i] != nullptr)
+                {
+                    subscriber_->delete_datareader(readers_[i]);
+                }
             }
             participant_->delete_subscriber(subscriber_);
         }
@@ -188,48 +216,54 @@ HelloWorldSubscriber::~HelloWorldSubscriber()
     }
 }
 
-void HelloWorldSubscriber::SubListener::set_max_messages(
+void SubListener::set_max_messages(
         uint32_t max_messages)
 {
     max_messages_ = max_messages;
 }
 
-void HelloWorldSubscriber::SubListener::on_subscription_matched(
+void SubListener::on_subscription_matched(
         DataReader*,
         const SubscriptionMatchedStatus& info)
 {
     if (info.current_count_change == 1)
     {
         matched_ = info.current_count;
-        std::cout << "Subscriber matched." << std::endl;
+        // std::cout << "Subscriber matched in " << topic_name_  << std::endl;
+        logWarning(BASIC_CONFIGURATION_SUBSCRIBER, "Subscriber matched in " << topic_name_);
     }
     else if (info.current_count_change == -1)
     {
         matched_ = info.current_count;
-        std::cout << "Subscriber unmatched." << std::endl;
+        // std::cout << "Subscriber unmatched in " << topic_name_  << std::endl;
+        logWarning(BASIC_CONFIGURATION_SUBSCRIBER, "Subscriber unmatched in " << topic_name_);
+
     }
     else
     {
-        std::cout << info.current_count_change
-                  << " is not a valid value for SubscriptionMatchedStatus current count change" << std::endl;
+        // std::cout << info.current_count_change
+        //           << " is not a valid value for SubscriptionMatchedStatus current count change" << std::endl;
+        logWarning(BASIC_CONFIGURATION_SUBSCRIBER,
+                info.current_count_change <<
+                " is not a valid value for SubscriptionMatchedStatus current count change");
     }
 }
 
-void HelloWorldSubscriber::SubListener::on_data_available(
+void SubListener::on_data_available(
         DataReader* reader)
 {
     SampleInfo info;
-    while ((reader->take_next_sample(&hello_, &info) == ReturnCode_t::RETCODE_OK) && !is_stopped())
+    while ((reader->take_next_sample(&hello_,
+            &info) == ReturnCode_t::RETCODE_OK) && !HelloWorldSubscriber::is_stopped())
     {
-        if (info.instance_state == ALIVE_INSTANCE_STATE)
+        samples_++;
+        // Print your structure data here.
+        // std::cout << "Message " << hello_.message().data() << " " << hello_.index() << " RECEIVED in " << topic_name_  << std::endl;
+        logWarning(BASIC_CONFIGURATION_SUBSCRIBER,
+                "Message " << hello_.message().data() << " " << hello_.index() << " RECEIVED in " << topic_name_);
+        if (max_messages_ > 0 && samples_ == max_messages_)
         {
-            samples_++;
-            // Print your structure data here.
-            std::cout << "Message " << hello_.message().data() << " " << hello_.index() << " RECEIVED" << std::endl;
-            if (max_messages_ > 0 && (samples_ >= max_messages_))
-            {
-                stop();
-            }
+            HelloWorldSubscriber::stop();
         }
     }
 }
@@ -250,7 +284,7 @@ void HelloWorldSubscriber::run(
     signal(SIGINT, [](int signum)
             {
                 std::cout << "SIGINT received, stopping Subscriber execution." << std::endl;
-                static_cast<void>(signum); HelloWorldSubscriber::stop();
+                static_cast<void>(signum); HelloWorldSubscriber::stop(true);
             });
     std::unique_lock<std::mutex> lck(terminate_cv_mtx_);
     terminate_cv_.wait(lck, []

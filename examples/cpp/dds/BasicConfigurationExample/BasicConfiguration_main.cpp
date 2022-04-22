@@ -18,6 +18,7 @@
  */
 
 #include <string>
+#include <vector>
 
 #include "arg_configuration.h"
 #include "BasicConfigurationPublisher.h"
@@ -30,10 +31,24 @@ enum EntityType
     SUBSCRIBER
 };
 
+std::vector<std::string> split(const std::string &s, char delim)
+{
+    std::vector<std::string> result;
+    std::stringstream ss (s);
+    std::string item;
+
+    while (getline (ss, item, delim)) {
+        result.push_back (item);
+    }
+
+    return result;
+}
+
 int main(
         int argc,
         char** argv)
 {
+    eprosima::fastdds::dds::Log::SetVerbosity(eprosima::fastdds::dds::Log::Kind::Warning);
     int columns;
 
 #if defined(_WIN32)
@@ -53,10 +68,11 @@ int main(
 #endif // if defined(_WIN32)
 
     EntityType type = PUBLISHER;
-    std::string topic_name = "HelloWorldTopic";
+    std::vector<std::string> topic_names = {"HelloWorldTopic"};
     int count = 0;
     long sleep = 100;
     int num_wait_matched = 0;
+    bool single_thread = true;
     int domain = 0;
     bool async = false;
     TransportType transport = DEFAULT;
@@ -115,7 +131,7 @@ int main(
                     break;
 
                 case optionIndex::TOPIC:
-                    topic_name = std::string(opt.arg);
+                    topic_names = split(std::string(opt.arg), ',');
                     break;
 
                 case optionIndex::DOMAIN_ID:
@@ -135,6 +151,10 @@ int main(
                     {
                         print_warning("publisher", opt.name);
                     }
+                    break;
+
+                case optionIndex::MULTITHREADING:
+                    single_thread = false;
                     break;
 
                 case optionIndex::WAIT:
@@ -206,17 +226,17 @@ int main(
         case PUBLISHER:
         {
             HelloWorldPublisher mypub;
-            if (mypub.init(topic_name, static_cast<uint32_t>(domain), static_cast<uint32_t>(num_wait_matched), async,
+            if (mypub.init(topic_names, static_cast<uint32_t>(domain), static_cast<uint32_t>(num_wait_matched), async,
                     transport, reliable, transient))
             {
-                mypub.run(static_cast<uint32_t>(count), static_cast<uint32_t>(sleep));
+                mypub.run(static_cast<uint32_t>(count), static_cast<uint32_t>(sleep), single_thread);
             }
             break;
         }
         case SUBSCRIBER:
         {
             HelloWorldSubscriber mysub;
-            if (mysub.init(topic_name, static_cast<uint32_t>(count), static_cast<uint32_t>(domain), transport,
+            if (mysub.init(topic_names, static_cast<uint32_t>(count), static_cast<uint32_t>(domain), transport,
                     reliable, transient))
             {
                 mysub.run(static_cast<uint32_t>(count));
