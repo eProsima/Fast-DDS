@@ -1636,6 +1636,14 @@ void DataReaderImpl::filter_has_been_updated()
     update_rtps_reader_qos();
 }
 
+InstanceHandle_t DataReaderImpl::lookup_instance(
+        const void* instance) const
+{
+    static_cast<void> (instance);
+    logWarning(DATA_READER, "lookup_instance method not implemented")
+    return HANDLE_NIL;
+}
+
 } /* namespace dds */
 } /* namespace fastdds */
 } /* namespace eprosima */
