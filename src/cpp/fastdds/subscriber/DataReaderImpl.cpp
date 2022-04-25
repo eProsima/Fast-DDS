@@ -1639,9 +1639,20 @@ void DataReaderImpl::filter_has_been_updated()
 InstanceHandle_t DataReaderImpl::lookup_instance(
         const void* instance) const
 {
-    static_cast<void> (instance);
-    logWarning(DATA_READER, "lookup_instance method not implemented")
-    return HANDLE_NIL;
+    InstanceHandle_t handle = HANDLE_NIL;
+
+    if (type_->m_isGetKeyDefined)
+    {
+        if (type_->getKey(const_cast<void*>(instance), &handle, false))
+        {
+            auto it = history_.lookup_instance(handle, true);
+            if (!it.first)
+            {
+                handle = HANDLE_NIL;
+            }
+        }
+    }
+    return handle;
 }
 
 } /* namespace dds */
