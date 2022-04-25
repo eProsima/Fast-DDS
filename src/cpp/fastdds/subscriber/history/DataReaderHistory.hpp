@@ -203,7 +203,7 @@ public:
      */
     std::pair<bool, instance_info> lookup_instance(
             const InstanceHandle_t& handle,
-            bool exact);
+            bool exact) const;
 
     void update_instance_nts(
             CacheChange_t* const change);
