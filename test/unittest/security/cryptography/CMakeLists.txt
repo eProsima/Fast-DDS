@@ -27,14 +27,14 @@ set(COMMON_SOURCES_CRYPTO_PLUGIN_TEST_SOURCE
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/exceptions/Exception.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/security/exceptions/SecurityException.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/security/common/SharedSecretHandle.cpp
-    )
-
-add_executable(BuiltinAESGCMGMAC ${COMMON_SOURCES_CRYPTO_PLUGIN_TEST_SOURCE}
     ${PROJECT_SOURCE_DIR}/src/cpp/security/cryptography/AESGCMGMAC.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/security/cryptography/AESGCMGMAC_KeyExchange.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/security/cryptography/AESGCMGMAC_KeyFactory.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/security/cryptography/AESGCMGMAC_Transform.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/security/cryptography/AESGCMGMAC_Types.cpp
+    )
+
+add_executable(BuiltinAESGCMGMAC ${COMMON_SOURCES_CRYPTO_PLUGIN_TEST_SOURCE}
     ${PROJECT_SOURCE_DIR}/src/cpp/security/authentication/PKIIdentityHandle.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/security/accesscontrol/AccessPermissionsHandle.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/builtinAESGCMGMACTests.cpp)
@@ -43,18 +43,17 @@ target_compile_definitions(BuiltinAESGCMGMAC PRIVATE FASTRTPS_NO_LIB
     $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
     $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
     )
+
 target_include_directories(BuiltinAESGCMGMAC PRIVATE
     ${OPENSSL_INCLUDE_DIR}
+    ${PROJECT_SOURCE_DIR}/test/mock/rtps/SecurityPluginFactory/rtps
     ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include
     ${PROJECT_SOURCE_DIR}/src/cpp
     )
+
 target_link_libraries(BuiltinAESGCMGMAC fastcdr GTest::gmock ${OPENSSL_LIBRARIES})
+
 add_gtest(BuiltinAESGCMGMAC SOURCES ${COMMON_SOURCES_CRYPTO_PLUGIN_TEST_SOURCE}
-    ${PROJECT_SOURCE_DIR}/src/cpp/security/cryptography/AESGCMGMAC.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/security/cryptography/AESGCMGMAC_KeyExchange.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/security/cryptography/AESGCMGMAC_KeyFactory.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/security/cryptography/AESGCMGMAC_Transform.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/security/cryptography/AESGCMGMAC_Types.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/builtinAESGCMGMACTests.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/CryptographyPluginTests.hpp
     ENVIRONMENTS "CERTS_PATH=${PROJECT_SOURCE_DIR}/test/certs")

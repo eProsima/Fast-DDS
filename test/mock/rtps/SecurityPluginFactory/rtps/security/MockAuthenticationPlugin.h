@@ -36,101 +36,129 @@ class MockAuthenticationPlugin : public Authentication
 {
     public:
 
-        MOCK_METHOD6(validate_local_identity, ValidationResult_t(IdentityHandle** local_identity_handle,
-                GUID_t& adjusted_participant_key,
-                const uint32_t domain_id,
-                const RTPSParticipantAttributes& participant_attr,
-                const GUID_t& candidate_participant_key,
-                SecurityException& exception));
+    using PKIIdentityHandle = HandleImpl<PKIIdentity, MockAuthenticationPlugin>;
+    using SharedSecretHandle = HandleImpl<SharedSecret, MockAuthenticationPlugin>;
 
-        MOCK_METHOD5(validate_remote_identity_rvr, ValidationResult_t(IdentityHandle** remote_identity_handle,
-                const IdentityHandle& local_identity_handle,
-                IdentityToken remote_identity_token,
-                const GUID_t& remote_participant_key,
-                SecurityException& exception));
+    MOCK_METHOD(ValidationResult_t, validate_local_identity, (IdentityHandle** local_identity_handle,
+            GUID_t& adjusted_participant_key,
+            const uint32_t domain_id,
+            const RTPSParticipantAttributes& participant_attr,
+            const GUID_t& candidate_participant_key,
+            SecurityException& exception), (override));
 
-        MOCK_METHOD6(begin_handshake_request, ValidationResult_t(HandshakeHandle** handshake_handle,
-                HandshakeMessageToken** handshake_message,
-                const IdentityHandle& initiator_identity_handle,
-                IdentityHandle& replier_identity_handle,
-                const CDRMessage_t& cdr_participant_data,
-                SecurityException& exception));
+    MOCK_METHOD5(validate_remote_identity_rvr, ValidationResult_t(IdentityHandle** remote_identity_handle,
+            const IdentityHandle& local_identity_handle,
+            IdentityToken remote_identity_token,
+            const GUID_t& remote_participant_key,
+            SecurityException& exception));
 
-        MOCK_METHOD7(begin_handshake_reply_rvr, ValidationResult_t(HandshakeHandle** handshake_handle,
-                HandshakeMessageToken** handshake_message_out,
-                HandshakeMessageToken handshake_message_in,
-                IdentityHandle& initiator_identity_handle,
-                const IdentityHandle& replier_identity_handle,
-                const CDRMessage_t& cdr_participant_data,
-                SecurityException& exception));
+    MOCK_METHOD(ValidationResult_t, begin_handshake_request, (HandshakeHandle** handshake_handle,
+            HandshakeMessageToken** handshake_message,
+            const IdentityHandle& initiator_identity_handle,
+            IdentityHandle& replier_identity_handle,
+            const CDRMessage_t& cdr_participant_data,
+            SecurityException& exception), (override));
 
-        MOCK_METHOD4(process_handshake_rvr, ValidationResult_t(HandshakeMessageToken** handshake_message_out,
-                HandshakeMessageToken handshake_message_in,
-                HandshakeHandle& handshake_handle,
-                SecurityException& exception));
+    MOCK_METHOD7(begin_handshake_reply_rvr, ValidationResult_t(HandshakeHandle** handshake_handle,
+            HandshakeMessageToken** handshake_message_out,
+            HandshakeMessageToken handshake_message_in,
+            IdentityHandle& initiator_identity_handle,
+            const IdentityHandle& replier_identity_handle,
+            const CDRMessage_t& cdr_participant_data,
+            SecurityException& exception));
 
-        MOCK_METHOD2(get_shared_secret, SharedSecretHandle*(const HandshakeHandle& handshake_handle,
-                SecurityException& exception));
+    MOCK_METHOD4(process_handshake_rvr, ValidationResult_t(HandshakeMessageToken** handshake_message_out,
+            HandshakeMessageToken handshake_message_in,
+            HandshakeHandle& handshake_handle,
+            SecurityException& exception));
 
-        MOCK_METHOD2(set_listener, bool(AuthenticationListener* listener,
-                SecurityException& exception));
+    MOCK_METHOD(bool, set_listener, (AuthenticationListener* listener,
+                SecurityException& exception), (override));
 
-        MOCK_METHOD3(get_identity_token, bool(IdentityToken** identity_token,
-                const IdentityHandle& handle,
-                SecurityException& exception));
+    MOCK_METHOD(bool, get_identity_token, (IdentityToken** identity_token,
+            const IdentityHandle& handle,
+            SecurityException& exception), (override));
 
-        MOCK_METHOD2(return_identity_token, bool(IdentityToken* token,
-                SecurityException& exception));
+    MOCK_METHOD(bool, return_identity_token, (IdentityToken* token,
+            SecurityException& exception), (override));
 
-        MOCK_METHOD2(return_handshake_handle, bool(HandshakeHandle* handshake_handle,
-                SecurityException& exception));
+    MOCK_METHOD(bool, return_handshake_handle, (HandshakeHandle* handshake_handle,
+            SecurityException& exception), (override));
 
-        MOCK_METHOD2(return_identity_handle, bool(IdentityHandle* identity_handle,
-                SecurityException& exception));
+    MOCK_METHOD(bool, set_permissions_credential_and_token, (IdentityHandle& identity_handle,
+            PermissionsCredentialToken& permissions_credential_token,
+            SecurityException& ex), (override));
 
-        MOCK_METHOD2(return_sharedsecret_handle, bool(SharedSecretHandle* sharedsecret_handle,
-                SecurityException& exception));
+    MOCK_METHOD(bool, get_authenticated_peer_credential_token, (PermissionsCredentialToken **token,
+            const IdentityHandle& identity_handle, SecurityException& exception), (override));
 
-        MOCK_METHOD3(set_permissions_credential_and_token, bool(IdentityHandle& identity_handle,
-                PermissionsCredentialToken& permissions_credential_token,
-                SecurityException& ex));
+    MOCK_METHOD(bool, return_authenticated_peer_credential_token, (PermissionsCredentialToken* token,
+            SecurityException& ex), (override));
 
-        MOCK_METHOD3(get_authenticated_peer_credential_token, bool(PermissionsCredentialToken **token,
-                const IdentityHandle& identity_handle, SecurityException& exception));
+    ValidationResult_t validate_remote_identity(IdentityHandle** remote_identity_handle,
+            const IdentityHandle& local_identity_handle,
+            const IdentityToken& remote_identity_token,
+            const GUID_t& remote_participant_key,
+            SecurityException& exception)
+    {
+        return validate_remote_identity_rvr(remote_identity_handle, local_identity_handle,
+                remote_identity_token, remote_participant_key, exception);
+    }
 
-        MOCK_METHOD2(return_authenticated_peer_credential_token, bool(PermissionsCredentialToken* token,
-                SecurityException& ex));
+    ValidationResult_t begin_handshake_reply(HandshakeHandle** handshake_handle,
+            HandshakeMessageToken** handshake_message_out,
+            HandshakeMessageToken&& handshake_message_in,
+            IdentityHandle& initiator_identity_handle,
+            const IdentityHandle& replier_identity_handle,
+            const CDRMessage_t& cdr_participant_data,
+            SecurityException& exception)
+    {
+        return begin_handshake_reply_rvr(handshake_handle, handshake_message_out, handshake_message_in,
+                initiator_identity_handle, replier_identity_handle, cdr_participant_data, exception);
+    }
 
-        ValidationResult_t validate_remote_identity(IdentityHandle** remote_identity_handle,
-                const IdentityHandle& local_identity_handle,
-                const IdentityToken& remote_identity_token,
-                const GUID_t& remote_participant_key,
-                SecurityException& exception)
-        {
-            return validate_remote_identity_rvr(remote_identity_handle, local_identity_handle,
-                    remote_identity_token, remote_participant_key, exception);
-        }
+    ValidationResult_t process_handshake(HandshakeMessageToken** handshake_message_out,
+            HandshakeMessageToken&& handshake_message_in,
+            HandshakeHandle& handshake_handle,
+            SecurityException& exception)
+    {
+        return process_handshake_rvr(handshake_message_out, handshake_message_in,
+                handshake_handle, exception);
+    }
 
-        ValidationResult_t begin_handshake_reply(HandshakeHandle** handshake_handle,
-                HandshakeMessageToken** handshake_message_out,
-                HandshakeMessageToken&& handshake_message_in,
-                IdentityHandle& initiator_identity_handle,
-                const IdentityHandle& replier_identity_handle,
-                const CDRMessage_t& cdr_participant_data,
-                SecurityException& exception)
-        {
-            return begin_handshake_reply_rvr(handshake_handle, handshake_message_out, handshake_message_in,
-                    initiator_identity_handle, replier_identity_handle, cdr_participant_data, exception);
-        }
+    IdentityHandle* get_identity_handle(SecurityException&)
+    {
+        return new (std::nothrow) PKIIdentityHandle();
+    }
 
-        ValidationResult_t process_handshake(HandshakeMessageToken** handshake_message_out,
-                HandshakeMessageToken&& handshake_message_in,
-                HandshakeHandle& handshake_handle,
-                SecurityException& exception)
-        {
-            return process_handshake_rvr(handshake_message_out, handshake_message_in,
-                    handshake_handle, exception);
-        }
+    bool return_identity_handle(
+            IdentityHandle* identity_handle,
+            SecurityException&)
+    {
+        delete dynamic_cast<PKIIdentityHandle*>(identity_handle);
+        return true;
+    }
+
+    std::shared_ptr<SecretHandle> get_shared_secret(
+            const HandshakeHandle&,
+            SecurityException&) const
+    {
+        // create ad hoc deleter because this object can only be created/release from the friend factory
+        auto p = new (std::nothrow) SharedSecretHandle;
+        return std::dynamic_pointer_cast<SecretHandle>(std::shared_ptr<SharedSecretHandle>(p,
+                    [](SharedSecretHandle* p)
+                    {
+                        delete p;
+                    }));
+    }
+
+    bool return_sharedsecret_handle(
+            std::shared_ptr<SecretHandle>& sharedsecret_handle,
+            SecurityException&) const
+    {
+        sharedsecret_handle.reset();
+        return true;
+    }
 };
 
 } // namespace security
