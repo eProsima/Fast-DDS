@@ -30,7 +30,7 @@ void SecurityTest::initialization_ok()
             register_local_participant(Ref(local_identity_handle_), _, _, _, _)).Times(1).
             WillOnce(Return(&local_participant_crypto_handle_));
     EXPECT_CALL(crypto_plugin_->cryptokeyfactory_,
-            unregister_participant(&local_participant_crypto_handle_, _)).Times(1).
+            unregister_participant(local_participant_crypto_handle_, _)).Times(1).
             WillOnce(Return(true));
     EXPECT_CALL(participant_, createWriter_mock(_, _, _, _, _, _)).Times(2).
             WillOnce(DoAll(SetArgPointee<0>(stateless_writer_), Return(true))).
@@ -205,8 +205,8 @@ void SecurityTest::final_message_process_ok(
 
     HandshakeMessageToken handshake_message;
     CacheChange_t* change2 = new CacheChange_t(200);
-    MockSharedSecretHandle shared_secret_handle;
-    MockParticipantCryptoHandle participant_crypto_handle;
+    std::shared_ptr<SecretHandle> shared_secret_handle;
+    std::shared_ptr<ParticipantCryptoHandle> participant_crypto_handle;
 
     EXPECT_CALL(*auth_plugin_, process_handshake_rvr(_, _, Ref(handshake_handle_), _)).Times(1).
             WillOnce(DoAll(SetArgPointee<0>(&handshake_message),
@@ -222,7 +222,7 @@ void SecurityTest::final_message_process_ok(
     EXPECT_CALL(pdpsimple_, notifyAboveRemoteEndpoints(_)).Times(1);
     EXPECT_CALL(*auth_plugin_, get_shared_secret(Ref(handshake_handle_), _)).Times(1).
             WillOnce(Return(&shared_secret_handle));
-    EXPECT_CALL(*auth_plugin_, return_sharedsecret_handle(&shared_secret_handle, _)).Times(1).
+    EXPECT_CALL(*auth_plugin_, return_sharedsecret_handle(shared_secret_handle, _)).Times(1).
             WillRepeatedly(Return(true));
     EXPECT_CALL(crypto_plugin_->cryptokeyfactory_,
             register_matched_remote_participant(Ref(local_participant_crypto_handle_),
@@ -231,7 +231,7 @@ void SecurityTest::final_message_process_ok(
     EXPECT_CALL(crypto_plugin_->cryptokeyexchange_, create_local_participant_crypto_tokens(_,
             Ref(local_participant_crypto_handle_), Ref(participant_crypto_handle), _)).Times(1).
             WillOnce(Return(true));
-    EXPECT_CALL(crypto_plugin_->cryptokeyfactory_, unregister_participant(&participant_crypto_handle, _)).Times(1).
+    EXPECT_CALL(crypto_plugin_->cryptokeyfactory_, unregister_participant(participant_crypto_handle, _)).Times(1).
             WillOnce(Return(true));
 
     ParticipantAuthenticationInfo info;

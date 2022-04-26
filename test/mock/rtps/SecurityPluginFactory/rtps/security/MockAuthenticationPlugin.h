@@ -22,6 +22,8 @@
 // TODO(Ricardo) Change when GMock supports r-values.
 
 #include <fastrtps/rtps/security/authentication/Authentication.h>
+#include <security/authentication/PKIIdentityHandle.h>
+
 #include <gmock/gmock.h>
 
 #pragma warning(push)
@@ -139,7 +141,11 @@ class MockAuthenticationPlugin : public Authentication
         return true;
     }
 
-    std::shared_ptr<SecretHandle> get_shared_secret(
+    MOCK_METHOD(std::shared_ptr<SecretHandle>, get_shared_secret, (
+            const HandshakeHandle&,
+            SecurityException&), (const, override));
+
+    std::shared_ptr<SecretHandle> get_shared_secret_impl(
             const HandshakeHandle&,
             SecurityException&) const
     {
@@ -152,7 +158,11 @@ class MockAuthenticationPlugin : public Authentication
                     }));
     }
 
-    bool return_sharedsecret_handle(
+    MOCK_METHOD(bool, return_sharedsecret_handle, (
+            std::shared_ptr<SecretHandle>& sharedsecret_handle,
+            SecurityException&), (const, override));
+
+    bool return_sharedsecret_handle_impl(
             std::shared_ptr<SecretHandle>& sharedsecret_handle,
             SecurityException&) const
     {
