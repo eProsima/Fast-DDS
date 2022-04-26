@@ -37,6 +37,8 @@ using namespace eprosima::fastrtps::rtps;
 using namespace eprosima::fastrtps::rtps::security;
 using namespace ::testing;
 
+class SecurityTest;
+
 class MockIdentity
 {
 public:
@@ -44,7 +46,7 @@ public:
     static const char* const class_id_;
 };
 
-typedef HandleImpl<MockIdentity> MockIdentityHandle;
+typedef HandleImpl<MockIdentity, SecurityTest> MockIdentityHandle;
 
 class MockHandshake
 {
@@ -53,9 +55,9 @@ public:
     static const char* const class_id_;
 };
 
-typedef HandleImpl<MockHandshake> MockHandshakeHandle;
+typedef HandleImpl<MockHandshake, SecurityTest> MockHandshakeHandle;
 
-typedef HandleImpl<SharedSecret> MockSharedSecretHandle;
+typedef HandleImpl<SharedSecret, SecurityTest> MockSharedSecretHandle;
 
 class MockParticipantCrypto
 {
@@ -64,7 +66,7 @@ public:
     static const char* const class_id_;
 };
 
-typedef HandleImpl<MockParticipantCrypto> MockParticipantCryptoHandle;
+typedef HandleImpl<MockParticipantCrypto, SecurityTest> MockParticipantCryptoHandle;
 
 class SecurityTest : public ::testing::Test
 {
@@ -139,6 +141,7 @@ public:
         , participant_data_(c_default_RTPSParticipantAllocationAttributes)
         , default_cdr_message(RTPSMESSAGE_DEFAULT_SIZE)
     {
+        local_participant_crypto_handle_ = std::make_shared<MockParticipantCrypto>();
     }
 
     ~SecurityTest()
@@ -158,7 +161,7 @@ public:
     MockIdentityHandle local_identity_handle_;
     MockIdentityHandle remote_identity_handle_;
     MockHandshakeHandle handshake_handle_;
-    MockParticipantCryptoHandle local_participant_crypto_handle_;
+    std::shared_ptr<ParticipantCryptoHandle> local_participant_crypto_handle_;
     ParticipantProxyData participant_data_;
     ParticipantSecurityAttributes security_attributes_;
     PropertyPolicy participant_properties_;

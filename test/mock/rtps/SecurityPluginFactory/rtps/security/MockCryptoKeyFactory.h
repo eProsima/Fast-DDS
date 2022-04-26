@@ -36,18 +36,18 @@ class MockCryptoKeyFactory : public CryptoKeyFactory
 
         virtual ~MockCryptoKeyFactory(){}
 
-        MOCK_METHOD5(register_local_participant, ParticipantCryptoHandle* (
+        MOCK_METHOD5(register_local_participant, std::shared_ptr<ParticipantCryptoHandle> (
                 const IdentityHandle&,
                 const PermissionsHandle&,
                 const PropertySeq&,
                 const ParticipantSecurityAttributes&,
                 SecurityException&));
 
-        MOCK_METHOD5(register_matched_remote_participant, ParticipantCryptoHandle* (
+        MOCK_METHOD5(register_matched_remote_participant, std::shared_ptr<ParticipantCryptoHandle> (
                 const ParticipantCryptoHandle&,
                 const IdentityHandle&,
                 const PermissionsHandle&,
-                const SharedSecretHandle&,
+                const SecretHandle&,
                 SecurityException&));
 
         MOCK_METHOD4(register_local_datawriter, DatawriterCryptoHandle* (
@@ -59,7 +59,7 @@ class MockCryptoKeyFactory : public CryptoKeyFactory
         MOCK_METHOD5(register_matched_remote_datareader, DatareaderCryptoHandle* (
                 DatawriterCryptoHandle&,
                 ParticipantCryptoHandle&,
-                const SharedSecretHandle&,
+                const SecretHandle&,
                 const bool,
                 SecurityException&));
 
@@ -72,11 +72,11 @@ class MockCryptoKeyFactory : public CryptoKeyFactory
         MOCK_METHOD4(register_matched_remote_datawriter, DatawriterCryptoHandle* (
                 DatareaderCryptoHandle&,
                 ParticipantCryptoHandle&,
-                const SharedSecretHandle&,
+                const SecretHandle&,
                 SecurityException&));
 
         MOCK_METHOD2(unregister_participant, bool (
-                ParticipantCryptoHandle*,
+                std::shared_ptr<ParticipantCryptoHandle>&,
                 SecurityException&));
 
         MOCK_METHOD2(unregister_datawriter, bool (

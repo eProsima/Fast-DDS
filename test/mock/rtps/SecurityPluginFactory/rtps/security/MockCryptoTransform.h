@@ -44,21 +44,21 @@ class MockCryptoTransform : public CryptoTransform
                 CDRMessage_t&,
                 const CDRMessage_t&,
                 DatawriterCryptoHandle&,
-                std::vector<DatareaderCryptoHandle*>&,
+                std::vector<std::shared_ptr<DatareaderCryptoHandle>>&,
                 SecurityException&));
 
         MOCK_METHOD5(encode_datareader_submessage, bool (
                 CDRMessage_t&,
                 const CDRMessage_t&,
                 DatareaderCryptoHandle&,
-                std::vector<DatawriterCryptoHandle*>&,
+                std::vector<std::shared_ptr<DatawriterCryptoHandle>>&,
                 SecurityException &exception));
 
         MOCK_METHOD5(encode_rtps_message, bool (
                 CDRMessage_t&,
                 const CDRMessage_t&,
                 ParticipantCryptoHandle&,
-                std::vector<ParticipantCryptoHandle*>&,
+                std::vector<std::shared_ptr<ParticipantCryptoHandle>>&,
                 SecurityException&));
 
         MOCK_METHOD5(decode_rtps_message, bool (
