@@ -409,13 +409,13 @@ private:
         }
 
         void set_shared_secret(
-                std::shared_ptr<SharedSecretHandle>& shared_secret)
+                std::shared_ptr<SecretHandle>& shared_secret)
         {
             std::lock_guard<std::mutex> g(mtx_);
             shared_secret_handle_ = shared_secret;
         }
 
-        std::shared_ptr<SharedSecretHandle> get_shared_secret()
+        std::shared_ptr<SecretHandle> get_shared_secret()
         {
             std::lock_guard<std::mutex> g(mtx_);
             return shared_secret_handle_;
@@ -468,7 +468,7 @@ private:
 
         AuthUniquePtr auth_;
 
-        std::shared_ptr<SharedSecretHandle> shared_secret_handle_;
+        std::shared_ptr<SecretHandle> shared_secret_handle_;
 
         PermissionsHandle* permissions_handle_;
 
@@ -620,7 +620,7 @@ private:
 
     std::shared_ptr<ParticipantCryptoHandle> register_and_match_crypto_endpoint(
             IdentityHandle& remote_participant_identity,
-            SharedSecretHandle& shared_secret);
+            SecretHandle& shared_secret);
 
     /**
      * Manage cryptographic exchange with a remote participant
@@ -680,7 +680,7 @@ private:
     bool participant_authorized(
             const ParticipantProxyData& participant_data,
             const DiscoveredParticipantInfo::AuthUniquePtr& remote_participant_info,
-            std::shared_ptr<SharedSecretHandle>& shared_secret_handle);
+            std::shared_ptr<SecretHandle>& shared_secret_handle);
 
     void resend_handshake_message_token(
             const GUID_t& remote_participant_key) const;

@@ -470,7 +470,7 @@ void SecurityManager::destroy()
                 access_plugin_->return_permissions_handle(permissions_handle, exception);
             }
 
-            std::shared_ptr<SharedSecretHandle> shared_secret_handle = dp_it.second->get_shared_secret();
+            std::shared_ptr<SecretHandle> shared_secret_handle = dp_it.second->get_shared_secret();
             if (shared_secret_handle != nullptr)
             {
                 authentication_plugin_->return_sharedsecret_handle(shared_secret_handle, exception);
@@ -700,7 +700,7 @@ bool SecurityManager::discovered_participant(
         if (auth_status == AUTHENTICATION_OK)
         {
             //TODO(Ricardo) Shared secret on this case?
-            std::shared_ptr<SharedSecretHandle> ss;
+            std::shared_ptr<SecretHandle> ss;
             participant_authorized(participant_data, remote_participant_info, ss);
         }
     }
@@ -763,7 +763,7 @@ void SecurityManager::remove_participant(
                 access_plugin_->return_permissions_handle(permissions_handle, exception);
             }
 
-            std::shared_ptr<SharedSecretHandle> shared_secret_handle = dp_it->second->get_shared_secret();
+            std::shared_ptr<SecretHandle> shared_secret_handle = dp_it->second->get_shared_secret();
             if (shared_secret_handle != nullptr)
             {
                 authentication_plugin_->return_sharedsecret_handle(shared_secret_handle, exception);
@@ -996,7 +996,7 @@ bool SecurityManager::on_process_handshake(
                 // if authentication was finished, starts encryption.
                 if (remote_participant_info->auth_status_ == AUTHENTICATION_OK)
                 {
-                    std::shared_ptr<SharedSecretHandle> shared_secret_handle = authentication_plugin_->get_shared_secret(
+                    std::shared_ptr<SecretHandle> shared_secret_handle = authentication_plugin_->get_shared_secret(
                         *remote_participant_info->handshake_handle_, exception);
                     if (!participant_authorized(participant_data, remote_participant_info,
                             shared_secret_handle))
@@ -2223,7 +2223,7 @@ void SecurityManager::exchange_participant_crypto(
 // TODO (Ricardo) Change participant_data
 std::shared_ptr<ParticipantCryptoHandle> SecurityManager::register_and_match_crypto_endpoint(
         IdentityHandle& remote_participant_identity,
-        SharedSecretHandle& shared_secret)
+        SecretHandle& shared_secret)
 {
     if (crypto_plugin_ == nullptr)
     {
@@ -2864,7 +2864,7 @@ bool SecurityManager::discovered_reader(
 
     PermissionsHandle* remote_permissions = nullptr;
     std::shared_ptr<ParticipantCryptoHandle> remote_participant_crypto_handle;
-    std::shared_ptr<SharedSecretHandle> shared_secret_handle;
+    std::shared_ptr<SecretHandle> shared_secret_handle;
 
     if (!security_attributes.match(remote_reader_data.security_attributes_,
             remote_reader_data.plugin_security_attributes_))
@@ -3210,7 +3210,7 @@ bool SecurityManager::discovered_writer(
 
     PermissionsHandle* remote_permissions = nullptr;
     std::shared_ptr<ParticipantCryptoHandle> remote_participant_crypto_handle;
-    std::shared_ptr<SharedSecretHandle> shared_secret_handle;
+    std::shared_ptr<SecretHandle> shared_secret_handle;
 
     if (!security_attributes.match(remote_writer_data.security_attributes_,
             remote_writer_data.plugin_security_attributes_))
@@ -3871,7 +3871,7 @@ bool SecurityManager::decode_serialized_payload(
 bool SecurityManager::participant_authorized(
         const ParticipantProxyData& participant_data,
         const DiscoveredParticipantInfo::AuthUniquePtr& remote_participant_info,
-        std::shared_ptr<SharedSecretHandle>& shared_secret_handle)
+        std::shared_ptr<SecretHandle>& shared_secret_handle)
 {
     auto sentry = is_security_manager_initialized();
     if (!sentry)

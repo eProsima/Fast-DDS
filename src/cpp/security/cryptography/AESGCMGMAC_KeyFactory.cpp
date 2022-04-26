@@ -222,13 +222,13 @@ std::shared_ptr<ParticipantCryptoHandle> AESGCMGMAC_KeyFactory::register_matched
         const ParticipantCryptoHandle& local_participant_crypto_handle,
         const IdentityHandle& /*remote_participant_identity*/,
         const PermissionsHandle& /*remote_participant_permissions*/,
-        const SharedSecretHandle& shared_secret,
+        const SecretHandle& shared_secret,
         SecurityException& exception)
 {
     //Extract information from the handshake. It will be needed in order to compute KeyMaterials
-    const std::vector<uint8_t>* challenge_1 = SharedSecretHelper::find_data_value(**shared_secret, "Challenge1");
-    const std::vector<uint8_t>* shared_secret_ss = SharedSecretHelper::find_data_value(**shared_secret, "SharedSecret");
-    const std::vector<uint8_t>* challenge_2 = SharedSecretHelper::find_data_value(**shared_secret, "Challenge2");
+    const std::vector<uint8_t>* challenge_1 = SharedSecretHelper::find_data_value(shared_secret, "Challenge1");
+    const std::vector<uint8_t>* shared_secret_ss = SharedSecretHelper::find_data_value(shared_secret, "SharedSecret");
+    const std::vector<uint8_t>* challenge_2 = SharedSecretHelper::find_data_value(shared_secret, "Challenge2");
     if ((challenge_1 == nullptr) || (shared_secret_ss == nullptr) || (challenge_2 == nullptr))
     {
         logWarning(SECURITY_CRYPTO, "Malformed SharedSecretHandle");
@@ -455,7 +455,7 @@ DatawriterCryptoHandle* AESGCMGMAC_KeyFactory::register_local_datawriter(
 DatareaderCryptoHandle* AESGCMGMAC_KeyFactory::register_matched_remote_datareader(
         DatawriterCryptoHandle& local_datawriter_crypto_handle,
         ParticipantCryptoHandle& remote_participant_crypto,
-        const SharedSecretHandle& /*shared_secret*/,
+        const SecretHandle& /*shared_secret*/,
         const bool relay_only,
         SecurityException& /*exception*/)
 {
@@ -659,7 +659,7 @@ DatareaderCryptoHandle* AESGCMGMAC_KeyFactory::register_local_datareader(
 DatawriterCryptoHandle* AESGCMGMAC_KeyFactory::register_matched_remote_datawriter(
         DatareaderCryptoHandle& local_datareader_crypto_handle,
         ParticipantCryptoHandle& remote_participant_crypt,
-        const SharedSecretHandle& /*shared_secret*/,
+        const SecretHandle& /*shared_secret*/,
         SecurityException& /*exception*/)
 {
     //Create Participant2ParticipantKeyMaterial (Based on local ParticipantKeyMaterial) and

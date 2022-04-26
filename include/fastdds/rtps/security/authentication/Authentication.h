@@ -160,13 +160,13 @@ class Authentication
                 SecurityException& exception) = 0;
 
         /*!
-         * @brief Retrieve the SharedSecretHandle resulting with a successfully completed handshake.
+         * @brief Retrieve the SecretHandle resulting with a successfully completed handshake.
          * @param handshake_handle Handle returned bu a corresponding previous call to begin_handshake_request or
          * begin_handshake_reply, which has successfully complete the handshake operations.
          * @param exception SecurityException object
-         * @return SharedSecretHandle.
+         * @return SecretHandle.
          */
-        virtual std::shared_ptr<SharedSecretHandle> get_shared_secret(
+        virtual std::shared_ptr<SecretHandle> get_shared_secret(
                 const HandshakeHandle& handshake_handle,
                 SecurityException& exception) const = 0;
 
@@ -201,6 +201,14 @@ class Authentication
                 SecurityException& exception) = 0;
 
         /*!
+         * @brief Creates and IdentityHandle for the handshake process
+         * @param exception (out) A SecurityException object.
+         * @return the new handle or nullptr on failure
+         */
+        virtual IdentityHandle* get_identity_handle(
+                SecurityException& exception) = 0;
+
+        /*!
          * @brief Returns the IdentityHandle object to the plugin so it can be disposed of.
          * @param identity_handle An IdentityHandle issued by the plugin on a prior call to validate_local_identity or
          * validate_remote_identity.
@@ -210,11 +218,11 @@ class Authentication
                 SecurityException& exception) = 0;
 
         /*!
-         * @brief Returns the SharedSecretHandle object to the plugin so it can be disposed of.
+         * @brief Returns the SecretHandle object to the plugin so it can be disposed of.
          * @param sharedsecret_handle An SharedSecretHandle issued by the plugin on a prior call to get_shared_secret.
          * @param exception (out) A SecurityException object.
          */
-        virtual bool return_sharedsecret_handle(std::shared_ptr<SharedSecretHandle>& sharedsecret_handle,
+        virtual bool return_sharedsecret_handle(std::shared_ptr<SecretHandle>& sharedsecret_handle,
                 SecurityException& exception) const = 0;
 
         virtual bool set_permissions_credential_and_token(IdentityHandle& identity_handle,

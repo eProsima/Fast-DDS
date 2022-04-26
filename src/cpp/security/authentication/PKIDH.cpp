@@ -890,7 +890,7 @@ static bool generate_challenge(
     return returnedValue;
 }
 
-std::shared_ptr<SharedSecretHandle> PKIDH::generate_sharedsecret(
+std::shared_ptr<SecretHandle> PKIDH::generate_sharedsecret(
         EVP_PKEY* private_key,
         EVP_PKEY* public_key,
         SecurityException& exception) const
@@ -920,7 +920,8 @@ std::shared_ptr<SharedSecretHandle> PKIDH::generate_sharedsecret(
                         if (EVP_Digest(data.value().data(), length, md, NULL, EVP_sha256(), NULL))
                         {
                             data.value().assign(md, md + 32);
-                            handle = get_shared_secret(SharedSecretHandle::nil_handle, exception);
+                            handle = std::dynamic_pointer_cast<SharedSecretHandle>(
+                                    get_shared_secret(SharedSecretHandle::nil_handle, exception));
                             (*handle)->data_.push_back(std::move(data));
                         }
                         else
@@ -955,7 +956,7 @@ std::shared_ptr<SharedSecretHandle> PKIDH::generate_sharedsecret(
         exception = _SecurityException_("OpenSSL library cannot allocate context");
     }
 
-    return handle;
+    return std::dynamic_pointer_cast<SecretHandle>(handle);
 }
 
 static bool generate_identity_token(
@@ -1045,7 +1046,7 @@ ValidationResult_t PKIDH::validate_local_identity(
         password = &empty_password;
     }
 
-    PKIIdentityHandle* ih = new PKIIdentityHandle();
+    PKIIdentityHandle* ih = &PKIIdentityHandle::narrow(*get_identity_handle(exception));
 
     (*ih)->store_ = load_identity_ca(*identity_ca, (*ih)->there_are_crls_, (*ih)->sn, (*ih)->algo,
                     exception);
@@ -1137,7 +1138,7 @@ ValidationResult_t PKIDH::validate_remote_identity(
         const IdentityHandle& local_identity_handle,
         const IdentityToken& remote_identity_token,
         const GUID_t& remote_participant_key,
-        SecurityException& /*exception*/)
+        SecurityException& exception)
 {
     assert(remote_identity_handle);
     assert(local_identity_handle.nil() == false);
@@ -1157,7 +1158,7 @@ ValidationResult_t PKIDH::validate_remote_identity(
         // dds.cert.algo
         const std::string* cert_algo = DataHolderHelper::find_property_value(remote_identity_token, "dds.cert.algo");
 
-        PKIIdentityHandle* rih = new PKIIdentityHandle();
+        PKIIdentityHandle* rih = &PKIIdentityHandle::narrow(*get_identity_handle(exception));
 
         (*rih)->sn = ca_sn ? *ca_sn : "";
         (*rih)->cert_sn_ = ""; // cert_sn ? *cert_sn : "";
@@ -2178,8 +2179,10 @@ ValidationResult_t PKIDH::process_handshake_request(
     {
         final_message.binary_properties().push_back(std::move(bproperty));
 
-        handshake_handle->sharedsecret_ = generate_sharedsecret(handshake_handle->dhkeys_, handshake_handle->peerkeys_,
-                        exception);
+        handshake_handle->sharedsecret_ =
+            std::dynamic_pointer_cast<SharedSecretHandle>(
+                    generate_sharedsecret(handshake_handle->dhkeys_, handshake_handle->peerkeys_,
+                        exception));
 
         if (handshake_handle->sharedsecret_ != nullptr)
         {
@@ -2373,8 +2376,10 @@ ValidationResult_t PKIDH::process_handshake_reply(
         return ValidationResult_t::VALIDATION_FAILED;
     }
 
-    handshake_handle->sharedsecret_ = generate_sharedsecret(handshake_handle->dhkeys_, handshake_handle->peerkeys_,
-                    exception);
+    handshake_handle->sharedsecret_ =
+        std::dynamic_pointer_cast<SharedSecretHandle>(
+                generate_sharedsecret(handshake_handle->dhkeys_, handshake_handle->peerkeys_,
+                    exception));
 
     if (handshake_handle->sharedsecret_ != nullptr)
     {
@@ -2392,7 +2397,7 @@ ValidationResult_t PKIDH::process_handshake_reply(
     return ValidationResult_t::VALIDATION_FAILED;
 }
 
-std::shared_ptr<SharedSecretHandle> PKIDH::get_shared_secret(
+std::shared_ptr<SecretHandle> PKIDH::get_shared_secret(
         const HandshakeHandle& handshake_handle,
         SecurityException& exception) const
 {
@@ -2400,14 +2405,18 @@ std::shared_ptr<SharedSecretHandle> PKIDH::get_shared_secret(
 
     if (!handshake.nil())
     {
-        auto sharedsecret = get_shared_secret(SharedSecretHandle::nil_handle, exception);
+        auto secret = get_shared_secret(SharedSecretHandle::nil_handle, exception);
+        auto sharedsecret = std::dynamic_pointer_cast<SharedSecretHandle>(secret);
         (*sharedsecret)->data_ = (*handshake->sharedsecret_)->data_;
-        return sharedsecret;
+        return secret;
     }
 
     // create ad hoc deleter because this object can only be created/release from the friend factory
-    auto p = new SharedSecretHandle;
-    return std::shared_ptr<SharedSecretHandle>(p, [](SharedSecretHandle* p) { delete p;});
+    auto p = new (std::nothrow) SharedSecretHandle;
+    return std::dynamic_pointer_cast<SecretHandle>(
+            std::shared_ptr<SharedSecretHandle>(p, [](SharedSecretHandle* p) {
+                delete p;
+                }));
 }
 
 bool PKIDH::set_listener(
@@ -2456,6 +2465,11 @@ bool PKIDH::return_handshake_handle(
     return false;
 }
 
+IdentityHandle* PKIDH::get_identity_handle(SecurityException&)
+{
+    return new (std::nothrow) PKIIdentityHandle();
+}
+
 bool PKIDH::return_identity_handle(
         IdentityHandle* identity_handle,
         SecurityException& /*exception*/)
@@ -2472,7 +2486,7 @@ bool PKIDH::return_identity_handle(
 }
 
 bool PKIDH::return_sharedsecret_handle(
-        std::shared_ptr<SharedSecretHandle>& sharedsecret_handle,
+        std::shared_ptr<SecretHandle>& sharedsecret_handle,
         SecurityException& /*exception*/) const
 {
     sharedsecret_handle.reset();

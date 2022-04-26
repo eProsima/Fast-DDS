@@ -133,6 +133,8 @@ typedef Handle IdentityHandle;
 
 typedef Handle PermissionsHandle;
 
+typedef Handle SecretHandle;
+
 typedef Handle ParticipantCryptoHandle;
 typedef Handle EntityCryptoHandle;
 typedef Handle DatawriterCryptoHandle;

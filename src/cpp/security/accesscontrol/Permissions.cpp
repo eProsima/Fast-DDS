@@ -803,7 +803,7 @@ PermissionsHandle* Permissions::validate_local_permissions(
         return nullptr;
     }
 
-    AccessPermissionsHandle* ah = new AccessPermissionsHandle();
+    AccessPermissionsHandle* ah = &AccessPermissionsHandle::narrow(*get_permissions_handle(exception));
 
     (*ah)->store_ = load_permissions_ca(*permissions_ca, (*ah)->there_are_crls_, (*ah)->sn, (*ah)->algo, exception);
 
@@ -891,6 +891,11 @@ bool Permissions::return_permissions_credential_token(
 {
     delete token;
     return true;
+}
+
+PermissionsHandle* Permissions::get_permissions_handle(SecurityException&)
+{
+    return new (std::nothrow) AccessPermissionsHandle();
 }
 
 bool Permissions::return_permissions_handle(
@@ -991,7 +996,7 @@ PermissionsHandle* Permissions::validate_remote_permissions(
         return nullptr;
     }
 
-    AccessPermissionsHandle* handle =  new AccessPermissionsHandle();
+    AccessPermissionsHandle* handle = &AccessPermissionsHandle::narrow(*get_permissions_handle(exception));
     (*handle)->grant = std::move(remote_grant);
     (*handle)->governance_rule_ = lph->governance_rule_;
     (*handle)->governance_topic_rules_ = lph->governance_topic_rules_;
