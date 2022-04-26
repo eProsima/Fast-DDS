@@ -153,7 +153,7 @@ bool AESGCMGMAC_Transform::encode_serialized_payload(
 
     try
     {
-        std::vector<DatareaderCryptoHandle*> receiving_datareader_crypto_list;
+        std::vector<std::shared_ptr<DatareaderCryptoHandle>> receiving_datareader_crypto_list;
         if (!serialize_SecureDataTag(serializer, keyMat.transformation_kind, session->session_id,
                 initialization_vector, receiving_datareader_crypto_list, false, tag, nKeys - 1))
         {
@@ -176,7 +176,7 @@ bool AESGCMGMAC_Transform::encode_datawriter_submessage(
         CDRMessage_t& encoded_rtps_submessage,
         const CDRMessage_t& plain_rtps_submessage,
         DatawriterCryptoHandle& sending_datawriter_crypto,
-        std::vector<DatareaderCryptoHandle*>& receiving_datareader_crypto_list,
+        std::vector<std::shared_ptr<DatareaderCryptoHandle>>& receiving_datareader_crypto_list,
         SecurityException& /*exception*/)
 {
     AESGCMGMAC_WriterCryptoHandle& local_writer = AESGCMGMAC_WriterCryptoHandle::narrow(sending_datawriter_crypto);
@@ -318,7 +318,7 @@ bool AESGCMGMAC_Transform::encode_datareader_submessage(
         CDRMessage_t& encoded_rtps_submessage,
         const CDRMessage_t& plain_rtps_submessage,
         DatareaderCryptoHandle& sending_datareader_crypto,
-        std::vector<DatawriterCryptoHandle*>& receiving_datawriter_crypto_list,
+        std::vector<std::shared_ptr<DatawriterCryptoHandle>>& receiving_datawriter_crypto_list,
         SecurityException& /*exception*/)
 {
     AESGCMGMAC_ReaderCryptoHandle& local_reader = AESGCMGMAC_ReaderCryptoHandle::narrow(sending_datareader_crypto);
@@ -1701,7 +1701,7 @@ bool AESGCMGMAC_Transform::serialize_SecureDataTag(
         const std::array<uint8_t, 4>& transformation_kind,
         const uint32_t session_id,
         const std::array<uint8_t, 12>& initialization_vector,
-        std::vector<EntityCryptoHandle*>& receiving_crypto_list,
+        std::vector<std::shared_ptr<ParticipantCryptoHandle>>& receiving_crypto_list,
         bool update_specific_keys,
         SecureDataTag& tag,
         size_t sessionIndex)

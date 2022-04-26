@@ -166,9 +166,9 @@ class Authentication
          * @param exception SecurityException object
          * @return SharedSecretHandle.
          */
-        virtual SharedSecretHandle* get_shared_secret(
+        virtual std::shared_ptr<SharedSecretHandle> get_shared_secret(
                 const HandshakeHandle& handshake_handle,
-                SecurityException& exception) = 0;
+                SecurityException& exception) const = 0;
 
         /*!
          * @brief Sets the AuthenticationListener that the Authentication plugin will use to notify the infrastructure
@@ -214,8 +214,8 @@ class Authentication
          * @param sharedsecret_handle An SharedSecretHandle issued by the plugin on a prior call to get_shared_secret.
          * @param exception (out) A SecurityException object.
          */
-        virtual bool return_sharedsecret_handle(SharedSecretHandle* sharedsecret_handle,
-                SecurityException& exception) = 0;
+        virtual bool return_sharedsecret_handle(std::shared_ptr<SharedSecretHandle>& sharedsecret_handle,
+                SecurityException& exception) const = 0;
 
         virtual bool set_permissions_credential_and_token(IdentityHandle& identity_handle,
                 PermissionsCredentialToken& permissions_credential_token,

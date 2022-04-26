@@ -327,7 +327,7 @@ bool SecurityManager::init(
 
                         if (local_participant_crypto_handle_)
                         {
-                            assert(!(*local_participant_crypto_handle_)->nil());
+                            assert(!local_participant_crypto_handle_->nil());
                         }
                     }
                     else
@@ -399,7 +399,7 @@ void SecurityManager::cancel_init()
     SecurityException exception;
     if (local_participant_crypto_handle_)
     {
-        crypto_plugin_->cryptokeyfactory()->unregister_participant(*local_participant_crypto_handle_, exception);
+        crypto_plugin_->cryptokeyfactory()->unregister_participant(local_participant_crypto_handle_, exception);
     }
 
     if (crypto_plugin_ != nullptr)
@@ -470,7 +470,7 @@ void SecurityManager::destroy()
                 access_plugin_->return_permissions_handle(permissions_handle, exception);
             }
 
-            SharedSecretHandle* shared_secret_handle = dp_it.second->get_shared_secret();
+            std::shared_ptr<SharedSecretHandle> shared_secret_handle = dp_it.second->get_shared_secret();
             if (shared_secret_handle != nullptr)
             {
                 authentication_plugin_->return_sharedsecret_handle(shared_secret_handle, exception);
@@ -481,7 +481,7 @@ void SecurityManager::destroy()
 
         if (local_participant_crypto_handle_)
         {
-            crypto_plugin_->cryptokeyfactory()->unregister_participant(*local_participant_crypto_handle_, exception);
+            crypto_plugin_->cryptokeyfactory()->unregister_participant(local_participant_crypto_handle_, exception);
         }
 
         if (local_permissions_handle_ != nullptr)
@@ -700,7 +700,8 @@ bool SecurityManager::discovered_participant(
         if (auth_status == AUTHENTICATION_OK)
         {
             //TODO(Ricardo) Shared secret on this case?
-            participant_authorized(participant_data, remote_participant_info, nullptr);
+            std::shared_ptr<SharedSecretHandle> ss;
+            participant_authorized(participant_data, remote_participant_info, ss);
         }
     }
     else
@@ -762,7 +763,7 @@ void SecurityManager::remove_participant(
                 access_plugin_->return_permissions_handle(permissions_handle, exception);
             }
 
-            SharedSecretHandle* shared_secret_handle = dp_it->second->get_shared_secret();
+            std::shared_ptr<SharedSecretHandle> shared_secret_handle = dp_it->second->get_shared_secret();
             if (shared_secret_handle != nullptr)
             {
                 authentication_plugin_->return_sharedsecret_handle(shared_secret_handle, exception);
@@ -995,7 +996,7 @@ bool SecurityManager::on_process_handshake(
                 // if authentication was finished, starts encryption.
                 if (remote_participant_info->auth_status_ == AUTHENTICATION_OK)
                 {
-                    SharedSecretHandle* shared_secret_handle = authentication_plugin_->get_shared_secret(
+                    std::shared_ptr<SharedSecretHandle> shared_secret_handle = authentication_plugin_->get_shared_secret(
                         *remote_participant_info->handshake_handle_, exception);
                     if (!participant_authorized(participant_data, remote_participant_info,
                             shared_secret_handle))
@@ -1733,7 +1734,7 @@ void SecurityManager::process_participant_volatile_message_secure(
         {
             SecurityException exception;
 
-            if (!crypto_plugin_->cryptkeyexchange()->set_remote_participant_crypto_tokens(
+            if (!crypto_plugin_->cryptokeyexchange()->set_remote_participant_crypto_tokens(
                         *local_participant_crypto_handle_,
                         *remote_participant_crypto,
                         message.message_data(),
@@ -1789,7 +1790,7 @@ void SecurityManager::process_participant_volatile_message_secure(
                 {
                     SecurityException exception;
 
-                    if (crypto_plugin_->cryptkeyexchange()->set_remote_datareader_crypto_tokens(
+                    if (crypto_plugin_->cryptokeyexchange()->set_remote_datareader_crypto_tokens(
                                 *wr_it->second.writer_handle,
                                 *std::get<1>(rd_it->second),
                                 message.message_data(),
@@ -1864,7 +1865,7 @@ void SecurityManager::process_participant_volatile_message_secure(
                 {
                     SecurityException exception;
 
-                    if (crypto_plugin_->cryptkeyexchange()->set_remote_datawriter_crypto_tokens(
+                    if (crypto_plugin_->cryptokeyexchange()->set_remote_datawriter_crypto_tokens(
                                 *rd_it->second.reader_handle,
                                 *std::get<1>(wr_it->second),
                                 message.message_data(),
@@ -2161,7 +2162,7 @@ void SecurityManager::exchange_participant_crypto(
 
     // Get participant crypto tokens.
     ParticipantCryptoTokenSeq local_participant_crypto_tokens;
-    if (crypto_plugin_->cryptkeyexchange()->create_local_participant_crypto_tokens(local_participant_crypto_tokens,
+    if (crypto_plugin_->cryptokeyexchange()->create_local_participant_crypto_tokens(local_participant_crypto_tokens,
             *local_participant_crypto_handle_, *remote_participant_crypto, exception))
     {
         ParticipantGenericMessage message = generate_participant_crypto_token_message(remote_participant_guid,
@@ -2324,7 +2325,7 @@ int SecurityManager::decode_rtps_message(
     // Init output buffer
     CDRMessage::initCDRMsg(&out_message);
 
-    const std::shared_ptr<ParticipantCryptoHandle> remote_participant_crypto_handle;
+    std::shared_ptr<const ParticipantCryptoHandle> remote_participant_crypto_handle;
 
     const GUID_t remote_participant_key(remote_participant, c_EntityId_RTPSParticipant);
 
@@ -2863,7 +2864,7 @@ bool SecurityManager::discovered_reader(
 
     PermissionsHandle* remote_permissions = nullptr;
     std::shared_ptr<ParticipantCryptoHandle> remote_participant_crypto_handle;
-    SharedSecretHandle* shared_secret_handle = &SharedSecretHandle::nil_handle;
+    std::shared_ptr<SharedSecretHandle> shared_secret_handle;
 
     if (!security_attributes.match(remote_reader_data.security_attributes_,
             remote_reader_data.plugin_security_attributes_))
@@ -2941,7 +2942,7 @@ bool SecurityManager::discovered_reader(
 
                         if (pending != remote_reader_pending_messages_.end())
                         {
-                            if (crypto_plugin_->cryptkeyexchange()->set_remote_datareader_crypto_tokens(
+                            if (crypto_plugin_->cryptokeyexchange()->set_remote_datareader_crypto_tokens(
                                         *local_writer->second.writer_handle,
                                         *remote_reader_handle,
                                         pending->second,
@@ -2963,7 +2964,7 @@ bool SecurityManager::discovered_reader(
 
                         // Get local writer crypto tokens.
                         DatawriterCryptoTokenSeq local_writer_crypto_tokens;
-                        if (crypto_plugin_->cryptkeyexchange()->create_local_datawriter_crypto_tokens(
+                        if (crypto_plugin_->cryptokeyexchange()->create_local_datawriter_crypto_tokens(
                                     local_writer_crypto_tokens,
                                     *local_writer->second.writer_handle,
                                     *remote_reader_handle, exception))
@@ -2985,7 +2986,7 @@ bool SecurityManager::discovered_reader(
 
                                     if (remote_writer != local_reader->second.associated_writers.end())
                                     {
-                                        if (crypto_plugin_->cryptkeyexchange()->set_remote_datawriter_crypto_tokens(
+                                        if (crypto_plugin_->cryptokeyexchange()->set_remote_datawriter_crypto_tokens(
                                                     *local_reader->second.reader_handle,
                                                     *std::get<1>(remote_writer->second),
                                                     local_writer_crypto_tokens,
@@ -3209,7 +3210,7 @@ bool SecurityManager::discovered_writer(
 
     PermissionsHandle* remote_permissions = nullptr;
     std::shared_ptr<ParticipantCryptoHandle> remote_participant_crypto_handle;
-    SharedSecretHandle* shared_secret_handle = &SharedSecretHandle::nil_handle;
+    std::shared_ptr<SharedSecretHandle> shared_secret_handle;
 
     if (!security_attributes.match(remote_writer_data.security_attributes_,
             remote_writer_data.plugin_security_attributes_))
@@ -3286,7 +3287,7 @@ bool SecurityManager::discovered_writer(
 
                         if (pending != remote_writer_pending_messages_.end())
                         {
-                            if (crypto_plugin_->cryptkeyexchange()->set_remote_datawriter_crypto_tokens(
+                            if (crypto_plugin_->cryptokeyexchange()->set_remote_datawriter_crypto_tokens(
                                         *local_reader->second.reader_handle,
                                         *remote_writer_handle,
                                         pending->second,
@@ -3308,7 +3309,7 @@ bool SecurityManager::discovered_writer(
 
                         // Get local reader crypto tokens.
                         DatareaderCryptoTokenSeq local_reader_crypto_tokens;
-                        if (crypto_plugin_->cryptkeyexchange()->create_local_datareader_crypto_tokens(
+                        if (crypto_plugin_->cryptokeyexchange()->create_local_datareader_crypto_tokens(
                                     local_reader_crypto_tokens,
                                     *local_reader->second.reader_handle,
                                     *remote_writer_handle,
@@ -3331,7 +3332,7 @@ bool SecurityManager::discovered_writer(
 
                                     if (remote_reader != local_writer->second.associated_readers.end())
                                     {
-                                        if (crypto_plugin_->cryptkeyexchange()->set_remote_datareader_crypto_tokens(
+                                        if (crypto_plugin_->cryptokeyexchange()->set_remote_datareader_crypto_tokens(
                                                     *local_writer->second.writer_handle,
                                                     *std::get<1>(remote_reader->second),
                                                     local_reader_crypto_tokens,
@@ -3523,7 +3524,7 @@ bool SecurityManager::encode_writer_submessage(
                     auto wHandle =
                             crypto_plugin_->cryptokeyfactory()->register_local_datawriter(
                         *pCrypto, auxProps, attr, exception);
-                    std::vector<DatareaderCryptoHandle*> receiving_crypto_list;
+                    std::vector<std::shared_ptr<DatareaderCryptoHandle>> receiving_crypto_list;
                     if (wHandle != nullptr)
                     {
                         ret_val = crypto_plugin_->cryptotransform()->encode_datawriter_submessage(output_message,
@@ -3540,7 +3541,7 @@ bool SecurityManager::encode_writer_submessage(
 
     if (wr_it != writer_handles_.end())
     {
-        std::vector<DatareaderCryptoHandle*> receiving_datareader_crypto_list;
+        std::vector<std::shared_ptr<DatareaderCryptoHandle>> receiving_datareader_crypto_list;
 
         for (const auto& rd_it : receiving_list)
         {
@@ -3548,7 +3549,7 @@ bool SecurityManager::encode_writer_submessage(
 
             if (rd_it_handle != wr_it->second.associated_readers.end())
             {
-                receiving_datareader_crypto_list.push_back(std::get<1>(rd_it_handle->second));
+                receiving_datareader_crypto_list.emplace_back(std::get<1>(rd_it_handle->second)->shared_from_this());
             }
             else
             {
@@ -3619,7 +3620,7 @@ bool SecurityManager::encode_reader_submessage(
                     auto rHandle =
                             crypto_plugin_->cryptokeyfactory()->register_local_datareader(
                         *pCrypto, auxProps, attr, exception);
-                    std::vector<DatawriterCryptoHandle*> receiving_crypto_list;
+                    std::vector<std::shared_ptr<DatawriterCryptoHandle>> receiving_crypto_list;
                     if (rHandle != nullptr)
                     {
                         ret_val = crypto_plugin_->cryptotransform()->encode_datareader_submessage(output_message,
@@ -3636,7 +3637,7 @@ bool SecurityManager::encode_reader_submessage(
 
     if (rd_it != reader_handles_.end())
     {
-        std::vector<DatawriterCryptoHandle*> receiving_datawriter_crypto_list;
+        std::vector<std::shared_ptr<DatawriterCryptoHandle>> receiving_datawriter_crypto_list;
 
         for (const auto& wr_it : receiving_list)
         {
@@ -3644,7 +3645,7 @@ bool SecurityManager::encode_reader_submessage(
 
             if (wr_it_handle != rd_it->second.associated_writers.end())
             {
-                receiving_datawriter_crypto_list.push_back(std::get<1>(wr_it_handle->second));
+                receiving_datawriter_crypto_list.push_back(std::get<1>(wr_it_handle->second)->shared_from_this());
             }
             else
             {
@@ -3870,7 +3871,7 @@ bool SecurityManager::decode_serialized_payload(
 bool SecurityManager::participant_authorized(
         const ParticipantProxyData& participant_data,
         const DiscoveredParticipantInfo::AuthUniquePtr& remote_participant_info,
-        SharedSecretHandle* shared_secret_handle)
+        std::shared_ptr<SharedSecretHandle>& shared_secret_handle)
 {
     auto sentry = is_security_manager_initialized();
     if (!sentry)
@@ -3960,7 +3961,7 @@ bool SecurityManager::participant_authorized(
 
                 if (pending != remote_participant_pending_messages_.end())
                 {
-                    if (!crypto_plugin_->cryptkeyexchange()->set_remote_participant_crypto_tokens(
+                    if (!crypto_plugin_->cryptokeyexchange()->set_remote_participant_crypto_tokens(
                                 *local_participant_crypto_handle_,
                                 *participant_crypto_handle,
                                 pending->second,

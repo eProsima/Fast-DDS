@@ -89,7 +89,9 @@ class PKIIdentity
         PermissionsCredentialToken permissions_credential_token_;
 };
 
-typedef HandleImpl<PKIIdentity> PKIIdentityHandle;
+class PKIDH;
+
+typedef HandleImpl<PKIIdentity, PKIDH> PKIIdentityHandle;
 
 } //namespace security
 } //namespace rtps

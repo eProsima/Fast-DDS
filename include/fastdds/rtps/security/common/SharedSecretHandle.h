@@ -119,7 +119,9 @@ class SharedSecret
         std::vector<BinaryData> data_;
 };
 
-typedef HandleImpl<SharedSecret> SharedSecretHandle;
+class PKIDH;
+
+typedef HandleImpl<SharedSecret, PKIDH> SharedSecretHandle;
 
 class SharedSecretHelper
 {

@@ -890,15 +890,15 @@ static bool generate_challenge(
     return returnedValue;
 }
 
-static SharedSecretHandle* generate_sharedsecret(
+std::shared_ptr<SharedSecretHandle> PKIDH::generate_sharedsecret(
         EVP_PKEY* private_key,
         EVP_PKEY* public_key,
-        SecurityException& exception)
+        SecurityException& exception) const
 {
     assert(private_key);
     assert(public_key);
 
-    SharedSecretHandle* handle = nullptr;
+    std::shared_ptr<SharedSecretHandle> handle;
     EVP_PKEY_CTX* ctx = EVP_PKEY_CTX_new(private_key, NULL);
 
     if (ctx != nullptr)
@@ -920,7 +920,7 @@ static SharedSecretHandle* generate_sharedsecret(
                         if (EVP_Digest(data.value().data(), length, md, NULL, EVP_sha256(), NULL))
                         {
                             data.value().assign(md, md + 32);
-                            handle = new SharedSecretHandle();
+                            handle = get_shared_secret(SharedSecretHandle::nil_handle, exception);
                             (*handle)->data_.push_back(std::move(data));
                         }
                         else
@@ -2392,20 +2392,22 @@ ValidationResult_t PKIDH::process_handshake_reply(
     return ValidationResult_t::VALIDATION_FAILED;
 }
 
-SharedSecretHandle* PKIDH::get_shared_secret(
+std::shared_ptr<SharedSecretHandle> PKIDH::get_shared_secret(
         const HandshakeHandle& handshake_handle,
-        SecurityException& /*exception*/)
+        SecurityException& exception) const
 {
     const PKIHandshakeHandle& handshake = PKIHandshakeHandle::narrow(handshake_handle);
 
     if (!handshake.nil())
     {
-        SharedSecretHandle* sharedsecret = new SharedSecretHandle();
+        auto sharedsecret = get_shared_secret(SharedSecretHandle::nil_handle, exception);
         (*sharedsecret)->data_ = (*handshake->sharedsecret_)->data_;
         return sharedsecret;
     }
 
-    return nullptr;
+    // create ad hoc deleter because this object can only be created/release from the friend factory
+    auto p = new SharedSecretHandle;
+    return std::shared_ptr<SharedSecretHandle>(p, [](SharedSecretHandle* p) { delete p;});
 }
 
 bool PKIDH::set_listener(
@@ -2470,10 +2472,10 @@ bool PKIDH::return_identity_handle(
 }
 
 bool PKIDH::return_sharedsecret_handle(
-        SharedSecretHandle* sharedsecret_handle,
-        SecurityException& /*exception*/)
+        std::shared_ptr<SharedSecretHandle>& sharedsecret_handle,
+        SecurityException& /*exception*/) const
 {
-    delete sharedsecret_handle;
+    sharedsecret_handle.reset();
     return true;
 }
 

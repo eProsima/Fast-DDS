@@ -26,7 +26,7 @@ namespace fastrtps {
 namespace rtps {
 namespace security {
 
-class Handle
+class Handle : public std::enable_shared_from_this<Handle>
 {
     public:
 
@@ -48,31 +48,35 @@ class Handle
         std::string class_id_;
 };
 
-template<typename T>
+template<typename T, typename F>
 class HandleImpl : public Handle
 {
-    public:
+    friend F;
 
-        typedef T type;
+    protected:
 
         HandleImpl() : Handle(T::class_id_), impl_(new T) {}
 
         virtual ~HandleImpl() = default;
 
-        static HandleImpl<T>& narrow(Handle& handle)
+    public:
+
+        typedef T type;
+
+        static HandleImpl<T,F>& narrow(Handle& handle)
         {
             if(handle.get_class_id().compare(T::class_id_) == 0)
-                return reinterpret_cast<HandleImpl<T>&>(handle);
+                return reinterpret_cast<HandleImpl<T,F>&>(handle);
 
-            return HandleImpl<T>::nil_handle;
+            return HandleImpl<T,F>::nil_handle;
         }
 
-        static const HandleImpl<T>& narrow(const Handle& handle)
+        static const HandleImpl<T,F>& narrow(const Handle& handle)
         {
             if(handle.get_class_id().compare(T::class_id_) == 0)
-                return reinterpret_cast<const HandleImpl<T>&>(handle);
+                return reinterpret_cast<const HandleImpl<T,F>&>(handle);
 
-            return HandleImpl<T>::nil_handle;
+            return HandleImpl<T,F>::nil_handle;
         }
 
         bool nil() const override
@@ -100,7 +104,7 @@ class HandleImpl : public Handle
             return impl_.get();
         }
 
-        static HandleImpl<T> nil_handle;
+        static HandleImpl<T,F> nil_handle;
 
     private:
 
@@ -108,8 +112,9 @@ class HandleImpl : public Handle
 
         std::unique_ptr<T> impl_;
 };
-template<typename T>
-HandleImpl<T> HandleImpl<T>::nil_handle(true);
+
+template<typename T, typename F>
+HandleImpl<T,F> HandleImpl<T,F>::nil_handle(true);
 
 class NilHandle : public Handle
 {

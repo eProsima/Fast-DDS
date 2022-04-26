@@ -106,7 +106,7 @@ ParticipantCryptoHandleDeleter::ParticipantCryptoHandleDeleter(AESGCMGMAC_KeyFac
     factory_ = std::weak_ptr<AESGCMGMAC_KeyFactory>(factory.shared_from_this());
 }
 
-void ParticipantCryptoHandleDeleter::operator()(ParticipantKeyHandle* pk)
+void ParticipantCryptoHandleDeleter::operator()(AESGCMGMAC_ParticipantCryptoHandle* pk)
 {
     if(nullptr == pk)
     {
@@ -118,12 +118,12 @@ void ParticipantCryptoHandleDeleter::operator()(ParticipantKeyHandle* pk)
 
     // Dummy exception if none provided
     SecurityException exception;
-    if(nullptr == pk->exception_)
+    if(nullptr == (*pk)->exception_)
     {
-        pk->exception_ = &exception;
+        (*pk)->exception_ = &exception;
     }
 
-    factory_.lock()->release_participant(pk);
+    factory_.lock()->release_participant(*pk);
 }
 
 AESGCMGMAC_KeyFactory::AESGCMGMAC_KeyFactory()
@@ -138,8 +138,13 @@ std::shared_ptr<ParticipantCryptoHandle> AESGCMGMAC_KeyFactory::register_local_p
         SecurityException& /*exception*/)
 {
     // Create ParticipantCryptoHandle, fill deleter and Participant KeyMaterial and return it
-    auto PCrypto = std::make_shared<AESGCMGMAC_ParticipantCryptoHandle>();
-    (*PCrypto)->deleter_ = ParticipantCryptoHandleDeleter(*this);
+    std::shared_ptr<AESGCMGMAC_ParticipantCryptoHandle> PCrypto;
+
+    // generate the and populate the handle
+    {
+        auto ih = new AESGCMGMAC_ParticipantCryptoHandle();
+        PCrypto = std::shared_ptr<AESGCMGMAC_ParticipantCryptoHandle>(ih, ParticipantCryptoHandleDeleter(*this));
+    }
 
     auto plugin_attrs = participant_security_attributes.plugin_participant_attributes;
     (*PCrypto)->ParticipantPluginAttributes = plugin_attrs;
@@ -242,9 +247,16 @@ std::shared_ptr<ParticipantCryptoHandle> AESGCMGMAC_KeyFactory::register_matched
     bool is_origin_auth =
             (plugin_attrs & PLUGIN_PARTICIPANT_SECURITY_ATTRIBUTES_FLAG_IS_RTPS_ORIGIN_AUTHENTICATED) != 0;
 
+
     // Remote Participant CryptoHandle, to be returned at the end of the function
-    auto RPCrypto = std::make_shared<AESGCMGMAC_ParticipantCryptoHandle>();
-    (*RPCrypto)->deleter_ = ParticipantCryptoHandleDeleter(*this);
+    std::shared_ptr<AESGCMGMAC_ParticipantCryptoHandle> RPCrypto;
+
+    // generate the and populate the handle
+    {
+        auto ih = new AESGCMGMAC_ParticipantCryptoHandle();
+        RPCrypto = std::shared_ptr<AESGCMGMAC_ParticipantCryptoHandle>(ih, ParticipantCryptoHandleDeleter(*this));
+    }
+
     (*RPCrypto)->ParticipantPluginAttributes = plugin_attrs;
 
     /*Fill values for Participant2ParticipantKeyMaterial - Used to encrypt outgoing data */
@@ -735,9 +747,8 @@ DatawriterCryptoHandle* AESGCMGMAC_KeyFactory::register_matched_remote_datawrite
 }
 
 void AESGCMGMAC_KeyFactory::release_participant(
-        ParticipantKeyHandle* key)
+        AESGCMGMAC_ParticipantCryptoHandle& key)
 {
-    assert(key != nullptr);
     assert(key->exception_ != nullptr);
 
     auto exception = key->exception_;
@@ -762,7 +773,7 @@ void AESGCMGMAC_KeyFactory::release_participant(
         rit = key->Readers.begin();
     }
 
-    return;
+    delete (&key);
 }
 
 bool AESGCMGMAC_KeyFactory::unregister_participant(
