@@ -115,11 +115,6 @@ void TCPChannelResourceBasic::disconnect()
                     try
                     {
                         socket->cancel();
-
-                        // This method was added on the version 1.12.0
-#if ASIO_VERSION >= 101200 && (!defined(_WIN32_WINNT) || _WIN32_WINNT >= 0x0603)
-                        socket->release();
-#endif // if ASIO_VERSION >= 101200 && (!defined(_WIN32_WINNT) || _WIN32_WINNT >= 0x0603)
                         socket->close();
                     }
                     catch (std::exception&)
