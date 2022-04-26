@@ -127,9 +127,7 @@ class SharedSecretHelper
 {
     public:
 
-        static std::vector<uint8_t>* find_data_value(SharedSecret& sharedsecret, const std::string& name);
-
-        static const std::vector<uint8_t>* find_data_value(const SharedSecret& sharedsecret, const std::string& name);
+        static const std::vector<uint8_t>* find_data_value(const SecretHandle& sharedsecret, const std::string& name);
 };
 
 } //namespace security

@@ -50,6 +50,8 @@ class Permissions : public AccessControl
         bool return_permissions_credential_token(PermissionsCredentialToken* token,
                 SecurityException& exception) override;
 
+        PermissionsHandle* get_permissions_handle(SecurityException& exception) override;
+
         bool return_permissions_handle(PermissionsHandle* permissions_handle,
                 SecurityException& exception) override;
 

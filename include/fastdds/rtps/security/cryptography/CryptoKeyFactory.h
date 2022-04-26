@@ -68,7 +68,7 @@ public:
             const ParticipantCryptoHandle& local_participant_crypto_handle,
             const IdentityHandle& remote_participant_identity,
             const PermissionsHandle& remote_participant_permissions,
-            const SharedSecretHandle& shared_secret,
+            const SecretHandle& shared_secret,
             SecurityException& exception) = 0;
 
     /**
@@ -99,7 +99,7 @@ public:
     virtual DatareaderCryptoHandle* register_matched_remote_datareader(
             DatawriterCryptoHandle& local_datawriter_crypto_handle,
             ParticipantCryptoHandle& remote_participant_crypto,
-            const SharedSecretHandle& shared_secret,
+            const SecretHandle& shared_secret,
             const bool relay_only,
             SecurityException& exception) = 0;
 
@@ -130,7 +130,7 @@ public:
     virtual DatawriterCryptoHandle* register_matched_remote_datawriter(
             DatareaderCryptoHandle& local_datareader_crypto_handle,
             ParticipantCryptoHandle& remote_participant_crypt,
-            const SharedSecretHandle& shared_secret,
+            const SecretHandle& shared_secret,
             SecurityException& exception) = 0;
 
     /**
