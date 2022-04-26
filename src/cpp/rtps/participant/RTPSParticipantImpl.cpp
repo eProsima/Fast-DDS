@@ -486,6 +486,8 @@ void RTPSParticipantImpl::disable()
         }
     }
 
+    mp_event_thr.stop_thread();
+
     delete(mp_builtinProtocols);
     mp_builtinProtocols = nullptr;
 }
