@@ -55,6 +55,12 @@ TEST_F(XMLParserTests, regressions)
     std::unique_ptr<BaseNode> root;
 
     EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParser::loadXML("regressions/12736.xml", root));
+<<<<<<< HEAD
+=======
+    EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParser::loadXML("regressions/13418.xml", root));
+    EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParser::loadXML("regressions/13454.xml", root));
+    EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParser::loadXML("regressions/13513.xml", root));
+>>>>>>> 6e6908a3c (Fix oss-fuzz 43650 (#2647))
 }
 
 TEST_F(XMLParserTests, NoFile)
