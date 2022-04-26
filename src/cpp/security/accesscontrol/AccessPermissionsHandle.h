@@ -64,7 +64,9 @@ public:
     Grant grant;
 };
 
-typedef HandleImpl<AccessPermissions> AccessPermissionsHandle;
+class Permissions;
+
+typedef HandleImpl<AccessPermissions, Permissions> AccessPermissionsHandle;
 
 } //namespace security
 } //namespace rtps

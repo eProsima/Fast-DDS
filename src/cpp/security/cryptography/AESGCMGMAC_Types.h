@@ -26,6 +26,7 @@
 #include <fastdds/rtps/security/accesscontrol/ParticipantSecurityAttributes.h>
 #include <fastdds/rtps/security/accesscontrol/EndpointSecurityAttributes.h>
 
+#include <cassert>
 #include <functional>
 #include <limits>
 #include <mutex>
@@ -166,24 +167,16 @@ struct EntityKeyHandle
     std::mutex mutex_;
 };
 
-typedef HandleImpl<EntityKeyHandle> AESGCMGMAC_WriterCryptoHandle;
-typedef HandleImpl<EntityKeyHandle> AESGCMGMAC_ReaderCryptoHandle;
-typedef HandleImpl<EntityKeyHandle> AESGCMGMAC_EntityCryptoHandle;
+class AESGCMGMAC_KeyFactory;
+
+typedef HandleImpl<EntityKeyHandle, AESGCMGMAC_KeyFactory> AESGCMGMAC_WriterCryptoHandle;
+typedef HandleImpl<EntityKeyHandle, AESGCMGMAC_KeyFactory> AESGCMGMAC_ReaderCryptoHandle;
+typedef HandleImpl<EntityKeyHandle, AESGCMGMAC_KeyFactory> AESGCMGMAC_EntityCryptoHandle;
 
 struct ParticipantKeyHandle
 {
     static const char* const class_id_;
 
-    ~ParticipantKeyHandle()
-    {
-        if(deleter_)
-        {
-            deleter_(this);
-        }
-    }
-
-    // release resources functor
-    std::function<void(ParticipantKeyHandle*)> deleter_;
     // Reference to an auxiliary exception object on destruction
     SecurityException* exception_ = {nullptr};
 
@@ -208,7 +201,7 @@ struct ParticipantKeyHandle
     std::mutex mutex_;
 };
 
-typedef HandleImpl<ParticipantKeyHandle> AESGCMGMAC_ParticipantCryptoHandle;
+typedef HandleImpl<ParticipantKeyHandle, AESGCMGMAC_KeyFactory> AESGCMGMAC_ParticipantCryptoHandle;
 
 } //namespaces security
 } //namespace rtps

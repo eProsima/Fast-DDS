@@ -40,7 +40,7 @@ struct ParticipantCryptoHandleDeleter
 {
     ParticipantCryptoHandleDeleter(AESGCMGMAC_KeyFactory& factory);
 
-    void operator()(ParticipantKeyHandle* pk);
+    void operator()(AESGCMGMAC_ParticipantCryptoHandle* pk);
 
     // Reference to the factory
     std::weak_ptr<AESGCMGMAC_KeyFactory> factory_;
@@ -53,7 +53,7 @@ class AESGCMGMAC_KeyFactory : public CryptoKeyFactory, public std::enable_shared
     friend ParticipantCryptoHandleDeleter;
 
     // Actual unregister_participant() implementation called from the handle destructor
-    void release_participant(ParticipantKeyHandle* key);
+    void release_participant(AESGCMGMAC_ParticipantCryptoHandle& key);
 
 public:
 

@@ -379,7 +379,6 @@ private:
                 AuthenticationStatus auth_status,
                 const ParticipantProxyData& participant_data)
             : auth_(new AuthenticationInfo(auth_status))
-            , shared_secret_handle_(nullptr)
             , permissions_handle_(nullptr)
             , participant_crypto_(nullptr)
             , participant_data_(participant_data)
@@ -410,13 +409,13 @@ private:
         }
 
         void set_shared_secret(
-                SharedSecretHandle* shared_secret)
+                std::shared_ptr<SharedSecretHandle>& shared_secret)
         {
             std::lock_guard<std::mutex> g(mtx_);
             shared_secret_handle_ = shared_secret;
         }
 
-        SharedSecretHandle* get_shared_secret()
+        std::shared_ptr<SharedSecretHandle> get_shared_secret()
         {
             std::lock_guard<std::mutex> g(mtx_);
             return shared_secret_handle_;
@@ -442,13 +441,13 @@ private:
         }
 
         void set_participant_crypto(
-                ParticipantCryptoHandle* participant_crypto)
+                std::shared_ptr<ParticipantCryptoHandle> participant_crypto)
         {
             std::lock_guard<std::mutex> g(mtx_);
             participant_crypto_ = participant_crypto;
         }
 
-        ParticipantCryptoHandle* get_participant_crypto()
+        std::shared_ptr<ParticipantCryptoHandle> get_participant_crypto()
         {
             std::lock_guard<std::mutex> g(mtx_);
             return participant_crypto_;
@@ -469,11 +468,11 @@ private:
 
         AuthUniquePtr auth_;
 
-        SharedSecretHandle* shared_secret_handle_;
+        std::shared_ptr<SharedSecretHandle> shared_secret_handle_;
 
         PermissionsHandle* permissions_handle_;
 
-        ParticipantCryptoHandle* participant_crypto_;
+        std::shared_ptr<ParticipantCryptoHandle> participant_crypto_;
 
         ParticipantProxyData participant_data_;
 
@@ -619,7 +618,7 @@ private:
     void unmatch_builtin_endpoints(
             const ParticipantProxyData& participant_data);
 
-    ParticipantCryptoHandle* register_and_match_crypto_endpoint(
+    std::shared_ptr<ParticipantCryptoHandle> register_and_match_crypto_endpoint(
             IdentityHandle& remote_participant_identity,
             SharedSecretHandle& shared_secret);
 
@@ -631,7 +630,7 @@ private:
      * @param remote_participant_guid GUID_t& remote participant id
      */
     void exchange_participant_crypto(
-            ParticipantCryptoHandle* remote_participant_crypto,
+            std::shared_ptr<ParticipantCryptoHandle> remote_participant_crypto,
             const GUID_t& remote_participant_guid);
 
     void process_participant_stateless_message(
@@ -681,7 +680,7 @@ private:
     bool participant_authorized(
             const ParticipantProxyData& participant_data,
             const DiscoveredParticipantInfo::AuthUniquePtr& remote_participant_info,
-            SharedSecretHandle* shared_secret_handle);
+            std::shared_ptr<SharedSecretHandle>& shared_secret_handle);
 
     void resend_handshake_message_token(
             const GUID_t& remote_participant_key) const;

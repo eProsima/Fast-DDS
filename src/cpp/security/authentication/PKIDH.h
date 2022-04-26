@@ -71,9 +71,9 @@ public:
             HandshakeHandle& handshake_handle,
             SecurityException& exception) override;
 
-    SharedSecretHandle* get_shared_secret(
+    std::shared_ptr<SharedSecretHandle> get_shared_secret(
             const HandshakeHandle& handshake_handle,
-            SecurityException& exception) override;
+            SecurityException& exception) const override;
 
     bool set_listener(
             AuthenticationListener* listener,
@@ -97,8 +97,8 @@ public:
             SecurityException& exception) override;
 
     bool return_sharedsecret_handle(
-            SharedSecretHandle* sharedsecret_handle,
-            SecurityException& exception) override;
+            std::shared_ptr<SharedSecretHandle>& sharedsecret_handle,
+            SecurityException& exception) const override;
 
     bool set_permissions_credential_and_token(
             IdentityHandle& identity_handle,
@@ -130,6 +130,10 @@ private:
             PKIHandshakeHandle& handshake_handle,
             SecurityException& exception);
 
+    std::shared_ptr<SharedSecretHandle> generate_sharedsecret(
+            EVP_PKEY* private_key,
+            EVP_PKEY* public_key,
+            SecurityException& exception) const;
 };
 
 } //namespace security

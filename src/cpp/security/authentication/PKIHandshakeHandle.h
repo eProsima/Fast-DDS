@@ -33,9 +33,7 @@ class PKIHandshake
 {
     public:
 
-        PKIHandshake() : dhkeys_(nullptr), peerkeys_(nullptr),
-        local_identity_handle_(nullptr), remote_identity_handle_(nullptr),
-        sharedsecret_(nullptr) {}
+        PKIHandshake() = default;
 
         ~PKIHandshake()
         {
@@ -48,26 +46,23 @@ class PKIHandshake
             {
                 EVP_PKEY_free(peerkeys_);
             }
-
-            if(sharedsecret_ != nullptr)
-            {
-                delete sharedsecret_;
-            }
         }
 
 
         static const char* const class_id_;
 
         std::string kagree_alg_;
-        EVP_PKEY* dhkeys_;
-        EVP_PKEY* peerkeys_;
-        const PKIIdentityHandle* local_identity_handle_;
-        PKIIdentityHandle* remote_identity_handle_;
+        EVP_PKEY* dhkeys_ = { nullptr };
+        EVP_PKEY* peerkeys_ = { nullptr };
+        const PKIIdentityHandle* local_identity_handle_ = { nullptr };
+        PKIIdentityHandle* remote_identity_handle_ = { nullptr };
         HandshakeMessageToken handshake_message_;
-        SharedSecretHandle* sharedsecret_;
+        std::shared_ptr<SharedSecretHandle> sharedsecret_;
 };
 
-typedef HandleImpl<PKIHandshake> PKIHandshakeHandle;
+class PKIDH;
+
+typedef HandleImpl<PKIHandshake, PKIDH> PKIHandshakeHandle;
 
 } //namespace security
 } //namespace rtps
