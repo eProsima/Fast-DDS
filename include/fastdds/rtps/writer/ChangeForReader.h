@@ -54,20 +54,7 @@ class ChangeForReader_t
 
 public:
 
-    ChangeForReader_t() = delete;
-
-    ChangeForReader_t(
-            const ChangeForReader_t& ch)
-        : status_(ch.status_)
-        , seq_num_(ch.seq_num_)
-        , change_(ch.change_)
-        , unsent_fragments_(ch.unsent_fragments_)
-    {
-    }
-
-    //TODO(Ricardo) Temporal
-    //ChangeForReader_t(const CacheChange_t* change) : status_(UNSENT),
-    ChangeForReader_t(
+    explicit ChangeForReader_t(
             CacheChange_t* change)
         : status_(UNSENT)
         , seq_num_(change->sequenceNumber)
@@ -78,20 +65,6 @@ public:
             unsent_fragments_.base(1u);
             unsent_fragments_.add_range(1u, change->getFragmentCount() + 1u);
         }
-    }
-
-    ~ChangeForReader_t()
-    {
-    }
-
-    ChangeForReader_t& operator =(
-            const ChangeForReader_t& ch)
-    {
-        status_ = ch.status_;
-        seq_num_ = ch.seq_num_;
-        change_ = ch.change_;
-        unsent_fragments_ = ch.unsent_fragments_;
-        return *this;
     }
 
     /**
