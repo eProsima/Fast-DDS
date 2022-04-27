@@ -150,12 +150,17 @@ public:
     {
         unsent_fragments_.remove(sentFragment);
 
+        if (sentFragment > highest_sent_fragment_)
+        {
+            highest_sent_fragment_ = sentFragment;
+        }
+
         FragmentNumber_t base;
         FragmentNumber_t max;
         if (unsent_fragments_.empty())
         {
-            base = sentFragment + 1u;
-            max = sentFragment;
+            base = highest_sent_fragment_ + 1u;
+            max = highest_sent_fragment_ + 1u;
         }
         else
         {
@@ -212,7 +217,10 @@ private:
 
     FragmentNumberSet_t unsent_fragments_;
 
-    //! Indicates if was delivered at least one time.
+    //! Highest fragment number sent at least once.
+    FragmentNumber_t highest_sent_fragment_ = 0;
+
+    //! Indicates if was delivered at least once.
     bool delivered_ = false;
 };
 
