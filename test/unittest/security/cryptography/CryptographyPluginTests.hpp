@@ -34,9 +34,44 @@ protected:
 
     virtual void SetUp()
     {
+        using namespace eprosima::fastrtps::rtps::security;
+
         eprosima::fastrtps::rtps::PropertyPolicy m_propertypolicy;
 
         CryptoPlugin = new eprosima::fastrtps::rtps::security::AESGCMGMAC();
+
+        // Delegate SharedSecret creation to an actual implementation
+        ON_CALL(auth_plugin, get_shared_secret)
+            .WillByDefault([this](const HandshakeHandle& h, SecurityException& e)
+                    {
+                        return auth_plugin.get_shared_secret_impl(h, e);
+                    });
+
+        // Delegate SharedSecret disposal to an actual implementation
+        ON_CALL(auth_plugin, return_sharedsecret_handle)
+            .WillByDefault([this](
+                    std::shared_ptr<SecretHandle>& sh,
+                    SecurityException& e)
+                    {
+                        return auth_plugin.return_sharedsecret_handle_impl(sh, e);
+                    });
+
+        // Delegate identity handle creation to an actual implementation
+        ON_CALL(auth_plugin, get_identity_handle)
+            .WillByDefault([this](
+                SecurityException& e)
+                {
+                    return auth_plugin.get_identity_handle_impl(e);
+                });
+
+        // Delegate identity handle disposal to an actual implementation
+        ON_CALL(auth_plugin, return_identity_handle)
+            .WillByDefault([this](
+                IdentityHandle* ih,
+                SecurityException& e)
+                {
+                    return auth_plugin.return_identity_handle_impl(ih, e);
+                });
     }
 
     virtual void TearDown()
@@ -165,7 +200,7 @@ TEST_F(CryptographyPluginTest, factory_RegisterRemoteParticipant)
     ParticipantSecurityAttributes part_sec_attr;
 
     std::shared_ptr<SecretHandle> secret =
-        auth_plugin.get_shared_secret_impl(SharedSecretHandle::nil_handle, exception);
+        auth_plugin.get_shared_secret(SharedSecretHandle::nil_handle, exception);
 
     std::shared_ptr<SharedSecretHandle> shared_secret = std::dynamic_pointer_cast<SharedSecretHandle>(secret);
 
@@ -239,7 +274,7 @@ TEST_F(CryptographyPluginTest, factory_RegisterRemoteParticipant)
     CryptoPlugin->keyfactory()->unregister_participant(local, exception);
 
     auth_plugin.return_identity_handle(&i_handle, exception);
-    auth_plugin.return_sharedsecret_handle_impl(secret, exception);
+    auth_plugin.return_sharedsecret_handle(secret, exception);
     access_plugin.return_permissions_handle(&perm_handle,exception);
 }
 
@@ -305,7 +340,7 @@ TEST_F(CryptographyPluginTest, exchange_ParticipantCryptoTokens)
     ParticipantSecurityAttributes part_sec_attr;
 
     std::shared_ptr<SecretHandle> secret =
-        auth_plugin.get_shared_secret_impl(SharedSecretHandle::nil_handle, exception);
+        auth_plugin.get_shared_secret(SharedSecretHandle::nil_handle, exception);
 
     std::shared_ptr<SharedSecretHandle> shared_secret = std::dynamic_pointer_cast<SharedSecretHandle>(secret);
 
@@ -396,7 +431,7 @@ TEST_F(CryptographyPluginTest, exchange_ParticipantCryptoTokens)
     CryptoPlugin->keyfactory()->unregister_participant(ParticipantB_remote, exception);
 
     auth_plugin.return_identity_handle(&i_handle, exception);
-    auth_plugin.return_sharedsecret_handle_impl(secret, exception);
+    auth_plugin.return_sharedsecret_handle(secret, exception);
     access_plugin.return_permissions_handle(&perm_handle,exception);
 }
 
@@ -416,7 +451,7 @@ TEST_F(CryptographyPluginTest, transform_RTPSMessage)
     ParticipantSecurityAttributes part_sec_attr;
 
     std::shared_ptr<SecretHandle> secret =
-        auth_plugin.get_shared_secret_impl(SharedSecretHandle::nil_handle, exception);
+        auth_plugin.get_shared_secret(SharedSecretHandle::nil_handle, exception);
 
     std::shared_ptr<SharedSecretHandle> shared_secret = std::dynamic_pointer_cast<SharedSecretHandle>(secret);
 
@@ -594,7 +629,7 @@ TEST_F(CryptographyPluginTest, transform_RTPSMessage)
     CryptoPlugin->keyfactory()->unregister_participant(ParticipantB_remote, exception);
 
     auth_plugin.return_identity_handle(&i_handle, exception);
-    auth_plugin.return_sharedsecret_handle_impl(secret, exception);
+    auth_plugin.return_sharedsecret_handle(secret, exception);
     access_plugin.return_permissions_handle(&perm_handle,exception);
 }
 
@@ -616,7 +651,7 @@ TEST_F(CryptographyPluginTest, factory_CreateLocalWriterHandle)
     EndpointSecurityAttributes sec_attrs;
 
     std::shared_ptr<SecretHandle> secret =
-        auth_plugin.get_shared_secret_impl(SharedSecretHandle::nil_handle, exception);
+        auth_plugin.get_shared_secret(SharedSecretHandle::nil_handle, exception);
 
     std::shared_ptr<SharedSecretHandle> shared_secret = std::dynamic_pointer_cast<SharedSecretHandle>(secret);
 
@@ -669,7 +704,7 @@ TEST_F(CryptographyPluginTest, factory_CreateLocalWriterHandle)
 
     //Release resources and check the handle is indeed empty
     auth_plugin.return_identity_handle(&i_handle, exception);
-    auth_plugin.return_sharedsecret_handle_impl(secret, exception);
+    auth_plugin.return_sharedsecret_handle(secret, exception);
     access_plugin.return_permissions_handle(&perm_handle,exception);
 
     CryptoPlugin->keyfactory()->unregister_datawriter(target, exception);
@@ -694,7 +729,7 @@ TEST_F(CryptographyPluginTest, factory_CreateLocalReaderHandle)
     EndpointSecurityAttributes sec_attrs;
 
     std::shared_ptr<SecretHandle> secret =
-        auth_plugin.get_shared_secret_impl(SharedSecretHandle::nil_handle, exception);
+        auth_plugin.get_shared_secret(SharedSecretHandle::nil_handle, exception);
 
     std::shared_ptr<SharedSecretHandle> shared_secret = std::dynamic_pointer_cast<SharedSecretHandle>(secret);
 
@@ -747,7 +782,7 @@ TEST_F(CryptographyPluginTest, factory_CreateLocalReaderHandle)
 
     //Release resources and check the handle is indeed empty
     auth_plugin.return_identity_handle(&i_handle, exception);
-    auth_plugin.return_sharedsecret_handle_impl(secret, exception);
+    auth_plugin.return_sharedsecret_handle(secret, exception);
     access_plugin.return_permissions_handle(&perm_handle,exception);
 
     CryptoPlugin->keyfactory()->unregister_datareader(target, exception);
@@ -772,7 +807,7 @@ TEST_F(CryptographyPluginTest, factory_RegisterRemoteReaderWriter)
     EndpointSecurityAttributes sec_attrs;
 
     std::shared_ptr<SecretHandle> secret =
-        auth_plugin.get_shared_secret_impl(SharedSecretHandle::nil_handle, exception);
+        auth_plugin.get_shared_secret(SharedSecretHandle::nil_handle, exception);
 
     std::shared_ptr<SharedSecretHandle> shared_secret = std::dynamic_pointer_cast<SharedSecretHandle>(secret);
 
@@ -842,7 +877,7 @@ TEST_F(CryptographyPluginTest, factory_RegisterRemoteReaderWriter)
     ASSERT_TRUE(remote_writer != nullptr);
 
     auth_plugin.return_identity_handle(&i_handle, exception);
-    auth_plugin.return_sharedsecret_handle_impl(secret, exception);
+    auth_plugin.return_sharedsecret_handle(secret, exception);
     access_plugin.return_permissions_handle(&perm_handle,exception);
 
     CryptoPlugin->keyfactory()->unregister_datawriter(writer, exception);
@@ -878,7 +913,7 @@ TEST_F(CryptographyPluginTest, exchange_ReaderWriterCryptoTokens)
     EndpointSecurityAttributes sec_attrs;
 
     std::shared_ptr<SecretHandle> secret =
-        auth_plugin.get_shared_secret_impl(SharedSecretHandle::nil_handle, exception);
+        auth_plugin.get_shared_secret(SharedSecretHandle::nil_handle, exception);
 
     std::shared_ptr<SharedSecretHandle> shared_secret = std::dynamic_pointer_cast<SharedSecretHandle>(secret);
 
@@ -994,7 +1029,7 @@ TEST_F(CryptographyPluginTest, exchange_ReaderWriterCryptoTokens)
 
     //Release resources and check the handle is indeed empty
     auth_plugin.return_identity_handle(&i_handle, exception);
-    auth_plugin.return_sharedsecret_handle_impl(secret, exception);
+    auth_plugin.return_sharedsecret_handle(secret, exception);
     access_plugin.return_permissions_handle(&perm_handle,exception);
 
     CryptoPlugin->keyfactory()->unregister_datawriter(writer, exception);
@@ -1029,7 +1064,7 @@ TEST_F(CryptographyPluginTest, transform_SerializedPayload)
     EndpointSecurityAttributes sec_attrs;
 
     std::shared_ptr<SecretHandle> secret =
-        auth_plugin.get_shared_secret_impl(SharedSecretHandle::nil_handle, exception);
+        auth_plugin.get_shared_secret(SharedSecretHandle::nil_handle, exception);
 
     std::shared_ptr<SharedSecretHandle> shared_secret = std::dynamic_pointer_cast<SharedSecretHandle>(secret);
 
@@ -1236,7 +1271,7 @@ TEST_F(CryptographyPluginTest, transform_SerializedPayload)
     CryptoPlugin->keyfactory()->unregister_participant(ParticipantB_remote, exception);
 
     auth_plugin.return_identity_handle(&i_handle, exception);
-    auth_plugin.return_sharedsecret_handle_impl(secret, exception);
+    auth_plugin.return_sharedsecret_handle(secret, exception);
     access_plugin.return_permissions_handle(&perm_handle,exception);
 }
 
@@ -1258,7 +1293,7 @@ TEST_F(CryptographyPluginTest, transform_Writer_Submesage)
     EndpointSecurityAttributes sec_attrs;
 
     std::shared_ptr<SecretHandle> secret =
-        auth_plugin.get_shared_secret_impl(SharedSecretHandle::nil_handle, exception);
+        auth_plugin.get_shared_secret(SharedSecretHandle::nil_handle, exception);
 
     std::shared_ptr<SharedSecretHandle> shared_secret = std::dynamic_pointer_cast<SharedSecretHandle>(secret);
 
@@ -1456,7 +1491,7 @@ TEST_F(CryptographyPluginTest, transform_Writer_Submesage)
        ASSERT_TRUE(plain_payload == decoded_payload);
      */
 
-    auth_plugin.return_sharedsecret_handle_impl(secret, exception);
+    auth_plugin.return_sharedsecret_handle(secret, exception);
     auth_plugin.return_identity_handle(&i_handle, exception);
     access_plugin.return_permissions_handle(&perm_handle,exception);
 
@@ -1491,7 +1526,7 @@ TEST_F(CryptographyPluginTest, transform_Reader_Submessage)
     EndpointSecurityAttributes sec_attrs;
 
     std::shared_ptr<SecretHandle> secret =
-        auth_plugin.get_shared_secret_impl(SharedSecretHandle::nil_handle, exception);
+        auth_plugin.get_shared_secret(SharedSecretHandle::nil_handle, exception);
 
     std::shared_ptr<SharedSecretHandle> shared_secret = std::dynamic_pointer_cast<SharedSecretHandle>(secret);
 
@@ -1701,7 +1736,7 @@ TEST_F(CryptographyPluginTest, transform_Reader_Submessage)
     CryptoPlugin->keyfactory()->unregister_participant(participant_B, exception);
     CryptoPlugin->keyfactory()->unregister_participant(ParticipantB_remote, exception);
 
-    auth_plugin.return_sharedsecret_handle_impl(secret, exception);
+    auth_plugin.return_sharedsecret_handle(secret, exception);
     auth_plugin.return_identity_handle(&i_handle, exception);
     access_plugin.return_permissions_handle(&perm_handle,exception);
 }
@@ -1724,7 +1759,7 @@ TEST_F(CryptographyPluginTest, transform_preprocess_secure_submessage)
     EndpointSecurityAttributes sec_attrs;
 
     std::shared_ptr<SecretHandle> secret =
-        auth_plugin.get_shared_secret_impl(SharedSecretHandle::nil_handle, exception);
+        auth_plugin.get_shared_secret(SharedSecretHandle::nil_handle, exception);
 
     std::shared_ptr<SharedSecretHandle> shared_secret = std::dynamic_pointer_cast<SharedSecretHandle>(secret);
 
@@ -1890,7 +1925,7 @@ TEST_F(CryptographyPluginTest, transform_preprocess_secure_submessage)
     EXPECT_TRUE(CryptoPlugin->keyfactory()->unregister_participant(participant_B, exception));
     EXPECT_TRUE(CryptoPlugin->keyfactory()->unregister_participant(ParticipantB_remote, exception));
 
-    auth_plugin.return_sharedsecret_handle_impl(secret, exception);
+    auth_plugin.return_sharedsecret_handle(secret, exception);
     auth_plugin.return_identity_handle(&i_handle, exception);
     access_plugin.return_permissions_handle(&perm_handle,exception);
 }

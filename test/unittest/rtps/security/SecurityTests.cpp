@@ -28,7 +28,7 @@ void SecurityTest::initialization_ok()
             WillOnce(DoAll(SetArgPointee<0>(&local_identity_handle_), Return(ValidationResult_t::VALIDATION_OK)));
     EXPECT_CALL(crypto_plugin_->cryptokeyfactory_,
             register_local_participant(Ref(local_identity_handle_), _, _, _, _)).Times(1).
-            WillOnce(Return(&local_participant_crypto_handle_));
+            WillOnce(Return(local_participant_crypto_handle_));
     EXPECT_CALL(crypto_plugin_->cryptokeyfactory_,
             unregister_participant(local_participant_crypto_handle_, _)).Times(1).
             WillOnce(Return(true));
@@ -221,15 +221,15 @@ void SecurityTest::final_message_process_ok(
     EXPECT_CALL(participant_, pdpsimple()).Times(1).WillOnce(Return(&pdpsimple_));
     EXPECT_CALL(pdpsimple_, notifyAboveRemoteEndpoints(_)).Times(1);
     EXPECT_CALL(*auth_plugin_, get_shared_secret(Ref(handshake_handle_), _)).Times(1).
-            WillOnce(Return(&shared_secret_handle));
+            WillOnce(Return(shared_secret_handle));
     EXPECT_CALL(*auth_plugin_, return_sharedsecret_handle(shared_secret_handle, _)).Times(1).
             WillRepeatedly(Return(true));
     EXPECT_CALL(crypto_plugin_->cryptokeyfactory_,
-            register_matched_remote_participant(Ref(local_participant_crypto_handle_),
-            Ref(remote_identity_handle_), _, Ref(shared_secret_handle), _)).Times(1).
-            WillOnce(Return(&participant_crypto_handle));
+            register_matched_remote_participant(Ref(*local_participant_crypto_handle_),
+            Ref(remote_identity_handle_), _, Ref(*shared_secret_handle), _)).Times(1).
+            WillOnce(Return(participant_crypto_handle));
     EXPECT_CALL(crypto_plugin_->cryptokeyexchange_, create_local_participant_crypto_tokens(_,
-            Ref(local_participant_crypto_handle_), Ref(participant_crypto_handle), _)).Times(1).
+            Ref(*local_participant_crypto_handle_), Ref(*participant_crypto_handle), _)).Times(1).
             WillOnce(Return(true));
     EXPECT_CALL(crypto_plugin_->cryptokeyfactory_, unregister_participant(participant_crypto_handle, _)).Times(1).
             WillOnce(Return(true));
