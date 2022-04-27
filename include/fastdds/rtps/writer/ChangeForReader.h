@@ -178,7 +178,7 @@ public:
             const FragmentNumberSet_t& unsentFragments)
     {
         FragmentNumber_t other_base = unsentFragments.base();
-        if (other_base < unsent_fragments_.base())
+        if (unsent_fragments_.empty() || other_base < unsent_fragments_.base())
         {
             unsent_fragments_.base_update(other_base);
         }
