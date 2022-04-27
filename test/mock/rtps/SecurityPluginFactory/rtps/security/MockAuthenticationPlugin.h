@@ -128,12 +128,19 @@ class MockAuthenticationPlugin : public Authentication
                 handshake_handle, exception);
     }
 
-    IdentityHandle* get_identity_handle(SecurityException&)
+    MOCK_METHOD(IdentityHandle*, get_identity_handle, (
+                SecurityException&), (override));
+
+    IdentityHandle* get_identity_handle_impl(SecurityException&)
     {
         return new (std::nothrow) PKIIdentityHandle();
     }
 
-    bool return_identity_handle(
+    MOCK_METHOD(bool, return_identity_handle, (
+            IdentityHandle* identity_handle,
+            SecurityException&), (override));
+
+    bool return_identity_handle_impl(
             IdentityHandle* identity_handle,
             SecurityException&)
     {

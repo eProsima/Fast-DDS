@@ -141,7 +141,10 @@ public:
         , participant_data_(c_default_RTPSParticipantAllocationAttributes)
         , default_cdr_message(RTPSMESSAGE_DEFAULT_SIZE)
     {
-        local_participant_crypto_handle_ = std::make_shared<MockParticipantCrypto>();
+        // enforce deleter due to handle destructor protected nature
+        local_participant_crypto_handle_.reset(
+                new MockParticipantCryptoHandle,
+                [](MockParticipantCryptoHandle* p) { delete p; });
     }
 
     ~SecurityTest()
@@ -158,20 +161,47 @@ public:
     PDPSimple pdpsimple_;
     SecurityManager manager_;
 
+    // handles
     MockIdentityHandle local_identity_handle_;
     MockIdentityHandle remote_identity_handle_;
     MockHandshakeHandle handshake_handle_;
+
     std::shared_ptr<ParticipantCryptoHandle> local_participant_crypto_handle_;
     ParticipantProxyData participant_data_;
     ParticipantSecurityAttributes security_attributes_;
     PropertyPolicy participant_properties_;
     bool security_activated_;
 
-
     // Default Values
     NetworkFactory network;
     GUID_t guid;
     CDRMessage_t default_cdr_message;
+
+    // handle factory for the tests
+    template<class T>
+    typename std::enable_if<std::is_base_of<Handle,T>::value, T&>::type
+    get_handle() const
+    {
+        return *new T;
+    }
+
+    // specialization for shared_ptrs doesn't need return method
+    template<class T>
+    typename std::enable_if<std::is_base_of<Handle,T>::value, std::shared_ptr<Handle>>::type
+    get_sh_ptr() const
+    {
+        return std::dynamic_pointer_cast<Handle>(
+                std::shared_ptr<T>(
+                    new T,
+                    [](T * p){delete p;}));
+    }
+
+    template<class T>
+    typename std::enable_if<std::is_base_of<Handle,T>::value, void>::type
+    return_handle(T& h) const
+    {
+        delete &h;
+    }
 
 };
 
