@@ -32,6 +32,11 @@ class CryptographyPluginTest : public ::testing::Test
 {
 protected:
 
+    // Mock the handles to avoid cast issues
+    using SharedSecretHandle = eprosima::fastrtps::rtps::security::MockAuthenticationPlugin::SharedSecretHandle;
+    using PKIIdentityHandle = eprosima::fastrtps::rtps::security::MockAuthenticationPlugin::PKIIdentityHandle;
+    using AccessPermissionsHandle = eprosima::fastrtps::rtps::security::MockAccessControlPlugin::AccessPermissionsHandle;
+
     virtual void SetUp()
     {
         using namespace eprosima::fastrtps::rtps::security;
@@ -87,8 +92,8 @@ public:
     }
 
     eprosima::fastrtps::rtps::security::AESGCMGMAC* CryptoPlugin;
-    eprosima::fastrtps::rtps::security::MockAuthenticationPlugin auth_plugin;
-    eprosima::fastrtps::rtps::security::MockAccessControlPlugin access_plugin;
+    ::testing::NiceMock<eprosima::fastrtps::rtps::security::MockAuthenticationPlugin> auth_plugin;
+    ::testing::NiceMock<eprosima::fastrtps::rtps::security::MockAccessControlPlugin> access_plugin;
 };
 
 TEST_F(CryptographyPluginTest, factory_CreateLocalParticipantHandle)
