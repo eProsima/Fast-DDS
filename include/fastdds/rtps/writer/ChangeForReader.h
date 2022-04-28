@@ -133,7 +133,7 @@ public:
         if (unsent_fragments_.empty())
         {
             base = highest_sent_fragment_ + 1u;
-            max = highest_sent_fragment_ + 1u;
+            max = highest_sent_fragment_;
         }
         else
         {
@@ -141,6 +141,11 @@ public:
             max = unsent_fragments_.max();
             assert(!unsent_fragments_.is_set(base));
             base = unsent_fragments_.min();
+
+            if (max < highest_sent_fragment_)
+            {
+                max = highest_sent_fragment_;
+            }
         }
 
         if (max < change_->getFragmentCount())
