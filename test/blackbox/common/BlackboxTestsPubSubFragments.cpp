@@ -86,10 +86,12 @@ protected:
             bool reliable,
             bool volatile_reader,
             bool volatile_writer,
-            bool small_fragments)
+            bool small_fragments,
+            uint32_t loss_rate = 0)
     {
         PubSubReader<Data1mbPubSubType> reader(topic_name);
         PubSubWriter<Data1mbPubSubType> writer(topic_name);
+        uint32_t fragment_count = 0;
 
         reader
                 .socket_buffer_size(1048576) // accomodate large and fast fragments
@@ -104,12 +106,31 @@ protected:
 
         ASSERT_TRUE(reader.isInitialized());
 
-        if (small_fragments)
+        if (small_fragments || 0 < loss_rate)
         {
-            auto testTransport = std::make_shared<UDPv4TransportDescriptor>();
-            testTransport->sendBufferSize = 1024;
-            testTransport->maxMessageSize = 1024;
+            auto testTransport = std::make_shared<test_UDPv4TransportDescriptor>();
+
             testTransport->receiveBufferSize = 65536;
+            if (small_fragments)
+            {
+                testTransport->sendBufferSize = 1024;
+                testTransport->maxMessageSize = 1024;
+            }
+            if (0 < loss_rate)
+            {
+                testTransport->drop_data_frag_messages_filter_ =
+                        [&fragment_count, loss_rate](eprosima::fastrtps::rtps::CDRMessage_t& msg)->bool
+                        {
+                            ++fragment_count;
+                            if (fragment_count >= loss_rate)
+                            {
+                                fragment_count = 0;
+                            }
+
+                            return 1ul == fragment_count;
+                        };
+            }
+
             writer.disable_builtin_transport();
             writer.add_user_transport_to_pparams(testTransport);
         }
@@ -228,6 +249,12 @@ TEST_P(PubSubFragments, PubSubAsReliableTransientLocalData300kbSmallFragments)
     do_fragment_test(TEST_TOPIC_NAME, data, false, true, false, false, true);
 }
 
+TEST_P(PubSubFragments, PubSubAsReliableTransientLocalData300kbSmallFragmentsLossy)
+{
+    auto data = default_data300kb_data_generator();
+    do_fragment_test(TEST_TOPIC_NAME, data, false, true, false, false, true, 260);
+}
+
 TEST_P(PubSubFragments, AsyncPubSubAsNonReliableData300kb)
 {
     auto data = default_data300kb_data_generator();
@@ -298,6 +325,12 @@ TEST_P(PubSubFragments, AsyncPubSubAsReliableTransientLocalData300kbSmallFragmen
 {
     auto data = default_data300kb_data_generator();
     do_fragment_test(TEST_TOPIC_NAME, data, true, true, false, false, true);
+}
+
+TEST_P(PubSubFragments, AsyncPubSubAsReliableTransientLocalData300kbSmallFragmentsLossy)
+{
+    auto data = default_data300kb_data_generator();
+    do_fragment_test(TEST_TOPIC_NAME, data, true, true, false, false, true, 260);
 }
 
 class PubSubFragmentsLimited : public testing::TestWithParam<eprosima::fastdds::rtps::FlowControllerSchedulerPolicy>
