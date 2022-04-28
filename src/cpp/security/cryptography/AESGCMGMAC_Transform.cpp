@@ -885,10 +885,9 @@ bool AESGCMGMAC_Transform::preprocess_secure_submsg(
     //TODO(Ricardo) Deserializing header two times, here preprocessing and decoding submessage.
     //KeyId is present in Header->transform_identifier->transformation_key_id and contains the sender_key_id
 
-    for (std::vector<DatawriterCryptoHandle*>::iterator it = remote_participant->Writers.begin();
-            it != remote_participant->Writers.end(); ++it)
+    for (auto& wt_sp : remote_participant->Writers)
     {
-        AESGCMGMAC_WriterCryptoHandle& writer = AESGCMGMAC_WriterCryptoHandle::narrow(**it);
+        AESGCMGMAC_WriterCryptoHandle& writer = AESGCMGMAC_WriterCryptoHandle::narrow(*wt_sp);
         auto& wKeyMats = writer->Entity2RemoteKeyMaterial;
 
         if (wKeyMats.size() == 0)
@@ -901,7 +900,7 @@ bool AESGCMGMAC_Transform::preprocess_secure_submsg(
         {
             // Remote writer found
             secure_submessage_category = DATAWRITER_SUBMESSAGE;
-            *datawriter_crypto = *it;
+            *datawriter_crypto = wt_sp.get();
 
             //We have the remote writer, now lets look for the local datareader
             bool found = lookup_reader(local_participant, datareader_crypto, key_id);
@@ -922,10 +921,9 @@ bool AESGCMGMAC_Transform::preprocess_secure_submsg(
         } //Remote writer key found
     } //For each datawriter present in the remote participant
 
-    for (std::vector<DatareaderCryptoHandle*>::iterator it = remote_participant->Readers.begin();
-            it != remote_participant->Readers.end(); ++it)
+    for (auto& rd_sh : remote_participant->Readers)
     {
-        AESGCMGMAC_ReaderCryptoHandle& reader = AESGCMGMAC_ReaderCryptoHandle::narrow(**it);
+        AESGCMGMAC_ReaderCryptoHandle& reader = AESGCMGMAC_ReaderCryptoHandle::narrow(*rd_sh);
 
         auto& rKeyMats = reader->Entity2RemoteKeyMaterial;
 
@@ -939,7 +937,7 @@ bool AESGCMGMAC_Transform::preprocess_secure_submsg(
         {
             // Remote reader found
             secure_submessage_category = DATAREADER_SUBMESSAGE;
-            *datareader_crypto = *it;
+            *datareader_crypto = rd_sh.get();
 
             //We have the remote reader, now lets look for the local datawriter
             bool found = lookup_writer(local_participant, datawriter_crypto, key_id);
@@ -2246,7 +2244,7 @@ bool AESGCMGMAC_Transform::lookup_reader(
         DatareaderCryptoHandle** datareader_crypto,
         CryptoTransformKeyId key_id)
 {
-    for (DatareaderCryptoHandle* readerHandle : participant->Readers)
+    for (auto& readerHandle : participant->Readers)
     {
         AESGCMGMAC_ReaderCryptoHandle& reader = AESGCMGMAC_ReaderCryptoHandle::narrow(*readerHandle);
 
@@ -2260,7 +2258,7 @@ bool AESGCMGMAC_Transform::lookup_reader(
         {
             if (elem.sender_key_id == key_id)
             {
-                *datareader_crypto = readerHandle;
+                *datareader_crypto = readerHandle.get();
                 return true;
             }
         }   //For each Reader2WriterKeyMaterial in the datareader
@@ -2274,7 +2272,7 @@ bool AESGCMGMAC_Transform::lookup_writer(
         DatawriterCryptoHandle** datawriter_crypto,
         CryptoTransformKeyId key_id)
 {
-    for (DatawriterCryptoHandle* writerHandle : participant->Writers)
+    for (auto& writerHandle : participant->Writers)
     {
         AESGCMGMAC_WriterCryptoHandle& writer = AESGCMGMAC_WriterCryptoHandle::narrow(*writerHandle);
 
@@ -2288,7 +2286,7 @@ bool AESGCMGMAC_Transform::lookup_writer(
         {
             if (elem.sender_key_id == key_id)
             {
-                *datawriter_crypto = writerHandle;
+                *datawriter_crypto = writerHandle.get();
                 return true;
             }
         }   //For each Writer2ReaderKeyMaterial in the datawriter

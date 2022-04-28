@@ -20,6 +20,9 @@
 
 #include <fastrtps/rtps/security/cryptography/CryptoKeyFactory.h>
 #include <fastrtps/rtps/security/cryptography/CryptoTypes.h>
+
+#include <security/cryptography/AESGCMGMAC_Types.h>
+
 #include <gmock/gmock.h>
 
 #pragma warning(push)
@@ -33,6 +36,7 @@ namespace security {
 class MockCryptoKeyFactory : public CryptoKeyFactory
 {
     public:
+        using AESGCMGMAC_ParticipantCryptoHandle = HandleImpl<ParticipantKeyHandle, MockCryptoKeyFactory>;
 
         virtual ~MockCryptoKeyFactory(){}
 
@@ -87,7 +91,25 @@ class MockCryptoKeyFactory : public CryptoKeyFactory
                 DatareaderCryptoHandle*,
                 SecurityException&));
 
+        MOCK_METHOD2(unregister_datawriter, bool (
+                std::shared_ptr<DatawriterCryptoHandle>&,
+                SecurityException&));
 
+        MOCK_METHOD2(unregister_datareader, bool (
+                std::shared_ptr<DatareaderCryptoHandle>&,
+                SecurityException&));
+
+        std::shared_ptr<ParticipantCryptoHandle> get_dummy_participant_handle() const
+        {
+            // create ad hoc deleter because this object can only be created/release from the friend factory
+            auto p = new (std::nothrow) AESGCMGMAC_ParticipantCryptoHandle;
+            return std::dynamic_pointer_cast<ParticipantCryptoHandle>(
+                    std::shared_ptr<AESGCMGMAC_ParticipantCryptoHandle>(p,
+                        [](AESGCMGMAC_ParticipantCryptoHandle* p)
+                        {
+                            delete p;
+                        }));
+        }
 };
 
 } //namespace security

@@ -47,35 +47,36 @@ protected:
 
         // Delegate SharedSecret creation to an actual implementation
         ON_CALL(auth_plugin, get_shared_secret)
-            .WillByDefault([this](const HandshakeHandle& h, SecurityException& e)
+            .WillByDefault([this](
+                    const HandshakeHandle&,
+                    SecurityException&)
                     {
-                        return auth_plugin.get_shared_secret_impl(h, e);
+                        return auth_plugin.get_dummy_shared_secret();
                     });
 
         // Delegate SharedSecret disposal to an actual implementation
         ON_CALL(auth_plugin, return_sharedsecret_handle)
             .WillByDefault([this](
                     std::shared_ptr<SecretHandle>& sh,
-                    SecurityException& e)
+                    SecurityException&)
                     {
-                        return auth_plugin.return_sharedsecret_handle_impl(sh, e);
+                        return auth_plugin.return_dummy_sharedsecret(sh);
                     });
 
         // Delegate identity handle creation to an actual implementation
         ON_CALL(auth_plugin, get_identity_handle)
-            .WillByDefault([this](
-                SecurityException& e)
+            .WillByDefault([this](SecurityException&)
                 {
-                    return auth_plugin.get_identity_handle_impl(e);
+                    return auth_plugin.get_dummy_identity_handle();
                 });
 
         // Delegate identity handle disposal to an actual implementation
         ON_CALL(auth_plugin, return_identity_handle)
             .WillByDefault([this](
                 IdentityHandle* ih,
-                SecurityException& e)
+                SecurityException&)
                 {
-                    return auth_plugin.return_identity_handle_impl(ih, e);
+                    return auth_plugin.return_dummy_identity_handle(ih);
                 });
     }
 
@@ -1766,7 +1767,7 @@ TEST_F(CryptographyPluginTest, transform_preprocess_secure_submessage)
     std::shared_ptr<SecretHandle> secret =
         auth_plugin.get_shared_secret(SharedSecretHandle::nil_handle, exception);
 
-    std::shared_ptr<SharedSecretHandle> shared_secret = std::dynamic_pointer_cast<SharedSecretHandle>(secret);
+    auto shared_secret = std::dynamic_pointer_cast<SharedSecretHandle>(secret);
 
     part_sec_attr.is_rtps_protected = true;
     part_sec_attr.plugin_participant_attributes = PLUGIN_PARTICIPANT_SECURITY_ATTRIBUTES_FLAG_IS_RTPS_ENCRYPTED |
@@ -1778,10 +1779,10 @@ TEST_F(CryptographyPluginTest, transform_preprocess_secure_submessage)
     sec_attrs.plugin_endpoint_attributes = PLUGIN_ENDPOINT_SECURITY_ATTRIBUTES_FLAG_IS_SUBMESSAGE_ENCRYPTED |
             PLUGIN_ENDPOINT_SECURITY_ATTRIBUTES_FLAG_IS_SUBMESSAGE_ORIGIN_AUTHENTICATED;
 
-    std::shared_ptr<ParticipantCryptoHandle> participant_A =
+    auto participant_A =
             CryptoPlugin->keyfactory()->register_local_participant(i_handle, perm_handle, prop_handle, part_sec_attr,
                     exception);
-    std::shared_ptr<ParticipantCryptoHandle> participant_B =
+    auto participant_B =
             CryptoPlugin->keyfactory()->register_local_participant(i_handle, perm_handle, prop_handle, part_sec_attr,
                     exception);
 
@@ -1885,7 +1886,7 @@ TEST_F(CryptographyPluginTest, transform_preprocess_secure_submessage)
     plain_payload.length = 18;
 
     std::vector<std::shared_ptr<DatawriterCryptoHandle>> receivers;
-    receivers.push_back(remote_writer->shared_from_this());
+    receivers.push_back(remote_writer->shared_from_this()); // hic sunt dracones
 
     EXPECT_TRUE(CryptoPlugin->cryptotransform()->encode_datareader_submessage(encoded_datareader_payload, plain_payload,
             *reader, receivers, exception));

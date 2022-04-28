@@ -131,7 +131,7 @@ class MockAuthenticationPlugin : public Authentication
     MOCK_METHOD(IdentityHandle*, get_identity_handle, (
                 SecurityException&), (override));
 
-    IdentityHandle* get_identity_handle_impl(SecurityException&)
+    IdentityHandle* get_dummy_identity_handle()
     {
         return new (std::nothrow) PKIIdentityHandle();
     }
@@ -140,9 +140,8 @@ class MockAuthenticationPlugin : public Authentication
             IdentityHandle* identity_handle,
             SecurityException&), (override));
 
-    bool return_identity_handle_impl(
-            IdentityHandle* identity_handle,
-            SecurityException&)
+    bool return_dummy_identity_handle(
+            IdentityHandle* identity_handle)
     {
         delete dynamic_cast<PKIIdentityHandle*>(identity_handle);
         return true;
@@ -152,9 +151,7 @@ class MockAuthenticationPlugin : public Authentication
             const HandshakeHandle&,
             SecurityException&), (const, override));
 
-    std::shared_ptr<SecretHandle> get_shared_secret_impl(
-            const HandshakeHandle&,
-            SecurityException&) const
+    std::shared_ptr<SecretHandle> get_dummy_shared_secret() const
     {
         // create ad hoc deleter because this object can only be created/release from the friend factory
         auto p = new (std::nothrow) SharedSecretHandle;
@@ -169,9 +166,8 @@ class MockAuthenticationPlugin : public Authentication
             std::shared_ptr<SecretHandle>& sharedsecret_handle,
             SecurityException&), (const, override));
 
-    bool return_sharedsecret_handle_impl(
-            std::shared_ptr<SecretHandle>& sharedsecret_handle,
-            SecurityException&) const
+    bool return_dummy_sharedsecret(
+            std::shared_ptr<SecretHandle>& sharedsecret_handle) const
     {
         sharedsecret_handle.reset();
         return true;

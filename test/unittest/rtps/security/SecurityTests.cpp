@@ -205,8 +205,11 @@ void SecurityTest::final_message_process_ok(
 
     HandshakeMessageToken handshake_message;
     CacheChange_t* change2 = new CacheChange_t(200);
-    std::shared_ptr<SecretHandle> shared_secret_handle;
-    std::shared_ptr<ParticipantCryptoHandle> participant_crypto_handle;
+    auto shared_secret_handle = auth_plugin_->get_dummy_shared_secret();
+
+    auto mock_crypto_factory = dynamic_cast<MockCryptoKeyFactory*>(crypto_plugin_->cryptokeyfactory());
+    assert(mock_crypto_factory != nullptr);
+    auto participant_crypto_handle = mock_crypto_factory->get_dummy_participant_handle();
 
     EXPECT_CALL(*auth_plugin_, process_handshake_rvr(_, _, Ref(handshake_handle_), _)).Times(1).
             WillOnce(DoAll(SetArgPointee<0>(&handshake_message),

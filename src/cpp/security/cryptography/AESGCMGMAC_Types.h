@@ -146,13 +146,16 @@ struct EntityKeyHandle
 {
     static const char* const class_id_;
 
+    // Reference to an auxiliary exception object on destruction
+    SecurityException* exception_ = {nullptr};
+
     //Plugin security options
     PluginEndpointSecurityAttributesMask EndpointPluginAttributes = 0;
     //Storage for the LocalCryptoHandle master_key, not used in RemoteCryptoHandles
     KeyMaterial_AES_GCM_GMAC_Seq EntityKeyMaterial;
     //KeyId of the master_key of the parent Participant and pointer to the relevant CryptoHandle
     CryptoTransformKeyId Participant_master_key_id = c_transformKeyIdZero;
-    ParticipantCryptoHandle* Parent_participant = nullptr;
+    std::weak_ptr<ParticipantCryptoHandle> Parent_participant;
 
     //(Direct) ReceiverSpecific Keys - Inherently hold the master_key of the writer
     KeyMaterial_AES_GCM_GMAC_Seq Entity2RemoteKeyMaterial;
@@ -191,9 +194,9 @@ struct ParticipantKeyHandle
     //(Reverse) ReceiverSpecific Keys - Inherently hold the master_key of the remote readers
     std::vector<KeyMaterial_AES_GCM_GMAC> RemoteParticipant2ParticipantKeyMaterial;
     //List of Pointers to the CryptoHandles of all matched Writers
-    std::vector<DatawriterCryptoHandle*> Writers;
+    std::vector<std::shared_ptr<DatawriterCryptoHandle>> Writers;
     //List of Pointers to the CryptoHandles of all matched Readers
-    std::vector<DatareaderCryptoHandle*> Readers;
+    std::vector<std::shared_ptr<DatareaderCryptoHandle>> Readers;
 
     //Data used to store the current session keys and to determine when it has to be updated
     KeySessionData Session;
