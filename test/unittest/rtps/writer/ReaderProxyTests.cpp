@@ -148,7 +148,7 @@ TEST(ReaderProxyTests, requested_changes_set_test)
     rproxy.requested_changes_set(set, gap_builder, {0, 1});
 }
 
-bool mark_next_fragment_sent(
+FragmentNumber_t mark_next_fragment_sent(
         ReaderProxy& rproxy,
         SequenceNumber_t sequence_number,
         FragmentNumber_t expected_fragment)
@@ -159,14 +159,15 @@ bool mark_next_fragment_sent(
     rproxy.change_is_unsent(sequence_number, next_fragment, gap_seq, need_reactivate_periodic_heartbeat);
     if (next_fragment != expected_fragment)
     {
-        return false;
+        return next_fragment;
     }
 
     bool was_last_fragment;
-    return rproxy.mark_fragment_as_sent_for_change(sequence_number, next_fragment, was_last_fragment);
+    rproxy.mark_fragment_as_sent_for_change(sequence_number, next_fragment, was_last_fragment);
+    return next_fragment;
 }
 
-TEST(ReaderProxyTests, process_nack_frag_single_fragment_test)
+TEST(ReaderProxyTests, process_nack_frag_single_fragment_different_windows_test)
 {
     StatefulWriter writerMock;
     WriterTimes wTimes;
@@ -197,7 +198,7 @@ TEST(ReaderProxyTests, process_nack_frag_single_fragment_test)
 
     for (auto i = 1u; i <= NUMBER_OF_SENT_FRAGMENTS; ++i)
     {
-        ASSERT_TRUE(mark_next_fragment_sent(rproxy, seq.sequenceNumber, i));
+        ASSERT_EQ(mark_next_fragment_sent(rproxy, seq.sequenceNumber, i), i);
     }
 
     // Set the change status to UNSENT.
@@ -211,11 +212,16 @@ TEST(ReaderProxyTests, process_nack_frag_single_fragment_test)
     fragment_set.add(UNDELIVERED_FRAGMENT);
     rproxy.process_nack_frag({}, 1, seq.sequenceNumber, fragment_set);
 
-    ASSERT_TRUE(mark_next_fragment_sent(rproxy, seq.sequenceNumber, UNDELIVERED_FRAGMENT));
-    ASSERT_TRUE(mark_next_fragment_sent(rproxy, seq.sequenceNumber, UNDELIVERED_FRAGMENT + 1u));
+    ASSERT_EQ(mark_next_fragment_sent(rproxy, seq.sequenceNumber, UNDELIVERED_FRAGMENT), UNDELIVERED_FRAGMENT);
+
+    // After the undelivered fragment is sent, fragments for sent go sequentially from the highest sent fragment.
+    ASSERT_EQ(mark_next_fragment_sent(rproxy, seq.sequenceNumber,
+            NUMBER_OF_SENT_FRAGMENTS + 1u), NUMBER_OF_SENT_FRAGMENTS + 1u);
+    ASSERT_EQ(mark_next_fragment_sent(rproxy, seq.sequenceNumber,
+            NUMBER_OF_SENT_FRAGMENTS + 2u), NUMBER_OF_SENT_FRAGMENTS + 2u);
 }
 
-TEST(ReaderProxyTests, process_nack_frag_multiple_fragments_test)
+TEST(ReaderProxyTests, process_nack_frag_multiple_fragments_different_windows_test)
 {
     StatefulWriter writerMock;
     WriterTimes wTimes;
@@ -246,7 +252,7 @@ TEST(ReaderProxyTests, process_nack_frag_multiple_fragments_test)
 
     for (auto i = 1u; i <= NUMBER_OF_SENT_FRAGMENTS; ++i)
     {
-        ASSERT_TRUE(mark_next_fragment_sent(rproxy, seq.sequenceNumber, i));
+        ASSERT_EQ(mark_next_fragment_sent(rproxy, seq.sequenceNumber, i), i);
     }
 
     // Set the change status to UNSENT.
@@ -264,14 +270,14 @@ TEST(ReaderProxyTests, process_nack_frag_multiple_fragments_test)
     // Check that all undelivered fragments are chosen first for sending.
     for (auto fragment : undelivered_fragments)
     {
-        ASSERT_TRUE(mark_next_fragment_sent(rproxy, seq.sequenceNumber, fragment));
+        ASSERT_EQ(mark_next_fragment_sent(rproxy, seq.sequenceNumber, fragment), fragment);
     }
 
-    // After the last undelivered fragment is sent, fragments for sent go sequentially.
-    for (auto i = 1u; i < 3u; i++)
-    {
-        ASSERT_TRUE(mark_next_fragment_sent(rproxy, seq.sequenceNumber, undelivered_fragments.back() + i));
-    }
+    // After the last undelivered fragment is sent, fragments for sent go sequentially from the highest sent fragment.
+    ASSERT_EQ(mark_next_fragment_sent(rproxy, seq.sequenceNumber,
+            NUMBER_OF_SENT_FRAGMENTS + 1u), NUMBER_OF_SENT_FRAGMENTS + 1u);
+    ASSERT_EQ(mark_next_fragment_sent(rproxy, seq.sequenceNumber,
+            NUMBER_OF_SENT_FRAGMENTS + 2u), NUMBER_OF_SENT_FRAGMENTS + 2u);
 }
 
 } // namespace rtps
