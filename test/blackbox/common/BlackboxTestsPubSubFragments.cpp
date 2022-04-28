@@ -121,6 +121,8 @@ protected:
                 testTransport->drop_data_frag_messages_filter_ =
                         [&fragment_count, loss_rate](eprosima::fastrtps::rtps::CDRMessage_t& msg)->bool
                         {
+                            static_cast<void>(msg);
+
                             ++fragment_count;
                             if (fragment_count >= loss_rate)
                             {
