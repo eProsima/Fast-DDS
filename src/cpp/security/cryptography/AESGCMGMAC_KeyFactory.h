@@ -55,6 +55,10 @@ class AESGCMGMAC_KeyFactory : public CryptoKeyFactory, public std::enable_shared
     // Actual unregister_participant() implementation called from the handle destructor
     void release_participant(AESGCMGMAC_ParticipantCryptoHandle& key);
 
+    // DatawriterCryptoHandle & DatareaderCryptoHandle creation methods.
+    std::shared_ptr<DatawriterCryptoHandle> get_datawriter_handle();
+    std::shared_ptr<DatareaderCryptoHandle> get_datareader_handle();
+
 public:
 
     AESGCMGMAC_KeyFactory();
@@ -103,12 +107,16 @@ public:
             SecurityException& exception) override;
 
     bool unregister_datawriter(
-            DatawriterCryptoHandle* datawriter_crypto_handle,
+            std::shared_ptr<DatawriterCryptoHandle>& datawriter_crypto_handle,
             SecurityException& exception) override;
 
     bool unregister_datareader(
-            DatareaderCryptoHandle* datareader_crypto_handle,
+            std::shared_ptr<DatareaderCryptoHandle>& datareader_crypto_handle,
             SecurityException& exception) override;
+
+    // introduce convenient overrides in this scope
+    using CryptoKeyFactory::unregister_datawriter;
+    using CryptoKeyFactory::unregister_datareader;
 
 private:
 

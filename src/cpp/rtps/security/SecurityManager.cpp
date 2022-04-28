@@ -432,29 +432,8 @@ void SecurityManager::destroy()
 
         SecurityException exception;
 
-        for (auto& local_reader : reader_handles_)
-        {
-            for (auto& wit : local_reader.second.associated_writers)
-            {
-                crypto_plugin_->cryptokeyfactory()->unregister_datawriter(std::get<1>(wit.second),
-                        exception);
-            }
-
-            crypto_plugin_->cryptokeyfactory()->unregister_datareader(local_reader.second.reader_handle,
-                    exception);
-        }
-
-        for (auto& local_writer : writer_handles_)
-        {
-            for (auto& rit : local_writer.second.associated_readers)
-            {
-                crypto_plugin_->cryptokeyfactory()->unregister_datareader(std::get<1>(rit.second),
-                        exception);
-            }
-
-            crypto_plugin_->cryptokeyfactory()->unregister_datawriter(local_writer.second.writer_handle,
-                    exception);
-        }
+        // writer_handles_ and reader_handles_ contents reference the discovered_participants_ ones and are disposed on
+        // this collection removal
 
         for (auto& dp_it : discovered_participants_)
         {
@@ -501,6 +480,8 @@ void SecurityManager::destroy()
     // check the logic
     delete_entities();
 
+    writer_handles_.clear();
+    reader_handles_.clear();
     discovered_participants_.clear();
 
     local_permissions_handle_ = nullptr;
@@ -2568,8 +2549,7 @@ bool SecurityManager::unregister_local_writer(
 
         for (auto& rit : local_writer->second.associated_readers)
         {
-            crypto_plugin_->cryptokeyfactory()->unregister_datareader(std::get<1>(rit.second),
-                    exception);
+            crypto_plugin_->cryptokeyfactory()->unregister_datareader(std::get<1>(rit.second), exception);
         }
 
         crypto_plugin_->cryptokeyfactory()->unregister_datawriter(local_writer->second.writer_handle,
@@ -2777,12 +2757,10 @@ bool SecurityManager::unregister_local_reader(
 
         for (auto& wit : local_reader->second.associated_writers)
         {
-            crypto_plugin_->cryptokeyfactory()->unregister_datawriter(std::get<1>(wit.second),
-                    exception);
+            crypto_plugin_->cryptokeyfactory()->unregister_datawriter(std::get<1>(wit.second), exception);
         }
 
-        crypto_plugin_->cryptokeyfactory()->unregister_datareader(local_reader->second.reader_handle,
-                exception);
+        crypto_plugin_->cryptokeyfactory()->unregister_datareader(local_reader->second.reader_handle, exception);
         reader_handles_.erase(local_reader);
 
         return true;
@@ -3940,7 +3918,7 @@ bool SecurityManager::participant_authorized(
         if (crypto_plugin_ != nullptr)
         {
             // TODO(Ricardo) Study cryptography without sharedsecret
-            if (shared_secret_handle == nullptr)
+            if (!shared_secret_handle)
             {
                 logError(SECURITY, "Not shared secret for participant " << participant_data.m_guid);
                 return false;
@@ -3952,7 +3930,7 @@ bool SecurityManager::participant_authorized(
                             *shared_secret_handle);
 
             // Store cryptography info
-            if (participant_crypto_handle != nullptr && !participant_crypto_handle->nil())
+            if (participant_crypto_handle && !participant_crypto_handle->nil())
             {
                 std::lock_guard<shared_mutex> _(mutex_);
 
