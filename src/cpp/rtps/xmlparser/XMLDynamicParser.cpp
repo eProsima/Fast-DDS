@@ -341,9 +341,17 @@ XMLP_ret XMLParser::parseXMLAliasDynamicType(
         if (valueBuilder != nullptr)
         {
             const char* name = p_root->Attribute(NAME);
-            p_dynamictypebuilder_t typeBuilder =
-                    types::DynamicTypeBuilderFactory::get_instance()->create_alias_builder(valueBuilder, name);
-            XMLProfileManager::insertDynamicTypeByName(name, typeBuilder);
+            if (name != nullptr)
+            {
+                p_dynamictypebuilder_t typeBuilder =
+                        types::DynamicTypeBuilderFactory::get_instance()->create_alias_builder(valueBuilder, name);
+                XMLProfileManager::insertDynamicTypeByName(name, typeBuilder);
+            }
+            else
+            {
+                logError(XMLPARSER, "Error parsing alias type: No name attribute given.");
+                ret = XMLP_ret::XML_ERROR;
+            }
         }
         else
         {
