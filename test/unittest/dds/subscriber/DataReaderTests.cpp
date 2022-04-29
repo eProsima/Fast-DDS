@@ -1550,6 +1550,30 @@ TEST_F(DataReaderTests, read_unread)
     }
 }
 
+template<typename DataType>
+void lookup_instance_test(
+        DataType& data,
+        DataWriter* writer,
+        DataReader* reader,
+        const InstanceHandle_t& handle_ok)
+{
+    // Send sample with key value 0
+    data.index(0);
+    EXPECT_TRUE(writer->write(&data));
+    // Ensure it arrived to the DataReader
+    EXPECT_TRUE(reader->wait_for_unread_message({ 1, 0 }));
+
+    // DataReader should have a single sample on instance handle_ok_
+
+    // Wrong parameter should return HANDLE_NIL
+    EXPECT_EQ(HANDLE_NIL, reader->lookup_instance(nullptr));
+    // Querying with the correct key value should return handle_ok_, but only if the type has keys
+    EXPECT_EQ(data.isKeyDefined() ? handle_ok : HANDLE_NIL, reader->lookup_instance(&data));
+    // Querying with another key should return HANDLE_NIL
+    data.index(37);
+    EXPECT_EQ(HANDLE_NIL, reader->lookup_instance(&data));
+}
+
 TEST_F(DataReaderTests, lookup_instance)
 {
     DataReaderQos reader_qos = DATAREADER_QOS_DEFAULT;
@@ -1561,25 +1585,25 @@ TEST_F(DataReaderTests, lookup_instance)
     reader_qos.resource_limits().max_samples_per_instance = 1;
     reader_qos.resource_limits().max_samples = 1;
 
-    create_entities(nullptr, reader_qos);
     create_instance_handles();
 
-    // Send sample for handle_ok_
-    FooType data;
-    data.index(0);
-    EXPECT_TRUE(data_writer_->write(&data));
-    // Ensure it arrived to the DataReader
-    EXPECT_TRUE(data_reader_->wait_for_unread_message({ 1, 0 }));
+    // Perform test on type with keys
+    {
+        create_entities(nullptr, reader_qos);
+        FooType data;
+        lookup_instance_test(data, data_writer_, data_reader_, handle_ok_);
+    }
 
-    // DataReader should have a sinfle sample on instance handle_ok_
+    // Destroy entities
+    TearDown();
 
-    // Wrong parameter should return HANDLE_NIL
-    EXPECT_EQ(HANDLE_NIL, data_reader_->lookup_instance(nullptr));
-    // Querying with the correct key should return handle_ok_
-    EXPECT_EQ(handle_ok_, data_reader_->lookup_instance(&data));
-    // Querying with another key should return HANDLE_NIL
-    data.index(37);
-    EXPECT_EQ(HANDLE_NIL, data_reader_->lookup_instance(&data));
+    // Perform test on type without keys
+    {
+        type_.reset(new FooBoundedTypeSupport());
+        create_entities(nullptr, reader_qos);
+        FooBoundedType data;
+        lookup_instance_test(data, data_writer_, data_reader_, handle_ok_);
+    }
 }
 
 TEST_F(DataReaderTests, sample_info)
