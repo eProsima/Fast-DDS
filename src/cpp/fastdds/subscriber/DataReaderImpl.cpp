@@ -1641,7 +1641,7 @@ InstanceHandle_t DataReaderImpl::lookup_instance(
 {
     InstanceHandle_t handle = HANDLE_NIL;
 
-    if (type_->m_isGetKeyDefined)
+    if (instance && type_->m_isGetKeyDefined)
     {
         if (type_->getKey(const_cast<void*>(instance), &handle, false))
         {
