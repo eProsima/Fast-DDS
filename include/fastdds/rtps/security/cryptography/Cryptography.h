@@ -59,7 +59,7 @@ protected:
 
 private:
 
-    Logging *m_logger;
+    Logging* m_logger;
 };
 
 } //namespace security

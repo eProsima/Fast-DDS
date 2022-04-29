@@ -143,8 +143,11 @@ public:
     {
         // enforce deleter due to handle destructor protected nature
         local_participant_crypto_handle_.reset(
-                new MockParticipantCryptoHandle,
-                [](MockParticipantCryptoHandle* p) { delete p; });
+            new MockParticipantCryptoHandle,
+            [](MockParticipantCryptoHandle* p)
+            {
+                delete p;
+            });
     }
 
     ~SecurityTest()
@@ -179,7 +182,7 @@ public:
 
     // handle factory for the tests
     template<class T>
-    typename std::enable_if<std::is_base_of<Handle,T>::value, T&>::type
+    typename std::enable_if<std::is_base_of<Handle, T>::value, T&>::type
     get_handle() const
     {
         return *new T;
@@ -187,18 +190,22 @@ public:
 
     // specialization for shared_ptrs doesn't need return method
     template<class T>
-    typename std::enable_if<std::is_base_of<Handle,T>::value, std::shared_ptr<Handle>>::type
+    typename std::enable_if<std::is_base_of<Handle, T>::value, std::shared_ptr<Handle>>::type
     get_sh_ptr() const
     {
         return std::dynamic_pointer_cast<Handle>(
-                std::shared_ptr<T>(
-                    new T,
-                    [](T * p){delete p;}));
+            std::shared_ptr<T>(
+                new T,
+                [](T* p)
+                {
+                    delete p;
+                }));
     }
 
     template<class T>
-    typename std::enable_if<std::is_base_of<Handle,T>::value, void>::type
-    return_handle(T& h) const
+    typename std::enable_if<std::is_base_of<Handle, T>::value, void>::type
+    return_handle(
+            T& h) const
     {
         delete &h;
     }

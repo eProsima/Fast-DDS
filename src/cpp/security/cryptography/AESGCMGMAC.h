@@ -35,9 +35,9 @@ namespace security {
 
 class AESGCMGMAC : public Cryptography
 {
-    CryptoKeyExchange *m_cryptokeyexchange;
+    CryptoKeyExchange* m_cryptokeyexchange;
     std::shared_ptr<AESGCMGMAC_KeyFactory> m_cryptokeyfactory;
-    CryptoTransform *m_cryptotransform;
+    CryptoTransform* m_cryptotransform;
 
 public:
 

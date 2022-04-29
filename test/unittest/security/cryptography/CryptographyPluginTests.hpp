@@ -35,7 +35,8 @@ protected:
     // Mock the handles to avoid cast issues
     using SharedSecretHandle = eprosima::fastrtps::rtps::security::MockAuthenticationPlugin::SharedSecretHandle;
     using PKIIdentityHandle = eprosima::fastrtps::rtps::security::MockAuthenticationPlugin::PKIIdentityHandle;
-    using AccessPermissionsHandle = eprosima::fastrtps::rtps::security::MockAccessControlPlugin::AccessPermissionsHandle;
+    using AccessPermissionsHandle =
+            eprosima::fastrtps::rtps::security::MockAccessControlPlugin::AccessPermissionsHandle;
 
     virtual void SetUp()
     {
@@ -47,34 +48,34 @@ protected:
 
         // Delegate SharedSecret creation to an actual implementation
         ON_CALL(auth_plugin, get_shared_secret)
-            .WillByDefault([this](
+                .WillByDefault([this](
                     const HandshakeHandle&,
                     SecurityException&)
-                    {
-                        return auth_plugin.get_dummy_shared_secret();
-                    });
+                {
+                    return auth_plugin.get_dummy_shared_secret();
+                });
 
         // Delegate SharedSecret disposal to an actual implementation
         ON_CALL(auth_plugin, return_sharedsecret_handle)
-            .WillByDefault([this](
+                .WillByDefault([this](
                     std::shared_ptr<SecretHandle>& sh,
                     SecurityException&)
-                    {
-                        return auth_plugin.return_dummy_sharedsecret(sh);
-                    });
+                {
+                    return auth_plugin.return_dummy_sharedsecret(sh);
+                });
 
         // Delegate identity handle creation to an actual implementation
         ON_CALL(auth_plugin, get_identity_handle)
-            .WillByDefault([this](SecurityException&)
+                .WillByDefault([this](SecurityException&)
                 {
                     return auth_plugin.get_dummy_identity_handle();
                 });
 
         // Delegate identity handle disposal to an actual implementation
         ON_CALL(auth_plugin, return_identity_handle)
-            .WillByDefault([this](
-                IdentityHandle* ih,
-                SecurityException&)
+                .WillByDefault([this](
+                    IdentityHandle* ih,
+                    SecurityException&)
                 {
                     return auth_plugin.return_dummy_identity_handle(ih);
                 });
@@ -104,10 +105,10 @@ TEST_F(CryptographyPluginTest, factory_CreateLocalParticipantHandle)
     SecurityException exception;
 
     PKIIdentityHandle& i_handle =
-        PKIIdentityHandle::narrow(*auth_plugin.get_identity_handle(exception));
+            PKIIdentityHandle::narrow(*auth_plugin.get_identity_handle(exception));
 
     AccessPermissionsHandle& perm_handle =
-        AccessPermissionsHandle::narrow(*access_plugin.get_permissions_handle(exception));
+            AccessPermissionsHandle::narrow(*access_plugin.get_permissions_handle(exception));
 
     eprosima::fastrtps::rtps::PropertySeq prop_handle;
     ParticipantSecurityAttributes part_sec_attr;
@@ -126,65 +127,66 @@ TEST_F(CryptographyPluginTest, factory_CreateLocalParticipantHandle)
     ASSERT_GT(local_participant->Participant2ParticipantKeyMaterial.size(), 0ul);
     ASSERT_GT(local_participant->Participant2ParticipantKxKeyMaterial.size(), 0ul);
 
-    ASSERT_TRUE( (local_participant->ParticipantKeyMaterial.transformation_kind ==
-            c_transfrom_kind_aes256_gcm) );
-    ASSERT_TRUE( (local_participant->Participant2ParticipantKeyMaterial.at(0).transformation_kind ==
-            c_transfrom_kind_aes256_gcm) );
-    ASSERT_TRUE( (local_participant->Participant2ParticipantKxKeyMaterial.at(0).transformation_kind ==
-            c_transfrom_kind_aes256_gcm) );
+    ASSERT_TRUE((local_participant->ParticipantKeyMaterial.transformation_kind ==
+            c_transfrom_kind_aes256_gcm));
+    ASSERT_TRUE((local_participant->Participant2ParticipantKeyMaterial.at(0).transformation_kind ==
+            c_transfrom_kind_aes256_gcm));
+    ASSERT_TRUE((local_participant->Participant2ParticipantKxKeyMaterial.at(0).transformation_kind ==
+            c_transfrom_kind_aes256_gcm));
 
     ASSERT_FALSE( std::all_of(local_participant->ParticipantKeyMaterial.master_salt.begin(),
             local_participant->ParticipantKeyMaterial.master_salt.end(), [](uint8_t i)
             {
                 return i == 0;
-            }) );
+            }));
     ASSERT_FALSE( std::all_of(local_participant->Participant2ParticipantKeyMaterial.at(0).master_salt.begin(),
             local_participant->Participant2ParticipantKeyMaterial.at(0).master_salt.end(), [](uint8_t i)
             {
                 return i == 0;
-            }) );
+            }));
     ASSERT_FALSE( std::all_of(local_participant->Participant2ParticipantKxKeyMaterial.at(0).master_salt.begin(),
             local_participant->Participant2ParticipantKxKeyMaterial.at(0).master_salt.end(), [](uint8_t i)
             {
                 return i == 0;
-            }) );
+            }));
 
     ASSERT_FALSE( std::all_of(local_participant->ParticipantKeyMaterial.master_sender_key.begin(),
             local_participant->ParticipantKeyMaterial.master_sender_key.end(), [](uint8_t i)
             {
                 return i == 0;
-            }) );
+            }));
     ASSERT_FALSE( std::all_of(local_participant->Participant2ParticipantKeyMaterial.at(0).master_sender_key.begin(),
             local_participant->Participant2ParticipantKeyMaterial.at(0).master_sender_key.end(), [](uint8_t i)
             {
                 return i == 0;
-            }) );
+            }));
     ASSERT_FALSE( std::all_of(local_participant->Participant2ParticipantKxKeyMaterial.at(0).master_sender_key.begin(),
             local_participant->Participant2ParticipantKxKeyMaterial.at(0).master_sender_key.end(), [](uint8_t i)
             {
                 return i == 0;
-            }) );
+            }));
 
     ASSERT_FALSE( std::any_of(local_participant->ParticipantKeyMaterial.receiver_specific_key_id.begin(),
             local_participant->ParticipantKeyMaterial.receiver_specific_key_id.end(), [](uint8_t i)
             {
                 return i != 0;
-            }) );
+            }));
     ASSERT_FALSE( std::all_of(local_participant->Participant2ParticipantKeyMaterial.at(0).receiver_specific_key_id.begin(),
             local_participant->Participant2ParticipantKeyMaterial.at(0).receiver_specific_key_id.end(), [](uint8_t i)
             {
                 return i == 0;
-            }) );
+            }));
     ASSERT_FALSE( std::all_of(local_participant->Participant2ParticipantKxKeyMaterial.at(0).receiver_specific_key_id.
-            begin(), local_participant->Participant2ParticipantKxKeyMaterial.at(0).receiver_specific_key_id.end(),
+                    begin(),
+            local_participant->Participant2ParticipantKxKeyMaterial.at(0).receiver_specific_key_id.end(),
             [](uint8_t i)
             {
                 return i == 0;
-            }) );
+            }));
 
     //Release resources and check the handle is indeed empty
     auth_plugin.return_identity_handle(&i_handle, exception);
-    access_plugin.return_permissions_handle(&perm_handle,exception);
+    access_plugin.return_permissions_handle(&perm_handle, exception);
 
     CryptoPlugin->keyfactory()->unregister_participant(target, exception);
 }
@@ -197,16 +199,16 @@ TEST_F(CryptographyPluginTest, factory_RegisterRemoteParticipant)
     SecurityException exception;
 
     PKIIdentityHandle& i_handle =
-        PKIIdentityHandle::narrow(*auth_plugin.get_identity_handle(exception));
+            PKIIdentityHandle::narrow(*auth_plugin.get_identity_handle(exception));
 
     AccessPermissionsHandle& perm_handle =
-        AccessPermissionsHandle::narrow(*access_plugin.get_permissions_handle(exception));
+            AccessPermissionsHandle::narrow(*access_plugin.get_permissions_handle(exception));
 
     eprosima::fastrtps::rtps::PropertySeq prop_handle;
     ParticipantSecurityAttributes part_sec_attr;
 
     std::shared_ptr<SecretHandle> secret =
-        auth_plugin.get_shared_secret(SharedSecretHandle::nil_handle, exception);
+            auth_plugin.get_shared_secret(SharedSecretHandle::nil_handle, exception);
 
     std::shared_ptr<SharedSecretHandle> shared_secret = std::dynamic_pointer_cast<SharedSecretHandle>(secret);
 
@@ -281,7 +283,7 @@ TEST_F(CryptographyPluginTest, factory_RegisterRemoteParticipant)
 
     auth_plugin.return_identity_handle(&i_handle, exception);
     auth_plugin.return_sharedsecret_handle(secret, exception);
-    access_plugin.return_permissions_handle(&perm_handle,exception);
+    access_plugin.return_permissions_handle(&perm_handle, exception);
 }
 
 TEST_F(CryptographyPluginTest, exchange_CDRSerializenDeserialize){
@@ -291,10 +293,10 @@ TEST_F(CryptographyPluginTest, exchange_CDRSerializenDeserialize){
     SecurityException exception;
 
     PKIIdentityHandle& i_handle =
-        PKIIdentityHandle::narrow(*auth_plugin.get_identity_handle(exception));
+            PKIIdentityHandle::narrow(*auth_plugin.get_identity_handle(exception));
 
     AccessPermissionsHandle& perm_handle =
-        AccessPermissionsHandle::narrow(*access_plugin.get_permissions_handle(exception));
+            AccessPermissionsHandle::narrow(*access_plugin.get_permissions_handle(exception));
 
     eprosima::fastrtps::rtps::PropertySeq prop_handle;
     ParticipantSecurityAttributes part_sec_attr;
@@ -327,7 +329,7 @@ TEST_F(CryptographyPluginTest, exchange_CDRSerializenDeserialize){
     CryptoPlugin->keyfactory()->unregister_participant(ParticipantA, exception);
 
     auth_plugin.return_identity_handle(&i_handle, exception);
-    access_plugin.return_permissions_handle(&perm_handle,exception);
+    access_plugin.return_permissions_handle(&perm_handle, exception);
 }
 
 TEST_F(CryptographyPluginTest, exchange_ParticipantCryptoTokens)
@@ -337,16 +339,16 @@ TEST_F(CryptographyPluginTest, exchange_ParticipantCryptoTokens)
     SecurityException exception;
 
     PKIIdentityHandle& i_handle =
-        PKIIdentityHandle::narrow(*auth_plugin.get_identity_handle(exception));
+            PKIIdentityHandle::narrow(*auth_plugin.get_identity_handle(exception));
 
     AccessPermissionsHandle& perm_handle =
-        AccessPermissionsHandle::narrow(*access_plugin.get_permissions_handle(exception));
+            AccessPermissionsHandle::narrow(*access_plugin.get_permissions_handle(exception));
 
     eprosima::fastrtps::rtps::PropertySeq prop_handle;
     ParticipantSecurityAttributes part_sec_attr;
 
     std::shared_ptr<SecretHandle> secret =
-        auth_plugin.get_shared_secret(SharedSecretHandle::nil_handle, exception);
+            auth_plugin.get_shared_secret(SharedSecretHandle::nil_handle, exception);
 
     std::shared_ptr<SharedSecretHandle> shared_secret = std::dynamic_pointer_cast<SharedSecretHandle>(secret);
 
@@ -438,7 +440,7 @@ TEST_F(CryptographyPluginTest, exchange_ParticipantCryptoTokens)
 
     auth_plugin.return_identity_handle(&i_handle, exception);
     auth_plugin.return_sharedsecret_handle(secret, exception);
-    access_plugin.return_permissions_handle(&perm_handle,exception);
+    access_plugin.return_permissions_handle(&perm_handle, exception);
 }
 
 TEST_F(CryptographyPluginTest, transform_RTPSMessage)
@@ -448,16 +450,16 @@ TEST_F(CryptographyPluginTest, transform_RTPSMessage)
     SecurityException exception;
 
     PKIIdentityHandle& i_handle =
-        PKIIdentityHandle::narrow(*auth_plugin.get_identity_handle(exception));
+            PKIIdentityHandle::narrow(*auth_plugin.get_identity_handle(exception));
 
     AccessPermissionsHandle& perm_handle =
-        AccessPermissionsHandle::narrow(*access_plugin.get_permissions_handle(exception));
+            AccessPermissionsHandle::narrow(*access_plugin.get_permissions_handle(exception));
 
     eprosima::fastrtps::rtps::PropertySeq prop_handle;
     ParticipantSecurityAttributes part_sec_attr;
 
     std::shared_ptr<SecretHandle> secret =
-        auth_plugin.get_shared_secret(SharedSecretHandle::nil_handle, exception);
+            auth_plugin.get_shared_secret(SharedSecretHandle::nil_handle, exception);
 
     std::shared_ptr<SharedSecretHandle> shared_secret = std::dynamic_pointer_cast<SharedSecretHandle>(secret);
 
@@ -636,7 +638,7 @@ TEST_F(CryptographyPluginTest, transform_RTPSMessage)
 
     auth_plugin.return_identity_handle(&i_handle, exception);
     auth_plugin.return_sharedsecret_handle(secret, exception);
-    access_plugin.return_permissions_handle(&perm_handle,exception);
+    access_plugin.return_permissions_handle(&perm_handle, exception);
 }
 
 TEST_F(CryptographyPluginTest, factory_CreateLocalWriterHandle)
@@ -646,10 +648,10 @@ TEST_F(CryptographyPluginTest, factory_CreateLocalWriterHandle)
     SecurityException exception;
 
     PKIIdentityHandle& i_handle =
-        PKIIdentityHandle::narrow(*auth_plugin.get_identity_handle(exception));
+            PKIIdentityHandle::narrow(*auth_plugin.get_identity_handle(exception));
 
     AccessPermissionsHandle& perm_handle =
-        AccessPermissionsHandle::narrow(*access_plugin.get_permissions_handle(exception));
+            AccessPermissionsHandle::narrow(*access_plugin.get_permissions_handle(exception));
 
     eprosima::fastrtps::rtps::PropertySeq prop_handle;
     ParticipantSecurityAttributes part_sec_attr;
@@ -657,7 +659,7 @@ TEST_F(CryptographyPluginTest, factory_CreateLocalWriterHandle)
     EndpointSecurityAttributes sec_attrs;
 
     std::shared_ptr<SecretHandle> secret =
-        auth_plugin.get_shared_secret(SharedSecretHandle::nil_handle, exception);
+            auth_plugin.get_shared_secret(SharedSecretHandle::nil_handle, exception);
 
     std::shared_ptr<SharedSecretHandle> shared_secret = std::dynamic_pointer_cast<SharedSecretHandle>(secret);
 
@@ -682,36 +684,36 @@ TEST_F(CryptographyPluginTest, factory_CreateLocalWriterHandle)
     ASSERT_TRUE(!local_writer.nil());
 
     ASSERT_TRUE(local_writer->Entity2RemoteKeyMaterial.empty());
-    ASSERT_TRUE( (local_writer->EntityKeyMaterial.at(0).transformation_kind == c_transfrom_kind_aes256_gcm) );
+    ASSERT_TRUE((local_writer->EntityKeyMaterial.at(0).transformation_kind == c_transfrom_kind_aes256_gcm));
 
     ASSERT_FALSE( std::all_of(local_writer->EntityKeyMaterial.at(0).master_salt.begin(),
             local_writer->EntityKeyMaterial.at(0).master_salt.end(), [](uint8_t i)
             {
                 return i == 0;
-            }) );
+            }));
 
     ASSERT_FALSE( std::all_of(local_writer->EntityKeyMaterial.at(0).master_sender_key.begin(),
             local_writer->EntityKeyMaterial.at(0).master_sender_key.end(), [](uint8_t i)
             {
                 return i == 0;
-            }) );
+            }));
 
     ASSERT_FALSE( std::any_of(local_writer->EntityKeyMaterial.at(0).receiver_specific_key_id.begin(),
             local_writer->EntityKeyMaterial.at(0).receiver_specific_key_id.end(), [](uint8_t i)
             {
                 return i != 0;
-            }) );
+            }));
 
     ASSERT_FALSE( std::any_of(local_writer->EntityKeyMaterial.at(0).master_receiver_specific_key.begin(),
             local_writer->EntityKeyMaterial.at(0).master_receiver_specific_key.end(), [](uint8_t i)
             {
                 return i != 0;
-            }) );
+            }));
 
     //Release resources and check the handle is indeed empty
     auth_plugin.return_identity_handle(&i_handle, exception);
     auth_plugin.return_sharedsecret_handle(secret, exception);
-    access_plugin.return_permissions_handle(&perm_handle,exception);
+    access_plugin.return_permissions_handle(&perm_handle, exception);
 
     CryptoPlugin->keyfactory()->unregister_datawriter(target, exception);
     CryptoPlugin->keyfactory()->unregister_participant(participant, exception);
@@ -724,10 +726,10 @@ TEST_F(CryptographyPluginTest, factory_CreateLocalReaderHandle)
     SecurityException exception;
 
     PKIIdentityHandle& i_handle =
-        PKIIdentityHandle::narrow(*auth_plugin.get_identity_handle(exception));
+            PKIIdentityHandle::narrow(*auth_plugin.get_identity_handle(exception));
 
     AccessPermissionsHandle& perm_handle =
-        AccessPermissionsHandle::narrow(*access_plugin.get_permissions_handle(exception));
+            AccessPermissionsHandle::narrow(*access_plugin.get_permissions_handle(exception));
 
     eprosima::fastrtps::rtps::PropertySeq prop_handle;
     ParticipantSecurityAttributes part_sec_attr;
@@ -735,7 +737,7 @@ TEST_F(CryptographyPluginTest, factory_CreateLocalReaderHandle)
     EndpointSecurityAttributes sec_attrs;
 
     std::shared_ptr<SecretHandle> secret =
-        auth_plugin.get_shared_secret(SharedSecretHandle::nil_handle, exception);
+            auth_plugin.get_shared_secret(SharedSecretHandle::nil_handle, exception);
 
     std::shared_ptr<SharedSecretHandle> shared_secret = std::dynamic_pointer_cast<SharedSecretHandle>(secret);
 
@@ -760,36 +762,36 @@ TEST_F(CryptographyPluginTest, factory_CreateLocalReaderHandle)
     ASSERT_TRUE(!local_reader.nil());
 
     ASSERT_TRUE(local_reader->Entity2RemoteKeyMaterial.empty());
-    ASSERT_TRUE( (local_reader->EntityKeyMaterial.at(0).transformation_kind == c_transfrom_kind_aes256_gcm) );
+    ASSERT_TRUE((local_reader->EntityKeyMaterial.at(0).transformation_kind == c_transfrom_kind_aes256_gcm));
 
     ASSERT_FALSE( std::all_of(local_reader->EntityKeyMaterial.at(0).master_salt.begin(),
             local_reader->EntityKeyMaterial.at(0).master_salt.end(), [](uint8_t i)
             {
                 return i == 0;
-            }) );
+            }));
 
     ASSERT_FALSE( std::all_of(local_reader->EntityKeyMaterial.at(0).master_sender_key.begin(),
             local_reader->EntityKeyMaterial.at(0).master_sender_key.end(), [](uint8_t i)
             {
                 return i == 0;
-            }) );
+            }));
 
     ASSERT_FALSE( std::any_of(local_reader->EntityKeyMaterial.at(0).receiver_specific_key_id.begin(),
             local_reader->EntityKeyMaterial.at(0).receiver_specific_key_id.end(), [](uint8_t i)
             {
                 return i != 0;
-            }) );
+            }));
 
     ASSERT_FALSE( std::any_of(local_reader->EntityKeyMaterial.at(0).master_receiver_specific_key.begin(),
             local_reader->EntityKeyMaterial.at(0).master_receiver_specific_key.end(), [](uint8_t i)
             {
                 return i != 0;
-            }) );
+            }));
 
     //Release resources and check the handle is indeed empty
     auth_plugin.return_identity_handle(&i_handle, exception);
     auth_plugin.return_sharedsecret_handle(secret, exception);
-    access_plugin.return_permissions_handle(&perm_handle,exception);
+    access_plugin.return_permissions_handle(&perm_handle, exception);
 
     CryptoPlugin->keyfactory()->unregister_datareader(target, exception);
     CryptoPlugin->keyfactory()->unregister_participant(participant, exception);
@@ -802,10 +804,10 @@ TEST_F(CryptographyPluginTest, factory_RegisterRemoteReaderWriter)
     SecurityException exception;
 
     PKIIdentityHandle& i_handle =
-        PKIIdentityHandle::narrow(*auth_plugin.get_identity_handle(exception));
+            PKIIdentityHandle::narrow(*auth_plugin.get_identity_handle(exception));
 
     AccessPermissionsHandle& perm_handle =
-        AccessPermissionsHandle::narrow(*access_plugin.get_permissions_handle(exception));
+            AccessPermissionsHandle::narrow(*access_plugin.get_permissions_handle(exception));
 
     eprosima::fastrtps::rtps::PropertySeq prop_handle;
     ParticipantSecurityAttributes part_sec_attr;
@@ -813,7 +815,7 @@ TEST_F(CryptographyPluginTest, factory_RegisterRemoteReaderWriter)
     EndpointSecurityAttributes sec_attrs;
 
     std::shared_ptr<SecretHandle> secret =
-        auth_plugin.get_shared_secret(SharedSecretHandle::nil_handle, exception);
+            auth_plugin.get_shared_secret(SharedSecretHandle::nil_handle, exception);
 
     std::shared_ptr<SharedSecretHandle> shared_secret = std::dynamic_pointer_cast<SharedSecretHandle>(secret);
 
@@ -884,7 +886,7 @@ TEST_F(CryptographyPluginTest, factory_RegisterRemoteReaderWriter)
 
     auth_plugin.return_identity_handle(&i_handle, exception);
     auth_plugin.return_sharedsecret_handle(secret, exception);
-    access_plugin.return_permissions_handle(&perm_handle,exception);
+    access_plugin.return_permissions_handle(&perm_handle, exception);
 
     CryptoPlugin->keyfactory()->unregister_datawriter(writer, exception);
     CryptoPlugin->keyfactory()->unregister_datareader(reader, exception);
@@ -908,10 +910,10 @@ TEST_F(CryptographyPluginTest, exchange_ReaderWriterCryptoTokens)
     SecurityException exception;
 
     PKIIdentityHandle& i_handle =
-        PKIIdentityHandle::narrow(*auth_plugin.get_identity_handle(exception));
+            PKIIdentityHandle::narrow(*auth_plugin.get_identity_handle(exception));
 
     AccessPermissionsHandle& perm_handle =
-        AccessPermissionsHandle::narrow(*access_plugin.get_permissions_handle(exception));
+            AccessPermissionsHandle::narrow(*access_plugin.get_permissions_handle(exception));
 
     eprosima::fastrtps::rtps::PropertySeq prop_handle;
     ParticipantSecurityAttributes part_sec_attr;
@@ -919,7 +921,7 @@ TEST_F(CryptographyPluginTest, exchange_ReaderWriterCryptoTokens)
     EndpointSecurityAttributes sec_attrs;
 
     std::shared_ptr<SecretHandle> secret =
-        auth_plugin.get_shared_secret(SharedSecretHandle::nil_handle, exception);
+            auth_plugin.get_shared_secret(SharedSecretHandle::nil_handle, exception);
 
     std::shared_ptr<SharedSecretHandle> shared_secret = std::dynamic_pointer_cast<SharedSecretHandle>(secret);
 
@@ -1036,7 +1038,7 @@ TEST_F(CryptographyPluginTest, exchange_ReaderWriterCryptoTokens)
     //Release resources and check the handle is indeed empty
     auth_plugin.return_identity_handle(&i_handle, exception);
     auth_plugin.return_sharedsecret_handle(secret, exception);
-    access_plugin.return_permissions_handle(&perm_handle,exception);
+    access_plugin.return_permissions_handle(&perm_handle, exception);
 
     CryptoPlugin->keyfactory()->unregister_datawriter(writer, exception);
     CryptoPlugin->keyfactory()->unregister_datawriter(remote_writer, exception);
@@ -1059,10 +1061,10 @@ TEST_F(CryptographyPluginTest, transform_SerializedPayload)
     SecurityException exception;
 
     PKIIdentityHandle& i_handle =
-        PKIIdentityHandle::narrow(*auth_plugin.get_identity_handle(exception));
+            PKIIdentityHandle::narrow(*auth_plugin.get_identity_handle(exception));
 
     AccessPermissionsHandle& perm_handle =
-        AccessPermissionsHandle::narrow(*access_plugin.get_permissions_handle(exception));
+            AccessPermissionsHandle::narrow(*access_plugin.get_permissions_handle(exception));
 
     eprosima::fastrtps::rtps::PropertySeq prop_handle;
     ParticipantSecurityAttributes part_sec_attr;
@@ -1070,7 +1072,7 @@ TEST_F(CryptographyPluginTest, transform_SerializedPayload)
     EndpointSecurityAttributes sec_attrs;
 
     std::shared_ptr<SecretHandle> secret =
-        auth_plugin.get_shared_secret(SharedSecretHandle::nil_handle, exception);
+            auth_plugin.get_shared_secret(SharedSecretHandle::nil_handle, exception);
 
     std::shared_ptr<SharedSecretHandle> shared_secret = std::dynamic_pointer_cast<SharedSecretHandle>(secret);
 
@@ -1278,7 +1280,7 @@ TEST_F(CryptographyPluginTest, transform_SerializedPayload)
 
     auth_plugin.return_identity_handle(&i_handle, exception);
     auth_plugin.return_sharedsecret_handle(secret, exception);
-    access_plugin.return_permissions_handle(&perm_handle,exception);
+    access_plugin.return_permissions_handle(&perm_handle, exception);
 }
 
 TEST_F(CryptographyPluginTest, transform_Writer_Submesage)
@@ -1288,10 +1290,10 @@ TEST_F(CryptographyPluginTest, transform_Writer_Submesage)
     SecurityException exception;
 
     PKIIdentityHandle& i_handle =
-        PKIIdentityHandle::narrow(*auth_plugin.get_identity_handle(exception));
+            PKIIdentityHandle::narrow(*auth_plugin.get_identity_handle(exception));
 
     AccessPermissionsHandle& perm_handle =
-        AccessPermissionsHandle::narrow(*access_plugin.get_permissions_handle(exception));
+            AccessPermissionsHandle::narrow(*access_plugin.get_permissions_handle(exception));
 
     eprosima::fastrtps::rtps::PropertySeq prop_handle;
     ParticipantSecurityAttributes part_sec_attr;
@@ -1299,7 +1301,7 @@ TEST_F(CryptographyPluginTest, transform_Writer_Submesage)
     EndpointSecurityAttributes sec_attrs;
 
     std::shared_ptr<SecretHandle> secret =
-        auth_plugin.get_shared_secret(SharedSecretHandle::nil_handle, exception);
+            auth_plugin.get_shared_secret(SharedSecretHandle::nil_handle, exception);
 
     std::shared_ptr<SharedSecretHandle> shared_secret = std::dynamic_pointer_cast<SharedSecretHandle>(secret);
 
@@ -1499,7 +1501,7 @@ TEST_F(CryptographyPluginTest, transform_Writer_Submesage)
 
     auth_plugin.return_sharedsecret_handle(secret, exception);
     auth_plugin.return_identity_handle(&i_handle, exception);
-    access_plugin.return_permissions_handle(&perm_handle,exception);
+    access_plugin.return_permissions_handle(&perm_handle, exception);
 
     CryptoPlugin->keyfactory()->unregister_datawriter(writer, exception);
     CryptoPlugin->keyfactory()->unregister_datawriter(remote_writer, exception);
@@ -1521,10 +1523,10 @@ TEST_F(CryptographyPluginTest, transform_Reader_Submessage)
     SecurityException exception;
 
     PKIIdentityHandle& i_handle =
-        PKIIdentityHandle::narrow(*auth_plugin.get_identity_handle(exception));
+            PKIIdentityHandle::narrow(*auth_plugin.get_identity_handle(exception));
 
     AccessPermissionsHandle& perm_handle =
-        AccessPermissionsHandle::narrow(*access_plugin.get_permissions_handle(exception));
+            AccessPermissionsHandle::narrow(*access_plugin.get_permissions_handle(exception));
 
     eprosima::fastrtps::rtps::PropertySeq prop_handle;
     ParticipantSecurityAttributes part_sec_attr;
@@ -1532,7 +1534,7 @@ TEST_F(CryptographyPluginTest, transform_Reader_Submessage)
     EndpointSecurityAttributes sec_attrs;
 
     std::shared_ptr<SecretHandle> secret =
-        auth_plugin.get_shared_secret(SharedSecretHandle::nil_handle, exception);
+            auth_plugin.get_shared_secret(SharedSecretHandle::nil_handle, exception);
 
     std::shared_ptr<SharedSecretHandle> shared_secret = std::dynamic_pointer_cast<SharedSecretHandle>(secret);
 
@@ -1744,7 +1746,7 @@ TEST_F(CryptographyPluginTest, transform_Reader_Submessage)
 
     auth_plugin.return_sharedsecret_handle(secret, exception);
     auth_plugin.return_identity_handle(&i_handle, exception);
-    access_plugin.return_permissions_handle(&perm_handle,exception);
+    access_plugin.return_permissions_handle(&perm_handle, exception);
 }
 
 TEST_F(CryptographyPluginTest, transform_preprocess_secure_submessage)
@@ -1754,10 +1756,10 @@ TEST_F(CryptographyPluginTest, transform_preprocess_secure_submessage)
     SecurityException exception;
 
     PKIIdentityHandle& i_handle =
-        PKIIdentityHandle::narrow(*auth_plugin.get_identity_handle(exception));
+            PKIIdentityHandle::narrow(*auth_plugin.get_identity_handle(exception));
 
     AccessPermissionsHandle& perm_handle =
-        AccessPermissionsHandle::narrow(*access_plugin.get_permissions_handle(exception));
+            AccessPermissionsHandle::narrow(*access_plugin.get_permissions_handle(exception));
 
     eprosima::fastrtps::rtps::PropertySeq prop_handle;
     ParticipantSecurityAttributes part_sec_attr;
@@ -1765,7 +1767,7 @@ TEST_F(CryptographyPluginTest, transform_preprocess_secure_submessage)
     EndpointSecurityAttributes sec_attrs;
 
     std::shared_ptr<SecretHandle> secret =
-        auth_plugin.get_shared_secret(SharedSecretHandle::nil_handle, exception);
+            auth_plugin.get_shared_secret(SharedSecretHandle::nil_handle, exception);
 
     auto shared_secret = std::dynamic_pointer_cast<SharedSecretHandle>(secret);
 
@@ -1933,7 +1935,7 @@ TEST_F(CryptographyPluginTest, transform_preprocess_secure_submessage)
 
     auth_plugin.return_sharedsecret_handle(secret, exception);
     auth_plugin.return_identity_handle(&i_handle, exception);
-    access_plugin.return_permissions_handle(&perm_handle,exception);
+    access_plugin.return_permissions_handle(&perm_handle, exception);
 }
 
 #endif // ifndef _UNITTEST_SECURITY_CRYPTOGRAPHY_CRYPTOGRAPHYPLUGINTESTS_HPP_

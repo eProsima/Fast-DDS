@@ -55,4 +55,3 @@ AESGCMGMAC::~AESGCMGMAC()
     delete m_cryptokeyexchange;
     delete m_cryptotransform;
 }
-

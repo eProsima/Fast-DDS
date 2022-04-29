@@ -33,102 +33,103 @@ namespace security {
 
 class MockAccessControlPlugin : public AccessControl
 {
-    public:
+public:
 
     using AccessPermissionsHandle = HandleImpl<AccessPermissions, MockAccessControlPlugin>;
 
     MOCK_METHOD(PermissionsHandle*, validate_local_permissions, (
-            Authentication& auth_plugin,
-            const IdentityHandle& identity,
-            const uint32_t domain_id,
-            const RTPSParticipantAttributes& participant_attr,
-            SecurityException& exception), (override));
+                Authentication & auth_plugin,
+                const IdentityHandle& identity,
+                const uint32_t domain_id,
+                const RTPSParticipantAttributes& participant_attr,
+                SecurityException & exception), (override));
 
     MOCK_METHOD(bool, get_permissions_token, (
-            PermissionsToken** permissions_token,
-            const PermissionsHandle& handle,
-            SecurityException& exception), (override));
+                PermissionsToken * *permissions_token,
+                const PermissionsHandle& handle,
+                SecurityException & exception), (override));
 
-    MOCK_METHOD(bool, return_permissions_token,(
-            PermissionsToken* token,
-            SecurityException& exception), (override));
+    MOCK_METHOD(bool, return_permissions_token, (
+                PermissionsToken * token,
+                SecurityException & exception), (override));
 
     MOCK_METHOD(bool, get_permissions_credential_token, (
-            PermissionsCredentialToken** permissions_credential_token,
-            const PermissionsHandle& handle,
-            SecurityException& exception), (override));
+                PermissionsCredentialToken * *permissions_credential_token,
+                const PermissionsHandle& handle,
+                SecurityException & exception), (override));
 
     MOCK_METHOD(bool, return_permissions_credential_token, (
-            PermissionsCredentialToken* token,
-            SecurityException& exception), (override));
+                PermissionsCredentialToken * token,
+                SecurityException & exception), (override));
 
     MOCK_METHOD(PermissionsHandle*, validate_remote_permissions, (
-            Authentication& auth_plugin,
-            const IdentityHandle& local_identity_handle,
-            const PermissionsHandle& local_permissions_handle,
-            const IdentityHandle& remote_identity_handle,
-            const PermissionsToken& remote_permissions_token,
-            const PermissionsCredentialToken& remote_credential_token,
-            SecurityException& exception), (override));
+                Authentication & auth_plugin,
+                const IdentityHandle& local_identity_handle,
+                const PermissionsHandle& local_permissions_handle,
+                const IdentityHandle& remote_identity_handle,
+                const PermissionsToken& remote_permissions_token,
+                const PermissionsCredentialToken& remote_credential_token,
+                SecurityException & exception), (override));
 
     MOCK_METHOD(bool, check_create_participant, (
-            const PermissionsHandle& local_handle,
-            const uint32_t domain_id,
-            const RTPSParticipantAttributes& qos,
-            SecurityException& exception), (override));
+                const PermissionsHandle& local_handle,
+                const uint32_t domain_id,
+                const RTPSParticipantAttributes& qos,
+                SecurityException & exception), (override));
 
     MOCK_METHOD(bool, check_remote_participant, (
-            const PermissionsHandle& remote_handle,
-            const uint32_t domain_id,
-            const ParticipantProxyData&,
-            SecurityException& exception), (override));
+                const PermissionsHandle& remote_handle,
+                const uint32_t domain_id,
+                const ParticipantProxyData&,
+                SecurityException & exception), (override));
 
     MOCK_METHOD(bool, check_create_datawriter, (
-            const PermissionsHandle& local_handle,
-            const uint32_t domain_id,
-            const std::string& topic_name,
-            const std::vector<std::string>& partitions,
-            SecurityException& exception), (override));
+                const PermissionsHandle& local_handle,
+                const uint32_t domain_id,
+                const std::string& topic_name,
+                const std::vector<std::string>& partitions,
+                SecurityException & exception), (override));
 
     MOCK_METHOD(bool, check_create_datareader, (
-            const PermissionsHandle& local_handle,
-            const uint32_t domain_id,
-            const std::string& topic_name,
-            const std::vector<std::string>& partitions,
-            SecurityException& exception), (override));
+                const PermissionsHandle& local_handle,
+                const uint32_t domain_id,
+                const std::string& topic_name,
+                const std::vector<std::string>& partitions,
+                SecurityException & exception), (override));
 
     MOCK_METHOD(bool, check_remote_datawriter, (
-            const PermissionsHandle& remote_handle,
-            const uint32_t domain_id,
-            const WriterProxyData& publication_data,
-            SecurityException& exception), (override));
+                const PermissionsHandle& remote_handle,
+                const uint32_t domain_id,
+                const WriterProxyData& publication_data,
+                SecurityException & exception), (override));
 
     MOCK_METHOD(bool, check_remote_datareader, (
-            const PermissionsHandle& remote_handle,
-            const uint32_t domain_id,
-            const ReaderProxyData& subscription_data,
-            bool& relay_only,
-            SecurityException& exception), (override));
+                const PermissionsHandle& remote_handle,
+                const uint32_t domain_id,
+                const ReaderProxyData& subscription_data,
+                bool& relay_only,
+                SecurityException & exception), (override));
     MOCK_METHOD(bool, get_participant_sec_attributes, (
-            const PermissionsHandle& local_handle,
-            ParticipantSecurityAttributes& attributes,
-            SecurityException& exception), (override));
+                const PermissionsHandle& local_handle,
+                ParticipantSecurityAttributes & attributes,
+                SecurityException & exception), (override));
 
     MOCK_METHOD(bool, get_datawriter_sec_attributes, (
-            const PermissionsHandle& permissions_handle,
-            const std::string& topic_name,
-            const std::vector<std::string>& partitions,
-            EndpointSecurityAttributes& attributes,
-            SecurityException& exception), (override));
+                const PermissionsHandle& permissions_handle,
+                const std::string& topic_name,
+                const std::vector<std::string>& partitions,
+                EndpointSecurityAttributes & attributes,
+                SecurityException & exception), (override));
 
     MOCK_METHOD(bool, get_datareader_sec_attributes, (
-            const PermissionsHandle& permissions_handle,
-            const std::string& topic_name,
-            const std::vector<std::string>& partitions,
-            EndpointSecurityAttributes& attributes,
-            SecurityException& exception), (override));
+                const PermissionsHandle& permissions_handle,
+                const std::string& topic_name,
+                const std::vector<std::string>& partitions,
+                EndpointSecurityAttributes & attributes,
+                SecurityException & exception), (override));
 
-    PermissionsHandle* get_permissions_handle(SecurityException&)
+    PermissionsHandle* get_permissions_handle(
+            SecurityException&)
     {
         return new (std::nothrow) AccessPermissionsHandle();
     }

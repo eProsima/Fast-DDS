@@ -174,7 +174,7 @@ public:
             auto temp = datawriter_crypto_handle->shared_from_this();
             return unregister_datawriter(temp, exception);
         }
-        catch(std::bad_weak_ptr&)
+        catch (std::bad_weak_ptr&)
         {
             return false;
         }
@@ -211,7 +211,7 @@ public:
             auto temp = datareader_crypto_handle->shared_from_this();
             return unregister_datareader(temp, exception);
         }
-        catch(std::bad_weak_ptr&)
+        catch (std::bad_weak_ptr&)
         {
             return false;
         }

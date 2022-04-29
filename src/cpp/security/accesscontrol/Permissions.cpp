@@ -893,7 +893,8 @@ bool Permissions::return_permissions_credential_token(
     return true;
 }
 
-PermissionsHandle* Permissions::get_permissions_handle(SecurityException&)
+PermissionsHandle* Permissions::get_permissions_handle(
+        SecurityException&)
 {
     return new (std::nothrow) AccessPermissionsHandle();
 }
