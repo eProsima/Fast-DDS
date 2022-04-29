@@ -2261,8 +2261,7 @@ public:
  * 6. delete_readcondition
  * 7. get_matched_publications
  * 8. get_key_value
- * 9. lookup_instance
- * 10. wait_for_historical_data
+ * 9. wait_for_historical_data
  */
 TEST_F(DataReaderUnsupportedTests, UnsupportedDataReaderMethods)
 {
@@ -2383,12 +2382,10 @@ TEST_F(DataReaderUnsupportedTests, UnsupportedDataReaderMethods)
     fastrtps::rtps::InstanceHandle_t key_handle;
     EXPECT_EQ(ReturnCode_t::RETCODE_UNSUPPORTED, data_reader->get_key_value(nullptr, key_handle));
 
-    EXPECT_EQ(HANDLE_NIL, data_reader->lookup_instance(nullptr));
-
     EXPECT_EQ(ReturnCode_t::RETCODE_UNSUPPORTED, data_reader->wait_for_historical_data({0, 1}));
 
-    // Expected logWarnings: create_querycondition, create_readcondition, lookup_instance
-    HELPER_WaitForEntries(3);
+    // Expected logWarnings: create_querycondition, create_readcondition
+    HELPER_WaitForEntries(2);
 
     ASSERT_EQ(subscriber->delete_datareader(data_reader), ReturnCode_t::RETCODE_OK);
     ASSERT_EQ(participant->delete_subscriber(subscriber), ReturnCode_t::RETCODE_OK);
