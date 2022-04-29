@@ -83,7 +83,7 @@ public:
      * This operation can be used to retrieve the serialized payload of the instance key that corresponds to an
      * @ref eprosima::fastdds::dds::Entity::instance_handle_ "instance_handle".
      *
-     * This operation will return @c nullpre if the InstanceHandle_t handle does not correspond to an existing
+     * This operation will return @c nullptr if the InstanceHandle_t handle does not correspond to an existing
      * data-object known to the DataWriterHistory.
      *
      * @param[in] handle  Handle to the instance to retrieve the key values from.

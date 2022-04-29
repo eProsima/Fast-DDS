@@ -1392,7 +1392,7 @@ public:
  * 3. register_instance_w_timestamp
  * 4. unregister_instance_w_timestamp
  * 5. get_matched_subscriptions
- * 7. lookup_instance
+ * 6. lookup_instance
  */
 TEST_F(DataWriterUnsupportedTests, UnsupportedDataWriterMethods)
 {
