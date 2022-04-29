@@ -729,10 +729,9 @@ ReturnCode_t DataWriterImpl::get_key_value(
     }
 
     // Block lowlevel writer
+#if HAVE_STRICT_REALTIME
     auto max_blocking_time = std::chrono::steady_clock::now() +
             std::chrono::microseconds(::TimeConv::Time_t2MicroSecondsInt64(qos_.reliability().max_blocking_time));
-
-#if HAVE_STRICT_REALTIME
     std::unique_lock<RecursiveTimedMutex> lock(writer_->getMutex(), std::defer_lock);
     if (!lock.try_lock_until(max_blocking_time))
     {
