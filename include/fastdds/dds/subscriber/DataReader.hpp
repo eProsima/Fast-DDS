@@ -783,7 +783,9 @@ public:
      *
      * @param [in] instance Data pointer to the sample
      *
-     * @return handle of the given instance
+     * @return handle of the given @c instance.
+     * @return HANDLE_NIL if @c instance is nullptr.
+     * @return HANDLE_NIL if there is no instance on the DataReader's history with the same key as @c instance.
      */
     RTPS_DllAPI InstanceHandle_t lookup_instance(
             const void* instance) const;
