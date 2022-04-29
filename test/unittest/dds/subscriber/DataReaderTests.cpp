@@ -1692,6 +1692,12 @@ TEST_F(DataReaderTests, sample_info)
                 EXPECT_EQ(instance_result.disposed_generation_count, infos[0].disposed_generation_count);
                 EXPECT_EQ(instance_result.no_writers_generation_count, infos[0].no_writers_generation_count);
                 EXPECT_EQ(ReturnCode_t::RETCODE_OK, reader->return_loan(values, infos));
+
+                EXPECT_EQ(handles_[instance_index], reader->lookup_instance(&data_[instance_index]));
+            }
+            else
+            {
+                EXPECT_EQ(HANDLE_NIL, reader->lookup_instance(&data_[instance_index]));
             }
         }
 
