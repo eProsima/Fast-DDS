@@ -123,35 +123,16 @@ public:
     {
         unsent_fragments_.remove(sentFragment);
 
-        if (sentFragment > highest_sent_fragment_)
+        if (!delivered_ && !unsent_fragments_.empty() && (unsent_fragments_.max() < change_->getFragmentCount()))
         {
-            highest_sent_fragment_ = sentFragment;
-        }
-
-        FragmentNumber_t base;
-        FragmentNumber_t max;
-        if (unsent_fragments_.empty())
-        {
-            base = highest_sent_fragment_ + 1u;
-            max = highest_sent_fragment_;
-        }
-        else
-        {
-            base = unsent_fragments_.base();
-            max = unsent_fragments_.max();
+            FragmentNumber_t base = unsent_fragments_.base();
+            FragmentNumber_t max = unsent_fragments_.max();
             assert(!unsent_fragments_.is_set(base));
-            base = unsent_fragments_.min();
 
-            if (max < highest_sent_fragment_)
-            {
-                max = highest_sent_fragment_;
-            }
-        }
-
-        if (max < change_->getFragmentCount())
-        {
             // Update base to first bit set
+            base = unsent_fragments_.min();
             unsent_fragments_.base_update(base);
+
             // Add all possible fragments
             unsent_fragments_.add_range(max + 1u, change_->getFragmentCount() + 1u);
         }
@@ -160,17 +141,10 @@ public:
     void markFragmentsAsUnsent(
             const FragmentNumberSet_t& unsentFragments)
     {
-        FragmentNumber_t other_base = unsentFragments.base();
-        if (unsent_fragments_.empty() || other_base < unsent_fragments_.base())
+        if (delivered_ && unsent_fragments_.empty())
         {
-            unsent_fragments_.base_update(other_base);
+            unsent_fragments_ = unsentFragments;
         }
-        unsentFragments.for_each(
-            [this](
-                FragmentNumber_t element)
-            {
-                unsent_fragments_.add(element);
-            });
     }
 
     bool has_been_delivered() const
@@ -194,9 +168,6 @@ private:
     CacheChange_t* change_;
 
     FragmentNumberSet_t unsent_fragments_;
-
-    //! Highest fragment number sent at least once.
-    FragmentNumber_t highest_sent_fragment_ = 0;
 
     //! Indicates if was delivered at least once.
     bool delivered_ = false;
