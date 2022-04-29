@@ -470,8 +470,8 @@ bool DataWriterHistory::get_next_deadline(
             keyed_changes_.begin(),
             keyed_changes_.end(),
             [](
-                const std::pair<InstanceHandle_t, detail::DataWriterInstance>& lhs,
-                const std::pair<InstanceHandle_t, detail::DataWriterInstance>& rhs)
+                const t_m_Inst_Caches::value_type& lhs,
+                const t_m_Inst_Caches::value_type& rhs)
             {
                 return lhs.second.next_deadline_us < rhs.second.next_deadline_us;
             });

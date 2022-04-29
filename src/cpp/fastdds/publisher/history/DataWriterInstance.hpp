@@ -25,6 +25,8 @@
 #include <fastdds/rtps/common/ChangeKind_t.hpp>
 #include <fastdds/rtps/common/SerializedPayload.h>
 
+#include <utils/constructor_macros.hpp>
+
 namespace eprosima {
 namespace fastdds {
 namespace dds {
@@ -39,6 +41,11 @@ struct DataWriterInstance
     std::chrono::steady_clock::time_point next_deadline_us;
     //! Serialized payload for key holder
     fastrtps::rtps::SerializedPayload_t key_payload;
+
+    DataWriterInstance() = default;
+
+    FASTDDS_DELETED_COPY(DataWriterInstance);
+    FASTDDS_DEFAULT_MOVE(DataWriterInstance);
 
     bool is_registered() const
     {
