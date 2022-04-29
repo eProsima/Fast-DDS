@@ -1550,6 +1550,38 @@ TEST_F(DataReaderTests, read_unread)
     }
 }
 
+TEST_F(DataReaderTests, lookup_instance)
+{
+    DataReaderQos reader_qos = DATAREADER_QOS_DEFAULT;
+    reader_qos.reliability().kind = RELIABLE_RELIABILITY_QOS;
+    reader_qos.durability().kind = TRANSIENT_LOCAL_DURABILITY_QOS;
+    reader_qos.history().kind = KEEP_LAST_HISTORY_QOS;
+    reader_qos.history().depth = 1;
+    reader_qos.resource_limits().max_instances = 1;
+    reader_qos.resource_limits().max_samples_per_instance = 1;
+    reader_qos.resource_limits().max_samples = 1;
+
+    create_entities(nullptr, reader_qos);
+    create_instance_handles();
+
+    // Send sample for handle_ok_
+    FooType data;
+    data.index(0);
+    EXPECT_TRUE(data_writer_->write(&data));
+    // Ensure it arrived to the DataReader
+    EXPECT_TRUE(data_reader_->wait_for_unread_message({ 1, 0 }));
+
+    // DataReader should have a sinfle sample on instance handle_ok_
+
+    // Wrong parameter should return HANDLE_NIL
+    EXPECT_EQ(HANDLE_NIL, data_reader_->lookup_instance(nullptr));
+    // Querying with the correct key should return handle_ok_
+    EXPECT_EQ(handle_ok_, data_reader_->lookup_instance(&data));
+    // Querying with another key should return HANDLE_NIL
+    data.index(37);
+    EXPECT_EQ(HANDLE_NIL, data_reader_->lookup_instance(&data));
+}
+
 TEST_F(DataReaderTests, sample_info)
 {
     DataReaderQos reader_qos = DATAREADER_QOS_DEFAULT;
