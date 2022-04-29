@@ -35,81 +35,85 @@ namespace security {
 
 class MockCryptoKeyFactory : public CryptoKeyFactory
 {
-    public:
-        using AESGCMGMAC_ParticipantCryptoHandle = HandleImpl<ParticipantKeyHandle, MockCryptoKeyFactory>;
+public:
 
-        virtual ~MockCryptoKeyFactory(){}
+    using AESGCMGMAC_ParticipantCryptoHandle = HandleImpl<ParticipantKeyHandle, MockCryptoKeyFactory>;
 
-        MOCK_METHOD5(register_local_participant, std::shared_ptr<ParticipantCryptoHandle> (
+    virtual ~MockCryptoKeyFactory()
+    {
+    }
+
+    MOCK_METHOD5(register_local_participant, std::shared_ptr<ParticipantCryptoHandle> (
                 const IdentityHandle&,
                 const PermissionsHandle&,
                 const PropertySeq&,
                 const ParticipantSecurityAttributes&,
                 SecurityException&));
 
-        MOCK_METHOD5(register_matched_remote_participant, std::shared_ptr<ParticipantCryptoHandle> (
+    MOCK_METHOD5(register_matched_remote_participant, std::shared_ptr<ParticipantCryptoHandle> (
                 const ParticipantCryptoHandle&,
                 const IdentityHandle&,
                 const PermissionsHandle&,
                 const SecretHandle&,
                 SecurityException&));
 
-        MOCK_METHOD4(register_local_datawriter, DatawriterCryptoHandle* (
+    MOCK_METHOD4(register_local_datawriter, DatawriterCryptoHandle * (
                 ParticipantCryptoHandle&,
                 const PropertySeq&,
                 const EndpointSecurityAttributes&,
-                SecurityException&));
+                SecurityException &));
 
-        MOCK_METHOD5(register_matched_remote_datareader, DatareaderCryptoHandle* (
+    MOCK_METHOD5(register_matched_remote_datareader, DatareaderCryptoHandle * (
                 DatawriterCryptoHandle&,
                 ParticipantCryptoHandle&,
                 const SecretHandle&,
                 const bool,
-                SecurityException&));
+                SecurityException &));
 
-        MOCK_METHOD4(register_local_datareader, DatareaderCryptoHandle* (
+    MOCK_METHOD4(register_local_datareader, DatareaderCryptoHandle * (
                 ParticipantCryptoHandle&,
                 const PropertySeq&,
                 const EndpointSecurityAttributes&,
-                SecurityException&));
+                SecurityException &));
 
-        MOCK_METHOD4(register_matched_remote_datawriter, DatawriterCryptoHandle* (
+    MOCK_METHOD4(register_matched_remote_datawriter, DatawriterCryptoHandle * (
                 DatareaderCryptoHandle&,
                 ParticipantCryptoHandle&,
                 const SecretHandle&,
-                SecurityException&));
+                SecurityException &));
 
-        MOCK_METHOD2(unregister_participant, bool (
+    MOCK_METHOD2(unregister_participant, bool (
                 std::shared_ptr<ParticipantCryptoHandle>&,
-                SecurityException&));
+                SecurityException &));
 
-        MOCK_METHOD2(unregister_datawriter, bool (
+    MOCK_METHOD2(unregister_datawriter, bool (
                 DatawriterCryptoHandle*,
-                SecurityException&));
+                SecurityException &));
 
-        MOCK_METHOD2(unregister_datareader, bool (
+    MOCK_METHOD2(unregister_datareader, bool (
                 DatareaderCryptoHandle*,
-                SecurityException&));
+                SecurityException &));
 
-        MOCK_METHOD2(unregister_datawriter, bool (
+    MOCK_METHOD2(unregister_datawriter, bool (
                 std::shared_ptr<DatawriterCryptoHandle>&,
-                SecurityException&));
+                SecurityException &));
 
-        MOCK_METHOD2(unregister_datareader, bool (
+    MOCK_METHOD2(unregister_datareader, bool (
                 std::shared_ptr<DatareaderCryptoHandle>&,
-                SecurityException&));
+                SecurityException &));
 
-        std::shared_ptr<ParticipantCryptoHandle> get_dummy_participant_handle() const
-        {
-            // create ad hoc deleter because this object can only be created/release from the friend factory
-            auto p = new (std::nothrow) AESGCMGMAC_ParticipantCryptoHandle;
-            return std::dynamic_pointer_cast<ParticipantCryptoHandle>(
-                    std::shared_ptr<AESGCMGMAC_ParticipantCryptoHandle>(p,
-                        [](AESGCMGMAC_ParticipantCryptoHandle* p)
-                        {
-                            delete p;
-                        }));
-        }
+    std::shared_ptr<ParticipantCryptoHandle> get_dummy_participant_handle() const
+    {
+        // create ad hoc deleter because this object can only be created/release from the friend factory
+        auto p = new (std::nothrow) AESGCMGMAC_ParticipantCryptoHandle;
+        return std::dynamic_pointer_cast<ParticipantCryptoHandle>(
+            std::shared_ptr<AESGCMGMAC_ParticipantCryptoHandle>(p,
+            [](AESGCMGMAC_ParticipantCryptoHandle* p)
+            {
+                delete p;
+            }));
+    }
+
 };
 
 } //namespace security

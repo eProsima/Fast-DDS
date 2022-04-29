@@ -31,33 +31,32 @@ namespace security {
 
 class PKIHandshake
 {
-    public:
+public:
 
-        PKIHandshake() = default;
+    PKIHandshake() = default;
 
-        ~PKIHandshake()
+    ~PKIHandshake()
+    {
+        if (dhkeys_ != nullptr)
         {
-            if(dhkeys_ != nullptr)
-            {
-                EVP_PKEY_free(dhkeys_);
-            }
-
-            if(peerkeys_ != nullptr)
-            {
-                EVP_PKEY_free(peerkeys_);
-            }
+            EVP_PKEY_free(dhkeys_);
         }
 
+        if (peerkeys_ != nullptr)
+        {
+            EVP_PKEY_free(peerkeys_);
+        }
+    }
 
-        static const char* const class_id_;
+    static const char* const class_id_;
 
-        std::string kagree_alg_;
-        EVP_PKEY* dhkeys_ = { nullptr };
-        EVP_PKEY* peerkeys_ = { nullptr };
-        const PKIIdentityHandle* local_identity_handle_ = { nullptr };
-        PKIIdentityHandle* remote_identity_handle_ = { nullptr };
-        HandshakeMessageToken handshake_message_;
-        std::shared_ptr<SharedSecretHandle> sharedsecret_;
+    std::string kagree_alg_;
+    EVP_PKEY* dhkeys_ = { nullptr };
+    EVP_PKEY* peerkeys_ = { nullptr };
+    const PKIIdentityHandle* local_identity_handle_ = { nullptr };
+    PKIIdentityHandle* remote_identity_handle_ = { nullptr };
+    HandshakeMessageToken handshake_message_;
+    std::shared_ptr<SharedSecretHandle> sharedsecret_;
 };
 
 class PKIDH;

@@ -22,14 +22,16 @@ using namespace eprosima::fastrtps::rtps::security;
 
 const char* const SharedSecret::class_id_ = "SharedSecret";
 
-const std::vector<uint8_t>* SharedSecretHelper::find_data_value(const SecretHandle& secret, const std::string& name)
+const std::vector<uint8_t>* SharedSecretHelper::find_data_value(
+        const SecretHandle& secret,
+        const std::string& name)
 {
     const std::vector<uint8_t>* returnedValue = nullptr;
     const SharedSecret& sharedsecret = **SharedSecretHandle::narrow(secret);
 
-    for(auto property = sharedsecret.data_.begin(); property != sharedsecret.data_.end(); ++property)
+    for (auto property = sharedsecret.data_.begin(); property != sharedsecret.data_.end(); ++property)
     {
-        if(property->name().compare(name) == 0)
+        if (property->name().compare(name) == 0)
         {
             returnedValue = &property->value();
             break;

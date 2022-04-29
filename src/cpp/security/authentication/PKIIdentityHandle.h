@@ -38,55 +38,57 @@ static const char* const ECDH_prime256v1 = "ECDH+prime256v1-CEUM";
 
 class PKIIdentity
 {
-    public:
+public:
 
-        PKIIdentity() : store_(nullptr),
-        cert_(nullptr), pkey_(nullptr),
-        cert_content_(nullptr),
-        kagree_alg_(DH_2048_256),
-        there_are_crls_(false)
-        {}
+    PKIIdentity()
+        : store_(nullptr)
+        , cert_(nullptr)
+        , pkey_(nullptr)
+        , cert_content_(nullptr)
+        , kagree_alg_(DH_2048_256)
+        , there_are_crls_(false)
+    {
+    }
 
-        ~PKIIdentity()
+    ~PKIIdentity()
+    {
+        if (store_ != nullptr)
         {
-            if(store_ != nullptr)
-            {
-                X509_STORE_free(store_);
-            }
-
-            if(cert_ != nullptr)
-            {
-                X509_free(cert_);
-            }
-
-            if(pkey_ != nullptr)
-            {
-                EVP_PKEY_free(pkey_);
-            }
-
-            if(cert_content_ != nullptr)
-            {
-                BUF_MEM_free(cert_content_);
-            }
+            X509_STORE_free(store_);
         }
 
+        if (cert_ != nullptr)
+        {
+            X509_free(cert_);
+        }
 
-        static const char* const class_id_;
+        if (pkey_ != nullptr)
+        {
+            EVP_PKEY_free(pkey_);
+        }
 
-        X509_STORE* store_;
-        X509* cert_;
-        EVP_PKEY* pkey_;
-        GUID_t participant_key_;
-        BUF_MEM* cert_content_;
-        std::string sn;
-        std::string algo;
-        std::string sign_alg_;
-        std::string kagree_alg_;
-        std::string cert_sn_;
-        std::string cert_sn_rfc2253_;
-        bool there_are_crls_;
-        IdentityToken identity_token_;
-        PermissionsCredentialToken permissions_credential_token_;
+        if (cert_content_ != nullptr)
+        {
+            BUF_MEM_free(cert_content_);
+        }
+    }
+
+    static const char* const class_id_;
+
+    X509_STORE* store_;
+    X509* cert_;
+    EVP_PKEY* pkey_;
+    GUID_t participant_key_;
+    BUF_MEM* cert_content_;
+    std::string sn;
+    std::string algo;
+    std::string sign_alg_;
+    std::string kagree_alg_;
+    std::string cert_sn_;
+    std::string cert_sn_rfc2253_;
+    bool there_are_crls_;
+    IdentityToken identity_token_;
+    PermissionsCredentialToken permissions_credential_token_;
 };
 
 class PKIDH;

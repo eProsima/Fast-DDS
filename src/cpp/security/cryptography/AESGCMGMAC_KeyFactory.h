@@ -38,9 +38,11 @@ namespace {
 // Auxiliary class to delete the handles, privy to this compilation unit
 struct ParticipantCryptoHandleDeleter
 {
-    ParticipantCryptoHandleDeleter(AESGCMGMAC_KeyFactory& factory);
+    ParticipantCryptoHandleDeleter(
+            AESGCMGMAC_KeyFactory& factory);
 
-    void operator()(AESGCMGMAC_ParticipantCryptoHandle* pk);
+    void operator ()(
+            AESGCMGMAC_ParticipantCryptoHandle* pk);
 
     // Reference to the factory
     std::weak_ptr<AESGCMGMAC_KeyFactory> factory_;
@@ -53,7 +55,8 @@ class AESGCMGMAC_KeyFactory : public CryptoKeyFactory, public std::enable_shared
     friend ParticipantCryptoHandleDeleter;
 
     // Actual unregister_participant() implementation called from the handle destructor
-    void release_participant(AESGCMGMAC_ParticipantCryptoHandle& key);
+    void release_participant(
+            AESGCMGMAC_ParticipantCryptoHandle& key);
 
     // DatawriterCryptoHandle & DatareaderCryptoHandle creation methods.
     std::shared_ptr<DatawriterCryptoHandle> get_datawriter_handle();

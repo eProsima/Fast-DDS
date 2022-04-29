@@ -13,7 +13,7 @@
 // limitations under the License.
 
 /*!
- * @file MockCryptoTransform.h	
+ * @file MockCryptoTransform.h
  */
 #ifndef _RTPS_SECURITY_MOCKCRYPTOTRANSFORM_H_
 #define _RTPS_SECURITY_MOCKCRYPTOTRANSFORM_H_
@@ -29,81 +29,96 @@ namespace security {
 
 class MockCryptoTransform : public CryptoTransform
 {
-    public:
+public:
 
-        virtual ~MockCryptoTransform(){}
+    virtual ~MockCryptoTransform()
+    {
+    }
 
-        MOCK_METHOD5(encode_serialized_payload, bool (
+    MOCK_METHOD5(encode_serialized_payload, bool (
                 SerializedPayload_t&,
                 std::vector<uint8_t>&,
                 const SerializedPayload_t&,
                 DatawriterCryptoHandle&,
-                SecurityException&));
+                SecurityException &));
 
-        MOCK_METHOD5(encode_datawriter_submessage, bool (
+    MOCK_METHOD5(encode_datawriter_submessage, bool (
                 CDRMessage_t&,
                 const CDRMessage_t&,
                 DatawriterCryptoHandle&,
                 std::vector<std::shared_ptr<DatareaderCryptoHandle>>&,
-                SecurityException&));
+                SecurityException &));
 
-        MOCK_METHOD5(encode_datareader_submessage, bool (
+    MOCK_METHOD5(encode_datareader_submessage, bool (
                 CDRMessage_t&,
                 const CDRMessage_t&,
                 DatareaderCryptoHandle&,
                 std::vector<std::shared_ptr<DatawriterCryptoHandle>>&,
-                SecurityException &exception));
+                SecurityException & exception));
 
-        MOCK_METHOD5(encode_rtps_message, bool (
+    MOCK_METHOD5(encode_rtps_message, bool (
                 CDRMessage_t&,
                 const CDRMessage_t&,
                 ParticipantCryptoHandle&,
                 std::vector<std::shared_ptr<ParticipantCryptoHandle>>&,
-                SecurityException&));
+                SecurityException &));
 
-        MOCK_METHOD5(decode_rtps_message, bool (
+    MOCK_METHOD5(decode_rtps_message, bool (
                 CDRMessage_t&,
                 const CDRMessage_t&,
                 const ParticipantCryptoHandle&,
                 const ParticipantCryptoHandle&,
-                SecurityException&));
+                SecurityException &));
 
-        MOCK_METHOD7(preprocess_secure_submsg, bool (
-                DatawriterCryptoHandle**,
-                DatareaderCryptoHandle**,
+    MOCK_METHOD7(preprocess_secure_submsg, bool (
+                DatawriterCryptoHandle * *,
+                DatareaderCryptoHandle * *,
                 SecureSubmessageCategory_t&,
                 const CDRMessage_t&,
                 ParticipantCryptoHandle&,
                 ParticipantCryptoHandle&,
-                SecurityException&));
+                SecurityException &));
 
-        MOCK_METHOD5(decode_datawriter_submessage, bool (
+    MOCK_METHOD5(decode_datawriter_submessage, bool (
                 CDRMessage_t&,
                 CDRMessage_t&,
                 DatareaderCryptoHandle&,
                 DatawriterCryptoHandle&,
-                SecurityException&));
+                SecurityException &));
 
-        MOCK_METHOD5(decode_datareader_submessage, bool (
+    MOCK_METHOD5(decode_datareader_submessage, bool (
                 CDRMessage_t&,
                 CDRMessage_t&,
                 DatawriterCryptoHandle&,
                 DatareaderCryptoHandle&,
-                SecurityException&));
+                SecurityException &));
 
-        MOCK_METHOD6(decode_serialized_payload, bool (
+    MOCK_METHOD6(decode_serialized_payload, bool (
                 SerializedPayload_t&,
                 const SerializedPayload_t&,
                 const std::vector<uint8_t>&,
                 DatareaderCryptoHandle&,
                 DatawriterCryptoHandle&,
-                SecurityException&));
+                SecurityException &));
 
-        uint32_t calculate_extra_size_for_rtps_message(uint32_t /*number_discovered_participants*/) const { return 0; };
+    uint32_t calculate_extra_size_for_rtps_message(
+            uint32_t /*number_discovered_participants*/) const
+    {
+        return 0;
+    }
 
-        uint32_t calculate_extra_size_for_rtps_submessage(uint32_t /*number_discovered_readers*/) const { return 0; };
+    uint32_t calculate_extra_size_for_rtps_submessage(
+            uint32_t /*number_discovered_readers*/) const
+    {
+        return 0;
+    }
 
-        uint32_t calculate_extra_size_for_encoded_payload(uint32_t /*number_discovered_readers*/) const { return 0; };
+    uint32_t calculate_extra_size_for_encoded_payload(
+            uint32_t /*number_discovered_readers*/) const
+    {
+        return 0;
+    }
+
 };
 
 } //namespace security
