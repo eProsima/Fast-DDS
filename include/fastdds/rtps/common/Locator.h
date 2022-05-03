@@ -37,12 +37,16 @@ namespace eprosima {
 namespace fastrtps {
 namespace rtps {
 
+//! Initialize locator with invalid values
 #define LOCATOR_INVALID(loc)  {loc.kind = LOCATOR_KIND_INVALID; loc.port = LOCATOR_PORT_INVALID; \
                                LOCATOR_ADDRESS_INVALID(loc.address); \
 }
+
 #define LOCATOR_KIND_INVALID -1
 
+//! Set locator IP address to 0
 #define LOCATOR_ADDRESS_INVALID(a) {std::memset(a, 0x00, 16 * sizeof(octet));}
+
 #define LOCATOR_PORT_INVALID 0
 #define LOCATOR_KIND_RESERVED 0
 #define LOCATOR_KIND_UDPv4 1
