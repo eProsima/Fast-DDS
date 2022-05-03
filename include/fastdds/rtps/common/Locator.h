@@ -160,7 +160,13 @@ public:
 
 };
 
-
+/**
+ * @brief Auxiliary method to check that IP address is not invalid (0).
+ *
+ * @param loc Locator which IP address is going to be checked.
+ * @return true if IP address is defined (not 0).
+ * @return false otherwise.
+ */
 inline bool IsAddressDefined(
         const Locator_t& loc)
 {
