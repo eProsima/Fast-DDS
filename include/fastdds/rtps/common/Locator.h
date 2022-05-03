@@ -193,6 +193,13 @@ inline bool IsAddressDefined(
     return false;
 }
 
+/**
+ * @brief Auxiliary method to check that locator kind is not LOCATOR_KIND_INVALID (-1).
+ *
+ * @param loc Locator to be checked.
+ * @return true if the locator kind is not LOCATOR_KIND_INVALID.
+ * @return false otherwise.
+ */
 inline bool IsLocatorValid(
         const Locator_t& loc)
 {
