@@ -836,6 +836,8 @@ TEST_F(RTPSStatisticsTests, statistics_rpts_listener_gap_callback)
     // add a second sample and remove it to generate the gap
     write_small_sample(length);
     ASSERT_TRUE(writer_history_->remove_change(SequenceNumber_t{0, 2}));
+    // add a third sample in order to force the gap
+    write_small_sample(length);
 
     // create the late joiner as VOLATILE
     create_reader(length, RELIABLE, VOLATILE);
