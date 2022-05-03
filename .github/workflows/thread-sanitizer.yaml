@@ -89,13 +89,10 @@ jobs:
           cd ws
           git clone https://github.com/eProsima/Fast-DDS.git
           cd Fast-DDS
-<<<<<<< HEAD
-=======
           git fetch origin ${{ github.ref }}:merge-branch
           git checkout merge-branch
           echo "Modified files against destination branch"
           git diff --name-only HEAD~1
->>>>>>> b14962a01... Fixed unknown ref error during checkout in workflow execution (#2644)
           git remote add efork https://github.com/MiguelBarro/Fast-DDS.git
           git fetch efork
           git merge --no-edit efork/bugfix/add_sanitizer_support | Out-Null
