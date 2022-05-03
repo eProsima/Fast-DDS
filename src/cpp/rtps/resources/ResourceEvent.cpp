@@ -76,9 +76,9 @@ void ResourceEvent::unregister_timer(
     std::unique_lock<TimedMutex> lock(mutex_);
 
     cv_manipulation_.wait(lock, [&]()
-        {
-            return allow_vector_manipulation_;
-        });
+            {
+                return allow_vector_manipulation_;
+            });
 
     bool should_notify = false;
     std::vector<TimedEventImpl*>::iterator it;
