@@ -56,7 +56,7 @@ namespace rtps {
 #define LOCATOR_KIND_SHM 16
 
 //!@brief Class Locator_t, uniquely identifies a communication channel for a particular transport.
-//For example, an address+port combination in the case of UDP.
+//! For example, an address + port combination in the case of UDP.
 //!@ingroup COMMON_MODULE
 class RTPS_DllAPI Locator_t
 {
@@ -126,6 +126,7 @@ public:
         LOCATOR_ADDRESS_INVALID(address);
     }
 
+    //! Copy assignment
     Locator_t& operator =(
             const Locator_t& loc)
     {
@@ -135,6 +136,12 @@ public:
         return *this;
     }
 
+    /**
+     * @brief Set the locator IP address using another locator.
+     *
+     * @param other Locator which IP address is used to set this locator IP address.
+     * @return always true.
+     */
     bool set_address(
             const Locator_t& other)
     {
@@ -142,17 +149,31 @@ public:
         return true;
     }
 
+    /**
+     * @brief Getter for the locator IP address.
+     *
+     * @return IP address as octet pointer.
+     */
     octet* get_address()
     {
         return address;
     }
 
+    /**
+     * @brief Getter for a specific field of the locator IP address.
+     *
+     * @param field IP address element to be accessed.
+     * @return Octet value for the specific IP address element.
+     */
     octet get_address(
             uint16_t field) const
     {
         return address[field];
     }
 
+    /**
+     * @brief Automatic setter for setting locator IP address to invalid address (0).
+     */
     void set_Invalid_Address()
     {
         LOCATOR_ADDRESS_INVALID(address);
