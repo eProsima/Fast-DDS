@@ -87,7 +87,7 @@ void DataWriterHistory::rebuild_instances()
         for (CacheChange_t* change : m_changes)
         {
             t_m_Inst_Caches::iterator vit;
-            if (find_or_add_key(change->instanceHandle, &vit))
+            if (find_or_add_key(change->instanceHandle, change->serializedPayload, &vit))
             {
                 vit->second.cache_changes.push_back(change);
             }
@@ -98,8 +98,11 @@ void DataWriterHistory::rebuild_instances()
 bool DataWriterHistory::register_instance(
         const InstanceHandle_t& instance_handle,
         std::unique_lock<RecursiveTimedMutex>&,
-        const std::chrono::time_point<std::chrono::steady_clock>&)
+        const std::chrono::time_point<std::chrono::steady_clock>&,
+        SerializedPayload_t*& payload)
 {
+    payload = nullptr;
+
     /// Preconditions
     if (topic_att_.getTopicKind() == NO_KEY)
     {
@@ -107,7 +110,23 @@ bool DataWriterHistory::register_instance(
     }
 
     t_m_Inst_Caches::iterator vit;
-    return find_or_add_key(instance_handle, &vit);
+    bool result = find_or_add_key(instance_handle, {}, &vit);
+    if (result)
+    {
+        payload = &vit->second.key_payload;
+    }
+    return result;
+}
+
+fastrtps::rtps::SerializedPayload_t* DataWriterHistory::get_key_value(
+        const fastrtps::rtps::InstanceHandle_t& handle)
+{
+    t_m_Inst_Caches::iterator vit = keyed_changes_.find(handle);
+    if (vit != keyed_changes_.end() && vit->second.is_registered())
+    {
+        return &vit->second.key_payload;
+    }
+    return nullptr;
 }
 
 bool DataWriterHistory::prepare_change(
@@ -149,7 +168,7 @@ bool DataWriterHistory::prepare_change(
         while (!add)
         {
             // We should have the instance
-            if (!find_or_add_key(change->instanceHandle, &vit))
+            if (!find_or_add_key(change->instanceHandle, change->serializedPayload, &vit))
             {
                 break;
             }
@@ -182,7 +201,7 @@ bool DataWriterHistory::prepare_change(
                     }
 
                     // vit may have been invalidated
-                    if (!find_or_add_key(change->instanceHandle, &vit))
+                    if (!find_or_add_key(change->instanceHandle, change->serializedPayload, &vit))
                     {
                         break;
                     }
@@ -239,8 +258,11 @@ bool DataWriterHistory::add_pub_change(
 
 bool DataWriterHistory::find_or_add_key(
         const InstanceHandle_t& instance_handle,
+        const SerializedPayload_t& payload,
         t_m_Inst_Caches::iterator* vit_out)
 {
+    static_cast<void>(payload);
+
     t_m_Inst_Caches::iterator vit;
     vit = keyed_changes_.find(instance_handle);
     if (vit != keyed_changes_.end())
@@ -251,7 +273,9 @@ bool DataWriterHistory::find_or_add_key(
 
     if (static_cast<int>(keyed_changes_.size()) < resource_limited_qos_.max_instances)
     {
-        *vit_out = keyed_changes_.insert(std::make_pair(instance_handle, KeyedChanges())).first;
+        vit = keyed_changes_.insert(std::make_pair(instance_handle, detail::DataWriterInstance())).first;
+        vit->second.key_payload.copy(&payload, false);
+        *vit_out = vit;
         return true;
     }
 
@@ -326,7 +350,8 @@ bool DataWriterHistory::remove_change_pub(
     else
     {
         t_m_Inst_Caches::iterator vit;
-        if (!this->find_or_add_key(change->instanceHandle, &vit))
+        vit = keyed_changes_.find(change->instanceHandle);
+        if (vit == keyed_changes_.end())
         {
             return false;
         }
@@ -445,8 +470,8 @@ bool DataWriterHistory::get_next_deadline(
             keyed_changes_.begin(),
             keyed_changes_.end(),
             [](
-                const std::pair<InstanceHandle_t, KeyedChanges>& lhs,
-                const std::pair<InstanceHandle_t, KeyedChanges>& rhs)
+                const t_m_Inst_Caches::value_type& lhs,
+                const t_m_Inst_Caches::value_type& rhs)
             {
                 return lhs.second.next_deadline_us < rhs.second.next_deadline_us;
             });
@@ -475,13 +500,7 @@ bool DataWriterHistory::is_key_registered(
     std::lock_guard<RecursiveTimedMutex> guard(*this->mp_mutex);
     t_m_Inst_Caches::iterator vit;
     vit = keyed_changes_.find(handle);
-    return (vit != keyed_changes_.end() &&
-           (vit->second.cache_changes.empty() ||
-           (NOT_ALIVE_UNREGISTERED != vit->second.cache_changes.back()->kind &&
-           NOT_ALIVE_DISPOSED_UNREGISTERED != vit->second.cache_changes.back()->kind
-           )
-           )
-           );
+    return vit != keyed_changes_.end() && vit->second.is_registered();
 }
 
 bool DataWriterHistory::wait_for_acknowledgement_last_change(

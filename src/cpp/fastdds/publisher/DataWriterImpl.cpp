@@ -403,7 +403,7 @@ DataWriterImpl::~DataWriterImpl()
 
     if (writer_ != nullptr)
     {
-        logInfo(PUBLISHER, guid().entityId << " in topic: " << type_->getName());
+        logInfo(DATA_WRITER, guid().entityId << " in topic: " << type_->getName());
         RTPSDomain::removeRTPSWriter(writer_);
         release_payload_pool();
     }
@@ -586,13 +586,13 @@ InstanceHandle_t DataWriterImpl::register_instance(
 
     if (key == nullptr)
     {
-        logError(PUBLISHER, "Data pointer not valid");
+        logError(DATA_WRITER, "Data pointer not valid");
         return c_InstanceHandle_Unknown;
     }
 
     if (!type_->m_isGetKeyDefined)
     {
-        logError(PUBLISHER, "Topic is NO_KEY, operation not permitted");
+        logError(DATA_WRITER, "Topic is NO_KEY, operation not permitted");
         return c_InstanceHandle_Unknown;
     }
 
@@ -614,8 +614,25 @@ InstanceHandle_t DataWriterImpl::register_instance(
     std::unique_lock<RecursiveTimedMutex> lock(writer_->getMutex());
 #endif // if HAVE_STRICT_REALTIME
     {
-        if (history_.register_instance(instance_handle, lock, max_blocking_time))
+        SerializedPayload_t* payload = nullptr;
+        if (history_.register_instance(instance_handle, lock, max_blocking_time, payload))
         {
+            // Keep serialization of sample inside the instance
+            assert(nullptr != payload);
+            if (0 == payload->length || nullptr == payload->data)
+            {
+                uint32_t size = fixed_payload_size_ ? fixed_payload_size_ : type_->getSerializedSizeProvider(key)();
+                payload->reserve(size);
+                if (!type_->serialize(key, payload))
+                {
+                    logWarning(DATA_WRITER, "Key data serialization failed");
+
+                    // Serialization of the sample failed. Remove the instance to keep original state.
+                    // Note that we will only end-up here if the instance has just been created, so it will be empty
+                    // and removing its changes will remove the instance completely.
+                    history_.remove_instance_changes(instance_handle, SequenceNumber_t());
+                }
+            }
             return instance_handle;
         }
     }
@@ -636,13 +653,13 @@ ReturnCode_t DataWriterImpl::unregister_instance(
 
     if (instance == nullptr)
     {
-        logError(PUBLISHER, "Data pointer not valid");
+        logError(DATA_WRITER, "Data pointer not valid");
         return ReturnCode_t::RETCODE_BAD_PARAMETER;
     }
 
     if (!type_->m_isGetKeyDefined)
     {
-        logError(PUBLISHER, "Topic is NO_KEY, operation not permitted");
+        logError(DATA_WRITER, "Topic is NO_KEY, operation not permitted");
         return ReturnCode_t::RETCODE_PRECONDITION_NOT_MET;
     }
 
@@ -663,7 +680,7 @@ ReturnCode_t DataWriterImpl::unregister_instance(
 #if !defined(NDEBUG)
     if (c_InstanceHandle_Unknown != handle && ih != handle)
     {
-        logError(PUBLISHER, "handle differs from data's key.");
+        logError(DATA_WRITER, "handle differs from data's key.");
         return ReturnCode_t::RETCODE_PRECONDITION_NOT_MET;
     }
 #endif // if !defined(NDEBUG)
@@ -689,6 +706,51 @@ ReturnCode_t DataWriterImpl::unregister_instance(
     return returned_value;
 }
 
+ReturnCode_t DataWriterImpl::get_key_value(
+        void* key_holder,
+        const InstanceHandle_t& handle)
+{
+    /// Preconditions
+    if (key_holder == nullptr || !handle.isDefined())
+    {
+        logError(DATA_WRITER, "Key holder pointer not valid");
+        return ReturnCode_t::RETCODE_BAD_PARAMETER;
+    }
+
+    if (!type_->m_isGetKeyDefined)
+    {
+        logError(DATA_WRITER, "Topic is NO_KEY, operation not permitted");
+        return ReturnCode_t::RETCODE_ILLEGAL_OPERATION;
+    }
+
+    if (writer_ == nullptr)
+    {
+        return ReturnCode_t::RETCODE_NOT_ENABLED;
+    }
+
+    // Block lowlevel writer
+#if HAVE_STRICT_REALTIME
+    auto max_blocking_time = std::chrono::steady_clock::now() +
+            std::chrono::microseconds(::TimeConv::Time_t2MicroSecondsInt64(qos_.reliability().max_blocking_time));
+    std::unique_lock<RecursiveTimedMutex> lock(writer_->getMutex(), std::defer_lock);
+    if (!lock.try_lock_until(max_blocking_time))
+    {
+        return ReturnCode_t::RETCODE_TIMEOUT;
+    }
+#else
+    std::lock_guard<RecursiveTimedMutex> lock(writer_->getMutex());
+#endif // if HAVE_STRICT_REALTIME
+
+    SerializedPayload_t* payload = history_.get_key_value(handle);
+    if (nullptr == payload)
+    {
+        return ReturnCode_t::RETCODE_BAD_PARAMETER;
+    }
+
+    type_->deserialize(payload, key_holder);
+    return ReturnCode_t::RETCODE_OK;
+}
+
 ReturnCode_t DataWriterImpl::create_new_change(
         ChangeKind_t changeKind,
         void* data)
@@ -704,7 +766,7 @@ ReturnCode_t DataWriterImpl::check_new_change_preconditions(
     // Preconditions
     if (data == nullptr)
     {
-        logError(PUBLISHER, "Data pointer not valid");
+        logError(DATA_WRITER, "Data pointer not valid");
         return ReturnCode_t::RETCODE_BAD_PARAMETER;
     }
 
@@ -714,7 +776,7 @@ ReturnCode_t DataWriterImpl::check_new_change_preconditions(
     {
         if (!type_->m_isGetKeyDefined)
         {
-            logError(PUBLISHER, "Topic is NO_KEY, operation not permitted");
+            logError(DATA_WRITER, "Topic is NO_KEY, operation not permitted");
             return ReturnCode_t::RETCODE_ILLEGAL_OPERATION;
         }
     }
@@ -753,7 +815,7 @@ ReturnCode_t DataWriterImpl::perform_create_new_change(
 
         if ((ALIVE == change_kind) && !type_->serialize(data, &payload.payload))
         {
-            logWarning(RTPS_WRITER, "RTPSWriter:Serialization returns false");
+            logWarning(DATA_WRITER, "Data serialization returned false");
             return_payload_to_pool(payload);
             return ReturnCode_t::RETCODE_ERROR;
         }
@@ -797,7 +859,7 @@ ReturnCode_t DataWriterImpl::perform_create_new_change(
                         handle,
                         steady_clock::now() + duration_cast<system_clock::duration>(deadline_duration_us_)))
             {
-                logError(PUBLISHER, "Could not set the next deadline in the history");
+                logError(DATA_WRITER, "Could not set the next deadline in the history");
             }
             else
             {
@@ -1105,13 +1167,13 @@ ReturnCode_t DataWriterImpl::wait_for_acknowledgments(
 
     if (nullptr == instance)
     {
-        logError(PUBLISHER, "Data pointer not valid");
+        logError(DATA_WRITER, "Data pointer not valid");
         return ReturnCode_t::RETCODE_BAD_PARAMETER;
     }
 
     if (!type_->m_isGetKeyDefined)
     {
-        logError(PUBLISHER, "Topic is NO_KEY, operation not permitted");
+        logError(DATA_WRITER, "Topic is NO_KEY, operation not permitted");
         return ReturnCode_t::RETCODE_PRECONDITION_NOT_MET;
     }
 
@@ -1131,7 +1193,7 @@ ReturnCode_t DataWriterImpl::wait_for_acknowledgments(
 #if !defined(NDEBUG)
     if (c_InstanceHandle_Unknown != handle && ih != handle)
     {
-        logError(PUBLISHER, "handle differs from data's key");
+        logError(DATA_WRITER, "handle differs from data's key");
         return ReturnCode_t::RETCODE_PRECONDITION_NOT_MET;
     }
 #endif // NDEBUG */
@@ -1216,7 +1278,7 @@ bool DataWriterImpl::deadline_timer_reschedule()
     steady_clock::time_point next_deadline_us;
     if (!history_.get_next_deadline(timer_owner_, next_deadline_us))
     {
-        logError(PUBLISHER, "Could not get the next deadline from the history");
+        logError(DATA_WRITER, "Could not get the next deadline from the history");
         return false;
     }
 
@@ -1247,7 +1309,7 @@ bool DataWriterImpl::deadline_missed()
                 timer_owner_,
                 steady_clock::now() + duration_cast<system_clock::duration>(deadline_duration_us_)))
     {
-        logError(PUBLISHER, "Could not set the next deadline in the history");
+        logError(DATA_WRITER, "Could not set the next deadline in the history");
         return false;
     }
     return deadline_timer_reschedule();

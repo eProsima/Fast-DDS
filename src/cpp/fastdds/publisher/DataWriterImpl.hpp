@@ -261,11 +261,23 @@ public:
     ReturnCode_t set_listener(
             DataWriterListener* listener);
 
-    /* TODO
-       bool get_key_value(
+    /**
+     * This operation can be used to retrieve the instance key that corresponds to an
+     * @ref eprosima::fastdds::dds::Entity::instance_handle_ "instance_handle".
+     * The operation will only fill the fields that form the key inside the key_holder instance.
+     *
+     * This operation may return BAD_PARAMETER if the InstanceHandle_t handle does not correspond to an existing
+     * data-object known to the DataWriter. If the implementation is not able to check invalid handles then the result
+     * in this situation is unspecified.
+     *
+     * @param[in,out] key_holder  Sample where the key fields will be returned.
+     * @param[in] handle          Handle to the instance to retrieve the key values from.
+     *
+     * @return Any of the standard return codes.
+     */
+    ReturnCode_t get_key_value(
             void* key_holder,
             const InstanceHandle_t& handle);
-     */
 
     ReturnCode_t get_liveliness_lost_status(
             LivelinessLostStatus& status);

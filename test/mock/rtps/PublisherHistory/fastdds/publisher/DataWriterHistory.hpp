@@ -30,8 +30,9 @@
 #include <fastdds/rtps/history/WriterHistory.h>
 #include <fastdds/rtps/resources/ResourceManagement.h>
 #include <fastrtps/attributes/TopicAttributes.h>
-#include <fastrtps/common/KeyedChanges.h>
 #include <fastrtps/utils/TimedMutex.hpp>
+
+#include <fastdds/publisher/history/DataWriterInstance.hpp>
 
 namespace eprosima {
 namespace fastdds {
@@ -107,8 +108,11 @@ public:
     bool register_instance(
             const InstanceHandle_t& instance_handle,
             std::unique_lock<RecursiveTimedMutex>&,
-            const std::chrono::time_point<std::chrono::steady_clock>&)
+            const std::chrono::time_point<std::chrono::steady_clock>&,
+            SerializedPayload_t*& payload)
     {
+        payload = nullptr;
+
         /// Preconditions
         if (topic_att_.getTopicKind() == NO_KEY)
         {
@@ -116,7 +120,12 @@ public:
         }
 
         t_m_Inst_Caches::iterator vit;
-        return find_or_add_key(instance_handle, &vit);
+        bool result = find_or_add_key(instance_handle, &vit);
+        if (result)
+        {
+            payload = &vit->second.key_payload;
+        }
+        return result;
     }
 
     bool is_key_registered(
@@ -137,6 +146,17 @@ public:
                )
                )
                );
+    }
+
+    fastrtps::rtps::SerializedPayload_t* get_key_value(
+            const fastrtps::rtps::InstanceHandle_t& handle)
+    {
+        t_m_Inst_Caches::iterator vit = keyed_changes_.find(handle);
+        if (vit != keyed_changes_.end() && vit->second.is_registered())
+        {
+            return &vit->second.key_payload;
+        }
+        return nullptr;
     }
 
     bool add_pub_change(
@@ -266,7 +286,7 @@ public:
 
 private:
 
-    typedef std::map<InstanceHandle_t, KeyedChanges> t_m_Inst_Caches;
+    typedef std::map<InstanceHandle_t, detail::DataWriterInstance> t_m_Inst_Caches;
 
     //!Map where keys are instance handles and values are vectors of cache changes associated
     t_m_Inst_Caches keyed_changes_;
@@ -289,7 +309,7 @@ private:
         }
         else
         {
-            *vit_out = keyed_changes_.insert(std::make_pair(instance_handle, KeyedChanges())).first;
+            *vit_out = keyed_changes_.insert(std::make_pair(instance_handle, detail::DataWriterInstance())).first;
         }
         return true;
     }

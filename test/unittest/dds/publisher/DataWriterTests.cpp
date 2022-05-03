@@ -898,6 +898,84 @@ TEST(DataWriterTests, Dispose)
     // RETCODE_ERROR, and RETCODE_TIMEOUT (only if HAVE_STRICT_REALTIME has been defined).
 }
 
+/**
+ * This test checks get_key_value API
+ */
+TEST(DataWriterTests, GetKeyValue)
+{
+    // Test parameters
+    InstanceFooType data;
+    InstanceHandle_t wrong_handle;
+    wrong_handle.value[0] = 0xee;
+    InstanceHandle_t valid_handle;
+    InstanceFooType valid_data;
+    valid_data.message("HelloWorld");
+
+    // Create participant
+    DomainParticipant* participant =
+            DomainParticipantFactory::get_instance()->create_participant(0, PARTICIPANT_QOS_DEFAULT);
+    ASSERT_NE(nullptr, participant);
+
+    // Create publisher
+    PublisherQos pqos = PUBLISHER_QOS_DEFAULT;
+    pqos.entity_factory().autoenable_created_entities = false;
+    Publisher* publisher = participant->create_publisher(pqos);
+    ASSERT_NE(nullptr, publisher);
+
+    // Register types and topics
+    TypeSupport type(new TopicDataTypeMock());
+    type.register_type(participant);
+    TypeSupport instance_type(new InstanceTopicDataTypeMock());
+    instance_type.register_type(participant);
+
+    Topic* topic = participant->create_topic("footopic", type.get_type_name(), TOPIC_QOS_DEFAULT);
+    ASSERT_NE(topic, nullptr);
+    Topic* instance_topic = participant->create_topic("instancefootopic", instance_type.get_type_name(),
+                    TOPIC_QOS_DEFAULT);
+    ASSERT_NE(instance_topic, nullptr);
+
+    // Create disabled DataWriters
+    DataWriter* datawriter = publisher->create_datawriter(topic, DATAWRITER_QOS_DEFAULT);
+    ASSERT_NE(nullptr, datawriter);
+    DataWriter* instance_datawriter = publisher->create_datawriter(instance_topic, DATAWRITER_QOS_DEFAULT);
+    ASSERT_NE(nullptr, instance_datawriter);
+
+    // 1. Check nullptr on key_holder
+    EXPECT_EQ(ReturnCode_t::RETCODE_BAD_PARAMETER, datawriter->get_key_value(nullptr, wrong_handle));
+    EXPECT_EQ(ReturnCode_t::RETCODE_BAD_PARAMETER, instance_datawriter->get_key_value(nullptr, wrong_handle));
+
+    // 2. Check HANDLE_NIL
+    EXPECT_EQ(ReturnCode_t::RETCODE_BAD_PARAMETER, datawriter->get_key_value(&data, HANDLE_NIL));
+    EXPECT_EQ(ReturnCode_t::RETCODE_BAD_PARAMETER, instance_datawriter->get_key_value(&data, HANDLE_NIL));
+
+    // 3. Check type should have keys, and writer should be enabled
+    EXPECT_EQ(ReturnCode_t::RETCODE_ILLEGAL_OPERATION, datawriter->get_key_value(&data, wrong_handle));
+    EXPECT_EQ(ReturnCode_t::RETCODE_NOT_ENABLED, instance_datawriter->get_key_value(&data, wrong_handle));
+
+    ASSERT_EQ(ReturnCode_t::RETCODE_OK, datawriter->enable());
+    ASSERT_EQ(ReturnCode_t::RETCODE_OK, instance_datawriter->enable());
+
+    // 4. Calling get_key_value with a key not yet registered returns RETCODE_BAD_PARAMETER
+    EXPECT_EQ(ReturnCode_t::RETCODE_BAD_PARAMETER, instance_datawriter->get_key_value(&data, wrong_handle));
+
+    // 5. Calling get_key_value on a registered instance should work.
+    valid_handle = instance_datawriter->register_instance(&valid_data);
+    EXPECT_NE(HANDLE_NIL, valid_handle);
+    EXPECT_EQ(ReturnCode_t::RETCODE_OK, instance_datawriter->get_key_value(&data, valid_handle));
+
+    // 6. Calling get_key_value on an unregistered instance should return RETCODE_BAD_PARAMETER.
+    ASSERT_EQ(ReturnCode_t::RETCODE_OK, instance_datawriter->unregister_instance(&valid_data, valid_handle));
+    EXPECT_EQ(ReturnCode_t::RETCODE_BAD_PARAMETER, instance_datawriter->get_key_value(&data, valid_handle));
+
+    // 7. Calling get_key_value with a valid instance should work
+    ASSERT_EQ(ReturnCode_t::RETCODE_OK, instance_datawriter->write(&valid_data, c_InstanceHandle_Unknown));
+    EXPECT_EQ(ReturnCode_t::RETCODE_OK, instance_datawriter->get_key_value(&data, valid_handle));
+
+    // 8. Calling get_key_value on a disposed instance should work.
+    ASSERT_EQ(ReturnCode_t::RETCODE_OK, instance_datawriter->dispose(&valid_data, valid_handle));
+    EXPECT_EQ(ReturnCode_t::RETCODE_OK, instance_datawriter->get_key_value(&data, valid_handle));
+}
+
 struct LoanableType
 {
     static constexpr uint32_t initialization_value()
@@ -1314,8 +1392,7 @@ public:
  * 3. register_instance_w_timestamp
  * 4. unregister_instance_w_timestamp
  * 5. get_matched_subscriptions
- * 6. get_key_value
- * 7. lookup_instance
+ * 6. lookup_instance
  */
 TEST_F(DataWriterUnsupportedTests, UnsupportedDataWriterMethods)
 {
@@ -1367,9 +1444,6 @@ TEST_F(DataWriterUnsupportedTests, UnsupportedDataWriterMethods)
 
     std::vector<InstanceHandle_t> subscription_handles;
     EXPECT_EQ(ReturnCode_t::RETCODE_UNSUPPORTED, data_writer->get_matched_subscriptions(subscription_handles));
-
-    fastrtps::rtps::InstanceHandle_t key_handle;
-    EXPECT_EQ(ReturnCode_t::RETCODE_UNSUPPORTED, data_writer->get_key_value(nullptr /* key_holder */, key_handle));
 
     EXPECT_EQ(HANDLE_NIL, data_writer->lookup_instance(nullptr /* instance */));
 

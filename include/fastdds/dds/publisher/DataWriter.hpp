@@ -293,8 +293,6 @@ public:
 #endif // DOXYGEN_SHOULD_SKIP_THIS
 
     /**
-     * NOT YET IMPLEMENTED
-     *
      * This operation can be used to retrieve the instance key that corresponds to an
      * @ref eprosima::fastdds::dds::Entity::instance_handle_ "instance_handle".
      * The operation will only fill the fields that form the key inside the key_holder instance.
@@ -303,8 +301,8 @@ public:
      * data-object known to the DataWriter. If the implementation is not able to check invalid handles then the result
      * in this situation is unspecified.
      *
-     * @param[in,out] key_holder
-     * @param[in] handle
+     * @param[in,out] key_holder  Sample where the key fields will be returned.
+     * @param[in] handle          Handle to the instance to retrieve the key values from.
      *
      * @return Any of the standard return codes.
      */
@@ -442,12 +440,6 @@ public:
     RTPS_DllAPI ReturnCode_t set_listener(
             DataWriterListener* listener,
             const StatusMask& mask);
-
-    /* TODO
-       bool get_key_value(
-            void* key_holder,
-            const InstanceHandle_t& handle);
-     */
 
     /**
      * @brief This operation requests the middleware to delete the data (the actual deletion is postponed until there is no

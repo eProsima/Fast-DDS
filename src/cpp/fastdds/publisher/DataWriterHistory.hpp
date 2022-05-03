@@ -27,8 +27,9 @@
 #include <fastdds/rtps/history/WriterHistory.h>
 #include <fastdds/rtps/resources/ResourceManagement.h>
 #include <fastrtps/attributes/TopicAttributes.h>
-#include <fastrtps/common/KeyedChanges.h>
 #include <fastrtps/qos/QosPolicies.h>
+
+#include <fastdds/publisher/history/DataWriterInstance.hpp>
 
 namespace eprosima {
 namespace fastdds {
@@ -63,15 +64,34 @@ public:
 
     /*!
      * @brief Tries to reserve resources for the new instance.
-     * @param instance_handle Instance's key.
-     * @param lock Lock which should be unlock in case the operation has to wait.
-     * @param max_blocking_time Maximum time the operation should be waiting.
-     * @return True if resources was reserved successfully.
+     *
+     * @param [in]  instance_handle    Instance's key.
+     * @param [in]  lock               Lock which should be unlock in case the operation has to wait.
+     * @param [in]  max_blocking_time  Maximum time the operation should be waiting.
+     * @param [out] payload            Pointer to a serialized payload structure where the serialized payload of the
+     *                                 newly allocated instance should be written.
+     *
+     * @return True if resources were reserved successfully.
      */
     bool register_instance(
             const fastrtps::rtps::InstanceHandle_t& instance_handle,
             std::unique_lock<fastrtps::RecursiveTimedMutex>& lock,
-            const std::chrono::time_point<std::chrono::steady_clock>& max_blocking_time);
+            const std::chrono::time_point<std::chrono::steady_clock>& max_blocking_time,
+            fastrtps::rtps::SerializedPayload_t*& payload);
+
+    /**
+     * This operation can be used to retrieve the serialized payload of the instance key that corresponds to an
+     * @ref eprosima::fastdds::dds::Entity::instance_handle_ "instance_handle".
+     *
+     * This operation will return @c nullptr if the InstanceHandle_t handle does not correspond to an existing
+     * data-object known to the DataWriterHistory.
+     *
+     * @param[in] handle  Handle to the instance to retrieve the key values from.
+     *
+     * @return Pointer to the serialized payload of the sample with which the instance was registered.
+     */
+    fastrtps::rtps::SerializedPayload_t* get_key_value(
+            const fastrtps::rtps::InstanceHandle_t& handle);
 
     /**
      * Add a change comming from the DataWriter.
@@ -201,7 +221,7 @@ public:
 
 private:
 
-    typedef std::map<fastrtps::rtps::InstanceHandle_t, fastrtps::KeyedChanges> t_m_Inst_Caches;
+    typedef std::map<fastrtps::rtps::InstanceHandle_t, detail::DataWriterInstance> t_m_Inst_Caches;
 
     //!Map where keys are instance handles and values are vectors of cache changes associated
     t_m_Inst_Caches keyed_changes_;
@@ -215,13 +235,15 @@ private:
     fastrtps::TopicAttributes topic_att_;
 
     /**
-     * @brief Method that finds a key in m_keyedChanges or tries to add it if not found
-     * @param instance_handle Instance of the key.
-     * @param map_it A map iterator to the given key
+     * @brief Method that finds a key in the DataWriterHistory or tries to add it if not found
+     * @param [in]  instance_handle  Instance of the key.
+     * @param [in]  payload          Serialized payload of the sample for which the instance is being registered.
+     * @param [out] map_it           A map iterator to the given key.
      * @return True if the key was found or could be added to the map
      */
     bool find_or_add_key(
             const fastrtps::rtps::InstanceHandle_t& instance_handle,
+            const fastrtps::rtps::SerializedPayload_t& payload,
             t_m_Inst_Caches::iterator* map_it);
 
     /**

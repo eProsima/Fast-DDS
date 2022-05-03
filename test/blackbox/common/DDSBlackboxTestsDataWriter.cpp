@@ -133,6 +133,70 @@ TEST_P(DDSDataWriter, WaitForAcknowledgmentInstance)
 
 }
 
+/**
+ * Test that checks DataWriter::get_key_value
+ */
+TEST_P(DDSDataWriter, GetKeyValue)
+{
+    using namespace eprosima::fastdds::dds;
+
+    // Test variables
+    KeyedHelloWorld data;
+    eprosima::fastrtps::rtps::InstanceHandle_t wrong_handle;
+    wrong_handle.value[0] = 0xee;
+    eprosima::fastrtps::rtps::InstanceHandle_t valid_handle;
+    KeyedHelloWorld valid_data;
+    valid_data.key(27);
+    valid_data.index(1);
+    valid_data.message("HelloWorld");
+
+    // Create and initialize writers
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME + "_KEY");
+    PubSubWriter<KeyedHelloWorldPubSubType> keyed_writer(TEST_TOPIC_NAME + "_KEY");
+    writer.init();
+    keyed_writer.init();
+
+    DataWriter* datawriter = &writer.get_native_writer();
+    DataWriter* instance_datawriter = &keyed_writer.get_native_writer();
+
+    // 1. Check nullptr on key_holder
+    EXPECT_EQ(ReturnCode_t::RETCODE_BAD_PARAMETER, datawriter->get_key_value(nullptr, wrong_handle));
+    EXPECT_EQ(ReturnCode_t::RETCODE_BAD_PARAMETER, instance_datawriter->get_key_value(nullptr, wrong_handle));
+
+    // 2. Check HANDLE_NIL
+    EXPECT_EQ(ReturnCode_t::RETCODE_BAD_PARAMETER, datawriter->get_key_value(&data, HANDLE_NIL));
+    EXPECT_EQ(ReturnCode_t::RETCODE_BAD_PARAMETER, instance_datawriter->get_key_value(&data, HANDLE_NIL));
+
+    // 3. Check type should have keys
+    EXPECT_EQ(ReturnCode_t::RETCODE_ILLEGAL_OPERATION, datawriter->get_key_value(&data, wrong_handle));
+
+    // 4. Calling get_key_value with a key not yet registered returns RETCODE_BAD_PARAMETER
+    EXPECT_EQ(ReturnCode_t::RETCODE_BAD_PARAMETER, instance_datawriter->get_key_value(&data, wrong_handle));
+
+    // 5. Calling get_key_value on a registered instance should work.
+    valid_handle = instance_datawriter->register_instance(&valid_data);
+    EXPECT_NE(HANDLE_NIL, valid_handle);
+    data.key(0);
+    EXPECT_EQ(ReturnCode_t::RETCODE_OK, instance_datawriter->get_key_value(&data, valid_handle));
+    EXPECT_EQ(valid_data.key(), data.key());
+
+    // 6. Calling get_key_value on an unregistered instance should return RETCODE_BAD_PARAMETER.
+    ASSERT_EQ(ReturnCode_t::RETCODE_OK, instance_datawriter->unregister_instance(&valid_data, valid_handle));
+    EXPECT_EQ(ReturnCode_t::RETCODE_BAD_PARAMETER, instance_datawriter->get_key_value(&data, valid_handle));
+
+    // 7. Calling get_key_value with a valid instance should work
+    ASSERT_EQ(ReturnCode_t::RETCODE_OK, instance_datawriter->write(&valid_data, HANDLE_NIL));
+    data.key(0);
+    EXPECT_EQ(ReturnCode_t::RETCODE_OK, instance_datawriter->get_key_value(&data, valid_handle));
+    EXPECT_EQ(valid_data.key(), data.key());
+
+    // 8. Calling get_key_value on a disposed instance should work.
+    ASSERT_EQ(ReturnCode_t::RETCODE_OK, instance_datawriter->dispose(&valid_data, valid_handle));
+    data.key(0);
+    EXPECT_EQ(ReturnCode_t::RETCODE_OK, instance_datawriter->get_key_value(&data, valid_handle));
+    EXPECT_EQ(valid_data.key(), data.key());
+}
+
 #ifdef INSTANTIATE_TEST_SUITE_P
 #define GTEST_INSTANTIATE_TEST_MACRO(x, y, z, w) INSTANTIATE_TEST_SUITE_P(x, y, z, w)
 #else
