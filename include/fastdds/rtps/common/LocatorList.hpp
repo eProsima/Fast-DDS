@@ -92,26 +92,31 @@ class LocatorList
 {
 public:
 
+    //! Constructor
     RTPS_DllAPI LocatorList()
     {
     }
 
+    //! Destructor
     RTPS_DllAPI ~LocatorList()
     {
     }
 
+    //! Copy constructor
     RTPS_DllAPI LocatorList(
             const LocatorList& list)
         : m_locators(list.m_locators)
     {
     }
 
+    //! Move contructor
     RTPS_DllAPI LocatorList(
             LocatorList&& list)
         : m_locators(std::move(list.m_locators))
     {
     }
 
+    //! Copy assignment
     RTPS_DllAPI LocatorList& operator =(
             const LocatorList& list)
     {
@@ -119,6 +124,7 @@ public:
         return *this;
     }
 
+    //! Move assignment
     RTPS_DllAPI LocatorList& operator =(
             LocatorList&& list)
     {
@@ -126,6 +132,7 @@ public:
         return *this;
     }
 
+    //! Equal to operator
     RTPS_DllAPI bool operator ==(
             const LocatorList& locator_list) const
     {
@@ -153,31 +160,62 @@ public:
         return false;
     }
 
+    /**
+     * @brief Return an iterator to the beginning.
+     *
+     * @return LocatorListIterator iterator to the first locator.
+     */
     RTPS_DllAPI LocatorListIterator begin()
     {
         return m_locators.begin();
     }
 
+    /**
+     * @brief Return an iterator to the end.
+     *
+     * @return LocatorListIterator iterator to the element following the last element.
+     */
     RTPS_DllAPI LocatorListIterator end()
     {
         return m_locators.end();
     }
 
+    /**
+     * @brief Return a constant iterator to the beginning.
+     *
+     * @return LocatorListConstIterator iterator to the first locator.
+     */
     RTPS_DllAPI LocatorListConstIterator begin() const
     {
         return m_locators.begin();
     }
 
+    /**
+     * @brief Return a constant iterator to the end.
+     *
+     * @return LocatorListConstIterator iterator to the element following the last element.
+     */
     RTPS_DllAPI LocatorListConstIterator end() const
     {
         return m_locators.end();
     }
 
+    /**
+     * @brief Return the number of locators.
+     *
+     * @return size_t The number of locators in the container.
+     */
     RTPS_DllAPI size_t size() const
     {
         return m_locators.size();
     }
 
+    /**
+     * @brief Replace the contents of the container.
+     *
+     * @param list New content to be saved into the container.
+     * @return LocatorList& reference to the container with the replaced content.
+     */
     RTPS_DllAPI LocatorList& assign(
             const LocatorList& list)
     {
@@ -188,23 +226,43 @@ public:
         return *this;
     }
 
+    /**
+     * @brief Erase all locators from the container.
+     */
     RTPS_DllAPI void clear()
     {
         return m_locators.clear();
     }
 
+    /**
+     * @brief Reserve storage increasing the capacity of the vector.
+     *
+     * @param num new capacity of the vector, in number of elements.
+     */
     RTPS_DllAPI void reserve(
             size_t num)
     {
         return m_locators.reserve(num);
     }
 
+    /**
+     * @brief Resize the container to contain @c num locators.
+     *        If the current size is greater than @c num, the container is reduced to its first @c num locators.
+     *        If the current size is less than count, additional default-inserted locators are appended.
+     *
+     * @param num new size of the container.
+     */
     RTPS_DllAPI void resize(
             size_t num)
     {
         return m_locators.resize(num);
     }
 
+    /**
+     * @brief Add locator to the end.
+     *
+     * @param loc locator to be appended.
+     */
     RTPS_DllAPI void push_back(
             const Locator& loc)
     {
@@ -223,6 +281,11 @@ public:
         }
     }
 
+    /**
+     * @brief Add several locators to the end.
+     *
+     * @param locList LocatorList with the locators to be appended.
+     */
     RTPS_DllAPI void push_back(
             const LocatorList& locList)
     {
@@ -232,11 +295,21 @@ public:
         }
     }
 
+    /**
+     * @brief Check that the container has no locators.
+     *
+     * @return true if the container is empty. False otherwise.
+     */
     RTPS_DllAPI bool empty() const
     {
         return m_locators.empty();
     }
 
+    /**
+     * @brief Erase the specified locator from the container.
+     *
+     * @param loc Locator to be removed.
+     */
     RTPS_DllAPI void erase(
             const Locator& loc)
     {
@@ -273,6 +346,11 @@ public:
         return false;
     }
 
+    /**
+     * @brief Check that every locator contained in the list is not LOCATOR_KIND_INVALID.
+     *
+     * @return true if all locators are valid. False otherwise.
+     */
     RTPS_DllAPI bool isValid() const
     {
         for (LocatorListConstIterator it = this->begin(); it != this->end(); ++it)
@@ -285,6 +363,11 @@ public:
         return true;
     }
 
+    /**
+     * @brief exchange the content of the container.
+     *
+     * @param locatorList container to exchange the contents with.
+     */
     RTPS_DllAPI void swap(
             LocatorList& locatorList)
     {
