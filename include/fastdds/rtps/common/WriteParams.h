@@ -33,53 +33,6 @@ class RTPS_DllAPI WriteParams
 {
 public:
 
-    /*!
-     * @brief Default constructor.
-     */
-    WriteParams() = default;
-
-    /*!
-     * @brief Copy constructor.
-     */
-    WriteParams(
-            const WriteParams& wparam)
-        : sample_identity_(wparam.sample_identity_)
-        , related_sample_identity_(wparam.related_sample_identity_)
-    {
-    }
-
-    /*!
-     * @brief Move constructor.
-     */
-    WriteParams(
-            WriteParams&& wparam)
-        : sample_identity_(std::move(wparam.sample_identity_))
-        , related_sample_identity_(std::move(wparam.related_sample_identity_))
-    {
-    }
-
-    /*!
-     * @brief Assignment operator
-     */
-    WriteParams& operator =(
-            const WriteParams& wparam)
-    {
-        sample_identity_ = wparam.sample_identity_;
-        related_sample_identity_ = wparam.related_sample_identity_;
-        return *this;
-    }
-
-    /*!
-     * @brief Assignment operator
-     */
-    WriteParams& operator =(
-            WriteParams&& wparam)
-    {
-        sample_identity_ = std::move(wparam.sample_identity_);
-        related_sample_identity_ = std::move(wparam.related_sample_identity_);
-        return *this;
-    }
-
     WriteParams& sample_identity(
             const SampleIdentity& sample_id)
     {
