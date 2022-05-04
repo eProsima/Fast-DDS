@@ -21,117 +21,124 @@
 #include <fastdds/rtps/common/SampleIdentity.h>
 #include <chrono>
 
-namespace eprosima
+namespace eprosima {
+namespace fastrtps {
+namespace rtps {
+
+/*!
+ * @brief This class contains additional information of a CacheChange.
+ * @ingroup COMMON_MODULE
+ */
+class RTPS_DllAPI WriteParams
 {
-    namespace fastrtps
+public:
+
+    /*!
+     * @brief Default constructor.
+     */
+    WriteParams() = default;
+
+    /*!
+     * @brief Copy constructor.
+     */
+    WriteParams(
+            const WriteParams& wparam)
+        : sample_identity_(wparam.sample_identity_)
+        , related_sample_identity_(wparam.related_sample_identity_)
     {
-        namespace rtps
-        {
-            /*!
-             * @brief This class contains additional information of a CacheChange.
-             * @ingroup COMMON_MODULE
-             */
-            class RTPS_DllAPI WriteParams
-            {
-                public:
+    }
 
-                    /*!
-                     * @brief Default constructor.
-                     */
-                    WriteParams() = default;
+    /*!
+     * @brief Move constructor.
+     */
+    WriteParams(
+            WriteParams&& wparam)
+        : sample_identity_(std::move(wparam.sample_identity_))
+        , related_sample_identity_(std::move(wparam.related_sample_identity_))
+    {
+    }
 
-                    /*!
-                     * @brief Copy constructor.
-                     */
-                    WriteParams(const WriteParams &wparam)
-                        : sample_identity_(wparam.sample_identity_)
-                        , related_sample_identity_(wparam.related_sample_identity_)
-                    {
-                    }
+    /*!
+     * @brief Assignment operator
+     */
+    WriteParams& operator =(
+            const WriteParams& wparam)
+    {
+        sample_identity_ = wparam.sample_identity_;
+        related_sample_identity_ = wparam.related_sample_identity_;
+        return *this;
+    }
 
-                    /*!
-                     * @brief Move constructor.
-                     */
-                    WriteParams(WriteParams &&wparam)
-                        : sample_identity_(std::move(wparam.sample_identity_))
-                        , related_sample_identity_(std::move(wparam.related_sample_identity_))
-                    {
-                    }
+    /*!
+     * @brief Assignment operator
+     */
+    WriteParams& operator =(
+            WriteParams&& wparam)
+    {
+        sample_identity_ = std::move(wparam.sample_identity_);
+        related_sample_identity_ = std::move(wparam.related_sample_identity_);
+        return *this;
+    }
 
-                    /*!
-                     * @brief Assignment operator
-                     */
-                    WriteParams& operator=(const WriteParams &wparam)
-                    {
-                        sample_identity_ = wparam.sample_identity_;
-                        related_sample_identity_ = wparam.related_sample_identity_;
-                        return *this;
-                    }
+    WriteParams& sample_identity(
+            const SampleIdentity& sample_id)
+    {
+        sample_identity_ = sample_id;
+        return *this;
+    }
 
-                    /*!
-                     * @brief Assignment operator
-                     */
-                    WriteParams& operator=(WriteParams &&wparam)
-                    {
-                        sample_identity_ = std::move(wparam.sample_identity_);
-                        related_sample_identity_ = std::move(wparam.related_sample_identity_);
-                        return *this;
-                    }
+    WriteParams& sample_identity(
+            SampleIdentity&& sample_id)
+    {
+        sample_identity_ = std::move(sample_id);
+        return *this;
+    }
 
-                    WriteParams& sample_identity(const SampleIdentity &sample_id)
-                    {
-                        sample_identity_ = sample_id;
-                        return *this;
-                    }
+    const SampleIdentity& sample_identity() const
+    {
+        return sample_identity_;
+    }
 
-                    WriteParams& sample_identity(SampleIdentity &&sample_id)
-                    {
-                        sample_identity_ = std::move(sample_id);
-                        return *this;
-                    }
+    SampleIdentity& sample_identity()
+    {
+        return sample_identity_;
+    }
 
-                    const SampleIdentity& sample_identity() const
-                    {
-                        return sample_identity_;
-                    }
+    WriteParams& related_sample_identity(
+            const SampleIdentity& sample_id)
+    {
+        related_sample_identity_ = sample_id;
+        return *this;
+    }
 
-                    SampleIdentity& sample_identity()
-                    {
-                        return sample_identity_;
-                    }
+    WriteParams& related_sample_identity(
+            SampleIdentity&& sample_id)
+    {
+        related_sample_identity_ = std::move(sample_id);
+        return *this;
+    }
 
-                    WriteParams& related_sample_identity(const SampleIdentity &sample_id)
-                    {
-                        related_sample_identity_ = sample_id;
-                        return *this;
-                    }
+    const SampleIdentity& related_sample_identity() const
+    {
+        return related_sample_identity_;
+    }
 
-                    WriteParams& related_sample_identity(SampleIdentity &&sample_id)
-                    {
-                        related_sample_identity_ = std::move(sample_id);
-                        return *this;
-                    }
+    SampleIdentity& related_sample_identity()
+    {
+        return related_sample_identity_;
+    }
 
-                    const SampleIdentity& related_sample_identity() const
-                    {
-                        return related_sample_identity_;
-                    }
+    static WriteParams WRITE_PARAM_DEFAULT;
 
-                    SampleIdentity& related_sample_identity()
-                    {
-                        return related_sample_identity_;
-                    }
+private:
 
-                    static WriteParams WRITE_PARAM_DEFAULT;
+    SampleIdentity sample_identity_;
 
-                private:
+    SampleIdentity related_sample_identity_;
+};
 
-                    SampleIdentity sample_identity_;
+}  // namespace rtps
+}  // namespace fastrtps
+}  // namespace eprosima
 
-                    SampleIdentity related_sample_identity_;
-            };
-
-        } //namespace rtps
-    } //namespace fastrtps
-} //namespace eprosima
 #endif //_FASTDDS_RTPS_COMMON_WRITEPARAMS_H_
