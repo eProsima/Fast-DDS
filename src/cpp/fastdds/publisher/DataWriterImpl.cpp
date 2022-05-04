@@ -545,16 +545,16 @@ bool DataWriterImpl::write(
     return ReturnCode_t::RETCODE_OK == create_new_change_with_params(ALIVE, data, params);
 }
 
-ReturnCode_t DataWriterImpl::write(
+ReturnCode_t DataWriterImpl::check_write_preconditions(
         void* data,
-        const InstanceHandle_t& handle)
+        const InstanceHandle_t& handle,
+        InstanceHandle_t& instance_handle)
 {
     if (writer_ == nullptr)
     {
         return ReturnCode_t::RETCODE_NOT_ENABLED;
     }
 
-    InstanceHandle_t instance_handle;
     if (type_.get()->m_isGetKeyDefined)
     {
         bool is_key_protected = false;
@@ -570,9 +570,24 @@ ReturnCode_t DataWriterImpl::write(
     {
         return ReturnCode_t::RETCODE_PRECONDITION_NOT_MET;
     }
-    logInfo(DATA_WRITER, "Writing new data with Handle");
-    WriteParams wparams;
-    return create_new_change_with_params(ALIVE, data, wparams, instance_handle);
+
+    return ReturnCode_t::RETCODE_OK;
+}
+
+ReturnCode_t DataWriterImpl::write(
+        void* data,
+        const InstanceHandle_t& handle)
+{
+    InstanceHandle_t instance_handle;
+    ReturnCode_t ret = check_write_preconditions(data, handle, instance_handle);
+    if (ReturnCode_t::RETCODE_OK == ret)
+    {
+        logInfo(DATA_WRITER, "Writing new data with Handle");
+        WriteParams wparams;
+        ret = create_new_change_with_params(ALIVE, data, wparams, instance_handle);
+    }
+
+    return ret;
 }
 
 ReturnCode_t DataWriterImpl::write_w_timestamp(

@@ -424,6 +424,11 @@ protected:
 
     std::unique_ptr<ReaderFilterCollection> reader_filters_;
 
+    ReturnCode_t check_write_preconditions(
+            void* data,
+            const InstanceHandle_t& handle,
+            InstanceHandle_t& instance_handle);
+
     /**
      *
      * @param kind
