@@ -595,10 +595,27 @@ ReturnCode_t DataWriterImpl::write_w_timestamp(
         const InstanceHandle_t& handle,
         const fastrtps::Time_t& timestamp)
 {
-    static_cast<void> (data);
-    static_cast<void> (handle);
-    static_cast<void> (timestamp);
-    return ReturnCode_t::RETCODE_UNSUPPORTED;
+    InstanceHandle_t instance_handle;
+    ReturnCode_t ret = ReturnCode_t::RETCODE_OK;
+    if (timestamp.is_infinite() || timestamp.seconds < 0)
+    {
+        ret = ReturnCode_t::RETCODE_BAD_PARAMETER;
+    }
+
+    if (ReturnCode_t::RETCODE_OK == ret)
+    {
+        ret = check_write_preconditions(data, handle, instance_handle);
+    }
+
+    if (ReturnCode_t::RETCODE_OK == ret)
+    {
+        logInfo(DATA_WRITER, "Writing new data with Handle and timestamp");
+        WriteParams wparams;
+        wparams.source_timestamp(timestamp);
+        ret = create_new_change_with_params(ALIVE, data, wparams, instance_handle);
+    }
+
+    return ret;
 }
 
 InstanceHandle_t DataWriterImpl::register_instance(
