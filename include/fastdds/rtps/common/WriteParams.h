@@ -19,6 +19,7 @@
 #define _FASTDDS_RTPS_COMMON_WRITEPARAMS_H_
 
 #include <fastdds/rtps/common/SampleIdentity.h>
+#include <fastdds/rtps/common/Time_t.h>
 
 namespace eprosima {
 namespace fastrtps {
@@ -80,6 +81,30 @@ public:
         return related_sample_identity_;
     }
 
+    Time_t source_timestamp() const
+    {
+        return source_timestamp_;
+    }
+
+    Time_t& source_timestamp()
+    {
+        return source_timestamp_;
+    }
+
+    WriteParams& source_timestamp(
+            const Time_t& timestamp)
+    {
+        source_timestamp_ = timestamp;
+        return *this;
+    }
+
+    WriteParams& source_timestamp(
+            Time_t&& timestamp)
+    {
+        source_timestamp_ = std::move(timestamp);
+        return *this;
+    }
+
     static WriteParams WRITE_PARAM_DEFAULT;
 
 private:
@@ -87,6 +112,8 @@ private:
     SampleIdentity sample_identity_;
 
     SampleIdentity related_sample_identity_;
+
+    Time_t source_timestamp_{ -1, TIME_T_INFINITE_NANOSECONDS };
 };
 
 }  // namespace rtps
