@@ -186,6 +186,11 @@ public:
             void* data,
             const InstanceHandle_t& handle);
 
+    ReturnCode_t DataWriterImpl::write_w_timestamp(
+            void* data,
+            const InstanceHandle_t& handle,
+            const fastrtps::Time_t& timestamp);
+
     /*!
      * @brief Implementation of the DDS `register_instance` operation.
      * It deduces the instance's key and tries to get resources in the DataWriterHistory.

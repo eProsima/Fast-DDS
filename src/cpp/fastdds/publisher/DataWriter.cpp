@@ -103,10 +103,7 @@ ReturnCode_t DataWriter::write_w_timestamp(
         const InstanceHandle_t& handle,
         const fastrtps::Time_t& timestamp)
 {
-    static_cast<void> (data);
-    static_cast<void> (handle);
-    static_cast<void> (timestamp);
-    return ReturnCode_t::RETCODE_UNSUPPORTED;
+    return impl_->write_w_timestamp(data, handle, timestamp);
 }
 
 ReturnCode_t DataWriter::write_w_timestamp(

@@ -575,6 +575,17 @@ ReturnCode_t DataWriterImpl::write(
     return create_new_change_with_params(ALIVE, data, wparams, instance_handle);
 }
 
+ReturnCode_t DataWriterImpl::write_w_timestamp(
+        void* data,
+        const InstanceHandle_t& handle,
+        const fastrtps::Time_t& timestamp)
+{
+    static_cast<void> (data);
+    static_cast<void> (handle);
+    static_cast<void> (timestamp);
+    return ReturnCode_t::RETCODE_UNSUPPORTED;
+}
+
 InstanceHandle_t DataWriterImpl::register_instance(
         void* key)
 {
