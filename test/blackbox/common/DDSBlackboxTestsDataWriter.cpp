@@ -197,6 +197,88 @@ TEST_P(DDSDataWriter, GetKeyValue)
     EXPECT_EQ(valid_data.key(), data.key());
 }
 
+TEST_P(DDSDataWriter, WithTimestampOperations)
+{
+    using namespace eprosima::fastdds::dds;
+
+    // Test variables
+    eprosima::fastrtps::Time_t ts;
+
+    KeyedHelloWorld valid_data;
+    valid_data.key(27);
+    valid_data.index(1);
+    valid_data.message("HelloWorld");
+
+    // Create and initialize reader
+    PubSubReader<KeyedHelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+    reader.durability_kind(eprosima::fastrtps::TRANSIENT_LOCAL_DURABILITY_QOS)
+            .reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS)
+            .history_depth(10)
+            .init();
+    ASSERT_TRUE(reader.isInitialized());
+    DataReader& datareader = reader.get_native_reader();
+
+    // Create and initialize writer
+    PubSubWriter<KeyedHelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+    writer.durability_kind(eprosima::fastrtps::TRANSIENT_LOCAL_DURABILITY_QOS)
+            .reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS)
+            .history_depth(10)
+            .init();
+    ASSERT_TRUE(writer.isInitialized());
+    DataWriter& datawriter = writer.get_native_writer();
+    DataWriterQos qos = datawriter.get_qos();
+    qos.writer_data_lifecycle().autodispose_unregistered_instances = false;
+    EXPECT_EQ(ReturnCode_t::RETCODE_OK, datawriter.set_qos(qos));
+
+    // Wait discovery, since we are going to unregister an instance
+    reader.wait_discovery();
+    writer.wait_discovery();
+
+    ts.seconds = 0;
+    ts.nanosec = 1;
+    // Register with custom timestamp
+    EXPECT_NE(HANDLE_NIL, datawriter.register_instance_w_timestamp(&valid_data, ts));
+    // TODO(MiguelCompay): Remove the following line when register_instance operation gets propagated to the reader.
+    // See redmine issue #14494
+    ts.nanosec--;
+    // Write with custom timestamp
+    ts.nanosec++;
+    EXPECT_EQ(ReturnCode_t::RETCODE_OK, datawriter.write_w_timestamp(&valid_data, HANDLE_NIL, ts));
+    // Dispose with custom timestamp
+    ts.nanosec++;
+    EXPECT_EQ(ReturnCode_t::RETCODE_OK, datawriter.dispose_w_timestamp(&valid_data, HANDLE_NIL, ts));
+    // Write with custom timestamp
+    ts.nanosec++;
+    EXPECT_EQ(ReturnCode_t::RETCODE_OK, datawriter.write_w_timestamp(&valid_data, HANDLE_NIL, ts));
+    // Unregister with custom timestamp
+    ts.nanosec++;
+    EXPECT_EQ(ReturnCode_t::RETCODE_OK, datawriter.unregister_instance_w_timestamp(&valid_data, HANDLE_NIL, ts));
+
+    // Wait and take all data
+    auto num_samples = ts.nanosec;
+    while (num_samples != datareader.get_unread_count())
+    {
+        EXPECT_TRUE(datareader.wait_for_unread_message({ 10, 0 }));
+    }
+
+    FASTDDS_CONST_SEQUENCE(DataSeq, KeyedHelloWorld);
+    SampleInfoSeq infos;
+    DataSeq datas;
+    EXPECT_EQ(ReturnCode_t::RETCODE_OK, datareader.take(datas, infos));
+
+    // Check received timestamps
+    ts.seconds = 0;
+    ts.nanosec = 1;
+    EXPECT_EQ(static_cast<decltype(num_samples)>(infos.length()), num_samples);
+    for (SampleInfoSeq::size_type n = 0; n < infos.length(); ++n)
+    {
+        EXPECT_EQ(ts, infos[n].source_timestamp);
+        ts.nanosec++;
+    }
+
+    EXPECT_EQ(ReturnCode_t::RETCODE_OK, datareader.return_loan(datas, infos));
+}
+
 #ifdef INSTANTIATE_TEST_SUITE_P
 #define GTEST_INSTANTIATE_TEST_MACRO(x, y, z, w) INSTANTIATE_TEST_SUITE_P(x, y, z, w)
 #else
