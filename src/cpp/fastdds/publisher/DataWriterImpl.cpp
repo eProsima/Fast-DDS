@@ -719,26 +719,24 @@ ReturnCode_t DataWriterImpl::unregister_instance(
     // Preconditions
     InstanceHandle_t ih;
     ReturnCode_t returned_value = check_instance_preconditions(instance, handle, ih);
+    if (ReturnCode_t::RETCODE_OK == returned_value && !history_.is_key_registered(ih))
+    {
+        returned_value = ReturnCode_t::RETCODE_PRECONDITION_NOT_MET;
+    }
+
+    // Operation
     if (ReturnCode_t::RETCODE_OK == returned_value)
     {
-        // Operation
-        if (history_.is_key_registered(ih))
+        WriteParams wparams;
+        ChangeKind_t change_kind = NOT_ALIVE_DISPOSED;
+        if (!dispose)
         {
-            WriteParams wparams;
-            ChangeKind_t change_kind = NOT_ALIVE_DISPOSED;
-            if (!dispose)
-            {
-                change_kind = qos_.writer_data_lifecycle().autodispose_unregistered_instances ?
-                    NOT_ALIVE_DISPOSED_UNREGISTERED :
-                    NOT_ALIVE_UNREGISTERED;
-            }
+            change_kind = qos_.writer_data_lifecycle().autodispose_unregistered_instances ?
+                NOT_ALIVE_DISPOSED_UNREGISTERED :
+                NOT_ALIVE_UNREGISTERED;
+        }
 
-            returned_value = create_new_change_with_params(change_kind, instance, wparams, ih);
-        }
-        else
-        {
-            returned_value = ReturnCode_t::RETCODE_PRECONDITION_NOT_MET;
-        }
+        returned_value = create_new_change_with_params(change_kind, instance, wparams, ih);
     }
 
     return returned_value;
