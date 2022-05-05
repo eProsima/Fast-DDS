@@ -46,12 +46,14 @@ class Locators : public LocatorsIterator
 {
 public:
 
+    //! Contructor
     Locators(
             const LocatorListConstIterator& it)
         : it_(it)
     {
     }
 
+    //! Copy constructor
     Locators(
             const Locators& other)
         : it_(other.it_)
