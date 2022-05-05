@@ -449,6 +449,11 @@ protected:
             const InstanceHandle_t& handle,
             InstanceHandle_t& instance_handle);
 
+    ReturnCode_t check_instance_preconditions(
+            void* data,
+            const InstanceHandle_t& handle,
+            InstanceHandle_t& instance_handle);
+
     /**
      *
      * @param kind
