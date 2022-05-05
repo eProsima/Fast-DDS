@@ -85,7 +85,7 @@ private:
 };
 
 /**
- * Class LocatorList, a Locator vector that doesn't avoid duplicates.
+ * Class LocatorList, a Locator vector that doesn't allow duplicates.
  * @ingroup COMMON_MODULE
  */
 class LocatorList
