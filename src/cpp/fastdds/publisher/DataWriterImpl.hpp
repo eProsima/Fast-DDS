@@ -220,6 +220,26 @@ public:
             const InstanceHandle_t& handle,
             bool dispose = false);
 
+    /*!
+     * @brief Implementation of the DDS `unregister_instance_w_timestamp` and `dispose_w_timestamp` operations.
+     * It sends a CacheChange_t with a kind that depends on the `dispose` parameter and
+     * `writer_data_lifecycle` QoS.
+     * @param[in] instance Sample used to deduce instance's key in case of `handle` parameter is HANDLE_NIL.
+     * @param[in] handle Instance's key to be unregistered or disposed.
+     * @param[in] timestamp Source timestamp to set on the CacheChange_t being sent.
+     * @param[in] dispose If it is `false`, a CacheChange_t with kind set to NOT_ALIVE_UNREGISTERED is sent, or if
+     * `writer_data_lifecycle.autodispose_unregistered_instances` is `true` then it is sent with kind set to
+     * NOT_ALIVE_DISPOSED_UNREGISTERED.
+     * If `dispose` is `true`, a CacheChange_t with kind set to NOT_ALIVE_DISPOSED is sent.
+     * @return Returns the operation's result.
+     * If the operation finishes successfully, ReturnCode_t::RETCODE_OK is returned.
+     */
+    ReturnCode_t unregister_instance_w_timestamp(
+            void* instance,
+            const InstanceHandle_t& handle,
+            const fastrtps::Time_t& timestamp,
+            bool dispose = false);
+
     /**
      *
      * @return

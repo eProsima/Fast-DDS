@@ -749,6 +749,19 @@ ReturnCode_t DataWriterImpl::unregister_instance(
     return returned_value;
 }
 
+ReturnCode_t DataWriterImpl::unregister_instance_w_timestamp(
+        void* instance,
+        const InstanceHandle_t& handle,
+        const fastrtps::Time_t& timestamp,
+        bool dispose)
+{
+    static_cast<void> (instance);
+    static_cast<void> (handle);
+    static_cast<void> (timestamp);
+    static_cast<void> (dispose);
+    return ReturnCode_t::RETCODE_UNSUPPORTED;
+}
+
 ReturnCode_t DataWriterImpl::get_key_value(
         void* key_holder,
         const InstanceHandle_t& handle)
