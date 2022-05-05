@@ -748,11 +748,39 @@ ReturnCode_t DataWriterImpl::unregister_instance_w_timestamp(
         const fastrtps::Time_t& timestamp,
         bool dispose)
 {
-    static_cast<void> (instance);
-    static_cast<void> (handle);
-    static_cast<void> (timestamp);
-    static_cast<void> (dispose);
-    return ReturnCode_t::RETCODE_UNSUPPORTED;
+    // Preconditions
+    InstanceHandle_t instance_handle;
+    ReturnCode_t ret = ReturnCode_t::RETCODE_OK;
+    if (timestamp.is_infinite() || timestamp.seconds < 0)
+    {
+        ret = ReturnCode_t::RETCODE_BAD_PARAMETER;
+    }
+    if (ReturnCode_t::RETCODE_OK == ret)
+    {
+        ret = check_instance_preconditions(instance, handle, instance_handle);
+    }
+    if (ReturnCode_t::RETCODE_OK == ret && !history_.is_key_registered(instance_handle))
+    {
+        ret = ReturnCode_t::RETCODE_PRECONDITION_NOT_MET;
+    }
+
+    // Operation
+    if (ReturnCode_t::RETCODE_OK == ret)
+    {
+        WriteParams wparams;
+        wparams.source_timestamp(timestamp);
+        ChangeKind_t change_kind = NOT_ALIVE_DISPOSED;
+        if (!dispose)
+        {
+            change_kind = qos_.writer_data_lifecycle().autodispose_unregistered_instances ?
+                NOT_ALIVE_DISPOSED_UNREGISTERED :
+                NOT_ALIVE_UNREGISTERED;
+        }
+
+        ret = create_new_change_with_params(change_kind, instance, wparams, instance_handle);
+    }
+
+    return ret;
 }
 
 ReturnCode_t DataWriterImpl::get_key_value(
