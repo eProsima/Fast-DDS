@@ -34,7 +34,9 @@ namespace eprosima {
 namespace fastdds {
 namespace rtps {
 
+//! Iterator to iterate over a vector of locators.
 typedef std::vector<Locator>::iterator LocatorListIterator;
+//! Constant iterator to iterate over a vector of locators.
 typedef std::vector<Locator>::const_iterator LocatorListConstIterator;
 
 /**
