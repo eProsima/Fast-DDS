@@ -870,11 +870,13 @@ TEST(DataWriterTests, UnregisterInstanceWithTimestamp)
 
     // 2. Calling unregister_instance in a non keyed topic returns RETCODE_PRECONDITION_NOT MET
     ASSERT_EQ(ReturnCode_t::RETCODE_OK, datawriter->enable());
-    EXPECT_EQ(ReturnCode_t::RETCODE_PRECONDITION_NOT_MET, datawriter->unregister_instance_w_timestamp(&data, handle, ts));
+    EXPECT_EQ(ReturnCode_t::RETCODE_PRECONDITION_NOT_MET,
+            datawriter->unregister_instance_w_timestamp(&data, handle, ts));
 
     // 3. Calling unregister_instance with an invalid sample returns RETCODE_BAD_PARAMETER
     ASSERT_EQ(ReturnCode_t::RETCODE_OK, instance_datawriter->enable());
-    EXPECT_EQ(ReturnCode_t::RETCODE_BAD_PARAMETER, instance_datawriter->unregister_instance_w_timestamp(nullptr, handle, ts));
+    EXPECT_EQ(ReturnCode_t::RETCODE_BAD_PARAMETER,
+            instance_datawriter->unregister_instance_w_timestamp(nullptr, handle, ts));
 
 #if !defined(NDEBUG)
     // 4. Calling unregister_instance with an inconsistent handle returns RETCODE_PRECONDITION_NOT_MET
@@ -883,7 +885,8 @@ TEST(DataWriterTests, UnregisterInstanceWithTimestamp)
 #endif // NDEBUG
 
     // 5. Calling unregister_instance with a key not yet registered returns RETCODE_PRECONDITION_NOT_MET
-    EXPECT_EQ(ReturnCode_t::RETCODE_PRECONDITION_NOT_MET, instance_datawriter->unregister_instance_w_timestamp(&data, handle, ts));
+    EXPECT_EQ(ReturnCode_t::RETCODE_PRECONDITION_NOT_MET,
+            instance_datawriter->unregister_instance_w_timestamp(&data, handle, ts));
 
     // 6. Calling unregister_instance with a valid key returns RETCODE_OK
     ASSERT_EQ(ReturnCode_t::RETCODE_OK, instance_datawriter->write_w_timestamp(&data, HANDLE_NIL, ts));
@@ -898,9 +901,11 @@ TEST(DataWriterTests, UnregisterInstanceWithTimestamp)
     // 8. Check invalid timestamps
     ASSERT_EQ(ReturnCode_t::RETCODE_OK, instance_datawriter->write_w_timestamp(&data, HANDLE_NIL, ts));
     ts = eprosima::fastrtps::c_TimeInfinite;
-    EXPECT_EQ(ReturnCode_t::RETCODE_BAD_PARAMETER, instance_datawriter->unregister_instance_w_timestamp(&data, handle, ts));
+    EXPECT_EQ(ReturnCode_t::RETCODE_BAD_PARAMETER,
+            instance_datawriter->unregister_instance_w_timestamp(&data, handle, ts));
     ts = eprosima::fastrtps::c_TimeInvalid;
-    EXPECT_EQ(ReturnCode_t::RETCODE_BAD_PARAMETER, instance_datawriter->unregister_instance_w_timestamp(&data, handle, ts));
+    EXPECT_EQ(ReturnCode_t::RETCODE_BAD_PARAMETER,
+            instance_datawriter->unregister_instance_w_timestamp(&data, handle, ts));
 
     // TODO(jlbueno) There are other possible errors sending the unregister message: RETCODE_OUT_OF_RESOURCES,
     // RETCODE_ERROR, and RETCODE_TIMEOUT (only if HAVE_STRICT_REALTIME has been defined).
