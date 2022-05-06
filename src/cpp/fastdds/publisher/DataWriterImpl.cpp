@@ -671,7 +671,7 @@ InstanceHandle_t DataWriterImpl::register_instance(
     InstanceHandle_t instance_handle;
     if (ReturnCode_t::RETCODE_OK != check_instance_preconditions(key, HANDLE_NIL, instance_handle))
     {
-        return c_InstanceHandle_Unknown;
+        return HANDLE_NIL;
     }
 
     // Block lowlevel writer
@@ -708,7 +708,7 @@ InstanceHandle_t DataWriterImpl::register_instance(
         }
     }
 
-    return c_InstanceHandle_Unknown;
+    return HANDLE_NIL;
 }
 
 InstanceHandle_t DataWriterImpl::register_instance_w_timestamp(
