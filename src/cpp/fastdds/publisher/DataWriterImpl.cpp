@@ -687,41 +687,8 @@ InstanceHandle_t DataWriterImpl::register_instance(
         return HANDLE_NIL;
     }
 
-    // Block lowlevel writer
-    auto max_blocking_time = std::chrono::steady_clock::now() +
-            std::chrono::microseconds(::TimeConv::Time_t2MicroSecondsInt64(qos_.reliability().max_blocking_time));
-
-#if HAVE_STRICT_REALTIME
-    std::unique_lock<RecursiveTimedMutex> lock(writer_->getMutex(), std::defer_lock);
-    if (lock.try_lock_until(max_blocking_time))
-#else
-    std::unique_lock<RecursiveTimedMutex> lock(writer_->getMutex());
-#endif // if HAVE_STRICT_REALTIME
-    {
-        SerializedPayload_t* payload = nullptr;
-        if (history_.register_instance(instance_handle, lock, max_blocking_time, payload))
-        {
-            // Keep serialization of sample inside the instance
-            assert(nullptr != payload);
-            if (0 == payload->length || nullptr == payload->data)
-            {
-                uint32_t size = fixed_payload_size_ ? fixed_payload_size_ : type_->getSerializedSizeProvider(key)();
-                payload->reserve(size);
-                if (!type_->serialize(key, payload))
-                {
-                    logWarning(DATA_WRITER, "Key data serialization failed");
-
-                    // Serialization of the sample failed. Remove the instance to keep original state.
-                    // Note that we will only end-up here if the instance has just been created, so it will be empty
-                    // and removing its changes will remove the instance completely.
-                    history_.remove_instance_changes(instance_handle, SequenceNumber_t());
-                }
-            }
-            return instance_handle;
-        }
-    }
-
-    return HANDLE_NIL;
+    WriteParams wparams;
+    return do_register_instance(key, instance_handle, wparams);
 }
 
 InstanceHandle_t DataWriterImpl::register_instance_w_timestamp(
@@ -735,6 +702,18 @@ InstanceHandle_t DataWriterImpl::register_instance_w_timestamp(
     {
         return HANDLE_NIL;
     }
+
+    WriteParams wparams;
+    wparams.source_timestamp(timestamp);
+    return do_register_instance(key, instance_handle, wparams);
+}
+
+InstanceHandle_t DataWriterImpl::do_register_instance(
+        void* key,
+        const InstanceHandle_t instance_handle,
+        WriteParams& wparams)
+{
+    static_cast<void>(wparams);
 
     // Block lowlevel writer
     auto max_blocking_time = std::chrono::steady_clock::now() +

@@ -458,6 +458,11 @@ protected:
             const InstanceHandle_t& handle,
             InstanceHandle_t& instance_handle);
 
+    InstanceHandle_t do_register_instance(
+            void* key,
+            const InstanceHandle_t instance_handle,
+            fastrtps::rtps::WriteParams& wparams);
+
     /**
      *
      * @param kind
