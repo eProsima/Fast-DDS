@@ -752,6 +752,60 @@ TEST(DataWriterTests, TerminateWithoutDestroyingWriter)
 }
 
 /**
+ * This test checks register_instance API
+ */
+TEST(DataWriterTests, RegisterInstance)
+{
+    // Test parameters
+    InstanceFooType data;
+    data.message("HelloWorld");
+
+    // Create participant
+    DomainParticipant* participant =
+        DomainParticipantFactory::get_instance()->create_participant(0, PARTICIPANT_QOS_DEFAULT);
+    ASSERT_NE(nullptr, participant);
+
+    // Create publisher
+    PublisherQos pqos = PUBLISHER_QOS_DEFAULT;
+    pqos.entity_factory().autoenable_created_entities = false;
+    Publisher* publisher = participant->create_publisher(pqos);
+    ASSERT_NE(nullptr, publisher);
+
+    // Register types and topics
+    TypeSupport type(new TopicDataTypeMock());
+    type.register_type(participant);
+    TypeSupport instance_type(new InstanceTopicDataTypeMock());
+    instance_type.register_type(participant);
+
+    Topic* topic = participant->create_topic("footopic", type.get_type_name(), TOPIC_QOS_DEFAULT);
+    ASSERT_NE(topic, nullptr);
+    Topic* instance_topic = participant->create_topic("instancefootopic", instance_type.get_type_name(),
+        TOPIC_QOS_DEFAULT);
+    ASSERT_NE(instance_topic, nullptr);
+
+    // Create disabled DataWriters
+    DataWriter* datawriter = publisher->create_datawriter(topic, DATAWRITER_QOS_DEFAULT);
+    ASSERT_NE(nullptr, datawriter);
+    DataWriter* instance_datawriter = publisher->create_datawriter(instance_topic, DATAWRITER_QOS_DEFAULT);
+    ASSERT_NE(nullptr, instance_datawriter);
+
+    // 1. Calling register_instance in a disable writer returns HANDLE_NIL
+    EXPECT_EQ(HANDLE_NIL, datawriter->register_instance(&data));
+    EXPECT_EQ(HANDLE_NIL, instance_datawriter->register_instance(&data));
+
+    // 2. Calling register_instance in a non keyed topic returns HANDLE_NIL
+    ASSERT_EQ(ReturnCode_t::RETCODE_OK, datawriter->enable());
+    EXPECT_EQ(HANDLE_NIL, datawriter->register_instance(&data));
+
+    // 3. Calling register_instance with an invalid sample returns HANDLE_NIL
+    ASSERT_EQ(ReturnCode_t::RETCODE_OK, instance_datawriter->enable());
+    EXPECT_EQ(HANDLE_NIL, instance_datawriter->register_instance(nullptr));
+
+    // 4. Calling register_instance with a valid key returns a valid handle
+    EXPECT_NE(HANDLE_NIL, instance_datawriter->register_instance(&data));
+}
+
+/**
  * This test checks unregister_instance API
  */
 TEST(DataWriterTests, UnregisterInstance)
