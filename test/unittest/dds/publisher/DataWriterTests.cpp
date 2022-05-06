@@ -762,7 +762,7 @@ TEST(DataWriterTests, RegisterInstance)
 
     // Create participant
     DomainParticipant* participant =
-        DomainParticipantFactory::get_instance()->create_participant(0, PARTICIPANT_QOS_DEFAULT);
+            DomainParticipantFactory::get_instance()->create_participant(0, PARTICIPANT_QOS_DEFAULT);
     ASSERT_NE(nullptr, participant);
 
     // Create publisher
@@ -780,7 +780,7 @@ TEST(DataWriterTests, RegisterInstance)
     Topic* topic = participant->create_topic("footopic", type.get_type_name(), TOPIC_QOS_DEFAULT);
     ASSERT_NE(topic, nullptr);
     Topic* instance_topic = participant->create_topic("instancefootopic", instance_type.get_type_name(),
-        TOPIC_QOS_DEFAULT);
+                    TOPIC_QOS_DEFAULT);
     ASSERT_NE(instance_topic, nullptr);
 
     // Create disabled DataWriters
@@ -816,7 +816,7 @@ TEST(DataWriterTests, RegisterInstanceWithTimestamp)
 
     // Create participant
     DomainParticipant* participant =
-        DomainParticipantFactory::get_instance()->create_participant(0, PARTICIPANT_QOS_DEFAULT);
+            DomainParticipantFactory::get_instance()->create_participant(0, PARTICIPANT_QOS_DEFAULT);
     ASSERT_NE(nullptr, participant);
 
     // Create publisher
@@ -834,7 +834,7 @@ TEST(DataWriterTests, RegisterInstanceWithTimestamp)
     Topic* topic = participant->create_topic("footopic", type.get_type_name(), TOPIC_QOS_DEFAULT);
     ASSERT_NE(topic, nullptr);
     Topic* instance_topic = participant->create_topic("instancefootopic", instance_type.get_type_name(),
-        TOPIC_QOS_DEFAULT);
+                    TOPIC_QOS_DEFAULT);
     ASSERT_NE(instance_topic, nullptr);
 
     // Create disabled DataWriters
