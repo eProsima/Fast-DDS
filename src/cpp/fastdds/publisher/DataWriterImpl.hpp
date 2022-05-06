@@ -186,7 +186,7 @@ public:
             void* data,
             const InstanceHandle_t& handle);
 
-    ReturnCode_t DataWriterImpl::write_w_timestamp(
+    ReturnCode_t write_w_timestamp(
             void* data,
             const InstanceHandle_t& handle,
             const fastrtps::Time_t& timestamp);
