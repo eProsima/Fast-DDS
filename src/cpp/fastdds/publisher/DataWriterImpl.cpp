@@ -713,6 +713,8 @@ InstanceHandle_t DataWriterImpl::do_register_instance(
         const InstanceHandle_t instance_handle,
         WriteParams& wparams)
 {
+    // TODO(MiguelCompany): wparams should be used when propagating the register_instance operation to the DataReader.
+    // See redmine issue #14494
     static_cast<void>(wparams);
 
     // Block lowlevel writer
