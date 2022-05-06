@@ -1388,11 +1388,8 @@ public:
  * This test checks that the DataWriter methods defined in the standard not yet implemented in FastDDS return
  * ReturnCode_t::RETCODE_UNSUPPORTED. The following methods are checked:
  * 1. get_matched_subscription_data
- * 2. write_w_timestamp
- * 3. register_instance_w_timestamp
- * 4. unregister_instance_w_timestamp
- * 5. get_matched_subscriptions
- * 6. lookup_instance
+ * 2. get_matched_subscriptions
+ * 3. lookup_instance
  */
 TEST_F(DataWriterUnsupportedTests, UnsupportedDataWriterMethods)
 {
@@ -1418,37 +1415,13 @@ TEST_F(DataWriterUnsupportedTests, UnsupportedDataWriterMethods)
         ReturnCode_t::RETCODE_UNSUPPORTED,
         data_writer->get_matched_subscription_data(subscription_data, subscription_handle));
 
-    {
-        InstanceHandle_t handle;
-        fastrtps::Time_t timestamp;
-        EXPECT_EQ(
-            ReturnCode_t::RETCODE_UNSUPPORTED,
-            data_writer->write_w_timestamp(nullptr /* data */, handle, timestamp));
-    }
-
-    {
-        fastrtps::Time_t timestamp;
-        EXPECT_EQ(
-            HANDLE_NIL,
-            data_writer->register_instance_w_timestamp(nullptr /* instance */, timestamp));
-    }
-
-    {
-        InstanceHandle_t handle;
-        fastrtps::Time_t timestamp;
-        EXPECT_EQ(
-            ReturnCode_t::RETCODE_UNSUPPORTED,
-            data_writer->unregister_instance_w_timestamp(nullptr /* instance */, handle, timestamp));
-    }
-
-
     std::vector<InstanceHandle_t> subscription_handles;
     EXPECT_EQ(ReturnCode_t::RETCODE_UNSUPPORTED, data_writer->get_matched_subscriptions(subscription_handles));
 
     EXPECT_EQ(HANDLE_NIL, data_writer->lookup_instance(nullptr /* instance */));
 
-    // Expected logWarnings: register_instance_w_timestamp, lookup_instance
-    HELPER_WaitForEntries(2);
+    // Expected logWarnings: lookup_instance
+    HELPER_WaitForEntries(1);
 
     ASSERT_EQ(publisher->delete_datawriter(data_writer), ReturnCode_t::RETCODE_OK);
     ASSERT_EQ(participant->delete_publisher(publisher), ReturnCode_t::RETCODE_OK);
