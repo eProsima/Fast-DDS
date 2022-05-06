@@ -63,6 +63,19 @@ namespace eprosima {
 namespace fastdds {
 namespace dds {
 
+static ChangeKind_t unregister_change_kind(
+        bool dispose,
+        const DataWriterQos& qos)
+{
+    if (dispose)
+    {
+        return NOT_ALIVE_DISPOSED;
+    }
+
+    return qos.writer_data_lifecycle().autodispose_unregistered_instances ?
+           NOT_ALIVE_DISPOSED_UNREGISTERED : NOT_ALIVE_UNREGISTERED;
+}
+
 static bool qos_has_pull_mode_request(
         const DataWriterQos& qos)
 {
@@ -777,14 +790,7 @@ ReturnCode_t DataWriterImpl::unregister_instance(
     if (ReturnCode_t::RETCODE_OK == returned_value)
     {
         WriteParams wparams;
-        ChangeKind_t change_kind = NOT_ALIVE_DISPOSED;
-        if (!dispose)
-        {
-            change_kind = qos_.writer_data_lifecycle().autodispose_unregistered_instances ?
-                NOT_ALIVE_DISPOSED_UNREGISTERED :
-                NOT_ALIVE_UNREGISTERED;
-        }
-
+        ChangeKind_t change_kind = unregister_change_kind(dispose, qos_);
         returned_value = create_new_change_with_params(change_kind, instance, wparams, ih);
     }
 
@@ -818,14 +824,7 @@ ReturnCode_t DataWriterImpl::unregister_instance_w_timestamp(
     {
         WriteParams wparams;
         wparams.source_timestamp(timestamp);
-        ChangeKind_t change_kind = NOT_ALIVE_DISPOSED;
-        if (!dispose)
-        {
-            change_kind = qos_.writer_data_lifecycle().autodispose_unregistered_instances ?
-                NOT_ALIVE_DISPOSED_UNREGISTERED :
-                NOT_ALIVE_UNREGISTERED;
-        }
-
+        ChangeKind_t change_kind = unregister_change_kind(dispose, qos_);
         ret = create_new_change_with_params(change_kind, instance, wparams, instance_handle);
     }
 
