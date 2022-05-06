@@ -202,6 +202,10 @@ public:
     InstanceHandle_t register_instance(
             void* instance);
 
+    InstanceHandle_t register_instance_w_timestamp(
+            void* instance,
+            const fastrtps::Time_t& timestamp);
+
     /*!
      * @brief Implementation of the DDS `unregister_instance` and `dispose` operations.
      * It sends a CacheChange_t with a kind that depends on the `dispose` parameter and

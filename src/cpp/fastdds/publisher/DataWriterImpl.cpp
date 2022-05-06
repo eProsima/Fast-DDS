@@ -711,6 +711,16 @@ InstanceHandle_t DataWriterImpl::register_instance(
     return c_InstanceHandle_Unknown;
 }
 
+InstanceHandle_t DataWriterImpl::register_instance_w_timestamp(
+        void* key,
+        const fastrtps::Time_t& timestamp)
+{
+    static_cast<void> (key);
+    static_cast<void> (timestamp);
+    logWarning(DATA_WRITER, "register_instance_w_timestamp method not yet implemented")
+    return HANDLE_NIL;
+}
+
 ReturnCode_t DataWriterImpl::unregister_instance(
         void* instance,
         const InstanceHandle_t& handle,

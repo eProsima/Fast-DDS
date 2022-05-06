@@ -127,10 +127,7 @@ InstanceHandle_t DataWriter::register_instance_w_timestamp(
         void* instance,
         const fastrtps::Time_t& timestamp)
 {
-    static_cast<void> (instance);
-    static_cast<void> (timestamp);
-    logWarning(DATA_WRITER, "register_instance_w_timestamp method not yet implemented")
-    return HANDLE_NIL;
+    return impl_->register_instance_w_timestamp(instance, timestamp);
 }
 
 InstanceHandle_t DataWriter::register_instance_w_timestamp(
