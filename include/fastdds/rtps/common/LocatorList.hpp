@@ -389,7 +389,7 @@ private:
  *        operator.
  *
  * @param output Output stream where the serialized locator list is appended.
- * @param loc Locator list to be serialized/inserted.
+ * @param locList Locator list to be serialized/inserted.
  * @return std::ostream& Reference to the output stream with the serialized locator list appended.
  */
 inline std::ostream& operator <<(
@@ -419,7 +419,7 @@ inline std::ostream& operator <<(
  *        extraction opertator.
  *
  * @param input Input stream where the locator list to be deserialized is located.
- * @param loc Locator list where the deserialized locators are saved.
+ * @param locList Locator list where the deserialized locators are saved.
  * @return std::istream& Reference to the input stream after extracting the locator list.
  */
 inline std::istream& operator >>(
