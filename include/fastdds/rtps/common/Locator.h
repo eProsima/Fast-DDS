@@ -227,6 +227,14 @@ inline bool IsLocatorValid(
     return (0 <= loc.kind);
 }
 
+/**
+ * @brief Less than operator.
+ *
+ * @param loc1 Left hand side locator being compared.
+ * @param loc2 Right hand side locator being compared.
+ * @return true if loc1 is less than loc2.
+ * @return false otherwise.
+ */
 inline bool operator <(
         const Locator_t& loc1,
         const Locator_t& loc2)
@@ -234,6 +242,14 @@ inline bool operator <(
     return memcmp(&loc1, &loc2, sizeof(Locator_t)) < 0;
 }
 
+/**
+ * @brief Equal to operator.
+ *
+ * @param loc1 Left hand side locator being compared.
+ * @param loc2 Right hand side locator being compared.
+ * @return true if loc1 is equal to loc2.
+ * @return false otherwise.
+ */
 inline bool operator ==(
         const Locator_t& loc1,
         const Locator_t& loc2)
@@ -253,6 +269,14 @@ inline bool operator ==(
     return true;
 }
 
+/**
+ * @brief Not equal to operator.
+ *
+ * @param loc1 Left hand side locator being compared.
+ * @param loc2 Right hand side locator being compared.
+ * @return true if loc1 is not equal to loc2.
+ * @return false otherwise.
+ */
 inline bool operator !=(
         const Locator_t& loc1,
         const Locator_t& loc2)
@@ -260,9 +284,21 @@ inline bool operator !=(
     return !(loc1 == loc2);
 }
 
-/*
- * kind:[address (in IP version)]:port
- * <address> cannot be empty or deserialization process fails
+/**
+ * @brief Insertion operator: serialize a locator
+ *        The serialization format is kind:[address]:port
+ *        \c kind must be one of the following:
+ *            - UDPv4
+ *            - UDPv6
+ *            - TCPv4
+ *            - TCPv6
+ *            - SHM
+ *        \c address must be either a name which can be resolved by DNS or the IP address
+ *        \c port number
+ *
+ * @param output Output stream where the serialized locator is appended.
+ * @param loc Locator to be serialized/inserted.
+ * @return std::ostream& Reference to the output stream with the serialized locator appended.
  */
 inline std::ostream& operator <<(
         std::ostream& output,
@@ -330,6 +366,22 @@ inline std::ostream& operator <<(
     return output;
 }
 
+/**
+ * @brief Extraction operator: deserialize a locator
+ *        The deserialization format is kind:[address]:port
+ *        \c kind must be one of the following:
+ *            - UDPv4
+ *            - UDPv6
+ *            - TCPv4
+ *            - TCPv6
+ *            - SHM
+ *        \c address must be either a name which can be resolved by DNS or the IP address
+ *        \c port number
+ *
+ * @param input Input stream where the locator to be deserialized is located.
+ * @param loc Locator where the deserialized locator is saved.
+ * @return std::istream& Reference to the input stream after extracting the locator.
+ */
 inline std::istream& operator >>(
         std::istream& input,
         Locator_t& loc)
