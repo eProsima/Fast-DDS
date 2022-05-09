@@ -520,7 +520,7 @@ bool DataReaderHistory::get_next_deadline(
 
 std::pair<bool, DataReaderHistory::instance_info> DataReaderHistory::lookup_instance(
         const InstanceHandle_t& handle,
-        bool exact)
+        bool exact) const
 {
     if (!has_keys_)
     {
@@ -543,10 +543,10 @@ std::pair<bool, DataReaderHistory::instance_info> DataReaderHistory::lookup_inst
         // Looking for the first instance, return the ficticious one containing all changes
         InstanceHandle_t tmp;
         tmp.value[0] = 1;
-        return { true, {tmp, &keyed_changes_.begin()->second} };
+        return { true, {tmp, const_cast<DataReaderInstance*>(&keyed_changes_.begin()->second)} };
     }
 
-    InstanceCollection::iterator it;
+    InstanceCollection::const_iterator it;
 
     if (exact)
     {
@@ -563,7 +563,7 @@ std::pair<bool, DataReaderHistory::instance_info> DataReaderHistory::lookup_inst
 
     if (it != keyed_changes_.end())
     {
-        return { true, {it->first, &(it->second)} };
+        return { true, {it->first, const_cast<DataReaderInstance*>(&(it->second))} };
     }
     return { false, {InstanceHandle_t(), nullptr} };
 }

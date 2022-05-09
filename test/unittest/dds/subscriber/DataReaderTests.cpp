@@ -1550,6 +1550,62 @@ TEST_F(DataReaderTests, read_unread)
     }
 }
 
+template<typename DataType>
+void lookup_instance_test(
+        DataType& data,
+        DataWriter* writer,
+        DataReader* reader,
+        const InstanceHandle_t& handle_ok)
+{
+    // Send sample with key value 0
+    data.index(0);
+    EXPECT_TRUE(writer->write(&data));
+    // Ensure it arrived to the DataReader
+    EXPECT_TRUE(reader->wait_for_unread_message({ 1, 0 }));
+
+    // DataReader should have a single sample on instance handle_ok_
+
+    // Wrong parameter should return HANDLE_NIL
+    EXPECT_EQ(HANDLE_NIL, reader->lookup_instance(nullptr));
+    // Querying with the correct key value should return handle_ok_, but only if the type has keys
+    EXPECT_EQ(data.isKeyDefined() ? handle_ok : HANDLE_NIL, reader->lookup_instance(&data));
+    // Querying with another key should return HANDLE_NIL
+    data.index(37);
+    EXPECT_EQ(HANDLE_NIL, reader->lookup_instance(&data));
+}
+
+TEST_F(DataReaderTests, lookup_instance)
+{
+    DataReaderQos reader_qos = DATAREADER_QOS_DEFAULT;
+    reader_qos.reliability().kind = RELIABLE_RELIABILITY_QOS;
+    reader_qos.durability().kind = TRANSIENT_LOCAL_DURABILITY_QOS;
+    reader_qos.history().kind = KEEP_LAST_HISTORY_QOS;
+    reader_qos.history().depth = 1;
+    reader_qos.resource_limits().max_instances = 1;
+    reader_qos.resource_limits().max_samples_per_instance = 1;
+    reader_qos.resource_limits().max_samples = 1;
+
+    create_instance_handles();
+
+    // Perform test on type with keys
+    {
+        create_entities(nullptr, reader_qos);
+        FooType data;
+        lookup_instance_test(data, data_writer_, data_reader_, handle_ok_);
+    }
+
+    // Destroy entities
+    TearDown();
+
+    // Perform test on type without keys
+    {
+        type_.reset(new FooBoundedTypeSupport());
+        create_entities(nullptr, reader_qos);
+        FooBoundedType data;
+        lookup_instance_test(data, data_writer_, data_reader_, handle_ok_);
+    }
+}
+
 TEST_F(DataReaderTests, sample_info)
 {
     DataReaderQos reader_qos = DATAREADER_QOS_DEFAULT;
@@ -1692,6 +1748,12 @@ TEST_F(DataReaderTests, sample_info)
                 EXPECT_EQ(instance_result.disposed_generation_count, infos[0].disposed_generation_count);
                 EXPECT_EQ(instance_result.no_writers_generation_count, infos[0].no_writers_generation_count);
                 EXPECT_EQ(ReturnCode_t::RETCODE_OK, reader->return_loan(values, infos));
+
+                EXPECT_EQ(handles_[instance_index], reader->lookup_instance(&data_[instance_index]));
+            }
+            else
+            {
+                EXPECT_EQ(HANDLE_NIL, reader->lookup_instance(&data_[instance_index]));
             }
         }
 
@@ -2261,8 +2323,7 @@ public:
  * 6. delete_readcondition
  * 7. get_matched_publications
  * 8. get_key_value
- * 9. lookup_instance
- * 10. wait_for_historical_data
+ * 9. wait_for_historical_data
  */
 TEST_F(DataReaderUnsupportedTests, UnsupportedDataReaderMethods)
 {
@@ -2383,12 +2444,10 @@ TEST_F(DataReaderUnsupportedTests, UnsupportedDataReaderMethods)
     fastrtps::rtps::InstanceHandle_t key_handle;
     EXPECT_EQ(ReturnCode_t::RETCODE_UNSUPPORTED, data_reader->get_key_value(nullptr, key_handle));
 
-    EXPECT_EQ(HANDLE_NIL, data_reader->lookup_instance(nullptr));
-
     EXPECT_EQ(ReturnCode_t::RETCODE_UNSUPPORTED, data_reader->wait_for_historical_data({0, 1}));
 
-    // Expected logWarnings: create_querycondition, create_readcondition, lookup_instance
-    HELPER_WaitForEntries(3);
+    // Expected logWarnings: create_querycondition, create_readcondition
+    HELPER_WaitForEntries(2);
 
     ASSERT_EQ(subscriber->delete_datareader(data_reader), ReturnCode_t::RETCODE_OK);
     ASSERT_EQ(participant->delete_subscriber(subscriber), ReturnCode_t::RETCODE_OK);

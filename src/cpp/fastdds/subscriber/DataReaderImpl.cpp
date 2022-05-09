@@ -1636,6 +1636,25 @@ void DataReaderImpl::filter_has_been_updated()
     update_rtps_reader_qos();
 }
 
+InstanceHandle_t DataReaderImpl::lookup_instance(
+        const void* instance) const
+{
+    InstanceHandle_t handle = HANDLE_NIL;
+
+    if (instance && type_->m_isGetKeyDefined)
+    {
+        if (type_->getKey(const_cast<void*>(instance), &handle, false))
+        {
+            auto it = history_.lookup_instance(handle, true);
+            if (!it.first)
+            {
+                handle = HANDLE_NIL;
+            }
+        }
+    }
+    return handle;
+}
+
 } /* namespace dds */
 } /* namespace fastdds */
 } /* namespace eprosima */

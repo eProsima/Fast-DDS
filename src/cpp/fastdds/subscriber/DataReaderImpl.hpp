@@ -314,10 +314,12 @@ public:
     ReturnCode_t get_listening_locators(
             rtps::LocatorList& locators) const;
 
-
     ReturnCode_t delete_contained_entities();
 
     void filter_has_been_updated();
+
+    InstanceHandle_t lookup_instance(
+            const void* instance) const;
 
 protected:
 
