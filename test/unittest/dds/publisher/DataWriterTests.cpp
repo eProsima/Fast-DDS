@@ -669,6 +669,39 @@ TEST(DataWriterTests, Write)
     ASSERT_TRUE(DomainParticipantFactory::get_instance()->delete_participant(participant) == ReturnCode_t::RETCODE_OK);
 }
 
+TEST(DataWriterTests, WriteWithTimestamp)
+{
+    DomainParticipant* participant =
+            DomainParticipantFactory::get_instance()->create_participant(0, PARTICIPANT_QOS_DEFAULT);
+    ASSERT_NE(participant, nullptr);
+
+    Publisher* publisher = participant->create_publisher(PUBLISHER_QOS_DEFAULT);
+    ASSERT_NE(publisher, nullptr);
+
+    TypeSupport type(new TopicDataTypeMock());
+    type.register_type(participant);
+
+    Topic* topic = participant->create_topic("footopic", type.get_type_name(), TOPIC_QOS_DEFAULT);
+    ASSERT_NE(topic, nullptr);
+
+    DataWriter* datawriter = publisher->create_datawriter(topic, DATAWRITER_QOS_DEFAULT);
+    ASSERT_NE(datawriter, nullptr);
+
+    eprosima::fastrtps::Time_t ts{ 0, 1 };
+
+    FooType data;
+    data.message("HelloWorld");
+    ASSERT_FALSE(datawriter->write_w_timestamp(nullptr, HANDLE_NIL, ts) == ReturnCode_t::RETCODE_OK);
+    ASSERT_TRUE(datawriter->write_w_timestamp(&data, HANDLE_NIL, ts) == ReturnCode_t::RETCODE_OK);
+    ASSERT_TRUE(datawriter->write_w_timestamp(&data, participant->get_instance_handle(), ts) ==
+            ReturnCode_t::RETCODE_PRECONDITION_NOT_MET);
+
+    ASSERT_TRUE(publisher->delete_datawriter(datawriter) == ReturnCode_t::RETCODE_OK);
+    ASSERT_TRUE(participant->delete_topic(topic) == ReturnCode_t::RETCODE_OK);
+    ASSERT_TRUE(participant->delete_publisher(publisher) == ReturnCode_t::RETCODE_OK);
+    ASSERT_TRUE(DomainParticipantFactory::get_instance()->delete_participant(participant) == ReturnCode_t::RETCODE_OK);
+}
+
 void set_listener_test (
         DataWriter* writer,
         DataWriterListener* listener,
