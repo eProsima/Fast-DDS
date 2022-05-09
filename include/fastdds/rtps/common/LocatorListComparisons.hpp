@@ -27,6 +27,14 @@ namespace eprosima {
 namespace fastrtps {
 namespace rtps {
 
+/**
+ * @brief Equal to operator to compare two locator lists.
+ *
+ * @param lhs Locator list to be compared.
+ * @param rhs Other locator list to be compared.
+ * @return true if the list are equal.
+ * @return false otherwise.
+ */
 static inline bool operator == (
         const ResourceLimitedVector<Locator_t>& lhs,
         const ResourceLimitedVector<Locator_t>& rhs)
