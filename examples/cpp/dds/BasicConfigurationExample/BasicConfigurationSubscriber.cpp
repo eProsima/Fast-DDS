@@ -230,13 +230,15 @@ void SubListener::on_subscription_matched(
     {
         matched_ = info.current_count;
         // std::cout << "Subscriber matched in " << topic_name_  << std::endl;
-        logWarning(BASIC_CONFIGURATION_SUBSCRIBER, "Subscriber matched in " << topic_name_);
+        logWarning(BASIC_CONFIGURATION_SUBSCRIBER,
+                "Thread: " << std::this_thread::get_id() << " | " << "Subscriber matched in " << topic_name_);
     }
     else if (info.current_count_change == -1)
     {
         matched_ = info.current_count;
         // std::cout << "Subscriber unmatched in " << topic_name_  << std::endl;
-        logWarning(BASIC_CONFIGURATION_SUBSCRIBER, "Subscriber unmatched in " << topic_name_);
+        logWarning(BASIC_CONFIGURATION_SUBSCRIBER,
+                "Thread: " << std::this_thread::get_id() << " | " << "Subscriber unmatched in " << topic_name_);
 
     }
     else
@@ -259,7 +261,7 @@ void SubListener::on_data_available(
         samples_++;
         // Print your structure data here.
         // std::cout << "Message " << hello_.message().data() << " " << hello_.index() << " RECEIVED in " << topic_name_  << std::endl;
-        logWarning(BASIC_CONFIGURATION_SUBSCRIBER,
+        logWarning(BASIC_CONFIGURATION_SUBSCRIBER, "Thread: " << std::this_thread::get_id() << " | " <<
                 "Message " << hello_.message().data() << " " << hello_.index() << " RECEIVED in " << topic_name_);
         if (max_messages_ > 0 && samples_ == max_messages_)
         {

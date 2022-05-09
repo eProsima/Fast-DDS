@@ -31,13 +31,16 @@ enum EntityType
     SUBSCRIBER
 };
 
-std::vector<std::string> split(const std::string &s, char delim)
+std::vector<std::string> split(
+        const std::string& s,
+        char delim)
 {
     std::vector<std::string> result;
     std::stringstream ss (s);
     std::string item;
 
-    while (getline (ss, item, delim)) {
+    while (getline (ss, item, delim))
+    {
         result.push_back (item);
     }
 
@@ -244,5 +247,6 @@ int main(
             break;
         }
     }
+    eprosima::fastdds::dds::Log::Flush();
     return 0;
 }

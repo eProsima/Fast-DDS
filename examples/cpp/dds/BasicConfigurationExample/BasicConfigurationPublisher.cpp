@@ -238,7 +238,8 @@ void PubListener::on_publication_matched(
     {
         matched_ = info.current_count;
         // std::cout << "Publisher matched in " << topic_name_ << std::endl;
-        logWarning(BASIC_CONFIGURATION_PUBLISHER, "Publisher matched in " << topic_name_);
+        logWarning(BASIC_CONFIGURATION_PUBLISHER,
+                "Thread: " << std::this_thread::get_id() << " | " << "Publisher matched in " << topic_name_);
         if (enough_matched())
         {
             awake();
@@ -248,7 +249,8 @@ void PubListener::on_publication_matched(
     {
         matched_ = info.current_count;
         // std::cout << "Publisher unmatched in " << topic_name_  << std::endl;
-        logWarning(BASIC_CONFIGURATION_PUBLISHER, "Publisher unmatched in " << topic_name_);
+        logWarning(BASIC_CONFIGURATION_PUBLISHER,
+                "Thread: " << std::this_thread::get_id() << " | " << "Publisher unmatched in " << topic_name_);
     }
     else
     {
@@ -297,7 +299,7 @@ void HelloWorldPublisher::runThread(
             publish(idx);
             // std::cout << "Message: " << hellos_[idx].message().data() << " with index: " << hellos_[idx].index()
             //             << " SENT in " << listeners_[idx]->topic_name_ << std::endl;
-            logWarning(BASIC_CONFIGURATION_PUBLISHER,
+            logWarning(BASIC_CONFIGURATION_PUBLISHER, "Thread: " << std::this_thread::get_id() << " | " <<
                     "Message: " << hellos_[idx].message().data() << " with index: " << hellos_[idx].index() << " SENT in " <<
                     listeners_[idx]->topic_name_);
             if (samples == 0 || hellos_[idx].index() < samples)
@@ -327,7 +329,7 @@ void HelloWorldPublisher::runSingleThread(
                 publish(i);
                 // std::cout << "Message: " << hellos_[i].message().data() << " with index: " << hellos_[i].index()
                 //         << " SENT in " << listeners_[i]->topic_name_ << std::endl;
-                logWarning(BASIC_CONFIGURATION_PUBLISHER,
+                logWarning(BASIC_CONFIGURATION_PUBLISHER, "Thread: " << std::this_thread::get_id() << " | " <<
                         "Message: " << hellos_[i].message().data() << " with index: " << hellos_[i].index() << " SENT in " <<
                         listeners_[i]->topic_name_);
                 if (hellos_[i].index() == samples)
