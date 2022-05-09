@@ -658,6 +658,7 @@ TEST(DataWriterTests, Write)
 
     FooType data;
     data.message("HelloWorld");
+    ASSERT_FALSE(datawriter->write(nullptr, HANDLE_NIL) == ReturnCode_t::RETCODE_OK);
     ASSERT_TRUE(datawriter->write(&data, HANDLE_NIL) == ReturnCode_t::RETCODE_OK);
     ASSERT_TRUE(datawriter->write(&data, participant->get_instance_handle()) ==
             ReturnCode_t::RETCODE_PRECONDITION_NOT_MET);
