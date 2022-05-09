@@ -63,6 +63,12 @@ namespace rtps {
 using reader_map_helper = utilities::collections::map_size_helper<GUID_t, SubscriptionMatchedStatus>;
 using writer_map_helper = utilities::collections::map_size_helper<GUID_t, PublicationMatchedStatus>;
 
+static bool is_partition_empty(
+        const fastdds::dds::Partition_t& partition)
+{
+    return partition.size() <= 1 && 0 == strlen(partition.name());
+}
+
 EDP::EDP(
         PDP* p,
         RTPSParticipantImpl* part)
@@ -751,7 +757,7 @@ bool EDP::valid_matching(
         for (auto rnameit = rdata->m_qos.m_partition.begin();
                 rnameit != rdata->m_qos.m_partition.end(); ++rnameit)
         {
-            if (rnameit->size() == 0)
+            if (is_partition_empty(*rnameit))
             {
                 matched = true;
                 break;
@@ -763,7 +769,7 @@ bool EDP::valid_matching(
         for (auto wnameit = wdata->m_qos.m_partition.begin();
                 wnameit !=  wdata->m_qos.m_partition.end(); ++wnameit)
         {
-            if (wnameit->size() == 0)
+            if (is_partition_empty(*wnameit))
             {
                 matched = true;
                 break;
@@ -977,7 +983,7 @@ bool EDP::valid_matching(
         for (auto rnameit = wdata->m_qos.m_partition.begin();
                 rnameit != wdata->m_qos.m_partition.end(); ++rnameit)
         {
-            if (rnameit->size() == 0)
+            if (is_partition_empty(*rnameit))
             {
                 matched = true;
                 break;
@@ -989,7 +995,7 @@ bool EDP::valid_matching(
         for (auto wnameit = rdata->m_qos.m_partition.begin();
                 wnameit !=  rdata->m_qos.m_partition.end(); ++wnameit)
         {
-            if (wnameit->size() == 0)
+            if (is_partition_empty(*wnameit))
             {
                 matched = true;
                 break;
