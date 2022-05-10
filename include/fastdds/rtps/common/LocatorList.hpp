@@ -34,9 +34,9 @@ namespace eprosima {
 namespace fastdds {
 namespace rtps {
 
-//! Iterator to iterate over a vector of locators.
+/// Iterator to iterate over a vector of locators.
 typedef std::vector<Locator>::iterator LocatorListIterator;
-//! Constant iterator to iterate over a vector of locators.
+/// Constant iterator to iterate over a vector of locators.
 typedef std::vector<Locator>::const_iterator LocatorListConstIterator;
 
 /**
@@ -46,14 +46,14 @@ class Locators : public LocatorsIterator
 {
 public:
 
-    //! Contructor
+    /// Contructor
     Locators(
             const LocatorListConstIterator& it)
         : it_(it)
     {
     }
 
-    //! Copy constructor
+    /// Copy constructor
     Locators(
             const Locators& other)
         : it_(other.it_)
@@ -96,31 +96,31 @@ class LocatorList
 {
 public:
 
-    //! Constructor
+    /// Constructor
     RTPS_DllAPI LocatorList()
     {
     }
 
-    //! Destructor
+    /// Destructor
     RTPS_DllAPI ~LocatorList()
     {
     }
 
-    //! Copy constructor
+    /// Copy constructor
     RTPS_DllAPI LocatorList(
             const LocatorList& list)
         : m_locators(list.m_locators)
     {
     }
 
-    //! Move contructor
+    /// Move contructor
     RTPS_DllAPI LocatorList(
             LocatorList&& list)
         : m_locators(std::move(list.m_locators))
     {
     }
 
-    //! Copy assignment
+    /// Copy assignment
     RTPS_DllAPI LocatorList& operator =(
             const LocatorList& list)
     {
@@ -128,7 +128,7 @@ public:
         return *this;
     }
 
-    //! Move assignment
+    /// Move assignment
     RTPS_DllAPI LocatorList& operator =(
             LocatorList&& list)
     {
@@ -136,7 +136,7 @@ public:
         return *this;
     }
 
-    //! Equal to operator
+    /// Equal to operator
     RTPS_DllAPI bool operator ==(
             const LocatorList& locator_list) const
     {
@@ -263,7 +263,7 @@ public:
     }
 
     /**
-     * @brief Add locator to the end.
+     * @brief Add locator to the end if not found within the list.
      *
      * @param loc locator to be appended.
      */
@@ -286,7 +286,7 @@ public:
     }
 
     /**
-     * @brief Add several locators to the end.
+     * @brief Add several locators to the end if not already present within the list.
      *
      * @param locList LocatorList with the locators to be appended.
      */

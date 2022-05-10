@@ -37,32 +37,42 @@ namespace eprosima {
 namespace fastrtps {
 namespace rtps {
 
-//! Initialize locator with invalid values
+/// Initialize locator with invalid values
 #define LOCATOR_INVALID(loc)  {loc.kind = LOCATOR_KIND_INVALID; loc.port = LOCATOR_PORT_INVALID; \
                                LOCATOR_ADDRESS_INVALID(loc.address); \
 }
-
+/// Invalid locator kind
 #define LOCATOR_KIND_INVALID -1
 
-//! Set locator IP address to 0
+/// Set locator IP address to 0
 #define LOCATOR_ADDRESS_INVALID(a) {std::memset(a, 0x00, 16 * sizeof(octet));}
 
+/// Invalid locator port
 #define LOCATOR_PORT_INVALID 0
+
+/// Reserved locator kind
 #define LOCATOR_KIND_RESERVED 0
+/// UDP over IPv4 locator kind
 #define LOCATOR_KIND_UDPv4 1
+/// UDP over IPv6 locator kind
 #define LOCATOR_KIND_UDPv6 2
+/// TCP over IPv4 kind
 #define LOCATOR_KIND_TCPv4 4
+/// TCP over IPv6 locator kind
 #define LOCATOR_KIND_TCPv6 8
+/// Shared memory locator kind
 #define LOCATOR_KIND_SHM 16
 
-//!@brief Class Locator_t, uniquely identifies a communication channel for a particular transport.
-//! For example, an address + port combination in the case of UDP.
-//!@ingroup COMMON_MODULE
+/**
+ * @brief Class Locator_t, uniquely identifies a communication channel for a particular transport.
+ * For example, an address + port combination in the case of UDP.
+ * @ingroup COMMON_MODULE
+ */
 class RTPS_DllAPI Locator_t
 {
 public:
 
-    /*!
+    /**
      * @brief Specifies the locator type. Valid values are:
      *
      * LOCATOR_KIND_UDPv4
@@ -76,12 +86,12 @@ public:
      * LOCATOR_KIND_SHM
      */
     int32_t kind;
-    //! Network port
+    /// Network port
     uint32_t port;
-    //! IP address
+    /// IP address
     octet address[16];
 
-    //!Default constructor
+    /// Default constructor
     Locator_t()
         : kind(LOCATOR_KIND_UDPv4)
     {
@@ -89,7 +99,7 @@ public:
         LOCATOR_ADDRESS_INVALID(address);
     }
 
-    //!Move constructor
+    /// Move constructor
     Locator_t(
             Locator_t&& loc)
         : kind(loc.kind)
@@ -98,7 +108,7 @@ public:
         std::memcpy(address, loc.address, 16 * sizeof(octet));
     }
 
-    //!Copy constructor
+    /// Copy constructor
     Locator_t(
             const Locator_t& loc)
         : kind(loc.kind)
@@ -107,7 +117,7 @@ public:
         std::memcpy(address, loc.address, 16 * sizeof(octet));
     }
 
-    //!Port constructor
+    /// Port constructor
     Locator_t(
             uint32_t portin)
         : kind(LOCATOR_KIND_UDPv4)
@@ -116,7 +126,7 @@ public:
         LOCATOR_ADDRESS_INVALID(address);
     }
 
-    //!Kind and port constructor
+    /// Kind and port constructor
     Locator_t(
             int32_t kindin,
             uint32_t portin)
@@ -126,7 +136,7 @@ public:
         LOCATOR_ADDRESS_INVALID(address);
     }
 
-    //! Copy assignment
+    /// Copy assignment
     Locator_t& operator =(
             const Locator_t& loc)
     {
@@ -293,7 +303,7 @@ inline bool operator !=(
  *            - TCPv4
  *            - TCPv6
  *            - SHM
- *        \c address must be either a name which can be resolved by DNS or the IP address
+ *        \c address must be either a name which can be resolved by DNS or the IP address unless \c kind is SHM
  *        \c port number
  *
  * @param output Output stream where the serialized locator is appended.
