@@ -173,15 +173,16 @@ void Log::run()
             while (!resources_.logs.Empty())
             {
                 std::unique_lock<std::mutex> configGuard(resources_.config_mutex);
-                if (preprocess(resources_.logs.Front()))
+
+                // This value is moved and not copied
+                Entry value_dequeue = resources_.logs.FrontAndPop();
+                if (preprocess(value_dequeue))
                 {
                     for (auto& consumer : resources_.consumers)
                     {
-                        consumer->Consume(resources_.logs.Front());
+                        consumer->Consume(value_dequeue);
                     }
                 }
-
-                resources_.logs.Pop();
             }
         }
         guard.lock();
