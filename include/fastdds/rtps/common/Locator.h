@@ -242,7 +242,7 @@ inline bool IsLocatorValid(
  *
  * @param loc1 Left hand side locator being compared.
  * @param loc2 Right hand side locator being compared.
- * @return true if loc1 is less than loc2.
+ * @return true if \c loc1 is less than \c loc2.
  * @return false otherwise.
  */
 inline bool operator <(
@@ -257,7 +257,7 @@ inline bool operator <(
  *
  * @param loc1 Left hand side locator being compared.
  * @param loc2 Right hand side locator being compared.
- * @return true if loc1 is equal to loc2.
+ * @return true if \c loc1 is equal to  \c loc2.
  * @return false otherwise.
  */
 inline bool operator ==(
@@ -284,7 +284,7 @@ inline bool operator ==(
  *
  * @param loc1 Left hand side locator being compared.
  * @param loc2 Right hand side locator being compared.
- * @return true if loc1 is not equal to loc2.
+ * @return true if \c loc1 is not equal to \c loc2.
  * @return false otherwise.
  */
 inline bool operator !=(
@@ -308,7 +308,7 @@ inline bool operator !=(
  *
  * @param output Output stream where the serialized locator is appended.
  * @param loc Locator to be serialized/inserted.
- * @return std::ostream& Reference to the output stream with the serialized locator appended.
+ * @return \c std::ostream& Reference to the output stream with the serialized locator appended.
  */
 inline std::ostream& operator <<(
         std::ostream& output,
@@ -390,7 +390,7 @@ inline std::ostream& operator <<(
  *
  * @param input Input stream where the locator to be deserialized is located.
  * @param loc Locator where the deserialized locator is saved.
- * @return std::istream& Reference to the input stream after extracting the locator.
+ * @return \c std::istream& Reference to the input stream after extracting the locator.
  */
 inline std::istream& operator >>(
         std::istream& input,

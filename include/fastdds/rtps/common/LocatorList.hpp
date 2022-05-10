@@ -46,7 +46,7 @@ class Locators : public LocatorsIterator
 {
 public:
 
-    /// Contructor
+    /// Constructor
     Locators(
             const LocatorListConstIterator& it)
         : it_(it)
@@ -113,7 +113,7 @@ public:
     {
     }
 
-    /// Move contructor
+    /// Move constructor
     RTPS_DllAPI LocatorList(
             LocatorList&& list)
         : m_locators(std::move(list.m_locators))
@@ -385,12 +385,12 @@ private:
 
 /**
  * @brief Insertion operator: serialize a locator list
- *        Each individual locator within the list must follow the seralization format explained in the locator insertion
+ *        Each individual locator within the list must follow the serialization format explained in the locator insertion
  *        operator.
  *
  * @param output Output stream where the serialized locator list is appended.
  * @param locList Locator list to be serialized/inserted.
- * @return std::ostream& Reference to the output stream with the serialized locator list appended.
+ * @return \c std::ostream& Reference to the output stream with the serialized locator list appended.
  */
 inline std::ostream& operator <<(
         std::ostream& output,
@@ -416,11 +416,11 @@ inline std::ostream& operator <<(
 /**
  * @brief Extraction operator: deserialize a list of locators
  *        Each individual locator within the list must follow the deserialization format explained in the locator
- *        extraction opertator.
+ *        extraction operator.
  *
  * @param input Input stream where the locator list to be deserialized is located.
  * @param locList Locator list where the deserialized locators are saved.
- * @return std::istream& Reference to the input stream after extracting the locator list.
+ * @return \c std::istream& Reference to the input stream after extracting the locator list.
  */
 inline std::istream& operator >>(
         std::istream& input,
