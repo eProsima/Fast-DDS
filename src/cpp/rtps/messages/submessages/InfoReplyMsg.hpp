@@ -21,11 +21,36 @@ namespace eprosima {
 namespace fastrtps {
 namespace rtps {
 
+static bool addSubmessageInfoReplyV4(
+        CDRMessage_t* msg,
+        const Locator_t& unicast_locator,
+        const Locator_t& multicast_locator)
+{
+    return false;
+}
+
 bool RTPSMessageCreator::addSubmessageInfoReply(
         CDRMessage_t* msg,
         const LocatorList_t& unicast_locators,
         const LocatorList_t& multicast_locators)
 {
+    bool compact_unicast = (unicast_locators.size() == 1) && (LOCATOR_KIND_UDPv4 == unicast_locators.begin()->kind);
+    bool compact_version = compact_unicast && (multicast_locators.size() <= 1);
+    if ( (multicast_locators.size() == 1) && (LOCATOR_KIND_UDPv4 != multicast_locators.begin()->kind))
+    {
+        compact_version = false;
+    }
+
+    if (compact_version)
+    {
+        Locator_t multicast_locator;
+        if (multicast_locators.size() == 1)
+        {
+            multicast_locator = *multicast_locators.begin();
+        }
+        return addSubmessageInfoReplyV4(msg, *unicast_locators.begin(), multicast_locator);
+    }
+
     return false;
 }
 
