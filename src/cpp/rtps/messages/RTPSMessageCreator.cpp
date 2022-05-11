@@ -194,3 +194,4 @@ bool RTPSMessageCreator::addSubmessageInfoTS_Now(
 #include <rtps/messages/submessages/HeartbeatMsg.hpp>
 #include <rtps/messages/submessages/AckNackMsg.hpp>
 #include <rtps/messages/submessages/GapMsg.hpp>
+#include <rtps/messages/submessages/InfoReplyMsg.hpp>

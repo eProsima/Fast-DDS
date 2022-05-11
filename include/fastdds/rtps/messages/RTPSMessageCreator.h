@@ -24,6 +24,7 @@
 #include <fastdds/rtps/common/SequenceNumber.h>
 #include <fastdds/rtps/common/FragmentNumber.h>
 #include <fastdds/rtps/common/CacheChange.h>
+#include <fastdds/rtps/common/Locator.h>
 
 namespace eprosima {
 namespace fastrtps {
@@ -266,6 +267,11 @@ public:
     static bool addSubmessageInfoDST(
             CDRMessage_t* msg,
             const GuidPrefix_t& guidP);
+
+    static bool addSubmessageInfoReply(
+            CDRMessage_t* msg,
+            const LocatorList_t& unicast_locators,
+            const LocatorList_t& multicast_locators);
 };
 } // namespace rtps
 } /* namespace rtps */
