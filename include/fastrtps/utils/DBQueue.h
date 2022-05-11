@@ -85,7 +85,7 @@ public:
    }
 
    //! Return the front element in the foreground queue by moving it and erase it from the queue.
-   T FrontAndPop() const
+   T FrontAndPop()
    {
       std::unique_lock<std::mutex> guard(mForegroundMutex);
 
