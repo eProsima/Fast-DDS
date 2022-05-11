@@ -1274,6 +1274,7 @@ void StatefulReader::send_acknack(
     logInfo(RTPS_READER, "Sending ACKNACK: " << sns);
 
     RTPSMessageGroup group(getRTPSParticipant(), this, sender);
+    group.add_info_reply(m_att.unicastLocatorList, m_att.multicastLocatorList);
     group.add_acknack(sns, acknack_count_, is_final);
 }
 
@@ -1304,6 +1305,8 @@ void StatefulReader::send_acknack(
         RTPSMessageGroup group(getRTPSParticipant(), this, sender);
         if (!missing_changes.empty() || !heartbeat_was_final)
         {
+            group.add_info_reply(m_att.unicastLocatorList, m_att.multicastLocatorList);
+
             GUID_t guid = sender->remote_guids().at(0);
             SequenceNumberSet_t sns(writer->available_changes_max() + 1);
             History::const_iterator history_iterator = mp_history->changesBegin();
