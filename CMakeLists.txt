@@ -443,7 +443,7 @@ option(INSTALL_EXAMPLES "Install example" OFF)
 
 if(INSTALL_EXAMPLES)
   # Install examples
-  install(DIRECTORY ${PROJECT_SOURCE_DIR}/examples/C++
+  install(DIRECTORY ${PROJECT_SOURCE_DIR}/examples/cpp
       DESTINATION examples/
       COMPONENT examples
       PATTERN "examples/CMakeLists.txt" EXCLUDE

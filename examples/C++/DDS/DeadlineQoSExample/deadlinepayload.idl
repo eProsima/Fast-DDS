@@ -1,6 +1,0 @@
-struct HelloMsg
-{
-    @Key
-    unsigned short deadlinekey;
-    string<256> payload;
-};
