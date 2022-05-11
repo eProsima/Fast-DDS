@@ -891,9 +891,50 @@ bool RTPSMessageGroup::add_info_reply(
         const LocatorList_t& unicast_locators,
         const LocatorList_t& multicast_locators)
 {
-    static_cast<void>(unicast_locators);
-    static_cast<void>(multicast_locators);
-    return true;
+    assert(nullptr != sender_);
+
+    // A vector is used to avoid dynamic allocations, but only first item is used
+    assert(sender_->remote_guids().size() == 1);
+
+    check_and_maybe_flush();
+
+#if HAVE_SECURITY
+    uint32_t from_buffer_position = submessage_msg_->pos;
+#endif // if HAVE_SECURITY
+
+    if (!RTPSMessageCreator::addSubmessageInfoReply(submessage_msg_, unicast_locators, multicast_locators))
+    {
+        logError(RTPS_READER, "Cannot add INFO_REPLY submsg to the CDRMessage. Buffer too small");
+        return false;
+    }
+
+#if HAVE_SECURITY
+    if (endpoint_->getAttributes().security_attributes().is_submessage_protected)
+    {
+        submessage_msg_->pos = from_buffer_position;
+        CDRMessage::initCDRMsg(encrypt_msg_);
+        if (!participant_->security_manager().encode_reader_submessage(*submessage_msg_, *encrypt_msg_,
+                endpoint_->getGuid(), sender_->remote_guids()))
+        {
+            logError(RTPS_READER, "Cannot encrypt INFO_REPLY submessage on reader " << endpoint_->getGuid());
+            return false;
+        }
+
+        if ((submessage_msg_->max_size - from_buffer_position) >= encrypt_msg_->length)
+        {
+            memcpy(&submessage_msg_->buffer[from_buffer_position], encrypt_msg_->buffer, encrypt_msg_->length);
+            submessage_msg_->length = from_buffer_position + encrypt_msg_->length;
+            submessage_msg_->pos = submessage_msg_->length;
+        }
+        else
+        {
+            logError(RTPS_OUT, "Not enough memory to copy encrypted data for " << endpoint_->getGuid());
+            return false;
+        }
+    }
+#endif // if HAVE_SECURITY
+
+    return insert_submessage(false);
 }
 
 } /* namespace rtps */
