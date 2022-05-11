@@ -199,6 +199,16 @@ public:
             int32_t count);
 
     /**
+     * Adds a INFO_REPLY message to the group.
+     * @param unicast_locators   List of unicast locators to include.
+     * @param multicast_locators List of multicast locators to include.
+     * @return True when message was added to the group.
+     */
+    bool add_info_reply(
+            const LocatorList_t& unicast_locators,
+            const LocatorList_t& multicast_locators);
+
+    /**
      * To be used whenever destination locators/guids change between two add_xxx calls.
      * Automatically called inside add_xxx calls if destinations_have_changed() method of
      * RTPSMessageSenderInterface returns true.

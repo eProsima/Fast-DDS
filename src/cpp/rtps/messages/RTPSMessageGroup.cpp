@@ -887,6 +887,15 @@ bool RTPSMessageGroup::add_nackfrag(
     return insert_submessage(false);
 }
 
+bool RTPSMessageGroup::add_info_reply(
+        const LocatorList_t& unicast_locators,
+        const LocatorList_t& multicast_locators)
+{
+    static_cast<void>(unicast_locators);
+    static_cast<void>(multicast_locators);
+    return true;
+}
+
 } /* namespace rtps */
 } /* namespace fastrtps */
 } /* namespace eprosima */
