@@ -791,10 +791,11 @@ XMLP_ret XMLEndpointParser::lookforReader(
         uint16_t id,
         ReaderProxyData** rdataptr)
 {
+    std::string participant_name(partname);
     for (std::vector<StaticRTPSParticipantInfo*>::iterator pit = m_RTPSParticipants.begin();
             pit != m_RTPSParticipants.end(); ++pit)
     {
-        if ((*pit)->m_RTPSParticipantName == partname || true) //it doenst matter the name fo the RTPSParticipant, only for organizational purposes
+        if ((*pit)->m_RTPSParticipantName == participant_name.substr(0, participant_name.find_first_of('#')))
         {
             for (std::vector<ReaderProxyData*>::iterator rit = (*pit)->m_readers.begin();
                     rit != (*pit)->m_readers.end(); ++rit)
@@ -815,10 +816,11 @@ XMLP_ret XMLEndpointParser::lookforWriter(
         uint16_t id,
         WriterProxyData** wdataptr)
 {
+    std::string participant_name(partname);
     for (std::vector<StaticRTPSParticipantInfo*>::iterator pit = m_RTPSParticipants.begin();
             pit != m_RTPSParticipants.end(); ++pit)
     {
-        if ((*pit)->m_RTPSParticipantName == partname || true) //it doenst matter the name fo the RTPSParticipant, only for organizational purposes
+        if ((*pit)->m_RTPSParticipantName == participant_name.substr(0, participant_name.find_first_of('#')))
         {
             for (std::vector<WriterProxyData*>::iterator wit = (*pit)->m_writers.begin();
                     wit != (*pit)->m_writers.end(); ++wit)
