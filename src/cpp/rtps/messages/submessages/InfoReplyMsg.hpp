@@ -21,6 +21,12 @@ namespace eprosima {
 namespace fastrtps {
 namespace rtps {
 
+/**
+ * Append a LocatorUDPv4 to a CDR message.
+ *
+ * @param msg      CDRMessage where the locator should be appended.
+ * @param locator  Locator to append (should have LOCATOR_KIND_UDPv4 as kind).
+ */
 static void add_locator_udp4(
         CDRMessage_t* msg,
         const Locator_t& locator)
@@ -35,6 +41,16 @@ static void add_locator_udp4(
     CDRMessage::addUInt32(msg, locator.port);
 }
 
+/**
+ * Append an INFO_REPLY_IP4 submessage to a CDR message.
+ *
+ * @param msg                 CDRMessage where the submessage should be appended.
+ * @param unicast_locator     Unicast locator (should have LOCATOR_KIND_UDPv4 as kind).
+ * @param multicast_locator   Optional multicast locator (should either be invalid or have LOCATOR_KIND_UDPv4 as kind).
+ *
+ * @return true if the submessage is appended to the CDR message.
+ * @return false if the submessage does not fit into the CDR message.
+ */
 static bool addSubmessageInfoReplyV4(
         CDRMessage_t* msg,
         const Locator_t& unicast_locator,
@@ -84,6 +100,16 @@ static bool addSubmessageInfoReplyV4(
     return true;
 }
 
+/**
+ * Append an INFO_REPLY submessage to a CDR message.
+ *
+ * @param msg                  CDRMessage where the submessage should be appended.
+ * @param unicast_locators     List of unicast locators.
+ * @param multicast_locators   List of multicast locators.
+ *
+ * @return true if the submessage is appended to the CDR message.
+ * @return false if the submessage does not fit into the CDR message.
+ */
 static bool addSubmessageInfoReplyGeneric(
         CDRMessage_t* msg,
         const LocatorList_t& unicast_locators,
