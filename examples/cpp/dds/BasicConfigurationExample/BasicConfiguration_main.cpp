@@ -78,6 +78,7 @@ int main(
     bool single_thread = true;
     int domain = 0;
     bool async = false;
+    bool random = false;
     TransportType transport = DEFAULT;
     bool reliable = false;
     bool transient = false; // transient local
@@ -182,6 +183,17 @@ int main(
                     }
                     break;
 
+                case optionIndex::RANDOM:
+                    if (type == PUBLISHER)
+                    {
+                        random = true;
+                    }
+                    else
+                    {
+                        print_warning("publisher", opt.name);
+                    }
+                    break;
+
                 case optionIndex::TRANSPORT:
                     if (strcmp(opt.arg, "shm") == 0)
                     {
@@ -232,7 +244,7 @@ int main(
             if (mypub.init(topic_names, static_cast<uint32_t>(domain), static_cast<uint32_t>(num_wait_matched), async,
                     transport, reliable, transient))
             {
-                mypub.run(static_cast<uint32_t>(count), static_cast<uint32_t>(sleep), single_thread);
+                mypub.run(static_cast<uint32_t>(count), static_cast<uint32_t>(sleep), single_thread, random);
             }
             break;
         }

@@ -114,7 +114,8 @@ public:
     void run(
             uint32_t number,
             uint32_t sleep,
-            bool single_thread = true);
+            bool single_thread = true,
+            bool random = false);
 
     //! Return the current state of execution
     static bool is_stopped();
@@ -148,7 +149,8 @@ private:
 
     void runSingleThread(
             uint32_t number,
-            uint32_t sleep);
+            uint32_t sleep,
+            bool random);
 
     //! Member used for control flow purposes
     static std::atomic<bool> stop_;

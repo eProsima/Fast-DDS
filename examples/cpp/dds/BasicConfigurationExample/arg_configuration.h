@@ -137,6 +137,7 @@ enum optionIndex
     INTERVAL,
     MULTITHREADING,
     ASYNC,
+    RANDOM,
     DOMAIN_ID,
     TRANSPORT,
     RELIABLE,
@@ -164,6 +165,8 @@ const option::Descriptor usage[] = {
       "  -m \t--multithreading \tPublish each topic's messages concurrently (Default: False)." },
     { ASYNC, 0, "a", "async",               Arg::None,
       "  -a \t--async \tAsynchronous publish mode (synchronous by default)." },
+    { RANDOM, 0, "", "random",               Arg::None,
+      "  \t--random \tPublish in random order (False by default)." },
     { TRANSPORT, 0, "", "transport",        Arg::Transport,
       "  \t--transport=<shm|udp|udpv6> \tUse only shared-memory, UDPv4, or UDPv6 transport."
       "If not set, use Fast DDS default transports (depending on the scenario it will use the most efficient one:"

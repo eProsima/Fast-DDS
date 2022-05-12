@@ -19,6 +19,11 @@
 
 #include <csignal>
 #include <thread>
+#include <algorithm>
+#include <array>
+#include <random>
+#include <chrono>
+#include <numeric>
 
 #include <fastdds/dds/domain/DomainParticipantFactory.hpp>
 #include <fastdds/dds/publisher/DataWriter.hpp>
@@ -316,23 +321,33 @@ void HelloWorldPublisher::runThread(
 
 void HelloWorldPublisher::runSingleThread(
         uint32_t samples,
-        uint32_t sleep)
+        uint32_t sleep,
+        bool random)
 {
     uint32_t n_topics = n_topics_.load();
     uint32_t n_finished = 0;
+    std::vector<uint32_t> send_order(n_topics);
+    std::iota(send_order.begin(), send_order.end(), 0);
+    unsigned seed = std::chrono::system_clock::now().time_since_epoch().count();
+    std::default_random_engine rng(seed);
     while (!is_stopped() && n_finished < n_topics)
     {
+        if (random)
+        {
+            shuffle(send_order.begin(), send_order.end(), rng);
+        }
         for (uint32_t i = 0; i < n_topics; i++)
         {
-            if (listeners_[i]->enough_matched() && (samples == 0 || hellos_[i].index() < samples))
+            uint32_t idx = send_order[i];
+            if (listeners_[idx]->enough_matched() && (samples == 0 || hellos_[idx].index() < samples))
             {
-                publish(i);
-                // std::cout << "Message: " << hellos_[i].message().data() << " with index: " << hellos_[i].index()
-                //         << " SENT in " << listeners_[i]->topic_name_ << std::endl;
+                publish(idx);
+                // std::cout << "Message: " << hellos_[idx].message().data() << " with index: " << hellos_[idx].index()
+                //         << " SENT in " << listeners_[idx]->topic_name_ << std::endl;
                 logWarning(BASIC_CONFIGURATION_PUBLISHER, "Thread: " << std::this_thread::get_id() << " | " <<
-                        "Message: " << hellos_[i].message().data() << " with index: " << hellos_[i].index() << " SENT in " <<
-                        listeners_[i]->topic_name_);
-                if (hellos_[i].index() == samples)
+                        "Message: " << hellos_[idx].message().data() << " with index: " << hellos_[idx].index() << " SENT in " <<
+                        listeners_[idx]->topic_name_);
+                if (hellos_[idx].index() == samples)
                 {
                     n_finished++;
                 }
@@ -352,14 +367,15 @@ void HelloWorldPublisher::runSingleThread(
 void HelloWorldPublisher::run(
         uint32_t samples,
         uint32_t sleep,
-        bool single_thread)
+        bool single_thread,
+        bool random)
 {
     stop_ = false;
 
     std::vector<std::thread> threads;
     if (single_thread)
     {
-        threads.push_back(std::thread(&HelloWorldPublisher::runSingleThread, this, samples, sleep));
+        threads.push_back(std::thread(&HelloWorldPublisher::runSingleThread, this, samples, sleep, random));
     }
     else
     {
