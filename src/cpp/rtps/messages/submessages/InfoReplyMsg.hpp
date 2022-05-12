@@ -31,6 +31,8 @@ static void add_locator_udp4(
         CDRMessage_t* msg,
         const Locator_t& locator)
 {
+    assert(LOCATOR_KIND_UDPv4 == locator.kind);
+
     uint32_t address =
         static_cast<uint32_t>(locator.address[3]) << 24 |
         static_cast<uint32_t>(locator.address[2]) << 16 |
@@ -56,11 +58,14 @@ static bool addSubmessageInfoReplyV4(
         const Locator_t& unicast_locator,
         const Locator_t& multicast_locator)
 {
+    assert(LOCATOR_KIND_UDPv4 == unicast_locator.kind);
+
     // Calculate total submessage size
     bool has_multicast = false;
     uint16_t submessage_size = 2 * sizeof(uint32_t);
-    if (LOCATOR_KIND_UDPv4 == multicast_locator.kind)
+    if (LOCATOR_KIND_INVALID != multicast_locator.kind)
     {
+        assert(LOCATOR_KIND_UDPv4 == multicast_locator.kind);
         has_multicast = true;
         submessage_size *= 2;
     }
@@ -180,6 +185,7 @@ bool RTPSMessageCreator::addSubmessageInfoReply(
     if (compact_version)
     {
         Locator_t multicast_locator;
+        LOCATOR_INVALID(multicast_locator);
         if (multicast_locators.size() == 1)
         {
             multicast_locator = *multicast_locators.begin();
