@@ -34,10 +34,10 @@ static void add_locator_udp4(
     assert(LOCATOR_KIND_UDPv4 == locator.kind);
 
     uint32_t address =
-        static_cast<uint32_t>(locator.address[3]) << 24 |
-        static_cast<uint32_t>(locator.address[2]) << 16 |
-        static_cast<uint32_t>(locator.address[1]) << 8 |
-        static_cast<uint32_t>(locator.address[0]);
+            static_cast<uint32_t>(locator.address[3]) << 24 |
+            static_cast<uint32_t>(locator.address[2]) << 16 |
+            static_cast<uint32_t>(locator.address[1]) << 8 |
+            static_cast<uint32_t>(locator.address[0]);
 
     CDRMessage::addUInt32(msg, address);
     CDRMessage::addUInt32(msg, locator.port);
@@ -177,7 +177,7 @@ bool RTPSMessageCreator::addSubmessageInfoReply(
     // Compact version requires 0 or 1 multicast locators
     bool compact_version = compact_unicast && (multicast_locators.size() <= 1);
     // Compact version requires the multicast locator to be UDPv4
-    if ( (multicast_locators.size() == 1) && (LOCATOR_KIND_UDPv4 != multicast_locators.begin()->kind))
+    if ((multicast_locators.size() == 1) && (LOCATOR_KIND_UDPv4 != multicast_locators.begin()->kind))
     {
         compact_version = false;
     }
@@ -195,7 +195,6 @@ bool RTPSMessageCreator::addSubmessageInfoReply(
 
     return addSubmessageInfoReplyGeneric(msg, unicast_locators, multicast_locators);
 }
-
 
 } // namespace rtps
 } // namespace fastrtps
