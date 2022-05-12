@@ -777,6 +777,19 @@ inline bool CDRMessage::addLocator(
     return true;
 }
 
+inline bool CDRMessage::addLocatorList(
+        CDRMessage_t* msg,
+        const LocatorList_t& locators)
+{
+    addUInt32(msg, static_cast<uint32_t>(locators.size()));
+    for (const Locator_t& loc : locators)
+    {
+        CDRMessage::addLocator(msg, loc);
+    }
+
+    return true;
+}
+
 inline bool CDRMessage::add_string(
         CDRMessage_t* msg,
         const char* in_str)

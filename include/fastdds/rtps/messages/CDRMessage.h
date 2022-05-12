@@ -253,6 +253,10 @@ inline bool addLocator(
         CDRMessage_t* msg,
         const Locator_t& loc);
 
+inline bool addLocatorList(
+        CDRMessage_t* msg,
+        const LocatorList_t& locators);
+
 inline bool add_string(
         CDRMessage_t* msg,
         const char* in_str);
