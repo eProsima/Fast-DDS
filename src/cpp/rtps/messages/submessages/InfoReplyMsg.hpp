@@ -84,13 +84,68 @@ static bool addSubmessageInfoReplyV4(
     return true;
 }
 
+static bool addSubmessageInfoReplyGeneric(
+        CDRMessage_t* msg,
+        const LocatorList_t& unicast_locators,
+        const LocatorList_t& multicast_locators)
+{
+
+    // Calculate total submessage size
+    bool has_multicast = !multicast_locators.empty();
+    size_t num_locators = unicast_locators.size() + multicast_locators.size();
+    size_t total_size = num_locators * (16 + 4 + 4);
+    total_size += 4 + (has_multicast ? 4 : 0);
+    if (total_size > 0xFFFF)
+    {
+        return false;
+    }
+
+    // Check if submessage fits into message
+    uint16_t submessage_size = static_cast<uint16_t>(total_size);
+    if (msg->pos + submessage_size + 4 > msg->max_size)
+    {
+        return false;
+    }
+
+    octet flags = 0x0;
+    Endianness_t old_endianess = msg->msg_endian;
+#if FASTDDS_IS_BIG_ENDIAN_TARGET
+    msg->msg_endian = BIGEND;
+#else
+    flags = flags | BIT(0);
+    msg->msg_endian = LITTLEEND;
+#endif // if FASTDDS_IS_BIG_ENDIAN_TARGET
+
+    if (has_multicast)
+    {
+        flags = flags | BIT(1);
+    }
+
+    // Submessage header.
+    CDRMessage::addOctet(msg, INFO_REPLY);
+    CDRMessage::addOctet(msg, flags);
+    CDRMessage::addUInt16(msg, submessage_size);
+
+    CDRMessage::addLocatorList(msg, unicast_locators);
+    if (has_multicast)
+    {
+        CDRMessage::addLocatorList(msg, multicast_locators);
+    }
+
+    msg->msg_endian = old_endianess;
+    return true;
+}
+
 bool RTPSMessageCreator::addSubmessageInfoReply(
         CDRMessage_t* msg,
         const LocatorList_t& unicast_locators,
         const LocatorList_t& multicast_locators)
 {
+    // Compact version requires a single UDPv4 unicast locator
     bool compact_unicast = (unicast_locators.size() == 1) && (LOCATOR_KIND_UDPv4 == unicast_locators.begin()->kind);
+    // Compact version requires 0 or 1 multicast locators
     bool compact_version = compact_unicast && (multicast_locators.size() <= 1);
+    // Compact version requires the multicast locator to be UDPv4
     if ( (multicast_locators.size() == 1) && (LOCATOR_KIND_UDPv4 != multicast_locators.begin()->kind))
     {
         compact_version = false;
@@ -106,7 +161,7 @@ bool RTPSMessageCreator::addSubmessageInfoReply(
         return addSubmessageInfoReplyV4(msg, *unicast_locators.begin(), multicast_locator);
     }
 
-    return false;
+    return addSubmessageInfoReplyGeneric(msg, unicast_locators, multicast_locators);
 }
 
 
