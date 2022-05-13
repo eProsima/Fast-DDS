@@ -168,7 +168,9 @@ message(STATUS "Found foonathan_memory: ${foonathan_memory_DIR}")
 find_package(ThirdpartyBoost REQUIRED)
 
 if(ANDROID)
-    eprosima_find_thirdparty(android-ifaddrs android-ifaddrs)
+    if((ANDROID_PLATFORM LESS_EQUAL 23) OR (ANDROID_NATIVE_API_LEVEL LESS_EQUAL 23))
+        eprosima_find_thirdparty(android-ifaddrs android-ifaddrs)
+    endif()
 endif()
 
 include_directories(thirdparty/nlohmann-json)
