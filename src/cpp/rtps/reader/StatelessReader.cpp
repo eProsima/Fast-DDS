@@ -186,6 +186,22 @@ bool StatelessReader::matched_writer_remove(
         const GUID_t& writer_guid,
         bool removed_by_lease)
 {
+    if (liveliness_lease_duration_ < c_TimeInfinite)
+    {
+        auto wlp = mp_RTPSParticipant->wlp();
+        if ( wlp != nullptr)
+        {
+            wlp->sub_liveliness_manager_->remove_writer(
+                writer_guid,
+                liveliness_kind_,
+                liveliness_lease_duration_);
+        }
+        else
+        {
+            logError(RTPS_LIVELINESS,
+                    "Finite liveliness lease duration but WLP not enabled, cannot remove writer");
+        }
+    }
     {
         std::lock_guard<RecursiveTimedMutex> guard(mp_mutex);
 
@@ -213,22 +229,6 @@ bool StatelessReader::matched_writer_remove(
                 }
                 return true;
             }
-        }
-    }
-    if (liveliness_lease_duration_ < c_TimeInfinite)
-    {
-        auto wlp = mp_RTPSParticipant->wlp();
-        if ( wlp != nullptr)
-        {
-            wlp->sub_liveliness_manager_->remove_writer(
-                writer_guid,
-                liveliness_kind_,
-                liveliness_lease_duration_);
-        }
-        else
-        {
-            logError(RTPS_LIVELINESS,
-                    "Finite liveliness lease duration but WLP not enabled, cannot remove writer");
         }
     }
     return false;
