@@ -70,7 +70,8 @@ bool HelloWorldSubscriber::init(
         uint32_t domain,
         TransportType transport,
         bool reliable,
-        bool transient)
+        bool transient,
+        bool realloc)
 {
     n_topics_.store(topic_names.size());
 
@@ -148,6 +149,12 @@ bool HelloWorldSubscriber::init(
     else
     {
         rqos.durability().kind = VOLATILE_DURABILITY_QOS;   // default
+    }
+
+    if (realloc)
+    {
+        rqos.endpoint().history_memory_policy =
+                eprosima::fastrtps::rtps::MemoryManagementPolicy_t::PREALLOCATED_WITH_REALLOC_MEMORY_MODE;
     }
 
     for (uint32_t i = 0; i < n_topics_.load(); i++)

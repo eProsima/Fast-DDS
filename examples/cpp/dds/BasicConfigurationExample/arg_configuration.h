@@ -142,7 +142,8 @@ enum optionIndex
     DOMAIN_ID,
     TRANSPORT,
     RELIABLE,
-    TRANSIENT_LOCAL
+    TRANSIENT_LOCAL,
+    REALLOC
 };
 
 const option::Descriptor usage[] = {
@@ -192,6 +193,8 @@ const option::Descriptor usage[] = {
       "  -r \t--reliable \tSet reliability to reliable (best-effort by default)." },
     { TRANSIENT_LOCAL, 0, "", "transient",        Arg::None,
       "  \t--transient \tSet durability to transient local (volatile by default, ineffective when not reliable)." },
+    { REALLOC, 0, "", "realloc",        Arg::None,
+      "  \t--realloc \tAllow for memory reallocation (No memory reallocation by default)." },
 
 
     { 0, 0, 0, 0, 0, 0 }

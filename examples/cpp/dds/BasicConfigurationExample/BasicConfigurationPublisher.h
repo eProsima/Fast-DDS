@@ -104,7 +104,8 @@ public:
             bool async,
             TransportType transport,
             bool reliable,
-            bool transient);
+            bool transient,
+            bool realloc);
 
     //! Publish a sample
     void publish(

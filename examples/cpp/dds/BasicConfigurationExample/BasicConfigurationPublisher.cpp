@@ -74,7 +74,8 @@ bool HelloWorldPublisher::init(
         bool async,
         TransportType transport,
         bool reliable,
-        bool transient)
+        bool transient,
+        bool realloc)
 {
     n_topics_.store(topic_names.size());
 
@@ -174,6 +175,12 @@ bool HelloWorldPublisher::init(
     {
         wqos.durability().kind = VOLATILE_DURABILITY_QOS;   // default in this example (although default value for
                                                             // writters' qos actually is TRANSIENT_LOCAL)
+    }
+
+    if (realloc)
+    {
+        wqos.endpoint().history_memory_policy =
+                eprosima::fastrtps::rtps::MemoryManagementPolicy_t::PREALLOCATED_WITH_REALLOC_MEMORY_MODE;
     }
 
     for (uint32_t i = 0; i < n_topics_.load(); i++)

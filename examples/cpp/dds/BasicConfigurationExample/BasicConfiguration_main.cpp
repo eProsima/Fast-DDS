@@ -83,6 +83,7 @@ int main(
     TransportType transport = DEFAULT;
     bool reliable = false;
     bool transient = false; // transient local
+    bool realloc = false;
     if (argc > 1)
     {
         if (!strcmp(argv[1], "publisher"))
@@ -229,6 +230,10 @@ int main(
                     transient = true;
                     break;
 
+                case optionIndex::REALLOC:
+                    realloc = true;
+                    break;
+
                 case optionIndex::UNKNOWN_OPT:
                     std::cerr << "ERROR: " << opt.name << " is not a valid argument." << std::endl;
                     option::printUsage(fwrite, stdout, usage, columns);
@@ -254,7 +259,7 @@ int main(
         {
             HelloWorldPublisher mypub;
             if (mypub.init(topic_names, static_cast<uint32_t>(domain), static_cast<uint32_t>(num_wait_matched), async,
-                    transport, reliable, transient))
+                    transport, reliable, transient, realloc))
             {
                 mypub.run(static_cast<uint32_t>(count), static_cast<uint32_t>(sleep), static_cast<uint32_t>(init_sleep),
                         single_thread, random);
@@ -265,7 +270,7 @@ int main(
         {
             HelloWorldSubscriber mysub;
             if (mysub.init(topic_names, static_cast<uint32_t>(count), static_cast<uint32_t>(domain), transport,
-                    reliable, transient))
+                    reliable, transient, realloc))
             {
                 mysub.run(static_cast<uint32_t>(count));
             }
