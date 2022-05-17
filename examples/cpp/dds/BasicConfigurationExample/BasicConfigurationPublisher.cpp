@@ -322,6 +322,7 @@ void HelloWorldPublisher::runThread(
 void HelloWorldPublisher::runSingleThread(
         uint32_t samples,
         uint32_t sleep,
+        uint32_t init_sleep,
         bool random)
 {
     uint32_t n_topics = n_topics_.load();
@@ -330,6 +331,10 @@ void HelloWorldPublisher::runSingleThread(
     std::iota(send_order.begin(), send_order.end(), 0);
     unsigned seed = std::chrono::system_clock::now().time_since_epoch().count();
     std::default_random_engine rng(seed);
+    if (init_sleep > 0)
+    {
+        std::this_thread::sleep_for(std::chrono::seconds(init_sleep));
+    }
     while (!is_stopped() && n_finished < n_topics)
     {
         if (random)
@@ -367,6 +372,7 @@ void HelloWorldPublisher::runSingleThread(
 void HelloWorldPublisher::run(
         uint32_t samples,
         uint32_t sleep,
+        uint32_t init_sleep,
         bool single_thread,
         bool random)
 {
@@ -375,7 +381,7 @@ void HelloWorldPublisher::run(
     std::vector<std::thread> threads;
     if (single_thread)
     {
-        threads.push_back(std::thread(&HelloWorldPublisher::runSingleThread, this, samples, sleep, random));
+        threads.push_back(std::thread(&HelloWorldPublisher::runSingleThread, this, samples, sleep, init_sleep, random));
     }
     else
     {

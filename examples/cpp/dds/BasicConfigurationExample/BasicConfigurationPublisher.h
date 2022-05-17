@@ -114,6 +114,7 @@ public:
     void run(
             uint32_t number,
             uint32_t sleep,
+            uint32_t init_sleep,
             bool single_thread = true,
             bool random = false);
 
@@ -150,6 +151,7 @@ private:
     void runSingleThread(
             uint32_t number,
             uint32_t sleep,
+            uint32_t init_sleep,
             bool random);
 
     //! Member used for control flow purposes

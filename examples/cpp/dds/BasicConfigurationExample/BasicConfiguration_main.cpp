@@ -74,6 +74,7 @@ int main(
     std::vector<std::string> topic_names = {"HelloWorldTopic"};
     int count = 0;
     long sleep = 100;
+    long init_sleep = 0;
     int num_wait_matched = 0;
     bool single_thread = true;
     int domain = 0;
@@ -150,6 +151,17 @@ int main(
                     if (type == PUBLISHER)
                     {
                         sleep = strtol(opt.arg, nullptr, 10);
+                    }
+                    else
+                    {
+                        print_warning("publisher", opt.name);
+                    }
+                    break;
+
+                case optionIndex::INIT_SLEEP:
+                    if (type == PUBLISHER)
+                    {
+                        init_sleep = strtol(opt.arg, nullptr, 10);
                     }
                     else
                     {
@@ -244,7 +256,8 @@ int main(
             if (mypub.init(topic_names, static_cast<uint32_t>(domain), static_cast<uint32_t>(num_wait_matched), async,
                     transport, reliable, transient))
             {
-                mypub.run(static_cast<uint32_t>(count), static_cast<uint32_t>(sleep), single_thread, random);
+                mypub.run(static_cast<uint32_t>(count), static_cast<uint32_t>(sleep), static_cast<uint32_t>(init_sleep),
+                        single_thread, random);
             }
             break;
         }
