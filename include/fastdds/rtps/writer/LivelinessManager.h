@@ -18,9 +18,10 @@
 #ifndef _FASTDDS_RTPS_LIVELINESS_MANAGER_H_
 #define _FASTDDS_RTPS_LIVELINESS_MANAGER_H_
 
+#include <fastdds/rtps/resources/TimedEvent.h>
 #include <fastdds/rtps/writer/LivelinessData.h>
 #include <fastrtps/utils/collections/ResourceLimitedVector.hpp>
-#include <fastdds/rtps/resources/TimedEvent.h>
+#include <fastrtps/utils/shared_mutex.hpp>
 
 #include <mutex>
 
@@ -125,46 +126,39 @@ public:
 
 private:
 
-    //! @brief A method responsible for invoking the callback when liveliness is asserted
-    //! @param writer The liveliness data of the writer asserting liveliness
-    //!
+    /**
+     * @brief A method responsible for invoking the callback when liveliness is asserted
+     * @param writer The liveliness data of the writer asserting liveliness
+     * @pre The collection shared_mutex must be taken for reading
+     */
     void assert_writer_liveliness(LivelinessData& writer);
 
     /**
      * @brief A method to calculate the time when the next writer is going to lose liveliness
      * @details This method is public for testing purposes but it should not be used from outside this class
+     * @pre std::mutex_ should not be taken on calling this method to avoid deadlock.
      * @return True if at least one writer is alive
      */
     bool calculate_next();
-
-    //! @brief A method to find a writer from a guid, liveliness kind and lease duration
-    //! @param guid The guid of the writer
-    //! @param kind The liveliness kind
-    //! @param lease_duration The lease duration
-    //! @param wit_out Returns an iterator to the writer liveliness data
-    //! @return Returns true if writer was found, false otherwise
-    bool find_writer(
-            const GUID_t &guid,
-            const LivelinessQosPolicyKind &kind,
-            const Duration_t &lease_duration,
-            ResourceLimitedVector<LivelinessData>::iterator* wit_out);
-
 
     //! @brief A method called if the timer expires
     //! @return True if the timer should be restarted
     bool timer_expired();
 
     //! A callback to inform outside classes that a writer changed its liveliness status
-    LivelinessCallback callback_;
+    const LivelinessCallback callback_;
 
     //! A boolean indicating whether we are managing writers with automatic liveliness
-    bool manage_automatic_;
+    const bool manage_automatic_;
 
     //! A vector of liveliness data
     ResourceLimitedVector<LivelinessData> writers_;
 
-    //! A mutex to protect the liveliness data
+    //! A mutex to protect the liveliness data included LivelinessData objects
     std::mutex mutex_;
+
+    //! A mutex devoted to protect the writers_ collection
+    eprosima::shared_mutex col_mutex_;
 
     //! The timer owner, i.e. the writer which is next due to lose its liveliness
     LivelinessData* timer_owner_;
