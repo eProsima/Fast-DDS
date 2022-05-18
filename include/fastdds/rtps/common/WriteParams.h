@@ -27,12 +27,20 @@ namespace rtps {
 
 /*!
  * @brief This class contains additional information of a CacheChange.
+ *
  * @ingroup COMMON_MODULE
  */
 class RTPS_DllAPI WriteParams
 {
 public:
 
+    /**
+     * Set the value of the sample_identity member.
+     *
+     * @param sample_id  New value for the sample_identity member.
+     *
+     * @return Reference to the modified object in order to allow daisy chaining.
+     */
     WriteParams& sample_identity(
             const SampleIdentity& sample_id)
     {
@@ -40,6 +48,13 @@ public:
         return *this;
     }
 
+    /**
+     * Set the value of the sample_identity member.
+     *
+     * @param sample_id  New value for the sample_identity member.
+     *
+     * @return Reference to the modified object in order to allow daisy chaining.
+     */
     WriteParams& sample_identity(
             SampleIdentity&& sample_id)
     {
@@ -47,16 +62,33 @@ public:
         return *this;
     }
 
+    /**
+     * Get the value of the sample_identity member.
+     *
+     * @return Constant reference to the sample_identity member.
+     */
     const SampleIdentity& sample_identity() const
     {
         return sample_identity_;
     }
 
+    /**
+     * Set the value of the sample_identity member.
+     *
+     * @return Reference to the sample_identity member.
+     */
     SampleIdentity& sample_identity()
     {
         return sample_identity_;
     }
 
+    /**
+     * Set the value of the related_sample_identity member of this class.
+     *
+     * @param sample_id  New value for the related_sample_identity member.
+     *
+     * @return Reference to the modified object in order to allow daisy chaining.
+     */
     WriteParams& related_sample_identity(
             const SampleIdentity& sample_id)
     {
@@ -64,6 +96,13 @@ public:
         return *this;
     }
 
+    /**
+     * Set the related_sample_identity member of this class.
+     *
+     * @param sample_id  New value for the related_sample_identity member.
+     *
+     * @return Reference to the modified object in order to allow daisy chaining.
+     */
     WriteParams& related_sample_identity(
             SampleIdentity&& sample_id)
     {
@@ -71,26 +110,53 @@ public:
         return *this;
     }
 
+    /**
+     * Get the value of the related_sample_identity member.
+     *
+     * @return Constant reference to the related_sample_identity member.
+     */
     const SampleIdentity& related_sample_identity() const
     {
         return related_sample_identity_;
     }
 
+    /**
+     * Set the value of the related_sample_identity member.
+     *
+     * @return Reference to the related_sample_identity member.
+     */
     SampleIdentity& related_sample_identity()
     {
         return related_sample_identity_;
     }
 
+    /**
+     * Get the value of the source_timestamp member.
+     *
+     * @return Current value of the source_timestamp member.
+     */
     Time_t source_timestamp() const
     {
         return source_timestamp_;
     }
 
+    /**
+     * Set the value of the source_timestamp member.
+     *
+     * @return Reference to the source_timestamp member.
+     */
     Time_t& source_timestamp()
     {
         return source_timestamp_;
     }
 
+    /**
+     * Set the source_timestamp member of this class.
+     *
+     * @param timestamp  New value for the source_timestamp member.
+     *
+     * @return Reference to the modified object in order to allow daisy chaining.
+     */
     WriteParams& source_timestamp(
             const Time_t& timestamp)
     {
@@ -98,6 +164,13 @@ public:
         return *this;
     }
 
+    /**
+     * Set the source_timestamp member of this class.
+     *
+     * @param timestamp  New value for the source_timestamp member.
+     *
+     * @return Reference to the modified object in order to allow daisy chaining.
+     */
     WriteParams& source_timestamp(
             Time_t&& timestamp)
     {
@@ -105,14 +178,23 @@ public:
         return *this;
     }
 
+    /**
+     * Default value for methods receiving a WriteParams.
+     *
+     * Will contain the following values on its members:
+     * - sample_identity: Invalid SampleIdentity
+     * - related_sample_identity: Invalid SampleIdentity
+     * - source_timestamp: Invalid Time_t
+     */
     static WriteParams WRITE_PARAM_DEFAULT;
 
 private:
 
+    /// Holds sample_identity member value
     SampleIdentity sample_identity_;
-
+    /// Holds related_sample_identity member value
     SampleIdentity related_sample_identity_;
-
+    /// Holds source_timestamp member value
     Time_t source_timestamp_{ -1, TIME_T_INFINITE_NANOSECONDS };
 };
 

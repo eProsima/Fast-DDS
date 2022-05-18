@@ -255,7 +255,6 @@ public:
 
     /**
      * @brief This operation performs the same function as @ref unregister_instance and can be used instead of
-     * @brief This operation performs the same function as @ref unregister_instance and can be used instead of
      * @ref unregister_instance in the cases where the application desires to specify the value for the
      * @ref eprosima::fastdds::dds::SampleInfo::source_timestamp "source_timestamp".
      * The @ref eprosima::fastdds::dds::SampleInfo::source_timestamp "source_timestamp" potentially affects the relative
