@@ -102,15 +102,16 @@ bool LivelinessManager::remove_writer(
         // collection guard
         std::lock_guard<shared_mutex> _(col_mutex_);
 
-        removed = writers_.remove_if([guid, kind, lease_duration, &status, this](LivelinessData& writer){
-                // writers_ elements guard
-                std::lock_guard<std::mutex> _(mutex_);
-                status = writer.status;
-                return writer.guid == guid &&
-                    writer.kind == kind &&
-                    writer.lease_duration == lease_duration &&
-                    --writer.count == 0;
-                });
+        removed = writers_.remove_if([guid, kind, lease_duration, &status, this](LivelinessData& writer)
+                        {
+                            // writers_ elements guard
+                            std::lock_guard<std::mutex> _(mutex_);
+                            status = writer.status;
+                            return writer.guid == guid &&
+                            writer.kind == kind &&
+                            writer.lease_duration == lease_duration &&
+                            --writer.count == 0;
+                        });
     }
 
     if (!removed)
@@ -203,7 +204,7 @@ bool LivelinessManager::assert_liveliness(
         }
     }
 
-    if(!found)
+    if (!found)
     {
         return false;
     }
@@ -342,7 +343,7 @@ bool LivelinessManager::timer_expired()
     {
         lock.lock();
 
-        if( timer_owner_ != nullptr)
+        if ( timer_owner_ != nullptr)
         {
             // Some times the interval could be negative if a writer expired during the call to this function
             // Once in this situation there is not much we can do but let asio timers expire inmediately

@@ -29,12 +29,12 @@ namespace eprosima {
 namespace fastrtps {
 namespace rtps {
 
-using LivelinessCallback = std::function<void(
-        const GUID_t&,
-        const LivelinessQosPolicyKind&,
-        const Duration_t&,
-        int32_t alive_change,
-        int32_t not_alive_change)>;
+using LivelinessCallback = std::function<void (
+                    const GUID_t&,
+                    const LivelinessQosPolicyKind&,
+                    const Duration_t&,
+                    int32_t alive_change,
+                    int32_t not_alive_change)>;
 
 /**
  * @brief A class managing the liveliness of a set of writers. Writers are represented by their LivelinessData
@@ -65,7 +65,8 @@ public:
      * @brief LivelinessManager
      * @param other
      */
-    LivelinessManager(const LivelinessManager& other) = delete;
+    LivelinessManager(
+            const LivelinessManager& other) = delete;
 
     /**
      * @brief Adds a writer to the set
@@ -108,21 +109,23 @@ public:
      * @param kind Liveliness kind
      * @return True if liveliness was successfully asserted
      */
-    bool assert_liveliness(LivelinessQosPolicyKind kind);
+    bool assert_liveliness(
+            LivelinessQosPolicyKind kind);
 
     /**
      * @brief A method to check any writer of the given kind is alive
      * @param kind The liveliness kind to check for
      * @return True if at least one writer of this kind is alive. False otherwise
      */
-    bool is_any_alive(LivelinessQosPolicyKind kind);
+    bool is_any_alive(
+            LivelinessQosPolicyKind kind);
 
     /**
      * @brief A method to return liveliness data
      * @details Should only be used for testing purposes
      * @return Vector of liveliness data
      */
-    const ResourceLimitedVector<LivelinessData> &get_liveliness_data() const;
+    const ResourceLimitedVector<LivelinessData>& get_liveliness_data() const;
 
 private:
 
@@ -131,7 +134,8 @@ private:
      * @param writer The liveliness data of the writer asserting liveliness
      * @pre The collection shared_mutex must be taken for reading
      */
-    void assert_writer_liveliness(LivelinessData& writer);
+    void assert_writer_liveliness(
+            LivelinessData& writer);
 
     /**
      * @brief A method to calculate the time when the next writer is going to lose liveliness
