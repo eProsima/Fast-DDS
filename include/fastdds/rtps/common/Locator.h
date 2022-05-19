@@ -303,7 +303,7 @@ inline bool operator !=(
  *            - TCPv4
  *            - TCPv6
  *            - SHM
- *        \c address must be either a name which can be resolved by DNS or the IP address unless \c kind is SHM
+ *        \c address IP address unless \c kind is SHM
  *        \c port number
  *
  * @param output Output stream where the serialized locator is appended.
@@ -385,7 +385,7 @@ inline std::ostream& operator <<(
  *            - TCPv4
  *            - TCPv6
  *            - SHM
- *        \c address must be either a name which can be resolved by DNS or the IP address
+ *        \c address must be either a name which can be resolved by DNS or the IP address unless \c kind is SHM
  *        \c port number
  *
  * @param input Input stream where the locator to be deserialized is located.

@@ -384,7 +384,8 @@ private:
 };
 
 /**
- * @brief Insertion operator: serialize a locator list
+ * @brief Insertion operator: serialize a locator list.
+ *        The deserialization format is [locator1,locator2,...,locatorN].
  *        Each individual locator within the list must follow the serialization format explained in the locator insertion
  *        operator.
  *
@@ -414,7 +415,8 @@ inline std::ostream& operator <<(
 }
 
 /**
- * @brief Extraction operator: deserialize a list of locators
+ * @brief Extraction operator: deserialize a list of locators.
+ *        The serialization format is [locator1,locator2,...,locatorN].
  *        Each individual locator within the list must follow the deserialization format explained in the locator
  *        extraction operator.
  *
