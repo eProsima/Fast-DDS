@@ -786,17 +786,20 @@ TEST(DataWriterTests, TerminateWithoutDestroyingWriter)
 }
 
 /**
- * This test checks register_instance API
+ * Create two disabled data writer objects, one for a non-keyed topic, and another one for a keyed topic.
+ *
+ * @param [out] datawriter           Pointer to the data writer created for the non-keyed topic.
+ * @param [out] instance_datawriter  Pointer to the data writer created for the keyed topic.
+ * @param [out] keyed_type_support   Optionally written with the type support of the keyed topic.
  */
-TEST(DataWriterTests, RegisterInstance)
+static void create_writers_for_instance_test(
+        DataWriter*& datawriter,
+        DataWriter*& instance_datawriter,
+        TypeSupport* keyed_type_support = nullptr)
 {
-    // Test parameters
-    InstanceFooType data;
-    data.message("HelloWorld");
-
     // Create participant
     DomainParticipant* participant =
-            DomainParticipantFactory::get_instance()->create_participant(0, PARTICIPANT_QOS_DEFAULT);
+        DomainParticipantFactory::get_instance()->create_participant(0, PARTICIPANT_QOS_DEFAULT);
     ASSERT_NE(nullptr, participant);
 
     // Create publisher
@@ -814,14 +817,34 @@ TEST(DataWriterTests, RegisterInstance)
     Topic* topic = participant->create_topic("footopic", type.get_type_name(), TOPIC_QOS_DEFAULT);
     ASSERT_NE(topic, nullptr);
     Topic* instance_topic = participant->create_topic("instancefootopic", instance_type.get_type_name(),
-                    TOPIC_QOS_DEFAULT);
+        TOPIC_QOS_DEFAULT);
     ASSERT_NE(instance_topic, nullptr);
 
     // Create disabled DataWriters
-    DataWriter* datawriter = publisher->create_datawriter(topic, DATAWRITER_QOS_DEFAULT);
+    datawriter = publisher->create_datawriter(topic, DATAWRITER_QOS_DEFAULT);
     ASSERT_NE(nullptr, datawriter);
-    DataWriter* instance_datawriter = publisher->create_datawriter(instance_topic, DATAWRITER_QOS_DEFAULT);
+    instance_datawriter = publisher->create_datawriter(instance_topic, DATAWRITER_QOS_DEFAULT);
     ASSERT_NE(nullptr, instance_datawriter);
+
+    if (nullptr != keyed_type_support)
+    {
+        *keyed_type_support = instance_type;
+    }
+}
+
+/**
+ * This test checks register_instance API
+ */
+TEST(DataWriterTests, RegisterInstance)
+{
+    // Test parameters
+    InstanceFooType data;
+    data.message("HelloWorld");
+
+    // Create disabled DataWriters
+    DataWriter* datawriter;
+    DataWriter* instance_datawriter;
+    create_writers_for_instance_test(datawriter, instance_datawriter);
 
     // 1. Calling register_instance in a disable writer returns HANDLE_NIL
     EXPECT_EQ(HANDLE_NIL, datawriter->register_instance(&data));
@@ -848,34 +871,10 @@ TEST(DataWriterTests, RegisterInstanceWithTimestamp)
     InstanceFooType data;
     data.message("HelloWorld");
 
-    // Create participant
-    DomainParticipant* participant =
-            DomainParticipantFactory::get_instance()->create_participant(0, PARTICIPANT_QOS_DEFAULT);
-    ASSERT_NE(nullptr, participant);
-
-    // Create publisher
-    PublisherQos pqos = PUBLISHER_QOS_DEFAULT;
-    pqos.entity_factory().autoenable_created_entities = false;
-    Publisher* publisher = participant->create_publisher(pqos);
-    ASSERT_NE(nullptr, publisher);
-
-    // Register types and topics
-    TypeSupport type(new TopicDataTypeMock());
-    type.register_type(participant);
-    TypeSupport instance_type(new InstanceTopicDataTypeMock());
-    instance_type.register_type(participant);
-
-    Topic* topic = participant->create_topic("footopic", type.get_type_name(), TOPIC_QOS_DEFAULT);
-    ASSERT_NE(topic, nullptr);
-    Topic* instance_topic = participant->create_topic("instancefootopic", instance_type.get_type_name(),
-                    TOPIC_QOS_DEFAULT);
-    ASSERT_NE(instance_topic, nullptr);
-
     // Create disabled DataWriters
-    DataWriter* datawriter = publisher->create_datawriter(topic, DATAWRITER_QOS_DEFAULT);
-    ASSERT_NE(nullptr, datawriter);
-    DataWriter* instance_datawriter = publisher->create_datawriter(instance_topic, DATAWRITER_QOS_DEFAULT);
-    ASSERT_NE(nullptr, instance_datawriter);
+    DataWriter* datawriter;
+    DataWriter* instance_datawriter;
+    create_writers_for_instance_test(datawriter, instance_datawriter);
 
     eprosima::fastrtps::Time_t ts{ 0, 1 };
 
@@ -909,34 +908,11 @@ TEST(DataWriterTests, UnregisterInstance)
     InstanceFooType data;
     data.message("HelloWorld");
 
-    // Create participant
-    DomainParticipant* participant =
-            DomainParticipantFactory::get_instance()->create_participant(0, PARTICIPANT_QOS_DEFAULT);
-    ASSERT_NE(nullptr, participant);
-
-    // Create publisher
-    PublisherQos pqos = PUBLISHER_QOS_DEFAULT;
-    pqos.entity_factory().autoenable_created_entities = false;
-    Publisher* publisher = participant->create_publisher(pqos);
-    ASSERT_NE(nullptr, publisher);
-
-    // Register types and topics
-    TypeSupport type(new TopicDataTypeMock());
-    type.register_type(participant);
-    TypeSupport instance_type(new InstanceTopicDataTypeMock());
-    instance_type.register_type(participant);
-
-    Topic* topic = participant->create_topic("footopic", type.get_type_name(), TOPIC_QOS_DEFAULT);
-    ASSERT_NE(topic, nullptr);
-    Topic* instance_topic = participant->create_topic("instancefootopic", instance_type.get_type_name(),
-                    TOPIC_QOS_DEFAULT);
-    ASSERT_NE(instance_topic, nullptr);
-
     // Create disabled DataWriters
-    DataWriter* datawriter = publisher->create_datawriter(topic, DATAWRITER_QOS_DEFAULT);
-    ASSERT_NE(nullptr, datawriter);
-    DataWriter* instance_datawriter = publisher->create_datawriter(instance_topic, DATAWRITER_QOS_DEFAULT);
-    ASSERT_NE(nullptr, instance_datawriter);
+    TypeSupport instance_type;
+    DataWriter* datawriter;
+    DataWriter* instance_datawriter;
+    create_writers_for_instance_test(datawriter, instance_datawriter, &instance_type);
 
     // 1. Calling unregister_instance in a disable writer returns RETCODE_NOT_ENABLED
     EXPECT_EQ(ReturnCode_t::RETCODE_NOT_ENABLED, datawriter->unregister_instance(&data, handle));
@@ -982,34 +958,11 @@ TEST(DataWriterTests, UnregisterInstanceWithTimestamp)
     InstanceFooType data;
     data.message("HelloWorld");
 
-    // Create participant
-    DomainParticipant* participant =
-            DomainParticipantFactory::get_instance()->create_participant(0, PARTICIPANT_QOS_DEFAULT);
-    ASSERT_NE(nullptr, participant);
-
-    // Create publisher
-    PublisherQos pqos = PUBLISHER_QOS_DEFAULT;
-    pqos.entity_factory().autoenable_created_entities = false;
-    Publisher* publisher = participant->create_publisher(pqos);
-    ASSERT_NE(nullptr, publisher);
-
-    // Register types and topics
-    TypeSupport type(new TopicDataTypeMock());
-    type.register_type(participant);
-    TypeSupport instance_type(new InstanceTopicDataTypeMock());
-    instance_type.register_type(participant);
-
-    Topic* topic = participant->create_topic("footopic", type.get_type_name(), TOPIC_QOS_DEFAULT);
-    ASSERT_NE(topic, nullptr);
-    Topic* instance_topic = participant->create_topic("instancefootopic", instance_type.get_type_name(),
-                    TOPIC_QOS_DEFAULT);
-    ASSERT_NE(instance_topic, nullptr);
-
     // Create disabled DataWriters
-    DataWriter* datawriter = publisher->create_datawriter(topic, DATAWRITER_QOS_DEFAULT);
-    ASSERT_NE(nullptr, datawriter);
-    DataWriter* instance_datawriter = publisher->create_datawriter(instance_topic, DATAWRITER_QOS_DEFAULT);
-    ASSERT_NE(nullptr, instance_datawriter);
+    TypeSupport instance_type;
+    DataWriter* datawriter;
+    DataWriter* instance_datawriter;
+    create_writers_for_instance_test(datawriter, instance_datawriter, &instance_type);
 
     eprosima::fastrtps::Time_t ts{ 0, 1 };
 
@@ -1069,34 +1022,11 @@ TEST(DataWriterTests, Dispose)
     InstanceFooType data;
     data.message("HelloWorld");
 
-    // Create participant
-    DomainParticipant* participant =
-            DomainParticipantFactory::get_instance()->create_participant(0, PARTICIPANT_QOS_DEFAULT);
-    ASSERT_NE(nullptr, participant);
-
-    // Create publisher
-    PublisherQos pqos = PUBLISHER_QOS_DEFAULT;
-    pqos.entity_factory().autoenable_created_entities = false;
-    Publisher* publisher = participant->create_publisher(pqos);
-    ASSERT_NE(nullptr, publisher);
-
-    // Register types and topics
-    TypeSupport type(new TopicDataTypeMock());
-    type.register_type(participant);
-    TypeSupport instance_type(new InstanceTopicDataTypeMock());
-    instance_type.register_type(participant);
-
-    Topic* topic = participant->create_topic("footopic", type.get_type_name(), TOPIC_QOS_DEFAULT);
-    ASSERT_NE(topic, nullptr);
-    Topic* instance_topic = participant->create_topic("instancefootopic", instance_type.get_type_name(),
-                    TOPIC_QOS_DEFAULT);
-    ASSERT_NE(instance_topic, nullptr);
-
     // Create disabled DataWriters
-    DataWriter* datawriter = publisher->create_datawriter(topic, DATAWRITER_QOS_DEFAULT);
-    ASSERT_NE(nullptr, datawriter);
-    DataWriter* instance_datawriter = publisher->create_datawriter(instance_topic, DATAWRITER_QOS_DEFAULT);
-    ASSERT_NE(nullptr, instance_datawriter);
+    TypeSupport instance_type;
+    DataWriter* datawriter;
+    DataWriter* instance_datawriter;
+    create_writers_for_instance_test(datawriter, instance_datawriter, &instance_type);
 
     // 1. Calling dispose in a disable writer returns RETCODE_NOT_ENABLED
     EXPECT_EQ(ReturnCode_t::RETCODE_NOT_ENABLED, datawriter->dispose(&data, handle));
@@ -1142,34 +1072,11 @@ TEST(DataWriterTests, DisposeWithTimestamp)
     InstanceFooType data;
     data.message("HelloWorld");
 
-    // Create participant
-    DomainParticipant* participant =
-            DomainParticipantFactory::get_instance()->create_participant(0, PARTICIPANT_QOS_DEFAULT);
-    ASSERT_NE(nullptr, participant);
-
-    // Create publisher
-    PublisherQos pqos = PUBLISHER_QOS_DEFAULT;
-    pqos.entity_factory().autoenable_created_entities = false;
-    Publisher* publisher = participant->create_publisher(pqos);
-    ASSERT_NE(nullptr, publisher);
-
-    // Register types and topics
-    TypeSupport type(new TopicDataTypeMock());
-    type.register_type(participant);
-    TypeSupport instance_type(new InstanceTopicDataTypeMock());
-    instance_type.register_type(participant);
-
-    Topic* topic = participant->create_topic("footopic", type.get_type_name(), TOPIC_QOS_DEFAULT);
-    ASSERT_NE(topic, nullptr);
-    Topic* instance_topic = participant->create_topic("instancefootopic", instance_type.get_type_name(),
-                    TOPIC_QOS_DEFAULT);
-    ASSERT_NE(instance_topic, nullptr);
-
     // Create disabled DataWriters
-    DataWriter* datawriter = publisher->create_datawriter(topic, DATAWRITER_QOS_DEFAULT);
-    ASSERT_NE(nullptr, datawriter);
-    DataWriter* instance_datawriter = publisher->create_datawriter(instance_topic, DATAWRITER_QOS_DEFAULT);
-    ASSERT_NE(nullptr, instance_datawriter);
+    TypeSupport instance_type;
+    DataWriter* datawriter;
+    DataWriter* instance_datawriter;
+    create_writers_for_instance_test(datawriter, instance_datawriter, &instance_type);
 
     eprosima::fastrtps::Time_t ts{ 0, 1 };
 
@@ -1227,34 +1134,10 @@ TEST(DataWriterTests, GetKeyValue)
     InstanceFooType valid_data;
     valid_data.message("HelloWorld");
 
-    // Create participant
-    DomainParticipant* participant =
-            DomainParticipantFactory::get_instance()->create_participant(0, PARTICIPANT_QOS_DEFAULT);
-    ASSERT_NE(nullptr, participant);
-
-    // Create publisher
-    PublisherQos pqos = PUBLISHER_QOS_DEFAULT;
-    pqos.entity_factory().autoenable_created_entities = false;
-    Publisher* publisher = participant->create_publisher(pqos);
-    ASSERT_NE(nullptr, publisher);
-
-    // Register types and topics
-    TypeSupport type(new TopicDataTypeMock());
-    type.register_type(participant);
-    TypeSupport instance_type(new InstanceTopicDataTypeMock());
-    instance_type.register_type(participant);
-
-    Topic* topic = participant->create_topic("footopic", type.get_type_name(), TOPIC_QOS_DEFAULT);
-    ASSERT_NE(topic, nullptr);
-    Topic* instance_topic = participant->create_topic("instancefootopic", instance_type.get_type_name(),
-                    TOPIC_QOS_DEFAULT);
-    ASSERT_NE(instance_topic, nullptr);
-
     // Create disabled DataWriters
-    DataWriter* datawriter = publisher->create_datawriter(topic, DATAWRITER_QOS_DEFAULT);
-    ASSERT_NE(nullptr, datawriter);
-    DataWriter* instance_datawriter = publisher->create_datawriter(instance_topic, DATAWRITER_QOS_DEFAULT);
-    ASSERT_NE(nullptr, instance_datawriter);
+    DataWriter* datawriter;
+    DataWriter* instance_datawriter;
+    create_writers_for_instance_test(datawriter, instance_datawriter);
 
     // 1. Check nullptr on key_holder
     EXPECT_EQ(ReturnCode_t::RETCODE_BAD_PARAMETER, datawriter->get_key_value(nullptr, wrong_handle));
