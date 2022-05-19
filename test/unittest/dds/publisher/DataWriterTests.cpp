@@ -691,10 +691,19 @@ TEST(DataWriterTests, WriteWithTimestamp)
 
     FooType data;
     data.message("HelloWorld");
-    ASSERT_FALSE(datawriter->write_w_timestamp(nullptr, HANDLE_NIL, ts) == ReturnCode_t::RETCODE_OK);
-    ASSERT_TRUE(datawriter->write_w_timestamp(&data, HANDLE_NIL, ts) == ReturnCode_t::RETCODE_OK);
-    ASSERT_TRUE(datawriter->write_w_timestamp(&data, participant->get_instance_handle(), ts) ==
-            ReturnCode_t::RETCODE_PRECONDITION_NOT_MET);
+
+    // 1. Calling write with nullptr data returns RETCODE_BAD_PARAMETER
+    ASSERT_EQ(ReturnCode_t::RETCODE_BAD_PARAMETER, datawriter->write_w_timestamp(nullptr, HANDLE_NIL, ts));
+    // 2. Calling write with an invalid timestamps returns RETCODE_BAD_PARAMETER
+    EXPECT_EQ(ReturnCode_t::RETCODE_BAD_PARAMETER,
+            datawriter->write_w_timestamp(&data, HANDLE_NIL, fastrtps::c_TimeInfinite));
+    EXPECT_EQ(ReturnCode_t::RETCODE_BAD_PARAMETER,
+            datawriter->write_w_timestamp(&data, HANDLE_NIL, fastrtps::c_TimeInvalid));
+    // 3. Colling write with a wrong instance handle returns RETCODE_PRECONDITION_NOT_MET
+    ASSERT_EQ(ReturnCode_t::RETCODE_PRECONDITION_NOT_MET,
+            datawriter->write_w_timestamp(&data, participant->get_instance_handle(), ts));
+    // 4. Correct case
+    ASSERT_EQ(ReturnCode_t::RETCODE_OK, datawriter->write_w_timestamp(&data, HANDLE_NIL, ts));
 
     ASSERT_TRUE(publisher->delete_datawriter(datawriter) == ReturnCode_t::RETCODE_OK);
     ASSERT_TRUE(participant->delete_topic(topic) == ReturnCode_t::RETCODE_OK);
@@ -799,7 +808,7 @@ static void create_writers_for_instance_test(
 {
     // Create participant
     DomainParticipant* participant =
-        DomainParticipantFactory::get_instance()->create_participant(0, PARTICIPANT_QOS_DEFAULT);
+            DomainParticipantFactory::get_instance()->create_participant(0, PARTICIPANT_QOS_DEFAULT);
     ASSERT_NE(nullptr, participant);
 
     // Create publisher
@@ -817,7 +826,7 @@ static void create_writers_for_instance_test(
     Topic* topic = participant->create_topic("footopic", type.get_type_name(), TOPIC_QOS_DEFAULT);
     ASSERT_NE(topic, nullptr);
     Topic* instance_topic = participant->create_topic("instancefootopic", instance_type.get_type_name(),
-        TOPIC_QOS_DEFAULT);
+                    TOPIC_QOS_DEFAULT);
     ASSERT_NE(instance_topic, nullptr);
 
     // Create disabled DataWriters
