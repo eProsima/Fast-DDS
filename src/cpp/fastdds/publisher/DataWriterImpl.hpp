@@ -122,8 +122,23 @@ public:
 
     virtual ~DataWriterImpl();
 
+    /**
+     * Enable this object.
+     * The required lower layer entities will be created.
+     *
+     * @pre This method has not previously returned ReturnCode_t::RETCODE_OK
+     *
+     * @return ReturnCode_t::RETCODE_OK if all the lower layer entities have been correctly created.
+     * @return Other standard return codes on error.
+     */
     virtual ReturnCode_t enable();
 
+    /**
+     * Check if the preconditions to delete this object are met.
+     *
+     * @return ReturnCode_t::RETCODE_PRECONDITION_NOT_MET if the preconditions to delete this object are not met.
+     * @return ReturnCode_t::RETCODE_OK if it is safe to delete this object.
+     */
     ReturnCode_t check_delete_preconditions();
 
     /**
@@ -154,47 +169,60 @@ public:
 
     /**
      * Write data to the topic.
-     * @param data Pointer to the data
-     * @return True if correct
-     * @par Calling example:
-     * @snippet fastrtps_example.cpp ex_PublisherWrite
+     *
+     * @param data Pointer to the data.
+     *
+     * @return true if data is correctly delivered to the lower layers, false otherwise.
      */
     bool write(
             void* data);
 
     /**
      * Write data with params to the topic.
-     * @param data Pointer to the data
+     *
+     * @param data Pointer to the data.
      * @param params Extra write parameters.
-     * @return True if correct
-     * @par Calling example:
-     * @snippet fastrtps_example.cpp ex_PublisherWrite
+     *
+     * @return true if data is correctly delivered to the lower layers, false otherwise.
      */
     bool write(
             void* data,
             fastrtps::rtps::WriteParams& params);
 
     /**
-     * Write data with handle.
-     * @param data Pointer to the data
-     * @param handle InstanceHandle_t.
-     * @return True if correct
-     * @par Calling example:
-     * @snippet fastrtps_example.cpp ex_PublisherWrite
+     * @brief Implementation of the DDS `write` operation.
+     *
+     * @param[in] data    Pointer to the data to publish.
+     * @param[in] handle  Handle of the instance to update. The special value @c HANDLE_NIL can be used to indicate
+     *                    that the instance should be automatically calculated.
+     *
+     * @return any of the standard return codes.
      */
     ReturnCode_t write(
             void* data,
             const InstanceHandle_t& handle);
 
+    /**
+     * @brief Implementation of the DDS `write_w_timestamp` operation.
+     *
+     * @param[in] data        Pointer to the data to publish.
+     * @param[in] handle      Handle of the instance to update. The special value @c HANDLE_NIL can be used to indicate
+     *                        that the instance should be automatically calculated.
+     * @param[in] timestamp   Timestamp to associate to the sample info of the published data.
+     *
+     * @return any of the standard return codes.
+     */
     ReturnCode_t write_w_timestamp(
             void* data,
             const InstanceHandle_t& handle,
             const fastrtps::Time_t& timestamp);
 
-    /*!
+    /**
      * @brief Implementation of the DDS `register_instance` operation.
      * It deduces the instance's key and tries to get resources in the DataWriterHistory.
+     *
      * @param[in] instance Sample used to get the instance's key.
+     *
      * @return Handle containing the instance's key.
      * This handle could be used in successive `write` or `dispose` operations.
      * In case of error, HANDLE_NIL will be returned.
@@ -202,20 +230,33 @@ public:
     InstanceHandle_t register_instance(
             void* instance);
 
+    /**
+     * @brief Implementation of the DDS `register_instance_w_timestamp` operation.
+     * It deduces the instance's key and tries to get resources in the DataWriterHistory.
+     *
+     * @param[in] instance Sample used to get the instance's key.
+     * @param[in] timestamp Timestamp to set on the instance registration operation.
+     *
+     * @return Handle containing the instance's key.
+     * This handle could be used in successive `write` or `dispose` operations.
+     * In case of error, HANDLE_NIL will be returned.
+     */
     InstanceHandle_t register_instance_w_timestamp(
             void* instance,
             const fastrtps::Time_t& timestamp);
 
-    /*!
+    /**
      * @brief Implementation of the DDS `unregister_instance` and `dispose` operations.
      * It sends a CacheChange_t with a kind that depends on the `dispose` parameter and
      * `writer_data_lifecycle` QoS.
-     * @param[in] instance Sample used to deduce instance's key in case of `handle` parameter is HANDLE_NIL.
-     * @param[in] handle Instance's key to be unregistered or disposed.
-     * @param[in] dispose If it is `false`, a CacheChange_t with kind set to NOT_ALIVE_UNREGISTERED is sent, or if
-     * `writer_data_lifecycle.autodispose_unregistered_instances` is `true` then it is sent with kind set to
-     * NOT_ALIVE_DISPOSED_UNREGISTERED.
-     * If `dispose` is `true`, a CacheChange_t with kind set to NOT_ALIVE_DISPOSED is sent.
+     *
+     * @param[in] instance  Sample used to deduce instance's key in case of `handle` parameter is HANDLE_NIL.
+     * @param[in] handle    Instance's key to be unregistered or disposed.
+     * @param[in] dispose   If `dispose` is `false`, a CacheChange_t with kind set to NOT_ALIVE_UNREGISTERED is sent,
+     *                      or if `writer_data_lifecycle.autodispose_unregistered_instances` is `true` then it is sent
+     *                      with kind set to NOT_ALIVE_DISPOSED_UNREGISTERED.
+     *                      If `dispose` is `true`, a CacheChange_t with kind set to NOT_ALIVE_DISPOSED is sent.
+     *
      * @return Returns the operation's result.
      * If the operation finishes successfully, ReturnCode_t::RETCODE_OK is returned.
      */
@@ -224,17 +265,19 @@ public:
             const InstanceHandle_t& handle,
             bool dispose = false);
 
-    /*!
+    /**
      * @brief Implementation of the DDS `unregister_instance_w_timestamp` and `dispose_w_timestamp` operations.
      * It sends a CacheChange_t with a kind that depends on the `dispose` parameter and
      * `writer_data_lifecycle` QoS.
-     * @param[in] instance Sample used to deduce instance's key in case of `handle` parameter is HANDLE_NIL.
-     * @param[in] handle Instance's key to be unregistered or disposed.
+     *
+     * @param[in] instance  Sample used to deduce instance's key in case of `handle` parameter is HANDLE_NIL.
+     * @param[in] handle    Instance's key to be unregistered or disposed.
      * @param[in] timestamp Source timestamp to set on the CacheChange_t being sent.
-     * @param[in] dispose If it is `false`, a CacheChange_t with kind set to NOT_ALIVE_UNREGISTERED is sent, or if
-     * `writer_data_lifecycle.autodispose_unregistered_instances` is `true` then it is sent with kind set to
-     * NOT_ALIVE_DISPOSED_UNREGISTERED.
-     * If `dispose` is `true`, a CacheChange_t with kind set to NOT_ALIVE_DISPOSED is sent.
+     * @param[in] dispose   If `dispose` is `false`, a CacheChange_t with kind set to NOT_ALIVE_UNREGISTERED is sent,
+     *                      or if `writer_data_lifecycle.autodispose_unregistered_instances` is `true` then it is sent
+     *                      with kind set to NOT_ALIVE_DISPOSED_UNREGISTERED.
+     *                      If `dispose` is `true`, a CacheChange_t with kind set to NOT_ALIVE_DISPOSED is sent.
+     *
      * @return Returns the operation's result.
      * If the operation finishes successfully, ReturnCode_t::RETCODE_OK is returned.
      */
