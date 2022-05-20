@@ -37,28 +37,42 @@ namespace eprosima {
 namespace fastrtps {
 namespace rtps {
 
+/// Initialize locator with invalid values
 #define LOCATOR_INVALID(loc)  {loc.kind = LOCATOR_KIND_INVALID; loc.port = LOCATOR_PORT_INVALID; \
                                LOCATOR_ADDRESS_INVALID(loc.address); \
 }
+/// Invalid locator kind
 #define LOCATOR_KIND_INVALID -1
 
+/// Set locator IP address to 0
 #define LOCATOR_ADDRESS_INVALID(a) {std::memset(a, 0x00, 16 * sizeof(octet));}
+
+/// Invalid locator port
 #define LOCATOR_PORT_INVALID 0
+
+/// Reserved locator kind
 #define LOCATOR_KIND_RESERVED 0
+/// UDP over IPv4 locator kind
 #define LOCATOR_KIND_UDPv4 1
+/// UDP over IPv6 locator kind
 #define LOCATOR_KIND_UDPv6 2
+/// TCP over IPv4 kind
 #define LOCATOR_KIND_TCPv4 4
+/// TCP over IPv6 locator kind
 #define LOCATOR_KIND_TCPv6 8
+/// Shared memory locator kind
 #define LOCATOR_KIND_SHM 16
 
-//!@brief Class Locator_t, uniquely identifies a communication channel for a particular transport.
-//For example, an address+port combination in the case of UDP.
-//!@ingroup COMMON_MODULE
+/**
+ * @brief Class Locator_t, uniquely identifies a communication channel for a particular transport.
+ * For example, an address + port combination in the case of UDP.
+ * @ingroup COMMON_MODULE
+ */
 class RTPS_DllAPI Locator_t
 {
 public:
 
-    /*!
+    /**
      * @brief Specifies the locator type. Valid values are:
      *
      * LOCATOR_KIND_UDPv4
@@ -72,12 +86,12 @@ public:
      * LOCATOR_KIND_SHM
      */
     int32_t kind;
-    //! Network port
+    /// Network port
     uint32_t port;
-    //! IP address
+    /// IP address
     octet address[16];
 
-    //!Default constructor
+    /// Default constructor
     Locator_t()
         : kind(LOCATOR_KIND_UDPv4)
     {
@@ -85,7 +99,7 @@ public:
         LOCATOR_ADDRESS_INVALID(address);
     }
 
-    //!Move constructor
+    /// Move constructor
     Locator_t(
             Locator_t&& loc)
         : kind(loc.kind)
@@ -94,7 +108,7 @@ public:
         std::memcpy(address, loc.address, 16 * sizeof(octet));
     }
 
-    //!Copy constructor
+    /// Copy constructor
     Locator_t(
             const Locator_t& loc)
         : kind(loc.kind)
@@ -103,7 +117,7 @@ public:
         std::memcpy(address, loc.address, 16 * sizeof(octet));
     }
 
-    //!Port constructor
+    /// Port constructor
     Locator_t(
             uint32_t portin)
         : kind(LOCATOR_KIND_UDPv4)
@@ -112,7 +126,7 @@ public:
         LOCATOR_ADDRESS_INVALID(address);
     }
 
-    //!Kind and port constructor
+    /// Kind and port constructor
     Locator_t(
             int32_t kindin,
             uint32_t portin)
@@ -122,6 +136,7 @@ public:
         LOCATOR_ADDRESS_INVALID(address);
     }
 
+    /// Copy assignment
     Locator_t& operator =(
             const Locator_t& loc)
     {
@@ -131,6 +146,12 @@ public:
         return *this;
     }
 
+    /**
+     * @brief Set the locator IP address using another locator.
+     *
+     * @param other Locator which IP address is used to set this locator IP address.
+     * @return always true.
+     */
     bool set_address(
             const Locator_t& other)
     {
@@ -138,17 +159,31 @@ public:
         return true;
     }
 
+    /**
+     * @brief Getter for the locator IP address.
+     *
+     * @return IP address as octet pointer.
+     */
     octet* get_address()
     {
         return address;
     }
 
+    /**
+     * @brief Getter for a specific field of the locator IP address.
+     *
+     * @param field IP address element to be accessed.
+     * @return Octet value for the specific IP address element.
+     */
     octet get_address(
             uint16_t field) const
     {
         return address[field];
     }
 
+    /**
+     * @brief Automatic setter for setting locator IP address to invalid address (0).
+     */
     void set_Invalid_Address()
     {
         LOCATOR_ADDRESS_INVALID(address);
@@ -156,7 +191,13 @@ public:
 
 };
 
-
+/**
+ * @brief Auxiliary method to check that IP address is not invalid (0).
+ *
+ * @param loc Locator which IP address is going to be checked.
+ * @return true if IP address is defined (not 0).
+ * @return false otherwise.
+ */
 inline bool IsAddressDefined(
         const Locator_t& loc)
 {
@@ -183,12 +224,27 @@ inline bool IsAddressDefined(
     return false;
 }
 
+/**
+ * @brief Auxiliary method to check that locator kind is not LOCATOR_KIND_INVALID (-1).
+ *
+ * @param loc Locator to be checked.
+ * @return true if the locator kind is not LOCATOR_KIND_INVALID.
+ * @return false otherwise.
+ */
 inline bool IsLocatorValid(
         const Locator_t& loc)
 {
     return (0 <= loc.kind);
 }
 
+/**
+ * @brief Less than operator.
+ *
+ * @param loc1 Left hand side locator being compared.
+ * @param loc2 Right hand side locator being compared.
+ * @return true if \c loc1 is less than \c loc2.
+ * @return false otherwise.
+ */
 inline bool operator <(
         const Locator_t& loc1,
         const Locator_t& loc2)
@@ -196,6 +252,14 @@ inline bool operator <(
     return memcmp(&loc1, &loc2, sizeof(Locator_t)) < 0;
 }
 
+/**
+ * @brief Equal to operator.
+ *
+ * @param loc1 Left hand side locator being compared.
+ * @param loc2 Right hand side locator being compared.
+ * @return true if \c loc1 is equal to  \c loc2.
+ * @return false otherwise.
+ */
 inline bool operator ==(
         const Locator_t& loc1,
         const Locator_t& loc2)
@@ -215,6 +279,14 @@ inline bool operator ==(
     return true;
 }
 
+/**
+ * @brief Not equal to operator.
+ *
+ * @param loc1 Left hand side locator being compared.
+ * @param loc2 Right hand side locator being compared.
+ * @return true if \c loc1 is not equal to \c loc2.
+ * @return false otherwise.
+ */
 inline bool operator !=(
         const Locator_t& loc1,
         const Locator_t& loc2)
@@ -222,9 +294,21 @@ inline bool operator !=(
     return !(loc1 == loc2);
 }
 
-/*
- * kind:[address (in IP version)]:port
- * <address> cannot be empty or deserialization process fails
+/**
+ * @brief Insertion operator: serialize a locator
+ *        The serialization format is kind:[address]:port
+ *        \c kind must be one of the following:
+ *            - UDPv4
+ *            - UDPv6
+ *            - TCPv4
+ *            - TCPv6
+ *            - SHM
+ *        \c address IP address unless \c kind is SHM
+ *        \c port number
+ *
+ * @param output Output stream where the serialized locator is appended.
+ * @param loc Locator to be serialized/inserted.
+ * @return \c std::ostream& Reference to the output stream with the serialized locator appended.
  */
 inline std::ostream& operator <<(
         std::ostream& output,
@@ -292,6 +376,22 @@ inline std::ostream& operator <<(
     return output;
 }
 
+/**
+ * @brief Extraction operator: deserialize a locator
+ *        The deserialization format is kind:[address]:port
+ *        \c kind must be one of the following:
+ *            - UDPv4
+ *            - UDPv6
+ *            - TCPv4
+ *            - TCPv6
+ *            - SHM
+ *        \c address must be either a name which can be resolved by DNS or the IP address unless \c kind is SHM
+ *        \c port number
+ *
+ * @param input Input stream where the locator to be deserialized is located.
+ * @param loc Locator where the deserialized locator is saved.
+ * @return \c std::istream& Reference to the input stream after extracting the locator.
+ */
 inline std::istream& operator >>(
         std::istream& input,
         Locator_t& loc)

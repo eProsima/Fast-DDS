@@ -31,11 +31,35 @@ namespace rtps {
  */
 struct LocatorsIterator
 {
+    /**
+     * @brief Increment operator.
+     *
+     * @return LocatorsIterator& reference to the next LocatorsIterator.
+     */
     virtual LocatorsIterator& operator ++() = 0;
+    /**
+     * @brief Equal to operator.
+     *
+     * @param other LocatorsIterator to compare.
+     * @return true if equal.
+     * @return false otherwise.
+     */
     virtual bool operator ==(
             const LocatorsIterator& other) const = 0;
+    /**
+     * @brief Not equal to operator.
+     *
+     * @param other LocatorsIterator to compare.
+     * @return true if not equal.
+     * @return false otherwise.
+     */
     virtual bool operator !=(
             const LocatorsIterator& other) const = 0;
+    /**
+     * @brief Dereference operator.
+     *
+     * @return const Locator& Reference to the locator pointed by the LocatorsIterator.
+     */
     virtual const Locator& operator *() const = 0;
 };
 

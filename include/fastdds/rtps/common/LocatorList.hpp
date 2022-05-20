@@ -34,7 +34,9 @@ namespace eprosima {
 namespace fastdds {
 namespace rtps {
 
+/// Iterator to iterate over a vector of locators.
 typedef std::vector<Locator>::iterator LocatorListIterator;
+/// Constant iterator to iterate over a vector of locators.
 typedef std::vector<Locator>::const_iterator LocatorListConstIterator;
 
 /**
@@ -44,12 +46,14 @@ class Locators : public LocatorsIterator
 {
 public:
 
+    /// Constructor
     Locators(
             const LocatorListConstIterator& it)
         : it_(it)
     {
     }
 
+    /// Copy constructor
     Locators(
             const Locators& other)
         : it_(other.it_)
@@ -85,33 +89,38 @@ private:
 };
 
 /**
- * Class LocatorList, a Locator vector that doesn't avoid duplicates.
+ * Class LocatorList, a Locator vector that doesn't allow duplicates.
  * @ingroup COMMON_MODULE
  */
 class LocatorList
 {
 public:
 
+    /// Constructor
     RTPS_DllAPI LocatorList()
     {
     }
 
+    /// Destructor
     RTPS_DllAPI ~LocatorList()
     {
     }
 
+    /// Copy constructor
     RTPS_DllAPI LocatorList(
             const LocatorList& list)
         : m_locators(list.m_locators)
     {
     }
 
+    /// Move constructor
     RTPS_DllAPI LocatorList(
             LocatorList&& list)
         : m_locators(std::move(list.m_locators))
     {
     }
 
+    /// Copy assignment
     RTPS_DllAPI LocatorList& operator =(
             const LocatorList& list)
     {
@@ -119,6 +128,7 @@ public:
         return *this;
     }
 
+    /// Move assignment
     RTPS_DllAPI LocatorList& operator =(
             LocatorList&& list)
     {
@@ -126,6 +136,7 @@ public:
         return *this;
     }
 
+    /// Equal to operator
     RTPS_DllAPI bool operator ==(
             const LocatorList& locator_list) const
     {
@@ -153,31 +164,62 @@ public:
         return false;
     }
 
+    /**
+     * @brief Return an iterator to the beginning.
+     *
+     * @return LocatorListIterator iterator to the first locator.
+     */
     RTPS_DllAPI LocatorListIterator begin()
     {
         return m_locators.begin();
     }
 
+    /**
+     * @brief Return an iterator to the end.
+     *
+     * @return LocatorListIterator iterator to the element following the last element.
+     */
     RTPS_DllAPI LocatorListIterator end()
     {
         return m_locators.end();
     }
 
+    /**
+     * @brief Return a constant iterator to the beginning.
+     *
+     * @return LocatorListConstIterator iterator to the first locator.
+     */
     RTPS_DllAPI LocatorListConstIterator begin() const
     {
         return m_locators.begin();
     }
 
+    /**
+     * @brief Return a constant iterator to the end.
+     *
+     * @return LocatorListConstIterator iterator to the element following the last element.
+     */
     RTPS_DllAPI LocatorListConstIterator end() const
     {
         return m_locators.end();
     }
 
+    /**
+     * @brief Return the number of locators.
+     *
+     * @return size_t The number of locators in the container.
+     */
     RTPS_DllAPI size_t size() const
     {
         return m_locators.size();
     }
 
+    /**
+     * @brief Replace the contents of the container.
+     *
+     * @param list New content to be saved into the container.
+     * @return LocatorList& reference to the container with the replaced content.
+     */
     RTPS_DllAPI LocatorList& assign(
             const LocatorList& list)
     {
@@ -188,23 +230,43 @@ public:
         return *this;
     }
 
+    /**
+     * @brief Erase all locators from the container.
+     */
     RTPS_DllAPI void clear()
     {
         return m_locators.clear();
     }
 
+    /**
+     * @brief Reserve storage increasing the capacity of the vector.
+     *
+     * @param num new capacity of the vector, in number of elements.
+     */
     RTPS_DllAPI void reserve(
             size_t num)
     {
         return m_locators.reserve(num);
     }
 
+    /**
+     * @brief Resize the container to contain @c num locators.
+     *        If the current size is greater than @c num, the container is reduced to its first @c num locators.
+     *        If the current size is less than count, additional default-inserted locators are appended.
+     *
+     * @param num new size of the container.
+     */
     RTPS_DllAPI void resize(
             size_t num)
     {
         return m_locators.resize(num);
     }
 
+    /**
+     * @brief Add locator to the end if not found within the list.
+     *
+     * @param loc locator to be appended.
+     */
     RTPS_DllAPI void push_back(
             const Locator& loc)
     {
@@ -223,6 +285,11 @@ public:
         }
     }
 
+    /**
+     * @brief Add several locators to the end if not already present within the list.
+     *
+     * @param locList LocatorList with the locators to be appended.
+     */
     RTPS_DllAPI void push_back(
             const LocatorList& locList)
     {
@@ -232,11 +299,21 @@ public:
         }
     }
 
+    /**
+     * @brief Check that the container has no locators.
+     *
+     * @return true if the container is empty. False otherwise.
+     */
     RTPS_DllAPI bool empty() const
     {
         return m_locators.empty();
     }
 
+    /**
+     * @brief Erase the specified locator from the container.
+     *
+     * @param loc Locator to be removed.
+     */
     RTPS_DllAPI void erase(
             const Locator& loc)
     {
@@ -273,6 +350,11 @@ public:
         return false;
     }
 
+    /**
+     * @brief Check that every locator contained in the list is not LOCATOR_KIND_INVALID.
+     *
+     * @return true if all locators are valid. False otherwise.
+     */
     RTPS_DllAPI bool isValid() const
     {
         for (LocatorListConstIterator it = this->begin(); it != this->end(); ++it)
@@ -285,6 +367,11 @@ public:
         return true;
     }
 
+    /**
+     * @brief exchange the content of the container.
+     *
+     * @param locatorList container to exchange the contents with.
+     */
     RTPS_DllAPI void swap(
             LocatorList& locatorList)
     {
@@ -296,6 +383,16 @@ private:
     std::vector<Locator> m_locators;
 };
 
+/**
+ * @brief Insertion operator: serialize a locator list.
+ *        The deserialization format is [locator1,locator2,...,locatorN].
+ *        Each individual locator within the list must follow the serialization format explained in the locator insertion
+ *        operator.
+ *
+ * @param output Output stream where the serialized locator list is appended.
+ * @param locList Locator list to be serialized/inserted.
+ * @return \c std::ostream& Reference to the output stream with the serialized locator list appended.
+ */
 inline std::ostream& operator <<(
         std::ostream& output,
         const LocatorList& locList)
@@ -317,6 +414,16 @@ inline std::ostream& operator <<(
     return output;
 }
 
+/**
+ * @brief Extraction operator: deserialize a list of locators.
+ *        The serialization format is [locator1,locator2,...,locatorN].
+ *        Each individual locator within the list must follow the deserialization format explained in the locator
+ *        extraction operator.
+ *
+ * @param input Input stream where the locator list to be deserialized is located.
+ * @param locList Locator list where the deserialized locators are saved.
+ * @return \c std::istream& Reference to the input stream after extracting the locator list.
+ */
 inline std::istream& operator >>(
         std::istream& input,
         LocatorList& locList)
