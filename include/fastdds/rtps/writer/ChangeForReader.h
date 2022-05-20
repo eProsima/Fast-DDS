@@ -123,6 +123,8 @@ public:
     {
         unsent_fragments_.remove(sentFragment);
 
+        // We only use the running window mechanism during the first stage, until all fragments have been delivered
+        // once, and we consider the whole change as delivered.
         if (!delivered_ && !unsent_fragments_.empty() && (unsent_fragments_.max() < change_->getFragmentCount()))
         {
             FragmentNumber_t base = unsent_fragments_.base();
@@ -141,9 +143,30 @@ public:
     void markFragmentsAsUnsent(
             const FragmentNumberSet_t& unsentFragments)
     {
-        if (delivered_ && unsent_fragments_.empty())
+        // Ignore NACK_FRAG messages during the first stage, until all fragments have been delivered once, and we
+        // consider the whole change as delivered.
+        if (delivered_)
         {
-            unsent_fragments_ = unsentFragments;
+            if (unsent_fragments_.empty())
+            {
+                // Current window is empty, so we can set it to the received one.
+                unsent_fragments_ = unsentFragments;
+            }
+            else
+            {
+                // Update window to send the lowest possible requested fragments first.
+                FragmentNumber_t other_base = unsentFragments.base();
+                if (other_base < unsent_fragments_.base())
+                {
+                    unsent_fragments_.base_update(other_base);
+                }
+                unsentFragments.for_each(
+                    [this](
+                        FragmentNumber_t element)
+                    {
+                        unsent_fragments_.add(element);
+                    });
+            }
         }
     }
 
