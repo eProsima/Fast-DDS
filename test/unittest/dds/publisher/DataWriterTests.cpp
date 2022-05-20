@@ -699,7 +699,7 @@ TEST(DataWriterTests, WriteWithTimestamp)
             datawriter->write_w_timestamp(&data, HANDLE_NIL, fastrtps::c_TimeInfinite));
     EXPECT_EQ(ReturnCode_t::RETCODE_BAD_PARAMETER,
             datawriter->write_w_timestamp(&data, HANDLE_NIL, fastrtps::c_TimeInvalid));
-    // 3. Colling write with a wrong instance handle returns RETCODE_PRECONDITION_NOT_MET
+    // 3. Calling write with a wrong instance handle returns RETCODE_PRECONDITION_NOT_MET
     ASSERT_EQ(ReturnCode_t::RETCODE_PRECONDITION_NOT_MET,
             datawriter->write_w_timestamp(&data, participant->get_instance_handle(), ts));
     // 4. Correct case

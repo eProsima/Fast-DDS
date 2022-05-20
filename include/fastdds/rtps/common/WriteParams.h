@@ -190,11 +190,11 @@ public:
 
 private:
 
-    /// Holds sample_identity member value
+    /// Attribute that holds sample_identity member value
     SampleIdentity sample_identity_;
-    /// Holds related_sample_identity member value
+    /// Attribute that holds related_sample_identity member value
     SampleIdentity related_sample_identity_;
-    /// Holds source_timestamp member value
+    /// Attribute that holds source_timestamp member value
     Time_t source_timestamp_{ -1, TIME_T_INFINITE_NANOSECONDS };
 };
 
