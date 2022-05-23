@@ -18,6 +18,9 @@
 #include <fastdds/dds/domain/DomainParticipantFactory.hpp>
 #include <fastdds/dds/domain/qos/DomainParticipantFactoryQos.hpp>
 
+#include <fastdds/dds/topic/TopicDataType.hpp>
+#include <fastdds/dds/topic/TypeSupport.hpp>
+
 #include <gtest/gtest.h>
 
 #include <chrono>
@@ -32,6 +35,51 @@ using ReturnCode_t = eprosima::fastrtps::types::ReturnCode_t;
 
 class DDSFindTopicTest : public testing::Test
 {
+    /**
+     * A mock type support class.
+     */
+    struct TestType : public TopicDataType
+    {
+        bool serialize(
+                void*,
+                fastrtps::rtps::SerializedPayload_t*) override
+        {
+            return true;
+        }
+
+        bool deserialize(
+                fastrtps::rtps::SerializedPayload_t*,
+                void*) override
+        {
+            return true;
+        }
+
+        std::function<uint32_t()> getSerializedSizeProvider(
+                void*) override
+        {
+            return {};
+        }
+
+        void* createData() override
+        {
+            return nullptr;
+        }
+
+        void deleteData(
+                void*) override
+        {
+        }
+
+        bool getKey(
+                void*,
+                fastrtps::rtps::InstanceHandle_t*,
+                bool) override
+        {
+            return false;
+        }
+
+    };
+
 public:
 
     void SetUp() override
@@ -41,6 +89,10 @@ public:
         factory_qos.entity_factory().autoenable_created_entities = false;
         participant_ = DomainParticipantFactory::get_instance()->create_participant(0, PARTICIPANT_QOS_DEFAULT);
         ASSERT_NE(nullptr, participant_);
+
+        type_.reset(new TestType);
+        type_->setName(c_type_name);
+        type_.register_type(participant_);
     }
 
     void TearDown() override
@@ -54,7 +106,10 @@ public:
 
 protected:
 
+    static constexpr const char* const c_type_name = "testing::find_topic::test_type";
+
     DomainParticipant* participant_ = nullptr;
+    TypeSupport type_;
 };
 
 /**
