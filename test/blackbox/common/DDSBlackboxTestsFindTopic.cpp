@@ -18,8 +18,11 @@
 #include <fastdds/dds/domain/DomainParticipantFactory.hpp>
 #include <fastdds/dds/domain/qos/DomainParticipantFactoryQos.hpp>
 
+#include <fastdds/dds/topic/Topic.hpp>
 #include <fastdds/dds/topic/TopicDataType.hpp>
+#include <fastdds/dds/topic/TopicListener.hpp>
 #include <fastdds/dds/topic/TypeSupport.hpp>
+#include <fastdds/dds/topic/qos/TopicQos.hpp>
 
 #include <gtest/gtest.h>
 
@@ -133,6 +136,37 @@ TEST_F(DDSFindTopicTest, find_topic_timeout)
     // - At least timeout time has elapsed.
     EXPECT_EQ(nullptr, topic);
     EXPECT_GE(std::chrono::steady_clock::now(), max_tp);
+}
+
+/**
+ * Implements test DDS-DP-FT-02 from the test plan.
+ *
+ * Check non-timeout behavior of DomainParticipant::find_topic.
+ */
+TEST_F(DDSFindTopicTest, find_topic_no_timeout)
+{
+    // Input:
+    // - A DomainParticipant correctly initialized (on test setup)
+    // - A Topic correctly created with DomainParticipant::create_topic.
+    TopicListener listener;
+    TopicQos qos;
+    qos.transport_priority().value = 10;
+    Topic* topic0 = participant_->create_topic(TEST_TOPIC_NAME, c_type_name, qos, &listener, StatusMask::none());
+    ASSERT_NE(nullptr, topic0);
+
+    // Procedure:
+    // 1. Call DomainParticipant::find_topic with the same topic name as the input Topic, and infinite timeout.
+    auto topic = participant_->find_topic(TEST_TOPIC_NAME, fastrtps::c_TimeInfinite);
+
+    // Output:
+    // - The call returns something different from nullptr.
+    // - The returned object has the same topic name, type name, qos, listener, and mask as the original Topic.
+    ASSERT_NE(nullptr, topic);
+    EXPECT_EQ(topic0->get_name(), topic->get_name());
+    EXPECT_EQ(topic0->get_type_name(), topic->get_type_name());
+    EXPECT_EQ(topic0->get_qos(), topic->get_qos());
+    EXPECT_EQ(topic0->get_listener(), topic->get_listener());
+    EXPECT_EQ(topic0->get_status_mask(), topic->get_status_mask());
 }
 
 } // namespace dds
