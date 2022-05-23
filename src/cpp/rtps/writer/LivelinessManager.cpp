@@ -51,7 +51,7 @@ bool LivelinessManager::add_writer(
 
     {
         // collection guard
-        shared_lock<shared_mutex> _(col_mutex_);
+        std::lock_guard<shared_mutex> _(col_mutex_);
 
         for (LivelinessData& writer : writers_)
         {
