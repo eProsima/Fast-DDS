@@ -20,6 +20,10 @@
 
 #include <gtest/gtest.h>
 
+#include <chrono>
+
+#include "BlackboxTests.hpp"
+
 namespace eprosima {
 namespace fastdds {
 namespace dds {
@@ -52,6 +56,29 @@ protected:
 
     DomainParticipant* participant_ = nullptr;
 };
+
+/**
+ * Implements test DDS-DP-FT-01 from the test plan.
+ *
+ * Check timeout behavior of DomainParticipant::find_topic.
+ */
+TEST_F(DDSFindTopicTest, find_topic_timeout)
+{
+    // Input:
+    // - A DomainParticipant correctly initialized (on test setup)
+
+    // Procedure:
+    // 1. Call DomainParticipant::find_topic with a valid topic name and certain, non-infinite, timeout.
+    eprosima::fastrtps::Duration_t timeout{ 1, 0 };
+    auto max_tp = std::chrono::steady_clock::now() + std::chrono::seconds(1);
+    auto topic = participant_->find_topic(TEST_TOPIC_NAME, timeout);
+
+    // Output:
+    // - The call returns nullptr.
+    // - At least timeout time has elapsed.
+    EXPECT_EQ(nullptr, topic);
+    EXPECT_GE(std::chrono::steady_clock::now(), max_tp);
+}
 
 } // namespace dds
 } // namespace fastdds
