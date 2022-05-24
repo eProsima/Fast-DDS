@@ -47,7 +47,7 @@ using ReturnCode_t = eprosima::fastrtps::types::ReturnCode_t;
 class DDSFindTopicTest : public testing::Test
 {
     /**
-     * A mock type support class.
+     * A dummy type support class.
      */
     struct TestType : public TopicDataType
     {
@@ -103,7 +103,7 @@ public:
 
         type_.reset(new TestType);
         type_->setName(c_type_name);
-        type_.register_type(participant_);
+        participant_->register_type(type_);
     }
 
     void TearDown() override
@@ -160,8 +160,8 @@ TEST_F(DDSFindTopicTest, find_topic_timeout)
 
     // Procedure:
     // 1. Call DomainParticipant::find_topic with a valid topic name and certain, non-infinite, timeout.
-    eprosima::fastrtps::Duration_t timeout{ 1, 0 };
-    auto max_tp = std::chrono::steady_clock::now() + std::chrono::seconds(1);
+    eprosima::fastrtps::Duration_t timeout{ 0, 50 * 1000 * 1000 };
+    auto max_tp = std::chrono::steady_clock::now() + std::chrono::milliseconds(50);
     auto topic = participant_->find_topic(TEST_TOPIC_NAME, timeout);
 
     // Output:
