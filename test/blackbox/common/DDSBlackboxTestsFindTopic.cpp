@@ -115,6 +115,18 @@ protected:
 
     DomainParticipant* participant_ = nullptr;
     TypeSupport type_;
+    TopicListener listener_;
+
+    /**
+     * Create a topic with parameters different to the default ones, in order to check that the topics returned by
+     * find_topic are not default created.
+     */
+    Topic* create_test_topic()
+    {
+        TopicQos qos;
+        qos.transport_priority().value = 10;
+        return participant_->create_topic(TEST_TOPIC_NAME, c_type_name, qos, &listener_, StatusMask::none());
+    }
 
     void check_topics(
             const Topic* lhs,
@@ -163,10 +175,7 @@ TEST_F(DDSFindTopicTest, find_topic_no_timeout)
     // Input:
     // - A DomainParticipant correctly initialized (on test setup)
     // - A Topic correctly created with DomainParticipant::create_topic.
-    TopicListener listener;
-    TopicQos qos;
-    qos.transport_priority().value = 10;
-    Topic* topic0 = participant_->create_topic(TEST_TOPIC_NAME, c_type_name, qos, &listener, StatusMask::none());
+    Topic* topic0 = create_test_topic();
     ASSERT_NE(nullptr, topic0);
 
     // Procedure:
@@ -207,10 +216,7 @@ TEST_F(DDSFindTopicTest, find_topic_unblock)
     }
 
     // 2. On the main thread, call DomainParticipant::create_topic with the same topic name, and test_type_name.
-    TopicListener listener;
-    TopicQos qos;
-    qos.transport_priority().value = 10;
-    Topic* topic0 = participant_->create_topic(TEST_TOPIC_NAME, c_type_name, qos, &listener, StatusMask::none());
+    Topic* topic0 = create_test_topic();
     ASSERT_NE(nullptr, topic0);
 
     // Output:
