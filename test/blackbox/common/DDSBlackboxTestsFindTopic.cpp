@@ -248,6 +248,60 @@ TEST_F(DDSFindTopicTest, find_topic_unblock)
     }
 }
 
+/**
+ * Implements test DDS-DP-FT-04 from the test plan.
+ *
+ * Check proxy behavior of the objects returned by DomainParticipant::find_topic.
+ */
+TEST_F(DDSFindTopicTest, find_topic_is_proxy)
+{
+    // Input:
+    // - A DomainParticipant correctly initialized (on test setup)
+    // - A Topic object topic_1 correctly created with DomainParticipant::create_topic.
+    // - A Topic object topic_2 obtained by calling DomainParticipant::find_topic with the same topic name.
+    Topic* topic_1 = create_test_topic();
+    ASSERT_NE(nullptr, topic_1);
+    Topic* topic_2 = participant_->find_topic(TEST_TOPIC_NAME, fastrtps::c_TimeInfinite);
+    ASSERT_NE(nullptr, topic_2);
+    check_topics(topic_1, topic_2);
+
+    // Procedure:
+    // 1. Call set_qos and set_listener on topic_2.
+    // 2. Call get_qos, get_listener, and get_status_mask on topic_1.
+    // 3. Call set_qosand set_listener on topic_1.
+    // 4. Call get_qos, get_listener, and get_status_mask on topic_2.1. Call DomainParticipant::find_topic with the same topic name as the input Topic, and infinite timeout.
+    // Output:
+    // - Values returned from the getters should match the ones written by the setters.
+
+    // Steps 1, 2.
+    {
+        TopicListener other_listener;
+        TopicQos other_qos;
+        topic_2->get_qos(other_qos);
+        other_qos.transport_priority().value *= 10;
+
+        topic_2->set_qos(other_qos);
+        topic_2->set_listener(&other_listener, StatusMask::inconsistent_topic());
+        EXPECT_EQ(other_qos, topic_1->get_qos());
+        EXPECT_EQ(&other_listener, topic_1->get_listener());
+        EXPECT_EQ(StatusMask::inconsistent_topic(), topic_1->get_status_mask());
+    }
+
+    // Steps 3, 4.
+    {
+        TopicListener other_listener;
+        TopicQos other_qos;
+        topic_1->get_qos(other_qos);
+        other_qos.transport_priority().value /= 10;
+
+        topic_1->set_qos(other_qos);
+        topic_1->set_listener(&other_listener, StatusMask::none());
+        EXPECT_EQ(other_qos, topic_2->get_qos());
+        EXPECT_EQ(&other_listener, topic_2->get_listener());
+        EXPECT_EQ(StatusMask::none(), topic_2->get_status_mask());
+    }
+}
+
 } // namespace dds
 } // namespace fastdds
 } // namespace eprosima
