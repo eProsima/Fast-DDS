@@ -27,6 +27,8 @@
 #include <gtest/gtest.h>
 
 #include <chrono>
+#include <future>
+#include <vector>
 
 #include "BlackboxTests.hpp"
 
@@ -125,6 +127,7 @@ protected:
         EXPECT_EQ(lhs->get_listener(), rhs->get_listener());
         EXPECT_EQ(lhs->get_status_mask(), rhs->get_status_mask());
     }
+
 };
 
 /**
@@ -175,6 +178,68 @@ TEST_F(DDSFindTopicTest, find_topic_no_timeout)
     // - The returned object has the same topic name, type name, qos, listener, and mask as the original Topic.
     ASSERT_NE(nullptr, topic);
     check_topics(topic0, topic);
+}
+
+/**
+ * Implements test DDS-DP-FT-03 from the test plan.
+ *
+ * Check unblocking behavior of DomainParticipant::find_topic.
+ */
+TEST_F(DDSFindTopicTest, find_topic_unblock)
+{
+    static constexpr size_t num_threads = 4;
+
+    // Input:
+    // - A DomainParticipant correctly initialized (on test setup)
+    // - A type registered for c_type_name (on test setup)
+
+    // Procedure:
+    // 1. Create several threads, which call DomainParticipant::find_topic with certain topic name,
+    //    and infinite timeout.
+    auto exec_fn = [this]()
+            {
+                return participant_->find_topic(TEST_TOPIC_NAME, fastrtps::c_TimeInfinite);
+            };
+    std::vector<std::future<Topic*>> threads;
+    for (size_t i = 0; i < num_threads; ++i)
+    {
+        threads.emplace_back(std::async(std::launch::async, exec_fn));
+    }
+
+    // 2. On the main thread, call DomainParticipant::create_topic with the same topic name, and test_type_name.
+    TopicListener listener;
+    TopicQos qos;
+    qos.transport_priority().value = 10;
+    Topic* topic0 = participant_->create_topic(TEST_TOPIC_NAME, c_type_name, qos, &listener, StatusMask::none());
+    ASSERT_NE(nullptr, topic0);
+
+    // Output:
+    // - All threads return from the call to find_topic.
+    // - All calls to find_topic return something different from nullptr.
+    std::array<Topic*, num_threads> topics;
+    topics.fill(nullptr);
+    for (size_t i = 0; i < num_threads; ++i)
+    {
+        topics[i] = threads[i].get();
+        ASSERT_NE(nullptr, topics[i]);
+    }
+
+    // - All returned values are different.
+    for (size_t i = 0; i < num_threads; ++i)
+    {
+        for (size_t j = i + 1; j < num_threads; ++j)
+        {
+            EXPECT_NE(topics[i], topics[j]);
+        }
+    }
+
+    // - All returned values are different from the one returned by create_topic.
+    // - All find_topic returned objects have the same topic name, type name, qos, listener, and mask as the object
+    //   returned by create_topic.
+    for (Topic* topic : topics)
+    {
+        check_topics(topic0, topic);
+    }
 }
 
 } // namespace dds
