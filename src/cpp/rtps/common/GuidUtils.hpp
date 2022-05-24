@@ -102,6 +102,9 @@ private:
         prefix_.value[4] = static_cast<octet>(pid & 0xFF);
         prefix_.value[5] = static_cast<octet>((pid >> 8) & 0xFF);
 
+        // Using std::random_device as the generator made program hang forever on some CPUs (issue #2694), so we
+        // changed this into a std::mt19937 seeded by a std::random_device. Since we are just adding some randomness
+        // to the PID part of the GUID, it will still provide enough uniqueness on the cases stated above.
         std::random_device device;
         std::mt19937 generator(device());
         std::uniform_int_distribution<uint16_t> distribution(0, std::numeric_limits<uint16_t>::max());
