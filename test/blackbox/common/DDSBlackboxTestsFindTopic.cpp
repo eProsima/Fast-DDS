@@ -113,6 +113,18 @@ protected:
 
     DomainParticipant* participant_ = nullptr;
     TypeSupport type_;
+
+    void check_topics(
+            const Topic* lhs,
+            const Topic* rhs)
+    {
+        EXPECT_NE(lhs, rhs);
+        EXPECT_EQ(lhs->get_name(), rhs->get_name());
+        EXPECT_EQ(lhs->get_type_name(), rhs->get_type_name());
+        EXPECT_EQ(lhs->get_qos(), rhs->get_qos());
+        EXPECT_EQ(lhs->get_listener(), rhs->get_listener());
+        EXPECT_EQ(lhs->get_status_mask(), rhs->get_status_mask());
+    }
 };
 
 /**
@@ -162,11 +174,7 @@ TEST_F(DDSFindTopicTest, find_topic_no_timeout)
     // - The call returns something different from nullptr.
     // - The returned object has the same topic name, type name, qos, listener, and mask as the original Topic.
     ASSERT_NE(nullptr, topic);
-    EXPECT_EQ(topic0->get_name(), topic->get_name());
-    EXPECT_EQ(topic0->get_type_name(), topic->get_type_name());
-    EXPECT_EQ(topic0->get_qos(), topic->get_qos());
-    EXPECT_EQ(topic0->get_listener(), topic->get_listener());
-    EXPECT_EQ(topic0->get_status_mask(), topic->get_status_mask());
+    check_topics(topic0, topic);
 }
 
 } // namespace dds
