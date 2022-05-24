@@ -18,6 +18,12 @@
 #include <fastdds/dds/domain/DomainParticipantFactory.hpp>
 #include <fastdds/dds/domain/qos/DomainParticipantFactoryQos.hpp>
 
+#include <fastdds/dds/publisher/DataWriter.hpp>
+#include <fastdds/dds/publisher/Publisher.hpp>
+
+#include <fastdds/dds/subscriber/DataReader.hpp>
+#include <fastdds/dds/subscriber/Subscriber.hpp>
+
 #include <fastdds/dds/topic/Topic.hpp>
 #include <fastdds/dds/topic/TopicDataType.hpp>
 #include <fastdds/dds/topic/TopicListener.hpp>
@@ -299,6 +305,79 @@ TEST_F(DDSFindTopicTest, find_topic_is_proxy)
         EXPECT_EQ(other_qos, topic_2->get_qos());
         EXPECT_EQ(&other_listener, topic_2->get_listener());
         EXPECT_EQ(StatusMask::none(), topic_2->get_status_mask());
+    }
+}
+
+/**
+ * Implements test DDS-DP-FT-05 from the test plan.
+ *
+ * Check create_topic and delete_topic interactions with find_topic.
+ */
+TEST_F(DDSFindTopicTest, find_topic_delete_topic)
+{
+    // Input:
+    // - A DomainParticipant correctly initialized (on test setup)
+    // - A Topic object topic_1 correctly created with DomainParticipant::create_topic.
+    // - Two Topic objects topic_2 and topic_3, obtained by calling DomainParticipant::find_topic with the same
+    //   topic name.
+    // - A DataWriter created on topic_1.
+    // - A DataReader created on topic_2.
+    Topic* topic_1 = create_test_topic();
+    ASSERT_NE(nullptr, topic_1);
+    Topic* topic_2 = participant_->find_topic(TEST_TOPIC_NAME, fastrtps::c_TimeInfinite);
+    ASSERT_NE(nullptr, topic_2);
+    Topic* topic_3 = participant_->find_topic(TEST_TOPIC_NAME, fastrtps::c_TimeInfinite);
+    ASSERT_NE(nullptr, topic_3);
+    auto publisher = participant_->create_publisher(PUBLISHER_QOS_DEFAULT);
+    auto data_writer = publisher->create_datawriter(topic_1, DATAWRITER_QOS_DEFAULT);
+    auto subscriber = participant_->create_subscriber(SUBSCRIBER_QOS_DEFAULT);
+    auto data_reader = subscriber->create_datareader(topic_2, DATAREADER_QOS_DEFAULT);
+
+    // Procedure:
+    // 1. Call DomainParticipant::delete_topic for topic_3.
+    // 2. Call DomainParticipant::delete_topic for topic_2.
+    // 3. Call DomainParticipant::delete_topic for topic_1.
+    // 4. Call DomainParticipant::create_topic for the same topic name.
+    // 5. Delete the DataWriter.
+    // 6. Call DomainParticipant::delete_topic for topic_3.
+    // 7. Call DomainParticipant::delete_topic for topic_2.
+    // 8. Call DomainParticipant::delete_topic for topic_1.
+    // 9. Call DomainParticipant::create_topic for the same topic name.
+    // 10. Delete the DataReader.
+    // 11. Call DomainParticipant::delete_topic for topic_3.
+    // 12. Call DomainParticipant::delete_topic for topic_2.
+    // 13. Call DomainParticipant::delete_topic for topic_1.
+    // 14. Call DomainParticipant::create_topic for the same topic name.
+    // Output:
+    // - The calls to delete_topic return the following codes:
+    //   - OK for calls 1, 8, and 12.
+    //   - PRECONDITION_NOT_MET for the rest.
+    // - Only the last call to create_topic succeeds.
+
+    // Steps 1-4.
+    {
+        EXPECT_EQ(ReturnCode_t::RETCODE_OK, participant_->delete_topic(topic_3));
+        EXPECT_EQ(ReturnCode_t::RETCODE_PRECONDITION_NOT_MET, participant_->delete_topic(topic_2));
+        EXPECT_EQ(ReturnCode_t::RETCODE_PRECONDITION_NOT_MET, participant_->delete_topic(topic_1));
+        EXPECT_EQ(nullptr, create_test_topic());
+    }
+
+    // Steps 5-9.
+    {
+        EXPECT_EQ(ReturnCode_t::RETCODE_OK, publisher->delete_datawriter(data_writer));
+        EXPECT_EQ(ReturnCode_t::RETCODE_PRECONDITION_NOT_MET, participant_->delete_topic(topic_3));
+        EXPECT_EQ(ReturnCode_t::RETCODE_PRECONDITION_NOT_MET, participant_->delete_topic(topic_2));
+        EXPECT_EQ(ReturnCode_t::RETCODE_OK, participant_->delete_topic(topic_1));
+        EXPECT_EQ(nullptr, create_test_topic());
+    }
+
+    // Steps 10-14.
+    {
+        EXPECT_EQ(ReturnCode_t::RETCODE_OK, subscriber->delete_datareader(data_reader));
+        EXPECT_EQ(ReturnCode_t::RETCODE_PRECONDITION_NOT_MET, participant_->delete_topic(topic_3));
+        EXPECT_EQ(ReturnCode_t::RETCODE_OK, participant_->delete_topic(topic_2));
+        EXPECT_EQ(ReturnCode_t::RETCODE_PRECONDITION_NOT_MET, participant_->delete_topic(topic_1));
+        EXPECT_NE(nullptr, create_test_topic());
     }
 }
 
