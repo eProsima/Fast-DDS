@@ -59,6 +59,8 @@ using eprosima::fastdds::rtps::UDPTransportDescriptor;
 using eprosima::fastdds::rtps::UDPv4TransportDescriptor;
 using eprosima::fastdds::rtps::UDPv6TransportDescriptor;
 
+using SampleLostStatusFunctor = std::function<void (const eprosima::fastdds::dds::SampleLostStatus&)>;
+
 template<class TypeSupport>
 class PubSubReader
 {
@@ -230,6 +232,15 @@ protected:
                 reader_.liveliness_lost();
 
             }
+        }
+
+        void on_sample_lost(
+                eprosima::fastdds::dds::DataReader* datareader,
+                const eprosima::fastdds::dds::SampleLostStatus& status) override
+        {
+            (void)datareader;
+
+            reader_.set_sample_lost_status(status);
         }
 
         unsigned int missed_deadlines() const
@@ -1576,6 +1587,22 @@ public:
         return eprosima::fastrtps::rtps::InstanceHandle_t(datareader_guid());
     }
 
+    void set_sample_lost_status(
+            const eprosima::fastdds::dds::SampleLostStatus& status)
+    {
+        if (sample_lost_status_functor_)
+        {
+            sample_lost_status_functor_(status);
+        }
+    }
+
+    PubSubReader& sample_lost_status_functor(
+            SampleLostStatusFunctor functor)
+    {
+        sample_lost_status_functor_ = functor;
+        return *this;
+    }
+
     const eprosima::fastrtps::rtps::GUID_t& participant_guid() const
     {
         return participant_guid_;
@@ -1814,6 +1841,9 @@ protected:
     std::condition_variable message_receive_cv_;
     //! Number of messages received but not yet processed by the application
     std::atomic<size_t> message_receive_count_;
+
+    //! Functor called when called SampleLostStatus listener.
+    SampleLostStatusFunctor sample_lost_status_functor_;
 };
 
 template<class TypeSupport>
