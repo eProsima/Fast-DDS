@@ -2001,6 +2001,13 @@ protected:
                 }
             }
 
+            if (triggered_statuses.is_active(eprosima::fastdds::dds::StatusMask::sample_lost()))
+            {
+                eprosima::fastdds::dds::SampleLostStatus status;
+                ASSERT_EQ(ReturnCode_t::RETCODE_OK, reader_.datareader_->get_sample_lost_status(status));
+                reader_.set_sample_lost_status(status);
+            }
+
             // We also have to process the subscriber
             triggered_statuses = reader_.subscriber_->get_status_changes();
             triggered_statuses &= condition->get_enabled_statuses();
