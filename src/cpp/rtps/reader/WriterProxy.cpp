@@ -228,8 +228,7 @@ int32_t WriterProxy::lost_changes_update(
                     (changes_from_writer_low_mark_.to64long() + 1));
             auto distance = std::distance(changes_received_.begin(), it);
             current_sample_lost +=
-                    static_cast<int32_t>(seq_num.to64long() - (*changes_received_.begin()).to64long() + 1 -
-                    distance);
+                    static_cast<int32_t>(seq_num.to64long() - (*changes_received_.begin()).to64long() - distance);
         }
         else
         {

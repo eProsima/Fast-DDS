@@ -643,8 +643,25 @@ void StatefulWriter::deliver_sample_to_intraprocesses(
             // send it a personal GAP.
             if (SequenceNumber_t::unknown() != gap_seq)
             {
-                intraprocess_gap(remoteReader, gap_seq, change->sequenceNumber);
-                remoteReader->acked_changes_set(change->sequenceNumber);
+                // Verify the calculated gap_seq in ReaderProxy is a real hole in the history.
+                SequenceNumber_t min_seq = get_seq_num_min();
+                if (gap_seq < min_seq) // Several samples of the hole are not really already available.
+                {
+                    if (min_seq < change->sequenceNumber)
+                    {
+                        gap_seq = min_seq;
+                    }
+                    else
+                    {
+                        gap_seq = SequenceNumber_t::unknown();
+                    }
+                }
+
+                if (SequenceNumber_t::unknown() != gap_seq)
+                {
+                    intraprocess_gap(remoteReader, gap_seq, change->sequenceNumber);
+                    remoteReader->acked_changes_set(change->sequenceNumber);
+                }
             }
             bool delivered = intraprocess_delivery(change, remoteReader);
             if (!remoteReader->is_reliable())
@@ -737,31 +754,49 @@ DeliveryRetCode StatefulWriter::deliver_sample_to_network(
                 // send it a personal GAP.
                 if (SequenceNumber_t::unknown() != gap_seq)
                 {
-                    if (SequenceNumber_t::unknown() == gap_seq_for_all) // Calculate if the hole is for all readers
+                    // Verify the calculated gap_seq in ReaderProxy is a real hole in the history.
+                    SequenceNumber_t min_seq = get_seq_num_min();
+                    if (gap_seq < min_seq) // Several samples of the hole are not really already available.
                     {
-                        History::const_iterator chit = mp_history->find_change_nts(change);
-
-                        if (chit == mp_history->changesBegin())
+                        if (min_seq < change->sequenceNumber)
                         {
-                            gap_seq_for_all = gap_seq;
+                            gap_seq = min_seq;
                         }
                         else
                         {
-                            SequenceNumber_t prev = (*std::prev(chit))->sequenceNumber + 1;
-
-                            if (prev == gap_seq)
-                            {
-                                gap_seq_for_all = gap_seq;
-                            }
+                            gap_seq = SequenceNumber_t::unknown();
                         }
                     }
 
-                    if (gap_seq_for_all != gap_seq) // If it is an individual GAP, sent it to repective reader.
+                    if (SequenceNumber_t::unknown() != gap_seq)
                     {
-                        group.sender(this, (*remote_reader)->message_sender());
-                        group.add_gap(gap_seq, SequenceNumberSet_t(change->sequenceNumber), (*remote_reader)->guid());
-                        send_heartbeat_nts_(1u, group, disable_positive_acks_);
-                        group.sender(this, &locator_selector); // This makes the flush_and_reset().
+                        if (SequenceNumber_t::unknown() == gap_seq_for_all) // Calculate if the hole is for all readers
+                        {
+                            History::const_iterator chit = mp_history->find_change_nts(change);
+
+                            if (chit == mp_history->changesBegin())
+                            {
+                                gap_seq_for_all = gap_seq;
+                            }
+                            else
+                            {
+                                SequenceNumber_t prev = (*std::prev(chit))->sequenceNumber + 1;
+
+                                if (prev == gap_seq)
+                                {
+                                    gap_seq_for_all = gap_seq;
+                                }
+                            }
+                        }
+
+                        if (gap_seq_for_all != gap_seq) // If it is an individual GAP, sent it to repective reader.
+                        {
+                            group.sender(this, (*remote_reader)->message_sender());
+                            group.add_gap(gap_seq, SequenceNumberSet_t(change->sequenceNumber),
+                                    (*remote_reader)->guid());
+                            send_heartbeat_nts_(1u, group, disable_positive_acks_);
+                            group.sender(this, &locator_selector); // This makes the flush_and_reset().
+                        }
                     }
                 }
             }

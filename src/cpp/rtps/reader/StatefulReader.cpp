@@ -282,7 +282,14 @@ bool StatefulReader::matched_writer_add(
             {
                 SequenceNumberSet_t sns(last_seq + 1);
                 send_acknack(wp, sns, wp, false);
-                wp->lost_changes_update(last_seq + 1);
+                int32_t current_sample_lost = 0;
+                if (0 < (current_sample_lost = wp->lost_changes_update(last_seq + 1)))
+                {
+                    if (getListener() != nullptr)
+                    {
+                        getListener()->on_sample_lost((RTPSReader*)this, current_sample_lost);
+                    }
+                }
             }
         }
         else if (!is_same_process)
@@ -965,15 +972,6 @@ bool StatefulReader::change_received(
         auto payload_length = a_change->serializedPayload.length;
 
         Time_t::now(a_change->reader_info.receptionTimestamp);
-        GUID_t proxGUID = prox->guid();
-
-        // If KEEP_LAST and history full, make older changes as lost.
-        CacheChange_t* aux_change = nullptr;
-        if (mp_history->isFull() && mp_history->get_min_change_from(&aux_change, proxGUID))
-        {
-            prox->lost_changes_update(aux_change->sequenceNumber);
-        }
-
         bool ret = true;
 
         if (a_change->is_fully_assembled())
