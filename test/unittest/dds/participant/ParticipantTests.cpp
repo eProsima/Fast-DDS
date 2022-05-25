@@ -3373,7 +3373,6 @@ TEST(ParticipantTests, ContentFilterInterfaces)
  * This test checks that the following methods are not implemented and returns an error
  *  create_multitopic
  *  delete_multitopic
- *  find_topic
  *  get_builtin_subscriber
  *  ignore_participant
  *  ignore_topic
@@ -3409,8 +3408,6 @@ TEST(ParticipantTests, UnsupportedMethods)
 
     // nullptr use as there are not such a class
     ASSERT_EQ(participant->delete_multitopic(nullptr), ReturnCode_t::RETCODE_UNSUPPORTED);
-
-    ASSERT_EQ(participant->find_topic("topic", Duration_t(1, 0)), nullptr);
 
     ASSERT_EQ(participant->get_builtin_subscriber(), nullptr);
 
