@@ -152,13 +152,6 @@ public:
         static_cast<void>(writer_info);
     }
 
-    virtual void on_sample_lost(
-        RTPSReader* reader,
-        int32_t sample_lost_since_last_update)
-    {
-        (void)reader;
-        (void)sample_lost_since_last_update;
-    }
 };
 
 } // namespace rtps
