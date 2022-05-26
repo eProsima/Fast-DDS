@@ -673,14 +673,9 @@ TEST_P(DDSStatus, DataAvailableConditions)
     subscriber_reader.wait_waitset_timeout();
 }
 
-/*!
- * \test DDS-STS-SLS-01 Test `SampleLostStatus` in a Best-Effort DataWriter and a Best-Effort DataReader communication.
- */
-TEST(DDSStatus, sample_lost_be_dw_be_dr)
+void sample_lost_test_dw_init(
+        PubSubWriter<HelloWorldPubSubType>& writer)
 {
-    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
-    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
-
     auto testTransport = std::make_shared<test_UDPv4TransportDescriptor>();
     testTransport->drop_data_messages_filter_ = [](eprosima::fastrtps::rtps::CDRMessage_t& msg)-> bool
             {
@@ -719,17 +714,51 @@ TEST(DDSStatus, sample_lost_be_dw_be_dr)
 
     writer.disable_builtin_transport()
             .add_user_transport_to_pparams(testTransport)
-            .reliability(eprosima::fastrtps::BEST_EFFORT_RELIABILITY_QOS)
             .init();
 
     ASSERT_TRUE(writer.isInitialized());
+
+}
+
+void sample_lost_test_dr_init(
+        PubSubReader<HelloWorldPubSubType>& reader,
+        std::function<void(const eprosima::fastdds::dds::SampleLostStatus& status)> functor)
+{
+    reader.sample_lost_status_functor(functor)
+            .init();
+
+    ASSERT_TRUE(reader.isInitialized());
+}
+
+void sample_lost_test_init(
+        PubSubReader<HelloWorldPubSubType>& reader,
+        PubSubWriter<HelloWorldPubSubType>& writer,
+        std::function<void(const eprosima::fastdds::dds::SampleLostStatus& status)> functor)
+{
+    sample_lost_test_dw_init(writer);
+    sample_lost_test_dr_init(reader, functor);
+
+    // Wait for discovery.
+    writer.wait_discovery();
+    reader.wait_discovery();
+}
+
+/*!
+ * \test DDS-STS-SLS-01 Test `SampleLostStatus` in a Best-Effort DataWriter and a Best-Effort DataReader communication.
+ */
+TEST(DDSStatus, sample_lost_be_dw_be_dr)
+{
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
 
     std::mutex test_step_mtx;
     std::condition_variable test_step_cv;
     uint8_t test_step = 0;
 
-    reader.reliability(eprosima::fastrtps::BEST_EFFORT_RELIABILITY_QOS)
-            .sample_lost_status_functor([&test_step_mtx, &test_step_cv, &test_step](
+    writer.reliability(eprosima::fastrtps::BEST_EFFORT_RELIABILITY_QOS);
+    reader.reliability(eprosima::fastrtps::BEST_EFFORT_RELIABILITY_QOS);
+
+    sample_lost_test_init(reader, writer, [&test_step_mtx, &test_step_cv, &test_step](
                 const eprosima::fastdds::dds::SampleLostStatus& status)
             {
                 {
@@ -757,14 +786,8 @@ TEST(DDSStatus, sample_lost_be_dw_be_dr)
                 }
 
                 test_step_cv.notify_all();
-            })
-            .init();
+            });
 
-    ASSERT_TRUE(reader.isInitialized());
-
-    // Wait for discovery.
-    writer.wait_discovery();
-    reader.wait_discovery();
 
     auto data = default_helloworld_data_generator(13);
 
@@ -787,48 +810,8 @@ TEST(DDSStatus, sample_lost_be_dw_lj_be_dr)
     PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
     PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
 
-    auto testTransport = std::make_shared<test_UDPv4TransportDescriptor>();
-    testTransport->drop_data_messages_filter_ = [](eprosima::fastrtps::rtps::CDRMessage_t& msg)-> bool
-            {
-                uint32_t old_pos = msg.pos;
-
-                // see RTPS DDS 9.4.5.3 Data Submessage
-                EntityId_t readerID, writerID;
-                SequenceNumber_t sn;
-
-                msg.pos += 2; // flags
-                msg.pos += 2; // octets to inline quos
-                CDRMessage::readEntityId(&msg, &readerID);
-                CDRMessage::readEntityId(&msg, &writerID);
-                CDRMessage::readSequenceNumber(&msg, &sn);
-
-                // restore buffer pos
-                msg.pos = old_pos;
-
-                // generate losses
-                if ((writerID.value[3] & 0xC0) == 0 // only user endpoints
-                        && (sn == SequenceNumber_t{0, 2} ||
-                        sn == SequenceNumber_t(0, 3) ||
-                        sn == SequenceNumber_t(0, 4) ||
-                        sn == SequenceNumber_t(0, 6) ||
-                        sn == SequenceNumber_t(0, 8) ||
-                        sn == SequenceNumber_t(0, 10) ||
-                        sn == SequenceNumber_t(0, 11) ||
-                        sn == SequenceNumber_t(0, 13)))
-                {
-                    return true;
-                }
-
-                return false;
-            };
-
-
-    writer.disable_builtin_transport()
-            .add_user_transport_to_pparams(testTransport)
-            .reliability(eprosima::fastrtps::BEST_EFFORT_RELIABILITY_QOS)
-            .init();
-
-    ASSERT_TRUE(writer.isInitialized());
+    writer.reliability(eprosima::fastrtps::BEST_EFFORT_RELIABILITY_QOS);
+    sample_lost_test_dw_init(writer);
 
     auto data = default_helloworld_data_generator(4);
     writer.send(data, 50);
@@ -837,8 +820,8 @@ TEST(DDSStatus, sample_lost_be_dw_lj_be_dr)
     std::condition_variable test_step_cv;
     uint8_t test_step = 0;
 
-    reader.reliability(eprosima::fastrtps::BEST_EFFORT_RELIABILITY_QOS)
-            .sample_lost_status_functor([&test_step_mtx, &test_step_cv, &test_step](
+    reader.reliability(eprosima::fastrtps::BEST_EFFORT_RELIABILITY_QOS);
+    sample_lost_test_dr_init(reader, [&test_step_mtx, &test_step_cv, &test_step](
                 const eprosima::fastdds::dds::SampleLostStatus& status)
             {
                 {
@@ -866,10 +849,7 @@ TEST(DDSStatus, sample_lost_be_dw_lj_be_dr)
                 }
 
                 test_step_cv.notify_all();
-            })
-            .init();
-
-    ASSERT_TRUE(reader.isInitialized());
+            });
 
     // Wait for discovery.
     writer.wait_discovery();
@@ -895,56 +875,15 @@ TEST(DDSStatus, sample_lost_re_dw_re_dr)
     PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
     PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
 
-    auto testTransport = std::make_shared<test_UDPv4TransportDescriptor>();
-    testTransport->drop_data_messages_filter_ = [](eprosima::fastrtps::rtps::CDRMessage_t& msg)-> bool
-            {
-                uint32_t old_pos = msg.pos;
-
-                // see RTPS DDS 9.4.5.3 Data Submessage
-                EntityId_t readerID, writerID;
-                SequenceNumber_t sn;
-
-                msg.pos += 2; // flags
-                msg.pos += 2; // octets to inline quos
-                CDRMessage::readEntityId(&msg, &readerID);
-                CDRMessage::readEntityId(&msg, &writerID);
-                CDRMessage::readSequenceNumber(&msg, &sn);
-
-                // restore buffer pos
-                msg.pos = old_pos;
-
-                // generate losses
-                if ((writerID.value[3] & 0xC0) == 0 // only user endpoints
-                        && (sn == SequenceNumber_t{0, 2} ||
-                        sn == SequenceNumber_t(0, 3) ||
-                        sn == SequenceNumber_t(0, 4) ||
-                        sn == SequenceNumber_t(0, 6) ||
-                        sn == SequenceNumber_t(0, 8) ||
-                        sn == SequenceNumber_t(0, 10) ||
-                        sn == SequenceNumber_t(0, 11) ||
-                        sn == SequenceNumber_t(0, 13)))
-                {
-                    return true;
-                }
-
-                return false;
-            };
-
-
-    writer.disable_builtin_transport()
-            .add_user_transport_to_pparams(testTransport)
-            .reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS)
-            .init();
-
-    ASSERT_TRUE(writer.isInitialized());
+    writer.reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS);
+    reader.reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS);
 
     std::mutex test_step_mtx;
     std::condition_variable test_step_cv;
     int32_t test_count = 0;
     int32_t test_count_change_accum = 0;
 
-    reader.reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS)
-            .sample_lost_status_functor([&test_step_mtx, &test_step_cv, &test_count, &test_count_change_accum](
+    sample_lost_test_init(reader, writer, [&test_step_mtx, &test_step_cv, &test_count, &test_count_change_accum](
                 const eprosima::fastdds::dds::SampleLostStatus& status)
             {
                 {
@@ -954,14 +893,7 @@ TEST(DDSStatus, sample_lost_re_dw_re_dr)
                 }
 
                 test_step_cv.notify_all();
-            })
-            .init();
-
-    ASSERT_TRUE(reader.isInitialized());
-
-    // Wait for discovery.
-    writer.wait_discovery();
-    reader.wait_discovery();
+            });
 
     auto data = default_helloworld_data_generator(13);
 
@@ -984,48 +916,8 @@ TEST(DDSStatus, sample_lost_re_dw_lj_re_dr)
     PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
     PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
 
-    auto testTransport = std::make_shared<test_UDPv4TransportDescriptor>();
-    testTransport->drop_data_messages_filter_ = [](eprosima::fastrtps::rtps::CDRMessage_t& msg)-> bool
-            {
-                uint32_t old_pos = msg.pos;
-
-                // see RTPS DDS 9.4.5.3 Data Submessage
-                EntityId_t readerID, writerID;
-                SequenceNumber_t sn;
-
-                msg.pos += 2; // flags
-                msg.pos += 2; // octets to inline quos
-                CDRMessage::readEntityId(&msg, &readerID);
-                CDRMessage::readEntityId(&msg, &writerID);
-                CDRMessage::readSequenceNumber(&msg, &sn);
-
-                // restore buffer pos
-                msg.pos = old_pos;
-
-                // generate losses
-                if ((writerID.value[3] & 0xC0) == 0 // only user endpoints
-                        && (sn == SequenceNumber_t{0, 2} ||
-                        sn == SequenceNumber_t(0, 3) ||
-                        sn == SequenceNumber_t(0, 4) ||
-                        sn == SequenceNumber_t(0, 6) ||
-                        sn == SequenceNumber_t(0, 8) ||
-                        sn == SequenceNumber_t(0, 10) ||
-                        sn == SequenceNumber_t(0, 11) ||
-                        sn == SequenceNumber_t(0, 13)))
-                {
-                    return true;
-                }
-
-                return false;
-            };
-
-
-    writer.disable_builtin_transport()
-            .add_user_transport_to_pparams(testTransport)
-            .reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS)
-            .init();
-
-    ASSERT_TRUE(writer.isInitialized());
+    writer.reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS);
+    sample_lost_test_dw_init(writer);
 
     auto data = default_helloworld_data_generator(4);
     writer.send(data, 50);
@@ -1035,8 +927,8 @@ TEST(DDSStatus, sample_lost_re_dw_lj_re_dr)
     int32_t test_count = 0;
     int32_t test_count_change_accum = 0;
 
-    reader.reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS)
-            .sample_lost_status_functor([&test_step_mtx, &test_step_cv, &test_count, &test_count_change_accum](
+    reader.reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS);
+    sample_lost_test_dr_init(reader, [&test_step_mtx, &test_step_cv, &test_count, &test_count_change_accum](
                 const eprosima::fastdds::dds::SampleLostStatus& status)
             {
                 {
@@ -1046,10 +938,7 @@ TEST(DDSStatus, sample_lost_re_dw_lj_re_dr)
                 }
 
                 test_step_cv.notify_all();
-            })
-            .init();
-
-    ASSERT_TRUE(reader.isInitialized());
+            });
 
     // Wait for discovery.
     writer.wait_discovery();
@@ -1076,55 +965,15 @@ TEST(DDSStatus, sample_lost_re_dw_be_dr)
     PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
     PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
 
-    auto testTransport = std::make_shared<test_UDPv4TransportDescriptor>();
-    testTransport->drop_data_messages_filter_ = [](eprosima::fastrtps::rtps::CDRMessage_t& msg)-> bool
-            {
-                uint32_t old_pos = msg.pos;
+    writer.reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS);
+    reader.reliability(eprosima::fastrtps::BEST_EFFORT_RELIABILITY_QOS);
 
-                // see RTPS DDS 9.4.5.3 Data Submessage
-                EntityId_t readerID, writerID;
-                SequenceNumber_t sn;
-
-                msg.pos += 2; // flags
-                msg.pos += 2; // octets to inline quos
-                CDRMessage::readEntityId(&msg, &readerID);
-                CDRMessage::readEntityId(&msg, &writerID);
-                CDRMessage::readSequenceNumber(&msg, &sn);
-
-                // restore buffer pos
-                msg.pos = old_pos;
-
-                // generate losses
-                if ((writerID.value[3] & 0xC0) == 0 // only user endpoints
-                        && (sn == SequenceNumber_t{0, 2} ||
-                        sn == SequenceNumber_t(0, 3) ||
-                        sn == SequenceNumber_t(0, 4) ||
-                        sn == SequenceNumber_t(0, 6) ||
-                        sn == SequenceNumber_t(0, 8) ||
-                        sn == SequenceNumber_t(0, 10) ||
-                        sn == SequenceNumber_t(0, 11) ||
-                        sn == SequenceNumber_t(0, 13)))
-                {
-                    return true;
-                }
-
-                return false;
-            };
-
-
-    writer.disable_builtin_transport()
-            .add_user_transport_to_pparams(testTransport)
-            .reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS)
-            .init();
-
-    ASSERT_TRUE(writer.isInitialized());
 
     std::mutex test_step_mtx;
     std::condition_variable test_step_cv;
     uint8_t test_step = 0;
 
-    reader.reliability(eprosima::fastrtps::BEST_EFFORT_RELIABILITY_QOS)
-            .sample_lost_status_functor([&test_step_mtx, &test_step_cv, &test_step](
+    sample_lost_test_init(reader, writer, [&test_step_mtx, &test_step_cv, &test_step](
                 const eprosima::fastdds::dds::SampleLostStatus& status)
             {
                 {
@@ -1152,14 +1001,7 @@ TEST(DDSStatus, sample_lost_re_dw_be_dr)
                 }
 
                 test_step_cv.notify_all();
-            })
-            .init();
-
-    ASSERT_TRUE(reader.isInitialized());
-
-    // Wait for discovery.
-    writer.wait_discovery();
-    reader.wait_discovery();
+            });
 
     auto data = default_helloworld_data_generator(13);
 
@@ -1182,48 +1024,8 @@ TEST(DDSStatus, sample_lost_re_dw_lj_be_dr)
     PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
     PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
 
-    auto testTransport = std::make_shared<test_UDPv4TransportDescriptor>();
-    testTransport->drop_data_messages_filter_ = [](eprosima::fastrtps::rtps::CDRMessage_t& msg)-> bool
-            {
-                uint32_t old_pos = msg.pos;
-
-                // see RTPS DDS 9.4.5.3 Data Submessage
-                EntityId_t readerID, writerID;
-                SequenceNumber_t sn;
-
-                msg.pos += 2; // flags
-                msg.pos += 2; // octets to inline quos
-                CDRMessage::readEntityId(&msg, &readerID);
-                CDRMessage::readEntityId(&msg, &writerID);
-                CDRMessage::readSequenceNumber(&msg, &sn);
-
-                // restore buffer pos
-                msg.pos = old_pos;
-
-                // generate losses
-                if ((writerID.value[3] & 0xC0) == 0 // only user endpoints
-                        && (sn == SequenceNumber_t{0, 2} ||
-                        sn == SequenceNumber_t(0, 3) ||
-                        sn == SequenceNumber_t(0, 4) ||
-                        sn == SequenceNumber_t(0, 6) ||
-                        sn == SequenceNumber_t(0, 8) ||
-                        sn == SequenceNumber_t(0, 10) ||
-                        sn == SequenceNumber_t(0, 11) ||
-                        sn == SequenceNumber_t(0, 13)))
-                {
-                    return true;
-                }
-
-                return false;
-            };
-
-
-    writer.disable_builtin_transport()
-            .add_user_transport_to_pparams(testTransport)
-            .reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS)
-            .init();
-
-    ASSERT_TRUE(writer.isInitialized());
+    writer.reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS);
+    sample_lost_test_dw_init(writer);
 
     auto data = default_helloworld_data_generator(4);
     writer.send(data, 50);
@@ -1232,8 +1034,8 @@ TEST(DDSStatus, sample_lost_re_dw_lj_be_dr)
     std::condition_variable test_step_cv;
     uint8_t test_step = 0;
 
-    reader.reliability(eprosima::fastrtps::BEST_EFFORT_RELIABILITY_QOS)
-            .sample_lost_status_functor([&test_step_mtx, &test_step_cv, &test_step](
+    reader.reliability(eprosima::fastrtps::BEST_EFFORT_RELIABILITY_QOS);
+    sample_lost_test_dr_init(reader, [&test_step_mtx, &test_step_cv, &test_step](
                 const eprosima::fastdds::dds::SampleLostStatus& status)
             {
                 {
@@ -1261,10 +1063,7 @@ TEST(DDSStatus, sample_lost_re_dw_lj_be_dr)
                 }
 
                 test_step_cv.notify_all();
-            })
-            .init();
-
-    ASSERT_TRUE(reader.isInitialized());
+            });
 
     // Wait for discovery.
     writer.wait_discovery();
@@ -1288,10 +1087,6 @@ TEST(DDSStatus, sample_lost_re_dw_lj_be_dr)
  */
 TEST(DDSStatus, sample_lost_re_dw_re_persistence_dr)
 {
-    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
-    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
-
-    // Get info about current test
     auto info = ::testing::UnitTest::GetInstance()->current_test_info();
     // Create DB file name from test name and PID
     std::ostringstream ss;
@@ -1300,105 +1095,64 @@ TEST(DDSStatus, sample_lost_re_dw_re_persistence_dr)
     ss << test_case_name << "_" << test_name << "_" << GET_PID() << ".db";
     std::string db_file_name = ss.str();
 
-    auto testTransport = std::make_shared<test_UDPv4TransportDescriptor>();
-    testTransport->drop_data_messages_filter_ = [](eprosima::fastrtps::rtps::CDRMessage_t& msg)-> bool
-            {
-                uint32_t old_pos = msg.pos;
-
-                // see RTPS DDS 9.4.5.3 Data Submessage
-                EntityId_t readerID, writerID;
-                SequenceNumber_t sn;
-
-                msg.pos += 2; // flags
-                msg.pos += 2; // octets to inline quos
-                CDRMessage::readEntityId(&msg, &readerID);
-                CDRMessage::readEntityId(&msg, &writerID);
-                CDRMessage::readSequenceNumber(&msg, &sn);
-
-                // restore buffer pos
-                msg.pos = old_pos;
-
-                // generate losses
-                if ((writerID.value[3] & 0xC0) == 0 // only user endpoints
-                        && (sn == SequenceNumber_t{0, 2} ||
-                        sn == SequenceNumber_t(0, 3) ||
-                        sn == SequenceNumber_t(0, 4) ||
-                        sn == SequenceNumber_t(0, 6) ||
-                        sn == SequenceNumber_t(0, 8) ||
-                        sn == SequenceNumber_t(0, 10) ||
-                        sn == SequenceNumber_t(0, 11) ||
-                        sn == SequenceNumber_t(0, 13)))
-                {
-                    return true;
-                }
-
-                return false;
-            };
-
-    writer.disable_builtin_transport()
-            .add_user_transport_to_pparams(testTransport)
-            .reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS)
-            .make_persistent(db_file_name, "67.62.79.64.75.62.5f.60.75.72.73.5f|76.65.79.74")
-            .init();
-
-    ASSERT_TRUE(writer.isInitialized());
-
-    std::mutex test_step_mtx;
-    std::condition_variable test_step_cv;
-    int32_t test_count = 0;
-    int32_t test_count_change_accum = 0;
-
-    reader.reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS)
-            .sample_lost_status_functor([&test_step_mtx, &test_step_cv, &test_count, &test_count_change_accum](
-                const eprosima::fastdds::dds::SampleLostStatus& status)
-            {
-                {
-                    std::unique_lock<std::mutex> lock(test_step_mtx);
-                    test_count = status.total_count;
-                    test_count_change_accum += status.total_count_change;
-                }
-
-                test_step_cv.notify_all();
-            })
-            .make_persistent(db_file_name, "67.62.79.64.75.62.5f.60.75.72.73.5f|76.65.79.72")
-            .init();
-
-    ASSERT_TRUE(reader.isInitialized());
-
-    // Wait for discovery.
-    writer.wait_discovery();
-    reader.wait_discovery();
-
-    auto data = default_helloworld_data_generator(6);
-
-    reader.startReception(data);
-    writer.send(data, 50);
-
     {
+        PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+        PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+
+        writer.reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS)
+                .make_persistent(db_file_name, "67.62.79.64.75.62.5f.60.75.72.73.5f|76.65.79.74");
+        reader.reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS)
+                .make_persistent(db_file_name, "67.62.79.64.75.62.5f.60.75.72.73.5f|76.65.79.72");
+
+
+        std::mutex test_step_mtx;
+        std::condition_variable test_step_cv;
+        int32_t test_count = 0;
+        int32_t test_count_change_accum = 0;
+
+        sample_lost_test_init(reader, writer, [&test_step_mtx, &test_step_cv, &test_count, &test_count_change_accum](
+                    const eprosima::fastdds::dds::SampleLostStatus& status)
+                {
+                    {
+                        std::unique_lock<std::mutex> lock(test_step_mtx);
+                        test_count = status.total_count;
+                        test_count_change_accum += status.total_count_change;
+                    }
+
+                    test_step_cv.notify_all();
+                });
+
+        auto data = default_helloworld_data_generator(6);
+
+        reader.startReception(data);
+        writer.send(data, 50);
+
+        {
+            std::unique_lock<std::mutex> lock(test_step_mtx);
+            test_step_cv.wait(lock, [&test_count, &test_count_change_accum]()
+                    {
+                        return 3 == test_count && 3 == test_count_change_accum;
+                    });
+        }
+
+        reader.destroy();
+        reader.init();
+
+        // Wait for discovery.
+        writer.wait_discovery();
+        reader.wait_discovery();
+        std::this_thread::sleep_for(std::chrono::seconds(1)); // Make sure the GAP message are received for the sixth sample.
+
+        data = default_helloworld_data_generator(7);
+        reader.startReception(data);
+        writer.send(data, 50);
+
         std::unique_lock<std::mutex> lock(test_step_mtx);
         test_step_cv.wait(lock, [&test_count, &test_count_change_accum]()
                 {
-                    return 3 == test_count && 3 == test_count_change_accum;
+                    return 4 == test_count && 7 == test_count_change_accum;
                 });
     }
-
-    reader.destroy();
-    reader.init();
-
-    // Wait for discovery.
-    writer.wait_discovery();
-    reader.wait_discovery();
-    std::this_thread::sleep_for(std::chrono::seconds(1)); // Make sure the GAP message are received for the sixth sample.
-
-    data = default_helloworld_data_generator(7);
-    reader.startReception(data);
-    writer.send(data, 50);
-
-    std::unique_lock<std::mutex> lock(test_step_mtx);
-    test_step_cv.wait(lock, [&test_count, &test_count_change_accum]()
-            {
-                return 4 == test_count && 7 == test_count_change_accum;
-            });
 
     std::remove(db_file_name.c_str());
 }
@@ -1408,58 +1162,17 @@ TEST(DDSStatus, sample_lost_re_dw_re_persistence_dr)
  */
 TEST(DDSStatus, sample_lost_waitset_be_dw_be_dr)
 {
-    PubSubReaderWithWaitsets<HelloWorldType> reader(TEST_TOPIC_NAME);
-    PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
-
-    auto testTransport = std::make_shared<test_UDPv4TransportDescriptor>();
-    testTransport->drop_data_messages_filter_ = [](eprosima::fastrtps::rtps::CDRMessage_t& msg)-> bool
-            {
-                uint32_t old_pos = msg.pos;
-
-                // see RTPS DDS 9.4.5.3 Data Submessage
-                EntityId_t readerID, writerID;
-                SequenceNumber_t sn;
-
-                msg.pos += 2; // flags
-                msg.pos += 2; // octets to inline quos
-                CDRMessage::readEntityId(&msg, &readerID);
-                CDRMessage::readEntityId(&msg, &writerID);
-                CDRMessage::readSequenceNumber(&msg, &sn);
-
-                // restore buffer pos
-                msg.pos = old_pos;
-
-                // generate losses
-                if ((writerID.value[3] & 0xC0) == 0 // only user endpoints
-                        && (sn == SequenceNumber_t{0, 2} ||
-                        sn == SequenceNumber_t(0, 3) ||
-                        sn == SequenceNumber_t(0, 4) ||
-                        sn == SequenceNumber_t(0, 6) ||
-                        sn == SequenceNumber_t(0, 8) ||
-                        sn == SequenceNumber_t(0, 10) ||
-                        sn == SequenceNumber_t(0, 11) ||
-                        sn == SequenceNumber_t(0, 13)))
-                {
-                    return true;
-                }
-
-                return false;
-            };
-
-
-    writer.disable_builtin_transport()
-            .add_user_transport_to_pparams(testTransport)
-            .reliability(eprosima::fastrtps::BEST_EFFORT_RELIABILITY_QOS)
-            .init();
-
-    ASSERT_TRUE(writer.isInitialized());
+    PubSubReaderWithWaitsets<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
 
     std::mutex test_step_mtx;
     std::condition_variable test_step_cv;
     uint8_t test_step = 0;
 
-    reader.reliability(eprosima::fastrtps::BEST_EFFORT_RELIABILITY_QOS)
-            .sample_lost_status_functor([&test_step_mtx, &test_step_cv, &test_step](
+    writer.reliability(eprosima::fastrtps::BEST_EFFORT_RELIABILITY_QOS);
+    reader.reliability(eprosima::fastrtps::BEST_EFFORT_RELIABILITY_QOS);
+
+    sample_lost_test_init(reader, writer, [&test_step_mtx, &test_step_cv, &test_step](
                 const eprosima::fastdds::dds::SampleLostStatus& status)
             {
                 {
@@ -1487,14 +1200,8 @@ TEST(DDSStatus, sample_lost_waitset_be_dw_be_dr)
                 }
 
                 test_step_cv.notify_all();
-            })
-            .init();
+            });
 
-    ASSERT_TRUE(reader.isInitialized());
-
-    // Wait for discovery.
-    writer.wait_discovery();
-    reader.wait_discovery();
 
     auto data = default_helloworld_data_generator(13);
 
@@ -1514,51 +1221,11 @@ TEST(DDSStatus, sample_lost_waitset_be_dw_be_dr)
  */
 TEST(DDSStatus, sample_lost_waitset_be_dw_lj_be_dr)
 {
-    PubSubReaderWithWaitsets<HelloWorldType> reader(TEST_TOPIC_NAME);
-    PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
+    PubSubReaderWithWaitsets<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
 
-    auto testTransport = std::make_shared<test_UDPv4TransportDescriptor>();
-    testTransport->drop_data_messages_filter_ = [](eprosima::fastrtps::rtps::CDRMessage_t& msg)-> bool
-            {
-                uint32_t old_pos = msg.pos;
-
-                // see RTPS DDS 9.4.5.3 Data Submessage
-                EntityId_t readerID, writerID;
-                SequenceNumber_t sn;
-
-                msg.pos += 2; // flags
-                msg.pos += 2; // octets to inline quos
-                CDRMessage::readEntityId(&msg, &readerID);
-                CDRMessage::readEntityId(&msg, &writerID);
-                CDRMessage::readSequenceNumber(&msg, &sn);
-
-                // restore buffer pos
-                msg.pos = old_pos;
-
-                // generate losses
-                if ((writerID.value[3] & 0xC0) == 0 // only user endpoints
-                        && (sn == SequenceNumber_t{0, 2} ||
-                        sn == SequenceNumber_t(0, 3) ||
-                        sn == SequenceNumber_t(0, 4) ||
-                        sn == SequenceNumber_t(0, 6) ||
-                        sn == SequenceNumber_t(0, 8) ||
-                        sn == SequenceNumber_t(0, 10) ||
-                        sn == SequenceNumber_t(0, 11) ||
-                        sn == SequenceNumber_t(0, 13)))
-                {
-                    return true;
-                }
-
-                return false;
-            };
-
-
-    writer.disable_builtin_transport()
-            .add_user_transport_to_pparams(testTransport)
-            .reliability(eprosima::fastrtps::BEST_EFFORT_RELIABILITY_QOS)
-            .init();
-
-    ASSERT_TRUE(writer.isInitialized());
+    writer.reliability(eprosima::fastrtps::BEST_EFFORT_RELIABILITY_QOS);
+    sample_lost_test_dw_init(writer);
 
     auto data = default_helloworld_data_generator(4);
     writer.send(data, 50);
@@ -1567,8 +1234,8 @@ TEST(DDSStatus, sample_lost_waitset_be_dw_lj_be_dr)
     std::condition_variable test_step_cv;
     uint8_t test_step = 0;
 
-    reader.reliability(eprosima::fastrtps::BEST_EFFORT_RELIABILITY_QOS)
-            .sample_lost_status_functor([&test_step_mtx, &test_step_cv, &test_step](
+    reader.reliability(eprosima::fastrtps::BEST_EFFORT_RELIABILITY_QOS);
+    sample_lost_test_dr_init(reader, [&test_step_mtx, &test_step_cv, &test_step](
                 const eprosima::fastdds::dds::SampleLostStatus& status)
             {
                 {
@@ -1596,10 +1263,7 @@ TEST(DDSStatus, sample_lost_waitset_be_dw_lj_be_dr)
                 }
 
                 test_step_cv.notify_all();
-            })
-            .init();
-
-    ASSERT_TRUE(reader.isInitialized());
+            });
 
     // Wait for discovery.
     writer.wait_discovery();
@@ -1622,59 +1286,18 @@ TEST(DDSStatus, sample_lost_waitset_be_dw_lj_be_dr)
  */
 TEST(DDSStatus, sample_lost_waitset_re_dw_re_dr)
 {
-    PubSubReaderWithWaitsets<HelloWorldType> reader(TEST_TOPIC_NAME);
-    PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
+    PubSubReaderWithWaitsets<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
 
-    auto testTransport = std::make_shared<test_UDPv4TransportDescriptor>();
-    testTransport->drop_data_messages_filter_ = [](eprosima::fastrtps::rtps::CDRMessage_t& msg)-> bool
-            {
-                uint32_t old_pos = msg.pos;
-
-                // see RTPS DDS 9.4.5.3 Data Submessage
-                EntityId_t readerID, writerID;
-                SequenceNumber_t sn;
-
-                msg.pos += 2; // flags
-                msg.pos += 2; // octets to inline quos
-                CDRMessage::readEntityId(&msg, &readerID);
-                CDRMessage::readEntityId(&msg, &writerID);
-                CDRMessage::readSequenceNumber(&msg, &sn);
-
-                // restore buffer pos
-                msg.pos = old_pos;
-
-                // generate losses
-                if ((writerID.value[3] & 0xC0) == 0 // only user endpoints
-                        && (sn == SequenceNumber_t{0, 2} ||
-                        sn == SequenceNumber_t(0, 3) ||
-                        sn == SequenceNumber_t(0, 4) ||
-                        sn == SequenceNumber_t(0, 6) ||
-                        sn == SequenceNumber_t(0, 8) ||
-                        sn == SequenceNumber_t(0, 10) ||
-                        sn == SequenceNumber_t(0, 11) ||
-                        sn == SequenceNumber_t(0, 13)))
-                {
-                    return true;
-                }
-
-                return false;
-            };
-
-
-    writer.disable_builtin_transport()
-            .add_user_transport_to_pparams(testTransport)
-            .reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS)
-            .init();
-
-    ASSERT_TRUE(writer.isInitialized());
+    writer.reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS);
+    reader.reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS);
 
     std::mutex test_step_mtx;
     std::condition_variable test_step_cv;
     int32_t test_count = 0;
     int32_t test_count_change_accum = 0;
 
-    reader.reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS)
-            .sample_lost_status_functor([&test_step_mtx, &test_step_cv, &test_count, &test_count_change_accum](
+    sample_lost_test_init(reader, writer, [&test_step_mtx, &test_step_cv, &test_count, &test_count_change_accum](
                 const eprosima::fastdds::dds::SampleLostStatus& status)
             {
                 {
@@ -1684,14 +1307,7 @@ TEST(DDSStatus, sample_lost_waitset_re_dw_re_dr)
                 }
 
                 test_step_cv.notify_all();
-            })
-            .init();
-
-    ASSERT_TRUE(reader.isInitialized());
-
-    // Wait for discovery.
-    writer.wait_discovery();
-    reader.wait_discovery();
+            });
 
     auto data = default_helloworld_data_generator(13);
 
@@ -1711,51 +1327,11 @@ TEST(DDSStatus, sample_lost_waitset_re_dw_re_dr)
  */
 TEST(DDSStatus, sample_lost_waitset_re_dw_lj_re_dr)
 {
-    PubSubReaderWithWaitsets<HelloWorldType> reader(TEST_TOPIC_NAME);
-    PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
+    PubSubReaderWithWaitsets<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
 
-    auto testTransport = std::make_shared<test_UDPv4TransportDescriptor>();
-    testTransport->drop_data_messages_filter_ = [](eprosima::fastrtps::rtps::CDRMessage_t& msg)-> bool
-            {
-                uint32_t old_pos = msg.pos;
-
-                // see RTPS DDS 9.4.5.3 Data Submessage
-                EntityId_t readerID, writerID;
-                SequenceNumber_t sn;
-
-                msg.pos += 2; // flags
-                msg.pos += 2; // octets to inline quos
-                CDRMessage::readEntityId(&msg, &readerID);
-                CDRMessage::readEntityId(&msg, &writerID);
-                CDRMessage::readSequenceNumber(&msg, &sn);
-
-                // restore buffer pos
-                msg.pos = old_pos;
-
-                // generate losses
-                if ((writerID.value[3] & 0xC0) == 0 // only user endpoints
-                        && (sn == SequenceNumber_t{0, 2} ||
-                        sn == SequenceNumber_t(0, 3) ||
-                        sn == SequenceNumber_t(0, 4) ||
-                        sn == SequenceNumber_t(0, 6) ||
-                        sn == SequenceNumber_t(0, 8) ||
-                        sn == SequenceNumber_t(0, 10) ||
-                        sn == SequenceNumber_t(0, 11) ||
-                        sn == SequenceNumber_t(0, 13)))
-                {
-                    return true;
-                }
-
-                return false;
-            };
-
-
-    writer.disable_builtin_transport()
-            .add_user_transport_to_pparams(testTransport)
-            .reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS)
-            .init();
-
-    ASSERT_TRUE(writer.isInitialized());
+    writer.reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS);
+    sample_lost_test_dw_init(writer);
 
     auto data = default_helloworld_data_generator(4);
     writer.send(data, 50);
@@ -1765,8 +1341,8 @@ TEST(DDSStatus, sample_lost_waitset_re_dw_lj_re_dr)
     int32_t test_count = 0;
     int32_t test_count_change_accum = 0;
 
-    reader.reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS)
-            .sample_lost_status_functor([&test_step_mtx, &test_step_cv, &test_count, &test_count_change_accum](
+    reader.reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS);
+    sample_lost_test_dr_init(reader, [&test_step_mtx, &test_step_cv, &test_count, &test_count_change_accum](
                 const eprosima::fastdds::dds::SampleLostStatus& status)
             {
                 {
@@ -1776,10 +1352,7 @@ TEST(DDSStatus, sample_lost_waitset_re_dw_lj_re_dr)
                 }
 
                 test_step_cv.notify_all();
-            })
-            .init();
-
-    ASSERT_TRUE(reader.isInitialized());
+            });
 
     // Wait for discovery.
     writer.wait_discovery();
@@ -1803,58 +1376,17 @@ TEST(DDSStatus, sample_lost_waitset_re_dw_lj_re_dr)
  */
 TEST(DDSStatus, sample_lost_waitset_re_dw_be_dr)
 {
-    PubSubReaderWithWaitsets<HelloWorldType> reader(TEST_TOPIC_NAME);
-    PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
+    PubSubReaderWithWaitsets<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
 
-    auto testTransport = std::make_shared<test_UDPv4TransportDescriptor>();
-    testTransport->drop_data_messages_filter_ = [](eprosima::fastrtps::rtps::CDRMessage_t& msg)-> bool
-            {
-                uint32_t old_pos = msg.pos;
-
-                // see RTPS DDS 9.4.5.3 Data Submessage
-                EntityId_t readerID, writerID;
-                SequenceNumber_t sn;
-
-                msg.pos += 2; // flags
-                msg.pos += 2; // octets to inline quos
-                CDRMessage::readEntityId(&msg, &readerID);
-                CDRMessage::readEntityId(&msg, &writerID);
-                CDRMessage::readSequenceNumber(&msg, &sn);
-
-                // restore buffer pos
-                msg.pos = old_pos;
-
-                // generate losses
-                if ((writerID.value[3] & 0xC0) == 0 // only user endpoints
-                        && (sn == SequenceNumber_t{0, 2} ||
-                        sn == SequenceNumber_t(0, 3) ||
-                        sn == SequenceNumber_t(0, 4) ||
-                        sn == SequenceNumber_t(0, 6) ||
-                        sn == SequenceNumber_t(0, 8) ||
-                        sn == SequenceNumber_t(0, 10) ||
-                        sn == SequenceNumber_t(0, 11) ||
-                        sn == SequenceNumber_t(0, 13)))
-                {
-                    return true;
-                }
-
-                return false;
-            };
-
-
-    writer.disable_builtin_transport()
-            .add_user_transport_to_pparams(testTransport)
-            .reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS)
-            .init();
-
-    ASSERT_TRUE(writer.isInitialized());
+    writer.reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS);
+    reader.reliability(eprosima::fastrtps::BEST_EFFORT_RELIABILITY_QOS);
 
     std::mutex test_step_mtx;
     std::condition_variable test_step_cv;
     uint8_t test_step = 0;
 
-    reader.reliability(eprosima::fastrtps::BEST_EFFORT_RELIABILITY_QOS)
-            .sample_lost_status_functor([&test_step_mtx, &test_step_cv, &test_step](
+    sample_lost_test_init(reader, writer, [&test_step_mtx, &test_step_cv, &test_step](
                 const eprosima::fastdds::dds::SampleLostStatus& status)
             {
                 {
@@ -1882,14 +1414,7 @@ TEST(DDSStatus, sample_lost_waitset_re_dw_be_dr)
                 }
 
                 test_step_cv.notify_all();
-            })
-            .init();
-
-    ASSERT_TRUE(reader.isInitialized());
-
-    // Wait for discovery.
-    writer.wait_discovery();
-    reader.wait_discovery();
+            });
 
     auto data = default_helloworld_data_generator(13);
 
@@ -1909,51 +1434,11 @@ TEST(DDSStatus, sample_lost_waitset_re_dw_be_dr)
  */
 TEST(DDSStatus, sample_lost_waitset_re_dw_lj_be_dr)
 {
-    PubSubReaderWithWaitsets<HelloWorldType> reader(TEST_TOPIC_NAME);
-    PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
+    PubSubReaderWithWaitsets<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
 
-    auto testTransport = std::make_shared<test_UDPv4TransportDescriptor>();
-    testTransport->drop_data_messages_filter_ = [](eprosima::fastrtps::rtps::CDRMessage_t& msg)-> bool
-            {
-                uint32_t old_pos = msg.pos;
-
-                // see RTPS DDS 9.4.5.3 Data Submessage
-                EntityId_t readerID, writerID;
-                SequenceNumber_t sn;
-
-                msg.pos += 2; // flags
-                msg.pos += 2; // octets to inline quos
-                CDRMessage::readEntityId(&msg, &readerID);
-                CDRMessage::readEntityId(&msg, &writerID);
-                CDRMessage::readSequenceNumber(&msg, &sn);
-
-                // restore buffer pos
-                msg.pos = old_pos;
-
-                // generate losses
-                if ((writerID.value[3] & 0xC0) == 0 // only user endpoints
-                        && (sn == SequenceNumber_t{0, 2} ||
-                        sn == SequenceNumber_t(0, 3) ||
-                        sn == SequenceNumber_t(0, 4) ||
-                        sn == SequenceNumber_t(0, 6) ||
-                        sn == SequenceNumber_t(0, 8) ||
-                        sn == SequenceNumber_t(0, 10) ||
-                        sn == SequenceNumber_t(0, 11) ||
-                        sn == SequenceNumber_t(0, 13)))
-                {
-                    return true;
-                }
-
-                return false;
-            };
-
-
-    writer.disable_builtin_transport()
-            .add_user_transport_to_pparams(testTransport)
-            .reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS)
-            .init();
-
-    ASSERT_TRUE(writer.isInitialized());
+    writer.reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS);
+    sample_lost_test_dw_init(writer);
 
     auto data = default_helloworld_data_generator(4);
     writer.send(data, 50);
@@ -1962,8 +1447,8 @@ TEST(DDSStatus, sample_lost_waitset_re_dw_lj_be_dr)
     std::condition_variable test_step_cv;
     uint8_t test_step = 0;
 
-    reader.reliability(eprosima::fastrtps::BEST_EFFORT_RELIABILITY_QOS)
-            .sample_lost_status_functor([&test_step_mtx, &test_step_cv, &test_step](
+    reader.reliability(eprosima::fastrtps::BEST_EFFORT_RELIABILITY_QOS);
+    sample_lost_test_dr_init(reader, [&test_step_mtx, &test_step_cv, &test_step](
                 const eprosima::fastdds::dds::SampleLostStatus& status)
             {
                 {
@@ -1991,10 +1476,7 @@ TEST(DDSStatus, sample_lost_waitset_re_dw_lj_be_dr)
                 }
 
                 test_step_cv.notify_all();
-            })
-            .init();
-
-    ASSERT_TRUE(reader.isInitialized());
+            });
 
     // Wait for discovery.
     writer.wait_discovery();
@@ -2018,9 +1500,6 @@ TEST(DDSStatus, sample_lost_waitset_re_dw_lj_be_dr)
  */
 TEST(DDSStatus, sample_lost_waitset_re_dw_re_persistence_dr)
 {
-    PubSubReaderWithWaitsets<HelloWorldType> reader(TEST_TOPIC_NAME);
-    PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
-
     // Get info about current test
     auto info = ::testing::UnitTest::GetInstance()->current_test_info();
     // Create DB file name from test name and PID
@@ -2029,106 +1508,63 @@ TEST(DDSStatus, sample_lost_waitset_re_dw_re_persistence_dr)
     std::string test_name(info->name());
     ss << test_case_name << "_" << test_name << "_" << GET_PID() << ".db";
     std::string db_file_name = ss.str();
-
-    auto testTransport = std::make_shared<test_UDPv4TransportDescriptor>();
-    testTransport->drop_data_messages_filter_ = [](eprosima::fastrtps::rtps::CDRMessage_t& msg)-> bool
-            {
-                uint32_t old_pos = msg.pos;
-
-                // see RTPS DDS 9.4.5.3 Data Submessage
-                EntityId_t readerID, writerID;
-                SequenceNumber_t sn;
-
-                msg.pos += 2; // flags
-                msg.pos += 2; // octets to inline quos
-                CDRMessage::readEntityId(&msg, &readerID);
-                CDRMessage::readEntityId(&msg, &writerID);
-                CDRMessage::readSequenceNumber(&msg, &sn);
-
-                // restore buffer pos
-                msg.pos = old_pos;
-
-                // generate losses
-                if ((writerID.value[3] & 0xC0) == 0 // only user endpoints
-                        && (sn == SequenceNumber_t{0, 2} ||
-                        sn == SequenceNumber_t(0, 3) ||
-                        sn == SequenceNumber_t(0, 4) ||
-                        sn == SequenceNumber_t(0, 6) ||
-                        sn == SequenceNumber_t(0, 8) ||
-                        sn == SequenceNumber_t(0, 10) ||
-                        sn == SequenceNumber_t(0, 11) ||
-                        sn == SequenceNumber_t(0, 13)))
-                {
-                    return true;
-                }
-
-                return false;
-            };
-
-    writer.disable_builtin_transport()
-            .add_user_transport_to_pparams(testTransport)
-            .reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS)
-            .make_persistent(db_file_name, "67.62.79.64.75.62.5f.60.75.72.73.5f|76.65.79.74")
-            .init();
-
-    ASSERT_TRUE(writer.isInitialized());
-
-    std::mutex test_step_mtx;
-    std::condition_variable test_step_cv;
-    int32_t test_count = 0;
-    int32_t test_count_change_accum = 0;
-
-    reader.reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS)
-            .sample_lost_status_functor([&test_step_mtx, &test_step_cv, &test_count, &test_count_change_accum](
-                const eprosima::fastdds::dds::SampleLostStatus& status)
-            {
-                {
-                    std::unique_lock<std::mutex> lock(test_step_mtx);
-                    test_count = status.total_count;
-                    test_count_change_accum += status.total_count_change;
-                }
-
-                test_step_cv.notify_all();
-            })
-            .make_persistent(db_file_name, "67.62.79.64.75.62.5f.60.75.72.73.5f|76.65.79.72")
-            .init();
-
-    ASSERT_TRUE(reader.isInitialized());
-
-    // Wait for discovery.
-    writer.wait_discovery();
-    reader.wait_discovery();
-
-    auto data = default_helloworld_data_generator(6);
-
-    reader.startReception(data);
-    writer.send(data, 50);
-
     {
+        PubSubReaderWithWaitsets<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+        PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+
+        writer.reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS)
+                .make_persistent(db_file_name, "67.62.79.64.75.62.5f.60.75.72.73.5f|76.65.79.74");
+        reader.reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS)
+                .make_persistent(db_file_name, "67.62.79.64.75.62.5f.60.75.72.73.5f|76.65.79.72");
+
+        std::mutex test_step_mtx;
+        std::condition_variable test_step_cv;
+        int32_t test_count = 0;
+        int32_t test_count_change_accum = 0;
+
+        sample_lost_test_init(reader, writer, [&test_step_mtx, &test_step_cv, &test_count, &test_count_change_accum](
+                    const eprosima::fastdds::dds::SampleLostStatus& status)
+                {
+                    {
+                        std::unique_lock<std::mutex> lock(test_step_mtx);
+                        test_count = status.total_count;
+                        test_count_change_accum += status.total_count_change;
+                    }
+
+                    test_step_cv.notify_all();
+                });
+
+        auto data = default_helloworld_data_generator(6);
+
+        reader.startReception(data);
+        writer.send(data, 50);
+
+        {
+            std::unique_lock<std::mutex> lock(test_step_mtx);
+            test_step_cv.wait(lock, [&test_count, &test_count_change_accum]()
+                    {
+                        return 3 == test_count && 3 == test_count_change_accum;
+                    });
+        }
+
+        reader.destroy();
+        reader.init();
+
+        // Wait for discovery.
+        writer.wait_discovery();
+        reader.wait_discovery();
+        std::this_thread::sleep_for(std::chrono::seconds(1)); // Make sure the GAP message are received for the sixth sample.
+
+        data = default_helloworld_data_generator(7);
+        reader.startReception(data);
+        writer.send(data, 50);
+
         std::unique_lock<std::mutex> lock(test_step_mtx);
         test_step_cv.wait(lock, [&test_count, &test_count_change_accum]()
                 {
-                    return 3 == test_count && 3 == test_count_change_accum;
+                    return 4 == test_count && 7 == test_count_change_accum;
                 });
     }
-
-    reader.destroy();
-    reader.init();
-
-    // Wait for discovery.
-    writer.wait_discovery();
-    reader.wait_discovery();
-    std::this_thread::sleep_for(std::chrono::seconds(1)); // Make sure the GAP message are received for the sixth sample.
-
-    data = default_helloworld_data_generator(7);
-    reader.startReception(data);
-    writer.send(data, 50);
-
-    std::unique_lock<std::mutex> lock(test_step_mtx);
-    test_step_cv.wait(lock, [&test_count, &test_count_change_accum]()
-            {
-                return 4 == test_count && 7 == test_count_change_accum;
-            });
 
     std::remove(db_file_name.c_str());
 }
