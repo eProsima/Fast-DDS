@@ -533,7 +533,7 @@ private:
     //!Id counter to correctly assign the ids to writers and readers.
     uint32_t IdCounter;
     //! Mutex to safely access endpoints collections
-    shared_mutex endpoints_list_mutex;
+    mutable shared_mutex endpoints_list_mutex;
     //!Writer List.
     std::vector<RTPSWriter*> m_allWriterList;
     //!Reader List
@@ -925,7 +925,7 @@ public:
      * @return Functor provided in order to allow aggregates retrieval
      */
     template<class Functor>
-    Functor& forEachUserWriter(Functor& f)
+    Functor forEachUserWriter(Functor f)
     {
         shared_lock<shared_mutex> _(endpoints_list_mutex);
 
@@ -944,8 +944,8 @@ public:
      * @param f - Functor applied to each element. Must accept a reference as parameter. Should return true to keep iterating.
      * @return Functor provided in order to allow aggregates retrieval
      */
-    template<EndpointKind_t e, class Functor>
-    Functor& forEachUserReader(Functor& f)
+    template<class Functor>
+    Functor forEachUserReader(Functor f)
     {
         shared_lock<shared_mutex> _(endpoints_list_mutex);
 

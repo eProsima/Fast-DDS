@@ -569,7 +569,7 @@ bool EDP::unpairWriterProxy(
 
     logInfo(RTPS_EDP, writer_guid);
 
-    mp_RTPSParticipant->forEachUserReader([&, removed_by_lease](RTPSReader& r)
+    mp_RTPSParticipant->forEachUserReader([&, removed_by_lease](RTPSReader& r) -> bool
     {
         if (r.matched_writer_remove(writer_guid, removed_by_lease))
         {
@@ -608,7 +608,7 @@ bool EDP::unpairReaderProxy(
 
     logInfo(RTPS_EDP, reader_guid);
 
-    mp_RTPSParticipant->forEachUserReader([&](RTPSWriter& w)
+    mp_RTPSParticipant->forEachUserWriter([&](RTPSWriter& w) -> bool
     {
         if (w.matched_reader_remove(reader_guid))
         {
@@ -1225,7 +1225,7 @@ bool EDP::pairing_reader_proxy_with_any_local_writer(
 
     logInfo(RTPS_EDP, rdata->guid() << " in topic: \"" << rdata->topicName() << "\"");
 
-    mp_RTPSParticipant->forEachUserWriter([&, rdata](RTPSWriter& w)
+    mp_RTPSParticipant->forEachUserWriter([&, rdata](RTPSWriter& w) -> bool
     {
         std::unique_lock<std::mutex> lock(temp_data_lock_);
 
@@ -1313,14 +1313,14 @@ bool EDP::pairing_reader_proxy_with_local_writer(
 {
     logInfo(RTPS_EDP, rdata.guid() << " in topic: \"" << rdata.topicName() << "\"");
 
-    mp_RTPSParticipant->forEachUserWriter([&](RTPSWriter& w)
+    mp_RTPSParticipant->forEachUserWriter([&](RTPSWriter& w) -> bool
     {
         GUID_t writerGUID = w.getGuid();
         const GUID_t& reader_guid = rdata.guid();
 
         if (local_writer == writerGUID)
         {
-            std::lock_guard<std::mutex> _(temp_data_lock_);
+            std::unique_lock<std::mutex> lock(temp_data_lock_);
 
             if (mp_PDP->lookupWriterProxyData(writerGUID, temp_writer_proxy_data_))
             {
@@ -1380,7 +1380,7 @@ bool EDP::pairing_remote_reader_with_local_writer_after_security(
     bool matched = false;
     bool found = false;
 
-    mp_RTPSParticipant->forEachUserWriter([&](RTPSWriter& w)
+    mp_RTPSParticipant->forEachUserWriter([&](RTPSWriter& w) -> bool
     {
         GUID_t writerGUID = w.getGuid();
 
@@ -1429,7 +1429,7 @@ bool EDP::pairing_writer_proxy_with_any_local_reader(
 
     logInfo(RTPS_EDP, wdata->guid() << " in topic: \"" << wdata->topicName() << "\"");
 
-    mp_RTPSParticipant->forEachUserReader([&, wdata](RTPSReader& r)
+    mp_RTPSParticipant->forEachUserReader([&, wdata](RTPSReader& r) -> bool
     {
         std::unique_lock<std::mutex> lock(temp_data_lock_);
 
@@ -1502,6 +1502,8 @@ bool EDP::pairing_writer_proxy_with_any_local_reader(
                 }
             }
         }
+        // keep looking
+        return true;
     });
 
     return true;
@@ -1515,7 +1517,7 @@ bool EDP::pairing_writer_proxy_with_local_reader(
 {
     logInfo(RTPS_EDP, wdata.guid() << " in topic: \"" << wdata.topicName() << "\"");
 
-    mp_RTPSParticipant->forEachUserReader([&](RTPSReader& w)
+    mp_RTPSParticipant->forEachUserReader([&](RTPSReader& r) -> bool
     {
         GUID_t readerGUID = r.getGuid();
 
@@ -1567,8 +1569,10 @@ bool EDP::pairing_writer_proxy_with_local_reader(
                     }
                 }
             }
+            // don't keep searching
+            return false;
         }
-        // next iteration
+        // keep searching
         return true;
     });
 
@@ -1582,7 +1586,7 @@ bool EDP::pairing_remote_writer_with_local_reader_after_security(
     bool matched = false;
     bool found = false;
 
-    mp_RTPSParticipant->forEachUserReader([&](RTPSReader& r)
+    mp_RTPSParticipant->forEachUserReader([&](RTPSReader& r) -> bool
     {
         GUID_t readerGUID = r.getGuid();
 

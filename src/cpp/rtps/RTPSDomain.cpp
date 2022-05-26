@@ -362,7 +362,7 @@ bool RTPSDomain::removeRTPSWriter(
             {
                 t_p_RTPSParticipant participant = *it;
                 lock.unlock();
-                return participant.second->deleteUserEndpoint((Endpoint*)writer->getGuid());
+                return participant.second->deleteUserEndpoint(writer->getGuid());
             }
         }
     }

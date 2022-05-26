@@ -464,7 +464,7 @@ void RTPSParticipantImpl::disable()
         block.disable();
     }
 
-    deleteAllEndpoints()
+    deleteAllEndpoints();
 
     mp_event_thr.stop_thread();
 
@@ -1440,7 +1440,7 @@ bool RTPSParticipantImpl::existsEntityId(
         EndpointKind_t kind) const
 {
 
-    auto check = [&ent](Endpoint* e) { return ent == e->getGuid().entityId };
+    auto check = [&ent](Endpoint* e) { return ent == e->getGuid().entityId; };
 
     shared_lock<shared_mutex> _(endpoints_list_mutex);
 
@@ -1745,7 +1745,7 @@ bool RTPSParticipantImpl::deleteUserEndpoint(
     {
         std::lock_guard<std::mutex> _(m_receiverResourcelistMutex);
 
-        for(auto rb : m_receiverResourcelist)
+        for(auto& rb : m_receiverResourcelist)
         {
             auto receiver = rb.mp_receiver;
             if (receiver)
@@ -1799,17 +1799,15 @@ void RTPSParticipantImpl::deleteAllEndpoints()
         std::lock_guard<shared_mutex> _(endpoints_list_mutex);
 
         // remove the collections and keep all endpoint references locally
-        auto size = m_allWriterList.size();
-        tmp = std::move(m_allWriterList);
-        tmp.resize(size + m_allReaderList.size());
-        auto it = tmp.begin();
-        std::advance(it, size);
+        tmp.resize(m_allWriterList.size() + m_allReaderList.size());
+        auto it = std::move(m_allWriterList.begin(), m_allWriterList.end(), tmp.begin());
         it = std::move(m_allReaderList.begin(), m_allReaderList.end(), it);
 
         // we have copied all elements
         assert(tmp.end() == it);
 
         // remove dangling references
+        m_allWriterList.clear();
         m_allReaderList.clear();
     }
 
@@ -1818,7 +1816,7 @@ void RTPSParticipantImpl::deleteAllEndpoints()
     {
         std::lock_guard<std::mutex> _(m_receiverResourcelistMutex);
 
-        for(auto rb : m_receiverResourcelist)
+        for(auto& rb : m_receiverResourcelist)
         {
             auto receiver = rb.mp_receiver;
             if (receiver)
@@ -1834,12 +1832,12 @@ void RTPSParticipantImpl::deleteAllEndpoints()
         return kind == WRITER
                ? mp_builtinProtocols->removeLocalWriter((RTPSWriter*)p)
                : mp_builtinProtocols->removeLocalReader((RTPSReader*)p);
-    }
+    };
 
 #if HAVE_SECURITY
-    bool (SecurityManager::* unregister_endpoint[2](const GUID_t& writer_guid);
-    unregister_endpoint[WRITER] = SecurityManager::unregister_local_writer;
-    unregister_endpoint[READER] = SecurityManager::unregister_local_reader;
+    bool (eprosima::fastrtps::rtps::security::SecurityManager::* unregister_endpoint[2])(const GUID_t& writer_guid);
+    unregister_endpoint[WRITER] = &security::SecurityManager::unregister_local_writer;
+    unregister_endpoint[READER] = &security::SecurityManager::unregister_local_reader;
 #endif // if HAVE_SECURITY
 
     for( auto endpoint : tmp)
