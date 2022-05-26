@@ -347,6 +347,12 @@ public:
     //! Pointer to the RTPSParticipant.
     RTPSParticipantImpl* mp_RTPSParticipant;
 
+protected:
+
+    std::mutex temp_data_lock_;
+    ReaderProxyData temp_reader_proxy_data_;
+    WriterProxyData temp_writer_proxy_data_;
+
 private:
 
     /**
@@ -395,9 +401,6 @@ private:
     bool hasTypeObject(
             const WriterProxyData* wdata,
             const ReaderProxyData* rdata) const;
-
-    ReaderProxyData temp_reader_proxy_data_;
-    WriterProxyData temp_writer_proxy_data_;
 
     using pool_allocator_t =
             foonathan::memory::memory_pool<foonathan::memory::node_pool, foonathan::memory::heap_allocator>;

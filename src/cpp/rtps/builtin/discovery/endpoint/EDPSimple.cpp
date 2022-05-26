@@ -66,7 +66,7 @@ static void delete_reader(
 {
     if (nullptr != reader_pair.first)
     {
-        participant->deleteUserEndpoint(reader_pair.first);
+        participant->deleteUserEndpoint(reader_pair.first->getGuid());
         EDPUtils::release_payload_pool(pool, reader_pair.second->m_att, true);
         delete(reader_pair.second);
     }
@@ -79,7 +79,7 @@ static void delete_writer(
 {
     if (nullptr != writer_pair.first)
     {
-        participant->deleteUserEndpoint(writer_pair.first);
+        participant->deleteUserEndpoint(writer_pair.first->getGuid());
         EDPUtils::release_payload_pool(pool, writer_pair.second->m_att, false);
         delete(writer_pair.second);
     }
@@ -91,15 +91,6 @@ EDPSimple::EDPSimple(
     : EDP(p, part)
     , publications_listener_(nullptr)
     , subscriptions_listener_(nullptr)
-    , temp_reader_proxy_data_(
-        part->getRTPSParticipantAttributes().allocation.locators.max_unicast_locators,
-        part->getRTPSParticipantAttributes().allocation.locators.max_multicast_locators,
-        part->getRTPSParticipantAttributes().allocation.data_limits,
-        part->getRTPSParticipantAttributes().allocation.content_filter)
-    , temp_writer_proxy_data_(
-        part->getRTPSParticipantAttributes().allocation.locators.max_unicast_locators,
-        part->getRTPSParticipantAttributes().allocation.locators.max_multicast_locators,
-        part->getRTPSParticipantAttributes().allocation.data_limits)
 {
 }
 

@@ -19,14 +19,17 @@
 #ifndef _RTPS_PARTICIPANT_RTPSPARTICIPANTIMPL_H_
 #define _RTPS_PARTICIPANT_RTPSPARTICIPANTIMPL_H_
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
+
+#include <atomic>
+#include <chrono>
 #include <cstdio>
 #include <cstdlib>
 #include <list>
-#include <sys/types.h>
 #include <mutex>
-#include <atomic>
-#include <chrono>
+#include <sys/types.h>
+
 #include <fastrtps/utils/Semaphore.h>
+#include <fastrtps/utils/shared_mutex.hpp>
 
 #if defined(_WIN32)
 #include <process.h>
@@ -530,7 +533,7 @@ private:
     //!Id counter to correctly assign the ids to writers and readers.
     uint32_t IdCounter;
     //! Mutex to safely access endpoints collections
-    std::mutex endpoints_list_mutex;
+    shared_mutex endpoints_list_mutex;
     //!Writer List.
     std::vector<RTPSWriter*> m_allWriterList;
     //!Reader List
@@ -912,42 +915,49 @@ public:
      * @return True on success
      */
     bool deleteUserEndpoint(
-            Endpoint*);
+            const GUID_t &);
 
-    /**
-     * Get the begin of the user reader list
-     * @return Iterator pointing to the begin of the user reader list
+    //! Delete all user and builtin endpoints
+    void deleteAllEndpoints();
+
+    /** Traverses the user writers collection transforming its elements with a provided functor
+     * @param f - Functor applied to each element. Must accept a reference as parameter. Should return true to keep iterating.
+     * @return Functor provided in order to allow aggregates retrieval
      */
-    std::vector<RTPSReader*>::iterator userReadersListBegin()
+    template<class Functor>
+    Functor& forEachUserWriter(Functor& f)
     {
-        return m_userReaderList.begin();
+        shared_lock<shared_mutex> _(endpoints_list_mutex);
+
+        for( RTPSWriter* pw : m_userWriterList)
+        {
+            if(!f(*pw))
+            {
+                break;
+            }
+        }
+
+        return f;
     }
 
-    /**
-     * Get the end of the user reader list
-     * @return Iterator pointing to the end of the user reader list
+    /** Traverses the user readers collection transforming its elements with a provided functor
+     * @param f - Functor applied to each element. Must accept a reference as parameter. Should return true to keep iterating.
+     * @return Functor provided in order to allow aggregates retrieval
      */
-    std::vector<RTPSReader*>::iterator userReadersListEnd()
+    template<EndpointKind_t e, class Functor>
+    Functor& forEachUserReader(Functor& f)
     {
-        return m_userReaderList.end();
-    }
+        shared_lock<shared_mutex> _(endpoints_list_mutex);
 
-    /**
-     * Get the begin of the user writer list
-     * @return Iterator pointing to the begin of the user writer list
-     */
-    std::vector<RTPSWriter*>::iterator userWritersListBegin()
-    {
-        return m_userWriterList.begin();
-    }
+        for( RTPSReader* pr : m_userReaderList)
+        {
+            if(!f(*pr))
+            {
+                break;
+            }
+        }
 
-    /**
-     * Get the end of the user writer list
-     * @return Iterator pointing to the end of the user writer list
-     */
-    std::vector<RTPSWriter*>::iterator userWritersListEnd()
-    {
-        return m_userWriterList.end();
+        return f;
     }
 
     /** Helper function that creates ReceiverResources based on a Locator_t List, possibly mutating

@@ -128,8 +128,8 @@ PDP::~PDP()
     delete resend_participant_info_event_;
     mp_RTPSParticipant->disableReader(mp_PDPReader);
     delete mp_EDP;
-    mp_RTPSParticipant->deleteUserEndpoint(mp_PDPWriter);
-    mp_RTPSParticipant->deleteUserEndpoint(mp_PDPReader);
+    mp_RTPSParticipant->deleteUserEndpoint(mp_PDPWriter->getGuid());
+    mp_RTPSParticipant->deleteUserEndpoint(mp_PDPReader->getGuid());
 
     if (mp_PDPWriterHistory)
     {

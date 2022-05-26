@@ -125,12 +125,6 @@ public:
             const EntityId_t& entityId, bool isBuiltin, bool enable));
     // *INDENT-ON*
 
-    MOCK_METHOD0(userWritersListBegin, std::vector<RTPSWriter*>::iterator ());
-    MOCK_METHOD0(userWritersListEnd, std::vector<RTPSWriter*>::iterator ());
-
-    MOCK_METHOD0(userReadersListBegin, std::vector<RTPSReader*>::iterator ());
-    MOCK_METHOD0(userReadersListEnd, std::vector<RTPSReader*>::iterator ());
-
     MOCK_CONST_METHOD0(getParticipantMutex, std::recursive_mutex* ());
 
     bool createWriter(

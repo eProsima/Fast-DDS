@@ -362,7 +362,7 @@ bool RTPSDomain::removeRTPSWriter(
             {
                 t_p_RTPSParticipant participant = *it;
                 lock.unlock();
-                return participant.second->deleteUserEndpoint((Endpoint*)writer);
+                return participant.second->deleteUserEndpoint((Endpoint*)writer->getGuid());
             }
         }
     }
@@ -438,7 +438,7 @@ bool RTPSDomain::removeRTPSReader(
             {
                 t_p_RTPSParticipant participant = *it;
                 lock.unlock();
-                return participant.second->deleteUserEndpoint((Endpoint*)reader);
+                return participant.second->deleteUserEndpoint(reader->getGuid());
             }
         }
     }
