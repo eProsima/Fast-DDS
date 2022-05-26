@@ -197,10 +197,10 @@ public:
         return ret;
     }
 
-    void deleteUserEndpoint(
-            Endpoint* endpoint)
+    bool deleteUserEndpoint(
+        const GUID_t& )
     {
-        delete endpoint;
+        return true;
     }
 
     MOCK_METHOD0(pdpsimple, PDPSimple * ());
@@ -262,6 +262,18 @@ public:
             EntityId_t&)
     {
         return true;
+    }
+
+    template<class Functor>
+    Functor forEachUserWriter(Functor f)
+    {
+        return f;
+    }
+
+    template<class Functor>
+    Functor forEachUserReader(Functor f)
+    {
+        return f;
     }
 
 private:
