@@ -587,6 +587,7 @@ bool UDPv6Transport::compare_ips(
 
 void UDPv6Transport::update_network_interfaces()
 {
+    UDPTransportInterface::update_network_interfaces();
     // TODO(jlbueno)
 }
 
