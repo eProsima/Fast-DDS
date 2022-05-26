@@ -105,16 +105,25 @@ UDPv6Transport::UDPv6Transport(
 
     if (!descriptor.interfaceWhiteList.empty())
     {
-        std::vector<IPFinder::info_IP> local_interfaces;
-        get_ipv6s(local_interfaces, true);
-        for (IPFinder::info_IP& infoIP : local_interfaces)
+        std::vector<IPFinder::info_IP> loopback_interfaces;
+        std::vector<IPFinder::info_IP> interfaces;
+        get_ipv6s(interfaces, true);
+        for (IPFinder::info_IP& infoIP : interfaces)
         {
+            bool added = false;
             for (auto& whitelist_interface : descriptor.interfaceWhiteList)
             {
                 if (compare_ips(infoIP.name, whitelist_interface))
                 {
                     interface_whitelist_.emplace_back(ip::address_v6::from_string(infoIP.name));
+                    added = true;
+                    break;
                 }
+            }
+
+            if (!added && IPFinder::IPTYPE::IP6_LOCAL == infoIP.type)
+            {
+                loopback_interfaces.emplace_back(infoIP);
             }
         }
 
@@ -122,6 +131,13 @@ UDPv6Transport::UDPv6Transport(
         {
             logError(TRANSPORT, "All whitelist interfaces were filtered out");
             interface_whitelist_.emplace_back(ip::address_v6::from_string("2001:db8::"));
+        }
+        else
+        {
+            for (const IPFinder::info_IP& infoIP : loopback_interfaces)
+            {
+                interface_whitelist_.emplace_back(ip::address_v6::from_string(infoIP.name));
+            }
         }
     }
 }
