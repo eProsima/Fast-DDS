@@ -249,18 +249,18 @@ public:
             RequestedIncompatibleQosStatus& status);
 
     ReturnCode_t get_sample_lost_status(
-        fastdds::dds::SampleLostStatus& status);
+            fastdds::dds::SampleLostStatus& status);
 
     /* TODO
        bool get_sample_rejected_status(
-            fastrtps::SampleRejectedStatus& status) const;
+       fastrtps::SampleRejectedStatus& status) const;
      */
 
     const Subscriber* get_subscriber() const;
 
     /* TODO
        bool wait_for_historical_data(
-            const fastrtps::Duration_t& max_wait) const;
+       const fastrtps::Duration_t& max_wait) const;
      */
 
     //! Remove all listeners in the hierarchy to allow a quiet destruction
@@ -371,10 +371,10 @@ protected:
         void on_requested_incompatible_qos(
                 fastrtps::rtps::RTPSReader* reader,
                 fastdds::dds::PolicyMask qos) override;
-        
+
         void on_sample_lost(
-            fastrtps::rtps::RTPSReader* reader,
-            int32_t sample_lost_since_last_update);
+                fastrtps::rtps::RTPSReader* reader,
+                int32_t sample_lost_since_last_update);
 
         DataReaderImpl* data_reader_;
     }
@@ -484,7 +484,7 @@ protected:
             const fastrtps::LivelinessChangedStatus& status);
 
     SampleLostStatus& update_sample_lost_status(
-        int32_t sample_lost_since_last_update);
+            int32_t sample_lost_since_last_update);
 
     /**
      * Returns the most appropriate listener to handle the callback for the given status,
