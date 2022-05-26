@@ -104,13 +104,21 @@ UDPv4Transport::UDPv4Transport(
         const auto white_begin = descriptor.interfaceWhiteList.begin();
         const auto white_end = descriptor.interfaceWhiteList.end();
 
-        std::vector<IPFinder::info_IP> local_interfaces;
-        get_ipv4s(local_interfaces, true);
-        for (const IPFinder::info_IP& infoIP : local_interfaces)
+        std::vector<IPFinder::info_IP> loopback_interfaces;
+        std::vector<IPFinder::info_IP> interfaces;
+        get_ipv4s(interfaces, true);
+        for (const IPFinder::info_IP& infoIP : interfaces)
         {
             if (std::find(white_begin, white_end, infoIP.name) != white_end)
             {
                 interface_whitelist_.emplace_back(ip::address_v4::from_string(infoIP.name));
+            }
+            else
+            {
+                if (IPFinder::IPTYPE::IP4_LOCAL == infoIP.type)
+                {
+                    loopback_interfaces.emplace_back(infoIP);
+                }
             }
         }
 
@@ -118,6 +126,13 @@ UDPv4Transport::UDPv4Transport(
         {
             logError(TRANSPORT, "All whitelist interfaces were filtered out");
             interface_whitelist_.emplace_back(ip::address_v4::from_string("192.0.2.0"));
+        }
+        else
+        {
+            for (const IPFinder::info_IP& infoIP : loopback_interfaces)
+            {
+                interface_whitelist_.emplace_back(ip::address_v4::from_string(infoIP.name));
+            }
         }
     }
 }
