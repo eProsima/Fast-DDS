@@ -1771,6 +1771,8 @@ const SubscriptionMatchedStatus& EDP::update_subscription_matched_status(
         const GUID_t& writer_guid,
         int change)
 {
+    std::lock_guard<std::recursive_mutex> _(*mp_PDP->getMutex());
+
     SubscriptionMatchedStatus* status;
     auto it = reader_status_.find(reader_guid);
     if (it == reader_status_.end())
@@ -1797,6 +1799,8 @@ const fastdds::dds::PublicationMatchedStatus& EDP::update_publication_matched_st
         const GUID_t& writer_guid,
         int change)
 {
+    std::lock_guard<std::recursive_mutex> _(*mp_PDP->getMutex());
+
     PublicationMatchedStatus* status;
     auto it = writer_status_.find(writer_guid);
     if (it == writer_status_.end())
