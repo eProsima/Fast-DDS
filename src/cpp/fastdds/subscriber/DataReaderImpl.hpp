@@ -374,7 +374,7 @@ protected:
 
         void on_sample_lost(
                 fastrtps::rtps::RTPSReader* reader,
-                int32_t sample_lost_since_last_update);
+                int32_t sample_lost_since_last_update) override;
 
         DataReaderImpl* data_reader_;
     }
