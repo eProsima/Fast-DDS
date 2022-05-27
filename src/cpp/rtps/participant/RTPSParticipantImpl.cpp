@@ -464,7 +464,7 @@ void RTPSParticipantImpl::disable()
         block.disable();
     }
 
-    deleteAllEndpoints();
+    deleteAllUserEndpoints();
 
     mp_event_thr.stop_thread();
 
@@ -1685,14 +1685,13 @@ bool RTPSParticipantImpl::deleteUserEndpoint(
     bool found = false, found_in_users = false;
     Endpoint * p_endpoint = nullptr;
 
-    // Standard table 9.1
     if (endpoint.entityId.is_writer())
     {
         std::lock_guard<shared_mutex> _(endpoints_list_mutex);
 
         for (auto wit = m_userWriterList.begin(); wit != m_userWriterList.end(); ++wit)
         {
-            if ((*wit)->getGuid().entityId == p_endpoint->getGuid().entityId) //Found it
+            if ((*wit)->getGuid().entityId == endpoint.entityId) //Found it
             {
                 m_userWriterList.erase(wit);
                 found_in_users = true;
@@ -1702,7 +1701,7 @@ bool RTPSParticipantImpl::deleteUserEndpoint(
 
         for (auto wit = m_allWriterList.begin(); wit != m_allWriterList.end(); ++wit)
         {
-            if ((*wit)->getGuid().entityId == p_endpoint->getGuid().entityId) //Found it
+            if ((*wit)->getGuid().entityId == endpoint.entityId) //Found it
             {
                 p_endpoint = *wit;
                 m_allWriterList.erase(wit);
@@ -1717,7 +1716,7 @@ bool RTPSParticipantImpl::deleteUserEndpoint(
 
         for (auto rit = m_userReaderList.begin(); rit != m_userReaderList.end(); ++rit)
         {
-            if ((*rit)->getGuid().entityId == p_endpoint->getGuid().entityId) //Found it
+            if ((*rit)->getGuid().entityId == endpoint.entityId) //Found it
             {
                 m_userReaderList.erase(rit);
                 found_in_users = true;
@@ -1727,7 +1726,7 @@ bool RTPSParticipantImpl::deleteUserEndpoint(
 
         for (auto rit = m_allReaderList.begin(); rit != m_allReaderList.end(); ++rit)
         {
-            if ((*rit)->getGuid().entityId == p_endpoint->getGuid().entityId) //Found it
+            if ((*rit)->getGuid().entityId == endpoint.entityId) //Found it
             {
                 p_endpoint = *rit;
                 m_allReaderList.erase(rit);
@@ -1791,24 +1790,44 @@ bool RTPSParticipantImpl::deleteUserEndpoint(
     return true;
 }
 
-void RTPSParticipantImpl::deleteAllEndpoints()
+void RTPSParticipantImpl::deleteAllUserEndpoints()
 {
     std::vector<Endpoint*> tmp(0);
 
     {
-        std::lock_guard<shared_mutex> _(endpoints_list_mutex);
+        using namespace std;
 
-        // remove the collections and keep all endpoint references locally
-        tmp.resize(m_allWriterList.size() + m_allReaderList.size());
-        auto it = std::move(m_allWriterList.begin(), m_allWriterList.end(), tmp.begin());
-        it = std::move(m_allReaderList.begin(), m_allReaderList.end(), it);
+        lock_guard<shared_mutex> _(endpoints_list_mutex);
 
-        // we have copied all elements
+        // move the collections to a local
+        tmp.resize(m_userWriterList.size() + m_userReaderList.size());
+        auto it = move(m_userWriterList.begin(), m_userWriterList.end(), tmp.begin());
+        it = move(m_userReaderList.begin(), m_userReaderList.end(), it);
+
+        // check we have copied all elements
         assert(tmp.end() == it);
 
+        // now update the all collections by removing the user elements
+        sort(m_userWriterList.begin(), m_userWriterList.end());
+        sort(m_userReaderList.begin(), m_userReaderList.end());
+        sort(m_allWriterList.begin(), m_allWriterList.end());
+        sort(m_allReaderList.begin(), m_allReaderList.end());
+
+        vector<RTPSWriter*> writers;
+        set_difference(m_allWriterList.begin(), m_allWriterList.end(),
+                       m_userWriterList.begin(), m_userWriterList.end(),
+                       back_inserter(writers));
+        swap(writers, m_allWriterList);
+
+        vector<RTPSReader*> readers;
+        set_difference(m_allReaderList.begin(), m_allReaderList.end(),
+                       m_userReaderList.begin(), m_userReaderList.end(),
+                       back_inserter(readers));
+        swap(readers, m_allReaderList);
+
         // remove dangling references
-        m_allWriterList.clear();
-        m_allReaderList.clear();
+        m_userWriterList.clear();
+        m_userReaderList.clear();
     }
 
     // unlink the transport receiver blocks from the endpoints

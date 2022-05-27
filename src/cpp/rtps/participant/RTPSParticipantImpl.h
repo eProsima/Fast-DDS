@@ -917,8 +917,8 @@ public:
     bool deleteUserEndpoint(
             const GUID_t &);
 
-    //! Delete all user and builtin endpoints
-    void deleteAllEndpoints();
+    //! Delete all user endpoints, builtin are disposed in its related classes
+    void deleteAllUserEndpoints();
 
     /** Traverses the user writers collection transforming its elements with a provided functor
      * @param f - Functor applied to each element. Must accept a reference as parameter. Should return true to keep iterating.
