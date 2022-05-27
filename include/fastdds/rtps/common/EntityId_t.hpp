@@ -188,6 +188,7 @@ struct RTPS_DllAPI EntityId_t
         // RTPS Standard table 9.1
         return 0x2u & to_uint32() && !is_reader();
     }
+
 };
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC

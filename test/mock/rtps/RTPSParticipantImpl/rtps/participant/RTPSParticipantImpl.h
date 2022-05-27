@@ -198,7 +198,7 @@ public:
     }
 
     bool deleteUserEndpoint(
-        const GUID_t& )
+            const GUID_t& )
     {
         return true;
     }
@@ -265,13 +265,15 @@ public:
     }
 
     template<class Functor>
-    Functor forEachUserWriter(Functor f)
+    Functor forEachUserWriter(
+            Functor f)
     {
         return f;
     }
 
     template<class Functor>
-    Functor forEachUserReader(Functor f)
+    Functor forEachUserReader(
+            Functor f)
     {
         return f;
     }

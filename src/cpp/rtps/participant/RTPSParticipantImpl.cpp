@@ -1440,7 +1440,10 @@ bool RTPSParticipantImpl::existsEntityId(
         EndpointKind_t kind) const
 {
 
-    auto check = [&ent](Endpoint* e) { return ent == e->getGuid().entityId; };
+    auto check = [&ent](Endpoint* e)
+            {
+                return ent == e->getGuid().entityId;
+            };
 
     shared_lock<shared_mutex> _(endpoints_list_mutex);
 
@@ -1683,7 +1686,7 @@ bool RTPSParticipantImpl::deleteUserEndpoint(
     }
 
     bool found = false, found_in_users = false;
-    Endpoint * p_endpoint = nullptr;
+    Endpoint* p_endpoint = nullptr;
 
     if (endpoint.entityId.is_writer())
     {
@@ -1744,7 +1747,7 @@ bool RTPSParticipantImpl::deleteUserEndpoint(
     {
         std::lock_guard<std::mutex> _(m_receiverResourcelistMutex);
 
-        for(auto& rb : m_receiverResourcelist)
+        for (auto& rb : m_receiverResourcelist)
         {
             auto receiver = rb.mp_receiver;
             if (receiver)
@@ -1815,14 +1818,14 @@ void RTPSParticipantImpl::deleteAllUserEndpoints()
 
         vector<RTPSWriter*> writers;
         set_difference(m_allWriterList.begin(), m_allWriterList.end(),
-                       m_userWriterList.begin(), m_userWriterList.end(),
-                       back_inserter(writers));
+                m_userWriterList.begin(), m_userWriterList.end(),
+                back_inserter(writers));
         swap(writers, m_allWriterList);
 
         vector<RTPSReader*> readers;
         set_difference(m_allReaderList.begin(), m_allReaderList.end(),
-                       m_userReaderList.begin(), m_userReaderList.end(),
-                       back_inserter(readers));
+                m_userReaderList.begin(), m_userReaderList.end(),
+                back_inserter(readers));
         swap(readers, m_allReaderList);
 
         // remove dangling references
@@ -1831,11 +1834,11 @@ void RTPSParticipantImpl::deleteAllUserEndpoints()
     }
 
     // unlink the transport receiver blocks from the endpoints
-    for( auto endpoint : tmp)
+    for ( auto endpoint : tmp)
     {
         std::lock_guard<std::mutex> _(m_receiverResourcelistMutex);
 
-        for(auto& rb : m_receiverResourcelist)
+        for (auto& rb : m_receiverResourcelist)
         {
             auto receiver = rb.mp_receiver;
             if (receiver)
@@ -1846,20 +1849,21 @@ void RTPSParticipantImpl::deleteAllUserEndpoints()
     }
 
     // Remove from builtin protocols
-    auto removeEndpoint = [this](EndpointKind_t kind, Endpoint  * p)
-    {
-        return kind == WRITER
+    auto removeEndpoint = [this](EndpointKind_t kind, Endpoint* p)
+            {
+                return kind == WRITER
                ? mp_builtinProtocols->removeLocalWriter((RTPSWriter*)p)
                : mp_builtinProtocols->removeLocalReader((RTPSReader*)p);
-    };
+            };
 
 #if HAVE_SECURITY
-    bool (eprosima::fastrtps::rtps::security::SecurityManager::* unregister_endpoint[2])(const GUID_t& writer_guid);
+    bool (eprosima::fastrtps::rtps::security::SecurityManager::* unregister_endpoint[2])(
+            const GUID_t& writer_guid);
     unregister_endpoint[WRITER] = &security::SecurityManager::unregister_local_writer;
     unregister_endpoint[READER] = &security::SecurityManager::unregister_local_reader;
 #endif // if HAVE_SECURITY
 
-    for( auto endpoint : tmp)
+    for ( auto endpoint : tmp)
     {
         auto kind = endpoint->getAttributes().endpointKind;
         removeEndpoint(kind, endpoint);

@@ -915,7 +915,7 @@ public:
      * @return True on success
      */
     bool deleteUserEndpoint(
-            const GUID_t &);
+            const GUID_t&);
 
     //! Delete all user endpoints, builtin are disposed in its related classes
     void deleteAllUserEndpoints();
@@ -925,13 +925,14 @@ public:
      * @return Functor provided in order to allow aggregates retrieval
      */
     template<class Functor>
-    Functor forEachUserWriter(Functor f)
+    Functor forEachUserWriter(
+            Functor f)
     {
         shared_lock<shared_mutex> _(endpoints_list_mutex);
 
-        for( RTPSWriter* pw : m_userWriterList)
+        for ( RTPSWriter* pw : m_userWriterList)
         {
-            if(!f(*pw))
+            if (!f(*pw))
             {
                 break;
             }
@@ -945,13 +946,14 @@ public:
      * @return Functor provided in order to allow aggregates retrieval
      */
     template<class Functor>
-    Functor forEachUserReader(Functor f)
+    Functor forEachUserReader(
+            Functor f)
     {
         shared_lock<shared_mutex> _(endpoints_list_mutex);
 
-        for( RTPSReader* pr : m_userReaderList)
+        for ( RTPSReader* pr : m_userReaderList)
         {
-            if(!f(*pr))
+            if (!f(*pr))
             {
                 break;
             }
