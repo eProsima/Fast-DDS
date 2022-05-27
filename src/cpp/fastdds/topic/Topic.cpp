@@ -19,7 +19,7 @@
 
 #include <fastdds/dds/topic/Topic.hpp>
 #include <fastdds/dds/domain/DomainParticipant.hpp>
-#include <fastdds/topic/TopicImpl.hpp>
+#include <fastdds/topic/TopicProxy.hpp>
 
 #include <fastdds/dds/log/Log.hpp>
 
@@ -30,7 +30,7 @@ namespace dds {
 Topic::Topic(
         const std::string& topic_name,
         const std::string& type_name,
-        TopicImpl* p,
+        TopicProxy* p,
         const StatusMask& mask)
     : DomainEntity(mask)
     , TopicDescription(topic_name, type_name)

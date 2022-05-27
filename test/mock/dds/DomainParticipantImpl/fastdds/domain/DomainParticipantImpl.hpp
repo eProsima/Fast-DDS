@@ -44,6 +44,7 @@
 #include <fastdds/publisher/PublisherImpl.hpp>
 #include <fastdds/subscriber/SubscriberImpl.hpp>
 #include <fastdds/topic/TopicImpl.hpp>
+#include <fastdds/topic/TopicProxy.hpp>
 
 using ReturnCode_t = eprosima::fastrtps::types::ReturnCode_t;
 
@@ -264,9 +265,10 @@ public:
             return nullptr;
         }
         TopicImpl* topic_impl = new TopicImpl(this, type_support, qos, listener);
-        Topic* topic = new Topic(topic_name, type_name, topic_impl, mask);
+        TopicProxy* proxy = new TopicProxy(topic_impl);
+        Topic* topic = new Topic(topic_name, type_name, proxy, mask);
         topic_impl->user_topic_ = topic;
-        topics_[topic_name] = topic_impl;
+        topics_[topic_name] = proxy;
         topic->enable();
         return topic;
     }
@@ -340,7 +342,7 @@ public:
         auto it = topics_.find(topic_name);
         if (it != topics_.end())
         {
-            return it->second->user_topic_;
+            return it->second->get_topic();
         }
         return nullptr;
     }
@@ -676,7 +678,7 @@ protected:
     std::map<Subscriber*, SubscriberImpl*> subscribers_;
     mutable std::mutex mtx_subs_;
     SubscriberQos default_sub_qos_;
-    std::map<std::string, TopicImpl*> topics_;
+    std::map<std::string, TopicProxy*> topics_;
     mutable std::mutex mtx_topics_;
     std::map<std::string, TypeSupport> types_;
     mutable std::mutex mtx_types_;

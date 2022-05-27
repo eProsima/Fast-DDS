@@ -480,7 +480,7 @@ protected:
     mutable std::mutex mtx_types_;
 
     //!Topic map
-    std::map<std::string, TopicImpl*> topics_;
+    std::map<std::string, TopicProxy*> topics_;
     std::map<InstanceHandle_t, Topic*> topics_by_handle_;
     std::map<std::string, std::unique_ptr<ContentFilteredTopic>> filtered_topics_;
     std::map<std::string, IContentFilterFactory*> filter_factories_;

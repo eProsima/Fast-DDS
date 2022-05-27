@@ -32,7 +32,6 @@
 
 #include <fastdds/subscriber/DataReaderImpl.hpp>
 #include <fastdds/topic/TopicDescriptionImpl.hpp>
-#include <fastdds/topic/TopicImpl.hpp>
 
 namespace eprosima {
 namespace fastdds {

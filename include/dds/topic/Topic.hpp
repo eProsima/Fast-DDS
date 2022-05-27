@@ -33,7 +33,6 @@ class TopicListener;
 
 class Topic : public dds::core::TEntity<detail::Topic>
 {
-    friend class TopicImpl;
     friend class DomainParticipantImpl;
 
 public:

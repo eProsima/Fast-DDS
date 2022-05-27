@@ -58,6 +58,7 @@
 #include <fastdds/subscriber/SubscriberImpl.hpp>
 #include <fastdds/topic/ContentFilteredTopicImpl.hpp>
 #include <fastdds/topic/TopicImpl.hpp>
+#include <fastdds/topic/TopicProxy.hpp>
 #include <rtps/RTPSDomainImpl.hpp>
 #include <utils/SystemInfo.hpp>
 
@@ -327,7 +328,7 @@ ReturnCode_t DomainParticipantImpl::enable()
 
             for (auto topic : topics_)
             {
-                topic.second->user_topic_->enable();
+                topic.second->get_topic()->enable();
             }
         }
 
@@ -537,7 +538,7 @@ ContentFilteredTopic* DomainParticipantImpl::create_contentfilteredtopic(
         return nullptr;
     }
 
-    TopicImpl* topic_impl = dynamic_cast<TopicImpl*>(related_topic->get_impl());
+    TopicProxy* topic_impl = dynamic_cast<TopicProxy*>(related_topic->get_impl());
     assert(nullptr != topic_impl);
     const TypeSupport& type = topic_impl->get_type();
     LoanableSequence<const char*>::size_type n_params;
@@ -1302,13 +1303,14 @@ Topic* DomainParticipantImpl::create_topic(
 
     //TODO CONSTRUIR LA IMPLEMENTACION DENTRO DEL OBJETO DEL USUARIO.
     TopicImpl* topic_impl = new TopicImpl(this, type_support, qos, listener);
-    Topic* topic = new Topic(topic_name, type_name, topic_impl, mask);
+    TopicProxy* proxy = new TopicProxy(topic_impl);
+    Topic* topic = new Topic(topic_name, type_name, proxy, mask);
     topic_impl->user_topic_ = topic;
     topic->set_instance_handle(topic_handle);
 
     //SAVE THE TOPIC INTO MAPS
     topics_by_handle_[topic_handle] = topic;
-    topics_[topic_name] = topic_impl;
+    topics_[topic_name] = proxy;
 
     // Enable topic if appropriate
     if (enabled && qos_.entity_factory().autoenable_created_entities)
@@ -1348,7 +1350,7 @@ TopicDescription* DomainParticipantImpl::lookup_topicdescription(
     auto it = topics_.find(topic_name);
     if (it != topics_.end())
     {
-        return it->second->user_topic_;
+        return it->second->get_topic();
     }
 
     auto filtered_it = filtered_topics_.find(topic_name);
