@@ -534,6 +534,8 @@ private:
     uint32_t IdCounter;
     //! Mutex to safely access endpoints collections
     mutable shared_mutex endpoints_list_mutex;
+    //! This member avoids shared_mutex reentrancy by tracking last participant into traversing the endpoints collections
+    static thread_local RTPSParticipantImpl* collections_mutex_owner_;
     //!Writer List.
     std::vector<RTPSWriter*> m_allWriterList;
     //!Reader List
@@ -928,8 +930,18 @@ public:
     Functor forEachUserWriter(
             Functor f)
     {
-        shared_lock<shared_mutex> _(endpoints_list_mutex);
+        // check if we are reentrying
+        shared_lock<shared_mutex> may_lock;
+        RTPSParticipantImpl* previous_onwer = collections_mutex_owner_;
 
+        if(collections_mutex_owner_ != this)
+        {
+            shared_lock<shared_mutex> lock(endpoints_list_mutex);
+            may_lock = std::move(lock);
+            collections_mutex_owner_ = this;
+        }
+
+        // traverse the list
         for ( RTPSWriter* pw : m_userWriterList)
         {
             if (!f(*pw))
@@ -937,6 +949,9 @@ public:
                 break;
             }
         }
+
+        // restore tls former value
+        std::swap(collections_mutex_owner_, previous_onwer);
 
         return f;
     }
@@ -949,7 +964,16 @@ public:
     Functor forEachUserReader(
             Functor f)
     {
-        shared_lock<shared_mutex> _(endpoints_list_mutex);
+        // check if we are reentrying
+        shared_lock<shared_mutex> may_lock;
+        RTPSParticipantImpl* previous_onwer = collections_mutex_owner_;
+
+        if(collections_mutex_owner_ != this)
+        {
+            shared_lock<shared_mutex> lock(endpoints_list_mutex);
+            may_lock = std::move(lock);
+            collections_mutex_owner_ = this;
+        }
 
         for ( RTPSReader* pr : m_userReaderList)
         {
@@ -958,6 +982,9 @@ public:
                 break;
             }
         }
+
+        // restore tls former value
+        std::swap(collections_mutex_owner_, previous_onwer);
 
         return f;
     }

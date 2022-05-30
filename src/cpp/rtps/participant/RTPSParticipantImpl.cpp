@@ -67,6 +67,8 @@ using UDPv4TransportDescriptor = fastdds::rtps::UDPv4TransportDescriptor;
 using TCPTransportDescriptor = fastdds::rtps::TCPTransportDescriptor;
 using SharedMemTransportDescriptor = fastdds::rtps::SharedMemTransportDescriptor;
 
+thread_local RTPSParticipantImpl* RTPSParticipantImpl::collections_mutex_owner_ = nullptr;
+
 static EntityId_t TrustedWriter(
         const EntityId_t& reader)
 {
