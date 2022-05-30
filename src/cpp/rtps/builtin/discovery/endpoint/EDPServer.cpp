@@ -228,9 +228,9 @@ bool EDPServer::removeLocalReader(
     // Recover reader information
     std::string topic_name;
     {
-        std::lock_guard<std::mutex> data_guard(temp_data_lock_);
-        mp_PDP->lookupReaderProxyData(guid, temp_reader_proxy_data_);
-        topic_name = temp_reader_proxy_data_.topicName().to_string();
+        auto temp_reader_proxy_data = temp_reader_proxies_.get();
+        mp_PDP->lookupReaderProxyData(guid, *temp_reader_proxy_data);
+        topic_name = temp_reader_proxy_data->topicName().to_string();
     }
 
     // Remove proxy data associated with the reader
@@ -288,9 +288,9 @@ bool EDPServer::removeLocalWriter(
     std::string topic_name;
 
     {
-        std::lock_guard<std::mutex> data_guard(temp_data_lock_);
-        mp_PDP->lookupWriterProxyData(guid, temp_writer_proxy_data_);
-        topic_name = temp_writer_proxy_data_.topicName().to_string();
+        auto temp_writer_proxy_data = temp_writer_proxies_.get();
+        mp_PDP->lookupWriterProxyData(guid, *temp_writer_proxy_data);
+        topic_name = temp_writer_proxy_data->topicName().to_string();
     }
 
     // Remove proxy data associated with the writer

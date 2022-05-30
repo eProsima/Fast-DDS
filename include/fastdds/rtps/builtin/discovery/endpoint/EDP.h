@@ -30,6 +30,8 @@
 #include <fastdds/dds/core/status/SubscriptionMatchedStatus.hpp>
 #include <fastdds/dds/core/status/IncompatibleQosStatus.hpp>
 
+#include <fastrtps/utils/ProxyPool.hpp>
+
 #include <foonathan/memory/container.hpp>
 #include <foonathan/memory/memory_pool.hpp>
 
@@ -349,9 +351,11 @@ public:
 
 protected:
 
-    std::mutex temp_data_lock_;
-    ReaderProxyData temp_reader_proxy_data_;
-    WriterProxyData temp_writer_proxy_data_;
+    //! ProxyPool for temporary reader proxies
+    ProxyPool<ReaderProxyData> temp_reader_proxies_;
+
+    //! ProxyPool for temporary writer proxies
+    ProxyPool<WriterProxyData> temp_writer_proxies_;
 
 private:
 

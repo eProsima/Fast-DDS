@@ -764,30 +764,32 @@ void EDPSimple::assignRemoteEndpoints(
             pdata.metatraffic_locators.unicast.empty();
     auxendp &= DISC_BUILTIN_ENDPOINT_PUBLICATION_ANNOUNCER;
 
-    std::lock_guard<std::mutex> data_guard(temp_data_lock_);
+    auto temp_reader_proxy_data = temp_reader_proxies_.get();
 
-    temp_reader_proxy_data_.clear();
-    temp_reader_proxy_data_.m_expectsInlineQos = false;
-    temp_reader_proxy_data_.guid().guidPrefix = pdata.m_guid.guidPrefix;
-    temp_reader_proxy_data_.set_remote_locators(pdata.metatraffic_locators, network, use_multicast_locators);
-    temp_reader_proxy_data_.m_qos.m_durability.kind = TRANSIENT_LOCAL_DURABILITY_QOS;
-    temp_reader_proxy_data_.m_qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
+    temp_reader_proxy_data->clear();
+    temp_reader_proxy_data->m_expectsInlineQos = false;
+    temp_reader_proxy_data->guid().guidPrefix = pdata.m_guid.guidPrefix;
+    temp_reader_proxy_data->set_remote_locators(pdata.metatraffic_locators, network, use_multicast_locators);
+    temp_reader_proxy_data->m_qos.m_durability.kind = TRANSIENT_LOCAL_DURABILITY_QOS;
+    temp_reader_proxy_data->m_qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
 
-    temp_writer_proxy_data_.clear();
-    temp_writer_proxy_data_.guid().guidPrefix = pdata.m_guid.guidPrefix;
-    temp_writer_proxy_data_.persistence_guid(pdata.get_persistence_guid());
-    temp_writer_proxy_data_.set_remote_locators(pdata.metatraffic_locators, network, use_multicast_locators);
-    temp_writer_proxy_data_.m_qos.m_durability.kind = TRANSIENT_LOCAL_DURABILITY_QOS;
-    temp_writer_proxy_data_.m_qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
+    auto temp_writer_proxy_data = temp_writer_proxies_.get();
+
+    temp_writer_proxy_data->clear();
+    temp_writer_proxy_data->guid().guidPrefix = pdata.m_guid.guidPrefix;
+    temp_writer_proxy_data->persistence_guid(pdata.get_persistence_guid());
+    temp_writer_proxy_data->set_remote_locators(pdata.metatraffic_locators, network, use_multicast_locators);
+    temp_writer_proxy_data->m_qos.m_durability.kind = TRANSIENT_LOCAL_DURABILITY_QOS;
+    temp_writer_proxy_data->m_qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
 
     //FIXME: FIX TO NOT FAIL WITH BAD BUILTIN ENDPOINT SET
     //auxendp = 1;
     if (auxendp != 0 && publications_reader_.first != nullptr) //Exist Pub Writer and i have pub reader
     {
         logInfo(RTPS_EDP, "Adding SEDP Pub Writer to my Pub Reader");
-        temp_writer_proxy_data_.guid().entityId = c_EntityId_SEDPPubWriter;
-        temp_writer_proxy_data_.set_persistence_entity_id(c_EntityId_SEDPPubWriter);
-        publications_reader_.first->matched_writer_add(temp_writer_proxy_data_);
+        temp_writer_proxy_data->guid().entityId = c_EntityId_SEDPPubWriter;
+        temp_writer_proxy_data->set_persistence_entity_id(c_EntityId_SEDPPubWriter);
+        publications_reader_.first->matched_writer_add(*temp_writer_proxy_data);
     }
     auxendp = endp;
     auxendp &= DISC_BUILTIN_ENDPOINT_PUBLICATION_DETECTOR;
@@ -796,8 +798,8 @@ void EDPSimple::assignRemoteEndpoints(
     if (auxendp != 0 && publications_writer_.first != nullptr) //Exist Pub Detector
     {
         logInfo(RTPS_EDP, "Adding SEDP Pub Reader to my Pub Writer");
-        temp_reader_proxy_data_.guid().entityId = c_EntityId_SEDPPubReader;
-        publications_writer_.first->matched_reader_add(temp_reader_proxy_data_);
+        temp_reader_proxy_data->guid().entityId = c_EntityId_SEDPPubReader;
+        publications_writer_.first->matched_reader_add(*temp_reader_proxy_data);
     }
     auxendp = endp;
     auxendp &= DISC_BUILTIN_ENDPOINT_SUBSCRIPTION_ANNOUNCER;
@@ -806,9 +808,9 @@ void EDPSimple::assignRemoteEndpoints(
     if (auxendp != 0 && subscriptions_reader_.first != nullptr) //Exist Pub Announcer
     {
         logInfo(RTPS_EDP, "Adding SEDP Sub Writer to my Sub Reader");
-        temp_writer_proxy_data_.guid().entityId = c_EntityId_SEDPSubWriter;
-        temp_writer_proxy_data_.set_persistence_entity_id(c_EntityId_SEDPSubWriter);
-        subscriptions_reader_.first->matched_writer_add(temp_writer_proxy_data_);
+        temp_writer_proxy_data->guid().entityId = c_EntityId_SEDPSubWriter;
+        temp_writer_proxy_data->set_persistence_entity_id(c_EntityId_SEDPSubWriter);
+        subscriptions_reader_.first->matched_writer_add(*temp_writer_proxy_data);
     }
     auxendp = endp;
     auxendp &= DISC_BUILTIN_ENDPOINT_SUBSCRIPTION_DETECTOR;
@@ -817,8 +819,8 @@ void EDPSimple::assignRemoteEndpoints(
     if (auxendp != 0 && subscriptions_writer_.first != nullptr) //Exist Pub Announcer
     {
         logInfo(RTPS_EDP, "Adding SEDP Sub Reader to my Sub Writer");
-        temp_reader_proxy_data_.guid().entityId = c_EntityId_SEDPSubReader;
-        subscriptions_writer_.first->matched_reader_add(temp_reader_proxy_data_);
+        temp_reader_proxy_data->guid().entityId = c_EntityId_SEDPSubReader;
+        subscriptions_writer_.first->matched_reader_add(*temp_reader_proxy_data);
     }
 
 #if HAVE_SECURITY
@@ -828,11 +830,11 @@ void EDPSimple::assignRemoteEndpoints(
     //auxendp = 1;
     if (auxendp != 0 && publications_secure_reader_.first != nullptr)
     {
-        temp_writer_proxy_data_.guid().entityId = sedp_builtin_publications_secure_writer;
-        temp_writer_proxy_data_.set_persistence_entity_id(sedp_builtin_publications_secure_writer);
+        temp_writer_proxy_data->guid().entityId = sedp_builtin_publications_secure_writer;
+        temp_writer_proxy_data->set_persistence_entity_id(sedp_builtin_publications_secure_writer);
 
         if (!mp_RTPSParticipant->security_manager().discovered_builtin_writer(
-                    publications_secure_reader_.first->getGuid(), pdata.m_guid, temp_writer_proxy_data_,
+                    publications_secure_reader_.first->getGuid(), pdata.m_guid, *temp_writer_proxy_data,
                     publications_secure_reader_.first->getAttributes().security_attributes()))
         {
             logError(RTPS_EDP, "Security manager returns an error for writer " <<
@@ -846,9 +848,9 @@ void EDPSimple::assignRemoteEndpoints(
     //auxendp = 1;
     if (auxendp != 0 && publications_secure_writer_.first != nullptr)
     {
-        temp_reader_proxy_data_.guid().entityId = sedp_builtin_publications_secure_reader;
+        temp_reader_proxy_data->guid().entityId = sedp_builtin_publications_secure_reader;
         if (!mp_RTPSParticipant->security_manager().discovered_builtin_reader(
-                    publications_secure_writer_.first->getGuid(), pdata.m_guid, temp_reader_proxy_data_,
+                    publications_secure_writer_.first->getGuid(), pdata.m_guid, *temp_reader_proxy_data,
                     publications_secure_writer_.first->getAttributes().security_attributes()))
         {
             logError(RTPS_EDP, "Security manager returns an error for writer " <<
@@ -862,11 +864,11 @@ void EDPSimple::assignRemoteEndpoints(
     //auxendp = 1;
     if (auxendp != 0 && subscriptions_secure_reader_.first != nullptr)
     {
-        temp_writer_proxy_data_.guid().entityId = sedp_builtin_subscriptions_secure_writer;
-        temp_writer_proxy_data_.set_persistence_entity_id(sedp_builtin_subscriptions_secure_writer);
+        temp_writer_proxy_data->guid().entityId = sedp_builtin_subscriptions_secure_writer;
+        temp_writer_proxy_data->set_persistence_entity_id(sedp_builtin_subscriptions_secure_writer);
 
         if (!mp_RTPSParticipant->security_manager().discovered_builtin_writer(
-                    subscriptions_secure_reader_.first->getGuid(), pdata.m_guid, temp_writer_proxy_data_,
+                    subscriptions_secure_reader_.first->getGuid(), pdata.m_guid, *temp_writer_proxy_data,
                     subscriptions_secure_reader_.first->getAttributes().security_attributes()))
         {
             logError(RTPS_EDP, "Security manager returns an error for writer " <<
@@ -881,9 +883,9 @@ void EDPSimple::assignRemoteEndpoints(
     if (auxendp != 0 && subscriptions_secure_writer_.first != nullptr)
     {
         logInfo(RTPS_EDP, "Adding SEDP Sub Reader to my Sub Writer");
-        temp_reader_proxy_data_.guid().entityId = sedp_builtin_subscriptions_secure_reader;
+        temp_reader_proxy_data->guid().entityId = sedp_builtin_subscriptions_secure_reader;
         if (!mp_RTPSParticipant->security_manager().discovered_builtin_reader(
-                    subscriptions_secure_writer_.first->getGuid(), pdata.m_guid, temp_reader_proxy_data_,
+                    subscriptions_secure_writer_.first->getGuid(), pdata.m_guid, *temp_reader_proxy_data,
                     subscriptions_secure_writer_.first->getAttributes().security_attributes()))
         {
             logError(RTPS_EDP, "Security manager returns an error for writer " <<

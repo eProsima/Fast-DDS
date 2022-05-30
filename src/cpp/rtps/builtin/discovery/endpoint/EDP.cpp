@@ -74,15 +74,15 @@ EDP::EDP(
         RTPSParticipantImpl* part)
     : mp_PDP(p)
     , mp_RTPSParticipant(part)
-    , temp_reader_proxy_data_(
+    , temp_reader_proxies_({
         part->getRTPSParticipantAttributes().allocation.locators.max_unicast_locators,
         part->getRTPSParticipantAttributes().allocation.locators.max_multicast_locators,
         part->getRTPSParticipantAttributes().allocation.data_limits,
-        part->getRTPSParticipantAttributes().allocation.content_filter)
-    , temp_writer_proxy_data_(
+        part->getRTPSParticipantAttributes().allocation.content_filter})
+    , temp_writer_proxies_({
         part->getRTPSParticipantAttributes().allocation.locators.max_unicast_locators,
         part->getRTPSParticipantAttributes().allocation.locators.max_multicast_locators,
-        part->getRTPSParticipantAttributes().allocation.data_limits)
+        part->getRTPSParticipantAttributes().allocation.data_limits})
     , reader_status_allocator_(
         reader_map_helper::node_size,
         reader_map_helper::min_pool_size<pool_allocator_t>(
@@ -1227,18 +1227,17 @@ bool EDP::pairing_reader_proxy_with_any_local_writer(
 
     mp_RTPSParticipant->forEachUserWriter([&, rdata](RTPSWriter& w) -> bool
             {
-                std::unique_lock<std::mutex> lock(temp_data_lock_);
-
+                auto temp_writer_proxy_data = temp_writer_proxies_.get();
                 GUID_t writerGUID = w.getGuid();
 
-                if (mp_PDP->lookupWriterProxyData(writerGUID, temp_writer_proxy_data_))
+                if (mp_PDP->lookupWriterProxyData(writerGUID, *temp_writer_proxy_data))
                 {
                     MatchingFailureMask no_match_reason;
                     fastdds::dds::PolicyMask incompatible_qos;
-                    bool valid = valid_matching(&temp_writer_proxy_data_, rdata, no_match_reason, incompatible_qos);
+                    bool valid = valid_matching(temp_writer_proxy_data.get(), rdata, no_match_reason, incompatible_qos);
                     const GUID_t& reader_guid = rdata->guid();
 
-                    lock.unlock();
+                    temp_writer_proxy_data.reset();
 
                     if (valid)
                     {
@@ -1320,16 +1319,16 @@ bool EDP::pairing_reader_proxy_with_local_writer(
 
                 if (local_writer == writerGUID)
                 {
-                    std::unique_lock<std::mutex> lock(temp_data_lock_);
+                    auto temp_writer_proxy_data = temp_writer_proxies_.get();
 
-                    if (mp_PDP->lookupWriterProxyData(writerGUID, temp_writer_proxy_data_))
+                    if (mp_PDP->lookupWriterProxyData(writerGUID, *temp_writer_proxy_data))
                     {
                         MatchingFailureMask no_match_reason;
                         fastdds::dds::PolicyMask incompatible_qos;
-                        bool valid = valid_matching(&temp_writer_proxy_data_, &rdata, no_match_reason,
+                        bool valid = valid_matching(temp_writer_proxy_data.get(), &rdata, no_match_reason,
                         incompatible_qos);
 
-                        lock.unlock();
+                        temp_writer_proxy_data.reset();
 
                         if (valid)
                         {
@@ -1434,18 +1433,17 @@ bool EDP::pairing_writer_proxy_with_any_local_reader(
 
     mp_RTPSParticipant->forEachUserReader([&, wdata](RTPSReader& r) -> bool
             {
-                std::unique_lock<std::mutex> lock(temp_data_lock_);
-
+                auto temp_reader_proxy_data = temp_reader_proxies_.get();
                 GUID_t readerGUID = r.getGuid();
 
-                if (mp_PDP->lookupReaderProxyData(readerGUID, temp_reader_proxy_data_))
+                if (mp_PDP->lookupReaderProxyData(readerGUID, *temp_reader_proxy_data))
                 {
                     MatchingFailureMask no_match_reason;
                     fastdds::dds::PolicyMask incompatible_qos;
-                    bool valid = valid_matching(&temp_reader_proxy_data_, wdata, no_match_reason, incompatible_qos);
+                    bool valid = valid_matching(temp_reader_proxy_data.get(), wdata, no_match_reason, incompatible_qos);
                     const GUID_t& writer_guid = wdata->guid();
 
-                    lock.unlock();
+                    temp_reader_proxy_data.reset();
 
                     if (valid)
                     {
@@ -1527,17 +1525,17 @@ bool EDP::pairing_writer_proxy_with_local_reader(
 
                 if (local_reader == readerGUID)
                 {
-                    std::unique_lock<std::mutex> lock(temp_data_lock_);
+                    auto temp_reader_proxy_data = temp_reader_proxies_.get();
 
-                    if (mp_PDP->lookupReaderProxyData(readerGUID, temp_reader_proxy_data_))
+                    if (mp_PDP->lookupReaderProxyData(readerGUID, *temp_reader_proxy_data))
                     {
                         MatchingFailureMask no_match_reason;
                         fastdds::dds::PolicyMask incompatible_qos;
-                        bool valid = valid_matching(&temp_reader_proxy_data_, &wdata, no_match_reason,
+                        bool valid = valid_matching(temp_reader_proxy_data.get(), &wdata, no_match_reason,
                         incompatible_qos);
                         const GUID_t& writer_guid = wdata.guid();
 
-                        lock.unlock();
+                        temp_reader_proxy_data.reset();
 
                         if (valid)
                         {
