@@ -169,14 +169,17 @@ FragmentNumber_t mark_next_fragment_sent(
 
 TEST(ReaderProxyTests, process_nack_frag_single_fragment_different_windows_test)
 {
+    constexpr FragmentNumber_t TOTAL_NUMBER_OF_FRAGMENTS = 400;
+    constexpr uint16_t FRAGMENT_SIZE = 100;
+
     StatefulWriter writerMock;
     WriterTimes wTimes;
     RemoteLocatorsAllocationAttributes alloc;
     ReaderProxy rproxy(wTimes, alloc, &writerMock);
     CacheChange_t seq;
     seq.sequenceNumber = {0, 1};
-    seq.serializedPayload.length = 100000;
-    seq.setFragmentSize(100);
+    seq.serializedPayload.length = TOTAL_NUMBER_OF_FRAGMENTS * FRAGMENT_SIZE;
+    seq.setFragmentSize(FRAGMENT_SIZE);
 
     RTPSMessageGroup message_group(nullptr, false);
     RTPSGapBuilder gap_builder(message_group);
@@ -207,30 +210,45 @@ TEST(ReaderProxyTests, process_nack_frag_single_fragment_different_windows_test)
     // The difference between the latest sent fragment and an undelivered fragment should also be higher than
     // the FragmentNumberSet_t size.
     constexpr FragmentNumber_t UNDELIVERED_FRAGMENT = 3;
+    FragmentNumberSet_t undelivered_fragment_set(UNDELIVERED_FRAGMENT);
+    undelivered_fragment_set.add(UNDELIVERED_FRAGMENT);
 
-    FragmentNumberSet_t fragment_set(UNDELIVERED_FRAGMENT);
-    fragment_set.add(UNDELIVERED_FRAGMENT);
-    rproxy.process_nack_frag({}, 1, seq.sequenceNumber, fragment_set);
+    rproxy.process_nack_frag({}, 1, seq.sequenceNumber, undelivered_fragment_set);
 
-    ASSERT_EQ(mark_next_fragment_sent(rproxy, seq.sequenceNumber, UNDELIVERED_FRAGMENT), UNDELIVERED_FRAGMENT);
+    // Nack data should be ignored: first, complete the sequential delivering of the remaining fragments.
+    for (auto i = NUMBER_OF_SENT_FRAGMENTS + 1u; i <= TOTAL_NUMBER_OF_FRAGMENTS; ++i)
+    {
+        ASSERT_EQ(mark_next_fragment_sent(rproxy, seq.sequenceNumber, i), i);
+    }
 
-    // After the undelivered fragment is sent, fragments for sent go sequentially from the highest sent fragment.
+    // Mark the change as sent, i.e. all fragments were sent once.
+    rproxy.from_unsent_to_status(seq.sequenceNumber, UNACKNOWLEDGED, false, true);
+
+    // After the change is marked as delivered, nack data can be processed.
+    rproxy.process_nack_frag({}, 2, seq.sequenceNumber, undelivered_fragment_set);
+
+    // Now, send the fragments that were reported as undelivered.
     ASSERT_EQ(mark_next_fragment_sent(rproxy, seq.sequenceNumber,
-            NUMBER_OF_SENT_FRAGMENTS + 1u), NUMBER_OF_SENT_FRAGMENTS + 1u);
+            UNDELIVERED_FRAGMENT), UNDELIVERED_FRAGMENT);
+
+    // All fragments are marked as sent.
     ASSERT_EQ(mark_next_fragment_sent(rproxy, seq.sequenceNumber,
-            NUMBER_OF_SENT_FRAGMENTS + 2u), NUMBER_OF_SENT_FRAGMENTS + 2u);
+            TOTAL_NUMBER_OF_FRAGMENTS + 1u), TOTAL_NUMBER_OF_FRAGMENTS + 1u);
 }
 
 TEST(ReaderProxyTests, process_nack_frag_multiple_fragments_different_windows_test)
 {
+    constexpr FragmentNumber_t TOTAL_NUMBER_OF_FRAGMENTS = 400;
+    constexpr uint16_t FRAGMENT_SIZE = 100;
+
     StatefulWriter writerMock;
     WriterTimes wTimes;
     RemoteLocatorsAllocationAttributes alloc;
     ReaderProxy rproxy(wTimes, alloc, &writerMock);
     CacheChange_t seq;
     seq.sequenceNumber = {0, 1};
-    seq.serializedPayload.length = 100000;
-    seq.setFragmentSize(100);
+    seq.serializedPayload.length = TOTAL_NUMBER_OF_FRAGMENTS * FRAGMENT_SIZE;
+    seq.setFragmentSize(FRAGMENT_SIZE);
 
     RTPSMessageGroup message_group(nullptr, false);
     RTPSGapBuilder gap_builder(message_group);
@@ -258,26 +276,58 @@ TEST(ReaderProxyTests, process_nack_frag_multiple_fragments_different_windows_te
     // Set the change status to UNSENT.
     rproxy.perform_acknack_response(nullptr);
 
-    std::vector<FragmentNumber_t> undelivered_fragments = {3, 6, 8};
-
-    FragmentNumberSet_t undelivered_fragment_set(undelivered_fragments.front());
-    for (auto fragment : undelivered_fragments)
+    // Handle the first portion of undelivered fragments.
     {
-        undelivered_fragment_set.add(fragment);
-    }
-    rproxy.process_nack_frag({}, 1, seq.sequenceNumber, undelivered_fragment_set);
+        std::vector<FragmentNumber_t> undelivered_fragments = {3, 6, 8};
+        FragmentNumberSet_t undelivered_fragment_set(undelivered_fragments.front());
+        for (auto fragment: undelivered_fragments)
+        {
+            undelivered_fragment_set.add(fragment);
+        }
+        rproxy.process_nack_frag({}, 1, seq.sequenceNumber, undelivered_fragment_set);
 
-    // Check that all undelivered fragments are chosen first for sending.
-    for (auto fragment : undelivered_fragments)
+        // Nack data should be ignored: first, complete the sequential delivering of the remaining fragments.
+        for (auto i = NUMBER_OF_SENT_FRAGMENTS + 1u; i <= TOTAL_NUMBER_OF_FRAGMENTS; ++i)
+        {
+            ASSERT_EQ(mark_next_fragment_sent(rproxy, seq.sequenceNumber, i), i);
+        }
+
+        // Mark the change as sent, i.e. all fragments were sent once.
+        rproxy.from_unsent_to_status(seq.sequenceNumber, UNACKNOWLEDGED, false, true);
+
+        rproxy.process_nack_frag({}, 2, seq.sequenceNumber, undelivered_fragment_set);
+
+        // After the change is marked as delivered, nack data can be processed.
+        for (auto fragment: undelivered_fragments)
+        {
+            ASSERT_EQ(mark_next_fragment_sent(rproxy, seq.sequenceNumber, fragment), fragment);
+        }
+    }
+
+    // All fragments are marked as sent.
+    ASSERT_EQ(mark_next_fragment_sent(rproxy, seq.sequenceNumber,
+            TOTAL_NUMBER_OF_FRAGMENTS + 1u), TOTAL_NUMBER_OF_FRAGMENTS + 1u);
+
+    // Handle undelivered fragments that are from a different window.
     {
-        ASSERT_EQ(mark_next_fragment_sent(rproxy, seq.sequenceNumber, fragment), fragment);
+        std::vector<FragmentNumber_t> undelivered_fragments = {301, 399};
+        FragmentNumberSet_t undelivered_fragment_set(undelivered_fragments.front());
+        for (auto fragment: undelivered_fragments)
+        {
+            undelivered_fragment_set.add(fragment);
+        }
+        rproxy.process_nack_frag({}, 3, seq.sequenceNumber, undelivered_fragment_set);
+
+        // After the change is marked as delivered, nack data can be processed.
+        for (auto fragment: undelivered_fragments)
+        {
+            ASSERT_EQ(mark_next_fragment_sent(rproxy, seq.sequenceNumber, fragment), fragment);
+        }
     }
 
-    // After the last undelivered fragment is sent, fragments for sent go sequentially from the highest sent fragment.
+    // All fragments are marked as sent.
     ASSERT_EQ(mark_next_fragment_sent(rproxy, seq.sequenceNumber,
-            NUMBER_OF_SENT_FRAGMENTS + 1u), NUMBER_OF_SENT_FRAGMENTS + 1u);
-    ASSERT_EQ(mark_next_fragment_sent(rproxy, seq.sequenceNumber,
-            NUMBER_OF_SENT_FRAGMENTS + 2u), NUMBER_OF_SENT_FRAGMENTS + 2u);
+            TOTAL_NUMBER_OF_FRAGMENTS + 1u), TOTAL_NUMBER_OF_FRAGMENTS + 1u);
 }
 
 } // namespace rtps
