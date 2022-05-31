@@ -318,7 +318,7 @@ private:
     GUID_t generate_endpoint_guid() const
     {
         static uint32_t counter = 0;
-        constexpr char* prefix = "49.20.48.61.74.65.20.47.4D.6F.63.6B";
+        const char* prefix = "49.20.48.61.74.65.20.47.4D.6F.63.6B";
 
         GUID_t res;
         std::istringstream is(prefix);
