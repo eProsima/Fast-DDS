@@ -18,6 +18,8 @@
 
 #include <fastdds/topic/TopicProxyFactory.hpp>
 
+#include <algorithm>
+
 #include <fastdds/topic/TopicProxy.hpp>
 
 namespace eprosima {
@@ -26,20 +28,28 @@ namespace dds {
 
 TopicProxy* TopicProxyFactory::create_topic()
 {
-	return nullptr;
+    return nullptr;
 }
 
 ReturnCode_t TopicProxyFactory::delete_topic(
-		TopicProxy* proxy)
+        TopicProxy* proxy)
 {
-	static_cast<void>(proxy);
+    auto it = std::find_if(proxies_.begin(), proxies_.end(), [proxy](const auto& item)
+                    {
+                        return item.get() == proxy;
+                    });
+    if (it != proxies_.end() && !proxy->is_referenced())
+    {
+        proxies_.erase(it);
+        return ReturnCode_t::RETCODE_OK;
+    }
 
-	return ReturnCode_t::RETCODE_UNSUPPORTED;
+    return ReturnCode_t::RETCODE_PRECONDITION_NOT_MET;
 }
 
 bool TopicProxyFactory::can_be_deleted()
 {
-	return proxies_.empty();
+    return proxies_.empty();
 }
 
 }  // namespace dds
