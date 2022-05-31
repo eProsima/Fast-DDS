@@ -39,7 +39,7 @@ ReturnCode_t TopicProxyFactory::delete_topic(
 
 bool TopicProxyFactory::can_be_deleted()
 {
-	return true;
+	return proxies_.empty();
 }
 
 }  // namespace dds
