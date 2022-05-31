@@ -21,13 +21,11 @@
 #define _FASTDDS_TOPICIMPL_HPP_
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 
-// #include <fastdds/dds/topic/TopicListener.hpp>
-#include <fastdds/dds/topic/qos/TopicQos.hpp>
+#include <fastdds/dds/core/status/StatusMask.hpp>
+#include <fastdds/dds/topic/TopicListener.hpp>
 #include <fastdds/dds/topic/TypeSupport.hpp>
-#include <fastdds/topic/TopicDescriptionImpl.hpp>
+#include <fastdds/dds/topic/qos/TopicQos.hpp>
 #include <fastrtps/types/TypesBase.h>
-
-#include <atomic>
 
 using eprosima::fastrtps::types::ReturnCode_t;
 
@@ -75,8 +73,6 @@ public:
             TopicListener* listener);
 
     DomainParticipant* get_participant() const;
-
-    const Topic* get_topic() const;
 
     const TypeSupport& get_type() const;
 
