@@ -1553,6 +1553,144 @@ TEST(DDSStatus, sample_lost_waitset_re_dw_re_persistence_dr)
     std::remove(db_file_name.c_str());
 }
 
+void sample_rejected_test_dw_init(
+        PubSubWriter<HelloWorldPubSubType>& writer)
+{
+    static std::vector<SequenceNumber_t> samples_to_lost_only_one_time;
+    samples_to_lost_only_one_time.clear();
+
+    auto testTransport = std::make_shared<test_UDPv4TransportDescriptor>();
+    testTransport->drop_data_messages_filter_ =
+            [](eprosima::fastrtps::rtps::CDRMessage_t& msg)-> bool
+            {
+                uint32_t old_pos = msg.pos;
+
+                // see RTPS DDS 9.4.5.3 Data Submessage
+                EntityId_t readerID, writerID;
+                SequenceNumber_t sn;
+
+                msg.pos += 2; // flags
+                msg.pos += 2; // octets to inline quos
+                CDRMessage::readEntityId(&msg, &readerID);
+                CDRMessage::readEntityId(&msg, &writerID);
+                CDRMessage::readSequenceNumber(&msg, &sn);
+
+                // restore buffer pos
+                msg.pos = old_pos;
+
+                // generate losses
+                if ((writerID.value[3] & 0xC0) == 0 // only user endpoints
+                        && (sn == SequenceNumber_t{0, 2} ||
+                        sn == SequenceNumber_t(0, 3) ||
+                        sn == SequenceNumber_t(0, 7) ||
+                        sn == SequenceNumber_t(0, 8)))
+                {
+                    if (samples_to_lost_only_one_time.end() ==
+                            std::find(samples_to_lost_only_one_time.begin(), samples_to_lost_only_one_time.end(), sn))
+                    {
+                        samples_to_lost_only_one_time.push_back(sn);
+                        return true;
+                    }
+                }
+
+                return false;
+            };
+
+
+    writer.reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS)
+            .disable_builtin_transport()
+            .add_user_transport_to_pparams(testTransport)
+            .init();
+
+    ASSERT_TRUE(writer.isInitialized());
+
+}
+
+void sample_rejected_test_dr_init(
+        PubSubReader<HelloWorldPubSubType>& reader,
+        std::function<void(const eprosima::fastdds::dds::SampleRejectedStatus& status)> functor)
+{
+    reader.reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS)
+            .sample_rejected_status_functor(functor)
+            .init();
+
+    ASSERT_TRUE(reader.isInitialized());
+}
+
+void sample_rejected_test_init(
+        PubSubReader<HelloWorldPubSubType>& reader,
+        PubSubWriter<HelloWorldPubSubType>& writer,
+        std::function<void(const eprosima::fastdds::dds::SampleRejectedStatus& status)> functor)
+{
+    sample_rejected_test_dw_init(writer);
+    sample_rejected_test_dr_init(reader, functor);
+
+    // Wait for discovery.
+    writer.wait_discovery();
+    reader.wait_discovery();
+}
+
+/*!
+ * \test DDS-STS-SRS-01 Test `SampleRejectedStatus` in a Reliable DataWriter and a Reliable DataReader communication
+ * when reader is configured with `KEEP_ALL_HISTORY_QOS` policy and `max_samples = 2`.
+ */
+TEST(DDSStatus, sample_rejected_re_dw_re_dr_keep_all_max_2)
+{
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+
+    std::mutex test_step_mtx;
+    std::condition_variable test_step_cv;
+    uint8_t test_step = 0;
+
+    writer.history_kind(eprosima::fastdds::dds::KEEP_ALL_HISTORY_QOS);
+    reader.history_kind(eprosima::fastdds::dds::KEEP_ALL_HISTORY_QOS)
+            .resource_limits_max_samples(2);
+
+    sample_rejected_test_init(reader, writer, [&test_step_mtx, &test_step_cv, &test_step](
+                const eprosima::fastdds::dds::SampleRejectedStatus& status)
+            {
+                {
+                    std::cout << "Count = " << status.total_count << std::endl;
+                    std::unique_lock<std::mutex> lock(test_step_mtx);
+                    if (0 == test_step && 3 == status.total_count && 3 == status.total_count_change)
+                    {
+                        ++test_step;
+                    }
+                    else if (1 == test_step && 4 == status.total_count && 1 == status.total_count_change)
+                    {
+                        ++test_step;
+                    }
+                    else if (2 == test_step && 5 == status.total_count && 1 == status.total_count_change)
+                    {
+                        ++test_step;
+                    }
+                    else if (3 == test_step && 7 == status.total_count && 2 == status.total_count_change)
+                    {
+                        ++test_step;
+                    }
+                    else
+                    {
+                        test_step = 0;
+                    }
+                }
+
+                test_step_cv.notify_all();
+            });
+
+
+    auto data = default_helloworld_data_generator(10);
+
+    reader.startReception(data);
+    writer.send(data);
+
+    std::unique_lock<std::mutex> lock(test_step_mtx);
+    test_step_cv.wait(lock, [&test_step]()
+            {
+                return 4 == test_step;
+            });
+}
+
 #ifdef INSTANTIATE_TEST_SUITE_P
 #define GTEST_INSTANTIATE_TEST_MACRO(x, y, z, w) INSTANTIATE_TEST_SUITE_P(x, y, z, w)
 #else

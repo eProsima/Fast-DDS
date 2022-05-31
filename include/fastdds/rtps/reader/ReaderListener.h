@@ -152,6 +152,21 @@ public:
         static_cast<void>(writer_info);
     }
 
+    /**
+     * This method is called when the reader rejects a samples.
+     *
+     * @param reader                         Pointer to the RTPSReader.
+     * @param change Pointer to the CacheChange_t. This is a const pointer to const data
+     * to indicate that the user should not dispose of this data himself.
+     */
+    virtual void on_sample_rejected(
+            RTPSReader* reader,
+            const CacheChange_t* const change)
+    {
+        static_cast<void>(reader);
+        static_cast<void>(change);
+    }
+
 };
 
 } // namespace rtps
