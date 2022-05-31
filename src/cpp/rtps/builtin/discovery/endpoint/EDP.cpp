@@ -75,14 +75,14 @@ EDP::EDP(
     : mp_PDP(p)
     , mp_RTPSParticipant(part)
     , temp_reader_proxies_({
-        part->getRTPSParticipantAttributes().allocation.locators.max_unicast_locators,
-        part->getRTPSParticipantAttributes().allocation.locators.max_multicast_locators,
-        part->getRTPSParticipantAttributes().allocation.data_limits,
-        part->getRTPSParticipantAttributes().allocation.content_filter})
+                part->getRTPSParticipantAttributes().allocation.locators.max_unicast_locators,
+                part->getRTPSParticipantAttributes().allocation.locators.max_multicast_locators,
+                part->getRTPSParticipantAttributes().allocation.data_limits,
+                part->getRTPSParticipantAttributes().allocation.content_filter})
     , temp_writer_proxies_({
-        part->getRTPSParticipantAttributes().allocation.locators.max_unicast_locators,
-        part->getRTPSParticipantAttributes().allocation.locators.max_multicast_locators,
-        part->getRTPSParticipantAttributes().allocation.data_limits})
+                part->getRTPSParticipantAttributes().allocation.locators.max_unicast_locators,
+                part->getRTPSParticipantAttributes().allocation.locators.max_multicast_locators,
+                part->getRTPSParticipantAttributes().allocation.data_limits})
     , reader_status_allocator_(
         reader_map_helper::node_size,
         reader_map_helper::min_pool_size<pool_allocator_t>(

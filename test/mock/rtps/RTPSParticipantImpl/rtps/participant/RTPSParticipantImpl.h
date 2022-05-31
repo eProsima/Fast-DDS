@@ -221,7 +221,7 @@ public:
     {
         // Check the map
         auto it = endpoints_.find(e);
-        if( it != endpoints_.end())
+        if ( it != endpoints_.end())
         {
             delete it->second;
             endpoints_.erase(it);
@@ -313,12 +313,12 @@ private:
 
     RTPSParticipantAttributes attr_;
 
-    std::map<GUID_t, Endpoint *> endpoints_;
+    std::map<GUID_t, Endpoint*> endpoints_;
 
     GUID_t generate_endpoint_guid() const
     {
         static uint32_t counter = 0;
-        constexpr char * prefix = "49.20.48.61.74.65.20.47.4D.6F.63.6B";
+        constexpr char* prefix = "49.20.48.61.74.65.20.47.4D.6F.63.6B";
 
         GUID_t res;
         std::istringstream is(prefix);
@@ -326,6 +326,7 @@ private:
         res.entityId = ++counter;
         return res;
     }
+
 };
 
 } // namespace rtps

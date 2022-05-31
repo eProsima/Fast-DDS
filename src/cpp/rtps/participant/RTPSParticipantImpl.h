@@ -934,7 +934,7 @@ public:
         shared_lock<shared_mutex> may_lock;
         RTPSParticipantImpl* previous_onwer = collections_mutex_owner_;
 
-        if(collections_mutex_owner_ != this)
+        if (collections_mutex_owner_ != this)
         {
             shared_lock<shared_mutex> lock(endpoints_list_mutex);
             may_lock = std::move(lock);
@@ -968,7 +968,7 @@ public:
         shared_lock<shared_mutex> may_lock;
         RTPSParticipantImpl* previous_onwer = collections_mutex_owner_;
 
-        if(collections_mutex_owner_ != this)
+        if (collections_mutex_owner_ != this)
         {
             shared_lock<shared_mutex> lock(endpoints_list_mutex);
             may_lock = std::move(lock);
