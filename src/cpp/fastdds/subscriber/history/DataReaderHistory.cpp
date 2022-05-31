@@ -186,7 +186,8 @@ bool DataReaderHistory::can_change_be_added_nts(
     }
 
     will_never_be_accepted = false;
-    return (m_changes.size() + unknown_missing_changes_up_to < static_cast<size_t>(resource_limited_qos_.max_samples));
+    return (0 == unknown_missing_changes_up_to) ||
+           (m_changes.size() + unknown_missing_changes_up_to < static_cast<size_t>(resource_limited_qos_.max_samples));
 }
 
 bool DataReaderHistory::received_change(
