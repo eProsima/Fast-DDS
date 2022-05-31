@@ -42,15 +42,13 @@ class Topic;
 
 class TopicImpl
 {
-    friend class DomainParticipantImpl;
+public:
 
     TopicImpl(
             DomainParticipantImpl* p,
             TypeSupport type_support,
             const TopicQos& qos,
             TopicListener* listen);
-
-public:
 
     static ReturnCode_t check_qos(
             const TopicQos& qos);
