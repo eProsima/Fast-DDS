@@ -19,6 +19,9 @@
 #ifndef _FASTDDS_TOPICPROXYFACTORY_HPP_
 #define _FASTDDS_TOPICPROXYFACTORY_HPP_
 
+#include <memory>
+#include <list>
+
 #include <fastdds/dds/topic/TopicListener.hpp>
 #include <fastdds/dds/topic/TypeSupport.hpp>
 #include <fastdds/dds/topic/qos/TopicQos.hpp>
@@ -90,6 +93,8 @@ private:
 
     //! Implementation object for the topic managed by the factory.
     TopicImpl topic_impl_;
+    //! List of TopicProxy objects created by this factory.
+    std::list<std::unique_ptr<TopicProxy>> proxies_;
 
 };
 
