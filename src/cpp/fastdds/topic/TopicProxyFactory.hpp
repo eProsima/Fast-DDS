@@ -19,9 +19,11 @@
 #ifndef _FASTDDS_TOPICPROXYFACTORY_HPP_
 #define _FASTDDS_TOPICPROXYFACTORY_HPP_
 
-#include <memory>
 #include <list>
+#include <memory>
+#include <string>
 
+#include <fastdds/dds/core/status/StatusMask.hpp>
 #include <fastdds/dds/topic/TopicListener.hpp>
 #include <fastdds/dds/topic/TypeSupport.hpp>
 #include <fastdds/dds/topic/qos/TopicQos.hpp>
@@ -49,16 +51,22 @@ public:
      * Construct a TopicProxyFactory.
      *
      * @param participant   Pointer to the DomainParticipantImpl creating this object.
+     * @param topic_name    Name of the topic managed by this factory.
+     * @param status_mask   Initial StatusMask of the topic managed by this factory.
      * @param type_support  TypeSupport to use for the topics created by this factory.
      * @param qos           TopicQos to use on the creation of the implementation object.
      * @param listener      TopicListener to use on the creation of the implementation object.
      */
     TopicProxyFactory(
             DomainParticipantImpl* participant,
+            const std::string& topic_name,
+            const StatusMask& status_mask,
             TypeSupport type_support,
             const TopicQos& qos,
             TopicListener* listener)
-        : topic_impl_(participant, type_support, qos, listener)
+        : topic_name_(topic_name)
+        , status_mask_(status_mask)
+        , topic_impl_(participant, type_support, qos, listener)
     {
     }
 
@@ -91,11 +99,14 @@ public:
 
 private:
 
+    //! Name of the topic managed by the factory.
+    std::string topic_name_;
+    //! StatusMask of the topic managed by the factory.
+    StatusMask status_mask_;
     //! Implementation object for the topic managed by the factory.
     TopicImpl topic_impl_;
     //! List of TopicProxy objects created by this factory.
     std::list<std::unique_ptr<TopicProxy>> proxies_;
-
 };
 
 }  // namespace dds
