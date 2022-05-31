@@ -19,6 +19,9 @@
 #ifndef _FASTDDS_TOPICPROXY_HPP_
 #define _FASTDDS_TOPICPROXY_HPP_
 
+#include <memory>
+#include <string>
+
 #include <fastdds/dds/core/status/StatusMask.hpp>
 #include <fastdds/dds/topic/Topic.hpp>
 #include <fastdds/dds/topic/TopicListener.hpp>
@@ -42,9 +45,13 @@ class TopicProxy : public TopicDescriptionImpl
 {
 public:
 
-    explicit TopicProxy(
+    TopicProxy(
+            const std::string& topic_name,
+            const std::string& type_name,
+            const StatusMask& mask,
             TopicImpl* impl) noexcept
         : impl_(impl)
+        , user_topic_(new Topic(topic_name, type_name, this, mask))
     {
     }
 
@@ -88,17 +95,18 @@ public:
 
     Topic* get_topic() const
     {
-        return const_cast<Topic*>(impl_->get_topic());
+        return user_topic_.get();
     }
 
     const std::string& get_rtps_topic_name() const override
     {
-        return get_topic()->get_name();
+        return user_topic_->get_name();
     }
 
 private:
 
     TopicImpl* impl_ = nullptr;
+    std::unique_ptr<Topic> user_topic_;
 };
 
 }  // namespace dds

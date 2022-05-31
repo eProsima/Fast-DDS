@@ -1303,9 +1303,8 @@ Topic* DomainParticipantImpl::create_topic(
 
     //TODO CONSTRUIR LA IMPLEMENTACION DENTRO DEL OBJETO DEL USUARIO.
     TopicImpl* topic_impl = new TopicImpl(this, type_support, qos, listener);
-    TopicProxy* proxy = new TopicProxy(topic_impl);
-    Topic* topic = new Topic(topic_name, type_name, proxy, mask);
-    topic_impl->user_topic_ = topic;
+    TopicProxy* proxy = new TopicProxy(topic_name, type_name, mask, topic_impl);
+    Topic* topic = proxy->get_topic();
     topic->set_instance_handle(topic_handle);
 
     //SAVE THE TOPIC INTO MAPS
