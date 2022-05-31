@@ -59,6 +59,7 @@
 #include <fastdds/topic/ContentFilteredTopicImpl.hpp>
 #include <fastdds/topic/TopicImpl.hpp>
 #include <fastdds/topic/TopicProxy.hpp>
+#include <fastdds/topic/TopicProxyFactory.hpp>
 #include <rtps/RTPSDomainImpl.hpp>
 #include <utils/SystemInfo.hpp>
 
@@ -328,7 +329,7 @@ ReturnCode_t DomainParticipantImpl::enable()
 
             for (auto topic : topics_)
             {
-                topic.second->get_topic()->enable();
+                topic.second->enable_topic();
             }
         }
 
@@ -483,23 +484,29 @@ ReturnCode_t DomainParticipantImpl::delete_topic(
 
     std::lock_guard<std::mutex> lock(mtx_topics_);
     auto it = topics_.find(topic->get_name());
+    auto handle = topic->get_instance_handle();
 
     if (it != topics_.end())
     {
-        assert(topic->get_instance_handle() == it->second->get_topic()->get_instance_handle()
-                && "The topic instance handle does not match the topic implementation instance handle");
-        if (it->second->is_referenced())
+        TopicProxy* proxy = dynamic_cast<TopicProxy*>(topic->get_impl());
+        auto ret_code = it->second->delete_topic(proxy);
+        if (ReturnCode_t::RETCODE_OK == ret_code)
         {
-            return ReturnCode_t::RETCODE_PRECONDITION_NOT_MET;
+            assert(topics_by_handle_.find(handle) != topics_by_handle_.end()
+                    && "The topic instance handle does not match the topic implementation instance handle");
+            topics_by_handle_.erase(handle);
+
+            if (it->second->can_be_deleted())
+            {
+                auto factory = it->second;
+                topics_.erase(it);
+                delete factory;
+            }
         }
-        it->second->set_listener(nullptr);
-        topics_by_handle_.erase(topic->get_instance_handle());
-        delete it->second;
-        topics_.erase(it);
         return ReturnCode_t::RETCODE_OK;
     }
 
-    return ReturnCode_t::RETCODE_ERROR;
+    return ReturnCode_t::RETCODE_PRECONDITION_NOT_MET;
 }
 
 ContentFilteredTopic* DomainParticipantImpl::create_contentfilteredtopic(
@@ -905,12 +912,11 @@ ReturnCode_t DomainParticipantImpl::delete_contained_entities()
     std::lock_guard<std::mutex> lock_topics(mtx_topics_);
 
     filtered_topics_.clear();
+    topics_by_handle_.clear();
 
     auto it_topics = topics_.begin();
     while (it_topics != topics_.end())
     {
-        it_topics->second->set_listener(nullptr);
-        topics_by_handle_.erase(it_topics->second->get_topic()->get_instance_handle());
         delete it_topics->second;
         it_topics = topics_.erase(it_topics);
     }
@@ -1301,15 +1307,14 @@ Topic* DomainParticipantImpl::create_topic(
     InstanceHandle_t topic_handle;
     create_instance_handle(topic_handle);
 
-    //TODO CONSTRUIR LA IMPLEMENTACION DENTRO DEL OBJETO DEL USUARIO.
-    TopicImpl* topic_impl = new TopicImpl(this, type_support, qos, listener);
-    TopicProxy* proxy = new TopicProxy(topic_name, type_name, mask, topic_impl);
+    TopicProxyFactory* factory = new TopicProxyFactory(this, topic_name, mask, type_support, qos, listener);
+    TopicProxy* proxy = factory->create_topic();
     Topic* topic = proxy->get_topic();
     topic->set_instance_handle(topic_handle);
 
     //SAVE THE TOPIC INTO MAPS
     topics_by_handle_[topic_handle] = topic;
-    topics_[topic_name] = proxy;
+    topics_[topic_name] = factory;
 
     // Enable topic if appropriate
     if (enabled && qos_.entity_factory().autoenable_created_entities)
@@ -1349,7 +1354,7 @@ TopicDescription* DomainParticipantImpl::lookup_topicdescription(
     auto it = topics_.find(topic_name);
     if (it != topics_.end())
     {
-        return it->second->get_topic();
+        return it->second->get_topic()->get_topic();
     }
 
     auto filtered_it = filtered_topics_.find(topic_name);

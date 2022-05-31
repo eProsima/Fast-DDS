@@ -37,6 +37,7 @@
 #include <fastrtps/types/TypesBase.h>
 
 #include "fastdds/topic/DDSSQLFilter/DDSFilterFactory.hpp"
+#include <fastdds/topic/TopicProxyFactory.hpp>
 
 using eprosima::fastrtps::types::ReturnCode_t;
 
@@ -480,7 +481,7 @@ protected:
     mutable std::mutex mtx_types_;
 
     //!Topic map
-    std::map<std::string, TopicProxy*> topics_;
+    std::map<std::string, TopicProxyFactory*> topics_;
     std::map<InstanceHandle_t, Topic*> topics_by_handle_;
     std::map<std::string, std::unique_ptr<ContentFilteredTopic>> filtered_topics_;
     std::map<std::string, IContentFilterFactory*> filter_factories_;
