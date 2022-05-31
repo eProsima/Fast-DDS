@@ -49,9 +49,22 @@ ReturnCode_t TopicProxyFactory::delete_topic(
     return ReturnCode_t::RETCODE_PRECONDITION_NOT_MET;
 }
 
+TopicProxy* TopicProxyFactory::get_topic()
+{
+    return proxies_.empty() ? nullptr : proxies_.front().get();
+}
+
 bool TopicProxyFactory::can_be_deleted()
 {
     return proxies_.empty();
+}
+
+void TopicProxyFactory::enable_topic()
+{
+    for (auto& item : proxies_)
+    {
+        item->get_topic()->enable();
+    }
 }
 
 }  // namespace dds

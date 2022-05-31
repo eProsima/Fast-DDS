@@ -90,12 +90,25 @@ public:
             TopicProxy* proxy);
 
     /**
+     * Get one of the TopicProxy objects created by the factory.
+     *
+     * @return nullptr if the factory owns no proxy objects.
+     * @return Pointer to one of the proxies owned by the factory.
+     */
+    TopicProxy* get_topic();
+
+    /**
      * Return whether this factory can be deleted.
      * Will disallow deletion if it still owns some proxy objects.
      *
      * @return true if the factory owns no proxy objects
      */
     bool can_be_deleted();
+
+    /**
+     * Enable the topic managed by the factory.
+     */
+    void enable_topic();
 
 private:
 
