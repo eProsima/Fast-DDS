@@ -40,7 +40,7 @@ class DomainParticipant;
 class TopicListener;
 class Topic;
 
-class TopicImpl : public TopicDescriptionImpl
+class TopicImpl
 {
     friend class DomainParticipantImpl;
 
@@ -82,17 +82,13 @@ public:
 
     const TypeSupport& get_type() const;
 
-    const std::string& get_rtps_topic_name() const override
-    {
-        return user_topic_->get_name();
-    }
-
     /**
      * Returns the most appropriate listener to handle the callback for the given status,
      * or nullptr if there is no appropriate listener.
      */
     TopicListener* get_listener_for(
-            const StatusMask& status);
+            const StatusMask& status,
+            const Topic* topic);
 
 protected:
 
@@ -100,7 +96,6 @@ protected:
     TypeSupport type_support_;
     TopicQos qos_;
     TopicListener* listener_;
-    Topic* user_topic_;
 
 };
 

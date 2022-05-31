@@ -90,7 +90,7 @@ public:
     TopicListener* get_listener_for(
             const StatusMask& status)
     {
-        return impl_->get_listener_for(status);
+        return impl_->get_listener_for(status, user_topic_.get());
     }
 
     Topic* get_topic() const
