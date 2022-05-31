@@ -21,17 +21,20 @@
 
 // Include first possible mocks (depending on include on CMakeLists.txt)
 #include <fastrtps/rtps/attributes/RTPSParticipantAttributes.h>
+#include <fastrtps/rtps/network/NetworkFactory.h>
 #include <fastrtps/rtps/participant/RTPSParticipantListener.h>
-#include <fastrtps/rtps/writer/RTPSWriter.h>
 #include <fastrtps/rtps/reader/RTPSReader.h>
 #include <fastrtps/rtps/resources/ResourceEvent.h>
-#include <fastrtps/rtps/network/NetworkFactory.h>
+#include <fastrtps/rtps/writer/RTPSWriter.h>
 
 #if HAVE_SECURITY
 #include <rtps/security/SecurityManager.h>
 #endif // if HAVE_SECURITY
 
 #include <gmock/gmock.h>
+
+#include <map>
+#include <sstream>
 
 namespace eprosima {
 namespace fastrtps {
@@ -139,6 +142,10 @@ public:
         if (*writer != nullptr)
         {
             (*writer)->history_ = hist;
+
+            auto guid = generate_endpoint_guid();
+            (*writer)->m_guid = guid;
+            endpoints_.emplace(guid, *writer);
         }
         return ret;
     }
@@ -156,6 +163,10 @@ public:
         if (*writer != nullptr)
         {
             (*writer)->history_ = hist;
+
+            auto guid = generate_endpoint_guid();
+            (*writer)->m_guid = guid;
+            endpoints_.emplace(guid, *writer);
         }
         return ret;
     }
@@ -174,6 +185,10 @@ public:
         {
             (*reader)->history_ = hist;
             (*reader)->listener_ = listen;
+
+            auto guid = generate_endpoint_guid();
+            (*reader)->m_guid = guid;
+            endpoints_.emplace(guid, *reader);
         }
         return ret;
     }
@@ -193,13 +208,25 @@ public:
         {
             (*reader)->history_ = hist;
             (*reader)->listener_ = listen;
+
+            auto guid = generate_endpoint_guid();
+            (*reader)->m_guid = guid;
+            endpoints_.emplace(guid, *reader);
         }
         return ret;
     }
 
     bool deleteUserEndpoint(
-            const GUID_t& )
+            const GUID_t& e)
     {
+        // Check the map
+        auto it = endpoints_.find(e);
+        if( it != endpoints_.end())
+        {
+            delete it->second;
+            endpoints_.erase(it);
+        }
+
         return true;
     }
 
@@ -285,6 +312,20 @@ private:
     ResourceEvent events_;
 
     RTPSParticipantAttributes attr_;
+
+    std::map<GUID_t, Endpoint *> endpoints_;
+
+    GUID_t generate_endpoint_guid() const
+    {
+        static uint32_t counter = 0;
+        constexpr char * prefix = "49.20.48.61.74.65.20.47.4D.6F.63.6B";
+
+        GUID_t res;
+        std::istringstream is(prefix);
+        is >> res.guidPrefix;
+        res.entityId = ++counter;
+        return res;
+    }
 };
 
 } // namespace rtps
