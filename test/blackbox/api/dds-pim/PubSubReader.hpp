@@ -300,6 +300,10 @@ public:
         , last_incompatible_qos_(eprosima::fastdds::dds::INVALID_QOS_POLICY_ID)
         , message_receive_count_(0)
     {
+        // Load default QoS to permit testing with external XML profile files.
+        DomainParticipantFactory::get_instance()->load_profiles();
+        participant_qos_ = DomainParticipantFactory::get_instance()->get_default_participant_qos();
+
         // Generate topic name
         if (!statistics)
         {

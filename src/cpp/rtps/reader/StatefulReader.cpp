@@ -703,6 +703,7 @@ bool StatefulReader::processDataFragMsg(
                 {
                     mp_history->remove_change(work_change);
                 }
+
                 NotifyChanges(pWP);
             }
         }
@@ -879,23 +880,45 @@ bool StatefulReader::change_removed_by_history(
 {
     std::lock_guard<RecursiveTimedMutex> guard(mp_mutex);
 
-    if (is_alive_ && a_change->is_fully_assembled())
+    if (is_alive_)
     {
-        if (wp != nullptr || matched_writer_lookup(a_change->writerGUID, &wp))
+        if (a_change->is_fully_assembled())
         {
-            wp->change_removed_from_history(a_change->sequenceNumber);
-        }
-
-        if (!a_change->isRead &&
-                get_last_notified(a_change->writerGUID) >= a_change->sequenceNumber)
-        {
-            if (0 < total_unread_)
+            if (wp != nullptr || matched_writer_lookup(a_change->writerGUID, &wp))
             {
-                --total_unread_;
+                wp->change_removed_from_history(a_change->sequenceNumber);
+            }
+
+            if (!a_change->isRead &&
+                    get_last_notified(a_change->writerGUID) >= a_change->sequenceNumber)
+            {
+                if (0 < total_unread_)
+                {
+                    --total_unread_;
+                }
+
+            }
+            return true;
+        }
+        else
+        {
+            /* A not fully assembled fragmented sample may be removed due to being received a newer sample and KEEP_LAST
+             * policy. In this case WriterProxy should consider it as irrelevant for avoiding enter in a loop asking for
+             * it.
+             */
+            WriterProxy* proxy = wp;
+
+            if (nullptr == proxy)
+            {
+                if (!findWriterProxy(a_change->writerGUID, &proxy))
+                {
+                    return false;
+                }
+
+                proxy->irrelevant_change_set(a_change->sequenceNumber);
             }
 
         }
-        return true;
     }
 
     //Simulate a datasharing notification to process any pending payloads that were waiting due to full history
@@ -978,6 +1001,16 @@ bool StatefulReader::change_received(
         {
             ret = prox->received_change_set(a_change->sequenceNumber);
         }
+        else
+        {
+            /* Search if the first fragment was stored, because maybe it was discarded due to is older and KEEP_LAST
+             * policy. In this case this samples should be set as irrelevant.
+             */
+            if (mp_history->changesEnd() == mp_history->find_change(a_change))
+            {
+                ret = prox->irrelevant_change_set(a_change->sequenceNumber);
+            }
+        }
 
         // WARNING! This method could destroy a_change
         NotifyChanges(prox);
@@ -997,6 +1030,7 @@ void StatefulReader::NotifyChanges(
     GUID_t proxGUID = prox->guid();
     update_last_notified(proxGUID, prox->available_changes_max());
     SequenceNumber_t nextChangeToNotify = prox->next_cache_change_to_be_notified();
+
     while (nextChangeToNotify != SequenceNumber_t::unknown())
     {
         CacheChange_t* ch_to_give = nullptr;

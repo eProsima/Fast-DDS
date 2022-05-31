@@ -460,7 +460,6 @@ protected:
     bool is_datasharing_compatible_with(
             const WriterProxyData& wdata);
 
-
     //!ReaderHistory
     ReaderHistory* mp_history;
     //!Listener
