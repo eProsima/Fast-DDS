@@ -19,8 +19,12 @@
 #ifndef _FASTDDS_TOPICPROXYFACTORY_HPP_
 #define _FASTDDS_TOPICPROXYFACTORY_HPP_
 
+#include <fastdds/dds/topic/TopicListener.hpp>
+#include <fastdds/dds/topic/TypeSupport.hpp>
+#include <fastdds/dds/topic/qos/TopicQos.hpp>
 #include <fastrtps/types/TypesBase.h>
 
+#include <fastdds/topic/TopicImpl.hpp>
 #include <fastdds/topic/TopicProxy.hpp>
 
 using eprosima::fastrtps::types::ReturnCode_t;
@@ -29,12 +33,31 @@ namespace eprosima {
 namespace fastdds {
 namespace dds {
 
+class DomainParticipantImpl;
+
 /**
  * A factory of TopicProxy objects for a specific topic.
  */
 class TopicProxyFactory
 {
 public:
+
+    /**
+     * Construct a TopicProxyFactory.
+     *
+     * @param participant   Pointer to the DomainParticipantImpl creating this object.
+     * @param type_support  TypeSupport to use for the topics created by this factory.
+     * @param qos           TopicQos to use on the creation of the implementation object.
+     * @param listener      TopicListener to use on the creation of the implementation object.
+     */
+    TopicProxyFactory(
+            DomainParticipantImpl* participant,
+            TypeSupport type_support,
+            const TopicQos& qos,
+            TopicListener* listener)
+        : topic_impl_(participant, type_support, qos, listener)
+    {
+    }
 
     /**
      * Create a new proxy object for the topic managed by the factory.
@@ -62,6 +85,11 @@ public:
      * @return true if the factory owns no proxy objects
      */
     bool can_be_deleted();
+
+private:
+
+    //! Implementation object for the topic managed by the factory.
+    TopicImpl topic_impl_;
 
 };
 
