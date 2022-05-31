@@ -898,7 +898,6 @@ bool StatefulReader::change_removed_by_history(
                 }
 
             }
-            return true;
         }
         else
         {
@@ -919,6 +918,8 @@ bool StatefulReader::change_removed_by_history(
             }
 
         }
+
+        return true;
     }
 
     //Simulate a datasharing notification to process any pending payloads that were waiting due to full history
@@ -1008,7 +1009,8 @@ bool StatefulReader::change_received(
              */
             if (mp_history->changesEnd() == mp_history->find_change(a_change))
             {
-                ret = prox->irrelevant_change_set(a_change->sequenceNumber);
+                prox->irrelevant_change_set(a_change->sequenceNumber);
+                ret = false;
             }
         }
 
