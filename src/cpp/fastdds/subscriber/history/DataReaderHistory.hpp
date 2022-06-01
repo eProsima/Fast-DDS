@@ -214,6 +214,9 @@ public:
     void check_and_remove_instance(
             instance_info& instance_info);
 
+    /// Function to compute the instance handle of a received change
+    std::function<bool(CacheChange_t*)> compute_key_for_change_fn;
+
 private:
 
     using InstanceCollection = std::map<InstanceHandle_t, DataReaderInstance>;
@@ -242,8 +245,6 @@ private:
 
     /// Function processing a received change
     std::function<bool(CacheChange_t*, size_t)> receive_fn_;
-    /// Function to compute the instance handle of a received change
-    std::function<bool(CacheChange_t*)> compute_key_for_change_fn_;
     /// Function processing a completed fragmented change
     std::function<bool(CacheChange_t*, DataReaderInstance&)> complete_fn_;
 

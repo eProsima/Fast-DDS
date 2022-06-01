@@ -126,7 +126,7 @@ DataReaderHistory::DataReaderHistory(
 
     if (!has_keys_)
     {
-        compute_key_for_change_fn_ = [](CacheChange_t* change)
+        compute_key_for_change_fn = [](CacheChange_t* change)
                 {
                     change->instanceHandle = c_InstanceHandle_Unknown;
                     return true;
@@ -134,7 +134,7 @@ DataReaderHistory::DataReaderHistory(
     }
     else
     {
-        compute_key_for_change_fn_ =
+        compute_key_for_change_fn =
                 [this](CacheChange_t* a_change)
                 {
                     if (a_change->instanceHandle.isDefined())
@@ -208,7 +208,7 @@ bool DataReaderHistory::received_change_keep_all(
         CacheChange_t* a_change,
         size_t unknown_missing_changes_up_to)
 {
-    if (!compute_key_for_change_fn_(a_change))
+    if (!compute_key_for_change_fn(a_change))
     {
         // Store the sample temporally only in ReaderHistory. When completed it will be stored in SubscriberHistory too.
         return add_to_reader_history_if_not_full(a_change);
@@ -234,7 +234,7 @@ bool DataReaderHistory::received_change_keep_last(
         CacheChange_t* a_change,
         size_t /* unknown_missing_changes_up_to */)
 {
-    if (!compute_key_for_change_fn_(a_change))
+    if (!compute_key_for_change_fn(a_change))
     {
         // Store the sample temporally only in ReaderHistory. When completed it will be stored in SubscriberHistory too.
         return add_to_reader_history_if_not_full(a_change);
@@ -614,7 +614,7 @@ bool DataReaderHistory::completed_change(
     if (!change->instanceHandle.isDefined())
     {
         InstanceCollection::iterator vit;
-        ret_value = compute_key_for_change_fn_(change) && find_key(change->instanceHandle, vit);
+        ret_value = compute_key_for_change_fn(change) && find_key(change->instanceHandle, vit);
         if (ret_value)
         {
             ret_value = !change->instanceHandle.isDefined() || complete_fn_(change, vit->second);

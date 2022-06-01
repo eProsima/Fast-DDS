@@ -449,27 +449,26 @@ size_t WriterProxy::unknown_missing_changes_up_to(
     if (seq_num > changes_from_writer_low_mark_)
     {
         SequenceNumber_t first_missing = changes_from_writer_low_mark_ + 1;
-        SequenceNumber_t max_missing = std::min(seq_num, max_sequence_number_ + 1);
         SequenceNumberSet_t sns(first_missing);
         SequenceNumberDiff d_fun;
 
         for (SequenceNumber_t seq : changes_received_)
         {
-            seq = std::min(seq, max_missing);
+            seq = std::min(seq, seq_num);
             if (first_missing < seq)
             {
                 returnedValue += d_fun(seq, first_missing);
             }
             first_missing = seq + 1;
-            if (first_missing >= max_missing)
+            if (first_missing >= seq_num)
             {
                 break;
             }
         }
 
-        if (first_missing < max_missing)
+        if (first_missing < seq_num)
         {
-            returnedValue += d_fun(max_missing, first_missing);
+            returnedValue += d_fun(seq_num, first_missing);
         }
     }
 

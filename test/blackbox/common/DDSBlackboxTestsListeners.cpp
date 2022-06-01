@@ -1553,8 +1553,9 @@ TEST(DDSStatus, sample_lost_waitset_re_dw_re_persistence_dr)
     std::remove(db_file_name.c_str());
 }
 
+template<typename T>
 void sample_rejected_test_dw_init(
-        PubSubWriter<HelloWorldPubSubType>& writer)
+        PubSubWriter<T>& writer)
 {
     static std::vector<SequenceNumber_t> samples_to_lost_only_one_time;
     samples_to_lost_only_one_time.clear();
@@ -1595,19 +1596,21 @@ void sample_rejected_test_dw_init(
 
                 return false;
             };
-
+    testTransport->drop_data_frag_messages_filter_ = testTransport->drop_data_messages_filter_;
 
     writer.reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS)
             .disable_builtin_transport()
             .add_user_transport_to_pparams(testTransport)
+            .disable_heartbeat_piggyback(true)
             .init();
 
     ASSERT_TRUE(writer.isInitialized());
 
 }
 
+template<typename T>
 void sample_rejected_test_dr_init(
-        PubSubReader<HelloWorldPubSubType>& reader,
+        PubSubReader<T>& reader,
         std::function<void(const eprosima::fastdds::dds::SampleRejectedStatus& status)> functor)
 {
     reader.reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS)
@@ -1617,9 +1620,10 @@ void sample_rejected_test_dr_init(
     ASSERT_TRUE(reader.isInitialized());
 }
 
+template<typename T>
 void sample_rejected_test_init(
-        PubSubReader<HelloWorldPubSubType>& reader,
-        PubSubWriter<HelloWorldPubSubType>& writer,
+        PubSubReader<T>& reader,
+        PubSubWriter<T>& writer,
         std::function<void(const eprosima::fastdds::dds::SampleRejectedStatus& status)> functor)
 {
     sample_rejected_test_dw_init(writer);
@@ -1631,51 +1635,33 @@ void sample_rejected_test_init(
 }
 
 /*!
- * \test DDS-STS-SRS-01 Test `SampleRejectedStatus` in a Reliable DataWriter and a Reliable DataReader communication
- * when reader is configured with `KEEP_ALL_HISTORY_QOS` policy and `max_samples = 2`.
+ * \test DDS-STS-SRS-01 Test `SampleRejectedStatus` in a Reliable Non-keyed DataWriter and
+ * a Reliable Non-keyed DataReader communication when reader is configured with `KEEP_ALL_HISTORY_QOS` policy and
+ * `max_samples = 2`.
  */
-TEST(DDSStatus, sample_rejected_re_dw_re_dr_keep_all_max_2)
+TEST(DDSStatus, sample_rejected_nokey_re_dw_re_dr_keep_all_max_2)
 {
     PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
     PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
 
-    std::mutex test_step_mtx;
-    std::condition_variable test_step_cv;
-    uint8_t test_step = 0;
+    std::mutex test_mtx;
+    eprosima::fastdds::dds::SampleRejectedStatus test_status;
 
     writer.history_kind(eprosima::fastdds::dds::KEEP_ALL_HISTORY_QOS);
     reader.history_kind(eprosima::fastdds::dds::KEEP_ALL_HISTORY_QOS)
             .resource_limits_max_samples(2);
 
-    sample_rejected_test_init(reader, writer, [&test_step_mtx, &test_step_cv, &test_step](
+    sample_rejected_test_init(reader, writer, [&test_mtx, &test_status](
                 const eprosima::fastdds::dds::SampleRejectedStatus& status)
             {
+                std::unique_lock<std::mutex> lock(test_mtx);
+                test_status.total_count = status.total_count;
+                test_status.total_count_change += status.total_count_change;
+                if (eprosima::fastdds::dds::REJECTED_BY_SAMPLES_LIMIT == status.last_reason)
                 {
-                    std::cout << "Count = " << status.total_count << std::endl;
-                    std::unique_lock<std::mutex> lock(test_step_mtx);
-                    if (0 == test_step && 3 == status.total_count && 3 == status.total_count_change)
-                    {
-                        ++test_step;
-                    }
-                    else if (1 == test_step && 4 == status.total_count && 1 == status.total_count_change)
-                    {
-                        ++test_step;
-                    }
-                    else if (2 == test_step && 5 == status.total_count && 1 == status.total_count_change)
-                    {
-                        ++test_step;
-                    }
-                    else if (3 == test_step && 7 == status.total_count && 2 == status.total_count_change)
-                    {
-                        ++test_step;
-                    }
-                    else
-                    {
-                        test_step = 0;
-                    }
+                    test_status.last_reason = status.last_reason;
                 }
-
-                test_step_cv.notify_all();
+                test_status.last_instance_handle = status.last_instance_handle;
             });
 
 
@@ -1684,11 +1670,400 @@ TEST(DDSStatus, sample_rejected_re_dw_re_dr_keep_all_max_2)
     reader.startReception(data);
     writer.send(data);
 
-    std::unique_lock<std::mutex> lock(test_step_mtx);
-    test_step_cv.wait(lock, [&test_step]()
+    reader.block_for_all();
+
+    std::unique_lock<std::mutex> lock(test_mtx);
+    ASSERT_EQ(5, test_status.total_count);
+    ASSERT_EQ(5, test_status.total_count_change);
+    ASSERT_EQ(eprosima::fastdds::dds::REJECTED_BY_SAMPLES_LIMIT, test_status.last_reason);
+    ASSERT_EQ(c_InstanceHandle_Unknown, test_status.last_instance_handle);
+}
+
+/*!
+ * \test DDS-STS-SRS-02 Test `SampleRejectedStatus` in a Reliable Keyed DataWriter and
+ * a Reliable Keyed DataReader communication when reader is configured with `KEEP_ALL_HISTORY_QOS` policy and
+ * `max_samples = 2`.
+ */
+TEST(DDSStatus, sample_rejected_key_re_dw_re_dr_keep_all_max_2)
+{
+    PubSubReader<KeyedHelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<KeyedHelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+
+    std::mutex test_mtx;
+    eprosima::fastdds::dds::SampleRejectedStatus test_status;
+
+    writer.history_kind(eprosima::fastdds::dds::KEEP_ALL_HISTORY_QOS);
+    reader.history_kind(eprosima::fastdds::dds::KEEP_ALL_HISTORY_QOS)
+            .resource_limits_max_samples(2);
+
+    sample_rejected_test_dw_init(writer);
+
+    auto data = default_keyedhelloworld_data_generator(10);
+    auto instance_1 = writer.register_instance(*data.begin());
+    auto instance_2 = writer.register_instance(*std::next(data.begin()));
+
+    sample_rejected_test_dr_init(reader, [&test_mtx, &test_status, instance_1, instance_2](
+                const eprosima::fastdds::dds::SampleRejectedStatus& status)
             {
-                return 4 == test_step;
+                std::unique_lock<std::mutex> lock(test_mtx);
+                if ((1 == status.total_count && instance_2 == status.last_instance_handle) ||
+                (2 == status.total_count && instance_1 == status.last_instance_handle) ||
+                (3 == status.total_count && instance_2 == status.last_instance_handle) ||
+                (4 == status.total_count && instance_1 == status.last_instance_handle) ||
+                (5 == status.total_count && instance_2 == status.last_instance_handle))
+                {
+                    test_status.total_count = status.total_count;
+                    test_status.total_count_change += status.total_count_change;
+                    test_status.last_instance_handle = status.last_instance_handle;
+                    if (eprosima::fastdds::dds::REJECTED_BY_SAMPLES_LIMIT == status.last_reason)
+                    {
+                        test_status.last_reason = status.last_reason;
+                    }
+                    test_status.last_instance_handle = status.last_instance_handle;
+                }
             });
+
+    // Wait for discovery.
+    writer.wait_discovery();
+    reader.wait_discovery();
+
+    reader.startReception(data);
+    writer.send(data);
+
+    reader.block_for_all();
+
+    std::unique_lock<std::mutex> lock(test_mtx);
+    ASSERT_EQ(5, test_status.total_count);
+    ASSERT_EQ(5, test_status.total_count_change);
+    ASSERT_EQ(eprosima::fastdds::dds::REJECTED_BY_SAMPLES_LIMIT, test_status.last_reason);
+    ASSERT_EQ(instance_2, test_status.last_instance_handle);
+}
+
+/*!
+ * \test DDS-STS-SRS-03 Test `SampleRejectedStatus` in a Reliable Non-keyed DataWriter and
+ * a Reliable Non-keyed DataReader communication using a large type when reader is configured with
+ * `KEEP_ALL_HISTORY_QOS` policy and `max_samples = 2`.
+ */
+TEST(DDSStatus, sample_rejected_nokey_large_re_dw_re_dr_keep_all_max_2)
+{
+    PubSubReader<Data1mbPubSubType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<Data1mbPubSubType> writer(TEST_TOPIC_NAME);
+
+    std::mutex test_mtx;
+    eprosima::fastdds::dds::SampleRejectedStatus test_status;
+
+    writer.history_kind(eprosima::fastdds::dds::KEEP_ALL_HISTORY_QOS)
+            .asynchronously(eprosima::fastrtps::PublishModeQosPolicyKind::ASYNCHRONOUS_PUBLISH_MODE)
+            .add_throughput_controller_descriptor_to_pparams( // Avoid losing more frangments
+        eprosima::fastdds::rtps::FlowControllerSchedulerPolicy::FIFO, 310000, 50);
+    reader.history_kind(eprosima::fastdds::dds::KEEP_ALL_HISTORY_QOS)
+            .resource_limits_max_samples(2);
+
+    sample_rejected_test_init(reader, writer, [&test_mtx, &test_status](
+                const eprosima::fastdds::dds::SampleRejectedStatus& status)
+            {
+                std::unique_lock<std::mutex> lock(test_mtx);
+                test_status.total_count = status.total_count;
+                test_status.total_count_change += status.total_count_change;
+                if (eprosima::fastdds::dds::REJECTED_BY_SAMPLES_LIMIT == status.last_reason)
+                {
+                    test_status.last_reason = status.last_reason;
+                }
+                test_status.last_instance_handle = status.last_instance_handle;
+            });
+
+
+    auto data = default_data300kb_data_generator(10);
+
+    reader.startReception(data);
+    writer.send(data, 50);
+
+    reader.block_for_all();
+
+    std::unique_lock<std::mutex> lock(test_mtx);
+    ASSERT_EQ(5, test_status.total_count);
+    ASSERT_EQ(5, test_status.total_count_change);
+    ASSERT_EQ(eprosima::fastdds::dds::REJECTED_BY_SAMPLES_LIMIT, test_status.last_reason);
+    ASSERT_EQ(c_InstanceHandle_Unknown, test_status.last_instance_handle);
+}
+
+/*!
+ * \test DDS-STS-SRS-04 Test `SampleRejectedStatus` in a Reliable Keyed DataWriter and
+ * a Reliable Keyed DataReader communication using a large type when reader is configured with `KEEP_ALL_HISTORY_QOS`
+ * policy and `max_samples = 2`.
+ */
+TEST(DDSStatus, sample_rejected_key_large_re_dw_re_dr_keep_all_max_2)
+{
+    PubSubReader<KeyedData1mbPubSubType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<KeyedData1mbPubSubType> writer(TEST_TOPIC_NAME);
+
+    std::mutex test_mtx;
+    eprosima::fastdds::dds::SampleRejectedStatus test_status;
+
+    writer.history_kind(eprosima::fastdds::dds::KEEP_ALL_HISTORY_QOS)
+            .asynchronously(eprosima::fastrtps::PublishModeQosPolicyKind::ASYNCHRONOUS_PUBLISH_MODE)
+            .add_throughput_controller_descriptor_to_pparams( // Avoid losing more frangments
+        eprosima::fastdds::rtps::FlowControllerSchedulerPolicy::FIFO, 310000, 50);
+    reader.history_kind(eprosima::fastdds::dds::KEEP_ALL_HISTORY_QOS)
+            .resource_limits_max_samples(2);
+
+    sample_rejected_test_dw_init(writer);
+
+    auto data = default_keyeddata300kb_data_generator(10);
+    auto instance_1 = writer.register_instance(*data.begin());
+    auto instance_2 = writer.register_instance(*std::next(data.begin()));
+
+    sample_rejected_test_dr_init(reader, [&test_mtx, &test_status, instance_1, instance_2](
+                const eprosima::fastdds::dds::SampleRejectedStatus& status)
+            {
+                std::unique_lock<std::mutex> lock(test_mtx);
+                if ((1 == status.total_count && instance_2 == status.last_instance_handle) ||
+                (2 == status.total_count && instance_1 == status.last_instance_handle) ||
+                (3 == status.total_count && instance_2 == status.last_instance_handle) ||
+                (4 == status.total_count && instance_1 == status.last_instance_handle) ||
+                (5 == status.total_count && instance_2 == status.last_instance_handle))
+                {
+                    test_status.total_count = status.total_count;
+                    test_status.total_count_change += status.total_count_change;
+                    test_status.last_instance_handle = status.last_instance_handle;
+                    if (eprosima::fastdds::dds::REJECTED_BY_SAMPLES_LIMIT == status.last_reason)
+                    {
+                        test_status.last_reason = status.last_reason;
+                    }
+                    test_status.last_instance_handle = status.last_instance_handle;
+                }
+            });
+
+    // Wait for discovery.
+    writer.wait_discovery();
+    reader.wait_discovery();
+
+    reader.startReception(data);
+    writer.send(data, 50);
+
+    reader.block_for_all();
+
+    std::unique_lock<std::mutex> lock(test_mtx);
+    ASSERT_EQ(5, test_status.total_count);
+    ASSERT_EQ(5, test_status.total_count_change);
+    ASSERT_EQ(eprosima::fastdds::dds::REJECTED_BY_SAMPLES_LIMIT, test_status.last_reason);
+    ASSERT_EQ(instance_2, test_status.last_instance_handle);
+}
+
+/*!
+ * \test DDS-STS-SRS-05 Test `SampleRejectedStatus` in a Reliable Non-keyed DataWriter and
+ * a Reliable Non-keyed DataReader communication when reader is configured with `KEEP_LAST_HISTORY_QOS` policy and
+ * `max_samples = 2`.
+ */
+TEST(DDSStatus, sample_rejected_nokey_re_dw_re_dr_keep_last_max_2)
+{
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+
+    std::mutex test_mtx;
+    eprosima::fastdds::dds::SampleRejectedStatus test_status;
+
+    writer.history_kind(eprosima::fastdds::dds::KEEP_ALL_HISTORY_QOS);
+    reader.history_kind(eprosima::fastdds::dds::KEEP_LAST_HISTORY_QOS)
+            .resource_limits_max_samples(2);
+
+    sample_rejected_test_init(reader, writer, [&test_mtx, &test_status](
+                const eprosima::fastdds::dds::SampleRejectedStatus& status)
+            {
+                std::unique_lock<std::mutex> lock(test_mtx);
+                test_status.total_count = status.total_count;
+                test_status.total_count_change += status.total_count_change;
+                if (eprosima::fastdds::dds::REJECTED_BY_SAMPLES_LIMIT == status.last_reason)
+                {
+                    test_status.last_reason = status.last_reason;
+                }
+                test_status.last_instance_handle = status.last_instance_handle;
+            });
+
+
+    auto data = default_helloworld_data_generator(10);
+
+    reader.startReception(data);
+    writer.send(data);
+
+    reader.block_for_seq({0, 10});
+
+    std::unique_lock<std::mutex> lock(test_mtx);
+    ASSERT_EQ(5, test_status.total_count);
+    ASSERT_EQ(5, test_status.total_count_change);
+    ASSERT_EQ(eprosima::fastdds::dds::REJECTED_BY_SAMPLES_LIMIT, test_status.last_reason);
+    ASSERT_EQ(c_InstanceHandle_Unknown, test_status.last_instance_handle);
+}
+
+/*!
+ * \test DDS-STS-SRS-06 Test `SampleRejectedStatus` in a Reliable Keyed DataWriter and
+ * a Reliable Keyed DataReader communication when reader is configured with `KEEP_LAST_HISTORY_QOS` policy and
+ * `max_samples = 2`.
+ */
+TEST(DDSStatus, sample_rejected_key_re_dw_re_dr_keep_last_max_2)
+{
+    PubSubReader<KeyedHelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<KeyedHelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+
+    std::mutex test_mtx;
+    eprosima::fastdds::dds::SampleRejectedStatus test_status;
+
+    writer.history_kind(eprosima::fastdds::dds::KEEP_ALL_HISTORY_QOS);
+    reader.history_kind(eprosima::fastdds::dds::KEEP_LAST_HISTORY_QOS)
+            .resource_limits_max_samples(2);
+
+    sample_rejected_test_dw_init(writer);
+
+    auto data = default_keyedhelloworld_data_generator(10);
+    auto instance_1 = writer.register_instance(*data.begin());
+    auto instance_2 = writer.register_instance(*std::next(data.begin()));
+
+    sample_rejected_test_dr_init(reader, [&test_mtx, &test_status, instance_1, instance_2](
+                const eprosima::fastdds::dds::SampleRejectedStatus& status)
+            {
+                std::unique_lock<std::mutex> lock(test_mtx);
+                if ((1 == status.total_count && instance_2 == status.last_instance_handle) ||
+                (2 == status.total_count && instance_1 == status.last_instance_handle) ||
+                (3 == status.total_count && instance_2 == status.last_instance_handle) ||
+                (4 == status.total_count && instance_1 == status.last_instance_handle) ||
+                (5 == status.total_count && instance_2 == status.last_instance_handle))
+                {
+                    test_status.total_count = status.total_count;
+                    test_status.total_count_change += status.total_count_change;
+                    test_status.last_instance_handle = status.last_instance_handle;
+                    if (eprosima::fastdds::dds::REJECTED_BY_SAMPLES_LIMIT == status.last_reason)
+                    {
+                        test_status.last_reason = status.last_reason;
+                    }
+                    test_status.last_instance_handle = status.last_instance_handle;
+                }
+            });
+
+    // Wait for discovery.
+    writer.wait_discovery();
+    reader.wait_discovery();
+
+    reader.startReception(data);
+    writer.send(data);
+
+    reader.block_for_seq({0, 10});
+
+    std::unique_lock<std::mutex> lock(test_mtx);
+    ASSERT_EQ(5, test_status.total_count);
+    ASSERT_EQ(5, test_status.total_count_change);
+    ASSERT_EQ(eprosima::fastdds::dds::REJECTED_BY_SAMPLES_LIMIT, test_status.last_reason);
+    ASSERT_EQ(instance_2, test_status.last_instance_handle);
+}
+
+/*!
+ * \test DDS-STS-SRS-07 Test `SampleRejectedStatus` in a Reliable Non-keyed DataWriter and
+ * a Reliable Non-keyed DataReader communication using a large type when reader is configured with
+ * `KEEP_LAST_HISTORY_QOS` policy and `max_samples = 2`.
+ */
+TEST(DDSStatus, sample_rejected_nokey_large_re_dw_re_dr_keep_last_max_2)
+{
+    PubSubReader<Data1mbPubSubType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<Data1mbPubSubType> writer(TEST_TOPIC_NAME);
+
+    std::mutex test_mtx;
+    eprosima::fastdds::dds::SampleRejectedStatus test_status;
+
+    writer.history_kind(eprosima::fastdds::dds::KEEP_ALL_HISTORY_QOS)
+            .asynchronously(eprosima::fastrtps::PublishModeQosPolicyKind::ASYNCHRONOUS_PUBLISH_MODE)
+            .add_throughput_controller_descriptor_to_pparams( // Avoid losing more frangments
+        eprosima::fastdds::rtps::FlowControllerSchedulerPolicy::FIFO, 310000, 50);
+    reader.history_kind(eprosima::fastdds::dds::KEEP_LAST_HISTORY_QOS)
+            .resource_limits_max_samples(2);
+
+    sample_rejected_test_init(reader, writer, [&test_mtx, &test_status](
+                const eprosima::fastdds::dds::SampleRejectedStatus& status)
+            {
+                std::unique_lock<std::mutex> lock(test_mtx);
+                test_status.total_count = status.total_count;
+                test_status.total_count_change += status.total_count_change;
+                if (eprosima::fastdds::dds::REJECTED_BY_SAMPLES_LIMIT == status.last_reason)
+                {
+                    test_status.last_reason = status.last_reason;
+                }
+                test_status.last_instance_handle = status.last_instance_handle;
+            });
+
+
+    auto data = default_data300kb_data_generator(10);
+
+    reader.startReception(data);
+    writer.send(data, 50);
+
+    reader.block_for_seq({0, 10});
+
+    std::unique_lock<std::mutex> lock(test_mtx);
+    ASSERT_EQ(5, test_status.total_count);
+    ASSERT_EQ(5, test_status.total_count_change);
+    ASSERT_EQ(eprosima::fastdds::dds::REJECTED_BY_SAMPLES_LIMIT, test_status.last_reason);
+    ASSERT_EQ(c_InstanceHandle_Unknown, test_status.last_instance_handle);
+}
+
+/*!
+ * \test DDS-STS-SRS-08 Test `SampleRejectedStatus` in a Reliable Keyed DataWriter and
+ * a Reliable Keyed DataReader communication using a large type when reader is configured with `KEEP_LAST_HISTORY_QOS`
+ * policy and `max_samples = 2`.
+ */
+TEST(DDSStatus, sample_rejected_key_large_re_dw_re_dr_keep_last_max_2)
+{
+    PubSubReader<KeyedData1mbPubSubType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<KeyedData1mbPubSubType> writer(TEST_TOPIC_NAME);
+
+    std::mutex test_mtx;
+    eprosima::fastdds::dds::SampleRejectedStatus test_status;
+
+    writer.history_kind(eprosima::fastdds::dds::KEEP_ALL_HISTORY_QOS)
+            .asynchronously(eprosima::fastrtps::PublishModeQosPolicyKind::ASYNCHRONOUS_PUBLISH_MODE)
+            .add_throughput_controller_descriptor_to_pparams( // Avoid losing more frangments
+        eprosima::fastdds::rtps::FlowControllerSchedulerPolicy::FIFO, 310000, 50);
+    reader.history_kind(eprosima::fastdds::dds::KEEP_LAST_HISTORY_QOS)
+            .resource_limits_max_samples(2);
+
+    sample_rejected_test_dw_init(writer);
+
+    auto data = default_keyeddata300kb_data_generator(10);
+    auto instance_1 = writer.register_instance(*data.begin());
+    auto instance_2 = writer.register_instance(*std::next(data.begin()));
+
+    sample_rejected_test_dr_init(reader, [&test_mtx, &test_status, instance_1, instance_2](
+                const eprosima::fastdds::dds::SampleRejectedStatus& status)
+            {
+                std::unique_lock<std::mutex> lock(test_mtx);
+                if ((1 == status.total_count && instance_2 == status.last_instance_handle) ||
+                (2 == status.total_count && instance_1 == status.last_instance_handle) ||
+                (3 == status.total_count && instance_2 == status.last_instance_handle) ||
+                (4 == status.total_count && instance_1 == status.last_instance_handle) ||
+                (5 == status.total_count && instance_2 == status.last_instance_handle))
+                {
+                    test_status.total_count = status.total_count;
+                    test_status.total_count_change += status.total_count_change;
+                    test_status.last_instance_handle = status.last_instance_handle;
+                    if (eprosima::fastdds::dds::REJECTED_BY_SAMPLES_LIMIT == status.last_reason)
+                    {
+                        test_status.last_reason = status.last_reason;
+                    }
+                    test_status.last_instance_handle = status.last_instance_handle;
+                }
+            });
+
+    // Wait for discovery.
+    writer.wait_discovery();
+    reader.wait_discovery();
+
+    reader.startReception(data);
+    writer.send(data, 50);
+
+    reader.block_for_seq({0, 10});
+
+    std::unique_lock<std::mutex> lock(test_mtx);
+    ASSERT_EQ(5, test_status.total_count);
+    ASSERT_EQ(5, test_status.total_count_change);
+    ASSERT_EQ(eprosima::fastdds::dds::REJECTED_BY_SAMPLES_LIMIT, test_status.last_reason);
+    ASSERT_EQ(instance_2, test_status.last_instance_handle);
 }
 
 #ifdef INSTANTIATE_TEST_SUITE_P

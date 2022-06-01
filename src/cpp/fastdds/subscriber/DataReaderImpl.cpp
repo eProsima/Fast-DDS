@@ -903,6 +903,26 @@ void DataReaderImpl::InnerDataReaderListener::on_sample_lost(
     data_reader_->user_datareader_->get_statuscondition().get_impl()->set_status(notify_status, true);
 }
 
+void DataReaderImpl::InnerDataReaderListener::on_sample_rejected(
+        RTPSReader* /*reader*/,
+        const CacheChange_t* const change_in)
+{
+    if (data_reader_->update_sample_rejected_status(REJECTED_BY_SAMPLES_LIMIT, change_in))
+    {
+        StatusMask notify_status = StatusMask::sample_rejected();
+        DataReaderListener* listener = data_reader_->get_listener_for(notify_status);
+        if (listener != nullptr)
+        {
+            SampleRejectedStatus callback_status;
+            if (data_reader_->get_sample_rejected_status(callback_status) == ReturnCode_t::RETCODE_OK)
+            {
+                listener->on_sample_rejected(data_reader_->user_datareader_, callback_status);
+            }
+        }
+        data_reader_->user_datareader_->get_statuscondition().get_impl()->set_status(notify_status, true);
+    }
+}
+
 bool DataReaderImpl::on_new_cache_change_added(
         const CacheChange_t* const change)
 {
@@ -1208,16 +1228,26 @@ ReturnCode_t DataReaderImpl::get_sample_lost_status(
     return ReturnCode_t::RETCODE_OK;
 }
 
-/* TODO
-   bool DataReaderImpl::get_sample_rejected_status(
-        SampleRejectedStatus& status) const
-   {
-    (void)status;
-    // TODO Implement
-    // TODO add callback call subscriber_->subscriber_listener_->on_sample_rejected
-    return false;
-   }
- */
+ReturnCode_t DataReaderImpl::get_sample_rejected_status(
+        SampleRejectedStatus& status)
+{
+    if (reader_ == nullptr)
+    {
+        return ReturnCode_t::RETCODE_NOT_ENABLED;
+    }
+
+    {
+        std::lock_guard<RecursiveTimedMutex> lock(reader_->getMutex());
+
+        status = sample_rejected_status_;
+        sample_rejected_status_.total_count_change = 0u;
+        sample_rejected_status_.last_reason = NOT_REJECTED;
+        sample_rejected_status_.last_instance_handle = c_InstanceHandle_Unknown;
+    }
+
+    user_datareader_->get_statuscondition().get_impl()->set_status(StatusMask::sample_rejected(), false);
+    return ReturnCode_t::RETCODE_OK;
+}
 
 const Subscriber* DataReaderImpl::get_subscriber() const
 {
@@ -1688,6 +1718,24 @@ InstanceHandle_t DataReaderImpl::lookup_instance(
         }
     }
     return handle;
+}
+
+bool DataReaderImpl::update_sample_rejected_status(
+        SampleRejectedStatusKind reason,
+        const CacheChange_t* const change_in)
+{
+    bool ret_val = false;
+
+    if (history_.compute_key_for_change_fn(const_cast<CacheChange_t*>(change_in)))
+    {
+        ++sample_rejected_status_.total_count;
+        ++sample_rejected_status_.total_count_change;
+        sample_rejected_status_.last_reason = reason;
+        sample_rejected_status_.last_instance_handle = change_in->instanceHandle;
+        ret_val = true;
+    }
+
+    return ret_val;
 }
 
 } /* namespace dds */

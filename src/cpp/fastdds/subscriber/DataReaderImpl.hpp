@@ -258,10 +258,8 @@ public:
     ReturnCode_t get_sample_lost_status(
             fastdds::dds::SampleLostStatus& status);
 
-    /* TODO
-       bool get_sample_rejected_status(
-       fastrtps::SampleRejectedStatus& status) const;
-     */
+    ReturnCode_t get_sample_rejected_status(
+            fastrtps::SampleRejectedStatus& status);
 
     const Subscriber* get_subscriber() const;
 
@@ -383,6 +381,10 @@ protected:
                 fastrtps::rtps::RTPSReader* reader,
                 int32_t sample_lost_since_last_update) override;
 
+        void on_sample_rejected(
+                fastrtps::rtps::RTPSReader* reader,
+                const fastrtps::rtps::CacheChange_t* const change) override;
+
         DataReaderImpl* data_reader_;
     }
     reader_listener_;
@@ -410,6 +412,8 @@ protected:
 
     //! Sample lost status
     SampleLostStatus sample_lost_status_;
+    //! Sample rejected status
+    SampleRejectedStatus sample_rejected_status_;
 
     //! A timed callback to remove expired samples
     fastrtps::rtps::TimedEvent* lifespan_timer_ = nullptr;
@@ -493,6 +497,10 @@ protected:
 
     SampleLostStatus& update_sample_lost_status(
             int32_t sample_lost_since_last_update);
+
+    bool update_sample_rejected_status(
+            SampleRejectedStatusKind reason,
+            const fastrtps::rtps::CacheChange_t* const change_in);
 
     /**
      * Returns the most appropriate listener to handle the callback for the given status,
