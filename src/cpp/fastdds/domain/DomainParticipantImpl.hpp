@@ -20,6 +20,10 @@
 #ifndef _FASTDDS_PARTICIPANTIMPL_HPP_
 #define _FASTDDS_PARTICIPANTIMPL_HPP_
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
+
+#include <mutex>
+#include <condition_variable>
+
 #include <fastdds/rtps/common/Guid.h>
 #include <fastdds/rtps/participant/RTPSParticipantListener.h>
 #include <fastdds/rtps/reader/StatefulReader.h>
@@ -499,6 +503,7 @@ protected:
     std::map<std::string, IContentFilterFactory*> filter_factories_;
     DDSSQLFilter::DDSFilterFactory dds_sql_filter_factory_;
     mutable std::mutex mtx_topics_;
+    std::condition_variable cond_topics_;
 
     TopicQos default_topic_qos_;
 

@@ -1334,6 +1334,8 @@ Topic* DomainParticipantImpl::create_topic(
         (void)ret_topic_enable;
     }
 
+    cond_topics_.notify_all();
+
     return topic;
 }
 
