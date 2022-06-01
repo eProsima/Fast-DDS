@@ -473,10 +473,24 @@ Topic* DomainParticipantImpl::find_topic(
         const std::string& topic_name,
         const fastrtps::Duration_t& timeout)
 {
-    static_cast<void> (topic_name);
-    static_cast<void> (timeout);
-    logWarning(DOMAIN_PARTICIPANT, "find_topic method not implemented");
-    return nullptr;
+    auto duration = std::chrono::seconds(timeout.seconds) + std::chrono::nanoseconds(timeout.nanosec);
+    Topic* ret_val = nullptr;
+
+    std::unique_lock<std::mutex> lock(mtx_topics_);
+    if (cond_topics_.wait_for(lock, duration, [this, &topic_name]()
+            {
+                return topics_.count(topic_name) > 0;
+            }))
+    {
+        ret_val = topics_[topic_name]->create_topic()->get_topic();
+
+        InstanceHandle_t topic_handle;
+        create_instance_handle(topic_handle);
+        ret_val->set_instance_handle(topic_handle);
+        topics_by_handle_[topic_handle] = ret_val;
+    }
+
+    return ret_val;
 }
 
 ReturnCode_t DomainParticipantImpl::delete_topic(
