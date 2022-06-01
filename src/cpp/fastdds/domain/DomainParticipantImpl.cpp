@@ -501,23 +501,22 @@ ReturnCode_t DomainParticipantImpl::delete_topic(
         return ReturnCode_t::RETCODE_BAD_PARAMETER;
     }
 
-    if (participant_ != topic->get_participant())
-    {
-        return ReturnCode_t::RETCODE_PRECONDITION_NOT_MET;
-    }
-
     std::lock_guard<std::mutex> lock(mtx_topics_);
-    auto it = topics_.find(topic->get_name());
-    auto handle = topic->get_instance_handle();
-
-    if (it != topics_.end())
+    auto handle_it = std::find_if(topics_by_handle_.begin(), topics_by_handle_.end(),
+                    [topic](const auto& item)
+                    {
+                        return item.second == topic;
+                    });
+    if (handle_it != topics_by_handle_.end())
     {
+        auto it = topics_.find(topic->get_name());
+        assert(it != topics_.end() && "Topic found by handle but factory not found");
+
         TopicProxy* proxy = dynamic_cast<TopicProxy*>(topic->get_impl());
         auto ret_code = it->second->delete_topic(proxy);
         if (ReturnCode_t::RETCODE_OK == ret_code)
         {
-            assert(topics_by_handle_.find(handle) != topics_by_handle_.end()
-                    && "The topic instance handle does not match the topic implementation instance handle");
+            InstanceHandle_t handle = topic->get_instance_handle();
             topics_by_handle_.erase(handle);
 
             if (it->second->can_be_deleted())
