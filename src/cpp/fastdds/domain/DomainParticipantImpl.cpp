@@ -527,7 +527,7 @@ ReturnCode_t DomainParticipantImpl::delete_topic(
                 delete factory;
             }
         }
-        return ReturnCode_t::RETCODE_OK;
+        return ret_code;
     }
 
     return ReturnCode_t::RETCODE_PRECONDITION_NOT_MET;
