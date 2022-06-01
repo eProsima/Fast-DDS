@@ -102,7 +102,7 @@ public:
             const IdentityHandle& local_identity_handle,
             const IdentityToken& remote_identity_token,
             const GUID_t& remote_participant_key,
-            SecurityException& exception)
+            SecurityException& exception) override
     {
         return validate_remote_identity_rvr(remote_identity_handle, local_identity_handle,
                        remote_identity_token, remote_participant_key, exception);
@@ -115,7 +115,7 @@ public:
             IdentityHandle& initiator_identity_handle,
             const IdentityHandle& replier_identity_handle,
             const CDRMessage_t& cdr_participant_data,
-            SecurityException& exception)
+            SecurityException& exception) override
     {
         return begin_handshake_reply_rvr(handshake_handle, handshake_message_out, handshake_message_in,
                        initiator_identity_handle, replier_identity_handle, cdr_participant_data, exception);
@@ -125,7 +125,7 @@ public:
             HandshakeMessageToken** handshake_message_out,
             HandshakeMessageToken&& handshake_message_in,
             HandshakeHandle& handshake_handle,
-            SecurityException& exception)
+            SecurityException& exception) override
     {
         return process_handshake_rvr(handshake_message_out, handshake_message_in,
                        handshake_handle, exception);

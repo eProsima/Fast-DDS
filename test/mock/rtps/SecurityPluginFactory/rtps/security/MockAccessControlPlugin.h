@@ -129,14 +129,14 @@ public:
                 SecurityException & exception), (override));
 
     PermissionsHandle* get_permissions_handle(
-            SecurityException&)
+            SecurityException&) override
     {
         return new (std::nothrow) AccessPermissionsHandle();
     }
 
     bool return_permissions_handle(
             PermissionsHandle* permissions_handle,
-            SecurityException&)
+            SecurityException&) override
     {
         delete dynamic_cast<AccessPermissionsHandle*>(permissions_handle);
         return true;
