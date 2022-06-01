@@ -82,8 +82,7 @@ ReturnCode_t Topic::set_listener(
         TopicListener* listener,
         const StatusMask& mask)
 {
-    TopicListener* value = mask.is_active(mask.inconsistent_topic()) ? listener : nullptr;
-    ReturnCode_t ret_val = impl_->set_listener(value);
+    ReturnCode_t ret_val = impl_->set_listener(listener);
     if (ret_val == ReturnCode_t::RETCODE_OK)
     {
         status_mask_ = mask;
