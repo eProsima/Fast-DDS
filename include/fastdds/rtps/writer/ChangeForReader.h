@@ -52,6 +52,7 @@ class ChangeForReader_t
 
 public:
 
+<<<<<<< HEAD
     ChangeForReader_t()
         : status_(UNSENT)
         , is_relevant_(true)
@@ -72,6 +73,9 @@ public:
     //TODO(Ricardo) Temporal
     //ChangeForReader_t(const CacheChange_t* change) : status_(UNSENT),
     ChangeForReader_t(
+=======
+    explicit ChangeForReader_t(
+>>>>>>> 6c4da3719 (Fix freezes in the RTPS level when transferring large files (#2654))
             CacheChange_t* change)
         : status_(UNSENT)
         , is_relevant_(true)
@@ -85,6 +89,7 @@ public:
         }
     }
 
+<<<<<<< HEAD
     ChangeForReader_t(
             const SequenceNumber_t& seq_num)
         : status_(UNSENT)
@@ -109,6 +114,8 @@ public:
         return *this;
     }
 
+=======
+>>>>>>> 6c4da3719 (Fix freezes in the RTPS level when transferring large files (#2654))
     /**
      * Get the cache change
      * @return Cache change
@@ -179,7 +186,9 @@ public:
     {
         unsent_fragments_.remove(sentFragment);
 
-        if (!unsent_fragments_.empty() && unsent_fragments_.max() < change_->getFragmentCount())
+        // We only use the running window mechanism during the first stage, until all fragments have been delivered
+        // once, and we consider the whole change as delivered.
+        if (!delivered_ && !unsent_fragments_.empty() && (unsent_fragments_.max() < change_->getFragmentCount()))
         {
             FragmentNumber_t base = unsent_fragments_.base();
             FragmentNumber_t max = unsent_fragments_.max();
@@ -197,17 +206,31 @@ public:
     void markFragmentsAsUnsent(
             const FragmentNumberSet_t& unsentFragments)
     {
-        FragmentNumber_t other_base = unsentFragments.base();
-        if (other_base < unsent_fragments_.base())
+        // Ignore NACK_FRAG messages during the first stage, until all fragments have been delivered once, and we
+        // consider the whole change as delivered.
+        if (delivered_)
         {
-            unsent_fragments_.base_update(other_base);
-        }
-        unsentFragments.for_each(
-            [this](
-                FragmentNumber_t element)
+            if (unsent_fragments_.empty())
             {
-                unsent_fragments_.add(element);
-            });
+                // Current window is empty, so we can set it to the received one.
+                unsent_fragments_ = unsentFragments;
+            }
+            else
+            {
+                // Update window to send the lowest possible requested fragments first.
+                FragmentNumber_t other_base = unsentFragments.base();
+                if (other_base < unsent_fragments_.base())
+                {
+                    unsent_fragments_.base_update(other_base);
+                }
+                unsentFragments.for_each(
+                    [this](
+                        FragmentNumber_t element)
+                    {
+                        unsent_fragments_.add(element);
+                    });
+            }
+        }
     }
 
 private:
@@ -226,6 +249,12 @@ private:
     CacheChange_t* change_;
 
     FragmentNumberSet_t unsent_fragments_;
+<<<<<<< HEAD
+=======
+
+    //! Indicates if was delivered at least once.
+    bool delivered_ = false;
+>>>>>>> 6c4da3719 (Fix freezes in the RTPS level when transferring large files (#2654))
 };
 
 struct ChangeForReaderCmp
