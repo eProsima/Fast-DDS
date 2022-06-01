@@ -51,6 +51,13 @@ class DDSFindTopicTest : public testing::Test
      */
     struct TestType : public TopicDataType
     {
+        TestType()
+            : TopicDataType()
+        {
+            m_isGetKeyDefined = false;
+            m_typeSize = 16;
+        }
+
         bool serialize(
                 void*,
                 fastrtps::rtps::SerializedPayload_t*) override
