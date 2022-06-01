@@ -43,7 +43,7 @@ class Entity;
  * @brief The StatusCondition class is a specific Condition that is associated with each Entity.
  *
  */
-class StatusCondition : public Condition
+class StatusCondition final : public Condition
 {
 public:
 
