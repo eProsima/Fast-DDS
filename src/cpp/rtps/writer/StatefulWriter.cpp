@@ -325,7 +325,13 @@ StatefulWriter::~StatefulWriter()
         nack_response_event_ = nullptr;
     }
 
-    // This must be the next action, because free CacheChange_t from async thread.
+    if (periodic_hb_event_ != nullptr)
+    {
+        delete(periodic_hb_event_);
+        periodic_hb_event_ = nullptr;
+    }
+
+    // This must be the next action, as it frees CacheChange_t from the async thread.
     deinit();
 
     // Stop all active proxies and pass them to the pool
@@ -352,13 +358,6 @@ StatefulWriter::~StatefulWriter()
             remote_reader->stop();
             matched_readers_pool_.push_back(remote_reader);
         }
-    }
-
-    // Destroy heartbeat event
-    if (periodic_hb_event_ != nullptr)
-    {
-        delete(periodic_hb_event_);
-        periodic_hb_event_ = nullptr;
     }
 
     // Delete all proxies in the pool
