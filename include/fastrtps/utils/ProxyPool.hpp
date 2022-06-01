@@ -105,7 +105,7 @@ std::array<P, N> make_array(
 template< class Proxy, std::size_t N = 4>
 class ProxyPool
 {
-    std::mutex mtx_;
+    mutable std::mutex mtx_;
     std::condition_variable cv_;
     std::array<Proxy, N> heap_;
     std::bitset<N> mask_;
