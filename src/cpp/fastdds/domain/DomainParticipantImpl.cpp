@@ -469,6 +469,16 @@ ReturnCode_t DomainParticipantImpl::delete_subscriber(
     return ReturnCode_t::RETCODE_ERROR;
 }
 
+Topic* DomainParticipantImpl::find_topic(
+        const std::string& topic_name,
+        const fastrtps::Duration_t& timeout)
+{
+    static_cast<void> (topic_name);
+    static_cast<void> (timeout);
+    logWarning(DOMAIN_PARTICIPANT, "find_topic method not implemented");
+    return nullptr;
+}
+
 ReturnCode_t DomainParticipantImpl::delete_topic(
         const Topic* topic)
 {

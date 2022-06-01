@@ -238,10 +238,7 @@ Topic* DomainParticipant::find_topic(
         const std::string& topic_name,
         const fastrtps::Duration_t& timeout)
 {
-    static_cast<void> (topic_name);
-    static_cast<void> (timeout);
-    logWarning(DOMAIN_PARTICIPANT, "find_topic method not implemented");
-    return nullptr;
+    return impl_->find_topic(topic_name, timeout);
 }
 
 TopicDescription* DomainParticipant::lookup_topicdescription(

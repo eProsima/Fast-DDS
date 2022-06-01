@@ -282,6 +282,13 @@ public:
         return create_topic(topic_name, type_name, TOPIC_QOS_DEFAULT, listener, mask);
     }
 
+    Topic* find_topic(
+            const std::string& /*topic_name*/,
+            const fastrtps::Duration_t& /*timeout*/)
+    {
+        return nullptr;
+    }
+
     ReturnCode_t delete_topic(
             const Topic* topic)
     {

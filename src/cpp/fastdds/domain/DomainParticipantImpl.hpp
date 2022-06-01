@@ -214,6 +214,18 @@ public:
             TopicListener* listener = nullptr,
             const StatusMask& mask = StatusMask::all());
 
+    /**
+     * Gives access to an existing (or ready to exist) enabled Topic.
+     * Topics obtained by this method must be destroyed by delete_topic.
+     *
+     * @param topic_name Topic name
+     * @param timeout Maximum time to wait for the Topic
+     * @return Pointer to the existing Topic, nullptr in error case
+     */
+    Topic* find_topic(
+            const std::string& topic_name,
+            const fastrtps::Duration_t& timeout);
+
     ReturnCode_t delete_topic(
             const Topic* topic);
 
