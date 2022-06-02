@@ -383,6 +383,7 @@ protected:
 
         void on_sample_rejected(
                 fastrtps::rtps::RTPSReader* reader,
+                SampleRejectedStatusKind reason,
                 const fastrtps::rtps::CacheChange_t* const change) override;
 
         DataReaderImpl* data_reader_;

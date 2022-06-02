@@ -205,6 +205,11 @@ struct RTPS_DllAPI CacheChange_t
         return first_missing_fragment_ >= fragment_count_;
     }
 
+    bool contains_first_fragment()
+    {
+        return 0 < first_missing_fragment_;
+    }
+
     /*!
      * Fills a FragmentNumberSet_t with the list of missing fragments.
      * @param [out] frag_sns FragmentNumberSet_t where result is stored.

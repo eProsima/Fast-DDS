@@ -110,7 +110,8 @@ public:
      * @return
      */
     bool completed_change(
-            rtps::CacheChange_t* change) override;
+            rtps::CacheChange_t* change,
+            size_t) override;
 
     /** @name Read or take data methods.
      * Methods to read or take data from the History.

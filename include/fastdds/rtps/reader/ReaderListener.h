@@ -22,6 +22,7 @@
 
 #include <fastdds/dds/core/status/LivelinessChangedStatus.hpp>
 #include <fastdds/dds/core/status/SubscriptionMatchedStatus.hpp>
+#include <fastdds/dds/core/status/SampleRejectedStatus.hpp>
 #include <fastdds/rtps/builtin/data/WriterProxyData.h>
 #include <fastdds/rtps/common/Guid.h>
 #include <fastdds/rtps/common/MatchingInfo.h>
@@ -161,9 +162,11 @@ public:
      */
     virtual void on_sample_rejected(
             RTPSReader* reader,
+            eprosima::fastdds::dds::SampleRejectedStatusKind reason,
             const CacheChange_t* const change)
     {
         static_cast<void>(reader);
+        static_cast<void>(reason);
         static_cast<void>(change);
     }
 

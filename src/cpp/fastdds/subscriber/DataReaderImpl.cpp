@@ -905,9 +905,10 @@ void DataReaderImpl::InnerDataReaderListener::on_sample_lost(
 
 void DataReaderImpl::InnerDataReaderListener::on_sample_rejected(
         RTPSReader* /*reader*/,
+        SampleRejectedStatusKind reason,
         const CacheChange_t* const change_in)
 {
-    if (data_reader_->update_sample_rejected_status(REJECTED_BY_SAMPLES_LIMIT, change_in))
+    if (data_reader_->update_sample_rejected_status(reason, change_in))
     {
         StatusMask notify_status = StatusMask::sample_rejected();
         DataReaderListener* listener = data_reader_->get_listener_for(notify_status);
@@ -1726,7 +1727,8 @@ bool DataReaderImpl::update_sample_rejected_status(
 {
     bool ret_val = false;
 
-    if (history_.compute_key_for_change_fn(const_cast<CacheChange_t*>(change_in)))
+    if (c_InstanceHandle_Unknown != change_in->instanceHandle ||
+            history_.compute_key_for_change_fn(const_cast<CacheChange_t*>(change_in)))
     {
         ++sample_rejected_status_.total_count;
         ++sample_rejected_status_.total_count_change;

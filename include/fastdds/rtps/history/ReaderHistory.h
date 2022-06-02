@@ -92,9 +92,11 @@ public:
      * @return
      */
     RTPS_DllAPI bool virtual completed_change(
-            rtps::CacheChange_t* change)
+            rtps::CacheChange_t* change,
+            size_t unknown_missing_changes_up_to)
     {
         (void)change;
+        (void)unknown_missing_changes_up_to;
         return true;
     }
 

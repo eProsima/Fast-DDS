@@ -518,7 +518,8 @@ bool StatefulReader::processDataMsg(
             {
                 if (getListener())
                 {
-                    getListener()->on_sample_rejected((RTPSReader*)this, change);
+                    getListener()->on_sample_rejected((RTPSReader*)this, fastdds::dds::REJECTED_BY_SAMPLES_LIMIT,
+                            change);
                 }
                 if (will_never_be_accepted && pWP)
                 {
@@ -643,7 +644,8 @@ bool StatefulReader::processDataFragMsg(
             {
                 if (getListener() && 1 == fragmentStartingNum)
                 {
-                    getListener()->on_sample_rejected((RTPSReader*)this, incomingChange);
+                    getListener()->on_sample_rejected((RTPSReader*)this, fastdds::dds::REJECTED_BY_SAMPLES_LIMIT,
+                            incomingChange);
                 }
                 if (will_never_be_accepted)
                 {
@@ -689,32 +691,45 @@ bool StatefulReader::processDataFragMsg(
             {
                 if (!change_received(change_created, pWP, changes_up_to))
                 {
-
                     logInfo(RTPS_MSG_IN,
                             IDSTRING "MessageReceiver not add change " << change_created->sequenceNumber.to64long());
 
                     releaseCache(change_created);
                     work_change = nullptr;
                 }
+                else
+                {
+                    /* Corner case: a fragment is discarted because its older than other stored in the instance
+                     * inside History. In this case we don't want to receive again this sample.
+                     */
+                    if (mp_history->changesEnd() == mp_history->find_change(change_created))
+                    {
+                        pWP->irrelevant_change_set(change_created->sequenceNumber);
+                        releaseCache(change_created);
+                        work_change = nullptr;
+                    }
+                }
             }
 
             // If change has been fully reassembled, mark as received and add notify user
             if (work_change != nullptr && work_change->is_fully_assembled())
             {
-                mp_history->completed_change(work_change);
-                pWP->received_change_set(work_change->sequenceNumber);
-
-                // Temporarilly assign the inline qos while evaluating the data filter
-                work_change->inline_qos = incomingChange->inline_qos;
-                bool filtered_out = data_filter_ && !data_filter_->is_relevant(*work_change, m_guid);
-                work_change->inline_qos = SerializedPayload_t();
-
-                if (filtered_out)
+                if (mp_history->completed_change(work_change, changes_up_to))
                 {
-                    mp_history->remove_change(work_change);
-                }
+                    pWP->received_change_set(work_change->sequenceNumber);
 
-                NotifyChanges(pWP);
+                    // Temporarilly assign the inline qos while evaluating the data filter
+                    work_change->inline_qos = incomingChange->inline_qos;
+                    bool filtered_out = data_filter_ && !data_filter_->is_relevant(*work_change, m_guid);
+                    work_change->inline_qos = SerializedPayload_t();
+
+                    if (filtered_out)
+                    {
+                        mp_history->remove_change(work_change);
+                    }
+
+                    NotifyChanges(pWP);
+                }
             }
         }
     }
@@ -894,11 +909,6 @@ bool StatefulReader::change_removed_by_history(
     {
         if (a_change->is_fully_assembled())
         {
-            if (wp != nullptr || matched_writer_lookup(a_change->writerGUID, &wp))
-            {
-                wp->change_removed_from_history(a_change->sequenceNumber);
-            }
-
             if (!a_change->isRead &&
                     get_last_notified(a_change->writerGUID) >= a_change->sequenceNumber)
             {
