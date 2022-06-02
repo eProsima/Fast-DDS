@@ -36,7 +36,7 @@ TopicProxy* TopicProxyFactory::create_topic()
 ReturnCode_t TopicProxyFactory::delete_topic(
         TopicProxy* proxy)
 {
-    auto it = std::find_if(proxies_.begin(), proxies_.end(), [proxy](const auto& item)
+    auto it = std::find_if(proxies_.begin(), proxies_.end(), [proxy](const std::unique_ptr<TopicProxy>& item)
                     {
                         return item.get() == proxy;
                     });

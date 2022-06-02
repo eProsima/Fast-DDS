@@ -510,7 +510,7 @@ void DomainParticipantImpl::set_topic_listener(
 {
     std::lock_guard<std::mutex> lock(mtx_topics_);
     impl->set_listener(listener);
-    factory->for_each([mask](const auto& proxy)
+    factory->for_each([mask](const std::unique_ptr<TopicProxy>& proxy)
             {
                 proxy->get_topic()->status_mask_ = mask;
             });
@@ -526,7 +526,7 @@ ReturnCode_t DomainParticipantImpl::delete_topic(
 
     std::lock_guard<std::mutex> lock(mtx_topics_);
     auto handle_it = std::find_if(topics_by_handle_.begin(), topics_by_handle_.end(),
-                    [topic](const auto& item)
+                    [topic](const decltype(topics_by_handle_)::value_type& item)
                     {
                         return item.second == topic;
                     });
