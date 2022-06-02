@@ -1281,7 +1281,7 @@ SampleLostStatus& DataReaderImpl::update_sample_lost_status(
         int32_t sample_lost_since_last_update)
 {
     sample_lost_status_.total_count += sample_lost_since_last_update;
-    sample_lost_status_.total_count_change = sample_lost_since_last_update;
+    sample_lost_status_.total_count_change += sample_lost_since_last_update;
 
     return sample_lost_status_;
 }

@@ -901,9 +901,8 @@ bool StatefulReader::change_removed_by_history(
         }
         else
         {
-            /* A not fully assembled fragmented sample may be removed due to being received a newer sample and KEEP_LAST
-             * policy. In this case WriterProxy should consider it as irrelevant for avoiding enter in a loop asking for
-             * it.
+            /* A not fully assembled fragmented sample may be removed when receiving a newer sample and KEEP_LAST
+             * policy. The WriterProxy should consider it as irrelevant to avoid an infinite loop asking for it.
              */
             WriterProxy* proxy = wp;
 
@@ -1004,7 +1003,7 @@ bool StatefulReader::change_received(
         }
         else
         {
-            /* Search if the first fragment was stored, because maybe it was discarded due to is older and KEEP_LAST
+            /* Search if the first fragment was stored, because it may have been discarded due to being older and KEEP_LAST
              * policy. In this case this samples should be set as irrelevant.
              */
             if (mp_history->changesEnd() == mp_history->find_change(a_change))
