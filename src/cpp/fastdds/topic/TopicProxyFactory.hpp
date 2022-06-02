@@ -19,6 +19,7 @@
 #ifndef _FASTDDS_TOPICPROXYFACTORY_HPP_
 #define _FASTDDS_TOPICPROXYFACTORY_HPP_
 
+#include <algorithm>
 #include <list>
 #include <memory>
 #include <string>
@@ -109,6 +110,15 @@ public:
      * Enable the topic managed by the factory.
      */
     void enable_topic();
+
+    /**
+     * Apply the given function to all the TopicProxy objects owned by the factory.
+     */
+    template<class UnaryFunction>
+    void for_each(UnaryFunction f) const
+    {
+        std::for_each(proxies_.begin(), proxies_.end(), f);
+    }
 
 private:
 
