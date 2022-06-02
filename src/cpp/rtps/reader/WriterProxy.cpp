@@ -223,18 +223,17 @@ int32_t WriterProxy::lost_changes_update(
         ChangeIterator it = std::lower_bound(changes_received_.begin(), changes_received_.end(), seq_num);
         if (!changes_received_.empty())
         {
-            current_sample_lost =
-                    static_cast<int32_t>((*changes_received_.begin()).to64long() -
-                    (changes_from_writer_low_mark_.to64long() + 1));
+            uint64_t tmp = (*changes_received_.begin()).to64long() - (changes_from_writer_low_mark_.to64long() + 1);
             auto distance = std::distance(changes_received_.begin(), it);
-            current_sample_lost +=
-                    static_cast<int32_t>(seq_num.to64long() - (*changes_received_.begin()).to64long() - distance);
+            tmp += seq_num.to64long() - (*changes_received_.begin()).to64long() - distance;
+            current_sample_lost = tmp > static_cast<uint64_t>(std::numeric_limits<int32_t>::max()) ?
+                    std::numeric_limits<int32_t>::max() : static_cast<int32_t>(tmp);
         }
         else
         {
-            current_sample_lost =
-                    static_cast<int32_t>(seq_num.to64long() -
-                    (changes_from_writer_low_mark_.to64long() + 1));
+            uint64_t tmp = seq_num.to64long() - (changes_from_writer_low_mark_.to64long() + 1);
+            current_sample_lost = tmp > static_cast<uint64_t>(std::numeric_limits<int32_t>::max()) ?
+                    std::numeric_limits<int32_t>::max() : static_cast<int32_t>(tmp);
         }
         changes_received_.erase(changes_received_.begin(), it);
 

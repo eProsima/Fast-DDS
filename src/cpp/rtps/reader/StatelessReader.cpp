@@ -267,7 +267,9 @@ bool StatelessReader::change_received(
             if (getListener() != nullptr)
             {
                 assert(previous_seq < change->sequenceNumber);
-                int32_t lost_samples = static_cast<int32_t>((change->sequenceNumber - previous_seq).to64long() - 1);
+                uint64_t tmp = (change->sequenceNumber - previous_seq).to64long() - 1;
+                int32_t lost_samples = tmp > static_cast<uint64_t>(std::numeric_limits<int32_t>::max()) ?
+                        std::numeric_limits<int32_t>::max() : static_cast<int32_t>(tmp);
                 if (0 < lost_samples)     // There are lost samples.
                 {
                     getListener()->on_sample_lost(this, lost_samples);
