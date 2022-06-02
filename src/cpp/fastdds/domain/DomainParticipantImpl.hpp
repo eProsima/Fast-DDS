@@ -230,6 +230,20 @@ public:
             const std::string& topic_name,
             const fastrtps::Duration_t& timeout);
 
+    /**
+     * Implementation of Topic::set_listener that propagates the listener and mask to all the TopicProxy
+     * objects held by the same TopicProxy factory in a thread-safe way.
+     *
+     * @param factory  TopicProxyFactory managing the topic on which the listener should be changed.
+     * @param listener Listener to assign to all the TopicProxy objects owned by the factory.
+     * @param mask     StatusMask to assign to all the TopicProxy objects owned by the factory.
+     */
+    void set_topic_listener(
+            const TopicProxyFactory* factory,
+            TopicImpl* topic,
+            TopicListener* listener,
+            const StatusMask& mask);
+
     ReturnCode_t delete_topic(
             const Topic* topic);
 

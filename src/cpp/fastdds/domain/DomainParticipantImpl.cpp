@@ -493,6 +493,20 @@ Topic* DomainParticipantImpl::find_topic(
     return ret_val;
 }
 
+void DomainParticipantImpl::set_topic_listener(
+        const TopicProxyFactory* factory,
+        TopicImpl* impl,
+        TopicListener* listener,
+        const StatusMask& mask)
+{
+    std::lock_guard<std::mutex> lock(mtx_topics_);
+    impl->set_listener(listener);
+    factory->for_each([mask](const auto& proxy)
+            {
+                proxy->get_topic()->status_mask_ = mask;
+            });
+}
+
 ReturnCode_t DomainParticipantImpl::delete_topic(
         const Topic* topic)
 {

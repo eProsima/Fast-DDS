@@ -289,6 +289,14 @@ public:
         return nullptr;
     }
 
+    void set_topic_listener(
+            const TopicProxyFactory* /*factory*/,
+            TopicImpl* /*impl*/,
+            TopicListener* /*listener*/,
+            const StatusMask& /*mask*/)
+    {
+    }
+
     ReturnCode_t delete_topic(
             const Topic* topic)
     {
