@@ -118,7 +118,7 @@ bool StatelessReader::matched_writer_add(
                     mp_history->m_att.maximumReservedCaches))
             {
                 logInfo(RTPS_READER, "Writer Proxy " << wdata.guid() << " added to " << this->m_guid.entityId
-                                                    << " with data sharing");
+                                                     << " with data sharing");
             }
             else
             {

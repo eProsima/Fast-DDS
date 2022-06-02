@@ -221,7 +221,7 @@ bool StatefulReader::matched_writer_add(
             {
                 matched_writers_.push_back(wp);
                 logInfo(RTPS_READER, "Writer Proxy " << wdata.guid() << " added to " << this->m_guid.entityId
-                                                    << " with data sharing");
+                                                     << " with data sharing");
             }
             else
             {
@@ -281,22 +281,22 @@ bool StatefulReader::matched_writer_remove(
         const GUID_t& writer_guid,
         bool removed_by_lease)
 {
-        if (is_alive_ && liveliness_lease_duration_ < c_TimeInfinite)
+    if (is_alive_ && liveliness_lease_duration_ < c_TimeInfinite)
+    {
+        auto wlp = this->mp_RTPSParticipant->wlp();
+        if ( wlp != nullptr)
         {
-            auto wlp = this->mp_RTPSParticipant->wlp();
-            if ( wlp != nullptr)
-            {
-                wlp->sub_liveliness_manager_->remove_writer(
-                    writer_guid,
-                    liveliness_kind_,
-                    liveliness_lease_duration_);
-            }
-            else
-            {
-                logError(RTPS_LIVELINESS,
-                        "Finite liveliness lease duration but WLP not enabled, cannot remove writer");
-            }
+            wlp->sub_liveliness_manager_->remove_writer(
+                writer_guid,
+                liveliness_kind_,
+                liveliness_lease_duration_);
         }
+        else
+        {
+            logError(RTPS_LIVELINESS,
+                    "Finite liveliness lease duration but WLP not enabled, cannot remove writer");
+        }
+    }
 
     std::unique_lock<RecursiveTimedMutex> lock(mp_mutex);
     WriterProxy* wproxy = nullptr;
