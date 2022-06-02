@@ -659,7 +659,6 @@ public:
 
         while (it_topics != topics_.end())
         {
-            it_topics->second->set_listener(nullptr);
             delete it_topics->second;
             it_topics = topics_.erase(it_topics);
         }

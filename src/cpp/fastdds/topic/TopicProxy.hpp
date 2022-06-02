@@ -72,9 +72,10 @@ public:
     }
 
     void set_listener(
-            TopicListener* listener)
+            TopicListener* listener,
+            const StatusMask& mask)
     {
-        impl_->set_listener(listener);
+        impl_->set_listener(listener, mask);
     }
 
     DomainParticipant* get_participant() const

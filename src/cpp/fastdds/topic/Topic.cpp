@@ -82,9 +82,7 @@ ReturnCode_t Topic::set_listener(
         TopicListener* listener,
         const StatusMask& mask)
 {
-    impl_->set_listener(listener);
-    status_mask_ = mask;
-
+    impl_->set_listener(listener, mask);
     return ReturnCode_t::RETCODE_OK;
 }
 
