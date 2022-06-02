@@ -71,10 +71,10 @@ public:
         return impl_->get_listener();
     }
 
-    ReturnCode_t set_listener(
+    void set_listener(
             TopicListener* listener)
     {
-        return impl_->set_listener(listener);
+        impl_->set_listener(listener);
     }
 
     DomainParticipant* get_participant() const

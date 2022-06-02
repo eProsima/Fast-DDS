@@ -141,11 +141,10 @@ const TopicListener* TopicImpl::get_listener() const
     return listener_;
 }
 
-ReturnCode_t TopicImpl::set_listener(
+void TopicImpl::set_listener(
         TopicListener* listener)
 {
     listener_ = listener;
-    return ReturnCode_t::RETCODE_OK;
 }
 
 DomainParticipant* TopicImpl::get_participant() const

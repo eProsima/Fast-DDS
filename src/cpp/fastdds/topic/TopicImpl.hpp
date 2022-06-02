@@ -69,7 +69,7 @@ public:
 
     const TopicListener* get_listener() const;
 
-    ReturnCode_t set_listener(
+    void set_listener(
             TopicListener* listener);
 
     DomainParticipant* get_participant() const;

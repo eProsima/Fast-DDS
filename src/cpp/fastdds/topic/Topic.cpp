@@ -82,13 +82,10 @@ ReturnCode_t Topic::set_listener(
         TopicListener* listener,
         const StatusMask& mask)
 {
-    ReturnCode_t ret_val = impl_->set_listener(listener);
-    if (ret_val == ReturnCode_t::RETCODE_OK)
-    {
-        status_mask_ = mask;
-    }
+    impl_->set_listener(listener);
+    status_mask_ = mask;
 
-    return ret_val;
+    return ReturnCode_t::RETCODE_OK;
 }
 
 DomainParticipant* Topic::get_participant() const
