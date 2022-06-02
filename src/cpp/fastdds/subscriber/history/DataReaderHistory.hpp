@@ -25,7 +25,6 @@
 #include <utility>
 
 #include <fastdds/dds/core/policy/QosPolicies.hpp>
-#include <fastdds/dds/core/status/SampleRejectedStatus.hpp>
 #include <fastdds/dds/subscriber/qos/DataReaderQos.hpp>
 #include <fastdds/dds/subscriber/SampleInfo.hpp>
 
@@ -120,6 +119,11 @@ public:
             CacheChange_t* change,
             size_t unknown_missing_changes_up_to) override;
 
+    bool received_change(
+            CacheChange_t* change,
+            size_t unknown_missing_changes_up_to,
+            SampleRejectedStatusKind& rejection_reason) override;
+
     /**
      * Called when a fragmented change is received completely by the Subscriber. Will find its instance and store it.
      * @pre Change should be already present in the history.
@@ -128,8 +132,12 @@ public:
      * @return
      */
     bool completed_change(
+            CacheChange_t* change) override;
+
+    bool completed_change(
             CacheChange_t* change,
-            size_t unknown_missing_changes_up_to);
+            size_t unknown_missing_changes_up_to,
+            SampleRejectedStatusKind& rejection_reason) override;
 
     /**
      * @brief Returns information about the first untaken sample.
@@ -247,9 +255,9 @@ private:
     void* get_key_object_;
 
     /// Function processing a received change
-    std::function<SampleRejectedStatusKind(CacheChange_t*, size_t)> receive_fn_;
+    std::function<bool(CacheChange_t*, size_t, SampleRejectedStatusKind&)> receive_fn_;
     /// Function processing a completed fragmented change
-    std::function<SampleRejectedStatusKind(CacheChange_t*, DataReaderInstance&, size_t)> complete_fn_;
+    std::function<bool(CacheChange_t*, DataReaderInstance&, size_t, SampleRejectedStatusKind&)> complete_fn_;
 
     /**
      * @brief Method that finds a key in m_keyedChanges or tries to add it if not found
@@ -269,13 +277,15 @@ private:
      * @return
      */
     ///@{
-    SampleRejectedStatusKind received_change_keep_all(
+    bool received_change_keep_all(
             CacheChange_t* change,
-            size_t unknown_missing_changes_up_to);
+            size_t unknown_missing_changes_up_to,
+            SampleRejectedStatusKind& rejection_reason);
 
-    SampleRejectedStatusKind received_change_keep_last(
+    bool received_change_keep_last(
             CacheChange_t* change,
-            size_t unknown_missing_changes_up_to);
+            size_t unknown_missing_changes_up_to,
+            SampleRejectedStatusKind& rejection_reason);
     ///@}
 
     /**
@@ -287,23 +297,27 @@ private:
      * @return false when the change could not be added to the instance and has been removed from the history.
      */
     ///@{
-    SampleRejectedStatusKind completed_change_keep_all(
+    bool completed_change_keep_all(
             CacheChange_t* change,
             DataReaderInstance& instance,
-            size_t unknown_missing_changes_up_to);
+            size_t unknown_missing_changes_up_to,
+            SampleRejectedStatusKind&);
 
-    SampleRejectedStatusKind completed_change_keep_last(
+    bool completed_change_keep_last(
             CacheChange_t* change,
             DataReaderInstance& instance,
-            size_t unknown_missing_changes_up_to);
+            size_t unknown_missing_changes_up_to,
+            SampleRejectedStatusKind&);
     ///@}
 
-    SampleRejectedStatusKind add_received_change_with_key(
+    bool add_received_change_with_key(
             CacheChange_t* a_change,
-            DataReaderInstance& instance);
+            DataReaderInstance& instance,
+            SampleRejectedStatusKind& rejection_reason);
 
-    SampleRejectedStatusKind add_to_reader_history_if_not_full(
-            CacheChange_t* a_change);
+    bool add_to_reader_history_if_not_full(
+            CacheChange_t* a_change,
+            SampleRejectedStatusKind& rejection_reason);
 
     void add_to_instance(
             CacheChange_t* a_change,

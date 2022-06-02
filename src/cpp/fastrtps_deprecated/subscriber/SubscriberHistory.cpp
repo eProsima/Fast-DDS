@@ -718,8 +718,7 @@ ReaderHistory::iterator SubscriberHistory::remove_change_nts(
 }
 
 bool SubscriberHistory::completed_change(
-        rtps::CacheChange_t* change,
-        size_t)
+        rtps::CacheChange_t* change)
 {
     bool ret_value = true;
 

@@ -22,6 +22,7 @@
 
 #include <fastdds/rtps/history/History.h>
 #include <fastdds/rtps/common/CacheChange.h>
+#include <fastdds/dds/core/status/SampleRejectedStatus.hpp>
 
 namespace eprosima {
 namespace fastrtps {
@@ -81,9 +82,18 @@ public:
      *                                      could potentially be received in the future.
      * @return True if added.
      */
-    RTPS_DllAPI virtual bool received_change(
+    virtual bool received_change(
             CacheChange_t* change,
             size_t unknown_missing_changes_up_to);
+
+    virtual bool received_change(
+            CacheChange_t* change,
+            size_t unknown_missing_changes_up_to,
+            fastdds::dds::SampleRejectedStatusKind& rejection_reason)
+    {
+        rejection_reason = fastdds::dds::NOT_REJECTED;
+        return received_change(change, unknown_missing_changes_up_to);
+    }
 
     /**
      * Called when a fragmented change is received completely by the Subscriber. Will find its instance and store it.
@@ -91,12 +101,21 @@ public:
      * @param[in] change The received change
      * @return
      */
-    RTPS_DllAPI bool virtual completed_change(
-            rtps::CacheChange_t* change,
-            size_t unknown_missing_changes_up_to)
+    bool virtual completed_change(
+            rtps::CacheChange_t* change)
+    {
+        (void)change;
+        return true;
+    }
+
+    virtual bool completed_change(
+            CacheChange_t* change,
+            size_t unknown_missing_changes_up_to,
+            fastdds::dds::SampleRejectedStatusKind& rejection_reason)
     {
         (void)change;
         (void)unknown_missing_changes_up_to;
+        (void)rejection_reason;
         return true;
     }
 

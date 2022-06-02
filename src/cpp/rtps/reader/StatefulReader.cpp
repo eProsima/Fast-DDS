@@ -697,24 +697,13 @@ bool StatefulReader::processDataFragMsg(
                     releaseCache(change_created);
                     work_change = nullptr;
                 }
-                else
-                {
-                    /* Corner case: a fragment is discarted because its older than other stored in the instance
-                     * inside History. In this case we don't want to receive again this sample.
-                     */
-                    if (mp_history->changesEnd() == mp_history->find_change(change_created))
-                    {
-                        pWP->irrelevant_change_set(change_created->sequenceNumber);
-                        releaseCache(change_created);
-                        work_change = nullptr;
-                    }
-                }
             }
 
             // If change has been fully reassembled, mark as received and add notify user
             if (work_change != nullptr && work_change->is_fully_assembled())
             {
-                if (mp_history->completed_change(work_change, changes_up_to))
+                fastdds::dds::SampleRejectedStatusKind rejection_reason;
+                if (mp_history->completed_change(work_change, changes_up_to, rejection_reason))
                 {
                     pWP->received_change_set(work_change->sequenceNumber);
 
@@ -729,6 +718,33 @@ bool StatefulReader::processDataFragMsg(
                     }
 
                     NotifyChanges(pWP);
+                }
+                else
+                {
+                    if (fastdds::dds::NOT_REJECTED != rejection_reason)
+                    {
+                        if (getListener())
+                        {
+                            getListener()->on_sample_rejected((RTPSReader*)this, rejection_reason, work_change);
+                        }
+
+                        /* Special case: rejected by REJECTED_BY_INSTANCES_LIMIT should never be received again.
+                         */
+                        if (fastdds::dds::REJECTED_BY_INSTANCES_LIMIT == rejection_reason)
+                        {
+                            pWP->irrelevant_change_set(work_change->sequenceNumber);
+                        }
+                    }
+
+                    History::const_iterator chit = mp_history->find_change_nts(work_change);
+                    if (chit != mp_history->changesEnd())
+                    {
+                        mp_history->remove_change_nts(chit);
+                    }
+                    else
+                    {
+                        logError(RTPS_READER, "Change should exist but didn't find it");
+                    }
                 }
             }
         }
@@ -1010,14 +1026,22 @@ bool StatefulReader::change_received(
 
     // NOTE: Depending on QoS settings, one change can be removed from history
     // inside the call to mp_history->received_change
-    if (mp_history->received_change(a_change, unknown_missing_changes_up_to))
+    fastdds::dds::SampleRejectedStatusKind rejection_reason;
+    if (mp_history->received_change(a_change, unknown_missing_changes_up_to, rejection_reason))
     {
         auto payload_length = a_change->serializedPayload.length;
 
-        Time_t::now(a_change->reader_info.receptionTimestamp);
         bool ret = true;
 
-        if (a_change->is_fully_assembled())
+        /* Special case: a fragment is discarted because its older than other stored in the instance
+         * inside History. In this case we don't want to receive again this sample.
+         */
+        if (fastdds::dds::NOT_REJECTED != rejection_reason)
+        {
+            prox->irrelevant_change_set(a_change->sequenceNumber);
+            ret = false;
+        }
+        else if (a_change->is_fully_assembled())
         {
             ret = prox->received_change_set(a_change->sequenceNumber);
         }
@@ -1033,6 +1057,8 @@ bool StatefulReader::change_received(
             }
         }
 
+        Time_t::now(a_change->reader_info.receptionTimestamp);
+
         // WARNING! This method could destroy a_change
         NotifyChanges(prox);
 
@@ -1040,6 +1066,23 @@ bool StatefulReader::change_received(
         on_subscribe_throughput(payload_length);
 
         return ret;
+    }
+    else
+    {
+        if (fastdds::dds::NOT_REJECTED != rejection_reason)
+        {
+            if (getListener())
+            {
+                getListener()->on_sample_rejected((RTPSReader*)this, rejection_reason, a_change);
+            }
+
+            /* Special case: rejected by REJECTED_BY_INSTANCES_LIMIT should never be received again.
+             */
+            if (fastdds::dds::REJECTED_BY_INSTANCES_LIMIT == rejection_reason)
+            {
+                prox->irrelevant_change_set(a_change->sequenceNumber);
+            }
+        }
     }
 
     return false;
@@ -1412,7 +1455,7 @@ void StatefulReader::send_acknack(
     }
     catch (const RTPSMessageGroup::timeout&)
     {
-        logError(RTPS_WRITER, "Max blocking time reached");
+        logError(RTPS_READER, "Max blocking time reached");
     }
 }
 

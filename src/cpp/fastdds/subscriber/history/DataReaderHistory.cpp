@@ -105,14 +105,15 @@ DataReaderHistory::DataReaderHistory(
     using std::placeholders::_1;
     using std::placeholders::_2;
     using std::placeholders::_3;
+    using std::placeholders::_4;
 
     receive_fn_ = qos.history().kind == KEEP_ALL_HISTORY_QOS ?
-            std::bind(&DataReaderHistory::received_change_keep_all, this, _1, _2) :
-            std::bind(&DataReaderHistory::received_change_keep_last, this, _1, _2);
+            std::bind(&DataReaderHistory::received_change_keep_all, this, _1, _2, _3) :
+            std::bind(&DataReaderHistory::received_change_keep_last, this, _1, _2, _3);
 
     complete_fn_ = qos.history().kind == KEEP_ALL_HISTORY_QOS ?
-            std::bind(&DataReaderHistory::completed_change_keep_all, this, _1, _2, _3) :
-            std::bind(&DataReaderHistory::completed_change_keep_last, this, _1, _2, _3);
+            std::bind(&DataReaderHistory::completed_change_keep_all, this, _1, _2, _3, _4) :
+            std::bind(&DataReaderHistory::completed_change_keep_last, this, _1, _2, _3, _4);
 
     if (!has_keys_)
     {
@@ -181,9 +182,20 @@ bool DataReaderHistory::can_change_be_added_nts(
 }
 
 bool DataReaderHistory::received_change(
-        CacheChange_t* a_change,
+        CacheChange_t* change,
         size_t unknown_missing_changes_up_to)
 {
+    SampleRejectedStatusKind rejection_reason;
+    return received_change(change, unknown_missing_changes_up_to, rejection_reason);
+}
+
+bool DataReaderHistory::received_change(
+        CacheChange_t* a_change,
+        size_t unknown_missing_changes_up_to,
+        SampleRejectedStatusKind& rejection_reason)
+{
+    rejection_reason = NOT_REJECTED;
+
     if (mp_reader == nullptr || mp_mutex == nullptr)
     {
         logError(SUBSCRIBER, "You need to create a Reader with this History before using it");
@@ -191,31 +203,21 @@ bool DataReaderHistory::received_change(
     }
 
     std::lock_guard<RecursiveTimedMutex> guard(*mp_mutex);
-    SampleRejectedStatusKind ret = receive_fn_(a_change, unknown_missing_changes_up_to);
-
-    if (NOT_REJECTED != ret)
-    {
-        if (mp_reader->getListener() &&
-                (a_change->is_fully_assembled() || a_change->contains_first_fragment()))
-        {
-            mp_reader->getListener()->on_sample_rejected(mp_reader, ret, a_change);
-        }
-    }
-
-    return NOT_REJECTED == ret ? true : false;
+    return receive_fn_(a_change, unknown_missing_changes_up_to, rejection_reason);
 }
 
-SampleRejectedStatusKind DataReaderHistory::received_change_keep_all(
+bool DataReaderHistory::received_change_keep_all(
         CacheChange_t* a_change,
-        size_t unknown_missing_changes_up_to)
+        size_t unknown_missing_changes_up_to,
+        SampleRejectedStatusKind& rejection_reason)
 {
     if (!compute_key_for_change_fn(a_change))
     {
         // Store the sample temporally only in ReaderHistory. When completed it will be stored in DataReaderHistory too.
-        return add_to_reader_history_if_not_full(a_change);
+        return add_to_reader_history_if_not_full(a_change, rejection_reason);
     }
 
-    SampleRejectedStatusKind ret_value = REJECTED_BY_INSTANCES_LIMIT;
+    bool ret_value = false;
     InstanceCollection::iterator vit;
     if (find_key(a_change->instanceHandle, vit))
     {
@@ -223,39 +225,42 @@ SampleRejectedStatusKind DataReaderHistory::received_change_keep_all(
         size_t total_size = instance_changes.size() + unknown_missing_changes_up_to;
         if (total_size < static_cast<size_t>(resource_limited_qos_.max_samples_per_instance))
         {
-            ret_value =  add_received_change_with_key(a_change, vit->second);
+            ret_value =  add_received_change_with_key(a_change, vit->second, rejection_reason);
         }
         else
         {
             logInfo(SUBSCRIBER, "Change not added due to maximum number of samples per instance");
-            ret_value = REJECTED_BY_SAMPLES_PER_INSTANCE_LIMIT;
+            rejection_reason = REJECTED_BY_SAMPLES_PER_INSTANCE_LIMIT;
         }
 
+    }
+    else
+    {
+        rejection_reason = REJECTED_BY_INSTANCES_LIMIT;
     }
 
     return ret_value;
 }
 
-SampleRejectedStatusKind DataReaderHistory::received_change_keep_last(
+bool DataReaderHistory::received_change_keep_last(
         CacheChange_t* a_change,
-        size_t)
+        size_t,
+        SampleRejectedStatusKind& rejection_reason)
 {
     if (!compute_key_for_change_fn(a_change))
     {
         // Store the sample temporally only in ReaderHistory. When completed it will be stored in SubscriberHistory too.
-        return add_to_reader_history_if_not_full(a_change);
+        return add_to_reader_history_if_not_full(a_change, rejection_reason);
     }
 
-    SampleRejectedStatusKind ret_value = REJECTED_BY_INSTANCES_LIMIT;
+    bool ret_value = false;
     InstanceCollection::iterator vit;
     if (find_key(a_change->instanceHandle, vit))
     {
-        ret_value = NOT_REJECTED;
-        bool add = false;
         DataReaderInstance::ChangeCollection& instance_changes = vit->second.cache_changes;
         if (instance_changes.size() < static_cast<size_t>(history_qos_.depth))
         {
-            add = true;
+            ret_value = true;
         }
         else
         {
@@ -264,30 +269,37 @@ SampleRejectedStatusKind DataReaderHistory::received_change_keep_last(
             if (a_change->sourceTimestamp >= first_change->sourceTimestamp)
             {
                 // As the instance is ordered by source timestamp, we can always remove the first one.
-                add = remove_change_sub(first_change);
+                ret_value = remove_change_sub(first_change);
             }
             else
             {
                 // Received change is older than oldest, and should be discarded
+                rejection_reason = REJECTED_BY_SAMPLES_PER_INSTANCE_LIMIT;
+                return true;
             }
         }
 
-        if (add)
+        if (ret_value)
         {
-            ret_value = add_received_change_with_key(a_change, vit->second);
+            ret_value = add_received_change_with_key(a_change, vit->second, rejection_reason);
         }
+    }
+    else
+    {
+        rejection_reason = REJECTED_BY_INSTANCES_LIMIT;
     }
 
     return ret_value;
 }
 
-SampleRejectedStatusKind DataReaderHistory::add_received_change_with_key(
+bool DataReaderHistory::add_received_change_with_key(
         CacheChange_t* a_change,
-        DataReaderInstance& instance)
+        DataReaderInstance& instance,
+        SampleRejectedStatusKind& rejection_reason)
 {
-    SampleRejectedStatusKind ret_value = add_to_reader_history_if_not_full(a_change);
+    bool ret_value = add_to_reader_history_if_not_full(a_change, rejection_reason);
 
-    if (NOT_REJECTED == ret_value)
+    if (ret_value)
     {
         add_to_instance(a_change, instance);
     }
@@ -295,14 +307,16 @@ SampleRejectedStatusKind DataReaderHistory::add_received_change_with_key(
     return ret_value;
 }
 
-SampleRejectedStatusKind DataReaderHistory::add_to_reader_history_if_not_full(
-        CacheChange_t* a_change)
+bool DataReaderHistory::add_to_reader_history_if_not_full(
+        CacheChange_t* a_change,
+        SampleRejectedStatusKind& rejection_reason)
 {
     if (m_isHistoryFull)
     {
         // Discarding the sample.
         logWarning(SUBSCRIBER, "Attempting to add Data to Full ReaderHistory: " << type_name_);
-        return REJECTED_BY_SAMPLES_LIMIT;
+        rejection_reason = REJECTED_BY_SAMPLES_LIMIT;
+        return false;
     }
 
     bool ret_value = add_change(a_change);
@@ -310,7 +324,7 @@ SampleRejectedStatusKind DataReaderHistory::add_to_reader_history_if_not_full(
     {
         m_isHistoryFull = true;
     }
-    return ret_value ? NOT_REJECTED : REJECTED_BY_SAMPLES_LIMIT;
+    return ret_value;
 }
 
 void DataReaderHistory::add_to_instance(
@@ -377,7 +391,7 @@ bool DataReaderHistory::find_key(
 
     for (vit = keyed_changes_.begin(); vit != keyed_changes_.end(); ++vit)
     {
-        if (vit->second.cache_changes.size() == 0)
+        if (InstanceStateKind::ALIVE_INSTANCE_STATE != vit->second.instance_state)
         {
             keyed_changes_.erase(vit);
             vit_out = keyed_changes_.emplace(handle,
@@ -605,10 +619,11 @@ ReaderHistory::iterator DataReaderHistory::remove_change_nts(
             auto it = keyed_changes_.find(p_sample->instanceHandle);
 
             // if keyed and in history must be in the map
-            assert(it != keyed_changes_.end());
-
-            auto& c = it->second.cache_changes;
-            c.erase(std::remove(c.begin(), c.end(), p_sample), c.end());
+            if (it != keyed_changes_.end())
+            {
+                auto& c = it->second.cache_changes;
+                c.erase(std::remove(c.begin(), c.end(), p_sample), c.end());
+            }
         }
     }
 
@@ -617,83 +632,75 @@ ReaderHistory::iterator DataReaderHistory::remove_change_nts(
 }
 
 bool DataReaderHistory::completed_change(
-        CacheChange_t* change,
-        size_t unknown_missing_changes_up_to)
+        CacheChange_t* change)
 {
+    SampleRejectedStatusKind reason;
+    return completed_change(change, 0, reason);
+}
+
+bool DataReaderHistory::completed_change(
+        CacheChange_t* change,
+        size_t unknown_missing_changes_up_to,
+        SampleRejectedStatusKind& rejection_reason)
+{
+    bool ret_value = true;
+    rejection_reason = NOT_REJECTED;
 
     if (!change->instanceHandle.isDefined())
     {
-        InstanceCollection::iterator vit;
-        SampleRejectedStatusKind ret_value = REJECTED_BY_INSTANCES_LIMIT;
-        if (compute_key_for_change_fn(change) && find_key(change->instanceHandle, vit))
+        ret_value = false;
+        if (compute_key_for_change_fn(change))
         {
-            if (!change->instanceHandle.isDefined())
+            InstanceCollection::iterator vit;
+            if (find_key(change->instanceHandle, vit))
             {
-                ret_value = NOT_REJECTED;
+                ret_value = !change->instanceHandle.isDefined() ||
+                        complete_fn_(change, vit->second, unknown_missing_changes_up_to, rejection_reason);
             }
             else
             {
-                ret_value = complete_fn_(change, vit->second, unknown_missing_changes_up_to);
+                rejection_reason = REJECTED_BY_INSTANCES_LIMIT;
             }
         }
-
-        if (NOT_REJECTED != ret_value)
-        {
-            if (mp_reader->getListener())
-            {
-                mp_reader->getListener()->on_sample_rejected(mp_reader, ret_value, change);
-            }
-
-            const_iterator chit = find_change_nts(change);
-            if (chit != changesEnd())
-            {
-                m_isHistoryFull = false;
-                remove_change_nts(chit);
-            }
-            else
-            {
-                logError(SUBSCRIBER, "Change should exist but didn't find it");
-            }
-        }
-
-        return NOT_REJECTED == ret_value ? true : false;
-    }
-
-    return false;
-}
-
-SampleRejectedStatusKind DataReaderHistory::completed_change_keep_all(
-        CacheChange_t* change,
-        DataReaderInstance& instance,
-        size_t unknown_missing_changes_up_to)
-{
-    SampleRejectedStatusKind ret_value = REJECTED_BY_SAMPLES_PER_INSTANCE_LIMIT;
-    DataReaderInstance::ChangeCollection& instance_changes = instance.cache_changes;
-    if (instance_changes.size() + unknown_missing_changes_up_to <
-            static_cast<size_t>(resource_limited_qos_.max_samples_per_instance))
-    {
-        add_to_instance(change, instance);
-        ret_value = NOT_REJECTED;
-    }
-    else
-    {
-        logWarning(SUBSCRIBER, "Change not added due to maximum number of samples per instance");
     }
 
     return ret_value;
 }
 
-SampleRejectedStatusKind DataReaderHistory::completed_change_keep_last(
+bool DataReaderHistory::completed_change_keep_all(
         CacheChange_t* change,
         DataReaderInstance& instance,
-        size_t)
+        size_t unknown_missing_changes_up_to,
+        SampleRejectedStatusKind& rejection_reason)
 {
-    SampleRejectedStatusKind ret_value = REJECTED_BY_SAMPLES_PER_INSTANCE_LIMIT;
-    bool add = false;
+    bool ret_value = false;
+    DataReaderInstance::ChangeCollection& instance_changes = instance.cache_changes;
+    if (instance_changes.size() + unknown_missing_changes_up_to <
+            static_cast<size_t>(resource_limited_qos_.max_samples_per_instance))
+    {
+        add_to_instance(change, instance);
+        ret_value = true;
+    }
+    else
+    {
+        logWarning(SUBSCRIBER, "Change not added due to maximum number of samples per instance");
+        rejection_reason = REJECTED_BY_SAMPLES_PER_INSTANCE_LIMIT;
+    }
+
+    return ret_value;
+}
+
+bool DataReaderHistory::completed_change_keep_last(
+        CacheChange_t* change,
+        DataReaderInstance& instance,
+        size_t,
+        SampleRejectedStatusKind& rejection_reason)
+{
+    bool ret_value = false;
     DataReaderInstance::ChangeCollection& instance_changes = instance.cache_changes;
     if (instance_changes.size() < static_cast<size_t>(history_qos_.depth))
     {
-        add = true;
+        ret_value = true;
     }
     else
     {
@@ -702,19 +709,19 @@ SampleRejectedStatusKind DataReaderHistory::completed_change_keep_last(
         if (change->sourceTimestamp >= first_change->sourceTimestamp)
         {
             // As the instance is ordered by source timestamp, we can always remove the first one.
-            add = remove_change_sub(first_change);
+            ret_value = remove_change_sub(first_change);
         }
         else
         {
             // Received change is older than oldest, and should be discarded
-            ret_value = NOT_REJECTED;
+            rejection_reason = REJECTED_BY_SAMPLES_PER_INSTANCE_LIMIT;
+            return true;
         }
     }
 
-    if (add)
+    if (ret_value)
     {
         add_to_instance(change, instance);
-        ret_value = NOT_REJECTED;
     }
 
     return ret_value;
