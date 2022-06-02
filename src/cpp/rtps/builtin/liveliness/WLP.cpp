@@ -744,6 +744,7 @@ bool WLP::remove_local_writer(
             }
         }
         automatic_liveliness_assertion_->update_interval_millisec(min_automatic_ms_);
+        return true;
     }
     else if (W->get_liveliness_kind() == MANUAL_BY_PARTICIPANT_LIVELINESS_QOS)
     {
