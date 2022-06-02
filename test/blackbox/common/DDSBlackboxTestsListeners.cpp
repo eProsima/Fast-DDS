@@ -1671,8 +1671,8 @@ TEST(DDSStatus, sample_rejected_nokey_re_dw_re_dr_keep_all_max_samples_2)
     reader.block_for_all();
 
     std::unique_lock<std::mutex> lock(test_mtx);
-    ASSERT_EQ(5, test_status.total_count);
-    ASSERT_EQ(5, test_status.total_count_change);
+    ASSERT_EQ(5u, test_status.total_count);
+    ASSERT_EQ(5u, test_status.total_count_change);
     ASSERT_EQ(eprosima::fastdds::dds::REJECTED_BY_SAMPLES_LIMIT, test_status.last_reason);
     ASSERT_EQ(c_InstanceHandle_Unknown, test_status.last_instance_handle);
 }
@@ -1729,8 +1729,8 @@ TEST(DDSStatus, sample_rejected_key_re_dw_re_dr_keep_all_max_samples_2)
     reader.block_for_all();
 
     std::unique_lock<std::mutex> lock(test_mtx);
-    ASSERT_EQ(5, test_status.total_count);
-    ASSERT_EQ(5, test_status.total_count_change);
+    ASSERT_EQ(5u, test_status.total_count);
+    ASSERT_EQ(5u, test_status.total_count_change);
     ASSERT_EQ(eprosima::fastdds::dds::REJECTED_BY_SAMPLES_LIMIT, test_status.last_reason);
     ASSERT_EQ(instance_2, test_status.last_instance_handle);
 }
@@ -1775,8 +1775,8 @@ TEST(DDSStatus, sample_rejected_nokey_large_re_dw_re_dr_keep_all_max_samples_2)
     reader.block_for_all();
 
     std::unique_lock<std::mutex> lock(test_mtx);
-    ASSERT_EQ(5, test_status.total_count);
-    ASSERT_EQ(5, test_status.total_count_change);
+    ASSERT_EQ(5u, test_status.total_count);
+    ASSERT_EQ(5u, test_status.total_count_change);
     ASSERT_EQ(eprosima::fastdds::dds::REJECTED_BY_SAMPLES_LIMIT, test_status.last_reason);
     ASSERT_EQ(c_InstanceHandle_Unknown, test_status.last_instance_handle);
 }
@@ -1836,8 +1836,8 @@ TEST(DDSStatus, sample_rejected_key_large_re_dw_re_dr_keep_all_max_samples_2)
     reader.block_for_all();
 
     std::unique_lock<std::mutex> lock(test_mtx);
-    ASSERT_EQ(5, test_status.total_count);
-    ASSERT_EQ(5, test_status.total_count_change);
+    ASSERT_EQ(5u, test_status.total_count);
+    ASSERT_EQ(5u, test_status.total_count_change);
     ASSERT_EQ(eprosima::fastdds::dds::REJECTED_BY_SAMPLES_LIMIT, test_status.last_reason);
     ASSERT_EQ(instance_2, test_status.last_instance_handle);
 }
@@ -1879,8 +1879,8 @@ TEST(DDSStatus, sample_rejected_nokey_re_dw_re_dr_keep_last_max_samples_2)
     reader.block_for_seq({0, 10});
 
     std::unique_lock<std::mutex> lock(test_mtx);
-    ASSERT_EQ(5, test_status.total_count);
-    ASSERT_EQ(5, test_status.total_count_change);
+    ASSERT_EQ(5u, test_status.total_count);
+    ASSERT_EQ(5u, test_status.total_count_change);
     ASSERT_EQ(eprosima::fastdds::dds::REJECTED_BY_SAMPLES_LIMIT, test_status.last_reason);
     ASSERT_EQ(c_InstanceHandle_Unknown, test_status.last_instance_handle);
 }
@@ -1937,8 +1937,8 @@ TEST(DDSStatus, sample_rejected_key_re_dw_re_dr_keep_last_max_samples_2)
     reader.block_for_seq({0, 10});
 
     std::unique_lock<std::mutex> lock(test_mtx);
-    ASSERT_EQ(5, test_status.total_count);
-    ASSERT_EQ(5, test_status.total_count_change);
+    ASSERT_EQ(5u, test_status.total_count);
+    ASSERT_EQ(5u, test_status.total_count_change);
     ASSERT_EQ(eprosima::fastdds::dds::REJECTED_BY_SAMPLES_LIMIT, test_status.last_reason);
     ASSERT_EQ(instance_2, test_status.last_instance_handle);
 }
@@ -1983,8 +1983,8 @@ TEST(DDSStatus, sample_rejected_nokey_large_re_dw_re_dr_keep_last_max_samples_2)
     reader.block_for_seq({0, 10});
 
     std::unique_lock<std::mutex> lock(test_mtx);
-    ASSERT_EQ(5, test_status.total_count);
-    ASSERT_EQ(5, test_status.total_count_change);
+    ASSERT_EQ(5u, test_status.total_count);
+    ASSERT_EQ(5u, test_status.total_count_change);
     ASSERT_EQ(eprosima::fastdds::dds::REJECTED_BY_SAMPLES_LIMIT, test_status.last_reason);
     ASSERT_EQ(c_InstanceHandle_Unknown, test_status.last_instance_handle);
 }
@@ -2044,8 +2044,8 @@ TEST(DDSStatus, sample_rejected_key_large_re_dw_re_dr_keep_last_max_samples_2)
     reader.block_for_seq({0, 10});
 
     std::unique_lock<std::mutex> lock(test_mtx);
-    ASSERT_EQ(5, test_status.total_count);
-    ASSERT_EQ(5, test_status.total_count_change);
+    ASSERT_EQ(5u, test_status.total_count);
+    ASSERT_EQ(5u, test_status.total_count_change);
     ASSERT_EQ(eprosima::fastdds::dds::REJECTED_BY_SAMPLES_LIMIT, test_status.last_reason);
     ASSERT_EQ(instance_2, test_status.last_instance_handle);
 }
@@ -2083,7 +2083,7 @@ TEST(DDSStatus, sample_rejected_nokey_re_dw_re_dr_keep_all_max_samples_per_insta
     reader.block_for_all();
 
     std::unique_lock<std::mutex> lock(test_mtx);
-    ASSERT_EQ(0, test_status.total_count);
+    ASSERT_EQ(0u, test_status.total_count);
 }
 
 /*!
@@ -2137,8 +2137,8 @@ TEST(DDSStatus, sample_rejected_key_re_dw_re_dr_keep_all_max_samples_per_instanc
     reader.block_for_all();
 
     std::unique_lock<std::mutex> lock(test_mtx);
-    ASSERT_EQ(5, test_status.total_count);
-    ASSERT_EQ(5, test_status.total_count_change);
+    ASSERT_EQ(5u, test_status.total_count);
+    ASSERT_EQ(5u, test_status.total_count_change);
     ASSERT_EQ(eprosima::fastdds::dds::REJECTED_BY_SAMPLES_PER_INSTANCE_LIMIT, test_status.last_reason);
     ASSERT_EQ(instance_2, test_status.last_instance_handle);
 }
@@ -2179,7 +2179,7 @@ TEST(DDSStatus, sample_rejected_nokey_large_re_dw_re_dr_keep_all_max_samples_per
     reader.block_for_all();
 
     std::unique_lock<std::mutex> lock(test_mtx);
-    ASSERT_EQ(0, test_status.total_count);
+    ASSERT_EQ(0u, test_status.total_count);
 }
 
 /*!
@@ -2237,8 +2237,8 @@ TEST(DDSStatus, sample_rejected_key_large_re_dw_re_dr_keep_all_max_samples_per_i
     reader.block_for_all();
 
     std::unique_lock<std::mutex> lock(test_mtx);
-    ASSERT_EQ(5, test_status.total_count);
-    ASSERT_EQ(5, test_status.total_count_change);
+    ASSERT_EQ(5u, test_status.total_count);
+    ASSERT_EQ(5u, test_status.total_count_change);
     ASSERT_EQ(eprosima::fastdds::dds::REJECTED_BY_SAMPLES_PER_INSTANCE_LIMIT, test_status.last_reason);
     ASSERT_EQ(instance_2, test_status.last_instance_handle);
 }
@@ -2276,7 +2276,7 @@ TEST(DDSStatus, sample_rejected_nokey_re_dw_re_dr_keep_last_max_samples_per_inst
     reader.block_for_seq({0, 10});
 
     std::unique_lock<std::mutex> lock(test_mtx);
-    ASSERT_EQ(0, test_status.total_count);
+    ASSERT_EQ(0u, test_status.total_count);
 }
 
 /*!
@@ -2319,7 +2319,7 @@ TEST(DDSStatus, sample_rejected_key_re_dw_re_dr_keep_last_max_samples_per_instan
     reader.block_for_seq({0, 10});
 
     std::unique_lock<std::mutex> lock(test_mtx);
-    ASSERT_EQ(0, test_status.total_count);
+    ASSERT_EQ(0u, test_status.total_count);
 }
 
 /*!
@@ -2358,7 +2358,7 @@ TEST(DDSStatus, sample_rejected_nokey_large_re_dw_re_dr_keep_last_max_samples_pe
     reader.block_for_seq({0, 10});
 
     std::unique_lock<std::mutex> lock(test_mtx);
-    ASSERT_EQ(0, test_status.total_count);
+    ASSERT_EQ(0u, test_status.total_count);
 }
 
 /*!
@@ -2404,7 +2404,7 @@ TEST(DDSStatus, sample_rejected_key_large_re_dw_re_dr_keep_last_max_samples_per_
     reader.block_for_seq({0, 10});
 
     std::unique_lock<std::mutex> lock(test_mtx);
-    ASSERT_EQ(0, test_status.total_count);
+    ASSERT_EQ(0u, test_status.total_count);
 }
 
 /*!
@@ -2440,7 +2440,7 @@ TEST(DDSStatus, sample_rejected_nokey_re_dw_re_dr_keep_all_max_instances_1)
     reader.block_for_all();
 
     std::unique_lock<std::mutex> lock(test_mtx);
-    ASSERT_EQ(0, test_status.total_count);
+    ASSERT_EQ(0u, test_status.total_count);
 }
 
 /*!
@@ -2487,8 +2487,8 @@ TEST(DDSStatus, sample_rejected_key_re_dw_re_dr_keep_all_max_instances_1)
     reader.block_for_seq({0, 9});
 
     std::unique_lock<std::mutex> lock(test_mtx);
-    ASSERT_EQ(4, test_status.total_count);
-    ASSERT_EQ(4, test_status.total_count_change);
+    ASSERT_EQ(4u, test_status.total_count);
+    ASSERT_EQ(4u, test_status.total_count_change);
     ASSERT_EQ(eprosima::fastdds::dds::REJECTED_BY_INSTANCES_LIMIT, test_status.last_reason);
     ASSERT_EQ(instance_2, test_status.last_instance_handle);
 }
@@ -2530,7 +2530,7 @@ TEST(DDSStatus, sample_rejected_nokey_large_re_dw_re_dr_keep_all_max_instances_1
     reader.block_for_all();
 
     std::unique_lock<std::mutex> lock(test_mtx);
-    ASSERT_EQ(0, test_status.total_count);
+    ASSERT_EQ(0u, test_status.total_count);
 }
 
 /*!
@@ -2581,8 +2581,8 @@ TEST(DDSStatus, sample_rejected_key_large_re_dw_re_dr_keep_all_max_instances_1)
     reader.block_for_seq({0, 9});
 
     std::unique_lock<std::mutex> lock(test_mtx);
-    ASSERT_EQ(4, test_status.total_count);
-    ASSERT_EQ(4, test_status.total_count_change);
+    ASSERT_EQ(4u, test_status.total_count);
+    ASSERT_EQ(4u, test_status.total_count_change);
     ASSERT_EQ(eprosima::fastdds::dds::REJECTED_BY_INSTANCES_LIMIT, test_status.last_reason);
     ASSERT_EQ(instance_2, test_status.last_instance_handle);
 }
@@ -2620,7 +2620,7 @@ TEST(DDSStatus, sample_rejected_nokey_re_dw_re_dr_keep_last_max_instances_1)
     reader.block_for_seq({0, 10});
 
     std::unique_lock<std::mutex> lock(test_mtx);
-    ASSERT_EQ(0, test_status.total_count);
+    ASSERT_EQ(0u, test_status.total_count);
 }
 
 
@@ -2669,8 +2669,8 @@ TEST(DDSStatus, sample_rejected_key_re_dw_re_dr_keep_last_max_instances_1)
     reader.block_for_seq({0, 9});
 
     std::unique_lock<std::mutex> lock(test_mtx);
-    ASSERT_EQ(4, test_status.total_count);
-    ASSERT_EQ(4, test_status.total_count_change);
+    ASSERT_EQ(4u, test_status.total_count);
+    ASSERT_EQ(4u, test_status.total_count_change);
     ASSERT_EQ(eprosima::fastdds::dds::REJECTED_BY_INSTANCES_LIMIT, test_status.last_reason);
     ASSERT_EQ(instance_2, test_status.last_instance_handle);
 }
@@ -2711,7 +2711,7 @@ TEST(DDSStatus, sample_rejected_nokey_large_re_dw_re_dr_keep_last_max_instances_
     reader.block_for_seq({0, 10});
 
     std::unique_lock<std::mutex> lock(test_mtx);
-    ASSERT_EQ(0, test_status.total_count);
+    ASSERT_EQ(0u, test_status.total_count);
 }
 
 /*!
@@ -2762,8 +2762,8 @@ TEST(DDSStatus, sample_rejected_key_large_re_dw_re_dr_keep_last_max_instances_1)
     reader.block_for_seq({0, 9});
 
     std::unique_lock<std::mutex> lock(test_mtx);
-    ASSERT_EQ(4, test_status.total_count);
-    ASSERT_EQ(4, test_status.total_count_change);
+    ASSERT_EQ(4u, test_status.total_count);
+    ASSERT_EQ(4u, test_status.total_count_change);
     ASSERT_EQ(eprosima::fastdds::dds::REJECTED_BY_INSTANCES_LIMIT, test_status.last_reason);
     ASSERT_EQ(instance_2, test_status.last_instance_handle);
 }
