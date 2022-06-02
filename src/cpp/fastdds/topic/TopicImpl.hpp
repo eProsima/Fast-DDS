@@ -74,6 +74,10 @@ public:
     void set_listener(
             TopicListener* listener);
 
+    void set_listener(
+            TopicListener* listener,
+            const StatusMask& status);
+
     DomainParticipant* get_participant() const;
 
     const TypeSupport& get_type() const;

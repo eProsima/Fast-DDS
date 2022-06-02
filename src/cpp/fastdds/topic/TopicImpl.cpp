@@ -149,6 +149,13 @@ void TopicImpl::set_listener(
     listener_ = listener;
 }
 
+void TopicImpl::set_listener(
+        TopicListener* listener,
+        const StatusMask& mask)
+{
+    participant_->set_topic_listener(factory_, this, listener, mask);
+}
+
 DomainParticipant* TopicImpl::get_participant() const
 {
     return participant_->get_participant();
