@@ -474,9 +474,9 @@ Topic* DomainParticipantImpl::find_topic(
         const fastrtps::Duration_t& timeout)
 {
     auto find_fn = [this, &topic_name]()
-    {
-        return topics_.count(topic_name) > 0;
-    };
+            {
+                return topics_.count(topic_name) > 0;
+            };
 
     std::unique_lock<std::mutex> lock(mtx_topics_);
     if (timeout.is_infinite())

@@ -38,12 +38,12 @@ class Topic : public dds::core::TEntity<detail::Topic>
 public:
 
     OMG_DDS_REF_TYPE_PROTECTED_DC(
-            Topic,
+        Topic,
         dds::core::TEntity,
         detail::Topic)
 
     OMG_DDS_IMPLICIT_REF_BASE(
-            Topic)
+        Topic)
 
     /**
      * Create a new Topic.

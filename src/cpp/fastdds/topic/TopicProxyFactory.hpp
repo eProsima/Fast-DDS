@@ -115,7 +115,8 @@ public:
      * Apply the given function to all the TopicProxy objects owned by the factory.
      */
     template<class UnaryFunction>
-    void for_each(UnaryFunction f) const
+    void for_each(
+            UnaryFunction f) const
     {
         std::for_each(proxies_.begin(), proxies_.end(), f);
     }
