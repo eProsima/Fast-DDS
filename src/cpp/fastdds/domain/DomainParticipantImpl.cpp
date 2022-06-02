@@ -473,22 +473,31 @@ Topic* DomainParticipantImpl::find_topic(
         const std::string& topic_name,
         const fastrtps::Duration_t& timeout)
 {
-    auto duration = std::chrono::seconds(timeout.seconds) + std::chrono::nanoseconds(timeout.nanosec);
-    Topic* ret_val = nullptr;
+    auto find_fn = [this, &topic_name]()
+    {
+        return topics_.count(topic_name) > 0;
+    };
 
     std::unique_lock<std::mutex> lock(mtx_topics_);
-    if (cond_topics_.wait_for(lock, duration, [this, &topic_name]()
-            {
-                return topics_.count(topic_name) > 0;
-            }))
+    if (timeout.is_infinite())
     {
-        ret_val = topics_[topic_name]->create_topic()->get_topic();
-
-        InstanceHandle_t topic_handle;
-        create_instance_handle(topic_handle);
-        ret_val->set_instance_handle(topic_handle);
-        topics_by_handle_[topic_handle] = ret_val;
+        cond_topics_.wait(lock, find_fn);
     }
+    else
+    {
+        auto duration = std::chrono::seconds(timeout.seconds) + std::chrono::nanoseconds(timeout.nanosec);
+        if (!cond_topics_.wait_for(lock, duration, find_fn))
+        {
+            return nullptr;
+        }
+    }
+
+    Topic* ret_val = topics_[topic_name]->create_topic()->get_topic();
+
+    InstanceHandle_t topic_handle;
+    create_instance_handle(topic_handle);
+    ret_val->set_instance_handle(topic_handle);
+    topics_by_handle_[topic_handle] = ret_val;
 
     return ret_val;
 }
