@@ -270,6 +270,7 @@ bool ReaderProxy::change_is_unsent(
         const SequenceNumber_t& seq_num,
         FragmentNumber_t& next_unsent_frag,
         SequenceNumber_t& gap_seq,
+        const SequenceNumber_t& min_seq,
         bool& need_reactivate_periodic_heartbeat) const
 {
     if (seq_num <= changes_low_mark_ || changes_for_reader_.empty())
@@ -304,6 +305,19 @@ bool ReaderProxy::change_is_unsent(
             if (prev != chit->getSequenceNumber())
             {
                 gap_seq = prev;
+
+                // Verify the calculated gap_seq in ReaderProxy is a real hole in the history.
+                if (gap_seq < min_seq) // Several samples of the hole are not really already available.
+                {
+                    if (min_seq < seq_num)
+                    {
+                        gap_seq = min_seq;
+                    }
+                    else
+                    {
+                        gap_seq = SequenceNumber_t::unknown();
+                    }
+                }
             }
         }
     }
