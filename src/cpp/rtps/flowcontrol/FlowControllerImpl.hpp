@@ -1325,8 +1325,8 @@ private:
 
                 fastrtps::rtps::LocatorSelectorSender& locator_selector =
                         current_writer->get_async_locator_selector();
-                locator_selector.lock();
                 async_mode.group.sender(current_writer, &locator_selector);
+                locator_selector.lock();
 
                 // Remove previously from queue, because deliver_sample_nts could call FlowController::remove_sample()
                 // provoking a deadlock.

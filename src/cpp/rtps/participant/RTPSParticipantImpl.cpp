@@ -447,11 +447,13 @@ void RTPSParticipantImpl::enable()
 
 void RTPSParticipantImpl::disable()
 {
-    // Ensure that other participants will not accidentally discover this one
-    if (mp_builtinProtocols && mp_builtinProtocols->mp_PDP)
+    if (nullptr == mp_builtinProtocols)
     {
-        mp_builtinProtocols->stopRTPSParticipantAnnouncement();
+        return;
     }
+
+    // Ensure that other participants will not accidentally discover this one
+    stopRTPSParticipantAnnouncement();
 
     // Disable Retries on Transports
     m_network_Factory.Shutdown();
@@ -464,7 +466,16 @@ void RTPSParticipantImpl::disable()
     }
 
     {
-        std::lock_guard<std::recursive_mutex> lock(*mp_mutex);
+        // take PDP mutex to avoid ABBA deadlock, make not be avaiable on DiscoveryProtocol::NONE
+        std::unique_ptr<std::lock_guard<std::recursive_mutex>> _;
+        if (mp_builtinProtocols->mp_PDP)
+        {
+            // TODO: promote to make_unike in C++14 upgrade
+            _.reset(new std::lock_guard<std::recursive_mutex>(*mp_builtinProtocols->mp_PDP->getMutex()));
+        }
+
+        std::lock_guard<std::recursive_mutex> __(*mp_mutex);
+
         while (m_userReaderList.size() > 0)
         {
             deleteUserEndpoint(static_cast<Endpoint*>(*m_userReaderList.begin()));
