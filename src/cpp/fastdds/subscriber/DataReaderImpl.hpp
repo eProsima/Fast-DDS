@@ -248,6 +248,13 @@ public:
     ReturnCode_t get_requested_incompatible_qos_status(
             RequestedIncompatibleQosStatus& status);
 
+    /*!
+     * @brief Get the SAMPLE_LOST communication status
+     *
+     * @param[out] status SampleLostStatus object where the status is returned.
+     *
+     * @return RETCODE_OK
+     */
     ReturnCode_t get_sample_lost_status(
             fastdds::dds::SampleLostStatus& status);
 
@@ -401,6 +408,7 @@ protected:
     //! Requested incompatible QoS status
     RequestedIncompatibleQosStatus requested_incompatible_qos_status_;
 
+    //! Sample lost status
     SampleLostStatus sample_lost_status_;
 
     //! A timed callback to remove expired samples
