@@ -1,3 +1,8 @@
+Version 2.6.1
+-------------
+
+* Support of `SampleLostStatus` in DDS API.
+
 Version 2.6.0
 -------------
 
