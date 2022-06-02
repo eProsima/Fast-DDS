@@ -67,7 +67,7 @@ public:
             TopicListener* listener)
         : topic_name_(topic_name)
         , status_mask_(status_mask)
-        , topic_impl_(participant, type_support, qos, listener)
+        , topic_impl_(this, participant, type_support, qos, listener)
     {
     }
 

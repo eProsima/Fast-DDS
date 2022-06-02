@@ -264,7 +264,7 @@ public:
         {
             return nullptr;
         }
-        TopicImpl* topic_impl = new TopicImpl(this, type_support, qos, listener);
+        TopicImpl* topic_impl = new TopicImpl(nullptr, this, type_support, qos, listener);
         TopicProxy* proxy = new TopicProxy(topic_name, type_name, mask, topic_impl);
         Topic* topic = proxy->get_topic();
         topics_[topic_name] = proxy;

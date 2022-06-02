@@ -37,12 +37,14 @@ class DomainParticipantImpl;
 class DomainParticipant;
 class TopicListener;
 class Topic;
+class TopicProxyFactory;
 
 class TopicImpl
 {
 public:
 
     TopicImpl(
+            TopicProxyFactory* factory,
             DomainParticipantImpl* p,
             TypeSupport type_support,
             const TopicQos& qos,
@@ -86,6 +88,7 @@ public:
 
 protected:
 
+    TopicProxyFactory* factory_;
     DomainParticipantImpl* participant_;
     TypeSupport type_support_;
     TopicQos qos_;

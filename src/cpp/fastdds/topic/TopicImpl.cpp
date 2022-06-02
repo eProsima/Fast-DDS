@@ -33,11 +33,13 @@ namespace fastdds {
 namespace dds {
 
 TopicImpl::TopicImpl(
+        TopicProxyFactory* factory,
         DomainParticipantImpl* p,
         TypeSupport type_support,
         const TopicQos& qos,
         TopicListener* listen)
-    : participant_(p)
+    : factory_(factory)
+    , participant_(p)
     , type_support_(type_support)
     , qos_(&qos == &TOPIC_QOS_DEFAULT ? participant_->get_default_topic_qos() : qos)
     , listener_(listen)
