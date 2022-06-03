@@ -193,7 +193,7 @@ public:
             EndpointSecurityAttributes& security_attributes);
 
     /**
-     * Returns a handle to the identity token used in handshake
+     * Retrieves a handle to the identity token used in handshake
      *
      * @param identity_token IdentityToken** handle reference to set
      * @return true on successful retrieval
@@ -211,7 +211,7 @@ public:
             IdentityToken* identity_token) const;
 
     /**
-     * Returns a handle to the permision token used in handshake
+     * Retrieves a handle to the permision token used in handshake
      *
      * @param permissions_token PermissionsToken** handle reference to set
      * @return true on successful retrieval

@@ -18,11 +18,11 @@
 #ifndef _FASTDDS_RTPS_SECURITY_CRYPTOGRAPHY_CRYPTOTRANSFORM_H_
 #define _FASTDDS_RTPS_SECURITY_CRYPTOGRAPHY_CRYPTOTRANSFORM_H_
 
+#include <memory>
+
 #include <fastdds/rtps/security/cryptography/CryptoTypes.h>
 #include <fastdds/rtps/common/CDRMessage_t.h>
 #include <fastdds/rtps/common/SerializedPayload.h>
-
-#include <memory>
 
 namespace eprosima {
 namespace fastrtps {

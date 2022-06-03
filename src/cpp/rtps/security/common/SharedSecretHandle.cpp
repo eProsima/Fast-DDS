@@ -27,7 +27,15 @@ const std::vector<uint8_t>* SharedSecretHelper::find_data_value(
         const std::string& name)
 {
     const std::vector<uint8_t>* returnedValue = nullptr;
-    const SharedSecret& sharedsecret = **SharedSecretHandle::narrow(secret);
+    const SharedSecretHandle& sh = SharedSecretHandle::narrow(secret);
+
+    // Check the right class is underneath the handle
+    if (sh.nil())
+    {
+        return nullptr;
+    }
+
+    const SharedSecret& sharedsecret = **sh;
 
     for (auto property = sharedsecret.data_.begin(); property != sharedsecret.data_.end(); ++property)
     {

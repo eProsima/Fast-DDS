@@ -254,7 +254,6 @@ std::shared_ptr<ParticipantCryptoHandle> AESGCMGMAC_KeyFactory::register_matched
     bool is_origin_auth =
             (plugin_attrs & PLUGIN_PARTICIPANT_SECURITY_ATTRIBUTES_FLAG_IS_RTPS_ORIGIN_AUTHENTICATED) != 0;
 
-
     // Remote Participant CryptoHandle, to be returned at the end of the function
     std::shared_ptr<AESGCMGMAC_ParticipantCryptoHandle> RPCrypto;
 

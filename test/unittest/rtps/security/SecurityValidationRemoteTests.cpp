@@ -56,6 +56,8 @@ TEST_F(SecurityTest, discovered_participant_validation_remote_identity_ok)
     EXPECT_CALL(*participant_.getListener(), onParticipantAuthentication(_, info)).Times(1);
 
     ASSERT_TRUE(manager_.discovered_participant(participant_data));
+
+    return_handle(remote_identity_handle);
 }
 
 TEST_F(SecurityTest, discovered_participant_validation_remote_identity_pending_handshake_message)
@@ -75,6 +77,8 @@ TEST_F(SecurityTest, discovered_participant_validation_remote_identity_pending_h
     ParticipantProxyData participant_data;
     fill_participant_key(participant_data.m_guid);
     ASSERT_TRUE(manager_.discovered_participant(participant_data));
+
+    return_handle(remote_identity_handle);
 }
 
 TEST_F(SecurityTest, discovered_participant_validation_remote_identity_pending_handshake_request_fail)
@@ -104,6 +108,8 @@ TEST_F(SecurityTest, discovered_participant_validation_remote_identity_pending_h
     EXPECT_CALL(*participant_.getListener(), onParticipantAuthentication(_, info)).Times(1);
 
     ASSERT_FALSE(manager_.discovered_participant(participant_data));
+
+    return_handle(remote_identity_handle);
 }
 
 TEST_F(SecurityTest, discovered_participant_validation_remote_identity_pending_handshake_request_ok)
