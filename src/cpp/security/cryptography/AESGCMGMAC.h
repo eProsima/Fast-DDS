@@ -1,5 +1,5 @@
 // Copyright 2016 Proyectos y Sistemas de Mantenimiento SL (eProsima).
-//G
+//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -26,6 +26,7 @@
 #include <security/cryptography/AESGCMGMAC_KeyFactory.h>
 #include <security/cryptography/AESGCMGMAC_Transform.h>
 
+#include <memory>
 
 namespace eprosima {
 namespace fastrtps {
@@ -34,15 +35,33 @@ namespace security {
 
 class AESGCMGMAC : public Cryptography
 {
+    CryptoKeyExchange* m_cryptokeyexchange;
+    std::shared_ptr<AESGCMGMAC_KeyFactory> m_cryptokeyfactory;
+    CryptoTransform* m_cryptotransform;
+
 public:
 
     AESGCMGMAC();
     ~AESGCMGMAC();
 
-    AESGCMGMAC_KeyExchange* keyexchange();
-    AESGCMGMAC_KeyFactory* keyfactory();
-    AESGCMGMAC_Transform* cryptotransform();
+    CryptoKeyExchange* cryptokeyexchange() override
+    {
+        return keyexchange();
+    }
 
+    CryptoKeyFactory* cryptokeyfactory() override
+    {
+        return keyfactory().get();
+    }
+
+    CryptoTransform* cryptotransform() override
+    {
+        return transform();
+    }
+
+    AESGCMGMAC_KeyExchange* keyexchange();
+    std::shared_ptr<AESGCMGMAC_KeyFactory> keyfactory();
+    AESGCMGMAC_Transform* transform();
 };
 
 } //namespace security

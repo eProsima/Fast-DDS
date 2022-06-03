@@ -21,14 +21,14 @@
 
 //Description of doxygen modules, not used in actual code.
 
- /*!
+/*!
  * @defgroup FASTRTPS_GENERAL_API eProsima Fast RTPS API Reference
  * @brief eProsima Fast RTPS API grouped in modules.
  */
 
 
 
- /*!
+/*!
  * @defgroup RTPS_MODULE RTPS
  * @ingroup FASTRTPS_GENERAL_API
  * @brief RTPS API
@@ -61,7 +61,7 @@
 
 /** @defgroup NETWORK_MODULE Network Module
  * @ingroup RTPS_MODULE
- * Includes the elements necessary to interface between the 
+ * Includes the elements necessary to interface between the
  * transport layer and the FastRTPS library.
  */
 
@@ -108,8 +108,12 @@
  * This module contains the classes associated with the Writer Liveliness Protocols.
  */
 
-#endif
+/** @defgroup SECURITY_MODULE Security Module
+ * @ingroup MANAGEMENT_MODULE
+ * This module contains the classes associated with DDS Security (see https://www.omg.org/spec/DDS-SECURITY/)
+ */
 
+#endif // ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 
 /** @defgroup UTILITIES_MODULE Shared Utilities
  * @ingroup FASTRTPS_GENERAL_API
@@ -135,6 +139,6 @@
 /**
  * @namespace eprosima::fastrtps::rtps::TimeConv Auxiliary methods to convert to Time_t to more manageable types.
  *  @ingroup UTILITIES_MODULE
-  */
+ */
 
 #endif /* RTPS_DOXYGEN_MODULES_H_ */

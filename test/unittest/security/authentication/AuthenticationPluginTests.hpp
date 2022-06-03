@@ -64,8 +64,8 @@ public:
             const eprosima::fastrtps::rtps::security::HandshakeMessageToken& message,
             const eprosima::fastrtps::rtps::security::HandshakeMessageToken& reply_message);
     static void check_shared_secrets(
-            const eprosima::fastrtps::rtps::security::SharedSecretHandle& sharedsecret1,
-            const eprosima::fastrtps::rtps::security::SharedSecretHandle& sharedsecret2);
+            const eprosima::fastrtps::rtps::security::SecretHandle& sharedsecret1,
+            const eprosima::fastrtps::rtps::security::SecretHandle& sharedsecret2);
 
     eprosima::fastrtps::rtps::security::PKIDH plugin;
 };
@@ -148,16 +148,18 @@ TEST_F(AuthenticationPluginTest, validate_local_identity_wrong_validation)
 
 TEST_F(AuthenticationPluginTest, handshake_process_ok)
 {
-    eprosima::fastrtps::rtps::security::IdentityHandle* local_identity_handle1 = nullptr;
+    using namespace eprosima::fastrtps::rtps::security;
+
+    IdentityHandle* local_identity_handle1 = nullptr;
     eprosima::fastrtps::rtps::GUID_t adjusted_participant_key1;
     eprosima::fastrtps::rtps::GUID_t adjusted_participant_key2;
     uint32_t domain_id = 0;
     eprosima::fastrtps::rtps::RTPSParticipantAttributes participant_attr;
     eprosima::fastrtps::rtps::GUID_t candidate_participant_key1;
     eprosima::fastrtps::rtps::GUID_t candidate_participant_key2;
-    eprosima::fastrtps::rtps::security::SecurityException exception;
-    eprosima::fastrtps::rtps::security::ValidationResult_t result =
-            eprosima::fastrtps::rtps::security::ValidationResult_t::VALIDATION_FAILED;
+    SecurityException exception;
+    ValidationResult_t result =
+            ValidationResult_t::VALIDATION_FAILED;
 
     participant_attr.properties = get_valid_policy();
 
@@ -168,11 +170,11 @@ TEST_F(AuthenticationPluginTest, handshake_process_ok)
                     candidate_participant_key1,
                     exception);
 
-    ASSERT_TRUE(result == eprosima::fastrtps::rtps::security::ValidationResult_t::VALIDATION_OK);
+    ASSERT_TRUE(result == ValidationResult_t::VALIDATION_OK);
     ASSERT_TRUE(local_identity_handle1 != nullptr);
     AuthenticationPluginTest::check_local_identity_handle(*local_identity_handle1);
 
-    eprosima::fastrtps::rtps::security::IdentityHandle* local_identity_handle2 = nullptr;
+    IdentityHandle* local_identity_handle2 = nullptr;
     result = plugin.validate_local_identity(&local_identity_handle2,
                     adjusted_participant_key2,
                     domain_id,
@@ -180,11 +182,11 @@ TEST_F(AuthenticationPluginTest, handshake_process_ok)
                     candidate_participant_key2,
                     exception);
 
-    ASSERT_TRUE(result == eprosima::fastrtps::rtps::security::ValidationResult_t::VALIDATION_OK);
+    ASSERT_TRUE(result == ValidationResult_t::VALIDATION_OK);
     ASSERT_TRUE(local_identity_handle2 != nullptr);
     AuthenticationPluginTest::check_local_identity_handle(*local_identity_handle2);
 
-    eprosima::fastrtps::rtps::security::IdentityHandle* remote_identity_handle1 = nullptr;
+    IdentityHandle* remote_identity_handle1 = nullptr;
     eprosima::fastrtps::rtps::IdentityToken remote_identity_token1 = generate_remote_identity_token_ok(
         *local_identity_handle1);
     eprosima::fastrtps::rtps::GUID_t remote_participant_key;
@@ -198,7 +200,7 @@ TEST_F(AuthenticationPluginTest, handshake_process_ok)
     ASSERT_TRUE(remote_identity_handle1 != nullptr);
     AuthenticationPluginTest::check_remote_identity_handle(*remote_identity_handle1);
 
-    eprosima::fastrtps::rtps::security::IdentityHandle* remote_identity_handle2 = nullptr;
+    IdentityHandle* remote_identity_handle2 = nullptr;
     eprosima::fastrtps::rtps::IdentityToken remote_identity_token2 = generate_remote_identity_token_ok(
         *local_identity_handle2);
 
@@ -211,10 +213,10 @@ TEST_F(AuthenticationPluginTest, handshake_process_ok)
     ASSERT_TRUE(remote_identity_handle2 != nullptr);
     AuthenticationPluginTest::check_remote_identity_handle(*remote_identity_handle2);
 
-    eprosima::fastrtps::rtps::security::HandshakeHandle* handshake_handle = nullptr;
-    eprosima::fastrtps::rtps::security::HandshakeMessageToken* handshake_message = nullptr;
+    HandshakeHandle* handshake_handle = nullptr;
+    HandshakeMessageToken* handshake_message = nullptr;
     eprosima::fastrtps::rtps::ParticipantProxyData participant_data1(eprosima::fastrtps::rtps::
-            c_default_RTPSParticipantAllocationAttributes);
+                    c_default_RTPSParticipantAllocationAttributes);
     participant_data1.m_guid = adjusted_participant_key1;
     eprosima::fastrtps::rtps::CDRMessage_t auxMsg(RTPSMESSAGE_DEFAULT_SIZE);
     auxMsg.msg_endian = eprosima::fastrtps::rtps::BIGEND;
@@ -227,15 +229,15 @@ TEST_F(AuthenticationPluginTest, handshake_process_ok)
                     auxMsg,
                     exception);
 
-    ASSERT_TRUE(result == eprosima::fastrtps::rtps::security::ValidationResult_t::VALIDATION_PENDING_HANDSHAKE_MESSAGE);
+    ASSERT_TRUE(result == ValidationResult_t::VALIDATION_PENDING_HANDSHAKE_MESSAGE);
     ASSERT_TRUE(handshake_handle != nullptr);
     ASSERT_TRUE(handshake_message != nullptr);
     check_handshake_request_message(*handshake_handle, *handshake_message);
 
-    eprosima::fastrtps::rtps::security::HandshakeHandle* handshake_handle_reply = nullptr;
-    eprosima::fastrtps::rtps::security::HandshakeMessageToken* handshake_message_reply = nullptr;
+    HandshakeHandle* handshake_handle_reply = nullptr;
+    HandshakeMessageToken* handshake_message_reply = nullptr;
     eprosima::fastrtps::rtps::ParticipantProxyData participant_data2(eprosima::fastrtps::rtps::
-            c_default_RTPSParticipantAllocationAttributes);
+                    c_default_RTPSParticipantAllocationAttributes);
     participant_data2.m_guid = adjusted_participant_key2;
 
     auxMsg.length = 0;
@@ -245,48 +247,51 @@ TEST_F(AuthenticationPluginTest, handshake_process_ok)
 
     result = plugin.begin_handshake_reply(&handshake_handle_reply,
                     &handshake_message_reply,
-                    eprosima::fastrtps::rtps::security::HandshakeMessageToken(*handshake_message),
+                    HandshakeMessageToken(*handshake_message),
                     *remote_identity_handle2,
                     *local_identity_handle2,
                     auxMsg,
                     exception);
 
-    ASSERT_TRUE(result == eprosima::fastrtps::rtps::security::ValidationResult_t::VALIDATION_PENDING_HANDSHAKE_MESSAGE);
+    ASSERT_TRUE(result == ValidationResult_t::VALIDATION_PENDING_HANDSHAKE_MESSAGE);
     ASSERT_TRUE(handshake_handle_reply != nullptr);
     ASSERT_TRUE(handshake_message_reply != nullptr);
     check_handshake_reply_message(*handshake_handle_reply, *handshake_message_reply, *handshake_message);
 
-    eprosima::fastrtps::rtps::security::HandshakeMessageToken* handshake_message_final = nullptr;
+    HandshakeMessageToken* handshake_message_final = nullptr;
 
     result = plugin.process_handshake(&handshake_message_final,
-                    eprosima::fastrtps::rtps::security::HandshakeMessageToken(*handshake_message_reply),
+                    HandshakeMessageToken(*handshake_message_reply),
                     *handshake_handle,
                     exception);
 
-    ASSERT_TRUE(result == eprosima::fastrtps::rtps::security::ValidationResult_t::VALIDATION_OK_WITH_FINAL_MESSAGE);
+    ASSERT_TRUE(result == ValidationResult_t::VALIDATION_OK_WITH_FINAL_MESSAGE);
     ASSERT_TRUE(handshake_message_final != nullptr);
     check_handshake_final_message(*handshake_handle, *handshake_message_final, *handshake_message_reply);
 
-    eprosima::fastrtps::rtps::security::HandshakeMessageToken* handshake_message_aux = nullptr;
+    HandshakeMessageToken* handshake_message_aux = nullptr;
 
     result = plugin.process_handshake(&handshake_message_aux,
-                    eprosima::fastrtps::rtps::security::HandshakeMessageToken(*handshake_message_final),
+                    HandshakeMessageToken(*handshake_message_final),
                     *handshake_handle_reply,
                     exception);
 
-    ASSERT_TRUE(result == eprosima::fastrtps::rtps::security::ValidationResult_t::VALIDATION_OK);
+    ASSERT_TRUE(result == ValidationResult_t::VALIDATION_OK);
 
-    eprosima::fastrtps::rtps::security::SharedSecretHandle* sharedsecret1 = plugin.get_shared_secret(*handshake_handle,
-                    exception);
-    ASSERT_TRUE(sharedsecret1 != nullptr);
+    std::shared_ptr<SecretHandle> secret1 = plugin.get_shared_secret(*handshake_handle, exception);
+    ASSERT_TRUE(secret1);
+    auto sharedsecret1 = std::dynamic_pointer_cast<SharedSecretHandle>(secret1);
+    ASSERT_TRUE(sharedsecret1);
 
-    eprosima::fastrtps::rtps::security::SharedSecretHandle* sharedsecret2 = plugin.get_shared_secret(
-        *handshake_handle_reply, exception);
-    ASSERT_TRUE(sharedsecret2 != nullptr);
+    std::shared_ptr<SecretHandle> secret2 = plugin.get_shared_secret(*handshake_handle_reply, exception);
+    ASSERT_TRUE(secret2);
+    auto sharedsecret2 = std::dynamic_pointer_cast<SharedSecretHandle>(secret2);
+    ASSERT_TRUE(sharedsecret2);
+
     check_shared_secrets(*sharedsecret1, *sharedsecret2);
 
-    ASSERT_TRUE(plugin.return_sharedsecret_handle(sharedsecret2, exception));
-    ASSERT_TRUE(plugin.return_sharedsecret_handle(sharedsecret1, exception));
+    ASSERT_TRUE(plugin.return_sharedsecret_handle(secret2, exception));
+    ASSERT_TRUE(plugin.return_sharedsecret_handle(secret1, exception));
     ASSERT_TRUE(plugin.return_handshake_handle(handshake_handle_reply, exception));
     ASSERT_TRUE(plugin.return_handshake_handle(handshake_handle, exception));
     ASSERT_TRUE(plugin.return_identity_handle(remote_identity_handle2, exception));

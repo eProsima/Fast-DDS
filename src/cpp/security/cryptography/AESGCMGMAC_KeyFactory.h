@@ -24,29 +24,60 @@
 
 #include <security/cryptography/AESGCMGMAC_Types.h>
 
+#include <memory>
+
 namespace eprosima {
 namespace fastrtps {
 namespace rtps {
 namespace security {
 
-class AESGCMGMAC_KeyFactory : public CryptoKeyFactory
+class AESGCMGMAC_KeyFactory;
+
+namespace {
+
+// Auxiliary class to delete the handles, privy to this compilation unit
+struct ParticipantCryptoHandleDeleter
 {
+    ParticipantCryptoHandleDeleter(
+            AESGCMGMAC_KeyFactory& factory);
+
+    void operator ()(
+            AESGCMGMAC_ParticipantCryptoHandle* pk);
+
+    // Reference to the factory
+    std::weak_ptr<AESGCMGMAC_KeyFactory> factory_;
+};
+
+} // Unnamed namespace
+
+class AESGCMGMAC_KeyFactory : public CryptoKeyFactory, public std::enable_shared_from_this<AESGCMGMAC_KeyFactory>
+{
+    friend ParticipantCryptoHandleDeleter;
+
+    // Actual unregister_participant() implementation called from the handle destructor
+    void release_participant(
+            AESGCMGMAC_ParticipantCryptoHandle& key);
+
+    // DatawriterCryptoHandle & DatareaderCryptoHandle creation methods.
+    std::shared_ptr<DatawriterCryptoHandle> get_datawriter_handle();
+    std::shared_ptr<DatareaderCryptoHandle> get_datareader_handle();
+
 public:
 
     AESGCMGMAC_KeyFactory();
 
-    ParticipantCryptoHandle* register_local_participant(
+    std::shared_ptr<ParticipantCryptoHandle> register_local_participant(
             const IdentityHandle& participant_identity,
             const PermissionsHandle& participant_permissions,
             const PropertySeq& participant_properties,
             const ParticipantSecurityAttributes& participant_security_attributes,
             SecurityException& exception) override;
 
-    ParticipantCryptoHandle* register_matched_remote_participant(
+    std::shared_ptr<ParticipantCryptoHandle> register_matched_remote_participant(
             const ParticipantCryptoHandle& local_participant_crypto_handle,
             const IdentityHandle& remote_participant_identity,
             const PermissionsHandle& remote_participant_permissions,
-            const SharedSecretHandle& shared_secret,
+            const SecretHandle& shared_secret,
             SecurityException& exception) override;
 
     DatawriterCryptoHandle* register_local_datawriter(
@@ -58,7 +89,7 @@ public:
     DatareaderCryptoHandle* register_matched_remote_datareader(
             DatawriterCryptoHandle& local_datawriter_crypto_handle,
             ParticipantCryptoHandle& remote_participant_crypto,
-            const SharedSecretHandle& shared_secret,
+            const SecretHandle& shared_secret,
             const bool relay_only,
             SecurityException& exception) override;
 
@@ -71,20 +102,24 @@ public:
     DatawriterCryptoHandle* register_matched_remote_datawriter(
             DatareaderCryptoHandle& local_datareader_crypto_handle,
             ParticipantCryptoHandle& remote_participant_crypt,
-            const SharedSecretHandle& shared_secret,
+            const SecretHandle& shared_secret,
             SecurityException& exception) override;
 
     bool unregister_participant(
-            ParticipantCryptoHandle* participant_crypto_handle,
+            std::shared_ptr<ParticipantCryptoHandle>& participant_crypto_handle,
             SecurityException& exception) override;
 
     bool unregister_datawriter(
-            DatawriterCryptoHandle* datawriter_crypto_handle,
+            std::shared_ptr<DatawriterCryptoHandle>& datawriter_crypto_handle,
             SecurityException& exception) override;
 
     bool unregister_datareader(
-            DatareaderCryptoHandle* datareader_crypto_handle,
+            std::shared_ptr<DatareaderCryptoHandle>& datareader_crypto_handle,
             SecurityException& exception) override;
+
+    // introduce convenient overrides in this scope
+    using CryptoKeyFactory::unregister_datawriter;
+    using CryptoKeyFactory::unregister_datareader;
 
 private:
 

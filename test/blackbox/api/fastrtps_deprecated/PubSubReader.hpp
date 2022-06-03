@@ -404,11 +404,13 @@ public:
     size_t block_for_at_least(
             size_t at_least)
     {
-        block([this, at_least]() -> bool
+        size_t read_count_locked; // solves TSan data race
+        block([this, &read_count_locked, at_least]() -> bool
                 {
+                    read_count_locked = current_processed_count_;
                     return current_processed_count_ >= at_least;
                 });
-        return current_processed_count_;
+        return read_count_locked;
     }
 
     void block(

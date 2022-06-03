@@ -28,33 +28,30 @@ using namespace eprosima::fastrtps::rtps::security;
 AESGCMGMAC::AESGCMGMAC()
 {
     m_cryptokeyexchange = new AESGCMGMAC_KeyExchange();
-    m_cryptokeyfactory = new AESGCMGMAC_KeyFactory();
+    m_cryptokeyfactory = std::make_shared<AESGCMGMAC_KeyFactory>();
     m_cryptotransform = new AESGCMGMAC_Transform();
 
     // Seed prng
     RAND_load_file("/dev/urandom", 32);
 }
 
-AESGCMGMAC_KeyExchange* AESGCMGMAC::keyexchange(){
-
+AESGCMGMAC_KeyExchange* AESGCMGMAC::keyexchange()
+{
     return (AESGCMGMAC_KeyExchange*) m_cryptokeyexchange;
 }
 
-AESGCMGMAC_KeyFactory* AESGCMGMAC::keyfactory(){
-
-    return (AESGCMGMAC_KeyFactory*) m_cryptokeyfactory;
+std::shared_ptr<AESGCMGMAC_KeyFactory> AESGCMGMAC::keyfactory()
+{
+    return m_cryptokeyfactory;
 }
 
-AESGCMGMAC_Transform* AESGCMGMAC::cryptotransform(){
-
+AESGCMGMAC_Transform* AESGCMGMAC::transform()
+{
     return (AESGCMGMAC_Transform*) m_cryptotransform;
 }
 
-AESGCMGMAC::~AESGCMGMAC(){
-
+AESGCMGMAC::~AESGCMGMAC()
+{
     delete m_cryptokeyexchange;
-    delete m_cryptokeyfactory;
     delete m_cryptotransform;
-
 }
-

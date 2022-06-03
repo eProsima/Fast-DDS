@@ -18,6 +18,8 @@
 #ifndef _FASTDDS_RTPS_SECURITY_CRYPTOGRAPHY_CRYPTOTRANSFORM_H_
 #define _FASTDDS_RTPS_SECURITY_CRYPTOGRAPHY_CRYPTOTRANSFORM_H_
 
+#include <memory>
+
 #include <fastdds/rtps/security/cryptography/CryptoTypes.h>
 #include <fastdds/rtps/common/CDRMessage_t.h>
 #include <fastdds/rtps/common/SerializedPayload.h>
@@ -63,7 +65,7 @@ public:
             CDRMessage_t& encoded_rtps_submessage,
             const CDRMessage_t& plain_rtps_submessage,
             DatawriterCryptoHandle& sending_datawriter_crypto,
-            std::vector<DatareaderCryptoHandle*>& receiving_datareader_crypto_list,
+            std::vector<std::shared_ptr<DatareaderCryptoHandle>>& receiving_datareader_crypto_list,
             SecurityException& exception) = 0;
 
     /**
@@ -79,7 +81,7 @@ public:
             CDRMessage_t& encoded_rtps_submessage,
             const CDRMessage_t& plain_rtps_submessage,
             DatareaderCryptoHandle& sending_datareader_crypto,
-            std::vector<DatawriterCryptoHandle*>& receiving_datawriter_crypto_list,
+            std::vector<std::shared_ptr<DatawriterCryptoHandle>>& receiving_datawriter_crypto_list,
             SecurityException& exception) = 0;
 
     /**
@@ -95,7 +97,7 @@ public:
             CDRMessage_t& encoded_rtps_message,
             const CDRMessage_t& plain_rtps_message,
             ParticipantCryptoHandle& sending_crypto,
-            std::vector<ParticipantCryptoHandle*>& receiving_crypto_list,
+            std::vector<std::shared_ptr<ParticipantCryptoHandle>>& receiving_crypto_list,
             SecurityException& exception) = 0;
 
     /**
