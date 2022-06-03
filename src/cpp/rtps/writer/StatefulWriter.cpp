@@ -312,9 +312,7 @@ StatefulWriter::~StatefulWriter()
 {
     logInfo(RTPS_WRITER, "StatefulWriter destructor");
 
-    // This must be the first action, because free CacheChange_t from async thread.
-    deinit();
-
+    // Disable timed events, because their callbacks use cache changes
     if (disable_positive_acks_)
     {
         delete(ack_event_);
@@ -326,6 +324,15 @@ StatefulWriter::~StatefulWriter()
         delete(nack_response_event_);
         nack_response_event_ = nullptr;
     }
+
+    if (periodic_hb_event_ != nullptr)
+    {
+        delete(periodic_hb_event_);
+        periodic_hb_event_ = nullptr;
+    }
+
+    // This must be the next action, as it frees CacheChange_t from the async thread.
+    deinit();
 
     // Stop all active proxies and pass them to the pool
     {
@@ -351,13 +358,6 @@ StatefulWriter::~StatefulWriter()
             remote_reader->stop();
             matched_readers_pool_.push_back(remote_reader);
         }
-    }
-
-    // Destroy heartbeat event
-    if (periodic_hb_event_ != nullptr)
-    {
-        delete(periodic_hb_event_);
-        periodic_hb_event_ = nullptr;
     }
 
     // Delete all proxies in the pool
