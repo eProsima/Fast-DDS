@@ -558,7 +558,7 @@ protected:
      * Remove element.
      *
      * Removes the element pointed to by it.
-     * All iterators may become invalidated if this method returns true.
+     * All iterators may become invalidated.
      * This version doesn't keep the order of insertion, optimizing the number of copies performed.
      *
      * @param it   Iterator pointing to the item to be removed.
@@ -581,7 +581,7 @@ protected:
      * Remove element.
      *
      * Removes the element pointed to by it.
-     * All iterators may become invalidated if this method returns true.
+     * All iterators may become invalidated.
      * This version keeps the order of insertion, so when removing an item different from the last one,
      * part of the collection will be copied.
      *
