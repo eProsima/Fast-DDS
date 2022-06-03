@@ -315,7 +315,7 @@ void BuiltinProtocols::announceRTPSParticipantState()
     {
         mp_PDP->announceParticipantState(false);
     }
-    else
+    else if (m_att.discovery_config.discoveryProtocol != DiscoveryProtocol_t::NONE)
     {
         logError(RTPS_EDP, "Trying to use BuiltinProtocols interfaces before initBuiltinProtocols call");
     }
@@ -323,13 +323,14 @@ void BuiltinProtocols::announceRTPSParticipantState()
 
 void BuiltinProtocols::stopRTPSParticipantAnnouncement()
 {
-    assert(mp_PDP);
+    // note that participants created with DiscoveryProtocol::NONE
+    // may not have mp_PDP available
 
     if (mp_PDP)
     {
         mp_PDP->stopParticipantAnnouncement();
     }
-    else
+    else if (m_att.discovery_config.discoveryProtocol != DiscoveryProtocol_t::NONE)
     {
         logError(RTPS_EDP, "Trying to use BuiltinProtocols interfaces before initBuiltinProtocols call");
     }
@@ -343,7 +344,7 @@ void BuiltinProtocols::resetRTPSParticipantAnnouncement()
     {
         mp_PDP->resetParticipantAnnouncement();
     }
-    else
+    else if (m_att.discovery_config.discoveryProtocol != DiscoveryProtocol_t::NONE)
     {
         logError(RTPS_EDP, "Trying to use BuiltinProtocols interfaces before initBuiltinProtocols call");
     }
