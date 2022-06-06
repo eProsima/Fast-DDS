@@ -2315,15 +2315,14 @@ public:
 /*
  * This test checks that the DataReader methods defined in the standard not yet implemented in FastDDS return
  * ReturnCode_t::RETCODE_UNSUPPORTED. The following methods are checked:
- * 1. get_sample_lost_status
- * 2. get_sample_rejected_status
- * 3. get_matched_publication_data
- * 4. create_readcondition
- * 5. create_querycondition
- * 6. delete_readcondition
- * 7. get_matched_publications
- * 8. get_key_value
- * 9. wait_for_historical_data
+ * 1. get_sample_rejected_status
+ * 2. get_matched_publication_data
+ * 3. create_readcondition
+ * 4. create_querycondition
+ * 5. delete_readcondition
+ * 6. get_matched_publications
+ * 7. get_key_value
+ * 8. wait_for_historical_data
  */
 TEST_F(DataReaderUnsupportedTests, UnsupportedDataReaderMethods)
 {
@@ -2342,11 +2341,6 @@ TEST_F(DataReaderUnsupportedTests, UnsupportedDataReaderMethods)
 
     DataReader* data_reader = subscriber->create_datareader(topic, DATAREADER_QOS_DEFAULT);
     ASSERT_NE(data_reader, nullptr);
-
-    {
-        SampleLostStatus status;
-        EXPECT_EQ(ReturnCode_t::RETCODE_UNSUPPORTED, data_reader->get_sample_lost_status(status));
-    }
 
     {
         SampleRejectedStatus status;

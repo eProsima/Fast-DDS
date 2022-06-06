@@ -259,13 +259,22 @@ bool StatelessReader::change_received(
             auto payload_length = change->serializedPayload.length;
 
             Time_t::now(change->reader_info.receptionTimestamp);
-            update_last_notified(change->writerGUID, change->sequenceNumber);
+            SequenceNumber_t previous_seq = update_last_notified(change->writerGUID, change->sequenceNumber);
             ++total_unread_;
 
             on_data_notify(change->writerGUID, change->sourceTimestamp);
 
             if (getListener() != nullptr)
             {
+                assert(previous_seq < change->sequenceNumber);
+                uint64_t tmp = (change->sequenceNumber - previous_seq).to64long() - 1;
+                int32_t lost_samples = tmp > static_cast<uint64_t>(std::numeric_limits<int32_t>::max()) ?
+                        std::numeric_limits<int32_t>::max() : static_cast<int32_t>(tmp);
+                if (0 < lost_samples)     // There are lost samples.
+                {
+                    getListener()->on_sample_lost(this, lost_samples);
+                }
+
                 // WARNING! This method could destroy the change
                 getListener()->onNewCacheChangeAdded(this, change);
             }

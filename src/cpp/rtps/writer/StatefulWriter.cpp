@@ -637,7 +637,7 @@ void StatefulWriter::deliver_sample_to_intraprocesses(
         SequenceNumber_t gap_seq;
         FragmentNumber_t dummy = 0;
         bool dumb = false;
-        if (remoteReader->change_is_unsent(change->sequenceNumber, dummy, gap_seq, dumb))
+        if (remoteReader->change_is_unsent(change->sequenceNumber, dummy, gap_seq, get_seq_num_min(), dumb))
         {
             // If there is a hole (removed from history or not relevants) between previous sample and this one,
             // send it a personal GAP.
@@ -672,7 +672,7 @@ void StatefulWriter::deliver_sample_to_datasharing(
         SequenceNumber_t gap_seq;
         FragmentNumber_t dummy = 0;
         bool dumb = false;
-        if (remoteReader->change_is_unsent(change->sequenceNumber, dummy, gap_seq, dumb))
+        if (remoteReader->change_is_unsent(change->sequenceNumber, dummy, gap_seq, get_seq_num_min(), dumb))
         {
             if (!remoteReader->is_reliable())
             {
@@ -717,7 +717,7 @@ DeliveryRetCode StatefulWriter::deliver_sample_to_network(
         {
             SequenceNumber_t gap_seq;
             FragmentNumber_t next_unsent_frag = 0;
-            if ((*remote_reader)->change_is_unsent(change->sequenceNumber, next_unsent_frag, gap_seq,
+            if ((*remote_reader)->change_is_unsent(change->sequenceNumber, next_unsent_frag, gap_seq, get_seq_num_min(),
                     need_reactivate_periodic_heartbeat) &&
                     (0 == n_fragments || min_unsent_fragment >= next_unsent_frag))
             {
@@ -737,7 +737,7 @@ DeliveryRetCode StatefulWriter::deliver_sample_to_network(
                 // send it a personal GAP.
                 if (SequenceNumber_t::unknown() != gap_seq)
                 {
-                    if (SequenceNumber_t::unknown() == gap_seq_for_all) // Calculate if the hole is for all readers
+                    if (SequenceNumber_t::unknown() == gap_seq_for_all)     // Calculate if the hole is for all readers
                     {
                         History::const_iterator chit = mp_history->find_change_nts(change);
 
@@ -756,12 +756,13 @@ DeliveryRetCode StatefulWriter::deliver_sample_to_network(
                         }
                     }
 
-                    if (gap_seq_for_all != gap_seq) // If it is an individual GAP, sent it to repective reader.
+                    if (gap_seq_for_all != gap_seq)     // If it is an individual GAP, sent it to repective reader.
                     {
                         group.sender(this, (*remote_reader)->message_sender());
-                        group.add_gap(gap_seq, SequenceNumberSet_t(change->sequenceNumber), (*remote_reader)->guid());
+                        group.add_gap(gap_seq, SequenceNumberSet_t(change->sequenceNumber),
+                                (*remote_reader)->guid());
                         send_heartbeat_nts_(1u, group, disable_positive_acks_);
-                        group.sender(this, &locator_selector); // This makes the flush_and_reset().
+                        group.sender(this, &locator_selector);     // This makes the flush_and_reset().
                     }
                 }
             }

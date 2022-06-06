@@ -282,7 +282,14 @@ bool StatefulReader::matched_writer_add(
             {
                 SequenceNumberSet_t sns(last_seq + 1);
                 send_acknack(wp, sns, wp, false);
-                wp->lost_changes_update(last_seq + 1);
+                int32_t current_sample_lost = 0;
+                if (0 < (current_sample_lost = wp->lost_changes_update(last_seq + 1)))
+                {
+                    if (getListener() != nullptr)
+                    {
+                        getListener()->on_sample_lost((RTPSReader*)this, current_sample_lost);
+                    }
+                }
             }
         }
         else if (!is_same_process)
@@ -696,6 +703,7 @@ bool StatefulReader::processDataFragMsg(
                 {
                     mp_history->remove_change(work_change);
                 }
+
                 NotifyChanges(pWP);
             }
         }
@@ -723,10 +731,20 @@ bool StatefulReader::processHeartbeatMsg(
     if (acceptMsgFrom(writerGUID, &writer) && writer)
     {
         bool assert_liveliness = false;
+        int32_t current_sample_lost = 0;
         if (writer->process_heartbeat(
-                    hbCount, firstSN, lastSN, finalFlag, livelinessFlag, disable_positive_acks_, assert_liveliness))
+                    hbCount, firstSN, lastSN, finalFlag, livelinessFlag, disable_positive_acks_, assert_liveliness,
+                    current_sample_lost))
         {
             mp_history->remove_fragmented_changes_until(firstSN, writerGUID);
+
+            if (0 < current_sample_lost)
+            {
+                if (getListener() != nullptr)
+                {
+                    getListener()->on_sample_lost((RTPSReader*)this, current_sample_lost);
+                }
+            }
 
             // Maybe now we have to notify user from new CacheChanges.
             NotifyChanges(writer);
@@ -862,22 +880,44 @@ bool StatefulReader::change_removed_by_history(
 {
     std::lock_guard<RecursiveTimedMutex> guard(mp_mutex);
 
-    if (is_alive_ && a_change->is_fully_assembled())
+    if (is_alive_)
     {
-        if (wp != nullptr || matched_writer_lookup(a_change->writerGUID, &wp))
+        if (a_change->is_fully_assembled())
         {
-            wp->change_removed_from_history(a_change->sequenceNumber);
-        }
-
-        if (!a_change->isRead &&
-                get_last_notified(a_change->writerGUID) >= a_change->sequenceNumber)
-        {
-            if (0 < total_unread_)
+            if (wp != nullptr || matched_writer_lookup(a_change->writerGUID, &wp))
             {
-                --total_unread_;
+                wp->change_removed_from_history(a_change->sequenceNumber);
+            }
+
+            if (!a_change->isRead &&
+                    get_last_notified(a_change->writerGUID) >= a_change->sequenceNumber)
+            {
+                if (0 < total_unread_)
+                {
+                    --total_unread_;
+                }
+
+            }
+        }
+        else
+        {
+            /* A not fully assembled fragmented sample may be removed when receiving a newer sample and KEEP_LAST
+             * policy. The WriterProxy should consider it as irrelevant to avoid an infinite loop asking for it.
+             */
+            WriterProxy* proxy = wp;
+
+            if (nullptr == proxy)
+            {
+                if (!findWriterProxy(a_change->writerGUID, &proxy))
+                {
+                    return false;
+                }
+
+                proxy->irrelevant_change_set(a_change->sequenceNumber);
             }
 
         }
+
         return true;
     }
 
@@ -955,20 +995,22 @@ bool StatefulReader::change_received(
         auto payload_length = a_change->serializedPayload.length;
 
         Time_t::now(a_change->reader_info.receptionTimestamp);
-        GUID_t proxGUID = prox->guid();
-
-        // If KEEP_LAST and history full, make older changes as lost.
-        CacheChange_t* aux_change = nullptr;
-        if (mp_history->isFull() && mp_history->get_min_change_from(&aux_change, proxGUID))
-        {
-            prox->lost_changes_update(aux_change->sequenceNumber);
-        }
-
         bool ret = true;
 
         if (a_change->is_fully_assembled())
         {
             ret = prox->received_change_set(a_change->sequenceNumber);
+        }
+        else
+        {
+            /* Search if the first fragment was stored, because it may have been discarded due to being older and KEEP_LAST
+             * policy. In this case this samples should be set as irrelevant.
+             */
+            if (mp_history->changesEnd() == mp_history->find_change(a_change))
+            {
+                prox->irrelevant_change_set(a_change->sequenceNumber);
+                ret = false;
+            }
         }
 
         // WARNING! This method could destroy a_change
@@ -989,6 +1031,7 @@ void StatefulReader::NotifyChanges(
     GUID_t proxGUID = prox->guid();
     update_last_notified(proxGUID, prox->available_changes_max());
     SequenceNumber_t nextChangeToNotify = prox->next_cache_change_to_be_notified();
+
     while (nextChangeToNotify != SequenceNumber_t::unknown())
     {
         CacheChange_t* ch_to_give = nullptr;

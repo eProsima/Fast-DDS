@@ -132,6 +132,8 @@ public:
      * @param[out] next_unsent_frag Return next fragment to be sent.
      * @param[out] gap_seq Return, when it is its first delivery (should be relevant seq_num), the sequence number of
      * the first sequence of the gap [first, seq_num). Otherwise return SequenceNumber_t::unknown().
+     * @param[in]  min_seq Minimum sequence number managed by the History. It could be SequenceNumber_t::unknown() if
+     * history is empty.
      * @param[out] need_reactivate_periodic_heartbeat Indicates if the heartbeat period event has to be restarted.
      *
      * @return true if the change is marked to be sent. False otherwise.
@@ -140,6 +142,7 @@ public:
             const SequenceNumber_t& seq_num,
             FragmentNumber_t& next_unsent_frag,
             SequenceNumber_t& gap_seq,
+            const SequenceNumber_t& min_seq,
             bool& need_reactivate_periodic_heartbeat) const;
 
     /**

@@ -59,6 +59,8 @@ using eprosima::fastdds::rtps::UDPTransportDescriptor;
 using eprosima::fastdds::rtps::UDPv4TransportDescriptor;
 using eprosima::fastdds::rtps::UDPv6TransportDescriptor;
 
+using SampleLostStatusFunctor = std::function<void (const eprosima::fastdds::dds::SampleLostStatus&)>;
+
 template<class TypeSupport>
 class PubSubReader
 {
@@ -232,6 +234,15 @@ protected:
             }
         }
 
+        void on_sample_lost(
+                eprosima::fastdds::dds::DataReader* datareader,
+                const eprosima::fastdds::dds::SampleLostStatus& status) override
+        {
+            (void)datareader;
+
+            reader_.set_sample_lost_status(status);
+        }
+
         unsigned int missed_deadlines() const
         {
             return times_deadline_missed_;
@@ -289,6 +300,10 @@ public:
         , last_incompatible_qos_(eprosima::fastdds::dds::INVALID_QOS_POLICY_ID)
         , message_receive_count_(0)
     {
+        // Load default QoS to permit testing with external XML profile files.
+        DomainParticipantFactory::get_instance()->load_profiles();
+        participant_qos_ = DomainParticipantFactory::get_instance()->get_default_participant_qos();
+
         // Generate topic name
         if (!statistics)
         {
@@ -1576,6 +1591,22 @@ public:
         return eprosima::fastrtps::rtps::InstanceHandle_t(datareader_guid());
     }
 
+    void set_sample_lost_status(
+            const eprosima::fastdds::dds::SampleLostStatus& status)
+    {
+        if (sample_lost_status_functor_)
+        {
+            sample_lost_status_functor_(status);
+        }
+    }
+
+    PubSubReader& sample_lost_status_functor(
+            SampleLostStatusFunctor functor)
+    {
+        sample_lost_status_functor_ = functor;
+        return *this;
+    }
+
     const eprosima::fastrtps::rtps::GUID_t& participant_guid() const
     {
         return participant_guid_;
@@ -1814,6 +1845,9 @@ protected:
     std::condition_variable message_receive_cv_;
     //! Number of messages received but not yet processed by the application
     std::atomic<size_t> message_receive_count_;
+
+    //! Functor called when called SampleLostStatus listener.
+    SampleLostStatusFunctor sample_lost_status_functor_;
 };
 
 template<class TypeSupport>
@@ -1969,6 +2003,13 @@ protected:
                         reader_.receive(reader_.datareader_, ret);
                     } while (ret);
                 }
+            }
+
+            if (triggered_statuses.is_active(eprosima::fastdds::dds::StatusMask::sample_lost()))
+            {
+                eprosima::fastdds::dds::SampleLostStatus status;
+                ASSERT_EQ(ReturnCode_t::RETCODE_OK, reader_.datareader_->get_sample_lost_status(status));
+                reader_.set_sample_lost_status(status);
             }
 
             // We also have to process the subscriber

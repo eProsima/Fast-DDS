@@ -248,21 +248,26 @@ public:
     ReturnCode_t get_requested_incompatible_qos_status(
             RequestedIncompatibleQosStatus& status);
 
-    /* TODO
-       bool get_sample_lost_status(
-            fastrtps::SampleLostStatus& status) const;
+    /*!
+     * @brief Get the SAMPLE_LOST communication status
+     *
+     * @param[out] status SampleLostStatus object where the status is returned.
+     *
+     * @return RETCODE_OK
      */
+    ReturnCode_t get_sample_lost_status(
+            fastdds::dds::SampleLostStatus& status);
 
     /* TODO
        bool get_sample_rejected_status(
-            fastrtps::SampleRejectedStatus& status) const;
+       fastrtps::SampleRejectedStatus& status) const;
      */
 
     const Subscriber* get_subscriber() const;
 
     /* TODO
        bool wait_for_historical_data(
-            const fastrtps::Duration_t& max_wait) const;
+       const fastrtps::Duration_t& max_wait) const;
      */
 
     //! Remove all listeners in the hierarchy to allow a quiet destruction
@@ -374,6 +379,10 @@ protected:
                 fastrtps::rtps::RTPSReader* reader,
                 fastdds::dds::PolicyMask qos) override;
 
+        void on_sample_lost(
+                fastrtps::rtps::RTPSReader* reader,
+                int32_t sample_lost_since_last_update) override;
+
         DataReaderImpl* data_reader_;
     }
     reader_listener_;
@@ -398,6 +407,9 @@ protected:
 
     //! Requested incompatible QoS status
     RequestedIncompatibleQosStatus requested_incompatible_qos_status_;
+
+    //! Sample lost status
+    SampleLostStatus sample_lost_status_;
 
     //! A timed callback to remove expired samples
     fastrtps::rtps::TimedEvent* lifespan_timer_ = nullptr;
@@ -478,6 +490,9 @@ protected:
 
     LivelinessChangedStatus& update_liveliness_status(
             const fastrtps::LivelinessChangedStatus& status);
+
+    SampleLostStatus& update_sample_lost_status(
+            int32_t sample_lost_since_last_update);
 
     /**
      * Returns the most appropriate listener to handle the callback for the given status,
