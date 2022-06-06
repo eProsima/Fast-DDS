@@ -82,11 +82,11 @@ public:
      *                                      could potentially be received in the future.
      * @return True if added.
      */
-    virtual bool received_change(
+    RTPS_DllAPI virtual bool received_change(
             CacheChange_t* change,
             size_t unknown_missing_changes_up_to);
 
-    virtual bool received_change(
+    RTPS_DllAPI virtual bool received_change(
             CacheChange_t* change,
             size_t unknown_missing_changes_up_to,
             fastdds::dds::SampleRejectedStatusKind& rejection_reason)
@@ -101,14 +101,14 @@ public:
      * @param[in] change The received change
      * @return
      */
-    bool virtual completed_change(
+    RTPS_DllAPI bool virtual completed_change(
             rtps::CacheChange_t* change)
     {
         (void)change;
         return true;
     }
 
-    virtual bool completed_change(
+    RTPS_DllAPI virtual bool completed_change(
             CacheChange_t* change,
             size_t unknown_missing_changes_up_to,
             fastdds::dds::SampleRejectedStatusKind& rejection_reason)
