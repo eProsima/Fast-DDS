@@ -52,6 +52,8 @@ public:
      */
     void init_thread();
 
+    void stop_thread();
+
     /*!
      * @brief This method informs that a TimedEventImpl has been created.
      *
