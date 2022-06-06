@@ -325,12 +325,6 @@ StatefulWriter::~StatefulWriter()
         nack_response_event_ = nullptr;
     }
 
-    if (periodic_hb_event_ != nullptr)
-    {
-        delete(periodic_hb_event_);
-        periodic_hb_event_ = nullptr;
-    }
-
     // This must be the next action, as it frees CacheChange_t from the async thread.
     deinit();
 
@@ -358,6 +352,14 @@ StatefulWriter::~StatefulWriter()
             remote_reader->stop();
             matched_readers_pool_.push_back(remote_reader);
         }
+    }
+
+    // PeriodicHeartbeatEvent must be released after releasing all proxies
+    // because proxy's NackSuppressionEvent could restart this event.
+    if (periodic_hb_event_ != nullptr)
+    {
+        delete(periodic_hb_event_);
+        periodic_hb_event_ = nullptr;
     }
 
     // Delete all proxies in the pool
