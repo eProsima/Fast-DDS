@@ -24,6 +24,8 @@
 
 #include <fastdds/rtps/transport/test_UDPv4TransportDescriptor.h>
 
+#include <set>
+
 #include <gtest/gtest.h>
 
 using namespace eprosima::fastrtps;
@@ -1557,8 +1559,10 @@ template<typename T>
 void sample_rejected_test_dw_init(
         PubSubWriter<T>& writer)
 {
-    static std::vector<SequenceNumber_t> samples_to_lost_only_one_time;
+    static std::set<SequenceNumber_t> samples_to_lost_only_one_time;
+    static bool received_nien = false;
     samples_to_lost_only_one_time.clear();
+    received_nien = false;
 
     auto testTransport = std::make_shared<test_UDPv4TransportDescriptor>();
     testTransport->drop_data_messages_filter_ =
@@ -1586,12 +1590,16 @@ void sample_rejected_test_dw_init(
                         sn == SequenceNumber_t(0, 7) ||
                         sn == SequenceNumber_t(0, 8)))
                 {
-                    if (samples_to_lost_only_one_time.end() ==
+                    if (!received_nien || samples_to_lost_only_one_time.end() ==
                             std::find(samples_to_lost_only_one_time.begin(), samples_to_lost_only_one_time.end(), sn))
                     {
-                        samples_to_lost_only_one_time.push_back(sn);
+                        samples_to_lost_only_one_time.insert(sn);
                         return true;
                     }
+                }
+                else if (SequenceNumber_t(0, 9) == sn)
+                {
+                    received_nien = true;
                 }
 
                 return false;
@@ -2766,6 +2774,114 @@ TEST(DDSStatus, sample_rejected_key_large_re_dw_re_dr_keep_last_max_instances_1)
     ASSERT_EQ(4u, test_status.total_count_change);
     ASSERT_EQ(eprosima::fastdds::dds::REJECTED_BY_INSTANCES_LIMIT, test_status.last_reason);
     ASSERT_EQ(instance_2, test_status.last_instance_handle);
+}
+
+/*!
+ * \test DDS-STS-SRS-25 Test `SampleRejectedStatus` and Waitsets
+ */
+TEST(DDSStatus, sample_rejected_waitset)
+{
+    PubSubReaderWithWaitsets<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+
+    std::mutex test_mtx;
+    eprosima::fastdds::dds::SampleRejectedStatus test_status;
+
+    int skip_step = 0;
+    auto testTransport = std::make_shared<test_UDPv4TransportDescriptor>();
+    testTransport->drop_data_messages_filter_ =
+            [&skip_step](eprosima::fastrtps::rtps::CDRMessage_t& msg)-> bool
+            {
+                uint32_t old_pos = msg.pos;
+
+                // see RTPS DDS 9.4.5.3 Data Submessage
+                EntityId_t readerID, writerID;
+                SequenceNumber_t sn;
+                bool ret = false;
+
+                msg.pos += 2; // flags
+                msg.pos += 2; // octets to inline quos
+                CDRMessage::readEntityId(&msg, &readerID);
+                CDRMessage::readEntityId(&msg, &writerID);
+                CDRMessage::readSequenceNumber(&msg, &sn);
+
+                // restore buffer pos
+                msg.pos = old_pos;
+
+                // generate losses
+                if ((writerID.value[3] & 0xC0) == 0) // only user endpoints
+                {
+                    if (SequenceNumber_t{0, 1} == sn)
+                    {
+                        if (0 == skip_step)
+                        {
+                            return true;
+                        }
+                        else
+                        {
+                            if (1 == skip_step)
+                            {
+                                ++skip_step;
+                            }
+                        }
+                    }
+                    else if (SequenceNumber_t{0, 2} == sn)
+                    {
+                        if (0 == skip_step)
+                        {
+                            ++skip_step;
+                        }
+                        else if (2 <= skip_step && 12 > skip_step) // Could be several network interfaces.
+                        {
+                            ret =  true;
+                            ++skip_step;
+                        }
+                    }
+                }
+
+                return ret;
+            };
+    writer.reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS)
+            .history_kind(eprosima::fastdds::dds::KEEP_ALL_HISTORY_QOS)
+            .disable_builtin_transport()
+            .add_user_transport_to_pparams(testTransport)
+            .disable_heartbeat_piggyback(true)
+            .asynchronously(eprosima::fastrtps::PublishModeQosPolicyKind::ASYNCHRONOUS_PUBLISH_MODE)
+            .add_throughput_controller_descriptor_to_pparams( // Be sure are sent in separate submessage each DATA.
+        eprosima::fastdds::rtps::FlowControllerSchedulerPolicy::FIFO, 100, 50)
+            .init();
+
+    reader.history_kind(eprosima::fastdds::dds::KEEP_ALL_HISTORY_QOS)
+            .reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS)
+            .resource_limits_max_samples(1)
+            .sample_rejected_status_functor([&test_mtx, &test_status](
+                const eprosima::fastdds::dds::SampleRejectedStatus& status)
+            {
+                std::unique_lock<std::mutex> lock(test_mtx);
+                test_status.total_count = status.total_count;
+                test_status.total_count_change += status.total_count_change;
+                ASSERT_EQ(eprosima::fastdds::dds::REJECTED_BY_SAMPLES_LIMIT, status.last_reason);
+                test_status.last_reason = status.last_reason;
+                test_status.last_instance_handle = status.last_instance_handle;
+            })
+            .init();
+
+    // Wait for discovery.
+    writer.wait_discovery();
+    reader.wait_discovery();
+
+    auto data = default_helloworld_data_generator(2);
+
+    reader.startReception(data);
+    writer.send(data);
+
+    reader.block_for_all();
+
+    std::unique_lock<std::mutex> lock(test_mtx);
+    ASSERT_EQ(1u, test_status.total_count);
+    ASSERT_EQ(1u, test_status.total_count_change);
+    ASSERT_EQ(eprosima::fastdds::dds::REJECTED_BY_SAMPLES_LIMIT, test_status.last_reason);
+    ASSERT_EQ(c_InstanceHandle_Unknown, test_status.last_instance_handle);
 }
 
 #ifdef INSTANTIATE_TEST_SUITE_P
