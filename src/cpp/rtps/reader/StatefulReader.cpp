@@ -1033,15 +1033,7 @@ bool StatefulReader::change_received(
 
         bool ret = true;
 
-        /* Special case: a fragment is discarted because its older than other stored in the instance
-         * inside History. In this case we don't want to receive again this sample.
-         */
-        if (fastdds::dds::NOT_REJECTED != rejection_reason)
-        {
-            prox->irrelevant_change_set(a_change->sequenceNumber);
-            ret = false;
-        }
-        else if (a_change->is_fully_assembled())
+        if (a_change->is_fully_assembled())
         {
             ret = prox->received_change_set(a_change->sequenceNumber);
         }

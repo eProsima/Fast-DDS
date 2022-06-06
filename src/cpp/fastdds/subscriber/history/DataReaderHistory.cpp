@@ -274,7 +274,6 @@ bool DataReaderHistory::received_change_keep_last(
             else
             {
                 // Received change is older than oldest, and should be discarded
-                rejection_reason = REJECTED_BY_SAMPLES_PER_INSTANCE_LIMIT;
                 return true;
             }
         }
@@ -698,7 +697,7 @@ bool DataReaderHistory::completed_change_keep_last(
         CacheChange_t* change,
         DataReaderInstance& instance,
         size_t,
-        SampleRejectedStatusKind& rejection_reason)
+        SampleRejectedStatusKind&)
 {
     bool ret_value = false;
     DataReaderInstance::ChangeCollection& instance_changes = instance.cache_changes;
@@ -718,7 +717,6 @@ bool DataReaderHistory::completed_change_keep_last(
         else
         {
             // Received change is older than oldest, and should be discarded
-            rejection_reason = REJECTED_BY_SAMPLES_PER_INSTANCE_LIMIT;
             return true;
         }
     }
