@@ -1751,7 +1751,7 @@ TEST(DDSStatus, sample_rejected_nokey_large_re_dw_re_dr_keep_all_max_samples_2)
     writer.history_kind(eprosima::fastdds::dds::KEEP_ALL_HISTORY_QOS)
             .asynchronously(eprosima::fastrtps::PublishModeQosPolicyKind::ASYNCHRONOUS_PUBLISH_MODE)
             .add_throughput_controller_descriptor_to_pparams( // Avoid losing more frangments
-        eprosima::fastdds::rtps::FlowControllerSchedulerPolicy::FIFO, 310000, 50);
+        eprosima::fastdds::rtps::FlowControllerSchedulerPolicy::FIFO, 132000, 50);
     reader.history_kind(eprosima::fastdds::dds::KEEP_ALL_HISTORY_QOS)
             .resource_limits_max_samples(2);
 
@@ -1797,7 +1797,7 @@ TEST(DDSStatus, sample_rejected_key_large_re_dw_re_dr_keep_all_max_samples_2)
     writer.history_kind(eprosima::fastdds::dds::KEEP_ALL_HISTORY_QOS)
             .asynchronously(eprosima::fastrtps::PublishModeQosPolicyKind::ASYNCHRONOUS_PUBLISH_MODE)
             .add_throughput_controller_descriptor_to_pparams( // Avoid losing more frangments
-        eprosima::fastdds::rtps::FlowControllerSchedulerPolicy::FIFO, 310000, 50);
+        eprosima::fastdds::rtps::FlowControllerSchedulerPolicy::FIFO, 132000, 50);
     reader.history_kind(eprosima::fastdds::dds::KEEP_ALL_HISTORY_QOS)
             .resource_limits_max_samples(2);
 
@@ -1959,7 +1959,7 @@ TEST(DDSStatus, sample_rejected_nokey_large_re_dw_re_dr_keep_last_max_samples_2)
     writer.history_kind(eprosima::fastdds::dds::KEEP_ALL_HISTORY_QOS)
             .asynchronously(eprosima::fastrtps::PublishModeQosPolicyKind::ASYNCHRONOUS_PUBLISH_MODE)
             .add_throughput_controller_descriptor_to_pparams( // Avoid losing more frangments
-        eprosima::fastdds::rtps::FlowControllerSchedulerPolicy::FIFO, 310000, 50);
+        eprosima::fastdds::rtps::FlowControllerSchedulerPolicy::FIFO, 132000, 50);
     reader.history_kind(eprosima::fastdds::dds::KEEP_LAST_HISTORY_QOS)
             .resource_limits_max_samples(2);
 
@@ -2005,7 +2005,7 @@ TEST(DDSStatus, sample_rejected_key_large_re_dw_re_dr_keep_last_max_samples_2)
     writer.history_kind(eprosima::fastdds::dds::KEEP_ALL_HISTORY_QOS)
             .asynchronously(eprosima::fastrtps::PublishModeQosPolicyKind::ASYNCHRONOUS_PUBLISH_MODE)
             .add_throughput_controller_descriptor_to_pparams( // Avoid losing more frangments
-        eprosima::fastdds::rtps::FlowControllerSchedulerPolicy::FIFO, 310000, 50);
+        eprosima::fastdds::rtps::FlowControllerSchedulerPolicy::FIFO, 132000, 50);
     reader.history_kind(eprosima::fastdds::dds::KEEP_LAST_HISTORY_QOS)
             .resource_limits_max_samples(2);
 
@@ -2159,7 +2159,7 @@ TEST(DDSStatus, sample_rejected_nokey_large_re_dw_re_dr_keep_all_max_samples_per
     writer.history_kind(eprosima::fastdds::dds::KEEP_ALL_HISTORY_QOS)
             .asynchronously(eprosima::fastrtps::PublishModeQosPolicyKind::ASYNCHRONOUS_PUBLISH_MODE)
             .add_throughput_controller_descriptor_to_pparams( // Avoid losing more frangments
-        eprosima::fastdds::rtps::FlowControllerSchedulerPolicy::FIFO, 310000, 50);
+        eprosima::fastdds::rtps::FlowControllerSchedulerPolicy::FIFO, 132000, 50);
     reader.history_kind(eprosima::fastdds::dds::KEEP_ALL_HISTORY_QOS)
             .resource_limits_max_samples_per_instance(1);
 
@@ -2198,7 +2198,7 @@ TEST(DDSStatus, sample_rejected_key_large_re_dw_re_dr_keep_all_max_samples_per_i
     writer.history_kind(eprosima::fastdds::dds::KEEP_ALL_HISTORY_QOS)
             .asynchronously(eprosima::fastrtps::PublishModeQosPolicyKind::ASYNCHRONOUS_PUBLISH_MODE)
             .add_throughput_controller_descriptor_to_pparams( // Avoid losing more frangments
-        eprosima::fastdds::rtps::FlowControllerSchedulerPolicy::FIFO, 310000, 50);
+        eprosima::fastdds::rtps::FlowControllerSchedulerPolicy::FIFO, 132000, 50);
     reader.history_kind(eprosima::fastdds::dds::KEEP_ALL_HISTORY_QOS)
             .resource_limits_max_samples_per_instance(1);
 
@@ -2338,7 +2338,7 @@ TEST(DDSStatus, sample_rejected_nokey_large_re_dw_re_dr_keep_last_max_samples_pe
     writer.history_kind(eprosima::fastdds::dds::KEEP_ALL_HISTORY_QOS)
             .asynchronously(eprosima::fastrtps::PublishModeQosPolicyKind::ASYNCHRONOUS_PUBLISH_MODE)
             .add_throughput_controller_descriptor_to_pparams( // Avoid losing more frangments
-        eprosima::fastdds::rtps::FlowControllerSchedulerPolicy::FIFO, 310000, 50);
+        eprosima::fastdds::rtps::FlowControllerSchedulerPolicy::FIFO, 132000, 50);
     reader.history_kind(eprosima::fastdds::dds::KEEP_LAST_HISTORY_QOS)
             .resource_limits_max_samples_per_instance(1);
 
@@ -2377,7 +2377,7 @@ TEST(DDSStatus, sample_rejected_key_large_re_dw_re_dr_keep_last_max_samples_per_
     writer.history_kind(eprosima::fastdds::dds::KEEP_ALL_HISTORY_QOS)
             .asynchronously(eprosima::fastrtps::PublishModeQosPolicyKind::ASYNCHRONOUS_PUBLISH_MODE)
             .add_throughput_controller_descriptor_to_pparams( // Avoid losing more frangments
-        eprosima::fastdds::rtps::FlowControllerSchedulerPolicy::FIFO, 310000, 50);
+        eprosima::fastdds::rtps::FlowControllerSchedulerPolicy::FIFO, 132000, 50);
     reader.history_kind(eprosima::fastdds::dds::KEEP_LAST_HISTORY_QOS)
             .resource_limits_max_samples_per_instance(1);
 
@@ -2510,7 +2510,7 @@ TEST(DDSStatus, sample_rejected_nokey_large_re_dw_re_dr_keep_all_max_instances_1
     writer.history_kind(eprosima::fastdds::dds::KEEP_ALL_HISTORY_QOS)
             .asynchronously(eprosima::fastrtps::PublishModeQosPolicyKind::ASYNCHRONOUS_PUBLISH_MODE)
             .add_throughput_controller_descriptor_to_pparams( // Avoid losing more frangments
-        eprosima::fastdds::rtps::FlowControllerSchedulerPolicy::FIFO, 310000, 50);
+        eprosima::fastdds::rtps::FlowControllerSchedulerPolicy::FIFO, 132000, 50);
     reader.history_kind(eprosima::fastdds::dds::KEEP_ALL_HISTORY_QOS)
             .resource_limits_max_instances(1);
 
@@ -2549,7 +2549,7 @@ TEST(DDSStatus, sample_rejected_key_large_re_dw_re_dr_keep_all_max_instances_1)
     writer.history_kind(eprosima::fastdds::dds::KEEP_ALL_HISTORY_QOS)
             .asynchronously(eprosima::fastrtps::PublishModeQosPolicyKind::ASYNCHRONOUS_PUBLISH_MODE)
             .add_throughput_controller_descriptor_to_pparams( // Avoid losing more frangments
-        eprosima::fastdds::rtps::FlowControllerSchedulerPolicy::FIFO, 310000, 50);
+        eprosima::fastdds::rtps::FlowControllerSchedulerPolicy::FIFO, 132000, 50);
     reader.history_kind(eprosima::fastdds::dds::KEEP_ALL_HISTORY_QOS)
             .resource_limits_max_instances(1);
 
@@ -2691,7 +2691,7 @@ TEST(DDSStatus, sample_rejected_nokey_large_re_dw_re_dr_keep_last_max_instances_
     writer.history_kind(eprosima::fastdds::dds::KEEP_ALL_HISTORY_QOS)
             .asynchronously(eprosima::fastrtps::PublishModeQosPolicyKind::ASYNCHRONOUS_PUBLISH_MODE)
             .add_throughput_controller_descriptor_to_pparams( // Avoid losing more frangments
-        eprosima::fastdds::rtps::FlowControllerSchedulerPolicy::FIFO, 310000, 50);
+        eprosima::fastdds::rtps::FlowControllerSchedulerPolicy::FIFO, 132000, 50);
     reader.history_kind(eprosima::fastdds::dds::KEEP_LAST_HISTORY_QOS)
             .resource_limits_max_instances(1);
 
@@ -2730,7 +2730,7 @@ TEST(DDSStatus, sample_rejected_key_large_re_dw_re_dr_keep_last_max_instances_1)
     writer.history_kind(eprosima::fastdds::dds::KEEP_ALL_HISTORY_QOS)
             .asynchronously(eprosima::fastrtps::PublishModeQosPolicyKind::ASYNCHRONOUS_PUBLISH_MODE)
             .add_throughput_controller_descriptor_to_pparams( // Avoid losing more frangments
-        eprosima::fastdds::rtps::FlowControllerSchedulerPolicy::FIFO, 310000, 50);
+        eprosima::fastdds::rtps::FlowControllerSchedulerPolicy::FIFO, 132000, 50);
     reader.history_kind(eprosima::fastdds::dds::KEEP_LAST_HISTORY_QOS)
             .resource_limits_max_instances(1);
 
