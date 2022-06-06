@@ -49,21 +49,21 @@ public:
             CDRMessage_t& encoded_rtps_submessage,
             const CDRMessage_t& plain_rtps_submessage,
             DatawriterCryptoHandle& sending_datawriter_crypto,
-            std::vector<DatareaderCryptoHandle*>& receiving_datareader_crypto_list,
+            std::vector<std::shared_ptr<DatareaderCryptoHandle>>& receiving_datareader_crypto_list,
             SecurityException& exception) override;
 
     bool encode_datareader_submessage(
             CDRMessage_t& encoded_rtps_submessage,
             const CDRMessage_t& plain_rtps_submessage,
             DatareaderCryptoHandle& sending_datareader_crypto,
-            std::vector<DatawriterCryptoHandle*>& receiving_datawriter_crypto_list,
+            std::vector<std::shared_ptr<DatawriterCryptoHandle>>& receiving_datawriter_crypto_list,
             SecurityException& exception) override;
 
     bool encode_rtps_message(
             CDRMessage_t& encoded_rtps_message,
             const CDRMessage_t& plain_rtps_message,
             ParticipantCryptoHandle& sending_crypto,
-            std::vector<ParticipantCryptoHandle*>& receiving_crypto_list,
+            std::vector<std::shared_ptr<ParticipantCryptoHandle>>& receiving_crypto_list,
             SecurityException& exception) override;
 
     bool decode_rtps_message(
@@ -142,7 +142,7 @@ public:
             const std::array<uint8_t, 4>& transformation_kind,
             const uint32_t session_id,
             const std::array<uint8_t, 12>& initialization_vector,
-            std::vector<EntityCryptoHandle*>& receiving_datareader_crypto_list,
+            std::vector<std::shared_ptr<EntityCryptoHandle>>& receiving_crypto_list,
             bool update_specific_keys,
             SecureDataTag& tag,
             size_t sessionIndex);
@@ -151,7 +151,7 @@ public:
             eprosima::fastcdr::Cdr& serializer,
             const AESGCMGMAC_ParticipantCryptoHandle& local_participant,
             const std::array<uint8_t, 12>& initialization_vector,
-            std::vector<ParticipantCryptoHandle*>& receiving_crypto_list,
+            std::vector<std::shared_ptr<EntityCryptoHandle>>& receiving_crypto_list,
             bool update_specific_keys,
             SecureDataTag& tag);
 

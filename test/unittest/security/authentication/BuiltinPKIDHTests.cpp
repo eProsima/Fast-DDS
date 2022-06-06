@@ -379,22 +379,22 @@ void AuthenticationPluginTest::check_handshake_final_message(
 }
 
 void AuthenticationPluginTest::check_shared_secrets(
-        const SharedSecretHandle& sharedsecret1,
-        const SharedSecretHandle& sharedsecret2)
+        const SecretHandle& sharedsecret1,
+        const SecretHandle& sharedsecret2)
 {
-    const std::vector<uint8_t>* challenge1_1 = SharedSecretHelper::find_data_value(**sharedsecret1, "Challenge1");
+    const std::vector<uint8_t>* challenge1_1 = SharedSecretHelper::find_data_value(sharedsecret1, "Challenge1");
     ASSERT_TRUE(challenge1_1 != nullptr);
-    const std::vector<uint8_t>* challenge1_2 = SharedSecretHelper::find_data_value(**sharedsecret2, "Challenge1");
+    const std::vector<uint8_t>* challenge1_2 = SharedSecretHelper::find_data_value(sharedsecret2, "Challenge1");
     ASSERT_TRUE(challenge1_2 != nullptr);
     ASSERT_TRUE(*challenge1_1 == *challenge1_2);
-    const std::vector<uint8_t>* challenge2_1 = SharedSecretHelper::find_data_value(**sharedsecret1, "Challenge2");
+    const std::vector<uint8_t>* challenge2_1 = SharedSecretHelper::find_data_value(sharedsecret1, "Challenge2");
     ASSERT_TRUE(challenge2_1 != nullptr);
-    const std::vector<uint8_t>* challenge2_2 = SharedSecretHelper::find_data_value(**sharedsecret2, "Challenge2");
+    const std::vector<uint8_t>* challenge2_2 = SharedSecretHelper::find_data_value(sharedsecret2, "Challenge2");
     ASSERT_TRUE(challenge2_2 != nullptr);
     ASSERT_TRUE(*challenge2_1 == *challenge2_2);
-    const std::vector<uint8_t>* sharedsecret_1 = SharedSecretHelper::find_data_value(**sharedsecret1, "SharedSecret");
+    const std::vector<uint8_t>* sharedsecret_1 = SharedSecretHelper::find_data_value(sharedsecret1, "SharedSecret");
     ASSERT_TRUE(sharedsecret_1 != nullptr);
-    const std::vector<uint8_t>* sharedsecret_2 = SharedSecretHelper::find_data_value(**sharedsecret2, "SharedSecret");
+    const std::vector<uint8_t>* sharedsecret_2 = SharedSecretHelper::find_data_value(sharedsecret2, "SharedSecret");
     ASSERT_TRUE(sharedsecret_2 != nullptr);
     ASSERT_TRUE(*sharedsecret_1 == *sharedsecret_2);
 }
