@@ -1242,8 +1242,6 @@ ReturnCode_t DataReaderImpl::get_sample_rejected_status(
 
         status = sample_rejected_status_;
         sample_rejected_status_.total_count_change = 0u;
-        sample_rejected_status_.last_reason = NOT_REJECTED;
-        sample_rejected_status_.last_instance_handle = c_InstanceHandle_Unknown;
     }
 
     user_datareader_->get_statuscondition().get_impl()->set_status(StatusMask::sample_rejected(), false);
