@@ -499,6 +499,12 @@ protected:
     SampleLostStatus& update_sample_lost_status(
             int32_t sample_lost_since_last_update);
 
+    /*!
+     * @brief Update SampleRejectedStatus with information about a new rejected sample.
+     *
+     * @param[in] Reason why the new sample was rejected.
+     * @param[in] New sample which was rejected.
+     */
     bool update_sample_rejected_status(
             SampleRejectedStatusKind reason,
             const fastrtps::rtps::CacheChange_t* const change_in);

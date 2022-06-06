@@ -119,6 +119,14 @@ public:
             CacheChange_t* change,
             size_t unknown_missing_changes_up_to) override;
 
+    /*!
+     * Called when a change is received by the Subscriber. Will add the change to the history.
+     * @pre Change should not be already present in the history.
+     * @param[in] change The received change
+     * @param[in] unknown_missing_changes_up_to Number of missing changes before this one
+     * @param[out] rejection_reason In case of been rejected the sample, it will contain the reason of the rejection.
+     * @return
+     */
     bool received_change(
             CacheChange_t* change,
             size_t unknown_missing_changes_up_to,
@@ -127,13 +135,21 @@ public:
     /**
      * Called when a fragmented change is received completely by the Subscriber. Will find its instance and store it.
      * @pre Change should be already present in the history.
-     * @param unknown_missing_changes_up_to Number of missing changes before this one
      * @param[in] change The received change
+     * @param[in] unknown_missing_changes_up_to Number of missing changes before this one
      * @return
      */
     bool completed_change(
             CacheChange_t* change) override;
 
+    /*!
+     * Called when a fragmented change is received completely by the Subscriber. Will find its instance and store it.
+     * @pre Change should be already present in the history.
+     * @param[in] change The received change
+     * @param[in] unknown_missing_changes_up_to Number of missing changes before this one
+     * @param[out] rejection_reason In case of been rejected the sample, it will contain the reason of the rejection.
+     * @return
+     */
     bool completed_change(
             CacheChange_t* change,
             size_t unknown_missing_changes_up_to,
