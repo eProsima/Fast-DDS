@@ -619,6 +619,10 @@ ReaderHistory::iterator DataReaderHistory::remove_change_nts(
             auto it = keyed_changes_.find(p_sample->instanceHandle);
 
             // if keyed and in history must be in the map
+            // There is a case when the sample could not be in the keyed map. The first received fragment of a
+            // fragmented sample is stored in the history, and when it is completed it is stored in the keyed map.
+            // But it can occur it is rejected when the sample is completed and removed without being stored in the
+            // keyed map.
             if (it != keyed_changes_.end())
             {
                 auto& c = it->second.cache_changes;
