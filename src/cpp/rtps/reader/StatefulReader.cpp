@@ -282,14 +282,7 @@ bool StatefulReader::matched_writer_add(
             {
                 SequenceNumberSet_t sns(last_seq + 1);
                 send_acknack(wp, sns, wp, false);
-                int32_t current_sample_lost = 0;
-                if (0 < (current_sample_lost = wp->lost_changes_update(last_seq + 1)))
-                {
-                    if (getListener() != nullptr)
-                    {
-                        getListener()->on_sample_lost((RTPSReader*)this, current_sample_lost);
-                    }
-                }
+                wp->lost_changes_update(last_seq + 1);
             }
         }
         else if (!is_same_process)

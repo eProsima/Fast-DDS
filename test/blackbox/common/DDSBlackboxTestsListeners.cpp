@@ -826,19 +826,15 @@ TEST(DDSStatus, sample_lost_be_dw_lj_be_dr)
             {
                 {
                     std::unique_lock<std::mutex> lock(test_step_mtx);
-                    if (0 == test_step && 4 == status.total_count && 4 == status.total_count_change)
+                    if (0 == test_step && 1 == status.total_count && 1 == status.total_count_change)
                     {
                         ++test_step;
                     }
-                    else if (1 == test_step && 5 == status.total_count && 1 == status.total_count_change)
+                    else if (1 == test_step && 2 == status.total_count && 1 == status.total_count_change)
                     {
                         ++test_step;
                     }
-                    else if (2 == test_step && 6 == status.total_count && 1 == status.total_count_change)
-                    {
-                        ++test_step;
-                    }
-                    else if (3 == test_step && 8 == status.total_count && 2 == status.total_count_change)
+                    else if (2 == test_step && 4 == status.total_count && 2 == status.total_count_change)
                     {
                         ++test_step;
                     }
@@ -863,7 +859,7 @@ TEST(DDSStatus, sample_lost_be_dw_lj_be_dr)
     std::unique_lock<std::mutex> lock(test_step_mtx);
     test_step_cv.wait(lock, [&test_step]()
             {
-                return 4 == test_step;
+                return 3 == test_step;
             });
 }
 
@@ -953,7 +949,7 @@ TEST(DDSStatus, sample_lost_re_dw_lj_re_dr)
     std::unique_lock<std::mutex> lock(test_step_mtx);
     test_step_cv.wait(lock, [&test_count, &test_count_change_accum]()
             {
-                return 7 == test_count && 7 == test_count_change_accum;
+                return 4 == test_count && 4 == test_count_change_accum;
             });
 }
 
@@ -1040,19 +1036,15 @@ TEST(DDSStatus, sample_lost_re_dw_lj_be_dr)
             {
                 {
                     std::unique_lock<std::mutex> lock(test_step_mtx);
-                    if (0 == test_step && 4 == status.total_count && 4 == status.total_count_change)
+                    if (0 == test_step && 1 == status.total_count && 1 == status.total_count_change)
                     {
                         ++test_step;
                     }
-                    else if (1 == test_step && 5 == status.total_count && 1 == status.total_count_change)
+                    else if (1 == test_step && 2 == status.total_count && 1 == status.total_count_change)
                     {
                         ++test_step;
                     }
-                    else if (2 == test_step && 6 == status.total_count && 1 == status.total_count_change)
-                    {
-                        ++test_step;
-                    }
-                    else if (3 == test_step && 8 == status.total_count && 2 == status.total_count_change)
+                    else if (2 == test_step && 4 == status.total_count && 2 == status.total_count_change)
                     {
                         ++test_step;
                     }
@@ -1077,7 +1069,7 @@ TEST(DDSStatus, sample_lost_re_dw_lj_be_dr)
     std::unique_lock<std::mutex> lock(test_step_mtx);
     test_step_cv.wait(lock, [&test_step]()
             {
-                return 4 == test_step;
+                return 3 == test_step;
             });
 }
 
@@ -1240,19 +1232,15 @@ TEST(DDSStatus, sample_lost_waitset_be_dw_lj_be_dr)
             {
                 {
                     std::unique_lock<std::mutex> lock(test_step_mtx);
-                    if (0 == test_step && 4 == status.total_count && 4 == status.total_count_change)
+                    if (0 == test_step && 1 == status.total_count && 1 == status.total_count_change)
                     {
                         ++test_step;
                     }
-                    else if (1 == test_step && 5 == status.total_count && 1 == status.total_count_change)
+                    else if (1 == test_step && 2 == status.total_count && 1 == status.total_count_change)
                     {
                         ++test_step;
                     }
-                    else if (2 == test_step && 6 == status.total_count && 1 == status.total_count_change)
-                    {
-                        ++test_step;
-                    }
-                    else if (3 == test_step && 8 == status.total_count && 2 == status.total_count_change)
+                    else if (2 == test_step && 4 == status.total_count && 2 == status.total_count_change)
                     {
                         ++test_step;
                     }
@@ -1277,7 +1265,7 @@ TEST(DDSStatus, sample_lost_waitset_be_dw_lj_be_dr)
     std::unique_lock<std::mutex> lock(test_step_mtx);
     test_step_cv.wait(lock, [&test_step]()
             {
-                return 4 == test_step;
+                return 3 == test_step;
             });
 }
 
@@ -1367,7 +1355,7 @@ TEST(DDSStatus, sample_lost_waitset_re_dw_lj_re_dr)
     std::unique_lock<std::mutex> lock(test_step_mtx);
     test_step_cv.wait(lock, [&test_count, &test_count_change_accum]()
             {
-                return 7 == test_count && 7 == test_count_change_accum;
+                return 4 == test_count && 4 == test_count_change_accum;
             });
 }
 
@@ -1453,19 +1441,15 @@ TEST(DDSStatus, sample_lost_waitset_re_dw_lj_be_dr)
             {
                 {
                     std::unique_lock<std::mutex> lock(test_step_mtx);
-                    if (0 == test_step && 4 == status.total_count && 4 == status.total_count_change)
+                    if (0 == test_step && 1 == status.total_count && 1 == status.total_count_change)
                     {
                         ++test_step;
                     }
-                    else if (1 == test_step && 5 == status.total_count && 1 == status.total_count_change)
+                    else if (1 == test_step && 2 == status.total_count && 1 == status.total_count_change)
                     {
                         ++test_step;
                     }
-                    else if (2 == test_step && 6 == status.total_count && 1 == status.total_count_change)
-                    {
-                        ++test_step;
-                    }
-                    else if (3 == test_step && 8 == status.total_count && 2 == status.total_count_change)
+                    else if (2 == test_step && 4 == status.total_count && 2 == status.total_count_change)
                     {
                         ++test_step;
                     }
@@ -1490,7 +1474,7 @@ TEST(DDSStatus, sample_lost_waitset_re_dw_lj_be_dr)
     std::unique_lock<std::mutex> lock(test_step_mtx);
     test_step_cv.wait(lock, [&test_step]()
             {
-                return 4 == test_step;
+                return 3 == test_step;
             });
 }
 

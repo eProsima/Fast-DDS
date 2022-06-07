@@ -413,6 +413,8 @@ private:
     LocatorSelectorEntry locators_entry_;
     //! Is the writer datasharing
     bool is_datasharing_writer_;
+    //! Wether at least one heartbeat was recevied.
+    bool received_at_least_one_heartbeat_;
 
     using ChangeIterator = decltype(changes_received_)::iterator;
 
