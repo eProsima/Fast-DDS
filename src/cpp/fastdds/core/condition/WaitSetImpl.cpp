@@ -46,9 +46,15 @@ WaitSetImpl::~WaitSetImpl()
 ReturnCode_t WaitSetImpl::attach_condition(
         const Condition& condition)
 {
-    std::lock_guard<std::mutex> guard(mutex_);
-    bool was_there = entries_.remove(&condition);
-    entries_.emplace_back(&condition);
+    bool was_there = false;
+
+    {
+        // We only need to protect access to the collection.
+        std::lock_guard<std::mutex> guard(mutex_);
+
+        was_there = entries_.remove(&condition);
+        entries_.emplace_back(&condition);
+    }
 
     if (!was_there)
     {
@@ -68,8 +74,13 @@ ReturnCode_t WaitSetImpl::attach_condition(
 ReturnCode_t WaitSetImpl::detach_condition(
         const Condition& condition)
 {
-    std::lock_guard<std::mutex> guard(mutex_);
-    bool was_there = entries_.remove(&condition);
+    bool was_there = false;
+
+    {
+        // We only need to protect access to the collection.
+        std::lock_guard<std::mutex> guard(mutex_);
+        was_there = entries_.remove(&condition);
+    }
 
     if (was_there)
     {
