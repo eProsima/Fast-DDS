@@ -21,15 +21,14 @@
 #define _FASTDDS_RTPS_EDP_H_
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 
+#include <fastdds/dds/core/status/IncompatibleQosStatus.hpp>
+#include <fastdds/dds/core/status/PublicationMatchedStatus.hpp>
+#include <fastdds/dds/core/status/SubscriptionMatchedStatus.hpp>
 #include <fastdds/rtps/attributes/RTPSParticipantAttributes.h>
 #include <fastdds/rtps/builtin/data/ContentFilterProperty.hpp>
 #include <fastdds/rtps/builtin/data/ReaderProxyData.h>
 #include <fastdds/rtps/builtin/data/WriterProxyData.h>
 #include <fastdds/rtps/common/Guid.h>
-#include <fastdds/dds/core/status/PublicationMatchedStatus.hpp>
-#include <fastdds/dds/core/status/SubscriptionMatchedStatus.hpp>
-#include <fastdds/dds/core/status/IncompatibleQosStatus.hpp>
-
 #include <fastrtps/utils/ProxyPool.hpp>
 
 #include <foonathan/memory/container.hpp>
@@ -349,13 +348,17 @@ public:
     //! Pointer to the RTPSParticipant.
     RTPSParticipantImpl* mp_RTPSParticipant;
 
-protected:
+    /**
+     * Access the temporary proxy pool for reader proxies
+     * @return pool reference
+     */
+    ProxyPool<ReaderProxyData>& get_temporary_reader_proxies_pool();
 
-    //! ProxyPool for temporary reader proxies
-    ProxyPool<ReaderProxyData> temp_reader_proxies_;
-
-    //! ProxyPool for temporary writer proxies
-    ProxyPool<WriterProxyData> temp_writer_proxies_;
+    /**
+     * Access the temporary proxy pool for writer proxies
+     * @return pool reference
+     */
+    ProxyPool<WriterProxyData>& get_temporary_writer_proxies_pool();
 
 private:
 

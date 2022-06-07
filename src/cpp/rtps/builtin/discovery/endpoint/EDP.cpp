@@ -74,15 +74,6 @@ EDP::EDP(
         RTPSParticipantImpl* part)
     : mp_PDP(p)
     , mp_RTPSParticipant(part)
-    , temp_reader_proxies_({
-                part->getRTPSParticipantAttributes().allocation.locators.max_unicast_locators,
-                part->getRTPSParticipantAttributes().allocation.locators.max_multicast_locators,
-                part->getRTPSParticipantAttributes().allocation.data_limits,
-                part->getRTPSParticipantAttributes().allocation.content_filter})
-    , temp_writer_proxies_({
-                part->getRTPSParticipantAttributes().allocation.locators.max_unicast_locators,
-                part->getRTPSParticipantAttributes().allocation.locators.max_multicast_locators,
-                part->getRTPSParticipantAttributes().allocation.data_limits})
     , reader_status_allocator_(
         reader_map_helper::node_size,
         reader_map_helper::min_pool_size<pool_allocator_t>(
@@ -1037,7 +1028,19 @@ bool EDP::valid_matching(
 
 }
 
-//TODO Estas cuatro funciones comparten codigo comun (2 a 2) y se podrían seguramente combinar.
+ProxyPool<ReaderProxyData>& EDP::get_temporary_reader_proxies_pool()
+{
+    assert(mp_PDP != nullptr);
+    return mp_PDP->get_temporary_reader_proxies_pool();
+}
+
+ProxyPool<WriterProxyData>& EDP::get_temporary_writer_proxies_pool()
+{
+    assert(mp_PDP != nullptr);
+    return mp_PDP->get_temporary_writer_proxies_pool();
+}
+
+//TODO This four functions share common code (2 to 2) and surely can be templatized.
 
 bool EDP::pairingReader(
         RTPSReader* R,
@@ -1227,7 +1230,7 @@ bool EDP::pairing_reader_proxy_with_any_local_writer(
 
     mp_RTPSParticipant->forEachUserWriter([&, rdata](RTPSWriter& w) -> bool
             {
-                auto temp_writer_proxy_data = temp_writer_proxies_.get();
+                auto temp_writer_proxy_data = get_temporary_writer_proxies_pool().get();
                 GUID_t writerGUID = w.getGuid();
 
                 if (mp_PDP->lookupWriterProxyData(writerGUID, *temp_writer_proxy_data))
@@ -1319,7 +1322,7 @@ bool EDP::pairing_reader_proxy_with_local_writer(
 
                 if (local_writer == writerGUID)
                 {
-                    auto temp_writer_proxy_data = temp_writer_proxies_.get();
+                    auto temp_writer_proxy_data = get_temporary_writer_proxies_pool().get();
 
                     if (mp_PDP->lookupWriterProxyData(writerGUID, *temp_writer_proxy_data))
                     {
@@ -1433,7 +1436,7 @@ bool EDP::pairing_writer_proxy_with_any_local_reader(
 
     mp_RTPSParticipant->forEachUserReader([&, wdata](RTPSReader& r) -> bool
             {
-                auto temp_reader_proxy_data = temp_reader_proxies_.get();
+                auto temp_reader_proxy_data = get_temporary_reader_proxies_pool().get();
                 GUID_t readerGUID = r.getGuid();
 
                 if (mp_PDP->lookupReaderProxyData(readerGUID, *temp_reader_proxy_data))
@@ -1525,7 +1528,7 @@ bool EDP::pairing_writer_proxy_with_local_reader(
 
                 if (local_reader == readerGUID)
                 {
-                    auto temp_reader_proxy_data = temp_reader_proxies_.get();
+                    auto temp_reader_proxy_data = get_temporary_reader_proxies_pool().get();
 
                     if (mp_PDP->lookupReaderProxyData(readerGUID, *temp_reader_proxy_data))
                     {

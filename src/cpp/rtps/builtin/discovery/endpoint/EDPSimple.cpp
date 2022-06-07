@@ -764,7 +764,7 @@ void EDPSimple::assignRemoteEndpoints(
             pdata.metatraffic_locators.unicast.empty();
     auxendp &= DISC_BUILTIN_ENDPOINT_PUBLICATION_ANNOUNCER;
 
-    auto temp_reader_proxy_data = temp_reader_proxies_.get();
+    auto temp_reader_proxy_data = get_temporary_reader_proxies_pool().get();
 
     temp_reader_proxy_data->clear();
     temp_reader_proxy_data->m_expectsInlineQos = false;
@@ -773,7 +773,7 @@ void EDPSimple::assignRemoteEndpoints(
     temp_reader_proxy_data->m_qos.m_durability.kind = TRANSIENT_LOCAL_DURABILITY_QOS;
     temp_reader_proxy_data->m_qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
 
-    auto temp_writer_proxy_data = temp_writer_proxies_.get();
+    auto temp_writer_proxy_data = get_temporary_writer_proxies_pool().get();
 
     temp_writer_proxy_data->clear();
     temp_writer_proxy_data->guid().guidPrefix = pdata.m_guid.guidPrefix;

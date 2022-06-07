@@ -361,30 +361,32 @@ void PDPSimple::assignRemoteEndpoints(
     auxendp &= DISC_BUILTIN_ENDPOINT_PARTICIPANT_ANNOUNCER;
     if (auxendp != 0)
     {
-        std::lock_guard<std::mutex> data_guard(temp_data_lock_);
-        temp_writer_data_.clear();
-        temp_writer_data_.guid().guidPrefix = pdata->m_guid.guidPrefix;
-        temp_writer_data_.guid().entityId = c_EntityId_SPDPWriter;
-        temp_writer_data_.persistence_guid(pdata->get_persistence_guid());
-        temp_writer_data_.set_persistence_entity_id(c_EntityId_SPDPWriter);
-        temp_writer_data_.set_remote_locators(pdata->metatraffic_locators, network, use_multicast_locators);
-        temp_writer_data_.m_qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
-        temp_writer_data_.m_qos.m_durability.kind = TRANSIENT_LOCAL_DURABILITY_QOS;
-        mp_PDPReader->matched_writer_add(temp_writer_data_);
+        auto temp_writer_data = get_temporary_writer_proxies_pool().get();
+
+        temp_writer_data->clear();
+        temp_writer_data->guid().guidPrefix = pdata->m_guid.guidPrefix;
+        temp_writer_data->guid().entityId = c_EntityId_SPDPWriter;
+        temp_writer_data->persistence_guid(pdata->get_persistence_guid());
+        temp_writer_data->set_persistence_entity_id(c_EntityId_SPDPWriter);
+        temp_writer_data->set_remote_locators(pdata->metatraffic_locators, network, use_multicast_locators);
+        temp_writer_data->m_qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
+        temp_writer_data->m_qos.m_durability.kind = TRANSIENT_LOCAL_DURABILITY_QOS;
+        mp_PDPReader->matched_writer_add(*temp_writer_data);
     }
     auxendp = endp;
     auxendp &= DISC_BUILTIN_ENDPOINT_PARTICIPANT_DETECTOR;
     if (auxendp != 0)
     {
-        std::lock_guard<std::mutex> data_guard(temp_data_lock_);
-        temp_reader_data_.clear();
-        temp_reader_data_.m_expectsInlineQos = false;
-        temp_reader_data_.guid().guidPrefix = pdata->m_guid.guidPrefix;
-        temp_reader_data_.guid().entityId = c_EntityId_SPDPReader;
-        temp_reader_data_.set_remote_locators(pdata->metatraffic_locators, network, use_multicast_locators);
-        temp_reader_data_.m_qos.m_reliability.kind = BEST_EFFORT_RELIABILITY_QOS;
-        temp_reader_data_.m_qos.m_durability.kind = TRANSIENT_LOCAL_DURABILITY_QOS;
-        mp_PDPWriter->matched_reader_add(temp_reader_data_);
+        auto temp_reader_data = get_temporary_reader_proxies_pool().get();
+
+        temp_reader_data->clear();
+        temp_reader_data->m_expectsInlineQos = false;
+        temp_reader_data->guid().guidPrefix = pdata->m_guid.guidPrefix;
+        temp_reader_data->guid().entityId = c_EntityId_SPDPReader;
+        temp_reader_data->set_remote_locators(pdata->metatraffic_locators, network, use_multicast_locators);
+        temp_reader_data->m_qos.m_reliability.kind = BEST_EFFORT_RELIABILITY_QOS;
+        temp_reader_data->m_qos.m_durability.kind = TRANSIENT_LOCAL_DURABILITY_QOS;
+        mp_PDPWriter->matched_reader_add(*temp_reader_data);
 
         StatelessWriter* pW = dynamic_cast<StatelessWriter*>(mp_PDPWriter);
 

@@ -72,38 +72,43 @@ void EDPBasePUBListener::add_writer_from_change(
     //LOAD INFORMATION IN DESTINATION WRITER PROXY DATA
     const NetworkFactory& network = edp->mp_RTPSParticipant->network_factory();
     CDRMessage_t tempMsg(change->serializedPayload);
-    if (temp_writer_data_.readFromCDRMessage(&tempMsg, network,
+    auto temp_writer_data = edp->get_temporary_writer_proxies_pool().get();
+
+    if (temp_writer_data->readFromCDRMessage(&tempMsg, network,
             edp->mp_RTPSParticipant->has_shm_transport()))
     {
-        if (temp_writer_data_.guid().guidPrefix == edp->mp_RTPSParticipant->getGuid().guidPrefix)
+        if (temp_writer_data->guid().guidPrefix == edp->mp_RTPSParticipant->getGuid().guidPrefix)
         {
             logInfo(RTPS_EDP, "Message from own RTPSParticipant, ignoring");
             return;
         }
 
         //LOAD INFORMATION IN DESTINATION WRITER PROXY DATA
-        auto copy_data_fun = [this, &network](
+        auto copy_data_fun = [this,&temp_writer_data, &network](
             WriterProxyData* data,
             bool updating,
             const ParticipantProxyData& participant_data)
                 {
-                    if (!temp_writer_data_.has_locators())
+                    if (!temp_writer_data->has_locators())
                     {
-                        temp_writer_data_.set_remote_locators(participant_data.default_locators, network, true);
+                        temp_writer_data->set_remote_locators(participant_data.default_locators, network, true);
                     }
 
-                    if (updating && !data->is_update_allowed(temp_writer_data_))
+                    if (updating && !data->is_update_allowed(*temp_writer_data))
                     {
                         logWarning(RTPS_EDP,
                                 "Received incompatible update for WriterQos. writer_guid = " << data->guid());
                     }
-                    *data = temp_writer_data_;
+                    *data = *temp_writer_data;
                     return true;
                 };
 
         GUID_t participant_guid;
         WriterProxyData* writer_data =
-                edp->mp_PDP->addWriterProxyData(temp_writer_data_.guid(), participant_guid, copy_data_fun);
+                edp->mp_PDP->addWriterProxyData(temp_writer_data->guid(), participant_guid, copy_data_fun);
+
+        // release temporary proxy
+        temp_writer_data.reset();
 
         //Removing change from history
         reader_history->remove_change(reader_history->find_change(change), release_change);
@@ -178,38 +183,43 @@ void EDPBaseSUBListener::add_reader_from_change(
     //LOAD INFORMATION IN TEMPORAL WRITER PROXY DATA
     const NetworkFactory& network = edp->mp_RTPSParticipant->network_factory();
     CDRMessage_t tempMsg(change->serializedPayload);
-    if (temp_reader_data_.readFromCDRMessage(&tempMsg, network,
+    auto temp_reader_data = edp->get_temporary_reader_proxies_pool().get();
+
+    if (temp_reader_data->readFromCDRMessage(&tempMsg, network,
             edp->mp_RTPSParticipant->has_shm_transport()))
     {
-        if (temp_reader_data_.guid().guidPrefix == edp->mp_RTPSParticipant->getGuid().guidPrefix)
+        if (temp_reader_data->guid().guidPrefix == edp->mp_RTPSParticipant->getGuid().guidPrefix)
         {
             logInfo(RTPS_EDP, "From own RTPSParticipant, ignoring");
             return;
         }
 
-        auto copy_data_fun = [this, &network](
+        auto copy_data_fun = [this, &temp_reader_data, &network](
             ReaderProxyData* data,
             bool updating,
             const ParticipantProxyData& participant_data)
                 {
-                    if (!temp_reader_data_.has_locators())
+                    if (!temp_reader_data->has_locators())
                     {
-                        temp_reader_data_.set_remote_locators(participant_data.default_locators, network, true);
+                        temp_reader_data->set_remote_locators(participant_data.default_locators, network, true);
                     }
 
-                    if (updating && !data->is_update_allowed(temp_reader_data_))
+                    if (updating && !data->is_update_allowed(*temp_reader_data))
                     {
                         logWarning(RTPS_EDP,
                                 "Received incompatible update for ReaderQos. reader_guid = " << data->guid());
                     }
-                    *data = temp_reader_data_;
+                    *data = *temp_reader_data;
                     return true;
                 };
 
         //LOOK IF IS AN UPDATED INFORMATION
         GUID_t participant_guid;
         ReaderProxyData* reader_data =
-                edp->mp_PDP->addReaderProxyData(temp_reader_data_.guid(), participant_guid, copy_data_fun);
+                edp->mp_PDP->addReaderProxyData(temp_reader_data->guid(), participant_guid, copy_data_fun);
+
+        // Release the temporary proxy
+        temp_reader_data.reset();
 
         // Remove change from history.
         reader_history->remove_change(reader_history->find_change(change), release_change);

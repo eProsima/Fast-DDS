@@ -228,7 +228,7 @@ bool EDPServer::removeLocalReader(
     // Recover reader information
     std::string topic_name;
     {
-        auto temp_reader_proxy_data = temp_reader_proxies_.get();
+        auto temp_reader_proxy_data = get_temporary_reader_proxies_pool().get();
         mp_PDP->lookupReaderProxyData(guid, *temp_reader_proxy_data);
         topic_name = temp_reader_proxy_data->topicName().to_string();
     }
@@ -288,7 +288,7 @@ bool EDPServer::removeLocalWriter(
     std::string topic_name;
 
     {
-        auto temp_writer_proxy_data = temp_writer_proxies_.get();
+        auto temp_writer_proxy_data = get_temporary_writer_proxies_pool().get();
         mp_PDP->lookupWriterProxyData(guid, *temp_writer_proxy_data);
         topic_name = temp_writer_proxy_data->topicName().to_string();
     }
