@@ -61,10 +61,15 @@ ReturnCode_t WaitSetImpl::attach_condition(
         // This is a new condition. Inform the notifier of our interest.
         condition.get_notifier()->attach_to(this);
 
-        // Should wake_up when adding a new triggered condition
-        if (is_waiting_ && condition.get_trigger_value())
         {
-            wake_up();
+            // Might happen that a wait changes is_waiting_'s status. Protect it.
+            std::lock_guard<std::mutex> guard(mutex_);
+
+            // Should wake_up when adding a new triggered condition
+            if (is_waiting_ && condition.get_trigger_value())
+            {
+                wake_up();
+            }
         }
     }
 
