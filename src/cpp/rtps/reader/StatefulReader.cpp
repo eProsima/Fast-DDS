@@ -186,7 +186,7 @@ bool StatefulReader::matched_writer_add(
     assert(wdata.guid() != c_Guid_Unknown);
 
     {
-        std::lock_guard<RecursiveTimedMutex> guard(mp_mutex);
+        std::unique_lock<RecursiveTimedMutex> guard(mp_mutex);
 
         if (!is_alive_)
         {
@@ -209,8 +209,11 @@ bool StatefulReader::matched_writer_add(
                         getRTPSParticipant()->createSenderResources(locator);
                     }
                 }
+
                 if (nullptr != mp_listener)
                 {
+                    // call the listener without the lock taken
+                    guard.unlock();
                     mp_listener->on_writer_discovery(this, WriterDiscoveryInfo::CHANGED_QOS_WRITER, wdata.guid(),
                             &wdata);
                 }
@@ -352,7 +355,6 @@ bool StatefulReader::matched_writer_remove(
         //Remove cachechanges belonging to the unmatched writer
         mp_history->writer_unmatched(writer_guid, get_last_notified(writer_guid));
 
-
         for (ResourceLimitedVector<WriterProxy*>::iterator it = matched_writers_.begin();
                 it != matched_writers_.end();
                 ++it)
@@ -382,6 +384,8 @@ bool StatefulReader::matched_writer_remove(
             matched_writers_pool_.push_back(wproxy);
             if (nullptr != mp_listener)
             {
+                // call the listener without the lock taken
+                lock.unlock();
                 mp_listener->on_writer_discovery(this, WriterDiscoveryInfo::REMOVED_WRITER, writer_guid, nullptr);
             }
         }

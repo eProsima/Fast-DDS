@@ -1011,9 +1011,9 @@ bool StatefulWriter::matched_reader_add(
         return false;
     }
 
-    std::lock_guard<RecursiveTimedMutex> guard(mp_mutex);
-    std::lock_guard<LocatorSelectorSender> guard_locator_selector_general(locator_selector_general_);
-    std::lock_guard<LocatorSelectorSender> guard_locator_selector_async(locator_selector_async_);
+    std::unique_lock<RecursiveTimedMutex> guard(mp_mutex);
+    std::unique_lock<LocatorSelectorSender> guard_locator_selector_general(locator_selector_general_);
+    std::unique_lock<LocatorSelectorSender> guard_locator_selector_async(locator_selector_async_);
 
     // Check if it is already matched.
     if (for_matched_readers(matched_local_readers_, matched_datasharing_readers_, matched_remote_readers_,
@@ -1034,6 +1034,11 @@ bool StatefulWriter::matched_reader_add(
     {
         if (nullptr != mp_listener)
         {
+            // call the listener without locks taken
+            guard_locator_selector_async.unlock();
+            guard_locator_selector_general.unlock();
+            guard.unlock();
+
             mp_listener->on_reader_discovery(this, ReaderDiscoveryInfo::CHANGED_QOS_READER, rdata.guid(), &rdata);
         }
         return false;
@@ -1096,6 +1101,11 @@ bool StatefulWriter::matched_reader_add(
     {
         if (nullptr != mp_listener)
         {
+            // call the listener without locks taken
+            guard_locator_selector_async.unlock();
+            guard_locator_selector_general.unlock();
+            guard.unlock();
+
             mp_listener->on_reader_discovery(this, ReaderDiscoveryInfo::DISCOVERED_READER, rdata.guid(), &rdata);
         }
         return true;
@@ -1189,6 +1199,11 @@ bool StatefulWriter::matched_reader_add(
 
     if (nullptr != mp_listener)
     {
+        // call the listener without locks taken
+        guard_locator_selector_async.unlock();
+        guard_locator_selector_general.unlock();
+        guard.unlock();
+
         mp_listener->on_reader_discovery(this, ReaderDiscoveryInfo::DISCOVERED_READER, rdata.guid(), &rdata);
     }
     return true;
@@ -1199,8 +1214,8 @@ bool StatefulWriter::matched_reader_remove(
 {
     ReaderProxy* rproxy = nullptr;
     std::unique_lock<RecursiveTimedMutex> lock(mp_mutex);
-    std::lock_guard<LocatorSelectorSender> guard_locator_selector_general(locator_selector_general_);
-    std::lock_guard<LocatorSelectorSender> guard_locator_selector_async(locator_selector_async_);
+    std::unique_lock<LocatorSelectorSender> guard_locator_selector_general(locator_selector_general_);
+    std::unique_lock<LocatorSelectorSender> guard_locator_selector_async(locator_selector_async_);
 
     for (ReaderProxyIterator it = matched_local_readers_.begin();
             it != matched_local_readers_.end(); ++it)
@@ -1263,6 +1278,11 @@ bool StatefulWriter::matched_reader_remove(
 
         if (nullptr != mp_listener)
         {
+            // call the listener without locks taken
+            guard_locator_selector_async.unlock();
+            guard_locator_selector_general.unlock();
+            lock.unlock();
+
             mp_listener->on_reader_discovery(this, ReaderDiscoveryInfo::REMOVED_READER, reader_guid, nullptr);
         }
         return true;

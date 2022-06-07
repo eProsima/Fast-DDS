@@ -92,7 +92,7 @@ bool StatelessReader::matched_writer_add(
         const WriterProxyData& wdata)
 {
     {
-        std::lock_guard<RecursiveTimedMutex> guard(mp_mutex);
+        std::unique_lock<RecursiveTimedMutex> guard(mp_mutex);
         for (const RemoteWriterInfo_t& writer : matched_writers_)
         {
             if (writer.guid == wdata.guid())
@@ -100,6 +100,8 @@ bool StatelessReader::matched_writer_add(
                 logWarning(RTPS_READER, "Attempting to add existing writer");
                 if (nullptr != mp_listener)
                 {
+                    // call the listener without the lock taken
+                    guard.unlock();
                     mp_listener->on_writer_discovery(this, WriterDiscoveryInfo::CHANGED_QOS_WRITER, wdata.guid(),
                             &wdata);
                 }
@@ -157,13 +159,8 @@ bool StatelessReader::matched_writer_add(
             // this has to be done after the writer is added to the matched_writers or the processing may fail
             datasharing_listener_->notify(false);
         }
-
-        if (nullptr != mp_listener)
-        {
-            mp_listener->on_writer_discovery(this, WriterDiscoveryInfo::DISCOVERED_WRITER, wdata.guid(), &wdata);
-        }
-
     }
+
     if (liveliness_lease_duration_ < c_TimeInfinite)
     {
         auto wlp = mp_RTPSParticipant->wlp();
@@ -179,6 +176,12 @@ bool StatelessReader::matched_writer_add(
             logError(RTPS_LIVELINESS, "Finite liveliness lease duration but WLP not enabled");
         }
     }
+
+    if (nullptr != mp_listener)
+    {
+        mp_listener->on_writer_discovery(this, WriterDiscoveryInfo::DISCOVERED_WRITER, wdata.guid(), &wdata);
+    }
+
     return true;
 }
 
@@ -203,7 +206,7 @@ bool StatelessReader::matched_writer_remove(
         }
     }
     {
-        std::lock_guard<RecursiveTimedMutex> guard(mp_mutex);
+        std::unique_lock<RecursiveTimedMutex> guard(mp_mutex);
 
         //Remove cachechanges belonging to the unmatched writer
         mp_history->writer_unmatched(writer_guid, get_last_notified(writer_guid));
@@ -225,6 +228,8 @@ bool StatelessReader::matched_writer_remove(
                 matched_writers_.erase(it);
                 if (nullptr != mp_listener)
                 {
+                    // call the listener without lock
+                    guard.unlock();
                     mp_listener->on_writer_discovery(this, WriterDiscoveryInfo::REMOVED_WRITER, writer_guid, nullptr);
                 }
                 return true;
