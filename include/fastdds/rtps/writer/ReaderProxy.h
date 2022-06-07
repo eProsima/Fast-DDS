@@ -49,6 +49,7 @@ class StatefulWriter;
 class TimedEvent;
 class RTPSReader;
 class IDataSharingNotifier;
+class RTPSGapBuilder;
 
 /**
  * ReaderProxy class that helps to keep the state of a specific Reader with respect to the RTPSWriter.
@@ -142,10 +143,13 @@ public:
     /**
      * Mark all changes in the vector as requested.
      * @param seq_num_set Bitmap of sequence numbers.
+     * @param gap_builder RTPSGapBuilder reference uses for adding  each requested change that is irrelevant for the
+     * requester.
      * @return true if at least one change has been marked as REQUESTED, false otherwise.
      */
     bool requested_changes_set(
-            const SequenceNumberSet_t& seq_num_set);
+            const SequenceNumberSet_t& seq_num_set,
+            RTPSGapBuilder& gap_builder);
 
     /**
      * Performs processing of preemptive acknack
