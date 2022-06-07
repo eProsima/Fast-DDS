@@ -142,6 +142,7 @@ inline std::istream& operator >>(
         }
         catch (std::ios_base::failure& )
         {
+            guiP = GuidPrefix_t::unknown();
         }
 
         input.exceptions(excp_mask);
