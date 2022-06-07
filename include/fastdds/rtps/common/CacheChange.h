@@ -205,6 +205,9 @@ struct RTPS_DllAPI CacheChange_t
         return first_missing_fragment_ >= fragment_count_;
     }
 
+    /*! Checks if the first fragment is present.
+     * @return true when it contains the first fragment. In other case, false.
+     */
     bool contains_first_fragment()
     {
         return 0 < first_missing_fragment_;

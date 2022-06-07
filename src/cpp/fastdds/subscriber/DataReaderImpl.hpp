@@ -258,6 +258,13 @@ public:
     ReturnCode_t get_sample_lost_status(
             fastdds::dds::SampleLostStatus& status);
 
+    /*!
+     * @brief Get the SAMPLE_REJECTED communication status
+     *
+     * @param[out] status SampleRejectedStatus object where the status is returned.
+     *
+     * @return RETCODE_OK
+     */
     ReturnCode_t get_sample_rejected_status(
             fastrtps::SampleRejectedStatus& status);
 

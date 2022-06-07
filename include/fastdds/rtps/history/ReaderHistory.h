@@ -86,6 +86,16 @@ public:
             CacheChange_t* change,
             size_t unknown_missing_changes_up_to);
 
+    /**
+     * Virtual method that is called when a new change is received.
+     * In this implementation this method just calls add_change. The user can overload this method in case
+     * he needs to perform additional checks before adding the change.
+     * @param[in] change Pointer to the change
+     * @param[in] unknown_missing_changes_up_to The number of changes from the same writer with a lower sequence number that
+     *                                      could potentially be received in the future.
+     * @param[out] rejection_reason In case of been rejected the sample, it will contain the reason of the rejection.
+     * @return True if added.
+     */
     RTPS_DllAPI virtual bool received_change(
             CacheChange_t* change,
             size_t unknown_missing_changes_up_to,
@@ -108,6 +118,14 @@ public:
         return true;
     }
 
+    /**
+     * Called when a fragmented change is received completely by the Subscriber. Will find its instance and store it.
+     * @pre Change should be already present in the history.
+     * @param[in] change The received change
+     * @param[in] unknown_missing_changes_up_to Number of missing changes before this one
+     * @param[out] rejection_reason In case of been rejected the sample, it will contain the reason of the rejection.
+     * @return
+     */
     RTPS_DllAPI virtual bool completed_change(
             CacheChange_t* change,
             size_t unknown_missing_changes_up_to,

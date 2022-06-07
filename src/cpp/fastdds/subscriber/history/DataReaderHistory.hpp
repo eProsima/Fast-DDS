@@ -268,7 +268,7 @@ private:
     void* get_key_object_;
 
     /// Function to compute the instance handle of a received change
-    std::function<bool(CacheChange_t*)> compute_key_for_change_fn;
+    std::function<bool(CacheChange_t*)> compute_key_for_change_fn_;
     /// Function processing a received change
     std::function<bool(CacheChange_t*, size_t, SampleRejectedStatusKind&)> receive_fn_;
     /// Function processing a completed fragmented change
