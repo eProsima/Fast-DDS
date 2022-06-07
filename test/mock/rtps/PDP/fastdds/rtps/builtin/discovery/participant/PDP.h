@@ -95,8 +95,8 @@ public:
     std::recursive_mutex* mutex_;
 
     // temporary proxies pools
-    ProxyPool<ReaderProxyData> temp_proxy_readers = {{4,1}};
-    ProxyPool<WriterProxyData> temp_proxy_writers = {{4,1}};
+    ProxyPool<ReaderProxyData> temp_proxy_readers = {{4, 1}};
+    ProxyPool<WriterProxyData> temp_proxy_writers = {{4, 1}};
 };
 
 

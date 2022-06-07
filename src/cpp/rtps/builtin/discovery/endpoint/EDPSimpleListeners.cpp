@@ -84,7 +84,7 @@ void EDPBasePUBListener::add_writer_from_change(
         }
 
         //LOAD INFORMATION IN DESTINATION WRITER PROXY DATA
-        auto copy_data_fun = [this,&temp_writer_data, &network](
+        auto copy_data_fun = [this, &temp_writer_data, &network](
             WriterProxyData* data,
             bool updating,
             const ParticipantProxyData& participant_data)
