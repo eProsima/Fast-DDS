@@ -1705,26 +1705,17 @@ TEST(DDSStatus, sample_rejected_key_re_dw_re_dr_keep_all_max_samples_2)
     sample_rejected_test_dw_init(writer);
 
     auto data = default_keyedhelloworld_data_generator(10);
-    auto instance_1 = writer.register_instance(*data.begin());
-    auto instance_2 = writer.register_instance(*std::next(data.begin()));
 
-    sample_rejected_test_dr_init(reader, [&test_mtx, &test_status, instance_1, instance_2](
+    sample_rejected_test_dr_init(reader, [&test_mtx, &test_status](
                 const eprosima::fastdds::dds::SampleRejectedStatus& status)
             {
                 std::unique_lock<std::mutex> lock(test_mtx);
-                if ((1 == status.total_count && instance_2 == status.last_instance_handle) ||
-                (2 == status.total_count && instance_1 == status.last_instance_handle) ||
-                (3 == status.total_count && instance_2 == status.last_instance_handle) ||
-                (4 == status.total_count && instance_1 == status.last_instance_handle) ||
-                (5 == status.total_count && instance_2 == status.last_instance_handle))
-                {
-                    test_status.total_count = status.total_count;
-                    test_status.total_count_change += status.total_count_change;
-                    test_status.last_instance_handle = status.last_instance_handle;
-                    ASSERT_EQ(eprosima::fastdds::dds::REJECTED_BY_SAMPLES_LIMIT, status.last_reason);
-                    test_status.last_reason = status.last_reason;
-                    test_status.last_instance_handle = status.last_instance_handle;
-                }
+                test_status.total_count = status.total_count;
+                test_status.total_count_change += status.total_count_change;
+                test_status.last_instance_handle = status.last_instance_handle;
+                ASSERT_EQ(eprosima::fastdds::dds::REJECTED_BY_SAMPLES_LIMIT, status.last_reason);
+                test_status.last_reason = status.last_reason;
+                test_status.last_instance_handle = status.last_instance_handle;
             });
 
     // Wait for discovery.
@@ -1740,7 +1731,7 @@ TEST(DDSStatus, sample_rejected_key_re_dw_re_dr_keep_all_max_samples_2)
     ASSERT_EQ(5u, test_status.total_count);
     ASSERT_EQ(5u, test_status.total_count_change);
     ASSERT_EQ(eprosima::fastdds::dds::REJECTED_BY_SAMPLES_LIMIT, test_status.last_reason);
-    ASSERT_EQ(instance_2, test_status.last_instance_handle);
+    ASSERT_EQ(c_InstanceHandle_Unknown, test_status.last_instance_handle);
 }
 
 /*!
@@ -1812,26 +1803,17 @@ TEST(DDSStatus, sample_rejected_key_large_re_dw_re_dr_keep_all_max_samples_2)
     sample_rejected_test_dw_init(writer);
 
     auto data = default_keyeddata300kb_data_generator(10);
-    auto instance_1 = writer.register_instance(*data.begin());
-    auto instance_2 = writer.register_instance(*std::next(data.begin()));
 
-    sample_rejected_test_dr_init(reader, [&test_mtx, &test_status, instance_1, instance_2](
+    sample_rejected_test_dr_init(reader, [&test_mtx, &test_status](
                 const eprosima::fastdds::dds::SampleRejectedStatus& status)
             {
                 std::unique_lock<std::mutex> lock(test_mtx);
-                if ((1 == status.total_count && instance_2 == status.last_instance_handle) ||
-                (2 == status.total_count && instance_1 == status.last_instance_handle) ||
-                (3 == status.total_count && instance_2 == status.last_instance_handle) ||
-                (4 == status.total_count && instance_1 == status.last_instance_handle) ||
-                (5 == status.total_count && instance_2 == status.last_instance_handle))
-                {
-                    test_status.total_count = status.total_count;
-                    test_status.total_count_change += status.total_count_change;
-                    test_status.last_instance_handle = status.last_instance_handle;
-                    ASSERT_EQ(eprosima::fastdds::dds::REJECTED_BY_SAMPLES_LIMIT, status.last_reason);
-                    test_status.last_reason = status.last_reason;
-                    test_status.last_instance_handle = status.last_instance_handle;
-                }
+                test_status.total_count = status.total_count;
+                test_status.total_count_change += status.total_count_change;
+                test_status.last_instance_handle = status.last_instance_handle;
+                ASSERT_EQ(eprosima::fastdds::dds::REJECTED_BY_SAMPLES_LIMIT, status.last_reason);
+                test_status.last_reason = status.last_reason;
+                test_status.last_instance_handle = status.last_instance_handle;
             });
 
     // Wait for discovery.
@@ -1847,7 +1829,7 @@ TEST(DDSStatus, sample_rejected_key_large_re_dw_re_dr_keep_all_max_samples_2)
     ASSERT_EQ(5u, test_status.total_count);
     ASSERT_EQ(5u, test_status.total_count_change);
     ASSERT_EQ(eprosima::fastdds::dds::REJECTED_BY_SAMPLES_LIMIT, test_status.last_reason);
-    ASSERT_EQ(instance_2, test_status.last_instance_handle);
+    ASSERT_EQ(c_InstanceHandle_Unknown, test_status.last_instance_handle);
 }
 
 /*!
@@ -1913,26 +1895,17 @@ TEST(DDSStatus, sample_rejected_key_re_dw_re_dr_keep_last_max_samples_2)
     sample_rejected_test_dw_init(writer);
 
     auto data = default_keyedhelloworld_data_generator(10);
-    auto instance_1 = writer.register_instance(*data.begin());
-    auto instance_2 = writer.register_instance(*std::next(data.begin()));
 
-    sample_rejected_test_dr_init(reader, [&test_mtx, &test_status, instance_1, instance_2](
+    sample_rejected_test_dr_init(reader, [&test_mtx, &test_status](
                 const eprosima::fastdds::dds::SampleRejectedStatus& status)
             {
                 std::unique_lock<std::mutex> lock(test_mtx);
-                if ((1 == status.total_count && instance_2 == status.last_instance_handle) ||
-                (2 == status.total_count && instance_1 == status.last_instance_handle) ||
-                (3 == status.total_count && instance_2 == status.last_instance_handle) ||
-                (4 == status.total_count && instance_1 == status.last_instance_handle) ||
-                (5 == status.total_count && instance_2 == status.last_instance_handle))
-                {
-                    test_status.total_count = status.total_count;
-                    test_status.total_count_change += status.total_count_change;
-                    test_status.last_instance_handle = status.last_instance_handle;
-                    ASSERT_EQ(eprosima::fastdds::dds::REJECTED_BY_SAMPLES_LIMIT, status.last_reason);
-                    test_status.last_reason = status.last_reason;
-                    test_status.last_instance_handle = status.last_instance_handle;
-                }
+                test_status.total_count = status.total_count;
+                test_status.total_count_change += status.total_count_change;
+                test_status.last_instance_handle = status.last_instance_handle;
+                ASSERT_EQ(eprosima::fastdds::dds::REJECTED_BY_SAMPLES_LIMIT, status.last_reason);
+                test_status.last_reason = status.last_reason;
+                test_status.last_instance_handle = status.last_instance_handle;
             });
 
     // Wait for discovery.
@@ -1948,7 +1921,7 @@ TEST(DDSStatus, sample_rejected_key_re_dw_re_dr_keep_last_max_samples_2)
     ASSERT_EQ(5u, test_status.total_count);
     ASSERT_EQ(5u, test_status.total_count_change);
     ASSERT_EQ(eprosima::fastdds::dds::REJECTED_BY_SAMPLES_LIMIT, test_status.last_reason);
-    ASSERT_EQ(instance_2, test_status.last_instance_handle);
+    ASSERT_EQ(c_InstanceHandle_Unknown, test_status.last_instance_handle);
 }
 
 /*!
@@ -2027,19 +2000,12 @@ TEST(DDSStatus, sample_rejected_key_large_re_dw_re_dr_keep_last_max_samples_2)
                 const eprosima::fastdds::dds::SampleRejectedStatus& status)
             {
                 std::unique_lock<std::mutex> lock(test_mtx);
-                if ((1 == status.total_count && instance_2 == status.last_instance_handle) ||
-                (2 == status.total_count && instance_1 == status.last_instance_handle) ||
-                (3 == status.total_count && instance_2 == status.last_instance_handle) ||
-                (4 == status.total_count && instance_1 == status.last_instance_handle) ||
-                (5 == status.total_count && instance_2 == status.last_instance_handle))
-                {
-                    test_status.total_count = status.total_count;
-                    test_status.total_count_change += status.total_count_change;
-                    test_status.last_instance_handle = status.last_instance_handle;
-                    ASSERT_EQ(eprosima::fastdds::dds::REJECTED_BY_SAMPLES_LIMIT, status.last_reason);
-                    test_status.last_reason = status.last_reason;
-                    test_status.last_instance_handle = status.last_instance_handle;
-                }
+                test_status.total_count = status.total_count;
+                test_status.total_count_change += status.total_count_change;
+                test_status.last_instance_handle = status.last_instance_handle;
+                ASSERT_EQ(eprosima::fastdds::dds::REJECTED_BY_SAMPLES_LIMIT, status.last_reason);
+                test_status.last_reason = status.last_reason;
+                test_status.last_instance_handle = status.last_instance_handle;
             });
 
     // Wait for discovery.
@@ -2055,7 +2021,7 @@ TEST(DDSStatus, sample_rejected_key_large_re_dw_re_dr_keep_last_max_samples_2)
     ASSERT_EQ(5u, test_status.total_count);
     ASSERT_EQ(5u, test_status.total_count_change);
     ASSERT_EQ(eprosima::fastdds::dds::REJECTED_BY_SAMPLES_LIMIT, test_status.last_reason);
-    ASSERT_EQ(instance_2, test_status.last_instance_handle);
+    ASSERT_EQ(c_InstanceHandle_Unknown, test_status.last_instance_handle);
 }
 
 /*!

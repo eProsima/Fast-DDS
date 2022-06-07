@@ -170,15 +170,8 @@ bool DataReaderHistory::can_change_be_added_nts(
         size_t unknown_missing_changes_up_to,
         bool& will_never_be_accepted) const
 {
-    if (!ReaderHistory::can_change_be_added_nts(writer_guid, total_payload_size, unknown_missing_changes_up_to,
-            will_never_be_accepted))
-    {
-        return false;
-    }
-
-    will_never_be_accepted = false;
-    return (0 == unknown_missing_changes_up_to) ||
-           (m_changes.size() + unknown_missing_changes_up_to < static_cast<size_t>(resource_limited_qos_.max_samples));
+    return ReaderHistory::can_change_be_added_nts(writer_guid, total_payload_size, unknown_missing_changes_up_to,
+                   will_never_be_accepted);
 }
 
 bool DataReaderHistory::received_change(
@@ -194,6 +187,7 @@ bool DataReaderHistory::received_change(
         size_t unknown_missing_changes_up_to,
         SampleRejectedStatusKind& rejection_reason)
 {
+    bool ret_value = false;
     rejection_reason = NOT_REJECTED;
 
     if (mp_reader == nullptr || mp_mutex == nullptr)
@@ -202,8 +196,18 @@ bool DataReaderHistory::received_change(
         return false;
     }
 
-    std::lock_guard<RecursiveTimedMutex> guard(*mp_mutex);
-    return receive_fn_(a_change, unknown_missing_changes_up_to, rejection_reason);
+    if ((0 == unknown_missing_changes_up_to) ||
+            (m_changes.size() + unknown_missing_changes_up_to < static_cast<size_t>(resource_limited_qos_.max_samples)))
+    {
+        std::lock_guard<RecursiveTimedMutex> guard(*mp_mutex);
+        ret_value =  receive_fn_(a_change, unknown_missing_changes_up_to, rejection_reason);
+    }
+    else
+    {
+        rejection_reason = REJECTED_BY_SAMPLES_LIMIT;
+    }
+
+    return ret_value;
 }
 
 bool DataReaderHistory::received_change_keep_all(

@@ -516,11 +516,6 @@ bool StatefulReader::processDataMsg(
             if (!mp_history->can_change_be_added_nts(change->writerGUID, change->serializedPayload.length,
                     unknown_missing_changes_up_to, will_never_be_accepted))
             {
-                if (getListener())
-                {
-                    getListener()->on_sample_rejected((RTPSReader*)this, fastdds::dds::REJECTED_BY_SAMPLES_LIMIT,
-                            change);
-                }
                 if (will_never_be_accepted && pWP)
                 {
                     pWP->irrelevant_change_set(change->sequenceNumber);
@@ -642,11 +637,6 @@ bool StatefulReader::processDataFragMsg(
             if (!mp_history->can_change_be_added_nts(incomingChange->writerGUID, sampleSize, changes_up_to,
                     will_never_be_accepted))
             {
-                if (getListener() && 1 == fragmentStartingNum)
-                {
-                    getListener()->on_sample_rejected((RTPSReader*)this, fastdds::dds::REJECTED_BY_SAMPLES_LIMIT,
-                            incomingChange);
-                }
                 if (will_never_be_accepted)
                 {
                     pWP->irrelevant_change_set(incomingChange->sequenceNumber);
@@ -1063,7 +1053,7 @@ bool StatefulReader::change_received(
     {
         if (fastdds::dds::NOT_REJECTED != rejection_reason)
         {
-            if (getListener())
+            if (getListener() && (a_change->is_fully_assembled() || (a_change->contains_first_fragment())))
             {
                 getListener()->on_sample_rejected((RTPSReader*)this, rejection_reason, a_change);
             }

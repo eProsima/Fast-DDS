@@ -496,7 +496,7 @@ protected:
     LivelinessChangedStatus& update_liveliness_status(
             const fastrtps::LivelinessChangedStatus& status);
 
-    SampleLostStatus& update_sample_lost_status(
+    const SampleLostStatus& update_sample_lost_status(
             int32_t sample_lost_since_last_update);
 
     /*!
@@ -505,7 +505,7 @@ protected:
      * @param[in] Reason why the new sample was rejected.
      * @param[in] New sample which was rejected.
      */
-    bool update_sample_rejected_status(
+    const SampleRejectedStatus& update_sample_rejected_status(
             SampleRejectedStatusKind reason,
             const fastrtps::rtps::CacheChange_t* const change_in);
 

@@ -908,20 +908,18 @@ void DataReaderImpl::InnerDataReaderListener::on_sample_rejected(
         SampleRejectedStatusKind reason,
         const CacheChange_t* const change_in)
 {
-    if (data_reader_->update_sample_rejected_status(reason, change_in))
+    data_reader_->update_sample_rejected_status(reason, change_in);
+    StatusMask notify_status = StatusMask::sample_rejected();
+    DataReaderListener* listener = data_reader_->get_listener_for(notify_status);
+    if (listener != nullptr)
     {
-        StatusMask notify_status = StatusMask::sample_rejected();
-        DataReaderListener* listener = data_reader_->get_listener_for(notify_status);
-        if (listener != nullptr)
+        SampleRejectedStatus callback_status;
+        if (data_reader_->get_sample_rejected_status(callback_status) == ReturnCode_t::RETCODE_OK)
         {
-            SampleRejectedStatus callback_status;
-            if (data_reader_->get_sample_rejected_status(callback_status) == ReturnCode_t::RETCODE_OK)
-            {
-                listener->on_sample_rejected(data_reader_->user_datareader_, callback_status);
-            }
+            listener->on_sample_rejected(data_reader_->user_datareader_, callback_status);
         }
-        data_reader_->user_datareader_->get_statuscondition().get_impl()->set_status(notify_status, true);
     }
+    data_reader_->user_datareader_->get_statuscondition().get_impl()->set_status(notify_status, true);
 }
 
 bool DataReaderImpl::on_new_cache_change_added(
@@ -1306,7 +1304,7 @@ LivelinessChangedStatus& DataReaderImpl::update_liveliness_status(
     return liveliness_changed_status_;
 }
 
-SampleLostStatus& DataReaderImpl::update_sample_lost_status(
+const SampleLostStatus& DataReaderImpl::update_sample_lost_status(
         int32_t sample_lost_since_last_update)
 {
     sample_lost_status_.total_count += sample_lost_since_last_update;
@@ -1719,23 +1717,15 @@ InstanceHandle_t DataReaderImpl::lookup_instance(
     return handle;
 }
 
-bool DataReaderImpl::update_sample_rejected_status(
+const SampleRejectedStatus& DataReaderImpl::update_sample_rejected_status(
         SampleRejectedStatusKind reason,
         const CacheChange_t* const change_in)
 {
-    bool ret_val = false;
-
-    if (c_InstanceHandle_Unknown != change_in->instanceHandle ||
-            history_.compute_key_for_change_fn(const_cast<CacheChange_t*>(change_in)))
-    {
-        ++sample_rejected_status_.total_count;
-        ++sample_rejected_status_.total_count_change;
-        sample_rejected_status_.last_reason = reason;
-        sample_rejected_status_.last_instance_handle = change_in->instanceHandle;
-        ret_val = true;
-    }
-
-    return ret_val;
+    ++sample_rejected_status_.total_count;
+    ++sample_rejected_status_.total_count_change;
+    sample_rejected_status_.last_reason = reason;
+    sample_rejected_status_.last_instance_handle = change_in->instanceHandle;
+    return sample_rejected_status_;
 }
 
 } /* namespace dds */
