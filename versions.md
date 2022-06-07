@@ -3,6 +3,7 @@ Version 2.7.0
 
 * Implementation of DataWriter methods write_w_timestamp, register_instance_w_timestamp,
   unregister_instance_w_timestamp, and dispose_w_timestamp (ABI break)
+* Support of `SampleRejectedStatus` in DDS API (API extensions on RTPS layer)
 
 Version 2.6.1
 -------------
@@ -11,7 +12,6 @@ Version 2.6.1
 * Implementation for DataWriter::get_key_value.
 * Implementation for DataReader::lookup_instance.
 * Support of `SampleLostStatus` in DDS API.
-* Support of `SampleRejectedStatus` in DDS API.
 
 Version 2.6.0
 -------------
