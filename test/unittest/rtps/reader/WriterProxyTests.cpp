@@ -330,7 +330,7 @@ TEST(WriterProxyTests, LostChangesUpdate)
     ASSERT_EQ(SequenceNumber_t(0, 2), wproxy.available_changes_max());
     ASSERT_EQ(1u, wproxy.number_of_changes_from_writer());
     ASSERT_EQ(1u, wproxy.unknown_missing_changes_up_to(SequenceNumber_t(0, 4)));
-    ASSERT_EQ(2, current_sample_lost);
+    ASSERT_EQ(0, current_sample_lost);
 
     // 2. Simulate reception of a DATA(5) follow by a HEARTBEAT(5,5)
     EXPECT_CALL(*wproxy.heartbeat_response_, restart_timer()).Times(1u);
