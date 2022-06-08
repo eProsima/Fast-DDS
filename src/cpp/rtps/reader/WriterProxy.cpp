@@ -88,6 +88,7 @@ WriterProxy::WriterProxy(
     , liveliness_kind_(AUTOMATIC_LIVELINESS_QOS)
     , locators_entry_(loc_alloc.max_unicast_locators, loc_alloc.max_multicast_locators)
     , is_datasharing_writer_(false)
+    , received_at_least_one_heartbeat_(false)
 {
     //Create Events
     ResourceEvent& event_manager = reader_->getRTPSParticipant()->getEventResource();
@@ -141,6 +142,7 @@ void WriterProxy::start(
     is_datasharing_writer_ = is_datasharing;
     initial_acknack_->restart_timer();
     loaded_from_storage(initial_sequence);
+    received_at_least_one_heartbeat_ = false;
 }
 
 void WriterProxy::update(
@@ -581,6 +583,12 @@ bool WriterProxy::process_heartbeat(
         else
         {
             assert_liveliness = liveliness_flag;
+        }
+
+        if (!received_at_least_one_heartbeat_)
+        {
+            current_sample_lost = 0;
+            received_at_least_one_heartbeat_ = true;
         }
 
         return true;
