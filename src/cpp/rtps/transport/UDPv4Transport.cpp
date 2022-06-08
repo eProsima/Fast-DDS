@@ -556,6 +556,7 @@ void UDPv4Transport::SetSocketOutboundInterface(
 
 void UDPv4Transport::update_network_interfaces()
 {
+    UDPTransportInterface::update_network_interfaces();
     for (auto& channelResources : mInputSockets)
     {
         for (UDPChannelResource* channelResource : channelResources.second)

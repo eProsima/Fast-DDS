@@ -271,6 +271,7 @@ bool UDPTransportInterface::OpenOutputChannel(
     if (locNames.empty() && !first_time_open_output_channel_)
     {
         statistics_info_.add_entry(locator);
+        rescan_interfaces_.store(false);
         return true;
     }
 
@@ -367,6 +368,7 @@ bool UDPTransportInterface::OpenOutputChannel(
     }
 
     statistics_info_.add_entry(locator);
+    rescan_interfaces_.store(false);
     return true;
 }
 
@@ -678,26 +680,33 @@ void UDPTransportInterface::get_unknown_network_interfaces(
         bool return_loopback)
 {
     locNames.clear();
-    get_ips(locNames, return_loopback);
-    for (auto& sender_resource : sender_resource_list)
+    if (rescan_interfaces_)
     {
-        UDPSenderResource* udp_sender_resource = UDPSenderResource::cast(*this, sender_resource.get());
-        if (nullptr != udp_sender_resource)
+        get_ips(locNames, return_loopback);
+        for (auto& sender_resource : sender_resource_list)
         {
-            for (auto it = locNames.begin(); it != locNames.end();)
+            UDPSenderResource* udp_sender_resource = UDPSenderResource::cast(*this, sender_resource.get());
+            if (nullptr != udp_sender_resource)
             {
-                if (udp_sender_resource->check_ip_address(it->locator))
+                for (auto it = locNames.begin(); it != locNames.end();)
                 {
-                    it = locNames.erase(it);
-                }
-                else
-                {
-                    ++it;
+                    if (udp_sender_resource->check_ip_address(it->locator))
+                    {
+                        it = locNames.erase(it);
+                    }
+                    else
+                    {
+                        ++it;
+                    }
                 }
             }
         }
     }
+}
 
+void UDPTransportInterface::update_network_interfaces()
+{
+    rescan_interfaces_.store(true);
 }
 
 } // namespace rtps

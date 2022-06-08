@@ -417,8 +417,8 @@ bool StatelessWriter::wait_for_acknowledgement(
 bool StatelessWriter::matched_reader_add(
         const ReaderProxyData& data)
 {
-    std::lock_guard<RecursiveTimedMutex> guard(mp_mutex);
-    std::lock_guard<LocatorSelectorSender> locator_selector_guard(locator_selector_);
+    std::unique_lock<RecursiveTimedMutex> guard(mp_mutex);
+    std::unique_lock<LocatorSelectorSender> locator_selector_guard(locator_selector_);
 
     assert(data.guid() != c_Guid_Unknown);
 
@@ -442,6 +442,9 @@ bool StatelessWriter::matched_reader_add(
     {
         if (nullptr != mp_listener)
         {
+            // call the listener without locks taken
+            locator_selector_guard.unlock();
+            guard.unlock();
             mp_listener->on_reader_discovery(this, ReaderDiscoveryInfo::CHANGED_QOS_READER, data.guid(), &data);
         }
         return false;
@@ -506,6 +509,9 @@ bool StatelessWriter::matched_reader_add(
 
     if (nullptr != mp_listener)
     {
+        // call the listener without locks taken
+        locator_selector_guard.unlock();
+        guard.unlock();
         mp_listener->on_reader_discovery(this, ReaderDiscoveryInfo::DISCOVERED_READER, data.guid(), &data);
     }
     return true;
@@ -534,8 +540,8 @@ bool StatelessWriter::set_fixed_locators(
 bool StatelessWriter::matched_reader_remove(
         const GUID_t& reader_guid)
 {
-    std::lock_guard<RecursiveTimedMutex> guard(mp_mutex);
-    std::lock_guard<LocatorSelectorSender> locator_selector_guard(locator_selector_);
+    std::unique_lock<RecursiveTimedMutex> guard(mp_mutex);
+    std::unique_lock<LocatorSelectorSender> locator_selector_guard(locator_selector_);
 
     if (locator_selector_.locator_selector.remove_entry(reader_guid))
     {
@@ -588,6 +594,10 @@ bool StatelessWriter::matched_reader_remove(
         logInfo(RTPS_WRITER, "Reader Proxy removed: " << reader_guid);
         if (nullptr != mp_listener)
         {
+            // call the listener without locks taken
+            locator_selector_guard.unlock();
+            guard.unlock();
+
             mp_listener->on_reader_discovery(this, ReaderDiscoveryInfo::REMOVED_READER, reader_guid, nullptr);
         }
         return true;

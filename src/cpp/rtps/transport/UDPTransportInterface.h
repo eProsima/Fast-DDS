@@ -162,6 +162,8 @@ public:
         return configuration()->maxMessageSize;
     }
 
+    void update_network_interfaces() override;
+
 protected:
 
     friend class UDPChannelResource;
@@ -278,6 +280,8 @@ protected:
             const SendResourceList& sender_resource_list,
             std::vector<fastrtps::rtps::IPFinder::info_IP>& locNames,
             bool return_loopback = false);
+
+    std::atomic_bool rescan_interfaces_ = {true};
 };
 
 } // namespace rtps
