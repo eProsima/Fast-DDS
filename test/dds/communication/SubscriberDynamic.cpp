@@ -91,35 +91,37 @@ public:
         using callback_type = std::function<void (const std::string& name,
                         const eprosima::fastrtps::types::DynamicType_ptr type)>;
 
-        try
+        // once it is registered do ...
+        callback_type callback = [this, topic_name, type_name](
+            const std::string&,
+            const types::DynamicType_ptr)
+                {
+                    try
+                    {
+                        is_worth_a_type_.set_value(std::make_pair(topic_name.to_string(), type_name.to_string()));
+                    }
+                    catch (std::future_error&)
+                    {
+                        // Ignore if multiple callbacks are done for the same type
+                    }
+                };
+
+        // Check if the type is already registered
+        auto name = type_name.to_string();
+        types::DynamicType_ptr dummy;
+
+        if (participant->find_type(name))
         {
-            // Check if the type is already registered
-            TypeSupport ts = participant->find_type(type_name.to_string());
-
-            if (ts)
-            {
-                // already registered
-                is_worth_a_type_.set_value(std::make_pair(topic_name.to_string(), type_name.to_string()));
-            }
-            else
-            {
-                // once it is registered do ...
-                callback_type callback = [this, topic_name, type_name](
-                    const std::string&,
-                    const types::DynamicType_ptr)
-                        {
-                            is_worth_a_type_.set_value(std::make_pair(topic_name.to_string(), type_name.to_string()));
-                        };
-
-                participant->register_remote_type(
-                    type_information,
-                    type_name.to_string(),
-                    callback);
-            }
+            // signal now
+            callback(name, dummy);
         }
-        catch (std::future_error&)
+        else
         {
-            // Ignore if multiple callbacks are done for the same type
+            // signal on reception
+            participant->register_remote_type(
+                type_information,
+                type_name.to_string(),
+                callback);
         }
     }
 
