@@ -88,14 +88,15 @@ public:
             const eprosima::fastrtps::string_255 type_name,
             const eprosima::fastrtps::types::TypeInformation& type_information) override
     {
-        using callback_type = std::function<void(const std::string& name, const eprosima::fastrtps::types::DynamicType_ptr type)>;
+        using callback_type = std::function<void (const std::string& name,
+                        const eprosima::fastrtps::types::DynamicType_ptr type)>;
 
         try
         {
             // Check if the type is already registered
             TypeSupport ts = participant->find_type(type_name.to_string());
 
-            if(ts)
+            if (ts)
             {
                 // already registered
                 is_worth_a_type_.set_value(std::make_pair(topic_name.to_string(), type_name.to_string()));
@@ -104,8 +105,8 @@ public:
             {
                 // once it is registered do ...
                 callback_type callback = [this, topic_name, type_name](
-                        const std::string&,
-                        const types::DynamicType_ptr)
+                    const std::string&,
+                    const types::DynamicType_ptr)
                         {
                             is_worth_a_type_.set_value(std::make_pair(topic_name.to_string(), type_name.to_string()));
                         };
@@ -116,7 +117,7 @@ public:
                     callback);
             }
         }
-        catch(std::future_error&)
+        catch (std::future_error&)
         {
             // Ignore if multiple callbacks are done for the same type
         }
@@ -266,7 +267,7 @@ int main(
     SubListener listener;
     Subscriber* subscriber = nullptr;
 
-    Topic * topic = nullptr;
+    Topic* topic = nullptr;
     DataReader* reader = nullptr;
 
     try
@@ -337,7 +338,7 @@ int main(
         }
         else
         {
-           topic = participant->create_topic( topic_name, type_name, TOPIC_QOS_DEFAULT);
+            topic = participant->create_topic( topic_name, type_name, TOPIC_QOS_DEFAULT);
             if (topic == nullptr)
             {
                 std::cout << "ERROR: Could not create topic " << topic_name << std::endl;
@@ -386,12 +387,12 @@ int main(
             }
         }
     }
-    catch(int res)
+    catch (int res)
     {
         result = res;
     }
 
-    if(participant != nullptr)
+    if (participant != nullptr)
     {
         if (subscriber != nullptr)
         {
