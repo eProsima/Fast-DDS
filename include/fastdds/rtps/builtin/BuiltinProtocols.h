@@ -27,6 +27,8 @@
 #include <fastdds/rtps/builtin/data/ContentFilterProperty.hpp>
 #include <fastdds/rtps/network/NetworkFactory.h>
 
+#include <fastrtps/utils/shared_mutex.hpp>
+
 namespace eprosima {
 
 namespace fastdds {
@@ -66,6 +68,8 @@ private:
 
     BuiltinProtocols();
     virtual ~BuiltinProtocols();
+
+    eprosima::shared_mutex m_DiscoveryMutex;
 
 public:
 
@@ -190,6 +194,15 @@ public:
     void stopRTPSParticipantAnnouncement();
     //!Reset to timer to make periodic RTPSParticipant Announcements.
     void resetRTPSParticipantAnnouncement();
+
+    /**
+     * Get Discovery mutex
+     * @return Associated Mutex
+     */
+    inline eprosima::shared_mutex& getDiscoveryMutex()
+    {
+        return m_DiscoveryMutex;
+    }
 
 };
 

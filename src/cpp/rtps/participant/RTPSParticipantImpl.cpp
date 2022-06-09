@@ -1375,7 +1375,10 @@ void RTPSParticipantImpl::update_attributes(
                 }
 
                 // Update the servers list in builtin protocols
-                mp_builtinProtocols->m_DiscoveryServers = m_att.builtin.discovery_config.m_DiscoveryServers;
+                {
+                    std::unique_lock<eprosima::shared_mutex> disc_lock(mp_builtinProtocols->getDiscoveryMutex());
+                    mp_builtinProtocols->m_DiscoveryServers = m_att.builtin.discovery_config.m_DiscoveryServers;
+                }
 
                 // Notify PDPServer
                 if (m_att.builtin.discovery_config.discoveryProtocol == DiscoveryProtocol::SERVER ||

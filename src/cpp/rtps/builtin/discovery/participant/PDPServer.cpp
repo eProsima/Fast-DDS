@@ -77,7 +77,10 @@ PDPServer::PDPServer(
         {
             for (auto server : env_servers)
             {
-                mp_builtin->m_DiscoveryServers.push_back(server);
+                {
+                    std::unique_lock<eprosima::shared_mutex> disc_lock(mp_builtin->getDiscoveryMutex());
+                    mp_builtin->m_DiscoveryServers.push_back(server);
+                }
                 m_discovery.discovery_config.m_DiscoveryServers.push_back(server);
                 discovery_db_.add_server(server.guidPrefix);
             }
@@ -197,11 +200,14 @@ ParticipantProxyData* PDPServer::createParticipantProxyData(
     if (!do_lease)
     {
         // if not a client verify this participant is a server
-        for (auto& svr : mp_builtin->m_DiscoveryServers)
         {
-            if (svr.guidPrefix == participant_data.m_guid.guidPrefix)
+            eprosima::shared_lock<eprosima::shared_mutex> disc_lock(mp_builtin->getDiscoveryMutex());
+            for (auto& svr : mp_builtin->m_DiscoveryServers)
             {
-                do_lease = true;
+                if (svr.guidPrefix == participant_data.m_guid.guidPrefix)
+                {
+                    do_lease = true;
+                }
             }
         }
     }
@@ -262,7 +268,7 @@ bool PDPServer::createPDPEndpoints()
         mp_PDPReader->enableMessagesFromUnkownWriters(true);
 
         {
-            std::lock_guard<std::recursive_mutex> lock(*getMutex());
+            eprosima::shared_lock<eprosima::shared_mutex> disc_lock(mp_builtin->getDiscoveryMutex());
 
             // Initial peer list doesn't make sense in server scenario. Client should match its server list
             for (const eprosima::fastdds::rtps::RemoteServerAttributes& it : mp_builtin->m_DiscoveryServers)
@@ -326,7 +332,7 @@ bool PDPServer::createPDPEndpoints()
         mp_PDPWriter->set_separate_sending(true);
 
         {
-            std::lock_guard<std::recursive_mutex> lock(*getMutex());
+            eprosima::shared_lock<eprosima::shared_mutex> disc_lock(mp_builtin->getDiscoveryMutex());
 
             for (const eprosima::fastdds::rtps::RemoteServerAttributes& it : mp_builtin->m_DiscoveryServers)
             {
@@ -897,6 +903,8 @@ void PDPServer::update_remote_servers_list()
 
     std::lock_guard<std::recursive_mutex> lock(*getMutex());
 
+    eprosima::shared_lock<eprosima::shared_mutex> disc_lock(mp_builtin->getDiscoveryMutex());
+
     for (const eprosima::fastdds::rtps::RemoteServerAttributes& it : mp_builtin->m_DiscoveryServers)
     {
         if (!mp_PDPReader->matched_writer_is_matched(it.GetPDPWriter()))
@@ -1361,6 +1369,8 @@ std::set<fastrtps::rtps::GuidPrefix_t> PDPServer::servers_prefixes()
 {
     std::lock_guard<std::recursive_mutex> lock(*getMutex());
     std::set<GuidPrefix_t> servers;
+    eprosima::shared_lock<eprosima::shared_mutex> disc_lock(mp_builtin->getDiscoveryMutex());
+
     for (const eprosima::fastdds::rtps::RemoteServerAttributes& it : mp_builtin->m_DiscoveryServers)
     {
         servers.insert(it.guidPrefix);
@@ -1391,6 +1401,7 @@ void PDPServer::ping_remote_servers()
     // Iterate over the list of servers
     {
         std::lock_guard<std::recursive_mutex> lock(*getMutex());
+        eprosima::shared_lock<eprosima::shared_mutex> disc_lock(mp_builtin->getDiscoveryMutex());
 
         for (auto& server : mp_builtin->m_DiscoveryServers)
         {
