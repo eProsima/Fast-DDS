@@ -40,9 +40,14 @@
 #include <string.h>
 #include <net/if.h>
 #include <sys/ioctl.h>
+#if !defined(__APPLE__)
 #include <net/if_arp.h>
+#endif // if defined(__APPLE__)
 #include <errno.h>
 #if defined(__APPLE__)
+#if !__is_target_os(ios)
+#include <net/if_arp.h>
+#endif
 #include <sys/types.h>
 #include <sys/sysctl.h>
 #include <net/if_dl.h>
@@ -272,6 +277,15 @@ bool IPFinder::getAllMACAddress(
 
 #elif defined(__APPLE__)
 
+#if __is_target_os(ios)
+bool IPFinder::getAllMACAddress(
+        std::vector<info_MAC>* macs)
+{
+    return false;
+}
+
+#else
+
 bool IPFinder::getAllMACAddress(
         std::vector<info_MAC>* macs)
 {
@@ -325,6 +339,7 @@ bool IPFinder::getAllMACAddress(
     }
     return true;
 }
+#endif
 
 #elif defined(__linux__)
 
