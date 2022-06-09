@@ -95,6 +95,13 @@ public:
      */
     virtual ~DomainParticipant();
 
+    /**
+     * This returns whether the participant is a valid object to be interacted with.
+     * 
+     * @return true if the participant is still valid, false otherwise
+     */
+    bool is_valid() const { return( nullptr != impl_ ); }
+
     // Superclass methods
 
     /**

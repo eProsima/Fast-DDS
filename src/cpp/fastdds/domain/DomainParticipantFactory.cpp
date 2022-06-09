@@ -190,7 +190,9 @@ ReturnCode_t DomainParticipantFactory::delete_participant(
                         || (*pit)->get_participant()->guid() == part->guid())
                 {
                     (*pit)->disable();
+                    auto participant_to_be_deleted = (*pit)->get_participant();
                     delete (*pit);
+                    delete participant_to_be_deleted; // it's no longer deleted by the impl!
                     PartVectorIt next_it = vit->second.erase(pit);
                     pit = next_it;
                     break;

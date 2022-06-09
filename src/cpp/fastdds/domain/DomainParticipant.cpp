@@ -46,28 +46,38 @@ DomainParticipant::~DomainParticipant()
 ReturnCode_t DomainParticipant::get_qos(
         DomainParticipantQos& qos) const
 {
+    if (!impl_)
+        return ReturnCode_t::RETCODE_ALREADY_DELETED;
     return impl_->get_qos(qos);
 }
 
 const DomainParticipantQos& DomainParticipant::get_qos() const
 {
+    if (!impl_)
+        throw std::runtime_error( "participant was deleted" );
     return impl_->get_qos();
 }
 
 ReturnCode_t DomainParticipant::set_qos(
         const DomainParticipantQos& qos) const
 {
+    if (!impl_)
+        return ReturnCode_t::RETCODE_ALREADY_DELETED;
     return impl_->set_qos(qos);
 }
 
 const DomainParticipantListener* DomainParticipant::get_listener() const
 {
+    if (!impl_)
+        return nullptr;
     return impl_->get_listener();
 }
 
 ReturnCode_t DomainParticipant::set_listener(
         DomainParticipantListener* listener)
 {
+    if (!impl_)
+        return ReturnCode_t::RETCODE_ALREADY_DELETED;
     return set_listener(listener, StatusMask::all());
 }
 
@@ -75,6 +85,8 @@ ReturnCode_t DomainParticipant::set_listener(
         DomainParticipantListener* listener,
         const StatusMask& mask)
 {
+    if (!impl_)
+        return ReturnCode_t::RETCODE_ALREADY_DELETED;
     ReturnCode_t ret_val = impl_->set_listener(listener);
     if (ret_val == ReturnCode_t::RETCODE_OK)
     {
@@ -86,6 +98,9 @@ ReturnCode_t DomainParticipant::set_listener(
 
 ReturnCode_t DomainParticipant::enable()
 {
+    if (!impl_)
+        return ReturnCode_t::RETCODE_ALREADY_DELETED;
+
     if (enable_)
     {
         return ReturnCode_t::RETCODE_OK;
@@ -102,6 +117,8 @@ Publisher* DomainParticipant::create_publisher(
         PublisherListener* listener,
         const StatusMask& mask)
 {
+    if (!impl_)
+        return nullptr;
     return impl_->create_publisher(qos, listener, mask);
 }
 
@@ -110,12 +127,16 @@ Publisher* DomainParticipant::create_publisher_with_profile(
         PublisherListener* listener,
         const StatusMask& mask)
 {
+    if (!impl_)
+        return nullptr;
     return impl_->create_publisher_with_profile(profile_name, listener, mask);
 }
 
 ReturnCode_t DomainParticipant::delete_publisher(
         const Publisher* publisher)
 {
+    if (!impl_)
+        return ReturnCode_t::RETCODE_ALREADY_DELETED;
     return impl_->delete_publisher(publisher);
 }
 
@@ -124,6 +145,8 @@ Subscriber* DomainParticipant::create_subscriber(
         SubscriberListener* listener,
         const StatusMask& mask)
 {
+    if (!impl_)
+        return nullptr;
     return impl_->create_subscriber(qos, listener, mask);
 }
 
@@ -132,12 +155,16 @@ Subscriber* DomainParticipant::create_subscriber_with_profile(
         SubscriberListener* listener,
         const StatusMask& mask)
 {
+    if (!impl_)
+        return nullptr;
     return impl_->create_subscriber_with_profile(profile_name, listener, mask);
 }
 
 ReturnCode_t DomainParticipant::delete_subscriber(
         const Subscriber* subscriber)
 {
+    if (!impl_)
+        return ReturnCode_t::RETCODE_ALREADY_DELETED;
     return impl_->delete_subscriber(subscriber);
 }
 
@@ -148,6 +175,8 @@ Topic* DomainParticipant::create_topic(
         TopicListener* listener,
         const StatusMask& mask)
 {
+    if (!impl_)
+        return nullptr;
     return impl_->create_topic(topic_name, type_name, qos, listener, mask);
 }
 
@@ -158,12 +187,16 @@ Topic* DomainParticipant::create_topic_with_profile(
         TopicListener* listener,
         const StatusMask& mask)
 {
+    if (!impl_)
+        return nullptr;
     return impl_->create_topic_with_profile(topic_name, type_name, profile_name, listener, mask);
 }
 
 ReturnCode_t DomainParticipant::delete_topic(
         const Topic* topic)
 {
+    if (!impl_)
+        return ReturnCode_t::RETCODE_ALREADY_DELETED;
     return impl_->delete_topic(topic);
 }
 
@@ -173,6 +206,8 @@ ContentFilteredTopic* DomainParticipant::create_contentfilteredtopic(
         const std::string& filter_expression,
         const std::vector<std::string>& expression_parameters)
 {
+    if (!impl_)
+        return nullptr;
     return impl_->create_contentfilteredtopic(name, related_topic, filter_expression, expression_parameters,
                    FASTDDS_SQLFILTER_NAME);
 }
@@ -184,6 +219,8 @@ ContentFilteredTopic* DomainParticipant::create_contentfilteredtopic(
         const std::vector<std::string>& expression_parameters,
         const char* filter_class_name)
 {
+    if (!impl_)
+        return nullptr;
     return impl_->create_contentfilteredtopic(name, related_topic, filter_expression, expression_parameters,
                    filter_class_name);
 }
@@ -191,6 +228,8 @@ ContentFilteredTopic* DomainParticipant::create_contentfilteredtopic(
 ReturnCode_t DomainParticipant::delete_contentfilteredtopic(
         const ContentFilteredTopic* a_contentfilteredtopic)
 {
+    if (!impl_)
+        return ReturnCode_t::RETCODE_ALREADY_DELETED;
     return impl_->delete_contentfilteredtopic(a_contentfilteredtopic);
 }
 
@@ -219,18 +258,24 @@ ReturnCode_t DomainParticipant::register_content_filter_factory(
         const char* filter_class_name,
         IContentFilterFactory* const filter_factory)
 {
+    if (!impl_)
+        return ReturnCode_t::RETCODE_ALREADY_DELETED;
     return impl_->register_content_filter_factory(filter_class_name, filter_factory);
 }
 
 IContentFilterFactory* DomainParticipant::lookup_content_filter_factory(
         const char* filter_class_name)
 {
+    if (!impl_)
+        return nullptr;
     return impl_->lookup_content_filter_factory(filter_class_name);
 }
 
 ReturnCode_t DomainParticipant::unregister_content_filter_factory(
         const char* filter_class_name)
 {
+    if (!impl_)
+        return ReturnCode_t::RETCODE_ALREADY_DELETED;
     return impl_->unregister_content_filter_factory(filter_class_name);
 }
 
@@ -247,6 +292,8 @@ Topic* DomainParticipant::find_topic(
 TopicDescription* DomainParticipant::lookup_topicdescription(
         const std::string& topic_name) const
 {
+    if(!impl_)
+        return nullptr;
     return impl_->lookup_topicdescription(topic_name);
 }
 
@@ -286,33 +333,45 @@ ReturnCode_t DomainParticipant::ignore_subscription(
 
 DomainId_t DomainParticipant::get_domain_id() const
 {
+    if (!impl_)
+        throw std::runtime_error( "participant was deleted" );
     return impl_->get_domain_id();
 }
 
 ReturnCode_t DomainParticipant::delete_contained_entities()
 {
+    if (!impl_)
+        return ReturnCode_t::RETCODE_ALREADY_DELETED;
     return impl_->delete_contained_entities();
 }
 
 ReturnCode_t DomainParticipant::assert_liveliness()
 {
+    if (!impl_)
+        return ReturnCode_t::RETCODE_ALREADY_DELETED;
     return impl_->assert_liveliness();
 }
 
 ReturnCode_t DomainParticipant::set_default_publisher_qos(
         const PublisherQos& qos)
 {
+    if (!impl_)
+        return ReturnCode_t::RETCODE_ALREADY_DELETED;
     return impl_->set_default_publisher_qos(qos);
 }
 
 const PublisherQos& DomainParticipant::get_default_publisher_qos() const
 {
+    if (!impl_)
+        throw std::runtime_error( "participant was deleted" );
     return impl_->get_default_publisher_qos();
 }
 
 ReturnCode_t DomainParticipant::get_default_publisher_qos(
         PublisherQos& qos) const
 {
+    if (!impl_)
+        return ReturnCode_t::RETCODE_ALREADY_DELETED;
     qos = impl_->get_default_publisher_qos();
     return ReturnCode_t::RETCODE_OK;
 }
@@ -321,23 +380,31 @@ ReturnCode_t DomainParticipant::get_publisher_qos_from_profile(
         const std::string& profile_name,
         PublisherQos& qos) const
 {
+    if (!impl_)
+        return ReturnCode_t::RETCODE_ALREADY_DELETED;
     return impl_->get_publisher_qos_from_profile(profile_name, qos);
 }
 
 ReturnCode_t DomainParticipant::set_default_subscriber_qos(
         const SubscriberQos& qos)
 {
+    if (!impl_)
+        return ReturnCode_t::RETCODE_ALREADY_DELETED;
     return impl_->set_default_subscriber_qos(qos);
 }
 
 const SubscriberQos& DomainParticipant::get_default_subscriber_qos() const
 {
+    if (!impl_)
+        throw std::runtime_error( "participant was deleted" );
     return impl_->get_default_subscriber_qos();
 }
 
 ReturnCode_t DomainParticipant::get_default_subscriber_qos(
         SubscriberQos& qos) const
 {
+    if (!impl_)
+        return ReturnCode_t::RETCODE_ALREADY_DELETED;
     qos = impl_->get_default_subscriber_qos();
     return ReturnCode_t::RETCODE_OK;
 }
@@ -346,23 +413,31 @@ ReturnCode_t DomainParticipant::get_subscriber_qos_from_profile(
         const std::string& profile_name,
         SubscriberQos& qos) const
 {
+    if (!impl_)
+        return ReturnCode_t::RETCODE_ALREADY_DELETED;
     return impl_->get_subscriber_qos_from_profile(profile_name, qos);
 }
 
 ReturnCode_t DomainParticipant::set_default_topic_qos(
         const TopicQos& qos)
 {
+    if (!impl_)
+        return ReturnCode_t::RETCODE_ALREADY_DELETED;
     return impl_->set_default_topic_qos(qos);
 }
 
 const TopicQos& DomainParticipant::get_default_topic_qos() const
 {
+    if (!impl_)
+        throw std::runtime_error( "participant was deleted" );
     return impl_->get_default_topic_qos();
 }
 
 ReturnCode_t DomainParticipant::get_default_topic_qos(
         TopicQos& qos) const
 {
+    if (!impl_)
+        return ReturnCode_t::RETCODE_ALREADY_DELETED;
     qos = impl_->get_default_topic_qos();
     return ReturnCode_t::RETCODE_OK;
 }
@@ -371,6 +446,8 @@ ReturnCode_t DomainParticipant::get_topic_qos_from_profile(
         const std::string& profile_name,
         TopicQos& qos) const
 {
+    if (!impl_)
+        return ReturnCode_t::RETCODE_ALREADY_DELETED;
     return impl_->get_topic_qos_from_profile(profile_name, qos);
 }
 
@@ -410,12 +487,16 @@ bool DomainParticipant::contains_entity(
         const InstanceHandle_t& a_handle,
         bool recursive /* = true */) const
 {
+    if (!impl_)
+        return false;
     return impl_->contains_entity(a_handle, recursive);
 }
 
 ReturnCode_t DomainParticipant::get_current_time(
         fastrtps::Time_t& current_time) const
 {
+    if (!impl_)
+        return ReturnCode_t::RETCODE_ALREADY_DELETED;
     return impl_->get_current_time(current_time);
 }
 
@@ -423,39 +504,53 @@ ReturnCode_t DomainParticipant::register_type(
         TypeSupport type,
         const std::string& type_name)
 {
+    if (!impl_)
+        return ReturnCode_t::RETCODE_ALREADY_DELETED;
     return impl_->register_type(type, type_name);
 }
 
 ReturnCode_t DomainParticipant::register_type(
         TypeSupport type)
 {
+    if (!impl_)
+        return ReturnCode_t::RETCODE_ALREADY_DELETED;
     return impl_->register_type(type, type.get_type_name());
 }
 
 ReturnCode_t DomainParticipant::unregister_type(
         const std::string& typeName)
 {
+    if (!impl_)
+        return ReturnCode_t::RETCODE_ALREADY_DELETED;
     return impl_->unregister_type(typeName);
 }
 
 TypeSupport DomainParticipant::find_type(
         const std::string& type_name) const
 {
+    if (!impl_)
+        return TypeSupport(nullptr);
     return impl_->find_type(type_name);
 }
 
 const InstanceHandle_t& DomainParticipant::get_instance_handle() const
 {
+    if (!impl_)
+        throw std::runtime_error( "participant was deleted" );
     return impl_->get_instance_handle();
 }
 
 const fastrtps::rtps::GUID_t& DomainParticipant::guid() const
 {
+    if (!impl_)
+        throw std::runtime_error( "participant was deleted" );
     return impl_->guid();
 }
 
 std::vector<std::string> DomainParticipant::get_participant_names() const
 {
+    if (!impl_)
+        return {};
     return impl_->get_participant_names();
 }
 
@@ -464,23 +559,31 @@ bool DomainParticipant::new_remote_endpoint_discovered(
         uint16_t userId,
         fastrtps::rtps::EndpointKind_t kind)
 {
+    if (!impl_)
+        throw std::runtime_error( "participant was deleted" );
     return impl_->new_remote_endpoint_discovered(partguid, userId, kind);
 }
 
 fastrtps::rtps::ResourceEvent& DomainParticipant::get_resource_event() const
 {
+    if (!impl_)
+        throw std::runtime_error( "participant was deleted" );
     return impl_->get_resource_event();
 }
 
 fastrtps::rtps::SampleIdentity DomainParticipant::get_type_dependencies(
         const fastrtps::types::TypeIdentifierSeq& in) const
 {
+    if (!impl_)
+        throw std::runtime_error( "participant was deleted" );
     return impl_->get_type_dependencies(in);
 }
 
 fastrtps::rtps::SampleIdentity DomainParticipant::get_types(
         const fastrtps::types::TypeIdentifierSeq& in) const
 {
+    if (!impl_)
+        throw std::runtime_error( "participant was deleted" );
     return impl_->get_types(in);
 }
 
@@ -489,10 +592,14 @@ ReturnCode_t DomainParticipant::register_remote_type(
         const std::string& type_name,
         std::function<void(const std::string& name, const fastrtps::types::DynamicType_ptr type)>& callback)
 {
+    if (!impl_)
+        return ReturnCode_t::RETCODE_ALREADY_DELETED;
     return impl_->register_remote_type(type_information, type_name, callback);
 }
 
 bool DomainParticipant::has_active_entities()
 {
+    if (!impl_)
+        return false;
     return impl_->has_active_entities();
 }
