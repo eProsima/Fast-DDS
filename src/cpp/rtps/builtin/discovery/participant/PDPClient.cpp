@@ -555,7 +555,6 @@ bool PDPClient::match_servers_EDP_endpoints()
     // PDP must have been initialize
     assert(mp_EDP);
 
-    //std::lock_guard<std::recursive_mutex> lock(*getMutex());
     bool all = true; // have all servers been discovered?
 
     eprosima::shared_lock<eprosima::shared_mutex> disc_lock(mp_builtin->getDiscoveryMutex());
