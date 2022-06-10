@@ -1120,7 +1120,7 @@ void SecurityManager::delete_participant_stateless_message_writer()
 {
     if (participant_stateless_message_writer_ != nullptr)
     {
-        participant_->deleteUserEndpoint(participant_stateless_message_writer_);
+        participant_->deleteUserEndpoint(participant_stateless_message_writer_->getGuid());
         participant_stateless_message_writer_ = nullptr;
     }
 
@@ -1169,7 +1169,7 @@ void SecurityManager::delete_participant_stateless_message_reader()
 {
     if (participant_stateless_message_reader_ != nullptr)
     {
-        participant_->deleteUserEndpoint(participant_stateless_message_reader_);
+        participant_->deleteUserEndpoint(participant_stateless_message_reader_->getGuid());
         participant_stateless_message_reader_ = nullptr;
     }
 
@@ -1268,7 +1268,7 @@ void SecurityManager::delete_participant_volatile_message_secure_writer()
 {
     if (participant_volatile_message_secure_writer_ != nullptr)
     {
-        participant_->deleteUserEndpoint(participant_volatile_message_secure_writer_);
+        participant_->deleteUserEndpoint(participant_volatile_message_secure_writer_->getGuid());
         participant_volatile_message_secure_writer_ = nullptr;
     }
 
@@ -1317,7 +1317,7 @@ void SecurityManager::delete_participant_volatile_message_secure_reader()
 {
     if (participant_volatile_message_secure_reader_ != nullptr)
     {
-        participant_->deleteUserEndpoint(participant_volatile_message_secure_reader_);
+        participant_->deleteUserEndpoint(participant_volatile_message_secure_reader_->getGuid());
         participant_volatile_message_secure_reader_ = nullptr;
     }
 

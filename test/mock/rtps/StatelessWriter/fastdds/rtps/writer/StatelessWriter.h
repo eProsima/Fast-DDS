@@ -45,8 +45,6 @@ public:
 
     MOCK_METHOD1 (matched_reader_is_matched, bool(const GUID_t& reader_guid));
 
-    MOCK_METHOD0(getGuid, const GUID_t& ());
-
     MOCK_METHOD1(unsent_change_added_to_history_mock, void(CacheChange_t*));
 
     RTPSParticipantImpl* getRTPSParticipant()

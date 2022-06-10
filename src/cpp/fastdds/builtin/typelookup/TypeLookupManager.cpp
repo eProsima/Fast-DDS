@@ -105,19 +105,19 @@ TypeLookupManager::~TypeLookupManager()
      */
     if (nullptr != builtin_reply_reader_)
     {
-        participant_->deleteUserEndpoint(builtin_reply_reader_);
+        participant_->deleteUserEndpoint(builtin_reply_reader_->getGuid());
     }
     if (nullptr != builtin_reply_writer_)
     {
-        participant_->deleteUserEndpoint(builtin_reply_writer_);
+        participant_->deleteUserEndpoint(builtin_reply_writer_->getGuid());
     }
     if (nullptr != builtin_request_reader_)
     {
-        participant_->deleteUserEndpoint(builtin_request_reader_);
+        participant_->deleteUserEndpoint(builtin_request_reader_->getGuid());
     }
     if (nullptr != builtin_request_writer_)
     {
-        participant_->deleteUserEndpoint(builtin_request_writer_);
+        participant_->deleteUserEndpoint(builtin_request_writer_->getGuid());
     }
     delete builtin_request_writer_history_;
     delete builtin_reply_writer_history_;

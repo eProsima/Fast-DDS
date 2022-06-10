@@ -221,7 +221,7 @@ public:
 
     ReaderListener* listener_;
 
-    const GUID_t m_guid;
+    GUID_t m_guid;
 };
 
 } // namespace rtps
