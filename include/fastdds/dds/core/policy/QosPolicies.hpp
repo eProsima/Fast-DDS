@@ -24,6 +24,7 @@
 
 #include <fastdds/dds/core/policy/ParameterTypes.hpp>
 
+#include <fastdds/rtps/attributes/ExternalLocators.hpp>
 #include <fastdds/rtps/attributes/PropertyPolicy.h>
 #include <fastdds/rtps/attributes/RTPSParticipantAllocationAttributes.hpp>
 #include <fastdds/rtps/attributes/RTPSParticipantAttributes.h>
@@ -2675,6 +2676,7 @@ public:
                (this->throughput_controller == b.throughput_controller) &&
                (this->default_unicast_locator_list == b.default_unicast_locator_list) &&
                (this->default_multicast_locator_list == b.default_multicast_locator_list) &&
+               (this->default_external_unicast_locators == b.default_external_unicast_locators) &&
                QosPolicy::operator ==(b);
     }
 
@@ -2710,6 +2712,11 @@ public:
      * case that it was defined with NO UnicastLocators. This is usually left empty.
      */
     rtps::LocatorList default_multicast_locator_list;
+
+    /**
+     * The collection of external locators to use for communication on user created topics.
+     */
+    rtps::ExternalLocators default_external_unicast_locators;
 };
 
 //! Qos Policy to configure the transport layer
