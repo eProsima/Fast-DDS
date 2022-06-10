@@ -932,7 +932,7 @@ public:
     {
         // check if we are reentrying
         shared_lock<shared_mutex> may_lock;
-        RTPSParticipantImpl* previous_onwer = collections_mutex_owner_;
+        RTPSParticipantImpl* previous_owner = collections_mutex_owner_;
 
         if (collections_mutex_owner_ != this)
         {
@@ -951,7 +951,7 @@ public:
         }
 
         // restore tls former value
-        std::swap(collections_mutex_owner_, previous_onwer);
+        std::swap(collections_mutex_owner_, previous_owner);
 
         return f;
     }
@@ -966,7 +966,7 @@ public:
     {
         // check if we are reentrying
         shared_lock<shared_mutex> may_lock;
-        RTPSParticipantImpl* previous_onwer = collections_mutex_owner_;
+        RTPSParticipantImpl* previous_owner = collections_mutex_owner_;
 
         if (collections_mutex_owner_ != this)
         {
@@ -984,7 +984,7 @@ public:
         }
 
         // restore tls former value
-        std::swap(collections_mutex_owner_, previous_onwer);
+        std::swap(collections_mutex_owner_, previous_owner);
 
         return f;
     }
