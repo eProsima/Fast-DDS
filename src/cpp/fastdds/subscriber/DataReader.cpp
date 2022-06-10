@@ -380,9 +380,9 @@ ReturnCode_t DataReader::get_matched_publications(
 }
 
 ReadCondition* DataReader::create_readcondition(
-        const std::vector<SampleStateKind>& sample_states,
-        const std::vector<ViewStateKind>& view_states,
-        const std::vector<InstanceStateKind>& instance_states)
+        SampleStateMask sample_states,
+        ViewStateMask view_states,
+        InstanceStateMask instance_states)
 {
     logWarning(DATA_READER, "create_readcondition method not implemented");
     static_cast<void> (sample_states);
@@ -395,9 +395,9 @@ ReadCondition* DataReader::create_readcondition(
 }
 
 QueryCondition* DataReader::create_querycondition(
-        const std::vector<SampleStateKind>& sample_states,
-        const std::vector<ViewStateKind>& view_states,
-        const std::vector<InstanceStateKind>& instance_states,
+        SampleStateMask sample_states,
+        ViewStateMask view_states,
+        InstanceStateMask instance_states,
         const std::string& query_expression,
         const std::vector<std::string>& query_parameters)
 {

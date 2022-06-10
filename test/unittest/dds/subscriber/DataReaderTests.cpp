@@ -2348,18 +2348,18 @@ TEST_F(DataReaderUnsupportedTests, UnsupportedDataReaderMethods)
         data_reader->get_matched_publication_data(publication_data, publication_handle));
 
     {
-        std::vector<SampleStateKind> sample_states;
-        std::vector<ViewStateKind> view_states;
-        std::vector<InstanceStateKind> instance_states;
+        SampleStateMask sample_states = ANY_SAMPLE_STATE;
+        ViewStateMask view_states = ANY_VIEW_STATE;
+        InstanceStateMask instance_states = ANY_INSTANCE_STATE;
         EXPECT_EQ(
             nullptr,
             data_reader->create_readcondition(sample_states, view_states, instance_states));
     }
 
     {
-        std::vector<SampleStateKind> sample_states;
-        std::vector<ViewStateKind> view_states;
-        std::vector<InstanceStateKind> instance_states;
+        SampleStateMask sample_states = ANY_SAMPLE_STATE;
+        ViewStateMask view_states = ANY_VIEW_STATE;
+        InstanceStateMask instance_states = ANY_INSTANCE_STATE;
         std::string query_expression;
         std::vector<std::string> query_parameters;
         EXPECT_EQ(

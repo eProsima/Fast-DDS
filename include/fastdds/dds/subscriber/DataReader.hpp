@@ -995,9 +995,9 @@ public:
      * @return ReadCondition pointer
      */
     RTPS_DllAPI ReadCondition* create_readcondition(
-            const std::vector<SampleStateKind>& sample_states,
-            const std::vector<ViewStateKind>& view_states,
-            const std::vector<InstanceStateKind>& instance_states);
+            SampleStateMask sample_states,
+            ViewStateMask view_states,
+            InstanceStateMask instance_states);
 
     /**
      * @brief This operation creates a QueryCondition. The returned QueryCondition will be attached and belong to the
@@ -1011,9 +1011,9 @@ public:
      * @return QueryCondition pointer
      */
     RTPS_DllAPI QueryCondition* create_querycondition(
-            const std::vector<SampleStateKind>& sample_states,
-            const std::vector<ViewStateKind>& view_states,
-            const std::vector<InstanceStateKind>& instance_states,
+            SampleStateMask sample_states,
+            ViewStateMask view_states,
+            InstanceStateMask instance_states,
             const std::string& query_expression,
             const std::vector<std::string>& query_parameters);
 
