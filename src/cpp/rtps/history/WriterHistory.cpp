@@ -86,7 +86,14 @@ bool WriterHistory::prepare_and_add_change(
 
     ++m_lastCacheChangeSeqNum;
     a_change->sequenceNumber = m_lastCacheChangeSeqNum;
-    Time_t::now(a_change->sourceTimestamp);
+    if (wparams.source_timestamp().seconds() < 0)
+    {
+        Time_t::now(a_change->sourceTimestamp);
+    }
+    else
+    {
+        a_change->sourceTimestamp = wparams.source_timestamp();
+    }
     a_change->writer_info.num_sent_submessages = 0;
 
     a_change->write_params = wparams;

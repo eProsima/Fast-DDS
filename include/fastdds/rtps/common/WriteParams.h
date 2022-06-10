@@ -19,119 +19,187 @@
 #define _FASTDDS_RTPS_COMMON_WRITEPARAMS_H_
 
 #include <fastdds/rtps/common/SampleIdentity.h>
-#include <chrono>
+#include <fastdds/rtps/common/Time_t.h>
 
-namespace eprosima
+namespace eprosima {
+namespace fastrtps {
+namespace rtps {
+
+/*!
+ * @brief This class contains additional information of a CacheChange.
+ *
+ * @ingroup COMMON_MODULE
+ */
+class RTPS_DllAPI WriteParams
 {
-    namespace fastrtps
+public:
+
+    /**
+     * Set the value of the sample_identity member.
+     *
+     * @param sample_id  New value for the sample_identity member.
+     *
+     * @return Reference to the modified object in order to allow daisy chaining.
+     */
+    WriteParams& sample_identity(
+            const SampleIdentity& sample_id)
     {
-        namespace rtps
-        {
-            /*!
-             * @brief This class contains additional information of a CacheChange.
-             * @ingroup COMMON_MODULE
-             */
-            class RTPS_DllAPI WriteParams
-            {
-                public:
+        sample_identity_ = sample_id;
+        return *this;
+    }
 
-                    /*!
-                     * @brief Default constructor.
-                     */
-                    WriteParams() = default;
+    /**
+     * Set the value of the sample_identity member.
+     *
+     * @param sample_id  New value for the sample_identity member.
+     *
+     * @return Reference to the modified object in order to allow daisy chaining.
+     */
+    WriteParams& sample_identity(
+            SampleIdentity&& sample_id)
+    {
+        sample_identity_ = std::move(sample_id);
+        return *this;
+    }
 
-                    /*!
-                     * @brief Copy constructor.
-                     */
-                    WriteParams(const WriteParams &wparam)
-                        : sample_identity_(wparam.sample_identity_)
-                        , related_sample_identity_(wparam.related_sample_identity_)
-                    {
-                    }
+    /**
+     * Get the value of the sample_identity member.
+     *
+     * @return Constant reference to the sample_identity member.
+     */
+    const SampleIdentity& sample_identity() const
+    {
+        return sample_identity_;
+    }
 
-                    /*!
-                     * @brief Move constructor.
-                     */
-                    WriteParams(WriteParams &&wparam)
-                        : sample_identity_(std::move(wparam.sample_identity_))
-                        , related_sample_identity_(std::move(wparam.related_sample_identity_))
-                    {
-                    }
+    /**
+     * Set the value of the sample_identity member.
+     *
+     * @return Reference to the sample_identity member.
+     */
+    SampleIdentity& sample_identity()
+    {
+        return sample_identity_;
+    }
 
-                    /*!
-                     * @brief Assignment operator
-                     */
-                    WriteParams& operator=(const WriteParams &wparam)
-                    {
-                        sample_identity_ = wparam.sample_identity_;
-                        related_sample_identity_ = wparam.related_sample_identity_;
-                        return *this;
-                    }
+    /**
+     * Set the value of the related_sample_identity member of this class.
+     *
+     * @param sample_id  New value for the related_sample_identity member.
+     *
+     * @return Reference to the modified object in order to allow daisy chaining.
+     */
+    WriteParams& related_sample_identity(
+            const SampleIdentity& sample_id)
+    {
+        related_sample_identity_ = sample_id;
+        return *this;
+    }
 
-                    /*!
-                     * @brief Assignment operator
-                     */
-                    WriteParams& operator=(WriteParams &&wparam)
-                    {
-                        sample_identity_ = std::move(wparam.sample_identity_);
-                        related_sample_identity_ = std::move(wparam.related_sample_identity_);
-                        return *this;
-                    }
+    /**
+     * Set the related_sample_identity member of this class.
+     *
+     * @param sample_id  New value for the related_sample_identity member.
+     *
+     * @return Reference to the modified object in order to allow daisy chaining.
+     */
+    WriteParams& related_sample_identity(
+            SampleIdentity&& sample_id)
+    {
+        related_sample_identity_ = std::move(sample_id);
+        return *this;
+    }
 
-                    WriteParams& sample_identity(const SampleIdentity &sample_id)
-                    {
-                        sample_identity_ = sample_id;
-                        return *this;
-                    }
+    /**
+     * Get the value of the related_sample_identity member.
+     *
+     * @return Constant reference to the related_sample_identity member.
+     */
+    const SampleIdentity& related_sample_identity() const
+    {
+        return related_sample_identity_;
+    }
 
-                    WriteParams& sample_identity(SampleIdentity &&sample_id)
-                    {
-                        sample_identity_ = std::move(sample_id);
-                        return *this;
-                    }
+    /**
+     * Set the value of the related_sample_identity member.
+     *
+     * @return Reference to the related_sample_identity member.
+     */
+    SampleIdentity& related_sample_identity()
+    {
+        return related_sample_identity_;
+    }
 
-                    const SampleIdentity& sample_identity() const
-                    {
-                        return sample_identity_;
-                    }
+    /**
+     * Get the value of the source_timestamp member.
+     *
+     * @return Current value of the source_timestamp member.
+     */
+    Time_t source_timestamp() const
+    {
+        return source_timestamp_;
+    }
 
-                    SampleIdentity& sample_identity()
-                    {
-                        return sample_identity_;
-                    }
+    /**
+     * Set the value of the source_timestamp member.
+     *
+     * @return Reference to the source_timestamp member.
+     */
+    Time_t& source_timestamp()
+    {
+        return source_timestamp_;
+    }
 
-                    WriteParams& related_sample_identity(const SampleIdentity &sample_id)
-                    {
-                        related_sample_identity_ = sample_id;
-                        return *this;
-                    }
+    /**
+     * Set the source_timestamp member of this class.
+     *
+     * @param timestamp  New value for the source_timestamp member.
+     *
+     * @return Reference to the modified object in order to allow daisy chaining.
+     */
+    WriteParams& source_timestamp(
+            const Time_t& timestamp)
+    {
+        source_timestamp_ = timestamp;
+        return *this;
+    }
 
-                    WriteParams& related_sample_identity(SampleIdentity &&sample_id)
-                    {
-                        related_sample_identity_ = std::move(sample_id);
-                        return *this;
-                    }
+    /**
+     * Set the source_timestamp member of this class.
+     *
+     * @param timestamp  New value for the source_timestamp member.
+     *
+     * @return Reference to the modified object in order to allow daisy chaining.
+     */
+    WriteParams& source_timestamp(
+            Time_t&& timestamp)
+    {
+        source_timestamp_ = std::move(timestamp);
+        return *this;
+    }
 
-                    const SampleIdentity& related_sample_identity() const
-                    {
-                        return related_sample_identity_;
-                    }
+    /**
+     * Default value for methods receiving a WriteParams.
+     *
+     * Will contain the following values on its members:
+     * - sample_identity: Invalid SampleIdentity
+     * - related_sample_identity: Invalid SampleIdentity
+     * - source_timestamp: Invalid Time_t
+     */
+    static WriteParams WRITE_PARAM_DEFAULT;
 
-                    SampleIdentity& related_sample_identity()
-                    {
-                        return related_sample_identity_;
-                    }
+private:
 
-                    static WriteParams WRITE_PARAM_DEFAULT;
+    /// Attribute that holds sample_identity member value
+    SampleIdentity sample_identity_;
+    /// Attribute that holds related_sample_identity member value
+    SampleIdentity related_sample_identity_;
+    /// Attribute that holds source_timestamp member value
+    Time_t source_timestamp_{ -1, TIME_T_INFINITE_NANOSECONDS };
+};
 
-                private:
+}  // namespace rtps
+}  // namespace fastrtps
+}  // namespace eprosima
 
-                    SampleIdentity sample_identity_;
-
-                    SampleIdentity related_sample_identity_;
-            };
-
-        } //namespace rtps
-    } //namespace fastrtps
-} //namespace eprosima
 #endif //_FASTDDS_RTPS_COMMON_WRITEPARAMS_H_

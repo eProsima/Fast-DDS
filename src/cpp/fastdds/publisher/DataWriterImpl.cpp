@@ -63,6 +63,19 @@ namespace eprosima {
 namespace fastdds {
 namespace dds {
 
+static ChangeKind_t unregister_change_kind(
+        bool dispose,
+        const DataWriterQos& qos)
+{
+    if (dispose)
+    {
+        return NOT_ALIVE_DISPOSED;
+    }
+
+    return qos.writer_data_lifecycle().autodispose_unregistered_instances ?
+           NOT_ALIVE_DISPOSED_UNREGISTERED : NOT_ALIVE_UNREGISTERED;
+}
+
 static bool qos_has_pull_mode_request(
         const DataWriterQos& qos)
 {
@@ -545,16 +558,16 @@ bool DataWriterImpl::write(
     return ReturnCode_t::RETCODE_OK == create_new_change_with_params(ALIVE, data, params);
 }
 
-ReturnCode_t DataWriterImpl::write(
+ReturnCode_t DataWriterImpl::check_write_preconditions(
         void* data,
-        const InstanceHandle_t& handle)
+        const InstanceHandle_t& handle,
+        InstanceHandle_t& instance_handle)
 {
     if (writer_ == nullptr)
     {
         return ReturnCode_t::RETCODE_NOT_ENABLED;
     }
 
-    InstanceHandle_t instance_handle;
     if (type_.get()->m_isGetKeyDefined)
     {
         bool is_key_protected = false;
@@ -570,38 +583,139 @@ ReturnCode_t DataWriterImpl::write(
     {
         return ReturnCode_t::RETCODE_PRECONDITION_NOT_MET;
     }
-    logInfo(DATA_WRITER, "Writing new data with Handle");
-    WriteParams wparams;
-    return create_new_change_with_params(ALIVE, data, wparams, instance_handle);
+
+    return ReturnCode_t::RETCODE_OK;
+}
+
+ReturnCode_t DataWriterImpl::write(
+        void* data,
+        const InstanceHandle_t& handle)
+{
+    InstanceHandle_t instance_handle;
+    ReturnCode_t ret = check_write_preconditions(data, handle, instance_handle);
+    if (ReturnCode_t::RETCODE_OK == ret)
+    {
+        logInfo(DATA_WRITER, "Writing new data with Handle");
+        WriteParams wparams;
+        ret = create_new_change_with_params(ALIVE, data, wparams, instance_handle);
+    }
+
+    return ret;
+}
+
+ReturnCode_t DataWriterImpl::write_w_timestamp(
+        void* data,
+        const InstanceHandle_t& handle,
+        const fastrtps::Time_t& timestamp)
+{
+    InstanceHandle_t instance_handle;
+    ReturnCode_t ret = ReturnCode_t::RETCODE_OK;
+    if (timestamp.is_infinite() || timestamp.seconds < 0)
+    {
+        ret = ReturnCode_t::RETCODE_BAD_PARAMETER;
+    }
+
+    if (ReturnCode_t::RETCODE_OK == ret)
+    {
+        ret = check_write_preconditions(data, handle, instance_handle);
+    }
+
+    if (ReturnCode_t::RETCODE_OK == ret)
+    {
+        logInfo(DATA_WRITER, "Writing new data with Handle and timestamp");
+        WriteParams wparams;
+        wparams.source_timestamp(timestamp);
+        ret = create_new_change_with_params(ALIVE, data, wparams, instance_handle);
+    }
+
+    return ret;
+}
+
+ReturnCode_t DataWriterImpl::check_instance_preconditions(
+        void* data,
+        const InstanceHandle_t& handle,
+        InstanceHandle_t& instance_handle)
+{
+    if (nullptr == writer_)
+    {
+        return ReturnCode_t::RETCODE_NOT_ENABLED;
+    }
+
+    if (nullptr == data)
+    {
+        logError(DATA_WRITER, "Data pointer not valid");
+        return ReturnCode_t::RETCODE_BAD_PARAMETER;
+    }
+
+    if (!type_->m_isGetKeyDefined)
+    {
+        logError(DATA_WRITER, "Topic is NO_KEY, operation not permitted");
+        return ReturnCode_t::RETCODE_PRECONDITION_NOT_MET;
+    }
+
+    instance_handle = handle;
+
+#if defined(NDEBUG)
+    if (!instance_handle.isDefined())
+#endif // if !defined(NDEBUG)
+    {
+        bool is_key_protected = false;
+#if HAVE_SECURITY
+        is_key_protected = writer_->getAttributes().security_attributes().is_key_protected;
+#endif // if HAVE_SECURITY
+        type_->getKey(data, &instance_handle, is_key_protected);
+    }
+
+#if !defined(NDEBUG)
+    if (handle.isDefined() && instance_handle != handle)
+    {
+        logError(DATA_WRITER, "handle differs from data's key.");
+        return ReturnCode_t::RETCODE_PRECONDITION_NOT_MET;
+    }
+#endif // if !defined(NDEBUG)
+
+    return ReturnCode_t::RETCODE_OK;
 }
 
 InstanceHandle_t DataWriterImpl::register_instance(
         void* key)
 {
     /// Preconditions
-    if (writer_ == nullptr)
+    InstanceHandle_t instance_handle;
+    if (ReturnCode_t::RETCODE_OK != check_instance_preconditions(key, HANDLE_NIL, instance_handle))
     {
-        return c_InstanceHandle_Unknown;
+        return HANDLE_NIL;
     }
 
-    if (key == nullptr)
+    WriteParams wparams;
+    return do_register_instance(key, instance_handle, wparams);
+}
+
+InstanceHandle_t DataWriterImpl::register_instance_w_timestamp(
+        void* key,
+        const fastrtps::Time_t& timestamp)
+{
+    /// Preconditions
+    InstanceHandle_t instance_handle;
+    if (timestamp.is_infinite() || timestamp.seconds < 0 ||
+            (ReturnCode_t::RETCODE_OK != check_instance_preconditions(key, HANDLE_NIL, instance_handle)))
     {
-        logError(DATA_WRITER, "Data pointer not valid");
-        return c_InstanceHandle_Unknown;
+        return HANDLE_NIL;
     }
 
-    if (!type_->m_isGetKeyDefined)
-    {
-        logError(DATA_WRITER, "Topic is NO_KEY, operation not permitted");
-        return c_InstanceHandle_Unknown;
-    }
+    WriteParams wparams;
+    wparams.source_timestamp(timestamp);
+    return do_register_instance(key, instance_handle, wparams);
+}
 
-    InstanceHandle_t instance_handle = c_InstanceHandle_Unknown;
-    bool is_key_protected = false;
-#if HAVE_SECURITY
-    is_key_protected = writer_->getAttributes().security_attributes().is_key_protected;
-#endif // if HAVE_SECURITY
-    type_->getKey(key, &instance_handle, is_key_protected);
+InstanceHandle_t DataWriterImpl::do_register_instance(
+        void* key,
+        const InstanceHandle_t instance_handle,
+        WriteParams& wparams)
+{
+    // TODO(MiguelCompany): wparams should be used when propagating the register_instance operation to the DataReader.
+    // See redmine issue #14494
+    static_cast<void>(wparams);
 
     // Block lowlevel writer
     auto max_blocking_time = std::chrono::steady_clock::now() +
@@ -637,7 +751,7 @@ InstanceHandle_t DataWriterImpl::register_instance(
         }
     }
 
-    return c_InstanceHandle_Unknown;
+    return HANDLE_NIL;
 }
 
 ReturnCode_t DataWriterImpl::unregister_instance(
@@ -645,65 +759,57 @@ ReturnCode_t DataWriterImpl::unregister_instance(
         const InstanceHandle_t& handle,
         bool dispose)
 {
-    /// Preconditions
-    if (writer_ == nullptr)
-    {
-        return ReturnCode_t::RETCODE_NOT_ENABLED;
-    }
-
-    if (instance == nullptr)
-    {
-        logError(DATA_WRITER, "Data pointer not valid");
-        return ReturnCode_t::RETCODE_BAD_PARAMETER;
-    }
-
-    if (!type_->m_isGetKeyDefined)
-    {
-        logError(DATA_WRITER, "Topic is NO_KEY, operation not permitted");
-        return ReturnCode_t::RETCODE_PRECONDITION_NOT_MET;
-    }
-
-    ReturnCode_t returned_value = ReturnCode_t::RETCODE_ERROR;
-    InstanceHandle_t ih = handle;
-
-#if defined(NDEBUG)
-    if (c_InstanceHandle_Unknown == ih)
-#endif // if !defined(NDEBUG)
-    {
-        bool is_key_protected = false;
-#if HAVE_SECURITY
-        is_key_protected = writer_->getAttributes().security_attributes().is_key_protected;
-#endif // if HAVE_SECURITY
-        type_->getKey(instance, &ih, is_key_protected);
-    }
-
-#if !defined(NDEBUG)
-    if (c_InstanceHandle_Unknown != handle && ih != handle)
-    {
-        logError(DATA_WRITER, "handle differs from data's key.");
-        return ReturnCode_t::RETCODE_PRECONDITION_NOT_MET;
-    }
-#endif // if !defined(NDEBUG)
-
-    if (history_.is_key_registered(ih))
-    {
-        WriteParams wparams;
-        ChangeKind_t change_kind = NOT_ALIVE_DISPOSED;
-        if (!dispose)
-        {
-            change_kind = qos_.writer_data_lifecycle().autodispose_unregistered_instances ?
-                    NOT_ALIVE_DISPOSED_UNREGISTERED :
-                    NOT_ALIVE_UNREGISTERED;
-        }
-
-        returned_value = create_new_change_with_params(change_kind, instance, wparams, ih);
-    }
-    else
+    // Preconditions
+    InstanceHandle_t ih;
+    ReturnCode_t returned_value = check_instance_preconditions(instance, handle, ih);
+    if (ReturnCode_t::RETCODE_OK == returned_value && !history_.is_key_registered(ih))
     {
         returned_value = ReturnCode_t::RETCODE_PRECONDITION_NOT_MET;
     }
 
+    // Operation
+    if (ReturnCode_t::RETCODE_OK == returned_value)
+    {
+        WriteParams wparams;
+        ChangeKind_t change_kind = unregister_change_kind(dispose, qos_);
+        returned_value = create_new_change_with_params(change_kind, instance, wparams, ih);
+    }
+
     return returned_value;
+}
+
+ReturnCode_t DataWriterImpl::unregister_instance_w_timestamp(
+        void* instance,
+        const InstanceHandle_t& handle,
+        const fastrtps::Time_t& timestamp,
+        bool dispose)
+{
+    // Preconditions
+    InstanceHandle_t instance_handle;
+    ReturnCode_t ret = ReturnCode_t::RETCODE_OK;
+    if (timestamp.is_infinite() || timestamp.seconds < 0)
+    {
+        ret = ReturnCode_t::RETCODE_BAD_PARAMETER;
+    }
+    if (ReturnCode_t::RETCODE_OK == ret)
+    {
+        ret = check_instance_preconditions(instance, handle, instance_handle);
+    }
+    if (ReturnCode_t::RETCODE_OK == ret && !history_.is_key_registered(instance_handle))
+    {
+        ret = ReturnCode_t::RETCODE_PRECONDITION_NOT_MET;
+    }
+
+    // Operation
+    if (ReturnCode_t::RETCODE_OK == ret)
+    {
+        WriteParams wparams;
+        wparams.source_timestamp(timestamp);
+        ChangeKind_t change_kind = unregister_change_kind(dispose, qos_);
+        ret = create_new_change_with_params(change_kind, instance, wparams, instance_handle);
+    }
+
+    return ret;
 }
 
 ReturnCode_t DataWriterImpl::get_key_value(
@@ -1159,44 +1265,13 @@ ReturnCode_t DataWriterImpl::wait_for_acknowledgments(
         const InstanceHandle_t& handle,
         const Duration_t& max_wait)
 {
-    /// Preconditions
-    if (nullptr == writer_)
+    // Preconditions
+    InstanceHandle_t ih;
+    ReturnCode_t returned_value = check_instance_preconditions(instance, handle, ih);
+    if (ReturnCode_t::RETCODE_OK != returned_value)
     {
-        return ReturnCode_t::RETCODE_NOT_ENABLED;
+        return returned_value;
     }
-
-    if (nullptr == instance)
-    {
-        logError(DATA_WRITER, "Data pointer not valid");
-        return ReturnCode_t::RETCODE_BAD_PARAMETER;
-    }
-
-    if (!type_->m_isGetKeyDefined)
-    {
-        logError(DATA_WRITER, "Topic is NO_KEY, operation not permitted");
-        return ReturnCode_t::RETCODE_PRECONDITION_NOT_MET;
-    }
-
-    InstanceHandle_t ih = handle;
-
-#if defined(NDEBUG)
-    if (c_InstanceHandle_Unknown == ih)
-#endif // NDEBUG
-    {
-        bool is_key_protected = false;
-#if HAVE_SECURITY
-        is_key_protected = writer_->getAttributes().security_attributes().is_key_protected;
-#endif // HAVE_SECURITY
-        type_->getKey(instance, &ih, is_key_protected);
-    }
-
-#if !defined(NDEBUG)
-    if (c_InstanceHandle_Unknown != handle && ih != handle)
-    {
-        logError(DATA_WRITER, "handle differs from data's key");
-        return ReturnCode_t::RETCODE_PRECONDITION_NOT_MET;
-    }
-#endif // NDEBUG */
 
     // Block low-level writer
     auto max_blocking_time = steady_clock::now() +
