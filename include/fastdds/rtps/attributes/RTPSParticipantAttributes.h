@@ -490,7 +490,7 @@ public:
 
     /**
      * Default list of Multicast Locators to be used for any Endpoint defined inside this RTPSParticipant in the
-     * case that it was defined with NO UnicastLocators. This is usually left empty.
+     * case that it was defined with NO MulticastLocators. This is usually left empty.
      */
     LocatorList_t defaultMulticastLocatorList;
 
@@ -527,37 +527,38 @@ public:
     //! Builtin parameters.
     BuiltinAttributes builtin;
 
-    //!Port Parameters
+    //! Port Parameters
     PortParameters port;
 
-    //!User Data of the participant
+    //! User Data of the participant
     std::vector<octet> userData;
 
-    //!Participant ID
+    //! Participant ID
     int32_t participantID;
 
-    //!Throughput controller parameters. Leave default for uncontrolled flow.
+    //! Throughput controller parameters. Leave default for uncontrolled flow.
     ThroughputControllerDescriptor throughputController;
 
-    //!User defined transports to use alongside or in place of builtins.
+    //! User defined transports to use alongside or in place of builtins.
     std::vector<std::shared_ptr<fastdds::rtps::TransportDescriptorInterface>> userTransports;
 
-    //!Set as false to disable the default UDPv4 implementation.
+    //! Set as false to disable the default UDPv4 implementation.
     bool useBuiltinTransports;
-    //!Holds allocation limits affecting collections managed by a participant.
+
+    //! Holds allocation limits affecting collections managed by a participant.
     RTPSParticipantAllocationAttributes allocation;
 
     //! Property policies
     PropertyPolicy properties;
 
-    //!Set the name of the participant.
+    //! Set the name of the participant.
     inline void setName(
             const char* nam)
     {
         name = nam;
     }
 
-    //!Get the name of the participant.
+    //! Get the name of the participant.
     inline const char* getName() const
     {
         return name.c_str();
@@ -568,7 +569,7 @@ public:
 
 private:
 
-    //!Name of the participant.
+    //! Name of the participant.
     string_255 name;
 };
 
