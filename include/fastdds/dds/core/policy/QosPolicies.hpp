@@ -2677,6 +2677,7 @@ public:
                (this->default_unicast_locator_list == b.default_unicast_locator_list) &&
                (this->default_multicast_locator_list == b.default_multicast_locator_list) &&
                (this->default_external_unicast_locators == b.default_external_unicast_locators) &&
+               (this->ignore_non_matching_locators == b.ignore_non_matching_locators) &&
                QosPolicy::operator ==(b);
     }
 
@@ -2717,6 +2718,11 @@ public:
      * The collection of external locators to use for communication on user created topics.
      */
     rtps::ExternalLocators default_external_unicast_locators;
+
+    /**
+     * Whether locators that don't match with the announced locators should be kept.
+     */
+    bool ignore_non_matching_locators = false;
 };
 
 //! Qos Policy to configure the transport layer
