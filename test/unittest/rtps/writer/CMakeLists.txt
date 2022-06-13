@@ -101,7 +101,7 @@ target_compile_definitions(RTPSWriterTests PRIVATE
     )
 target_include_directories(RTPSWriterTests PRIVATE
     ${Asio_INCLUDE_DIR})
-target_link_libraries(RTPSWriterTests fastrtps foonathan_memory
+target_link_libraries(RTPSWriterTests fastcdr fastrtps foonathan_memory
     GTest::gmock
     ${CMAKE_DL_LIBS})
 add_gtest(RTPSWriterTests SOURCES ${RTPSWRITERTESTS_SOURCE})

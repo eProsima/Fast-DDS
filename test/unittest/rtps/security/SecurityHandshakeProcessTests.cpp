@@ -612,7 +612,7 @@ TEST_F(SecurityTest, discovered_participant_process_message_fail_process_handsha
 
     ParticipantGenericMessage message;
     message.message_identity().source_guid(remote_participant_key);
-    message.related_message_identity().source_guid(remote_participant_key);
+    message.related_message_identity().source_guid(stateless_writer_->getGuid());
     message.related_message_identity().sequence_number(1);
     message.destination_participant_key(remote_participant_key);
     message.message_class_id("dds.sec.auth");
@@ -665,7 +665,7 @@ TEST_F(SecurityTest, discovered_participant_process_message_ok_process_handshake
 
     ParticipantGenericMessage message;
     message.message_identity().source_guid(remote_participant_key);
-    message.related_message_identity().source_guid(remote_participant_key);
+    message.related_message_identity().source_guid(stateless_writer_->getGuid());
     message.related_message_identity().sequence_number(1);
     message.destination_participant_key(remote_participant_key);
     message.message_class_id("dds.sec.auth");
@@ -737,7 +737,7 @@ TEST_F(SecurityTest, discovered_participant_process_message_process_handshake_re
 
     ParticipantGenericMessage message;
     message.message_identity().source_guid(remote_participant_key);
-    message.related_message_identity().source_guid(remote_participant_key);
+    message.related_message_identity().source_guid(stateless_writer_->getGuid());
     message.related_message_identity().sequence_number(1);
     message.destination_participant_key(remote_participant_key);
     message.message_class_id("dds.sec.auth");
@@ -791,7 +791,7 @@ TEST_F(SecurityTest, discovered_participant_process_message_process_handshake_re
 
     ParticipantGenericMessage message;
     message.message_identity().source_guid(remote_participant_key);
-    message.related_message_identity().source_guid(remote_participant_key);
+    message.related_message_identity().source_guid(stateless_writer_->getGuid());
     message.related_message_identity().sequence_number(1);
     message.destination_participant_key(remote_participant_key);
     message.message_class_id("dds.sec.auth");
@@ -870,7 +870,7 @@ TEST_F(SecurityTest, discovered_participant_process_message_process_handshake_re
 
     ParticipantGenericMessage message;
     message.message_identity().source_guid(remote_participant_key);
-    message.related_message_identity().source_guid(remote_participant_key);
+    message.related_message_identity().source_guid(stateless_writer_->getGuid());
     message.related_message_identity().sequence_number(1);
     message.destination_participant_key(remote_participant_key);
     message.message_class_id("dds.sec.auth");
@@ -1006,7 +1006,7 @@ TEST_F(SecurityTest, discovered_participant_process_message_fail_process_handsha
 
     ParticipantGenericMessage message;
     message.message_identity().source_guid(remote_participant_key);
-    message.related_message_identity().source_guid(remote_participant_key);
+    message.related_message_identity().source_guid(stateless_writer_->getGuid());
     message.related_message_identity().sequence_number(1);
     message.destination_participant_key(remote_participant_key);
     message.message_class_id("dds.sec.auth");
@@ -1059,7 +1059,7 @@ TEST_F(SecurityTest, discovered_participant_process_message_ok_process_handshake
 
     ParticipantGenericMessage message;
     message.message_identity().source_guid(remote_participant_key);
-    message.related_message_identity().source_guid(remote_participant_key);
+    message.related_message_identity().source_guid(stateless_writer_->getGuid());
     message.related_message_identity().sequence_number(1);
     message.destination_participant_key(remote_participant_key);
     message.message_class_id("dds.sec.auth");

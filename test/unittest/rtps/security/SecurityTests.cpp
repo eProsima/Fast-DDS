@@ -179,7 +179,7 @@ void SecurityTest::final_message_process_ok(
 
     ParticipantGenericMessage message;
     message.message_identity().source_guid(remote_participant_key);
-    message.related_message_identity().source_guid(remote_participant_key);
+    message.related_message_identity().source_guid(stateless_writer_->getGuid());
     message.related_message_identity().sequence_number(1);
     message.destination_participant_key(remote_participant_key);
     message.message_class_id("dds.sec.auth");

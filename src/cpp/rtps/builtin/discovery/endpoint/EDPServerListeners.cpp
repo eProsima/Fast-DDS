@@ -43,9 +43,7 @@ PDPServer* EDPServerPUBListener::get_pdp()
 
 EDPServerPUBListener::EDPServerPUBListener(
         EDPServer* sedp)
-    : EDPBasePUBListener(sedp->mp_RTPSParticipant->getAttributes().allocation.locators,
-            sedp->mp_RTPSParticipant->getAttributes().allocation.data_limits)
-    , sedp_(sedp)
+    : sedp_(sedp)
 {
 }
 
@@ -96,9 +94,10 @@ void EDPServerPUBListener::onNewCacheChangeAdded(
 
         // Retrieve the topic after creating the WriterProxyData (in add_writer_from_change()). This way, not matter
         // whether the DATA(w) is a new one or an update, the WriterProxyData exists, and so the topic can be retrieved
-        if (get_pdp()->lookupWriterProxyData(auxGUID, temp_writer_data_))
+        auto temp_writer_data = get_pdp()->get_temporary_writer_proxies_pool().get();
+        if (get_pdp()->lookupWriterProxyData(auxGUID, *temp_writer_data))
         {
-            topic_name = temp_writer_data_.topicName().to_string();
+            topic_name = temp_writer_data->topicName().to_string();
         }
     }
     // DATA(Uw) case
@@ -107,9 +106,10 @@ void EDPServerPUBListener::onNewCacheChangeAdded(
         logInfo(RTPS_EDP_LISTENER, "Disposed Remote Writer, removing...");
 
         // Retrieve the topic before removing the WriterProxyData. We need it to add the DATA(Uw) to the database
-        if (get_pdp()->lookupWriterProxyData(auxGUID, temp_writer_data_))
+        auto temp_writer_data = get_pdp()->get_temporary_writer_proxies_pool().get();
+        if (get_pdp()->lookupWriterProxyData(auxGUID, *temp_writer_data))
         {
-            topic_name = temp_writer_data_.topicName().to_string();
+            topic_name = temp_writer_data->topicName().to_string();
         }
         else
         {
@@ -157,10 +157,7 @@ PDPServer* EDPServerSUBListener::get_pdp()
 
 EDPServerSUBListener::EDPServerSUBListener(
         EDPServer* sedp)
-    : EDPBaseSUBListener(sedp->mp_RTPSParticipant->getAttributes().allocation.locators,
-            sedp->mp_RTPSParticipant->getAttributes().allocation.data_limits,
-            sedp->mp_RTPSParticipant->getAttributes().allocation.content_filter)
-    , sedp_(sedp)
+    : sedp_(sedp)
 {
 }
 
@@ -211,9 +208,10 @@ void EDPServerSUBListener::onNewCacheChangeAdded(
 
         // Retrieve the topic after creating the ReaderProxyData (in add_reader_from_change()). This way, not matter
         // whether the DATA(r) is a new one or an update, the ReaderProxyData exists, and so the topic can be retrieved
-        if (get_pdp()->lookupReaderProxyData(auxGUID, temp_reader_data_))
+        auto temp_reader_data = get_pdp()->get_temporary_reader_proxies_pool().get();
+        if (get_pdp()->lookupReaderProxyData(auxGUID, *temp_reader_data))
         {
-            topic_name = temp_reader_data_.topicName().to_string();
+            topic_name = temp_reader_data->topicName().to_string();
         }
         else
         {
@@ -227,9 +225,10 @@ void EDPServerSUBListener::onNewCacheChangeAdded(
         logInfo(RTPS_EDP_LISTENER, "Disposed Remote Reader, removing...");
 
         // Retrieve the topic before removing the ReaderProxyData. We need it to add the DATA(Ur) to the database
-        if (get_pdp()->lookupReaderProxyData(auxGUID, temp_reader_data_))
+        auto temp_reader_data = get_pdp()->get_temporary_reader_proxies_pool().get();
+        if (get_pdp()->lookupReaderProxyData(auxGUID, *temp_reader_data))
         {
-            topic_name = temp_reader_data_.topicName().to_string();
+            topic_name = temp_reader_data->topicName().to_string();
         }
 
         // Remove ReaderProxy data information
