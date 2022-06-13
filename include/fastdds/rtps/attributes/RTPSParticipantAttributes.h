@@ -375,16 +375,16 @@ public:
     //! Discovery protocol related attributes
     DiscoverySettings discovery_config;
 
-    //!Indicates to use the WriterLiveliness protocol.
+    //! Indicates to use the WriterLiveliness protocol.
     bool use_WriterLivelinessProtocol = true;
 
-    //!TypeLookup Service settings
+    //! TypeLookup Service settings
     TypeLookupSettings typelookup_config;
 
-    //!Metatraffic Unicast Locator List
+    //! Metatraffic Unicast Locator List
     LocatorList_t metatrafficUnicastLocatorList;
 
-    //!Metatraffic Multicast Locator List.
+    //! Metatraffic Multicast Locator List.
     LocatorList_t metatrafficMulticastLocatorList;
 
     //! The collection of external locators to use for communication on metatraffic topics.
@@ -410,7 +410,7 @@ public:
     //! Mutation tries if the port is being used.
     uint32_t mutation_tries = 100u;
 
-    //!Set to true to avoid multicast traffic on builtin endpoints
+    //! Set to true to avoid multicast traffic on builtin endpoints
     bool avoid_builtin_multicast = true;
 
     BuiltinAttributes() = default;
