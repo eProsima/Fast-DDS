@@ -467,6 +467,7 @@ public:
         return (this->name == b.name) &&
                (this->defaultUnicastLocatorList == b.defaultUnicastLocatorList) &&
                (this->defaultMulticastLocatorList == b.defaultMulticastLocatorList) &&
+               (this->default_external_unicast_locators == b.default_external_unicast_locators) &&
                (this->sendSocketBufferSize == b.sendSocketBufferSize) &&
                (this->listenSocketBufferSize == b.listenSocketBufferSize) &&
                (this->builtin == b.builtin) &&
@@ -491,6 +492,11 @@ public:
      * case that it was defined with NO UnicastLocators. This is usually left empty.
      */
     LocatorList_t defaultMulticastLocatorList;
+
+    /**
+     * The collection of external locators to use for communication on user created topics.
+     */
+    fastdds::rtps::ExternalLocators default_external_unicast_locators;
 
     /*!
      * @brief Send socket buffer size for the send resource. Zero value indicates to use default system buffer size.
