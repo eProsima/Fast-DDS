@@ -2690,16 +2690,16 @@ public:
     //! Optionally allows user to define the GuidPrefix_t
     fastrtps::rtps::GuidPrefix_t prefix;
 
-    //!Participant ID <br> By default, -1.
+    //! Participant ID <br> By default, -1.
     int32_t participant_id;
 
     //! Builtin parameters.
     fastrtps::rtps::BuiltinAttributes builtin;
 
-    //!Port Parameters
+    //! Port Parameters
     fastrtps::rtps::PortParameters port;
 
-    //!Throughput controller parameters. Leave default for uncontrolled flow.
+    //! Throughput controller parameters. Leave default for uncontrolled flow.
     fastrtps::rtps::ThroughputControllerDescriptor throughput_controller;
 
     /**
@@ -2710,7 +2710,7 @@ public:
 
     /**
      * Default list of Multicast Locators to be used for any Endpoint defined inside this RTPSParticipant in the
-     * case that it was defined with NO UnicastLocators. This is usually left empty.
+     * case that it was defined with NO MulticastLocators. This is usually left empty.
      */
     rtps::LocatorList default_multicast_locator_list;
 
