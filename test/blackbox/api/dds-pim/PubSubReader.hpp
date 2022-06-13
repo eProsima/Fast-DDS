@@ -60,6 +60,7 @@ using eprosima::fastdds::rtps::UDPv4TransportDescriptor;
 using eprosima::fastdds::rtps::UDPv6TransportDescriptor;
 
 using SampleLostStatusFunctor = std::function<void (const eprosima::fastdds::dds::SampleLostStatus&)>;
+using SampleRejectedStatusFunctor = std::function<void (const eprosima::fastdds::dds::SampleRejectedStatus&)>;
 
 template<class TypeSupport>
 class PubSubReader
@@ -241,6 +242,15 @@ protected:
             (void)datareader;
 
             reader_.set_sample_lost_status(status);
+        }
+
+        void on_sample_rejected(
+                eprosima::fastdds::dds::DataReader* datareader,
+                const eprosima::fastdds::dds::SampleRejectedStatus& status) override
+        {
+            (void)datareader;
+
+            reader_.set_sample_rejected_status(status);
         }
 
         unsigned int missed_deadlines() const
@@ -1607,6 +1617,22 @@ public:
         return *this;
     }
 
+    void set_sample_rejected_status(
+            const eprosima::fastdds::dds::SampleRejectedStatus& status)
+    {
+        if (sample_rejected_status_functor_)
+        {
+            sample_rejected_status_functor_(status);
+        }
+    }
+
+    PubSubReader& sample_rejected_status_functor(
+            SampleRejectedStatusFunctor functor)
+    {
+        sample_rejected_status_functor_ = functor;
+        return *this;
+    }
+
     const eprosima::fastrtps::rtps::GUID_t& participant_guid() const
     {
         return participant_guid_;
@@ -1848,6 +1874,8 @@ protected:
 
     //! Functor called when called SampleLostStatus listener.
     SampleLostStatusFunctor sample_lost_status_functor_;
+    //! Functor called when called SampleRejectedStatus listener.
+    SampleRejectedStatusFunctor sample_rejected_status_functor_;
 };
 
 template<class TypeSupport>
@@ -2010,6 +2038,13 @@ protected:
                 eprosima::fastdds::dds::SampleLostStatus status;
                 ASSERT_EQ(ReturnCode_t::RETCODE_OK, reader_.datareader_->get_sample_lost_status(status));
                 reader_.set_sample_lost_status(status);
+            }
+
+            if (triggered_statuses.is_active(eprosima::fastdds::dds::StatusMask::sample_rejected()))
+            {
+                eprosima::fastdds::dds::SampleRejectedStatus status;
+                ASSERT_EQ(ReturnCode_t::RETCODE_OK, reader_.datareader_->get_sample_rejected_status(status));
+                reader_.set_sample_rejected_status(status);
             }
 
             // We also have to process the subscriber

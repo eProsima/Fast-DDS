@@ -21,6 +21,7 @@
 
 #include <fastrtps/rtps/common/CacheChange.h>
 #include <fastrtps/rtps/attributes/HistoryAttributes.h>
+#include <fastdds/dds/core/status/SampleRejectedStatus.hpp>
 #include <fastrtps/utils/TimedMutex.hpp>
 
 #include <mutex>
@@ -90,8 +91,24 @@ public:
         return true;
     }
 
+    virtual bool received_change(
+            CacheChange_t*,
+            size_t,
+            fastdds::dds::SampleRejectedStatusKind&)
+    {
+        return true;
+    }
+
     virtual bool completed_change(
             rtps::CacheChange_t*)
+    {
+        return true;
+    }
+
+    virtual bool completed_change(
+            rtps::CacheChange_t*,
+            size_t,
+            fastdds::dds::SampleRejectedStatusKind&)
     {
         return true;
     }

@@ -681,7 +681,6 @@ bool StatefulReader::processDataFragMsg(
             {
                 if (!change_received(change_created, pWP, changes_up_to))
                 {
-
                     logInfo(RTPS_MSG_IN,
                             IDSTRING "MessageReceiver not add change " << change_created->sequenceNumber.to64long());
 
@@ -693,20 +692,57 @@ bool StatefulReader::processDataFragMsg(
             // If change has been fully reassembled, mark as received and add notify user
             if (work_change != nullptr && work_change->is_fully_assembled())
             {
-                mp_history->completed_change(work_change);
-                pWP->received_change_set(work_change->sequenceNumber);
-
-                // Temporarilly assign the inline qos while evaluating the data filter
-                work_change->inline_qos = incomingChange->inline_qos;
-                bool filtered_out = data_filter_ && !data_filter_->is_relevant(*work_change, m_guid);
-                work_change->inline_qos = SerializedPayload_t();
-
-                if (filtered_out)
+                fastdds::dds::SampleRejectedStatusKind rejection_reason;
+                if (mp_history->completed_change(work_change, changes_up_to, rejection_reason))
                 {
-                    mp_history->remove_change(work_change);
-                }
+                    pWP->received_change_set(work_change->sequenceNumber);
 
-                NotifyChanges(pWP);
+                    // Temporarilly assign the inline qos while evaluating the data filter
+                    work_change->inline_qos = incomingChange->inline_qos;
+                    bool filtered_out = data_filter_ && !data_filter_->is_relevant(*work_change, m_guid);
+                    work_change->inline_qos = SerializedPayload_t();
+
+                    if (filtered_out)
+                    {
+                        mp_history->remove_change(work_change);
+                    }
+
+                    NotifyChanges(pWP);
+                }
+                else
+                {
+                    bool has_to_notify = false;
+                    if (fastdds::dds::NOT_REJECTED != rejection_reason)
+                    {
+                        if (getListener())
+                        {
+                            getListener()->on_sample_rejected((RTPSReader*)this, rejection_reason, work_change);
+                        }
+
+                        /* Special case: rejected by REJECTED_BY_INSTANCES_LIMIT should never be received again.
+                         */
+                        if (fastdds::dds::REJECTED_BY_INSTANCES_LIMIT == rejection_reason)
+                        {
+                            pWP->irrelevant_change_set(work_change->sequenceNumber);
+                            has_to_notify = true;
+                        }
+                    }
+
+                    History::const_iterator chit = mp_history->find_change_nts(work_change);
+                    if (chit != mp_history->changesEnd())
+                    {
+                        mp_history->remove_change_nts(chit);
+                    }
+                    else
+                    {
+                        logError(RTPS_READER, "Change should exist but didn't find it");
+                    }
+
+                    if (has_to_notify)
+                    {
+                        NotifyChanges(pWP);
+                    }
+                }
             }
         }
     }
@@ -886,11 +922,6 @@ bool StatefulReader::change_removed_by_history(
     {
         if (a_change->is_fully_assembled())
         {
-            if (wp != nullptr || matched_writer_lookup(a_change->writerGUID, &wp))
-            {
-                wp->change_removed_from_history(a_change->sequenceNumber);
-            }
-
             if (!a_change->isRead &&
                     get_last_notified(a_change->writerGUID) >= a_change->sequenceNumber)
             {
@@ -992,11 +1023,11 @@ bool StatefulReader::change_received(
 
     // NOTE: Depending on QoS settings, one change can be removed from history
     // inside the call to mp_history->received_change
-    if (mp_history->received_change(a_change, unknown_missing_changes_up_to))
+    fastdds::dds::SampleRejectedStatusKind rejection_reason;
+    if (mp_history->received_change(a_change, unknown_missing_changes_up_to, rejection_reason))
     {
         auto payload_length = a_change->serializedPayload.length;
 
-        Time_t::now(a_change->reader_info.receptionTimestamp);
         bool ret = true;
 
         if (a_change->is_fully_assembled())
@@ -1015,6 +1046,8 @@ bool StatefulReader::change_received(
             }
         }
 
+        Time_t::now(a_change->reader_info.receptionTimestamp);
+
         // WARNING! This method could destroy a_change
         NotifyChanges(prox);
 
@@ -1022,6 +1055,24 @@ bool StatefulReader::change_received(
         on_subscribe_throughput(payload_length);
 
         return ret;
+    }
+    else
+    {
+        if (fastdds::dds::NOT_REJECTED != rejection_reason)
+        {
+            if (getListener() && (a_change->is_fully_assembled() || (a_change->contains_first_fragment())))
+            {
+                getListener()->on_sample_rejected((RTPSReader*)this, rejection_reason, a_change);
+            }
+
+            /* Special case: rejected by REJECTED_BY_INSTANCES_LIMIT should never be received again.
+             */
+            if (fastdds::dds::REJECTED_BY_INSTANCES_LIMIT == rejection_reason)
+            {
+                prox->irrelevant_change_set(a_change->sequenceNumber);
+                NotifyChanges(prox);
+            }
+        }
     }
 
     return false;
@@ -1394,7 +1445,7 @@ void StatefulReader::send_acknack(
     }
     catch (const RTPSMessageGroup::timeout&)
     {
-        logError(RTPS_WRITER, "Max blocking time reached");
+        logError(RTPS_READER, "Max blocking time reached");
     }
 }
 

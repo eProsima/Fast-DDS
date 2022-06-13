@@ -22,6 +22,7 @@
 
 #include <fastdds/dds/core/status/LivelinessChangedStatus.hpp>
 #include <fastdds/dds/core/status/SubscriptionMatchedStatus.hpp>
+#include <fastdds/dds/core/status/SampleRejectedStatus.hpp>
 #include <fastdds/rtps/builtin/data/WriterProxyData.h>
 #include <fastdds/rtps/common/Guid.h>
 #include <fastdds/rtps/common/MatchingInfo.h>
@@ -150,6 +151,24 @@ public:
         static_cast<void>(reason);
         static_cast<void>(writer_guid);
         static_cast<void>(writer_info);
+    }
+
+    /**
+     * This method is called when the reader rejects a samples.
+     *
+     * @param reader  Pointer to the RTPSReader.
+     * @param reason  Indicates reason for sample rejection.
+     * @param change  Pointer to the CacheChange_t. This is a const pointer to const data
+     *                to indicate that the user should not dispose of this data himself.
+     */
+    virtual void on_sample_rejected(
+            RTPSReader* reader,
+            eprosima::fastdds::dds::SampleRejectedStatusKind reason,
+            const CacheChange_t* const change)
+    {
+        static_cast<void>(reader);
+        static_cast<void>(reason);
+        static_cast<void>(change);
     }
 
 };

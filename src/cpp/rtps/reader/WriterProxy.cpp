@@ -373,46 +373,6 @@ const SequenceNumber_t WriterProxy::available_changes_max() const
     return changes_from_writer_low_mark_;
 }
 
-void WriterProxy::change_removed_from_history(
-        const SequenceNumber_t& seq_num)
-{
-#ifdef SHOULD_DEBUG_LINUX
-    assert(get_mutex_owner() == get_thread_id());
-#endif // SHOULD_DEBUG_LINUX
-
-    // Check sequence number is in the container, because it was not clean up.
-    if (seq_num <= changes_from_writer_low_mark_)
-    {
-        return;
-    }
-
-    ChangeIterator chit = changes_received_.find(seq_num);
-
-    (void)chit;
-
-    // Element must be in the container. In other case, bug.
-    assert(chit != changes_received_.end());
-
-    // Previously, it was asserted that the change couldn't be the first and should have RECEIVED
-    // status. As we only keep received changes now, status is already checked by the previous assert.
-    // It can now be the case that the change being removed is the first if there are missing changes
-    // in the (changes_from_writer_low_mark_, seq_num) range.
-
-    // We are removing a change that will not be notified to the user. This may be due to the following:
-    // a) history became full (either due to KEEP_LAST or RESOURCE_LIMITS)
-    // b) lifespan timer expired for seq_num
-    // Previously, change was marked as irrelevant.
-
-    // As this may imply that all changes with a lower sequence number will also be dropped,
-    // now that history is full, it may be interesting to act as if a heartbeat with an initial
-    // sequence of seq_num has been received, i.e. calling lost_changes_update(seq_num).
-    // If we don't do it, changes_received_ may grow above the limits stablished for it,
-    // thus causing undesired dynamic allocations.
-
-    // For case a) a call to lost_changes_update is done inside StatefulReader::change_received.
-    // For case b) it does not imply a dynamic allocation problem.
-}
-
 void WriterProxy::cleanup()
 {
     ChangeIterator chit = changes_received_.begin();
@@ -449,27 +409,26 @@ size_t WriterProxy::unknown_missing_changes_up_to(
     if (seq_num > changes_from_writer_low_mark_)
     {
         SequenceNumber_t first_missing = changes_from_writer_low_mark_ + 1;
-        SequenceNumber_t max_missing = std::min(seq_num, max_sequence_number_ + 1);
         SequenceNumberSet_t sns(first_missing);
         SequenceNumberDiff d_fun;
 
         for (SequenceNumber_t seq : changes_received_)
         {
-            seq = std::min(seq, max_missing);
+            seq = std::min(seq, seq_num);
             if (first_missing < seq)
             {
                 returnedValue += d_fun(seq, first_missing);
             }
             first_missing = seq + 1;
-            if (first_missing >= max_missing)
+            if (first_missing >= seq_num)
             {
                 break;
             }
         }
 
-        if (first_missing < max_missing)
+        if (first_missing < seq_num)
         {
-            returnedValue += d_fun(max_missing, first_missing);
+            returnedValue += d_fun(seq_num, first_missing);
         }
     }
 

@@ -142,13 +142,6 @@ public:
             const SequenceNumber_t& seq_num);
 
     /**
-     * Called when a change has been removed from the reader's history.
-     * @param seq_num Sequence number of the removed change.
-     */
-    void change_removed_from_history(
-            const SequenceNumber_t& seq_num);
-
-    /**
      * Check if this proxy has any missing change.
      * @return true when there is at least one missing change on this proxy.
      */

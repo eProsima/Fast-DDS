@@ -119,14 +119,41 @@ public:
             CacheChange_t* change,
             size_t unknown_missing_changes_up_to) override;
 
+    /*!
+     * Called when a change is received by the Subscriber. Will add the change to the history.
+     * @pre Change should not be already present in the history.
+     * @param[in] change The received change
+     * @param[in] unknown_missing_changes_up_to Number of missing changes before this one
+     * @param[out] rejection_reason In case of been rejected the sample, it will contain the reason of the rejection.
+     * @return
+     */
+    bool received_change(
+            CacheChange_t* change,
+            size_t unknown_missing_changes_up_to,
+            SampleRejectedStatusKind& rejection_reason) override;
+
     /**
      * Called when a fragmented change is received completely by the Subscriber. Will find its instance and store it.
      * @pre Change should be already present in the history.
      * @param[in] change The received change
+     * @param[in] unknown_missing_changes_up_to Number of missing changes before this one
      * @return
      */
     bool completed_change(
             CacheChange_t* change) override;
+
+    /*!
+     * Called when a fragmented change is received completely by the Subscriber. Will find its instance and store it.
+     * @pre Change should be already present in the history.
+     * @param[in] change The received change
+     * @param[in] unknown_missing_changes_up_to Number of missing changes before this one
+     * @param[out] rejection_reason In case of been rejected the sample, it will contain the reason of the rejection.
+     * @return
+     */
+    bool completed_change(
+            CacheChange_t* change,
+            size_t unknown_missing_changes_up_to,
+            SampleRejectedStatusKind& rejection_reason) override;
 
     /**
      * @brief Returns information about the first untaken sample.
@@ -240,12 +267,12 @@ private:
     //!Type object to deserialize Key
     void* get_key_object_;
 
-    /// Function processing a received change
-    std::function<bool(CacheChange_t*, size_t)> receive_fn_;
     /// Function to compute the instance handle of a received change
     std::function<bool(CacheChange_t*)> compute_key_for_change_fn_;
+    /// Function processing a received change
+    std::function<bool(CacheChange_t*, size_t, SampleRejectedStatusKind&)> receive_fn_;
     /// Function processing a completed fragmented change
-    std::function<bool(CacheChange_t*, DataReaderInstance&)> complete_fn_;
+    std::function<bool(CacheChange_t*, DataReaderInstance&, size_t, SampleRejectedStatusKind&)> complete_fn_;
 
     /**
      * @brief Method that finds a key in m_keyedChanges or tries to add it if not found
@@ -267,11 +294,13 @@ private:
     ///@{
     bool received_change_keep_all(
             CacheChange_t* change,
-            size_t unknown_missing_changes_up_to);
+            size_t unknown_missing_changes_up_to,
+            SampleRejectedStatusKind& rejection_reason);
 
     bool received_change_keep_last(
             CacheChange_t* change,
-            size_t unknown_missing_changes_up_to);
+            size_t unknown_missing_changes_up_to,
+            SampleRejectedStatusKind& rejection_reason);
     ///@}
 
     /**
@@ -285,19 +314,25 @@ private:
     ///@{
     bool completed_change_keep_all(
             CacheChange_t* change,
-            DataReaderInstance& instance);
+            DataReaderInstance& instance,
+            size_t unknown_missing_changes_up_to,
+            SampleRejectedStatusKind&);
 
     bool completed_change_keep_last(
             CacheChange_t* change,
-            DataReaderInstance& instance);
+            DataReaderInstance& instance,
+            size_t unknown_missing_changes_up_to,
+            SampleRejectedStatusKind&);
     ///@}
 
     bool add_received_change_with_key(
             CacheChange_t* a_change,
-            DataReaderInstance& instance);
+            DataReaderInstance& instance,
+            SampleRejectedStatusKind& rejection_reason);
 
     bool add_to_reader_history_if_not_full(
-            CacheChange_t* a_change);
+            CacheChange_t* a_change,
+            SampleRejectedStatusKind& rejection_reason);
 
     void add_to_instance(
             CacheChange_t* a_change,
