@@ -468,6 +468,7 @@ public:
                (this->defaultUnicastLocatorList == b.defaultUnicastLocatorList) &&
                (this->defaultMulticastLocatorList == b.defaultMulticastLocatorList) &&
                (this->default_external_unicast_locators == b.default_external_unicast_locators) &&
+               (this->ignore_non_matching_locators == b.ignore_non_matching_locators) &&
                (this->sendSocketBufferSize == b.sendSocketBufferSize) &&
                (this->listenSocketBufferSize == b.listenSocketBufferSize) &&
                (this->builtin == b.builtin) &&
@@ -497,6 +498,11 @@ public:
      * The collection of external locators to use for communication on user created topics.
      */
     fastdds::rtps::ExternalLocators default_external_unicast_locators;
+
+    /**
+     * Whether locators that don't match with the announced locators should be kept.
+     */
+    bool ignore_non_matching_locators = false;
 
     /*!
      * @brief Send socket buffer size for the send resource. Zero value indicates to use default system buffer size.
