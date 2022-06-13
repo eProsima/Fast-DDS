@@ -68,15 +68,7 @@ class EDPBasePUBListener : public EDPListener
 {
 public:
 
-    EDPBasePUBListener(
-            const RemoteLocatorsAllocationAttributes& locators_allocation,
-            const VariableLengthDataLimits& data_limits)
-        : temp_writer_data_(
-            locators_allocation.max_unicast_locators,
-            locators_allocation.max_multicast_locators,
-            data_limits)
-    {
-    }
+    EDPBasePUBListener() = default;
 
     virtual ~EDPBasePUBListener() = default;
 
@@ -88,9 +80,6 @@ protected:
             CacheChange_t* change,
             EDP* edp,
             bool release_change = true);
-
-    //!Temporary structure to avoid allocations
-    WriterProxyData temp_writer_data_;
 };
 
 /**
@@ -101,17 +90,7 @@ class EDPBaseSUBListener : public EDPListener
 {
 public:
 
-    EDPBaseSUBListener(
-            const RemoteLocatorsAllocationAttributes& locators_allocation,
-            const VariableLengthDataLimits& data_limits,
-            const fastdds::rtps::ContentFilterProperty::AllocationConfiguration& filter_allocation)
-        : temp_reader_data_(
-            locators_allocation.max_unicast_locators,
-            locators_allocation.max_multicast_locators,
-            data_limits,
-            filter_allocation)
-    {
-    }
+    EDPBaseSUBListener() = default;
 
     virtual ~EDPBaseSUBListener() = default;
 
@@ -123,9 +102,6 @@ protected:
             CacheChange_t* change,
             EDP* edp,
             bool release_change = true);
-
-    //!Temporary structure to avoid allocations
-    ReaderProxyData temp_reader_data_;
 };
 
 /*!
@@ -142,9 +118,7 @@ public:
      */
     EDPSimplePUBListener(
             EDPSimple* sedp)
-        : EDPBasePUBListener(sedp->mp_RTPSParticipant->getAttributes().allocation.locators,
-                sedp->mp_RTPSParticipant->getAttributes().allocation.data_limits)
-        , sedp_(sedp)
+        : sedp_(sedp)
     {
     }
 
@@ -190,10 +164,7 @@ public:
      */
     EDPSimpleSUBListener(
             EDPSimple* sedp)
-        : EDPBaseSUBListener(sedp->mp_RTPSParticipant->getAttributes().allocation.locators,
-                sedp->mp_RTPSParticipant->getAttributes().allocation.data_limits,
-                sedp->mp_RTPSParticipant->getAttributes().allocation.content_filter)
-        , sedp_(sedp)
+        : sedp_(sedp)
     {
     }
 
