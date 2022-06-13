@@ -1129,7 +1129,6 @@ ParticipantProxyData* PDP::get_participant_proxy_data(
 
 std::list<eprosima::fastdds::rtps::RemoteServerAttributes>& PDP::remote_server_attributes()
 {
-    std::unique_lock<eprosima::shared_mutex> lock(mp_builtin->getDiscoveryMutex());
     return mp_builtin->m_DiscoveryServers;
 }
 

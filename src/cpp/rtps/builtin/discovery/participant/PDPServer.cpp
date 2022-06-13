@@ -556,20 +556,21 @@ void PDPServer::announceParticipantState(
 
         /*
            Protect writer sequence number. Make sure in order to prevent AB BA deadlock that the
-           writer mutex is systematically lock before the PDP one (if needed):
+           PDP mutex is systematically locked before the writer one (if needed):
             - transport callbacks on PDPListener
             - initialization and removal on BuiltinProtocols::initBuiltinProtocols and ~BuiltinProtocols
             - DSClientEvent (own thread)
             - ResendParticipantProxyDataPeriod (participant event thread)
          */
-        std::lock_guard<fastrtps::RecursiveTimedMutex> wlock(pW->getMutex());
-
+        
         if (!dispose)
         {
             // Create the CacheChange_t if necessary
             if (m_hasChangedLocalPDP.exchange(false) || new_change)
             {
                 getMutex()->lock();
+
+                std::lock_guard<fastrtps::RecursiveTimedMutex> wlock(pW->getMutex());
 
                 // Copy the participant data
                 ParticipantProxyData proxy_data_copy(*getLocalParticipantProxyData());
@@ -662,6 +663,7 @@ void PDPServer::announceParticipantState(
             }
             else
             {
+                std::lock_guard<fastrtps::RecursiveTimedMutex> wlock(pW->getMutex());
                 // Retrieve the CacheChange_t from the database
                 change = discovery_db().cache_change_own_participant();
                 if (nullptr == change)
@@ -680,6 +682,7 @@ void PDPServer::announceParticipantState(
         {
             getMutex()->lock();
 
+            std::lock_guard<fastrtps::RecursiveTimedMutex> wlock(pW->getMutex());
             // Copy the participant data
             ParticipantProxyData* local_participant = getLocalParticipantProxyData();
             InstanceHandle_t key = local_participant->m_key;
@@ -744,16 +747,20 @@ void PDPServer::announceParticipantState(
         std::vector<GUID_t> remote_readers;
         LocatorList locators;
 
-        std::vector<GuidPrefix_t> direct_clients_and_servers = discovery_db_.direct_clients_and_servers();
-        for (GuidPrefix_t participant_prefix: direct_clients_and_servers)
         {
-            // Add remote reader
-            GUID_t remote_guid(participant_prefix, c_EntityId_SPDPReader);
-            remote_readers.push_back(remote_guid);
+            std::lock_guard<fastrtps::RecursiveTimedMutex> wlock(pW->getMutex());
 
-            locators.push_back(discovery_db_.participant_metatraffic_locators(participant_prefix));
+            std::vector<GuidPrefix_t> direct_clients_and_servers = discovery_db_.direct_clients_and_servers();
+            for (GuidPrefix_t participant_prefix: direct_clients_and_servers)
+            {
+                // Add remote reader
+                GUID_t remote_guid(participant_prefix, c_EntityId_SPDPReader);
+                remote_readers.push_back(remote_guid);
+    
+                locators.push_back(discovery_db_.participant_metatraffic_locators(participant_prefix));
+            }
+            send_announcement(change, remote_readers, locators, dispose);
         }
-        send_announcement(change, remote_readers, locators, dispose);
     }
 }
 
