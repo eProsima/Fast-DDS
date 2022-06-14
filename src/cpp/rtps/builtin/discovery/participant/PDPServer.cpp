@@ -562,7 +562,7 @@ void PDPServer::announceParticipantState(
             - DSClientEvent (own thread)
             - ResendParticipantProxyDataPeriod (participant event thread)
          */
-        
+
         if (!dispose)
         {
             // Create the CacheChange_t if necessary
@@ -756,7 +756,7 @@ void PDPServer::announceParticipantState(
                 // Add remote reader
                 GUID_t remote_guid(participant_prefix, c_EntityId_SPDPReader);
                 remote_readers.push_back(remote_guid);
-    
+
                 locators.push_back(discovery_db_.participant_metatraffic_locators(participant_prefix));
             }
             send_announcement(change, remote_readers, locators, dispose);
