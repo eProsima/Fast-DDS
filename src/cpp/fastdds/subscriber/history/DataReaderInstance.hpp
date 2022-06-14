@@ -178,9 +178,10 @@ private:
                 ret_val = true;
             }
 
-            writer_set(writer_guid, ownership_strength);
             instance_state = InstanceStateKind::ALIVE_INSTANCE_STATE;
         }
+
+        writer_set(writer_guid, ownership_strength);
 
         return ret_val;
     }
