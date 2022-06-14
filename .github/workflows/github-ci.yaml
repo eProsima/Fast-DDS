@@ -1,0 +1,303 @@
+name: Fast-DDS continuous integration
+
+on:
+  workflow_dispatch:
+  pull_request:
+    branches: [ master ]
+
+defaults:
+  run:
+    shell: pwsh
+
+jobs:
+  build-and-test-ci:
+    strategy:
+      matrix:
+        os: [ubuntu-22.04, windows-2022, macos-11]
+        config: [debug, release]
+      fail-fast: false
+ 
+    name: ${{ matrix.os }} ${{ matrix.config }} CI
+    runs-on: ${{ matrix.os }} 
+    steps:
+      - name: Setup environment
+        run: |
+             # Handle single target/multi target
+             $env_variables = @()
+
+             if($IsWindows)
+             {
+               $env_variables +=
+                 'CONFIG_TYPE=--config ${{ matrix.config }}',
+                 'BIN_ARCH=-A x64',
+                 'HOST_ARCH=-T host=x64' 
+             }
+             elseif($IsLinux -or $IsMacOS)
+             {
+               $env_variables +=
+                 'BUILD_TYPE=-DCMAKE_BUILD_TYPE=${{ matrix.config }}'
+             }
+             else
+             {
+               throw "Unsupported platform??"
+             }
+
+             $env_variables | Out-File $Env:GITHUB_ENV -Append -Encoding OEM
+
+      - name: Installing colcon ancillary
+        run: |
+             pip3 install -U colcon-common-extensions vcstool colcon-mixin
+
+             # patch colcon issue with visual studio 2022
+             if($IsWindows)
+             {
+               $patch = gci -Include build.py -Recurse `
+                            -Path ((gcm colcon).source | Split-Path | Join-Path -ChildPath "..\Lib\site-packages\colcon_cmake\*")
+               if(!(sls -Path $patch -Pattern "'17.0': 'Visual Studio 17 2022'"))
+               {
+                  echo "Patching colcon build to admit Visual Studio 17 2022"
+                  $tmp = New-TemporaryFile
+                  Get-Content $patch | % {
+                      if($_ -match "Visual Studio 16 2019") {
+                           "                '17.0': 'Visual Studio 17 2022'," }
+                      $_
+                      } | Out-File $tmp -Encoding OEM
+                  Install-Module -Name Pscx -Force -AllowClobber
+                  ConvertTo-UnixLineEnding -Destination $patch -Path $tmp.FullName
+                  del $tmp
+               }
+             }
+
+             # refresh mixins
+             colcon mixin add default 'https://raw.githubusercontent.com/colcon/colcon-mixin-repository/master/index.yaml'
+             colcon mixin update default
+             colcon mixin show
+
+      - name: Installing asio and tinyxml2 dependencies
+        run: |
+             if($IsWindows)
+             {
+                $tmpdir = New-Item -Path "$Env:TMP\choco_aux" -Type Directory
+                iwr -Uri https://github.com/ros2/choco-packages/releases/download/2020-02-24/asio.1.12.1.nupkg -OutFile "$tmpdir\asio.1.12.1.nupkg"
+                iwr -Uri https://github.com/ros2/choco-packages/releases/download/2020-02-24/tinyxml2.6.0.0.nupkg -OutFile "$tmpdir\tinyxml2.6.0.0.nupkg"
+                choco install -y -s $tmpdir asio tinyxml2
+                del $tmpdir -Recurse
+             }
+             elseif($IsLinux)
+             {
+                sudo apt install libasio-dev libtinyxml2-dev
+             }
+             elseif($IsMacOS)
+             {
+                brew install asio tinyxml2
+             }
+             else
+             {
+               throw "Unsupported platform??"
+             }
+
+      - name: Download & build & install googletest system wide
+        run: |
+             git clone --branch release-1.11.0 https://github.com/google/googletest.git
+             # windows workaround
+             if($IsWindows)
+             {
+               $crt = '-Dgtest_force_shared_crt=ON' 
+             }
+
+             # Generate
+             cmake -DBUILD_GMOCK=ON $Env:BUILD_TYPE $crt -DCMAKE_VERBOSE_MAKEFILE=ON `
+                   -B ./build/googletest $Env:BIN_ARCH $Env:HOST_ARCH ./googletest 
+
+             # Build and install elevated if required
+             $build = { cmake --build ./build/googletest --target install $Env:CONFIG_TYPE --verbose }
+             $IsLinux ? (sudo pwsh -C $build) : (& $build) | Tee-Object -FilePath gtest.log
+
+             # Hint install dir
+             if($IsWindows)
+             {
+               $pattern = ("$Env:ProgramFiles" -replace "\\","/") + "/.*/GTestConfig.cmake"
+               $matches = sls -Path gtest.log -Pattern $pattern
+               ("GTest_DIR=" + ($matches.Matches.Value | Split-Path -Parent)) |
+                 Out-File $Env:GITHUB_ENV -Append -Encoding OEM
+             }
+
+             # clean up
+             'build', 'googletest', 'gtest.log' | del -Recurse -Force 
+
+      - name: Make sure OpenSSL is there
+        if: ${{ contains(matrix.os, 'windows') }}
+        run: |
+             # Windows host has only the binaries installed, we need the headers too
+             # download the last installer
+             $uri = 'https://slproweb.com' +
+               ((iwr 'https://slproweb.com/products/Win32OpenSSL.html').links |
+               sls 'href=\"(.*download/Win64OpenSSL-1_1_1.*\.exe)\"').matches.Groups.value[-1]
+               iwr -Uri $uri -OutFile "$Env:TMP\Win64OpenSSL.exe"
+ 
+             # Do install
+             & "$Env:TMP\Win64OpenSSL.exe" /silent /verysilent /sp- /suppressmsgboxes;
+ 
+             # Update the environment
+             "OPENSSL64_ROOT=$Env:ProgramFiles\OpenSSL-Win64" | Out-File $Env:GITHUB_ENV -Append -Encoding OEM
+ 
+             # Wait for the installation to be fulfill
+             Get-Process Win??OpenSSL -ErrorAction SilentlyContinue | Wait-Process
+             del "$Env:TMP\Win64OpenSSL.exe"
+
+      - name: Set up libp11 and SoftHSM
+        if: ${{ !contains(matrix.os, 'macos') }}
+        run: |
+             if($IsWindows)
+             {
+                if(!(Test-Path -Path Env:OPENSSL64_ROOT))
+                {
+                  throw "OpenSSL is not set up properly. Check previous steps."
+                }
+
+                # Install the HSM emulator (required for testing PKCS #11 support)
+                $urlHSM = "https://github.com/disig/SoftHSM2-for-Windows/releases/download/v2.5.0/SoftHSM2-2.5.0.msi" 
+                $msiHSM = "$Env:tmp\SoftHSM2-2.5.0.msi"
+
+                iwr $urlHSM -OutFile $msiHSM
+                msiexec /i $msiHSM /quiet TARGETDIR="""${Env:ProgramFiles(x86)}"""
+                $Env:SOFTHSM2_ROOT = Join-Path "${Env:ProgramFiles(x86)}" SoftHSM2
+                'SOFTHSM2_ROOT=' + $Env:SOFTHSM2_ROOT | Out-File $Env:GITHUB_ENV -Append -Encoding OEM
+
+                # Build pkcs11 library
+                $deploy_dir = "$Env:ProgramFiles\libp11"
+                git clone https://github.com/OpenSC/libp11.git $deploy_dir
+                $deploy_dir = gi $deploy_dir
+
+                $pwshmodule = gi "$Env:ProgramFiles\Microsoft Visual Studio\2022\Enterprise\Common7\Tools\Microsoft.VisualStudio.DevShell.dll" 
+                Import-Module $pwshmodule
+                Enter-VsDevShell -SetDefaultWindowTitle -VsInstallPath $pwshmodule.Directory.Parent.Parent `
+                                 -StartInPath (pwd) -DevCmdArguments '/arch=x64 /host_arch=x64'
+
+                cd $deploy_dir
+
+                nmake .\Makefile.mak OPENSSL_DIR=$Env:OPENSSL64_ROOT BUILD_FOR=WIN64
+                $config = ls -Path $Env:OPENSSL64_ROOT -Recurse -Include openssl.cnf; 
+                $libp11_path = Join-Path $deploy_dir src
+                'LibP11_ROOT_64=' + $libp11_path | Out-File $Env:GITHUB_ENV -Append -Encoding OEM
+
+                # Wait until installation is completed 
+                Wait-Process -Name msiexec -ErrorAction SilentlyContinue
+                del $msiHSM
+
+                # Set up OpenSSL
+                $module_path = gci -Path $Env:SOFTHSM2_ROOT -Recurse -Include '*.dll' | ? FullName -match 64
+                $contents = cat $config;
+
+                $header = "# HSM test ancillary configuration",
+                          "openssl_conf = openssl_init"
+
+                $footer = "[openssl_init]",
+                          "engines = engine_section",
+                          "",
+                          "[engine_section]",
+                          "pkcs11 = pkcs11_section",
+                          "",
+                          "[pkcs11_section]",
+                          "engine_id = pkcs11",
+                          ("dynamic_path =" + ("$libp11_path/pkcs11.dll" -replace "\\","/")),
+                          ("MODULE_PATH =" + ($module_path.FullName -replace "\\","/")),
+                          "init = 0"
+
+                $header_line = ($contents | sls '^HOME')[0].LineNumber;
+                ($contents[0..$header_line] + $header +  $contents[$header_line..$contents.count] + $footer) |
+                % { $_.TrimStart() } | Out-File $config -Encoding OEM;
+
+                # lead openssl to the right config file
+                $Env:OPENSSL_CONF=$config
+                
+             }
+             elseif ($IsLinux)
+             {
+                sudo apt install libp11-dev libengine-pkcs11-openssl softhsm2
+                sudo usermod -a -G softhsm $env:USER
+             }
+             else
+             {
+               throw "Libp11 support for this OS is not yet available"
+             }
+
+             # check if is working
+             openssl engine pkcs11 -t
+
+      - name: Prepare the colcon workspace for build
+        run: |
+             # download the repos file
+             iwr -Uri https://raw.githubusercontent.com/eprosima/fast-dds/master/fastrtps.repos `
+                 -OutFile fastrtps.repos
+
+             # checkout the merged branch
+             Install-Module powershell-yaml -Force
+             $repos = cat fastrtps.repos | ConvertFrom-Yaml
+             $repos.repositories.fastrtps.version = "${{ github.ref }}"
+             $repos | ConvertTo-Yaml | Out-File fastrtps.repos
+
+             # create source dir and donwload the sources
+             mkdir src
+             vcs import src --input fastrtps.repos
+
+      - name: Retrieve colcon.meta file
+        run: |
+           # Here a dummy that generates dynamically one
+           $meta = [PSCustomObject]@{names=@{fastrtps=@{"cmake-args"=$Null}}}
+
+           $meta.names.fastrtps."cmake-args" = "-DEPROSIMA_BUILD=ON",
+                                               "-DINTERNAL_DEBUG=ON",
+                                               "-DGTEST_INDIVIDUAL=ON",
+                                               "-DFASTRTPS_API_TESTS=OFF",
+                                               "-DFASTDDS_PIM_API_TESTS=ON",
+                                               "-DPERFORMANCE_TESTS=ON",
+                                               "-DNO_TLS=ON"
+
+           # single config processing parafernalia
+           if(Test-Path -Path Env:BUILD_TYPE)
+           {
+             $meta.names.fastrtps."cmake-args" += $Env:BUILD_TYPE
+           }
+           # Generate the meta file
+           $meta | ConvertTo-Json -Depth 3 | Tee-Object -FilePath ci.meta -Encoding OEM
+
+      - name: Build
+        run: |
+           # For convenience use an array to pass the arguments
+           $buildargs = "--merge-install",
+                        "--symlink-install",
+                        "--event-handlers=console_direct+"
+
+           # On Windows we must load the developer environment and chose a config
+           if($IsWindows)
+           {
+              $pwshmodule = gi "$Env:ProgramFiles\Microsoft Visual Studio\2022\Enterprise\Common7\Tools\Microsoft.VisualStudio.DevShell.dll" 
+              Import-Module $pwshmodule
+              Enter-VsDevShell -SetDefaultWindowTitle -VsInstallPath $pwshmodule.Directory.Parent.Parent `
+                               -StartInPath (pwd) -DevCmdArguments '/arch=x64 /host_arch=x64'
+
+              $buildargs += "--mixin", "${{ matrix.config }}"
+              $cmakeargs = "--cmake-args", $Env:BIN_ARCH, $Env:HOST_ARCH 
+
+              # allow multiprocess build on windows
+              $Env:CXXFLAGS="/MP"
+
+              # multistage build to speed up
+              colcon build $buildargs --packages-up-to fastrtps --packages-skip fastrtps `
+                           --executor parallel $cmakeargs
+              colcon build $buildargs --packages-select fastrtps --cmake-target fastrtps `
+                           --metas ci.meta --executor sequential $cmakeargs
+              colcon build $buildargs --packages-select fastrtps --metas ci.meta `
+                           --executor parallel $cmakeargs
+           }
+           else
+           {
+              colcon build $buildargs --metas ci.meta $config --executor parallel
+           }
+
+      - name: Test
+        run: |
+           # For convenience use an array to pass the arguments
+           colcon test --packages-select fastrtps --event-handlers=console_direct+ `
+                       --merge-install --executor parallel --ctest-args -V
