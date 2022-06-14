@@ -18,6 +18,7 @@ configure_file(${CMAKE_CURRENT_SOURCE_DIR}/../profiles/test_xml_profiles.xml
 
 set(SUBSCRIBERTESTS_SOURCE SubscriberTests.cpp)
 set(DATAREADERTESTS_SOURCE DataReaderTests.cpp)
+set(DATAREADERINSTANCETESTS_SOURCE DataReaderInstanceTests.cpp)
 
 if(WIN32)
     add_definitions(-D_WIN32_WINNT=0x0601)
@@ -50,3 +51,17 @@ target_link_libraries(DataReaderTests fastrtps fastcdr foonathan_memory
     GTest::gmock
     ${CMAKE_DL_LIBS})
 add_gtest(DataReaderTests SOURCES ${DATAREADERTESTS_SOURCE})
+
+add_executable(DataReaderInstanceTests ${DATAREADERINSTANCETESTS_SOURCE})
+target_compile_definitions(DataReaderInstanceTests PRIVATE FASTRTPS_NO_LIB
+    $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
+    $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
+    )
+target_include_directories(DataReaderInstanceTests PRIVATE
+    ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include
+    ${PROJECT_SOURCE_DIR}/src/cpp
+    )
+target_link_libraries(DataReaderInstanceTests fastrtps fastcdr foonathan_memory
+    GTest::gmock
+    ${CMAKE_DL_LIBS})
+add_gtest(DataReaderInstanceTests SOURCES ${DATAREADERINSTANCETESTS_SOURCE})

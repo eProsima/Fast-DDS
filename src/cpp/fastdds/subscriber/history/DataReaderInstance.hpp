@@ -67,6 +67,12 @@ struct DataReaderInstance
     {
     }
 
+    void writer_update_its_ownership_strength(
+            const fastrtps::rtps::GUID_t& writer_guid,
+            const uint32_t ownership_strength)
+    {
+    }
+
     bool update_state(
             DataReaderHistoryCounters& counters,
             const fastrtps::rtps::ChangeKind_t change_kind,
