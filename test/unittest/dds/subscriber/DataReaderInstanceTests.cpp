@@ -73,6 +73,69 @@ TEST(DataReaderInstance, writer_update_its_ownership_strength)
     ASSERT_EQ(3, instance.alive_writers.size());
 }
 
+/*!
+ * \test DDS-OWN-INST-02 Tests instance's owner changes successfully when instance is notified with a new "alive"
+ * change..
+ */
+TEST(DataReaderInstance, update_state_alive)
+{
+    // Prepare test input.
+    eprosima::fastdds::dds::detail::DataReaderInstance instance({}, {});
+    const eprosima::fastrtps::rtps::GUID_t dw1_guid({}, 1);
+    const eprosima::fastrtps::rtps::GUID_t dw2_guid({}, 2);
+    const eprosima::fastrtps::rtps::GUID_t dw3_guid({}, 3);
+    const eprosima::fastrtps::rtps::GUID_t another_guid({}, 4);
+
+    // Calls `DataReaderInstance::update_state()` with a new DW1 writer with strength 2.
+    instance.update_state(eprosima::fastrtps::rtps::ALIVE, dw1_guid, 2);
+    // Instance has a new owner DW1 with strength 2.
+    ASSERT_EQ(dw1_guid, instance.current_owner.first);
+    ASSERT_EQ(2, instance.current_owner.second);
+    ASSERT_EQ(1u, instance.alive_writers.size());
+
+    // Calls `DataReaderInstance::update_state()` with a new DW2 writer with strength 1.
+    instance.update_state(eprosima::fastrtps::rtps::ALIVE, dw2_guid, 1);
+    // Instance has a new "alive" writer DW2 with strength 1.
+    ASSERT_EQ(dw1_guid, instance.current_owner.first);
+    ASSERT_EQ(2, instance.current_owner.second);
+    ASSERT_EQ(2u, instance.alive_writers.size());
+
+    // Calls `DataReaderInstance::update_state()` with a new DW3 writer with strength 6.
+    instance.update_state(eprosima::fastrtps::rtps::ALIVE, dw3_guid, 6);
+    // Instance has a new "alive" writer DW3 with strength 6 and  DW3 is the new owner.
+    ASSERT_EQ(dw3_guid, instance.current_owner.first);
+    ASSERT_EQ(6, instance.current_owner.second);
+    ASSERT_EQ(3u, instance.alive_writers.size());
+
+    // Calls `DataReaderInstance::update_state()` with a new DW2 writer with strength 7.
+    instance.update_state(eprosima::fastrtps::rtps::ALIVE, dw2_guid, 7);
+    // Instance has a new owner DW2 with strength 7.
+    ASSERT_EQ(dw2_guid, instance.current_owner.first);
+    ASSERT_EQ(7, instance.current_owner.second);
+    ASSERT_EQ(3u, instance.alive_writers.size());
+
+    // Calls `DataReaderInstance::update_state()` with a new DW2 writer with strength 2.
+    instance.update_state(eprosima::fastrtps::rtps::ALIVE, dw2_guid, 2);
+    // Instance maintain the owner DW2 with strength 2.
+    ASSERT_EQ(dw2_guid, instance.current_owner.first);
+    ASSERT_EQ(2, instance.current_owner.second);
+    ASSERT_EQ(3u, instance.alive_writers.size());
+
+    // Calls `DataReaderInstance::update_state()` with a new DW1 writer with strength 5.
+    instance.update_state(eprosima::fastrtps::rtps::ALIVE, dw1_guid, 5);
+    // Instance has a new owner DW1 with strength 5.
+    ASSERT_EQ(dw1_guid, instance.current_owner.first);
+    ASSERT_EQ(5, instance.current_owner.second);
+    ASSERT_EQ(3u, instance.alive_writers.size());
+
+    // Calls `DataReaderInstance::update_state()` with a new DW1 writer with strength 10.
+    instance.update_state(eprosima::fastrtps::rtps::ALIVE, dw1_guid, 10);
+    // Instance maintain the owner DW1 with strength 10.
+    ASSERT_EQ(dw1_guid, instance.current_owner.first);
+    ASSERT_EQ(10, instance.current_owner.second);
+    ASSERT_EQ(3u, instance.alive_writers.size());
+}
+
 int main(
         int argc,
         char** argv)
