@@ -84,19 +84,19 @@ struct DataReaderInstance
             is_increase = (*writer_it).second < ownership_strength;
             // Update writer info
             (*writer_it).second = ownership_strength;
-        }
 
-        if (writer_guid == current_owner.first)
-        {
-            current_owner.second = ownership_strength;
-            if (!is_increase)
+            if (writer_guid == current_owner.first)
             {
-                update_owner();
+                current_owner.second = ownership_strength;
+                if (!is_increase)
+                {
+                    update_owner();
+                }
             }
-        }
-        else if (is_increase)
-        {
-            update_owner();
+            else if (ownership_strength > current_owner.second)
+            {
+                current_owner = *writer_it;
+            }
         }
 
         return;
