@@ -71,32 +71,21 @@ struct DataReaderInstance
             const fastrtps::rtps::GUID_t& writer_guid,
             const uint32_t ownership_strength)
     {
-        bool is_increase = false;
-        // Check it is an "alive" writer.
-        auto writer_it = std::find_if(alive_writers.begin(), alive_writers.end(),
-                        [&writer_guid](const WriterOwnership& item)
-                        {
-                            return item.first == writer_guid;
-                        });
-
-        if (alive_writers.end() != writer_it)
+        if (writer_guid == current_owner.first)
         {
-            is_increase = (*writer_it).second < ownership_strength;
+            // Check it is an "alive" writer.
+            auto writer_it = std::find_if(alive_writers.begin(), alive_writers.end(),
+                            [&writer_guid](const WriterOwnership& item)
+                            {
+                                return item.first == writer_guid;
+                            });
+
+            assert(alive_writers.end() != writer_it);
+
             // Update writer info
             (*writer_it).second = ownership_strength;
-
-            if (writer_guid == current_owner.first)
-            {
-                current_owner.second = ownership_strength;
-                if (!is_increase)
-                {
-                    update_owner();
-                }
-            }
-            else if (ownership_strength > current_owner.second)
-            {
-                current_owner = *writer_it;
-            }
+            current_owner.second = ownership_strength;
+            update_owner();
         }
 
         return;

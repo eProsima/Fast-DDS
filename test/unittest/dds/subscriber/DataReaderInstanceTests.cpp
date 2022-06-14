@@ -36,13 +36,13 @@ TEST(DataReaderInstance, writer_update_its_ownership_strength)
 
     // Calls `DataReaderInstance::writer_update_its_ownership_strength()` changing DW1's strength to 12.
     instance.writer_update_its_ownership_strength(dw1_guid, 12);
-    // DW1 changes strength to 12 and it is the new owner.
-    ASSERT_EQ(dw1_guid, instance.current_owner.first);
-    ASSERT_EQ(12, instance.current_owner.second);
+    // DW1 changes strength to 12 and the owner doesn't changes.
+    ASSERT_EQ(dw2_guid, instance.current_owner.first);
+    ASSERT_EQ(11, instance.current_owner.second);
 
     // Calls `DataReaderInstance::writer_update_its_ownership_strength()` changing DW2's strength to 13.
     instance.writer_update_its_ownership_strength(dw2_guid, 13);
-    // DW2 changes strength to 13 and it is the new owner.
+    // DW2 changes strength to 13 and still is the new owner.
     ASSERT_EQ(dw2_guid, instance.current_owner.first);
     ASSERT_EQ(13, instance.current_owner.second);
 
@@ -52,18 +52,17 @@ TEST(DataReaderInstance, writer_update_its_ownership_strength)
     ASSERT_EQ(dw2_guid, instance.current_owner.first);
     ASSERT_EQ(13, instance.current_owner.second);
 
-    // Calls `DataReaderInstance::writer_update_its_ownership_strength()` changing DW2's strength to 6.
-    instance.writer_update_its_ownership_strength(dw2_guid, 6);
-    // DW2 changes strength to 6 and losses the ownership. DW1 is the new owner.
-    ASSERT_EQ(dw1_guid, instance.current_owner.first);
-    ASSERT_EQ(12, instance.current_owner.second);
+    // Calls `DataReaderInstance::writer_update_its_ownership_strength()` changing DW2's strength to 4.
+    instance.writer_update_its_ownership_strength(dw2_guid, 4);
+    // DW2 changes strength to 6 and losses the ownership. DW3 is the new owner.
+    ASSERT_EQ(dw3_guid, instance.current_owner.first);
+    ASSERT_EQ(5, instance.current_owner.second);
 
     // Calls `DataReaderInstance::writer_update_its_ownership_strength()` changing DW3's strength to 14.
     instance.writer_update_its_ownership_strength(dw3_guid, 14);
-    // DW3 changes strength to 14 and it is the new owner.
+    // DW3 changes strength to 14 and doesn't change the owner
     ASSERT_EQ(dw3_guid, instance.current_owner.first);
     ASSERT_EQ(14, instance.current_owner.second);
-
 
     // Calls `DataReaderInstance::writer_update_its_ownership_strength()` changing no registered DataWriter's strength
     // to 20.
