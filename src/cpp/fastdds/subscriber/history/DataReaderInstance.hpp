@@ -71,6 +71,35 @@ struct DataReaderInstance
             const fastrtps::rtps::GUID_t& writer_guid,
             const uint32_t ownership_strength)
     {
+        bool is_increase = false;
+        // Check it is an "alive" writer.
+        auto writer_it = std::find_if(alive_writers.begin(), alive_writers.end(),
+                        [&writer_guid](const WriterOwnership& item)
+                        {
+                            return item.first == writer_guid;
+                        });
+
+        if (alive_writers.end() != writer_it)
+        {
+            is_increase = (*writer_it).second < ownership_strength;
+            // Update writer info
+            (*writer_it).second = ownership_strength;
+        }
+
+        if (writer_guid == current_owner.first)
+        {
+            current_owner.second = ownership_strength;
+            if (!is_increase)
+            {
+                update_owner();
+            }
+        }
+        else if (is_increase)
+        {
+            update_owner();
+        }
+
+        return;
     }
 
     bool update_state(
@@ -249,6 +278,18 @@ private:
             ++counters.instances_new;
             --counters.instances_not_new;
         }
+    }
+
+    void update_owner()
+    {
+        std::for_each(alive_writers.begin(), alive_writers.end(),
+                [&](const WriterOwnership& item)
+                {
+                    if (item.second > current_owner.second)
+                    {
+                        current_owner = item;
+                    }
+                });
     }
 
 };
