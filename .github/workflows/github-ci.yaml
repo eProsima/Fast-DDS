@@ -145,6 +145,48 @@ jobs:
              Get-Process Win??OpenSSL -ErrorAction SilentlyContinue | Wait-Process
              del "$Env:TMP\Win64OpenSSL.exe"
 
+      - name: Update the host file for DNS resolver testing
+        run: |
+             # File location is OSpecific
+             if($IsWindows)
+             {
+                 $hostfile = "$Env:SystemRoot\system32\drivers" -replace "\\", "/"
+             }
+             $hostfile += "/etc/hosts"
+
+             # DNS entries to add
+             $new_entries = @{
+               "localhost.test" = "127.0.0.1", "::1"
+               "www.eprosima.com.test" = "154.56.134.194"
+               "www.acme.com.test" = "216.58.215.164", "2a00:1450:400e:803::2004"
+               "www.foo.com.test" = "140.82.121.4", "140.82.121.3"
+               "acme.org.test" = "ff1e::ffff:efff:1"
+             }
+
+             # Modify the file
+             $mod = { Param([string]$FilePath, [Hashtable]$Entries )
+                $entries.GetEnumerator() |
+                  % { $hostname = $_.key; $_.value |
+                  % { "{0,-25} {1}" -f $_, $hostname }} |
+                  Out-File $filepath -Append
+             }
+
+             if( $IsLinux -or $IsMacOS )
+             {
+               sudo pwsh -Command $mod -args $hostfile, $new_entries
+             }
+             elseif($IsWindows)
+             {
+               & $mod -FilePath $hostfile -Entries $new_entries
+             }
+             else
+             {
+               throw "Unsupported platform??"
+             }
+
+             # Show the result
+             gc $hostfile
+
       - name: Set up libp11 and SoftHSM
         if: ${{ !contains(matrix.os, 'macos') }}
         run: |
@@ -187,7 +229,7 @@ jobs:
 
                 # Set up OpenSSL
                 $module_path = gci -Path $Env:SOFTHSM2_ROOT -Recurse -Include '*.dll' | ? FullName -match 64
-                $contents = cat $config;
+                $contents = gc $config;
 
                 $header = "# HSM test ancillary configuration",
                           "openssl_conf = openssl_init"
@@ -227,15 +269,20 @@ jobs:
 
       - name: Prepare the colcon workspace for build
         run: |
+             # Get some convenient tools
+             Install-Module -Name ConvertBase64Strings -Force -AllowClobber
+             Import-Module -name ConvertBase64Strings -Prefix CI
+             Install-Module powershell-yaml -Force
+
              # download the repos file
-             iwr -Uri https://raw.githubusercontent.com/eprosima/fast-dds/master/fastrtps.repos `
-                 -OutFile fastrtps.repos
+             $repos = ((Invoke-WebRequest `
+                        -Uri "${{ github.api_url}}/repos/eProsima/Fast-DDS/contents/fastrtps.repos?ref=${{ github.ref }}" `
+                        -Headers @{"method"="GET";"Accept"="application/vnd.github.v3+json"}).content |
+                        ConvertFrom-Json).content | ConvertFrom-CIBase64 | ConvertFrom-Yaml
 
              # checkout the merged branch
-             Install-Module powershell-yaml -Force
-             $repos = cat fastrtps.repos | ConvertFrom-Yaml
              $repos.repositories.fastrtps.version = "${{ github.ref }}"
-             $repos | ConvertTo-Yaml | Out-File fastrtps.repos
+             $repos | ConvertTo-Yaml | Tee-Object -FilePath fastrtps.repos
 
              # create source dir and donwload the sources
              mkdir src
@@ -298,6 +345,44 @@ jobs:
 
       - name: Test
         run: |
-           # For convenience use an array to pass the arguments
+           # Create a junit file for test results
+           $junit = New-Item -Path ./junit.xml -ItemType File
+           'JUNIT_LOG=' + $junit.FullName | Out-File $Env:GITHUB_ENV -Append -Encoding OEM
+           # Run the testing
            colcon test --packages-select fastrtps --event-handlers=console_direct+ `
-                       --merge-install --executor parallel --ctest-args -V
+              --merge-install --ctest-args -V -j ($IsMacOS ? 3 : 2) --output-junit $Env:tmp/test.xml
+
+      - name: Test Summary
+        run: |
+           # If the CMake version (3.21 et seq.) supports junit use it
+           $failed = 0
+
+           if(Test-Path $Env:JUNIT_LOG)
+           {
+             $res = [xml](gc $Env:JUNIT_LOG)
+             $failed = $res.testsuite.failures
+
+             # Summary
+             $res.testsuite | Format-List name, tests, failures, disabled, hostname, time, timestamp
+
+             # list the failures if any
+             $failures = $res.testsuite.testcase | ? status -eq fail
+             $failures | select name, failure, time | Format-List
+
+             # list faulty tests output
+             $failures
+           }
+           else
+           {
+             # fallback to parse the ordinary output file
+             $pattern = '^(?:.\[0;32m)?(\d+)% tests passed(?:.\[0;0m)?, (\d+) tests failed(?:.\[0;0m)? out of (\d+)$'
+             (cat .\log\latest_test\fastrtps\stdout.log).Where({ $_ -match $pattern }, 'SkipUntil') | Out-Host
+
+             $failed = $Matches[2]
+           }
+
+           # force failure
+           if( $failed -ne 0 )
+           {
+            throw $Matches[2] + " tests failed. Triggering Job failure."
+           }
