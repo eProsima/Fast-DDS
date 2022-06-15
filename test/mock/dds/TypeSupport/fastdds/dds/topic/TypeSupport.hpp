@@ -13,30 +13,34 @@
 // limitations under the License.
 
 /**
- * @file SubscriptionMatchedStatus.hpp
+ * @file TypeSupport.hpp
  */
 
-#ifndef _SUBSCRIPTION_MATCHED_STATUS_HPP_
-#define _SUBSCRIPTION_MATCHED_STATUS_HPP_
+#ifndef _FASTDDS_TYPE_SUPPORT_HPP_
+#define _FASTDDS_TYPE_SUPPORT_HPP_
 
-#include <cstdint>
+#include <fastdds/dds/topic/TopicDataType.hpp>
 
-#include <fastdds/dds/core/status/MatchedStatus.hpp>
-#include <fastdds/dds/common/InstanceHandle.hpp>
+#include <memory>
 
 namespace eprosima {
 namespace fastdds {
 namespace dds {
 
-//! @brief A structure storing the subscription status
-struct SubscriptionMatchedStatus : public MatchedStatus
+class TypeSupport : public std::shared_ptr<fastdds::dds::TopicDataType>
 {
-    //! @brief Handle to the last writer that matched the reader causing the status change
-    InstanceHandle_t last_publication_handle;
+public:
+
+    explicit TypeSupport(
+            TopicDataType* ptr)
+        : std::shared_ptr<TopicDataType>(ptr)
+    {
+    }
+
 };
 
 } // namespace dds
 } // namespace fastdds
 } // namespace eprosima
 
-#endif //_SUBCRIPTION_MATCHED_STATUS_HPP_
+#endif // _FASTDDS_TYPE_SUPPORT_HPP_

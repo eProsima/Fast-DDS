@@ -1,4 +1,4 @@
-// Copyright 2019 Proyectos y Sistemas de Mantenimiento SL (eProsima).
+// Copyright 2022 Proyectos y Sistemas de Mantenimiento SL (eProsima).
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -13,30 +13,39 @@
 // limitations under the License.
 
 /**
- * @file SubscriptionMatchedStatus.hpp
+ * @file Topic.hpp
  */
 
-#ifndef _SUBSCRIPTION_MATCHED_STATUS_HPP_
-#define _SUBSCRIPTION_MATCHED_STATUS_HPP_
+#ifndef _FASTDDS_TOPIC_HPP_
+#define _FASTDDS_TOPIC_HPP_
 
-#include <cstdint>
+#include <fastdds/dds/topic/TopicDescription.hpp>
 
-#include <fastdds/dds/core/status/MatchedStatus.hpp>
-#include <fastdds/dds/common/InstanceHandle.hpp>
+#include <string>
+#include <gmock/gmock.h>
 
 namespace eprosima {
 namespace fastdds {
 namespace dds {
 
-//! @brief A structure storing the subscription status
-struct SubscriptionMatchedStatus : public MatchedStatus
+class Topic : public TopicDescription
 {
-    //! @brief Handle to the last writer that matched the reader causing the status change
-    InstanceHandle_t last_publication_handle;
+public:
+
+    Topic(
+            const std::string& topic_name,
+            const std::string& type_name)
+        : TopicDescription(topic_name, type_name)
+    {
+    }
+
+    MOCK_CONST_METHOD0(get_participant, DomainParticipant * ());
+    MOCK_CONST_METHOD0(get_impl, TopicDescriptionImpl * ());
+
 };
 
 } // namespace dds
 } // namespace fastdds
 } // namespace eprosima
 
-#endif //_SUBCRIPTION_MATCHED_STATUS_HPP_
+#endif // _FASTDDS_TOPIC_HPP_
