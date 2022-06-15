@@ -422,12 +422,15 @@ void PDPClient::announceParticipantState(
     {
         /*
            Protect writer sequence number. Make sure in order to prevent AB BA deadlock that the
-           writer mutex is systematically lock before the PDP one (if needed):
+           PDP mutex is systematically lock before the writer one (if needed):
             - transport callbacks on PDPListener
             - initialization and removal on BuiltinProtocols::initBuiltinProtocols and ~BuiltinProtocols
             - DSClientEvent (own thread)
             - ResendParticipantProxyDataPeriod (participant event thread)
          */
+
+        std::lock_guard<std::recursive_mutex> lock(*getMutex());
+
         std::lock_guard<RecursiveTimedMutex> wlock(mp_PDPWriter->getMutex());
 
         WriteParams wp;
@@ -475,7 +478,6 @@ void PDPClient::announceParticipantState(
                 //}
                 {
                     // temporary workaround
-                    std::lock_guard<std::recursive_mutex> lock(*getMutex());
                     eprosima::shared_lock<eprosima::shared_mutex> disc_lock(mp_builtin->getDiscoveryMutex());
 
                     for (auto& svr : mp_builtin->m_DiscoveryServers)
