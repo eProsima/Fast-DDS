@@ -216,22 +216,24 @@ private:
     {
         bool ret_val = false;
 
-        alive_writers.remove_if([&writer_guid](const WriterOwnership& item)
+        if (alive_writers.remove_if([&writer_guid](const WriterOwnership& item)
                 {
                     return item.first == writer_guid;
-                });
-
-        if (writer_guid == current_owner.first)
+                }))
         {
-            current_owner.second = 0;
-            current_owner.first = fastrtps::rtps::c_Guid_Unknown;
-        }
+            if (writer_guid == current_owner.first)
+            {
+                current_owner.second = 0;
+                current_owner.first = fastrtps::rtps::c_Guid_Unknown;
+                update_owner();
+            }
 
-        if (alive_writers.empty() && (InstanceStateKind::ALIVE_INSTANCE_STATE == instance_state))
-        {
-            ret_val = true;
-            instance_state = InstanceStateKind::NOT_ALIVE_NO_WRITERS_INSTANCE_STATE;
-            counters_update(counters.instances_alive, counters.instances_no_writers, counters, false);
+            if (alive_writers.empty() && (InstanceStateKind::ALIVE_INSTANCE_STATE == instance_state))
+            {
+                ret_val = true;
+                instance_state = InstanceStateKind::NOT_ALIVE_NO_WRITERS_INSTANCE_STATE;
+                counters_update(counters.instances_alive, counters.instances_no_writers, counters, false);
+            }
         }
 
         return ret_val;
