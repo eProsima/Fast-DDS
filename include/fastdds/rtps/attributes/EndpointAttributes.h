@@ -19,6 +19,7 @@
 #ifndef _FASTDDS_ENDPOINTATTRIBUTES_H_
 #define _FASTDDS_ENDPOINTATTRIBUTES_H_
 
+#include <fastdds/rtps/attributes/ExternalLocators.hpp>
 #include <fastdds/rtps/attributes/PropertyPolicy.h>
 #include <fastrtps/qos/QosPolicies.h>
 
@@ -56,6 +57,12 @@ public:
 
     //!GUID used for persistence
     GUID_t persistence_guid;
+
+    //!The collection of external locators to use for communication.
+    fastdds::rtps::ExternalLocators external_unicast_locators;
+
+    //!Whether locators that don't match with the announced locators should be kept.
+    bool ignore_non_matching_locators = false;
 
     //!Unicast locator list
     LocatorList_t unicastLocatorList;
