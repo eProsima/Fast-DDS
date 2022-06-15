@@ -2785,12 +2785,7 @@ class RTPSEndpointQos
 {
 public:
 
-    RTPS_DllAPI RTPSEndpointQos()
-        : user_defined_id(-1)
-        , entity_id(-1)
-        , history_memory_policy(fastrtps::rtps::PREALLOCATED_MEMORY_MODE)
-    {
-    }
+    RTPS_DllAPI RTPSEndpointQos() = default;
 
     virtual RTPS_DllAPI ~RTPSEndpointQos() = default;
 
@@ -2800,6 +2795,8 @@ public:
         return (this->unicast_locator_list == b.unicast_locator_list) &&
                (this->multicast_locator_list == b.multicast_locator_list) &&
                (this->remote_locator_list == b.remote_locator_list) &&
+               (this->external_unicast_locators == b.external_unicast_locators) &&
+               (this->ignore_non_matching_locators == b.ignore_non_matching_locators) &&
                (this->user_defined_id == b.user_defined_id) &&
                (this->entity_id == b.entity_id) &&
                (this->history_memory_policy == b.history_memory_policy);
@@ -2814,14 +2811,20 @@ public:
     //!Remote locator list
     rtps::LocatorList remote_locator_list;
 
+    //!The collection of external locators to use for communication.
+    fastdds::rtps::ExternalLocators external_unicast_locators;
+
+    //!Whether locators that don't match with the announced locators should be kept.
+    bool ignore_non_matching_locators = false;
+
     //!User Defined ID, used for StaticEndpointDiscovery. <br> By default, -1.
-    int16_t user_defined_id;
+    int16_t user_defined_id = -1;
 
     //!Entity ID, if the user wants to specify the EntityID of the endpoint. <br> By default, -1.
-    int16_t entity_id;
+    int16_t entity_id = -1;
 
     //!Underlying History memory policy. <br> By default, PREALLOCATED_MEMORY_MODE.
-    fastrtps::rtps::MemoryManagementPolicy_t history_memory_policy;
+    fastrtps::rtps::MemoryManagementPolicy_t history_memory_policy = fastrtps::rtps::PREALLOCATED_MEMORY_MODE;
 };
 
 //!Qos Policy to configure the limit of the writer resources
