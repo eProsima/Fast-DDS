@@ -137,6 +137,66 @@ TEST(DataReaderInstance, update_state_alive)
     ASSERT_EQ(3u, instance.alive_writers.size());
 }
 
+/*!
+ * \test DDS-OWN-INST-03 Tests instance's owner changes successfully when writer is unregistered from the instance..
+ */
+TEST(DataReaderInstance, update_state_unregister)
+{
+    // Prepare test input.
+    eprosima::fastdds::dds::detail::DataReaderInstance instance({}, {});
+    const eprosima::fastrtps::rtps::GUID_t dw1_guid({}, 1);
+    const eprosima::fastrtps::rtps::GUID_t dw2_guid({}, 2);
+    const eprosima::fastrtps::rtps::GUID_t dw3_guid({}, 3);
+    const eprosima::fastrtps::rtps::GUID_t dw4_guid({}, 4);
+    const eprosima::fastrtps::rtps::GUID_t another_guid({}, 10);
+
+    instance.alive_writers.push_back({dw1_guid, 1});
+    instance.alive_writers.push_back({dw2_guid, 10});
+    instance.alive_writers.push_back({dw3_guid, 5});
+    instance.alive_writers.push_back({dw4_guid, 10});
+    instance.current_owner = {dw2_guid, 10};
+
+    // Call `DataReaderInstance::update_state()` unregistering DW2.
+    instance.update_state(eprosima::fastrtps::rtps::NOT_ALIVE_UNREGISTERED, dw2_guid, 10);
+    // Instance's owner changes to DW4
+    ASSERT_EQ(dw4_guid, instance.current_owner.first);
+    ASSERT_EQ(10, instance.current_owner.second);
+    ASSERT_EQ(eprosima::fastdds::dds::ALIVE_INSTANCE_STATE, instance.instance_state);
+    ASSERT_EQ(3u, instance.alive_writers.size());
+
+    // Call `DataReaderInstance::update_state()` unregistering DW3.
+    instance.update_state(eprosima::fastrtps::rtps::NOT_ALIVE_UNREGISTERED, dw3_guid, 5);
+    // Instance's owner doesn't changes.
+    ASSERT_EQ(dw4_guid, instance.current_owner.first);
+    ASSERT_EQ(10, instance.current_owner.second);
+    ASSERT_EQ(eprosima::fastdds::dds::ALIVE_INSTANCE_STATE, instance.instance_state);
+    ASSERT_EQ(2u, instance.alive_writers.size());
+
+    // Call `DataReaderInstance::update_state()` unregistering DW4.
+    instance.update_state(eprosima::fastrtps::rtps::NOT_ALIVE_UNREGISTERED, dw4_guid, 10);
+    // Instance's owner changes to DW1
+    ASSERT_EQ(dw1_guid, instance.current_owner.first);
+    ASSERT_EQ(1, instance.current_owner.second);
+    ASSERT_EQ(eprosima::fastdds::dds::ALIVE_INSTANCE_STATE, instance.instance_state);
+    ASSERT_EQ(1u, instance.alive_writers.size());
+
+    // Call `DataReaderInstance::update_state()` with with an unknown writer.
+    instance.update_state(eprosima::fastrtps::rtps::NOT_ALIVE_UNREGISTERED, another_guid, 10);
+    // Nothing happens.
+    ASSERT_EQ(dw1_guid, instance.current_owner.first);
+    ASSERT_EQ(1, instance.current_owner.second);
+    ASSERT_EQ(eprosima::fastdds::dds::ALIVE_INSTANCE_STATE, instance.instance_state);
+    ASSERT_EQ(1u, instance.alive_writers.size());
+
+    // Call `DataReaderInstance::update_state()` unregistering DW1.
+    instance.update_state(eprosima::fastrtps::rtps::NOT_ALIVE_UNREGISTERED, dw1_guid, 1);
+    // No instance's owner.
+    ASSERT_EQ(eprosima::fastrtps::rtps::c_Guid_Unknown, instance.current_owner.first);
+    ASSERT_EQ(0, instance.current_owner.second);
+    ASSERT_EQ(eprosima::fastdds::dds::NOT_ALIVE_NO_WRITERS_INSTANCE_STATE, instance.instance_state);
+    ASSERT_EQ(0u, instance.alive_writers.size());
+}
+
 int main(
         int argc,
         char** argv)
