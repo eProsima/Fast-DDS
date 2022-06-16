@@ -16,6 +16,7 @@
  * @file AESGCMGMAC_KeyExchange.cpp
  */
 
+#include <cstring>
 #include <sstream>
 #include <fastdds/rtps/common/Token.h>
 #include <fastdds/rtps/common/BinaryProperty.h>
