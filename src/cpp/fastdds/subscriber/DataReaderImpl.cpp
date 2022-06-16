@@ -1022,7 +1022,11 @@ bool DataReaderImpl::on_new_cache_change_added(
     }
 
     CacheChange_t* new_change = const_cast<CacheChange_t*>(change);
-    history_.update_instance_nts(new_change);
+    if (!history_.update_instance_nts(new_change))
+    {
+        history_.remove_change_sub(new_change);
+        return false;
+    }
 
     if (qos_.lifespan().duration == c_TimeInfinite)
     {

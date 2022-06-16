@@ -29,6 +29,15 @@ class StatelessReader : public RTPSReader
 {
 public:
 
+    StatelessReader() = default;
+
+    StatelessReader(
+            ReaderHistory* history,
+            RecursiveTimedMutex* mutex)
+        : RTPSReader(history, mutex)
+    {
+    }
+
     virtual ~StatelessReader() = default;
 
     MOCK_METHOD1(matched_writer_add, bool(const WriterProxyData&));

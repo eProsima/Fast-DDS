@@ -64,6 +64,8 @@ struct CacheChangeReaderInfo_t
     int32_t disposed_generation_count;
     //! No-writers generation of the instance when this entry was added to it
     int32_t no_writers_generation_count;
+    //! Ownership stregth of its writer when the sample was received.
+    uint32_t writer_ownership_strength;
 };
 
 /**

@@ -23,6 +23,7 @@ set(DATAREADERINSTANCETESTS_SOURCE DataReaderInstanceTests.cpp
     )
 set(DATAREADERHISTORYTESTS_SOURCE DataReaderHistoryTests.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/common/Time_t.cpp
+    ${PROJECT_SOURCE_DIR}/src/cpp/utils/SystemInfo.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/log/Log.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/log/OStreamConsumer.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/log/StdoutConsumer.cpp
@@ -84,6 +85,7 @@ target_compile_definitions(DataReaderHistoryTests PRIVATE FASTRTPS_NO_LIB
     )
 target_include_directories(DataReaderHistoryTests PRIVATE
     ${PROJECT_SOURCE_DIR}/test/mock/rtps/RTPSReader
+    ${PROJECT_SOURCE_DIR}/test/mock/rtps/StatelessReader
     ${PROJECT_SOURCE_DIR}/test/mock/dds/Topic
     ${PROJECT_SOURCE_DIR}/test/mock/dds/TypeSupport
     ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include

@@ -321,7 +321,14 @@ public:
     void instance_viewed_nts(
             const InstanceCollection::mapped_type& instance);
 
-    void update_instance_nts(
+    /*!
+     * @brief Updates instance's information and also decides whether the sample is finally accepted or denied depending
+     * on the Ownership strength.
+     *
+     * @param[in] change Sample received by DataReader.
+     * @return true is returned when the sample is accepted and false when the sample is denied.
+     */
+    bool update_instance_nts(
             CacheChange_t* const change);
 
     void writer_not_alive(

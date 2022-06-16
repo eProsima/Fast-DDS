@@ -174,7 +174,7 @@ TEST(DataReaderInstance, update_state_alive)
 }
 
 /*!
- * \test DDS-OWN-INST-03 Tests instance's owner changes successfully when writer is unregistered from the instance..
+ * \test DDS-OWN-INST-03 Tests instance's owner changes successfully when writer is unregistered from the instance.
  */
 TEST(DataReaderInstance, update_state_unregister)
 {
