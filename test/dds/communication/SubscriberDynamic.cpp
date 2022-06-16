@@ -396,19 +396,10 @@ int main(
 
     if (participant != nullptr)
     {
-        if (subscriber != nullptr)
+        if (!participant->delete_contained_entities() && !result)
         {
-            if (reader != nullptr)
-            {
-                subscriber->delete_datareader(reader);
-            }
-
-            participant->delete_subscriber(subscriber);
-        }
-
-        if (topic != nullptr)
-        {
-            participant->delete_topic(topic);
+            std::cout << "ERROR: precondition not met on participant entities removal" << std::endl;
+            result = 1;
         }
 
         DomainParticipantFactory::get_instance()->delete_participant(participant);
