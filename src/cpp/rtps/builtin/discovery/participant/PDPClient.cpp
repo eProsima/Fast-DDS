@@ -513,10 +513,10 @@ void PDPClient::announceParticipantState(
                 CacheChange_t* pPD;
                 if (mp_PDPWriterHistory->get_min_change(&pPD))
                 {
-                    std::lock_guard<std::recursive_mutex> lock(*getMutex());
-
                     std::vector<GUID_t> remote_readers;
                     LocatorList locators;
+
+                    eprosima::shared_lock<eprosima::shared_mutex> disc_lock(mp_builtin->getDiscoveryMutex());
 
                     for (auto& svr : mp_builtin->m_DiscoveryServers)
                     {
