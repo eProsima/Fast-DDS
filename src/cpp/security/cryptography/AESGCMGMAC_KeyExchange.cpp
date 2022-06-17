@@ -16,21 +16,23 @@
  * @file AESGCMGMAC_KeyExchange.cpp
  */
 
+#include "AESGCMGMAC_KeyExchange.h"
+
 #include <cstring>
 #include <sstream>
-#include <fastdds/rtps/common/Token.h>
-#include <fastdds/rtps/common/BinaryProperty.h>
-#include <security/cryptography/AESGCMGMAC_KeyExchange.h>
-#include <fastdds/dds/log/Log.hpp>
 
 #include <openssl/aes.h>
 #include <openssl/evp.h>
 #include <openssl/rand.h>
 
+#include <fastdds/dds/log/Log.hpp>
+#include <fastdds/rtps/common/BinaryProperty.h>
+#include <fastdds/rtps/common/Token.h>
+
 // Solve error with Win32 macro
 #ifdef WIN32
 #undef max
-#endif
+#endif // ifdef WIN32
 
 using namespace eprosima::fastrtps::rtps::security;
 
@@ -54,7 +56,7 @@ bool AESGCMGMAC_KeyExchange::create_local_participant_crypto_tokens(
     AESGCMGMAC_ParticipantCryptoHandle& remote_participant = AESGCMGMAC_ParticipantCryptoHandle::narrow(
         remote_participant_crypto);
 
-    if ( local_participant.nil() || remote_participant.nil() )
+    if (local_participant.nil() || remote_participant.nil())
     {
         logWarning(SECURITY_CRYPTO, "Not a valid ParticipantCryptoHandle received");
         return false;
@@ -99,7 +101,7 @@ bool AESGCMGMAC_KeyExchange::set_remote_participant_crypto_tokens(
     AESGCMGMAC_ParticipantCryptoHandle& remote_participant = AESGCMGMAC_ParticipantCryptoHandle::narrow(
         remote_participant_crypto);
 
-    if ( local_participant.nil() || remote_participant.nil() )
+    if (local_participant.nil() || remote_participant.nil())
     {
         logWarning(SECURITY_CRYPTO, "Not a valid ParticipantCryptoHandle received");
         return false;
@@ -152,7 +154,7 @@ bool AESGCMGMAC_KeyExchange::create_local_datawriter_crypto_tokens(
     AESGCMGMAC_WriterCryptoHandle& local_writer = AESGCMGMAC_WriterCryptoHandle::narrow(local_datawriter_crypto);
     AESGCMGMAC_ReaderCryptoHandle& remote_reader = AESGCMGMAC_ReaderCryptoHandle::narrow(remote_datareader_crypto);
 
-    if ( local_writer.nil() || remote_reader.nil() )
+    if (local_writer.nil() || remote_reader.nil())
     {
         logWarning(SECURITY_CRYPTO, "Invalid CryptoHandle received");
         return false;
@@ -195,7 +197,7 @@ bool AESGCMGMAC_KeyExchange::create_local_datareader_crypto_tokens(
     AESGCMGMAC_ReaderCryptoHandle& local_reader = AESGCMGMAC_ReaderCryptoHandle::narrow(local_datareader_crypto);
     AESGCMGMAC_WriterCryptoHandle& remote_writer = AESGCMGMAC_WriterCryptoHandle::narrow(remote_datawriter_crypto);
 
-    if ( local_reader.nil() || remote_writer.nil() )
+    if (local_reader.nil() || remote_writer.nil())
     {
         logWarning(SECURITY_CRYPTO, "Invalid CryptoHandle received");
         return false;
@@ -237,7 +239,7 @@ bool AESGCMGMAC_KeyExchange::set_remote_datareader_crypto_tokens(
     AESGCMGMAC_WriterCryptoHandle& local_writer = AESGCMGMAC_WriterCryptoHandle::narrow(local_datawriter_crypto);
     AESGCMGMAC_ReaderCryptoHandle& remote_reader = AESGCMGMAC_ReaderCryptoHandle::narrow(remote_datareader_crypto);
 
-    if ( local_writer.nil() || remote_reader.nil() )
+    if (local_writer.nil() || remote_reader.nil())
     {
         logWarning(SECURITY_CRYPTO, "Invalid CryptoHandle received");
         return false;
@@ -304,7 +306,7 @@ bool AESGCMGMAC_KeyExchange::set_remote_datawriter_crypto_tokens(
     AESGCMGMAC_ReaderCryptoHandle& local_reader = AESGCMGMAC_ReaderCryptoHandle::narrow(local_datareader_crypto);
     AESGCMGMAC_WriterCryptoHandle& remote_writer = AESGCMGMAC_WriterCryptoHandle::narrow(remote_datawriter_crypto);
 
-    if ( local_reader.nil() || remote_writer.nil() )
+    if (local_reader.nil() || remote_writer.nil())
     {
         logWarning(SECURITY_CRYPTO, "Invalid CryptoHandle");
         return false;
