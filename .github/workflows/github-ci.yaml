@@ -13,7 +13,7 @@ jobs:
   build-and-test-ci:
     strategy:
       matrix:
-        os: [ubuntu-22.04, windows-2022, macos-11]
+        os: [ubuntu-22.04, ubuntu-20.04, windows-2022, windows-2019, macos-12, macos-11]
         config: [debug, release]
       fail-fast: false
  
@@ -27,10 +27,16 @@ jobs:
 
              if($IsWindows)
              {
+               [xml]$info = & "${Env:ProgramFiles(x86)}\Microsoft Visual Studio\installer\vswhere" `
+                              -latest -format xml
+               $pwshmodule = Join-Path $info.instances.instance.installationPath `
+                                       "Common7\Tools\Microsoft.VisualStudio.DevShell.dll" | gi
+
                $env_variables +=
                  'CONFIG_TYPE=--config ${{ matrix.config }}',
                  'BIN_ARCH=-A x64',
-                 'HOST_ARCH=-T host=x64' 
+                 'HOST_ARCH=-T host=x64',
+                 ('VSPWSH=' + $pwshmodule)
              }
              elseif($IsLinux -or $IsMacOS)
              {
@@ -211,7 +217,7 @@ jobs:
                 git clone https://github.com/OpenSC/libp11.git $deploy_dir
                 $deploy_dir = gi $deploy_dir
 
-                $pwshmodule = gi "$Env:ProgramFiles\Microsoft Visual Studio\2022\Enterprise\Common7\Tools\Microsoft.VisualStudio.DevShell.dll" 
+                $pwshmodule = gi $Env:VSPWSH
                 Import-Module $pwshmodule
                 Enter-VsDevShell -SetDefaultWindowTitle -VsInstallPath $pwshmodule.Directory.Parent.Parent `
                                  -StartInPath (pwd) -DevCmdArguments '/arch=x64 /host_arch=x64'
@@ -274,11 +280,20 @@ jobs:
              Import-Module -name ConvertBase64Strings -Prefix CI
              Install-Module powershell-yaml -Force
 
+             # Get action credentials for github REST API
+             $secret = ConvertTo-SecureString -String "${{ secrets.GITHUB_TOKEN }}" -AsPlainText
+
+             # Check available queries according with github policy
+             "Rate Limits with github action token:",
+             ((Invoke-WebRequest -Authentication OAuth -Token $secret `
+                -Uri https://api.github.com/users/octocat).Headers.GetEnumerator() |
+                ? Key -like "X-RateLimit*") | Out-Host
+
              # download the repos file
-             $repos = ((Invoke-WebRequest `
-                        -Uri "${{ github.api_url}}/repos/eProsima/Fast-DDS/contents/fastrtps.repos?ref=${{ github.ref }}" `
-                        -Headers @{"method"="GET";"Accept"="application/vnd.github.v3+json"}).content |
-                        ConvertFrom-Json).content | ConvertFrom-CIBase64 | ConvertFrom-Yaml
+             $repos = ((Invoke-WebRequest -Authentication OAuth -Token $secret `
+                -Uri "${{ github.api_url }}/repos/eProsima/Fast-DDS/contents/fastrtps.repos?ref=${{ github.ref }}" `
+                -Headers @{"method"="GET";"Accept"="application/vnd.github.v3+json"}).content |
+                ConvertFrom-Json).content | ConvertFrom-CIBase64 | ConvertFrom-Yaml
 
              # checkout the merged branch
              $repos.repositories.fastrtps.version = "${{ github.ref }}"
@@ -319,7 +334,7 @@ jobs:
            # On Windows we must load the developer environment and chose a config
            if($IsWindows)
            {
-              $pwshmodule = gi "$Env:ProgramFiles\Microsoft Visual Studio\2022\Enterprise\Common7\Tools\Microsoft.VisualStudio.DevShell.dll" 
+              $pwshmodule = gi $Env:VSPWSH
               Import-Module $pwshmodule
               Enter-VsDevShell -SetDefaultWindowTitle -VsInstallPath $pwshmodule.Directory.Parent.Parent `
                                -StartInPath (pwd) -DevCmdArguments '/arch=x64 /host_arch=x64'
@@ -350,39 +365,53 @@ jobs:
            'JUNIT_LOG=' + $junit.FullName | Out-File $Env:GITHUB_ENV -Append -Encoding OEM
            # Run the testing
            colcon test --packages-select fastrtps --event-handlers=console_direct+ `
-              --merge-install --ctest-args -V -j ($IsMacOS ? 3 : 2) --output-junit $Env:tmp/test.xml
+              --merge-install --ctest-args -j ($IsMacOS ? 3 : 2) --output-junit $junit
 
       - name: Test Summary
+        id: summary
+        continue-on-error: true
         run: |
            # If the CMake version (3.21 et seq.) supports junit use it
            $failed = 0
 
            if(Test-Path $Env:JUNIT_LOG)
            {
+             # ancillary for markdown summary
+             Install-Package -Name MarkdownPS -Source PSGallery -Force
+
              $res = [xml](gc $Env:JUNIT_LOG)
              $failed = $res.testsuite.failures
 
              # Summary
-             $res.testsuite | Format-List name, tests, failures, disabled, hostname, time, timestamp
+             $res.testsuite | select name, tests, failures, disabled, hostname, time, timestamp |
+              New-MDTable | Tee-Object -FilePath $Env:GITHUB_STEP_SUMMARY
 
              # list the failures if any
+             "::group::Failures Summary"
              $failures = $res.testsuite.testcase | ? status -eq fail
-             $failures | select name, failure, time | Format-List
+             $failures | select name, time | format-list
+             "::endgroup::"
 
              # list faulty tests output
+             "::group::Failed tests output"
              $failures
+             "::endgroup::"
            }
            else
            {
              # fallback to parse the ordinary output file
              $pattern = '^(?:.\[0;32m)?(\d+)% tests passed(?:.\[0;0m)?, (\d+) tests failed(?:.\[0;0m)? out of (\d+)$'
-             (cat .\log\latest_test\fastrtps\stdout.log).Where({ $_ -match $pattern }, 'SkipUntil') | Out-Host
+             $summary = (cat .\log\latest_test\fastrtps\stdout.log).where({ $_ -match $pattern }, 'skipuntil')
+             $failed = $matches[2]
 
-             $failed = $Matches[2]
+             $summary[0] | out-file -filepath $env:github_step_summary.
+
+             $summary
            }
 
-           # force failure
-           if( $failed -ne 0 )
-           {
-            throw $Matches[2] + " tests failed. Triggering Job failure."
-           }
+           $LastExitCode = $failed
+           "::set-output name=test_failures::$failed"
+
+      - name: Check test failures
+        if: ${{ steps.summary.outcome }} == 'failure'
+        run: exit ${{ steps.summary.outputs.test_failures }}
