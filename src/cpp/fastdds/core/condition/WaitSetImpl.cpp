@@ -46,19 +46,30 @@ WaitSetImpl::~WaitSetImpl()
 ReturnCode_t WaitSetImpl::attach_condition(
         const Condition& condition)
 {
-    std::lock_guard<std::mutex> guard(mutex_);
-    bool was_there = entries_.remove(&condition);
-    entries_.emplace_back(&condition);
+    bool was_there = false;
+
+    {
+        // We only need to protect access to the collection.
+        std::lock_guard<std::mutex> guard(mutex_);
+
+        was_there = entries_.remove(&condition);
+        entries_.emplace_back(&condition);
+    }
 
     if (!was_there)
     {
         // This is a new condition. Inform the notifier of our interest.
         condition.get_notifier()->attach_to(this);
 
-        // Should wake_up when adding a new triggered condition
-        if (is_waiting_ && condition.get_trigger_value())
         {
-            wake_up();
+            // Might happen that a wait changes is_waiting_'s status. Protect it.
+            std::lock_guard<std::mutex> guard(mutex_);
+
+            // Should wake_up when adding a new triggered condition
+            if (is_waiting_ && condition.get_trigger_value())
+            {
+                wake_up();
+            }
         }
     }
 
@@ -68,8 +79,13 @@ ReturnCode_t WaitSetImpl::attach_condition(
 ReturnCode_t WaitSetImpl::detach_condition(
         const Condition& condition)
 {
-    std::lock_guard<std::mutex> guard(mutex_);
-    bool was_there = entries_.remove(&condition);
+    bool was_there = false;
+
+    {
+        // We only need to protect access to the collection.
+        std::lock_guard<std::mutex> guard(mutex_);
+        was_there = entries_.remove(&condition);
+    }
 
     if (was_there)
     {
