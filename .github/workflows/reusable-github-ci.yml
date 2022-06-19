@@ -1,9 +1,16 @@
-name: Fast-DDS continuous integration
+name: reusable Fast-DDS continuous integration
 
 on:
-  workflow_dispatch:
-  pull_request:
-    branches: [ master ]
+  workflow_call:
+    inputs:
+      os:
+        description: 'A json array listing github hosts'
+        required: true
+        type: string
+      config:
+        description: 'A json array listing build configs'
+        required: true
+        type: string
 
 defaults:
   run:
@@ -13,8 +20,8 @@ jobs:
   build-and-test-ci:
     strategy:
       matrix:
-        os: [ubuntu-22.04, ubuntu-20.04, windows-2022, windows-2019, macos-12, macos-11]
-        config: [debug, release]
+        os: ${{ fromJSON(inputs.os) }}
+        config: ${{ fromJSON(inputs.config) }}
       fail-fast: false
  
     name: ${{ matrix.os }} ${{ matrix.config }} CI
@@ -377,7 +384,11 @@ jobs:
            if(Test-Path $Env:JUNIT_LOG)
            {
              # ancillary for markdown summary
-             Install-Package -Name MarkdownPS -Source PSGallery -Force
+             $modules = Get-Module -ListAvailable | Select ModuleType, Version, Name
+             if(!($modules | ? Name -eq "MarkdownPS"))
+             {
+               Install-Module -Name MarkdownPS -Force
+             }
 
              $res = [xml](gc $Env:JUNIT_LOG)
              $failed = $res.testsuite.failures
@@ -404,7 +415,7 @@ jobs:
              $summary = (cat .\log\latest_test\fastrtps\stdout.log).where({ $_ -match $pattern }, 'skipuntil')
              $failed = $matches[2]
 
-             $summary[0] | out-file -filepath $env:github_step_summary.
+             $summary[0] | out-file -filepath $env:github_step_summary
 
              $summary
            }
