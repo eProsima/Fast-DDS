@@ -25,7 +25,7 @@ jobs:
   build-matrix:
     runs-on: windows-latest
     outputs:
-        configs-matrix: $${{ steps.set-matrix.outputs.configs-matrix }}  
+        configs-matrix: ${{ steps.set-matrix.outputs.configs-matrix }}  
     steps:
         - id: set-matrix
           run: |
@@ -61,22 +61,17 @@ jobs:
     needs: build-matrix
     strategy:
       matrix:
-        # configs: ${{ fromJSON(needs.build-matrix.outputs.configs-matrix) }}
         os: ${{ fromJSON(inputs.os) }}
         config: ${{ fromJSON(inputs.config) }}
       fail-fast: false
  
-    # name: ${{ matrix.configs.os }} ${{ matrix.configs.config }} CI
     name: ${{ matrix.os }} ${{ matrix.config }} CI
-    # runs-on: ${{ matrix.configs.os }} 
     runs-on: ${{ matrix.os }} 
     steps:
       - name: Setup environment
         run: |
              # Handle single target/multi target
              $env_variables = @()
-
-             '${{ needs.build-matrix.outputs.configs-matrix }}' | Out-Host
 
              if($IsWindows)
              {
@@ -413,7 +408,7 @@ jobs:
            'JUNIT_LOG=' + $junit.FullName | Out-File $Env:GITHUB_ENV -Append -Encoding OEM
            # Run the testing
            colcon test --packages-select fastrtps --event-handlers=console_direct+ `
-              --merge-install --executor sequential --ctest-args --timeout 60 --output-junit $junit
+              --merge-install --executor sequential --ctest-args --timeout 300 --output-junit $junit
 
       - name: Test Summary
         id: summary
