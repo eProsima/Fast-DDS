@@ -34,9 +34,12 @@
 #include <rtps/reader/WriterProxy.h>
 #include <utils/collections/sorted_vector_insert.hpp>
 
-using namespace eprosima::fastdds::dds;
-using namespace eprosima::fastdds::dds::detail;
 using namespace eprosima::fastrtps::rtps;
+
+namespace eprosima {
+namespace fastdds {
+namespace dds {
+namespace detail {
 
 using eprosima::fastrtps::RecursiveTimedMutex;
 
@@ -854,3 +857,18 @@ StateFilter DataReaderHistory::get_mask_status() const noexcept
             (counters_.instances_no_writers ? NOT_ALIVE_NO_WRITERS_INSTANCE_STATE : 0))
     };
 }
+
+void DataReaderHistory::writer_update_its_ownership_strength_nts(
+        const GUID_t& writer_guid,
+        const uint32_t ownership_strength)
+{
+    for (auto& instance : instances_)
+    {
+        instance.second->writer_update_its_ownership_strength(writer_guid, ownership_strength);
+    }
+}
+
+} // namespace detail
+} // namsepace dds
+} // namespace fastdds
+} // namsepace eprosima

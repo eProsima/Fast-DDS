@@ -339,6 +339,16 @@ public:
 
     StateFilter get_mask_status() const noexcept;
 
+    /*!
+     * @brief This function should be called by reader if a writer updates its ownership strength.
+     *
+     * @param[in] writer_guid Guid of the writer which changes its ownership strength.
+     * @param[out] ownership_strength New value of the writer's Ownership strength.
+     */
+    void writer_update_its_ownership_strength_nts(
+            const GUID_t& writer_guid,
+            const uint32_t ownership_strength) override;
+
 private:
 
     //!Resource limits for allocating the array of changes per instance

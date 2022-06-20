@@ -76,6 +76,9 @@ public:
     //! Properties
     PropertyPolicy properties;
 
+    //!Ownership
+    OwnershipQosPolicyKind ownershipKind = SHARED_OWNERSHIP_QOS;
+
     EndpointAttributes()
     {
         datasharing_.off();

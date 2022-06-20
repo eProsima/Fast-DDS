@@ -63,12 +63,6 @@ ReturnCode_t TopicImpl::check_qos(
         logError(DDS_QOS_CHECK, "BY SOURCE TIMESTAMP DestinationOrder not supported");
         return ReturnCode_t::RETCODE_UNSUPPORTED;
     }
-    if (BEST_EFFORT_RELIABILITY_QOS == qos.reliability().kind &&
-            EXCLUSIVE_OWNERSHIP_QOS == qos.ownership().kind)
-    {
-        logError(DDS_QOS_CHECK, "BEST_EFFORT incompatible with EXCLUSIVE ownership");
-        return ReturnCode_t::RETCODE_INCONSISTENT_POLICY;
-    }
     if (AUTOMATIC_LIVELINESS_QOS == qos.liveliness().kind ||
             MANUAL_BY_PARTICIPANT_LIVELINESS_QOS == qos.liveliness().kind)
     {

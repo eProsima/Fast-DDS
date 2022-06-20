@@ -203,6 +203,13 @@ bool StatefulReader::matched_writer_add(
             if (it->guid() == wdata.guid())
             {
                 logInfo(RTPS_READER, "Attempting to add existing writer, updating information");
+                // If Ownership strength changes then update all history instances.
+                if (EXCLUSIVE_OWNERSHIP_QOS == m_att.ownershipKind &&
+                        it->ownership_strength() != wdata.m_qos.m_ownershipStrength.value)
+                {
+                    mp_history->writer_update_its_ownership_strength_nts(
+                        it->guid(), wdata.m_qos.m_ownershipStrength.value);
+                }
                 it->update(wdata);
                 if (!is_same_process)
                 {
@@ -965,6 +972,7 @@ bool StatefulReader::change_removed_by_history(
                 }
 
                 proxy->irrelevant_change_set(a_change->sequenceNumber);
+                send_ack_if_datasharing(this, mp_history, proxy, a_change->sequenceNumber);
             }
 
         }
@@ -1047,6 +1055,16 @@ bool StatefulReader::change_received(
         }
     }
 
+    // Update Ownership strength.
+    if (EXCLUSIVE_OWNERSHIP_QOS == m_att.ownershipKind)
+    {
+        a_change->reader_info.writer_ownership_strength = prox->ownership_strength();
+    }
+    else
+    {
+        a_change->reader_info.writer_ownership_strength = std::numeric_limits<uint32_t>::max();
+    }
+
     // NOTE: Depending on QoS settings, one change can be removed from history
     // inside the call to mp_history->received_change
     fastdds::dds::SampleRejectedStatusKind rejection_reason;
@@ -1068,7 +1086,9 @@ bool StatefulReader::change_received(
             if (mp_history->changesEnd() == mp_history->find_change(a_change))
             {
                 prox->irrelevant_change_set(a_change->sequenceNumber);
+                send_ack_if_datasharing(this, mp_history, prox, a_change->sequenceNumber);
                 ret = false;
+
             }
         }
 

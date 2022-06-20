@@ -140,6 +140,7 @@ ReturnCode_t DataReaderImpl::enable()
     att.endpoint.unicastLocatorList = qos_.endpoint().unicast_locator_list;
     att.endpoint.remoteLocatorList = qos_.endpoint().remote_locator_list;
     att.endpoint.properties = qos_.properties();
+    att.endpoint.ownershipKind = qos_.ownership().kind;
     att.endpoint.setEntityID(qos_.endpoint().entity_id);
     att.endpoint.setUserDefinedID(qos_.endpoint().user_defined_id);
     att.times = qos_.reliable_reader_qos().times;
@@ -1411,11 +1412,6 @@ ReturnCode_t DataReaderImpl::check_qos (
     {
         logError(DDS_QOS_CHECK, "BY SOURCE TIMESTAMP DestinationOrder not supported");
         return ReturnCode_t::RETCODE_UNSUPPORTED;
-    }
-    if (qos.reliability().kind == BEST_EFFORT_RELIABILITY_QOS && qos.ownership().kind == EXCLUSIVE_OWNERSHIP_QOS)
-    {
-        logError(DDS_QOS_CHECK, "BEST_EFFORT incompatible with EXCLUSIVE ownership");
-        return ReturnCode_t::RETCODE_INCONSISTENT_POLICY;
     }
     if (qos.reader_resource_limits().max_samples_per_read <= 0)
     {

@@ -205,6 +205,7 @@ ReturnCode_t DataWriterImpl::enable()
     w_att.mode = qos_.publish_mode().kind == SYNCHRONOUS_PUBLISH_MODE ? SYNCHRONOUS_WRITER : ASYNCHRONOUS_WRITER;
     w_att.flow_controller_name = qos_.publish_mode().flow_controller_name;
     w_att.endpoint.properties = qos_.properties();
+    w_att.endpoint.ownershipKind = qos_.ownership().kind;
     w_att.endpoint.setEntityID(qos_.endpoint().entity_id);
     w_att.endpoint.setUserDefinedID(qos_.endpoint().user_defined_id);
     w_att.times = qos_.reliable_writer_qos().times;
@@ -1721,11 +1722,6 @@ ReturnCode_t DataWriterImpl::check_qos(
             logError(RTPS_QOS_CHECK, "Infinite heartbeat period incompatible with pull mode");
             return ReturnCode_t::RETCODE_INCONSISTENT_POLICY;
         }
-    }
-    if (qos.reliability().kind == BEST_EFFORT_RELIABILITY_QOS && qos.ownership().kind == EXCLUSIVE_OWNERSHIP_QOS)
-    {
-        logError(RTPS_QOS_CHECK, "BEST_EFFORT incompatible with EXCLUSIVE ownership");
-        return ReturnCode_t::RETCODE_INCONSISTENT_POLICY;
     }
     if (qos.liveliness().kind == AUTOMATIC_LIVELINESS_QOS ||
             qos.liveliness().kind == MANUAL_BY_PARTICIPANT_LIVELINESS_QOS)

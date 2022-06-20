@@ -204,6 +204,20 @@ public:
             const GUID_t& writer_guid,
             const SequenceNumber_t& last_notified_seq);
 
+    /*!
+     * @brief This function should be called by reader if a writer updates its ownership strength.
+     *
+     * @param[in] writer_guid Guid of the writer which changes its ownership strength.
+     * @param[out] ownership_strength New value of the writer's Ownership strength.
+     */
+    RTPS_DllAPI virtual void writer_update_its_ownership_strength_nts(
+            const GUID_t& writer_guid,
+            const uint32_t ownership_strength)
+    {
+        static_cast<void>(writer_guid);
+        static_cast<void>(ownership_strength);
+    }
+
 protected:
 
     RTPS_DllAPI bool do_reserve_cache(
