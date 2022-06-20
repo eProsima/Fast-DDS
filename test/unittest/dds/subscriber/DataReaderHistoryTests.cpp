@@ -109,7 +109,7 @@ TEST(DataReaderHistory, exclusive_ownership_non_keyed_sample_reception)
     // Receives a sample with seq 4 from DW2 and update instance with strength 2.
     dw2_change.sequenceNumber = {0, 4};
     ASSERT_TRUE(history.received_change(&dw2_change, 0));
-    ASSERT_FALSE(history.update_instance_nts(&dw2_change));
+    ASSERT_TRUE(history.update_instance_nts(&dw2_change));
 
     ASSERT_EQ(9u, history.getHistorySize());
 }

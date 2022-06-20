@@ -47,7 +47,7 @@ struct DataReaderInstance
     //! The list of alive writers for this instance
     WriterCollection alive_writers;
     //! GUID and strength of the current maximum strength writer
-    WriterOwnership current_owner{ {}, 0 };
+    WriterOwnership current_owner{ {}, std::numeric_limits<uint32_t>::max() };
     //! The time when the group will miss the deadline
     std::chrono::steady_clock::time_point next_deadline_us;
     //! Current view state of the instance
@@ -95,7 +95,7 @@ struct DataReaderInstance
             DataReaderHistoryCounters& counters,
             const fastrtps::rtps::ChangeKind_t change_kind,
             const fastrtps::rtps::GUID_t& writer_guid,
-            const uint32_t ownership_strength = 0)
+            const uint32_t ownership_strength)
     {
         bool ret_val = false;
 
@@ -154,32 +154,48 @@ private:
     {
         bool ret_val = false;
 
-        if (ownership_strength >= current_owner.second)
+        if (writer_guid == current_owner.first) // Accept sample of current owner.
+        {
+            current_owner.second = ownership_strength;
+            ret_val = true;
+        }
+        else if (ownership_strength > current_owner.second) // Accept sample of greater strength writer
         {
             current_owner.first = writer_guid;
             current_owner.second = ownership_strength;
-
-            if (InstanceStateKind::NOT_ALIVE_DISPOSED_INSTANCE_STATE == instance_state)
-            {
-                counters_update(counters.instances_disposed, counters.instances_alive, counters, true);
-
-                ++disposed_generation_count;
-                alive_writers.clear();
-                view_state = ViewStateKind::NEW_VIEW_STATE;
-                ret_val = true;
-            }
-            else if (InstanceStateKind::NOT_ALIVE_NO_WRITERS_INSTANCE_STATE == instance_state)
-            {
-                counters_update(counters.instances_no_writers, counters.instances_alive, counters, true);
-
-                ++no_writers_generation_count;
-                alive_writers.clear();
-                view_state = ViewStateKind::NEW_VIEW_STATE;
-                ret_val = true;
-            }
-
-            instance_state = InstanceStateKind::ALIVE_INSTANCE_STATE;
+            ret_val = true;
         }
+        else if (std::numeric_limits<uint32_t>::max() == ownership_strength) // uint32_t::max indicates we are in SHARED_OWNERSHIP_QOS.
+        {
+            assert(eprosima::fastrtps::rtps::c_Guid_Unknown == current_owner.first);
+            assert(std::numeric_limits<uint32_t>::max() == current_owner.second);
+            ret_val = true;
+        }
+        else if (eprosima::fastrtps::rtps::c_Guid_Unknown == current_owner.first) // Without owner.
+        {
+            current_owner.first = writer_guid;
+            current_owner.second = ownership_strength;
+            ret_val = true;
+        }
+
+        if (InstanceStateKind::NOT_ALIVE_DISPOSED_INSTANCE_STATE == instance_state)
+        {
+            counters_update(counters.instances_disposed, counters.instances_alive, counters, true);
+
+            ++disposed_generation_count;
+            alive_writers.clear();
+            view_state = ViewStateKind::NEW_VIEW_STATE;
+        }
+        else if (InstanceStateKind::NOT_ALIVE_NO_WRITERS_INSTANCE_STATE == instance_state)
+        {
+            counters_update(counters.instances_no_writers, counters.instances_alive, counters, true);
+
+            ++no_writers_generation_count;
+            assert(0 == alive_writers.size());
+            view_state = ViewStateKind::NEW_VIEW_STATE;
+        }
+
+        instance_state = InstanceStateKind::ALIVE_INSTANCE_STATE;
 
         writer_set(writer_guid, ownership_strength);
 
