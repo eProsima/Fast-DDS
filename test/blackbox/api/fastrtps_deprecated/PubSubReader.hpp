@@ -342,7 +342,7 @@ public:
     }
 
     void startReception(
-            std::list<type>& msgs)
+            const std::list<type>& msgs)
     {
         mutex_.lock();
         total_msgs_ = msgs;
@@ -1045,6 +1045,12 @@ public:
     {
         participant_attr_.rtps.builtin.discovery_config.leaseDuration = lease_duration;
         participant_attr_.rtps.builtin.discovery_config.leaseDuration_announcementperiod = announce_period;
+        return *this;
+    }
+
+    PubSubReader& ownership_exclusive()
+    {
+        subscriber_attr_.qos.m_ownership.kind = eprosima::fastdds::dds::EXCLUSIVE_OWNERSHIP_QOS;
         return *this;
     }
 

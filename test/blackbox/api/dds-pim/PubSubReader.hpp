@@ -478,7 +478,7 @@ public:
     }
 
     eprosima::fastrtps::rtps::SequenceNumber_t startReception(
-            std::list<type>& msgs)
+            const std::list<type>& msgs)
     {
         mutex_.lock();
         total_msgs_ = msgs;
@@ -1290,6 +1290,12 @@ public:
     {
         participant_qos_.wire_protocol().builtin.discovery_config.leaseDuration = lease_duration;
         participant_qos_.wire_protocol().builtin.discovery_config.leaseDuration_announcementperiod = announce_period;
+        return *this;
+    }
+
+    PubSubReader& ownership_exclusive()
+    {
+        datareader_qos_.ownership().kind = eprosima::fastdds::dds::EXCLUSIVE_OWNERSHIP_QOS;
         return *this;
     }
 
