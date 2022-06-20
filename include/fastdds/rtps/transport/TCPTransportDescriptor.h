@@ -77,6 +77,8 @@ struct TCPTransportDescriptor : public SocketTransportDescriptor
      *
      * - \c handshake_role: role that the transport will take on handshaking.
      *
+     * - \c server_name: server name or host name required in case Server Name Indication (SNI) is used.
+     *
      */
     struct TLSConfig
     {
@@ -180,6 +182,8 @@ struct TCPTransportDescriptor : public SocketTransportDescriptor
         std::string rsa_private_key_file;
         //! Role that the transport will take on handshaking
         TLSHandShakeRole handshake_role = TLSHandShakeRole::DEFAULT;
+        //! Server name or host name required in case Server Name Indication (SNI) is used
+        std::string server_name;
 
         //! Add verification modes to the verification mode mask
         void add_verify_mode(
