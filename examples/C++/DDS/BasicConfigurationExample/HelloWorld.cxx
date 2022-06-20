@@ -21,10 +21,8 @@
 
 #ifdef _WIN32
 // Remove linker warning LNK4221 on Visual Studio
-namespace {
-char dummy;
-}  // namespace
-#endif  // _WIN32
+namespace { char dummy; }
+#endif
 
 #include "HelloWorld.h"
 #include <fastcdr/Cdr.h>
@@ -36,10 +34,10 @@ using namespace eprosima::fastcdr::exception;
 
 HelloWorld::HelloWorld()
 {
-    // m_index com.eprosima.idl.parser.typecode.PrimitiveTypeCode@43738a82
+    // m_index com.eprosima.idl.parser.typecode.PrimitiveTypeCode@1622f1b
     m_index = 0;
-    // m_message com.eprosima.idl.parser.typecode.ArrayTypeCode@75881071
-    memset(&m_message, 0, (20) * 1);
+    // m_message com.eprosima.idl.parser.typecode.StringTypeCode@70e8f8e
+    m_message ="";
 
 }
 
@@ -49,22 +47,19 @@ HelloWorld::~HelloWorld()
 
 }
 
-HelloWorld::HelloWorld(
-        const HelloWorld& x)
+HelloWorld::HelloWorld(const HelloWorld &x)
 {
     m_index = x.m_index;
     m_message = x.m_message;
 }
 
-HelloWorld::HelloWorld(
-        HelloWorld&& x)
+HelloWorld::HelloWorld(HelloWorld &&x)
 {
     m_index = x.m_index;
     m_message = std::move(x.m_message);
 }
 
-HelloWorld& HelloWorld::operator =(
-        const HelloWorld& x)
+HelloWorld& HelloWorld::operator=(const HelloWorld &x)
 {
 
     m_index = x.m_index;
@@ -73,8 +68,7 @@ HelloWorld& HelloWorld::operator =(
     return *this;
 }
 
-HelloWorld& HelloWorld::operator =(
-        HelloWorld&& x)
+HelloWorld& HelloWorld::operator=(HelloWorld &&x)
 {
 
     m_index = x.m_index;
@@ -83,8 +77,7 @@ HelloWorld& HelloWorld::operator =(
     return *this;
 }
 
-size_t HelloWorld::getMaxCdrSerializedSize(
-        size_t current_alignment)
+size_t HelloWorld::getMaxCdrSerializedSize(size_t current_alignment)
 {
     size_t initial_alignment = current_alignment;
 
@@ -92,16 +85,13 @@ size_t HelloWorld::getMaxCdrSerializedSize(
     current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
 
 
-    current_alignment += ((20) * 1) + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
-
+    current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4) + 255 + 1;
 
 
     return current_alignment - initial_alignment;
 }
 
-size_t HelloWorld::getCdrSerializedSize(
-        const HelloWorld& data,
-        size_t current_alignment)
+size_t HelloWorld::getCdrSerializedSize(const HelloWorld& data, size_t current_alignment)
 {
     (void)data;
     size_t initial_alignment = current_alignment;
@@ -110,44 +100,33 @@ size_t HelloWorld::getCdrSerializedSize(
     current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
 
 
-    // Constant expresion. Change to avoid warning in windows.
-    // if ((20) > 0)
-    // {
-    //     current_alignment += ((20) * 1) + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
-    // }
-    current_alignment += ((20) * 1) + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
+    current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4) + data.message().size() + 1;
 
 
     return current_alignment - initial_alignment;
 }
 
-void HelloWorld::serialize(
-        eprosima::fastcdr::Cdr& scdr) const
+void HelloWorld::serialize(eprosima::fastcdr::Cdr &scdr) const
 {
 
     scdr << m_index;
     scdr << m_message;
-
-
 }
 
-void HelloWorld::deserialize(
-        eprosima::fastcdr::Cdr& dcdr)
+void HelloWorld::deserialize(eprosima::fastcdr::Cdr &dcdr)
 {
 
     dcdr >> m_index;
     dcdr >> m_message;
-
 }
 
 /*!
  * @brief This function sets a value in member index
  * @param _index New value for member index
  */
-void HelloWorld::index(
-        uint32_t _index)
+void HelloWorld::index(uint32_t _index)
 {
-    m_index = _index;
+m_index = _index;
 }
 
 /*!
@@ -172,27 +151,25 @@ uint32_t& HelloWorld::index()
  * @brief This function copies the value in member message
  * @param _message New value to be copied in member message
  */
-void HelloWorld::message(
-        const std::array<char, 20>& _message)
+void HelloWorld::message(const std::string &_message)
 {
-    m_message = _message;
+m_message = _message;
 }
 
 /*!
  * @brief This function moves the value in member message
  * @param _message New value to be moved in member message
  */
-void HelloWorld::message(
-        std::array<char, 20>&& _message)
+void HelloWorld::message(std::string &&_message)
 {
-    m_message = std::move(_message);
+m_message = std::move(_message);
 }
 
 /*!
  * @brief This function returns a constant reference to member message
  * @return Constant reference to member message
  */
-const std::array<char, 20>& HelloWorld::message() const
+const std::string& HelloWorld::message() const
 {
     return m_message;
 }
@@ -201,13 +178,12 @@ const std::array<char, 20>& HelloWorld::message() const
  * @brief This function returns a reference to member message
  * @return Reference to member message
  */
-std::array<char, 20>& HelloWorld::message()
+std::string& HelloWorld::message()
 {
     return m_message;
 }
 
-size_t HelloWorld::getKeyMaxCdrSerializedSize(
-        size_t current_alignment)
+size_t HelloWorld::getKeyMaxCdrSerializedSize(size_t current_alignment)
 {
     size_t current_align = current_alignment;
 
@@ -220,12 +196,12 @@ size_t HelloWorld::getKeyMaxCdrSerializedSize(
 
 bool HelloWorld::isKeyDefined()
 {
-    return false;
+   return false;
 }
 
-void HelloWorld::serializeKey(
-        eprosima::fastcdr::Cdr& scdr) const
+void HelloWorld::serializeKey(eprosima::fastcdr::Cdr &scdr) const
 {
     (void) scdr;
-
+     
+     
 }

@@ -70,7 +70,7 @@ bool HelloWorldPublisher::init(
         bool transient)
 {
     hello_.index(0);
-    memcpy(hello_.message().data(), "HelloWorld ", strlen("HelloWorld") + 1);
+    hello_.message("HelloWorld");
 
     DomainParticipantQos pqos;
     pqos.name("Participant_pub");
