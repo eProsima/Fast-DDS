@@ -1260,6 +1260,16 @@ void RTPSParticipantImpl::update_attributes(
         update_pdp = true;
         std::vector<GUID_t> modified_servers;
         LocatorList_t modified_locators;
+
+        // Update RTPSParticipantAttributes member
+        m_att.userData = patt.userData;
+
+        // If there's no PDP don't process Discovery-related attributes.
+        if (!pdp)
+        {
+            return;
+        }
+
         // Check that the remote servers list is consistent: all the already known remote servers must be included in
         // the list and either new remote servers are added or remote server listening locator is modified.
         for (auto existing_server : m_att.builtin.discovery_config.m_DiscoveryServers)
@@ -1300,9 +1310,6 @@ void RTPSParticipantImpl::update_attributes(
                 return;
             }
         }
-
-        // Update RTPSParticipantAttributes member
-        m_att.userData = patt.userData;
 
         {
             std::lock_guard<std::recursive_mutex> lock(*pdp->getMutex());

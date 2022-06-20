@@ -69,7 +69,11 @@ private:
     BuiltinProtocols();
     virtual ~BuiltinProtocols();
 
-    eprosima::shared_mutex m_DiscoveryMutex;
+    /*
+    * Mutex to protect the m_DiscoveryServers collection. Element access is not protected by this mutex, the PDP mutex 
+    * needs to be used when querying or modifying mutable members of the collection. 
+    */
+    mutable eprosima::shared_mutex discovery_mutex_;
 
 public:
 
@@ -199,9 +203,9 @@ public:
      * Get Discovery mutex
      * @return Associated Mutex
      */
-    inline eprosima::shared_mutex& getDiscoveryMutex()
+    inline eprosima::shared_mutex& getDiscoveryMutex() const
     {
-        return m_DiscoveryMutex;
+        return discovery_mutex_;
     }
 
 };

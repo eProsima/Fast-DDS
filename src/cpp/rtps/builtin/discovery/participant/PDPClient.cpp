@@ -289,9 +289,12 @@ void PDPClient::assignRemoteEndpoints(
         // Verify if this participant is a server
         for (auto& svr : mp_builtin->m_DiscoveryServers)
         {
-            if (svr.guidPrefix == pdata->m_guid.guidPrefix)
             {
-                svr.proxy = pdata;
+                std::unique_lock<std::recursive_mutex> lock(*getMutex());
+                if (svr.guidPrefix == pdata->m_guid.guidPrefix)
+                {
+                    svr.proxy = pdata;
+                }
             }
         }
     }
@@ -322,11 +325,14 @@ void PDPClient::removeRemoteEndpoints(
         // Verify if this participant is a server
         for (auto& svr : mp_builtin->m_DiscoveryServers)
         {
-            if (svr.guidPrefix == pdata->m_guid.guidPrefix)
             {
-                svr.proxy = nullptr; // reasign when we receive again server DATA(p)
-                is_server = true;
-                mp_sync->restart_timer(); // enable announcement and sync mechanism till this server reappears
+                std::unique_lock<std::recursive_mutex> lock(*getMutex());
+                if (svr.guidPrefix == pdata->m_guid.guidPrefix)
+                {
+                    svr.proxy = nullptr; // reasign when we receive again server DATA(p)
+                    is_server = true;
+                    mp_sync->restart_timer(); // enable announcement and sync mechanism till this server reappears
+                }
             }
         }
     }
