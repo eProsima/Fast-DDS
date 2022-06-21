@@ -229,12 +229,14 @@ public:
      *
      * @param handle The handle to the instance
      * @param next_deadline_us The time point when the deadline will occur
+     * @param[in] deadline_missed true value when is called because the deadline was missed.
      *
      * @return True if the deadline was set correctly
      */
     bool set_next_deadline(
             const InstanceHandle_t& handle,
-            const std::chrono::steady_clock::time_point& next_deadline_us);
+            const std::chrono::steady_clock::time_point& next_deadline_us,
+            bool deadline_missed = false);
 
     /**
      * @brief A method to get the next instance handle that will miss the deadline and the time when the deadline will occur.

@@ -520,7 +520,8 @@ bool DataReaderHistory::remove_change_sub(
 
 bool DataReaderHistory::set_next_deadline(
         const InstanceHandle_t& handle,
-        const std::chrono::steady_clock::time_point& next_deadline_us)
+        const std::chrono::steady_clock::time_point& next_deadline_us,
+        bool deadline_missed)
 {
     if (mp_reader == nullptr || mp_mutex == nullptr)
     {
@@ -534,6 +535,10 @@ bool DataReaderHistory::set_next_deadline(
         return false;
     }
 
+    if (deadline_missed)
+    {
+        it->second->deadline_missed();
+    }
     it->second->next_deadline_us = next_deadline_us;
     return true;
 }

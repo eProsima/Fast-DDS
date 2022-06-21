@@ -258,6 +258,57 @@ TEST(DataReaderInstance, update_state_unregister)
     ASSERT_EQ(1u, counters.instances_no_writers);
 }
 
+/*!
+ * \test DDS-OWN-INST-04 Tests instance's owner changes successfully when the deadline is missed.
+ */
+TEST(DataReaderInstance, deadline_missed)
+{
+    // Prepare test input.
+    eprosima::fastdds::dds::detail::DataReaderInstance instance({}, {});
+    const eprosima::fastrtps::rtps::GUID_t dw1_guid({}, 1);
+    const eprosima::fastrtps::rtps::GUID_t dw2_guid({}, 2);
+    const eprosima::fastrtps::rtps::GUID_t dw3_guid({}, 3);
+    const eprosima::fastrtps::rtps::GUID_t dw4_guid({}, 4);
+
+    instance.alive_writers.push_back({dw1_guid, 1});
+    instance.alive_writers.push_back({dw2_guid, 10});
+    instance.alive_writers.push_back({dw3_guid, 5});
+    instance.alive_writers.push_back({dw4_guid, 10});
+    instance.current_owner = {dw2_guid, 10};
+
+    // Call `DataReaderInstance::deadline_missed()`.
+    instance.deadline_missed();
+    // Instance's owner changes to DW4
+    ASSERT_EQ(dw4_guid, instance.current_owner.first);
+    ASSERT_EQ(10, instance.current_owner.second);
+    ASSERT_EQ(eprosima::fastdds::dds::ALIVE_INSTANCE_STATE, instance.instance_state);
+    ASSERT_EQ(3u, instance.alive_writers.size());
+
+    // Call `DataReaderInstance::deadline_missed()`.
+    instance.deadline_missed();
+    // Instance's owner changes to DW3
+    ASSERT_EQ(dw3_guid, instance.current_owner.first);
+    ASSERT_EQ(5, instance.current_owner.second);
+    ASSERT_EQ(eprosima::fastdds::dds::ALIVE_INSTANCE_STATE, instance.instance_state);
+    ASSERT_EQ(2u, instance.alive_writers.size());
+
+    // Call `DataReaderInstance::deadline_missed()`.
+    instance.deadline_missed();
+    // Instance's owner changes to DW1
+    ASSERT_EQ(dw1_guid, instance.current_owner.first);
+    ASSERT_EQ(1, instance.current_owner.second);
+    ASSERT_EQ(eprosima::fastdds::dds::ALIVE_INSTANCE_STATE, instance.instance_state);
+    ASSERT_EQ(1u, instance.alive_writers.size());
+
+    // Call `DataReaderInstance::deadline_missed()`.
+    instance.deadline_missed();
+    // No instance's owner.
+    ASSERT_EQ(eprosima::fastrtps::rtps::c_Guid_Unknown, instance.current_owner.first);
+    ASSERT_EQ(0, instance.current_owner.second);
+    ASSERT_EQ(eprosima::fastdds::dds::NOT_ALIVE_NO_WRITERS_INSTANCE_STATE, instance.instance_state);
+    ASSERT_EQ(0u, instance.alive_writers.size());
+}
+
 int main(
         int argc,
         char** argv)

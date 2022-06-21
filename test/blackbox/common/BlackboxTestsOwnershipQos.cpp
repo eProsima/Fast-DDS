@@ -74,7 +74,7 @@ public:
 };
 
 /*!
- * \test DDS-OWN-SAMPLE-01 Tests samples reception works successfully with Non-Keyed types, Reliable,  Ownership QoS
+ * @test DDS-OWN-SAMPLE-01 Tests samples reception works successfully with Non-Keyed types, Reliable,  Ownership QoS
  * EXCLUSIVE and dynamic change of strength.
  */
 TEST_P(OwnershipQos, exclusive_kind_non_keyed_reliable_sample_reception)
@@ -191,7 +191,7 @@ TEST_P(OwnershipQos, exclusive_kind_non_keyed_reliable_sample_reception)
 }
 
 /*!
- * \test DDS-OWN-SAMPLE-02 Tests samples reception works successfully with Keyed types, Reliable,  Ownership QoS
+ * @test DDS-OWN-SAMPLE-02 Tests samples reception works successfully with Keyed types, Reliable,  Ownership QoS
  * EXCLUSIVE and dynamic change of strength.
  */
 TEST_P(OwnershipQos, exclusive_kind_keyed_reliable_sample_reception)
@@ -369,7 +369,7 @@ TEST_P(OwnershipQos, exclusive_kind_keyed_reliable_sample_reception)
 }
 
 /*!
- * \test DDS-OWN-SAMPLE-03 Tests samples reception works successfully with Non-Keyed types, BestEffort, Ownership QoS
+ * @test DDS-OWN-SAMPLE-03 Tests samples reception works successfully with Non-Keyed types, BestEffort, Ownership QoS
  * EXCLUSIVE and dynamic change of strength.
  */
 TEST_P(OwnershipQos, exclusive_kind_non_keyed_besteffort_sample_reception)
@@ -486,7 +486,7 @@ TEST_P(OwnershipQos, exclusive_kind_non_keyed_besteffort_sample_reception)
 }
 
 /*!
- * \test DDS-OWN-SAMPLE-04 Tests samples reception works successfully with Keyed types, BestEffort, Ownership QoS
+ * @test DDS-OWN-SAMPLE-04 Tests samples reception works successfully with Keyed types, BestEffort, Ownership QoS
  * EXCLUSIVE and dynamic change of strength.
  */
 TEST_P(OwnershipQos, exclusive_kind_keyed_besteffort_sample_reception)
@@ -658,8 +658,84 @@ TEST_P(OwnershipQos, exclusive_kind_keyed_besteffort_sample_reception)
     data.pop_front();
     std::this_thread::sleep_for(std::chrono::milliseconds(50));
 
-
     reader.block_for_at_least(10);
+    ASSERT_EQ(denied_samples.size(), reader.data_not_received().size());
+    ASSERT_EQ(denied_samples, reader.data_not_received());
+}
+
+/*!
+ * @test DDS-OWN-DEADLINE-01 Tests Ownership changes when the current owner doesn't comply with deadline QoS, in a
+ * Reliable communication with Non-Keyed types.
+ */
+TEST_P(OwnershipQos, exclusive_kind_non_keyed_reliable_deadline)
+{
+
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldPubSubType> writer1(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldPubSubType> writer2(TEST_TOPIC_NAME);
+
+    reader.ownership_exclusive().reliability(RELIABLE_RELIABILITY_QOS).deadline_period({0, 100000000}).init();
+    writer1.ownership_strength(1).deadline_period({0, 100000000}).init();
+    writer2.ownership_strength(2).deadline_period({0, 100000000}).init();
+
+    ASSERT_TRUE(reader.isInitialized());
+    ASSERT_TRUE(writer1.isInitialized());
+    ASSERT_TRUE(writer2.isInitialized());
+
+    // Wait for discovery.
+    writer1.wait_discovery();
+    writer2.wait_discovery();
+    reader.wait_discovery(std::chrono::seconds(1), 2);
+
+    auto data = default_helloworld_data_generator(10);
+    reader.startReception(data);
+
+    decltype(data) denied_samples;
+
+    writer1.send_sample(data.front());
+    data.pop_front();
+    std::this_thread::sleep_for(std::chrono::milliseconds(50));
+
+    writer2.send_sample(data.front());
+    data.pop_front();
+    std::this_thread::sleep_for(std::chrono::milliseconds(50));
+
+    writer1.send_sample(data.front());
+    denied_samples.push_back(data.front());
+    data.pop_front();
+    std::this_thread::sleep_for(std::chrono::milliseconds(50));
+
+    writer2.send_sample(data.front());
+    data.pop_front();
+    std::this_thread::sleep_for(std::chrono::milliseconds(50));
+
+    writer1.send_sample(data.front());
+    denied_samples.push_back(data.front());
+    data.pop_front();
+    std::this_thread::sleep_for(std::chrono::milliseconds(50));
+
+    writer2.send_sample(data.front());
+    data.pop_front();
+    std::this_thread::sleep_for(std::chrono::milliseconds(50));
+
+    writer1.send_sample(data.front());
+    denied_samples.push_back(data.front());
+    data.pop_front();
+    std::this_thread::sleep_for(std::chrono::milliseconds(50));
+
+    writer1.send_sample(data.front());
+    data.pop_front();
+    std::this_thread::sleep_for(std::chrono::milliseconds(50));
+
+    writer1.send_sample(data.front());
+    data.pop_front();
+    std::this_thread::sleep_for(std::chrono::milliseconds(50));
+
+    writer1.send_sample(data.front());
+    data.pop_front();
+    std::this_thread::sleep_for(std::chrono::milliseconds(50));
+
+    reader.block_for_seq({0, 7});
     ASSERT_EQ(denied_samples.size(), reader.data_not_received().size());
     ASSERT_EQ(denied_samples, reader.data_not_received());
 }

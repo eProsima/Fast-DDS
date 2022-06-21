@@ -1004,6 +1004,15 @@ bool DataReaderImpl::on_data_available(
 bool DataReaderImpl::on_new_cache_change_added(
         const CacheChange_t* const change)
 {
+    std::lock_guard<RecursiveTimedMutex> guard(reader_->getMutex());
+
+    CacheChange_t* new_change = const_cast<CacheChange_t*>(change);
+    if (!history_.update_instance_nts(new_change))
+    {
+        history_.remove_change_sub(new_change);
+        return false;
+    }
+
     if (qos_.deadline().period != c_TimeInfinite)
     {
         if (!history_.set_next_deadline(
@@ -1020,13 +1029,6 @@ bool DataReaderImpl::on_new_cache_change_added(
                 deadline_timer_->restart_timer();
             }
         }
-    }
-
-    CacheChange_t* new_change = const_cast<CacheChange_t*>(change);
-    if (!history_.update_instance_nts(new_change))
-    {
-        history_.remove_change_sub(new_change);
-        return false;
     }
 
     if (qos_.lifespan().duration == c_TimeInfinite)
@@ -1158,7 +1160,7 @@ bool DataReaderImpl::deadline_missed()
 
     if (!history_.set_next_deadline(
                 timer_owner_,
-                steady_clock::now() + duration_cast<system_clock::duration>(deadline_duration_us_)))
+                steady_clock::now() + duration_cast<system_clock::duration>(deadline_duration_us_), true))
     {
         logError(SUBSCRIBER, "Could not set next deadline in the history");
         return false;
@@ -2013,4 +2015,3 @@ void DataReaderImpl::try_notify_read_conditions() noexcept
 }  // namespace dds
 }  // namespace fastdds
 }  // namespace eprosima
-
