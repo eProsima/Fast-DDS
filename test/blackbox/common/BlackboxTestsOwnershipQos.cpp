@@ -740,6 +740,121 @@ TEST_P(OwnershipQos, exclusive_kind_non_keyed_reliable_deadline)
     ASSERT_EQ(denied_samples, reader.data_not_received());
 }
 
+/*!
+ * @test DDS-OWN-DEADLINE-02 Tests Ownership changes when the current owner doesn't comply with deadline QoS, in a
+ * Reliable communication with Keyed types.
+ */
+TEST_P(OwnershipQos, exclusive_kind_keyed_reliable_deadline)
+{
+
+    PubSubReader<KeyedHelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<KeyedHelloWorldPubSubType> writer1(TEST_TOPIC_NAME);
+    PubSubWriter<KeyedHelloWorldPubSubType> writer2(TEST_TOPIC_NAME);
+
+    reader.ownership_exclusive().reliability(RELIABLE_RELIABILITY_QOS).deadline_period({0, 100000000}).init();
+    writer1.ownership_strength(1).deadline_period({0, 100000000}).init();
+    writer2.ownership_strength(2).deadline_period({0, 100000000}).init();
+
+    ASSERT_TRUE(reader.isInitialized());
+    ASSERT_TRUE(writer1.isInitialized());
+    ASSERT_TRUE(writer2.isInitialized());
+
+    // Wait for discovery.
+    writer1.wait_discovery();
+    writer2.wait_discovery();
+    reader.wait_discovery(std::chrono::seconds(1), 2);
+
+    auto data = default_keyedhelloworld_data_generator(26);
+    reader.startReception(data);
+
+    decltype(data) denied_samples;
+
+    writer1.send_sample(data.front());
+    data.pop_front();
+    writer1.send_sample(data.front());
+    data.pop_front();
+    std::this_thread::sleep_for(std::chrono::milliseconds(50));
+
+    writer2.send_sample(data.front());
+    data.pop_front();
+    writer2.send_sample(data.front());
+    data.pop_front();
+    std::this_thread::sleep_for(std::chrono::milliseconds(50));
+
+    writer1.send_sample(data.front());
+    denied_samples.push_back(data.front());
+    data.pop_front();
+    writer1.send_sample(data.front());
+    denied_samples.push_back(data.front());
+    data.pop_front();
+    std::this_thread::sleep_for(std::chrono::milliseconds(50));
+
+    writer2.send_sample(data.front());
+    data.pop_front();
+    writer2.send_sample(data.front());
+    data.pop_front();
+    std::this_thread::sleep_for(std::chrono::milliseconds(50));
+
+    writer1.send_sample(data.front());
+    denied_samples.push_back(data.front());
+    data.pop_front();
+    writer1.send_sample(data.front());
+    denied_samples.push_back(data.front());
+    data.pop_front();
+    std::this_thread::sleep_for(std::chrono::milliseconds(50));
+
+    writer2.send_sample(data.front());
+    data.pop_front();
+    writer2.send_sample(data.front());
+    data.pop_front();
+    std::this_thread::sleep_for(std::chrono::milliseconds(50));
+
+    writer1.send_sample(data.front());
+    denied_samples.push_back(data.front());
+    data.pop_front();
+    writer1.send_sample(data.front());
+    denied_samples.push_back(data.front());
+    data.pop_front();
+    std::this_thread::sleep_for(std::chrono::milliseconds(50));
+
+    writer1.send_sample(data.front());
+    data.pop_front();
+    writer2.send_sample(data.front());
+    data.pop_front();
+    denied_samples.push_back(data.front());
+    data.pop_front();
+    writer1.send_sample(data.front());
+    denied_samples.push_back(data.front());
+    data.pop_front();
+    std::this_thread::sleep_for(std::chrono::milliseconds(50));
+
+    writer1.send_sample(data.front());
+    data.pop_front();
+    writer2.send_sample(data.front());
+    data.pop_front();
+    denied_samples.push_back(data.front());
+    data.pop_front();
+    writer1.send_sample(data.front());
+    denied_samples.push_back(data.front());
+    data.pop_front();
+    std::this_thread::sleep_for(std::chrono::milliseconds(50));
+
+    writer1.send_sample(data.front());
+    data.pop_front();
+    writer2.send_sample(data.front());
+    data.pop_front();
+    denied_samples.push_back(data.front());
+    data.pop_front();
+    writer1.send_sample(data.front());
+    denied_samples.push_back(data.front());
+    data.pop_front();
+    std::this_thread::sleep_for(std::chrono::milliseconds(50));
+
+    reader.block_for_seq({0, 13});
+    ASSERT_EQ(denied_samples.size(), reader.data_not_received().size());
+    ASSERT_EQ(denied_samples, reader.data_not_received());
+}
+
 #ifdef INSTANTIATE_TEST_SUITE_P
 #define GTEST_INSTANTIATE_TEST_MACRO(x, y, z, w) INSTANTIATE_TEST_SUITE_P(x, y, z, w)
 #else
