@@ -44,6 +44,7 @@
 #include <fastdds/publisher/PublisherImpl.hpp>
 #include <fastdds/subscriber/SubscriberImpl.hpp>
 #include <fastdds/topic/TopicImpl.hpp>
+#include <fastdds/topic/TopicProxy.hpp>
 
 using ReturnCode_t = eprosima::fastrtps::types::ReturnCode_t;
 
@@ -263,10 +264,10 @@ public:
         {
             return nullptr;
         }
-        TopicImpl* topic_impl = new TopicImpl(this, type_support, qos, listener);
-        Topic* topic = new Topic(topic_name, type_name, topic_impl, mask);
-        topic_impl->user_topic_ = topic;
-        topics_[topic_name] = topic_impl;
+        TopicImpl* topic_impl = new TopicImpl(nullptr, this, type_support, qos, listener);
+        TopicProxy* proxy = new TopicProxy(topic_name, type_name, mask, topic_impl);
+        Topic* topic = proxy->get_topic();
+        topics_[topic_name] = proxy;
         topic->enable();
         return topic;
     }
@@ -279,6 +280,21 @@ public:
             const StatusMask& mask)
     {
         return create_topic(topic_name, type_name, TOPIC_QOS_DEFAULT, listener, mask);
+    }
+
+    Topic* find_topic(
+            const std::string& /*topic_name*/,
+            const fastrtps::Duration_t& /*timeout*/)
+    {
+        return nullptr;
+    }
+
+    void set_topic_listener(
+            const TopicProxyFactory* /*factory*/,
+            TopicImpl* /*impl*/,
+            TopicListener* /*listener*/,
+            const StatusMask& /*mask*/)
+    {
     }
 
     ReturnCode_t delete_topic(
@@ -340,7 +356,7 @@ public:
         auto it = topics_.find(topic_name);
         if (it != topics_.end())
         {
-            return it->second->user_topic_;
+            return it->second->get_topic();
         }
         return nullptr;
     }
@@ -643,7 +659,6 @@ public:
 
         while (it_topics != topics_.end())
         {
-            it_topics->second->set_listener(nullptr);
             delete it_topics->second;
             it_topics = topics_.erase(it_topics);
         }
@@ -676,7 +691,7 @@ protected:
     std::map<Subscriber*, SubscriberImpl*> subscribers_;
     mutable std::mutex mtx_subs_;
     SubscriberQos default_sub_qos_;
-    std::map<std::string, TopicImpl*> topics_;
+    std::map<std::string, TopicProxy*> topics_;
     mutable std::mutex mtx_topics_;
     std::map<std::string, TypeSupport> types_;
     mutable std::mutex mtx_types_;

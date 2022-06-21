@@ -33,21 +33,21 @@ namespace fastdds {
 namespace dds {
 
 TopicImpl::TopicImpl(
+        TopicProxyFactory* factory,
         DomainParticipantImpl* p,
         TypeSupport type_support,
         const TopicQos& qos,
         TopicListener* listen)
-    : participant_(p)
+    : factory_(factory)
+    , participant_(p)
     , type_support_(type_support)
     , qos_(&qos == &TOPIC_QOS_DEFAULT ? participant_->get_default_topic_qos() : qos)
     , listener_(listen)
-    , user_topic_(nullptr)
 {
 }
 
 TopicImpl::~TopicImpl()
 {
-    delete user_topic_;
 }
 
 ReturnCode_t TopicImpl::check_qos(
@@ -143,21 +143,22 @@ const TopicListener* TopicImpl::get_listener() const
     return listener_;
 }
 
-ReturnCode_t TopicImpl::set_listener(
+void TopicImpl::set_listener(
         TopicListener* listener)
 {
     listener_ = listener;
-    return ReturnCode_t::RETCODE_OK;
+}
+
+void TopicImpl::set_listener(
+        TopicListener* listener,
+        const StatusMask& mask)
+{
+    participant_->set_topic_listener(factory_, this, listener, mask);
 }
 
 DomainParticipant* TopicImpl::get_participant() const
 {
     return participant_->get_participant();
-}
-
-const Topic* TopicImpl::get_topic() const
-{
-    return user_topic_;
 }
 
 const TypeSupport& TopicImpl::get_type() const
@@ -166,10 +167,11 @@ const TypeSupport& TopicImpl::get_type() const
 }
 
 TopicListener* TopicImpl::get_listener_for(
-        const StatusMask& status)
+        const StatusMask& status,
+        const Topic* topic)
 {
     if (listener_ != nullptr &&
-            user_topic_->get_status_mask().is_active(status))
+            topic->get_status_mask().is_active(status))
     {
         return listener_;
     }

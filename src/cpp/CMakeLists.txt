@@ -96,6 +96,7 @@ set(${PROJECT_NAME}_source_files
     fastdds/topic/ContentFilteredTopicImpl.cpp
     fastdds/topic/Topic.cpp
     fastdds/topic/TopicImpl.cpp
+    fastdds/topic/TopicProxyFactory.cpp
     fastdds/topic/TypeSupport.cpp
     fastdds/topic/qos/TopicQos.cpp
     fastdds/publisher/qos/DataWriterQos.cpp

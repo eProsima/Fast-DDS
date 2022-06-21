@@ -42,7 +42,7 @@ namespace dds {
 class DomainParticipant;
 class TopicListener;
 class DomainParticipantImpl;
-class TopicImpl;
+class TopicProxy;
 
 /**
  * Class Topic, represents the fact that both publications
@@ -52,7 +52,7 @@ class TopicImpl;
  */
 class Topic : public DomainEntity, public TopicDescription
 {
-    friend class TopicImpl;
+    friend class TopicProxy;
     friend class DomainParticipantImpl;
 
     /**
@@ -62,7 +62,7 @@ class Topic : public DomainEntity, public TopicDescription
     Topic(
             const std::string& topic_name,
             const std::string& type_name,
-            TopicImpl* p,
+            TopicProxy* p,
             const StatusMask& mask = StatusMask::all());
 
     Topic(
@@ -143,7 +143,7 @@ public:
 
 protected:
 
-    TopicImpl* impl_;
+    TopicProxy* impl_;
 
     friend class ::dds::topic::Topic;
 
