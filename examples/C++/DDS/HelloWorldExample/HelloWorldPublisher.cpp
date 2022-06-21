@@ -28,7 +28,16 @@
 
 #include <thread>
 
+#include <fastdds/rtps/transport/UDPv4TransportDescriptor.h>
+#include <fastrtps/rtps/attributes/RTPSParticipantAttributes.h>
+
+#include <fastdds/dds/subscriber/DataReader.hpp>
+#include <fastdds/dds/subscriber/SampleInfo.hpp>
+#include <fastdds/dds/subscriber/qos/DataReaderQos.hpp>
+
 using namespace eprosima::fastdds::dds;
+using namespace eprosima::fastdds::rtps;
+using namespace eprosima::fastrtps::rtps;
 
 HelloWorldPublisher::HelloWorldPublisher()
     : participant_(nullptr)
@@ -41,10 +50,22 @@ HelloWorldPublisher::HelloWorldPublisher()
 
 bool HelloWorldPublisher::init()
 {
-    hello_.index(0);
-    hello_.message("HelloWorld");
+    hello_.index(500);  // Key
+    hello_.id(0);
+    // hello_.message("HelloWorld");
     DomainParticipantQos pqos;
     pqos.name("Participant_pub");
+
+    pqos.wire_protocol().builtin.discovery_config.discoveryProtocol = DiscoveryProtocol_t::SIMPLE;
+    pqos.wire_protocol().builtin.discovery_config.use_SIMPLE_EndpointDiscoveryProtocol = true;
+    pqos.wire_protocol().builtin.discovery_config.use_STATIC_EndpointDiscoveryProtocol = false;
+    pqos.wire_protocol().builtin.discovery_config.leaseDuration = Duration_t(3, 0);
+    pqos.wire_protocol().builtin.discovery_config.leaseDuration_announcementperiod = Duration_t(1, 0);
+    auto transport = std::make_shared<UDPv4TransportDescriptor>();
+    transport->TTL = 64;
+    pqos.transport().user_transports.push_back(transport);
+    pqos.transport().use_builtin_transports = false;
+
     participant_ = DomainParticipantFactory::get_instance()->create_participant(0, pqos);
 
     if (participant_ == nullptr)
@@ -56,6 +77,21 @@ bool HelloWorldPublisher::init()
     type_.register_type(participant_);
 
     //CREATE THE PUBLISHER
+    DataWriterQos wqos;
+    wqos.reliability().kind = RELIABLE_RELIABILITY_QOS;
+    //
+    wqos.history().kind = KEEP_LAST_HISTORY_QOS;
+    wqos.durability().kind = TRANSIENT_LOCAL_DURABILITY_QOS;
+    wqos.endpoint().history_memory_policy = DYNAMIC_RESERVE_MEMORY_MODE;
+
+    wqos.publish_mode().kind = SYNCHRONOUS_PUBLISH_MODE;
+    wqos.reliable_writer_qos().times.heartbeatPeriod.seconds = 0;
+    wqos.reliable_writer_qos().times.heartbeatPeriod.nanosec = 500 * 1000 * 1000;
+
+    wqos.resource_limits().max_instances = 1024;
+    wqos.resource_limits().max_samples_per_instance = 1;
+    wqos.data_sharing().off();
+
     publisher_ = participant_->create_publisher(PUBLISHER_QOS_DEFAULT, nullptr);
 
     if (publisher_ == nullptr)
@@ -71,7 +107,7 @@ bool HelloWorldPublisher::init()
     }
 
     // CREATE THE WRITER
-    writer_ = publisher_->create_datawriter(topic_, DATAWRITER_QOS_DEFAULT, &listener_);
+    writer_ = publisher_->create_datawriter(topic_, wqos, &listener_);
 
     if (writer_ == nullptr)
     {
@@ -129,11 +165,14 @@ void HelloWorldPublisher::runThread(
         {
             if (publish(false))
             {
-                std::cout << "Message: " << hello_.message() << " with index: " << hello_.index()
-                          << " SENT" << std::endl;
+                // std::cout << "Message: " << hello_.message() << " with index: " << hello_.index()
+                //           << " SENT" << std::endl;
             }
-            std::this_thread::sleep_for(std::chrono::milliseconds(sleep));
+            // std::this_thread::sleep_for(std::chrono::milliseconds(sleep));
         }
+
+        std::cout << "publish finished " << std::endl;
+        std::this_thread::sleep_for(std::chrono::seconds(10));
     }
     else
     {
@@ -145,11 +184,14 @@ void HelloWorldPublisher::runThread(
             }
             else
             {
-                std::cout << "Message: " << hello_.message() << " with index: " << hello_.index()
+                std::cout << "Message: id: " << hello_.id() << " index: " << hello_.index()
                           << " SENT" << std::endl;
             }
-            std::this_thread::sleep_for(std::chrono::milliseconds(sleep));
+            // std::this_thread::sleep_for(std::chrono::milliseconds(sleep));
         }
+
+        std::cout << "publish finished. " << std::endl;
+        std::this_thread::sleep_for(std::chrono::seconds(10));
     }
 }
 
@@ -177,8 +219,10 @@ bool HelloWorldPublisher::publish(
 {
     if (listener_.firstConnected_ || !waitForListener || listener_.matched_ > 0)
     {
-        hello_.index(hello_.index() + 1);
+        hello_.id(hello_.id() + 1);  // id is increased from 0 and step is 1.
+        hello_.index(hello_.index() - 1); // index (key) is decreased from 500 and step is 1.
         writer_->write(&hello_);
+
         return true;
     }
     return false;

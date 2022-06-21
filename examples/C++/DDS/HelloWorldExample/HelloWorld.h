@@ -141,30 +141,49 @@ public:
     eProsima_user_DllExport uint32_t& index();
 
     /*!
-     * @brief This function copies the value in member message
-     * @param _message New value to be copied in member message
+     * @brief This function sets a value in member id
+     * @param _id New value for member id
      */
-    eProsima_user_DllExport void message(
-            const std::string& _message);
+    eProsima_user_DllExport void id(
+            uint32_t _id);
 
     /*!
-     * @brief This function moves the value in member message
-     * @param _message New value to be moved in member message
+     * @brief This function returns the value of member id
+     * @return Value of member id
      */
-    eProsima_user_DllExport void message(
-            std::string&& _message);
+    eProsima_user_DllExport uint32_t id() const;
 
     /*!
-     * @brief This function returns a constant reference to member message
-     * @return Constant reference to member message
+     * @brief This function returns a reference to member id
+     * @return Reference to member id
      */
-    eProsima_user_DllExport const std::string& message() const;
+    eProsima_user_DllExport uint32_t& id();
 
     /*!
-     * @brief This function returns a reference to member message
-     * @return Reference to member message
+     * @brief This function copies the value in member description
+     * @param _description New value to be copied in member description
      */
-    eProsima_user_DllExport std::string& message();
+    eProsima_user_DllExport void description(
+            const std::string& _description);
+
+    /*!
+     * @brief This function moves the value in member description
+     * @param _description New value to be moved in member description
+     */
+    eProsima_user_DllExport void description(
+            std::string&& _description);
+
+    /*!
+     * @brief This function returns a constant reference to member description
+     * @return Constant reference to member description
+     */
+    eProsima_user_DllExport const std::string& description() const;
+
+    /*!
+     * @brief This function returns a reference to member description
+     * @return Reference to member description
+     */
+    eProsima_user_DllExport std::string& description();
 
     /*!
      * @brief This function returns the maximum serialized size of an object
@@ -226,7 +245,8 @@ public:
 private:
 
     uint32_t m_index;
-    std::string m_message;
+    uint32_t m_id;
+    std::string m_description;
 };
 
 #endif // _FAST_DDS_GENERATED_HELLOWORLD_H_

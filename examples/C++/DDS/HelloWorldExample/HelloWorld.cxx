@@ -36,10 +36,12 @@ using namespace eprosima::fastcdr::exception;
 
 HelloWorld::HelloWorld()
 {
-    // m_index com.eprosima.idl.parser.typecode.PrimitiveTypeCode@64f6106c
+    // m_index com.eprosima.idl.parser.typecode.PrimitiveTypeCode@2df32bf7
     m_index = 0;
-    // m_message com.eprosima.idl.parser.typecode.StringTypeCode@5891e32e
-    m_message ="";
+    // m_id com.eprosima.idl.parser.typecode.PrimitiveTypeCode@530612ba
+    m_id = 0;
+    // m_description com.eprosima.idl.parser.typecode.StringTypeCode@2a40cd94
+    m_description ="";
 
 }
 
@@ -47,20 +49,23 @@ HelloWorld::~HelloWorld()
 {
 
 
+
 }
 
 HelloWorld::HelloWorld(
         const HelloWorld& x)
 {
     m_index = x.m_index;
-    m_message = x.m_message;
+    m_id = x.m_id;
+    m_description = x.m_description;
 }
 
 HelloWorld::HelloWorld(
         HelloWorld&& x)
 {
     m_index = x.m_index;
-    m_message = std::move(x.m_message);
+    m_id = x.m_id;
+    m_description = std::move(x.m_description);
 }
 
 HelloWorld& HelloWorld::operator =(
@@ -68,7 +73,8 @@ HelloWorld& HelloWorld::operator =(
 {
 
     m_index = x.m_index;
-    m_message = x.m_message;
+    m_id = x.m_id;
+    m_description = x.m_description;
 
     return *this;
 }
@@ -78,7 +84,8 @@ HelloWorld& HelloWorld::operator =(
 {
 
     m_index = x.m_index;
-    m_message = std::move(x.m_message);
+    m_id = x.m_id;
+    m_description = std::move(x.m_description);
 
     return *this;
 }
@@ -87,7 +94,7 @@ bool HelloWorld::operator ==(
         const HelloWorld& x) const
 {
 
-    return (m_index == x.m_index && m_message == x.m_message);
+    return (m_index == x.m_index && m_id == x.m_id && m_description == x.m_description);
 }
 
 bool HelloWorld::operator !=(
@@ -100,6 +107,9 @@ size_t HelloWorld::getMaxCdrSerializedSize(
         size_t current_alignment)
 {
     size_t initial_alignment = current_alignment;
+
+
+    current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
 
 
     current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
@@ -122,7 +132,10 @@ size_t HelloWorld::getCdrSerializedSize(
     current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
 
 
-    current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4) + data.message().size() + 1;
+    current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
+
+
+    current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4) + data.description().size() + 1;
 
 
     return current_alignment - initial_alignment;
@@ -133,7 +146,8 @@ void HelloWorld::serialize(
 {
 
     scdr << m_index;
-    scdr << m_message;
+    scdr << m_id;
+    scdr << m_description;
 
 }
 
@@ -142,7 +156,8 @@ void HelloWorld::deserialize(
 {
 
     dcdr >> m_index;
-    dcdr >> m_message;
+    dcdr >> m_id;
+    dcdr >> m_description;
 }
 
 /*!
@@ -174,47 +189,78 @@ uint32_t& HelloWorld::index()
 }
 
 /*!
- * @brief This function copies the value in member message
- * @param _message New value to be copied in member message
+ * @brief This function sets a value in member id
+ * @param _id New value for member id
  */
-void HelloWorld::message(
-        const std::string& _message)
+void HelloWorld::id(
+        uint32_t _id)
 {
-    m_message = _message;
+    m_id = _id;
 }
 
 /*!
- * @brief This function moves the value in member message
- * @param _message New value to be moved in member message
+ * @brief This function returns the value of member id
+ * @return Value of member id
  */
-void HelloWorld::message(
-        std::string&& _message)
+uint32_t HelloWorld::id() const
 {
-    m_message = std::move(_message);
+    return m_id;
 }
 
 /*!
- * @brief This function returns a constant reference to member message
- * @return Constant reference to member message
+ * @brief This function returns a reference to member id
+ * @return Reference to member id
  */
-const std::string& HelloWorld::message() const
+uint32_t& HelloWorld::id()
 {
-    return m_message;
+    return m_id;
 }
 
 /*!
- * @brief This function returns a reference to member message
- * @return Reference to member message
+ * @brief This function copies the value in member description
+ * @param _description New value to be copied in member description
  */
-std::string& HelloWorld::message()
+void HelloWorld::description(
+        const std::string& _description)
 {
-    return m_message;
+    m_description = _description;
+}
+
+/*!
+ * @brief This function moves the value in member description
+ * @param _description New value to be moved in member description
+ */
+void HelloWorld::description(
+        std::string&& _description)
+{
+    m_description = std::move(_description);
+}
+
+/*!
+ * @brief This function returns a constant reference to member description
+ * @return Constant reference to member description
+ */
+const std::string& HelloWorld::description() const
+{
+    return m_description;
+}
+
+/*!
+ * @brief This function returns a reference to member description
+ * @return Reference to member description
+ */
+std::string& HelloWorld::description()
+{
+    return m_description;
 }
 
 size_t HelloWorld::getKeyMaxCdrSerializedSize(
         size_t current_alignment)
 {
     size_t current_align = current_alignment;
+
+
+     current_align += 4 + eprosima::fastcdr::Cdr::alignment(current_align, 4);
 
 
 
@@ -225,12 +271,13 @@ size_t HelloWorld::getKeyMaxCdrSerializedSize(
 
 bool HelloWorld::isKeyDefined()
 {
-    return false;
+    return true;
 }
 
 void HelloWorld::serializeKey(
         eprosima::fastcdr::Cdr& scdr) const
 {
     (void) scdr;
-      
+     scdr << m_index;
+
 }

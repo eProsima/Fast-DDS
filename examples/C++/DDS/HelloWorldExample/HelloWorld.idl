@@ -1,5 +1,6 @@
 struct HelloWorld
 {
-	unsigned long index;
-	string message;
+    @Key unsigned long      index;
+    unsigned long      id;
+    string                  description;
 };

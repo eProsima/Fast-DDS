@@ -26,7 +26,18 @@
 #include <fastdds/dds/subscriber/SampleInfo.hpp>
 #include <fastdds/dds/subscriber/qos/DataReaderQos.hpp>
 
+#include <thread>
+
+#include <fastdds/rtps/transport/UDPv4TransportDescriptor.h>
+#include <fastrtps/rtps/attributes/RTPSParticipantAttributes.h>
+
+#include <fastdds/dds/subscriber/DataReader.hpp>
+#include <fastdds/dds/subscriber/SampleInfo.hpp>
+#include <fastdds/dds/subscriber/qos/DataReaderQos.hpp>
+
 using namespace eprosima::fastdds::dds;
+using namespace eprosima::fastdds::rtps;
+using namespace eprosima::fastrtps::rtps;
 
 HelloWorldSubscriber::HelloWorldSubscriber()
     : participant_(nullptr)
@@ -41,6 +52,17 @@ bool HelloWorldSubscriber::init()
 {
     DomainParticipantQos pqos;
     pqos.name("Participant_sub");
+
+    pqos.wire_protocol().builtin.discovery_config.discoveryProtocol = DiscoveryProtocol_t::SIMPLE;
+    pqos.wire_protocol().builtin.discovery_config.use_SIMPLE_EndpointDiscoveryProtocol = true;
+    pqos.wire_protocol().builtin.discovery_config.use_STATIC_EndpointDiscoveryProtocol = false;
+    pqos.wire_protocol().builtin.discovery_config.leaseDuration = Duration_t(3, 0);
+    pqos.wire_protocol().builtin.discovery_config.leaseDuration_announcementperiod = Duration_t(1, 0);
+    auto transport = std::make_shared<UDPv4TransportDescriptor>();
+    transport->TTL = 64;
+    pqos.transport().user_transports.push_back(transport);
+    pqos.transport().use_builtin_transports = false;
+
     participant_ = DomainParticipantFactory::get_instance()->create_participant(0, pqos);
 
     if (participant_ == nullptr)
@@ -73,6 +95,13 @@ bool HelloWorldSubscriber::init()
     // CREATE THE READER
     DataReaderQos rqos = DATAREADER_QOS_DEFAULT;
     rqos.reliability().kind = RELIABLE_RELIABILITY_QOS;
+    //
+    rqos.history().kind = KEEP_LAST_HISTORY_QOS;
+    rqos.durability().kind = TRANSIENT_LOCAL_DURABILITY_QOS;
+    rqos.resource_limits().max_instances = 1024;
+    rqos.resource_limits().max_samples_per_instance = 1;
+    rqos.data_sharing().off();
+
     reader_ = subscriber_->create_datareader(topic_, rqos, &listener_);
 
     if (reader_ == nullptr)
@@ -125,13 +154,23 @@ void HelloWorldSubscriber::SubListener::on_data_available(
         DataReader* reader)
 {
     SampleInfo info;
+    static int64_t prev_id = -1;
     if (reader->take_next_sample(&hello_, &info) == ReturnCode_t::RETCODE_OK)
     {
         if (info.instance_state == ALIVE_INSTANCE_STATE)
         {
             samples_++;
             // Print your structure data here.
-            std::cout << "Message " << hello_.message() << " " << hello_.index() << " RECEIVED" << std::endl;
+            if (prev_id == -1) {
+              prev_id = hello_.id();
+              std::cout << "id:" << hello_.id() << ", index:" << hello_.index() << " RECEIVED" << std::endl;
+			} else if ((prev_id + 1) == hello_.id()) {
+              prev_id++;
+            	std::cout << "id:" << hello_.id() << ", index:" << hello_.index() << " RECEIVED" << std::endl;
+            } else {
+              prev_id++;
+            	std::cout << "+++ Fail: id:" << hello_.id() << ", index:" << hello_.index() << " RECEIVED" << std::endl;
+            }
         }
     }
 }
