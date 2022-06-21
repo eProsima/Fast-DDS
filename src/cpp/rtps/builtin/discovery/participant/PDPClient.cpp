@@ -290,9 +290,9 @@ void PDPClient::assignRemoteEndpoints(
         for (auto& svr : mp_builtin->m_DiscoveryServers)
         {
             {
-                std::unique_lock<std::recursive_mutex> lock(*getMutex());
                 if (svr.guidPrefix == pdata->m_guid.guidPrefix)
                 {
+                    std::unique_lock<std::recursive_mutex> lock(*getMutex());
                     svr.proxy = pdata;
                 }
             }
@@ -326,9 +326,9 @@ void PDPClient::removeRemoteEndpoints(
         for (auto& svr : mp_builtin->m_DiscoveryServers)
         {
             {
-                std::unique_lock<std::recursive_mutex> lock(*getMutex());
                 if (svr.guidPrefix == pdata->m_guid.guidPrefix)
                 {
+                    std::unique_lock<std::recursive_mutex> lock(*getMutex());
                     svr.proxy = nullptr; // reasign when we receive again server DATA(p)
                     is_server = true;
                     mp_sync->restart_timer(); // enable announcement and sync mechanism till this server reappears
