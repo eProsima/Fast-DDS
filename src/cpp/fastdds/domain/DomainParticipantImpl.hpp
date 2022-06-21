@@ -220,11 +220,16 @@ public:
 
     /**
      * Gives access to an existing (or ready to exist) enabled Topic.
-     * Topics obtained by this method must be destroyed by delete_topic.
+     * It should be noted that the returned Topic is a local object that acts as a proxy to designate the global
+     * concept of topic.
+     * Topics obtained by means of find_topic, must also be deleted by means of delete_topic so that the local
+     * resources can be released.
+     * If a Topic is obtained multiple times by means of find_topic or create_topic, it must also be deleted that same
+     * number of times using delete_topic.
      *
      * @param topic_name Topic name
      * @param timeout Maximum time to wait for the Topic
-     * @return Pointer to the existing Topic, nullptr in error case
+     * @return Pointer to the existing Topic, nullptr in case of error or timeout
      */
     Topic* find_topic(
             const std::string& topic_name,
