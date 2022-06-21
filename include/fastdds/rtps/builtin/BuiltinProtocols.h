@@ -70,9 +70,9 @@ private:
     virtual ~BuiltinProtocols();
 
     /*
-    * Mutex to protect the m_DiscoveryServers collection. Element access is not protected by this mutex, the PDP mutex 
-    * needs to be used when querying or modifying mutable members of the collection. 
-    */
+     * Mutex to protect the m_DiscoveryServers collection. Element access is not protected by this mutex, the PDP mutex
+     * needs to be used when querying or modifying mutable members of the collection.
+     */
     mutable eprosima::shared_mutex discovery_mutex_;
 
 public:
