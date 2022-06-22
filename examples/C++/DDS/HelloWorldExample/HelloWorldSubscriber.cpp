@@ -155,7 +155,7 @@ void HelloWorldSubscriber::SubListener::on_data_available(
 {
     SampleInfo info;
     static int64_t prev_id = -1;
-    if (reader->take_next_sample(&hello_, &info) == ReturnCode_t::RETCODE_OK)
+    while (reader->take_next_sample(&hello_, &info) == ReturnCode_t::RETCODE_OK)
     {
         if (info.instance_state == ALIVE_INSTANCE_STATE)
         {
