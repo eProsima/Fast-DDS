@@ -20,6 +20,10 @@
 #ifndef _FASTDDS_PARTICIPANTIMPL_HPP_
 #define _FASTDDS_PARTICIPANTIMPL_HPP_
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
+
+#include <mutex>
+#include <condition_variable>
+
 #include <fastdds/rtps/common/Guid.h>
 #include <fastdds/rtps/participant/RTPSParticipantListener.h>
 #include <fastdds/rtps/reader/StatefulReader.h>
@@ -37,6 +41,7 @@
 #include <fastrtps/types/TypesBase.h>
 
 #include "fastdds/topic/DDSSQLFilter/DDSFilterFactory.hpp"
+#include <fastdds/topic/TopicProxyFactory.hpp>
 
 using eprosima::fastrtps::types::ReturnCode_t;
 
@@ -212,6 +217,37 @@ public:
             const std::string& profile_name,
             TopicListener* listener = nullptr,
             const StatusMask& mask = StatusMask::all());
+
+    /**
+     * Gives access to an existing (or ready to exist) enabled Topic.
+     * It should be noted that the returned Topic is a local object that acts as a proxy to designate the global
+     * concept of topic.
+     * Topics obtained by means of find_topic, must also be deleted by means of delete_topic so that the local
+     * resources can be released.
+     * If a Topic is obtained multiple times by means of find_topic or create_topic, it must also be deleted that same
+     * number of times using delete_topic.
+     *
+     * @param topic_name Topic name
+     * @param timeout Maximum time to wait for the Topic
+     * @return Pointer to the existing Topic, nullptr in case of error or timeout
+     */
+    Topic* find_topic(
+            const std::string& topic_name,
+            const fastrtps::Duration_t& timeout);
+
+    /**
+     * Implementation of Topic::set_listener that propagates the listener and mask to all the TopicProxy
+     * objects held by the same TopicProxy factory in a thread-safe way.
+     *
+     * @param factory  TopicProxyFactory managing the topic on which the listener should be changed.
+     * @param listener Listener to assign to all the TopicProxy objects owned by the factory.
+     * @param mask     StatusMask to assign to all the TopicProxy objects owned by the factory.
+     */
+    void set_topic_listener(
+            const TopicProxyFactory* factory,
+            TopicImpl* topic,
+            TopicListener* listener,
+            const StatusMask& mask);
 
     ReturnCode_t delete_topic(
             const Topic* topic);
@@ -480,12 +516,13 @@ protected:
     mutable std::mutex mtx_types_;
 
     //!Topic map
-    std::map<std::string, TopicImpl*> topics_;
+    std::map<std::string, TopicProxyFactory*> topics_;
     std::map<InstanceHandle_t, Topic*> topics_by_handle_;
     std::map<std::string, std::unique_ptr<ContentFilteredTopic>> filtered_topics_;
     std::map<std::string, IContentFilterFactory*> filter_factories_;
     DDSSQLFilter::DDSFilterFactory dds_sql_filter_factory_;
     mutable std::mutex mtx_topics_;
+    std::condition_variable cond_topics_;
 
     TopicQos default_topic_qos_;
 

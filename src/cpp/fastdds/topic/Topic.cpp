@@ -19,7 +19,7 @@
 
 #include <fastdds/dds/topic/Topic.hpp>
 #include <fastdds/dds/domain/DomainParticipant.hpp>
-#include <fastdds/topic/TopicImpl.hpp>
+#include <fastdds/topic/TopicProxy.hpp>
 
 #include <fastdds/dds/log/Log.hpp>
 
@@ -30,7 +30,7 @@ namespace dds {
 Topic::Topic(
         const std::string& topic_name,
         const std::string& type_name,
-        TopicImpl* p,
+        TopicProxy* p,
         const StatusMask& mask)
     : DomainEntity(mask)
     , TopicDescription(topic_name, type_name)
@@ -82,14 +82,8 @@ ReturnCode_t Topic::set_listener(
         TopicListener* listener,
         const StatusMask& mask)
 {
-    TopicListener* value = mask.is_active(mask.inconsistent_topic()) ? listener : nullptr;
-    ReturnCode_t ret_val = impl_->set_listener(value);
-    if (ret_val == ReturnCode_t::RETCODE_OK)
-    {
-        status_mask_ = mask;
-    }
-
-    return ret_val;
+    impl_->set_listener(listener, mask);
+    return ReturnCode_t::RETCODE_OK;
 }
 
 DomainParticipant* Topic::get_participant() const

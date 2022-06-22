@@ -36,7 +36,7 @@
 #include <fastdds/domain/DomainParticipantImpl.hpp>
 #include <fastdds/publisher/filtering/DataWriterFilteredChange.hpp>
 #include <fastdds/publisher/filtering/ReaderFilterInformation.hpp>
-#include <fastdds/topic/TopicImpl.hpp>
+#include <fastdds/topic/TopicProxy.hpp>
 #include <fastdds/topic/ContentFilterInfo.hpp>
 #include <fastdds/topic/ContentFilterUtils.hpp>
 
@@ -202,7 +202,7 @@ public:
             DomainParticipantImpl* participant,
             Topic* topic)
     {
-        TopicImpl* writer_topic = static_cast<TopicImpl*>(topic->get_impl());
+        TopicProxy* writer_topic = static_cast<TopicProxy*>(topic->get_impl());
 
         if (0 == filter_info.filter_class_name.size() ||
                 0 != writer_topic->get_rtps_topic_name().compare(filter_info.related_topic_name.c_str()))

@@ -58,6 +58,8 @@
 #include <fastdds/subscriber/SubscriberImpl.hpp>
 #include <fastdds/topic/ContentFilteredTopicImpl.hpp>
 #include <fastdds/topic/TopicImpl.hpp>
+#include <fastdds/topic/TopicProxy.hpp>
+#include <fastdds/topic/TopicProxyFactory.hpp>
 #include <rtps/RTPSDomainImpl.hpp>
 #include <utils/SystemInfo.hpp>
 
@@ -327,7 +329,7 @@ ReturnCode_t DomainParticipantImpl::enable()
 
             for (auto topic : topics_)
             {
-                topic.second->user_topic_->enable();
+                topic.second->enable_topic();
             }
         }
 
@@ -467,6 +469,53 @@ ReturnCode_t DomainParticipantImpl::delete_subscriber(
     return ReturnCode_t::RETCODE_ERROR;
 }
 
+Topic* DomainParticipantImpl::find_topic(
+        const std::string& topic_name,
+        const fastrtps::Duration_t& timeout)
+{
+    auto find_fn = [this, &topic_name]()
+            {
+                return topics_.count(topic_name) > 0;
+            };
+
+    std::unique_lock<std::mutex> lock(mtx_topics_);
+    if (timeout.is_infinite())
+    {
+        cond_topics_.wait(lock, find_fn);
+    }
+    else
+    {
+        auto duration = std::chrono::seconds(timeout.seconds) + std::chrono::nanoseconds(timeout.nanosec);
+        if (!cond_topics_.wait_for(lock, duration, find_fn))
+        {
+            return nullptr;
+        }
+    }
+
+    Topic* ret_val = topics_[topic_name]->create_topic()->get_topic();
+
+    InstanceHandle_t topic_handle;
+    create_instance_handle(topic_handle);
+    ret_val->set_instance_handle(topic_handle);
+    topics_by_handle_[topic_handle] = ret_val;
+
+    return ret_val;
+}
+
+void DomainParticipantImpl::set_topic_listener(
+        const TopicProxyFactory* factory,
+        TopicImpl* impl,
+        TopicListener* listener,
+        const StatusMask& mask)
+{
+    std::lock_guard<std::mutex> lock(mtx_topics_);
+    impl->set_listener(listener);
+    factory->for_each([mask](const std::unique_ptr<TopicProxy>& proxy)
+            {
+                proxy->get_topic()->status_mask_ = mask;
+            });
+}
+
 ReturnCode_t DomainParticipantImpl::delete_topic(
         const Topic* topic)
 {
@@ -475,30 +524,36 @@ ReturnCode_t DomainParticipantImpl::delete_topic(
         return ReturnCode_t::RETCODE_BAD_PARAMETER;
     }
 
-    if (participant_ != topic->get_participant())
-    {
-        return ReturnCode_t::RETCODE_PRECONDITION_NOT_MET;
-    }
-
     std::lock_guard<std::mutex> lock(mtx_topics_);
-    auto it = topics_.find(topic->get_name());
-
-    if (it != topics_.end())
+    auto handle_it = std::find_if(topics_by_handle_.begin(), topics_by_handle_.end(),
+                    [topic](const decltype(topics_by_handle_)::value_type& item)
+                    {
+                        return item.second == topic;
+                    });
+    if (handle_it != topics_by_handle_.end())
     {
-        assert(topic->get_instance_handle() == it->second->get_topic()->get_instance_handle()
-                && "The topic instance handle does not match the topic implementation instance handle");
-        if (it->second->is_referenced())
+        auto it = topics_.find(topic->get_name());
+        assert(it != topics_.end() && "Topic found by handle but factory not found");
+
+        TopicProxy* proxy = dynamic_cast<TopicProxy*>(topic->get_impl());
+        assert(nullptr != proxy);
+        auto ret_code = it->second->delete_topic(proxy);
+        if (ReturnCode_t::RETCODE_OK == ret_code)
         {
-            return ReturnCode_t::RETCODE_PRECONDITION_NOT_MET;
+            InstanceHandle_t handle = topic->get_instance_handle();
+            topics_by_handle_.erase(handle);
+
+            if (it->second->can_be_deleted())
+            {
+                auto factory = it->second;
+                topics_.erase(it);
+                delete factory;
+            }
         }
-        it->second->set_listener(nullptr);
-        topics_by_handle_.erase(topic->get_instance_handle());
-        delete it->second;
-        topics_.erase(it);
-        return ReturnCode_t::RETCODE_OK;
+        return ret_code;
     }
 
-    return ReturnCode_t::RETCODE_ERROR;
+    return ReturnCode_t::RETCODE_PRECONDITION_NOT_MET;
 }
 
 ContentFilteredTopic* DomainParticipantImpl::create_contentfilteredtopic(
@@ -537,7 +592,7 @@ ContentFilteredTopic* DomainParticipantImpl::create_contentfilteredtopic(
         return nullptr;
     }
 
-    TopicImpl* topic_impl = dynamic_cast<TopicImpl*>(related_topic->get_impl());
+    TopicProxy* topic_impl = dynamic_cast<TopicProxy*>(related_topic->get_impl());
     assert(nullptr != topic_impl);
     const TypeSupport& type = topic_impl->get_type();
     LoanableSequence<const char*>::size_type n_params;
@@ -904,12 +959,11 @@ ReturnCode_t DomainParticipantImpl::delete_contained_entities()
     std::lock_guard<std::mutex> lock_topics(mtx_topics_);
 
     filtered_topics_.clear();
+    topics_by_handle_.clear();
 
     auto it_topics = topics_.begin();
     while (it_topics != topics_.end())
     {
-        it_topics->second->set_listener(nullptr);
-        topics_by_handle_.erase(it_topics->second->get_topic()->get_instance_handle());
         delete it_topics->second;
         it_topics = topics_.erase(it_topics);
     }
@@ -1300,15 +1354,14 @@ Topic* DomainParticipantImpl::create_topic(
     InstanceHandle_t topic_handle;
     create_instance_handle(topic_handle);
 
-    //TODO CONSTRUIR LA IMPLEMENTACION DENTRO DEL OBJETO DEL USUARIO.
-    TopicImpl* topic_impl = new TopicImpl(this, type_support, qos, listener);
-    Topic* topic = new Topic(topic_name, type_name, topic_impl, mask);
-    topic_impl->user_topic_ = topic;
+    TopicProxyFactory* factory = new TopicProxyFactory(this, topic_name, mask, type_support, qos, listener);
+    TopicProxy* proxy = factory->create_topic();
+    Topic* topic = proxy->get_topic();
     topic->set_instance_handle(topic_handle);
 
     //SAVE THE TOPIC INTO MAPS
     topics_by_handle_[topic_handle] = topic;
-    topics_[topic_name] = topic_impl;
+    topics_[topic_name] = factory;
 
     // Enable topic if appropriate
     if (enabled && qos_.entity_factory().autoenable_created_entities)
@@ -1317,6 +1370,8 @@ Topic* DomainParticipantImpl::create_topic(
         assert(ReturnCode_t::RETCODE_OK == ret_topic_enable);
         (void)ret_topic_enable;
     }
+
+    cond_topics_.notify_all();
 
     return topic;
 }
@@ -1348,7 +1403,7 @@ TopicDescription* DomainParticipantImpl::lookup_topicdescription(
     auto it = topics_.find(topic_name);
     if (it != topics_.end())
     {
-        return it->second->user_topic_;
+        return it->second->get_topic()->get_topic();
     }
 
     auto filtered_it = filtered_topics_.find(topic_name);
