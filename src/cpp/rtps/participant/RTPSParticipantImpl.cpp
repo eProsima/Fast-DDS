@@ -1369,10 +1369,7 @@ void RTPSParticipantImpl::update_attributes(
                                     break;
                                 }
                             }
-                            if (false == modified_locator)
-                            {
-                                break;
-                            }
+                            break;
                         }
                     }
                     if (server_it == m_att.builtin.discovery_config.m_DiscoveryServers.end())

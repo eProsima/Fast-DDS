@@ -227,7 +227,7 @@ RTPSParticipant* RTPSDomain::createParticipant(
     }
 
     // Check the environment file in case it was modified during participant creation leading to a missed callback.
-    if (RTPSDomainImpl::file_watch_handle_)
+    if ((PParam.builtin.discovery_config.discoveryProtocol != DiscoveryProtocol_t::CLIENT) && RTPSDomainImpl::file_watch_handle_)
     {
         pimpl->environment_file_has_changed();
     }

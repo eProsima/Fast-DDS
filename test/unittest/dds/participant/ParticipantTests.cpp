@@ -62,6 +62,7 @@
 
 #include "../../common/GTestPrinters.hpp"
 #include "../../logging/mock/MockConsumer.h"
+#include "fastdds/dds/domain/DomainParticipant.hpp"
 
 namespace eprosima {
 namespace fastdds {
@@ -708,6 +709,72 @@ void set_environment_file(
 #endif // _WIN32
 }
 
+void set_and_check_with_environment_file(
+        DomainParticipant* participant,
+        std::vector<std::string> locators,
+        std::string filename)
+{
+
+    const std::regex ROS2_ADDRESS_PATTERN(R"(^([A-Za-z0-9-.]+)?:?(?:(\d+))?$)");
+
+    rtps::RemoteServerList_t output;
+    rtps::RemoteServerAttributes server;
+    fastrtps::rtps::Locator_t locator;
+    int id = 0;
+
+    std::ofstream file;
+
+    std::this_thread::sleep_for(std::chrono::milliseconds(1100));
+    file.open(filename);
+    file << "{\"ROS_DISCOVERY_SERVER\": ";
+    bool first_element = true;
+    for (auto a: locators)
+    {
+        if (!first_element)
+        {
+            file << "; ";
+        }
+        std::smatch mr;
+        if (std::regex_match(a, mr, ROS2_ADDRESS_PATTERN, std::regex_constants::match_not_null))
+        {
+            std::smatch::iterator it = mr.cbegin();
+            while (++it != mr.cend())
+            {
+                // Check whether the address is IPv4
+                if (fastrtps::rtps::IPLocator::isIPv4(it->str()))
+                {
+                    fastrtps::rtps::IPLocator::setIPv4(locator, it->str());
+                }
+                if (++it != mr.cend())
+                {
+                    // reset the locator to default
+                    int port = stoi(it->str());
+                    fastrtps::rtps::IPLocator::setPhysicalPort(locator, static_cast<uint16_t>(port));
+                }
+            }
+            // add the server to the list
+            server.clear();
+            server.metatrafficUnicastLocatorList.push_back(locator);
+            if (!get_server_client_default_guidPrefix(id++, server.guidPrefix))
+            {
+                file.close();
+                throw std::invalid_argument("The maximum number of default discovery servers has been reached");
+            }
+            output.push_back(server);
+        }
+        file << a;
+        first_element = false;
+    }
+    file << "}";
+    file.close();
+    std::this_thread::sleep_for(std::chrono::milliseconds(3000));
+
+    fastrtps::rtps::RTPSParticipantAttributes attributes;
+    get_rtps_attributes(participant, attributes);
+    EXPECT_EQ(attributes.builtin.discovery_config.discoveryProtocol, fastrtps::rtps::DiscoveryProtocol::SERVER);
+    EXPECT_EQ(attributes.builtin.discovery_config.m_DiscoveryServers, output);
+}
+
 /**
  * Test that checks a SIMPLE participant is transformed into a CLIENT.
  * It also checks that the environment variable has priority over the coded QoS settings.
@@ -973,6 +1040,32 @@ TEST(ParticipantTests, ServerParticipantInconsistentLocatorsRemoteServerListConf
 #endif // APPLE
     DomainParticipantQos result_qos = participant->get_qos();
     EXPECT_EQ(ReturnCode_t::RETCODE_OK, participant->set_qos(result_qos));
+    EXPECT_EQ(ReturnCode_t::RETCODE_OK, DomainParticipantFactory::get_instance()->delete_participant(participant));
+    std::remove(filename.c_str());
+}
+
+/**
+ * SERVER Participant: Test repeat invocations of FileWatch callback
+ */
+TEST(ParticipantTests, RepeatEnvironmentFileConfiguration)
+{
+    std::string filename = "environment_file.json";
+    set_environment_file(filename);
+
+    std::ofstream file;
+    file.open(filename);
+    file << "{\"ROS_DISCOVERY_SERVER\": \";localhost:1234\"}";
+    file.close();
+
+    DomainParticipantQos qos;
+    set_server_qos(qos);
+
+    DomainParticipant* participant = DomainParticipantFactory::get_instance()->create_participant(0, qos);
+    ASSERT_NE(nullptr, participant);
+#ifndef __APPLE__
+    std::vector<std::string> locator_list = {"172.17.0.5:4321", "192.168.1.133:64863"};
+    set_and_check_with_environment_file(participant, locator_list, filename);
+#endif // APPLE
     EXPECT_EQ(ReturnCode_t::RETCODE_OK, DomainParticipantFactory::get_instance()->delete_participant(participant));
     std::remove(filename.c_str());
 }
