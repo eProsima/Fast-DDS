@@ -538,7 +538,8 @@ public:
         return ret_value;
     }
 
-    void wait_writer_undiscovery()
+    void wait_writer_undiscovery(
+            unsigned int matched = 0)
     {
         std::unique_lock<std::mutex> lock(mutexDiscovery_);
 
@@ -546,7 +547,7 @@ public:
 
         cvDiscovery_.wait(lock, [&]()
                 {
-                    return matched_ == 0;
+                    return matched_ <= matched;
                 });
 
         std::cout << "Reader removal finished..." << std::endl;
