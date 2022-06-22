@@ -141,7 +141,7 @@ void HelloWorldSubscriber::SubListener::on_subscription_matched(
     else if (info.current_count_change == -1)
     {
         matched_ = info.total_count;
-        std::cout << "Subscriber unmatched." << std::endl;
+        std::cout << "Subscriber unmatched. Num samples = " << samples_ << std::endl;
     }
     else
     {
