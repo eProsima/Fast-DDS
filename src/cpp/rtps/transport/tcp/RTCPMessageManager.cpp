@@ -676,11 +676,13 @@ ResponseCode RTCPMessageManager::processKeepAliveResponse(
 ResponseCode RTCPMessageManager::processRTCPMessage(
         std::shared_ptr<TCPChannelResource>& channel,
         octet* receive_buffer,
-        size_t receivedSize)
+        size_t receivedSize,
+        fastrtps::rtps::Endianness_t msg_endian)
 {
     ResponseCode responseCode(RETCODE_OK);
 
     TCPControlMsgHeader controlHeader = *(reinterpret_cast<TCPControlMsgHeader*>(receive_buffer));
+    controlHeader.valid_endianness(msg_endian);
     //memcpy(&controlHeader, receive_buffer, TCPControlMsgHeader::size());
     size_t dataSize = controlHeader.length() - TCPControlMsgHeader::size();
     size_t bufferSize = dataSize + 4;

@@ -68,6 +68,18 @@ struct TCPHeader
         return TCPHEADER_SIZE;
     }
 
+    inline void valid_endianness(
+            fastrtps::rtps::Endianness_t msg_endian)
+    {
+        if (msg_endian != eprosima::fastrtps::rtps::DEFAULT_ENDIAN)
+        {
+            length = ((length >> 24) & 0xff) | ((length << 8) & 0xff0000) | ((length >> 8) & 0xff00) |
+                    ((length << 24) & 0xff000000);
+            crc = ((crc >> 24) & 0xff) | ((crc << 8) & 0xff0000) | ((crc >> 8) & 0xff00) | ((crc << 24) & 0xff000000);
+            logical_port = ((logical_port >> 8) & 0xff) | ((logical_port << 8) & 0xff00);
+        }
+    }
+
 };
 
 union TCPTransactionId
@@ -343,6 +355,33 @@ public:
     static inline size_t size()
     {
         return 16;
+    }
+
+    inline void valid_endianness(
+            fastrtps::rtps::Endianness_t msg_endian)
+    {
+        fastrtps::rtps::Endianness_t internal_endian = endianess() ? fastrtps::rtps::Endianness_t::LITTLEEND :
+                fastrtps::rtps::Endianness_t::BIGEND;
+        if (internal_endian != msg_endian)
+        {
+            logWarning(RTCP_MSG, "endianness of rtcp header is not consistent with CDRMsg");
+            return;
+        }
+
+        if (msg_endian != eprosima::fastrtps::rtps::DEFAULT_ENDIAN)
+        {
+            length_ = ((length_ >> 8) & 0xff) | ((length_ << 8) & 0xff00);
+
+            auto swapOperator = [](uint32_t x) ->uint32_t
+                    {
+                        return ((x >> 24) & 0xff) | ((x << 8) & 0xff0000) | ((x >> 8) & 0xff00) |
+                               ((x << 24) & 0xff000000);
+                    };
+
+            transaction_id_.ints[0] = swapOperator(transaction_id_.ints[0]);
+            transaction_id_.ints[1] = swapOperator(transaction_id_.ints[1]);
+            transaction_id_.ints[2] = swapOperator(transaction_id_.ints[2]);
+        }
     }
 
 };

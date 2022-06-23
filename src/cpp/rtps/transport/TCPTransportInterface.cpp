@@ -825,7 +825,7 @@ void TCPTransportInterface::perform_listen_operation(
         // Blocking receive.
         CDRMessage_t& msg = channel->message_buffer();
         fastrtps::rtps::CDRMessage::initCDRMsg(&msg);
-        if (!Receive(rtcp_manager, channel, msg.buffer, msg.max_size, msg.length, remote_locator))
+        if (!Receive(rtcp_manager, channel, msg.buffer, msg.max_size, msg.length, msg.msg_endian, remote_locator))
         {
             continue;
         }
@@ -965,6 +965,7 @@ bool TCPTransportInterface::Receive(
         octet* receive_buffer,
         uint32_t receive_buffer_capacity,
         uint32_t& receive_buffer_size,
+        fastrtps::rtps::Endianness_t msg_endian,
         Locator& remote_locator)
 {
     bool success = false;
@@ -1001,6 +1002,8 @@ bool TCPTransportInterface::Receive(
         }
         else
         {
+            tcp_header.valid_endianness(msg_endian);
+
             size_t body_size = tcp_header.length - static_cast<uint32_t>(TCPHeader::size());
 
             if (body_size > receive_buffer_capacity)
@@ -1049,7 +1052,7 @@ bool TCPTransportInterface::Receive(
                         {
                             // The channel is not going to be deleted because we lock it for reading.
                             ResponseCode responseCode = rtcp_message_manager->processRTCPMessage(
-                                channel, receive_buffer, body_size);
+                                channel, receive_buffer, body_size, msg_endian);
 
                             if (responseCode != RETCODE_OK)
                             {

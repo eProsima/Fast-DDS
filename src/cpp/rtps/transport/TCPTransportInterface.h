@@ -319,6 +319,7 @@ public:
             fastrtps::rtps::octet* receive_buffer,
             uint32_t receive_buffer_capacity,
             uint32_t& receive_buffer_size,
+            fastrtps::rtps::Endianness_t msg_endian,
             Locator& remote_locator);
 
     /**
