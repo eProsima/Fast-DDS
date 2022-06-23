@@ -1252,6 +1252,7 @@ void RTPSParticipantImpl::update_attributes(
     }
 
     auto pdp = mp_builtinProtocols->mp_PDP;
+
     // Check if there are changes
     if (patt.builtin.discovery_config.m_DiscoveryServers != m_att.builtin.discovery_config.m_DiscoveryServers
             || patt.userData != m_att.userData
@@ -1357,13 +1358,11 @@ void RTPSParticipantImpl::update_attributes(
                     {
                         if (server_it->guidPrefix == incoming_server.guidPrefix)
                         {
-                            bool modified_locator = false;
                             // Check if the listening locators have been modified
                             for (auto guid : modified_servers)
                             {
                                 if (guid == incoming_server.GetParticipant())
                                 {
-                                    modified_locator = true;
                                     server_it->metatrafficUnicastLocatorList =
                                             incoming_server.metatrafficUnicastLocatorList;
                                     break;

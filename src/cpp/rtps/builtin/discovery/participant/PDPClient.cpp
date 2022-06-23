@@ -647,7 +647,7 @@ bool load_environment_server_info(
 }
 
 bool load_environment_server_info(
-        std::string list,
+        const std::string& list,
         RemoteServerList_t& attributes)
 {
     attributes.clear();
@@ -659,8 +659,8 @@ bool load_environment_server_info(
     /* Parsing ancillary regex */
     // Address should be <letter,numbers,dots>:<number>. We do not need to verify that the first part
     // is an IPv4 address, as it is done latter.
-    const std::regex ROS2_ADDRESS_PATTERN(R"(^([A-Za-z0-9-.]+)?:?(?:(\d+))?$)");
-    const std::regex ROS2_SERVER_LIST_PATTERN(R"(([^;]*);?)");
+    const static std::regex ROS2_ADDRESS_PATTERN(R"(^([A-Za-z0-9-.]+)?:?(?:(\d+))?$)");
+    const static std::regex ROS2_SERVER_LIST_PATTERN(R"(([^;]*);?)");
 
     try
     {
@@ -841,6 +841,12 @@ bool PDPClient::remove_remote_participant(
 
     return false;
 }
+
+template<> const char* server_ostream_separators<char>::list_separator = "; ";
+template<> const wchar_t* server_ostream_separators<wchar_t>::list_separator = L"; ";
+
+template<> const char* server_ostream_separators<char>::locator_separator = "|";
+template<> const wchar_t* server_ostream_separators<wchar_t>::locator_separator = L"|";
 
 } /* namespace rtps */
 } /* namespace fastdds */
