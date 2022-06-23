@@ -109,20 +109,22 @@ typedef std::list<RemoteServerAttributes> RemoteServerList_t;
 template<class charT>
 struct server_ostream_separators
 {
-    static const charT * list_separator;
-    static const charT * locator_separator;
+    static const charT* list_separator;
+    static const charT* locator_separator;
 };
 
 template<class charT>
-std::basic_ostream<charT>& operator <<( std::basic_ostream<charT>& output, const RemoteServerAttributes& sa)
+std::basic_ostream<charT>& operator <<(
+        std::basic_ostream<charT>& output,
+        const RemoteServerAttributes& sa)
 {
     typename std::basic_ostream<charT>::sentry s(output);
     output << sa.guidPrefix;
-    if(!sa.metatrafficUnicastLocatorList.empty())
+    if (!sa.metatrafficUnicastLocatorList.empty())
     {
         output << server_ostream_separators<charT>::locator_separator << sa.metatrafficUnicastLocatorList;
     }
-    if(!sa.metatrafficMulticastLocatorList.empty())
+    if (!sa.metatrafficMulticastLocatorList.empty())
     {
         output << server_ostream_separators<charT>::locator_separator << sa.metatrafficUnicastLocatorList;
     }
@@ -130,7 +132,9 @@ std::basic_ostream<charT>& operator <<( std::basic_ostream<charT>& output, const
 }
 
 template<class charT>
-std::basic_ostream<charT>& operator <<( std::basic_ostream<charT>& output, const RemoteServerList_t& list)
+std::basic_ostream<charT>& operator <<(
+        std::basic_ostream<charT>& output,
+        const RemoteServerList_t& list)
 {
     typename std::basic_ostream<charT>::sentry s(output);
     std::ostream_iterator<RemoteServerAttributes> os_iterator(output, server_ostream_separators<charT>::list_separator);
