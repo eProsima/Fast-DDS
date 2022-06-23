@@ -709,6 +709,16 @@ void set_environment_file(
 #endif // _WIN32
 }
 
+std::string get_environment_filename()
+{
+    std::ostringstream name;
+    name << "environment_file_" << SystemInfo::instance().process_id() << ".json";
+    std::string fname = name.str();
+    // 'touch' the file
+    std::ofstream f(fname);
+    return fname;
+}
+
 void set_and_check_with_environment_file(
         DomainParticipant* participant,
         std::vector<std::string> locators,
@@ -801,7 +811,7 @@ TEST(ParticipantTests, SimpleParticipantRemoteServerListConfiguration)
  */
 TEST(ParticipantTests, SimpleParticipantDynamicAdditionRemoteServers)
 {
-    std::string filename = "environment_file.json";
+    auto filename = get_environment_filename();
     set_environment_variable();
     set_environment_file(filename);
 
@@ -813,8 +823,6 @@ TEST(ParticipantTests, SimpleParticipantDynamicAdditionRemoteServers)
     set_participant_qos(qos, qos_output);
 
     // Create environment file so the watch file is initialized
-    std::ofstream file(filename);
-    file.close();
     DomainParticipant* participant = DomainParticipantFactory::get_instance()->create_participant(0, qos);
     ASSERT_NE(nullptr, participant);
     fastrtps::rtps::RTPSParticipantAttributes attributes;
@@ -828,7 +836,7 @@ TEST(ParticipantTests, SimpleParticipantDynamicAdditionRemoteServers)
     // Wait long enought for file watch callback rigging
     std::this_thread::sleep_for(std::chrono::seconds(1));
 
-    file.open(filename);
+    std::ofstream file(filename);
     file << "{\"ROS_DISCOVERY_SERVER\": \"84.22.253.128:8888;192.168.1.133:64863;localhost:1234\"}";
     file.close();
 
@@ -943,11 +951,10 @@ TEST(ParticipantTests, ServerParticipantInconsistentRemoteServerListConfiguratio
     Log::RegisterConsumer(std::unique_ptr<LogConsumer>(mockConsumer));
     Log::SetVerbosity(Log::Warning);
 
-    std::string filename = "environment_file.json";
+    auto filename = get_environment_filename();
     set_environment_file(filename);
 
-    std::ofstream file;
-    file.open(filename);
+    std::ofstream file(filename);
     file << "{\"ROS_DISCOVERY_SERVER\": \"84.22.253.128:8888;;localhost:1234\"}";
     file.close();
 
@@ -994,7 +1001,7 @@ TEST(ParticipantTests, ServerParticipantInconsistentRemoteServerListConfiguratio
  */
 TEST(ParticipantTests, ServerParticipantInconsistentLocatorsRemoteServerListConfiguration)
 {
-    std::string filename = "environment_file.json";
+    auto filename = get_environment_filename();
     set_environment_file(filename);
 
     DomainParticipantQos qos;
@@ -1016,17 +1023,12 @@ TEST(ParticipantTests, ServerParticipantInconsistentLocatorsRemoteServerListConf
     get_server_client_default_guidPrefix(1, server.guidPrefix);
     output.push_back(server);
 
-    std::ofstream file;
-    file.open(filename);
-    file << "{\"ROS_DISCOVERY_SERVER\": \"localhost:1234\"}";
-    file.close();
-
     DomainParticipant* participant = DomainParticipantFactory::get_instance()->create_participant(0, qos);
     ASSERT_NE(nullptr, participant);
     // Try adding a new remote server
 #ifndef __APPLE__
     std::this_thread::sleep_for(std::chrono::milliseconds(1100));
-    file.open(filename);
+    std::ofstream file(filename);
     file << "{\"ROS_DISCOVERY_SERVER\": \"172.17.0.5:4321;192.168.1.133:64863\"}";
     file.close();
     std::this_thread::sleep_for(std::chrono::milliseconds(1100));
@@ -1045,10 +1047,9 @@ TEST(ParticipantTests, ServerParticipantInconsistentLocatorsRemoteServerListConf
  */
 TEST(ParticipantTests, RepeatEnvironmentFileConfiguration)
 {
-    std::string filename = "environment_file.json";
+    auto filename = get_environment_filename();
     set_environment_file(filename);
 
-    std::ofstream file(filename);
     DomainParticipantQos qos;
     set_server_qos(qos);
 
@@ -1073,7 +1074,7 @@ TEST(ParticipantTests, RepeatEnvironmentFileConfiguration)
  */
 TEST(ParticipantTests, ServerParticipantCorrectRemoteServerListConfiguration)
 {
-    std::string filename = "environment_file.json";
+    auto filename = get_environment_filename();
     set_environment_file(filename);
 
     std::ofstream file;
