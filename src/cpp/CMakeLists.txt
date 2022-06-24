@@ -109,6 +109,7 @@ set(${PROJECT_NAME}_source_files
     fastdds/subscriber/Subscriber.cpp
     fastdds/subscriber/DataReader.cpp
     fastdds/subscriber/DataReaderImpl.cpp
+    fastdds/subscriber/ReadCondition.cpp
     fastdds/subscriber/history/DataReaderHistory.cpp
     fastdds/domain/DomainParticipantFactory.cpp
     fastdds/domain/DomainParticipantImpl.cpp
