@@ -333,7 +333,7 @@ public:
      * @param[in,out] data_values     A LoanableCollection object where the received data samples will be returned.
      * @param[in,out] sample_infos    A SampleInfoSeq object where the received sample info will be returned.
      * @param[in]     max_samples     The maximum number of samples to be returned.
-     * @param[in]     a_condition     A ReadCondition that returned @c sample_states must pass
+     * @param[in]     a_condition     A ReadCondition that returned @c data_values must pass
      *
      * @return Any of the standard return codes.
      */
@@ -478,7 +478,7 @@ public:
      *                                available, up to the limits described in the documentation for @ref read().
      * @param[in]     previous_handle The 'next smallest' instance with a value greater than this value that has
      *                                available samples will be returned.
-     * @param[in]     a_condition     A ReadCondition that returned @c sample_states must pass
+     * @param[in]     a_condition     A ReadCondition that returned @c data_values must pass
      *
      * @return Any of the standard return codes.
      */
@@ -570,7 +570,7 @@ public:
      * @param[in,out] sample_infos    A SampleInfoSeq object where the received sample info will be returned.
      * @param[in]     max_samples     The maximum number of samples to be returned. If the special value
      *                                @ref LENGTH_UNLIMITED is provided, as many samples will be returned as are.
-     * @param[in]     a_condition     A ReadCondition that returned @c sample_states must pass
+     * @param[in]     a_condition     A ReadCondition that returned @c data_values must pass
      *
      * @return Any of the standard return codes.
      */
@@ -682,7 +682,7 @@ public:
      *                                available, up to the limits described in the documentation for @ref read().
      * @param[in]     previous_handle The 'next smallest' instance with a value greater than this value that has
      *                                available samples will be returned.
-     * @param[in]     a_condition     A ReadCondition that returned @c sample_states must pass
+     * @param[in]     a_condition     A ReadCondition that returned @c data_values must pass
      *
      * @return Any of the standard return codes.
      */
@@ -989,10 +989,11 @@ public:
      * @brief This operation creates a ReadCondition. The returned ReadCondition will be attached and belong to the
      * DataReader.
      *
-     * @param sample_states Vector of SampleStateKind
-     * @param view_states Vector of ViewStateKind
-     * @param instance_states Vector of InstanceStateKind
-     * @return ReadCondition pointer
+     * @param [in] sample_states   Only data samples with @c sample_state matching one of these will trigger the created condition.
+     * @param [in] view_states     Only data samples with @c view_state matching one of these will trigger the created condition.
+     * @param [in] instance_states Only data samples with @c instance_state matching one of these will trigger the created condition.
+     *
+     * @return pointer to the created ReadCondition, nullptr in case of error.
      */
     RTPS_DllAPI ReadCondition* create_readcondition(
             SampleStateMask sample_states,
@@ -1003,12 +1004,13 @@ public:
      * @brief This operation creates a QueryCondition. The returned QueryCondition will be attached and belong to the
      * DataReader.
      *
-     * @param sample_states Vector of SampleStateKind
-     * @param view_states Vector of ViewStateKind
-     * @param instance_states Vector of InstanceStateKind
-     * @param query_expression string containing query
-     * @param query_parameters Vector of strings containing parameters of query expression
-     * @return QueryCondition pointer
+     * @param [in] sample_states    Only data samples with @c sample_state matching one of these will trigger the created condition.
+     * @param [in] view_states      Only data samples with @c view_state matching one of these will trigger the created condition.
+     * @param [in] instance_states  Only data samples with @c instance_state matching one of these will trigger the created condition.
+     * @param [in] query_expression Only data samples matching this query will trigger the created condition.
+     * @param [in] query_parameters Value of the parameters on the query expression.
+     *
+     * @return pointer to the created QueryCondition, nullptr in case of error.
      */
     RTPS_DllAPI QueryCondition* create_querycondition(
             SampleStateMask sample_states,
