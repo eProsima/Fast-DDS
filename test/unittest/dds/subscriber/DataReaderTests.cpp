@@ -2551,9 +2551,9 @@ TEST_F(DataReaderTests, delete_contained_entities)
     DataReader* data_reader = subscriber->create_datareader(topic, DATAREADER_QOS_DEFAULT);
     ASSERT_NE(data_reader, nullptr);
 
-    const std::vector<SampleStateKind> mock_sample_state_kind;
-    const std::vector<ViewStateKind> mock_view_state_kind;
-    const std::vector<InstanceStateKind> mock_instance_states;
+    SampleStateMask mock_sample_state_kind = ANY_SAMPLE_STATE;
+    ViewStateMask mock_view_state_kind = ANY_VIEW_STATE;
+    InstanceStateMask mock_instance_states = ANY_INSTANCE_STATE;
     const std::string mock_query_expression;
     const std::vector<std::string> mock_query_parameters;
 

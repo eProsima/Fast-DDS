@@ -3048,9 +3048,9 @@ TEST(ParticipantTests, DeleteContainedEntities)
     DataWriter* data_writer_foo = publisher->create_datawriter(topic_foo, DATAWRITER_QOS_DEFAULT);
     ASSERT_NE(data_writer_foo, nullptr);
 
-    const std::vector<SampleStateKind> mock_sample_state_kind;
-    const std::vector<ViewStateKind> mock_view_state_kind;
-    const std::vector<InstanceStateKind> mock_instance_states;
+    SampleStateMask mock_sample_state_kind = ANY_SAMPLE_STATE;
+    ViewStateMask mock_view_state_kind = ANY_VIEW_STATE;
+    InstanceStateMask mock_instance_states = ANY_INSTANCE_STATE;
     const std::string mock_query_expression;
     const std::vector<std::string> mock_query_parameters;
 
