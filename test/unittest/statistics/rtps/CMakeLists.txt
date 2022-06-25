@@ -19,6 +19,7 @@ endif()
 set(STATISTICS_RTPS_TESTS_SOURCE
     RTPSStatisticsTests.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/statistics/types/types.cxx
+    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/builtin/discovery/participant/ServerAttributes.cpp
     )
 
 add_executable(RTPSStatisticsTests ${STATISTICS_RTPS_TESTS_SOURCE})

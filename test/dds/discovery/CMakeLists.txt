@@ -21,6 +21,7 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER) AND fastcdr_FOUND)
     set(DDS_PARTICIPANT_SOURCE
         ParticipantModule.cpp
         ParticipantMain.cpp
+        ${PROJECT_SOURCE_DIR}/src/cpp/rtps/builtin/discovery/participant/ServerAttributes.cpp
         )
 
     add_executable(DDSParticipantDiscovery ${DDS_PARTICIPANT_SOURCE})
