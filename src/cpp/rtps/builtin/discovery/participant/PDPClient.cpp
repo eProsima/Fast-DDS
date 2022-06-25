@@ -842,12 +842,6 @@ bool PDPClient::remove_remote_participant(
     return false;
 }
 
-template<> const char* server_ostream_separators<char>::list_separator = "; ";
-template<> const wchar_t* server_ostream_separators<wchar_t>::list_separator = L"; ";
-
-template<> const char* server_ostream_separators<char>::locator_separator = "|";
-template<> const wchar_t* server_ostream_separators<wchar_t>::locator_separator = L"|";
-
 } /* namespace rtps */
 } /* namespace fastdds */
 } /* namespace eprosima */

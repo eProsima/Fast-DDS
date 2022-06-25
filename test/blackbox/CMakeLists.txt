@@ -335,6 +335,7 @@ if(FASTRTPS_API_TESTS)
         ${BLACKBOXTESTS_SOURCE}
         api/fastrtps_deprecated/ReqRepHelloWorldRequester.cpp
         api/fastrtps_deprecated/ReqRepHelloWorldReplier.cpp
+        ${PROJECT_SOURCE_DIR}/src/cpp/rtps/builtin/discovery/participant/ServerAttributes.cpp
         )
 
     add_executable(BlackboxTests_FastRTPS ${BLACKBOXTESTS_FASTRTPS_SOURCE})

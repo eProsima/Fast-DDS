@@ -17,6 +17,7 @@ configure_file(${CMAKE_CURRENT_SOURCE_DIR}/../profiles/test_xml_profiles.xml
     COPYONLY)
 
 set(PARTICIPANTTESTS_SOURCE ParticipantTests.cpp
+    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/builtin/discovery/participant/ServerAttributes.cpp
     )
 
 if(WIN32)

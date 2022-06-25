@@ -742,6 +742,7 @@ void set_and_check_with_environment_file(
 
         std::smatch mr;
         auto res = std::regex_match(l, mr, ROS2_IPV4_PATTERN, std::regex_constants::match_not_null);
+        (void)res;
         assert(res);
 
         std::smatch::iterator it = mr.cbegin();
