@@ -119,7 +119,7 @@ template<> const wchar_t* server_ostream_separators<wchar_t>::list_separator;
 
 template<> const char* server_ostream_separators<char>::locator_separator;
 template<> const wchar_t* server_ostream_separators<wchar_t>::locator_separator;
-#endif
+#endif // _MSC_VER
 
 template<class charT>
 std::basic_ostream<charT>& operator <<(
