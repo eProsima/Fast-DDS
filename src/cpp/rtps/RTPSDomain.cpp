@@ -656,6 +656,9 @@ void RTPSDomainImpl::file_watch_callback()
 #else
     // plain wait
     std::this_thread::sleep_for(max_wait);
+    // avoid unused warning
+    (void)start;
+    (void)fn;
 #endif // ifdef _MSC_VER
 
     // For all RTPSParticipantImpl registered in the RTPSDomain, call RTPSParticipantImpl::environment_file_has_changed
