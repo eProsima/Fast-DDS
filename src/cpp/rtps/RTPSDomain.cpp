@@ -20,9 +20,16 @@
 
 #include <chrono>
 #include <cstdlib>
+#include <fstream>
 #include <regex>
 #include <string>
 #include <thread>
+
+#ifdef __unix__
+#   include <sys/file.h>
+#   include <fcntl.h>
+#   include <unistd.h>
+#endif // ifdef __unix__
 
 #include <fastdds/dds/log/Log.hpp>
 #include <fastdds/rtps/history/WriterHistory.h>
@@ -608,7 +615,49 @@ bool RTPSDomainImpl::should_intraprocess_between(
 void RTPSDomainImpl::file_watch_callback()
 {
     // Ensure that all changes have been saved by the OS
-    std::this_thread::sleep_for(std::chrono::seconds(1));
+    auto fn = SystemInfo::get_environment_file();
+    auto max_wait = std::chrono::seconds(1);
+    auto start = std::chrono::system_clock::now();
+
+#ifdef _MSC_VER
+    {
+        std::ofstream os;
+        do
+        {
+            // MSVC specific
+            os.open(fn, std::ios::out | std::ios::app, _SH_DENYWR);
+            if (!os.is_open()
+                    // If the file is lock-opened in an external editor do not hang
+                    && (std::chrono::system_clock::now() - start) < max_wait )
+            {
+                std::this_thread::yield();
+            }
+            else
+            {
+                break;
+            }
+        }
+        while (true);
+    }
+#elif __unix__
+    {
+        int fd = open(fn.c_str(), O_WRONLY);
+
+        while (flock(fd, LOCK_EX)
+                // If the file is lock-opened in an external editor do not hang
+                && (std::chrono::system_clock::now() - start) < max_wait )
+        {
+            std::this_thread::yield();
+        }
+
+        flock(fd, LOCK_UN);
+        close(fd);
+    }
+#else
+    // plain wait
+    std::this_thread::sleep_for(max_wait);
+#endif // ifdef _MSC_VER
+
     // For all RTPSParticipantImpl registered in the RTPSDomain, call RTPSParticipantImpl::environment_file_has_changed
     std::lock_guard<std::mutex> guard(RTPSDomain::m_mutex);
     for (auto participant : RTPSDomain::m_RTPSParticipants)
