@@ -114,11 +114,11 @@ struct server_ostream_separators
 };
 
 #ifndef _MSC_VER
-    template<> const char* server_ostream_separators<char>::list_separator;
-    template<> const wchar_t* server_ostream_separators<wchar_t>::list_separator;
+template<> const char* server_ostream_separators<char>::list_separator;
+template<> const wchar_t* server_ostream_separators<wchar_t>::list_separator;
 
-    template<> const char* server_ostream_separators<char>::locator_separator;
-    template<> const wchar_t* server_ostream_separators<wchar_t>::locator_separator;
+template<> const char* server_ostream_separators<char>::locator_separator;
+template<> const wchar_t* server_ostream_separators<wchar_t>::locator_separator;
 #endif
 
 template<class charT>
