@@ -1708,8 +1708,7 @@ InstanceHandle_t DataReaderImpl::lookup_instance(
     {
         if (type_->getKey(const_cast<void*>(instance), &handle, false))
         {
-            auto it = history_.lookup_instance(handle, true);
-            if (!it.first)
+            if (!history_.is_instance_present(handle))
             {
                 handle = HANDLE_NIL;
             }
