@@ -47,22 +47,23 @@
 #include <unistd.h>
 #endif // __unix__
 
-#include <functional>
+#include <algorithm>
+#include <array>
 #include <atomic>
-#include <thread>
-#include <mutex>
+#include <chrono>
 #include <condition_variable>
+#include <functional>
+#include <future>
+#include <iostream>
+#include <map>
+#include <mutex>
+#include <regex>
+#include <string>
+#include <system_error>
+#include <thread>
+#include <type_traits>
 #include <utility>
 #include <vector>
-#include <array>
-#include <map>
-#include <system_error>
-#include <string>
-#include <algorithm>
-#include <type_traits>
-#include <future>
-#include <regex>
-#include <iostream>
 
 namespace filewatch {
 	enum class Event {
@@ -156,7 +157,8 @@ namespace filewatch {
 
 		std::promise<void> _running;
 
-		time_t last_write_time_;
+        std::chrono::time_point<std::chrono::system_clock> last_write_time_;
+
 #ifdef _WIN32
 		HANDLE _directory = { nullptr };
 		HANDLE _close_event = { nullptr };
@@ -178,6 +180,9 @@ namespace filewatch {
 			{ FILE_ACTION_RENAMED_OLD_NAME, Event::renamed_old },
 			{ FILE_ACTION_RENAMED_NEW_NAME, Event::renamed_new }
 		};
+
+        // time epoch translation
+        std::pair<ULARGE_INTEGER, std::chrono::time_point<std::chrono::system_clock>> base_;
 #endif // WIN32
 
 #if __unix__
@@ -381,12 +386,15 @@ namespace filewatch {
 					}
 					async_pending = false;
 
-					struct stat result;
-					static time_t current_time = 0;
-					if (stat(_path.c_str(), &result) == 0)
-					{
-						current_time = result.st_mtime;
-					}
+                    // Get current time
+                    _WIN32_FILE_ATTRIBUTE_DATA att;
+                    GetFileAttributesExA(_path.c_str(), GetFileExInfoStandard, &att);
+
+                    auto current_time = base_.second
+                        + std::chrono::duration<
+                                typename std::chrono::time_point<std::chrono::system_clock>::rep,
+                                std::ratio_multiply<std::hecto, typename std::chrono::nanoseconds::period>>(
+                                    reinterpret_cast<ULARGE_INTEGER*>(&att.ftLastWriteTime)->QuadPart - base_.first.QuadPart);
 
 					if (bytes_returned == 0 || current_time == last_write_time_) {
 						break;
@@ -492,12 +500,12 @@ namespace filewatch {
 			{
 				const auto length = read(_directory.folder, static_cast<void*>(buffer.data()), buffer.size());
 
-				struct stat result;
-				static time_t current_time = 0;
-				if (stat(_path.c_str(), &result) == 0)
-				{
-					current_time = result.st_mtime;
-				}
+                struct stat result;
+                stat(_path.c_str(), &result);
+
+                std::chrono::time_point<std::chrono::system_clock> current_time;
+                current_time += std::chrono::seconds(result.st_mtim.tv_sec);
+                current_time += std::chrono::nanoseconds(result.st_mtim.tv_nsec);
 
 				if (length > 0 && current_time != last_write_time_)
 				{
@@ -568,13 +576,30 @@ namespace filewatch {
 
 		void init_last_write_time()
 		{
+#ifdef _WIN32
+            // Define epoch reference
+            GetSystemTimeAsFileTime((LPFILETIME)&base_.first);
+            base_.second = std::chrono::system_clock::now();
+
 			// Initialize last_write_time_
-			struct stat result;
-			if(stat(_path.c_str(), &result) == 0)
-			{
-				last_write_time_ = result.st_mtime;
-			}
+            _WIN32_FILE_ATTRIBUTE_DATA att;
+            GetFileAttributesExA(_path.c_str(), GetFileExInfoStandard, &att);
+
+            last_write_time_ = base_.second
+                + std::chrono::duration<
+                        typename std::chrono::time_point<std::chrono::system_clock>::rep,
+                        std::ratio_multiply<std::hecto, typename std::chrono::nanoseconds::period>>(
+                            reinterpret_cast<ULARGE_INTEGER*>(&att.ftLastWriteTime)->QuadPart - base_.first.QuadPart);
+#else
+			// Initialize last_write_time_
+            struct stat result;
+            stat(_path.c_str(), &result);
+
+            last_write_time_ += std::chrono::seconds(result.st_mtim.tv_sec);
+            last_write_time_ += std::chrono::nanoseconds(result.st_mtim.tv_nsec);
+#endif
 		}
+
 	};
 
 	template<class T> constexpr typename FileWatch<T>::C FileWatch<T>::_regex_all[];

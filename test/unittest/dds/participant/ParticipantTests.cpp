@@ -769,7 +769,7 @@ void set_and_check_with_environment_file(
     file.close();
 
     // Wait for the file watch callback
-    std::this_thread::sleep_for(std::chrono::milliseconds(1500));
+    std::this_thread::sleep_for(std::chrono::milliseconds(100));
 
     fastrtps::rtps::RTPSParticipantAttributes attributes;
     get_rtps_attributes(participant, attributes);
@@ -1057,9 +1057,6 @@ TEST(ParticipantTests, RepeatEnvironmentFileConfiguration)
     DomainParticipant* participant = DomainParticipantFactory::get_instance()->create_participant(0, qos);
     ASSERT_NE(nullptr, participant);
 #ifndef __APPLE__
-    // Give some room for OS file watch timer initialization
-    std::this_thread::sleep_for(std::chrono::milliseconds(1000));
-
     set_and_check_with_environment_file(participant, {"172.17.0.5:4321", "192.168.1.133:64863"}, filename);
     set_and_check_with_environment_file(participant, {"172.17.0.5:64863", "192.168.1.133:4321"}, filename);
     set_and_check_with_environment_file(participant, {"172.17.0.5:64863", "192.168.1.133:4321"}, filename);
