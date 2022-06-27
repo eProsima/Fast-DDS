@@ -254,8 +254,6 @@ set(RTPS_BLACKBOXTESTS_SOURCE ${RTPS_BLACKBOXTESTS_TEST_SOURCE}
     utils/data_generators.cpp
     utils/lambda_functions.cpp
     utils/print_functions.cpp
-
-    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/builtin/discovery/participant/ServerAttributes.cpp
     )
 add_executable(BlackboxTests_RTPS ${RTPS_BLACKBOXTESTS_SOURCE})
 target_compile_definitions(BlackboxTests_RTPS PRIVATE
