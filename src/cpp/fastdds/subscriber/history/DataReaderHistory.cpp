@@ -594,11 +594,18 @@ std::pair<bool, DataReaderHistory::instance_info> DataReaderHistory::lookup_inst
     }
     else
     {
-        auto comp = [](const InstanceHandle_t& h, const InstanceCollection::value_type& it)
-                {
-                    return h < it.first;
-                };
-        it = std::upper_bound(keyed_changes_.begin(), keyed_changes_.end(), handle, comp);
+        if (!handle.isDefined())
+        {
+            it = keyed_changes_.begin();
+        }
+        else
+        {
+            auto comp = [](const InstanceHandle_t& h, const InstanceCollection::value_type& it)
+            {
+                return h < it.first;
+            };
+            it = std::upper_bound(keyed_changes_.begin(), keyed_changes_.end(), handle, comp);
+        }
     }
 
     return { it != keyed_changes_.end(), it };
