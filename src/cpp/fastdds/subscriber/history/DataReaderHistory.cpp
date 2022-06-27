@@ -533,7 +533,7 @@ bool DataReaderHistory::is_instance_present(
 
 std::pair<bool, DataReaderHistory::instance_info> DataReaderHistory::lookup_instance(
         const InstanceHandle_t& handle,
-        bool exact) const
+        bool exact)
 {
     if (!has_keys_)
     {

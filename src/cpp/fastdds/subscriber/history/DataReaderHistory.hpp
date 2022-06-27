@@ -223,7 +223,7 @@ public:
      */
     std::pair<bool, instance_info> lookup_instance(
             const InstanceHandle_t& handle,
-            bool exact) const;
+            bool exact);
 
 
     void update_instance_nts(
