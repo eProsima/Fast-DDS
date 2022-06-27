@@ -27,7 +27,6 @@
 
 #ifdef __unix__
 #   include <sys/file.h>
-#   include <fcntl.h>
 #   include <unistd.h>
 #endif // ifdef __unix__
 
@@ -643,14 +642,14 @@ void RTPSDomainImpl::file_watch_callback()
     {
         int fd = open(fn.c_str(), O_WRONLY);
 
-        while (flock(fd, LOCK_EX)
+        while (flock(fd, LOCK_EX | LOCK_NB)
                 // If the file is lock-opened in an external editor do not hang
                 && (std::chrono::system_clock::now() - start) < max_wait )
         {
             std::this_thread::yield();
         }
 
-        flock(fd, LOCK_UN);
+        flock(fd, LOCK_UN | LOCK_NB);
         close(fd);
     }
 #else

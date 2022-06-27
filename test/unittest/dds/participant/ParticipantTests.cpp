@@ -746,9 +746,7 @@ void set_and_check_with_environment_file(
         assert(res);
 
         std::smatch::iterator it = mr.cbegin();
-        // Check whether the address is IPv4
         auto address = (++it)->str();
-        assert(fastrtps::rtps::IPLocator::isIPv4(address));
         fastrtps::rtps::IPLocator::setIPv4(locator, address);
 
         assert(it != mr.cend());
