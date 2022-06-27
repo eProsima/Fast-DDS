@@ -199,6 +199,15 @@ public:
             bool mark_as_read);
 
     /**
+     * @brief Check whether an instance handle is present in the history.
+     * @param handle The handle of the instance to check.
+     * @return true when the topic has keys and the handle corresponds to an instance present in the history.
+     * @return false otherwise.
+     */
+    bool is_instance_present(
+            const InstanceHandle_t& handle) const;
+
+    /**
      * @brief Get the list of changes corresponding to an instance handle.
      * @param handle The handle to the instance.
      * @param exact  Indicates if the handle should match exactly (true) or if the first instance greater than the
@@ -215,6 +224,7 @@ public:
     std::pair<bool, instance_info> lookup_instance(
             const InstanceHandle_t& handle,
             bool exact) const;
+
 
     void update_instance_nts(
             CacheChange_t* const change);

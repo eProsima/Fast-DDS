@@ -525,6 +525,12 @@ uint64_t DataReaderHistory::get_unread_count(
     return mp_reader->get_unread_count(mark_as_read);
 }
 
+bool DataReaderHistory::is_instance_present(
+        const InstanceHandle_t& handle) const
+{
+    return has_keys_ && keyed_changes_.find(handle) != keyed_changes_.end();
+}
+
 std::pair<bool, DataReaderHistory::instance_info> DataReaderHistory::lookup_instance(
         const InstanceHandle_t& handle,
         bool exact) const
