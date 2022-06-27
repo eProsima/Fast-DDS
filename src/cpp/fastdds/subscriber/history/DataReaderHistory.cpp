@@ -17,6 +17,7 @@
  */
 
 #include <limits>
+#include <memory>
 #include <mutex>
 
 #include "DataReaderHistory.hpp"
@@ -99,7 +100,7 @@ DataReaderHistory::DataReaderHistory(
         key_changes_allocation_.maximum = resource_limited_qos_.max_samples;
 
         keyed_changes_.emplace(c_InstanceHandle_Unknown,
-                DataReaderInstance{ key_changes_allocation_, key_writers_allocation_ });
+                std::make_shared<DataReaderInstance>(key_changes_allocation_, key_writers_allocation_));
     }
 
     using std::placeholders::_1;
@@ -225,11 +226,11 @@ bool DataReaderHistory::received_change_keep_all(
     InstanceCollection::iterator vit;
     if (find_key(a_change->instanceHandle, vit))
     {
-        DataReaderInstance::ChangeCollection& instance_changes = vit->second.cache_changes;
+        DataReaderInstance::ChangeCollection& instance_changes = vit->second->cache_changes;
         size_t total_size = instance_changes.size() + unknown_missing_changes_up_to;
         if (total_size < static_cast<size_t>(resource_limited_qos_.max_samples_per_instance))
         {
-            ret_value =  add_received_change_with_key(a_change, vit->second, rejection_reason);
+            ret_value =  add_received_change_with_key(a_change, *vit->second, rejection_reason);
         }
         else
         {
@@ -261,7 +262,7 @@ bool DataReaderHistory::received_change_keep_last(
     InstanceCollection::iterator vit;
     if (find_key(a_change->instanceHandle, vit))
     {
-        DataReaderInstance::ChangeCollection& instance_changes = vit->second.cache_changes;
+        DataReaderInstance::ChangeCollection& instance_changes = vit->second->cache_changes;
         if (instance_changes.size() < static_cast<size_t>(history_qos_.depth))
         {
             ret_value = true;
@@ -284,7 +285,7 @@ bool DataReaderHistory::received_change_keep_last(
 
         if (ret_value)
         {
-            ret_value = add_received_change_with_key(a_change, vit->second, rejection_reason);
+            ret_value = add_received_change_with_key(a_change, *vit->second, rejection_reason);
         }
     }
     else
@@ -358,14 +359,14 @@ bool DataReaderHistory::get_first_untaken_info(
     {
         auto it = keyed_changes_.find(change->instanceHandle);
         assert(it != keyed_changes_.end());
-        auto& instance_changes = it->second.cache_changes;
+        auto& instance_changes = it->second->cache_changes;
         auto item =
                 std::find_if(instance_changes.cbegin(), instance_changes.cend(),
                         [change](const DataReaderCacheChange& v)
                         {
                             return v == change;
                         });
-        ReadTakeCommand::generate_info(info, it->second, *item);
+        ReadTakeCommand::generate_info(info, *(it->second), *item);
         mp_reader->change_read_by_user(change, wp, false);
         return true;
     }
@@ -388,17 +389,17 @@ bool DataReaderHistory::find_key(
     if (keyed_changes_.size() < static_cast<size_t>(resource_limited_qos_.max_instances))
     {
         vit_out = keyed_changes_.emplace(handle,
-                        DataReaderInstance{key_changes_allocation_, key_writers_allocation_}).first;
+                        std::make_shared<DataReaderInstance>(key_changes_allocation_, key_writers_allocation_)).first;
         return true;
     }
 
     for (vit = keyed_changes_.begin(); vit != keyed_changes_.end(); ++vit)
     {
-        if (InstanceStateKind::ALIVE_INSTANCE_STATE != vit->second.instance_state)
+        if (InstanceStateKind::ALIVE_INSTANCE_STATE != vit->second->instance_state)
         {
             keyed_changes_.erase(vit);
             vit_out = keyed_changes_.emplace(handle,
-                            DataReaderInstance{ key_changes_allocation_, key_writers_allocation_ }).first;
+                            std::make_shared<DataReaderInstance>(key_changes_allocation_, key_writers_allocation_)).first;
             return true;
         }
     }
@@ -432,12 +433,12 @@ bool DataReaderHistory::remove_change_sub(
     InstanceCollection::iterator vit;
     if (find_key(change->instanceHandle, vit))
     {
-        for (auto chit = vit->second.cache_changes.begin(); chit != vit->second.cache_changes.end(); ++chit)
+        for (auto chit = vit->second->cache_changes.begin(); chit != vit->second->cache_changes.end(); ++chit)
         {
             if ((*chit)->sequenceNumber == change->sequenceNumber &&
                     (*chit)->writerGUID == change->writerGUID)
             {
-                vit->second.cache_changes.erase(chit);
+                vit->second->cache_changes.erase(chit);
                 found = true;
                 break;
             }
@@ -472,13 +473,13 @@ bool DataReaderHistory::remove_change_sub(
     InstanceCollection::iterator vit;
     if (find_key(change->instanceHandle, vit))
     {
-        for (auto chit = vit->second.cache_changes.begin(); chit != vit->second.cache_changes.end(); ++chit)
+        for (auto chit = vit->second->cache_changes.begin(); chit != vit->second->cache_changes.end(); ++chit)
         {
             if ((*chit)->sequenceNumber == change->sequenceNumber &&
                     (*chit)->writerGUID == change->writerGUID)
             {
                 assert(it == chit);
-                it = vit->second.cache_changes.erase(chit);
+                it = vit->second->cache_changes.erase(chit);
                 found = true;
                 break;
             }
@@ -518,7 +519,7 @@ bool DataReaderHistory::set_next_deadline(
         return false;
     }
 
-    it->second.next_deadline_us = next_deadline_us;
+    it->second->next_deadline_us = next_deadline_us;
     return true;
 }
 
@@ -535,13 +536,13 @@ bool DataReaderHistory::get_next_deadline(
     auto min = std::min_element(keyed_changes_.begin(),
                     keyed_changes_.end(),
                     [](
-                        const std::pair<InstanceHandle_t, DataReaderInstance>& lhs,
-                        const std::pair<InstanceHandle_t, DataReaderInstance>& rhs)
+                        const InstanceCollection::value_type& lhs,
+                        const InstanceCollection::value_type& rhs)
                     {
-                        return lhs.second.next_deadline_us < rhs.second.next_deadline_us;
+                        return lhs.second->next_deadline_us < rhs.second->next_deadline_us;
                     });
     handle = min->first;
-    next_deadline_us = min->second.next_deadline_us;
+    next_deadline_us = min->second->next_deadline_us;
     return true;
 }
 
@@ -576,7 +577,7 @@ std::pair<bool, DataReaderHistory::instance_info> DataReaderHistory::lookup_inst
         // Looking for the first instance, return the ficticious one containing all changes
         InstanceHandle_t tmp;
         tmp.value[0] = 1;
-        return { true, {tmp, const_cast<DataReaderInstance*>(&keyed_changes_.begin()->second)} };
+        return { true, {tmp, const_cast<DataReaderInstance*>(keyed_changes_.begin()->second.get())} };
     }
 
     InstanceCollection::const_iterator it;
@@ -587,7 +588,7 @@ std::pair<bool, DataReaderHistory::instance_info> DataReaderHistory::lookup_inst
     }
     else
     {
-        auto comp = [](const InstanceHandle_t& h, const std::pair<InstanceHandle_t, DataReaderInstance>& it)
+        auto comp = [](const InstanceHandle_t& h, const InstanceCollection::value_type& it)
                 {
                     return h < it.first;
                 };
@@ -596,7 +597,7 @@ std::pair<bool, DataReaderHistory::instance_info> DataReaderHistory::lookup_inst
 
     if (it != keyed_changes_.end())
     {
-        return { true, {it->first, const_cast<DataReaderInstance*>(&(it->second))} };
+        return { true, {it->first, const_cast<DataReaderInstance*>(it->second.get())} };
     }
     return { false, {InstanceHandle_t(), nullptr} };
 }
@@ -634,7 +635,7 @@ ReaderHistory::iterator DataReaderHistory::remove_change_nts(
             // keyed map.
             if (it != keyed_changes_.end())
             {
-                auto& c = it->second.cache_changes;
+                auto& c = it->second->cache_changes;
                 c.erase(std::remove(c.begin(), c.end(), p_sample), c.end());
             }
         }
@@ -668,7 +669,7 @@ bool DataReaderHistory::completed_change(
             if (find_key(change->instanceHandle, vit))
             {
                 ret_value = !change->instanceHandle.isDefined() ||
-                        complete_fn_(change, vit->second, unknown_missing_changes_up_to, rejection_reason);
+                        complete_fn_(change, *vit->second, unknown_missing_changes_up_to, rejection_reason);
             }
             else
             {
@@ -746,9 +747,9 @@ void DataReaderHistory::update_instance_nts(
     vit = keyed_changes_.find(change->instanceHandle);
 
     assert(vit != keyed_changes_.end());
-    vit->second.update_state(change->kind, change->writerGUID);
-    change->reader_info.disposed_generation_count = vit->second.disposed_generation_count;
-    change->reader_info.no_writers_generation_count = vit->second.no_writers_generation_count;
+    vit->second->update_state(change->kind, change->writerGUID);
+    change->reader_info.disposed_generation_count = vit->second->disposed_generation_count;
+    change->reader_info.no_writers_generation_count = vit->second->no_writers_generation_count;
 }
 
 void DataReaderHistory::writer_not_alive(
@@ -756,7 +757,7 @@ void DataReaderHistory::writer_not_alive(
 {
     for (auto& it : keyed_changes_)
     {
-        it.second.writer_removed(writer_guid);
+        it.second->writer_removed(writer_guid);
     }
 }
 
