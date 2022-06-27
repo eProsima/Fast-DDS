@@ -293,7 +293,7 @@ private:
             return false;
         }
 
-        auto result = history_.lookup_instance(handle_, false);
+        auto result = history_.next_available_instance_nts(handle_, instance_);
         if (!result.first)
         {
             finished_ = true;
