@@ -544,22 +544,22 @@ std::pair<bool, DataReaderHistory::instance_info> DataReaderHistory::lookup_inst
             // - Looking for a specific instance (exact = true)
             // - Looking for the next instance to the ficticious one (exact = false)
             // In both cases, no instance should be returned
-            return { false, {InstanceHandle_t(), nullptr} };
+            return { false, keyed_changes_.end() };
         }
 
         if (exact)
         {
             // Looking for HANDLE_NIL, nothing to return
-            return { false, {InstanceHandle_t(), nullptr} };
+            return { false, keyed_changes_.end() };
         }
 
         // Looking for the first instance, return the ficticious one containing all changes
         InstanceHandle_t tmp;
         tmp.value[0] = 1;
-        return { true, {tmp, const_cast<DataReaderInstance*>(keyed_changes_.begin()->second.get())} };
+        return { true, keyed_changes_.begin() };
     }
 
-    InstanceCollection::const_iterator it;
+    InstanceCollection::iterator it;
 
     if (exact)
     {
@@ -574,31 +574,31 @@ std::pair<bool, DataReaderHistory::instance_info> DataReaderHistory::lookup_inst
         it = std::upper_bound(keyed_changes_.begin(), keyed_changes_.end(), handle, comp);
     }
 
-    if (it != keyed_changes_.end())
-    {
-        return { true, {it->first, const_cast<DataReaderInstance*>(it->second.get())} };
-    }
-    return { false, {InstanceHandle_t(), nullptr} };
+    return { it != keyed_changes_.end(), it };
 }
 
 std::pair<bool, DataReaderHistory::instance_info> DataReaderHistory::next_available_instance_nts(
         const InstanceHandle_t& handle,
         const DataReaderHistory::instance_info& current_info)
 {
-    static_cast<void>(current_info);
-    return lookup_instance(handle, false);
+    instance_info it = current_info;
+    if (it->first == handle)
+    {
+        ++it;
+    }
+
+    return { it != keyed_changes_.end(), it };
 }
 
 void DataReaderHistory::check_and_remove_instance(
         DataReaderHistory::instance_info& instance_info)
 {
-    DataReaderInstance* instance = instance_info.second;
+    DataReaderInstance* instance = instance_info->second.get();
     if (instance->cache_changes.empty() &&
             (InstanceStateKind::ALIVE_INSTANCE_STATE != instance->instance_state) &&
-            instance_info.first.isDefined())
+            instance_info->first.isDefined())
     {
-        keyed_changes_.erase(instance_info.first);
-        instance_info.second = nullptr;
+        instance_info = keyed_changes_.erase(instance_info);
     }
 }
 

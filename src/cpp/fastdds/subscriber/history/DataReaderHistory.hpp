@@ -63,7 +63,8 @@ public:
     using GUID_t = eprosima::fastrtps::rtps::GUID_t;
     using SequenceNumber_t = eprosima::fastrtps::rtps::SequenceNumber_t;
 
-    using instance_info = std::pair<InstanceHandle_t, DataReaderInstance*>;
+    using InstanceCollection = std::map<InstanceHandle_t, std::shared_ptr<DataReaderInstance>>;
+    using instance_info = InstanceCollection::iterator;
 
     /**
      * Constructor. Requires information about the DataReader.
@@ -239,8 +240,6 @@ public:
             instance_info& instance_info);
 
 private:
-
-    using InstanceCollection = std::map<InstanceHandle_t, std::shared_ptr<DataReaderInstance>>;
 
     //!Resource limits for allocating the array of changes per instance
     eprosima::fastrtps::ResourceLimitedContainerConfig key_changes_allocation_;
