@@ -252,6 +252,9 @@ public:
             const InstanceHandle_t& handle,
             bool exact);
 
+    std::pair<bool, instance_info> next_available_instance_nts(
+            const InstanceHandle_t& handle,
+            const instance_info& current_info);
 
     void update_instance_nts(
             CacheChange_t* const change);

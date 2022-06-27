@@ -608,6 +608,14 @@ std::pair<bool, DataReaderHistory::instance_info> DataReaderHistory::lookup_inst
     return { false, {InstanceHandle_t(), nullptr} };
 }
 
+std::pair<bool, DataReaderHistory::instance_info> DataReaderHistory::next_available_instance_nts(
+        const InstanceHandle_t& handle,
+        const DataReaderHistory::instance_info& current_info)
+{
+    static_cast<void>(current_info);
+    return lookup_instance(handle, false);
+}
+
 void DataReaderHistory::check_and_remove_instance(
         DataReaderHistory::instance_info& instance_info)
 {
