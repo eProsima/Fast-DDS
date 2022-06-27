@@ -1213,12 +1213,16 @@ void DataWriterImpl::InnerDataWriterListener::on_liveliness_lost(
         fastrtps::rtps::RTPSWriter* /*writer*/,
         const fastrtps::LivelinessLostStatus& status)
 {
+    data_writer_->update_liveliness_lost_status(status);
     StatusMask notify_status = StatusMask::liveliness_lost();
     DataWriterListener* listener = data_writer_->get_listener_for(notify_status);
     if (listener != nullptr)
     {
-        listener->on_liveliness_lost(
-            data_writer_->user_datawriter_, status);
+        LivelinessLostStatus callback_status;
+        if (ReturnCode_t::RETCODE_OK == data_writer_->get_liveliness_lost_status(callback_status))
+        {
+            listener->on_liveliness_lost( data_writer_->user_datawriter_, status);
+        }
     }
     data_writer_->user_datawriter_->get_statuscondition().get_impl()->set_status(notify_status, true);
 }
@@ -1481,10 +1485,8 @@ ReturnCode_t DataWriterImpl::get_liveliness_lost_status(
     {
         std::unique_lock<RecursiveTimedMutex> lock(writer_->getMutex());
 
-        status.total_count = writer_->liveliness_lost_status_.total_count;
-        status.total_count_change = writer_->liveliness_lost_status_.total_count_change;
-
-        writer_->liveliness_lost_status_.total_count_change = 0u;
+        status = liveliness_lost_status_;
+        liveliness_lost_status_.total_count_change = 0u;
     }
 
     user_datawriter_->get_statuscondition().get_impl()->set_status(StatusMask::liveliness_lost(), false);
@@ -1564,6 +1566,14 @@ OfferedIncompatibleQosStatus& DataWriterImpl::update_offered_incompatible_qos(
         }
     }
     return offered_incompatible_qos_status_;
+}
+
+LivelinessLostStatus& DataWriterImpl::update_liveliness_lost_status(
+        const fastrtps::LivelinessLostStatus& liveliness_lost_status)
+{
+    liveliness_lost_status_.total_count = liveliness_lost_status.total_count;
+    liveliness_lost_status_.total_count_change += liveliness_lost_status.total_count;
+    return liveliness_lost_status_;
 }
 
 void DataWriterImpl::set_qos(
