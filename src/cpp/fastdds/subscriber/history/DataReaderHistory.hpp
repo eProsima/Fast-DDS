@@ -22,6 +22,7 @@
 #include <chrono>
 #include <functional>
 #include <map>
+#include <memory>
 #include <utility>
 
 #include <fastdds/dds/core/policy/QosPolicies.hpp>
@@ -226,7 +227,7 @@ public:
 
 private:
 
-    using InstanceCollection = std::map<InstanceHandle_t, DataReaderInstance>;
+    using InstanceCollection = std::map<InstanceHandle_t, std::shared_ptr<DataReaderInstance>>;
 
     //!Resource limits for allocating the array of changes per instance
     eprosima::fastrtps::ResourceLimitedContainerConfig key_changes_allocation_;
