@@ -375,7 +375,8 @@ bool DataReaderHistory::find_key(
             data_available_instances_.erase(vit->first);
             instances_.erase(vit);
             vit_out = instances_.emplace(handle,
-                            std::make_shared<DataReaderInstance>(key_changes_allocation_, key_writers_allocation_)).first;
+                            std::make_shared<DataReaderInstance>(key_changes_allocation_,
+                            key_writers_allocation_)).first;
             return true;
         }
     }
@@ -577,9 +578,9 @@ std::pair<bool, DataReaderHistory::instance_info> DataReaderHistory::lookup_avai
         else
         {
             auto comp = [](const InstanceHandle_t& h, const InstanceCollection::value_type& it)
-            {
-                return h < it.first;
-            };
+                    {
+                        return h < it.first;
+                    };
             it = std::upper_bound(data_available_instances_.begin(), data_available_instances_.end(), handle, comp);
         }
     }
@@ -606,7 +607,7 @@ void DataReaderHistory::check_and_remove_instance(
     if (instance_info->second->cache_changes.empty())
     {
         if ((InstanceStateKind::ALIVE_INSTANCE_STATE != instance_info->second->instance_state) &&
-            instance_info->first.isDefined())
+                instance_info->first.isDefined())
         {
             instances_.erase(instance_info->first);
         }
