@@ -134,11 +134,13 @@ ReturnCode_t DataReaderImpl::enable()
 
     att.endpoint.durabilityKind = qos_.durability().durabilityKind();
     att.endpoint.endpointKind = READER;
-    att.endpoint.multicastLocatorList = qos_.endpoint().multicast_locator_list;
     att.endpoint.reliabilityKind = qos_.reliability().kind == RELIABLE_RELIABILITY_QOS ? RELIABLE : BEST_EFFORT;
     att.endpoint.topicKind = type_->m_isGetKeyDefined ? WITH_KEY : NO_KEY;
+    att.endpoint.multicastLocatorList = qos_.endpoint().multicast_locator_list;
     att.endpoint.unicastLocatorList = qos_.endpoint().unicast_locator_list;
     att.endpoint.remoteLocatorList = qos_.endpoint().remote_locator_list;
+    att.endpoint.external_unicast_locators = qos_.endpoint().external_unicast_locators;
+    att.endpoint.ignore_non_matching_locators = qos_.endpoint().ignore_non_matching_locators;
     att.endpoint.properties = qos_.properties();
     att.endpoint.ownershipKind = qos_.ownership().kind;
     att.endpoint.setEntityID(qos_.endpoint().entity_id);

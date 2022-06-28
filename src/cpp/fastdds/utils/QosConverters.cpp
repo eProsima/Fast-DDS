@@ -93,6 +93,8 @@ void set_qos_from_attributes(
     qos.endpoint().unicast_locator_list = attr.unicastLocatorList;
     qos.endpoint().multicast_locator_list = attr.multicastLocatorList;
     qos.endpoint().remote_locator_list = attr.remoteLocatorList;
+    qos.endpoint().external_unicast_locators = attr.external_unicast_locators;
+    qos.endpoint().ignore_non_matching_locators = attr.ignore_non_matching_locators;
     qos.endpoint().history_memory_policy = attr.historyMemoryPolicy;
     qos.endpoint().user_defined_id = attr.getUserDefinedID();
     qos.endpoint().entity_id = attr.getEntityID();
