@@ -158,6 +158,7 @@ namespace filewatch {
         std::promise<void> _running;
 
         std::chrono::time_point<std::chrono::system_clock> last_write_time_;
+        unsigned long last_size_;
 
 #ifdef _WIN32
         HANDLE _directory = { nullptr };
@@ -390,13 +391,14 @@ namespace filewatch {
                     _WIN32_FILE_ATTRIBUTE_DATA att;
                     GetFileAttributesExA(_path.c_str(), GetFileExInfoStandard, &att);
 
+                    unsigned long current_size = att.nFileSizeLow;
                     auto current_time = base_.second
                         + std::chrono::duration<
                                 typename std::chrono::time_point<std::chrono::system_clock>::rep,
                                 std::ratio_multiply<std::hecto, typename std::chrono::nanoseconds::period>>(
                                     reinterpret_cast<ULARGE_INTEGER*>(&att.ftLastWriteTime)->QuadPart - base_.first.QuadPart);
 
-                    if (bytes_returned == 0 || current_time == last_write_time_) {
+                    if (bytes_returned == 0 || (current_time == last_write_time_) && current_size == last_size_ ) {
                         break;
                     }
 
@@ -412,6 +414,7 @@ namespace filewatch {
                         }
 
                         last_write_time_ = current_time;
+                        last_size_ = current_size;
 
                         if (file_information->NextEntryOffset == 0) {
                             break;
@@ -507,10 +510,13 @@ namespace filewatch {
                 current_time += std::chrono::seconds(result.st_mtim.tv_sec);
                 current_time += std::chrono::nanoseconds(result.st_mtim.tv_nsec);
 
-                if (length > 0 && current_time != last_write_time_)
+                unsigned long current_size = result.st_size;
+
+                if (length > 0 && (current_time != last_write_time_ || current_size != last_size_))
                 {
                     int i = 0;
                     last_write_time_ = current_time;
+                    last_size_ = current_size;
                     std::vector<std::pair<T, Event>> parsed_information;
                     bool already_modified = false;
                     while (i < length)
@@ -590,6 +596,9 @@ namespace filewatch {
                         typename std::chrono::time_point<std::chrono::system_clock>::rep,
                         std::ratio_multiply<std::hecto, typename std::chrono::nanoseconds::period>>(
                             reinterpret_cast<ULARGE_INTEGER*>(&att.ftLastWriteTime)->QuadPart - base_.first.QuadPart);
+
+            // Initialize filesize
+            last_size_ = att.nFileSizeLow;
 #else
             // Initialize last_write_time_
             struct stat result;
@@ -597,7 +606,11 @@ namespace filewatch {
 
             last_write_time_ += std::chrono::seconds(result.st_mtim.tv_sec);
             last_write_time_ += std::chrono::nanoseconds(result.st_mtim.tv_nsec);
+
+            // Initialize filesize
+            last_size_ = result.st_size;
 #endif
+            
         }
 
     };
