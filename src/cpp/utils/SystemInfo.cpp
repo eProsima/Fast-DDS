@@ -16,7 +16,6 @@
 
 #ifdef __unix__
 #   include <sys/file.h>
-#   include <sys/stat.h>
 #   include <unistd.h>
 #endif // ifdef __unix__
 
@@ -24,6 +23,7 @@
 #include <windows.h>
 #else
 #include <pwd.h>
+#include <sys/stat.h>
 #endif // _WIN32
 
 #include <fstream>
