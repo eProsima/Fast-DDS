@@ -249,7 +249,7 @@ public:
      * @remarks When used on a NO_KEY topic, an instance will only be returned when called with
      *          `handle = HANDLE_NIL` and `exact = false`.
      */
-    std::pair<bool, instance_info> lookup_instance(
+    std::pair<bool, instance_info> lookup_available_instance(
             const InstanceHandle_t& handle,
             bool exact);
 

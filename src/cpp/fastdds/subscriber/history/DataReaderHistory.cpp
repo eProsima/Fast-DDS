@@ -561,7 +561,7 @@ bool DataReaderHistory::is_instance_present(
     return has_keys_ && instances_.find(handle) != instances_.end();
 }
 
-std::pair<bool, DataReaderHistory::instance_info> DataReaderHistory::lookup_instance(
+std::pair<bool, DataReaderHistory::instance_info> DataReaderHistory::lookup_available_instance(
         const InstanceHandle_t& handle,
         bool exact)
 {
