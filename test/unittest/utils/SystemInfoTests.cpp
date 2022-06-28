@@ -227,7 +227,6 @@ TEST_F(SystemInfoTests, EnvironmentFileTest)
 TEST_F(SystemInfoTests, FileWatchTest)
 {
     auto _1s = std::chrono::seconds(1);
-    auto _100ms = std::chrono::milliseconds(100);
 
     std::string filename = "environment_test_file.json";
     nlohmann::json file_content;
@@ -263,16 +262,6 @@ TEST_F(SystemInfoTests, FileWatchTest)
 
     file_content["EMPTY_ENV_VAR"] = "another_value";
 
-    // Avoid:
-    // 1. Filetime granularity issues.
-    //    Note that file changes within the same:
-    //     - 100 ns in windows
-    //     - 1 ns in linux
-    //    will not trigger a callback
-    // 2. OS time to update the results of Filetime info calls as:
-    //     - GetFileAttributesEx() < 1 ms
-    //     - stat() < 100 ms
-    std::this_thread::sleep_for(_100ms);
     {
         std::ofstream file(filename);
         file << file_content;
@@ -290,8 +279,6 @@ TEST_F(SystemInfoTests, FileWatchTest)
     // Restore content of file
     file_content["EMPTY_ENV_VAR"] = "";
 
-    // Avoid filetime granularity issues
-    std::this_thread::sleep_for(_100ms);
     {
         std::ofstream file(filename);
         file << file_content;
