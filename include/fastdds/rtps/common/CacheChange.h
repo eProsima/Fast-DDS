@@ -169,7 +169,7 @@ struct RTPS_DllAPI CacheChange_t
         setFragmentSize(ch_ptr->fragment_size_, false);
     }
 
-    ~CacheChange_t()
+    virtual ~CacheChange_t()
     {
         if (payload_owner_ != nullptr)
         {
