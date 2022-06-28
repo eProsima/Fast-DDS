@@ -44,7 +44,6 @@ void DynamicDataHelper::print(
             {
                 std::cout << "Only structs are supported by DynamicDataHelper::print method." << std::endl;
             }
-
         }
     }
     else
