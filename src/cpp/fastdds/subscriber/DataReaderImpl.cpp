@@ -479,7 +479,14 @@ ReturnCode_t DataReaderImpl::read_or_take(
     auto it = history_.lookup_available_instance(handle, exact_instance);
     if (!it.first)
     {
-        return exact_instance ? ReturnCode_t::RETCODE_BAD_PARAMETER : ReturnCode_t::RETCODE_NO_DATA;
+        if (exact_instance && !history_.is_instance_present(handle))
+        {
+            return ReturnCode_t::RETCODE_BAD_PARAMETER;
+        }
+        else
+        {
+            return ReturnCode_t::RETCODE_NO_DATA;
+        }
     }
 
     code = prepare_loan(data_values, sample_infos, max_samples);
