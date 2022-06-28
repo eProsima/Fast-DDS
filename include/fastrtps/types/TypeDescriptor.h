@@ -52,7 +52,7 @@ protected:
 
 public:
 
-   RTPS_DllAPI TypeDescriptor();
+    RTPS_DllAPI TypeDescriptor();
 
     RTPS_DllAPI TypeDescriptor(
             const TypeDescriptor* other);
