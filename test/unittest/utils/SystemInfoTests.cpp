@@ -256,9 +256,10 @@ TEST_F(SystemInfoTests, FileWatchTest)
     }
 
     // Check modifications.
-    block_for_at_least_N_callbacks(1);
-    uint32_t times_called = times_called_;
-    EXPECT_EQ(1u, times_called);
+    uint32_t times_called = 0;
+    block_for_at_least_N_callbacks(times_called + 1);
+    EXPECT_LT(times_called, times_called_);
+    times_called = times_called_;
 
     file_content["EMPTY_ENV_VAR"] = "another_value";
 
@@ -278,12 +279,13 @@ TEST_F(SystemInfoTests, FileWatchTest)
     }
 
     // Check modifications.
-    block_for_at_least_N_callbacks(2);
+    block_for_at_least_N_callbacks(times_called + 1);
+    EXPECT_LT(times_called, times_called_);
     times_called = times_called_;
-    EXPECT_EQ(2u, times_called);
 
     // Remove the watcher
     eprosima::SystemInfo::stop_watching_file(watch);
+    times_called = times_called_;
 
     // Restore content of file
     file_content["EMPTY_ENV_VAR"] = "";
