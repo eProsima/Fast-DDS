@@ -110,7 +110,7 @@ DataReaderHistory::DataReaderHistory(
         key_changes_allocation_.initial = resource_limited_qos_.allocated_samples;
         key_changes_allocation_.maximum = resource_limited_qos_.max_samples;
 
-        keyed_changes_.emplace(c_InstanceHandle_Unknown,
+        instances_.emplace(c_InstanceHandle_Unknown,
                 std::make_shared<DataReaderInstance>(key_changes_allocation_, key_writers_allocation_));
     }
 
@@ -330,8 +330,8 @@ bool DataReaderHistory::get_first_untaken_info(
     WriterProxy* wp = nullptr;
     if (mp_reader->nextUntakenCache(&change, &wp))
     {
-        auto it = keyed_changes_.find(change->instanceHandle);
-        assert(it != keyed_changes_.end());
+        auto it = instances_.find(change->instanceHandle);
+        assert(it != instances_.end());
         auto& instance_changes = it->second->cache_changes;
         auto item =
                 std::find_if(instance_changes.cbegin(), instance_changes.cend(),
@@ -352,26 +352,26 @@ bool DataReaderHistory::find_key(
         InstanceCollection::iterator& vit_out)
 {
     InstanceCollection::iterator vit;
-    vit = keyed_changes_.find(handle);
-    if (vit != keyed_changes_.end())
+    vit = instances_.find(handle);
+    if (vit != instances_.end())
     {
         vit_out = vit;
         return true;
     }
 
-    if (keyed_changes_.size() < static_cast<size_t>(resource_limited_qos_.max_instances))
+    if (instances_.size() < static_cast<size_t>(resource_limited_qos_.max_instances))
     {
-        vit_out = keyed_changes_.emplace(handle,
+        vit_out = instances_.emplace(handle,
                         std::make_shared<DataReaderInstance>(key_changes_allocation_, key_writers_allocation_)).first;
         return true;
     }
 
-    for (vit = keyed_changes_.begin(); vit != keyed_changes_.end(); ++vit)
+    for (vit = instances_.begin(); vit != instances_.end(); ++vit)
     {
         if (vit->second->cache_changes.size() == 0)
         {
-            keyed_changes_.erase(vit);
-            vit_out = keyed_changes_.emplace(handle,
+            instances_.erase(vit);
+            vit_out = instances_.emplace(handle,
                             std::make_shared<DataReaderInstance>(key_changes_allocation_, key_writers_allocation_)).first;
             return true;
         }
@@ -486,8 +486,8 @@ bool DataReaderHistory::set_next_deadline(
         return false;
     }
     std::lock_guard<RecursiveTimedMutex> guard(*mp_mutex);
-    auto it = keyed_changes_.find(handle);
-    if (it == keyed_changes_.end())
+    auto it = instances_.find(handle);
+    if (it == instances_.end())
     {
         return false;
     }
@@ -506,8 +506,8 @@ bool DataReaderHistory::get_next_deadline(
         return false;
     }
     std::lock_guard<RecursiveTimedMutex> guard(*mp_mutex);
-    auto min = std::min_element(keyed_changes_.begin(),
-                    keyed_changes_.end(),
+    auto min = std::min_element(instances_.begin(),
+                    instances_.end(),
                     [](
                         const InstanceCollection::value_type& lhs,
                         const InstanceCollection::value_type& rhs)
@@ -528,7 +528,7 @@ uint64_t DataReaderHistory::get_unread_count(
 bool DataReaderHistory::is_instance_present(
         const InstanceHandle_t& handle) const
 {
-    return has_keys_ && keyed_changes_.find(handle) != keyed_changes_.end();
+    return has_keys_ && instances_.find(handle) != instances_.end();
 }
 
 std::pair<bool, DataReaderHistory::instance_info> DataReaderHistory::lookup_instance(
@@ -544,32 +544,32 @@ std::pair<bool, DataReaderHistory::instance_info> DataReaderHistory::lookup_inst
             // - Looking for a specific instance (exact = true)
             // - Looking for the next instance to the ficticious one (exact = false)
             // In both cases, no instance should be returned
-            return { false, keyed_changes_.end() };
+            return { false, instances_.end() };
         }
 
         if (exact)
         {
             // Looking for HANDLE_NIL, nothing to return
-            return { false, keyed_changes_.end() };
+            return { false, instances_.end() };
         }
 
         // Looking for the first instance, return the ficticious one containing all changes
         InstanceHandle_t tmp;
         tmp.value[0] = 1;
-        return { true, keyed_changes_.begin() };
+        return { true, instances_.begin() };
     }
 
     InstanceCollection::iterator it;
 
     if (exact)
     {
-        it = keyed_changes_.find(handle);
+        it = instances_.find(handle);
     }
     else
     {
         if (!handle.isDefined())
         {
-            it = keyed_changes_.begin();
+            it = instances_.begin();
         }
         else
         {
@@ -577,11 +577,11 @@ std::pair<bool, DataReaderHistory::instance_info> DataReaderHistory::lookup_inst
             {
                 return h < it.first;
             };
-            it = std::upper_bound(keyed_changes_.begin(), keyed_changes_.end(), handle, comp);
+            it = std::upper_bound(instances_.begin(), instances_.end(), handle, comp);
         }
     }
 
-    return { it != keyed_changes_.end(), it };
+    return { it != instances_.end(), it };
 }
 
 std::pair<bool, DataReaderHistory::instance_info> DataReaderHistory::next_available_instance_nts(
@@ -594,7 +594,7 @@ std::pair<bool, DataReaderHistory::instance_info> DataReaderHistory::next_availa
         ++it;
     }
 
-    return { it != keyed_changes_.end(), it };
+    return { it != instances_.end(), it };
 }
 
 void DataReaderHistory::check_and_remove_instance(
@@ -605,7 +605,7 @@ void DataReaderHistory::check_and_remove_instance(
             (InstanceStateKind::ALIVE_INSTANCE_STATE != instance->instance_state) &&
             instance_info->first.isDefined())
     {
-        instance_info = keyed_changes_.erase(instance_info);
+        instance_info = instances_.erase(instance_info);
     }
 }
 
@@ -620,10 +620,10 @@ ReaderHistory::iterator DataReaderHistory::remove_change_nts(
         if (!has_keys_ || p_sample->is_fully_assembled())
         {
             // clean any references to this CacheChange in the key state collection
-            auto it = keyed_changes_.find(p_sample->instanceHandle);
+            auto it = instances_.find(p_sample->instanceHandle);
 
             // if keyed and in history must be in the map
-            assert(it != keyed_changes_.end());
+            assert(it != instances_.end());
 
             auto& c = it->second->cache_changes;
             c.erase(std::remove(c.begin(), c.end(), p_sample), c.end());
@@ -712,9 +712,9 @@ void DataReaderHistory::update_instance_nts(
         CacheChange_t* const change)
 {
     InstanceCollection::iterator vit;
-    vit = keyed_changes_.find(change->instanceHandle);
+    vit = instances_.find(change->instanceHandle);
 
-    assert(vit != keyed_changes_.end());
+    assert(vit != instances_.end());
     vit->second->update_state(change->kind, change->writerGUID);
     change->reader_info.disposed_generation_count = vit->second->disposed_generation_count;
     change->reader_info.no_writers_generation_count = vit->second->no_writers_generation_count;
@@ -723,7 +723,7 @@ void DataReaderHistory::update_instance_nts(
 void DataReaderHistory::writer_not_alive(
         const fastrtps::rtps::GUID_t& writer_guid)
 {
-    for (auto& it : keyed_changes_)
+    for (auto& it : instances_)
     {
         it.second->writer_removed(writer_guid);
     }
