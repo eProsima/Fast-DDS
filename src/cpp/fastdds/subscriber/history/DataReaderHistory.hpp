@@ -272,8 +272,8 @@ private:
     eprosima::fastrtps::ResourceLimitedContainerConfig key_changes_allocation_;
     //!Resource limits for allocating the array of alive writers per instance
     eprosima::fastrtps::ResourceLimitedContainerConfig key_writers_allocation_;
-    //!Map where keys are instance handles and values vectors of cache changes
-    InstanceCollection keyed_changes_;
+    //!Collection of DataReaderInstance objects accessible by their handle
+    InstanceCollection instances_;
     //!HistoryQosPolicy values.
     HistoryQosPolicy history_qos_;
     //!ResourceLimitsQosPolicy values.
