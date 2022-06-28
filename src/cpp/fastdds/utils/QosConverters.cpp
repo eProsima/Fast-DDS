@@ -144,6 +144,8 @@ void set_qos_from_attributes(
     qos.wire_protocol().throughput_controller = attr.throughputController;
     qos.wire_protocol().default_unicast_locator_list = attr.defaultUnicastLocatorList;
     qos.wire_protocol().default_multicast_locator_list = attr.defaultMulticastLocatorList;
+    qos.wire_protocol().default_external_unicast_locators = attr.default_external_unicast_locators;
+    qos.wire_protocol().ignore_non_matching_locators = attr.ignore_non_matching_locators;
     qos.transport().user_transports = attr.userTransports;
     qos.transport().use_builtin_transports = attr.useBuiltinTransports;
     qos.transport().send_socket_buffer_size = attr.sendSocketBufferSize;
@@ -182,6 +184,8 @@ void set_attributes_from_qos(
     attr.throughputController = qos.wire_protocol().throughput_controller;
     attr.defaultUnicastLocatorList = qos.wire_protocol().default_unicast_locator_list;
     attr.defaultMulticastLocatorList = qos.wire_protocol().default_multicast_locator_list;
+    attr.default_external_unicast_locators = qos.wire_protocol().default_external_unicast_locators;
+    attr.ignore_non_matching_locators = qos.wire_protocol().ignore_non_matching_locators;
     attr.userTransports = qos.transport().user_transports;
     attr.useBuiltinTransports = qos.transport().use_builtin_transports;
     attr.sendSocketBufferSize = qos.transport().send_socket_buffer_size;
