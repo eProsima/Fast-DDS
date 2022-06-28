@@ -247,6 +247,8 @@ private:
     eprosima::fastrtps::ResourceLimitedContainerConfig key_writers_allocation_;
     //!Collection of DataReaderInstance objects accessible by their handle
     InstanceCollection instances_;
+    //!Collection of DataReaderInstance objects with available data, accessible by their handle
+    InstanceCollection data_available_instances_;
     //!HistoryQosPolicy values.
     HistoryQosPolicy history_qos_;
     //!ResourceLimitsQosPolicy values.
