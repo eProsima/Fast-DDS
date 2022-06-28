@@ -101,6 +101,7 @@ DataReaderHistory::DataReaderHistory(
 
         instances_.emplace(c_InstanceHandle_Unknown,
                 std::make_shared<DataReaderInstance>(key_changes_allocation_, key_writers_allocation_));
+        data_available_instances_[c_InstanceHandle_Unknown] = instances_[c_InstanceHandle_Unknown];
     }
 
     using std::placeholders::_1;
@@ -342,6 +343,7 @@ void DataReaderHistory::add_to_instance(
             {
                 return lhs->sourceTimestamp < rhs->sourceTimestamp;
             });
+    data_available_instances_[a_change->instanceHandle] = instances_[a_change->instanceHandle];
 
     logInfo(SUBSCRIBER, mp_reader->getGuid().entityId
             << ": Change " << a_change->sequenceNumber << " added from: "
@@ -357,8 +359,8 @@ bool DataReaderHistory::get_first_untaken_info(
     WriterProxy* wp = nullptr;
     if (mp_reader->nextUntakenCache(&change, &wp))
     {
-        auto it = instances_.find(change->instanceHandle);
-        assert(it != instances_.end());
+        auto it = data_available_instances_.find(change->instanceHandle);
+        assert(it != data_available_instances_.end());
         auto& instance_changes = it->second->cache_changes;
         auto item =
                 std::find_if(instance_changes.cbegin(), instance_changes.cend(),
@@ -397,6 +399,7 @@ bool DataReaderHistory::find_key(
     {
         if (InstanceStateKind::ALIVE_INSTANCE_STATE != vit->second->instance_state)
         {
+            data_available_instances_.erase(vit->first);
             instances_.erase(vit);
             vit_out = instances_.emplace(handle,
                             std::make_shared<DataReaderInstance>(key_changes_allocation_, key_writers_allocation_)).first;
@@ -571,32 +574,32 @@ std::pair<bool, DataReaderHistory::instance_info> DataReaderHistory::lookup_inst
             // - Looking for a specific instance (exact = true)
             // - Looking for the next instance to the ficticious one (exact = false)
             // In both cases, no instance should be returned
-            return { false, instances_.end() };
+            return { false, data_available_instances_.end() };
         }
 
         if (exact)
         {
             // Looking for HANDLE_NIL, nothing to return
-            return { false, instances_.end() };
+            return { false, data_available_instances_.end() };
         }
 
         // Looking for the first instance, return the ficticious one containing all changes
         InstanceHandle_t tmp;
         tmp.value[0] = 1;
-        return { true, instances_.begin() };
+        return { true, data_available_instances_.begin() };
     }
 
     InstanceCollection::iterator it;
 
     if (exact)
     {
-        it = instances_.find(handle);
+        it = data_available_instances_.find(handle);
     }
     else
     {
         if (!handle.isDefined())
         {
-            it = instances_.begin();
+            it = data_available_instances_.begin();
         }
         else
         {
@@ -604,11 +607,11 @@ std::pair<bool, DataReaderHistory::instance_info> DataReaderHistory::lookup_inst
             {
                 return h < it.first;
             };
-            it = std::upper_bound(instances_.begin(), instances_.end(), handle, comp);
+            it = std::upper_bound(data_available_instances_.begin(), data_available_instances_.end(), handle, comp);
         }
     }
 
-    return { it != instances_.end(), it };
+    return { it != data_available_instances_.end(), it };
 }
 
 std::pair<bool, DataReaderHistory::instance_info> DataReaderHistory::next_available_instance_nts(
@@ -621,18 +624,21 @@ std::pair<bool, DataReaderHistory::instance_info> DataReaderHistory::next_availa
         ++it;
     }
 
-    return { it != instances_.end(), it };
+    return { it != data_available_instances_.end(), it };
 }
 
 void DataReaderHistory::check_and_remove_instance(
         DataReaderHistory::instance_info& instance_info)
 {
-    DataReaderInstance* instance = instance_info->second.get();
-    if (instance->cache_changes.empty() &&
-            (InstanceStateKind::ALIVE_INSTANCE_STATE != instance->instance_state) &&
-            instance_info->first.isDefined())
+    if (instance_info->second->cache_changes.empty())
     {
-        instance_info = instances_.erase(instance_info);
+        if ((InstanceStateKind::ALIVE_INSTANCE_STATE != instance_info->second->instance_state) &&
+            instance_info->first.isDefined())
+        {
+            instances_.erase(instance_info->first);
+        }
+
+        instance_info = data_available_instances_.erase(instance_info);
     }
 }
 
