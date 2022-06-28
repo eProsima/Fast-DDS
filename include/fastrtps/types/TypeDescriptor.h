@@ -144,16 +144,16 @@ public:
     RTPS_DllAPI void annotation_set_appendable();
 
     RTPS_DllAPI void annotation_set_nested(
-            RTPS_DllAPI bool nested);
+            bool nested);
 
     RTPS_DllAPI void annotation_set_bit_bound(
             uint16_t bit_bound);
 
     RTPS_DllAPI void annotation_set_key(
-            RTPS_DllAPI bool key);
+            bool key);
 
     RTPS_DllAPI void annotation_set_non_serialized(
-            RTPS_DllAPI bool non_serialized);
+            bool non_serialized);
 };
 
 } // namespace types
