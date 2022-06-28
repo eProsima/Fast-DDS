@@ -607,10 +607,10 @@ bool RTPSDomainImpl::should_intraprocess_between(
 
 void RTPSDomainImpl::file_watch_callback()
 {
-    using namespace std::chrono_literals;
+    auto _1s = std::chrono::seconds(1);
 
     // Ensure that all changes have been saved by the OS
-    SystemInfo::wait_for_file_closure(SystemInfo::get_environment_file(), 1s);
+    SystemInfo::wait_for_file_closure(SystemInfo::get_environment_file(), _1s);
 
     // For all RTPSParticipantImpl registered in the RTPSDomain, call RTPSParticipantImpl::environment_file_has_changed
     std::lock_guard<std::mutex> guard(RTPSDomain::m_mutex);

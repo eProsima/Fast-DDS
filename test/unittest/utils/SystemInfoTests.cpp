@@ -226,7 +226,8 @@ TEST_F(SystemInfoTests, EnvironmentFileTest)
  */
 TEST_F(SystemInfoTests, FileWatchTest)
 {
-    using namespace std::chrono_literals;
+    auto _1s = std::chrono::seconds(1);
+    auto _1ms = std::chrono::milliseconds(1);
 
     std::string filename = "environment_test_file.json";
     nlohmann::json file_content;
@@ -235,7 +236,7 @@ TEST_F(SystemInfoTests, FileWatchTest)
     eprosima::FileWatchHandle watch =
             eprosima::SystemInfo::watch_file(filename, [&]()
                     {
-                        eprosima::SystemInfo::wait_for_file_closure(filename, 1s);
+                        eprosima::SystemInfo::wait_for_file_closure(filename, _1s);
                         ++times_called_;
                         cv_.notify_all();
                     });
@@ -266,7 +267,7 @@ TEST_F(SystemInfoTests, FileWatchTest)
     //  - 100ns in windows
     //  - 1ns in linux
     // will not trigger a callback
-    std::this_thread::sleep_for(1ms);
+    std::this_thread::sleep_for(_1ms);
     {
         std::ofstream file(filename);
         file << file_content;
@@ -284,14 +285,14 @@ TEST_F(SystemInfoTests, FileWatchTest)
     file_content["EMPTY_ENV_VAR"] = "";
 
     // Avoid filetime granularity issues
-    std::this_thread::sleep_for(1ms);
+    std::this_thread::sleep_for(_1ms);
     {
         std::ofstream file(filename);
         file << file_content;
     }
 
     // Check no modifications were notified
-    std::this_thread::sleep_for(std::chrono::seconds(1));
+    std::this_thread::sleep_for(_1s);
     EXPECT_EQ(times_called, times_called_);
 }
 
