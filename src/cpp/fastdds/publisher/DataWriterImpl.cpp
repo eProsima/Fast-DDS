@@ -1221,7 +1221,7 @@ void DataWriterImpl::InnerDataWriterListener::on_liveliness_lost(
         LivelinessLostStatus callback_status;
         if (ReturnCode_t::RETCODE_OK == data_writer_->get_liveliness_lost_status(callback_status))
         {
-            listener->on_liveliness_lost( data_writer_->user_datawriter_, status);
+            listener->on_liveliness_lost(data_writer_->user_datawriter_, callback_status);
         }
     }
     data_writer_->user_datawriter_->get_statuscondition().get_impl()->set_status(notify_status, true);
@@ -1572,7 +1572,7 @@ LivelinessLostStatus& DataWriterImpl::update_liveliness_lost_status(
         const fastrtps::LivelinessLostStatus& liveliness_lost_status)
 {
     liveliness_lost_status_.total_count = liveliness_lost_status.total_count;
-    liveliness_lost_status_.total_count_change += liveliness_lost_status.total_count;
+    liveliness_lost_status_.total_count_change += liveliness_lost_status.total_count_change;
     return liveliness_lost_status_;
 }
 
