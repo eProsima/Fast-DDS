@@ -21,13 +21,14 @@
 
 #include <fastdds/rtps/resources/ResourceManagement.h>
 
+#include <fastdds/rtps/attributes/ExternalLocators.hpp>
+#include <fastdds/rtps/attributes/PropertyPolicy.h>
+#include <fastdds/rtps/attributes/WriterAttributes.h>
 #include <fastdds/rtps/common/Locator.h>
 #include <fastdds/rtps/common/Time_t.h>
-#include <fastdds/rtps/attributes/WriterAttributes.h>
 #include <fastdds/rtps/flowcontrol/ThroughputControllerDescriptor.h>
 #include <fastrtps/attributes/TopicAttributes.h>
 #include <fastrtps/qos/WriterQos.h>
-#include <fastdds/rtps/attributes/PropertyPolicy.h>
 
 namespace eprosima {
 namespace fastrtps {
@@ -83,6 +84,12 @@ public:
 
     //!Remote locator list
     rtps::LocatorList_t remoteLocatorList;
+
+    //!The collection of external locators to use for communication.
+    fastdds::rtps::ExternalLocators external_unicast_locators;
+
+    //!Whether locators that don't match with the announced locators should be kept.
+    bool ignore_non_matching_locators = false;
 
     //!Throughput controller
     rtps::ThroughputControllerDescriptor throughputController;
