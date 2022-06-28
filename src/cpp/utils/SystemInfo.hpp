@@ -153,7 +153,7 @@ public:
             const std::string& filename);
 
     /**
-     * Wait for file with name \c filename 
+     * Wait for file with name \c filename
      * until exclusive lock can be taken on it
      *
      * \param [in] filename path/name of the file to check.

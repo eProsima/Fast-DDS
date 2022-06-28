@@ -138,8 +138,8 @@ bool SystemInfo::file_exists(
 }
 
 bool SystemInfo::wait_for_file_closure(
-         const std::string& filename,
-         const std::chrono::seconds timeout)
+        const std::string& filename,
+        const std::chrono::seconds timeout)
 {
     auto start = std::chrono::system_clock::now();
 
