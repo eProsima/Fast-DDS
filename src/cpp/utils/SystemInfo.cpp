@@ -14,12 +14,16 @@
 
 #include "SystemInfo.hpp"
 
-#include <sys/stat.h>
+#ifdef __unix__
+#   include <sys/file.h>
+#   include <sys/stat.h>
+#   include <unistd.h>
+#endif // ifdef __unix__
+
 #ifdef _WIN32
 #include <windows.h>
 #else
 #include <pwd.h>
-#include <unistd.h>
 #endif // _WIN32
 
 #include <fstream>
@@ -131,6 +135,53 @@ bool SystemInfo::file_exists(
     struct stat s;
     // Check existence and that it is a regular file (and not a folder)
     return (stat(filename.c_str(), &s) == 0 && s.st_mode & S_IFREG);
+}
+
+bool SystemInfo::wait_for_file_closure(
+         const std::string& filename,
+         const std::chrono::seconds timeout)
+{
+    auto start = std::chrono::system_clock::now();
+
+#ifdef _MSC_VER
+    std::ofstream os;
+    do
+    {
+        // MSVC specific
+        os.open(filename, std::ios::out | std::ios::app, _SH_DENYWR);
+        if (!os.is_open()
+                // If the file is lock-opened in an external editor do not hang
+                && (std::chrono::system_clock::now() - start) < timeout )
+        {
+            std::this_thread::yield();
+        }
+        else
+        {
+            break;
+        }
+    }
+    while (true);
+#elif __unix__
+    int fd = open(filename.c_str(), O_WRONLY);
+
+    while (flock(fd, LOCK_EX | LOCK_NB)
+            // If the file is lock-opened in an external editor do not hang
+            && (std::chrono::system_clock::now() - start) < timeout )
+    {
+        std::this_thread::yield();
+    }
+
+    flock(fd, LOCK_UN | LOCK_NB);
+    close(fd);
+#else
+    // plain wait
+    std::this_thread::sleep_for(timeout);
+    // avoid unused warning
+    (void)start;
+    (void)filename;
+#endif // ifdef _MSC_VER
+
+    return std::chrono::system_clock::now() - start < timeout;
 }
 
 ReturnCode_t SystemInfo::set_environment_file()

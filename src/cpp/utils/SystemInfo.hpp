@@ -143,7 +143,7 @@ public:
             std::string& username);
 
     /**
-     * Check if the file wiht name \c filename exists.
+     * Check if the file with name \c filename exists.
      * \c filename can also include the path to the file.
      *
      * \param [in] filename path/name of the file to check.
@@ -151,6 +151,18 @@ public:
      */
     static bool file_exists(
             const std::string& filename);
+
+    /**
+     * Wait for file with name \c filename 
+     * until exclusive lock can be taken on it
+     *
+     * \param [in] filename path/name of the file to check.
+     * \param [in] lock wait timeout
+     * @return True if the file could be locked. False otherwise (timeout).
+     */
+    static bool wait_for_file_closure(
+            const std::string& filename,
+            const std::chrono::seconds timeout);
 
     /**
      * Read FASTDDS_ENVIRONMENT_FILE_ENV_VAR environment value and save its value.
