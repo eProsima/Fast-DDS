@@ -340,8 +340,8 @@ public:
     RTPS_DllAPI ReturnCode_t read_w_condition(
             LoanableCollection& data_values,
             SampleInfoSeq& sample_infos,
-            int32_t max_samples = LENGTH_UNLIMITED,
-            ReadCondition* a_condition = nullptr);
+            int32_t max_samples,
+            ReadCondition* a_condition);
 
     /**
      * Access a collection of data samples from the DataReader.
@@ -485,9 +485,9 @@ public:
     RTPS_DllAPI ReturnCode_t read_next_instance_w_condition(
             LoanableCollection& data_values,
             SampleInfoSeq& sample_infos,
-            int32_t max_samples = LENGTH_UNLIMITED,
-            const InstanceHandle_t& previous_handle = HANDLE_NIL,
-            ReadCondition* a_condition = nullptr);
+            int32_t max_samples,
+            const InstanceHandle_t& previous_handle,
+            ReadCondition* a_condition);
 
     /**
      * @brief This operation copies the next, non-previously accessed Data value from the DataReader; the operation
@@ -577,8 +577,8 @@ public:
     RTPS_DllAPI ReturnCode_t take_w_condition(
             LoanableCollection& data_values,
             SampleInfoSeq& sample_infos,
-            int32_t max_samples = LENGTH_UNLIMITED,
-            ReadCondition* a_condition = nullptr);
+            int32_t max_samples,
+            ReadCondition* a_condition);
 
     /**
      * Access a collection of data samples from the DataReader.
@@ -689,9 +689,9 @@ public:
     RTPS_DllAPI ReturnCode_t take_next_instance_w_condition(
             LoanableCollection& data_values,
             SampleInfoSeq& sample_infos,
-            int32_t max_samples = LENGTH_UNLIMITED,
-            const InstanceHandle_t& previous_handle = HANDLE_NIL,
-            ReadCondition* a_condition = nullptr);
+            int32_t max_samples,
+            const InstanceHandle_t& previous_handle,
+            ReadCondition* a_condition);
 
     /**
      * @brief This operation copies the next, non-previously accessed Data value from the DataReader and ‘removes’ it
