@@ -31,9 +31,7 @@ endif()
 
 #Check C++11
 include(CheckCXXCompilerFlag)
-if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_COMPILER_IS_CLANG OR
-        CMAKE_CXX_COMPILER_ID MATCHES "Clang")
-    check_cxx_compiler_flag(-std=c++11 SUPPORTS_CXX11)
+if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
     if(NOT SUPPORTS_CXX11)
         message(FATAL_ERROR "Compiler doesn't support C++11")
     endif()

@@ -41,10 +41,7 @@ function(get_set_stdcxx stdversion stdfeature gcc_flag cl_flag force result)
         # fallback to the old behaviour
         include(CheckCXXCompilerFlag)
 
-        if(gcc_flag AND (
-           CMAKE_COMPILER_IS_GNUCXX OR CMAKE_COMPILER_IS_CLANG OR
-           CMAKE_CXX_COMPILER_ID MATCHES "Clang" OR
-           CMAKE_CXX_COMPILER_ID MATCHES "QCC"))
+        if(gcc_flag AND CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang|QCC")
             # check using gcc/clang flags
             check_cxx_compiler_flag(${gcc_flag} SUPPORTS_${stdfeature})
             if(SUPPORTS_${stdfeature} AND force)
