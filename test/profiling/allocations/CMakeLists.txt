@@ -12,9 +12,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-cmake_minimum_required(VERSION 3.5)
+cmake_minimum_required(VERSION 3.16.3)
 
-project(fastrtps_allocation_test)
+project(fastrtps_allocation_test VERSION 1)
 
 # Default to C++11
 if(NOT CMAKE_CXX_STANDARD)
