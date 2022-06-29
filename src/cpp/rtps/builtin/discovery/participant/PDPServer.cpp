@@ -680,8 +680,6 @@ void PDPServer::announceParticipantState(
                     return;
                 }
             }
-
-
         }
         else
         {
