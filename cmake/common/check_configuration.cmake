@@ -17,20 +17,20 @@
 #   stdfeature: the feature name associated with that level
 #   gcc_flag:   the gcc/clang flag for fallback
 #   cl_flag:    the cl flag for fallback
-#   force:      if the user should enforced this standard level or not (FORCE_CXX)
+#   force:      if the user should enforce this standard level or not (FORCE_CXX)
 #   result:     a return variable to check if this level is available
 
 function(get_set_stdcxx stdversion stdfeature gcc_flag cl_flag force result)
 
     set(${result} 0 PARENT_SCOPE)
 
-    # check if CMake feature management is available
+    # Check if CMake feature management is available
     get_property(CXX_KNOWN_FEATURES GLOBAL PROPERTY CMAKE_CXX_KNOWN_FEATURES)
     if((stdfeature IN_LIST CXX_KNOWN_FEATURES) AND NOT ("run_fallback_test" IN_LIST ARGV))
-        # CMake is aware let's check if is available
+        # CMake is aware let's check if the requested feature is available
         if(force AND (stdfeature IN_LIST CMAKE_CXX_COMPILE_FEATURES))
-            # is available report and enforce as commanded
-            # avoid using CACHE variables to avoid polute projects that use this repo as subdir
+            # The feature is available so report and enforce it as commanded
+            # Don't use CACHE variables to prevent poluting projects that use this repo as subdir
             set(CMAKE_CXX_STANDARD ${stdversion} PARENT_SCOPE)
             set(${result} 1 PARENT_SCOPE)
             message(STATUS "Enforced ${stdfeature} CMake feature")
@@ -38,11 +38,11 @@ function(get_set_stdcxx stdversion stdfeature gcc_flag cl_flag force result)
             message(FATAL_ERROR "The specified C++ ${stdfeature} feature is not supported using default compiler.")
         endif()
     else()
-        # fallback to the old behaviour
+        # Fallback to the old behaviour
         include(CheckCXXCompilerFlag)
 
         if(gcc_flag AND CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang|QCC")
-            # check using gcc/clang flags
+            # Check using gcc/clang flags
             check_cxx_compiler_flag(${gcc_flag} SUPPORTS_${stdfeature})
             if(SUPPORTS_${stdfeature} AND force)
                 add_compile_options($<$<COMPILE_LANGUAGE:CXX>:${gcc_flag}>)
@@ -52,7 +52,7 @@ function(get_set_stdcxx stdversion stdfeature gcc_flag cl_flag force result)
                 message(FATAL_ERROR "Force to support ${stdfeature} but not supported by gnu compiler")
             endif()
         elseif(cl_flag AND (MSVC OR MSVC_IDE))
-            # check using cl flags
+            # Check using cl flags
             check_cxx_compiler_flag(${cl_flag} SUPPORTS_${stdfeature})
             if(SUPPORTS_${stdfeature} AND force)
                 add_compile_options($<$<COMPILE_LANGUAGE:CXX>:${cl_flag}>)
