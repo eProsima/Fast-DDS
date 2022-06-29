@@ -80,16 +80,18 @@ StatelessReader::StatelessReader(
 bool StatelessReader::matched_writer_add(
         const WriterProxyData& wdata)
 {
-    std::lock_guard<RecursiveTimedMutex> guard(mp_mutex);
-    for (const RemoteWriterInfo_t& writer : matched_writers_)
     {
-        if (writer.guid == wdata.guid())
+        std::lock_guard<RecursiveTimedMutex> guard(mp_mutex);
+        for (const RemoteWriterInfo_t& writer : matched_writers_)
         {
-            logWarning(RTPS_READER, "Attempting to add existing writer");
-            return false;
+            if (writer.guid == wdata.guid())
+            {
+                logWarning(RTPS_READER, "Attempting to add existing writer");
+                return false;
+            }
         }
-    }
 
+<<<<<<< HEAD
     RemoteWriterInfo_t info;
     info.guid = wdata.guid();
     info.persistence_guid = wdata.persistence_guid();
@@ -103,6 +105,63 @@ bool StatelessReader::matched_writer_add(
         logInfo(RTPS_READER, "Writer " << info.guid << " added to reader " << m_guid);
 
         if (liveliness_lease_duration_ < c_TimeInfinite)
+=======
+        bool is_same_process = RTPSDomainImpl::should_intraprocess_between(m_guid, wdata.guid());
+        bool is_datasharing = !is_same_process && is_datasharing_compatible_with(wdata);
+
+        RemoteWriterInfo_t info;
+        info.guid = wdata.guid();
+        info.persistence_guid = wdata.persistence_guid();
+        info.has_manual_topic_liveliness = (MANUAL_BY_TOPIC_LIVELINESS_QOS == wdata.m_qos.m_liveliness.kind);
+        info.is_datasharing = is_datasharing;
+
+        if (is_datasharing)
+        {
+            if (datasharing_listener_->add_datasharing_writer(wdata.guid(),
+                    m_att.durabilityKind == VOLATILE,
+                    mp_history->m_att.maximumReservedCaches))
+            {
+                logInfo(RTPS_READER, "Writer Proxy " << wdata.guid() << " added to " << this->m_guid.entityId
+                                                     << " with data sharing");
+            }
+            else
+            {
+                logError(RTPS_READER, "Failed to add Writer Proxy " << wdata.guid()
+                                                                    << " to " << this->m_guid.entityId
+                                                                    << " with data sharing.");
+                return false;
+            }
+
+        }
+
+        if (matched_writers_.emplace_back(info) == nullptr)
+        {
+            logWarning(RTPS_READER, "No space to add writer " << wdata.guid() << " to reader " << m_guid);
+            if (is_datasharing)
+            {
+                datasharing_listener_->remove_datasharing_writer(wdata.guid());
+            }
+            return false;
+        }
+        logInfo(RTPS_READER, "Writer " << wdata.guid() << " added to reader " << m_guid);
+
+        add_persistence_guid(info.guid, info.persistence_guid);
+
+        m_acceptMessagesFromUnkownWriters = false;
+
+        // Intraprocess manages durability itself
+        if (is_datasharing && !is_same_process && m_att.durabilityKind != VOLATILE)
+        {
+            // simulate a notification to force reading of transient changes
+            // this has to be done after the writer is added to the matched_writers or the processing may fail
+            datasharing_listener_->notify(false);
+        }
+    }
+    if (liveliness_lease_duration_ < c_TimeInfinite)
+    {
+        auto wlp = mp_RTPSParticipant->wlp();
+        if ( wlp != nullptr)
+>>>>>>> 01a55d4e4 (Fix WLP deadlock (#2715))
         {
             auto wlp = mp_RTPSParticipant->wlp();
             if ( wlp != nullptr)
@@ -118,19 +177,48 @@ bool StatelessReader::matched_writer_add(
             }
         }
 
+<<<<<<< HEAD
         return true;
     }
 
     logWarning(RTPS_READER, "No space to add writer " << wdata.guid() << " to reader " << m_guid);
     return false;
+=======
+    return true;
+>>>>>>> 01a55d4e4 (Fix WLP deadlock (#2715))
 }
 
 bool StatelessReader::matched_writer_remove(
         const GUID_t& writer_guid,
         bool removed_by_lease)
 {
+<<<<<<< HEAD
     std::lock_guard<RecursiveTimedMutex> guard(mp_mutex);
 
+=======
+    if (liveliness_lease_duration_ < c_TimeInfinite)
+    {
+        auto wlp = mp_RTPSParticipant->wlp();
+        if ( wlp != nullptr)
+        {
+            wlp->sub_liveliness_manager_->remove_writer(
+                writer_guid,
+                liveliness_kind_,
+                liveliness_lease_duration_);
+        }
+        else
+        {
+            logError(RTPS_LIVELINESS,
+                    "Finite liveliness lease duration but WLP not enabled, cannot remove writer");
+        }
+    }
+
+    std::lock_guard<RecursiveTimedMutex> guard(mp_mutex);
+
+    //Remove cachechanges belonging to the unmatched writer
+    mp_history->writer_unmatched(writer_guid, get_last_notified(writer_guid));
+
+>>>>>>> 01a55d4e4 (Fix WLP deadlock (#2715))
     ResourceLimitedVector<RemoteWriterInfo_t>::iterator it;
     for (it = matched_writers_.begin(); it != matched_writers_.end(); ++it)
     {
