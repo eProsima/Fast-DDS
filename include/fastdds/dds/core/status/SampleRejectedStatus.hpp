@@ -40,7 +40,7 @@ enum SampleRejectedStatusKind
     REJECTED_BY_SAMPLES_PER_INSTANCE_LIMIT
 };
 
-//! @brief A struct storing the sample lost status
+//! @brief A struct storing the sample rejected status
 struct SampleRejectedStatus
 {
     /**
