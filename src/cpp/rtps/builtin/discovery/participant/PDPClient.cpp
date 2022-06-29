@@ -33,6 +33,7 @@
 #include <fastdds/rtps/writer/ReaderProxy.h>
 #include <fastdds/rtps/writer/StatefulWriter.h>
 #include <fastrtps/utils/TimeConversion.h>
+#include <fastrtps/utils/shared_mutex.hpp>
 #include <rtps/builtin/discovery/endpoint/EDPClient.h>
 #include <rtps/builtin/discovery/participant/DirectMessageSender.hpp>
 #include <rtps/builtin/discovery/participant/timedevent/DSClientEvent.h>
@@ -154,11 +155,16 @@ ParticipantProxyData* PDPClient::createParticipantProxyData(
 
     // Verify if this participant is a server
     bool is_server = false;
-    for (auto& svr : mp_builtin->m_DiscoveryServers)
+
     {
-        if (svr.guidPrefix == participant_data.m_guid.guidPrefix)
+        eprosima::shared_lock<eprosima::shared_mutex> disc_lock(mp_builtin->getDiscoveryMutex());
+
+        for (auto& svr : mp_builtin->m_DiscoveryServers)
         {
-            is_server = true;
+            if (svr.guidPrefix == participant_data.m_guid.guidPrefix)
+            {
+                is_server = true;
+            }
         }
     }
 
@@ -207,7 +213,7 @@ bool PDPClient::createPDPEndpoints()
         //#endif
         // Initial peer list doesn't make sense in server scenario. Client should match its server list
         {
-            std::lock_guard<std::recursive_mutex> lock(*getMutex());
+            eprosima::shared_lock<eprosima::shared_mutex> disc_lock(mp_builtin->getDiscoveryMutex());
 
             for (const eprosima::fastdds::rtps::RemoteServerAttributes& it : mp_builtin->m_DiscoveryServers)
             {
@@ -254,7 +260,7 @@ bool PDPClient::createPDPEndpoints()
         //        mp_RTPSParticipant->set_endpoint_rtps_protection_supports(wout, false);
         //#endif
         {
-            std::lock_guard<std::recursive_mutex> lock(*getMutex());
+            eprosima::shared_lock<eprosima::shared_mutex> disc_lock(mp_builtin->getDiscoveryMutex());
 
             for (const eprosima::fastdds::rtps::RemoteServerAttributes& it : mp_builtin->m_DiscoveryServers)
             {
@@ -278,13 +284,14 @@ void PDPClient::assignRemoteEndpoints(
         ParticipantProxyData* pdata)
 {
     {
-        std::unique_lock<std::recursive_mutex> lock(*getMutex());
+        eprosima::shared_lock<eprosima::shared_mutex> disc_lock(mp_builtin->getDiscoveryMutex());
 
         // Verify if this participant is a server
         for (auto& svr : mp_builtin->m_DiscoveryServers)
         {
             if (svr.guidPrefix == pdata->m_guid.guidPrefix)
             {
+                std::unique_lock<std::recursive_mutex> lock(*getMutex());
                 svr.proxy = pdata;
             }
         }
@@ -311,13 +318,14 @@ void PDPClient::removeRemoteEndpoints(
 
     bool is_server = false;
     {
-        std::unique_lock<std::recursive_mutex> lock(*getMutex());
+        eprosima::shared_lock<eprosima::shared_mutex> disc_lock(mp_builtin->getDiscoveryMutex());
 
         // Verify if this participant is a server
         for (auto& svr : mp_builtin->m_DiscoveryServers)
         {
             if (svr.guidPrefix == pdata->m_guid.guidPrefix)
             {
+                std::unique_lock<std::recursive_mutex> lock(*getMutex());
                 svr.proxy = nullptr; // reasign when we receive again server DATA(p)
                 is_server = true;
                 mp_sync->restart_timer(); // enable announcement and sync mechanism till this server reappears
@@ -416,12 +424,15 @@ void PDPClient::announceParticipantState(
     {
         /*
            Protect writer sequence number. Make sure in order to prevent AB BA deadlock that the
-           writer mutex is systematically lock before the PDP one (if needed):
+           PDP mutex is systematically lock before the writer one (if needed):
             - transport callbacks on PDPListener
             - initialization and removal on BuiltinProtocols::initBuiltinProtocols and ~BuiltinProtocols
             - DSClientEvent (own thread)
             - ResendParticipantProxyDataPeriod (participant event thread)
          */
+
+        std::lock_guard<std::recursive_mutex> lock(*getMutex());
+
         std::lock_guard<RecursiveTimedMutex> wlock(mp_PDPWriter->getMutex());
 
         WriteParams wp;
@@ -469,7 +480,7 @@ void PDPClient::announceParticipantState(
                 //}
                 {
                     // temporary workaround
-                    std::lock_guard<std::recursive_mutex> lock(*getMutex());
+                    eprosima::shared_lock<eprosima::shared_mutex> disc_lock(mp_builtin->getDiscoveryMutex());
 
                     for (auto& svr : mp_builtin->m_DiscoveryServers)
                     {
@@ -504,10 +515,10 @@ void PDPClient::announceParticipantState(
                 CacheChange_t* pPD;
                 if (mp_PDPWriterHistory->get_min_change(&pPD))
                 {
-                    std::lock_guard<std::recursive_mutex> lock(*getMutex());
-
                     std::vector<GUID_t> remote_readers;
                     LocatorList locators;
+
+                    eprosima::shared_lock<eprosima::shared_mutex> disc_lock(mp_builtin->getDiscoveryMutex());
 
                     for (auto& svr : mp_builtin->m_DiscoveryServers)
                     {
@@ -548,9 +559,9 @@ bool PDPClient::match_servers_EDP_endpoints()
     // PDP must have been initialize
     assert(mp_EDP);
 
-    std::lock_guard<std::recursive_mutex> lock(*getMutex());
     bool all = true; // have all servers been discovered?
 
+    eprosima::shared_lock<eprosima::shared_mutex> disc_lock(mp_builtin->getDiscoveryMutex());
     for (auto& svr : mp_builtin->m_DiscoveryServers)
     {
         all &= (svr.proxy != nullptr);
@@ -575,7 +586,7 @@ void PDPClient::update_remote_servers_list()
         return;
     }
 
-    std::lock_guard<std::recursive_mutex> lock(*getMutex());
+    eprosima::shared_lock<eprosima::shared_mutex> disc_lock(mp_builtin->getDiscoveryMutex());
 
     for (const eprosima::fastdds::rtps::RemoteServerAttributes& it : mp_builtin->m_DiscoveryServers)
     {
@@ -636,7 +647,7 @@ bool load_environment_server_info(
 }
 
 bool load_environment_server_info(
-        std::string list,
+        const std::string& list,
         RemoteServerList_t& attributes)
 {
     attributes.clear();
@@ -648,8 +659,8 @@ bool load_environment_server_info(
     /* Parsing ancillary regex */
     // Address should be <letter,numbers,dots>:<number>. We do not need to verify that the first part
     // is an IPv4 address, as it is done latter.
-    const std::regex ROS2_ADDRESS_PATTERN(R"(^([A-Za-z0-9-.]+)?:?(?:(\d+))?$)");
-    const std::regex ROS2_SERVER_LIST_PATTERN(R"(([^;]*);?)");
+    const static std::regex ROS2_ADDRESS_PATTERN(R"(^([A-Za-z0-9-.]+)?:?(?:(\d+))?$)");
+    const static std::regex ROS2_SERVER_LIST_PATTERN(R"(([^;]*);?)");
 
     try
     {

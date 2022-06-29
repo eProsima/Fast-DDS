@@ -24,6 +24,8 @@
 #include <fastdds/rtps/common/Guid.h>
 #include <fastdds/rtps/common/Locator.h>
 
+#include <algorithm>
+#include <iterator>
 #include <list>
 
 namespace eprosima {
@@ -104,6 +106,50 @@ public:
 
 typedef std::list<RemoteServerAttributes> RemoteServerList_t;
 
+template<class charT>
+struct server_ostream_separators
+{
+    static const charT* list_separator;
+    static const charT* locator_separator;
+};
+
+#ifndef _MSC_VER
+template<> const char* server_ostream_separators<char>::list_separator;
+template<> const wchar_t* server_ostream_separators<wchar_t>::list_separator;
+
+template<> const char* server_ostream_separators<char>::locator_separator;
+template<> const wchar_t* server_ostream_separators<wchar_t>::locator_separator;
+#endif // _MSC_VER
+
+template<class charT>
+std::basic_ostream<charT>& operator <<(
+        std::basic_ostream<charT>& output,
+        const RemoteServerAttributes& sa)
+{
+    typename std::basic_ostream<charT>::sentry s(output);
+    output << sa.guidPrefix;
+    if (!sa.metatrafficUnicastLocatorList.empty())
+    {
+        output << server_ostream_separators<charT>::locator_separator << sa.metatrafficUnicastLocatorList;
+    }
+    if (!sa.metatrafficMulticastLocatorList.empty())
+    {
+        output << server_ostream_separators<charT>::locator_separator << sa.metatrafficUnicastLocatorList;
+    }
+    return output;
+}
+
+template<class charT>
+std::basic_ostream<charT>& operator <<(
+        std::basic_ostream<charT>& output,
+        const RemoteServerList_t& list)
+{
+    typename std::basic_ostream<charT>::sentry s(output);
+    std::ostream_iterator<RemoteServerAttributes> os_iterator(output, server_ostream_separators<charT>::list_separator);
+    std::copy(list.begin(), list.end(), os_iterator);
+    return output;
+}
+
 // port use if the ros environment variable doesn't specified one
 constexpr uint16_t DEFAULT_ROS2_SERVER_PORT = 11811;
 // default server base guidPrefix
@@ -131,7 +177,7 @@ const char* const DEFAULT_ROS2_MASTER_URI = "ROS_DISCOVERY_SERVER";
  * @return true if parsing succeeds, false otherwise (or if the list is empty)
  */
 RTPS_DllAPI bool load_environment_server_info(
-        std::string list,
+        const std::string& list,
         RemoteServerList_t& attributes);
 
 /**

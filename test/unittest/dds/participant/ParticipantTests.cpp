@@ -62,6 +62,7 @@
 
 #include "../../common/GTestPrinters.hpp"
 #include "../../logging/mock/MockConsumer.h"
+#include "fastdds/dds/domain/DomainParticipant.hpp"
 
 namespace eprosima {
 namespace fastdds {
@@ -708,6 +709,72 @@ void set_environment_file(
 #endif // _WIN32
 }
 
+std::string get_environment_filename()
+{
+    std::ostringstream name;
+    name << "environment_file_" << SystemInfo::instance().process_id() << ".json";
+    std::string fname = name.str();
+    // 'touch' the file
+    std::ofstream f(fname);
+    return fname;
+}
+
+void set_and_check_with_environment_file(
+        DomainParticipant* participant,
+        std::vector<std::string> locators,
+        std::string& filename)
+{
+    const static std::regex ROS2_IPV4_PATTERN(R"(^((?:[0-9]{1,3}\.){3}[0-9]{1,3})?:?(?:(\d+))?$)");
+
+    rtps::RemoteServerList_t output;
+    rtps::RemoteServerAttributes server;
+    fastrtps::rtps::Locator_t locator;
+    int id = 0;
+
+    std::ofstream file(filename);
+    file << "{\"ROS_DISCOVERY_SERVER\": ";
+
+    char separator = '\"';
+    for (auto l: locators)
+    {
+        file << separator;
+        separator = ';';
+
+        std::smatch mr;
+        auto res = std::regex_match(l, mr, ROS2_IPV4_PATTERN, std::regex_constants::match_not_null);
+        (void)res;
+        assert(res);
+
+        std::smatch::iterator it = mr.cbegin();
+        auto address = (++it)->str();
+        fastrtps::rtps::IPLocator::setIPv4(locator, address);
+
+        assert(it != mr.cend());
+        int port = stoi((++it)->str());
+        fastrtps::rtps::IPLocator::setPhysicalPort(locator, static_cast<uint16_t>(port));
+
+        // add the server to the list
+        server.clear();
+        server.metatrafficUnicastLocatorList.push_back(locator);
+        if (!get_server_client_default_guidPrefix(id++, server.guidPrefix))
+        {
+            throw std::invalid_argument("The maximum number of default discovery servers has been reached");
+        }
+        output.push_back(server);
+        file << l;
+    }
+    file << "\"}";
+    file.close();
+
+    // Wait for the file watch callback
+    std::this_thread::sleep_for(std::chrono::milliseconds(100));
+
+    fastrtps::rtps::RTPSParticipantAttributes attributes;
+    get_rtps_attributes(participant, attributes);
+    EXPECT_EQ(attributes.builtin.discovery_config.discoveryProtocol, fastrtps::rtps::DiscoveryProtocol::SERVER);
+    EXPECT_EQ(attributes.builtin.discovery_config.m_DiscoveryServers, output);
+}
+
 /**
  * Test that checks a SIMPLE participant is transformed into a CLIENT.
  * It also checks that the environment variable has priority over the coded QoS settings.
@@ -743,7 +810,7 @@ TEST(ParticipantTests, SimpleParticipantRemoteServerListConfiguration)
  */
 TEST(ParticipantTests, SimpleParticipantDynamicAdditionRemoteServers)
 {
-    std::string filename = "environment_file.json";
+    auto filename = get_environment_filename();
     set_environment_variable();
     set_environment_file(filename);
 
@@ -755,23 +822,22 @@ TEST(ParticipantTests, SimpleParticipantDynamicAdditionRemoteServers)
     set_participant_qos(qos, qos_output);
 
     // Create environment file so the watch file is initialized
-    std::ofstream file;
-    file.open(filename);
-    file.close();
     DomainParticipant* participant = DomainParticipantFactory::get_instance()->create_participant(0, qos);
     ASSERT_NE(nullptr, participant);
     fastrtps::rtps::RTPSParticipantAttributes attributes;
     get_rtps_attributes(participant, attributes);
+
     // As the environment file does not have the ROS_DISCOVERY_SERVER variable set, this variable has been loaded from
     // the environment
     EXPECT_EQ(attributes.builtin.discovery_config.m_DiscoveryServers, output);
     // Modify environment file
 #ifndef __APPLE__
-    std::this_thread::sleep_for(std::chrono::milliseconds(1100));
-    file.open(filename);
+    std::ofstream file(filename);
     file << "{\"ROS_DISCOVERY_SERVER\": \"84.22.253.128:8888;192.168.1.133:64863;localhost:1234\"}";
     file.close();
-    std::this_thread::sleep_for(std::chrono::milliseconds(1100));
+
+    // Wait long enought for the file watch callback
+    std::this_thread::sleep_for(std::chrono::milliseconds(100));
     get_rtps_attributes(participant, attributes);
 
     rtps::RemoteServerAttributes server;
@@ -781,6 +847,7 @@ TEST(ParticipantTests, SimpleParticipantDynamicAdditionRemoteServers)
     server.metatrafficUnicastLocatorList.push_back(locator);
     get_server_client_default_guidPrefix(1, server.guidPrefix);
     output.push_back(server);
+
     EXPECT_EQ(attributes.builtin.discovery_config.m_DiscoveryServers, output);
 #endif // APPLE
     DomainParticipantQos result_qos = participant->get_qos();
@@ -880,11 +947,10 @@ TEST(ParticipantTests, ServerParticipantInconsistentRemoteServerListConfiguratio
     Log::RegisterConsumer(std::unique_ptr<LogConsumer>(mockConsumer));
     Log::SetVerbosity(Log::Warning);
 
-    std::string filename = "environment_file.json";
+    auto filename = get_environment_filename();
     set_environment_file(filename);
 
-    std::ofstream file;
-    file.open(filename);
+    std::ofstream file(filename);
     file << "{\"ROS_DISCOVERY_SERVER\": \"84.22.253.128:8888;;localhost:1234\"}";
     file.close();
 
@@ -906,11 +972,11 @@ TEST(ParticipantTests, ServerParticipantInconsistentRemoteServerListConfiguratio
     EXPECT_EQ(attributes.builtin.discovery_config.m_DiscoveryServers, qos_output);
 
     // Modify environment file: fails cause the initial guid prefix did not comply with the schema
-    std::this_thread::sleep_for(std::chrono::milliseconds(1100));
+    std::this_thread::sleep_for(std::chrono::milliseconds(100));
     file.open(filename);
     file << "{\"ROS_DISCOVERY_SERVER\": \"84.22.253.128:8888;192.168.1.133:64863;localhost:1234\"}";
     file.close();
-    std::this_thread::sleep_for(std::chrono::milliseconds(1100));
+    std::this_thread::sleep_for(std::chrono::milliseconds(100));
     get_rtps_attributes(participant, attributes);
     EXPECT_EQ(attributes.builtin.discovery_config.m_DiscoveryServers, qos_output);
     // Capture log warning
@@ -931,7 +997,7 @@ TEST(ParticipantTests, ServerParticipantInconsistentRemoteServerListConfiguratio
  */
 TEST(ParticipantTests, ServerParticipantInconsistentLocatorsRemoteServerListConfiguration)
 {
-    std::string filename = "environment_file.json";
+    auto filename = get_environment_filename();
     set_environment_file(filename);
 
     DomainParticipantQos qos;
@@ -953,20 +1019,15 @@ TEST(ParticipantTests, ServerParticipantInconsistentLocatorsRemoteServerListConf
     get_server_client_default_guidPrefix(1, server.guidPrefix);
     output.push_back(server);
 
-    std::ofstream file;
-    file.open(filename);
-    file << "{\"ROS_DISCOVERY_SERVER\": \"localhost:1234\"}";
-    file.close();
-
     DomainParticipant* participant = DomainParticipantFactory::get_instance()->create_participant(0, qos);
     ASSERT_NE(nullptr, participant);
     // Try adding a new remote server
 #ifndef __APPLE__
-    std::this_thread::sleep_for(std::chrono::milliseconds(1100));
-    file.open(filename);
+    std::this_thread::sleep_for(std::chrono::milliseconds(100));
+    std::ofstream file(filename);
     file << "{\"ROS_DISCOVERY_SERVER\": \"172.17.0.5:4321;192.168.1.133:64863\"}";
     file.close();
-    std::this_thread::sleep_for(std::chrono::milliseconds(1100));
+    std::this_thread::sleep_for(std::chrono::milliseconds(100));
     fastrtps::rtps::RTPSParticipantAttributes attributes;
     get_rtps_attributes(participant, attributes);
     EXPECT_EQ(attributes.builtin.discovery_config.m_DiscoveryServers, output);
@@ -978,11 +1039,35 @@ TEST(ParticipantTests, ServerParticipantInconsistentLocatorsRemoteServerListConf
 }
 
 /**
+ * SERVER Participant: Test repeat invocations of FileWatch callback
+ */
+TEST(ParticipantTests, RepeatEnvironmentFileConfiguration)
+{
+    auto filename = get_environment_filename();
+    set_environment_file(filename);
+
+    DomainParticipantQos qos;
+    set_server_qos(qos);
+
+    DomainParticipant* participant = DomainParticipantFactory::get_instance()->create_participant(0, qos);
+    ASSERT_NE(nullptr, participant);
+#ifndef __APPLE__
+    set_and_check_with_environment_file(participant, {"172.17.0.5:4321", "192.168.1.133:64863"}, filename);
+    set_and_check_with_environment_file(participant, {"172.17.0.5:64863", "192.168.1.133:4321"}, filename);
+    set_and_check_with_environment_file(participant, {"172.17.0.5:64863", "192.168.1.133:4321"}, filename);
+    set_and_check_with_environment_file(participant,
+            {"172.17.0.5:64863", "192.168.1.133:4321", "192.168.5.15:1234"}, filename);
+#endif // APPLE
+    EXPECT_EQ(ReturnCode_t::RETCODE_OK, DomainParticipantFactory::get_instance()->delete_participant(participant));
+    std::remove(filename.c_str());
+}
+
+/**
  * SERVER Participant: intended use
  */
 TEST(ParticipantTests, ServerParticipantCorrectRemoteServerListConfiguration)
 {
-    std::string filename = "environment_file.json";
+    auto filename = get_environment_filename();
     set_environment_file(filename);
 
     std::ofstream file;
@@ -1012,11 +1097,11 @@ TEST(ParticipantTests, ServerParticipantCorrectRemoteServerListConfiguration)
     // checked because it is not included in the attributes.
     DomainParticipantQos result_qos;
 #ifndef __APPLE__
-    std::this_thread::sleep_for(std::chrono::milliseconds(1100));
+    std::this_thread::sleep_for(std::chrono::milliseconds(100));
     file.open(filename);
     file << "{\"ROS_DISCOVERY_SERVER\": \"172.17.0.5:4321;;192.168.1.133:64863\"}";
     file.close();
-    std::this_thread::sleep_for(std::chrono::milliseconds(1100));
+    std::this_thread::sleep_for(std::chrono::milliseconds(100));
     server.clear();
     fastrtps::rtps::IPLocator::setIPv4(locator, "192.168.1.133");
     locator.port = 64863;
@@ -1026,11 +1111,11 @@ TEST(ParticipantTests, ServerParticipantCorrectRemoteServerListConfiguration)
     get_rtps_attributes(participant, attributes);
     EXPECT_EQ(attributes.builtin.discovery_config.m_DiscoveryServers, output);
     // Try to be consistent: add already known server
-    std::this_thread::sleep_for(std::chrono::milliseconds(1100));
+    std::this_thread::sleep_for(std::chrono::milliseconds(100));
     file.open(filename);
     file << "{\"ROS_DISCOVERY_SERVER\": \"172.17.0.5:4321;localhost:1234;192.168.1.133:64863\"}";
     file.close();
-    std::this_thread::sleep_for(std::chrono::milliseconds(1100));
+    std::this_thread::sleep_for(std::chrono::milliseconds(100));
     server.clear();
     fastrtps::rtps::IPLocator::setIPv4(locator, "127.0.0.1");
     locator.port = 1234;

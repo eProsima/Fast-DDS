@@ -178,6 +178,7 @@ set(${PROJECT_NAME}_source_files
     rtps/builtin/BuiltinProtocols.cpp
     rtps/builtin/discovery/participant/DirectMessageSender.cpp
     rtps/builtin/discovery/participant/PDP.cpp
+    rtps/builtin/discovery/participant/ServerAttributes.cpp
     rtps/builtin/discovery/participant/PDPSimple.cpp
     rtps/builtin/discovery/participant/PDPListener.cpp
     rtps/builtin/discovery/endpoint/EDP.cpp

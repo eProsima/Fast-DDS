@@ -1622,6 +1622,10 @@ bool DiscoveryDataBase::server_acked_by_my_servers()
 
     // Find the server's participant and check whether all its servers have ACKed the server's DATA(p)
     auto this_server = participants_.find(server_guid_prefix_);
+
+    // check is always there
+    assert(this_server != participants_.end());
+
     for (auto prefix : servers_)
     {
         if (!this_server->second.is_matched(prefix))
