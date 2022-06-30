@@ -24,6 +24,8 @@
 #include <rtps/participant/RTPSParticipantImpl.h>
 
 #include <fastdds/dds/log/Log.hpp>
+#include <fastdds/rtps/builtin/BuiltinProtocols.h>
+#include <fastrtps/utils/shared_mutex.hpp>
 
 #include <rtps/builtin/discovery/participant/timedevent/DSClientEvent.h>
 #include <rtps/builtin/discovery/participant/PDPClient.h>
@@ -58,9 +60,10 @@ bool DSClientEvent::event()
 
     // Iterate over remote servers to check for new unmatched servers
     ParticipantProxyData* part_proxy_data;
-    std::unique_lock<std::recursive_mutex> lock(*mp_PDP->getMutex());
+    eprosima::shared_lock<eprosima::shared_mutex> lock(mp_PDP->mp_builtin->getDiscoveryMutex());
     for (auto server: mp_PDP->remote_server_attributes())
     {
+        std::unique_lock<std::recursive_mutex> pdp_lock(*mp_PDP->getMutex());
         // Get the participant proxy data of the server
         part_proxy_data = mp_PDP->get_participant_proxy_data(server.guidPrefix);
 
