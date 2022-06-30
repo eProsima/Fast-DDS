@@ -1,0 +1,159 @@
+name: Address Sanitizer analysis
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - 'feature/asan/fixes'
+  pull_request:
+    branches:
+      - 'feature/asan/fixes'
+
+env:
+  BUILD_ARCH: -A x64 -T host=x64
+  BUILD_CONFIG: Debug
+  CXXFLAGS: /MP
+
+defaults:
+  run:
+    shell: pwsh
+
+jobs:
+  windows-sanitizer-run:
+    name: Asan Evaluation
+    runs-on: windows-latest
+    steps:
+      - name: Download the sanitizers cmake module and apply some fixes
+        run: |
+          git config --global user.email "dummy@mail.com"
+          git config --global user.name "dummy"
+          cd (New-Item -ItemType Directory -Path ./ws)
+          git clone https://github.com/arsenm/sanitizers-cmake
+          cd sanitizers-cmake
+          git remote add efork https://github.com/MiguelBarro/sanitizers-cmake.git
+          git fetch efork
+          git merge --no-edit efork/bugfix/cmake_updates
+          # Hint FindSanitizers.cmake location
+          $module = gci -Path . -Include FindSanitizers.cmake -R
+          $module_dir = Split-Path $module
+          "MODULE_PATH=$module_dir" -replace "\\", "/" | Out-File $Env:GITHUB_ENV -Append -Encoding OEM
+
+      - name: Download googletest and make it sanitizer aware
+        run: |
+          cd ws
+          git clone https://github.com/google/googletest.git
+          cd googletest
+          git remote add efork https://github.com/MiguelBarro/googletest.git
+          git fetch efork
+          git merge --no-edit efork/bugfix/add_sanitizer_support
+
+      - name: Build & install googletest
+        run: |
+          cd ws
+          cmake -DCMAKE_MODULE_PATH="$Env:MODULE_PATH" -DCMAKE_INSTALL_PREFIX="./install" `
+                -DCMAKE_CXX_FLAGS="/wd4996" -Dgtest_force_shared_crt=ON -DBUILD_GMOCK=ON `
+                -DBUILD_GMOCK=ON -DSANITIZE_ADDRESS=ON -DCMAKE_BUILD_TYPE=Debug `
+                -DCMAKE_VERBOSE_MAKEFILE=ON -B ./build/googletest $Env:BUILD_ARCH.split() ./googletest 
+          cmake --build ./build/googletest --config $Env:BUILD_CONFIG --target install --verbose
+
+      - name: Download Fast-CDR and make it sanitizer aware
+        run: |
+          cd ws
+          git clone https://github.com/eProsima/Fast-CDR.git
+          cd Fast-CDR
+          git remote add efork https://github.com/MiguelBarro/Fast-CDR.git
+          git fetch efork
+          git merge --no-edit efork/bugfix/add_sanitizer_support
+
+      - name: Build & install Fast-CDR
+        run: |
+          cd ws
+          cmake -DCMAKE_INSTALL_PREFIX="./install" -DCMAKE_PREFIX_PATH="./install" `
+                -DCMAKE_MODULE_PATH="$Env:MODULE_PATH" -DCMAKE_VERBOSE_MAKEFILE=ON `
+                -DSANITIZE_ADDRESS=ON -DCMAKE_BUILD_TYPE=Debug -B ./build/fastcdr $Env:BUILD_ARCH.split() ./Fast-CDR 
+          cmake --build ./build/fastcdr --config $Env:BUILD_CONFIG --target install --verbose
+
+      - name: Download foonathan/memory and make it sanitizer aware
+        run: |
+          cd ws
+          git clone https://github.com/foonathan/memory.git
+          cd memory
+          git remote add efork https://github.com/MiguelBarro/memory.git
+          git fetch efork
+          git merge --no-edit efork/bugfix/add_sanitizer_support
+
+      - name: Build & install foonathan/memory
+        run: |
+          cd ws
+          cmake -DCMAKE_MODULE_PATH="$Env:MODULE_PATH" -DCMAKE_VERBOSE_MAKEFILE=ON -DSANITIZE_ADDRESS=ON `
+                -DCMAKE_INSTALL_PREFIX="./install" -DFOONATHAN_MEMORY_BUILD_TOOLS=ON -DCMAKE_POSITION_INDEPENDENT_CODE=ON `
+                -DFOONATHAN_MEMORY_BUILD_TESTS=ON -DFOONATHAN_MEMORY_BUILD_EXAMPLES=ON -DFOONATHAN_MEMORY_BUILD_TOOLS=ON  `
+                -DCMAKE_BUILD_TYPE=Debug -B ./build/memory $Env:BUILD_ARCH.split() ./memory
+          cmake --build ./build/memory --config $Env:BUILD_CONFIG --target install --verbose
+
+      - name: Download Fast-DDS and make it sanitizer aware
+        run: |
+          cd ws
+          git clone https://github.com/eProsima/Fast-DDS.git
+          cd Fast-DDS
+          git fetch origin ${{ github.ref }}:merge-branch
+          git checkout merge-branch
+          echo "Modified files against destination branch"
+          git diff --name-only HEAD~1
+          git remote add efork https://github.com/MiguelBarro/Fast-DDS.git
+          git fetch efork
+          git merge --no-edit efork/bugfix/add_sanitizer_support | Out-Null
+
+      - name: Make sure OpenSSL is there
+        run: |
+          # Windows host has only the binaries installed, we need the headers too
+          # download the last installer
+          $uri = 'https://slproweb.com' +
+            ((iwr 'https://slproweb.com/products/Win32OpenSSL.html').links |
+            sls 'href=\"(.*download/Win64OpenSSL-1_1_1.*\.exe)\"').matches.Groups.value[-1]
+            iwr -Uri $uri -OutFile "$Env:TMP\Win64OpenSSL.exe"
+
+          # Do install
+          & "$Env:TMP\Win64OpenSSL.exe" /silent /verysilent /sp- /suppressmsgboxes;
+
+          # Update the environment
+          "OPENSSL64_ROOT=$Env:ProgramFiles\OpenSSL-Win64" | Out-File $Env:GITHUB_ENV -Append -Encoding OEM
+
+          # Wait for the installation to be fulfill
+          Get-Process Win??OpenSSL -ErrorAction SilentlyContinue | Wait-Process
+          del "$Env:TMP\Win64OpenSSL.exe"
+
+      - name: Build & install Fast-DDS
+        run: |
+          cd ws
+          cmake -DCMAKE_MODULE_PATH="$Env:MODULE_PATH" -DCMAKE_PREFIX_PATH="./install" -DCMAKE_INSTALL_PREFIX='./install' `
+                -DCMAKE_VERBOSE_MAKEFILE=ON -DSANITIZE_ADDRESS=ON `
+                -DGTEST_INDIVIDUAL=ON -DFASTDDS_STATISTICS=ON -DTHIRDPARTY=ON `
+                -DCOMPILE_EXAMPLES=OFF -DEPROSIMA_BUILD_TESTS=ON -DSECURITY=ON `
+                -DCMAKE_BUILD_TYPE=Debug -B ./build/fastdds $Env:BUILD_ARCH.split() ./Fast-DDS
+          # Create a symlink to the reports folder
+          $report_dir = gci -Path ./build/fastdds -Attributes D |
+            ? Name -like "$(Get-Date -Format 'MMMM-dd-yyyy')*"
+          $report_dir = Join-Path $report_dir asan | gi
+          echo "report folder is: $report_dir"
+          New-Item -ItemType SymbolicLink -Target $report_dir -Path ./build/fastdds/reports
+          cmake --build ./build/fastdds --config $Env:BUILD_CONFIG --target fastrtps --verbose
+          cmake --build ./build/fastdds --config $Env:BUILD_CONFIG --target install -j 2 --verbose
+
+      - name: Run Fast-DDS test & generate sanitizer reports
+        run: |
+          cd ws/build/fastdds
+          ctest -C $Env:BUILD_CONFIG --timeout 30 -j 2 -V
+          # check where the result files are
+          echo "List test using symlink"
+          gci -Path ./reports/* | select Name
+          echo "List test using actual path"
+          gci -Path ./* -Attributes D |
+            ? Name -like "$(Get-Date -Format 'MMMM-dd-yyyy')*" | gci -R | select Name
+          # ctest fails if sanitizer reports are present
+          $LASTEXITCODE=0 
+
+      - name: Archive sanitation results
+        uses: actions/upload-artifact@v3
+        with:
+            name: sanitation-report
+            path: ws/build/fastdds/reports/*
