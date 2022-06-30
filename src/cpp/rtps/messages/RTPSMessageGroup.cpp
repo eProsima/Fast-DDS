@@ -434,8 +434,8 @@ bool RTPSMessageGroup::add_data(
     add_info_ts_in_buffer(change.sourceTimestamp);
 
     CacheChangeInlineQoSWriter qos_writer(change);
-    InlineQosWriter* inline_qos;
-    inline_qos = (change.inline_qos.length > 0 && nullptr != change.inline_qos.data) ? &qos_writer : nullptr;
+    InlineQosWriter* inline_qos_writer;
+    inline_qos_writer = (change.inline_qos.length > 0 && nullptr != change.inline_qos.data) ? &qos_writer : nullptr;
 
 #if HAVE_SECURITY
     uint32_t from_buffer_position = submessage_msg_->pos;
@@ -473,7 +473,7 @@ bool RTPSMessageGroup::add_data(
     // TODO (Ricardo). Check to create special wrapper.
     bool is_big_submessage;
     if (!RTPSMessageCreator::addSubmessageData(submessage_msg_, &change_to_add, endpoint_->getAttributes().topicKind,
-            readerId, expectsInlineQos, inline_qos, &is_big_submessage))
+            readerId, expectsInlineQos, inline_qos_writer, &is_big_submessage))
     {
         logError(RTPS_WRITER, "Cannot add DATA submsg to the CDRMessage. Buffer too small");
         change_to_add.serializedPayload.data = nullptr;
@@ -537,8 +537,8 @@ bool RTPSMessageGroup::add_data_frag(
     add_info_ts_in_buffer(change.sourceTimestamp);
 
     CacheChangeInlineQoSWriter qos_writer(change);
-    InlineQosWriter* inline_qos;
-    inline_qos = (change.inline_qos.length > 0 && nullptr != change.inline_qos.data) ? &qos_writer : nullptr;
+    InlineQosWriter* inline_qos_writer;
+    inline_qos_writer = (change.inline_qos.length > 0 && nullptr != change.inline_qos.data) ? &qos_writer : nullptr;
 
 #if HAVE_SECURITY
     uint32_t from_buffer_position = submessage_msg_->pos;
@@ -576,7 +576,7 @@ bool RTPSMessageGroup::add_data_frag(
 
     if (!RTPSMessageCreator::addSubmessageDataFrag(submessage_msg_, &change, fragment_number,
             change_to_add.serializedPayload, endpoint_->getAttributes().topicKind, readerId,
-            expectsInlineQos, inline_qos))
+            expectsInlineQos, inline_qos_writer))
     {
         logError(RTPS_WRITER, "Cannot add DATA_FRAG submsg to the CDRMessage. Buffer too small");
         change_to_add.serializedPayload.data = nullptr;

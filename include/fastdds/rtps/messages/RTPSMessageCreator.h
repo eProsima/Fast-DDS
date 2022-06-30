@@ -124,7 +124,7 @@ public:
             TopicKind_t topicKind,
             const EntityId_t& readerId,
             bool expectsInlineQos,
-            InlineQosWriter* inlineQos);
+            InlineQosWriter* inlineQosWriter);
 
     static bool addSubmessageData(
             CDRMessage_t* msg,
@@ -132,7 +132,7 @@ public:
             TopicKind_t topicKind,
             const EntityId_t& readerId,
             bool expectsInlineQos,
-            InlineQosWriter* inlineQos,
+            InlineQosWriter* inlineQosWriter,
             bool* is_big_submessage);
 
     static bool addMessageDataFrag(
@@ -143,7 +143,7 @@ public:
             TopicKind_t topicKind,
             const EntityId_t& readerId,
             bool expectsInlineQos,
-            InlineQosWriter* inlineQos);
+            InlineQosWriter* inlineQosWriter);
     static bool addSubmessageDataFrag(
             CDRMessage_t* msg,
             const CacheChange_t* change,
@@ -152,7 +152,7 @@ public:
             TopicKind_t topicKind,
             const EntityId_t& readerId,
             bool expectsInlineQos,
-            InlineQosWriter* inlineQos);
+            InlineQosWriter* inlineQosWriter);
 
     static bool addMessageGap(
             CDRMessage_t* msg,

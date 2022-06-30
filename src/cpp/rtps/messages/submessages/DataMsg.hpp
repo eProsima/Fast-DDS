@@ -34,14 +34,14 @@ struct DataMsgUtils
             const CacheChange_t* change,
             TopicKind_t topicKind,
             bool expectsInlineQos,
-            InlineQosWriter* inlineQos,
+            InlineQosWriter* inlineQosWriter,
             bool& dataFlag,
             bool& keyFlag,
             bool& inlineQosFlag,
             octet& status)
     {
         inlineQosFlag =
-                (nullptr != inlineQos) ||
+                (nullptr != inlineQosWriter) ||
                 ((WITH_KEY == topicKind) && (expectsInlineQos || change->kind != ALIVE)) ||
                 (change->write_params.related_sample_identity() != SampleIdentity::unknown());
 
@@ -118,7 +118,7 @@ struct DataMsgUtils
             const CacheChange_t* change,
             TopicKind_t topicKind,
             bool expectsInlineQos,
-            InlineQosWriter* inlineQos,
+            InlineQosWriter* inlineQosWriter,
             octet status)
     {
         if (change->write_params.related_sample_identity() != SampleIdentity::unknown())
@@ -137,9 +137,9 @@ struct DataMsgUtils
             }
         }
 
-        if (inlineQos != nullptr)
+        if (inlineQosWriter != nullptr)
         {
-            inlineQos->writeQosToCDRMessage(msg);
+            inlineQosWriter->writeQosToCDRMessage(msg);
         }
 
         fastdds::dds::ParameterSerializer<Parameter_t>::add_parameter_sentinel(msg);
@@ -156,7 +156,7 @@ bool RTPSMessageCreator::addMessageData(
         TopicKind_t topicKind,
         const EntityId_t& readerId,
         bool expectsInlineQos,
-        InlineQosWriter* inlineQos)
+        InlineQosWriter* inlineQosWriter)
 {
 
     RTPSMessageCreator::addHeader(msg, guidprefix);
@@ -164,7 +164,7 @@ bool RTPSMessageCreator::addMessageData(
     RTPSMessageCreator::addSubmessageInfoTS_Now(msg, false);
 
     bool is_big_submessage;
-    RTPSMessageCreator::addSubmessageData(msg, change, topicKind, readerId, expectsInlineQos, inlineQos,
+    RTPSMessageCreator::addSubmessageData(msg, change, topicKind, readerId, expectsInlineQos, inlineQosWriter,
             &is_big_submessage);
 
     msg->length = msg->pos;
@@ -178,7 +178,7 @@ bool RTPSMessageCreator::addSubmessageData(
         TopicKind_t topicKind,
         const EntityId_t& readerId,
         bool expectsInlineQos,
-        InlineQosWriter* inlineQos,
+        InlineQosWriter* inlineQosWriter,
         bool* is_big_submessage)
 {
     octet status = 0;
@@ -196,7 +196,7 @@ bool RTPSMessageCreator::addSubmessageData(
     msg->msg_endian = LITTLEEND;
 #endif // if FASTDDS_IS_BIG_ENDIAN_TARGET
 
-    DataMsgUtils::prepare_submessage_flags(change, topicKind, expectsInlineQos, inlineQos,
+    DataMsgUtils::prepare_submessage_flags(change, topicKind, expectsInlineQos, inlineQosWriter,
             dataFlag, keyFlag, inlineQosFlag, status);
 
     if (inlineQosFlag)
@@ -224,7 +224,7 @@ bool RTPSMessageCreator::addSubmessageData(
     //Add INLINE QOS AND SERIALIZED PAYLOAD DEPENDING ON FLAGS:
     if (inlineQosFlag) //inlineQoS
     {
-        DataMsgUtils::serialize_inline_qos(msg, change, topicKind, expectsInlineQos, inlineQos, status);
+        DataMsgUtils::serialize_inline_qos(msg, change, topicKind, expectsInlineQos, inlineQosWriter, status);
     }
 
     //Add Serialized Payload
@@ -303,7 +303,7 @@ bool RTPSMessageCreator::addMessageDataFrag(
         TopicKind_t topicKind,
         const EntityId_t& readerId,
         bool expectsInlineQos,
-        InlineQosWriter* inlineQos)
+        InlineQosWriter* inlineQosWriter)
 {
     RTPSMessageCreator::addHeader(msg, guidprefix);
 
@@ -321,7 +321,7 @@ bool RTPSMessageCreator::addMessageDataFrag(
     payload.length = fragment_size;
 
     RTPSMessageCreator::addSubmessageDataFrag(msg, change, fragment_number, payload,
-            topicKind, readerId, expectsInlineQos, inlineQos);
+            topicKind, readerId, expectsInlineQos, inlineQosWriter);
 
     payload.data = NULL;
 
@@ -337,7 +337,7 @@ bool RTPSMessageCreator::addSubmessageDataFrag(
         TopicKind_t topicKind,
         const EntityId_t& readerId,
         bool expectsInlineQos,
-        InlineQosWriter* inlineQos)
+        InlineQosWriter* inlineQosWriter)
 {
     octet status = 0;
     octet flags = 0;
@@ -354,7 +354,7 @@ bool RTPSMessageCreator::addSubmessageDataFrag(
     msg->msg_endian = LITTLEEND;
 #endif // if FASTDDS_IS_BIG_ENDIAN_TARGET
 
-    DataMsgUtils::prepare_submessage_flags(change, topicKind, expectsInlineQos, inlineQos,
+    DataMsgUtils::prepare_submessage_flags(change, topicKind, expectsInlineQos, inlineQosWriter,
             dataFlag, keyFlag, inlineQosFlag, status);
 
     if (inlineQosFlag)
@@ -377,7 +377,7 @@ bool RTPSMessageCreator::addSubmessageDataFrag(
     //Add INLINE QOS AND SERIALIZED PAYLOAD DEPENDING ON FLAGS:
     if (inlineQosFlag) //inlineQoS
     {
-        DataMsgUtils::serialize_inline_qos(msg, change, topicKind, expectsInlineQos, inlineQos, status);
+        DataMsgUtils::serialize_inline_qos(msg, change, topicKind, expectsInlineQos, inlineQosWriter, status);
     }
 
     //Add Serialized Payload XXX TODO
