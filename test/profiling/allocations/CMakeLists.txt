@@ -14,7 +14,7 @@
 
 cmake_minimum_required(VERSION 3.16.3)
 
-project(fastrtps_allocation_test VERSION 1)
+project(fastrtps_allocation_test VERSION 1 LANGUAGES CXX)
 
 # Default to C++11
 if(NOT CMAKE_CXX_STANDARD)

@@ -37,6 +37,8 @@ add_subdirectory(utils)
 add_subdirectory(xmlparser)
 add_subdirectory(xtypes)
 add_subdirectory(statistics/dds)
+add_subdirectory(cmake)
+
 if(SECURITY)
     add_subdirectory(security/authentication)
     add_subdirectory(security/cryptography)

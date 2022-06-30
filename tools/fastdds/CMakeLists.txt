@@ -12,7 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-project(fastdds-tool)
+# empty LANGUAGES defaults to C in Ubuntu and breaks the build
+project(fastdds-tool LANGUAGES CXX)
 
 ###############################################################################
 # Installation

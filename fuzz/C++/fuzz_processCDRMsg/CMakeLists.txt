@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.16.3)
 
-project(fuzz_processCDRMsg VERSION 1)
+project(fuzz_processCDRMsg VERSION 1 LANGUAGES CXX)
 
 # Find requirements
 if(NOT fastcdr_FOUND)
