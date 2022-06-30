@@ -741,6 +741,62 @@ public:
 /**
  * @ingroup PARAMETER_MODULE
  */
+class ParameterOriginalWriterInfo_t : public Parameter_t
+{
+public:
+
+    //!Original writer guid. By default, unknown GUID.
+    fastrtps::rtps::GUID_t writer_guid;
+
+    //!Original writer sequence number
+    fastrtps::rtps::SequenceNumber_t sequence_number;
+
+    /**
+     * @brief Constructor without parameters
+     */
+    ParameterOriginalWriterInfo_t()
+    {
+    }
+
+    /**
+     * Constructor using a parameter PID and the parameter length
+     *
+     * @param pid Pid of the parameter
+     * @param in_length Its associated length
+     */
+    ParameterOriginalWriterInfo_t(
+            ParameterId_t pid,
+            uint16_t in_length)
+        : Parameter_t(pid, in_length)
+    {
+    }
+
+    /**
+     * @brief Constructor using a parameter PID, the parameter length and parameters of the original writer
+     *
+     * @param pid Pid of the parameter
+     * @param in_length Its associated length
+     * @param guid Guid of the original writer
+     * @param sn Sequence number of the original writer
+     */
+    ParameterOriginalWriterInfo_t(
+        ParameterId_t pid,
+        uint16_t in_length,
+        const fastrtps::rtps::GUID_t& guid,
+        const fastrtps::rtps::SequenceNumber_t sn)
+      : Parameter_t(pid, in_length) 
+      , writer_guid(guid)
+      , sequence_number(sn)
+    {
+    }
+
+};
+
+#define PARAMETER_ORIGINAL_WRITER_INFO_LENGTH 24 // 12 + 4 + 8
+
+/**
+ * @ingroup PARAMETER_MODULE
+ */
 class ParameterCount_t : public Parameter_t
 {
 public:

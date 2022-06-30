@@ -483,6 +483,40 @@ inline bool ParameterSerializer<ParameterStatusInfo_t>::read_content_from_cdr_me
 }
 
 template<>
+inline bool ParameterSerializer<ParameterOriginalWriterInfo_t>::add_content_to_cdr_message(
+        const ParameterOriginalWriterInfo_t& parameter,
+        fastrtps::rtps::CDRMessage_t* cdr_message)
+{
+    bool valid = fastrtps::rtps::CDRMessage::addData(cdr_message,
+                    parameter.writer_guid.guidPrefix.value, fastrtps::rtps::GuidPrefix_t::size);
+    valid &= fastrtps::rtps::CDRMessage::addData(cdr_message,
+                    parameter.writer_guid.entityId.value, fastrtps::rtps::EntityId_t::size);
+    valid &= fastrtps::rtps::CDRMessage::addInt32(cdr_message, parameter.sequence_number.high);
+    valid &= fastrtps::rtps::CDRMessage::addUInt32(cdr_message, parameter.sequence_number.low);
+    return valid;
+}
+
+template<>
+inline bool ParameterSerializer<ParameterOriginalWriterInfo_t>::read_content_from_cdr_message(
+        ParameterOriginalWriterInfo_t& parameter,
+        fastrtps::rtps::CDRMessage_t* cdr_message,
+        const uint16_t parameter_length)
+{
+    if (parameter_length != PARAMETER_ORIGINAL_WRITER_INFO_LENGTH)
+    {
+        return false;
+    }
+    parameter.length = parameter_length;
+    bool valid = fastrtps::rtps::CDRMessage::readData(cdr_message,
+                    parameter.writer_guid.guidPrefix.value, fastrtps::rtps::GuidPrefix_t::size);
+    valid &= fastrtps::rtps::CDRMessage::readData(cdr_message,
+                    parameter.writer_guid.entityId.value, fastrtps::rtps::EntityId_t::size);
+    valid &= fastrtps::rtps::CDRMessage::readInt32(cdr_message, &parameter.sequence_number.high);
+    valid &= fastrtps::rtps::CDRMessage::readUInt32(cdr_message, &parameter.sequence_number.low);
+    return valid;
+}
+
+template<>
 inline bool ParameterSerializer<ParameterCount_t>::add_content_to_cdr_message(
         const ParameterCount_t& parameter,
         fastrtps::rtps::CDRMessage_t* cdr_message)
