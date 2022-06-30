@@ -218,7 +218,7 @@ bool LivelinessManager::assert_liveliness(
         return false;
     }
 
-    std::unique_lock<std::mutex> lock(mutex_);
+    std::lock_guard<std::mutex> lock(mutex_);
 
     if (timer_owner_ != nullptr)
     {
@@ -272,7 +272,7 @@ bool LivelinessManager::assert_liveliness(
         return false;
     }
 
-    std::unique_lock<std::mutex> lock(mutex_);
+    std::lock_guard<std::mutex> lock(mutex_);
 
     if (timer_owner_ != nullptr)
     {
