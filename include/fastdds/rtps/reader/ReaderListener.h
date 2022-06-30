@@ -190,6 +190,7 @@ public:
             const SequenceNumber_t& last_sequence,
             bool& should_notify_individual_changes)
     {
+        static_cast<void>(reader);
         static_cast<void>(writer_guid);
         static_cast<void>(first_sequence);
         static_cast<void>(last_sequence);
