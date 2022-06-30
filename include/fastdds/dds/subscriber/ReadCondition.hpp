@@ -1,0 +1,122 @@
+// Copyright 2022 Proyectos y Sistemas de Mantenimiento SL (eProsima).
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+/**
+ * @file ReadCondition.hpp
+ */
+
+#ifndef _FASTDDS_DDS_SUBSCRIBER_READCONDITION_HPP_
+#define _FASTDDS_DDS_SUBSCRIBER_READCONDITION_HPP_
+
+#include <fastdds/dds/core/condition/Condition.hpp>
+#include <fastdds/dds/subscriber/InstanceState.hpp>
+#include <fastdds/dds/subscriber/SampleState.hpp>
+#include <fastdds/dds/subscriber/ViewState.hpp>
+#include <fastrtps/fastrtps_dll.h>
+
+namespace eprosima {
+namespace fastdds {
+namespace dds {
+
+namespace detail {
+
+struct ReadConditionImpl;
+
+} // namespace detail
+
+class DataReader;
+
+/**
+ * @brief A Condition specifically dedicated to read operations and attached to one DataReader.
+ *
+ * ReadCondition objects allow an application to specify the data samples it is interested in (by specifying the
+ * desired sample_states, view_states, and instance_states).
+ * The condition will only be triggered when suitable information is available.
+ * They are to be used in conjunction with a WaitSet as normal conditions.
+ * More than one ReadCondition may be attached to the same DataReader.
+ */
+class ReadCondition : public Condition
+{
+public:
+
+    explicit ReadCondition(
+            DataReader* parent);
+
+    ~ReadCondition() override;
+
+    // Non-copyable
+    ReadCondition(
+            const ReadCondition&) = delete;
+    ReadCondition& operator =(
+            const ReadCondition&) = delete;
+
+    // Non-movable
+    ReadCondition(
+            ReadCondition&&) = delete;
+    ReadCondition& operator =(
+            ReadCondition&&) = delete;
+
+    /**
+     * @brief Retrieves the trigger_value of the Condition
+     * @return true if trigger_value is set to 'true', 'false' otherwise
+     */
+    RTPS_DllAPI bool get_trigger_value() const override;
+
+    /**
+     * @brief Retrieves the DataReader associated with the ReadCondition.
+     *
+     * Note that there is exactly one DataReader associated with each ReadCondition.
+     *
+     * @return pointer to the DataReader associated with this ReadCondition.
+     */
+    RTPS_DllAPI DataReader* get_datareader() const;
+
+    /**
+     * @brief Retrieves the set of sample_states taken into account to determine the trigger_value of this condition.
+     *
+     * @return the sample_states specified when the ReadCondition was created.
+     */
+    RTPS_DllAPI SampleStateMask get_sample_state_mask() const;
+
+    /**
+     * @brief Retrieves the set of view_states taken into account to determine the trigger_value of this condition.
+     *
+     * @return the view_states specified when the ReadCondition was created.
+     */
+    RTPS_DllAPI ViewStateMask get_view_state_mask() const;
+
+    /**
+     * @brief Retrieves the set of instance_states taken into account to determine the trigger_value of this condition.
+     *
+     * @return the instance_states specified when the ReadCondition was created.
+     */
+    RTPS_DllAPI InstanceStateMask get_instance_state_mask() const;
+
+    detail::ReadConditionImpl* get_impl() const
+    {
+        return impl_.get();
+    }
+
+protected:
+
+    //! Class implementation
+    std::unique_ptr<detail::ReadConditionImpl> impl_;
+
+};
+
+} // namespace dds
+} // namespace fastdds
+} // namespace eprosima
+
+#endif // _FASTDDS_DDS_SUBSCRIBER_READCONDITION_HPP_
