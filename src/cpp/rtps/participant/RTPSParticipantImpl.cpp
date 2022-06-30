@@ -1252,6 +1252,7 @@ void RTPSParticipantImpl::update_attributes(
     }
 
     auto pdp = mp_builtinProtocols->mp_PDP;
+
     // Check if there are changes
     if (patt.builtin.discovery_config.m_DiscoveryServers != m_att.builtin.discovery_config.m_DiscoveryServers
             || patt.userData != m_att.userData
@@ -1260,6 +1261,16 @@ void RTPSParticipantImpl::update_attributes(
         update_pdp = true;
         std::vector<GUID_t> modified_servers;
         LocatorList_t modified_locators;
+
+        // Update RTPSParticipantAttributes member
+        m_att.userData = patt.userData;
+
+        // If there's no PDP don't process Discovery-related attributes.
+        if (!pdp)
+        {
+            return;
+        }
+
         // Check that the remote servers list is consistent: all the already known remote servers must be included in
         // the list and either new remote servers are added or remote server listening locator is modified.
         for (auto existing_server : m_att.builtin.discovery_config.m_DiscoveryServers)
@@ -1300,9 +1311,6 @@ void RTPSParticipantImpl::update_attributes(
                 return;
             }
         }
-
-        // Update RTPSParticipantAttributes member
-        m_att.userData = patt.userData;
 
         {
             std::lock_guard<std::recursive_mutex> lock(*pdp->getMutex());
@@ -1350,22 +1358,17 @@ void RTPSParticipantImpl::update_attributes(
                     {
                         if (server_it->guidPrefix == incoming_server.guidPrefix)
                         {
-                            bool modified_locator = false;
                             // Check if the listening locators have been modified
                             for (auto guid : modified_servers)
                             {
                                 if (guid == incoming_server.GetParticipant())
                                 {
-                                    modified_locator = true;
                                     server_it->metatrafficUnicastLocatorList =
                                             incoming_server.metatrafficUnicastLocatorList;
                                     break;
                                 }
                             }
-                            if (false == modified_locator)
-                            {
-                                break;
-                            }
+                            break;
                         }
                     }
                     if (server_it == m_att.builtin.discovery_config.m_DiscoveryServers.end())
@@ -1375,7 +1378,10 @@ void RTPSParticipantImpl::update_attributes(
                 }
 
                 // Update the servers list in builtin protocols
-                mp_builtinProtocols->m_DiscoveryServers = m_att.builtin.discovery_config.m_DiscoveryServers;
+                {
+                    std::unique_lock<eprosima::shared_mutex> disc_lock(mp_builtinProtocols->getDiscoveryMutex());
+                    mp_builtinProtocols->m_DiscoveryServers = m_att.builtin.discovery_config.m_DiscoveryServers;
+                }
 
                 // Notify PDPServer
                 if (m_att.builtin.discovery_config.discoveryProtocol == DiscoveryProtocol::SERVER ||

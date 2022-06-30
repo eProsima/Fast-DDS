@@ -20,6 +20,7 @@
 
 #include <chrono>
 #include <cstdlib>
+#include <fstream>
 #include <regex>
 #include <string>
 #include <thread>
@@ -45,7 +46,6 @@
 #include <rtps/common/GuidUtils.hpp>
 #include <utils/Host.hpp>
 #include <utils/SystemInfo.hpp>
-
 
 namespace eprosima {
 namespace fastrtps {
@@ -224,6 +224,13 @@ RTPSParticipant* RTPSDomain::createParticipant(
     {
         std::lock_guard<std::mutex> guard(m_mutex);
         m_RTPSParticipants.push_back(t_p_RTPSParticipant(p, pimpl));
+    }
+
+    // Check the environment file in case it was modified during participant creation leading to a missed callback.
+    if ((PParam.builtin.discovery_config.discoveryProtocol != DiscoveryProtocol_t::CLIENT) &&
+            RTPSDomainImpl::file_watch_handle_)
+    {
+        pimpl->environment_file_has_changed();
     }
 
     if (enabled)
@@ -473,7 +480,8 @@ RTPSParticipant* RTPSDomain::clientServerEnvironmentCreationOverride(
     }
 
     logInfo(DOMAIN, "Detected auto client-server environment variable."
-            "Trying to create client with the default server setup.");
+            << "Trying to create client with the default server setup: "
+            << client_att.builtin.discovery_config.m_DiscoveryServers);
 
     client_att.builtin.discovery_config.discoveryProtocol = DiscoveryProtocol_t::CLIENT;
     // RemoteServerAttributes already fill in above
@@ -599,8 +607,11 @@ bool RTPSDomainImpl::should_intraprocess_between(
 
 void RTPSDomainImpl::file_watch_callback()
 {
+    auto _1s = std::chrono::seconds(1);
+
     // Ensure that all changes have been saved by the OS
-    std::this_thread::sleep_for(std::chrono::seconds(1));
+    SystemInfo::wait_for_file_closure(SystemInfo::get_environment_file(), _1s);
+
     // For all RTPSParticipantImpl registered in the RTPSDomain, call RTPSParticipantImpl::environment_file_has_changed
     std::lock_guard<std::mutex> guard(RTPSDomain::m_mutex);
     for (auto participant : RTPSDomain::m_RTPSParticipants)

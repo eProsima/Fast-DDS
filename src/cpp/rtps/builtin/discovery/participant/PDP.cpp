@@ -46,6 +46,7 @@
 
 #include <fastrtps/utils/TimeConversion.h>
 #include <fastrtps/utils/IPLocator.h>
+#include "fastrtps/utils/shared_mutex.hpp"
 
 #include <fastdds/dds/domain/DomainParticipantFactory.hpp>
 #include <fastdds/dds/domain/DomainParticipant.hpp>
@@ -1128,7 +1129,6 @@ ParticipantProxyData* PDP::get_participant_proxy_data(
 
 std::list<eprosima::fastdds::rtps::RemoteServerAttributes>& PDP::remote_server_attributes()
 {
-    std::unique_lock<std::recursive_mutex> lock(*getMutex());
     return mp_builtin->m_DiscoveryServers;
 }
 
