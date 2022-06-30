@@ -173,7 +173,8 @@ public:
 
     /**
      * This method is called when new CacheChange_t objects are made available to the user.
-     * 
+     * NOTE: This method is currently never called. Implementation will be added in future releases.
+     *
      * @param [in]  reader                            Pointer to the reader performing the notification.
      * @param [in]  writer_guid                       GUID of the writer from which the changes were received.
      * @param [in]  first_sequence                    Sequence number of the first change made available.
