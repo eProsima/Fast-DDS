@@ -121,7 +121,7 @@ jobs:
           $LASTEXITCODE=0
 
       - name: Process sanitizer reports
-        id: summary
+        id: report_summary
         continue-on-error: true
         run: |
           # Create a dir for the exports
@@ -173,12 +173,14 @@ jobs:
           # The step fails on new deadlocks
           $LASTEXITCODE=$sd.count
 
-      - name: Check on failures
-        if: ${{ steps.summary.outcome }} == 'failure'
-        run: exit 1
-
       - name: Archive sanitation results
         uses: actions/upload-artifact@v3
         with:
-            name: sanitation-report
-            path: /home/runner/work/ws/exports/*
+          name: sanitation-report
+          path: /home/runner/work/ws/exports/*
+
+      - name: Check on failures
+        if: ${{ steps.report_summary.outcome == 'failure' }}
+        run: |
+          Write-Host ${{ steps.report_summary.outcome }}
+          exit 1
