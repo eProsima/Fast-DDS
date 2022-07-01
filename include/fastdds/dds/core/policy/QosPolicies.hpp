@@ -2780,7 +2780,7 @@ public:
     uint32_t listen_socket_buffer_size;
 };
 
-//!Qos Policy to configure the endpoint
+//! Qos Policy to configure the endpoint
 class RTPSEndpointQos
 {
 public:
@@ -2802,13 +2802,13 @@ public:
                (this->history_memory_policy == b.history_memory_policy);
     }
 
-    //!Unicast locator list
+    //! Unicast locator list
     rtps::LocatorList unicast_locator_list;
 
-    //!Multicast locator list
+    //! Multicast locator list
     rtps::LocatorList multicast_locator_list;
 
-    //!Remote locator list
+    //! Remote locator list
     rtps::LocatorList remote_locator_list;
 
     //! The collection of external locators to use for communication.
@@ -2817,13 +2817,13 @@ public:
     //! Whether locators that don't match with the announced locators should be kept.
     bool ignore_non_matching_locators = false;
 
-    //!User Defined ID, used for StaticEndpointDiscovery. <br> By default, -1.
+    //! User Defined ID, used for StaticEndpointDiscovery. <br> By default, -1.
     int16_t user_defined_id = -1;
 
-    //!Entity ID, if the user wants to specify the EntityID of the endpoint. <br> By default, -1.
+    //! Entity ID, if the user wants to specify the EntityID of the endpoint. <br> By default, -1.
     int16_t entity_id = -1;
 
-    //!Underlying History memory policy. <br> By default, PREALLOCATED_MEMORY_MODE.
+    //! Underlying History memory policy. <br> By default, PREALLOCATED_MEMORY_MODE.
     fastrtps::rtps::MemoryManagementPolicy_t history_memory_policy = fastrtps::rtps::PREALLOCATED_MEMORY_MODE;
 };
 
