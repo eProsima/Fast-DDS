@@ -18,6 +18,7 @@ jobs:
     runs-on: windows-latest
     env:
       BUILD_ARCH: -A x64 -T host=x64
+      DEV_BUILD_ARCH: /arch=x64 /host_arch=x64
       BUILD_CONFIG: Debug
       CXXFLAGS: /MP
     steps:
@@ -122,7 +123,9 @@ jobs:
           del "$Env:TMP\Win64OpenSSL.exe"
 
       - name: Build & install Fast-DDS
+        id: BuildFastDDS
         run: |
+          # cmake generation stage
           cd ws
           cmake -DCMAKE_MODULE_PATH="$Env:MODULE_PATH" -DCMAKE_PREFIX_PATH="./install" -DCMAKE_INSTALL_PREFIX='./install' `
                 -DCMAKE_VERBOSE_MAKEFILE=ON -DSANITIZE_ADDRESS=ON `
@@ -134,28 +137,64 @@ jobs:
             ? Name -like "$(Get-Date -Format 'MMMM-dd-yyyy')*"
           $report_dir = Join-Path $report_dir asan | gi
           echo "report folder is: $report_dir"
-          New-Item -ItemType SymbolicLink -Target $report_dir -Path ./build/fastdds/reports
+          # actions/upload-artifact@v3 doesn't admit a symlink as directory as:
+          # New-Item -ItemType SymbolicLink -Target $report_dir -Path ./build/fastdds/reports
+          # we can workaround this using steps output metadata
+          "::set-output name=SanitizerDir::" + $report_dir
           cmake --build ./build/fastdds --config $Env:BUILD_CONFIG --target fastrtps --verbose
           cmake --build ./build/fastdds --config $Env:BUILD_CONFIG --target install -j 2 --verbose
 
+      - name: Check missing dll dependencies
+        run: |
+          # Upgrade to developer console
+          [xml]$info = & "${Env:ProgramFiles(x86)}\Microsoft Visual Studio\installer\vswhere" `
+                         -latest -format xml
+          $pwshmodule = Join-Path $info.instances.instance.installationPath `
+                                  "Common7\Tools\Microsoft.VisualStudio.DevShell.dll" | gi
+          Import-Module $pwshmodule
+          Enter-VsDevShell -SetDefaultWindowTitle -VsInstallPath $pwshmodule.Directory.Parent.Parent `
+                           -StartInPath (pwd) -DevCmdArguments $Env:DEV_BUILD_ARCH
+
+          # Add the binary install dir to avoid false-positives
+          $installdir = Join-Path (pwd) ws/install/bin
+          $Env:PATH="$Env:OPENSSL64_ROOT;$installdir;$Env:PATH"
+
+          # Check dependencies
+          ls -Path .\ws\build\fastdds\* -R -Include *.exe | % {dumpbin /DEPENDENTS $_.FullName } |
+                     ? { $_ -match "\.dll"} | Sort-Object | Get-Unique -OutVariable dllname
+          ls -Path ($Env:Path.split(';') | gi -ErrorAction SilentlyContinue | Join-Path -ChildPath *) `
+             -Include $dllname.Trim() -OutVariable dll
+          $located = $dll.Name | Sort-Object | Get-Unique
+          Compare-Object -ReferenceObject $dllname.trim() -DifferenceObject $located -OutVariable cmp
+          # Fail if some are missing
+          $LASTEXITCODE=$cmp.count
+
+          # sanitizer ancillary dlls are not readily available outside development console
+          # symlink them into the install path
+          if(!(Test-Path -Path $installdir -PathType Container))
+          {
+            $installdir = New-Item -ItemType Directory -path $installdir
+          }
+          $dll | ? Name -Match "^clang_rt.*\.dll$" | % {
+            New-Item -ItemType SymbolicLink -Target $_ -Path (Join-Path $installdir $_.Name) 
+          }
+
       - name: Run Fast-DDS test & generate sanitizer reports
         run: |
+          # Run the testing
           cd ws/build/fastdds
           ctest -C $Env:BUILD_CONFIG --timeout 30 -j 2 -V
           # check where the result files are
-          echo "List test using symlink"
-          gci -Path ./reports/* | select Name
-          echo "List test using actual path"
-          gci -Path ./* -Attributes D |
-            ? Name -like "$(Get-Date -Format 'MMMM-dd-yyyy')*" | gci -R | select Name
+          echo "List test"
+          gci -Path (Join-Path ${{ steps.BuildFastDDS.outputs.SanitizerDir }} *) -R | select Name
           # ctest fails if sanitizer reports are present
           $LASTEXITCODE=0 
 
       - name: Archive sanitation results
         uses: actions/upload-artifact@v3
         with:
-            name: sanitation-report
-            path: ws/build/fastdds/reports/*
+            name: windows-sanitation-report
+            path: ${{ steps.BuildFastDDS.outputs.SanitizerDir }}
 
   ubuntu-sanitizer-run:
     name: Ubuntu Asan Evaluation
@@ -245,6 +284,7 @@ jobs:
           git merge --no-edit efork/bugfix/add_sanitizer_support | Out-Null
 
       - name: Build & install Fast-DDS
+        id: BuildFastDDS
         run: |
           cd ws
           cmake -DCMAKE_MODULE_PATH="$Env:MODULE_PATH" -DCMAKE_PREFIX_PATH="./install" -DCMAKE_INSTALL_PREFIX='./install' `
@@ -257,8 +297,10 @@ jobs:
             ? Name -like "$(Get-Date -Format 'MMMM-dd-yyyy')*"
           $report_dir = Join-Path $report_dir asan | gi
           echo "report folder is: $report_dir"
-          New-Item -ItemType SymbolicLink -Target $report_dir -Path ./build/fastdds/reports
-          cmake --build ./build/fastdds --target fastrtps --verbose
+          # actions/upload-artifact@v3 doesn't admit a symlink as directory as:
+          # New-Item -ItemType SymbolicLink -Target $report_dir -Path ./build/fastdds/reports
+          # we can workaround this using steps output metadata
+          "::set-output name=SanitizerDir::" + $report_dir
           cmake --build ./build/fastdds --target install -j 2 --verbose
 
       - name: Run Fast-DDS test & generate sanitizer reports
@@ -266,16 +308,13 @@ jobs:
           cd ws/build/fastdds
           ctest --timeout 30 -j 2 -V
           # check where the result files are
-          echo "List test using symlink"
-          gci -Path ./reports/* | select Name
-          echo "List test using actual path"
-          gci -Path ./* -Attributes D |
-            ? Name -like "$(Get-Date -Format 'MMMM-dd-yyyy')*" | gci -R | select Name
+          echo "List test"
+          gci -Path (Join-Path ${{ steps.BuildFastDDS.outputs.SanitizerDir }} *) -R | select Name
           # ctest fails if sanitizer reports are present
           $LASTEXITCODE=0 
 
       - name: Archive sanitation results
         uses: actions/upload-artifact@v3
         with:
-            name: sanitation-report
-            path: ws/build/fastdds/reports/*
+            name: ubuntu-sanitation-report
+            path: ${{ steps.BuildFastDDS.outputs.SanitizerDir }}
