@@ -137,7 +137,7 @@ void LifespanPublisher::run(
     samples = ( samples == 0 ) ? 10 : samples;
     for ( uint32_t i = 0; i < samples; ++i )
     {
-        if ( !publish() )
+        if ( !publish())
         {
             --i;
         }

@@ -36,7 +36,7 @@ class HelloWorldPublisher
 {
     class PubListener : public eprosima::fastdds::dds::DataWriterListener
     {
-public:
+    public:
 
         PubListener()
             : matched_(0)
@@ -56,7 +56,8 @@ public:
 
         bool first_connected_;
 
-    } listener_;
+    }
+    listener_;
 
     HelloWorld hello_;
 

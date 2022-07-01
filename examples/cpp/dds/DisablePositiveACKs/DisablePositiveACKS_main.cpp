@@ -53,7 +53,7 @@ bool parse_arguments(
         return false;
     }
 
-    for (int i=0; i<argc; i++)
+    for (int i = 0; i < argc; i++)
     {
         if (!strcmp(argv[i], "--help"))
         {
@@ -122,7 +122,9 @@ bool parse_arguments(
     return false;
 }
 
-int main(int argc, char** argv)
+int main(
+        int argc,
+        char** argv)
 {
     int type = 1;
 
@@ -146,7 +148,7 @@ int main(int argc, char** argv)
     {
         std::cout << "Usage: " << std::endl;
         std::cout << argv[0] << " publisher ";
-        std::cout << "[--disable]" ;
+        std::cout << "[--disable]";
         std::cout << "[--keep_duration <duration_ms>] ";
         std::cout << "[--sleep <writer_sleep_ms>] ";
         std::cout << "[--samples <samples>]" << std::endl;
@@ -159,26 +161,26 @@ int main(int argc, char** argv)
         return 0;
     }
 
-    switch(type)
+    switch (type)
     {
         case 1:
+        {
+            DisablePositiveACKsPublisher mypub;
+            if (mypub.init(use_disable_positive_acks > 0, keep_duration_ms))
             {
-                DisablePositiveACKsPublisher mypub;
-                if (mypub.init(use_disable_positive_acks > 0, keep_duration_ms))
-                {
-                    mypub.run(count, writer_sleep_ms);
-                }
-                break;
+                mypub.run(count, writer_sleep_ms);
             }
+            break;
+        }
         case 2:
+        {
+            DisablePositiveACKsSubscriber mysub;
+            if (mysub.init(use_disable_positive_acks > 0))
             {
-                DisablePositiveACKsSubscriber mysub;
-                if (mysub.init(use_disable_positive_acks > 0))
-                {
-                    mysub.run(count);
-                }
-                break;
+                mysub.run(count);
             }
+            break;
+        }
     }
     Domain::stopAll();
     Log::Reset();

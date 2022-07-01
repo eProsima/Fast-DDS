@@ -26,7 +26,9 @@
 using namespace eprosima;
 using namespace fastrtps;
 using namespace rtps;
-int main(int argc, char** argv)
+int main(
+        int argc,
+        char** argv)
 {
     int type = 1;
 
@@ -39,9 +41,9 @@ int main(int argc, char** argv)
     // Sleep time between samples
     long writer_sleep_ms = 10;
 
-    if(argc > 1)
+    if (argc > 1)
     {
-        if(strcmp(argv[1],"publisher")==0)
+        if (strcmp(argv[1], "publisher") == 0)
         {
             type = 1;
             if (argc > 2)
@@ -50,10 +52,10 @@ int main(int argc, char** argv)
                 if (argc > 3)
                 {
                     sleep_ms = atoi(argv[3]);
-                    if( argc > 4 )
+                    if ( argc > 4 )
                     {
                         count = atoi(argv[4]);
-                        if( argc > 5 )
+                        if ( argc > 5 )
                         {
                             writer_sleep_ms = atoi(argv[5]);
                         }
@@ -61,13 +63,13 @@ int main(int argc, char** argv)
                 }
             }
         }
-        else if( strcmp(argv[1], "subscriber") == 0 )
+        else if ( strcmp(argv[1], "subscriber") == 0 )
         {
             type = 2;
-            if( argc > 2 )
+            if ( argc > 2 )
             {
                 lifespan_ms = atoi(argv[2]);
-                if( argc > 3 )
+                if ( argc > 3 )
                 {
                     sleep_ms = atoi(argv[3]);
                 }
@@ -81,26 +83,26 @@ int main(int argc, char** argv)
         return 0;
     }
 
-    switch(type)
+    switch (type)
     {
         case 1:
+        {
+            LifespanPublisher mypub;
+            if ( mypub.init(lifespan_ms))
             {
-                LifespanPublisher mypub;
-                if( mypub.init(lifespan_ms) )
-                {
-                    mypub.run(count, writer_sleep_ms, sleep_ms);
-                }
-                break;
+                mypub.run(count, writer_sleep_ms, sleep_ms);
             }
+            break;
+        }
         case 2:
+        {
+            LifespanSubscriber mysub;
+            if ( mysub.init(lifespan_ms))
             {
-                LifespanSubscriber mysub;
-                if( mysub.init(lifespan_ms) )
-                {
-                    mysub.run(count, sleep_ms);
-                }
-                break;
+                mysub.run(count, sleep_ms);
             }
+            break;
+        }
     }
     Domain::stopAll();
     Log::Reset();

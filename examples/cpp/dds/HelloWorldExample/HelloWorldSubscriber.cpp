@@ -37,12 +37,13 @@ HelloWorldSubscriber::HelloWorldSubscriber()
 {
 }
 
-bool HelloWorldSubscriber::init(bool use_env)
+bool HelloWorldSubscriber::init(
+        bool use_env)
 {
     DomainParticipantQos pqos;
     auto factory = DomainParticipantFactory::get_instance();
 
-    if(use_env)
+    if (use_env)
     {
         factory->load_profiles();
         factory->get_default_participant_qos(pqos);

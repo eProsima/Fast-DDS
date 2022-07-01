@@ -25,8 +25,10 @@
 
 #include "fastrtps/rtps/writer/WriterListener.h"
 
-class TestWriterRegistered {
+class TestWriterRegistered
+{
 public:
+
     TestWriterRegistered();
     virtual ~TestWriterRegistered();
     eprosima::fastrtps::rtps::RTPSParticipant* mp_participant;
@@ -34,21 +36,34 @@ public:
     eprosima::fastrtps::rtps::WriterHistory* mp_history;
     bool init(); //Initialize writer
     bool reg(); //Register the Writer
-    void run(uint16_t samples); //Run the Writer
-    class MyListener :public eprosima::fastrtps::rtps::WriterListener
+    void run(
+            uint16_t samples);  //Run the Writer
+    class MyListener : public eprosima::fastrtps::rtps::WriterListener
     {
     public:
-        MyListener():n_matched(0){};
-        ~MyListener(){};
+
+        MyListener()
+            : n_matched(0)
+        {
+        }
+
+        ~MyListener()
+        {
+        }
+
         void onWriterMatched(
                 eprosima::fastrtps::rtps::RTPSWriter*,
                 eprosima::fastrtps::rtps::MatchingInfo& info) override
         {
             if (info.status == eprosima::fastrtps::rtps::MATCHED_MATCHING)
+            {
                 ++n_matched;
+            }
         }
+
         int n_matched;
-    }m_listener;
+    }
+    m_listener;
 };
 
 #endif /* TESTWRITER_H_ */

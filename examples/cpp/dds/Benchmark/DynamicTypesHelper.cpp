@@ -107,56 +107,61 @@ DynamicType_ptr DynamicTypesHelper::GetComplexStructType()
     // Members (auxiliar types are tab)
     DynamicTypeBuilder_ptr octet_builder = DynamicTypeBuilderFactory::get_instance()->create_byte_builder();
     DynamicTypeBuilder_ptr my_sequence_octet_builder =
-        DynamicTypeBuilderFactory::get_instance()->create_sequence_builder(octet_builder.get(), 55);
+            DynamicTypeBuilderFactory::get_instance()->create_sequence_builder(octet_builder.get(), 55);
     DynamicTypeBuilder_ptr my_sequence_struct_builder =
-        DynamicTypeBuilderFactory::get_instance()->create_sequence_builder(GetBasicStructType());
+            DynamicTypeBuilderFactory::get_instance()->create_sequence_builder(GetBasicStructType());
     DynamicTypeBuilder_ptr char_builder = DynamicTypeBuilderFactory::get_instance()->create_char8_builder();
     DynamicTypeBuilder_ptr byte_builder = DynamicTypeBuilderFactory::get_instance()->create_byte_builder();
     DynamicTypeBuilder_ptr my_array_octet_builder =
-        DynamicTypeBuilderFactory::get_instance()->create_array_builder(byte_builder.get(), { 500, 5, 4 });
+            DynamicTypeBuilderFactory::get_instance()->create_array_builder(byte_builder.get(), { 500, 5, 4 });
     // MyOctetArray500 is already created
     // We reuse the bounds... { 5 }
     DynamicTypeBuilder_ptr my_array_struct_builder =
-        DynamicTypeBuilderFactory::get_instance()->create_array_builder(GetBasicStructType(), { 5 });
+            DynamicTypeBuilderFactory::get_instance()->create_array_builder(GetBasicStructType(), { 5 });
     DynamicTypeBuilder_ptr int16_builder = DynamicTypeBuilderFactory::get_instance()->create_int16_builder();
     DynamicTypeBuilder_ptr my_map_octet_short_builder =
-        DynamicTypeBuilderFactory::get_instance()->create_map_builder(octet_builder.get(), int16_builder.get());
+            DynamicTypeBuilderFactory::get_instance()->create_map_builder(octet_builder.get(), int16_builder.get());
     DynamicTypeBuilder_ptr int32_builder = DynamicTypeBuilderFactory::get_instance()->create_int32_builder();
     DynamicTypeBuilder_ptr my_map_long_struct_builder =
-        DynamicTypeBuilderFactory::get_instance()->create_map_builder(int32_builder.get()->build(), GetBasicStructType());
+            DynamicTypeBuilderFactory::get_instance()->create_map_builder(
+        int32_builder.get()->build(), GetBasicStructType());
     DynamicTypeBuilder_ptr seqOctet_builder =
-        DynamicTypeBuilderFactory::get_instance()->create_sequence_builder(octet_builder.get());
+            DynamicTypeBuilderFactory::get_instance()->create_sequence_builder(octet_builder.get());
     DynamicTypeBuilder_ptr seqSeqOctet_builder =
-        DynamicTypeBuilderFactory::get_instance()->create_sequence_builder(seqOctet_builder.get());
+            DynamicTypeBuilderFactory::get_instance()->create_sequence_builder(seqOctet_builder.get());
     DynamicTypeBuilder_ptr my_map_long_seq_octet_builder =
-        DynamicTypeBuilderFactory::get_instance()->create_map_builder(int32_builder.get(), seqSeqOctet_builder.get());
+            DynamicTypeBuilderFactory::get_instance()->create_map_builder(int32_builder.get(),
+                    seqSeqOctet_builder.get());
     DynamicTypeBuilder_ptr my_map_long_octet_array_500_builder =
-        DynamicTypeBuilderFactory::get_instance()->create_map_builder(int32_builder.get()->build(), GetMyOctetArray500Type());
+            DynamicTypeBuilderFactory::get_instance()->create_map_builder(
+        int32_builder.get()->build(), GetMyOctetArray500Type());
     DynamicTypeBuilder_ptr map_octet_bsalias5_builder =
-        DynamicTypeBuilderFactory::get_instance()->create_map_builder(octet_builder.get()->build(), GetBSAlias5Type());
+            DynamicTypeBuilderFactory::get_instance()->create_map_builder(octet_builder.get()->build(),
+                    GetBSAlias5Type());
     DynamicTypeBuilder_ptr my_map_long_lol_type_builder =
-        DynamicTypeBuilderFactory::get_instance()->create_map_builder(int32_builder.get(), map_octet_bsalias5_builder.get());
+            DynamicTypeBuilderFactory::get_instance()->create_map_builder(
+        int32_builder.get(), map_octet_bsalias5_builder.get());
     DynamicTypeBuilder_ptr my_small_string_8_builder =
-        DynamicTypeBuilderFactory::get_instance()->create_string_builder(128);
+            DynamicTypeBuilderFactory::get_instance()->create_string_builder(128);
     DynamicTypeBuilder_ptr my_small_string_16_builder =
-        DynamicTypeBuilderFactory::get_instance()->create_wstring_builder(64);
+            DynamicTypeBuilderFactory::get_instance()->create_wstring_builder(64);
     DynamicTypeBuilder_ptr my_large_string_8_builder =
-        DynamicTypeBuilderFactory::get_instance()->create_string_builder(500);
+            DynamicTypeBuilderFactory::get_instance()->create_string_builder(500);
     DynamicTypeBuilder_ptr my_large_string_16_builder =
-        DynamicTypeBuilderFactory::get_instance()->create_wstring_builder(1024);
+            DynamicTypeBuilderFactory::get_instance()->create_wstring_builder(1024);
     DynamicTypeBuilder_ptr string75_8_builder =
-        DynamicTypeBuilderFactory::get_instance()->create_string_builder(75);
+            DynamicTypeBuilderFactory::get_instance()->create_string_builder(75);
     DynamicTypeBuilder_ptr my_array_string_builder =
-        DynamicTypeBuilderFactory::get_instance()->create_array_builder(string75_8_builder.get(), { 5, 5 });
+            DynamicTypeBuilderFactory::get_instance()->create_array_builder(string75_8_builder.get(), { 5, 5 });
 
     // MA3 is already defined.
     // { 5 } being reused
     DynamicTypeBuilder_ptr my_array_arrays_builder =
-        DynamicTypeBuilderFactory::get_instance()->create_array_builder(GetMyMiniArrayType(), { 5 });
+            DynamicTypeBuilderFactory::get_instance()->create_array_builder(GetMyMiniArrayType(), { 5 });
     DynamicTypeBuilder_ptr my_sequences_array_builder =
-        DynamicTypeBuilderFactory::get_instance()->create_array_builder(GetMySequenceLongType(), { 23 });
+            DynamicTypeBuilderFactory::get_instance()->create_array_builder(GetMySequenceLongType(), { 23 });
     DynamicTypeBuilder_ptr complexStruct_builder =
-        DynamicTypeBuilderFactory::get_instance()->create_struct_builder();
+            DynamicTypeBuilderFactory::get_instance()->create_struct_builder();
 
     // Add members to the struct.
     int idx = 0;
@@ -191,7 +196,7 @@ DynamicType_ptr DynamicTypesHelper::GetMyOctetArray500Type()
 {
     DynamicTypeBuilder_ptr octet_builder = DynamicTypeBuilderFactory::get_instance()->create_byte_builder();
     DynamicTypeBuilder_ptr myOctetArray500_builder =
-        DynamicTypeBuilderFactory::get_instance()->create_array_builder(octet_builder.get(), { 500 });
+            DynamicTypeBuilderFactory::get_instance()->create_array_builder(octet_builder.get(), { 500 });
     myOctetArray500_builder->set_name("MyOctetArray500");
     return myOctetArray500_builder->build();
 }
@@ -199,7 +204,7 @@ DynamicType_ptr DynamicTypesHelper::GetMyOctetArray500Type()
 DynamicType_ptr DynamicTypesHelper::GetBSAlias5Type()
 {
     DynamicTypeBuilder_ptr bSAlias5_builder =
-        DynamicTypeBuilderFactory::get_instance()->create_array_builder(GetBasicStructType(), { 5 });
+            DynamicTypeBuilderFactory::get_instance()->create_array_builder(GetBasicStructType(), { 5 });
     bSAlias5_builder->set_name("BSAlias5");
     return bSAlias5_builder->build();
 }
@@ -208,7 +213,7 @@ DynamicType_ptr DynamicTypesHelper::GetMyMiniArrayType()
 {
     DynamicTypeBuilder_ptr int32_builder = DynamicTypeBuilderFactory::get_instance()->create_int32_builder();
     DynamicTypeBuilder_ptr myMiniArray_builder =
-        DynamicTypeBuilderFactory::get_instance()->create_array_builder(int32_builder.get(), { 2 });
+            DynamicTypeBuilderFactory::get_instance()->create_array_builder(int32_builder.get(), { 2 });
     myMiniArray_builder->set_name("MyMiniArray");
     return myMiniArray_builder->build();
 }
@@ -217,9 +222,9 @@ DynamicType_ptr DynamicTypesHelper::GetMySequenceLongType()
 {
     DynamicTypeBuilder_ptr int32_builder = DynamicTypeBuilderFactory::get_instance()->create_int32_builder();
     DynamicTypeBuilder_ptr seqLong_builder =
-        DynamicTypeBuilderFactory::get_instance()->create_sequence_builder(int32_builder.get());
+            DynamicTypeBuilderFactory::get_instance()->create_sequence_builder(int32_builder.get());
     DynamicTypeBuilder_ptr mySequenceLong_builder =
-        DynamicTypeBuilderFactory::get_instance()->create_alias_builder(seqLong_builder.get(), "MySequenceLong");
+            DynamicTypeBuilderFactory::get_instance()->create_alias_builder(seqLong_builder.get(), "MySequenceLong");
     return mySequenceLong_builder->build();
 }
 
@@ -236,14 +241,14 @@ DynamicType_ptr DynamicTypesHelper::GetMyEnumType()
 DynamicType_ptr DynamicTypesHelper::GetMyAliasEnumType()
 {
     DynamicTypeBuilder_ptr myAliasEnum_builder =
-        DynamicTypeBuilderFactory::get_instance()->create_alias_builder(GetMyEnumType(), "MyAliasEnum");
+            DynamicTypeBuilderFactory::get_instance()->create_alias_builder(GetMyEnumType(), "MyAliasEnum");
     return myAliasEnum_builder->build();
 }
 
 DynamicType_ptr DynamicTypesHelper::GetMA3Type()
 {
     DynamicTypeBuilder_ptr mA3_builder =
-        DynamicTypeBuilderFactory::get_instance()->create_array_builder(GetMyAliasEnum3Type(), { 42 });
+            DynamicTypeBuilderFactory::get_instance()->create_array_builder(GetMyAliasEnum3Type(), { 42 });
     mA3_builder->set_name("MA3");
     return mA3_builder->build();
 }
@@ -251,20 +256,21 @@ DynamicType_ptr DynamicTypesHelper::GetMA3Type()
 DynamicType_ptr DynamicTypesHelper::GetMyAliasEnum3Type()
 {
     DynamicTypeBuilder_ptr myAliasEnum3_builder =
-        DynamicTypeBuilderFactory::get_instance()->create_alias_builder(GetMyAliasEnum2Type(), "MyAliasEnum3");
+            DynamicTypeBuilderFactory::get_instance()->create_alias_builder(GetMyAliasEnum2Type(), "MyAliasEnum3");
     return myAliasEnum3_builder->build();
 }
 
 DynamicType_ptr DynamicTypesHelper::GetMyAliasEnum2Type()
 {
     DynamicTypeBuilder_ptr myAliasEnum2_builder =
-        DynamicTypeBuilderFactory::get_instance()->create_alias_builder(GetMyAliasEnumType(), "MyAliasEnum2");
+            DynamicTypeBuilderFactory::get_instance()->create_alias_builder(GetMyAliasEnumType(), "MyAliasEnum2");
     return myAliasEnum2_builder->build();
 }
 
 DynamicType_ptr DynamicTypesHelper::GetUnionSwitchType()
 {
-    DynamicTypeBuilder_ptr myUnion_builder = DynamicTypeBuilderFactory::get_instance()->create_union_builder(GetMyEnumType());
+    DynamicTypeBuilder_ptr myUnion_builder = DynamicTypeBuilderFactory::get_instance()->create_union_builder(
+        GetMyEnumType());
     myUnion_builder->add_member(0, "basic", GetBasicStructType(), "A", { 0 }, false);
     myUnion_builder->add_member(1, "complex", GetComplexStructType(), "B", { 1, 2 }, false);
     myUnion_builder->set_name("MyUnion");
@@ -276,7 +282,8 @@ DynamicType_ptr DynamicTypesHelper::GetUnion2SwitchType()
     DynamicTypeBuilder_ptr octet_builder = DynamicTypeBuilderFactory::get_instance()->create_byte_builder();
     DynamicTypeBuilder_ptr int32_builder = DynamicTypeBuilderFactory::get_instance()->create_int32_builder();
     DynamicTypeBuilder_ptr string_builder = DynamicTypeBuilderFactory::get_instance()->create_string_builder();
-    DynamicTypeBuilder_ptr myUnion2_builder = DynamicTypeBuilderFactory::get_instance()->create_union_builder(octet_builder.get());
+    DynamicTypeBuilder_ptr myUnion2_builder = DynamicTypeBuilderFactory::get_instance()->create_union_builder(
+        octet_builder.get());
     myUnion2_builder->add_member(0, "uno", int32_builder.get(), "0", { 0 }, false);
     myUnion2_builder->add_member(1, "imString", string_builder.get(), "1", { 1 }, false);
     myUnion2_builder->add_member(2, "tres", int32_builder.get(), "2", { 2 }, false);

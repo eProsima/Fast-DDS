@@ -61,23 +61,23 @@ int main(
     switch (type)
     {
         case 1:
+        {
+            TypeLookupPublisher mypub;
+            if (mypub.init())
             {
-                TypeLookupPublisher mypub;
-                if (mypub.init())
-                {
-                    mypub.run(count, sleep);
-                }
-                break;
+                mypub.run(count, sleep);
             }
+            break;
+        }
         case 2:
+        {
+            TypeLookupSubscriber mysub;
+            if (mysub.init())
             {
-                TypeLookupSubscriber mysub;
-                if (mysub.init())
-                {
-                    mysub.run();
-                }
-                break;
+                mysub.run();
             }
+            break;
+        }
     }
     Log::Reset();
     return 0;

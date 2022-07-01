@@ -62,7 +62,7 @@ private:
 
     class PubListener : public eprosima::fastdds::dds::DataWriterListener
     {
-public:
+    public:
 
         PubListener()
             : n_matched(0)
@@ -81,7 +81,8 @@ public:
         int n_matched;
 
         bool firstConnected;
-    } m_listener;
+    }
+    m_listener;
 
     void runThread(
             uint32_t number,
