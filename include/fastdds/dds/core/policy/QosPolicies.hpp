@@ -24,6 +24,7 @@
 
 #include <fastdds/dds/core/policy/ParameterTypes.hpp>
 
+#include <fastdds/rtps/attributes/ExternalLocators.hpp>
 #include <fastdds/rtps/attributes/PropertyPolicy.h>
 #include <fastdds/rtps/attributes/RTPSParticipantAllocationAttributes.hpp>
 #include <fastdds/rtps/attributes/RTPSParticipantAttributes.h>
@@ -2675,6 +2676,8 @@ public:
                (this->throughput_controller == b.throughput_controller) &&
                (this->default_unicast_locator_list == b.default_unicast_locator_list) &&
                (this->default_multicast_locator_list == b.default_multicast_locator_list) &&
+               (this->default_external_unicast_locators == b.default_external_unicast_locators) &&
+               (this->ignore_non_matching_locators == b.ignore_non_matching_locators) &&
                QosPolicy::operator ==(b);
     }
 
@@ -2687,16 +2690,16 @@ public:
     //! Optionally allows user to define the GuidPrefix_t
     fastrtps::rtps::GuidPrefix_t prefix;
 
-    //!Participant ID <br> By default, -1.
+    //! Participant ID <br> By default, -1.
     int32_t participant_id;
 
     //! Builtin parameters.
     fastrtps::rtps::BuiltinAttributes builtin;
 
-    //!Port Parameters
+    //! Port Parameters
     fastrtps::rtps::PortParameters port;
 
-    //!Throughput controller parameters. Leave default for uncontrolled flow.
+    //! Throughput controller parameters. Leave default for uncontrolled flow.
     fastrtps::rtps::ThroughputControllerDescriptor throughput_controller;
 
     /**
@@ -2707,9 +2710,19 @@ public:
 
     /**
      * Default list of Multicast Locators to be used for any Endpoint defined inside this RTPSParticipant in the
-     * case that it was defined with NO UnicastLocators. This is usually left empty.
+     * case that it was defined with NO MulticastLocators. This is usually left empty.
      */
     rtps::LocatorList default_multicast_locator_list;
+
+    /**
+     * The collection of external locators to use for communication on user created topics.
+     */
+    rtps::ExternalLocators default_external_unicast_locators;
+
+    /**
+     * Whether locators that don't match with the announced locators should be kept.
+     */
+    bool ignore_non_matching_locators = false;
 };
 
 //! Qos Policy to configure the transport layer
@@ -2767,17 +2780,12 @@ public:
     uint32_t listen_socket_buffer_size;
 };
 
-//!Qos Policy to configure the endpoint
+//! Qos Policy to configure the endpoint
 class RTPSEndpointQos
 {
 public:
 
-    RTPS_DllAPI RTPSEndpointQos()
-        : user_defined_id(-1)
-        , entity_id(-1)
-        , history_memory_policy(fastrtps::rtps::PREALLOCATED_MEMORY_MODE)
-    {
-    }
+    RTPS_DllAPI RTPSEndpointQos() = default;
 
     virtual RTPS_DllAPI ~RTPSEndpointQos() = default;
 
@@ -2787,28 +2795,36 @@ public:
         return (this->unicast_locator_list == b.unicast_locator_list) &&
                (this->multicast_locator_list == b.multicast_locator_list) &&
                (this->remote_locator_list == b.remote_locator_list) &&
+               (this->external_unicast_locators == b.external_unicast_locators) &&
+               (this->ignore_non_matching_locators == b.ignore_non_matching_locators) &&
                (this->user_defined_id == b.user_defined_id) &&
                (this->entity_id == b.entity_id) &&
                (this->history_memory_policy == b.history_memory_policy);
     }
 
-    //!Unicast locator list
+    //! Unicast locator list
     rtps::LocatorList unicast_locator_list;
 
-    //!Multicast locator list
+    //! Multicast locator list
     rtps::LocatorList multicast_locator_list;
 
-    //!Remote locator list
+    //! Remote locator list
     rtps::LocatorList remote_locator_list;
 
-    //!User Defined ID, used for StaticEndpointDiscovery. <br> By default, -1.
-    int16_t user_defined_id;
+    //! The collection of external locators to use for communication.
+    fastdds::rtps::ExternalLocators external_unicast_locators;
 
-    //!Entity ID, if the user wants to specify the EntityID of the endpoint. <br> By default, -1.
-    int16_t entity_id;
+    //! Whether locators that don't match with the announced locators should be kept.
+    bool ignore_non_matching_locators = false;
 
-    //!Underlying History memory policy. <br> By default, PREALLOCATED_MEMORY_MODE.
-    fastrtps::rtps::MemoryManagementPolicy_t history_memory_policy;
+    //! User Defined ID, used for StaticEndpointDiscovery. <br> By default, -1.
+    int16_t user_defined_id = -1;
+
+    //! Entity ID, if the user wants to specify the EntityID of the endpoint. <br> By default, -1.
+    int16_t entity_id = -1;
+
+    //! Underlying History memory policy. <br> By default, PREALLOCATED_MEMORY_MODE.
+    fastrtps::rtps::MemoryManagementPolicy_t history_memory_policy = fastrtps::rtps::PREALLOCATED_MEMORY_MODE;
 };
 
 //!Qos Policy to configure the limit of the writer resources

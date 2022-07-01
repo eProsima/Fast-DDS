@@ -19,16 +19,14 @@
 #ifndef SUBSCRIBERATTRIBUTES_H_
 #define SUBSCRIBERATTRIBUTES_H_
 
-#include <fastdds/rtps/resources/ResourceManagement.h>
-
+#include <fastdds/rtps/attributes/ExternalLocators.hpp>
+#include <fastdds/rtps/attributes/PropertyPolicy.h>
+#include <fastdds/rtps/attributes/ReaderAttributes.h>
 #include <fastdds/rtps/common/Time_t.h>
 #include <fastdds/rtps/common/Locator.h>
-#include <fastdds/rtps/attributes/ReaderAttributes.h>
+#include <fastdds/rtps/resources/ResourceManagement.h>
 #include <fastrtps/attributes/TopicAttributes.h>
 #include <fastrtps/qos/ReaderQos.h>
-#include <fastdds/rtps/attributes/PropertyPolicy.h>
-
-
 
 namespace eprosima {
 namespace fastrtps {
@@ -39,93 +37,112 @@ namespace fastrtps {
  */
 class SubscriberAttributes
 {
-    public:
-        //!Topic Attributes
-        TopicAttributes topic;
+public:
 
-        //!Reader QOs.
-        ReaderQos qos;
+    //! Topic Attributes
+    TopicAttributes topic;
 
-        //!Times for a RELIABLE Reader
-        rtps::ReaderTimes times;
+    //! Reader QOs.
+    ReaderQos qos;
 
-        //!Unicast locator list
-        rtps::LocatorList_t unicastLocatorList;
+    //! Times for a RELIABLE Reader
+    rtps::ReaderTimes times;
 
-        //!Multicast locator list
-        rtps::LocatorList_t multicastLocatorList;
+    //! Unicast locator list
+    rtps::LocatorList_t unicastLocatorList;
 
-        //!Remote locator list
-        rtps::LocatorList_t remoteLocatorList;
+    //! Multicast locator list
+    rtps::LocatorList_t multicastLocatorList;
 
-        //!Expects Inline QOS
-        bool expectsInlineQos;
+    //! Remote locator list
+    rtps::LocatorList_t remoteLocatorList;
 
-        //!Underlying History memory policy
-        rtps::MemoryManagementPolicy_t historyMemoryPolicy;
+    //! The collection of external locators to use for communication.
+    fastdds::rtps::ExternalLocators external_unicast_locators;
 
-        //!Properties
-        rtps::PropertyPolicy properties;
+    //! Whether locators that don't match with the announced locators should be kept.
+    bool ignore_non_matching_locators = false;
 
-        //!Matched publishers allocation limits
-        ResourceLimitedContainerConfig matched_publisher_allocation;
+    //! Expects Inline QOS
+    bool expectsInlineQos = false;
 
-        SubscriberAttributes()
-            : expectsInlineQos(false)
-            , historyMemoryPolicy(rtps::PREALLOCATED_MEMORY_MODE)
-            , m_userDefinedID(-1)
-            , m_entityID(-1)
-        {}
+    //! Underlying History memory policy
+    rtps::MemoryManagementPolicy_t historyMemoryPolicy;
 
-        virtual ~SubscriberAttributes(){}
+    //! Properties
+    rtps::PropertyPolicy properties;
 
-        bool operator==(const SubscriberAttributes& b) const
-        {
-            return (this->topic == b.topic) &&
-                (this->qos == b.qos) &&
-                (this->times == b.times) &&
-                (this->unicastLocatorList == b.unicastLocatorList) &&
-                (this->multicastLocatorList == b.multicastLocatorList) &&
-                (this->remoteLocatorList == b.remoteLocatorList) &&
-                (this->historyMemoryPolicy == b.historyMemoryPolicy) &&
-                (this->properties == b.properties);
-        }
+    //! Matched publishers allocation limits
+    ResourceLimitedContainerConfig matched_publisher_allocation;
 
-        bool operator!=(const SubscriberAttributes& b) const
-        {
-            return !(*this == b);
-        }
+    SubscriberAttributes() = default;
 
-        /**
-         * Get the user defined ID
-         * @return User defined ID
-         */
-        inline int16_t getUserDefinedID() const { return m_userDefinedID; }
+    virtual ~SubscriberAttributes() = default;
 
-        /**
-         * Get the entity defined ID
-         * @return Entity ID
-         */
-        inline int16_t getEntityID() const { return m_entityID; }
+    bool operator ==(
+            const SubscriberAttributes& b) const
+    {
+        return (this->topic == b.topic) &&
+               (this->qos == b.qos) &&
+               (this->times == b.times) &&
+               (this->unicastLocatorList == b.unicastLocatorList) &&
+               (this->multicastLocatorList == b.multicastLocatorList) &&
+               (this->remoteLocatorList == b.remoteLocatorList) &&
+               (this->historyMemoryPolicy == b.historyMemoryPolicy) &&
+               (this->properties == b.properties);
+    }
 
-        /**
-         * Set the user defined ID
-         * @param id User defined ID to be set
-         */
-        inline void setUserDefinedID(uint8_t id) { m_userDefinedID = id; }
+    bool operator !=(
+            const SubscriberAttributes& b) const
+    {
+        return !(*this == b);
+    }
 
-        /**
-         * Set the entity ID
-         * @param id Entity ID to be set
-         */
-        inline void setEntityID(uint8_t id) { m_entityID = id; }
+    /**
+     * Get the user defined ID
+     * @return User defined ID
+     */
+    inline int16_t getUserDefinedID() const
+    {
+        return m_userDefinedID;
+    }
 
-    private:
-        //!User Defined ID, used for StaticEndpointDiscovery, default value -1.
-        int16_t m_userDefinedID;
+    /**
+     * Get the entity defined ID
+     * @return Entity ID
+     */
+    inline int16_t getEntityID() const
+    {
+        return m_entityID;
+    }
 
-        //!Entity ID, if the user want to specify the EntityID of the enpoint, default value -1.
-        int16_t m_entityID;
+    /**
+     * Set the user defined ID
+     * @param id User defined ID to be set
+     */
+    inline void setUserDefinedID(
+            uint8_t id)
+    {
+        m_userDefinedID = id;
+    }
+
+    /**
+     * Set the entity ID
+     * @param id Entity ID to be set
+     */
+    inline void setEntityID(
+            uint8_t id)
+    {
+        m_entityID = id;
+    }
+
+private:
+
+    //! User Defined ID, used for StaticEndpointDiscovery, default value -1.
+    int16_t m_userDefinedID = -1;
+
+    //! Entity ID, if the user want to specify the EntityID of the enpoint, default value -1.
+    int16_t m_entityID = -1;
 };
 
 } /* namespace fastrtps */
