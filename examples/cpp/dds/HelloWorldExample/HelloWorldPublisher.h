@@ -35,7 +35,7 @@ public:
     virtual ~HelloWorldPublisher();
 
     //!Initialize
-    bool init();
+    bool init(bool use_env);
 
     //!Publish a sample
     bool publish(

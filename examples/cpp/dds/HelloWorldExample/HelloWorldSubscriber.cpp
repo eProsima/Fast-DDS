@@ -37,11 +37,19 @@ HelloWorldSubscriber::HelloWorldSubscriber()
 {
 }
 
-bool HelloWorldSubscriber::init()
+bool HelloWorldSubscriber::init(bool use_env)
 {
     DomainParticipantQos pqos;
+    auto factory = DomainParticipantFactory::get_instance();
+
+    if(use_env)
+    {
+        factory->load_profiles();
+        factory->get_default_participant_qos(pqos);
+    }
+
     pqos.name("Participant_sub");
-    participant_ = DomainParticipantFactory::get_instance()->create_participant(0, pqos);
+    participant_ = factory->create_participant(0, pqos);
 
     if (participant_ == nullptr)
     {
