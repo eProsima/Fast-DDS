@@ -39,7 +39,7 @@ public:
         print_context(stream, entry, false);
         print_new_line(stream, false);
 
-        std::regex re("^(.+)CUSTOM_LOG_CONSUMER_TEST(.+)Testing log consumer protected functions -> (.+)$");
+        std::regex re("^(.+)(CUSTOM_LOG_CONSUMER_TEST)(.+)(Testing log consumer protected functions)(.+)(\n)$");
         EXPECT_TRUE(std::regex_match(stream.str(), re));
     }
 
@@ -54,6 +54,8 @@ TEST(LogConsumer, CheckLogConsumerPrintMemberFunctions)
     Log::SetCategoryFilter(std::regex("(CUSTOM_LOG_CONSUMER_TEST)"));
 
     logError(CUSTOM_LOG_CONSUMER_TEST, "Testing log consumer protected functions")
+
+    Log::Flush();
 }
 
 
