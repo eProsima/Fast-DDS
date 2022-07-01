@@ -32,21 +32,17 @@ public:
     virtual void Consume(
             const Log::Entry& entry)
     {
-        print_timestamp(stream_, entry, false);
-        print_header(stream_, entry, false);
-        print_message(stream_, entry, false);
-        print_context(stream_, entry, false);
-        print_new_line(stream_, false);
+        std::stringstream stream;
+        print_timestamp(stream, entry, false);
+        print_header(stream, entry, false);
+        print_message(stream, entry, false);
+        print_context(stream, entry, false);
+        print_new_line(stream, false);
 
         std::regex re("^(.+)CUSTOM_LOG_CONSUMER_TEST(.+)Testing log consumer protected functions -> (.+)$");
-        EXPECT_TRUE(std::regex_match(stream_.str(), re));
-
-        stream_.str("");
+        EXPECT_TRUE(std::regex_match(stream.str(), re));
     }
 
-private:
-
-    std::stringstream stream_;
 };
 
 TEST(LogConsumer, CheckLogConsumerPrintMemberFunctions)
