@@ -56,7 +56,7 @@ public:
     }
 
     /**
-     * Virtual function to be implemented by the user containing the actions to be performed when a new  Data Message is received.
+     * Virtual function to be implemented by the user containing the actions to be performed when new Data Messages are received.
      *
      * @param reader DataReader
      */
