@@ -179,27 +179,27 @@ public:
 
 protected:
 
-    void print_timestamp(
+    RTPS_DllAPI void print_timestamp(
             std::ostream& stream,
             const Log::Entry&,
             bool color) const;
 
-    void print_header(
+    RTPS_DllAPI void print_header(
             std::ostream& stream,
             const Log::Entry&,
             bool color) const;
 
-    void print_context(
+    RTPS_DllAPI void print_context(
             std::ostream& stream,
             const Log::Entry&,
             bool color) const;
 
-    void print_message(
+    RTPS_DllAPI void print_message(
             std::ostream& stream,
             const Log::Entry&,
             bool color) const;
 
-    void print_new_line(
+    RTPS_DllAPI void print_new_line(
             std::ostream& stream,
             bool color) const;
 };
