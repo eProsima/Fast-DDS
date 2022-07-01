@@ -77,7 +77,7 @@ private:
 
     class OperationListener : public eprosima::fastdds::dds::DataWriterListener
     {
-public:
+    public:
 
         OperationListener(
                 EprosimaClient* up)
@@ -96,11 +96,12 @@ public:
                 const eprosima::fastdds::dds::PublicationMatchedStatus& info) override;
 
 
-    } m_operationsListener;
+    }
+    m_operationsListener;
 
     class ResultListener : public eprosima::fastdds::dds::DataReaderListener
     {
-public:
+    public:
 
         ResultListener(
                 EprosimaClient* up)
@@ -121,7 +122,8 @@ public:
                 eprosima::fastdds::dds::DataReader* reader,
                 const eprosima::fastdds::dds::SubscriptionMatchedStatus& info) override;
 
-    } m_resultsListener;
+    }
+    m_resultsListener;
 
     bool m_isReady;
 

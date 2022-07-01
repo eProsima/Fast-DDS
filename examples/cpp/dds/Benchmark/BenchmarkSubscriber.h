@@ -88,7 +88,7 @@ public:
 
     class PubListener : public eprosima::fastdds::dds::DataWriterListener
     {
-public:
+    public:
 
         PubListener(
                 BenchMarkSubscriber* parent);
@@ -106,11 +106,12 @@ public:
         int matched_;
         bool first_connected_;
 
-    } m_pubListener;
+    }
+    m_pubListener;
 
     class SubListener : public eprosima::fastdds::dds::DataReaderListener
     {
-public:
+    public:
 
         SubListener()
         {
@@ -144,7 +145,8 @@ public:
 
         uint32_t samples_;
 
-    } m_subListener;
+    }
+    m_subListener;
 
 private:
 

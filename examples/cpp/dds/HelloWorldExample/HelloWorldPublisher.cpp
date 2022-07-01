@@ -39,14 +39,15 @@ HelloWorldPublisher::HelloWorldPublisher()
 {
 }
 
-bool HelloWorldPublisher::init(bool use_env)
+bool HelloWorldPublisher::init(
+        bool use_env)
 {
     hello_.index(0);
     hello_.message("HelloWorld");
     DomainParticipantQos pqos;
     auto factory = DomainParticipantFactory::get_instance();
 
-    if(use_env)
+    if (use_env)
     {
         factory->load_profiles();
         factory->get_default_participant_qos(pqos);

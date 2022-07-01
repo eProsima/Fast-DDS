@@ -220,26 +220,26 @@ int main(
         return 0;
     }
 
-    switch(type)
+    switch (type)
     {
         case 1:
+        {
+            HelloWorldPublisher mypub;
+            if (mypub.init(use_environment_qos))
             {
-                HelloWorldPublisher mypub;
-                if(mypub.init(use_environment_qos))
-                {
-                    mypub.run(count, sleep);
-                }
-                break;
+                mypub.run(count, sleep);
             }
+            break;
+        }
         case 2:
+        {
+            HelloWorldSubscriber mysub;
+            if (mysub.init(use_environment_qos))
             {
-                HelloWorldSubscriber mysub;
-                if(mysub.init(use_environment_qos))
-                {
-                    mysub.run();
-                }
-                break;
+                mysub.run();
             }
+            break;
+        }
     }
     Log::Reset();
     return 0;

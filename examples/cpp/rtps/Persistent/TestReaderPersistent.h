@@ -28,6 +28,7 @@
 class TestReaderPersistent
 {
 public:
+
     TestReaderPersistent();
     virtual ~TestReaderPersistent();
     eprosima::fastrtps::rtps::RTPSParticipant* mp_participant;
@@ -36,11 +37,20 @@ public:
     bool init(); //Initialization
     bool reg(); //Register
     void run(); //Run
-    class MyListener:public eprosima::fastrtps::rtps::ReaderListener
+    class MyListener : public eprosima::fastrtps::rtps::ReaderListener
     {
     public:
-        MyListener():n_received(0),n_matched(0){};
-        ~MyListener(){};
+
+        MyListener()
+            : n_received(0)
+            , n_matched(0)
+        {
+        }
+
+        ~MyListener()
+        {
+        }
+
         void onNewCacheChangeAdded(
                 eprosima::fastrtps::rtps::RTPSReader* reader,
                 const eprosima::fastrtps::rtps::CacheChange_t* const change) override;
@@ -48,11 +58,16 @@ public:
                 eprosima::fastrtps::rtps::RTPSReader*,
                 eprosima::fastrtps::rtps::MatchingInfo& info) override
         {
-            if(info.status == eprosima::fastrtps::rtps::MATCHED_MATCHING) n_matched++;
-        };
+            if (info.status == eprosima::fastrtps::rtps::MATCHED_MATCHING)
+            {
+                n_matched++;
+            }
+        }
+
         uint32_t n_received;
         uint32_t n_matched;
-    }m_listener;
+    }
+    m_listener;
 };
 
 #endif /* TESTREADERPERSISTENT_H_ */

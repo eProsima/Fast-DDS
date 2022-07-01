@@ -112,16 +112,18 @@ void TestWriterPersistent::run(
 
     for (int i = 0; i < samples; ++i )
     {
-        CacheChange_t* ch = mp_writer->new_change([]() -> uint32_t {
-            return 255;
-        }, ALIVE);
+        CacheChange_t* ch = mp_writer->new_change([]() -> uint32_t
+                        {
+                            return 255;
+                        }, ALIVE);
         if (!ch)     // In the case history is full, remove some old changes
         {
             std::cout << "cleaning history...";
             mp_writer->remove_older_changes(20);
-            ch = mp_writer->new_change([]() -> uint32_t {
-                return 255;
-            }, ALIVE);
+            ch = mp_writer->new_change([]() -> uint32_t
+                            {
+                                return 255;
+                            }, ALIVE);
         }
 
 #if defined(_WIN32)
@@ -130,7 +132,7 @@ void TestWriterPersistent::run(
 #else
         ch->serializedPayload.length =
                 sprintf((char*)ch->serializedPayload.data, "My example string %d", i) + 1;
-#endif
+#endif // if defined(_WIN32)
         printf("Sending: %s\n", (char*)ch->serializedPayload.data);
         mp_history->add_change(ch);
     }

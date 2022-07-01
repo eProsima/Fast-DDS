@@ -63,7 +63,7 @@ private:
 
     class PubListener : public eprosima::fastdds::dds::DataWriterListener
     {
-public:
+    public:
 
         PubListener()
             : matched_(0)
@@ -82,7 +82,8 @@ public:
         int matched_;
 
         bool first_connected_;
-    } listener_;
+    }
+    listener_;
 
     eprosima::fastdds::dds::TypeSupport type_;
 };

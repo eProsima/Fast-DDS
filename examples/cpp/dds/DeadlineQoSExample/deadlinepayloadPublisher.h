@@ -68,7 +68,7 @@ private:
 
     class PubListener : public eprosima::fastdds::dds::DataWriterListener
     {
-public:
+    public:
 
         PubListener()
             : n_matched(0)
@@ -89,7 +89,8 @@ public:
 
         int n_matched;
 
-    } m_listener;
+    }
+    m_listener;
 
     //!Boolean used to force a period double on a certain key
     bool double_time;

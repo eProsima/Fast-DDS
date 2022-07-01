@@ -22,29 +22,35 @@
 
 #include <fastrtps/Domain.h>
 
-typedef struct ex_mapableKey{
+typedef struct ex_mapableKey
+{
 
-	eprosima::fastrtps::rtps::octet value[16];
-	
-	ex_mapableKey& operator=(const eprosima::fastrtps::rtps::InstanceHandle_t& ihandle){
-		for(uint8_t i=0;i<16;i++)
-		{
-			value[i] = ihandle.value[i];
-		}
-		return *this;
-	}
+    eprosima::fastrtps::rtps::octet value[16];
+
+    ex_mapableKey& operator =(
+            const eprosima::fastrtps::rtps::InstanceHandle_t& ihandle)
+    {
+        for (uint8_t i = 0; i < 16; i++)
+        {
+            value[i] = ihandle.value[i];
+        }
+        return *this;
+    }
 
 }mapable_key;
 
-inline bool operator<(const ex_mapableKey& ex_mapableKey1,const ex_mapableKey& ex_mapableKey2)
+inline bool operator <(
+        const ex_mapableKey& ex_mapableKey1,
+        const ex_mapableKey& ex_mapableKey2)
 {
-	for(uint8_t i=0;i<16;++i){
-		if(ex_mapableKey1.value[i] < ex_mapableKey2.value[i])
-			return true;
-	}
-	return false;
+    for (uint8_t i = 0; i < 16; ++i)
+    {
+        if (ex_mapableKey1.value[i] < ex_mapableKey2.value[i])
+        {
+            return true;
+        }
+    }
+    return false;
 }
 
-
-
-#endif
+#endif // ifndef MAPABLEKEY_H_

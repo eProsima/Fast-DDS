@@ -83,7 +83,7 @@ public:
 
     class OperationListener : public eprosima::fastdds::dds::DataReaderListener
     {
-public:
+    public:
 
         OperationListener(
                 EprosimaServer* up)
@@ -104,11 +104,12 @@ public:
 
         clientserver::Result m_result;
 
-    } m_operationsListener;
+    }
+    m_operationsListener;
 
     class ResultListener : public eprosima::fastdds::dds::DataWriterListener
     {
-public:
+    public:
 
         ResultListener(
                 EprosimaServer* up)
@@ -121,7 +122,8 @@ public:
         }
 
         EprosimaServer* mp_up;
-    } m_resultsListener;
+    }
+    m_resultsListener;
 };
 
 #endif /* EPROSIMASERVER_H_ */

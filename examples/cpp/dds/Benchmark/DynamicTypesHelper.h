@@ -22,25 +22,24 @@
 
 #include <fastrtps/fastrtps_fwd.h>
 
-namespace eprosima
-{
-    namespace fastrtps
-    {
-        namespace types
-        {
-            class DynamicData;
-            class DynamicType_ptr;
-        }
-    }
-}
+namespace eprosima {
+namespace fastrtps {
+namespace types {
+class DynamicData;
+class DynamicType_ptr;
+} // namespace types
+} // namespace fastrtps
+} // namespace eprosima
 
 class DynamicTypesHelper
 {
 public:
+
     static eprosima::fastrtps::types::DynamicData* CreateSmallData();
     static eprosima::fastrtps::types::DynamicData* CreateData();
     static eprosima::fastrtps::types::DynamicData* CreateMediumData();
     static eprosima::fastrtps::types::DynamicData* CreateBigData();
+
 protected:
 
     static eprosima::fastrtps::types::DynamicType_ptr GetMyMiniArrayType();

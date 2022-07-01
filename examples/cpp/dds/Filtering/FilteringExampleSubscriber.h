@@ -48,7 +48,7 @@ private:
 
     class SubListener : public eprosima::fastdds::dds::DataReaderListener
     {
-public:
+    public:
 
         SubListener()
             : n_matched(0)
@@ -71,7 +71,8 @@ public:
 
         int n_msg;
 
-    } m_listener;
+    }
+    m_listener;
 
     eprosima::fastdds::dds::TypeSupport myType;
 };

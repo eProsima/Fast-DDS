@@ -59,7 +59,7 @@ private:
 
     class StrengthHierarchy
     {
-public:
+    public:
 
         // Automatically adds a publisher to the hierarchy, and reports back whether it is the strongest.
         bool IsMessageStrong(
@@ -71,13 +71,13 @@ public:
                 eprosima::fastrtps::rtps::GUID_t guid);
 
         // Provides an ordered hierarchy of publishers, based on the Ownership Strength QoS parameter.
-        std::map<unsigned int, std::set<eprosima::fastrtps::rtps::GUID_t> > strengthMap; // Keyed by Ownership Strength
+        std::map<unsigned int, std::set<eprosima::fastrtps::rtps::GUID_t>> strengthMap;  // Keyed by Ownership Strength
         std::mutex mapMutex;
     };
 
     class SubListener : public eprosima::fastdds::dds::DataReaderListener
     {
-public:
+    public:
 
         SubListener()
             : n_matched(0)
@@ -101,7 +101,8 @@ public:
         int n_msg;
 
         StrengthHierarchy m_hierarchy;
-    } m_listener;
+    }
+    m_listener;
 
     eprosima::fastdds::dds::TypeSupport myType;
 };

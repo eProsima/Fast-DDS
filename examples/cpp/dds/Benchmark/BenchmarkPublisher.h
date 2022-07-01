@@ -113,7 +113,7 @@ private:
 
     class PubListener : public eprosima::fastdds::dds::DataWriterListener
     {
-public:
+    public:
 
         PubListener()
         {
@@ -134,11 +134,12 @@ public:
 
         int matched_;
 
-    } m_pubListener;
+    }
+    m_pubListener;
 
     class SubListener : public eprosima::fastdds::dds::DataReaderListener
     {
-public:
+    public:
 
         SubListener()
         {
@@ -168,7 +169,8 @@ public:
 
         BenchMarkBig m_HelloBig;
 
-    } m_subListener;
+    }
+    m_subListener;
 
     eprosima::fastdds::dds::TypeSupport m_type;
 
