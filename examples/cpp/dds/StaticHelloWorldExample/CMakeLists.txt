@@ -54,6 +54,7 @@ target_compile_definitions(DDSStaticHelloWorldExample PRIVATE
     )
 target_link_libraries(DDSStaticHelloWorldExample fastrtps fastcdr foonathan_memory)
 install(TARGETS DDSStaticHelloWorldExample
-    RUNTIME DESTINATION examples/cpp/dds/StaticHelloWorldExample/${BIN_INSTALL_DIR})
+        RUNTIME DESTINATION examples/cpp/dds/StaticHelloWorldExample/${BIN_INSTALL_DIR})
 install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/HelloWorldPublisher.xml
-    DESTINATION examples/cpp/dds/StaticHelloWorldExample/${BIN_INSTALL_DIR})
+              ${CMAKE_CURRENT_SOURCE_DIR}/HelloWorldSubscriber.xml
+        DESTINATION examples/cpp/dds/StaticHelloWorldExample/${BIN_INSTALL_DIR})
