@@ -85,10 +85,10 @@ public:
     //!Remote locator list
     rtps::LocatorList_t remoteLocatorList;
 
-    //!The collection of external locators to use for communication.
+    //! The collection of external locators to use for communication.
     fastdds::rtps::ExternalLocators external_unicast_locators;
 
-    //!Whether locators that don't match with the announced locators should be kept.
+    //! Whether locators that don't match with the announced locators should be kept.
     bool ignore_non_matching_locators = false;
 
     //!Throughput controller

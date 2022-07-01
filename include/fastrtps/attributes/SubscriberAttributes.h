@@ -39,7 +39,7 @@ class SubscriberAttributes
 {
 public:
 
-    //!Topic Attributes
+    //! Topic Attributes
     TopicAttributes topic;
 
     //!Reader QOs.
