@@ -427,7 +427,7 @@ inline std::istream& operator >>(
                 // In case there are less than 9 numbers at the right of the dot, nano should be powered to 10
                 // till the value is correct.
                 // Manual power operation done by loop.
-                for (int i=nano_st.length(); i<9; i++)
+                for (int i = nano_st.length(); i < 9; i++)
                 {
                     nano *= 10;
                 }
