@@ -217,7 +217,7 @@ public:
      * @return RETCODE_OK if the validation is successful, RETCODE_ERROR otherwise.
      */
     RTPS_DllAPI ReturnCode_t check_xml_static_discovery(
-        std::string &xml_file);
+            std::string& xml_file);
 
     /**
      * This operation returns the value of the DomainParticipantFactory QoS policies.
