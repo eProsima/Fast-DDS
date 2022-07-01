@@ -42,50 +42,42 @@ public:
     //! Topic Attributes
     TopicAttributes topic;
 
-    //!Reader QOs.
+    //! Reader QOs.
     ReaderQos qos;
 
-    //!Times for a RELIABLE Reader
+    //! Times for a RELIABLE Reader
     rtps::ReaderTimes times;
 
-    //!Unicast locator list
+    //! Unicast locator list
     rtps::LocatorList_t unicastLocatorList;
 
-    //!Multicast locator list
+    //! Multicast locator list
     rtps::LocatorList_t multicastLocatorList;
 
-    //!Remote locator list
+    //! Remote locator list
     rtps::LocatorList_t remoteLocatorList;
 
-    //!The collection of external locators to use for communication.
+    //! The collection of external locators to use for communication.
     fastdds::rtps::ExternalLocators external_unicast_locators;
 
-    //!Whether locators that don't match with the announced locators should be kept.
+    //! Whether locators that don't match with the announced locators should be kept.
     bool ignore_non_matching_locators = false;
 
-    //!Expects Inline QOS
-    bool expectsInlineQos;
+    //! Expects Inline QOS
+    bool expectsInlineQos = false;
 
-    //!Underlying History memory policy
+    //! Underlying History memory policy
     rtps::MemoryManagementPolicy_t historyMemoryPolicy;
 
-    //!Properties
+    //! Properties
     rtps::PropertyPolicy properties;
 
-    //!Matched publishers allocation limits
+    //! Matched publishers allocation limits
     ResourceLimitedContainerConfig matched_publisher_allocation;
 
-    SubscriberAttributes()
-        : expectsInlineQos(false)
-        , historyMemoryPolicy(rtps::PREALLOCATED_MEMORY_MODE)
-        , m_userDefinedID(-1)
-        , m_entityID(-1)
-    {
-    }
+    SubscriberAttributes() = default;
 
-    virtual ~SubscriberAttributes()
-    {
-    }
+    virtual ~SubscriberAttributes() = default;
 
     bool operator ==(
             const SubscriberAttributes& b) const
@@ -146,11 +138,11 @@ public:
 
 private:
 
-    //!User Defined ID, used for StaticEndpointDiscovery, default value -1.
-    int16_t m_userDefinedID;
+    //! User Defined ID, used for StaticEndpointDiscovery, default value -1.
+    int16_t m_userDefinedID = -1;
 
-    //!Entity ID, if the user want to specify the EntityID of the enpoint, default value -1.
-    int16_t m_entityID;
+    //! Entity ID, if the user want to specify the EntityID of the enpoint, default value -1.
+    int16_t m_entityID = -1;
 };
 
 } /* namespace fastrtps */
