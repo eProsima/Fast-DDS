@@ -84,18 +84,18 @@ std::vector<fastrtps::rtps::CacheChange_t*> DiscoveryDataBase::clear()
     /* Clear receive queues. Set changes inside to release */
     while (!pdp_data_queue_.Empty())
     {
-        DiscoveryPDPDataQueueInfo data_queue_info = pdp_data_queue_.Front();
+        // This moves the value, do not copy it
+        DiscoveryPDPDataQueueInfo data_queue_info = pdp_data_queue_.FrontAndPop();
         changes_to_release_.push_back(data_queue_info.change());
-        pdp_data_queue_.Pop();
     }
     pdp_data_queue_.Clear(
 
         );
     while (!edp_data_queue_.Empty())
     {
-        DiscoveryEDPDataQueueInfo data_queue_info = edp_data_queue_.Front();
+        // This moves the value, do not copy it
+        DiscoveryEDPDataQueueInfo data_queue_info = edp_data_queue_.FrontAndPop();
         changes_to_release_.push_back(data_queue_info.change());
-        edp_data_queue_.Pop();
     }
     edp_data_queue_.Clear();
 
@@ -468,8 +468,8 @@ void DiscoveryDataBase::process_pdp_data_queue()
     // Process all messages in the queque
     while (!pdp_data_queue_.Empty())
     {
-        // Process each message with Front()
-        DiscoveryPDPDataQueueInfo data_queue_info = pdp_data_queue_.Front();
+        // Process each message with FrontAndPop(). Move it, do not copy it
+        DiscoveryPDPDataQueueInfo data_queue_info = pdp_data_queue_.FrontAndPop();
 
         // If the change is a DATA(p)
         if (data_queue_info.change()->kind == eprosima::fastrtps::rtps::ALIVE)
@@ -486,9 +486,6 @@ void DiscoveryDataBase::process_pdp_data_queue()
                     " received from: " << data_queue_info.change()->writerGUID);
             process_dispose_participant_(data_queue_info.change());
         }
-
-        // Pop the message from the queue
-        pdp_data_queue_.Pop();
     }
 }
 
@@ -514,8 +511,8 @@ bool DiscoveryDataBase::process_edp_data_queue()
     // Process all messages in the queque
     while (!edp_data_queue_.Empty())
     {
-        // Process each message with Front()
-        DiscoveryEDPDataQueueInfo data_queue_info = edp_data_queue_.Front();
+        // Process each message with FrontAndPop(). Move it, do not copy it
+        DiscoveryEDPDataQueueInfo data_queue_info = edp_data_queue_.FrontAndPop();
         change = data_queue_info.change();
         topic_name = data_queue_info.topic();
 
@@ -554,9 +551,6 @@ bool DiscoveryDataBase::process_edp_data_queue()
                 process_dispose_reader_(change);
             }
         }
-
-        // Pop the message from the queue
-        edp_data_queue_.Pop();
     }
 
     return is_dirty_topic;
