@@ -3034,6 +3034,45 @@ TEST_F(DataReaderTests, read_conditions_wait_on_InstanceStateMask)
     EXPECT_EQ(data_reader.delete_readcondition(any_cond), ReturnCode_t::RETCODE_OK);
 }
 
+/*
+ * This test checks the allocation consistency when using instances. If the number of instances is infinite,
+ and the max_samples is not set, the endpoint creation should fail. The following methods are checked:
+ * 1. create_datareader
+ */
+TEST_F(DataReaderTests, InstancePolicyAllocationConsistency)
+{
+    DomainParticipant* participant =
+            DomainParticipantFactory::get_instance()->create_participant(0, PARTICIPANT_QOS_DEFAULT);
+    ASSERT_NE(participant, nullptr);
+
+    Subscriber* subscriber = participant->create_subscriber(SUBSCRIBER_QOS_DEFAULT);
+    ASSERT_NE(subscriber, nullptr);
+
+    TypeSupport type(new FooTypeSupport());
+    type.register_type(participant);
+
+    Topic* topic = participant->create_topic("footopic", type.get_type_name(), TOPIC_QOS_DEFAULT);
+    ASSERT_NE(topic, nullptr);
+
+    // Next QoS config checks that if user sets max_instances to inf and leaves max_samples by default, 
+    // create_datareader() should return nullptr
+    DataReaderQos qos = DATAREADER_QOS_DEFAULT;
+    qos.resource_limits().max_instances = 0;
+
+    DataReader* data_reader1 = subscriber->create_datareader(topic, qos);
+    ASSERT_EQ(data_reader1, nullptr);
+
+    // Next QoS config checks that if user sets max_samples < ( max_instances * max_samples_per_instance ) , 
+    // create_datareader() should return nullptr
+    qos.resource_limits().max_samples = 4999;
+    qos.resource_limits().max_instances = 10;
+    qos.resource_limits().max_samples_per_instance = 500;
+
+    DataReader* data_reader2 = subscriber->create_datareader(topic, qos);
+    ASSERT_EQ(data_reader2, nullptr);
+
+}
+
 int main(
         int argc,
         char** argv)
