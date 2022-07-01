@@ -415,29 +415,28 @@ inline std::istream& operator >>(
             }
             else
             {
+                // If nano str has more than 9 digits, it is truncated.
+                if (nano_st.length() > 9)
+                {
+                    nano_st.erase(9);
+                }
+
+                // Convert string to uint32_t. It will always fit as str has been truncated
                 nano = static_cast<uint32_t>(std::stoul(nano_st));
 
-                if (nano > 1000000000ULL)
+                // In case there are less than 9 numbers at the right of the dot, nano should be powered to 10
+                // till the value is correct.
+                // Manual power operation done by loop.
+                for (int i=nano_st.length(); i<9; i++)
                 {
-                    // Error case, nanos > 10^9
-                    input.setstate(std::ios_base::failbit);
-                    sec = 0;
-                    nano = 0;
-                }
-                else
-                {
-                    // In case there are less than 9 numbers at the right of the dot, nano should be powered to 10
-                    // till the value is correct.
-                    // Manual power operation done by loop.
-                    for (int i=nano_st.length(); i<9; i++)
-                    {
-                        nano *= 10;
-                    }
+                    nano *= 10;
                 }
             }
         }
         catch (std::ios_base::failure& )
         {
+            sec = 0;
+            nano = 0;
         }
 
         // Set time object values

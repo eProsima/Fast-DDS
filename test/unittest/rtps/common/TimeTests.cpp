@@ -110,6 +110,67 @@ TEST(TimeTest, deserialize_operator)
     ASSERT_EQ(t.nanosec(), 456789000);
 }
 
+/*
+ * Test >> operator with bad format
+ */
+TEST(TimeTest, bad_format_deserialize_operator)
+{
+    Time_t t;
+
+    // Check more than 9 digits
+    {
+        std::stringstream st("1.1231231231");
+        st >> t;
+        ASSERT_EQ(t.seconds(), 1);
+        ASSERT_EQ(t.nanosec(), 123123123);
+    }
+
+    {
+        std::stringstream st("2.789789789789");
+        st >> t;
+        ASSERT_EQ(t.seconds(), 2);
+        ASSERT_EQ(t.nanosec(), 789789789);
+    }
+
+    {
+        std::stringstream st("1234.999999999999");
+        st >> t;
+        ASSERT_EQ(t.seconds(), 1234);
+        ASSERT_EQ(t.nanosec(), 999999999);
+    }
+
+    {
+        std::stringstream st("55.1000000001");
+        st >> t;
+        ASSERT_EQ(t.seconds(), 55);
+        ASSERT_EQ(t.nanosec(), 100000000);
+    }
+
+    // Check if incorrect format, the time is not set
+    // Negative case
+    {
+        std::stringstream st("-3");
+        st >> t;
+        ASSERT_EQ(t.seconds(), 0);
+        ASSERT_EQ(t.nanosec(), 0);
+    }
+
+    // Non numeric case
+    {
+        std::stringstream st("2non_number");
+        st >> t;
+        ASSERT_EQ(t.seconds(), 0);
+        ASSERT_EQ(t.nanosec(), 0);
+    }
+
+    {
+        std::stringstream st("2.3non_number4");
+        st >> t;
+        ASSERT_EQ(t.seconds(), 0);
+        ASSERT_EQ(t.nanosec(), 0);
+    }
+}
+
 int main(
         int argc,
         char** argv)
