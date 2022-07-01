@@ -211,11 +211,10 @@ public:
             size_t length);
 
     /**
-     * Check xml file for static discovery
-     * Not supported yet
+     * Check the validity of the provided static discovery XML file
      *
      * @param xml_file xml file path
-     * @return RETCODE_UNSUPPORTED.
+     * @return RETCODE_OK if the validation is successful, RETCODE_ERROR otherwise.
      */
     RTPS_DllAPI ReturnCode_t check_xml_static_discovery(
         std::string &xml_file);
