@@ -36,7 +36,7 @@ public:
     virtual ~HelloWorldSubscriber();
 
     //!Initialize the subscriber
-    bool init();
+    bool init(bool use_env);
 
     //!RUN the subscriber
     void run();
