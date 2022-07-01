@@ -43,54 +43,45 @@ class EndpointAttributes
 {
 public:
 
-    //!Endpoint kind, default value WRITER
-    EndpointKind_t endpointKind;
+    //! Endpoint kind, default value WRITER
+    EndpointKind_t endpointKind = EndpointKind_t::WRITER;
 
-    //!Topic kind, default value NO_KEY
-    TopicKind_t topicKind;
+    //! Topic kind, default value NO_KEY
+    TopicKind_t topicKind = TopicKind_t::NO_KEY;
 
-    //!Reliability kind, default value BEST_EFFORT
-    ReliabilityKind_t reliabilityKind;
+    //! Reliability kind, default value BEST_EFFORT
+    ReliabilityKind_t reliabilityKind = ReliabilityKind_t::BEST_EFFORT;
 
-    //!Durability kind, default value VOLATILE
-    DurabilityKind_t durabilityKind;
+    //! Durability kind, default value VOLATILE
+    DurabilityKind_t durabilityKind = DurabilityKind_t::VOLATILE;
 
-    //!GUID used for persistence
+    //! GUID used for persistence
     GUID_t persistence_guid;
 
-    //!The collection of external locators to use for communication.
+    //! The collection of external locators to use for communication.
     fastdds::rtps::ExternalLocators external_unicast_locators;
 
     //! Whether locators that don't match with the announced locators should be kept.
     bool ignore_non_matching_locators = false;
 
-    //!Unicast locator list
+    //! Unicast locator list
     LocatorList_t unicastLocatorList;
 
-    //!Multicast locator list
+    //! Multicast locator list
     LocatorList_t multicastLocatorList;
 
     //! Remote locator list.
     LocatorList_t remoteLocatorList;
 
-    //!Properties
+    //! Properties
     PropertyPolicy properties;
 
     EndpointAttributes()
-        : endpointKind(WRITER)
-        , topicKind(NO_KEY)
-        , reliabilityKind(BEST_EFFORT)
-        , durabilityKind(VOLATILE)
-        , persistence_guid()
-        , m_userDefinedID(-1)
-        , m_entityID(-1)
     {
         datasharing_.off();
     }
 
-    virtual ~EndpointAttributes()
-    {
-    }
+    virtual ~EndpointAttributes() = default;
 
     /**
      * Get the user defined ID
@@ -164,16 +155,18 @@ public:
 
 private:
 
-    //!User Defined ID, used for StaticEndpointDiscovery, default value -1.
-    int16_t m_userDefinedID;
+    //! User Defined ID, used for StaticEndpointDiscovery, default value -1.
+    int16_t m_userDefinedID = -1;
 
-    //!Entity ID, if the user want to specify the EntityID of the enpoint, default value -1.
-    int16_t m_entityID;
+    //! Entity ID, if the user want to specify the EntityID of the enpoint, default value -1.
+    int16_t m_entityID = -1;
 
 #if HAVE_SECURITY
+    //! Security attributes
     security::EndpointSecurityAttributes security_attributes_;
 #endif // HAVE_SECURITY
 
+    //! Settings for datasharing
     DataSharingQosPolicy datasharing_;
 };
 
