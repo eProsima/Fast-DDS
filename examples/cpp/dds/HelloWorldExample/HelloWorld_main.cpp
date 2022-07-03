@@ -156,68 +156,88 @@ int main(
     uint32_t sleep = 100;
     bool use_environment_qos = false;
 
-    if (argc > 1)
+    argc -= (argc > 0);
+    argv += (argc > 0); // skip program name argv[0] if present
+    option::Stats stats(true, usage, argc, argv);
+    std::vector<option::Option> options(stats.options_max);
+    std::vector<option::Option> buffer(stats.buffer_max);
+    option::Parser parse(true, usage, argc, argv, &options[0], &buffer[0]);
+
+    if (parse.error())
     {
-        if (strcmp(argv[1], "publisher") == 0)
+        return 1;
+    }
+
+    if (options[HELP] || options[UNKNOWN_OPT])
+    {
+        option::printUsage(fwrite, stdout, usage, columns);
+        return 0;
+    }
+
+    // For backward compatibility count and sleep may be given positionally
+    if (parse.nonOptionsCount() > 3 || parse.nonOptionsCount() == 0)
+    {
+        option::printUsage(fwrite, stdout, usage, columns);
+        return 1;
+    }
+
+    // Decide between publisher or subscriber
+    {
+        const char* type_name = parse.nonOption(0);
+
+        if (strcmp(type_name, "publisher") == 0)
         {
             type = 1;
         }
-        else if (strcmp(argv[1], "subscriber") == 0)
+        else if (strcmp(type_name, "subscriber") == 0)
         {
             type = 2;
         }
-
-        argc -= (argc > 0);
-        argv += (argc > 0); // skip program name argv[0] if present
-        --argc; ++argv; // skip pub/sub argument
-        option::Stats stats(usage, argc, argv);
-        std::vector<option::Option> options(stats.options_max);
-        std::vector<option::Option> buffer(stats.buffer_max);
-        option::Parser parse(usage, argc, argv, &options[0], &buffer[0]);
-
-        if (parse.error())
+        else
         {
+            option::printUsage(fwrite, stdout, usage, columns);
+            return 1;
+        }
+    }
+
+    // Decide among the old and new syntax
+    if (parse.nonOptionsCount() > 1)
+    {
+        // old syntax, only affects publishers
+        // old and new syntax cannot be mixed
+        if (type != 1 || parse.optionsCount() > 0)
+        {
+            option::printUsage(fwrite, stdout, usage, columns);
             return 1;
         }
 
-        if (options[HELP])
+        count = atoi(parse.nonOption(1));
+
+        if (parse.nonOptionsCount() == 3)
         {
-            option::printUsage(fwrite, stdout, usage, columns);
-            return 0;
-        }
-
-        for (int i = 0; i < parse.optionsCount(); ++i)
-        {
-            option::Option& opt = buffer[i];
-            switch (opt.index())
-            {
-                case HELP:
-                    // not possible, because handled further above and exits the program
-                    break;
-
-                case SAMPLES:
-                    count = strtol(opt.arg, nullptr, 10);
-                    break;
-
-                case INTERVAL:
-                    sleep = strtol(opt.arg, nullptr, 10);
-                    break;
-
-                case ENVIRONMENT:
-                    use_environment_qos = true;
-                    break;
-
-                case UNKNOWN_OPT:
-                    option::printUsage(fwrite, stdout, usage, columns);
-                    return 0;
-                    break;
-            }
+            sleep = atoi(parse.nonOption(2));
         }
     }
     else
     {
-        option::printUsage(fwrite, stdout, usage, columns);
-        return 0;
+        // new syntax
+        option::Option* opt = options[SAMPLES];
+        if (opt)
+        {
+            count = strtol(opt->arg, nullptr, 10);
+        }
+
+        opt = options[INTERVAL];
+        if (opt)
+        {
+            sleep = strtol(opt->arg, nullptr, 10);
+        }
+
+        opt = options[ENVIRONMENT];
+        if (opt)
+        {
+            use_environment_qos = true;
+        }
     }
 
     switch (type)
