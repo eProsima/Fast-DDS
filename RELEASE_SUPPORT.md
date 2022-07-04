@@ -16,6 +16,7 @@ The table below outlines the *eProsima Fast DDS* minor releases and their suppor
 
 |Version branch|Release Date|EOL Date|
 |--------------|------------|--------|
+|v2.7.x|July 2022|January 2023|
 |v2.6.x|March 2022|May 2023 [^*]|
 |v2.5.x|December 2021|June 2022|
 |v2.4.x|September 2021|March 2022|
