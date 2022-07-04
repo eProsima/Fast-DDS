@@ -567,3 +567,14 @@ TEST(DDSDiscovery, ParticipantProxyPhysicalData)
     DomainParticipantFactory::get_instance()->delete_participant(part_1);
     DomainParticipantFactory::get_instance()->delete_participant(part_2);
 }
+
+/**
+ * This test checks the unsupported DomainParticipantFactory->check_xml_static_discovery
+ * method and checks it returns RETCODE_UNSUPPORTED
+ */
+TEST(DDSDiscovery, CheckUnsupportedXmlStaticDiscoveryFile)
+{
+    std::string file = "Unsupported.xml";
+    DomainParticipantFactory* factory = DomainParticipantFactory::get_instance();
+    ASSERT_EQ(factory->check_xml_static_discovery(file), ReturnCode_t::RETCODE_UNSUPPORTED);
+}

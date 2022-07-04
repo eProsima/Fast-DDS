@@ -415,6 +415,15 @@ ReturnCode_t DomainParticipantFactory::load_XML_profiles_string(
     return ReturnCode_t::RETCODE_OK;
 }
 
+ReturnCode_t DomainParticipantFactory::check_xml_static_discovery(
+        std::string& xml_file)
+{
+    // Not suported yet
+    (void)xml_file;
+
+    return ReturnCode_t::RETCODE_UNSUPPORTED;
+}
+
 ReturnCode_t DomainParticipantFactory::get_qos(
         DomainParticipantFactoryQos& qos) const
 {
