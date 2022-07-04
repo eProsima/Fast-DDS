@@ -98,7 +98,7 @@ struct Arg : public option::Arg
         }
         if (msg)
         {
-            print_error("Option '", option, "' requires a numeric argument\n");
+            print_error("Option '", option, "' requires an argument\n");
         }
         return option::ARG_ILLEGAL;
     }
@@ -200,7 +200,7 @@ int main(
         }
     }
 
-    // Decide among the old and new syntax
+    // Decide between the old and new syntax
     if (parse.nonOptionsCount() > 1)
     {
         // old syntax, only affects publishers

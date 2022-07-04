@@ -5,7 +5,7 @@ In the second one: ./DDSHelloWorldExample subscriber (or DDSHelloWorldExample.ex
 
 In order to use xml profiles (--env or shorcut -e cli flags):
     - reference the xml profiles file setting the environment variable FASTRTPS_DEFAULT_PROFILES_FILE to its path.
-    - called it DEFAULT_FASTRTPS_PROFILES.xml and make sure the file is besides the DDSHelloWorldExample binary.
+    - name it DEFAULT_FASTRTPS_PROFILES.xml and make sure the file is besides the DDSHelloWorldExample binary.
 The profile loaded will be the mark as default one with the corresponding attribute. For example:
 
     <?xml version="1.0" encoding="UTF-8" ?>
