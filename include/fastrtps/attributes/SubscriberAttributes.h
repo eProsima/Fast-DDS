@@ -67,7 +67,7 @@ public:
     bool expectsInlineQos = false;
 
     //! Underlying History memory policy
-    rtps::MemoryManagementPolicy_t historyMemoryPolicy;
+    rtps::MemoryManagementPolicy_t historyMemoryPolicy = rtps::PREALLOCATED_MEMORY_MODE;
 
     //! Properties
     rtps::PropertyPolicy properties;

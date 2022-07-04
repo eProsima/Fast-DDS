@@ -1,5 +1,0 @@
-struct FlowControlExample
-{
-   char message[600000];
-   char wasFast;
-};

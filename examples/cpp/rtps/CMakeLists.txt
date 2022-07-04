@@ -1,4 +1,4 @@
-# Copyright 2016 Proyectos y Sistemas de Mantenimiento SL (eProsima).
+# Copyright 2019 Proyectos y Sistemas de Mantenimiento SL (eProsima).
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -12,6 +12,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-set(fastrtps_FOUND TRUE)
-add_subdirectory(cpp/dds)
-add_subdirectory(cpp/rtps)
+add_subdirectory(AsSocket)
+add_subdirectory(Registered)
+
+if(SQLITE3_SUPPORT)
+    add_subdirectory(Persistent)
+endif()
