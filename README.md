@@ -157,7 +157,7 @@ To launch the Hello World example (a minimal example that will perform a Publish
 sending samples) you could run:
 
     $ goToExamples
-    $ cd HelloWorldExample/bin
+    $ cd dds/HelloWorldExample/bin
     $ tmux new-session "./HelloWorldExample publisher 0 1000" \; \
     split-window "./HelloWorldExample subscriber" \; \
     select-layout even-vertical
@@ -166,13 +166,13 @@ This example is not constrained to the current instance. It's possible to run se
 container to check the communication between them by running the following from each container.
 
     $ goToExamples
-    $ cd HelloWorldExample/bin
+    $ cd dds/HelloWorldExample/bin
     $ ./HelloWorldExample publisher
 
 or
 
     $ goToExamples
-    $ cd HelloWorldExample/bin
+    $ cd dds/HelloWorldExample/bin
     $ ./HelloWorldExample subscriber
 
 Another example you could launch is the Benchmark example. This example creates either a Publisher or a Subscriber and
@@ -182,13 +182,13 @@ a report with the number of samples transmitted.
 On the subscriber side, run:
 
     $ goToExamples
-    $ cd Benchmark/bin
+    $ cd dds/Benchmark/bin
     $ ./Benchmark subscriber udp
 
 On the publisher side, run:
 
     $ goToExamples
-    $ cd Benchmark/bin
+    $ cd dds/Benchmark/bin
     $ ./Benchmark publisher udp
 
 
