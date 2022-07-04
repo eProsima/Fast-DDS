@@ -222,6 +222,41 @@ TEST(TopicTests, SetListener)
     ASSERT_TRUE(DomainParticipantFactory::get_instance()->delete_participant(participant) == ReturnCode_t::RETCODE_OK);
 }
 
+/*
+ * This test checks the allocation consistency when using instances. If the number of instances is infinite,
+ and the max_samples is not set, the endpoint creation should fail. The following methods are checked:
+ * 1. create_datawriter
+ */
+TEST(TopicTests, InstancePolicyAllocationConsistency)
+{
+    DomainParticipant* participant =
+            DomainParticipantFactory::get_instance()->create_participant(0, PARTICIPANT_QOS_DEFAULT);
+    ASSERT_NE(participant, nullptr);
+
+    Publisher* publisher = participant->create_publisher(PUBLISHER_QOS_DEFAULT);
+    ASSERT_NE(publisher, nullptr);
+
+    TypeSupport type(new TopicDataTypeMock());
+    type.register_type(participant);
+
+    // Next QoS config checks that if user sets max_instances to inf and leaves max_samples by default, 
+    // create_datareader() should return nullptr
+    TopicQos qos = TOPIC_QOS_DEFAULT;
+    qos.resource_limits().max_instances = 0;
+
+    Topic* topic1 = participant->create_topic("footopic1", type.get_type_name(), qos);
+    ASSERT_EQ(topic1, nullptr);
+
+    // Next QoS config checks that if user sets max_samples < ( max_instances * max_samples_per_instance ) , 
+    // create_datareader() should return nullptr
+    qos.resource_limits().max_samples = 4999;
+    qos.resource_limits().max_instances = 10;
+    qos.resource_limits().max_samples_per_instance = 500;
+    
+    Topic* topic2 = participant->create_topic("footopic2", type.get_type_name(), qos);
+    ASSERT_EQ(topic2, nullptr);
+}
+
 } // namespace dds
 } // namespace fastdds
 } // namespace eprosima
