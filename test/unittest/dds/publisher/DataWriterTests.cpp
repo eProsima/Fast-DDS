@@ -1639,7 +1639,7 @@ TEST_F(DataWriterUnsupportedTests, UnsupportedDataWriterMethods)
 
 /*
  * This test checks the allocation consistency when using instances. If the number of instances is infinite,
- and the max_samples is not set, the endpoint creation should fail. The following methods are checked:
+   and the max_samples is not set, the endpoint creation should fail. The following methods are checked:
  * 1. create_datawriter
  */
 TEST(DataWriterTests, InstancePolicyAllocationConsistency)
@@ -1657,7 +1657,7 @@ TEST(DataWriterTests, InstancePolicyAllocationConsistency)
     Topic* topic = participant->create_topic("footopic", type.get_type_name(), TOPIC_QOS_DEFAULT);
     ASSERT_NE(topic, nullptr);
 
-    // Next QoS config checks that if user sets max_instances to inf and leaves max_samples by default, 
+    // Next QoS config checks that if user sets max_instances to inf and leaves max_samples by default,
     // create_datareader() should return nullptr
     DataWriterQos qos = DATAWRITER_QOS_DEFAULT;
     qos.resource_limits().max_instances = 0;
@@ -1665,7 +1665,7 @@ TEST(DataWriterTests, InstancePolicyAllocationConsistency)
     DataWriter* data_writer1 = publisher->create_datawriter(topic, qos);
     ASSERT_EQ(data_writer1, nullptr);
 
-    // Next QoS config checks that if user sets max_samples < ( max_instances * max_samples_per_instance ) , 
+    // Next QoS config checks that if user sets max_samples < ( max_instances * max_samples_per_instance ) ,
     // create_datareader() should return nullptr
     qos.resource_limits().max_samples = 4999;
     qos.resource_limits().max_instances = 10;
