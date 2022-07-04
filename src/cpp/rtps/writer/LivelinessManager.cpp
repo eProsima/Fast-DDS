@@ -218,6 +218,8 @@ bool LivelinessManager::assert_liveliness(
         return false;
     }
 
+    std::lock_guard<std::mutex> lock(mutex_);
+
     if (timer_owner_ != nullptr)
     {
         // Some times the interval could be negative if a writer expired during the call to this function
@@ -270,7 +272,7 @@ bool LivelinessManager::assert_liveliness(
         return false;
     }
 
-    std::unique_lock<std::mutex> lock(mutex_);
+    std::lock_guard<std::mutex> lock(mutex_);
 
     if (timer_owner_ != nullptr)
     {
