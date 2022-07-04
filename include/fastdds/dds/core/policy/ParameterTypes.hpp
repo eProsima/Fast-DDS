@@ -738,12 +738,16 @@ public:
 
 #define PARAMETER_STATUS_INFO_LENGTH 4
 
+#define PARAMETER_ORIGINAL_WRITER_INFO_LENGTH 24 // 12 + 4 + 8
+
 /**
  * @ingroup PARAMETER_MODULE
  */
 class ParameterOriginalWriterInfo_t : public Parameter_t
 {
 public:
+    //!Static class attribute
+    static constexpr uint16_t LENGTH = PARAMETER_ORIGINAL_WRITER_INFO_LENGTH;
 
     //!Original writer guid. By default, unknown GUID.
     fastrtps::rtps::GUID_t writer_guid;
@@ -755,44 +759,59 @@ public:
      * @brief Constructor without parameters
      */
     ParameterOriginalWriterInfo_t()
+      : Parameter_t(PID_ORIGINAL_WRITER_INFO, PARAMETER_ORIGINAL_WRITER_INFO_LENGTH) 
     {
     }
 
-    /**
-     * Constructor using a parameter PID and the parameter length
-     *
-     * @param pid Pid of the parameter
-     * @param in_length Its associated length
-     */
-    ParameterOriginalWriterInfo_t(
-            ParameterId_t pid,
-            uint16_t in_length)
-        : Parameter_t(pid, in_length)
-    {
-    }
+    // DISABLED CONSTRUCTORS, as pid and length should be implicit
+    // /**
+    //  * Constructor using a parameter PID and the parameter length
+    //  *
+    //  * @param pid Pid of the parameter
+    //  * @param in_length Its associated length
+    //  */
+    // ParameterOriginalWriterInfo_t(
+    //         ParameterId_t pid,
+    //         uint16_t in_length)
+    //     : Parameter_t(pid, in_length)
+    // {
+    // }
+
+    // /**
+    //  * @brief Constructor using a parameter PID, the parameter length and parameters of the original writer
+    //  *
+    //  * @param pid Pid of the parameter
+    //  * @param in_length Its associated length
+    //  * @param guid Guid of the original writer
+    //  * @param sn Sequence number of the original writer
+    //  */
+    // ParameterOriginalWriterInfo_t(
+    //     ParameterId_t pid,
+    //     uint16_t in_length,
+    //     const fastrtps::rtps::GUID_t& guid,
+    //     const fastrtps::rtps::SequenceNumber_t sn)
+    //   : Parameter_t(pid, in_length) 
+    //   , writer_guid(guid)
+    //   , sequence_number(sn)
+    // {
+    // }
 
     /**
      * @brief Constructor using a parameter PID, the parameter length and parameters of the original writer
      *
-     * @param pid Pid of the parameter
-     * @param in_length Its associated length
      * @param guid Guid of the original writer
      * @param sn Sequence number of the original writer
      */
     ParameterOriginalWriterInfo_t(
-        ParameterId_t pid,
-        uint16_t in_length,
         const fastrtps::rtps::GUID_t& guid,
         const fastrtps::rtps::SequenceNumber_t sn)
-      : Parameter_t(pid, in_length) 
+      : Parameter_t(PID_ORIGINAL_WRITER_INFO, PARAMETER_ORIGINAL_WRITER_INFO_LENGTH) 
       , writer_guid(guid)
       , sequence_number(sn)
     {
     }
 
 };
-
-#define PARAMETER_ORIGINAL_WRITER_INFO_LENGTH 24 // 12 + 4 + 8
 
 /**
  * @ingroup PARAMETER_MODULE
