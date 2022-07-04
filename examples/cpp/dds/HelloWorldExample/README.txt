@@ -12,9 +12,25 @@ The profile loaded will be the mark as default one with the corresponding attrib
     <profiles xmlns="http://www.eprosima.com/XMLSchemas/fastRTPS_Profiles">
         <participant profile_name="name_is_mandatory" is_default_profile="true">
             <rtps>
-                <name>Example dummy name</name>
+                <name>Profiles example name</name>
             </rtps>
         </participant>
+        <data_writer profile_name="datawriter_name_is_mandatory" is_default_profile="true">
+            <qos>
+                <reliability>
+                    <kind>BEST_EFFORT</kind>
+                </reliability>
+            </qos>
+        </data_writer>
+        <data_reader profile_name="datareader_name_is_mandatory" is_default_profile="true">
+            <topic>
+                <historyQos>
+                    <kind>KEEP_LAST</kind>
+                    <depth>5</depth>
+                </historyQos>
+            </topic>
+        </data_reader>
     </profiles>
 
-will create a participant called "Example dummy name". Note the "profile_name" attribute is mandatory.
+will create a participant called "Example dummy name" and modify the endpoint set up.
+Note the "profile_name" attribute is mandatory.
