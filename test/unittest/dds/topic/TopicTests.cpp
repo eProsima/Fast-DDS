@@ -225,7 +225,7 @@ TEST(TopicTests, SetListener)
 /*
  * This test checks the allocation consistency when using instances. If the number of instances is infinite,
  and the max_samples is not set, the endpoint creation should fail. The following methods are checked:
- * 1. create_datawriter
+ * 1. create_topic
  */
 TEST(TopicTests, InstancePolicyAllocationConsistency)
 {
