@@ -44,7 +44,8 @@ bool HelloWorldPublisher::init(
 {
     hello_.index(0);
     hello_.message("HelloWorld");
-    DomainParticipantQos pqos;
+    DomainParticipantQos pqos = PARTICIPANT_QOS_DEFAULT;
+    pqos.name("Participant_pub");
     auto factory = DomainParticipantFactory::get_instance();
 
     if (use_env)
@@ -53,7 +54,6 @@ bool HelloWorldPublisher::init(
         factory->get_default_participant_qos(pqos);
     }
 
-    pqos.name("Participant_pub");
     participant_ = factory->create_participant(0, pqos);
 
     if (participant_ == nullptr)
@@ -65,14 +65,34 @@ bool HelloWorldPublisher::init(
     type_.register_type(participant_);
 
     //CREATE THE PUBLISHER
-    publisher_ = participant_->create_publisher(PUBLISHER_QOS_DEFAULT, nullptr);
+    PublisherQos pubqos = PUBLISHER_QOS_DEFAULT;
+
+    if (use_env)
+    {
+        participant_->get_default_publisher_qos(pubqos);
+    }
+
+    publisher_ = participant_->create_publisher(
+        pubqos,
+        nullptr);
 
     if (publisher_ == nullptr)
     {
         return false;
     }
 
-    topic_ = participant_->create_topic("HelloWorldTopic", "HelloWorld", TOPIC_QOS_DEFAULT);
+    //CREATE THE TOPIC
+    TopicQos tqos = TOPIC_QOS_DEFAULT;
+
+    if (use_env)
+    {
+        participant_->get_default_topic_qos(tqos);
+    }
+
+    topic_ = participant_->create_topic(
+        "HelloWorldTopic",
+        "HelloWorld",
+        tqos);
 
     if (topic_ == nullptr)
     {
@@ -80,12 +100,23 @@ bool HelloWorldPublisher::init(
     }
 
     // CREATE THE WRITER
-    writer_ = publisher_->create_datawriter(topic_, DATAWRITER_QOS_DEFAULT, &listener_);
+    DataWriterQos wqos = DATAWRITER_QOS_DEFAULT;
+
+    if (use_env)
+    {
+        publisher_->get_default_datawriter_qos(wqos);
+    }
+
+    writer_ = publisher_->create_datawriter(
+        topic_,
+        wqos,
+        &listener_);
 
     if (writer_ == nullptr)
     {
         return false;
     }
+
     return true;
 }
 

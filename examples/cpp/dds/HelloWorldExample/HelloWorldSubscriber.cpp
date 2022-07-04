@@ -40,7 +40,8 @@ HelloWorldSubscriber::HelloWorldSubscriber()
 bool HelloWorldSubscriber::init(
         bool use_env)
 {
-    DomainParticipantQos pqos;
+    DomainParticipantQos pqos = PARTICIPANT_QOS_DEFAULT;
+    pqos.name("Participant_sub");
     auto factory = DomainParticipantFactory::get_instance();
 
     if (use_env)
@@ -49,7 +50,6 @@ bool HelloWorldSubscriber::init(
         factory->get_default_participant_qos(pqos);
     }
 
-    pqos.name("Participant_sub");
     participant_ = factory->create_participant(0, pqos);
 
     if (participant_ == nullptr)
@@ -61,7 +61,14 @@ bool HelloWorldSubscriber::init(
     type_.register_type(participant_);
 
     //CREATE THE SUBSCRIBER
-    subscriber_ = participant_->create_subscriber(SUBSCRIBER_QOS_DEFAULT, nullptr);
+    SubscriberQos sqos = SUBSCRIBER_QOS_DEFAULT;
+
+    if (use_env)
+    {
+        participant_->get_default_subscriber_qos(sqos);
+    }
+
+    subscriber_ = participant_->create_subscriber(sqos, nullptr);
 
     if (subscriber_ == nullptr)
     {
@@ -69,10 +76,17 @@ bool HelloWorldSubscriber::init(
     }
 
     //CREATE THE TOPIC
+    TopicQos tqos = TOPIC_QOS_DEFAULT;
+
+    if (use_env)
+    {
+        participant_->get_default_topic_qos(tqos);
+    }
+
     topic_ = participant_->create_topic(
         "HelloWorldTopic",
         "HelloWorld",
-        TOPIC_QOS_DEFAULT);
+        tqos);
 
     if (topic_ == nullptr)
     {
@@ -82,6 +96,12 @@ bool HelloWorldSubscriber::init(
     // CREATE THE READER
     DataReaderQos rqos = DATAREADER_QOS_DEFAULT;
     rqos.reliability().kind = RELIABLE_RELIABILITY_QOS;
+
+    if (use_env)
+    {
+        subscriber_->get_default_datareader_qos(rqos);
+    }
+
     reader_ = subscriber_->create_datareader(topic_, rqos, &listener_);
 
     if (reader_ == nullptr)
