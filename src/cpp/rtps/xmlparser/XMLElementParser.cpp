@@ -416,6 +416,7 @@ XMLP_ret XMLParser::getXMLBuiltinAttributes(
         <xs:all minOccurs="0">
             <xs:element name="discovery_config" type="discoverySettingsType" minOccurs="0"/>
             <xs:element name="use_WriterLivelinessProtocol" type="boolType" minOccurs="0"/>
+            <xs:element name="metatraffic_external_unicast_locators" type="externalLocatorListType" minOccurs="0"/>
             <xs:element name="metatrafficUnicastLocatorList" type="locatorListType" minOccurs="0"/>
             <xs:element name="metatrafficMulticastLocatorList" type="locatorListType" minOccurs="0"/>
             <xs:element name="initialPeersList" type="locatorListType" minOccurs="0"/>
@@ -443,6 +444,15 @@ XMLP_ret XMLParser::getXMLBuiltinAttributes(
         {
             // use_WriterLivelinessProtocol - boolType
             if (XMLP_ret::XML_OK != getXMLBool(p_aux0, &builtin.use_WriterLivelinessProtocol, ident))
+            {
+                return XMLP_ret::XML_ERROR;
+            }
+        }
+        else if (strcmp(name, META_EXT_UNI_LOC_LIST) == 0)
+        {
+            // metatraffic_external_unicast_locators - externalLocatorListType
+            if (XMLP_ret::XML_OK !=
+                    getXMLExternalLocatorList(p_aux0, builtin.metatraffic_external_unicast_locators, ident))
             {
                 return XMLP_ret::XML_ERROR;
             }
