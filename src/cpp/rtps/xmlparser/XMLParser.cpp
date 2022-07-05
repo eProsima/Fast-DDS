@@ -1721,6 +1721,8 @@ XMLP_ret XMLParser::fillDataNode(
                 <xs:element name="domainId" type="uint32Type" minOccurs="0"/>
                 <xs:element name="allocation" type="rtpsParticipantAllocationAttributesType" minOccurs="0"/>
                 <xs:element name="prefix" type="guid" minOccurs="0"/>
+                <xs:element name="default_external_unicast_locators" type="externalLocatorListType" minOccurs="0"/>
+                <xs:element name="ignore_non_matching_locators" type="boolType" minOccurs="0"/>
                 <xs:element name="defaultUnicastLocatorList" type="locatorListType" minOccurs="0"/>
                 <xs:element name="defaultMulticastLocatorList" type="locatorListType" minOccurs="0"/>
                 <xs:element name="sendSocketBufferSize" type="uint32Type" minOccurs="0"/>
@@ -1784,6 +1786,25 @@ XMLP_ret XMLParser::fillDataNode(
             // prefix
             if (XMLP_ret::XML_OK !=
                     getXMLguidPrefix(p_aux0, participant_node.get()->rtps.prefix, ident))
+            {
+                return XMLP_ret::XML_ERROR;
+            }
+        }
+        else if (strcmp(name, IGN_NON_MATCHING_LOCS) == 0)
+        {
+            // ignore_non_matching_locators - boolType
+            if (XMLP_ret::XML_OK !=
+                    getXMLBool(p_aux0, &participant_node.get()->rtps.ignore_non_matching_locators, ident))
+            {
+                return XMLP_ret::XML_ERROR;
+            }
+        }
+        else if (strcmp(name, DEF_EXT_UNI_LOC_LIST) == 0)
+        {
+            // default_external_unicast_locators - externalLocatorListType
+            if (XMLP_ret::XML_OK !=
+                    getXMLExternalLocatorList(p_aux0, participant_node.get()->rtps.default_external_unicast_locators,
+                    ident))
             {
                 return XMLP_ret::XML_ERROR;
             }

@@ -86,6 +86,7 @@ const char* INTRAPROCESS_DELIVERY = "intraprocess_delivery";
 /// RTPS Participant attributes
 const char* ALLOCATION = "allocation";
 const char* PREFIX = "prefix";
+const char* DEF_EXT_UNI_LOC_LIST = "default_external_unicast_locators";
 const char* DEF_UNI_LOC_LIST = "defaultUnicastLocatorList";
 const char* DEF_MULTI_LOC_LIST = "defaultMulticastLocatorList";
 const char* SEND_SOCK_BUF_SIZE = "sendSocketBufferSize";
@@ -132,6 +133,7 @@ const char* MATCHED_SUBSCRIBERS_ALLOCATION = "matchedSubscribersAllocation";
 const char* MATCHED_PUBLISHERS_ALLOCATION = "matchedPublishersAllocation";
 
 ///
+const char* IGN_NON_MATCHING_LOCS = "ignore_non_matching_locators";
 const char* PROPERTIES = "properties";
 const char* BIN_PROPERTIES = "binary_properties";
 const char* PROPERTY = "property";

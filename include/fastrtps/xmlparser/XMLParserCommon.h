@@ -101,6 +101,7 @@ extern const char* INTRAPROCESS_DELIVERY;
 extern const char* ALLOCATION;
 extern const char* PREFIX;
 extern const char* DEF_UNI_LOC_LIST;
+extern const char* DEF_EXT_UNI_LOC_LIST;
 extern const char* DEF_MULTI_LOC_LIST;
 extern const char* SEND_SOCK_BUF_SIZE;
 extern const char* LIST_SOCK_BUF_SIZE;
@@ -148,6 +149,7 @@ extern const char* MATCHED_SUBSCRIBERS_ALLOCATION;
 extern const char* MATCHED_PUBLISHERS_ALLOCATION;
 
 ///
+extern const char* IGN_NON_MATCHING_LOCS;
 extern const char* PROPERTIES;
 extern const char* BIN_PROPERTIES;
 extern const char* PROPERTY;
