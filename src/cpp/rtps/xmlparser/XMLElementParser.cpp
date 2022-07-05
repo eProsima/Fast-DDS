@@ -3027,6 +3027,132 @@ XMLP_ret XMLParser::getXMLLocatorTCPv6(
     return XMLP_ret::XML_OK;
 }
 
+template<typename T>
+static XMLP_ret process_unsigned_attribute(
+        const tinyxml2::XMLElement* elem,
+        const char* name,
+        T& value,
+        const unsigned int min_value,
+        const unsigned int max_value)
+{
+    auto attribute = elem->FindAttribute(name);
+    if (nullptr != attribute)
+    {
+        unsigned int v = 0;
+        if (tinyxml2::XMLError::XML_SUCCESS == attribute->QueryUnsignedValue(&v))
+        {
+            if (min_value <= v && v <= max_value)
+            {
+                value = static_cast<T>(v);
+                return XMLP_ret::XML_OK;
+            }
+        }
+
+        logError(XMLPARSER, "Wrong value '" << attribute->Value() << "' for attribute '" << name << "' on '" <<
+                elem->Name() << "'");
+        return XMLP_ret::XML_ERROR;
+    }
+
+    return XMLP_ret::XML_OK;
+}
+
+static XMLP_ret process_external_locator_attributes(
+        const tinyxml2::XMLElement* elem,
+        eprosima::fastdds::rtps::LocatorWithMask& locator,
+        eprosima::fastdds::rtps::ExternalLocators& external_locators)
+{
+    static const char* EXTERNALITY_ATTR_NAME = "externality";
+    static const char* COST_ATTR_NAME = "cost";
+    static const char* MASK_ATTR_NAME = "mask";
+
+    // Attributes initialized with default value
+    uint8_t externality = 1;
+    uint8_t cost = 0;
+    uint8_t mask = 24;
+
+    if (XMLP_ret::XML_OK != process_unsigned_attribute(elem, EXTERNALITY_ATTR_NAME, externality, 1, 255) ||
+            XMLP_ret::XML_OK != process_unsigned_attribute(elem, COST_ATTR_NAME, cost, 0, 255) ||
+            XMLP_ret::XML_OK != process_unsigned_attribute(elem, MASK_ATTR_NAME, mask, 1, 127))
+    {
+        return XMLP_ret::XML_ERROR;
+    }
+
+    locator.mask(mask);
+    external_locators[externality][cost].push_back(locator);
+
+    return XMLP_ret::XML_OK;
+}
+
+XMLP_ret XMLParser::getXMLExternalLocatorList(
+        tinyxml2::XMLElement* elem,
+        eprosima::fastdds::rtps::ExternalLocators& external_locators,
+        uint8_t ident)
+{
+    /*
+        <xs:complexType name="externalLocatorListType">
+            <xs:sequence>
+              <xs:choice>
+                <xs:element name="udpv4" type="udpExternalLocatorType"/>
+                <xs:element name="udpv6" type="udpExternalLocatorType"/>
+              </xs:choice>
+            </xs:sequence>
+        </xs:complexType>
+     */
+
+    external_locators.clear();
+
+    tinyxml2::XMLElement* child = nullptr;
+    for (child = elem->FirstChildElement(); nullptr != child; child = child->NextSiblingElement())
+    {
+        fastdds::rtps::LocatorWithMask locator;
+        const char* name = child->Name();
+        if (strcmp(name, UDPv4_LOCATOR) == 0)
+        {
+            if (XMLP_ret::XML_OK != getXMLLocatorUDPv4(child, locator, ident + 1))
+            {
+                external_locators.clear();
+                return XMLP_ret::XML_ERROR;
+            }
+        }
+        else if (strcmp(name, UDPv6_LOCATOR) == 0)
+        {
+            if (XMLP_ret::XML_OK != getXMLLocatorUDPv6(child, locator, ident + 1))
+            {
+                external_locators.clear();
+                return XMLP_ret::XML_ERROR;
+            }
+        }
+        else
+        {
+            logError(XMLPARSER, "Invalid element found inside 'externalLocatorListType'. Name: " << name);
+            external_locators.clear();
+            return XMLP_ret::XML_ERROR;
+        }
+
+        if (IPLocator::isAny(locator) || 0 == locator.port)
+        {
+            logError(XMLPARSER, "Address and port are mandatory for 'udpExternalLocatorType'.");
+            external_locators.clear();
+            return XMLP_ret::XML_ERROR;
+        }
+
+        if (IPLocator::isMulticast(locator))
+        {
+            logError(XMLPARSER, "Address should be unicast for 'udpExternalLocatorType'.");
+            external_locators.clear();
+            return XMLP_ret::XML_ERROR;
+        }
+
+        if (XMLP_ret::XML_OK != process_external_locator_attributes(child, locator, external_locators))
+        {
+            external_locators.clear();
+            return XMLP_ret::XML_ERROR;
+        }
+    }
+
+    return XMLP_ret::XML_OK;
+}
+
 XMLP_ret XMLParser::getXMLLocatorList(
         tinyxml2::XMLElement* elem,
         LocatorList_t& locatorList,
