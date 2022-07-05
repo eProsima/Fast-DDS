@@ -32,7 +32,7 @@
 #include <gtest/gtest.h>
 #include <fastdds/rtps/attributes/ServerAttributes.h>
 #include <fastrtps/types/TypesBase.h>
-#include <json.hpp>
+#include <nlohmann/json.hpp>
 #include <utils/SystemInfo.hpp>
 
 #define SIZE 512

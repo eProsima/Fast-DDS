@@ -26,7 +26,7 @@
 
 #include <rtps/builtin/discovery/database/DiscoveryParticipantsAckStatus.hpp>
 
-#include <json.hpp>
+#include <nlohmann/json.hpp>
 
 namespace eprosima {
 namespace fastdds {

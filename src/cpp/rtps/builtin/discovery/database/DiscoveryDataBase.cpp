@@ -28,7 +28,7 @@
 
 #include <rtps/builtin/discovery/database/DiscoveryDataBase.hpp>
 
-#include <json.hpp>
+#include <nlohmann/json.hpp>
 #include <rtps/builtin/discovery/database/backup/SharedBackupFunctions.hpp>
 
 namespace eprosima {
