@@ -3905,6 +3905,8 @@ XMLP_ret XMLParser::getXMLPublisherAttributes(
                 <xs:element name="topic" type="topicAttributesType" minOccurs="0"/>
                 <xs:element name="qos" type="writerQosPoliciesType" minOccurs="0"/>
                 <xs:element name="times" type="writerTimesType" minOccurs="0"/>
+                <xs:element name="external_unicast_locators" type="externalLocatorListType" minOccurs="0"/>
+                <xs:element name="ignore_non_matching_locators" type="boolType" minOccurs="0"/>
                 <xs:element name="unicastLocatorList" type="locatorListType" minOccurs="0"/>
                 <xs:element name="multicastLocatorList" type="locatorListType" minOccurs="0"/>
                 <xs:element name="throughputController" type="throughputControllerType" minOccurs="0"/>
@@ -3943,6 +3945,22 @@ XMLP_ret XMLParser::getXMLPublisherAttributes(
         {
             // times
             if (XMLP_ret::XML_OK != getXMLWriterTimes(p_aux0, publisher.times, ident))
+            {
+                return XMLP_ret::XML_ERROR;
+            }
+        }
+        else if (strcmp(name, IGN_NON_MATCHING_LOCS) == 0)
+        {
+            // ignore_non_matching_locators - boolType
+            if (XMLP_ret::XML_OK != getXMLBool(p_aux0, &publisher.ignore_non_matching_locators, ident))
+            {
+                return XMLP_ret::XML_ERROR;
+            }
+        }
+        else if (strcmp(name, EXT_UNI_LOC_LIST) == 0)
+        {
+            // external_unicast_locators - externalLocatorListType
+            if (XMLP_ret::XML_OK != getXMLExternalLocatorList(p_aux0, publisher.external_unicast_locators, ident))
             {
                 return XMLP_ret::XML_ERROR;
             }
@@ -4045,6 +4063,8 @@ XMLP_ret XMLParser::getXMLSubscriberAttributes(
                 <xs:element name="topic" type="topicAttributesType" minOccurs="0"/>
                 <xs:element name="qos" type="readerQosPoliciesType" minOccurs="0"/>
                 <xs:element name="times" type="readerTimesType" minOccurs="0"/>
+                <xs:element name="external_unicast_locators" type="externalLocatorListType" minOccurs="0"/>
+                <xs:element name="ignore_non_matching_locators" type="boolType" minOccurs="0"/>
                 <xs:element name="unicastLocatorList" type="locatorListType" minOccurs="0"/>
                 <xs:element name="multicastLocatorList" type="locatorListType" minOccurs="0"/>
                 <xs:element name="expectsInlineQos" type="boolType" minOccurs="0"/>
@@ -4083,6 +4103,22 @@ XMLP_ret XMLParser::getXMLSubscriberAttributes(
         {
             // times
             if (XMLP_ret::XML_OK != getXMLReaderTimes(p_aux0, subscriber.times, ident))
+            {
+                return XMLP_ret::XML_ERROR;
+            }
+        }
+        else if (strcmp(name, IGN_NON_MATCHING_LOCS) == 0)
+        {
+            // ignore_non_matching_locators - boolType
+            if (XMLP_ret::XML_OK != getXMLBool(p_aux0, &subscriber.ignore_non_matching_locators, ident))
+            {
+                return XMLP_ret::XML_ERROR;
+            }
+        }
+        else if (strcmp(name, EXT_UNI_LOC_LIST) == 0)
+        {
+            // external_unicast_locators - externalLocatorListType
+            if (XMLP_ret::XML_OK != getXMLExternalLocatorList(p_aux0, subscriber.external_unicast_locators, ident))
             {
                 return XMLP_ret::XML_ERROR;
             }

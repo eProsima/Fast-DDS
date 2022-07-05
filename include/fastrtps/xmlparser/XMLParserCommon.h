@@ -136,6 +136,7 @@ extern const char* MAX_PARTITIONS;
 extern const char* TOPIC;
 extern const char* QOS;
 extern const char* TIMES;
+extern const char* EXT_UNI_LOC_LIST;
 extern const char* UNI_LOC_LIST;
 extern const char* MULTI_LOC_LIST;
 extern const char* REM_LOC_LIST;

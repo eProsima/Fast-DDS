@@ -120,6 +120,7 @@ const char* MAX_PARTITIONS = "max_partitions";
 const char* TOPIC = "topic";
 const char* QOS = "qos";
 const char* TIMES = "times";
+const char* EXT_UNI_LOC_LIST = "external_unicast_locators";
 const char* UNI_LOC_LIST = "unicastLocatorList";
 const char* MULTI_LOC_LIST = "multicastLocatorList";
 const char* REM_LOC_LIST = "remoteLocatorList";
