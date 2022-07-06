@@ -619,7 +619,7 @@ TEST(DDSDiscovery, CheckCorrectXmlStaticDiscoveryFile)
 
 /**
  * This test checks the incorrect <staticdiscovery> case of DomainParticipantFactory->check_xml_static_discovery
- * method and checks it returns RETCODE_OK
+ * method and checks it returns RETCODE_ERROR
  */
 TEST(DDSDiscovery, CheckIncorrectStaticdiscoveryXmlStaticDiscoveryFile)
 {
@@ -657,7 +657,7 @@ TEST(DDSDiscovery, CheckIncorrectStaticdiscoveryXmlStaticDiscoveryFile)
 
 /**
  * This test checks the incorrect <participant> case of DomainParticipantFactory->check_xml_static_discovery
- * method and checks it returns RETCODE_OK
+ * method and checks it returns RETCODE_ERROR
  */
 TEST(DDSDiscovery, CheckIncorrectParticipantXmlStaticDiscoveryFile)
 {
@@ -695,7 +695,7 @@ TEST(DDSDiscovery, CheckIncorrectParticipantXmlStaticDiscoveryFile)
 
 /**
  * This test checks the incorrect <reader> case of DomainParticipantFactory->check_xml_static_discovery
- * method and checks it returns RETCODE_OK
+ * method and checks it returns RETCODE_ERROR
  */
 TEST(DDSDiscovery, CheckIncorrectReaderXmlStaticDiscoveryFile)
 {
@@ -733,7 +733,7 @@ TEST(DDSDiscovery, CheckIncorrectReaderXmlStaticDiscoveryFile)
 
 /**
  * This test checks the incorrect reader <userId> case of DomainParticipantFactory->check_xml_static_discovery
- * method and checks it returns RETCODE_OK
+ * method and checks it returns RETCODE_ERROR
  */
 TEST(DDSDiscovery, CheckIncorrectReaderUserIDXmlStaticDiscoveryFile)
 {
@@ -770,7 +770,7 @@ TEST(DDSDiscovery, CheckIncorrectReaderUserIDXmlStaticDiscoveryFile)
 }
 /**
  * This test checks the incorrect reader <entityID> case of DomainParticipantFactory->check_xml_static_discovery
- * method and checks it returns RETCODE_OK
+ * method and checks it returns RETCODE_ERROR
  */
 TEST(DDSDiscovery, CheckIncorrectReaderEntityIDXmlStaticDiscoveryFile)
 {
@@ -808,7 +808,7 @@ TEST(DDSDiscovery, CheckIncorrectReaderEntityIDXmlStaticDiscoveryFile)
 
 /**
  * This test checks the incorrect reader <topicName> case of DomainParticipantFactory->check_xml_static_discovery
- * method and checks it returns RETCODE_OK
+ * method and checks it returns RETCODE_ERROR
  */
 TEST(DDSDiscovery, CheckIncorrectReaderTopicNameXmlStaticDiscoveryFile)
 {
@@ -846,7 +846,7 @@ TEST(DDSDiscovery, CheckIncorrectReaderTopicNameXmlStaticDiscoveryFile)
 
 /**
  * This test checks the incorrect data case of DomainParticipantFactory->check_xml_static_discovery
- * method and checks it returns RETCODE_OK
+ * method and checks it returns RETCODE_ERROR
  */
 TEST(DDSDiscovery, CheckIncorrectReaderTopicDataTypeXmlStaticDiscoveryFile)
 {
@@ -884,7 +884,7 @@ TEST(DDSDiscovery, CheckIncorrectReaderTopicDataTypeXmlStaticDiscoveryFile)
 
 /**
  * This test checks the incorrect reader <topicKind> case of DomainParticipantFactory->check_xml_static_discovery
- * method and checks it returns RETCODE_OK
+ * method and checks it returns RETCODE_ERROR
  */
 TEST(DDSDiscovery, CheckIncorrectReaderTopicKindXmlStaticDiscoveryFile)
 {
@@ -922,7 +922,7 @@ TEST(DDSDiscovery, CheckIncorrectReaderTopicKindXmlStaticDiscoveryFile)
 
 /**
  * This test checks the incorrect reader <partitionQos> case of DomainParticipantFactory->check_xml_static_discovery
- * method and checks it returns RETCODE_OK
+ * method and checks it returns RETCODE_ERROR
  */
 TEST(DDSDiscovery, CheckIncorrectReaderPartitionQosXmlStaticDiscoveryFile)
 {
@@ -960,7 +960,7 @@ TEST(DDSDiscovery, CheckIncorrectReaderPartitionQosXmlStaticDiscoveryFile)
 
 /**
  * This test checks the incorrect reader <reliabilityQos> case of DomainParticipantFactory->check_xml_static_discovery
- * method and checks it returns RETCODE_OK
+ * method and checks it returns RETCODE_ERROR
  */
 TEST(DDSDiscovery, CheckIncorrectReaderReliabilityQosXmlStaticDiscoveryFile)
 {
@@ -998,7 +998,7 @@ TEST(DDSDiscovery, CheckIncorrectReaderReliabilityQosXmlStaticDiscoveryFile)
 
 /**
  * This test checks the incorrect reader <durabilityQos> case of DomainParticipantFactory->check_xml_static_discovery
- * method and checks it returns RETCODE_OK
+ * method and checks it returns RETCODE_ERROR
  */
 TEST(DDSDiscovery, CheckIncorrectReaderDurabilityQosXmlStaticDiscoveryFile)
 {
@@ -1036,7 +1036,7 @@ TEST(DDSDiscovery, CheckIncorrectReaderDurabilityQosXmlStaticDiscoveryFile)
 
 /**
  * This test checks the incorrect reader <multicastLocator> case of DomainParticipantFactory->check_xml_static_discovery
- * method and checks it returns RETCODE_OK
+ * method and checks it returns RETCODE_ERROR
  */
 TEST(DDSDiscovery, CheckIncorrectReaderMulticastLocatorXmlStaticDiscoveryFile)
 {
@@ -1074,7 +1074,7 @@ TEST(DDSDiscovery, CheckIncorrectReaderMulticastLocatorXmlStaticDiscoveryFile)
 
 /**
  * This test checks the incorrect <writer> case of DomainParticipantFactory->check_xml_static_discovery
- * method and checks it returns RETCODE_OK
+ * method and checks it returns RETCODE_ERROR
  */
 TEST(DDSDiscovery, CheckIncorrectWriterXmlStaticDiscoveryFile)
 {
@@ -1112,7 +1112,7 @@ TEST(DDSDiscovery, CheckIncorrectWriterXmlStaticDiscoveryFile)
 
 /**
  * This test checks the incorrect writer <userId> case of DomainParticipantFactory->check_xml_static_discovery
- * method and checks it returns RETCODE_OK
+ * method and checks it returns RETCODE_ERROR
  */
 TEST(DDSDiscovery, CheckIncorrectWriterUserIDXmlStaticDiscoveryFile)
 {
@@ -1150,7 +1150,7 @@ TEST(DDSDiscovery, CheckIncorrectWriterUserIDXmlStaticDiscoveryFile)
 
 /**
  * This test checks the incorrect writer <entityID> case of DomainParticipantFactory->check_xml_static_discovery
- * method and checks it returns RETCODE_OK
+ * method and checks it returns RETCODE_ERROR
  */
 TEST(DDSDiscovery, CheckIncorrectWriterEntityIDXmlStaticDiscoveryFile)
 {
@@ -1188,7 +1188,7 @@ TEST(DDSDiscovery, CheckIncorrectWriterEntityIDXmlStaticDiscoveryFile)
 
 /**
  * This test checks the incorrect writer <topicName> case of DomainParticipantFactory->check_xml_static_discovery
- * method and checks it returns RETCODE_OK
+ * method and checks it returns RETCODE_ERROR
  */
 TEST(DDSDiscovery, CheckIncorrectWriterTopicNameXmlStaticDiscoveryFile)
 {
@@ -1226,7 +1226,7 @@ TEST(DDSDiscovery, CheckIncorrectWriterTopicNameXmlStaticDiscoveryFile)
 
 /**
  * This test checks the incorrect writer <topicDataType> case of DomainParticipantFactory->check_xml_static_discovery
- * method and checks it returns RETCODE_OK
+ * method and checks it returns RETCODE_ERROR
  */
 TEST(DDSDiscovery, CheckIncorrectWriterTopicDataTypeXmlStaticDiscoveryFile)
 {
@@ -1264,7 +1264,7 @@ TEST(DDSDiscovery, CheckIncorrectWriterTopicDataTypeXmlStaticDiscoveryFile)
 
 /**
  * This test checks the incorrect writer <topicKind> case of DomainParticipantFactory->check_xml_static_discovery
- * method and checks it returns RETCODE_OK
+ * method and checks it returns RETCODE_ERROR
  */
 TEST(DDSDiscovery, CheckIncorrectWriterTopicKindXmlStaticDiscoveryFile)
 {
@@ -1302,7 +1302,7 @@ TEST(DDSDiscovery, CheckIncorrectWriterTopicKindXmlStaticDiscoveryFile)
 
 /**
  * This test checks the incorrect writer <partitionQos> case of DomainParticipantFactory->check_xml_static_discovery
- * method and checks it returns RETCODE_OK
+ * method and checks it returns RETCODE_ERROR
  */
 TEST(DDSDiscovery, CheckIncorrectWriterPartitionQosXmlStaticDiscoveryFile)
 {
@@ -1340,7 +1340,7 @@ TEST(DDSDiscovery, CheckIncorrectWriterPartitionQosXmlStaticDiscoveryFile)
 
 /**
  * This test checks the incorrect writer <reliabilityQos> case of DomainParticipantFactory->check_xml_static_discovery
- * method and checks it returns RETCODE_OK
+ * method and checks it returns RETCODE_ERROR
  */
 TEST(DDSDiscovery, CheckIncorrectWriterReliabilityQosXmlStaticDiscoveryFile)
 {
@@ -1378,7 +1378,7 @@ TEST(DDSDiscovery, CheckIncorrectWriterReliabilityQosXmlStaticDiscoveryFile)
 
 /**
  * This test checks the incorrect writer <durabilityQos> case of DomainParticipantFactory->check_xml_static_discovery
- * method and checks it returns RETCODE_OK
+ * method and checks it returns RETCODE_ERROR
  */
 TEST(DDSDiscovery, CheckIncorrectWriterDurabilityQosXmlStaticDiscoveryFile)
 {
