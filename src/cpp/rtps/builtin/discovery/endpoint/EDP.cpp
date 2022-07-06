@@ -259,17 +259,20 @@ bool EDP::newLocalWriterProxyData(
                 }
 
                 const NetworkFactory& network = mp_RTPSParticipant->network_factory();
+                const auto& watt = writer->getAttributes();
+
                 wpd->guid(writer->getGuid());
                 wpd->key() = wpd->guid();
-                if (writer->getAttributes().multicastLocatorList.empty() &&
-                        writer->getAttributes().unicastLocatorList.empty())
+                if (watt.multicastLocatorList.empty() && watt.unicastLocatorList.empty())
                 {
                     wpd->set_locators(participant_data.default_locators);
                 }
                 else
                 {
-                    wpd->set_multicast_locators(writer->getAttributes().multicastLocatorList, network);
-                    wpd->set_announced_unicast_locators(writer->getAttributes().unicastLocatorList);
+                    wpd->set_multicast_locators(watt.multicastLocatorList, network);
+                    wpd->set_announced_unicast_locators(watt.unicastLocatorList);
+                    fastdds::rtps::ExternalLocatorsProcessor::add_external_locators(*wpd,
+                            watt.external_unicast_locators);
                 }
                 wpd->RTPSParticipantKey() = mp_RTPSParticipant->getGuid();
                 wpd->topicName(att.getTopicName());
@@ -289,14 +292,13 @@ bool EDP::newLocalWriterProxyData(
                 }
                 wpd->typeMaxSerialized(writer->getTypeMaxSerialized());
                 wpd->m_qos.setQos(wqos, true);
-                wpd->userDefinedId(writer->getAttributes().getUserDefinedID());
-                wpd->persistence_guid(writer->getAttributes().persistence_guid);
+                wpd->userDefinedId(watt.getUserDefinedID());
+                wpd->persistence_guid(watt.persistence_guid);
 #if HAVE_SECURITY
                 if (mp_RTPSParticipant->is_secure())
                 {
-                    wpd->security_attributes_ = writer->getAttributes().security_attributes().mask();
-                    wpd->plugin_security_attributes_ =
-                            writer->getAttributes().security_attributes().plugin_endpoint_attributes;
+                    wpd->security_attributes_ = watt.security_attributes().mask();
+                    wpd->plugin_security_attributes_ = watt.security_attributes().plugin_endpoint_attributes;
                 }
                 else
                 {
