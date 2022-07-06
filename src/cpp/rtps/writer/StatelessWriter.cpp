@@ -36,6 +36,7 @@
 #include <rtps/DataSharing/WriterPool.hpp>
 #include <rtps/DataSharing/DataSharingNotifier.hpp>
 #include <rtps/history/CacheChangePool.h>
+#include <rtps/network/ExternalLocatorsProcessor.hpp>
 #include <rtps/RTPSDomainImpl.hpp>
 
 #include "../flowcontrol/FlowController.hpp"
@@ -417,6 +418,8 @@ bool StatelessWriter::wait_for_acknowledgement(
 bool StatelessWriter::matched_reader_add(
         const ReaderProxyData& data)
 {
+    using fastdds::rtps::ExternalLocatorsProcessor::filter_remote_locators;
+
     std::unique_lock<RecursiveTimedMutex> guard(mp_mutex);
     std::unique_lock<LocatorSelectorSender> locator_selector_guard(locator_selector_);
 
@@ -432,6 +435,10 @@ bool StatelessWriter::matched_reader_add(
                     data.remote_locators().multicast,
                     data.m_expectsInlineQos))
                     {
+                        filter_remote_locators(*reader.general_locator_selector_entry(),
+                        m_att.external_unicast_locators, m_att.ignore_non_matching_locators);
+                        filter_remote_locators(*reader.async_locator_selector_entry(),
+                        m_att.external_unicast_locators, m_att.ignore_non_matching_locators);
                         update_reader_info(true);
                     }
                     return true;
@@ -483,6 +490,10 @@ bool StatelessWriter::matched_reader_add(
             data.remote_locators().multicast,
             data.m_expectsInlineQos,
             is_datasharing_compatible_with(data));
+    filter_remote_locators(*new_reader->general_locator_selector_entry(),
+            m_att.external_unicast_locators, m_att.ignore_non_matching_locators);
+    filter_remote_locators(*new_reader->async_locator_selector_entry(),
+            m_att.external_unicast_locators, m_att.ignore_non_matching_locators);
 
     locator_selector_.locator_selector.add_entry(new_reader->general_locator_selector_entry());
 
