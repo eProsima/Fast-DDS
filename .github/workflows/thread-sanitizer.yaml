@@ -9,6 +9,8 @@ on:
       - '**/CMakeLists.txt'
       - '**.[hc]*'
       - '**.cmake'
+      - '**.py*'
+      - '**.ps1'
 
   pull_request:
     branches:
@@ -17,6 +19,8 @@ on:
       - '**/CMakeLists.txt'
       - '**.[hc]*'
       - '**.cmake'
+      - '**.py*'
+      - '**.ps1'
 
 env:
   TSAN_OPTIONS: second_deadlock_stack=1
