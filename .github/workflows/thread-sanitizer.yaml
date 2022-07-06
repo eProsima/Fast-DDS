@@ -1,12 +1,23 @@
 name: Thread Sanitizer analysis
 on:
   workflow_dispatch:
+
   push:
     branches:
       - 'master'
+    paths:
+      - '**/CMakeLists.txt'
+      - '**.[hc]*'
+      - '**.cmake'
+
   pull_request:
     branches:
       - 'master'
+    paths:
+      - '**/CMakeLists.txt'
+      - '**.[hc]*'
+      - '**.cmake'
+
 env:
   TSAN_OPTIONS: second_deadlock_stack=1
   # ubuntu host doesn't have an environment SHELL value (docker and vm images does)???
@@ -19,6 +30,7 @@ defaults:
 jobs:
   ubuntu-sanitizer-run:
     name: Sanitizer Evaluation
+    if: ${{ !contains(github.event.pull_request.labels.*.name, 'no-test') }}
     runs-on: ubuntu-latest
     steps:
       - name: Download the sanitizers cmake module and apply some fixes
