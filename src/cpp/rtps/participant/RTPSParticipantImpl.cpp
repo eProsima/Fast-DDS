@@ -1527,22 +1527,24 @@ bool RTPSParticipantImpl::createAndAssociateReceiverswithEndpoint(
         - Launches the listener thread
      */
 
+    auto& attributes = pend->getAttributes();
     if (unique_flows)
     {
-        pend->getAttributes().multicastLocatorList.clear();
-        pend->getAttributes().unicastLocatorList = m_att.defaultUnicastLocatorList;
+        attributes.multicastLocatorList.clear();
+        attributes.unicastLocatorList = m_att.defaultUnicastLocatorList;
+        attributes.external_unicast_locators.clear();
 
         uint16_t port = initial_unique_port;
         while (port < final_unique_port)
         {
             // Set port on unicast locators
-            for (Locator_t& loc : pend->getAttributes().unicastLocatorList)
+            for (Locator_t& loc : attributes.unicastLocatorList)
             {
                 loc.port = port;
             }
 
             // Try creating receiver resources
-            if (createReceiverResources(pend->getAttributes().unicastLocatorList, false, true))
+            if (createReceiverResources(attributes.unicastLocatorList, false, true))
             {
                 break;
             }
@@ -1564,15 +1566,19 @@ bool RTPSParticipantImpl::createAndAssociateReceiverswithEndpoint(
         // 1 - Ask the network factory to generate the elements that do still not exist
         //Iterate through the list of unicast and multicast locators the endpoint has... unless its empty
         //In that case, just use the standard
-        if (pend->getAttributes().unicastLocatorList.empty() && pend->getAttributes().multicastLocatorList.empty())
+        if (attributes.unicastLocatorList.empty() && attributes.multicastLocatorList.empty())
         {
             // Take default locators from the participant.
-            pend->getAttributes().unicastLocatorList = m_att.defaultUnicastLocatorList;
-            pend->getAttributes().multicastLocatorList = m_att.defaultMulticastLocatorList;
+            attributes.unicastLocatorList = m_att.defaultUnicastLocatorList;
+            attributes.multicastLocatorList = m_att.defaultMulticastLocatorList;
+            attributes.external_unicast_locators = m_att.default_external_unicast_locators;
         }
-        createReceiverResources(pend->getAttributes().unicastLocatorList, false, true);
-        createReceiverResources(pend->getAttributes().multicastLocatorList, false, true);
+        createReceiverResources(attributes.unicastLocatorList, false, true);
+        createReceiverResources(attributes.multicastLocatorList, false, true);
     }
+
+    fastdds::rtps::ExternalLocatorsProcessor::set_listening_locators(attributes.external_unicast_locators,
+            attributes.unicastLocatorList);
 
     // Associate the Endpoint with ReceiverControlBlock
     assignEndpointListenResources(pend);
