@@ -17,17 +17,18 @@
  *
  */
 
-#include <fastdds/rtps/builtin/data/WriterProxyData.h>
-
 #include <rtps/reader/WriterProxy.h>
-#include <fastdds/rtps/reader/StatefulReader.h>
-#include <fastrtps/rtps/writer/RTPSWriter.h>
 
 #include <fastdds/dds/log/Log.hpp>
+
+#include <fastdds/rtps/builtin/data/WriterProxyData.h>
+#include <fastdds/rtps/messages/RTPSMessageCreator.h>
+#include <fastdds/rtps/reader/StatefulReader.h>
+#include <fastdds/rtps/resources/TimedEvent.h>
+
 #include <fastrtps/utils/TimeConversion.h>
 
-#include <fastdds/rtps/resources/TimedEvent.h>
-#include <fastdds/rtps/messages/RTPSMessageCreator.h>
+#include <rtps/network/ExternalLocatorsProcessor.hpp>
 #include <rtps/participant/RTPSParticipantImpl.h>
 
 #include "rtps/RTPSDomainImpl.hpp"
@@ -121,6 +122,8 @@ void WriterProxy::start(
         const SequenceNumber_t& initial_sequence,
         bool is_datasharing)
 {
+    using fastdds::rtps::ExternalLocatorsProcessor::filter_remote_locators;
+
 #ifdef SHOULD_DEBUG_LINUX
     assert(get_mutex_owner() == get_thread_id());
 #endif // SHOULD_DEBUG_LINUX
@@ -138,6 +141,8 @@ void WriterProxy::start(
     liveliness_kind_ = attributes.m_qos.m_liveliness.kind;
     locators_entry_.unicast = attributes.remote_locators().unicast;
     locators_entry_.multicast = attributes.remote_locators().multicast;
+    filter_remote_locators(locators_entry_,
+            reader_->getAttributes().external_unicast_locators, reader_->getAttributes().ignore_non_matching_locators);
     is_datasharing_writer_ = is_datasharing;
     initial_acknack_->restart_timer();
     loaded_from_storage(initial_sequence);
@@ -147,6 +152,8 @@ void WriterProxy::start(
 void WriterProxy::update(
         const WriterProxyData& attributes)
 {
+    using fastdds::rtps::ExternalLocatorsProcessor::filter_remote_locators;
+
 #ifdef SHOULD_DEBUG_LINUX
     assert(get_mutex_owner() == get_thread_id());
 #endif // SHOULD_DEBUG_LINUX
@@ -155,6 +162,8 @@ void WriterProxy::update(
     ownership_strength_ = attributes.m_qos.m_ownershipStrength.value;
     locators_entry_.unicast = attributes.remote_locators().unicast;
     locators_entry_.multicast = attributes.remote_locators().multicast;
+    filter_remote_locators(locators_entry_,
+            reader_->getAttributes().external_unicast_locators, reader_->getAttributes().ignore_non_matching_locators);
 }
 
 void WriterProxy::stop()

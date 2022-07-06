@@ -33,6 +33,7 @@ target_compile_definitions(WriterProxyTests PRIVATE FASTRTPS_NO_LIB
 target_include_directories(WriterProxyTests PRIVATE
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/reader
     ${PROJECT_SOURCE_DIR}/test/mock/rtps/Endpoint
+    ${PROJECT_SOURCE_DIR}/test/mock/rtps/ExternalLocatorsProcessor
     ${PROJECT_SOURCE_DIR}/test/mock/rtps/RTPSReader
     ${PROJECT_SOURCE_DIR}/test/mock/rtps/RTPSWriter
     ${PROJECT_SOURCE_DIR}/test/mock/rtps/RTPSParticipantImpl
