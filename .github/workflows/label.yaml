@@ -1,0 +1,17 @@
+name: Label testing
+on:
+    pull_request:
+        label:
+          - created
+
+defaults:
+    run:
+        shell: pwsh
+
+jobs:
+    test-run:
+        name: Testing label check
+        runs-on: ubuntu-latest
+        steps:
+          - name: Download the sanitizers cmake module and apply some fixes
+            run: echo ${{ github.event.label.name }} 
