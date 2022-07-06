@@ -5,22 +5,18 @@ on:
   push:
     branches:
       - 'master'
-    paths:
-      - '**/CMakeLists.txt'
-      - '**.[hc]*'
-      - '**.cmake'
-      - '**.py*'
-      - '**.ps1'
+    paths-ignore:
+      - '**.md'
+      - '**.txt'
+      - '!**/CMakeLists.txt'
 
   pull_request:
     branches:
       - 'master'
-    paths:
-      - '**/CMakeLists.txt'
-      - '**.[hc]*'
-      - '**.cmake'
-      - '**.py*'
-      - '**.ps1'
+    paths-ignore:
+      - '**.md'
+      - '**.txt'
+      - '!**/CMakeLists.txt'
 
 env:
   TSAN_OPTIONS: second_deadlock_stack=1
@@ -34,7 +30,8 @@ defaults:
 jobs:
   ubuntu-sanitizer-run:
     name: Sanitizer Evaluation
-    if: ${{ !contains(github.event.pull_request.labels.*.name, 'no-test') }}
+    if: ${{ !(contains(github.event.pull_request.labels.*.name, 'no-test') ||
+              contains(github.event.pull_request.labels.*.name, 'skip-ci')) }}
     runs-on: ubuntu-latest
     steps:
       - name: Download the sanitizers cmake module and apply some fixes
