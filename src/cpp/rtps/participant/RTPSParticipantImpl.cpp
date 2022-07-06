@@ -56,6 +56,7 @@
 #include <rtps/builtin/discovery/participant/PDPServer.hpp>
 #include <rtps/builtin/discovery/participant/PDPClient.h>
 #include <rtps/history/BasicPayloadPool.hpp>
+#include <rtps/network/ExternalLocatorsProcessor.hpp>
 #include <rtps/persistence/PersistenceService.h>
 #include <statistics/rtps/GuidUtils.hpp>
 
@@ -347,6 +348,12 @@ RTPSParticipantImpl::RTPSParticipantImpl(
     createReceiverResources(m_att.builtin.metatrafficUnicastLocatorList, true, false);
     createReceiverResources(m_att.defaultUnicastLocatorList, true, false);
     createReceiverResources(m_att.defaultMulticastLocatorList, true, false);
+
+    namespace ExternalLocatorsProcessor = fastdds::rtps::ExternalLocatorsProcessor;
+    ExternalLocatorsProcessor::set_listening_locators(m_att.builtin.metatraffic_external_unicast_locators,
+            m_att.builtin.metatrafficUnicastLocatorList);
+    ExternalLocatorsProcessor::set_listening_locators(m_att.default_external_unicast_locators,
+            m_att.defaultUnicastLocatorList);
 
     // Check metatraffic multicast port
     if (0 < m_att.builtin.metatrafficMulticastLocatorList.size() &&
@@ -1223,7 +1230,8 @@ bool RTPSParticipantImpl::registerReader(
 void RTPSParticipantImpl::update_attributes(
         const RTPSParticipantAttributes& patt)
 {
-    bool update_pdp = false;
+    bool local_interfaces_changed = false;
+
     // Check if new interfaces have been added
     if (internal_metatraffic_locators_)
     {
@@ -1231,8 +1239,7 @@ void RTPSParticipantImpl::update_attributes(
         get_default_metatraffic_locators();
         if (!(metatraffic_unicast_locator_list == m_att.builtin.metatrafficUnicastLocatorList))
         {
-            update_pdp = true;
-            m_network_Factory.update_network_interfaces();
+            local_interfaces_changed = true;
             logInfo(RTPS_PARTICIPANT, m_att.getName() << " updated its metatraffic locators");
         }
     }
@@ -1242,30 +1249,51 @@ void RTPSParticipantImpl::update_attributes(
         get_default_unicast_locators();
         if (!(default_unicast_locator_list == m_att.defaultUnicastLocatorList))
         {
-            update_pdp = true;
+            local_interfaces_changed = true;
             logInfo(RTPS_PARTICIPANT, m_att.getName() << " updated default unicast locator list, current locators: "
                                                       << m_att.defaultUnicastLocatorList);
         }
     }
 
+    if (local_interfaces_changed)
+    {
+        m_network_Factory.update_network_interfaces();
+    }
+
     auto pdp = mp_builtinProtocols->mp_PDP;
+    bool update_pdp = false;
 
     // Check if there are changes
     if (patt.builtin.discovery_config.m_DiscoveryServers != m_att.builtin.discovery_config.m_DiscoveryServers
             || patt.userData != m_att.userData
-            || update_pdp)
+            || local_interfaces_changed)
     {
         update_pdp = true;
         std::vector<GUID_t> modified_servers;
         LocatorList_t modified_locators;
 
-        // Update RTPSParticipantAttributes member
+        // Update RTPSParticipantAttributes members
         m_att.userData = patt.userData;
 
         // If there's no PDP don't process Discovery-related attributes.
         if (!pdp)
         {
             return;
+        }
+
+        // Update listening locators on external locators
+        {
+            namespace ExternalLocatorsProcessor = fastdds::rtps::ExternalLocatorsProcessor;
+            if (local_interfaces_changed && internal_metatraffic_locators_)
+            {
+                ExternalLocatorsProcessor::set_listening_locators(m_att.builtin.metatraffic_external_unicast_locators,
+                        m_att.builtin.metatrafficUnicastLocatorList);
+            }
+            if (local_interfaces_changed && internal_default_locators_)
+            {
+                ExternalLocatorsProcessor::set_listening_locators(m_att.default_external_unicast_locators,
+                        m_att.defaultUnicastLocatorList);
+            }
         }
 
         // Check that the remote servers list is consistent: all the already known remote servers must be included in

@@ -58,6 +58,7 @@
 #include <fastdds/dds/log/Log.hpp>
 
 #include <rtps/history/TopicPayloadPoolRegistry.hpp>
+#include <rtps/network/ExternalLocatorsProcessor.hpp>
 
 #include <mutex>
 #include <chrono>
@@ -240,7 +241,9 @@ ParticipantProxyData* PDP::add_participant_proxy_data(
 void PDP::initializeParticipantProxyData(
         ParticipantProxyData* participant_data)
 {
-    participant_data->m_leaseDuration = mp_RTPSParticipant->getAttributes().builtin.discovery_config.leaseDuration;
+    RTPSParticipantAttributes& attributes = mp_RTPSParticipant->getAttributes();
+
+    participant_data->m_leaseDuration = attributes.builtin.discovery_config.leaseDuration;
     //set_VendorId_eProsima(participant_data->m_VendorId);
     participant_data->m_VendorId = c_VendorId_eProsima;
 
@@ -252,7 +255,7 @@ void PDP::initializeParticipantProxyData(
     participant_data->m_availableBuiltinEndpoints |= DISC_BUILTIN_ENDPOINT_PARTICIPANT_SECURE_DETECTOR;
 #endif // if HAVE_SECURITY
 
-    if (mp_RTPSParticipant->getAttributes().builtin.use_WriterLivelinessProtocol)
+    if (attributes.builtin.use_WriterLivelinessProtocol)
     {
         participant_data->m_availableBuiltinEndpoints |= BUILTIN_ENDPOINT_PARTICIPANT_MESSAGE_DATA_WRITER;
         participant_data->m_availableBuiltinEndpoints |= BUILTIN_ENDPOINT_PARTICIPANT_MESSAGE_DATA_READER;
@@ -263,13 +266,13 @@ void PDP::initializeParticipantProxyData(
 #endif // if HAVE_SECURITY
     }
 
-    if (mp_RTPSParticipant->getAttributes().builtin.typelookup_config.use_server)
+    if (attributes.builtin.typelookup_config.use_server)
     {
         participant_data->m_availableBuiltinEndpoints |= BUILTIN_ENDPOINT_TYPELOOKUP_SERVICE_REQUEST_DATA_READER;
         participant_data->m_availableBuiltinEndpoints |= BUILTIN_ENDPOINT_TYPELOOKUP_SERVICE_REPLY_DATA_WRITER;
     }
 
-    if (mp_RTPSParticipant->getAttributes().builtin.typelookup_config.use_client)
+    if (attributes.builtin.typelookup_config.use_client)
     {
         participant_data->m_availableBuiltinEndpoints |= BUILTIN_ENDPOINT_TYPELOOKUP_SERVICE_REQUEST_DATA_WRITER;
         participant_data->m_availableBuiltinEndpoints |= BUILTIN_ENDPOINT_TYPELOOKUP_SERVICE_REPLY_DATA_READER;
@@ -279,11 +282,11 @@ void PDP::initializeParticipantProxyData(
     participant_data->m_availableBuiltinEndpoints |= mp_RTPSParticipant->security_manager().builtin_endpoints();
 #endif // if HAVE_SECURITY
 
-    for (const Locator_t& loc : mp_RTPSParticipant->getAttributes().defaultUnicastLocatorList)
+    for (const Locator_t& loc : attributes.defaultUnicastLocatorList)
     {
         participant_data->default_locators.add_unicast_locator(loc);
     }
-    for (const Locator_t& loc : mp_RTPSParticipant->getAttributes().defaultMulticastLocatorList)
+    for (const Locator_t& loc : attributes.defaultMulticastLocatorList)
     {
         participant_data->default_locators.add_multicast_locator(loc);
     }
@@ -300,7 +303,7 @@ void PDP::initializeParticipantProxyData(
         // If it has not been set, use guid
         if (persistent == c_GuidPrefix_Unknown)
         {
-            persistent = mp_RTPSParticipant->getAttributes().prefix;
+            persistent = attributes.prefix;
         }
 
         // If persistent is set, set it into the participant proxy
@@ -328,9 +331,13 @@ void PDP::initializeParticipantProxyData(
         }
     }
 
-    participant_data->m_participantName = std::string(mp_RTPSParticipant->getAttributes().getName());
+    fastdds::rtps::ExternalLocatorsProcessor::add_external_locators(*participant_data,
+            attributes.builtin.metatraffic_external_unicast_locators,
+            attributes.default_external_unicast_locators);
 
-    participant_data->m_userData = mp_RTPSParticipant->getAttributes().userData;
+    participant_data->m_participantName = std::string(attributes.getName());
+
+    participant_data->m_userData = attributes.userData;
 
 #if HAVE_SECURITY
     IdentityToken* identity_token = nullptr;
