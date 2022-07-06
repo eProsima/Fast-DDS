@@ -26,6 +26,7 @@
 #include <fastrtps/types/DynamicTypeBuilderFactory.h>
 #include <fastrtps/types/TypeObjectFactory.h>
 #include <fastrtps/xmlparser/XMLProfileManager.h>
+#include <fastrtps/xmlparser/XMLEndpointParser.h>
 
 #include <fastdds/domain/DomainParticipantImpl.hpp>
 #include <rtps/history/TopicPayloadPoolRegistry.hpp>
@@ -418,10 +419,13 @@ ReturnCode_t DomainParticipantFactory::load_XML_profiles_string(
 ReturnCode_t DomainParticipantFactory::check_xml_static_discovery(
         std::string& xml_file)
 {
-    // Not suported yet
-    (void)xml_file;
-
-    return ReturnCode_t::RETCODE_UNSUPPORTED;
+    eprosima::fastrtps::xmlparser::XMLEndpointParser parser;
+    if (XMLP_ret::XML_OK != parser.loadXMLFile(xml_file))
+    {
+        logError(DOMAIN, "Error parsing xml file");
+        return ReturnCode_t::RETCODE_ERROR;
+    }
+    return ReturnCode_t::RETCODE_OK;
 }
 
 ReturnCode_t DomainParticipantFactory::get_qos(

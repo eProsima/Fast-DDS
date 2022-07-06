@@ -64,15 +64,28 @@ XMLEndpointParser::~XMLEndpointParser()
 XMLP_ret XMLEndpointParser::loadXMLFile(
         std::string& filename)
 {
-    logInfo(RTPS_EDP, "File: " << filename);
-
     tinyxml2::XMLDocument doc;
-    doc.LoadFile(filename.c_str());
-    tinyxml2::XMLError eResult = doc.LoadFile(filename.c_str());
+    tinyxml2::XMLError eResult;
+
+    if (0 == filename.rfind("data://", 0))
+    {
+        logInfo(RTPS_EDP, filename);
+        eResult = doc.Parse(filename.c_str() + 7, filename.size() - 7);
+    }
+    else if (0 == filename.rfind("file://", 0))
+    {
+        logInfo(RTPS_EDP, filename);
+        eResult = doc.LoadFile(filename.substr(7).c_str());
+    }
+    else
+    {
+        logInfo(RTPS_EDP, "FileName: " << filename);
+        eResult = doc.LoadFile(filename.c_str());
+    }
 
     if (tinyxml2::XML_SUCCESS != eResult)
     {
-        logError(RTPS_EDP, filename << " bad file (bad path?)");
+        logError(RTPS_EDP, filename << " bad file");
         return XMLP_ret::XML_ERROR;
     }
 
@@ -82,7 +95,6 @@ XMLP_ret XMLEndpointParser::loadXMLFile(
         logError(RTPS_EDP, filename << " XML has errors");
         return XMLP_ret::XML_ERROR;
     }
-
 
     tinyxml2::XMLElement* xml_RTPSParticipant = root->FirstChildElement();
 
