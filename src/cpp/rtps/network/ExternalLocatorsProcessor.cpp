@@ -133,6 +133,36 @@ void add_external_locators(
     perform_add_external_locators(data, external_locators);
 }
 
+/**
+ * Checks if the first significant bits of two locator addresses match.
+ *
+ * @param [in] addr1     First address to check.
+ * @param [in] addr2     Second address to check.
+ * @param [in] num_bits  Number of bits to take into account.
+ *
+ * @return true when the first @c num_bits of both addresses are equal, false otherwise.
+ */
+static bool address_matches(
+        const uint8_t* addr1,
+        const uint8_t* addr2,
+        uint64_t num_bits)
+{
+    uint64_t full_bytes = num_bits / 8;
+    if ((0 == full_bytes) || std::equal(addr1, addr1 + full_bytes, addr2))
+    {
+        uint64_t rem_bits = num_bits % 8;
+        if (rem_bits == 0)
+        {
+            return true;
+        }
+
+        uint8_t mask = 0xFF << (8 - rem_bits);
+        return (addr1[full_bytes] & mask) == (addr2[full_bytes] & mask);
+    }
+
+    return false;
+}
+
 static void filter_remote_locators(
         fastrtps::ResourceLimitedVector<Locator>& locators,
         const ExternalLocators& external_locators,
