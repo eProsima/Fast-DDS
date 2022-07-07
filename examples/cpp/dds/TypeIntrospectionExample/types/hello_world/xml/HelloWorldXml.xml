@@ -1,0 +1,8 @@
+<types>
+    <type>
+        <struct name="HelloWorld_TypeIntrospectionExample">
+            <member name="index" type="uint32"/>
+            <member name="message" type="string"/>
+        </struct>
+    </type>
+</types>
