@@ -38,30 +38,48 @@ void set_listening_locators(
     static_cast<void>(listening_locators);
 }
 
+template<typename T>
+static void perform_add_external_locators(
+        T& announced_locators,
+        const ExternalLocators& external_locators)
+{
+    for (const auto& externality_item : external_locators)
+    {
+        // Only add locators with externality greater than 0
+        if (externality_item.first > 0)
+        {
+            for (const auto& cost_item : externality_item.second)
+            {
+                for (const auto& locator : cost_item.second)
+                {
+                    announced_locators.add_unicast_locator(locator);
+                }
+            }
+        }
+    }
+}
+
 void add_external_locators(
         ParticipantProxyData& data,
         const ExternalLocators& metatraffic_external_locators,
         const ExternalLocators& default_external_locators)
 {
-    static_cast<void>(data);
-    static_cast<void>(metatraffic_external_locators);
-    static_cast<void>(default_external_locators);
+    perform_add_external_locators(data.metatraffic_locators, metatraffic_external_locators);
+    perform_add_external_locators(data.default_locators, default_external_locators);
 }
 
 void add_external_locators(
         WriterProxyData& data,
         const ExternalLocators& external_locators)
 {
-    static_cast<void>(data);
-    static_cast<void>(external_locators);
+    perform_add_external_locators(data, external_locators);
 }
 
 void add_external_locators(
         ReaderProxyData& data,
         const ExternalLocators& external_locators)
 {
-    static_cast<void>(data);
-    static_cast<void>(external_locators);
+    perform_add_external_locators(data, external_locators);
 }
 
 void filter_remote_locators(
