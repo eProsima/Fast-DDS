@@ -53,6 +53,7 @@ bool HelloWorldPublisher::init()
     if (RETCODE_OK !=
             DomainParticipantFactory::get_instance()->get_dynamic_type_builder_from_xml_by_name("HelloWorld",
             dyn_type))
+    // if (XMLProfileManager::getDynamicTypeByName(dyn_type, "HelloWorldDyn") != XMLP_ret::XML_OK ) // TODO: review
     {
         std::cout <<
             "Error getting dynamic type \"HelloWorld\"." << std::endl;
