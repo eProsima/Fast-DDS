@@ -1,0 +1,5 @@
+struct Plain_TypeIntrospectionExample
+{
+	unsigned long index;
+	char message[20];
+};
