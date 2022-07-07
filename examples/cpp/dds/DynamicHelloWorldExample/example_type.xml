@@ -1,6 +1,6 @@
 <types>
     <type>
-        <struct name="HelloWorld">
+        <struct name="HelloWorldDyn">
             <member name="message" type="string"/>
             <member name="index" type="uint32"/>
             <member name="array" type="uint32" arrayDimensions="5,2"/>
