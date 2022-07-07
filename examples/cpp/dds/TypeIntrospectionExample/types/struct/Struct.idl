@@ -1,0 +1,13 @@
+
+struct InternalStruct_TypeIntrospectionExample
+{
+    long x_member;
+    long y_member;
+    long z_member;
+};
+
+struct Struct_TypeIntrospectionExample
+{
+	unsigned long index;
+    InternalStruct_TypeIntrospectionExample internal_data;
+};

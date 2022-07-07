@@ -1,0 +1,6 @@
+struct Key_TypeIntrospectionExample
+{
+    @key string instance_key;
+	unsigned long index;
+	long value;
+};
