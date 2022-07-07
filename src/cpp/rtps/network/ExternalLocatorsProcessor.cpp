@@ -195,11 +195,128 @@ static bool match_with_mask(
     return false;
 }
 
+static constexpr uint64_t heuristic_value(
+        uint64_t externality,
+        uint64_t cost)
+{
+    return ((255ull - externality) << 16) | (cost << 8);
+}
+
+static uint64_t heuristic(
+        const Locator& remote_locator,
+        const ExternalLocators& external_locators,
+        bool ignore_non_matching)
+{
+    for (const auto& externality : external_locators)
+    {
+        for (const auto& cost : externality.second)
+        {
+            for (const LocatorWithMask& local_locator : cost.second)
+            {
+                if (match_with_mask(local_locator, remote_locator))
+                {
+                    return heuristic_value(externality.first, cost.first);
+                }
+            }
+        }
+    }
+
+    return ignore_non_matching ? std::numeric_limits<uint64_t>::max() : 0;
+}
+
 static void filter_remote_locators(
         fastrtps::ResourceLimitedVector<Locator>& locators,
         const ExternalLocators& external_locators,
         bool ignore_non_matching)
 {
+    auto compare_locators = [external_locators, ignore_non_matching](const Locator& lhs, const Locator& rhs) -> bool
+            {
+                return heuristic(lhs, external_locators, ignore_non_matching) <
+                       heuristic(rhs, external_locators, ignore_non_matching);
+            };
+
+    /* This will sort the received locators according to the following criteria:
+     * 1. Non-matching locators when not ignored. Heuristic value: 0
+     * 2. Matching locators. Heuristic value: ((255ull - externality) << 16) | (cost << 8)
+     * 3. Non-matching locators when ignored. Heuristic value: max_uint64_t
+     *
+     * The heuristic has been chosen so non-matching locators will never give a value that will be given to a matching
+     * locator. Matching locators will be sorted first by highest externality, then by lowest cost.
+     */
+    std::sort(locators.begin(), locators.end(), compare_locators);
+
+    /* Remove non-matching locators if requested to.
+     * This is done by removing all locators at the end with an heuristic value of max_uint64_t.
+     */
+    if (ignore_non_matching)
+    {
+        while (!locators.empty())
+        {
+            uint64_t h = heuristic(locators.back(), external_locators, ignore_non_matching);
+            if (std::numeric_limits<uint64_t>::max() != h)
+            {
+                break;
+            }
+            locators.pop_back();
+        }
+    }
+
+    // Check what locators to keep
+    auto it = locators.begin();
+
+    // Keep non-matching locators with an heuristic value of 0.
+    if (!ignore_non_matching)
+    {
+        while (it != locators.end() && (0 == heuristic(*it, external_locators, ignore_non_matching)))
+        {
+            ++it;
+        }
+    }
+
+    // Traverse external_locators in heuristic order, checking if certain heuristic value should be ignored
+    for (const auto& externality : external_locators)
+    {
+        for (const auto& cost : externality.second)
+        {
+            // Check if the locators on this heuristic value should be ignored
+            uint64_t entry_heuristic = heuristic_value(externality.first, cost.first);
+            auto end_it = it;
+            size_t num_exactly_matched = 0;
+            while (end_it != locators.end() &&
+                    (entry_heuristic == heuristic(*end_it, external_locators, ignore_non_matching)))
+            {
+                for (const LocatorWithMask& local_locator : cost.second)
+                {
+                    if (std::equal(end_it->address, end_it->address + 16, local_locator.address))
+                    {
+                        ++num_exactly_matched;
+                        break;
+                    }
+                }
+                ++end_it;
+            }
+
+            if (end_it != it)
+            {
+                // There was at least one locator with this heuristic value
+                if (externality.first > 0 &&
+                        num_exactly_matched == cost.second.size() &&
+                        end_it != locators.end() &&
+                        static_cast<size_t>(std::distance(it, end_it)) == num_exactly_matched)
+                {
+                    // All locators on this heuristic were the local locators, ignore this heuristic
+                    it = locators.erase(it, end_it);
+                }
+                else
+                {
+                    // We should keep this locators, remove the rest and return
+                    it = locators.erase(end_it, locators.end());
+                    return;
+                }
+            }
+        }
+    }
+
 }
 
 void filter_remote_locators(
