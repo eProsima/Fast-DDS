@@ -30,12 +30,63 @@ namespace fastdds {
 namespace rtps {
 namespace ExternalLocatorsProcessor {
 
+static void get_mask_and_cost(
+        const Locator& locator,
+        uint8_t& mask,
+        uint8_t& cost)
+{
+    cost = 0;
+    mask = 24;
+
+    switch (locator.kind)
+    {
+        case LOCATOR_KIND_UDPv4:
+        case LOCATOR_KIND_TCPv4:
+            // TODO(MiguelCompany): We should take cost and mask from the routing table
+            cost = 1;
+            break;
+
+        case LOCATOR_KIND_UDPv6:
+        case LOCATOR_KIND_TCPv6:
+            // TODO(MiguelCompany): We should take cost and mask from the routing table
+            cost = 2;
+            break;
+
+        // SHM locators should always match exactly (full 128 bits of the address), and always have the lowest cost
+        case LOCATOR_KIND_SHM:
+            cost = 0;
+            mask = 128;
+            break;
+
+        default:
+            assert(false && "Unexpected locator kind");
+            break;
+    }
+}
+
 void set_listening_locators(
         ExternalLocators& external_locators,
         const LocatorList& listening_locators)
 {
-    static_cast<void>(external_locators);
-    static_cast<void>(listening_locators);
+    // Remove all locators on externality index 0
+    external_locators[0].clear();
+
+    // Add all listening locators to externality index 0
+    for (const auto& listening_locator : listening_locators)
+    {
+        // Get network mask and interface cost from system
+        uint8_t mask = 24;
+        uint8_t cost = 0;
+        get_mask_and_cost(listening_locator, mask, cost);
+
+        // Prepare LocatorWithMask to be added
+        LocatorWithMask locator;
+        static_cast<Locator&>(locator) = listening_locator;
+        locator.mask(mask);
+
+        // Add to externality index 0 with the corresponding cost
+        external_locators[0][cost].push_back(locator);
+    }
 }
 
 template<typename T>
