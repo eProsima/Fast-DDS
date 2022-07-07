@@ -163,6 +163,38 @@ static bool address_matches(
     return false;
 }
 
+/**
+ * Checks if a remote locator matches with a local locator.
+ *
+ * @param [in] local_locator     LocatorWithMask with the matching configuration.
+ * @param [in] remote_locator    Locator being checked.
+ *
+ * @return true when the locators match, false otherwise.
+ */
+static bool match_with_mask(
+        const LocatorWithMask& local_locator,
+        const Locator& remote_locator)
+{
+    if (local_locator.kind == remote_locator.kind)
+    {
+        switch (local_locator.kind)
+        {
+            case LOCATOR_KIND_UDPv4:
+            case LOCATOR_KIND_TCPv4:
+                assert(32 >= local_locator.mask());
+                return address_matches(remote_locator.address + 12, local_locator.address + 12, local_locator.mask());
+
+            case LOCATOR_KIND_UDPv6:
+            case LOCATOR_KIND_TCPv6:
+            case LOCATOR_KIND_SHM:
+                assert(128 >= local_locator.mask());
+                return address_matches(remote_locator.address, local_locator.address, local_locator.mask());
+        }
+    }
+
+    return false;
+}
+
 static void filter_remote_locators(
         fastrtps::ResourceLimitedVector<Locator>& locators,
         const ExternalLocators& external_locators,
