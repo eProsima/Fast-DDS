@@ -133,16 +133,21 @@ void add_external_locators(
     perform_add_external_locators(data, external_locators);
 }
 
+static void filter_remote_locators(
+        fastrtps::ResourceLimitedVector<Locator>& locators,
+        const ExternalLocators& external_locators,
+        bool ignore_non_matching)
+{
+}
+
 void filter_remote_locators(
         ParticipantProxyData& data,
         const ExternalLocators& metatraffic_external_locators,
         const ExternalLocators& default_external_locators,
         bool ignore_non_matching)
 {
-    static_cast<void>(data);
-    static_cast<void>(metatraffic_external_locators);
-    static_cast<void>(default_external_locators);
-    static_cast<void>(ignore_non_matching);
+    filter_remote_locators(data.metatraffic_locators.unicast, metatraffic_external_locators, ignore_non_matching);
+    filter_remote_locators(data.default_locators.unicast, default_external_locators, ignore_non_matching);
 }
 
 void filter_remote_locators(
@@ -150,9 +155,7 @@ void filter_remote_locators(
         const ExternalLocators& external_locators,
         bool ignore_non_matching)
 {
-    static_cast<void>(locators);
-    static_cast<void>(external_locators);
-    static_cast<void>(ignore_non_matching);
+    filter_remote_locators(locators.unicast, external_locators, ignore_non_matching);
 }
 
 } // namespace ExternalLocatorsProcessor
