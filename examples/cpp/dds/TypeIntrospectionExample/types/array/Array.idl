@@ -1,0 +1,5 @@
+struct Array_TypeIntrospectionExample
+{
+	unsigned long index;
+    long points[3];
+};
