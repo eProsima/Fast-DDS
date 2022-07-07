@@ -1,0 +1,21 @@
+<types>
+    <type>
+        <struct name="InternalComplexPoints_TypeIntrospectionExample">
+            <member name="x_member" type="int32"/>
+            <member name="y_member" type="int32"/>
+            <member name="z_member" type="int32"/>
+        </struct>
+    </type>
+    <type>
+        <struct name="InternalComplexMessage_TypeIntrospectionExample">
+            <member name="message" type="string"/>
+        </struct>
+    </type>
+    <type>
+        <struct name="Complex_TypeIntrospectionExample">
+            <member name="index" type="uint32"/>
+            <member name="internal_data" type="nonBasic" nonBasicTypeName="InternalComplexPoints_TypeIntrospectionExample"/>
+            <member name="messages" type="nonBasic" nonBasicTypeName="InternalComplexMessage_TypeIntrospectionExample" arrayDimensions="3"/>
+        </struct>
+    </type>
+</types>

@@ -1,0 +1,15 @@
+<types>
+    <type>
+        <struct name="InternalStruct_TypeIntrospectionExample">
+            <member name="x_member" type="int32"/>
+            <member name="y_member" type="int32"/>
+            <member name="z_member" type="int32"/>
+        </struct>
+    </type>
+    <type>
+        <struct name="Struct_TypeIntrospectionExample">
+            <member name="index" type="uint32"/>
+            <member name="internal_data" type="nonBasic" nonBasicTypeName="InternalStruct_TypeIntrospectionExample"/>
+        </struct>
+    </type>
+</types>

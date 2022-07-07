@@ -1,0 +1,9 @@
+<types>
+    <type>
+        <struct name="Key_TypeIntrospectionExample">
+            <member name="instance_key" type="string"/>
+            <member name="index" type="uint32"/>
+            <member name="value" type="int32"/>
+        </struct>
+    </type>
+</types>

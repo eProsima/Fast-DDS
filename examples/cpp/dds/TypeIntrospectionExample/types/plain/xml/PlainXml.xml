@@ -1,0 +1,8 @@
+<types>
+    <type>
+        <struct name="Plain_TypeIntrospectionExample">
+            <member name="index" type="uint32"/>
+            <member name="message" type="char8"  arrayDimensions="20"/>
+        </struct>
+    </type>
+</types>
