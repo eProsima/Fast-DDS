@@ -463,7 +463,7 @@ bool StatelessReader::processDataMsg(
             if (!change_pool_->reserve_cache(change_to_add))
             {
                 logWarning(RTPS_MSG_IN,
-                        IDSTRING "Reached the specified maximum number samples allowed by this DataReader QoS. Rejecting change for reader: " <<
+                        IDSTRING "Reached the maximum number of samples allowed by this reader's QoS. Rejecting change for reader: " <<
                         m_guid );
                 return false;
             }
