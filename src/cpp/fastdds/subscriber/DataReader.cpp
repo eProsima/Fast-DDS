@@ -255,6 +255,12 @@ uint64_t DataReader::get_unread_count() const
     return impl_->get_unread_count(false);
 }
 
+uint64_t DataReader::get_unread_count(
+        bool mark_as_read) const
+{
+    return impl_->get_unread_count(mark_as_read);
+}
+
 const GUID_t& DataReader::guid()
 {
     return impl_->guid();
