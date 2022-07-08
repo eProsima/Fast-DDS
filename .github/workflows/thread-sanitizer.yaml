@@ -48,7 +48,7 @@ jobs:
       - name: Download googletest and make it sanitizer aware
         run: |
           cd ws
-          git clone https://github.com/google/googletest.git
+          git clone --branch release-1.11.0 https://github.com/google/googletest.git
           cd googletest
           git remote add efork https://github.com/MiguelBarro/googletest.git
           git fetch efork
