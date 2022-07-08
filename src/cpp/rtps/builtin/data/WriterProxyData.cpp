@@ -1026,6 +1026,10 @@ bool WriterProxyData::readFromCDRMessage(
 
 void WriterProxyData::clear()
 {
+#if HAVE_SECURITY
+    security_attributes_ = 0UL;
+    plugin_security_attributes_ = 0UL;
+#endif // if HAVE_SECURITY
     m_guid = c_Guid_Unknown;
     remote_locators_.unicast.clear();
     remote_locators_.multicast.clear();
