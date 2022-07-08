@@ -238,6 +238,9 @@ public:
 
     RTPS_DllAPI uint64_t get_unread_count() const;
 
+    RTPS_DllAPI uint64_t get_unread_count(
+            bool mark_as_read);
+
     /**
      * @return True if the reader expects Inline QOS.
      */

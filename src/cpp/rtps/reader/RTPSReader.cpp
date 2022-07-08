@@ -367,6 +367,25 @@ uint64_t RTPSReader::get_unread_count() const
     return total_unread_;
 }
 
+uint64_t RTPSReader::get_unread_count(
+        bool mark_as_read)
+{
+    std::unique_lock<RecursiveTimedMutex> lock(mp_mutex);
+    uint64_t ret_val = total_unread_;
+
+    if (mark_as_read)
+    {
+        for (auto it = mp_history->changesBegin(); it != mp_history->changesEnd(); ++it)
+        {
+            CacheChange_t* change = *it;
+            change->isRead = false;
+        }
+
+        total_unread_ = 0;
+    }
+    return total_unread_;
+}
+
 bool RTPSReader::is_datasharing_compatible_with(
         const WriterProxyData& wdata)
 {
