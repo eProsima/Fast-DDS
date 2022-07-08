@@ -462,7 +462,9 @@ bool StatelessReader::processDataMsg(
             CacheChange_t* change_to_add = nullptr;
             if (!change_pool_->reserve_cache(change_to_add))
             {
-                logError(RTPS_MSG_IN, IDSTRING "Problem reserving CacheChange in reader: " << m_guid);
+                logWarning(RTPS_MSG_IN,
+                        IDSTRING "Reached the specified maximum number samples allowed by this DataReader QoS. Rejecting change for reader: " <<
+                        m_guid );
                 return false;
             }
 
