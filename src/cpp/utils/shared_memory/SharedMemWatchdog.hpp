@@ -15,11 +15,12 @@
 #ifndef _FASTDDS_SHAREDMEM_WATCHDOG_H_
 #define _FASTDDS_SHAREDMEM_WATCHDOG_H_
 
-#include <thread>
+#include <atomic>
 #include <condition_variable>
-#include <mutex>
-#include <unordered_set>
 #include <memory>
+#include <mutex>
+#include <thread>
+#include <unordered_set>
 
 namespace eprosima {
 namespace fastdds {
@@ -96,7 +97,7 @@ private:
     std::mutex wake_run_mutex_;
     bool wake_run_;
 
-    bool exit_thread_;
+    std::atomic_bool exit_thread_;
 
     SharedMemWatchdog()
         : wake_run_(false)
