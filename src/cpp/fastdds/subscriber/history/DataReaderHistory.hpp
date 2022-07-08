@@ -215,6 +215,16 @@ public:
             std::chrono::steady_clock::time_point& next_deadline_us);
 
     /**
+     * Get the number of samples pending to be read.
+     *
+     * @param mark_as_read  Whether the unread samples should be marked as read or not.
+     *
+     * @return the number of samples on the reader history that have never been read.
+     */
+    uint64_t get_unread_count(
+            bool mark_as_read);
+
+    /**
      * @brief Get the list of changes corresponding to an instance handle.
      * @param handle The handle to the instance.
      * @param exact  Indicates if the handle should match exactly (true) or if the first instance greater than the
