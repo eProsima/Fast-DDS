@@ -288,8 +288,10 @@ bool LivelinessManager::assert_liveliness(
 
 bool LivelinessManager::calculate_next()
 {
+    std::unique_lock<std::mutex> lock(mutex_);
     timer_owner_ = nullptr;
-
+    lock.unlock();
+    
     steady_clock::time_point min_time = steady_clock::now() + nanoseconds(c_TimeInfinite.to_ns());
 
     bool any_alive = false;
