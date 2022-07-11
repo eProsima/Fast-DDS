@@ -383,7 +383,7 @@ uint64_t RTPSReader::get_unread_count(
 
         total_unread_ = 0;
     }
-    return total_unread_;
+    return ret_val;
 }
 
 bool RTPSReader::is_datasharing_compatible_with(
