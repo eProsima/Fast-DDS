@@ -33,7 +33,7 @@ LivelinessManager::LivelinessManager(
 
 LivelinessManager::~LivelinessManager()
 {
-    std::unique_lock<std::mutex> lock(mutex_);
+    std::lock_guard<std::mutex> _(mutex_);
     timer_owner_ = nullptr;
     timer_.cancel_timer();
 }
@@ -52,12 +52,11 @@ bool LivelinessManager::add_writer(
     {
         // collection guard
         std::lock_guard<shared_mutex> _(col_mutex_);
+        // writers_ elements guard
+        std::lock_guard<std::mutex> __(mutex_);
 
         for (LivelinessData& writer : writers_)
         {
-            // writers_ elements guard
-            std::lock_guard<std::mutex> __(mutex_);
-
             if (writer.guid == guid &&
                     writer.kind == kind &&
                     writer.lease_duration == lease_duration)
@@ -101,11 +100,11 @@ bool LivelinessManager::remove_writer(
     {
         // collection guard
         std::lock_guard<shared_mutex> _(col_mutex_);
+        // writers_ elements guard
+        std::lock_guard<std::mutex> __(mutex_);
 
         removed = writers_.remove_if([guid, kind, lease_duration, &status, this](LivelinessData& writer)
                         {
-                            // writers_ elements guard
-                            std::lock_guard<std::mutex> _(mutex_);
                             status = writer.status;
                             return writer.guid == guid &&
                             writer.kind == kind &&
@@ -288,22 +287,18 @@ bool LivelinessManager::assert_liveliness(
 
 bool LivelinessManager::calculate_next()
 {
-    std::unique_lock<std::mutex> lock(mutex_);
-    timer_owner_ = nullptr;
-    lock.unlock();
-    
-    steady_clock::time_point min_time = steady_clock::now() + nanoseconds(c_TimeInfinite.to_ns());
+    // Keep this lock order to prevent ABBA deadlocks
+    shared_lock<shared_mutex> _(col_mutex_);
+    std::lock_guard<std::mutex> __(mutex_);
 
     bool any_alive = false;
+    steady_clock::time_point min_time = steady_clock::now() + nanoseconds(c_TimeInfinite.to_ns());
+
+    timer_owner_ = nullptr;
 
     // collection guard
-    shared_lock<shared_mutex> _(col_mutex_);
-
     for (LivelinessData& writer : writers_)
     {
-        // writers_ elements guard
-        std::lock_guard<std::mutex> __(mutex_);
-
         if (writer.status == LivelinessData::WriterStatus::ALIVE)
         {
             if (writer.time < min_time)
@@ -364,12 +359,12 @@ bool LivelinessManager::timer_expired()
 bool LivelinessManager::is_any_alive(
         LivelinessQosPolicyKind kind)
 {
+    // Keep this lock order to prevent ABBA deadlocks
     shared_lock<shared_mutex> _(col_mutex_);
+    std::lock_guard<std::mutex> __(mutex_);
 
     for (const auto& writer : writers_)
     {
-        std::unique_lock<std::mutex> lock(mutex_);
-
         if (writer.kind == kind && writer.status == LivelinessData::WriterStatus::ALIVE)
         {
             return true;
