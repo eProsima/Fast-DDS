@@ -160,15 +160,15 @@ macro(add_blackbox_gtest)
 
         # add filtering statement if required
         if(GTEST_IGNORE)
-            set(command "${command} --gtest_filter=${GTEST_IGNORE}")
+            set(gtest_filter "--gtest_filter=${GTEST_IGNORE}")
         endif()
 
-        add_test(NAME ${test} COMMAND ${command})
+        add_test(NAME ${test} COMMAND ${command} ${gtest_filter})
 
         # Add environment
         if(WIN32)
             set(WIN_PATH "$ENV{PATH}")
-            get_target_property(LINK_LIBRARIES_ ${command} LINK_LIBRARIES)
+            get_target_property(LINK_LIBRARIES_ ${test} LINK_LIBRARIES)
             if(NOT "${LINK_LIBRARIES_}" STREQUAL "LINK_LIBRARIES_-NOTFOUND")
                 foreach(LIBRARY_LINKED ${LINK_LIBRARIES_})
                     if(TARGET ${LIBRARY_LINKED})
@@ -189,6 +189,8 @@ macro(add_blackbox_gtest)
 
         # Add labels
         set_property(TEST ${test} PROPERTY LABELS "${GTEST_LABELS}")
+
+        unset(gtest_filter)
     endif()
 endmacro()
 
