@@ -566,49 +566,44 @@ std::pair<bool, DataReaderHistory::instance_info> DataReaderHistory::lookup_avai
         const InstanceHandle_t& handle,
         bool exact)
 {
+    InstanceCollection::iterator it = data_available_instances_.end();
+
     if (!has_keys_)
     {
-        if (handle.isDefined())
+        // NO_KEY topics can only return the ficticious instance.
+        // Execution can only get here for two reasons:
+        // - Looking for a specific instance (exact = true)
+        // - Looking for the next instance to the ficticious one (exact = false)
+        // In both cases, no instance should be returned
+        if (!handle.isDefined() && !exact)
         {
-            // NO_KEY topics can only return the ficticious instance.
-            // Execution can only get here for two reasons:
-            // - Looking for a specific instance (exact = true)
-            // - Looking for the next instance to the ficticious one (exact = false)
-            // In both cases, no instance should be returned
-            return { false, data_available_instances_.end() };
+            // Looking for the first instance, return the ficticious one containing all changes
+            it = data_available_instances_.begin();
         }
-
-        if (exact)
-        {
-            // Looking for HANDLE_NIL, nothing to return
-            return { false, data_available_instances_.end() };
-        }
-
-        // Looking for the first instance, return the ficticious one containing all changes
-        InstanceHandle_t tmp;
-        tmp.value[0] = 1;
-        return { true, data_available_instances_.begin() };
-    }
-
-    InstanceCollection::iterator it;
-
-    if (exact)
-    {
-        it = data_available_instances_.find(handle);
     }
     else
     {
-        if (!handle.isDefined())
+        if (exact)
         {
-            it = data_available_instances_.begin();
+            // Looking for a specific instance on a topic with key
+            it = data_available_instances_.find(handle);
         }
         else
         {
-            auto comp = [](const InstanceHandle_t& h, const InstanceCollection::value_type& it)
-                    {
-                        return h < it.first;
-                    };
-            it = std::upper_bound(data_available_instances_.begin(), data_available_instances_.end(), handle, comp);
+            if (!handle.isDefined())
+            {
+                // Looking for the first instance on a topic with key
+                it = data_available_instances_.begin();
+            }
+            else
+            {
+                // Looking for an instance with a handle greater than the one on the input
+                auto comp = [](const InstanceHandle_t& h, const InstanceCollection::value_type& it)
+                        {
+                            return h < it.first;
+                        };
+                it = std::upper_bound(data_available_instances_.begin(), data_available_instances_.end(), handle, comp);
+            }
         }
     }
 
