@@ -21,6 +21,7 @@
 #include <fastdds/dds/log/StdoutErrConsumer.hpp>
 #include "mock/MockConsumer.h"
 #include <gtest/gtest.h>
+#include <atomic>
 #include <memory>
 #include <thread>
 #include <chrono>
@@ -62,6 +63,25 @@ public:
 
     std::vector<Log::Entry> HELPER_WaitForEntries(
             uint32_t amount);
+};
+
+class LogConsumerMock : public LogConsumer
+{
+public:
+    LogConsumerMock(
+            std::atomic<unsigned int>& consumed_reference)
+        : logs_consumed_(consumed_reference)
+    {
+    }
+
+    void Consume(
+            const Log::Entry&) override
+    {
+        logs_consumed_++;
+    }
+
+protected:
+    std::atomic<unsigned int>& logs_consumed_;
 };
 
 TEST_F(LogTests, asynchronous_logging)
@@ -520,6 +540,138 @@ std::vector<Log::Entry> LogTests::HELPER_WaitForEntries(
     }
 
     return mockConsumer->ConsumedEntries();
+}
+
+/**
+ * TEST: Test Flush functionality using a custom consumer.
+ *
+ * CASES:
+ * - 1 log Info
+ * - 1 log Warning
+ * - 1 log Error
+ * - N logs
+ */
+TEST_F(LogTests, flush_info)
+{
+    // Set general verbosity
+    Log::SetVerbosity(Log::Info);
+
+    // Create Log Consumer
+    std::atomic<unsigned int> logs_consumed(0);
+    Log::RegisterConsumer(
+        std::unique_ptr<LogConsumerMock>(new LogConsumerMock(logs_consumed)));
+
+    // Raise a log message
+    logInfo(TEST_FLUSH, "Info message");
+
+    // Flush the log
+    Log::Flush();
+
+    // Check that the consumer has the log message
+    ASSERT_EQ(1u, logs_consumed.load());
+}
+
+TEST_F(LogTests, flush_warning)
+{
+    // Set general verbosity
+    Log::SetVerbosity(Log::Info);
+
+    // Create Log Consumer
+    std::atomic<unsigned int> logs_consumed(0);
+    Log::RegisterConsumer(
+        std::unique_ptr<LogConsumerMock>(new LogConsumerMock(logs_consumed)));
+
+    // Raise a log message
+    logWarning(TEST_FLUSH, "Warning message");
+
+    // Flush the log
+    Log::Flush();
+
+    // Check that the consumer has the log message
+    ASSERT_EQ(1u, logs_consumed.load());
+}
+
+TEST_F(LogTests, flush_error)
+{
+    // Set general verbosity
+    Log::SetVerbosity(Log::Info);
+
+    // Create Log Consumer
+    std::atomic<unsigned int> logs_consumed(0);
+    Log::RegisterConsumer(
+        std::unique_ptr<LogConsumerMock>(new LogConsumerMock(logs_consumed)));
+
+    // Raise a log message
+    logError(TEST_FLUSH, "Error message");
+
+    // Flush the log
+    Log::Flush();
+
+    // Check that the consumer has the log message
+    ASSERT_EQ(1u, logs_consumed.load());
+}
+
+TEST_F(LogTests, flush_n)
+{
+    // Set general verbosity
+    Log::SetVerbosity(Log::Info);
+
+    // Create Log Consumer
+    std::atomic<unsigned int> logs_consumed(0);
+    Log::RegisterConsumer(
+        std::unique_ptr<LogConsumerMock>(new LogConsumerMock(logs_consumed)));
+
+    // Raise N messages
+    for (int i = 0; i < 3; i++)
+    {
+        logInfo(TEST_FLUSH, "Info message");
+        logWarning(TEST_FLUSH, "Warning message");
+        logError(TEST_FLUSH, "Error message");
+    }
+
+    // Flush the log
+    Log::Flush();
+
+    // Check that the consumer has the log message
+    ASSERT_EQ(9u, logs_consumed.load());
+}
+
+TEST_F(LogTests, flush_2_info)
+{
+    // Set general verbosity
+    Log::SetVerbosity(Log::Info);
+
+    {
+        // Create Log Consumer
+        std::atomic<unsigned int> logs_consumed(0);
+        Log::RegisterConsumer(
+            std::unique_ptr<LogConsumerMock>(new LogConsumerMock(logs_consumed)));
+
+        // Raise a log message
+        logInfo(TEST_FLUSH, "Info message");
+
+        // Flush the log
+        Log::Flush();
+
+        // Check that the consumer has the log message
+        ASSERT_EQ(1u, logs_consumed.load());
+    }
+
+    {
+        // Create Log Consumer
+        std::atomic<unsigned int> logs_consumed_2(0);
+        Log::RegisterConsumer(
+            std::unique_ptr<LogConsumerMock>(new LogConsumerMock(logs_consumed_2)));
+
+        // Raise a log message
+        logInfo(TEST_FLUSH, "Info message");
+
+        // Flush the log
+        Log::Flush();
+
+        // Check that the consumer has the log message
+        ASSERT_EQ(1u, logs_consumed_2.load());
+    }
 }
 
 int main(

@@ -25,6 +25,7 @@ set(LOG_COMMON_SOURCE
     ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/log/StdoutErrConsumer.cpp
     )
 
+# LOG TEST
 set(LOGTESTS_TEST_SOURCE LogTests.cpp)
 
 set(LOGTESTS_SOURCE
@@ -45,6 +46,7 @@ target_link_libraries(LogTests GTest::gtest ${MOCKS}
     )
 add_gtest(LogTests SOURCES ${LOGTESTS_TEST_SOURCE})
 
+# LOG FILE TEST
 set(LOGFILETESTS_TEST_SOURCE LogFileTests.cpp)
 
 set(LOGFILETESTS_SOURCE
