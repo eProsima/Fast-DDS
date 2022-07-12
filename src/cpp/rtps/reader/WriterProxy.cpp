@@ -98,8 +98,7 @@ WriterProxy::WriterProxy(
             };
     auto acknack_lambda = [this]() -> bool
             {
-                perform_initial_ack_nack();
-                return false;
+                return perform_initial_ack_nack();
             };
 
     heartbeat_response_ = new TimedEvent(event_manager, heartbeat_lambda, 0);
@@ -487,8 +486,10 @@ SequenceNumber_t WriterProxy::next_cache_change_to_be_notified()
     return SequenceNumber_t::unknown();
 }
 
-void WriterProxy::perform_initial_ack_nack() const
+bool WriterProxy::perform_initial_ack_nack() const
 {
+    bool ret_value = false;
+
     // Send initial NACK.
     SequenceNumberSet_t sns(SequenceNumber_t(0, 0));
     if (is_on_same_process_)
@@ -502,8 +503,14 @@ void WriterProxy::perform_initial_ack_nack() const
     }
     else
     {
-        reader_->send_acknack(this, sns, *this, false);
+        if (last_heartbeat_count_ == 0)
+        {
+            reader_->send_acknack(this, sns, *this, false);
+            ret_value = true;
+        }
     }
+
+    return ret_value;
 }
 
 void WriterProxy::perform_heartbeat_response() const
