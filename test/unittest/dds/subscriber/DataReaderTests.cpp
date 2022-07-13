@@ -1550,6 +1550,70 @@ TEST_F(DataReaderTests, read_unread)
     }
 }
 
+/*
+ * This test checks the behaviour of the two overloads of get_unread_count.
+ */
+TEST_F(DataReaderTests, get_unread_count)
+{
+    static const Duration_t time_to_wait(0, 100 * 1000 * 1000);
+    static constexpr int32_t num_samples = 10;
+    static constexpr uint64_t num_samples_check = static_cast<uint64_t>(num_samples);
+
+    const ReturnCode_t& ok_code = ReturnCode_t::RETCODE_OK;
+
+    DataWriterQos writer_qos = DATAWRITER_QOS_DEFAULT;
+    writer_qos.history().kind = KEEP_LAST_HISTORY_QOS;
+    writer_qos.history().depth = num_samples;
+    writer_qos.publish_mode().kind = SYNCHRONOUS_PUBLISH_MODE;
+    writer_qos.reliability().kind = RELIABLE_RELIABILITY_QOS;
+
+    DataReaderQos reader_qos = DATAREADER_QOS_DEFAULT;
+    reader_qos.reliability().kind = RELIABLE_RELIABILITY_QOS;
+    reader_qos.history().kind = KEEP_ALL_HISTORY_QOS;
+    reader_qos.resource_limits().max_instances = 1;
+    reader_qos.resource_limits().max_samples_per_instance = num_samples;
+    reader_qos.resource_limits().max_samples = 3 * num_samples;
+
+    create_instance_handles();
+    create_entities(nullptr, reader_qos, SUBSCRIBER_QOS_DEFAULT, writer_qos);
+
+    FooType data;
+    data.index(0);
+    data.message()[1] = '\0';
+
+    // Send a bunch of samples
+    for (char i = 0; i < num_samples; ++i)
+    {
+        data.message()[0] = i + '0';
+        EXPECT_EQ(ok_code, data_writer_->write(&data, handle_ok_));
+    }
+
+    // Reader should have 10 unread samples
+
+    // There are unread samples, so wait_for_unread should be ok
+    EXPECT_TRUE(data_reader_->wait_for_unread_message(time_to_wait));
+
+    // Calling get_unread_count() several times should always return the same value
+    for (char i = 0; i < num_samples; ++i)
+    {
+        EXPECT_EQ(num_samples_check, data_reader_->get_unread_count());
+    }
+
+    // Calling get_unread_count(false) several times should always return the same value
+    for (char i = 0; i < num_samples; ++i)
+    {
+        EXPECT_EQ(num_samples_check, data_reader_->get_unread_count(false));
+    }
+
+    // Calling get_unread_count(true) once will return the correct value
+    EXPECT_EQ(num_samples_check, data_reader_->get_unread_count(true));
+
+    // All variants should then return 0
+    EXPECT_EQ(0, data_reader_->get_unread_count(true));
+    EXPECT_EQ(0, data_reader_->get_unread_count(false));
+    EXPECT_EQ(0, data_reader_->get_unread_count());
+}
+
 template<typename DataType>
 void lookup_instance_test(
         DataType& data,
