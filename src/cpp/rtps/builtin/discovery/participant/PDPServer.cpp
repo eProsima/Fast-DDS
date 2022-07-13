@@ -400,6 +400,14 @@ void PDPServer::assignRemoteEndpoints(
     bool use_multicast_locators = !mp_RTPSParticipant->getAttributes().builtin.avoid_builtin_multicast ||
             pdata->metatraffic_locators.unicast.empty();
 
+    // Make reliable by default
+    dds::ReliabilityQosPolicyKind reliability_kind = dds::RELIABLE_RELIABILITY_QOS;
+    // Change to best effort for other vendors
+    if (c_VendorId_eProsima != pdata->m_VendorId)
+    {
+        reliability_kind = dds::BEST_EFFORT_RELIABILITY_QOS;
+    }
+
     // only SERVER and CLIENT participants will be received. All builtin must be there
     uint32_t auxendp = endp & DISC_BUILTIN_ENDPOINT_PARTICIPANT_ANNOUNCER;
     if (0 != auxendp)
@@ -412,7 +420,7 @@ void PDPServer::assignRemoteEndpoints(
         temp_writer_data->persistence_guid(pdata->get_persistence_guid());
         temp_writer_data->set_persistence_entity_id(c_EntityId_SPDPWriter);
         temp_writer_data->set_remote_locators(pdata->metatraffic_locators, network, use_multicast_locators);
-        temp_writer_data->m_qos.m_reliability.kind = dds::RELIABLE_RELIABILITY_QOS;
+        temp_writer_data->m_qos.m_reliability.kind = reliability_kind;
         temp_writer_data->m_qos.m_durability.kind = dds::TRANSIENT_LOCAL_DURABILITY_QOS;
         mp_PDPReader->matched_writer_add(*temp_writer_data);
     }
@@ -434,7 +442,7 @@ void PDPServer::assignRemoteEndpoints(
         temp_reader_data->guid().guidPrefix = pdata->m_guid.guidPrefix;
         temp_reader_data->guid().entityId = c_EntityId_SPDPReader;
         temp_reader_data->set_remote_locators(pdata->metatraffic_locators, network, use_multicast_locators);
-        temp_reader_data->m_qos.m_reliability.kind = dds::RELIABLE_RELIABILITY_QOS;
+        temp_reader_data->m_qos.m_reliability.kind = reliability_kind;
         temp_reader_data->m_qos.m_durability.kind = dds::TRANSIENT_LOCAL_DURABILITY_QOS;
         mp_PDPWriter->matched_reader_add(*temp_reader_data);
     }
