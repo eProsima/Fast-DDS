@@ -97,10 +97,14 @@ void PDPServerListener::onNewCacheChangeAdded(
     // DATA(p|Up) sample identity should not be unknown
     if (change->write_params.sample_identity() == SampleIdentity::unknown())
     {
+        change->write_params.sample_identity().writer_guid(change->writerGUID);
+        change->write_params.sample_identity().sequence_number(change->sequenceNumber);
+        /*
         logWarning(RTPS_PDP_LISTENER, "CacheChange_t is not properly identified for client-server operation");
         logInfo(RTPS_PDP_LISTENER, "------------------ PDP SERVER LISTENER END ------------------");
         logInfo(RTPS_PDP_LISTENER, "");
         return;
+        */
     }
 
     // Related_sample_identity could be lost in message delivered, so we set as sample_identity
