@@ -1599,14 +1599,24 @@ TEST_F(DataReaderTests, get_unread_count)
         EXPECT_EQ(num_samples_check, data_reader_->get_unread_count());
     }
 
+    SampleInfo sample_info;
+    ASSERT_EQ(ReturnCode_t::RETCODE_OK, data_reader_->get_first_untaken_info(&sample_info));
+    ASSERT_EQ(SampleStateKind::NOT_READ_SAMPLE_STATE, sample_info.sample_state);
+
     // Calling get_unread_count(false) several times should always return the same value
     for (char i = 0; i < num_samples; ++i)
     {
         EXPECT_EQ(num_samples_check, data_reader_->get_unread_count(false));
     }
 
+    ASSERT_EQ(ReturnCode_t::RETCODE_OK, data_reader_->get_first_untaken_info(&sample_info));
+    ASSERT_EQ(SampleStateKind::NOT_READ_SAMPLE_STATE, sample_info.sample_state);
+
     // Calling get_unread_count(true) once will return the correct value
     EXPECT_EQ(num_samples_check, data_reader_->get_unread_count(true));
+
+    ASSERT_EQ(ReturnCode_t::RETCODE_OK, data_reader_->get_first_untaken_info(&sample_info));
+    ASSERT_EQ(SampleStateKind::READ_SAMPLE_STATE, sample_info.sample_state);
 
     // All variants should then return 0
     EXPECT_EQ(0, data_reader_->get_unread_count(true));
