@@ -1911,6 +1911,7 @@ bool StatefulWriter::process_acknack(
                                         {
                                             // Send heartbeat if requested
                                             send_heartbeat_to_nts(*remote_reader, false, true);
+                                            periodic_hb_event_->restart_timer();
                                         }
                                     }
 
