@@ -394,7 +394,10 @@ protected:
     PublicationMatchedStatus publication_matched_status_;
 
     //! The offered deadline missed status
-    fastrtps::OfferedDeadlineMissedStatus deadline_missed_status_;
+    OfferedDeadlineMissedStatus deadline_missed_status_;
+
+    //! The liveliness lost status
+    LivelinessLostStatus liveliness_lost_status_;
 
     //! The offered incompatible qos status
     OfferedIncompatibleQosStatus offered_incompatible_qos_status_;
@@ -510,6 +513,15 @@ protected:
 
     OfferedIncompatibleQosStatus& update_offered_incompatible_qos(
             PolicyMask incompatible_policies);
+
+    /*!
+     * @brief Updates liveliness lost status.
+     *
+     * @param[in] liveliness_lost_status Liveliness lost status coming from RTPS layer.
+     * @return Current liveliness lost status.
+     */
+    LivelinessLostStatus& update_liveliness_lost_status(
+            const fastrtps::LivelinessLostStatus& liveliness_lost_status);
 
     /**
      * Returns the most appropriate listener to handle the callback for the given status,
