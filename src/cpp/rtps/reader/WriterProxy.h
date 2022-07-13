@@ -360,6 +360,8 @@ private:
     TimedEvent* heartbeat_response_;
     //! Timed event to send initial acknack.
     TimedEvent* initial_acknack_;
+    //! Check initial ack always is sent.
+    bool first_initial_acknack_ = false;
     //! Last Heartbeatcount.
     uint32_t last_heartbeat_count_;
     //!Indicates if the heartbeat has the final flag set.

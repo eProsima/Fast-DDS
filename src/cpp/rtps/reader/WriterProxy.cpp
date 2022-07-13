@@ -503,9 +503,10 @@ bool WriterProxy::perform_initial_ack_nack() const
     }
     else
     {
-        if (last_heartbeat_count_ == 0)
+        if (!first_initial_acknack_ || 0 == last_heartbeat_count_)
         {
             reader_->send_acknack(this, sns, *this, false);
+            first_initial_acknack_ = true;
             ret_value = true;
         }
     }
