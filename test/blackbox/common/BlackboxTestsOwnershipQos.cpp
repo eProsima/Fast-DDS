@@ -856,7 +856,7 @@ TEST_P(OwnershipQos, exclusive_kind_keyed_reliable_deadline)
 }
 
 /*!
- * @test DDS-OWN-UNREG-01 Tests Ownership changes when writer removes himself, in a Reliable communication with
+ * @test DDS-OWN-UNDISC-01 Tests Ownership changes when writer removes himself, in a Reliable communication with
  * Non-Keyed types.
  */
 TEST_P(OwnershipQos, exclusive_kind_non_keyed_reliable_undiscovered_writer)
@@ -961,7 +961,7 @@ TEST_P(OwnershipQos, exclusive_kind_non_keyed_reliable_undiscovered_writer)
 }
 
 /*!
- * @test DDS-OWN-UNREG-02 Tests Ownership changes when writer removes himself, in a Reliable communication with
+ * @test DDS-OWN-UNDISC-02 Tests Ownership changes when writer removes himself, in a Reliable communication with
  * Keyed types.
  */
 TEST_P(OwnershipQos, exclusive_kind_keyed_reliable_undiscovered_writer)
@@ -1143,7 +1143,7 @@ TEST_P(OwnershipQos, exclusive_kind_keyed_reliable_undiscovered_writer)
 }
 
 /*!
- * @test DDS-OWN-UNREG-03 Tests Ownership changes when writer removes himself, in a BestEffort communication with
+ * @test DDS-OWN-UNDISC-03 Tests Ownership changes when writer removes himself, in a BestEffort communication with
  * Non-Keyed types.
  */
 TEST_P(OwnershipQos, exclusive_kind_non_keyed_besteffort_undiscovered_writer)
@@ -1248,7 +1248,7 @@ TEST_P(OwnershipQos, exclusive_kind_non_keyed_besteffort_undiscovered_writer)
 }
 
 /*!
- * @test DDS-OWN-UNREG-04 Tests Ownership changes when writer removes himself, in a BestEffort communication with
+ * @test DDS-OWN-UNDISC-04 Tests Ownership changes when writer removes himself, in a BestEffort communication with
  * Keyed types.
  */
 TEST_P(OwnershipQos, exclusive_kind_keyed_besteffort_undiscovered_writer)
@@ -1413,6 +1413,368 @@ TEST_P(OwnershipQos, exclusive_kind_keyed_besteffort_undiscovered_writer)
     // DW4 is destroyed.
     writer4.destroy();
     reader.wait_writer_undiscovery(2);
+
+    // DW1 sends a sample in instance 1.
+    writer1.send_sample(data.front());
+    data.pop_front();
+    std::this_thread::sleep_for(std::chrono::milliseconds(50));
+
+    // DW1 sends a sample in instance 2.
+    writer1.send_sample(data.front());
+    data.pop_front();
+    std::this_thread::sleep_for(std::chrono::milliseconds(50));
+
+    reader.block_for_at_least(5);
+    ASSERT_EQ(denied_samples.size(), reader.data_not_received().size());
+    ASSERT_EQ(denied_samples, reader.data_not_received());
+}
+
+/*!
+ * @test DDS-OWN-UNREG-01 Tests Ownership changes when writer unregisters an instance, in a Reliable communication with
+ * Keyed types.
+ */
+TEST_P(OwnershipQos, exclusive_kind_keyed_reliable_unregistering_instance)
+{
+
+    PubSubReader<KeyedHelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<KeyedHelloWorldPubSubType> writer1(TEST_TOPIC_NAME);
+    PubSubWriter<KeyedHelloWorldPubSubType> writer2(TEST_TOPIC_NAME);
+    PubSubWriter<KeyedHelloWorldPubSubType> writer3(TEST_TOPIC_NAME);
+    PubSubWriter<KeyedHelloWorldPubSubType> writer4(TEST_TOPIC_NAME);
+
+    reader.ownership_exclusive().reliability(RELIABLE_RELIABILITY_QOS).init();
+    writer1.ownership_strength(1).init();
+    writer2.ownership_strength(2).init();
+    writer3.ownership_strength(3).init();
+    writer4.ownership_strength(4).init();
+
+    ASSERT_TRUE(reader.isInitialized());
+    ASSERT_TRUE(writer1.isInitialized());
+    ASSERT_TRUE(writer2.isInitialized());
+    ASSERT_TRUE(writer3.isInitialized());
+    ASSERT_TRUE(writer4.isInitialized());
+
+    // Wait for discovery.
+    writer1.wait_discovery();
+    writer2.wait_discovery();
+    writer3.wait_discovery();
+    writer4.wait_discovery();
+    reader.wait_discovery(std::chrono::seconds(1), 4);
+
+    auto data = default_keyedhelloworld_data_generator(24);
+    reader.startReception(data);
+
+    decltype(data) denied_samples;
+
+    // DW1 sends a sample in instance 1.
+    InstanceHandle_t instance_1 = writer1.register_instance(data.front());
+    writer1.send_sample(data.front());
+    data.pop_front();
+    writer1.waitForAllAcked(std::chrono::milliseconds(100));
+
+    // DW1 sends a sample in instance 2.
+    InstanceHandle_t instance_2 = writer1.register_instance(data.front());
+    writer1.send_sample(data.front());
+    data.pop_front();
+    writer1.waitForAllAcked(std::chrono::milliseconds(100));
+
+    // DW2 sends a sample in instance 1.
+    writer2.send_sample(data.front());
+    data.pop_front();
+    writer2.waitForAllAcked(std::chrono::milliseconds(100));
+
+    // DW3 sends a sample in instance 2.
+    writer3.send_sample(data.front());
+    data.pop_front();
+    writer3.waitForAllAcked(std::chrono::milliseconds(100));
+
+    // DW1 sends a sample in instance 1.
+    writer1.send_sample(data.front());
+    denied_samples.push_back(data.front());
+    data.pop_front();
+    writer1.waitForAllAcked(std::chrono::milliseconds(100));
+
+    // DW1 sends a sample in instance 2.
+    writer1.send_sample(data.front());
+    denied_samples.push_back(data.front());
+    data.pop_front();
+    writer1.waitForAllAcked(std::chrono::milliseconds(100));
+
+    // DW4 sends a sample in instance 1.
+    writer4.send_sample(data.front());
+    data.pop_front();
+    writer4.waitForAllAcked(std::chrono::milliseconds(100));
+
+    // DW3 sends a sample in instance 2.
+    writer3.send_sample(data.front());
+    data.pop_front();
+    writer3.waitForAllAcked(std::chrono::milliseconds(100));
+
+    // DW1 sends a sample in instance 1.
+    writer1.send_sample(data.front());
+    denied_samples.push_back(data.front());
+    data.pop_front();
+    writer1.waitForAllAcked(std::chrono::milliseconds(100));
+
+    // DW1 sends a sample in instance 2.
+    writer1.send_sample(data.front());
+    denied_samples.push_back(data.front());
+    data.pop_front();
+    writer1.waitForAllAcked(std::chrono::milliseconds(100));
+
+    // DW2 sends a sample in instance 1.
+    writer2.send_sample(data.front());
+    denied_samples.push_back(data.front());
+    data.pop_front();
+    writer2.waitForAllAcked(std::chrono::milliseconds(100));
+
+    // DW3 sends a sample in instance 2.
+    writer3.send_sample(data.front());
+    writer3.waitForAllAcked(std::chrono::milliseconds(100));
+
+    // DW3 unregisters instance 2.
+    writer3.unregister_instance(data.front(), instance_2);
+    data.pop_front();
+
+    // DW1 sends a sample in instance 1.
+    writer1.send_sample(data.front());
+    denied_samples.push_back(data.front());
+    data.pop_front();
+    writer1.waitForAllAcked(std::chrono::milliseconds(100));
+
+    // DW1 sends a sample in instance 2.
+    writer1.send_sample(data.front());
+    data.pop_front();
+    writer1.waitForAllAcked(std::chrono::milliseconds(100));
+
+    // DW2 sends a sample in instance 1.
+    writer2.send_sample(data.front());
+    denied_samples.push_back(data.front());
+    data.pop_front();
+    writer2.waitForAllAcked(std::chrono::milliseconds(100));
+
+    // DW1 sends a sample in instance 2.
+    writer1.send_sample(data.front());
+    data.pop_front();
+    writer1.waitForAllAcked(std::chrono::milliseconds(100));
+
+    // DW4 sends a sample in instance 1.
+    writer4.send_sample(data.front());
+    data.pop_front();
+    writer4.waitForAllAcked(std::chrono::milliseconds(100));
+
+    // DW1 sends a sample in instance 2.
+    writer1.send_sample(data.front());
+    data.pop_front();
+    writer1.waitForAllAcked(std::chrono::milliseconds(100));
+
+    // DW2 unregisters instance 1.
+    writer2.unregister_instance(data.front(), instance_1);
+
+    // DW1 sends a sample in instance 1.
+    writer1.send_sample(data.front());
+    denied_samples.push_back(data.front());
+    data.pop_front();
+    writer1.waitForAllAcked(std::chrono::milliseconds(100));
+
+    // DW1 sends a sample in instance 2.
+    writer1.send_sample(data.front());
+    data.pop_front();
+    writer1.waitForAllAcked(std::chrono::milliseconds(100));
+
+    // DW4 sends a sample in instance 1.
+    writer4.send_sample(data.front());
+    data.pop_front();
+    writer4.waitForAllAcked(std::chrono::milliseconds(100));
+
+    // DW1 sends a sample in instance 2.
+    writer1.send_sample(data.front());
+    data.pop_front();
+    writer1.waitForAllAcked(std::chrono::milliseconds(100));
+
+    // DW4 is destroyed.
+    writer4.unregister_instance(data.front(), instance_1);
+
+    // DW1 sends a sample in instance 1.
+    writer1.send_sample(data.front());
+    data.pop_front();
+    writer1.waitForAllAcked(std::chrono::milliseconds(100));
+
+    // DW1 sends a sample in instance 2.
+    writer1.send_sample(data.front());
+    data.pop_front();
+    writer1.waitForAllAcked(std::chrono::milliseconds(100));
+
+    reader.block_for_at_least(5);
+    ASSERT_EQ(denied_samples.size(), reader.data_not_received().size());
+    ASSERT_EQ(denied_samples, reader.data_not_received());
+}
+
+/*!
+ * @test DDS-OWN-UNREG-02 Tests Ownership changes when writer unregisters an instance, in a BestEffort communication with
+ * Keyed types.
+ */
+TEST_P(OwnershipQos, exclusive_kind_keyed_besteffort_unregistering_instance)
+{
+
+    PubSubReader<KeyedHelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<KeyedHelloWorldPubSubType> writer1(TEST_TOPIC_NAME);
+    PubSubWriter<KeyedHelloWorldPubSubType> writer2(TEST_TOPIC_NAME);
+    PubSubWriter<KeyedHelloWorldPubSubType> writer3(TEST_TOPIC_NAME);
+    PubSubWriter<KeyedHelloWorldPubSubType> writer4(TEST_TOPIC_NAME);
+
+    reader.ownership_exclusive().init();
+    writer1.ownership_strength(1).reliability(BEST_EFFORT_RELIABILITY_QOS).init();
+    writer2.ownership_strength(2).reliability(BEST_EFFORT_RELIABILITY_QOS).init();
+    writer3.ownership_strength(3).reliability(BEST_EFFORT_RELIABILITY_QOS).init();
+    writer4.ownership_strength(4).reliability(BEST_EFFORT_RELIABILITY_QOS).init();
+
+    ASSERT_TRUE(reader.isInitialized());
+    ASSERT_TRUE(writer1.isInitialized());
+    ASSERT_TRUE(writer2.isInitialized());
+    ASSERT_TRUE(writer3.isInitialized());
+    ASSERT_TRUE(writer4.isInitialized());
+
+    // Wait for discovery.
+    writer1.wait_discovery();
+    writer2.wait_discovery();
+    writer3.wait_discovery();
+    writer4.wait_discovery();
+    reader.wait_discovery(std::chrono::seconds(1), 4);
+
+    auto data = default_keyedhelloworld_data_generator(24);
+    reader.startReception(data);
+
+    decltype(data) denied_samples;
+
+    // DW1 sends a sample in instance 1.
+    InstanceHandle_t instance_1 = writer1.register_instance(data.front());
+    writer1.send_sample(data.front());
+    data.pop_front();
+    std::this_thread::sleep_for(std::chrono::milliseconds(50));
+
+    // DW1 sends a sample in instance 2.
+    InstanceHandle_t instance_2 = writer1.register_instance(data.front());
+    writer1.send_sample(data.front());
+    data.pop_front();
+    std::this_thread::sleep_for(std::chrono::milliseconds(50));
+
+    // DW2 sends a sample in instance 1.
+    writer2.send_sample(data.front());
+    data.pop_front();
+    std::this_thread::sleep_for(std::chrono::milliseconds(50));
+
+    // DW3 sends a sample in instance 2.
+    writer3.send_sample(data.front());
+    data.pop_front();
+    std::this_thread::sleep_for(std::chrono::milliseconds(50));
+
+    // DW1 sends a sample in instance 1.
+    writer1.send_sample(data.front());
+    denied_samples.push_back(data.front());
+    data.pop_front();
+    std::this_thread::sleep_for(std::chrono::milliseconds(50));
+
+    // DW1 sends a sample in instance 2.
+    writer1.send_sample(data.front());
+    denied_samples.push_back(data.front());
+    data.pop_front();
+    std::this_thread::sleep_for(std::chrono::milliseconds(50));
+
+    // DW4 sends a sample in instance 1.
+    writer4.send_sample(data.front());
+    data.pop_front();
+    std::this_thread::sleep_for(std::chrono::milliseconds(50));
+
+    // DW3 sends a sample in instance 2.
+    writer3.send_sample(data.front());
+    data.pop_front();
+    std::this_thread::sleep_for(std::chrono::milliseconds(50));
+
+    // DW1 sends a sample in instance 1.
+    writer1.send_sample(data.front());
+    denied_samples.push_back(data.front());
+    data.pop_front();
+    std::this_thread::sleep_for(std::chrono::milliseconds(50));
+
+    // DW1 sends a sample in instance 2.
+    writer1.send_sample(data.front());
+    denied_samples.push_back(data.front());
+    data.pop_front();
+    std::this_thread::sleep_for(std::chrono::milliseconds(50));
+
+    // DW2 sends a sample in instance 1.
+    writer2.send_sample(data.front());
+    denied_samples.push_back(data.front());
+    data.pop_front();
+    std::this_thread::sleep_for(std::chrono::milliseconds(50));
+
+    // DW3 sends a sample in instance 2.
+    writer3.send_sample(data.front());
+    std::this_thread::sleep_for(std::chrono::milliseconds(50));
+
+    // DW3 unregisters instance 2.
+    writer3.unregister_instance(data.front(), instance_2);
+    data.pop_front();
+
+    // DW1 sends a sample in instance 1.
+    writer1.send_sample(data.front());
+    denied_samples.push_back(data.front());
+    data.pop_front();
+    std::this_thread::sleep_for(std::chrono::milliseconds(50));
+
+    // DW1 sends a sample in instance 2.
+    writer1.send_sample(data.front());
+    data.pop_front();
+    std::this_thread::sleep_for(std::chrono::milliseconds(50));
+
+    // DW2 sends a sample in instance 1.
+    writer2.send_sample(data.front());
+    denied_samples.push_back(data.front());
+    data.pop_front();
+    std::this_thread::sleep_for(std::chrono::milliseconds(50));
+
+    // DW1 sends a sample in instance 2.
+    writer1.send_sample(data.front());
+    data.pop_front();
+    std::this_thread::sleep_for(std::chrono::milliseconds(50));
+
+    // DW4 sends a sample in instance 1.
+    writer4.send_sample(data.front());
+    data.pop_front();
+    std::this_thread::sleep_for(std::chrono::milliseconds(50));
+
+    // DW1 sends a sample in instance 2.
+    writer1.send_sample(data.front());
+    data.pop_front();
+    std::this_thread::sleep_for(std::chrono::milliseconds(50));
+
+    // DW2 unregisters instance 1.
+    writer2.unregister_instance(data.front(), instance_1);
+
+    // DW1 sends a sample in instance 1.
+    writer1.send_sample(data.front());
+    denied_samples.push_back(data.front());
+    data.pop_front();
+    std::this_thread::sleep_for(std::chrono::milliseconds(50));
+
+    // DW1 sends a sample in instance 2.
+    writer1.send_sample(data.front());
+    data.pop_front();
+    std::this_thread::sleep_for(std::chrono::milliseconds(50));
+
+    // DW4 sends a sample in instance 1.
+    writer4.send_sample(data.front());
+    data.pop_front();
+    std::this_thread::sleep_for(std::chrono::milliseconds(50));
+
+    // DW1 sends a sample in instance 2.
+    writer1.send_sample(data.front());
+    data.pop_front();
+    std::this_thread::sleep_for(std::chrono::milliseconds(50));
+
+    // DW4 unregisters instance 1.
+    writer4.unregister_instance(data.front(), instance_1);
 
     // DW1 sends a sample in instance 1.
     writer1.send_sample(data.front());
