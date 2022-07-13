@@ -13,8 +13,6 @@
 // limitations under the License.
 //
 
-#define FASTDDS_ENFORCE_LOG_INFO
-
 #include <fastdds/dds/log/Log.hpp>
 #include <fastdds/dds/log/OStreamConsumer.hpp>
 #include <fastdds/dds/log/StdoutConsumer.hpp>
