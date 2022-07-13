@@ -103,7 +103,7 @@ bool LivelinessManager::remove_writer(
         // writers_ elements guard
         std::lock_guard<std::mutex> __(mutex_);
 
-        removed = writers_.remove_if([guid, kind, lease_duration, &status, this](LivelinessData& writer)
+        removed = writers_.remove_if([guid, kind, lease_duration, &status](LivelinessData& writer)
                         {
                             status = writer.status;
                             return writer.guid == guid &&
