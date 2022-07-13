@@ -375,13 +375,16 @@ uint64_t RTPSReader::get_unread_count(
 
     if (mark_as_read)
     {
-        for (auto it = mp_history->changesBegin(); it != mp_history->changesEnd(); ++it)
+        for (auto it = mp_history->changesBegin(); 0 < total_unread_ && it != mp_history->changesEnd(); ++it)
         {
             CacheChange_t* change = *it;
-            change->isRead = false;
+            if (!change->isRead)
+            {
+                change->isRead = true;
+                --total_unread_;
+            }
         }
-
-        total_unread_ = 0;
+        assert(0 == total_unread_);
     }
     return ret_val;
 }
