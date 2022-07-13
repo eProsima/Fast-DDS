@@ -66,6 +66,7 @@ public:
 class LogConsumerMock : public LogConsumer
 {
 public:
+
     LogConsumerMock(
             std::atomic<unsigned int>& consumed_reference)
         : logs_consumed_(consumed_reference)
@@ -79,6 +80,7 @@ public:
     }
 
 protected:
+
     std::atomic<unsigned int>& logs_consumed_;
 };
 
