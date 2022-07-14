@@ -265,29 +265,37 @@ bool StatelessReader::change_received(
         if (mp_history->received_change(change, 0))
         {
             auto payload_length = change->serializedPayload.length;
+            auto guid = change->writerGUID;
+            auto seq = change->sequenceNumber;
 
             Time_t::now(change->reader_info.receptionTimestamp);
             SequenceNumber_t previous_seq = update_last_notified(change->writerGUID, change->sequenceNumber);
             ++total_unread_;
 
-            on_data_notify(change->writerGUID, change->sourceTimestamp);
+            on_data_notify(guid, change->sourceTimestamp);
 
-            if (getListener() != nullptr)
+            auto listener = getListener();
+            if (listener != nullptr)
             {
                 if (SequenceNumber_t{0, 0} != previous_seq)
                 {
-                    assert(previous_seq < change->sequenceNumber);
-                    uint64_t tmp = (change->sequenceNumber - previous_seq).to64long() - 1;
+                    assert(previous_seq < seq);
+                    uint64_t tmp = (seq - previous_seq).to64long() - 1;
                     int32_t lost_samples = tmp > static_cast<uint64_t>(std::numeric_limits<int32_t>::max()) ?
                             std::numeric_limits<int32_t>::max() : static_cast<int32_t>(tmp);
                     if (0 < lost_samples) // There are lost samples.
                     {
-                        getListener()->on_sample_lost(this, lost_samples);
+                        listener->on_sample_lost(this, lost_samples);
                     }
                 }
 
-                // WARNING! This method could destroy the change
-                getListener()->onNewCacheChangeAdded(this, change);
+                // WARNING! These methods could destroy the change
+                bool notify_single = false;
+                listener->on_data_available(this, guid, seq, seq, notify_single);
+                if (notify_single)
+                {
+                    listener->onNewCacheChangeAdded(this, change);
+                }
             }
 
             new_notification_cv_.notify_all();
