@@ -31,7 +31,7 @@ namespace dds {
 
 namespace detail {
 
-struct ReadConditionImpl;
+class ReadConditionImpl;
 
 } // namespace detail
 
@@ -50,8 +50,7 @@ class ReadCondition : public Condition
 {
 public:
 
-    explicit ReadCondition(
-            DataReader* parent);
+     ReadCondition();
 
     ~ReadCondition() override;
 

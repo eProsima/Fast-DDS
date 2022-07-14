@@ -72,6 +72,7 @@ using SampleInfoSeq = LoanableSequence<SampleInfo>;
 namespace detail {
 
 struct ReadTakeCommand;
+class ReadConditionImpl;
 
 } // namespace detail
 
@@ -82,6 +83,7 @@ struct ReadTakeCommand;
 class DataReaderImpl
 {
     friend struct detail::ReadTakeCommand;
+    friend class detail::ReadConditionImpl;
 
 protected:
 
