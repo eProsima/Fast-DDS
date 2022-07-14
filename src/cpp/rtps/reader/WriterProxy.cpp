@@ -481,7 +481,7 @@ bool WriterProxy::perform_initial_ack_nack()
     }
     else
     {
-        if (last_heartbeat_count_ == 0)
+        if (0 == last_heartbeat_count_)
         {
             reader_->send_acknack(this, sns, this, false);
             ret_value = true;
