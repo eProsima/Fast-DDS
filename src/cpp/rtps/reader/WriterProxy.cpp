@@ -468,23 +468,26 @@ bool WriterProxy::perform_initial_ack_nack()
 {
     bool ret_value = false;
 
-    // Send initial NACK.
-    SequenceNumberSet_t sns(SequenceNumber_t(0, 0));
-    if (is_on_same_process_)
+    if (!is_datasharing_writer_)
     {
-        RTPSWriter* writer = RTPSDomainImpl::find_local_writer(guid());
-        if (writer)
+        // Send initial NACK.
+        SequenceNumberSet_t sns(SequenceNumber_t(0, 0));
+        if (is_on_same_process_)
         {
-            bool tmp;
-            writer->process_acknack(guid(), reader_->getGuid(), 1, SequenceNumberSet_t(), false, tmp);
+            RTPSWriter* writer = RTPSDomainImpl::find_local_writer(guid());
+            if (writer)
+            {
+                bool tmp;
+                writer->process_acknack(guid(), reader_->getGuid(), 1, SequenceNumberSet_t(), false, tmp);
+            }
         }
-    }
-    else
-    {
-        if (0 == last_heartbeat_count_)
+        else
         {
-            reader_->send_acknack(this, sns, this, false);
-            ret_value = true;
+            if (0 == last_heartbeat_count_)
+            {
+                reader_->send_acknack(this, sns, this, false);
+                ret_value = true;
+            }
         }
     }
 
