@@ -1000,9 +1000,17 @@ bool StatefulReader::change_received(
                         // initialized using this SequenceNumber_t. Note that on a SERVER the own DATA(p) may be in any
                         // position within the WriterHistory preventing effective data exchange.
                         update_last_notified(a_change->writerGUID, SequenceNumber_t(0, 1));
-                        if (getListener() != nullptr)
+                        auto listener = getListener();
+                        if (listener != nullptr)
                         {
-                            getListener()->onNewCacheChangeAdded((RTPSReader*)this, a_change);
+                            bool notify_single = false;
+                            auto guid = a_change->writerGUID;
+                            auto seq = a_change->sequenceNumber;
+                            listener->on_data_available(this, guid, seq, seq, notify_single);
+                            if (notify_single)
+                            {
+                                listener->onNewCacheChangeAdded(this, a_change);
+                            }
                         }
 
                         return true;
@@ -1082,8 +1090,18 @@ void StatefulReader::NotifyChanges(
         WriterProxy* prox)
 {
     GUID_t proxGUID = prox->guid();
-    update_last_notified(proxGUID, prox->available_changes_max());
+    SequenceNumber_t max_seq = prox->available_changes_max();
+    update_last_notified(proxGUID, max_seq);
     SequenceNumber_t nextChangeToNotify = prox->next_cache_change_to_be_notified();
+
+    auto listener = getListener();
+    bool notify_individual = false;
+    bool new_data_available = (nextChangeToNotify != SequenceNumber_t::unknown()) &&
+            (max_seq >= nextChangeToNotify);
+    if (new_data_available && (nullptr != listener))
+    {
+        listener->on_data_available(this, proxGUID, nextChangeToNotify, max_seq, notify_individual);
+    }
 
     while (nextChangeToNotify != SequenceNumber_t::unknown())
     {
@@ -1097,12 +1115,10 @@ void StatefulReader::NotifyChanges(
 
                 on_data_notify(ch_to_give->writerGUID, ch_to_give->sourceTimestamp);
 
-                if (getListener() != nullptr)
+                if (notify_individual && (nullptr != listener))
                 {
-                    getListener()->onNewCacheChangeAdded((RTPSReader*)this, ch_to_give);
+                    listener->onNewCacheChangeAdded((RTPSReader*)this, ch_to_give);
                 }
-
-                new_notification_cv_.notify_all();
             }
         }
 
@@ -1113,6 +1129,11 @@ void StatefulReader::NotifyChanges(
         }
 
         nextChangeToNotify = prox->next_cache_change_to_be_notified();
+    }
+
+    if (new_data_available)
+    {
+        new_notification_cv_.notify_all();
     }
 }
 
