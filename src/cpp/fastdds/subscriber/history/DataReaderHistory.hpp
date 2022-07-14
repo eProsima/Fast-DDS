@@ -67,7 +67,9 @@ public:
     using instance_info = InstanceCollection::iterator;
 
     /**
-     * Constructor. Requires information about the DataReader.
+     * Constructor.
+     * Requires information about the DataReader.
+     *
      * @param type  Type information. Needed to know if the type is keyed, as long as the maximum serialized size.
      * @param topic Topic description. Topic and type name are used on debug messages.
      * @param qos   DataReaderQoS policy. History related limits are taken from here.
@@ -81,9 +83,11 @@ public:
 
     /**
      * Remove a specific change from the history.
-     * No Thread Safe
+     * No Thread Safe.
+     *
      * @param removal iterator to the CacheChange_t to remove.
      * @param release defaults to true and hints if the CacheChange_t should return to the pool
+     *
      * @return iterator to the next CacheChange_t or end iterator.
      */
     iterator remove_change_nts(
@@ -111,23 +115,31 @@ public:
             bool& will_never_be_accepted) const override;
 
     /**
-     * Called when a change is received by the Subscriber. Will add the change to the history.
+     * Called when a change is received by the RTPS reader.
+     * Will add the change to the history.
+     *
      * @pre Change should not be already present in the history.
+     *
      * @param[in] change The received change
      * @param unknown_missing_changes_up_to Number of missing changes before this one
-     * @return
+     *
+     * @return Whether the operation succeeded.
      */
     bool received_change(
             CacheChange_t* change,
             size_t unknown_missing_changes_up_to) override;
 
-    /*!
-     * Called when a change is received by the Subscriber. Will add the change to the history.
+    /**
+     * Called when a change is received by the RTPS reader.
+     * Will add the change to the history.
+     *
      * @pre Change should not be already present in the history.
+     *
      * @param[in] change The received change
      * @param[in] unknown_missing_changes_up_to Number of missing changes before this one
      * @param[out] rejection_reason In case of been rejected the sample, it will contain the reason of the rejection.
-     * @return
+     *
+     * @return Whether the operation succeeded.
      */
     bool received_change(
             CacheChange_t* change,
@@ -135,22 +147,29 @@ public:
             SampleRejectedStatusKind& rejection_reason) override;
 
     /**
-     * Called when a fragmented change is received completely by the Subscriber. Will find its instance and store it.
+     * Called when a fragmented change is received completely by the RTPS reader.
+     * Will find its instance and store it.
+     *
      * @pre Change should be already present in the history.
+     *
      * @param[in] change The received change
-     * @param[in] unknown_missing_changes_up_to Number of missing changes before this one
-     * @return
+     *
+     * @return Whether the operation succeeded.
      */
     bool completed_change(
             CacheChange_t* change) override;
 
-    /*!
-     * Called when a fragmented change is received completely by the Subscriber. Will find its instance and store it.
+    /**
+     * Called when a fragmented change is received completely by the RTPS reader.
+     * Will find its instance and store it.
+     *
      * @pre Change should be already present in the history.
+     *
      * @param[in] change The received change
      * @param[in] unknown_missing_changes_up_to Number of missing changes before this one
      * @param[out] rejection_reason In case of been rejected the sample, it will contain the reason of the rejection.
-     * @return
+     *
+     * @return Whether the operation succeeded.
      */
     bool completed_change(
             CacheChange_t* change,
@@ -159,24 +178,30 @@ public:
 
     /**
      * @brief Returns information about the first untaken sample.
+     *
      * @param [out] info SampleInfo structure to store first untaken sample information.
-     * @return true if sample info was returned. false if there is no sample to take.
+     *
+     * @return true if sample info was returned, false if there is no sample to take.
      */
     bool get_first_untaken_info(
             SampleInfo& info);
 
     /**
-     * This method is called to remove a change from the SubscriberHistory.
+     * This method is called to remove a change from the DataReaderHistory.
+     *
      * @param change Pointer to the CacheChange_t.
+     *
      * @return True if removed.
      */
     bool remove_change_sub(
             CacheChange_t* change);
 
     /**
-     * This method is called to remove a change from the SubscriberHistory.
+     * This method is called to remove a change from the DataReaderHistory.
+     *
      * @param [in]     change Pointer to the CacheChange_t.
      * @param [in,out] it     Iterator pointing to change on input. Will point to next valid change on output.
+     *
      * @return True if removed.
      */
     bool remove_change_sub(
@@ -197,9 +222,11 @@ public:
             const SequenceNumber_t& last_notified_seq) override;
 
     /**
-     * @brief A method to set the next deadline for the given instance
+     * @brief A method to set the next deadline for the given instance.
+     *
      * @param handle The handle to the instance
      * @param next_deadline_us The time point when the deadline will occur
+     *
      * @return True if the deadline was set correctly
      */
     bool set_next_deadline(
@@ -207,9 +234,11 @@ public:
             const std::chrono::steady_clock::time_point& next_deadline_us);
 
     /**
-     * @brief A method to get the next instance handle that will miss the deadline and the time when the deadline will occur
+     * @brief A method to get the next instance handle that will miss the deadline and the time when the deadline will occur.
+     *
      * @param handle The handle to the instance
      * @param next_deadline_us The time point when the instance will miss the deadline
+     *
      * @return True if the deadline was retrieved successfully
      */
     bool get_next_deadline(
@@ -228,7 +257,9 @@ public:
 
     /**
      * @brief Check whether an instance handle is present in the history.
+     *
      * @param handle The handle of the instance to check.
+     *
      * @return true when the topic has keys and the handle corresponds to an instance present in the history.
      * @return false otherwise.
      */
@@ -236,15 +267,15 @@ public:
             const InstanceHandle_t& handle) const;
 
     /**
-     * @brief Get the list of changes corresponding to an instance handle.
+     * @brief Get an iterator to an instance with available data.
+     *
      * @param handle The handle to the instance.
      * @param exact  Indicates if the handle should match exactly (true) or if the first instance greater than the
      *               input handle should be returned.
+     *
      * @return A pair where:
      *         - @c first is a boolean indicating if an instance was found
-     *         - @c second is a pair where:
-     *           - @c first is the handle of the returned instance
-     *           - @c second is a pointer to a DataReaderInstance that holds information about the returned instance
+     *         - @c second is an iterator to the data available instances collection
      *
      * @remarks When used on a NO_KEY topic, an instance will only be returned when called with
      *          `handle = HANDLE_NIL` and `exact = false`.
@@ -253,6 +284,17 @@ public:
             const InstanceHandle_t& handle,
             bool exact);
 
+    /**
+     * @brief Advance an iterator to an instance with available data to the next instance.
+     *
+     * @param handle        The handle of the instance returned by a previous call to lookup_available_instance or
+     *                      next_available_instance_nts.
+     * @param current_info  The iterator to be advanced.
+     *
+     * @return A pair where:
+     *         - @c first is a boolean indicating if another instance with available data is present
+     *         - @c second is an iterator pointing to the next instance with available data
+     */
     std::pair<bool, instance_info> next_available_instance_nts(
             const InstanceHandle_t& handle,
             const instance_info& current_info);
