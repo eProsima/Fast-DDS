@@ -355,9 +355,8 @@ shared_lock<Mutex>::try_lock()
 
 namespace eprosima {
 
-using shared_mutex = std::shared_mutex;
-template< class Mutex >
-using shared_lock = std::shared_lock<Mutex>;
+using std::shared_mutex;
+using std::shared_lock;
 
 } //namespace eprosima
 
