@@ -285,7 +285,7 @@ public:
             bool exact);
 
     /**
-     * @brief Advance an iterator to an instance with available data to the next instance.
+     * @brief Given an instance advance the iterator to the next instance with available data.
      *
      * @param handle        The handle of the instance returned by a previous call to lookup_available_instance or
      *                      next_available_instance_nts.
