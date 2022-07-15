@@ -14,6 +14,8 @@
 
 // Detect if the share_mutex feature is available
 #if defined(__has_include) && __has_include(<version>) && !defined(__cpp_lib_shared_mutex) || \
+    /* allow users to ignore shared_mutex framework implementation */ \
+    defined(USE_THIRDPARTY_SHARED_MUTEX) || \
     /* deprecated procedure if the good one is not available*/ \
     ( !(defined(__has_include) && __has_include(<version>)) && \
     !(defined(HAVE_CXX17) && HAVE_CXX17) &&  __cplusplus < 201703 )
