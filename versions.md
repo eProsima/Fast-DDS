@@ -1,3 +1,8 @@
+Version 2.7.1
+-------------
+
+* Added a new CMake option to allow users to enforce use of our third party shared_mutex
+
 Version 2.7.0
 -------------
 
