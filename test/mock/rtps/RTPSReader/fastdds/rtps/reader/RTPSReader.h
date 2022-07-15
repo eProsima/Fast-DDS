@@ -115,6 +115,8 @@ public:
 
     MOCK_METHOD0(get_unread_count, uint64_t());
 
+    MOCK_METHOD1(get_unread_count, uint64_t(bool));
+
     MOCK_METHOD1(set_content_filter, void (eprosima::fastdds::rtps::IReaderDataFilter* filter));
 
     // *INDENT-ON*

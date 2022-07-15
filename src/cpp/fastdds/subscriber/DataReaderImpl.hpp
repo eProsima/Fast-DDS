@@ -196,9 +196,14 @@ public:
             SampleInfo* info);
 
     /**
-     * @return the number of samples pending to be read.
+     * Get the number of samples pending to be read.
+     *
+     * @param mark_as_read  Whether the unread samples should be marked as read or not.
+     *
+     * @return the number of samples on the reader history that have never been read.
      */
-    uint64_t get_unread_count() const;
+    uint64_t get_unread_count(
+            bool mark_as_read);
 
     /**
      * Get associated GUID

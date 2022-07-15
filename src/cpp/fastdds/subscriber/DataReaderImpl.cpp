@@ -710,9 +710,10 @@ ReturnCode_t DataReaderImpl::get_first_untaken_info(
     return ReturnCode_t::RETCODE_NO_DATA;
 }
 
-uint64_t DataReaderImpl::get_unread_count() const
+uint64_t DataReaderImpl::get_unread_count(
+        bool mark_as_read)
 {
-    return reader_ ? reader_->get_unread_count() : 0;
+    return reader_ ? history_.get_unread_count(mark_as_read) : 0;
 }
 
 const GUID_t& DataReaderImpl::guid() const

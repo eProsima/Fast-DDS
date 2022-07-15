@@ -545,6 +545,12 @@ bool DataReaderHistory::get_next_deadline(
     return true;
 }
 
+uint64_t DataReaderHistory::get_unread_count(
+        bool mark_as_read)
+{
+    return mp_reader->get_unread_count(mark_as_read);
+}
+
 std::pair<bool, DataReaderHistory::instance_info> DataReaderHistory::lookup_instance(
         const InstanceHandle_t& handle,
         bool exact) const
