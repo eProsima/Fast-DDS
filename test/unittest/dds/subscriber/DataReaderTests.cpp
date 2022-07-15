@@ -1869,11 +1869,10 @@ public:
  * 6. create_readcondition
  * 7. create_querycondition
  * 8. delete_readcondition
- * 9. delete_contained_entities
- * 10. get_matched_publications
- * 11. get_key_value
- * 12. lookup_instance
- * 13. wait_for_historical_data
+ * 9. get_matched_publications
+ * 10. get_key_value
+ * 11. lookup_instance
+ * 12. wait_for_historical_data
  */
 TEST_F(DataReaderUnsupportedTests, UnsupportedDataReaderMethods)
 {
@@ -1891,7 +1890,7 @@ TEST_F(DataReaderUnsupportedTests, UnsupportedDataReaderMethods)
     ASSERT_NE(topic, nullptr);
 
     DataReader* data_reader = subscriber->create_datareader(topic, DATAREADER_QOS_DEFAULT);
-    ASSERT_NE(subscriber, nullptr);
+    ASSERT_NE(data_reader, nullptr);
 
     {
         SampleLostStatus status;
@@ -1997,8 +1996,6 @@ TEST_F(DataReaderUnsupportedTests, UnsupportedDataReaderMethods)
                     previous_handle,
                     nullptr));
     }
-
-    EXPECT_EQ(ReturnCode_t::RETCODE_UNSUPPORTED, data_reader->delete_contained_entities());
 
     std::vector<fastrtps::rtps::InstanceHandle_t> publication_handles;
     EXPECT_EQ(ReturnCode_t::RETCODE_UNSUPPORTED, data_reader->get_matched_publications(publication_handles));
@@ -2106,6 +2103,45 @@ TEST_F(DataReaderTests, read_samples_with_future_changes)
     check_collection(data_seq, true, num_samples, expected_samples);
 
     ASSERT_EQ(publisher_->delete_datawriter(data_writer2), ReturnCode_t::RETCODE_OK);
+}
+
+// Delete contained entities test
+TEST_F(DataReaderTests, delete_contained_entities)
+{
+    DomainParticipant* participant =
+            DomainParticipantFactory::get_instance()->create_participant(0, PARTICIPANT_QOS_DEFAULT);
+    ASSERT_NE(participant, nullptr);
+
+    Subscriber* subscriber = participant->create_subscriber(SUBSCRIBER_QOS_DEFAULT);
+    ASSERT_NE(subscriber, nullptr);
+
+    TypeSupport type(new FooTypeSupport());
+    type.register_type(participant);
+
+    Topic* topic = participant->create_topic("footopic", type.get_type_name(), TOPIC_QOS_DEFAULT);
+    ASSERT_NE(topic, nullptr);
+
+    DataReader* data_reader = subscriber->create_datareader(topic, DATAREADER_QOS_DEFAULT);
+    ASSERT_NE(data_reader, nullptr);
+
+    const std::vector<SampleStateKind> mock_sample_state_kind;
+    const std::vector<ViewStateKind> mock_view_state_kind;
+    const std::vector<InstanceStateKind> mock_instance_states;
+    const std::string mock_query_expression;
+    const std::vector<std::string> mock_query_parameters;
+
+    QueryCondition* query_condition = data_reader->create_querycondition(
+        mock_sample_state_kind,
+        mock_view_state_kind,
+        mock_instance_states,
+        mock_query_expression,
+        mock_query_parameters
+        );
+
+    // To be updated when Query Conditions are available
+    ASSERT_EQ(query_condition, nullptr);
+
+    ASSERT_EQ(data_reader->delete_contained_entities(), ReturnCode_t::RETCODE_OK);
 }
 
 } // namespace dds

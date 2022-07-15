@@ -140,6 +140,11 @@ public:
         return false;
     }
 
+    ReturnCode_t delete_contained_entities()
+    {
+        return impl_->delete_contained_entities();
+    }
+
 protected:
 
     PublisherImpl* impl_;
