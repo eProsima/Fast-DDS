@@ -810,6 +810,16 @@ public:
     RTPS_DllAPI uint64_t get_unread_count() const;
 
     /**
+     * Get the number of samples pending to be read.
+     *
+     * @param mark_as_read  Whether the unread samples should be marked as read or not.
+     *
+     * @return the number of samples on the reader history that have never been read.
+     */
+    RTPS_DllAPI uint64_t get_unread_count(
+            bool mark_as_read) const;
+
+    /**
      * Get associated GUID.
      *
      * @return Associated GUID
