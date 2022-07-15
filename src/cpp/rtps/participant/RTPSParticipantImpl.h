@@ -28,9 +28,6 @@
 #include <mutex>
 #include <sys/types.h>
 
-#include <fastrtps/utils/Semaphore.h>
-#include <fastrtps/utils/shared_mutex.hpp>
-
 #if defined(_WIN32)
 #include <process.h>
 #else
@@ -67,6 +64,9 @@
 #include <fastdds/rtps/security/accesscontrol/ParticipantSecurityAttributes.h>
 #include <rtps/security/SecurityManager.h>
 #endif // if HAVE_SECURITY
+
+#include <fastrtps/utils/Semaphore.h>
+#include <fastrtps/utils/shared_mutex.hpp>
 
 namespace eprosima {
 
