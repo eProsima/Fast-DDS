@@ -720,7 +720,7 @@ TEST(DDSDataSharing, acknack_reception_when_change_removed_by_history)
     reader.history_depth(100)
             .add_user_transport_to_pparams(testTransport)
             .disable_builtin_transport()
-            .datasharing_on(".").loan_sample_validation()
+            .datasharing_on(".")
             .reliability(RELIABLE_RELIABILITY_QOS)
             .durability_kind(TRANSIENT_LOCAL_DURABILITY_QOS)
             .lifespan_period({0, 10})
@@ -733,6 +733,10 @@ TEST(DDSDataSharing, acknack_reception_when_change_removed_by_history)
     writer.wait_discovery();
     reader.wait_discovery();
 
+    // Check that the shared files are created on the correct directory
+    ASSERT_TRUE(check_shared_file(".", reader.datareader_guid()));
+    ASSERT_TRUE(check_shared_file(".", writer.datawriter_guid()));
+
     auto data = default_fixed_sized_data_generator(10);
 
     // Send data
@@ -740,14 +744,156 @@ TEST(DDSDataSharing, acknack_reception_when_change_removed_by_history)
     // In this test all data should be sent.
     ASSERT_TRUE(data.empty());
 
+    auto now = std::chrono::steady_clock::now();
+    writer.waitForAllAcked(std::chrono::milliseconds(10000));
+    ASSERT_LT(std::chrono::steady_clock::now() - now, std::chrono::milliseconds(5000));
+
+    // Destroy reader and writer and see if there are dangling files
+    reader.destroy();
+    writer.destroy();
+
+    // Check that the shared files are created on the correct directory
+    ASSERT_FALSE(check_shared_file(".", reader.datareader_guid()));
+    ASSERT_FALSE(check_shared_file(".", writer.datawriter_guid()));
+}
+
+/*!
+ * @test Regression test for bug #15176. Corner case using `get_unread_count(true)`.
+ */
+TEST(DDSDataSharing, acknack_reception_when_get_unread_count_and_change_removed_by_history)
+{
+    PubSubReader<FixedSizedPubSubType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<FixedSizedPubSubType> writer(TEST_TOPIC_NAME);
+
+    // Disable transports to ensure we are using datasharing
+    auto testTransport = std::make_shared<test_UDPv4TransportDescriptor>();
+    testTransport->dropDataMessagesPercentage = 100;
+
+    writer.history_depth(100)
+            .add_user_transport_to_pparams(testTransport)
+            .disable_builtin_transport()
+            .datasharing_on(".")
+            .reliability(RELIABLE_RELIABILITY_QOS)
+            .init();
+
+    ASSERT_TRUE(writer.isInitialized());
+
+    reader.history_depth(100)
+            .add_user_transport_to_pparams(testTransport)
+            .disable_builtin_transport()
+            .datasharing_on(".")
+            .loan_sample_validation()
+            .reliability(RELIABLE_RELIABILITY_QOS)
+            .durability_kind(TRANSIENT_LOCAL_DURABILITY_QOS)
+            .init();
+
+    ASSERT_TRUE(reader.isInitialized());
+
+    // Because its volatile the durability
+    // Wait for discovery.
+    writer.wait_discovery();
+    reader.wait_discovery();
+
     // Check that the shared files are created on the correct directory
     ASSERT_TRUE(check_shared_file(".", reader.datareader_guid()));
     ASSERT_TRUE(check_shared_file(".", writer.datawriter_guid()));
 
-    reader.startReception(data);
+    auto data = default_fixed_sized_data_generator(2);
+    auto data_recv = data;
+
+    // Send data
+    writer.send_sample(data.front());
+    data.pop_front();
+
+    // Wait to arrive data.
+    std::this_thread::sleep_for(std::chrono::milliseconds(500));
+
+    auto& native_reader = reader.get_native_reader();
+    ASSERT_EQ(1u, native_reader.get_unread_count(true));
+
+    writer.send_sample(data.front());
+
+    // Wait to arrive data.
+    std::this_thread::sleep_for(std::chrono::milliseconds(500));
+
+    reader.startReception(data_recv);
+    reader.block_for_all();
     auto now = std::chrono::steady_clock::now();
     writer.waitForAllAcked(std::chrono::milliseconds(10000));
     ASSERT_LT(std::chrono::steady_clock::now() - now, std::chrono::milliseconds(5000));
+
+    // Destroy reader and writer and see if there are dangling files
+    reader.destroy();
+    writer.destroy();
+
+    // Check that the shared files are created on the correct directory
+    ASSERT_FALSE(check_shared_file(".", reader.datareader_guid()));
+    ASSERT_FALSE(check_shared_file(".", writer.datawriter_guid()));
+}
+
+/*!
+ * @test Regression test for bug #15176. Corner case using `get_unread_count(true)`.
+ */
+TEST(DDSDataSharing, acknack_reception_when_get_unread_count)
+{
+    PubSubReader<FixedSizedPubSubType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<FixedSizedPubSubType> writer(TEST_TOPIC_NAME);
+
+    // Disable transports to ensure we are using datasharing
+    auto testTransport = std::make_shared<test_UDPv4TransportDescriptor>();
+    testTransport->dropDataMessagesPercentage = 100;
+
+    writer.history_depth(100)
+            .add_user_transport_to_pparams(testTransport)
+            .disable_builtin_transport()
+            .datasharing_on(".")
+            .reliability(RELIABLE_RELIABILITY_QOS)
+            .init();
+
+    ASSERT_TRUE(writer.isInitialized());
+
+    reader.history_depth(100)
+            .add_user_transport_to_pparams(testTransport)
+            .disable_builtin_transport()
+            .datasharing_on(".")
+            .loan_sample_validation()
+            .reliability(RELIABLE_RELIABILITY_QOS)
+            .durability_kind(TRANSIENT_LOCAL_DURABILITY_QOS)
+            .init();
+
+    ASSERT_TRUE(reader.isInitialized());
+
+    // Because its volatile the durability
+    // Wait for discovery.
+    writer.wait_discovery();
+    reader.wait_discovery();
+
+    // Check that the shared files are created on the correct directory
+    ASSERT_TRUE(check_shared_file(".", reader.datareader_guid()));
+    ASSERT_TRUE(check_shared_file(".", writer.datawriter_guid()));
+
+    auto data = default_fixed_sized_data_generator(10);
+    auto data_recv = data;
+
+    // Send data
+    writer.send(data);
+    // In this test all data should be sent.
+    ASSERT_TRUE(data.empty());
+
+    // Wait to arrive data.
+    std::this_thread::sleep_for(std::chrono::milliseconds(500));
+
+    auto& native_reader = reader.get_native_reader();
+    ASSERT_EQ(10u, native_reader.get_unread_count(true));
+
+    auto now = std::chrono::steady_clock::now();
+    writer.waitForAllAcked(std::chrono::milliseconds(2000));
+    ASSERT_GE(std::chrono::steady_clock::now() - now, std::chrono::milliseconds(1900));
+
+    reader.startReception(data_recv);
+    reader.block_for_all();
+    writer.waitForAllAcked(std::chrono::milliseconds(2000));
+    ASSERT_LT(std::chrono::steady_clock::now() - now, std::chrono::milliseconds(1900));
 
     // Destroy reader and writer and see if there are dangling files
     reader.destroy();
