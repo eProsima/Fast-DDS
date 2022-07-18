@@ -183,7 +183,7 @@ void Log::run()
                         consumer->Consume(entry);
                     }
                 }
-
+                // This Pop() is also a barrier for Log::Flush wait condition
                 resources_.logs.Pop();
             }
         }

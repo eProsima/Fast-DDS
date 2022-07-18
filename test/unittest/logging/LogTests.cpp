@@ -647,7 +647,7 @@ TEST_F(LogTests, flush_n)
                 logInfo(TEST_FLUSH, "Secondary message " << i);
             }
         }
-    );
+        );
 
     // Raise N messages
     for (unsigned int i = 1; i < n_logs; i++)
@@ -657,7 +657,7 @@ TEST_F(LogTests, flush_n)
 
         // Flush the log
         Log::Flush();
-        ASSERT_GE(logs_consumed.load(), 1);
+        ASSERT_GE(logs_consumed.load(), 1u);
     }
 
     loggind_thread.join();
