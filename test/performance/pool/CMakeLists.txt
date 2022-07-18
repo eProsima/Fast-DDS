@@ -12,20 +12,4 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-find_package(Threads REQUIRED)
-
-if(WIN32)
-    if("${CMAKE_SYSTEM_NAME}" STREQUAL "WindowsStore")
-        add_definitions(-D_WIN32_WINNT=0x0603)
-    else()
-        add_definitions(-D_WIN32_WINNT=0x0601)
-    endif()
-endif()
-
-option(VIDEO_TESTS "Activate the building and execution of performance tests" OFF)
-add_subdirectory(latency)
-add_subdirectory(pool)
-add_subdirectory(throughput)
-if(VIDEO_TESTS)
-    add_subdirectory(video)
-endif()
+add_subdirectory(cache_change)
