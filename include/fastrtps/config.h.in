@@ -63,7 +63,7 @@
 #endif /* ifndef HAVE_SQLITE3 */
 
 // Using thirdparty shared_mutex
-#cmakedefine USE_THIRDPARTY_SHARED_MUTEX
+#cmakedefine01 USE_THIRDPARTY_SHARED_MUTEX
 
 // TLS support
 #ifndef TLS_FOUND
