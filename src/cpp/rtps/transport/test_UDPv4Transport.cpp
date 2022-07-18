@@ -333,26 +333,35 @@ bool test_UDPv4Transport::packet_should_drop(
                     {
                         return true;
                     }
-                    else if (!drop_participant_builtin_topic_data_)
+                    else if (drop_participant_builtin_topic_data_)
                     {
-                        return false;
+                        return true;
                     }
                 }
-                else if ((!drop_publication_builtin_topic_data_ &&
-                        writer_id == fastrtps::rtps::c_EntityId_SEDPPubWriter) ||
-                        (!drop_subscription_builtin_topic_data_ &&
-                        writer_id == fastrtps::rtps::c_EntityId_SEDPSubWriter))
+                else if (writer_id == fastrtps::rtps::c_EntityId_SEDPPubWriter)
                 {
-                    return false;
+                    if (drop_publication_builtin_topic_data_)
+                    {
+                        return true;
+                    }
                 }
-
-                if (should_be_dropped(&drop_data_messages_percentage_))
+                else if (writer_id == fastrtps::rtps::c_EntityId_SEDPSubWriter)
                 {
-                    return true;
+                    if (drop_subscription_builtin_topic_data_)
+                    {
+                        return true;
+                    }
                 }
-                if (drop_data_messages_filter_(cdrMessage))
+                else
                 {
-                    return true;
+                    if (should_be_dropped(&drop_data_messages_percentage_))
+                    {
+                        return true;
+                    }
+                    if (drop_data_messages_filter_(cdrMessage))
+                    {
+                        return true;
+                    }
                 }
 
                 break;

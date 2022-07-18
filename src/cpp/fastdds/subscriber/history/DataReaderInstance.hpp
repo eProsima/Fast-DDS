@@ -154,7 +154,10 @@ struct DataReaderInstance
 
                 current_owner.second = 0;
                 current_owner.first = fastrtps::rtps::c_Guid_Unknown;
-                update_owner();
+                if (ALIVE_INSTANCE_STATE == instance_state)
+                {
+                    update_owner();
+                }
 
                 if (alive_writers.empty() && (InstanceStateKind::ALIVE_INSTANCE_STATE == instance_state))
                 {
@@ -267,7 +270,10 @@ private:
             {
                 current_owner.second = 0;
                 current_owner.first = fastrtps::rtps::c_Guid_Unknown;
-                update_owner();
+                if (ALIVE_INSTANCE_STATE == instance_state)
+                {
+                    update_owner();
+                }
             }
 
             if (alive_writers.empty() && (InstanceStateKind::ALIVE_INSTANCE_STATE == instance_state))
