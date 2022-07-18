@@ -892,6 +892,7 @@ TEST(DDSDataSharing, acknack_reception_when_get_unread_count)
 
     reader.startReception(data_recv);
     reader.block_for_all();
+    now = std::chrono::steady_clock::now();
     writer.waitForAllAcked(std::chrono::milliseconds(2000));
     ASSERT_LT(std::chrono::steady_clock::now() - now, std::chrono::milliseconds(1900));
 
