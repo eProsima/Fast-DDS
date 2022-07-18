@@ -25,13 +25,14 @@
 #include <mutex>
 #include <functional>
 
-#include <fastdds/rtps/common/Guid.h>
 #include <fastdds/rtps/attributes/RTPSParticipantAttributes.h>
 #include <fastdds/rtps/builtin/data/ReaderProxyData.h>
 #include <fastdds/rtps/builtin/data/WriterProxyData.h>
-#include <fastrtps/qos/QosPolicies.h>
-#include <fastrtps/utils/collections/ResourceLimitedVector.hpp>
+#include <fastdds/rtps/common/Guid.h>
 #include <fastdds/rtps/participant/ParticipantDiscoveryInfo.h>
+#include <fastrtps/qos/QosPolicies.h>
+#include <fastrtps/utils/ProxyPool.hpp>
+#include <fastrtps/utils/collections/ResourceLimitedVector.hpp>
 
 namespace eprosima {
 
@@ -357,6 +358,24 @@ public:
      */
     std::list<eprosima::fastdds::rtps::RemoteServerAttributes>& remote_server_attributes();
 
+    /**
+     * Access the temporary proxy pool for reader proxies
+     * @return pool reference
+     */
+    ProxyPool<ReaderProxyData>& get_temporary_reader_proxies_pool()
+    {
+        return temp_reader_proxies_;
+    }
+
+    /**
+     * Access the temporary proxy pool for writer proxies
+     * @return pool reference
+     */
+    ProxyPool<WriterProxyData>& get_temporary_writer_proxies_pool()
+    {
+        return temp_writer_proxies_;
+    }
+
 protected:
 
     //!Pointer to the builtin protocols object.
@@ -397,12 +416,10 @@ protected:
     ReaderHistory* mp_PDPReaderHistory;
     //!Reader payload pool
     std::shared_ptr<ITopicPayloadPool> reader_payload_pool_;
-    //!ReaderProxyData to allow preallocation of remote locators
-    ReaderProxyData temp_reader_data_;
-    //!WriterProxyData to allow preallocation of remote locators
-    WriterProxyData temp_writer_data_;
-    //!To protect temp_writer_data_ and temp_reader_data_
-    std::mutex temp_data_lock_;
+    //! ProxyPool for temporary reader proxies
+    ProxyPool<ReaderProxyData> temp_reader_proxies_;
+    //! ProxyPool for temporary writer proxies
+    ProxyPool<WriterProxyData> temp_writer_proxies_;
     //!Participant data atomic access assurance
     std::recursive_mutex* mp_mutex;
     //!To protect callbacks (ParticipantProxyData&)
