@@ -77,7 +77,6 @@ TEST_P(CacheChangePoolTests, init_pool)
         expected_size = static_cast<size_t>(pool_size ? pool_size : 1u);
     }
 
-    ASSERT_EQ(pool->get_allCachesSize(), expected_size);
     ASSERT_EQ(pool->get_freeCachesSize(), expected_size);
 }
 

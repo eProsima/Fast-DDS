@@ -57,7 +57,7 @@ public:
             UnaryFunction f)
     {
         init(config);
-        std::for_each(all_caches_.begin(), all_caches_.end(), f);
+        std::for_each(free_caches_.begin(), free_caches_.end(), f);
     }
 
     /**
@@ -80,7 +80,7 @@ public:
     //!Get the size of the cache vector; all of them (reserved and not reserved).
     size_t get_allCachesSize()
     {
-        return all_caches_.size();
+        return current_pool_size_;
     }
 
     //!Get the number of free caches.
@@ -117,7 +117,6 @@ private:
     MemoryManagementPolicy_t memory_mode_ = MemoryManagementPolicy_t::DYNAMIC_RESERVE_MEMORY_MODE;
 
     std::vector<CacheChange_t*> free_caches_;
-    std::vector<CacheChange_t*> all_caches_;
 
     bool allocateGroup(
             uint32_t num_caches);
