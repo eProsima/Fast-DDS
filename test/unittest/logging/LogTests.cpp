@@ -34,6 +34,10 @@ public:
 
     LogTests()
     {
+        // Remove all previous log consumers so test msgs do not show off in the console.
+        // NOTE: This is not working because Mock inherits directly from StdOut (dont know why)
+        Log::ClearConsumers();
+
         mockConsumer = new MockConsumer();
 
         Log::RegisterConsumer(std::unique_ptr<LogConsumer>(mockConsumer));
@@ -611,67 +615,52 @@ TEST_F(LogTests, flush_error)
     ASSERT_EQ(1u, logs_consumed.load());
 }
 
+/**
+ * @brief This tests that doing Flush will always wait till the message has been correctly consumed by all consumers
+ *
+ * This test creats a custom consumer, and for N iterations, it raises a log message, and then flushes the log.
+ * After this flush, the internal consumer variable must be raised.
+ *
+ * This tests uses an auxiliary thread to simulate a multithread production of log messages.
+ * This is needed because raising the log in the same thread that is flushed does not fail consistently.
+ * However, adding random delays in the log queue force this error much more often.
+ * The variable is checked to be equal or higher than 1, not just 1, because the consumer will also consume thread logs.
+ *
+ * N = 1000
+ */
 TEST_F(LogTests, flush_n)
 {
     // Set general verbosity
     Log::SetVerbosity(Log::Info);
+    unsigned int n_logs = 1000;
 
     // Create Log Consumer
     std::atomic<unsigned int> logs_consumed(0);
     Log::RegisterConsumer(
         std::unique_ptr<LogConsumerMock>(new LogConsumerMock(logs_consumed)));
 
+    std::thread loggind_thread(
+        [&n_logs]()
+        {
+            for (unsigned int i = 0; i < n_logs; i++)
+            {
+                logInfo(TEST_FLUSH, "Secondary message " << i);
+            }
+        }
+    );
+
     // Raise N messages
-    for (int i = 0; i < 3; i++)
+    for (unsigned int i = 1; i < n_logs; i++)
     {
-        logInfo(TEST_FLUSH, "Info message");
-        logWarning(TEST_FLUSH, "Warning message");
-        logError(TEST_FLUSH, "Error message");
-    }
-
-    // Flush the log
-    Log::Flush();
-
-    // Check that the consumer has the log message
-    ASSERT_EQ(9u, logs_consumed.load());
-}
-
-TEST_F(LogTests, flush_2_info)
-{
-    // Set general verbosity
-    Log::SetVerbosity(Log::Info);
-
-    {
-        // Create Log Consumer
-        std::atomic<unsigned int> logs_consumed(0);
-        Log::RegisterConsumer(
-            std::unique_ptr<LogConsumerMock>(new LogConsumerMock(logs_consumed)));
-
-        // Raise a log message
-        logInfo(TEST_FLUSH, "Info message");
+        logs_consumed.store(0);
+        logInfo(TEST_FLUSH, "Info message " << i);
 
         // Flush the log
         Log::Flush();
-
-        // Check that the consumer has the log message
-        ASSERT_EQ(1u, logs_consumed.load());
+        ASSERT_GE(logs_consumed.load(), 1);
     }
 
-    {
-        // Create Log Consumer
-        std::atomic<unsigned int> logs_consumed_2(0);
-        Log::RegisterConsumer(
-            std::unique_ptr<LogConsumerMock>(new LogConsumerMock(logs_consumed_2)));
-
-        // Raise a log message
-        logInfo(TEST_FLUSH, "Info message");
-
-        // Flush the log
-        Log::Flush();
-
-        // Check that the consumer has the log message
-        ASSERT_EQ(1u, logs_consumed_2.load());
-    }
+    loggind_thread.join();
 }
 
 int main(
