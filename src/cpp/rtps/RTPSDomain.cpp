@@ -330,9 +330,6 @@ RTPSWriter* RTPSDomain::createRTPSWriter(
         {
             return ret_val;
         }
-        {
-            return ret_val;
-        }
     }
 
     return nullptr;

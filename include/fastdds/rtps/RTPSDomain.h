@@ -140,6 +140,7 @@ public:
      * @param p Pointer to the RTPSParticipant.
      * @param watt Writer Attributes.
      * @param payload_pool Shared pointer to the IPayloadPool
+     * @param change_pool Shared pointer to the IChangePool
      * @param hist Pointer to the WriterHistory.
      * @param listen Pointer to the WriterListener.
      * @return Pointer to the created RTPSWriter.
