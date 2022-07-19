@@ -377,9 +377,12 @@ protected:
                 fastrtps::rtps::RTPSReader* reader,
                 const SubscriptionMatchedStatus& info) override;
 
-        void onNewCacheChangeAdded(
+        void on_data_available(
                 fastrtps::rtps::RTPSReader* reader,
-                const fastrtps::rtps::CacheChange_t* const change) override;
+                const fastrtps::rtps::GUID_t& writer_guid,
+                const fastrtps::rtps::SequenceNumber_t& first_sequence,
+                const fastrtps::rtps::SequenceNumber_t& last_sequence,
+                bool& should_notify_individual_changes) override;
 
         void on_liveliness_changed(
                 fastrtps::rtps::RTPSReader* reader,
@@ -474,6 +477,11 @@ protected:
 
     void update_subscription_matched_status(
             const SubscriptionMatchedStatus& status);
+
+    bool on_data_available(
+            const fastrtps::rtps::GUID_t& writer_guid,
+            const fastrtps::rtps::SequenceNumber_t& first_sequence,
+            const fastrtps::rtps::SequenceNumber_t& last_sequence);
 
     /**
      * @brief A method called when a new cache change is added

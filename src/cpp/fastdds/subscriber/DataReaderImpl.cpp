@@ -821,11 +821,16 @@ const DataReaderQos& DataReaderImpl::get_qos() const
     return qos_;
 }
 
-void DataReaderImpl::InnerDataReaderListener::onNewCacheChangeAdded(
-        RTPSReader* /*reader*/,
-        const CacheChange_t* const change_in)
+void DataReaderImpl::InnerDataReaderListener::on_data_available(
+        fastrtps::rtps::RTPSReader* /*reader*/,
+        const fastrtps::rtps::GUID_t& writer_guid,
+        const fastrtps::rtps::SequenceNumber_t& first_sequence,
+        const fastrtps::rtps::SequenceNumber_t& last_sequence,
+        bool& should_notify_individual_changes)
 {
-    if (data_reader_->on_new_cache_change_added(change_in))
+    should_notify_individual_changes = false;
+
+    if (data_reader_->on_data_available(writer_guid, first_sequence, last_sequence))
     {
         auto user_reader = data_reader_->user_datareader_;
 
@@ -930,11 +935,30 @@ void DataReaderImpl::InnerDataReaderListener::on_sample_rejected(
     data_reader_->user_datareader_->get_statuscondition().get_impl()->set_status(notify_status, true);
 }
 
+bool DataReaderImpl::on_data_available(
+        const fastrtps::rtps::GUID_t& writer_guid,
+        const fastrtps::rtps::SequenceNumber_t& first_sequence,
+        const fastrtps::rtps::SequenceNumber_t& last_sequence)
+{
+    bool ret_val = false;
+
+    std::lock_guard<RecursiveTimedMutex> guard(reader_->getMutex());
+    for (auto seq = first_sequence; seq <= last_sequence; ++seq)
+    {
+        CacheChange_t* change = nullptr;
+
+        if (history_.get_change(seq, writer_guid, &change))
+        {
+            ret_val |= on_new_cache_change_added(change);
+        }
+    }
+
+    return ret_val;
+}
+
 bool DataReaderImpl::on_new_cache_change_added(
         const CacheChange_t* const change)
 {
-    std::lock_guard<RecursiveTimedMutex> guard(reader_->getMutex());
-
     if (qos_.deadline().period != c_TimeInfinite)
     {
         if (!history_.set_next_deadline(
