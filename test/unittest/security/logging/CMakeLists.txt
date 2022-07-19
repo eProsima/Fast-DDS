@@ -13,10 +13,7 @@
 # limitations under the License.
 
 if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
-    include(${PROJECT_SOURCE_DIR}/cmake/common/gtest.cmake)
-    check_gtest()
-
-    if(GTEST_FOUND)
+    if(GTest_FOUND)
         if(WIN32)
             add_definitions(-D_WIN32_WINNT=0x0601)
         endif()
@@ -40,11 +37,10 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
 
         target_compile_definitions(BuiltinLogging PRIVATE FASTRTPS_NO_LIB)
         target_include_directories(BuiltinLogging PRIVATE
-            ${GTEST_INCLUDE_DIRS}
             ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include
             ${PROJECT_SOURCE_DIR}/src/cpp
             )
-        target_link_libraries(BuiltinLogging fastcdr ${GTEST_LIBRARIES} ${OPENSSL_LIBRARIES})
+        target_link_libraries(BuiltinLogging fastcdr GTest::gtest ${OPENSSL_LIBRARIES})
         add_gtest(BuiltinLogging SOURCES ${COMMON_SOURCES_LOGGING_PLUGIN_TEST_SOURCE}
             ${CMAKE_CURRENT_SOURCE_DIR}/LoggingPluginTests.hpp
             ${CMAKE_CURRENT_SOURCE_DIR}/BuiltinLogTopicTests.cpp)

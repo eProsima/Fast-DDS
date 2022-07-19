@@ -13,18 +13,13 @@
 # limitations under the License.
 
 if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
-    include(${PROJECT_SOURCE_DIR}/cmake/common/gtest.cmake)
-    check_gtest()
-
-    if(GTEST_FOUND)
+    if(GTest_FOUND)
         if(WIN32)
             add_definitions(
                 -D_WIN32_WINNT=0x0601
                 -D_CRT_SECURE_NO_WARNINGS
                 )
         endif()
-
-        include_directories(${ASIO_INCLUDE_DIR})
 
         set(COMMON_SOURCES_ACCESS_CONTROL_TEST_SOURCE
             ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/log/Log.cpp
@@ -70,10 +65,13 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
             ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/publisher/qos/WriterQos.cpp
             ${CMAKE_CURRENT_SOURCE_DIR}/AccessControlTests.cpp)
             
-        target_compile_definitions(AccessControlTests PRIVATE FASTRTPS_NO_LIB)
+        target_compile_definitions(AccessControlTests PRIVATE FASTRTPS_NO_LIB
+            BOOST_ASIO_STANDALONE
+            ASIO_STANDALONE
+            )
 
         target_include_directories(AccessControlTests PRIVATE
-            ${GTEST_INCLUDE_DIRS} ${GMOCK_INCLUDE_DIRS}
+            ${Asio_INCLUDE_DIR}
             ${PROJECT_SOURCE_DIR}/test/mock/rtps/NetworkFactory/
             ${PROJECT_SOURCE_DIR}/test/mock/rtps/PDPSimple
             ${PROJECT_SOURCE_DIR}/test/mock/rtps/EDP
@@ -87,7 +85,8 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
             )
             
         target_link_libraries(AccessControlTests 
-            ${GTEST_LIBRARIES} ${OPENSSL_LIBRARIES}
+            GTest::gmock
+            ${OPENSSL_LIBRARIES}
             fastcdr
             foonathan_memory
             $<$<BOOL:${WIN32}>:ws2_32>

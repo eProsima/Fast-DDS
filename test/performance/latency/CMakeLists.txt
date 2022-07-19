@@ -23,6 +23,13 @@ set(
 )
 add_executable(LatencyTest ${LATENCYTEST_SOURCE})
 
+target_compile_definitions(LatencyTest PRIVATE
+    BOOST_ASIO_STANDALONE
+    ASIO_STANDALONE
+    )
+
+target_include_directories(LatencyTest PRIVATE ${Asio_INCLUDE_DIR})
+
 target_link_libraries(
     LatencyTest
     fastrtps

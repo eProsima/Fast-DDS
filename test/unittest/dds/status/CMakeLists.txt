@@ -13,11 +13,7 @@
 # limitations under the License.
 
 if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
-    include(${PROJECT_SOURCE_DIR}/cmake/common/gtest.cmake)
-    check_gtest()
-    check_gmock()
-
-    if(GTEST_FOUND AND GMOCK_FOUND)
+    if(GTest_FOUND)
         find_package(Threads REQUIRED)
 
         set(LISTENERTESTS_SOURCE ListenerTests.cpp
@@ -104,7 +100,6 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
         add_executable(ListenerTests ${LISTENERTESTS_SOURCE})
         target_compile_definitions(ListenerTests PRIVATE FASTRTPS_NO_LIB)
         target_include_directories(ListenerTests PRIVATE
-            ${GTEST_INCLUDE_DIRS} ${GMOCK_INCLUDE_DIRS}
             ${PROJECT_SOURCE_DIR}/test/mock/rtps/RTPSReader
             ${PROJECT_SOURCE_DIR}/test/mock/rtps/RTPSWriter
             ${PROJECT_SOURCE_DIR}/test/mock/rtps/RTPSDomain
@@ -136,8 +131,8 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
 
         target_link_libraries(ListenerTests fastcdr foonathan_memory
             ${TINYXML2_LIBRARY}
-            ${GTEST_LIBRARIES} ${GMOCK_LIBRARIES}
-            ${CMAKE_THREAD_LIBS_INIT} ${CMAKE_DL_LIBS})
+            GTest::gmock
+            ${CMAKE_DL_LIBS})
         add_gtest(ListenerTests SOURCES ${LISTENERTESTS_SOURCE})
 
     endif()
