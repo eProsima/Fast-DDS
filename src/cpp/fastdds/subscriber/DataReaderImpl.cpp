@@ -16,9 +16,12 @@
  * @file DataReaderImpl.cpp
  */
 
+#include <memory>
+
 #include <fastrtps/config.h>
 
 #include <fastdds/subscriber/DataReaderImpl.hpp>
+#include <fastdds/subscriber/ReadConditionImpl.hpp>
 
 #include <fastdds/dds/core/StackAllocatedSequence.hpp>
 #include <fastdds/dds/domain/DomainParticipant.hpp>
@@ -53,13 +56,12 @@
 #include <rtps/history/TopicPayloadPoolRegistry.hpp>
 #include <rtps/participant/RTPSParticipantImpl.h>
 
-using namespace eprosima::fastrtps;
+using namespace eprosima::fastdds::dds;
 using namespace eprosima::fastrtps::rtps;
+using namespace eprosima::fastrtps;
 using namespace std::chrono;
 
-namespace eprosima {
-namespace fastdds {
-namespace dds {
+using eprosima::fastrtps::types::ReturnCode_t;
 
 static bool collections_have_same_properties(
         const LoanableCollection& data_values,
@@ -1571,7 +1573,7 @@ void DataReaderImpl::set_qos(
     }
 }
 
-fastrtps::TopicAttributes DataReaderImpl::topic_attributes() const
+TopicAttributes DataReaderImpl::topic_attributes() const
 {
     fastrtps::TopicAttributes topic_att;
     topic_att.topicKind = type_->m_isGetKeyDefined ? WITH_KEY : NO_KEY;
@@ -1770,6 +1772,126 @@ const SampleRejectedStatus& DataReaderImpl::update_sample_rejected_status(
     return sample_rejected_status_;
 }
 
-} /* namespace dds */
-} /* namespace fastdds */
-} /* namespace eprosima */
+bool DataReaderImpl::ReadConditionOrder::operator()(const detail::ReadConditionImpl* lhs, const detail::ReadConditionImpl* rhs) const
+{
+    return lhs->get_sample_state_mask() < rhs->get_sample_state_mask() &&
+           lhs->get_view_state_mask() < rhs->get_view_state_mask() &&
+           lhs->get_instance_state_mask() < rhs->get_instance_state_mask();
+}
+
+bool DataReaderImpl::ReadConditionOrder::operator()(const detail::ReadConditionImpl* lhs, const detail::StateFilter& rhs) const
+{
+    return lhs->get_sample_state_mask() < rhs.sample_states &&
+           lhs->get_view_state_mask() < rhs.view_states &&
+           lhs->get_instance_state_mask() < rhs.instance_states;
+}
+
+bool DataReaderImpl::ReadConditionOrder::operator()(const detail::StateFilter& lhs, const detail::ReadConditionImpl* rhs) const
+{
+    return lhs.sample_states < rhs->get_sample_state_mask() &&
+           lhs.view_states < rhs->get_view_state_mask() &&
+           lhs.instance_states < rhs->get_instance_state_mask();
+}
+
+ReadCondition* DataReaderImpl::create_readcondition(
+        SampleStateMask sample_states,
+        ViewStateMask view_states,
+        InstanceStateMask instance_states)
+{
+    assert(nullptr != reader_);
+    std::lock_guard<RecursiveTimedMutex> _(reader_->getMutex());
+
+    // Check if there is an associated ReadConditionImpl object already
+    detail::StateFilter key = {sample_states, view_states, instance_states};
+
+#   if defined(__cpp_lib_generic_associative_lookup)
+    // c++14
+    auto it = read_conditions_.find(key);
+#   else
+    // TODO: remove this when C++14 is enforced
+    ReadConditionOrder sort;
+    auto it = lower_bound(read_conditions_.begin(), read_conditions_.end(), key, sort);
+    if(it != read_conditions_.end() &&
+      (sort(*it,key) || sort(key,*it)))
+    {
+        it = read_conditions_.end();
+    }
+#   endif
+
+    std::shared_ptr<detail::ReadConditionImpl> impl;
+
+    if(it != read_conditions_.end())
+    {
+        // already there
+        impl = (*it)->shared_from_this();
+    }
+    else
+    {
+        // create a new one
+        impl = std::make_shared<detail::ReadConditionImpl>(*this, key);
+        // Add the implementation object to the collection
+        read_conditions_.insert(impl.get());
+    }
+
+    // Now create the ReadCondition and associate it with the implementation
+    ReadCondition* cond = new ReadCondition();
+    auto ret_code = impl->attach_condition(cond);
+
+    // attach cannot fail in this scenario
+    assert(!!ret_code);
+
+    return cond;
+}
+
+ReturnCode_t DataReaderImpl::delete_readcondition(
+        ReadCondition* a_condition)
+{
+    if( nullptr == a_condition )
+    {
+        return ReturnCode_t::RETCODE_PRECONDITION_NOT_MET;
+    }
+
+    detail::ReadConditionImpl* impl = a_condition->get_impl();
+
+    if( nullptr == impl )
+    {
+        return ReturnCode_t::RETCODE_PRECONDITION_NOT_MET;
+    }
+
+    assert(nullptr != reader_);
+    std::lock_guard<RecursiveTimedMutex> _(reader_->getMutex());
+
+    // Check if there is an associated ReadConditionImpl object already
+    auto it = read_conditions_.find(impl);
+
+    if( it == read_conditions_.end())
+    {
+        // The ReadCondition is unknown to this DataReader
+        return ReturnCode_t::RETCODE_PRECONDITION_NOT_MET;
+    }
+
+    // Detach from the implementation object
+    auto ret_code = impl->detach_condition(a_condition);
+
+    if(!!ret_code)
+    {
+        // delete the condition
+        delete a_condition;
+
+        // check if we must remove the implementation object
+        if(!impl->shared_from_this())
+        {
+            read_conditions_.erase(it);
+        }
+    }
+
+    return ret_code;
+
+}
+
+const eprosima::fastdds::dds::detail::StateFilter& DataReaderImpl::get_last_mask_state() const
+{
+    assert(nullptr != reader_);
+    std::lock_guard<RecursiveTimedMutex> _(reader_->getMutex());
+    return last_mask_state_;
+}

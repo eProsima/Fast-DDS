@@ -1036,7 +1036,7 @@ public:
      * @return RETCODE_OK
      */
     RTPS_DllAPI ReturnCode_t delete_readcondition(
-            const ReadCondition* a_condition);
+            ReadCondition* a_condition);
 
     /**
      * @brief Getter for the Subscriber

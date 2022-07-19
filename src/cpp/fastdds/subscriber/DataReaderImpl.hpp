@@ -24,10 +24,11 @@
 #include <fastdds/dds/core/LoanableCollection.hpp>
 #include <fastdds/dds/core/LoanableSequence.hpp>
 #include <fastdds/dds/core/status/StatusMask.hpp>
-#include <fastdds/dds/subscriber/qos/DataReaderQos.hpp>
 #include <fastdds/dds/subscriber/DataReaderListener.hpp>
 #include <fastdds/dds/subscriber/SampleInfo.hpp>
+#include <fastdds/dds/subscriber/qos/DataReaderQos.hpp>
 #include <fastdds/dds/topic/TypeSupport.hpp>
+#include <fastdds/dds/subscriber/ReadCondition.hpp>
 
 #include <fastdds/rtps/attributes/ReaderAttributes.h>
 #include <fastdds/rtps/common/LocatorList.hpp>
@@ -42,12 +43,11 @@
 #include <fastdds/subscriber/DataReaderImpl/DataReaderLoanManager.hpp>
 #include <fastdds/subscriber/DataReaderImpl/SampleInfoPool.hpp>
 #include <fastdds/subscriber/DataReaderImpl/SampleLoanManager.hpp>
+#include <fastdds/subscriber/DataReaderImpl/StateFilter.hpp>
 #include <fastdds/subscriber/SubscriberImpl.hpp>
 #include <rtps/history/ITopicPayloadPool.h>
 
 #include <fastdds/subscriber/history/DataReaderHistory.hpp>
-
-using eprosima::fastrtps::types::ReturnCode_t;
 
 namespace eprosima {
 namespace fastrtps {
@@ -77,15 +77,15 @@ class ReadConditionImpl;
 } // namespace detail
 
 /**
- * Class DataReader, contains the actual implementation of the behaviour of the Subscriber.
- *  @ingroup FASTDDS_MODULE
- */
+* Class DataReader, contains the actual implementation of the behaviour of the Subscriber.
+*  @ingroup FASTDDS_MODULE
+*/
 class DataReaderImpl
 {
     friend struct detail::ReadTakeCommand;
     friend class detail::ReadConditionImpl;
 
-protected:
+    protected:
 
     using ITopicPayloadPool = eprosima::fastrtps::rtps::ITopicPayloadPool;
     using IPayloadPool = eprosima::fastrtps::rtps::IPayloadPool;
@@ -102,7 +102,7 @@ protected:
             const DataReaderQos& qos,
             DataReaderListener* listener = nullptr);
 
-public:
+    public:
 
     virtual ~DataReaderImpl();
 
@@ -338,7 +338,19 @@ public:
     InstanceHandle_t lookup_instance(
             const void* instance) const;
 
-protected:
+    ReadCondition* create_readcondition(
+            SampleStateMask sample_states,
+            ViewStateMask view_states,
+            InstanceStateMask instance_states);
+
+    ReturnCode_t delete_readcondition(
+            ReadCondition* a_condition);
+
+    const detail::StateFilter& get_last_mask_state() const;
+
+    bool try_notify_read_conditions() const;
+
+    protected:
 
     //!Subscriber
     SubscriberImpl* subscriber_ = nullptr;
@@ -446,6 +458,22 @@ protected:
 
     detail::SampleInfoPool sample_info_pool_;
     detail::DataReaderLoanManager loan_manager_;
+
+    // Order for the ReadCondition collection
+    struct ReadConditionOrder
+    {
+        using is_transparent = void;
+
+        bool operator()(const detail::ReadConditionImpl* lhs, const detail::ReadConditionImpl* rhs) const;
+        bool operator()(const detail::ReadConditionImpl* lhs, const detail::StateFilter& rhs) const;
+        bool operator()(const detail::StateFilter& lhs, const detail::ReadConditionImpl* rhs) const;
+    };
+
+    // ReadConditions collection
+    std::set<detail::ReadConditionImpl*, ReadConditionOrder> read_conditions_;
+
+    // State of the History mask last time it was queried
+    detail::StateFilter last_mask_state_;
 
     ReturnCode_t check_collection_preconditions_and_calc_max_samples(
             LoanableCollection& data_values,

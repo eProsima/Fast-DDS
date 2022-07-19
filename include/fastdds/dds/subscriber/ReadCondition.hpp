@@ -19,6 +19,8 @@
 #ifndef _FASTDDS_DDS_SUBSCRIBER_READCONDITION_HPP_
 #define _FASTDDS_DDS_SUBSCRIBER_READCONDITION_HPP_
 
+#include <cassert>
+
 #include <fastdds/dds/core/condition/Condition.hpp>
 #include <fastdds/dds/subscriber/InstanceState.hpp>
 #include <fastdds/dds/subscriber/SampleState.hpp>
@@ -48,6 +50,8 @@ class DataReader;
  */
 class ReadCondition : public Condition
 {
+     friend class detail::ReadConditionImpl;
+
 public:
 
      ReadCondition();
@@ -104,13 +108,14 @@ public:
 
     detail::ReadConditionImpl* get_impl() const
     {
+        assert((bool)impl_);
         return impl_.get();
     }
 
 protected:
 
     //! Class implementation
-    std::unique_ptr<detail::ReadConditionImpl> impl_;
+    std::shared_ptr<detail::ReadConditionImpl> impl_;
 
 };
 
