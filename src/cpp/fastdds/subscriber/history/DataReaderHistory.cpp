@@ -614,6 +614,10 @@ std::pair<bool, DataReaderHistory::instance_info> DataReaderHistory::next_availa
         const InstanceHandle_t& handle,
         const DataReaderHistory::instance_info& current_info)
 {
+    if (current_info == data_available_instances_.end())
+    {
+        return { false, current_info };
+    }
     instance_info it = current_info;
     if (it->first == handle)
     {
