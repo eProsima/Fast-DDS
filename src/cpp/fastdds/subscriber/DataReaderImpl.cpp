@@ -476,10 +476,17 @@ ReturnCode_t DataReaderImpl::read_or_take(
 
     set_read_communication_status(false);
 
-    auto it = history_.lookup_instance(handle, exact_instance);
+    auto it = history_.lookup_available_instance(handle, exact_instance);
     if (!it.first)
     {
-        return exact_instance ? ReturnCode_t::RETCODE_BAD_PARAMETER : ReturnCode_t::RETCODE_NO_DATA;
+        if (exact_instance && !history_.is_instance_present(handle))
+        {
+            return ReturnCode_t::RETCODE_BAD_PARAMETER;
+        }
+        else
+        {
+            return ReturnCode_t::RETCODE_NO_DATA;
+        }
     }
 
     code = prepare_loan(data_values, sample_infos, max_samples);
@@ -656,7 +663,7 @@ ReturnCode_t DataReaderImpl::read_or_take_next_sample(
 
     set_read_communication_status(false);
 
-    auto it = history_.lookup_instance(HANDLE_NIL, false);
+    auto it = history_.lookup_available_instance(HANDLE_NIL, false);
     if (!it.first)
     {
         return ReturnCode_t::RETCODE_NO_DATA;
@@ -1681,8 +1688,7 @@ InstanceHandle_t DataReaderImpl::lookup_instance(
     {
         if (type_->getKey(const_cast<void*>(instance), &handle, false))
         {
-            auto it = history_.lookup_instance(handle, true);
-            if (!it.first)
+            if (!history_.is_instance_present(handle))
             {
                 handle = HANDLE_NIL;
             }

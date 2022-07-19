@@ -77,13 +77,13 @@ struct ReadTakeCommand
         , remaining_samples_(max_samples)
         , states_(states)
         , instance_(instance)
-        , handle_(instance.first)
+        , handle_(instance->first)
         , single_instance_(single_instance)
     {
         assert(0 <= remaining_samples_);
 
         current_slot_ = data_values_.length();
-        finished_ = nullptr == instance.second;
+        finished_ = false;
     }
 
     ~ReadTakeCommand()
@@ -108,8 +108,8 @@ struct ReadTakeCommand
         // Traverse changes on current instance
         bool ret_val = false;
         LoanableCollection::size_type first_slot = current_slot_;
-        auto it = instance_.second->cache_changes.begin();
-        while (!finished_ && it != instance_.second->cache_changes.end())
+        auto it = instance_->second->cache_changes.begin();
+        while (!finished_ && it != instance_->second->cache_changes.end())
         {
             CacheChange_t* change = *it;
             SampleStateKind check;
@@ -180,7 +180,7 @@ struct ReadTakeCommand
 
         if (current_slot_ > first_slot)
         {
-            instance_.second->view_state = ViewStateKind::NOT_NEW_VIEW_STATE;
+            instance_->second->view_state = ViewStateKind::NOT_NEW_VIEW_STATE;
             ret_val = true;
 
             // complete sample infos
@@ -279,8 +279,8 @@ private:
     bool is_current_instance_valid()
     {
         // Check instance_state against states_.instance_states and view_state against states_.view_states
-        auto instance_state = instance_.second->instance_state;
-        auto view_state = instance_.second->view_state;
+        auto instance_state = instance_->second->instance_state;
+        auto view_state = instance_->second->view_state;
         return (0 != (states_.instance_states & instance_state)) && (0 != (states_.view_states & view_state));
     }
 
@@ -293,7 +293,7 @@ private:
             return false;
         }
 
-        auto result = history_.lookup_instance(handle_, false);
+        auto result = history_.next_available_instance_nts(handle_, instance_);
         if (!result.first)
         {
             finished_ = true;
@@ -301,7 +301,7 @@ private:
         }
 
         instance_ = result.second;
-        handle_ = instance_.first;
+        handle_ = instance_->first;
         return true;
     }
 
@@ -376,7 +376,7 @@ private:
         }
 
         SampleInfo& info = sample_infos_[current_slot_];
-        generate_info(info, *instance_.second, item);
+        generate_info(info, *instance_->second, item);
     }
 
     bool check_datasharing_validity(
