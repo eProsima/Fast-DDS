@@ -300,6 +300,17 @@ public:
             const InstanceHandle_t& handle,
             const instance_info& current_info);
 
+    /**
+     * This method is meant to be called just before calling @c end_sample_access_nts on the RTPS reader.
+     * It will update the internal counters of unread and read samples.
+     *
+     * @param change                       Pointer to the cache change that has been processed.
+     * @param is_going_to_be_mark_as_read  Whether the change is going to be marked as read.
+     */
+    void change_was_processed_nts(
+            CacheChange_t* const change,
+            bool is_going_to_be_mark_as_read);
+
     void update_instance_nts(
             CacheChange_t* const change);
 

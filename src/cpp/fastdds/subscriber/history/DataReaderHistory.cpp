@@ -791,6 +791,17 @@ bool DataReaderHistory::completed_change_keep_last(
     return ret_value;
 }
 
+void DataReaderHistory::change_was_processed_nts(
+        CacheChange_t* const change,
+        bool is_going_to_be_mark_as_read)
+{
+    if (!change->isRead && is_going_to_be_mark_as_read)
+    {
+        ++counters_.samples_read;
+        --counters_.samples_unread;
+    }
+}
+
 void DataReaderHistory::update_instance_nts(
         CacheChange_t* const change)
 {

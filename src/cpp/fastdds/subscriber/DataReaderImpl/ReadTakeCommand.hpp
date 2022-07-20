@@ -145,6 +145,7 @@ struct ReadTakeCommand
                     // Add sample and info to collections
                     ReturnCode_t previous_return_value = return_value_;
                     bool added = add_sample(*it, remove_change);
+                    history_.change_was_processed_nts(change, added);
                     reader_->end_sample_access_nts(change, wp, added);
 
                     // Check if the payload is dirty
