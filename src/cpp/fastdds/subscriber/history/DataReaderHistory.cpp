@@ -654,7 +654,7 @@ std::pair<bool, DataReaderHistory::instance_info> DataReaderHistory::next_availa
 void DataReaderHistory::check_and_remove_instance(
         DataReaderHistory::instance_info& instance_info)
 {
-    auto& instance = instance_info->second;
+    DataReaderInstance* instance = instance_info->second.get();
     if (instance->cache_changes.empty() &&
             (InstanceStateKind::ALIVE_INSTANCE_STATE != instance->instance_state) &&
             instance->alive_writers.empty() &&
