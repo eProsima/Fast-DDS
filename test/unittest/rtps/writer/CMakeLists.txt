@@ -69,11 +69,11 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
             ${PROJECT_SOURCE_DIR}/src/cpp/rtps/common/Time_t.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/utils/TimedConditionVariable.cpp
             )
-        add_executable(LivelinessManagerTests ${LIVELINESSMANAGERTESTS_SOURCE}
+        add_executable(LivelinessManagerTests ${LIVELINESSMANAGERTESTS_SOURCE})
+        target_compile_definitions(LivelinessManagerTests PRIVATE FASTRTPS_NO_LIB
             BOOST_ASIO_STANDALONE
             ASIO_STANDALONE
             )
-        target_compile_definitions(LivelinessManagerTests PRIVATE FASTRTPS_NO_LIB)
         target_include_directories(LivelinessManagerTests PRIVATE
             ${Asio_INCLUDE_DIR}
             ${PROJECT_SOURCE_DIR}/include
