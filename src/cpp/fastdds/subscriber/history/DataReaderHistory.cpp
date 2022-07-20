@@ -802,6 +802,17 @@ void DataReaderHistory::change_was_processed_nts(
     }
 }
 
+void DataReaderHistory::instance_viewed_nts(
+        const InstanceCollection::mapped_type& instance)
+{
+    if (ViewStateKind::NEW_VIEW_STATE == instance->view_state)
+    {
+        instance->view_state = ViewStateKind::NOT_NEW_VIEW_STATE;
+        --counters_.instances_new;
+        ++counters_.instances_not_new;
+    }
+}
+
 void DataReaderHistory::update_instance_nts(
         CacheChange_t* const change)
 {
@@ -811,7 +822,7 @@ void DataReaderHistory::update_instance_nts(
     assert(vit != instances_.end());
     assert(false == change->isRead);
     ++counters_.samples_unread;
-    vit->second->update_state(change->kind, change->writerGUID);
+    vit->second->update_state(counters_, change->kind, change->writerGUID);
     change->reader_info.disposed_generation_count = vit->second->disposed_generation_count;
     change->reader_info.no_writers_generation_count = vit->second->no_writers_generation_count;
 }
@@ -821,7 +832,7 @@ void DataReaderHistory::writer_not_alive(
 {
     for (auto& it : instances_)
     {
-        it.second->writer_removed(writer_guid);
+        it.second->writer_removed(counters_, writer_guid);
     }
 }
 

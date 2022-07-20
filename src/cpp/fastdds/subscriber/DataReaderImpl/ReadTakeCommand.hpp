@@ -181,7 +181,7 @@ struct ReadTakeCommand
 
         if (current_slot_ > first_slot)
         {
-            instance_->second->view_state = ViewStateKind::NOT_NEW_VIEW_STATE;
+            history_.instance_viewed_nts(instance_->second);
             ret_val = true;
 
             // complete sample infos

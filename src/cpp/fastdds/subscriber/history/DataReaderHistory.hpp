@@ -311,6 +311,14 @@ public:
             CacheChange_t* const change,
             bool is_going_to_be_mark_as_read);
 
+    /**
+     * Mark that a DataReaderInstance has been viewed.
+     *
+     * @param instance        Instance on which the view state should be modified.
+     */
+    void instance_viewed_nts(
+            const InstanceCollection::mapped_type& instance);
+
     void update_instance_nts(
             CacheChange_t* const change);
 
