@@ -19,6 +19,10 @@
 #include <memory>
 #include <stdexcept>
 
+#if defined(__has_include) && __has_include(<version>)
+#   include <version>
+#endif // if defined(__has_include) && __has_include(<version>)
+
 #include <fastrtps/config.h>
 
 #include <fastdds/subscriber/DataReaderImpl.hpp>
@@ -1832,7 +1836,7 @@ ReadCondition* DataReaderImpl::create_readcondition(
     // Check if there is an associated ReadConditionImpl object already
     detail::StateFilter key = {sample_states, view_states, instance_states};
 
-#   if defined(__cpp_lib_generic_associative_lookup)
+#   ifdef __cpp_lib_generic_associative_lookup
     // c++14
     auto it = read_conditions_.find(key);
 #   else
@@ -1897,6 +1901,13 @@ ReturnCode_t DataReaderImpl::delete_readcondition(
         return ReturnCode_t::RETCODE_PRECONDITION_NOT_MET;
     }
 
+#   ifdef __cpp_lib_enable_shared_from_this
+    std::weak_ptr<detail::ReadConditionImpl> wp = impl->weak_from_this();
+#   else
+    // remove when C++17 is enforced
+    auto wp = std::weak_ptr<detail::ReadConditionImpl>(impl->shared_from_this());
+#   endif
+
     // Detach from the implementation object
     auto ret_code = impl->detach_condition(a_condition);
 
@@ -1906,7 +1917,7 @@ ReturnCode_t DataReaderImpl::delete_readcondition(
         delete a_condition;
 
         // check if we must remove the implementation object
-        if(!impl->shared_from_this())
+        if(wp.expired())
         {
             read_conditions_.erase(it);
         }
