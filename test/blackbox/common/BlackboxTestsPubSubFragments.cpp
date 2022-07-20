@@ -61,14 +61,9 @@ protected:
             bool small_fragments,
             uint32_t loss_rate = 0)
     {
-<<<<<<< HEAD
         PubSubReader<Data1mbType> reader(topic_name);
         PubSubWriter<Data1mbType> writer(topic_name);
-=======
-        PubSubReader<Data1mbPubSubType> reader(topic_name);
-        PubSubWriter<Data1mbPubSubType> writer(topic_name);
         uint32_t fragment_count = 0;
->>>>>>> 6c4da3719 (Fix freezes in the RTPS level when transferring large files (#2654))
 
         reader
                 .socket_buffer_size(1048576) // accomodate large and fast fragments
@@ -304,17 +299,13 @@ TEST_P(PubSubFragments, AsyncPubSubAsReliableTransientLocalData300kbSmallFragmen
     do_fragment_test(TEST_TOPIC_NAME, data, true, true, false, false, true);
 }
 
-<<<<<<< HEAD
-TEST_P(PubSubFragments, AsyncPubSubAsNonReliableData300kbWithFlowControl)
-=======
 TEST_P(PubSubFragments, AsyncPubSubAsReliableTransientLocalData300kbSmallFragmentsLossy)
 {
     auto data = default_data300kb_data_generator();
     do_fragment_test(TEST_TOPIC_NAME, data, true, true, false, false, true, 260);
 }
 
-class PubSubFragmentsLimited : public testing::TestWithParam<eprosima::fastdds::rtps::FlowControllerSchedulerPolicy>
->>>>>>> 6c4da3719 (Fix freezes in the RTPS level when transferring large files (#2654))
+TEST_P(PubSubFragments, AsyncPubSubAsNonReliableData300kbWithFlowControl)
 {
     PubSubReader<Data1mbType> reader(TEST_TOPIC_NAME);
     PubSubWriter<Data1mbType> writer(TEST_TOPIC_NAME);

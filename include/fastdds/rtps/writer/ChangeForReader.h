@@ -52,30 +52,7 @@ class ChangeForReader_t
 
 public:
 
-<<<<<<< HEAD
-    ChangeForReader_t()
-        : status_(UNSENT)
-        , is_relevant_(true)
-        , change_(nullptr)
-    {
-    }
-
-    ChangeForReader_t(
-            const ChangeForReader_t& ch)
-        : status_(ch.status_)
-        , is_relevant_(ch.is_relevant_)
-        , seq_num_(ch.seq_num_)
-        , change_(ch.change_)
-        , unsent_fragments_(ch.unsent_fragments_)
-    {
-    }
-
-    //TODO(Ricardo) Temporal
-    //ChangeForReader_t(const CacheChange_t* change) : status_(UNSENT),
-    ChangeForReader_t(
-=======
     explicit ChangeForReader_t(
->>>>>>> 6c4da3719 (Fix freezes in the RTPS level when transferring large files (#2654))
             CacheChange_t* change)
         : status_(UNSENT)
         , is_relevant_(true)
@@ -89,33 +66,6 @@ public:
         }
     }
 
-<<<<<<< HEAD
-    ChangeForReader_t(
-            const SequenceNumber_t& seq_num)
-        : status_(UNSENT)
-        , is_relevant_(true)
-        , seq_num_(seq_num)
-        , change_(nullptr)
-    {
-    }
-
-    ~ChangeForReader_t()
-    {
-    }
-
-    ChangeForReader_t& operator =(
-            const ChangeForReader_t& ch)
-    {
-        status_ = ch.status_;
-        is_relevant_ = ch.is_relevant_;
-        seq_num_ = ch.seq_num_;
-        change_ = ch.change_;
-        unsent_fragments_ = ch.unsent_fragments_;
-        return *this;
-    }
-
-=======
->>>>>>> 6c4da3719 (Fix freezes in the RTPS level when transferring large files (#2654))
     /**
      * Get the cache change
      * @return Cache change
@@ -249,12 +199,9 @@ private:
     CacheChange_t* change_;
 
     FragmentNumberSet_t unsent_fragments_;
-<<<<<<< HEAD
-=======
 
     //! Indicates if was delivered at least once.
     bool delivered_ = false;
->>>>>>> 6c4da3719 (Fix freezes in the RTPS level when transferring large files (#2654))
 };
 
 struct ChangeForReaderCmp
