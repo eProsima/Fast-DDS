@@ -13,7 +13,7 @@
 // limitations under the License.
 
 /**
- * @file CacheChangePool.h
+ * @file CacheChangePool_old.h
  */
 
 #ifndef RTPS_HISTORY_CACHECHANGEPOOL_H_
@@ -24,7 +24,6 @@
 #include <fastdds/rtps/resources/ResourceManagement.h>
 
 #include <rtps/history/PoolConfig.h>
-#include <rtps/history/paris/PerformancePool.hpp>
 
 #include <vector>
 #include <algorithm>
@@ -36,61 +35,97 @@ namespace fastrtps {
 namespace rtps {
 
 /**
- * Class CacheChangePool, used by the HistoryCache to pre-reserve a number of CacheChange_t to avoid dynamically
+ * Class CacheChangePool_old, used by the HistoryCache to pre-reserve a number of CacheChange_t to avoid dynamically
  * reserving memory in the middle of execution loops.
  * @ingroup COMMON_MODULE
  */
-class CacheChangePool : public IChangePool
+class CacheChangePool_old : public IChangePool
 {
 public:
 
-    virtual ~CacheChangePool()
-    {
-
-    }
+    virtual ~CacheChangePool_old();
 
     /**
-     * Construct and initialize a CacheChangePool.
+     * Construct and initialize a CacheChangePool_old.
      *
      * @param config   Pool configuration (member @c payload_initial_size is not being used).
      * @param f        Functor to be called on all preallocated elements.
      */
     template<class UnaryFunction>
-    CacheChangePool(
+    CacheChangePool_old(
             const PoolConfig& config,
-            UnaryFunction )
+            UnaryFunction f)
     {
-        pool_ = eprosima::ddsrouter::utils::create_cache_change_pool(config);
+        init(config);
+        std::for_each(free_caches_.begin(), free_caches_.end(), f);
     }
 
     /**
-     * Construct and initialize a CacheChangePool.
+     * Construct and initialize a CacheChangePool_old.
      *
      * @param config   Pool configuration (member @c payload_initial_size is not being used).
      */
-    CacheChangePool(
+    CacheChangePool_old(
             const PoolConfig& config)
     {
-        pool_ = eprosima::ddsrouter::utils::create_cache_change_pool(config);
+        init(config);
     }
 
     bool reserve_cache(
-            CacheChange_t*& cache_change) override
-    {
-        pool_->loan(cache_change);
-        return true;
-    }
+            CacheChange_t*& cache_change) override;
 
     bool release_cache(
-            CacheChange_t* cache_change) override
+            CacheChange_t* cache_change) override;
+
+    //!Get the size of the cache vector; all of them (reserved and not reserved).
+    size_t get_allCachesSize()
     {
-        pool_->return_loan(cache_change);
-        return true;
+        return current_pool_size_;
+    }
+
+    //!Get the number of free caches.
+    size_t get_freeCachesSize()
+    {
+        return free_caches_.size();
+    }
+
+protected:
+
+    /**
+     * Construct a CacheChangePool_old without initialization.
+     */
+    CacheChangePool_old() = default;
+
+    void init(
+            const PoolConfig& config);
+
+    virtual CacheChange_t* create_change() const
+    {
+        return new CacheChange_t();
+    }
+
+    virtual void destroy_change(
+            CacheChange_t* change) const
+    {
+        delete change;
     }
 
 private:
 
-    std::unique_ptr<eprosima::ddsrouter::utils::PerformancePool> pool_;
+    uint32_t current_pool_size_ = 0;
+    uint32_t max_pool_size_ = 0;
+    MemoryManagementPolicy_t memory_mode_ = MemoryManagementPolicy_t::DYNAMIC_RESERVE_MEMORY_MODE;
+
+    std::vector<CacheChange_t*> free_caches_;
+
+    bool allocateGroup(
+            uint32_t num_caches);
+
+    CacheChange_t* allocateSingle();
+
+    //! Returns a CacheChange to the free caches pool
+    void return_cache_to_pool(
+            CacheChange_t* ch);
 
 };
 

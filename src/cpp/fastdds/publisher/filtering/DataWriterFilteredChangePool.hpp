@@ -39,21 +39,21 @@ public:
     DataWriterFilteredChangePool(
             const fastrtps::rtps::PoolConfig& config,
             const fastrtps::ResourceLimitedContainerConfig& filter_allocation)
-        : fastrtps::rtps::CacheChangePool()
+        : fastrtps::rtps::CacheChangePool(config)
         , filter_allocation_(filter_allocation)
     {
-        init(config);
+        // init(config);
     }
 
 protected:
 
-    fastrtps::rtps::CacheChange_t* create_change() const final
+    fastrtps::rtps::CacheChange_t* create_change() const
     {
         return new DataWriterFilteredChange(filter_allocation_);
     }
 
     void destroy_change(
-            fastrtps::rtps::CacheChange_t* change) const final
+            fastrtps::rtps::CacheChange_t* change) const
     {
         DataWriterFilteredChange* writer_change = static_cast<DataWriterFilteredChange*>(change);
         delete writer_change;

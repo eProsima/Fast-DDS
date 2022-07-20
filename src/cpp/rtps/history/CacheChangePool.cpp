@@ -13,14 +13,14 @@
 // limitations under the License.
 
 /**
- * @file CacheChangePool.cpp
+ * @file CacheChangePool_old.cpp
  *
  */
 
 #include <fastdds/rtps/common/CacheChange.h>
 #include <fastdds/dds/log/Log.hpp>
 
-#include <rtps/history/CacheChangePool.h>
+#include <rtps/history/CacheChangePool_old.h>
 
 #include <mutex>
 #include <cstring>
@@ -31,13 +31,13 @@ namespace eprosima {
 namespace fastrtps {
 namespace rtps {
 
-CacheChangePool::~CacheChangePool()
+CacheChangePool_old::~CacheChangePool_old()
 {
     logInfo(RTPS_UTILS, "ChangePool destructor");
 
     if (free_caches_.size() != current_pool_size_)
     {
-        logError(RTPS_UTILS, "CacheChangePool destructor called without all caches being returned to the pool");
+        logError(RTPS_UTILS, "CacheChangePool_old destructor called without all caches being returned to the pool");
     }
 
     // Deletion process does not depend on the memory management policy
@@ -47,7 +47,7 @@ CacheChangePool::~CacheChangePool()
     }
 }
 
-void CacheChangePool::init(
+void CacheChangePool_old::init(
         const PoolConfig& config)
 {
     memory_mode_ = config.memory_policy;
@@ -56,7 +56,7 @@ void CacheChangePool::init(
     uint32_t pool_size = config.initial_size;
     uint32_t max_pool_size = config.maximum_size;
 
-    logInfo(RTPS_UTILS, "Creating CacheChangePool of size: " << pool_size);
+    logInfo(RTPS_UTILS, "Creating CacheChangePool_old of size: " << pool_size);
 
     current_pool_size_ = 0;
     if (max_pool_size > 0)
@@ -79,12 +79,12 @@ void CacheChangePool::init(
     {
         case PREALLOCATED_MEMORY_MODE:
             logInfo(RTPS_UTILS, "Static Mode is active, preallocating memory for pool_size elements");
-            allocateGroup(pool_size ? pool_size : 1);
+            allocateGroup(pool_size ? pool_size : 0);
             break;
         case PREALLOCATED_WITH_REALLOC_MEMORY_MODE:
             logInfo(RTPS_UTILS,
                     "Semi-Static Mode is active, preallocating memory for pool_size. Size of the cachechanges can be increased");
-            allocateGroup(pool_size ? pool_size : 1);
+            allocateGroup(pool_size ? pool_size : 0);
             break;
         case DYNAMIC_RESERVE_MEMORY_MODE:
             logInfo(RTPS_UTILS, "Dynamic Mode is active, CacheChanges are allocated on request");
@@ -96,7 +96,7 @@ void CacheChangePool::init(
     }
 }
 
-void CacheChangePool::return_cache_to_pool(
+void CacheChangePool_old::return_cache_to_pool(
         CacheChange_t* ch)
 {
     // ch->kind = ALIVE;
@@ -114,7 +114,7 @@ void CacheChangePool::return_cache_to_pool(
     free_caches_.push_back(ch);
 }
 
-bool CacheChangePool::allocateGroup(
+bool CacheChangePool_old::allocateGroup(
         uint32_t group_size)
 {
     logInfo(RTPS_UTILS, "Allocating group of cache changes of size: " << group_size);
@@ -144,7 +144,7 @@ bool CacheChangePool::allocateGroup(
     return true;
 }
 
-CacheChange_t* CacheChangePool::allocateSingle()
+CacheChange_t* CacheChangePool_old::allocateSingle()
 {
     /*
      *   In Dynamic Memory Mode CacheChanges are only allocated when they are needed.
@@ -171,7 +171,7 @@ CacheChange_t* CacheChangePool::allocateSingle()
     return ch;
 }
 
-bool CacheChangePool::reserve_cache(
+bool CacheChangePool_old::reserve_cache(
         CacheChange_t*& cache_change)
 {
     cache_change = nullptr;
@@ -203,7 +203,7 @@ bool CacheChangePool::reserve_cache(
     return true;
 }
 
-bool CacheChangePool::release_cache(
+bool CacheChangePool_old::release_cache(
         CacheChange_t* cache_change)
 {
     switch (memory_mode_)

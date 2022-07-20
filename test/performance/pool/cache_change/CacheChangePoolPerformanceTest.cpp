@@ -294,7 +294,7 @@ std::vector<std::pair<std::string, PoolConfig>> generate_pool_configurations()
         std::make_pair<std::string, PoolConfig>(
             "preallocated not initialized",
             PoolConfig(
-                PREALLOCATED_MEMORY_MODE,
+                PREALLOCATED_WITH_REALLOC_MEMORY_MODE,
                 0,
                 0,
                 TEST_LOW_RESERVE + TEST_HIGH_RESERVE)),
