@@ -672,7 +672,7 @@ inline bool ParameterSerializer<ParameterPropertyList_t>::read_content_from_cdr_
     //Nproperties_ = num_properties;
 
     uint32_t length_diff = cdr_message->pos - pos_ref;
-    valid &= (parameter_length == length_diff);
+    valid &= (parameter_length >= length_diff);
     return valid;
 }
 
