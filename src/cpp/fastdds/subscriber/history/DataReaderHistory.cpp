@@ -414,6 +414,7 @@ void DataReaderHistory::writer_unmatched(
         const GUID_t& writer_guid,
         const SequenceNumber_t& last_notified_seq)
 {
+    // Remove all future changes from the unmatched writer
     remove_changes_with_pred(
         [&writer_guid, &last_notified_seq](CacheChange_t* ch)
         {
@@ -442,6 +443,11 @@ bool DataReaderHistory::remove_change_sub(
             {
                 vit->second->cache_changes.erase(chit);
                 found = true;
+
+                if (change->isRead)
+                {
+                    --counters_.samples_read;
+                }
                 break;
             }
         }
@@ -454,6 +460,7 @@ bool DataReaderHistory::remove_change_sub(
     if (remove_change(change))
     {
         m_isHistoryFull = false;
+        counters_.samples_unread = mp_reader->get_unread_count();
         return true;
     }
 
@@ -483,6 +490,11 @@ bool DataReaderHistory::remove_change_sub(
                 assert(it == chit);
                 it = vit->second->cache_changes.erase(chit);
                 found = true;
+
+                if (change->isRead)
+                {
+                    --counters_.samples_read;
+                }
                 break;
             }
         }
@@ -502,6 +514,7 @@ bool DataReaderHistory::remove_change_sub(
     m_isHistoryFull = false;
     ReaderHistory::remove_change_nts(chit);
 
+    counters_.samples_unread = mp_reader->get_unread_count();
     return true;
 }
 
@@ -551,7 +564,15 @@ bool DataReaderHistory::get_next_deadline(
 uint64_t DataReaderHistory::get_unread_count(
         bool mark_as_read)
 {
-    return mp_reader->get_unread_count(mark_as_read);
+    std::lock_guard<RecursiveTimedMutex> guard(*mp_mutex);
+    uint64_t ret_val = mp_reader->get_unread_count(mark_as_read);
+    assert(ret_val == counters_.samples_unread);
+    if (mark_as_read)
+    {
+        counters_.samples_read += ret_val;
+        counters_.samples_unread = 0;
+    }
+    return ret_val;
 }
 
 bool DataReaderHistory::is_instance_present(
@@ -661,12 +682,18 @@ ReaderHistory::iterator DataReaderHistory::remove_change_nts(
             if (it != instances_.end())
             {
                 it->second->cache_changes.remove(p_sample);
+                if (p_sample->isRead)
+                {
+                    --counters_.samples_read;
+                }
             }
         }
     }
 
     // call the base class
-    return ReaderHistory::remove_change_nts(removal, release);
+    auto ret_val = ReaderHistory::remove_change_nts(removal, release);
+    counters_.samples_unread = mp_reader->get_unread_count();
+    return ret_val;
 }
 
 bool DataReaderHistory::completed_change(
@@ -771,6 +798,8 @@ void DataReaderHistory::update_instance_nts(
     vit = instances_.find(change->instanceHandle);
 
     assert(vit != instances_.end());
+    assert(false == change->isRead);
+    ++counters_.samples_unread;
     vit->second->update_state(change->kind, change->writerGUID);
     change->reader_info.disposed_generation_count = vit->second->disposed_generation_count;
     change->reader_info.no_writers_generation_count = vit->second->no_writers_generation_count;

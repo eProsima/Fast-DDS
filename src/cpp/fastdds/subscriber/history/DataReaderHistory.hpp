@@ -43,6 +43,7 @@
 #include <fastrtps/utils/fixed_size_string.hpp>
 #include <fastrtps/utils/collections/ResourceLimitedContainerConfig.hpp>
 
+#include "DataReaderHistoryCounters.hpp"
 #include "DataReaderInstance.hpp"
 
 namespace eprosima {
@@ -340,6 +341,9 @@ private:
     std::function<bool(CacheChange_t*, size_t, SampleRejectedStatusKind&)> receive_fn_;
     /// Function processing a completed fragmented change
     std::function<bool(CacheChange_t*, DataReaderInstance&, size_t, SampleRejectedStatusKind&)> complete_fn_;
+
+    /// Book-keeping counters for ReadCondition support
+    DataReaderHistoryCounters counters_;
 
     /**
      * @brief Method that finds a key in m_keyedChanges or tries to add it if not found
