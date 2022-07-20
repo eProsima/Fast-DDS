@@ -19,6 +19,7 @@
 #include <algorithm>
 #include <forward_list>
 #include <memory>
+#include <mutex>
 
 #include <fastdds/core/condition/ConditionNotifier.hpp>
 #include <fastdds/dds/subscriber/InstanceState.hpp>
@@ -43,13 +44,17 @@ class ReadConditionImpl : public std::enable_shared_from_this<ReadConditionImpl>
 {
     DataReaderImpl& data_reader_;
     const StateFilter state_;
+    std::mutex & mutex_;
     std::forward_list<const ReadCondition*> conditions_;
+
+    using length = std::forward_list<const ReadCondition*>::difference_type;
 
     public:
 
     ReadConditionImpl(DataReaderImpl& data_reader, const StateFilter& state)
         : data_reader_(data_reader)
         , state_(state)
+        , mutex_(data_reader.get_conditions_mutex())
     {}
 
     ~ReadConditionImpl()
@@ -58,34 +63,59 @@ class ReadConditionImpl : public std::enable_shared_from_this<ReadConditionImpl>
         assert(conditions_.empty());
     }
 
-    bool get_trigger_value(const StateFilter& state) const
+    /**
+     * Detach all ReadConditions from this object.
+     * @pre The DataWriterImpl recursive mutex must be taken because it protects the collection
+     */
+    void detach_all_conditions() noexcept
+    {
+        std::lock_guard<std::mutex> _(mutex_);
+
+        for(const ReadCondition* cond : conditions_)
+        {
+            delete cond;
+        }
+
+        // here the destructor would destroy the conditions_ collection
+    }
+
+    bool get_trigger_value(const StateFilter& state) const noexcept
     {
         return state.sample_states & state_.sample_states ||
                state.view_states & state_.view_states ||
                state.instance_states & state_.instance_states;
     }
 
-    bool get_trigger_value() const
+    bool get_trigger_value() const noexcept
     {
-        return get_trigger_value(data_reader_.get_last_mask_state());
+        try
+        {
+            return get_trigger_value(data_reader_.get_last_mask_state());
+        }
+        catch(std::runtime_error& e)
+        {
+            // DataReader not enabled yet
+            logWarning(READCONDITION, e.what());
+            return false;
+        }
     }
 
-    DataReader* get_datareader() const
+    DataReader* get_datareader() const noexcept
     {
         return data_reader_.user_datareader_;
     }
 
-    const SampleStateMask& get_sample_state_mask() const
+    const SampleStateMask& get_sample_state_mask() const noexcept
     {
         return state_.sample_states;
     }
 
-    const ViewStateMask& get_view_state_mask() const
+    const ViewStateMask& get_view_state_mask() const noexcept
     {
         return state_.view_states;
     }
 
-    const InstanceStateMask& get_instance_state_mask() const
+    const InstanceStateMask& get_instance_state_mask() const noexcept
     {
         return state_.instance_states;
     }
@@ -93,12 +123,13 @@ class ReadConditionImpl : public std::enable_shared_from_this<ReadConditionImpl>
     /**
      * Attach a new ReadCondition to this object.
      * @param [in] pRC reader to attach
-     * @pre The DataWriterImpl recursive mutex must be taken because it protects the collection
      * @return RETCODE_OK on success
      */
     ReturnCode_t attach_condition(ReadCondition* pRC)
     {
         using namespace std;
+
+        lock_guard<mutex> _(mutex_);
 
         auto it = conditions_.begin();
         auto pit = conditions_.before_begin();
@@ -132,12 +163,13 @@ class ReadConditionImpl : public std::enable_shared_from_this<ReadConditionImpl>
     /**
      * Detach a ReadCondition from this object.
      * @param [in] pRC reader to detach
-     * @pre The DataWriterImpl recursive mutex must be taken because it protects the collection
      * @return RETCODE_OK on success
      */
-    ReturnCode_t detach_condition(ReadCondition* pRC)
+    ReturnCode_t detach_condition(ReadCondition* pRC) noexcept
     {
         using namespace std;
+
+        lock_guard<mutex> _(mutex_);
 
         auto it = conditions_.begin();
         auto pit = conditions_.before_begin();
@@ -170,8 +202,10 @@ class ReadConditionImpl : public std::enable_shared_from_this<ReadConditionImpl>
      * Notify all the associated ReadConditions
      * @pre The DataWriterImpl recursive mutex must be taken because it protects the collection
      */
-    void notify() const
+    void notify() const noexcept
     {
+        std::lock_guard<std::mutex> _(mutex_);
+
         for(auto cond : conditions_)
         {
             auto pN = cond->get_notifier();

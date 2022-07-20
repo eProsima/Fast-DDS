@@ -30,31 +30,31 @@ ReadCondition::~ReadCondition()
 {
 }
 
-bool ReadCondition::get_trigger_value() const
+bool ReadCondition::get_trigger_value() const noexcept
 {
     assert((bool)impl_);
     return impl_->get_trigger_value();
 }
 
-DataReader* ReadCondition::get_datareader() const
+DataReader* ReadCondition::get_datareader() const noexcept
 {
     assert((bool)impl_);
     return impl_->get_datareader();
 }
 
-SampleStateMask ReadCondition::get_sample_state_mask() const
+SampleStateMask ReadCondition::get_sample_state_mask() const noexcept
 {
     assert((bool)impl_);
     return impl_->get_sample_state_mask();
 }
 
-ViewStateMask ReadCondition::get_view_state_mask() const
+ViewStateMask ReadCondition::get_view_state_mask() const noexcept
 {
     assert((bool)impl_);
     return impl_->get_view_state_mask();
 }
 
-InstanceStateMask ReadCondition::get_instance_state_mask() const
+InstanceStateMask ReadCondition::get_instance_state_mask() const noexcept
 {
     assert((bool)impl_);
     return impl_->get_instance_state_mask();

@@ -21,6 +21,8 @@
 #define _FASTRTPS_DATAREADERIMPL_HPP_
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 
+#include <mutex>
+
 #include <fastdds/dds/core/LoanableCollection.hpp>
 #include <fastdds/dds/core/LoanableSequence.hpp>
 #include <fastdds/dds/core/status/StatusMask.hpp>
@@ -341,14 +343,16 @@ class DataReaderImpl
     ReadCondition* create_readcondition(
             SampleStateMask sample_states,
             ViewStateMask view_states,
-            InstanceStateMask instance_states);
+            InstanceStateMask instance_states) noexcept;
 
     ReturnCode_t delete_readcondition(
-            ReadCondition* a_condition);
+            ReadCondition* a_condition) noexcept;
 
     const detail::StateFilter& get_last_mask_state() const;
 
-    bool try_notify_read_conditions() const;
+    bool try_notify_read_conditions() const noexcept;
+
+    std::mutex& get_conditions_mutex() const noexcept;
 
     protected:
 
@@ -459,6 +463,13 @@ class DataReaderImpl
     detail::SampleInfoPool sample_info_pool_;
     detail::DataReaderLoanManager loan_manager_;
 
+    /**
+     * Mutex to protect ReadCondition collection
+     * is required because the RTPSReader mutex is only available when the object is enabled
+     * @note use get_conditions_mutex() instead of directly referencing it
+     */
+    mutable std::mutex conditions_mutex_;
+
     // Order for the ReadCondition collection
     struct ReadConditionOrder
     {
@@ -467,12 +478,20 @@ class DataReaderImpl
         bool operator()(const detail::ReadConditionImpl* lhs, const detail::ReadConditionImpl* rhs) const;
         bool operator()(const detail::ReadConditionImpl* lhs, const detail::StateFilter& rhs) const;
         bool operator()(const detail::StateFilter& lhs, const detail::ReadConditionImpl* rhs) const;
+
+        template<class S, class V, class I>
+        static inline bool less(const S s1, const V v1, const I i1, const S s2, const V v2, const I i2)
+        {
+            return s1 < s2 || (s1 == s2 && (v1 < v2 || (v1 == v2 && i1 < i2)));
+        }
+
     };
 
     // ReadConditions collection
     std::set<detail::ReadConditionImpl*, ReadConditionOrder> read_conditions_;
 
     // State of the History mask last time it was queried
+    // protected with the RTPSReader mutex
     detail::StateFilter last_mask_state_;
 
     ReturnCode_t check_collection_preconditions_and_calc_max_samples(
