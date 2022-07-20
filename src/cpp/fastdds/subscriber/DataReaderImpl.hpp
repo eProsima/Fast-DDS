@@ -350,9 +350,9 @@ class DataReaderImpl
 
     const detail::StateFilter& get_last_mask_state() const;
 
-    bool try_notify_read_conditions() const noexcept;
+    void try_notify_read_conditions() noexcept;
 
-    std::mutex& get_conditions_mutex() const noexcept;
+    std::recursive_mutex& get_conditions_mutex() const noexcept;
 
     protected:
 
@@ -468,7 +468,7 @@ class DataReaderImpl
      * is required because the RTPSReader mutex is only available when the object is enabled
      * @note use get_conditions_mutex() instead of directly referencing it
      */
-    mutable std::mutex conditions_mutex_;
+    mutable std::recursive_mutex conditions_mutex_;
 
     // Order for the ReadCondition collection
     struct ReadConditionOrder

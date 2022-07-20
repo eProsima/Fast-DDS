@@ -40,6 +40,8 @@
 #include <fastdds/rtps/history/ReaderHistory.h>
 #include <fastdds/rtps/resources/ResourceManagement.h>
 
+#include <fastdds/subscriber/DataReaderImpl/StateFilter.hpp>
+
 #include <fastrtps/utils/fixed_size_string.hpp>
 #include <fastrtps/utils/collections/ResourceLimitedContainerConfig.hpp>
 
@@ -327,6 +329,8 @@ public:
 
     void check_and_remove_instance(
             instance_info& instance_info);
+
+    StateFilter get_mask_status() const noexcept;
 
 private:
 

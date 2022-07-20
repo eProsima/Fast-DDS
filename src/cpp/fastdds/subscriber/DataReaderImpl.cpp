@@ -311,7 +311,7 @@ DataReaderImpl::~DataReaderImpl()
 bool DataReaderImpl::can_be_deleted() const
 {
     {
-        std::lock_guard<std::mutex> _(get_conditions_mutex());
+        std::lock_guard<std::recursive_mutex> _(get_conditions_mutex());
 
         if(!read_conditions_.empty())
         {
@@ -1748,24 +1748,19 @@ ReturnCode_t DataReaderImpl::get_listening_locators(
 
 ReturnCode_t DataReaderImpl::delete_contained_entities()
 {
-    std::unique_lock<std::mutex> lock(get_conditions_mutex());
+    std::lock_guard<std::recursive_mutex> _(get_conditions_mutex());
 
     // Check pending ReadConditions
-    while(!read_conditions_.empty())
+    for(detail::ReadConditionImpl* impl : read_conditions_)
     {
-        auto it = read_conditions_.begin();
-        detail::ReadConditionImpl* impl = *it;
         // should be alive
         assert((bool)impl->shared_from_this());
-        // detach from the collection
-        read_conditions_.erase(it);
-        // avoid deadlock on detach
-        lock.unlock();
-        // count pending
+        // free ReadConditions
         impl->detach_all_conditions();
-        // keep traversing the collection safely
-        lock.lock();
     }
+
+    // release the colection
+    read_conditions_.clear();
 
     return ReturnCode_t::RETCODE_OK;
 }
@@ -1822,7 +1817,7 @@ bool DataReaderImpl::ReadConditionOrder::operator()(const detail::StateFilter& l
                 rhs->get_sample_state_mask(), rhs->get_view_state_mask(), rhs->get_instance_state_mask());
 }
 
-std::mutex& DataReaderImpl::get_conditions_mutex() const noexcept
+std::recursive_mutex& DataReaderImpl::get_conditions_mutex() const noexcept
 {
     return conditions_mutex_;
 }
@@ -1832,7 +1827,7 @@ ReadCondition* DataReaderImpl::create_readcondition(
         ViewStateMask view_states,
         InstanceStateMask instance_states) noexcept
 {
-    std::unique_lock<std::mutex> lock(get_conditions_mutex());
+    std::lock_guard<std::recursive_mutex> _(get_conditions_mutex());
 
     // Check if there is an associated ReadConditionImpl object already
     detail::StateFilter key = {sample_states, view_states, instance_states};
@@ -1866,8 +1861,6 @@ ReadCondition* DataReaderImpl::create_readcondition(
         read_conditions_.insert(impl.get());
     }
 
-    lock.unlock(); // collection protection ends here
-
     // Now create the ReadCondition and associate it with the implementation
     ReadCondition* cond = new ReadCondition();
     auto ret_code = impl->attach_condition(cond);
@@ -1893,7 +1886,7 @@ ReturnCode_t DataReaderImpl::delete_readcondition(
         return ReturnCode_t::RETCODE_PRECONDITION_NOT_MET;
     }
 
-    std::unique_lock<std::mutex> lock(get_conditions_mutex());
+    std::lock_guard<std::recursive_mutex> _(get_conditions_mutex());
 
     // Check if there is an associated ReadConditionImpl object already
     auto it = read_conditions_.find(impl);
@@ -1903,8 +1896,6 @@ ReturnCode_t DataReaderImpl::delete_readcondition(
         // The ReadCondition is unknown to this DataReader
         return ReturnCode_t::RETCODE_PRECONDITION_NOT_MET;
     }
-
-    lock.unlock(); // collection protection ends here
 
     // Detach from the implementation object
     auto ret_code = impl->detach_condition(a_condition);
@@ -1917,7 +1908,6 @@ ReturnCode_t DataReaderImpl::delete_readcondition(
         // check if we must remove the implementation object
         if(!impl->shared_from_this())
         {
-            lock.lock(); // atomic removal
             read_conditions_.erase(it);
         }
     }
@@ -1935,4 +1925,34 @@ const eprosima::fastdds::dds::detail::StateFilter& DataReaderImpl::get_last_mask
 
     std::lock_guard<RecursiveTimedMutex> _(reader_->getMutex());
     return last_mask_state_;
+}
+
+void DataReaderImpl::try_notify_read_conditions() noexcept
+{
+    // If disabled ignore always
+    if(nullptr == reader_)
+    {
+        return;
+    }
+
+    // Update and check the mask change requires notification
+    auto old_mask = last_mask_state_;
+    last_mask_state_ = history_.get_mask_status();
+
+    bool notify = last_mask_state_.sample_states & ~old_mask.sample_states ||
+                  last_mask_state_.view_states & ~old_mask.view_states ||
+                  last_mask_state_.instance_states & ~old_mask.instance_states;
+
+    if(!notify)
+    {
+        return;
+    }
+
+    // traverse the conditions notifying
+    std::lock_guard<std::recursive_mutex> _(get_conditions_mutex());
+
+    for(detail::ReadConditionImpl* impl : read_conditions_)
+    {
+        impl->notify();
+    }
 }

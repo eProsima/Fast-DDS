@@ -44,7 +44,7 @@ class ReadConditionImpl : public std::enable_shared_from_this<ReadConditionImpl>
 {
     DataReaderImpl& data_reader_;
     const StateFilter state_;
-    std::mutex & mutex_;
+    std::recursive_mutex & mutex_;
     std::forward_list<const ReadCondition*> conditions_;
 
     using length = std::forward_list<const ReadCondition*>::difference_type;
@@ -65,11 +65,10 @@ class ReadConditionImpl : public std::enable_shared_from_this<ReadConditionImpl>
 
     /**
      * Detach all ReadConditions from this object.
-     * @pre The DataWriterImpl recursive mutex must be taken because it protects the collection
      */
     void detach_all_conditions() noexcept
     {
-        std::lock_guard<std::mutex> _(mutex_);
+        std::lock_guard<std::recursive_mutex> _(mutex_);
 
         for(const ReadCondition* cond : conditions_)
         {
@@ -129,7 +128,7 @@ class ReadConditionImpl : public std::enable_shared_from_this<ReadConditionImpl>
     {
         using namespace std;
 
-        lock_guard<mutex> _(mutex_);
+        lock_guard<recursive_mutex> _(mutex_);
 
         auto it = conditions_.begin();
         auto pit = conditions_.before_begin();
@@ -169,7 +168,7 @@ class ReadConditionImpl : public std::enable_shared_from_this<ReadConditionImpl>
     {
         using namespace std;
 
-        lock_guard<mutex> _(mutex_);
+        lock_guard<recursive_mutex> _(mutex_);
 
         auto it = conditions_.begin();
         auto pit = conditions_.before_begin();
@@ -200,11 +199,10 @@ class ReadConditionImpl : public std::enable_shared_from_this<ReadConditionImpl>
 
     /**
      * Notify all the associated ReadConditions
-     * @pre The DataWriterImpl recursive mutex must be taken because it protects the collection
      */
     void notify() const noexcept
     {
-        std::lock_guard<std::mutex> _(mutex_);
+        std::lock_guard<std::recursive_mutex> _(mutex_);
 
         for(auto cond : conditions_)
         {
