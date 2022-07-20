@@ -19,12 +19,9 @@
 #include <fastrtps/rtps/writer/StatefulWriter.h>
 
 //using namespace eprosima::fastrtps::rtps;
-namespace eprosima
-{
-namespace fastrtps
-{
-namespace rtps
-{
+namespace eprosima {
+namespace fastrtps {
+namespace rtps {
 
 TEST(ReaderProxyTests, find_change_test)
 {
@@ -319,7 +316,9 @@ TEST(ReaderProxyTests, process_nack_frag_multiple_fragments_different_windows_te
 } // namespace fastrtps
 } // namespace eprosima
 
-int main(int argc, char **argv)
+int main(
+        int argc,
+        char** argv)
 {
     testing::InitGoogleMock(&argc, argv);
     return RUN_ALL_TESTS();
