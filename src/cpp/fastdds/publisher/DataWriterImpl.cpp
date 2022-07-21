@@ -720,13 +720,9 @@ void DataWriterImpl::InnerDataWriterListener::on_liveliness_lost(
         fastrtps::rtps::RTPSWriter* /*writer*/,
         const fastrtps::LivelinessLostStatus& status)
 {
-<<<<<<< HEAD
-    DataWriterListener* listener = data_writer_->get_listener_for(StatusMask::liveliness_lost());
-=======
     data_writer_->update_liveliness_lost_status(status);
     StatusMask notify_status = StatusMask::liveliness_lost();
     DataWriterListener* listener = data_writer_->get_listener_for(notify_status);
->>>>>>> b5f87dd5c (Fix resetting of `LivelinessLostStatus::total_changes` (#2782))
     if (listener != nullptr)
     {
         LivelinessLostStatus callback_status;
@@ -878,16 +874,8 @@ ReturnCode_t DataWriterImpl::get_liveliness_lost_status(
 
     std::unique_lock<RecursiveTimedMutex> lock(writer_->getMutex());
 
-<<<<<<< HEAD
-    status.total_count = writer_->liveliness_lost_status_.total_count;
-    status.total_count_change = writer_->liveliness_lost_status_.total_count_change;
-
-    writer_->liveliness_lost_status_.total_count_change = 0u;
-=======
-        status = liveliness_lost_status_;
-        liveliness_lost_status_.total_count_change = 0u;
-    }
->>>>>>> b5f87dd5c (Fix resetting of `LivelinessLostStatus::total_changes` (#2782))
+    status = liveliness_lost_status_;
+    liveliness_lost_status_.total_count_change = 0u;
 
     return ReturnCode_t::RETCODE_OK;
 }
