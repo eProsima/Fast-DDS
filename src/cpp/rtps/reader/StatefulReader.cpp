@@ -278,7 +278,8 @@ bool StatefulReader::matched_writer_remove(
         }
         else
         {
-            logInfo(RTPS_READER, "Writer Proxy " << writer_guid << " doesn't exist in reader " << this->getGuid().entityId);
+            logInfo(RTPS_READER,
+                    "Writer Proxy " << writer_guid << " doesn't exist in reader " << this->getGuid().entityId);
         }
     }
     return false;
