@@ -43,7 +43,7 @@ struct DataReaderHistoryCounters
     uint64_t instances_alive = 0;
     /// Total number of instances with NOT_ALIVE_DISPOSED_INSTANCE_STATE
     uint64_t instances_disposed = 0;
-    /// Total number of instances with NOT_ALIVE_DISPOSED_INSTANCE_STATE
+    /// Total number of instances with NOT_ALIVE_NO_WRITERS_INSTANCE_STATE
     uint64_t instances_no_writers = 0;
 };
 

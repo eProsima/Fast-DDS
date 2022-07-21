@@ -838,12 +838,15 @@ StateFilter DataReaderHistory::get_mask_status() const noexcept
     std::lock_guard<RecursiveTimedMutex> guard(*getMutex());
 
     return {
-        (counters_.samples_read ? READ_SAMPLE_STATE : 0u) |
-        (counters_.samples_unread ? NOT_READ_SAMPLE_STATE : 0u),
-        (counters_.instances_new ? NEW_VIEW_STATE : 0u) |
-        (counters_.instances_not_new ? NOT_NEW_VIEW_STATE : 0u),
-        (counters_.instances_alive ? ALIVE_INSTANCE_STATE : 0u) |
-        (counters_.instances_disposed ? NOT_ALIVE_DISPOSED_INSTANCE_STATE : 0u) |
-        (counters_.instances_no_writers ? NOT_ALIVE_DISPOSED_INSTANCE_STATE : 0u)
+        static_cast<SampleStateMask>(
+            (counters_.samples_read ? READ_SAMPLE_STATE : 0) |
+            (counters_.samples_unread ? NOT_READ_SAMPLE_STATE : 0)),
+        static_cast<ViewStateMask>(
+            (counters_.instances_not_new ? NOT_NEW_VIEW_STATE : 0) |
+            (counters_.instances_new ? NEW_VIEW_STATE : 0)),
+        static_cast<InstanceStateMask>(
+            (counters_.instances_alive ? ALIVE_INSTANCE_STATE : 0) |
+            (counters_.instances_disposed ? NOT_ALIVE_DISPOSED_INSTANCE_STATE : 0) |
+            (counters_.instances_no_writers ? NOT_ALIVE_NO_WRITERS_INSTANCE_STATE : 0))
     };
 }

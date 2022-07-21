@@ -126,7 +126,7 @@ public:
         return ret;
     }
 
-    inline RecursiveTimedMutex* getMutex()
+    inline RecursiveTimedMutex* getMutex() const
     {
         return mp_mutex;
     }

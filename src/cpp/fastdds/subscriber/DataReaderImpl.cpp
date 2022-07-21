@@ -515,7 +515,7 @@ ReturnCode_t DataReaderImpl::read_or_take(
         return code;
     }
 
-    detail::StateFilter states{ sample_states, view_states, instance_states };
+    detail::StateFilter states = { sample_states, view_states, instance_states };
     detail::ReadTakeCommand cmd(*this, data_values, sample_infos, max_samples, states, it.second, single_instance);
     while (!cmd.is_finished())
     {
@@ -1883,6 +1883,7 @@ ReadCondition* DataReaderImpl::create_readcondition(
 
     // attach cannot fail in this scenario
     assert(!!ret_code);
+    (void)ret_code;
 
     return cond;
 }

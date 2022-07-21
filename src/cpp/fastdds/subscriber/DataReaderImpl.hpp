@@ -504,7 +504,7 @@ protected:
 
     // State of the History mask last time it was queried
     // protected with the RTPSReader mutex
-    detail::StateFilter last_mask_state_;
+    detail::StateFilter last_mask_state_ {};
 
     ReturnCode_t check_collection_preconditions_and_calc_max_samples(
             LoanableCollection& data_values,
