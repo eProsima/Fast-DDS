@@ -13,11 +13,7 @@
 # limitations under the License.
 
 if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
-    include(${PROJECT_SOURCE_DIR}/cmake/common/gtest.cmake)
-    check_gtest()
-    check_gmock()
-
-    if(GTEST_FOUND AND GMOCK_FOUND)
+    if(GTest_FOUND)
         find_package(Threads REQUIRED)
 
         set(WRITERPROXYTESTS_SOURCE WriterProxyTests.cpp
@@ -36,7 +32,6 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
         add_executable(WriterProxyTests ${WRITERPROXYTESTS_SOURCE})
         target_compile_definitions(WriterProxyTests PRIVATE FASTRTPS_NO_LIB)
         target_include_directories(WriterProxyTests PRIVATE
-            ${GTEST_INCLUDE_DIRS} ${GMOCK_INCLUDE_DIRS}
             ${PROJECT_SOURCE_DIR}/src/cpp/rtps/reader
             ${PROJECT_SOURCE_DIR}/test/mock/rtps/Endpoint
             ${PROJECT_SOURCE_DIR}/test/mock/rtps/RTPSReader
@@ -52,8 +47,8 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
             ${PROJECT_SOURCE_DIR}/src/cpp
             )
         target_link_libraries(WriterProxyTests foonathan_memory
-            ${GTEST_LIBRARIES} ${GMOCK_LIBRARIES}
-            ${CMAKE_THREAD_LIBS_INIT} ${CMAKE_DL_LIBS})
+            GTest::gmock
+            ${CMAKE_DL_LIBS})
         add_gtest(WriterProxyTests SOURCES ${WRITERPROXYTESTS_SOURCE})
     endif()
 endif()

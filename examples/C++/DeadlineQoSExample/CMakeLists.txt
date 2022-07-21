@@ -61,14 +61,12 @@ endif()
 message(STATUS "Configuring DeadlineQoS example...")
 file(GLOB DEADLINEQOS_EXAMPLE_SOURCES "*.cxx")
 
-add_definitions(
-  -DBOOST_ASIO_STANDALONE
-  -DASIO_STANDALONE
-)
-
-include_directories(${ASIO_INCLUDE_DIR})
-
 add_executable(DeadlineQoSExample ${DEADLINEQOS_EXAMPLE_SOURCES})
+target_compile_definitions(DeadlineQoSExample PRIVATE
+    BOOST_ASIO_STANDALONE
+    ASIO_STANDALONE
+    )
+target_include_directories(DeadlineQoSExample PRIVATE ${ASIO_INCLUDE_DIR})
 target_link_libraries(DeadlineQoSExample fastrtps fastcdr foonathan_memory)
 if(UNIX)
   target_link_libraries(DeadlineQoSExample pthread)

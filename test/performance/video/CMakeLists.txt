@@ -77,18 +77,24 @@ if(GST_FOUND)
         main_VideoTest.cpp
     )
     add_executable(VideoTest ${VIDEOTEST_SOURCE})
+    target_compile_definitions(VideoTest PRIVATE
+        BOOST_ASIO_STANDALONE
+        ASIO_STANDALONE
+    )
     target_compile_options(VideoTest PUBLIC ${GST_CFLAGS})
 
     if(NOT WIN32)
         target_include_directories(
             VideoTest
             PUBLIC
+            ${ASIO_INCLUDE_DIR}
             ${GST_INCLUDE_DIRS}
         )
     else()
         target_include_directories(
             VideoTest
             PUBLIC
+            ${ASIO_INCLUDE_DIR}
             $ENV{GSTREAMER_1_0_ROOT_X86_64}/include
             $ENV{GSTREAMER_1_0_ROOT_X86_64}/include/glib-2.0
             $ENV{GSTREAMER_1_0_ROOT_X86_64}/include/gstreamer-1.0

@@ -141,23 +141,13 @@ option(FASTRTPS_API_TESTS "Enable tests using FastRTPS API" ON)
 option(FASTDDS_PIM_API_TESTS "Enable tests using FastDDS API" OFF)
 
 if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER) AND fastcdr_FOUND)
-    include(${PROJECT_SOURCE_DIR}/cmake/common/gtest.cmake)
-    check_gtest()
-
-    if(GTEST_FOUND)
+    if(GTest_FOUND)
         if(WIN32)
             add_definitions(
                 -D_WIN32_WINNT=0x0601
                 -D_CRT_SECURE_NO_WARNINGS
                 )
         endif()
-
-        add_definitions(
-          -DBOOST_ASIO_STANDALONE
-          -DASIO_STANDALONE
-        )
-
-        include_directories(${ASIO_INCLUDE_DIR})
 
         ###############################################################################
         # Unit tests
@@ -183,11 +173,13 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER) AND fastcdr_FOUND)
             )
         add_executable(BlackboxTests_RTPS ${RTPS_BLACKBOXTESTS_SOURCE})
         target_compile_definitions(BlackboxTests_RTPS PRIVATE
+            BOOST_ASIO_STANDALONE
+            ASIO_STANDALONE
             $<$<NOT:$<BOOL:${IS_THIRDPARTY_BOOST_SUPPORTED}>>:FASTDDS_SHM_TRANSPORT_DISABLED> # Do not compile SHM Transport
             )
         target_include_directories(BlackboxTests_RTPS PRIVATE
-            ${GTEST_INCLUDE_DIRS})
-        target_link_libraries(BlackboxTests_RTPS fastrtps fastcdr foonathan_memory ${GTEST_LIBRARIES})
+            ${ASIO_INCLUDE_DIR})
+        target_link_libraries(BlackboxTests_RTPS fastrtps fastcdr foonathan_memory GTest::gtest)
         add_blackbox_gtest(BlackboxTests_RTPS SOURCES ${RTPS_BLACKBOXTESTS_TEST_SOURCE})
 
         file(GLOB BLACKBOXTESTS_TEST_SOURCE "common/BlackboxTests*.cpp")
@@ -249,12 +241,14 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER) AND fastcdr_FOUND)
 
             add_executable(BlackboxTests_FastRTPS ${BLACKBOXTESTS_FASTRTPS_SOURCE})
             target_compile_definitions(BlackboxTests_FastRTPS PRIVATE
+                BOOST_ASIO_STANDALONE
+                ASIO_STANDALONE
                 $<$<NOT:$<BOOL:${IS_THIRDPARTY_BOOST_SUPPORTED}>>:FASTDDS_SHM_TRANSPORT_DISABLED> # Do not compile SHM Transport
                 )
             target_include_directories(BlackboxTests_FastRTPS PRIVATE
-                api/fastrtps_deprecated
-                ${GTEST_INCLUDE_DIRS})
-            target_link_libraries(BlackboxTests_FastRTPS fastrtps fastcdr foonathan_memory ${GTEST_LIBRARIES})
+                ${ASIO_INCLUDE_DIR}
+                api/fastrtps_deprecated)
+            target_link_libraries(BlackboxTests_FastRTPS fastrtps fastcdr foonathan_memory GTest::gtest)
             add_blackbox_gtest(BlackboxTests_FastRTPS SOURCES ${BLACKBOXTESTS_TEST_SOURCE}
                 ENVIRONMENTS "CERTS_PATH=${PROJECT_SOURCE_DIR}/test/certs"
                 "TOPIC_RANDOM_NUMBER=${TOPIC_RANDOM_NUMBER}"
@@ -272,12 +266,14 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER) AND fastcdr_FOUND)
                 )
             add_executable(BlackboxTests_DDS_PIM ${BLACKBOXTESTS_FASTDDS_PIM_SOURCE})
             target_compile_definitions(BlackboxTests_DDS_PIM PRIVATE
+                BOOST_ASIO_STANDALONE
+                ASIO_STANDALONE
                 $<$<NOT:$<BOOL:${IS_THIRDPARTY_BOOST_SUPPORTED}>>:FASTDDS_SHM_TRANSPORT_DISABLED> # Do not compile SHM Transport
                 )
             target_include_directories(BlackboxTests_DDS_PIM PRIVATE
-                api/dds-pim
-                ${GTEST_INCLUDE_DIRS})
-            target_link_libraries(BlackboxTests_DDS_PIM fastrtps fastcdr foonathan_memory ${GTEST_LIBRARIES})
+                ${ASIO_INCLUDE_DIR}
+                api/dds-pim)
+            target_link_libraries(BlackboxTests_DDS_PIM fastrtps fastcdr foonathan_memory GTest::gtest)
             add_blackbox_gtest(BlackboxTests_DDS_PIM SOURCES ${DDS_BLACKBOXTESTS_SOURCE}
                 ENVIRONMENTS "CERTS_PATH=${PROJECT_SOURCE_DIR}/test/certs"
                 "TOPIC_RANDOM_NUMBER=${TOPIC_RANDOM_NUMBER}"

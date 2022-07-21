@@ -13,13 +13,8 @@
 # limitations under the License.
 
 if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
-    include(${PROJECT_SOURCE_DIR}/cmake/common/gtest.cmake)
-    check_gtest()
-
-    if(GTEST_FOUND)
+    if(GTest_FOUND)
         find_package(Threads REQUIRED)
-
-        include_directories(${ASIO_INCLUDE_DIR})
 
         set(TIMEDEVENTTESTS_SOURCE mock/MockEvent.cpp
             TimedEventTests.cpp
@@ -35,14 +30,17 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
         endif()
 
         add_executable(TimedEventTests ${TIMEDEVENTTESTS_SOURCE})
-        target_compile_definitions(TimedEventTests PRIVATE FASTRTPS_NO_LIB)
+        target_compile_definitions(TimedEventTests PRIVATE FASTRTPS_NO_LIB
+            BOOST_ASIO_STANDALONE
+            ASIO_STANDALONE
+            )
         target_include_directories(TimedEventTests PRIVATE
-            ${GTEST_INCLUDE_DIRS}
+            ${ASIO_INCLUDE_DIR}
             ${PROJECT_SOURCE_DIR}/include
             ${PROJECT_BINARY_DIR}/include
             ${PROJECT_SOURCE_DIR}/src/cpp
             )
-        target_link_libraries(TimedEventTests ${GTEST_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT} ${CMAKE_DL_LIBS})
+        target_link_libraries(TimedEventTests GTest::gtest ${CMAKE_DL_LIBS})
         add_gtest(TimedEventTests SOURCES ${TIMEDEVENTTESTS_SOURCE})
     endif()
 endif()

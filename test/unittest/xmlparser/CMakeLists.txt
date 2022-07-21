@@ -13,11 +13,7 @@
 # limitations under the License.
 
 if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
-    include(${PROJECT_SOURCE_DIR}/cmake/common/gtest.cmake)
-    check_gtest()
-    check_gmock()
-
-    if(GTEST_FOUND AND GMOCK_FOUND)
+    if(GTest_FOUND)
         if(WIN32)
             add_definitions(
                 -D_WIN32_WINNT=0x0601
@@ -121,7 +117,6 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
         add_executable(XMLProfileParserTests ${XMLPROFILEPARSER_SOURCE})
         target_compile_definitions(XMLProfileParserTests PRIVATE FASTRTPS_NO_LIB)
         target_include_directories(XMLProfileParserTests PRIVATE
-            ${GTEST_INCLUDE_DIRS} ${GMOCK_INCLUDE_DIRS}
             ${PROJECT_SOURCE_DIR}/test/mock/rtps/Log
             ${PROJECT_SOURCE_DIR}/test/mock/rtps/TCPTransportDescriptor
             ${PROJECT_SOURCE_DIR}/test/mock/rtps/TCPv4TransportDescriptor
@@ -132,7 +127,7 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
             ${PROJECT_SOURCE_DIR}/test/mock/rtps/SharedMemTransportDescriptor
             ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include)
 
-        target_link_libraries(XMLProfileParserTests ${GTEST_LIBRARIES} ${GMOCK_LIBRARIES}
+        target_link_libraries(XMLProfileParserTests GTest::gmock
             $<$<BOOL:${WIN32}>:iphlpapi$<SEMICOLON>Shlwapi>
             $<$<BOOL:${WIN32}>:ws2_32>
             ${TINYXML2_LIBRARY}
@@ -197,7 +192,6 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
         add_executable(XMLParserTests ${XMLPARSER_SOURCE})
         target_compile_definitions(XMLParserTests PRIVATE FASTRTPS_NO_LIB)
         target_include_directories(XMLParserTests PRIVATE
-            ${GTEST_INCLUDE_DIRS}
             ${PROJECT_SOURCE_DIR}/test/mock/rtps/TCPTransportDescriptor
             ${PROJECT_SOURCE_DIR}/test/mock/rtps/TCPv4TransportDescriptor
             ${PROJECT_SOURCE_DIR}/test/mock/rtps/TCPv6TransportDescriptor
@@ -209,7 +203,7 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
             ${PROJECT_BINARY_DIR}/include
             )
 
-        target_link_libraries(XMLParserTests ${GTEST_LIBRARIES}
+        target_link_libraries(XMLParserTests GTest::gtest
             $<$<BOOL:${WIN32}>:iphlpapi$<SEMICOLON>Shlwapi>
             $<$<BOOL:${WIN32}>:ws2_32>
             ${TINYXML2_LIBRARY}

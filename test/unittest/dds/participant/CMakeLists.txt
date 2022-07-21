@@ -13,11 +13,7 @@
 # limitations under the License.
 
 if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
-    include(${PROJECT_SOURCE_DIR}/cmake/common/gtest.cmake)
-    check_gtest()
-    check_gmock()
-
-    if(GTEST_FOUND AND GMOCK_FOUND)
+    if(GTest_FOUND)
         find_package(Threads REQUIRED)
 
         configure_file(${CMAKE_CURRENT_SOURCE_DIR}/../profiles/test_xml_profiles.xml
@@ -34,13 +30,12 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
         add_executable(ParticipantTests ${PARTICIPANTTESTS_SOURCE})
         target_compile_definitions(ParticipantTests PRIVATE FASTRTPS_NO_LIB)
         target_include_directories(ParticipantTests PRIVATE
-            ${GTEST_INCLUDE_DIRS} ${GMOCK_INCLUDE_DIRS}
             ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include
             ${PROJECT_SOURCE_DIR}/src/cpp
             )
         target_link_libraries(ParticipantTests fastrtps fastcdr foonathan_memory
-            ${GTEST_LIBRARIES} ${GMOCK_LIBRARIES}
-            ${CMAKE_THREAD_LIBS_INIT} ${CMAKE_DL_LIBS})
+            GTest::gmock
+            ${CMAKE_DL_LIBS})
         add_gtest(ParticipantTests SOURCES ${PARTICIPANTTESTS_SOURCE})
     endif()
 endif()

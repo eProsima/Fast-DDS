@@ -13,10 +13,7 @@
 # limitations under the License.
 
 if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
-    include(${PROJECT_SOURCE_DIR}/cmake/common/gtest.cmake)
-    check_gtest()
-
-    if(GTEST_FOUND)
+    if(GTest_FOUND)
         if(WIN32)
             add_definitions(-D_WIN32_WINNT=0x0601)
         endif()
@@ -43,9 +40,9 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
 
         add_executable(StringMatchingTests ${STRINGMATCHINGTESTS_SOURCE})
         target_compile_definitions(StringMatchingTests PRIVATE FASTRTPS_NO_LIB)
-        target_include_directories(StringMatchingTests PRIVATE ${GTEST_INCLUDE_DIRS}
+        target_include_directories(StringMatchingTests PRIVATE
             ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include)
-        target_link_libraries(StringMatchingTests ${GTEST_LIBRARIES} ${MOCKS})
+        target_link_libraries(StringMatchingTests GTest::gtest ${MOCKS})
         if(MSVC OR MSVC_IDE)
             target_link_libraries(StringMatchingTests ${PRIVACY} iphlpapi Shlwapi
                 )
@@ -55,25 +52,25 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
 
         add_executable(FixedSizeStringTests ${FIXEDSIZESTRINGTESTS_SOURCE})
         target_compile_definitions(FixedSizeStringTests PRIVATE FASTRTPS_NO_LIB)
-        target_include_directories(FixedSizeStringTests PRIVATE ${GTEST_INCLUDE_DIRS}
+        target_include_directories(FixedSizeStringTests PRIVATE
             ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include)
-        target_link_libraries(FixedSizeStringTests ${GTEST_LIBRARIES} ${MOCKS})
+        target_link_libraries(FixedSizeStringTests GTest::gtest ${MOCKS})
         add_gtest(FixedSizeStringTests SOURCES ${FIXEDSIZESTRINGTESTS_SOURCE})
 
 
         add_executable(BitmapRangeTests ${BITMAPRANGETESTS_SOURCE})
         target_compile_definitions(BitmapRangeTests PRIVATE FASTRTPS_NO_LIB)
-        target_include_directories(BitmapRangeTests PRIVATE ${GTEST_INCLUDE_DIRS}
+        target_include_directories(BitmapRangeTests PRIVATE
             ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include)
-        target_link_libraries(BitmapRangeTests ${GTEST_LIBRARIES} ${MOCKS})
+        target_link_libraries(BitmapRangeTests GTest::gtest ${MOCKS})
         add_gtest(BitmapRangeTests SOURCES ${BITMAPRANGETESTS_SOURCE})
 
 
         add_executable(ResourceLimitedVectorTests ${RESOURCELIMITEDVECTORTESTS_SOURCE})
         target_compile_definitions(ResourceLimitedVectorTests PRIVATE FASTRTPS_NO_LIB)
-        target_include_directories(ResourceLimitedVectorTests PRIVATE ${GTEST_INCLUDE_DIRS}
+        target_include_directories(ResourceLimitedVectorTests PRIVATE
             ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include)
-        target_link_libraries(ResourceLimitedVectorTests ${GTEST_LIBRARIES} ${MOCKS})
+        target_link_libraries(ResourceLimitedVectorTests GTest::gtest ${MOCKS})
         add_gtest(ResourceLimitedVectorTests SOURCES ${RESOURCELIMITEDVECTORTESTS_SOURCE})
     endif()
 endif()
