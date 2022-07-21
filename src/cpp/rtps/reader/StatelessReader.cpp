@@ -149,9 +149,6 @@ bool StatelessReader::matched_writer_remove(
 
     std::lock_guard<RecursiveTimedMutex> guard(mp_mutex);
 
-    //Remove cachechanges belonging to the unmatched writer
-    mp_history->writer_unmatched(writer_guid, get_last_notified(writer_guid));
-
     ResourceLimitedVector<RemoteWriterInfo_t>::iterator it;
     for (it = matched_writers_.begin(); it != matched_writers_.end(); ++it)
     {
