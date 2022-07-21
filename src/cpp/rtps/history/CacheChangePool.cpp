@@ -106,7 +106,6 @@ void CacheChangePool::return_cache_to_pool(
     ch->setFragmentSize(0);
     ch->inline_qos.pos = 0;
     ch->inline_qos.length = 0;
-    assert(free_caches_.end() == std::find(free_caches_.begin(), free_caches_.end(), ch));
     free_caches_.push_back(ch);
 }
 
