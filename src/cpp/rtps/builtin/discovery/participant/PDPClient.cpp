@@ -776,8 +776,6 @@ bool PDPClient::remove_remote_participant(
     rguid.entityId = c_EntityId_SPDPReader;
     mp_PDPWriter->matched_reader_remove(rguid);
 
-    update_remote_servers_list();
-
     return false;
 }
 
