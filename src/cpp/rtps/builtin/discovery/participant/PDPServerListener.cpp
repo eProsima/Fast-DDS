@@ -63,6 +63,8 @@ void PDPServerListener::onNewCacheChangeAdded(
     // Get PDP reader to release change
     auto pdp_reader = pdp_server()->mp_PDPReader;
 
+    bool routine_should_be_awake = false;
+
     // Create a delete function to clear the data associated with the unique pointer in case the change is not passed
     // to the database.
     auto deleter = [pdp_history](CacheChange_t* p)
@@ -258,7 +260,7 @@ void PDPServerListener::onNewCacheChangeAdded(
                     // The server does not have to postpone the execution of the routine if a change is received, i.e.
                     // the server routine is triggered instantly as the default value of the interval that the server has
                     // to wait is 0.
-                    pdp_server()->awake_routine_thread();
+                    routine_should_be_awake = true;
 
                     // TODO: when the DiscoveryDataBase allows updating capabilities we can dismissed old PDP processing
                 }
@@ -376,7 +378,7 @@ void PDPServerListener::onNewCacheChangeAdded(
             // The server does not have to postpone the execution of the routine if a change is received, i.e.
             // the server routine is triggered instantly as the default value of the interval that the server has
             // to wait is 0.
-            pdp_server()->awake_routine_thread();
+            routine_should_be_awake = true;
 
             // From here on, the discovery database takes ownership of the CacheChange_t. Henceforth there are no
             // references to the change. Take change ownership away from the unique pointer, so that its destruction
@@ -386,13 +388,23 @@ void PDPServerListener::onNewCacheChangeAdded(
 
         // Remove participant from proxies
         reader->getMutex().unlock();
-        if (pdp_server()->remove_remote_participant(guid, ParticipantDiscoveryInfo::REMOVED_PARTICIPANT))
-        {
-            reader->getMutex().lock();
-            return;
-        }
+        pdp_server()->remove_remote_participant(guid, ParticipantDiscoveryInfo::REMOVED_PARTICIPANT);
         reader->getMutex().lock();
     }
+
+    /*
+     * Awake routine thread if needed.
+     * Thread is awaken at the end of the listener as it is required to have created the Proxies before
+     * the data is processed and the new messages added to history.
+     * If not, could happen that a message is added to history in order to be sent to a relevant participant, and
+     * this Participant still not have a ReaderProxy associated, and so it will miss the message and it wont be
+     * sent again (because if there are no changes PDP is no sent again).
+     */
+    if (routine_should_be_awake)
+    {
+        pdp_server()->awake_routine_thread();
+    }
+
     // cache is removed from history (if it's still there) and returned to the pool on leaving the scope, since the
     // unique pointer destruction grants it. If the ownership has been taken away from the unique pointer, then nothing
     // happens at this point
