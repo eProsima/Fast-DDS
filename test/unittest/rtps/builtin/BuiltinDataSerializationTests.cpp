@@ -15,9 +15,8 @@
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
 
-#include <fastrtps/rtps/builtin/data/ParticipantProxyData.h>
-#include <fastrtps/rtps/builtin/data/ReaderProxyData.h>
 #include <fastrtps/rtps/builtin/data/WriterProxyData.h>
+#include <fastrtps/rtps/builtin/data/ReaderProxyData.h>
 #include <fastrtps/rtps/network/NetworkFactory.h>
 #include <fastdds/core/policy/ParameterSerializer.hpp>
 
@@ -346,83 +345,6 @@ TEST(BuiltinDataSerializationTests, ignore_unsupported_type_object)
         WriterProxyData out(max_unicast_locators, max_multicast_locators);
         EXPECT_NO_THROW(EXPECT_TRUE(out.readFromCDRMessage(&msg, network, false)));
     }
-}
-
-TEST(BuiltinDataSerializationTests, property_list_with_binary_properties)
-{
-    octet data_p_buffer[] =
-    {
-        // Encapsulation
-        0x00, 0x03, 0x00, 0x00,
-
-        // PID_PROPERTY_LIST
-        0x59, 0, 104, 0,
-        // 3 properties
-        0x03, 0x00, 0x00, 0x00,
-        // key-1
-        0x0e, 0x00, 0x00, 0x00,
-        0x5f, 0x5f, 0x50, 0x72, 0x6f, 0x63, 0x65, 0x73, 0x73, 0x4e, 0x61, 0x6d, 0x65, 0x00, 0x00, 0x00,
-        // value-1
-        0x07, 0x00, 0x00, 0x00,
-        0x74, 0x61, 0x6c, 0x6b, 0x65, 0x72, 0x00, 0x00,
-        // key-2
-        0x06, 0x00, 0x00, 0x00,
-        0x5f, 0x5f, 0x50, 0x69, 0x64, 0x00, 0x00, 0x00,
-        // value-2
-        0x05, 0x00, 0x00, 0x00,
-        0x32, 0x35, 0x31, 0x39, 0x00, 0x00, 0x00, 0x00,
-        // key-3
-        0x0b, 0x00, 0x00, 0x00,
-        0x5f, 0x5f, 0x48, 0x6f, 0x73, 0x74, 0x6e, 0x61, 0x6d, 0x65, 0x00, 0x00,
-        // value-3
-        0x11, 0x00, 0x00, 0x00,
-        0x6e, 0x6f, 0x6e, 0x5f, 0x77, 0x6f, 0x72, 0x6b, 0x69, 0x6e, 0x67, 0x5f, 0x68, 0x61, 0x73, 0x68,
-        0x00, 0x00, 0x00, 0x00,
-        // 0 binary properties
-        0x00, 0x00, 0x00, 0x00,
-
-        // PID_PROTOCOL_VERSION
-        0x15, 0, 4, 0,
-        2, 1, 0, 0,
-
-        // PID_VENDORID
-        0x16, 0, 4, 0,
-        1, 16, 0, 0,
-
-        // PID_PARTICIPANT_LEASE_DURATION
-        0x02, 0, 8, 0,
-        10, 0, 0, 0, 0, 0, 0, 0,
-
-        // PID_PARTICIPANT_GUID
-        0x50, 0, 16, 0,
-        1, 16, 54, 83, 136, 247, 149, 252, 47, 105, 174, 141, 0, 0, 1, 193,
-
-        // PID_BUILTIN_ENDPOINT_SET
-        0x58, 0, 4, 0,
-        63, 12, 0, 0,
-
-        // PID_DOMAIN_ID
-        0x0f, 0, 4, 0,
-        0, 0, 0, 0,
-
-        // PID_DEFAULT_UNICAST_LOCATOR
-        0x31, 0, 24, 0,
-        1, 0, 0, 0, 68, 128, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 10, 31, 133, 54,
-
-        // PID_METATRAFFIC_UNICAST_LOCATOR
-        0x32, 0, 24, 0,
-        1, 0, 0, 0, 68, 128, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 10, 31, 133, 54,
-
-        // PID_SENTINEL
-        0x01, 0, 0, 0
-    };
-
-    CDRMessage_t msg(0);
-    msg.init(data_p_buffer, static_cast<uint32_t>(sizeof(data_p_buffer)));
-    msg.length = msg.max_size;
-
-    ParticipantProxyData out(RTPSParticipantAllocationAttributes{});
-    EXPECT_NO_THROW(EXPECT_TRUE(out.readFromCDRMessage(&msg, true, network, false)));
 }
 
 /*!
