@@ -79,15 +79,15 @@ class ReadConditionImpl;
 } // namespace detail
 
 /**
-* Class DataReader, contains the actual implementation of the behaviour of the Subscriber.
-*  @ingroup FASTDDS_MODULE
-*/
+ * Class DataReader, contains the actual implementation of the behaviour of the Subscriber.
+ *  @ingroup FASTDDS_MODULE
+ */
 class DataReaderImpl
 {
     friend struct detail::ReadTakeCommand;
     friend class detail::ReadConditionImpl;
 
-    protected:
+protected:
 
     using ITopicPayloadPool = eprosima::fastrtps::rtps::ITopicPayloadPool;
     using IPayloadPool = eprosima::fastrtps::rtps::IPayloadPool;
@@ -104,7 +104,7 @@ class DataReaderImpl
             const DataReaderQos& qos,
             DataReaderListener* listener = nullptr);
 
-    public:
+public:
 
     virtual ~DataReaderImpl();
 
@@ -354,7 +354,7 @@ class DataReaderImpl
 
     std::recursive_mutex& get_conditions_mutex() const noexcept;
 
-    protected:
+protected:
 
     //!Subscriber
     SubscriberImpl* subscriber_ = nullptr;
@@ -475,12 +475,24 @@ class DataReaderImpl
     {
         using is_transparent = void;
 
-        bool operator()(const detail::ReadConditionImpl* lhs, const detail::ReadConditionImpl* rhs) const;
-        bool operator()(const detail::ReadConditionImpl* lhs, const detail::StateFilter& rhs) const;
-        bool operator()(const detail::StateFilter& lhs, const detail::ReadConditionImpl* rhs) const;
+        bool operator ()(
+                const detail::ReadConditionImpl* lhs,
+                const detail::ReadConditionImpl* rhs) const;
+        bool operator ()(
+                const detail::ReadConditionImpl* lhs,
+                const detail::StateFilter& rhs) const;
+        bool operator ()(
+                const detail::StateFilter& lhs,
+                const detail::ReadConditionImpl* rhs) const;
 
         template<class S, class V, class I>
-        static inline bool less(const S s1, const V v1, const I i1, const S s2, const V v2, const I i2)
+        static inline bool less(
+                S&& s1,
+                V&& v1,
+                I&& i1,
+                S&& s2,
+                V&& v2,
+                I&& i2)
         {
             return s1 < s2 || (s1 == s2 && (v1 < v2 || (v1 == v2 && i1 < i2)));
         }

@@ -50,11 +50,11 @@ class DataReader;
  */
 class ReadCondition : public Condition
 {
-     friend class detail::ReadConditionImpl;
+    friend class detail::ReadConditionImpl;
 
 public:
 
-     ReadCondition();
+    ReadCondition();
 
     ~ReadCondition() override;
 

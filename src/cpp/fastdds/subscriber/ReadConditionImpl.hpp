@@ -44,18 +44,21 @@ class ReadConditionImpl : public std::enable_shared_from_this<ReadConditionImpl>
 {
     DataReaderImpl& data_reader_;
     const StateFilter state_;
-    std::recursive_mutex & mutex_;
+    std::recursive_mutex& mutex_;
     std::forward_list<const ReadCondition*> conditions_;
 
     using length = std::forward_list<const ReadCondition*>::difference_type;
 
-    public:
+public:
 
-    ReadConditionImpl(DataReaderImpl& data_reader, const StateFilter& state)
+    ReadConditionImpl(
+            DataReaderImpl& data_reader,
+            const StateFilter& state)
         : data_reader_(data_reader)
         , state_(state)
         , mutex_(data_reader.get_conditions_mutex())
-    {}
+    {
+    }
 
     ~ReadConditionImpl()
     {
@@ -70,7 +73,7 @@ class ReadConditionImpl : public std::enable_shared_from_this<ReadConditionImpl>
     {
         std::lock_guard<std::recursive_mutex> _(mutex_);
 
-        for(const ReadCondition* cond : conditions_)
+        for (const ReadCondition* cond : conditions_)
         {
             delete cond;
         }
@@ -78,7 +81,8 @@ class ReadConditionImpl : public std::enable_shared_from_this<ReadConditionImpl>
         // here the destructor would destroy the conditions_ collection
     }
 
-    bool get_trigger_value(const StateFilter& state) const noexcept
+    bool get_trigger_value(
+            const StateFilter& state) const noexcept
     {
         return state.sample_states & state_.sample_states ||
                state.view_states & state_.view_states ||
@@ -91,7 +95,7 @@ class ReadConditionImpl : public std::enable_shared_from_this<ReadConditionImpl>
         {
             return get_trigger_value(data_reader_.get_last_mask_state());
         }
-        catch(std::runtime_error& e)
+        catch (std::runtime_error& e)
         {
             // DataReader not enabled yet
             logWarning(READCONDITION, e.what());
@@ -124,7 +128,8 @@ class ReadConditionImpl : public std::enable_shared_from_this<ReadConditionImpl>
      * @param [in] pRC reader to attach
      * @return RETCODE_OK on success
      */
-    ReturnCode_t attach_condition(ReadCondition* pRC)
+    ReturnCode_t attach_condition(
+            ReadCondition* pRC)
     {
         using namespace std;
 
@@ -133,9 +138,9 @@ class ReadConditionImpl : public std::enable_shared_from_this<ReadConditionImpl>
         auto it = conditions_.begin();
         auto pit = conditions_.before_begin();
 
-        while(it != conditions_.end())
+        while (it != conditions_.end())
         {
-            if(*it < pRC)
+            if (*it < pRC)
             {
                 pit = it++;
             }
@@ -164,7 +169,8 @@ class ReadConditionImpl : public std::enable_shared_from_this<ReadConditionImpl>
      * @param [in] pRC reader to detach
      * @return RETCODE_OK on success
      */
-    ReturnCode_t detach_condition(ReadCondition* pRC) noexcept
+    ReturnCode_t detach_condition(
+            ReadCondition* pRC) noexcept
     {
         using namespace std;
 
@@ -173,9 +179,9 @@ class ReadConditionImpl : public std::enable_shared_from_this<ReadConditionImpl>
         auto it = conditions_.begin();
         auto pit = conditions_.before_begin();
 
-        while(it != conditions_.end())
+        while (it != conditions_.end())
         {
-            if(*it < pRC)
+            if (*it < pRC)
             {
                 pit = it++;
             }
@@ -204,13 +210,14 @@ class ReadConditionImpl : public std::enable_shared_from_this<ReadConditionImpl>
     {
         std::lock_guard<std::recursive_mutex> _(mutex_);
 
-        for(auto cond : conditions_)
+        for (auto cond : conditions_)
         {
             auto pN = cond->get_notifier();
             assert(nullptr != pN);
             pN->notify();
         }
     }
+
 };
 
 } // namespace detail

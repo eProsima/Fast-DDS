@@ -390,7 +390,7 @@ ReadCondition* DataReader::create_readcondition(
         ViewStateMask view_states,
         InstanceStateMask instance_states)
 {
-   return impl_->create_readcondition(sample_states, view_states, instance_states);
+    return impl_->create_readcondition(sample_states, view_states, instance_states);
 }
 
 QueryCondition* DataReader::create_querycondition(
@@ -415,7 +415,7 @@ QueryCondition* DataReader::create_querycondition(
 ReturnCode_t DataReader::delete_readcondition(
         ReadCondition* a_condition)
 {
-   return impl_->delete_readcondition(a_condition);
+    return impl_->delete_readcondition(a_condition);
 }
 
 ReturnCode_t DataReader::delete_contained_entities()
