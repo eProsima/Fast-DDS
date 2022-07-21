@@ -571,16 +571,17 @@ bool EDP::unpairWriterProxy(
 #endif // if HAVE_SECURITY
 
                     //MATCHED AND ADDED CORRECTLY:
-                    if (r.getListener() != nullptr)
+                    ReaderListener* listener = nullptr;
+                    if (nullptr != (listener = r.getListener()))
                     {
                         MatchingInfo info;
                         info.status = REMOVED_MATCHING;
                         info.remoteEndpointGuid = writer_guid;
-                        r.getListener()->onReaderMatched(&r, info);
+                        listener->onReaderMatched(&r, info);
 
                         const SubscriptionMatchedStatus& sub_info =
                         update_subscription_matched_status(reader_guid, writer_guid, -1);
-                        r.getListener()->onReaderMatched(&r, sub_info);
+                        listener->onReaderMatched(&r, sub_info);
                     }
                 }
 
@@ -609,16 +610,17 @@ bool EDP::unpairReaderProxy(
                     participant_guid, reader_guid);
 #endif // if HAVE_SECURITY
                     //MATCHED AND ADDED CORRECTLY:
-                    if (w.getListener() != nullptr)
+                    WriterListener* listener = nullptr;
+                    if (nullptr != (listener = w.getListener()))
                     {
                         MatchingInfo info;
                         info.status = REMOVED_MATCHING;
                         info.remoteEndpointGuid = reader_guid;
-                        w.getListener()->onWriterMatched(&w, info);
+                        listener->onWriterMatched(&w, info);
 
                         const PublicationMatchedStatus& pub_info =
                         update_publication_matched_status(reader_guid, writer_guid, -1);
-                        w.getListener()->onWriterMatched(&w, pub_info);
+                        listener->onWriterMatched(&w, pub_info);
                     }
                 }
 
