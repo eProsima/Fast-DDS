@@ -234,7 +234,7 @@ public:
     /**
      * Sends a preemptive acknack to the writer represented by this proxy.
      */
-    bool perform_initial_ack_nack();
+    void perform_initial_ack_nack();
 
     /**
      * Sends the necessary acknac and nackfrag messages to answer the last received heartbeat message.
