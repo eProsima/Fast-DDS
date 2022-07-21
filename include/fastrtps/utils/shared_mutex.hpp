@@ -8,23 +8,12 @@
 #ifndef _UTILS_SHARED_MUTEX_HPP_
 #define _UTILS_SHARED_MUTEX_HPP_
 
-#ifndef USE_THIRDPARTY_SHARED_MUTEX
-#   if defined(_MSC_VER) && _MSVC_LANG < 202302L
-#       pragma message("warning: USE_THIRDPARTY_SHARED_MUTEX not defined. By default use framework version.")
-#   else
-#       warning "USE_THIRDPARTY_SHARED_MUTEX not defined. By default use framework version."
-#   endif // if defined(_MSC_VER) && _MSVC_LANG < 202302L
-#   define USE_THIRDPARTY_SHARED_MUTEX 0
-#endif // ifndef USE_THIRDPARTY_SHARED_MUTEX
-
 #if defined(__has_include) && __has_include(<version>)
 #   include <version>
 #endif // if defined(__has_include) && __has_include(<version>)
 
 // Detect if the share_mutex feature is available
 #if defined(__has_include) && __has_include(<version>) && !defined(__cpp_lib_shared_mutex) || \
-    /* allow users to ignore shared_mutex framework implementation */ \
-    (~USE_THIRDPARTY_SHARED_MUTEX + 1) || \
     /* deprecated procedure if the good one is not available*/ \
     ( !(defined(__has_include) && __has_include(<version>)) && \
     !(defined(HAVE_CXX17) && HAVE_CXX17) &&  __cplusplus < 201703 )
@@ -364,8 +353,9 @@ shared_lock<Mutex>::try_lock()
 
 namespace eprosima {
 
-using std::shared_mutex;
-using std::shared_lock;
+using shared_mutex = std::shared_mutex;
+template< class Mutex >
+using shared_lock = std::shared_lock<Mutex>;
 
 } //namespace eprosima
 
