@@ -30,9 +30,9 @@ namespace detail {
 
 struct StateFilter
 {
-    SampleStateMask sample_states;
-    ViewStateMask view_states;
-    InstanceStateMask instance_states;
+    SampleStateMask sample_states = 0;
+    ViewStateMask view_states = 0;
+    InstanceStateMask instance_states = 0;
 };
 
 } /* namespace detail */

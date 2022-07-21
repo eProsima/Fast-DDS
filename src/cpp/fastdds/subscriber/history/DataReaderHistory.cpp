@@ -34,11 +34,8 @@
 #include <rtps/reader/WriterProxy.h>
 #include <utils/collections/sorted_vector_insert.hpp>
 
-namespace eprosima {
-namespace fastdds {
-namespace dds {
-namespace detail {
-
+using namespace eprosima::fastdds::dds;
+using namespace eprosima::fastdds::dds::detail;
 using namespace eprosima::fastrtps::rtps;
 
 using eprosima::fastrtps::RecursiveTimedMutex;
@@ -203,7 +200,7 @@ bool DataReaderHistory::received_change(
     if ((0 == unknown_missing_changes_up_to) ||
             (m_changes.size() + unknown_missing_changes_up_to < static_cast<size_t>(resource_limited_qos_.max_samples)))
     {
-        std::lock_guard<RecursiveTimedMutex> guard(*mp_mutex);
+        std::lock_guard<RecursiveTimedMutex> guard(*getMutex());
         ret_value =  receive_fn_(a_change, unknown_missing_changes_up_to, rejection_reason);
     }
     else
@@ -351,7 +348,7 @@ void DataReaderHistory::add_to_instance(
 bool DataReaderHistory::get_first_untaken_info(
         SampleInfo& info)
 {
-    std::lock_guard<RecursiveTimedMutex> lock(*mp_mutex);
+    std::lock_guard<RecursiveTimedMutex> lock(*getMutex());
 
     CacheChange_t* change = nullptr;
     WriterProxy* wp = nullptr;
@@ -431,7 +428,7 @@ bool DataReaderHistory::remove_change_sub(
         return false;
     }
 
-    std::lock_guard<RecursiveTimedMutex> guard(*mp_mutex);
+    std::lock_guard<RecursiveTimedMutex> guard(*getMutex());
     bool found = false;
     InstanceCollection::iterator vit;
     if (find_key(change->instanceHandle, vit))
@@ -477,7 +474,7 @@ bool DataReaderHistory::remove_change_sub(
         return false;
     }
 
-    std::lock_guard<RecursiveTimedMutex> guard(*mp_mutex);
+    std::lock_guard<RecursiveTimedMutex> guard(*getMutex());
     bool found = false;
     InstanceCollection::iterator vit;
     if (find_key(change->instanceHandle, vit))
@@ -527,7 +524,7 @@ bool DataReaderHistory::set_next_deadline(
         logError(SUBSCRIBER, "You need to create a Reader with this History before using it");
         return false;
     }
-    std::lock_guard<RecursiveTimedMutex> guard(*mp_mutex);
+    std::lock_guard<RecursiveTimedMutex> guard(*getMutex());
     auto it = instances_.find(handle);
     if (it == instances_.end())
     {
@@ -547,7 +544,7 @@ bool DataReaderHistory::get_next_deadline(
         logError(SUBSCRIBER, "You need to create a Reader with this History before using it");
         return false;
     }
-    std::lock_guard<RecursiveTimedMutex> guard(*mp_mutex);
+    std::lock_guard<RecursiveTimedMutex> guard(*getMutex());
     auto min = std::min_element(instances_.begin(),
                     instances_.end(),
                     [](
@@ -564,7 +561,7 @@ bool DataReaderHistory::get_next_deadline(
 uint64_t DataReaderHistory::get_unread_count(
         bool mark_as_read)
 {
-    std::lock_guard<RecursiveTimedMutex> guard(*mp_mutex);
+    std::lock_guard<RecursiveTimedMutex> guard(*getMutex());
     uint64_t ret_val = mp_reader->get_unread_count(mark_as_read);
     assert(ret_val == counters_.samples_unread);
     if (mark_as_read)
@@ -589,7 +586,7 @@ std::pair<bool, DataReaderHistory::instance_info> DataReaderHistory::lookup_avai
 
     if (!has_keys_)
     {
-        // NO_KEY topics can only return the ficticious instance.
+        // NO_KEY topics can only return the fictitious instance.
         // Execution can only get here for two reasons:
         // - Looking for a specific instance (exact = true)
         // - Looking for the next instance to the ficticious one (exact = false)
@@ -836,7 +833,17 @@ void DataReaderHistory::writer_not_alive(
     }
 }
 
-} // namespace detail
-} // namsepace dds
-} // namespace fastdds
-} // namsepace eprosima
+StateFilter DataReaderHistory::get_mask_status() const noexcept
+{
+    std::lock_guard<RecursiveTimedMutex> guard(*getMutex());
+
+    return {
+        (counters_.samples_read ? READ_SAMPLE_STATE : 0u) |
+        (counters_.samples_unread ? NOT_READ_SAMPLE_STATE : 0u),
+        (counters_.instances_new ? NEW_VIEW_STATE : 0u) |
+        (counters_.instances_not_new ? NOT_NEW_VIEW_STATE : 0u),
+        (counters_.instances_alive ? ALIVE_INSTANCE_STATE : 0u) |
+        (counters_.instances_disposed ? NOT_ALIVE_DISPOSED_INSTANCE_STATE : 0u) |
+        (counters_.instances_no_writers ? NOT_ALIVE_DISPOSED_INSTANCE_STATE : 0u)
+    };
+}
