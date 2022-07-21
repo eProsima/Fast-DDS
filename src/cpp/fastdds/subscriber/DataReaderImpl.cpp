@@ -501,6 +501,7 @@ ReturnCode_t DataReaderImpl::read_or_take(
     {
         cmd.add_instance(should_take);
     }
+    // TODO(MiguelCompany): Notify read conditions
     return cmd.return_value();
 }
 
@@ -685,6 +686,7 @@ ReturnCode_t DataReaderImpl::read_or_take_next_sample(
     {
         *info = sample_infos[0];
     }
+    // TODO(MiguelCompany): Notify read conditions
     return code;
 }
 
@@ -720,7 +722,12 @@ ReturnCode_t DataReaderImpl::get_first_untaken_info(
 uint64_t DataReaderImpl::get_unread_count(
         bool mark_as_read)
 {
-    return reader_ ? history_.get_unread_count(mark_as_read) : 0;
+    bool ret_val = reader_ ? history_.get_unread_count(mark_as_read) : 0;
+    if (mark_as_read)
+    {
+        // TODO(MiguelCompany): Notify read conditions
+    }
+    return ret_val;
 }
 
 const GUID_t& DataReaderImpl::guid() const
@@ -953,6 +960,7 @@ bool DataReaderImpl::on_data_available(
         }
     }
 
+    // TODO(MiguelCompany): Notify read conditions
     return ret_val;
 }
 
@@ -1037,6 +1045,7 @@ void DataReaderImpl::update_subscription_matched_status(
     if (count_change < 0)
     {
         history_.writer_not_alive(iHandle2GUID(status.last_publication_handle));
+        // TODO(MiguelCompany): Notify read conditions
     }
 
     StatusMask notify_status = StatusMask::subscription_matched();
@@ -1155,6 +1164,7 @@ bool DataReaderImpl::lifespan_expired()
 
         // The earliest change has expired
         history_.remove_change_sub(earliest_change);
+        // TODO(MiguelCompany): Notify read conditions
 
         // Set the timer for the next change if there is one
         if (!history_.get_earliest_change(&earliest_change))
@@ -1325,6 +1335,7 @@ LivelinessChangedStatus& DataReaderImpl::update_liveliness_status(
     if (0 < status.not_alive_count_change)
     {
         history_.writer_not_alive(iHandle2GUID(status.last_publication_handle));
+        // TODO(MiguelCompany): Notify read conditions
     }
 
     liveliness_changed_status_.alive_count = status.alive_count;
