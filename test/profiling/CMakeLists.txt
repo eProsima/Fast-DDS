@@ -38,7 +38,7 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
         main_MemoryTest.cpp
         )
     add_executable(MemoryTest ${MEMORYTEST_SOURCE})
-    target_include_directories(MemoryTest PRIVATE ${Asio_INCLUDE_DIR})
+    target_include_directories(MemoryTest PRIVATE ${ASIO_INCLUDE_DIR})
     target_link_libraries(MemoryTest fastrtps foonathan_memory ${CMAKE_THREAD_LIBS_INIT} ${CMAKE_DL_LIBS})
 
     configure_file("cycles_tests.py" "cycles_tests.py")

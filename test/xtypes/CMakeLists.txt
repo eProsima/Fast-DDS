@@ -102,7 +102,7 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER) AND fastcdr_FOUND)
             BOOST_ASIO_STANDALONE
             ASIO_STANDALONE
             )
-        target_include_directories(XTypesBlackBoxTests PRIVATE ${Asio_INCLUDE_DIR})
+        target_include_directories(XTypesBlackBoxTests PRIVATE ${ASIO_INCLUDE_DIR})
         target_link_libraries(XTypesBlackBoxTests fastrtps fastcdr GTest::gtest)
         add_xtypes_gtest(XTypesBlackBoxTests SOURCES ${XTYPES_TESTS_SOURCE})
     endif()

@@ -28,7 +28,7 @@ target_compile_definitions(LatencyTest PRIVATE
     ASIO_STANDALONE
     )
 
-target_include_directories(LatencyTest PRIVATE ${Asio_INCLUDE_DIR})
+target_include_directories(LatencyTest PRIVATE ${ASIO_INCLUDE_DIR})
 
 target_link_libraries(
     LatencyTest

@@ -103,7 +103,7 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
             ASIO_STANDALONE
             )
         target_include_directories(DynamicTypesTests PRIVATE
-            ${Asio_INCLUDE_DIR}
+            ${ASIO_INCLUDE_DIR}
             ${PROJECT_SOURCE_DIR}/test/mock/rtps/TCPTransportDescriptor
             ${PROJECT_SOURCE_DIR}/test/mock/rtps/TCPv4TransportDescriptor
             ${PROJECT_SOURCE_DIR}/test/mock/rtps/TCPv6TransportDescriptor
@@ -129,7 +129,7 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
             ASIO_STANDALONE
             )
         target_include_directories(DynamicComplexTypesTests PRIVATE
-            ${Asio_INCLUDE_DIR}
+            ${ASIO_INCLUDE_DIR}
             ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include)
         target_link_libraries(DynamicComplexTypesTests GTest::gtest
             $<$<BOOL:${WIN32}>:iphlpapi$<SEMICOLON>Shlwapi>
@@ -146,7 +146,7 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
             ASIO_STANDALONE
            )
         target_include_directories(DynamicTypes_4_2_Tests PRIVATE
-            ${Asio_INCLUDE_DIR}
+            ${ASIO_INCLUDE_DIR}
             ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include)
         target_link_libraries(DynamicTypes_4_2_Tests GTest::gtest
             $<$<BOOL:${WIN32}>:iphlpapi$<SEMICOLON>Shlwapi>

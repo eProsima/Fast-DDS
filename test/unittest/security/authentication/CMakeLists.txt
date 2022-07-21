@@ -55,7 +55,7 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
             ASIO_STANDALONE
             )
         target_include_directories(BuiltinPKIDH PRIVATE
-            ${Asio_INCLUDE_DIR}
+            ${ASIO_INCLUDE_DIR}
             ${PROJECT_SOURCE_DIR}/test/mock/rtps/NetworkFactory/
             ${OPENSSL_INCLUDE_DIR}
             ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include

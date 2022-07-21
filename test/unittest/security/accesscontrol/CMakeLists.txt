@@ -71,7 +71,7 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
             )
 
         target_include_directories(AccessControlTests PRIVATE
-            ${Asio_INCLUDE_DIR}
+            ${ASIO_INCLUDE_DIR}
             ${PROJECT_SOURCE_DIR}/test/mock/rtps/NetworkFactory/
             ${PROJECT_SOURCE_DIR}/test/mock/rtps/PDPSimple
             ${PROJECT_SOURCE_DIR}/test/mock/rtps/EDP

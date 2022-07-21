@@ -32,7 +32,7 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER) AND fastcdr_FOUND)
         ASIO_STANDALONE
         )
     target_include_directories(SimpleCommunicationPublisher PRIVATE
-        ${Asio_INCLUDE_DIR}
+        ${ASIO_INCLUDE_DIR}
         ${PROJECT_SOURCE_DIR}/test/blackbox)
     target_link_libraries(SimpleCommunicationPublisher fastrtps fastcdr foonathan_memory ${CMAKE_DL_LIBS})
 
@@ -46,7 +46,7 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER) AND fastcdr_FOUND)
         ASIO_STANDALONE
         )
     target_include_directories(SimpleCommunicationSubscriber PRIVATE
-        ${Asio_INCLUDE_DIR}
+        ${ASIO_INCLUDE_DIR}
         ${PROJECT_SOURCE_DIR}/test/blackbox)
     target_link_libraries(SimpleCommunicationSubscriber fastrtps fastcdr foonathan_memory ${CMAKE_DL_LIBS})
 
@@ -62,7 +62,7 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER) AND fastcdr_FOUND)
         ASIO_STANDALONE
         )
     target_include_directories(SimpleCommunicationPubSub PRIVATE
-        ${Asio_INCLUDE_DIR}
+        ${ASIO_INCLUDE_DIR}
         ${PROJECT_SOURCE_DIR}/test/blackbox)
     target_link_libraries(SimpleCommunicationPubSub fastrtps fastcdr foonathan_memory ${CMAKE_DL_LIBS})
 

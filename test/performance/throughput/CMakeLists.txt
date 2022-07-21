@@ -27,7 +27,7 @@ target_compile_definitions(ThroughputTest PRIVATE
     BOOST_ASIO_STANDALONE
     ASIO_STANDALONE
     )
-target_include_directories(ThroughputTest PRIVATE ${Asio_INCLUDE_DIR})
+target_include_directories(ThroughputTest PRIVATE ${ASIO_INCLUDE_DIR})
 target_link_libraries(
     ThroughputTest
     fastrtps

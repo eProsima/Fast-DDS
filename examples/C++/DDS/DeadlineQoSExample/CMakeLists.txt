@@ -65,7 +65,7 @@ target_compile_definitions(DDSDeadlineQoSExample PRIVATE
     BOOST_ASIO_STANDALONE
     ASIO_STANDALONE
     )
-target_include_directories(DDSDeadlineQoSExample PRIVATE ${Asio_INCLUDE_DIR})
+target_include_directories(DDSDeadlineQoSExample PRIVATE ${ASIO_INCLUDE_DIR})
 target_link_libraries(DDSDeadlineQoSExample fastrtps fastcdr foonathan_memory)
 if(UNIX)
   target_link_libraries(DDSDeadlineQoSExample pthread)

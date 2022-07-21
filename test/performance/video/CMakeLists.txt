@@ -87,14 +87,14 @@ if(GST_FOUND)
         target_include_directories(
             VideoTest
             PUBLIC
-            ${Asio_INCLUDE_DIR}
+            ${ASIO_INCLUDE_DIR}
             ${GST_INCLUDE_DIRS}
         )
     else()
         target_include_directories(
             VideoTest
             PUBLIC
-            ${Asio_INCLUDE_DIR}
+            ${ASIO_INCLUDE_DIR}
             $ENV{GSTREAMER_1_0_ROOT_X86_64}/include
             $ENV{GSTREAMER_1_0_ROOT_X86_64}/include/glib-2.0
             $ENV{GSTREAMER_1_0_ROOT_X86_64}/include/gstreamer-1.0

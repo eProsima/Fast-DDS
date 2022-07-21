@@ -33,7 +33,7 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
             ASIO_STANDALONE
             )
         target_include_directories(ThroughputControllerTests PRIVATE
-            ${Asio_INCLUDE_DIR}    
+            ${ASIO_INCLUDE_DIR}    
             ${PROJECT_SOURCE_DIR}/test/mock/rtps/Endpoint
             ${PROJECT_SOURCE_DIR}/test/mock/rtps/AsyncWriterThread
             ${PROJECT_SOURCE_DIR}/test/mock/rtps/RTPSParticipantImpl

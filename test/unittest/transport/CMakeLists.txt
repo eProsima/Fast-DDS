@@ -202,7 +202,7 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
             ASIO_STANDALONE
             )
         target_include_directories(UDPv4Tests PRIVATE
-            ${Asio_INCLUDE_DIR}
+            ${ASIO_INCLUDE_DIR}
             ${PROJECT_SOURCE_DIR}/test/mock/rtps/MessageReceiver
             ${PROJECT_SOURCE_DIR}/test/mock/rtps/ReceiverResource
             ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include
@@ -224,7 +224,7 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
                 ASIO_STANDALONE
                 )
             target_include_directories(UDPv6Tests PRIVATE
-                ${Asio_INCLUDE_DIR}
+                ${ASIO_INCLUDE_DIR}
                 ${PROJECT_SOURCE_DIR}/test/mock/rtps/MessageReceiver
                 ${PROJECT_SOURCE_DIR}/test/mock/rtps/ReceiverResource
                 ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include
@@ -243,7 +243,7 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
                 ASIO_STANDALONE
                 )
             target_include_directories(TCPv6Tests PRIVATE
-                ${Asio_INCLUDE_DIR}
+                ${ASIO_INCLUDE_DIR}
                 ${PROJECT_SOURCE_DIR}/test/mock/rtps/ParticipantProxyData
                 ${PROJECT_SOURCE_DIR}/test/mock/dds/QosPolicies
                 ${PROJECT_SOURCE_DIR}/test/mock/rtps/MessageReceiver
@@ -268,7 +268,7 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
             ASIO_STANDALONE
             )
         target_include_directories(test_UDPv4Tests PRIVATE
-            ${Asio_INCLUDE_DIR}
+            ${ASIO_INCLUDE_DIR}
             ${PROJECT_SOURCE_DIR}/test/mock/rtps/ParticipantProxyData
             ${PROJECT_SOURCE_DIR}/test/mock/dds/QosPolicies
             ${PROJECT_SOURCE_DIR}/test/mock/rtps/MessageReceiver
@@ -291,7 +291,7 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
             ASIO_STANDALONE
             )
         target_include_directories(TCPv4Tests PRIVATE
-            ${Asio_INCLUDE_DIR}
+            ${ASIO_INCLUDE_DIR}
             ${PROJECT_SOURCE_DIR}/test/mock/rtps/ParticipantProxyData
             ${PROJECT_SOURCE_DIR}/test/mock/dds/QosPolicies
             ${PROJECT_SOURCE_DIR}/test/mock/rtps/MessageReceiver
@@ -318,7 +318,7 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
                 $<$<BOOL:${WIN32}>:_ENABLE_ATOMIC_ALIGNMENT_FIX>)
 
             target_include_directories(SharedMemTests PRIVATE
-                ${Asio_INCLUDE_DIR}
+                ${ASIO_INCLUDE_DIR}
                 ${PROJECT_SOURCE_DIR}/test/mock/rtps/MessageReceiver
                 ${PROJECT_SOURCE_DIR}/test/mock/rtps/ReceiverResource
                 ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include
