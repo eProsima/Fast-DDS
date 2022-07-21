@@ -2482,6 +2482,7 @@ bool StatefulWriter::process_acknack(
                                     {
                                         if (!remote_reader->is_datasharing_reader())
                                         {
+<<<<<<< HEAD
                                             if (remote_reader->is_local_reader())
                                             {
                                                 mp_RTPSParticipant->async_thread().wake_up(this);
@@ -2491,6 +2492,11 @@ bool StatefulWriter::process_acknack(
                                                 // Send heartbeat if requested
                                                 send_heartbeat_to_nts(*remote_reader, false, true);
                                             }
+=======
+                                            // Send heartbeat if requested
+                                            send_heartbeat_to_nts(*remote_reader, false, true);
+                                            periodic_hb_event_->restart_timer();
+>>>>>>> 5d220cec8 (Improve rediscovery on lossy environments (#2858))
                                         }
                                     }
 
