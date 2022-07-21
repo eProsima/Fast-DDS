@@ -80,55 +80,73 @@ StatelessReader::StatelessReader(
 bool StatelessReader::matched_writer_add(
         const WriterProxyData& wdata)
 {
-    std::lock_guard<RecursiveTimedMutex> guard(mp_mutex);
-    for (const RemoteWriterInfo_t& writer : matched_writers_)
     {
-        if (writer.guid == wdata.guid())
+        std::lock_guard<RecursiveTimedMutex> guard(mp_mutex);
+        for (const RemoteWriterInfo_t& writer : matched_writers_)
         {
-            logWarning(RTPS_READER, "Attempting to add existing writer");
+            if (writer.guid == wdata.guid())
+            {
+                logWarning(RTPS_READER, "Attempting to add existing writer");
+                return false;
+            }
+        }
+
+        RemoteWriterInfo_t info;
+        info.guid = wdata.guid();
+        info.persistence_guid = wdata.persistence_guid();
+        info.has_manual_topic_liveliness = (MANUAL_BY_TOPIC_LIVELINESS_QOS == wdata.m_qos.m_liveliness.kind);
+
+        if (matched_writers_.emplace_back(info) == nullptr)
+        {
+            logWarning(RTPS_READER, "No space to add writer " << wdata.guid() << " to reader " << m_guid);
             return false;
         }
-    }
+        logInfo(RTPS_READER, "Writer " << wdata.guid() << " added to reader " << m_guid);
 
-    RemoteWriterInfo_t info;
-    info.guid = wdata.guid();
-    info.persistence_guid = wdata.persistence_guid();
-    info.has_manual_topic_liveliness = (MANUAL_BY_TOPIC_LIVELINESS_QOS == wdata.m_qos.m_liveliness.kind);
-    RemoteWriterInfo_t* att = matched_writers_.emplace_back(info);
-    if (att != nullptr)
-    {
         add_persistence_guid(info.guid, info.persistence_guid);
 
         m_acceptMessagesFromUnkownWriters = false;
-        logInfo(RTPS_READER, "Writer " << info.guid << " added to reader " << m_guid);
 
-        if (liveliness_lease_duration_ < c_TimeInfinite)
-        {
-            auto wlp = mp_RTPSParticipant->wlp();
-            if ( wlp != nullptr)
-            {
-                wlp->sub_liveliness_manager_->add_writer(
-                    wdata.guid(),
-                    liveliness_kind_,
-                    liveliness_lease_duration_);
-            }
-            else
-            {
-                logError(RTPS_LIVELINESS, "Finite liveliness lease duration but WLP not enabled");
-            }
-        }
-
-        return true;
     }
-
-    logWarning(RTPS_READER, "No space to add writer " << wdata.guid() << " to reader " << m_guid);
-    return false;
+    if (liveliness_lease_duration_ < c_TimeInfinite)
+    {
+        auto wlp = mp_RTPSParticipant->wlp();
+        if ( wlp != nullptr)
+        {
+            wlp->sub_liveliness_manager_->add_writer(
+                wdata.guid(),
+                liveliness_kind_,
+                liveliness_lease_duration_);
+        }
+        else
+        {
+            logError(RTPS_LIVELINESS, "Finite liveliness lease duration but WLP not enabled");
+        }
+    }
+    return true;
 }
 
 bool StatelessReader::matched_writer_remove(
         const GUID_t& writer_guid,
         bool removed_by_lease)
 {
+    if (liveliness_lease_duration_ < c_TimeInfinite)
+    {
+        auto wlp = mp_RTPSParticipant->wlp();
+        if ( wlp != nullptr)
+        {
+            wlp->sub_liveliness_manager_->remove_writer(
+                writer_guid,
+                liveliness_kind_,
+                liveliness_lease_duration_);
+        }
+        else
+        {
+            logError(RTPS_LIVELINESS,
+                    "Finite liveliness lease duration but WLP not enabled, cannot remove writer");
+        }
+    }
+
     std::lock_guard<RecursiveTimedMutex> guard(mp_mutex);
 
     ResourceLimitedVector<RemoteWriterInfo_t>::iterator it;
@@ -137,23 +155,6 @@ bool StatelessReader::matched_writer_remove(
         if (it->guid == writer_guid)
         {
             logInfo(RTPS_READER, "Writer " << writer_guid << " removed from " << m_guid);
-
-            if (liveliness_lease_duration_ < c_TimeInfinite)
-            {
-                auto wlp = mp_RTPSParticipant->wlp();
-                if ( wlp != nullptr)
-                {
-                    wlp->sub_liveliness_manager_->remove_writer(
-                        writer_guid,
-                        liveliness_kind_,
-                        liveliness_lease_duration_);
-                }
-                else
-                {
-                    logError(RTPS_LIVELINESS,
-                            "Finite liveliness lease duration but WLP not enabled, cannot remove writer");
-                }
-            }
 
             remove_persistence_guid(it->guid, it->persistence_guid, removed_by_lease);
             matched_writers_.erase(it);
