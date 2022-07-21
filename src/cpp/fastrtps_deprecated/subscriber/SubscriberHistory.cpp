@@ -28,6 +28,8 @@
 #include <fastdds/rtps/reader/RTPSReader.h>
 
 #include <fastrtps_deprecated/subscriber/SubscriberImpl.h>
+
+#include <rtps/common/ChangeComparison.hpp>
 #include <rtps/reader/WriterProxy.h>
 #include <utils/collections/sorted_vector_insert.hpp>
 
@@ -348,10 +350,7 @@ bool SubscriberHistory::add_received_change_with_key(
 
         //ADD TO KEY VECTOR
         eprosima::utilities::collections::sorted_vector_insert(instance_changes, a_change,
-                [](const CacheChange_t* lhs, const CacheChange_t* rhs)
-                {
-                    return lhs->sourceTimestamp < rhs->sourceTimestamp;
-                });
+                fastdds::rtps::history_order_cmp);
 
         logInfo(SUBSCRIBER, mp_reader->getGuid().entityId
                 << ": Change " << a_change->sequenceNumber << " added from: "
@@ -745,10 +744,7 @@ bool SubscriberHistory::completed_change_keep_all_with_key(
             {
                 //ADD TO KEY VECTOR
                 eprosima::utilities::collections::sorted_vector_insert(instance_changes, a_change,
-                        [](const CacheChange_t* lhs, const CacheChange_t* rhs)
-                        {
-                            return lhs->sourceTimestamp < rhs->sourceTimestamp;
-                        });
+                        fastdds::rtps::history_order_cmp);
                 ret_value = true;
 
                 logInfo(SUBSCRIBER, mp_reader->getGuid().entityId
@@ -804,10 +800,7 @@ bool SubscriberHistory::completed_change_keep_last_with_key(
             {
                 //ADD TO KEY VECTOR
                 eprosima::utilities::collections::sorted_vector_insert(instance_changes, a_change,
-                        [](const CacheChange_t* lhs, const CacheChange_t* rhs)
-                        {
-                            return lhs->sourceTimestamp < rhs->sourceTimestamp;
-                        });
+                        fastdds::rtps::history_order_cmp);
                 ret_value = true;
 
                 logInfo(SUBSCRIBER, mp_reader->getGuid().entityId

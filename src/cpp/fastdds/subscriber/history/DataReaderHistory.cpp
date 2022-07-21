@@ -29,6 +29,8 @@
 #include <fastdds/rtps/reader/RTPSReader.h>
 
 #include <fastdds/subscriber/DataReaderImpl/ReadTakeCommand.hpp>
+
+#include <rtps/common/ChangeComparison.hpp>
 #include <rtps/reader/WriterProxy.h>
 #include <utils/collections/sorted_vector_insert.hpp>
 
@@ -338,11 +340,7 @@ void DataReaderHistory::add_to_instance(
 {
     // ADD TO KEY VECTOR
     DataReaderCacheChange item = a_change;
-    eprosima::utilities::collections::sorted_vector_insert(instance.cache_changes, item,
-            [](const DataReaderCacheChange& lhs, const DataReaderCacheChange& rhs)
-            {
-                return lhs->sourceTimestamp < rhs->sourceTimestamp;
-            });
+    eprosima::utilities::collections::sorted_vector_insert(instance.cache_changes, item, rtps::history_order_cmp);
     data_available_instances_[a_change->instanceHandle] = instances_[a_change->instanceHandle];
 
     logInfo(SUBSCRIBER, mp_reader->getGuid().entityId
