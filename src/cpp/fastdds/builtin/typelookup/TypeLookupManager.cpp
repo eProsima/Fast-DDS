@@ -327,6 +327,8 @@ ReaderHistory* TypeLookupManager::get_builtin_reply_reader_history()
  */
 bool TypeLookupManager::create_endpoints()
 {
+    const RTPSParticipantAttributes& pattr = participant_->getRTPSParticipantAttributes();
+
     // Built-in history attributes.
     HistoryAttributes hatt;
     hatt.initialReservedCaches = 20;
@@ -336,8 +338,10 @@ bool TypeLookupManager::create_endpoints()
     WriterAttributes watt;
     watt.endpoint.unicastLocatorList = builtin_protocols_->m_metatrafficUnicastLocatorList;
     watt.endpoint.multicastLocatorList = builtin_protocols_->m_metatrafficMulticastLocatorList;
+    watt.endpoint.external_unicast_locators = builtin_protocols_->m_att.metatraffic_external_unicast_locators;
+    watt.endpoint.ignore_non_matching_locators = pattr.ignore_non_matching_locators;
     watt.endpoint.remoteLocatorList = builtin_protocols_->m_initialPeersList;
-    watt.matched_readers_allocation = participant_->getRTPSParticipantAttributes().allocation.participants;
+    watt.matched_readers_allocation = pattr.allocation.participants;
     watt.endpoint.topicKind = fastrtps::rtps::NO_KEY;
     watt.endpoint.reliabilityKind = fastrtps::rtps::RELIABLE;
     watt.endpoint.durabilityKind = fastrtps::rtps::VOLATILE;
@@ -397,8 +401,10 @@ bool TypeLookupManager::create_endpoints()
     ReaderAttributes ratt;
     ratt.endpoint.unicastLocatorList = builtin_protocols_->m_metatrafficUnicastLocatorList;
     ratt.endpoint.multicastLocatorList = builtin_protocols_->m_metatrafficMulticastLocatorList;
+    ratt.endpoint.external_unicast_locators = builtin_protocols_->m_att.metatraffic_external_unicast_locators;
+    ratt.endpoint.ignore_non_matching_locators = pattr.ignore_non_matching_locators;
     ratt.endpoint.remoteLocatorList = builtin_protocols_->m_initialPeersList;
-    ratt.matched_writers_allocation = participant_->getRTPSParticipantAttributes().allocation.participants;
+    ratt.matched_writers_allocation = pattr.allocation.participants;
     ratt.expectsInlineQos = true;
     ratt.endpoint.topicKind = fastrtps::rtps::NO_KEY;
     ratt.endpoint.reliabilityKind = fastrtps::rtps::RELIABLE;

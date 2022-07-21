@@ -238,8 +238,8 @@ bool PDPSimple::createPDPEndpoints()
 {
     logInfo(RTPS_PDP, "Beginning");
 
-    const RTPSParticipantAllocationAttributes& allocation =
-            mp_RTPSParticipant->getRTPSParticipantAttributes().allocation;
+    const RTPSParticipantAttributes& pattr = mp_RTPSParticipant->getRTPSParticipantAttributes();
+    const RTPSParticipantAllocationAttributes& allocation = pattr.allocation;
 
     //SPDP BUILTIN RTPSParticipant READER
     HistoryAttributes hatt;
@@ -263,6 +263,8 @@ bool PDPSimple::createPDPEndpoints()
     ReaderAttributes ratt;
     ratt.endpoint.multicastLocatorList = mp_builtin->m_metatrafficMulticastLocatorList;
     ratt.endpoint.unicastLocatorList = mp_builtin->m_metatrafficUnicastLocatorList;
+    ratt.endpoint.external_unicast_locators = mp_builtin->m_att.metatraffic_external_unicast_locators;
+    ratt.endpoint.ignore_non_matching_locators = pattr.ignore_non_matching_locators;
     ratt.endpoint.topicKind = WITH_KEY;
     ratt.endpoint.durabilityKind = TRANSIENT_LOCAL;
     ratt.endpoint.reliabilityKind = BEST_EFFORT;
@@ -299,6 +301,8 @@ bool PDPSimple::createPDPEndpoints()
 
     mp_PDPWriterHistory = new WriterHistory(hatt);
     WriterAttributes watt;
+    watt.endpoint.external_unicast_locators = mp_builtin->m_att.metatraffic_external_unicast_locators;
+    watt.endpoint.ignore_non_matching_locators = pattr.ignore_non_matching_locators;
     watt.endpoint.endpointKind = WRITER;
     watt.endpoint.durabilityKind = TRANSIENT_LOCAL;
     watt.endpoint.reliabilityKind = BEST_EFFORT;
@@ -306,8 +310,7 @@ bool PDPSimple::createPDPEndpoints()
     watt.endpoint.remoteLocatorList = m_discovery.initialPeersList;
     watt.matched_readers_allocation = allocation.participants;
 
-    if (mp_RTPSParticipant->getRTPSParticipantAttributes().throughputController.bytesPerPeriod != UINT32_MAX &&
-            mp_RTPSParticipant->getRTPSParticipantAttributes().throughputController.periodMillisecs != 0)
+    if (pattr.throughputController.bytesPerPeriod != UINT32_MAX && pattr.throughputController.periodMillisecs != 0)
     {
         watt.mode = ASYNCHRONOUS_WRITER;
     }
