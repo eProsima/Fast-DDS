@@ -241,20 +241,14 @@ bool StatefulReader::matched_writer_add(
                 if (SequenceNumber_t::unknown() != last_seq)
                 {
                     SequenceNumberSet_t sns(last_seq + 1);
-                    send_acknack(wp, sns, wp, false);
+                    send_acknack(wp, sns, *wp, false);
                     wp->lost_changes_update(last_seq + 1);
                 }
             }
             else if (!is_same_process)
             {
-<<<<<<< HEAD
-                SequenceNumberSet_t sns(last_seq + 1);
-                send_acknack(wp, sns, *wp, false);
-                wp->lost_changes_update(last_seq + 1);
-=======
                 // simulate a notification to force reading of transient changes
                 datasharing_listener_->notify(false);
->>>>>>> 01a55d4e4 (Fix WLP deadlock (#2715))
             }
         }
         else

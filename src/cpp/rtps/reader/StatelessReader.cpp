@@ -176,14 +176,6 @@ bool StatelessReader::matched_writer_remove(
         const GUID_t& writer_guid,
         bool removed_by_lease)
 {
-<<<<<<< HEAD
-    std::lock_guard<RecursiveTimedMutex> guard(mp_mutex);
-
-    //Remove cachechanges belonging to the unmatched writer
-    mp_history->remove_changes_with_guid(writer_guid);
-
-=======
->>>>>>> 01a55d4e4 (Fix WLP deadlock (#2715))
     if (liveliness_lease_duration_ < c_TimeInfinite)
     {
         auto wlp = mp_RTPSParticipant->wlp();
@@ -204,7 +196,7 @@ bool StatelessReader::matched_writer_remove(
     std::lock_guard<RecursiveTimedMutex> guard(mp_mutex);
 
     //Remove cachechanges belonging to the unmatched writer
-    mp_history->writer_unmatched(writer_guid, get_last_notified(writer_guid));
+    mp_history->remove_changes_with_guid(writer_guid);
 
     ResourceLimitedVector<RemoteWriterInfo_t>::iterator it;
     for (it = matched_writers_.begin(); it != matched_writers_.end(); ++it)
