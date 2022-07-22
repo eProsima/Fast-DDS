@@ -467,6 +467,9 @@ protected:
      * Mutex to protect ReadCondition collection
      * is required because the RTPSReader mutex is only available when the object is enabled
      * @note use get_conditions_mutex() instead of directly referencing it
+     * @note lock get_conditions_mutex() after lock reader_->getMutex() to avoid ABBAs because
+     *       try_notify_read_conditions() will be called from the callbacks with the reader
+     *       mutex locked
      */
     mutable std::recursive_mutex conditions_mutex_;
 
