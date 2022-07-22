@@ -1761,9 +1761,9 @@ public:
     RTPS_DllAPI ResourceLimitsQosPolicy()
         : Parameter_t(PID_RESOURCE_LIMITS, 4 + 4 + 4)
         , QosPolicy(false)
-        , max_samples(5000)
-        , max_instances(10)
-        , max_samples_per_instance(400)
+        , max_samples(0)
+        , max_instances(0)
+        , max_samples_per_instance(0)
         , allocated_samples(100)
         , extra_samples(1)
     {
