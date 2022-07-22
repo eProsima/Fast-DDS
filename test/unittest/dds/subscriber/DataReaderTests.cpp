@@ -3062,14 +3062,22 @@ TEST_F(DataReaderTests, InstancePolicyAllocationConsistency)
     DataReader* data_reader1 = subscriber->create_datareader(topic, qos);
     ASSERT_EQ(data_reader1, nullptr);
 
+    // Below an ampliation of the last comprobation, for which it is proved the case of < 0 (-1),
+    // which also means infinite value
+    DataReaderQos qos = DATAREADER_QOS_DEFAULT;
+    qos.resource_limits().max_instances = -1;
+
+    DataReader* data_reader2 = subscriber->create_datareader(topic, qos);
+    ASSERT_EQ(data_reader2, nullptr);
+
     // Next QoS config checks that if user sets max_samples < ( max_instances * max_samples_per_instance ) ,
     // create_datareader() should return nullptr
     qos.resource_limits().max_samples = 4999;
     qos.resource_limits().max_instances = 10;
     qos.resource_limits().max_samples_per_instance = 500;
 
-    DataReader* data_reader2 = subscriber->create_datareader(topic, qos);
-    ASSERT_EQ(data_reader2, nullptr);
+    DataReader* data_reader3 = subscriber->create_datareader(topic, qos);
+    ASSERT_EQ(data_reader3, nullptr);
 
 }
 
