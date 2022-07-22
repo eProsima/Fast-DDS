@@ -1395,7 +1395,7 @@ const SampleLostStatus& DataReaderImpl::update_sample_lost_status(
     return sample_lost_status_;
 }
 
-ReturnCode_t DataReaderImpl::check_qos (
+ReturnCode_t DataReaderImpl::check_qos(
         const DataReaderQos& qos)
 {
     if (qos.durability().kind == PERSISTENT_DURABILITY_QOS)
@@ -1423,14 +1423,15 @@ ReturnCode_t DataReaderImpl::check_qos (
         logError(DDS_QOS_CHECK, "unique_network_request cannot be set along specific locators");
         return ReturnCode_t::RETCODE_INCONSISTENT_POLICY;
     }
-    if (qos.resource_limits().max_samples <
-            (qos.resource_limits().max_instances * qos.resource_limits().max_samples_per_instance))
+    if ((qos.resource_limits().max_samples > 0) &&
+            (qos.resource_limits().max_samples <
+            (qos.resource_limits().max_instances * qos.resource_limits().max_samples_per_instance)))
     {
         logError(DDS_QOS_CHECK, "max_samples should be greater than max_instances * max_samples_per_instance");
         return ReturnCode_t::RETCODE_INCONSISTENT_POLICY;
     }
-    if ((qos.resource_limits().max_instances == 0 || qos.resource_limits().max_samples_per_instance == 0) &&
-            (qos.resource_limits().max_samples != 0))
+    if ((qos.resource_limits().max_instances <= 0 || qos.resource_limits().max_samples_per_instance <= 0) &&
+            (qos.resource_limits().max_samples > 0))
     {
         logError(DDS_QOS_CHECK, "max_samples should be greater than max_instances * max_samples_per_instance");
         return ReturnCode_t::RETCODE_INCONSISTENT_POLICY;
