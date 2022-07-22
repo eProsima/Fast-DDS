@@ -25,6 +25,7 @@ set(LOG_COMMON_SOURCE
     ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/log/StdoutErrConsumer.cpp
     )
 
+# LOG TEST
 set(LOGTESTS_TEST_SOURCE LogTests.cpp)
 
 set(LOGTESTS_SOURCE
@@ -37,7 +38,9 @@ add_executable(LogTests ${LOGTESTS_SOURCE})
 target_compile_definitions(LogTests PRIVATE FASTRTPS_NO_LIB
     $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
     $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
+    HAVE_LOG_NO_INFO=0 FASTDDS_ENFORCE_LOG_INFO # logInfo is used in some tests
     )
+
 target_include_directories(LogTests PRIVATE
     ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include)
 target_link_libraries(LogTests GTest::gtest ${MOCKS}
@@ -45,6 +48,7 @@ target_link_libraries(LogTests GTest::gtest ${MOCKS}
     )
 add_gtest(LogTests SOURCES ${LOGTESTS_TEST_SOURCE})
 
+# LOG FILE TEST
 set(LOGFILETESTS_TEST_SOURCE LogFileTests.cpp)
 
 set(LOGFILETESTS_SOURCE
