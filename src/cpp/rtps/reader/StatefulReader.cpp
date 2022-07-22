@@ -908,7 +908,10 @@ bool StatefulReader::change_removed_by_history(
                 {
                     return false;
                 }
+            }
 
+            if (nullptr != proxy)
+            {
                 send_ack_if_datasharing(this, mp_history, proxy, a_change->sequenceNumber);
             }
         }
