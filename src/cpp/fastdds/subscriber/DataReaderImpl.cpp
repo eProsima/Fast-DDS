@@ -1764,7 +1764,8 @@ ReturnCode_t DataReaderImpl::delete_contained_entities()
     for (detail::ReadConditionImpl* impl : read_conditions_)
     {
         // should be alive
-        assert((bool)impl->shared_from_this());
+        auto keep_alive = impl->shared_from_this();
+        assert((bool)keep_alive);
         // free ReadConditions
         impl->detach_all_conditions();
     }

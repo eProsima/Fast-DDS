@@ -73,12 +73,19 @@ public:
     {
         std::lock_guard<std::recursive_mutex> _(mutex_);
 
+        if(conditions_.empty())
+        {
+            return;
+        }
+
+        auto keep_alive_in_stack = shared_from_this();
+
         for (const ReadCondition* cond : conditions_)
         {
             delete cond;
         }
 
-        // here the destructor would destroy the conditions_ collection
+        conditions_.clear();
     }
 
     bool get_trigger_value(
@@ -188,9 +195,6 @@ public:
             else if ( *it == pRC )
             {
                 conditions_.erase_after(pit);
-
-                // deassociate
-                pRC->impl_.reset();
 
                 return ReturnCode_t::RETCODE_OK;
             }
