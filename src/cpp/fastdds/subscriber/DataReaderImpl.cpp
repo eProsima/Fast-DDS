@@ -1844,7 +1844,7 @@ ReadCondition* DataReaderImpl::create_readcondition(
         InstanceStateMask instance_states) noexcept
 {
     // Check the mask set up makes sense
-    if( sample_states == 0 && view_states == 0 && instance_states == 0 )
+    if ( sample_states == 0 && view_states == 0 && instance_states == 0 )
     {
         return nullptr;
     }

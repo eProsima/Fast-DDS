@@ -73,7 +73,7 @@ public:
     {
         std::lock_guard<std::recursive_mutex> _(mutex_);
 
-        if(conditions_.empty())
+        if (conditions_.empty())
         {
             return;
         }
