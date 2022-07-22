@@ -1658,7 +1658,7 @@ TEST(DataWriterTests, InstancePolicyAllocationConsistency)
     ASSERT_NE(topic, nullptr);
 
     // Next QoS config checks that if user sets max_instances to inf and leaves max_samples by default,
-    // create_datareader() should return nullptr
+    // create_datawriter() should return nullptr
     DataWriterQos qos = DATAWRITER_QOS_DEFAULT;
     qos.resource_limits().max_instances = 0;
 
@@ -1674,7 +1674,7 @@ TEST(DataWriterTests, InstancePolicyAllocationConsistency)
     ASSERT_EQ(data_writer2, nullptr);
 
     // Next QoS config checks that if user sets max_samples < ( max_instances * max_samples_per_instance ) ,
-    // create_datareader() should return nullptr
+    // create_datawriter() should return nullptr
     qos.resource_limits().max_samples = 4999;
     qos.resource_limits().max_instances = 10;
     qos.resource_limits().max_samples_per_instance = 500;
