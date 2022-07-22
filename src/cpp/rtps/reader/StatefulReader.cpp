@@ -898,7 +898,21 @@ bool StatefulReader::change_removed_by_history(
                 {
                     --total_unread_;
                 }
+            }
 
+            WriterProxy* proxy = wp;
+
+            if (nullptr == proxy)
+            {
+                if (!findWriterProxy(a_change->writerGUID, &proxy))
+                {
+                    return false;
+                }
+            }
+
+            if (nullptr != proxy)
+            {
+                send_ack_if_datasharing(this, mp_history, proxy, a_change->sequenceNumber);
             }
         }
         else
