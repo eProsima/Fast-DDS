@@ -3035,8 +3035,10 @@ TEST_F(DataReaderTests, read_conditions_wait_on_InstanceStateMask)
 }
 
 /*
- * This test checks the allocation consistency when using instances. If the number of instances is infinite,
-   and the max_samples is not set, the endpoint creation should fail. The following methods are checked:
+ * This test checks the allocation consistency when using instances.
+ * max_samples should be greater or equal than max_instances * max_samples_per_instance.
+ * If that condition is not met, the endpoint creation should fail.
+ * The following method is checked:
  * 1. create_datareader
  */
 TEST_F(DataReaderTests, InstancePolicyAllocationConsistency)
