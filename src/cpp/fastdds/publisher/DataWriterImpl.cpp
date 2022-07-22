@@ -1754,7 +1754,8 @@ ReturnCode_t DataWriterImpl::check_qos(
     if ((qos.resource_limits().max_instances <= 0 || qos.resource_limits().max_samples_per_instance <= 0) &&
             (qos.resource_limits().max_samples > 0))
     {
-        logError(DDS_QOS_CHECK, "max_samples should be greater than max_instances * max_samples_per_instance");
+        logError(DDS_QOS_CHECK,
+                "max_samples should be infinite when max_instances or max_samples_per_instance are infinite");
         return ReturnCode_t::RETCODE_INCONSISTENT_POLICY;
     }
     return ReturnCode_t::RETCODE_OK;
