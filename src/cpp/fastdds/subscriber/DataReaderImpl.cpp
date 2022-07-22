@@ -1843,6 +1843,12 @@ ReadCondition* DataReaderImpl::create_readcondition(
         ViewStateMask view_states,
         InstanceStateMask instance_states) noexcept
 {
+    // Check the mask set up makes sense
+    if( sample_states == 0 && view_states == 0 && instance_states == 0 )
+    {
+        return nullptr;
+    }
+
     std::lock_guard<std::recursive_mutex> _(get_conditions_mutex());
 
     // Check if there is an associated ReadConditionImpl object already
