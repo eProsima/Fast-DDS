@@ -95,11 +95,18 @@ ReturnCode_t DataReader::read_w_condition(
         int32_t max_samples,
         ReadCondition* a_condition)
 {
-    static_cast<void> (data_values);
-    static_cast<void> (sample_infos);
-    static_cast<void> (max_samples);
-    static_cast<void> (a_condition);
-    return ReturnCode_t::RETCODE_UNSUPPORTED;
+    if ( nullptr == a_condition )
+    {
+        return ReturnCode_t::RETCODE_PRECONDITION_NOT_MET;
+    }
+
+    return read(
+        data_values,
+        sample_infos,
+        max_samples,
+        a_condition->get_sample_state_mask(),
+        a_condition->get_view_state_mask(),
+        a_condition->get_instance_state_mask());
 }
 
 ReturnCode_t DataReader::read_instance(
@@ -135,12 +142,19 @@ ReturnCode_t DataReader::read_next_instance_w_condition(
         const InstanceHandle_t& previous_handle,
         ReadCondition* a_condition)
 {
-    static_cast<void> (data_values);
-    static_cast<void> (sample_infos);
-    static_cast<void> (max_samples);
-    static_cast<void> (previous_handle);
-    static_cast<void> (a_condition);
-    return ReturnCode_t::RETCODE_UNSUPPORTED;
+    if ( nullptr == a_condition )
+    {
+        return ReturnCode_t::RETCODE_PRECONDITION_NOT_MET;
+    }
+
+    return read_next_instance(
+        data_values,
+        sample_infos,
+        max_samples,
+        previous_handle,
+        a_condition->get_sample_state_mask(),
+        a_condition->get_view_state_mask(),
+        a_condition->get_instance_state_mask());
 }
 
 ReturnCode_t DataReader::take(
@@ -160,11 +174,18 @@ ReturnCode_t DataReader::take_w_condition(
         int32_t max_samples,
         ReadCondition* a_condition)
 {
-    static_cast<void> (data_values);
-    static_cast<void> (sample_infos);
-    static_cast<void> (max_samples);
-    static_cast<void> (a_condition);
-    return ReturnCode_t::RETCODE_UNSUPPORTED;
+    if ( nullptr == a_condition )
+    {
+        return ReturnCode_t::RETCODE_PRECONDITION_NOT_MET;
+    }
+
+    return take(
+        data_values,
+        sample_infos,
+        max_samples,
+        a_condition->get_sample_state_mask(),
+        a_condition->get_view_state_mask(),
+        a_condition->get_instance_state_mask());
 }
 
 ReturnCode_t DataReader::take_instance(
@@ -200,12 +221,19 @@ ReturnCode_t DataReader::take_next_instance_w_condition(
         const InstanceHandle_t& previous_handle,
         ReadCondition* a_condition)
 {
-    static_cast<void> (data_values);
-    static_cast<void> (sample_infos);
-    static_cast<void> (max_samples);
-    static_cast<void> (previous_handle);
-    static_cast<void> (a_condition);
-    return ReturnCode_t::RETCODE_UNSUPPORTED;
+    if ( nullptr == a_condition )
+    {
+        return ReturnCode_t::RETCODE_PRECONDITION_NOT_MET;
+    }
+
+    return take_next_instance(
+        data_values,
+        sample_infos,
+        max_samples,
+        previous_handle,
+        a_condition->get_sample_state_mask(),
+        a_condition->get_view_state_mask(),
+        a_condition->get_instance_state_mask());
 }
 
 ReturnCode_t DataReader::return_loan(
