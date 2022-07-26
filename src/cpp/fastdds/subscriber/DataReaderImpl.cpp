@@ -62,6 +62,7 @@
 #include <rtps/participant/RTPSParticipantImpl.h>
 
 using namespace eprosima::fastdds::dds;
+using namespace eprosima::fastdds::rtps;
 using namespace eprosima::fastrtps::rtps;
 using namespace eprosima::fastrtps;
 using namespace std::chrono;
@@ -116,7 +117,7 @@ DataReaderImpl::DataReaderImpl(
     endpoint_attributes.topicKind = type_->m_isGetKeyDefined ? WITH_KEY : NO_KEY;
     endpoint_attributes.setEntityID(qos_.endpoint().entity_id);
     endpoint_attributes.setUserDefinedID(qos_.endpoint().user_defined_id);
-    fastrtps::rtps::RTPSParticipantImpl::preprocess_endpoint_attributes<READER, 0x04, 0x07>(
+    RTPSParticipantImpl::preprocess_endpoint_attributes<READER, 0x04, 0x07>(
         EntityId_t::unknown(), subscriber_->get_participant_impl()->id_counter(), endpoint_attributes, guid_.entityId);
     guid_.guidPrefix = subscriber_->get_participant_impl()->guid().guidPrefix;
 }
@@ -125,7 +126,7 @@ ReturnCode_t DataReaderImpl::enable()
 {
     assert(reader_ == nullptr);
 
-    fastrtps::rtps::ReaderAttributes att;
+    ReaderAttributes att;
 
     att.endpoint.durabilityKind = qos_.durability().durabilityKind();
     att.endpoint.endpointKind = READER;
@@ -252,7 +253,7 @@ ReturnCode_t DataReaderImpl::enable()
         }
     }
 
-    eprosima::fastdds::rtps::ContentFilterProperty* filter_property = nullptr;
+    ContentFilterProperty* filter_property = nullptr;
     if (nullptr != content_topic && !content_topic->filter_property.filter_expression.empty())
     {
         filter_property = &content_topic->filter_property;
@@ -332,7 +333,7 @@ bool DataReaderImpl::can_be_deleted() const
 }
 
 bool DataReaderImpl::wait_for_unread_message(
-        const fastrtps::Duration_t& timeout)
+        const Duration_t& timeout)
 {
     return reader_ ? reader_->wait_for_unread_cache(timeout) : false;
 }
@@ -771,7 +772,7 @@ void DataReaderImpl::update_rtps_reader_qos()
 {
     if (reader_)
     {
-        eprosima::fastdds::rtps::ContentFilterProperty* filter_property = nullptr;
+        ContentFilterProperty* filter_property = nullptr;
         auto content_topic = dynamic_cast<ContentFilteredTopicImpl*>(topic_->get_impl());
         if (nullptr != content_topic && !content_topic->filter_property.filter_expression.empty())
         {
@@ -851,10 +852,10 @@ const DataReaderQos& DataReaderImpl::get_qos() const
 }
 
 void DataReaderImpl::InnerDataReaderListener::on_data_available(
-        fastrtps::rtps::RTPSReader* /*reader*/,
-        const fastrtps::rtps::GUID_t& writer_guid,
-        const fastrtps::rtps::SequenceNumber_t& first_sequence,
-        const fastrtps::rtps::SequenceNumber_t& last_sequence,
+        RTPSReader* /*reader*/,
+        const GUID_t& writer_guid,
+        const SequenceNumber_t& first_sequence,
+        const SequenceNumber_t& last_sequence,
         bool& should_notify_individual_changes)
 {
     should_notify_individual_changes = false;
@@ -893,7 +894,7 @@ void DataReaderImpl::InnerDataReaderListener::onReaderMatched(
 
 void DataReaderImpl::InnerDataReaderListener::on_liveliness_changed(
         RTPSReader* /*reader*/,
-        const fastrtps::LivelinessChangedStatus& status)
+        const LivelinessChangedStatus& status)
 {
     data_reader_->update_liveliness_status(status);
     StatusMask notify_status = StatusMask::liveliness_changed();
@@ -911,7 +912,7 @@ void DataReaderImpl::InnerDataReaderListener::on_liveliness_changed(
 
 void DataReaderImpl::InnerDataReaderListener::on_requested_incompatible_qos(
         RTPSReader* /*reader*/,
-        fastdds::dds::PolicyMask qos)
+        PolicyMask qos)
 {
     data_reader_->update_requested_incompatible_qos(qos);
     StatusMask notify_status = StatusMask::requested_incompatible_qos();
@@ -965,9 +966,9 @@ void DataReaderImpl::InnerDataReaderListener::on_sample_rejected(
 }
 
 bool DataReaderImpl::on_data_available(
-        const fastrtps::rtps::GUID_t& writer_guid,
-        const fastrtps::rtps::SequenceNumber_t& first_sequence,
-        const fastrtps::rtps::SequenceNumber_t& last_sequence)
+        const GUID_t& writer_guid,
+        const SequenceNumber_t& first_sequence,
+        const SequenceNumber_t& last_sequence)
 {
     bool ret_val = false;
 
@@ -1342,7 +1343,7 @@ RequestedIncompatibleQosStatus& DataReaderImpl::update_requested_incompatible_qo
 {
     ++requested_incompatible_qos_status_.total_count;
     ++requested_incompatible_qos_status_.total_count_change;
-    for (fastrtps::rtps::octet id = 1; id < NEXT_QOS_POLICY_ID; ++id)
+    for (octet id = 1; id < NEXT_QOS_POLICY_ID; ++id)
     {
         if (incompatible_policies.test(id))
         {
@@ -1354,7 +1355,7 @@ RequestedIncompatibleQosStatus& DataReaderImpl::update_requested_incompatible_qo
 }
 
 LivelinessChangedStatus& DataReaderImpl::update_liveliness_status(
-        const fastrtps::LivelinessChangedStatus& status)
+        const LivelinessChangedStatus& status)
 {
     if (0 < status.not_alive_count_change)
     {
@@ -1597,7 +1598,7 @@ void DataReaderImpl::set_qos(
 
 TopicAttributes DataReaderImpl::topic_attributes() const
 {
-    fastrtps::TopicAttributes topic_att;
+    TopicAttributes topic_att;
     topic_att.topicKind = type_->m_isGetKeyDefined ? WITH_KEY : NO_KEY;
     topic_att.topicName = topic_->get_impl()->get_rtps_topic_name();
     topic_att.topicDataType = topic_->get_type_name();

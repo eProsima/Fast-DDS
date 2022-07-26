@@ -825,7 +825,7 @@ void DataReaderHistory::update_instance_nts(
 }
 
 void DataReaderHistory::writer_not_alive(
-        const fastrtps::rtps::GUID_t& writer_guid)
+        const GUID_t& writer_guid)
 {
     for (auto& it : instances_)
     {
