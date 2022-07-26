@@ -2737,7 +2737,7 @@ TEST_F(DataReaderTests, read_conditions_wait_on_SampleStateMask)
                 not_read_cond), ReturnCode_t::RETCODE_OK);
 
     triggered.clear();
-    EXPECT_EQ(ws.wait(triggered, 2.0), ReturnCode_t::RETCODE_OK);
+    EXPECT_EQ(ws.wait(triggered, 1.0), ReturnCode_t::RETCODE_OK);
 
     // Check data is good
     ASSERT_TRUE(infos[0].valid_data);
@@ -2872,6 +2872,125 @@ TEST_F(DataReaderTests, read_conditions_wait_on_ViewStateMask)
     EXPECT_EQ(data_reader.delete_readcondition(not_view_cond), ReturnCode_t::RETCODE_OK);
     EXPECT_EQ(ws.detach_condition(*any_view_cond), ReturnCode_t::RETCODE_OK);
     EXPECT_EQ(data_reader.delete_readcondition(any_view_cond), ReturnCode_t::RETCODE_OK);
+}
+
+TEST_F(DataReaderTests, read_conditions_wait_on_InstanceStateMask)
+{
+    DataReaderQos reader_qos = DATAREADER_QOS_DEFAULT;
+    reader_qos.reliability().kind = eprosima::fastrtps::RELIABLE_RELIABILITY_QOS;
+
+    DataWriterQos writer_qos = DATAWRITER_QOS_DEFAULT;
+    writer_qos.reliability().kind = eprosima::fastrtps::RELIABLE_RELIABILITY_QOS;
+
+    create_entities(nullptr, reader_qos, SUBSCRIBER_QOS_DEFAULT, writer_qos);
+    DataReader& data_reader = *data_reader_;
+    DataWriter& data_writer = *data_writer_;
+
+    // Condition masks
+    SampleStateMask sample_states = ANY_SAMPLE_STATE;
+    ViewStateMask view_states = ANY_VIEW_STATE;
+
+    // Create the read conditions
+    ReadCondition* alive_cond = data_reader.create_readcondition(sample_states, view_states, ALIVE_INSTANCE_STATE);
+    EXPECT_NE(alive_cond, nullptr);
+
+    ReadCondition* disposed_cond =
+            data_reader.create_readcondition(sample_states, view_states, NOT_ALIVE_DISPOSED_INSTANCE_STATE);
+    EXPECT_NE(disposed_cond, nullptr);
+
+    ReadCondition* no_writer_cond = data_reader.create_readcondition(sample_states, view_states,
+                    NOT_ALIVE_NO_WRITERS_INSTANCE_STATE);
+    EXPECT_NE(no_writer_cond, nullptr);
+
+    ReadCondition* any_cond = data_reader.create_readcondition(sample_states, view_states, ANY_INSTANCE_STATE);
+    EXPECT_NE(any_cond, nullptr);
+
+    // Create the waitset and associate
+    WaitSet ws;
+    EXPECT_EQ(ws.attach_condition(*alive_cond), ReturnCode_t::RETCODE_OK);
+    EXPECT_EQ(ws.attach_condition(*disposed_cond), ReturnCode_t::RETCODE_OK);
+    EXPECT_EQ(ws.attach_condition(*no_writer_cond), ReturnCode_t::RETCODE_OK);
+    EXPECT_EQ(ws.attach_condition(*any_cond), ReturnCode_t::RETCODE_OK);
+
+    // 1- Check ALIVE_INSTANCE_STATE
+    // Send sample from a background thread
+    std::array<char, 256> test_message = {"Testing sample state"};
+
+    FooType msg;
+    msg.index(1);
+    msg.message(test_message);
+
+    std::thread bw([&]
+            {
+                // Allow main thread entering wait state, before sending
+                std::this_thread::sleep_for(std::chrono::seconds(1));
+                data_writer.write(&msg);
+            });
+
+    ConditionSeq triggered;
+    EXPECT_EQ(ws.wait(triggered, 2.0), ReturnCode_t::RETCODE_OK);
+    bw.join();
+
+    // Check the data is there
+    EXPECT_EQ(data_reader.get_unread_count(), 1);
+
+    // Check the conditions triggered where the expected ones
+    ASSERT_TRUE(alive_cond->get_trigger_value());
+    EXPECT_NE(std::find(triggered.begin(), triggered.end(), alive_cond), triggered.end());
+    ASSERT_FALSE(disposed_cond->get_trigger_value());
+    EXPECT_EQ(std::find(triggered.begin(), triggered.end(), disposed_cond), triggered.end());
+    ASSERT_FALSE(no_writer_cond->get_trigger_value());
+    EXPECT_EQ(std::find(triggered.begin(), triggered.end(), no_writer_cond), triggered.end());
+    ASSERT_TRUE(any_cond->get_trigger_value());
+    EXPECT_NE(std::find(triggered.begin(), triggered.end(), any_cond), triggered.end());
+
+    // 2 - Check NOT_ALIVE_DISPOSED_INSTANCE_STATE
+    // unregister the instance
+    EXPECT_EQ(data_writer.unregister_instance(&msg, HANDLE_NIL), ReturnCode_t::RETCODE_OK);
+
+    triggered.clear();
+    EXPECT_EQ(ws.wait(triggered, 1.0), ReturnCode_t::RETCODE_OK);
+
+    // Check the conditions triggered where the expected ones
+    ASSERT_FALSE(alive_cond->get_trigger_value());
+    EXPECT_EQ(std::find(triggered.begin(), triggered.end(), alive_cond), triggered.end());
+    ASSERT_TRUE(disposed_cond->get_trigger_value());
+    EXPECT_NE(std::find(triggered.begin(), triggered.end(), disposed_cond), triggered.end());
+    ASSERT_FALSE(no_writer_cond->get_trigger_value());
+    EXPECT_EQ(std::find(triggered.begin(), triggered.end(), no_writer_cond), triggered.end());
+    ASSERT_TRUE(any_cond->get_trigger_value());
+    EXPECT_NE(std::find(triggered.begin(), triggered.end(), any_cond), triggered.end());
+
+    // 4 - Check NOT_ALIVE_NO_WRITERS_INSTANCE_STATE
+    // delete the writer to remove all writers from a new instance
+    msg.index(2);
+    data_writer.write(&msg);
+
+    ASSERT_EQ(publisher_->delete_datawriter(data_writer_), ReturnCode_t::RETCODE_OK);
+    data_writer_ = nullptr;
+
+    triggered.clear();
+    EXPECT_EQ(ws.wait(triggered, 1.0), ReturnCode_t::RETCODE_OK);
+
+    // Check the conditions triggered where the expected ones
+    ASSERT_FALSE(alive_cond->get_trigger_value());
+    EXPECT_EQ(std::find(triggered.begin(), triggered.end(), alive_cond), triggered.end());
+    ASSERT_TRUE(disposed_cond->get_trigger_value());
+    EXPECT_NE(std::find(triggered.begin(), triggered.end(), disposed_cond), triggered.end());
+    ASSERT_TRUE(no_writer_cond->get_trigger_value());
+    EXPECT_NE(std::find(triggered.begin(), triggered.end(), no_writer_cond), triggered.end());
+    ASSERT_TRUE(any_cond->get_trigger_value());
+    EXPECT_NE(std::find(triggered.begin(), triggered.end(), any_cond), triggered.end());
+
+    // Detach conditions & destroy
+    EXPECT_EQ(ws.detach_condition(*alive_cond), ReturnCode_t::RETCODE_OK);
+    EXPECT_EQ(data_reader.delete_readcondition(alive_cond), ReturnCode_t::RETCODE_OK);
+    EXPECT_EQ(ws.detach_condition(*disposed_cond), ReturnCode_t::RETCODE_OK);
+    EXPECT_EQ(data_reader.delete_readcondition(disposed_cond), ReturnCode_t::RETCODE_OK);
+    EXPECT_EQ(ws.detach_condition(*no_writer_cond), ReturnCode_t::RETCODE_OK);
+    EXPECT_EQ(data_reader.delete_readcondition(no_writer_cond), ReturnCode_t::RETCODE_OK);
+    EXPECT_EQ(ws.detach_condition(*any_cond), ReturnCode_t::RETCODE_OK);
+    EXPECT_EQ(data_reader.delete_readcondition(any_cond), ReturnCode_t::RETCODE_OK);
 }
 
 int main(
