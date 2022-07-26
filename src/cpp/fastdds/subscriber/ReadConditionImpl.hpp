@@ -91,8 +91,8 @@ public:
     bool get_trigger_value(
             const StateFilter& state) const noexcept
     {
-        return state.sample_states & state_.sample_states ||
-               state.view_states & state_.view_states ||
+        return state.sample_states & state_.sample_states &&
+               state.view_states & state_.view_states &&
                state.instance_states & state_.instance_states;
     }
 
