@@ -2730,18 +2730,13 @@ TEST_F(DataReaderTests, read_conditions_wait_on_SampleStateMask)
     FooSeq datas;
     SampleInfoSeq infos;
 
-    bw = std::thread([&]
-                    {
-                        EXPECT_EQ(data_reader.read_w_condition(
-                            datas,
-                            infos,
-                            1,
-                            not_read_cond), ReturnCode_t::RETCODE_OK);
-                    });
+    EXPECT_EQ(data_reader.read_w_condition(
+                datas,
+                infos,
+                1,
+                not_read_cond), ReturnCode_t::RETCODE_OK);
 
     triggered.clear();
-    bw.join(); // the read must be performed before the wait, otherwise the wait returns at once
-               // with the previous result
     EXPECT_EQ(ws.wait(triggered, 2.0), ReturnCode_t::RETCODE_OK);
 
     // Check data is good
@@ -2778,6 +2773,105 @@ TEST_F(DataReaderTests, read_conditions_wait_on_SampleStateMask)
     EXPECT_EQ(data_reader.delete_readcondition(not_read_cond), ReturnCode_t::RETCODE_OK);
     EXPECT_EQ(ws.detach_condition(*any_read_cond), ReturnCode_t::RETCODE_OK);
     EXPECT_EQ(data_reader.delete_readcondition(any_read_cond), ReturnCode_t::RETCODE_OK);
+}
+
+TEST_F(DataReaderTests, read_conditions_wait_on_ViewStateMask)
+{
+    DataReaderQos reader_qos = DATAREADER_QOS_DEFAULT;
+    reader_qos.reliability().kind = eprosima::fastrtps::RELIABLE_RELIABILITY_QOS;
+
+    DataWriterQos writer_qos = DATAWRITER_QOS_DEFAULT;
+    writer_qos.reliability().kind = eprosima::fastrtps::RELIABLE_RELIABILITY_QOS;
+
+    create_entities(nullptr, reader_qos, SUBSCRIBER_QOS_DEFAULT, writer_qos);
+    DataReader& data_reader = *data_reader_;
+    DataWriter& data_writer = *data_writer_;
+
+    // Condition masks
+    SampleStateMask sample_states = ANY_SAMPLE_STATE;
+    InstanceStateMask instance_states = ANY_INSTANCE_STATE;
+
+    // Create the read conditions
+    ReadCondition* view_cond = data_reader.create_readcondition(sample_states, NEW_VIEW_STATE, instance_states);
+    EXPECT_NE(view_cond, nullptr);
+
+    ReadCondition* not_view_cond =
+            data_reader.create_readcondition(sample_states, NOT_NEW_VIEW_STATE, instance_states);
+    EXPECT_NE(not_view_cond, nullptr);
+
+    ReadCondition* any_view_cond = data_reader.create_readcondition(sample_states, ANY_VIEW_STATE, instance_states);
+    EXPECT_NE(any_view_cond, nullptr);
+
+    // Create the waitset and associate
+    WaitSet ws;
+    EXPECT_EQ(ws.attach_condition(*view_cond), ReturnCode_t::RETCODE_OK);
+    EXPECT_EQ(ws.attach_condition(*not_view_cond), ReturnCode_t::RETCODE_OK);
+    EXPECT_EQ(ws.attach_condition(*any_view_cond), ReturnCode_t::RETCODE_OK);
+
+    // 1- Check NEW_VIEW_STATE
+    // Send sample from a background thread
+    std::array<char, 256> test_message = {"Testing sample state"};
+    std::thread bw([&]
+            {
+                FooType msg;
+                msg.index(1);
+                msg.message(test_message);
+
+                // Allow main thread entering wait state, before sending
+                std::this_thread::sleep_for(std::chrono::seconds(1));
+                data_writer.write(&msg);
+            });
+
+    ConditionSeq triggered;
+    EXPECT_EQ(ws.wait(triggered, 2.0), ReturnCode_t::RETCODE_OK);
+    bw.join();
+
+    // Check the data is there
+    EXPECT_EQ(data_reader.get_unread_count(), 1);
+
+    // Check the conditions triggered where the expected ones
+    ASSERT_TRUE(view_cond->get_trigger_value());
+    EXPECT_NE(std::find(triggered.begin(), triggered.end(), view_cond), triggered.end());
+    ASSERT_FALSE(not_view_cond->get_trigger_value());
+    EXPECT_EQ(std::find(triggered.begin(), triggered.end(), not_view_cond), triggered.end());
+    ASSERT_TRUE(any_view_cond->get_trigger_value());
+    EXPECT_NE(std::find(triggered.begin(), triggered.end(), any_view_cond), triggered.end());
+
+    // 2- Check NOT_NEW_VIEW_STATE
+    // Read the sample in order to change instance view state
+    FooSeq datas;
+    SampleInfoSeq infos;
+
+    EXPECT_EQ(data_reader.read_w_condition(
+                datas,
+                infos,
+                1,
+                view_cond), ReturnCode_t::RETCODE_OK);
+
+    triggered.clear();
+    EXPECT_EQ(ws.wait(triggered, 1.0), ReturnCode_t::RETCODE_OK);
+
+    // Check data is good
+    ASSERT_TRUE(infos[0].valid_data);
+    EXPECT_EQ(datas[0].index(), 1u);
+    EXPECT_EQ(datas[0].message(), test_message);
+    EXPECT_EQ(data_reader.return_loan(datas, infos), ReturnCode_t::RETCODE_OK);
+
+    // Check the conditions triggered where the expected ones
+    ASSERT_FALSE(view_cond->get_trigger_value());
+    EXPECT_EQ(std::find(triggered.begin(), triggered.end(), view_cond), triggered.end());
+    ASSERT_TRUE(not_view_cond->get_trigger_value());
+    EXPECT_NE(std::find(triggered.begin(), triggered.end(), not_view_cond), triggered.end());
+    ASSERT_TRUE(any_view_cond->get_trigger_value());
+    EXPECT_NE(std::find(triggered.begin(), triggered.end(), any_view_cond), triggered.end());
+
+    // Detach conditions & destroy
+    EXPECT_EQ(ws.detach_condition(*view_cond), ReturnCode_t::RETCODE_OK);
+    EXPECT_EQ(data_reader.delete_readcondition(view_cond), ReturnCode_t::RETCODE_OK);
+    EXPECT_EQ(ws.detach_condition(*not_view_cond), ReturnCode_t::RETCODE_OK);
+    EXPECT_EQ(data_reader.delete_readcondition(not_view_cond), ReturnCode_t::RETCODE_OK);
+    EXPECT_EQ(ws.detach_condition(*any_view_cond), ReturnCode_t::RETCODE_OK);
+    EXPECT_EQ(data_reader.delete_readcondition(any_view_cond), ReturnCode_t::RETCODE_OK);
 }
 
 int main(
