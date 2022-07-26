@@ -534,7 +534,7 @@ ReturnCode_t DomainParticipantImpl::delete_topic(
     {
         auto it = topics_.find(topic->get_name());
         assert(it != topics_.end() && "Topic found by handle but factory not found");
-        InstanceHandle_t handle = topic->get_instance_handle();
+        InstanceHandle_t handle = handle_it->first;
 
         TopicProxy* proxy = dynamic_cast<TopicProxy*>(topic->get_impl());
         assert(nullptr != proxy);
