@@ -1,6 +1,7 @@
 Version 2.7.1
 -------------
 
+* ReadCondition implementation according to DDS version 1.4 standard document
 * Added a new CMake option to allow users to force the use of our third party shared_mutex
 
 Version 2.7.0
