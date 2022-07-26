@@ -2961,11 +2961,41 @@ TEST_F(DataReaderTests, read_conditions_wait_on_InstanceStateMask)
     ASSERT_TRUE(any_cond->get_trigger_value());
     EXPECT_NE(std::find(triggered.begin(), triggered.end(), any_cond), triggered.end());
 
-    // 4 - Check NOT_ALIVE_NO_WRITERS_INSTANCE_STATE
-    // delete the writer to remove all writers from a new instance
-    msg.index(2);
+    // 4 - Check (read|take)_next_instance_w_condition() APIs
+    // take the sample to check the API works
+    FooSeq datas;
+    SampleInfoSeq infos;
+    EXPECT_EQ(data_reader.take_next_instance_w_condition(
+                datas,
+                infos,
+                1,
+                HANDLE_NIL,
+                disposed_cond), ReturnCode_t::RETCODE_OK);
+
+    // Check data is bad because the sample for instance 1 was unregistered
+    ASSERT_FALSE(infos[0].valid_data);
+    InstanceHandle_t prev_handle = infos[0].instance_handle;
+    EXPECT_EQ(data_reader.return_loan(datas, infos), ReturnCode_t::RETCODE_OK);
+
+    // new instance
+    msg.index(2u);
     data_writer.write(&msg);
 
+    EXPECT_EQ(data_reader.read_next_instance_w_condition(
+                datas,
+                infos,
+                1,
+                prev_handle,
+                alive_cond), ReturnCode_t::RETCODE_OK);
+
+    // Check data is good
+    ASSERT_TRUE(infos[0].valid_data);
+    EXPECT_EQ(datas[0].index(), 2u);
+    EXPECT_EQ(datas[0].message(), test_message);
+    EXPECT_EQ(data_reader.return_loan(datas, infos), ReturnCode_t::RETCODE_OK);
+
+    // 5 - Check NOT_ALIVE_NO_WRITERS_INSTANCE_STATE
+    // delete the writer to remove all writers from a new instance
     ASSERT_EQ(publisher_->delete_datawriter(data_writer_), ReturnCode_t::RETCODE_OK);
     data_writer_ = nullptr;
 
