@@ -136,6 +136,7 @@ public:
      *
      * @param[in] max_wait Max blocking time for this operation.
      * @return RETCODE_OK if there is new unread message, ReturnCode_t::RETCODE_TIMEOUT if timeout
+     * @warning Not supported yet. Currently returns RETCODE_UNSUPPORTED
      */
     RTPS_DllAPI ReturnCode_t wait_for_historical_data(
             const fastrtps::Duration_t& max_wait) const;
@@ -336,6 +337,7 @@ public:
      * @param[in]     a_condition     A ReadCondition that returned @c data_values must pass
      *
      * @return Any of the standard return codes.
+     * @warning Not supported yet. Currently returns RETCODE_UNSUPPORTED
      */
     RTPS_DllAPI ReturnCode_t read_w_condition(
             LoanableCollection& data_values,
@@ -481,6 +483,7 @@ public:
      * @param[in]     a_condition     A ReadCondition that returned @c data_values must pass
      *
      * @return Any of the standard return codes.
+     * @warning Not supported yet. Currently returns RETCODE_UNSUPPORTED
      */
     RTPS_DllAPI ReturnCode_t read_next_instance_w_condition(
             LoanableCollection& data_values,
@@ -573,6 +576,7 @@ public:
      * @param[in]     a_condition     A ReadCondition that returned @c data_values must pass
      *
      * @return Any of the standard return codes.
+     * @warning Not supported yet. Currently returns RETCODE_UNSUPPORTED
      */
     RTPS_DllAPI ReturnCode_t take_w_condition(
             LoanableCollection& data_values,
@@ -685,6 +689,7 @@ public:
      * @param[in]     a_condition     A ReadCondition that returned @c data_values must pass
      *
      * @return Any of the standard return codes.
+     * @warning Not supported yet. Currently returns RETCODE_UNSUPPORTED
      */
     RTPS_DllAPI ReturnCode_t take_next_instance_w_condition(
             LoanableCollection& data_values,
@@ -771,6 +776,7 @@ public:
      * @param[in] handle
      *
      * @return Any of the standard return codes.
+     * @warning Not supported yet. Currently returns RETCODE_UNSUPPORTED
      */
     RTPS_DllAPI ReturnCode_t get_key_value(
             void* key_holder,
@@ -980,7 +986,7 @@ public:
      * @param[out] publication_data publication data struct
      * @param publication_handle InstanceHandle_t of the publication
      * @return RETCODE_OK
-     *
+     * @warning Not supported yet. Currently returns RETCODE_UNSUPPORTED
      */
     RTPS_DllAPI ReturnCode_t get_matched_publication_data(
             builtin::PublicationBuiltinTopicData& publication_data,
@@ -991,6 +997,7 @@ public:
      *
      * @param[out] publication_handles Vector where the InstanceHandle_t are returned
      * @return RETCODE_OK
+     * @warning Not supported yet. Currently returns RETCODE_UNSUPPORTED
      */
     RTPS_DllAPI ReturnCode_t get_matched_publications(
             std::vector<InstanceHandle_t>& publication_handles) const;
@@ -1034,6 +1041,7 @@ public:
      *
      * @param a_condition pointer to a ReadCondition belonging to the DataReader
      * @return RETCODE_OK
+     * @warning Not supported yet. Currently returns RETCODE_UNSUPPORTED
      */
     RTPS_DllAPI ReturnCode_t delete_readcondition(
             const ReadCondition* a_condition);
