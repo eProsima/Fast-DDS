@@ -181,6 +181,7 @@ public:
      * @param handle InstanceHandle_t
      * @param timestamp Time_t used to set the source_timestamp.
      * @return Any of the standard return codes.
+     * @warning Not supported yet. Currently returns RETCODE_UNSUPPORTED
      */
     RTPS_DllAPI ReturnCode_t write_w_timestamp(
             void* data,
@@ -271,6 +272,7 @@ public:
      * @param handle Instance's key to be unregistered.
      * @param timestamp Time_t used to set the source_timestamp.
      * @return Handle containing the instance's key.
+     * @warning Not supported yet. Currently returns RETCODE_UNSUPPORTED
      */
     RTPS_DllAPI ReturnCode_t unregister_instance_w_timestamp(
             void* instance,
@@ -514,7 +516,7 @@ public:
      * @param[out] subscription_data subscription data struct
      * @param subscription_handle InstanceHandle_t of the subscription
      * @return RETCODE_OK
-     *
+     * @warning Not supported yet. Currently returns RETCODE_UNSUPPORTED
      */
     RTPS_DllAPI ReturnCode_t get_matched_subscription_data(
             builtin::SubscriptionBuiltinTopicData& subscription_data,
@@ -525,6 +527,7 @@ public:
      *
      * @param[out] subscription_handles Vector where the InstanceHandle_t are returned
      * @return RETCODE_OK
+     * @warning Not supported yet. Currently returns RETCODE_UNSUPPORTED
      */
     RTPS_DllAPI ReturnCode_t get_matched_subscriptions(
             std::vector<InstanceHandle_t>& subscription_handles) const;
