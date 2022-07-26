@@ -412,13 +412,13 @@ if(BUILD_DOCUMENTATION)
 
         file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/readthedocs_custom_template.cmake [=[
 
-            file(DOWNLOAD "https://fast-dds.docs.eprosima.com/_/downloads/en/v${PROJECT_VERSION}/htmlzip/" "eprosima-fast-rtps.zip")
+            file(DOWNLOAD "https://fast-dds.docs.eprosima.com/_/downloads/en/v${PROJECT_VERSION}/htmlzip/" "./eprosima-fast-rtps.zip")
             # TODO: when windows ci CMake version surpasses 17 favor file() instead of UNZIP as in the next line
-            # file(ARCHIVE_EXTRACT INPUT "eprosima-fast-rtps.zip" DESTINATION  "${PROJECT_BINARY_DIR}/doc/")
-            execute_process(COMMAND "${UNZIP_EXE}" "eprosima-fast-rtps.zip" -d "${PROJECT_BINARY_DIR}/doc/")
+            # file(ARCHIVE_EXTRACT INPUT "./eprosima-fast-rtps.zip" DESTINATION  "${PROJECT_BINARY_DIR}/doc/")
+            execute_process(COMMAND "${UNZIP_EXE}" "./eprosima-fast-rtps.zip" -d "${PROJECT_BINARY_DIR}/doc/")
             file(REMOVE_RECURSE "${PROJECT_BINARY_DIR}/doc/manual")
             file(RENAME "${PROJECT_BINARY_DIR}/doc/eprosima-fast-rtps-v${PROJECT_VERSION}" "${PROJECT_BINARY_DIR}/doc/manual")
-            file(REMOVE  "eprosima-fast-rtps.zip")
+            file(REMOVE  "./eprosima-fast-rtps.zip")
 
             ]=])
 
