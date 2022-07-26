@@ -73,7 +73,10 @@ struct TCPv4TransportDescriptor : public TCPTransportDescriptor
     std::string get_WAN_address()
     {
         std::stringstream ss;
-        ss << wan_addr[0] << "." << wan_addr[1] << "." << wan_addr[2] << "." << wan_addr[3];
+        ss << static_cast<int>(wan_addr[0]) << "."
+           << static_cast<int>(wan_addr[1]) << "."
+           << static_cast<int>(wan_addr[2]) << "."
+           << static_cast<int>(wan_addr[3]);
         return ss.str();
     }
 
