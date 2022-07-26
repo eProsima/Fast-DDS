@@ -2425,15 +2425,6 @@ TEST_F(DataReaderUnsupportedTests, UnsupportedDataReaderMethods)
         SampleStateMask sample_states = ANY_SAMPLE_STATE;
         ViewStateMask view_states = ANY_VIEW_STATE;
         InstanceStateMask instance_states = ANY_INSTANCE_STATE;
-        EXPECT_EQ(
-            nullptr,
-            data_reader->create_readcondition(sample_states, view_states, instance_states));
-    }
-
-    {
-        SampleStateMask sample_states = ANY_SAMPLE_STATE;
-        ViewStateMask view_states = ANY_VIEW_STATE;
-        InstanceStateMask instance_states = ANY_INSTANCE_STATE;
         std::string query_expression;
         std::vector<std::string> query_parameters;
         EXPECT_EQ(
@@ -2444,60 +2435,6 @@ TEST_F(DataReaderUnsupportedTests, UnsupportedDataReaderMethods)
                 instance_states,
                 query_expression,
                 query_parameters));
-    }
-
-    {
-        EXPECT_EQ(
-            ReturnCode_t::RETCODE_UNSUPPORTED,
-            data_reader->delete_readcondition(nullptr));
-    }
-
-    {
-        FooBoundedSeq data_values;
-        SampleInfoSeq sample_infos;
-        int32_t max_samples = LENGTH_UNLIMITED;
-        EXPECT_EQ(ReturnCode_t::RETCODE_UNSUPPORTED, data_reader->read_w_condition(
-                    data_values,
-                    sample_infos,
-                    max_samples,
-                    nullptr));
-    }
-
-    {
-        FooBoundedSeq data_values;
-        SampleInfoSeq sample_infos;
-        int32_t max_samples = LENGTH_UNLIMITED;
-        fastrtps::rtps::InstanceHandle_t previous_handle;
-        EXPECT_EQ(ReturnCode_t::RETCODE_UNSUPPORTED, data_reader->read_next_instance_w_condition(
-                    data_values,
-                    sample_infos,
-                    max_samples,
-                    previous_handle,
-                    nullptr));
-    }
-
-    {
-        FooBoundedSeq data_values;
-        SampleInfoSeq sample_infos;
-        int32_t max_samples = LENGTH_UNLIMITED;
-        EXPECT_EQ(ReturnCode_t::RETCODE_UNSUPPORTED, data_reader->take_w_condition(
-                    data_values,
-                    sample_infos,
-                    max_samples,
-                    nullptr));
-    }
-
-    {
-        FooBoundedSeq data_values;
-        SampleInfoSeq sample_infos;
-        int32_t max_samples = LENGTH_UNLIMITED;
-        fastrtps::rtps::InstanceHandle_t previous_handle;
-        EXPECT_EQ(ReturnCode_t::RETCODE_UNSUPPORTED, data_reader->take_next_instance_w_condition(
-                    data_values,
-                    sample_infos,
-                    max_samples,
-                    previous_handle,
-                    nullptr));
     }
 
     std::vector<fastrtps::rtps::InstanceHandle_t> publication_handles;
