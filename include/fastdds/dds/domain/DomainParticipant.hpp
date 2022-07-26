@@ -348,6 +348,7 @@ public:
      * @param a_multitopic MultiTopic to be deleted
      * @return RETCODE_BAD_PARAMETER if the topic passed is a nullptr, RETCODE_PRECONDITION_NOT_MET if the topic does not belong to
      * this participant or if it is referenced by any entity and RETCODE_OK if the Topic was deleted.
+     * @warning Not supported yet. Currently returns RETCODE_UNSUPPORTED
      */
     RTPS_DllAPI ReturnCode_t delete_multitopic(
             const MultiTopic* a_multitopic);
@@ -395,6 +396,7 @@ public:
      *
      * @param handle Identifier of the remote participant to ignore
      * @return RETURN_OK code if everything correct, error code otherwise
+     * @warning Not supported yet. Currently returns RETCODE_UNSUPPORTED
      */
     RTPS_DllAPI ReturnCode_t ignore_participant(
             const InstanceHandle_t& handle);
@@ -406,6 +408,7 @@ public:
      *
      * @param handle Identifier of the topic to ignore
      * @return RETURN_OK code if everything correct, error code otherwise
+     * @warning Not supported yet. Currently returns RETCODE_UNSUPPORTED
      */
     RTPS_DllAPI ReturnCode_t ignore_topic(
             const InstanceHandle_t& handle);
@@ -417,6 +420,7 @@ public:
      *
      * @param handle Identifier of the datawriter to ignore
      * @return RETURN_OK code if everything correct, error code otherwise
+     * @warning Not supported yet. Currently returns RETCODE_UNSUPPORTED
      */
     RTPS_DllAPI ReturnCode_t ignore_publication(
             const InstanceHandle_t& handle);
@@ -428,6 +432,7 @@ public:
      *
      * @param handle Identifier of the datareader to ignore
      * @return RETURN_OK code if everything correct, error code otherwise
+     * @warning Not supported yet. Currently returns RETCODE_UNSUPPORTED
      */
     RTPS_DllAPI ReturnCode_t ignore_subscription(
             const InstanceHandle_t& handle);
@@ -631,6 +636,7 @@ public:
      *
      * @param[out]  participant_handles Reference to the vector where discovered participants will be returned
      * @return RETCODE_OK if everything correct, error code otherwise
+     * @warning Not supported yet. Currently returns RETCODE_UNSUPPORTED
      */
     RTPS_DllAPI ReturnCode_t get_discovered_participants(
             std::vector<InstanceHandle_t>& participant_handles) const;
@@ -641,6 +647,7 @@ public:
      * @param[out]  participant_data Reference to the ParticipantBuiltinTopicData object to return the data
      * @param participant_handle InstanceHandle of DomainParticipant to retrieve the data from
      * @return RETCODE_OK if everything correct, PRECONDITION_NOT_MET if participant does not exist
+     * @warning Not supported yet. Currently returns RETCODE_UNSUPPORTED
      */
     RTPS_DllAPI ReturnCode_t get_discovered_participant_data(
             builtin::ParticipantBuiltinTopicData& participant_data,
@@ -651,6 +658,7 @@ public:
      *
      * @param[out]  topic_handles Reference to the vector where discovered topics will be returned
      * @return RETCODE_OK if everything correct, error code otherwise
+     * @warning Not supported yet. Currently returns RETCODE_UNSUPPORTED
      */
     RTPS_DllAPI ReturnCode_t get_discovered_topics(
             std::vector<InstanceHandle_t>& topic_handles) const;
@@ -661,6 +669,7 @@ public:
      * @param[out]  topic_data Reference to the TopicBuiltinTopicData object to return the data
      * @param topic_handle InstanceHandle of Topic to retrieve the data from
      * @return RETCODE_OK if everything correct, PRECONDITION_NOT_MET if topic does not exist
+     * @warning Not supported yet. Currently returns RETCODE_UNSUPPORTED
      */
     RTPS_DllAPI ReturnCode_t get_discovered_topic_data(
             builtin::TopicBuiltinTopicData& topic_data,
