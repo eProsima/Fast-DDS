@@ -12,6 +12,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#include <algorithm>
+#include <random>
+#include <vector>
+
 #include <gtest/gtest.h>
 #include <gmock/gmock.h>
 
@@ -19,7 +23,8 @@
 #include <fastrtps/rtps/reader/StatefulReader.h>
 #include <fastrtps/utils/TimedMutex.hpp>
 
-#include <vector>
+#include <rtps/common/ChangeComparison.hpp>
+
 
 using namespace eprosima::fastrtps;
 using namespace ::rtps;
@@ -168,6 +173,70 @@ TEST_F(ReaderHistoryTests, get_change)
             ASSERT_EQ(ch->writerGUID, writer_guid);
             ASSERT_EQ(ch->sequenceNumber, seq_number);
         }
+    }
+}
+
+TEST_F(ReaderHistoryTests, change_order)
+{
+    constexpr uint32_t n_writers = 4;
+    constexpr uint32_t changes_per_writer = 5;
+    std::vector<CacheChange_t*> changes;
+
+    // Create changes list
+    for (uint32_t i = 1; i <= n_writers; i++)
+    {
+        uint32_t ts = 0;
+        GUID_t writer_guid = GUID_t(GuidPrefix_t::unknown(), i);
+
+        for (uint32_t j = 1; j <= changes_per_writer; j++)
+        {
+            CacheChange_t* ch = new CacheChange_t(0);
+            ch->writerGUID = writer_guid;
+            ch->sequenceNumber = SequenceNumber_t(0, j);
+            ch->sourceTimestamp = rtps::Time_t(0, ts);
+
+            changes.push_back(ch);
+            ts += i;
+        }
+    }
+
+    size_t total_changes = changes.size();
+    ASSERT_EQ(total_changes, n_writers * changes_per_writer);
+    int num_removes = static_cast<int>(total_changes * total_changes);
+    EXPECT_CALL(*readerMock, change_removed_by_history(_)).Times(num_removes).WillRepeatedly(Return(true));
+    EXPECT_CALL(*readerMock, releaseCache(_)).Times(num_removes);
+
+    auto rng = std::default_random_engine{};
+    for (size_t n = 0; n < changes.size(); ++n)
+    {
+        // Shuffle the generated samples
+        std::shuffle(std::begin(changes), std::end(changes), rng);
+
+        // Add samples to history
+        for (CacheChange_t* ch : changes)
+        {
+            history->add_change(ch);
+        }
+
+        // Check full history order
+        ASSERT_EQ(history->getHistorySize(), total_changes);
+        for (auto it = history->changesBegin(); it != history->changesEnd(); ++it)
+        {
+            for (auto it2 = it + 1; it2 != history->changesEnd(); ++it2)
+            {
+                EXPECT_FALSE(eprosima::fastdds::rtps::history_order_cmp(*it2, *it));
+            }
+        }
+
+        // Prepare for next iteration
+        history->remove_all_changes();
+        ASSERT_EQ(history->getHistorySize(), 0);
+    }
+
+    // Clean-up
+    for (CacheChange_t* ch : changes)
+    {
+        delete ch;
     }
 }
 
