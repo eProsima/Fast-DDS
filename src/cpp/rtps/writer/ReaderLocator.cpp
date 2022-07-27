@@ -38,7 +38,8 @@ ReaderLocator::ReaderLocator(
         size_t max_multicast_locators)
     : owner_(owner)
     , participant_owner_(owner->getRTPSParticipant())
-    , locator_info_(max_unicast_locators, max_multicast_locators)
+    , general_locator_info_(max_unicast_locators, max_multicast_locators)
+    , async_locator_info_(max_unicast_locators, max_multicast_locators)
     , expects_inline_qos_(false)
     , is_local_reader_(false)
     , local_reader_(nullptr)
@@ -69,12 +70,14 @@ bool ReaderLocator::start(
         bool expects_inline_qos,
         bool is_datasharing)
 {
-    if (locator_info_.remote_guid == c_Guid_Unknown)
+    if (general_locator_info_.remote_guid == c_Guid_Unknown)
     {
+        assert(c_Guid_Unknown == async_locator_info_.remote_guid);
         expects_inline_qos_ = expects_inline_qos;
         guid_as_vector_.at(0) = remote_guid;
         guid_prefix_as_vector_.at(0) = remote_guid.guidPrefix;
-        locator_info_.remote_guid = remote_guid;
+        general_locator_info_.remote_guid = remote_guid;
+        async_locator_info_.remote_guid = remote_guid;
 
         is_local_reader_ = RTPSDomainImpl::should_intraprocess_between(owner_->getGuid(), remote_guid);
         is_datasharing &= !is_local_reader_;
@@ -82,12 +85,16 @@ bool ReaderLocator::start(
 
         if (!is_local_reader_ && !is_datasharing)
         {
-            locator_info_.unicast = unicast_locators;
-            locator_info_.multicast = multicast_locators;
+            general_locator_info_.unicast = unicast_locators;
+            general_locator_info_.multicast = multicast_locators;
+            async_locator_info_.unicast = unicast_locators;
+            async_locator_info_.multicast = multicast_locators;
         }
 
-        locator_info_.reset();
-        locator_info_.enable(true);
+        general_locator_info_.reset();
+        general_locator_info_.enable(true);
+        async_locator_info_.reset();
+        async_locator_info_.enable(true);
 
         if (is_datasharing)
         {
@@ -112,17 +119,21 @@ bool ReaderLocator::update(
         expects_inline_qos_ = expects_inline_qos;
         ret_val = true;
     }
-    if (!(locator_info_.unicast == unicast_locators) ||
-            !(locator_info_.multicast == multicast_locators))
+    if (!(general_locator_info_.unicast == unicast_locators) ||
+            !(general_locator_info_.multicast == multicast_locators))
     {
         if (!is_local_reader_ && !is_datasharing_reader())
         {
-            locator_info_.unicast = unicast_locators;
-            locator_info_.multicast = multicast_locators;
+            general_locator_info_.unicast = unicast_locators;
+            general_locator_info_.multicast = multicast_locators;
+            async_locator_info_.unicast = unicast_locators;
+            async_locator_info_.multicast = multicast_locators;
         }
 
-        locator_info_.reset();
-        locator_info_.enable(true);
+        general_locator_info_.reset();
+        general_locator_info_.enable(true);
+        async_locator_info_.reset();
+        async_locator_info_.enable(true);
         ret_val = true;
     }
 
@@ -132,8 +143,9 @@ bool ReaderLocator::update(
 bool ReaderLocator::stop(
         const GUID_t& remote_guid)
 {
-    if (locator_info_.remote_guid == remote_guid)
+    if (general_locator_info_.remote_guid == remote_guid)
     {
+        assert (remote_guid == async_locator_info_.remote_guid);
         stop();
         return true;
     }
@@ -148,11 +160,16 @@ void ReaderLocator::stop()
         datasharing_notifier_->disable();
     }
 
-    locator_info_.enable(false);
-    locator_info_.reset();
-    locator_info_.multicast.clear();
-    locator_info_.unicast.clear();
-    locator_info_.remote_guid = c_Guid_Unknown;
+    general_locator_info_.enable(false);
+    general_locator_info_.reset();
+    general_locator_info_.multicast.clear();
+    general_locator_info_.unicast.clear();
+    general_locator_info_.remote_guid = c_Guid_Unknown;
+    async_locator_info_.enable(false);
+    async_locator_info_.reset();
+    async_locator_info_.multicast.clear();
+    async_locator_info_.unicast.clear();
+    async_locator_info_.remote_guid = c_Guid_Unknown;
     guid_as_vector_.at(0) = c_Guid_Unknown;
     guid_prefix_as_vector_.at(0) = c_GuidPrefix_Unknown;
     expects_inline_qos_ = false;
@@ -164,18 +181,20 @@ bool ReaderLocator::send(
         CDRMessage_t* message,
         std::chrono::steady_clock::time_point max_blocking_time_point) const
 {
-    if (locator_info_.remote_guid != c_Guid_Unknown && !is_local_reader_)
+    if (general_locator_info_.remote_guid != c_Guid_Unknown && !is_local_reader_)
     {
-        if (locator_info_.unicast.size() > 0)
+        if (general_locator_info_.unicast.size() > 0)
         {
             return participant_owner_->sendSync(message, owner_->getGuid(),
-                           Locators(locator_info_.unicast.begin()), Locators(locator_info_.unicast.end()),
+                           Locators(general_locator_info_.unicast.begin()), Locators(
+                               general_locator_info_.unicast.end()),
                            max_blocking_time_point);
         }
         else
         {
             return participant_owner_->sendSync(message, owner_->getGuid(),
-                           Locators(locator_info_.multicast.begin()), Locators(locator_info_.multicast.end()),
+                           Locators(general_locator_info_.multicast.begin()),
+                           Locators(general_locator_info_.multicast.end()),
                            max_blocking_time_point);
         }
     }
@@ -187,7 +206,7 @@ RTPSReader* ReaderLocator::local_reader()
 {
     if (!local_reader_)
     {
-        local_reader_ = RTPSDomainImpl::find_local_reader(locator_info_.remote_guid);
+        local_reader_ = RTPSDomainImpl::find_local_reader(general_locator_info_.remote_guid);
     }
     return local_reader_;
 }

@@ -354,9 +354,14 @@ public:
     void update_nack_supression_interval(
             const Duration_t& interval);
 
-    LocatorSelectorEntry* locator_selector_entry()
+    LocatorSelectorEntry* general_locator_selector_entry()
     {
-        return locator_info_.locator_selector_entry();
+        return locator_info_.general_locator_selector_entry();
+    }
+
+    LocatorSelectorEntry* async_locator_selector_entry()
+    {
+        return locator_info_.async_locator_selector_entry();
     }
 
     RTPSMessageSenderInterface* message_sender()
