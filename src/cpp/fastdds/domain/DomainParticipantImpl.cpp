@@ -1349,7 +1349,7 @@ Topic* DomainParticipantImpl::create_topic(
         return nullptr;
     }
 
-    if (!TopicImpl::check_qos(qos))
+    if (!TopicImpl::check_qos_including_resource_limits(qos, type_support))
     {
         logError(PARTICIPANT, "TopicQos inconsistent or not supported");
         return nullptr;
