@@ -337,7 +337,6 @@ public:
      * @param[in]     a_condition     A ReadCondition that returned @c data_values must pass
      *
      * @return Any of the standard return codes.
-     * @warning Not supported yet. Currently returns RETCODE_UNSUPPORTED
      */
     RTPS_DllAPI ReturnCode_t read_w_condition(
             LoanableCollection& data_values,
@@ -483,7 +482,6 @@ public:
      * @param[in]     a_condition     A ReadCondition that returned @c data_values must pass
      *
      * @return Any of the standard return codes.
-     * @warning Not supported yet. Currently returns RETCODE_UNSUPPORTED
      */
     RTPS_DllAPI ReturnCode_t read_next_instance_w_condition(
             LoanableCollection& data_values,
@@ -576,7 +574,6 @@ public:
      * @param[in]     a_condition     A ReadCondition that returned @c data_values must pass
      *
      * @return Any of the standard return codes.
-     * @warning Not supported yet. Currently returns RETCODE_UNSUPPORTED
      */
     RTPS_DllAPI ReturnCode_t take_w_condition(
             LoanableCollection& data_values,
@@ -689,7 +686,6 @@ public:
      * @param[in]     a_condition     A ReadCondition that returned @c data_values must pass
      *
      * @return Any of the standard return codes.
-     * @warning Not supported yet. Currently returns RETCODE_UNSUPPORTED
      */
     RTPS_DllAPI ReturnCode_t take_next_instance_w_condition(
             LoanableCollection& data_values,
@@ -1041,7 +1037,6 @@ public:
      *
      * @param a_condition pointer to a ReadCondition belonging to the DataReader
      * @return RETCODE_OK
-     * @warning Not supported yet. Currently returns RETCODE_UNSUPPORTED
      */
     RTPS_DllAPI ReturnCode_t delete_readcondition(
             const ReadCondition* a_condition);
