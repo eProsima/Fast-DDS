@@ -294,9 +294,24 @@ public:
     virtual void disable();
 
     /* Check whether values in the DataReaderQos are compatible among them or not
+     * Checks also resource limits related policy
+     * @return True if correct.
+     */
+    static ReturnCode_t check_qos_including_resource_limits(
+            const DataReaderQos& qos,
+            const TypeSupport& type);
+
+    /* Check whether values in the DataReaderQos are compatible among them or not
      * @return True if correct.
      */
     static ReturnCode_t check_qos (
+            const DataReaderQos& qos);
+
+    /* Check whether values in the DataReaderQos resource limits related policy
+     * are compatible among them or not
+     * @return True if correct.
+     */
+    static ReturnCode_t check_allocation_consistency(
             const DataReaderQos& qos);
 
     /* Check whether the DataReaderQos can be updated with the values provided. This method DOES NOT update anything.
