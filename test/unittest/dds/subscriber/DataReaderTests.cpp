@@ -3035,13 +3035,16 @@ TEST_F(DataReaderTests, read_conditions_wait_on_InstanceStateMask)
 }
 
 /*
- * This test checks the allocation consistency when using instances.
+ * This test checks the allocation consistency when NOT using instances.
+ * If the topic is keyed,
  * max_samples should be greater or equal than max_instances * max_samples_per_instance.
  * If that condition is not met, the endpoint creation should fail.
+ * If not keyed (not using instances), the only property that is used is max_samples,
+ * thus, should not fail with the previously mentioned configuration.
  * The following method is checked:
  * 1. create_datareader
  */
-TEST_F(DataReaderTests, InstancePolicyAllocationConsistency)
+TEST_F(DataReaderTests, InstancePolicyAllocationConsistencyNotKeyed)
 {
     DomainParticipant* participant =
             DomainParticipantFactory::get_instance()->create_participant(0, PARTICIPANT_QOS_DEFAULT);
@@ -3057,28 +3060,31 @@ TEST_F(DataReaderTests, InstancePolicyAllocationConsistency)
     ASSERT_NE(topic, nullptr);
 
     // Next QoS config checks that if user sets max_instances to inf and leaves max_samples by default,
-    // create_datareader() should return nullptr
+    // create_datareader() should NOT return nullptr.
+    // By not using instances, this does not make any change.
     DataReaderQos qos = DATAREADER_QOS_DEFAULT;
     qos.resource_limits().max_instances = 0;
 
     DataReader* data_reader1 = subscriber->create_datareader(topic, qos);
-    ASSERT_EQ(data_reader1, nullptr);
+    ASSERT_NE(data_reader1, nullptr);
 
     // Below an ampliation of the last comprobation, for which it is proved the case of < 0 (-1),
-    // which also means infinite value
+    // which also means infinite value.
+    // By not using instances, this does not make any change.
     qos.resource_limits().max_instances = -1;
 
     DataReader* data_reader2 = subscriber->create_datareader(topic, qos);
-    ASSERT_EQ(data_reader2, nullptr);
+    ASSERT_NE(data_reader2, nullptr);
 
     // Next QoS config checks that if user sets max_samples < ( max_instances * max_samples_per_instance ) ,
-    // create_datareader() should return nullptr
+    // create_datareader() should NOT return nullptr.
+    // By not using instances, this does not make any change.
     qos.resource_limits().max_samples = 4999;
     qos.resource_limits().max_instances = 10;
     qos.resource_limits().max_samples_per_instance = 500;
 
     DataReader* data_reader3 = subscriber->create_datareader(topic, qos);
-    ASSERT_EQ(data_reader3, nullptr);
+    ASSERT_NE(data_reader3, nullptr);
 
 }
 

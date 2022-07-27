@@ -223,13 +223,16 @@ TEST(TopicTests, SetListener)
 }
 
 /*
- * This test checks the allocation consistency when using instances.
+ * This test checks the allocation consistency when NOT using instances.
+ * If the topic is keyed,
  * max_samples should be greater or equal than max_instances * max_samples_per_instance.
  * If that condition is not met, the endpoint creation should fail.
+ * If not keyed (not using instances), the only property that is used is max_samples,
+ * thus, should not fail with the previously mentioned configuration.
  * The following method is checked:
  * 1. create_topic
  */
-TEST(TopicTests, InstancePolicyAllocationConsistency)
+TEST(TopicTests, InstancePolicyAllocationConsistencyNotKeyed)
 {
     DomainParticipant* participant =
             DomainParticipantFactory::get_instance()->create_participant(0, PARTICIPANT_QOS_DEFAULT);
@@ -242,28 +245,31 @@ TEST(TopicTests, InstancePolicyAllocationConsistency)
     type.register_type(participant);
 
     // Next QoS config checks that if user sets max_instances to inf and leaves max_samples by default,
-    // create_topic() should return nullptr
+    // create_topic() should NOT return nullptr.
+    // By not using instances, this does not make any change.
     TopicQos qos = TOPIC_QOS_DEFAULT;
     qos.resource_limits().max_instances = 0;
 
     Topic* topic1 = participant->create_topic("footopic1", type.get_type_name(), qos);
-    ASSERT_EQ(topic1, nullptr);
+    ASSERT_NE(topic1, nullptr);
 
     // Below an ampliation of the last comprobation, for which it is proved the case of < 0 (-1),
-    // which also means infinite value
+    // which also means infinite value.
+    // By not using instances, this does not make any change.
     qos.resource_limits().max_instances = -1;
 
     Topic* topic2 = participant->create_topic("footopic1", type.get_type_name(), qos);
-    ASSERT_EQ(topic2, nullptr);
+    ASSERT_NE(topic2, nullptr);
 
     // Next QoS config checks that if user sets max_samples < ( max_instances * max_samples_per_instance ) ,
-    // create_topic() should return nullptr
+    // create_topic() should NOT return nullptr.
+    // By not using instances, this does not make any change.
     qos.resource_limits().max_samples = 4999;
     qos.resource_limits().max_instances = 10;
     qos.resource_limits().max_samples_per_instance = 500;
 
     Topic* topic3 = participant->create_topic("footopic2", type.get_type_name(), qos);
-    ASSERT_EQ(topic3, nullptr);
+    ASSERT_NE(topic3, nullptr);
 }
 
 } // namespace dds
