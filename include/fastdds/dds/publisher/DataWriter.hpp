@@ -181,7 +181,6 @@ public:
      * @param handle InstanceHandle_t
      * @param timestamp Time_t used to set the source_timestamp.
      * @return Any of the standard return codes.
-     * @warning Not supported yet. Currently returns RETCODE_UNSUPPORTED
      */
     RTPS_DllAPI ReturnCode_t write_w_timestamp(
             void* data,
@@ -272,7 +271,6 @@ public:
      * @param handle Instance's key to be unregistered.
      * @param timestamp Time_t used to set the source_timestamp.
      * @return Handle containing the instance's key.
-     * @warning Not supported yet. Currently returns RETCODE_UNSUPPORTED
      */
     RTPS_DllAPI ReturnCode_t unregister_instance_w_timestamp(
             void* instance,
