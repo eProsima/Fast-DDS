@@ -589,7 +589,14 @@ protected:
             const DataWriterQos& from,
             bool is_default);
 
+    static ReturnCode_t check_qos_including_resource_limits(
+            const DataWriterQos& qos,
+            const TypeSupport& type);
+
     static ReturnCode_t check_qos(
+            const DataWriterQos& qos);
+
+    static ReturnCode_t check_allocation_consistency(
             const DataWriterQos& qos);
 
     static bool can_qos_be_updated(

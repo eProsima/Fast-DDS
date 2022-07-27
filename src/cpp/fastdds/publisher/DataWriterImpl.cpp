@@ -1690,6 +1690,27 @@ void DataWriterImpl::set_qos(
     }
 }
 
+ReturnCode_t DataWriterImpl::check_qos_including_resource_limits(
+        const DataWriterQos& qos,
+        const TypeSupport& type)
+{
+    ReturnCode_t check_qos_return;
+    check_qos_return = check_qos(qos);
+    if (!check_qos_return)
+    {
+        return check_qos_return;
+    }
+    if (type->m_isGetKeyDefined)
+    {
+        check_qos_return = check_allocation_consistency(qos);
+        if (!check_qos_return)
+        {
+            return check_qos_return;
+        }
+    }
+    return ReturnCode_t::RETCODE_OK;
+}
+
 ReturnCode_t DataWriterImpl::check_qos(
         const DataWriterQos& qos)
 {
@@ -1749,6 +1770,27 @@ ReturnCode_t DataWriterImpl::check_qos(
             (qos.resource_limits().max_instances * qos.resource_limits().max_samples_per_instance)))
     {
         logError(DDS_QOS_CHECK, "max_samples should be greater than max_instances * max_samples_per_instance");
+        return ReturnCode_t::RETCODE_INCONSISTENT_POLICY;
+    }
+    if ((qos.resource_limits().max_instances <= 0 || qos.resource_limits().max_samples_per_instance <= 0) &&
+            (qos.resource_limits().max_samples > 0))
+    {
+        logError(DDS_QOS_CHECK,
+                "max_samples should be infinite when max_instances or max_samples_per_instance are infinite");
+        return ReturnCode_t::RETCODE_INCONSISTENT_POLICY;
+    }
+    return ReturnCode_t::RETCODE_OK;
+}
+
+ReturnCode_t DataWriterImpl::check_allocation_consistency(
+        const DataWriterQos& qos)
+{
+    if ((qos.resource_limits().max_samples > 0) &&
+            (qos.resource_limits().max_samples <=
+            (qos.resource_limits().max_instances * qos.resource_limits().max_samples_per_instance)))
+    {
+        logError(DDS_QOS_CHECK,
+                "max_samples should be greater than max_instances * max_samples_per_instance");
         return ReturnCode_t::RETCODE_INCONSISTENT_POLICY;
     }
     if ((qos.resource_limits().max_instances <= 0 || qos.resource_limits().max_samples_per_instance <= 0) &&
