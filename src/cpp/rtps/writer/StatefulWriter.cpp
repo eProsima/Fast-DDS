@@ -1341,7 +1341,7 @@ bool StatefulWriter::is_acked_by_all(
 {
     assert(mp_history->next_sequence_number() > seq);
     return (seq < next_all_acked_notify_sequence_) ||
-           !for_matched_readers(matched_local_readers_, matched_remote_readers_,
+           !for_matched_readers(matched_local_readers_, matched_datasharing_readers_, matched_remote_readers_,
                    [seq](const ReaderProxy* reader)
                    {
                        return !(reader->change_is_acked(seq));
