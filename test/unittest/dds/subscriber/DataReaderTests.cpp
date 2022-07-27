@@ -2391,12 +2391,10 @@ public:
  * This test checks that the DataReader methods defined in the standard not yet implemented in FastDDS return
  * ReturnCode_t::RETCODE_UNSUPPORTED. The following methods are checked:
  * 1. get_matched_publication_data
- * 2. create_readcondition
- * 3. create_querycondition
- * 4. delete_readcondition
- * 5. get_matched_publications
- * 6. get_key_value
- * 7. wait_for_historical_data
+ * 2. create_querycondition
+ * 3. get_matched_publications
+ * 4. get_key_value
+ * 5. wait_for_historical_data
  */
 TEST_F(DataReaderUnsupportedTests, UnsupportedDataReaderMethods)
 {
@@ -2446,8 +2444,8 @@ TEST_F(DataReaderUnsupportedTests, UnsupportedDataReaderMethods)
 
     EXPECT_EQ(ReturnCode_t::RETCODE_UNSUPPORTED, data_reader->wait_for_historical_data({0, 1}));
 
-    // Expected logWarnings: create_querycondition, create_readcondition
-    HELPER_WaitForEntries(2);
+    // Expected logWarnings: create_querycondition
+    HELPER_WaitForEntries(1);
 
     ASSERT_EQ(subscriber->delete_datareader(data_reader), ReturnCode_t::RETCODE_OK);
     ASSERT_EQ(participant->delete_subscriber(subscriber), ReturnCode_t::RETCODE_OK);
