@@ -62,6 +62,7 @@
 #include <rtps/participant/RTPSParticipantImpl.h>
 
 using namespace eprosima::fastdds::dds;
+using namespace eprosima::fastdds::dds::detail;
 using namespace eprosima::fastdds::rtps;
 using namespace eprosima::fastrtps::rtps;
 using namespace eprosima::fastrtps;
@@ -1751,7 +1752,7 @@ bool DataReaderImpl::is_sample_valid(
 }
 
 ReturnCode_t DataReaderImpl::get_listening_locators(
-        rtps::LocatorList& locators) const
+        LocatorList& locators) const
 {
     if (nullptr == reader_)
     {
