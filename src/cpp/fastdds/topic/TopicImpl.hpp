@@ -50,7 +50,14 @@ public:
             const TopicQos& qos,
             TopicListener* listen);
 
+    static ReturnCode_t check_qos_including_resource_limits(
+            const TopicQos& qos,
+            const TypeSupport& type);
+
     static ReturnCode_t check_qos(
+            const TopicQos& qos);
+
+    static ReturnCode_t check_allocation_consistency(
             const TopicQos& qos);
 
     static bool can_qos_be_updated(
