@@ -753,7 +753,7 @@ ReturnCode_t DataReaderImpl::get_first_untaken_info(
 uint64_t DataReaderImpl::get_unread_count(
         bool mark_as_read)
 {
-    bool ret_val = reader_ ? history_.get_unread_count(mark_as_read) : 0;
+    uint64_t ret_val = reader_ ? history_.get_unread_count(mark_as_read) : 0;
     if (mark_as_read)
     {
         try_notify_read_conditions();
