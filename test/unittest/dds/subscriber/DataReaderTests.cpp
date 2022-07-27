@@ -3056,6 +3056,9 @@ TEST_F(DataReaderTests, InstancePolicyAllocationConsistencyNotKeyed)
     TypeSupport type(new FooTypeSupport());
     type.register_type(participant);
 
+    // This test pretends to use topic with no instances, so the following flag is set false.
+    type.get()->m_isGetKeyDefined = false;
+
     Topic* topic = participant->create_topic("footopic", type.get_type_name(), TOPIC_QOS_DEFAULT);
     ASSERT_NE(topic, nullptr);
 

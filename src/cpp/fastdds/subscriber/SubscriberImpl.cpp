@@ -247,7 +247,7 @@ DataReader* SubscriberImpl::create_datareader(
         return nullptr;
     }
 
-    if (!DataReaderImpl::check_qos(qos))
+    if (!DataReaderImpl::check_qos_including_resource_limits(qos, type_support))
     {
         return nullptr;
     }
