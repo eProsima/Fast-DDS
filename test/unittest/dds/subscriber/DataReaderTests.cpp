@@ -2566,6 +2566,13 @@ TEST_F(DataReaderTests, delete_contained_entities)
     SampleStateMask mock_sample_state_kind = ANY_SAMPLE_STATE;
     ViewStateMask mock_view_state_kind = ANY_VIEW_STATE;
     InstanceStateMask mock_instance_states = ANY_INSTANCE_STATE;
+
+    ReadCondition* read_condition = data_reader->create_readcondition(
+        mock_sample_state_kind,
+        mock_view_state_kind,
+        mock_instance_states);
+    EXPECT_NE(read_condition, nullptr);
+
     const std::string mock_query_expression;
     const std::vector<std::string> mock_query_parameters;
 
@@ -2580,6 +2587,10 @@ TEST_F(DataReaderTests, delete_contained_entities)
     // To be updated when Query Conditions are available
     ASSERT_EQ(query_condition, nullptr);
 
+    // Should fail with outstanding ReadConditions
+    ASSERT_EQ(subscriber->delete_datareader(data_reader), ReturnCode_t::RETCODE_PRECONDITION_NOT_MET);
+
+    // Should not fail with outstanding ReadConditions
     ASSERT_EQ(data_reader->delete_contained_entities(), ReturnCode_t::RETCODE_OK);
 }
 
