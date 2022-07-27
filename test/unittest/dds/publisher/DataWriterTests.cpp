@@ -1688,7 +1688,59 @@ TEST(DataWriterTests, InstancePolicyAllocationConsistencyNotKeyed)
 
     DataWriter* data_writer3 = publisher->create_datawriter(topic, qos);
     ASSERT_NE(data_writer3, nullptr);
+}
 
+/*
+ * This test checks the allocation consistency when USING instances.
+ * If the topic is keyed,
+ * max_samples should be greater or equal than max_instances * max_samples_per_instance.
+ * If that condition is not met, the endpoint creation should fail.
+ * If not keyed (not using instances), the only property that is used is max_samples,
+ * thus, should not fail with the previously mentioned configuration.
+ * The following method is checked:
+ * 1. create_datawriter
+ */
+TEST(DataWriterTests, InstancePolicyAllocationConsistencyKeyed)
+{
+    DomainParticipant* participant =
+            DomainParticipantFactory::get_instance()->create_participant(0, PARTICIPANT_QOS_DEFAULT);
+    ASSERT_NE(participant, nullptr);
+
+    Publisher* publisher = participant->create_publisher(PUBLISHER_QOS_DEFAULT);
+    ASSERT_NE(publisher, nullptr);
+
+    TypeSupport type(new TopicDataTypeMock());
+    type.register_type(participant);
+
+    // This test pretends to use topic with instances, so the following flag is set.
+    type.get()->m_isGetKeyDefined = true;
+
+    Topic* topic = participant->create_topic("footopic", type.get_type_name(), TOPIC_QOS_DEFAULT);
+    ASSERT_NE(topic, nullptr);
+
+    // Next QoS config checks that if user sets max_instances to inf and leaves max_samples by default,
+    // create_datawriter() should not return nullptr, as the by default values are already infinite.
+    DataWriterQos qos = DATAWRITER_QOS_DEFAULT;
+    qos.resource_limits().max_instances = 0;
+
+    DataWriter* data_writer1 = publisher->create_datawriter(topic, qos);
+    ASSERT_NE(data_writer1, nullptr);
+
+    // Below an ampliation of the last comprobation, for which it is proved the case of < 0 (-1),
+    // which also means infinite value.
+    qos.resource_limits().max_instances = -1;
+
+    DataWriter* data_writer2 = publisher->create_datawriter(topic, qos);
+    ASSERT_NE(data_writer2, nullptr);
+
+    // Next QoS config checks that if user sets max_samples < ( max_instances * max_samples_per_instance ) ,
+    // create_datawriter() should return nullptr.
+    qos.resource_limits().max_samples = 4999;
+    qos.resource_limits().max_instances = 10;
+    qos.resource_limits().max_samples_per_instance = 500;
+
+    DataWriter* data_writer3 = publisher->create_datawriter(topic, qos);
+    ASSERT_EQ(data_writer3, nullptr);
 }
 
 } // namespace dds
