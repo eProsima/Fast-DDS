@@ -41,6 +41,7 @@
 using ::testing::StrictMock;
 using ::testing::NiceMock;
 using ::testing::Mock;
+using ::testing::_;
 
 using eprosima::fastrtps::rtps::RTPSDomain;
 
@@ -1328,10 +1329,18 @@ void verify_expectations_on_data_available (
 {
     fastrtps::rtps::CacheChange_t change;
 
-    RTPSDomain::reader_->listener_->onNewCacheChangeAdded(nullptr, &change);
+    auto seq = change.sequenceNumber;
+    bool notify_individual = false;
+
+    EXPECT_CALL(*RTPSDomain::reader_->history_, get_change(_, _, _))
+            .WillRepeatedly(testing::DoAll(testing::SetArgPointee<2>(&change), testing::Return(true)));
+
+    RTPSDomain::reader_->listener_->on_data_available(nullptr, change.writerGUID, seq, seq, notify_individual);
+
     Mock::VerifyAndClearExpectations(&datareader_listener_);
     Mock::VerifyAndClearExpectations(&subscriber_listener_);
     Mock::VerifyAndClearExpectations(&participant_listener_);
+    Mock::VerifyAndClearExpectations(RTPSDomain::reader_->history_);
 }
 
 TEST_F(UserListeners, data_available)
