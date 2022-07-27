@@ -215,6 +215,7 @@ public:
      *
      * @param xml_file xml file path
      * @return RETCODE_OK if the validation is successful, RETCODE_ERROR otherwise.
+     * @warning Not supported yet. Currently returns RETCODE_UNSUPPORTED
      */
     RTPS_DllAPI ReturnCode_t check_xml_static_discovery(
             std::string& xml_file);
