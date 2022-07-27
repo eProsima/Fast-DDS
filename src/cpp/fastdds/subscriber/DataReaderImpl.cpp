@@ -61,14 +61,17 @@
 #include <rtps/history/TopicPayloadPoolRegistry.hpp>
 #include <rtps/participant/RTPSParticipantImpl.h>
 
-using namespace eprosima::fastdds::dds;
-using namespace eprosima::fastdds::dds::detail;
-using namespace eprosima::fastdds::rtps;
+using eprosima::fastrtps::RecursiveTimedMutex;
+using eprosima::fastrtps::c_TimeInfinite;
+
 using namespace eprosima::fastrtps::rtps;
-using namespace eprosima::fastrtps;
 using namespace std::chrono;
 
 using eprosima::fastrtps::types::ReturnCode_t;
+
+namespace eprosima {
+namespace fastdds {
+namespace dds {
 
 static bool collections_have_same_properties(
         const LoanableCollection& data_values,
@@ -254,7 +257,7 @@ ReturnCode_t DataReaderImpl::enable()
         }
     }
 
-    ContentFilterProperty* filter_property = nullptr;
+    rtps::ContentFilterProperty* filter_property = nullptr;
     if (nullptr != content_topic && !content_topic->filter_property.filter_expression.empty())
     {
         filter_property = &content_topic->filter_property;
@@ -781,7 +784,7 @@ void DataReaderImpl::update_rtps_reader_qos()
 {
     if (reader_)
     {
-        ContentFilterProperty* filter_property = nullptr;
+        rtps::ContentFilterProperty* filter_property = nullptr;
         auto content_topic = dynamic_cast<ContentFilteredTopicImpl*>(topic_->get_impl());
         if (nullptr != content_topic && !content_topic->filter_property.filter_expression.empty())
         {
@@ -1605,9 +1608,9 @@ void DataReaderImpl::set_qos(
     }
 }
 
-TopicAttributes DataReaderImpl::topic_attributes() const
+fastrtps::TopicAttributes DataReaderImpl::topic_attributes() const
 {
-    TopicAttributes topic_att;
+    fastrtps::TopicAttributes topic_att;
     topic_att.topicKind = type_->m_isGetKeyDefined ? WITH_KEY : NO_KEY;
     topic_att.topicName = topic_->get_impl()->get_rtps_topic_name();
     topic_att.topicDataType = topic_->get_type_name();
@@ -1752,7 +1755,7 @@ bool DataReaderImpl::is_sample_valid(
 }
 
 ReturnCode_t DataReaderImpl::get_listening_locators(
-        LocatorList& locators) const
+        rtps::LocatorList& locators) const
 {
     if (nullptr == reader_)
     {
@@ -1999,3 +2002,8 @@ void DataReaderImpl::try_notify_read_conditions() noexcept
         impl->notify();
     }
 }
+
+}  // namespace dds
+}  // namespace fastdds
+}  // namespace eprosima
+
