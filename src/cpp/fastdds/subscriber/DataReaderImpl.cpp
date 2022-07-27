@@ -313,14 +313,15 @@ DataReaderImpl::~DataReaderImpl()
     delete user_datareader_;
 }
 
-bool DataReaderImpl::can_be_deleted(bool recursive) const
+bool DataReaderImpl::can_be_deleted(
+        bool recursive) const
 {
     std::lock_guard<RecursiveTimedMutex> _(reader_->getMutex());
 
     // According with the standard
     // delete_datareader() should fail with outstanding ReadConditions
     // delete_contained_entities() should not
-    if( !recursive )
+    if ( !recursive )
     {
         std::lock_guard<std::recursive_mutex> __(get_conditions_mutex());
 
