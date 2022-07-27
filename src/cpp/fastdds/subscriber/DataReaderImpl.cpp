@@ -320,24 +320,24 @@ DataReaderImpl::~DataReaderImpl()
 bool DataReaderImpl::can_be_deleted(
         bool recursive) const
 {
-    std::lock_guard<RecursiveTimedMutex> _(reader_->getMutex());
-
-    // According with the standard
-    // delete_datareader() should fail with outstanding ReadConditions
-    // delete_contained_entities() should not
-    if ( !recursive )
-    {
-        std::lock_guard<std::recursive_mutex> __(get_conditions_mutex());
-
-        if (!read_conditions_.empty())
-        {
-            logWarning(DATA_READER, "DataReader " << guid() << " has ReadConditions not yet deleted");
-            return false;
-        }
-    }
-
     if (reader_ != nullptr)
     {
+        std::lock_guard<RecursiveTimedMutex> _(reader_->getMutex());
+
+        // According with the standard
+        // delete_datareader() should fail with outstanding ReadConditions
+        // delete_contained_entities() should not
+        if ( !recursive )
+        {
+            std::lock_guard<std::recursive_mutex> __(get_conditions_mutex());
+
+            if (!read_conditions_.empty())
+            {
+                logWarning(DATA_READER, "DataReader " << guid() << " has ReadConditions not yet deleted");
+                return false;
+            }
+        }
+
         return !loan_manager_.has_outstanding_loans();
     }
 
