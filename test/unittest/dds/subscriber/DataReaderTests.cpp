@@ -2620,7 +2620,7 @@ TEST_F(DataReaderTests, read_conditions_management)
     }
     conds.clear();
 
-    // 4- Create several ReadConditions associated to different same masks
+    // 4- Create several ReadConditions associated to different masks
     sample_states = 0;
     view_states = 0;
     instance_states = 0;
@@ -2659,7 +2659,9 @@ TEST_F(DataReaderTests, read_conditions_management)
 
     // 7- Check the DataReader cannot be deleted with outstanding conditions
     EXPECT_EQ(subscriber_->delete_datareader(another_reader), ReturnCode_t::RETCODE_PRECONDITION_NOT_MET);
+    // but delete_contained_entities() succeeds with outstanding ReadConditions
     EXPECT_EQ(another_reader->delete_contained_entities(), ReturnCode_t::RETCODE_OK);
+    // no outstanding conditions (killed above)
     EXPECT_EQ(subscriber_->delete_datareader(another_reader), ReturnCode_t::RETCODE_OK);
 }
 
@@ -2717,7 +2719,7 @@ TEST_F(DataReaderTests, read_conditions_wait_on_SampleStateMask)
     // Check the data is there
     EXPECT_EQ(data_reader.get_unread_count(), 1);
 
-    // Check the conditions triggered where the expected ones
+    // Check the conditions triggered were the expected ones
     ASSERT_FALSE(read_cond->get_trigger_value());
     EXPECT_EQ(std::find(triggered.begin(), triggered.end(), read_cond), triggered.end());
     ASSERT_TRUE(not_read_cond->get_trigger_value());
@@ -2745,7 +2747,7 @@ TEST_F(DataReaderTests, read_conditions_wait_on_SampleStateMask)
     EXPECT_EQ(datas[0].message(), test_message);
     EXPECT_EQ(data_reader.return_loan(datas, infos), ReturnCode_t::RETCODE_OK);
 
-    // Check the conditions triggered where the expected ones
+    // Check the conditions triggered were the expected ones
     ASSERT_TRUE(read_cond->get_trigger_value());
     EXPECT_NE(std::find(triggered.begin(), triggered.end(), read_cond), triggered.end());
     ASSERT_FALSE(not_read_cond->get_trigger_value());
@@ -2829,7 +2831,7 @@ TEST_F(DataReaderTests, read_conditions_wait_on_ViewStateMask)
     // Check the data is there
     EXPECT_EQ(data_reader.get_unread_count(), 1);
 
-    // Check the conditions triggered where the expected ones
+    // Check the conditions triggered were the expected ones
     ASSERT_TRUE(view_cond->get_trigger_value());
     EXPECT_NE(std::find(triggered.begin(), triggered.end(), view_cond), triggered.end());
     ASSERT_FALSE(not_view_cond->get_trigger_value());
@@ -2857,7 +2859,7 @@ TEST_F(DataReaderTests, read_conditions_wait_on_ViewStateMask)
     EXPECT_EQ(datas[0].message(), test_message);
     EXPECT_EQ(data_reader.return_loan(datas, infos), ReturnCode_t::RETCODE_OK);
 
-    // Check the conditions triggered where the expected ones
+    // Check the conditions triggered were the expected ones
     ASSERT_FALSE(view_cond->get_trigger_value());
     EXPECT_EQ(std::find(triggered.begin(), triggered.end(), view_cond), triggered.end());
     ASSERT_TRUE(not_view_cond->get_trigger_value());
@@ -2934,7 +2936,7 @@ TEST_F(DataReaderTests, read_conditions_wait_on_InstanceStateMask)
     // Check the data is there
     EXPECT_EQ(data_reader.get_unread_count(), 1);
 
-    // Check the conditions triggered where the expected ones
+    // Check the conditions triggered were the expected ones
     ASSERT_TRUE(alive_cond->get_trigger_value());
     EXPECT_NE(std::find(triggered.begin(), triggered.end(), alive_cond), triggered.end());
     ASSERT_FALSE(disposed_cond->get_trigger_value());
@@ -2951,7 +2953,7 @@ TEST_F(DataReaderTests, read_conditions_wait_on_InstanceStateMask)
     triggered.clear();
     EXPECT_EQ(ws.wait(triggered, 1.0), ReturnCode_t::RETCODE_OK);
 
-    // Check the conditions triggered where the expected ones
+    // Check the conditions triggered were the expected ones
     ASSERT_FALSE(alive_cond->get_trigger_value());
     EXPECT_EQ(std::find(triggered.begin(), triggered.end(), alive_cond), triggered.end());
     ASSERT_TRUE(disposed_cond->get_trigger_value());
@@ -3002,7 +3004,7 @@ TEST_F(DataReaderTests, read_conditions_wait_on_InstanceStateMask)
     triggered.clear();
     EXPECT_EQ(ws.wait(triggered, 1.0), ReturnCode_t::RETCODE_OK);
 
-    // Check the conditions triggered where the expected ones
+    // Check the conditions triggered were the expected ones
     ASSERT_FALSE(alive_cond->get_trigger_value());
     EXPECT_EQ(std::find(triggered.begin(), triggered.end(), alive_cond), triggered.end());
     ASSERT_TRUE(disposed_cond->get_trigger_value());

@@ -110,7 +110,12 @@ public:
 
     virtual ReturnCode_t enable();
 
-    bool can_be_deleted() const;
+    /**
+     * Method to check if a DataReader can be deleted
+     * @param recursive == true if is used from delete_contained_entities otherwise delete_datareader 
+     * @return true if can be deleted according to the standard rules
+     */
+    bool can_be_deleted(bool recursive = true) const;
 
     /**
      * Method to block the current thread until an unread message is available
