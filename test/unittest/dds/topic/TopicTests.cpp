@@ -308,7 +308,8 @@ TEST(TopicTests, InstancePolicyAllocationConsistencyNotKeyed)
  * If not keyed (not using instances), the only property that is used is max_samples,
  * thus, should not fail with the previously mentioned configuration.
  * The following method is checked:
- * 1. create_topic
+ * 1. DomainParticipant::create_topic
+ * 2. Topic::set_qos
  */
 TEST(TopicTests, InstancePolicyAllocationConsistencyKeyed)
 {
@@ -349,6 +350,30 @@ TEST(TopicTests, InstancePolicyAllocationConsistencyKeyed)
 
     Topic* topic3 = participant->create_topic("footopic3", type.get_type_name(), qos);
     ASSERT_EQ(topic3, nullptr);
+
+    // Next QoS config checks that if user sets max_instances to inf and leaves max_samples by default,
+    // set_qos() should return ReturnCode_t::RETCODE_OK = 0, as the by default values are already infinite.
+    TopicQos qos2 = TOPIC_QOS_DEFAULT;
+    Topic* default_topic1 = participant->create_topic("footopic4", type.get_type_name(), qos2);
+    ASSERT_NE(default_topic1, nullptr);
+
+    qos2.resource_limits().max_instances = 0;
+
+    ASSERT_EQ(ReturnCode_t::RETCODE_OK, default_topic1->set_qos(qos2));
+
+    // Below an ampliation of the last comprobation, for which it is proved the case of < 0 (-1),
+    // which also means infinite value.
+    qos2.resource_limits().max_instances = -1;
+
+    ASSERT_EQ(ReturnCode_t::RETCODE_OK, default_topic1->set_qos(qos2));
+
+    // Next QoS config checks that if user sets max_samples < ( max_instances * max_samples_per_instance ) ,
+    // set_qos() should return a value != 0 (not OK)
+    qos2.resource_limits().max_samples = 4999;
+    qos2.resource_limits().max_instances = 10;
+    qos2.resource_limits().max_samples_per_instance = 500;
+
+    ASSERT_NE(ReturnCode_t::RETCODE_OK, default_topic1->set_qos(qos2));
 }
 
 } // namespace dds
