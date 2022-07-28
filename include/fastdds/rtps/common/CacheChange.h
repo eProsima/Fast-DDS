@@ -20,6 +20,7 @@
 #define _FASTDDS_RTPS_CACHECHANGE_H_
 
 #include <cassert>
+#include <atomic>
 
 #include <fastdds/rtps/common/ChangeKind_t.hpp>
 #include <fastdds/rtps/common/FragmentNumber.h>
@@ -48,6 +49,8 @@ struct CacheChangeWriterInfo_t
     //! Used to link with next node in a list. Used by FlowControllerImpl.
     //! Cannot be cached because there are several comparisons without locking.
     CacheChange_t* volatile next = nullptr;
+    //! Used to know if the object is already in a list.
+    std::atomic_bool is_linked {false};
 };
 
 /*!

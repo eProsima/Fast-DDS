@@ -129,10 +129,14 @@ private:
         void add_change(
                 fastrtps::rtps::CacheChange_t* change) noexcept
         {
-            change->writer_info.previous = tail.writer_info.previous;
-            change->writer_info.previous->writer_info.next = change;
-            tail.writer_info.previous = change;
-            change->writer_info.next = &tail;
+            bool expected = false;
+            if (change->writer_info.is_linked.compare_exchange_strong(expected, true))
+            {
+                change->writer_info.previous = tail.writer_info.previous;
+                change->writer_info.previous->writer_info.next = change;
+                tail.writer_info.previous = change;
+                change->writer_info.next = &tail;
+            }
         }
 
         void add_list(
@@ -1101,8 +1105,7 @@ private:
             fastrtps::rtps::CacheChange_t* change,
             const std::chrono::time_point<std::chrono::steady_clock>& /* TODO max_blocking_time*/)
     {
-        assert(nullptr == change->writer_info.previous &&
-                nullptr == change->writer_info.next);
+        assert(!change->writer_info.is_linked.load());
         // Sync delivery failed. Try to store for asynchronous delivery.
         std::unique_lock<std::mutex> lock(async_mode.changes_interested_mutex);
         sched.add_new_sample(writer, change);
@@ -1177,13 +1180,7 @@ private:
             fastrtps::rtps::CacheChange_t* change,
             const std::chrono::time_point<std::chrono::steady_clock>& /* TODO max_blocking_time*/)
     {
-        // This comparison is thread-safe, because we ensure the change to a problematic state is always protected for
-        // its writer's mutex.
-        // Problematic states:
-        // - Being added: change both pointers from nullptr to a pointer values.
-        // - Being removed: change both pointer from pointer values to nullptr.
-        if (nullptr == change->writer_info.previous &&
-                nullptr == change->writer_info.next)
+        if (!change->writer_info.is_linked.load())
         {
             std::unique_lock<std::mutex> lock(async_mode.changes_interested_mutex);
             sched.add_old_sample(writer, change);
@@ -1218,13 +1215,7 @@ private:
     remove_change_impl(
             fastrtps::rtps::CacheChange_t* change)
     {
-        // This comparison is thread-safe, because we ensure the change to a problematic state is always protected for
-        // its writer's mutex.
-        // Problematic states:
-        // - Being added: change both pointers from nullptr to a pointer values.
-        // - Being removed: change both pointer from pointer values to nullptr.
-        if (nullptr != change->writer_info.previous ||
-                nullptr != change->writer_info.next)
+        if (change->writer_info.is_linked.load())
         {
             ++async_mode.writers_interested_in_remove;
             std::unique_lock<std::mutex> lock(mutex_);
@@ -1235,8 +1226,7 @@ private:
                     nullptr != change->writer_info.next) ||
                     (nullptr == change->writer_info.previous &&
                     nullptr == change->writer_info.next));
-            if (nullptr != change->writer_info.previous &&
-                    nullptr != change->writer_info.next)
+            if (change->writer_info.is_linked.load())
             {
 
                 // Try to join previous node and next node.
@@ -1244,6 +1234,7 @@ private:
                 change->writer_info.next->writer_info.previous = change->writer_info.previous;
                 change->writer_info.previous = nullptr;
                 change->writer_info.next = nullptr;
+                change->writer_info.is_linked.store(false);
             }
             --async_mode.writers_interested_in_remove;
         }
@@ -1336,6 +1327,7 @@ private:
                 next->writer_info.previous = previous;
                 change_to_process->writer_info.previous = nullptr;
                 change_to_process->writer_info.next = nullptr;
+                change_to_process->writer_info.is_linked.store(false);
 
                 fastrtps::rtps::DeliveryRetCode ret_delivery = current_writer->deliver_sample_nts(
                     change_to_process, async_mode.group, locator_selector,
@@ -1344,6 +1336,7 @@ private:
                 if (fastrtps::rtps::DeliveryRetCode::DELIVERED != ret_delivery)
                 {
                     // If delivery fails, put the change again in the queue.
+                    change_to_process->writer_info.is_linked.store(true);
                     previous->writer_info.next = change_to_process;
                     next->writer_info.previous = change_to_process;
                     change_to_process->writer_info.previous = previous;
