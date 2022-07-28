@@ -812,7 +812,7 @@ ReturnCode_t DataReaderImpl::set_qos(
             return ReturnCode_t::RETCODE_INCONSISTENT_POLICY;
         }
 
-        ReturnCode_t check_result = check_qos(qos_to_set);
+        ReturnCode_t check_result = check_qos_including_resource_limits(qos_to_set, type_);
         if (!check_result)
         {
             return check_result;
