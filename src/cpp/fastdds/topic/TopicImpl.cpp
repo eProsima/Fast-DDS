@@ -165,7 +165,7 @@ ReturnCode_t TopicImpl::set_qos(
         return ReturnCode_t::RETCODE_OK;
     }
 
-    ReturnCode_t ret_val = check_qos(qos);
+    ReturnCode_t ret_val = check_qos_including_resource_limits(qos, type_support_);
     if (!ret_val)
     {
         return ret_val;
