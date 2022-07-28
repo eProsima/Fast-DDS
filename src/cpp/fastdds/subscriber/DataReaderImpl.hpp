@@ -21,13 +21,16 @@
 #define _FASTRTPS_DATAREADERIMPL_HPP_
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 
+#include <mutex>
+
 #include <fastdds/dds/core/LoanableCollection.hpp>
 #include <fastdds/dds/core/LoanableSequence.hpp>
 #include <fastdds/dds/core/status/StatusMask.hpp>
-#include <fastdds/dds/subscriber/qos/DataReaderQos.hpp>
 #include <fastdds/dds/subscriber/DataReaderListener.hpp>
 #include <fastdds/dds/subscriber/SampleInfo.hpp>
+#include <fastdds/dds/subscriber/qos/DataReaderQos.hpp>
 #include <fastdds/dds/topic/TypeSupport.hpp>
+#include <fastdds/dds/subscriber/ReadCondition.hpp>
 
 #include <fastdds/rtps/attributes/ReaderAttributes.h>
 #include <fastdds/rtps/common/LocatorList.hpp>
@@ -42,12 +45,11 @@
 #include <fastdds/subscriber/DataReaderImpl/DataReaderLoanManager.hpp>
 #include <fastdds/subscriber/DataReaderImpl/SampleInfoPool.hpp>
 #include <fastdds/subscriber/DataReaderImpl/SampleLoanManager.hpp>
+#include <fastdds/subscriber/DataReaderImpl/StateFilter.hpp>
 #include <fastdds/subscriber/SubscriberImpl.hpp>
 #include <rtps/history/ITopicPayloadPool.h>
 
 #include <fastdds/subscriber/history/DataReaderHistory.hpp>
-
-using eprosima::fastrtps::types::ReturnCode_t;
 
 namespace eprosima {
 namespace fastrtps {
@@ -72,6 +74,7 @@ using SampleInfoSeq = LoanableSequence<SampleInfo>;
 namespace detail {
 
 struct ReadTakeCommand;
+class ReadConditionImpl;
 
 } // namespace detail
 
@@ -82,6 +85,7 @@ struct ReadTakeCommand;
 class DataReaderImpl
 {
     friend struct detail::ReadTakeCommand;
+    friend class detail::ReadConditionImpl;
 
 protected:
 
@@ -106,7 +110,13 @@ public:
 
     virtual ReturnCode_t enable();
 
-    bool can_be_deleted() const;
+    /**
+     * Method to check if a DataReader can be deleted
+     * @param recursive == true if is used from delete_contained_entities otherwise delete_datareader
+     * @return true if can be deleted according to the standard rules
+     */
+    bool can_be_deleted(
+            bool recursive = true) const;
 
     /**
      * Method to block the current thread until an unread message is available
@@ -336,6 +346,20 @@ public:
     InstanceHandle_t lookup_instance(
             const void* instance) const;
 
+    ReadCondition* create_readcondition(
+            SampleStateMask sample_states,
+            ViewStateMask view_states,
+            InstanceStateMask instance_states) noexcept;
+
+    ReturnCode_t delete_readcondition(
+            ReadCondition* a_condition) noexcept;
+
+    const detail::StateFilter& get_last_mask_state() const;
+
+    void try_notify_read_conditions() noexcept;
+
+    std::recursive_mutex& get_conditions_mutex() const noexcept;
+
 protected:
 
     //!Subscriber
@@ -377,9 +401,12 @@ protected:
                 fastrtps::rtps::RTPSReader* reader,
                 const SubscriptionMatchedStatus& info) override;
 
-        void onNewCacheChangeAdded(
+        void on_data_available(
                 fastrtps::rtps::RTPSReader* reader,
-                const fastrtps::rtps::CacheChange_t* const change) override;
+                const fastrtps::rtps::GUID_t& writer_guid,
+                const fastrtps::rtps::SequenceNumber_t& first_sequence,
+                const fastrtps::rtps::SequenceNumber_t& last_sequence,
+                bool& should_notify_individual_changes) override;
 
         void on_liveliness_changed(
                 fastrtps::rtps::RTPSReader* reader,
@@ -442,6 +469,52 @@ protected:
     detail::SampleInfoPool sample_info_pool_;
     detail::DataReaderLoanManager loan_manager_;
 
+    /**
+     * Mutex to protect ReadCondition collection
+     * is required because the RTPSReader mutex is only available when the object is enabled
+     * @note use get_conditions_mutex() instead of directly referencing it
+     * @note lock get_conditions_mutex() after lock reader_->getMutex() to avoid ABBAs because
+     *       try_notify_read_conditions() will be called from the callbacks with the reader
+     *       mutex locked
+     */
+    mutable std::recursive_mutex conditions_mutex_;
+
+    // Order for the ReadCondition collection
+    struct ReadConditionOrder
+    {
+        using is_transparent = void;
+
+        bool operator ()(
+                const detail::ReadConditionImpl* lhs,
+                const detail::ReadConditionImpl* rhs) const;
+        bool operator ()(
+                const detail::ReadConditionImpl* lhs,
+                const detail::StateFilter& rhs) const;
+        bool operator ()(
+                const detail::StateFilter& lhs,
+                const detail::ReadConditionImpl* rhs) const;
+
+        template<class S, class V, class I>
+        static inline bool less(
+                S&& s1,
+                V&& v1,
+                I&& i1,
+                S&& s2,
+                V&& v2,
+                I&& i2)
+        {
+            return s1 < s2 || (s1 == s2 && (v1 < v2 || (v1 == v2 && i1 < i2)));
+        }
+
+    };
+
+    // ReadConditions collection
+    std::set<detail::ReadConditionImpl*, ReadConditionOrder> read_conditions_;
+
+    // State of the History mask last time it was queried
+    // protected with the RTPSReader mutex
+    detail::StateFilter last_mask_state_ {};
+
     ReturnCode_t check_collection_preconditions_and_calc_max_samples(
             LoanableCollection& data_values,
             SampleInfoSeq& sample_infos,
@@ -474,6 +547,11 @@ protected:
 
     void update_subscription_matched_status(
             const SubscriptionMatchedStatus& status);
+
+    bool on_data_available(
+            const fastrtps::rtps::GUID_t& writer_guid,
+            const fastrtps::rtps::SequenceNumber_t& first_sequence,
+            const fastrtps::rtps::SequenceNumber_t& last_sequence);
 
     /**
      * @brief A method called when a new cache change is added

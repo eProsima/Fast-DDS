@@ -1155,6 +1155,9 @@ void StatefulReader::NotifyChanges(
                 aux_ch = *it;
                 next_seq = aux_ch->sequenceNumber + 1;
                 listener->onNewCacheChangeAdded(this, aux_ch);
+
+                // Reset the iterator to the beginning, since it may be invalidated inside the callback
+                it = mp_history->changesBegin();
             }
         }
     }

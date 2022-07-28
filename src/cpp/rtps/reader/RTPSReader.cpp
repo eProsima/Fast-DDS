@@ -378,9 +378,10 @@ uint64_t RTPSReader::get_unread_count(
         for (auto it = mp_history->changesBegin(); 0 < total_unread_ && it != mp_history->changesEnd(); ++it)
         {
             CacheChange_t* change = *it;
-            if (!change->isRead)
+            if (!change->isRead && get_last_notified(change->writerGUID) >= change->sequenceNumber)
             {
                 change->isRead = true;
+                assert(0 < total_unread_);
                 --total_unread_;
             }
         }

@@ -40,9 +40,12 @@
 #include <fastdds/rtps/history/ReaderHistory.h>
 #include <fastdds/rtps/resources/ResourceManagement.h>
 
+#include <fastdds/subscriber/DataReaderImpl/StateFilter.hpp>
+
 #include <fastrtps/utils/fixed_size_string.hpp>
 #include <fastrtps/utils/collections/ResourceLimitedContainerConfig.hpp>
 
+#include "DataReaderHistoryCounters.hpp"
 #include "DataReaderInstance.hpp"
 
 namespace eprosima {
@@ -299,6 +302,25 @@ public:
             const InstanceHandle_t& handle,
             const instance_info& current_info);
 
+    /**
+     * This method is meant to be called just before calling @c end_sample_access_nts on the RTPS reader.
+     * It will update the internal counters of unread and read samples.
+     *
+     * @param change                       Pointer to the cache change that has been processed.
+     * @param is_going_to_be_mark_as_read  Whether the change is going to be marked as read.
+     */
+    void change_was_processed_nts(
+            CacheChange_t* const change,
+            bool is_going_to_be_mark_as_read);
+
+    /**
+     * Mark that a DataReaderInstance has been viewed.
+     *
+     * @param instance        Instance on which the view state should be modified.
+     */
+    void instance_viewed_nts(
+            const InstanceCollection::mapped_type& instance);
+
     void update_instance_nts(
             CacheChange_t* const change);
 
@@ -307,6 +329,8 @@ public:
 
     void check_and_remove_instance(
             instance_info& instance_info);
+
+    StateFilter get_mask_status() const noexcept;
 
 private:
 
@@ -340,6 +364,9 @@ private:
     std::function<bool(CacheChange_t*, size_t, SampleRejectedStatusKind&)> receive_fn_;
     /// Function processing a completed fragmented change
     std::function<bool(CacheChange_t*, DataReaderInstance&, size_t, SampleRejectedStatusKind&)> complete_fn_;
+
+    /// Book-keeping counters for ReadCondition support
+    DataReaderHistoryCounters counters_;
 
     /**
      * @brief Method that finds a key in m_keyedChanges or tries to add it if not found

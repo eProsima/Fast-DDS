@@ -352,6 +352,11 @@ public:
         return *datareader_;
     }
 
+    eprosima::fastdds::dds::Subscriber& get_native_subscriber() const
+    {
+        return *subscriber_;
+    }
+
     void init()
     {
         ASSERT_FALSE(initialized_);

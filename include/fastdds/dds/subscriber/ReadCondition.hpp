@@ -19,6 +19,8 @@
 #ifndef _FASTDDS_DDS_SUBSCRIBER_READCONDITION_HPP_
 #define _FASTDDS_DDS_SUBSCRIBER_READCONDITION_HPP_
 
+#include <cassert>
+
 #include <fastdds/dds/core/condition/Condition.hpp>
 #include <fastdds/dds/subscriber/InstanceState.hpp>
 #include <fastdds/dds/subscriber/SampleState.hpp>
@@ -31,7 +33,7 @@ namespace dds {
 
 namespace detail {
 
-struct ReadConditionImpl;
+class ReadConditionImpl;
 
 } // namespace detail
 
@@ -48,10 +50,11 @@ class DataReader;
  */
 class ReadCondition : public Condition
 {
+    friend class detail::ReadConditionImpl;
+
 public:
 
-    explicit ReadCondition(
-            DataReader* parent);
+    ReadCondition();
 
     ~ReadCondition() override;
 
@@ -71,7 +74,7 @@ public:
      * @brief Retrieves the trigger_value of the Condition
      * @return true if trigger_value is set to 'true', 'false' otherwise
      */
-    RTPS_DllAPI bool get_trigger_value() const override;
+    RTPS_DllAPI bool get_trigger_value() const noexcept override;
 
     /**
      * @brief Retrieves the DataReader associated with the ReadCondition.
@@ -80,38 +83,39 @@ public:
      *
      * @return pointer to the DataReader associated with this ReadCondition.
      */
-    RTPS_DllAPI DataReader* get_datareader() const;
+    RTPS_DllAPI DataReader* get_datareader() const noexcept;
 
     /**
      * @brief Retrieves the set of sample_states taken into account to determine the trigger_value of this condition.
      *
      * @return the sample_states specified when the ReadCondition was created.
      */
-    RTPS_DllAPI SampleStateMask get_sample_state_mask() const;
+    RTPS_DllAPI SampleStateMask get_sample_state_mask() const noexcept;
 
     /**
      * @brief Retrieves the set of view_states taken into account to determine the trigger_value of this condition.
      *
      * @return the view_states specified when the ReadCondition was created.
      */
-    RTPS_DllAPI ViewStateMask get_view_state_mask() const;
+    RTPS_DllAPI ViewStateMask get_view_state_mask() const noexcept;
 
     /**
      * @brief Retrieves the set of instance_states taken into account to determine the trigger_value of this condition.
      *
      * @return the instance_states specified when the ReadCondition was created.
      */
-    RTPS_DllAPI InstanceStateMask get_instance_state_mask() const;
+    RTPS_DllAPI InstanceStateMask get_instance_state_mask() const noexcept;
 
-    detail::ReadConditionImpl* get_impl() const
+    detail::ReadConditionImpl* get_impl() const noexcept
     {
+        assert((bool)impl_);
         return impl_.get();
     }
 
 protected:
 
     //! Class implementation
-    std::unique_ptr<detail::ReadConditionImpl> impl_;
+    std::shared_ptr<detail::ReadConditionImpl> impl_;
 
 };
 

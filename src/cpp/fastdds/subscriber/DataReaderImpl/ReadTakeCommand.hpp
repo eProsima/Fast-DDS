@@ -145,6 +145,7 @@ struct ReadTakeCommand
                     // Add sample and info to collections
                     ReturnCode_t previous_return_value = return_value_;
                     bool added = add_sample(*it, remove_change);
+                    history_.change_was_processed_nts(change, added);
                     reader_->end_sample_access_nts(change, wp, added);
 
                     // Check if the payload is dirty
@@ -180,7 +181,7 @@ struct ReadTakeCommand
 
         if (current_slot_ > first_slot)
         {
-            instance_->second->view_state = ViewStateKind::NOT_NEW_VIEW_STATE;
+            history_.instance_viewed_nts(instance_->second);
             ret_val = true;
 
             // complete sample infos

@@ -28,6 +28,7 @@
 #include <fastrtps/utils/collections/ResourceLimitedVector.hpp>
 
 #include "DataReaderCacheChange.hpp"
+#include "DataReaderHistoryCounters.hpp"
 
 namespace eprosima {
 namespace fastdds {
@@ -67,29 +68,39 @@ struct DataReaderInstance
     }
 
     bool update_state(
+            DataReaderHistoryCounters& counters,
             const fastrtps::rtps::ChangeKind_t change_kind,
             const fastrtps::rtps::GUID_t& writer_guid,
             const uint32_t ownership_strength = 0)
     {
         bool ret_val = false;
 
+        if (!has_been_accounted)
+        {
+            has_been_accounted = true;
+            assert(ViewStateKind::NEW_VIEW_STATE == view_state);
+            ++counters.instances_new;
+            assert(InstanceStateKind::ALIVE_INSTANCE_STATE == instance_state);
+            ++counters.instances_alive;
+        }
+
         switch (change_kind)
         {
             case fastrtps::rtps::ALIVE:
-                ret_val = writer_alive(writer_guid, ownership_strength);
+                ret_val = writer_alive(counters, writer_guid, ownership_strength);
                 break;
 
             case fastrtps::rtps::NOT_ALIVE_DISPOSED:
-                ret_val = writer_dispose(writer_guid, ownership_strength);
+                ret_val = writer_dispose(counters, writer_guid, ownership_strength);
                 break;
 
             case fastrtps::rtps::NOT_ALIVE_DISPOSED_UNREGISTERED:
-                ret_val = writer_dispose(writer_guid, ownership_strength);
-                ret_val |= writer_unregister(writer_guid);
+                ret_val = writer_dispose(counters, writer_guid, ownership_strength);
+                ret_val |= writer_unregister(counters, writer_guid);
                 break;
 
             case fastrtps::rtps::NOT_ALIVE_UNREGISTERED:
-                ret_val = writer_unregister(writer_guid);
+                ret_val = writer_unregister(counters, writer_guid);
                 break;
 
             default:
@@ -101,14 +112,19 @@ struct DataReaderInstance
     }
 
     bool writer_removed(
+            DataReaderHistoryCounters& counters,
             const fastrtps::rtps::GUID_t& writer_guid)
     {
-        return writer_unregister(writer_guid);
+        return writer_unregister(counters, writer_guid);
     }
 
 private:
 
+    //! Whether this instance has ever been included in the history counters
+    bool has_been_accounted = false;
+
     bool writer_alive(
+            DataReaderHistoryCounters& counters,
             const fastrtps::rtps::GUID_t& writer_guid,
             const uint32_t ownership_strength)
     {
@@ -121,6 +137,8 @@ private:
 
             if (InstanceStateKind::NOT_ALIVE_DISPOSED_INSTANCE_STATE == instance_state)
             {
+                counters_update(counters.instances_disposed, counters.instances_alive, counters, true);
+
                 ++disposed_generation_count;
                 alive_writers.clear();
                 view_state = ViewStateKind::NEW_VIEW_STATE;
@@ -128,6 +146,8 @@ private:
             }
             else if (InstanceStateKind::NOT_ALIVE_NO_WRITERS_INSTANCE_STATE == instance_state)
             {
+                counters_update(counters.instances_no_writers, counters.instances_alive, counters, true);
+
                 ++no_writers_generation_count;
                 alive_writers.clear();
                 view_state = ViewStateKind::NEW_VIEW_STATE;
@@ -142,6 +162,7 @@ private:
     }
 
     bool writer_dispose(
+            DataReaderHistoryCounters& counters,
             const fastrtps::rtps::GUID_t& writer_guid,
             const uint32_t ownership_strength)
     {
@@ -157,6 +178,7 @@ private:
             {
                 ret_val = true;
                 instance_state = InstanceStateKind::NOT_ALIVE_DISPOSED_INSTANCE_STATE;
+                counters_update(counters.instances_alive, counters.instances_disposed, counters, false);
             }
         }
 
@@ -164,6 +186,7 @@ private:
     }
 
     bool writer_unregister(
+            DataReaderHistoryCounters& counters,
             const fastrtps::rtps::GUID_t& writer_guid)
     {
         bool ret_val = false;
@@ -183,6 +206,7 @@ private:
         {
             ret_val = true;
             instance_state = InstanceStateKind::NOT_ALIVE_NO_WRITERS_INSTANCE_STATE;
+            counters_update(counters.instances_alive, counters.instances_no_writers, counters, false);
         }
 
         return ret_val;
@@ -203,6 +227,21 @@ private:
         else
         {
             it->second = ownership_strength;
+        }
+    }
+
+    void counters_update(
+            uint64_t& decremented_counter,
+            uint64_t& incremented_counter,
+            DataReaderHistoryCounters& counters,
+            bool set_as_new_view_state)
+    {
+        --decremented_counter;
+        ++incremented_counter;
+        if (set_as_new_view_state && (ViewStateKind::NEW_VIEW_STATE != view_state))
+        {
+            ++counters.instances_new;
+            --counters.instances_not_new;
         }
     }
 

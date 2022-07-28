@@ -16,28 +16,11 @@
  * @file ReadCondition.cpp
  */
 
-#include <fastdds/dds/subscriber/ReadCondition.hpp>
-#include <fastdds/dds/subscriber/InstanceState.hpp>
-#include <fastdds/dds/subscriber/SampleState.hpp>
-#include <fastdds/dds/subscriber/ViewState.hpp>
+#include <fastdds/subscriber/ReadConditionImpl.hpp>
 
-namespace eprosima {
-namespace fastdds {
-namespace dds {
+using namespace eprosima::fastdds::dds;
 
-namespace detail {
-
-struct ReadConditionImpl
-{
-};
-
-}  // namespace detail
-
-
-ReadCondition::ReadCondition(
-        DataReader* /*parent*/)
-    : Condition()
-    , impl_(new detail::ReadConditionImpl())
+ReadCondition::ReadCondition()
 {
 }
 
@@ -45,31 +28,32 @@ ReadCondition::~ReadCondition()
 {
 }
 
-bool ReadCondition::get_trigger_value() const
+bool ReadCondition::get_trigger_value() const noexcept
 {
-    return false;
+    assert((bool)impl_);
+    return impl_->get_trigger_value();
 }
 
-DataReader* ReadCondition::get_datareader() const
+DataReader* ReadCondition::get_datareader() const noexcept
 {
-    return nullptr;
+    assert((bool)impl_);
+    return impl_->get_datareader();
 }
 
-SampleStateMask ReadCondition::get_sample_state_mask() const
+SampleStateMask ReadCondition::get_sample_state_mask() const noexcept
 {
-    return ANY_SAMPLE_STATE;
+    assert((bool)impl_);
+    return impl_->get_sample_state_mask();
 }
 
-ViewStateMask ReadCondition::get_view_state_mask() const
+ViewStateMask ReadCondition::get_view_state_mask() const noexcept
 {
-    return ANY_VIEW_STATE;
+    assert((bool)impl_);
+    return impl_->get_view_state_mask();
 }
 
-InstanceStateMask ReadCondition::get_instance_state_mask() const
+InstanceStateMask ReadCondition::get_instance_state_mask() const noexcept
 {
-    return ANY_INSTANCE_STATE;
+    assert((bool)impl_);
+    return impl_->get_instance_state_mask();
 }
-
-} // namespace dds
-} // namespace fastdds
-} // namespace eprosima
