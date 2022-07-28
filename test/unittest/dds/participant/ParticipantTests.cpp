@@ -617,7 +617,7 @@ void get_rtps_attributes(
     ASSERT_NE(nullptr, participant_test);
     const DomainParticipantImpl* participant_impl = participant_test->get_impl();
     ASSERT_NE(nullptr, participant_impl);
-    att = participant_impl->rtps_participant()->getRTPSParticipantAttributes();
+    att = participant_impl->get_rtps_participant()->getRTPSParticipantAttributes();
 }
 
 void helper_wait_for_at_least_entries(

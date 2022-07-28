@@ -1238,30 +1238,6 @@ ReturnCode_t DomainParticipantImpl::get_current_time(
     return ReturnCode_t::RETCODE_OK;
 }
 
-const DomainParticipant* DomainParticipantImpl::get_participant() const
-{
-    std::lock_guard<std::mutex> _(mtx_gs_);
-    return participant_;
-}
-
-DomainParticipant* DomainParticipantImpl::get_participant()
-{
-    std::lock_guard<std::mutex> _(mtx_gs_);
-    return participant_;
-}
-
-const fastrtps::rtps::RTPSParticipant* DomainParticipantImpl::get_rtps_participant() const
-{
-    std::lock_guard<std::mutex> _(mtx_gs_);
-    return rtps_participant_;
-}
-
-fastrtps::rtps::RTPSParticipant* DomainParticipantImpl::get_rtps_participant()
-{
-    std::lock_guard<std::mutex> _(mtx_gs_);
-    return rtps_participant_;
-}
-
 std::vector<std::string> DomainParticipantImpl::get_participant_names() const
 {
     std::lock_guard<std::mutex> _(mtx_gs_);

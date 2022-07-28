@@ -397,13 +397,29 @@ public:
     ReturnCode_t get_current_time(
             fastrtps::Time_t& current_time) const;
 
-    const DomainParticipant* get_participant() const;
+    const DomainParticipant* get_participant() const
+    {
+        std::lock_guard<std::mutex> _(mtx_gs_);
+        return participant_;
+    }
 
-    DomainParticipant* get_participant();
+    DomainParticipant* get_participant()
+    {
+        std::lock_guard<std::mutex> _(mtx_gs_);
+        return participant_;
+    }
 
-    const fastrtps::rtps::RTPSParticipant* get_rtps_participant() const;
+    const fastrtps::rtps::RTPSParticipant* get_rtps_participant() const
+    {
+        std::lock_guard<std::mutex> _(mtx_gs_);
+        return rtps_participant_;
+    }
 
-    fastrtps::rtps::RTPSParticipant* get_rtps_participant();
+    fastrtps::rtps::RTPSParticipant* get_rtps_participant()
+    {
+        std::lock_guard<std::mutex> _(mtx_gs_);
+        return rtps_participant_;
+    }
 
     const TypeSupport find_type(
             const std::string& type_name) const;
