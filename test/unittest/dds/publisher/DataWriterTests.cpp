@@ -1709,7 +1709,7 @@ TEST(DataWriterTests, InstancePolicyAllocationConsistencyNotKeyed)
     ASSERT_EQ(ReturnCode_t::RETCODE_OK, default_data_writer1->set_qos(qos2));
 
     // Next QoS config checks that if user sets max_samples < ( max_instances * max_samples_per_instance ) ,
-    // create_datawriter() should return ReturnCode_t::RETCODE_OK = 0
+    // set_qos() should return ReturnCode_t::RETCODE_OK = 0
     // By not using instances, this does not make any change.
     qos2.resource_limits().max_samples = 4999;
     qos2.resource_limits().max_instances = 10;
