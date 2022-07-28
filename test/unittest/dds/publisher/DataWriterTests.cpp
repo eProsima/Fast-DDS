@@ -1785,7 +1785,7 @@ TEST(DataWriterTests, InstancePolicyAllocationConsistencyKeyed)
     // which also means infinite value.
     qos2.resource_limits().max_instances = -1;
 
-    ASSERT_EQ(ReturnCode_t::RETCODE_OK,default_data_writer1->set_qos(qos2));
+    ASSERT_EQ(ReturnCode_t::RETCODE_OK, default_data_writer1->set_qos(qos2));
 
     // Next QoS config checks that if user sets max_samples < ( max_instances * max_samples_per_instance ) ,
     // set_qos() should return a value != 0 (not OK)
