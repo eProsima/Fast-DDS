@@ -371,7 +371,7 @@ private:
     //! Timed event to send initial acknack.
     TimedEvent* initial_acknack_;
     //! Last Heartbeatcount.
-    uint32_t last_heartbeat_count_;
+    std::atomic<uint32_t> last_heartbeat_count_;
     //!Indicates if the heartbeat has the final flag set.
     std::atomic<bool> heartbeat_final_flag_;
     //!Is the writer alive
