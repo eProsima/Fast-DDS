@@ -484,7 +484,7 @@ bool StatelessWriter::matched_reader_add(
             data.m_expectsInlineQos,
             is_datasharing_compatible_with(data));
 
-    locator_selector_.locator_selector.add_entry(new_reader->locator_selector_entry());
+    locator_selector_.locator_selector.add_entry(new_reader->general_locator_selector_entry());
 
     if (new_reader->is_local_reader())
     {

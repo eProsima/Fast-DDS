@@ -65,7 +65,12 @@ public:
     {
     }
 
-    LocatorSelectorEntry* locator_selector_entry()
+    LocatorSelectorEntry* general_locator_selector_entry()
+    {
+        return nullptr;
+    }
+
+    LocatorSelectorEntry* async_locator_selector_entry()
     {
         return nullptr;
     }

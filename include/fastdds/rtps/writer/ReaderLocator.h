@@ -79,12 +79,17 @@ public:
 
     const GUID_t& remote_guid() const
     {
-        return locator_info_.remote_guid;
+        return general_locator_info_.remote_guid;
     }
 
-    LocatorSelectorEntry* locator_selector_entry()
+    LocatorSelectorEntry* general_locator_selector_entry()
     {
-        return &locator_info_;
+        return &general_locator_info_;
+    }
+
+    LocatorSelectorEntry* async_locator_selector_entry()
+    {
+        return &async_locator_info_;
     }
 
     /**
@@ -153,7 +158,7 @@ public:
      */
     GuidPrefix_t destination_guid_prefix() const override
     {
-        return locator_info_.remote_guid.guidPrefix;
+        return general_locator_info_.remote_guid.guidPrefix;
     }
 
     /**
@@ -215,15 +220,15 @@ public:
 
     size_t locators_size() const
     {
-        if (locator_info_.remote_guid != c_Guid_Unknown && !is_local_reader_)
+        if (general_locator_info_.remote_guid != c_Guid_Unknown && !is_local_reader_)
         {
-            if (locator_info_.unicast.size() > 0)
+            if (general_locator_info_.unicast.size() > 0)
             {
-                return locator_info_.unicast.size();
+                return general_locator_info_.unicast.size();
             }
             else
             {
-                return locator_info_.multicast.size();
+                return general_locator_info_.multicast.size();
             }
         }
 
@@ -251,7 +256,8 @@ private:
 
     RTPSWriter* owner_;
     RTPSParticipantImpl* participant_owner_;
-    LocatorSelectorEntry locator_info_;
+    LocatorSelectorEntry general_locator_info_;
+    LocatorSelectorEntry async_locator_info_;
     bool expects_inline_qos_;
     bool is_local_reader_;
     RTPSReader* local_reader_;

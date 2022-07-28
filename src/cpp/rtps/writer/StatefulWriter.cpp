@@ -1069,8 +1069,8 @@ bool StatefulWriter::matched_reader_add(
 
     // Add info of new datareader.
     rp->start(rdata, is_datasharing_compatible_with(rdata));
-    locator_selector_general_.locator_selector.add_entry(rp->locator_selector_entry());
-    locator_selector_async_.locator_selector.add_entry(rp->locator_selector_entry());
+    locator_selector_general_.locator_selector.add_entry(rp->general_locator_selector_entry());
+    locator_selector_async_.locator_selector.add_entry(rp->async_locator_selector_entry());
 
     if (rp->is_local_reader())
     {
