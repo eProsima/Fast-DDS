@@ -247,21 +247,24 @@ bool RTPSDomain::removeRTPSParticipant(
     if (p != nullptr)
     {
         assert((p->mp_impl != nullptr) && "This participant has been previously invalidated");
-        p->mp_impl->disable();
 
-        std::unique_lock<std::mutex> lock(m_mutex);
-        for (auto it = m_RTPSParticipants.begin(); it != m_RTPSParticipants.end(); ++it)
         {
-            if (it->second->getGuid().guidPrefix == p->getGuid().guidPrefix)
+            std::unique_lock<std::mutex> lock(m_mutex);
+            for (auto it = m_RTPSParticipants.begin(); it != m_RTPSParticipants.end(); ++it)
             {
-                RTPSDomain::t_p_RTPSParticipant participant = *it;
-                m_RTPSParticipants.erase(it);
-                m_RTPSParticipantIDs.erase(m_RTPSParticipantIDs.find(participant.second->getRTPSParticipantID()));
-                lock.unlock();
-                removeRTPSParticipant_nts(participant);
-                return true;
+                if (it->second->getGuid().guidPrefix == p->getGuid().guidPrefix)
+                {
+                    RTPSDomain::t_p_RTPSParticipant participant = *it;
+                    m_RTPSParticipants.erase(it);
+                    m_RTPSParticipantIDs.erase(m_RTPSParticipantIDs.find(participant.second->getRTPSParticipantID()));
+                    lock.unlock();
+                    removeRTPSParticipant_nts(participant);
+                    return true;
+                }
             }
         }
+
+        p->mp_impl->disable();
     }
     logError(RTPS_PARTICIPANT, "RTPSParticipant not valid or not recognized");
     return false;
