@@ -1086,7 +1086,7 @@ ReturnCode_t DataWriterImpl::set_qos(
     // Default qos is always considered consistent
     if (&qos != &DATAWRITER_QOS_DEFAULT)
     {
-        ReturnCode_t ret_val = check_qos(qos_to_set);
+        ReturnCode_t ret_val = check_qos_including_resource_limits(qos_to_set, type_);
         if (!ret_val)
         {
             return ret_val;
