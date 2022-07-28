@@ -14,4 +14,4 @@ jobs:
       with:
         github-token: ${{ secrets.GITHUB_TOKEN }}
         source: 'master'
-        dest: '2.7.x'
+        dest: '2.8.x'
