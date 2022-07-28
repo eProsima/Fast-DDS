@@ -108,7 +108,7 @@ SubscriberImpl::SubscriberImpl(
     , listener_(listen)
     , subscriber_listener_(this)
     , user_subscriber_(nullptr)
-    , rtps_participant_(p->rtps_participant())
+    , rtps_participant_(p->get_rtps_participant())
     , default_datareader_qos_(DATAREADER_QOS_DEFAULT)
 {
     SubscriberAttributes sub_attr;
