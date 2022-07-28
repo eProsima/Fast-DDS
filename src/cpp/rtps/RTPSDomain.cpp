@@ -248,23 +248,19 @@ bool RTPSDomain::removeRTPSParticipant(
     {
         assert((p->mp_impl != nullptr) && "This participant has been previously invalidated");
 
+        std::unique_lock<std::mutex> lock(m_mutex);
+        for (auto it = m_RTPSParticipants.begin(); it != m_RTPSParticipants.end(); ++it)
         {
-            std::unique_lock<std::mutex> lock(m_mutex);
-            for (auto it = m_RTPSParticipants.begin(); it != m_RTPSParticipants.end(); ++it)
+            if (it->second->getGuid().guidPrefix == p->getGuid().guidPrefix)
             {
-                if (it->second->getGuid().guidPrefix == p->getGuid().guidPrefix)
-                {
-                    RTPSDomain::t_p_RTPSParticipant participant = *it;
-                    m_RTPSParticipants.erase(it);
-                    m_RTPSParticipantIDs.erase(m_RTPSParticipantIDs.find(participant.second->getRTPSParticipantID()));
-                    lock.unlock();
-                    removeRTPSParticipant_nts(participant);
-                    return true;
-                }
+                RTPSDomain::t_p_RTPSParticipant participant = *it;
+                m_RTPSParticipants.erase(it);
+                m_RTPSParticipantIDs.erase(m_RTPSParticipantIDs.find(participant.second->getRTPSParticipantID()));
+                lock.unlock();
+                removeRTPSParticipant_nts(participant);
+                return true;
             }
         }
-
-        p->mp_impl->disable();
     }
     logError(RTPS_PARTICIPANT, "RTPSParticipant not valid or not recognized");
     return false;
@@ -273,6 +269,7 @@ bool RTPSDomain::removeRTPSParticipant(
 void RTPSDomain::removeRTPSParticipant_nts(
         RTPSDomain::t_p_RTPSParticipant& participant)
 {
+    participant.second->disable();
     // The destructor of RTPSParticipantImpl already deletes the associated RTPSParticipant and sets
     // its pointer to the RTPSParticipant to nullptr, so there is no need to do it here manually.
     delete(participant.second);
