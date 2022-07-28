@@ -266,9 +266,7 @@ DomainParticipantImpl::~DomainParticipantImpl()
         topics_by_handle_.clear();
     }
 
-    std::lock_guard<std::mutex> _(mtx_gs_);
-
-    if (rtps_participant_ != nullptr)
+    if (get_rtps_participant() != nullptr)
     {
         RTPSDomain::removeRTPSParticipant(rtps_participant_);
     }
@@ -277,6 +275,8 @@ DomainParticipantImpl::~DomainParticipantImpl()
         std::lock_guard<std::mutex> lock(mtx_types_);
         types_.clear();
     }
+
+    std::lock_guard<std::mutex> _(mtx_gs_);
 
     if (participant_)
     {
@@ -288,10 +288,8 @@ DomainParticipantImpl::~DomainParticipantImpl()
 
 ReturnCode_t DomainParticipantImpl::enable()
 {
-    std::lock_guard<std::mutex> _(mtx_gs_);
-
     // Should not have been previously enabled
-    assert(rtps_participant_ == nullptr);
+    assert(get_rtps_participant() == nullptr);
 
     fastrtps::rtps::RTPSParticipantAttributes rtps_attr;
     set_attributes_from_qos(rtps_attr, qos_);
@@ -317,13 +315,18 @@ ReturnCode_t DomainParticipantImpl::enable()
     }
 
     guid_ = part->getGuid();
-    rtps_participant_ = part;
 
-    rtps_participant_->set_check_type_function(
-        [this](const std::string& type_name) -> bool
-        {
-            return find_type(type_name).get() != nullptr;
-        });
+    {
+        std::lock_guard<std::mutex> _(mtx_gs_);
+
+        rtps_participant_ = part;
+
+        rtps_participant_->set_check_type_function(
+            [this](const std::string& type_name) -> bool
+            {
+                return find_type(type_name).get() != nullptr;
+            });
+    }
 
     if (qos_.entity_factory().autoenable_created_entities)
     {
@@ -342,7 +345,7 @@ ReturnCode_t DomainParticipantImpl::enable()
             std::lock_guard<std::mutex> lock(mtx_pubs_);
             for (auto pub : publishers_)
             {
-                pub.second->rtps_participant_ = rtps_participant_;
+                pub.second->rtps_participant_ = get_rtps_participant();
                 pub.second->user_publisher_->enable();
             }
         }
@@ -353,13 +356,13 @@ ReturnCode_t DomainParticipantImpl::enable()
 
             for (auto sub : subscribers_)
             {
-                sub.second->rtps_participant_ = rtps_participant_;
+                sub.second->rtps_participant_ = get_rtps_participant();
                 sub.second->user_subscriber_->enable();
             }
         }
     }
 
-    rtps_participant_->enable();
+    get_rtps_participant()->enable();
 
     return ReturnCode_t::RETCODE_OK;
 }
