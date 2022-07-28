@@ -1561,9 +1561,10 @@ void DomainParticipantImpl::MyRTPSParticipantListener::onParticipantDiscovery(
         RTPSParticipant*,
         ParticipantDiscoveryInfo&& info)
 {
-    if (participant_ != nullptr && participant_->get_listener() != nullptr)
+    DomainParticipantListener* listener = nullptr;
+    if (participant_ != nullptr && (listener = participant_->get_listener()) != nullptr)
     {
-        participant_->get_listener()->on_participant_discovery(participant_->participant_, std::move(info));
+        listener->on_participant_discovery(participant_->participant_, std::move(info));
     }
 }
 
@@ -1572,9 +1573,10 @@ void DomainParticipantImpl::MyRTPSParticipantListener::onParticipantAuthenticati
         RTPSParticipant*,
         ParticipantAuthenticationInfo&& info)
 {
-    if (participant_ != nullptr && participant_->get_listener() != nullptr)
+    DomainParticipantListener* listener = nullptr;
+    if (participant_ != nullptr && (listener = participant_->get_listener()) != nullptr)
     {
-        participant_->get_listener()->onParticipantAuthentication(participant_->participant_, std::move(info));
+        listener->onParticipantAuthentication(participant_->participant_, std::move(info));
     }
 }
 
@@ -1584,9 +1586,10 @@ void DomainParticipantImpl::MyRTPSParticipantListener::onReaderDiscovery(
         RTPSParticipant*,
         ReaderDiscoveryInfo&& info)
 {
-    if (participant_ != nullptr && participant_->get_listener() != nullptr)
+    DomainParticipantListener* listener = nullptr;
+    if (participant_ != nullptr && (listener = participant_->get_listener()) != nullptr)
     {
-        participant_->get_listener()->on_subscriber_discovery(participant_->participant_, std::move(info));
+        listener->on_subscriber_discovery(participant_->participant_, std::move(info));
     }
 }
 
@@ -1594,9 +1597,10 @@ void DomainParticipantImpl::MyRTPSParticipantListener::onWriterDiscovery(
         RTPSParticipant*,
         WriterDiscoveryInfo&& info)
 {
-    if (participant_ != nullptr && participant_->get_listener() != nullptr)
+    DomainParticipantListener* listener = nullptr;
+    if (participant_ != nullptr && (listener = participant_->get_listener()) != nullptr)
     {
-        participant_->get_listener()->on_publisher_discovery(participant_->participant_, std::move(info));
+        listener->on_publisher_discovery(participant_->participant_, std::move(info));
     }
 }
 
@@ -1608,9 +1612,10 @@ void DomainParticipantImpl::MyRTPSParticipantListener::on_type_discovery(
         const fastrtps::types::TypeObject* object,
         fastrtps::types::DynamicType_ptr dyn_type)
 {
-    if (participant_ != nullptr && participant_->get_listener() != nullptr)
+    DomainParticipantListener* listener = nullptr;
+    if (participant_ != nullptr && (listener = participant_->get_listener()) != nullptr)
     {
-        participant_->get_listener()->on_type_discovery(
+        listener->on_type_discovery(
             participant_->participant_,
             request_sample_id,
             topic,
@@ -1627,7 +1632,8 @@ void DomainParticipantImpl::MyRTPSParticipantListener::on_type_dependencies_repl
         const fastrtps::rtps::SampleIdentity& request_sample_id,
         const fastrtps::types::TypeIdentifierWithSizeSeq& dependencies)
 {
-    if (participant_ != nullptr && participant_->get_listener() != nullptr)
+    DomainParticipantListener* listener = nullptr;
+    if (participant_ != nullptr && (listener = participant_->get_listener()) != nullptr)
     {
         participant_->get_listener()->on_type_dependencies_reply(
             participant_->participant_, request_sample_id, dependencies);
@@ -1642,13 +1648,17 @@ void DomainParticipantImpl::MyRTPSParticipantListener::on_type_information_recei
         const fastrtps::string_255& type_name,
         const fastrtps::types::TypeInformation& type_information)
 {
-    if (participant_ != nullptr && participant_->get_listener() != nullptr)
+    DomainParticipantListener* listener = nullptr;
+    DomainParticipant* participant = nullptr;
+    if (participant_ != nullptr
+            && (participant = participant_->get_participant()) != nullptr
+            && (listener = participant_->get_listener()) != nullptr)
     {
         if (type_information.complete().typeid_with_size().type_id()._d() > 0
                 || type_information.minimal().typeid_with_size().type_id()._d() > 0)
         {
-            participant_->get_listener()->on_type_information_received(
-                participant_->participant_, topic_name, type_name, type_information);
+            listener->on_type_information_received(
+                participant, topic_name, type_name, type_information);
         }
     }
 }
