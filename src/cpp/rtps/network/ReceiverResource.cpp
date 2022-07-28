@@ -34,6 +34,7 @@ ReceiverResource::ReceiverResource(
     , LocatorMapsToManagedChannel(nullptr)
     , mValid(false)
     , mtx()
+    , cv_()
     , receiver(nullptr)
     , max_message_size_(max_recv_buffer_size)
     , active_callbacks_(0)
@@ -148,7 +149,7 @@ void ReceiverResource::disable()
     std::unique_lock<std::mutex> lock(mtx);
     cv_.wait(lock, [this]
             {
-                return active_callbacks_ == 0;
+                return active_callbacks_ <= 0;
             });
     // no more callbacks
     active_callbacks_ = -1;
