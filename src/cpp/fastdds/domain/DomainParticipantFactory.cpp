@@ -132,6 +132,11 @@ DomainParticipantFactory::~DomainParticipantFactory()
 
 DomainParticipantFactory* DomainParticipantFactory::get_instance()
 {
+    return get_shared_instance().get();
+}
+
+std::shared_ptr<DomainParticipantFactory> DomainParticipantFactory::get_shared_instance()
+{
     /*
      * The first time an interprocess synchronization object is created by boost, a singleton is instantiated and
      * its destructor is registered with std::atexit(&atexit_work).
@@ -157,8 +162,13 @@ DomainParticipantFactory* DomainParticipantFactory::get_instance()
     using pool_registry_ref = eprosima::fastrtps::rtps::TopicPayloadPoolRegistry::reference;
     static pool_registry_ref topic_pool_registry = eprosima::fastrtps::rtps::TopicPayloadPoolRegistry::instance();
 
-    static DomainParticipantFactory instance;
-    return &instance;
+    static std::shared_ptr<DomainParticipantFactory> instance(
+        new DomainParticipantFactory(),
+        [](DomainParticipantFactory* p)
+        {
+            delete p;
+        });
+    return instance;
 }
 
 ReturnCode_t DomainParticipantFactory::delete_participant(

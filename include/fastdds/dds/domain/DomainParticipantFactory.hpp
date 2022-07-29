@@ -26,8 +26,9 @@
 #include <fastdds/dds/domain/qos/DomainParticipantFactoryQos.hpp>
 #include <fastdds/dds/core/status/StatusMask.hpp>
 
-#include <mutex>
 #include <map>
+#include <memory>
+#include <mutex>
 
 using eprosima::fastrtps::types::ReturnCode_t;
 
@@ -50,11 +51,18 @@ class DomainParticipantFactory
 public:
 
     /**
-     * Returns the DomainParticipantFactory singleton.
+     * Returns the DomainParticipantFactory singleton instance.
      *
-     * @return The DomainParticipantFactory singleton.
+     * @return A raw pointer to the DomainParticipantFactory singleton instance.
      */
     RTPS_DllAPI static DomainParticipantFactory* get_instance();
+
+    /**
+     * Returns the DomainParticipantFactory singleton instance.
+     *
+     * @return A shared pointer to the DomainParticipantFactory singleton instance.
+     */
+    RTPS_DllAPI static std::shared_ptr<DomainParticipantFactory> get_shared_instance();
 
     /**
      * Create a Participant.
