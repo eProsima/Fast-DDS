@@ -344,17 +344,7 @@ RTPSWriter* RTPSDomain::createRTPSWriter(
         WriterHistory* hist,
         WriterListener* listen)
 {
-    RTPSParticipantImpl* impl = RTPSDomainImpl::find_local_participant(p->getGuid());
-    if (impl)
-    {
-        RTPSWriter* ret_val = nullptr;
-        if (impl->create_writer(&ret_val, watt, payload_pool, change_pool, hist, listen, entity_id))
-        {
-            return ret_val;
-        }
-    }
-
-    return nullptr;
+    return RTPSDomainImpl::create_rtps_writer(p, entity_id, watt, payload_pool, change_pool, hist, listen);
 }
 
 RTPSWriter* RTPSDomain::createRTPSWriter(
