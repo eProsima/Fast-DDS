@@ -26,6 +26,7 @@
 #include <fastdds/rtps/attributes/RTPSParticipantAttributes.h>
 #include <fastdds/rtps/common/Types.h>
 #include <fastdds/rtps/history/IPayloadPool.h>
+#include <fastdds/rtps/history/IChangePool.h>
 
 namespace eprosima {
 namespace fastrtps {
@@ -131,6 +132,50 @@ public:
             RTPSParticipant* p,
             WriterAttributes& watt,
             const std::shared_ptr<IPayloadPool>& payload_pool,
+            WriterHistory* hist,
+            WriterListener* listen = nullptr);
+
+    /**
+     * Create a RTPSWriter in a participant using a custom payload pool.
+     * @param p Pointer to the RTPSParticipant.
+     * @param watt Writer Attributes.
+     * @param payload_pool Shared pointer to the IPayloadPool
+     * @param change_pool Shared pointer to the IChangePool
+     * @param hist Pointer to the WriterHistory.
+     * @param listen Pointer to the WriterListener.
+     * @return Pointer to the created RTPSWriter.
+     *
+     * \warning The returned pointer is invalidated after a call to removeRTPSWriter() or stopAll(),
+     *          so its use may result in undefined behaviour.
+     */
+    RTPS_DllAPI static RTPSWriter* createRTPSWriter(
+            RTPSParticipant* p,
+            WriterAttributes& watt,
+            const std::shared_ptr<IPayloadPool>& payload_pool,
+            const std::shared_ptr<IChangePool>& change_pool,
+            WriterHistory* hist,
+            WriterListener* listen = nullptr);
+
+    /**
+     * Create a RTPSWriter in a participant using a custom payload pool.
+     * @param p Pointer to the RTPSParticipant.
+     * @param entity_id Specific entity id to use for the created writer.
+     * @param watt Writer Attributes.
+     * @param payload_pool Shared pointer to the IPayloadPool
+     * @param change_pool Shared pointer to the IChangePool
+     * @param hist Pointer to the WriterHistory.
+     * @param listen Pointer to the WriterListener.
+     * @return Pointer to the created RTPSWriter.
+     *
+     * \warning The returned pointer is invalidated after a call to removeRTPSWriter() or stopAll(),
+     *          so its use may result in undefined behaviour.
+     */
+    RTPS_DllAPI static RTPSWriter* createRTPSWriter(
+            RTPSParticipant* p,
+            const EntityId_t& entity_id,
+            WriterAttributes& watt,
+            const std::shared_ptr<IPayloadPool>& payload_pool,
+            const std::shared_ptr<IChangePool>& change_pool,
             WriterHistory* hist,
             WriterListener* listen = nullptr);
 

@@ -316,6 +316,39 @@ RTPSWriter* RTPSDomain::createRTPSWriter(
 
 RTPSWriter* RTPSDomain::createRTPSWriter(
         RTPSParticipant* p,
+        WriterAttributes& watt,
+        const std::shared_ptr<IPayloadPool>& payload_pool,
+        const std::shared_ptr<IChangePool>& change_pool,
+        WriterHistory* hist,
+        WriterListener* listen)
+{
+    RTPSParticipantImpl* impl = RTPSDomainImpl::find_local_participant(p->getGuid());
+    if (impl)
+    {
+        RTPSWriter* ret_val = nullptr;
+        if (impl->create_writer(&ret_val, watt, payload_pool, change_pool, hist, listen))
+        {
+            return ret_val;
+        }
+    }
+
+    return nullptr;
+}
+
+RTPSWriter* RTPSDomain::createRTPSWriter(
+        RTPSParticipant* p,
+        const EntityId_t& entity_id,
+        WriterAttributes& watt,
+        const std::shared_ptr<IPayloadPool>& payload_pool,
+        const std::shared_ptr<IChangePool>& change_pool,
+        WriterHistory* hist,
+        WriterListener* listen)
+{
+    return RTPSDomainImpl::create_rtps_writer(p, entity_id, watt, payload_pool, change_pool, hist, listen);
+}
+
+RTPSWriter* RTPSDomain::createRTPSWriter(
+        RTPSParticipant* p,
         const EntityId_t& entity_id,
         WriterAttributes& watt,
         const std::shared_ptr<IPayloadPool>& payload_pool,
