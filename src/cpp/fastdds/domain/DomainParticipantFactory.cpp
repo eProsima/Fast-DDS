@@ -103,6 +103,7 @@ static void set_qos_from_attributes(
 DomainParticipantFactory::DomainParticipantFactory()
     : default_xml_profiles_loaded(false)
     , default_participant_qos_(PARTICIPANT_QOS_DEFAULT)
+    , topic_pool_(fastrtps::rtps::TopicPayloadPoolRegistry::instance())
 {
 }
 
@@ -157,10 +158,6 @@ std::shared_ptr<DomainParticipantFactory> DomainParticipantFactory::get_shared_i
 
     };
     static AuxiliaryBoostFunctor boost_functor;
-
-    // Keep a reference to the topic payload pool to avoid it to be destroyed before our own instance
-    using pool_registry_ref = eprosima::fastrtps::rtps::TopicPayloadPoolRegistry::reference;
-    static pool_registry_ref topic_pool_registry = eprosima::fastrtps::rtps::TopicPayloadPoolRegistry::instance();
 
     static std::shared_ptr<DomainParticipantFactory> instance(
         new DomainParticipantFactory(),

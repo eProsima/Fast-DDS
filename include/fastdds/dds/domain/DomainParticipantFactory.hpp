@@ -33,6 +33,15 @@
 using eprosima::fastrtps::types::ReturnCode_t;
 
 namespace eprosima {
+
+namespace fastrtps {
+namespace rtps {
+namespace detail {
+class TopicPayloadPoolRegistry;
+}  // namespace detail
+}  // namespace rtps
+}  // namespace fastrtps
+
 namespace fastdds {
 namespace dds {
 
@@ -292,10 +301,12 @@ protected:
     DomainParticipantFactoryQos factory_qos_;
 
     DomainParticipantQos default_participant_qos_;
+
+    std::shared_ptr<fastrtps::rtps::detail::TopicPayloadPoolRegistry> topic_pool_;
 };
 
-} /* namespace dds */
-} /* namespace fastdds */
-} /* namespace eprosima */
+}  // namespace dds
+}  // namespace fastdds
+}  // namespace eprosima
 
 #endif /* _FASTDDS_DOMAINPARTICIPANT_HPP_*/
