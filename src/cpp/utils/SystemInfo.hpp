@@ -82,6 +82,15 @@ public:
     static const SystemInfo& instance()
     {
         static SystemInfo singleton;
+
+        // From ctime(3) linux man page:
+        // According to POSIX.1-2004, localtime() is required to behave as though tzset(3) was called, while
+        // localtime_r() does not have this requirement. For portable code tzset(3) should be called before
+        // localtime_r().
+#if (_POSIX_C_SOURCE >= 1) || defined(_XOPEN_SOURCE) || defined(_POSIX_SOURCE)
+        tzset();
+#endif // if (_POSIX_C_SOURCE >= 1) || defined(_XOPEN_SOURCE) || defined(_POSIX_SOURCE)
+
         return singleton;
     }
 
@@ -209,6 +218,15 @@ public:
      */
     static void stop_watching_file(
             FileWatchHandle& handle);
+
+    /**
+     * Get the current time in string format.
+     *
+     * The function returns a timestamp of the current time in the following format: YYYY-MM-DD HH:MM:SS.ms
+     *
+     * @return The current time in string format
+     */
+    static std::string get_timestamp();
 
 private:
 

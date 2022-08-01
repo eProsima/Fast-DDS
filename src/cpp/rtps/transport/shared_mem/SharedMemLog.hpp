@@ -18,6 +18,7 @@
 #include <fastdds/rtps/common/Locator.h>
 #include <fastrtps/utils/DBQueue.h>
 #include <rtps/transport/shared_mem/SharedMemManager.hpp>
+#include <utils/SystemInfo.hpp>
 
 namespace eprosima {
 namespace fastdds {
@@ -317,27 +318,7 @@ public:
 
     std::string now()
     {
-        std::stringstream stream;
-        auto now = std::chrono::system_clock::now();
-        std::time_t now_c = std::chrono::system_clock::to_time_t(now);
-        std::chrono::system_clock::duration tp = now.time_since_epoch();
-        tp -= std::chrono::duration_cast<std::chrono::seconds>(tp);
-        auto ms = static_cast<unsigned>(tp / std::chrono::milliseconds(1));
-
-    #if defined(_WIN32)
-        struct tm timeinfo;
-        localtime_s(&timeinfo, &now_c);
-        //#elif defined(__clang__) && !defined(std::put_time) // TODO arm64 doesn't seem to support std::put_time
-        //    (void)now_c;
-        //    (void)ms;
-    #elif defined(__unix__)
-        std::tm timeinfo;
-        localtime_r(&now_c, &timeinfo);
-    #else
-        std::tm timeinfo = *localtime(&now_c);
-    #endif // if defined(_WIN32)
-        stream << std::put_time(&timeinfo, "%F %T") << "." << std::setw(3) << std::setfill('0') << ms << " ";
-        return stream.str();
+        return SystemInfo::get_timestamp();
     }
 
 private:

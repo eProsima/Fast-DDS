@@ -28,6 +28,9 @@
 
 #include <fstream>
 #include <string>
+#include <chrono>
+#include <iomanip>
+#include <time.h>
 
 #include <json.hpp>
 #include <fastrtps/types/TypesBase.h>
@@ -226,6 +229,31 @@ void SystemInfo::stop_watching_file(
     handle.reset();
 #endif // if defined(_WIN32) || defined(__unix__)
     static_cast<void>(handle);
+}
+
+std::string SystemInfo::get_timestamp()
+{
+    std::stringstream stream;
+    auto now = std::chrono::system_clock::now();
+    std::time_t now_c = std::chrono::system_clock::to_time_t(now);
+    std::chrono::system_clock::duration tp = now.time_since_epoch();
+    tp -= std::chrono::duration_cast<std::chrono::seconds>(tp);
+    auto ms = static_cast<unsigned>(tp / std::chrono::milliseconds(1));
+
+#if defined(_WIN32)
+    struct tm timeinfo;
+    localtime_s(&timeinfo, &now_c);
+    //#elif defined(__clang__) && !defined(std::put_time) // TODO arm64 doesn't seem to support std::put_time
+    //    (void)now_c;
+    //    (void)ms;
+#elif (_POSIX_C_SOURCE >= 1) || defined(_XOPEN_SOURCE) || defined(_BSD_SOURCE) || defined(_SVID_SOURCE) || defined(_POSIX_SOURCE) || defined(__unix__)
+    std::tm timeinfo;
+    localtime_r(&now_c, &timeinfo);
+#else
+    std::tm timeinfo = *localtime(&now_c);
+#endif // if defined(_WIN32)
+    stream << std::put_time(&timeinfo, "%F %T") << "." << std::setw(3) << std::setfill('0') << ms << " ";
+    return stream.str();
 }
 
 std::string SystemInfo::environment_file_;
