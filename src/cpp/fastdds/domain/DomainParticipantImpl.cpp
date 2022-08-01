@@ -1702,6 +1702,7 @@ bool DomainParticipantImpl::new_remote_endpoint_discovered(
 
 ResourceEvent& DomainParticipantImpl::get_resource_event() const
 {
+    assert(nullptr != get_rtps_participant());
     return get_rtps_participant()->get_resource_event();
 }
 
