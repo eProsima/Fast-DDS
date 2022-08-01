@@ -1708,13 +1708,19 @@ ResourceEvent& DomainParticipantImpl::get_resource_event() const
 fastrtps::rtps::SampleIdentity DomainParticipantImpl::get_type_dependencies(
         const fastrtps::types::TypeIdentifierSeq& in) const
 {
-    return get_rtps_participant()->typelookup_manager()->get_type_dependencies(in);
+    const fastrtps::rtps::RTPSParticipant* rtps_participant = get_rtps_participant();
+    return nullptr != rtps_participant ?
+           rtps_participant->typelookup_manager()->get_type_dependencies(in) :
+           builtin::INVALID_SAMPLE_IDENTITY;
 }
 
 fastrtps::rtps::SampleIdentity DomainParticipantImpl::get_types(
         const fastrtps::types::TypeIdentifierSeq& in) const
 {
-    return get_rtps_participant()->typelookup_manager()->get_types(in);
+    const fastrtps::rtps::RTPSParticipant* rtps_participant = get_rtps_participant();
+    return nullptr != rtps_participant ?
+           rtps_participant->typelookup_manager()->get_types(in) :
+           builtin::INVALID_SAMPLE_IDENTITY;
 }
 
 ReturnCode_t DomainParticipantImpl::register_remote_type(
@@ -2348,7 +2354,7 @@ DomainParticipantListener* DomainParticipantImpl::get_listener_for(
 {
     if (get_participant()->get_status_mask().is_active(status))
     {
-        return listener_;
+        return get_listener();
     }
     return nullptr;
 }
