@@ -477,45 +477,31 @@ SequenceNumber_t WriterProxy::next_cache_change_to_be_notified()
     return SequenceNumber_t::unknown();
 }
 
-<<<<<<< HEAD
-void WriterProxy::perform_initial_ack_nack() const
-=======
 bool WriterProxy::perform_initial_ack_nack()
->>>>>>> 5d220cec8 (Improve rediscovery on lossy environments (#2858))
 {
     bool ret_value = false;
 
-    if (!is_datasharing_writer_)
+    // Send initial NACK.
+    SequenceNumberSet_t sns(SequenceNumber_t(0, 0));
+    if (is_on_same_process_)
     {
-        // Send initial NACK.
-        SequenceNumberSet_t sns(SequenceNumber_t(0, 0));
-        if (is_on_same_process_)
+        RTPSWriter* writer = RTPSDomainImpl::find_local_writer(guid());
+        if (writer)
         {
-            RTPSWriter* writer = RTPSDomainImpl::find_local_writer(guid());
-            if (writer)
-            {
-                bool tmp;
-                writer->process_acknack(guid(), reader_->getGuid(), 1, SequenceNumberSet_t(), false, tmp);
-            }
-        }
-        else
-        {
-            if (0 == last_heartbeat_count_)
-            {
-                reader_->send_acknack(this, sns, this, false);
-                ret_value = true;
-            }
+            bool tmp;
+            writer->process_acknack(guid(), reader_->getGuid(), 1, SequenceNumberSet_t(), false, tmp);
         }
     }
-<<<<<<< HEAD
     else
     {
-        reader_->send_acknack(this, sns, *this, false);
+        if (0 == last_heartbeat_count_)
+        {
+            reader_->send_acknack(this, sns, *this, false);
+            ret_value = true;
+        }
     }
-=======
 
     return ret_value;
->>>>>>> 5d220cec8 (Improve rediscovery on lossy environments (#2858))
 }
 
 void WriterProxy::perform_heartbeat_response() const

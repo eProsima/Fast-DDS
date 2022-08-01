@@ -2106,30 +2106,9 @@ bool StatefulWriter::process_acknack(
                                 }
                                 else
                                 {
-<<<<<<< HEAD
                                     // Send heartbeat if requested
                                     send_heartbeat_to_nts(*remote_reader, false, true);
-=======
-                                    // This is the preemptive acknack.
-                                    if (remote_reader->process_initial_acknack([&](ChangeForReader_t& change_reader)
-                                    {
-                                        assert(nullptr != change_reader.getChange());
-                                        flow_controller_->add_old_sample(this, change_reader.getChange());
-                                    }))
-                                    {
-                                        if (remote_reader->is_remote_and_reliable())
-                                        {
-                                            // Send heartbeat if requested
-                                            send_heartbeat_to_nts(*remote_reader, false, true);
-                                            periodic_hb_event_->restart_timer();
-                                        }
-                                    }
-
-                                    if (remote_reader->is_local_reader() && !remote_reader->is_datasharing_reader())
-                                    {
-                                        intraprocess_heartbeat(remote_reader);
-                                    }
->>>>>>> 5d220cec8 (Improve rediscovery on lossy environments (#2858))
+                                    periodic_hb_event_->restart_timer();
                                 }
                             }
 
