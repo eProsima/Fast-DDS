@@ -1046,7 +1046,7 @@ bool PDPServer::process_disposals()
     for (auto change: disposals)
     {
         logInfo(RTPS_PDP_SERVER, "Process disposal change from: " << change->instanceHandle);
-        // No check is performed on whether the change is an actual disposal, leaving the responsability of correctly
+        // No check is performed on whether the change is an actual disposal, leaving the responsibility of correctly
         // populating the disposals list to discovery_db_.process_data_queue().
 
         // Get the identity of the participant from which the change came.
