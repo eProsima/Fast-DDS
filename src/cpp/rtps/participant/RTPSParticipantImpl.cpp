@@ -113,7 +113,7 @@ Locator_t& RTPSParticipantImpl::applyLocatorAdaptRule(
         Locator_t& loc)
 {
     // This is a completely made up rule
-    // It is transport responsability to interpret this new port.
+    // It is transport responsibility to interpret this new port.
     loc.port += m_att.port.participantIDGain;
     return loc;
 }
