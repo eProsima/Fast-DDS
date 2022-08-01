@@ -33,6 +33,8 @@
 #include <fastdds/statistics/topic_names.hpp>
 #include <fastrtps/types/TypesBase.h>
 #include <statistics/types/typesPubSubTypes.h>
+#include <statistics/fastdds/domain/DomainParticipantImpl.hpp>
+//#include <fastdds/publisher/PublisherImpl.hpp>
 
 #include "../../logging/mock/MockConsumer.h"
 
@@ -141,6 +143,15 @@ public:
 
     eprosima::fastdds::dds::MockConsumer* mock_consumer_;
 
+};
+
+class StatisticsFromXMLProfileTests : public eprosima::fastdds::statistics::dds::DomainParticipantImpl
+{
+public:
+    PublisherImpl*  get_publisher_impl()
+    {
+        return builtin_publisher_impl_;
+    }
 };
 
 /*
