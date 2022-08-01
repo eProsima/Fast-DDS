@@ -698,6 +698,20 @@ TEST_F(StatisticsDomainParticipantTests, EnableStatisticsDataWriterFailureIncomp
 #endif // FASTDDS_STATISTICS
 }
 
+/**
+ * This test checks that the creation of new feature: Configuration of participant statistic QoS from XML file
+ * Topic created with another type different from the one expected.
+ * 1. Create XML file with the appropiate configuration.
+ * 2. Read XML and enable datawrtiters from it.
+ * 3. Check that Qos are correctly configured.
+ */
+TEST_F(StatisticsFromXMLProfileTests, XMLConfigurationForStatisticsDataWritersQoS)
+{
+#ifdef FASTDDS_STATISTICS
+    
+#endif // FASTDDS_STATISTICS
+}
+
 } // namespace dds
 } // namespace statistics
 } // namespace fastdds
