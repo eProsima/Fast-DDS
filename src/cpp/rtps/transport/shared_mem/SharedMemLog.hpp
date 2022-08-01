@@ -327,13 +327,16 @@ public:
     #if defined(_WIN32)
         struct tm timeinfo;
         localtime_s(&timeinfo, &now_c);
-        stream << std::put_time(&timeinfo, "%T") << "." << std::setw(3) << std::setfill('0') << ms << " ";
         //#elif defined(__clang__) && !defined(std::put_time) // TODO arm64 doesn't seem to support std::put_time
         //    (void)now_c;
         //    (void)ms;
+    #elif defined(__unix__)
+        std::tm timeinfo;
+        localtime_r(&now_c, &timeinfo);
     #else
-        stream << std::put_time(localtime(&now_c), "%T") << "." << std::setw(3) << std::setfill('0') << ms << " ";
+        std::tm timeinfo = *localtime(&now_c);
     #endif // if defined(_WIN32)
+        stream << std::put_time(&timeinfo, "%F %T") << "." << std::setw(3) << std::setfill('0') << ms << " ";
         return stream.str();
     }
 
