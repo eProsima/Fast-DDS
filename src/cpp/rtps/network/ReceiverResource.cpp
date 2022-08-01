@@ -70,6 +70,7 @@ ReceiverResource::ReceiverResource(
     rValueResource.mValid = false;
     max_message_size_ = rValueResource.max_message_size_;
     active_callbacks_ = rValueResource.active_callbacks_;
+    rValueResource.active_callbacks_ = 0;
 }
 
 bool ReceiverResource::SupportsLocator(

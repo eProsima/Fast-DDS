@@ -200,17 +200,19 @@ DomainParticipantImpl::DomainParticipantImpl(
 
 void DomainParticipantImpl::disable()
 {
-    if (get_participant())
+    DomainParticipant* participant = get_participant();
+    if (participant)
     {
-        get_participant()->set_listener(nullptr);
+        participant->set_listener(nullptr);
     }
     rtps_listener_.participant_ = nullptr;
 
     // The function to disable the DomainParticipantImpl is called from
     // DomainParticipantFactory::delete_participant() and DomainParticipantFactory destructor.
-    if (get_rtps_participant() != nullptr)
+    auto rtps_participant = get_rtps_participant();
+    if (rtps_participant != nullptr)
     {
-        get_rtps_participant()->set_listener(nullptr);
+        rtps_participant->set_listener(nullptr);
 
         {
             std::lock_guard<std::mutex> lock(mtx_pubs_);
@@ -266,9 +268,10 @@ DomainParticipantImpl::~DomainParticipantImpl()
         topics_by_handle_.clear();
     }
 
-    if (get_rtps_participant() != nullptr)
+    auto rtps_participant = get_rtps_participant();
+    if (rtps_participant != nullptr)
     {
-        RTPSDomain::removeRTPSParticipant(rtps_participant_);
+        RTPSDomain::removeRTPSParticipant(rtps_participant);
     }
 
     {
@@ -321,7 +324,7 @@ ReturnCode_t DomainParticipantImpl::enable()
 
         rtps_participant_ = part;
 
-        rtps_participant_->set_check_type_function(
+        part->set_check_type_function(
             [this](const std::string& type_name) -> bool
             {
                 return find_type(type_name).get() != nullptr;
@@ -345,7 +348,7 @@ ReturnCode_t DomainParticipantImpl::enable()
             std::lock_guard<std::mutex> lock(mtx_pubs_);
             for (auto pub : publishers_)
             {
-                pub.second->rtps_participant_ = get_rtps_participant();
+                pub.second->rtps_participant_ = part;
                 pub.second->user_publisher_->enable();
             }
         }
@@ -356,13 +359,13 @@ ReturnCode_t DomainParticipantImpl::enable()
 
             for (auto sub : subscribers_)
             {
-                sub.second->rtps_participant_ = get_rtps_participant();
+                sub.second->rtps_participant_ = part;
                 sub.second->user_subscriber_->enable();
             }
         }
     }
 
-    get_rtps_participant()->enable();
+    part->enable();
 
     return ReturnCode_t::RETCODE_OK;
 }
@@ -370,39 +373,52 @@ ReturnCode_t DomainParticipantImpl::enable()
 ReturnCode_t DomainParticipantImpl::set_qos(
         const DomainParticipantQos& qos)
 {
-    bool enabled = (get_rtps_participant() != nullptr);
-    const DomainParticipantQos& qos_to_set = (&qos == &PARTICIPANT_QOS_DEFAULT) ?
-            DomainParticipantFactory::get_instance()->get_default_participant_qos() : qos;
+    bool enabled = false;
+    bool qos_should_be_updated = false;
+    fastrtps::rtps::RTPSParticipantAttributes patt;
+    fastrtps::rtps::RTPSParticipant* rtps_participant = nullptr;
 
-    if (&qos != &PARTICIPANT_QOS_DEFAULT)
     {
-        ReturnCode_t ret_val = check_qos(qos_to_set);
-        if (!ret_val)
+        std::lock_guard<std::mutex> _(mtx_gs_);
+
+        rtps_participant = rtps_participant_;
+        enabled = rtps_participant != nullptr;
+        const DomainParticipantQos& qos_to_set = (&qos == &PARTICIPANT_QOS_DEFAULT) ?
+                DomainParticipantFactory::get_instance()->get_default_participant_qos() : qos;
+
+        if (&qos != &PARTICIPANT_QOS_DEFAULT)
         {
-            return ret_val;
+            ReturnCode_t ret_val = check_qos(qos_to_set);
+            if (!ret_val)
+            {
+                return ret_val;
+            }
+        }
+
+        if (enabled && !can_qos_be_updated(qos_, qos_to_set))
+        {
+            return ReturnCode_t::RETCODE_IMMUTABLE_POLICY;
+        }
+
+        qos_should_be_updated = set_qos(qos_, qos_to_set, !enabled);
+        if (enabled)
+        {
+            if (qos_should_be_updated)
+            {
+                // Notify the participant that there is a QoS update
+                set_attributes_from_qos(patt, qos_);
+            }
+            else
+            {
+                // Trigger update of network interfaces by calling update_attributes with current attributes
+                patt = rtps_participant->getRTPSParticipantAttributes();
+            }
         }
     }
 
-    if (enabled && !can_qos_be_updated(qos_, qos_to_set))
-    {
-        return ReturnCode_t::RETCODE_IMMUTABLE_POLICY;
-    }
-
-    bool qos_should_be_updated = set_qos(qos_, qos_to_set, !enabled);
     if (enabled)
     {
-        if (qos_should_be_updated)
-        {
-            // Notify the participant that there is a QoS update
-            fastrtps::rtps::RTPSParticipantAttributes patt;
-            set_attributes_from_qos(patt, qos_);
-            get_rtps_participant()->update_attributes(patt);
-        }
-        else
-        {
-            // Trigger update of network interfaces by calling update_attributes
-            get_rtps_participant()->update_attributes(get_rtps_participant()->getRTPSParticipantAttributes());
-        }
+        rtps_participant->update_attributes(patt);
     }
 
     return ReturnCode_t::RETCODE_OK;
@@ -587,7 +603,7 @@ ContentFilteredTopic* DomainParticipantImpl::create_contentfilteredtopic(
         return nullptr;
     }
 
-    if (related_topic->get_participant() != this->get_participant())
+    if (related_topic->get_participant() != get_participant())
     {
         logError(PARTICIPANT, "Creating ContentFilteredTopic with name " << name <<
                 ": related_topic not from this participant");
@@ -981,14 +997,15 @@ ReturnCode_t DomainParticipantImpl::delete_contained_entities()
 
 ReturnCode_t DomainParticipantImpl::assert_liveliness()
 {
-    if (get_rtps_participant() == nullptr)
+    fastrtps::rtps::RTPSParticipant* rtps_participant = get_rtps_participant();
+    if (rtps_participant == nullptr)
     {
         return ReturnCode_t::RETCODE_NOT_ENABLED;
     }
 
-    if (get_rtps_participant()->wlp() != nullptr)
+    if (rtps_participant->wlp() != nullptr)
     {
-        if (get_rtps_participant()->wlp()->assert_liveliness_manual_by_participant())
+        if (rtps_participant->wlp()->assert_liveliness_manual_by_participant())
         {
             return ReturnCode_t::RETCODE_OK;
         }
@@ -1635,7 +1652,7 @@ void DomainParticipantImpl::MyRTPSParticipantListener::on_type_dependencies_repl
     DomainParticipantListener* listener = nullptr;
     if (participant_ != nullptr && (listener = participant_->get_listener()) != nullptr)
     {
-        participant_->get_listener()->on_type_dependencies_reply(
+        listener->on_type_dependencies_reply(
             participant_->participant_, request_sample_id, dependencies);
     }
 

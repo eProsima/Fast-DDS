@@ -448,7 +448,8 @@ void RTPSParticipantImpl::enable()
 
 void RTPSParticipantImpl::disable()
 {
-    // Disabling even thread disables participant announcement
+    // Disabling event thread also disables participant announcement, so there is no need to call
+    // stopRTPSParticipantAnnouncement()
     mp_event_thr.stop_thread();
 
     // Disable Retries on Transports
