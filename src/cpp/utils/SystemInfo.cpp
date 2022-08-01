@@ -246,7 +246,8 @@ std::string SystemInfo::get_timestamp()
     //#elif defined(__clang__) && !defined(std::put_time) // TODO arm64 doesn't seem to support std::put_time
     //    (void)now_c;
     //    (void)ms;
-#elif (_POSIX_C_SOURCE >= 1) || defined(_XOPEN_SOURCE) || defined(_BSD_SOURCE) || defined(_SVID_SOURCE) || defined(_POSIX_SOURCE) || defined(__unix__)
+#elif (_POSIX_C_SOURCE >= 1) || defined(_XOPEN_SOURCE) || defined(_BSD_SOURCE) || defined(_SVID_SOURCE) || \
+    defined(_POSIX_SOURCE) || defined(__unix__)
     std::tm timeinfo;
     localtime_r(&now_c, &timeinfo);
 #else
