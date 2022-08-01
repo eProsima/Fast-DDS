@@ -81,6 +81,7 @@
 
 using namespace eprosima::fastdds::dds;
 using namespace eprosima::fastdds::rtps;
+using namespace eprosima::fastrtps::rtps;
 
 static constexpr LoanableCollection::size_type num_test_elements = 10;
 
@@ -640,9 +641,9 @@ TEST_F(DataReaderTests, get_guid)
     {
         std::unique_lock<std::mutex> lock(discovery_listener.mutex);
         discovery_listener.cv.wait(lock, [&]()
-            {
-                return GUID_t::unknown() != discovery_listener.guid;
-            });
+                {
+                    return GUID_t::unknown() != discovery_listener.guid;
+                });
     }
     ASSERT_EQ(guid, discovery_listener.guid);
 
@@ -2509,18 +2510,18 @@ TEST_F(DataReaderTests, check_key_history_wholesomeness_on_unmatch)
     // here the DataReader History state must be coherent and don't loop endlessly
     ReturnCode_t res;
     std::thread query([this, &res]()
-        {
-            FooSeq samples;
-            SampleInfoSeq infos;
+            {
+                FooSeq samples;
+                SampleInfoSeq infos;
 
-            res = data_reader_->take_instance(samples, infos, LENGTH_UNLIMITED, handle_ok_);
+                res = data_reader_->take_instance(samples, infos, LENGTH_UNLIMITED, handle_ok_);
 
-            // If the DataWriter is destroyed only the non-notified samples must be removed
-            // this operation MUST succeed
-            ASSERT_EQ(res, ReturnCode_t::RETCODE_OK);
+                // If the DataWriter is destroyed only the non-notified samples must be removed
+                // this operation MUST succeed
+                ASSERT_EQ(res, ReturnCode_t::RETCODE_OK);
 
-            data_reader_->return_loan(samples, infos);
-        });
+                data_reader_->return_loan(samples, infos);
+            });
 
     // Check if the thread hangs
     // wait for termination
@@ -2902,15 +2903,15 @@ TEST_F(DataReaderTests, read_conditions_wait_on_SampleStateMask)
     // Send sample from a background thread
     std::array<char, 256> test_message = {"Testing sample state"};
     std::thread bw([&]
-        {
-            FooType msg;
-            msg.index(1);
-            msg.message(test_message);
+            {
+                FooType msg;
+                msg.index(1);
+                msg.message(test_message);
 
-            // Allow main thread entering wait state, before sending
-            std::this_thread::sleep_for(std::chrono::seconds(1));
-            data_writer.write(&msg);
-        });
+                // Allow main thread entering wait state, before sending
+                std::this_thread::sleep_for(std::chrono::seconds(1));
+                data_writer.write(&msg);
+            });
 
     ConditionSeq triggered;
     EXPECT_EQ(ws.wait(triggered, 2.0), ReturnCode_t::RETCODE_OK);
@@ -3014,15 +3015,15 @@ TEST_F(DataReaderTests, read_conditions_wait_on_ViewStateMask)
     // Send sample from a background thread
     std::array<char, 256> test_message = {"Testing sample state"};
     std::thread bw([&]
-        {
-            FooType msg;
-            msg.index(1);
-            msg.message(test_message);
+            {
+                FooType msg;
+                msg.index(1);
+                msg.message(test_message);
 
-            // Allow main thread entering wait state, before sending
-            std::this_thread::sleep_for(std::chrono::seconds(1));
-            data_writer.write(&msg);
-        });
+                // Allow main thread entering wait state, before sending
+                std::this_thread::sleep_for(std::chrono::seconds(1));
+                data_writer.write(&msg);
+            });
 
     ConditionSeq triggered;
     EXPECT_EQ(ws.wait(triggered, 2.0), ReturnCode_t::RETCODE_OK);
@@ -3123,11 +3124,11 @@ TEST_F(DataReaderTests, read_conditions_wait_on_InstanceStateMask)
     msg.message(test_message);
 
     std::thread bw([&]
-        {
-            // Allow main thread entering wait state, before sending
-            std::this_thread::sleep_for(std::chrono::seconds(1));
-            data_writer.write(&msg);
-        });
+            {
+                // Allow main thread entering wait state, before sending
+                std::this_thread::sleep_for(std::chrono::seconds(1));
+                data_writer.write(&msg);
+            });
 
     ConditionSeq triggered;
     EXPECT_EQ(ws.wait(triggered, 2.0), ReturnCode_t::RETCODE_OK);
