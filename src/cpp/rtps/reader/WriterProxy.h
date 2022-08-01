@@ -241,11 +241,7 @@ public:
     /**
      * Sends a preemptive acknack to the writer represented by this proxy.
      */
-<<<<<<< HEAD
-    void perform_initial_ack_nack() const;
-=======
     bool perform_initial_ack_nack();
->>>>>>> 5d220cec8 (Improve rediscovery on lossy environments (#2858))
 
     /**
      * Sends the necessary acknac and nackfrag messages to answer the last received heartbeat message.

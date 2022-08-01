@@ -486,11 +486,7 @@ SequenceNumber_t WriterProxy::next_cache_change_to_be_notified()
     return SequenceNumber_t::unknown();
 }
 
-<<<<<<< HEAD
-void WriterProxy::perform_initial_ack_nack() const
-=======
 bool WriterProxy::perform_initial_ack_nack()
->>>>>>> 5d220cec8 (Improve rediscovery on lossy environments (#2858))
 {
     bool ret_value = false;
 
@@ -511,20 +507,13 @@ bool WriterProxy::perform_initial_ack_nack()
         {
             if (0 == last_heartbeat_count_)
             {
-                reader_->send_acknack(this, sns, this, false);
+                reader_->send_acknack(this, sns, *this, false);
                 ret_value = true;
             }
         }
     }
-<<<<<<< HEAD
-    else
-    {
-        reader_->send_acknack(this, sns, *this, false);
-    }
-=======
 
     return ret_value;
->>>>>>> 5d220cec8 (Improve rediscovery on lossy environments (#2858))
 }
 
 void WriterProxy::perform_heartbeat_response() const
