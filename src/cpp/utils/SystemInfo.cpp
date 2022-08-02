@@ -244,7 +244,8 @@ void SystemInfo::stop_watching_file(
     static_cast<void>(handle);
 }
 
-std::string SystemInfo::get_timestamp()
+std::string SystemInfo::get_timestamp(
+        const char* format)
 {
     std::stringstream stream;
     auto now = std::chrono::system_clock::now();
@@ -266,7 +267,7 @@ std::string SystemInfo::get_timestamp()
 #else
     std::tm timeinfo = *localtime(&now_c);
 #endif // if defined(_WIN32)
-    stream << std::put_time(&timeinfo, "%F %T") << "." << std::setw(3) << std::setfill('0') << ms;
+    stream << std::put_time(&timeinfo, format) << "." << std::setw(3) << std::setfill('0') << ms;
     return stream.str();
 }
 

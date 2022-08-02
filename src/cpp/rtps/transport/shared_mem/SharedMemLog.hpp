@@ -318,7 +318,7 @@ public:
 
     std::string now()
     {
-        return SystemInfo::get_timestamp();
+        return SystemInfo::get_timestamp("%T");
     }
 
 private:
