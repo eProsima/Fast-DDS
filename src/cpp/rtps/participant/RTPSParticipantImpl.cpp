@@ -448,13 +448,9 @@ void RTPSParticipantImpl::enable()
 
 void RTPSParticipantImpl::disable()
 {
-    if (nullptr == mp_builtinProtocols)
-    {
-        return;
-    }
-
-    // Ensure that other participants will not accidentally discover this one
-    stopRTPSParticipantAnnouncement();
+    // Disabling event thread also disables participant announcement, so there is no need to call
+    // stopRTPSParticipantAnnouncement()
+    mp_event_thr.stop_thread();
 
     // Disable Retries on Transports
     m_network_Factory.Shutdown();
@@ -468,10 +464,11 @@ void RTPSParticipantImpl::disable()
 
     deleteAllUserEndpoints();
 
-    mp_event_thr.stop_thread();
-
-    delete(mp_builtinProtocols);
-    mp_builtinProtocols = nullptr;
+    if (nullptr != mp_builtinProtocols)
+    {
+        delete(mp_builtinProtocols);
+        mp_builtinProtocols = nullptr;
+    }
 }
 
 const std::vector<RTPSWriter*>& RTPSParticipantImpl::getAllWriters() const

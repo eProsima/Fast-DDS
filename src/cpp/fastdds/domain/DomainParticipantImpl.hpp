@@ -109,12 +109,14 @@ public:
     ReturnCode_t set_listener(
             DomainParticipantListener* listener)
     {
+        std::lock_guard<std::mutex> _(mtx_gs_);
         listener_ = listener;
         return ReturnCode_t::RETCODE_OK;
     }
 
-    const DomainParticipantListener* get_listener() const
+    DomainParticipantListener* get_listener() const
     {
+        std::lock_guard<std::mutex> _(mtx_gs_);
         return listener_;
     }
 
@@ -395,17 +397,27 @@ public:
     ReturnCode_t get_current_time(
             fastrtps::Time_t& current_time) const;
 
-    const DomainParticipant* get_participant() const;
-
-    DomainParticipant* get_participant();
-
-    const fastrtps::rtps::RTPSParticipant* rtps_participant() const
+    const DomainParticipant* get_participant() const
     {
+        std::lock_guard<std::mutex> _(mtx_gs_);
+        return participant_;
+    }
+
+    DomainParticipant* get_participant()
+    {
+        std::lock_guard<std::mutex> _(mtx_gs_);
+        return participant_;
+    }
+
+    const fastrtps::rtps::RTPSParticipant* get_rtps_participant() const
+    {
+        std::lock_guard<std::mutex> _(mtx_gs_);
         return rtps_participant_;
     }
 
-    fastrtps::rtps::RTPSParticipant* rtps_participant()
+    fastrtps::rtps::RTPSParticipant* get_rtps_participant()
     {
+        std::lock_guard<std::mutex> _(mtx_gs_);
         return rtps_participant_;
     }
 
@@ -496,6 +508,9 @@ protected:
 
     //!Participant Listener
     DomainParticipantListener* listener_;
+
+    //! getter/setter mutex
+    mutable std::mutex mtx_gs_;
 
     //!Publisher maps
     std::map<Publisher*, PublisherImpl*> publishers_;

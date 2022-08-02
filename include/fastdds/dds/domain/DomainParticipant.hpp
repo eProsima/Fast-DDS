@@ -784,6 +784,8 @@ public:
     /**
      * @brief Getter for the resource event
      *
+     * @pre The DomainParticipant is enabled.
+     *
      * @return A reference to the resource event
      */
     RTPS_DllAPI fastrtps::rtps::ResourceEvent& get_resource_event() const;

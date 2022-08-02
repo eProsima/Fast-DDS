@@ -110,7 +110,7 @@ PublisherImpl::PublisherImpl(
     , listener_(listen)
     , publisher_listener_(this)
     , user_publisher_(nullptr)
-    , rtps_participant_(p->rtps_participant())
+    , rtps_participant_(p->get_rtps_participant())
     , default_datawriter_qos_(DATAWRITER_QOS_DEFAULT)
 {
     PublisherAttributes pub_attr;

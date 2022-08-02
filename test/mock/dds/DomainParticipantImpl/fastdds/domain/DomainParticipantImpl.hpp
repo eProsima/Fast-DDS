@@ -502,7 +502,7 @@ public:
         return participant_;
     }
 
-    fastrtps::rtps::RTPSParticipant* rtps_participant()
+    fastrtps::rtps::RTPSParticipant* get_rtps_participant()
     {
         return rtps_participant_;
     }

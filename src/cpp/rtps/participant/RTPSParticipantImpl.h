@@ -321,6 +321,7 @@ public:
      */
     inline RTPSParticipantListener* getListener()
     {
+        std::lock_guard<std::recursive_mutex> _(*getParticipantMutex());
         return mp_participantListener;
     }
 
@@ -331,6 +332,7 @@ public:
     void set_listener(
             RTPSParticipantListener* listener)
     {
+        std::lock_guard<std::recursive_mutex> _(*getParticipantMutex());
         mp_participantListener = listener;
     }
 
