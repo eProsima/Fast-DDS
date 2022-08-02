@@ -253,7 +253,7 @@ std::string SystemInfo::get_timestamp()
 #else
     std::tm timeinfo = *localtime(&now_c);
 #endif // if defined(_WIN32)
-    stream << std::put_time(&timeinfo, "%F %T") << "." << std::setw(3) << std::setfill('0') << ms << " ";
+    stream << std::put_time(&timeinfo, "%F %T") << "." << std::setw(3) << std::setfill('0') << ms;
     return stream.str();
 }
 

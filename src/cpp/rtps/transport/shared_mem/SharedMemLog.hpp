@@ -85,7 +85,7 @@ public:
     }
 
     void dump_packet(
-            const std::string timestamp,
+            const std::string& timestamp,
             const Locator& from,
             const Locator& to,
             const fastrtps::rtps::octet* buf,

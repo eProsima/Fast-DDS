@@ -324,7 +324,7 @@ void LogConsumer::print_timestamp(
         bool color) const
 {
     std::string white = (color) ? C_B_WHITE : "";
-    stream << white << entry.timestamp;
+    stream << white << entry.timestamp << " ";
 }
 
 void LogConsumer::print_header(
