@@ -16,6 +16,7 @@
 #include <mutex>
 #include <string>
 #include <vector>
+#include <tinyxml2.h>
 
 #include <gtest/gtest.h>
 
@@ -34,7 +35,7 @@
 #include <fastrtps/types/TypesBase.h>
 #include <statistics/types/typesPubSubTypes.h>
 #include <statistics/fastdds/domain/DomainParticipantImpl.hpp>
-//#include <fastdds/publisher/PublisherImpl.hpp>
+#include <fastrtps/xmlparser/XMLProfileManager.h>
 
 #include "../../logging/mock/MockConsumer.h"
 
@@ -145,13 +146,16 @@ public:
 
 };
 
-class StatisticsFromXMLProfileTests : public eprosima::fastdds::statistics::dds::DomainParticipantImpl
+class StatisticsFromXMLProfileTests : public ::testing::Test
 {
 public:
-    PublisherImpl*  get_publisher_impl()
+    class TestDomainParticipantImpl : public eprosima::fastdds::statistics::dds::DomainParticipantImpl
     {
-        return builtin_publisher_impl_;
-    }
+        PublisherImpl*  get_publisher_impl()
+        {
+                return builtin_publisher_impl_; 
+        }
+    };
 };
 
 /*
@@ -719,7 +723,33 @@ TEST_F(StatisticsDomainParticipantTests, EnableStatisticsDataWriterFailureIncomp
 TEST_F(StatisticsFromXMLProfileTests, XMLConfigurationForStatisticsDataWritersQoS)
 {
 #ifdef FASTDDS_STATISTICS
-    
+    const char* xml =
+    "                                                                                                                  \
+        <profiles>                                                                                                     \
+        </profiles>                                                                                                    \
+    ";
+    tinyxml2::XMLDocument xml_doc;
+    xml_doc.Parse(xml);
+    xml_doc.SaveFile("FASTRTPS_STATISTICS_PROFILES.xml");
+
+
+    // 1. Set environment variable and create participant using Qos set by code
+    const char* value = "FASTRTPS_STATISTICS_PROFILES.xml";
+#ifdef _WIN32
+    ASSERT_EQ(0, _putenv_s("FASTRTPS_DEFAULT_PROFILES_FILE", value));
+#else
+    ASSERT_EQ(0, setenv("FASTRTPS_DEFAULT_PROFILES_FILE", value, 1));
+#endif // ifdef _WIN32
+
+/*
+        TODO: Here, enable() and so on [2. and 3.]
+
+*/
+
+
+    remove("FASTRTPS_PROFILES.xml");
+
+
 #endif // FASTDDS_STATISTICS
 }
 
