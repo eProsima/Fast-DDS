@@ -784,6 +784,10 @@ TEST_F(StatisticsFromXMLProfileTests, XMLConfigurationForStatisticsDataWritersQo
             test_statistics_domain_participant_impl->get_publisher_impl();
     ASSERT_NE(statistics_publisher_impl, nullptr);
 
+    // 2. enable() statistic datawriters
+    domain_statistics_participant_impl->enable();
+
+
     /*
             TODO: Here, enable() and so on [2. and 3.]
 
