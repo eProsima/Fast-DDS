@@ -1639,13 +1639,16 @@ fastrtps::TopicAttributes DataReaderImpl::topic_attributes() const
 DataReaderListener* DataReaderImpl::get_listener_for(
         const StatusMask& status)
 {
-    std::lock_guard<std::mutex> _(listener_mutex_);
-
-    if (listener_ != nullptr &&
-            user_datareader_->get_status_mask().is_active(status))
     {
-        return listener_;
+        std::lock_guard<std::mutex> _(listener_mutex_);
+
+        if (listener_ != nullptr &&
+                user_datareader_->get_status_mask().is_active(status))
+        {
+            return listener_;
+        }
     }
+
     return subscriber_->get_listener_for(status);
 }
 
