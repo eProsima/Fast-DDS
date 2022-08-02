@@ -98,8 +98,7 @@ WriterProxy::WriterProxy(
             };
     auto acknack_lambda = [this]() -> bool
             {
-                perform_initial_ack_nack();
-                return false;
+                return perform_initial_ack_nack();
             };
 
     heartbeat_response_ = new TimedEvent(event_manager, heartbeat_lambda, 0);
@@ -487,23 +486,34 @@ SequenceNumber_t WriterProxy::next_cache_change_to_be_notified()
     return SequenceNumber_t::unknown();
 }
 
-void WriterProxy::perform_initial_ack_nack() const
+bool WriterProxy::perform_initial_ack_nack()
 {
-    // Send initial NACK.
-    SequenceNumberSet_t sns(SequenceNumber_t(0, 0));
-    if (is_on_same_process_)
+    bool ret_value = false;
+
+    if (!is_datasharing_writer_)
     {
-        RTPSWriter* writer = RTPSDomainImpl::find_local_writer(guid());
-        if (writer)
+        // Send initial NACK.
+        SequenceNumberSet_t sns(SequenceNumber_t(0, 0));
+        if (is_on_same_process_)
         {
-            bool tmp;
-            writer->process_acknack(guid(), reader_->getGuid(), 1, SequenceNumberSet_t(), false, tmp);
+            RTPSWriter* writer = RTPSDomainImpl::find_local_writer(guid());
+            if (writer)
+            {
+                bool tmp;
+                writer->process_acknack(guid(), reader_->getGuid(), 1, SequenceNumberSet_t(), false, tmp);
+            }
+        }
+        else
+        {
+            if (0 == last_heartbeat_count_)
+            {
+                reader_->send_acknack(this, sns, *this, false);
+                ret_value = true;
+            }
         }
     }
-    else
-    {
-        reader_->send_acknack(this, sns, *this, false);
-    }
+
+    return ret_value;
 }
 
 void WriterProxy::perform_heartbeat_response() const
