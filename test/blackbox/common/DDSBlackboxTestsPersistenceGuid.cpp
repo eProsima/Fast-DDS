@@ -182,7 +182,7 @@ TEST_P(PersistenceGuid, SetPersistenceGuidThroughDDSLayer)
     // Check if there is one entry in the writers database table with the stated persistence guid
     command << "python check_guid.py \"" << db_file_name <<
         "\" \"writers_histories\" \"77.72.69.74.65.72.5f.70." << guidprefix_4 << "|67.75.69.64\"";
-    int result1 = system(command.str() c_str());
+    int result1 = system(command.str().c_str());
     command.str("");
     ASSERT_EQ(result1, 1);
 
@@ -380,7 +380,7 @@ TEST_P(PersistenceGuid, SetPersistenceGuidByXML)
     // Check if there is one entry in the writers database table with the stated persistence guid
     command << "python check_guid.py \"" << db_file_name <<
         "\" \"writers_histories\" \"77.72.69.74.65.72.5f.70." << guidprefix_4 << "|67.75.69.64\"";
-    int result1 = system(command.str() c_str());
+    int result1 = system(command.str().c_str());
     command.str("");
     ASSERT_EQ(result1, 1);
 

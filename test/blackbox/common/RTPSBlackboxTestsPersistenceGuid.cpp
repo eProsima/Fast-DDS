@@ -159,7 +159,7 @@ TEST_P(PersistenceGuid, SetPersistenceGuidThroughRTPSLayer)
     // Check if there is one entry in the writers database table with the stated persistence guid
     command << "python check_guid.py \"" << persistence_db <<
         "\" \"writers_histories\" \"77.72.69.74.65.72.5f.70." << guidprefix_4 << "|67.75.69.64\"";
-    int result1 = system(command.str() c_str());
+    int result1 = system(command.str().c_str());
     command.str("");
     ASSERT_EQ(result1, 1);
 
@@ -263,14 +263,14 @@ TEST_P(PersistenceGuid, CheckPrevalenceBetweenManualAndPropertyConfiguration)
     // Check if there is one entry in the writers database table with the stated persistence guid
     command << "python check_guid.py \"" << persistence_db <<
         "\" \"writers_histories\" \"77.72.69.74.65.72.5f.70." << guidprefix_4 << "|67.75.69.64\"";
-    int result1 = system(command.str() c_str());
+    int result1 = system(command.str().c_str());
     command.str("");
     ASSERT_EQ(result1, 0);
 
     // Check if there is one entry in the writers database table with the stated persistence guid
     command << "python check_guid.py \"" << persistence_db <<
         "\" \"writers_histories\" \"00.00.00.00.00.00.00.00." << guidprefix_4 << "|0.0.0.1\"";
-    result1 = system(command.str() c_str());
+    result1 = system(command.str().c_str());
     command.str("");
     ASSERT_EQ(result1, 1);
 
