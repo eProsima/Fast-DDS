@@ -39,6 +39,19 @@ namespace eprosima {
 
 using ReturnCode_t = fastrtps::types::ReturnCode_t;
 
+SystemInfo::SystemInfo()
+{
+    // From ctime(3) linux man page:
+    // According to POSIX.1-2004, localtime() is required to behave as though tzset(3) was called, while
+    // localtime_r() does not have this requirement. For portable code tzset(3) should be called before
+    // localtime_r().
+#if (_POSIX_C_SOURCE >= 1) || defined(_XOPEN_SOURCE) || defined(_BSD_SOURCE) || defined(_SVID_SOURCE) || \
+    defined(_POSIX_SOURCE) || defined(__unix__)
+    tzset();
+#endif // if (_POSIX_C_SOURCE >= 1) || defined(_XOPEN_SOURCE) || defined(_BSD_SOURCE) || defined(_SVID_SOURCE) ||
+       // defined(_POSIX_SOURCE) || defined(__unix__)
+}
+
 ReturnCode_t SystemInfo::get_env(
         const std::string& env_name,
         std::string& env_value)

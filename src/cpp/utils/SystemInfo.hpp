@@ -83,14 +83,6 @@ public:
     {
         static SystemInfo singleton;
 
-        // From ctime(3) linux man page:
-        // According to POSIX.1-2004, localtime() is required to behave as though tzset(3) was called, while
-        // localtime_r() does not have this requirement. For portable code tzset(3) should be called before
-        // localtime_r().
-#if (_POSIX_C_SOURCE >= 1) || defined(_XOPEN_SOURCE) || defined(_POSIX_SOURCE)
-        tzset();
-#endif // if (_POSIX_C_SOURCE >= 1) || defined(_XOPEN_SOURCE) || defined(_POSIX_SOURCE)
-
         return singleton;
     }
 
@@ -230,7 +222,7 @@ public:
 
 private:
 
-    SystemInfo() = default;
+    SystemInfo();
 
     static std::string environment_file_;
 
