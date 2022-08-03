@@ -170,6 +170,12 @@ public:
         return string_len;
     }
 
+    int compare(
+            const std::string& str ) const
+    {
+        return strncmp(string_data, str.c_str(), MAX_CHARS);
+    }
+
 private:
 
     void set(
