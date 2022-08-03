@@ -2151,11 +2151,11 @@ TEST_F(SHMTransportTests, dump_file)
         std::string dump_text((std::istreambuf_iterator<char>(dump_file)),
                 std::istreambuf_iterator<char>());
 
-        ASSERT_EQ(dump_text.length(), 312u);
-        ASSERT_EQ(dump_text.c_str()[308], '6');
-        ASSERT_EQ(dump_text.c_str()[309], 'f');
-        ASSERT_EQ(dump_text.c_str()[310], 10);
-        ASSERT_EQ(dump_text.c_str()[311], 10);
+        ASSERT_EQ(dump_text.length(), 310u);
+        ASSERT_EQ(dump_text.c_str()[306], '6');
+        ASSERT_EQ(dump_text.c_str()[307], 'f');
+        ASSERT_EQ(dump_text.c_str()[308], 10);
+        ASSERT_EQ(dump_text.c_str()[309], 10);
     }
 
     std::remove(log_file.c_str());
