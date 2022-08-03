@@ -61,7 +61,7 @@ public:
 
     XMLProfileParserTests()
     {
-        log_mock = new LogMock();
+        log_mock = new testing::StrictMock<LogMock>();
     }
 
     ~XMLProfileParserTests()
@@ -1375,8 +1375,13 @@ TEST_F(XMLProfileParserTests, default_env_variable)
  */
 TEST_F(XMLProfileParserTests, loadXMLFile)
 {
+    using namespace eprosima::fastdds::dds;
+
     const char* filename = "minimal_file.xml";
     tinyxml2::XMLDocument xml_doc;
+
+    EXPECT_CALL(*log_mock, ClearConsumers()).Times(AnyNumber());
+    EXPECT_CALL(*log_mock, RegisterConsumer(IsStdoutErrConsumer())).Times(AnyNumber());
 
     {
         std::vector<std::string> correct_xmls =
