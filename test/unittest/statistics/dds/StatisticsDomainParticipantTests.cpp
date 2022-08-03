@@ -35,6 +35,8 @@
 #include <fastrtps/types/TypesBase.h>
 #include <statistics/types/typesPubSubTypes.h>
 #include <statistics/fastdds/domain/DomainParticipantImpl.hpp>
+#include <statistics/fastdds/publisher/PublisherImpl.hpp>
+#include <fastdds/dds/publisher/DataWriter.hpp>
 #include <fastrtps/xmlparser/XMLProfileManager.h>
 
 #include "../../logging/mock/MockConsumer.h"
