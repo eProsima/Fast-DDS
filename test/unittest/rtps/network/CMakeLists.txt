@@ -87,9 +87,27 @@ target_link_libraries(NetworkFactoryTests fastcdr foonathan_memory
     $<$<BOOL:${TLS_FOUND}>:OpenSSL::SSL$<SEMICOLON>OpenSSL::Crypto>
     ${CMAKE_THREAD_LIBS_INIT} ${CMAKE_DL_LIBS})
 
+add_executable(ExternalLocatorsProcessorTests ExternalLocatorsProcessorTests.cpp)
+target_compile_definitions(ExternalLocatorsProcessorTests PRIVATE FASTRTPS_NO_LIB
+    BOOST_ASIO_STANDALONE
+    ASIO_STANDALONE
+    $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
+    $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
+    )
+target_include_directories(ExternalLocatorsProcessorTests PRIVATE
+    ${Asio_INCLUDE_DIR}
+    ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include
+    ${PROJECT_SOURCE_DIR}/src/cpp
+    )
+target_link_libraries(ExternalLocatorsProcessorTests fastcdr
+    GTest::gtest ${MOCKS}
+    ${CMAKE_THREAD_LIBS_INIT} ${CMAKE_DL_LIBS})
+
 if(WIN32)
     add_definitions(-D_WIN32_WINNT=0x0601)
     target_link_libraries(NetworkFactoryTests IPHLPAPI shlwapi) # Later so mocks have precedence
+    target_link_libraries(ExternalLocatorsProcessorTests IPHLPAPI shlwapi) # Later so mocks have precedence
 endif()
 
 add_gtest(NetworkFactoryTests SOURCES ${NETWORKFACTORYTESTS_SOURCE})
+add_gtest(ExternalLocatorsProcessorTests SOURCES ExternalLocatorsProcessorTests.cpp)
