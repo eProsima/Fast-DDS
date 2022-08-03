@@ -171,7 +171,7 @@ public:
     }
 
     /*!
-     * Compare with a std:.string.
+     * Compare with a std::string.
      *
      * @param str std::string to be compared with.
      *
