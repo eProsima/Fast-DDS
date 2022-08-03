@@ -756,7 +756,7 @@ TEST_F(StatisticsFromXMLProfileTests, XMLConfigurationForStatisticsDataWritersQo
     ASSERT_EQ(0, setenv("FASTRTPS_DEFAULT_PROFILES_FILE", value, 1));
 #endif // ifdef _WIN32
 
-    // Create a DomainParticipant
+    // Create a DomainParticipant (2. is implicit, as auto-enable option is true by default)
     eprosima::fastdds::dds::DomainParticipant* participant =
             eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->
                     create_participant(0, eprosima::fastdds::dds::PARTICIPANT_QOS_DEFAULT);
@@ -786,11 +786,9 @@ TEST_F(StatisticsFromXMLProfileTests, XMLConfigurationForStatisticsDataWritersQo
             test_statistics_domain_participant_impl->get_publisher_impl();
     ASSERT_NE(statistics_publisher_impl, nullptr);
 
-    // 2. enable() statistic datawriters
-    EXPECT_EQ(ReturnCode_t::RETCODE_OK, domain_statistics_participant_impl->enable());
-
     // 3. Get datawriters
     eprosima::fastdds::dds::DataWriter* history_latency_writer = statistics_publisher_impl->lookup_datawriter("HISTORY_LATENCY_TOPIC");
+    ASSERT_NE(history_latency_writer, nullptr);
 
     // TODO: Check datawriters
 
