@@ -153,8 +153,7 @@
             </rtps>
         </participant>
 
-        <publisher profile_name="test_publisher_profile"
-        is_default_profile="true">
+        <publisher profile_name="test_publisher_profile" is_default_profile="true">
             <topic>
                 <kind>NO_KEY</kind>
                 <name>samplePubSubTopic</name>
@@ -258,6 +257,13 @@
                     </udpv4>
                 </locator>
             </multicastLocatorList>
+            <ignore_non_matching_locators>true</ignore_non_matching_locators>
+            <external_unicast_locators>
+                <udpv4 externality="100" cost="200" mask="10">
+                    <address>10.10.10.10</address>
+                    <port>2001</port>
+                </udpv4>
+            </external_unicast_locators>
             <throughputController>
                 <bytesPerPeriod>9236</bytesPerPeriod>
                 <periodMillisecs>234</periodMillisecs>

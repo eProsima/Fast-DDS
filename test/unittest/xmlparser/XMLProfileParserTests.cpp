@@ -455,6 +455,8 @@ TEST_F(XMLProfileParserTests, XMLParserPublisher)
     EXPECT_EQ(pub_times.nackResponseDelay, c_TimeZero);
     EXPECT_EQ(pub_times.nackSupressionDuration.seconds, 121);
     EXPECT_EQ(pub_times.nackSupressionDuration.nanosec, 332u);
+    EXPECT_TRUE(publisher_atts.ignore_non_matching_locators);
+    check_external_locator(publisher_atts.external_unicast_locators, 100, 200, 10, "10.10.10.10", 2001);
     IPLocator::setIPv4(locator, 192, 168, 1, 3);
     locator.port = 197;
     EXPECT_EQ(*(loc_list_it = publisher_atts.unicastLocatorList.begin()), locator);
@@ -524,6 +526,8 @@ TEST_F(XMLProfileParserTests, XMLParserDefaultPublisherProfile)
     EXPECT_EQ(pub_times.nackResponseDelay, c_TimeZero);
     EXPECT_EQ(pub_times.nackSupressionDuration.seconds, 121);
     EXPECT_EQ(pub_times.nackSupressionDuration.nanosec, 332u);
+    EXPECT_TRUE(publisher_atts.ignore_non_matching_locators);
+    check_external_locator(publisher_atts.external_unicast_locators, 100, 200, 10, "10.10.10.10", 2001);
     IPLocator::setIPv4(locator, 192, 168, 1, 3);
     locator.port = 197;
     EXPECT_EQ(*(loc_list_it = publisher_atts.unicastLocatorList.begin()), locator);
