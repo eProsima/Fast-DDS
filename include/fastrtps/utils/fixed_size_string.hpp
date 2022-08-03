@@ -170,6 +170,13 @@ public:
         return string_len;
     }
 
+    /*!
+     * Compare with a std:.string.
+     *
+     * @param str std::string to be compared with.
+     *
+     * @return Integer value with the result of the comparison as described in `std.:string::compare()`.
+     */
     int compare(
             const std::string& str ) const
     {
