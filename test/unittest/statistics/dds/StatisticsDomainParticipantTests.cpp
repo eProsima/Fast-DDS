@@ -787,14 +787,12 @@ TEST_F(StatisticsFromXMLProfileTests, XMLConfigurationForStatisticsDataWritersQo
     ASSERT_NE(statistics_publisher_impl, nullptr);
 
     // 2. enable() statistic datawriters
-    domain_statistics_participant_impl->enable();
+    EXPECT_EQ(ReturnCode_t::RETCODE_OK, domain_statistics_participant_impl->enable());
 
+    // 3. Get datawriters
+    eprosima::fastdds::dds::DataWriter* history_latency_writer = statistics_publisher_impl->lookup_datawriter("HISTORY_LATENCY_TOPIC");
 
-    /*
-            TODO: Here, enable() and so on [2. and 3.]
-
-     */
-
+    // TODO: Check datawriters
 
     remove("FASTRTPS_PROFILES.xml");
 
