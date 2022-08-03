@@ -742,6 +742,26 @@ TEST_F(StatisticsFromXMLProfileTests, XMLConfigurationForStatisticsDataWritersQo
 #ifdef FASTDDS_STATISTICS
     const char* xml =
             "                                                                                                                  \
+        <?xml version=\"1.0\" encoding=\"utf-8\"  ?>                                                                        \
+        <dds xmlns=\"http://www.eprosima.com/XMLSchemas/fastRTPS_Profiles\">                                              \
+        <profiles>                                                                                                      \
+                <participant profile_name=\"statistics_participant\" is_default_profile=\"true\">                           \
+                <rtps>                                                                                                  \
+                        <propertiesPolicy>                                                                              \
+                        <properties>                                                                                    \
+                                <property>                                                                              \
+                                <name>fastdds.statistics</name>                                                         \
+                                <value>HISTORY_LATENCY_TOPIC; \
+                                </value>                                                                                \
+                                </property>                                                                             \
+                        </properties>                                                                                   \
+                        </propertiesPolicy>                                                                             \
+                </rtps>                                                                                                 \
+                </participant>                                                                                          \
+                <data_writer profile_name=\"HISTORY_LATENCY_TOPIC\">                                              \
+                </data_writer>                                                                                          \
+        </profiles>                                                                                                     \
+        </dds>                                                                                                          \
     ";
     tinyxml2::XMLDocument xml_doc;
     xml_doc.Parse(xml);
