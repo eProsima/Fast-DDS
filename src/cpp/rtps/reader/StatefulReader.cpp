@@ -184,6 +184,7 @@ bool StatefulReader::matched_writer_add(
         const WriterProxyData& wdata)
 {
     assert(wdata.guid() != c_Guid_Unknown);
+    ReaderListener* listener = nullptr;
 
     {
         std::unique_lock<RecursiveTimedMutex> guard(mp_mutex);
@@ -193,6 +194,7 @@ bool StatefulReader::matched_writer_add(
             return false;
         }
 
+        listener = mp_listener;
         bool is_same_process = RTPSDomainImpl::should_intraprocess_between(m_guid, wdata.guid());
         bool is_datasharing = !is_same_process && is_datasharing_compatible_with(wdata);
 
@@ -210,12 +212,11 @@ bool StatefulReader::matched_writer_add(
                     }
                 }
 
-                if (nullptr != mp_listener)
+                if (nullptr != listener)
                 {
                     // call the listener without the lock taken
                     guard.unlock();
-                    mp_listener->on_writer_discovery(this, WriterDiscoveryInfo::CHANGED_QOS_WRITER, wdata.guid(),
-                            &wdata);
+                    listener->on_writer_discovery(this, WriterDiscoveryInfo::CHANGED_QOS_WRITER, wdata.guid(), &wdata);
                 }
                 return false;
             }
@@ -318,9 +319,9 @@ bool StatefulReader::matched_writer_add(
         }
     }
 
-    if (nullptr != mp_listener)
+    if (nullptr != listener)
     {
-        mp_listener->on_writer_discovery(this, WriterDiscoveryInfo::DISCOVERED_WRITER, wdata.guid(), &wdata);
+        listener->on_writer_discovery(this, WriterDiscoveryInfo::DISCOVERED_WRITER, wdata.guid(), &wdata);
     }
 
     return true;
@@ -385,8 +386,9 @@ bool StatefulReader::matched_writer_remove(
             if (nullptr != mp_listener)
             {
                 // call the listener without the lock taken
+                ReaderListener* listener = mp_listener;
                 lock.unlock();
-                mp_listener->on_writer_discovery(this, WriterDiscoveryInfo::REMOVED_WRITER, writer_guid, nullptr);
+                listener->on_writer_discovery(this, WriterDiscoveryInfo::REMOVED_WRITER, writer_guid, nullptr);
             }
         }
         else

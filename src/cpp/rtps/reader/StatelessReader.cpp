@@ -91,18 +91,22 @@ StatelessReader::StatelessReader(
 bool StatelessReader::matched_writer_add(
         const WriterProxyData& wdata)
 {
+    ReaderListener* listener = nullptr;
+
     {
         std::unique_lock<RecursiveTimedMutex> guard(mp_mutex);
+        listener = mp_listener;
+
         for (const RemoteWriterInfo_t& writer : matched_writers_)
         {
             if (writer.guid == wdata.guid())
             {
                 logWarning(RTPS_READER, "Attempting to add existing writer");
-                if (nullptr != mp_listener)
+                if (nullptr != listener)
                 {
                     // call the listener without the lock taken
                     guard.unlock();
-                    mp_listener->on_writer_discovery(this, WriterDiscoveryInfo::CHANGED_QOS_WRITER, wdata.guid(),
+                    listener->on_writer_discovery(this, WriterDiscoveryInfo::CHANGED_QOS_WRITER, wdata.guid(),
                             &wdata);
                 }
                 return false;
@@ -177,9 +181,9 @@ bool StatelessReader::matched_writer_add(
         }
     }
 
-    if (nullptr != mp_listener)
+    if (nullptr != listener)
     {
-        mp_listener->on_writer_discovery(this, WriterDiscoveryInfo::DISCOVERED_WRITER, wdata.guid(), &wdata);
+        listener->on_writer_discovery(this, WriterDiscoveryInfo::DISCOVERED_WRITER, wdata.guid(), &wdata);
     }
 
     return true;
@@ -229,8 +233,9 @@ bool StatelessReader::matched_writer_remove(
                 if (nullptr != mp_listener)
                 {
                     // call the listener without lock
+                    ReaderListener* listener = mp_listener;
                     guard.unlock();
-                    mp_listener->on_writer_discovery(this, WriterDiscoveryInfo::REMOVED_WRITER, writer_guid, nullptr);
+                    listener->on_writer_discovery(this, WriterDiscoveryInfo::REMOVED_WRITER, writer_guid, nullptr);
                 }
                 return true;
             }

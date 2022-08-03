@@ -380,6 +380,7 @@ protected:
 
     //!Listener
     DataReaderListener* listener_ = nullptr;
+    mutable std::mutex listener_mutex_;
 
     fastrtps::rtps::GUID_t guid_;
 
