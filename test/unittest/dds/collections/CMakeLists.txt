@@ -21,6 +21,7 @@ set(LOANABLE_SEQUENCE_TESTS_SOURCE
     ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/log/OStreamConsumer.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/log/StdoutConsumer.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/log/StdoutErrConsumer.cpp
+    ${PROJECT_SOURCE_DIR}/src/cpp/utils/SystemInfo.cpp
     LoanableSequenceTests.cpp)
 
 add_executable(LoanableSequenceTests ${LOANABLE_SEQUENCE_TESTS_SOURCE})
@@ -29,6 +30,7 @@ target_compile_definitions(LoanableSequenceTests PRIVATE FASTRTPS_NO_LIB
     $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
     )
 target_include_directories(LoanableSequenceTests PRIVATE
-    ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include)
+    ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include
+    ${PROJECT_SOURCE_DIR}/src/cpp)
 target_link_libraries(LoanableSequenceTests GTest::gtest)
 add_gtest(LoanableSequenceTests SOURCES ${LOANABLE_SEQUENCE_TESTS_SOURCE})

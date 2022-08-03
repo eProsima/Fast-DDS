@@ -22,7 +22,8 @@ set(STRINGMATCHINGTESTS_SOURCE
     ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/log/OStreamConsumer.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/log/StdoutConsumer.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/log/StdoutErrConsumer.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/utils/StringMatching.cpp)
+    ${PROJECT_SOURCE_DIR}/src/cpp/utils/StringMatching.cpp
+    ${PROJECT_SOURCE_DIR}/src/cpp/utils/SystemInfo.cpp)
 
 set(FIXEDSIZESTRINGTESTS_SOURCE
     FixedSizeStringTests.cpp)
@@ -39,7 +40,8 @@ set(LOCATORTESTS_SOURCE
     ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/log/OStreamConsumer.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/log/StdoutConsumer.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/log/StdoutErrConsumer.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/utils/IPLocator.cpp)
+    ${PROJECT_SOURCE_DIR}/src/cpp/utils/IPLocator.cpp
+    ${PROJECT_SOURCE_DIR}/src/cpp/utils/SystemInfo.cpp)
 
 set(FIXEDSIZEQUEUETESTS_SOURCE
     FixedSizeQueueTests.cpp)
@@ -56,7 +58,8 @@ target_compile_definitions(StringMatchingTests PRIVATE FASTRTPS_NO_LIB
     $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
     )
 target_include_directories(StringMatchingTests PRIVATE
-    ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include)
+    ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include
+    ${PROJECT_SOURCE_DIR}/src/cpp)
 target_link_libraries(StringMatchingTests GTest::gtest ${MOCKS})
 if(MSVC OR MSVC_IDE)
     target_link_libraries(StringMatchingTests ${PRIVACY} iphlpapi Shlwapi
@@ -105,7 +108,8 @@ target_compile_definitions(LocatorTests PRIVATE FASTRTPS_NO_LIB
     $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
     )
 target_include_directories(LocatorTests PRIVATE
-    ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include ${Asio_INCLUDE_DIR})
+    ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include ${Asio_INCLUDE_DIR}
+    ${PROJECT_SOURCE_DIR}/src/cpp)
 target_link_libraries(LocatorTests GTest::gtest ${MOCKS})
 add_gtest(LocatorTests SOURCES ${LOCATORTESTS_SOURCE})
 # Skip DNS related tests when not running on our CI

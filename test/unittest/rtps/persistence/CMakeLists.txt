@@ -27,7 +27,8 @@ if(SQLITE3_SUPPORT)
         ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/log/StdoutErrConsumer.cpp
         ${PROJECT_SOURCE_DIR}/src/cpp/rtps/history/CacheChangePool.cpp
         ${PROJECT_SOURCE_DIR}/src/cpp/rtps/attributes/PropertyPolicy.cpp
-        ${PROJECT_SOURCE_DIR}/src/cpp/rtps/common/Time_t.cpp)
+        ${PROJECT_SOURCE_DIR}/src/cpp/rtps/common/Time_t.cpp
+        ${PROJECT_SOURCE_DIR}/src/cpp/utils/SystemInfo.cpp)
 
     add_executable(PersistenceTests ${PERSISTENCETESTS_SOURCE})
     target_compile_definitions(PersistenceTests PRIVATE FASTRTPS_NO_LIB

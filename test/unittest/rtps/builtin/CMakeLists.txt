@@ -59,7 +59,7 @@ set(BUILTIN_DATA_SERIALIZATION_TESTS_SOURCE BuiltinDataSerializationTests.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/utils/md5.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/utils/string_convert.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/utils/TimedConditionVariable.cpp
-    )
+    ${PROJECT_SOURCE_DIR}/src/cpp/utils/SystemInfo.cpp)
 
 if(WIN32)
     add_definitions(-D_WIN32_WINNT=0x0601)

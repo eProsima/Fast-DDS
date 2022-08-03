@@ -82,6 +82,7 @@ public:
     static const SystemInfo& instance()
     {
         static SystemInfo singleton;
+
         return singleton;
     }
 
@@ -210,9 +211,23 @@ public:
     static void stop_watching_file(
             FileWatchHandle& handle);
 
+    /**
+     * Get the current time as string, formatting it as specified by argument format.
+     *
+     * The function returns a timestamp of the current time in the following format: YYYY-MM-DD HH:MM:SS.ms
+     *
+     * @param [in] format Format of the date to be printed.
+     * This format is build according to the std::put_time(const struct tm* tmb, const charT* fmt) function.
+     * Default "%F %T".
+     *
+     * @return The current time in string format
+     */
+    static std::string get_timestamp(
+            const char* format = "%F %T");
+
 private:
 
-    SystemInfo() = default;
+    SystemInfo();
 
     static std::string environment_file_;
 

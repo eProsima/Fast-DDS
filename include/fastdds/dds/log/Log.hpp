@@ -160,9 +160,6 @@ private:
             Entry&);
 
     static void run();
-
-    static void get_timestamp(
-            std::string&);
 };
 
 /**

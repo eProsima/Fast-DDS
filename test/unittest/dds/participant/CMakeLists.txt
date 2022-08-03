@@ -19,7 +19,7 @@ configure_file(${CMAKE_CURRENT_SOURCE_DIR}/../profiles/test_xml_profiles.xml
 set(PARTICIPANTTESTS_SOURCE
     ParticipantTests.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/builtin/discovery/participant/ServerAttributes.cpp
-    )
+    ${PROJECT_SOURCE_DIR}/src/cpp/utils/SystemInfo.cpp)
 
 if(WIN32)
     add_definitions(-D_WIN32_WINNT=0x0601)

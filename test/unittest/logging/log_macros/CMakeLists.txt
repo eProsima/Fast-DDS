@@ -21,6 +21,7 @@ set(LOG_COMMON_SOURCE
     ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/log/OStreamConsumer.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/log/StdoutConsumer.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/log/StdoutErrConsumer.cpp
+    ${PROJECT_SOURCE_DIR}/src/cpp/utils/SystemInfo.cpp
     )
 
 # MACROS LOG TEST ALL
@@ -36,7 +37,8 @@ target_compile_definitions(LogMacrosAllActiveTests PRIVATE FASTRTPS_NO_LIB
     $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
     )
 target_include_directories(LogMacrosAllActiveTests PRIVATE
-    ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include)
+    ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include
+    ${PROJECT_SOURCE_DIR}/src/cpp)
 target_link_libraries(LogMacrosAllActiveTests GTest::gtest ${MOCKS}
     $<$<BOOL:${WIN32}>:iphlpapi$<SEMICOLON>Shlwapi>
     )
@@ -56,7 +58,8 @@ target_compile_definitions(LogMacrosNoInfoTests PRIVATE FASTRTPS_NO_LIB
     $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
     )
 target_include_directories(LogMacrosNoInfoTests PRIVATE
-    ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include)
+    ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include
+    ${PROJECT_SOURCE_DIR}/src/cpp)
 target_link_libraries(LogMacrosNoInfoTests GTest::gtest ${MOCKS}
     $<$<BOOL:${WIN32}>:iphlpapi$<SEMICOLON>Shlwapi>
     )
@@ -76,7 +79,8 @@ target_compile_definitions(LogMacrosNoWarningTests PRIVATE FASTRTPS_NO_LIB
     $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
     )
 target_include_directories(LogMacrosNoWarningTests PRIVATE
-    ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include)
+    ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include
+    ${PROJECT_SOURCE_DIR}/src/cpp)
 target_link_libraries(LogMacrosNoWarningTests GTest::gtest ${MOCKS}
     $<$<BOOL:${WIN32}>:iphlpapi$<SEMICOLON>Shlwapi>
     )
@@ -96,7 +100,8 @@ target_compile_definitions(LogMacrosNoErrorTests PRIVATE FASTRTPS_NO_LIB
     $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
     )
 target_include_directories(LogMacrosNoErrorTests PRIVATE
-    ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include)
+    ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include
+    ${PROJECT_SOURCE_DIR}/src/cpp)
 target_link_libraries(LogMacrosNoErrorTests GTest::gtest ${MOCKS}
     $<$<BOOL:${WIN32}>:iphlpapi$<SEMICOLON>Shlwapi>
     )
@@ -116,7 +121,8 @@ target_compile_definitions(LogMacrosDefaultTests PRIVATE FASTRTPS_NO_LIB
     $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
     )
 target_include_directories(LogMacrosDefaultTests PRIVATE
-    ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include)
+    ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include
+    ${PROJECT_SOURCE_DIR}/src/cpp)
 target_link_libraries(LogMacrosDefaultTests GTest::gtest ${MOCKS}
     $<$<BOOL:${WIN32}>:iphlpapi$<SEMICOLON>Shlwapi>
     )
@@ -138,7 +144,8 @@ target_compile_definitions(LogMacrosInternalDebugOffTests PRIVATE FASTRTPS_NO_LI
     $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
     )
 target_include_directories(LogMacrosInternalDebugOffTests PRIVATE
-    ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include)
+    ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include
+    ${PROJECT_SOURCE_DIR}/src/cpp)
 target_link_libraries(LogMacrosInternalDebugOffTests GTest::gtest ${MOCKS}
     $<$<BOOL:${WIN32}>:iphlpapi$<SEMICOLON>Shlwapi>
     )

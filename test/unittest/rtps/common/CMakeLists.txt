@@ -21,13 +21,15 @@ set(GUID_UTILS_TESTS_SOURCE GuidUtilsTests.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/log/StdoutErrConsumer.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/utils/IPFinder.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/utils/IPLocator.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/utils/md5.cpp)
+    ${PROJECT_SOURCE_DIR}/src/cpp/utils/md5.cpp
+    ${PROJECT_SOURCE_DIR}/src/cpp/utils/SystemInfo.cpp)
 set(SEQUENCENUMBERTESTS_SOURCE SequenceNumberTests.cpp)
 set(PORTPARAMETERSTESTS_SOURCE PortParametersTests.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/log/Log.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/log/OStreamConsumer.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/log/StdoutConsumer.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/log/StdoutErrConsumer.cpp)
+    ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/log/StdoutErrConsumer.cpp
+    ${PROJECT_SOURCE_DIR}/src/cpp/utils/SystemInfo.cpp)
 
 add_executable(CacheChangeTests ${CACHECHANGETESTS_SOURCE})
 target_compile_definitions(CacheChangeTests PRIVATE FASTRTPS_NO_LIB
@@ -72,6 +74,7 @@ target_compile_definitions(PortParametersTests PRIVATE FASTRTPS_NO_LIB
     $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
     )
 target_include_directories(PortParametersTests PRIVATE
-    ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include)
+    ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include
+    ${PROJECT_SOURCE_DIR}/src/cpp)
 target_link_libraries(PortParametersTests GTest::gtest)
 add_gtest(PortParametersTests SOURCES ${PORTPARAMETERSTESTS_SOURCE} LABELS "NoMemoryCheck")
