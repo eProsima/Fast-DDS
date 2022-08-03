@@ -1484,6 +1484,30 @@ TEST_F(XMLProfileParserTests, loadXMLFile)
 
 }
 
+/**
+ * This test checks positive and negative cases for parsing of external locators related configuration
+ */
+TEST_F(XMLProfileParserTests, external_locators_feature)
+{
+    struct TestCase
+    {
+        std::string title;
+        std::string xml;
+        xmlparser::XMLP_ret result;
+    };
+
+    std::vector<TestCase> test_cases =
+    {
+    };
+
+    for (const TestCase& test : test_cases)
+    {
+        EXPECT_EQ(test.result, xmlparser::XMLProfileManager::loadXMLString(test.xml.c_str(), test.xml.length())) <<
+            " test_case = [" << test.title << "]";
+        xmlparser::XMLProfileManager::DeleteInstance();
+    }
+}
+
 int main(
         int argc,
         char** argv)
