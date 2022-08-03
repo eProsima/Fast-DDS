@@ -374,6 +374,13 @@
                     </udpv4>
                 </locator>
             </multicastLocatorList>
+            <ignore_non_matching_locators>true</ignore_non_matching_locators>
+            <external_unicast_locators>
+                <udpv4 externality="100" cost="200" mask="10">
+                    <address>10.10.10.10</address>
+                    <port>2001</port>
+                </udpv4>
+            </external_unicast_locators>
             <expectsInlineQos>true</expectsInlineQos>
             <historyMemoryPolicy>PREALLOCATED_WITH_REALLOC</historyMemoryPolicy>
             <userDefinedID>13</userDefinedID>

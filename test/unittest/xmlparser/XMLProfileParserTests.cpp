@@ -488,7 +488,6 @@ TEST_F(XMLProfileParserTests, XMLParserPublisher)
 
 TEST_F(XMLProfileParserTests, XMLParserDefaultPublisherProfile)
 {
-    std::string publisher_profile = std::string("test_publisher_profile");
     PublisherAttributes publisher_atts;
 
     ASSERT_EQ(  xmlparser::XMLP_ret::XML_OK,
@@ -596,6 +595,8 @@ TEST_F(XMLProfileParserTests, XMLParserSubscriber)
     EXPECT_EQ(sub_times.initialAcknackDelay, c_TimeZero);
     EXPECT_EQ(sub_times.heartbeatResponseDelay.seconds, 18);
     EXPECT_EQ(sub_times.heartbeatResponseDelay.nanosec, 81u);
+    EXPECT_TRUE(subscriber_atts.ignore_non_matching_locators);
+    check_external_locator(subscriber_atts.external_unicast_locators, 100, 200, 10, "10.10.10.10", 2001);
     IPLocator::setIPv4(locator, 192, 168, 1, 10);
     locator.port = 196;
     EXPECT_EQ(*(loc_list_it = subscriber_atts.unicastLocatorList.begin()), locator);
@@ -626,7 +627,6 @@ TEST_F(XMLProfileParserTests, XMLParserSubscriber)
 
 TEST_F(XMLProfileParserTests, XMLParserDefaultSubscriberProfile)
 {
-    std::string subscriber_profile = std::string("test_subscriber_profile");
     SubscriberAttributes subscriber_atts;
 
     ASSERT_EQ(  xmlparser::XMLP_ret::XML_OK,
@@ -662,6 +662,8 @@ TEST_F(XMLProfileParserTests, XMLParserDefaultSubscriberProfile)
     EXPECT_EQ(sub_times.initialAcknackDelay, c_TimeZero);
     EXPECT_EQ(sub_times.heartbeatResponseDelay.seconds, 18);
     EXPECT_EQ(sub_times.heartbeatResponseDelay.nanosec, 81u);
+    EXPECT_TRUE(subscriber_atts.ignore_non_matching_locators);
+    check_external_locator(subscriber_atts.external_unicast_locators, 100, 200, 10, "10.10.10.10", 2001);
     IPLocator::setIPv4(locator, 192, 168, 1, 10);
     locator.port = 196;
     EXPECT_EQ(*(loc_list_it = subscriber_atts.unicastLocatorList.begin()), locator);
