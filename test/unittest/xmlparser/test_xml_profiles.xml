@@ -48,6 +48,13 @@
                         </udpv4>
                     </locator>
                 </defaultMulticastLocatorList>
+                <ignore_non_matching_locators>true</ignore_non_matching_locators>
+                <default_external_unicast_locators>
+                    <udpv4 externality="100" cost="200" mask="10">
+                        <address>10.10.10.10</address>
+                        <port>2001</port>
+                    </udpv4>
+                </default_external_unicast_locators>
                 <sendSocketBufferSize>32</sendSocketBufferSize>
                 <listenSocketBufferSize>1000</listenSocketBufferSize>
                 <builtin>
@@ -104,6 +111,12 @@
                             </udpv4>
                         </locator>
                     </metatrafficMulticastLocatorList>
+                    <metatraffic_external_unicast_locators>
+                        <udpv4 externality="100" cost="200" mask="10">
+                            <address>10.10.10.10</address>
+                            <port>2002</port>
+                        </udpv4>
+                    </metatraffic_external_unicast_locators>
                     <initialPeersList>
                         <locator>
                             <udpv4>

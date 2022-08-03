@@ -78,6 +78,31 @@ protected:
 
 };
 
+static void check_external_locator(
+        const eprosima::fastdds::rtps::ExternalLocators& external_locators,
+        uint8_t externality,
+        uint8_t cost,
+        uint8_t mask,
+        const char* address,
+        uint32_t port)
+{
+    auto ext_it = external_locators.find(externality);
+    ASSERT_NE(ext_it, external_locators.end());
+    auto cost_it = ext_it->second.find(cost);
+    ASSERT_NE(cost_it, ext_it->second.end());
+    for (const eprosima::fastdds::rtps::LocatorWithMask& loc : cost_it->second)
+    {
+        if (IPLocator::ip_to_string(loc).compare(address) == 0)
+        {
+            EXPECT_EQ(mask, loc.mask());
+            EXPECT_EQ(port, loc.port);
+            return;
+        }
+    }
+
+    EXPECT_FALSE(true);
+}
+
 TEST_F(XMLProfileParserTests, XMLParserRootLibrarySettings)
 {
     ASSERT_EQ(xmlparser::XMLP_ret::XML_OK,
@@ -252,6 +277,8 @@ TEST_F(XMLProfileParserTests, XMLParserParticipant)
     EXPECT_EQ(*rtps_atts.defaultMulticastLocatorList.begin(), locator);
     IPLocator::setIPv4(locator, 192, 168, 1, 1);
     locator.port = 1979;
+    check_external_locator(rtps_atts.default_external_unicast_locators, 100, 200, 10, "10.10.10.10", 2001);
+    EXPECT_TRUE(rtps_atts.ignore_non_matching_locators);
     EXPECT_EQ(rtps_atts.sendSocketBufferSize, 32u);
     EXPECT_EQ(rtps_atts.listenSocketBufferSize, 1000u);
     EXPECT_EQ(builtin.discovery_config.discoveryProtocol, eprosima::fastrtps::rtps::DiscoveryProtocol::SIMPLE);
@@ -270,6 +297,7 @@ TEST_F(XMLProfileParserTests, XMLParserParticipant)
     EXPECT_FALSE(builtin.avoid_builtin_multicast);
     EXPECT_EQ(builtin.discovery_config.m_simpleEDP.use_PublicationWriterANDSubscriptionReader, false);
     EXPECT_EQ(builtin.discovery_config.m_simpleEDP.use_PublicationReaderANDSubscriptionWriter, true);
+    check_external_locator(rtps_atts.builtin.metatraffic_external_unicast_locators, 100, 200, 10, "10.10.10.10", 2002);
     IPLocator::setIPv4(locator, 192, 168, 1, 5);
     locator.port = 9999;
     EXPECT_EQ(*(loc_list_it = builtin.metatrafficUnicastLocatorList.begin()), locator);
@@ -308,7 +336,6 @@ TEST_F(XMLProfileParserTests, XMLParserParticipant)
 
 TEST_F(XMLProfileParserTests, XMLParserDefaultParticipantProfile)
 {
-    std::string participant_profile = std::string("test_participant_profile");
     ParticipantAttributes participant_atts;
 
     ASSERT_EQ(  xmlparser::XMLP_ret::XML_OK,
@@ -330,6 +357,8 @@ TEST_F(XMLProfileParserTests, XMLParserDefaultParticipantProfile)
     EXPECT_EQ(*rtps_atts.defaultMulticastLocatorList.begin(), locator);
     IPLocator::setIPv4(locator, 192, 168, 1, 1);
     locator.port = 1979;
+    check_external_locator(rtps_atts.default_external_unicast_locators, 100, 200, 10, "10.10.10.10", 2001);
+    EXPECT_TRUE(rtps_atts.ignore_non_matching_locators);
     EXPECT_EQ(rtps_atts.sendSocketBufferSize, 32u);
     EXPECT_EQ(rtps_atts.listenSocketBufferSize, 1000u);
     EXPECT_EQ(builtin.discovery_config.discoveryProtocol, eprosima::fastrtps::rtps::DiscoveryProtocol::SIMPLE);
@@ -348,6 +377,7 @@ TEST_F(XMLProfileParserTests, XMLParserDefaultParticipantProfile)
     EXPECT_FALSE(builtin.avoid_builtin_multicast);
     EXPECT_EQ(builtin.discovery_config.m_simpleEDP.use_PublicationWriterANDSubscriptionReader, false);
     EXPECT_EQ(builtin.discovery_config.m_simpleEDP.use_PublicationReaderANDSubscriptionWriter, true);
+    check_external_locator(rtps_atts.builtin.metatraffic_external_unicast_locators, 100, 200, 10, "10.10.10.10", 2002);
     IPLocator::setIPv4(locator, 192, 168, 1, 5);
     locator.port = 9999;
     EXPECT_EQ(*(loc_list_it = builtin.metatrafficUnicastLocatorList.begin()), locator);
