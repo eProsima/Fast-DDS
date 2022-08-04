@@ -171,6 +171,19 @@ public:
     }
 
     /*!
+     * Compare with a C string.
+     *
+     * @param str C string to be compared with.
+     *
+     * @return Integer value with the result of the comparison as described in `std.:string::compare()`.
+     */
+    int compare(
+            const char* str) const noexcept
+    {
+        return strncmp(string_data, str, MAX_CHARS);
+    }
+
+    /*!
      * Compare with a std::string.
      *
      * @param str std::string to be compared with.
@@ -178,7 +191,20 @@ public:
      * @return Integer value with the result of the comparison as described in `std.:string::compare()`.
      */
     int compare(
-            const std::string& str ) const
+            const std::string& str) const noexcept
+    {
+        return strncmp(string_data, str.c_str(), MAX_CHARS);
+    }
+
+    /*!
+     * Compare with a fixed_string
+     *
+     * @param str fixed_string to be compared with.
+     *
+     * @return Integer value with the result of the comparison as described in `std.:string::compare()`.
+     */
+    template<size_t N>  int compare(
+            const fixed_string<N>& str) const noexcept
     {
         return strncmp(string_data, str.c_str(), MAX_CHARS);
     }
