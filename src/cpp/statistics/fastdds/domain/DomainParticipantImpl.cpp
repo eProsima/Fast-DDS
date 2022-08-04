@@ -280,7 +280,17 @@ void DomainParticipantImpl::create_statistics_builtin_entities()
 void DomainParticipantImpl::get_XML_topic_qos(
         std::vector<StatisticTopicQoS>& _topic_qos_vector)
 {
-
+    for (ValidEntry entry: valid_entries)
+    {
+        DataWriterQos qos = STATISTICS_DATAWRITER_QOS;
+        if (ReturnCode_t::RETCODE_OK == builtin_publisher_impl_->get_datawriter_qos_from_profile(entry.name, qos))
+        {
+            StatisticTopicQoS stat_topic_qos;
+            stat_topic_qos.name = const_cast<char*>(entry.name);
+            stat_topic_qos.qos = &qos;
+            _topic_qos_vector.push_back(stat_topic_qos);
+        }
+    }
 }
 
 void DomainParticipantImpl::enable_statistics_builtin_datawriters_with_qos(
