@@ -93,7 +93,7 @@ public:
 
         std::ostringstream topic_name_s;
         topic_name_s << "footopic" << "_" << asio::ip::host_name() << "_" <<
-                eprosima::SystemInfo::instance().process_id();
+            eprosima::SystemInfo::instance().process_id();
         topic_name = topic_name_s.str();
     }
 
