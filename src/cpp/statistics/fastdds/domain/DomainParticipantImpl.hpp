@@ -130,6 +130,18 @@ protected:
     void create_statistics_builtin_entities();
 
     /**
+     * Auxiliary function to search for topics and qos in XML profiles.
+     */
+    void get_XML_topic_qos(
+            std::vector<StatisticTopicQoS>& _topic_qos_vector);
+
+    /**
+     * Auxiliary function to enable statistics builtin datawriters with non standard QoS.
+     */
+    void enable_statistics_builtin_datawriters_with_qos(
+            std::vector<StatisticTopicQoS>& _topic_qos_vector);
+
+    /**
      * Auxiliary function to enable statistics builtin datawriters.
      * @param topic_list string with the semicolon separated list of statistics topics.
      */
