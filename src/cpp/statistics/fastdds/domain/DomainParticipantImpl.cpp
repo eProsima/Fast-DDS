@@ -255,6 +255,8 @@ void DomainParticipantImpl::create_statistics_builtin_entities()
     // Enable statistics datawriters
     // 1. Find for XML file with profile specifications
     std::vector<StatisticTopicQoS> topic_qos_vector(sizeof(valid_entries) / sizeof(valid_entries[0]));
+    get_XML_topic_qos(topic_qos_vector);
+    enable_statistics_builtin_datawriters_with_qos(topic_qos_vector);
 
     // 2. Find fastdds_statistics PropertyPolicyQos
     const std::string* property_topic_list = eprosima::fastrtps::rtps::PropertyPolicyHelper::find_property(
