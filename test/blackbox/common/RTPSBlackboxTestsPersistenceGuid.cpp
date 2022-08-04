@@ -27,12 +27,6 @@
 #include <gtest/gtest.h>
 #include <fastrtps/xmlparser/XMLProfileManager.h>
 
-#if defined(_WIN32)
-#define GET_PID _getpid
-#else
-#define GET_PID getpid
-#endif // if defined(_WIN32)
-
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
 

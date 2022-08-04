@@ -20,10 +20,11 @@
 #include "PubSubWriter.hpp"
 
 #include <cstring>
-#include <thread>
-#include <sstream>
-#include <iomanip>
 #include <fstream>
+#include <functional>
+#include <iomanip>
+#include <sstream>
+#include <thread>
 
 #include <gtest/gtest.h>
 #include <fastrtps/xmlparser/XMLProfileManager.h>

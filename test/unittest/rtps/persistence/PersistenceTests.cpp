@@ -23,15 +23,11 @@
 #include <fastrtps/utils/TimeConversion.h>
 #include <fastdds/rtps/history/WriterHistory.h>
 
+#include <utils/SystemInfo.hpp>
+
 #include <climits>
 #include <sstream>
 #include <gtest/gtest.h>
-
-#if defined(_WIN32)
-#define GET_PID _getpid
-#else
-#define GET_PID getpid
-#endif // if defined(_WIN32)
 
 using namespace eprosima::fastrtps::rtps;
 
@@ -95,7 +91,7 @@ protected:
         {
             ss << test_name;
         }
-        ss << "_" << GET_PID() << ".db";
+        ss << "_" << eprosima::SystemInfo::instance().process_id() << ".db";
         dbfile = ss.str();
     }
 

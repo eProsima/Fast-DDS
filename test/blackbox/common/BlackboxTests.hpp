@@ -19,7 +19,10 @@
         ::testing::UnitTest::GetInstance()->current_test_info()->test_case_name() + std::string( \
             "_") + ::testing::UnitTest::GetInstance()->current_test_info()->name())
 
-#if defined(_WIN32)
+#if defined(__cplusplus_winrt)
+#define GET_PID GetCurrentProcessId
+#include <process.h>
+#elif defined(_WIN32)
 #define GET_PID _getpid
 #include <process.h>
 #else
