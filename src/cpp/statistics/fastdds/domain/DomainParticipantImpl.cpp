@@ -80,6 +80,12 @@ struct ValidEntry
     EventKind event_kind;
 };
 
+struct StatisticTopicQoS
+{
+    char* name;
+    DataWriterQos* qos;
+};
+
 static const ValidEntry valid_entries[] =
 {
     {HISTORY_LATENCY_TOPIC_ALIAS,         HISTORY_LATENCY_TOPIC,         HISTORY2HISTORY_LATENCY},
@@ -247,7 +253,10 @@ void DomainParticipantImpl::create_statistics_builtin_entities()
     assert(nullptr != builtin_publisher_impl_);
 
     // Enable statistics datawriters
-    // 1. Find fastdds_statistics PropertyPolicyQos
+    // 1. Find for XML file with profile specifications
+    std::vector<StatisticTopicQoS> topic_qos_vector(sizeof(valid_entries) / sizeof(valid_entries[0]));
+
+    // 2. Find fastdds_statistics PropertyPolicyQos
     const std::string* property_topic_list = eprosima::fastrtps::rtps::PropertyPolicyHelper::find_property(
         get_qos().properties(), "fastdds.statistics");
 
@@ -256,7 +265,7 @@ void DomainParticipantImpl::create_statistics_builtin_entities()
         enable_statistics_builtin_datawriters(*property_topic_list);
     }
 
-    // 2. FASTDDS_STATISTICS environment variable
+    // 3. FASTDDS_STATISTICS environment variable
     std::string env_topic_list;
     SystemInfo::get_env(FASTDDS_STATISTICS_ENVIRONMENT_VARIABLE, env_topic_list);
 

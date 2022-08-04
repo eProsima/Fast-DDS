@@ -53,6 +53,7 @@ enum EventKind : uint32_t;
 namespace dds {
 
 class PublisherImpl;
+struct StatisticTopicQoS;
 
 class DomainParticipantImpl : public efd::DomainParticipantImpl
 {
