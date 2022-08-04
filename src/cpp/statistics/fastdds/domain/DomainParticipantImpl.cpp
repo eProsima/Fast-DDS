@@ -275,6 +275,18 @@ void DomainParticipantImpl::create_statistics_builtin_entities()
     }
 }
 
+void DomainParticipantImpl::get_XML_topic_qos(
+        std::vector<StatisticTopicQoS>& _topic_qos_vector)
+{
+
+}
+
+void DomainParticipantImpl::enable_statistics_builtin_datawriters_with_qos(
+        std::vector<StatisticTopicQoS>& _topic_qos_vector)
+{
+
+}
+
 void DomainParticipantImpl::enable_statistics_builtin_datawriters(
         const std::string& topic_list)
 {
