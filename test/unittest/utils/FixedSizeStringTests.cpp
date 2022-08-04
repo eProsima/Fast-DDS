@@ -20,11 +20,12 @@ using namespace eprosima::fastrtps;
 constexpr size_t MAX_CHARS = 255;
 constexpr size_t OTHER_MAX_CHARS = 127;
 
-class FixedSizeStringTests: public ::testing::Test
+class FixedSizeStringTests : public ::testing::Test
 {
-    public:
-        char const *pattern0 = "foo/bar/baz";
-        char const *long_pattern =
+public:
+
+    char const* pattern0 = "foo/bar/baz";
+    char const* long_pattern =
             "0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF"
             "0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF"
             "0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF"
@@ -34,7 +35,7 @@ class FixedSizeStringTests: public ::testing::Test
             "0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF"
             "0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF";
 
-        size_t pattern0_len = strlen(pattern0);
+    size_t pattern0_len = strlen(pattern0);
 };
 
 TEST_F(FixedSizeStringTests, default_constructor)
@@ -166,7 +167,64 @@ TEST_F(FixedSizeStringTests, different_fixed_sizes)
     ASSERT_EQ(s1, s2);
 }
 
-int main(int argc, char **argv)
+TEST_F(FixedSizeStringTests, comparisons)
+{
+    const char* c_string_short = "test string";
+    const char* c_string_a = "test string a";
+    const char* c_string_b = "test string b";
+    const char* c_string_c = "test string c";
+    const char* c_string_large = "test string b ";
+    std::string std_string_short = "test string";
+    std::string std_string_a = "test string a";
+    std::string std_string_b = "test string b";
+    std::string std_string_c = "test string c";
+    std::string std_string_large = "test string b ";
+    fixed_string<MAX_CHARS> fixed_short = "test string";
+    fixed_string<MAX_CHARS> fixed_a = "test string a";
+    fixed_string<MAX_CHARS> fixed_b = "test string b";
+    fixed_string<MAX_CHARS> fixed_c = "test string c";
+    fixed_string<MAX_CHARS> fixed_large = "test string b ";
+
+    ASSERT_NE(fixed_b, c_string_short);
+    ASSERT_NE(fixed_b, c_string_a);
+    ASSERT_EQ(fixed_b, c_string_b);
+    ASSERT_NE(fixed_b, c_string_c);
+    ASSERT_NE(fixed_b, c_string_large);
+
+    ASSERT_LT(0, fixed_b.compare(c_string_short));
+    ASSERT_LT(0, fixed_b.compare(c_string_a));
+    ASSERT_EQ(0, fixed_b.compare(c_string_b));
+    ASSERT_GT(0, fixed_b.compare(c_string_c));
+    ASSERT_GT(0, fixed_b.compare(c_string_large));
+
+    ASSERT_NE(fixed_b, std_string_short);
+    ASSERT_NE(fixed_b, std_string_a);
+    ASSERT_EQ(fixed_b, std_string_b);
+    ASSERT_NE(fixed_b, std_string_c);
+    ASSERT_NE(fixed_b, std_string_large);
+
+    ASSERT_LE(0, fixed_b.compare(std_string_short));
+    ASSERT_LE(0, fixed_b.compare(std_string_a));
+    ASSERT_EQ(0, fixed_b.compare(std_string_b));
+    ASSERT_GT(0, fixed_b.compare(std_string_c));
+    ASSERT_GT(0, fixed_b.compare(std_string_large));
+
+    ASSERT_NE(fixed_b, fixed_short);
+    ASSERT_NE(fixed_b, fixed_a);
+    ASSERT_EQ(fixed_b, fixed_b);
+    ASSERT_NE(fixed_b, fixed_c);
+    ASSERT_NE(fixed_b, fixed_large);
+
+    ASSERT_LE(0, fixed_b.compare(fixed_short));
+    ASSERT_LE(0, fixed_b.compare(fixed_a));
+    ASSERT_EQ(0, fixed_b.compare(fixed_b));
+    ASSERT_GT(0, fixed_b.compare(fixed_c));
+    ASSERT_GT(0, fixed_b.compare(fixed_large));
+}
+
+int main(
+        int argc,
+        char** argv)
 {
     testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();
