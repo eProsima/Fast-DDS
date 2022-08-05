@@ -17,7 +17,9 @@ configure_file(${CMAKE_CURRENT_SOURCE_DIR}/../profiles/test_xml_profile.xml
     COPYONLY)
 
 set(SUBSCRIBERTESTS_SOURCE SubscriberTests.cpp)
-set(DATAREADERTESTS_SOURCE DataReaderTests.cpp)
+set(DATAREADERTESTS_SOURCE 
+    DataReaderTests.cpp
+    ${PROJECT_SOURCE_DIR}/src/cpp/utils/SystemInfo.cpp
 set(DATAREADERINSTANCETESTS_SOURCE DataReaderInstanceTests.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/common/Time_t.cpp
     )
