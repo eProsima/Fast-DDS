@@ -807,7 +807,8 @@ TEST_F(StatisticsFromXMLProfileTests, XMLConfigurationForStatisticsDataWritersQo
     ASSERT_NE(statistics_publisher_impl, nullptr);
 
     // 3. Get datawriters
-    eprosima::fastdds::dds::DataWriter* history_latency_writer = statistics_publisher_impl->lookup_datawriter("HISTORY_LATENCY_TOPIC");
+    std::string topic1_name = "_fastdds_statistics_history2history_latency";
+    eprosima::fastdds::dds::DataWriter* history_latency_writer = statistics_publisher_impl->lookup_datawriter(topic1_name);
     ASSERT_NE(history_latency_writer, nullptr);
 
     // TODO: Check datawriters

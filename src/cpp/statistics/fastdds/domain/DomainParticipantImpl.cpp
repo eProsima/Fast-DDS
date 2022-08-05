@@ -283,10 +283,10 @@ void DomainParticipantImpl::get_XML_topic_qos(
     for (ValidEntry entry: valid_entries)
     {
         DataWriterQos qos = STATISTICS_DATAWRITER_QOS;
-        if (ReturnCode_t::RETCODE_OK == builtin_publisher_impl_->get_datawriter_qos_from_profile(entry.name, qos))
+        if (ReturnCode_t::RETCODE_OK == builtin_publisher_impl_->get_datawriter_qos_from_profile(entry.alias, qos))
         {
             StatisticTopicQoS stat_topic_qos;
-            stat_topic_qos.name = const_cast<char*>(entry.name);
+            stat_topic_qos.name = const_cast<char*>(entry.alias);
             stat_topic_qos.qos = &qos;
             _topic_qos_vector.push_back(stat_topic_qos);
         }
@@ -296,7 +296,23 @@ void DomainParticipantImpl::get_XML_topic_qos(
 void DomainParticipantImpl::enable_statistics_builtin_datawriters_with_qos(
         std::vector<StatisticTopicQoS>& _topic_qos_vector)
 {
-
+    for (StatisticTopicQoS topic_qos: _topic_qos_vector)
+    {
+        if (topic_qos.name != NULL)
+        {
+            ReturnCode_t ret = enable_statistics_datawriter(topic_qos.name, STATISTICS_DATAWRITER_QOS); //*topic_qos.qos);
+            // case RETCODE_ERROR is checked and logged in enable_statistics_datawriter.
+            // case RETCODE_INCONSISTENT_POLICY is checked and logged in enable_statistics_datawriter.
+            // case RETCODE_UNSUPPORTED cannot happen because this method is only called if FASTDDS_STATISTICS
+            // CMake option is enabled
+            assert(ret != ReturnCode_t::RETCODE_INCONSISTENT_POLICY);
+            assert(ret != ReturnCode_t::RETCODE_UNSUPPORTED);
+            if (ret == ReturnCode_t::RETCODE_BAD_PARAMETER)
+            {
+                logError(STATISTICS_DOMAIN_PARTICIPANT, "Topic " << topic_qos.name << " is not a valid statistics topic name/alias");
+            }
+        }
+    }
 }
 
 void DomainParticipantImpl::enable_statistics_builtin_datawriters(
