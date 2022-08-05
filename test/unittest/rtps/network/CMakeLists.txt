@@ -106,6 +106,7 @@ target_compile_definitions(ExternalLocatorsProcessorTests PRIVATE FASTRTPS_NO_LI
     )
 target_include_directories(ExternalLocatorsProcessorTests PRIVATE
     ${Asio_INCLUDE_DIR}
+    ${PROJECT_SOURCE_DIR}/test/mock/rtps/ParticipantProxyData
     ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include
     ${PROJECT_SOURCE_DIR}/src/cpp
     )
