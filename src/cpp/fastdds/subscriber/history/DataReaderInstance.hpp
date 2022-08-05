@@ -75,9 +75,9 @@ struct DataReaderInstance
     {
         bool ret_val = false;
 
-        if (!has_been_accounted)
+        if (!has_been_accounted_)
         {
-            has_been_accounted = true;
+            has_been_accounted_ = true;
             assert(ViewStateKind::NEW_VIEW_STATE == view_state);
             ++counters.instances_new;
             assert(InstanceStateKind::ALIVE_INSTANCE_STATE == instance_state);
@@ -115,13 +115,13 @@ struct DataReaderInstance
             DataReaderHistoryCounters& counters,
             const fastrtps::rtps::GUID_t& writer_guid)
     {
-        return writer_unregister(counters, writer_guid);
+        return has_been_accounted_ && writer_unregister(counters, writer_guid);
     }
 
 private:
 
     //! Whether this instance has ever been included in the history counters
-    bool has_been_accounted = false;
+    bool has_been_accounted_ = false;
 
     bool writer_alive(
             DataReaderHistoryCounters& counters,
