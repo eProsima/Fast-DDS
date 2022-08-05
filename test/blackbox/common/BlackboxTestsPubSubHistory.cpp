@@ -1282,8 +1282,24 @@ TEST_P(PubSubHistory, KeepAllWriterContinueSendingAfterReaderMatched)
 }
 
 // Regression test for redmine bug #15370
-// It uses a test transport to drop some DATA messages, in order to force the instance to exist but not be notified.
-TEST(PubSubHistory, PubSubAsReliableUnmatchWithFutureChanges)
+/*!
+ * @fn TEST(PubSubHistory, ReliableUnmatchWithFutureChanges)
+ * @brief This test checks reader behavior when a writer for which only future changes have been received is unmatched.
+ *
+ * It uses a test transport to drop some DATA and HEARTBEAT messages, in order to force the reader to only know
+ * about changes in the future (i.e. with sequence number greater than 1).
+ *
+ * The test creates a Reliable, Transient Local, Keep Last (10) Writer and Reader.
+ *
+ * After waiting for them to match, 10 samples are sent with both heartbeats and data messages being dropped.
+ * Another 10 samples are then sent, with heartbeats still dropped.
+ * This way, the reader receives them as changes in the future.
+ *
+ * The Writer is then destroyed, and the reader waits for it to unmatch.
+ * The Writer is then created again, all messages are let through, and 10 samples are sent and expected to be received
+ * by the Reader.
+ */
+TEST(PubSubHistory, ReliableUnmatchWithFutureChanges)
 {
     PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
     PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
