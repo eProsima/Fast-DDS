@@ -175,7 +175,7 @@ public:
      *
      * @param str C string to be compared with.
      *
-     * @return Integer value with the result of the comparison as described in `std.:string::compare()`.
+     * @return Integer value with the result of the comparison as described in `std::string::compare()`.
      */
     int compare(
             const char* str) const noexcept
@@ -188,7 +188,7 @@ public:
      *
      * @param str std::string to be compared with.
      *
-     * @return Integer value with the result of the comparison as described in `std.:string::compare()`.
+     * @return Integer value with the result of the comparison as described in `std::string::compare()`.
      */
     int compare(
             const std::string& str) const noexcept
@@ -201,7 +201,7 @@ public:
      *
      * @param str fixed_string to be compared with.
      *
-     * @return Integer value with the result of the comparison as described in `std.:string::compare()`.
+     * @return Integer value with the result of the comparison as described in `std::string::compare()`.
      */
     template<size_t N>  int compare(
             const fixed_string<N>& str) const noexcept
