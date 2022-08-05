@@ -1313,8 +1313,8 @@ TEST(PubSubHistory, ReliableUnmatchWithFutureChanges)
 
     ASSERT_TRUE(reader.isInitialized());
 
-    std::atomic_bool drop_data = false;
-    std::atomic_bool drop_heartbeat = false;
+    std::atomic_bool drop_data {false};
+    std::atomic_bool drop_heartbeat {false};
 
     auto testTransport = std::make_shared<test_UDPv4TransportDescriptor>();
     testTransport->drop_data_messages_filter_ = [&drop_data](eprosima::fastrtps::rtps::CDRMessage_t& msg)
