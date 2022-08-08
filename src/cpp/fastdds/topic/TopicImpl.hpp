@@ -50,6 +50,10 @@ public:
             const TopicQos& qos,
             TopicListener* listen);
 
+    /**
+     * Extends the check_qos() call, including the check for
+     * resource limits policy.
+     */
     static ReturnCode_t check_qos_including_resource_limits(
             const TopicQos& qos,
             const TypeSupport& type);
