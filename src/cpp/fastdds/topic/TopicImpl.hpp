@@ -61,6 +61,9 @@ public:
     static ReturnCode_t check_qos(
             const TopicQos& qos);
 
+    /**
+     * Checks resource limits policy: Instance allocation consistency
+     */
     static ReturnCode_t check_allocation_consistency(
             const TopicQos& qos);
 
