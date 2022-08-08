@@ -54,21 +54,13 @@ ReturnCode_t TopicImpl::check_qos_including_resource_limits(
         const TopicQos& qos,
         const TypeSupport& type)
 {
-    ReturnCode_t check_qos_return;
-    check_qos_return = check_qos(qos);
-    if (!check_qos_return)
-    {
-        return check_qos_return;
-    }
-    if (type->m_isGetKeyDefined)
+    ReturnCode_t check_qos_return = check_qos(qos);
+    if (ReturnCode_t::RETCODE_OK == check_qos_return &&
+            type->m_isGetKeyDefined)
     {
         check_qos_return = check_allocation_consistency(qos);
-        if (!check_qos_return)
-        {
-            return check_qos_return;
-        }
     }
-    return ReturnCode_t::RETCODE_OK;
+    return check_qos_return;
 }
 
 ReturnCode_t TopicImpl::check_qos(
