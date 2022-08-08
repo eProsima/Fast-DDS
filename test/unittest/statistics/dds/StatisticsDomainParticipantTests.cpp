@@ -741,24 +741,36 @@ TEST_F(StatisticsFromXMLProfileTests, XMLConfigurationForStatisticsDataWritersQo
 {
 #ifdef FASTDDS_STATISTICS
     const char* xml =
-            "                                                                                                                  \
-        <?xml version=\"1.0\" encoding=\"utf-8\"  ?>                                                                        \
-        <dds xmlns=\"http://www.eprosima.com/XMLSchemas/fastRTPS_Profiles\">                                              \
+            "                                                                                                           \
+        <?xml version=\"1.0\" encoding=\"utf-8\"  ?>                                                                    \
+        <dds xmlns=\"http://www.eprosima.com/XMLSchemas/fastRTPS_Profiles\">                                            \
         <profiles>                                                                                                      \
-                <participant profile_name=\"statistics_participant\" is_default_profile=\"true\">                           \
+                <participant profile_name=\"statistics_participant\" is_default_profile=\"true\">                       \
                 <rtps>                                                                                                  \
                         <propertiesPolicy>                                                                              \
                         <properties>                                                                                    \
                                 <property>                                                                              \
                                 <name>fastdds.statistics</name>                                                         \
-                                <value>HISTORY_LATENCY_TOPIC; \
-                                </value>                                                                                \
+                                <value>HISTORY_LATENCY_TOPIC;PUBLICATION_THROUGHPUT_TOPIC</value>                                                    \
                                 </property>                                                                             \
                         </properties>                                                                                   \
                         </propertiesPolicy>                                                                             \
                 </rtps>                                                                                                 \
                 </participant>                                                                                          \
-                <data_writer profile_name=\"HISTORY_LATENCY_TOPIC\">                                              \
+                <data_writer profile_name=\"HISTORY_LATENCY_TOPIC\">                                                    \
+                        <qos>                                                                                           \
+                                <reliability>                                                                           \
+                                        <kind>BEST_EFFORT</kind>                                                        \
+                                </reliability>                                                                          \
+                                <durability>                                                                            \
+                                        <kind>VOLATILE</kind>                                                           \
+                                </durability>                                                                           \
+                                <publishMode>                                                                           \
+                                        <kind>SYNCHRONOUS</kind>                                                        \
+                                </publishMode>                                                                          \
+                        </qos>                                                                                          \
+                </data_writer>                                                                                          \
+                <data_writer profile_name=\"NETWORK_LATENCY_TOPIC\">                                                    \
                 </data_writer>                                                                                          \
         </profiles>                                                                                                     \
         </dds>                                                                                                          \
@@ -807,11 +819,45 @@ TEST_F(StatisticsFromXMLProfileTests, XMLConfigurationForStatisticsDataWritersQo
     ASSERT_NE(statistics_publisher_impl, nullptr);
 
     // 3. Get datawriters
-    std::string topic1_name = "_fastdds_statistics_history2history_latency";
-    eprosima::fastdds::dds::DataWriter* history_latency_writer = statistics_publisher_impl->lookup_datawriter(topic1_name);
+
+    // HISTORY_LATENCY_TOPIC has non default qos defined in XML
+    // Also is defined as data_writer profile, and in the fastdds.statistics property policy,
+    // for which the non-default qos defined should prevail
+    std::string history_latency_name = "_fastdds_statistics_history2history_latency";
+    eprosima::fastdds::dds::DataWriter* history_latency_writer =
+            statistics_publisher_impl->lookup_datawriter(history_latency_name);
     ASSERT_NE(history_latency_writer, nullptr);
 
-    // TODO: Check datawriters
+    ASSERT_EQ(eprosima::fastdds::dds::ReliabilityQosPolicyKind::BEST_EFFORT_RELIABILITY_QOS,
+            history_latency_writer->get_qos().reliability().kind);
+    ASSERT_EQ(eprosima::fastdds::dds::DurabilityQosPolicyKind_t::VOLATILE_DURABILITY_QOS,
+            history_latency_writer->get_qos().durability().kind);
+    ASSERT_EQ(eprosima::fastdds::dds::PublishModeQosPolicyKind::SYNCHRONOUS_PUBLISH_MODE,
+            history_latency_writer->get_qos().publish_mode().kind);
+
+    // NETWORK_LATENCY_TOPIC should have by-default qos
+    // Defined as data_writer profile
+    std::string network_latency_name = "_fastdds_statistics_network_latency";
+    eprosima::fastdds::dds::DataWriter* network_latency_writer =
+            statistics_publisher_impl->lookup_datawriter(network_latency_name);
+    ASSERT_NE(network_latency_writer, nullptr);
+    ASSERT_EQ(STATISTICS_DATAWRITER_QOS, network_latency_writer->get_qos());
+
+    // PUBLICATION_THROUGHPUT_TOPIC should have by-default qos
+    // Defined in the fastdds.statistics property policy
+    std::string publication_throughput_name = "_fastdds_statistics_publication_throughput";
+    eprosima::fastdds::dds::DataWriter* publication_throughput_writer =
+            statistics_publisher_impl->lookup_datawriter(publication_throughput_name);
+    ASSERT_NE(publication_throughput_writer, nullptr);
+    ASSERT_EQ(STATISTICS_DATAWRITER_QOS, publication_throughput_writer->get_qos());
+
+    // SUBSCRIPTION_THROUGHPUT_TOPIC is not defined. Should return nullptr
+    std::string subscription_throughput_name = "_fastdds_statistics_subscription_throughput";
+    eprosima::fastdds::dds::DataWriter* subscription_throughput_writer =
+            statistics_publisher_impl->lookup_datawriter(subscription_throughput_name);
+    ASSERT_EQ(subscription_throughput_writer, nullptr);
+
+    // TODO: Check more datawriters
 
     remove("FASTRTPS_PROFILES.xml");
 
