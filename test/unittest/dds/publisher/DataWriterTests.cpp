@@ -1671,8 +1671,7 @@ TEST(DataWriterTests, InstancePolicyAllocationConsistencyNotKeyed)
     ASSERT_NE(data_writer1, nullptr);
 
     // Below an ampliation of the last comprobation, for which it is proved the case of < 0 (-1),
-    // which also means infinite value.
-    // By not using instances, this does not make any change.
+    // which also means infinite value, and does not make any change.
     qos.resource_limits().max_instances = -1;
 
     DataWriter* data_writer2 = publisher->create_datawriter(topic, qos);
@@ -1680,7 +1679,7 @@ TEST(DataWriterTests, InstancePolicyAllocationConsistencyNotKeyed)
 
     // Next QoS config checks that if user sets max_samples < ( max_instances * max_samples_per_instance ) ,
     // create_datawriter() should NOT return nullptr.
-    // By not using instances, this does not make any change.
+    // By not using instances, instance allocation consistency is not checked.
     qos.resource_limits().max_samples = 4999;
     qos.resource_limits().max_instances = 10;
     qos.resource_limits().max_samples_per_instance = 500;
@@ -1688,9 +1687,19 @@ TEST(DataWriterTests, InstancePolicyAllocationConsistencyNotKeyed)
     DataWriter* data_writer3 = publisher->create_datawriter(topic, qos);
     ASSERT_NE(data_writer3, nullptr);
 
+    // Next QoS config checks that if user sets max_samples > ( max_instances * max_samples_per_instance ) ,
+    // create_datawriter() should NOT return nullptr.
+    // By not using instances, instance allocation consistency is not checked.
+    qos.resource_limits().max_samples = 5001;
+    qos.resource_limits().max_instances = 10;
+    qos.resource_limits().max_samples_per_instance = 500;
+
+    DataWriter* data_writer4 = publisher->create_datawriter(topic, qos);
+    ASSERT_NE(data_writer4, nullptr);
+
     // Next QoS config checks that if user sets max_instances to inf and leaves max_samples by default,
     // set_qos() should return ReturnCode_t::RETCODE_OK = 0
-    // By not using instances, this does not make any change.
+    // By not using instances, instance allocation consistency is not checked.
     DataWriterQos qos2 = DATAWRITER_QOS_DEFAULT;
     DataWriter* default_data_writer1 = publisher->create_datawriter(topic, qos2);
     ASSERT_NE(default_data_writer1, nullptr);
@@ -1701,15 +1710,24 @@ TEST(DataWriterTests, InstancePolicyAllocationConsistencyNotKeyed)
 
     // Below an ampliation of the last comprobation, for which it is proved the case of < 0 (-1),
     // which also means infinite value.
-    // By not using instances, this does not make any change.
+    // By not using instances, instance allocation consistency is not checked.
     qos2.resource_limits().max_instances = -1;
 
     ASSERT_EQ(ReturnCode_t::RETCODE_OK, default_data_writer1->set_qos(qos2));
 
     // Next QoS config checks that if user sets max_samples < ( max_instances * max_samples_per_instance ) ,
     // set_qos() should return ReturnCode_t::RETCODE_OK = 0
-    // By not using instances, this does not make any change.
+    // By not using instances, instance allocation consistency is not checked.
     qos2.resource_limits().max_samples = 4999;
+    qos2.resource_limits().max_instances = 10;
+    qos2.resource_limits().max_samples_per_instance = 500;
+
+    ASSERT_EQ(ReturnCode_t::RETCODE_OK, default_data_writer1->set_qos(qos2));
+
+    // Next QoS config checks that if user sets max_samples > ( max_instances * max_samples_per_instance ) ,
+    // set_qos() should return ReturnCode_t::RETCODE_OK = 0
+    // By not using instances, instance allocation consistency is not checked.
+    qos2.resource_limits().max_samples = 5001;
     qos2.resource_limits().max_instances = 10;
     qos2.resource_limits().max_samples_per_instance = 500;
 
