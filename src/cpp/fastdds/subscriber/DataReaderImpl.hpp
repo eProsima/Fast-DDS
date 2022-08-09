@@ -293,8 +293,10 @@ public:
     //! Remove all listeners in the hierarchy to allow a quiet destruction
     virtual void disable();
 
-    /* Check whether values in the DataReaderQos are compatible among them or not
-     * Checks also resource limits related policy
+    /* Extends the check_qos() call, including the check for
+     * resource limits policy.
+     * @param qos Pointer to the qos to be checked.
+     * @param type Pointer to the associated TypeSupport object.
      * @return True if correct.
      */
     static ReturnCode_t check_qos_including_resource_limits(
@@ -302,13 +304,14 @@ public:
             const TypeSupport& type);
 
     /* Check whether values in the DataReaderQos are compatible among them or not
+     * @param qos Pointer to the qos to be checked.
      * @return True if correct.
      */
     static ReturnCode_t check_qos (
             const DataReaderQos& qos);
 
-    /* Check whether values in the DataReaderQos resource limits related policy
-     * are compatible among them or not
+    /* Checks resource limits policy: Instance allocation consistency
+     * @param qos Pointer to the qos to be checked.
      * @return True if correct.
      */
     static ReturnCode_t check_allocation_consistency(
