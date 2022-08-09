@@ -363,7 +363,7 @@ TEST(TopicTests, InstancePolicyAllocationConsistencyKeyed)
     Topic* topic3 = participant->create_topic("footopic3", type.get_type_name(), qos);
     ASSERT_EQ(topic3, nullptr);
 
-    // Next QoS config checks that if user sets max_samples < ( max_instances * max_samples_per_instance ) ,
+    // Next QoS config checks that if user sets max_samples > ( max_instances * max_samples_per_instance ) ,
     // create_datareader() should not return nullptr.
     qos.resource_limits().max_samples = 5001;
     qos.resource_limits().max_instances = 10;
