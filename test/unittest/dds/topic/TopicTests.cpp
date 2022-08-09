@@ -245,18 +245,15 @@ TEST(TopicTests, InstancePolicyAllocationConsistencyNotKeyed)
     TypeSupport type(new TopicDataTypeMock());
     type.register_type(participant);
 
-    // Next QoS config checks that if user sets max_instances to inf and leaves max_samples by default,
+    // Next QoS config checks the default qos configuration,
     // create_topic() should NOT return nullptr.
-    // By not using instances, this does not make any change.
     TopicQos qos = TOPIC_QOS_DEFAULT;
-    qos.resource_limits().max_instances = 0;
 
     Topic* topic1 = participant->create_topic("footopic1", type.get_type_name(), qos);
     ASSERT_NE(topic1, nullptr);
 
     // Below an ampliation of the last comprobation, for which it is proved the case of < 0 (-1),
-    // which also means infinite value.
-    // By not using instances, this does not make any change.
+    // which also means infinite value, and does not make any change.
     qos.resource_limits().max_instances = -1;
 
     Topic* topic2 = participant->create_topic("footopic2", type.get_type_name(), qos);
@@ -264,7 +261,7 @@ TEST(TopicTests, InstancePolicyAllocationConsistencyNotKeyed)
 
     // Next QoS config checks that if user sets max_samples < ( max_instances * max_samples_per_instance ) ,
     // create_topic() should NOT return nullptr.
-    // By not using instances, this does not make any change.
+    // By not using instances, instance allocation consistency is not checked.
     qos.resource_limits().max_samples = 4999;
     qos.resource_limits().max_instances = 10;
     qos.resource_limits().max_samples_per_instance = 500;
@@ -272,27 +269,24 @@ TEST(TopicTests, InstancePolicyAllocationConsistencyNotKeyed)
     Topic* topic3 = participant->create_topic("footopic3", type.get_type_name(), qos);
     ASSERT_NE(topic3, nullptr);
 
-    // Next QoS config checks that if user sets max_instances to inf and leaves max_samples by default,
+    // Next QoS config checks the default qos configuration,
     // set_qos() should return ReturnCode_t::RETCODE_OK = 0
-    // By not using instances, this does not make any change.
     TopicQos qos2 = TOPIC_QOS_DEFAULT;
     Topic* default_topic1 = participant->create_topic("footopic4", type.get_type_name(), qos2);
     ASSERT_NE(default_topic1, nullptr);
-
-    qos2.resource_limits().max_instances = 0;
 
     ASSERT_EQ(ReturnCode_t::RETCODE_OK, default_topic1->set_qos(qos2));
 
     // Below an ampliation of the last comprobation, for which it is proved the case of < 0 (-1),
     // which also means infinite value.
-    // By not using instances, this does not make any change.
+    // By not using instances, instance allocation consistency is not checked.
     qos2.resource_limits().max_instances = -1;
 
     ASSERT_EQ(ReturnCode_t::RETCODE_OK, default_topic1->set_qos(qos2));
 
     // Next QoS config checks that if user sets max_samples < ( max_instances * max_samples_per_instance ) ,
     // set_qos() should return ReturnCode_t::RETCODE_OK = 0
-    // By not using instances, this does not make any change.
+    // By not using instances, instance allocation consistency is not checked.
     qos2.resource_limits().max_samples = 4999;
     qos2.resource_limits().max_instances = 10;
     qos2.resource_limits().max_samples_per_instance = 500;
@@ -327,10 +321,9 @@ TEST(TopicTests, InstancePolicyAllocationConsistencyKeyed)
     // This test pretends to use topic with instances, so the following flag is set.
     type.get()->m_isGetKeyDefined = true;
 
-    // Next QoS config checks that if user sets max_instances to inf and leaves max_samples by default,
-    // create_topic() should not return nullptr, as the by default values are already infinite.
+    // Next QoS config checks the default qos configuration,
+    // create_topic() should not return nullptr.
     TopicQos qos = TOPIC_QOS_DEFAULT;
-    qos.resource_limits().max_instances = 0;
 
     Topic* topic1 = participant->create_topic("footopic1", type.get_type_name(), qos);
     ASSERT_NE(topic1, nullptr);
@@ -351,13 +344,11 @@ TEST(TopicTests, InstancePolicyAllocationConsistencyKeyed)
     Topic* topic3 = participant->create_topic("footopic3", type.get_type_name(), qos);
     ASSERT_EQ(topic3, nullptr);
 
-    // Next QoS config checks that if user sets max_instances to inf and leaves max_samples by default,
-    // set_qos() should return ReturnCode_t::RETCODE_OK = 0, as the by default values are already infinite.
+    // Next QoS config checks the default qos configuration,
+    // set_qos() should return ReturnCode_t::RETCODE_OK = 0.
     TopicQos qos2 = TOPIC_QOS_DEFAULT;
     Topic* default_topic1 = participant->create_topic("footopic4", type.get_type_name(), qos2);
     ASSERT_NE(default_topic1, nullptr);
-
-    qos2.resource_limits().max_instances = 0;
 
     ASSERT_EQ(ReturnCode_t::RETCODE_OK, default_topic1->set_qos(qos2));
 
