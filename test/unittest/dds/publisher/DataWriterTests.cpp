@@ -1699,7 +1699,6 @@ TEST(DataWriterTests, InstancePolicyAllocationConsistencyNotKeyed)
 
     // Next QoS config checks the default qos configuration,
     // set_qos() should return ReturnCode_t::RETCODE_OK = 0
-    // By not using instances, instance allocation consistency is not checked.
     DataWriterQos qos2 = DATAWRITER_QOS_DEFAULT;
     DataWriter* default_data_writer1 = publisher->create_datawriter(topic, qos2);
     ASSERT_NE(default_data_writer1, nullptr);

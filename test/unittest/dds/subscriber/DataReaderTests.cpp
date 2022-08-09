@@ -3063,18 +3063,15 @@ TEST_F(DataReaderTests, InstancePolicyAllocationConsistencyNotKeyed)
     Topic* topic = participant->create_topic("footopic", type.get_type_name(), TOPIC_QOS_DEFAULT);
     ASSERT_NE(topic, nullptr);
 
-    // Next QoS config checks that if user sets max_instances to inf and leaves max_samples by default,
+    // Next QoS config checks the default qos configuration,
     // create_datareader() should NOT return nullptr.
-    // By not using instances, this does not make any change.
     DataReaderQos qos = DATAREADER_QOS_DEFAULT;
-    qos.resource_limits().max_instances = 0;
 
     DataReader* data_reader1 = subscriber->create_datareader(topic, qos);
     ASSERT_NE(data_reader1, nullptr);
 
     // Below an ampliation of the last comprobation, for which it is proved the case of < 0 (-1),
-    // which also means infinite value.
-    // By not using instances, this does not make any change.
+    // which also means infinite value, and does not make any change.
     qos.resource_limits().max_instances = -1;
 
     DataReader* data_reader2 = subscriber->create_datareader(topic, qos);
@@ -3096,15 +3093,11 @@ TEST_F(DataReaderTests, InstancePolicyAllocationConsistencyNotKeyed)
     subscriber_qos.entity_factory().autoenable_created_entities = false;
     ASSERT_EQ(ReturnCode_t::RETCODE_OK, subscriber->set_qos(subscriber_qos));
 
-    // Next QoS config checks that if user sets max_instances to inf and leaves max_samples by default,
+    // Next QoS config checks the default qos configuration,
     // set_qos() should return ReturnCode_t::RETCODE_OK = 0
-    // By not using instances, this does not make any change.
     DataReaderQos qos2 = DATAREADER_QOS_DEFAULT;
-
     DataReader* default_data_reader2 = subscriber->create_datareader(topic, qos2);
     ASSERT_NE(default_data_reader2, nullptr);
-
-    qos2.resource_limits().max_instances = 0;
 
     ASSERT_EQ(ReturnCode_t::RETCODE_OK, default_data_reader2->set_qos(qos2));
 
@@ -3154,10 +3147,9 @@ TEST_F(DataReaderTests, InstancePolicyAllocationConsistencyKeyed)
     Topic* topic = participant->create_topic("footopic", type.get_type_name(), TOPIC_QOS_DEFAULT);
     ASSERT_NE(topic, nullptr);
 
-    // Next QoS config checks that if user sets max_instances to inf and leaves max_samples by default,
-    // create_datareader() should not return nullptr, as the by default values are already infinite.
+    // Next QoS config checks the default qos configuration,
+    // create_datareader() should not return nullptr.
     DataReaderQos qos = DATAREADER_QOS_DEFAULT;
-    qos.resource_limits().max_instances = 0;
 
     DataReader* data_reader1 = subscriber->create_datareader(topic, qos);
     ASSERT_NE(data_reader1, nullptr);
@@ -3184,14 +3176,11 @@ TEST_F(DataReaderTests, InstancePolicyAllocationConsistencyKeyed)
     subscriber_qos.entity_factory().autoenable_created_entities = false;
     ASSERT_EQ(ReturnCode_t::RETCODE_OK, subscriber->set_qos(subscriber_qos));
 
-    // Next QoS config checks that if user sets max_instances to inf and leaves max_samples by default,
+    // Next QoS config checks the default qos configuration,
     // set_qos() should return ReturnCode_t::RETCODE_OK = 0, as the by default values are already infinite.
     DataReaderQos qos2 = DATAREADER_QOS_DEFAULT;
-
     DataReader* default_data_reader2 = subscriber->create_datareader(topic, qos2);
     ASSERT_NE(default_data_reader2, nullptr);
-
-    qos2.resource_limits().max_instances = 0;
 
     ASSERT_EQ(ReturnCode_t::RETCODE_OK, default_data_reader2->set_qos(qos2));
 
