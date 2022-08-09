@@ -1784,6 +1784,15 @@ TEST(DataWriterTests, InstancePolicyAllocationConsistencyKeyed)
     DataWriter* data_writer3 = publisher->create_datawriter(topic, qos);
     ASSERT_EQ(data_writer3, nullptr);
 
+    // Next QoS config checks that if user sets max_samples > ( max_instances * max_samples_per_instance ) ,
+    // create_datawriter() should not return nullptr.
+    qos.resource_limits().max_samples = 5001;
+    qos.resource_limits().max_instances = 10;
+    qos.resource_limits().max_samples_per_instance = 500;
+
+    DataWriter* data_writer4 = publisher->create_datawriter(topic, qos);
+    ASSERT_NE(data_writer4, nullptr);
+
     // Next QoS config checks the default qos configuration,
     // set_qos() should return ReturnCode_t::RETCODE_OK = 0, as the by default values are already infinite.
     DataWriterQos qos2 = DATAWRITER_QOS_DEFAULT;
@@ -1805,6 +1814,14 @@ TEST(DataWriterTests, InstancePolicyAllocationConsistencyKeyed)
     qos2.resource_limits().max_samples_per_instance = 500;
 
     ASSERT_NE(ReturnCode_t::RETCODE_OK, default_data_writer1->set_qos(qos2));
+
+    // Next QoS config checks that if user sets max_samples > ( max_instances * max_samples_per_instance ) ,
+    // set_qos() should return ReturnCode_t::RETCODE_OK = 0.
+    qos2.resource_limits().max_samples = 5001;
+    qos2.resource_limits().max_instances = 10;
+    qos2.resource_limits().max_samples_per_instance = 500;
+
+    ASSERT_EQ(ReturnCode_t::RETCODE_OK, default_data_writer1->set_qos(qos2));
 }
 
 } // namespace dds
