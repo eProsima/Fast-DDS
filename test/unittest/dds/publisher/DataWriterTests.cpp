@@ -1745,10 +1745,9 @@ TEST(DataWriterTests, InstancePolicyAllocationConsistencyKeyed)
     Topic* topic = participant->create_topic("footopic", type.get_type_name(), TOPIC_QOS_DEFAULT);
     ASSERT_NE(topic, nullptr);
 
-    // Next QoS config checks that if user sets max_instances to inf and leaves max_samples by default,
-    // create_datawriter() should not return nullptr, as the by default values are already infinite.
+    // Next QoS config checks the default qos configuration,
+    // create_datawriter() should not return nullptr.
     DataWriterQos qos = DATAWRITER_QOS_DEFAULT;
-    qos.resource_limits().max_instances = 0;
 
     DataWriter* data_writer1 = publisher->create_datawriter(topic, qos);
     ASSERT_NE(data_writer1, nullptr);
