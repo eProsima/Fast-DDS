@@ -1698,7 +1698,7 @@ ReturnCode_t DataWriterImpl::check_qos_including_resource_limits(
     if (ReturnCode_t::RETCODE_OK == check_qos_return &&
             type->m_isGetKeyDefined)
     {
-            check_qos_return = check_allocation_consistency(qos);
+        check_qos_return = check_allocation_consistency(qos);
     }
     return check_qos_return;
 }
