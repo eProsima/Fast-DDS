@@ -25,7 +25,7 @@
 
 #include <fastdds/rtps/common/GuidPrefix_t.hpp>
 
-#include <json.hpp>
+#include <nlohmann/json.hpp>
 
 namespace eprosima {
 namespace fastdds {

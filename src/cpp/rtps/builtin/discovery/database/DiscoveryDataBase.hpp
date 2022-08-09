@@ -37,7 +37,7 @@
 #include <rtps/builtin/discovery/database/DiscoveryEndpointInfo.hpp>
 #include <rtps/builtin/discovery/database/DiscoveryDataQueueInfo.hpp>
 
-#include <json.hpp>
+#include <nlohmann/json.hpp>
 
 namespace eprosima {
 namespace fastdds {

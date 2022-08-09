@@ -28,7 +28,7 @@
 #include <rtps/builtin/discovery/database/DiscoverySharedInfo.hpp>
 #include <rtps/builtin/discovery/database/DiscoveryParticipantChangeData.hpp>
 
-#include <json.hpp>
+#include <nlohmann/json.hpp>
 
 namespace eprosima {
 namespace fastdds {

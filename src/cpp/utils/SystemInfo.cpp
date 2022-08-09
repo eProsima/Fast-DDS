@@ -32,7 +32,7 @@
 #include <iomanip>
 #include <time.h>
 
-#include <json.hpp>
+#include <nlohmann/json.hpp>
 #include <fastrtps/types/TypesBase.h>
 
 namespace eprosima {

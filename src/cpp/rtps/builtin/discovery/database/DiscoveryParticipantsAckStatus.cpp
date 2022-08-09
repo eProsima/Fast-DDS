@@ -24,7 +24,7 @@
 
 #include <rtps/builtin/discovery/database/DiscoveryParticipantsAckStatus.hpp>
 
-#include <json.hpp>
+#include <nlohmann/json.hpp>
 #include <rtps/builtin/discovery/database/backup/SharedBackupFunctions.hpp>
 
 namespace eprosima {
