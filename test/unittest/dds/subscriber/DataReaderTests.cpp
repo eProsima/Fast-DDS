@@ -3079,7 +3079,7 @@ TEST_F(DataReaderTests, InstancePolicyAllocationConsistencyNotKeyed)
 
     // Next QoS config checks that if user sets max_samples < ( max_instances * max_samples_per_instance ) ,
     // create_datareader() should NOT return nullptr.
-    // By not using instances, this does not make any change.
+    // By not using instances, instance allocation consistency is not checked.
     qos.resource_limits().max_samples = 4999;
     qos.resource_limits().max_instances = 10;
     qos.resource_limits().max_samples_per_instance = 500;
@@ -3103,14 +3103,14 @@ TEST_F(DataReaderTests, InstancePolicyAllocationConsistencyNotKeyed)
 
     // Below an ampliation of the last comprobation, for which it is proved the case of < 0 (-1),
     // which also means infinite value.
-    // By not using instances, this does not make any change.
+    // By not using instances, instance allocation consistency is not checked.
     qos2.resource_limits().max_instances = -1;
 
     ASSERT_EQ(ReturnCode_t::RETCODE_OK, default_data_reader2->set_qos(qos2));
 
     // Next QoS config checks that if user sets max_samples < ( max_instances * max_samples_per_instance ) ,
     // set_qos() should return ReturnCode_t::RETCODE_OK = 0
-    // By not using instances, this does not make any change.
+    // By not using instances, instance allocation consistency is not checked.
     qos2.resource_limits().max_samples = 4999;
     qos2.resource_limits().max_instances = 10;
     qos2.resource_limits().max_samples_per_instance = 500;
