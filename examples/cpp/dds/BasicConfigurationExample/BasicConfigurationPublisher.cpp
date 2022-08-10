@@ -209,7 +209,7 @@ void HelloWorldPublisher::PubListener::on_publication_matched(
     if (info.current_count_change == 1)
     {
         matched_ = info.current_count;
-        std::cout << "Publisher matched [ " << info.last_subscription_handle << " ]." << std::endl;
+        std::cout << "Publisher matched [ " << iHandle2GUID(info.last_subscription_handle) << " ]." << std::endl;
         if (enough_matched())
         {
             awake();
@@ -218,7 +218,7 @@ void HelloWorldPublisher::PubListener::on_publication_matched(
     else if (info.current_count_change == -1)
     {
         matched_ = info.current_count;
-        std::cout << "Publisher unmatched [ " << info.last_subscription_handle << " ]." << std::endl;
+        std::cout << "Publisher unmatched [ " << iHandle2GUID(info.last_subscription_handle) << " ]." << std::endl;
     }
     else
     {
