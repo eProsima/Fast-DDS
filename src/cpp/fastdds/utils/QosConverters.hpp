@@ -43,6 +43,10 @@ void set_qos_from_attributes(
         const PublisherAttributes& attr);
 
 void set_qos_from_attributes(
+        DataReaderQos& qos,
+        const SubscriberAttributes& attr);
+
+void set_qos_from_attributes(
         DomainParticipantQos& qos,
         const eprosima::fastrtps::rtps::RTPSParticipantAttributes& attr);
 
