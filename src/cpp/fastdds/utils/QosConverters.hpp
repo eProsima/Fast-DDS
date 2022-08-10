@@ -23,7 +23,10 @@
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 
 #include <fastdds/dds/publisher/qos/DataWriterQos.hpp>
+#include <fastdds/dds/subscriber/qos/DataReaderQos.hpp>
 #include <fastrtps/attributes/PublisherAttributes.h>
+#include <fastrtps/attributes/SubscriberAttributes.h>
+#include <fastrtps/attributes/TopicAttributes.h>
 #include <fastdds/dds/domain/DomainParticipant.hpp>
 #include <fastdds/rtps/participant/RTPSParticipant.h>
 
@@ -32,6 +35,8 @@ namespace fastdds {
 namespace dds {
 
 using fastrtps::PublisherAttributes;
+using fastrtps::SubscriberAttributes;
+using fastrtps::TopicAttributes;
 
 void set_qos_from_attributes(
         DataWriterQos& qos,
@@ -40,6 +45,22 @@ void set_qos_from_attributes(
 void set_qos_from_attributes(
         DomainParticipantQos& qos,
         const eprosima::fastrtps::rtps::RTPSParticipantAttributes& attr);
+
+void set_attributes_from_qos(
+        fastrtps::rtps::RTPSParticipantAttributes& attr,
+        const DomainParticipantQos& qos);
+
+void set_qos_from_attributes(
+        TopicQos& qos,
+        const TopicAttributes& attr);
+
+void set_qos_from_attributes(
+        SubscriberQos& qos,
+        const SubscriberAttributes& attr);
+
+void set_qos_from_attributes(
+        PublisherQos& qos,
+        const PublisherAttributes& attr);
 
 } /* namespace dds */
 } /* namespace fastdds */
