@@ -22,11 +22,18 @@
 #define _QOS_CONVERTERS_HPP_
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 
+#include <fastdds/dds/publisher/qos/DataWriterQos.hpp>
+#include <fastrtps/attributes/PublisherAttributes.h>
+
 namespace eprosima {
 namespace fastdds {
 namespace dds {
 
 using fastrtps::PublisherAttributes;
+
+void set_qos_from_attributes(
+        DataWriterQos& qos,
+        const PublisherAttributes& attr);
 
 } /* namespace dds */
 } /* namespace fastdds */
