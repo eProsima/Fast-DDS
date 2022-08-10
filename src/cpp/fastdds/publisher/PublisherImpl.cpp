@@ -22,6 +22,8 @@
 #include <fastdds/domain/DomainParticipantImpl.hpp>
 #include <fastdds/topic/TopicDescriptionImpl.hpp>
 
+#include <fastdds/utils/QosConverters.hpp>
+
 #include <fastdds/dds/publisher/Publisher.hpp>
 #include <fastdds/dds/publisher/PublisherListener.hpp>
 #include <fastdds/dds/publisher/DataWriter.hpp>
@@ -49,7 +51,7 @@ using fastrtps::rtps::InstanceHandle_t;
 using fastrtps::rtps::Property;
 using fastrtps::Duration_t;
 using fastrtps::PublisherAttributes;
-
+/*
 static void set_qos_from_attributes(
         DataWriterQos& qos,
         const PublisherAttributes& attr)
@@ -99,7 +101,7 @@ static void set_qos_from_attributes(
         property.value(std::move(partitions));
         qos.properties().properties().push_back(std::move(property));
     }
-}
+}*/
 
 PublisherImpl::PublisherImpl(
         DomainParticipantImpl* p,
