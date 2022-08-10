@@ -220,7 +220,7 @@ DomainParticipant* DomainParticipantFactory::create_participant_with_profile(
     if (XMLP_ret::XML_OK == XMLProfileManager::fillParticipantAttributes(profile_name, attr))
     {
         DomainParticipantQos qos = default_participant_qos_;
-        set_qos_from_attributes(qos, attr.rtps);
+        utils::set_qos_from_attributes(qos, attr.rtps);
         return create_participant(did, qos, listen, mask);
     }
 
@@ -239,7 +239,7 @@ DomainParticipant* DomainParticipantFactory::create_participant_with_profile(
     if (XMLP_ret::XML_OK == XMLProfileManager::fillParticipantAttributes(profile_name, attr))
     {
         DomainParticipantQos qos = default_participant_qos_;
-        set_qos_from_attributes(qos, attr.rtps);
+        utils::set_qos_from_attributes(qos, attr.rtps);
         return create_participant(attr.domainId, qos, listen, mask);
     }
 
@@ -317,7 +317,7 @@ ReturnCode_t DomainParticipantFactory::get_participant_qos_from_profile(
     if (XMLP_ret::XML_OK == XMLProfileManager::fillParticipantAttributes(profile_name, attr))
     {
         qos = default_participant_qos_;
-        set_qos_from_attributes(qos, attr.rtps);
+        utils::set_qos_from_attributes(qos, attr.rtps);
         return ReturnCode_t::RETCODE_OK;
     }
 
@@ -409,7 +409,7 @@ void DomainParticipantFactory::reset_default_participant_qos()
     {
         eprosima::fastrtps::ParticipantAttributes attr;
         XMLProfileManager::getDefaultParticipantAttributes(attr);
-        set_qos_from_attributes(default_participant_qos_, attr.rtps);
+        utils::set_qos_from_attributes(default_participant_qos_, attr.rtps);
     }
 }
 

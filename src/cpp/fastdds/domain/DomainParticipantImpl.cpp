@@ -110,15 +110,15 @@ DomainParticipantImpl::DomainParticipantImpl(
 
     PublisherAttributes pub_attr;
     XMLProfileManager::getDefaultPublisherAttributes(pub_attr);
-    set_qos_from_attributes(default_pub_qos_, pub_attr);
+    utils::set_qos_from_attributes(default_pub_qos_, pub_attr);
 
     SubscriberAttributes sub_attr;
     XMLProfileManager::getDefaultSubscriberAttributes(sub_attr);
-    set_qos_from_attributes(default_sub_qos_, sub_attr);
+    utils::set_qos_from_attributes(default_sub_qos_, sub_attr);
 
     TopicAttributes top_attr;
     XMLProfileManager::getDefaultTopicAttributes(top_attr);
-    set_qos_from_attributes(default_topic_qos_, top_attr);
+    utils::set_qos_from_attributes(default_topic_qos_, top_attr);
 
     // Pre calculate participant id and generated guid
     participant_id_ = qos_.wire_protocol().participant_id;
@@ -248,7 +248,7 @@ ReturnCode_t DomainParticipantImpl::enable()
     assert(get_rtps_participant() == nullptr);
 
     fastrtps::rtps::RTPSParticipantAttributes rtps_attr;
-    set_attributes_from_qos(rtps_attr, qos_);
+    utils::set_attributes_from_qos(rtps_attr, qos_);
     rtps_attr.participantID = participant_id_;
 
     // If DEFAULT_ROS2_MASTER_URI is specified then try to create default client if
@@ -359,7 +359,7 @@ ReturnCode_t DomainParticipantImpl::set_qos(
             if (qos_should_be_updated)
             {
                 // Notify the participant that there is a QoS update
-                set_attributes_from_qos(patt, qos_);
+                utils::set_attributes_from_qos(patt, qos_);
             }
             else
             {
@@ -800,7 +800,7 @@ Publisher* DomainParticipantImpl::create_publisher_with_profile(
     if (XMLP_ret::XML_OK == XMLProfileManager::fillPublisherAttributes(profile_name, attr))
     {
         PublisherQos qos = default_pub_qos_;
-        set_qos_from_attributes(qos, attr);
+        utils::set_qos_from_attributes(qos, attr);
         return create_publisher(qos, listener, mask);
     }
 
@@ -996,7 +996,7 @@ void DomainParticipantImpl::reset_default_publisher_qos()
     PublisherImpl::set_qos(default_pub_qos_, PUBLISHER_QOS_DEFAULT, true);
     PublisherAttributes attr;
     XMLProfileManager::getDefaultPublisherAttributes(attr);
-    set_qos_from_attributes(default_pub_qos_, attr);
+    utils::set_qos_from_attributes(default_pub_qos_, attr);
 }
 
 const PublisherQos& DomainParticipantImpl::get_default_publisher_qos() const
@@ -1012,7 +1012,7 @@ const ReturnCode_t DomainParticipantImpl::get_publisher_qos_from_profile(
     if (XMLP_ret::XML_OK == XMLProfileManager::fillPublisherAttributes(profile_name, attr))
     {
         qos = default_pub_qos_;
-        set_qos_from_attributes(qos, attr);
+        utils::set_qos_from_attributes(qos, attr);
         return ReturnCode_t::RETCODE_OK;
     }
 
@@ -1044,7 +1044,7 @@ void DomainParticipantImpl::reset_default_subscriber_qos()
     SubscriberImpl::set_qos(default_sub_qos_, SUBSCRIBER_QOS_DEFAULT, true);
     SubscriberAttributes attr;
     XMLProfileManager::getDefaultSubscriberAttributes(attr);
-    set_qos_from_attributes(default_sub_qos_, attr);
+    utils::set_qos_from_attributes(default_sub_qos_, attr);
 }
 
 const SubscriberQos& DomainParticipantImpl::get_default_subscriber_qos() const
@@ -1060,7 +1060,7 @@ const ReturnCode_t DomainParticipantImpl::get_subscriber_qos_from_profile(
     if (XMLP_ret::XML_OK == XMLProfileManager::fillSubscriberAttributes(profile_name, attr))
     {
         qos = default_sub_qos_;
-        set_qos_from_attributes(qos, attr);
+        utils::set_qos_from_attributes(qos, attr);
         return ReturnCode_t::RETCODE_OK;
     }
 
@@ -1092,7 +1092,7 @@ void DomainParticipantImpl::reset_default_topic_qos()
     TopicImpl::set_qos(default_topic_qos_, TOPIC_QOS_DEFAULT, true);
     TopicAttributes attr;
     XMLProfileManager::getDefaultTopicAttributes(attr);
-    set_qos_from_attributes(default_topic_qos_, attr);
+    utils::set_qos_from_attributes(default_topic_qos_, attr);
 }
 
 const TopicQos& DomainParticipantImpl::get_default_topic_qos() const
@@ -1108,7 +1108,7 @@ const ReturnCode_t DomainParticipantImpl::get_topic_qos_from_profile(
     if (XMLP_ret::XML_OK == XMLProfileManager::fillTopicAttributes(profile_name, attr))
     {
         qos = default_topic_qos_;
-        set_qos_from_attributes(qos, attr);
+        utils::set_qos_from_attributes(qos, attr);
         return ReturnCode_t::RETCODE_OK;
     }
 
@@ -1273,7 +1273,7 @@ Subscriber* DomainParticipantImpl::create_subscriber_with_profile(
     if (XMLP_ret::XML_OK == XMLProfileManager::fillSubscriberAttributes(profile_name, attr))
     {
         SubscriberQos qos = default_sub_qos_;
-        set_qos_from_attributes(qos, attr);
+        utils::set_qos_from_attributes(qos, attr);
         return create_subscriber(qos, listener, mask);
     }
 
@@ -1357,7 +1357,7 @@ Topic* DomainParticipantImpl::create_topic_with_profile(
     if (XMLP_ret::XML_OK == XMLProfileManager::fillTopicAttributes(profile_name, attr))
     {
         TopicQos qos = default_topic_qos_;
-        set_qos_from_attributes(qos, attr);
+        utils::set_qos_from_attributes(qos, attr);
         return create_topic(topic_name, type_name, qos, listener, mask);
     }
 

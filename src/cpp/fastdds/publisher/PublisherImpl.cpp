@@ -64,7 +64,7 @@ PublisherImpl::PublisherImpl(
 {
     PublisherAttributes pub_attr;
     XMLProfileManager::getDefaultPublisherAttributes(pub_attr);
-    set_qos_from_attributes(default_datawriter_qos_, pub_attr);
+    utils::set_qos_from_attributes(default_datawriter_qos_, pub_attr);
 }
 
 ReturnCode_t PublisherImpl::enable()
@@ -276,7 +276,7 @@ DataWriter* PublisherImpl::create_datawriter_with_profile(
     if (XMLP_ret::XML_OK == XMLProfileManager::fillPublisherAttributes(profile_name, attr))
     {
         DataWriterQos qos = default_datawriter_qos_;
-        set_qos_from_attributes(qos, attr);
+        utils::set_qos_from_attributes(qos, attr);
         return create_datawriter(topic, qos, listener, mask);
     }
 
@@ -431,7 +431,7 @@ void PublisherImpl::reset_default_datawriter_qos()
     DataWriterImpl::set_qos(default_datawriter_qos_, DATAWRITER_QOS_DEFAULT, true);
     PublisherAttributes attr;
     XMLProfileManager::getDefaultPublisherAttributes(attr);
-    set_qos_from_attributes(default_datawriter_qos_, attr);
+    utils::set_qos_from_attributes(default_datawriter_qos_, attr);
 }
 
 const DataWriterQos& PublisherImpl::get_default_datawriter_qos() const
@@ -447,7 +447,7 @@ const ReturnCode_t PublisherImpl::get_datawriter_qos_from_profile(
     if (XMLP_ret::XML_OK == XMLProfileManager::fillPublisherAttributes(profile_name, attr, false))
     {
         qos = default_datawriter_qos_;
-        set_qos_from_attributes(qos, attr);
+        utils::set_qos_from_attributes(qos, attr);
         return ReturnCode_t::RETCODE_OK;
     }
 

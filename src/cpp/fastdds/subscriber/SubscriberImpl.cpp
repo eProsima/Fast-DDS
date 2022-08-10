@@ -64,7 +64,7 @@ SubscriberImpl::SubscriberImpl(
 {
     SubscriberAttributes sub_attr;
     XMLProfileManager::getDefaultSubscriberAttributes(sub_attr);
-    set_qos_from_attributes(default_datareader_qos_, sub_attr);
+    utils::set_qos_from_attributes(default_datareader_qos_, sub_attr);
 }
 
 ReturnCode_t SubscriberImpl::enable()
@@ -237,7 +237,7 @@ DataReader* SubscriberImpl::create_datareader_with_profile(
     if (XMLP_ret::XML_OK == XMLProfileManager::fillSubscriberAttributes(profile_name, attr))
     {
         DataReaderQos qos = default_datareader_qos_;
-        set_qos_from_attributes(qos, attr);
+        utils::set_qos_from_attributes(qos, attr);
         return create_datareader(topic, qos, listener, mask);
     }
 
@@ -369,7 +369,7 @@ void SubscriberImpl::reset_default_datareader_qos()
     DataReaderImpl::set_qos(default_datareader_qos_, DATAREADER_QOS_DEFAULT, true);
     SubscriberAttributes attr;
     XMLProfileManager::getDefaultSubscriberAttributes(attr);
-    set_qos_from_attributes(default_datareader_qos_, attr);
+    utils::set_qos_from_attributes(default_datareader_qos_, attr);
 }
 
 const DataReaderQos& SubscriberImpl::get_default_datareader_qos() const
@@ -408,7 +408,7 @@ const ReturnCode_t SubscriberImpl::get_datareader_qos_from_profile(
     if (XMLP_ret::XML_OK == XMLProfileManager::fillSubscriberAttributes(profile_name, attr, false))
     {
         qos = default_datareader_qos_;
-        set_qos_from_attributes(qos, attr);
+        utils::set_qos_from_attributes(qos, attr);
         return ReturnCode_t::RETCODE_OK;
     }
 
