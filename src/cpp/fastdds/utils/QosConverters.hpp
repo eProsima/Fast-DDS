@@ -39,30 +39,65 @@ using fastrtps::PublisherAttributes;
 using fastrtps::SubscriberAttributes;
 using fastrtps::TopicAttributes;
 
+/**
+ * Obtains the corresponding QoS from the attributes provided.
+ * @param qos Pointer to the QoS to write on
+ * @param attr Pointer to the attributes from which to obtain data
+ */
 void set_qos_from_attributes(
         DataWriterQos& qos,
         const PublisherAttributes& attr);
 
+/**
+ * Obtains the corresponding QoS from the attributes provided.
+ * @param qos Pointer to the QoS to write on
+ * @param attr Pointer to the attributes from which to obtain data
+ */
 void set_qos_from_attributes(
         DataReaderQos& qos,
         const SubscriberAttributes& attr);
 
+/**
+ * Obtains the corresponding QoS from the attributes provided.
+ * @param qos Pointer to the QoS to write on
+ * @param attr Pointer to the attributes from which to obtain data
+ */
 void set_qos_from_attributes(
         DomainParticipantQos& qos,
         const eprosima::fastrtps::rtps::RTPSParticipantAttributes& attr);
 
+/**
+ * Obtains the corresponding attributes from the QoS provided.
+ * @param attr Pointer to the attributes from which to obtain data
+ * @param qos Pointer to the QoS to write on
+ */
 void set_attributes_from_qos(
         fastrtps::rtps::RTPSParticipantAttributes& attr,
         const DomainParticipantQos& qos);
 
+/**
+ * Obtains the corresponding QoS from the attributes provided.
+ * @param qos Pointer to the QoS to write on
+ * @param attr Pointer to the attributes from which to obtain data
+ */
 void set_qos_from_attributes(
         TopicQos& qos,
         const TopicAttributes& attr);
 
+/**
+ * Obtains the corresponding QoS from the attributes provided.
+ * @param qos Pointer to the QoS to write on
+ * @param attr Pointer to the attributes from which to obtain data
+ */
 void set_qos_from_attributes(
         SubscriberQos& qos,
         const SubscriberAttributes& attr);
 
+/**
+ * Obtains the corresponding QoS from the attributes provided.
+ * @param qos Pointer to the QoS to write on
+ * @param attr Pointer to the attributes from which to obtain data
+ */
 void set_qos_from_attributes(
         PublisherQos& qos,
         const PublisherAttributes& attr);
