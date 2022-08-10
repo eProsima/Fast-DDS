@@ -177,6 +177,8 @@ bool HelloWorldPublisher::init(
     {
         return false;
     }
+
+    std::cout << "Publisher Participant created with DataWriter Guid [ " << writer_->guid() << " ]." << std::endl;
     return true;
 }
 
@@ -207,7 +209,7 @@ void HelloWorldPublisher::PubListener::on_publication_matched(
     if (info.current_count_change == 1)
     {
         matched_ = info.current_count;
-        std::cout << "Publisher matched." << std::endl;
+        std::cout << "Publisher matched [ " << info.last_subscription_handle << " ]." << std::endl;
         if (enough_matched())
         {
             awake();
@@ -216,7 +218,7 @@ void HelloWorldPublisher::PubListener::on_publication_matched(
     else if (info.current_count_change == -1)
     {
         matched_ = info.current_count;
-        std::cout << "Publisher unmatched." << std::endl;
+        std::cout << "Publisher unmatched [ " << info.last_subscription_handle << " ]." << std::endl;
     }
     else
     {
