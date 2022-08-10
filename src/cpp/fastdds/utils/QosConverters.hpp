@@ -24,6 +24,8 @@
 
 #include <fastdds/dds/publisher/qos/DataWriterQos.hpp>
 #include <fastrtps/attributes/PublisherAttributes.h>
+#include <fastdds/dds/domain/DomainParticipant.hpp>
+#include <fastdds/rtps/participant/RTPSParticipant.h>
 
 namespace eprosima {
 namespace fastdds {
@@ -34,6 +36,10 @@ using fastrtps::PublisherAttributes;
 void set_qos_from_attributes(
         DataWriterQos& qos,
         const PublisherAttributes& attr);
+
+void set_qos_from_attributes(
+        DomainParticipantQos& qos,
+        const eprosima::fastrtps::rtps::RTPSParticipantAttributes& attr);
 
 } /* namespace dds */
 } /* namespace fastdds */
