@@ -23,6 +23,7 @@
 namespace eprosima {
 namespace fastdds {
 namespace dds {
+namespace utils {
 
 using fastrtps::rtps::Property;
 
@@ -226,6 +227,7 @@ void set_qos_from_attributes(
     qos.presentation() = attr.qos.m_presentation;
 }
 
+} /* namespace utils */
 } /* namespace dds */
 } /* namespace fastdds */
 } /* namespace eprosima */

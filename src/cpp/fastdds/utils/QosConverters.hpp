@@ -33,6 +33,7 @@
 namespace eprosima {
 namespace fastdds {
 namespace dds {
+namespace utils {
 
 using fastrtps::PublisherAttributes;
 using fastrtps::SubscriberAttributes;
@@ -66,6 +67,7 @@ void set_qos_from_attributes(
         PublisherQos& qos,
         const PublisherAttributes& attr);
 
+} /* namespace utils */
 } /* namespace dds */
 } /* namespace fastdds */
 } /* namespace eprosima */
