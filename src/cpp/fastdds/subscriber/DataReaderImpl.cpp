@@ -1443,7 +1443,7 @@ ReturnCode_t DataReaderImpl::check_allocation_consistency(
         const DataReaderQos& qos)
 {
     if ((qos.resource_limits().max_samples > 0) &&
-            (qos.resource_limits().max_samples <=
+            (qos.resource_limits().max_samples <
             (qos.resource_limits().max_instances * qos.resource_limits().max_samples_per_instance)))
     {
         logError(DDS_QOS_CHECK,
