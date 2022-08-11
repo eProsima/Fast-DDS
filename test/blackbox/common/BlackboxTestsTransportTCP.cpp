@@ -497,6 +497,15 @@ TEST_P(TransportTCP, TCPv4_copy)
     EXPECT_EQ(tcpv4_transport_copy, tcpv4_transport);
 }
 
+// Test get_WAN_address member function
+TEST_P(TransportTCP, TCPv4_get_WAN_address)
+{
+    // TCPv4TransportDescriptor
+    TCPv4TransportDescriptor tcpv4_transport;
+    tcpv4_transport.set_WAN_address("80.80.99.45");
+    ASSERT_EQ(tcpv4_transport.get_WAN_address(), "80.80.99.45");
+}
+
 // Test == operator for TCPv6
 TEST_P(TransportTCP, TCPv6_equal_operator)
 {
