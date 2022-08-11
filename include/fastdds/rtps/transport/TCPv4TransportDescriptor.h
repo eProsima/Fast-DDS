@@ -69,6 +69,17 @@ struct TCPv4TransportDescriptor : public TCPTransportDescriptor
         wan_addr[3] = (fastrtps::rtps::octet)d;
     }
 
+    //! Get the public IP address
+    std::string get_WAN_address()
+    {
+        std::stringstream ss;
+        ss << static_cast<int>(wan_addr[0]) << "."
+           << static_cast<int>(wan_addr[1]) << "."
+           << static_cast<int>(wan_addr[2]) << "."
+           << static_cast<int>(wan_addr[3]);
+        return ss.str();
+    }
+
     //! Constructor
     RTPS_DllAPI TCPv4TransportDescriptor();
 

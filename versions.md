@@ -1,3 +1,54 @@
+Forthcoming
+-----------
+
+* Added API get the WAN address of TCPv4 transport descriptors (API extension)
+
+Version 2.7.1
+-------------
+
+* ReadCondition implementation according to DDS version 1.4 standard document
+* Added a new CMake option to allow users to force the use of our third party shared_mutex
+
+Version 2.7.0
+-------------
+
+* Implementation of DataWriter methods write_w_timestamp, register_instance_w_timestamp,
+  unregister_instance_w_timestamp, and dispose_w_timestamp (ABI break)
+* Support of `SampleRejectedStatus` in DDS API (API extensions on RTPS layer)
+* Implementation of DomainParticipant method find_topic
+* Include Server Name Indication (SNI) empty API (ABI break on transport layer)
+* CacheChange_t destructor made virtual (ABI break on RTPS layer)
+* Added DDS APIs for ReadCondition (API extension)
+* Added bulk notification interface to RTPS reader listener (API extension)
+* Refactor of auxiliary utils class DBQueue (ABI break)
+* Added configuration data for external locators feature (ABI break)
+
+Version 2.6.1
+-------------
+
+* Writer side content filter.
+* Implementation for DataWriter::get_key_value.
+* Implementation for DataReader::lookup_instance.
+* Support of `SampleLostStatus` in DDS API.
+
+Version 2.6.0
+-------------
+
+* New TransportInterface and NetworkFactory API to allow updating the network interfaces at runtime (ABI breaks on RTPS
+  and transport layers)
+* Removed dll export for constructors and destructors of factory created entities (breaks ABI)
+* Allow modifying the remote server locator in runtime.
+* Add physical information in DATA[p] using properties
+* Extension of `DISCOVERY_TOPIC` to include physical information about the discovered entity (ABI break)
+* Added methods getting `fastrtps::Time_t` as parameters instead of `fastrtps::rtps::Time_t` (API extension, API
+  deprecations).
+* Changed signature of eprosima::fastdds::dds::DataWriter::dispose_w_timestamp (ABI break).
+* Added method getting `std::vector<InstanceHandle_t>&` instead of `std::vector<InstanceHandle_t*>&` (API extension, API
+  deprecations).
+* Added RTPS APIs for content filter discovery information (API extension)
+* Added RTPS APIs for endpoint discovery (API extension)
+* Added RTPS APIs for on_sample_lost feature (API extension)
+
 Version 2.5.0
 -------------
 
