@@ -686,7 +686,9 @@ TEST_F(DataReaderTests, InvalidQos)
     const ReturnCode_t inmutable_code = ReturnCode_t::RETCODE_IMMUTABLE_POLICY;
 
     qos = DATAREADER_QOS_DEFAULT;
-    qos.resource_limits().max_samples++;
+    qos.resource_limits().max_samples = 5000;
+    qos.resource_limits().max_instances = 2;
+    qos.resource_limits().max_samples_per_instance = 100;
     EXPECT_EQ(inmutable_code, data_reader_->set_qos(qos));
 
     qos = DATAREADER_QOS_DEFAULT;
