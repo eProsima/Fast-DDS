@@ -1700,7 +1700,9 @@ TEST(DDSStatus, sample_rejected_key_re_dw_re_dr_keep_all_max_samples_2)
 
     writer.history_kind(eprosima::fastdds::dds::KEEP_ALL_HISTORY_QOS);
     reader.history_kind(eprosima::fastdds::dds::KEEP_ALL_HISTORY_QOS)
-            .resource_limits_max_samples(2);
+            .resource_limits_max_samples(2)
+            .resource_limits_max_instances(2)
+            .resource_limits_max_samples_per_instance(1);
 
     sample_rejected_test_dw_init(writer);
 
