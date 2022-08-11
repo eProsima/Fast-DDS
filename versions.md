@@ -1,6 +1,8 @@
 Forthcoming
 -----------
 
+* Added API get the WAN address of TCPv4 transport descriptors (API extension)
+
 Version 2.7.1
 -------------
 
