@@ -822,7 +822,7 @@ TEST_P(PubSubHistory, PubSubAsReliableKeepAllWithKeyAndMaxSamples)
     ASSERT_TRUE(reader.isInitialized());
 
     writer.resource_limits_max_instances(keys)
-            .resource_limits_max_samples(2)
+            .resource_limits_max_samples(4)
             .resource_limits_allocated_samples(2)
             .resource_limits_max_samples_per_instance(2)
             .history_kind(eprosima::fastrtps::KEEP_ALL_HISTORY_QOS)
