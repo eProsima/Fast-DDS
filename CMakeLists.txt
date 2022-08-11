@@ -15,8 +15,8 @@
 ###############################################################################
 # CMake build rules for Fast DDS
 ###############################################################################
-cmake_minimum_required(VERSION 3.5)
-cmake_policy(VERSION 3.5...3.13)
+cmake_minimum_required(VERSION 3.13)
+cmake_policy(VERSION 3.13...3.16)
 
 set(IS_TOP_LEVEL TRUE)
 if(PROJECT_SOURCE_DIR)
