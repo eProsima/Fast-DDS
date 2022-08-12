@@ -111,6 +111,7 @@ list(APPEND TEST_DEFINITIONS
     zero_copy_sub_communication
     mix_zero_copy_communication
     close_TCP_client
+    TCP_multiple_descriptors
     )
 
 
@@ -121,7 +122,9 @@ list(APPEND XML_CONFIGURATION_FILES
     simple_besteffort_zerocopy.xml
     TCP_server.xml
     TCP_client.xml
+    TCP_server_multiple_descriptors.xml
     )
+
 # Python file
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/test_build.py
     ${CMAKE_CURRENT_BINARY_DIR}/test_build.py COPYONLY)
