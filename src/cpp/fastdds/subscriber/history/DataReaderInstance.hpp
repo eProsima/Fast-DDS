@@ -190,6 +190,13 @@ private:
             current_owner.second = ownership_strength;
             ret_val = true;
         }
+        else if (ownership_strength == current_owner.second &&
+                writer_guid < current_owner.first) // Check if new writer has lower GUID.
+        {
+            current_owner.first = writer_guid;
+            current_owner.second = ownership_strength;
+            ret_val = true;
+        }
         else if (std::numeric_limits<uint32_t>::max() == ownership_strength) // uint32_t::max indicates we are in SHARED_OWNERSHIP_QOS.
         {
             assert(eprosima::fastrtps::rtps::c_Guid_Unknown == current_owner.first);
