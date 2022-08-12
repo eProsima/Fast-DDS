@@ -246,8 +246,11 @@ private:
 
         if (ownership_strength >= current_owner.second)
         {
-            current_owner.first = writer_guid;
-            current_owner.second = ownership_strength;
+            if (std::numeric_limits<uint32_t>::max() != ownership_strength) // Not SHARED_OWNERSHIP_QOS
+            {
+                current_owner.first = writer_guid;
+                current_owner.second = ownership_strength;
+            }
 
             if (InstanceStateKind::ALIVE_INSTANCE_STATE == instance_state)
             {

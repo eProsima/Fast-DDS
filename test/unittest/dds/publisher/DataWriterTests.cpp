@@ -585,11 +585,6 @@ TEST(DataWriterTests, InvalidQos)
     EXPECT_EQ(inconsistent_code, datawriter->set_qos(qos));
 
     qos = DATAWRITER_QOS_DEFAULT;
-    qos.reliability().kind = BEST_EFFORT_RELIABILITY_QOS;
-    qos.ownership().kind = EXCLUSIVE_OWNERSHIP_QOS;
-    EXPECT_EQ(inconsistent_code, datawriter->set_qos(qos));
-
-    qos = DATAWRITER_QOS_DEFAULT;
     qos.liveliness().kind = AUTOMATIC_LIVELINESS_QOS;
     qos.liveliness().announcement_period = 20;
     qos.liveliness().lease_duration = 10;
