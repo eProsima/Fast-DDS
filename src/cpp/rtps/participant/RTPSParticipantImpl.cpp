@@ -144,6 +144,50 @@ RTPSParticipantImpl::RTPSParticipantImpl(
     , is_intraprocess_only_(should_be_intraprocess_only(PParam))
     , has_shm_transport_(false)
 {
+
+    std::cout << std::endl;
+    std::cout << "RTPSParticipant Params to construct participnt" << std::endl;
+    for (const auto& x : PParam.builtin.metatrafficMulticastLocatorList)
+    {
+        std::cout << "Metatraffic Multicast Locator: " << x << std::endl;
+    }
+    for (const auto& x : PParam.builtin.metatrafficUnicastLocatorList)
+    {
+        std::cout << "Metatraffic Unicast Locator: " << x << std::endl;
+    }
+    for (const auto& x : PParam.builtin.initialPeersList)
+    {
+        std::cout << "Initial Peers Locator: " << x << std::endl;
+    }
+    for (const auto& x : PParam.defaultMulticastLocatorList)
+    {
+        std::cout << "Default Multicast Locator: " << x << std::endl;
+    }
+    for (const auto& x : PParam.defaultUnicastLocatorList)
+    {
+        std::cout << "Default Unicast Locator: " << x << std::endl;
+    }
+    for (const auto& x : PParam.userTransports)
+    {
+        std::cout << "User Transports: " << x << std::endl;
+        auto y = std::dynamic_pointer_cast<eprosima::fastdds::rtps::TCPv4TransportDescriptor>(x);
+        if (y)
+        {
+            for (const auto& p : y->listening_ports)
+            {
+                std::cout << "Listening Port: " << p << std::endl;
+            }
+            std::cout << "TCPv4TransportDescriptor " <<
+                static_cast<int>(y->wan_addr[0]) << "." <<
+                static_cast<int>(y->wan_addr[1]) << "." <<
+                static_cast<int>(y->wan_addr[2]) << "." <<
+                static_cast<int>(y->wan_addr[3]) << "." <<
+                std::endl;
+        }
+    }
+    std::cout << "End Locators in PParams" << std::endl;
+    std::cout << std::endl;
+
     if (c_GuidPrefix_Unknown != persistence_guid)
     {
         m_persistence_guid = GUID_t(persistence_guid, c_EntityId_RTPSParticipant);
@@ -421,6 +465,48 @@ RTPSParticipantImpl::RTPSParticipantImpl(
         logInfo(RTPS_PARTICIPANT,
                 "RTPSParticipant \"" << m_att.getName() << "\" with guidPrefix: " << m_guid.guidPrefix);
     }
+
+    std::cout << "RTPSParticipant with guidPrefix: " << m_guid.guidPrefix << std::endl;
+    for (const auto& x : m_att.builtin.metatrafficMulticastLocatorList)
+    {
+        std::cout << "Metatraffic Multicast Locator: " << x << std::endl;
+    }
+    for (const auto& x : m_att.builtin.metatrafficUnicastLocatorList)
+    {
+        std::cout << "Metatraffic Unicast Locator: " << x << std::endl;
+    }
+    for (const auto& x : m_att.builtin.initialPeersList)
+    {
+        std::cout << "Initial Peers Locator: " << x << std::endl;
+    }
+    for (const auto& x : m_att.defaultMulticastLocatorList)
+    {
+        std::cout << "Default Multicast Locator: " << x << std::endl;
+    }
+    for (const auto& x : m_att.defaultUnicastLocatorList)
+    {
+        std::cout << "Default Unicast Locator: " << x << std::endl;
+    }
+    for (const auto& x : m_att.userTransports)
+    {
+        std::cout << "User Transports: " << x << std::endl;
+        auto y = std::dynamic_pointer_cast<eprosima::fastdds::rtps::TCPv4TransportDescriptor>(x);
+        if (y)
+        {
+            for (const auto& p : y->listening_ports)
+            {
+                std::cout << "Listening Port: " << p << std::endl;
+            }
+            std::cout << "TCPv4TransportDescriptor " <<
+                static_cast<int>(y->wan_addr[0]) << "." <<
+                static_cast<int>(y->wan_addr[1]) << "." <<
+                static_cast<int>(y->wan_addr[2]) << "." <<
+                static_cast<int>(y->wan_addr[3]) << "." <<
+                std::endl;
+        }
+    }
+    std::cout << "End Locators " << m_guid.guidPrefix << std::endl;
+    std::cout << std::endl;
 
     initialized_ = true;
 }

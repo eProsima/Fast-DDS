@@ -55,6 +55,8 @@ bool HelloWorldPublisher::init(
 
     pqos.transport().use_builtin_transports = false;
 
+    /////////////
+
     std::shared_ptr<TCPv4TransportDescriptor> descriptor = std::make_shared<TCPv4TransportDescriptor>();
 
     for (std::string ip : whitelist)
@@ -85,7 +87,33 @@ bool HelloWorldPublisher::init(
         std::cout << wan_ip << ":" << port << std::endl;
     }
     descriptor->add_listener_port(port);
+
+    // pqos.transport().user_transports.push_back(descriptor);
+
+    /////////////
+
+    static_cast<void>(wan_ip);
+    static_cast<void>(use_tls);
+    static_cast<void>(whitelist);
+
+    std::shared_ptr<TCPv4TransportDescriptor> descriptor_local = std::make_shared<TCPv4TransportDescriptor>();
+    descriptor_local->sendBufferSize = 0;
+    descriptor_local->receiveBufferSize = 0;
+    std::string local_ip = "127.0.0.1";
+    port += 10;
+    descriptor_local->set_WAN_address(local_ip);
+    std::cout << local_ip << ":" << port << std::endl;
+
+    descriptor_local->add_listener_port(port);
+    // pqos.transport().user_transports.push_back(descriptor_local);
+
+
+    ///////////////////
+
     pqos.transport().user_transports.push_back(descriptor);
+    pqos.transport().user_transports.push_back(descriptor_local);
+
+    ///////////////////
 
     participant_ = DomainParticipantFactory::get_instance()->create_participant(0, pqos);
 

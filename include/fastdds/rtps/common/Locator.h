@@ -371,7 +371,10 @@ inline std::ostream& operator <<(
     }
 
     // Stream port
-    output << "]:" << loc.port;
+    auto p_port = IPLocator::getPhysicalPort(loc);
+    auto l_port = IPLocator::getLogicalPort(loc);
+
+    output << "]:" << p_port << ":" << l_port;
 
     return output;
 }
