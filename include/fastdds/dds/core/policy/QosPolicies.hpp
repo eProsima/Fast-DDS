@@ -1727,19 +1727,19 @@ public:
      * @brief Specifies the maximum number of data-samples the DataWriter (or DataReader) can manage across all the
      * instances associated with it. Represents the maximum samples the middleware can store for any one DataWriter
      * (or DataReader). <br>
-     * By default, o (infinite).
+     * By default, 5000.
      *
      * @warning It is inconsistent for this value to be less than max_samples_per_instance.
      */
     int32_t max_samples;
     /**
      * @brief Represents the maximum number of instances DataWriter (or DataReader) can manage. <br>
-     * By default, 0 (infinite).
+     * By default, 10.
      */
     int32_t max_instances;
     /**
      * @brief Represents the maximum number of samples of any one instance a DataWriter(or DataReader) can manage. <br>
-     * By default, 0 (infinite).
+     * By default, 400.
      *
      * @warning It is inconsistent for this value to be greater than max_samples.
      */
@@ -1761,9 +1761,9 @@ public:
     RTPS_DllAPI ResourceLimitsQosPolicy()
         : Parameter_t(PID_RESOURCE_LIMITS, 4 + 4 + 4)
         , QosPolicy(false)
-        , max_samples(0)
-        , max_instances(0)
-        , max_samples_per_instance(0)
+        , max_samples(5000)
+        , max_instances(10)
+        , max_samples_per_instance(400)
         , allocated_samples(100)
         , extra_samples(1)
     {
