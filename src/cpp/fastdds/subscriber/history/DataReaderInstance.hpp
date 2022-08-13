@@ -288,10 +288,11 @@ private:
 
             if (alive_writers.empty() && (InstanceStateKind::ALIVE_INSTANCE_STATE == instance_state))
             {
-                ret_val = true;
                 instance_state = InstanceStateKind::NOT_ALIVE_NO_WRITERS_INSTANCE_STATE;
                 counters_update(counters.instances_alive, counters.instances_no_writers, counters, false);
             }
+
+            ret_val = true;
         }
 
         return ret_val;
