@@ -106,16 +106,19 @@ void exclusive_kind_non_keyed_sample_reception(
     writer3.wait_discovery();
     reader.wait_discovery(std::chrono::seconds(1), 3);
 
-    auto wait_functor = reliable ?
-            [] (PubSubWriter<HelloWorldPubSubType>& writer)
+    std::function<void(PubSubWriter<HelloWorldPubSubType>&)> wait_functor =
+            [](PubSubWriter<HelloWorldPubSubType>&)
+            {
+                std::this_thread::sleep_for(std::chrono::milliseconds(50));
+            };
+
+    if (reliable)
     {
-        writer.waitForAllAcked(std::chrono::milliseconds(100));
+        wait_functor = [](PubSubWriter<HelloWorldPubSubType>& writer)
+                {
+                    writer.waitForAllAcked(std::chrono::milliseconds(100));
+                };
     }
-    :
-    [] (PubSubWriter<HelloWorldPubSubType>&)
-    {
-        std::this_thread::sleep_for(std::chrono::milliseconds(50));
-    };
 
     auto data = default_helloworld_data_generator(13);
     reader.startReception(data);
@@ -253,16 +256,19 @@ void exclusive_kind_keyed_sample_reception(
     writer4.wait_discovery();
     reader.wait_discovery(std::chrono::seconds(1), 4);
 
-    auto wait_functor = reliable ?
-            [] (PubSubWriter<KeyedHelloWorldPubSubType>& writer)
+    std::function<void(PubSubWriter<KeyedHelloWorldPubSubType>&)> wait_functor =
+            [](PubSubWriter<KeyedHelloWorldPubSubType>&)
+            {
+                std::this_thread::sleep_for(std::chrono::milliseconds(50));
+            };
+
+    if (reliable)
     {
-        writer.waitForAllAcked(std::chrono::milliseconds(100));
+        wait_functor = [](PubSubWriter<KeyedHelloWorldPubSubType>& writer)
+                {
+                    writer.waitForAllAcked(std::chrono::milliseconds(100));
+                };
     }
-    :
-    [] (PubSubWriter<KeyedHelloWorldPubSubType>&)
-    {
-        std::this_thread::sleep_for(std::chrono::milliseconds(50));
-    };
 
     auto data = default_keyedhelloworld_data_generator(23);
     reader.startReception(data);
@@ -469,16 +475,19 @@ void exclusive_kind_non_keyed_writers_same_guid(
     writer3.wait_discovery();
     reader.wait_discovery(std::chrono::seconds(1), 3);
 
-    auto wait_functor = reliable ?
-            [] (PubSubWriter<HelloWorldPubSubType>& writer)
+    std::function<void(PubSubWriter<HelloWorldPubSubType>&)> wait_functor =
+            [](PubSubWriter<HelloWorldPubSubType>&)
+            {
+                std::this_thread::sleep_for(std::chrono::milliseconds(50));
+            };
+
+    if (reliable)
     {
-        writer.waitForAllAcked(std::chrono::milliseconds(100));
+        wait_functor = [](PubSubWriter<HelloWorldPubSubType>& writer)
+                {
+                    writer.waitForAllAcked(std::chrono::milliseconds(100));
+                };
     }
-    :
-    [] (PubSubWriter<HelloWorldPubSubType>&)
-    {
-        std::this_thread::sleep_for(std::chrono::milliseconds(50));
-    };
 
     auto data = default_helloworld_data_generator(7);
     reader.startReception(data);
@@ -575,16 +584,19 @@ void exclusive_kind_keyed_writers_same_guid(
     writer4.wait_discovery();
     reader.wait_discovery(std::chrono::seconds(1), 4);
 
-    auto wait_functor = reliable ?
-            [] (PubSubWriter<KeyedHelloWorldPubSubType>& writer)
+    std::function<void(PubSubWriter<KeyedHelloWorldPubSubType>&)> wait_functor =
+            [](PubSubWriter<KeyedHelloWorldPubSubType>&)
+            {
+                std::this_thread::sleep_for(std::chrono::milliseconds(50));
+            };
+
+    if (reliable)
     {
-        writer.waitForAllAcked(std::chrono::milliseconds(100));
+        wait_functor = [](PubSubWriter<KeyedHelloWorldPubSubType>& writer)
+                {
+                    writer.waitForAllAcked(std::chrono::milliseconds(100));
+                };
     }
-    :
-    [] (PubSubWriter<KeyedHelloWorldPubSubType>&)
-    {
-        std::this_thread::sleep_for(std::chrono::milliseconds(50));
-    };
 
     auto data = default_keyedhelloworld_data_generator(10);
     reader.startReception(data);
@@ -901,16 +913,19 @@ void exclusive_kind_non_keyed_undiscovered_writer(
     writer3.wait_discovery();
     reader.wait_discovery(std::chrono::seconds(1), 3);
 
-    auto wait_functor = reliable ?
-            [] (PubSubWriter<HelloWorldPubSubType>& writer)
+    std::function<void(PubSubWriter<HelloWorldPubSubType>&)> wait_functor =
+            [](PubSubWriter<HelloWorldPubSubType>&)
+            {
+                std::this_thread::sleep_for(std::chrono::milliseconds(50));
+            };
+
+    if (reliable)
     {
-        writer.waitForAllAcked(std::chrono::milliseconds(100));
+        wait_functor = [](PubSubWriter<HelloWorldPubSubType>& writer)
+                {
+                    writer.waitForAllAcked(std::chrono::milliseconds(100));
+                };
     }
-    :
-    [] (PubSubWriter<HelloWorldPubSubType>&)
-    {
-        std::this_thread::sleep_for(std::chrono::milliseconds(50));
-    };
 
     auto data = default_helloworld_data_generator(11);
     reader.startReception(data);
@@ -1036,16 +1051,19 @@ void exclusive_kind_keyed_undiscovered_writer(
     writer4.wait_discovery();
     reader.wait_discovery(std::chrono::seconds(1), 4);
 
-    auto wait_functor = reliable ?
-            [] (PubSubWriter<KeyedHelloWorldPubSubType>& writer)
+    std::function<void(PubSubWriter<KeyedHelloWorldPubSubType>&)> wait_functor =
+            [](PubSubWriter<KeyedHelloWorldPubSubType>&)
+            {
+                std::this_thread::sleep_for(std::chrono::milliseconds(50));
+            };
+
+    if (reliable)
     {
-        writer.waitForAllAcked(std::chrono::milliseconds(100));
+        wait_functor = [](PubSubWriter<KeyedHelloWorldPubSubType>& writer)
+                {
+                    writer.waitForAllAcked(std::chrono::milliseconds(100));
+                };
     }
-    :
-    [] (PubSubWriter<KeyedHelloWorldPubSubType>&)
-    {
-        std::this_thread::sleep_for(std::chrono::milliseconds(50));
-    };
 
     auto data = default_keyedhelloworld_data_generator(24);
     reader.startReception(data);
@@ -1281,16 +1299,19 @@ void exclusive_kind_non_keyed_lost_liveliness(
     writer3.wait_discovery();
     reader.wait_discovery(std::chrono::seconds(1), 3);
 
-    auto wait_functor = reliable ?
-            [] (PubSubWriter<HelloWorldPubSubType>& writer)
+    std::function<void(PubSubWriter<HelloWorldPubSubType>&)> wait_functor =
+            [](PubSubWriter<HelloWorldPubSubType>&)
+            {
+                std::this_thread::sleep_for(std::chrono::milliseconds(50));
+            };
+
+    if (reliable)
     {
-        writer.waitForAllAcked(std::chrono::milliseconds(100));
+        wait_functor = [](PubSubWriter<HelloWorldPubSubType>& writer)
+                {
+                    writer.waitForAllAcked(std::chrono::milliseconds(100));
+                };
     }
-    :
-    [] (PubSubWriter<HelloWorldPubSubType>&)
-    {
-        std::this_thread::sleep_for(std::chrono::milliseconds(50));
-    };
 
     auto data = default_helloworld_data_generator(11);
     reader.startReception(data);
@@ -1451,16 +1472,19 @@ void exclusive_kind_keyed_lost_liveliness(
     writer4.wait_discovery();
     reader.wait_discovery(std::chrono::seconds(1), 4);
 
-    auto wait_functor = reliable ?
-            [] (PubSubWriter<KeyedHelloWorldPubSubType>& writer)
+    std::function<void(PubSubWriter<KeyedHelloWorldPubSubType>&)> wait_functor =
+            [](PubSubWriter<KeyedHelloWorldPubSubType>&)
+            {
+                std::this_thread::sleep_for(std::chrono::milliseconds(50));
+            };
+
+    if (reliable)
     {
-        writer.waitForAllAcked(std::chrono::milliseconds(100));
+        wait_functor = [](PubSubWriter<KeyedHelloWorldPubSubType>& writer)
+                {
+                    writer.waitForAllAcked(std::chrono::milliseconds(100));
+                };
     }
-    :
-    [] (PubSubWriter<KeyedHelloWorldPubSubType>&)
-    {
-        std::this_thread::sleep_for(std::chrono::milliseconds(50));
-    };
 
     auto data = default_keyedhelloworld_data_generator(24);
     reader.startReception(data);
@@ -1677,16 +1701,19 @@ void exclusive_kind_keyed_unregistering_instance(
     writer4.wait_discovery();
     reader.wait_discovery(std::chrono::seconds(1), 4);
 
-    auto wait_functor = reliable ?
-            [] (PubSubWriter<KeyedHelloWorldPubSubType>& writer)
+    std::function<void(PubSubWriter<KeyedHelloWorldPubSubType>&)> wait_functor =
+            [](PubSubWriter<KeyedHelloWorldPubSubType>&)
+            {
+                std::this_thread::sleep_for(std::chrono::milliseconds(50));
+            };
+
+    if (reliable)
     {
-        writer.waitForAllAcked(std::chrono::milliseconds(100));
+        wait_functor = [](PubSubWriter<KeyedHelloWorldPubSubType>& writer)
+                {
+                    writer.waitForAllAcked(std::chrono::milliseconds(100));
+                };
     }
-    :
-    [] (PubSubWriter<KeyedHelloWorldPubSubType>&)
-    {
-        std::this_thread::sleep_for(std::chrono::milliseconds(50));
-    };
 
     auto data = default_keyedhelloworld_data_generator(24);
     reader.startReception(data);
@@ -1895,16 +1922,19 @@ void exclusive_kind_keyed_disposing_instance(
     writer4.wait_discovery();
     reader.wait_discovery(std::chrono::seconds(1), 4);
 
-    auto wait_functor = reliable ?
-            [] (PubSubWriter<KeyedHelloWorldPubSubType>& writer)
+    std::function<void(PubSubWriter<KeyedHelloWorldPubSubType>&)> wait_functor =
+            [](PubSubWriter<KeyedHelloWorldPubSubType>&)
+            {
+                std::this_thread::sleep_for(std::chrono::milliseconds(50));
+            };
+
+    if (reliable)
     {
-        writer.waitForAllAcked(std::chrono::milliseconds(100));
+        wait_functor = [](PubSubWriter<KeyedHelloWorldPubSubType>& writer)
+                {
+                    writer.waitForAllAcked(std::chrono::milliseconds(100));
+                };
     }
-    :
-    [] (PubSubWriter<KeyedHelloWorldPubSubType>&)
-    {
-        std::this_thread::sleep_for(std::chrono::milliseconds(50));
-    };
 
     auto data = default_keyedhelloworld_data_generator(30);
     reader.startReception(data);
