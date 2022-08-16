@@ -82,6 +82,9 @@ add_executable(DataReaderHistoryTests ${DATAREADERHISTORYTESTS_SOURCE})
 target_compile_definitions(DataReaderHistoryTests PRIVATE FASTRTPS_NO_LIB
     $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
     $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
+    $<${MSVC}:NOMINMAX> # avoid conflic with std::min & std::max in visual studio
+    # acknowledge atomic layout issue on old versions of visual studio STL
+    $<$<AND:${MSVC},$<VERSION_LESS:${CMAKE_CXX_COMPILER_VERSION},19.29.30140.0>>:_ENABLE_ATOMIC_ALIGNMENT_FIX>
     )
 target_include_directories(DataReaderHistoryTests PRIVATE
     ${PROJECT_SOURCE_DIR}/test/mock/rtps/RTPSReader
