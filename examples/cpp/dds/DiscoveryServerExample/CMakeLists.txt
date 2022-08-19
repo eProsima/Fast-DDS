@@ -1,4 +1,4 @@
-# Copyright 2021 Proyectos y Sistemas de Mantenimiento SL (eProsima).
+# Copyright 2022 Proyectos y Sistemas de Mantenimiento SL (eProsima).
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -27,8 +27,8 @@ endif()
 
 #Check C++11
 include(CheckCXXCompilerFlag)
-if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_COMPILER_IS_CLANG OR
-        CMAKE_CXX_COMPILER_ID MATCHES "Clang")
+if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
+    check_cxx_compiler_flag(-std=c++11 SUPPORTS_CXX11)
     check_cxx_compiler_flag(-std=c++11 SUPPORTS_CXX11)
     if(NOT SUPPORTS_CXX11)
         message(FATAL_ERROR "Compiler doesn't support C++11")
@@ -39,11 +39,12 @@ message(STATUS "Configuring DiscoveryServerExample example...")
 file(GLOB DISCOVERY_SERVER_EXAMPLE_SOURCES_CXX "types/*.cxx")
 file(GLOB DISCOVERY_SERVER_EXAMPLE_SOURCES_CPP "*.cpp")
 
-add_executable(DiscoveryServerExample ${DISCOVERY_SERVER_EXAMPLE_SOURCES_CXX} ${DISCOVERY_SERVER_EXAMPLE_SOURCES_CPP})
-target_compile_definitions(DiscoveryServerExample PRIVATE
+add_executable(${PROJECT_NAME} ${DISCOVERY_SERVER_EXAMPLE_SOURCES_CXX} ${DISCOVERY_SERVER_EXAMPLE_SOURCES_CPP})
+target_compile_definitions(${PROJECT_NAME} PRIVATE
     $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
     $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
 )
-target_link_libraries(DiscoveryServerExample fastrtps fastcdr fastdds::optionparser)
-install(TARGETS DiscoveryServerExample
-    RUNTIME DESTINATION examples/C++/DDS/DiscoveryServerExample/${BIN_INSTALL_DIR})
+target_link_libraries(${PROJECT_NAME} fastrtps fastcdr fastdds::optionparser)
+install(TARGETS ${PROJECT_NAME}
+    RUNTIME DESTINATION examples/cpp/dds/${PROJECT_NAME}/${BIN_INSTALL_DIR})
+

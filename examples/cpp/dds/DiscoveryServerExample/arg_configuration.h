@@ -213,7 +213,7 @@ const option::Descriptor usage[] = {
         "c",
         "connection-address",
         Arg::Locator,
-        " -c <IPaddress> \t--connection-address=<IPaddress>  \tServer address (Default address: ::1)."
+        "  -c <IPaddress> \t--connection-address=<IPaddress>  \tServer address (Default address: ::1)."
     },
     {
         PORT,
@@ -256,7 +256,7 @@ const option::Descriptor usage[] = {
         "c",
         "connection-address",
         Arg::Locator,
-        " -c <IPaddress> \t--connection-address=<IPaddress>  \tServer address (Default address: ::1)."
+        "  -c <IPaddress> \t--connection-address=<IPaddress>  \tServer address (Default address: ::1)."
     },
     {
         PORT,
@@ -272,7 +272,7 @@ const option::Descriptor usage[] = {
         "t",
         "transport",
         Arg::Transport,
-      "  -t <trans>\t--transport <trans> \tUse Transport Protocol [udpv4|udpv6] (UDPv6 by default)."
+        "  -t <trans>\t--transport <trans> \tUse Transport Protocol [udpv4|udpv6] (UDPv6 by default)."
     },
 
     /// SERVER OPTIONS
@@ -283,7 +283,7 @@ const option::Descriptor usage[] = {
         "l",
         "listening-address",
         Arg::Locator,
-        " -l <IPaddress> \t--listening-address=<IPaddress>  \tServer address (Default address: ::1)."
+        "  -l <IPaddress> \t--listening-address=<IPaddress>  \tServer address (Default address: ::1)."
     },
     {
         PORT,
@@ -299,7 +299,7 @@ const option::Descriptor usage[] = {
         "t",
         "transport",
         Arg::Transport,
-      "  -t <trans>\t--transport <trans> \tUse Transport Protocol [udpv4|udpv6] (UDPv6 by default)."
+        "  -t <trans>\t--transport <trans> \tUse Transport Protocol [udpv4|udpv6] (UDPv6 by default)."
     },
 
 
