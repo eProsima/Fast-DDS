@@ -660,12 +660,7 @@ void DataReaderHistory::check_and_remove_instance(
             instance->alive_writers.empty() &&
             instance_info->first.isDefined())
     {
-        if ((InstanceStateKind::ALIVE_INSTANCE_STATE != instance_info->second->instance_state) &&
-                instance_info->first.isDefined())
-        {
-            instances_.erase(instance_info->first);
-        }
-
+        instances_.erase(instance_info->first);
         instance_info = data_available_instances_.erase(instance_info);
     }
 }

@@ -19,6 +19,7 @@
 #ifndef _FASTDDS_TOPIC_HPP_
 #define _FASTDDS_TOPIC_HPP_
 
+#include <fastdds/dds/domain/DomainParticipant.hpp>
 #include <fastdds/dds/topic/TopicDescription.hpp>
 
 #include <string>

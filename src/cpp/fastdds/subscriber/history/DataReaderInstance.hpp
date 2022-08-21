@@ -154,14 +154,13 @@ struct DataReaderInstance
 
                 current_owner.second = 0;
                 current_owner.first = fastrtps::rtps::c_Guid_Unknown;
-                if (ALIVE_INSTANCE_STATE == instance_state)
-                {
-                    update_owner();
-                }
-
                 if (alive_writers.empty() && (InstanceStateKind::ALIVE_INSTANCE_STATE == instance_state))
                 {
                     instance_state = InstanceStateKind::NOT_ALIVE_NO_WRITERS_INSTANCE_STATE;
+                }
+                if (ALIVE_INSTANCE_STATE == instance_state)
+                {
+                    update_owner();
                 }
             }
         }
@@ -194,7 +193,6 @@ private:
                 writer_guid < current_owner.first) // Check if new writer has lower GUID.
         {
             current_owner.first = writer_guid;
-            current_owner.second = ownership_strength;
             ret_val = true;
         }
         else if (std::numeric_limits<uint32_t>::max() == ownership_strength) // uint32_t::max indicates we are in SHARED_OWNERSHIP_QOS.
@@ -244,7 +242,10 @@ private:
     {
         bool ret_val = false;
 
-        if (ownership_strength >= current_owner.second)
+        if (ownership_strength >= current_owner.second ||
+                (ownership_strength == current_owner.second &&
+                writer_guid < current_owner.first)
+                )
         {
             if (std::numeric_limits<uint32_t>::max() != ownership_strength) // Not SHARED_OWNERSHIP_QOS
             {
@@ -336,7 +337,10 @@ private:
         std::for_each(alive_writers.begin(), alive_writers.end(),
                 [&](const WriterOwnership& item)
                 {
-                    if (item.second > current_owner.second)
+                    if (item.second > current_owner.second ||
+                    (item.second > current_owner.second &&
+                    item.first < current_owner.first)
+                    )
                     {
                         current_owner = item;
                     }
