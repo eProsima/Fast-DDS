@@ -53,7 +53,6 @@ enum EventKind : uint32_t;
 namespace dds {
 
 class PublisherImpl;
-struct StatisticTopicQoS;
 
 class DomainParticipantImpl : public efd::DomainParticipantImpl
 {
@@ -128,18 +127,6 @@ protected:
      * Auxiliary function to create the statistics builtin entities.
      */
     void create_statistics_builtin_entities();
-
-    /**
-     * Auxiliary function to search for topics and qos in XML profiles.
-     */
-    void get_XML_topic_qos(
-            std::vector<StatisticTopicQoS>& _topic_qos_vector);
-
-    /**
-     * Auxiliary function to enable statistics builtin datawriters with non standard QoS.
-     */
-    void enable_statistics_builtin_datawriters_with_qos(
-            std::vector<StatisticTopicQoS>& _topic_qos_vector);
 
     /**
      * Auxiliary function to enable statistics builtin datawriters.

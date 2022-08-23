@@ -80,12 +80,6 @@ struct ValidEntry
     EventKind event_kind;
 };
 
-struct StatisticTopicQoS
-{
-    char* name;
-    DataWriterQos* qos;
-};
-
 static const ValidEntry valid_entries[] =
 {
     {HISTORY_LATENCY_TOPIC_ALIAS,         HISTORY_LATENCY_TOPIC,         HISTORY2HISTORY_LATENCY},
@@ -253,12 +247,7 @@ void DomainParticipantImpl::create_statistics_builtin_entities()
     assert(nullptr != builtin_publisher_impl_);
 
     // Enable statistics datawriters
-    // 1. Find for XML file with profile specifications
-    std::vector<StatisticTopicQoS> topic_qos_vector(sizeof(valid_entries) / sizeof(valid_entries[0]));
-    get_XML_topic_qos(topic_qos_vector);
-    enable_statistics_builtin_datawriters_with_qos(topic_qos_vector);
-
-    // 2. Find fastdds_statistics PropertyPolicyQos
+    // 1. Find fastdds_statistics PropertyPolicyQos
     const std::string* property_topic_list = eprosima::fastrtps::rtps::PropertyPolicyHelper::find_property(
         get_qos().properties(), "fastdds.statistics");
 
@@ -267,55 +256,13 @@ void DomainParticipantImpl::create_statistics_builtin_entities()
         enable_statistics_builtin_datawriters(*property_topic_list);
     }
 
-    // 3. FASTDDS_STATISTICS environment variable
+    // 2. FASTDDS_STATISTICS environment variable
     std::string env_topic_list;
     SystemInfo::get_env(FASTDDS_STATISTICS_ENVIRONMENT_VARIABLE, env_topic_list);
 
     if (!env_topic_list.empty())
     {
         enable_statistics_builtin_datawriters(env_topic_list);
-    }
-}
-
-void DomainParticipantImpl::get_XML_topic_qos(
-        std::vector<StatisticTopicQoS>& _topic_qos_vector)
-{
-    for (ValidEntry entry: valid_entries)
-    {
-        DataWriterQos* qos = new DataWriterQos;
-        if (ReturnCode_t::RETCODE_OK == builtin_publisher_impl_->get_datawriter_qos_from_profile(entry.alias, *qos))
-        {
-            StatisticTopicQoS stat_topic_qos;
-            stat_topic_qos.name = const_cast<char*>(entry.alias);
-            if (*qos == builtin_publisher_impl_->get_default_datawriter_qos())
-            {
-                *qos = STATISTICS_DATAWRITER_QOS;
-            }
-            stat_topic_qos.qos = qos;
-            _topic_qos_vector.push_back(stat_topic_qos);
-        }
-    }
-}
-
-void DomainParticipantImpl::enable_statistics_builtin_datawriters_with_qos(
-        std::vector<StatisticTopicQoS>& _topic_qos_vector)
-{
-    for (StatisticTopicQoS topic_qos: _topic_qos_vector)
-    {
-        if (topic_qos.name != NULL)
-        {
-            ReturnCode_t ret = enable_statistics_datawriter(topic_qos.name, *topic_qos.qos);
-            // case RETCODE_ERROR is checked and logged in enable_statistics_datawriter.
-            // case RETCODE_INCONSISTENT_POLICY is checked and logged in enable_statistics_datawriter.
-            // case RETCODE_UNSUPPORTED cannot happen because this method is only called if FASTDDS_STATISTICS
-            // CMake option is enabled
-            assert(ret != ReturnCode_t::RETCODE_INCONSISTENT_POLICY);
-            assert(ret != ReturnCode_t::RETCODE_UNSUPPORTED);
-            if (ret == ReturnCode_t::RETCODE_BAD_PARAMETER)
-            {
-                logError(STATISTICS_DOMAIN_PARTICIPANT, "Topic " << topic_qos.name << " is not a valid statistics topic name/alias");
-            }
-        }
     }
 }
 
