@@ -834,13 +834,12 @@ TEST_F(StatisticsFromXMLProfileTests, XMLConfigurationForStatisticsDataWritersQo
     qos.publish_mode().kind = eprosima::fastdds::dds::PublishModeQosPolicyKind::SYNCHRONOUS_PUBLISH_MODE;
     ASSERT_EQ(qos, history_latency_writer->get_qos());
 
-    // NETWORK_LATENCY_TOPIC should have by-default qos
-    // Defined as data_writer profile
+    // NETWORK_LATENCY_TOPIC is not defined in the fastdds.statistics property policy,
+    // it is just defined as data_writer profile. Thus, should not be created
     std::string network_latency_name = "_fastdds_statistics_network_latency";
     eprosima::fastdds::dds::DataWriter* network_latency_writer =
             statistics_publisher_impl->lookup_datawriter(network_latency_name);
-    ASSERT_NE(network_latency_writer, nullptr);
-    ASSERT_EQ(STATISTICS_DATAWRITER_QOS, network_latency_writer->get_qos());
+    ASSERT_EQ(network_latency_writer, nullptr);
 
     // PUBLICATION_THROUGHPUT_TOPIC should have by-default qos
     // Defined in the fastdds.statistics property policy
