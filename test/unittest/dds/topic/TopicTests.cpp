@@ -370,6 +370,7 @@ TEST(TopicTests, InstancePolicyAllocationConsistencyKeyed)
 
     // Below an ampliation of the last comprobation, for which it is proved the case of < 0 (-1),
     // which also means infinite value.
+    qos.resource_limits().max_samples = 0;
     qos.resource_limits().max_instances = -1;
 
     Topic* topic2 = participant->create_topic("footopic2", type.get_type_name(), qos);
@@ -422,6 +423,7 @@ TEST(TopicTests, InstancePolicyAllocationConsistencyKeyed)
 
     // Below an ampliation of the last comprobation, for which it is proved the case of < 0 (-1),
     // which also means infinite value.
+    qos2.resource_limits().max_samples = 0;
     qos2.resource_limits().max_instances = -1;
 
     ASSERT_EQ(ReturnCode_t::RETCODE_OK, default_topic1->set_qos(qos2));
