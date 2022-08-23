@@ -828,12 +828,11 @@ TEST_F(StatisticsFromXMLProfileTests, XMLConfigurationForStatisticsDataWritersQo
             statistics_publisher_impl->lookup_datawriter(history_latency_name);
     ASSERT_NE(history_latency_writer, nullptr);
 
-    ASSERT_EQ(eprosima::fastdds::dds::ReliabilityQosPolicyKind::BEST_EFFORT_RELIABILITY_QOS,
-            history_latency_writer->get_qos().reliability().kind);
-    ASSERT_EQ(eprosima::fastdds::dds::DurabilityQosPolicyKind_t::VOLATILE_DURABILITY_QOS,
-            history_latency_writer->get_qos().durability().kind);
-    ASSERT_EQ(eprosima::fastdds::dds::PublishModeQosPolicyKind::SYNCHRONOUS_PUBLISH_MODE,
-            history_latency_writer->get_qos().publish_mode().kind);
+    DataWriterQos qos = STATISTICS_DATAWRITER_QOS;
+    qos.reliability().kind = eprosima::fastdds::dds::ReliabilityQosPolicyKind::BEST_EFFORT_RELIABILITY_QOS;
+    qos.durability().kind = eprosima::fastdds::dds::DurabilityQosPolicyKind_t::VOLATILE_DURABILITY_QOS;
+    qos.publish_mode().kind = eprosima::fastdds::dds::PublishModeQosPolicyKind::SYNCHRONOUS_PUBLISH_MODE;
+    ASSERT_EQ(qos, history_latency_writer->get_qos());
 
     // NETWORK_LATENCY_TOPIC should have by-default qos
     // Defined as data_writer profile
