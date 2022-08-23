@@ -45,10 +45,18 @@
 #include <statistics/types/typesPubSubTypes.h>
 #include <utils/SystemInfo.hpp>
 
+#include <fastrtps/attributes/PublisherAttributes.h>
+#include <fastrtps/xmlparser/XMLProfileManager.h>
+#include <fastdds/utils/QosConverters.hpp>
+
 namespace eprosima {
 namespace fastdds {
 namespace statistics {
 namespace dds {
+
+using fastrtps::xmlparser::XMLProfileManager;
+using fastrtps::xmlparser::XMLP_ret;
+using fastrtps::PublisherAttributes;
 
 constexpr const char* HISTORY_LATENCY_TOPIC_ALIAS = "HISTORY_LATENCY_TOPIC";
 constexpr const char* NETWORK_LATENCY_TOPIC_ALIAS = "NETWORK_LATENCY_TOPIC";
@@ -274,7 +282,14 @@ void DomainParticipantImpl::enable_statistics_builtin_datawriters(
     std::string topic;
     while (std::getline(topics, topic, ';'))
     {
-        ReturnCode_t ret = enable_statistics_datawriter(topic, STATISTICS_DATAWRITER_QOS);
+        DataWriterQos datawriter_qos = STATISTICS_DATAWRITER_QOS;
+        PublisherAttributes attr;
+        if (XMLP_ret::XML_OK == XMLProfileManager::fillPublisherAttributes(topic, attr))
+        {
+            efd::utils::set_qos_from_attributes(datawriter_qos, attr);
+        }
+
+        ReturnCode_t ret = enable_statistics_datawriter(topic, datawriter_qos);
         // case RETCODE_ERROR is checked and logged in enable_statistics_datawriter.
         // case RETCODE_INCONSISTENT_POLICY cannot happen. STATISTICS_DATAWRITER_QOS is consistent.
         // case RETCODE_UNSUPPORTED cannot happen because this method is only called if FASTDDS_STATISTICS
