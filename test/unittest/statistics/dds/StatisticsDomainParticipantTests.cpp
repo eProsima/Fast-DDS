@@ -828,7 +828,9 @@ TEST_F(StatisticsFromXMLProfileTests, XMLConfigurationForStatisticsDataWritersQo
             statistics_publisher_impl->lookup_datawriter(history_latency_name);
     ASSERT_NE(history_latency_writer, nullptr);
 
-    DataWriterQos qos = STATISTICS_DATAWRITER_QOS;
+    // By default, when QoS are setted in XML for an statistics DataWriter profile,
+    // XMLProfileManager will use eProsima's default qos, not statistics default qos
+    efd::DataWriterQos qos;
     qos.reliability().kind = eprosima::fastdds::dds::ReliabilityQosPolicyKind::BEST_EFFORT_RELIABILITY_QOS;
     qos.durability().kind = eprosima::fastdds::dds::DurabilityQosPolicyKind_t::VOLATILE_DURABILITY_QOS;
     qos.publish_mode().kind = eprosima::fastdds::dds::PublishModeQosPolicyKind::SYNCHRONOUS_PUBLISH_MODE;
