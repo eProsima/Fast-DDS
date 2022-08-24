@@ -73,6 +73,14 @@ public:
             const efd::DataWriterQos& dwqos);
 
     /**
+     * @brief This operation enables a Statistics DataWriter from a provided profile
+     * @param profile_name Name for the profile to be used to fill the structure.
+     * @return XMLP_ret::XML_OK on success, XMLP_ret::XML_ERROR in other case. Defaults true.
+     */
+    ReturnCode_t enable_statistics_datawriter_with_profile(
+            const std::string &profile_name);
+
+    /**
      * @brief This operation disables a Statistics DataWriter
      * @param topic_name Name of the topic associated to the Statistics DataWriter
      * @return RETCODE_UNSUPPORTED if the FASTDDS_STATISTICS CMake option has not been set,
