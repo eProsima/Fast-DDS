@@ -81,6 +81,59 @@ void set_qos_from_attributes(
     }
 }
 
+void set_attributes_from_qos(
+        PublisherAttributes& attr,
+        const DataWriterQos& qos)
+{
+    attr.matched_subscriber_allocation = qos.writer_resource_limits().matched_subscriber_allocation;
+    attr.properties = qos.properties();
+    attr.throughputController = qos.throughput_controller();
+    attr.unicastLocatorList = qos.endpoint().unicast_locator_list;
+    attr.multicastLocatorList = qos.endpoint().multicast_locator_list;
+    attr.remoteLocatorList = qos.endpoint().remote_locator_list;
+    attr.historyMemoryPolicy = qos.endpoint().history_memory_policy;
+    attr.setUserDefinedID(qos.endpoint().user_defined_id);
+    attr.setEntityID(qos.endpoint().entity_id);
+    attr.times = qos.reliable_writer_qos().times;
+    attr.qos.m_disablePositiveACKs = qos.reliable_writer_qos().disable_positive_acks;
+    attr.qos.m_durability = qos.durability();
+    attr.qos.m_durabilityService = qos.durability_service();
+    attr.qos.m_deadline = qos.deadline();
+    attr.qos.m_latencyBudget = qos.latency_budget();
+    attr.qos.m_liveliness = qos.liveliness();
+    attr.qos.m_reliability = qos.reliability();
+    attr.qos.m_lifespan = qos.lifespan();
+    attr.qos.m_userData = qos.user_data().getValue();
+    attr.qos.m_ownership = qos.ownership();
+    attr.qos.m_ownershipStrength = qos.ownership_strength();
+    attr.qos.m_destinationOrder = qos.destination_order();
+    attr.qos.representation = qos.representation();
+    attr.qos.m_publishMode = qos.publish_mode();
+    attr.topic.historyQos = qos.history();
+    attr.topic.resourceLimitsQos = qos.resource_limits();
+    attr.qos.data_sharing = qos.data_sharing();
+    attr.qos.disable_heartbeat_piggyback = qos.reliable_writer_qos().disable_heartbeat_piggyback;
+
+    // For next commit reverse the following:
+
+    if (attr.qos.m_partition.size() > 0 )
+    {
+        Property property;
+        property.name("partitions");
+        std::string partitions;
+        bool is_first_partition = true;
+
+        for (auto partition : attr.qos.m_partition.names())
+        {
+            partitions += (is_first_partition ? "" : ";") + partition;
+            is_first_partition = false;
+        }
+
+        property.value(std::move(partitions));
+        qos.properties().properties().push_back(std::move(property));
+    }
+}
+
 void set_qos_from_attributes(
         DataReaderQos& qos,
         const SubscriberAttributes& attr)
