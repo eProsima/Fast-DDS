@@ -114,23 +114,17 @@ void set_attributes_from_qos(
     attr.qos.data_sharing = qos.data_sharing();
     attr.qos.disable_heartbeat_piggyback = qos.reliable_writer_qos().disable_heartbeat_piggyback;
 
-    // For next commit reverse the following:
-
-    if (attr.qos.m_partition.size() > 0 )
+    for (auto property : qos.properties().properties())
     {
-        Property property;
-        property.name("partitions");
-        std::string partitions;
-        bool is_first_partition = true;
-
-        for (auto partition : attr.qos.m_partition.names())
+        if (property.name() == "partitions")
         {
-            partitions += (is_first_partition ? "" : ";") + partition;
-            is_first_partition = false;
+            std::string partition_name;
+            std::istringstream partition_string(property.value());
+            while (std::getline(partition_string, partition_name, ';'))
+            {
+                attr.qos.m_partition.push_back(partition_name.c_str());
+            }
         }
-
-        property.value(std::move(partitions));
-        qos.properties().properties().push_back(std::move(property));
     }
 }
 

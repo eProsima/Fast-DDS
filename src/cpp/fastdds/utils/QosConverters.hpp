@@ -54,7 +54,7 @@ void set_qos_from_attributes(
  */
 void set_attributes_from_qos(
         PublisherAttributes& attr,
-        const DataWriterQos& qos)
+        const DataWriterQos& qos);
 
 /**
  * Obtains the DataReaderQos from the SubscriberAttributes provided.
