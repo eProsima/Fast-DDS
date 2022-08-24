@@ -282,7 +282,7 @@ void DomainParticipantImpl::enable_statistics_builtin_datawriters(
     std::string topic;
     while (std::getline(topics, topic, ';'))
     {
-        DataWriterQos datawriter_qos = STATISTICS_DATAWRITER_QOS;
+        DataWriterQos datawriter_qos;
         PublisherAttributes attr;
         if (XMLP_ret::XML_OK == XMLProfileManager::fillPublisherAttributes(topic, attr))
         {
