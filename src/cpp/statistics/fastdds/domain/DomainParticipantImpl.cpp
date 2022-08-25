@@ -172,6 +172,40 @@ ReturnCode_t DomainParticipantImpl::enable_statistics_datawriter(
     return ReturnCode_t::RETCODE_ERROR;
 }
 
+ReturnCode_t DomainParticipantImpl::enable_statistics_datawriter_with_profile(
+        const std::string& profile_name)
+{
+    DataWriterQos datawriter_qos;
+    PublisherAttributes attr;
+    if (XMLP_ret::XML_OK == XMLProfileManager::fillPublisherAttributes(profile_name, attr))
+    {
+        efd::utils::set_qos_from_attributes(datawriter_qos, attr);
+
+        ReturnCode_t ret = enable_statistics_datawriter(profile_name, datawriter_qos);
+        // case RETCODE_ERROR is checked and logged in enable_statistics_datawriter.
+        // case RETCODE_INCONSISTENT_POLICY could happen if profile defined in XML is inconsistent.
+        // case RETCODE_UNSUPPORTED could happen if this method is called when FASTDDS_STATISTICS is not set.
+        // CMake option is enabled
+        if (ret == ReturnCode_t::RETCODE_INCONSISTENT_POLICY)
+        {
+            logError(STATISTICS_DOMAIN_PARTICIPANT,
+                    "Topic QoS from profile name " << profile_name << " are not consistent/compatible");
+        }
+        if (ret == ReturnCode_t::RETCODE_UNSUPPORTED)
+        {
+            logError(STATISTICS_DOMAIN_PARTICIPANT,
+                    "UNSUPPORTED METHOD: FASTDDS_STATISTICS CMake option has not been set");
+        }
+        if (ret == ReturnCode_t::RETCODE_BAD_PARAMETER)
+        {
+            logError(STATISTICS_DOMAIN_PARTICIPANT,
+                    "Profile name " << profile_name << " is not a valid statistics topic name/alias");
+        }
+        return ret;
+    }
+    return ReturnCode_t::RETCODE_ERROR;
+}
+
 ReturnCode_t DomainParticipantImpl::disable_statistics_datawriter(
         const std::string& topic_name)
 {
@@ -294,7 +328,6 @@ void DomainParticipantImpl::enable_statistics_builtin_datawriters(
         // case RETCODE_INCONSISTENT_POLICY could happen if profile defined in XML is inconsistent.
         // case RETCODE_UNSUPPORTED cannot happen because this method is only called if FASTDDS_STATISTICS
         // CMake option is enabled
-        assert(ret != ReturnCode_t::RETCODE_INCONSISTENT_POLICY);
         if (ret == ReturnCode_t::RETCODE_INCONSISTENT_POLICY)
         {
             logError(STATISTICS_DOMAIN_PARTICIPANT,
