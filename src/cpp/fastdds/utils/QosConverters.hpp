@@ -68,7 +68,7 @@ void set_qos_from_attributes(
  * - If any property from the RTPSParticipantAttributes property is also in the DomainParticipantQos, then the
  *   value in the DomainParticipantQos is overridden with that of the RTPSParticipantAttributes.
  *
- * @param[out] qos The DomainParticipantQos to set
+ * @param[in, out] qos The DomainParticipantQos to set
  * @param[in] attr The RTPSParticipantAttributes from which the @c qos is set.
  */
 void set_qos_from_attributes(
