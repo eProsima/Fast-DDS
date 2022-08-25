@@ -17,12 +17,11 @@
  *
  */
 
-#pragma once
-
-#ifndef EPROSIMA_FASTDDS_EXAMPLES_CPP_DDS_DISCOVERYSERVEREXAMPLE_COMMON_H_
-#define EPROSIMA_FASTDDS_EXAMPLES_CPP_DDS_DISCOVERYSERVEREXAMPLE_COMMON_H_
+#ifndef _EPROSIMA_FASTDDS_EXAMPLES_CPP_DDS_DISCOVERYSERVEREXAMPLE_COMMON_H_
+#define _EPROSIMA_FASTDDS_EXAMPLES_CPP_DDS_DISCOVERYSERVEREXAMPLE_COMMON_H_
 
 #include <fastdds/rtps/attributes/ServerAttributes.h>
+#include <fastrtps/utils/IPLocator.h>
 
 enum class TransportKind
 {
@@ -45,4 +44,46 @@ inline eprosima::fastrtps::rtps::GuidPrefix_t get_discovery_server_guid_from_id(
     return result;
 }
 
-#endif /* EPROSIMA_FASTDDS_EXAMPLES_CPP_DDS_DISCOVERYSERVEREXAMPLE_COMMON_H_ */
+inline bool is_ip(const std::string ip_str)
+{
+    return eprosima::fastrtps::rtps::IPLocator::isIPv4(ip_str) || eprosima::fastrtps::rtps::IPLocator::isIPv6(ip_str);
+}
+
+inline std::string get_ip_from_dns(const std::string& domain_name, TransportKind kind)
+{
+    std::pair<std::set<std::string>, std::set<std::string>> dns_response =
+            eprosima::fastrtps::rtps::IPLocator::resolveNameDNS(domain_name);
+
+    if (kind == TransportKind::UDPv4 || kind == TransportKind::TCPv4)
+    {
+        if (dns_response.first.empty())
+        {
+            std::cout << "Not DNS found for IPv4 for " << domain_name << std::endl;
+            return "";
+        }
+        else
+        {
+            std::string solution(*dns_response.first.begin());
+            std::cout << "DNS found for " << domain_name << " => " << solution << std::endl;
+            return solution;
+        }
+    }
+    else if (kind == TransportKind::UDPv6 || kind == TransportKind::TCPv6)
+    {
+        if (dns_response.second.empty())
+        {
+            std::cout << "Not DNS found for IPv6 for " << domain_name << std::endl;
+            return "";
+        }
+        else
+        {
+            std::string solution(*dns_response.second.begin());
+            std::cout << "DNS found for " << domain_name << " => " << solution << std::endl;
+            return solution;
+        }
+    }
+
+    return domain_name;
+}
+
+#endif /* _EPROSIMA_FASTDDS_EXAMPLES_CPP_DDS_DISCOVERYSERVEREXAMPLE_COMMON_H_ */

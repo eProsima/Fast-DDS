@@ -73,6 +73,18 @@ bool HelloWorldPublisher::init(
     pqos.name("DS-Client_pub");
     pqos.transport().use_builtin_transports = false;
 
+    std::string ip_server_address(server_address);
+    // Check if DNS is required
+    if (!is_ip(server_address))
+    {
+        ip_server_address = get_ip_from_dns(server_address, transport);
+    }
+
+    if (ip_server_address.empty())
+    {
+        return false;
+    }
+
     // Create DS SERVER locator
     eprosima::fastdds::rtps::Locator server_locator;
     eprosima::fastrtps::rtps::IPLocator::setPhysicalPort(server_locator, server_port);
@@ -89,22 +101,22 @@ bool HelloWorldPublisher::init(
     case TransportKind::UDPv4:
     {
         auto descriptor_tmp = std::make_shared<eprosima::fastdds::rtps::UDPv4TransportDescriptor>();
-        descriptor_tmp->interfaceWhiteList.push_back(server_address);
+        descriptor_tmp->interfaceWhiteList.push_back(ip_server_address);
         descriptor = descriptor_tmp;
 
         server_locator.kind = LOCATOR_KIND_UDPv4;
-        eprosima::fastrtps::rtps::IPLocator::setIPv4(server_locator, server_address);
+        eprosima::fastrtps::rtps::IPLocator::setIPv4(server_locator, ip_server_address);
         break;
     }
 
     case TransportKind::UDPv6:
     {
         auto descriptor_tmp = std::make_shared<eprosima::fastdds::rtps::UDPv6TransportDescriptor>();
-        descriptor_tmp->interfaceWhiteList.push_back(server_address);
+        descriptor_tmp->interfaceWhiteList.push_back(ip_server_address);
         descriptor = descriptor_tmp;
 
         server_locator.kind = LOCATOR_KIND_UDPv6;
-        eprosima::fastrtps::rtps::IPLocator::setIPv6(server_locator, server_address);
+        eprosima::fastrtps::rtps::IPLocator::setIPv6(server_locator, ip_server_address);
         break;
     }
 

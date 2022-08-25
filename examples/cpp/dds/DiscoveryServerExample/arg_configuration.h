@@ -218,7 +218,7 @@ const option::Descriptor usage[] = {
         0,
         "c",
         "connection-address",
-        Arg::Locator,
+        Arg::String,
         "  -c <IPaddress> \t--connection-address=<IPaddress>  \tServer address (Default address: ::1)."
     },
     {
@@ -270,7 +270,7 @@ const option::Descriptor usage[] = {
         0,
         "c",
         "connection-address",
-        Arg::Locator,
+        Arg::String,
         "  -c <IPaddress> \t--connection-address=<IPaddress>  \tServer address (Default address: ::1)."
     },
     {
@@ -306,7 +306,7 @@ const option::Descriptor usage[] = {
         0,
         "",
         "listening-address",
-        Arg::Locator,
+        Arg::String,
         "  \t--listening-address=<IPaddress>  \tServer address (Default address: ::1)."
     },
     {
@@ -346,7 +346,7 @@ const option::Descriptor usage[] = {
         0,
         "c",
         "connection-address",
-        Arg::Locator,
+        Arg::String,
         "  -c <num> \t--connection-address=<IPaddress>  \tServer address (Default address: ::1)."
     },
     {

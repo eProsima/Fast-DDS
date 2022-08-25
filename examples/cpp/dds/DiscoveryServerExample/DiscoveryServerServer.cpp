@@ -66,6 +66,30 @@ bool DiscoveryServer::init(
     pqos.name("DS-Server");
     pqos.transport().use_builtin_transports = false;
 
+    std::string ip_listening_address(server_address);
+    std::string ip_connection_address(connection_server_address);
+    // Check if DNS is required
+    if (!is_ip(server_address))
+    {
+        ip_listening_address = get_ip_from_dns(server_address, transport);
+    }
+
+    if (ip_listening_address.empty())
+    {
+        return false;
+    }
+
+    // Do the same for connection
+    if (has_connection_server && !is_ip(connection_server_address))
+    {
+        ip_connection_address = get_ip_from_dns(connection_server_address, transport);
+    }
+
+    if (has_connection_server && ip_connection_address.empty())
+    {
+        return false;
+    }
+
     ///////////////////////////////
     // Configure Listening address
     ///////////////////////////////
@@ -89,26 +113,26 @@ bool DiscoveryServer::init(
     case TransportKind::UDPv4:
     {
         auto descriptor_tmp = std::make_shared<eprosima::fastdds::rtps::UDPv4TransportDescriptor>();
-        descriptor_tmp->interfaceWhiteList.push_back(server_address);
+        descriptor_tmp->interfaceWhiteList.push_back(ip_listening_address);
         descriptor = descriptor_tmp;
 
         listening_locator.kind = LOCATOR_KIND_UDPv4;
-        eprosima::fastrtps::rtps::IPLocator::setIPv4(listening_locator, server_address);
+        eprosima::fastrtps::rtps::IPLocator::setIPv4(listening_locator, ip_listening_address);
         connection_locator.kind = LOCATOR_KIND_UDPv4;
-        eprosima::fastrtps::rtps::IPLocator::setIPv4(connection_locator, connection_server_address);
+        eprosima::fastrtps::rtps::IPLocator::setIPv4(connection_locator, ip_connection_address);
         break;
     }
 
     case TransportKind::UDPv6:
     {
         auto descriptor_tmp = std::make_shared<eprosima::fastdds::rtps::UDPv6TransportDescriptor>();
-        descriptor_tmp->interfaceWhiteList.push_back(server_address);
+        descriptor_tmp->interfaceWhiteList.push_back(ip_listening_address);
         descriptor = descriptor_tmp;
 
         listening_locator.kind = LOCATOR_KIND_UDPv6;
-        eprosima::fastrtps::rtps::IPLocator::setIPv6(listening_locator, server_address);
+        eprosima::fastrtps::rtps::IPLocator::setIPv6(listening_locator, ip_listening_address);
         connection_locator.kind = LOCATOR_KIND_UDPv6;
-        eprosima::fastrtps::rtps::IPLocator::setIPv6(connection_locator, connection_server_address);
+        eprosima::fastrtps::rtps::IPLocator::setIPv6(connection_locator, ip_connection_address);
         break;
     }
 

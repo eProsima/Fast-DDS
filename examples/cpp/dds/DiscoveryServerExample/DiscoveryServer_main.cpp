@@ -197,7 +197,7 @@ int main(
                     break;
 
                 case optionIndex::CONNECTION_ADDRESS:
-                    connection_address = std::string(opt.arg);
+                    connection_address = opt.arg;
                     break;
 
                 case optionIndex::CONNECTION_DISCOVERY_SERVER_ID:
@@ -220,7 +220,8 @@ int main(
                         print_warning("server", opt.name);
                         break;
                     }
-                    listening_address = std::string(opt.arg);
+                    listening_address = opt.arg;
+
                     break;
 
                 case optionIndex::LISTENING_DISCOVERY_SERVER_ID:
@@ -248,18 +249,18 @@ int main(
     }
 
     // Check that ip matches transport
-    if (transport == TransportKind::UDPv4 && !eprosima::fastrtps::rtps::IPLocator::isIPv4(listening_address))
-    {
-        std::cerr << "ERROR: IPv4 is needed to use UDPv4. Wrong IP address: " << listening_address << std::endl;
-        option::printUsage(fwrite, stdout, usage, columns);
-        return 1;
-    }
-    else if (transport == TransportKind::UDPv6 && !eprosima::fastrtps::rtps::IPLocator::isIPv6(listening_address))
-    {
-        std::cerr << "ERROR: IPv6 is needed to use UDPv6. Wrong IP address: " << listening_address << std::endl;
-        option::printUsage(fwrite, stdout, usage, columns);
-        return 1;
-    }
+    // if (transport == TransportKind::UDPv4 && !eprosima::fastrtps::rtps::IPLocator::isIPv4(listening_address))
+    // {
+    //     std::cerr << "ERROR: IPv4 is needed to use UDPv4. Wrong IP address: " << listening_address << std::endl;
+    //     option::printUsage(fwrite, stdout, usage, columns);
+    //     return 1;
+    // }
+    // else if (transport == TransportKind::UDPv6 && !eprosima::fastrtps::rtps::IPLocator::isIPv6(listening_address))
+    // {
+    //     std::cerr << "ERROR: IPv6 is needed to use UDPv6. Wrong IP address: " << listening_address << std::endl;
+    //     option::printUsage(fwrite, stdout, usage, columns);
+    //     return 1;
+    // }
 
     // Check that a DS has not same id itself and connection
     if (id_ds_set && type == EntityKind::SERVER && listening_ds_id == connection_ds_id)
@@ -297,6 +298,11 @@ int main(
             {
                 mypub.run(static_cast<uint32_t>(count), static_cast<uint32_t>(sleep));
             }
+            else
+            {
+                std::cerr << "ERROR: when initializing Publisher." << std::endl;
+                return 1;
+            }
             break;
         }
         case EntityKind::SUBSCRIBER:
@@ -311,6 +317,11 @@ int main(
                     transport))
             {
                 mysub.run(static_cast<uint32_t>(count));
+            }
+            else
+            {
+                std::cerr << "ERROR: when initializing Subscriber." << std::endl;
+                return 1;
             }
             break;
         }
@@ -328,6 +339,11 @@ int main(
                     connection_ds_id))
             {
                 myserver.run();
+            }
+            else
+            {
+                std::cerr << "ERROR: when initializing Server." << std::endl;
+                return 1;
             }
             break;
         }
