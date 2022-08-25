@@ -38,7 +38,8 @@ using fastrtps::SubscriberAttributes;
 using fastrtps::TopicAttributes;
 
 /**
- * Obtains the corresponding QoS from the attributes provided.
+ * Obtains the DataWriterQos from the PublisherAttributes provided.
+ * 
  * @param qos Pointer to the QoS to write on
  * @param attr Pointer to the attributes from which to obtain data
  */
@@ -47,7 +48,8 @@ void set_qos_from_attributes(
         const PublisherAttributes& attr);
 
 /**
- * Obtains the corresponding QoS from the attributes provided.
+ * Obtains the DataReaderQos from the SubscriberAttributes provided.
+ * 
  * @param qos Pointer to the QoS to write on
  * @param attr Pointer to the attributes from which to obtain data
  */
@@ -74,7 +76,8 @@ void set_qos_from_attributes(
         const eprosima::fastrtps::rtps::RTPSParticipantAttributes& attr);
 
 /**
- * Obtains the corresponding attributes from the QoS provided.
+ * Obtains the RTPSParticipantAttributes from the DomainParticipantQos provided.
+ * 
  * @param attr Pointer to the attributes from which to obtain data
  * @param qos Pointer to the QoS to write on
  */
@@ -83,7 +86,8 @@ void set_attributes_from_qos(
         const DomainParticipantQos& qos);
 
 /**
- * Obtains the corresponding QoS from the attributes provided.
+ * Obtains the TopicQos from the TopicAttributes provided.
+ * 
  * @param qos Pointer to the QoS to write on
  * @param attr Pointer to the attributes from which to obtain data
  */
@@ -92,7 +96,8 @@ void set_qos_from_attributes(
         const TopicAttributes& attr);
 
 /**
- * Obtains the corresponding QoS from the attributes provided.
+ * Obtains the SubscriberQos from the SubscriberAttributes provided.
+ * 
  * @param qos Pointer to the QoS to write on
  * @param attr Pointer to the attributes from which to obtain data
  */
@@ -101,7 +106,8 @@ void set_qos_from_attributes(
         const SubscriberAttributes& attr);
 
 /**
- * Obtains the corresponding QoS from the attributes provided.
+ * Obtains the PublisherQos from the PublisherAttributes provided.
+ * 
  * @param qos Pointer to the QoS to write on
  * @param attr Pointer to the attributes from which to obtain data
  */
