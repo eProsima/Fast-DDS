@@ -229,7 +229,7 @@ void DiscoveryServer::ServerListener::on_participant_discovery(
     }
 }
 
-void DiscoveryServer::run()
+void DiscoveryServer::run(unsigned int timeout)
 {
     stop_ = false;
     std::cout << "Server running. Please press CTRL+C to stop the Server." << std::endl;
@@ -238,6 +238,21 @@ void DiscoveryServer::run()
                 std::cout << "SIGINT received, stopping Server execution." << std::endl;
                 static_cast<void>(signum); DiscoveryServer::stop();
             });
+
+    if (timeout > 0)
+    {
+        // Create a thread that will stop this process after timeout
+        std::thread t(
+            [=]
+            ()
+            {
+                std::this_thread::sleep_for(std::chrono::seconds(timeout));
+                std::cout << "Stopping Server execution due to timeout." << std::endl;
+                DiscoveryServer::stop();
+            });
+        t.detach();
+    }
+
     std::unique_lock<std::mutex> lck(terminate_cv_mtx_);
     terminate_cv_.wait(lck, []
             {

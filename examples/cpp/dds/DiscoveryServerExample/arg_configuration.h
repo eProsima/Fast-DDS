@@ -173,6 +173,7 @@ enum  optionIndex
     LISTENING_ADDRESS,
     LISTENING_PORT,
     LISTENING_DISCOVERY_SERVER_ID,
+    TIMEOUT,
 };
 
 const option::Descriptor usage[] = {
@@ -357,6 +358,14 @@ const option::Descriptor usage[] = {
         Arg::Numeric,
       "  -d <num>\t--connection-discovery-server-id <num> \tId of the Discovery Server to connect with. "
       "GUID will be calculated from id (if not set, this DS will not connect to other server)."
+    },
+    {
+        TIMEOUT,
+        0,
+        "z",
+        "timeout",
+        Arg::Numeric,
+      "  -z <num>\t--timeout <num> \tNumber of seconds before finish the process (Default: 0 = till ^C). "
     },
 
     { 0, 0, 0, 0, 0, 0 }

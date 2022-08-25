@@ -52,7 +52,7 @@ public:
             unsigned short connection_server_id);
 
     //! Run
-    void run();
+    void run(unsigned int timeout);
 
     //! Return the current state of execution
     static bool is_stopped();

@@ -71,6 +71,7 @@ int main(
     std::string listening_address = "::1";   // default ip address
     uint16_t listening_port = 16166;   // default physical port
     uint16_t listening_ds_id = 0;   // default DS id
+    uint32_t timeout = 0;   // default DS id
 
     if (argc > 1)
     {
@@ -233,6 +234,15 @@ int main(
                     listening_ds_id = strtol(opt.arg, nullptr, 10);
                     break;
 
+                case optionIndex::TIMEOUT:
+                    if (type != EntityKind::SERVER)
+                    {
+                        print_warning("server", opt.name);
+                        break;
+                    }
+                    timeout = strtol(opt.arg, nullptr, 10);
+                    break;
+
                 case optionIndex::UNKNOWN_OPT:
                     std::cerr << "ERROR: " << opt.name << " is not a valid argument." << std::endl;
                     option::printUsage(fwrite, stdout, usage, columns);
@@ -338,7 +348,7 @@ int main(
                     connection_port,
                     connection_ds_id))
             {
-                myserver.run();
+                myserver.run(timeout);
             }
             else
             {
