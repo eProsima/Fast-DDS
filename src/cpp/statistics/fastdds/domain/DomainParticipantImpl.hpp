@@ -78,7 +78,7 @@ public:
      * @return XMLP_ret::XML_OK on success, XMLP_ret::XML_ERROR in other case. Defaults true.
      */
     ReturnCode_t enable_statistics_datawriter_with_profile(
-            const std::string &profile_name);
+            const std::string& profile_name);
 
     /**
      * @brief This operation disables a Statistics DataWriter
