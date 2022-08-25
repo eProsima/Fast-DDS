@@ -39,7 +39,7 @@ using fastrtps::TopicAttributes;
 
 /**
  * Obtains the DataWriterQos from the PublisherAttributes provided.
- * 
+ *
  * @param qos Pointer to the QoS to write on
  * @param attr Pointer to the attributes from which to obtain data
  */
@@ -49,7 +49,7 @@ void set_qos_from_attributes(
 
 /**
  * Obtains the DataReaderQos from the SubscriberAttributes provided.
- * 
+ *
  * @param qos Pointer to the QoS to write on
  * @param attr Pointer to the attributes from which to obtain data
  */
@@ -77,7 +77,7 @@ void set_qos_from_attributes(
 
 /**
  * Obtains the RTPSParticipantAttributes from the DomainParticipantQos provided.
- * 
+ *
  * @param attr Pointer to the attributes from which to obtain data
  * @param qos Pointer to the QoS to write on
  */
@@ -87,7 +87,7 @@ void set_attributes_from_qos(
 
 /**
  * Obtains the TopicQos from the TopicAttributes provided.
- * 
+ *
  * @param qos Pointer to the QoS to write on
  * @param attr Pointer to the attributes from which to obtain data
  */
@@ -97,7 +97,7 @@ void set_qos_from_attributes(
 
 /**
  * Obtains the SubscriberQos from the SubscriberAttributes provided.
- * 
+ *
  * @param qos Pointer to the QoS to write on
  * @param attr Pointer to the attributes from which to obtain data
  */
@@ -107,7 +107,7 @@ void set_qos_from_attributes(
 
 /**
  * Obtains the PublisherQos from the PublisherAttributes provided.
- * 
+ *
  * @param qos Pointer to the QoS to write on
  * @param attr Pointer to the attributes from which to obtain data
  */
