@@ -17,6 +17,11 @@ if(WIN32)
     add_definitions(-DNOMINMAX)
 endif()
 
+# Only include tinyxml2 headers manually if the associated config predates the use of CMake targets
+if(TINYXML2_INCLUDE_DIR)
+    include_directories(${TINYXML2_INCLUDE_DIR})
+endif(TINYXML2_INCLUDE_DIR)
+
 ## StatisticsDomainParticipantTests
 set(STATISTICS_DOMAINPARTICIPANT_TESTS_SOURCE
     StatisticsDomainParticipantTests.cpp
@@ -312,11 +317,6 @@ if (SQLITE3_SUPPORT AND FASTDDS_STATISTICS)
             ${TINYXML2_SOURCE_DIR}/tinyxml2.cpp
             )
     endif()
-
-    # Only include tinyxml2 headers manually if the associated config predates the use of CMake targets
-    if(TINYXML2_INCLUDE_DIR)
-        include_directories(${TINYXML2_INCLUDE_DIR})
-    endif(TINYXML2_INCLUDE_DIR)
 
     add_executable(StatisticsDomainParticipantMockTests ${STATISTICS_DOMAINPARTICIPANT_MOCK_TESTS_SOURCE})
     target_compile_definitions(StatisticsDomainParticipantMockTests PRIVATE FASTRTPS_NO_LIB
