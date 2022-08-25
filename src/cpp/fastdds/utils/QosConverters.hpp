@@ -20,13 +20,13 @@
 #define _FASTDDS_UTILS_QOS_CONVERTERS_HPP_
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 
+#include <fastdds/dds/domain/DomainParticipant.hpp>
 #include <fastdds/dds/publisher/qos/DataWriterQos.hpp>
 #include <fastdds/dds/subscriber/qos/DataReaderQos.hpp>
+#include <fastdds/rtps/attributes/RTPSParticipantAttributes.h>
 #include <fastrtps/attributes/PublisherAttributes.h>
 #include <fastrtps/attributes/SubscriberAttributes.h>
 #include <fastrtps/attributes/TopicAttributes.h>
-#include <fastdds/dds/domain/DomainParticipant.hpp>
-#include <fastdds/rtps/participant/RTPSParticipant.h>
 
 namespace eprosima {
 namespace fastdds {
