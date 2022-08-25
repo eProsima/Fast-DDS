@@ -35,7 +35,7 @@ target_compile_definitions(StatisticsDomainParticipantTests PRIVATE FASTRTPS_NO_
     )
 target_include_directories(StatisticsDomainParticipantTests PRIVATE
     ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include ${PROJECT_SOURCE_DIR}/src/cpp ${THIRDPARTY_BOOST_INCLUDE_DIR})
-target_link_libraries(StatisticsDomainParticipantTests fastrtps fastcdr ${TINYXML2_LIBRARY} GTest::gtest)
+target_link_libraries(StatisticsDomainParticipantTests fastrtps fastcdr GTest::gtest)
 add_gtest(StatisticsDomainParticipantTests SOURCES ${STATISTICS_DOMAINPARTICIPANT_TESTS_SOURCE})
 
 ## StatisticsQosTests
@@ -43,13 +43,13 @@ set(STATISTICS_QOS_TESTS_SOURCE
     StatisticsQosTests.cpp)
 
 add_executable(StatisticsQosTests ${STATISTICS_QOS_TESTS_SOURCE})
-target_compile_definitions(StatisticsQosTests PRIVATE FASTRTPS_NO_LIB
+target_compile_definitions(StatisticsQosTests PRIVATE FASTRTPS_NO_LIB BOOST_ASIO_STANDALONE ASIO_STANDALONE
     $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
     $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNAL_DEBUG> # Internal debug activated.
     )
 target_include_directories(StatisticsQosTests PRIVATE
-    ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include ${PROJECT_SOURCE_DIR}/src/cpp)
-target_link_libraries(StatisticsQosTests fastrtps fastcdr GTest::gtest)
+    ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include ${PROJECT_SOURCE_DIR}/src/cpp ${THIRDPARTY_BOOST_INCLUDE_DIR})
+target_link_libraries(StatisticsQosTests fastrtps fastcdr ${TINYXML2_LIBRARY} GTest::gtest)
 add_gtest(StatisticsQosTests SOURCES ${STATISTICS_QOS_TESTS_SOURCE})
 
 ## StatisticsDomainParticipantListenerTests

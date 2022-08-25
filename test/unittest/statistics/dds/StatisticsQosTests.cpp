@@ -13,20 +13,56 @@
 // limitations under the License.
 
 #include <string>
+#include <tinyxml2.h>
 
 #include <gtest/gtest.h>
 
 #include <fastdds/dds/core/policy/QosPolicies.hpp>
 #include <fastdds/dds/log/Log.hpp>
+#include <fastdds/dds/publisher/DataWriter.hpp>
+#include <fastdds/dds/publisher/qos/DataWriterQos.hpp>
 #include <fastdds/rtps/attributes/PropertyPolicy.h>
 #include <fastdds/rtps/flowcontrol/FlowControllerConsts.hpp>
+#include <fastdds/statistics/dds/domain/DomainParticipant.hpp>
 #include <fastdds/statistics/dds/publisher/qos/DataWriterQos.hpp>
 #include <fastdds/statistics/dds/subscriber/qos/DataReaderQos.hpp>
+#include <fastrtps/xmlparser/XMLProfileManager.h>
+#include <statistics/fastdds/domain/DomainParticipantImpl.hpp>
+#include <statistics/fastdds/publisher/PublisherImpl.hpp>
 
 namespace eprosima {
 namespace fastdds {
 namespace statistics {
 namespace dds {
+
+using ReturnCode_t = eprosima::fastrtps::types::ReturnCode_t;
+
+class StatisticsFromXMLProfileTests : public ::testing::Test
+{
+public:
+
+    class TestDomainParticipant : public eprosima::fastdds::statistics::dds::DomainParticipant
+    {
+    public:
+
+        DomainParticipantImpl* get_domain_participant_impl()
+        {
+            return static_cast<DomainParticipantImpl*>(impl_);
+        }
+
+    };
+
+    class TestDomainParticipantImpl : public eprosima::fastdds::statistics::dds::DomainParticipantImpl
+    {
+    public:
+
+        PublisherImpl*  get_publisher_impl()
+        {
+            return builtin_publisher_impl_;
+        }
+
+    };
+};
 
 /*
  * This test checks that STATISTICS_DATAWRITER_QOS correctly sets the expected QoS.
@@ -65,6 +101,211 @@ TEST(StatisticsQosTests, StatisticsDataReaderQosTest)
     EXPECT_TRUE(STATISTICS_DATAREADER_QOS.durability().kind == eprosima::fastdds::dds::TRANSIENT_LOCAL_DURABILITY_QOS);
     EXPECT_TRUE(STATISTICS_DATAREADER_QOS.history().kind == eprosima::fastdds::dds::KEEP_LAST_HISTORY_QOS);
     EXPECT_TRUE(STATISTICS_DATAREADER_QOS.history().depth == 100);
+}
+
+/**
+ * This test checks that the creation of new feature: Configuration of participant statistic QoS from XML file
+ * Topic created with another type different from the one expected.
+ * 1. Create XML file with the appropiate configuration.
+ * 2. Read XML and enable datawrtiters from it.
+ * 3. Check that Qos are correctly configured.
+ */
+TEST_F(StatisticsFromXMLProfileTests, XMLConfigurationForStatisticsDataWritersQoS)
+{
+#ifdef FASTDDS_STATISTICS
+    const char* xml =
+            "                                                                                                           \
+        <?xml version=\"1.0\" encoding=\"utf-8\"  ?>                                                                    \
+        <dds xmlns=\"http://www.eprosima.com/XMLSchemas/fastRTPS_Profiles\">                                            \
+        <profiles>                                                                                                      \
+                <participant profile_name=\"statistics_participant\" is_default_profile=\"true\">                       \
+                <rtps>                                                                                                  \
+                        <propertiesPolicy>                                                                              \
+                        <properties>                                                                                    \
+                                <property>                                                                              \
+                                <name>fastdds.statistics</name>                                                         \
+                                <value>HISTORY_LATENCY_TOPIC;PUBLICATION_THROUGHPUT_TOPIC</value>                       \
+                                </property>                                                                             \
+                        </properties>                                                                                   \
+                        </propertiesPolicy>                                                                             \
+                </rtps>                                                                                                 \
+                </participant>                                                                                          \
+                <data_writer profile_name=\"HISTORY_LATENCY_TOPIC\">                                                    \
+                        <qos>                                                                                           \
+                                <reliability>                                                                           \
+                                        <kind>BEST_EFFORT</kind>                                                        \
+                                </reliability>                                                                          \
+                                <durability>                                                                            \
+                                        <kind>VOLATILE</kind>                                                           \
+                                </durability>                                                                           \
+                                <publishMode>                                                                           \
+                                        <kind>SYNCHRONOUS</kind>                                                        \
+                                </publishMode>                                                                          \
+                        </qos>                                                                                          \
+                </data_writer>                                                                                          \
+                <data_writer profile_name=\"NETWORK_LATENCY_TOPIC\">                                                    \
+                </data_writer>                                                                                          \
+                <data_writer profile_name=\"SUBSCRIPTION_THROUGHPUT_TOPIC\">                                            \
+                        <qos>                                                                                           \
+                                <reliability>                                                                           \
+                                        <kind>BEST_EFFORT</kind>                                                        \
+                                </reliability>                                                                          \
+                                <partition>                                                                             \
+                                        <names>                                                                         \
+                                                <name>part1</name>                                                      \
+                                                <name>part2</name>                                                      \
+                                        </names>                                                                        \
+                                </partition>                                                                            \
+                                <deadline>                                                                              \
+                                        <period>                                                                        \
+                                                <sec>3</sec>                                                            \
+                                        </period>                                                                       \
+                                </deadline>                                                                             \
+                                <latencyBudget>                                                                         \
+                                        <duration>                                                                      \
+                                                <sec>2</sec>                                                            \
+                                        </duration>                                                                     \
+                                </latencyBudget>                                                                        \
+                                <disable_heartbeat_piggyback>true</disable_heartbeat_piggyback>                         \
+                        </qos>                                                                                          \
+                </data_writer>                                                                                          \
+        </profiles>                                                                                                     \
+        </dds>                                                                                                          \
+    ";
+    tinyxml2::XMLDocument xml_doc;
+    xml_doc.Parse(xml);
+    xml_doc.SaveFile("FASTRTPS_STATISTICS_PROFILES.xml");
+
+
+    // 1. Set environment variable and create participant using Qos set by code
+    const char* value = "FASTRTPS_STATISTICS_PROFILES.xml";
+#ifdef _WIN32
+    ASSERT_EQ(0, _putenv_s("FASTRTPS_DEFAULT_PROFILES_FILE", value));
+#else
+    ASSERT_EQ(0, setenv("FASTRTPS_DEFAULT_PROFILES_FILE", value, 1));
+#endif // ifdef _WIN32
+
+    // Create a DomainParticipant (2. is implicit, as auto-enable option is true by default)
+    eprosima::fastdds::dds::DomainParticipant* participant =
+            eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->
+                    create_participant(0, eprosima::fastdds::dds::PARTICIPANT_QOS_DEFAULT);
+    ASSERT_NE(participant, nullptr);
+
+    // Obtain pointer to child class
+    eprosima::fastdds::statistics::dds::DomainParticipant* statistics_participant =
+            eprosima::fastdds::statistics::dds::DomainParticipant::narrow(participant);
+    ASSERT_NE(statistics_participant, nullptr);
+
+    // Static conversion to child class TestDomainParticipant
+    TestDomainParticipant* test_statistics_participant = static_cast<TestDomainParticipant*>(statistics_participant);
+    ASSERT_NE(test_statistics_participant, nullptr);
+
+    // Get DomainParticipantImpl
+    eprosima::fastdds::statistics::dds::DomainParticipantImpl* domain_statistics_participant_impl =
+            test_statistics_participant->get_domain_participant_impl();
+    ASSERT_NE(domain_statistics_participant_impl, nullptr);
+
+    // Static conversion to child class TestDomainParticipantImpl
+    TestDomainParticipantImpl* test_statistics_domain_participant_impl =
+            static_cast<TestDomainParticipantImpl*>(domain_statistics_participant_impl);
+    ASSERT_NE(test_statistics_domain_participant_impl, nullptr);
+
+    // Get PublisherImpl
+    eprosima::fastdds::statistics::dds::PublisherImpl* statistics_publisher_impl =
+            test_statistics_domain_participant_impl->get_publisher_impl();
+    ASSERT_NE(statistics_publisher_impl, nullptr);
+
+    // 3. Get datawriters
+
+    // HISTORY_LATENCY_TOPIC has non default qos defined in XML
+    // Also is defined as data_writer profile, and in the fastdds.statistics property policy,
+    // for which the non-default qos defined should prevail
+    std::string history_latency_name = "_fastdds_statistics_history2history_latency";
+    eprosima::fastdds::dds::DataWriter* history_latency_writer =
+            statistics_publisher_impl->lookup_datawriter(history_latency_name);
+    ASSERT_NE(history_latency_writer, nullptr);
+
+    // By default, when QoS are setted in XML for an statistics DataWriter profile,
+    // XMLProfileManager will use eProsima's default qos, not statistics default qos
+    efd::DataWriterQos qos;
+    qos.reliability().kind = eprosima::fastdds::dds::ReliabilityQosPolicyKind::BEST_EFFORT_RELIABILITY_QOS;
+    qos.durability().kind = eprosima::fastdds::dds::DurabilityQosPolicyKind_t::VOLATILE_DURABILITY_QOS;
+    qos.publish_mode().kind = eprosima::fastdds::dds::PublishModeQosPolicyKind::SYNCHRONOUS_PUBLISH_MODE;
+    ASSERT_EQ(qos, history_latency_writer->get_qos());
+
+    // Comprobation of the opposite of the last comprobation:
+    // XMLProfileManager doesn't use statistics default qos
+    eprosima::fastdds::statistics::dds::DataWriterQos qos2;
+    qos2.reliability().kind = eprosima::fastdds::dds::ReliabilityQosPolicyKind::BEST_EFFORT_RELIABILITY_QOS;
+    qos2.durability().kind = eprosima::fastdds::dds::DurabilityQosPolicyKind_t::VOLATILE_DURABILITY_QOS;
+    qos2.publish_mode().kind = eprosima::fastdds::dds::PublishModeQosPolicyKind::SYNCHRONOUS_PUBLISH_MODE;
+    ASSERT_EQ(false, qos2 == history_latency_writer->get_qos());
+
+    // PUBLICATION_THROUGHPUT_TOPIC should have by-default qos
+    // Defined in the fastdds.statistics property policy
+    std::string publication_throughput_name = "_fastdds_statistics_publication_throughput";
+    eprosima::fastdds::dds::DataWriter* publication_throughput_writer =
+            statistics_publisher_impl->lookup_datawriter(publication_throughput_name);
+    ASSERT_NE(publication_throughput_writer, nullptr);
+    ASSERT_EQ(STATISTICS_DATAWRITER_QOS, publication_throughput_writer->get_qos());
+
+    // SUBSCRIPTION_THROUGHPUT_TOPIC is not defined. Should return nullptr
+    std::string subscription_throughput_name = "_fastdds_statistics_subscription_throughput";
+    eprosima::fastdds::dds::DataWriter* subscription_throughput_writer =
+            statistics_publisher_impl->lookup_datawriter(subscription_throughput_name);
+    ASSERT_EQ(subscription_throughput_writer, nullptr);
+
+    // TEST FOR NEW PUBLIC METHOD: enable_statistics_datawriter_with_profile()
+
+    // NETWORK_LATENCY_TOPIC is not defined in the fastdds.statistics property policy,
+    // it is just defined as data_writer profile. Thus, should not be created
+    std::string network_latency_name = "_fastdds_statistics_network_latency";
+    eprosima::fastdds::dds::DataWriter* network_latency_writer =
+            statistics_publisher_impl->lookup_datawriter(network_latency_name);
+    ASSERT_EQ(network_latency_writer, nullptr);
+
+    // But user can enable it manualy through enable_statistics_datawriter_with_profile()
+    ReturnCode_t ret = test_statistics_domain_participant_impl->enable_statistics_datawriter_with_profile(
+        "NETWORK_LATENCY_TOPIC");
+    ASSERT_EQ(ReturnCode_t::RETCODE_OK, ret);
+    network_latency_writer =
+            statistics_publisher_impl->lookup_datawriter(network_latency_name);
+    ASSERT_NE(network_latency_writer, nullptr);
+
+    efd::DataWriterQos qos3;
+    ASSERT_EQ(qos3, network_latency_writer->get_qos());
+
+    // SUBSCRIPTION_THROUGHPUT_TOPIC is not defined in the fastdds.statistics property policy,
+    // it is just defined as data_writer profile. Thus, should not be created
+    std::string subscription_througput_name = "_fastdds_statistics_subscription_throughput";
+    eprosima::fastdds::dds::DataWriter* subscription_througput_writer =
+            statistics_publisher_impl->lookup_datawriter(subscription_througput_name);
+    ASSERT_EQ(subscription_througput_writer, nullptr);
+
+    // But user can enable it manualy through enable_statistics_datawriter_with_profile()
+    ret = test_statistics_domain_participant_impl->enable_statistics_datawriter_with_profile(
+        "SUBSCRIPTION_THROUGHPUT_TOPIC");
+    ASSERT_EQ(ReturnCode_t::RETCODE_OK, ret);
+    subscription_througput_writer =
+            statistics_publisher_impl->lookup_datawriter(subscription_througput_name);
+    ASSERT_NE(subscription_througput_writer, nullptr);
+
+    // Expected QoS construction for Subscription_Throughput topic:
+    efd::DataWriterQos qos4;
+    qos4.reliability().kind = eprosima::fastdds::dds::ReliabilityQosPolicyKind::BEST_EFFORT_RELIABILITY_QOS;
+    eprosima::fastrtps::rtps::Property property;
+    property.name("partitions");
+    std::string partitions = "part1;part2";
+    property.value(std::move(partitions));
+    qos4.properties().properties().push_back(std::move(property));
+    qos4.deadline().period.seconds = 3;
+    qos4.deadline().period.nanosec = 0; // If seconds are set in XML, nanoseconds are set to 0 (while default value is max value)
+    qos4.latency_budget().duration.seconds = 2;
+    qos4.reliable_writer_qos().disable_heartbeat_piggyback = true;
+    ASSERT_EQ(qos4, subscription_througput_writer->get_qos());
+
+    remove("FASTRTPS_PROFILES.xml");
+#endif // FASTDDS_STATISTICS
 }
 
 } // namespace dds
