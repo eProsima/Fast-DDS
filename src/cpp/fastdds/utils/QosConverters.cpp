@@ -18,6 +18,7 @@
  */
 
 #include <string>
+
 #include <fastdds/rtps/common/Property.h>
 #include <fastdds/utils/QosConverters.hpp>
 
