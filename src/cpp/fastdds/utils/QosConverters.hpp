@@ -16,10 +16,8 @@
  * @file QosConverters.h
  */
 
-
-
-#ifndef _QOS_CONVERTERS_HPP_
-#define _QOS_CONVERTERS_HPP_
+#ifndef _FASTDDS_UTILS_QOS_CONVERTERS_HPP_
+#define _FASTDDS_UTILS_QOS_CONVERTERS_HPP_
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 
 #include <fastdds/dds/publisher/qos/DataWriterQos.hpp>
@@ -116,4 +114,4 @@ void set_qos_from_attributes(
 } /* namespace fastdds */
 } /* namespace eprosima */
 #endif // ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
-#endif /* _QOS_CONVERTERS_HPP_ */
+#endif /* _FASTDDS_UTILS_QOS_CONVERTERS_HPP_ */
