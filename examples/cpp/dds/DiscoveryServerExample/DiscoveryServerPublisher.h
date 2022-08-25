@@ -46,6 +46,7 @@ public:
             const std::string& topic_name,
             const std::string& server_address,
             unsigned short server_port,
+            unsigned short server_id,
             TransportKind transport);
 
     //! Publish a sample

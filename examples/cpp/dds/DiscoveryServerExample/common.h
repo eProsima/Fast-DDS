@@ -17,8 +17,12 @@
  *
  */
 
-#ifndef _EPROSIMA_FASTDDS_EXAMPLES_CPP_DDS_DISCOVERYSERVEREXAMPLE_COMMON_H_
-#define _EPROSIMA_FASTDDS_EXAMPLES_CPP_DDS_DISCOVERYSERVEREXAMPLE_COMMON_H_
+#pragma once
+
+#ifndef EPROSIMA_FASTDDS_EXAMPLES_CPP_DDS_DISCOVERYSERVEREXAMPLE_COMMON_H_
+#define EPROSIMA_FASTDDS_EXAMPLES_CPP_DDS_DISCOVERYSERVEREXAMPLE_COMMON_H_
+
+#include <fastdds/rtps/attributes/ServerAttributes.h>
 
 enum class TransportKind
 {
@@ -29,4 +33,16 @@ enum class TransportKind
     SHM,
 };
 
-#endif /* _EPROSIMA_FASTDDS_EXAMPLES_CPP_DDS_DISCOVERYSERVEREXAMPLE_COMMON_H_ */
+inline eprosima::fastrtps::rtps::GuidPrefix_t get_discovery_server_guid_from_id(unsigned short id)
+{
+    eprosima::fastrtps::rtps::GuidPrefix_t result;
+
+    // Get default DS guid and modify the one value expected to be changed
+    std::istringstream(eprosima::fastdds::rtps::DEFAULT_ROS2_SERVER_GUIDPREFIX) >> result;
+    result.value[2] =
+        static_cast<eprosima::fastrtps::rtps::octet>(id); // This is done like this in Fast
+
+    return result;
+}
+
+#endif /* EPROSIMA_FASTDDS_EXAMPLES_CPP_DDS_DISCOVERYSERVEREXAMPLE_COMMON_H_ */

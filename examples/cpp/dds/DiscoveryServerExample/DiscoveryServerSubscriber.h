@@ -49,6 +49,7 @@ public:
             uint32_t max_messages,
             const std::string& server_address,
             unsigned short server_port,
+            unsigned short server_id,
             TransportKind transport);
 
     //! RUN the subscriber until number samples are received

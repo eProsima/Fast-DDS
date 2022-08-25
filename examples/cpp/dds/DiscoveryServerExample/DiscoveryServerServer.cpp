@@ -55,15 +55,26 @@ void DiscoveryServer::stop()
 bool DiscoveryServer::init(
         const std::string& server_address,
         unsigned short server_port,
-        TransportKind transport)
+        unsigned short server_id,
+        TransportKind transport,
+        bool has_connection_server,
+        const std::string& connection_server_address,
+        unsigned short connection_server_port,
+        unsigned short connection_server_id)
 {
     DomainParticipantQos pqos;
     pqos.name("DS-Server");
     pqos.transport().use_builtin_transports = false;
 
+    ///////////////////////////////
+    // Configure Listening address
+    ///////////////////////////////
+
     // Create DS SERVER locator
-    eprosima::fastdds::rtps::Locator server_locator;
-    eprosima::fastrtps::rtps::IPLocator::setPhysicalPort(server_locator, server_port);
+    eprosima::fastdds::rtps::Locator listening_locator;
+    eprosima::fastdds::rtps::Locator connection_locator;
+    eprosima::fastrtps::rtps::IPLocator::setPhysicalPort(listening_locator, server_port);
+    eprosima::fastrtps::rtps::IPLocator::setPhysicalPort(connection_locator, connection_server_port);
 
     std::shared_ptr<eprosima::fastdds::rtps::TransportDescriptorInterface> descriptor;
 
@@ -71,7 +82,8 @@ bool DiscoveryServer::init(
     {
     case TransportKind::SHM:
         descriptor = std::make_shared<eprosima::fastdds::rtps::SharedMemTransportDescriptor>();
-        server_locator.kind = LOCATOR_KIND_SHM;
+        listening_locator.kind = LOCATOR_KIND_SHM;
+        connection_locator.kind = LOCATOR_KIND_SHM;
         break;
 
     case TransportKind::UDPv4:
@@ -80,8 +92,10 @@ bool DiscoveryServer::init(
         descriptor_tmp->interfaceWhiteList.push_back(server_address);
         descriptor = descriptor_tmp;
 
-        server_locator.kind = LOCATOR_KIND_UDPv4;
-        eprosima::fastrtps::rtps::IPLocator::setIPv4(server_locator, server_address);
+        listening_locator.kind = LOCATOR_KIND_UDPv4;
+        eprosima::fastrtps::rtps::IPLocator::setIPv4(listening_locator, server_address);
+        connection_locator.kind = LOCATOR_KIND_UDPv4;
+        eprosima::fastrtps::rtps::IPLocator::setIPv4(connection_locator, connection_server_address);
         break;
     }
 
@@ -91,8 +105,10 @@ bool DiscoveryServer::init(
         descriptor_tmp->interfaceWhiteList.push_back(server_address);
         descriptor = descriptor_tmp;
 
-        server_locator.kind = LOCATOR_KIND_UDPv6;
-        eprosima::fastrtps::rtps::IPLocator::setIPv6(server_locator, server_address);
+        listening_locator.kind = LOCATOR_KIND_UDPv6;
+        eprosima::fastrtps::rtps::IPLocator::setIPv6(listening_locator, server_address);
+        connection_locator.kind = LOCATOR_KIND_UDPv6;
+        eprosima::fastrtps::rtps::IPLocator::setIPv6(connection_locator, connection_server_address);
         break;
     }
 
@@ -108,10 +124,32 @@ bool DiscoveryServer::init(
             eprosima::fastrtps::rtps::DiscoveryProtocol_t::SERVER;
 
     // Set SERVER's GUID prefix
-    std::istringstream(DEFAULT_ROS2_SERVER_GUIDPREFIX) >> pqos.wire_protocol().prefix;
+    pqos.wire_protocol().prefix = get_discovery_server_guid_from_id(server_id);
 
     // Set SERVER's listening locator for PDP
-    pqos.wire_protocol().builtin.metatrafficUnicastLocatorList.push_back(server_locator);
+    pqos.wire_protocol().builtin.metatrafficUnicastLocatorList.push_back(listening_locator);
+
+    ///////////////////////////////
+    // Configure Connection address
+    ///////////////////////////////
+
+    RemoteServerAttributes remote_server_att;
+    if (has_connection_server)
+    {
+        // Set SERVER's GUID prefix
+        remote_server_att.guidPrefix = get_discovery_server_guid_from_id(connection_server_id);
+
+        // Set SERVER's listening locator for PDP
+        remote_server_att.metatrafficUnicastLocatorList.push_back(connection_locator);
+
+        // Add remote SERVER to CLIENT's list of SERVERs
+        pqos.wire_protocol().builtin.discovery_config.m_DiscoveryServers.push_back(remote_server_att);
+    }
+
+
+    ///////////////////////////////
+    // Create Participant
+    ///////////////////////////////
 
     // CREATE THE PARTICIPANT
     participant_ = DomainParticipantFactory::get_instance()->create_participant(0, pqos, &listener_);
@@ -121,11 +159,25 @@ bool DiscoveryServer::init(
         return false;
     }
 
-    std::cout <<
-        "Server Participant " << pqos.name() <<
-        " created with GUID " << participant_->guid() <<
-        " listening in address <" << server_locator  << "> " <<
-        std::endl;
+
+    if (has_connection_server)
+    {
+        std::cout <<
+            "Server Participant " << pqos.name() <<
+            " created with GUID " << participant_->guid() <<
+            " listening in address <" << listening_locator  << "> " <<
+            " connecting with Discovery Server <" << remote_server_att.guidPrefix << "> "
+            " with address <" << connection_locator  << "> " <<
+            std::endl;
+    }
+    else
+    {
+        std::cout <<
+            "Server Participant " << pqos.name() <<
+            " created with GUID " << participant_->guid() <<
+            " listening in address <" << listening_locator  << "> " <<
+            std::endl;
+    }
 
     return true;
 }

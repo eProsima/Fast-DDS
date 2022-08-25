@@ -67,6 +67,7 @@ bool HelloWorldSubscriber::init(
         uint32_t max_messages,
         const std::string& server_address,
         unsigned short server_port,
+        unsigned short server_id,
         TransportKind transport)
 {
     DomainParticipantQos pqos;
@@ -118,7 +119,7 @@ bool HelloWorldSubscriber::init(
 
     // Set SERVER's GUID prefix
     RemoteServerAttributes remote_server_att;
-    remote_server_att.ReadguidPrefix(DEFAULT_ROS2_SERVER_GUIDPREFIX);
+    remote_server_att.guidPrefix = get_discovery_server_guid_from_id(server_id);
 
     // Set SERVER's listening locator for PDP
     remote_server_att.metatrafficUnicastLocatorList.push_back(server_locator);

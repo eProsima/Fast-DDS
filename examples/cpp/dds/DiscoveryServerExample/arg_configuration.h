@@ -160,13 +160,19 @@ enum  optionIndex
 {
     UNKNOWN_OPT,
     HELP,
+
     TOPIC,
     SAMPLES,
     INTERVAL,
-    LISTENING_ADDRESS,
-    CONNECTION_ADDRESS,
-    PORT,
     TRANSPORT,
+
+    CONNECTION_ADDRESS,
+    CONNECTION_PORT,
+    CONNECTION_DISCOVERY_SERVER_ID,
+
+    LISTENING_ADDRESS,
+    LISTENING_PORT,
+    LISTENING_DISCOVERY_SERVER_ID,
 };
 
 const option::Descriptor usage[] = {
@@ -216,7 +222,7 @@ const option::Descriptor usage[] = {
         "  -c <IPaddress> \t--connection-address=<IPaddress>  \tServer address (Default address: ::1)."
     },
     {
-        PORT,
+        CONNECTION_PORT,
         0,
         "p",
         "connection-port",
@@ -230,6 +236,15 @@ const option::Descriptor usage[] = {
         "transport",
         Arg::Transport,
       "  -t <trans>\t--transport <trans> \tUse Transport Protocol [udpv4|udpv6] (UDPv6 by default)."
+    },
+    {
+        CONNECTION_DISCOVERY_SERVER_ID,
+        0,
+        "d",
+        "discovery-server-id",
+        Arg::Numeric,
+      "  -d <num>\t--discovery-server-id <num> \tId of the Discovery Server to connect with. "
+      "GUID will be calculated from id (0 by default)."
     },
 
     /// SUBSCRIBER OPTIONS
@@ -259,7 +274,7 @@ const option::Descriptor usage[] = {
         "  -c <IPaddress> \t--connection-address=<IPaddress>  \tServer address (Default address: ::1)."
     },
     {
-        PORT,
+        CONNECTION_PORT,
         0,
         "p",
         "connection-port",
@@ -274,24 +289,41 @@ const option::Descriptor usage[] = {
         Arg::Transport,
         "  -t <trans>\t--transport <trans> \tUse Transport Protocol [udpv4|udpv6] (UDPv6 by default)."
     },
+    {
+        CONNECTION_DISCOVERY_SERVER_ID,
+        0,
+        "d",
+        "discovery-server-id",
+        Arg::Numeric,
+      "  -d <num>\t--discovery-server-id <num> \tId of the Discovery Server to connect with. "
+      "GUID will be calculated from id (0 by default)."
+    },
 
     /// SERVER OPTIONS
     {UNKNOWN_OPT, 0, "", "", Arg::None, "\nDiscovery Server options:"},
     {
         LISTENING_ADDRESS,
         0,
-        "l",
+        "",
         "listening-address",
         Arg::Locator,
-        "  -l <IPaddress> \t--listening-address=<IPaddress>  \tServer address (Default address: ::1)."
+        "  \t--listening-address=<IPaddress>  \tServer address (Default address: ::1)."
     },
     {
-        PORT,
+        LISTENING_DISCOVERY_SERVER_ID,
         0,
-        "p",
+        "",
+        "id",
+        Arg::Numeric,
+      "  \t--id <num> \tId of this Discovery Server. GUID will be calculated from id (0 by default)."
+    },
+    {
+        LISTENING_PORT,
+        0,
+        "",
         "listening-port",
         Arg::Numeric,
-        "  -p <num> \t--listening-port=<num>  \tServer listening port (Default port: 16166)."
+        "  \t--listening-port=<num>  \tServer listening port (Default port: 16166)."
     },
     {
         TRANSPORT,
@@ -301,7 +333,31 @@ const option::Descriptor usage[] = {
         Arg::Transport,
         "  -t <trans>\t--transport <trans> \tUse Transport Protocol [udpv4|udpv6] (UDPv6 by default)."
     },
-
+    {
+        CONNECTION_PORT,
+        0,
+        "p",
+        "connection-port",
+        Arg::Numeric,
+        "  -p <num> \t--connection-port=<num>  \tServer listening port (Default port: 16166)."
+    },
+    {
+        CONNECTION_ADDRESS,
+        0,
+        "c",
+        "connection-address",
+        Arg::Locator,
+        "  -c <num> \t--connection-address=<IPaddress>  \tServer address (Default address: ::1)."
+    },
+    {
+        CONNECTION_DISCOVERY_SERVER_ID,
+        0,
+        "d",
+        "connection-discovery-server-id",
+        Arg::Numeric,
+      "  -d <num>\t--connection-discovery-server-id <num> \tId of the Discovery Server to connect with. "
+      "GUID will be calculated from id (if not set, this DS will not connect to other server)."
+    },
 
     { 0, 0, 0, 0, 0, 0 }
 };

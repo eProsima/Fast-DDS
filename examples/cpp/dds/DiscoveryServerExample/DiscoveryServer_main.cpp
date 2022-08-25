@@ -61,10 +61,16 @@ int main(
     // Transport
     TransportKind transport = TransportKind::UDPv6;
 
-    // Discovery Server
-    std::cmatch mr;
-    std::string server_address = "::1";   // default ip address
-    uint16_t server_port = 16166;   // default physical port
+    // Discovery Server connection
+    std::string connection_address = "::1";   // default ip address
+    uint16_t connection_port = 16166;   // default physical port
+    uint16_t connection_ds_id = 0;   // default DS id
+    bool id_ds_set = false;
+
+    // Discovery Server listening
+    std::string listening_address = "::1";   // default ip address
+    uint16_t listening_port = 16166;   // default physical port
+    uint16_t listening_ds_id = 0;   // default DS id
 
     if (argc > 1)
     {
@@ -186,8 +192,26 @@ int main(
                     break;
                 }
 
-                case optionIndex::PORT:
-                    server_port = strtol(opt.arg, nullptr, 10);
+                case optionIndex::CONNECTION_PORT:
+                    connection_port = strtol(opt.arg, nullptr, 10);
+                    break;
+
+                case optionIndex::CONNECTION_ADDRESS:
+                    connection_address = std::string(opt.arg);
+                    break;
+
+                case optionIndex::CONNECTION_DISCOVERY_SERVER_ID:
+                    id_ds_set = true;
+                    connection_ds_id = strtol(opt.arg, nullptr, 10);
+                    break;
+
+                case optionIndex::LISTENING_PORT:
+                    if (type != EntityKind::SERVER)
+                    {
+                        print_warning("server", opt.name);
+                        break;
+                    }
+                    listening_port = strtol(opt.arg, nullptr, 10);
                     break;
 
                 case optionIndex::LISTENING_ADDRESS:
@@ -196,16 +220,16 @@ int main(
                         print_warning("server", opt.name);
                         break;
                     }
-                    server_address = std::string(opt.arg);
+                    listening_address = std::string(opt.arg);
                     break;
 
-                case optionIndex::CONNECTION_ADDRESS:
-                    if (type == EntityKind::SERVER)
+                case optionIndex::LISTENING_DISCOVERY_SERVER_ID:
+                    if (type != EntityKind::SERVER)
                     {
-                        print_warning("publisher|subscriber", opt.name);
+                        print_warning("server", opt.name);
                         break;
                     }
-                    server_address = std::string(opt.arg);
+                    listening_ds_id = strtol(opt.arg, nullptr, 10);
                     break;
 
                 case optionIndex::UNKNOWN_OPT:
@@ -224,15 +248,37 @@ int main(
     }
 
     // Check that ip matches transport
-    if (transport == TransportKind::UDPv4 && !eprosima::fastrtps::rtps::IPLocator::isIPv4(server_address))
+    if (transport == TransportKind::UDPv4 && !eprosima::fastrtps::rtps::IPLocator::isIPv4(listening_address))
     {
-        std::cerr << "ERROR: IPv4 is needed to use UDPv4. Wrong IP address: " << server_address << std::endl;
+        std::cerr << "ERROR: IPv4 is needed to use UDPv4. Wrong IP address: " << listening_address << std::endl;
         option::printUsage(fwrite, stdout, usage, columns);
         return 1;
     }
-    else if (transport == TransportKind::UDPv6 && !eprosima::fastrtps::rtps::IPLocator::isIPv6(server_address))
+    else if (transport == TransportKind::UDPv6 && !eprosima::fastrtps::rtps::IPLocator::isIPv6(listening_address))
     {
-        std::cerr << "ERROR: IPv6 is needed to use UDPv6. Wrong IP address: " << server_address << std::endl;
+        std::cerr << "ERROR: IPv6 is needed to use UDPv6. Wrong IP address: " << listening_address << std::endl;
+        option::printUsage(fwrite, stdout, usage, columns);
+        return 1;
+    }
+
+    // Check that a DS has not same id itself and connection
+    if (id_ds_set && type == EntityKind::SERVER && listening_ds_id == connection_ds_id)
+    {
+        std::cerr << "ERROR: Discovery Servers ids must be different, "
+                  << " cannot connect to a server with same id " << listening_ds_id << std::endl;
+        option::printUsage(fwrite, stdout, usage, columns);
+        return 1;
+    }
+
+    // Check that a DS has not same ip and port in listening and connection
+    if (id_ds_set &&
+        type == EntityKind::SERVER &&
+        listening_address == connection_address &&
+        listening_port == connection_port)
+    {
+        std::cerr << "ERROR: Discovery Servers ports must be different, "
+                  << " cannot connect to a server with same listening address "
+                  << listening_address << "(" << listening_port << ")" << std::endl;
         option::printUsage(fwrite, stdout, usage, columns);
         return 1;
     }
@@ -242,7 +288,12 @@ int main(
         case EntityKind::PUBLISHER:
         {
             HelloWorldPublisher mypub;
-            if (mypub.init(topic_name, server_address, server_port, transport))
+            if (mypub.init(
+                    topic_name,
+                    connection_address,
+                    connection_port,
+                    connection_ds_id,
+                    transport))
             {
                 mypub.run(static_cast<uint32_t>(count), static_cast<uint32_t>(sleep));
             }
@@ -251,7 +302,13 @@ int main(
         case EntityKind::SUBSCRIBER:
         {
             HelloWorldSubscriber mysub;
-            if (mysub.init(topic_name, static_cast<uint32_t>(count), server_address, server_port, transport))
+            if (mysub.init(
+                    topic_name,
+                    static_cast<uint32_t>(count),
+                    connection_address,
+                    connection_port,
+                    connection_ds_id,
+                    transport))
             {
                 mysub.run(static_cast<uint32_t>(count));
             }
@@ -260,7 +317,15 @@ int main(
         case EntityKind::SERVER:
         {
             DiscoveryServer myserver;
-            if (myserver.init(server_address, server_port, transport))
+            if (myserver.init(
+                    listening_address,
+                    listening_port,
+                    listening_ds_id,
+                    transport,
+                    id_ds_set,
+                    connection_address,
+                    connection_port,
+                    connection_ds_id))
             {
                 myserver.run();
             }
