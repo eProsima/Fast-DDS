@@ -58,9 +58,18 @@ void set_qos_from_attributes(
         const SubscriberAttributes& attr);
 
 /**
- * Obtains the corresponding QoS from the attributes provided.
- * @param qos Pointer to the QoS to write on
- * @param attr Pointer to the attributes from which to obtain data
+ * @brief Fill DomainParticipantQos from a given attributes RTPSParticipantAttributes object
+ *
+ * For the case of the non-binary properties, instead of the RTPSParticipantAttributes overriding the
+ * property list in the DomainParticipantQos, a merge is performed in the following manner:
+ *
+ * - If any property from the RTPSParticipantAttributes is not in the DomainParticipantQos, then it is appended
+ *   to the DomainParticipantQos.
+ * - If any property from the RTPSParticipantAttributes property is also in the DomainParticipantQos, then the
+ *   value in the DomainParticipantQos is overridden with that of the RTPSParticipantAttributes.
+ *
+ * @param[in, out] qos The DomainParticipantQos to set
+ * @param[in] attr The RTPSParticipantAttributes from which the @c qos is set.
  */
 void set_qos_from_attributes(
         DomainParticipantQos& qos,
