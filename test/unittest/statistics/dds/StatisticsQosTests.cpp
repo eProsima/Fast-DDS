@@ -13,7 +13,6 @@
 // limitations under the License.
 
 #include <string>
-#include <tinyxml2.h>
 
 #include <gtest/gtest.h>
 
@@ -29,6 +28,8 @@
 #include <fastrtps/xmlparser/XMLProfileManager.h>
 #include <statistics/fastdds/domain/DomainParticipantImpl.hpp>
 #include <statistics/fastdds/publisher/PublisherImpl.hpp>
+
+#include <tinyxml2.h>
 
 namespace eprosima {
 namespace fastdds {
