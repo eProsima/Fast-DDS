@@ -40,10 +40,11 @@ void FlowControllerFactory::init(
                     FlowControllerFifoSchedule>(participant_, nullptr))));
 
 #ifdef FASTDDS_STATISTICS
-    flow_controllers_.insert({async_statistics_flow_controller_name,
-                              std::unique_ptr<FlowController>(
-                                  new FlowControllerImpl<FlowControllerAsyncPublishMode,
-                                  FlowControllerFifoSchedule>(participant_, nullptr))});
+    flow_controllers_.insert(std::make_pair<std::string, std::unique_ptr<FlowController>>(
+                async_statistics_flow_controller_name,
+                std::unique_ptr<FlowController>(
+                    new FlowControllerImpl<FlowControllerAsyncPublishMode,
+                    FlowControllerFifoSchedule>(participant_, nullptr))});
 #endif // ifndef FASTDDS_STATISTICS
 }
 
