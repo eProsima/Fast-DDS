@@ -17,8 +17,9 @@
  *
  */
 
-#include <fastdds/utils/QosConverters.hpp>
 #include <fastdds/rtps/common/Property.h>
+#include <fastdds/utils/QosConverters.hpp>
+#include <string>
 
 namespace eprosima {
 namespace fastdds {
@@ -26,6 +27,7 @@ namespace dds {
 namespace utils {
 
 using fastrtps::rtps::Property;
+using std::string;
 
 void set_qos_from_attributes(
         DataWriterQos& qos,
@@ -64,7 +66,7 @@ void set_qos_from_attributes(
     {
         Property property;
         property.name("partitions");
-        std::string partitions;
+        string partitions;
         bool is_first_partition = true;
 
         for (auto partition : attr.qos.m_partition.names())
@@ -114,7 +116,7 @@ void set_qos_from_attributes(
     {
         Property property;
         property.name("partitions");
-        std::string partitions;
+        string partitions;
         bool is_first_partition = true;
 
         for (auto partition : attr.qos.m_partition.names())
@@ -151,7 +153,7 @@ void set_qos_from_attributes(
     // Merge attributes and qos properties
     for (auto property : attr.properties.properties())
     {
-        std::string* property_value = fastrtps::rtps::PropertyPolicyHelper::find_property(
+        string* property_value = fastrtps::rtps::PropertyPolicyHelper::find_property(
             qos.properties(), property.name());
         if (nullptr == property_value)
         {
