@@ -101,7 +101,7 @@ bool HelloWorldPublisher::init(
     case TransportKind::UDPv4:
     {
         auto descriptor_tmp = std::make_shared<eprosima::fastdds::rtps::UDPv4TransportDescriptor>();
-        descriptor_tmp->interfaceWhiteList.push_back(ip_server_address);
+        // descriptor_tmp->interfaceWhiteList.push_back(ip_server_address);
         descriptor = descriptor_tmp;
 
         server_locator.kind = LOCATOR_KIND_UDPv4;
@@ -112,7 +112,7 @@ bool HelloWorldPublisher::init(
     case TransportKind::UDPv6:
     {
         auto descriptor_tmp = std::make_shared<eprosima::fastdds::rtps::UDPv6TransportDescriptor>();
-        descriptor_tmp->interfaceWhiteList.push_back(ip_server_address);
+        // descriptor_tmp->interfaceWhiteList.push_back(ip_server_address);
         descriptor = descriptor_tmp;
 
         server_locator.kind = LOCATOR_KIND_UDPv6;
