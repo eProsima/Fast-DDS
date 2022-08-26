@@ -77,7 +77,7 @@ public:
      * @param profile_name Name for the profile to be used to fill the structure.
      * @return XMLP_ret::XML_OK on success, XMLP_ret::XML_ERROR in other case. Defaults true.
      */
-    ReturnCode_t enable_statistics_datawriter_with_profile(
+    RTPS_DllAPI ReturnCode_t enable_statistics_datawriter_with_profile(
             const std::string& profile_name);
 
     /**

@@ -44,9 +44,12 @@ set(STATISTICS_QOS_TESTS_SOURCE
 
 # External sources
 if(TINYXML2_SOURCE_DIR)
-list(APPEND XMLPARSER_SOURCE
-    ${TINYXML2_SOURCE_DIR}/tinyxml2.cpp
-    )
+    set(TINYXML2_SOURCES
+        ${TINYXML2_SOURCE_DIR}/tinyxml2.cpp
+        )
+    list(APPEND STATISTICS_QOS_TESTS_SOURCE
+        ${TINYXML2_SOURCES}
+        )
 endif()
 
 add_executable(StatisticsQosTests ${STATISTICS_QOS_TESTS_SOURCE})
@@ -56,7 +59,7 @@ target_compile_definitions(StatisticsQosTests PRIVATE FASTRTPS_NO_LIB BOOST_ASIO
     )
 target_include_directories(StatisticsQosTests PRIVATE
     ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include ${PROJECT_SOURCE_DIR}/src/cpp ${THIRDPARTY_BOOST_INCLUDE_DIR})
-target_link_libraries(StatisticsQosTests fastrtps fastcdr ${TINYXML2_LIBRARY} GTest::gtest)
+target_link_libraries(StatisticsQosTests fastrtps fastcdr ${TINYXML2_LIBRARY} foonathan_memory GTest::gtest)
 add_gtest(StatisticsQosTests SOURCES ${STATISTICS_QOS_TESTS_SOURCE})
 
 ## StatisticsDomainParticipantListenerTests
@@ -70,6 +73,7 @@ if (FASTDDS_STATISTICS)
         ${PROJECT_SOURCE_DIR}/src/cpp/statistics/types/types.cxx
         ${PROJECT_SOURCE_DIR}/src/cpp/rtps/common/Time_t.cpp
         ${PROJECT_SOURCE_DIR}/src/cpp/utils/md5.cpp
+        ${TINYXML2_SOURCES}
         ${DOMAINPARTICIPANTSTATISTICSLISTENER_TESTS_SOURCE})
     target_compile_definitions(DomainParticipantStatisticsListenerTests PRIVATE FASTRTPS_NO_LIB
         $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
@@ -81,7 +85,7 @@ if (FASTDDS_STATISTICS)
         ${PROJECT_BINARY_DIR}/include
         ${PROJECT_SOURCE_DIR}/src/cpp)
     target_link_libraries(DomainParticipantStatisticsListenerTests
-        fastcdr GTest::gmock )
+        ${TINYXML2_LIBRARY} fastcdr GTest::gmock )
     add_gtest(DomainParticipantStatisticsListenerTests
         SOURCES ${DOMAINPARTICIPANTSTATISTICSLISTENER_TESTS_SOURCE})
 endif()
