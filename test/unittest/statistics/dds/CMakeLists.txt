@@ -29,18 +29,25 @@ set(STATISTICS_DOMAINPARTICIPANT_TESTS_SOURCE
     ${PROJECT_SOURCE_DIR}/src/cpp/statistics/types/types.cxx)
 
 add_executable(StatisticsDomainParticipantTests ${STATISTICS_DOMAINPARTICIPANT_TESTS_SOURCE})
-target_compile_definitions(StatisticsDomainParticipantTests PRIVATE FASTRTPS_NO_LIB BOOST_ASIO_STANDALONE ASIO_STANDALONE
+target_compile_definitions(StatisticsDomainParticipantTests PRIVATE FASTRTPS_NO_LIB
     $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
     $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNAL_DEBUG> # Internal debug activated.
     )
 target_include_directories(StatisticsDomainParticipantTests PRIVATE
-    ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include ${PROJECT_SOURCE_DIR}/src/cpp ${THIRDPARTY_BOOST_INCLUDE_DIR})
+    ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include ${PROJECT_SOURCE_DIR}/src/cpp)
 target_link_libraries(StatisticsDomainParticipantTests fastrtps fastcdr GTest::gtest)
 add_gtest(StatisticsDomainParticipantTests SOURCES ${STATISTICS_DOMAINPARTICIPANT_TESTS_SOURCE})
 
 ## StatisticsQosTests
 set(STATISTICS_QOS_TESTS_SOURCE
     StatisticsQosTests.cpp)
+
+# External sources
+if(TINYXML2_SOURCE_DIR)
+list(APPEND XMLPARSER_SOURCE
+    ${TINYXML2_SOURCE_DIR}/tinyxml2.cpp
+    )
+endif()
 
 add_executable(StatisticsQosTests ${STATISTICS_QOS_TESTS_SOURCE})
 target_compile_definitions(StatisticsQosTests PRIVATE FASTRTPS_NO_LIB BOOST_ASIO_STANDALONE ASIO_STANDALONE
