@@ -189,7 +189,7 @@ ReturnCode_t DomainParticipantImpl::enable_statistics_datawriter_with_profile(
         if (ret == ReturnCode_t::RETCODE_INCONSISTENT_POLICY)
         {
             logError(STATISTICS_DOMAIN_PARTICIPANT,
-                    "Topic QoS from profile name " << profile_name << " are not consistent/compatible");
+                    "Statistics DataWriter QoS from profile name " << profile_name << " are not consistent/compatible");
         }
         if (ret == ReturnCode_t::RETCODE_UNSUPPORTED)
         {
