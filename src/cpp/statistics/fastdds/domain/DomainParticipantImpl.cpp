@@ -199,6 +199,8 @@ ReturnCode_t DomainParticipantImpl::enable_statistics_datawriter_with_profile(
         }
         return ret;
     }
+    logError(STATISTICS_DOMAIN_PARTICIPANT,
+            "Profile name " << profile_name << " has not been found");
     return ReturnCode_t::RETCODE_ERROR;
 }
 

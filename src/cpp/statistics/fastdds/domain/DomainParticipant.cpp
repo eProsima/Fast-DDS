@@ -46,7 +46,7 @@ ReturnCode_t DomainParticipant::enable_statistics_datawriter(
 }
 
 ReturnCode_t DomainParticipant::enable_statistics_datawriter_with_profile(
-            const std::string& profile_name)
+        const std::string& profile_name)
 {
 #ifndef FASTDDS_STATISTICS
     (void) topic_name;
