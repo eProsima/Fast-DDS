@@ -184,18 +184,14 @@ ReturnCode_t DomainParticipantImpl::enable_statistics_datawriter_with_profile(
         ReturnCode_t ret = enable_statistics_datawriter(profile_name, datawriter_qos);
         // case RETCODE_ERROR is checked and logged in enable_statistics_datawriter.
         // case RETCODE_INCONSISTENT_POLICY could happen if profile defined in XML is inconsistent.
-        // case RETCODE_UNSUPPORTED could happen if this method is called when FASTDDS_STATISTICS is not set.
+        // case RETCODE_UNSUPPORTED cannot happen because this method is only called if FASTDDS_STATISTICS
         // CMake option is enabled
         if (ret == ReturnCode_t::RETCODE_INCONSISTENT_POLICY)
         {
             logError(STATISTICS_DOMAIN_PARTICIPANT,
                     "Statistics DataWriter QoS from profile name " << profile_name << " are not consistent/compatible");
         }
-        if (ret == ReturnCode_t::RETCODE_UNSUPPORTED)
-        {
-            logError(STATISTICS_DOMAIN_PARTICIPANT,
-                    "UNSUPPORTED METHOD: FASTDDS_STATISTICS CMake option has not been set");
-        }
+        assert(ret != ReturnCode_t::RETCODE_UNSUPPORTED);
         if (ret == ReturnCode_t::RETCODE_BAD_PARAMETER)
         {
             logError(STATISTICS_DOMAIN_PARTICIPANT,
