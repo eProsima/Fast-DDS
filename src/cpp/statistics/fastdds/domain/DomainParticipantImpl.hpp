@@ -60,8 +60,9 @@ public:
 
     /**
      * @brief This operation enables a Statistics DataWriter
-     * @param topic_name Name of the topic associated to the Statistics DataWriter
-     * @param dwqos DataWriterQos to be set
+     *
+     * @param[in] topic_name Name of the topic associated to the Statistics DataWriter
+     * @param[in] dwqos DataWriterQos to be set
      * @return RETCODE_BAD_PARAMETER if the topic name provided does not correspond to any Statistics DataWriter,
      * RETCODE_INCONSISTENT_POLICY if the DataWriterQos provided is inconsistent,
      * RETCODE_OK if the DataWriter has been created or if it has been created previously,
@@ -72,16 +73,18 @@ public:
             const efd::DataWriterQos& dwqos);
 
     /**
-     * @brief This operation enables a Statistics DataWriter from a provided profile
-     * @param profile_name Name for the profile to be used to fill the structure.
-     * @return XMLP_ret::XML_OK on success, XMLP_ret::XML_ERROR in other case. Defaults true.
+     * @brief This operation enables a Statistics DataWriter from a provided XML defined profile
+     *
+     * @param[in] profile_name Name for the profile to be used to fill the QoS structure.
+     * @return ReturnCode_t::XML_OK on success, ReturnCode_t::XML_ERROR in other case. Defaults true.
      */
     RTPS_DllAPI ReturnCode_t enable_statistics_datawriter_with_profile(
             const std::string& profile_name);
 
     /**
      * @brief This operation disables a Statistics DataWriter
-     * @param topic_name Name of the topic associated to the Statistics DataWriter
+     *
+     * @param[in] topic_name Name of the topic associated to the Statistics DataWriter
      * @return RETCODE_UNSUPPORTED if the FASTDDS_STATISTICS CMake option has not been set,
      * RETCODE_BAD_PARAMETER if the topic name provided does not correspond to any Statistics DataWriter,
      * RETCODE_OK if the DataWriter has been correctly deleted or does not exist,
@@ -92,6 +95,7 @@ public:
 
     /**
      * @brief This operation enables the DomainParticipantImpl
+     *
      * @return RETCODE_OK if successful
      */
     ReturnCode_t enable() override;
