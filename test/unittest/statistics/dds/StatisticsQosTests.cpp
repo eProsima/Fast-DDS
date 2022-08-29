@@ -27,6 +27,7 @@
 #include <fastdds/statistics/dds/domain/DomainParticipant.hpp>
 #include <fastdds/statistics/dds/publisher/qos/DataWriterQos.hpp>
 #include <fastdds/statistics/dds/subscriber/qos/DataReaderQos.hpp>
+#include <fastdds/statistics/topic_names.hpp>
 #include <fastrtps/xmlparser/XMLProfileManager.h>
 
 #include <statistics/fastdds/domain/DomainParticipantImpl.hpp>
@@ -179,7 +180,6 @@ TEST_F(StatisticsFromXMLProfileTests, XMLConfigurationForStatisticsDataWritersQo
     xml_doc.Parse(xml);
     xml_doc.SaveFile("FASTRTPS_STATISTICS_PROFILES.xml");
 
-
     // Set environment variable and create participant using Qos set by code
     const char* value = "FASTRTPS_STATISTICS_PROFILES.xml";
 #ifdef _WIN32
@@ -220,10 +220,10 @@ TEST_F(StatisticsFromXMLProfileTests, XMLConfigurationForStatisticsDataWritersQo
 
     // GET AND CHECK BUILT-IN DATAWRITERS
 
-    // HISTORY_LATENCY_TOPIC has non default qos defined in XML
-    // Also is defined as data_writer profile, and in the fastdds.statistics property policy,
-    // for which the non-default qos defined should prevail
-    std::string history_latency_name = "_fastdds_statistics_history2history_latency";
+    // HISTORY_LATENCY_TOPIC has a QoS profile defined in the XML file,
+    // and it has been created automatically within the participant
+    // (because it has been included in the corresponding property)
+    std::string history_latency_name = HISTORY_LATENCY_TOPIC;
     eprosima::fastdds::dds::DataWriter* history_latency_writer =
             statistics_publisher_impl->lookup_datawriter(history_latency_name);
     ASSERT_NE(history_latency_writer, nullptr);
@@ -236,24 +236,23 @@ TEST_F(StatisticsFromXMLProfileTests, XMLConfigurationForStatisticsDataWritersQo
     qos.publish_mode().kind = eprosima::fastdds::dds::PublishModeQosPolicyKind::SYNCHRONOUS_PUBLISH_MODE;
     ASSERT_EQ(qos, history_latency_writer->get_qos());
 
-    // Comprobation of the opposite of the last comprobation:
-    // XMLProfileManager doesn't use statistics default qos
+    // Check that the Statistics recommended QoS are not being used
     eprosima::fastdds::statistics::dds::DataWriterQos qos2;
     qos2.reliability().kind = eprosima::fastdds::dds::ReliabilityQosPolicyKind::BEST_EFFORT_RELIABILITY_QOS;
     qos2.durability().kind = eprosima::fastdds::dds::DurabilityQosPolicyKind_t::VOLATILE_DURABILITY_QOS;
     qos2.publish_mode().kind = eprosima::fastdds::dds::PublishModeQosPolicyKind::SYNCHRONOUS_PUBLISH_MODE;
     ASSERT_EQ(false, qos2 == history_latency_writer->get_qos());
 
-    // PUBLICATION_THROUGHPUT_TOPIC should have by-default qos
-    // Defined in the fastdds.statistics property policy
-    std::string publication_throughput_name = "_fastdds_statistics_publication_throughput";
+    // PUBLICATION_THROUGHPUT_TOPIC should have the statistics recommended QoS
+    // Also created automatically
+    std::string publication_throughput_name = PUBLICATION_THROUGHPUT_TOPIC;
     eprosima::fastdds::dds::DataWriter* publication_throughput_writer =
             statistics_publisher_impl->lookup_datawriter(publication_throughput_name);
     ASSERT_NE(publication_throughput_writer, nullptr);
     ASSERT_EQ(STATISTICS_DATAWRITER_QOS, publication_throughput_writer->get_qos());
 
-    // SUBSCRIPTION_THROUGHPUT_TOPIC is not defined. Should return nullptr
-    std::string subscription_throughput_name = "_fastdds_statistics_subscription_throughput";
+    // SUBSCRIPTION_THROUGHPUT_TOPIC has not been created at initialization
+    std::string subscription_throughput_name = SUBSCRIPTION_THROUGHPUT_TOPIC;
     eprosima::fastdds::dds::DataWriter* subscription_throughput_writer =
             statistics_publisher_impl->lookup_datawriter(subscription_throughput_name);
     ASSERT_EQ(subscription_throughput_writer, nullptr);
@@ -261,13 +260,13 @@ TEST_F(StatisticsFromXMLProfileTests, XMLConfigurationForStatisticsDataWritersQo
     // TEST PUBLIC METHOD: enable_statistics_datawriter_with_profile()
 
     // NETWORK_LATENCY_TOPIC is not defined in the fastdds.statistics property policy,
-    // it is just defined as data_writer profile. Thus, should not be created
-    std::string network_latency_name = "_fastdds_statistics_network_latency";
+    // it is just defined as data_writer profile. Thus, should not be created at initialization
+    std::string network_latency_name = NETWORK_LATENCY_TOPIC;
     eprosima::fastdds::dds::DataWriter* network_latency_writer =
             statistics_publisher_impl->lookup_datawriter(network_latency_name);
     ASSERT_EQ(network_latency_writer, nullptr);
 
-    // But user can enable it manualy through enable_statistics_datawriter_with_profile()
+    // But user can enable it manually through enable_statistics_datawriter_with_profile()
     ReturnCode_t ret = test_statistics_participant->enable_statistics_datawriter_with_profile(
         "NETWORK_LATENCY_TOPIC");
     ASSERT_EQ(ReturnCode_t::RETCODE_OK, ret);
@@ -280,12 +279,12 @@ TEST_F(StatisticsFromXMLProfileTests, XMLConfigurationForStatisticsDataWritersQo
 
     // SUBSCRIPTION_THROUGHPUT_TOPIC is not defined in the fastdds.statistics property policy,
     // it is just defined as data_writer profile. Thus, should not be created
-    std::string subscription_througput_name = "_fastdds_statistics_subscription_throughput";
+    std::string subscription_througput_name = SUBSCRIPTION_THROUGHPUT_TOPIC;
     eprosima::fastdds::dds::DataWriter* subscription_througput_writer =
             statistics_publisher_impl->lookup_datawriter(subscription_througput_name);
     ASSERT_EQ(subscription_througput_writer, nullptr);
 
-    // But user can enable it manualy through enable_statistics_datawriter_with_profile()
+    // But user can enable it manually through enable_statistics_datawriter_with_profile()
     ret = test_statistics_participant->enable_statistics_datawriter_with_profile(
         "SUBSCRIPTION_THROUGHPUT_TOPIC");
     ASSERT_EQ(ReturnCode_t::RETCODE_OK, ret);
