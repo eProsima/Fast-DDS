@@ -329,7 +329,7 @@ void DomainParticipantImpl::enable_statistics_builtin_datawriters(
         if (ret == ReturnCode_t::RETCODE_INCONSISTENT_POLICY)
         {
             logError(STATISTICS_DOMAIN_PARTICIPANT,
-                    "Topic QoS from topic " << topic << " are not consistent/compatible");
+                    "Statistics DataWriter QoS from topic " << topic << " are not consistent/compatible");
         }
         assert(ret != ReturnCode_t::RETCODE_UNSUPPORTED);
         if (ret == ReturnCode_t::RETCODE_BAD_PARAMETER)
