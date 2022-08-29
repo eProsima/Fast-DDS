@@ -78,7 +78,7 @@ public:
      * @param[in] profile_name Name for the profile to be used to fill the QoS structure.
      * @return ReturnCode_t::XML_OK on success, ReturnCode_t::XML_ERROR in other case. Defaults true.
      */
-    RTPS_DllAPI ReturnCode_t enable_statistics_datawriter_with_profile(
+    ReturnCode_t enable_statistics_datawriter_with_profile(
             const std::string& profile_name);
 
     /**
