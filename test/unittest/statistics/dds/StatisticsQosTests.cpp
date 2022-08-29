@@ -16,6 +16,8 @@
 
 #include <gtest/gtest.h>
 
+#include <tinyxml2.h>
+
 #include <fastdds/dds/core/policy/QosPolicies.hpp>
 #include <fastdds/dds/log/Log.hpp>
 #include <fastdds/dds/publisher/DataWriter.hpp>
@@ -26,10 +28,9 @@
 #include <fastdds/statistics/dds/publisher/qos/DataWriterQos.hpp>
 #include <fastdds/statistics/dds/subscriber/qos/DataReaderQos.hpp>
 #include <fastrtps/xmlparser/XMLProfileManager.h>
+
 #include <statistics/fastdds/domain/DomainParticipantImpl.hpp>
 #include <statistics/fastdds/publisher/PublisherImpl.hpp>
-
-#include <tinyxml2.h>
 
 namespace eprosima {
 namespace fastdds {
@@ -105,10 +106,10 @@ TEST(StatisticsQosTests, StatisticsDataReaderQosTest)
 }
 
 /**
- * This test checks that the creation of new feature: Configuration of participant statistic QoS from XML file
+ * This test checks the configuration of datawriter statistics QoS from XML file
  * Topic created with another type different from the one expected.
  * 1. Create XML file with the appropiate configuration.
- * 2. Read XML and enable datawrtiters from it.
+ * 2. Read XML and enable datawriters from it.
  * 3. Check that Qos are correctly configured.
  */
 TEST_F(StatisticsFromXMLProfileTests, XMLConfigurationForStatisticsDataWritersQoS)
