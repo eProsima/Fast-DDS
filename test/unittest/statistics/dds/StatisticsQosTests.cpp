@@ -266,7 +266,7 @@ TEST_F(StatisticsFromXMLProfileTests, XMLConfigurationForStatisticsDataWritersQo
     ASSERT_EQ(network_latency_writer, nullptr);
 
     // But user can enable it manualy through enable_statistics_datawriter_with_profile()
-    ReturnCode_t ret = test_statistics_domain_participant_impl->enable_statistics_datawriter_with_profile(
+    ReturnCode_t ret = test_statistics_participant->enable_statistics_datawriter_with_profile(
         "NETWORK_LATENCY_TOPIC");
     ASSERT_EQ(ReturnCode_t::RETCODE_OK, ret);
     network_latency_writer =
@@ -284,7 +284,7 @@ TEST_F(StatisticsFromXMLProfileTests, XMLConfigurationForStatisticsDataWritersQo
     ASSERT_EQ(subscription_througput_writer, nullptr);
 
     // But user can enable it manualy through enable_statistics_datawriter_with_profile()
-    ret = test_statistics_domain_participant_impl->enable_statistics_datawriter_with_profile(
+    ret = test_statistics_participant->enable_statistics_datawriter_with_profile(
         "SUBSCRIPTION_THROUGHPUT_TOPIC");
     ASSERT_EQ(ReturnCode_t::RETCODE_OK, ret);
     subscription_througput_writer =
