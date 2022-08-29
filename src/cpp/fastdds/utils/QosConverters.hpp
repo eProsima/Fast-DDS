@@ -48,9 +48,10 @@ void set_qos_from_attributes(
         const PublisherAttributes& attr);
 
 /**
- * Obtains the corresponding QoS from the attributes provided.
- * @param attr Pointer to the attributes to write on
- * @param qos Pointer to the QoS from which to obtain data
+ * Obtains the DataWriterQos from the PublisherAttributes provided.
+ *
+ * @param[out] attr Pointer to the attributes to write on
+ * @param[in] qos Pointer to the QoS from which to obtain data
  */
 void set_attributes_from_qos(
         PublisherAttributes& attr,
