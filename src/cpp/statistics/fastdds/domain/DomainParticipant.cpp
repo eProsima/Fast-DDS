@@ -45,6 +45,19 @@ ReturnCode_t DomainParticipant::enable_statistics_datawriter(
 #endif // FASTDDS_STATISTICS
 }
 
+ReturnCode_t DomainParticipant::enable_statistics_datawriter_with_profile(
+            const std::string& profile_name)
+{
+#ifndef FASTDDS_STATISTICS
+    (void) topic_name;
+    (void) dwqos;
+
+    return ReturnCode_t::RETCODE_UNSUPPORTED;
+#else
+    return static_cast<DomainParticipantImpl*>(impl_)->enable_statistics_datawriter_with_profile(profile_name);
+#endif // FASTDDS_STATISTICS
+}
+
 ReturnCode_t DomainParticipant::disable_statistics_datawriter(
         const std::string& topic_name)
 {
