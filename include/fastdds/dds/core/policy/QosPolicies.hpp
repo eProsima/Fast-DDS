@@ -1735,7 +1735,7 @@ public:
     /**
      * @brief Represents the maximum number of instances DataWriter (or DataReader) can manage. <br>
      * By default, 10.
-     * 
+     *
      * @warning It is inconsistent if `(max_instances * max_samples_per_instance) > max_samples`.
      */
     int32_t max_instances;
