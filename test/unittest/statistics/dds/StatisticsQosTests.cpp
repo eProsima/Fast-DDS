@@ -207,6 +207,13 @@ TEST_F(StatisticsFromXMLProfileTests, XMLConfigurationForStatisticsDataWritersQo
                                 </liveliness>                                                                           \
                         </qos>                                                                                          \
                 </data_writer>                                                                                          \
+                <data_writer profile_name=\"OTHER_NAME_FOR_PROFILE\">                                                   \
+                        <qos>                                                                                           \
+                                <reliability>                                                                           \
+                                        <kind>BEST_EFFORT</kind>                                                        \
+                                </reliability>                                                                          \
+                        </qos>                                                                                          \
+                </data_writer>                                                                                          \
         </profiles>                                                                                                     \
         </dds>                                                                                                          \
     ";
@@ -316,6 +323,7 @@ TEST_F(StatisticsFromXMLProfileTests, XMLConfigurationForStatisticsDataWritersQo
 
     // But user can enable it manually through enable_statistics_datawriter_with_profile()
     ReturnCode_t ret = statistics_participant->enable_statistics_datawriter_with_profile(
+        "NETWORK_LATENCY_TOPIC",
         "NETWORK_LATENCY_TOPIC");
     ASSERT_EQ(ReturnCode_t::RETCODE_OK, ret);
     network_latency_writer =
@@ -334,6 +342,7 @@ TEST_F(StatisticsFromXMLProfileTests, XMLConfigurationForStatisticsDataWritersQo
 
     // But user can enable it manually through enable_statistics_datawriter_with_profile()
     ret = statistics_participant->enable_statistics_datawriter_with_profile(
+        "SUBSCRIPTION_THROUGHPUT_TOPIC",
         "SUBSCRIPTION_THROUGHPUT_TOPIC");
     ASSERT_EQ(ReturnCode_t::RETCODE_OK, ret);
     subscription_througput_writer =
@@ -357,6 +366,7 @@ TEST_F(StatisticsFromXMLProfileTests, XMLConfigurationForStatisticsDataWritersQo
     // Calling enable_statistics_datawriter_with_profile with a profile that does not exist,
     // RETCODE_ERROR must be returned.
     ret = statistics_participant->enable_statistics_datawriter_with_profile(
+        "FAKE_TOPIC",
         "FAKE_TOPIC");
     ASSERT_EQ(ReturnCode_t::RETCODE_ERROR, ret);
 
@@ -372,8 +382,23 @@ TEST_F(StatisticsFromXMLProfileTests, XMLConfigurationForStatisticsDataWritersQo
     // Calling enable_statistics_datawriter_with_profile with a profile defined with inconsistent QoS configuration,
     // RETCODE_INCONSISTENT_POLICY must be returned.
     ret = statistics_participant->enable_statistics_datawriter_with_profile(
+        "HEARTBEAT_COUNT_TOPIC",
         "HEARTBEAT_COUNT_TOPIC");
     ASSERT_EQ(ReturnCode_t::RETCODE_INCONSISTENT_POLICY, ret);
+
+    // There is the possibility to enable a statistics topic with a profile defined with different name:
+    ret = statistics_participant->enable_statistics_datawriter_with_profile(
+        "OTHER_NAME_FOR_PROFILE",
+        "NACKFRAG_COUNT_TOPIC");
+    ASSERT_EQ(ReturnCode_t::RETCODE_OK, ret);
+    std::string nackfrag_count_name = NACKFRAG_COUNT_TOPIC;
+    eprosima::fastdds::dds::DataWriter* nackfrag_count_writer =
+            statistics_publisher_impl->lookup_datawriter(nackfrag_count_name);
+    ASSERT_NE(nackfrag_count_writer, nullptr);
+    
+    efd::DataWriterQos qos5;
+    qos5.reliability().kind = eprosima::fastdds::dds::ReliabilityQosPolicyKind::BEST_EFFORT_RELIABILITY_QOS;
+    ASSERT_EQ(qos5, nackfrag_count_writer->get_qos());
 
     remove("FASTRTPS_PROFILES.xml");
 
@@ -386,14 +411,17 @@ TEST_F(StatisticsFromXMLProfileTests, XMLConfigurationForStatisticsDataWritersQo
     ASSERT_NE(statistics_participant, nullptr);
 
     ReturnCode_t ret = statistics_participant->enable_statistics_datawriter_with_profile(
+        "HISTORY_LATENCY_TOPIC",
         "HISTORY_LATENCY_TOPIC");
     ASSERT_EQ(ReturnCode_t::RETCODE_UNSUPPORTED, ret);
 
     ret = statistics_participant->enable_statistics_datawriter_with_profile(
+        "NETWORK_LATENCY_TOPIC",
         "NETWORK_LATENCY_TOPIC");
     ASSERT_EQ(ReturnCode_t::RETCODE_UNSUPPORTED, ret);
 
     ret = statistics_participant->enable_statistics_datawriter_with_profile(
+        "SUBSCRIPTION_THROUGHPUT_TOPIC",
         "SUBSCRIPTION_THROUGHPUT_TOPIC");
     ASSERT_EQ(ReturnCode_t::RETCODE_UNSUPPORTED, ret);
 
