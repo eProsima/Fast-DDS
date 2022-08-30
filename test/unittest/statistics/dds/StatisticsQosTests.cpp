@@ -132,7 +132,7 @@ TEST_F(StatisticsFromXMLProfileTests, XMLConfigurationForStatisticsDataWritersQo
                         <properties>                                                                                    \
                                 <property>                                                                              \
                                 <name>fastdds.statistics</name>                                                         \
-                                <value>HISTORY_LATENCY_TOPIC;PUBLICATION_THROUGHPUT_TOPIC</value>                       \
+                                <value>HISTORY_LATENCY_TOPIC;PUBLICATION_THROUGHPUT_TOPIC;DATA_COUNT_TOPIC</value>      \
                                 </property>                                                                             \
                         </properties>                                                                                   \
                         </propertiesPolicy>                                                                             \
@@ -177,9 +177,51 @@ TEST_F(StatisticsFromXMLProfileTests, XMLConfigurationForStatisticsDataWritersQo
                                 <disable_heartbeat_piggyback>true</disable_heartbeat_piggyback>                         \
                         </qos>                                                                                          \
                 </data_writer>                                                                                          \
+                <data_writer profile_name=\"DATA_COUNT_TOPIC\">                                                    \
+                        <qos>                                                                                           \
+                                <liveliness>                                                                            \
+                                        <kind>AUTOMATIC</kind>                                                          \
+                                        <lease_duration>                                                                \
+                                                <sec>1</sec>                                                            \
+                                                <nanosec>856000</nanosec>                                               \
+                                        </lease_duration>                                                               \
+                                        <announcement_period>                                                           \
+                                                <sec>1</sec>                                                            \
+                                                <nanosec>856000</nanosec>                                               \
+                                        </announcement_period>                                                          \
+                                </liveliness>                                                                           \
+                        </qos>                                                                                          \
+                </data_writer>                                                                                          \
+                <data_writer profile_name=\"HEARTBEAT_COUNT_TOPIC\">                                                    \
+                        <qos>                                                                                           \
+                                <liveliness>                                                                            \
+                                        <kind>AUTOMATIC</kind>                                                          \
+                                        <lease_duration>                                                                \
+                                                <sec>1</sec>                                                            \
+                                                <nanosec>856000</nanosec>                                               \
+                                        </lease_duration>                                                               \
+                                        <announcement_period>                                                           \
+                                                <sec>1</sec>                                                            \
+                                                <nanosec>856000</nanosec>                                               \
+                                        </announcement_period>                                                          \
+                                </liveliness>                                                                           \
+                        </qos>                                                                                          \
+                </data_writer>                                                                                          \
         </profiles>                                                                                                     \
         </dds>                                                                                                          \
     ";
+    /*
+       if (qos.liveliness().kind == AUTOMATIC_LIVELINESS_QOS ||
+            qos.liveliness().kind == MANUAL_BY_PARTICIPANT_LIVELINESS_QOS)
+       {
+        if (qos.liveliness().lease_duration < eprosima::fastrtps::c_TimeInfinite &&
+                qos.liveliness().lease_duration <= qos.liveliness().announcement_period)
+        {
+            logError(RTPS_QOS_CHECK, "WRITERQOS: LeaseDuration <= announcement period.");
+            return ReturnCode_t::RETCODE_INCONSISTENT_POLICY;
+        }
+       };*/
+
     tinyxml2::XMLDocument xml_doc;
     xml_doc.Parse(xml);
     xml_doc.SaveFile("FASTRTPS_STATISTICS_PROFILES.xml");
@@ -317,6 +359,21 @@ TEST_F(StatisticsFromXMLProfileTests, XMLConfigurationForStatisticsDataWritersQo
     ret = statistics_participant->enable_statistics_datawriter_with_profile(
         "FAKE_TOPIC");
     ASSERT_EQ(ReturnCode_t::RETCODE_ERROR, ret);
+
+    // DATA_COUNT_TOPIC is also defined with inconsistent QoS policy, and defined in fastdds.statistics property
+    // It would have been created in a built-in manner with the creation of the DomainParticipant,
+    // but as the QoS are inconsistent, the DataWriter is not created, and lookup_datawriter
+    // must  return nullptr.
+    std::string data_count_name = DATA_COUNT_TOPIC;
+    eprosima::fastdds::dds::DataWriter* data_count_writer =
+            statistics_publisher_impl->lookup_datawriter(data_count_name);
+    ASSERT_EQ(data_count_writer, nullptr);
+
+    // Calling enable_statistics_datawriter_with_profile with a profile defined with inconsistent QoS configuration,
+    // RETCODE_INCONSISTENT_POLICY must be returned.
+    ret = statistics_participant->enable_statistics_datawriter_with_profile(
+        "HEARTBEAT_COUNT_TOPIC");
+    ASSERT_EQ(ReturnCode_t::RETCODE_INCONSISTENT_POLICY, ret);
 
     remove("FASTRTPS_PROFILES.xml");
 
