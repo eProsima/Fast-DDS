@@ -589,7 +589,31 @@ protected:
             const DataWriterQos& from,
             bool is_default);
 
+    /**
+     * Extends the check_qos() call, including the check for
+     * resource limits policy.
+     * @param qos Pointer to the qos to be checked.
+     * @param type Pointer to the associated TypeSupport object.
+     * @return True if correct.
+     */
+    static ReturnCode_t check_qos_including_resource_limits(
+            const DataWriterQos& qos,
+            const TypeSupport& type);
+
+    /**
+     * Checks the consistency of the qos configuration.
+     * @param qos Pointer to the qos to be checked.
+     * @return True if correct.
+     */
     static ReturnCode_t check_qos(
+            const DataWriterQos& qos);
+
+    /**
+     * Checks resource limits policy: Instance allocation consistency
+     * @param qos Pointer to the qos to be checked.
+     * @return True if correct.
+     */
+    static ReturnCode_t check_allocation_consistency(
             const DataWriterQos& qos);
 
     static bool can_qos_be_updated(

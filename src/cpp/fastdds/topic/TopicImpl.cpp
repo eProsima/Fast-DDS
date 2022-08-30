@@ -50,6 +50,19 @@ TopicImpl::~TopicImpl()
 {
 }
 
+ReturnCode_t TopicImpl::check_qos_including_resource_limits(
+        const TopicQos& qos,
+        const TypeSupport& type)
+{
+    ReturnCode_t check_qos_return = check_qos(qos);
+    if (ReturnCode_t::RETCODE_OK == check_qos_return &&
+            type->m_isGetKeyDefined)
+    {
+        check_qos_return = check_allocation_consistency(qos);
+    }
+    return check_qos_return;
+}
+
 ReturnCode_t TopicImpl::check_qos(
         const TopicQos& qos)
 {
@@ -78,6 +91,27 @@ ReturnCode_t TopicImpl::check_qos(
             logError(DDS_QOS_CHECK, "lease_duration <= announcement period.");
             return ReturnCode_t::RETCODE_INCONSISTENT_POLICY;
         }
+    }
+    return ReturnCode_t::RETCODE_OK;
+}
+
+ReturnCode_t TopicImpl::check_allocation_consistency(
+        const TopicQos& qos)
+{
+    if ((qos.resource_limits().max_samples > 0) &&
+            (qos.resource_limits().max_samples <
+            (qos.resource_limits().max_instances * qos.resource_limits().max_samples_per_instance)))
+    {
+        logError(DDS_QOS_CHECK,
+                "max_samples should be greater than max_instances * max_samples_per_instance");
+        return ReturnCode_t::RETCODE_INCONSISTENT_POLICY;
+    }
+    if ((qos.resource_limits().max_instances <= 0 || qos.resource_limits().max_samples_per_instance <= 0) &&
+            (qos.resource_limits().max_samples > 0))
+    {
+        logError(DDS_QOS_CHECK,
+                "max_samples should be infinite when max_instances or max_samples_per_instance are infinite");
+        return ReturnCode_t::RETCODE_INCONSISTENT_POLICY;
     }
     return ReturnCode_t::RETCODE_OK;
 }
@@ -123,7 +157,7 @@ ReturnCode_t TopicImpl::set_qos(
         return ReturnCode_t::RETCODE_OK;
     }
 
-    ReturnCode_t ret_val = check_qos(qos);
+    ReturnCode_t ret_val = check_qos_including_resource_limits(qos, type_support_);
     if (!ret_val)
     {
         return ret_val;

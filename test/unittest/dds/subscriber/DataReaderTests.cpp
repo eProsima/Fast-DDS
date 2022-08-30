@@ -686,7 +686,9 @@ TEST_F(DataReaderTests, InvalidQos)
     const ReturnCode_t inmutable_code = ReturnCode_t::RETCODE_IMMUTABLE_POLICY;
 
     qos = DATAREADER_QOS_DEFAULT;
-    qos.resource_limits().max_samples++;
+    qos.resource_limits().max_samples = 5000;
+    qos.resource_limits().max_instances = 2;
+    qos.resource_limits().max_samples_per_instance = 100;
     EXPECT_EQ(inmutable_code, data_reader_->set_qos(qos));
 
     qos = DATAREADER_QOS_DEFAULT;
@@ -3032,6 +3034,266 @@ TEST_F(DataReaderTests, read_conditions_wait_on_InstanceStateMask)
     EXPECT_EQ(data_reader.delete_readcondition(no_writer_cond), ReturnCode_t::RETCODE_OK);
     EXPECT_EQ(ws.detach_condition(*any_cond), ReturnCode_t::RETCODE_OK);
     EXPECT_EQ(data_reader.delete_readcondition(any_cond), ReturnCode_t::RETCODE_OK);
+}
+
+/*
+ * This test checks the allocation consistency when NOT using instances.
+ * If the topic is keyed,
+ * max_samples should be greater or equal than max_instances * max_samples_per_instance.
+ * If that condition is not met, the endpoint creation should fail.
+ * If not keyed (not using instances), the only property that is used is max_samples,
+ * thus, should not fail with the previously mentioned configuration.
+ * The following method is checked:
+ * 1. Subscriber::create_datareader
+ * 2. DataReader::set_qos
+ */
+TEST_F(DataReaderTests, InstancePolicyAllocationConsistencyNotKeyed)
+{
+    DomainParticipant* participant =
+            DomainParticipantFactory::get_instance()->create_participant(0, PARTICIPANT_QOS_DEFAULT);
+    ASSERT_NE(participant, nullptr);
+
+    Subscriber* subscriber = participant->create_subscriber(SUBSCRIBER_QOS_DEFAULT);
+    ASSERT_NE(subscriber, nullptr);
+
+    TypeSupport type(new FooTypeSupport());
+    type.register_type(participant);
+
+    // This test pretends to use topic with no instances, so the following flag is set false.
+    type.get()->m_isGetKeyDefined = false;
+
+    Topic* topic = participant->create_topic("footopic", type.get_type_name(), TOPIC_QOS_DEFAULT);
+    ASSERT_NE(topic, nullptr);
+
+    // Next QoS config checks the default qos configuration,
+    // create_datareader() should NOT return nullptr.
+    DataReaderQos qos = DATAREADER_QOS_DEFAULT;
+
+    DataReader* data_reader1 = subscriber->create_datareader(topic, qos);
+    ASSERT_NE(data_reader1, nullptr);
+
+    // Below an ampliation of the last comprobation, for which it is proved the case of < 0 (-1),
+    // which also means infinite value, and does not make any change.
+    qos.resource_limits().max_instances = -1;
+
+    DataReader* data_reader2 = subscriber->create_datareader(topic, qos);
+    ASSERT_NE(data_reader2, nullptr);
+
+    // Next QoS config checks that if user sets max_samples < ( max_instances * max_samples_per_instance ) ,
+    // create_datareader() should NOT return nullptr.
+    // By not using instances, instance allocation consistency is not checked.
+    qos.resource_limits().max_samples = 4999;
+    qos.resource_limits().max_instances = 10;
+    qos.resource_limits().max_samples_per_instance = 500;
+
+    DataReader* data_reader3 = subscriber->create_datareader(topic, qos);
+    ASSERT_NE(data_reader3, nullptr);
+
+    // Next QoS config checks that if user sets max_samples > ( max_instances * max_samples_per_instance ) ,
+    // create_datareader() should NOT return nullptr.
+    // By not using instances, instance allocation consistency is not checked.
+    qos.resource_limits().max_samples = 5001;
+    qos.resource_limits().max_instances = 10;
+    qos.resource_limits().max_samples_per_instance = 500;
+
+    DataReader* data_reader4 = subscriber->create_datareader(topic, qos);
+    ASSERT_NE(data_reader4, nullptr);
+
+    // Next QoS config checks that if user sets max_samples infinite
+    // and ( max_instances * max_samples_per_instance ) finite,
+    // create_datareader() should NOT return nullptr.
+    // By not using instances, instance allocation consistency is not checked.
+    qos.resource_limits().max_samples = 0;
+    qos.resource_limits().max_instances = 10;
+    qos.resource_limits().max_samples_per_instance = 500;
+
+    DataReader* data_reader5 = subscriber->create_datareader(topic, qos);
+    ASSERT_NE(data_reader5, nullptr);
+
+    // It is needed to disable the creation of enabled entities from the subscriber for following checks.
+    // This allows to change inmutable policies
+    SubscriberQos subscriber_qos = SUBSCRIBER_QOS_DEFAULT;
+    subscriber_qos.entity_factory().autoenable_created_entities = false;
+    ASSERT_EQ(ReturnCode_t::RETCODE_OK, subscriber->set_qos(subscriber_qos));
+
+    // Next QoS config checks the default qos configuration,
+    // set_qos() should return ReturnCode_t::RETCODE_OK = 0
+    DataReaderQos qos2 = DATAREADER_QOS_DEFAULT;
+    DataReader* default_data_reader2 = subscriber->create_datareader(topic, qos2);
+    ASSERT_NE(default_data_reader2, nullptr);
+
+    ASSERT_EQ(ReturnCode_t::RETCODE_OK, default_data_reader2->set_qos(qos2));
+
+    // Below an ampliation of the last comprobation, for which it is proved the case of < 0 (-1),
+    // which also means infinite value.
+    // By not using instances, instance allocation consistency is not checked.
+    qos2.resource_limits().max_instances = -1;
+
+    ASSERT_EQ(ReturnCode_t::RETCODE_OK, default_data_reader2->set_qos(qos2));
+
+    // Next QoS config checks that if user sets max_samples < ( max_instances * max_samples_per_instance ) ,
+    // set_qos() should return ReturnCode_t::RETCODE_OK = 0
+    // By not using instances, instance allocation consistency is not checked.
+    qos2.resource_limits().max_samples = 4999;
+    qos2.resource_limits().max_instances = 10;
+    qos2.resource_limits().max_samples_per_instance = 500;
+
+    ASSERT_EQ(ReturnCode_t::RETCODE_OK, default_data_reader2->set_qos(qos2));
+
+    // Next QoS config checks that if user sets max_samples > ( max_instances * max_samples_per_instance ) ,
+    // set_qos() should return ReturnCode_t::RETCODE_OK = 0
+    // By not using instances, instance allocation consistency is not checked.
+    qos2.resource_limits().max_samples = 5001;
+    qos2.resource_limits().max_instances = 10;
+    qos2.resource_limits().max_samples_per_instance = 500;
+
+    ASSERT_EQ(ReturnCode_t::RETCODE_OK, default_data_reader2->set_qos(qos2));
+
+    // Next QoS config checks that if user sets max_samples infinite
+    // and ( max_instances * max_samples_per_instance ) finite,
+    // set_qos() should return ReturnCode_t::RETCODE_OK = 0
+    // By not using instances, instance allocation consistency is not checked.
+    qos2.resource_limits().max_samples = 0;
+    qos2.resource_limits().max_instances = 10;
+    qos2.resource_limits().max_samples_per_instance = 500;
+
+    ASSERT_EQ(ReturnCode_t::RETCODE_OK, default_data_reader2->set_qos(qos2));
+}
+
+/*
+ * This test checks the allocation consistency when USING instances.
+ * If the topic is keyed,
+ * max_samples should be greater or equal than max_instances * max_samples_per_instance.
+ * If that condition is not met, the endpoint creation should fail.
+ * If not keyed (not using instances), the only property that is used is max_samples,
+ * thus, should not fail with the previously mentioned configuration.
+ * The following method is checked:
+ * 1. Subscriber::create_datareader
+ * 2. DataReader::set_qos
+ */
+TEST_F(DataReaderTests, InstancePolicyAllocationConsistencyKeyed)
+{
+    DomainParticipant* participant =
+            DomainParticipantFactory::get_instance()->create_participant(0, PARTICIPANT_QOS_DEFAULT);
+    ASSERT_NE(participant, nullptr);
+
+    Subscriber* subscriber = participant->create_subscriber(SUBSCRIBER_QOS_DEFAULT);
+    ASSERT_NE(subscriber, nullptr);
+
+    TypeSupport type(new FooTypeSupport());
+    type.register_type(participant);
+
+    // This test pretends to use topic with instances, so the following flag is set.
+    type.get()->m_isGetKeyDefined = true;
+
+    Topic* topic = participant->create_topic("footopic", type.get_type_name(), TOPIC_QOS_DEFAULT);
+    ASSERT_NE(topic, nullptr);
+
+    // Next QoS config checks the default qos configuration,
+    // create_datareader() should not return nullptr.
+    DataReaderQos qos = DATAREADER_QOS_DEFAULT;
+
+    DataReader* data_reader1 = subscriber->create_datareader(topic, qos);
+    ASSERT_NE(data_reader1, nullptr);
+
+    // Below an ampliation of the last comprobation, for which it is proved the case of < 0 (-1),
+    // which also means infinite value.
+    qos.resource_limits().max_samples = 0;
+    qos.resource_limits().max_instances = -1;
+
+    DataReader* data_reader2 = subscriber->create_datareader(topic, qos);
+    ASSERT_NE(data_reader2, nullptr);
+
+    // Next QoS config checks that if user sets max_samples < ( max_instances * max_samples_per_instance ) ,
+    // create_datareader() should return nullptr.
+    qos.resource_limits().max_samples = 4999;
+    qos.resource_limits().max_instances = 10;
+    qos.resource_limits().max_samples_per_instance = 500;
+
+    DataReader* data_reader3 = subscriber->create_datareader(topic, qos);
+    ASSERT_EQ(data_reader3, nullptr);
+
+    // Next QoS config checks that if user sets max_samples > ( max_instances * max_samples_per_instance ) ,
+    // create_datareader() should not return nullptr.
+    qos.resource_limits().max_samples = 5001;
+    qos.resource_limits().max_instances = 10;
+    qos.resource_limits().max_samples_per_instance = 500;
+
+    DataReader* data_reader4 = subscriber->create_datareader(topic, qos);
+    ASSERT_NE(data_reader4, nullptr);
+
+    // Next QoS config checks that if user sets max_samples = ( max_instances * max_samples_per_instance ) ,
+    // create_datareader() should not return nullptr.
+    qos.resource_limits().max_samples = 5000;
+    qos.resource_limits().max_instances = 10;
+    qos.resource_limits().max_samples_per_instance = 500;
+
+    DataReader* data_reader5 = subscriber->create_datareader(topic, qos);
+    ASSERT_NE(data_reader5, nullptr);
+
+    // Next QoS config checks that if user sets max_samples infinite
+    // and ( max_instances * max_samples_per_instance ) finite,
+    // create_datareader() should not return nullptr.
+    qos.resource_limits().max_samples = 0;
+    qos.resource_limits().max_instances = 10;
+    qos.resource_limits().max_samples_per_instance = 500;
+
+    DataReader* data_reader6 = subscriber->create_datareader(topic, qos);
+    ASSERT_NE(data_reader6, nullptr);
+
+    // It is needed to disable the creation of enabled entities from the subscriber for following checks.
+    // This allows to change inmutable policies
+    SubscriberQos subscriber_qos = SUBSCRIBER_QOS_DEFAULT;
+    subscriber_qos.entity_factory().autoenable_created_entities = false;
+    ASSERT_EQ(ReturnCode_t::RETCODE_OK, subscriber->set_qos(subscriber_qos));
+
+    // Next QoS config checks the default qos configuration,
+    // set_qos() should return ReturnCode_t::RETCODE_OK = 0, as the by default values are already infinite.
+    DataReaderQos qos2 = DATAREADER_QOS_DEFAULT;
+    DataReader* default_data_reader2 = subscriber->create_datareader(topic, qos2);
+    ASSERT_NE(default_data_reader2, nullptr);
+
+    ASSERT_EQ(ReturnCode_t::RETCODE_OK, default_data_reader2->set_qos(qos2));
+
+    // Below an ampliation of the last comprobation, for which it is proved the case of < 0 (-1),
+    // which also means infinite value.
+    qos2.resource_limits().max_samples = 0;
+    qos2.resource_limits().max_instances = -1;
+
+    ASSERT_EQ(ReturnCode_t::RETCODE_OK, default_data_reader2->set_qos(qos2));
+
+    // Next QoS config checks that if user sets max_samples < ( max_instances * max_samples_per_instance ) ,
+    // set_qos() should return a value != 0 (not OK)
+    qos2.resource_limits().max_samples = 4999;
+    qos2.resource_limits().max_instances = 10;
+    qos2.resource_limits().max_samples_per_instance = 500;
+
+    ASSERT_NE(ReturnCode_t::RETCODE_OK, default_data_reader2->set_qos(qos2));
+
+    // Next QoS config checks that if user sets max_samples > ( max_instances * max_samples_per_instance ) ,
+    // set_qos() should return ReturnCode_t::RETCODE_OK = 0.
+    qos2.resource_limits().max_samples = 5001;
+    qos2.resource_limits().max_instances = 10;
+    qos2.resource_limits().max_samples_per_instance = 500;
+
+    ASSERT_EQ(ReturnCode_t::RETCODE_OK, default_data_reader2->set_qos(qos2));
+
+    // Next QoS config checks that if user sets max_samples = ( max_instances * max_samples_per_instance ) ,
+    // set_qos() should return ReturnCode_t::RETCODE_OK = 0.
+    qos2.resource_limits().max_samples = 5000;
+    qos2.resource_limits().max_instances = 10;
+    qos2.resource_limits().max_samples_per_instance = 500;
+
+    ASSERT_EQ(ReturnCode_t::RETCODE_OK, default_data_reader2->set_qos(qos2));
+
+    // Next QoS config checks that if user sets max_samples infinite
+    // and ( max_instances * max_samples_per_instance ) finite,
+    // set_qos() should return ReturnCode_t::RETCODE_OK = 0.
+    qos2.resource_limits().max_samples = 0;
+    qos2.resource_limits().max_instances = 10;
+    qos2.resource_limits().max_samples_per_instance = 500;
+
+    ASSERT_EQ(ReturnCode_t::RETCODE_OK, default_data_reader2->set_qos(qos2));
 }
 
 int main(

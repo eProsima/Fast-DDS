@@ -812,7 +812,7 @@ ReturnCode_t DataReaderImpl::set_qos(
             return ReturnCode_t::RETCODE_INCONSISTENT_POLICY;
         }
 
-        ReturnCode_t check_result = check_qos(qos_to_set);
+        ReturnCode_t check_result = check_qos_including_resource_limits(qos_to_set, type_);
         if (!check_result)
         {
             return check_result;
@@ -1395,7 +1395,20 @@ const SampleLostStatus& DataReaderImpl::update_sample_lost_status(
     return sample_lost_status_;
 }
 
-ReturnCode_t DataReaderImpl::check_qos (
+ReturnCode_t DataReaderImpl::check_qos_including_resource_limits(
+        const DataReaderQos& qos,
+        const TypeSupport& type)
+{
+    ReturnCode_t check_qos_return = check_qos(qos);
+    if (ReturnCode_t::RETCODE_OK == check_qos_return &&
+            type->m_isGetKeyDefined)
+    {
+        check_qos_return = check_allocation_consistency(qos);
+    }
+    return check_qos_return;
+}
+
+ReturnCode_t DataReaderImpl::check_qos(
         const DataReaderQos& qos)
 {
     if (qos.durability().kind == PERSISTENT_DURABILITY_QOS)
@@ -1421,6 +1434,27 @@ ReturnCode_t DataReaderImpl::check_qos (
     if (qos_has_unique_network_request(qos) && qos_has_specific_locators(qos))
     {
         logError(DDS_QOS_CHECK, "unique_network_request cannot be set along specific locators");
+        return ReturnCode_t::RETCODE_INCONSISTENT_POLICY;
+    }
+    return ReturnCode_t::RETCODE_OK;
+}
+
+ReturnCode_t DataReaderImpl::check_allocation_consistency(
+        const DataReaderQos& qos)
+{
+    if ((qos.resource_limits().max_samples > 0) &&
+            (qos.resource_limits().max_samples <
+            (qos.resource_limits().max_instances * qos.resource_limits().max_samples_per_instance)))
+    {
+        logError(DDS_QOS_CHECK,
+                "max_samples should be greater than max_instances * max_samples_per_instance");
+        return ReturnCode_t::RETCODE_INCONSISTENT_POLICY;
+    }
+    if ((qos.resource_limits().max_instances <= 0 || qos.resource_limits().max_samples_per_instance <= 0) &&
+            (qos.resource_limits().max_samples > 0))
+    {
+        logError(DDS_QOS_CHECK,
+                "max_samples should be infinite when max_instances or max_samples_per_instance are infinite");
         return ReturnCode_t::RETCODE_INCONSISTENT_POLICY;
     }
     return ReturnCode_t::RETCODE_OK;

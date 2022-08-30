@@ -280,7 +280,7 @@ DataWriter* PublisherImpl::create_datawriter(
         return nullptr;
     }
 
-    if (!DataWriterImpl::check_qos(qos))
+    if (!DataWriterImpl::check_qos_including_resource_limits(qos, type_support))
     {
         return nullptr;
     }

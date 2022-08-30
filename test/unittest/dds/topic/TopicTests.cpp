@@ -222,6 +222,246 @@ TEST(TopicTests, SetListener)
     ASSERT_TRUE(DomainParticipantFactory::get_instance()->delete_participant(participant) == ReturnCode_t::RETCODE_OK);
 }
 
+/*
+ * This test checks the allocation consistency when NOT using instances.
+ * If the topic is keyed,
+ * max_samples should be greater or equal than max_instances * max_samples_per_instance.
+ * If that condition is not met, the endpoint creation should fail.
+ * If not keyed (not using instances), the only property that is used is max_samples,
+ * thus, should not fail with the previously mentioned configuration.
+ * The following method is checked:
+ * 1. DomainParticipant::create_topic
+ * 2. Topic::set_qos
+ */
+TEST(TopicTests, InstancePolicyAllocationConsistencyNotKeyed)
+{
+    DomainParticipant* participant =
+            DomainParticipantFactory::get_instance()->create_participant(0, PARTICIPANT_QOS_DEFAULT);
+    ASSERT_NE(participant, nullptr);
+
+    Publisher* publisher = participant->create_publisher(PUBLISHER_QOS_DEFAULT);
+    ASSERT_NE(publisher, nullptr);
+
+    TypeSupport type(new TopicDataTypeMock());
+    type.register_type(participant);
+
+    // Next QoS config checks the default qos configuration,
+    // create_topic() should NOT return nullptr.
+    TopicQos qos = TOPIC_QOS_DEFAULT;
+
+    Topic* topic1 = participant->create_topic("footopic1", type.get_type_name(), qos);
+    ASSERT_NE(topic1, nullptr);
+
+    // Below an ampliation of the last comprobation, for which it is proved the case of < 0 (-1),
+    // which also means infinite value, and does not make any change.
+    qos.resource_limits().max_instances = -1;
+
+    Topic* topic2 = participant->create_topic("footopic2", type.get_type_name(), qos);
+    ASSERT_NE(topic2, nullptr);
+
+    // Next QoS config checks that if user sets max_samples < ( max_instances * max_samples_per_instance ) ,
+    // create_topic() should NOT return nullptr.
+    // By not using instances, instance allocation consistency is not checked.
+    qos.resource_limits().max_samples = 4999;
+    qos.resource_limits().max_instances = 10;
+    qos.resource_limits().max_samples_per_instance = 500;
+
+    Topic* topic3 = participant->create_topic("footopic3", type.get_type_name(), qos);
+    ASSERT_NE(topic3, nullptr);
+
+    // Next QoS config checks that if user sets max_samples > ( max_instances * max_samples_per_instance ) ,
+    // create_topic() should NOT return nullptr.
+    // By not using instances, instance allocation consistency is not checked.
+    qos.resource_limits().max_samples = 5001;
+    qos.resource_limits().max_instances = 10;
+    qos.resource_limits().max_samples_per_instance = 500;
+
+    Topic* topic4 = participant->create_topic("footopic4", type.get_type_name(), qos);
+    ASSERT_NE(topic4, nullptr);
+
+    // Next QoS config checks that if user sets max_samples infinite
+    // and ( max_instances * max_samples_per_instance ) finite,
+    // create_topic() should NOT return nullptr.
+    // By not using instances, instance allocation consistency is not checked.
+    qos.resource_limits().max_samples = 0;
+    qos.resource_limits().max_instances = 10;
+    qos.resource_limits().max_samples_per_instance = 500;
+
+    Topic* topic5 = participant->create_topic("footopic5", type.get_type_name(), qos);
+    ASSERT_NE(topic5, nullptr);
+
+    // Next QoS config checks the default qos configuration,
+    // set_qos() should return ReturnCode_t::RETCODE_OK = 0
+    TopicQos qos2 = TOPIC_QOS_DEFAULT;
+    Topic* default_topic1 = participant->create_topic("footopic6", type.get_type_name(), qos2);
+    ASSERT_NE(default_topic1, nullptr);
+
+    ASSERT_EQ(ReturnCode_t::RETCODE_OK, default_topic1->set_qos(qos2));
+
+    // Below an ampliation of the last comprobation, for which it is proved the case of < 0 (-1),
+    // which also means infinite value.
+    // By not using instances, instance allocation consistency is not checked.
+    qos2.resource_limits().max_instances = -1;
+
+    ASSERT_EQ(ReturnCode_t::RETCODE_OK, default_topic1->set_qos(qos2));
+
+    // Next QoS config checks that if user sets max_samples < ( max_instances * max_samples_per_instance ) ,
+    // set_qos() should return ReturnCode_t::RETCODE_OK = 0
+    // By not using instances, instance allocation consistency is not checked.
+    qos2.resource_limits().max_samples = 4999;
+    qos2.resource_limits().max_instances = 10;
+    qos2.resource_limits().max_samples_per_instance = 500;
+
+    ASSERT_EQ(ReturnCode_t::RETCODE_OK, default_topic1->set_qos(qos2));
+
+    // Next QoS config checks that if user sets max_samples > ( max_instances * max_samples_per_instance ) ,
+    // set_qos() should return ReturnCode_t::RETCODE_OK = 0
+    // By not using instances, instance allocation consistency is not checked.
+    qos2.resource_limits().max_samples = 5001;
+    qos2.resource_limits().max_instances = 10;
+    qos2.resource_limits().max_samples_per_instance = 500;
+
+    ASSERT_EQ(ReturnCode_t::RETCODE_OK, default_topic1->set_qos(qos2));
+
+    // Next QoS config checks that if user sets max_samples infinite
+    // and ( max_instances * max_samples_per_instance ) finite,
+    // set_qos() should return ReturnCode_t::RETCODE_OK = 0
+    // By not using instances, instance allocation consistency is not checked.
+    qos2.resource_limits().max_samples = 0;
+    qos2.resource_limits().max_instances = 10;
+    qos2.resource_limits().max_samples_per_instance = 500;
+
+    ASSERT_EQ(ReturnCode_t::RETCODE_OK, default_topic1->set_qos(qos2));
+}
+
+/*
+ * This test checks the allocation consistency when USING instances.
+ * If the topic is keyed,
+ * max_samples should be greater or equal than max_instances * max_samples_per_instance.
+ * If that condition is not met, the endpoint creation should fail.
+ * If not keyed (not using instances), the only property that is used is max_samples,
+ * thus, should not fail with the previously mentioned configuration.
+ * The following method is checked:
+ * 1. DomainParticipant::create_topic
+ * 2. Topic::set_qos
+ */
+TEST(TopicTests, InstancePolicyAllocationConsistencyKeyed)
+{
+
+    DomainParticipant* participant =
+            DomainParticipantFactory::get_instance()->create_participant(0, PARTICIPANT_QOS_DEFAULT);
+    ASSERT_NE(participant, nullptr);
+
+    Publisher* publisher = participant->create_publisher(PUBLISHER_QOS_DEFAULT);
+    ASSERT_NE(publisher, nullptr);
+
+    TypeSupport type(new TopicDataTypeMock());
+    type.register_type(participant);
+
+    // This test pretends to use topic with instances, so the following flag is set.
+    type.get()->m_isGetKeyDefined = true;
+
+    // Next QoS config checks the default qos configuration,
+    // create_topic() should not return nullptr.
+    TopicQos qos = TOPIC_QOS_DEFAULT;
+
+    Topic* topic1 = participant->create_topic("footopic1", type.get_type_name(), qos);
+    ASSERT_NE(topic1, nullptr);
+
+    // Below an ampliation of the last comprobation, for which it is proved the case of < 0 (-1),
+    // which also means infinite value.
+    qos.resource_limits().max_samples = 0;
+    qos.resource_limits().max_instances = -1;
+
+    Topic* topic2 = participant->create_topic("footopic2", type.get_type_name(), qos);
+    ASSERT_NE(topic2, nullptr);
+
+    // Next QoS config checks that if user sets max_samples < ( max_instances * max_samples_per_instance ) ,
+    // create_datareader() should return nullptr.
+    qos.resource_limits().max_samples = 4999;
+    qos.resource_limits().max_instances = 10;
+    qos.resource_limits().max_samples_per_instance = 500;
+
+    Topic* topic3 = participant->create_topic("footopic3", type.get_type_name(), qos);
+    ASSERT_EQ(topic3, nullptr);
+
+    // Next QoS config checks that if user sets max_samples > ( max_instances * max_samples_per_instance ) ,
+    // create_datareader() should not return nullptr.
+    qos.resource_limits().max_samples = 5001;
+    qos.resource_limits().max_instances = 10;
+    qos.resource_limits().max_samples_per_instance = 500;
+
+    Topic* topic4 = participant->create_topic("footopic4", type.get_type_name(), qos);
+    ASSERT_NE(topic4, nullptr);
+
+    // Next QoS config checks that if user sets max_samples = ( max_instances * max_samples_per_instance ) ,
+    // create_datareader() should not return nullptr.
+    qos.resource_limits().max_samples = 5000;
+    qos.resource_limits().max_instances = 10;
+    qos.resource_limits().max_samples_per_instance = 500;
+
+    Topic* topic5 = participant->create_topic("footopic5", type.get_type_name(), qos);
+    ASSERT_NE(topic5, nullptr);
+
+    // Next QoS config checks that if user sets max_samples infinite
+    // and ( max_instances * max_samples_per_instance ) finite,
+    // create_datareader() should not return nullptr.
+    qos.resource_limits().max_samples = 0;
+    qos.resource_limits().max_instances = 10;
+    qos.resource_limits().max_samples_per_instance = 500;
+
+    Topic* topic6 = participant->create_topic("footopic6", type.get_type_name(), qos);
+    ASSERT_NE(topic6, nullptr);
+
+    // Next QoS config checks the default qos configuration,
+    // set_qos() should return ReturnCode_t::RETCODE_OK = 0.
+    TopicQos qos2 = TOPIC_QOS_DEFAULT;
+    Topic* default_topic1 = participant->create_topic("footopic7", type.get_type_name(), qos2);
+    ASSERT_NE(default_topic1, nullptr);
+
+    ASSERT_EQ(ReturnCode_t::RETCODE_OK, default_topic1->set_qos(qos2));
+
+    // Below an ampliation of the last comprobation, for which it is proved the case of < 0 (-1),
+    // which also means infinite value.
+    qos2.resource_limits().max_samples = 0;
+    qos2.resource_limits().max_instances = -1;
+
+    ASSERT_EQ(ReturnCode_t::RETCODE_OK, default_topic1->set_qos(qos2));
+
+    // Next QoS config checks that if user sets max_samples < ( max_instances * max_samples_per_instance ) ,
+    // set_qos() should return a value != 0 (not OK)
+    qos2.resource_limits().max_samples = 4999;
+    qos2.resource_limits().max_instances = 10;
+    qos2.resource_limits().max_samples_per_instance = 500;
+
+    ASSERT_NE(ReturnCode_t::RETCODE_OK, default_topic1->set_qos(qos2));
+
+    // Next QoS config checks that if user sets max_samples > ( max_instances * max_samples_per_instance ) ,
+    // set_qos() should return ReturnCode_t::RETCODE_OK = 0.
+    qos2.resource_limits().max_samples = 5001;
+    qos2.resource_limits().max_instances = 10;
+    qos2.resource_limits().max_samples_per_instance = 500;
+
+    ASSERT_EQ(ReturnCode_t::RETCODE_OK, default_topic1->set_qos(qos2));
+
+    // Next QoS config checks that if user sets max_samples = ( max_instances * max_samples_per_instance ) ,
+    // set_qos() should return ReturnCode_t::RETCODE_OK = 0.
+    qos2.resource_limits().max_samples = 5000;
+    qos2.resource_limits().max_instances = 10;
+    qos2.resource_limits().max_samples_per_instance = 500;
+
+    ASSERT_EQ(ReturnCode_t::RETCODE_OK, default_topic1->set_qos(qos2));
+
+    // Next QoS config checks that if user sets max_samples infinite
+    // and ( max_instances * max_samples_per_instance ) finite,
+    // set_qos() should return ReturnCode_t::RETCODE_OK = 0.
+    qos2.resource_limits().max_samples = 0;
+    qos2.resource_limits().max_instances = 10;
+    qos2.resource_limits().max_samples_per_instance = 500;
+
+    ASSERT_EQ(ReturnCode_t::RETCODE_OK, default_topic1->set_qos(qos2));
+}
+
 } // namespace dds
 } // namespace fastdds
 } // namespace eprosima
