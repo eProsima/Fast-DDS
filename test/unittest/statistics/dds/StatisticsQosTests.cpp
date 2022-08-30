@@ -19,6 +19,7 @@
 #include <tinyxml2.h>
 
 #include <fastdds/dds/core/policy/QosPolicies.hpp>
+#include <fastdds/dds/domain/DomainParticipantFactory.hpp>
 #include <fastdds/dds/log/Log.hpp>
 #include <fastdds/dds/publisher/DataWriter.hpp>
 #include <fastdds/dds/publisher/qos/DataWriterQos.hpp>
@@ -30,8 +31,10 @@
 #include <fastdds/statistics/topic_names.hpp>
 #include <fastrtps/xmlparser/XMLProfileManager.h>
 
+#ifdef FASTDDS_STATISTICS
 #include <statistics/fastdds/domain/DomainParticipantImpl.hpp>
 #include <statistics/fastdds/publisher/PublisherImpl.hpp>
+#endif
 
 namespace eprosima {
 namespace fastdds {
@@ -43,7 +46,7 @@ using ReturnCode_t = eprosima::fastrtps::types::ReturnCode_t;
 class StatisticsFromXMLProfileTests : public ::testing::Test
 {
 public:
-
+#ifdef FASTDDS_STATISTICS
     class TestDomainParticipant : public eprosima::fastdds::statistics::dds::DomainParticipant
     {
     public:
@@ -65,6 +68,7 @@ public:
         }
 
     };
+#endif
 };
 
 /*
@@ -116,7 +120,6 @@ TEST(StatisticsQosTests, StatisticsDataReaderQosTest)
  */
 TEST_F(StatisticsFromXMLProfileTests, XMLConfigurationForStatisticsDataWritersQoS)
 {
-#ifdef FASTDDS_STATISTICS
     const char* xml =
             "                                                                                                           \
         <?xml version=\"1.0\" encoding=\"utf-8\"  ?>                                                                    \
@@ -194,6 +197,8 @@ TEST_F(StatisticsFromXMLProfileTests, XMLConfigurationForStatisticsDataWritersQo
                     create_participant(0, eprosima::fastdds::dds::PARTICIPANT_QOS_DEFAULT);
     ASSERT_NE(participant, nullptr);
 
+#ifdef FASTDDS_STATISTICS
+
     // Obtain pointer to child class
     eprosima::fastdds::statistics::dds::DomainParticipant* statistics_participant =
             eprosima::fastdds::statistics::dds::DomainParticipant::narrow(participant);
@@ -267,7 +272,7 @@ TEST_F(StatisticsFromXMLProfileTests, XMLConfigurationForStatisticsDataWritersQo
     ASSERT_EQ(network_latency_writer, nullptr);
 
     // But user can enable it manually through enable_statistics_datawriter_with_profile()
-    ReturnCode_t ret = test_statistics_participant->enable_statistics_datawriter_with_profile(
+    ReturnCode_t ret = statistics_participant->enable_statistics_datawriter_with_profile(
         "NETWORK_LATENCY_TOPIC");
     ASSERT_EQ(ReturnCode_t::RETCODE_OK, ret);
     network_latency_writer =
@@ -285,7 +290,7 @@ TEST_F(StatisticsFromXMLProfileTests, XMLConfigurationForStatisticsDataWritersQo
     ASSERT_EQ(subscription_througput_writer, nullptr);
 
     // But user can enable it manually through enable_statistics_datawriter_with_profile()
-    ret = test_statistics_participant->enable_statistics_datawriter_with_profile(
+    ret = statistics_participant->enable_statistics_datawriter_with_profile(
         "SUBSCRIPTION_THROUGHPUT_TOPIC");
     ASSERT_EQ(ReturnCode_t::RETCODE_OK, ret);
     subscription_througput_writer =
@@ -307,6 +312,27 @@ TEST_F(StatisticsFromXMLProfileTests, XMLConfigurationForStatisticsDataWritersQo
     ASSERT_EQ(qos4, subscription_througput_writer->get_qos());
 
     remove("FASTRTPS_PROFILES.xml");
+
+#else // FASTDDS_STATISTICS == false
+
+    // Obtain pointer to child class with static_cast instead of narrow()
+    // because FASTDDS_STATISTICS is false
+    eprosima::fastdds::statistics::dds::DomainParticipant* statistics_participant =
+            static_cast<DomainParticipant*>(participant);
+    ASSERT_NE(statistics_participant, nullptr);
+
+    ReturnCode_t ret = statistics_participant->enable_statistics_datawriter_with_profile(
+        "HISTORY_LATENCY_TOPIC");
+    ASSERT_EQ(ReturnCode_t::RETCODE_UNSUPPORTED, ret);
+
+    ret = statistics_participant->enable_statistics_datawriter_with_profile(
+        "NETWORK_LATENCY_TOPIC");
+    ASSERT_EQ(ReturnCode_t::RETCODE_UNSUPPORTED, ret);
+
+    ret = statistics_participant->enable_statistics_datawriter_with_profile(
+        "SUBSCRIPTION_THROUGHPUT_TOPIC");
+    ASSERT_EQ(ReturnCode_t::RETCODE_UNSUPPORTED, ret);
+
 #endif // FASTDDS_STATISTICS
 }
 
