@@ -321,6 +321,10 @@ void DomainParticipantImpl::enable_statistics_builtin_datawriters(
         {
             efd::utils::set_qos_from_attributes(datawriter_qos, attr);
         }
+        else if (XMLP_ret::XML_OK == XMLProfileManager::fillPublisherAttributes(STATISTICS_GENERIC_PROFILE_NAME, attr))
+        {
+            efd::utils::set_qos_from_attributes(datawriter_qos, attr);
+        }
 
         ReturnCode_t ret = enable_statistics_datawriter(topic, datawriter_qos);
         // case RETCODE_ERROR is checked and logged in enable_statistics_datawriter.
