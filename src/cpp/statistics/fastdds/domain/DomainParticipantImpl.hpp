@@ -76,10 +76,12 @@ public:
      * @brief This operation enables a Statistics DataWriter from a provided XML defined profile
      *
      * @param[in] profile_name Name for the profile to be used to fill the QoS structure.
+     * @param[in] topic_name Name of the statistics topic to be enabled.
      * @return ReturnCode_t::XML_OK on success, ReturnCode_t::XML_ERROR in other case. Defaults true.
      */
     ReturnCode_t enable_statistics_datawriter_with_profile(
-            const std::string& profile_name);
+            const std::string& profile_name,
+            const std::string& topic_name);
 
     /**
      * @brief This operation disables a Statistics DataWriter

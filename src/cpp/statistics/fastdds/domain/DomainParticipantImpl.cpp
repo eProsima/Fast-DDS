@@ -173,7 +173,8 @@ ReturnCode_t DomainParticipantImpl::enable_statistics_datawriter(
 }
 
 ReturnCode_t DomainParticipantImpl::enable_statistics_datawriter_with_profile(
-        const std::string& profile_name)
+        const std::string& profile_name,
+        const std::string& topic_name)
 {
     DataWriterQos datawriter_qos;
     PublisherAttributes attr;
@@ -181,7 +182,7 @@ ReturnCode_t DomainParticipantImpl::enable_statistics_datawriter_with_profile(
     {
         efd::utils::set_qos_from_attributes(datawriter_qos, attr);
 
-        ReturnCode_t ret = enable_statistics_datawriter(profile_name, datawriter_qos);
+        ReturnCode_t ret = enable_statistics_datawriter(topic_name, datawriter_qos);
         // case RETCODE_ERROR is checked and logged in enable_statistics_datawriter.
         // case RETCODE_INCONSISTENT_POLICY could happen if profile defined in XML is inconsistent.
         // case RETCODE_UNSUPPORTED cannot happen because this method is only called if FASTDDS_STATISTICS

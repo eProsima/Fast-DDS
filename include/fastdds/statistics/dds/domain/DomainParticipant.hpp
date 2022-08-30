@@ -64,6 +64,7 @@ public:
      * @brief This operation enables a Statistics DataWriter from a given profile
      *
      * @param[in] profile_name Name for the profile to be used to fill the structure
+     * @param[in] topic_name Name of the statistics topic to be enabled.
      * @return RETCODE_UNSUPPORTED if the FASTDDS_STATISTICS CMake option has not been set,
      * RETCODE_BAD_PARAMETER if the topic name provided does not correspond to any Statistics DataWriter,
      * RETCODE_INCONSISTENT_POLICY if the DataWriterQos provided in profile are inconsistent,
@@ -71,7 +72,8 @@ public:
      * and RETCODE_ERROR otherwise
      */
     RTPS_DllAPI ReturnCode_t enable_statistics_datawriter_with_profile(
-            const std::string& profile_name);
+            const std::string& profile_name,
+            const std::string& topic_name);
 
     /**
      * @brief This operation disables a Statistics DataWriter
