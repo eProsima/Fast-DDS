@@ -34,7 +34,7 @@
 #ifdef FASTDDS_STATISTICS
 #include <statistics/fastdds/domain/DomainParticipantImpl.hpp>
 #include <statistics/fastdds/publisher/PublisherImpl.hpp>
-#endif
+#endif // ifdef FASTDDS_STATISTICS
 
 namespace eprosima {
 namespace fastdds {
@@ -46,6 +46,7 @@ using ReturnCode_t = eprosima::fastrtps::types::ReturnCode_t;
 class StatisticsFromXMLProfileTests : public ::testing::Test
 {
 public:
+
 #ifdef FASTDDS_STATISTICS
     class TestDomainParticipant : public eprosima::fastdds::statistics::dds::DomainParticipant
     {
@@ -68,7 +69,7 @@ public:
         }
 
     };
-#endif
+#endif // ifdef FASTDDS_STATISTICS
 };
 
 /*
@@ -310,6 +311,12 @@ TEST_F(StatisticsFromXMLProfileTests, XMLConfigurationForStatisticsDataWritersQo
     qos4.latency_budget().duration.seconds = 2;
     qos4.reliable_writer_qos().disable_heartbeat_piggyback = true;
     ASSERT_EQ(qos4, subscription_througput_writer->get_qos());
+
+    // Calling enable_statistics_datawriter_with_profile with a profile that does not exist,
+    // RETCODE_ERROR must be returned.
+    ret = statistics_participant->enable_statistics_datawriter_with_profile(
+        "FAKE_TOPIC");
+    ASSERT_EQ(ReturnCode_t::RETCODE_ERROR, ret);
 
     remove("FASTRTPS_PROFILES.xml");
 
