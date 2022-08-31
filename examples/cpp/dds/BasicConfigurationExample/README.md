@@ -62,4 +62,11 @@ QoS options:
                   --transient
                     Set durability to transient local (volatile by default,
                     ineffective when not reliable).
+
+Discovery options:
+                  --ttl
+                    Set multicast discovery Time To Live on IPv4 or Hop Limit
+                    for IPv6. If not set, uses Fast-DDS default (1 hop).
+                    Increase it to avoid discovery issues on scenarios with
+                    several routers.
 ```
