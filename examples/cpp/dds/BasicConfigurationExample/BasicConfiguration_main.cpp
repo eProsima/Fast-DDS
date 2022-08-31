@@ -84,9 +84,20 @@ int main(
     }
 
     // Decide between publisher or subscriber
-    if (parse.nonOptionsCount())
+    try
     {
+        if (parse.nonOptionsCount() != 1)
+        {
+            throw 1;
+        }
+
         const char* type_name = parse.nonOption(0);
+
+        // make sure is the first option
+        if (parse.optionsCount() && type_name >= buffer[0].arg)
+        {
+            throw 1;
+        }
 
         if (strcmp(type_name, "publisher") == 0)
         {
@@ -98,15 +109,14 @@ int main(
         }
         else
         {
-            option::printUsage(fwrite, stdout, usage, columns);
-            return 1;
+            throw 1;
         }
     }
-    else
+    catch (int error)
     {
         std::cerr << "ERROR: first argument can only be <publisher|subscriber>" << std::endl;
         option::printUsage(fwrite, stdout, usage, columns);
-        return 1;
+        return error;
     }
 
     for (int i = 0; i < parse.optionsCount(); ++i)
@@ -200,6 +210,16 @@ int main(
     if (transient && !reliable)
     {
         std::cerr << "WARNING: --transient will take no effect since not reliable." << std::endl;
+    }
+
+    if (transport == SHM && hops > 0 )
+    {
+        std::cerr << "WARNING: --ttl will take no effect since not using UDP transport." << std::endl;
+    }
+
+    if (hops > 255 )
+    {
+        std::cerr << "WARNING: --ttl value will be cut off to it's maximum 255." << std::endl;
     }
 
     switch (type)

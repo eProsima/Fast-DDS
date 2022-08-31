@@ -189,7 +189,7 @@ const option::Descriptor usage[] = {
     { TTL, 0, "", "ttl",         Arg::Numeric,
       "\t--ttl \tSet multicast discovery Time To Live on IPv4 or Hop Limit for IPv6."
       " If not set, uses Fast-DDS default (1 hop). Increase it to avoid discovery issues"
-      " on scenarios with several routers."},
+      " on scenarios with several routers. Maximum: 255."},
 
     { 0, 0, 0, 0, 0, 0 }
 };
