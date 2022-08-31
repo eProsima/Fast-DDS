@@ -83,40 +83,40 @@ bool HelloWorldPublisher::init(
     {
         pqos.transport().use_builtin_transports = false;
 
-        switch( transport )
+        switch ( transport )
         {
             case SHM:
-                {
-                    auto shm_transport = std::make_shared<SharedMemTransportDescriptor>();
-                    pqos.transport().user_transports.push_back(shm_transport);
-                }
-                break;
+            {
+                auto shm_transport = std::make_shared<SharedMemTransportDescriptor>();
+                pqos.transport().user_transports.push_back(shm_transport);
+            }
+            break;
             case UDPv4:
-                {
-                    auto udp_transport = std::make_shared<UDPv4TransportDescriptor>();
-                    pqos.transport().user_transports.push_back(udp_transport);
-                }
-                break;
+            {
+                auto udp_transport = std::make_shared<UDPv4TransportDescriptor>();
+                pqos.transport().user_transports.push_back(udp_transport);
+            }
+            break;
             case UDPv6:
-                {
-                    auto udp_transport = std::make_shared<UDPv6TransportDescriptor>();
-                    pqos.transport().user_transports.push_back(udp_transport);
-                }
-                break;
+            {
+                auto udp_transport = std::make_shared<UDPv6TransportDescriptor>();
+                pqos.transport().user_transports.push_back(udp_transport);
+            }
+            break;
             case DEFAULT:
             default:
-                {
-                    // mimick default transport selection
-                    auto udp_transport = std::make_shared<UDPv4TransportDescriptor>();
-                    pqos.transport().user_transports.push_back(udp_transport);
+            {
+                // mimick default transport selection
+                auto udp_transport = std::make_shared<UDPv4TransportDescriptor>();
+                pqos.transport().user_transports.push_back(udp_transport);
 #ifdef SHM_TRANSPORT_BUILTIN
-                    auto shm_transport = std::make_shared<SharedMemTransportDescriptor>();
-                    pqos.transport().user_transports.push_back(shm_transport);
+                auto shm_transport = std::make_shared<SharedMemTransportDescriptor>();
+                pqos.transport().user_transports.push_back(shm_transport);
 #endif // SHM_TRANSPORT_BUILTIN
-                }
+            }
         }
 
-        if( hops > 0 )
+        if ( hops > 0 )
         {
             for (auto& transportDescriptor : pqos.transport().user_transports)
             {

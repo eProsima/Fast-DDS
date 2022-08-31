@@ -84,7 +84,7 @@ int main(
     }
 
     // Decide between publisher or subscriber
-    if(parse.nonOptionsCount())
+    if (parse.nonOptionsCount())
     {
         const char* type_name = parse.nonOption(0);
 
