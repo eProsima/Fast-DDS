@@ -35,6 +35,7 @@
 #include <fastdds/rtps/transport/UDPv6TransportDescriptor.h>
 #include <fastrtps/attributes/ParticipantAttributes.h>
 #include <fastrtps/attributes/PublisherAttributes.h>
+#include <utils/SystemInfo.hpp>
 
 #include "BasicConfigurationPublisher.h"
 
@@ -249,9 +250,7 @@ void PubListener::on_publication_matched(
     if (info.current_count_change == 1)
     {
         matched_ = info.current_count;
-        // std::cout << "Publisher matched in " << topic_name_ << std::endl;
-        logWarning(BASIC_CONFIGURATION_PUBLISHER,
-                "Thread: " << std::this_thread::get_id() << " | " << "Publisher matched in " << topic_name_);
+        std::cout << eprosima::SystemInfo::get_timestamp() << " | " << "Publisher matched in " << topic_name_ << std::endl;
         if (enough_matched())
         {
             awake();
@@ -260,17 +259,12 @@ void PubListener::on_publication_matched(
     else if (info.current_count_change == -1)
     {
         matched_ = info.current_count;
-        // std::cout << "Publisher unmatched in " << topic_name_  << std::endl;
-        logWarning(BASIC_CONFIGURATION_PUBLISHER,
-                "Thread: " << std::this_thread::get_id() << " | " << "Publisher unmatched in " << topic_name_);
+        std::cout << eprosima::SystemInfo::get_timestamp() << " | " << "Publisher unmatched in " << topic_name_ << std::endl;
     }
     else
     {
         std::cout << info.current_count_change
                   << " is not a valid value for PublicationMatchedStatus current count change" << std::endl;
-        logWarning(BASIC_CONFIGURATION_PUBLISHER,
-                info.current_count_change <<
-                " is not a valid value for PublicationMatchedStatus current count change");
     }
 }
 
@@ -309,11 +303,8 @@ void HelloWorldPublisher::runThread(
         if (listeners_[idx]->enough_matched())
         {
             publish(idx);
-            // std::cout << "Message: " << hellos_[idx].message().data() << " with index: " << hellos_[idx].index()
-            //             << " SENT in " << listeners_[idx]->topic_name_ << std::endl;
-            logWarning(BASIC_CONFIGURATION_PUBLISHER, "Thread: " << std::this_thread::get_id() << " | " <<
-                    "Message: " << hellos_[idx].message().data() << " with index: " << hellos_[idx].index() << " SENT in " <<
-                    listeners_[idx]->topic_name_);
+            std::cout << eprosima::SystemInfo::get_timestamp() << " | " << "Message: " << hellos_[idx].message().data() <<
+                    " with index: " << hellos_[idx].index() << " SENT in " << listeners_[idx]->topic_name_ << std::endl;
             if (samples == 0 || hellos_[idx].index() < samples)
             {
                 std::this_thread::sleep_for(std::chrono::milliseconds(sleep));
@@ -354,11 +345,9 @@ void HelloWorldPublisher::runSingleThread(
             if (listeners_[idx]->enough_matched() && (samples == 0 || hellos_[idx].index() < samples))
             {
                 publish(idx);
-                // std::cout << "Message: " << hellos_[idx].message().data() << " with index: " << hellos_[idx].index()
-                //         << " SENT in " << listeners_[idx]->topic_name_ << std::endl;
-                logWarning(BASIC_CONFIGURATION_PUBLISHER, "Thread: " << std::this_thread::get_id() << " | " <<
-                        "Message: " << hellos_[idx].message().data() << " with index: " << hellos_[idx].index() << " SENT in " <<
-                        listeners_[idx]->topic_name_);
+                std::cout << eprosima::SystemInfo::get_timestamp() << " | " << "Message: " << hellos_[idx].message().data() <<
+                        " with index: " << hellos_[idx].index() << " SENT in " <<
+                        listeners_[idx]->topic_name_<< std::endl;
                 if (hellos_[idx].index() == samples)
                 {
                     n_finished++;

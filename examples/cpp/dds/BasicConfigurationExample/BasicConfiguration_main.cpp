@@ -51,7 +51,6 @@ int main(
         int argc,
         char** argv)
 {
-    eprosima::fastdds::dds::Log::SetVerbosity(eprosima::fastdds::dds::Log::Kind::Warning);
     int columns;
 
 #if defined(_WIN32)
@@ -277,6 +276,5 @@ int main(
             break;
         }
     }
-    eprosima::fastdds::dds::Log::Flush();
     return 0;
 }

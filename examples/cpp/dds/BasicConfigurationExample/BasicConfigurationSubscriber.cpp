@@ -29,6 +29,7 @@
 #include <fastdds/rtps/transport/UDPv6TransportDescriptor.h>
 #include <fastrtps/attributes/ParticipantAttributes.h>
 #include <fastrtps/attributes/SubscriberAttributes.h>
+#include <utils/SystemInfo.hpp>
 
 #include "BasicConfigurationSubscriber.h"
 
@@ -236,25 +237,19 @@ void SubListener::on_subscription_matched(
     if (info.current_count_change == 1)
     {
         matched_ = info.current_count;
-        // std::cout << "Subscriber matched in " << topic_name_  << std::endl;
-        logWarning(BASIC_CONFIGURATION_SUBSCRIBER,
-                "Thread: " << std::this_thread::get_id() << " | " << "Subscriber matched in " << topic_name_);
+        std::cout << eprosima::SystemInfo::get_timestamp() << " | " << "Subscriber matched in " << topic_name_ << std::endl;
+
     }
     else if (info.current_count_change == -1)
     {
         matched_ = info.current_count;
-        // std::cout << "Subscriber unmatched in " << topic_name_  << std::endl;
-        logWarning(BASIC_CONFIGURATION_SUBSCRIBER,
-                "Thread: " << std::this_thread::get_id() << " | " << "Subscriber unmatched in " << topic_name_);
+        std::cout << eprosima::SystemInfo::get_timestamp() << " | " << "Subscriber unmatched in " << topic_name_ << std::endl;
 
     }
     else
     {
-        // std::cout << info.current_count_change
-        //           << " is not a valid value for SubscriptionMatchedStatus current count change" << std::endl;
-        logWarning(BASIC_CONFIGURATION_SUBSCRIBER,
-                info.current_count_change <<
-                " is not a valid value for SubscriptionMatchedStatus current count change");
+        std::cout << info.current_count_change
+                  << " is not a valid value for SubscriptionMatchedStatus current count change" << std::endl;
     }
 }
 
@@ -267,9 +262,8 @@ void SubListener::on_data_available(
     {
         samples_++;
         // Print your structure data here.
-        // std::cout << "Message " << hello_.message().data() << " " << hello_.index() << " RECEIVED in " << topic_name_  << std::endl;
-        logWarning(BASIC_CONFIGURATION_SUBSCRIBER, "Thread: " << std::this_thread::get_id() << " | " <<
-                "Message " << hello_.message().data() << " " << hello_.index() << " RECEIVED in " << topic_name_);
+        std::cout << eprosima::SystemInfo::get_timestamp() << " | " << "Message " << hello_.message().data() << " " <<
+                hello_.index() << " RECEIVED in " << topic_name_ << std::endl;
         if (max_messages_ > 0 && samples_ == max_messages_)
         {
             HelloWorldSubscriber::stop();
