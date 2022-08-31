@@ -114,7 +114,7 @@ int main(
     }
     catch (int error)
     {
-        std::cerr << "ERROR: first argument can only be <publisher|subscriber>" << std::endl;
+        std::cerr << "ERROR: first argument must be <publisher|subscriber> followed by - or -- options" << std::endl;
         option::printUsage(fwrite, stdout, usage, columns);
         return error;
     }
@@ -219,7 +219,7 @@ int main(
 
     if (hops > 255 )
     {
-        std::cerr << "WARNING: --ttl value will be cut off to it's maximum 255." << std::endl;
+        std::cerr << "WARNING: --ttl value will be cut off to its maximum 255." << std::endl;
     }
 
     switch (type)
