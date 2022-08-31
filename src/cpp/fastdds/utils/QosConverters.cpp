@@ -92,8 +92,8 @@ void set_attributes_from_qos(
     attr.multicastLocatorList = qos.endpoint().multicast_locator_list;
     attr.remoteLocatorList = qos.endpoint().remote_locator_list;
     attr.historyMemoryPolicy = qos.endpoint().history_memory_policy;
-    attr.setUserDefinedID(qos.endpoint().user_defined_id);
-    attr.setEntityID(qos.endpoint().entity_id);
+    attr.setUserDefinedID((uint8_t)qos.endpoint().user_defined_id);
+    attr.setEntityID((uint8_t)qos.endpoint().entity_id);
     attr.times = qos.reliable_writer_qos().times;
     attr.qos.m_disablePositiveACKs = qos.reliable_writer_qos().disable_positive_acks;
     attr.qos.m_durability = qos.durability();
