@@ -67,7 +67,8 @@ bool HelloWorldPublisher::init(
         bool async,
         TransportType transport,
         bool reliable,
-        bool transient)
+        bool transient,
+        int hops)
 {
     hello_.index(0);
     memcpy(hello_.message().data(), "HelloWorld ", strlen("HelloWorld") + 1);
@@ -78,24 +79,53 @@ bool HelloWorldPublisher::init(
 
     // TRANSPORT CONFIG
     // If it is set, not use default and set the transport
-    if (transport != DEFAULT)
+    if (transport != DEFAULT || hops > 0 )
     {
         pqos.transport().use_builtin_transports = false;
 
-        if (transport == SHM)
+        switch( transport )
         {
-            auto shm_transport = std::make_shared<SharedMemTransportDescriptor>();
-            pqos.transport().user_transports.push_back(shm_transport);
+            case SHM:
+                {
+                    auto shm_transport = std::make_shared<SharedMemTransportDescriptor>();
+                    pqos.transport().user_transports.push_back(shm_transport);
+                }
+                break;
+            case UDPv4:
+                {
+                    auto udp_transport = std::make_shared<UDPv4TransportDescriptor>();
+                    pqos.transport().user_transports.push_back(udp_transport);
+                }
+                break;
+            case UDPv6:
+                {
+                    auto udp_transport = std::make_shared<UDPv6TransportDescriptor>();
+                    pqos.transport().user_transports.push_back(udp_transport);
+                }
+                break;
+            case DEFAULT:
+            default:
+                {
+                    // mimick default transport selection
+                    auto udp_transport = std::make_shared<UDPv4TransportDescriptor>();
+                    pqos.transport().user_transports.push_back(udp_transport);
+#ifdef SHM_TRANSPORT_BUILTIN
+                    auto shm_transport = std::make_shared<SharedMemTransportDescriptor>();
+                    pqos.transport().user_transports.push_back(shm_transport);
+#endif // SHM_TRANSPORT_BUILTIN
+                }
         }
-        else if (transport == UDPv4)
+
+        if( hops > 0 )
         {
-            auto udp_transport = std::make_shared<UDPv4TransportDescriptor>();
-            pqos.transport().user_transports.push_back(udp_transport);
-        }
-        else if (transport == UDPv6)
-        {
-            auto udp_transport = std::make_shared<UDPv6TransportDescriptor>();
-            pqos.transport().user_transports.push_back(udp_transport);
+            for (auto& transportDescriptor : pqos.transport().user_transports)
+            {
+                SocketTransportDescriptor* pT = dynamic_cast<SocketTransportDescriptor*>(transportDescriptor.get());
+                if (pT)
+                {
+                    pT->TTL = (uint8_t)std::min(hops, 255);
+                }
+            }
         }
     }
 

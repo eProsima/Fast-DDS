@@ -139,7 +139,8 @@ enum optionIndex
     DOMAIN_ID,
     TRANSPORT,
     RELIABLE,
-    TRANSIENT_LOCAL
+    TRANSIENT_LOCAL,
+    TTL
 };
 
 const option::Descriptor usage[] = {
@@ -184,6 +185,11 @@ const option::Descriptor usage[] = {
     { TRANSIENT_LOCAL, 0, "", "transient",        Arg::None,
       "  \t--transient \tSet durability to transient local (volatile by default, ineffective when not reliable)." },
 
+    { UNKNOWN_OPT, 0, "", "",                Arg::None,      "\nDiscovery options:"},
+    { TTL, 0, "", "ttl",         Arg::Numeric,
+      "\t--ttl \tSet multicast discovery Time To Live on IPv4 or Hop Limit for IPv6."
+      " If not set, uses Fast-DDS default (1 hop). Increase it to avoid discovery issues"
+      " on scenarios with several routers."},
 
     { 0, 0, 0, 0, 0, 0 }
 };
