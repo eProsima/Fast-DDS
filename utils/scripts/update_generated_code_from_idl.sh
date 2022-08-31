@@ -1,45 +1,10 @@
 #!/bin/bash
 
-idl_files=(
-    "./examples/cpp/dds/BasicConfigurationExample/HelloWorld.idl"
-    "./examples/cpp/dds/Benchmark/Benchmark.idl"
-    "./examples/cpp/dds/Benchmark/Benchmark_big.idl"
-    "./examples/cpp/dds/Benchmark/Benchmark_medium.idl"
-    "./examples/cpp/dds/Benchmark/Benchmark_small.idl"
-    "./examples/cpp/dds/Configurability/sample.idl"
-    "./examples/cpp/dds/ContentFilteredTopicExample//HelloWorld.idl"
-    "./examples/cpp/dds/CustomListenerExample/Topic.idl"
-    "./examples/cpp/dds/DeadlineQoSExample/deadlinepayload.idl"
-    "./examples/cpp/dds/DisablePositiveACKs/Topic.idl"
-    "./examples/cpp/dds/Filtering/FilteringExample.idl"
-    "./examples/cpp/dds/FlowControlExample/FlowControlExample.idl"
-    "./examples/cpp/dds/HelloWorldExample/HelloWorld.idl"
-    "./examples/cpp/dds/HelloWorldExampleDataSharing/HelloWorld.idl"
-    "./examples/cpp/dds/HelloWorldExampleSharedMem/HelloWorld.idl"
-    "./examples/cpp/dds/HelloWorldExampleTCP/HelloWorld.idl"
-    "./examples/cpp/dds/HistoryKind/sample.idl"
-    "./examples/cpp/dds/Keys/sample.idl"
-    "./examples/cpp/dds/LateJoiners/sample.idl"
-    "./examples/cpp/dds/LifespanQoSExample/Lifespan.idl"
-    "./examples/cpp/dds/LivelinessQoS/Topic.idl"
-    "./examples/cpp/dds/OwnershipStrengthQoSExample/OwnershipStrength.idl"
-    "./examples/cpp/dds/SampleConfig_Controller/sample.idl"
-    "./examples/cpp/dds/SampleConfig_Events/sample.idl"
-    "./examples/cpp/dds/SampleConfig_Multimedia/sample.idl"
-    "./examples/cpp/dds/SecureHelloWorldExample/HelloWorld.idl"
-    "./examples/cpp/dds/StaticHelloWorldExample/HelloWorld.idl"
-    "./examples/cpp/dds/WriterLoansExample/LoanableHelloWorld.idl"
-    "./examples/cpp/dds/ZeroCopyExample/LoanableHelloWorld.idl"
-    "./test/blackbox/types/Data64kb.idl"
-    "./test/blackbox/types/KeyedData1mb.idl"
-    "./test/blackbox/types/HelloWorld.idl"
-    "./test/blackbox/types/KeyedHelloWorld.idl"
-    "./test/blackbox/types/Data1mb.idl"
-    "./test/blackbox/types/FixedSized.idl"
-    "./test/blackbox/types/StringTest.idl"
-    "./test/unittest/dds/topic/DDSSQLFilter/data_types/ContentFilterTestType.idl"
-    "./test/profiling/allocations/AllocTestType.idl"
-)
+files_to_exclude=(
+    './include/fastrtps/types/*'
+    './include/fastdds/statistics/types.idl'
+    './test/unittest/dynamic_types/idl/new_features_4_2.idl'
+    )
 
 yellow='\E[1;33m'
 textreset='\E[1;0m'
@@ -55,6 +20,15 @@ if [[ -z "$(which fastddsgen)" ]]; then
 fi
 
 cd ../..
+
+readarray -d '' idl_files < <(find . -iname \*.idl -print0)
+
+for del in ${files_to_exclude[@]}
+do
+idl_files=("${idl_files[@]/$del}")
+done
+
+idl_files=(${idl_files[@]/$files_to_exclude})
 
 ret_value=0
 
