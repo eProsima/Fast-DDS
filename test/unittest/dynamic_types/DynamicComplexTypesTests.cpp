@@ -43,7 +43,7 @@ public:
 
     DynamicComplexTypesTests()
     {
-        CompleteStruct toRegisterStatic;
+        registerTestTypes();
         m_factory = DynamicTypeBuilderFactory::get_instance();
         init();
     }
