@@ -51,7 +51,8 @@ public:
             bool async,
             TransportType transport,
             bool reliable,
-            bool transient);
+            bool transient,
+            int hops);
 
     //! Publish a sample
     void publish();

@@ -50,7 +50,8 @@ public:
             uint32_t domain,
             TransportType transport,
             bool reliable,
-            bool transient);
+            bool transient,
+            int hops);
 
     //! RUN the subscriber until number samples are received
     void run(
