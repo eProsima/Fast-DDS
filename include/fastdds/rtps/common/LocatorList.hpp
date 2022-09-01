@@ -96,6 +96,8 @@ class LocatorList
 {
 public:
 
+    using value_type = typename std::vector<Locator>::value_type;
+
     /// Constructor
     RTPS_DllAPI LocatorList()
     {
