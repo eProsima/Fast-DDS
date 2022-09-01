@@ -388,6 +388,12 @@ void LogConsumer::print_new_line(
     stream << def << std::endl;
 }
 
+std::string Log::get_timestamp(
+        const char* format)
+{
+    return SystemInfo::get_timestamp(format);
+}
+
 } //namespace dds
 } //namespace fastdds
 } //namespace eprosima
