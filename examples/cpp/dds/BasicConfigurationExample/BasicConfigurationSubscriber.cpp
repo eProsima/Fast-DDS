@@ -29,7 +29,7 @@
 #include <fastdds/rtps/transport/UDPv6TransportDescriptor.h>
 #include <fastrtps/attributes/ParticipantAttributes.h>
 #include <fastrtps/attributes/SubscriberAttributes.h>
-#include <utils/SystemInfo.hpp>
+#include <fastdds/dds/log/Log.hpp>
 
 #include "BasicConfigurationSubscriber.h"
 
@@ -237,13 +237,13 @@ void SubListener::on_subscription_matched(
     if (info.current_count_change == 1)
     {
         matched_ = info.current_count;
-        std::cout << eprosima::SystemInfo::get_timestamp() << " | " << "Subscriber matched in " << topic_name_ << std::endl;
+        std::cout << Log::get_timestamp() << " | " << "Subscriber matched in " << topic_name_ << std::endl;
 
     }
     else if (info.current_count_change == -1)
     {
         matched_ = info.current_count;
-        std::cout << eprosima::SystemInfo::get_timestamp() << " | " << "Subscriber unmatched in " << topic_name_ << std::endl;
+        std::cout << Log::get_timestamp() << " | " << "Subscriber unmatched in " << topic_name_ << std::endl;
 
     }
     else
@@ -262,7 +262,7 @@ void SubListener::on_data_available(
     {
         samples_++;
         // Print your structure data here.
-        std::cout << eprosima::SystemInfo::get_timestamp() << " | " << "Message " << hello_.message().data() << " " <<
+        std::cout << Log::get_timestamp() << " | " << "Message " << hello_.message().data() << " " <<
                 hello_.index() << " RECEIVED in " << topic_name_ << std::endl;
         if (max_messages_ > 0 && samples_ == max_messages_)
         {

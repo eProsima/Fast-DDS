@@ -35,7 +35,7 @@
 #include <fastdds/rtps/transport/UDPv6TransportDescriptor.h>
 #include <fastrtps/attributes/ParticipantAttributes.h>
 #include <fastrtps/attributes/PublisherAttributes.h>
-#include <utils/SystemInfo.hpp>
+#include <fastdds/dds/log/Log.hpp>
 
 #include "BasicConfigurationPublisher.h"
 
@@ -250,7 +250,7 @@ void PubListener::on_publication_matched(
     if (info.current_count_change == 1)
     {
         matched_ = info.current_count;
-        std::cout << eprosima::SystemInfo::get_timestamp() << " | " << "Publisher matched in " << topic_name_ << std::endl;
+        std::cout << Log::get_timestamp() << " | " << "Publisher matched in " << topic_name_ << std::endl;
         if (enough_matched())
         {
             awake();
@@ -259,7 +259,7 @@ void PubListener::on_publication_matched(
     else if (info.current_count_change == -1)
     {
         matched_ = info.current_count;
-        std::cout << eprosima::SystemInfo::get_timestamp() << " | " << "Publisher unmatched in " << topic_name_ << std::endl;
+        std::cout << Log::get_timestamp() << " | " << "Publisher unmatched in " << topic_name_ << std::endl;
     }
     else
     {
@@ -303,7 +303,7 @@ void HelloWorldPublisher::runThread(
         if (listeners_[idx]->enough_matched())
         {
             publish(idx);
-            std::cout << eprosima::SystemInfo::get_timestamp() << " | " << "Message: " << hellos_[idx].message().data() <<
+            std::cout << Log::get_timestamp() << " | " << "Message: " << hellos_[idx].message().data() <<
                     " with index: " << hellos_[idx].index() << " SENT in " << listeners_[idx]->topic_name_ << std::endl;
             if (samples == 0 || hellos_[idx].index() < samples)
             {
@@ -345,7 +345,7 @@ void HelloWorldPublisher::runSingleThread(
             if (listeners_[idx]->enough_matched() && (samples == 0 || hellos_[idx].index() < samples))
             {
                 publish(idx);
-                std::cout << eprosima::SystemInfo::get_timestamp() << " | " << "Message: " << hellos_[idx].message().data() <<
+                std::cout << Log::get_timestamp() << " | " << "Message: " << hellos_[idx].message().data() <<
                         " with index: " << hellos_[idx].index() << " SENT in " <<
                         listeners_[idx]->topic_name_<< std::endl;
                 if (hellos_[idx].index() == samples)
