@@ -25,6 +25,15 @@ endif()
 file(TO_CMAKE_PATH "${PROJECT_SOURCE_DIR}/valgrind.supp" MEMORYCHECK_SUPPRESSIONS_FILE_TMP)
 set(MEMORYCHECK_SUPPRESSIONS_FILE ${MEMORYCHECK_SUPPRESSIONS_FILE_TMP} CACHE FILEPATH "Valgrind suppresions file")
 
+# Check if /etc/hosts file has been modified to add dummy host test subjects
+if(WIN32)
+    execute_process(COMMAND powershell -C Resolve-DNSName www.acme.com.test
+        RESULT_VARIABLE EPROSIMA_TEST_DNS_NOT_SET_UP OUTPUT_QUIET ERROR_QUIET)
+else(WIN32)
+    execute_process(COMMAND nslookup www.acme.com.test
+        RESULT_VARIABLE EPROSIMA_TEST_DNS_NOT_SET_UP OUTPUT_QUIET ERROR_QUIET)
+endif(WIN32)
+
 ###############################################################################
 # Testing
 ###############################################################################

@@ -24,7 +24,7 @@ macro(add_gtest)
         set(test "${ARGV0}")
         set(command "${test}")
     endif()
-    set(multiValueArgs SOURCES ENVIRONMENTS DEPENDENCIES LABELS)
+    set(multiValueArgs SOURCES ENVIRONMENTS DEPENDENCIES LABELS IGNORE)
     cmake_parse_arguments(GTEST "" "${uniValueArgs}" "${multiValueArgs}" ${ARGN})
 
     if(GTEST_NAME)
@@ -66,6 +66,15 @@ macro(add_gtest)
                     COMMAND ${command}
                     --gtest_filter=${GTEST_GROUP_NAME}.${GTEST_TEST_NAME}:*/${GTEST_GROUP_NAME}.${GTEST_TEST_NAME}/*:${GTEST_GROUP_NAME}/*.${GTEST_TEST_NAME})
 
+                # decide if disable
+                unset(GTEST_USER_DISABLED)
+                foreach(GTEST_USER_FILTER ${GTEST_IGNORE})
+                    string(REGEX MATCH ${GTEST_USER_FILTER} GTEST_USER_DISABLED ${GTEST_GROUP_NAME}.${GTEST_TEST_NAME})
+                    if(GTEST_USER_DISABLED)
+                        break()
+                    endif()
+                endforeach()
+
                 # Add environment
                 set(GTEST_ENVIRONMENT "")
                 if(WIN32)
@@ -82,13 +91,21 @@ macro(add_gtest)
                 endif()
                 unset(GTEST_ENVIRONMENT)
 
-                # Add labels
-                set_property(TEST ${GTEST_GROUP_NAME}.${GTEST_TEST_NAME} PROPERTY LABELS "${GTEST_LABELS}")
+                # Add labels and enable
+                set_tests_properties(${GTEST_GROUP_NAME}.${GTEST_TEST_NAME} PROPERTIES
+                    LABELS "${GTEST_LABELS}"
+                    DISABLED $<BOOL:${GTEST_USER_DISABLED}>)
 
             endforeach()
         endforeach()
     else()
-        add_test(NAME ${test} COMMAND ${command})
+
+        # add filtering statement if required
+        if(GTEST_IGNORE)
+            set(gtest_filter "--gtest_filter=${GTEST_IGNORE}")
+        endif()
+
+        add_test(NAME ${test} COMMAND ${command} ${gtest_filter})
 
         # Add environment
         set(GTEST_ENVIRONMENT "")
@@ -128,6 +145,8 @@ macro(add_gtest)
 
         # Add labels
         set_property(TEST ${test} PROPERTY LABELS "${GTEST_LABELS}")
+
+        unset(gtest_filter)
     endif()
 endmacro()
 
