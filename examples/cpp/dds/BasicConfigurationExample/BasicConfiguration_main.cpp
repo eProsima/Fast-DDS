@@ -83,6 +83,7 @@ int main(
     bool reliable = false;
     bool transient = false; // transient local
     bool realloc = false;
+    long msg_size = 20;
     if (argc > 1)
     {
         if (!strcmp(argv[1], "publisher"))
@@ -151,6 +152,17 @@ int main(
                     if (type == PUBLISHER)
                     {
                         sleep = strtol(opt.arg, nullptr, 10);
+                    }
+                    else
+                    {
+                        print_warning("publisher", opt.name);
+                    }
+                    break;
+
+                case optionIndex::MSG_SIZE:
+                    if (type == PUBLISHER)
+                    {
+                        msg_size = strtol(opt.arg, nullptr, 10);
                     }
                     else
                     {
@@ -258,7 +270,7 @@ int main(
         {
             HelloWorldPublisher mypub;
             if (mypub.init(topic_names, static_cast<uint32_t>(domain), static_cast<uint32_t>(num_wait_matched), async,
-                    transport, reliable, transient, realloc))
+                    transport, reliable, transient, realloc, msg_size))
             {
                 mypub.run(static_cast<uint32_t>(count), static_cast<uint32_t>(sleep), static_cast<uint32_t>(init_sleep),
                         single_thread, random);

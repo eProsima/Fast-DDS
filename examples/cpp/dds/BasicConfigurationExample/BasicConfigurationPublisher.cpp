@@ -76,7 +76,8 @@ bool HelloWorldPublisher::init(
         TransportType transport,
         bool reliable,
         bool transient,
-        bool realloc)
+        bool realloc,
+        uint32_t msg_size)
 {
     n_topics_.store(topic_names.size());
 
@@ -84,7 +85,7 @@ bool HelloWorldPublisher::init(
     {
         HelloWorld hello;
         hello.index(0);
-        memcpy(hello.message().data(), "HelloWorld ", strlen("HelloWorld") + 1);
+        hello.message(std::string(msg_size, '0'));
         hellos_.push_back(hello);
     }
 
@@ -303,8 +304,8 @@ void HelloWorldPublisher::runThread(
         if (listeners_[idx]->enough_matched())
         {
             publish(idx);
-            std::cout << Log::get_timestamp() << " | " << "Message: " << hellos_[idx].message().data() <<
-                    " with index: " << hellos_[idx].index() << " SENT in " << listeners_[idx]->topic_name_ << std::endl;
+            std::cout << Log::get_timestamp() << " | " << "Message with index: " << hellos_[idx].index() <<
+                    " SENT in " << listeners_[idx]->topic_name_ << std::endl;
             if (samples == 0 || hellos_[idx].index() < samples)
             {
                 std::this_thread::sleep_for(std::chrono::milliseconds(sleep));
@@ -345,9 +346,8 @@ void HelloWorldPublisher::runSingleThread(
             if (listeners_[idx]->enough_matched() && (samples == 0 || hellos_[idx].index() < samples))
             {
                 publish(idx);
-                std::cout << Log::get_timestamp() << " | " << "Message: " << hellos_[idx].message().data() <<
-                        " with index: " << hellos_[idx].index() << " SENT in " <<
-                        listeners_[idx]->topic_name_<< std::endl;
+                std::cout << Log::get_timestamp() << " | " << "Message with index: " << hellos_[idx].index() <<
+                        " SENT in " << listeners_[idx]->topic_name_ << std::endl;
                 if (hellos_[idx].index() == samples)
                 {
                     n_finished++;

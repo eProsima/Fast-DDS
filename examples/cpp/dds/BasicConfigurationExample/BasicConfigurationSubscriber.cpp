@@ -262,7 +262,7 @@ void SubListener::on_data_available(
     {
         samples_++;
         // Print your structure data here.
-        std::cout << Log::get_timestamp() << " | " << "Message " << hello_.message().data() << " " <<
+        std::cout << Log::get_timestamp() << " | " << "Message " <<
                 hello_.index() << " RECEIVED in " << topic_name_ << std::endl;
         if (max_messages_ > 0 && samples_ == max_messages_)
         {

@@ -105,7 +105,8 @@ public:
             TransportType transport,
             bool reliable,
             bool transient,
-            bool realloc);
+            bool realloc,
+            uint32_t msg_size);
 
     //! Publish a sample
     void publish(

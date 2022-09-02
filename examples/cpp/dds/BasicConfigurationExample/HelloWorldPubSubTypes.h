@@ -71,7 +71,7 @@ public:
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_BOUNDED
     eProsima_user_DllExport inline bool is_bounded() const override
     {
-        return true;
+        return false;
     }
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_BOUNDED
@@ -79,7 +79,7 @@ public:
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
     eProsima_user_DllExport inline bool is_plain() const override
     {
-        return true;
+        return false;
     }
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
@@ -88,8 +88,8 @@ public:
     eProsima_user_DllExport inline bool construct_sample(
             void* memory) const override
     {
-        new (memory) HelloWorld();
-        return true;
+        (void)memory;
+        return false;
     }
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_CONSTRUCT_SAMPLE

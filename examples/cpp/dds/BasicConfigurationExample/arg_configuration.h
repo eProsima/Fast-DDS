@@ -143,7 +143,8 @@ enum optionIndex
     TRANSPORT,
     RELIABLE,
     TRANSIENT_LOCAL,
-    REALLOC
+    REALLOC,
+    MSG_SIZE
 };
 
 const option::Descriptor usage[] = {
@@ -163,6 +164,8 @@ const option::Descriptor usage[] = {
       "  -s <num> \t--samples=<num>  \tNumber of samples to send (Default: 0 => infinite samples)." },
     { INTERVAL, 0, "i", "interval",            Arg::Numeric,
       "  -i <num> \t--interval=<num>  \tTime between samples in milliseconds (Default: 100)." },
+    { MSG_SIZE, 0, "", "size",            Arg::Numeric,
+      "  \t--size=<num>  \tSize in bytes to be sent (approximately) (Default: 20)." },
     { INIT_SLEEP, 0, "", "sleep",            Arg::Numeric,
       "  \t--sleep=<num>  \tTime to wait in seconds before start sending data (Default: 0)." },
     { MULTITHREADING, 0, "m", "multithreading",            Arg::None,
