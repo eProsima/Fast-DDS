@@ -77,7 +77,10 @@ public:
      *
      * @param[in] profile_name Name for the profile to be used to fill the QoS structure.
      * @param[in] topic_name Name of the statistics topic to be enabled.
-     * @return ReturnCode_t::XML_OK on success, ReturnCode_t::XML_ERROR in other case. Defaults true.
+     * @return RETCODE_BAD_PARAMETER if the topic name provided does not correspond to any Statistics DataWriter,
+     * RETCODE_INCONSISTENT_POLICY if the DataWriterQos provided is inconsistent,
+     * RETCODE_OK if the DataWriter has been created or if it has been created previously,
+     * and RETCODE_ERROR otherwise
      */
     ReturnCode_t enable_statistics_datawriter_with_profile(
             const std::string& profile_name,
