@@ -63,7 +63,7 @@ public:
     /**
      * @brief This operation enables a Statistics DataWriter from a given profile
      *
-     * @param[in] profile_name Name for the profile to be used to fill the structure
+     * @param[in] profile_name DataWriter QoS profile name
      * @param[in] topic_name Name of the statistics topic to be enabled.
      * @return RETCODE_UNSUPPORTED if the FASTDDS_STATISTICS CMake option has not been set,
      * RETCODE_BAD_PARAMETER if the topic name provided does not correspond to any Statistics DataWriter,
