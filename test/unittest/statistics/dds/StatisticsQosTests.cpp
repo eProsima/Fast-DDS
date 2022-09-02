@@ -113,9 +113,9 @@ TEST(StatisticsQosTests, StatisticsDataReaderQosTest)
 
 /**
  * This test checks the configuration of datawriter statistics QoS from XML file.
- * First the creation of an XML file with the appropiate configuration.
- * With DomainParticipant creation, datawriters are enabled in a built-in manner.
- * Then, DataWriter creation is verified, as well as the efective configuration of their Qos.
+ * First an XML file with the appropiate configuration is created.
+ * With DomainParticipant creation, some datawriters are enabled in a built-in manner.
+ * Then, DataWriters creation is verified, as well as the effective configuration of their QoS.
  * Finally, the `enable_statistics_datawriter_with_profile()` public method is verified,
  * which enables datawriters that are not enabled in a built-in manner.
  */
@@ -222,7 +222,7 @@ TEST_F(StatisticsFromXMLProfileTests, XMLConfigurationForStatisticsDataWritersQo
     xml_doc.Parse(xml);
     xml_doc.SaveFile("FASTRTPS_STATISTICS_PROFILES.xml");
 
-    // Set environment variable and create participant using Qos set by code
+    // Set environment variable
     const char* value = "FASTRTPS_STATISTICS_PROFILES.xml";
 #ifdef _WIN32
     ASSERT_EQ(0, _putenv_s("FASTRTPS_DEFAULT_PROFILES_FILE", value));
@@ -230,7 +230,7 @@ TEST_F(StatisticsFromXMLProfileTests, XMLConfigurationForStatisticsDataWritersQo
     ASSERT_EQ(0, setenv("FASTRTPS_DEFAULT_PROFILES_FILE", value, 1));
 #endif // ifdef _WIN32
 
-    // Create a DomainParticipant. DataWriter enable is done here, as auto-enable option is true by default.
+    // Create DomainParticipant. Builtin statistics DataWriters are also created, as auto-enable option is true by default.
     eprosima::fastdds::dds::DomainParticipant* participant =
             eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->
                     create_participant(0, eprosima::fastdds::dds::PARTICIPANT_QOS_DEFAULT);
@@ -262,7 +262,7 @@ TEST_F(StatisticsFromXMLProfileTests, XMLConfigurationForStatisticsDataWritersQo
             test_statistics_domain_participant_impl->get_publisher_impl();
     ASSERT_NE(statistics_publisher_impl, nullptr);
 
-    // GET AND CHECK BUILT-IN DATAWRITERS
+    // Get and check built-in DataWriters:
 
     // HISTORY_LATENCY_TOPIC has a QoS profile defined in the XML file,
     // and it has been created automatically within the participant
@@ -272,8 +272,8 @@ TEST_F(StatisticsFromXMLProfileTests, XMLConfigurationForStatisticsDataWritersQo
             statistics_publisher_impl->lookup_datawriter(history_latency_name);
     ASSERT_NE(history_latency_writer, nullptr);
 
-    // By default, when QoS are setted in XML for an statistics DataWriter profile,
-    // XMLProfileManager will use eProsima's default qos, not statistics default qos
+    // By default, when QoS are set in XML for an statistics DataWriter profile,
+    // Fast DDS default QoS are used for those QoS that are not explictly set, not the statistics recommended QoS
     efd::DataWriterQos qos;
     qos.reliability().kind = eprosima::fastdds::dds::ReliabilityQosPolicyKind::BEST_EFFORT_RELIABILITY_QOS;
     qos.durability().kind = eprosima::fastdds::dds::DurabilityQosPolicyKind_t::VOLATILE_DURABILITY_QOS;
@@ -301,7 +301,7 @@ TEST_F(StatisticsFromXMLProfileTests, XMLConfigurationForStatisticsDataWritersQo
             statistics_publisher_impl->lookup_datawriter(subscription_throughput_name);
     ASSERT_EQ(subscription_throughput_writer, nullptr);
 
-    // TEST PUBLIC METHOD: enable_statistics_datawriter_with_profile()
+    // Test public method: enable_statistics_datawriter_with_profile()
 
     // NETWORK_LATENCY_TOPIC is not defined in the fastdds.statistics property policy,
     // it is just defined as data_writer profile. Thus, should not be created at initialization
@@ -359,7 +359,8 @@ TEST_F(StatisticsFromXMLProfileTests, XMLConfigurationForStatisticsDataWritersQo
         "FAKE_TOPIC");
     ASSERT_EQ(ReturnCode_t::RETCODE_ERROR, ret);
 
-    // DATA_COUNT_TOPIC is also defined with inconsistent QoS policy, and defined in fastdds.statistics property
+    // DATA_COUNT_TOPIC is defined with inconsistent QoS policies,
+    // and configured to be enabled automatically at initialization
     // It would have been created in a built-in manner with the creation of the DomainParticipant,
     // but as the QoS are inconsistent, the DataWriter is not created, and lookup_datawriter
     // must  return nullptr.
@@ -389,10 +390,10 @@ TEST_F(StatisticsFromXMLProfileTests, XMLConfigurationForStatisticsDataWritersQo
     qos5.reliability().kind = eprosima::fastdds::dds::ReliabilityQosPolicyKind::BEST_EFFORT_RELIABILITY_QOS;
     ASSERT_EQ(qos5, nackfrag_count_writer->get_qos());
 
-#else // FASTDDS_STATISTICS == false
+#else // FASTDDS_STATISTICS not set
 
     // Obtain pointer to child class with static_cast instead of narrow()
-    // because FASTDDS_STATISTICS is false
+    // because FASTDDS_STATISTICS CMake option has not been set
     eprosima::fastdds::statistics::dds::DomainParticipant* statistics_participant =
             static_cast<DomainParticipant*>(participant);
     ASSERT_NE(statistics_participant, nullptr);
@@ -421,7 +422,7 @@ TEST_F(StatisticsFromXMLProfileTests, XMLConfigurationForStatisticsDataWritersQo
  * This test checks the configuration of datawriter statistics QoS from XML file using generic profile.
  * Generic profile is used for each statistics topic to be enabled that has no specific profile defined
  * in the XML file.
- * Instead, if a specific profile is thefined for a topic, it is enabled with that QoS configuration.
+ * Instead, if a specific profile is defined for a topic, it is enabled with that QoS configuration.
  */
 TEST_F(StatisticsFromXMLProfileTests, XMLConfigurationForStatisticsDataWritersQoSGenericProfile)
 {
@@ -491,7 +492,7 @@ TEST_F(StatisticsFromXMLProfileTests, XMLConfigurationForStatisticsDataWritersQo
     xml_doc.Parse(xml);
     xml_doc.SaveFile("FASTRTPS_STATISTICS_PROFILES.xml");
 
-    // Set environment variable and create participant using Qos set by code
+    // Set environment variable
     const char* value = "FASTRTPS_STATISTICS_PROFILES.xml";
 #ifdef _WIN32
     ASSERT_EQ(0, _putenv_s("FASTRTPS_DEFAULT_PROFILES_FILE", value));
@@ -499,7 +500,7 @@ TEST_F(StatisticsFromXMLProfileTests, XMLConfigurationForStatisticsDataWritersQo
     ASSERT_EQ(0, setenv("FASTRTPS_DEFAULT_PROFILES_FILE", value, 1));
 #endif // ifdef _WIN32
 
-    // Create a DomainParticipant. DataWriter enable is done here, as auto-enable option is true by default.
+    // Create DomainParticipant. Builtin statistics DataWriters are also created, as auto-enable option is true by default.
     eprosima::fastdds::dds::DomainParticipant* participant =
             eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->
                     create_participant(0, eprosima::fastdds::dds::PARTICIPANT_QOS_DEFAULT);
@@ -529,7 +530,7 @@ TEST_F(StatisticsFromXMLProfileTests, XMLConfigurationForStatisticsDataWritersQo
             test_statistics_domain_participant_impl->get_publisher_impl();
     ASSERT_NE(statistics_publisher_impl, nullptr);
 
-    // GET AND CHECK BUILT-IN DATAWRITERS
+    // Get and check built-in DataWriters:
 
     // HISTORY_LATENCY_TOPIC has been created automatically within the participant
     // (because it has been included in the corresponding property)
@@ -553,7 +554,7 @@ TEST_F(StatisticsFromXMLProfileTests, XMLConfigurationForStatisticsDataWritersQo
             statistics_publisher_impl->lookup_datawriter(subscription_throughput_name);
     ASSERT_EQ(subscription_throughput_writer, nullptr);
 
-    // TEST PUBLIC METHOD: enable_statistics_datawriter_with_profile()
+    // Test public method: enable_statistics_datawriter_with_profile()
 
     // NETWORK_LATENCY_TOPIC is not defined in the fastdds.statistics property policy,
     // it is just defined as data_writer profile. Thus, should not be created at initialization
