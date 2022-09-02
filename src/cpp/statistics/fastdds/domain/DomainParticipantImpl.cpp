@@ -47,6 +47,7 @@
 
 #include <fastrtps/attributes/PublisherAttributes.h>
 #include <fastrtps/xmlparser/XMLProfileManager.h>
+#include <fastrtps/xmlparser/XMLParserCommon.h>
 #include <fastdds/utils/QosConverters.hpp>
 
 namespace eprosima {
@@ -56,6 +57,7 @@ namespace dds {
 
 using fastrtps::xmlparser::XMLProfileManager;
 using fastrtps::xmlparser::XMLP_ret;
+using fastrtps::xmlparser::DEFAULT_STATISTICS_DATAWRITER_PROFILE;
 using fastrtps::PublisherAttributes;
 
 constexpr const char* HISTORY_LATENCY_TOPIC_ALIAS = "HISTORY_LATENCY_TOPIC";
@@ -321,7 +323,7 @@ void DomainParticipantImpl::enable_statistics_builtin_datawriters(
         {
             efd::utils::set_qos_from_attributes(datawriter_qos, attr);
         }
-        else if (XMLP_ret::XML_OK == XMLProfileManager::fillPublisherAttributes(STATISTICS_GENERIC_PROFILE_NAME, attr))
+        else if (XMLP_ret::XML_OK == XMLProfileManager::fillPublisherAttributes(DEFAULT_STATISTICS_DATAWRITER_PROFILE, attr))
         {
             efd::utils::set_qos_from_attributes(datawriter_qos, attr);
         }
