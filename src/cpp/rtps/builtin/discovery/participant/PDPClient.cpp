@@ -666,7 +666,7 @@ bool load_environment_server_info(
      **/
     const static std::regex ROS2_SERVER_LIST_PATTERN(R"(([^;]*);?)");
     const static std::regex ROS2_IPV4_ADDRESSPORT_PATTERN(R"(^((?:[0-9]{1,3}\.){3}[0-9]{1,3})?:?(?:(\d+))?$)");
-    const static std::regex ROS2_IPV6_ADDRESSPORT_PATTERN(R"(^\[?((?:[0-9a-fA-F]{0,4}\:){7}[0-9a-fA-F]{0,4})?(?:\])?:?(?:(\d+))?$)");
+    const static std::regex ROS2_IPV6_ADDRESSPORT_PATTERN(R"(^\[?((?:[0-9a-fA-F]{0,4}\:){0,7}[0-9a-fA-F]{0,4})?(?:\])?:?(?:(\d+))?$)");
     const static std::regex ROS2_DNS_DOMAINPORT_PATTERN(R"(^([\w\.-]{0,63}):?(?:(\d+))?$)");
 
     // Filling port info
@@ -742,9 +742,6 @@ bool load_environment_server_info(
                 if(locator.empty())
                 {
                     // it's intencionally empty to hint us to ignore this server
-                    // advance to the next server if any
-                    ++server_it;
-                    ++server_id;
                 }
                 // Try first with IPv4
                 else if (std::regex_match(locator, mr, ROS2_IPV4_ADDRESSPORT_PATTERN, std::regex_constants::match_not_null))
@@ -888,6 +885,10 @@ bool load_environment_server_info(
                     throw std::invalid_argument(ss.str());
                 }
             }
+
+            // advance to the next server if any
+            ++server_id;
+            ++server_it;
         }
 
         // Check for server info

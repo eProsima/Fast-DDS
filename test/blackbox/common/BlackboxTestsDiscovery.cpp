@@ -1196,7 +1196,7 @@ TEST(Discovery, ServerClientEnvironmentSetUp)
 
     RemoteServerList_t output, standard;
     RemoteServerAttributes att;
-    Locator_t loc;
+    Locator_t loc, loc6(LOCATOR_KIND_UDPv6,0);
 
     // We are going to use several test string and check they are properly parsed and turn into RemoteServerList_t
     // 1. single server address without specific port provided
@@ -1332,9 +1332,12 @@ TEST(Discovery, ServerClientEnvironmentSetUp)
     standard.clear();
 
     att.clear();
-    IPLocator::setIPv4(loc, string("127.0.0.1"));
+    IPLocator::setIPv4(loc, "127.0.0.1");
     IPLocator::setPhysicalPort(loc, 12345);
     att.metatrafficUnicastLocatorList.push_back(loc);
+    IPLocator::setIPv6(loc6, "::1");
+    IPLocator::setPhysicalPort(loc6, 12345);
+    att.metatrafficUnicastLocatorList.push_back(loc6);
     get_server_client_default_guidPrefix(0, att.guidPrefix);
     standard.push_back(att);
 
@@ -1358,6 +1361,9 @@ TEST(Discovery, ServerClientEnvironmentSetUp)
     IPLocator::setIPv4(loc, string("127.0.0.1"));
     IPLocator::setPhysicalPort(loc, 12345);
     att.metatrafficUnicastLocatorList.push_back(loc);
+    IPLocator::setIPv6(loc6, string("::1"));
+    IPLocator::setPhysicalPort(loc6, 12345);
+    att.metatrafficUnicastLocatorList.push_back(loc6);
     get_server_client_default_guidPrefix(1, att.guidPrefix);
     standard.push_back(att);
 
