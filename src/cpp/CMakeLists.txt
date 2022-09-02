@@ -176,6 +176,7 @@ set(${PROJECT_NAME}_source_files
     fastdds/core/policy/QosPolicyUtils.cpp
     fastdds/publisher/qos/WriterQos.cpp
     fastdds/subscriber/qos/ReaderQos.cpp
+    fastdds/utils/QosConverters.cpp
     rtps/builtin/BuiltinProtocols.cpp
     rtps/builtin/discovery/participant/DirectMessageSender.cpp
     rtps/builtin/discovery/participant/PDP.cpp
