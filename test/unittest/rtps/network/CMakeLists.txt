@@ -87,7 +87,17 @@ target_link_libraries(NetworkFactoryTests fastcdr foonathan_memory
     $<$<BOOL:${TLS_FOUND}>:OpenSSL::SSL$<SEMICOLON>OpenSSL::Crypto>
     ${CMAKE_THREAD_LIBS_INIT} ${CMAKE_DL_LIBS})
 
-add_executable(ExternalLocatorsProcessorTests ExternalLocatorsProcessorTests.cpp)
+add_executable(ExternalLocatorsProcessorTests
+    ExternalLocatorsProcessorTests.cpp
+    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/network/ExternalLocatorsProcessor.cpp
+    ${PROJECT_SOURCE_DIR}/src/cpp/utils/IPLocator.cpp
+    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/common/Time_t.cpp
+
+    ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/log/Log.cpp
+    ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/log/OStreamConsumer.cpp
+    ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/log/StdoutConsumer.cpp
+    ${PROJECT_SOURCE_DIR}/src/cpp/utils/SystemInfo.cpp
+    )
 target_compile_definitions(ExternalLocatorsProcessorTests PRIVATE FASTRTPS_NO_LIB
     BOOST_ASIO_STANDALONE
     ASIO_STANDALONE
