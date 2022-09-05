@@ -69,6 +69,54 @@ public:
         }
 
     };
+
+    eprosima::fastdds::statistics::dds::DomainParticipant* statistics_participant = nullptr;
+    eprosima::fastdds::statistics::dds::PublisherImpl* statistics_publisher_impl = nullptr;
+
+    void test_setup_XMLConfigurationForStatisticsDataWritersQoS(
+            eprosima::fastdds::statistics::dds::DomainParticipant*& _statistics_participant,
+            eprosima::fastdds::statistics::dds::PublisherImpl*& _statistics_publisher_impl)
+    {
+        // Set environment variable
+        const char* value = "FASTRTPS_STATISTICS_PROFILES.xml";
+        #ifdef _WIN32
+        ASSERT_EQ(0, _putenv_s("FASTRTPS_DEFAULT_PROFILES_FILE", value));
+        #else
+        ASSERT_EQ(0, setenv("FASTRTPS_DEFAULT_PROFILES_FILE", value, 1));
+        #endif // ifdef _WIN32
+
+        // Create DomainParticipant. Builtin statistics DataWriters are also created, as auto-enable option is true by default.
+        eprosima::fastdds::dds::DomainParticipant* participant =
+                eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->
+                        create_participant(0, eprosima::fastdds::dds::PARTICIPANT_QOS_DEFAULT);
+        ASSERT_NE(participant, nullptr);
+
+        // Obtain pointer to child class
+        _statistics_participant =
+                eprosima::fastdds::statistics::dds::DomainParticipant::narrow(participant);
+        ASSERT_NE(_statistics_participant, nullptr);
+
+        // Static conversion to child class TestDomainParticipant
+        TestDomainParticipant* test_statistics_participant =
+                static_cast<TestDomainParticipant*>(_statistics_participant);
+        ASSERT_NE(test_statistics_participant, nullptr);
+
+        // Get DomainParticipantImpl
+        eprosima::fastdds::statistics::dds::DomainParticipantImpl* domain_statistics_participant_impl =
+                test_statistics_participant->get_domain_participant_impl();
+        ASSERT_NE(domain_statistics_participant_impl, nullptr);
+
+        // Static conversion to child class TestDomainParticipantImpl
+        TestDomainParticipantImpl* test_statistics_domain_participant_impl =
+                static_cast<TestDomainParticipantImpl*>(domain_statistics_participant_impl);
+        ASSERT_NE(test_statistics_domain_participant_impl, nullptr);
+
+        // Get PublisherImpl
+        _statistics_publisher_impl =
+                test_statistics_domain_participant_impl->get_publisher_impl();
+        ASSERT_NE(_statistics_publisher_impl, nullptr);
+    }
+
 #endif // ifdef FASTDDS_STATISTICS
 };
 
@@ -121,6 +169,8 @@ TEST(StatisticsQosTests, StatisticsDataReaderQosTest)
  */
 TEST_F(StatisticsFromXMLProfileTests, XMLConfigurationForStatisticsDataWritersQoS)
 {
+#ifdef FASTDDS_STATISTICS
+
     const char* xml =
             "                                                                                                           \
         <?xml version=\"1.0\" encoding=\"utf-8\"  ?>                                                                    \
@@ -222,45 +272,10 @@ TEST_F(StatisticsFromXMLProfileTests, XMLConfigurationForStatisticsDataWritersQo
     xml_doc.Parse(xml);
     xml_doc.SaveFile("FASTRTPS_STATISTICS_PROFILES.xml");
 
-    // Set environment variable
-    const char* value = "FASTRTPS_STATISTICS_PROFILES.xml";
-#ifdef _WIN32
-    ASSERT_EQ(0, _putenv_s("FASTRTPS_DEFAULT_PROFILES_FILE", value));
-#else
-    ASSERT_EQ(0, setenv("FASTRTPS_DEFAULT_PROFILES_FILE", value, 1));
-#endif // ifdef _WIN32
-
-    // Create DomainParticipant. Builtin statistics DataWriters are also created, as auto-enable option is true by default.
-    eprosima::fastdds::dds::DomainParticipant* participant =
-            eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->
-                    create_participant(0, eprosima::fastdds::dds::PARTICIPANT_QOS_DEFAULT);
-    ASSERT_NE(participant, nullptr);
-
-#ifdef FASTDDS_STATISTICS
-
-    // Obtain pointer to child class
-    eprosima::fastdds::statistics::dds::DomainParticipant* statistics_participant =
-            eprosima::fastdds::statistics::dds::DomainParticipant::narrow(participant);
-    ASSERT_NE(statistics_participant, nullptr);
-
-    // Static conversion to child class TestDomainParticipant
-    TestDomainParticipant* test_statistics_participant = static_cast<TestDomainParticipant*>(statistics_participant);
-    ASSERT_NE(test_statistics_participant, nullptr);
-
-    // Get DomainParticipantImpl
-    eprosima::fastdds::statistics::dds::DomainParticipantImpl* domain_statistics_participant_impl =
-            test_statistics_participant->get_domain_participant_impl();
-    ASSERT_NE(domain_statistics_participant_impl, nullptr);
-
-    // Static conversion to child class TestDomainParticipantImpl
-    TestDomainParticipantImpl* test_statistics_domain_participant_impl =
-            static_cast<TestDomainParticipantImpl*>(domain_statistics_participant_impl);
-    ASSERT_NE(test_statistics_domain_participant_impl, nullptr);
-
-    // Get PublisherImpl
-    eprosima::fastdds::statistics::dds::PublisherImpl* statistics_publisher_impl =
-            test_statistics_domain_participant_impl->get_publisher_impl();
-    ASSERT_NE(statistics_publisher_impl, nullptr);
+    test_setup_XMLConfigurationForStatisticsDataWritersQoS(
+        statistics_participant,
+        statistics_publisher_impl
+        );
 
     // Get and check built-in DataWriters:
 
@@ -492,43 +507,10 @@ TEST_F(StatisticsFromXMLProfileTests, XMLConfigurationForStatisticsDataWritersQo
     xml_doc.Parse(xml);
     xml_doc.SaveFile("FASTRTPS_STATISTICS_PROFILES.xml");
 
-    // Set environment variable
-    const char* value = "FASTRTPS_STATISTICS_PROFILES.xml";
-#ifdef _WIN32
-    ASSERT_EQ(0, _putenv_s("FASTRTPS_DEFAULT_PROFILES_FILE", value));
-#else
-    ASSERT_EQ(0, setenv("FASTRTPS_DEFAULT_PROFILES_FILE", value, 1));
-#endif // ifdef _WIN32
-
-    // Create DomainParticipant. Builtin statistics DataWriters are also created, as auto-enable option is true by default.
-    eprosima::fastdds::dds::DomainParticipant* participant =
-            eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->
-                    create_participant(0, eprosima::fastdds::dds::PARTICIPANT_QOS_DEFAULT);
-    ASSERT_NE(participant, nullptr);
-
-    // Obtain pointer to child class
-    eprosima::fastdds::statistics::dds::DomainParticipant* statistics_participant =
-            eprosima::fastdds::statistics::dds::DomainParticipant::narrow(participant);
-    ASSERT_NE(statistics_participant, nullptr);
-
-    // Static conversion to child class TestDomainParticipant
-    TestDomainParticipant* test_statistics_participant = static_cast<TestDomainParticipant*>(statistics_participant);
-    ASSERT_NE(test_statistics_participant, nullptr);
-
-    // Get DomainParticipantImpl
-    eprosima::fastdds::statistics::dds::DomainParticipantImpl* domain_statistics_participant_impl =
-            test_statistics_participant->get_domain_participant_impl();
-    ASSERT_NE(domain_statistics_participant_impl, nullptr);
-
-    // Static conversion to child class TestDomainParticipantImpl
-    TestDomainParticipantImpl* test_statistics_domain_participant_impl =
-            static_cast<TestDomainParticipantImpl*>(domain_statistics_participant_impl);
-    ASSERT_NE(test_statistics_domain_participant_impl, nullptr);
-
-    // Get PublisherImpl
-    eprosima::fastdds::statistics::dds::PublisherImpl* statistics_publisher_impl =
-            test_statistics_domain_participant_impl->get_publisher_impl();
-    ASSERT_NE(statistics_publisher_impl, nullptr);
+    test_setup_XMLConfigurationForStatisticsDataWritersQoS(
+        statistics_participant,
+        statistics_publisher_impl
+        );
 
     // Get and check built-in DataWriters:
 
