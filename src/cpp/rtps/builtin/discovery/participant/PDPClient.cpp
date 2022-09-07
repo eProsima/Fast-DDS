@@ -22,6 +22,7 @@
 #include <algorithm>
 #include <forward_list>
 #include <iterator>
+#include <sstream>
 #include <string>
 #include <tuple>
 
@@ -667,7 +668,7 @@ bool load_environment_server_info(
     const static std::regex ROS2_SERVER_LIST_PATTERN(R"(([^;]*);?)");
     const static std::regex ROS2_IPV4_ADDRESSPORT_PATTERN(R"(^((?:[0-9]{1,3}\.){3}[0-9]{1,3})?:?(?:(\d+))?$)");
     const static std::regex ROS2_IPV6_ADDRESSPORT_PATTERN(R"(^\[?((?:[0-9a-fA-F]{0,4}\:){0,7}[0-9a-fA-F]{0,4})?(?:\])?:?(?:(\d+))?$)");
-    const static std::regex ROS2_DNS_DOMAINPORT_PATTERN(R"(^([\w\.-]{0,63}):?(?:(\d+))?$)");
+    const static std::regex ROS2_DNS_DOMAINPORT_PATTERN(R"(^(UDPv[46]?:\[[\w\.-]{0,63}\]|[\w\.-]{0,63}):?(?:(\d+))?$)");
 
     // Filling port info
     auto process_port = [](int port, Locator_t& server)
@@ -690,11 +691,11 @@ bool load_environment_server_info(
     {
         RemoteServerAttributes server_att;
 
-            // add the server to the list
-            if (!get_server_client_default_guidPrefix(id, server_att.guidPrefix))
-            {
-                throw std::invalid_argument("The maximum number of default discovery servers has been reached");
-            }
+        // add the server to the list
+        if (!get_server_client_default_guidPrefix(id, server_att.guidPrefix))
+        {
+            throw std::invalid_argument("The maximum number of default discovery servers has been reached");
+        }
 
         // split multi and unicast locators
         auto unicast = std::partition(locators.begin(), locators.end(), IPLocator::isMulticast);
@@ -753,6 +754,7 @@ bool load_environment_server_info(
                     {
                         std::string address = it->str();
                         server_locator.kind = LOCATOR_KIND_UDPv4;
+                        server_locator.set_Invalid_Address();
 
                         if (!IPLocator::setIPv4(server_locator, address))
                         {
@@ -790,6 +792,7 @@ bool load_environment_server_info(
                     {
                         std::string address = it->str();
                         server_locator.kind = LOCATOR_KIND_UDPv6;
+                        server_locator.set_Invalid_Address();
 
                         if (!IPLocator::setIPv6(server_locator, address))
                         {
@@ -820,63 +823,93 @@ bool load_environment_server_info(
                 // try resolve DNS
                 else if (std::regex_match(locator, mr, ROS2_DNS_DOMAINPORT_PATTERN, std::regex_constants::match_not_null))
                 {
-                    std::smatch::iterator it = mr.cbegin();
+                    std::forward_list<Locator> flist;
 
-                    // traverse submatches
-                    if (++it != mr.cend())
                     {
-                        std::string domain_name = it->str();
-                        std::set<std::string> ipv4, ipv6;
-                        std::tie(ipv4, ipv6) = IPLocator::resolveNameDNS(domain_name);
+                        std::stringstream new_locator(locator,
+                            std::ios_base::in |
+                            std::ios_base::out |
+                            std::ios_base::ate);
 
-                        // get port if any
-                        int port = DEFAULT_ROS2_SERVER_PORT;
-                        if (++it != mr.cend() && it->matched)
+                        // first try the formal notation, add default port if necessary
+                        if (!mr[2].matched)
                         {
-                            port = stoi(it->str());
+                            new_locator << ":" << DEFAULT_ROS2_SERVER_PORT;
                         }
 
-                        std::forward_list<Locator> flist;
-                        for( const std::string& loc : ipv4 )
-                        {
-                            server_locator.kind = LOCATOR_KIND_UDPv4;
-                            IPLocator::setIPv4(server_locator, loc);
-
-                            if (IPLocator::isAny(server_locator))
-                            {
-                                // A server cannot be reach in all interfaces, it's clearly a localhost call
-                                IPLocator::setIPv4(server_locator, "127.0.0.1");
-                            }
-
-                            process_port( port, server_locator);
-                            flist.push_front(server_locator);
-                        }
-
-                        for( const std::string& loc : ipv6 )
-                        {
-                            server_locator.kind = LOCATOR_KIND_UDPv6;
-                            IPLocator::setIPv6(server_locator, loc);
-
-                            if (IPLocator::isAny(server_locator))
-                            {
-                                // A server cannot be reach in all interfaces, it's clearly a localhost call
-                                IPLocator::setIPv6(server_locator, "::1");
-                            }
-
-                            process_port( port, server_locator);
-                            flist.push_front(server_locator);
-                        }
-
-                        if(flist.empty())
-                        {
-                            std::stringstream ss;
-                            ss << "Wrong domain name passed into the server's list " << locator;
-                            throw std::invalid_argument(ss.str());
-                        }
-
-                        // add server to the list
-                        add_server2qos(server_id, std::move(flist), attributes);
+                        new_locator >> server_locator;
                     }
+
+                    // Otherwise add all resolved locators
+                    switch ( server_locator.kind )
+                    {
+                        case LOCATOR_KIND_UDPv4:
+                        case LOCATOR_KIND_UDPv6:
+                        {
+                            flist.push_front(server_locator);
+                        }
+                        case LOCATOR_KIND_INVALID:
+                        {
+                            std::smatch::iterator it = mr.cbegin();
+
+                            // traverse submatches
+                            if (++it != mr.cend())
+                            {
+                                std::string domain_name = it->str();
+                                std::set<std::string> ipv4, ipv6;
+                                std::tie(ipv4, ipv6) = IPLocator::resolveNameDNS(domain_name);
+
+                                // get port if any
+                                int port = DEFAULT_ROS2_SERVER_PORT;
+                                if (++it != mr.cend() && it->matched)
+                                {
+                                    port = stoi(it->str());
+                                }
+
+                                for( const std::string& loc : ipv4 )
+                                {
+                                    server_locator.kind = LOCATOR_KIND_UDPv4;
+                                    server_locator.set_Invalid_Address();
+                                    IPLocator::setIPv4(server_locator, loc);
+
+                                    if (IPLocator::isAny(server_locator))
+                                    {
+                                        // A server cannot be reach in all interfaces, it's clearly a localhost call
+                                        IPLocator::setIPv4(server_locator, "127.0.0.1");
+                                    }
+
+                                    process_port( port, server_locator);
+                                    flist.push_front(server_locator);
+                                }
+
+                                for( const std::string& loc : ipv6 )
+                                {
+                                    server_locator.kind = LOCATOR_KIND_UDPv6;
+                                    server_locator.set_Invalid_Address();
+                                    IPLocator::setIPv6(server_locator, loc);
+
+                                    if (IPLocator::isAny(server_locator))
+                                    {
+                                        // A server cannot be reach in all interfaces, it's clearly a localhost call
+                                        IPLocator::setIPv6(server_locator, "::1");
+                                    }
+
+                                    process_port( port, server_locator);
+                                    flist.push_front(server_locator);
+                                }
+                            }
+                        }
+                    }
+
+                    if(flist.empty())
+                    {
+                        std::stringstream ss;
+                        ss << "Wrong domain name passed into the server's list " << locator;
+                        throw std::invalid_argument(ss.str());
+                    }
+
+                    // add server to the list
+                    add_server2qos(server_id, std::move(flist), attributes);
                 }
                 else
                 {

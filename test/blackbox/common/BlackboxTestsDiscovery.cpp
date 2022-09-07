@@ -1415,7 +1415,7 @@ TEST(Discovery, ServerClientEnvironmentSetUp)
 
     ASSERT_FALSE(load_environment_server_info(text, output));
 
-    // 13. Check addresses as dns name
+    // 13. Check addresses as dns name (test domain urls are checked on a specific test)
     text = "localhost:12345";
 
     output.clear();
@@ -1514,5 +1514,101 @@ TEST(Discovery, ServerClientEnvironmentSetUpDNS)
     ASSERT_TRUE(load_environment_server_info(text, output));
     ASSERT_EQ(output, standard);
 
+    // 3. single server DNS address specifying a custom locator type
+    // UDPv4
+    text = "UDPv4:[www.acme.com.test]";
 
+    att.clear();
+    output.clear();
+    standard.clear();
+    IPLocator::setIPv4(loc, "216.58.215.164");
+    IPLocator::setPhysicalPort(loc, DEFAULT_ROS2_SERVER_PORT);
+    att.metatrafficUnicastLocatorList.push_back(loc);
+    get_server_client_default_guidPrefix(0, att.guidPrefix);
+    standard.push_back(att);
+
+    ASSERT_TRUE(load_environment_server_info(text, output));
+    ASSERT_EQ(output, standard);
+
+    // UDPv6
+    text = "UDPv6:[www.acme.com.test]";
+
+    att.clear();
+    output.clear();
+    standard.clear();
+    IPLocator::setIPv6(loc6, "2a00:1450:400e:803::2004");
+    IPLocator::setPhysicalPort(loc6, DEFAULT_ROS2_SERVER_PORT);
+    att.metatrafficUnicastLocatorList.push_back(loc6);
+    get_server_client_default_guidPrefix(0, att.guidPrefix);
+    standard.push_back(att);
+
+    ASSERT_TRUE(load_environment_server_info(text, output));
+    ASSERT_EQ(output, standard);
+
+    // 4. single server DNS address specifying a custom locator type and listening port
+    // UDPv4
+    text = "UDPv4:[www.acme.com.test]:14520";
+
+    att.clear();
+    output.clear();
+    standard.clear();
+    IPLocator::setIPv4(loc, "216.58.215.164");
+    IPLocator::setPhysicalPort(loc, 14520);
+    att.metatrafficUnicastLocatorList.push_back(loc);
+    get_server_client_default_guidPrefix(0, att.guidPrefix);
+    standard.push_back(att);
+
+    ASSERT_TRUE(load_environment_server_info(text, output));
+    ASSERT_EQ(output, standard);
+
+    // UDPv6
+    text = "UDPv6:[www.acme.com.test]:14520";
+
+    att.clear();
+    output.clear();
+    standard.clear();
+    IPLocator::setIPv6(loc6, "2a00:1450:400e:803::2004");
+    IPLocator::setPhysicalPort(loc6, 14520);
+    att.metatrafficUnicastLocatorList.push_back(loc6);
+    get_server_client_default_guidPrefix(0, att.guidPrefix);
+    standard.push_back(att);
+
+    ASSERT_TRUE(load_environment_server_info(text, output));
+    ASSERT_EQ(output, standard);
+
+    // Any other Locator kind should fail
+    text = "TCPv4:[www.acme.com.test]";
+
+    output.clear();
+    ASSERT_FALSE(load_environment_server_info(text, output));
+
+    // 5. Check mixed scenario with addresses and dns
+    text = "192.168.36.34:14520;UDPv6:[www.acme.com.test]:14520;172.30.80.1:31090;";
+
+    output.clear();
+    standard.clear();
+
+    att.clear();
+    IPLocator::setIPv4(loc, string("192.168.36.34"));
+    IPLocator::setPhysicalPort(loc, 14520);
+    att.metatrafficUnicastLocatorList.push_back(loc);
+    get_server_client_default_guidPrefix(0, att.guidPrefix);
+    standard.push_back(att);
+
+    att.clear();
+    IPLocator::setIPv6(loc6, "2a00:1450:400e:803::2004");
+    IPLocator::setPhysicalPort(loc6, 14520);
+    att.metatrafficUnicastLocatorList.push_back(loc6);
+    get_server_client_default_guidPrefix(1, att.guidPrefix);
+    standard.push_back(att);
+
+    att.clear();
+    IPLocator::setIPv4(loc, string("172.30.80.1"));
+    IPLocator::setPhysicalPort(loc, 31090);
+    att.metatrafficUnicastLocatorList.push_back(loc);
+    get_server_client_default_guidPrefix(2, att.guidPrefix);
+    standard.push_back(att);
+
+    ASSERT_TRUE(load_environment_server_info(text, output));
+    ASSERT_EQ(output, standard);
 }
