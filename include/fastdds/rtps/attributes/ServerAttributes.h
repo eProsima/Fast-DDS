@@ -102,6 +102,14 @@ public:
 
     // Live participant proxy reference
     const fastrtps::rtps::ParticipantProxyData* proxy{};
+
+    // Check if there are specific transport locators associated
+    // the template parameter is the locator kind (e.g. LOCATOR_KIND_UDPv4)
+    template<int kind> bool requires_transport() const
+    {
+        return metatrafficUnicastLocatorList.has_kind<kind>() ||
+               metatrafficMulticastLocatorList.has_kind<kind>();
+    }
 };
 
 typedef std::list<RemoteServerAttributes> RemoteServerList_t;
