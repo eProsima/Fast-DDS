@@ -1,6 +1,15 @@
 name: Thread Sanitizer analysis
 on:
   workflow_dispatch:
+    inputs:
+      optional_cmake_args:
+        description: 'Optional CMake Compilation Flags'
+        required: false
+        type: string
+      optional_ctest_args:
+        description: 'Optional CTest Testing Flags'
+        required: false
+        type: string
 
   push:
     branches:
@@ -118,7 +127,7 @@ jobs:
                 -DGTEST_INDIVIDUAL=ON -DFASTDDS_STATISTICS=ON -DTHIRDPARTY=ON `
                 -DCOMPILE_EXAMPLES=OFF -DEPROSIMA_BUILD_TESTS=ON -DSECURITY=ON `
                 -DRTPS_API_TESTS=ON -DFASTRTPS_API_TESTS=ON -DFASTDDS_PIM_API_TESTS=ON `
-                -DCMAKE_BUILD_TYPE=Debug -B ./build/fastdds ./Fast-DDS
+                -DCMAKE_BUILD_TYPE=Debug ${{ inputs.optional_cmake_args }} -B ./build/fastdds ./Fast-DDS
           # Create a symlink to the reports folder
           $report_dir = gci -Path ./build/fastdds -Attributes D |
             ? Name -like "$(Get-Date -Format 'MMMM-dd-yyyy')*"
@@ -130,7 +139,7 @@ jobs:
       - name: Run Fast-DDS test & generate sanitizer reports
         run: |
           cd ws/build/fastdds
-          ctest --timeout 30 -j 2 -V
+          ctest --timeout 30 -j 2 -V ${{ inputs.optional_ctest_args }}
           # ctest fails if sanitizer reports are present
           $LASTEXITCODE=0
 
