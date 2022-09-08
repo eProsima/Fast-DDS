@@ -204,9 +204,17 @@ TEST(DDSBasic, MultithreadedReaderCreation)
     Subscriber* subscriber = participant->create_subscriber(SUBSCRIBER_QOS_DEFAULT);
     ASSERT_NE(nullptr, subscriber);
 
+    // Create publisher
+    Publisher* publisher = participant->create_publisher(PUBLISHER_QOS_DEFAULT);
+    ASSERT_NE(nullptr, publisher);
+
     // Create Topic
     Topic* topic = participant->create_topic(TEST_TOPIC_NAME, type_support.get_type_name(), TOPIC_QOS_DEFAULT);
     ASSERT_NE(nullptr, topic);
+
+    // Create DataWriter
+    DataWriter* writer = publisher->create_datawriter(topic, DATAWRITER_QOS_DEFAULT);
+    ASSERT_NE(nullptr, writer);
 
     std::mutex mtx;
     std::condition_variable cv;
@@ -247,6 +255,8 @@ TEST(DDSBasic, MultithreadedReaderCreation)
         }
     }
 
+    ASSERT_EQ(ReturnCode_t::RETCODE_OK, publisher->delete_datawriter(writer));
+    ASSERT_EQ(ReturnCode_t::RETCODE_OK, participant->delete_publisher(publisher));
     ASSERT_EQ(ReturnCode_t::RETCODE_OK, participant->delete_subscriber(subscriber));
     ASSERT_EQ(ReturnCode_t::RETCODE_OK, participant->delete_topic(topic));
     ASSERT_EQ(ReturnCode_t::RETCODE_OK, factory->delete_participant(participant));
