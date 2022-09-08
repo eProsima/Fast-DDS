@@ -194,9 +194,9 @@ macro(add_blackbox_gtest)
     endif()
 endmacro()
 
-option(RTPS_API_TESTS "Enable tests using RTPS API" ON)
-option(FASTRTPS_API_TESTS "Enable tests using FastRTPS API" ON)
-option(FASTDDS_PIM_API_TESTS "Enable tests using FastDDS API" OFF)
+option(RTPS_API_TESTS "Enable tests using RTPS API" OFF)
+option(FASTRTPS_API_TESTS "Enable tests using FastRTPS API" OFF)
+option(FASTDDS_PIM_API_TESTS "Enable tests using FastDDS API" ON)
 
 if(WIN32)
     add_definitions(
