@@ -1867,6 +1867,98 @@ TEST_F(XMLProfileParserTests, external_locators_feature)
             xmlparser::XMLP_ret::XML_ERROR
         },
         {
+            "participant_complete_duplicated_meta",
+            R"(<profiles><participant profile_name="p1"><rtps>
+                <ignore_non_matching_locators>false</ignore_non_matching_locators>
+                <default_external_unicast_locators>
+                    <udpv4 externality="1" cost="0" mask="24">
+                        <address>192.168.1.100</address>
+                        <port>1234</port>
+                    </udpv4>
+                    <udpv6 externality="1" cost="0" mask="24">
+                        <address>::1:2</address>
+                        <port>1235</port>
+                    </udpv6>
+                </default_external_unicast_locators>
+                <builtin>
+                    <metatraffic_external_unicast_locators>
+                        <udpv4 externality="1" cost="0" mask="24">
+                            <address>192.168.1.100</address>
+                            <port>2234</port>
+                        </udpv4>
+                    </metatraffic_external_unicast_locators>
+                    <metatraffic_external_unicast_locators>
+                        <udpv6 externality="1" cost="0" mask="24">
+                            <address>::1:2</address>
+                            <port>2235</port>
+                        </udpv6>
+                    </metatraffic_external_unicast_locators>
+                </builtin>
+            </rtps></participant></profiles>)",
+            xmlparser::XMLP_ret::XML_ERROR
+        },
+        {
+            "participant_complete_duplicated_default",
+            R"(<profiles><participant profile_name="p1"><rtps>
+                <ignore_non_matching_locators>false</ignore_non_matching_locators>
+                <default_external_unicast_locators>
+                    <udpv4 externality="1" cost="0" mask="24">
+                        <address>192.168.1.100</address>
+                        <port>1234</port>
+                    </udpv4>
+                </default_external_unicast_locators>
+                <default_external_unicast_locators>
+                    <udpv6 externality="1" cost="0" mask="24">
+                        <address>::1:2</address>
+                        <port>1235</port>
+                    </udpv6>
+                </default_external_unicast_locators>
+                <builtin>
+                    <metatraffic_external_unicast_locators>
+                        <udpv4 externality="1" cost="0" mask="24">
+                            <address>192.168.1.100</address>
+                            <port>2234</port>
+                        </udpv4>
+                        <udpv6 externality="1" cost="0" mask="24">
+                            <address>::1:2</address>
+                            <port>2235</port>
+                        </udpv6>
+                    </metatraffic_external_unicast_locators>
+                </builtin>
+            </rtps></participant></profiles>)",
+            xmlparser::XMLP_ret::XML_ERROR
+        },
+        {
+            "participant_complete_duplicated_ignore",
+            R"(<profiles><participant profile_name="p1"><rtps>
+                <ignore_non_matching_locators>false</ignore_non_matching_locators>
+                <ignore_non_matching_locators>true</ignore_non_matching_locators>
+                <default_external_unicast_locators>
+                    <udpv4 externality="1" cost="0" mask="24">
+                        <address>192.168.1.100</address>
+                        <port>1234</port>
+                    </udpv4>
+                    <udpv6 externality="1" cost="0" mask="24">
+                        <address>::1:2</address>
+                        <port>1235</port>
+                    </udpv6>
+                </default_external_unicast_locators>
+                <builtin>
+                    <metatraffic_external_unicast_locators>
+                        <udpv4 externality="1" cost="0" mask="24">
+                            <address>192.168.1.100</address>
+                            <port>2234</port>
+                        </udpv4>
+                        <udpv6 externality="1" cost="0" mask="24">
+                            <address>::1:2</address>
+                            <port>2235</port>
+                        </udpv6>
+                    </metatraffic_external_unicast_locators>
+                </builtin>
+            </rtps></participant></profiles>)",
+            xmlparser::XMLP_ret::XML_ERROR
+        },
+        {
             "participant_complete_wrong_ext_256",
             R"(<profiles><participant profile_name="p1"><rtps>
                 <ignore_non_matching_locators>false</ignore_non_matching_locators>
@@ -2212,7 +2304,7 @@ TEST_F(XMLProfileParserTests, external_locators_feature)
         {
             "writer_external_complete_ignore_false",
             R"(<profiles><data_writer profile_name="w1">
-                <ignore_non_matching_locators>true</ignore_non_matching_locators>
+                <ignore_non_matching_locators>false</ignore_non_matching_locators>
                 <external_unicast_locators>
                     <udpv4 externality="1" cost="0" mask="24">
                         <address>192.168.1.100</address>
@@ -2225,6 +2317,44 @@ TEST_F(XMLProfileParserTests, external_locators_feature)
                 </external_unicast_locators>
             </data_writer></profiles>)",
             xmlparser::XMLP_ret::XML_OK
+        },
+        // ------------------ data_writer negative cases
+        {
+            "writer_external_complete_duplicated_ignore",
+            R"(<profiles><data_writer profile_name="w1">
+                <ignore_non_matching_locators>false</ignore_non_matching_locators>
+                <ignore_non_matching_locators>true</ignore_non_matching_locators>
+                <external_unicast_locators>
+                    <udpv4 externality="1" cost="0" mask="24">
+                        <address>192.168.1.100</address>
+                        <port>1234</port>
+                    </udpv4>
+                    <udpv6 externality="1" cost="0" mask="24">
+                        <address>::1:2</address>
+                        <port>1235</port>
+                    </udpv6>
+                </external_unicast_locators>
+            </data_writer></profiles>)",
+            xmlparser::XMLP_ret::XML_ERROR
+        },
+        {
+            "writer_external_complete_duplicated_external",
+            R"(<profiles><data_writer profile_name="w1">
+                <ignore_non_matching_locators>false</ignore_non_matching_locators>
+                <external_unicast_locators>
+                    <udpv4 externality="1" cost="0" mask="24">
+                        <address>192.168.1.100</address>
+                        <port>1234</port>
+                    </udpv4>
+                </external_unicast_locators>
+                <external_unicast_locators>
+                    <udpv6 externality="1" cost="0" mask="24">
+                        <address>::1:2</address>
+                        <port>1235</port>
+                    </udpv6>
+                </external_unicast_locators>
+            </data_writer></profiles>)",
+            xmlparser::XMLP_ret::XML_ERROR
         },
         // ------------------ data_reader positive cases
         {
@@ -2284,7 +2414,7 @@ TEST_F(XMLProfileParserTests, external_locators_feature)
         {
             "reader_external_complete_ignore_false",
             R"(<profiles><data_reader profile_name="r1">
-                <ignore_non_matching_locators>true</ignore_non_matching_locators>
+                <ignore_non_matching_locators>false</ignore_non_matching_locators>
                 <external_unicast_locators>
                     <udpv4 externality="1" cost="0" mask="24">
                         <address>192.168.1.100</address>
@@ -2297,6 +2427,44 @@ TEST_F(XMLProfileParserTests, external_locators_feature)
                 </external_unicast_locators>
             </data_reader></profiles>)",
             xmlparser::XMLP_ret::XML_OK
+        },
+        // ------------------ data_reader negative cases
+        {
+            "reader_external_complete_duplicated_ignore",
+            R"(<profiles><data_reader profile_name="r1">
+                <ignore_non_matching_locators>true</ignore_non_matching_locators>
+                <ignore_non_matching_locators>false</ignore_non_matching_locators>
+                <external_unicast_locators>
+                    <udpv4 externality="1" cost="0" mask="24">
+                        <address>192.168.1.100</address>
+                        <port>1234</port>
+                    </udpv4>
+                    <udpv6 externality="1" cost="0" mask="24">
+                        <address>::1:2</address>
+                        <port>1235</port>
+                    </udpv6>
+                </external_unicast_locators>
+            </data_reader></profiles>)",
+            xmlparser::XMLP_ret::XML_ERROR
+        },
+        {
+            "reader_external_complete_duplicated_external",
+            R"(<profiles><data_reader profile_name="r1">
+                <ignore_non_matching_locators>false</ignore_non_matching_locators>
+                <external_unicast_locators>
+                    <udpv4 externality="1" cost="0" mask="24">
+                        <address>192.168.1.100</address>
+                        <port>1234</port>
+                    </udpv4>
+                </external_unicast_locators>
+                <external_unicast_locators>
+                    <udpv6 externality="1" cost="0" mask="24">
+                        <address>::1:2</address>
+                        <port>1235</port>
+                    </udpv6>
+                </external_unicast_locators>
+            </data_reader></profiles>)",
+            xmlparser::XMLP_ret::XML_ERROR
         },
     };
 
