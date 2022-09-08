@@ -1303,7 +1303,7 @@ void RTPSParticipantImpl::update_attributes(
             }
             if (!contained)
             {
-                logWarning(RTPS_QOS_CHECK,
+                logError(RTPS_QOS_CHECK,
                         "Discovery Servers cannot be removed from the list; they can only be added");
                 return;
             }
