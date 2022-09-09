@@ -24,7 +24,7 @@
 #ifdef _MSC_VER
 #include <intrin.h>
 #pragma intrinsic(_BitScanReverse)
-#endif
+#endif // ifdef _MSC_VER
 
 namespace eprosima {
 
@@ -32,7 +32,7 @@ namespace eprosima {
 #define NESTED_OPTIONPARSER_H_INCLUDED_
 // allow including again the header because is in another namespace
 #undef OPTIONPARSER_H_
-#endif
+#endif // ifdef OPTIONPARSER_H_
 
 #include "./optionparser/optionparser.h"
 
@@ -41,7 +41,7 @@ namespace eprosima {
 #undef OPTIONPARSER_H_
 #else
 #undef NESTED_OPTIONPARSER_H_INCLUDED_
-#endif
+#endif // ifndef NESTED_OPTIONPARSER_H_INCLUDED_
 
 } // namespace eprosima
 

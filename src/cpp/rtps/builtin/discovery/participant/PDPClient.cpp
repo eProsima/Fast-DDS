@@ -667,55 +667,56 @@ bool load_environment_server_info(
      **/
     const static std::regex ROS2_SERVER_LIST_PATTERN(R"(([^;]*);?)");
     const static std::regex ROS2_IPV4_ADDRESSPORT_PATTERN(R"(^((?:[0-9]{1,3}\.){3}[0-9]{1,3})?:?(?:(\d+))?$)");
-    const static std::regex ROS2_IPV6_ADDRESSPORT_PATTERN(R"(^\[?((?:[0-9a-fA-F]{0,4}\:){0,7}[0-9a-fA-F]{0,4})?(?:\])?:?(?:(\d+))?$)");
+    const static std::regex ROS2_IPV6_ADDRESSPORT_PATTERN(
+        R"(^\[?((?:[0-9a-fA-F]{0,4}\:){0,7}[0-9a-fA-F]{0,4})?(?:\])?:?(?:(\d+))?$)");
     const static std::regex ROS2_DNS_DOMAINPORT_PATTERN(R"(^(UDPv[46]?:\[[\w\.-]{0,63}\]|[\w\.-]{0,63}):?(?:(\d+))?$)");
 
     // Filling port info
     auto process_port = [](int port, Locator_t& server)
-    {
-        if (port > std::numeric_limits<uint16_t>::max())
-        {
-            throw std::out_of_range("Too large udp port passed into the server's list");
-        }
+            {
+                if (port > std::numeric_limits<uint16_t>::max())
+                {
+                    throw std::out_of_range("Too large udp port passed into the server's list");
+                }
 
-        if (!IPLocator::setPhysicalPort(server, static_cast<uint16_t>(port)))
-        {
-            std::stringstream ss;
-            ss << "Wrong udp port passed into the server's list " << port;
-            throw std::invalid_argument(ss.str());
-        }
-    };
+                if (!IPLocator::setPhysicalPort(server, static_cast<uint16_t>(port)))
+                {
+                    std::stringstream ss;
+                    ss << "Wrong udp port passed into the server's list " << port;
+                    throw std::invalid_argument(ss.str());
+                }
+            };
 
     // Add new server
     auto add_server2qos = [](int id, std::forward_list<Locator>&& locators, RemoteServerList_t& attributes)
-    {
-        RemoteServerAttributes server_att;
+            {
+                RemoteServerAttributes server_att;
 
-        // add the server to the list
-        if (!get_server_client_default_guidPrefix(id, server_att.guidPrefix))
-        {
-            throw std::invalid_argument("The maximum number of default discovery servers has been reached");
-        }
+                // add the server to the list
+                if (!get_server_client_default_guidPrefix(id, server_att.guidPrefix))
+                {
+                    throw std::invalid_argument("The maximum number of default discovery servers has been reached");
+                }
 
-        // split multi and unicast locators
-        auto unicast = std::partition(locators.begin(), locators.end(), IPLocator::isMulticast);
+                // split multi and unicast locators
+                auto unicast = std::partition(locators.begin(), locators.end(), IPLocator::isMulticast);
 
-        LocatorList mlist;
-        std::copy(locators.begin(), unicast, std::back_inserter(mlist));
-        if (!mlist.empty())
-        {
-            server_att.metatrafficMulticastLocatorList.push_back(std::move(mlist));
-        }
+                LocatorList mlist;
+                std::copy(locators.begin(), unicast, std::back_inserter(mlist));
+                if (!mlist.empty())
+                {
+                    server_att.metatrafficMulticastLocatorList.push_back(std::move(mlist));
+                }
 
-        LocatorList ulist;
-        std::copy(unicast, locators.end(), std::back_inserter(ulist));
-        if (!ulist.empty())
-        {
-            server_att.metatrafficUnicastLocatorList.push_back(std::move(ulist));
-        }
+                LocatorList ulist;
+                std::copy(unicast, locators.end(), std::back_inserter(ulist));
+                if (!ulist.empty())
+                {
+                    server_att.metatrafficUnicastLocatorList.push_back(std::move(ulist));
+                }
 
-        attributes.push_back(std::move(server_att));
-    };
+                attributes.push_back(std::move(server_att));
+            };
 
     try
     {
@@ -740,12 +741,13 @@ bool load_environment_server_info(
                 std::smatch mr;
                 std::string locator(sm);
 
-                if(locator.empty())
+                if (locator.empty())
                 {
                     // it's intencionally empty to hint us to ignore this server
                 }
                 // Try first with IPv4
-                else if (std::regex_match(locator, mr, ROS2_IPV4_ADDRESSPORT_PATTERN, std::regex_constants::match_not_null))
+                else if (std::regex_match(locator, mr, ROS2_IPV4_ADDRESSPORT_PATTERN,
+                        std::regex_constants::match_not_null))
                 {
                     std::smatch::iterator it = mr.cbegin();
 
@@ -783,7 +785,8 @@ bool load_environment_server_info(
                     add_server2qos(server_id, std::forward_list<Locator>{server_locator}, attributes);
                 }
                 // Try IPv6 next
-                else if (std::regex_match(locator, mr, ROS2_IPV6_ADDRESSPORT_PATTERN, std::regex_constants::match_not_null))
+                else if (std::regex_match(locator, mr, ROS2_IPV6_ADDRESSPORT_PATTERN,
+                        std::regex_constants::match_not_null))
                 {
                     std::smatch::iterator it = mr.cbegin();
 
@@ -821,15 +824,16 @@ bool load_environment_server_info(
                     add_server2qos(server_id, std::forward_list<Locator>{server_locator}, attributes);
                 }
                 // try resolve DNS
-                else if (std::regex_match(locator, mr, ROS2_DNS_DOMAINPORT_PATTERN, std::regex_constants::match_not_null))
+                else if (std::regex_match(locator, mr, ROS2_DNS_DOMAINPORT_PATTERN,
+                        std::regex_constants::match_not_null))
                 {
                     std::forward_list<Locator> flist;
 
                     {
                         std::stringstream new_locator(locator,
-                            std::ios_base::in |
-                            std::ios_base::out |
-                            std::ios_base::ate);
+                                std::ios_base::in |
+                                std::ios_base::out |
+                                std::ios_base::ate);
 
                         // first try the formal notation, add default port if necessary
                         if (!mr[2].matched)
@@ -866,7 +870,7 @@ bool load_environment_server_info(
                                     port = stoi(it->str());
                                 }
 
-                                for( const std::string& loc : ipv4 )
+                                for ( const std::string& loc : ipv4 )
                                 {
                                     server_locator.kind = LOCATOR_KIND_UDPv4;
                                     server_locator.set_Invalid_Address();
@@ -882,7 +886,7 @@ bool load_environment_server_info(
                                     flist.push_front(server_locator);
                                 }
 
-                                for( const std::string& loc : ipv6 )
+                                for ( const std::string& loc : ipv6 )
                                 {
                                     server_locator.kind = LOCATOR_KIND_UDPv6;
                                     server_locator.set_Invalid_Address();
@@ -901,7 +905,7 @@ bool load_environment_server_info(
                         }
                     }
 
-                    if(flist.empty())
+                    if (flist.empty())
                     {
                         std::stringstream ss;
                         ss << "Wrong domain name passed into the server's list " << locator;

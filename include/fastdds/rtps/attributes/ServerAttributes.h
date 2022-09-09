@@ -110,6 +110,7 @@ public:
         return metatrafficUnicastLocatorList.has_kind<kind>() ||
                metatrafficMulticastLocatorList.has_kind<kind>();
     }
+
 };
 
 typedef std::list<RemoteServerAttributes> RemoteServerList_t;

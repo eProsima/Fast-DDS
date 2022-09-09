@@ -384,7 +384,7 @@ public:
     // the template parameter is the locator kind (e.g. LOCATOR_KIND_UDPv4)
     template<int kind> bool has_kind() const
     {
-        for(auto& loc : m_locators)
+        for (auto& loc : m_locators)
         {
             if ( kind == loc.kind )
             {

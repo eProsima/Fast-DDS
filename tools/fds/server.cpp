@@ -296,11 +296,11 @@ int fastdds_discovery_server(
             int type = LOCATOR_PORT_INVALID;
 
             // Trial order IPv4, IPv6 & DNS
-            if(IPLocator::isIPv4(address) && IPLocator::setIPv4(locator4, address))
+            if (IPLocator::isIPv4(address) && IPLocator::setIPv4(locator4, address))
             {
                 type = LOCATOR_KIND_UDPv4;
             }
-            else if(IPLocator::isIPv6(address) && IPLocator::setIPv6(locator6, address))
+            else if (IPLocator::isIPv6(address) && IPLocator::setIPv6(locator6, address))
             {
                 type = LOCATOR_KIND_UDPv6;
             }
@@ -312,7 +312,7 @@ int fastdds_discovery_server(
                 if (response.first.size() > 0)
                 {
                     address = response.first.begin()->data();
-                    if(IPLocator::setIPv4(locator4, address))
+                    if (IPLocator::setIPv4(locator4, address))
                     {
                         type = LOCATOR_KIND_UDPv4;
                     }
@@ -320,7 +320,7 @@ int fastdds_discovery_server(
                 else if (response.second.size() > 0)
                 {
                     address = response.second.begin()->data();
-                    if(IPLocator::setIPv6(locator6, address))
+                    if (IPLocator::setIPv6(locator6, address))
                     {
                         type = LOCATOR_KIND_UDPv6;
                     }
@@ -342,9 +342,9 @@ int fastdds_discovery_server(
                 uint16_t id;
 
                 if (!(is >> id
-                            && is.eof()
-                            && IPLocator::setPhysicalPort(locator4, id)
-                            && IPLocator::setPhysicalPort(locator6, id)))
+                        && is.eof()
+                        && IPLocator::setPhysicalPort(locator4, id)
+                        && IPLocator::setPhysicalPort(locator6, id)))
                 {
                     std::cout << "Invalid listening locator port specified:" << id << std::endl;
                     return 1;
@@ -353,7 +353,7 @@ int fastdds_discovery_server(
 
             // Add the locator
             participantQos.wire_protocol().builtin.metatrafficUnicastLocatorList
-                .push_back( LOCATOR_KIND_UDPv4 == type ? locator4 : locator6 );
+                    .push_back( LOCATOR_KIND_UDPv4 == type ? locator4 : locator6 );
 
             pOp = pOp->next();
             if (pO_port)
@@ -363,12 +363,12 @@ int fastdds_discovery_server(
             else
             {
                 std::cout << "Warning: the number of specified ports doesn't match the ip" << std::endl
-                    << "         addresses provided. Locators share its port number." << std::endl;
+                          << "         addresses provided. Locators share its port number." << std::endl;
             }
         }
 
         // add UDPv6 transport if required
-        if(participantQos.wire_protocol().builtin.metatrafficUnicastLocatorList.has_kind<LOCATOR_KIND_UDPv6>())
+        if (participantQos.wire_protocol().builtin.metatrafficUnicastLocatorList.has_kind<LOCATOR_KIND_UDPv6>())
         {
             // extend builtin transports with the UDPv6 transport
             auto descriptor = std::make_shared<fastdds::rtps::UDPv6TransportDescriptor>();

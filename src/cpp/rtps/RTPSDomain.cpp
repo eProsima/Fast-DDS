@@ -513,9 +513,9 @@ RTPSParticipant* RTPSDomain::clientServerEnvironmentCreationOverride(
     }
 
     // check if some server requires the UDPv6 transport
-    for(auto& server : server_list)
+    for (auto& server : server_list)
     {
-        if(server.requires_transport<LOCATOR_KIND_UDPv6>())
+        if (server.requires_transport<LOCATOR_KIND_UDPv6>())
         {
             // extend builtin transports with the UDPv6 transport
             auto descriptor = std::make_shared<fastdds::rtps::UDPv6TransportDescriptor>();

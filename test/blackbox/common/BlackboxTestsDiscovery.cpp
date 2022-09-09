@@ -1196,7 +1196,7 @@ TEST(Discovery, ServerClientEnvironmentSetUp)
 
     RemoteServerList_t output, standard;
     RemoteServerAttributes att;
-    Locator_t loc, loc6(LOCATOR_KIND_UDPv6,0);
+    Locator_t loc, loc6(LOCATOR_KIND_UDPv6, 0);
 
     // We are going to use several test string and check they are properly parsed and turn into RemoteServerList_t
     // 1. single server address without specific port provided
@@ -1476,7 +1476,7 @@ TEST(Discovery, ServerClientEnvironmentSetUpDNS)
 
     RemoteServerList_t output, standard;
     RemoteServerAttributes att;
-    Locator_t loc, loc6(LOCATOR_KIND_UDPv6,0);
+    Locator_t loc, loc6(LOCATOR_KIND_UDPv6, 0);
 
     // 1. single server DNS address resolution without specific port provided
     std::string text = "www.acme.com.test";
