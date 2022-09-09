@@ -20,6 +20,12 @@
 #ifndef FASTDDS_OPTIONPARSER_HPP_
 #define FASTDDS_OPTIONPARSER_HPP_
 
+// specific optionparser.h includes must be moved out of the namespace to prevent macro issues
+#ifdef _MSC_VER
+#include <intrin.h>
+#pragma intrinsic(_BitScanReverse)
+#endif
+
 namespace eprosima {
 
 #ifdef OPTIONPARSER_H_

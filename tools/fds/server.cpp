@@ -12,6 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#include "server.h"
+
 #include <condition_variable>
 #include <csignal>
 #include <iostream>
@@ -21,11 +23,6 @@
 #include <stdlib.h>
 #include <string>
 #include <vector>
-
-// Even though this header should be the first, as it includes optionparser.hpp, a conflict arises between this file
-// and <condition_variable> in Windows platform.
-#include "server.h"
-#include <optionparser.hpp>
 
 #include <fastdds/dds/domain/DomainParticipant.hpp>
 #include <fastdds/dds/domain/DomainParticipantFactory.hpp>
