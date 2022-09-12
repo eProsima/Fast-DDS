@@ -70,7 +70,9 @@ bool HelloWorldPublisher::init(
         bool reliable,
         bool transient,
         int hops,
-        const std::string& partitions)
+        const std::string& partitions,
+        bool use_ownership,
+        unsigned int ownership_strength /* = 0 */)
 {
     hello_.index(0);
     memcpy(hello_.message().data(), "HelloWorld ", strlen("HelloWorld") + 1);
@@ -215,6 +217,13 @@ bool HelloWorldPublisher::init(
     {
         wqos.durability().kind = VOLATILE_DURABILITY_QOS;   // default in this example (although default value for
                                                             // writters' qos actually is TRANSIENT_LOCAL)
+    }
+
+    // Set ownership
+    if (use_ownership)
+    {
+        wqos.ownership().kind = OwnershipQosPolicyKind::EXCLUSIVE_OWNERSHIP_QOS;
+        wqos.ownership_strength().value = ownership_strength;
     }
 
     writer_ = publisher_->create_datawriter(topic_, wqos, &listener_);

@@ -64,6 +64,8 @@ int main(
     bool reliable = false;
     bool transient = false; // transient local
     std::string partitions = "";
+    bool use_ownership = false;
+    unsigned int ownership_strength = 0;
                             //
     argc -= (argc > 0);
     argv += (argc > 0); // skip program name argv[0] if present
@@ -205,6 +207,22 @@ int main(
                 partitions = std::string(opt.arg);
                 break;
 
+            case optionIndex::OWNERSHIP:
+                use_ownership = true;
+                break;
+
+            case optionIndex::OWNERSHIP_STRENGTH:
+                if (type == PUBLISHER)
+                {
+                    use_ownership = true;
+                    ownership_strength = strtol(opt.arg, nullptr, 10);
+                }
+                else
+                {
+                    print_warning("publisher", opt.name);
+                }
+                break;
+
             case optionIndex::UNKNOWN_OPT:
                 std::cerr << "ERROR: " << opt.name << " is not a valid argument." << std::endl;
                 option::printUsage(fwrite, stdout, usage, columns);
@@ -233,7 +251,7 @@ int main(
         {
             HelloWorldPublisher mypub;
             if (mypub.init(topic_name, static_cast<uint32_t>(domain), static_cast<uint32_t>(num_wait_matched), async,
-                    transport, reliable, transient, hops, partitions))
+                    transport, reliable, transient, hops, partitions, use_ownership, ownership_strength))
             {
                 mypub.run(static_cast<uint32_t>(count), static_cast<uint32_t>(sleep));
             }
@@ -243,7 +261,7 @@ int main(
         {
             HelloWorldSubscriber mysub;
             if (mysub.init(topic_name, static_cast<uint32_t>(count), static_cast<uint32_t>(domain), transport,
-                    reliable, transient, hops, partitions))
+                    reliable, transient, hops, partitions, use_ownership))
             {
                 mysub.run(static_cast<uint32_t>(count));
             }

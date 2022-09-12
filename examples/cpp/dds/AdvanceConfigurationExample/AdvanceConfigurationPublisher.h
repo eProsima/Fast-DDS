@@ -53,7 +53,9 @@ public:
             bool reliable,
             bool transient,
             int hops,
-            const std::string& partitions);
+            const std::string& partitions,
+            bool use_ownership,
+            unsigned int ownership_strength);
 
     //! Publish a sample
     void publish();

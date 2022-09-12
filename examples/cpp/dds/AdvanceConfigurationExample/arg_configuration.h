@@ -141,7 +141,9 @@ enum optionIndex
     RELIABLE,
     TRANSIENT_LOCAL,
     TTL,
-    PARTITIONS
+    PARTITIONS,
+    OWNERSHIP_STRENGTH,
+    OWNERSHIP
 };
 
 const option::Descriptor usage[] = {
@@ -167,6 +169,10 @@ const option::Descriptor usage[] = {
       "  \t--transport=<shm|udp|udpv6> \tUse only shared-memory, UDPv4, or UDPv6 transport."
       "If not set, use Fast DDS default transports (depending on the scenario it will use the most efficient one:"
       " data-sharing delivery mechanism > shared-memory > UDP)." },
+    { OWNERSHIP, 0, "o", "ownership",        Arg::None,
+      "  -o \t--ownership \tUse Topic with OWNERSHIP_EXCLUSIVE."},
+    { OWNERSHIP_STRENGTH, 0, "", "strength",        Arg::Numeric,
+      "  \t--strength=<num> \tSet this Publisher strength. Set Topic with OWNERSHIP_EXCLUSIVE. Default: 0"},
 
     { UNKNOWN_OPT, 0, "", "",                Arg::None,      "\nSubscriber options:"},
     { TOPIC, 0, "t", "topic",                  Arg::String,
@@ -179,6 +185,8 @@ const option::Descriptor usage[] = {
       "  \t--transport=<shm|udp|udpv6> \tUse only shared-memory, UDPv4, or UDPv6 transport."
       "If not set, use Fast DDS default transports (depending on the scenario it will use the most efficient one:"
       " data-sharing delivery mechanism > shared-memory > UDP)." },
+    { OWNERSHIP, 0, "o", "ownership",        Arg::None,
+      "  -o \t--ownership \tUse Topic with OWNERSHIP_EXCLUSIVE."},
 
     { UNKNOWN_OPT, 0, "", "",                Arg::None,      "\nQoS options:"},
     { RELIABLE, 0, "r", "reliable",         Arg::None,

@@ -67,7 +67,8 @@ bool HelloWorldSubscriber::init(
         bool reliable,
         bool transient,
         int hops,
-        const std::string& partitions)
+        const std::string& partitions,
+        bool use_ownership)
 {
     DomainParticipantQos pqos;
     pqos.name("Participant_sub");
@@ -200,6 +201,12 @@ bool HelloWorldSubscriber::init(
     else
     {
         rqos.durability().kind = VOLATILE_DURABILITY_QOS;   // default
+    }
+
+    // Set ownership
+    if (use_ownership)
+    {
+        rqos.ownership().kind = OwnershipQosPolicyKind::EXCLUSIVE_OWNERSHIP_QOS;
     }
 
     reader_ = subscriber_->create_datareader(topic_, rqos, &listener_);
