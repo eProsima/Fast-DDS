@@ -409,6 +409,7 @@ extern const char* TLS_DEFAULT_VERIFY_PATH;
 extern const char* TLS_VERIFY_DEPTH;
 extern const char* TLS_RSA_PRIVATE_KEY_FILE;
 extern const char* TLS_HANDSHAKE_ROLE;
+extern const char* TLS_SERVER_NAME;
 
 // TLS HandShake Role
 extern const char* TLS_HANDSHAKE_ROLE_DEFAULT;

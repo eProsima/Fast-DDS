@@ -72,6 +72,9 @@ public:
     void set_tls_verify_mode(
             const TCPTransportDescriptor* options);
 
+    void set_tls_sni(
+            const TCPTransportDescriptor* options);
+
     void cancel() override;
     void close() override;
     void shutdown(

@@ -395,6 +395,7 @@ const char* TLS_DEFAULT_VERIFY_PATH = "default_verify_path";
 const char* TLS_VERIFY_DEPTH = "verify_depth";
 const char* TLS_RSA_PRIVATE_KEY_FILE = "rsa_private_key_file";
 const char* TLS_HANDSHAKE_ROLE = "handshake_role";
+const char* TLS_SERVER_NAME = "server_name";
 
 // TLS HandShake Role
 const char* TLS_HANDSHAKE_ROLE_DEFAULT = "DEFAULT";

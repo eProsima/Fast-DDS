@@ -1149,8 +1149,7 @@ bool TCPTransportInterface::send(
     {
         Locator wan_locator;
         wan_locator.kind = remote_locator.kind;
-        wan_locator.port = IPLocator::getLogicalPort(remote_locator);
-//        wan_locator.port = IPLocator::toPhysicalLocator(remote_locator).port;
+        wan_locator.port = IPLocator::toPhysicalLocator(remote_locator).port;
         IPLocator::setIPv4(wan_locator, IPLocator::toWanstring(remote_locator)); // WAN to IP
         //std::cout << "WANLocator: " << IPLocator::to_string(wan_locator) << std::endl;
         if (channel->locator() == wan_locator)
@@ -1164,7 +1163,7 @@ bool TCPTransportInterface::send(
         //std::cout << "ChannelLocator: " << IPLocator::to_string(channel->locator()) << std::endl;
         //std::cout << "RemoteLocator: " << IPLocator::to_string(remote_locator) << std::endl;
 
-        logWarning(RTCP, "SEND [RTPS] Failed: FNot connect: " << IPLocator::getLogicalPort(remote_locator) \
+        logWarning(RTCP, "SEND [RTPS] Failed: Not connect: " << IPLocator::getLogicalPort(remote_locator) \
                                                              << " @ IP: " << IPLocator::toIPv4string(remote_locator));
         return false;
     }

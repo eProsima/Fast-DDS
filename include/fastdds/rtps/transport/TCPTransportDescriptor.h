@@ -158,8 +158,6 @@ struct TCPTransportDescriptor : public SocketTransportDescriptor
             SERVER                      = 1 << 1  // 0000 0010
         };
 
-        //! sni host required in case of https proxy setup
-        std::string sni_host;
         //! Password of the \c private_key_file or \c rsa_private_key_file
         std::string password;
         //! SSL context options mask
@@ -186,7 +184,6 @@ struct TCPTransportDescriptor : public SocketTransportDescriptor
         TLSHandShakeRole handshake_role = TLSHandShakeRole::DEFAULT;
         //! Server name or host name required in case Server Name Indication (SNI) is used
         std::string server_name;
-
 
         //! Add verification modes to the verification mode mask
         void add_verify_mode(

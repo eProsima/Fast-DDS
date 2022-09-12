@@ -59,6 +59,7 @@ TCPChannelResourceSecure::TCPChannelResourceSecure(
     , secure_socket_(socket)
 {
     set_tls_verify_mode(parent->configuration());
+    set_tls_sni(parent->configuration());
 }
 
 TCPChannelResourceSecure::~TCPChannelResourceSecure()
@@ -87,6 +88,7 @@ void TCPChannelResourceSecure::connect(
             TCPTransportInterface* parent = parent_;
             secure_socket_ = std::make_shared<asio::ssl::stream<asio::ip::tcp::socket>>(service_, ssl_context_);
             set_tls_verify_mode(parent->configuration());
+            set_tls_sni(parent->configuration());
             std::weak_ptr<TCPChannelResource> channel_weak_ptr = myself;
             const auto secure_socket = secure_socket_;
 
@@ -296,8 +298,18 @@ void TCPChannelResourceSecure::set_tls_verify_mode(
             }
             secure_socket_->set_verify_mode(vm);
         }
-        if (!options->tls_config.sni_host.empty()){
-            SSL_set_tlsext_host_name(secure_socket_->native_handle(), options->tls_config.sni_host.c_str());
+
+    }
+}
+
+void TCPChannelResourceSecure::set_tls_sni(
+        const TCPTransportDescriptor* options)
+{
+    if (options->apply_security)
+    {
+        if (!options->tls_config.server_name.empty()){
+            // This is not done through asio because it seems it is not supported, so call directly to OpenSSL
+            SSL_set_tlsext_host_name(secure_socket_->native_handle(), options->tls_config.server_name.c_str());
         }
     }
 }

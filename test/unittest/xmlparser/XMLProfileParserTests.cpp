@@ -931,6 +931,7 @@ TEST_F(XMLProfileParserTests, tls_config)
     EXPECT_EQ("Chain.pem", descriptor->tls_config.cert_chain_file);
     EXPECT_EQ("DH.pem", descriptor->tls_config.tmp_dh_file);
     EXPECT_EQ("verify.pem", descriptor->tls_config.verify_file);
+    EXPECT_EQ("my_server.com", descriptor->tls_config.server_name);
     EXPECT_EQ(TCPTransportDescriptor::TLSConfig::TLSVerifyMode::VERIFY_PEER, descriptor->tls_config.verify_mode);
     EXPECT_TRUE(descriptor->tls_config.get_option(TCPTransportDescriptor::TLSConfig::TLSOptions::NO_TLSV1));
     EXPECT_TRUE(descriptor->tls_config.get_option(TCPTransportDescriptor::TLSConfig::TLSOptions::NO_TLSV1_1));

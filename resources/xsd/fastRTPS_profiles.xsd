@@ -117,6 +117,7 @@
             <xs:element name="verify_depth" type="xs:int" minOccurs="0" maxOccurs="1"/>
             <xs:element name="rsa_private_key_file" type="stringType" minOccurs="0" maxOccurs="1"/>
             <xs:element name="handshake_role" type="tlsHandShakeRole" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="server_name" type="stringType" minOccurs="0" maxOccurs="1"/>
         </xs:all>
     </xs:complexType>
 

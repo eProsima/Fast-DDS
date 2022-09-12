@@ -979,6 +979,13 @@ XMLP_ret XMLParser::parse_tls_config(
                 }
             }
         }
+        else if (config.compare(TLS_SERVER_NAME) == 0)
+        {
+            if (XMLP_ret::XML_OK != getXMLString(p_aux0, &pTCPDesc->tls_config.server_name, 0))
+            {
+                ret = XMLP_ret::XML_ERROR;
+            }
+        }
         else if (config.compare(TLS_VERIFY_MODE) == 0)
         {
             tinyxml2::XMLElement* p_verify = p_aux0->FirstChildElement();
