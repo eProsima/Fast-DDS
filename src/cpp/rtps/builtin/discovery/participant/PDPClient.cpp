@@ -849,9 +849,8 @@ bool load_environment_server_info(
                     {
                         case LOCATOR_KIND_UDPv4:
                         case LOCATOR_KIND_UDPv6:
-                        {
                             flist.push_front(server_locator);
-                        }
+                            break;
                         case LOCATOR_KIND_INVALID:
                         {
                             std::smatch::iterator it = mr.cbegin();
