@@ -407,10 +407,20 @@ TEST_F(StatisticsFromXMLProfileTests, XMLConfigurationForStatisticsDataWritersQo
 
 #else // FASTDDS_STATISTICS not set
 
+    // Create DomainParticipant.
+    eprosima::fastdds::dds::DomainParticipant* participant =
+        eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->
+            create_participant(0, eprosima::fastdds::dds::PARTICIPANT_QOS_DEFAULT);
+    ASSERT_NE(participant, nullptr);
+
+    // Try to obtain pointer to child class
+    eprosima::fastdds::statistics::dds::DomainParticipant* statistics_participant =
+        eprosima::fastdds::statistics::dds::DomainParticipant::narrow(participant);
+    ASSERT_EQ(statistics_participant, nullptr);
+
     // Obtain pointer to child class with static_cast instead of narrow()
     // because FASTDDS_STATISTICS CMake option has not been set
-    eprosima::fastdds::statistics::dds::DomainParticipant* statistics_participant =
-            static_cast<DomainParticipant*>(participant);
+    statistics_participant = static_cast<DomainParticipant*>(participant);
     ASSERT_NE(statistics_participant, nullptr);
 
     ReturnCode_t ret = statistics_participant->enable_statistics_datawriter_with_profile(
