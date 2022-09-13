@@ -188,6 +188,7 @@ bool HelloWorldSubscriber::init(
     if (reliable)
     {
         rqos.reliability().kind = RELIABLE_RELIABILITY_QOS;
+        rqos.history().kind = KEEP_ALL_HISTORY_QOS;
     }
     else
     {
