@@ -163,27 +163,36 @@ int main(
     std::vector<option::Option> buffer(stats.buffer_max);
     option::Parser parse(true, usage, argc, argv, &options[0], &buffer[0]);
 
-    if (parse.error())
+    try
     {
-        return 1;
-    }
+        if (parse.error())
+        {
+            throw 1;
+        }
 
-    if (options[HELP] || options[UNKNOWN_OPT])
-    {
-        option::printUsage(fwrite, stdout, usage, columns);
-        return 0;
-    }
+        if (options[HELP] || options[UNKNOWN_OPT])
+        {
+            throw 1;
+        }
 
-    // For backward compatibility count and sleep may be given positionally
-    if (parse.nonOptionsCount() > 3 || parse.nonOptionsCount() == 0)
-    {
-        option::printUsage(fwrite, stdout, usage, columns);
-        return 1;
-    }
+        // For backward compatibility count and sleep may be given positionally
+        if (parse.nonOptionsCount() > 3 || parse.nonOptionsCount() == 0)
+        {
+            throw 2;
+        }
 
-    // Decide between publisher or subscriber
-    {
+        // Decide between publisher or subscriber
         const char* type_name = parse.nonOption(0);
+
+        // make sure is the first option.
+        // type_name and buffer[0].name reference the original command line char array
+        // type_name must precede any other arguments in the array.
+        // Note buffer[0].arg may be null for non-valued options and is not reliable for
+        // testing purposes.
+        if (parse.optionsCount() && type_name >= buffer[0].name)
+        {
+            throw 2;
+        }
 
         if (strcmp(type_name, "publisher") == 0)
         {
@@ -195,9 +204,18 @@ int main(
         }
         else
         {
-            option::printUsage(fwrite, stdout, usage, columns);
-            return 1;
+            throw 2;
         }
+    }
+    catch (int error)
+    {
+        if ( error == 2 )
+        {
+            std::cerr << "ERROR: first argument must be <publisher|subscriber> followed by - or -- options"
+                      << std::endl;
+        }
+        option::printUsage(fwrite, stdout, usage, columns);
+        return error;
     }
 
     // Decide between the old and new syntax
