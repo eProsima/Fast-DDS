@@ -192,6 +192,7 @@ bool HelloWorldPublisher::init(
     if (transient)
     {
         wqos.durability().kind = TRANSIENT_LOCAL_DURABILITY_QOS;
+        wqos.reliability().kind = RELIABLE_RELIABILITY_QOS;
         wqos.history().kind = KEEP_ALL_HISTORY_QOS;     // store previously sent samples so they can be resent to newly
                                                         // matched DataReaders
     }

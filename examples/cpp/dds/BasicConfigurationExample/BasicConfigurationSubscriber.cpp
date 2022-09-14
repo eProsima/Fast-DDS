@@ -185,6 +185,7 @@ bool HelloWorldSubscriber::init(
     {
         rqos.durability().kind = TRANSIENT_LOCAL_DURABILITY_QOS;
         // mimic publisher behaviour. Assure the user see all samples are received
+        rqos.reliability().kind = RELIABLE_RELIABILITY_QOS;
         rqos.history().kind = KEEP_ALL_HISTORY_QOS;
     }
     else
