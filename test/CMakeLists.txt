@@ -30,7 +30,7 @@ if(WIN32)
     execute_process(COMMAND powershell -C Resolve-DNSName www.acme.com.test
         RESULT_VARIABLE EPROSIMA_TEST_DNS_NOT_SET_UP OUTPUT_QUIET ERROR_QUIET)
 else(WIN32)
-    execute_process(COMMAND nslookup www.acme.com.test
+    execute_process(COMMAND getent hosts www.acme.com.test
         RESULT_VARIABLE EPROSIMA_TEST_DNS_NOT_SET_UP OUTPUT_QUIET ERROR_QUIET)
 endif(WIN32)
 
