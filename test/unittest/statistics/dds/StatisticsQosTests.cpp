@@ -409,13 +409,13 @@ TEST_F(StatisticsFromXMLProfileTests, XMLConfigurationForStatisticsDataWritersQo
 
     // Create DomainParticipant.
     eprosima::fastdds::dds::DomainParticipant* participant =
-        eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->
-            create_participant(0, eprosima::fastdds::dds::PARTICIPANT_QOS_DEFAULT);
+            eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->
+                    create_participant(0, eprosima::fastdds::dds::PARTICIPANT_QOS_DEFAULT);
     ASSERT_NE(participant, nullptr);
 
     // Try to obtain pointer to child class
     eprosima::fastdds::statistics::dds::DomainParticipant* statistics_participant =
-        eprosima::fastdds::statistics::dds::DomainParticipant::narrow(participant);
+            eprosima::fastdds::statistics::dds::DomainParticipant::narrow(participant);
     ASSERT_EQ(statistics_participant, nullptr);
 
     // Obtain pointer to child class with static_cast instead of narrow()
@@ -464,7 +464,7 @@ TEST_F(StatisticsFromXMLProfileTests, XMLConfigurationForStatisticsDataWritersQo
                         <properties>                                                                                    \
                                 <property>                                                                              \
                                 <name>fastdds.statistics</name>                                                         \
-                                <value>HISTORY_LATENCY_TOPIC;PUBLICATION_THROUGHPUT_TOPIC</value>                       \
+                                <value>HISTORY_LATENCY_TOPIC;PUBLICATION_THROUGHPUT_TOPIC;_fastdds_statistics_discovered_entity</value>       \
                                 </property>                                                                             \
                         </properties>                                                                                   \
                         </propertiesPolicy>                                                                             \
@@ -509,6 +509,13 @@ TEST_F(StatisticsFromXMLProfileTests, XMLConfigurationForStatisticsDataWritersQo
                                 <disable_heartbeat_piggyback>true</disable_heartbeat_piggyback>                         \
                         </qos>                                                                                          \
                 </data_writer>                                                                                          \
+                <data_writer profile_name=\"_fastdds_statistics_discovered_entity\">                                    \
+                        <qos>                                                                                           \
+                                <reliability>                                                                           \
+                                        <kind>RELIABLE</kind>                                                           \
+                                </reliability>                                                                          \
+                        </qos>                                                                                          \
+                </data_writer>                                                                                          \
         </profiles>                                                                                                     \
         </dds>                                                                                                          \
     ";
@@ -545,6 +552,18 @@ TEST_F(StatisticsFromXMLProfileTests, XMLConfigurationForStatisticsDataWritersQo
     eprosima::fastdds::dds::DataWriter* subscription_throughput_writer =
             statistics_publisher_impl->lookup_datawriter(subscription_throughput_name);
     ASSERT_EQ(subscription_throughput_writer, nullptr);
+
+    // DISCOVERY_TOPIC has been created automatically within the participant
+    // and specific QoS has been set by specifying the profile with
+    // name of the statistics topic name "_fastdds_statistics_discovered_entity"
+    std::string discovery_name = DISCOVERY_TOPIC;
+    eprosima::fastdds::dds::DataWriter* discovery_writer =
+            statistics_publisher_impl->lookup_datawriter(discovery_name);
+    ASSERT_NE(discovery_writer, nullptr);
+
+    efd::DataWriterQos qos2;
+    qos2.reliability().kind = eprosima::fastdds::dds::ReliabilityQosPolicyKind::RELIABLE_RELIABILITY_QOS;
+    ASSERT_EQ(qos2, discovery_writer->get_qos());
 
     remove("FASTRTPS_PROFILES.xml");
 
