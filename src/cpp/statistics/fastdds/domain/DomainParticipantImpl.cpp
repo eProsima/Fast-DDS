@@ -323,7 +323,8 @@ void DomainParticipantImpl::enable_statistics_builtin_datawriters(
         {
             efd::utils::set_qos_from_attributes(datawriter_qos, attr);
         }
-        else if (XMLP_ret::XML_OK == XMLProfileManager::fillPublisherAttributes(DEFAULT_STATISTICS_DATAWRITER_PROFILE, attr))
+        else if (XMLP_ret::XML_OK ==
+                XMLProfileManager::fillPublisherAttributes(DEFAULT_STATISTICS_DATAWRITER_PROFILE, attr))
         {
             efd::utils::set_qos_from_attributes(datawriter_qos, attr);
         }
