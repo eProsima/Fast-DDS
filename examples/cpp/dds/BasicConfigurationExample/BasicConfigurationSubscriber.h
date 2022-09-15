@@ -99,7 +99,8 @@ public:
             TransportType transport,
             bool reliable,
             bool transient,
-            bool realloc);
+            bool realloc,
+            bool dynamic);
 
     //! RUN the subscriber until number samples are received
     void run(

@@ -144,6 +144,7 @@ enum optionIndex
     RELIABLE,
     TRANSIENT_LOCAL,
     REALLOC,
+    DYNAMIC,
     MSG_SIZE
 };
 
@@ -198,6 +199,8 @@ const option::Descriptor usage[] = {
       "  \t--transient \tSet durability to transient local (volatile by default, ineffective when not reliable)." },
     { REALLOC, 0, "", "realloc",        Arg::None,
       "  \t--realloc \tAllow for memory reallocation (No memory reallocation by default)." },
+    { DYNAMIC, 0, "", "dynamic",        Arg::None,
+      "  \t--dynamic \tReserve memory dynamically (No allocation is reused)." },
 
 
     { 0, 0, 0, 0, 0, 0 }

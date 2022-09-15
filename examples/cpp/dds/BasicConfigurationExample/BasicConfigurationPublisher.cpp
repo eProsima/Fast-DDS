@@ -77,6 +77,7 @@ bool HelloWorldPublisher::init(
         bool reliable,
         bool transient,
         bool realloc,
+        bool dynamic,
         uint32_t msg_size)
 {
     n_topics_.store(topic_names.size());
@@ -183,6 +184,11 @@ bool HelloWorldPublisher::init(
     {
         wqos.endpoint().history_memory_policy =
                 eprosima::fastrtps::rtps::MemoryManagementPolicy_t::PREALLOCATED_WITH_REALLOC_MEMORY_MODE;
+    }
+    else if (dynamic)
+    {
+        wqos.endpoint().history_memory_policy =
+                eprosima::fastrtps::rtps::MemoryManagementPolicy_t::DYNAMIC_RESERVE_MEMORY_MODE;
     }
 
     for (uint32_t i = 0; i < n_topics_.load(); i++)

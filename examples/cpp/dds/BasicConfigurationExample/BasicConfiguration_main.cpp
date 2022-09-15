@@ -83,6 +83,7 @@ int main(
     bool reliable = false;
     bool transient = false; // transient local
     bool realloc = false;
+    bool dynamic = false;
     long msg_size = 20;
     if (argc > 1)
     {
@@ -243,6 +244,12 @@ int main(
 
                 case optionIndex::REALLOC:
                     realloc = true;
+                    dynamic = false;
+                    break;
+
+                case optionIndex::DYNAMIC:
+                    dynamic = true;
+                    realloc = false;
                     break;
 
                 case optionIndex::UNKNOWN_OPT:
@@ -270,7 +277,7 @@ int main(
         {
             HelloWorldPublisher mypub;
             if (mypub.init(topic_names, static_cast<uint32_t>(domain), static_cast<uint32_t>(num_wait_matched), async,
-                    transport, reliable, transient, realloc, msg_size))
+                    transport, reliable, transient, realloc, dynamic, msg_size))
             {
                 mypub.run(static_cast<uint32_t>(count), static_cast<uint32_t>(sleep), static_cast<uint32_t>(init_sleep),
                         single_thread, random);
@@ -281,7 +288,7 @@ int main(
         {
             HelloWorldSubscriber mysub;
             if (mysub.init(topic_names, static_cast<uint32_t>(count), static_cast<uint32_t>(domain), transport,
-                    reliable, transient, realloc))
+                    reliable, transient, realloc, dynamic))
             {
                 mysub.run(static_cast<uint32_t>(count));
             }

@@ -106,6 +106,7 @@ public:
             bool reliable,
             bool transient,
             bool realloc,
+            bool dynamic,
             uint32_t msg_size);
 
     //! Publish a sample
