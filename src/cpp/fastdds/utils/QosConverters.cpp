@@ -81,53 +81,6 @@ void set_qos_from_attributes(
     }
 }
 
-void set_attributes_from_qos(
-        PublisherAttributes& attr,
-        const DataWriterQos& qos)
-{
-    attr.matched_subscriber_allocation = qos.writer_resource_limits().matched_subscriber_allocation;
-    attr.properties = qos.properties();
-    attr.throughputController = qos.throughput_controller();
-    attr.unicastLocatorList = qos.endpoint().unicast_locator_list;
-    attr.multicastLocatorList = qos.endpoint().multicast_locator_list;
-    attr.remoteLocatorList = qos.endpoint().remote_locator_list;
-    attr.historyMemoryPolicy = qos.endpoint().history_memory_policy;
-    attr.setUserDefinedID(static_cast<uint8_t>(qos.endpoint().user_defined_id));
-    attr.setEntityID(static_cast<uint8_t>(qos.endpoint().entity_id));
-    attr.times = qos.reliable_writer_qos().times;
-    attr.qos.m_disablePositiveACKs = qos.reliable_writer_qos().disable_positive_acks;
-    attr.qos.m_durability = qos.durability();
-    attr.qos.m_durabilityService = qos.durability_service();
-    attr.qos.m_deadline = qos.deadline();
-    attr.qos.m_latencyBudget = qos.latency_budget();
-    attr.qos.m_liveliness = qos.liveliness();
-    attr.qos.m_reliability = qos.reliability();
-    attr.qos.m_lifespan = qos.lifespan();
-    attr.qos.m_userData = qos.user_data().getValue();
-    attr.qos.m_ownership = qos.ownership();
-    attr.qos.m_ownershipStrength = qos.ownership_strength();
-    attr.qos.m_destinationOrder = qos.destination_order();
-    attr.qos.representation = qos.representation();
-    attr.qos.m_publishMode = qos.publish_mode();
-    attr.topic.historyQos = qos.history();
-    attr.topic.resourceLimitsQos = qos.resource_limits();
-    attr.qos.data_sharing = qos.data_sharing();
-    attr.qos.disable_heartbeat_piggyback = qos.reliable_writer_qos().disable_heartbeat_piggyback;
-
-    for (auto property : qos.properties().properties())
-    {
-        if (property.name() == "partitions")
-        {
-            std::string partition_name;
-            std::istringstream partition_string(property.value());
-            while (std::getline(partition_string, partition_name, ';'))
-            {
-                attr.qos.m_partition.push_back(partition_name.c_str());
-            }
-        }
-    }
-}
-
 void set_qos_from_attributes(
         DataReaderQos& qos,
         const SubscriberAttributes& attr)
