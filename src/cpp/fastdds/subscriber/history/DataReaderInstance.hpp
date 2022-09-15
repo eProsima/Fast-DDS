@@ -338,7 +338,7 @@ private:
                 [&](const WriterOwnership& item)
                 {
                     if (item.second > current_owner.second ||
-                    (item.second > current_owner.second &&
+                    (item.second == current_owner.second &&
                     item.first < current_owner.first)
                     )
                     {

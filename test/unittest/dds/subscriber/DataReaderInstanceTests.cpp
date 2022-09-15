@@ -307,6 +307,21 @@ TEST(DataReaderInstance, deadline_missed)
     ASSERT_EQ(0u, instance.current_owner.second);
     ASSERT_EQ(eprosima::fastdds::dds::NOT_ALIVE_NO_WRITERS_INSTANCE_STATE, instance.instance_state);
     ASSERT_EQ(0u, instance.alive_writers.size());
+
+    // Ownership fallback when multiple writers have the same strength
+    eprosima::fastdds::dds::detail::DataReaderInstance second_instance({}, {});
+
+    const eprosima::fastrtps::rtps::GUID_t dw2_2_guid({}, 3);
+    second_instance.alive_writers.push_back({dw2_2_guid, 2});
+    second_instance.alive_writers.push_back({dw2_guid, 2});
+    second_instance.alive_writers.push_back({dw4_guid, 4});
+    second_instance.current_owner = {dw4_guid, 4};
+    second_instance.deadline_missed();
+    ASSERT_EQ(dw2_guid, second_instance.current_owner.first);
+    ASSERT_EQ(2u, second_instance.current_owner.second);
+    ASSERT_EQ(eprosima::fastdds::dds::ALIVE_INSTANCE_STATE, second_instance.instance_state);
+    ASSERT_EQ(2u, second_instance.alive_writers.size());
+
 }
 
 /*!
