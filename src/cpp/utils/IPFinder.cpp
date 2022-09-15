@@ -335,7 +335,7 @@ bool IPFinder::getAllMACAddress(
     IPFinder::getIPs(&ips);
     for (auto& ip : ips)
     {
-        struct ifreq ifr;
+        struct ifreq ifr = {};
         strncpy(ifr.ifr_name, ip.dev.c_str(), sizeof(ifr.ifr_name) - 1);
         int fd = socket(PF_INET, SOCK_DGRAM, 0);
         if (fd == -1)
