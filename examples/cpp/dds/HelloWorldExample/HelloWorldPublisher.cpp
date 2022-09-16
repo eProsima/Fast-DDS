@@ -18,6 +18,9 @@
  */
 
 #include "HelloWorldPublisher.h"
+
+#include "common.hpp"
+
 #include <fastrtps/attributes/ParticipantAttributes.h>
 #include <fastrtps/attributes/PublisherAttributes.h>
 #include <fastdds/dds/domain/DomainParticipantFactory.hpp>
@@ -40,8 +43,11 @@ HelloWorldPublisher::HelloWorldPublisher()
 }
 
 bool HelloWorldPublisher::init(
-        bool use_env)
+        bool use_env,
+        eprosima::examples::helloworld::AutomaticDiscovery discovery_mode)
 {
+    std::cout << "Publisher discovery mode: " << discovery_mode << std::endl;
+
     hello_.index(0);
     hello_.message("HelloWorld");
     DomainParticipantQos pqos = PARTICIPANT_QOS_DEFAULT;

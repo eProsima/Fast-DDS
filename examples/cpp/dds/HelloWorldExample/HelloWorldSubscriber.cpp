@@ -18,6 +18,9 @@
  */
 
 #include "HelloWorldSubscriber.h"
+
+#include "common.hpp"
+
 #include <fastrtps/attributes/ParticipantAttributes.h>
 #include <fastrtps/attributes/SubscriberAttributes.h>
 #include <fastdds/dds/domain/DomainParticipantFactory.hpp>
@@ -38,8 +41,11 @@ HelloWorldSubscriber::HelloWorldSubscriber()
 }
 
 bool HelloWorldSubscriber::init(
-        bool use_env)
+        bool use_env,
+        eprosima::examples::helloworld::AutomaticDiscovery discovery_mode)
 {
+    std::cout << "Subscriber discovery mode: " << discovery_mode << std::endl;
+
     DomainParticipantQos pqos = PARTICIPANT_QOS_DEFAULT;
     pqos.name("Participant_sub");
     auto factory = DomainParticipantFactory::get_instance();

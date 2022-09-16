@@ -22,6 +22,8 @@
 
 #include "HelloWorldPubSubTypes.h"
 
+#include "common.hpp"
+
 #include <fastdds/dds/domain/DomainParticipant.hpp>
 #include <fastdds/dds/subscriber/DataReaderListener.hpp>
 #include <fastrtps/subscriber/SampleInfo.h>
@@ -37,7 +39,8 @@ public:
 
     //!Initialize the subscriber
     bool init(
-            bool use_env);
+            bool use_env,
+            eprosima::examples::helloworld::AutomaticDiscovery discovery_mode);
 
     //!RUN the subscriber
     void run();

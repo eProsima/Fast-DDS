@@ -22,6 +22,8 @@
 
 #include "HelloWorldPubSubTypes.h"
 
+#include "common.hpp"
+
 #include <fastdds/dds/publisher/DataWriterListener.hpp>
 #include <fastdds/dds/topic/TypeSupport.hpp>
 #include <fastdds/dds/domain/DomainParticipant.hpp>
@@ -36,7 +38,8 @@ public:
 
     //!Initialize
     bool init(
-            bool use_env);
+            bool use_env,
+            eprosima::examples::helloworld::AutomaticDiscovery discovery_mode);
 
     //!Publish a sample
     bool publish(
