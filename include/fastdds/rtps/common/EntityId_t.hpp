@@ -189,6 +189,22 @@ struct RTPS_DllAPI EntityId_t
         return 0x2u & to_uint32() && !is_reader();
     }
 
+    /**
+     * Entity Id minor operator
+     * @param other Second entity id to compare
+     * @return True if other is higher or equal this
+     */
+    bool operator <(
+            const EntityId_t& other) const
+    {
+        return std::memcmp(value, other.value, size) < 0;
+    }
+
+    static int cmp(const EntityId_t& prefix1, const EntityId_t& prefix2)
+    {
+        return std::memcmp(prefix1.value, prefix2.value, size);
+    }
+
 };
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
