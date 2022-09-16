@@ -61,6 +61,14 @@ set(XTYPES_TEST_SOURCE
     ${XTYPES_SOURCE}
     )
 
+if(ANDROID)
+    if (ANDROID_NATIVE_API_LEVEL LESS 24)
+        list(APPEND XTYPES_TEST_SOURCE
+            ${ANDROID_IFADDRS_SOURCE_DIR}/ifaddrs.c
+            )
+    endif()
+endif()
+
 include_directories(mock/)
 
 add_executable(XTypesTests ${XTYPES_TEST_SOURCE})

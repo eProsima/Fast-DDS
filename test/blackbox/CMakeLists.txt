@@ -59,6 +59,7 @@ macro(add_blackbox_gtest)
                 list(GET GTEST_TEST_NAME 1 GTEST_GROUP_NAME)
                 list(GET GTEST_TEST_NAME 3 GTEST_TEST_NAME)
                 add_test(NAME ${test}.${GTEST_GROUP_NAME}.${GTEST_TEST_NAME}
+                    WORKING_DIRECTORY "/data/local/tmp"
                     COMMAND ${command} --gtest_filter=${GTEST_GROUP_NAME}.${GTEST_TEST_NAME})
 
                 # decide if disable
