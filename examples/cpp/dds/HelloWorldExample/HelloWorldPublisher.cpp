@@ -21,13 +21,15 @@
 
 #include "common.hpp"
 
+#include <fastdds/dds/domain/DomainParticipantFactory.hpp>
+#include <fastdds/dds/publisher/DataWriter.hpp>
+#include <fastdds/dds/publisher/Publisher.hpp>
+#include <fastdds/dds/publisher/qos/DataWriterQos.hpp>
+#include <fastdds/dds/publisher/qos/PublisherQos.hpp>
+#include <fastdds/rtps/common/Locator.h>
+#include <fastdds/rtps/common/LocatorList.hpp>
 #include <fastrtps/attributes/ParticipantAttributes.h>
 #include <fastrtps/attributes/PublisherAttributes.h>
-#include <fastdds/dds/domain/DomainParticipantFactory.hpp>
-#include <fastdds/dds/publisher/Publisher.hpp>
-#include <fastdds/dds/publisher/qos/PublisherQos.hpp>
-#include <fastdds/dds/publisher/DataWriter.hpp>
-#include <fastdds/dds/publisher/qos/DataWriterQos.hpp>
 
 #include <thread>
 
@@ -44,9 +46,18 @@ HelloWorldPublisher::HelloWorldPublisher()
 
 bool HelloWorldPublisher::init(
         bool use_env,
-        eprosima::examples::helloworld::AutomaticDiscovery discovery_mode)
+        eprosima::examples::helloworld::AutomaticDiscovery discovery_mode,
+        const eprosima::fastdds::rtps::LocatorList& initial_peers)
 {
     std::cout << "Publisher discovery mode: " << discovery_mode << std::endl;
+    if (!initial_peers.empty())
+    {
+        std::cout << "Publisher initial peers list:" << std::endl;
+        for (auto peer : initial_peers)
+        {
+            std::cout << "   - " << peer << std::endl;
+        }
+    }
 
     hello_.index(0);
     hello_.message("HelloWorld");

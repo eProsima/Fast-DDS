@@ -24,6 +24,8 @@
 #include "HelloWorldSubscriber.h"
 
 #include <fastdds/dds/domain/DomainParticipantFactory.hpp>
+#include <fastdds/rtps/common/Locator.h>
+#include <fastdds/rtps/common/LocatorList.hpp>
 #include <fastrtps/log/Log.h>
 
 #include <optionparser.hpp>
@@ -164,7 +166,8 @@ enum  optionIndex
     SAMPLES,
     INTERVAL,
     ENVIRONMENT,
-    AUTOMATIC_DISCOVERY
+    AUTOMATIC_DISCOVERY,
+    STATIC_PEERS
 };
 
 const option::Descriptor usage[] = {
@@ -173,6 +176,8 @@ const option::Descriptor usage[] = {
     { HELP,    0, "h", "help",               Arg::None,      "  -h \t--help  \tProduce help message." },
     { AUTOMATIC_DISCOVERY, 0, "a", "automatic_discovery", Arg::AutomaticDiscovery,
       "  -a \t--automatic_discovery   \toff|localhost|subnet (defaults: off)" },
+    { STATIC_PEERS, 0, "p", "static_peers", Arg::String,
+      "  -p \t--static_peers   \tComma separated list of initial peers as locators" },
     { UNKNOWN_OPT, 0, "", "",                Arg::None,      "\nPublisher options:"},
     { SAMPLES, 0, "s", "samples",            Arg::NumericRange<>,
       "  -s <num>, \t--samples=<num>  \tNumber of samples (0, default, infinite)." },
@@ -212,6 +217,7 @@ int main(
     bool use_environment_qos = false;
     eprosima::examples::helloworld::AutomaticDiscovery discovery_mode =
             eprosima::examples::helloworld::AutomaticDiscovery::OFF;
+    eprosima::fastdds::rtps::LocatorList initial_peers;
 
     argc -= (argc > 0);
     argv += (argc > 0); // skip program name argv[0] if present
@@ -326,6 +332,20 @@ int main(
                 discovery_mode = eprosima::examples::helloworld::AutomaticDiscovery::SUBNET;
             }
         }
+
+        opt = options[STATIC_PEERS];
+        if (opt)
+        {
+            std::stringstream option_stream(opt->arg);
+            std::string initial_peer;
+
+            while (std::getline(option_stream, initial_peer, ','))
+            {
+                eprosima::fastrtps::rtps::Locator_t loc;
+                std::istringstream(initial_peer) >> loc;
+                initial_peers.push_back(loc);
+            }
+        }
     }
 
     switch (type)
@@ -333,7 +353,7 @@ int main(
         case 1:
         {
             HelloWorldPublisher mypub;
-            if (mypub.init(use_environment_qos, discovery_mode))
+            if (mypub.init(use_environment_qos, discovery_mode, initial_peers))
             {
                 mypub.run(count, sleep);
             }
@@ -342,7 +362,7 @@ int main(
         case 2:
         {
             HelloWorldSubscriber mysub;
-            if (mysub.init(use_environment_qos, discovery_mode))
+            if (mysub.init(use_environment_qos, discovery_mode, initial_peers))
             {
                 mysub.run();
             }

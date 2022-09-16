@@ -24,9 +24,11 @@
 
 #include "common.hpp"
 
+#include <fastdds/dds/domain/DomainParticipant.hpp>
 #include <fastdds/dds/publisher/DataWriterListener.hpp>
 #include <fastdds/dds/topic/TypeSupport.hpp>
-#include <fastdds/dds/domain/DomainParticipant.hpp>
+#include <fastdds/rtps/common/Locator.h>
+#include <fastdds/rtps/common/LocatorList.hpp>
 
 class HelloWorldPublisher
 {
@@ -39,7 +41,8 @@ public:
     //!Initialize
     bool init(
             bool use_env,
-            eprosima::examples::helloworld::AutomaticDiscovery discovery_mode);
+            eprosima::examples::helloworld::AutomaticDiscovery discovery_mode,
+            const eprosima::fastdds::rtps::LocatorList& initial_peers);
 
     //!Publish a sample
     bool publish(

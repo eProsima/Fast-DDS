@@ -21,13 +21,15 @@
 
 #include "common.hpp"
 
+#include <fastdds/dds/domain/DomainParticipantFactory.hpp>
+#include <fastdds/dds/subscriber/DataReader.hpp>
+#include <fastdds/dds/subscriber/qos/DataReaderQos.hpp>
+#include <fastdds/dds/subscriber/SampleInfo.hpp>
+#include <fastdds/dds/subscriber/Subscriber.hpp>
+#include <fastdds/rtps/common/Locator.h>
+#include <fastdds/rtps/common/LocatorList.hpp>
 #include <fastrtps/attributes/ParticipantAttributes.h>
 #include <fastrtps/attributes/SubscriberAttributes.h>
-#include <fastdds/dds/domain/DomainParticipantFactory.hpp>
-#include <fastdds/dds/subscriber/Subscriber.hpp>
-#include <fastdds/dds/subscriber/DataReader.hpp>
-#include <fastdds/dds/subscriber/SampleInfo.hpp>
-#include <fastdds/dds/subscriber/qos/DataReaderQos.hpp>
 
 using namespace eprosima::fastdds::dds;
 
@@ -42,9 +44,18 @@ HelloWorldSubscriber::HelloWorldSubscriber()
 
 bool HelloWorldSubscriber::init(
         bool use_env,
-        eprosima::examples::helloworld::AutomaticDiscovery discovery_mode)
+        eprosima::examples::helloworld::AutomaticDiscovery discovery_mode,
+        const eprosima::fastdds::rtps::LocatorList& initial_peers)
 {
     std::cout << "Subscriber discovery mode: " << discovery_mode << std::endl;
+    if (!initial_peers.empty())
+    {
+        std::cout << "Subscriber initial peers list:" << std::endl;
+        for (auto peer : initial_peers)
+        {
+            std::cout << "   - " << peer << std::endl;
+        }
+    }
 
     DomainParticipantQos pqos = PARTICIPANT_QOS_DEFAULT;
     pqos.name("Participant_sub");

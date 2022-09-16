@@ -24,10 +24,12 @@
 
 #include "common.hpp"
 
+#include <fastdds/dds/core/status/SubscriptionMatchedStatus.hpp>
 #include <fastdds/dds/domain/DomainParticipant.hpp>
 #include <fastdds/dds/subscriber/DataReaderListener.hpp>
+#include <fastdds/rtps/common/Locator.h>
+#include <fastdds/rtps/common/LocatorList.hpp>
 #include <fastrtps/subscriber/SampleInfo.h>
-#include <fastdds/dds/core/status/SubscriptionMatchedStatus.hpp>
 
 class HelloWorldSubscriber
 {
@@ -40,7 +42,8 @@ public:
     //!Initialize the subscriber
     bool init(
             bool use_env,
-            eprosima::examples::helloworld::AutomaticDiscovery discovery_mode);
+            eprosima::examples::helloworld::AutomaticDiscovery discovery_mode,
+            const eprosima::fastdds::rtps::LocatorList& initial_peers);
 
     //!RUN the subscriber
     void run();
