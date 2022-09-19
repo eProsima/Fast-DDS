@@ -150,6 +150,38 @@ TEST(EntityIdTests, minor_opertor)
     }
 }
 
+/**
+ * @brief This test checks Entity Id compare \c operator== and \c operator!= method.
+ *
+ * Uses a manually sorted vector of entities to check cmp result.
+ *
+ * @note this method checks cmp sign, it does not use memcmp as testing the function with itself would not give info.
+ */
+TEST(EntityIdTests, equality)
+{
+    auto manually_sorted_entities = test::get_sorted_entityid_vector();
+
+    for (std::size_t i=0; i<manually_sorted_entities.size(); ++i)
+    {
+        for (std::size_t j=0; j<manually_sorted_entities.size(); ++j)
+        {
+            bool result_equal = manually_sorted_entities[i] == manually_sorted_entities[j];
+            bool result_non_equal = manually_sorted_entities[i] != manually_sorted_entities[j];
+
+            if (i == j)
+            {
+                ASSERT_TRUE(result_equal);
+                ASSERT_FALSE(result_non_equal);
+            }
+            else
+            {
+                ASSERT_FALSE(result_equal);
+                ASSERT_TRUE(result_non_equal);
+            }
+        }
+    }
+}
+
 int main(
         int argc,
         char** argv)
