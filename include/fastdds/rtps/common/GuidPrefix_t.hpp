@@ -94,7 +94,9 @@ struct RTPS_DllAPI GuidPrefix_t
      * @return < 0 if \c prefix1 is lower than \c prefix2 .
      * @return > 0 if \c prefix1 is higher than \c prefix2 .
      */
-    static int cmp(const GuidPrefix_t& prefix1, const GuidPrefix_t& prefix2)
+    static int cmp(
+            const GuidPrefix_t& prefix1,
+            const GuidPrefix_t& prefix2)
     {
         return std::memcmp(prefix1.value, prefix2.value, size);
     }

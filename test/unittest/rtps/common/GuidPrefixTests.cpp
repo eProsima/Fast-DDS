@@ -18,8 +18,7 @@
 
 using GuidPrefix = eprosima::fastrtps::rtps::GuidPrefix_t;
 
-namespace test
-{
+namespace test {
 
 /**
  * @brief Get a manually sorted guidprefix vector object
@@ -89,9 +88,9 @@ TEST(GuidPrefixTests, cmp)
 {
     auto manually_sorted_prefixes = test::get_sorted_guidprefix_vector();
 
-    for (std::size_t i=0; i<manually_sorted_prefixes.size(); ++i)
+    for (std::size_t i = 0; i < manually_sorted_prefixes.size(); ++i)
     {
-        for (std::size_t j=0; j<manually_sorted_prefixes.size(); ++j)
+        for (std::size_t j = 0; j < manually_sorted_prefixes.size(); ++j)
         {
             int result = GuidPrefix::cmp(manually_sorted_prefixes[i], manually_sorted_prefixes[j]);
 
@@ -125,9 +124,9 @@ TEST(GuidPrefixTests, minor_opertor)
 {
     auto manually_sorted_prefixes = test::get_sorted_guidprefix_vector();
 
-    for (std::size_t i=0; i<manually_sorted_prefixes.size(); ++i)
+    for (std::size_t i = 0; i < manually_sorted_prefixes.size(); ++i)
     {
-        for (std::size_t j=0; j<manually_sorted_prefixes.size(); ++j)
+        for (std::size_t j = 0; j < manually_sorted_prefixes.size(); ++j)
         {
             bool result = manually_sorted_prefixes[i] < manually_sorted_prefixes[j];
 
@@ -161,9 +160,9 @@ TEST(GuidPrefixTests, equality)
 {
     auto manually_sorted_entities = test::get_sorted_guidprefix_vector();
 
-    for (std::size_t i=0; i<manually_sorted_entities.size(); ++i)
+    for (std::size_t i = 0; i < manually_sorted_entities.size(); ++i)
     {
-        for (std::size_t j=0; j<manually_sorted_entities.size(); ++j)
+        for (std::size_t j = 0; j < manually_sorted_entities.size(); ++j)
         {
             bool result_equal = manually_sorted_entities[i] == manually_sorted_entities[j];
             bool result_non_equal = manually_sorted_entities[i] != manually_sorted_entities[j];

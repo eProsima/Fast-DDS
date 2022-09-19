@@ -18,8 +18,7 @@
 
 using EntityId = eprosima::fastrtps::rtps::EntityId_t;
 
-namespace test
-{
+namespace test {
 
 /**
  * @brief Get a manually sorted entityid vector object
@@ -89,9 +88,9 @@ TEST(EntityIdTests, cmp)
 {
     auto manually_sorted_entities = test::get_sorted_entityid_vector();
 
-    for (std::size_t i=0; i<manually_sorted_entities.size(); ++i)
+    for (std::size_t i = 0; i < manually_sorted_entities.size(); ++i)
     {
-        for (std::size_t j=0; j<manually_sorted_entities.size(); ++j)
+        for (std::size_t j = 0; j < manually_sorted_entities.size(); ++j)
         {
             int result = EntityId::cmp(manually_sorted_entities[i], manually_sorted_entities[j]);
 
@@ -125,9 +124,9 @@ TEST(EntityIdTests, minor_opertor)
 {
     auto manually_sorted_entities = test::get_sorted_entityid_vector();
 
-    for (std::size_t i=0; i<manually_sorted_entities.size(); ++i)
+    for (std::size_t i = 0; i < manually_sorted_entities.size(); ++i)
     {
-        for (std::size_t j=0; j<manually_sorted_entities.size(); ++j)
+        for (std::size_t j = 0; j < manually_sorted_entities.size(); ++j)
         {
             bool result = manually_sorted_entities[i] < manually_sorted_entities[j];
 
@@ -161,9 +160,9 @@ TEST(EntityIdTests, equality)
 {
     auto manually_sorted_entities = test::get_sorted_entityid_vector();
 
-    for (std::size_t i=0; i<manually_sorted_entities.size(); ++i)
+    for (std::size_t i = 0; i < manually_sorted_entities.size(); ++i)
     {
-        for (std::size_t j=0; j<manually_sorted_entities.size(); ++j)
+        for (std::size_t j = 0; j < manually_sorted_entities.size(); ++j)
         {
             bool result_equal = manually_sorted_entities[i] == manually_sorted_entities[j];
             bool result_non_equal = manually_sorted_entities[i] != manually_sorted_entities[j];

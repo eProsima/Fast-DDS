@@ -18,8 +18,7 @@
 
 using Guid = eprosima::fastrtps::rtps::GUID_t;
 
-namespace test
-{
+namespace test {
 
 /**
  * @brief Get a manually sorted guid vector object
@@ -111,9 +110,9 @@ TEST(GuidTests, minor_opertor)
 {
     auto manually_sorted_guids = test::get_sorted_guid_vector();
 
-    for (std::size_t i=0; i<manually_sorted_guids.size(); ++i)
+    for (std::size_t i = 0; i < manually_sorted_guids.size(); ++i)
     {
-        for (std::size_t j=0; j<manually_sorted_guids.size(); ++j)
+        for (std::size_t j = 0; j < manually_sorted_guids.size(); ++j)
         {
             bool result = manually_sorted_guids[i] < manually_sorted_guids[j];
 
@@ -122,21 +121,21 @@ TEST(GuidTests, minor_opertor)
                 // [i] == [j] so false
                 ASSERT_FALSE(result) <<
                     "[" << i << "] " << manually_sorted_guids[i] << " < " <<
-                    "[" << j << "] " << manually_sorted_guids[j] ;
+                    "[" << j << "] " << manually_sorted_guids[j];
             }
             else if (i < j)
             {
                 // [i] < [j] so true
                 ASSERT_TRUE(result) <<
                     "[" << i << "] " << manually_sorted_guids[i] << " < " <<
-                    "[" << j << "] " << manually_sorted_guids[j] ;
+                    "[" << j << "] " << manually_sorted_guids[j];
             }
             else
             {
                 // [i] > [j] so false
                 ASSERT_FALSE(result) <<
                     "[" << i << "] " << manually_sorted_guids[i] << " < " <<
-                    "[" << j << "] " << manually_sorted_guids[j] ;
+                    "[" << j << "] " << manually_sorted_guids[j];
             }
         }
     }
@@ -153,9 +152,9 @@ TEST(GuidTests, equality)
 {
     auto manually_sorted_entities = test::get_sorted_guid_vector();
 
-    for (std::size_t i=0; i<manually_sorted_entities.size(); ++i)
+    for (std::size_t i = 0; i < manually_sorted_entities.size(); ++i)
     {
-        for (std::size_t j=0; j<manually_sorted_entities.size(); ++j)
+        for (std::size_t j = 0; j < manually_sorted_entities.size(); ++j)
         {
             bool result_equal = manually_sorted_entities[i] == manually_sorted_entities[j];
             bool result_non_equal = manually_sorted_entities[i] != manually_sorted_entities[j];

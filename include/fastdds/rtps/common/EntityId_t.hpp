@@ -210,7 +210,9 @@ struct RTPS_DllAPI EntityId_t
      * @return < 0 if \c entity1 is lower than \c entity2 .
      * @return > 0 if \c entity1 is higher than \c entity2 .
      */
-    static int cmp(const EntityId_t& entity1, const EntityId_t& entity2)
+    static int cmp(
+            const EntityId_t& entity1,
+            const EntityId_t& entity2)
     {
         return std::memcmp(entity1.value, entity2.value, size);
     }
@@ -264,7 +266,7 @@ inline bool operator !=(
 {
     // Use == operator as it is faster enough.
     // NOTE: this could be done comparing the entities backwards (starting in [3]) as it would probably be faster.
-    return !(operator==(id1, id2));
+    return !(operator ==(id1, id2));
 }
 
 #endif // ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
