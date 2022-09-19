@@ -18,6 +18,19 @@ configure_file(${CMAKE_CURRENT_SOURCE_DIR}/../profiles/test_xml_profiles.xml
 
 set(SUBSCRIBERTESTS_SOURCE SubscriberTests.cpp)
 set(DATAREADERTESTS_SOURCE DataReaderTests.cpp)
+set(DATAREADERINSTANCETESTS_SOURCE DataReaderInstanceTests.cpp
+    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/common/Time_t.cpp
+    )
+set(DATAREADERHISTORYTESTS_SOURCE DataReaderHistoryTests.cpp
+    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/common/Time_t.cpp
+    ${PROJECT_SOURCE_DIR}/src/cpp/utils/SystemInfo.cpp
+    ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/log/Log.cpp
+    ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/log/OStreamConsumer.cpp
+    ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/log/StdoutConsumer.cpp
+    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/history/History.cpp
+    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/history/ReaderHistory.cpp
+    ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/subscriber/history/DataReaderHistory.cpp
+    )
 
 if(WIN32)
     add_definitions(-D_WIN32_WINNT=0x0601)
@@ -50,3 +63,39 @@ target_link_libraries(DataReaderTests fastrtps fastcdr foonathan_memory
     GTest::gmock
     ${CMAKE_DL_LIBS})
 add_gtest(DataReaderTests SOURCES ${DATAREADERTESTS_SOURCE})
+
+add_executable(DataReaderInstanceTests ${DATAREADERINSTANCETESTS_SOURCE})
+target_compile_definitions(DataReaderInstanceTests PRIVATE FASTRTPS_NO_LIB
+    $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
+    $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
+    )
+target_include_directories(DataReaderInstanceTests PRIVATE
+    ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include
+    ${PROJECT_SOURCE_DIR}/src/cpp
+    )
+target_link_libraries(DataReaderInstanceTests foonathan_memory
+    GTest::gmock
+    ${CMAKE_DL_LIBS})
+add_gtest(DataReaderInstanceTests SOURCES ${DATAREADERINSTANCETESTS_SOURCE})
+
+add_executable(DataReaderHistoryTests ${DATAREADERHISTORYTESTS_SOURCE})
+target_compile_definitions(DataReaderHistoryTests PRIVATE FASTRTPS_NO_LIB
+    $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
+    $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
+    $<$<BOOL:${MSVC}>:NOMINMAX> # avoid conflic with std::min & std::max in visual studio
+    # acknowledge atomic layout issue on old versions of visual studio STL
+    $<$<AND:$<BOOL:${MSVC}>,$<VERSION_LESS:${CMAKE_CXX_COMPILER_VERSION},19.29.30140.0>>:_ENABLE_ATOMIC_ALIGNMENT_FIX>
+    )
+target_include_directories(DataReaderHistoryTests PRIVATE
+    ${PROJECT_SOURCE_DIR}/test/mock/rtps/RTPSReader
+    ${PROJECT_SOURCE_DIR}/test/mock/rtps/StatelessReader
+    ${PROJECT_SOURCE_DIR}/test/mock/dds/Topic
+    ${PROJECT_SOURCE_DIR}/test/mock/dds/TypeSupport
+    ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include
+    ${PROJECT_SOURCE_DIR}/src/cpp
+    ${THIRDPARTY_BOOST_INCLUDE_DIR}
+    )
+target_link_libraries(DataReaderHistoryTests fastcdr foonathan_memory
+    GTest::gmock
+    ${CMAKE_DL_LIBS})
+add_gtest(DataReaderHistoryTests SOURCES ${DATAREADERHISTORYTESTS_SOURCE})

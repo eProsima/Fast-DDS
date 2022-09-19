@@ -47,7 +47,7 @@ struct DataReaderInstance
     //! The list of alive writers for this instance
     WriterCollection alive_writers;
     //! GUID and strength of the current maximum strength writer
-    WriterOwnership current_owner{ {}, 0 };
+    WriterOwnership current_owner{ {}, std::numeric_limits<uint32_t>::max() };
     //! The time when the group will miss the deadline
     std::chrono::steady_clock::time_point next_deadline_us;
     //! Current view state of the instance
@@ -67,11 +67,35 @@ struct DataReaderInstance
     {
     }
 
+    void writer_update_its_ownership_strength(
+            const fastrtps::rtps::GUID_t& writer_guid,
+            const uint32_t ownership_strength)
+    {
+        if (writer_guid == current_owner.first)
+        {
+            // Check it is an "alive" writer.
+            auto writer_it = std::find_if(alive_writers.begin(), alive_writers.end(),
+                            [&writer_guid](const WriterOwnership& item)
+                            {
+                                return item.first == writer_guid;
+                            });
+
+            assert(alive_writers.end() != writer_it);
+
+            // Update writer info
+            (*writer_it).second = ownership_strength;
+            current_owner.second = ownership_strength;
+            update_owner();
+        }
+
+        return;
+    }
+
     bool update_state(
             DataReaderHistoryCounters& counters,
             const fastrtps::rtps::ChangeKind_t change_kind,
             const fastrtps::rtps::GUID_t& writer_guid,
-            const uint32_t ownership_strength = 0)
+            const uint32_t ownership_strength)
     {
         bool ret_val = false;
 
@@ -118,6 +142,30 @@ struct DataReaderInstance
         return has_been_accounted_ && writer_unregister(counters, writer_guid);
     }
 
+    void deadline_missed()
+    {
+        if (fastrtps::rtps::c_Guid_Unknown != current_owner.first)
+        {
+            if (alive_writers.remove_if([&](const WriterOwnership& item)
+                    {
+                        return item.first == current_owner.first;
+                    }))
+            {
+
+                current_owner.second = 0;
+                current_owner.first = fastrtps::rtps::c_Guid_Unknown;
+                if (alive_writers.empty() && (InstanceStateKind::ALIVE_INSTANCE_STATE == instance_state))
+                {
+                    instance_state = InstanceStateKind::NOT_ALIVE_NO_WRITERS_INSTANCE_STATE;
+                }
+                if (ALIVE_INSTANCE_STATE == instance_state)
+                {
+                    update_owner();
+                }
+            }
+        }
+    }
+
 private:
 
     //! Whether this instance has ever been included in the history counters
@@ -130,11 +178,38 @@ private:
     {
         bool ret_val = false;
 
-        if (ownership_strength >= current_owner.second)
+        if (writer_guid == current_owner.first) // Accept sample of current owner.
+        {
+            current_owner.second = ownership_strength;
+            ret_val = true;
+        }
+        else if (ownership_strength > current_owner.second) // Accept sample of greater strength writer
         {
             current_owner.first = writer_guid;
             current_owner.second = ownership_strength;
+            ret_val = true;
+        }
+        else if (ownership_strength == current_owner.second &&
+                writer_guid < current_owner.first) // Check if new writer has lower GUID.
+        {
+            current_owner.first = writer_guid;
+            ret_val = true;
+        }
+        else if (std::numeric_limits<uint32_t>::max() == ownership_strength) // uint32_t::max indicates we are in SHARED_OWNERSHIP_QOS.
+        {
+            assert(eprosima::fastrtps::rtps::c_Guid_Unknown == current_owner.first);
+            assert(std::numeric_limits<uint32_t>::max() == current_owner.second);
+            ret_val = true;
+        }
+        else if (eprosima::fastrtps::rtps::c_Guid_Unknown == current_owner.first) // Without owner.
+        {
+            current_owner.first = writer_guid;
+            current_owner.second = ownership_strength;
+            ret_val = true;
+        }
 
+        if (ret_val)
+        {
             if (InstanceStateKind::NOT_ALIVE_DISPOSED_INSTANCE_STATE == instance_state)
             {
                 counters_update(counters.instances_disposed, counters.instances_alive, counters, true);
@@ -142,21 +217,20 @@ private:
                 ++disposed_generation_count;
                 alive_writers.clear();
                 view_state = ViewStateKind::NEW_VIEW_STATE;
-                ret_val = true;
             }
             else if (InstanceStateKind::NOT_ALIVE_NO_WRITERS_INSTANCE_STATE == instance_state)
             {
                 counters_update(counters.instances_no_writers, counters.instances_alive, counters, true);
 
                 ++no_writers_generation_count;
-                alive_writers.clear();
+                assert(0 == alive_writers.size());
                 view_state = ViewStateKind::NEW_VIEW_STATE;
-                ret_val = true;
             }
 
-            writer_set(writer_guid, ownership_strength);
             instance_state = InstanceStateKind::ALIVE_INSTANCE_STATE;
         }
+
+        writer_set(writer_guid, ownership_strength);
 
         return ret_val;
     }
@@ -168,11 +242,16 @@ private:
     {
         bool ret_val = false;
 
-        writer_set(writer_guid, ownership_strength);
-        if (ownership_strength >= current_owner.second)
+        if (ownership_strength >= current_owner.second ||
+                (ownership_strength == current_owner.second &&
+                writer_guid < current_owner.first)
+                )
         {
-            current_owner.first = writer_guid;
-            current_owner.second = ownership_strength;
+            if (std::numeric_limits<uint32_t>::max() != ownership_strength) // Not SHARED_OWNERSHIP_QOS
+            {
+                current_owner.first = writer_guid;
+                current_owner.second = ownership_strength;
+            }
 
             if (InstanceStateKind::ALIVE_INSTANCE_STATE == instance_state)
             {
@@ -181,6 +260,8 @@ private:
                 counters_update(counters.instances_alive, counters.instances_disposed, counters, false);
             }
         }
+
+        writer_set(writer_guid, ownership_strength);
 
         return ret_val;
     }
@@ -191,22 +272,28 @@ private:
     {
         bool ret_val = false;
 
-        alive_writers.remove_if([&writer_guid](const WriterOwnership& item)
+        if (alive_writers.remove_if([&writer_guid](const WriterOwnership& item)
                 {
                     return item.first == writer_guid;
-                });
-
-        if (writer_guid == current_owner.first)
+                }))
         {
-            current_owner.second = 0;
-            current_owner.first = fastrtps::rtps::c_Guid_Unknown;
-        }
+            if (writer_guid == current_owner.first)
+            {
+                current_owner.second = 0;
+                current_owner.first = fastrtps::rtps::c_Guid_Unknown;
+                if (ALIVE_INSTANCE_STATE == instance_state)
+                {
+                    update_owner();
+                }
+            }
 
-        if (alive_writers.empty() && (InstanceStateKind::ALIVE_INSTANCE_STATE == instance_state))
-        {
+            if (alive_writers.empty() && (InstanceStateKind::ALIVE_INSTANCE_STATE == instance_state))
+            {
+                instance_state = InstanceStateKind::NOT_ALIVE_NO_WRITERS_INSTANCE_STATE;
+                counters_update(counters.instances_alive, counters.instances_no_writers, counters, false);
+            }
+
             ret_val = true;
-            instance_state = InstanceStateKind::NOT_ALIVE_NO_WRITERS_INSTANCE_STATE;
-            counters_update(counters.instances_alive, counters.instances_no_writers, counters, false);
         }
 
         return ret_val;
@@ -243,6 +330,21 @@ private:
             ++counters.instances_new;
             --counters.instances_not_new;
         }
+    }
+
+    void update_owner()
+    {
+        std::for_each(alive_writers.begin(), alive_writers.end(),
+                [&](const WriterOwnership& item)
+                {
+                    if (item.second > current_owner.second ||
+                    (item.second == current_owner.second &&
+                    item.first < current_owner.first)
+                    )
+                    {
+                        current_owner = item;
+                    }
+                });
     }
 
 };

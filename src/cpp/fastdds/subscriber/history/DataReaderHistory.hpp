@@ -229,12 +229,14 @@ public:
      *
      * @param handle The handle to the instance
      * @param next_deadline_us The time point when the deadline will occur
+     * @param[in] deadline_missed true value when is called because the deadline was missed.
      *
      * @return True if the deadline was set correctly
      */
     bool set_next_deadline(
             const InstanceHandle_t& handle,
-            const std::chrono::steady_clock::time_point& next_deadline_us);
+            const std::chrono::steady_clock::time_point& next_deadline_us,
+            bool deadline_missed = false);
 
     /**
      * @brief A method to get the next instance handle that will miss the deadline and the time when the deadline will occur.
@@ -321,7 +323,14 @@ public:
     void instance_viewed_nts(
             const InstanceCollection::mapped_type& instance);
 
-    void update_instance_nts(
+    /*!
+     * @brief Updates instance's information and also decides whether the sample is finally accepted or denied depending
+     * on the Ownership strength.
+     *
+     * @param[in] change Sample received by DataReader.
+     * @return true is returned when the sample is accepted and false when the sample is denied.
+     */
+    bool update_instance_nts(
             CacheChange_t* const change);
 
     void writer_not_alive(
@@ -331,6 +340,16 @@ public:
             instance_info& instance_info);
 
     StateFilter get_mask_status() const noexcept;
+
+    /*!
+     * @brief This function should be called by reader if a writer updates its ownership strength.
+     *
+     * @param[in] writer_guid Guid of the writer which changes its ownership strength.
+     * @param[out] ownership_strength New value of the writer's Ownership strength.
+     */
+    void writer_update_its_ownership_strength_nts(
+            const GUID_t& writer_guid,
+            const uint32_t ownership_strength) override;
 
 private:
 

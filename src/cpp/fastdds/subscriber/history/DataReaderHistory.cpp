@@ -34,9 +34,12 @@
 #include <rtps/reader/WriterProxy.h>
 #include <utils/collections/sorted_vector_insert.hpp>
 
-using namespace eprosima::fastdds::dds;
-using namespace eprosima::fastdds::dds::detail;
 using namespace eprosima::fastrtps::rtps;
+
+namespace eprosima {
+namespace fastdds {
+namespace dds {
+namespace detail {
 
 using eprosima::fastrtps::RecursiveTimedMutex;
 
@@ -517,7 +520,8 @@ bool DataReaderHistory::remove_change_sub(
 
 bool DataReaderHistory::set_next_deadline(
         const InstanceHandle_t& handle,
-        const std::chrono::steady_clock::time_point& next_deadline_us)
+        const std::chrono::steady_clock::time_point& next_deadline_us,
+        bool deadline_missed)
 {
     if (mp_reader == nullptr || mp_mutex == nullptr)
     {
@@ -531,6 +535,10 @@ bool DataReaderHistory::set_next_deadline(
         return false;
     }
 
+    if (deadline_missed)
+    {
+        it->second->deadline_missed();
+    }
     it->second->next_deadline_us = next_deadline_us;
     return true;
 }
@@ -646,14 +654,13 @@ std::pair<bool, DataReaderHistory::instance_info> DataReaderHistory::next_availa
 void DataReaderHistory::check_and_remove_instance(
         DataReaderHistory::instance_info& instance_info)
 {
-    if (instance_info->second->cache_changes.empty())
+    DataReaderInstance* instance = instance_info->second.get();
+    if (instance->cache_changes.empty() &&
+            (InstanceStateKind::ALIVE_INSTANCE_STATE != instance->instance_state) &&
+            instance->alive_writers.empty() &&
+            instance_info->first.isDefined())
     {
-        if ((InstanceStateKind::ALIVE_INSTANCE_STATE != instance_info->second->instance_state) &&
-                instance_info->first.isDefined())
-        {
-            instances_.erase(instance_info->first);
-        }
-
+        instances_.erase(instance_info->first);
         instance_info = data_available_instances_.erase(instance_info);
     }
 }
@@ -810,7 +817,7 @@ void DataReaderHistory::instance_viewed_nts(
     }
 }
 
-void DataReaderHistory::update_instance_nts(
+bool DataReaderHistory::update_instance_nts(
         CacheChange_t* const change)
 {
     InstanceCollection::iterator vit;
@@ -819,9 +826,13 @@ void DataReaderHistory::update_instance_nts(
     assert(vit != instances_.end());
     assert(false == change->isRead);
     ++counters_.samples_unread;
-    vit->second->update_state(counters_, change->kind, change->writerGUID);
+    bool ret =
+            vit->second->update_state(counters_, change->kind, change->writerGUID,
+                    change->reader_info.writer_ownership_strength);
     change->reader_info.disposed_generation_count = vit->second->disposed_generation_count;
     change->reader_info.no_writers_generation_count = vit->second->no_writers_generation_count;
+
+    return ret;
 }
 
 void DataReaderHistory::writer_not_alive(
@@ -850,3 +861,18 @@ StateFilter DataReaderHistory::get_mask_status() const noexcept
             (counters_.instances_no_writers ? NOT_ALIVE_NO_WRITERS_INSTANCE_STATE : 0))
     };
 }
+
+void DataReaderHistory::writer_update_its_ownership_strength_nts(
+        const GUID_t& writer_guid,
+        const uint32_t ownership_strength)
+{
+    for (auto& instance : instances_)
+    {
+        instance.second->writer_update_its_ownership_strength(writer_guid, ownership_strength);
+    }
+}
+
+} // namespace detail
+} // namsepace dds
+} // namespace fastdds
+} // namsepace eprosima

@@ -28,6 +28,7 @@
 #include <fastdds/rtps/common/SampleIdentity.h>
 #include <fastdds/rtps/common/Time_t.h>
 #include <fastdds/rtps/common/Types.h>
+#include <fastdds/dds/common/InstanceHandle.hpp>
 
 namespace eprosima {
 namespace fastdds {

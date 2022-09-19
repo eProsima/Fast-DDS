@@ -1258,6 +1258,14 @@ public:
         return *this;
     }
 
+    PubSubWriter& ownership_strength(
+            uint32_t strength)
+    {
+        datawriter_qos_.ownership().kind = eprosima::fastdds::dds::EXCLUSIVE_OWNERSHIP_QOS;
+        datawriter_qos_.ownership_strength().value = strength;
+        return *this;
+    }
+
     PubSubWriter& load_publisher_attr(
             const std::string& /*xml*/)
     {
@@ -1369,6 +1377,11 @@ public:
         publisher_qos_.partition().clear();
         publisher_qos_.partition().push_back(partition.c_str());
         return (ReturnCode_t::RETCODE_OK == publisher_->set_qos(publisher_qos_));
+    }
+
+    bool set_qos()
+    {
+        return (ReturnCode_t::RETCODE_OK == datawriter_->set_qos(datawriter_qos_));
     }
 
     bool remove_all_changes(

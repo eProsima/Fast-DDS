@@ -97,11 +97,20 @@ bool StatelessReader::matched_writer_add(
         std::unique_lock<RecursiveTimedMutex> guard(mp_mutex);
         listener = mp_listener;
 
-        for (const RemoteWriterInfo_t& writer : matched_writers_)
+        for (RemoteWriterInfo_t& writer : matched_writers_)
         {
             if (writer.guid == wdata.guid())
             {
-                logWarning(RTPS_READER, "Attempting to add existing writer");
+                logInfo(RTPS_READER, "Attempting to add existing writer, updating information");
+
+                if (EXCLUSIVE_OWNERSHIP_QOS == m_att.ownershipKind &&
+                        writer.ownership_strength != wdata.m_qos.m_ownershipStrength.value)
+                {
+                    mp_history->writer_update_its_ownership_strength_nts(
+                        writer.guid, wdata.m_qos.m_ownershipStrength.value);
+                }
+                writer.ownership_strength = wdata.m_qos.m_ownershipStrength.value;
+
                 if (nullptr != listener)
                 {
                     // call the listener without the lock taken
@@ -121,6 +130,7 @@ bool StatelessReader::matched_writer_add(
         info.persistence_guid = wdata.persistence_guid();
         info.has_manual_topic_liveliness = (MANUAL_BY_TOPIC_LIVELINESS_QOS == wdata.m_qos.m_liveliness.kind);
         info.is_datasharing = is_datasharing;
+        info.ownership_strength = wdata.m_qos.m_ownershipStrength.value;
 
         if (is_datasharing)
         {
@@ -267,6 +277,22 @@ bool StatelessReader::change_received(
     // TODO Revisar si no hay que incluirlo.
     if (!thereIsUpperRecordOf(change->writerGUID, change->sequenceNumber))
     {
+        // Update Ownership strength.
+        if (EXCLUSIVE_OWNERSHIP_QOS == m_att.ownershipKind)
+        {
+            auto writer = std::find_if(matched_writers_.begin(), matched_writers_.end(),
+                            [change](const RemoteWriterInfo_t& item)
+                            {
+                                return item.guid == change->writerGUID;
+                            });
+            assert(matched_writers_.end() != writer);
+            change->reader_info.writer_ownership_strength = writer->ownership_strength;
+        }
+        else
+        {
+            change->reader_info.writer_ownership_strength = std::numeric_limits<uint32_t>::max();
+        }
+
         if (mp_history->received_change(change, 0))
         {
             auto payload_length = change->serializedPayload.length;

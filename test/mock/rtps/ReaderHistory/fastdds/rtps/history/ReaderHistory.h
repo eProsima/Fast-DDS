@@ -161,6 +161,14 @@ public:
     {
     }
 
+    virtual void writer_update_its_ownership_strength_nts(
+            const GUID_t& writer_guid,
+            const uint32_t ownership_strength)
+    {
+        static_cast<void>(writer_guid);
+        static_cast<void>(ownership_strength);
+    }
+
     HistoryAttributes m_att;
 
 protected:

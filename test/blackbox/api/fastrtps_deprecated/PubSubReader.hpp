@@ -342,7 +342,7 @@ public:
     }
 
     void startReception(
-            std::list<type>& msgs)
+            const std::list<type>& msgs)
     {
         mutex_.lock();
         total_msgs_ = msgs;
@@ -538,7 +538,8 @@ public:
         return ret_value;
     }
 
-    void wait_writer_undiscovery()
+    void wait_writer_undiscovery(
+            unsigned int matched = 0)
     {
         std::unique_lock<std::mutex> lock(mutexDiscovery_);
 
@@ -546,7 +547,7 @@ public:
 
         cvDiscovery_.wait(lock, [&]()
                 {
-                    return matched_ == 0;
+                    return matched_ <= matched;
                 });
 
         std::cout << "Reader removal finished..." << std::endl;
@@ -1045,6 +1046,12 @@ public:
     {
         participant_attr_.rtps.builtin.discovery_config.leaseDuration = lease_duration;
         participant_attr_.rtps.builtin.discovery_config.leaseDuration_announcementperiod = announce_period;
+        return *this;
+    }
+
+    PubSubReader& ownership_exclusive()
+    {
+        subscriber_attr_.qos.m_ownership.kind = eprosima::fastdds::dds::EXCLUSIVE_OWNERSHIP_QOS;
         return *this;
     }
 

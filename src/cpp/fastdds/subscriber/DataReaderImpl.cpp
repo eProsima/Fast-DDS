@@ -140,6 +140,7 @@ ReturnCode_t DataReaderImpl::enable()
     att.endpoint.unicastLocatorList = qos_.endpoint().unicast_locator_list;
     att.endpoint.remoteLocatorList = qos_.endpoint().remote_locator_list;
     att.endpoint.properties = qos_.properties();
+    att.endpoint.ownershipKind = qos_.ownership().kind;
     att.endpoint.setEntityID(qos_.endpoint().entity_id);
     att.endpoint.setUserDefinedID(qos_.endpoint().user_defined_id);
     att.times = qos_.reliable_reader_qos().times;
@@ -1003,6 +1004,15 @@ bool DataReaderImpl::on_data_available(
 bool DataReaderImpl::on_new_cache_change_added(
         const CacheChange_t* const change)
 {
+    std::lock_guard<RecursiveTimedMutex> guard(reader_->getMutex());
+
+    CacheChange_t* new_change = const_cast<CacheChange_t*>(change);
+    if (!history_.update_instance_nts(new_change))
+    {
+        history_.remove_change_sub(new_change);
+        return false;
+    }
+
     if (qos_.deadline().period != c_TimeInfinite)
     {
         if (!history_.set_next_deadline(
@@ -1020,9 +1030,6 @@ bool DataReaderImpl::on_new_cache_change_added(
             }
         }
     }
-
-    CacheChange_t* new_change = const_cast<CacheChange_t*>(change);
-    history_.update_instance_nts(new_change);
 
     if (qos_.lifespan().duration == c_TimeInfinite)
     {
@@ -1153,7 +1160,7 @@ bool DataReaderImpl::deadline_missed()
 
     if (!history_.set_next_deadline(
                 timer_owner_,
-                steady_clock::now() + duration_cast<system_clock::duration>(deadline_duration_us_)))
+                steady_clock::now() + duration_cast<system_clock::duration>(deadline_duration_us_), true))
     {
         logError(SUBSCRIBER, "Could not set next deadline in the history");
         return false;
@@ -1420,11 +1427,6 @@ ReturnCode_t DataReaderImpl::check_qos(
     {
         logError(DDS_QOS_CHECK, "BY SOURCE TIMESTAMP DestinationOrder not supported");
         return ReturnCode_t::RETCODE_UNSUPPORTED;
-    }
-    if (qos.reliability().kind == BEST_EFFORT_RELIABILITY_QOS && qos.ownership().kind == EXCLUSIVE_OWNERSHIP_QOS)
-    {
-        logError(DDS_QOS_CHECK, "BEST_EFFORT incompatible with EXCLUSIVE ownership");
-        return ReturnCode_t::RETCODE_INCONSISTENT_POLICY;
     }
     if (qos.reader_resource_limits().max_samples_per_read <= 0)
     {
@@ -2047,4 +2049,3 @@ void DataReaderImpl::try_notify_read_conditions() noexcept
 }  // namespace dds
 }  // namespace fastdds
 }  // namespace eprosima
-

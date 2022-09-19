@@ -658,11 +658,6 @@ TEST_F(DataReaderTests, InvalidQos)
     const ReturnCode_t inconsistent_code = ReturnCode_t::RETCODE_INCONSISTENT_POLICY;
 
     qos = DATAREADER_QOS_DEFAULT;
-    qos.reliability().kind = BEST_EFFORT_RELIABILITY_QOS;
-    qos.ownership().kind = EXCLUSIVE_OWNERSHIP_QOS;
-    EXPECT_EQ(inconsistent_code, data_reader_->set_qos(qos));
-
-    qos = DATAREADER_QOS_DEFAULT;
     qos.reader_resource_limits().max_samples_per_read = -1;
     EXPECT_EQ(inconsistent_code, data_reader_->set_qos(qos));
 

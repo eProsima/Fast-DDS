@@ -25,6 +25,7 @@
 
 #include <fastdds/dds/core/policy/QosPolicies.hpp>
 #include <fastdds/rtps/common/InstanceHandle.h>
+#include <fastdds/rtps/common/SerializedPayload.h>
 
 #include <fastrtps/fastrtps_dll.h>
 #include <fastrtps/utils/md5.h>
