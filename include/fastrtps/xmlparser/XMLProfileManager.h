@@ -47,7 +47,6 @@ using replier_map_iterator_t = replier_map_t::iterator;
 using xmlfiles_map_t = std::map<std::string, XMLP_ret>;
 using xmlfile_map_iterator_t = xmlfiles_map_t::iterator;
 
-
 /**
  * Class XMLProfileManager, used to make available profiles from XML file.
  * @ingroup XMLPROFILEMANAGER_MODULE

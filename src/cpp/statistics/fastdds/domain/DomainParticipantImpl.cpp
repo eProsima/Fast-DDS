@@ -45,10 +45,20 @@
 #include <statistics/types/typesPubSubTypes.h>
 #include <utils/SystemInfo.hpp>
 
+#include <fastrtps/attributes/PublisherAttributes.h>
+#include <fastrtps/xmlparser/XMLProfileManager.h>
+#include <fastrtps/xmlparser/XMLParserCommon.h>
+#include <fastdds/utils/QosConverters.hpp>
+
 namespace eprosima {
 namespace fastdds {
 namespace statistics {
 namespace dds {
+
+using fastrtps::xmlparser::XMLProfileManager;
+using fastrtps::xmlparser::XMLP_ret;
+using fastrtps::xmlparser::DEFAULT_STATISTICS_DATAWRITER_PROFILE;
+using fastrtps::PublisherAttributes;
 
 constexpr const char* HISTORY_LATENCY_TOPIC_ALIAS = "HISTORY_LATENCY_TOPIC";
 constexpr const char* NETWORK_LATENCY_TOPIC_ALIAS = "NETWORK_LATENCY_TOPIC";
@@ -164,6 +174,39 @@ ReturnCode_t DomainParticipantImpl::enable_statistics_datawriter(
     return ReturnCode_t::RETCODE_ERROR;
 }
 
+ReturnCode_t DomainParticipantImpl::enable_statistics_datawriter_with_profile(
+        const std::string& profile_name,
+        const std::string& topic_name)
+{
+    DataWriterQos datawriter_qos;
+    PublisherAttributes attr;
+    if (XMLP_ret::XML_OK == XMLProfileManager::fillPublisherAttributes(profile_name, attr))
+    {
+        efd::utils::set_qos_from_attributes(datawriter_qos, attr);
+
+        ReturnCode_t ret = enable_statistics_datawriter(topic_name, datawriter_qos);
+        // case RETCODE_ERROR is checked and logged in enable_statistics_datawriter.
+        // case RETCODE_INCONSISTENT_POLICY could happen if profile defined in XML is inconsistent.
+        // case RETCODE_UNSUPPORTED cannot happen because this method is only called if FASTDDS_STATISTICS
+        // CMake option is enabled
+        if (ret == ReturnCode_t::RETCODE_INCONSISTENT_POLICY)
+        {
+            logError(STATISTICS_DOMAIN_PARTICIPANT,
+                    "Statistics DataWriter QoS from profile name " << profile_name << " are not consistent/compatible");
+        }
+        assert(ret != ReturnCode_t::RETCODE_UNSUPPORTED);
+        if (ret == ReturnCode_t::RETCODE_BAD_PARAMETER)
+        {
+            logError(STATISTICS_DOMAIN_PARTICIPANT,
+                    "Profile name " << profile_name << " is not a valid statistics topic name/alias");
+        }
+        return ret;
+    }
+    logError(STATISTICS_DOMAIN_PARTICIPANT,
+            "Profile name " << profile_name << " has not been found");
+    return ReturnCode_t::RETCODE_ERROR;
+}
+
 ReturnCode_t DomainParticipantImpl::disable_statistics_datawriter(
         const std::string& topic_name)
 {
@@ -274,12 +317,28 @@ void DomainParticipantImpl::enable_statistics_builtin_datawriters(
     std::string topic;
     while (std::getline(topics, topic, ';'))
     {
-        ReturnCode_t ret = enable_statistics_datawriter(topic, STATISTICS_DATAWRITER_QOS);
+        DataWriterQos datawriter_qos;
+        PublisherAttributes attr;
+        if (XMLP_ret::XML_OK == XMLProfileManager::fillPublisherAttributes(topic, attr))
+        {
+            efd::utils::set_qos_from_attributes(datawriter_qos, attr);
+        }
+        else if (XMLP_ret::XML_OK ==
+                XMLProfileManager::fillPublisherAttributes(DEFAULT_STATISTICS_DATAWRITER_PROFILE, attr))
+        {
+            efd::utils::set_qos_from_attributes(datawriter_qos, attr);
+        }
+
+        ReturnCode_t ret = enable_statistics_datawriter(topic, datawriter_qos);
         // case RETCODE_ERROR is checked and logged in enable_statistics_datawriter.
-        // case RETCODE_INCONSISTENT_POLICY cannot happen. STATISTICS_DATAWRITER_QOS is consistent.
+        // case RETCODE_INCONSISTENT_POLICY could happen if profile defined in XML is inconsistent.
         // case RETCODE_UNSUPPORTED cannot happen because this method is only called if FASTDDS_STATISTICS
         // CMake option is enabled
-        assert(ret != ReturnCode_t::RETCODE_INCONSISTENT_POLICY);
+        if (ret == ReturnCode_t::RETCODE_INCONSISTENT_POLICY)
+        {
+            logError(STATISTICS_DOMAIN_PARTICIPANT,
+                    "Statistics DataWriter QoS from topic " << topic << " are not consistent/compatible");
+        }
         assert(ret != ReturnCode_t::RETCODE_UNSUPPORTED);
         if (ret == ReturnCode_t::RETCODE_BAD_PARAMETER)
         {

@@ -47,17 +47,33 @@ public:
 
     /**
      * @brief This operation enables a Statistics DataWriter
-     * @param topic_name Name of the topic associated to the Statistics DataWriter
-     * @param dwqos DataWriterQos to be set
+     *
+     * @param[in] topic_name Name of the topic associated to the Statistics DataWriter
+     * @param[in] dwqos DataWriterQos to be set
      * @return RETCODE_UNSUPPORTED if the FASTDDS_STATISTICS CMake option has not been set,
      * RETCODE_BAD_PARAMETER if the topic name provided does not correspond to any Statistics DataWriter,
-     * RETCODE_INCONSISTENT_POLICY if the DataWriterQos provided is inconsistent,
+     * RETCODE_INCONSISTENT_POLICY if the DataWriterQos provided are inconsistent,
      * RETCODE_OK if the DataWriter has been created or if it has been created previously,
      * and RETCODE_ERROR otherwise
      */
     RTPS_DllAPI ReturnCode_t enable_statistics_datawriter(
             const std::string& topic_name,
             const eprosima::fastdds::dds::DataWriterQos& dwqos);
+
+    /**
+     * @brief This operation enables a Statistics DataWriter from a given profile
+     *
+     * @param[in] profile_name DataWriter QoS profile name
+     * @param[in] topic_name Name of the statistics topic to be enabled.
+     * @return RETCODE_UNSUPPORTED if the FASTDDS_STATISTICS CMake option has not been set,
+     * RETCODE_BAD_PARAMETER if the topic name provided does not correspond to any Statistics DataWriter,
+     * RETCODE_INCONSISTENT_POLICY if the DataWriterQos provided in profile are inconsistent,
+     * RETCODE_OK if the DataWriter has been created or if it has been created previously,
+     * and RETCODE_ERROR otherwise
+     */
+    RTPS_DllAPI ReturnCode_t enable_statistics_datawriter_with_profile(
+            const std::string& profile_name,
+            const std::string& topic_name);
 
     /**
      * @brief This operation disables a Statistics DataWriter
