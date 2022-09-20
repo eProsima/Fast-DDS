@@ -262,12 +262,14 @@ void DynamicDataHelper::print_basic_collection(
         print_basic_element(data, data->get_array_index(positions[i]), data->type_->get_element_type()->get_kind());
         std::cout << (i == positions.size() - 1 ? "]" : ", ");
     }
+    std::cout << std::endl;
 }
 
 void DynamicDataHelper::print_complex_collection(
         DynamicData* data,
         const std::string& tabs)
 {
+    std::cout << std::endl;
     const std::vector<uint32_t>& bounds = data->type_->descriptor_->bound_;
 
     std::vector<std::vector<uint32_t>> positions;
@@ -277,7 +279,6 @@ void DynamicDataHelper::print_complex_collection(
     {
         std::cout << tabs << "[" << i << "] = ";
         print_complex_element(data, data->get_array_index(positions[i]), tabs);
-        std::cout << std::endl;
     }
 }
 
@@ -293,7 +294,7 @@ void DynamicDataHelper::print_complex_element(
         case TK_STRUCTURE:
         case TK_BITSET:
         {
-            DynamicData* st_data = data->loan_value(id);
+            std::cout << "<struct/bitset>" << std::endl;
             std::map<types::MemberId, types::DynamicTypeMember*> members;
             st_data->type_->get_all_members(members);
             for (auto it : members)
@@ -304,7 +305,7 @@ void DynamicDataHelper::print_complex_element(
         }
         case TK_UNION:
         {
-            DynamicData* st_data = data->loan_value(id);
+            std::cout << "<union>" << std::endl;
             DynamicTypeMember member;
             st_data->type_->get_member(member, st_data->union_id_);
             print_member(st_data, &member, tabs + "\t");
@@ -318,7 +319,7 @@ void DynamicDataHelper::print_complex_element(
         }
         case TK_MAP:
         {
-            DynamicData* st_data = data->loan_value(id);
+            std::cout << "<map>" << std::endl;
             std::map<types::MemberId, types::DynamicTypeMember*> members;
             st_data->type_->get_all_members(members);
             size_t size = st_data->get_item_count();
@@ -337,7 +338,7 @@ void DynamicDataHelper::print_complex_element(
         default:
             break;
     }
-    std::cout << std::endl;
+    data->return_loaned_value(st_data);
 }
 
 void DynamicDataHelper::print_member(
@@ -369,12 +370,14 @@ void DynamicDataHelper::print_member(
         case TK_BITMASK:
         {
             print_basic_element(data, type->get_id(), desc->get_kind());
+            std::cout << std::endl;
             break;
         }
         case TK_STRUCTURE:
         case TK_BITSET:
         {
             DynamicData* st_data = data->loan_value(type->get_id());
+            std::cout << "<struct/bitset>" << std::endl;
             std::map<types::MemberId, types::DynamicTypeMember*> members;
             desc->get_type()->get_all_members(members);
             for (auto it : members)
@@ -386,6 +389,7 @@ void DynamicDataHelper::print_member(
         }
         case TK_UNION:
         {
+            std::cout << "<union>" << std::endl;
             DynamicData* st_data = data->loan_value(type->get_id());
             DynamicTypeMember member;
             desc->get_type()->get_member(member, data->union_id_);
@@ -402,6 +406,7 @@ void DynamicDataHelper::print_member(
         }
         case TK_MAP:
         {
+            std::cout << "<map>" << std::endl;
             DynamicData* st_data = data->loan_value(type->get_id());
             std::map<types::MemberId, types::DynamicTypeMember*> members;
             desc->get_type()->get_all_members(members);
@@ -422,5 +427,4 @@ void DynamicDataHelper::print_member(
         default:
             break;
     }
-    std::cout << std::endl;
 }
