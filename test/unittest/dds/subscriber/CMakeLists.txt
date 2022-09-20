@@ -44,6 +44,12 @@ if(ANDROID)
         list(APPEND DATAREADERTESTS_SOURCE
             ${ANDROID_IFADDRS_SOURCE_DIR}/ifaddrs.c
             )
+        list(APPEND DATAREADERINSTANCETESTS_SOURCE
+            ${ANDROID_IFADDRS_SOURCE_DIR}/ifaddrs.c
+            )
+        list(APPEND DATAREADERHISTORYTESTS_SOURCE
+            ${ANDROID_IFADDRS_SOURCE_DIR}/ifaddrs.c
+            )
     endif()
 endif()
 
@@ -110,3 +116,9 @@ target_link_libraries(DataReaderHistoryTests fastcdr foonathan_memory
     GTest::gmock
     ${CMAKE_DL_LIBS})
 add_gtest(DataReaderHistoryTests SOURCES ${DATAREADERHISTORYTESTS_SOURCE})
+if(ANDROID)
+    set_property(TARGET SubscriberTests PROPERTY CROSSCOMPILING_EMULATOR "adb;shell;cd;${CMAKE_CURRENT_BINARY_DIR};&&")
+    set_property(TARGET DataReaderTests PROPERTY CROSSCOMPILING_EMULATOR "adb;shell;cd;${CMAKE_CURRENT_BINARY_DIR};&&")
+    set_property(TARGET DataReaderHistoryTests PROPERTY CROSSCOMPILING_EMULATOR "adb;shell;cd;${CMAKE_CURRENT_BINARY_DIR};&&")
+    set_property(TARGET DataReaderInstanceTests PROPERTY CROSSCOMPILING_EMULATOR "adb;shell;cd;${CMAKE_CURRENT_BINARY_DIR};&&")
+endif()

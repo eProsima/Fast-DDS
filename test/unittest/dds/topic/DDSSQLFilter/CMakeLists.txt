@@ -51,3 +51,7 @@ target_link_libraries(DDSSQLFilterTests fastcdr foonathan_memory
     GTest::gmock
     ${CMAKE_DL_LIBS})
 add_gtest(DDSSQLFilterTests SOURCES ${DDSSQLFILTERTEST_SOURCES})
+
+if(ANDROID)
+    set_property(TARGET DDSSQLFilterTests PROPERTY CROSSCOMPILING_EMULATOR "adb;shell;cd;${CMAKE_CURRENT_BINARY_DIR};&&")
+endif()

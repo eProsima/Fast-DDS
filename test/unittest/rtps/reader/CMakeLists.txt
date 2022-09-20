@@ -49,3 +49,7 @@ target_link_libraries(WriterProxyTests foonathan_memory
     GTest::gmock
     ${CMAKE_DL_LIBS})
 add_gtest(WriterProxyTests SOURCES ${WRITERPROXYTESTS_SOURCE})
+
+if(ANDROID)
+    set_property(TARGET WriterProxyTests PROPERTY CROSSCOMPILING_EMULATOR "adb;shell;cd;${CMAKE_CURRENT_BINARY_DIR};&&")
+endif()

@@ -178,3 +178,9 @@ target_include_directories(DynamicTypes_4_2_Tests PRIVATE
 add_gtest(DynamicTypes_4_2_Tests SOURCES ${DYNAMIC_TYPES_4_2_TEST_SOURCE})
 
 configure_file("types.xml" "types.xml" COPYONLY)
+
+if(ANDROID)
+    set_property(TARGET DynamicComplexTypesTests PROPERTY CROSSCOMPILING_EMULATOR "adb;shell;cd;${CMAKE_CURRENT_BINARY_DIR};&&")
+    set_property(TARGET DynamicTypes_4_2_Tests PROPERTY CROSSCOMPILING_EMULATOR "adb;shell;cd;${CMAKE_CURRENT_BINARY_DIR};&&")
+    set_property(TARGET DynamicTypesTests PROPERTY CROSSCOMPILING_EMULATOR "adb;shell;cd;${CMAKE_CURRENT_BINARY_DIR};&&")
+endif()

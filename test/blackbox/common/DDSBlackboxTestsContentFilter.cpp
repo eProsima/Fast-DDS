@@ -257,7 +257,11 @@ protected:
             reader_qos.history().depth = 10;
             if (enable_datasharing)
             {
+#ifdef ANDROID
+                reader_qos.data_sharing().automatic("/data/local/tmp/");
+#else
                 reader_qos.data_sharing().automatic();
+#endif // ifdef ANDROID
             }
             else
             {

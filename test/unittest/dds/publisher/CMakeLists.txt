@@ -367,3 +367,8 @@ endif()
 add_gtest(DataWriterTests
     SOURCES ${DATAWRITERTESTS_SOURCE}
     ENVIRONMENTS "CERTS_PATH=${PROJECT_SOURCE_DIR}/test/certs")
+
+if(ANDROID)
+    set_property(TARGET PublisherTests PROPERTY CROSSCOMPILING_EMULATOR "adb;shell;cd;${CMAKE_CURRENT_BINARY_DIR};&&")
+    set_property(TARGET DataWriterTests PROPERTY CROSSCOMPILING_EMULATOR "adb;shell;cd;${CMAKE_CURRENT_BINARY_DIR};&&")
+endif()

@@ -117,3 +117,10 @@ target_include_directories(WaitSetImplTests PRIVATE
     )
 target_link_libraries(WaitSetImplTests GTest::gtest GTest::gmock)
 add_gtest(WaitSetImplTests SOURCES ${WAITSET_IMPL_TESTS_SOURCE})
+
+if(ANDROID)
+    set_property(TARGET ConditionTests PROPERTY CROSSCOMPILING_EMULATOR "adb;shell;cd;${CMAKE_CURRENT_BINARY_DIR};&&")
+    set_property(TARGET ConditionNotifierTests PROPERTY CROSSCOMPILING_EMULATOR "adb;shell;cd;${CMAKE_CURRENT_BINARY_DIR};&&")
+    set_property(TARGET StatusConditionImplTests PROPERTY CROSSCOMPILING_EMULATOR "adb;shell;cd;${CMAKE_CURRENT_BINARY_DIR};&&")
+    set_property(TARGET WaitSetImplTests PROPERTY CROSSCOMPILING_EMULATOR "adb;shell;cd;${CMAKE_CURRENT_BINARY_DIR};&&")
+endif()

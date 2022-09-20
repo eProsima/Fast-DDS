@@ -35,8 +35,11 @@ bool check_shared_file (
     bool result;
     std::stringstream file_name;
     std::fstream file_stream;
-
+#if ANDROID
+    file_name << "/data/local/tmp/" << shared_dir << "/fast_datasharing_" << guid.guidPrefix << "_" << guid.entityId;
+#else
     file_name << shared_dir << "/fast_datasharing_" << guid.guidPrefix << "_" << guid.entityId;
+#endif // if ANDROID
     file_stream.open(file_name.str(), std::ios::in);
     result = file_stream.is_open();
     file_stream.close();

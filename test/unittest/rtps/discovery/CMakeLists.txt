@@ -92,3 +92,7 @@ else()
 endif()
 
 add_gtest(EdpTests SOURCES ${EDPTESTS_SOURCE})
+
+if(ANDROID)
+    set_property(TARGET EdpTests PROPERTY CROSSCOMPILING_EMULATOR "adb;shell;cd;${CMAKE_CURRENT_BINARY_DIR};&&")
+endif()

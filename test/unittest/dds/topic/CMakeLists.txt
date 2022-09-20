@@ -35,3 +35,7 @@ target_link_libraries(TopicTests fastrtps fastcdr foonathan_memory
     GTest::gmock
     ${CMAKE_DL_LIBS})
 add_gtest(TopicTests SOURCES ${TOPICTESTS_SOURCE})
+
+if(ANDROID)
+    set_property(TARGET TopicTests PROPERTY CROSSCOMPILING_EMULATOR "adb;shell;cd;${CMAKE_CURRENT_BINARY_DIR};&&")
+endif()

@@ -106,3 +106,9 @@ target_link_libraries(RTPSWriterTests fastcdr fastrtps foonathan_memory
     GTest::gmock
     ${CMAKE_DL_LIBS})
 add_gtest(RTPSWriterTests SOURCES ${RTPSWRITERTESTS_SOURCE})
+
+if(ANDROID)
+    set_property(TARGET ReaderProxyTests PROPERTY CROSSCOMPILING_EMULATOR "adb;shell;cd;${CMAKE_CURRENT_BINARY_DIR};&&")
+    set_property(TARGET LivelinessManagerTests PROPERTY CROSSCOMPILING_EMULATOR "adb;shell;cd;${CMAKE_CURRENT_BINARY_DIR};&&")
+    set_property(TARGET RTPSWriterTests PROPERTY CROSSCOMPILING_EMULATOR "adb;shell;cd;${CMAKE_CURRENT_BINARY_DIR};&&")
+endif()

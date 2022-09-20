@@ -102,3 +102,7 @@ if(WIN32)
 endif()
 
 add_gtest(NetworkFactoryTests SOURCES ${NETWORKFACTORYTESTS_SOURCE})
+
+if(ANDROID)
+    set_property(TARGET NetworkFactoryTests PROPERTY CROSSCOMPILING_EMULATOR "adb;shell;cd;${CMAKE_CURRENT_BINARY_DIR};&&")
+endif()

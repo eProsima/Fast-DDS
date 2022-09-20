@@ -98,3 +98,7 @@ else()
 endif()
 
 add_gtest(BuiltinDataSerializationTests SOURCES ${BUILTIN_DATA_SERIALIZATION_TESTS_SOURCE})
+
+if(ANDROID)
+    set_property(TARGET BuiltinDataSerializationTests PROPERTY CROSSCOMPILING_EMULATOR "adb;shell;cd;${CMAKE_CURRENT_BINARY_DIR};&&")
+endif()

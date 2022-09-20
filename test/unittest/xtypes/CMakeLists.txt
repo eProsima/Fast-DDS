@@ -90,3 +90,7 @@ else()
     target_link_libraries(XTypesTests ${PRIVACY} fastcdr)
 endif()
 add_gtest(XTypesTests SOURCES ${XTYPES_TEST_SOURCE})
+
+if(ANDROID)
+    set_property(TARGET XTypesTests PROPERTY CROSSCOMPILING_EMULATOR "adb;shell;cd;${CMAKE_CURRENT_BINARY_DIR};&&")
+endif()
