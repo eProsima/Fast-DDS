@@ -286,7 +286,8 @@ void DynamicDataHelper::print_complex_element(
         MemberId id,
         const std::string& tabs)
 {
-    const TypeDescriptor* desc = data->type_->get_type_descriptor();
+    DynamicData* st_data = data->loan_value(id);
+    const TypeDescriptor* desc = st_data->type_->get_type_descriptor();
     switch (desc->get_kind())
     {
         case TK_STRUCTURE:
@@ -294,47 +295,43 @@ void DynamicDataHelper::print_complex_element(
         {
             DynamicData* st_data = data->loan_value(id);
             std::map<types::MemberId, types::DynamicTypeMember*> members;
-            data->type_->get_all_members(members);
+            st_data->type_->get_all_members(members);
             for (auto it : members)
             {
                 print_member(st_data, it.second, tabs + "\t");
             }
-            data->return_loaned_value(st_data);
             break;
         }
         case TK_UNION:
         {
             DynamicData* st_data = data->loan_value(id);
             DynamicTypeMember member;
-            data->type_->get_member(member, data->union_id_);
+            st_data->type_->get_member(member, st_data->union_id_);
             print_member(st_data, &member, tabs + "\t");
             break;
         }
         case TK_SEQUENCE:
         case TK_ARRAY:
         {
-            DynamicData* st_data = data->loan_value(id);
             print_collection(st_data, tabs + "\t");
-            data->return_loaned_value(st_data);
             break;
         }
         case TK_MAP:
         {
             DynamicData* st_data = data->loan_value(id);
             std::map<types::MemberId, types::DynamicTypeMember*> members;
-            data->type_->get_all_members(members);
-            size_t size = data->get_item_count();
+            st_data->type_->get_all_members(members);
+            size_t size = st_data->get_item_count();
             for (size_t i = 0; i < size; ++i)
             {
                 size_t index = i * 2;
-                MemberId member_id = data->get_member_id_at_index(static_cast<uint32_t>(index));
+                MemberId member_id = st_data->get_member_id_at_index(static_cast<uint32_t>(index));
                 std::cout << "Key: ";
                 print_member(st_data, members[member_id], tabs + "\t");
                 member_id = data->get_member_id_at_index(static_cast<uint32_t>(index + 1));
                 std::cout << "Value: ";
                 print_member(st_data, members[member_id], tabs + "\t");
             }
-            data->return_loaned_value(st_data);
             break;
         }
         default:
