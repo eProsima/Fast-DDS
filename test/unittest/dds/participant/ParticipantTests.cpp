@@ -697,9 +697,10 @@ void set_server_qos(
     std::istringstream(rtps::DEFAULT_ROS2_SERVER_GUIDPREFIX) >> qos.wire_protocol().prefix;
 }
 
-void set_environment_variable()
+void set_environment_variable(
+        const std::string environment_servers = "84.22.253.128:8888;;UDPv4:[localhost]:1234;[2a02:ec80:600:ed1a::3]:8783"
+        )
 {
-    std::string environment_servers = "84.22.253.128:8888;;UDPv4:[localhost]:1234;[2a02:ec80:600:ed1a::3]:8783";
 #ifdef _WIN32
     ASSERT_EQ(0, _putenv_s(rtps::DEFAULT_ROS2_MASTER_URI, environment_servers.c_str()));
 #else
@@ -824,6 +825,58 @@ TEST(ParticipantTests, SimpleParticipantRemoteServerListConfiguration)
     DomainParticipantQos result_qos = participant->get_qos();
     EXPECT_EQ(result_qos.wire_protocol().builtin.discovery_config.m_DiscoveryServers, qos_output);
     EXPECT_EQ(ReturnCode_t::RETCODE_OK, participant->set_qos(result_qos));
+
+    EXPECT_EQ(ReturnCode_t::RETCODE_OK, DomainParticipantFactory::get_instance()->delete_participant(participant));
+}
+
+
+/**
+ * Test that:
+ * + checks a SIMPLE participant is transformed into a CLIENT.
+ * + the environment variable resolves DNS inputs adding both IPv4 and IPv6 locators
+ * + UDPv6 transport is included to service IPv6 locators
+ */
+TEST(ParticipantTests, SimpleParticipantRemoteServerListConfigurationDNS)
+{
+    // populate environment
+    set_environment_variable("www.acme.com.test");
+
+    // fill in expected result
+    rtps::RemoteServerAttributes server;
+    fastrtps::rtps::Locator_t locator4(11811), locator6(LOCATOR_KIND_UDPv6, 11811);
+    fastrtps::rtps::IPLocator::setIPv4(locator4, "216.58.215.164");
+    fastrtps::rtps::IPLocator::setIPv6(locator6, "2a00:1450:400e:803::2004");
+    server.metatrafficUnicastLocatorList.push_back(locator4);
+    server.metatrafficUnicastLocatorList.push_back(locator6);
+    get_server_client_default_guidPrefix(0, server.guidPrefix);
+
+    rtps::RemoteServerList_t output;
+    output.push_back(server);
+
+    // Create the participant
+    DomainParticipant* participant = DomainParticipantFactory::get_instance()->create_participant(0,
+                    PARTICIPANT_QOS_DEFAULT);
+    ASSERT_NE(nullptr, participant);
+
+    fastrtps::rtps::RTPSParticipantAttributes attributes;
+    get_rtps_attributes(participant, attributes);
+    EXPECT_EQ(attributes.builtin.discovery_config.discoveryProtocol, fastrtps::rtps::DiscoveryProtocol::CLIENT);
+    EXPECT_EQ(attributes.builtin.discovery_config.m_DiscoveryServers, output);
+
+    // check UDPv6 transport is there
+    auto udpv6_check = [](fastrtps::rtps::RTPSParticipantAttributes& attributes) -> bool
+            {
+                for (auto& transportDescriptor : attributes.userTransports)
+                {
+                    if ( nullptr != dynamic_cast<fastdds::rtps::UDPv6TransportDescriptor*>(transportDescriptor.get()))
+                    {
+                        return true;
+                    }
+                }
+
+                return false;
+            };
+    EXPECT_TRUE(udpv6_check(attributes));
 
     EXPECT_EQ(ReturnCode_t::RETCODE_OK, DomainParticipantFactory::get_instance()->delete_participant(participant));
 }
