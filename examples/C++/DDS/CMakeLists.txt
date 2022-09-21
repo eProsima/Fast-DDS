@@ -12,8 +12,13 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+<<<<<<< HEAD:examples/C++/DDS/CMakeLists.txt
 set(fastrtps_FOUND TRUE)
 
+=======
+add_subdirectory(AsyncReadExample)
+add_subdirectory(BasicConfigurationExample)
+>>>>>>> a0f6d7f64... Implementtion of AsyncReadExample:examples/cpp/dds/CMakeLists.txt
 add_subdirectory(Benchmark)
 add_subdirectory(ClientServerTest)
 add_subdirectory(Configurability)
