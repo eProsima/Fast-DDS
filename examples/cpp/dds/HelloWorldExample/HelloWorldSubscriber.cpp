@@ -67,6 +67,68 @@ bool HelloWorldSubscriber::init(
         factory->get_default_participant_qos(pqos);
     }
 
+    switch (discovery_mode)
+    {
+        case eprosima::examples::helloworld::AutomaticDiscovery::OFF:
+        {
+            // Clear multicast listening locators
+            pqos.wire_protocol().builtin.metatrafficMulticastLocatorList.clear();
+
+            // Clear unicast listening locators and add UDPv4 any, letting Fast DDS take care of the
+            // port number
+            pqos.wire_protocol().builtin.metatrafficUnicastLocatorList.clear();
+            eprosima::fastrtps::rtps::Locator_t loc;
+            std::istringstream("UDPv4:[0.0.0.0]:0") >> loc;
+            pqos.wire_protocol().builtin.metatrafficUnicastLocatorList.push_back(loc);
+
+            // Add static initial peers (if any)
+            pqos.wire_protocol().builtin.initialPeersList.clear();
+            for (auto locator : initial_peers)
+            {
+                pqos.wire_protocol().builtin.initialPeersList.push_back(locator);
+            }
+            break;
+        }
+        case eprosima::examples::helloworld::AutomaticDiscovery::LOCALHOST:
+        {
+            // Clear multicast listening locators
+            pqos.wire_protocol().builtin.metatrafficMulticastLocatorList.clear();
+
+            // Clear unicast listening locators and add UDPv4 any, letting Fast DDS take care of the
+            // port number
+            pqos.wire_protocol().builtin.metatrafficUnicastLocatorList.clear();
+            eprosima::fastrtps::rtps::Locator_t loc;
+            std::istringstream("UDPv4:[0.0.0.0]:0") >> loc;
+            pqos.wire_protocol().builtin.metatrafficUnicastLocatorList.push_back(loc);
+
+            // Add localhost as initial peer
+            pqos.wire_protocol().builtin.initialPeersList.clear();
+            std::istringstream("UDPv4:[127.0.0.1]:0") >> loc;
+            pqos.wire_protocol().builtin.initialPeersList.push_back(loc);
+
+            // Add static initial peers (if any)
+            for (auto locator : initial_peers)
+            {
+                pqos.wire_protocol().builtin.initialPeersList.push_back(locator);
+            }
+            break;
+        }
+        case eprosima::examples::helloworld::AutomaticDiscovery::SUBNET:
+        {
+            // Add multicast as initial peer
+            eprosima::fastrtps::rtps::Locator_t loc;
+            std::istringstream("UDPv4:[239.255.0.1]:0") >> loc;
+            pqos.wire_protocol().builtin.initialPeersList.push_back(loc);
+
+            // Add static initial peers (if any)
+            for (auto locator : initial_peers)
+            {
+                pqos.wire_protocol().builtin.initialPeersList.push_back(locator);
+            }
+            break;
+        }
+    }
+
     participant_ = factory->create_participant(0, pqos);
 
     if (participant_ == nullptr)
