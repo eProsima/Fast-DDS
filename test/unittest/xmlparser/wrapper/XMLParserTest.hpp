@@ -109,6 +109,13 @@ public:
     {
         return getXMLDataSharingQos(elem, datasharingQos, ident);
     }
+    static XMLP_ret propertiesPolicy_wrapper(
+            tinyxml2::XMLElement* elem,
+            OwnershipQosPolicy& ownershipQos,
+            uint8_t ident)
+    {
+        return getXMLOwnershipQos(elem, ownershipQos, ident);
+    }
 
     static XMLP_ret propertiesPolicy_wrapper(
             tinyxml2::XMLElement* elem,
