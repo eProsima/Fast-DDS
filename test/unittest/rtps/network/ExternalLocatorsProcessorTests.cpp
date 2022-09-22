@@ -22,6 +22,8 @@
 using namespace eprosima::fastdds::rtps;
 using namespace eprosima::fastrtps::rtps;
 
+// -------------------- Auxiliary methods to compare locator lists --------------------
+
 static bool operator == (
         const eprosima::fastrtps::ResourceLimitedVector<Locator>& lhs,
         const eprosima::fastdds::rtps::LocatorList& rhs)
@@ -56,6 +58,8 @@ static bool operator == (
 {
     return lhs.multicast == rhs.multicast && lhs.unicast == rhs.unicast;
 }
+
+// -------------------- Adding external locators to ParticipantProxyData --------------------
 
 void single_participant_check(
         ParticipantProxyData& pdata,
@@ -227,6 +231,8 @@ TEST(ExternalLocatorsProcessorTests, add_external_locators_participant)
         test_add_external_locators_participant(data);
     }
 }
+
+// -------------------- Adding external locators to ReaderProxyData / WriterProxyData --------------------
 
 template<typename ProxyData>
 void single_endpoint_check(
