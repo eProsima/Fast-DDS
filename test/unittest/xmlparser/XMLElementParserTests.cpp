@@ -3721,13 +3721,15 @@ TEST_F(XMLParserTests, getXMLOwnershipStrengthQos)
         sprintf(xml, xml_p, "0");
         ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
         titleElement = xml_doc.RootElement();
-        EXPECT_EQ(XMLP_ret::XML_OK, XMLParserTest::propertiesPolicy_wrapper(titleElement, ownership_strength_policy, ident));
+        EXPECT_EQ(XMLP_ret::XML_OK,
+                XMLParserTest::propertiesPolicy_wrapper(titleElement, ownership_strength_policy, ident));
         EXPECT_EQ(ownership_strength_policy.value, 0);
 
         sprintf(xml, xml_p, "100");
         ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
         titleElement = xml_doc.RootElement();
-        EXPECT_EQ(XMLP_ret::XML_OK, XMLParserTest::propertiesPolicy_wrapper(titleElement, ownership_strength_policy, ident));
+        EXPECT_EQ(XMLP_ret::XML_OK,
+                XMLParserTest::propertiesPolicy_wrapper(titleElement, ownership_strength_policy, ident));
         EXPECT_EQ(ownership_strength_policy.value, 100);
     }
 

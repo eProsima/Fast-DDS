@@ -2122,11 +2122,11 @@ XMLP_ret XMLParser::getXMLDataSharingQos(
    }
  */
 
-   XMLP_ret XMLParser::getXMLOwnershipQos(
+XMLP_ret XMLParser::getXMLOwnershipQos(
         tinyxml2::XMLElement* elem,
         OwnershipQosPolicy& ownership,
         uint8_t ident)
-   {
+{
     (void)ident;
 
     //    <xs:complexType name="ownershipQosPolicyType">
@@ -2186,14 +2186,14 @@ XMLP_ret XMLParser::getXMLDataSharingQos(
     }
 
     return XMLP_ret::
-    XML_OK;
-   }
+                   XML_OK;
+}
 
-   XMLP_ret XMLParser::getXMLOwnershipStrengthQos(
+XMLP_ret XMLParser::getXMLOwnershipStrengthQos(
         tinyxml2::XMLElement* elem,
         OwnershipStrengthQosPolicy& ownershipStrength,
         uint8_t ident)
-   {
+{
 
     //    <xs:complexType name="ownershipStrengthQosPolicyType">
     //        <xs:all>
@@ -2229,7 +2229,7 @@ XMLP_ret XMLParser::getXMLDataSharingQos(
     }
 
     return XMLP_ret::XML_OK;
-   }
+}
 
 // TODO Implement DestinationOrderQos
 /*
