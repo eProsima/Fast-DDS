@@ -239,17 +239,18 @@ void single_endpoint_check(
 }
 
 template<typename ProxyData>
-void test_add_external_locators_endpoint()
+void test_add_external_locators_endpoint(
+        ProxyData& working_data)
 {
     ExternalLocators empty_locators;
-    RemoteLocatorList empty_test_list;
-    RemoteLocatorList test_list;
+    RemoteLocatorList empty_test_list(working_data.remote_locators());
+    RemoteLocatorList test_list(working_data.remote_locators());
     LocatorWithMask test_locator;
     std::stringstream stream("1.1.1.1:9999");
     stream >> test_locator;
     test_list.add_unicast_locator(test_locator);
 
-    ProxyData working_data(4u, 1u);
+    ProxyData initial_data(working_data);
 
     ASSERT_TRUE(working_data.remote_locators() == empty_test_list);
 
@@ -271,16 +272,57 @@ void test_add_external_locators_endpoint()
                     single_locator[externality][cost].emplace_back(test_locator);
                     accum_locators[externality][cost].emplace_back(test_locator);
 
-                    working_data.clear();
+                    working_data = initial_data;
                     single_endpoint_check(working_data, accum_locators, test_list);
                     single_endpoint_check(working_data, single_locator, test_list);
 
-                    working_data.clear();
+                    working_data = initial_data;
                     single_endpoint_check(working_data, single_locator, test_list);
                     single_endpoint_check(working_data, accum_locators, test_list);
                 }
             }
         }
+    }
+}
+
+template<typename ProxyData>
+void test_add_external_locators_endpoint()
+{
+
+    Locator multicast_loc;
+    {
+        std::stringstream stream("239.255.0.1:12345");
+        stream >> multicast_loc;
+    }
+
+    Locator unicast_loc;
+    {
+        std::stringstream stream("10.10.10.10:9999");
+        stream >> unicast_loc;
+    }
+
+    {
+        ProxyData data(4u, 1u);
+        test_add_external_locators_endpoint(data);
+    }
+
+    {
+        ProxyData data(4u, 1u);
+        data.add_multicast_locator(multicast_loc);
+        test_add_external_locators_endpoint(data);
+    }
+
+    {
+        ProxyData data(4u, 1u);
+        data.add_unicast_locator(unicast_loc);
+        test_add_external_locators_endpoint(data);
+    }
+
+    {
+        ProxyData data(4u, 1u);
+        data.add_unicast_locator(unicast_loc);
+        data.add_multicast_locator(multicast_loc);
+        test_add_external_locators_endpoint(data);
     }
 }
 
