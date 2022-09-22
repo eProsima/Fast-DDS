@@ -69,23 +69,26 @@ void single_participant_check(
     ASSERT_TRUE(pdata.metatraffic_locators == meta_check_locators);
 }
 
-TEST(ExternalLocatorsProcessorTests, add_external_locators_participant)
+void test_add_external_locators_participant(
+        ParticipantProxyData& working_data)
 {
     ExternalLocators empty_locators;
-    RemoteLocatorList empty_test_list;
-    RemoteLocatorList test_list;
+    RemoteLocatorList def_empty_test_list(working_data.default_locators);
+    RemoteLocatorList meta_empty_test_list(working_data.metatraffic_locators);
+
+    RemoteLocatorList def_test_list(working_data.default_locators);
+    RemoteLocatorList meta_test_list(working_data.metatraffic_locators);
+
     LocatorWithMask test_locator;
     std::stringstream stream("1.1.1.1:9999");
     stream >> test_locator;
-    test_list.add_unicast_locator(test_locator);
+    def_test_list.add_unicast_locator(test_locator);
+    meta_test_list.add_unicast_locator(test_locator);
 
-    ParticipantProxyData working_data({});
-
-    ASSERT_TRUE(working_data.metatraffic_locators == empty_test_list);
-    ASSERT_TRUE(working_data.default_locators == empty_test_list);
+    ParticipantProxyData initial_data(working_data);
 
     // Adding empty external locators should leave working_data untouched
-    single_participant_check(working_data, empty_locators, empty_locators, empty_test_list, empty_test_list);
+    single_participant_check(working_data, empty_locators, empty_locators, def_empty_test_list, meta_empty_test_list);
 
     // Adding empty external locators should leave working_data untouched
     {
@@ -102,38 +105,126 @@ TEST(ExternalLocatorsProcessorTests, add_external_locators_participant)
                     single_locator[externality][cost].emplace_back(test_locator);
                     accum_locators[externality][cost].emplace_back(test_locator);
 
-                    working_data.default_locators.unicast.clear();
-                    working_data.metatraffic_locators.unicast.clear();
-                    single_participant_check(working_data, accum_locators, empty_locators, test_list, empty_test_list);
-                    single_participant_check(working_data, single_locator, empty_locators, test_list, empty_test_list);
+                    working_data = initial_data;
+                    single_participant_check(
+                        working_data,
+                        accum_locators, empty_locators,
+                        def_test_list, meta_empty_test_list);
+                    single_participant_check(
+                        working_data,
+                        single_locator, empty_locators,
+                        def_test_list, meta_empty_test_list);
 
-                    working_data.default_locators.unicast.clear();
-                    working_data.metatraffic_locators.unicast.clear();
-                    single_participant_check(working_data, single_locator, empty_locators, test_list, empty_test_list);
-                    single_participant_check(working_data, accum_locators, empty_locators, test_list, empty_test_list);
+                    working_data = initial_data;
+                    single_participant_check(
+                        working_data,
+                        single_locator, empty_locators,
+                        def_test_list, meta_empty_test_list);
+                    single_participant_check(
+                        working_data,
+                        accum_locators, empty_locators,
+                        def_test_list, meta_empty_test_list);
 
-                    working_data.default_locators.unicast.clear();
-                    working_data.metatraffic_locators.unicast.clear();
-                    single_participant_check(working_data, empty_locators, accum_locators, empty_test_list, test_list);
-                    single_participant_check(working_data, empty_locators, single_locator, empty_test_list, test_list);
+                    working_data = initial_data;
+                    single_participant_check(
+                        working_data,
+                        empty_locators, accum_locators,
+                        def_empty_test_list, meta_test_list);
+                    single_participant_check(
+                        working_data,
+                        empty_locators, single_locator,
+                        def_empty_test_list, meta_test_list);
 
-                    working_data.default_locators.unicast.clear();
-                    working_data.metatraffic_locators.unicast.clear();
-                    single_participant_check(working_data, empty_locators, single_locator, empty_test_list, test_list);
-                    single_participant_check(working_data, empty_locators, accum_locators, empty_test_list, test_list);
+                    working_data = initial_data;
+                    single_participant_check(
+                        working_data,
+                        empty_locators, single_locator,
+                        def_empty_test_list, meta_test_list);
+                    single_participant_check(
+                        working_data,
+                        empty_locators, accum_locators,
+                        def_empty_test_list, meta_test_list);
 
-                    working_data.default_locators.unicast.clear();
-                    working_data.metatraffic_locators.unicast.clear();
-                    single_participant_check(working_data, accum_locators, single_locator, test_list, test_list);
-                    single_participant_check(working_data, single_locator, accum_locators, test_list, test_list);
+                    working_data = initial_data;
+                    single_participant_check(
+                        working_data,
+                        accum_locators, single_locator,
+                        def_test_list, meta_test_list);
+                    single_participant_check(
+                        working_data,
+                        single_locator, accum_locators,
+                        def_test_list, meta_test_list);
 
-                    working_data.default_locators.unicast.clear();
-                    working_data.metatraffic_locators.unicast.clear();
-                    single_participant_check(working_data, single_locator, accum_locators, test_list, test_list);
-                    single_participant_check(working_data, accum_locators, single_locator, test_list, test_list);
+                    working_data = initial_data;
+                    single_participant_check(
+                        working_data,
+                        single_locator, accum_locators,
+                        def_test_list, meta_test_list);
+                    single_participant_check(
+                        working_data,
+                        accum_locators, single_locator,
+                        def_test_list, meta_test_list);
                 }
             }
         }
+    }
+}
+
+TEST(ExternalLocatorsProcessorTests, add_external_locators_participant)
+{
+    Locator multicast_loc;
+    {
+        std::stringstream stream("239.255.0.1:12345");
+        stream >> multicast_loc;
+    }
+
+    Locator unicast_loc;
+    {
+        std::stringstream stream("10.10.10.10:9999");
+        stream >> unicast_loc;
+    }
+
+    {
+        ParticipantProxyData data;
+        test_add_external_locators_participant(data);
+    }
+
+    {
+        ParticipantProxyData data;
+        data.default_locators.add_multicast_locator(multicast_loc);
+        test_add_external_locators_participant(data);
+    }
+
+    {
+        ParticipantProxyData data;
+        data.default_locators.add_unicast_locator(unicast_loc);
+        test_add_external_locators_participant(data);
+    }
+
+    {
+        ParticipantProxyData data;
+        data.default_locators.add_unicast_locator(unicast_loc);
+        data.default_locators.add_multicast_locator(multicast_loc);
+        test_add_external_locators_participant(data);
+    }
+
+    {
+        ParticipantProxyData data;
+        data.metatraffic_locators.add_multicast_locator(multicast_loc);
+        test_add_external_locators_participant(data);
+    }
+
+    {
+        ParticipantProxyData data;
+        data.metatraffic_locators.add_unicast_locator(unicast_loc);
+        test_add_external_locators_participant(data);
+    }
+
+    {
+        ParticipantProxyData data;
+        data.metatraffic_locators.add_unicast_locator(unicast_loc);
+        data.metatraffic_locators.add_multicast_locator(multicast_loc);
+        test_add_external_locators_participant(data);
     }
 }
 
