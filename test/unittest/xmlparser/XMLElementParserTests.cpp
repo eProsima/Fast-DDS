@@ -3654,9 +3654,9 @@ TEST_F(XMLParserTests, getXMLOwnershipQos)
         // Template xml
         const char* xml_p =
                 "\
-                <data_sharing>\
+                <ownership>\
                     <kind>%s</kind>\
-                </data_sharing>\
+                </ownership>\
                 ";
         char xml[1000];
 
@@ -3676,8 +3676,8 @@ TEST_F(XMLParserTests, getXMLOwnershipQos)
     {
         const char* xml =
                 "\
-                <data_sharing>\
-                </data_sharing>\
+                <ownership>\
+                </ownership>\
                 ";
 
         ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
@@ -3689,9 +3689,9 @@ TEST_F(XMLParserTests, getXMLOwnershipQos)
     {
         const char* xml =
                 "\
-                <data_sharing>\
+                <ownership>\
                     <kind>INVALID</kind>\
-                </data_sharing>\
+                </ownership>\
                 ";
 
         ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
@@ -3699,4 +3699,15 @@ TEST_F(XMLParserTests, getXMLOwnershipQos)
         EXPECT_EQ(XMLP_ret::XML_ERROR,
                 XMLParserTest::propertiesPolicy_wrapper(titleElement, ownership_policy, ident));
     }
+}
+
+/*
+ * This test checks the proper parsing of the <ownershipStrength> xml elements to a OwnershipQosPolicy object.
+ * 1. Correct parsing of a valid <ownershipStrength> value set to 0.
+ * 2. Correct parsing of a valid <ownershipStrength> value set to 100.
+ * 3. Check no value.
+ * 4. Check an invalid value.
+ */
+TEST_F(XMLParserTests, getXMLOwnershipStrengthQos)
+{
 }
