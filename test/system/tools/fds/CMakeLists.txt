@@ -22,6 +22,7 @@ if(PYTHONINTERP_FOUND)
 
     set(TESTS
         test_fast_discovery_closure
+        test_fast_discovery_udpv6_address
         test_fast_discovery_parse_XML_file_default_profile
         test_fast_discovery_parse_XML_file_URI_profile
         test_fast_discovery_prefix_override

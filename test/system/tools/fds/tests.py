@@ -25,11 +25,23 @@
 
     Available tests:
 
-        test_fast_discovery_closure
-        test_fast_discovery_parse_XML_file_prefix_OK
-        test_fast_discovery_parse_XML_file_prefix_OK_URI
-        test_fast_discovery_parse_XML_file_server_address
-        test_fast_discovery_parse_XML_file_server_address_URI
+        test_fast_discovery_closure,
+        test_fast_discovery_udpv6_address,
+        test_fast_discovery_parse_XML_file_default_profile,
+        test_fast_discovery_parse_XML_file_URI_profile,
+        test_fast_discovery_prefix_override,
+        test_fast_discovery_locator_address_override,
+        test_fast_discovery_locator_override_same_address,
+        test_fast_discovery_locator_port_override,
+        test_fast_discovery_locator_override_same_port,
+        test_fast_discovery_backup,
+        test_fast_discovery_no_XML,
+        test_fast_discovery_incorrect_participant,
+        test_fast_discovery_no_prefix,
+        test_fast_discovery_several_server_ids,
+        test_fast_discovery_invalid_locator,
+        test_fast_discovery_non_existent_profile,
+
 """
 
 import argparse
@@ -157,6 +169,31 @@ def test_fast_discovery_closure(fast_discovery_tool):
 
     sys.exit(exit_code)
 
+def test_fast_discovery_udpv6_address(fast_discovery_tool):
+    """Test that discovery command manages IPv4 and IPv6 correctly."""
+
+    command = [
+        fast_discovery_tool, '-i', '1', '-l', '154.56.134.194', '-p',
+        '32123', '-l', '2a02:ec80:600:ed1a::3', '-p', '14520'
+    ]
+
+    output, err, exit_code = send_command(command)
+
+    if exit_code != 0:
+        print(output)
+        sys.exit(exit_code)
+
+    EXPECTED_OUTPUTS = [
+        "UDPv4:[154.56.134.194]:32123",
+        "UDPv6:[2a02:ec80:600:ed1a::3]:14520",
+    ]
+
+    for pattern in EXPECTED_OUTPUTS:
+        exit_code = check_output(output, err, pattern, False)
+        if exit_code != 0:
+            break
+
+    sys.exit(exit_code)
 
 def test_fast_discovery_parse_XML_file_default_profile(fast_discovery_tool):
     """Test that discovery command read XML default profile correctly."""
@@ -267,7 +304,7 @@ def test_fast_discovery_locator_address_override(fast_discovery_tool):
 
     XML_file_path = 'test_xml_discovery_server.xml'
     default_profile = XML_parse_profile(XML_file_path, "")
-   
+
     prefix = default_profile.getElementsByTagName('prefix')
     PREFIX = prefix[0].firstChild.data
     EXPECTED_SERVER_ID = "Server GUID prefix: " + PREFIX.lower()
@@ -306,7 +343,7 @@ def test_fast_discovery_locator_override_same_address(fast_discovery_tool):
 
     XML_file_path = 'test_xml_discovery_server.xml'
     default_profile = XML_parse_profile(XML_file_path, "")
-   
+
     prefix = default_profile.getElementsByTagName('prefix')
     PREFIX = prefix[0].firstChild.data
     EXPECTED_SERVER_ID = "Server GUID prefix: " + PREFIX.lower()
@@ -345,7 +382,7 @@ def test_fast_discovery_locator_port_override(fast_discovery_tool):
 
     XML_file_path = 'test_xml_discovery_server.xml'
     default_profile = XML_parse_profile(XML_file_path, "")
-   
+
     prefix = default_profile.getElementsByTagName('prefix')
     PREFIX = prefix[0].firstChild.data
     EXPECTED_SERVER_ID = "Server GUID prefix: " + PREFIX.lower()
@@ -384,7 +421,7 @@ def test_fast_discovery_locator_override_same_port(fast_discovery_tool):
 
     XML_file_path = 'test_xml_discovery_server.xml'
     default_profile = XML_parse_profile(XML_file_path, "")
-   
+
     prefix = default_profile.getElementsByTagName('prefix')
     PREFIX = prefix[0].firstChild.data
     EXPECTED_SERVER_ID = "Server GUID prefix: " + PREFIX.lower()
@@ -546,8 +583,10 @@ if __name__ == '__main__':
 
     # Tests dictionary
     tests = {
-        'test_fast_discovery_closure': lambda: test_fast_discovery_closure(
-            args.binary_path),
+        'test_fast_discovery_closure': lambda:
+            test_fast_discovery_closure(args.binary_path),
+        'test_fast_discovery_udpv6_address': lambda:
+            test_fast_discovery_udpv6_address(args.binary_path),
         'test_fast_discovery_parse_XML_file_default_profile': lambda:
             test_fast_discovery_parse_XML_file_default_profile(args.binary_path),
         'test_fast_discovery_parse_XML_file_URI_profile': lambda:

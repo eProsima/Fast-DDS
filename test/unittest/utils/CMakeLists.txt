@@ -111,7 +111,11 @@ target_include_directories(LocatorTests PRIVATE
     ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include ${Asio_INCLUDE_DIR}
     ${PROJECT_SOURCE_DIR}/src/cpp)
 target_link_libraries(LocatorTests GTest::gtest ${MOCKS})
-add_gtest(LocatorTests SOURCES ${LOCATORTESTS_SOURCE})
+if(EPROSIMA_TEST_DNS_NOT_SET_UP)
+    set(IGNORE_COMMAND LocatorDNSTests)
+endif()
+add_gtest(LocatorTests SOURCES ${LOCATORTESTS_SOURCE} IGNORE ${IGNORE_COMMAND})
+unset(IGNORE_COMMAND)
 # Skip DNS related tests when not running on our CI
 if(NOT(EPROSIMA_BUILD))
     message(STATUS "Ignoring DNS tests")
@@ -120,7 +124,6 @@ if(NOT(EPROSIMA_BUILD))
         LocatorDNSTests
         )
 endif()
-
 
 add_executable(FixedSizeQueueTests ${FIXEDSIZEQUEUETESTS_SOURCE})
 target_compile_definitions(FixedSizeQueueTests PRIVATE FASTRTPS_NO_LIB)

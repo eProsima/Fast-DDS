@@ -60,8 +60,8 @@ const option::Descriptor usage[] = {
       "\t             position in ROS_DISCOVERY_SERVER environment variable.\n" },
 
     { IPADDRESS, 0, "l", "ip-address",   Arg::required,
-      "  -l \t--ip-address IPv4 address chosen to listen the clients. Defaults\n"
-      "\t             to any (0.0.0.0). Instead of an address, a name can\n"
+      "  -l \t--ip-address IPv4/IPv6 address chosen to listen the clients. Defaults\n"
+      "\t             to any (0.0.0.0/::0). Instead of an address, a name can\n"
       "\t             be specified."},
 
     { PORT,      0, "p",  "port",         Arg::check_udp_port,
@@ -90,28 +90,32 @@ const option::Descriptor usage[] = {
       "\t   can reach the server using as ROS_DISCOVERY_SERVER=;127.0.0.1:14520\n\n"
       "\t$ " FAST_SERVER_BINARY " -i 1 -l 127.0.0.1 -p 14520\n\n"
 
-      "\t3. Launch a default server with id 2 (third on ROS_DISCOVERY_SERVER)\n"
-      "\t   listening on Wi-Fi (192.168.36.34) and Ethernet (172.20.96.1) local\n"
+      "\t3. Launch a default server with id 1 (second on ROS_DISCOVERY_SERVER)\n"
+      "\t   listening on UDPv6 address with UDP port 14520.\n\n"
+      "\t$ " FAST_SERVER_BINARY " -i 1 -l 2a02:ec80:600:ed1a::3 -p 14520\n\n"
+
+      "\t4. Launch a default server with id 2 (third on ROS_DISCOVERY_SERVER)\n"
+      "\t   listening on Wi-Fi (192.163.6.34) and Ethernet (172.20.96.1) local\n"
       "\t   interfaces with UDP ports 8783 and 51083 respectively\n"
       "\t   (addresses and ports are made up for the example).\n\n"
-      "\t$ " FAST_SERVER_BINARY " -i 2 -l 192.168.36.34 -p 8783 -l 172.20.96.1 -p 51083\n\n"
+      "\t$ " FAST_SERVER_BINARY " -i 2 -l 192.163.6.34 -p 8783 -l 172.20.96.1 -p 51083\n\n"
 
-      "\t4. Launch a default server with id 3 (fourth on ROS_DISCOVERY_SERVER)\n"
-      "\t   listening on 172.30.144.1 with UDP port 12345 and provided with a\n"
+      "\t5. Launch a default server with id 3 (fourth on ROS_DISCOVERY_SERVER)\n"
+      "\t   listening on 172.31.44.1 with UDP port 12345 and provided with a\n"
       "\t   backup file. If the server crashes it will automatically restore its\n"
       "\t   previous state when reenacted.\n\n"
-      "\t$ " FAST_SERVER_BINARY " -i 3 -l 172.30.144.1 -p 12345 -b\n\n"
+      "\t$ " FAST_SERVER_BINARY " -i 3 -l 172.31.44.1 -p 12345 -b\n\n"
 
-      "\t5. Launch a default server with id 0 (first on ROS_DISCOVERY_SERVER)\n"
-      "\t   listening on localhost with UDP port 14520. Only localhost clients\n"
-      "\t   can reach the server defining as ROS_DISCOVERY_SERVER=localhost:14520.\n\n"
+      "\t6. Launch a default server with id 0 (first on ROS_DISCOVERY_SERVER)\n"
+      "\t   listening on localhost with UDP port 14520 Only localhost clients\n"
+      "\t   can reach the server defining as ROS_DISCOVERY_SERVER=localhost:14520\n\n"
       "\t$ " FAST_SERVER_BINARY " -i 0 -l localhost -p 14520\n\n"
 
-      "\t6. Launch a server with id 0 (first on ROS_DISCOVERY_SERVER) reading\n"
+      "\t7. Launch a server with id 0 (first on ROS_DISCOVERY_SERVER) reading\n"
       "\t   default configuration from XML file.\n\n"
       "\t$ " FAST_SERVER_BINARY " -i 0 -x config.xml\n\n"
 
-      "\t6. Launch a server with id 0 (first on ROS_DISCOVERY_SERVER) reading\n"
+      "\t6 Launch a server with id 0 (first on ROS_DISCOVERY_SERVER) reading\n"
       "\t   specific profile_name configuration from XML file.\n\n"
       "\t$ " FAST_SERVER_BINARY " -i 0 -x profile_name@config.xml"},
 

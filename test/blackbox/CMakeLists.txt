@@ -64,7 +64,7 @@ macro(add_blackbox_gtest)
                 # decide if disable
                 unset(GTEST_USER_DISABLED)
                 foreach(GTEST_USER_FILTER ${GTEST_IGNORE})
-                    string(REGEX MATCH ${GTEST_USER_FILTER} GTEST_USER_DISABLED ${GTEST_TEST_NAME})
+                    string(REGEX MATCH ${GTEST_USER_FILTER} GTEST_USER_DISABLED ${GTEST_GROUP_NAME}.${GTEST_TEST_NAME})
                     if(GTEST_USER_DISABLED)
                         break()
                     endif()
@@ -97,7 +97,7 @@ macro(add_blackbox_gtest)
                 # decide if disable
                 unset(GTEST_USER_DISABLED)
                 foreach(GTEST_USER_FILTER ${GTEST_IGNORE})
-                    string(REGEX MATCH ${GTEST_USER_FILTER} GTEST_USER_DISABLED ${GTEST_TEST_NAME})
+                    string(REGEX MATCH ${GTEST_USER_FILTER} GTEST_USER_DISABLED ${GTEST_GROUP_NAME}.${GTEST_TEST_NAME})
                     if(GTEST_USER_DISABLED)
                         break()
                     endif()
@@ -236,6 +236,10 @@ if(NOT LibP11_FOUND)
     endif() # GTEST_INDIVIDUAL
 endif() # LibP11_FOUND
 
+if(EPROSIMA_TEST_DNS_NOT_SET_UP)
+    set(dns_filter "Discovery.ServerClientEnvironmentSetUpDNS")
+endif()
+
 file(GLOB RTPS_BLACKBOXTESTS_TEST_SOURCE "common/RTPSBlackboxTests*.cpp")
 set(RTPS_BLACKBOXTESTS_SOURCE ${RTPS_BLACKBOXTESTS_TEST_SOURCE}
     types/HelloWorld.cxx
@@ -359,7 +363,7 @@ if(FASTRTPS_API_TESTS)
         GTest::gtest
         $<$<BOOL:${LibP11_FOUND}>:eProsima_p11>  # $<TARGET_NAME_IF_EXISTS:eProsima_p11>
         )
-       
+
     add_blackbox_gtest(BlackboxTests_FastRTPS SOURCES ${BLACKBOXTESTS_TEST_SOURCE}
         ENVIRONMENTS "CERTS_PATH=${PROJECT_SOURCE_DIR}/test/certs"
         "TOPIC_RANDOM_NUMBER=${TOPIC_RANDOM_NUMBER}"
@@ -367,7 +371,7 @@ if(FASTRTPS_API_TESTS)
         "R_UNICAST_PORT_RANDOM_NUMBER=${R_UNICAST_PORT_RANDOM_NUMBER}"
         "MULTICAST_PORT_RANDOM_NUMBER=${MULTICAST_PORT_RANDOM_NUMBER}"
         $<$<BOOL:${OPENSSL_CONF}>:OPENSSL_CONF=${OPENSSL_CONF}>
-        IGNORE ${pkcs_filter}
+        IGNORE ${pkcs_filter} ${dns_filter}
         )
 endif(FASTRTPS_API_TESTS)
 
@@ -414,7 +418,7 @@ if(FASTDDS_PIM_API_TESTS)
         "R_UNICAST_PORT_RANDOM_NUMBER=${R_UNICAST_PORT_RANDOM_NUMBER}"
         "MULTICAST_PORT_RANDOM_NUMBER=${MULTICAST_PORT_RANDOM_NUMBER}"
         $<$<BOOL:${OPENSSL_CONF}>:OPENSSL_CONF=${OPENSSL_CONF}>
-        IGNORE ${pkcs_filter}
+        IGNORE ${pkcs_filter} ${dns_filter}
         )
 endif(FASTDDS_PIM_API_TESTS)
 
@@ -437,3 +441,6 @@ endforeach()
 # Necessary files
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/environment_file.json
     ${CMAKE_CURRENT_BINARY_DIR}/environment_file.json COPYONLY)
+
+unset(dns_filter)
+unset(pkcs_filter)

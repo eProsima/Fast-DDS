@@ -499,17 +499,31 @@ RTPSParticipant* RTPSDomain::clientServerEnvironmentCreationOverride(
         return nullptr;
     }
 
-    // we only make the attributes copy when we are sure is worth
+    // We only make the attributes copy when we are sure is worth
+    // Is up to the caller guarantee the att argument is not modified during the call
     RTPSParticipantAttributes client_att(att);
 
     // Retrieve the info from the environment variable
-    // TODO(jlbueno) This should be protected with the PDP mutex.
-    if (load_environment_server_info(client_att.builtin.discovery_config.m_DiscoveryServers) &&
-            client_att.builtin.discovery_config.m_DiscoveryServers.empty())
+    RemoteServerList_t& server_list = client_att.builtin.discovery_config.m_DiscoveryServers;
+    if (load_environment_server_info(server_list) && server_list.empty())
     {
         // it's not an error, the environment variable may not be set. Any issue with environment
         // variable syntax is logError already
         return nullptr;
+    }
+
+    // check if some server requires the UDPv6 transport
+    for (auto& server : server_list)
+    {
+        if (server.requires_transport<LOCATOR_KIND_UDPv6>())
+        {
+            // extend builtin transports with the UDPv6 transport
+            auto descriptor = std::make_shared<fastdds::rtps::UDPv6TransportDescriptor>();
+            descriptor->sendBufferSize = client_att.sendSocketBufferSize;
+            descriptor->receiveBufferSize = client_att.listenSocketBufferSize;
+            client_att.userTransports.push_back(std::move(descriptor));
+            break;
+        }
     }
 
     logInfo(DOMAIN, "Detected auto client-server environment variable."

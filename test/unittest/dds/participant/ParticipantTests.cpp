@@ -15,6 +15,7 @@
 #include <chrono>
 #include <fstream>
 #include <memory>
+#include <sstream>
 #include <string>
 #include <thread>
 
@@ -27,8 +28,8 @@
 #include <dds/domain/qos/DomainParticipantQos.hpp>
 #include <dds/pub/Publisher.hpp>
 #include <dds/pub/qos/PublisherQos.hpp>
-#include <dds/sub/qos/SubscriberQos.hpp>
 #include <dds/sub/Subscriber.hpp>
+#include <dds/sub/qos/SubscriberQos.hpp>
 #include <dds/topic/Topic.hpp>
 #include <fastdds/dds/builtin/topic/ParticipantBuiltinTopicData.hpp>
 #include <fastdds/dds/builtin/topic/TopicBuiltinTopicData.hpp>
@@ -40,13 +41,14 @@
 #include <fastdds/dds/publisher/Publisher.hpp>
 #include <fastdds/dds/publisher/qos/PublisherQos.hpp>
 #include <fastdds/dds/subscriber/DataReader.hpp>
-#include <fastdds/dds/subscriber/qos/SubscriberQos.hpp>
 #include <fastdds/dds/subscriber/Subscriber.hpp>
+#include <fastdds/dds/subscriber/qos/SubscriberQos.hpp>
 #include <fastdds/dds/topic/qos/TopicQos.hpp>
 #include <fastdds/rtps/attributes/RTPSParticipantAttributes.h>
 #include <fastdds/rtps/attributes/ServerAttributes.h>
 #include <fastdds/rtps/common/Locator.h>
 #include <fastdds/rtps/participant/RTPSParticipant.h>
+#include <fastdds/rtps/transport/UDPv6TransportDescriptor.h>
 #include <fastrtps/attributes/PublisherAttributes.h>
 #include <fastrtps/attributes/SubscriberAttributes.h>
 #include <fastrtps/types/DynamicDataFactory.h>
@@ -656,6 +658,12 @@ void expected_remote_server_list_output(
     server.metatrafficUnicastLocatorList.push_back(locator);
     get_server_client_default_guidPrefix(2, server.guidPrefix);
     output.push_back(server);
+
+    std::istringstream("UDPv6:[2a02:ec80:600:ed1a::3]:8783") >> locator;
+    server.clear();
+    server.metatrafficUnicastLocatorList.push_back(locator);
+    get_server_client_default_guidPrefix(3, server.guidPrefix);
+    output.push_back(server);
 }
 
 void set_participant_qos(
@@ -689,9 +697,10 @@ void set_server_qos(
     std::istringstream(rtps::DEFAULT_ROS2_SERVER_GUIDPREFIX) >> qos.wire_protocol().prefix;
 }
 
-void set_environment_variable()
+void set_environment_variable(
+        const std::string environment_servers = "84.22.253.128:8888;;UDPv4:[localhost]:1234;[2a02:ec80:600:ed1a::3]:8783"
+        )
 {
-    std::string environment_servers = "84.22.253.128:8888;;localhost:1234";
 #ifdef _WIN32
     ASSERT_EQ(0, _putenv_s(rtps::DEFAULT_ROS2_MASTER_URI, environment_servers.c_str()));
 #else
@@ -798,9 +807,76 @@ TEST(ParticipantTests, SimpleParticipantRemoteServerListConfiguration)
     EXPECT_EQ(attributes.builtin.discovery_config.discoveryProtocol, fastrtps::rtps::DiscoveryProtocol::CLIENT);
     EXPECT_EQ(attributes.builtin.discovery_config.m_DiscoveryServers, output);
 
+    // check UDPv6 transport is there
+    auto udpv6_check = [](fastrtps::rtps::RTPSParticipantAttributes& attributes) -> bool
+            {
+                for (auto& transportDescriptor : attributes.userTransports)
+                {
+                    if ( nullptr != dynamic_cast<fastdds::rtps::UDPv6TransportDescriptor*>(transportDescriptor.get()))
+                    {
+                        return true;
+                    }
+                }
+
+                return false;
+            };
+    EXPECT_TRUE(udpv6_check(attributes));
+
     DomainParticipantQos result_qos = participant->get_qos();
     EXPECT_EQ(result_qos.wire_protocol().builtin.discovery_config.m_DiscoveryServers, qos_output);
     EXPECT_EQ(ReturnCode_t::RETCODE_OK, participant->set_qos(result_qos));
+
+    EXPECT_EQ(ReturnCode_t::RETCODE_OK, DomainParticipantFactory::get_instance()->delete_participant(participant));
+}
+
+
+/**
+ * Test that:
+ * + checks a SIMPLE participant is transformed into a CLIENT.
+ * + the environment variable resolves DNS inputs adding both IPv4 and IPv6 locators
+ * + UDPv6 transport is included to service IPv6 locators
+ */
+TEST(ParticipantTests, SimpleParticipantRemoteServerListConfigurationDNS)
+{
+    // populate environment
+    set_environment_variable("www.acme.com.test");
+
+    // fill in expected result
+    rtps::RemoteServerAttributes server;
+    fastrtps::rtps::Locator_t locator4(11811), locator6(LOCATOR_KIND_UDPv6, 11811);
+    fastrtps::rtps::IPLocator::setIPv4(locator4, "216.58.215.164");
+    fastrtps::rtps::IPLocator::setIPv6(locator6, "2a00:1450:400e:803::2004");
+    server.metatrafficUnicastLocatorList.push_back(locator4);
+    server.metatrafficUnicastLocatorList.push_back(locator6);
+    get_server_client_default_guidPrefix(0, server.guidPrefix);
+
+    rtps::RemoteServerList_t output;
+    output.push_back(server);
+
+    // Create the participant
+    DomainParticipant* participant = DomainParticipantFactory::get_instance()->create_participant(0,
+                    PARTICIPANT_QOS_DEFAULT);
+    ASSERT_NE(nullptr, participant);
+
+    fastrtps::rtps::RTPSParticipantAttributes attributes;
+    get_rtps_attributes(participant, attributes);
+    EXPECT_EQ(attributes.builtin.discovery_config.discoveryProtocol, fastrtps::rtps::DiscoveryProtocol::CLIENT);
+    EXPECT_EQ(attributes.builtin.discovery_config.m_DiscoveryServers, output);
+
+    // check UDPv6 transport is there
+    auto udpv6_check = [](fastrtps::rtps::RTPSParticipantAttributes& attributes) -> bool
+            {
+                for (auto& transportDescriptor : attributes.userTransports)
+                {
+                    if ( nullptr != dynamic_cast<fastdds::rtps::UDPv6TransportDescriptor*>(transportDescriptor.get()))
+                    {
+                        return true;
+                    }
+                }
+
+                return false;
+            };
+    EXPECT_TRUE(udpv6_check(attributes));
 
     EXPECT_EQ(ReturnCode_t::RETCODE_OK, DomainParticipantFactory::get_instance()->delete_participant(participant));
 }
@@ -833,7 +909,8 @@ TEST(ParticipantTests, SimpleParticipantDynamicAdditionRemoteServers)
     // Modify environment file
 #ifndef __APPLE__
     std::ofstream file(filename);
-    file << "{\"ROS_DISCOVERY_SERVER\": \"84.22.253.128:8888;192.168.1.133:64863;localhost:1234\"}";
+    file <<
+        "{\"ROS_DISCOVERY_SERVER\": \"84.22.253.128:8888;192.168.1.133:64863;UDPv4:[localhost]:1234;[2a02:ec80:600:ed1a::3]:8783\"}";
     file.close();
 
     // Wait long enought for the file watch callback
@@ -1072,7 +1149,7 @@ TEST(ParticipantTests, ServerParticipantCorrectRemoteServerListConfiguration)
 
     std::ofstream file;
     file.open(filename);
-    file << "{\"ROS_DISCOVERY_SERVER\": \";localhost:1234\"}";
+    file << "{\"ROS_DISCOVERY_SERVER\": \";UDPv4:[localhost]:1234\"}";
     file.close();
 
     DomainParticipantQos qos;
@@ -1113,7 +1190,7 @@ TEST(ParticipantTests, ServerParticipantCorrectRemoteServerListConfiguration)
     // Try to be consistent: add already known server
     std::this_thread::sleep_for(std::chrono::milliseconds(100));
     file.open(filename);
-    file << "{\"ROS_DISCOVERY_SERVER\": \"172.17.0.5:4321;localhost:1234;192.168.1.133:64863\"}";
+    file << "{\"ROS_DISCOVERY_SERVER\": \"172.17.0.5:4321;UDPv4:[localhost]:1234;192.168.1.133:64863\"}";
     file.close();
     std::this_thread::sleep_for(std::chrono::milliseconds(100));
     server.clear();
