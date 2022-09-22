@@ -18,6 +18,7 @@
  */
 
 #include <limits>
+#include <sstream>
 
 #include "HelloWorldPublisher.h"
 #include "HelloWorldSubscriber.h"
