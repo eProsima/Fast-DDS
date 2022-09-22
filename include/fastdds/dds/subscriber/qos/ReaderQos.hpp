@@ -84,7 +84,7 @@ public:
     //!ReliabilityQos, implemented in the library.
     ReliabilityQosPolicy m_reliability;
 
-    //!Ownership Qos, NOT implemented in the library.
+    //!Ownership Qos, implemented in the library.
     OwnershipQosPolicy m_ownership;
 
     //!Destinatio Order Qos, NOT implemented in the library.
