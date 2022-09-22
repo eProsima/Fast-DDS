@@ -1535,13 +1535,6 @@ TEST_F(XMLParserTests, getXMLWriterReaderUnsupportedQosPolicies)
     EXPECT_EQ(XMLP_ret::XML_OK, XMLParserTest::getXMLWriterQosPolicies_wrapper(titleElement, wqos, ident));
     EXPECT_EQ(XMLP_ret::XML_OK, XMLParserTest::getXMLReaderQosPolicies_wrapper(titleElement, rqos, ident));
 
-    // Check that there is a logError when trying to set up the <ownership> Qos.
-    sprintf(xml, xml_p, "<ownership></ownership>");
-    ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
-    titleElement = xml_doc.RootElement();
-    EXPECT_EQ(XMLP_ret::XML_OK, XMLParserTest::getXMLWriterQosPolicies_wrapper(titleElement, wqos, ident));
-    EXPECT_EQ(XMLP_ret::XML_OK, XMLParserTest::getXMLReaderQosPolicies_wrapper(titleElement, rqos, ident));
-
     // Check that there is a logError when trying to set up the <ownershipStrength> Qos.
     sprintf(xml, xml_p, "<ownershipStrength></ownershipStrength>");
     ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
@@ -1563,7 +1556,7 @@ TEST_F(XMLParserTests, getXMLWriterReaderUnsupportedQosPolicies)
     EXPECT_EQ(XMLP_ret::XML_OK, XMLParserTest::getXMLWriterQosPolicies_wrapper(titleElement, wqos, ident));
     EXPECT_EQ(XMLP_ret::XML_OK, XMLParserTest::getXMLReaderQosPolicies_wrapper(titleElement, rqos, ident));
 
-    helper_block_for_at_least_entries(12);
+    helper_block_for_at_least_entries(10);
     auto consumed_entries = mock_consumer->ConsumedEntries();
     // Expect 18 log errors.
     uint32_t num_errors = 0;
@@ -1574,7 +1567,7 @@ TEST_F(XMLParserTests, getXMLWriterReaderUnsupportedQosPolicies)
             num_errors++;
         }
     }
-    EXPECT_EQ(num_errors, 12u);
+    EXPECT_EQ(num_errors, 10u);
 }
 
 /*
