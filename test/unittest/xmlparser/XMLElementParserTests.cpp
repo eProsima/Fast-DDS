@@ -3710,4 +3710,58 @@ TEST_F(XMLParserTests, getXMLOwnershipQos)
  */
 TEST_F(XMLParserTests, getXMLOwnershipStrengthQos)
 {
+    uint8_t ident = 1;
+    OwnershipStrengthQosPolicy ownership_strength_policy;
+    tinyxml2::XMLDocument xml_doc;
+    tinyxml2::XMLElement* titleElement;
+
+    {
+        // Template xml
+        const char* xml_p =
+                "\
+                <ownershipStrength>\
+                    <value>%s</value>\
+                </ownershipStrength>\
+                ";
+        char xml[1000];
+
+        sprintf(xml, xml_p, "0");
+        ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
+        titleElement = xml_doc.RootElement();
+        EXPECT_EQ(XMLP_ret::XML_OK, XMLParserTest::propertiesPolicy_wrapper(titleElement, ownership_strength_policy, ident));
+        EXPECT_EQ(ownership_strength_policy.value, 0);
+
+        sprintf(xml, xml_p, "100");
+        ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
+        titleElement = xml_doc.RootElement();
+        EXPECT_EQ(XMLP_ret::XML_OK, XMLParserTest::propertiesPolicy_wrapper(titleElement, ownership_strength_policy, ident));
+        EXPECT_EQ(ownership_strength_policy.value, 100);
+    }
+
+    {
+        const char* xml =
+                "\
+                <ownershipStrength>\
+                </ownershipStrength>\
+                ";
+
+        ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
+        titleElement = xml_doc.RootElement();
+        EXPECT_EQ(XMLP_ret::XML_ERROR,
+                XMLParserTest::propertiesPolicy_wrapper(titleElement, ownership_strength_policy, ident));
+    }
+
+    {
+        const char* xml =
+                "\
+                <ownershipStrength>\
+                    <value>INVALID</value>\
+                </ownershipStrength>\
+                ";
+
+        ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
+        titleElement = xml_doc.RootElement();
+        EXPECT_EQ(XMLP_ret::XML_ERROR,
+                XMLParserTest::propertiesPolicy_wrapper(titleElement, ownership_strength_policy, ident));
+    }
 }
