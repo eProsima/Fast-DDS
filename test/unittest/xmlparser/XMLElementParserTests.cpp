@@ -3642,3 +3642,15 @@ TEST_F(XMLParserTests, getXMLDataSharingQos_negativeCases)
                 XMLParserTest::propertiesPolicy_wrapper(titleElement, datasharing_policy, ident));
     }
 }
+
+/*
+ * This test checks the proper parsing of the <ownership> xml elements to a OwnershipQosPolicy object.
+ * 1. Correct parsing of a valid <ownership> set to SHARED.
+ * 2. Correct parsing of a valid <ownership> set to EXCLUSIVE.
+ * 3. Check no kind.
+ * 4. Check an invalid kind.
+ */
+TEST_F(XMLParserTests, getXMLOwnershipQos)
+{
+
+}
