@@ -21,6 +21,7 @@
 #define _EPROSIMA_FASTDDS_EXAMPLES_CPP_DDS_BASICCONFIGURATIONEXAMPLE_ARG_CONFIGURATION_H_
 
 #include <iostream>
+#include <limits>
 #include <string>
 
 #include <optionparser.hpp>
@@ -87,7 +88,7 @@ struct Arg : public option::Arg
         return option::ARG_ILLEGAL;
     }
 
-    template<int min = 0, int max = std::numeric_limits<int>::max()>
+    template<long min = 0, long max = std::numeric_limits<long>::max()>
     static option::ArgStatus NumericRange(
             const option::Option& option,
             bool msg)
@@ -95,7 +96,7 @@ struct Arg : public option::Arg
         static_assert(min <= max, "NumericRange: invalid range provided.");
 
         char* endptr = 0;
-        if ( option.arg != nullptr)
+        if ( option.arg != nullptr )
         {
             long value = strtol(option.arg, &endptr, 10);
             if ( endptr != option.arg && *endptr == 0 &&
@@ -107,7 +108,10 @@ struct Arg : public option::Arg
 
         if (msg)
         {
-            print_error("Option '", option, "' requires a numeric argument\n");
+            std::ostringstream os;
+            os << "' requires a numeric argument in range ["
+               << min << ", " << max << "]" << std::endl;
+            print_error("Option '", option, os.str().c_str());
         }
 
         return option::ARG_ILLEGAL;
@@ -183,7 +187,7 @@ const option::Descriptor usage[] = {
     { WAIT, 0, "w", "wait",                 Arg::NumericRange<0, 100>,
       "  -w <num> \t--wait=<num> \tNumber of matched subscribers required to publish"
       " (Default: 0 => does not wait)." },
-    { SAMPLES, 0, "s", "samples",              Arg::NumericRange<1>,
+    { SAMPLES, 0, "s", "samples",              Arg::NumericRange<>,
       "  -s <num> \t--samples=<num>  \tNumber of samples to send (Default: 0 => infinite samples)." },
     { INTERVAL, 0, "i", "interval",            Arg::NumericRange<>,
       "  -i <num> \t--interval=<num>  \tTime between samples in milliseconds (Default: 100)." },
@@ -199,7 +203,7 @@ const option::Descriptor usage[] = {
       "  -t <topic_name> \t--topic=<topic_name>  \tTopic name (Default: HelloWorldTopic)." },
     { DOMAIN_ID, 0, "d", "domain",                Arg::NumericRange<0, 230>,
       "  -d <id> \t--domain=<id>  \tDDS domain ID (Default: 0)." },
-    { SAMPLES, 0, "s", "samples",              Arg::NumericRange<1>,
+    { SAMPLES, 0, "s", "samples",              Arg::NumericRange<>,
       "  -s <num> \t--samples=<num>  \tNumber of samples to send (Default: 0 => infinite samples)." },
     { TRANSPORT, 0, "", "transport",        Arg::Transport,
       "  \t--transport=<shm|udp|udpv6> \tUse only shared-memory, UDPv4, or UDPv6 transport."

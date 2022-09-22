@@ -17,6 +17,8 @@
  *
  */
 
+#include <limits>
+
 #include "HelloWorldPublisher.h"
 #include "HelloWorldSubscriber.h"
 
@@ -89,7 +91,7 @@ struct Arg : public option::Arg
         return option::ARG_ILLEGAL;
     }
 
-    template<int min = 0, int max = std::numeric_limits<int>::max()>
+    template<long min = 0, long max = std::numeric_limits<long>::max()>
     static option::ArgStatus NumericRange(
             const option::Option& option,
             bool msg)
@@ -97,7 +99,7 @@ struct Arg : public option::Arg
         static_assert(min <= max, "NumericRange: invalid range provided.");
 
         char* endptr = 0;
-        if ( option.arg != nullptr)
+        if ( option.arg != nullptr )
         {
             long value = strtol(option.arg, &endptr, 10);
             if ( endptr != option.arg && *endptr == 0 &&
@@ -109,7 +111,10 @@ struct Arg : public option::Arg
 
         if (msg)
         {
-            print_error("Option '", option, "' requires a numeric argument\n");
+            std::ostringstream os;
+            os << "' requires a numeric argument in range ["
+               << min << ", " << max << "]" << std::endl;
+            print_error("Option '", option, os.str().c_str());
         }
 
         return option::ARG_ILLEGAL;
@@ -146,7 +151,7 @@ const option::Descriptor usage[] = {
       "Usage: HelloWorldExample <publisher|subscriber>\n\nGeneral options:" },
     { HELP,    0, "h", "help",               Arg::None,      "  -h \t--help  \tProduce help message." },
     { UNKNOWN_OPT, 0, "", "",                Arg::None,      "\nPublisher options:"},
-    { SAMPLES, 0, "s", "samples",            Arg::NumericRange<1>,
+    { SAMPLES, 0, "s", "samples",            Arg::NumericRange<>,
       "  -s <num>, \t--samples=<num>  \tNumber of samples (0, default, infinite)." },
     { INTERVAL, 0, "i", "interval",          Arg::NumericRange<>,
       "  -i <num>, \t--interval=<num>  \tTime between samples in milliseconds (Default: 100)." },
