@@ -3652,5 +3652,58 @@ TEST_F(XMLParserTests, getXMLDataSharingQos_negativeCases)
  */
 TEST_F(XMLParserTests, getXMLOwnershipQos)
 {
+    uint8_t ident = 1;
+    OwnershipQosPolicy ownership_policy;
+    tinyxml2::XMLDocument xml_doc;
+    tinyxml2::XMLElement* titleElement;
 
+    {
+        // Template xml
+        const char* xml_p =
+                "\
+                <data_sharing>\
+                    <kind>%s</kind>\
+                </data_sharing>\
+                ";
+        char xml[1000];
+
+        sprintf(xml, xml_p, "SHARED");
+        ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
+        titleElement = xml_doc.RootElement();
+        EXPECT_EQ(XMLP_ret::XML_OK, XMLParserTest::propertiesPolicy_wrapper(titleElement, ownership_policy, ident));
+        EXPECT_EQ(ownership_policy.kind, OwnershipQosPolicyKind::SHARED_OWNERSHIP_QOS);
+
+        sprintf(xml, xml_p, "EXCLUSIVE");
+        ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
+        titleElement = xml_doc.RootElement();
+        EXPECT_EQ(XMLP_ret::XML_OK, XMLParserTest::propertiesPolicy_wrapper(titleElement, ownership_policy, ident));
+        EXPECT_EQ(ownership_policy.kind, OwnershipQosPolicyKind::EXCLUSIVE_OWNERSHIP_QOS);
+    }
+
+    {
+        const char* xml =
+                "\
+                <data_sharing>\
+                </data_sharing>\
+                ";
+
+        ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
+        titleElement = xml_doc.RootElement();
+        EXPECT_EQ(XMLP_ret::XML_ERROR,
+                XMLParserTest::propertiesPolicy_wrapper(titleElement, ownership_policy, ident));
+    }
+
+    {
+        const char* xml =
+                "\
+                <data_sharing>\
+                    <kind>INVALID</kind>\
+                </data_sharing>\
+                ";
+
+        ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
+        titleElement = xml_doc.RootElement();
+        EXPECT_EQ(XMLP_ret::XML_ERROR,
+                XMLParserTest::propertiesPolicy_wrapper(titleElement, ownership_policy, ident));
+    }
 }
