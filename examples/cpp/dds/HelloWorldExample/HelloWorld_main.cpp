@@ -73,18 +73,45 @@ struct Arg : public option::Arg
             bool msg)
     {
         char* endptr = 0;
-        if (option.arg != 0 && strtol(option.arg, &endptr, 10))
+        if ( option.arg != nullptr)
         {
-        }
-        if (endptr != option.arg && *endptr == 0)
-        {
-            return option::ARG_OK;
+            strtol(option.arg, &endptr, 10);
+            if (endptr != option.arg && *endptr == 0)
+            {
+                return option::ARG_OK;
+            }
         }
 
         if (msg)
         {
             print_error("Option '", option, "' requires a numeric argument\n");
         }
+        return option::ARG_ILLEGAL;
+    }
+
+    template<int min = 0, int max = std::numeric_limits<int>::max()>
+    static option::ArgStatus NumericRange(
+            const option::Option& option,
+            bool msg)
+    {
+        static_assert(min <= max, "NumericRange: invalid range provided.");
+
+        char* endptr = 0;
+        if ( option.arg != nullptr)
+        {
+            long value = strtol(option.arg, &endptr, 10);
+            if ( endptr != option.arg && *endptr == 0 &&
+                    value >= min && value <= max)
+            {
+                return option::ARG_OK;
+            }
+        }
+
+        if (msg)
+        {
+            print_error("Option '", option, "' requires a numeric argument\n");
+        }
+
         return option::ARG_ILLEGAL;
     }
 
@@ -119,9 +146,9 @@ const option::Descriptor usage[] = {
       "Usage: HelloWorldExample <publisher|subscriber>\n\nGeneral options:" },
     { HELP,    0, "h", "help",               Arg::None,      "  -h \t--help  \tProduce help message." },
     { UNKNOWN_OPT, 0, "", "",                Arg::None,      "\nPublisher options:"},
-    { SAMPLES, 0, "s", "samples",            Arg::Numeric,
+    { SAMPLES, 0, "s", "samples",            Arg::NumericRange<1>,
       "  -s <num>, \t--samples=<num>  \tNumber of samples (0, default, infinite)." },
-    { INTERVAL, 0, "i", "interval",          Arg::Numeric,
+    { INTERVAL, 0, "i", "interval",          Arg::NumericRange<>,
       "  -i <num>, \t--interval=<num>  \tTime between samples in milliseconds (Default: 100)." },
     { ENVIRONMENT, 0, "e", "env",            Arg::None,       "  -e \t--env   \tLoad QoS from environment." },
     { 0, 0, 0, 0, 0, 0 }
