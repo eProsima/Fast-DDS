@@ -40,6 +40,7 @@ class ParticipantProxyData
         ParticipantProxyData(const RTPSParticipantAllocationAttributes& allocation = c_default_RTPSParticipantAllocationAttributes)
             : m_availableBuiltinEndpoints(0)
             , metatraffic_locators(allocation.locators.max_unicast_locators, allocation.locators.max_multicast_locators)
+            , default_locators(allocation.locators.max_unicast_locators, allocation.locators.max_multicast_locators)
             , m_VendorId(c_VendorId_Unknown)
         {}
 
@@ -53,6 +54,7 @@ class ParticipantProxyData
         GUID_t m_guid;
         uint32_t m_availableBuiltinEndpoints;
         RemoteLocatorList metatraffic_locators;
+        RemoteLocatorList default_locators;
         VendorId_t m_VendorId;
 #if HAVE_SECURITY
         IdentityToken identity_token_;
