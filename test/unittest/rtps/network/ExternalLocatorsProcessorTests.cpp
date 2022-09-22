@@ -137,6 +137,72 @@ TEST(ExternalLocatorsProcessorTests, add_external_locators_participant)
     }
 }
 
+template<typename ProxyData>
+void single_endpoint_check(
+        ProxyData& rdata,
+        const ExternalLocators& ext_locators,
+        const RemoteLocatorList& check_locators)
+{
+    ExternalLocatorsProcessor::add_external_locators(rdata, ext_locators);
+    ASSERT_TRUE(rdata.remote_locators() == check_locators);
+}
+
+template<typename ProxyData>
+void test_add_external_locators_endpoint()
+{
+    ExternalLocators empty_locators;
+    RemoteLocatorList empty_test_list;
+    RemoteLocatorList test_list;
+    LocatorWithMask test_locator;
+    std::stringstream stream("1.1.1.1:9999");
+    stream >> test_locator;
+    test_list.add_unicast_locator(test_locator);
+
+    ProxyData working_data(4u, 1u);
+
+    ASSERT_TRUE(working_data.remote_locators() == empty_test_list);
+
+    // Adding empty external locators should leave working_data untouched
+    single_endpoint_check(working_data, empty_locators, empty_test_list);
+
+    // Adding empty external locators should leave working_data untouched
+    {
+        ExternalLocators accum_locators;
+
+        for (uint8_t externality = std::numeric_limits<uint8_t>::max(); externality > 0; --externality)
+        {
+            for (uint8_t cost = 0; cost < std::numeric_limits<uint8_t>::max(); ++cost)
+            {
+                for (uint8_t mask = 0; mask < 32; ++mask)
+                {
+                    ExternalLocators single_locator;
+                    test_locator.mask(mask);
+                    single_locator[externality][cost].emplace_back(test_locator);
+                    accum_locators[externality][cost].emplace_back(test_locator);
+
+                    working_data.clear();
+                    single_endpoint_check(working_data, accum_locators, test_list);
+                    single_endpoint_check(working_data, single_locator, test_list);
+
+                    working_data.clear();
+                    single_endpoint_check(working_data, single_locator, test_list);
+                    single_endpoint_check(working_data, accum_locators, test_list);
+                }
+            }
+        }
+    }
+}
+
+TEST(ExternalLocatorsProcessorTests, add_external_locators_reader)
+{
+    test_add_external_locators_endpoint<ReaderProxyData>();
+}
+
+TEST(ExternalLocatorsProcessorTests, add_external_locators_writer)
+{
+    test_add_external_locators_endpoint<WriterProxyData>();
+}
+
 int main(
         int argc,
         char** argv)
