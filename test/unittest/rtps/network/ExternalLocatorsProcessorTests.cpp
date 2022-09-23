@@ -373,6 +373,70 @@ TEST(ExternalLocatorsProcessorTests, add_external_locators_writer)
 *                                                                                                                 *
 *******************************************************************************************************************/
 
+struct ExternalAddress
+{
+    ExternalAddress(
+            const std::string& address,
+            uint32_t metatraffic_port,
+            uint32_t user_port)
+        : ExternalAddress(address, 24, metatraffic_port, user_port)
+    {
+    }
+
+    ExternalAddress(
+            const std::string& address,
+            uint8_t mask,
+            uint32_t metatraffic_port,
+            uint32_t user_port)
+    {
+        user.kind = LOCATOR_KIND_UDPv4;
+        user.port = user_port;
+        user.mask(mask);
+        IPLocator::setIPv4(user, address);
+
+        metatraffic = user;
+        metatraffic.port = metatraffic_port;
+    }
+
+    LocatorWithMask user;
+    LocatorWithMask metatraffic;
+};
+
+struct BasicNodeConfig
+{
+    BasicNodeConfig(
+            const std::string& wan_address,
+            const std::string& host_address,
+            const std::string& node_address,
+            uint32_t metatraffic_port,
+            uint32_t user_port)
+        : wan_locators(wan_address, metatraffic_port, user_port)
+        , host_locators(host_address, metatraffic_port, user_port)
+        , container_locators(node_address, metatraffic_port, user_port)
+    {
+    }
+
+    // User and metatraffic locators for externality 2
+    ExternalAddress wan_locators;
+    // User and metatraffic locators for externality 1
+    ExternalAddress host_locators;
+    // User and metatraffic locators for externality 0
+    ExternalAddress container_locators;
+};
+
+/* All nodes except Node_Z, which has no external locators */
+static const std::array<BasicNodeConfig, 8> internal_nodes =
+{
+    /* Node_11 */ BasicNodeConfig{"192.168.10.10", "10.10.10.4", "172.17.0.10", 7410, 7411},
+    /* Node_12 */ BasicNodeConfig{"192.168.10.10", "10.10.10.4", "172.17.0.11", 7412, 7413},
+    /* Node_21 */ BasicNodeConfig{"192.168.10.10", "10.10.10.5", "172.17.0.10", 7414, 7415},
+    /* Node_22 */ BasicNodeConfig{"192.168.10.10", "10.10.10.5", "172.17.0.11", 7416, 7417},
+    /* Node_31 */ BasicNodeConfig{"192.168.10.11", "10.10.10.4", "172.17.0.10", 7410, 7411},
+    /* Node_32 */ BasicNodeConfig{"192.168.10.11", "10.10.10.4", "172.17.0.11", 7412, 7413},
+    /* Node_41 */ BasicNodeConfig{"192.168.10.11", "10.10.10.5", "172.17.0.10", 7414, 7415},
+    /* Node_42 */ BasicNodeConfig{"192.168.10.11", "10.10.10.5", "172.17.0.11", 7416, 7417}
+};
+
 int main(
         int argc,
         char** argv)
