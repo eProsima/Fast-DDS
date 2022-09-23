@@ -98,9 +98,9 @@ void test_add_external_locators_participant(
     {
         ExternalLocators accum_locators;
 
-        for (uint8_t externality = std::numeric_limits<uint8_t>::max(); externality > 0; --externality)
+        for (uint8_t externality = std::numeric_limits<uint8_t>::max(); externality > 0; externality >>= 1)
         {
-            for (uint8_t cost = 0; cost < std::numeric_limits<uint8_t>::max(); ++cost)
+            for (uint8_t cost = 0; cost < std::numeric_limits<uint8_t>::max(); cost = (cost * 2) + 1)
             {
                 for (uint8_t mask = 0; mask < 32; ++mask)
                 {
@@ -267,9 +267,9 @@ void test_add_external_locators_endpoint(
     {
         ExternalLocators accum_locators;
 
-        for (uint8_t externality = std::numeric_limits<uint8_t>::max(); externality > 0; --externality)
+        for (uint8_t externality = std::numeric_limits<uint8_t>::max(); externality > 0; externality >>= 1)
         {
-            for (uint8_t cost = 0; cost < std::numeric_limits<uint8_t>::max(); ++cost)
+            for (uint8_t cost = 0; cost < std::numeric_limits<uint8_t>::max(); cost = (cost * 2) + 1)
             {
                 for (uint8_t mask = 0; mask < 32; ++mask)
                 {
