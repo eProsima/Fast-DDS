@@ -1,5 +1,29 @@
-// Copyright Howard Hinnant 2007-2010. Distributed under the Boost
-// Software License, Version 1.0. (see http://www.boost.org/LICENSE_1_0.txt)
+/*
+   Copyright Howard Hinnant 2007-2010. Distributed under the Boost
+   Software License, Version 1.0. (see http://www.boost.org/LICENSE_1_0.txt)
+   The original implementation has been modified to support the POSIX priorities:
+
+       PTHREAD_RWLOCK_PREFER_READER_NP
+              This is the default.  A thread may hold multiple read
+              locks; that is, read locks are recursive.  According to
+              The Single Unix Specification, the behavior is unspecified
+              when a reader tries to place a lock, and there is no write
+              lock but writers are waiting.  Giving preference to the
+              reader, as is set by PTHREAD_RWLOCK_PREFER_READER_NP,
+              implies that the reader will receive the requested lock,
+              even if a writer is waiting.  As long as there are
+              readers, the writer will be starved.
+
+       PTHREAD_RWLOCK_PREFER_WRITER_NONRECURSIVE_NP
+              Setting the lock kind to this avoids writer starvation as
+              long as any read locking is not done in a recursive
+              fashion.
+
+    The C++ Standard has not yet (C++20) imposed any requirements on shared_mutex implementation thus
+    each platform made its own choices:
+        Windows & Boost defaults to PTHREAD_RWLOCK_PREFER_WRITER_NONRECURSIVE_NP.
+        Linux & Mac defaults to PTHREAD_RWLOCK_PREFER_READER_NP.
+ */
 
 /**
  * @file shared_mutex.hpp
@@ -29,22 +53,33 @@
     ( !(defined(__has_include) && __has_include(<version>)) && \
     !(defined(HAVE_CXX17) && HAVE_CXX17) &&  __cplusplus < 201703 )
 
-#include <mutex>
-#include <condition_variable>
 #include <climits>
+#include <condition_variable>
+#include <map>
+#include <mutex>
 #include <system_error>
+#include <thread>
 
 namespace eprosima {
+namespace detail {
 
-class shared_mutex
+// mimic POSIX Read-Write lock syntax
+enum class shared_mutex_type
 {
+    PTHREAD_RWLOCK_PREFER_READER_NP, PTHREAD_RWLOCK_PREFER_WRITER_NONRECURSIVE_NP
+};
+
+class shared_mutex_base
+{
+
+protected:
+
     typedef std::mutex mutex_t;
     typedef std::condition_variable cond_t;
     typedef unsigned count_t;
 
     mutex_t mut_;
     cond_t gate1_;
-    cond_t gate2_;
     count_t state_;
 
     static const count_t write_entered_ = 1U << (sizeof(count_t) * CHAR_BIT - 1);
@@ -52,40 +87,26 @@ class shared_mutex
 
 public:
 
-    shared_mutex()
+    shared_mutex_base()
         : state_(0)
     {
     }
 
-    ~shared_mutex()
+    ~shared_mutex_base()
     {
         std::lock_guard<mutex_t> _(mut_);
     }
 
-    shared_mutex(
-            const shared_mutex&) = delete;
-    shared_mutex& operator =(
-            const shared_mutex&) = delete;
+    shared_mutex_base(
+            const shared_mutex_base&) = delete;
+    shared_mutex_base& operator =(
+            const shared_mutex_base&) = delete;
 
     // Exclusive ownership
 
-    void lock()
-    {
-        std::unique_lock<mutex_t> lk(mut_);
-        while (state_ & write_entered_)
-        {
-            gate1_.wait(lk);
-        }
-        state_ |= write_entered_;
-        while (state_ & n_readers_)
-        {
-            gate2_.wait(lk);
-        }
-    }
-
     bool try_lock()
     {
-        std::unique_lock<mutex_t> lk(mut_);
+        std::lock_guard<mutex_t> _(mut_);
         if (state_ == 0)
         {
             state_ = write_entered_;
@@ -117,7 +138,7 @@ public:
 
     bool try_lock_shared()
     {
-        std::unique_lock<mutex_t> lk(mut_);
+        std::lock_guard<mutex_t> _(mut_);
         count_t num_readers = state_ & n_readers_;
         if (!(state_ & write_entered_) && num_readers != n_readers_)
         {
@@ -127,6 +148,35 @@ public:
             return true;
         }
         return false;
+    }
+
+};
+
+template<shared_mutex_type>
+class shared_mutex;
+
+// original Hinnant implementation prioritizing writers
+
+template<>
+class shared_mutex<shared_mutex_type::PTHREAD_RWLOCK_PREFER_WRITER_NONRECURSIVE_NP>
+    : public shared_mutex_base
+{
+    cond_t gate2_;
+
+public:
+
+    void lock()
+    {
+        std::unique_lock<mutex_t> lk(mut_);
+        while (state_ & write_entered_)
+        {
+            gate1_.wait(lk);
+        }
+        state_ |= write_entered_;
+        while (state_ & n_readers_)
+        {
+            gate2_.wait(lk);
+        }
     }
 
     void unlock_shared()
@@ -142,16 +192,177 @@ public:
                 gate2_.notify_one();
             }
         }
-        else
+        else if (num_readers == n_readers_ - 1)
         {
-            if (num_readers == n_readers_ - 1)
-            {
-                gate1_.notify_one();
-            }
+            gate1_.notify_one();
         }
     }
 
 };
+
+// implementation not locking readers on behalf of writers
+
+template<>
+class shared_mutex<shared_mutex_type::PTHREAD_RWLOCK_PREFER_READER_NP>
+    : public shared_mutex_base
+{
+    count_t writer_waiting_ = 0;
+public:
+
+    void lock()
+    {
+        std::unique_lock<mutex_t> lk(mut_);
+        ++writer_waiting_;
+        while (state_ & n_readers_ || state_ & write_entered_)
+        {
+            gate1_.wait(lk);
+        }
+        state_ |= write_entered_;
+        --writer_waiting_;
+    }
+
+    void unlock_shared()
+    {
+        std::lock_guard<mutex_t> _(mut_);
+        count_t num_readers = (state_ & n_readers_) - 1;
+        state_ &= ~n_readers_;
+        state_ |= num_readers;
+
+        if ((writer_waiting_ && num_readers == 0)
+             || (num_readers == n_readers_ - 1))
+        {
+            gate1_.notify_one();
+        }
+    }
+};
+
+// Debugger wrapper class that provides insight
+template<class sm>
+class debug_wrapper : public sm
+{
+    std::mutex wm_;
+    // Identity of the exclusive owner if any
+    std::thread::id exclusive_owner_ = {};
+    // key_type thread_id, mapped_type number of locks
+    std::map<std::thread::id, unsigned int> shared_owners_;
+
+public:
+
+    ~debug_wrapper()
+    {
+        std::lock_guard<std::mutex> _(wm_);
+    }
+
+    // Exclusive ownership
+
+    void lock()
+    {
+        sm::lock();
+        std::lock_guard<std::mutex> _(wm_);
+        exclusive_owner_ = std::this_thread::get_id();
+    }
+
+    bool try_lock()
+    {
+        std::lock_guard<std::mutex> _(wm_);
+        bool res = sm::try_lock();
+        if (res)
+        {
+            exclusive_owner_ = std::this_thread::get_id();
+        }
+        return res;
+    }
+
+    void unlock()
+    {
+        std::lock_guard<std::mutex> _(wm_);
+        sm::unlock();
+        exclusive_owner_ = std::thread::id();
+    }
+
+    // Shared ownership
+
+    void lock_shared()
+    {
+        sm::lock_shared();
+        std::lock_guard<std::mutex> _(wm_);
+        ++shared_owners_[std::this_thread::get_id()];
+    }
+
+    bool try_lock_shared()
+    {
+        std::lock_guard<std::mutex> _(wm_);
+        bool res = sm::try_lock_shared();
+        if (res)
+        {
+            ++shared_owners_[std::this_thread::get_id()];
+        }
+        return res;
+    }
+
+    void unlock_shared()
+    {
+        std::lock_guard<std::mutex> _(wm_);
+        sm::unlock_shared();
+        auto owner = shared_owners_.find(std::this_thread::get_id());
+        if ( owner != shared_owners_.end() && 0 == --owner->second )
+        {
+            shared_owners_.erase(owner);
+        }
+    }
+
+};
+
+} // namespace detail
+
+/*
+    Fast-DDS defaults to PTHREAD_RWLOCK_PREFER_READER_NP for two main reasons:
+
+    - It allows reader side recursiveness.  If we have two threads (T1, T2) and
+      called S a shared lock and E and exclusive one.
+
+        T1: S -> S
+        T2:   E
+
+      PTHREAD_RWLOCK_PREFER_READER_NP will never deadlock. The S locks are not
+      influenced by the E locks.
+
+      PTHREAD_RWLOCK_PREFER_WRITER_NONRECURSIVE_NP will deadlock.  before T1
+      takes S twice. That happens because:
+        + T1's second S will wait for E (writer is prioritized)
+        + E will wait for T1's first S lock (writer needs atomic access)
+        + T1's first S cannot unlock because is blocked in the second S.
+
+      Thus, shared_mutex<PTHREAD_RWLOCK_PREFER_WRITER_NONRECURSIVE_NP> is
+      non-recursive.
+
+    - It prevents ABBA deadlocks with other mutexes. If we have three threads
+      (Ti) and P is an ordinary mutex:
+
+        T1: P -> S
+        T2: S -> P
+        T3:   E
+
+      PTHREAD_RWLOCK_PREFER_READER_NP will never deadlock. The S locks are not
+      influenced by the E locks. Starvation issues can be managed in the user
+      code.
+
+      PTHREAD_RWLOCK_PREFER_WRITER_NONRECURSIVE_NP will deadlock if T3 takes E
+      before T1 takes S. That happens because:
+        + T1's S will wait for E (writer is prioritized)
+        + E will wait for T2's S lock (writer needs atomic access)
+        + T2's S cannot unlock because is blocked in P (owned by T1).
+
+      Thus, shared_mutex<PTHREAD_RWLOCK_PREFER_WRITER_NONRECURSIVE_NP> must be
+      managed like an ordinary mutex in deadlock sense.
+ */
+
+#ifdef NDEBUG
+using shared_mutex = detail::shared_mutex<detail::shared_mutex_type::PTHREAD_RWLOCK_PREFER_READER_NP>;
+#else
+using shared_mutex =
+        detail::debug_wrapper<detail::shared_mutex<detail::shared_mutex_type::PTHREAD_RWLOCK_PREFER_READER_NP>>;
+#endif // NDEBUG
 
 template <class Mutex>
 class shared_lock
