@@ -180,7 +180,7 @@ ReturnCode_t DomainParticipantImpl::enable_statistics_datawriter_with_profile(
 {
     DataWriterQos datawriter_qos;
     PublisherAttributes attr;
-    if (XMLP_ret::XML_OK == XMLProfileManager::fillPublisherAttributes(profile_name, attr))
+    if (XMLP_ret::XML_OK == XMLProfileManager::fillPublisherAttributes(profile_name, attr, false))
     {
         efd::utils::set_qos_from_attributes(datawriter_qos, attr);
 
@@ -319,12 +319,12 @@ void DomainParticipantImpl::enable_statistics_builtin_datawriters(
     {
         DataWriterQos datawriter_qos;
         PublisherAttributes attr;
-        if (XMLP_ret::XML_OK == XMLProfileManager::fillPublisherAttributes(topic, attr))
+        if (XMLP_ret::XML_OK == XMLProfileManager::fillPublisherAttributes(topic, attr, false))
         {
             efd::utils::set_qos_from_attributes(datawriter_qos, attr);
         }
         else if (XMLP_ret::XML_OK ==
-                XMLProfileManager::fillPublisherAttributes(DEFAULT_STATISTICS_DATAWRITER_PROFILE, attr))
+                XMLProfileManager::fillPublisherAttributes(DEFAULT_STATISTICS_DATAWRITER_PROFILE, attr, false))
         {
             efd::utils::set_qos_from_attributes(datawriter_qos, attr);
         }
