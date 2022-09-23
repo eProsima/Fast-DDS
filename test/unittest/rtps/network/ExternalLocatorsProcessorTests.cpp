@@ -344,34 +344,33 @@ TEST(ExternalLocatorsProcessorTests, add_external_locators_writer)
 
 // -------------------- Locator matching algorithm --------------------
 
-/*******************************************************************************************************************
-*                                                                                                                 *
-*  DEPLOYMENT EXAMPLE SCENARIO                                                         +---------+                *
-*                                                        +-------- [INTERNET] -------- | Node ZZ |                *
-*  Router_NN and Host_N                                  |                             +---------+                *
-*  have direct port mappings                      +------------+                       100.10.10.1                *
-*  for UDP 7410-7417                              | WAN Router |                       7410 / 7411                *
-*                                                 +------------+                                                  *
-*                                                        |                                                        *
-*                     +-----------+ 192.168.10.10        |        192.168.10.11 +-----------+                     *
-*                     | Router_10 |---------------------------------------------| Router_11 |                     *
-*                     +-----------+                                             +-----------+                     *
-*                           |                                                         |                           *
-*             +---------------------------+                             +---------------------------+             *
-*  10.10.10.4 |                10.10.10.5 |                  10.10.10.4 |                10.10.10.5 |             *
-*        +---------+                 +---------+                   +---------+                 +---------+        *
-*        | Host_1  |                 | Host_2  |                   | Host_3  |                 | Host_4  |        *
-*        +---------+                 +---------+                   +---------+                 +---------+        *
-*             |                           |                             |                           |             *
-*      +-------------+             +-------------+               +-------------+             +-------------+      *
-*      |             |             |             |               |             |             |             |      *
-* +---------+   +---------+   +---------+   +---------+     +---------+   +---------+   +---------+   +---------+ *
-* | Node_11 |   | Node_12 |   | Node_21 |   | Node_22 |     | Node_31 |   | Node_32 |   | Node_41 |   | Node_42 | *
-* +---------+   +---------+   +---------+   +---------+     +---------+   +---------+   +---------+   +---------+ *
-* 172.17.0.10   172.17.0.11   172.17.0.10   172.17.0.11     172.17.0.10   172.17.0.11   172.17.0.10   172.17.0.11 *
-* 7410 / 7411   7412 / 7413   7414 / 7415   7416 / 7417     7410 / 7411   7412 / 7413   7414 / 7415   7416 / 7417 *
-*                                                                                                                 *
-*******************************************************************************************************************/
+/*******************************************************************************************************************/
+/*  DEPLOYMENT EXAMPLE SCENARIO                                                         +---------+                */
+/*                                                        +-------- [INTERNET] -------- | Node_ZZ |                */
+/*  Router_NN and Host_N                                  |                             +---------+                */
+/*  have direct port mappings                      +------------+                       100.10.10.1                */
+/*  for UDP 7410-7417                              | WAN Router |                       7410 / 7411                */
+/*                                                 +------------+                                                  */
+/*                                                        |                                                        */
+/*                     +-----------+ 192.168.10.10        |        192.168.10.11 +-----------+                     */
+/*                     | Router_10 |---------------------------------------------| Router_11 |                     */
+/*                     +-----------+                                             +-----------+                     */
+/*                           |                                                         |                           */
+/*             +---------------------------+                             +---------------------------+             */
+/*  10.10.10.4 |                10.10.10.5 |                  10.10.10.4 |                10.10.10.5 |             */
+/*        +---------+                 +---------+                   +---------+                 +---------+        */
+/*        | Host_1  |                 | Host_2  |                   | Host_3  |                 | Host_4  |        */
+/*        +---------+                 +---------+                   +---------+                 +---------+        */
+/*             |                           |                             |                           |             */
+/*      +-------------+             +-------------+               +-------------+             +-------------+      */
+/*      |             |             |             |               |             |             |             |      */
+/* +---------+   +---------+   +---------+   +---------+     +---------+   +---------+   +---------+   +---------+ */
+/* | Node_11 |   | Node_12 |   | Node_21 |   | Node_22 |     | Node_31 |   | Node_32 |   | Node_41 |   | Node_42 | */
+/* +---------+   +---------+   +---------+   +---------+     +---------+   +---------+   +---------+   +---------+ */
+/* 172.17.0.10   172.17.0.11   172.17.0.10   172.17.0.11     172.17.0.10   172.17.0.11   172.17.0.10   172.17.0.11 */
+/* 7410 / 7411   7412 / 7413   7414 / 7415   7416 / 7417     7410 / 7411   7412 / 7413   7414 / 7415   7416 / 7417 */
+/*                                                                                                                 */
+/*******************************************************************************************************************/
 
 struct ExternalAddress
 {
@@ -414,6 +413,19 @@ struct BasicNodeConfig
         , host_locators(host_address, metatraffic_port, user_port)
         , container_locators(node_address, metatraffic_port, user_port)
     {
+        metatraffic_ext_locators[0][0].push_back(container_locators.metatraffic);
+        metatraffic_ext_locators[1][0].push_back(host_locators.metatraffic);
+        metatraffic_ext_locators[2][0].push_back(wan_locators.metatraffic);
+
+        default_ext_locators[0][0].push_back(container_locators.user);
+        default_ext_locators[1][0].push_back(host_locators.user);
+        default_ext_locators[2][0].push_back(wan_locators.user);
+
+        announced_data.metatraffic_locators.add_unicast_locator(container_locators.metatraffic);
+        announced_data.default_locators.add_unicast_locator(container_locators.user);
+
+        ExternalLocatorsProcessor::add_external_locators(announced_data, metatraffic_ext_locators,
+                default_ext_locators);
     }
 
     // User and metatraffic locators for externality 2
@@ -422,9 +434,13 @@ struct BasicNodeConfig
     ExternalAddress host_locators;
     // User and metatraffic locators for externality 0
     ExternalAddress container_locators;
+
+    ExternalLocators metatraffic_ext_locators;
+    ExternalLocators default_ext_locators;
+    ParticipantProxyData announced_data;
 };
 
-/* All nodes except Node_Z, which has no external locators */
+/* All nodes except Node_ZZ, which has no external locators */
 static const std::array<BasicNodeConfig, 8> internal_nodes =
 {
     /* Node_11 */ BasicNodeConfig{"192.168.10.10", "10.10.10.4", "172.17.0.10", 7410, 7411},
@@ -436,6 +452,172 @@ static const std::array<BasicNodeConfig, 8> internal_nodes =
     /* Node_41 */ BasicNodeConfig{"192.168.10.11", "10.10.10.5", "172.17.0.10", 7414, 7415},
     /* Node_42 */ BasicNodeConfig{"192.168.10.11", "10.10.10.5", "172.17.0.11", 7416, 7417}
 };
+
+// The key of this map is a pair representing <local_node, discovered_node>
+// The value is a ExternalAddress with the locators that should be selected by local_node to communicate with the
+// discovered_node
+const std::map<std::pair<size_t, size_t>, ExternalAddress> expected_communication_results
+{
+    // Node_11
+    { {0, 0}, {"172.17.0.10",   7410, 7411} },
+    { {0, 1}, {"172.17.0.11",   7412, 7413} },
+    { {0, 2}, {"10.10.10.5",    7414, 7415} },
+    { {0, 3}, {"10.10.10.5",    7416, 7417} },
+    { {0, 4}, {"192.168.10.11", 7410, 7411} },
+    { {0, 5}, {"192.168.10.11", 7412, 7413} },
+    { {0, 6}, {"192.168.10.11", 7414, 7415} },
+    { {0, 7}, {"192.168.10.11", 7416, 7417} },
+    // Node_12
+    { {1, 0}, {"172.17.0.10",   7410, 7411} },
+    { {1, 1}, {"172.17.0.11",   7412, 7413} },
+    { {1, 2}, {"10.10.10.5",    7414, 7415} },
+    { {1, 3}, {"10.10.10.5",    7416, 7417} },
+    { {1, 4}, {"192.168.10.11", 7410, 7411} },
+    { {1, 5}, {"192.168.10.11", 7412, 7413} },
+    { {1, 6}, {"192.168.10.11", 7414, 7415} },
+    { {1, 7}, {"192.168.10.11", 7416, 7417} },
+    // Node_21
+    { {2, 0}, {"10.10.10.4",    7410, 7411} },
+    { {2, 1}, {"10.10.10.4",    7412, 7413} },
+    { {2, 2}, {"172.17.0.10",   7414, 7415} },
+    { {2, 3}, {"172.17.0.11",   7416, 7417} },
+    { {2, 4}, {"192.168.10.11", 7410, 7411} },
+    { {2, 5}, {"192.168.10.11", 7412, 7413} },
+    { {2, 6}, {"192.168.10.11", 7414, 7415} },
+    { {2, 7}, {"192.168.10.11", 7416, 7417} },
+    // Node_22
+    { {3, 0}, {"10.10.10.4",    7410, 7411} },
+    { {3, 1}, {"10.10.10.4",    7412, 7413} },
+    { {3, 2}, {"172.17.0.10",   7414, 7415} },
+    { {3, 3}, {"172.17.0.11",   7416, 7417} },
+    { {3, 4}, {"192.168.10.11", 7410, 7411} },
+    { {3, 5}, {"192.168.10.11", 7412, 7413} },
+    { {3, 6}, {"192.168.10.11", 7414, 7415} },
+    { {3, 7}, {"192.168.10.11", 7416, 7417} },
+    // Node_31
+    { {4, 0}, {"192.168.10.10", 7410, 7411} },
+    { {4, 1}, {"192.168.10.10", 7412, 7413} },
+    { {4, 2}, {"192.168.10.10", 7414, 7415} },
+    { {4, 3}, {"192.168.10.10", 7416, 7417} },
+    { {4, 4}, {"172.17.0.10",   7410, 7411} },
+    { {4, 5}, {"172.17.0.11",   7412, 7413} },
+    { {4, 6}, {"10.10.10.5",    7414, 7415} },
+    { {4, 7}, {"10.10.10.5",    7416, 7417} },
+    // Node_32
+    { {5, 0}, {"192.168.10.10", 7410, 7411} },
+    { {5, 1}, {"192.168.10.10", 7412, 7413} },
+    { {5, 2}, {"192.168.10.10", 7414, 7415} },
+    { {5, 3}, {"192.168.10.10", 7416, 7417} },
+    { {5, 4}, {"172.17.0.10",   7410, 7411} },
+    { {5, 5}, {"172.17.0.11",   7412, 7413} },
+    { {5, 6}, {"10.10.10.5",    7414, 7415} },
+    { {5, 7}, {"10.10.10.5",    7416, 7417} },
+    // Node_41
+    { {6, 0}, {"192.168.10.10", 7410, 7411} },
+    { {6, 1}, {"192.168.10.10", 7412, 7413} },
+    { {6, 2}, {"192.168.10.10", 7414, 7415} },
+    { {6, 3}, {"192.168.10.10", 7416, 7417} },
+    { {6, 4}, {"10.10.10.4",    7410, 7411} },
+    { {6, 5}, {"10.10.10.4",    7412, 7413} },
+    { {6, 6}, {"172.17.0.10",   7414, 7415} },
+    { {6, 7}, {"172.17.0.11",   7416, 7417} },
+    // Node_42
+    { {7, 0}, {"192.168.10.10", 7410, 7411} },
+    { {7, 1}, {"192.168.10.10", 7412, 7413} },
+    { {7, 2}, {"192.168.10.10", 7414, 7415} },
+    { {7, 3}, {"192.168.10.10", 7416, 7417} },
+    { {7, 4}, {"10.10.10.4",    7410, 7411} },
+    { {7, 5}, {"10.10.10.4",    7412, 7413} },
+    { {7, 6}, {"172.17.0.10",   7414, 7415} },
+    { {7, 7}, {"172.17.0.11",   7416, 7417} },
+};
+
+void test_matching_locators_scenario(
+        bool ignore_non_matching)
+{
+    // Node to node test
+    for (const auto& test_case : expected_communication_results)
+    {
+        const ExternalLocators& meta_ext_locators = internal_nodes[test_case.first.first].metatraffic_ext_locators;
+        const ExternalLocators& user_ext_locators = internal_nodes[test_case.first.first].default_ext_locators;
+        const ParticipantProxyData& discovered_data = internal_nodes[test_case.first.second].announced_data;
+        ParticipantProxyData filtered_data = discovered_data;
+
+        ExternalLocatorsProcessor::filter_remote_locators(
+            filtered_data, meta_ext_locators, user_ext_locators, ignore_non_matching);
+
+        const ExternalAddress& expected_result = test_case.second;
+
+        ASSERT_TRUE(filtered_data.metatraffic_locators.multicast == discovered_data.metatraffic_locators.multicast);
+        ASSERT_EQ(filtered_data.metatraffic_locators.unicast.size(), 1u);
+        ASSERT_EQ(filtered_data.metatraffic_locators.unicast[0], expected_result.metatraffic);
+
+        ASSERT_TRUE(filtered_data.default_locators.multicast == discovered_data.default_locators.multicast);
+        ASSERT_EQ(filtered_data.default_locators.unicast.size(), 1u);
+        ASSERT_EQ(filtered_data.default_locators.unicast[0], expected_result.user);
+    }
+
+    // Test against Node_ZZ
+    ExternalAddress zz_address("100.10.10.1", 7410, 7411);
+    ParticipantProxyData discovered_data;
+    ExternalLocators zz_meta_locators;
+    ExternalLocators zz_user_locators;
+    zz_meta_locators[0][0].push_back(zz_address.metatraffic);
+    zz_user_locators[0][0].push_back(zz_address.user);
+    discovered_data.metatraffic_locators.add_unicast_locator(zz_address.metatraffic);
+    discovered_data.default_locators.add_unicast_locator(zz_address.user);
+
+    for (const BasicNodeConfig& node : internal_nodes)
+    {
+        const ExternalLocators& meta_ext_locators = node.metatraffic_ext_locators;
+        const ExternalLocators& user_ext_locators = node.default_ext_locators;
+        ParticipantProxyData filtered_data = discovered_data;
+
+        ExternalLocatorsProcessor::filter_remote_locators(
+            filtered_data, meta_ext_locators, user_ext_locators, ignore_non_matching);
+
+        ASSERT_TRUE(filtered_data.metatraffic_locators.multicast == discovered_data.metatraffic_locators.multicast);
+        ASSERT_TRUE(filtered_data.default_locators.multicast == discovered_data.default_locators.multicast);
+
+        if (ignore_non_matching)
+        {
+            ASSERT_TRUE(filtered_data.metatraffic_locators.unicast.empty());
+            ASSERT_TRUE(filtered_data.default_locators.unicast.empty());
+        }
+        else
+        {
+            ASSERT_EQ(filtered_data.metatraffic_locators.unicast.size(), 1u);
+            ASSERT_EQ(filtered_data.metatraffic_locators.unicast[0], zz_address.metatraffic);
+
+            ASSERT_EQ(filtered_data.default_locators.unicast.size(), 1u);
+            ASSERT_EQ(filtered_data.default_locators.unicast[0], zz_address.user);
+        }
+
+        filtered_data = node.announced_data;
+        ExternalLocatorsProcessor::filter_remote_locators(
+            filtered_data, zz_meta_locators, zz_user_locators, ignore_non_matching);
+
+        ASSERT_TRUE(filtered_data.metatraffic_locators.multicast == node.announced_data.metatraffic_locators.multicast);
+        ASSERT_TRUE(filtered_data.default_locators.multicast == node.announced_data.default_locators.multicast);
+
+        if (ignore_non_matching)
+        {
+            ASSERT_TRUE(filtered_data.metatraffic_locators.unicast.empty());
+            ASSERT_TRUE(filtered_data.default_locators.unicast.empty());
+        }
+        else
+        {
+            ASSERT_TRUE(filtered_data.metatraffic_locators.unicast == node.announced_data.metatraffic_locators.unicast);
+            ASSERT_TRUE(filtered_data.default_locators.unicast == node.announced_data.default_locators.unicast);
+        }
+    }
+}
+
+TEST(ExternalLocatorsProcessorTests, matching_locators_scenario)
+{
+    test_matching_locators_scenario(true);
+    test_matching_locators_scenario(false);
+}
 
 int main(
         int argc,
