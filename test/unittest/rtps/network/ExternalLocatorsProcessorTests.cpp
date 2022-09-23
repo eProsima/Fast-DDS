@@ -84,7 +84,7 @@ void test_add_external_locators_participant(
     RemoteLocatorList meta_test_list(working_data.metatraffic_locators);
 
     LocatorWithMask test_locator;
-    std::stringstream stream("1.1.1.1:9999");
+    std::stringstream stream("UDPv4:[1.1.1.1]:9999");
     stream >> test_locator;
     def_test_list.add_unicast_locator(test_locator);
     meta_test_list.add_unicast_locator(test_locator);
@@ -178,13 +178,13 @@ TEST(ExternalLocatorsProcessorTests, add_external_locators_participant)
 {
     Locator multicast_loc;
     {
-        std::stringstream stream("239.255.0.1:12345");
+        std::stringstream stream("UDPv4:[239.255.0.1]:12345");
         stream >> multicast_loc;
     }
 
     Locator unicast_loc;
     {
-        std::stringstream stream("10.10.10.10:9999");
+        std::stringstream stream("UDPv4:[10.10.10.10]:9999");
         stream >> unicast_loc;
     }
 
@@ -252,7 +252,7 @@ void test_add_external_locators_endpoint(
     RemoteLocatorList empty_test_list(working_data.remote_locators());
     RemoteLocatorList test_list(working_data.remote_locators());
     LocatorWithMask test_locator;
-    std::stringstream stream("1.1.1.1:9999");
+    std::stringstream stream("UDPv4:[1.1.1.1]:9999");
     stream >> test_locator;
     test_list.add_unicast_locator(test_locator);
 
@@ -297,13 +297,13 @@ void test_add_external_locators_endpoint()
 
     Locator multicast_loc;
     {
-        std::stringstream stream("239.255.0.1:12345");
+        std::stringstream stream("UDPv4:[239.255.0.1]:12345");
         stream >> multicast_loc;
     }
 
     Locator unicast_loc;
     {
-        std::stringstream stream("10.10.10.10:9999");
+        std::stringstream stream("UDPv4:[10.10.10.10]:9999");
         stream >> unicast_loc;
     }
 
