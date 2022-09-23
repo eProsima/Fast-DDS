@@ -73,7 +73,7 @@ struct Arg : public option::Arg
             bool msg)
     {
         char* endptr = 0;
-        if ( option.arg != nullptr)
+        if ( option.arg != nullptr )
         {
             strtol(option.arg, &endptr, 10);
             if (endptr != option.arg && *endptr == 0)
@@ -205,7 +205,7 @@ const option::Descriptor usage[] = {
     { DOMAIN_ID, 0, "d", "domain",                Arg::NumericRange<0, 230>,
       "  -d <id> \t--domain=<id>  \tDDS domain ID (Default: 0)." },
     { SAMPLES, 0, "s", "samples",              Arg::NumericRange<>,
-      "  -s <num> \t--samples=<num>  \tNumber of samples to send (Default: 0 => infinite samples)." },
+      "  -s <num> \t--samples=<num>  \tNumber of samples to wait for (Default: 0 => infinite samples)." },
     { TRANSPORT, 0, "", "transport",        Arg::Transport,
       "  \t--transport=<shm|udp|udpv6> \tUse only shared-memory, UDPv4, or UDPv6 transport."
       "If not set, use Fast DDS default transports (depending on the scenario it will use the most efficient one:"

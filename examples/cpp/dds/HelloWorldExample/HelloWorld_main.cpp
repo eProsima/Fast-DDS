@@ -76,7 +76,7 @@ struct Arg : public option::Arg
             bool msg)
     {
         char* endptr = 0;
-        if ( option.arg != nullptr)
+        if ( option.arg != nullptr )
         {
             strtol(option.arg, &endptr, 10);
             if (endptr != option.arg && *endptr == 0)

@@ -221,11 +221,6 @@ int main(
         std::cerr << "WARNING: --ttl will take no effect since not using UDP transport." << std::endl;
     }
 
-    if (hops > 255 )
-    {
-        std::cerr << "WARNING: --ttl value will be cut off to its maximum 255." << std::endl;
-    }
-
     switch (type)
     {
         case PUBLISHER:
