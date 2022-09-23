@@ -68,7 +68,7 @@ void single_participant_check(
         const RemoteLocatorList& def_check_locators,
         const RemoteLocatorList& meta_check_locators)
 {
-    ExternalLocatorsProcessor::add_external_locators(pdata, def_ext_locators, meta_ext_locators);
+    ExternalLocatorsProcessor::add_external_locators(pdata, meta_ext_locators, def_ext_locators);
     ASSERT_TRUE(pdata.default_locators == def_check_locators);
     ASSERT_TRUE(pdata.metatraffic_locators == meta_check_locators);
 }
