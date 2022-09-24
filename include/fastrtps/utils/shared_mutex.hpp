@@ -207,6 +207,7 @@ class shared_mutex<shared_mutex_type::PTHREAD_RWLOCK_PREFER_READER_NP>
     : public shared_mutex_base
 {
     count_t writer_waiting_ = 0;
+
 public:
 
     void lock()
@@ -229,11 +230,12 @@ public:
         state_ |= num_readers;
 
         if ((writer_waiting_ && num_readers == 0)
-             || (num_readers == n_readers_ - 1))
+                || (num_readers == n_readers_ - 1))
         {
             gate1_.notify_one();
         }
     }
+
 };
 
 // Debugger wrapper class that provides insight
@@ -329,9 +331,9 @@ public:
 
       PTHREAD_RWLOCK_PREFER_WRITER_NONRECURSIVE_NP will deadlock.  before T1
       takes S twice. That happens because:
-        + T1's second S will wait for E (writer is prioritized)
-        + E will wait for T1's first S lock (writer needs atomic access)
-        + T1's first S cannot unlock because is blocked in the second S.
+ + T1's second S will wait for E (writer is prioritized)
+ + E will wait for T1's first S lock (writer needs atomic access)
+ + T1's first S cannot unlock because is blocked in the second S.
 
       Thus, shared_mutex<PTHREAD_RWLOCK_PREFER_WRITER_NONRECURSIVE_NP> is
       non-recursive.
@@ -349,9 +351,9 @@ public:
 
       PTHREAD_RWLOCK_PREFER_WRITER_NONRECURSIVE_NP will deadlock if T3 takes E
       before T1 takes S. That happens because:
-        + T1's S will wait for E (writer is prioritized)
-        + E will wait for T2's S lock (writer needs atomic access)
-        + T2's S cannot unlock because is blocked in P (owned by T1).
+ + T1's S will wait for E (writer is prioritized)
+ + E will wait for T2's S lock (writer needs atomic access)
+ + T2's S cannot unlock because is blocked in P (owned by T1).
 
       Thus, shared_mutex<PTHREAD_RWLOCK_PREFER_WRITER_NONRECURSIVE_NP> must be
       managed like an ordinary mutex in deadlock sense.
