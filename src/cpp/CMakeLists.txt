@@ -386,6 +386,44 @@ if(APPLE)
     set(CMAKE_INSTALL_RPATH_USE_LINK_PATH FALSE)
 endif()
 
+# Check if the shared_mutex provided by the platform STL library
+# prioritizes writes
+
+try_run(SM_RUN_RESULT SM_COMPILE_RESULT
+        "${CMAKE_CURRENT_BINARY_DIR}/shmtest"
+        "${CMAKE_SOURCE_DIR}/cmake/modules/check_shared_mutex_priority.cpp"
+        LINK_LIBRARIES ${CMAKE_THREAD_LIBS_INIT}
+        RUN_OUTPUT_VARIABLE SM_RUN_OUTPUT)
+
+if(SM_COMPILE_RESULT AND NOT SM_RUN_RESULT)
+    string(STRIP ${SM_RUN_OUTPUT} SM_RUN_OUTPUT)
+    message(STATUS "Framework's shared_mutex is ${SM_RUN_OUTPUT}")
+endif()
+
+if(SM_RUN_OUTPUT STREQUAL "PTHREAD_RWLOCK_PREFER_READER_NP")
+    set(USER_CAN_CHOOSE_SHARED_MEMORY_THIRDPARTY ON)
+else()
+    message(STATUS "Forcing third party shared_mutex")
+    set(USE_THIRDPARTY_SHARED_MUTEX ON)
+endif()
+
+cmake_dependent_option(
+    USE_THIRDPARTY_SHARED_MUTEX [=[
+Forces the use of a Boost-based shared_mutex implementation
+instead of the framework one. Useful to cope with issues on
+framework implementations like misguided sanitizer reports.
+This implementation will be used by default on frameworks
+lacking the shared_mutex feature like those not fulfilling
+C++17.
+]=] OFF
+    "USER_CAN_CHOOSE_SHARED_MEMORY_THIRDPARTY"
+    ON)
+
+unset(USER_CAN_CHOOSE_SHARED_MEMORY_THIRDPARTY)
+unset(SM_RUN_RESULT)
+unset(SM_COMPILE_RESULT)
+unset(SM_RUN_OUTPUT)
+
 #Create library
 add_library(${PROJECT_NAME} ${${PROJECT_NAME}_source_files})
 set_target_properties(${PROJECT_NAME} PROPERTIES VERSION ${PROJECT_VERSION})
