@@ -386,13 +386,22 @@ if(APPLE)
     set(CMAKE_INSTALL_RPATH_USE_LINK_PATH FALSE)
 endif()
 
+# Find out if libatomic link is required in this platform
+find_package(Atomic MODULE)
+
 # Check if the shared_mutex provided by the platform STL library
 # prioritizes writes
+
+# try_run cannot manage targets yet
+get_target_property(CMAKE_ATOMIC_LIB eProsima_atomic INTERFACE_LINK_LIBRARIES)    
+if(NOT CMAKE_ATOMIC_LIB)
+    set(CMAKE_ATOMIC_LIB)
+endif()
 
 try_run(SM_RUN_RESULT SM_COMPILE_RESULT
         "${CMAKE_CURRENT_BINARY_DIR}/shmtest"
         "${CMAKE_SOURCE_DIR}/cmake/modules/check_shared_mutex_priority.cpp"
-        LINK_LIBRARIES ${CMAKE_THREAD_LIBS_INIT}
+        LINK_LIBRARIES ${CMAKE_THREAD_LIBS_INIT} ${CMAKE_ATOMIC_LIB}
         RUN_OUTPUT_VARIABLE SM_RUN_OUTPUT)
 
 if(SM_COMPILE_RESULT AND NOT SM_RUN_RESULT)
@@ -423,6 +432,7 @@ unset(USER_CAN_CHOOSE_SHARED_MEMORY_THIRDPARTY)
 unset(SM_RUN_RESULT)
 unset(SM_COMPILE_RESULT)
 unset(SM_RUN_OUTPUT)
+unset(CMAKE_ATOMIC_LIB)
 
 #Create library
 add_library(${PROJECT_NAME} ${${PROJECT_NAME}_source_files})
@@ -470,9 +480,6 @@ if(BUILD_SHARED_LIBS AND MSVC)
 else()
     set(PRIVACY "PUBLIC")
 endif()
-
-# Find out if libatomic link is required in this platform
-find_package(Atomic MODULE)
 
 # Link library to external libraries.
 target_link_libraries(${PROJECT_NAME} ${PRIVACY} fastcdr foonathan_memory
