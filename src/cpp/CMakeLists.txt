@@ -371,9 +371,6 @@ else()
     set(HAVE_STRICT_REALTIME 0)
 endif()
 
-configure_file(${PROJECT_SOURCE_DIR}/include/${PROJECT_NAME}/config.h.in
-    ${PROJECT_BINARY_DIR}/include/${PROJECT_NAME}/config.h)
-
 if(NOT ANDROID)
     find_package(Threads REQUIRED)
 endif()
@@ -433,6 +430,10 @@ unset(SM_RUN_RESULT)
 unset(SM_COMPILE_RESULT)
 unset(SM_RUN_OUTPUT)
 unset(CMAKE_ATOMIC_LIB)
+
+# Generate the proper configure file
+configure_file(${PROJECT_SOURCE_DIR}/include/${PROJECT_NAME}/config.h.in
+    ${PROJECT_BINARY_DIR}/include/${PROJECT_NAME}/config.h)
 
 #Create library
 add_library(${PROJECT_NAME} ${${PROJECT_NAME}_source_files})
