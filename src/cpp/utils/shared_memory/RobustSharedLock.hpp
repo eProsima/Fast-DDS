@@ -237,7 +237,7 @@ private:
             bool* was_lock_created,
             bool* was_lock_released)
     {
-        auto fd = open(file_path.c_str(), O_RDONLY, 0666);
+        auto fd = open(file_path.c_str(), O_RDONLY, 0);
 
         if (fd != -1)
         {
@@ -289,7 +289,7 @@ private:
     {
         LockStatus lock_status;
 
-        auto fd = open(file_path.c_str(), O_RDONLY, 0666);
+        auto fd = open(file_path.c_str(), O_RDONLY, 0);
 
         if (fd != -1)
         {

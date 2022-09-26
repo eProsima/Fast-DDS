@@ -171,7 +171,7 @@ private:
             const std::string& file_path,
             bool* was_lock_created)
     {
-        auto fd = open(file_path.c_str(), O_RDONLY, 0666);
+        auto fd = open(file_path.c_str(), O_RDONLY, 0);
 
         if (fd != -1)
         {
