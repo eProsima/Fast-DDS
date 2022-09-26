@@ -23,6 +23,7 @@
   <depend>fastcdr</depend>
   <depend>foonathan_memory_vendor</depend>
   <depend>tinyxml2</depend>
+  <depend>python3</depend>
 
   <buildtool_depend>cmake</buildtool_depend>
 
