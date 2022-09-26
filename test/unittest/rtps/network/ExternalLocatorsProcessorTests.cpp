@@ -572,16 +572,26 @@ void test_matching_locators_scenario(
         {
             const BasicNodeConfig& from_node = internal_nodes[test_case.first.first];
             const BasicNodeConfig& to_node = internal_nodes[test_case.first.second];
+            const ExternalAddress& expected_result = test_case.second;
 
             ExternalLocators meta_ext_locators = from_node.get_metatraffic_external_locators(cfg);
             ExternalLocators user_ext_locators = from_node.get_default_external_locators(cfg);
             const ParticipantProxyData& discovered_data = to_node.announced_data;
+
+            LocatorSelectorEntry entry(4u, 1u);
+            entry.multicast = discovered_data.metatraffic_locators.multicast;
+            entry.unicast = discovered_data.metatraffic_locators.unicast;
+
+            ExternalLocatorsProcessor::filter_remote_locators(entry, meta_ext_locators, ignore_non_matching);
+            ASSERT_TRUE(entry.multicast == discovered_data.metatraffic_locators.multicast);
+            ASSERT_EQ(entry.unicast.size(), 1u);
+            ASSERT_EQ(entry.unicast[0], expected_result.metatraffic);
+
             ParticipantProxyData filtered_data = discovered_data;
 
             ExternalLocatorsProcessor::filter_remote_locators(
                 filtered_data, meta_ext_locators, user_ext_locators, ignore_non_matching);
 
-            const ExternalAddress& expected_result = test_case.second;
 
             ASSERT_TRUE(filtered_data.metatraffic_locators.multicast == discovered_data.metatraffic_locators.multicast);
             ASSERT_EQ(filtered_data.metatraffic_locators.unicast.size(), 1u);
@@ -604,9 +614,27 @@ void test_matching_locators_scenario(
 
         for (const BasicNodeConfig& node : internal_nodes)
         {
+            LocatorSelectorEntry entry(4u, 1u);
             ExternalLocators meta_ext_locators = node.get_metatraffic_external_locators(cfg);
             ExternalLocators user_ext_locators = node.get_default_external_locators(cfg);
             ParticipantProxyData filtered_data = zz_discovered_data;
+
+            // Node -> Node_ZZ
+            entry.multicast = filtered_data.metatraffic_locators.multicast;
+            entry.unicast = filtered_data.metatraffic_locators.unicast;
+
+            ExternalLocatorsProcessor::filter_remote_locators(entry, meta_ext_locators, ignore_non_matching);
+
+            ASSERT_TRUE(entry.multicast == zz_discovered_data.metatraffic_locators.multicast);
+            if (ignore_non_matching)
+            {
+                ASSERT_TRUE(entry.unicast.empty());
+            }
+            else
+            {
+                ASSERT_EQ(entry.unicast.size(), 1u);
+                ASSERT_EQ(entry.unicast[0], zz_address.metatraffic);
+            }
 
             ExternalLocatorsProcessor::filter_remote_locators(
                 filtered_data, meta_ext_locators, user_ext_locators, ignore_non_matching);
@@ -629,7 +657,23 @@ void test_matching_locators_scenario(
                 ASSERT_EQ(filtered_data.default_locators.unicast[0], zz_address.user);
             }
 
+            // Node_ZZ -> Node
             filtered_data = node.announced_data;
+            entry.multicast = filtered_data.metatraffic_locators.multicast;
+            entry.unicast = filtered_data.metatraffic_locators.unicast;
+
+            ExternalLocatorsProcessor::filter_remote_locators(entry, zz_meta_locators, ignore_non_matching);
+
+            ASSERT_TRUE(entry.multicast == node.announced_data.metatraffic_locators.multicast);
+            if (ignore_non_matching)
+            {
+                ASSERT_TRUE(entry.unicast.empty());
+            }
+            else
+            {
+                ASSERT_TRUE(entry.unicast == node.announced_data.metatraffic_locators.unicast);
+            }
+
             ExternalLocatorsProcessor::filter_remote_locators(
                 filtered_data, zz_meta_locators, zz_user_locators, ignore_non_matching);
 
