@@ -56,8 +56,13 @@ IPersistenceService* PersistenceFactory::create_persistence_service(
         {
             const std::string* filename_property = PropertyPolicyHelper::find_property(property_policy,
                             "dds.persistence.sqlite3.filename");
+#ifdef ANDROID
+            const char* filename = (filename_property == nullptr) ?
+                    "/data/local/tmp/persistence.db" : filename_property->c_str();
+#else
             const char* filename = (filename_property == nullptr) ?
                     "persistence.db" : filename_property->c_str();
+#endif // if ANDROID
             bool update_schema = false;
             const std::string* update_schema_value = PropertyPolicyHelper::find_property(property_policy,
                             "dds.persistence.update_schema");
