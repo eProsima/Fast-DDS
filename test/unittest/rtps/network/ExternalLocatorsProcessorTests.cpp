@@ -413,19 +413,44 @@ struct BasicNodeConfig
         , host_locators(host_address, metatraffic_port, user_port)
         , container_locators(node_address, metatraffic_port, user_port)
     {
-        metatraffic_ext_locators[0][0].push_back(container_locators.metatraffic);
-        metatraffic_ext_locators[1][0].push_back(host_locators.metatraffic);
-        metatraffic_ext_locators[2][0].push_back(wan_locators.metatraffic);
-
-        default_ext_locators[0][0].push_back(container_locators.user);
-        default_ext_locators[1][0].push_back(host_locators.user);
-        default_ext_locators[2][0].push_back(wan_locators.user);
-
         announced_data.metatraffic_locators.add_unicast_locator(container_locators.metatraffic);
         announced_data.default_locators.add_unicast_locator(container_locators.user);
+        announced_data.metatraffic_locators.add_unicast_locator(host_locators.metatraffic);
+        announced_data.default_locators.add_unicast_locator(host_locators.user);
+        announced_data.metatraffic_locators.add_unicast_locator(wan_locators.metatraffic);
+        announced_data.default_locators.add_unicast_locator(wan_locators.user);
+    }
 
-        ExternalLocatorsProcessor::add_external_locators(announced_data, metatraffic_ext_locators,
-                default_ext_locators);
+    struct ExperimentConfig
+    {
+        uint8_t host_externality;
+        uint8_t host_cost;
+        uint8_t wan_externality;
+        uint8_t wan_cost;
+    };
+
+    ExternalLocators get_metatraffic_external_locators(
+            ExperimentConfig cfg = {1, 0, 2, 0}) const
+    {
+        ExternalLocators ret_value;
+
+        ret_value[0][0].push_back(container_locators.metatraffic);
+        ret_value[cfg.host_externality][cfg.host_cost].push_back(host_locators.metatraffic);
+        ret_value[cfg.wan_externality][cfg.wan_cost].push_back(wan_locators.metatraffic);
+
+        return ret_value;
+    }
+
+    ExternalLocators get_default_external_locators(
+            ExperimentConfig cfg = {1, 0, 2, 0}) const
+    {
+        ExternalLocators ret_value;
+
+        ret_value[0][0].push_back(container_locators.user);
+        ret_value[cfg.host_externality][cfg.host_cost].push_back(host_locators.user);
+        ret_value[cfg.wan_externality][cfg.wan_cost].push_back(wan_locators.user);
+
+        return ret_value;
     }
 
     // User and metatraffic locators for externality 2
@@ -435,8 +460,6 @@ struct BasicNodeConfig
     // User and metatraffic locators for externality 0
     ExternalAddress container_locators;
 
-    ExternalLocators metatraffic_ext_locators;
-    ExternalLocators default_ext_locators;
     ParticipantProxyData announced_data;
 };
 
@@ -535,80 +558,96 @@ const std::map<std::pair<size_t, size_t>, ExternalAddress> expected_communicatio
 void test_matching_locators_scenario(
         bool ignore_non_matching)
 {
-    // Node to node test
-    for (const auto& test_case : expected_communication_results)
+    const std::vector<BasicNodeConfig::ExperimentConfig> configs =
     {
-        const ExternalLocators& meta_ext_locators = internal_nodes[test_case.first.first].metatraffic_ext_locators;
-        const ExternalLocators& user_ext_locators = internal_nodes[test_case.first.first].default_ext_locators;
-        const ParticipantProxyData& discovered_data = internal_nodes[test_case.first.second].announced_data;
-        ParticipantProxyData filtered_data = discovered_data;
+        {1, 0, 2, 0},
+        {1, 1, 1, 0},
+        {2, 100, 2, 50}
+    };
 
-        ExternalLocatorsProcessor::filter_remote_locators(
-            filtered_data, meta_ext_locators, user_ext_locators, ignore_non_matching);
-
-        const ExternalAddress& expected_result = test_case.second;
-
-        ASSERT_TRUE(filtered_data.metatraffic_locators.multicast == discovered_data.metatraffic_locators.multicast);
-        ASSERT_EQ(filtered_data.metatraffic_locators.unicast.size(), 1u);
-        ASSERT_EQ(filtered_data.metatraffic_locators.unicast[0], expected_result.metatraffic);
-
-        ASSERT_TRUE(filtered_data.default_locators.multicast == discovered_data.default_locators.multicast);
-        ASSERT_EQ(filtered_data.default_locators.unicast.size(), 1u);
-        ASSERT_EQ(filtered_data.default_locators.unicast[0], expected_result.user);
-    }
-
-    // Test against Node_ZZ
-    ExternalAddress zz_address("100.10.10.1", 7410, 7411);
-    ParticipantProxyData discovered_data;
-    ExternalLocators zz_meta_locators;
-    ExternalLocators zz_user_locators;
-    zz_meta_locators[0][0].push_back(zz_address.metatraffic);
-    zz_user_locators[0][0].push_back(zz_address.user);
-    discovered_data.metatraffic_locators.add_unicast_locator(zz_address.metatraffic);
-    discovered_data.default_locators.add_unicast_locator(zz_address.user);
-
-    for (const BasicNodeConfig& node : internal_nodes)
+    for (const auto& cfg : configs)
     {
-        const ExternalLocators& meta_ext_locators = node.metatraffic_ext_locators;
-        const ExternalLocators& user_ext_locators = node.default_ext_locators;
-        ParticipantProxyData filtered_data = discovered_data;
-
-        ExternalLocatorsProcessor::filter_remote_locators(
-            filtered_data, meta_ext_locators, user_ext_locators, ignore_non_matching);
-
-        ASSERT_TRUE(filtered_data.metatraffic_locators.multicast == discovered_data.metatraffic_locators.multicast);
-        ASSERT_TRUE(filtered_data.default_locators.multicast == discovered_data.default_locators.multicast);
-
-        if (ignore_non_matching)
+        // Node to node test
+        for (const auto& test_case : expected_communication_results)
         {
-            ASSERT_TRUE(filtered_data.metatraffic_locators.unicast.empty());
-            ASSERT_TRUE(filtered_data.default_locators.unicast.empty());
-        }
-        else
-        {
+            const BasicNodeConfig& from_node = internal_nodes[test_case.first.first];
+            const BasicNodeConfig& to_node = internal_nodes[test_case.first.second];
+
+            ExternalLocators meta_ext_locators = from_node.get_metatraffic_external_locators(cfg);
+            ExternalLocators user_ext_locators = from_node.get_default_external_locators(cfg);
+            const ParticipantProxyData& discovered_data = to_node.announced_data;
+            ParticipantProxyData filtered_data = discovered_data;
+
+            ExternalLocatorsProcessor::filter_remote_locators(
+                filtered_data, meta_ext_locators, user_ext_locators, ignore_non_matching);
+
+            const ExternalAddress& expected_result = test_case.second;
+
+            ASSERT_TRUE(filtered_data.metatraffic_locators.multicast == discovered_data.metatraffic_locators.multicast);
             ASSERT_EQ(filtered_data.metatraffic_locators.unicast.size(), 1u);
-            ASSERT_EQ(filtered_data.metatraffic_locators.unicast[0], zz_address.metatraffic);
+            ASSERT_EQ(filtered_data.metatraffic_locators.unicast[0], expected_result.metatraffic);
 
+            ASSERT_TRUE(filtered_data.default_locators.multicast == discovered_data.default_locators.multicast);
             ASSERT_EQ(filtered_data.default_locators.unicast.size(), 1u);
-            ASSERT_EQ(filtered_data.default_locators.unicast[0], zz_address.user);
+            ASSERT_EQ(filtered_data.default_locators.unicast[0], expected_result.user);
         }
 
-        filtered_data = node.announced_data;
-        ExternalLocatorsProcessor::filter_remote_locators(
-            filtered_data, zz_meta_locators, zz_user_locators, ignore_non_matching);
+        // Test against Node_ZZ
+        ExternalAddress zz_address("100.10.10.1", 7410, 7411);
+        ParticipantProxyData zz_discovered_data;
+        ExternalLocators zz_meta_locators;
+        ExternalLocators zz_user_locators;
+        zz_meta_locators[0][0].push_back(zz_address.metatraffic);
+        zz_user_locators[0][0].push_back(zz_address.user);
+        zz_discovered_data.metatraffic_locators.add_unicast_locator(zz_address.metatraffic);
+        zz_discovered_data.default_locators.add_unicast_locator(zz_address.user);
 
-        ASSERT_TRUE(filtered_data.metatraffic_locators.multicast == node.announced_data.metatraffic_locators.multicast);
-        ASSERT_TRUE(filtered_data.default_locators.multicast == node.announced_data.default_locators.multicast);
+        for (const BasicNodeConfig& node : internal_nodes)
+        {
+            ExternalLocators meta_ext_locators = node.get_metatraffic_external_locators(cfg);
+            ExternalLocators user_ext_locators = node.get_default_external_locators(cfg);
+            ParticipantProxyData filtered_data = zz_discovered_data;
 
-        if (ignore_non_matching)
-        {
-            ASSERT_TRUE(filtered_data.metatraffic_locators.unicast.empty());
-            ASSERT_TRUE(filtered_data.default_locators.unicast.empty());
-        }
-        else
-        {
-            ASSERT_TRUE(filtered_data.metatraffic_locators.unicast == node.announced_data.metatraffic_locators.unicast);
-            ASSERT_TRUE(filtered_data.default_locators.unicast == node.announced_data.default_locators.unicast);
+            ExternalLocatorsProcessor::filter_remote_locators(
+                filtered_data, meta_ext_locators, user_ext_locators, ignore_non_matching);
+
+            ASSERT_TRUE(
+                filtered_data.metatraffic_locators.multicast == zz_discovered_data.metatraffic_locators.multicast);
+            ASSERT_TRUE(filtered_data.default_locators.multicast == zz_discovered_data.default_locators.multicast);
+
+            if (ignore_non_matching)
+            {
+                ASSERT_TRUE(filtered_data.metatraffic_locators.unicast.empty());
+                ASSERT_TRUE(filtered_data.default_locators.unicast.empty());
+            }
+            else
+            {
+                ASSERT_EQ(filtered_data.metatraffic_locators.unicast.size(), 1u);
+                ASSERT_EQ(filtered_data.metatraffic_locators.unicast[0], zz_address.metatraffic);
+
+                ASSERT_EQ(filtered_data.default_locators.unicast.size(), 1u);
+                ASSERT_EQ(filtered_data.default_locators.unicast[0], zz_address.user);
+            }
+
+            filtered_data = node.announced_data;
+            ExternalLocatorsProcessor::filter_remote_locators(
+                filtered_data, zz_meta_locators, zz_user_locators, ignore_non_matching);
+
+            ASSERT_TRUE(
+                filtered_data.metatraffic_locators.multicast == node.announced_data.metatraffic_locators.multicast);
+            ASSERT_TRUE(filtered_data.default_locators.multicast == node.announced_data.default_locators.multicast);
+
+            if (ignore_non_matching)
+            {
+                ASSERT_TRUE(filtered_data.metatraffic_locators.unicast.empty());
+                ASSERT_TRUE(filtered_data.default_locators.unicast.empty());
+            }
+            else
+            {
+                ASSERT_TRUE(
+                    filtered_data.metatraffic_locators.unicast == node.announced_data.metatraffic_locators.unicast);
+                ASSERT_TRUE(filtered_data.default_locators.unicast == node.announced_data.default_locators.unicast);
+            }
         }
     }
 }
