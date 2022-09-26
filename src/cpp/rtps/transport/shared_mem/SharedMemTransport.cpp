@@ -16,6 +16,11 @@
 #include <cstring>
 #include <algorithm>
 
+#ifdef ANDROID
+#include <boostconfig.hpp>
+#include <unistd.h>
+#endif // ifdef ANDROID
+
 #include <fastdds/dds/log/Log.hpp>
 #include <fastdds/rtps/common/Locator.h>
 #include <fastdds/rtps/network/ReceiverResource.h>
@@ -250,6 +255,15 @@ bool SharedMemTransport::init(
         logError(RTPS_MSG_OUT, "max_message_size cannot be greater than segment_size");
         return false;
     }
+
+#ifdef ANDROID
+    if (access(BOOST_INTERPROCESS_SHARED_DIR_PATH, W_OK) != F_OK)
+    {
+        logWarning(RTPS_MSG_OUT,
+                "Unable to write on " << BOOST_INTERPROCESS_SHARED_DIR_PATH << ". SHM Transport not enabled");
+        return false;
+    }
+#endif // ifdef ANDROID
 
     try
     {

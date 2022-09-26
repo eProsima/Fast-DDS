@@ -114,7 +114,7 @@
           ( defined(__FreeBSD__) && (__FreeBSD__ >= 4)) || \
             defined(__APPLE__)
          // Android does not implement sem_open/sem_close
-         #if (! defined(__ANDROID__))
+         #if !defined(__ANDROID__)
             #define BOOST_INTERPROCESS_POSIX_NAMED_SEMAPHORES
          #endif
          //MacOsX declares _POSIX_SEMAPHORES but sem_init returns ENOSYS
