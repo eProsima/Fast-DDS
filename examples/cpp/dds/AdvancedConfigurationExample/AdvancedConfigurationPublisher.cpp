@@ -147,12 +147,12 @@ bool HelloWorldPublisher::init(
     // CREATE THE PUBLISHER
     PublisherQos pbqos;
 
-    if(!partitions.empty())
+    if (!partitions.empty())
     {
         // Divide in partitions by ;
         std::stringstream spartitions(partitions);
         std::string partition_cut;
-        while(std::getline(spartitions, partition_cut, ';'))
+        while (std::getline(spartitions, partition_cut, ';'))
         {
             pbqos.partition().push_back(partition_cut.c_str());
         }

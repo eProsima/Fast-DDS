@@ -66,7 +66,7 @@ int main(
     std::string partitions = "";
     bool use_ownership = false;
     unsigned int ownership_strength = 0;
-                            //
+    //
     argc -= (argc > 0);
     argv += (argc > 0); // skip program name argv[0] if present
     option::Stats stats(true, usage, argc, argv);
