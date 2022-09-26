@@ -546,6 +546,7 @@ bool RTPSParticipantImpl::preprocess_endpoint_attributes(
         }
         else
         {
+            std::lock_guard<std::mutex> _(getCounterMutex());
             idnum = ++id_counter;
         }
 

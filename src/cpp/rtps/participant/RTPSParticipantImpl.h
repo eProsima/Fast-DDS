@@ -1022,6 +1022,12 @@ public:
             EndpointAttributes& att,
             EntityId_t& entId);
 
+    static std::mutex& getCounterMutex()
+    {
+        static std::mutex counter_mutex;
+        return counter_mutex;
+    }
+
 #if HAVE_SECURITY
     void set_endpoint_rtps_protection_supports(
             Endpoint* endpoint,
