@@ -20,6 +20,7 @@
   <depend>foonathan_memory_vendor</depend>
   <depend>libssl-dev</depend>
   <depend>tinyxml2</depend>
+  <depend>python3</depend>
 
   <buildtool_depend>cmake</buildtool_depend>
 
