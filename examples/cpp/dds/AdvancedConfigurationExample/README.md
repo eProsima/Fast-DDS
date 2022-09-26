@@ -1,4 +1,4 @@
-# Advance Configuration Example
+# Advanced Configuration Example
 
 This example extends the configuration options of a trivial HelloWorld by letting the user specify properties of
 entities such as durability, reliability or specify the transport protocol to be used, among other possibilities. This
@@ -8,15 +8,15 @@ could be useful, for example, to quickly test whether two endpoints are compatib
 
 To launch this test open two different consoles:
 
-In the first one launch: ./AdvanceConfigurationExample publisher (or AdvanceConfigurationExample.exe publisher on windows).
-In the second one: ./AdvanceConfigurationExample subscriber (or AdvanceConfigurationExample.exe subscriber on windows).
+In the first one launch: ./AdvancedConfigurationExample publisher (or AdvancedConfigurationExample.exe publisher on windows).
+In the second one: ./AdvancedConfigurationExample subscriber (or AdvancedConfigurationExample.exe subscriber on windows).
 
 ## Arguments
 
 First argument is `publisher` or `subscriber` and then the rest of arguments are read unordered
 
 ```sh
-Usage: AdvanceConfigurationExample <publisher|subscriber>
+Usage: AdvancedConfigurationExample <publisher|subscriber>
 
 General options:
   -h              --help
@@ -39,8 +39,14 @@ Publisher options:
                   --transport=<shm|udp|udpv6>
                     Use only shared-memory, UDPv4, or UDPv6 transport.If not
                     set, use Fast DDS default transports (depending on the
-                    scenario it will use the most efficient one:  data-sharing
-                    delivery mechanism > shared-memory > UDP ).
+                    scenario it will use the most efficient one: data-sharing
+                    delivery mechanism > shared-memory > UDP).
+  -o              --ownership
+                    Use Topic with EXCLUSIVE_OWNERSHIP (SHARED_OWNERSHIP by
+                    default).
+                  --strength=<num>
+                    Set this Publisher strength. Set Topic with
+                    EXCLUSIVE_OWNERSHIP. Default: 0
 
 Subscriber options:
   -t <topic_name> --topic=<topic_name>
@@ -53,8 +59,11 @@ Subscriber options:
                   --transport=<shm|udp|udpv6>
                     Use only shared-memory, UDPv4, or UDPv6 transport.If not
                     set, use Fast DDS default transports (depending on the
-                    scenario it will use the most efficient one:  data-sharing
-                    delivery mechanism > shared-memory > UDP ).
+                    scenario it will use the most efficient one: data-sharing
+                    delivery mechanism > shared-memory > UDP).
+  -o              --ownership
+                    Use Topic with EXCLUSIVE_OWNERSHIP (SHARED_OWNERSHIP by
+                    default).
 
 QoS options:
   -r              --reliable
@@ -62,6 +71,10 @@ QoS options:
                   --transient
                     Set durability to transient local (volatile by default,
                     ineffective when not reliable).
+  -p <str>        --partitions=<str>
+                    Partitions to match separated by ';'. Single or double
+                    quotes required with multiple partitions. With empty string
+                    ('') no partitions used. (Default: '').
 
 Discovery options:
                   --ttl

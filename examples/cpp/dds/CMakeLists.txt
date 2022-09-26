@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-add_subdirectory(AdvanceConfigurationExample)
+add_subdirectory(AdvancedConfigurationExample)
 add_subdirectory(BasicConfigurationExample)
 add_subdirectory(Benchmark)
 add_subdirectory(ClientServerTest)

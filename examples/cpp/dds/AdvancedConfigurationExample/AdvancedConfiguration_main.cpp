@@ -1,4 +1,4 @@
-// Copyright 2021 Proyectos y Sistemas de Mantenimiento SL (eProsima).
+// Copyright 2022 Proyectos y Sistemas de Mantenimiento SL (eProsima).
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -13,15 +13,15 @@
 // limitations under the License.
 
 /**
- * @file AdvanceConfiguration_main.cpp
+ * @file AdvancedConfiguration_main.cpp
  *
  */
 
 #include <string>
 
 #include "arg_configuration.h"
-#include "AdvanceConfigurationPublisher.h"
-#include "AdvanceConfigurationSubscriber.h"
+#include "AdvancedConfigurationPublisher.h"
+#include "AdvancedConfigurationSubscriber.h"
 #include "types.hpp"
 
 enum EntityType
@@ -97,7 +97,7 @@ int main(
         const char* type_name = parse.nonOption(0);
 
         // make sure is the first option
-        if (parse.optionsCount() && type_name >= buffer[0].arg)
+        if (parse.optionsCount() && type_name >= buffer[0].name)
         {
             throw 1;
         }
@@ -238,11 +238,6 @@ int main(
     if (transport == SHM && hops > 0 )
     {
         std::cerr << "WARNING: --ttl will take no effect since not using UDP transport." << std::endl;
-    }
-
-    if (hops > 255 )
-    {
-        std::cerr << "WARNING: --ttl value will be cut off to its maximum 255." << std::endl;
     }
 
     switch (type)

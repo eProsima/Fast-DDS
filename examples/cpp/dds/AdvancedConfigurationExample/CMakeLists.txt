@@ -1,4 +1,4 @@
-# Copyright 2021 Proyectos y Sistemas de Mantenimiento SL (eProsima).
+# Copyright 2022 Proyectos y Sistemas de Mantenimiento SL (eProsima).
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
 
 cmake_minimum_required(VERSION 3.16.3)
 
-project(AdvanceConfigurationExample VERSION 1 LANGUAGES CXX)
+project(AdvancedConfigurationExample VERSION 1 LANGUAGES CXX)
 
 # Find requirements
 if(NOT fastcdr_FOUND)
@@ -35,11 +35,11 @@ if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
     endif()
 endif()
 
-message(STATUS "Configuring AdvanceConfiguration example...")
-file(GLOB ADVANCE_CONFIG_EXAMPLE_SOURCES_CXX "*.cxx")
-file(GLOB ADVANCE_CONFIG_EXAMPLE_SOURCES_CPP "*.cpp")
+message(STATUS "Configuring AdvancedConfiguration example...")
+file(GLOB ADVANCED_CONFIG_EXAMPLE_SOURCES_CXX "*.cxx")
+file(GLOB ADVANCED_CONFIG_EXAMPLE_SOURCES_CPP "*.cpp")
 
-add_executable(${PROJECT_NAME} ${ADVANCE_CONFIG_EXAMPLE_SOURCES_CXX} ${ADVANCE_CONFIG_EXAMPLE_SOURCES_CPP})
+add_executable(${PROJECT_NAME} ${ADVANCED_CONFIG_EXAMPLE_SOURCES_CXX} ${ADVANCED_CONFIG_EXAMPLE_SOURCES_CPP})
 target_compile_definitions(${PROJECT_NAME} PRIVATE
     $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
     $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.

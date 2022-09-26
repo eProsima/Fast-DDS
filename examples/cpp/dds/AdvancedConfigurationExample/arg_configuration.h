@@ -1,4 +1,4 @@
-// Copyright 2021 Proyectos y Sistemas de Mantenimiento SL (eProsima).
+// Copyright 2022 Proyectos y Sistemas de Mantenimiento SL (eProsima).
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -17,10 +17,12 @@
  *
  */
 
-#ifndef _EPROSIMA_FASTDDS_EXAMPLES_CPP_DDS_ADVANCECONFIGURATIONEXAMPLE_ARG_CONFIGURATION_H_
-#define _EPROSIMA_FASTDDS_EXAMPLES_CPP_DDS_ADVANCECONFIGURATIONEXAMPLE_ARG_CONFIGURATION_H_
+#ifndef _EPROSIMA_FASTDDS_EXAMPLES_CPP_DDS_ADVANCEDCONFIGURATIONEXAMPLE_ARG_CONFIGURATION_H_
+#define _EPROSIMA_FASTDDS_EXAMPLES_CPP_DDS_ADVANCEDCONFIGURATIONEXAMPLE_ARG_CONFIGURATION_H_
 
 #include <iostream>
+#include <limits>
+#include <sstream>
 #include <string>
 
 #include <optionparser.hpp>
@@ -71,18 +73,48 @@ struct Arg : public option::Arg
             bool msg)
     {
         char* endptr = 0;
-        if (option.arg != 0 && strtol(option.arg, &endptr, 10))
+        if ( option.arg != nullptr )
         {
-        }
-        if (endptr != option.arg && *endptr == 0)
-        {
-            return option::ARG_OK;
+            strtol(option.arg, &endptr, 10);
+            if (endptr != option.arg && *endptr == 0)
+            {
+                return option::ARG_OK;
+            }
         }
 
         if (msg)
         {
             print_error("Option '", option, "' requires a numeric argument\n");
         }
+        return option::ARG_ILLEGAL;
+    }
+
+    template<long min = 0, long max = std::numeric_limits<long>::max()>
+    static option::ArgStatus NumericRange(
+            const option::Option& option,
+            bool msg)
+    {
+        static_assert(min <= max, "NumericRange: invalid range provided.");
+
+        char* endptr = 0;
+        if ( option.arg != nullptr )
+        {
+            long value = strtol(option.arg, &endptr, 10);
+            if ( endptr != option.arg && *endptr == 0 &&
+                    value >= min && value <= max)
+            {
+                return option::ARG_OK;
+            }
+        }
+
+        if (msg)
+        {
+            std::ostringstream os;
+            os << "' requires a numeric argument in range ["
+               << min << ", " << max << "]" << std::endl;
+            print_error("Option '", option, os.str().c_str());
+        }
+
         return option::ARG_ILLEGAL;
     }
 
@@ -148,20 +180,20 @@ enum optionIndex
 
 const option::Descriptor usage[] = {
     { UNKNOWN_OPT, 0, "", "",                Arg::None,
-      "Usage: AdvanceConfigurationExample <publisher|subscriber>\n\nGeneral options:" },
+      "Usage: AdvancedConfigurationExample <publisher|subscriber>\n\nGeneral options:" },
     { HELP,    0, "h", "help",               Arg::None,      "  -h \t--help  \tProduce help message." },
 
     { UNKNOWN_OPT, 0, "", "",                Arg::None,      "\nPublisher options:"},
     { TOPIC, 0, "t", "topic",                  Arg::String,
       "  -t <topic_name> \t--topic=<topic_name>  \tTopic name (Default: HelloWorldTopic)." },
-    { DOMAIN_ID, 0, "d", "domain",                Arg::Numeric,
+    { DOMAIN_ID, 0, "d", "domain",                Arg::NumericRange<0, 230>,
       "  -d <id> \t--domain=<id>  \tDDS domain ID (Default: 0)." },
-    { WAIT, 0, "w", "wait",                 Arg::Numeric,
+    { WAIT, 0, "w", "wait",                 Arg::NumericRange<>,
       "  -w <num> \t--wait=<num> \tNumber of matched subscribers required to publish"
       " (Default: 0 => does not wait)." },
-    { SAMPLES, 0, "s", "samples",              Arg::Numeric,
+    { SAMPLES, 0, "s", "samples",              Arg::NumericRange<>,
       "  -s <num> \t--samples=<num>  \tNumber of samples to send (Default: 0 => infinite samples)." },
-    { INTERVAL, 0, "i", "interval",            Arg::Numeric,
+    { INTERVAL, 0, "i", "interval",            Arg::NumericRange<>,
       "  -i <num> \t--interval=<num>  \tTime between samples in milliseconds (Default: 100)." },
     { ASYNC, 0, "a", "async",               Arg::None,
       "  -a \t--async \tAsynchronous publish mode (synchronous by default)." },
@@ -170,23 +202,23 @@ const option::Descriptor usage[] = {
       "If not set, use Fast DDS default transports (depending on the scenario it will use the most efficient one:"
       " data-sharing delivery mechanism > shared-memory > UDP)." },
     { OWNERSHIP, 0, "o", "ownership",        Arg::None,
-      "  -o \t--ownership \tUse Topic with OWNERSHIP_EXCLUSIVE."},
-    { OWNERSHIP_STRENGTH, 0, "", "strength",        Arg::Numeric,
-      "  \t--strength=<num> \tSet this Publisher strength. Set Topic with OWNERSHIP_EXCLUSIVE. Default: 0"},
+      "  -o \t--ownership \tUse Topic with EXCLUSIVE_OWNERSHIP (SHARED_OWNERSHIP by default)."},
+    { OWNERSHIP_STRENGTH, 0, "", "strength",        Arg::NumericRange<>,
+      "  \t--strength=<num> \tSet this Publisher strength. Set Topic with EXCLUSIVE_OWNERSHIP. Default: 0"},
 
     { UNKNOWN_OPT, 0, "", "",                Arg::None,      "\nSubscriber options:"},
     { TOPIC, 0, "t", "topic",                  Arg::String,
       "  -t <topic_name> \t--topic=<topic_name>  \tTopic name (Default: HelloWorldTopic)." },
-    { DOMAIN_ID, 0, "d", "domain",                Arg::Numeric,
+    { DOMAIN_ID, 0, "d", "domain",                Arg::NumericRange<0, 230>,
       "  -d <id> \t--domain=<id>  \tDDS domain ID (Default: 0)." },
-    { SAMPLES, 0, "s", "samples",              Arg::Numeric,
+    { SAMPLES, 0, "s", "samples",              Arg::NumericRange<>,
       "  -s <num> \t--samples=<num>  \tNumber of samples to wait for (Default: 0 => infinite samples)." },
     { TRANSPORT, 0, "", "transport",        Arg::Transport,
       "  \t--transport=<shm|udp|udpv6> \tUse only shared-memory, UDPv4, or UDPv6 transport."
       "If not set, use Fast DDS default transports (depending on the scenario it will use the most efficient one:"
       " data-sharing delivery mechanism > shared-memory > UDP)." },
     { OWNERSHIP, 0, "o", "ownership",        Arg::None,
-      "  -o \t--ownership \tUse Topic with OWNERSHIP_EXCLUSIVE."},
+      "  -o \t--ownership \tUse Topic with EXCLUSIVE_OWNERSHIP (SHARED_OWNERSHIP by default)."},
 
     { UNKNOWN_OPT, 0, "", "",                Arg::None,      "\nQoS options:"},
     { RELIABLE, 0, "r", "reliable",         Arg::None,
@@ -194,11 +226,12 @@ const option::Descriptor usage[] = {
     { TRANSIENT_LOCAL, 0, "", "transient",        Arg::None,
       "  \t--transient \tSet durability to transient local (volatile by default, ineffective when not reliable)." },
     { PARTITIONS, 0, "p", "partitions",        Arg::String,
-      "  -p <str> \t--partitions=<str> \tPartitions to match separated by ';'. "
+      "  -p <str> \t--partitions=<str> \tPartitions to match separated by ';'."
+      " Single or double quotes required with multiple partitions."
       " With empty string ('') no partitions used. (Default: '')." },
 
     { UNKNOWN_OPT, 0, "", "",                Arg::None,      "\nDiscovery options:"},
-    { TTL, 0, "", "ttl",         Arg::Numeric,
+    { TTL, 0, "", "ttl",         Arg::NumericRange<1, 255>,
       "\t--ttl \tSet multicast discovery Time To Live on IPv4 or Hop Limit for IPv6."
       " If not set, uses Fast-DDS default (1 hop). Increase it to avoid discovery issues"
       " on scenarios with several routers. Maximum: 255."},
@@ -213,4 +246,4 @@ void print_warning(
     std::cerr << "WARNING: " << opt << " is a " << type << " option, ignoring argument." << std::endl;
 }
 
-#endif /* _EPROSIMA_FASTDDS_EXAMPLES_CPP_DDS_ADVANCECONFIGURATIONEXAMPLE_ARG_CONFIGURATION_H_ */
+#endif /* _EPROSIMA_FASTDDS_EXAMPLES_CPP_DDS_ADVANCEDCONFIGURATIONEXAMPLE_ARG_CONFIGURATION_H_ */

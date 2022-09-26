@@ -1,4 +1,4 @@
-// Copyright 2021 Proyectos y Sistemas de Mantenimiento SL (eProsima).
+// Copyright 2022 Proyectos y Sistemas de Mantenimiento SL (eProsima).
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -13,12 +13,12 @@
 // limitations under the License.
 
 /**
- * @file AdvanceConfigurationPublisher.h
+ * @file AdvancedConfigurationPublisher.h
  *
  */
 
-#ifndef _EPROSIMA_FASTDDS_EXAMPLES_CPP_DDS_ADVANCECONFIGURATIONEXAMPLE_TYPES_HPP_
-#define _EPROSIMA_FASTDDS_EXAMPLES_CPP_DDS_ADVANCECONFIGURATIONEXAMPLE_TYPES_HPP_
+#ifndef _EPROSIMA_FASTDDS_EXAMPLES_CPP_DDS_ADVANCEDCONFIGURATIONEXAMPLE_TYPES_HPP_
+#define _EPROSIMA_FASTDDS_EXAMPLES_CPP_DDS_ADVANCEDCONFIGURATIONEXAMPLE_TYPES_HPP_
 
 enum TransportType
 {
@@ -28,4 +28,4 @@ enum TransportType
     UDPv6,
 };
 
-#endif /* _EPROSIMA_FASTDDS_EXAMPLES_CPP_DDS_ADVANCECONFIGURATIONEXAMPLE_TYPES_HPP_ */
+#endif /* _EPROSIMA_FASTDDS_EXAMPLES_CPP_DDS_ADVANCEDCONFIGURATIONEXAMPLE_TYPES_HPP_ */
