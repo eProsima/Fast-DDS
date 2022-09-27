@@ -15,6 +15,7 @@
 #ifndef _FASTDDS_PARTICIPANTIMPL_HPP_
 #define _FASTDDS_PARTICIPANTIMPL_HPP_
 
+#include <atomic>
 #include <map>
 #include <mutex>
 #include <string>
@@ -79,6 +80,7 @@ protected:
         , default_topic_qos_(TOPIC_QOS_DEFAULT)
 #pragma warning (disable : 4355)
         , rtps_listener_(this)
+        , id_counter_(0)
     {
         participant_->impl_ = this;
 
@@ -672,7 +674,7 @@ public:
         return nullptr;
     }
 
-    uint32_t& id_counter()
+    std::atomic<uint32_t>& id_counter()
     {
         return id_counter_;
     }
@@ -696,7 +698,7 @@ protected:
     std::map<std::string, TypeSupport> types_;
     mutable std::mutex mtx_types_;
     TopicQos default_topic_qos_;
-    uint32_t id_counter_ = 0;
+    std::atomic<uint32_t> id_counter_;
 
     class MyRTPSParticipantListener : public fastrtps::rtps::RTPSParticipantListener
     {
