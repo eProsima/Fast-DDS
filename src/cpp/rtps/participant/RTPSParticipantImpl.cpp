@@ -507,7 +507,7 @@ RTPSParticipantImpl::~RTPSParticipantImpl()
 template <EndpointKind_t kind, octet no_key, octet with_key>
 bool RTPSParticipantImpl::preprocess_endpoint_attributes(
         const EntityId_t& entity_id,
-        uint32_t& id_counter,
+        std::atomic<uint32_t>& id_counter,
         EndpointAttributes& att,
         EntityId_t& entId)
 {
@@ -546,7 +546,6 @@ bool RTPSParticipantImpl::preprocess_endpoint_attributes(
         }
         else
         {
-            std::lock_guard<std::mutex> _(getCounterMutex());
             idnum = ++id_counter;
         }
 

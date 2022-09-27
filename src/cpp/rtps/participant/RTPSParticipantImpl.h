@@ -533,7 +533,7 @@ private:
     //!Semaphore to wait for the listen thread creation.
     Semaphore* mp_ResourceSemaphore;
     //!Id counter to correctly assign the ids to writers and readers.
-    uint32_t IdCounter;
+    std::atomic<uint32_t> IdCounter;
     //! Mutex to safely access endpoints collections
     mutable shared_mutex endpoints_list_mutex;
     //! This member avoids shared_mutex reentrancy by tracking last participant into traversing the endpoints collections
@@ -1018,15 +1018,9 @@ public:
     template <EndpointKind_t kind, octet no_key, octet with_key>
     static bool preprocess_endpoint_attributes(
             const EntityId_t& entity_id,
-            uint32_t& id_count,
+            std::atomic<uint32_t>& id_count,
             EndpointAttributes& att,
             EntityId_t& entId);
-
-    static std::mutex& getCounterMutex()
-    {
-        static std::mutex counter_mutex;
-        return counter_mutex;
-    }
 
 #if HAVE_SECURITY
     void set_endpoint_rtps_protection_supports(

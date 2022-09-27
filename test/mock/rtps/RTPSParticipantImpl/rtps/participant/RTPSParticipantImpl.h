@@ -33,6 +33,7 @@
 
 #include <gmock/gmock.h>
 
+#include <atomic>
 #include <map>
 #include <sstream>
 
@@ -284,7 +285,7 @@ public:
     template <EndpointKind_t kind, octet no_key, octet with_key>
     static bool preprocess_endpoint_attributes(
             const EntityId_t&,
-            uint32_t&,
+            std::atomic<uint32_t>&,
             EndpointAttributes&,
             EntityId_t&)
     {
