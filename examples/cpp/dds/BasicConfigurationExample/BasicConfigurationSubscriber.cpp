@@ -178,19 +178,18 @@ bool HelloWorldSubscriber::init(
     }
     else
     {
-        rqos.reliability().kind = BEST_EFFORT_RELIABILITY_QOS;  // default
+        // superfluous because this is the default value for DataReaders
+        rqos.reliability().kind = BEST_EFFORT_RELIABILITY_QOS;
     }
 
     if (transient)
     {
         rqos.durability().kind = TRANSIENT_LOCAL_DURABILITY_QOS;
-        // mimic publisher behaviour. Assure the user see all samples are received
-        rqos.reliability().kind = RELIABLE_RELIABILITY_QOS;
-        rqos.history().kind = KEEP_ALL_HISTORY_QOS;
     }
     else
     {
-        rqos.durability().kind = VOLATILE_DURABILITY_QOS;   // default
+        // superfluous because this is the default value for DataReaders
+        rqos.durability().kind = VOLATILE_DURABILITY_QOS;
     }
 
     reader_ = subscriber_->create_datareader(topic_, rqos, &listener_);
