@@ -146,11 +146,10 @@ TEST_P(PropertyQos, send_property_qos)
                             property_received = true;
                         }
 
-                        if (test::EXTERNAL_PROPERTY_VALUE == i.second())
+                        if (test::EXTERNAL_PROPERTY_VALUE != i.second())
                         {
                             return false;
                         }
-                        // ASSERT_EQ(test::EXTERNAL_PROPERTY_VALUE, i.second());
                     }
                 }
                 std::cout << std::endl;

@@ -51,17 +51,21 @@ public:
 
     Property(
             const std::string& name,
-            const std::string& value)
+            const std::string& value,
+            bool propagate = false)
         : name_(name)
         , value_(value)
+        , propagate_(propagate)
     {
     }
 
     Property(
             std::string&& name,
-            std::string&& value)
+            std::string&& value,
+            bool propagate = false)
         : name_(std::move(name))
         , value_(std::move(value))
+        , propagate_(propagate)
     {
     }
 
