@@ -1238,12 +1238,13 @@ void PDP::set_initial_announcement_interval()
     set_next_announcement_interval();
 }
 
-void PDP::set_external_participant_properties_(ParticipantProxyData* participant_data)
+void PDP::set_external_participant_properties_(
+        ParticipantProxyData* participant_data)
 {
     // For each property add it if it should be sent (it is propagated)
     for (auto const& property : mp_RTPSParticipant->getAttributes().properties.properties())
     {
-        if(property.propagate())
+        if (property.propagate())
         {
             participant_data->m_properties.push_back(property.name(), property.value());
         }

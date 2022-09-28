@@ -23,8 +23,7 @@
 #include <fastrtps/attributes/LibrarySettingsAttributes.h>
 #include <fastrtps/xmlparser/XMLProfileManager.h>
 
-namespace test
-{
+namespace test {
 const std::string EXTERNAL_PROPERTY_NAME  = "CustomExternalProperty";
 const std::string EXTERNAL_PROPERTY_VALUE = "My Value";
 const std::string INTERNAL_PROPERTY_NAME  = "CustomInternalProperty";
