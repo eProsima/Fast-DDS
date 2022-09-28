@@ -93,8 +93,12 @@ int main(
 
         const char* type_name = parse.nonOption(0);
 
-        // make sure is the first option
-        if (parse.optionsCount() && type_name >= buffer[0].arg)
+        // make sure is the first option.
+        // type_name and buffer[0].name reference the original command line char array
+        // type_name must precede any other arguments in the array.
+        // Note buffer[0].arg may be null for non-valued options and is not reliable for
+        // testing purposes.
+        if (parse.optionsCount() && type_name >= buffer[0].name)
         {
             throw 1;
         }
@@ -215,11 +219,6 @@ int main(
     if (transport == SHM && hops > 0 )
     {
         std::cerr << "WARNING: --ttl will take no effect since not using UDP transport." << std::endl;
-    }
-
-    if (hops > 255 )
-    {
-        std::cerr << "WARNING: --ttl value will be cut off to its maximum 255." << std::endl;
     }
 
     switch (type)
