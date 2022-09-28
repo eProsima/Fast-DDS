@@ -12,6 +12,7 @@
                     <cert_chain_file>Chain.pem</cert_chain_file>
                     <tmp_dh_file>DH.pem</tmp_dh_file>
                     <verify_file>verify.pem</verify_file>
+                    <server_name>my_server.com</server_name>
                     <verify_mode>
                         <verify>VERIFY_PEER</verify>
                     </verify_mode>
