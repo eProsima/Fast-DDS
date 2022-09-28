@@ -3934,11 +3934,20 @@ XMLP_ret XMLParser::getXMLPublisherAttributes(
         </xs:complexType>
      */
 
+    std::unordered_map<std::string, bool> tags_present;
+
     tinyxml2::XMLElement* p_aux0 = nullptr;
     const char* name = nullptr;
     for (p_aux0 = elem->FirstChildElement(); p_aux0 != nullptr; p_aux0 = p_aux0->NextSiblingElement())
     {
         name = p_aux0->Name();
+        if (tags_present[name])
+        {
+            logError(XMLPARSER, "Duplicated element found in 'publisherProfileType'. Name: " << name);
+            return XMLP_ret::XML_ERROR;
+        }
+        tags_present[name] = true;
+
         if (strcmp(name, TOPIC) == 0)
         {
             // topic
