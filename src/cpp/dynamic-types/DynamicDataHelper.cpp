@@ -325,14 +325,9 @@ void DynamicDataHelper::print_complex_element(
         MemberId id,
         const std::string& tabs)
 {
-<<<<<<< HEAD
-    const TypeDescriptor* desc = data->type_->get_type_descriptor();
-    switch(desc->get_kind())
-=======
     DynamicData* st_data = data->loan_value(id);
     const TypeDescriptor* desc = st_data->type_->get_type_descriptor();
     switch (desc->get_kind())
->>>>>>> 78473a0de (Fix complex member printing for DynamicDataHelper (#2957))
     {
         case TK_STRUCTURE:
         case TK_BITSET:
