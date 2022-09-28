@@ -131,7 +131,6 @@ TEST_P(PropertyQos, send_property_qos)
                     {
                         return false;
                     }
-                    // ASSERT_NE(test::INTERNAL_PROPERTY_NAME, value_received);
 
                     // If it is the external, check the value is correct
                     if (test::EXTERNAL_PROPERTY_NAME == i.first())
