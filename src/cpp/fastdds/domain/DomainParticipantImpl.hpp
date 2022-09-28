@@ -21,6 +21,7 @@
 #define _FASTDDS_PARTICIPANTIMPL_HPP_
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 
+#include <atomic>
 #include <mutex>
 #include <condition_variable>
 
@@ -478,7 +479,7 @@ public:
     DomainParticipantListener* get_listener_for(
             const StatusMask& status);
 
-    uint32_t& id_counter()
+    std::atomic<uint32_t>& id_counter()
     {
         return id_counter_;
     }
@@ -556,7 +557,7 @@ protected:
     // All parent's child requests
     std::map<fastrtps::rtps::SampleIdentity, std::vector<fastrtps::rtps::SampleIdentity>> parent_requests_;
 
-    uint32_t id_counter_ = 0;
+    std::atomic<uint32_t> id_counter_;
 
     class MyRTPSParticipantListener : public fastrtps::rtps::RTPSParticipantListener
     {
