@@ -13,6 +13,12 @@
 // limitations under the License.
 //
 #include <fastrtps/xmlparser/XMLParser.h>
+
+#include <cstdlib>
+#include <iostream>
+#include <string>
+#include <unordered_map>
+
 #include <fastrtps/xmlparser/XMLParserCommon.h>
 #include <fastrtps/xmlparser/XMLTree.h>
 
@@ -29,8 +35,6 @@
 #include <fastdds/dds/log/StdoutErrConsumer.hpp>
 
 #include <tinyxml2.h>
-#include <iostream>
-#include <cstdlib>
 
 namespace eprosima {
 namespace fastrtps {
@@ -1768,9 +1772,19 @@ XMLP_ret XMLParser::fillDataNode(
 
     tinyxml2::XMLElement* p_aux0 = nullptr;
     const char* name = nullptr;
+
+    std::unordered_map<std::string, bool> tags_present;
+
     for (p_aux0 = p_element->FirstChildElement(); p_aux0 != nullptr; p_aux0 = p_aux0->NextSiblingElement())
     {
         name = p_aux0->Name();
+
+        if (tags_present[name])
+        {
+            logError(XMLPARSER, "Duplicated element found in 'rtpsParticipantAttributesType'. Name: " << name);
+            return XMLP_ret::XML_ERROR;
+        }
+        tags_present[name] = true;
 
         if (strcmp(name, ALLOCATION) == 0)
         {
