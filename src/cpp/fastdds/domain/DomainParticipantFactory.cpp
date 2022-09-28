@@ -53,6 +53,7 @@ namespace dds {
 DomainParticipantFactory::DomainParticipantFactory()
     : default_xml_profiles_loaded(false)
     , default_participant_qos_(PARTICIPANT_QOS_DEFAULT)
+    , topic_pool_(fastrtps::rtps::TopicPayloadPoolRegistry::instance())
 {
 }
 
@@ -82,6 +83,11 @@ DomainParticipantFactory::~DomainParticipantFactory()
 
 DomainParticipantFactory* DomainParticipantFactory::get_instance()
 {
+    return get_shared_instance().get();
+}
+
+std::shared_ptr<DomainParticipantFactory> DomainParticipantFactory::get_shared_instance()
+{
     /*
      * The first time an interprocess synchronization object is created by boost, a singleton is instantiated and
      * its destructor is registered with std::atexit(&atexit_work).
@@ -103,12 +109,14 @@ DomainParticipantFactory* DomainParticipantFactory::get_instance()
     };
     static AuxiliaryBoostFunctor boost_functor;
 
-    // Keep a reference to the topic payload pool to avoid it to be destroyed before our own instance
-    using pool_registry_ref = eprosima::fastrtps::rtps::TopicPayloadPoolRegistry::reference;
-    static pool_registry_ref topic_pool_registry = eprosima::fastrtps::rtps::TopicPayloadPoolRegistry::instance();
-
-    static DomainParticipantFactory instance;
-    return &instance;
+    // Note we need a custom deleter, since the destructor is protected.
+    static std::shared_ptr<DomainParticipantFactory> instance(
+        new DomainParticipantFactory(),
+        [](DomainParticipantFactory* p)
+        {
+            delete p;
+        });
+    return instance;
 }
 
 ReturnCode_t DomainParticipantFactory::delete_participant(
