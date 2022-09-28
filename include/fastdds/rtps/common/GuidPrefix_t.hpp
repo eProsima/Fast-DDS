@@ -76,12 +76,29 @@ struct RTPS_DllAPI GuidPrefix_t
     /**
      * Guid prefix minor operator
      * @param prefix Second guid prefix to compare
-     * @return True if prefix is higher
+     * @return True if prefix is higher than this
      */
     bool operator <(
             const GuidPrefix_t& prefix) const
     {
         return std::memcmp(value, prefix.value, size) < 0;
+    }
+
+    /**
+     * Guid Prefix compare static method.
+     *
+     * @param prefix1 First guid prefix to compare
+     * @param prefix2 Second guid prefix to compare
+     *
+     * @return 0 if \c prefix1 is equal to \c prefix2 .
+     * @return < 0 if \c prefix1 is lower than \c prefix2 .
+     * @return > 0 if \c prefix1 is higher than \c prefix2 .
+     */
+    static int cmp(
+            const GuidPrefix_t& prefix1,
+            const GuidPrefix_t& prefix2)
+    {
+        return std::memcmp(prefix1.value, prefix2.value, size);
     }
 
 #endif // ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC

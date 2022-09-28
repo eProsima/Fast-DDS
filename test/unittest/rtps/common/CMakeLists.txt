@@ -52,6 +52,7 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
         target_link_libraries(SequenceNumberTests GTest::gtest)
         add_gtest(SequenceNumberTests SOURCES ${SEQUENCENUMBERTESTS_SOURCE})
 
+<<<<<<< HEAD
         add_executable(PortParametersTests ${PORTPARAMETERSTESTS_SOURCE})
         target_compile_definitions(PortParametersTests PRIVATE FASTRTPS_NO_LIB)
         target_include_directories(PortParametersTests PRIVATE
@@ -60,3 +61,66 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
         add_gtest(PortParametersTests SOURCES ${PORTPARAMETERSTESTS_SOURCE} LABELS "NoMemoryCheck")
     endif()
 endif()
+=======
+add_executable(PortParametersTests ${PORTPARAMETERSTESTS_SOURCE})
+target_compile_definitions(PortParametersTests PRIVATE FASTRTPS_NO_LIB
+    $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
+    $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
+    )
+target_include_directories(PortParametersTests PRIVATE
+    ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include
+    ${PROJECT_SOURCE_DIR}/src/cpp)
+target_link_libraries(PortParametersTests GTest::gtest)
+add_gtest(PortParametersTests SOURCES ${PORTPARAMETERSTESTS_SOURCE} LABELS "NoMemoryCheck")
+
+###################
+# GuifPrefix test #
+###################
+
+set(GUIDPREFIXTESTS_SOURCE GuidPrefixTests.cpp)
+
+add_executable(GuidPrefixTests ${GUIDPREFIXTESTS_SOURCE})
+target_compile_definitions(GuidPrefixTests PRIVATE FASTRTPS_NO_LIB
+    $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
+    $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
+    )
+target_include_directories(GuidPrefixTests PRIVATE
+    ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include
+    ${PROJECT_SOURCE_DIR}/src/cpp)
+target_link_libraries(GuidPrefixTests GTest::gtest)
+add_gtest(GuidPrefixTests SOURCES ${GUIDPREFIXTESTS_SOURCE} LABELS "NoMemoryCheck")
+
+#################
+# EntityId test #
+#################
+
+set(ENTITYIDTESTS_SOURCE EntityIdTests.cpp)
+
+add_executable(EntityIdTests ${ENTITYIDTESTS_SOURCE})
+target_compile_definitions(EntityIdTests PRIVATE FASTRTPS_NO_LIB
+    $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
+    $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
+    )
+target_include_directories(EntityIdTests PRIVATE
+    ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include
+    ${PROJECT_SOURCE_DIR}/src/cpp)
+target_link_libraries(EntityIdTests GTest::gtest)
+add_gtest(EntityIdTests SOURCES ${ENTITYIDTESTS_SOURCE} LABELS "NoMemoryCheck")
+
+#############
+# Guid test #
+#############
+
+set(GUIDTESTS_SOURCE GuidTests.cpp)
+
+add_executable(GuidTests ${GUIDTESTS_SOURCE})
+target_compile_definitions(GuidTests PRIVATE FASTRTPS_NO_LIB
+    $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
+    $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
+    )
+target_include_directories(GuidTests PRIVATE
+    ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include
+    ${PROJECT_SOURCE_DIR}/src/cpp)
+target_link_libraries(GuidTests GTest::gtest)
+add_gtest(GuidTests SOURCES ${GUIDTESTS_SOURCE} LABELS "NoMemoryCheck")
+>>>>>>> c871a2956 (Improve GUID_t operator< performance (#2955))
