@@ -491,6 +491,11 @@ private:
      */
     void set_initial_announcement_interval();
 
+    /**
+     * Set to a Participant Proxy those properties from this participant that must be sent.
+     */
+    void set_external_participant_properties_(
+            ParticipantProxyData* participant_data);
 };
 
 
