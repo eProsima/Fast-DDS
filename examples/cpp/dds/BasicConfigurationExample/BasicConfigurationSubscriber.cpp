@@ -199,6 +199,7 @@ bool HelloWorldSubscriber::init(
         return false;
     }
 
+    std::cout << "Subscriber Participant created with DataReader Guid [ " << reader_->guid() << " ]." << std::endl;
     return true;
 }
 
@@ -235,12 +236,12 @@ void HelloWorldSubscriber::SubListener::on_subscription_matched(
     if (info.current_count_change == 1)
     {
         matched_ = info.current_count;
-        std::cout << "Subscriber matched." << std::endl;
+        std::cout << "Subscriber matched [ " << iHandle2GUID(info.last_publication_handle) << " ]." << std::endl;
     }
     else if (info.current_count_change == -1)
     {
         matched_ = info.current_count;
-        std::cout << "Subscriber unmatched." << std::endl;
+        std::cout << "Subscriber unmatched [ " << iHandle2GUID(info.last_publication_handle) << " ]." << std::endl;
     }
     else
     {
