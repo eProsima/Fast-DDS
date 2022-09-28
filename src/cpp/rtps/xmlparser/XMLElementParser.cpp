@@ -1178,15 +1178,12 @@ XMLP_ret XMLParser::getXMLWriterQosPolicies(
             }
         }
         else if (strcmp(name, DURABILITY_SRV) == 0 ||
-                strcmp(name, TIME_FILTER) == 0 || strcmp(name, OWNERSHIP) == 0 ||
-                strcmp(name, OWNERSHIP_STRENGTH) == 0 || strcmp(name, DEST_ORDER) == 0 ||
+                strcmp(name, TIME_FILTER) == 0 || strcmp(name, DEST_ORDER) == 0 ||
                 strcmp(name, PRESENTATION) == 0)
         {
             // TODO: Do not supported for now
             //if (nullptr != (p_aux = elem->FirstChildElement(    DURABILITY_SRV))) getXMLDurabilityServiceQos(p_aux, ident);
             //if (nullptr != (p_aux = elem->FirstChildElement(       TIME_FILTER))) getXMLTimeBasedFilterQos(p_aux, ident);
-            //if (nullptr != (p_aux = elem->FirstChildElement(         OWNERSHIP))) getXMLOwnershipQos(p_aux, ident);
-            //if (nullptr != (p_aux = elem->FirstChildElement(OWNERSHIP_STRENGTH))) getXMLOwnershipStrengthQos(p_aux, ident);
             //if (nullptr != (p_aux = elem->FirstChildElement(        DEST_ORDER))) getXMLDestinationOrderQos(p_aux, ident);
             //if (nullptr != (p_aux = elem->FirstChildElement(      PRESENTATION))) getXMLPresentationQos(p_aux, ident);
             logError(XMLPARSER, "Quality of Service '" << p_aux0->Value() << "' do not supported for now");
@@ -1195,6 +1192,22 @@ XMLP_ret XMLParser::getXMLWriterQosPolicies(
         {
             //data sharing
             if (XMLP_ret::XML_OK != getXMLDataSharingQos(p_aux0, qos.data_sharing, ident))
+            {
+                return XMLP_ret::XML_ERROR;
+            }
+        }
+        else if (strcmp(name, OWNERSHIP) == 0)
+        {
+            //ownership
+            if (XMLP_ret::XML_OK != getXMLOwnershipQos(p_aux0, qos.m_ownership, ident))
+            {
+                return XMLP_ret::XML_ERROR;
+            }
+        }
+        else if (strcmp(name, OWNERSHIP_STRENGTH) == 0)
+        {
+            //ownership
+            if (XMLP_ret::XML_OK != getXMLOwnershipStrengthQos(p_aux0, qos.m_ownershipStrength, ident))
             {
                 return XMLP_ret::XML_ERROR;
             }
@@ -1338,14 +1351,12 @@ XMLP_ret XMLParser::getXMLReaderQosPolicies(
             }
         }
         else if (strcmp(name, DURABILITY_SRV) == 0 ||
-                strcmp(name, TIME_FILTER) == 0 || strcmp(name, OWNERSHIP) == 0 ||
-                strcmp(name, OWNERSHIP_STRENGTH) == 0 || strcmp(name, DEST_ORDER) == 0 ||
+                strcmp(name, TIME_FILTER) == 0 || strcmp(name, DEST_ORDER) == 0 ||
                 strcmp(name, PRESENTATION) == 0)
         {
             // TODO: Do not supported for now
             //if (nullptr != (p_aux = elem->FirstChildElement(    DURABILITY_SRV))) getXMLDurabilityServiceQos(p_aux, ident);
             //if (nullptr != (p_aux = elem->FirstChildElement(       TIME_FILTER))) getXMLTimeBasedFilterQos(p_aux, ident);
-            //if (nullptr != (p_aux = elem->FirstChildElement(         OWNERSHIP))) getXMLOwnershipQos(p_aux, ident);
             //if (nullptr != (p_aux = elem->FirstChildElement(        DEST_ORDER))) getXMLDestinationOrderQos(p_aux, ident);
             //if (nullptr != (p_aux = elem->FirstChildElement(      PRESENTATION))) getXMLPresentationQos(p_aux, ident);
             logError(XMLPARSER, "Quality of Service '" << p_aux0->Value() << "' do not supported for now");
@@ -1354,6 +1365,14 @@ XMLP_ret XMLParser::getXMLReaderQosPolicies(
         {
             //data sharing
             if (XMLP_ret::XML_OK != getXMLDataSharingQos(p_aux0, qos.data_sharing, ident))
+            {
+                return XMLP_ret::XML_ERROR;
+            }
+        }
+        else if (strcmp(name, OWNERSHIP) == 0)
+        {
+            //ownership
+            if (XMLP_ret::XML_OK != getXMLOwnershipQos(p_aux0, qos.m_ownership, ident))
             {
                 return XMLP_ret::XML_ERROR;
             }
@@ -2103,13 +2122,12 @@ XMLP_ret XMLParser::getXMLDataSharingQos(
    }
  */
 
-// TODO Implement OwnershipQos
-/*
-   XMLP_ret XMLParser::getXMLOwnershipQos(
+XMLP_ret XMLParser::getXMLOwnershipQos(
         tinyxml2::XMLElement* elem,
         OwnershipQosPolicy& ownership,
         uint8_t ident)
-   {
+{
+    (void)ident;
 
     //    <xs:complexType name="ownershipQosPolicyType">
     //        <xs:all>
@@ -2168,17 +2186,14 @@ XMLP_ret XMLParser::getXMLDataSharingQos(
     }
 
     return XMLP_ret::
-    XML_OK;
-   }
- */
+                   XML_OK;
+}
 
-// TODO Implement OwnershipStrengthQos
-/*
-   XMLP_ret XMLParser::getXMLOwnershipStrengthQos(
+XMLP_ret XMLParser::getXMLOwnershipStrengthQos(
         tinyxml2::XMLElement* elem,
         OwnershipStrengthQosPolicy& ownershipStrength,
         uint8_t ident)
-   {
+{
 
     //    <xs:complexType name="ownershipStrengthQosPolicyType">
     //        <xs:all>
@@ -2214,9 +2229,7 @@ XMLP_ret XMLParser::getXMLDataSharingQos(
     }
 
     return XMLP_ret::XML_OK;
-   }
- */
-
+}
 
 // TODO Implement DestinationOrderQos
 /*

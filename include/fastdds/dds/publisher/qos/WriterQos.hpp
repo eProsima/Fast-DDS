@@ -92,10 +92,10 @@ public:
     //!Time Based Filter Qos, NOT implemented in the library.
     TimeBasedFilterQosPolicy m_timeBasedFilter;
 
-    //!Ownership Qos, NOT implemented in the library.
+    //!Ownership Qos, implemented in the library.
     OwnershipQosPolicy m_ownership;
 
-    //!Owenership Strength Qos, NOT implemented in the library.
+    //!Owenership Strength Qos, implemented in the library.
     OwnershipStrengthQosPolicy m_ownershipStrength;
 
     //!Destination Order Qos, NOT implemented in the library.

@@ -1535,20 +1535,6 @@ TEST_F(XMLParserTests, getXMLWriterReaderUnsupportedQosPolicies)
     EXPECT_EQ(XMLP_ret::XML_OK, XMLParserTest::getXMLWriterQosPolicies_wrapper(titleElement, wqos, ident));
     EXPECT_EQ(XMLP_ret::XML_OK, XMLParserTest::getXMLReaderQosPolicies_wrapper(titleElement, rqos, ident));
 
-    // Check that there is a logError when trying to set up the <ownership> Qos.
-    sprintf(xml, xml_p, "<ownership></ownership>");
-    ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
-    titleElement = xml_doc.RootElement();
-    EXPECT_EQ(XMLP_ret::XML_OK, XMLParserTest::getXMLWriterQosPolicies_wrapper(titleElement, wqos, ident));
-    EXPECT_EQ(XMLP_ret::XML_OK, XMLParserTest::getXMLReaderQosPolicies_wrapper(titleElement, rqos, ident));
-
-    // Check that there is a logError when trying to set up the <ownershipStrength> Qos.
-    sprintf(xml, xml_p, "<ownershipStrength></ownershipStrength>");
-    ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
-    titleElement = xml_doc.RootElement();
-    EXPECT_EQ(XMLP_ret::XML_OK, XMLParserTest::getXMLWriterQosPolicies_wrapper(titleElement, wqos, ident));
-    EXPECT_EQ(XMLP_ret::XML_OK, XMLParserTest::getXMLReaderQosPolicies_wrapper(titleElement, rqos, ident));
-
     // Check that there is a logError when trying to set up the <destinationOrder> Qos.
     sprintf(xml, xml_p, "<destinationOrder></destinationOrder>");
     ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
@@ -1563,7 +1549,7 @@ TEST_F(XMLParserTests, getXMLWriterReaderUnsupportedQosPolicies)
     EXPECT_EQ(XMLP_ret::XML_OK, XMLParserTest::getXMLWriterQosPolicies_wrapper(titleElement, wqos, ident));
     EXPECT_EQ(XMLP_ret::XML_OK, XMLParserTest::getXMLReaderQosPolicies_wrapper(titleElement, rqos, ident));
 
-    helper_block_for_at_least_entries(12);
+    helper_block_for_at_least_entries(8);
     auto consumed_entries = mock_consumer->ConsumedEntries();
     // Expect 18 log errors.
     uint32_t num_errors = 0;
@@ -1574,7 +1560,7 @@ TEST_F(XMLParserTests, getXMLWriterReaderUnsupportedQosPolicies)
             num_errors++;
         }
     }
-    EXPECT_EQ(num_errors, 12u);
+    EXPECT_EQ(num_errors, 8u);
 }
 
 /*
@@ -3640,5 +3626,137 @@ TEST_F(XMLParserTests, getXMLDataSharingQos_negativeCases)
         titleElement = xml_doc.RootElement();
         EXPECT_EQ(XMLP_ret::XML_ERROR,
                 XMLParserTest::propertiesPolicy_wrapper(titleElement, datasharing_policy, ident));
+    }
+}
+
+/*
+ * This test checks the proper parsing of the <ownership> xml elements to a OwnershipQosPolicy object.
+ * 1. Correct parsing of a valid <ownership> set to SHARED.
+ * 2. Correct parsing of a valid <ownership> set to EXCLUSIVE.
+ * 3. Check no kind.
+ * 4. Check an invalid kind.
+ */
+TEST_F(XMLParserTests, getXMLOwnershipQos)
+{
+    uint8_t ident = 1;
+    OwnershipQosPolicy ownership_policy;
+    tinyxml2::XMLDocument xml_doc;
+    tinyxml2::XMLElement* titleElement;
+
+    {
+        // Template xml
+        const char* xml_p =
+                "\
+                <ownership>\
+                    <kind>%s</kind>\
+                </ownership>\
+                ";
+        char xml[1000];
+
+        sprintf(xml, xml_p, "SHARED");
+        ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
+        titleElement = xml_doc.RootElement();
+        EXPECT_EQ(XMLP_ret::XML_OK, XMLParserTest::propertiesPolicy_wrapper(titleElement, ownership_policy, ident));
+        EXPECT_EQ(ownership_policy.kind, OwnershipQosPolicyKind::SHARED_OWNERSHIP_QOS);
+
+        sprintf(xml, xml_p, "EXCLUSIVE");
+        ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
+        titleElement = xml_doc.RootElement();
+        EXPECT_EQ(XMLP_ret::XML_OK, XMLParserTest::propertiesPolicy_wrapper(titleElement, ownership_policy, ident));
+        EXPECT_EQ(ownership_policy.kind, OwnershipQosPolicyKind::EXCLUSIVE_OWNERSHIP_QOS);
+    }
+
+    {
+        const char* xml =
+                "\
+                <ownership>\
+                </ownership>\
+                ";
+
+        ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
+        titleElement = xml_doc.RootElement();
+        EXPECT_EQ(XMLP_ret::XML_ERROR,
+                XMLParserTest::propertiesPolicy_wrapper(titleElement, ownership_policy, ident));
+    }
+
+    {
+        const char* xml =
+                "\
+                <ownership>\
+                    <kind>INVALID</kind>\
+                </ownership>\
+                ";
+
+        ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
+        titleElement = xml_doc.RootElement();
+        EXPECT_EQ(XMLP_ret::XML_ERROR,
+                XMLParserTest::propertiesPolicy_wrapper(titleElement, ownership_policy, ident));
+    }
+}
+
+/*
+ * This test checks the proper parsing of the <ownershipStrength> xml elements to a OwnershipQosPolicy object.
+ * 1. Correct parsing of a valid <ownershipStrength> value set to 0.
+ * 2. Correct parsing of a valid <ownershipStrength> value set to 100.
+ * 3. Check no value.
+ * 4. Check an invalid value.
+ */
+TEST_F(XMLParserTests, getXMLOwnershipStrengthQos)
+{
+    uint8_t ident = 1;
+    OwnershipStrengthQosPolicy ownership_strength_policy;
+    tinyxml2::XMLDocument xml_doc;
+    tinyxml2::XMLElement* titleElement;
+
+    {
+        // Template xml
+        const char* xml_p =
+                "\
+                <ownershipStrength>\
+                    <value>%s</value>\
+                </ownershipStrength>\
+                ";
+        char xml[1000];
+
+        sprintf(xml, xml_p, "0");
+        ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
+        titleElement = xml_doc.RootElement();
+        EXPECT_EQ(XMLP_ret::XML_OK,
+                XMLParserTest::propertiesPolicy_wrapper(titleElement, ownership_strength_policy, ident));
+        EXPECT_EQ(ownership_strength_policy.value, 0u);
+
+        sprintf(xml, xml_p, "100");
+        ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
+        titleElement = xml_doc.RootElement();
+        EXPECT_EQ(XMLP_ret::XML_OK,
+                XMLParserTest::propertiesPolicy_wrapper(titleElement, ownership_strength_policy, ident));
+        EXPECT_EQ(ownership_strength_policy.value, 100u);
+    }
+
+    {
+        const char* xml =
+                "\
+                <ownershipStrength>\
+                </ownershipStrength>\
+                ";
+
+        ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
+        titleElement = xml_doc.RootElement();
+        EXPECT_EQ(XMLP_ret::XML_ERROR,
+                XMLParserTest::propertiesPolicy_wrapper(titleElement, ownership_strength_policy, ident));
+    }
+
+    {
+        const char* xml =
+                "\
+                <ownershipStrength>\
+                    <value>INVALID</value>\
+                </ownershipStrength>\
+                ";
+
+        ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
+        titleElement = xml_doc.RootElement();
+        EXPECT_EQ(XMLP_ret::XML_ERROR,
+                XMLParserTest::propertiesPolicy_wrapper(titleElement, ownership_strength_policy, ident));
     }
 }
