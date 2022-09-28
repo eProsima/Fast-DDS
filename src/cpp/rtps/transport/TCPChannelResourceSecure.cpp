@@ -307,7 +307,8 @@ void TCPChannelResourceSecure::set_tls_sni(
 {
     if (options->apply_security)
     {
-        if (!options->tls_config.server_name.empty()){
+        if (!options->tls_config.server_name.empty())
+        {
             // This is not done through asio because it seems it is not supported, so call directly to OpenSSL
             SSL_set_tlsext_host_name(secure_socket_->native_handle(), options->tls_config.server_name.c_str());
         }
