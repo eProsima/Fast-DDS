@@ -14,7 +14,11 @@
 //
 #include <cstring>
 #include <regex>
+#include <string>
+#include <unordered_map>
+
 #include <tinyxml2.h>
+
 #include <fastrtps/xmlparser/XMLParserCommon.h>
 #include <fastrtps/xmlparser/XMLParser.h>
 #include <fastrtps/xmlparser/XMLProfileManager.h>
@@ -427,11 +431,21 @@ XMLP_ret XMLParser::getXMLBuiltinAttributes(
        </xs:complexType>
      */
 
+    std::unordered_map<std::string, bool> tags_present;
+
     tinyxml2::XMLElement* p_aux0 = nullptr;
     const char* name = nullptr;
     for (p_aux0 = elem->FirstChildElement(); p_aux0 != NULL; p_aux0 = p_aux0->NextSiblingElement())
     {
         name = p_aux0->Name();
+
+        if (tags_present[name])
+        {
+            logError(XMLPARSER, "Duplicated element found in 'builtinAttributesType'. Name: " << name);
+            return XMLP_ret::XML_ERROR;
+        }
+        tags_present[name] = true;
+
         if (strcmp(name, DISCOVERY_SETTINGS) == 0)
         {
             // discovery_config - DiscoverySettings
