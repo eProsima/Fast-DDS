@@ -27,7 +27,7 @@
 
 #if HAVE_SECURITY
 #include <fastrtps/rtps/security/accesscontrol/ParticipantSecurityAttributes.h>
-#endif
+#endif // if HAVE_SECURITY
 
 namespace eprosima {
 namespace fastrtps {
@@ -35,33 +35,45 @@ namespace rtps {
 
 class ParticipantProxyData
 {
-    public:
+public:
 
-        ParticipantProxyData(const RTPSParticipantAllocationAttributes& allocation = c_default_RTPSParticipantAllocationAttributes)
-            : m_availableBuiltinEndpoints(0)
-            , metatraffic_locators(allocation.locators.max_unicast_locators, allocation.locators.max_multicast_locators)
-            , default_locators(allocation.locators.max_unicast_locators, allocation.locators.max_multicast_locators)
-            , m_VendorId(c_VendorId_Unknown)
-        {}
+    ParticipantProxyData(
+            const RTPSParticipantAllocationAttributes& allocation = c_default_RTPSParticipantAllocationAttributes)
+        : m_availableBuiltinEndpoints(0)
+        , metatraffic_locators(allocation.locators.max_unicast_locators, allocation.locators.max_multicast_locators)
+        , default_locators(allocation.locators.max_unicast_locators, allocation.locators.max_multicast_locators)
+        , m_VendorId(c_VendorId_Unknown)
+    {
+    }
 
-        ~ParticipantProxyData()
-        {
-        }
+    ~ParticipantProxyData()
+    {
+    }
 
-        bool writeToCDRMessage(CDRMessage_t* /*msg*/, bool /*write_encapsulation*/) { return true; }
-        bool readFromCDRMessage(CDRMessage_t* /*msg*/) { return true; }
+    bool writeToCDRMessage(
+            CDRMessage_t* /*msg*/,
+            bool /*write_encapsulation*/)
+    {
+        return true;
+    }
 
-        GUID_t m_guid;
-        uint32_t m_availableBuiltinEndpoints;
-        RemoteLocatorList metatraffic_locators;
-        RemoteLocatorList default_locators;
-        VendorId_t m_VendorId;
+    bool readFromCDRMessage(
+            CDRMessage_t* /*msg*/)
+    {
+        return true;
+    }
+
+    GUID_t m_guid;
+    uint32_t m_availableBuiltinEndpoints;
+    RemoteLocatorList metatraffic_locators;
+    RemoteLocatorList default_locators;
+    VendorId_t m_VendorId;
 #if HAVE_SECURITY
-        IdentityToken identity_token_;
-        PermissionsToken permissions_token_;
-        security::ParticipantSecurityAttributesMask security_attributes_ = 0UL;
-        security::PluginParticipantSecurityAttributesMask plugin_security_attributes_ = 0UL;
-#endif
+    IdentityToken identity_token_;
+    PermissionsToken permissions_token_;
+    security::ParticipantSecurityAttributesMask security_attributes_ = 0UL;
+    security::PluginParticipantSecurityAttributesMask plugin_security_attributes_ = 0UL;
+#endif // if HAVE_SECURITY
 };
 
 } // namespace rtps
