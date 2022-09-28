@@ -159,6 +159,7 @@ std::shared_ptr<DomainParticipantFactory> DomainParticipantFactory::get_shared_i
     };
     static AuxiliaryBoostFunctor boost_functor;
 
+    // Note we need a custom deleter, since the destructor is protected.
     static std::shared_ptr<DomainParticipantFactory> instance(
         new DomainParticipantFactory(),
         [](DomainParticipantFactory* p)
