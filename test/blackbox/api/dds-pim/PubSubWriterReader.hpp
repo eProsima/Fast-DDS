@@ -327,13 +327,8 @@ public:
 
         if (enable_datasharing)
         {
-#ifdef ANDROID
-            datareader_qos_.data_sharing().automatic("/data/local/tmp/");
-            datawriter_qos_.data_sharing().automatic("/data/local/tmp/");
-#else
             datareader_qos_.data_sharing().automatic();
             datawriter_qos_.data_sharing().automatic();
-#endif // ifdef ANDROID
         }
         else
         {

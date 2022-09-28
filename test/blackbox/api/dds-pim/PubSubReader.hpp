@@ -324,11 +324,7 @@ public:
 
         if (enable_datasharing)
         {
-#ifdef ANDROID
-            datareader_qos_.data_sharing().automatic("/data/local/tmp/");
-#else
             datareader_qos_.data_sharing().automatic();
-#endif // ifdef ANDROID
         }
         else
         {
@@ -1390,11 +1386,7 @@ public:
     PubSubReader& datasharing_auto(
             std::vector<uint16_t> domain_id = std::vector<uint16_t>())
     {
-#if ANDROID
-        datareader_qos_.data_sharing().automatic("/data/local/tmp/", domain_id);
-#else
         datareader_qos_.data_sharing().automatic(domain_id);
-#endif // if ANDROID
         return *this;
     }
 
@@ -1402,11 +1394,7 @@ public:
             const std::string directory,
             std::vector<uint16_t> domain_id = std::vector<uint16_t>())
     {
-#if ANDROID
-        datareader_qos_.data_sharing().automatic("/data/local/tmp/" + directory, domain_id);
-#else
         datareader_qos_.data_sharing().automatic(directory, domain_id);
-#endif // if ANDROID
         return *this;
     }
 
@@ -1414,11 +1402,7 @@ public:
             const std::string directory,
             std::vector<uint16_t> domain_id = std::vector<uint16_t>())
     {
-#if ANDROID
-        datareader_qos_.data_sharing().on("/data/local/tmp/" + directory, domain_id);
-#else
         datareader_qos_.data_sharing().on(directory, domain_id);
-#endif // if ANDROID
         return *this;
     }
 
