@@ -2795,12 +2795,21 @@ XMLP_ret XMLParser::getXMLLocatorUDPv4(
         </xs:complexType>
      */
 
+    std::unordered_map<std::string, bool> tags_present;
+
     locator.kind = LOCATOR_KIND_UDPv4;
     tinyxml2::XMLElement* p_aux0 = nullptr;
     const char* name = nullptr;
     for (p_aux0 = elem->FirstChildElement(); p_aux0 != NULL; p_aux0 = p_aux0->NextSiblingElement())
     {
         name = p_aux0->Name();
+        if (tags_present[name])
+        {
+            logError(XMLPARSER, "Duplicated element found in 'udpv4LocatorType'. Name: " << name);
+            return XMLP_ret::XML_ERROR;
+        }
+        tags_present[name] = true;
+
         if (strcmp(name, PORT) == 0)
         {
             // port - uint32Type
@@ -2859,12 +2868,21 @@ XMLP_ret XMLParser::getXMLLocatorUDPv6(
         </xs:complexType>
      */
 
+    std::unordered_map<std::string, bool> tags_present;
+
     locator.kind = LOCATOR_KIND_UDPv6;
     tinyxml2::XMLElement* p_aux0 = nullptr;
     const char* name = nullptr;
     for (p_aux0 = elem->FirstChildElement(); p_aux0 != NULL; p_aux0 = p_aux0->NextSiblingElement())
     {
         name = p_aux0->Name();
+        if (tags_present[name])
+        {
+            logError(XMLPARSER, "Duplicated element found in 'udpv6LocatorType'. Name: " << name);
+            return XMLP_ret::XML_ERROR;
+        }
+        tags_present[name] = true;
+
         if (strcmp(name, PORT) == 0)
         {
             // port - uint32Type
@@ -2926,12 +2944,21 @@ XMLP_ret XMLParser::getXMLLocatorTCPv4(
         </xs:complexType>
      */
 
+    std::unordered_map<std::string, bool> tags_present;
+
     locator.kind = LOCATOR_KIND_TCPv4;
     tinyxml2::XMLElement* p_aux0 = nullptr;
     const char* name = nullptr;
     for (p_aux0 = elem->FirstChildElement(); p_aux0 != NULL; p_aux0 = p_aux0->NextSiblingElement())
     {
         name = p_aux0->Name();
+        if (tags_present[name])
+        {
+            logError(XMLPARSER, "Duplicated element found in 'tcpv4LocatorType'. Name: " << name);
+            return XMLP_ret::XML_ERROR;
+        }
+        tags_present[name] = true;
+
         if (strcmp(name, PORT) == 0)
         {
             // port - uint16Type
@@ -3006,12 +3033,21 @@ XMLP_ret XMLParser::getXMLLocatorTCPv6(
         </xs:complexType>
      */
 
+    std::unordered_map<std::string, bool> tags_present;
+
     locator.kind = LOCATOR_KIND_TCPv6;
     tinyxml2::XMLElement* p_aux0 = nullptr;
     const char* name = nullptr;
     for (p_aux0 = elem->FirstChildElement(); p_aux0 != NULL; p_aux0 = p_aux0->NextSiblingElement())
     {
         name = p_aux0->Name();
+        if (tags_present[name])
+        {
+            logError(XMLPARSER, "Duplicated element found in 'tcpv6LocatorType'. Name: " << name);
+            return XMLP_ret::XML_ERROR;
+        }
+        tags_present[name] = true;
+
         if (strcmp(name, PORT) == 0)
         {
             // port - uint16Type
