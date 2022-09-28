@@ -5,6 +5,7 @@ Forthcoming
 * Support `propagate` attribute for Properties in PropertyQoSPolicies so they could be
   set by user and sent in PDP
 * Added possibility to configure Ownership and Ownership Strength QoS Policies from XML profiles file
+* Added Server Name Indication (SNI) support for TLS-TCP communication
 
 Version 2.7.1
 -------------
