@@ -3730,7 +3730,7 @@ TEST_F(XMLParserTests, getXMLOwnershipStrengthQos)
         titleElement = xml_doc.RootElement();
         EXPECT_EQ(XMLP_ret::XML_OK,
                 XMLParserTest::propertiesPolicy_wrapper(titleElement, ownership_strength_policy, ident));
-        EXPECT_EQ(ownership_strength_policy.value, 100);
+        EXPECT_EQ(ownership_strength_policy.value, 100u);
     }
 
     {
