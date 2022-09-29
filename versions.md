@@ -7,6 +7,7 @@ Forthcoming
 * Added possibility to configure Ownership and Ownership Strength QoS Policies from XML profiles file
 * Added Server Name Indication (SNI) support for TLS-TCP communication
 * Changes to allow running tests on Android emulator or device
+* Added configuration settings for announcing locators on external LANs (ABI break)
 
 Version 2.7.1
 -------------
