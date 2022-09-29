@@ -134,10 +134,7 @@ size_t HelloWorld::getCdrSerializedSize(
 
     current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4) + data.message().size() + 1;
 
-    if ((1024*1024) > 0)
-    {
-        current_alignment += ((1024*1024) * 1) + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
-    }
+    current_alignment += ((1024*1024) * 1) + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
 
 
     return current_alignment - initial_alignment;

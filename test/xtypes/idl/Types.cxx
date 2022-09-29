@@ -2620,10 +2620,7 @@ size_t ArrayStruct::getCdrSerializedSize(
     size_t initial_alignment = current_alignment;
 
 
-    if ((2) > 0)
-    {
-        current_alignment += ((2) * 4) + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
-    }
+    current_alignment += ((2) * 4) + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
 
     return current_alignment - initial_alignment;
 }
@@ -2781,10 +2778,7 @@ size_t ArrayStructEqual::getCdrSerializedSize(
     size_t initial_alignment = current_alignment;
 
 
-    if ((2) > 0)
-    {
-        current_alignment += ((2) * 4) + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
-    }
+    current_alignment += ((2) * 4) + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
 
     return current_alignment - initial_alignment;
 }
@@ -2942,10 +2936,7 @@ size_t ArrayBadStruct::getCdrSerializedSize(
     size_t initial_alignment = current_alignment;
 
 
-    if ((2) > 0)
-    {
-        current_alignment += ((2) * 1) + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
-    }
+    current_alignment += ((2) * 1) + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
 
     return current_alignment - initial_alignment;
 }
@@ -3103,10 +3094,7 @@ size_t ArrayDimensionsStruct::getCdrSerializedSize(
     size_t initial_alignment = current_alignment;
 
 
-    if ((2 * 2) > 0)
-    {
-        current_alignment += ((2 * 2) * 4) + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
-    }
+    current_alignment += ((2 * 2) * 4) + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
 
     return current_alignment - initial_alignment;
 }
@@ -3264,10 +3252,7 @@ size_t ArraySizeStruct::getCdrSerializedSize(
     size_t initial_alignment = current_alignment;
 
 
-    if ((5) > 0)
-    {
-        current_alignment += ((5) * 4) + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
-    }
+    current_alignment += ((5) * 4) + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
 
     return current_alignment - initial_alignment;
 }
