@@ -45,7 +45,7 @@ public:
 
     eProsima_user_DllExport TopicPubSubType();
 
-    eProsima_user_DllExport virtual ~TopicPubSubType();
+    eProsima_user_DllExport virtual ~TopicPubSubType() override;
 
     eProsima_user_DllExport virtual bool serialize(
             void* data,

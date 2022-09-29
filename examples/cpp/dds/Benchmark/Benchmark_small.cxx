@@ -36,9 +36,9 @@ using namespace eprosima::fastcdr::exception;
 
 BenchMarkSmall::BenchMarkSmall()
 {
-    // m_array com.eprosima.idl.parser.typecode.ArrayTypeCode@4c762604
+    // m_array com.eprosima.idl.parser.typecode.ArrayTypeCode@2b552920
     memset(&m_array, 0, (16384) * 1);
-    // m_index com.eprosima.idl.parser.typecode.PrimitiveTypeCode@2641e737
+    // m_index com.eprosima.idl.parser.typecode.PrimitiveTypeCode@1f36e637
     m_index = 0;
 
 }

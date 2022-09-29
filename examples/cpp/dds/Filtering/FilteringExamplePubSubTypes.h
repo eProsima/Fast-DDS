@@ -45,7 +45,7 @@ public:
 
     eProsima_user_DllExport FilteringExamplePubSubType();
 
-    eProsima_user_DllExport virtual ~FilteringExamplePubSubType();
+    eProsima_user_DllExport virtual ~FilteringExamplePubSubType() override;
 
     eProsima_user_DllExport virtual bool serialize(
             void* data,

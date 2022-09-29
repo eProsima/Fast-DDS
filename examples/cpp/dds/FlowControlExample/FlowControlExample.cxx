@@ -36,9 +36,9 @@ using namespace eprosima::fastcdr::exception;
 
 FlowControlExample::FlowControlExample()
 {
-    // m_message com.eprosima.idl.parser.typecode.ArrayTypeCode@43bd930a
+    // m_message com.eprosima.idl.parser.typecode.ArrayTypeCode@5b87ed94
     memset(&m_message, 0, (600000) * 1);
-    // m_wasFast com.eprosima.idl.parser.typecode.PrimitiveTypeCode@553a3d88
+    // m_wasFast com.eprosima.idl.parser.typecode.PrimitiveTypeCode@5bc79255
     m_wasFast = 0;
 
 }

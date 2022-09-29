@@ -27,7 +27,6 @@ char dummy;
 #endif  // _WIN32
 
 #include "HelloWorld.h"
-#include "HelloWorldTypeObject.h"
 #include <fastcdr/Cdr.h>
 
 #include <fastcdr/exceptions/BadParamException.h>
@@ -37,13 +36,11 @@ using namespace eprosima::fastcdr::exception;
 
 HelloWorld::HelloWorld()
 {
-    // m_index com.eprosima.idl.parser.typecode.PrimitiveTypeCode@1f36e637
+    // m_index com.eprosima.idl.parser.typecode.PrimitiveTypeCode@627551fb
     m_index = 0;
-    // m_message com.eprosima.idl.parser.typecode.StringTypeCode@578486a3
+    // m_message com.eprosima.idl.parser.typecode.StringTypeCode@2758fe70
     m_message ="";
 
-    // Just to register all known types
-    registerHelloWorldTypes();
 }
 
 HelloWorld::~HelloWorld()
@@ -136,7 +133,7 @@ void HelloWorld::serialize(
 {
 
     scdr << m_index;
-    scdr << m_message;
+    scdr << m_message.c_str();
 
 }
 

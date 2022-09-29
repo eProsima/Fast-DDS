@@ -187,7 +187,7 @@ void eprosima::fastdds::statistics::detail::EntityId_s::serializeKey(
         eprosima::fastcdr::Cdr& scdr) const
 {
     (void) scdr;
-
+     
 }
 
 eprosima::fastdds::statistics::detail::GuidPrefix_s::GuidPrefix_s()
@@ -343,7 +343,7 @@ void eprosima::fastdds::statistics::detail::GuidPrefix_s::serializeKey(
         eprosima::fastcdr::Cdr& scdr) const
 {
     (void) scdr;
-
+     
 }
 
 eprosima::fastdds::statistics::detail::GUID_s::GUID_s()
@@ -547,7 +547,7 @@ void eprosima::fastdds::statistics::detail::GUID_s::serializeKey(
         eprosima::fastcdr::Cdr& scdr) const
 {
     (void) scdr;
-
+      
 }
 
 eprosima::fastdds::statistics::detail::SequenceNumber_s::SequenceNumber_s()
@@ -741,14 +741,14 @@ void eprosima::fastdds::statistics::detail::SequenceNumber_s::serializeKey(
         eprosima::fastcdr::Cdr& scdr) const
 {
     (void) scdr;
-
+      
 }
 
 eprosima::fastdds::statistics::detail::SampleIdentity_s::SampleIdentity_s()
 {
-    // m_writer_guid com.eprosima.fastdds.idl.parser.typecode.StructTypeCode@612fc6eb
+    // m_writer_guid com.eprosima.fastdds.idl.parser.typecode.StructTypeCode@1060b431
 
-    // m_sequence_number com.eprosima.fastdds.idl.parser.typecode.StructTypeCode@1060b431
+    // m_sequence_number com.eprosima.fastdds.idl.parser.typecode.StructTypeCode@612679d6
 
 
 }
@@ -945,16 +945,16 @@ void eprosima::fastdds::statistics::detail::SampleIdentity_s::serializeKey(
         eprosima::fastcdr::Cdr& scdr) const
 {
     (void) scdr;
-
+      
 }
 
 eprosima::fastdds::statistics::detail::Locator_s::Locator_s()
 {
-    // m_kind com.eprosima.idl.parser.typecode.PrimitiveTypeCode@6a1aab78
+    // m_kind com.eprosima.idl.parser.typecode.PrimitiveTypeCode@462d5aee
     m_kind = 0;
-    // m_port com.eprosima.idl.parser.typecode.PrimitiveTypeCode@462d5aee
+    // m_port com.eprosima.idl.parser.typecode.PrimitiveTypeCode@69b0fd6f
     m_port = 0;
-    // m_address com.eprosima.idl.parser.typecode.ArrayTypeCode@69b0fd6f
+    // m_address com.eprosima.idl.parser.typecode.ArrayTypeCode@757942a1
     memset(&m_address, 0, (16) * 1);
 
 }
@@ -1193,23 +1193,23 @@ void eprosima::fastdds::statistics::detail::Locator_s::serializeKey(
         eprosima::fastcdr::Cdr& scdr) const
 {
     (void) scdr;
-
+       
 }
 
 
 eprosima::fastdds::statistics::DiscoveryTime::DiscoveryTime()
 {
-    // m_local_participant_guid com.eprosima.fastdds.idl.parser.typecode.StructTypeCode@612fc6eb
+    // m_local_participant_guid com.eprosima.fastdds.idl.parser.typecode.StructTypeCode@1060b431
 
-    // m_remote_entity_guid com.eprosima.fastdds.idl.parser.typecode.StructTypeCode@612fc6eb
+    // m_remote_entity_guid com.eprosima.fastdds.idl.parser.typecode.StructTypeCode@1060b431
 
-    // m_time com.eprosima.idl.parser.typecode.PrimitiveTypeCode@7f010382
+    // m_time com.eprosima.idl.parser.typecode.PrimitiveTypeCode@1e802ef9
     m_time = 0;
-    // m_host com.eprosima.idl.parser.typecode.StringTypeCode@1e802ef9
+    // m_host com.eprosima.idl.parser.typecode.StringTypeCode@2b6faea6
     m_host ="";
-    // m_user com.eprosima.idl.parser.typecode.StringTypeCode@2b6faea6
+    // m_user com.eprosima.idl.parser.typecode.StringTypeCode@778d1062
     m_user ="";
-    // m_process com.eprosima.idl.parser.typecode.StringTypeCode@778d1062
+    // m_process com.eprosima.idl.parser.typecode.StringTypeCode@670002
     m_process ="";
 
 }
@@ -1338,9 +1338,9 @@ void eprosima::fastdds::statistics::DiscoveryTime::serialize(
     scdr << m_local_participant_guid;
     scdr << m_remote_entity_guid;
     scdr << m_time;
-    scdr << m_host;
-    scdr << m_user;
-    scdr << m_process;
+    scdr << m_host.c_str();
+    scdr << m_user.c_str();
+    scdr << m_process.c_str();
 
 }
 
@@ -1576,8 +1576,8 @@ size_t eprosima::fastdds::statistics::DiscoveryTime::getKeyMaxCdrSerializedSize(
     size_t current_align = current_alignment;
 
 
-     current_align += eprosima::fastdds::statistics::detail::GUID_s::getMaxCdrSerializedSize(current_align);
-     current_align += eprosima::fastdds::statistics::detail::GUID_s::getMaxCdrSerializedSize(current_align);
+     current_align += eprosima::fastdds::statistics::detail::GUID_s::getMaxCdrSerializedSize(current_align); 
+     current_align += eprosima::fastdds::statistics::detail::GUID_s::getMaxCdrSerializedSize(current_align); 
 
 
 
@@ -1597,12 +1597,12 @@ void eprosima::fastdds::statistics::DiscoveryTime::serializeKey(
     (void) scdr;
      scdr << m_local_participant_guid;
        scdr << m_remote_entity_guid;
-
+          
 }
 
 eprosima::fastdds::statistics::EntityCount::EntityCount()
 {
-    // m_guid com.eprosima.fastdds.idl.parser.typecode.StructTypeCode@612fc6eb
+    // m_guid com.eprosima.fastdds.idl.parser.typecode.StructTypeCode@1060b431
 
     // m_count com.eprosima.idl.parser.typecode.PrimitiveTypeCode@1ed1993a
     m_count = 0;
@@ -1781,7 +1781,7 @@ size_t eprosima::fastdds::statistics::EntityCount::getKeyMaxCdrSerializedSize(
     size_t current_align = current_alignment;
 
 
-     current_align += eprosima::fastdds::statistics::detail::GUID_s::getMaxCdrSerializedSize(current_align);
+     current_align += eprosima::fastdds::statistics::detail::GUID_s::getMaxCdrSerializedSize(current_align); 
 
 
     return current_align;
@@ -1797,7 +1797,7 @@ void eprosima::fastdds::statistics::EntityCount::serializeKey(
 {
     (void) scdr;
      scdr << m_guid;
-
+       
 }
 
 eprosima::fastdds::statistics::SampleIdentityCount::SampleIdentityCount()
@@ -1981,7 +1981,7 @@ size_t eprosima::fastdds::statistics::SampleIdentityCount::getKeyMaxCdrSerialize
     size_t current_align = current_alignment;
 
 
-     current_align += eprosima::fastdds::statistics::detail::SampleIdentity_s::getMaxCdrSerializedSize(current_align);
+     current_align += eprosima::fastdds::statistics::detail::SampleIdentity_s::getMaxCdrSerializedSize(current_align); 
 
 
     return current_align;
@@ -1997,12 +1997,12 @@ void eprosima::fastdds::statistics::SampleIdentityCount::serializeKey(
 {
     (void) scdr;
      scdr << m_sample_id;
-
+       
 }
 
 eprosima::fastdds::statistics::Entity2LocatorTraffic::Entity2LocatorTraffic()
 {
-    // m_src_guid com.eprosima.fastdds.idl.parser.typecode.StructTypeCode@612fc6eb
+    // m_src_guid com.eprosima.fastdds.idl.parser.typecode.StructTypeCode@1060b431
 
     // m_dst_locator com.eprosima.fastdds.idl.parser.typecode.StructTypeCode@5c909414
 
@@ -2315,8 +2315,8 @@ size_t eprosima::fastdds::statistics::Entity2LocatorTraffic::getKeyMaxCdrSeriali
     size_t current_align = current_alignment;
 
 
-     current_align += eprosima::fastdds::statistics::detail::GUID_s::getMaxCdrSerializedSize(current_align);
-     current_align += eprosima::fastdds::statistics::detail::Locator_s::getMaxCdrSerializedSize(current_align);
+     current_align += eprosima::fastdds::statistics::detail::GUID_s::getMaxCdrSerializedSize(current_align); 
+     current_align += eprosima::fastdds::statistics::detail::Locator_s::getMaxCdrSerializedSize(current_align); 
 
 
 
@@ -2335,14 +2335,14 @@ void eprosima::fastdds::statistics::Entity2LocatorTraffic::serializeKey(
     (void) scdr;
      scdr << m_src_guid;
        scdr << m_dst_locator;
-
+         
 }
 
 eprosima::fastdds::statistics::WriterReaderData::WriterReaderData()
 {
-    // m_writer_guid com.eprosima.fastdds.idl.parser.typecode.StructTypeCode@612fc6eb
+    // m_writer_guid com.eprosima.fastdds.idl.parser.typecode.StructTypeCode@1060b431
 
-    // m_reader_guid com.eprosima.fastdds.idl.parser.typecode.StructTypeCode@612fc6eb
+    // m_reader_guid com.eprosima.fastdds.idl.parser.typecode.StructTypeCode@1060b431
 
     // m_data com.eprosima.idl.parser.typecode.PrimitiveTypeCode@2ea227af
     m_data = 0.0;
@@ -2567,8 +2567,8 @@ size_t eprosima::fastdds::statistics::WriterReaderData::getKeyMaxCdrSerializedSi
     size_t current_align = current_alignment;
 
 
-     current_align += eprosima::fastdds::statistics::detail::GUID_s::getMaxCdrSerializedSize(current_align);
-     current_align += eprosima::fastdds::statistics::detail::GUID_s::getMaxCdrSerializedSize(current_align);
+     current_align += eprosima::fastdds::statistics::detail::GUID_s::getMaxCdrSerializedSize(current_align); 
+     current_align += eprosima::fastdds::statistics::detail::GUID_s::getMaxCdrSerializedSize(current_align); 
 
 
     return current_align;
@@ -2585,7 +2585,7 @@ void eprosima::fastdds::statistics::WriterReaderData::serializeKey(
     (void) scdr;
      scdr << m_writer_guid;
        scdr << m_reader_guid;
-
+       
 }
 
 eprosima::fastdds::statistics::Locator2LocatorData::Locator2LocatorData()
@@ -2817,8 +2817,8 @@ size_t eprosima::fastdds::statistics::Locator2LocatorData::getKeyMaxCdrSerialize
     size_t current_align = current_alignment;
 
 
-     current_align += eprosima::fastdds::statistics::detail::Locator_s::getMaxCdrSerializedSize(current_align);
-     current_align += eprosima::fastdds::statistics::detail::Locator_s::getMaxCdrSerializedSize(current_align);
+     current_align += eprosima::fastdds::statistics::detail::Locator_s::getMaxCdrSerializedSize(current_align); 
+     current_align += eprosima::fastdds::statistics::detail::Locator_s::getMaxCdrSerializedSize(current_align); 
 
 
     return current_align;
@@ -2835,12 +2835,12 @@ void eprosima::fastdds::statistics::Locator2LocatorData::serializeKey(
     (void) scdr;
      scdr << m_src_locator;
        scdr << m_dst_locator;
-
+       
 }
 
 eprosima::fastdds::statistics::EntityData::EntityData()
 {
-    // m_guid com.eprosima.fastdds.idl.parser.typecode.StructTypeCode@612fc6eb
+    // m_guid com.eprosima.fastdds.idl.parser.typecode.StructTypeCode@1060b431
 
     // m_data com.eprosima.idl.parser.typecode.PrimitiveTypeCode@363ee3a2
     m_data = 0.0;
@@ -3019,7 +3019,7 @@ size_t eprosima::fastdds::statistics::EntityData::getKeyMaxCdrSerializedSize(
     size_t current_align = current_alignment;
 
 
-     current_align += eprosima::fastdds::statistics::detail::GUID_s::getMaxCdrSerializedSize(current_align);
+     current_align += eprosima::fastdds::statistics::detail::GUID_s::getMaxCdrSerializedSize(current_align); 
 
 
     return current_align;
@@ -3035,12 +3035,12 @@ void eprosima::fastdds::statistics::EntityData::serializeKey(
 {
     (void) scdr;
      scdr << m_guid;
-
+       
 }
 
 eprosima::fastdds::statistics::PhysicalData::PhysicalData()
 {
-    // m_participant_guid com.eprosima.fastdds.idl.parser.typecode.StructTypeCode@612fc6eb
+    // m_participant_guid com.eprosima.fastdds.idl.parser.typecode.StructTypeCode@1060b431
 
     // m_host com.eprosima.idl.parser.typecode.StringTypeCode@3c22fc4c
     m_host ="";
@@ -3155,9 +3155,9 @@ void eprosima::fastdds::statistics::PhysicalData::serialize(
 {
 
     scdr << m_participant_guid;
-    scdr << m_host;
-    scdr << m_user;
-    scdr << m_process;
+    scdr << m_host.c_str();
+    scdr << m_user.c_str();
+    scdr << m_process.c_str();
 
 }
 
@@ -3326,7 +3326,7 @@ size_t eprosima::fastdds::statistics::PhysicalData::getKeyMaxCdrSerializedSize(
     size_t current_align = current_alignment;
 
 
-     current_align += eprosima::fastdds::statistics::detail::GUID_s::getMaxCdrSerializedSize(current_align);
+     current_align += eprosima::fastdds::statistics::detail::GUID_s::getMaxCdrSerializedSize(current_align); 
 
 
 
@@ -3344,28 +3344,28 @@ void eprosima::fastdds::statistics::PhysicalData::serializeKey(
 {
     (void) scdr;
      scdr << m_participant_guid;
-
+         
 }
 
 
 eprosima::fastdds::statistics::Data::Data()
 {
     m__d = HISTORY2HISTORY_LATENCY;
-    // m_writer_reader_data com.eprosima.fastdds.idl.parser.typecode.StructTypeCode@49d904ec
+    // m_writer_reader_data com.eprosima.fastdds.idl.parser.typecode.StructTypeCode@48e4374
 
-    // m_locator2locator_data com.eprosima.fastdds.idl.parser.typecode.StructTypeCode@48e4374
+    // m_locator2locator_data com.eprosima.fastdds.idl.parser.typecode.StructTypeCode@3d680b5a
 
-    // m_entity_data com.eprosima.fastdds.idl.parser.typecode.StructTypeCode@3d680b5a
+    // m_entity_data com.eprosima.fastdds.idl.parser.typecode.StructTypeCode@4b5d6a01
 
-    // m_entity2locator_traffic com.eprosima.fastdds.idl.parser.typecode.StructTypeCode@4b5d6a01
+    // m_entity2locator_traffic com.eprosima.fastdds.idl.parser.typecode.StructTypeCode@4a22f9e2
 
-    // m_entity_count com.eprosima.fastdds.idl.parser.typecode.StructTypeCode@4a22f9e2
+    // m_entity_count com.eprosima.fastdds.idl.parser.typecode.StructTypeCode@3c419631
 
-    // m_discovery_time com.eprosima.fastdds.idl.parser.typecode.StructTypeCode@3c419631
+    // m_discovery_time com.eprosima.fastdds.idl.parser.typecode.StructTypeCode@418e7838
 
-    // m_sample_identity_count com.eprosima.fastdds.idl.parser.typecode.StructTypeCode@418e7838
+    // m_sample_identity_count com.eprosima.fastdds.idl.parser.typecode.StructTypeCode@61230f6a
 
-    // m_physical_data com.eprosima.fastdds.idl.parser.typecode.StructTypeCode@61230f6a
+    // m_physical_data com.eprosima.fastdds.idl.parser.typecode.StructTypeCode@3c130745
 
 }
 
@@ -4197,7 +4197,7 @@ size_t eprosima::fastdds::statistics::Data::getMaxCdrSerializedSize(
         if(union_max_size_serialized < reset_alignment)
             union_max_size_serialized = reset_alignment;
 
-
+        
         reset_alignment = current_alignment;
 
         reset_alignment += eprosima::fastdds::statistics::Locator2LocatorData::getMaxCdrSerializedSize(reset_alignment);
@@ -4205,7 +4205,7 @@ size_t eprosima::fastdds::statistics::Data::getMaxCdrSerializedSize(
         if(union_max_size_serialized < reset_alignment)
             union_max_size_serialized = reset_alignment;
 
-
+        
         reset_alignment = current_alignment;
 
         reset_alignment += eprosima::fastdds::statistics::EntityData::getMaxCdrSerializedSize(reset_alignment);
@@ -4213,7 +4213,7 @@ size_t eprosima::fastdds::statistics::Data::getMaxCdrSerializedSize(
         if(union_max_size_serialized < reset_alignment)
             union_max_size_serialized = reset_alignment;
 
-
+        
         reset_alignment = current_alignment;
 
         reset_alignment += eprosima::fastdds::statistics::Entity2LocatorTraffic::getMaxCdrSerializedSize(reset_alignment);
@@ -4221,7 +4221,7 @@ size_t eprosima::fastdds::statistics::Data::getMaxCdrSerializedSize(
         if(union_max_size_serialized < reset_alignment)
             union_max_size_serialized = reset_alignment;
 
-
+        
         reset_alignment = current_alignment;
 
         reset_alignment += eprosima::fastdds::statistics::EntityCount::getMaxCdrSerializedSize(reset_alignment);
@@ -4229,7 +4229,7 @@ size_t eprosima::fastdds::statistics::Data::getMaxCdrSerializedSize(
         if(union_max_size_serialized < reset_alignment)
             union_max_size_serialized = reset_alignment;
 
-
+        
         reset_alignment = current_alignment;
 
         reset_alignment += eprosima::fastdds::statistics::DiscoveryTime::getMaxCdrSerializedSize(reset_alignment);
@@ -4237,7 +4237,7 @@ size_t eprosima::fastdds::statistics::Data::getMaxCdrSerializedSize(
         if(union_max_size_serialized < reset_alignment)
             union_max_size_serialized = reset_alignment;
 
-
+        
         reset_alignment = current_alignment;
 
         reset_alignment += eprosima::fastdds::statistics::SampleIdentityCount::getMaxCdrSerializedSize(reset_alignment);
@@ -4245,7 +4245,7 @@ size_t eprosima::fastdds::statistics::Data::getMaxCdrSerializedSize(
         if(union_max_size_serialized < reset_alignment)
             union_max_size_serialized = reset_alignment;
 
-
+        
         reset_alignment = current_alignment;
 
         reset_alignment += eprosima::fastdds::statistics::PhysicalData::getMaxCdrSerializedSize(reset_alignment);
@@ -4253,7 +4253,7 @@ size_t eprosima::fastdds::statistics::Data::getMaxCdrSerializedSize(
         if(union_max_size_serialized < reset_alignment)
             union_max_size_serialized = reset_alignment;
 
-
+        
 
     return union_max_size_serialized - initial_alignment;
 }

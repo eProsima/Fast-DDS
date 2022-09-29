@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-/*! 
+/*!
  * @file Test.cpp
  * This source file contains the definition of the described types in the IDL file.
  *
@@ -21,8 +21,10 @@
 
 #ifdef _WIN32
 // Remove linker warning LNK4221 on Visual Studio
-namespace { char dummy; }
-#endif
+namespace {
+char dummy;
+}  // namespace
+#endif  // _WIN32
 
 #include "Test.h"
 #include "TestTypeObject.h"
@@ -39,33 +41,35 @@ using namespace eprosima::fastcdr::exception;
 
 BasicStruct::BasicStruct()
 {
+    // m_my_bool com.eprosima.idl.parser.typecode.PrimitiveTypeCode@76a3e297
     m_my_bool = false;
-
+    // m_my_octet com.eprosima.idl.parser.typecode.PrimitiveTypeCode@ed9d034
     m_my_octet = 0;
-
+    // m_my_int16 com.eprosima.idl.parser.typecode.PrimitiveTypeCode@6121c9d6
     m_my_int16 = 0;
-
+    // m_my_int32 com.eprosima.idl.parser.typecode.PrimitiveTypeCode@4eb7f003
     m_my_int32 = 0;
-
+    // m_my_int64 com.eprosima.idl.parser.typecode.PrimitiveTypeCode@eafc191
     m_my_int64 = 0;
-
+    // m_my_uint16 com.eprosima.idl.parser.typecode.PrimitiveTypeCode@612fc6eb
     m_my_uint16 = 0;
-
+    // m_my_uint32 com.eprosima.idl.parser.typecode.PrimitiveTypeCode@1060b431
     m_my_uint32 = 0;
-
+    // m_my_uint64 com.eprosima.idl.parser.typecode.PrimitiveTypeCode@612679d6
     m_my_uint64 = 0;
-
+    // m_my_float32 com.eprosima.idl.parser.typecode.PrimitiveTypeCode@11758f2a
     m_my_float32 = 0.0;
-
+    // m_my_float64 com.eprosima.idl.parser.typecode.PrimitiveTypeCode@e720b71
     m_my_float64 = 0.0;
-
+    // m_my_float128 com.eprosima.idl.parser.typecode.PrimitiveTypeCode@1b26f7b2
     m_my_float128 = 0.0;
-
+    // m_my_char com.eprosima.idl.parser.typecode.PrimitiveTypeCode@491cc5c9
     m_my_char = 0;
-
+    // m_my_wchar com.eprosima.idl.parser.typecode.PrimitiveTypeCode@74ad1f1f
     m_my_wchar = 0;
-
-
+    // m_my_string com.eprosima.idl.parser.typecode.StringTypeCode@6a1aab78
+    m_my_string ="";
+    // m_my_wstring com.eprosima.idl.parser.typecode.StringTypeCode@462d5aee
 
 
     // Just to register all known types
@@ -74,9 +78,25 @@ BasicStruct::BasicStruct()
 
 BasicStruct::~BasicStruct()
 {
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 }
 
-BasicStruct::BasicStruct(const BasicStruct &x)
+BasicStruct::BasicStruct(
+        const BasicStruct& x)
 {
     m_my_bool = x.m_my_bool;
     m_my_octet = x.m_my_octet;
@@ -95,7 +115,8 @@ BasicStruct::BasicStruct(const BasicStruct &x)
     m_my_wstring = x.m_my_wstring;
 }
 
-BasicStruct::BasicStruct(BasicStruct &&x)
+BasicStruct::BasicStruct(
+        BasicStruct&& x)
 {
     m_my_bool = x.m_my_bool;
     m_my_octet = x.m_my_octet;
@@ -114,8 +135,10 @@ BasicStruct::BasicStruct(BasicStruct &&x)
     m_my_wstring = std::move(x.m_my_wstring);
 }
 
-BasicStruct& BasicStruct::operator=(const BasicStruct &x)
+BasicStruct& BasicStruct::operator =(
+        const BasicStruct& x)
 {
+
     m_my_bool = x.m_my_bool;
     m_my_octet = x.m_my_octet;
     m_my_int16 = x.m_my_int16;
@@ -135,8 +158,10 @@ BasicStruct& BasicStruct::operator=(const BasicStruct &x)
     return *this;
 }
 
-BasicStruct& BasicStruct::operator=(BasicStruct &&x)
+BasicStruct& BasicStruct::operator =(
+        BasicStruct&& x)
 {
+
     m_my_bool = x.m_my_bool;
     m_my_octet = x.m_my_octet;
     m_my_int16 = x.m_my_int16;
@@ -156,9 +181,24 @@ BasicStruct& BasicStruct::operator=(BasicStruct &&x)
     return *this;
 }
 
-size_t BasicStruct::getMaxCdrSerializedSize(size_t current_alignment)
+bool BasicStruct::operator ==(
+        const BasicStruct& x) const
+{
+
+    return (m_my_bool == x.m_my_bool && m_my_octet == x.m_my_octet && m_my_int16 == x.m_my_int16 && m_my_int32 == x.m_my_int32 && m_my_int64 == x.m_my_int64 && m_my_uint16 == x.m_my_uint16 && m_my_uint32 == x.m_my_uint32 && m_my_uint64 == x.m_my_uint64 && m_my_float32 == x.m_my_float32 && m_my_float64 == x.m_my_float64 && m_my_float128 == x.m_my_float128 && m_my_char == x.m_my_char && m_my_wchar == x.m_my_wchar && m_my_string == x.m_my_string && m_my_wstring == x.m_my_wstring);
+}
+
+bool BasicStruct::operator !=(
+        const BasicStruct& x) const
+{
+    return !(*this == x);
+}
+
+size_t BasicStruct::getMaxCdrSerializedSize(
+        size_t current_alignment)
 {
     size_t initial_alignment = current_alignment;
+
 
     current_alignment += 1 + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
 
@@ -206,10 +246,13 @@ size_t BasicStruct::getMaxCdrSerializedSize(size_t current_alignment)
     return current_alignment - initial_alignment;
 }
 
-size_t BasicStruct::getCdrSerializedSize(const BasicStruct& data, size_t current_alignment)
+size_t BasicStruct::getCdrSerializedSize(
+        const BasicStruct& data,
+        size_t current_alignment)
 {
     (void)data;
     size_t initial_alignment = current_alignment;
+
 
     current_alignment += 1 + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
 
@@ -257,8 +300,10 @@ size_t BasicStruct::getCdrSerializedSize(const BasicStruct& data, size_t current
     return current_alignment - initial_alignment;
 }
 
-void BasicStruct::serialize(eprosima::fastcdr::Cdr &scdr) const
+void BasicStruct::serialize(
+        eprosima::fastcdr::Cdr& scdr) const
 {
+
     scdr << m_my_bool;
     scdr << m_my_octet;
     scdr << m_my_int16;
@@ -272,12 +317,15 @@ void BasicStruct::serialize(eprosima::fastcdr::Cdr &scdr) const
     scdr << m_my_float128;
     scdr << m_my_char;
     scdr << m_my_wchar;
-    scdr << m_my_string;
+    scdr << m_my_string.c_str();
     scdr << m_my_wstring;
+
 }
 
-void BasicStruct::deserialize(eprosima::fastcdr::Cdr &dcdr)
+void BasicStruct::deserialize(
+        eprosima::fastcdr::Cdr& dcdr)
 {
+
     dcdr >> m_my_bool;
     dcdr >> m_my_octet;
     dcdr >> m_my_int16;
@@ -295,10 +343,451 @@ void BasicStruct::deserialize(eprosima::fastcdr::Cdr &dcdr)
     dcdr >> m_my_wstring;
 }
 
-size_t BasicStruct::getKeyMaxCdrSerializedSize(size_t current_alignment)
+/*!
+ * @brief This function sets a value in member my_bool
+ * @param _my_bool New value for member my_bool
+ */
+void BasicStruct::my_bool(
+        bool _my_bool)
 {
-	size_t current_align = current_alignment;
-            
+    m_my_bool = _my_bool;
+}
+
+/*!
+ * @brief This function returns the value of member my_bool
+ * @return Value of member my_bool
+ */
+bool BasicStruct::my_bool() const
+{
+    return m_my_bool;
+}
+
+/*!
+ * @brief This function returns a reference to member my_bool
+ * @return Reference to member my_bool
+ */
+bool& BasicStruct::my_bool()
+{
+    return m_my_bool;
+}
+
+/*!
+ * @brief This function sets a value in member my_octet
+ * @param _my_octet New value for member my_octet
+ */
+void BasicStruct::my_octet(
+        uint8_t _my_octet)
+{
+    m_my_octet = _my_octet;
+}
+
+/*!
+ * @brief This function returns the value of member my_octet
+ * @return Value of member my_octet
+ */
+uint8_t BasicStruct::my_octet() const
+{
+    return m_my_octet;
+}
+
+/*!
+ * @brief This function returns a reference to member my_octet
+ * @return Reference to member my_octet
+ */
+uint8_t& BasicStruct::my_octet()
+{
+    return m_my_octet;
+}
+
+/*!
+ * @brief This function sets a value in member my_int16
+ * @param _my_int16 New value for member my_int16
+ */
+void BasicStruct::my_int16(
+        int16_t _my_int16)
+{
+    m_my_int16 = _my_int16;
+}
+
+/*!
+ * @brief This function returns the value of member my_int16
+ * @return Value of member my_int16
+ */
+int16_t BasicStruct::my_int16() const
+{
+    return m_my_int16;
+}
+
+/*!
+ * @brief This function returns a reference to member my_int16
+ * @return Reference to member my_int16
+ */
+int16_t& BasicStruct::my_int16()
+{
+    return m_my_int16;
+}
+
+/*!
+ * @brief This function sets a value in member my_int32
+ * @param _my_int32 New value for member my_int32
+ */
+void BasicStruct::my_int32(
+        int32_t _my_int32)
+{
+    m_my_int32 = _my_int32;
+}
+
+/*!
+ * @brief This function returns the value of member my_int32
+ * @return Value of member my_int32
+ */
+int32_t BasicStruct::my_int32() const
+{
+    return m_my_int32;
+}
+
+/*!
+ * @brief This function returns a reference to member my_int32
+ * @return Reference to member my_int32
+ */
+int32_t& BasicStruct::my_int32()
+{
+    return m_my_int32;
+}
+
+/*!
+ * @brief This function sets a value in member my_int64
+ * @param _my_int64 New value for member my_int64
+ */
+void BasicStruct::my_int64(
+        int64_t _my_int64)
+{
+    m_my_int64 = _my_int64;
+}
+
+/*!
+ * @brief This function returns the value of member my_int64
+ * @return Value of member my_int64
+ */
+int64_t BasicStruct::my_int64() const
+{
+    return m_my_int64;
+}
+
+/*!
+ * @brief This function returns a reference to member my_int64
+ * @return Reference to member my_int64
+ */
+int64_t& BasicStruct::my_int64()
+{
+    return m_my_int64;
+}
+
+/*!
+ * @brief This function sets a value in member my_uint16
+ * @param _my_uint16 New value for member my_uint16
+ */
+void BasicStruct::my_uint16(
+        uint16_t _my_uint16)
+{
+    m_my_uint16 = _my_uint16;
+}
+
+/*!
+ * @brief This function returns the value of member my_uint16
+ * @return Value of member my_uint16
+ */
+uint16_t BasicStruct::my_uint16() const
+{
+    return m_my_uint16;
+}
+
+/*!
+ * @brief This function returns a reference to member my_uint16
+ * @return Reference to member my_uint16
+ */
+uint16_t& BasicStruct::my_uint16()
+{
+    return m_my_uint16;
+}
+
+/*!
+ * @brief This function sets a value in member my_uint32
+ * @param _my_uint32 New value for member my_uint32
+ */
+void BasicStruct::my_uint32(
+        uint32_t _my_uint32)
+{
+    m_my_uint32 = _my_uint32;
+}
+
+/*!
+ * @brief This function returns the value of member my_uint32
+ * @return Value of member my_uint32
+ */
+uint32_t BasicStruct::my_uint32() const
+{
+    return m_my_uint32;
+}
+
+/*!
+ * @brief This function returns a reference to member my_uint32
+ * @return Reference to member my_uint32
+ */
+uint32_t& BasicStruct::my_uint32()
+{
+    return m_my_uint32;
+}
+
+/*!
+ * @brief This function sets a value in member my_uint64
+ * @param _my_uint64 New value for member my_uint64
+ */
+void BasicStruct::my_uint64(
+        uint64_t _my_uint64)
+{
+    m_my_uint64 = _my_uint64;
+}
+
+/*!
+ * @brief This function returns the value of member my_uint64
+ * @return Value of member my_uint64
+ */
+uint64_t BasicStruct::my_uint64() const
+{
+    return m_my_uint64;
+}
+
+/*!
+ * @brief This function returns a reference to member my_uint64
+ * @return Reference to member my_uint64
+ */
+uint64_t& BasicStruct::my_uint64()
+{
+    return m_my_uint64;
+}
+
+/*!
+ * @brief This function sets a value in member my_float32
+ * @param _my_float32 New value for member my_float32
+ */
+void BasicStruct::my_float32(
+        float _my_float32)
+{
+    m_my_float32 = _my_float32;
+}
+
+/*!
+ * @brief This function returns the value of member my_float32
+ * @return Value of member my_float32
+ */
+float BasicStruct::my_float32() const
+{
+    return m_my_float32;
+}
+
+/*!
+ * @brief This function returns a reference to member my_float32
+ * @return Reference to member my_float32
+ */
+float& BasicStruct::my_float32()
+{
+    return m_my_float32;
+}
+
+/*!
+ * @brief This function sets a value in member my_float64
+ * @param _my_float64 New value for member my_float64
+ */
+void BasicStruct::my_float64(
+        double _my_float64)
+{
+    m_my_float64 = _my_float64;
+}
+
+/*!
+ * @brief This function returns the value of member my_float64
+ * @return Value of member my_float64
+ */
+double BasicStruct::my_float64() const
+{
+    return m_my_float64;
+}
+
+/*!
+ * @brief This function returns a reference to member my_float64
+ * @return Reference to member my_float64
+ */
+double& BasicStruct::my_float64()
+{
+    return m_my_float64;
+}
+
+/*!
+ * @brief This function sets a value in member my_float128
+ * @param _my_float128 New value for member my_float128
+ */
+void BasicStruct::my_float128(
+        long double _my_float128)
+{
+    m_my_float128 = _my_float128;
+}
+
+/*!
+ * @brief This function returns the value of member my_float128
+ * @return Value of member my_float128
+ */
+long double BasicStruct::my_float128() const
+{
+    return m_my_float128;
+}
+
+/*!
+ * @brief This function returns a reference to member my_float128
+ * @return Reference to member my_float128
+ */
+long double& BasicStruct::my_float128()
+{
+    return m_my_float128;
+}
+
+/*!
+ * @brief This function sets a value in member my_char
+ * @param _my_char New value for member my_char
+ */
+void BasicStruct::my_char(
+        char _my_char)
+{
+    m_my_char = _my_char;
+}
+
+/*!
+ * @brief This function returns the value of member my_char
+ * @return Value of member my_char
+ */
+char BasicStruct::my_char() const
+{
+    return m_my_char;
+}
+
+/*!
+ * @brief This function returns a reference to member my_char
+ * @return Reference to member my_char
+ */
+char& BasicStruct::my_char()
+{
+    return m_my_char;
+}
+
+/*!
+ * @brief This function sets a value in member my_wchar
+ * @param _my_wchar New value for member my_wchar
+ */
+void BasicStruct::my_wchar(
+        wchar_t _my_wchar)
+{
+    m_my_wchar = _my_wchar;
+}
+
+/*!
+ * @brief This function returns the value of member my_wchar
+ * @return Value of member my_wchar
+ */
+wchar_t BasicStruct::my_wchar() const
+{
+    return m_my_wchar;
+}
+
+/*!
+ * @brief This function returns a reference to member my_wchar
+ * @return Reference to member my_wchar
+ */
+wchar_t& BasicStruct::my_wchar()
+{
+    return m_my_wchar;
+}
+
+/*!
+ * @brief This function copies the value in member my_string
+ * @param _my_string New value to be copied in member my_string
+ */
+void BasicStruct::my_string(
+        const std::string& _my_string)
+{
+    m_my_string = _my_string;
+}
+
+/*!
+ * @brief This function moves the value in member my_string
+ * @param _my_string New value to be moved in member my_string
+ */
+void BasicStruct::my_string(
+        std::string&& _my_string)
+{
+    m_my_string = std::move(_my_string);
+}
+
+/*!
+ * @brief This function returns a constant reference to member my_string
+ * @return Constant reference to member my_string
+ */
+const std::string& BasicStruct::my_string() const
+{
+    return m_my_string;
+}
+
+/*!
+ * @brief This function returns a reference to member my_string
+ * @return Reference to member my_string
+ */
+std::string& BasicStruct::my_string()
+{
+    return m_my_string;
+}
+/*!
+ * @brief This function copies the value in member my_wstring
+ * @param _my_wstring New value to be copied in member my_wstring
+ */
+void BasicStruct::my_wstring(
+        const std::wstring& _my_wstring)
+{
+    m_my_wstring = _my_wstring;
+}
+
+/*!
+ * @brief This function moves the value in member my_wstring
+ * @param _my_wstring New value to be moved in member my_wstring
+ */
+void BasicStruct::my_wstring(
+        std::wstring&& _my_wstring)
+{
+    m_my_wstring = std::move(_my_wstring);
+}
+
+/*!
+ * @brief This function returns a constant reference to member my_wstring
+ * @return Constant reference to member my_wstring
+ */
+const std::wstring& BasicStruct::my_wstring() const
+{
+    return m_my_wstring;
+}
+
+/*!
+ * @brief This function returns a reference to member my_wstring
+ * @return Reference to member my_wstring
+ */
+std::wstring& BasicStruct::my_wstring()
+{
+    return m_my_wstring;
+}
+
+size_t BasicStruct::getKeyMaxCdrSerializedSize(
+        size_t current_alignment)
+{
+    size_t current_align = current_alignment;
+
+
 
 
 
@@ -323,25 +812,13 @@ bool BasicStruct::isKeyDefined()
     return false;
 }
 
-void BasicStruct::serializeKey(eprosima::fastcdr::Cdr &scdr) const
+void BasicStruct::serializeKey(
+        eprosima::fastcdr::Cdr& scdr) const
 {
-	(void) scdr;
-	 
-	 
-	 
-	 
-	 
-	 
-	 
-	 
-	 
-	 
-	 
-	 
-	 
-	 
-	 
+    (void) scdr;
+                   
 }
+
 
 
 
@@ -349,30 +826,49 @@ void BasicStruct::serializeKey(eprosima::fastcdr::Cdr &scdr) const
 
 ComplexStruct::ComplexStruct()
 {
+    // m_my_octet com.eprosima.idl.parser.typecode.PrimitiveTypeCode@6483f5ae
     m_my_octet = 0;
+    // m_my_basic_struct com.eprosima.fastdds.idl.parser.typecode.StructTypeCode@b9afc07
 
-
+    // m_my_alias_enum com.eprosima.idl.parser.typecode.AliasTypeCode@382db087
     m_my_alias_enum = ::A;
-
+    // m_my_enum com.eprosima.idl.parser.typecode.EnumTypeCode@80169cf
     m_my_enum = ::A;
+    // m_my_sequence_octet com.eprosima.idl.parser.typecode.SequenceTypeCode@5427c60c
 
+    // m_my_sequence_struct com.eprosima.idl.parser.typecode.SequenceTypeCode@15bfd87
 
-
+    // m_my_array_octet com.eprosima.idl.parser.typecode.ArrayTypeCode@543e710e
     memset(&m_my_array_octet, 0, (500 * 5 * 4) * 1);
+    // m_my_octet_array_500 com.eprosima.idl.parser.typecode.AliasTypeCode@57f23557
     memset(&m_my_octet_array_500, 0, (500) * 1);
+    // m_my_array_struct com.eprosima.idl.parser.typecode.ArrayTypeCode@3d0f8e03
 
+    // m_my_map_octet_short com.eprosima.idl.parser.typecode.MapTypeCode@6366ebe0
 
+    // m_my_map_long_struct com.eprosima.idl.parser.typecode.MapTypeCode@44f75083
 
+    // m_my_map_long_seq_octet com.eprosima.idl.parser.typecode.MapTypeCode@2698dc7
 
+    // m_my_map_long_octet_array_500 com.eprosima.idl.parser.typecode.MapTypeCode@43d7741f
 
+    // m_my_map_long_lol_type com.eprosima.idl.parser.typecode.MapTypeCode@17baae6e
 
+    // m_my_small_string_8 com.eprosima.idl.parser.typecode.StringTypeCode@69379752
+    m_my_small_string_8 ="";
+    // m_my_small_string_16 com.eprosima.idl.parser.typecode.StringTypeCode@27fe3806
 
+    // m_my_large_string_8 com.eprosima.idl.parser.typecode.StringTypeCode@5f71c76a
+    m_my_large_string_8 ="";
+    // m_my_large_string_16 com.eprosima.idl.parser.typecode.StringTypeCode@1d7acb34
 
+    // m_my_array_string com.eprosima.idl.parser.typecode.ArrayTypeCode@48a242ce
 
-
-
+    // m_multi_alias_array_42 com.eprosima.idl.parser.typecode.AliasTypeCode@1e4a7dd4
     memset(&m_multi_alias_array_42, 0, (42) * 4);
+    // m_my_array_arrays com.eprosima.idl.parser.typecode.ArrayTypeCode@4f51b3e0
 
+    // m_my_sequences_array com.eprosima.idl.parser.typecode.ArrayTypeCode@4b9e255
 
 
     // Just to register all known types
@@ -381,9 +877,32 @@ ComplexStruct::ComplexStruct()
 
 ComplexStruct::~ComplexStruct()
 {
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 }
 
-ComplexStruct::ComplexStruct(const ComplexStruct &x)
+ComplexStruct::ComplexStruct(
+        const ComplexStruct& x)
 {
     m_my_octet = x.m_my_octet;
     m_my_basic_struct = x.m_my_basic_struct;
@@ -409,7 +928,8 @@ ComplexStruct::ComplexStruct(const ComplexStruct &x)
     m_my_sequences_array = x.m_my_sequences_array;
 }
 
-ComplexStruct::ComplexStruct(ComplexStruct &&x)
+ComplexStruct::ComplexStruct(
+        ComplexStruct&& x)
 {
     m_my_octet = x.m_my_octet;
     m_my_basic_struct = std::move(x.m_my_basic_struct);
@@ -435,8 +955,10 @@ ComplexStruct::ComplexStruct(ComplexStruct &&x)
     m_my_sequences_array = std::move(x.m_my_sequences_array);
 }
 
-ComplexStruct& ComplexStruct::operator=(const ComplexStruct &x)
+ComplexStruct& ComplexStruct::operator =(
+        const ComplexStruct& x)
 {
+
     m_my_octet = x.m_my_octet;
     m_my_basic_struct = x.m_my_basic_struct;
     m_my_alias_enum = x.m_my_alias_enum;
@@ -463,8 +985,10 @@ ComplexStruct& ComplexStruct::operator=(const ComplexStruct &x)
     return *this;
 }
 
-ComplexStruct& ComplexStruct::operator=(ComplexStruct &&x)
+ComplexStruct& ComplexStruct::operator =(
+        ComplexStruct&& x)
 {
+
     m_my_octet = x.m_my_octet;
     m_my_basic_struct = std::move(x.m_my_basic_struct);
     m_my_alias_enum = x.m_my_alias_enum;
@@ -491,9 +1015,24 @@ ComplexStruct& ComplexStruct::operator=(ComplexStruct &&x)
     return *this;
 }
 
-size_t ComplexStruct::getMaxCdrSerializedSize(size_t current_alignment)
+bool ComplexStruct::operator ==(
+        const ComplexStruct& x) const
+{
+
+    return (m_my_octet == x.m_my_octet && m_my_basic_struct == x.m_my_basic_struct && m_my_alias_enum == x.m_my_alias_enum && m_my_enum == x.m_my_enum && m_my_sequence_octet == x.m_my_sequence_octet && m_my_sequence_struct == x.m_my_sequence_struct && m_my_array_octet == x.m_my_array_octet && m_my_octet_array_500 == x.m_my_octet_array_500 && m_my_array_struct == x.m_my_array_struct && m_my_map_octet_short == x.m_my_map_octet_short && m_my_map_long_struct == x.m_my_map_long_struct && m_my_map_long_seq_octet == x.m_my_map_long_seq_octet && m_my_map_long_octet_array_500 == x.m_my_map_long_octet_array_500 && m_my_map_long_lol_type == x.m_my_map_long_lol_type && m_my_small_string_8 == x.m_my_small_string_8 && m_my_small_string_16 == x.m_my_small_string_16 && m_my_large_string_8 == x.m_my_large_string_8 && m_my_large_string_16 == x.m_my_large_string_16 && m_my_array_string == x.m_my_array_string && m_multi_alias_array_42 == x.m_multi_alias_array_42 && m_my_array_arrays == x.m_my_array_arrays && m_my_sequences_array == x.m_my_sequences_array);
+}
+
+bool ComplexStruct::operator !=(
+        const ComplexStruct& x) const
+{
+    return !(*this == x);
+}
+
+size_t ComplexStruct::getMaxCdrSerializedSize(
+        size_t current_alignment)
 {
     size_t initial_alignment = current_alignment;
+
 
     current_alignment += 1 + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
 
@@ -532,67 +1071,79 @@ size_t ComplexStruct::getMaxCdrSerializedSize(size_t current_alignment)
 
     for(size_t a = 0; a < 100; ++a)
     {
-        current_alignment += 1 + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
-
-        current_alignment += 2 + eprosima::fastcdr::Cdr::alignment(current_alignment, 2);
-
-
-    }
-
-    current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
-
-    for(size_t a = 0; a < 100; ++a)
-    {
-        current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
-
-        current_alignment += BasicStruct::getMaxCdrSerializedSize(current_alignment);
-    }
-
-    current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
-
-    for(size_t a = 0; a < 100; ++a)
-    {
-        current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
-
-        current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
-
-
-        for(size_t b = 0; b < 100; ++b)
-        {
-            current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
-
-            current_alignment += (100 * 1) + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
-
-
-        }
-    }
-
-    current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
-
-    for(size_t a = 0; a < 100; ++a)
-    {
-        current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
-
-        current_alignment += ((500) * 1) + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
-
-    }
-
-    current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
-
-    for(size_t a = 0; a < 100; ++a)
-    {
-        current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
-
-        current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
-
-        for(size_t b = 0; b < 100; ++b)
-        {
             current_alignment += 1 + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
 
 
-            for(size_t c = 0; c < (5); ++c)
+
+            current_alignment += 2 + eprosima::fastcdr::Cdr::alignment(current_alignment, 2);
+
+
+    }
+
+    current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
+
+    for(size_t a = 0; a < 100; ++a)
+    {
+            current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
+
+
+
+            current_alignment += BasicStruct::getMaxCdrSerializedSize(current_alignment);
+    }
+
+    current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
+
+    for(size_t a = 0; a < 100; ++a)
+    {
+            current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
+
+
+
+            current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
+
+
+            for(size_t b = 0; b < 100; ++b)
             {
-                current_alignment += BasicStruct::getMaxCdrSerializedSize(current_alignment);}}
+                current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
+
+                current_alignment += (100 * 1) + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
+
+
+            }
+    }
+
+    current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
+
+    for(size_t a = 0; a < 100; ++a)
+    {
+            current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
+
+
+
+            current_alignment += ((500) * 1) + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
+
+    }
+
+    current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
+
+    for(size_t a = 0; a < 100; ++a)
+    {
+            current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
+
+
+
+            current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
+
+            for(size_t b = 0; b < 100; ++b)
+            {
+                    current_alignment += 1 + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
+
+
+
+
+                    for(size_t c = 0; c < (5); ++c)
+                    {
+                        current_alignment += BasicStruct::getMaxCdrSerializedSize(current_alignment);}}
     }
 
     current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4) + 128 + 1;
@@ -630,10 +1181,13 @@ size_t ComplexStruct::getMaxCdrSerializedSize(size_t current_alignment)
     return current_alignment - initial_alignment;
 }
 
-size_t ComplexStruct::getCdrSerializedSize(const ComplexStruct& data, size_t current_alignment)
+size_t ComplexStruct::getCdrSerializedSize(
+        const ComplexStruct& data,
+        size_t current_alignment)
 {
     (void)data;
     size_t initial_alignment = current_alignment;
+
 
     current_alignment += 1 + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
 
@@ -647,7 +1201,10 @@ size_t ComplexStruct::getCdrSerializedSize(const ComplexStruct& data, size_t cur
 
     current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
 
-    current_alignment += (data.my_sequence_octet().size() * 1) + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
+    if (data.my_sequence_octet().size() > 0)
+    {
+        current_alignment += (data.my_sequence_octet().size() * 1) + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
+    }
 
 
 
@@ -672,79 +1229,81 @@ size_t ComplexStruct::getCdrSerializedSize(const ComplexStruct& data, size_t cur
     for(auto a : data.my_map_octet_short())
     {
         (void)a;
-        current_alignment += 1 + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
-        current_alignment += 2 + eprosima::fastcdr::Cdr::alignment(current_alignment, 2);
 
+            current_alignment += 1 + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
 
+            current_alignment += 2 + eprosima::fastcdr::Cdr::alignment(current_alignment, 2);
 
     }
-
 
     current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
 
     for(auto a : data.my_map_long_struct())
     {
         (void)a;
-        current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
-        current_alignment += BasicStruct::getCdrSerializedSize((a.second), current_alignment);
 
+            current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
+
+            current_alignment += BasicStruct::getCdrSerializedSize(a.second, current_alignment);
     }
-
 
     current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
 
     for(auto a : data.my_map_long_seq_octet())
     {
         (void)a;
-        current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
-        current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
 
-
-        for(size_t b = 0; b < a.second.size(); ++b)
-        {
             current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
 
-            current_alignment += (a.second.at(b).size() * 1) + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
+            current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
 
 
-        }
+            for(size_t b = 0; b < a.second.size(); ++b)
+            {
+                current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
 
+                if (a.second.at(b).size() > 0)
+                {
+                    current_alignment += (a.second.at(b).size() * 1) + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
+                }
+
+
+            }
     }
-
 
     current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
 
     for(auto a : data.my_map_long_octet_array_500())
     {
         (void)a;
-        current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
-        current_alignment += ((500) * 1) + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
 
+            current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
+
+            current_alignment += ((500) * 1) + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
     }
-
 
     current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
 
     for(auto a : data.my_map_long_lol_type())
     {
         (void)a;
-        current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
-        current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
 
-        for(auto b : a.second)
-        {
-            (void)b;
-            current_alignment += 1 + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
+            current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
 
-            for(size_t c = 0; c < b.second.size(); ++c)
+            current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
+
+            for(auto b : a.second)
             {
-                    current_alignment += BasicStruct::getCdrSerializedSize(b.second.at(c), current_alignment);
-            }
-        }
+                (void)b;
+
+                    current_alignment += 1 + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
 
 
+                    for(size_t c = 0; c < b.second.size(); ++c)
+                    {
+                            current_alignment += BasicStruct::getCdrSerializedSize(b.second.at(c), current_alignment);
+                    }}
     }
-
 
     current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4) + data.my_small_string_8().size() + 1;
 
@@ -776,7 +1335,10 @@ size_t ComplexStruct::getCdrSerializedSize(const ComplexStruct& data, size_t cur
     {
             current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
 
-            current_alignment += (data.my_sequences_array().at(a).size() * 4) + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
+            if (data.my_sequences_array().at(a).size() > 0)
+            {
+                current_alignment += (data.my_sequences_array().at(a).size() * 4) + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
+            }
 
 
     }
@@ -784,8 +1346,10 @@ size_t ComplexStruct::getCdrSerializedSize(const ComplexStruct& data, size_t cur
     return current_alignment - initial_alignment;
 }
 
-void ComplexStruct::serialize(eprosima::fastcdr::Cdr &scdr) const
+void ComplexStruct::serialize(
+        eprosima::fastcdr::Cdr& scdr) const
 {
+
     scdr << m_my_octet;
     scdr << m_my_basic_struct;
     scdr << (uint32_t)m_my_alias_enum;
@@ -793,25 +1357,44 @@ void ComplexStruct::serialize(eprosima::fastcdr::Cdr &scdr) const
     scdr << m_my_sequence_octet;
     scdr << m_my_sequence_struct;
     scdr << m_my_array_octet;
+
     scdr << m_my_octet_array_500;
+
     scdr << m_my_array_struct;
+
     scdr << m_my_map_octet_short;
     scdr << m_my_map_long_struct;
     scdr << m_my_map_long_seq_octet;
     scdr << m_my_map_long_octet_array_500;
     scdr << m_my_map_long_lol_type;
-    scdr << m_my_small_string_8;
+    scdr << m_my_small_string_8.c_str();
     scdr << m_my_small_string_16;
-    scdr << m_my_large_string_8;
+    scdr << m_my_large_string_8.c_str();
     scdr << m_my_large_string_16;
-    scdr << m_my_array_string;
+    for (uint32_t d = 0; d < m_my_array_string.size(); ++d)
+    {
+        for (const auto& str : m_my_array_string[d])
+        {
+            scdr << str.c_str();
+        }
+
+    }
+
+
     scdr.serializeArray(reinterpret_cast<const uint32_t*>(m_multi_alias_array_42.data()), m_multi_alias_array_42.size());
+
+
     scdr << m_my_array_arrays;
+
     scdr << m_my_sequences_array;
+
+
 }
 
-void ComplexStruct::deserialize(eprosima::fastcdr::Cdr &dcdr)
+void ComplexStruct::deserialize(
+        eprosima::fastcdr::Cdr& dcdr)
 {
+
     dcdr >> m_my_octet;
     dcdr >> m_my_basic_struct;
     {
@@ -819,35 +1402,855 @@ void ComplexStruct::deserialize(eprosima::fastcdr::Cdr &dcdr)
         dcdr >> enum_value;
         m_my_alias_enum = (MyAliasEnum)enum_value;
     }
+
     {
         uint32_t enum_value = 0;
         dcdr >> enum_value;
         m_my_enum = (MyEnum)enum_value;
     }
+
     dcdr >> m_my_sequence_octet;
     dcdr >> m_my_sequence_struct;
     dcdr >> m_my_array_octet;
+
     dcdr >> m_my_octet_array_500;
+
     dcdr >> m_my_array_struct;
+
     dcdr >> m_my_map_octet_short;
     dcdr >> m_my_map_long_struct;
     dcdr >> m_my_map_long_seq_octet;
     dcdr >> m_my_map_long_octet_array_500;
     dcdr >> m_my_map_long_lol_type;
-    dcdr >> m_my_small_string_8;
+    {
+        std::string aux;
+        dcdr >> aux;
+        m_my_small_string_8 = aux.c_str();
+    }
     dcdr >> m_my_small_string_16;
-    dcdr >> m_my_large_string_8;
+    {
+        std::string aux;
+        dcdr >> aux;
+        m_my_large_string_8 = aux.c_str();
+    }
     dcdr >> m_my_large_string_16;
-    dcdr >> m_my_array_string;
+    for (uint32_t f = 0; f < m_my_array_string.size(); ++f)
+    {
+        for (auto& str : m_my_array_string[f])
+        {
+            {
+                std::string aux_str;
+                dcdr >> aux_str;
+                str = aux_str.c_str();
+            }
+        }
+
+    }
+
+
     dcdr.deserializeArray(reinterpret_cast<uint32_t*>(m_multi_alias_array_42.data()), m_multi_alias_array_42.size());
+
+
     dcdr >> m_my_array_arrays;
+
     dcdr >> m_my_sequences_array;
+
 }
 
-size_t ComplexStruct::getKeyMaxCdrSerializedSize(size_t current_alignment)
+/*!
+ * @brief This function sets a value in member my_octet
+ * @param _my_octet New value for member my_octet
+ */
+void ComplexStruct::my_octet(
+        uint8_t _my_octet)
 {
-	size_t current_align = current_alignment;
-            
+    m_my_octet = _my_octet;
+}
+
+/*!
+ * @brief This function returns the value of member my_octet
+ * @return Value of member my_octet
+ */
+uint8_t ComplexStruct::my_octet() const
+{
+    return m_my_octet;
+}
+
+/*!
+ * @brief This function returns a reference to member my_octet
+ * @return Reference to member my_octet
+ */
+uint8_t& ComplexStruct::my_octet()
+{
+    return m_my_octet;
+}
+
+/*!
+ * @brief This function copies the value in member my_basic_struct
+ * @param _my_basic_struct New value to be copied in member my_basic_struct
+ */
+void ComplexStruct::my_basic_struct(
+        const BasicStruct& _my_basic_struct)
+{
+    m_my_basic_struct = _my_basic_struct;
+}
+
+/*!
+ * @brief This function moves the value in member my_basic_struct
+ * @param _my_basic_struct New value to be moved in member my_basic_struct
+ */
+void ComplexStruct::my_basic_struct(
+        BasicStruct&& _my_basic_struct)
+{
+    m_my_basic_struct = std::move(_my_basic_struct);
+}
+
+/*!
+ * @brief This function returns a constant reference to member my_basic_struct
+ * @return Constant reference to member my_basic_struct
+ */
+const BasicStruct& ComplexStruct::my_basic_struct() const
+{
+    return m_my_basic_struct;
+}
+
+/*!
+ * @brief This function returns a reference to member my_basic_struct
+ * @return Reference to member my_basic_struct
+ */
+BasicStruct& ComplexStruct::my_basic_struct()
+{
+    return m_my_basic_struct;
+}
+/*!
+ * @brief This function sets a value in member my_alias_enum
+ * @param _my_alias_enum New value for member my_alias_enum
+ */
+void ComplexStruct::my_alias_enum(
+        MyAliasEnum _my_alias_enum)
+{
+    m_my_alias_enum = _my_alias_enum;
+}
+
+/*!
+ * @brief This function returns the value of member my_alias_enum
+ * @return Value of member my_alias_enum
+ */
+MyAliasEnum ComplexStruct::my_alias_enum() const
+{
+    return m_my_alias_enum;
+}
+
+/*!
+ * @brief This function returns a reference to member my_alias_enum
+ * @return Reference to member my_alias_enum
+ */
+MyAliasEnum& ComplexStruct::my_alias_enum()
+{
+    return m_my_alias_enum;
+}
+
+/*!
+ * @brief This function sets a value in member my_enum
+ * @param _my_enum New value for member my_enum
+ */
+void ComplexStruct::my_enum(
+        MyEnum _my_enum)
+{
+    m_my_enum = _my_enum;
+}
+
+/*!
+ * @brief This function returns the value of member my_enum
+ * @return Value of member my_enum
+ */
+MyEnum ComplexStruct::my_enum() const
+{
+    return m_my_enum;
+}
+
+/*!
+ * @brief This function returns a reference to member my_enum
+ * @return Reference to member my_enum
+ */
+MyEnum& ComplexStruct::my_enum()
+{
+    return m_my_enum;
+}
+
+/*!
+ * @brief This function copies the value in member my_sequence_octet
+ * @param _my_sequence_octet New value to be copied in member my_sequence_octet
+ */
+void ComplexStruct::my_sequence_octet(
+        const std::vector<uint8_t>& _my_sequence_octet)
+{
+    m_my_sequence_octet = _my_sequence_octet;
+}
+
+/*!
+ * @brief This function moves the value in member my_sequence_octet
+ * @param _my_sequence_octet New value to be moved in member my_sequence_octet
+ */
+void ComplexStruct::my_sequence_octet(
+        std::vector<uint8_t>&& _my_sequence_octet)
+{
+    m_my_sequence_octet = std::move(_my_sequence_octet);
+}
+
+/*!
+ * @brief This function returns a constant reference to member my_sequence_octet
+ * @return Constant reference to member my_sequence_octet
+ */
+const std::vector<uint8_t>& ComplexStruct::my_sequence_octet() const
+{
+    return m_my_sequence_octet;
+}
+
+/*!
+ * @brief This function returns a reference to member my_sequence_octet
+ * @return Reference to member my_sequence_octet
+ */
+std::vector<uint8_t>& ComplexStruct::my_sequence_octet()
+{
+    return m_my_sequence_octet;
+}
+/*!
+ * @brief This function copies the value in member my_sequence_struct
+ * @param _my_sequence_struct New value to be copied in member my_sequence_struct
+ */
+void ComplexStruct::my_sequence_struct(
+        const std::vector<BasicStruct>& _my_sequence_struct)
+{
+    m_my_sequence_struct = _my_sequence_struct;
+}
+
+/*!
+ * @brief This function moves the value in member my_sequence_struct
+ * @param _my_sequence_struct New value to be moved in member my_sequence_struct
+ */
+void ComplexStruct::my_sequence_struct(
+        std::vector<BasicStruct>&& _my_sequence_struct)
+{
+    m_my_sequence_struct = std::move(_my_sequence_struct);
+}
+
+/*!
+ * @brief This function returns a constant reference to member my_sequence_struct
+ * @return Constant reference to member my_sequence_struct
+ */
+const std::vector<BasicStruct>& ComplexStruct::my_sequence_struct() const
+{
+    return m_my_sequence_struct;
+}
+
+/*!
+ * @brief This function returns a reference to member my_sequence_struct
+ * @return Reference to member my_sequence_struct
+ */
+std::vector<BasicStruct>& ComplexStruct::my_sequence_struct()
+{
+    return m_my_sequence_struct;
+}
+/*!
+ * @brief This function copies the value in member my_array_octet
+ * @param _my_array_octet New value to be copied in member my_array_octet
+ */
+void ComplexStruct::my_array_octet(
+        const std::array<std::array<std::array<char, 4>, 5>, 500>& _my_array_octet)
+{
+    m_my_array_octet = _my_array_octet;
+}
+
+/*!
+ * @brief This function moves the value in member my_array_octet
+ * @param _my_array_octet New value to be moved in member my_array_octet
+ */
+void ComplexStruct::my_array_octet(
+        std::array<std::array<std::array<char, 4>, 5>, 500>&& _my_array_octet)
+{
+    m_my_array_octet = std::move(_my_array_octet);
+}
+
+/*!
+ * @brief This function returns a constant reference to member my_array_octet
+ * @return Constant reference to member my_array_octet
+ */
+const std::array<std::array<std::array<char, 4>, 5>, 500>& ComplexStruct::my_array_octet() const
+{
+    return m_my_array_octet;
+}
+
+/*!
+ * @brief This function returns a reference to member my_array_octet
+ * @return Reference to member my_array_octet
+ */
+std::array<std::array<std::array<char, 4>, 5>, 500>& ComplexStruct::my_array_octet()
+{
+    return m_my_array_octet;
+}
+/*!
+ * @brief This function copies the value in member my_octet_array_500
+ * @param _my_octet_array_500 New value to be copied in member my_octet_array_500
+ */
+void ComplexStruct::my_octet_array_500(
+        const MyOctetArray500& _my_octet_array_500)
+{
+    m_my_octet_array_500 = _my_octet_array_500;
+}
+
+/*!
+ * @brief This function moves the value in member my_octet_array_500
+ * @param _my_octet_array_500 New value to be moved in member my_octet_array_500
+ */
+void ComplexStruct::my_octet_array_500(
+        MyOctetArray500&& _my_octet_array_500)
+{
+    m_my_octet_array_500 = std::move(_my_octet_array_500);
+}
+
+/*!
+ * @brief This function returns a constant reference to member my_octet_array_500
+ * @return Constant reference to member my_octet_array_500
+ */
+const MyOctetArray500& ComplexStruct::my_octet_array_500() const
+{
+    return m_my_octet_array_500;
+}
+
+/*!
+ * @brief This function returns a reference to member my_octet_array_500
+ * @return Reference to member my_octet_array_500
+ */
+MyOctetArray500& ComplexStruct::my_octet_array_500()
+{
+    return m_my_octet_array_500;
+}
+/*!
+ * @brief This function copies the value in member my_array_struct
+ * @param _my_array_struct New value to be copied in member my_array_struct
+ */
+void ComplexStruct::my_array_struct(
+        const std::array<BasicStruct, 5>& _my_array_struct)
+{
+    m_my_array_struct = _my_array_struct;
+}
+
+/*!
+ * @brief This function moves the value in member my_array_struct
+ * @param _my_array_struct New value to be moved in member my_array_struct
+ */
+void ComplexStruct::my_array_struct(
+        std::array<BasicStruct, 5>&& _my_array_struct)
+{
+    m_my_array_struct = std::move(_my_array_struct);
+}
+
+/*!
+ * @brief This function returns a constant reference to member my_array_struct
+ * @return Constant reference to member my_array_struct
+ */
+const std::array<BasicStruct, 5>& ComplexStruct::my_array_struct() const
+{
+    return m_my_array_struct;
+}
+
+/*!
+ * @brief This function returns a reference to member my_array_struct
+ * @return Reference to member my_array_struct
+ */
+std::array<BasicStruct, 5>& ComplexStruct::my_array_struct()
+{
+    return m_my_array_struct;
+}
+/*!
+ * @brief This function copies the value in member my_map_octet_short
+ * @param _my_map_octet_short New value to be copied in member my_map_octet_short
+ */
+void ComplexStruct::my_map_octet_short(
+        const std::map<uint8_t, int16_t>& _my_map_octet_short)
+{
+    m_my_map_octet_short = _my_map_octet_short;
+}
+
+/*!
+ * @brief This function moves the value in member my_map_octet_short
+ * @param _my_map_octet_short New value to be moved in member my_map_octet_short
+ */
+void ComplexStruct::my_map_octet_short(
+        std::map<uint8_t, int16_t>&& _my_map_octet_short)
+{
+    m_my_map_octet_short = std::move(_my_map_octet_short);
+}
+
+/*!
+ * @brief This function returns a constant reference to member my_map_octet_short
+ * @return Constant reference to member my_map_octet_short
+ */
+const std::map<uint8_t, int16_t>& ComplexStruct::my_map_octet_short() const
+{
+    return m_my_map_octet_short;
+}
+
+/*!
+ * @brief This function returns a reference to member my_map_octet_short
+ * @return Reference to member my_map_octet_short
+ */
+std::map<uint8_t, int16_t>& ComplexStruct::my_map_octet_short()
+{
+    return m_my_map_octet_short;
+}
+/*!
+ * @brief This function copies the value in member my_map_long_struct
+ * @param _my_map_long_struct New value to be copied in member my_map_long_struct
+ */
+void ComplexStruct::my_map_long_struct(
+        const std::map<int32_t, BasicStruct>& _my_map_long_struct)
+{
+    m_my_map_long_struct = _my_map_long_struct;
+}
+
+/*!
+ * @brief This function moves the value in member my_map_long_struct
+ * @param _my_map_long_struct New value to be moved in member my_map_long_struct
+ */
+void ComplexStruct::my_map_long_struct(
+        std::map<int32_t, BasicStruct>&& _my_map_long_struct)
+{
+    m_my_map_long_struct = std::move(_my_map_long_struct);
+}
+
+/*!
+ * @brief This function returns a constant reference to member my_map_long_struct
+ * @return Constant reference to member my_map_long_struct
+ */
+const std::map<int32_t, BasicStruct>& ComplexStruct::my_map_long_struct() const
+{
+    return m_my_map_long_struct;
+}
+
+/*!
+ * @brief This function returns a reference to member my_map_long_struct
+ * @return Reference to member my_map_long_struct
+ */
+std::map<int32_t, BasicStruct>& ComplexStruct::my_map_long_struct()
+{
+    return m_my_map_long_struct;
+}
+/*!
+ * @brief This function copies the value in member my_map_long_seq_octet
+ * @param _my_map_long_seq_octet New value to be copied in member my_map_long_seq_octet
+ */
+void ComplexStruct::my_map_long_seq_octet(
+        const std::map<int32_t, std::vector<std::vector<uint8_t>>>& _my_map_long_seq_octet)
+{
+    m_my_map_long_seq_octet = _my_map_long_seq_octet;
+}
+
+/*!
+ * @brief This function moves the value in member my_map_long_seq_octet
+ * @param _my_map_long_seq_octet New value to be moved in member my_map_long_seq_octet
+ */
+void ComplexStruct::my_map_long_seq_octet(
+        std::map<int32_t, std::vector<std::vector<uint8_t>>>&& _my_map_long_seq_octet)
+{
+    m_my_map_long_seq_octet = std::move(_my_map_long_seq_octet);
+}
+
+/*!
+ * @brief This function returns a constant reference to member my_map_long_seq_octet
+ * @return Constant reference to member my_map_long_seq_octet
+ */
+const std::map<int32_t, std::vector<std::vector<uint8_t>>>& ComplexStruct::my_map_long_seq_octet() const
+{
+    return m_my_map_long_seq_octet;
+}
+
+/*!
+ * @brief This function returns a reference to member my_map_long_seq_octet
+ * @return Reference to member my_map_long_seq_octet
+ */
+std::map<int32_t, std::vector<std::vector<uint8_t>>>& ComplexStruct::my_map_long_seq_octet()
+{
+    return m_my_map_long_seq_octet;
+}
+/*!
+ * @brief This function copies the value in member my_map_long_octet_array_500
+ * @param _my_map_long_octet_array_500 New value to be copied in member my_map_long_octet_array_500
+ */
+void ComplexStruct::my_map_long_octet_array_500(
+        const std::map<int32_t, MyOctetArray500>& _my_map_long_octet_array_500)
+{
+    m_my_map_long_octet_array_500 = _my_map_long_octet_array_500;
+}
+
+/*!
+ * @brief This function moves the value in member my_map_long_octet_array_500
+ * @param _my_map_long_octet_array_500 New value to be moved in member my_map_long_octet_array_500
+ */
+void ComplexStruct::my_map_long_octet_array_500(
+        std::map<int32_t, MyOctetArray500>&& _my_map_long_octet_array_500)
+{
+    m_my_map_long_octet_array_500 = std::move(_my_map_long_octet_array_500);
+}
+
+/*!
+ * @brief This function returns a constant reference to member my_map_long_octet_array_500
+ * @return Constant reference to member my_map_long_octet_array_500
+ */
+const std::map<int32_t, MyOctetArray500>& ComplexStruct::my_map_long_octet_array_500() const
+{
+    return m_my_map_long_octet_array_500;
+}
+
+/*!
+ * @brief This function returns a reference to member my_map_long_octet_array_500
+ * @return Reference to member my_map_long_octet_array_500
+ */
+std::map<int32_t, MyOctetArray500>& ComplexStruct::my_map_long_octet_array_500()
+{
+    return m_my_map_long_octet_array_500;
+}
+/*!
+ * @brief This function copies the value in member my_map_long_lol_type
+ * @param _my_map_long_lol_type New value to be copied in member my_map_long_lol_type
+ */
+void ComplexStruct::my_map_long_lol_type(
+        const std::map<int32_t, std::map<uint8_t, BSAlias5>>& _my_map_long_lol_type)
+{
+    m_my_map_long_lol_type = _my_map_long_lol_type;
+}
+
+/*!
+ * @brief This function moves the value in member my_map_long_lol_type
+ * @param _my_map_long_lol_type New value to be moved in member my_map_long_lol_type
+ */
+void ComplexStruct::my_map_long_lol_type(
+        std::map<int32_t, std::map<uint8_t, BSAlias5>>&& _my_map_long_lol_type)
+{
+    m_my_map_long_lol_type = std::move(_my_map_long_lol_type);
+}
+
+/*!
+ * @brief This function returns a constant reference to member my_map_long_lol_type
+ * @return Constant reference to member my_map_long_lol_type
+ */
+const std::map<int32_t, std::map<uint8_t, BSAlias5>>& ComplexStruct::my_map_long_lol_type() const
+{
+    return m_my_map_long_lol_type;
+}
+
+/*!
+ * @brief This function returns a reference to member my_map_long_lol_type
+ * @return Reference to member my_map_long_lol_type
+ */
+std::map<int32_t, std::map<uint8_t, BSAlias5>>& ComplexStruct::my_map_long_lol_type()
+{
+    return m_my_map_long_lol_type;
+}
+/*!
+ * @brief This function copies the value in member my_small_string_8
+ * @param _my_small_string_8 New value to be copied in member my_small_string_8
+ */
+void ComplexStruct::my_small_string_8(
+        const eprosima::fastrtps::fixed_string<128>& _my_small_string_8)
+{
+    m_my_small_string_8 = _my_small_string_8;
+}
+
+/*!
+ * @brief This function moves the value in member my_small_string_8
+ * @param _my_small_string_8 New value to be moved in member my_small_string_8
+ */
+void ComplexStruct::my_small_string_8(
+        eprosima::fastrtps::fixed_string<128>&& _my_small_string_8)
+{
+    m_my_small_string_8 = std::move(_my_small_string_8);
+}
+
+/*!
+ * @brief This function returns a constant reference to member my_small_string_8
+ * @return Constant reference to member my_small_string_8
+ */
+const eprosima::fastrtps::fixed_string<128>& ComplexStruct::my_small_string_8() const
+{
+    return m_my_small_string_8;
+}
+
+/*!
+ * @brief This function returns a reference to member my_small_string_8
+ * @return Reference to member my_small_string_8
+ */
+eprosima::fastrtps::fixed_string<128>& ComplexStruct::my_small_string_8()
+{
+    return m_my_small_string_8;
+}
+/*!
+ * @brief This function copies the value in member my_small_string_16
+ * @param _my_small_string_16 New value to be copied in member my_small_string_16
+ */
+void ComplexStruct::my_small_string_16(
+        const std::wstring& _my_small_string_16)
+{
+    m_my_small_string_16 = _my_small_string_16;
+}
+
+/*!
+ * @brief This function moves the value in member my_small_string_16
+ * @param _my_small_string_16 New value to be moved in member my_small_string_16
+ */
+void ComplexStruct::my_small_string_16(
+        std::wstring&& _my_small_string_16)
+{
+    m_my_small_string_16 = std::move(_my_small_string_16);
+}
+
+/*!
+ * @brief This function returns a constant reference to member my_small_string_16
+ * @return Constant reference to member my_small_string_16
+ */
+const std::wstring& ComplexStruct::my_small_string_16() const
+{
+    return m_my_small_string_16;
+}
+
+/*!
+ * @brief This function returns a reference to member my_small_string_16
+ * @return Reference to member my_small_string_16
+ */
+std::wstring& ComplexStruct::my_small_string_16()
+{
+    return m_my_small_string_16;
+}
+/*!
+ * @brief This function copies the value in member my_large_string_8
+ * @param _my_large_string_8 New value to be copied in member my_large_string_8
+ */
+void ComplexStruct::my_large_string_8(
+        const eprosima::fastrtps::fixed_string<500>& _my_large_string_8)
+{
+    m_my_large_string_8 = _my_large_string_8;
+}
+
+/*!
+ * @brief This function moves the value in member my_large_string_8
+ * @param _my_large_string_8 New value to be moved in member my_large_string_8
+ */
+void ComplexStruct::my_large_string_8(
+        eprosima::fastrtps::fixed_string<500>&& _my_large_string_8)
+{
+    m_my_large_string_8 = std::move(_my_large_string_8);
+}
+
+/*!
+ * @brief This function returns a constant reference to member my_large_string_8
+ * @return Constant reference to member my_large_string_8
+ */
+const eprosima::fastrtps::fixed_string<500>& ComplexStruct::my_large_string_8() const
+{
+    return m_my_large_string_8;
+}
+
+/*!
+ * @brief This function returns a reference to member my_large_string_8
+ * @return Reference to member my_large_string_8
+ */
+eprosima::fastrtps::fixed_string<500>& ComplexStruct::my_large_string_8()
+{
+    return m_my_large_string_8;
+}
+/*!
+ * @brief This function copies the value in member my_large_string_16
+ * @param _my_large_string_16 New value to be copied in member my_large_string_16
+ */
+void ComplexStruct::my_large_string_16(
+        const std::wstring& _my_large_string_16)
+{
+    m_my_large_string_16 = _my_large_string_16;
+}
+
+/*!
+ * @brief This function moves the value in member my_large_string_16
+ * @param _my_large_string_16 New value to be moved in member my_large_string_16
+ */
+void ComplexStruct::my_large_string_16(
+        std::wstring&& _my_large_string_16)
+{
+    m_my_large_string_16 = std::move(_my_large_string_16);
+}
+
+/*!
+ * @brief This function returns a constant reference to member my_large_string_16
+ * @return Constant reference to member my_large_string_16
+ */
+const std::wstring& ComplexStruct::my_large_string_16() const
+{
+    return m_my_large_string_16;
+}
+
+/*!
+ * @brief This function returns a reference to member my_large_string_16
+ * @return Reference to member my_large_string_16
+ */
+std::wstring& ComplexStruct::my_large_string_16()
+{
+    return m_my_large_string_16;
+}
+/*!
+ * @brief This function copies the value in member my_array_string
+ * @param _my_array_string New value to be copied in member my_array_string
+ */
+void ComplexStruct::my_array_string(
+        const std::array<std::array<eprosima::fastrtps::fixed_string<75>, 5>, 5>& _my_array_string)
+{
+    m_my_array_string = _my_array_string;
+}
+
+/*!
+ * @brief This function moves the value in member my_array_string
+ * @param _my_array_string New value to be moved in member my_array_string
+ */
+void ComplexStruct::my_array_string(
+        std::array<std::array<eprosima::fastrtps::fixed_string<75>, 5>, 5>&& _my_array_string)
+{
+    m_my_array_string = std::move(_my_array_string);
+}
+
+/*!
+ * @brief This function returns a constant reference to member my_array_string
+ * @return Constant reference to member my_array_string
+ */
+const std::array<std::array<eprosima::fastrtps::fixed_string<75>, 5>, 5>& ComplexStruct::my_array_string() const
+{
+    return m_my_array_string;
+}
+
+/*!
+ * @brief This function returns a reference to member my_array_string
+ * @return Reference to member my_array_string
+ */
+std::array<std::array<eprosima::fastrtps::fixed_string<75>, 5>, 5>& ComplexStruct::my_array_string()
+{
+    return m_my_array_string;
+}
+/*!
+ * @brief This function copies the value in member multi_alias_array_42
+ * @param _multi_alias_array_42 New value to be copied in member multi_alias_array_42
+ */
+void ComplexStruct::multi_alias_array_42(
+        const MA3& _multi_alias_array_42)
+{
+    m_multi_alias_array_42 = _multi_alias_array_42;
+}
+
+/*!
+ * @brief This function moves the value in member multi_alias_array_42
+ * @param _multi_alias_array_42 New value to be moved in member multi_alias_array_42
+ */
+void ComplexStruct::multi_alias_array_42(
+        MA3&& _multi_alias_array_42)
+{
+    m_multi_alias_array_42 = std::move(_multi_alias_array_42);
+}
+
+/*!
+ * @brief This function returns a constant reference to member multi_alias_array_42
+ * @return Constant reference to member multi_alias_array_42
+ */
+const MA3& ComplexStruct::multi_alias_array_42() const
+{
+    return m_multi_alias_array_42;
+}
+
+/*!
+ * @brief This function returns a reference to member multi_alias_array_42
+ * @return Reference to member multi_alias_array_42
+ */
+MA3& ComplexStruct::multi_alias_array_42()
+{
+    return m_multi_alias_array_42;
+}
+/*!
+ * @brief This function copies the value in member my_array_arrays
+ * @param _my_array_arrays New value to be copied in member my_array_arrays
+ */
+void ComplexStruct::my_array_arrays(
+        const std::array<MyMiniArray, 5>& _my_array_arrays)
+{
+    m_my_array_arrays = _my_array_arrays;
+}
+
+/*!
+ * @brief This function moves the value in member my_array_arrays
+ * @param _my_array_arrays New value to be moved in member my_array_arrays
+ */
+void ComplexStruct::my_array_arrays(
+        std::array<MyMiniArray, 5>&& _my_array_arrays)
+{
+    m_my_array_arrays = std::move(_my_array_arrays);
+}
+
+/*!
+ * @brief This function returns a constant reference to member my_array_arrays
+ * @return Constant reference to member my_array_arrays
+ */
+const std::array<MyMiniArray, 5>& ComplexStruct::my_array_arrays() const
+{
+    return m_my_array_arrays;
+}
+
+/*!
+ * @brief This function returns a reference to member my_array_arrays
+ * @return Reference to member my_array_arrays
+ */
+std::array<MyMiniArray, 5>& ComplexStruct::my_array_arrays()
+{
+    return m_my_array_arrays;
+}
+/*!
+ * @brief This function copies the value in member my_sequences_array
+ * @param _my_sequences_array New value to be copied in member my_sequences_array
+ */
+void ComplexStruct::my_sequences_array(
+        const std::array<MySequenceLong, 23>& _my_sequences_array)
+{
+    m_my_sequences_array = _my_sequences_array;
+}
+
+/*!
+ * @brief This function moves the value in member my_sequences_array
+ * @param _my_sequences_array New value to be moved in member my_sequences_array
+ */
+void ComplexStruct::my_sequences_array(
+        std::array<MySequenceLong, 23>&& _my_sequences_array)
+{
+    m_my_sequences_array = std::move(_my_sequences_array);
+}
+
+/*!
+ * @brief This function returns a constant reference to member my_sequences_array
+ * @return Constant reference to member my_sequences_array
+ */
+const std::array<MySequenceLong, 23>& ComplexStruct::my_sequences_array() const
+{
+    return m_my_sequences_array;
+}
+
+/*!
+ * @brief This function returns a reference to member my_sequences_array
+ * @return Reference to member my_sequences_array
+ */
+std::array<MySequenceLong, 23>& ComplexStruct::my_sequences_array()
+{
+    return m_my_sequences_array;
+}
+
+size_t ComplexStruct::getKeyMaxCdrSerializedSize(
+        size_t current_alignment)
+{
+    size_t current_align = current_alignment;
+
+
 
 
 
@@ -879,36 +2282,19 @@ bool ComplexStruct::isKeyDefined()
     return false;
 }
 
-void ComplexStruct::serializeKey(eprosima::fastcdr::Cdr &scdr) const
+void ComplexStruct::serializeKey(
+        eprosima::fastcdr::Cdr& scdr) const
 {
-	(void) scdr;
-	 
-	 
-	 
-	 
-	 
-	 
-	 
-	 
-	 
-	 
-	 
-	 
-	 
-	 
-	 
-	 
-	 
-	 
-	 
-	 
-	 
-	 
+    (void) scdr;
+                          
 }
+
 MyUnion::MyUnion()
 {
     m__d = ::A;
+    // m_basic com.eprosima.fastdds.idl.parser.typecode.StructTypeCode@b9afc07
 
+    // m_complex com.eprosima.fastdds.idl.parser.typecode.StructTypeCode@166fa74d
 
 }
 
@@ -916,7 +2302,8 @@ MyUnion::~MyUnion()
 {
 }
 
-MyUnion::MyUnion(const MyUnion &x)
+MyUnion::MyUnion(
+        const MyUnion& x)
 {
     m__d = x.m__d;
 
@@ -934,7 +2321,8 @@ MyUnion::MyUnion(const MyUnion &x)
     }
 }
 
-MyUnion::MyUnion(MyUnion &&x)
+MyUnion::MyUnion(
+        MyUnion&& x)
 {
     m__d = x.m__d;
 
@@ -952,7 +2340,8 @@ MyUnion::MyUnion(MyUnion &&x)
     }
 }
 
-MyUnion& MyUnion::operator=(const MyUnion &x)
+MyUnion& MyUnion::operator =(
+        const MyUnion& x)
 {
     m__d = x.m__d;
 
@@ -972,7 +2361,8 @@ MyUnion& MyUnion::operator=(const MyUnion &x)
     return *this;
 }
 
-MyUnion& MyUnion::operator=(MyUnion &&x)
+MyUnion& MyUnion::operator =(
+        MyUnion&& x)
 {
     m__d = x.m__d;
 
@@ -992,7 +2382,37 @@ MyUnion& MyUnion::operator=(MyUnion &&x)
     return *this;
 }
 
-void MyUnion::_d(MyEnum __d)
+bool MyUnion::operator ==(
+        const MyUnion& x) const
+{
+    if (m__d != x.m__d)
+    {
+        return false;
+    }
+
+    switch(m__d)
+    {
+        case ::A:
+            return (m_basic == x.m_basic);
+            break;
+        case ::B:
+        case ::C:
+            return (m_complex == x.m_complex);
+            break;
+        default:
+        break;
+    }
+    return false;
+}
+
+bool MyUnion::operator !=(
+        const MyUnion& x) const
+{
+    return !(*this == x);
+}
+
+void MyUnion::_d(
+        MyEnum __d)
 {
     bool b = false;
 
@@ -1040,13 +2460,15 @@ MyEnum& MyUnion::_d()
     return m__d;
 }
 
-void MyUnion::basic(const BasicStruct &_basic)
+void MyUnion::basic(
+        const BasicStruct& _basic)
 {
     m_basic = _basic;
     m__d = ::A;
 }
 
-void MyUnion::basic(BasicStruct &&_basic)
+void MyUnion::basic(
+        BasicStruct&& _basic)
 {
     m_basic = std::move(_basic);
     m__d = ::A;
@@ -1091,13 +2513,15 @@ BasicStruct& MyUnion::basic()
 
     return m_basic;
 }
-void MyUnion::complex(const ComplexStruct &_complex)
+void MyUnion::complex(
+        const ComplexStruct& _complex)
 {
     m_complex = _complex;
     m__d = ::B;
 }
 
-void MyUnion::complex(ComplexStruct &&_complex)
+void MyUnion::complex(
+        ComplexStruct&& _complex)
 {
     m_complex = std::move(_complex);
     m__d = ::B;
@@ -1145,7 +2569,8 @@ ComplexStruct& MyUnion::complex()
     return m_complex;
 }
 
-size_t MyUnion::getMaxCdrSerializedSize(size_t current_alignment)
+size_t MyUnion::getMaxCdrSerializedSize(
+        size_t current_alignment)
 {
     size_t initial_alignment = current_alignment;
     size_t reset_alignment = 0;
@@ -1175,7 +2600,9 @@ size_t MyUnion::getMaxCdrSerializedSize(size_t current_alignment)
 }
 
 // TODO(Ricardo) Review
-size_t MyUnion::getCdrSerializedSize(const MyUnion& data, size_t current_alignment)
+size_t MyUnion::getCdrSerializedSize(
+        const MyUnion& data,
+        size_t current_alignment)
 {
     (void)data;
     size_t initial_alignment = current_alignment;
@@ -1198,7 +2625,8 @@ size_t MyUnion::getCdrSerializedSize(const MyUnion& data, size_t current_alignme
     return current_alignment - initial_alignment;
 }
 
-void MyUnion::serialize(eprosima::fastcdr::Cdr &scdr) const
+void MyUnion::serialize(
+        eprosima::fastcdr::Cdr& scdr) const
 {
     scdr << (uint32_t)m__d;
 
@@ -1206,23 +2634,27 @@ void MyUnion::serialize(eprosima::fastcdr::Cdr &scdr) const
     {
         case ::A:
         scdr << m_basic;
+
         break;
         case ::B:
         case ::C:
         scdr << m_complex;
+
         break;
         default:
         break;
     }
 }
 
-void MyUnion::deserialize(eprosima::fastcdr::Cdr &dcdr)
+void MyUnion::deserialize(
+        eprosima::fastcdr::Cdr& dcdr)
 {
     {
         uint32_t enum_value = 0;
         dcdr >> enum_value;
         m__d = (MyEnum)enum_value;
     }
+
 
     switch(m__d)
     {
@@ -1242,18 +2674,20 @@ void MyUnion::deserialize(eprosima::fastcdr::Cdr &dcdr)
 MyUnion2::MyUnion2()
 {
     m__d = A;
+    // m_uno com.eprosima.idl.parser.typecode.PrimitiveTypeCode@7181ae3f
     m_uno = 0;
-
-
+    // m_imString com.eprosima.idl.parser.typecode.StringTypeCode@46238e3f
+    m_imString ="";
+    // m_tres com.eprosima.idl.parser.typecode.PrimitiveTypeCode@6e2c9341
     m_tres = 0;
-
 }
 
 MyUnion2::~MyUnion2()
 {
 }
 
-MyUnion2::MyUnion2(const MyUnion2 &x)
+MyUnion2::MyUnion2(
+        const MyUnion2& x)
 {
     m__d = x.m__d;
 
@@ -1273,7 +2707,8 @@ MyUnion2::MyUnion2(const MyUnion2 &x)
     }
 }
 
-MyUnion2::MyUnion2(MyUnion2 &&x)
+MyUnion2::MyUnion2(
+        MyUnion2&& x)
 {
     m__d = x.m__d;
 
@@ -1293,7 +2728,8 @@ MyUnion2::MyUnion2(MyUnion2 &&x)
     }
 }
 
-MyUnion2& MyUnion2::operator=(const MyUnion2 &x)
+MyUnion2& MyUnion2::operator =(
+        const MyUnion2& x)
 {
     m__d = x.m__d;
 
@@ -1315,7 +2751,8 @@ MyUnion2& MyUnion2::operator=(const MyUnion2 &x)
     return *this;
 }
 
-MyUnion2& MyUnion2::operator=(MyUnion2 &&x)
+MyUnion2& MyUnion2::operator =(
+        MyUnion2&& x)
 {
     m__d = x.m__d;
 
@@ -1337,7 +2774,39 @@ MyUnion2& MyUnion2::operator=(MyUnion2 &&x)
     return *this;
 }
 
-void MyUnion2::_d(uint8_t __d)
+bool MyUnion2::operator ==(
+        const MyUnion2& x) const
+{
+    if (m__d != x.m__d)
+    {
+        return false;
+    }
+
+    switch(m__d)
+    {
+        case A:
+            return (m_uno == x.m_uno);
+            break;
+        case B:
+            return (m_imString == x.m_imString);
+            break;
+        case C:
+            return (m_tres == x.m_tres);
+            break;
+        default:
+        break;
+    }
+    return false;
+}
+
+bool MyUnion2::operator !=(
+        const MyUnion2& x) const
+{
+    return !(*this == x);
+}
+
+void MyUnion2::_d(
+        uint8_t __d)
 {
     bool b = false;
 
@@ -1393,7 +2862,8 @@ uint8_t& MyUnion2::_d()
     return m__d;
 }
 
-void MyUnion2::uno(int32_t _uno)
+void MyUnion2::uno(
+        int32_t _uno)
 {
     m_uno = _uno;
     m__d = A;
@@ -1438,13 +2908,15 @@ int32_t& MyUnion2::uno()
 
     return m_uno;
 }
-void MyUnion2::imString(const std::string &_imString)
+void MyUnion2::imString(
+        const std::string& _imString)
 {
     m_imString = _imString;
     m__d = B;
 }
 
-void MyUnion2::imString(std::string &&_imString)
+void MyUnion2::imString(
+        std::string&& _imString)
 {
     m_imString = std::move(_imString);
     m__d = B;
@@ -1489,7 +2961,8 @@ std::string& MyUnion2::imString()
 
     return m_imString;
 }
-void MyUnion2::tres(int32_t _tres)
+void MyUnion2::tres(
+        int32_t _tres)
 {
     m_tres = _tres;
     m__d = C;
@@ -1535,7 +3008,8 @@ int32_t& MyUnion2::tres()
     return m_tres;
 }
 
-size_t MyUnion2::getMaxCdrSerializedSize(size_t current_alignment)
+size_t MyUnion2::getMaxCdrSerializedSize(
+        size_t current_alignment)
 {
     size_t initial_alignment = current_alignment;
     size_t reset_alignment = 0;
@@ -1575,7 +3049,9 @@ size_t MyUnion2::getMaxCdrSerializedSize(size_t current_alignment)
 }
 
 // TODO(Ricardo) Review
-size_t MyUnion2::getCdrSerializedSize(const MyUnion2& data, size_t current_alignment)
+size_t MyUnion2::getCdrSerializedSize(
+        const MyUnion2& data,
+        size_t current_alignment)
 {
     (void)data;
     size_t initial_alignment = current_alignment;
@@ -1602,7 +3078,8 @@ size_t MyUnion2::getCdrSerializedSize(const MyUnion2& data, size_t current_align
     return current_alignment - initial_alignment;
 }
 
-void MyUnion2::serialize(eprosima::fastcdr::Cdr &scdr) const
+void MyUnion2::serialize(
+        eprosima::fastcdr::Cdr& scdr) const
 {
     scdr << m__d;
 
@@ -1610,19 +3087,23 @@ void MyUnion2::serialize(eprosima::fastcdr::Cdr &scdr) const
     {
         case A:
         scdr << m_uno;
+
         break;
         case B:
-        scdr << m_imString;
+        scdr << m_imString.c_str();
+
         break;
         case C:
         scdr << m_tres;
+
         break;
         default:
         break;
     }
 }
 
-void MyUnion2::deserialize(eprosima::fastcdr::Cdr &dcdr)
+void MyUnion2::deserialize(
+        eprosima::fastcdr::Cdr& dcdr)
 {
     dcdr >> m__d;
 
@@ -1632,8 +3113,7 @@ void MyUnion2::deserialize(eprosima::fastcdr::Cdr &dcdr)
         dcdr >> m_uno;
         break;
         case B:
-        dcdr >> m_imString;
-        break;
+        dcdr >> m_imString;break;
         case C:
         dcdr >> m_tres;
         break;
@@ -1645,7 +3125,9 @@ void MyUnion2::deserialize(eprosima::fastcdr::Cdr &dcdr)
 
 CompleteStruct::CompleteStruct()
 {
+    // m_my_union com.eprosima.idl.parser.typecode.UnionTypeCode@1efee8e7
 
+    // m_my_union_2 com.eprosima.idl.parser.typecode.UnionTypeCode@1ee807c6
 
 
     // Just to register all known types
@@ -1654,39 +3136,62 @@ CompleteStruct::CompleteStruct()
 
 CompleteStruct::~CompleteStruct()
 {
+
+
 }
 
-CompleteStruct::CompleteStruct(const CompleteStruct &x)
+CompleteStruct::CompleteStruct(
+        const CompleteStruct& x)
 {
     m_my_union = x.m_my_union;
     m_my_union_2 = x.m_my_union_2;
 }
 
-CompleteStruct::CompleteStruct(CompleteStruct &&x)
+CompleteStruct::CompleteStruct(
+        CompleteStruct&& x)
 {
     m_my_union = std::move(x.m_my_union);
     m_my_union_2 = std::move(x.m_my_union_2);
 }
 
-CompleteStruct& CompleteStruct::operator=(const CompleteStruct &x)
+CompleteStruct& CompleteStruct::operator =(
+        const CompleteStruct& x)
 {
+
     m_my_union = x.m_my_union;
     m_my_union_2 = x.m_my_union_2;
 
     return *this;
 }
 
-CompleteStruct& CompleteStruct::operator=(CompleteStruct &&x)
+CompleteStruct& CompleteStruct::operator =(
+        CompleteStruct&& x)
 {
+
     m_my_union = std::move(x.m_my_union);
     m_my_union_2 = std::move(x.m_my_union_2);
 
     return *this;
 }
 
-size_t CompleteStruct::getMaxCdrSerializedSize(size_t current_alignment)
+bool CompleteStruct::operator ==(
+        const CompleteStruct& x) const
+{
+
+    return (m_my_union == x.m_my_union && m_my_union_2 == x.m_my_union_2);
+}
+
+bool CompleteStruct::operator !=(
+        const CompleteStruct& x) const
+{
+    return !(*this == x);
+}
+
+size_t CompleteStruct::getMaxCdrSerializedSize(
+        size_t current_alignment)
 {
     size_t initial_alignment = current_alignment;
+
 
     current_alignment += MyUnion::getMaxCdrSerializedSize(current_alignment);
     current_alignment += MyUnion2::getMaxCdrSerializedSize(current_alignment);
@@ -1694,10 +3199,13 @@ size_t CompleteStruct::getMaxCdrSerializedSize(size_t current_alignment)
     return current_alignment - initial_alignment;
 }
 
-size_t CompleteStruct::getCdrSerializedSize(const CompleteStruct& data, size_t current_alignment)
+size_t CompleteStruct::getCdrSerializedSize(
+        const CompleteStruct& data,
+        size_t current_alignment)
 {
     (void)data;
     size_t initial_alignment = current_alignment;
+
 
     current_alignment += MyUnion::getCdrSerializedSize(data.my_union(), current_alignment);
     current_alignment += MyUnion2::getCdrSerializedSize(data.my_union_2(), current_alignment);
@@ -1705,22 +3213,104 @@ size_t CompleteStruct::getCdrSerializedSize(const CompleteStruct& data, size_t c
     return current_alignment - initial_alignment;
 }
 
-void CompleteStruct::serialize(eprosima::fastcdr::Cdr &scdr) const
+void CompleteStruct::serialize(
+        eprosima::fastcdr::Cdr& scdr) const
 {
+
     scdr << m_my_union;
     scdr << m_my_union_2;
+
 }
 
-void CompleteStruct::deserialize(eprosima::fastcdr::Cdr &dcdr)
+void CompleteStruct::deserialize(
+        eprosima::fastcdr::Cdr& dcdr)
 {
+
     dcdr >> m_my_union;
     dcdr >> m_my_union_2;
 }
 
-size_t CompleteStruct::getKeyMaxCdrSerializedSize(size_t current_alignment)
+/*!
+ * @brief This function copies the value in member my_union
+ * @param _my_union New value to be copied in member my_union
+ */
+void CompleteStruct::my_union(
+        const MyUnion& _my_union)
 {
-	size_t current_align = current_alignment;
-            
+    m_my_union = _my_union;
+}
+
+/*!
+ * @brief This function moves the value in member my_union
+ * @param _my_union New value to be moved in member my_union
+ */
+void CompleteStruct::my_union(
+        MyUnion&& _my_union)
+{
+    m_my_union = std::move(_my_union);
+}
+
+/*!
+ * @brief This function returns a constant reference to member my_union
+ * @return Constant reference to member my_union
+ */
+const MyUnion& CompleteStruct::my_union() const
+{
+    return m_my_union;
+}
+
+/*!
+ * @brief This function returns a reference to member my_union
+ * @return Reference to member my_union
+ */
+MyUnion& CompleteStruct::my_union()
+{
+    return m_my_union;
+}
+/*!
+ * @brief This function copies the value in member my_union_2
+ * @param _my_union_2 New value to be copied in member my_union_2
+ */
+void CompleteStruct::my_union_2(
+        const MyUnion2& _my_union_2)
+{
+    m_my_union_2 = _my_union_2;
+}
+
+/*!
+ * @brief This function moves the value in member my_union_2
+ * @param _my_union_2 New value to be moved in member my_union_2
+ */
+void CompleteStruct::my_union_2(
+        MyUnion2&& _my_union_2)
+{
+    m_my_union_2 = std::move(_my_union_2);
+}
+
+/*!
+ * @brief This function returns a constant reference to member my_union_2
+ * @return Constant reference to member my_union_2
+ */
+const MyUnion2& CompleteStruct::my_union_2() const
+{
+    return m_my_union_2;
+}
+
+/*!
+ * @brief This function returns a reference to member my_union_2
+ * @return Reference to member my_union_2
+ */
+MyUnion2& CompleteStruct::my_union_2()
+{
+    return m_my_union_2;
+}
+
+size_t CompleteStruct::getKeyMaxCdrSerializedSize(
+        size_t current_alignment)
+{
+    size_t current_align = current_alignment;
+
+
 
 
 
@@ -1732,16 +3322,18 @@ bool CompleteStruct::isKeyDefined()
     return false;
 }
 
-void CompleteStruct::serializeKey(eprosima::fastcdr::Cdr &scdr) const
+void CompleteStruct::serializeKey(
+        eprosima::fastcdr::Cdr& scdr) const
 {
-	(void) scdr;
-	 
-	 
+    (void) scdr;
+      
 }
+
 KeyedStruct::KeyedStruct()
 {
+    // m_key com.eprosima.idl.parser.typecode.PrimitiveTypeCode@32cf48b7
     m_key = 0;
-
+    // m_basic com.eprosima.fastdds.idl.parser.typecode.StructTypeCode@b9afc07
 
 
     // Just to register all known types
@@ -1750,39 +3342,62 @@ KeyedStruct::KeyedStruct()
 
 KeyedStruct::~KeyedStruct()
 {
+
+
 }
 
-KeyedStruct::KeyedStruct(const KeyedStruct &x)
+KeyedStruct::KeyedStruct(
+        const KeyedStruct& x)
 {
     m_key = x.m_key;
     m_basic = x.m_basic;
 }
 
-KeyedStruct::KeyedStruct(KeyedStruct &&x)
+KeyedStruct::KeyedStruct(
+        KeyedStruct&& x)
 {
     m_key = x.m_key;
     m_basic = std::move(x.m_basic);
 }
 
-KeyedStruct& KeyedStruct::operator=(const KeyedStruct &x)
+KeyedStruct& KeyedStruct::operator =(
+        const KeyedStruct& x)
 {
+
     m_key = x.m_key;
     m_basic = x.m_basic;
 
     return *this;
 }
 
-KeyedStruct& KeyedStruct::operator=(KeyedStruct &&x)
+KeyedStruct& KeyedStruct::operator =(
+        KeyedStruct&& x)
 {
+
     m_key = x.m_key;
     m_basic = std::move(x.m_basic);
 
     return *this;
 }
 
-size_t KeyedStruct::getMaxCdrSerializedSize(size_t current_alignment)
+bool KeyedStruct::operator ==(
+        const KeyedStruct& x) const
+{
+
+    return (m_key == x.m_key && m_basic == x.m_basic);
+}
+
+bool KeyedStruct::operator !=(
+        const KeyedStruct& x) const
+{
+    return !(*this == x);
+}
+
+size_t KeyedStruct::getMaxCdrSerializedSize(
+        size_t current_alignment)
 {
     size_t initial_alignment = current_alignment;
+
 
     current_alignment += 1 + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
 
@@ -1792,10 +3407,13 @@ size_t KeyedStruct::getMaxCdrSerializedSize(size_t current_alignment)
     return current_alignment - initial_alignment;
 }
 
-size_t KeyedStruct::getCdrSerializedSize(const KeyedStruct& data, size_t current_alignment)
+size_t KeyedStruct::getCdrSerializedSize(
+        const KeyedStruct& data,
+        size_t current_alignment)
 {
     (void)data;
     size_t initial_alignment = current_alignment;
+
 
     current_alignment += 1 + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
 
@@ -1805,22 +3423,95 @@ size_t KeyedStruct::getCdrSerializedSize(const KeyedStruct& data, size_t current
     return current_alignment - initial_alignment;
 }
 
-void KeyedStruct::serialize(eprosima::fastcdr::Cdr &scdr) const
+void KeyedStruct::serialize(
+        eprosima::fastcdr::Cdr& scdr) const
 {
+
     scdr << m_key;
     scdr << m_basic;
+
 }
 
-void KeyedStruct::deserialize(eprosima::fastcdr::Cdr &dcdr)
+void KeyedStruct::deserialize(
+        eprosima::fastcdr::Cdr& dcdr)
 {
+
     dcdr >> m_key;
     dcdr >> m_basic;
 }
 
-size_t KeyedStruct::getKeyMaxCdrSerializedSize(size_t current_alignment)
+/*!
+ * @brief This function sets a value in member key
+ * @param _key New value for member key
+ */
+void KeyedStruct::key(
+        uint8_t _key)
 {
-	size_t current_align = current_alignment;
-            
+    m_key = _key;
+}
+
+/*!
+ * @brief This function returns the value of member key
+ * @return Value of member key
+ */
+uint8_t KeyedStruct::key() const
+{
+    return m_key;
+}
+
+/*!
+ * @brief This function returns a reference to member key
+ * @return Reference to member key
+ */
+uint8_t& KeyedStruct::key()
+{
+    return m_key;
+}
+
+/*!
+ * @brief This function copies the value in member basic
+ * @param _basic New value to be copied in member basic
+ */
+void KeyedStruct::basic(
+        const BasicStruct& _basic)
+{
+    m_basic = _basic;
+}
+
+/*!
+ * @brief This function moves the value in member basic
+ * @param _basic New value to be moved in member basic
+ */
+void KeyedStruct::basic(
+        BasicStruct&& _basic)
+{
+    m_basic = std::move(_basic);
+}
+
+/*!
+ * @brief This function returns a constant reference to member basic
+ * @return Constant reference to member basic
+ */
+const BasicStruct& KeyedStruct::basic() const
+{
+    return m_basic;
+}
+
+/*!
+ * @brief This function returns a reference to member basic
+ * @return Reference to member basic
+ */
+BasicStruct& KeyedStruct::basic()
+{
+    return m_basic;
+}
+
+size_t KeyedStruct::getKeyMaxCdrSerializedSize(
+        size_t current_alignment)
+{
+    size_t current_align = current_alignment;
+
+
      current_align += 1 + eprosima::fastcdr::Cdr::alignment(current_align, 1);
 
      
@@ -1834,9 +3525,10 @@ bool KeyedStruct::isKeyDefined()
     return true;
 }
 
-void KeyedStruct::serializeKey(eprosima::fastcdr::Cdr &scdr) const
+void KeyedStruct::serializeKey(
+        eprosima::fastcdr::Cdr& scdr) const
 {
-	(void) scdr;
-	 scdr << m_key;  
-	 
+    (void) scdr;
+     scdr << m_key;
+       
 }

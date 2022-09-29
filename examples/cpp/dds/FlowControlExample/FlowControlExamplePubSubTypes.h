@@ -45,7 +45,7 @@ public:
 
     eProsima_user_DllExport FlowControlExamplePubSubType();
 
-    eProsima_user_DllExport virtual ~FlowControlExamplePubSubType();
+    eProsima_user_DllExport virtual ~FlowControlExamplePubSubType() override;
 
     eProsima_user_DllExport virtual bool serialize(
             void* data,

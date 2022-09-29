@@ -45,7 +45,7 @@ public:
 
     eProsima_user_DllExport LifespanPubSubType();
 
-    eProsima_user_DllExport virtual ~LifespanPubSubType();
+    eProsima_user_DllExport virtual ~LifespanPubSubType() override;
 
     eProsima_user_DllExport virtual bool serialize(
             void* data,
