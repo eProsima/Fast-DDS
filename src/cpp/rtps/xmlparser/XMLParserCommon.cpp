@@ -86,6 +86,7 @@ const char* INTRAPROCESS_DELIVERY = "intraprocess_delivery";
 /// RTPS Participant attributes
 const char* ALLOCATION = "allocation";
 const char* PREFIX = "prefix";
+const char* DEF_EXT_UNI_LOC_LIST = "default_external_unicast_locators";
 const char* DEF_UNI_LOC_LIST = "defaultUnicastLocatorList";
 const char* DEF_MULTI_LOC_LIST = "defaultMulticastLocatorList";
 const char* SEND_SOCK_BUF_SIZE = "sendSocketBufferSize";
@@ -119,6 +120,7 @@ const char* MAX_PARTITIONS = "max_partitions";
 const char* TOPIC = "topic";
 const char* QOS = "qos";
 const char* TIMES = "times";
+const char* EXT_UNI_LOC_LIST = "external_unicast_locators";
 const char* UNI_LOC_LIST = "unicastLocatorList";
 const char* MULTI_LOC_LIST = "multicastLocatorList";
 const char* REM_LOC_LIST = "remoteLocatorList";
@@ -132,6 +134,7 @@ const char* MATCHED_SUBSCRIBERS_ALLOCATION = "matchedSubscribersAllocation";
 const char* MATCHED_PUBLISHERS_ALLOCATION = "matchedPublishersAllocation";
 
 ///
+const char* IGN_NON_MATCHING_LOCS = "ignore_non_matching_locators";
 const char* PROPERTIES = "properties";
 const char* BIN_PROPERTIES = "binary_properties";
 const char* PROPERTY = "property";
@@ -265,6 +268,7 @@ const char* LEASE_ANNOUNCE = "leaseAnnouncement";
 const char* INITIAL_ANNOUNCEMENTS = "initialAnnouncements";
 const char* AVOID_BUILTIN_MULTICAST = "avoid_builtin_multicast";
 const char* SIMPLE_EDP = "simpleEDP";
+const char* META_EXT_UNI_LOC_LIST = "metatraffic_external_unicast_locators";
 const char* META_UNI_LOC_LIST = "metatrafficUnicastLocatorList";
 const char* META_MULTI_LOC_LIST = "metatrafficMulticastLocatorList";
 const char* INIT_PEERS_LIST = "initialPeersList";

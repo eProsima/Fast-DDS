@@ -288,6 +288,46 @@
         </xs:sequence>
     </xs:complexType>
 
+    <xs:complexType name="udpExternalLocatorType">
+        <xs:all>
+            <xs:element name="port" type="uint32Type"/>
+            <xs:element name="address" type="stringType"/>
+        </xs:all>
+        <xs:attribute name="externality" default="1">
+            <xs:simpleType>
+                <xs:restriction base="xs:integer">
+                    <xs:minInclusive value="1"/>
+                    <xs:maxInclusive value="255"/>
+                </xs:restriction>
+            </xs:simpleType>
+        </xs:attribute>
+        <xs:attribute name="cost" default="0">
+            <xs:simpleType>
+                <xs:restriction base="xs:integer">
+                    <xs:minInclusive value="0"/>
+                    <xs:maxInclusive value="255"/>
+                </xs:restriction>
+            </xs:simpleType>
+        </xs:attribute>
+        <xs:attribute name="mask">
+            <xs:simpleType>
+                <xs:restriction base="xs:integer">
+                    <xs:minInclusive value="1"/>
+                    <xs:maxInclusive value="127"/>
+                </xs:restriction>
+            </xs:simpleType>
+        </xs:attribute>
+    </xs:complexType>
+  
+    <xs:complexType name="externalLocatorListType">
+        <xs:sequence>
+          <xs:choice>
+            <xs:element name="udpv4" type="udpExternalLocatorType"/>
+            <xs:element name="udpv6" type="udpExternalLocatorType"/>
+          </xs:choice>
+        </xs:sequence>
+    </xs:complexType>
+
     <xs:complexType name="simpleEDPType">
         <xs:all minOccurs="0">
             <xs:element name="PUBWRITER_SUBREADER" type="boolType"/>
@@ -373,6 +413,7 @@
         <xs:all minOccurs="0">
             <xs:element name="discovery_config" type="discoverySettingsType" minOccurs="0"/>
             <xs:element name="use_WriterLivelinessProtocol" type="boolType" minOccurs="0"/>
+            <xs:element name="metatraffic_external_unicast_locators" type="externalLocatorListType" minOccurs="0"/>
             <xs:element name="metatrafficUnicastLocatorList" type="locatorListType" minOccurs="0"/>
             <xs:element name="metatrafficMulticastLocatorList" type="locatorListType" minOccurs="0"/>
             <xs:element name="initialPeersList" type="locatorListType" minOccurs="0"/>
@@ -710,6 +751,8 @@
         <xs:all minOccurs="0">
             <xs:element name="allocation" type="rtpsParticipantAllocationAttributesType" minOccurs="0"/>
             <xs:element name="prefix" type="guid" minOccurs="0"/>
+            <xs:element name="default_external_unicast_locators" type="externalLocatorListType" minOccurs="0"/>
+            <xs:element name="ignore_non_matching_locators" type="boolType" minOccurs="0"/>
             <xs:element name="defaultUnicastLocatorList" type="locatorListType" minOccurs="0"/>
             <xs:element name="defaultMulticastLocatorList" type="locatorListType" minOccurs="0"/>
             <xs:element name="sendSocketBufferSize" type="uint32Type" minOccurs="0"/>
@@ -740,6 +783,8 @@
             <xs:element name="topic" type="topicAttributesType" minOccurs="0"/>
             <xs:element name="qos" type="writerQosPoliciesType" minOccurs="0"/>
             <xs:element name="times" type="writerTimesType" minOccurs="0"/>
+            <xs:element name="external_unicast_locators" type="externalLocatorListType" minOccurs="0"/>
+            <xs:element name="ignore_non_matching_locators" type="boolType" minOccurs="0"/>
             <xs:element name="unicastLocatorList" type="locatorListType" minOccurs="0"/>
             <xs:element name="multicastLocatorList" type="locatorListType" minOccurs="0"/>
             <xs:element name="throughputController" type="throughputControllerType" minOccurs="0"/>
@@ -758,6 +803,8 @@
             <xs:element name="topic" type="topicAttributesType" minOccurs="0"/>
             <xs:element name="qos" type="readerQosPoliciesType" minOccurs="0"/>
             <xs:element name="times" type="readerTimesType" minOccurs="0"/>
+            <xs:element name="external_unicast_locators" type="externalLocatorListType" minOccurs="0"/>
+            <xs:element name="ignore_non_matching_locators" type="boolType" minOccurs="0"/>
             <xs:element name="unicastLocatorList" type="locatorListType" minOccurs="0"/>
             <xs:element name="multicastLocatorList" type="locatorListType" minOccurs="0"/>
             <xs:element name="expectsInlineQos" type="boolType" minOccurs="0"/>

@@ -317,9 +317,10 @@ void EDPSimple::set_builtin_writer_history_attributes(
 void EDPSimple::set_builtin_reader_attributes(
         ReaderAttributes& attributes)
 {
+    const RTPSParticipantAttributes& pattr = mp_PDP->getRTPSParticipant()->getRTPSParticipantAttributes();
+
     // Matched writers will depend on total number of participants
-    attributes.matched_writers_allocation =
-            mp_PDP->getRTPSParticipant()->getRTPSParticipantAttributes().allocation.participants;
+    attributes.matched_writers_allocation = pattr.allocation.participants;
 
     // As participants allocation policy includes the local participant, one has to be substracted
     if (attributes.matched_writers_allocation.initial > 1)
@@ -334,15 +335,17 @@ void EDPSimple::set_builtin_reader_attributes(
 
     // Locators are copied from the local participant metatraffic locators
     attributes.endpoint.unicastLocatorList.clear();
-    for (const Locator_t& loc : this->mp_PDP->getLocalParticipantProxyData()->metatraffic_locators.unicast)
+    for (const Locator_t& loc : mp_PDP->getLocalParticipantProxyData()->metatraffic_locators.unicast)
     {
         attributes.endpoint.unicastLocatorList.push_back(loc);
     }
     attributes.endpoint.multicastLocatorList.clear();
-    for (const Locator_t& loc : this->mp_PDP->getLocalParticipantProxyData()->metatraffic_locators.multicast)
+    for (const Locator_t& loc : mp_PDP->getLocalParticipantProxyData()->metatraffic_locators.multicast)
     {
         attributes.endpoint.multicastLocatorList.push_back(loc);
     }
+    attributes.endpoint.external_unicast_locators = mp_PDP->builtin_attributes().metatraffic_external_unicast_locators;
+    attributes.endpoint.ignore_non_matching_locators = pattr.ignore_non_matching_locators;
 
     // Timings are configured using EDP default values
     attributes.times.heartbeatResponseDelay = edp_heartbeat_response_delay;
@@ -359,9 +362,10 @@ void EDPSimple::set_builtin_reader_attributes(
 void EDPSimple::set_builtin_writer_attributes(
         WriterAttributes& attributes)
 {
+    const RTPSParticipantAttributes& pattr = mp_PDP->getRTPSParticipant()->getRTPSParticipantAttributes();
+
     // Matched readers will depend on total number of participants
-    attributes.matched_readers_allocation =
-            mp_PDP->getRTPSParticipant()->getRTPSParticipantAttributes().allocation.participants;
+    attributes.matched_readers_allocation = pattr.allocation.participants;
 
     // As participants allocation policy includes the local participant, one has to be substracted
     if (attributes.matched_readers_allocation.initial > 1)
@@ -376,15 +380,17 @@ void EDPSimple::set_builtin_writer_attributes(
 
     // Locators are copied from the local participant metatraffic locators
     attributes.endpoint.unicastLocatorList.clear();
-    for (const Locator_t& loc : this->mp_PDP->getLocalParticipantProxyData()->metatraffic_locators.unicast)
+    for (const Locator_t& loc : mp_PDP->getLocalParticipantProxyData()->metatraffic_locators.unicast)
     {
         attributes.endpoint.unicastLocatorList.push_back(loc);
     }
     attributes.endpoint.multicastLocatorList.clear();
-    for (const Locator_t& loc : this->mp_PDP->getLocalParticipantProxyData()->metatraffic_locators.multicast)
+    for (const Locator_t& loc : mp_PDP->getLocalParticipantProxyData()->metatraffic_locators.multicast)
     {
         attributes.endpoint.multicastLocatorList.push_back(loc);
     }
+    attributes.endpoint.external_unicast_locators = mp_PDP->builtin_attributes().metatraffic_external_unicast_locators;
+    attributes.endpoint.ignore_non_matching_locators = pattr.ignore_non_matching_locators;
 
     // Timings are configured using EDP default values
     attributes.times.heartbeatPeriod = edp_heartbeat_period;

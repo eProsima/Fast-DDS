@@ -30,6 +30,7 @@
 
 #include <rtps/builtin/discovery/database/DiscoveryParticipantChangeData.hpp>
 #include <rtps/builtin/discovery/participant/PDPServer.hpp>
+#include <rtps/network/ExternalLocatorsProcessor.hpp>
 #include <rtps/participant/RTPSParticipantImpl.h>
 
 namespace eprosima {
@@ -139,6 +140,11 @@ void PDPServerListener::onNewCacheChangeAdded(
                     pdp_server()->getRTPSParticipant()->network_factory(),
                     pdp_server()->getRTPSParticipant()->has_shm_transport()))
         {
+            const auto& pattr = pdp_server()->getRTPSParticipant()->getAttributes();
+            fastdds::rtps::ExternalLocatorsProcessor::filter_remote_locators(participant_data,
+                    pattr.builtin.metatraffic_external_unicast_locators, pattr.default_external_unicast_locators,
+                    pattr.ignore_non_matching_locators);
+
             /* Check PID_VENDOR_ID */
             if (participant_data.m_VendorId != fastrtps::rtps::c_VendorId_eProsima)
             {

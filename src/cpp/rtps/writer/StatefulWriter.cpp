@@ -48,6 +48,7 @@
 #include <rtps/RTPSDomainImpl.hpp>
 #include <rtps/history/CacheChangePool.h>
 #include <rtps/messages/RTPSGapBuilder.hpp>
+#include <rtps/network/ExternalLocatorsProcessor.hpp>
 
 #include "../builtin/discovery/database/DiscoveryDataBase.hpp"
 
@@ -1005,6 +1006,8 @@ void StatefulWriter::update_reader_info(
 bool StatefulWriter::matched_reader_add(
         const ReaderProxyData& rdata)
 {
+    using fastdds::rtps::ExternalLocatorsProcessor::filter_remote_locators;
+
     if (rdata.guid() == c_Guid_Unknown)
     {
         logError(RTPS_WRITER, "Reliable Writer need GUID_t of matched readers");
@@ -1024,6 +1027,10 @@ bool StatefulWriter::matched_reader_add(
                     logInfo(RTPS_WRITER, "Attempting to add existing reader, updating information.");
                     if (reader->update(rdata))
                     {
+                        filter_remote_locators(*reader->general_locator_selector_entry(),
+                        m_att.external_unicast_locators, m_att.ignore_non_matching_locators);
+                        filter_remote_locators(*reader->async_locator_selector_entry(),
+                        m_att.external_unicast_locators, m_att.ignore_non_matching_locators);
                         update_reader_info(locator_selector_general_, true);
                         update_reader_info(locator_selector_async_, true);
                     }
@@ -1069,6 +1076,10 @@ bool StatefulWriter::matched_reader_add(
 
     // Add info of new datareader.
     rp->start(rdata, is_datasharing_compatible_with(rdata));
+    filter_remote_locators(*rp->general_locator_selector_entry(),
+            m_att.external_unicast_locators, m_att.ignore_non_matching_locators);
+    filter_remote_locators(*rp->async_locator_selector_entry(),
+            m_att.external_unicast_locators, m_att.ignore_non_matching_locators);
     locator_selector_general_.locator_selector.add_entry(rp->general_locator_selector_entry());
     locator_selector_async_.locator_selector.add_entry(rp->async_locator_selector_entry());
 
