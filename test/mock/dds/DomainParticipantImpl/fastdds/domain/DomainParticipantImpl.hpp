@@ -78,9 +78,9 @@ protected:
         , default_pub_qos_(PUBLISHER_QOS_DEFAULT)
         , default_sub_qos_(SUBSCRIBER_QOS_DEFAULT)
         , default_topic_qos_(TOPIC_QOS_DEFAULT)
+        , id_counter_(0)
 #pragma warning (disable : 4355)
         , rtps_listener_(this)
-        , id_counter_(0)
     {
         participant_->impl_ = this;
 
