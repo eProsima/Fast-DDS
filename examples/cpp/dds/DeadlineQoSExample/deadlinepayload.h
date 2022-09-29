@@ -23,6 +23,8 @@
 #define _FAST_DDS_GENERATED_DEADLINEPAYLOAD_H_
 
 
+#include <fastrtps/utils/fixed_size_string.hpp>
+
 #include <stdint.h>
 #include <array>
 #include <string>
@@ -145,26 +147,26 @@ public:
      * @param _payload New value to be copied in member payload
      */
     eProsima_user_DllExport void payload(
-            const std::string& _payload);
+            const eprosima::fastrtps::fixed_string<256>& _payload);
 
     /*!
      * @brief This function moves the value in member payload
      * @param _payload New value to be moved in member payload
      */
     eProsima_user_DllExport void payload(
-            std::string&& _payload);
+            eprosima::fastrtps::fixed_string<256>&& _payload);
 
     /*!
      * @brief This function returns a constant reference to member payload
      * @return Constant reference to member payload
      */
-    eProsima_user_DllExport const std::string& payload() const;
+    eProsima_user_DllExport const eprosima::fastrtps::fixed_string<256>& payload() const;
 
     /*!
      * @brief This function returns a reference to member payload
      * @return Reference to member payload
      */
-    eProsima_user_DllExport std::string& payload();
+    eProsima_user_DllExport eprosima::fastrtps::fixed_string<256>& payload();
 
     /*!
      * @brief This function returns the maximum serialized size of an object
@@ -226,7 +228,7 @@ public:
 private:
 
     uint16_t m_deadlinekey;
-    std::string m_payload;
+    eprosima::fastrtps::fixed_string<256> m_payload;
 };
 
 #endif // _FAST_DDS_GENERATED_DEADLINEPAYLOAD_H_

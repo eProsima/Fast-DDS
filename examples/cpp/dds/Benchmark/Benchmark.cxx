@@ -36,7 +36,7 @@ using namespace eprosima::fastcdr::exception;
 
 BenchMark::BenchMark()
 {
-    // m_index com.eprosima.idl.parser.typecode.PrimitiveTypeCode@52f759d7
+    // m_index com.eprosima.idl.parser.typecode.PrimitiveTypeCode@610694f1
     m_index = 0;
 
 }

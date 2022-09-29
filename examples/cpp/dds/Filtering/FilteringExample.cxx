@@ -36,7 +36,7 @@ using namespace eprosima::fastcdr::exception;
 
 FilteringExample::FilteringExample()
 {
-    // m_sampleNumber com.eprosima.idl.parser.typecode.PrimitiveTypeCode@553a3d88
+    // m_sampleNumber com.eprosima.idl.parser.typecode.PrimitiveTypeCode@578486a3
     m_sampleNumber = 0;
 
 }

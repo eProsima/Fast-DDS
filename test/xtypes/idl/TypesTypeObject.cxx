@@ -32,6 +32,7 @@ namespace { char dummy; }
 #include <fastrtps/utils/md5.h>
 #include <fastrtps/types/TypeObjectFactory.h>
 #include <fastrtps/types/TypeNamesGenerator.h>
+#include <fastrtps/types/AnnotationParameterValue.h>
 #include <fastcdr/FastBuffer.h>
 #include <fastcdr/Cdr.h>
 
@@ -40,94 +41,226 @@ using namespace eprosima::fastrtps::rtps;
 void registerTypesTypes()
 {
     TypeObjectFactory *factory = TypeObjectFactory::get_instance();
-    factory->add_type_object("MyEnum", GetMyEnumIdentifier(true), GetMyEnumObject(true));
-    factory->add_type_object("MyEnum", GetMyEnumIdentifier(false), GetMyEnumObject(false));
-    factory->add_type_object("MyBadEnum", GetMyBadEnumIdentifier(true), GetMyBadEnumObject(true));
-    factory->add_type_object("MyBadEnum", GetMyBadEnumIdentifier(false), GetMyBadEnumObject(false));
-    factory->add_type_object("MyEnumStruct", GetMyEnumStructIdentifier(true), GetMyEnumStructObject(true));
-    factory->add_type_object("MyEnumStruct", GetMyEnumStructIdentifier(false), GetMyEnumStructObject(false));
-    factory->add_type_object("MyBadEnumStruct", GetMyBadEnumStructIdentifier(true), GetMyBadEnumStructObject(true));
-    factory->add_type_object("MyBadEnumStruct", GetMyBadEnumStructIdentifier(false), GetMyBadEnumStructObject(false));
-    factory->add_type_object("MyAliasEnum", GetMyAliasEnumIdentifier(true), GetMyAliasEnumObject(true));
-    factory->add_type_object("MyAliasEnum", GetMyAliasEnumIdentifier(false), GetMyAliasEnumObject(false));
-    factory->add_type_object("MyAliasEnumStruct", GetMyAliasEnumStructIdentifier(true), GetMyAliasEnumStructObject(true));
-    factory->add_type_object("MyAliasEnumStruct", GetMyAliasEnumStructIdentifier(false), GetMyAliasEnumStructObject(false));
-    factory->add_type_object("BasicStruct", GetBasicStructIdentifier(true), GetBasicStructObject(true));
-    factory->add_type_object("BasicStruct", GetBasicStructIdentifier(false), GetBasicStructObject(false));
-    factory->add_type_object("BasicNamesStruct", GetBasicNamesStructIdentifier(true), GetBasicNamesStructObject(true));
-    factory->add_type_object("BasicNamesStruct", GetBasicNamesStructIdentifier(false), GetBasicNamesStructObject(false));
-    factory->add_type_object("BasicBadStruct", GetBasicBadStructIdentifier(true), GetBasicBadStructObject(true));
-    factory->add_type_object("BasicBadStruct", GetBasicBadStructIdentifier(false), GetBasicBadStructObject(false));
-    factory->add_type_object("BasicWideStruct", GetBasicWideStructIdentifier(true), GetBasicWideStructObject(true));
-    factory->add_type_object("BasicWideStruct", GetBasicWideStructIdentifier(false), GetBasicWideStructObject(false));
-    factory->add_type_object("BadBasicWideStruct", GetBadBasicWideStructIdentifier(true), GetBadBasicWideStructObject(true));
-    factory->add_type_object("BadBasicWideStruct", GetBadBasicWideStructIdentifier(false), GetBadBasicWideStructObject(false));
-    factory->add_type_object("StringStruct", GetStringStructIdentifier(true), GetStringStructObject(true));
-    factory->add_type_object("StringStruct", GetStringStructIdentifier(false), GetStringStructObject(false));
-    factory->add_type_object("LargeStringStruct", GetLargeStringStructIdentifier(true), GetLargeStringStructObject(true));
-    factory->add_type_object("LargeStringStruct", GetLargeStringStructIdentifier(false), GetLargeStringStructObject(false));
-    factory->add_type_object("WStringStruct", GetWStringStructIdentifier(true), GetWStringStructObject(true));
-    factory->add_type_object("WStringStruct", GetWStringStructIdentifier(false), GetWStringStructObject(false));
-    factory->add_type_object("LargeWStringStruct", GetLargeWStringStructIdentifier(true), GetLargeWStringStructObject(true));
-    factory->add_type_object("LargeWStringStruct", GetLargeWStringStructIdentifier(false), GetLargeWStringStructObject(false));
-    factory->add_type_object("ArrayStruct", GetArrayStructIdentifier(true), GetArrayStructObject(true));
-    factory->add_type_object("ArrayStruct", GetArrayStructIdentifier(false), GetArrayStructObject(false));
-    factory->add_type_object("ArrayStructEqual", GetArrayStructEqualIdentifier(true), GetArrayStructEqualObject(true));
-    factory->add_type_object("ArrayStructEqual", GetArrayStructEqualIdentifier(false), GetArrayStructEqualObject(false));
-    factory->add_type_object("ArrayBadStruct", GetArrayBadStructIdentifier(true), GetArrayBadStructObject(true));
-    factory->add_type_object("ArrayBadStruct", GetArrayBadStructIdentifier(false), GetArrayBadStructObject(false));
-    factory->add_type_object("ArrayDimensionsStruct", GetArrayDimensionsStructIdentifier(true), GetArrayDimensionsStructObject(true));
-    factory->add_type_object("ArrayDimensionsStruct", GetArrayDimensionsStructIdentifier(false), GetArrayDimensionsStructObject(false));
-    factory->add_type_object("ArraySizeStruct", GetArraySizeStructIdentifier(true), GetArraySizeStructObject(true));
-    factory->add_type_object("ArraySizeStruct", GetArraySizeStructIdentifier(false), GetArraySizeStructObject(false));
-    factory->add_type_object("SequenceStruct", GetSequenceStructIdentifier(true), GetSequenceStructObject(true));
-    factory->add_type_object("SequenceStruct", GetSequenceStructIdentifier(false), GetSequenceStructObject(false));
-    factory->add_type_object("SequenceStructEqual", GetSequenceStructEqualIdentifier(true), GetSequenceStructEqualObject(true));
-    factory->add_type_object("SequenceStructEqual", GetSequenceStructEqualIdentifier(false), GetSequenceStructEqualObject(false));
-    factory->add_type_object("SequenceBadStruct", GetSequenceBadStructIdentifier(true), GetSequenceBadStructObject(true));
-    factory->add_type_object("SequenceBadStruct", GetSequenceBadStructIdentifier(false), GetSequenceBadStructObject(false));
-    factory->add_type_object("SequenceBoundsStruct", GetSequenceBoundsStructIdentifier(true), GetSequenceBoundsStructObject(true));
-    factory->add_type_object("SequenceBoundsStruct", GetSequenceBoundsStructIdentifier(false), GetSequenceBoundsStructObject(false));
-    factory->add_type_object("SequenceSequenceStruct", GetSequenceSequenceStructIdentifier(true), GetSequenceSequenceStructObject(true));
-    factory->add_type_object("SequenceSequenceStruct", GetSequenceSequenceStructIdentifier(false), GetSequenceSequenceStructObject(false));
-    factory->add_type_object("SequenceSequenceBoundsStruct", GetSequenceSequenceBoundsStructIdentifier(true), GetSequenceSequenceBoundsStructObject(true));
-    factory->add_type_object("SequenceSequenceBoundsStruct", GetSequenceSequenceBoundsStructIdentifier(false), GetSequenceSequenceBoundsStructObject(false));
-    factory->add_type_object("MapStruct", GetMapStructIdentifier(true), GetMapStructObject(true));
-    factory->add_type_object("MapStruct", GetMapStructIdentifier(false), GetMapStructObject(false));
-    factory->add_type_object("MapStructEqual", GetMapStructEqualIdentifier(true), GetMapStructEqualObject(true));
-    factory->add_type_object("MapStructEqual", GetMapStructEqualIdentifier(false), GetMapStructEqualObject(false));
-    factory->add_type_object("MapBadKeyStruct", GetMapBadKeyStructIdentifier(true), GetMapBadKeyStructObject(true));
-    factory->add_type_object("MapBadKeyStruct", GetMapBadKeyStructIdentifier(false), GetMapBadKeyStructObject(false));
-    factory->add_type_object("MapBadElemStruct", GetMapBadElemStructIdentifier(true), GetMapBadElemStructObject(true));
-    factory->add_type_object("MapBadElemStruct", GetMapBadElemStructIdentifier(false), GetMapBadElemStructObject(false));
-    factory->add_type_object("MapBoundsStruct", GetMapBoundsStructIdentifier(true), GetMapBoundsStructObject(true));
-    factory->add_type_object("MapBoundsStruct", GetMapBoundsStructIdentifier(false), GetMapBoundsStructObject(false));
-    factory->add_type_object("MapMapStruct", GetMapMapStructIdentifier(true), GetMapMapStructObject(true));
-    factory->add_type_object("MapMapStruct", GetMapMapStructIdentifier(false), GetMapMapStructObject(false));
-    factory->add_type_object("MapMapBoundsStruct", GetMapMapBoundsStructIdentifier(true), GetMapMapBoundsStructObject(true));
-    factory->add_type_object("MapMapBoundsStruct", GetMapMapBoundsStructIdentifier(false), GetMapMapBoundsStructObject(false));
-    factory->add_type_object("SimpleUnion", GetSimpleUnionIdentifier(true), GetSimpleUnionObject(true));
-    factory->add_type_object("SimpleUnion", GetSimpleUnionIdentifier(false), GetSimpleUnionObject(false));
-    factory->add_type_object("SimpleUnionNames", GetSimpleUnionNamesIdentifier(true), GetSimpleUnionNamesObject(true));
-    factory->add_type_object("SimpleUnionNames", GetSimpleUnionNamesIdentifier(false), GetSimpleUnionNamesObject(false));
-    factory->add_type_object("SimpleTypeUnion", GetSimpleTypeUnionIdentifier(true), GetSimpleTypeUnionObject(true));
-    factory->add_type_object("SimpleTypeUnion", GetSimpleTypeUnionIdentifier(false), GetSimpleTypeUnionObject(false));
-    factory->add_type_object("SimpleBadUnion", GetSimpleBadUnionIdentifier(true), GetSimpleBadUnionObject(true));
-    factory->add_type_object("SimpleBadUnion", GetSimpleBadUnionIdentifier(false), GetSimpleBadUnionObject(false));
-    factory->add_type_object("SimpleBadDiscUnion", GetSimpleBadDiscUnionIdentifier(true), GetSimpleBadDiscUnionObject(true));
-    factory->add_type_object("SimpleBadDiscUnion", GetSimpleBadDiscUnionIdentifier(false), GetSimpleBadDiscUnionObject(false));
-    factory->add_type_object("SimpleUnionStruct", GetSimpleUnionStructIdentifier(true), GetSimpleUnionStructObject(true));
-    factory->add_type_object("SimpleUnionStruct", GetSimpleUnionStructIdentifier(false), GetSimpleUnionStructObject(false));
-    factory->add_type_object("SimpleUnionStructEqual", GetSimpleUnionStructEqualIdentifier(true), GetSimpleUnionStructEqualObject(true));
-    factory->add_type_object("SimpleUnionStructEqual", GetSimpleUnionStructEqualIdentifier(false), GetSimpleUnionStructEqualObject(false));
-    factory->add_type_object("SimpleUnionNamesStruct", GetSimpleUnionNamesStructIdentifier(true), GetSimpleUnionNamesStructObject(true));
-    factory->add_type_object("SimpleUnionNamesStruct", GetSimpleUnionNamesStructIdentifier(false), GetSimpleUnionNamesStructObject(false));
-    factory->add_type_object("SimpleTypeUnionStruct", GetSimpleTypeUnionStructIdentifier(true), GetSimpleTypeUnionStructObject(true));
-    factory->add_type_object("SimpleTypeUnionStruct", GetSimpleTypeUnionStructIdentifier(false), GetSimpleTypeUnionStructObject(false));
-    factory->add_type_object("SimpleBadUnionStruct", GetSimpleBadUnionStructIdentifier(true), GetSimpleBadUnionStructObject(true));
-    factory->add_type_object("SimpleBadUnionStruct", GetSimpleBadUnionStructIdentifier(false), GetSimpleBadUnionStructObject(false));
-    factory->add_type_object("SimplBadDiscUnionStruct", GetSimplBadDiscUnionStructIdentifier(true), GetSimplBadDiscUnionStructObject(true));
-    factory->add_type_object("SimplBadDiscUnionStruct", GetSimplBadDiscUnionStructIdentifier(false), GetSimplBadDiscUnionStructObject(false));
+    factory->add_type_object("MyEnum", GetMyEnumIdentifier(true),
+    GetMyEnumObject(true));
+    factory->add_type_object("MyEnum", GetMyEnumIdentifier(false),
+    GetMyEnumObject(false));
+
+    factory->add_type_object("MyBadEnum", GetMyBadEnumIdentifier(true),
+    GetMyBadEnumObject(true));
+    factory->add_type_object("MyBadEnum", GetMyBadEnumIdentifier(false),
+    GetMyBadEnumObject(false));
+
+    factory->add_type_object("MyEnumStruct", GetMyEnumStructIdentifier(true),
+    GetMyEnumStructObject(true));
+    factory->add_type_object("MyEnumStruct", GetMyEnumStructIdentifier(false),
+    GetMyEnumStructObject(false));
+
+    factory->add_type_object("MyBadEnumStruct", GetMyBadEnumStructIdentifier(true),
+    GetMyBadEnumStructObject(true));
+    factory->add_type_object("MyBadEnumStruct", GetMyBadEnumStructIdentifier(false),
+    GetMyBadEnumStructObject(false));
+
+    factory->add_type_object("MyAliasEnum", GetMyAliasEnumIdentifier(true),
+    GetMyAliasEnumObject(true));
+    factory->add_type_object("MyAliasEnum", GetMyAliasEnumIdentifier(false),
+    GetMyAliasEnumObject(false));
+
+    factory->add_type_object("MyAliasEnumStruct", GetMyAliasEnumStructIdentifier(true),
+    GetMyAliasEnumStructObject(true));
+    factory->add_type_object("MyAliasEnumStruct", GetMyAliasEnumStructIdentifier(false),
+    GetMyAliasEnumStructObject(false));
+
+    factory->add_type_object("BasicStruct", GetBasicStructIdentifier(true),
+    GetBasicStructObject(true));
+    factory->add_type_object("BasicStruct", GetBasicStructIdentifier(false),
+    GetBasicStructObject(false));
+
+    factory->add_type_object("BasicNamesStruct", GetBasicNamesStructIdentifier(true),
+    GetBasicNamesStructObject(true));
+    factory->add_type_object("BasicNamesStruct", GetBasicNamesStructIdentifier(false),
+    GetBasicNamesStructObject(false));
+
+    factory->add_type_object("BasicBadStruct", GetBasicBadStructIdentifier(true),
+    GetBasicBadStructObject(true));
+    factory->add_type_object("BasicBadStruct", GetBasicBadStructIdentifier(false),
+    GetBasicBadStructObject(false));
+
+    factory->add_type_object("BasicWideStruct", GetBasicWideStructIdentifier(true),
+    GetBasicWideStructObject(true));
+    factory->add_type_object("BasicWideStruct", GetBasicWideStructIdentifier(false),
+    GetBasicWideStructObject(false));
+
+    factory->add_type_object("BadBasicWideStruct", GetBadBasicWideStructIdentifier(true),
+    GetBadBasicWideStructObject(true));
+    factory->add_type_object("BadBasicWideStruct", GetBadBasicWideStructIdentifier(false),
+    GetBadBasicWideStructObject(false));
+
+    factory->add_type_object("StringStruct", GetStringStructIdentifier(true),
+    GetStringStructObject(true));
+    factory->add_type_object("StringStruct", GetStringStructIdentifier(false),
+    GetStringStructObject(false));
+
+    factory->add_type_object("LargeStringStruct", GetLargeStringStructIdentifier(true),
+    GetLargeStringStructObject(true));
+    factory->add_type_object("LargeStringStruct", GetLargeStringStructIdentifier(false),
+    GetLargeStringStructObject(false));
+
+    factory->add_type_object("WStringStruct", GetWStringStructIdentifier(true),
+    GetWStringStructObject(true));
+    factory->add_type_object("WStringStruct", GetWStringStructIdentifier(false),
+    GetWStringStructObject(false));
+
+    factory->add_type_object("LargeWStringStruct", GetLargeWStringStructIdentifier(true),
+    GetLargeWStringStructObject(true));
+    factory->add_type_object("LargeWStringStruct", GetLargeWStringStructIdentifier(false),
+    GetLargeWStringStructObject(false));
+
+    factory->add_type_object("ArrayStruct", GetArrayStructIdentifier(true),
+    GetArrayStructObject(true));
+    factory->add_type_object("ArrayStruct", GetArrayStructIdentifier(false),
+    GetArrayStructObject(false));
+
+    factory->add_type_object("ArrayStructEqual", GetArrayStructEqualIdentifier(true),
+    GetArrayStructEqualObject(true));
+    factory->add_type_object("ArrayStructEqual", GetArrayStructEqualIdentifier(false),
+    GetArrayStructEqualObject(false));
+
+    factory->add_type_object("ArrayBadStruct", GetArrayBadStructIdentifier(true),
+    GetArrayBadStructObject(true));
+    factory->add_type_object("ArrayBadStruct", GetArrayBadStructIdentifier(false),
+    GetArrayBadStructObject(false));
+
+    factory->add_type_object("ArrayDimensionsStruct", GetArrayDimensionsStructIdentifier(true),
+    GetArrayDimensionsStructObject(true));
+    factory->add_type_object("ArrayDimensionsStruct", GetArrayDimensionsStructIdentifier(false),
+    GetArrayDimensionsStructObject(false));
+
+    factory->add_type_object("ArraySizeStruct", GetArraySizeStructIdentifier(true),
+    GetArraySizeStructObject(true));
+    factory->add_type_object("ArraySizeStruct", GetArraySizeStructIdentifier(false),
+    GetArraySizeStructObject(false));
+
+    factory->add_type_object("SequenceStruct", GetSequenceStructIdentifier(true),
+    GetSequenceStructObject(true));
+    factory->add_type_object("SequenceStruct", GetSequenceStructIdentifier(false),
+    GetSequenceStructObject(false));
+
+    factory->add_type_object("SequenceStructEqual", GetSequenceStructEqualIdentifier(true),
+    GetSequenceStructEqualObject(true));
+    factory->add_type_object("SequenceStructEqual", GetSequenceStructEqualIdentifier(false),
+    GetSequenceStructEqualObject(false));
+
+    factory->add_type_object("SequenceBadStruct", GetSequenceBadStructIdentifier(true),
+    GetSequenceBadStructObject(true));
+    factory->add_type_object("SequenceBadStruct", GetSequenceBadStructIdentifier(false),
+    GetSequenceBadStructObject(false));
+
+    factory->add_type_object("SequenceBoundsStruct", GetSequenceBoundsStructIdentifier(true),
+    GetSequenceBoundsStructObject(true));
+    factory->add_type_object("SequenceBoundsStruct", GetSequenceBoundsStructIdentifier(false),
+    GetSequenceBoundsStructObject(false));
+
+    factory->add_type_object("SequenceSequenceStruct", GetSequenceSequenceStructIdentifier(true),
+    GetSequenceSequenceStructObject(true));
+    factory->add_type_object("SequenceSequenceStruct", GetSequenceSequenceStructIdentifier(false),
+    GetSequenceSequenceStructObject(false));
+
+    factory->add_type_object("SequenceSequenceBoundsStruct", GetSequenceSequenceBoundsStructIdentifier(true),
+    GetSequenceSequenceBoundsStructObject(true));
+    factory->add_type_object("SequenceSequenceBoundsStruct", GetSequenceSequenceBoundsStructIdentifier(false),
+    GetSequenceSequenceBoundsStructObject(false));
+
+    factory->add_type_object("MapStruct", GetMapStructIdentifier(true),
+    GetMapStructObject(true));
+    factory->add_type_object("MapStruct", GetMapStructIdentifier(false),
+    GetMapStructObject(false));
+
+    factory->add_type_object("MapStructEqual", GetMapStructEqualIdentifier(true),
+    GetMapStructEqualObject(true));
+    factory->add_type_object("MapStructEqual", GetMapStructEqualIdentifier(false),
+    GetMapStructEqualObject(false));
+
+    factory->add_type_object("MapBadKeyStruct", GetMapBadKeyStructIdentifier(true),
+    GetMapBadKeyStructObject(true));
+    factory->add_type_object("MapBadKeyStruct", GetMapBadKeyStructIdentifier(false),
+    GetMapBadKeyStructObject(false));
+
+    factory->add_type_object("MapBadElemStruct", GetMapBadElemStructIdentifier(true),
+    GetMapBadElemStructObject(true));
+    factory->add_type_object("MapBadElemStruct", GetMapBadElemStructIdentifier(false),
+    GetMapBadElemStructObject(false));
+
+    factory->add_type_object("MapBoundsStruct", GetMapBoundsStructIdentifier(true),
+    GetMapBoundsStructObject(true));
+    factory->add_type_object("MapBoundsStruct", GetMapBoundsStructIdentifier(false),
+    GetMapBoundsStructObject(false));
+
+    factory->add_type_object("MapMapStruct", GetMapMapStructIdentifier(true),
+    GetMapMapStructObject(true));
+    factory->add_type_object("MapMapStruct", GetMapMapStructIdentifier(false),
+    GetMapMapStructObject(false));
+
+    factory->add_type_object("MapMapBoundsStruct", GetMapMapBoundsStructIdentifier(true),
+    GetMapMapBoundsStructObject(true));
+    factory->add_type_object("MapMapBoundsStruct", GetMapMapBoundsStructIdentifier(false),
+    GetMapMapBoundsStructObject(false));
+
+    factory->add_type_object("SimpleUnion", GetSimpleUnionIdentifier(true),
+    GetSimpleUnionObject(true));
+    factory->add_type_object("SimpleUnion", GetSimpleUnionIdentifier(false),
+    GetSimpleUnionObject(false));
+
+    factory->add_type_object("SimpleUnionNames", GetSimpleUnionNamesIdentifier(true),
+    GetSimpleUnionNamesObject(true));
+    factory->add_type_object("SimpleUnionNames", GetSimpleUnionNamesIdentifier(false),
+    GetSimpleUnionNamesObject(false));
+
+    factory->add_type_object("SimpleTypeUnion", GetSimpleTypeUnionIdentifier(true),
+    GetSimpleTypeUnionObject(true));
+    factory->add_type_object("SimpleTypeUnion", GetSimpleTypeUnionIdentifier(false),
+    GetSimpleTypeUnionObject(false));
+
+    factory->add_type_object("SimpleBadUnion", GetSimpleBadUnionIdentifier(true),
+    GetSimpleBadUnionObject(true));
+    factory->add_type_object("SimpleBadUnion", GetSimpleBadUnionIdentifier(false),
+    GetSimpleBadUnionObject(false));
+
+    factory->add_type_object("SimpleBadDiscUnion", GetSimpleBadDiscUnionIdentifier(true),
+    GetSimpleBadDiscUnionObject(true));
+    factory->add_type_object("SimpleBadDiscUnion", GetSimpleBadDiscUnionIdentifier(false),
+    GetSimpleBadDiscUnionObject(false));
+
+    factory->add_type_object("SimpleUnionStruct", GetSimpleUnionStructIdentifier(true),
+    GetSimpleUnionStructObject(true));
+    factory->add_type_object("SimpleUnionStruct", GetSimpleUnionStructIdentifier(false),
+    GetSimpleUnionStructObject(false));
+
+    factory->add_type_object("SimpleUnionStructEqual", GetSimpleUnionStructEqualIdentifier(true),
+    GetSimpleUnionStructEqualObject(true));
+    factory->add_type_object("SimpleUnionStructEqual", GetSimpleUnionStructEqualIdentifier(false),
+    GetSimpleUnionStructEqualObject(false));
+
+    factory->add_type_object("SimpleUnionNamesStruct", GetSimpleUnionNamesStructIdentifier(true),
+    GetSimpleUnionNamesStructObject(true));
+    factory->add_type_object("SimpleUnionNamesStruct", GetSimpleUnionNamesStructIdentifier(false),
+    GetSimpleUnionNamesStructObject(false));
+
+    factory->add_type_object("SimpleTypeUnionStruct", GetSimpleTypeUnionStructIdentifier(true),
+    GetSimpleTypeUnionStructObject(true));
+    factory->add_type_object("SimpleTypeUnionStruct", GetSimpleTypeUnionStructIdentifier(false),
+    GetSimpleTypeUnionStructObject(false));
+
+    factory->add_type_object("SimpleBadUnionStruct", GetSimpleBadUnionStructIdentifier(true),
+    GetSimpleBadUnionStructObject(true));
+    factory->add_type_object("SimpleBadUnionStruct", GetSimpleBadUnionStructIdentifier(false),
+    GetSimpleBadUnionStructObject(false));
+
+    factory->add_type_object("SimplBadDiscUnionStruct", GetSimplBadDiscUnionStructIdentifier(true),
+    GetSimplBadDiscUnionStructObject(true));
+    factory->add_type_object("SimplBadDiscUnionStruct", GetSimplBadDiscUnionStructIdentifier(false),
+    GetSimplBadDiscUnionStructObject(false));
+
 }
 
 const TypeIdentifier* GetMyEnumIdentifier(bool complete)
@@ -168,7 +301,8 @@ const TypeObject* GetMinimalMyEnumObject()
     TypeObject *type_object = new TypeObject();
     type_object->_d(EK_MINIMAL);
     type_object->minimal()._d(TK_ENUM);
-    // Unused
+
+    // No flags apply
     //type_object->minimal().enumerated_type().enum_flags().IS_FINAL(false);
     //type_object->minimal().enumerated_type().enum_flags().IS_APPENDABLE(false);
     //type_object->minimal().enumerated_type().enum_flags().IS_MUTABLE(false);
@@ -179,13 +313,12 @@ const TypeObject* GetMinimalMyEnumObject()
 
     uint32_t value = 0;
     MinimalEnumeratedLiteral mel_A;
-    mel_A.common().flags().TRY_CONSTRUCT1(false);
-    mel_A.common().flags().TRY_CONSTRUCT2(false);
-    mel_A.common().flags().IS_EXTERNAL(false);
-    mel_A.common().flags().IS_OPTIONAL(false);
-    mel_A.common().flags().IS_MUST_UNDERSTAND(false);
-    mel_A.common().flags().IS_KEY(false);
-    mel_A.common().flags().IS_DEFAULT(false);
+    mel_A.common().flags().TRY_CONSTRUCT1(false); // Doesn't apply
+    mel_A.common().flags().TRY_CONSTRUCT2(false); // Doesn't apply
+    mel_A.common().flags().IS_EXTERNAL(false); // Doesn't apply
+    mel_A.common().flags().IS_OPTIONAL(false); // Doesn't apply
+    mel_A.common().flags().IS_MUST_UNDERSTAND(false); // Doesn't apply
+    mel_A.common().flags().IS_KEY(false); // Doesn't apply
     mel_A.common().flags().IS_DEFAULT(false);
     mel_A.common().value(value++);
     MD5 A_hash("A");
@@ -196,13 +329,12 @@ const TypeObject* GetMinimalMyEnumObject()
     type_object->minimal().enumerated_type().literal_seq().emplace_back(mel_A);
 
     MinimalEnumeratedLiteral mel_B;
-    mel_B.common().flags().TRY_CONSTRUCT1(false);
-    mel_B.common().flags().TRY_CONSTRUCT2(false);
-    mel_B.common().flags().IS_EXTERNAL(false);
-    mel_B.common().flags().IS_OPTIONAL(false);
-    mel_B.common().flags().IS_MUST_UNDERSTAND(false);
-    mel_B.common().flags().IS_KEY(false);
-    mel_B.common().flags().IS_DEFAULT(false);
+    mel_B.common().flags().TRY_CONSTRUCT1(false); // Doesn't apply
+    mel_B.common().flags().TRY_CONSTRUCT2(false); // Doesn't apply
+    mel_B.common().flags().IS_EXTERNAL(false); // Doesn't apply
+    mel_B.common().flags().IS_OPTIONAL(false); // Doesn't apply
+    mel_B.common().flags().IS_MUST_UNDERSTAND(false); // Doesn't apply
+    mel_B.common().flags().IS_KEY(false); // Doesn't apply
     mel_B.common().flags().IS_DEFAULT(false);
     mel_B.common().value(value++);
     MD5 B_hash("B");
@@ -213,13 +345,12 @@ const TypeObject* GetMinimalMyEnumObject()
     type_object->minimal().enumerated_type().literal_seq().emplace_back(mel_B);
 
     MinimalEnumeratedLiteral mel_C;
-    mel_C.common().flags().TRY_CONSTRUCT1(false);
-    mel_C.common().flags().TRY_CONSTRUCT2(false);
-    mel_C.common().flags().IS_EXTERNAL(false);
-    mel_C.common().flags().IS_OPTIONAL(false);
-    mel_C.common().flags().IS_MUST_UNDERSTAND(false);
-    mel_C.common().flags().IS_KEY(false);
-    mel_C.common().flags().IS_DEFAULT(false);
+    mel_C.common().flags().TRY_CONSTRUCT1(false); // Doesn't apply
+    mel_C.common().flags().TRY_CONSTRUCT2(false); // Doesn't apply
+    mel_C.common().flags().IS_EXTERNAL(false); // Doesn't apply
+    mel_C.common().flags().IS_OPTIONAL(false); // Doesn't apply
+    mel_C.common().flags().IS_MUST_UNDERSTAND(false); // Doesn't apply
+    mel_C.common().flags().IS_KEY(false); // Doesn't apply
     mel_C.common().flags().IS_DEFAULT(false);
     mel_C.common().value(value++);
     MD5 C_hash("C");
@@ -269,61 +400,55 @@ const TypeObject* GetCompleteMyEnumObject()
     type_object->_d(EK_COMPLETE);
     type_object->complete()._d(TK_ENUM);
 
-    type_object->complete().enumerated_type().enum_flags().IS_FINAL(false);
-    type_object->complete().enumerated_type().enum_flags().IS_APPENDABLE(false);
-    type_object->complete().enumerated_type().enum_flags().IS_MUTABLE(false);
-    type_object->complete().enumerated_type().enum_flags().IS_NESTED(false);
-    type_object->complete().enumerated_type().enum_flags().IS_AUTOID_HASH(false);
+    // No flags apply
+    //type_object->complete().enumerated_type().enum_flags().IS_FINAL(false);
+    //type_object->complete().enumerated_type().enum_flags().IS_APPENDABLE(false);
+    //type_object->complete().enumerated_type().enum_flags().IS_MUTABLE(false);
+    //type_object->complete().enumerated_type().enum_flags().IS_NESTED(false);
+    //type_object->complete().enumerated_type().enum_flags().IS_AUTOID_HASH(false);
 
     type_object->complete().enumerated_type().header().common().bit_bound(32); // TODO fixed by IDL, isn't?
-    //type_object->complete().enumerated_type().header().detail().ann_builtin()...
-    //type_object->complete().enumerated_type().header().detail().ann_custom()...
     type_object->complete().enumerated_type().header().detail().type_name("MyEnum");
+
 
     uint32_t value = 0;
     CompleteEnumeratedLiteral cel_A;
-    cel_A.common().flags().TRY_CONSTRUCT1(false);
-    cel_A.common().flags().TRY_CONSTRUCT2(false);
-    cel_A.common().flags().IS_EXTERNAL(false);
-    cel_A.common().flags().IS_OPTIONAL(false);
-    cel_A.common().flags().IS_MUST_UNDERSTAND(false);
-    cel_A.common().flags().IS_KEY(false);
-    cel_A.common().flags().IS_DEFAULT(false);
+    cel_A.common().flags().TRY_CONSTRUCT1(false); // Doesn't apply
+    cel_A.common().flags().TRY_CONSTRUCT2(false); // Doesn't apply
+    cel_A.common().flags().IS_EXTERNAL(false); // Doesn't apply
+    cel_A.common().flags().IS_OPTIONAL(false); // Doesn't apply
+    cel_A.common().flags().IS_MUST_UNDERSTAND(false); // Doesn't apply
+    cel_A.common().flags().IS_KEY(false); // Doesn't apply
     cel_A.common().flags().IS_DEFAULT(false);
     cel_A.common().value(value++);
     cel_A.detail().name("A");
-    //cel_A.detail().ann_builtin()...
-    //cel_A.detail().ann_custom()...
+
     type_object->complete().enumerated_type().literal_seq().emplace_back(cel_A);
 
     CompleteEnumeratedLiteral cel_B;
-    cel_B.common().flags().TRY_CONSTRUCT1(false);
-    cel_B.common().flags().TRY_CONSTRUCT2(false);
-    cel_B.common().flags().IS_EXTERNAL(false);
-    cel_B.common().flags().IS_OPTIONAL(false);
-    cel_B.common().flags().IS_MUST_UNDERSTAND(false);
-    cel_B.common().flags().IS_KEY(false);
-    cel_B.common().flags().IS_DEFAULT(false);
+    cel_B.common().flags().TRY_CONSTRUCT1(false); // Doesn't apply
+    cel_B.common().flags().TRY_CONSTRUCT2(false); // Doesn't apply
+    cel_B.common().flags().IS_EXTERNAL(false); // Doesn't apply
+    cel_B.common().flags().IS_OPTIONAL(false); // Doesn't apply
+    cel_B.common().flags().IS_MUST_UNDERSTAND(false); // Doesn't apply
+    cel_B.common().flags().IS_KEY(false); // Doesn't apply
     cel_B.common().flags().IS_DEFAULT(false);
     cel_B.common().value(value++);
     cel_B.detail().name("B");
-    //cel_B.detail().ann_builtin()...
-    //cel_B.detail().ann_custom()...
+
     type_object->complete().enumerated_type().literal_seq().emplace_back(cel_B);
 
     CompleteEnumeratedLiteral cel_C;
-    cel_C.common().flags().TRY_CONSTRUCT1(false);
-    cel_C.common().flags().TRY_CONSTRUCT2(false);
-    cel_C.common().flags().IS_EXTERNAL(false);
-    cel_C.common().flags().IS_OPTIONAL(false);
-    cel_C.common().flags().IS_MUST_UNDERSTAND(false);
-    cel_C.common().flags().IS_KEY(false);
-    cel_C.common().flags().IS_DEFAULT(false);
+    cel_C.common().flags().TRY_CONSTRUCT1(false); // Doesn't apply
+    cel_C.common().flags().TRY_CONSTRUCT2(false); // Doesn't apply
+    cel_C.common().flags().IS_EXTERNAL(false); // Doesn't apply
+    cel_C.common().flags().IS_OPTIONAL(false); // Doesn't apply
+    cel_C.common().flags().IS_MUST_UNDERSTAND(false); // Doesn't apply
+    cel_C.common().flags().IS_KEY(false); // Doesn't apply
     cel_C.common().flags().IS_DEFAULT(false);
     cel_C.common().value(value++);
     cel_C.detail().name("C");
-    //cel_C.detail().ann_builtin()...
-    //cel_C.detail().ann_custom()...
+
     type_object->complete().enumerated_type().literal_seq().emplace_back(cel_C);
 
 
@@ -392,7 +517,8 @@ const TypeObject* GetMinimalMyBadEnumObject()
     TypeObject *type_object = new TypeObject();
     type_object->_d(EK_MINIMAL);
     type_object->minimal()._d(TK_ENUM);
-    // Unused
+
+    // No flags apply
     //type_object->minimal().enumerated_type().enum_flags().IS_FINAL(false);
     //type_object->minimal().enumerated_type().enum_flags().IS_APPENDABLE(false);
     //type_object->minimal().enumerated_type().enum_flags().IS_MUTABLE(false);
@@ -403,13 +529,12 @@ const TypeObject* GetMinimalMyBadEnumObject()
 
     uint32_t value = 0;
     MinimalEnumeratedLiteral mel_A1;
-    mel_A1.common().flags().TRY_CONSTRUCT1(false);
-    mel_A1.common().flags().TRY_CONSTRUCT2(false);
-    mel_A1.common().flags().IS_EXTERNAL(false);
-    mel_A1.common().flags().IS_OPTIONAL(false);
-    mel_A1.common().flags().IS_MUST_UNDERSTAND(false);
-    mel_A1.common().flags().IS_KEY(false);
-    mel_A1.common().flags().IS_DEFAULT(false);
+    mel_A1.common().flags().TRY_CONSTRUCT1(false); // Doesn't apply
+    mel_A1.common().flags().TRY_CONSTRUCT2(false); // Doesn't apply
+    mel_A1.common().flags().IS_EXTERNAL(false); // Doesn't apply
+    mel_A1.common().flags().IS_OPTIONAL(false); // Doesn't apply
+    mel_A1.common().flags().IS_MUST_UNDERSTAND(false); // Doesn't apply
+    mel_A1.common().flags().IS_KEY(false); // Doesn't apply
     mel_A1.common().flags().IS_DEFAULT(false);
     mel_A1.common().value(value++);
     MD5 A1_hash("A1");
@@ -420,13 +545,12 @@ const TypeObject* GetMinimalMyBadEnumObject()
     type_object->minimal().enumerated_type().literal_seq().emplace_back(mel_A1);
 
     MinimalEnumeratedLiteral mel_B1;
-    mel_B1.common().flags().TRY_CONSTRUCT1(false);
-    mel_B1.common().flags().TRY_CONSTRUCT2(false);
-    mel_B1.common().flags().IS_EXTERNAL(false);
-    mel_B1.common().flags().IS_OPTIONAL(false);
-    mel_B1.common().flags().IS_MUST_UNDERSTAND(false);
-    mel_B1.common().flags().IS_KEY(false);
-    mel_B1.common().flags().IS_DEFAULT(false);
+    mel_B1.common().flags().TRY_CONSTRUCT1(false); // Doesn't apply
+    mel_B1.common().flags().TRY_CONSTRUCT2(false); // Doesn't apply
+    mel_B1.common().flags().IS_EXTERNAL(false); // Doesn't apply
+    mel_B1.common().flags().IS_OPTIONAL(false); // Doesn't apply
+    mel_B1.common().flags().IS_MUST_UNDERSTAND(false); // Doesn't apply
+    mel_B1.common().flags().IS_KEY(false); // Doesn't apply
     mel_B1.common().flags().IS_DEFAULT(false);
     mel_B1.common().value(value++);
     MD5 B1_hash("B1");
@@ -437,13 +561,12 @@ const TypeObject* GetMinimalMyBadEnumObject()
     type_object->minimal().enumerated_type().literal_seq().emplace_back(mel_B1);
 
     MinimalEnumeratedLiteral mel_C1;
-    mel_C1.common().flags().TRY_CONSTRUCT1(false);
-    mel_C1.common().flags().TRY_CONSTRUCT2(false);
-    mel_C1.common().flags().IS_EXTERNAL(false);
-    mel_C1.common().flags().IS_OPTIONAL(false);
-    mel_C1.common().flags().IS_MUST_UNDERSTAND(false);
-    mel_C1.common().flags().IS_KEY(false);
-    mel_C1.common().flags().IS_DEFAULT(false);
+    mel_C1.common().flags().TRY_CONSTRUCT1(false); // Doesn't apply
+    mel_C1.common().flags().TRY_CONSTRUCT2(false); // Doesn't apply
+    mel_C1.common().flags().IS_EXTERNAL(false); // Doesn't apply
+    mel_C1.common().flags().IS_OPTIONAL(false); // Doesn't apply
+    mel_C1.common().flags().IS_MUST_UNDERSTAND(false); // Doesn't apply
+    mel_C1.common().flags().IS_KEY(false); // Doesn't apply
     mel_C1.common().flags().IS_DEFAULT(false);
     mel_C1.common().value(value++);
     MD5 C1_hash("C1");
@@ -493,61 +616,55 @@ const TypeObject* GetCompleteMyBadEnumObject()
     type_object->_d(EK_COMPLETE);
     type_object->complete()._d(TK_ENUM);
 
-    type_object->complete().enumerated_type().enum_flags().IS_FINAL(false);
-    type_object->complete().enumerated_type().enum_flags().IS_APPENDABLE(false);
-    type_object->complete().enumerated_type().enum_flags().IS_MUTABLE(false);
-    type_object->complete().enumerated_type().enum_flags().IS_NESTED(false);
-    type_object->complete().enumerated_type().enum_flags().IS_AUTOID_HASH(false);
+    // No flags apply
+    //type_object->complete().enumerated_type().enum_flags().IS_FINAL(false);
+    //type_object->complete().enumerated_type().enum_flags().IS_APPENDABLE(false);
+    //type_object->complete().enumerated_type().enum_flags().IS_MUTABLE(false);
+    //type_object->complete().enumerated_type().enum_flags().IS_NESTED(false);
+    //type_object->complete().enumerated_type().enum_flags().IS_AUTOID_HASH(false);
 
     type_object->complete().enumerated_type().header().common().bit_bound(32); // TODO fixed by IDL, isn't?
-    //type_object->complete().enumerated_type().header().detail().ann_builtin()...
-    //type_object->complete().enumerated_type().header().detail().ann_custom()...
     type_object->complete().enumerated_type().header().detail().type_name("MyBadEnum");
+
 
     uint32_t value = 0;
     CompleteEnumeratedLiteral cel_A1;
-    cel_A1.common().flags().TRY_CONSTRUCT1(false);
-    cel_A1.common().flags().TRY_CONSTRUCT2(false);
-    cel_A1.common().flags().IS_EXTERNAL(false);
-    cel_A1.common().flags().IS_OPTIONAL(false);
-    cel_A1.common().flags().IS_MUST_UNDERSTAND(false);
-    cel_A1.common().flags().IS_KEY(false);
-    cel_A1.common().flags().IS_DEFAULT(false);
+    cel_A1.common().flags().TRY_CONSTRUCT1(false); // Doesn't apply
+    cel_A1.common().flags().TRY_CONSTRUCT2(false); // Doesn't apply
+    cel_A1.common().flags().IS_EXTERNAL(false); // Doesn't apply
+    cel_A1.common().flags().IS_OPTIONAL(false); // Doesn't apply
+    cel_A1.common().flags().IS_MUST_UNDERSTAND(false); // Doesn't apply
+    cel_A1.common().flags().IS_KEY(false); // Doesn't apply
     cel_A1.common().flags().IS_DEFAULT(false);
     cel_A1.common().value(value++);
     cel_A1.detail().name("A1");
-    //cel_A1.detail().ann_builtin()...
-    //cel_A1.detail().ann_custom()...
+
     type_object->complete().enumerated_type().literal_seq().emplace_back(cel_A1);
 
     CompleteEnumeratedLiteral cel_B1;
-    cel_B1.common().flags().TRY_CONSTRUCT1(false);
-    cel_B1.common().flags().TRY_CONSTRUCT2(false);
-    cel_B1.common().flags().IS_EXTERNAL(false);
-    cel_B1.common().flags().IS_OPTIONAL(false);
-    cel_B1.common().flags().IS_MUST_UNDERSTAND(false);
-    cel_B1.common().flags().IS_KEY(false);
-    cel_B1.common().flags().IS_DEFAULT(false);
+    cel_B1.common().flags().TRY_CONSTRUCT1(false); // Doesn't apply
+    cel_B1.common().flags().TRY_CONSTRUCT2(false); // Doesn't apply
+    cel_B1.common().flags().IS_EXTERNAL(false); // Doesn't apply
+    cel_B1.common().flags().IS_OPTIONAL(false); // Doesn't apply
+    cel_B1.common().flags().IS_MUST_UNDERSTAND(false); // Doesn't apply
+    cel_B1.common().flags().IS_KEY(false); // Doesn't apply
     cel_B1.common().flags().IS_DEFAULT(false);
     cel_B1.common().value(value++);
     cel_B1.detail().name("B1");
-    //cel_B1.detail().ann_builtin()...
-    //cel_B1.detail().ann_custom()...
+
     type_object->complete().enumerated_type().literal_seq().emplace_back(cel_B1);
 
     CompleteEnumeratedLiteral cel_C1;
-    cel_C1.common().flags().TRY_CONSTRUCT1(false);
-    cel_C1.common().flags().TRY_CONSTRUCT2(false);
-    cel_C1.common().flags().IS_EXTERNAL(false);
-    cel_C1.common().flags().IS_OPTIONAL(false);
-    cel_C1.common().flags().IS_MUST_UNDERSTAND(false);
-    cel_C1.common().flags().IS_KEY(false);
-    cel_C1.common().flags().IS_DEFAULT(false);
+    cel_C1.common().flags().TRY_CONSTRUCT1(false); // Doesn't apply
+    cel_C1.common().flags().TRY_CONSTRUCT2(false); // Doesn't apply
+    cel_C1.common().flags().IS_EXTERNAL(false); // Doesn't apply
+    cel_C1.common().flags().IS_OPTIONAL(false); // Doesn't apply
+    cel_C1.common().flags().IS_MUST_UNDERSTAND(false); // Doesn't apply
+    cel_C1.common().flags().IS_KEY(false); // Doesn't apply
     cel_C1.common().flags().IS_DEFAULT(false);
     cel_C1.common().value(value++);
     cel_C1.detail().name("C1");
-    //cel_C1.detail().ann_builtin()...
-    //cel_C1.detail().ann_custom()...
+
     type_object->complete().enumerated_type().literal_seq().emplace_back(cel_C1);
 
 
@@ -621,18 +738,18 @@ const TypeObject* GetMinimalMyEnumStructObject()
     type_object->minimal().struct_type().struct_flags().IS_APPENDABLE(false);
     type_object->minimal().struct_type().struct_flags().IS_MUTABLE(false);
     type_object->minimal().struct_type().struct_flags().IS_NESTED(false);
-    type_object->minimal().struct_type().struct_flags().IS_AUTOID_HASH(false);
+    type_object->minimal().struct_type().struct_flags().IS_AUTOID_HASH(false); // Unsupported
 
     MemberId memberId = 0;
     MinimalStructMember mst_my_enum;
     mst_my_enum.common().member_id(memberId++);
-    mst_my_enum.common().member_flags().TRY_CONSTRUCT1(false);
-    mst_my_enum.common().member_flags().TRY_CONSTRUCT2(false);
-    mst_my_enum.common().member_flags().IS_EXTERNAL(false);
+    mst_my_enum.common().member_flags().TRY_CONSTRUCT1(false); // Unsupported
+    mst_my_enum.common().member_flags().TRY_CONSTRUCT2(false); // Unsupported
+    mst_my_enum.common().member_flags().IS_EXTERNAL(false); // Unsupported
     mst_my_enum.common().member_flags().IS_OPTIONAL(false);
     mst_my_enum.common().member_flags().IS_MUST_UNDERSTAND(false);
     mst_my_enum.common().member_flags().IS_KEY(false);
-    mst_my_enum.common().member_flags().IS_DEFAULT(false);
+    mst_my_enum.common().member_flags().IS_DEFAULT(false); // Doesn't apply
     mst_my_enum.common().member_type_id(*GetMyEnumIdentifier(false));
     MD5 my_enum_hash("my_enum");
     for(int i = 0; i < 4; ++i)
@@ -690,32 +807,28 @@ const TypeObject* GetCompleteMyEnumStructObject()
     type_object->complete().struct_type().struct_flags().IS_APPENDABLE(false);
     type_object->complete().struct_type().struct_flags().IS_MUTABLE(false);
     type_object->complete().struct_type().struct_flags().IS_NESTED(false);
-    type_object->complete().struct_type().struct_flags().IS_AUTOID_HASH(false);
+    type_object->complete().struct_type().struct_flags().IS_AUTOID_HASH(false); // Unsupported
 
     MemberId memberId = 0;
     CompleteStructMember cst_my_enum;
     cst_my_enum.common().member_id(memberId++);
-    cst_my_enum.common().member_flags().TRY_CONSTRUCT1(false);
-    cst_my_enum.common().member_flags().TRY_CONSTRUCT2(false);
-    cst_my_enum.common().member_flags().IS_EXTERNAL(false);
+    cst_my_enum.common().member_flags().TRY_CONSTRUCT1(false); // Unsupported
+    cst_my_enum.common().member_flags().TRY_CONSTRUCT2(false); // Unsupported
+    cst_my_enum.common().member_flags().IS_EXTERNAL(false); // Unsupported
     cst_my_enum.common().member_flags().IS_OPTIONAL(false);
     cst_my_enum.common().member_flags().IS_MUST_UNDERSTAND(false);
     cst_my_enum.common().member_flags().IS_KEY(false);
-    cst_my_enum.common().member_flags().IS_DEFAULT(false);
+    cst_my_enum.common().member_flags().IS_DEFAULT(false); // Doesn't apply
     cst_my_enum.common().member_type_id(*GetMyEnumIdentifier(true));
     cst_my_enum.detail().name("my_enum");
-    //cst_my_enum.detail().ann_builtin()...
-    //cst_my_enum.detail().ann_custom()...
+
     type_object->complete().struct_type().member_seq().emplace_back(cst_my_enum);
 
 
     // Header
     type_object->complete().struct_type().header().detail().type_name("MyEnumStruct");
-    //type_object->complete().struct_type().header().detail().ann_builtin()...
-    //type_object->complete().struct_type().header().detail().ann_custom()...
     // TODO inheritance
-    //type_object->complete().struct_type().header().base_type()._d(EK_COMPLETE);
-    //type_object->complete().struct_type().header().base_type().equivalence_hash()[0..13];
+
 
     TypeIdentifier identifier;
     identifier._d(EK_COMPLETE);
@@ -787,18 +900,18 @@ const TypeObject* GetMinimalMyBadEnumStructObject()
     type_object->minimal().struct_type().struct_flags().IS_APPENDABLE(false);
     type_object->minimal().struct_type().struct_flags().IS_MUTABLE(false);
     type_object->minimal().struct_type().struct_flags().IS_NESTED(false);
-    type_object->minimal().struct_type().struct_flags().IS_AUTOID_HASH(false);
+    type_object->minimal().struct_type().struct_flags().IS_AUTOID_HASH(false); // Unsupported
 
     MemberId memberId = 0;
     MinimalStructMember mst_my_enum;
     mst_my_enum.common().member_id(memberId++);
-    mst_my_enum.common().member_flags().TRY_CONSTRUCT1(false);
-    mst_my_enum.common().member_flags().TRY_CONSTRUCT2(false);
-    mst_my_enum.common().member_flags().IS_EXTERNAL(false);
+    mst_my_enum.common().member_flags().TRY_CONSTRUCT1(false); // Unsupported
+    mst_my_enum.common().member_flags().TRY_CONSTRUCT2(false); // Unsupported
+    mst_my_enum.common().member_flags().IS_EXTERNAL(false); // Unsupported
     mst_my_enum.common().member_flags().IS_OPTIONAL(false);
     mst_my_enum.common().member_flags().IS_MUST_UNDERSTAND(false);
     mst_my_enum.common().member_flags().IS_KEY(false);
-    mst_my_enum.common().member_flags().IS_DEFAULT(false);
+    mst_my_enum.common().member_flags().IS_DEFAULT(false); // Doesn't apply
     mst_my_enum.common().member_type_id(*GetMyBadEnumIdentifier(false));
     MD5 my_enum_hash("my_enum");
     for(int i = 0; i < 4; ++i)
@@ -856,32 +969,28 @@ const TypeObject* GetCompleteMyBadEnumStructObject()
     type_object->complete().struct_type().struct_flags().IS_APPENDABLE(false);
     type_object->complete().struct_type().struct_flags().IS_MUTABLE(false);
     type_object->complete().struct_type().struct_flags().IS_NESTED(false);
-    type_object->complete().struct_type().struct_flags().IS_AUTOID_HASH(false);
+    type_object->complete().struct_type().struct_flags().IS_AUTOID_HASH(false); // Unsupported
 
     MemberId memberId = 0;
     CompleteStructMember cst_my_enum;
     cst_my_enum.common().member_id(memberId++);
-    cst_my_enum.common().member_flags().TRY_CONSTRUCT1(false);
-    cst_my_enum.common().member_flags().TRY_CONSTRUCT2(false);
-    cst_my_enum.common().member_flags().IS_EXTERNAL(false);
+    cst_my_enum.common().member_flags().TRY_CONSTRUCT1(false); // Unsupported
+    cst_my_enum.common().member_flags().TRY_CONSTRUCT2(false); // Unsupported
+    cst_my_enum.common().member_flags().IS_EXTERNAL(false); // Unsupported
     cst_my_enum.common().member_flags().IS_OPTIONAL(false);
     cst_my_enum.common().member_flags().IS_MUST_UNDERSTAND(false);
     cst_my_enum.common().member_flags().IS_KEY(false);
-    cst_my_enum.common().member_flags().IS_DEFAULT(false);
+    cst_my_enum.common().member_flags().IS_DEFAULT(false); // Doesn't apply
     cst_my_enum.common().member_type_id(*GetMyBadEnumIdentifier(true));
     cst_my_enum.detail().name("my_enum");
-    //cst_my_enum.detail().ann_builtin()...
-    //cst_my_enum.detail().ann_custom()...
+
     type_object->complete().struct_type().member_seq().emplace_back(cst_my_enum);
 
 
     // Header
     type_object->complete().struct_type().header().detail().type_name("MyBadEnumStruct");
-    //type_object->complete().struct_type().header().detail().ann_builtin()...
-    //type_object->complete().struct_type().header().detail().ann_custom()...
     // TODO inheritance
-    //type_object->complete().struct_type().header().base_type()._d(EK_COMPLETE);
-    //type_object->complete().struct_type().header().base_type().equivalence_hash()[0..13];
+
 
     TypeIdentifier identifier;
     identifier._d(EK_COMPLETE);
@@ -950,21 +1059,24 @@ const TypeObject* GetMinimalMyAliasEnumObject()
     TypeObject *type_object = new TypeObject();
     type_object->_d(EK_MINIMAL);
     type_object->minimal()._d(TK_ALIAS);
-    type_object->minimal().alias_type().alias_flags().IS_FINAL(false);
-    type_object->minimal().alias_type().alias_flags().IS_APPENDABLE(false);
-    type_object->minimal().alias_type().alias_flags().IS_MUTABLE(false);
-    type_object->minimal().alias_type().alias_flags().IS_NESTED(false);
-    type_object->minimal().alias_type().alias_flags().IS_AUTOID_HASH(false);
+
+    // No flags apply
+    //type_object->minimal().alias_type().alias_flags().IS_FINAL(false);
+    //type_object->minimal().alias_type().alias_flags().IS_APPENDABLE(false);
+    //type_object->minimal().alias_type().alias_flags().IS_MUTABLE(false);
+    //type_object->minimal().alias_type().alias_flags().IS_NESTED(false);
+    //type_object->minimal().alias_type().alias_flags().IS_AUTOID_HASH(false);
 
     // type_object->minimal().alias_type().header()... Is empty
 
-    type_object->minimal().alias_type().body().common().related_flags().TRY_CONSTRUCT1(false);
-    type_object->minimal().alias_type().body().common().related_flags().TRY_CONSTRUCT2(false);
-    type_object->minimal().alias_type().body().common().related_flags().IS_EXTERNAL(false);
-    type_object->minimal().alias_type().body().common().related_flags().IS_OPTIONAL(false);
-    type_object->minimal().alias_type().body().common().related_flags().IS_MUST_UNDERSTAND(false);
-    type_object->minimal().alias_type().body().common().related_flags().IS_KEY(false);
-    type_object->minimal().alias_type().body().common().related_flags().IS_DEFAULT(false);
+    // No flags apply
+    //type_object->minimal().alias_type().body().common().related_flags().TRY_CONSTRUCT1(false);
+    //type_object->minimal().alias_type().body().common().related_flags().TRY_CONSTRUCT2(false);
+    //type_object->minimal().alias_type().body().common().related_flags().IS_EXTERNAL(false);
+    //type_object->minimal().alias_type().body().common().related_flags().IS_OPTIONAL(false);
+    //type_object->minimal().alias_type().body().common().related_flags().IS_MUST_UNDERSTAND(false);
+    //type_object->minimal().alias_type().body().common().related_flags().IS_KEY(false);
+    //type_object->minimal().alias_type().body().common().related_flags().IS_DEFAULT(false);
 
     // Must be defined already, if don't, may be an recursive alias
     const TypeIdentifier *relatedType = TypeObjectFactory::get_instance()->get_type_identifier("MyEnum", false);
@@ -1022,11 +1134,13 @@ const TypeObject* GetCompleteMyAliasEnumObject()
     TypeObject *type_object = new TypeObject();
     type_object->_d(EK_COMPLETE);
     type_object->complete()._d(TK_ALIAS);
-    type_object->complete().alias_type().alias_flags().IS_FINAL(false);
-    type_object->complete().alias_type().alias_flags().IS_APPENDABLE(false);
-    type_object->complete().alias_type().alias_flags().IS_MUTABLE(false);
-    type_object->complete().alias_type().alias_flags().IS_NESTED(false);
-    type_object->complete().alias_type().alias_flags().IS_AUTOID_HASH(false);
+
+    // No flags apply
+    //type_object->complete().alias_type().alias_flags().IS_FINAL(false);
+    //type_object->complete().alias_type().alias_flags().IS_APPENDABLE(false);
+    //type_object->complete().alias_type().alias_flags().IS_MUTABLE(false);
+    //type_object->complete().alias_type().alias_flags().IS_NESTED(false);
+    //type_object->complete().alias_type().alias_flags().IS_AUTOID_HASH(false);
 
     //type_object->complete().alias_type().header().detail().ann_builtin().verbatim().placement("placement");
     //type_object->complete().alias_type().header().detail().ann_builtin().verbatim().language("language");
@@ -1034,13 +1148,14 @@ const TypeObject* GetCompleteMyAliasEnumObject()
     //type_object->complete().alias_type().header().detail().ann_custom().push_back(...);
     type_object->complete().alias_type().header().detail().type_name("MyAliasEnum");
 
-    type_object->complete().alias_type().body().common().related_flags().TRY_CONSTRUCT1(false);
-    type_object->complete().alias_type().body().common().related_flags().TRY_CONSTRUCT2(false);
-    type_object->complete().alias_type().body().common().related_flags().IS_EXTERNAL(false);
-    type_object->complete().alias_type().body().common().related_flags().IS_OPTIONAL(false);
-    type_object->complete().alias_type().body().common().related_flags().IS_MUST_UNDERSTAND(false);
-    type_object->complete().alias_type().body().common().related_flags().IS_KEY(false);
-    type_object->complete().alias_type().body().common().related_flags().IS_DEFAULT(false);
+    // No flags apply
+    //type_object->complete().alias_type().body().common().related_flags().TRY_CONSTRUCT1(false);
+    //type_object->complete().alias_type().body().common().related_flags().TRY_CONSTRUCT2(false);
+    //type_object->complete().alias_type().body().common().related_flags().IS_EXTERNAL(false);
+    //type_object->complete().alias_type().body().common().related_flags().IS_OPTIONAL(false);
+    //type_object->complete().alias_type().body().common().related_flags().IS_MUST_UNDERSTAND(false);
+    //type_object->complete().alias_type().body().common().related_flags().IS_KEY(false);
+    //type_object->complete().alias_type().body().common().related_flags().IS_DEFAULT(false);
 
     //type_object->complete().alias_type().body().common().ann_builtin()
     //type_object->complete().alias_type().body().common().ann_custom()
@@ -1133,18 +1248,18 @@ const TypeObject* GetMinimalMyAliasEnumStructObject()
     type_object->minimal().struct_type().struct_flags().IS_APPENDABLE(false);
     type_object->minimal().struct_type().struct_flags().IS_MUTABLE(false);
     type_object->minimal().struct_type().struct_flags().IS_NESTED(false);
-    type_object->minimal().struct_type().struct_flags().IS_AUTOID_HASH(false);
+    type_object->minimal().struct_type().struct_flags().IS_AUTOID_HASH(false); // Unsupported
 
     MemberId memberId = 0;
     MinimalStructMember mst_my_enum;
     mst_my_enum.common().member_id(memberId++);
-    mst_my_enum.common().member_flags().TRY_CONSTRUCT1(false);
-    mst_my_enum.common().member_flags().TRY_CONSTRUCT2(false);
-    mst_my_enum.common().member_flags().IS_EXTERNAL(false);
+    mst_my_enum.common().member_flags().TRY_CONSTRUCT1(false); // Unsupported
+    mst_my_enum.common().member_flags().TRY_CONSTRUCT2(false); // Unsupported
+    mst_my_enum.common().member_flags().IS_EXTERNAL(false); // Unsupported
     mst_my_enum.common().member_flags().IS_OPTIONAL(false);
     mst_my_enum.common().member_flags().IS_MUST_UNDERSTAND(false);
     mst_my_enum.common().member_flags().IS_KEY(false);
-    mst_my_enum.common().member_flags().IS_DEFAULT(false);
+    mst_my_enum.common().member_flags().IS_DEFAULT(false); // Doesn't apply
     mst_my_enum.common().member_type_id(*GetMyAliasEnumIdentifier(false));
     MD5 my_enum_hash("my_enum");
     for(int i = 0; i < 4; ++i)
@@ -1202,32 +1317,28 @@ const TypeObject* GetCompleteMyAliasEnumStructObject()
     type_object->complete().struct_type().struct_flags().IS_APPENDABLE(false);
     type_object->complete().struct_type().struct_flags().IS_MUTABLE(false);
     type_object->complete().struct_type().struct_flags().IS_NESTED(false);
-    type_object->complete().struct_type().struct_flags().IS_AUTOID_HASH(false);
+    type_object->complete().struct_type().struct_flags().IS_AUTOID_HASH(false); // Unsupported
 
     MemberId memberId = 0;
     CompleteStructMember cst_my_enum;
     cst_my_enum.common().member_id(memberId++);
-    cst_my_enum.common().member_flags().TRY_CONSTRUCT1(false);
-    cst_my_enum.common().member_flags().TRY_CONSTRUCT2(false);
-    cst_my_enum.common().member_flags().IS_EXTERNAL(false);
+    cst_my_enum.common().member_flags().TRY_CONSTRUCT1(false); // Unsupported
+    cst_my_enum.common().member_flags().TRY_CONSTRUCT2(false); // Unsupported
+    cst_my_enum.common().member_flags().IS_EXTERNAL(false); // Unsupported
     cst_my_enum.common().member_flags().IS_OPTIONAL(false);
     cst_my_enum.common().member_flags().IS_MUST_UNDERSTAND(false);
     cst_my_enum.common().member_flags().IS_KEY(false);
-    cst_my_enum.common().member_flags().IS_DEFAULT(false);
+    cst_my_enum.common().member_flags().IS_DEFAULT(false); // Doesn't apply
     cst_my_enum.common().member_type_id(*GetMyAliasEnumIdentifier(true));
     cst_my_enum.detail().name("my_enum");
-    //cst_my_enum.detail().ann_builtin()...
-    //cst_my_enum.detail().ann_custom()...
+
     type_object->complete().struct_type().member_seq().emplace_back(cst_my_enum);
 
 
     // Header
     type_object->complete().struct_type().header().detail().type_name("MyAliasEnumStruct");
-    //type_object->complete().struct_type().header().detail().ann_builtin()...
-    //type_object->complete().struct_type().header().detail().ann_custom()...
     // TODO inheritance
-    //type_object->complete().struct_type().header().base_type()._d(EK_COMPLETE);
-    //type_object->complete().struct_type().header().base_type().equivalence_hash()[0..13];
+
 
     TypeIdentifier identifier;
     identifier._d(EK_COMPLETE);
@@ -1299,26 +1410,19 @@ const TypeObject* GetMinimalBasicStructObject()
     type_object->minimal().struct_type().struct_flags().IS_APPENDABLE(false);
     type_object->minimal().struct_type().struct_flags().IS_MUTABLE(false);
     type_object->minimal().struct_type().struct_flags().IS_NESTED(false);
-    type_object->minimal().struct_type().struct_flags().IS_AUTOID_HASH(false);
+    type_object->minimal().struct_type().struct_flags().IS_AUTOID_HASH(false); // Unsupported
 
     MemberId memberId = 0;
     MinimalStructMember mst_my_bool;
     mst_my_bool.common().member_id(memberId++);
-    mst_my_bool.common().member_flags().TRY_CONSTRUCT1(false);
-    mst_my_bool.common().member_flags().TRY_CONSTRUCT2(false);
-    mst_my_bool.common().member_flags().IS_EXTERNAL(false);
+    mst_my_bool.common().member_flags().TRY_CONSTRUCT1(false); // Unsupported
+    mst_my_bool.common().member_flags().TRY_CONSTRUCT2(false); // Unsupported
+    mst_my_bool.common().member_flags().IS_EXTERNAL(false); // Unsupported
     mst_my_bool.common().member_flags().IS_OPTIONAL(false);
     mst_my_bool.common().member_flags().IS_MUST_UNDERSTAND(false);
     mst_my_bool.common().member_flags().IS_KEY(false);
-    mst_my_bool.common().member_flags().IS_DEFAULT(false);
-    {
-        std::string cppType = "bool";
-        if (cppType == "long double")
-        {
-            cppType = "longdouble";
-        }
-        mst_my_bool.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier(cppType, false));
-    }
+    mst_my_bool.common().member_flags().IS_DEFAULT(false); // Doesn't apply
+    mst_my_bool.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier("bool", false));
 
     MD5 my_bool_hash("my_bool");
     for(int i = 0; i < 4; ++i)
@@ -1329,21 +1433,14 @@ const TypeObject* GetMinimalBasicStructObject()
 
     MinimalStructMember mst_my_int32;
     mst_my_int32.common().member_id(memberId++);
-    mst_my_int32.common().member_flags().TRY_CONSTRUCT1(false);
-    mst_my_int32.common().member_flags().TRY_CONSTRUCT2(false);
-    mst_my_int32.common().member_flags().IS_EXTERNAL(false);
+    mst_my_int32.common().member_flags().TRY_CONSTRUCT1(false); // Unsupported
+    mst_my_int32.common().member_flags().TRY_CONSTRUCT2(false); // Unsupported
+    mst_my_int32.common().member_flags().IS_EXTERNAL(false); // Unsupported
     mst_my_int32.common().member_flags().IS_OPTIONAL(false);
     mst_my_int32.common().member_flags().IS_MUST_UNDERSTAND(false);
     mst_my_int32.common().member_flags().IS_KEY(false);
-    mst_my_int32.common().member_flags().IS_DEFAULT(false);
-    {
-        std::string cppType = "int32_t";
-        if (cppType == "long double")
-        {
-            cppType = "longdouble";
-        }
-        mst_my_int32.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier(cppType, false));
-    }
+    mst_my_int32.common().member_flags().IS_DEFAULT(false); // Doesn't apply
+    mst_my_int32.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier("int32_t", false));
 
     MD5 my_int32_hash("my_int32");
     for(int i = 0; i < 4; ++i)
@@ -1354,13 +1451,13 @@ const TypeObject* GetMinimalBasicStructObject()
 
     MinimalStructMember mst_my_string;
     mst_my_string.common().member_id(memberId++);
-    mst_my_string.common().member_flags().TRY_CONSTRUCT1(false);
-    mst_my_string.common().member_flags().TRY_CONSTRUCT2(false);
-    mst_my_string.common().member_flags().IS_EXTERNAL(false);
+    mst_my_string.common().member_flags().TRY_CONSTRUCT1(false); // Unsupported
+    mst_my_string.common().member_flags().TRY_CONSTRUCT2(false); // Unsupported
+    mst_my_string.common().member_flags().IS_EXTERNAL(false); // Unsupported
     mst_my_string.common().member_flags().IS_OPTIONAL(false);
     mst_my_string.common().member_flags().IS_MUST_UNDERSTAND(false);
     mst_my_string.common().member_flags().IS_KEY(false);
-    mst_my_string.common().member_flags().IS_DEFAULT(false);
+    mst_my_string.common().member_flags().IS_DEFAULT(false); // Doesn't apply
     mst_my_string.common().member_type_id(*TypeObjectFactory::get_instance()->get_string_identifier(255, false));
 
 
@@ -1420,80 +1517,60 @@ const TypeObject* GetCompleteBasicStructObject()
     type_object->complete().struct_type().struct_flags().IS_APPENDABLE(false);
     type_object->complete().struct_type().struct_flags().IS_MUTABLE(false);
     type_object->complete().struct_type().struct_flags().IS_NESTED(false);
-    type_object->complete().struct_type().struct_flags().IS_AUTOID_HASH(false);
+    type_object->complete().struct_type().struct_flags().IS_AUTOID_HASH(false); // Unsupported
 
     MemberId memberId = 0;
     CompleteStructMember cst_my_bool;
     cst_my_bool.common().member_id(memberId++);
-    cst_my_bool.common().member_flags().TRY_CONSTRUCT1(false);
-    cst_my_bool.common().member_flags().TRY_CONSTRUCT2(false);
-    cst_my_bool.common().member_flags().IS_EXTERNAL(false);
+    cst_my_bool.common().member_flags().TRY_CONSTRUCT1(false); // Unsupported
+    cst_my_bool.common().member_flags().TRY_CONSTRUCT2(false); // Unsupported
+    cst_my_bool.common().member_flags().IS_EXTERNAL(false); // Unsupported
     cst_my_bool.common().member_flags().IS_OPTIONAL(false);
     cst_my_bool.common().member_flags().IS_MUST_UNDERSTAND(false);
     cst_my_bool.common().member_flags().IS_KEY(false);
-    cst_my_bool.common().member_flags().IS_DEFAULT(false);
-    {
-        std::string cppType = "bool";
-        if (cppType == "long double")
-        {
-            cppType = "longdouble";
-        }
-        cst_my_bool.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier(cppType, false));
-    }
+    cst_my_bool.common().member_flags().IS_DEFAULT(false); // Doesn't apply
+    cst_my_bool.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier("bool", false));
 
     cst_my_bool.detail().name("my_bool");
-    //cst_my_bool.detail().ann_builtin()...
-    //cst_my_bool.detail().ann_custom()...
+
     type_object->complete().struct_type().member_seq().emplace_back(cst_my_bool);
 
     CompleteStructMember cst_my_int32;
     cst_my_int32.common().member_id(memberId++);
-    cst_my_int32.common().member_flags().TRY_CONSTRUCT1(false);
-    cst_my_int32.common().member_flags().TRY_CONSTRUCT2(false);
-    cst_my_int32.common().member_flags().IS_EXTERNAL(false);
+    cst_my_int32.common().member_flags().TRY_CONSTRUCT1(false); // Unsupported
+    cst_my_int32.common().member_flags().TRY_CONSTRUCT2(false); // Unsupported
+    cst_my_int32.common().member_flags().IS_EXTERNAL(false); // Unsupported
     cst_my_int32.common().member_flags().IS_OPTIONAL(false);
     cst_my_int32.common().member_flags().IS_MUST_UNDERSTAND(false);
     cst_my_int32.common().member_flags().IS_KEY(false);
-    cst_my_int32.common().member_flags().IS_DEFAULT(false);
-    {
-        std::string cppType = "int32_t";
-        if (cppType == "long double")
-        {
-            cppType = "longdouble";
-        }
-        cst_my_int32.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier(cppType, false));
-    }
+    cst_my_int32.common().member_flags().IS_DEFAULT(false); // Doesn't apply
+    cst_my_int32.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier("int32_t", false));
 
     cst_my_int32.detail().name("my_int32");
-    //cst_my_int32.detail().ann_builtin()...
-    //cst_my_int32.detail().ann_custom()...
+
     type_object->complete().struct_type().member_seq().emplace_back(cst_my_int32);
 
     CompleteStructMember cst_my_string;
     cst_my_string.common().member_id(memberId++);
-    cst_my_string.common().member_flags().TRY_CONSTRUCT1(false);
-    cst_my_string.common().member_flags().TRY_CONSTRUCT2(false);
-    cst_my_string.common().member_flags().IS_EXTERNAL(false);
+    cst_my_string.common().member_flags().TRY_CONSTRUCT1(false); // Unsupported
+    cst_my_string.common().member_flags().TRY_CONSTRUCT2(false); // Unsupported
+    cst_my_string.common().member_flags().IS_EXTERNAL(false); // Unsupported
     cst_my_string.common().member_flags().IS_OPTIONAL(false);
     cst_my_string.common().member_flags().IS_MUST_UNDERSTAND(false);
     cst_my_string.common().member_flags().IS_KEY(false);
-    cst_my_string.common().member_flags().IS_DEFAULT(false);
+    cst_my_string.common().member_flags().IS_DEFAULT(false); // Doesn't apply
     cst_my_string.common().member_type_id(*TypeObjectFactory::get_instance()->get_string_identifier(255, false));
 
 
     cst_my_string.detail().name("my_string");
-    //cst_my_string.detail().ann_builtin()...
-    //cst_my_string.detail().ann_custom()...
+
     type_object->complete().struct_type().member_seq().emplace_back(cst_my_string);
 
 
     // Header
     type_object->complete().struct_type().header().detail().type_name("BasicStruct");
-    //type_object->complete().struct_type().header().detail().ann_builtin()...
-    //type_object->complete().struct_type().header().detail().ann_custom()...
     // TODO inheritance
-    //type_object->complete().struct_type().header().base_type()._d(EK_COMPLETE);
-    //type_object->complete().struct_type().header().base_type().equivalence_hash()[0..13];
+
 
     TypeIdentifier identifier;
     identifier._d(EK_COMPLETE);
@@ -1565,26 +1642,19 @@ const TypeObject* GetMinimalBasicNamesStructObject()
     type_object->minimal().struct_type().struct_flags().IS_APPENDABLE(false);
     type_object->minimal().struct_type().struct_flags().IS_MUTABLE(false);
     type_object->minimal().struct_type().struct_flags().IS_NESTED(false);
-    type_object->minimal().struct_type().struct_flags().IS_AUTOID_HASH(false);
+    type_object->minimal().struct_type().struct_flags().IS_AUTOID_HASH(false); // Unsupported
 
     MemberId memberId = 0;
     MinimalStructMember mst_my_bool_name;
     mst_my_bool_name.common().member_id(memberId++);
-    mst_my_bool_name.common().member_flags().TRY_CONSTRUCT1(false);
-    mst_my_bool_name.common().member_flags().TRY_CONSTRUCT2(false);
-    mst_my_bool_name.common().member_flags().IS_EXTERNAL(false);
+    mst_my_bool_name.common().member_flags().TRY_CONSTRUCT1(false); // Unsupported
+    mst_my_bool_name.common().member_flags().TRY_CONSTRUCT2(false); // Unsupported
+    mst_my_bool_name.common().member_flags().IS_EXTERNAL(false); // Unsupported
     mst_my_bool_name.common().member_flags().IS_OPTIONAL(false);
     mst_my_bool_name.common().member_flags().IS_MUST_UNDERSTAND(false);
     mst_my_bool_name.common().member_flags().IS_KEY(false);
-    mst_my_bool_name.common().member_flags().IS_DEFAULT(false);
-    {
-        std::string cppType = "bool";
-        if (cppType == "long double")
-        {
-            cppType = "longdouble";
-        }
-        mst_my_bool_name.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier(cppType, false));
-    }
+    mst_my_bool_name.common().member_flags().IS_DEFAULT(false); // Doesn't apply
+    mst_my_bool_name.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier("bool", false));
 
     MD5 my_bool_name_hash("my_bool_name");
     for(int i = 0; i < 4; ++i)
@@ -1595,21 +1665,14 @@ const TypeObject* GetMinimalBasicNamesStructObject()
 
     MinimalStructMember mst_my_int32_name;
     mst_my_int32_name.common().member_id(memberId++);
-    mst_my_int32_name.common().member_flags().TRY_CONSTRUCT1(false);
-    mst_my_int32_name.common().member_flags().TRY_CONSTRUCT2(false);
-    mst_my_int32_name.common().member_flags().IS_EXTERNAL(false);
+    mst_my_int32_name.common().member_flags().TRY_CONSTRUCT1(false); // Unsupported
+    mst_my_int32_name.common().member_flags().TRY_CONSTRUCT2(false); // Unsupported
+    mst_my_int32_name.common().member_flags().IS_EXTERNAL(false); // Unsupported
     mst_my_int32_name.common().member_flags().IS_OPTIONAL(false);
     mst_my_int32_name.common().member_flags().IS_MUST_UNDERSTAND(false);
     mst_my_int32_name.common().member_flags().IS_KEY(false);
-    mst_my_int32_name.common().member_flags().IS_DEFAULT(false);
-    {
-        std::string cppType = "int32_t";
-        if (cppType == "long double")
-        {
-            cppType = "longdouble";
-        }
-        mst_my_int32_name.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier(cppType, false));
-    }
+    mst_my_int32_name.common().member_flags().IS_DEFAULT(false); // Doesn't apply
+    mst_my_int32_name.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier("int32_t", false));
 
     MD5 my_int32_name_hash("my_int32_name");
     for(int i = 0; i < 4; ++i)
@@ -1620,13 +1683,13 @@ const TypeObject* GetMinimalBasicNamesStructObject()
 
     MinimalStructMember mst_my_string_name;
     mst_my_string_name.common().member_id(memberId++);
-    mst_my_string_name.common().member_flags().TRY_CONSTRUCT1(false);
-    mst_my_string_name.common().member_flags().TRY_CONSTRUCT2(false);
-    mst_my_string_name.common().member_flags().IS_EXTERNAL(false);
+    mst_my_string_name.common().member_flags().TRY_CONSTRUCT1(false); // Unsupported
+    mst_my_string_name.common().member_flags().TRY_CONSTRUCT2(false); // Unsupported
+    mst_my_string_name.common().member_flags().IS_EXTERNAL(false); // Unsupported
     mst_my_string_name.common().member_flags().IS_OPTIONAL(false);
     mst_my_string_name.common().member_flags().IS_MUST_UNDERSTAND(false);
     mst_my_string_name.common().member_flags().IS_KEY(false);
-    mst_my_string_name.common().member_flags().IS_DEFAULT(false);
+    mst_my_string_name.common().member_flags().IS_DEFAULT(false); // Doesn't apply
     mst_my_string_name.common().member_type_id(*TypeObjectFactory::get_instance()->get_string_identifier(255, false));
 
 
@@ -1686,80 +1749,60 @@ const TypeObject* GetCompleteBasicNamesStructObject()
     type_object->complete().struct_type().struct_flags().IS_APPENDABLE(false);
     type_object->complete().struct_type().struct_flags().IS_MUTABLE(false);
     type_object->complete().struct_type().struct_flags().IS_NESTED(false);
-    type_object->complete().struct_type().struct_flags().IS_AUTOID_HASH(false);
+    type_object->complete().struct_type().struct_flags().IS_AUTOID_HASH(false); // Unsupported
 
     MemberId memberId = 0;
     CompleteStructMember cst_my_bool_name;
     cst_my_bool_name.common().member_id(memberId++);
-    cst_my_bool_name.common().member_flags().TRY_CONSTRUCT1(false);
-    cst_my_bool_name.common().member_flags().TRY_CONSTRUCT2(false);
-    cst_my_bool_name.common().member_flags().IS_EXTERNAL(false);
+    cst_my_bool_name.common().member_flags().TRY_CONSTRUCT1(false); // Unsupported
+    cst_my_bool_name.common().member_flags().TRY_CONSTRUCT2(false); // Unsupported
+    cst_my_bool_name.common().member_flags().IS_EXTERNAL(false); // Unsupported
     cst_my_bool_name.common().member_flags().IS_OPTIONAL(false);
     cst_my_bool_name.common().member_flags().IS_MUST_UNDERSTAND(false);
     cst_my_bool_name.common().member_flags().IS_KEY(false);
-    cst_my_bool_name.common().member_flags().IS_DEFAULT(false);
-    {
-        std::string cppType = "bool";
-        if (cppType == "long double")
-        {
-            cppType = "longdouble";
-        }
-        cst_my_bool_name.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier(cppType, false));
-    }
+    cst_my_bool_name.common().member_flags().IS_DEFAULT(false); // Doesn't apply
+    cst_my_bool_name.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier("bool", false));
 
     cst_my_bool_name.detail().name("my_bool_name");
-    //cst_my_bool_name.detail().ann_builtin()...
-    //cst_my_bool_name.detail().ann_custom()...
+
     type_object->complete().struct_type().member_seq().emplace_back(cst_my_bool_name);
 
     CompleteStructMember cst_my_int32_name;
     cst_my_int32_name.common().member_id(memberId++);
-    cst_my_int32_name.common().member_flags().TRY_CONSTRUCT1(false);
-    cst_my_int32_name.common().member_flags().TRY_CONSTRUCT2(false);
-    cst_my_int32_name.common().member_flags().IS_EXTERNAL(false);
+    cst_my_int32_name.common().member_flags().TRY_CONSTRUCT1(false); // Unsupported
+    cst_my_int32_name.common().member_flags().TRY_CONSTRUCT2(false); // Unsupported
+    cst_my_int32_name.common().member_flags().IS_EXTERNAL(false); // Unsupported
     cst_my_int32_name.common().member_flags().IS_OPTIONAL(false);
     cst_my_int32_name.common().member_flags().IS_MUST_UNDERSTAND(false);
     cst_my_int32_name.common().member_flags().IS_KEY(false);
-    cst_my_int32_name.common().member_flags().IS_DEFAULT(false);
-    {
-        std::string cppType = "int32_t";
-        if (cppType == "long double")
-        {
-            cppType = "longdouble";
-        }
-        cst_my_int32_name.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier(cppType, false));
-    }
+    cst_my_int32_name.common().member_flags().IS_DEFAULT(false); // Doesn't apply
+    cst_my_int32_name.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier("int32_t", false));
 
     cst_my_int32_name.detail().name("my_int32_name");
-    //cst_my_int32_name.detail().ann_builtin()...
-    //cst_my_int32_name.detail().ann_custom()...
+
     type_object->complete().struct_type().member_seq().emplace_back(cst_my_int32_name);
 
     CompleteStructMember cst_my_string_name;
     cst_my_string_name.common().member_id(memberId++);
-    cst_my_string_name.common().member_flags().TRY_CONSTRUCT1(false);
-    cst_my_string_name.common().member_flags().TRY_CONSTRUCT2(false);
-    cst_my_string_name.common().member_flags().IS_EXTERNAL(false);
+    cst_my_string_name.common().member_flags().TRY_CONSTRUCT1(false); // Unsupported
+    cst_my_string_name.common().member_flags().TRY_CONSTRUCT2(false); // Unsupported
+    cst_my_string_name.common().member_flags().IS_EXTERNAL(false); // Unsupported
     cst_my_string_name.common().member_flags().IS_OPTIONAL(false);
     cst_my_string_name.common().member_flags().IS_MUST_UNDERSTAND(false);
     cst_my_string_name.common().member_flags().IS_KEY(false);
-    cst_my_string_name.common().member_flags().IS_DEFAULT(false);
+    cst_my_string_name.common().member_flags().IS_DEFAULT(false); // Doesn't apply
     cst_my_string_name.common().member_type_id(*TypeObjectFactory::get_instance()->get_string_identifier(255, false));
 
 
     cst_my_string_name.detail().name("my_string_name");
-    //cst_my_string_name.detail().ann_builtin()...
-    //cst_my_string_name.detail().ann_custom()...
+
     type_object->complete().struct_type().member_seq().emplace_back(cst_my_string_name);
 
 
     // Header
     type_object->complete().struct_type().header().detail().type_name("BasicNamesStruct");
-    //type_object->complete().struct_type().header().detail().ann_builtin()...
-    //type_object->complete().struct_type().header().detail().ann_custom()...
     // TODO inheritance
-    //type_object->complete().struct_type().header().base_type()._d(EK_COMPLETE);
-    //type_object->complete().struct_type().header().base_type().equivalence_hash()[0..13];
+
 
     TypeIdentifier identifier;
     identifier._d(EK_COMPLETE);
@@ -1831,26 +1874,19 @@ const TypeObject* GetMinimalBasicBadStructObject()
     type_object->minimal().struct_type().struct_flags().IS_APPENDABLE(false);
     type_object->minimal().struct_type().struct_flags().IS_MUTABLE(false);
     type_object->minimal().struct_type().struct_flags().IS_NESTED(false);
-    type_object->minimal().struct_type().struct_flags().IS_AUTOID_HASH(false);
+    type_object->minimal().struct_type().struct_flags().IS_AUTOID_HASH(false); // Unsupported
 
     MemberId memberId = 0;
     MinimalStructMember mst_my_bool;
     mst_my_bool.common().member_id(memberId++);
-    mst_my_bool.common().member_flags().TRY_CONSTRUCT1(false);
-    mst_my_bool.common().member_flags().TRY_CONSTRUCT2(false);
-    mst_my_bool.common().member_flags().IS_EXTERNAL(false);
+    mst_my_bool.common().member_flags().TRY_CONSTRUCT1(false); // Unsupported
+    mst_my_bool.common().member_flags().TRY_CONSTRUCT2(false); // Unsupported
+    mst_my_bool.common().member_flags().IS_EXTERNAL(false); // Unsupported
     mst_my_bool.common().member_flags().IS_OPTIONAL(false);
     mst_my_bool.common().member_flags().IS_MUST_UNDERSTAND(false);
     mst_my_bool.common().member_flags().IS_KEY(false);
-    mst_my_bool.common().member_flags().IS_DEFAULT(false);
-    {
-        std::string cppType = "uint8_t";
-        if (cppType == "long double")
-        {
-            cppType = "longdouble";
-        }
-        mst_my_bool.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier(cppType, false));
-    }
+    mst_my_bool.common().member_flags().IS_DEFAULT(false); // Doesn't apply
+    mst_my_bool.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier("uint8_t", false));
 
     MD5 my_bool_hash("my_bool");
     for(int i = 0; i < 4; ++i)
@@ -1861,21 +1897,14 @@ const TypeObject* GetMinimalBasicBadStructObject()
 
     MinimalStructMember mst_my_int32;
     mst_my_int32.common().member_id(memberId++);
-    mst_my_int32.common().member_flags().TRY_CONSTRUCT1(false);
-    mst_my_int32.common().member_flags().TRY_CONSTRUCT2(false);
-    mst_my_int32.common().member_flags().IS_EXTERNAL(false);
+    mst_my_int32.common().member_flags().TRY_CONSTRUCT1(false); // Unsupported
+    mst_my_int32.common().member_flags().TRY_CONSTRUCT2(false); // Unsupported
+    mst_my_int32.common().member_flags().IS_EXTERNAL(false); // Unsupported
     mst_my_int32.common().member_flags().IS_OPTIONAL(false);
     mst_my_int32.common().member_flags().IS_MUST_UNDERSTAND(false);
     mst_my_int32.common().member_flags().IS_KEY(false);
-    mst_my_int32.common().member_flags().IS_DEFAULT(false);
-    {
-        std::string cppType = "int32_t";
-        if (cppType == "long double")
-        {
-            cppType = "longdouble";
-        }
-        mst_my_int32.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier(cppType, false));
-    }
+    mst_my_int32.common().member_flags().IS_DEFAULT(false); // Doesn't apply
+    mst_my_int32.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier("int32_t", false));
 
     MD5 my_int32_hash("my_int32");
     for(int i = 0; i < 4; ++i)
@@ -1886,13 +1915,13 @@ const TypeObject* GetMinimalBasicBadStructObject()
 
     MinimalStructMember mst_my_string;
     mst_my_string.common().member_id(memberId++);
-    mst_my_string.common().member_flags().TRY_CONSTRUCT1(false);
-    mst_my_string.common().member_flags().TRY_CONSTRUCT2(false);
-    mst_my_string.common().member_flags().IS_EXTERNAL(false);
+    mst_my_string.common().member_flags().TRY_CONSTRUCT1(false); // Unsupported
+    mst_my_string.common().member_flags().TRY_CONSTRUCT2(false); // Unsupported
+    mst_my_string.common().member_flags().IS_EXTERNAL(false); // Unsupported
     mst_my_string.common().member_flags().IS_OPTIONAL(false);
     mst_my_string.common().member_flags().IS_MUST_UNDERSTAND(false);
     mst_my_string.common().member_flags().IS_KEY(false);
-    mst_my_string.common().member_flags().IS_DEFAULT(false);
+    mst_my_string.common().member_flags().IS_DEFAULT(false); // Doesn't apply
     mst_my_string.common().member_type_id(*TypeObjectFactory::get_instance()->get_string_identifier(255, false));
 
 
@@ -1952,80 +1981,60 @@ const TypeObject* GetCompleteBasicBadStructObject()
     type_object->complete().struct_type().struct_flags().IS_APPENDABLE(false);
     type_object->complete().struct_type().struct_flags().IS_MUTABLE(false);
     type_object->complete().struct_type().struct_flags().IS_NESTED(false);
-    type_object->complete().struct_type().struct_flags().IS_AUTOID_HASH(false);
+    type_object->complete().struct_type().struct_flags().IS_AUTOID_HASH(false); // Unsupported
 
     MemberId memberId = 0;
     CompleteStructMember cst_my_bool;
     cst_my_bool.common().member_id(memberId++);
-    cst_my_bool.common().member_flags().TRY_CONSTRUCT1(false);
-    cst_my_bool.common().member_flags().TRY_CONSTRUCT2(false);
-    cst_my_bool.common().member_flags().IS_EXTERNAL(false);
+    cst_my_bool.common().member_flags().TRY_CONSTRUCT1(false); // Unsupported
+    cst_my_bool.common().member_flags().TRY_CONSTRUCT2(false); // Unsupported
+    cst_my_bool.common().member_flags().IS_EXTERNAL(false); // Unsupported
     cst_my_bool.common().member_flags().IS_OPTIONAL(false);
     cst_my_bool.common().member_flags().IS_MUST_UNDERSTAND(false);
     cst_my_bool.common().member_flags().IS_KEY(false);
-    cst_my_bool.common().member_flags().IS_DEFAULT(false);
-    {
-        std::string cppType = "uint8_t";
-        if (cppType == "long double")
-        {
-            cppType = "longdouble";
-        }
-        cst_my_bool.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier(cppType, false));
-    }
+    cst_my_bool.common().member_flags().IS_DEFAULT(false); // Doesn't apply
+    cst_my_bool.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier("uint8_t", false));
 
     cst_my_bool.detail().name("my_bool");
-    //cst_my_bool.detail().ann_builtin()...
-    //cst_my_bool.detail().ann_custom()...
+
     type_object->complete().struct_type().member_seq().emplace_back(cst_my_bool);
 
     CompleteStructMember cst_my_int32;
     cst_my_int32.common().member_id(memberId++);
-    cst_my_int32.common().member_flags().TRY_CONSTRUCT1(false);
-    cst_my_int32.common().member_flags().TRY_CONSTRUCT2(false);
-    cst_my_int32.common().member_flags().IS_EXTERNAL(false);
+    cst_my_int32.common().member_flags().TRY_CONSTRUCT1(false); // Unsupported
+    cst_my_int32.common().member_flags().TRY_CONSTRUCT2(false); // Unsupported
+    cst_my_int32.common().member_flags().IS_EXTERNAL(false); // Unsupported
     cst_my_int32.common().member_flags().IS_OPTIONAL(false);
     cst_my_int32.common().member_flags().IS_MUST_UNDERSTAND(false);
     cst_my_int32.common().member_flags().IS_KEY(false);
-    cst_my_int32.common().member_flags().IS_DEFAULT(false);
-    {
-        std::string cppType = "int32_t";
-        if (cppType == "long double")
-        {
-            cppType = "longdouble";
-        }
-        cst_my_int32.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier(cppType, false));
-    }
+    cst_my_int32.common().member_flags().IS_DEFAULT(false); // Doesn't apply
+    cst_my_int32.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier("int32_t", false));
 
     cst_my_int32.detail().name("my_int32");
-    //cst_my_int32.detail().ann_builtin()...
-    //cst_my_int32.detail().ann_custom()...
+
     type_object->complete().struct_type().member_seq().emplace_back(cst_my_int32);
 
     CompleteStructMember cst_my_string;
     cst_my_string.common().member_id(memberId++);
-    cst_my_string.common().member_flags().TRY_CONSTRUCT1(false);
-    cst_my_string.common().member_flags().TRY_CONSTRUCT2(false);
-    cst_my_string.common().member_flags().IS_EXTERNAL(false);
+    cst_my_string.common().member_flags().TRY_CONSTRUCT1(false); // Unsupported
+    cst_my_string.common().member_flags().TRY_CONSTRUCT2(false); // Unsupported
+    cst_my_string.common().member_flags().IS_EXTERNAL(false); // Unsupported
     cst_my_string.common().member_flags().IS_OPTIONAL(false);
     cst_my_string.common().member_flags().IS_MUST_UNDERSTAND(false);
     cst_my_string.common().member_flags().IS_KEY(false);
-    cst_my_string.common().member_flags().IS_DEFAULT(false);
+    cst_my_string.common().member_flags().IS_DEFAULT(false); // Doesn't apply
     cst_my_string.common().member_type_id(*TypeObjectFactory::get_instance()->get_string_identifier(255, false));
 
 
     cst_my_string.detail().name("my_string");
-    //cst_my_string.detail().ann_builtin()...
-    //cst_my_string.detail().ann_custom()...
+
     type_object->complete().struct_type().member_seq().emplace_back(cst_my_string);
 
 
     // Header
     type_object->complete().struct_type().header().detail().type_name("BasicBadStruct");
-    //type_object->complete().struct_type().header().detail().ann_builtin()...
-    //type_object->complete().struct_type().header().detail().ann_custom()...
     // TODO inheritance
-    //type_object->complete().struct_type().header().base_type()._d(EK_COMPLETE);
-    //type_object->complete().struct_type().header().base_type().equivalence_hash()[0..13];
+
 
     TypeIdentifier identifier;
     identifier._d(EK_COMPLETE);
@@ -2097,26 +2106,19 @@ const TypeObject* GetMinimalBasicWideStructObject()
     type_object->minimal().struct_type().struct_flags().IS_APPENDABLE(false);
     type_object->minimal().struct_type().struct_flags().IS_MUTABLE(false);
     type_object->minimal().struct_type().struct_flags().IS_NESTED(false);
-    type_object->minimal().struct_type().struct_flags().IS_AUTOID_HASH(false);
+    type_object->minimal().struct_type().struct_flags().IS_AUTOID_HASH(false); // Unsupported
 
     MemberId memberId = 0;
     MinimalStructMember mst_my_bool;
     mst_my_bool.common().member_id(memberId++);
-    mst_my_bool.common().member_flags().TRY_CONSTRUCT1(false);
-    mst_my_bool.common().member_flags().TRY_CONSTRUCT2(false);
-    mst_my_bool.common().member_flags().IS_EXTERNAL(false);
+    mst_my_bool.common().member_flags().TRY_CONSTRUCT1(false); // Unsupported
+    mst_my_bool.common().member_flags().TRY_CONSTRUCT2(false); // Unsupported
+    mst_my_bool.common().member_flags().IS_EXTERNAL(false); // Unsupported
     mst_my_bool.common().member_flags().IS_OPTIONAL(false);
     mst_my_bool.common().member_flags().IS_MUST_UNDERSTAND(false);
     mst_my_bool.common().member_flags().IS_KEY(false);
-    mst_my_bool.common().member_flags().IS_DEFAULT(false);
-    {
-        std::string cppType = "bool";
-        if (cppType == "long double")
-        {
-            cppType = "longdouble";
-        }
-        mst_my_bool.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier(cppType, false));
-    }
+    mst_my_bool.common().member_flags().IS_DEFAULT(false); // Doesn't apply
+    mst_my_bool.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier("bool", false));
 
     MD5 my_bool_hash("my_bool");
     for(int i = 0; i < 4; ++i)
@@ -2127,21 +2129,14 @@ const TypeObject* GetMinimalBasicWideStructObject()
 
     MinimalStructMember mst_my_int32;
     mst_my_int32.common().member_id(memberId++);
-    mst_my_int32.common().member_flags().TRY_CONSTRUCT1(false);
-    mst_my_int32.common().member_flags().TRY_CONSTRUCT2(false);
-    mst_my_int32.common().member_flags().IS_EXTERNAL(false);
+    mst_my_int32.common().member_flags().TRY_CONSTRUCT1(false); // Unsupported
+    mst_my_int32.common().member_flags().TRY_CONSTRUCT2(false); // Unsupported
+    mst_my_int32.common().member_flags().IS_EXTERNAL(false); // Unsupported
     mst_my_int32.common().member_flags().IS_OPTIONAL(false);
     mst_my_int32.common().member_flags().IS_MUST_UNDERSTAND(false);
     mst_my_int32.common().member_flags().IS_KEY(false);
-    mst_my_int32.common().member_flags().IS_DEFAULT(false);
-    {
-        std::string cppType = "int32_t";
-        if (cppType == "long double")
-        {
-            cppType = "longdouble";
-        }
-        mst_my_int32.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier(cppType, false));
-    }
+    mst_my_int32.common().member_flags().IS_DEFAULT(false); // Doesn't apply
+    mst_my_int32.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier("int32_t", false));
 
     MD5 my_int32_hash("my_int32");
     for(int i = 0; i < 4; ++i)
@@ -2152,13 +2147,13 @@ const TypeObject* GetMinimalBasicWideStructObject()
 
     MinimalStructMember mst_my_string;
     mst_my_string.common().member_id(memberId++);
-    mst_my_string.common().member_flags().TRY_CONSTRUCT1(false);
-    mst_my_string.common().member_flags().TRY_CONSTRUCT2(false);
-    mst_my_string.common().member_flags().IS_EXTERNAL(false);
+    mst_my_string.common().member_flags().TRY_CONSTRUCT1(false); // Unsupported
+    mst_my_string.common().member_flags().TRY_CONSTRUCT2(false); // Unsupported
+    mst_my_string.common().member_flags().IS_EXTERNAL(false); // Unsupported
     mst_my_string.common().member_flags().IS_OPTIONAL(false);
     mst_my_string.common().member_flags().IS_MUST_UNDERSTAND(false);
     mst_my_string.common().member_flags().IS_KEY(false);
-    mst_my_string.common().member_flags().IS_DEFAULT(false);
+    mst_my_string.common().member_flags().IS_DEFAULT(false); // Doesn't apply
     mst_my_string.common().member_type_id(*TypeObjectFactory::get_instance()->get_string_identifier(255, false));
 
 
@@ -2171,21 +2166,14 @@ const TypeObject* GetMinimalBasicWideStructObject()
 
     MinimalStructMember mst_new_int32;
     mst_new_int32.common().member_id(memberId++);
-    mst_new_int32.common().member_flags().TRY_CONSTRUCT1(false);
-    mst_new_int32.common().member_flags().TRY_CONSTRUCT2(false);
-    mst_new_int32.common().member_flags().IS_EXTERNAL(false);
+    mst_new_int32.common().member_flags().TRY_CONSTRUCT1(false); // Unsupported
+    mst_new_int32.common().member_flags().TRY_CONSTRUCT2(false); // Unsupported
+    mst_new_int32.common().member_flags().IS_EXTERNAL(false); // Unsupported
     mst_new_int32.common().member_flags().IS_OPTIONAL(false);
     mst_new_int32.common().member_flags().IS_MUST_UNDERSTAND(false);
     mst_new_int32.common().member_flags().IS_KEY(false);
-    mst_new_int32.common().member_flags().IS_DEFAULT(false);
-    {
-        std::string cppType = "int32_t";
-        if (cppType == "long double")
-        {
-            cppType = "longdouble";
-        }
-        mst_new_int32.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier(cppType, false));
-    }
+    mst_new_int32.common().member_flags().IS_DEFAULT(false); // Doesn't apply
+    mst_new_int32.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier("int32_t", false));
 
     MD5 new_int32_hash("new_int32");
     for(int i = 0; i < 4; ++i)
@@ -2196,13 +2184,13 @@ const TypeObject* GetMinimalBasicWideStructObject()
 
     MinimalStructMember mst_new_string;
     mst_new_string.common().member_id(memberId++);
-    mst_new_string.common().member_flags().TRY_CONSTRUCT1(false);
-    mst_new_string.common().member_flags().TRY_CONSTRUCT2(false);
-    mst_new_string.common().member_flags().IS_EXTERNAL(false);
+    mst_new_string.common().member_flags().TRY_CONSTRUCT1(false); // Unsupported
+    mst_new_string.common().member_flags().TRY_CONSTRUCT2(false); // Unsupported
+    mst_new_string.common().member_flags().IS_EXTERNAL(false); // Unsupported
     mst_new_string.common().member_flags().IS_OPTIONAL(false);
     mst_new_string.common().member_flags().IS_MUST_UNDERSTAND(false);
     mst_new_string.common().member_flags().IS_KEY(false);
-    mst_new_string.common().member_flags().IS_DEFAULT(false);
+    mst_new_string.common().member_flags().IS_DEFAULT(false); // Doesn't apply
     mst_new_string.common().member_type_id(*TypeObjectFactory::get_instance()->get_string_identifier(255, false));
 
 
@@ -2262,120 +2250,91 @@ const TypeObject* GetCompleteBasicWideStructObject()
     type_object->complete().struct_type().struct_flags().IS_APPENDABLE(false);
     type_object->complete().struct_type().struct_flags().IS_MUTABLE(false);
     type_object->complete().struct_type().struct_flags().IS_NESTED(false);
-    type_object->complete().struct_type().struct_flags().IS_AUTOID_HASH(false);
+    type_object->complete().struct_type().struct_flags().IS_AUTOID_HASH(false); // Unsupported
 
     MemberId memberId = 0;
     CompleteStructMember cst_my_bool;
     cst_my_bool.common().member_id(memberId++);
-    cst_my_bool.common().member_flags().TRY_CONSTRUCT1(false);
-    cst_my_bool.common().member_flags().TRY_CONSTRUCT2(false);
-    cst_my_bool.common().member_flags().IS_EXTERNAL(false);
+    cst_my_bool.common().member_flags().TRY_CONSTRUCT1(false); // Unsupported
+    cst_my_bool.common().member_flags().TRY_CONSTRUCT2(false); // Unsupported
+    cst_my_bool.common().member_flags().IS_EXTERNAL(false); // Unsupported
     cst_my_bool.common().member_flags().IS_OPTIONAL(false);
     cst_my_bool.common().member_flags().IS_MUST_UNDERSTAND(false);
     cst_my_bool.common().member_flags().IS_KEY(false);
-    cst_my_bool.common().member_flags().IS_DEFAULT(false);
-    {
-        std::string cppType = "bool";
-        if (cppType == "long double")
-        {
-            cppType = "longdouble";
-        }
-        cst_my_bool.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier(cppType, false));
-    }
+    cst_my_bool.common().member_flags().IS_DEFAULT(false); // Doesn't apply
+    cst_my_bool.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier("bool", false));
 
     cst_my_bool.detail().name("my_bool");
-    //cst_my_bool.detail().ann_builtin()...
-    //cst_my_bool.detail().ann_custom()...
+
     type_object->complete().struct_type().member_seq().emplace_back(cst_my_bool);
 
     CompleteStructMember cst_my_int32;
     cst_my_int32.common().member_id(memberId++);
-    cst_my_int32.common().member_flags().TRY_CONSTRUCT1(false);
-    cst_my_int32.common().member_flags().TRY_CONSTRUCT2(false);
-    cst_my_int32.common().member_flags().IS_EXTERNAL(false);
+    cst_my_int32.common().member_flags().TRY_CONSTRUCT1(false); // Unsupported
+    cst_my_int32.common().member_flags().TRY_CONSTRUCT2(false); // Unsupported
+    cst_my_int32.common().member_flags().IS_EXTERNAL(false); // Unsupported
     cst_my_int32.common().member_flags().IS_OPTIONAL(false);
     cst_my_int32.common().member_flags().IS_MUST_UNDERSTAND(false);
     cst_my_int32.common().member_flags().IS_KEY(false);
-    cst_my_int32.common().member_flags().IS_DEFAULT(false);
-    {
-        std::string cppType = "int32_t";
-        if (cppType == "long double")
-        {
-            cppType = "longdouble";
-        }
-        cst_my_int32.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier(cppType, false));
-    }
+    cst_my_int32.common().member_flags().IS_DEFAULT(false); // Doesn't apply
+    cst_my_int32.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier("int32_t", false));
 
     cst_my_int32.detail().name("my_int32");
-    //cst_my_int32.detail().ann_builtin()...
-    //cst_my_int32.detail().ann_custom()...
+
     type_object->complete().struct_type().member_seq().emplace_back(cst_my_int32);
 
     CompleteStructMember cst_my_string;
     cst_my_string.common().member_id(memberId++);
-    cst_my_string.common().member_flags().TRY_CONSTRUCT1(false);
-    cst_my_string.common().member_flags().TRY_CONSTRUCT2(false);
-    cst_my_string.common().member_flags().IS_EXTERNAL(false);
+    cst_my_string.common().member_flags().TRY_CONSTRUCT1(false); // Unsupported
+    cst_my_string.common().member_flags().TRY_CONSTRUCT2(false); // Unsupported
+    cst_my_string.common().member_flags().IS_EXTERNAL(false); // Unsupported
     cst_my_string.common().member_flags().IS_OPTIONAL(false);
     cst_my_string.common().member_flags().IS_MUST_UNDERSTAND(false);
     cst_my_string.common().member_flags().IS_KEY(false);
-    cst_my_string.common().member_flags().IS_DEFAULT(false);
+    cst_my_string.common().member_flags().IS_DEFAULT(false); // Doesn't apply
     cst_my_string.common().member_type_id(*TypeObjectFactory::get_instance()->get_string_identifier(255, false));
 
 
     cst_my_string.detail().name("my_string");
-    //cst_my_string.detail().ann_builtin()...
-    //cst_my_string.detail().ann_custom()...
+
     type_object->complete().struct_type().member_seq().emplace_back(cst_my_string);
 
     CompleteStructMember cst_new_int32;
     cst_new_int32.common().member_id(memberId++);
-    cst_new_int32.common().member_flags().TRY_CONSTRUCT1(false);
-    cst_new_int32.common().member_flags().TRY_CONSTRUCT2(false);
-    cst_new_int32.common().member_flags().IS_EXTERNAL(false);
+    cst_new_int32.common().member_flags().TRY_CONSTRUCT1(false); // Unsupported
+    cst_new_int32.common().member_flags().TRY_CONSTRUCT2(false); // Unsupported
+    cst_new_int32.common().member_flags().IS_EXTERNAL(false); // Unsupported
     cst_new_int32.common().member_flags().IS_OPTIONAL(false);
     cst_new_int32.common().member_flags().IS_MUST_UNDERSTAND(false);
     cst_new_int32.common().member_flags().IS_KEY(false);
-    cst_new_int32.common().member_flags().IS_DEFAULT(false);
-    {
-        std::string cppType = "int32_t";
-        if (cppType == "long double")
-        {
-            cppType = "longdouble";
-        }
-        cst_new_int32.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier(cppType, false));
-    }
+    cst_new_int32.common().member_flags().IS_DEFAULT(false); // Doesn't apply
+    cst_new_int32.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier("int32_t", false));
 
     cst_new_int32.detail().name("new_int32");
-    //cst_new_int32.detail().ann_builtin()...
-    //cst_new_int32.detail().ann_custom()...
+
     type_object->complete().struct_type().member_seq().emplace_back(cst_new_int32);
 
     CompleteStructMember cst_new_string;
     cst_new_string.common().member_id(memberId++);
-    cst_new_string.common().member_flags().TRY_CONSTRUCT1(false);
-    cst_new_string.common().member_flags().TRY_CONSTRUCT2(false);
-    cst_new_string.common().member_flags().IS_EXTERNAL(false);
+    cst_new_string.common().member_flags().TRY_CONSTRUCT1(false); // Unsupported
+    cst_new_string.common().member_flags().TRY_CONSTRUCT2(false); // Unsupported
+    cst_new_string.common().member_flags().IS_EXTERNAL(false); // Unsupported
     cst_new_string.common().member_flags().IS_OPTIONAL(false);
     cst_new_string.common().member_flags().IS_MUST_UNDERSTAND(false);
     cst_new_string.common().member_flags().IS_KEY(false);
-    cst_new_string.common().member_flags().IS_DEFAULT(false);
+    cst_new_string.common().member_flags().IS_DEFAULT(false); // Doesn't apply
     cst_new_string.common().member_type_id(*TypeObjectFactory::get_instance()->get_string_identifier(255, false));
 
 
     cst_new_string.detail().name("new_string");
-    //cst_new_string.detail().ann_builtin()...
-    //cst_new_string.detail().ann_custom()...
+
     type_object->complete().struct_type().member_seq().emplace_back(cst_new_string);
 
 
     // Header
     type_object->complete().struct_type().header().detail().type_name("BasicWideStruct");
-    //type_object->complete().struct_type().header().detail().ann_builtin()...
-    //type_object->complete().struct_type().header().detail().ann_custom()...
     // TODO inheritance
-    //type_object->complete().struct_type().header().base_type()._d(EK_COMPLETE);
-    //type_object->complete().struct_type().header().base_type().equivalence_hash()[0..13];
+
 
     TypeIdentifier identifier;
     identifier._d(EK_COMPLETE);
@@ -2447,26 +2406,19 @@ const TypeObject* GetMinimalBadBasicWideStructObject()
     type_object->minimal().struct_type().struct_flags().IS_APPENDABLE(false);
     type_object->minimal().struct_type().struct_flags().IS_MUTABLE(false);
     type_object->minimal().struct_type().struct_flags().IS_NESTED(false);
-    type_object->minimal().struct_type().struct_flags().IS_AUTOID_HASH(false);
+    type_object->minimal().struct_type().struct_flags().IS_AUTOID_HASH(false); // Unsupported
 
     MemberId memberId = 0;
     MinimalStructMember mst_new_int32;
     mst_new_int32.common().member_id(memberId++);
-    mst_new_int32.common().member_flags().TRY_CONSTRUCT1(false);
-    mst_new_int32.common().member_flags().TRY_CONSTRUCT2(false);
-    mst_new_int32.common().member_flags().IS_EXTERNAL(false);
+    mst_new_int32.common().member_flags().TRY_CONSTRUCT1(false); // Unsupported
+    mst_new_int32.common().member_flags().TRY_CONSTRUCT2(false); // Unsupported
+    mst_new_int32.common().member_flags().IS_EXTERNAL(false); // Unsupported
     mst_new_int32.common().member_flags().IS_OPTIONAL(false);
     mst_new_int32.common().member_flags().IS_MUST_UNDERSTAND(false);
     mst_new_int32.common().member_flags().IS_KEY(false);
-    mst_new_int32.common().member_flags().IS_DEFAULT(false);
-    {
-        std::string cppType = "int32_t";
-        if (cppType == "long double")
-        {
-            cppType = "longdouble";
-        }
-        mst_new_int32.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier(cppType, false));
-    }
+    mst_new_int32.common().member_flags().IS_DEFAULT(false); // Doesn't apply
+    mst_new_int32.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier("int32_t", false));
 
     MD5 new_int32_hash("new_int32");
     for(int i = 0; i < 4; ++i)
@@ -2477,13 +2429,13 @@ const TypeObject* GetMinimalBadBasicWideStructObject()
 
     MinimalStructMember mst_new_string;
     mst_new_string.common().member_id(memberId++);
-    mst_new_string.common().member_flags().TRY_CONSTRUCT1(false);
-    mst_new_string.common().member_flags().TRY_CONSTRUCT2(false);
-    mst_new_string.common().member_flags().IS_EXTERNAL(false);
+    mst_new_string.common().member_flags().TRY_CONSTRUCT1(false); // Unsupported
+    mst_new_string.common().member_flags().TRY_CONSTRUCT2(false); // Unsupported
+    mst_new_string.common().member_flags().IS_EXTERNAL(false); // Unsupported
     mst_new_string.common().member_flags().IS_OPTIONAL(false);
     mst_new_string.common().member_flags().IS_MUST_UNDERSTAND(false);
     mst_new_string.common().member_flags().IS_KEY(false);
-    mst_new_string.common().member_flags().IS_DEFAULT(false);
+    mst_new_string.common().member_flags().IS_DEFAULT(false); // Doesn't apply
     mst_new_string.common().member_type_id(*TypeObjectFactory::get_instance()->get_string_identifier(255, false));
 
 
@@ -2496,21 +2448,14 @@ const TypeObject* GetMinimalBadBasicWideStructObject()
 
     MinimalStructMember mst_my_bool;
     mst_my_bool.common().member_id(memberId++);
-    mst_my_bool.common().member_flags().TRY_CONSTRUCT1(false);
-    mst_my_bool.common().member_flags().TRY_CONSTRUCT2(false);
-    mst_my_bool.common().member_flags().IS_EXTERNAL(false);
+    mst_my_bool.common().member_flags().TRY_CONSTRUCT1(false); // Unsupported
+    mst_my_bool.common().member_flags().TRY_CONSTRUCT2(false); // Unsupported
+    mst_my_bool.common().member_flags().IS_EXTERNAL(false); // Unsupported
     mst_my_bool.common().member_flags().IS_OPTIONAL(false);
     mst_my_bool.common().member_flags().IS_MUST_UNDERSTAND(false);
     mst_my_bool.common().member_flags().IS_KEY(false);
-    mst_my_bool.common().member_flags().IS_DEFAULT(false);
-    {
-        std::string cppType = "bool";
-        if (cppType == "long double")
-        {
-            cppType = "longdouble";
-        }
-        mst_my_bool.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier(cppType, false));
-    }
+    mst_my_bool.common().member_flags().IS_DEFAULT(false); // Doesn't apply
+    mst_my_bool.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier("bool", false));
 
     MD5 my_bool_hash("my_bool");
     for(int i = 0; i < 4; ++i)
@@ -2521,21 +2466,14 @@ const TypeObject* GetMinimalBadBasicWideStructObject()
 
     MinimalStructMember mst_my_int32;
     mst_my_int32.common().member_id(memberId++);
-    mst_my_int32.common().member_flags().TRY_CONSTRUCT1(false);
-    mst_my_int32.common().member_flags().TRY_CONSTRUCT2(false);
-    mst_my_int32.common().member_flags().IS_EXTERNAL(false);
+    mst_my_int32.common().member_flags().TRY_CONSTRUCT1(false); // Unsupported
+    mst_my_int32.common().member_flags().TRY_CONSTRUCT2(false); // Unsupported
+    mst_my_int32.common().member_flags().IS_EXTERNAL(false); // Unsupported
     mst_my_int32.common().member_flags().IS_OPTIONAL(false);
     mst_my_int32.common().member_flags().IS_MUST_UNDERSTAND(false);
     mst_my_int32.common().member_flags().IS_KEY(false);
-    mst_my_int32.common().member_flags().IS_DEFAULT(false);
-    {
-        std::string cppType = "int32_t";
-        if (cppType == "long double")
-        {
-            cppType = "longdouble";
-        }
-        mst_my_int32.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier(cppType, false));
-    }
+    mst_my_int32.common().member_flags().IS_DEFAULT(false); // Doesn't apply
+    mst_my_int32.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier("int32_t", false));
 
     MD5 my_int32_hash("my_int32");
     for(int i = 0; i < 4; ++i)
@@ -2546,13 +2484,13 @@ const TypeObject* GetMinimalBadBasicWideStructObject()
 
     MinimalStructMember mst_my_string;
     mst_my_string.common().member_id(memberId++);
-    mst_my_string.common().member_flags().TRY_CONSTRUCT1(false);
-    mst_my_string.common().member_flags().TRY_CONSTRUCT2(false);
-    mst_my_string.common().member_flags().IS_EXTERNAL(false);
+    mst_my_string.common().member_flags().TRY_CONSTRUCT1(false); // Unsupported
+    mst_my_string.common().member_flags().TRY_CONSTRUCT2(false); // Unsupported
+    mst_my_string.common().member_flags().IS_EXTERNAL(false); // Unsupported
     mst_my_string.common().member_flags().IS_OPTIONAL(false);
     mst_my_string.common().member_flags().IS_MUST_UNDERSTAND(false);
     mst_my_string.common().member_flags().IS_KEY(false);
-    mst_my_string.common().member_flags().IS_DEFAULT(false);
+    mst_my_string.common().member_flags().IS_DEFAULT(false); // Doesn't apply
     mst_my_string.common().member_type_id(*TypeObjectFactory::get_instance()->get_string_identifier(255, false));
 
 
@@ -2612,120 +2550,91 @@ const TypeObject* GetCompleteBadBasicWideStructObject()
     type_object->complete().struct_type().struct_flags().IS_APPENDABLE(false);
     type_object->complete().struct_type().struct_flags().IS_MUTABLE(false);
     type_object->complete().struct_type().struct_flags().IS_NESTED(false);
-    type_object->complete().struct_type().struct_flags().IS_AUTOID_HASH(false);
+    type_object->complete().struct_type().struct_flags().IS_AUTOID_HASH(false); // Unsupported
 
     MemberId memberId = 0;
     CompleteStructMember cst_new_int32;
     cst_new_int32.common().member_id(memberId++);
-    cst_new_int32.common().member_flags().TRY_CONSTRUCT1(false);
-    cst_new_int32.common().member_flags().TRY_CONSTRUCT2(false);
-    cst_new_int32.common().member_flags().IS_EXTERNAL(false);
+    cst_new_int32.common().member_flags().TRY_CONSTRUCT1(false); // Unsupported
+    cst_new_int32.common().member_flags().TRY_CONSTRUCT2(false); // Unsupported
+    cst_new_int32.common().member_flags().IS_EXTERNAL(false); // Unsupported
     cst_new_int32.common().member_flags().IS_OPTIONAL(false);
     cst_new_int32.common().member_flags().IS_MUST_UNDERSTAND(false);
     cst_new_int32.common().member_flags().IS_KEY(false);
-    cst_new_int32.common().member_flags().IS_DEFAULT(false);
-    {
-        std::string cppType = "int32_t";
-        if (cppType == "long double")
-        {
-            cppType = "longdouble";
-        }
-        cst_new_int32.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier(cppType, false));
-    }
+    cst_new_int32.common().member_flags().IS_DEFAULT(false); // Doesn't apply
+    cst_new_int32.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier("int32_t", false));
 
     cst_new_int32.detail().name("new_int32");
-    //cst_new_int32.detail().ann_builtin()...
-    //cst_new_int32.detail().ann_custom()...
+
     type_object->complete().struct_type().member_seq().emplace_back(cst_new_int32);
 
     CompleteStructMember cst_new_string;
     cst_new_string.common().member_id(memberId++);
-    cst_new_string.common().member_flags().TRY_CONSTRUCT1(false);
-    cst_new_string.common().member_flags().TRY_CONSTRUCT2(false);
-    cst_new_string.common().member_flags().IS_EXTERNAL(false);
+    cst_new_string.common().member_flags().TRY_CONSTRUCT1(false); // Unsupported
+    cst_new_string.common().member_flags().TRY_CONSTRUCT2(false); // Unsupported
+    cst_new_string.common().member_flags().IS_EXTERNAL(false); // Unsupported
     cst_new_string.common().member_flags().IS_OPTIONAL(false);
     cst_new_string.common().member_flags().IS_MUST_UNDERSTAND(false);
     cst_new_string.common().member_flags().IS_KEY(false);
-    cst_new_string.common().member_flags().IS_DEFAULT(false);
+    cst_new_string.common().member_flags().IS_DEFAULT(false); // Doesn't apply
     cst_new_string.common().member_type_id(*TypeObjectFactory::get_instance()->get_string_identifier(255, false));
 
 
     cst_new_string.detail().name("new_string");
-    //cst_new_string.detail().ann_builtin()...
-    //cst_new_string.detail().ann_custom()...
+
     type_object->complete().struct_type().member_seq().emplace_back(cst_new_string);
 
     CompleteStructMember cst_my_bool;
     cst_my_bool.common().member_id(memberId++);
-    cst_my_bool.common().member_flags().TRY_CONSTRUCT1(false);
-    cst_my_bool.common().member_flags().TRY_CONSTRUCT2(false);
-    cst_my_bool.common().member_flags().IS_EXTERNAL(false);
+    cst_my_bool.common().member_flags().TRY_CONSTRUCT1(false); // Unsupported
+    cst_my_bool.common().member_flags().TRY_CONSTRUCT2(false); // Unsupported
+    cst_my_bool.common().member_flags().IS_EXTERNAL(false); // Unsupported
     cst_my_bool.common().member_flags().IS_OPTIONAL(false);
     cst_my_bool.common().member_flags().IS_MUST_UNDERSTAND(false);
     cst_my_bool.common().member_flags().IS_KEY(false);
-    cst_my_bool.common().member_flags().IS_DEFAULT(false);
-    {
-        std::string cppType = "bool";
-        if (cppType == "long double")
-        {
-            cppType = "longdouble";
-        }
-        cst_my_bool.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier(cppType, false));
-    }
+    cst_my_bool.common().member_flags().IS_DEFAULT(false); // Doesn't apply
+    cst_my_bool.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier("bool", false));
 
     cst_my_bool.detail().name("my_bool");
-    //cst_my_bool.detail().ann_builtin()...
-    //cst_my_bool.detail().ann_custom()...
+
     type_object->complete().struct_type().member_seq().emplace_back(cst_my_bool);
 
     CompleteStructMember cst_my_int32;
     cst_my_int32.common().member_id(memberId++);
-    cst_my_int32.common().member_flags().TRY_CONSTRUCT1(false);
-    cst_my_int32.common().member_flags().TRY_CONSTRUCT2(false);
-    cst_my_int32.common().member_flags().IS_EXTERNAL(false);
+    cst_my_int32.common().member_flags().TRY_CONSTRUCT1(false); // Unsupported
+    cst_my_int32.common().member_flags().TRY_CONSTRUCT2(false); // Unsupported
+    cst_my_int32.common().member_flags().IS_EXTERNAL(false); // Unsupported
     cst_my_int32.common().member_flags().IS_OPTIONAL(false);
     cst_my_int32.common().member_flags().IS_MUST_UNDERSTAND(false);
     cst_my_int32.common().member_flags().IS_KEY(false);
-    cst_my_int32.common().member_flags().IS_DEFAULT(false);
-    {
-        std::string cppType = "int32_t";
-        if (cppType == "long double")
-        {
-            cppType = "longdouble";
-        }
-        cst_my_int32.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier(cppType, false));
-    }
+    cst_my_int32.common().member_flags().IS_DEFAULT(false); // Doesn't apply
+    cst_my_int32.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier("int32_t", false));
 
     cst_my_int32.detail().name("my_int32");
-    //cst_my_int32.detail().ann_builtin()...
-    //cst_my_int32.detail().ann_custom()...
+
     type_object->complete().struct_type().member_seq().emplace_back(cst_my_int32);
 
     CompleteStructMember cst_my_string;
     cst_my_string.common().member_id(memberId++);
-    cst_my_string.common().member_flags().TRY_CONSTRUCT1(false);
-    cst_my_string.common().member_flags().TRY_CONSTRUCT2(false);
-    cst_my_string.common().member_flags().IS_EXTERNAL(false);
+    cst_my_string.common().member_flags().TRY_CONSTRUCT1(false); // Unsupported
+    cst_my_string.common().member_flags().TRY_CONSTRUCT2(false); // Unsupported
+    cst_my_string.common().member_flags().IS_EXTERNAL(false); // Unsupported
     cst_my_string.common().member_flags().IS_OPTIONAL(false);
     cst_my_string.common().member_flags().IS_MUST_UNDERSTAND(false);
     cst_my_string.common().member_flags().IS_KEY(false);
-    cst_my_string.common().member_flags().IS_DEFAULT(false);
+    cst_my_string.common().member_flags().IS_DEFAULT(false); // Doesn't apply
     cst_my_string.common().member_type_id(*TypeObjectFactory::get_instance()->get_string_identifier(255, false));
 
 
     cst_my_string.detail().name("my_string");
-    //cst_my_string.detail().ann_builtin()...
-    //cst_my_string.detail().ann_custom()...
+
     type_object->complete().struct_type().member_seq().emplace_back(cst_my_string);
 
 
     // Header
     type_object->complete().struct_type().header().detail().type_name("BadBasicWideStruct");
-    //type_object->complete().struct_type().header().detail().ann_builtin()...
-    //type_object->complete().struct_type().header().detail().ann_custom()...
     // TODO inheritance
-    //type_object->complete().struct_type().header().base_type()._d(EK_COMPLETE);
-    //type_object->complete().struct_type().header().base_type().equivalence_hash()[0..13];
+
 
     TypeIdentifier identifier;
     identifier._d(EK_COMPLETE);
@@ -2797,18 +2706,18 @@ const TypeObject* GetMinimalStringStructObject()
     type_object->minimal().struct_type().struct_flags().IS_APPENDABLE(false);
     type_object->minimal().struct_type().struct_flags().IS_MUTABLE(false);
     type_object->minimal().struct_type().struct_flags().IS_NESTED(false);
-    type_object->minimal().struct_type().struct_flags().IS_AUTOID_HASH(false);
+    type_object->minimal().struct_type().struct_flags().IS_AUTOID_HASH(false); // Unsupported
 
     MemberId memberId = 0;
     MinimalStructMember mst_my_string;
     mst_my_string.common().member_id(memberId++);
-    mst_my_string.common().member_flags().TRY_CONSTRUCT1(false);
-    mst_my_string.common().member_flags().TRY_CONSTRUCT2(false);
-    mst_my_string.common().member_flags().IS_EXTERNAL(false);
+    mst_my_string.common().member_flags().TRY_CONSTRUCT1(false); // Unsupported
+    mst_my_string.common().member_flags().TRY_CONSTRUCT2(false); // Unsupported
+    mst_my_string.common().member_flags().IS_EXTERNAL(false); // Unsupported
     mst_my_string.common().member_flags().IS_OPTIONAL(false);
     mst_my_string.common().member_flags().IS_MUST_UNDERSTAND(false);
     mst_my_string.common().member_flags().IS_KEY(false);
-    mst_my_string.common().member_flags().IS_DEFAULT(false);
+    mst_my_string.common().member_flags().IS_DEFAULT(false); // Doesn't apply
     mst_my_string.common().member_type_id(*TypeObjectFactory::get_instance()->get_string_identifier(255, false));
 
 
@@ -2868,34 +2777,30 @@ const TypeObject* GetCompleteStringStructObject()
     type_object->complete().struct_type().struct_flags().IS_APPENDABLE(false);
     type_object->complete().struct_type().struct_flags().IS_MUTABLE(false);
     type_object->complete().struct_type().struct_flags().IS_NESTED(false);
-    type_object->complete().struct_type().struct_flags().IS_AUTOID_HASH(false);
+    type_object->complete().struct_type().struct_flags().IS_AUTOID_HASH(false); // Unsupported
 
     MemberId memberId = 0;
     CompleteStructMember cst_my_string;
     cst_my_string.common().member_id(memberId++);
-    cst_my_string.common().member_flags().TRY_CONSTRUCT1(false);
-    cst_my_string.common().member_flags().TRY_CONSTRUCT2(false);
-    cst_my_string.common().member_flags().IS_EXTERNAL(false);
+    cst_my_string.common().member_flags().TRY_CONSTRUCT1(false); // Unsupported
+    cst_my_string.common().member_flags().TRY_CONSTRUCT2(false); // Unsupported
+    cst_my_string.common().member_flags().IS_EXTERNAL(false); // Unsupported
     cst_my_string.common().member_flags().IS_OPTIONAL(false);
     cst_my_string.common().member_flags().IS_MUST_UNDERSTAND(false);
     cst_my_string.common().member_flags().IS_KEY(false);
-    cst_my_string.common().member_flags().IS_DEFAULT(false);
+    cst_my_string.common().member_flags().IS_DEFAULT(false); // Doesn't apply
     cst_my_string.common().member_type_id(*TypeObjectFactory::get_instance()->get_string_identifier(255, false));
 
 
     cst_my_string.detail().name("my_string");
-    //cst_my_string.detail().ann_builtin()...
-    //cst_my_string.detail().ann_custom()...
+
     type_object->complete().struct_type().member_seq().emplace_back(cst_my_string);
 
 
     // Header
     type_object->complete().struct_type().header().detail().type_name("StringStruct");
-    //type_object->complete().struct_type().header().detail().ann_builtin()...
-    //type_object->complete().struct_type().header().detail().ann_custom()...
     // TODO inheritance
-    //type_object->complete().struct_type().header().base_type()._d(EK_COMPLETE);
-    //type_object->complete().struct_type().header().base_type().equivalence_hash()[0..13];
+
 
     TypeIdentifier identifier;
     identifier._d(EK_COMPLETE);
@@ -2967,18 +2872,18 @@ const TypeObject* GetMinimalLargeStringStructObject()
     type_object->minimal().struct_type().struct_flags().IS_APPENDABLE(false);
     type_object->minimal().struct_type().struct_flags().IS_MUTABLE(false);
     type_object->minimal().struct_type().struct_flags().IS_NESTED(false);
-    type_object->minimal().struct_type().struct_flags().IS_AUTOID_HASH(false);
+    type_object->minimal().struct_type().struct_flags().IS_AUTOID_HASH(false); // Unsupported
 
     MemberId memberId = 0;
     MinimalStructMember mst_my_large_string;
     mst_my_large_string.common().member_id(memberId++);
-    mst_my_large_string.common().member_flags().TRY_CONSTRUCT1(false);
-    mst_my_large_string.common().member_flags().TRY_CONSTRUCT2(false);
-    mst_my_large_string.common().member_flags().IS_EXTERNAL(false);
+    mst_my_large_string.common().member_flags().TRY_CONSTRUCT1(false); // Unsupported
+    mst_my_large_string.common().member_flags().TRY_CONSTRUCT2(false); // Unsupported
+    mst_my_large_string.common().member_flags().IS_EXTERNAL(false); // Unsupported
     mst_my_large_string.common().member_flags().IS_OPTIONAL(false);
     mst_my_large_string.common().member_flags().IS_MUST_UNDERSTAND(false);
     mst_my_large_string.common().member_flags().IS_KEY(false);
-    mst_my_large_string.common().member_flags().IS_DEFAULT(false);
+    mst_my_large_string.common().member_flags().IS_DEFAULT(false); // Doesn't apply
     mst_my_large_string.common().member_type_id(*TypeObjectFactory::get_instance()->get_string_identifier(41925, false));
 
 
@@ -3038,34 +2943,30 @@ const TypeObject* GetCompleteLargeStringStructObject()
     type_object->complete().struct_type().struct_flags().IS_APPENDABLE(false);
     type_object->complete().struct_type().struct_flags().IS_MUTABLE(false);
     type_object->complete().struct_type().struct_flags().IS_NESTED(false);
-    type_object->complete().struct_type().struct_flags().IS_AUTOID_HASH(false);
+    type_object->complete().struct_type().struct_flags().IS_AUTOID_HASH(false); // Unsupported
 
     MemberId memberId = 0;
     CompleteStructMember cst_my_large_string;
     cst_my_large_string.common().member_id(memberId++);
-    cst_my_large_string.common().member_flags().TRY_CONSTRUCT1(false);
-    cst_my_large_string.common().member_flags().TRY_CONSTRUCT2(false);
-    cst_my_large_string.common().member_flags().IS_EXTERNAL(false);
+    cst_my_large_string.common().member_flags().TRY_CONSTRUCT1(false); // Unsupported
+    cst_my_large_string.common().member_flags().TRY_CONSTRUCT2(false); // Unsupported
+    cst_my_large_string.common().member_flags().IS_EXTERNAL(false); // Unsupported
     cst_my_large_string.common().member_flags().IS_OPTIONAL(false);
     cst_my_large_string.common().member_flags().IS_MUST_UNDERSTAND(false);
     cst_my_large_string.common().member_flags().IS_KEY(false);
-    cst_my_large_string.common().member_flags().IS_DEFAULT(false);
+    cst_my_large_string.common().member_flags().IS_DEFAULT(false); // Doesn't apply
     cst_my_large_string.common().member_type_id(*TypeObjectFactory::get_instance()->get_string_identifier(41925, false));
 
 
     cst_my_large_string.detail().name("my_large_string");
-    //cst_my_large_string.detail().ann_builtin()...
-    //cst_my_large_string.detail().ann_custom()...
+
     type_object->complete().struct_type().member_seq().emplace_back(cst_my_large_string);
 
 
     // Header
     type_object->complete().struct_type().header().detail().type_name("LargeStringStruct");
-    //type_object->complete().struct_type().header().detail().ann_builtin()...
-    //type_object->complete().struct_type().header().detail().ann_custom()...
     // TODO inheritance
-    //type_object->complete().struct_type().header().base_type()._d(EK_COMPLETE);
-    //type_object->complete().struct_type().header().base_type().equivalence_hash()[0..13];
+
 
     TypeIdentifier identifier;
     identifier._d(EK_COMPLETE);
@@ -3137,18 +3038,18 @@ const TypeObject* GetMinimalWStringStructObject()
     type_object->minimal().struct_type().struct_flags().IS_APPENDABLE(false);
     type_object->minimal().struct_type().struct_flags().IS_MUTABLE(false);
     type_object->minimal().struct_type().struct_flags().IS_NESTED(false);
-    type_object->minimal().struct_type().struct_flags().IS_AUTOID_HASH(false);
+    type_object->minimal().struct_type().struct_flags().IS_AUTOID_HASH(false); // Unsupported
 
     MemberId memberId = 0;
     MinimalStructMember mst_my_wstring;
     mst_my_wstring.common().member_id(memberId++);
-    mst_my_wstring.common().member_flags().TRY_CONSTRUCT1(false);
-    mst_my_wstring.common().member_flags().TRY_CONSTRUCT2(false);
-    mst_my_wstring.common().member_flags().IS_EXTERNAL(false);
+    mst_my_wstring.common().member_flags().TRY_CONSTRUCT1(false); // Unsupported
+    mst_my_wstring.common().member_flags().TRY_CONSTRUCT2(false); // Unsupported
+    mst_my_wstring.common().member_flags().IS_EXTERNAL(false); // Unsupported
     mst_my_wstring.common().member_flags().IS_OPTIONAL(false);
     mst_my_wstring.common().member_flags().IS_MUST_UNDERSTAND(false);
     mst_my_wstring.common().member_flags().IS_KEY(false);
-    mst_my_wstring.common().member_flags().IS_DEFAULT(false);
+    mst_my_wstring.common().member_flags().IS_DEFAULT(false); // Doesn't apply
     mst_my_wstring.common().member_type_id(*TypeObjectFactory::get_instance()->get_string_identifier(255, true));
 
 
@@ -3208,34 +3109,30 @@ const TypeObject* GetCompleteWStringStructObject()
     type_object->complete().struct_type().struct_flags().IS_APPENDABLE(false);
     type_object->complete().struct_type().struct_flags().IS_MUTABLE(false);
     type_object->complete().struct_type().struct_flags().IS_NESTED(false);
-    type_object->complete().struct_type().struct_flags().IS_AUTOID_HASH(false);
+    type_object->complete().struct_type().struct_flags().IS_AUTOID_HASH(false); // Unsupported
 
     MemberId memberId = 0;
     CompleteStructMember cst_my_wstring;
     cst_my_wstring.common().member_id(memberId++);
-    cst_my_wstring.common().member_flags().TRY_CONSTRUCT1(false);
-    cst_my_wstring.common().member_flags().TRY_CONSTRUCT2(false);
-    cst_my_wstring.common().member_flags().IS_EXTERNAL(false);
+    cst_my_wstring.common().member_flags().TRY_CONSTRUCT1(false); // Unsupported
+    cst_my_wstring.common().member_flags().TRY_CONSTRUCT2(false); // Unsupported
+    cst_my_wstring.common().member_flags().IS_EXTERNAL(false); // Unsupported
     cst_my_wstring.common().member_flags().IS_OPTIONAL(false);
     cst_my_wstring.common().member_flags().IS_MUST_UNDERSTAND(false);
     cst_my_wstring.common().member_flags().IS_KEY(false);
-    cst_my_wstring.common().member_flags().IS_DEFAULT(false);
+    cst_my_wstring.common().member_flags().IS_DEFAULT(false); // Doesn't apply
     cst_my_wstring.common().member_type_id(*TypeObjectFactory::get_instance()->get_string_identifier(255, true));
 
 
     cst_my_wstring.detail().name("my_wstring");
-    //cst_my_wstring.detail().ann_builtin()...
-    //cst_my_wstring.detail().ann_custom()...
+
     type_object->complete().struct_type().member_seq().emplace_back(cst_my_wstring);
 
 
     // Header
     type_object->complete().struct_type().header().detail().type_name("WStringStruct");
-    //type_object->complete().struct_type().header().detail().ann_builtin()...
-    //type_object->complete().struct_type().header().detail().ann_custom()...
     // TODO inheritance
-    //type_object->complete().struct_type().header().base_type()._d(EK_COMPLETE);
-    //type_object->complete().struct_type().header().base_type().equivalence_hash()[0..13];
+
 
     TypeIdentifier identifier;
     identifier._d(EK_COMPLETE);
@@ -3307,18 +3204,18 @@ const TypeObject* GetMinimalLargeWStringStructObject()
     type_object->minimal().struct_type().struct_flags().IS_APPENDABLE(false);
     type_object->minimal().struct_type().struct_flags().IS_MUTABLE(false);
     type_object->minimal().struct_type().struct_flags().IS_NESTED(false);
-    type_object->minimal().struct_type().struct_flags().IS_AUTOID_HASH(false);
+    type_object->minimal().struct_type().struct_flags().IS_AUTOID_HASH(false); // Unsupported
 
     MemberId memberId = 0;
     MinimalStructMember mst_my_large_wstring;
     mst_my_large_wstring.common().member_id(memberId++);
-    mst_my_large_wstring.common().member_flags().TRY_CONSTRUCT1(false);
-    mst_my_large_wstring.common().member_flags().TRY_CONSTRUCT2(false);
-    mst_my_large_wstring.common().member_flags().IS_EXTERNAL(false);
+    mst_my_large_wstring.common().member_flags().TRY_CONSTRUCT1(false); // Unsupported
+    mst_my_large_wstring.common().member_flags().TRY_CONSTRUCT2(false); // Unsupported
+    mst_my_large_wstring.common().member_flags().IS_EXTERNAL(false); // Unsupported
     mst_my_large_wstring.common().member_flags().IS_OPTIONAL(false);
     mst_my_large_wstring.common().member_flags().IS_MUST_UNDERSTAND(false);
     mst_my_large_wstring.common().member_flags().IS_KEY(false);
-    mst_my_large_wstring.common().member_flags().IS_DEFAULT(false);
+    mst_my_large_wstring.common().member_flags().IS_DEFAULT(false); // Doesn't apply
     mst_my_large_wstring.common().member_type_id(*TypeObjectFactory::get_instance()->get_string_identifier(41925, true));
 
 
@@ -3378,34 +3275,30 @@ const TypeObject* GetCompleteLargeWStringStructObject()
     type_object->complete().struct_type().struct_flags().IS_APPENDABLE(false);
     type_object->complete().struct_type().struct_flags().IS_MUTABLE(false);
     type_object->complete().struct_type().struct_flags().IS_NESTED(false);
-    type_object->complete().struct_type().struct_flags().IS_AUTOID_HASH(false);
+    type_object->complete().struct_type().struct_flags().IS_AUTOID_HASH(false); // Unsupported
 
     MemberId memberId = 0;
     CompleteStructMember cst_my_large_wstring;
     cst_my_large_wstring.common().member_id(memberId++);
-    cst_my_large_wstring.common().member_flags().TRY_CONSTRUCT1(false);
-    cst_my_large_wstring.common().member_flags().TRY_CONSTRUCT2(false);
-    cst_my_large_wstring.common().member_flags().IS_EXTERNAL(false);
+    cst_my_large_wstring.common().member_flags().TRY_CONSTRUCT1(false); // Unsupported
+    cst_my_large_wstring.common().member_flags().TRY_CONSTRUCT2(false); // Unsupported
+    cst_my_large_wstring.common().member_flags().IS_EXTERNAL(false); // Unsupported
     cst_my_large_wstring.common().member_flags().IS_OPTIONAL(false);
     cst_my_large_wstring.common().member_flags().IS_MUST_UNDERSTAND(false);
     cst_my_large_wstring.common().member_flags().IS_KEY(false);
-    cst_my_large_wstring.common().member_flags().IS_DEFAULT(false);
+    cst_my_large_wstring.common().member_flags().IS_DEFAULT(false); // Doesn't apply
     cst_my_large_wstring.common().member_type_id(*TypeObjectFactory::get_instance()->get_string_identifier(41925, true));
 
 
     cst_my_large_wstring.detail().name("my_large_wstring");
-    //cst_my_large_wstring.detail().ann_builtin()...
-    //cst_my_large_wstring.detail().ann_custom()...
+
     type_object->complete().struct_type().member_seq().emplace_back(cst_my_large_wstring);
 
 
     // Header
     type_object->complete().struct_type().header().detail().type_name("LargeWStringStruct");
-    //type_object->complete().struct_type().header().detail().ann_builtin()...
-    //type_object->complete().struct_type().header().detail().ann_custom()...
     // TODO inheritance
-    //type_object->complete().struct_type().header().base_type()._d(EK_COMPLETE);
-    //type_object->complete().struct_type().header().base_type().equivalence_hash()[0..13];
+
 
     TypeIdentifier identifier;
     identifier._d(EK_COMPLETE);
@@ -3477,18 +3370,18 @@ const TypeObject* GetMinimalArrayStructObject()
     type_object->minimal().struct_type().struct_flags().IS_APPENDABLE(false);
     type_object->minimal().struct_type().struct_flags().IS_MUTABLE(false);
     type_object->minimal().struct_type().struct_flags().IS_NESTED(false);
-    type_object->minimal().struct_type().struct_flags().IS_AUTOID_HASH(false);
+    type_object->minimal().struct_type().struct_flags().IS_AUTOID_HASH(false); // Unsupported
 
     MemberId memberId = 0;
     MinimalStructMember mst_my_array;
     mst_my_array.common().member_id(memberId++);
-    mst_my_array.common().member_flags().TRY_CONSTRUCT1(false);
-    mst_my_array.common().member_flags().TRY_CONSTRUCT2(false);
-    mst_my_array.common().member_flags().IS_EXTERNAL(false);
+    mst_my_array.common().member_flags().TRY_CONSTRUCT1(false); // Unsupported
+    mst_my_array.common().member_flags().TRY_CONSTRUCT2(false); // Unsupported
+    mst_my_array.common().member_flags().IS_EXTERNAL(false); // Unsupported
     mst_my_array.common().member_flags().IS_OPTIONAL(false);
     mst_my_array.common().member_flags().IS_MUST_UNDERSTAND(false);
     mst_my_array.common().member_flags().IS_KEY(false);
-    mst_my_array.common().member_flags().IS_DEFAULT(false);
+    mst_my_array.common().member_flags().IS_DEFAULT(false); // Doesn't apply
     mst_my_array.common().member_type_id(*TypeObjectFactory::get_instance()->get_array_identifier("int32_t", {2}, false));
 
 
@@ -3548,34 +3441,30 @@ const TypeObject* GetCompleteArrayStructObject()
     type_object->complete().struct_type().struct_flags().IS_APPENDABLE(false);
     type_object->complete().struct_type().struct_flags().IS_MUTABLE(false);
     type_object->complete().struct_type().struct_flags().IS_NESTED(false);
-    type_object->complete().struct_type().struct_flags().IS_AUTOID_HASH(false);
+    type_object->complete().struct_type().struct_flags().IS_AUTOID_HASH(false); // Unsupported
 
     MemberId memberId = 0;
     CompleteStructMember cst_my_array;
     cst_my_array.common().member_id(memberId++);
-    cst_my_array.common().member_flags().TRY_CONSTRUCT1(false);
-    cst_my_array.common().member_flags().TRY_CONSTRUCT2(false);
-    cst_my_array.common().member_flags().IS_EXTERNAL(false);
+    cst_my_array.common().member_flags().TRY_CONSTRUCT1(false); // Unsupported
+    cst_my_array.common().member_flags().TRY_CONSTRUCT2(false); // Unsupported
+    cst_my_array.common().member_flags().IS_EXTERNAL(false); // Unsupported
     cst_my_array.common().member_flags().IS_OPTIONAL(false);
     cst_my_array.common().member_flags().IS_MUST_UNDERSTAND(false);
     cst_my_array.common().member_flags().IS_KEY(false);
-    cst_my_array.common().member_flags().IS_DEFAULT(false);
+    cst_my_array.common().member_flags().IS_DEFAULT(false); // Doesn't apply
     cst_my_array.common().member_type_id(*TypeObjectFactory::get_instance()->get_array_identifier("int32_t", {2}, true));
 
 
     cst_my_array.detail().name("my_array");
-    //cst_my_array.detail().ann_builtin()...
-    //cst_my_array.detail().ann_custom()...
+
     type_object->complete().struct_type().member_seq().emplace_back(cst_my_array);
 
 
     // Header
     type_object->complete().struct_type().header().detail().type_name("ArrayStruct");
-    //type_object->complete().struct_type().header().detail().ann_builtin()...
-    //type_object->complete().struct_type().header().detail().ann_custom()...
     // TODO inheritance
-    //type_object->complete().struct_type().header().base_type()._d(EK_COMPLETE);
-    //type_object->complete().struct_type().header().base_type().equivalence_hash()[0..13];
+
 
     TypeIdentifier identifier;
     identifier._d(EK_COMPLETE);
@@ -3647,18 +3536,18 @@ const TypeObject* GetMinimalArrayStructEqualObject()
     type_object->minimal().struct_type().struct_flags().IS_APPENDABLE(false);
     type_object->minimal().struct_type().struct_flags().IS_MUTABLE(false);
     type_object->minimal().struct_type().struct_flags().IS_NESTED(false);
-    type_object->minimal().struct_type().struct_flags().IS_AUTOID_HASH(false);
+    type_object->minimal().struct_type().struct_flags().IS_AUTOID_HASH(false); // Unsupported
 
     MemberId memberId = 0;
     MinimalStructMember mst_my_array_equal;
     mst_my_array_equal.common().member_id(memberId++);
-    mst_my_array_equal.common().member_flags().TRY_CONSTRUCT1(false);
-    mst_my_array_equal.common().member_flags().TRY_CONSTRUCT2(false);
-    mst_my_array_equal.common().member_flags().IS_EXTERNAL(false);
+    mst_my_array_equal.common().member_flags().TRY_CONSTRUCT1(false); // Unsupported
+    mst_my_array_equal.common().member_flags().TRY_CONSTRUCT2(false); // Unsupported
+    mst_my_array_equal.common().member_flags().IS_EXTERNAL(false); // Unsupported
     mst_my_array_equal.common().member_flags().IS_OPTIONAL(false);
     mst_my_array_equal.common().member_flags().IS_MUST_UNDERSTAND(false);
     mst_my_array_equal.common().member_flags().IS_KEY(false);
-    mst_my_array_equal.common().member_flags().IS_DEFAULT(false);
+    mst_my_array_equal.common().member_flags().IS_DEFAULT(false); // Doesn't apply
     mst_my_array_equal.common().member_type_id(*TypeObjectFactory::get_instance()->get_array_identifier("int32_t", {2}, false));
 
 
@@ -3718,34 +3607,30 @@ const TypeObject* GetCompleteArrayStructEqualObject()
     type_object->complete().struct_type().struct_flags().IS_APPENDABLE(false);
     type_object->complete().struct_type().struct_flags().IS_MUTABLE(false);
     type_object->complete().struct_type().struct_flags().IS_NESTED(false);
-    type_object->complete().struct_type().struct_flags().IS_AUTOID_HASH(false);
+    type_object->complete().struct_type().struct_flags().IS_AUTOID_HASH(false); // Unsupported
 
     MemberId memberId = 0;
     CompleteStructMember cst_my_array_equal;
     cst_my_array_equal.common().member_id(memberId++);
-    cst_my_array_equal.common().member_flags().TRY_CONSTRUCT1(false);
-    cst_my_array_equal.common().member_flags().TRY_CONSTRUCT2(false);
-    cst_my_array_equal.common().member_flags().IS_EXTERNAL(false);
+    cst_my_array_equal.common().member_flags().TRY_CONSTRUCT1(false); // Unsupported
+    cst_my_array_equal.common().member_flags().TRY_CONSTRUCT2(false); // Unsupported
+    cst_my_array_equal.common().member_flags().IS_EXTERNAL(false); // Unsupported
     cst_my_array_equal.common().member_flags().IS_OPTIONAL(false);
     cst_my_array_equal.common().member_flags().IS_MUST_UNDERSTAND(false);
     cst_my_array_equal.common().member_flags().IS_KEY(false);
-    cst_my_array_equal.common().member_flags().IS_DEFAULT(false);
+    cst_my_array_equal.common().member_flags().IS_DEFAULT(false); // Doesn't apply
     cst_my_array_equal.common().member_type_id(*TypeObjectFactory::get_instance()->get_array_identifier("int32_t", {2}, true));
 
 
     cst_my_array_equal.detail().name("my_array_equal");
-    //cst_my_array_equal.detail().ann_builtin()...
-    //cst_my_array_equal.detail().ann_custom()...
+
     type_object->complete().struct_type().member_seq().emplace_back(cst_my_array_equal);
 
 
     // Header
     type_object->complete().struct_type().header().detail().type_name("ArrayStructEqual");
-    //type_object->complete().struct_type().header().detail().ann_builtin()...
-    //type_object->complete().struct_type().header().detail().ann_custom()...
     // TODO inheritance
-    //type_object->complete().struct_type().header().base_type()._d(EK_COMPLETE);
-    //type_object->complete().struct_type().header().base_type().equivalence_hash()[0..13];
+
 
     TypeIdentifier identifier;
     identifier._d(EK_COMPLETE);
@@ -3817,18 +3702,18 @@ const TypeObject* GetMinimalArrayBadStructObject()
     type_object->minimal().struct_type().struct_flags().IS_APPENDABLE(false);
     type_object->minimal().struct_type().struct_flags().IS_MUTABLE(false);
     type_object->minimal().struct_type().struct_flags().IS_NESTED(false);
-    type_object->minimal().struct_type().struct_flags().IS_AUTOID_HASH(false);
+    type_object->minimal().struct_type().struct_flags().IS_AUTOID_HASH(false); // Unsupported
 
     MemberId memberId = 0;
     MinimalStructMember mst_my_array;
     mst_my_array.common().member_id(memberId++);
-    mst_my_array.common().member_flags().TRY_CONSTRUCT1(false);
-    mst_my_array.common().member_flags().TRY_CONSTRUCT2(false);
-    mst_my_array.common().member_flags().IS_EXTERNAL(false);
+    mst_my_array.common().member_flags().TRY_CONSTRUCT1(false); // Unsupported
+    mst_my_array.common().member_flags().TRY_CONSTRUCT2(false); // Unsupported
+    mst_my_array.common().member_flags().IS_EXTERNAL(false); // Unsupported
     mst_my_array.common().member_flags().IS_OPTIONAL(false);
     mst_my_array.common().member_flags().IS_MUST_UNDERSTAND(false);
     mst_my_array.common().member_flags().IS_KEY(false);
-    mst_my_array.common().member_flags().IS_DEFAULT(false);
+    mst_my_array.common().member_flags().IS_DEFAULT(false); // Doesn't apply
     mst_my_array.common().member_type_id(*TypeObjectFactory::get_instance()->get_array_identifier("uint8_t", {2}, false));
 
 
@@ -3888,34 +3773,30 @@ const TypeObject* GetCompleteArrayBadStructObject()
     type_object->complete().struct_type().struct_flags().IS_APPENDABLE(false);
     type_object->complete().struct_type().struct_flags().IS_MUTABLE(false);
     type_object->complete().struct_type().struct_flags().IS_NESTED(false);
-    type_object->complete().struct_type().struct_flags().IS_AUTOID_HASH(false);
+    type_object->complete().struct_type().struct_flags().IS_AUTOID_HASH(false); // Unsupported
 
     MemberId memberId = 0;
     CompleteStructMember cst_my_array;
     cst_my_array.common().member_id(memberId++);
-    cst_my_array.common().member_flags().TRY_CONSTRUCT1(false);
-    cst_my_array.common().member_flags().TRY_CONSTRUCT2(false);
-    cst_my_array.common().member_flags().IS_EXTERNAL(false);
+    cst_my_array.common().member_flags().TRY_CONSTRUCT1(false); // Unsupported
+    cst_my_array.common().member_flags().TRY_CONSTRUCT2(false); // Unsupported
+    cst_my_array.common().member_flags().IS_EXTERNAL(false); // Unsupported
     cst_my_array.common().member_flags().IS_OPTIONAL(false);
     cst_my_array.common().member_flags().IS_MUST_UNDERSTAND(false);
     cst_my_array.common().member_flags().IS_KEY(false);
-    cst_my_array.common().member_flags().IS_DEFAULT(false);
+    cst_my_array.common().member_flags().IS_DEFAULT(false); // Doesn't apply
     cst_my_array.common().member_type_id(*TypeObjectFactory::get_instance()->get_array_identifier("uint8_t", {2}, true));
 
 
     cst_my_array.detail().name("my_array");
-    //cst_my_array.detail().ann_builtin()...
-    //cst_my_array.detail().ann_custom()...
+
     type_object->complete().struct_type().member_seq().emplace_back(cst_my_array);
 
 
     // Header
     type_object->complete().struct_type().header().detail().type_name("ArrayBadStruct");
-    //type_object->complete().struct_type().header().detail().ann_builtin()...
-    //type_object->complete().struct_type().header().detail().ann_custom()...
     // TODO inheritance
-    //type_object->complete().struct_type().header().base_type()._d(EK_COMPLETE);
-    //type_object->complete().struct_type().header().base_type().equivalence_hash()[0..13];
+
 
     TypeIdentifier identifier;
     identifier._d(EK_COMPLETE);
@@ -3987,18 +3868,18 @@ const TypeObject* GetMinimalArrayDimensionsStructObject()
     type_object->minimal().struct_type().struct_flags().IS_APPENDABLE(false);
     type_object->minimal().struct_type().struct_flags().IS_MUTABLE(false);
     type_object->minimal().struct_type().struct_flags().IS_NESTED(false);
-    type_object->minimal().struct_type().struct_flags().IS_AUTOID_HASH(false);
+    type_object->minimal().struct_type().struct_flags().IS_AUTOID_HASH(false); // Unsupported
 
     MemberId memberId = 0;
     MinimalStructMember mst_my_array;
     mst_my_array.common().member_id(memberId++);
-    mst_my_array.common().member_flags().TRY_CONSTRUCT1(false);
-    mst_my_array.common().member_flags().TRY_CONSTRUCT2(false);
-    mst_my_array.common().member_flags().IS_EXTERNAL(false);
+    mst_my_array.common().member_flags().TRY_CONSTRUCT1(false); // Unsupported
+    mst_my_array.common().member_flags().TRY_CONSTRUCT2(false); // Unsupported
+    mst_my_array.common().member_flags().IS_EXTERNAL(false); // Unsupported
     mst_my_array.common().member_flags().IS_OPTIONAL(false);
     mst_my_array.common().member_flags().IS_MUST_UNDERSTAND(false);
     mst_my_array.common().member_flags().IS_KEY(false);
-    mst_my_array.common().member_flags().IS_DEFAULT(false);
+    mst_my_array.common().member_flags().IS_DEFAULT(false); // Doesn't apply
     mst_my_array.common().member_type_id(*TypeObjectFactory::get_instance()->get_array_identifier("int32_t", {2, 2}, false));
 
 
@@ -4058,34 +3939,30 @@ const TypeObject* GetCompleteArrayDimensionsStructObject()
     type_object->complete().struct_type().struct_flags().IS_APPENDABLE(false);
     type_object->complete().struct_type().struct_flags().IS_MUTABLE(false);
     type_object->complete().struct_type().struct_flags().IS_NESTED(false);
-    type_object->complete().struct_type().struct_flags().IS_AUTOID_HASH(false);
+    type_object->complete().struct_type().struct_flags().IS_AUTOID_HASH(false); // Unsupported
 
     MemberId memberId = 0;
     CompleteStructMember cst_my_array;
     cst_my_array.common().member_id(memberId++);
-    cst_my_array.common().member_flags().TRY_CONSTRUCT1(false);
-    cst_my_array.common().member_flags().TRY_CONSTRUCT2(false);
-    cst_my_array.common().member_flags().IS_EXTERNAL(false);
+    cst_my_array.common().member_flags().TRY_CONSTRUCT1(false); // Unsupported
+    cst_my_array.common().member_flags().TRY_CONSTRUCT2(false); // Unsupported
+    cst_my_array.common().member_flags().IS_EXTERNAL(false); // Unsupported
     cst_my_array.common().member_flags().IS_OPTIONAL(false);
     cst_my_array.common().member_flags().IS_MUST_UNDERSTAND(false);
     cst_my_array.common().member_flags().IS_KEY(false);
-    cst_my_array.common().member_flags().IS_DEFAULT(false);
+    cst_my_array.common().member_flags().IS_DEFAULT(false); // Doesn't apply
     cst_my_array.common().member_type_id(*TypeObjectFactory::get_instance()->get_array_identifier("int32_t", {2, 2}, true));
 
 
     cst_my_array.detail().name("my_array");
-    //cst_my_array.detail().ann_builtin()...
-    //cst_my_array.detail().ann_custom()...
+
     type_object->complete().struct_type().member_seq().emplace_back(cst_my_array);
 
 
     // Header
     type_object->complete().struct_type().header().detail().type_name("ArrayDimensionsStruct");
-    //type_object->complete().struct_type().header().detail().ann_builtin()...
-    //type_object->complete().struct_type().header().detail().ann_custom()...
     // TODO inheritance
-    //type_object->complete().struct_type().header().base_type()._d(EK_COMPLETE);
-    //type_object->complete().struct_type().header().base_type().equivalence_hash()[0..13];
+
 
     TypeIdentifier identifier;
     identifier._d(EK_COMPLETE);
@@ -4157,18 +4034,18 @@ const TypeObject* GetMinimalArraySizeStructObject()
     type_object->minimal().struct_type().struct_flags().IS_APPENDABLE(false);
     type_object->minimal().struct_type().struct_flags().IS_MUTABLE(false);
     type_object->minimal().struct_type().struct_flags().IS_NESTED(false);
-    type_object->minimal().struct_type().struct_flags().IS_AUTOID_HASH(false);
+    type_object->minimal().struct_type().struct_flags().IS_AUTOID_HASH(false); // Unsupported
 
     MemberId memberId = 0;
     MinimalStructMember mst_my_array;
     mst_my_array.common().member_id(memberId++);
-    mst_my_array.common().member_flags().TRY_CONSTRUCT1(false);
-    mst_my_array.common().member_flags().TRY_CONSTRUCT2(false);
-    mst_my_array.common().member_flags().IS_EXTERNAL(false);
+    mst_my_array.common().member_flags().TRY_CONSTRUCT1(false); // Unsupported
+    mst_my_array.common().member_flags().TRY_CONSTRUCT2(false); // Unsupported
+    mst_my_array.common().member_flags().IS_EXTERNAL(false); // Unsupported
     mst_my_array.common().member_flags().IS_OPTIONAL(false);
     mst_my_array.common().member_flags().IS_MUST_UNDERSTAND(false);
     mst_my_array.common().member_flags().IS_KEY(false);
-    mst_my_array.common().member_flags().IS_DEFAULT(false);
+    mst_my_array.common().member_flags().IS_DEFAULT(false); // Doesn't apply
     mst_my_array.common().member_type_id(*TypeObjectFactory::get_instance()->get_array_identifier("int32_t", {5}, false));
 
 
@@ -4228,34 +4105,30 @@ const TypeObject* GetCompleteArraySizeStructObject()
     type_object->complete().struct_type().struct_flags().IS_APPENDABLE(false);
     type_object->complete().struct_type().struct_flags().IS_MUTABLE(false);
     type_object->complete().struct_type().struct_flags().IS_NESTED(false);
-    type_object->complete().struct_type().struct_flags().IS_AUTOID_HASH(false);
+    type_object->complete().struct_type().struct_flags().IS_AUTOID_HASH(false); // Unsupported
 
     MemberId memberId = 0;
     CompleteStructMember cst_my_array;
     cst_my_array.common().member_id(memberId++);
-    cst_my_array.common().member_flags().TRY_CONSTRUCT1(false);
-    cst_my_array.common().member_flags().TRY_CONSTRUCT2(false);
-    cst_my_array.common().member_flags().IS_EXTERNAL(false);
+    cst_my_array.common().member_flags().TRY_CONSTRUCT1(false); // Unsupported
+    cst_my_array.common().member_flags().TRY_CONSTRUCT2(false); // Unsupported
+    cst_my_array.common().member_flags().IS_EXTERNAL(false); // Unsupported
     cst_my_array.common().member_flags().IS_OPTIONAL(false);
     cst_my_array.common().member_flags().IS_MUST_UNDERSTAND(false);
     cst_my_array.common().member_flags().IS_KEY(false);
-    cst_my_array.common().member_flags().IS_DEFAULT(false);
+    cst_my_array.common().member_flags().IS_DEFAULT(false); // Doesn't apply
     cst_my_array.common().member_type_id(*TypeObjectFactory::get_instance()->get_array_identifier("int32_t", {5}, true));
 
 
     cst_my_array.detail().name("my_array");
-    //cst_my_array.detail().ann_builtin()...
-    //cst_my_array.detail().ann_custom()...
+
     type_object->complete().struct_type().member_seq().emplace_back(cst_my_array);
 
 
     // Header
     type_object->complete().struct_type().header().detail().type_name("ArraySizeStruct");
-    //type_object->complete().struct_type().header().detail().ann_builtin()...
-    //type_object->complete().struct_type().header().detail().ann_custom()...
     // TODO inheritance
-    //type_object->complete().struct_type().header().base_type()._d(EK_COMPLETE);
-    //type_object->complete().struct_type().header().base_type().equivalence_hash()[0..13];
+
 
     TypeIdentifier identifier;
     identifier._d(EK_COMPLETE);
@@ -4327,18 +4200,18 @@ const TypeObject* GetMinimalSequenceStructObject()
     type_object->minimal().struct_type().struct_flags().IS_APPENDABLE(false);
     type_object->minimal().struct_type().struct_flags().IS_MUTABLE(false);
     type_object->minimal().struct_type().struct_flags().IS_NESTED(false);
-    type_object->minimal().struct_type().struct_flags().IS_AUTOID_HASH(false);
+    type_object->minimal().struct_type().struct_flags().IS_AUTOID_HASH(false); // Unsupported
 
     MemberId memberId = 0;
     MinimalStructMember mst_my_sequence;
     mst_my_sequence.common().member_id(memberId++);
-    mst_my_sequence.common().member_flags().TRY_CONSTRUCT1(false);
-    mst_my_sequence.common().member_flags().TRY_CONSTRUCT2(false);
-    mst_my_sequence.common().member_flags().IS_EXTERNAL(false);
+    mst_my_sequence.common().member_flags().TRY_CONSTRUCT1(false); // Unsupported
+    mst_my_sequence.common().member_flags().TRY_CONSTRUCT2(false); // Unsupported
+    mst_my_sequence.common().member_flags().IS_EXTERNAL(false); // Unsupported
     mst_my_sequence.common().member_flags().IS_OPTIONAL(false);
     mst_my_sequence.common().member_flags().IS_MUST_UNDERSTAND(false);
     mst_my_sequence.common().member_flags().IS_KEY(false);
-    mst_my_sequence.common().member_flags().IS_DEFAULT(false);
+    mst_my_sequence.common().member_flags().IS_DEFAULT(false); // Doesn't apply
     mst_my_sequence.common().member_type_id(*TypeObjectFactory::get_instance()->get_sequence_identifier("int32_t", 2, false));
 
 
@@ -4398,34 +4271,30 @@ const TypeObject* GetCompleteSequenceStructObject()
     type_object->complete().struct_type().struct_flags().IS_APPENDABLE(false);
     type_object->complete().struct_type().struct_flags().IS_MUTABLE(false);
     type_object->complete().struct_type().struct_flags().IS_NESTED(false);
-    type_object->complete().struct_type().struct_flags().IS_AUTOID_HASH(false);
+    type_object->complete().struct_type().struct_flags().IS_AUTOID_HASH(false); // Unsupported
 
     MemberId memberId = 0;
     CompleteStructMember cst_my_sequence;
     cst_my_sequence.common().member_id(memberId++);
-    cst_my_sequence.common().member_flags().TRY_CONSTRUCT1(false);
-    cst_my_sequence.common().member_flags().TRY_CONSTRUCT2(false);
-    cst_my_sequence.common().member_flags().IS_EXTERNAL(false);
+    cst_my_sequence.common().member_flags().TRY_CONSTRUCT1(false); // Unsupported
+    cst_my_sequence.common().member_flags().TRY_CONSTRUCT2(false); // Unsupported
+    cst_my_sequence.common().member_flags().IS_EXTERNAL(false); // Unsupported
     cst_my_sequence.common().member_flags().IS_OPTIONAL(false);
     cst_my_sequence.common().member_flags().IS_MUST_UNDERSTAND(false);
     cst_my_sequence.common().member_flags().IS_KEY(false);
-    cst_my_sequence.common().member_flags().IS_DEFAULT(false);
+    cst_my_sequence.common().member_flags().IS_DEFAULT(false); // Doesn't apply
     cst_my_sequence.common().member_type_id(*TypeObjectFactory::get_instance()->get_sequence_identifier("int32_t", 2, true));
 
 
     cst_my_sequence.detail().name("my_sequence");
-    //cst_my_sequence.detail().ann_builtin()...
-    //cst_my_sequence.detail().ann_custom()...
+
     type_object->complete().struct_type().member_seq().emplace_back(cst_my_sequence);
 
 
     // Header
     type_object->complete().struct_type().header().detail().type_name("SequenceStruct");
-    //type_object->complete().struct_type().header().detail().ann_builtin()...
-    //type_object->complete().struct_type().header().detail().ann_custom()...
     // TODO inheritance
-    //type_object->complete().struct_type().header().base_type()._d(EK_COMPLETE);
-    //type_object->complete().struct_type().header().base_type().equivalence_hash()[0..13];
+
 
     TypeIdentifier identifier;
     identifier._d(EK_COMPLETE);
@@ -4497,18 +4366,18 @@ const TypeObject* GetMinimalSequenceStructEqualObject()
     type_object->minimal().struct_type().struct_flags().IS_APPENDABLE(false);
     type_object->minimal().struct_type().struct_flags().IS_MUTABLE(false);
     type_object->minimal().struct_type().struct_flags().IS_NESTED(false);
-    type_object->minimal().struct_type().struct_flags().IS_AUTOID_HASH(false);
+    type_object->minimal().struct_type().struct_flags().IS_AUTOID_HASH(false); // Unsupported
 
     MemberId memberId = 0;
     MinimalStructMember mst_my_sequence_equal;
     mst_my_sequence_equal.common().member_id(memberId++);
-    mst_my_sequence_equal.common().member_flags().TRY_CONSTRUCT1(false);
-    mst_my_sequence_equal.common().member_flags().TRY_CONSTRUCT2(false);
-    mst_my_sequence_equal.common().member_flags().IS_EXTERNAL(false);
+    mst_my_sequence_equal.common().member_flags().TRY_CONSTRUCT1(false); // Unsupported
+    mst_my_sequence_equal.common().member_flags().TRY_CONSTRUCT2(false); // Unsupported
+    mst_my_sequence_equal.common().member_flags().IS_EXTERNAL(false); // Unsupported
     mst_my_sequence_equal.common().member_flags().IS_OPTIONAL(false);
     mst_my_sequence_equal.common().member_flags().IS_MUST_UNDERSTAND(false);
     mst_my_sequence_equal.common().member_flags().IS_KEY(false);
-    mst_my_sequence_equal.common().member_flags().IS_DEFAULT(false);
+    mst_my_sequence_equal.common().member_flags().IS_DEFAULT(false); // Doesn't apply
     mst_my_sequence_equal.common().member_type_id(*TypeObjectFactory::get_instance()->get_sequence_identifier("int32_t", 2, false));
 
 
@@ -4568,34 +4437,30 @@ const TypeObject* GetCompleteSequenceStructEqualObject()
     type_object->complete().struct_type().struct_flags().IS_APPENDABLE(false);
     type_object->complete().struct_type().struct_flags().IS_MUTABLE(false);
     type_object->complete().struct_type().struct_flags().IS_NESTED(false);
-    type_object->complete().struct_type().struct_flags().IS_AUTOID_HASH(false);
+    type_object->complete().struct_type().struct_flags().IS_AUTOID_HASH(false); // Unsupported
 
     MemberId memberId = 0;
     CompleteStructMember cst_my_sequence_equal;
     cst_my_sequence_equal.common().member_id(memberId++);
-    cst_my_sequence_equal.common().member_flags().TRY_CONSTRUCT1(false);
-    cst_my_sequence_equal.common().member_flags().TRY_CONSTRUCT2(false);
-    cst_my_sequence_equal.common().member_flags().IS_EXTERNAL(false);
+    cst_my_sequence_equal.common().member_flags().TRY_CONSTRUCT1(false); // Unsupported
+    cst_my_sequence_equal.common().member_flags().TRY_CONSTRUCT2(false); // Unsupported
+    cst_my_sequence_equal.common().member_flags().IS_EXTERNAL(false); // Unsupported
     cst_my_sequence_equal.common().member_flags().IS_OPTIONAL(false);
     cst_my_sequence_equal.common().member_flags().IS_MUST_UNDERSTAND(false);
     cst_my_sequence_equal.common().member_flags().IS_KEY(false);
-    cst_my_sequence_equal.common().member_flags().IS_DEFAULT(false);
+    cst_my_sequence_equal.common().member_flags().IS_DEFAULT(false); // Doesn't apply
     cst_my_sequence_equal.common().member_type_id(*TypeObjectFactory::get_instance()->get_sequence_identifier("int32_t", 2, true));
 
 
     cst_my_sequence_equal.detail().name("my_sequence_equal");
-    //cst_my_sequence_equal.detail().ann_builtin()...
-    //cst_my_sequence_equal.detail().ann_custom()...
+
     type_object->complete().struct_type().member_seq().emplace_back(cst_my_sequence_equal);
 
 
     // Header
     type_object->complete().struct_type().header().detail().type_name("SequenceStructEqual");
-    //type_object->complete().struct_type().header().detail().ann_builtin()...
-    //type_object->complete().struct_type().header().detail().ann_custom()...
     // TODO inheritance
-    //type_object->complete().struct_type().header().base_type()._d(EK_COMPLETE);
-    //type_object->complete().struct_type().header().base_type().equivalence_hash()[0..13];
+
 
     TypeIdentifier identifier;
     identifier._d(EK_COMPLETE);
@@ -4667,18 +4532,18 @@ const TypeObject* GetMinimalSequenceBadStructObject()
     type_object->minimal().struct_type().struct_flags().IS_APPENDABLE(false);
     type_object->minimal().struct_type().struct_flags().IS_MUTABLE(false);
     type_object->minimal().struct_type().struct_flags().IS_NESTED(false);
-    type_object->minimal().struct_type().struct_flags().IS_AUTOID_HASH(false);
+    type_object->minimal().struct_type().struct_flags().IS_AUTOID_HASH(false); // Unsupported
 
     MemberId memberId = 0;
     MinimalStructMember mst_my_sequence;
     mst_my_sequence.common().member_id(memberId++);
-    mst_my_sequence.common().member_flags().TRY_CONSTRUCT1(false);
-    mst_my_sequence.common().member_flags().TRY_CONSTRUCT2(false);
-    mst_my_sequence.common().member_flags().IS_EXTERNAL(false);
+    mst_my_sequence.common().member_flags().TRY_CONSTRUCT1(false); // Unsupported
+    mst_my_sequence.common().member_flags().TRY_CONSTRUCT2(false); // Unsupported
+    mst_my_sequence.common().member_flags().IS_EXTERNAL(false); // Unsupported
     mst_my_sequence.common().member_flags().IS_OPTIONAL(false);
     mst_my_sequence.common().member_flags().IS_MUST_UNDERSTAND(false);
     mst_my_sequence.common().member_flags().IS_KEY(false);
-    mst_my_sequence.common().member_flags().IS_DEFAULT(false);
+    mst_my_sequence.common().member_flags().IS_DEFAULT(false); // Doesn't apply
     mst_my_sequence.common().member_type_id(*TypeObjectFactory::get_instance()->get_sequence_identifier("uint8_t", 2, false));
 
 
@@ -4738,34 +4603,30 @@ const TypeObject* GetCompleteSequenceBadStructObject()
     type_object->complete().struct_type().struct_flags().IS_APPENDABLE(false);
     type_object->complete().struct_type().struct_flags().IS_MUTABLE(false);
     type_object->complete().struct_type().struct_flags().IS_NESTED(false);
-    type_object->complete().struct_type().struct_flags().IS_AUTOID_HASH(false);
+    type_object->complete().struct_type().struct_flags().IS_AUTOID_HASH(false); // Unsupported
 
     MemberId memberId = 0;
     CompleteStructMember cst_my_sequence;
     cst_my_sequence.common().member_id(memberId++);
-    cst_my_sequence.common().member_flags().TRY_CONSTRUCT1(false);
-    cst_my_sequence.common().member_flags().TRY_CONSTRUCT2(false);
-    cst_my_sequence.common().member_flags().IS_EXTERNAL(false);
+    cst_my_sequence.common().member_flags().TRY_CONSTRUCT1(false); // Unsupported
+    cst_my_sequence.common().member_flags().TRY_CONSTRUCT2(false); // Unsupported
+    cst_my_sequence.common().member_flags().IS_EXTERNAL(false); // Unsupported
     cst_my_sequence.common().member_flags().IS_OPTIONAL(false);
     cst_my_sequence.common().member_flags().IS_MUST_UNDERSTAND(false);
     cst_my_sequence.common().member_flags().IS_KEY(false);
-    cst_my_sequence.common().member_flags().IS_DEFAULT(false);
+    cst_my_sequence.common().member_flags().IS_DEFAULT(false); // Doesn't apply
     cst_my_sequence.common().member_type_id(*TypeObjectFactory::get_instance()->get_sequence_identifier("uint8_t", 2, true));
 
 
     cst_my_sequence.detail().name("my_sequence");
-    //cst_my_sequence.detail().ann_builtin()...
-    //cst_my_sequence.detail().ann_custom()...
+
     type_object->complete().struct_type().member_seq().emplace_back(cst_my_sequence);
 
 
     // Header
     type_object->complete().struct_type().header().detail().type_name("SequenceBadStruct");
-    //type_object->complete().struct_type().header().detail().ann_builtin()...
-    //type_object->complete().struct_type().header().detail().ann_custom()...
     // TODO inheritance
-    //type_object->complete().struct_type().header().base_type()._d(EK_COMPLETE);
-    //type_object->complete().struct_type().header().base_type().equivalence_hash()[0..13];
+
 
     TypeIdentifier identifier;
     identifier._d(EK_COMPLETE);
@@ -4837,18 +4698,18 @@ const TypeObject* GetMinimalSequenceBoundsStructObject()
     type_object->minimal().struct_type().struct_flags().IS_APPENDABLE(false);
     type_object->minimal().struct_type().struct_flags().IS_MUTABLE(false);
     type_object->minimal().struct_type().struct_flags().IS_NESTED(false);
-    type_object->minimal().struct_type().struct_flags().IS_AUTOID_HASH(false);
+    type_object->minimal().struct_type().struct_flags().IS_AUTOID_HASH(false); // Unsupported
 
     MemberId memberId = 0;
     MinimalStructMember mst_my_sequence;
     mst_my_sequence.common().member_id(memberId++);
-    mst_my_sequence.common().member_flags().TRY_CONSTRUCT1(false);
-    mst_my_sequence.common().member_flags().TRY_CONSTRUCT2(false);
-    mst_my_sequence.common().member_flags().IS_EXTERNAL(false);
+    mst_my_sequence.common().member_flags().TRY_CONSTRUCT1(false); // Unsupported
+    mst_my_sequence.common().member_flags().TRY_CONSTRUCT2(false); // Unsupported
+    mst_my_sequence.common().member_flags().IS_EXTERNAL(false); // Unsupported
     mst_my_sequence.common().member_flags().IS_OPTIONAL(false);
     mst_my_sequence.common().member_flags().IS_MUST_UNDERSTAND(false);
     mst_my_sequence.common().member_flags().IS_KEY(false);
-    mst_my_sequence.common().member_flags().IS_DEFAULT(false);
+    mst_my_sequence.common().member_flags().IS_DEFAULT(false); // Doesn't apply
     mst_my_sequence.common().member_type_id(*TypeObjectFactory::get_instance()->get_sequence_identifier("int32_t", 4, false));
 
 
@@ -4908,34 +4769,30 @@ const TypeObject* GetCompleteSequenceBoundsStructObject()
     type_object->complete().struct_type().struct_flags().IS_APPENDABLE(false);
     type_object->complete().struct_type().struct_flags().IS_MUTABLE(false);
     type_object->complete().struct_type().struct_flags().IS_NESTED(false);
-    type_object->complete().struct_type().struct_flags().IS_AUTOID_HASH(false);
+    type_object->complete().struct_type().struct_flags().IS_AUTOID_HASH(false); // Unsupported
 
     MemberId memberId = 0;
     CompleteStructMember cst_my_sequence;
     cst_my_sequence.common().member_id(memberId++);
-    cst_my_sequence.common().member_flags().TRY_CONSTRUCT1(false);
-    cst_my_sequence.common().member_flags().TRY_CONSTRUCT2(false);
-    cst_my_sequence.common().member_flags().IS_EXTERNAL(false);
+    cst_my_sequence.common().member_flags().TRY_CONSTRUCT1(false); // Unsupported
+    cst_my_sequence.common().member_flags().TRY_CONSTRUCT2(false); // Unsupported
+    cst_my_sequence.common().member_flags().IS_EXTERNAL(false); // Unsupported
     cst_my_sequence.common().member_flags().IS_OPTIONAL(false);
     cst_my_sequence.common().member_flags().IS_MUST_UNDERSTAND(false);
     cst_my_sequence.common().member_flags().IS_KEY(false);
-    cst_my_sequence.common().member_flags().IS_DEFAULT(false);
+    cst_my_sequence.common().member_flags().IS_DEFAULT(false); // Doesn't apply
     cst_my_sequence.common().member_type_id(*TypeObjectFactory::get_instance()->get_sequence_identifier("int32_t", 4, true));
 
 
     cst_my_sequence.detail().name("my_sequence");
-    //cst_my_sequence.detail().ann_builtin()...
-    //cst_my_sequence.detail().ann_custom()...
+
     type_object->complete().struct_type().member_seq().emplace_back(cst_my_sequence);
 
 
     // Header
     type_object->complete().struct_type().header().detail().type_name("SequenceBoundsStruct");
-    //type_object->complete().struct_type().header().detail().ann_builtin()...
-    //type_object->complete().struct_type().header().detail().ann_custom()...
     // TODO inheritance
-    //type_object->complete().struct_type().header().base_type()._d(EK_COMPLETE);
-    //type_object->complete().struct_type().header().base_type().equivalence_hash()[0..13];
+
 
     TypeIdentifier identifier;
     identifier._d(EK_COMPLETE);
@@ -5007,18 +4864,18 @@ const TypeObject* GetMinimalSequenceSequenceStructObject()
     type_object->minimal().struct_type().struct_flags().IS_APPENDABLE(false);
     type_object->minimal().struct_type().struct_flags().IS_MUTABLE(false);
     type_object->minimal().struct_type().struct_flags().IS_NESTED(false);
-    type_object->minimal().struct_type().struct_flags().IS_AUTOID_HASH(false);
+    type_object->minimal().struct_type().struct_flags().IS_AUTOID_HASH(false); // Unsupported
 
     MemberId memberId = 0;
     MinimalStructMember mst_my_sequence_sequence;
     mst_my_sequence_sequence.common().member_id(memberId++);
-    mst_my_sequence_sequence.common().member_flags().TRY_CONSTRUCT1(false);
-    mst_my_sequence_sequence.common().member_flags().TRY_CONSTRUCT2(false);
-    mst_my_sequence_sequence.common().member_flags().IS_EXTERNAL(false);
+    mst_my_sequence_sequence.common().member_flags().TRY_CONSTRUCT1(false); // Unsupported
+    mst_my_sequence_sequence.common().member_flags().TRY_CONSTRUCT2(false); // Unsupported
+    mst_my_sequence_sequence.common().member_flags().IS_EXTERNAL(false); // Unsupported
     mst_my_sequence_sequence.common().member_flags().IS_OPTIONAL(false);
     mst_my_sequence_sequence.common().member_flags().IS_MUST_UNDERSTAND(false);
     mst_my_sequence_sequence.common().member_flags().IS_KEY(false);
-    mst_my_sequence_sequence.common().member_flags().IS_DEFAULT(false);
+    mst_my_sequence_sequence.common().member_flags().IS_DEFAULT(false); // Doesn't apply
     mst_my_sequence_sequence.common().member_type_id(*TypeObjectFactory::get_instance()->get_sequence_identifier(TypeNamesGenerator::get_sequence_type_name("int32_t", 2), 3, false));
 
 
@@ -5078,34 +4935,30 @@ const TypeObject* GetCompleteSequenceSequenceStructObject()
     type_object->complete().struct_type().struct_flags().IS_APPENDABLE(false);
     type_object->complete().struct_type().struct_flags().IS_MUTABLE(false);
     type_object->complete().struct_type().struct_flags().IS_NESTED(false);
-    type_object->complete().struct_type().struct_flags().IS_AUTOID_HASH(false);
+    type_object->complete().struct_type().struct_flags().IS_AUTOID_HASH(false); // Unsupported
 
     MemberId memberId = 0;
     CompleteStructMember cst_my_sequence_sequence;
     cst_my_sequence_sequence.common().member_id(memberId++);
-    cst_my_sequence_sequence.common().member_flags().TRY_CONSTRUCT1(false);
-    cst_my_sequence_sequence.common().member_flags().TRY_CONSTRUCT2(false);
-    cst_my_sequence_sequence.common().member_flags().IS_EXTERNAL(false);
+    cst_my_sequence_sequence.common().member_flags().TRY_CONSTRUCT1(false); // Unsupported
+    cst_my_sequence_sequence.common().member_flags().TRY_CONSTRUCT2(false); // Unsupported
+    cst_my_sequence_sequence.common().member_flags().IS_EXTERNAL(false); // Unsupported
     cst_my_sequence_sequence.common().member_flags().IS_OPTIONAL(false);
     cst_my_sequence_sequence.common().member_flags().IS_MUST_UNDERSTAND(false);
     cst_my_sequence_sequence.common().member_flags().IS_KEY(false);
-    cst_my_sequence_sequence.common().member_flags().IS_DEFAULT(false);
+    cst_my_sequence_sequence.common().member_flags().IS_DEFAULT(false); // Doesn't apply
     cst_my_sequence_sequence.common().member_type_id(*TypeObjectFactory::get_instance()->get_sequence_identifier(TypeNamesGenerator::get_sequence_type_name("int32_t", 2), 3, true));
 
 
     cst_my_sequence_sequence.detail().name("my_sequence_sequence");
-    //cst_my_sequence_sequence.detail().ann_builtin()...
-    //cst_my_sequence_sequence.detail().ann_custom()...
+
     type_object->complete().struct_type().member_seq().emplace_back(cst_my_sequence_sequence);
 
 
     // Header
     type_object->complete().struct_type().header().detail().type_name("SequenceSequenceStruct");
-    //type_object->complete().struct_type().header().detail().ann_builtin()...
-    //type_object->complete().struct_type().header().detail().ann_custom()...
     // TODO inheritance
-    //type_object->complete().struct_type().header().base_type()._d(EK_COMPLETE);
-    //type_object->complete().struct_type().header().base_type().equivalence_hash()[0..13];
+
 
     TypeIdentifier identifier;
     identifier._d(EK_COMPLETE);
@@ -5177,18 +5030,18 @@ const TypeObject* GetMinimalSequenceSequenceBoundsStructObject()
     type_object->minimal().struct_type().struct_flags().IS_APPENDABLE(false);
     type_object->minimal().struct_type().struct_flags().IS_MUTABLE(false);
     type_object->minimal().struct_type().struct_flags().IS_NESTED(false);
-    type_object->minimal().struct_type().struct_flags().IS_AUTOID_HASH(false);
+    type_object->minimal().struct_type().struct_flags().IS_AUTOID_HASH(false); // Unsupported
 
     MemberId memberId = 0;
     MinimalStructMember mst_my_sequence_sequence;
     mst_my_sequence_sequence.common().member_id(memberId++);
-    mst_my_sequence_sequence.common().member_flags().TRY_CONSTRUCT1(false);
-    mst_my_sequence_sequence.common().member_flags().TRY_CONSTRUCT2(false);
-    mst_my_sequence_sequence.common().member_flags().IS_EXTERNAL(false);
+    mst_my_sequence_sequence.common().member_flags().TRY_CONSTRUCT1(false); // Unsupported
+    mst_my_sequence_sequence.common().member_flags().TRY_CONSTRUCT2(false); // Unsupported
+    mst_my_sequence_sequence.common().member_flags().IS_EXTERNAL(false); // Unsupported
     mst_my_sequence_sequence.common().member_flags().IS_OPTIONAL(false);
     mst_my_sequence_sequence.common().member_flags().IS_MUST_UNDERSTAND(false);
     mst_my_sequence_sequence.common().member_flags().IS_KEY(false);
-    mst_my_sequence_sequence.common().member_flags().IS_DEFAULT(false);
+    mst_my_sequence_sequence.common().member_flags().IS_DEFAULT(false); // Doesn't apply
     mst_my_sequence_sequence.common().member_type_id(*TypeObjectFactory::get_instance()->get_sequence_identifier(TypeNamesGenerator::get_sequence_type_name("int32_t", 5), 5, false));
 
 
@@ -5248,34 +5101,30 @@ const TypeObject* GetCompleteSequenceSequenceBoundsStructObject()
     type_object->complete().struct_type().struct_flags().IS_APPENDABLE(false);
     type_object->complete().struct_type().struct_flags().IS_MUTABLE(false);
     type_object->complete().struct_type().struct_flags().IS_NESTED(false);
-    type_object->complete().struct_type().struct_flags().IS_AUTOID_HASH(false);
+    type_object->complete().struct_type().struct_flags().IS_AUTOID_HASH(false); // Unsupported
 
     MemberId memberId = 0;
     CompleteStructMember cst_my_sequence_sequence;
     cst_my_sequence_sequence.common().member_id(memberId++);
-    cst_my_sequence_sequence.common().member_flags().TRY_CONSTRUCT1(false);
-    cst_my_sequence_sequence.common().member_flags().TRY_CONSTRUCT2(false);
-    cst_my_sequence_sequence.common().member_flags().IS_EXTERNAL(false);
+    cst_my_sequence_sequence.common().member_flags().TRY_CONSTRUCT1(false); // Unsupported
+    cst_my_sequence_sequence.common().member_flags().TRY_CONSTRUCT2(false); // Unsupported
+    cst_my_sequence_sequence.common().member_flags().IS_EXTERNAL(false); // Unsupported
     cst_my_sequence_sequence.common().member_flags().IS_OPTIONAL(false);
     cst_my_sequence_sequence.common().member_flags().IS_MUST_UNDERSTAND(false);
     cst_my_sequence_sequence.common().member_flags().IS_KEY(false);
-    cst_my_sequence_sequence.common().member_flags().IS_DEFAULT(false);
+    cst_my_sequence_sequence.common().member_flags().IS_DEFAULT(false); // Doesn't apply
     cst_my_sequence_sequence.common().member_type_id(*TypeObjectFactory::get_instance()->get_sequence_identifier(TypeNamesGenerator::get_sequence_type_name("int32_t", 5), 5, true));
 
 
     cst_my_sequence_sequence.detail().name("my_sequence_sequence");
-    //cst_my_sequence_sequence.detail().ann_builtin()...
-    //cst_my_sequence_sequence.detail().ann_custom()...
+
     type_object->complete().struct_type().member_seq().emplace_back(cst_my_sequence_sequence);
 
 
     // Header
     type_object->complete().struct_type().header().detail().type_name("SequenceSequenceBoundsStruct");
-    //type_object->complete().struct_type().header().detail().ann_builtin()...
-    //type_object->complete().struct_type().header().detail().ann_custom()...
     // TODO inheritance
-    //type_object->complete().struct_type().header().base_type()._d(EK_COMPLETE);
-    //type_object->complete().struct_type().header().base_type().equivalence_hash()[0..13];
+
 
     TypeIdentifier identifier;
     identifier._d(EK_COMPLETE);
@@ -5347,18 +5196,18 @@ const TypeObject* GetMinimalMapStructObject()
     type_object->minimal().struct_type().struct_flags().IS_APPENDABLE(false);
     type_object->minimal().struct_type().struct_flags().IS_MUTABLE(false);
     type_object->minimal().struct_type().struct_flags().IS_NESTED(false);
-    type_object->minimal().struct_type().struct_flags().IS_AUTOID_HASH(false);
+    type_object->minimal().struct_type().struct_flags().IS_AUTOID_HASH(false); // Unsupported
 
     MemberId memberId = 0;
     MinimalStructMember mst_my_map;
     mst_my_map.common().member_id(memberId++);
-    mst_my_map.common().member_flags().TRY_CONSTRUCT1(false);
-    mst_my_map.common().member_flags().TRY_CONSTRUCT2(false);
-    mst_my_map.common().member_flags().IS_EXTERNAL(false);
+    mst_my_map.common().member_flags().TRY_CONSTRUCT1(false); // Unsupported
+    mst_my_map.common().member_flags().TRY_CONSTRUCT2(false); // Unsupported
+    mst_my_map.common().member_flags().IS_EXTERNAL(false); // Unsupported
     mst_my_map.common().member_flags().IS_OPTIONAL(false);
     mst_my_map.common().member_flags().IS_MUST_UNDERSTAND(false);
     mst_my_map.common().member_flags().IS_KEY(false);
-    mst_my_map.common().member_flags().IS_DEFAULT(false);
+    mst_my_map.common().member_flags().IS_DEFAULT(false); // Doesn't apply
     mst_my_map.common().member_type_id(*TypeObjectFactory::get_instance()->get_map_identifier("int32_t", "int32_t", 2, false));
 
 
@@ -5418,34 +5267,30 @@ const TypeObject* GetCompleteMapStructObject()
     type_object->complete().struct_type().struct_flags().IS_APPENDABLE(false);
     type_object->complete().struct_type().struct_flags().IS_MUTABLE(false);
     type_object->complete().struct_type().struct_flags().IS_NESTED(false);
-    type_object->complete().struct_type().struct_flags().IS_AUTOID_HASH(false);
+    type_object->complete().struct_type().struct_flags().IS_AUTOID_HASH(false); // Unsupported
 
     MemberId memberId = 0;
     CompleteStructMember cst_my_map;
     cst_my_map.common().member_id(memberId++);
-    cst_my_map.common().member_flags().TRY_CONSTRUCT1(false);
-    cst_my_map.common().member_flags().TRY_CONSTRUCT2(false);
-    cst_my_map.common().member_flags().IS_EXTERNAL(false);
+    cst_my_map.common().member_flags().TRY_CONSTRUCT1(false); // Unsupported
+    cst_my_map.common().member_flags().TRY_CONSTRUCT2(false); // Unsupported
+    cst_my_map.common().member_flags().IS_EXTERNAL(false); // Unsupported
     cst_my_map.common().member_flags().IS_OPTIONAL(false);
     cst_my_map.common().member_flags().IS_MUST_UNDERSTAND(false);
     cst_my_map.common().member_flags().IS_KEY(false);
-    cst_my_map.common().member_flags().IS_DEFAULT(false);
+    cst_my_map.common().member_flags().IS_DEFAULT(false); // Doesn't apply
     cst_my_map.common().member_type_id(*TypeObjectFactory::get_instance()->get_map_identifier("int32_t", "int32_t", 2, true));
 
 
     cst_my_map.detail().name("my_map");
-    //cst_my_map.detail().ann_builtin()...
-    //cst_my_map.detail().ann_custom()...
+
     type_object->complete().struct_type().member_seq().emplace_back(cst_my_map);
 
 
     // Header
     type_object->complete().struct_type().header().detail().type_name("MapStruct");
-    //type_object->complete().struct_type().header().detail().ann_builtin()...
-    //type_object->complete().struct_type().header().detail().ann_custom()...
     // TODO inheritance
-    //type_object->complete().struct_type().header().base_type()._d(EK_COMPLETE);
-    //type_object->complete().struct_type().header().base_type().equivalence_hash()[0..13];
+
 
     TypeIdentifier identifier;
     identifier._d(EK_COMPLETE);
@@ -5517,18 +5362,18 @@ const TypeObject* GetMinimalMapStructEqualObject()
     type_object->minimal().struct_type().struct_flags().IS_APPENDABLE(false);
     type_object->minimal().struct_type().struct_flags().IS_MUTABLE(false);
     type_object->minimal().struct_type().struct_flags().IS_NESTED(false);
-    type_object->minimal().struct_type().struct_flags().IS_AUTOID_HASH(false);
+    type_object->minimal().struct_type().struct_flags().IS_AUTOID_HASH(false); // Unsupported
 
     MemberId memberId = 0;
     MinimalStructMember mst_my_map_equal;
     mst_my_map_equal.common().member_id(memberId++);
-    mst_my_map_equal.common().member_flags().TRY_CONSTRUCT1(false);
-    mst_my_map_equal.common().member_flags().TRY_CONSTRUCT2(false);
-    mst_my_map_equal.common().member_flags().IS_EXTERNAL(false);
+    mst_my_map_equal.common().member_flags().TRY_CONSTRUCT1(false); // Unsupported
+    mst_my_map_equal.common().member_flags().TRY_CONSTRUCT2(false); // Unsupported
+    mst_my_map_equal.common().member_flags().IS_EXTERNAL(false); // Unsupported
     mst_my_map_equal.common().member_flags().IS_OPTIONAL(false);
     mst_my_map_equal.common().member_flags().IS_MUST_UNDERSTAND(false);
     mst_my_map_equal.common().member_flags().IS_KEY(false);
-    mst_my_map_equal.common().member_flags().IS_DEFAULT(false);
+    mst_my_map_equal.common().member_flags().IS_DEFAULT(false); // Doesn't apply
     mst_my_map_equal.common().member_type_id(*TypeObjectFactory::get_instance()->get_map_identifier("int32_t", "int32_t", 2, false));
 
 
@@ -5588,34 +5433,30 @@ const TypeObject* GetCompleteMapStructEqualObject()
     type_object->complete().struct_type().struct_flags().IS_APPENDABLE(false);
     type_object->complete().struct_type().struct_flags().IS_MUTABLE(false);
     type_object->complete().struct_type().struct_flags().IS_NESTED(false);
-    type_object->complete().struct_type().struct_flags().IS_AUTOID_HASH(false);
+    type_object->complete().struct_type().struct_flags().IS_AUTOID_HASH(false); // Unsupported
 
     MemberId memberId = 0;
     CompleteStructMember cst_my_map_equal;
     cst_my_map_equal.common().member_id(memberId++);
-    cst_my_map_equal.common().member_flags().TRY_CONSTRUCT1(false);
-    cst_my_map_equal.common().member_flags().TRY_CONSTRUCT2(false);
-    cst_my_map_equal.common().member_flags().IS_EXTERNAL(false);
+    cst_my_map_equal.common().member_flags().TRY_CONSTRUCT1(false); // Unsupported
+    cst_my_map_equal.common().member_flags().TRY_CONSTRUCT2(false); // Unsupported
+    cst_my_map_equal.common().member_flags().IS_EXTERNAL(false); // Unsupported
     cst_my_map_equal.common().member_flags().IS_OPTIONAL(false);
     cst_my_map_equal.common().member_flags().IS_MUST_UNDERSTAND(false);
     cst_my_map_equal.common().member_flags().IS_KEY(false);
-    cst_my_map_equal.common().member_flags().IS_DEFAULT(false);
+    cst_my_map_equal.common().member_flags().IS_DEFAULT(false); // Doesn't apply
     cst_my_map_equal.common().member_type_id(*TypeObjectFactory::get_instance()->get_map_identifier("int32_t", "int32_t", 2, true));
 
 
     cst_my_map_equal.detail().name("my_map_equal");
-    //cst_my_map_equal.detail().ann_builtin()...
-    //cst_my_map_equal.detail().ann_custom()...
+
     type_object->complete().struct_type().member_seq().emplace_back(cst_my_map_equal);
 
 
     // Header
     type_object->complete().struct_type().header().detail().type_name("MapStructEqual");
-    //type_object->complete().struct_type().header().detail().ann_builtin()...
-    //type_object->complete().struct_type().header().detail().ann_custom()...
     // TODO inheritance
-    //type_object->complete().struct_type().header().base_type()._d(EK_COMPLETE);
-    //type_object->complete().struct_type().header().base_type().equivalence_hash()[0..13];
+
 
     TypeIdentifier identifier;
     identifier._d(EK_COMPLETE);
@@ -5687,18 +5528,18 @@ const TypeObject* GetMinimalMapBadKeyStructObject()
     type_object->minimal().struct_type().struct_flags().IS_APPENDABLE(false);
     type_object->minimal().struct_type().struct_flags().IS_MUTABLE(false);
     type_object->minimal().struct_type().struct_flags().IS_NESTED(false);
-    type_object->minimal().struct_type().struct_flags().IS_AUTOID_HASH(false);
+    type_object->minimal().struct_type().struct_flags().IS_AUTOID_HASH(false); // Unsupported
 
     MemberId memberId = 0;
     MinimalStructMember mst_my_map;
     mst_my_map.common().member_id(memberId++);
-    mst_my_map.common().member_flags().TRY_CONSTRUCT1(false);
-    mst_my_map.common().member_flags().TRY_CONSTRUCT2(false);
-    mst_my_map.common().member_flags().IS_EXTERNAL(false);
+    mst_my_map.common().member_flags().TRY_CONSTRUCT1(false); // Unsupported
+    mst_my_map.common().member_flags().TRY_CONSTRUCT2(false); // Unsupported
+    mst_my_map.common().member_flags().IS_EXTERNAL(false); // Unsupported
     mst_my_map.common().member_flags().IS_OPTIONAL(false);
     mst_my_map.common().member_flags().IS_MUST_UNDERSTAND(false);
     mst_my_map.common().member_flags().IS_KEY(false);
-    mst_my_map.common().member_flags().IS_DEFAULT(false);
+    mst_my_map.common().member_flags().IS_DEFAULT(false); // Doesn't apply
     mst_my_map.common().member_type_id(*TypeObjectFactory::get_instance()->get_map_identifier("uint8_t", "int32_t", 2, false));
 
 
@@ -5758,34 +5599,30 @@ const TypeObject* GetCompleteMapBadKeyStructObject()
     type_object->complete().struct_type().struct_flags().IS_APPENDABLE(false);
     type_object->complete().struct_type().struct_flags().IS_MUTABLE(false);
     type_object->complete().struct_type().struct_flags().IS_NESTED(false);
-    type_object->complete().struct_type().struct_flags().IS_AUTOID_HASH(false);
+    type_object->complete().struct_type().struct_flags().IS_AUTOID_HASH(false); // Unsupported
 
     MemberId memberId = 0;
     CompleteStructMember cst_my_map;
     cst_my_map.common().member_id(memberId++);
-    cst_my_map.common().member_flags().TRY_CONSTRUCT1(false);
-    cst_my_map.common().member_flags().TRY_CONSTRUCT2(false);
-    cst_my_map.common().member_flags().IS_EXTERNAL(false);
+    cst_my_map.common().member_flags().TRY_CONSTRUCT1(false); // Unsupported
+    cst_my_map.common().member_flags().TRY_CONSTRUCT2(false); // Unsupported
+    cst_my_map.common().member_flags().IS_EXTERNAL(false); // Unsupported
     cst_my_map.common().member_flags().IS_OPTIONAL(false);
     cst_my_map.common().member_flags().IS_MUST_UNDERSTAND(false);
     cst_my_map.common().member_flags().IS_KEY(false);
-    cst_my_map.common().member_flags().IS_DEFAULT(false);
+    cst_my_map.common().member_flags().IS_DEFAULT(false); // Doesn't apply
     cst_my_map.common().member_type_id(*TypeObjectFactory::get_instance()->get_map_identifier("uint8_t", "int32_t", 2, true));
 
 
     cst_my_map.detail().name("my_map");
-    //cst_my_map.detail().ann_builtin()...
-    //cst_my_map.detail().ann_custom()...
+
     type_object->complete().struct_type().member_seq().emplace_back(cst_my_map);
 
 
     // Header
     type_object->complete().struct_type().header().detail().type_name("MapBadKeyStruct");
-    //type_object->complete().struct_type().header().detail().ann_builtin()...
-    //type_object->complete().struct_type().header().detail().ann_custom()...
     // TODO inheritance
-    //type_object->complete().struct_type().header().base_type()._d(EK_COMPLETE);
-    //type_object->complete().struct_type().header().base_type().equivalence_hash()[0..13];
+
 
     TypeIdentifier identifier;
     identifier._d(EK_COMPLETE);
@@ -5857,18 +5694,18 @@ const TypeObject* GetMinimalMapBadElemStructObject()
     type_object->minimal().struct_type().struct_flags().IS_APPENDABLE(false);
     type_object->minimal().struct_type().struct_flags().IS_MUTABLE(false);
     type_object->minimal().struct_type().struct_flags().IS_NESTED(false);
-    type_object->minimal().struct_type().struct_flags().IS_AUTOID_HASH(false);
+    type_object->minimal().struct_type().struct_flags().IS_AUTOID_HASH(false); // Unsupported
 
     MemberId memberId = 0;
     MinimalStructMember mst_my_map;
     mst_my_map.common().member_id(memberId++);
-    mst_my_map.common().member_flags().TRY_CONSTRUCT1(false);
-    mst_my_map.common().member_flags().TRY_CONSTRUCT2(false);
-    mst_my_map.common().member_flags().IS_EXTERNAL(false);
+    mst_my_map.common().member_flags().TRY_CONSTRUCT1(false); // Unsupported
+    mst_my_map.common().member_flags().TRY_CONSTRUCT2(false); // Unsupported
+    mst_my_map.common().member_flags().IS_EXTERNAL(false); // Unsupported
     mst_my_map.common().member_flags().IS_OPTIONAL(false);
     mst_my_map.common().member_flags().IS_MUST_UNDERSTAND(false);
     mst_my_map.common().member_flags().IS_KEY(false);
-    mst_my_map.common().member_flags().IS_DEFAULT(false);
+    mst_my_map.common().member_flags().IS_DEFAULT(false); // Doesn't apply
     mst_my_map.common().member_type_id(*TypeObjectFactory::get_instance()->get_map_identifier("int32_t", "int64_t", 2, false));
 
 
@@ -5928,34 +5765,30 @@ const TypeObject* GetCompleteMapBadElemStructObject()
     type_object->complete().struct_type().struct_flags().IS_APPENDABLE(false);
     type_object->complete().struct_type().struct_flags().IS_MUTABLE(false);
     type_object->complete().struct_type().struct_flags().IS_NESTED(false);
-    type_object->complete().struct_type().struct_flags().IS_AUTOID_HASH(false);
+    type_object->complete().struct_type().struct_flags().IS_AUTOID_HASH(false); // Unsupported
 
     MemberId memberId = 0;
     CompleteStructMember cst_my_map;
     cst_my_map.common().member_id(memberId++);
-    cst_my_map.common().member_flags().TRY_CONSTRUCT1(false);
-    cst_my_map.common().member_flags().TRY_CONSTRUCT2(false);
-    cst_my_map.common().member_flags().IS_EXTERNAL(false);
+    cst_my_map.common().member_flags().TRY_CONSTRUCT1(false); // Unsupported
+    cst_my_map.common().member_flags().TRY_CONSTRUCT2(false); // Unsupported
+    cst_my_map.common().member_flags().IS_EXTERNAL(false); // Unsupported
     cst_my_map.common().member_flags().IS_OPTIONAL(false);
     cst_my_map.common().member_flags().IS_MUST_UNDERSTAND(false);
     cst_my_map.common().member_flags().IS_KEY(false);
-    cst_my_map.common().member_flags().IS_DEFAULT(false);
+    cst_my_map.common().member_flags().IS_DEFAULT(false); // Doesn't apply
     cst_my_map.common().member_type_id(*TypeObjectFactory::get_instance()->get_map_identifier("int32_t", "int64_t", 2, true));
 
 
     cst_my_map.detail().name("my_map");
-    //cst_my_map.detail().ann_builtin()...
-    //cst_my_map.detail().ann_custom()...
+
     type_object->complete().struct_type().member_seq().emplace_back(cst_my_map);
 
 
     // Header
     type_object->complete().struct_type().header().detail().type_name("MapBadElemStruct");
-    //type_object->complete().struct_type().header().detail().ann_builtin()...
-    //type_object->complete().struct_type().header().detail().ann_custom()...
     // TODO inheritance
-    //type_object->complete().struct_type().header().base_type()._d(EK_COMPLETE);
-    //type_object->complete().struct_type().header().base_type().equivalence_hash()[0..13];
+
 
     TypeIdentifier identifier;
     identifier._d(EK_COMPLETE);
@@ -6027,18 +5860,18 @@ const TypeObject* GetMinimalMapBoundsStructObject()
     type_object->minimal().struct_type().struct_flags().IS_APPENDABLE(false);
     type_object->minimal().struct_type().struct_flags().IS_MUTABLE(false);
     type_object->minimal().struct_type().struct_flags().IS_NESTED(false);
-    type_object->minimal().struct_type().struct_flags().IS_AUTOID_HASH(false);
+    type_object->minimal().struct_type().struct_flags().IS_AUTOID_HASH(false); // Unsupported
 
     MemberId memberId = 0;
     MinimalStructMember mst_my_map;
     mst_my_map.common().member_id(memberId++);
-    mst_my_map.common().member_flags().TRY_CONSTRUCT1(false);
-    mst_my_map.common().member_flags().TRY_CONSTRUCT2(false);
-    mst_my_map.common().member_flags().IS_EXTERNAL(false);
+    mst_my_map.common().member_flags().TRY_CONSTRUCT1(false); // Unsupported
+    mst_my_map.common().member_flags().TRY_CONSTRUCT2(false); // Unsupported
+    mst_my_map.common().member_flags().IS_EXTERNAL(false); // Unsupported
     mst_my_map.common().member_flags().IS_OPTIONAL(false);
     mst_my_map.common().member_flags().IS_MUST_UNDERSTAND(false);
     mst_my_map.common().member_flags().IS_KEY(false);
-    mst_my_map.common().member_flags().IS_DEFAULT(false);
+    mst_my_map.common().member_flags().IS_DEFAULT(false); // Doesn't apply
     mst_my_map.common().member_type_id(*TypeObjectFactory::get_instance()->get_map_identifier("int32_t", "int32_t", 4, false));
 
 
@@ -6098,34 +5931,30 @@ const TypeObject* GetCompleteMapBoundsStructObject()
     type_object->complete().struct_type().struct_flags().IS_APPENDABLE(false);
     type_object->complete().struct_type().struct_flags().IS_MUTABLE(false);
     type_object->complete().struct_type().struct_flags().IS_NESTED(false);
-    type_object->complete().struct_type().struct_flags().IS_AUTOID_HASH(false);
+    type_object->complete().struct_type().struct_flags().IS_AUTOID_HASH(false); // Unsupported
 
     MemberId memberId = 0;
     CompleteStructMember cst_my_map;
     cst_my_map.common().member_id(memberId++);
-    cst_my_map.common().member_flags().TRY_CONSTRUCT1(false);
-    cst_my_map.common().member_flags().TRY_CONSTRUCT2(false);
-    cst_my_map.common().member_flags().IS_EXTERNAL(false);
+    cst_my_map.common().member_flags().TRY_CONSTRUCT1(false); // Unsupported
+    cst_my_map.common().member_flags().TRY_CONSTRUCT2(false); // Unsupported
+    cst_my_map.common().member_flags().IS_EXTERNAL(false); // Unsupported
     cst_my_map.common().member_flags().IS_OPTIONAL(false);
     cst_my_map.common().member_flags().IS_MUST_UNDERSTAND(false);
     cst_my_map.common().member_flags().IS_KEY(false);
-    cst_my_map.common().member_flags().IS_DEFAULT(false);
+    cst_my_map.common().member_flags().IS_DEFAULT(false); // Doesn't apply
     cst_my_map.common().member_type_id(*TypeObjectFactory::get_instance()->get_map_identifier("int32_t", "int32_t", 4, true));
 
 
     cst_my_map.detail().name("my_map");
-    //cst_my_map.detail().ann_builtin()...
-    //cst_my_map.detail().ann_custom()...
+
     type_object->complete().struct_type().member_seq().emplace_back(cst_my_map);
 
 
     // Header
     type_object->complete().struct_type().header().detail().type_name("MapBoundsStruct");
-    //type_object->complete().struct_type().header().detail().ann_builtin()...
-    //type_object->complete().struct_type().header().detail().ann_custom()...
     // TODO inheritance
-    //type_object->complete().struct_type().header().base_type()._d(EK_COMPLETE);
-    //type_object->complete().struct_type().header().base_type().equivalence_hash()[0..13];
+
 
     TypeIdentifier identifier;
     identifier._d(EK_COMPLETE);
@@ -6197,18 +6026,18 @@ const TypeObject* GetMinimalMapMapStructObject()
     type_object->minimal().struct_type().struct_flags().IS_APPENDABLE(false);
     type_object->minimal().struct_type().struct_flags().IS_MUTABLE(false);
     type_object->minimal().struct_type().struct_flags().IS_NESTED(false);
-    type_object->minimal().struct_type().struct_flags().IS_AUTOID_HASH(false);
+    type_object->minimal().struct_type().struct_flags().IS_AUTOID_HASH(false); // Unsupported
 
     MemberId memberId = 0;
     MinimalStructMember mst_my_map_map;
     mst_my_map_map.common().member_id(memberId++);
-    mst_my_map_map.common().member_flags().TRY_CONSTRUCT1(false);
-    mst_my_map_map.common().member_flags().TRY_CONSTRUCT2(false);
-    mst_my_map_map.common().member_flags().IS_EXTERNAL(false);
+    mst_my_map_map.common().member_flags().TRY_CONSTRUCT1(false); // Unsupported
+    mst_my_map_map.common().member_flags().TRY_CONSTRUCT2(false); // Unsupported
+    mst_my_map_map.common().member_flags().IS_EXTERNAL(false); // Unsupported
     mst_my_map_map.common().member_flags().IS_OPTIONAL(false);
     mst_my_map_map.common().member_flags().IS_MUST_UNDERSTAND(false);
     mst_my_map_map.common().member_flags().IS_KEY(false);
-    mst_my_map_map.common().member_flags().IS_DEFAULT(false);
+    mst_my_map_map.common().member_flags().IS_DEFAULT(false); // Doesn't apply
     mst_my_map_map.common().member_type_id(*TypeObjectFactory::get_instance()->get_map_identifier("int32_t", TypeNamesGenerator::get_map_type_name("int32_t", "int32_t", 2), 2, false));
 
 
@@ -6268,34 +6097,30 @@ const TypeObject* GetCompleteMapMapStructObject()
     type_object->complete().struct_type().struct_flags().IS_APPENDABLE(false);
     type_object->complete().struct_type().struct_flags().IS_MUTABLE(false);
     type_object->complete().struct_type().struct_flags().IS_NESTED(false);
-    type_object->complete().struct_type().struct_flags().IS_AUTOID_HASH(false);
+    type_object->complete().struct_type().struct_flags().IS_AUTOID_HASH(false); // Unsupported
 
     MemberId memberId = 0;
     CompleteStructMember cst_my_map_map;
     cst_my_map_map.common().member_id(memberId++);
-    cst_my_map_map.common().member_flags().TRY_CONSTRUCT1(false);
-    cst_my_map_map.common().member_flags().TRY_CONSTRUCT2(false);
-    cst_my_map_map.common().member_flags().IS_EXTERNAL(false);
+    cst_my_map_map.common().member_flags().TRY_CONSTRUCT1(false); // Unsupported
+    cst_my_map_map.common().member_flags().TRY_CONSTRUCT2(false); // Unsupported
+    cst_my_map_map.common().member_flags().IS_EXTERNAL(false); // Unsupported
     cst_my_map_map.common().member_flags().IS_OPTIONAL(false);
     cst_my_map_map.common().member_flags().IS_MUST_UNDERSTAND(false);
     cst_my_map_map.common().member_flags().IS_KEY(false);
-    cst_my_map_map.common().member_flags().IS_DEFAULT(false);
+    cst_my_map_map.common().member_flags().IS_DEFAULT(false); // Doesn't apply
     cst_my_map_map.common().member_type_id(*TypeObjectFactory::get_instance()->get_map_identifier("int32_t", TypeNamesGenerator::get_map_type_name("int32_t", "int32_t", 2), 2, true));
 
 
     cst_my_map_map.detail().name("my_map_map");
-    //cst_my_map_map.detail().ann_builtin()...
-    //cst_my_map_map.detail().ann_custom()...
+
     type_object->complete().struct_type().member_seq().emplace_back(cst_my_map_map);
 
 
     // Header
     type_object->complete().struct_type().header().detail().type_name("MapMapStruct");
-    //type_object->complete().struct_type().header().detail().ann_builtin()...
-    //type_object->complete().struct_type().header().detail().ann_custom()...
     // TODO inheritance
-    //type_object->complete().struct_type().header().base_type()._d(EK_COMPLETE);
-    //type_object->complete().struct_type().header().base_type().equivalence_hash()[0..13];
+
 
     TypeIdentifier identifier;
     identifier._d(EK_COMPLETE);
@@ -6367,18 +6192,18 @@ const TypeObject* GetMinimalMapMapBoundsStructObject()
     type_object->minimal().struct_type().struct_flags().IS_APPENDABLE(false);
     type_object->minimal().struct_type().struct_flags().IS_MUTABLE(false);
     type_object->minimal().struct_type().struct_flags().IS_NESTED(false);
-    type_object->minimal().struct_type().struct_flags().IS_AUTOID_HASH(false);
+    type_object->minimal().struct_type().struct_flags().IS_AUTOID_HASH(false); // Unsupported
 
     MemberId memberId = 0;
     MinimalStructMember mst_my_map_map;
     mst_my_map_map.common().member_id(memberId++);
-    mst_my_map_map.common().member_flags().TRY_CONSTRUCT1(false);
-    mst_my_map_map.common().member_flags().TRY_CONSTRUCT2(false);
-    mst_my_map_map.common().member_flags().IS_EXTERNAL(false);
+    mst_my_map_map.common().member_flags().TRY_CONSTRUCT1(false); // Unsupported
+    mst_my_map_map.common().member_flags().TRY_CONSTRUCT2(false); // Unsupported
+    mst_my_map_map.common().member_flags().IS_EXTERNAL(false); // Unsupported
     mst_my_map_map.common().member_flags().IS_OPTIONAL(false);
     mst_my_map_map.common().member_flags().IS_MUST_UNDERSTAND(false);
     mst_my_map_map.common().member_flags().IS_KEY(false);
-    mst_my_map_map.common().member_flags().IS_DEFAULT(false);
+    mst_my_map_map.common().member_flags().IS_DEFAULT(false); // Doesn't apply
     mst_my_map_map.common().member_type_id(*TypeObjectFactory::get_instance()->get_map_identifier("int32_t", TypeNamesGenerator::get_map_type_name("int32_t", "int32_t", 3), 3, false));
 
 
@@ -6438,34 +6263,30 @@ const TypeObject* GetCompleteMapMapBoundsStructObject()
     type_object->complete().struct_type().struct_flags().IS_APPENDABLE(false);
     type_object->complete().struct_type().struct_flags().IS_MUTABLE(false);
     type_object->complete().struct_type().struct_flags().IS_NESTED(false);
-    type_object->complete().struct_type().struct_flags().IS_AUTOID_HASH(false);
+    type_object->complete().struct_type().struct_flags().IS_AUTOID_HASH(false); // Unsupported
 
     MemberId memberId = 0;
     CompleteStructMember cst_my_map_map;
     cst_my_map_map.common().member_id(memberId++);
-    cst_my_map_map.common().member_flags().TRY_CONSTRUCT1(false);
-    cst_my_map_map.common().member_flags().TRY_CONSTRUCT2(false);
-    cst_my_map_map.common().member_flags().IS_EXTERNAL(false);
+    cst_my_map_map.common().member_flags().TRY_CONSTRUCT1(false); // Unsupported
+    cst_my_map_map.common().member_flags().TRY_CONSTRUCT2(false); // Unsupported
+    cst_my_map_map.common().member_flags().IS_EXTERNAL(false); // Unsupported
     cst_my_map_map.common().member_flags().IS_OPTIONAL(false);
     cst_my_map_map.common().member_flags().IS_MUST_UNDERSTAND(false);
     cst_my_map_map.common().member_flags().IS_KEY(false);
-    cst_my_map_map.common().member_flags().IS_DEFAULT(false);
+    cst_my_map_map.common().member_flags().IS_DEFAULT(false); // Doesn't apply
     cst_my_map_map.common().member_type_id(*TypeObjectFactory::get_instance()->get_map_identifier("int32_t", TypeNamesGenerator::get_map_type_name("int32_t", "int32_t", 3), 3, true));
 
 
     cst_my_map_map.detail().name("my_map_map");
-    //cst_my_map_map.detail().ann_builtin()...
-    //cst_my_map_map.detail().ann_custom()...
+
     type_object->complete().struct_type().member_seq().emplace_back(cst_my_map_map);
 
 
     // Header
     type_object->complete().struct_type().header().detail().type_name("MapMapBoundsStruct");
-    //type_object->complete().struct_type().header().detail().ann_builtin()...
-    //type_object->complete().struct_type().header().detail().ann_custom()...
     // TODO inheritance
-    //type_object->complete().struct_type().header().base_type()._d(EK_COMPLETE);
-    //type_object->complete().struct_type().header().base_type().equivalence_hash()[0..13];
+
 
     TypeIdentifier identifier;
     identifier._d(EK_COMPLETE);
@@ -6537,36 +6358,29 @@ const TypeObject* GetMinimalSimpleUnionObject()
     type_object->minimal().union_type().union_flags().IS_APPENDABLE(false);
     type_object->minimal().union_type().union_flags().IS_MUTABLE(false);
     type_object->minimal().union_type().union_flags().IS_NESTED(false);
-    type_object->minimal().union_type().union_flags().IS_AUTOID_HASH(false);
+    type_object->minimal().union_type().union_flags().IS_AUTOID_HASH(false); // Unsupported
 
-    type_object->minimal().union_type().discriminator().common().member_flags().TRY_CONSTRUCT1(false);
-    type_object->minimal().union_type().discriminator().common().member_flags().TRY_CONSTRUCT2(false);
-    type_object->minimal().union_type().discriminator().common().member_flags().IS_EXTERNAL(false);
-    type_object->minimal().union_type().discriminator().common().member_flags().IS_OPTIONAL(false);
-    type_object->minimal().union_type().discriminator().common().member_flags().IS_MUST_UNDERSTAND(false);
-    type_object->minimal().union_type().discriminator().common().member_flags().IS_KEY(false);
-    type_object->minimal().union_type().discriminator().common().member_flags().IS_DEFAULT(false);
+    type_object->minimal().union_type().discriminator().common().member_flags().TRY_CONSTRUCT1(false); // Unsupported
+    type_object->minimal().union_type().discriminator().common().member_flags().TRY_CONSTRUCT2(false); // Unsupported
+    type_object->minimal().union_type().discriminator().common().member_flags().IS_EXTERNAL(false); // Doesn't apply
+    type_object->minimal().union_type().discriminator().common().member_flags().IS_OPTIONAL(false); // Doesn't apply
+    type_object->minimal().union_type().discriminator().common().member_flags().IS_MUST_UNDERSTAND(false); // Doesn't apply
+    type_object->minimal().union_type().discriminator().common().member_flags().IS_KEY(false); // Unsupported
+    type_object->minimal().union_type().discriminator().common().member_flags().IS_DEFAULT(false); // Doesn't apply
 
     type_object->minimal().union_type().discriminator().common().type_id(*TypeObjectFactory::get_instance()->get_type_identifier("int32_t", false));
 
     MemberId memberId = 0;
     MinimalUnionMember mst_first;
     mst_first.common().member_id(memberId++);
-    mst_first.common().member_flags().TRY_CONSTRUCT1(false);
-    mst_first.common().member_flags().TRY_CONSTRUCT2(false);
-    mst_first.common().member_flags().IS_EXTERNAL(false);
-    mst_first.common().member_flags().IS_OPTIONAL(false);
-    mst_first.common().member_flags().IS_MUST_UNDERSTAND(false);
-    mst_first.common().member_flags().IS_KEY(false);
+    mst_first.common().member_flags().TRY_CONSTRUCT1(false); // Unsupported
+    mst_first.common().member_flags().TRY_CONSTRUCT2(false); // Unsupported
+    mst_first.common().member_flags().IS_EXTERNAL(false); // Unsupported
+    mst_first.common().member_flags().IS_OPTIONAL(false); // Doesn't apply
+    mst_first.common().member_flags().IS_MUST_UNDERSTAND(false); // Doesn't apply
+    mst_first.common().member_flags().IS_KEY(false); // Doesn't apply
     mst_first.common().member_flags().IS_DEFAULT(false);
-    {
-        std::string cppType = "int32_t";
-        if (cppType == "long double")
-        {
-            cppType = "longdouble";
-        }
-        mst_first.common().type_id(*TypeObjectFactory::get_instance()->get_type_identifier(cppType, false));
-    }
+    mst_first.common().type_id(*TypeObjectFactory::get_instance()->get_type_identifier("int32_t", false));
 
     mst_first.common().label_seq().emplace_back(A);
     MD5 first_hash("first");
@@ -6578,21 +6392,14 @@ const TypeObject* GetMinimalSimpleUnionObject()
 
     MinimalUnionMember mst_second;
     mst_second.common().member_id(memberId++);
-    mst_second.common().member_flags().TRY_CONSTRUCT1(false);
-    mst_second.common().member_flags().TRY_CONSTRUCT2(false);
-    mst_second.common().member_flags().IS_EXTERNAL(false);
-    mst_second.common().member_flags().IS_OPTIONAL(false);
-    mst_second.common().member_flags().IS_MUST_UNDERSTAND(false);
-    mst_second.common().member_flags().IS_KEY(false);
+    mst_second.common().member_flags().TRY_CONSTRUCT1(false); // Unsupported
+    mst_second.common().member_flags().TRY_CONSTRUCT2(false); // Unsupported
+    mst_second.common().member_flags().IS_EXTERNAL(false); // Unsupported
+    mst_second.common().member_flags().IS_OPTIONAL(false); // Doesn't apply
+    mst_second.common().member_flags().IS_MUST_UNDERSTAND(false); // Doesn't apply
+    mst_second.common().member_flags().IS_KEY(false); // Doesn't apply
     mst_second.common().member_flags().IS_DEFAULT(false);
-    {
-        std::string cppType = "int64_t";
-        if (cppType == "long double")
-        {
-            cppType = "longdouble";
-        }
-        mst_second.common().type_id(*TypeObjectFactory::get_instance()->get_type_identifier(cppType, false));
-    }
+    mst_second.common().type_id(*TypeObjectFactory::get_instance()->get_type_identifier("int64_t", false));
 
     mst_second.common().label_seq().emplace_back(B);
     MD5 second_hash("second");
@@ -6650,77 +6457,54 @@ const TypeObject* GetCompleteSimpleUnionObject()
     type_object->complete().union_type().union_flags().IS_APPENDABLE(false);
     type_object->complete().union_type().union_flags().IS_MUTABLE(false);
     type_object->complete().union_type().union_flags().IS_NESTED(false);
-    type_object->complete().union_type().union_flags().IS_AUTOID_HASH(false);
+    type_object->complete().union_type().union_flags().IS_AUTOID_HASH(false); // Unsupported
 
-    //type_object->complete().union_type().discriminator().ann_builtin()...
-    //type_object->complete().union_type().discriminator().ann_custom()...
-    type_object->complete().union_type().discriminator().common().member_flags().TRY_CONSTRUCT1(false);
-    type_object->complete().union_type().discriminator().common().member_flags().TRY_CONSTRUCT2(false);
-    type_object->complete().union_type().discriminator().common().member_flags().IS_EXTERNAL(false);
-    type_object->complete().union_type().discriminator().common().member_flags().IS_OPTIONAL(false);
-    type_object->complete().union_type().discriminator().common().member_flags().IS_MUST_UNDERSTAND(false);
-    type_object->complete().union_type().discriminator().common().member_flags().IS_KEY(false);
-    type_object->complete().union_type().discriminator().common().member_flags().IS_DEFAULT(false);
+    type_object->complete().union_type().discriminator().common().member_flags().TRY_CONSTRUCT1(false); // Unsupported
+    type_object->complete().union_type().discriminator().common().member_flags().TRY_CONSTRUCT2(false); // Unsupported
+    type_object->complete().union_type().discriminator().common().member_flags().IS_EXTERNAL(false); // Doesn't apply
+    type_object->complete().union_type().discriminator().common().member_flags().IS_OPTIONAL(false); // Doesn't apply
+    type_object->complete().union_type().discriminator().common().member_flags().IS_MUST_UNDERSTAND(false); // Doesn't apply
+    type_object->complete().union_type().discriminator().common().member_flags().IS_KEY(false); // Unsupported
+    type_object->complete().union_type().discriminator().common().member_flags().IS_DEFAULT(false); // Doesn't apply
 
     type_object->complete().union_type().discriminator().common().type_id(*TypeObjectFactory::get_instance()->get_type_identifier("int32_t", false));
+
 
     MemberId memberId = 0;
     CompleteUnionMember cst_first;
     cst_first.common().member_id(memberId++);
-    cst_first.common().member_flags().TRY_CONSTRUCT1(false);
-    cst_first.common().member_flags().TRY_CONSTRUCT2(false);
-    cst_first.common().member_flags().IS_EXTERNAL(false);
-    cst_first.common().member_flags().IS_OPTIONAL(false);
-    cst_first.common().member_flags().IS_MUST_UNDERSTAND(false);
-    cst_first.common().member_flags().IS_KEY(false);
+    cst_first.common().member_flags().TRY_CONSTRUCT1(false); // Unsupported
+    cst_first.common().member_flags().TRY_CONSTRUCT2(false); // Unsupported
+    cst_first.common().member_flags().IS_EXTERNAL(false); // Unsupported
+    cst_first.common().member_flags().IS_OPTIONAL(false); // Doesn't apply
+    cst_first.common().member_flags().IS_MUST_UNDERSTAND(false); // Doesn't apply
+    cst_first.common().member_flags().IS_KEY(false); // Doesn't apply
     cst_first.common().member_flags().IS_DEFAULT(false);
-    {
-        std::string cppType = "int32_t";
-        if (cppType == "long double")
-        {
-            cppType = "longdouble";
-        }
-        cst_first.common().type_id(*TypeObjectFactory::get_instance()->get_type_identifier(cppType, false));
-    }
-
+    cst_first.common().type_id(*TypeObjectFactory::get_instance()->get_type_identifier("int32_t", false));
     cst_first.common().label_seq().emplace_back(A);
 
     cst_first.detail().name("first");
-    //cst_first.detail().ann_builtin()...
-    //cst_first.detail().ann_custom()...
 
     type_object->complete().union_type().member_seq().emplace_back(cst_first);
 
     CompleteUnionMember cst_second;
     cst_second.common().member_id(memberId++);
-    cst_second.common().member_flags().TRY_CONSTRUCT1(false);
-    cst_second.common().member_flags().TRY_CONSTRUCT2(false);
-    cst_second.common().member_flags().IS_EXTERNAL(false);
-    cst_second.common().member_flags().IS_OPTIONAL(false);
-    cst_second.common().member_flags().IS_MUST_UNDERSTAND(false);
-    cst_second.common().member_flags().IS_KEY(false);
+    cst_second.common().member_flags().TRY_CONSTRUCT1(false); // Unsupported
+    cst_second.common().member_flags().TRY_CONSTRUCT2(false); // Unsupported
+    cst_second.common().member_flags().IS_EXTERNAL(false); // Unsupported
+    cst_second.common().member_flags().IS_OPTIONAL(false); // Doesn't apply
+    cst_second.common().member_flags().IS_MUST_UNDERSTAND(false); // Doesn't apply
+    cst_second.common().member_flags().IS_KEY(false); // Doesn't apply
     cst_second.common().member_flags().IS_DEFAULT(false);
-    {
-        std::string cppType = "int64_t";
-        if (cppType == "long double")
-        {
-            cppType = "longdouble";
-        }
-        cst_second.common().type_id(*TypeObjectFactory::get_instance()->get_type_identifier(cppType, false));
-    }
-
+    cst_second.common().type_id(*TypeObjectFactory::get_instance()->get_type_identifier("int64_t", false));
     cst_second.common().label_seq().emplace_back(B);
 
     cst_second.detail().name("second");
-    //cst_second.detail().ann_builtin()...
-    //cst_second.detail().ann_custom()...
 
     type_object->complete().union_type().member_seq().emplace_back(cst_second);
 
 
     // Header
-    //type_object->complete().union_type().header().detail().ann_builtin()..
-    //type_object->complete().union_type().header().detail().ann_builtin()..
     type_object->complete().union_type().header().detail().type_name("SimpleUnion");
 
 
@@ -6795,36 +6579,29 @@ const TypeObject* GetMinimalSimpleUnionNamesObject()
     type_object->minimal().union_type().union_flags().IS_APPENDABLE(false);
     type_object->minimal().union_type().union_flags().IS_MUTABLE(false);
     type_object->minimal().union_type().union_flags().IS_NESTED(false);
-    type_object->minimal().union_type().union_flags().IS_AUTOID_HASH(false);
+    type_object->minimal().union_type().union_flags().IS_AUTOID_HASH(false); // Unsupported
 
-    type_object->minimal().union_type().discriminator().common().member_flags().TRY_CONSTRUCT1(false);
-    type_object->minimal().union_type().discriminator().common().member_flags().TRY_CONSTRUCT2(false);
-    type_object->minimal().union_type().discriminator().common().member_flags().IS_EXTERNAL(false);
-    type_object->minimal().union_type().discriminator().common().member_flags().IS_OPTIONAL(false);
-    type_object->minimal().union_type().discriminator().common().member_flags().IS_MUST_UNDERSTAND(false);
-    type_object->minimal().union_type().discriminator().common().member_flags().IS_KEY(false);
-    type_object->minimal().union_type().discriminator().common().member_flags().IS_DEFAULT(false);
+    type_object->minimal().union_type().discriminator().common().member_flags().TRY_CONSTRUCT1(false); // Unsupported
+    type_object->minimal().union_type().discriminator().common().member_flags().TRY_CONSTRUCT2(false); // Unsupported
+    type_object->minimal().union_type().discriminator().common().member_flags().IS_EXTERNAL(false); // Doesn't apply
+    type_object->minimal().union_type().discriminator().common().member_flags().IS_OPTIONAL(false); // Doesn't apply
+    type_object->minimal().union_type().discriminator().common().member_flags().IS_MUST_UNDERSTAND(false); // Doesn't apply
+    type_object->minimal().union_type().discriminator().common().member_flags().IS_KEY(false); // Unsupported
+    type_object->minimal().union_type().discriminator().common().member_flags().IS_DEFAULT(false); // Doesn't apply
 
     type_object->minimal().union_type().discriminator().common().type_id(*TypeObjectFactory::get_instance()->get_type_identifier("int32_t", false));
 
     MemberId memberId = 0;
     MinimalUnionMember mst_first_case;
     mst_first_case.common().member_id(memberId++);
-    mst_first_case.common().member_flags().TRY_CONSTRUCT1(false);
-    mst_first_case.common().member_flags().TRY_CONSTRUCT2(false);
-    mst_first_case.common().member_flags().IS_EXTERNAL(false);
-    mst_first_case.common().member_flags().IS_OPTIONAL(false);
-    mst_first_case.common().member_flags().IS_MUST_UNDERSTAND(false);
-    mst_first_case.common().member_flags().IS_KEY(false);
+    mst_first_case.common().member_flags().TRY_CONSTRUCT1(false); // Unsupported
+    mst_first_case.common().member_flags().TRY_CONSTRUCT2(false); // Unsupported
+    mst_first_case.common().member_flags().IS_EXTERNAL(false); // Unsupported
+    mst_first_case.common().member_flags().IS_OPTIONAL(false); // Doesn't apply
+    mst_first_case.common().member_flags().IS_MUST_UNDERSTAND(false); // Doesn't apply
+    mst_first_case.common().member_flags().IS_KEY(false); // Doesn't apply
     mst_first_case.common().member_flags().IS_DEFAULT(false);
-    {
-        std::string cppType = "int32_t";
-        if (cppType == "long double")
-        {
-            cppType = "longdouble";
-        }
-        mst_first_case.common().type_id(*TypeObjectFactory::get_instance()->get_type_identifier(cppType, false));
-    }
+    mst_first_case.common().type_id(*TypeObjectFactory::get_instance()->get_type_identifier("int32_t", false));
 
     mst_first_case.common().label_seq().emplace_back(A);
     MD5 first_case_hash("first_case");
@@ -6836,21 +6613,14 @@ const TypeObject* GetMinimalSimpleUnionNamesObject()
 
     MinimalUnionMember mst_second_case;
     mst_second_case.common().member_id(memberId++);
-    mst_second_case.common().member_flags().TRY_CONSTRUCT1(false);
-    mst_second_case.common().member_flags().TRY_CONSTRUCT2(false);
-    mst_second_case.common().member_flags().IS_EXTERNAL(false);
-    mst_second_case.common().member_flags().IS_OPTIONAL(false);
-    mst_second_case.common().member_flags().IS_MUST_UNDERSTAND(false);
-    mst_second_case.common().member_flags().IS_KEY(false);
+    mst_second_case.common().member_flags().TRY_CONSTRUCT1(false); // Unsupported
+    mst_second_case.common().member_flags().TRY_CONSTRUCT2(false); // Unsupported
+    mst_second_case.common().member_flags().IS_EXTERNAL(false); // Unsupported
+    mst_second_case.common().member_flags().IS_OPTIONAL(false); // Doesn't apply
+    mst_second_case.common().member_flags().IS_MUST_UNDERSTAND(false); // Doesn't apply
+    mst_second_case.common().member_flags().IS_KEY(false); // Doesn't apply
     mst_second_case.common().member_flags().IS_DEFAULT(false);
-    {
-        std::string cppType = "int64_t";
-        if (cppType == "long double")
-        {
-            cppType = "longdouble";
-        }
-        mst_second_case.common().type_id(*TypeObjectFactory::get_instance()->get_type_identifier(cppType, false));
-    }
+    mst_second_case.common().type_id(*TypeObjectFactory::get_instance()->get_type_identifier("int64_t", false));
 
     mst_second_case.common().label_seq().emplace_back(B);
     MD5 second_case_hash("second_case");
@@ -6908,77 +6678,54 @@ const TypeObject* GetCompleteSimpleUnionNamesObject()
     type_object->complete().union_type().union_flags().IS_APPENDABLE(false);
     type_object->complete().union_type().union_flags().IS_MUTABLE(false);
     type_object->complete().union_type().union_flags().IS_NESTED(false);
-    type_object->complete().union_type().union_flags().IS_AUTOID_HASH(false);
+    type_object->complete().union_type().union_flags().IS_AUTOID_HASH(false); // Unsupported
 
-    //type_object->complete().union_type().discriminator().ann_builtin()...
-    //type_object->complete().union_type().discriminator().ann_custom()...
-    type_object->complete().union_type().discriminator().common().member_flags().TRY_CONSTRUCT1(false);
-    type_object->complete().union_type().discriminator().common().member_flags().TRY_CONSTRUCT2(false);
-    type_object->complete().union_type().discriminator().common().member_flags().IS_EXTERNAL(false);
-    type_object->complete().union_type().discriminator().common().member_flags().IS_OPTIONAL(false);
-    type_object->complete().union_type().discriminator().common().member_flags().IS_MUST_UNDERSTAND(false);
-    type_object->complete().union_type().discriminator().common().member_flags().IS_KEY(false);
-    type_object->complete().union_type().discriminator().common().member_flags().IS_DEFAULT(false);
+    type_object->complete().union_type().discriminator().common().member_flags().TRY_CONSTRUCT1(false); // Unsupported
+    type_object->complete().union_type().discriminator().common().member_flags().TRY_CONSTRUCT2(false); // Unsupported
+    type_object->complete().union_type().discriminator().common().member_flags().IS_EXTERNAL(false); // Doesn't apply
+    type_object->complete().union_type().discriminator().common().member_flags().IS_OPTIONAL(false); // Doesn't apply
+    type_object->complete().union_type().discriminator().common().member_flags().IS_MUST_UNDERSTAND(false); // Doesn't apply
+    type_object->complete().union_type().discriminator().common().member_flags().IS_KEY(false); // Unsupported
+    type_object->complete().union_type().discriminator().common().member_flags().IS_DEFAULT(false); // Doesn't apply
 
     type_object->complete().union_type().discriminator().common().type_id(*TypeObjectFactory::get_instance()->get_type_identifier("int32_t", false));
+
 
     MemberId memberId = 0;
     CompleteUnionMember cst_first_case;
     cst_first_case.common().member_id(memberId++);
-    cst_first_case.common().member_flags().TRY_CONSTRUCT1(false);
-    cst_first_case.common().member_flags().TRY_CONSTRUCT2(false);
-    cst_first_case.common().member_flags().IS_EXTERNAL(false);
-    cst_first_case.common().member_flags().IS_OPTIONAL(false);
-    cst_first_case.common().member_flags().IS_MUST_UNDERSTAND(false);
-    cst_first_case.common().member_flags().IS_KEY(false);
+    cst_first_case.common().member_flags().TRY_CONSTRUCT1(false); // Unsupported
+    cst_first_case.common().member_flags().TRY_CONSTRUCT2(false); // Unsupported
+    cst_first_case.common().member_flags().IS_EXTERNAL(false); // Unsupported
+    cst_first_case.common().member_flags().IS_OPTIONAL(false); // Doesn't apply
+    cst_first_case.common().member_flags().IS_MUST_UNDERSTAND(false); // Doesn't apply
+    cst_first_case.common().member_flags().IS_KEY(false); // Doesn't apply
     cst_first_case.common().member_flags().IS_DEFAULT(false);
-    {
-        std::string cppType = "int32_t";
-        if (cppType == "long double")
-        {
-            cppType = "longdouble";
-        }
-        cst_first_case.common().type_id(*TypeObjectFactory::get_instance()->get_type_identifier(cppType, false));
-    }
-
+    cst_first_case.common().type_id(*TypeObjectFactory::get_instance()->get_type_identifier("int32_t", false));
     cst_first_case.common().label_seq().emplace_back(A);
 
     cst_first_case.detail().name("first_case");
-    //cst_first_case.detail().ann_builtin()...
-    //cst_first_case.detail().ann_custom()...
 
     type_object->complete().union_type().member_seq().emplace_back(cst_first_case);
 
     CompleteUnionMember cst_second_case;
     cst_second_case.common().member_id(memberId++);
-    cst_second_case.common().member_flags().TRY_CONSTRUCT1(false);
-    cst_second_case.common().member_flags().TRY_CONSTRUCT2(false);
-    cst_second_case.common().member_flags().IS_EXTERNAL(false);
-    cst_second_case.common().member_flags().IS_OPTIONAL(false);
-    cst_second_case.common().member_flags().IS_MUST_UNDERSTAND(false);
-    cst_second_case.common().member_flags().IS_KEY(false);
+    cst_second_case.common().member_flags().TRY_CONSTRUCT1(false); // Unsupported
+    cst_second_case.common().member_flags().TRY_CONSTRUCT2(false); // Unsupported
+    cst_second_case.common().member_flags().IS_EXTERNAL(false); // Unsupported
+    cst_second_case.common().member_flags().IS_OPTIONAL(false); // Doesn't apply
+    cst_second_case.common().member_flags().IS_MUST_UNDERSTAND(false); // Doesn't apply
+    cst_second_case.common().member_flags().IS_KEY(false); // Doesn't apply
     cst_second_case.common().member_flags().IS_DEFAULT(false);
-    {
-        std::string cppType = "int64_t";
-        if (cppType == "long double")
-        {
-            cppType = "longdouble";
-        }
-        cst_second_case.common().type_id(*TypeObjectFactory::get_instance()->get_type_identifier(cppType, false));
-    }
-
+    cst_second_case.common().type_id(*TypeObjectFactory::get_instance()->get_type_identifier("int64_t", false));
     cst_second_case.common().label_seq().emplace_back(B);
 
     cst_second_case.detail().name("second_case");
-    //cst_second_case.detail().ann_builtin()...
-    //cst_second_case.detail().ann_custom()...
 
     type_object->complete().union_type().member_seq().emplace_back(cst_second_case);
 
 
     // Header
-    //type_object->complete().union_type().header().detail().ann_builtin()..
-    //type_object->complete().union_type().header().detail().ann_builtin()..
     type_object->complete().union_type().header().detail().type_name("SimpleUnionNames");
 
 
@@ -7053,36 +6800,29 @@ const TypeObject* GetMinimalSimpleTypeUnionObject()
     type_object->minimal().union_type().union_flags().IS_APPENDABLE(false);
     type_object->minimal().union_type().union_flags().IS_MUTABLE(false);
     type_object->minimal().union_type().union_flags().IS_NESTED(false);
-    type_object->minimal().union_type().union_flags().IS_AUTOID_HASH(false);
+    type_object->minimal().union_type().union_flags().IS_AUTOID_HASH(false); // Unsupported
 
-    type_object->minimal().union_type().discriminator().common().member_flags().TRY_CONSTRUCT1(false);
-    type_object->minimal().union_type().discriminator().common().member_flags().TRY_CONSTRUCT2(false);
-    type_object->minimal().union_type().discriminator().common().member_flags().IS_EXTERNAL(false);
-    type_object->minimal().union_type().discriminator().common().member_flags().IS_OPTIONAL(false);
-    type_object->minimal().union_type().discriminator().common().member_flags().IS_MUST_UNDERSTAND(false);
-    type_object->minimal().union_type().discriminator().common().member_flags().IS_KEY(false);
-    type_object->minimal().union_type().discriminator().common().member_flags().IS_DEFAULT(false);
+    type_object->minimal().union_type().discriminator().common().member_flags().TRY_CONSTRUCT1(false); // Unsupported
+    type_object->minimal().union_type().discriminator().common().member_flags().TRY_CONSTRUCT2(false); // Unsupported
+    type_object->minimal().union_type().discriminator().common().member_flags().IS_EXTERNAL(false); // Doesn't apply
+    type_object->minimal().union_type().discriminator().common().member_flags().IS_OPTIONAL(false); // Doesn't apply
+    type_object->minimal().union_type().discriminator().common().member_flags().IS_MUST_UNDERSTAND(false); // Doesn't apply
+    type_object->minimal().union_type().discriminator().common().member_flags().IS_KEY(false); // Unsupported
+    type_object->minimal().union_type().discriminator().common().member_flags().IS_DEFAULT(false); // Doesn't apply
 
     type_object->minimal().union_type().discriminator().common().type_id(*TypeObjectFactory::get_instance()->get_type_identifier("int32_t", false));
 
     MemberId memberId = 0;
     MinimalUnionMember mst_first;
     mst_first.common().member_id(memberId++);
-    mst_first.common().member_flags().TRY_CONSTRUCT1(false);
-    mst_first.common().member_flags().TRY_CONSTRUCT2(false);
-    mst_first.common().member_flags().IS_EXTERNAL(false);
-    mst_first.common().member_flags().IS_OPTIONAL(false);
-    mst_first.common().member_flags().IS_MUST_UNDERSTAND(false);
-    mst_first.common().member_flags().IS_KEY(false);
+    mst_first.common().member_flags().TRY_CONSTRUCT1(false); // Unsupported
+    mst_first.common().member_flags().TRY_CONSTRUCT2(false); // Unsupported
+    mst_first.common().member_flags().IS_EXTERNAL(false); // Unsupported
+    mst_first.common().member_flags().IS_OPTIONAL(false); // Doesn't apply
+    mst_first.common().member_flags().IS_MUST_UNDERSTAND(false); // Doesn't apply
+    mst_first.common().member_flags().IS_KEY(false); // Doesn't apply
     mst_first.common().member_flags().IS_DEFAULT(false);
-    {
-        std::string cppType = "uint8_t";
-        if (cppType == "long double")
-        {
-            cppType = "longdouble";
-        }
-        mst_first.common().type_id(*TypeObjectFactory::get_instance()->get_type_identifier(cppType, false));
-    }
+    mst_first.common().type_id(*TypeObjectFactory::get_instance()->get_type_identifier("uint8_t", false));
 
     mst_first.common().label_seq().emplace_back(A);
     MD5 first_hash("first");
@@ -7094,21 +6834,14 @@ const TypeObject* GetMinimalSimpleTypeUnionObject()
 
     MinimalUnionMember mst_second;
     mst_second.common().member_id(memberId++);
-    mst_second.common().member_flags().TRY_CONSTRUCT1(false);
-    mst_second.common().member_flags().TRY_CONSTRUCT2(false);
-    mst_second.common().member_flags().IS_EXTERNAL(false);
-    mst_second.common().member_flags().IS_OPTIONAL(false);
-    mst_second.common().member_flags().IS_MUST_UNDERSTAND(false);
-    mst_second.common().member_flags().IS_KEY(false);
+    mst_second.common().member_flags().TRY_CONSTRUCT1(false); // Unsupported
+    mst_second.common().member_flags().TRY_CONSTRUCT2(false); // Unsupported
+    mst_second.common().member_flags().IS_EXTERNAL(false); // Unsupported
+    mst_second.common().member_flags().IS_OPTIONAL(false); // Doesn't apply
+    mst_second.common().member_flags().IS_MUST_UNDERSTAND(false); // Doesn't apply
+    mst_second.common().member_flags().IS_KEY(false); // Doesn't apply
     mst_second.common().member_flags().IS_DEFAULT(false);
-    {
-        std::string cppType = "int64_t";
-        if (cppType == "long double")
-        {
-            cppType = "longdouble";
-        }
-        mst_second.common().type_id(*TypeObjectFactory::get_instance()->get_type_identifier(cppType, false));
-    }
+    mst_second.common().type_id(*TypeObjectFactory::get_instance()->get_type_identifier("int64_t", false));
 
     mst_second.common().label_seq().emplace_back(B);
     MD5 second_hash("second");
@@ -7166,77 +6899,54 @@ const TypeObject* GetCompleteSimpleTypeUnionObject()
     type_object->complete().union_type().union_flags().IS_APPENDABLE(false);
     type_object->complete().union_type().union_flags().IS_MUTABLE(false);
     type_object->complete().union_type().union_flags().IS_NESTED(false);
-    type_object->complete().union_type().union_flags().IS_AUTOID_HASH(false);
+    type_object->complete().union_type().union_flags().IS_AUTOID_HASH(false); // Unsupported
 
-    //type_object->complete().union_type().discriminator().ann_builtin()...
-    //type_object->complete().union_type().discriminator().ann_custom()...
-    type_object->complete().union_type().discriminator().common().member_flags().TRY_CONSTRUCT1(false);
-    type_object->complete().union_type().discriminator().common().member_flags().TRY_CONSTRUCT2(false);
-    type_object->complete().union_type().discriminator().common().member_flags().IS_EXTERNAL(false);
-    type_object->complete().union_type().discriminator().common().member_flags().IS_OPTIONAL(false);
-    type_object->complete().union_type().discriminator().common().member_flags().IS_MUST_UNDERSTAND(false);
-    type_object->complete().union_type().discriminator().common().member_flags().IS_KEY(false);
-    type_object->complete().union_type().discriminator().common().member_flags().IS_DEFAULT(false);
+    type_object->complete().union_type().discriminator().common().member_flags().TRY_CONSTRUCT1(false); // Unsupported
+    type_object->complete().union_type().discriminator().common().member_flags().TRY_CONSTRUCT2(false); // Unsupported
+    type_object->complete().union_type().discriminator().common().member_flags().IS_EXTERNAL(false); // Doesn't apply
+    type_object->complete().union_type().discriminator().common().member_flags().IS_OPTIONAL(false); // Doesn't apply
+    type_object->complete().union_type().discriminator().common().member_flags().IS_MUST_UNDERSTAND(false); // Doesn't apply
+    type_object->complete().union_type().discriminator().common().member_flags().IS_KEY(false); // Unsupported
+    type_object->complete().union_type().discriminator().common().member_flags().IS_DEFAULT(false); // Doesn't apply
 
     type_object->complete().union_type().discriminator().common().type_id(*TypeObjectFactory::get_instance()->get_type_identifier("int32_t", false));
+
 
     MemberId memberId = 0;
     CompleteUnionMember cst_first;
     cst_first.common().member_id(memberId++);
-    cst_first.common().member_flags().TRY_CONSTRUCT1(false);
-    cst_first.common().member_flags().TRY_CONSTRUCT2(false);
-    cst_first.common().member_flags().IS_EXTERNAL(false);
-    cst_first.common().member_flags().IS_OPTIONAL(false);
-    cst_first.common().member_flags().IS_MUST_UNDERSTAND(false);
-    cst_first.common().member_flags().IS_KEY(false);
+    cst_first.common().member_flags().TRY_CONSTRUCT1(false); // Unsupported
+    cst_first.common().member_flags().TRY_CONSTRUCT2(false); // Unsupported
+    cst_first.common().member_flags().IS_EXTERNAL(false); // Unsupported
+    cst_first.common().member_flags().IS_OPTIONAL(false); // Doesn't apply
+    cst_first.common().member_flags().IS_MUST_UNDERSTAND(false); // Doesn't apply
+    cst_first.common().member_flags().IS_KEY(false); // Doesn't apply
     cst_first.common().member_flags().IS_DEFAULT(false);
-    {
-        std::string cppType = "uint8_t";
-        if (cppType == "long double")
-        {
-            cppType = "longdouble";
-        }
-        cst_first.common().type_id(*TypeObjectFactory::get_instance()->get_type_identifier(cppType, false));
-    }
-
+    cst_first.common().type_id(*TypeObjectFactory::get_instance()->get_type_identifier("uint8_t", false));
     cst_first.common().label_seq().emplace_back(A);
 
     cst_first.detail().name("first");
-    //cst_first.detail().ann_builtin()...
-    //cst_first.detail().ann_custom()...
 
     type_object->complete().union_type().member_seq().emplace_back(cst_first);
 
     CompleteUnionMember cst_second;
     cst_second.common().member_id(memberId++);
-    cst_second.common().member_flags().TRY_CONSTRUCT1(false);
-    cst_second.common().member_flags().TRY_CONSTRUCT2(false);
-    cst_second.common().member_flags().IS_EXTERNAL(false);
-    cst_second.common().member_flags().IS_OPTIONAL(false);
-    cst_second.common().member_flags().IS_MUST_UNDERSTAND(false);
-    cst_second.common().member_flags().IS_KEY(false);
+    cst_second.common().member_flags().TRY_CONSTRUCT1(false); // Unsupported
+    cst_second.common().member_flags().TRY_CONSTRUCT2(false); // Unsupported
+    cst_second.common().member_flags().IS_EXTERNAL(false); // Unsupported
+    cst_second.common().member_flags().IS_OPTIONAL(false); // Doesn't apply
+    cst_second.common().member_flags().IS_MUST_UNDERSTAND(false); // Doesn't apply
+    cst_second.common().member_flags().IS_KEY(false); // Doesn't apply
     cst_second.common().member_flags().IS_DEFAULT(false);
-    {
-        std::string cppType = "int64_t";
-        if (cppType == "long double")
-        {
-            cppType = "longdouble";
-        }
-        cst_second.common().type_id(*TypeObjectFactory::get_instance()->get_type_identifier(cppType, false));
-    }
-
+    cst_second.common().type_id(*TypeObjectFactory::get_instance()->get_type_identifier("int64_t", false));
     cst_second.common().label_seq().emplace_back(B);
 
     cst_second.detail().name("second");
-    //cst_second.detail().ann_builtin()...
-    //cst_second.detail().ann_custom()...
 
     type_object->complete().union_type().member_seq().emplace_back(cst_second);
 
 
     // Header
-    //type_object->complete().union_type().header().detail().ann_builtin()..
-    //type_object->complete().union_type().header().detail().ann_builtin()..
     type_object->complete().union_type().header().detail().type_name("SimpleTypeUnion");
 
 
@@ -7311,36 +7021,29 @@ const TypeObject* GetMinimalSimpleBadUnionObject()
     type_object->minimal().union_type().union_flags().IS_APPENDABLE(false);
     type_object->minimal().union_type().union_flags().IS_MUTABLE(false);
     type_object->minimal().union_type().union_flags().IS_NESTED(false);
-    type_object->minimal().union_type().union_flags().IS_AUTOID_HASH(false);
+    type_object->minimal().union_type().union_flags().IS_AUTOID_HASH(false); // Unsupported
 
-    type_object->minimal().union_type().discriminator().common().member_flags().TRY_CONSTRUCT1(false);
-    type_object->minimal().union_type().discriminator().common().member_flags().TRY_CONSTRUCT2(false);
-    type_object->minimal().union_type().discriminator().common().member_flags().IS_EXTERNAL(false);
-    type_object->minimal().union_type().discriminator().common().member_flags().IS_OPTIONAL(false);
-    type_object->minimal().union_type().discriminator().common().member_flags().IS_MUST_UNDERSTAND(false);
-    type_object->minimal().union_type().discriminator().common().member_flags().IS_KEY(false);
-    type_object->minimal().union_type().discriminator().common().member_flags().IS_DEFAULT(false);
+    type_object->minimal().union_type().discriminator().common().member_flags().TRY_CONSTRUCT1(false); // Unsupported
+    type_object->minimal().union_type().discriminator().common().member_flags().TRY_CONSTRUCT2(false); // Unsupported
+    type_object->minimal().union_type().discriminator().common().member_flags().IS_EXTERNAL(false); // Doesn't apply
+    type_object->minimal().union_type().discriminator().common().member_flags().IS_OPTIONAL(false); // Doesn't apply
+    type_object->minimal().union_type().discriminator().common().member_flags().IS_MUST_UNDERSTAND(false); // Doesn't apply
+    type_object->minimal().union_type().discriminator().common().member_flags().IS_KEY(false); // Unsupported
+    type_object->minimal().union_type().discriminator().common().member_flags().IS_DEFAULT(false); // Doesn't apply
 
     type_object->minimal().union_type().discriminator().common().type_id(*TypeObjectFactory::get_instance()->get_type_identifier("int32_t", false));
 
     MemberId memberId = 0;
     MinimalUnionMember mst_first;
     mst_first.common().member_id(memberId++);
-    mst_first.common().member_flags().TRY_CONSTRUCT1(false);
-    mst_first.common().member_flags().TRY_CONSTRUCT2(false);
-    mst_first.common().member_flags().IS_EXTERNAL(false);
-    mst_first.common().member_flags().IS_OPTIONAL(false);
-    mst_first.common().member_flags().IS_MUST_UNDERSTAND(false);
-    mst_first.common().member_flags().IS_KEY(false);
+    mst_first.common().member_flags().TRY_CONSTRUCT1(false); // Unsupported
+    mst_first.common().member_flags().TRY_CONSTRUCT2(false); // Unsupported
+    mst_first.common().member_flags().IS_EXTERNAL(false); // Unsupported
+    mst_first.common().member_flags().IS_OPTIONAL(false); // Doesn't apply
+    mst_first.common().member_flags().IS_MUST_UNDERSTAND(false); // Doesn't apply
+    mst_first.common().member_flags().IS_KEY(false); // Doesn't apply
     mst_first.common().member_flags().IS_DEFAULT(false);
-    {
-        std::string cppType = "int32_t";
-        if (cppType == "long double")
-        {
-            cppType = "longdouble";
-        }
-        mst_first.common().type_id(*TypeObjectFactory::get_instance()->get_type_identifier(cppType, false));
-    }
+    mst_first.common().type_id(*TypeObjectFactory::get_instance()->get_type_identifier("int32_t", false));
 
     mst_first.common().label_seq().emplace_back(A);
     MD5 first_hash("first");
@@ -7352,21 +7055,14 @@ const TypeObject* GetMinimalSimpleBadUnionObject()
 
     MinimalUnionMember mst_second;
     mst_second.common().member_id(memberId++);
-    mst_second.common().member_flags().TRY_CONSTRUCT1(false);
-    mst_second.common().member_flags().TRY_CONSTRUCT2(false);
-    mst_second.common().member_flags().IS_EXTERNAL(false);
-    mst_second.common().member_flags().IS_OPTIONAL(false);
-    mst_second.common().member_flags().IS_MUST_UNDERSTAND(false);
-    mst_second.common().member_flags().IS_KEY(false);
+    mst_second.common().member_flags().TRY_CONSTRUCT1(false); // Unsupported
+    mst_second.common().member_flags().TRY_CONSTRUCT2(false); // Unsupported
+    mst_second.common().member_flags().IS_EXTERNAL(false); // Unsupported
+    mst_second.common().member_flags().IS_OPTIONAL(false); // Doesn't apply
+    mst_second.common().member_flags().IS_MUST_UNDERSTAND(false); // Doesn't apply
+    mst_second.common().member_flags().IS_KEY(false); // Doesn't apply
     mst_second.common().member_flags().IS_DEFAULT(false);
-    {
-        std::string cppType = "int64_t";
-        if (cppType == "long double")
-        {
-            cppType = "longdouble";
-        }
-        mst_second.common().type_id(*TypeObjectFactory::get_instance()->get_type_identifier(cppType, false));
-    }
+    mst_second.common().type_id(*TypeObjectFactory::get_instance()->get_type_identifier("int64_t", false));
 
     mst_second.common().label_seq().emplace_back(C);
     MD5 second_hash("second");
@@ -7424,77 +7120,54 @@ const TypeObject* GetCompleteSimpleBadUnionObject()
     type_object->complete().union_type().union_flags().IS_APPENDABLE(false);
     type_object->complete().union_type().union_flags().IS_MUTABLE(false);
     type_object->complete().union_type().union_flags().IS_NESTED(false);
-    type_object->complete().union_type().union_flags().IS_AUTOID_HASH(false);
+    type_object->complete().union_type().union_flags().IS_AUTOID_HASH(false); // Unsupported
 
-    //type_object->complete().union_type().discriminator().ann_builtin()...
-    //type_object->complete().union_type().discriminator().ann_custom()...
-    type_object->complete().union_type().discriminator().common().member_flags().TRY_CONSTRUCT1(false);
-    type_object->complete().union_type().discriminator().common().member_flags().TRY_CONSTRUCT2(false);
-    type_object->complete().union_type().discriminator().common().member_flags().IS_EXTERNAL(false);
-    type_object->complete().union_type().discriminator().common().member_flags().IS_OPTIONAL(false);
-    type_object->complete().union_type().discriminator().common().member_flags().IS_MUST_UNDERSTAND(false);
-    type_object->complete().union_type().discriminator().common().member_flags().IS_KEY(false);
-    type_object->complete().union_type().discriminator().common().member_flags().IS_DEFAULT(false);
+    type_object->complete().union_type().discriminator().common().member_flags().TRY_CONSTRUCT1(false); // Unsupported
+    type_object->complete().union_type().discriminator().common().member_flags().TRY_CONSTRUCT2(false); // Unsupported
+    type_object->complete().union_type().discriminator().common().member_flags().IS_EXTERNAL(false); // Doesn't apply
+    type_object->complete().union_type().discriminator().common().member_flags().IS_OPTIONAL(false); // Doesn't apply
+    type_object->complete().union_type().discriminator().common().member_flags().IS_MUST_UNDERSTAND(false); // Doesn't apply
+    type_object->complete().union_type().discriminator().common().member_flags().IS_KEY(false); // Unsupported
+    type_object->complete().union_type().discriminator().common().member_flags().IS_DEFAULT(false); // Doesn't apply
 
     type_object->complete().union_type().discriminator().common().type_id(*TypeObjectFactory::get_instance()->get_type_identifier("int32_t", false));
+
 
     MemberId memberId = 0;
     CompleteUnionMember cst_first;
     cst_first.common().member_id(memberId++);
-    cst_first.common().member_flags().TRY_CONSTRUCT1(false);
-    cst_first.common().member_flags().TRY_CONSTRUCT2(false);
-    cst_first.common().member_flags().IS_EXTERNAL(false);
-    cst_first.common().member_flags().IS_OPTIONAL(false);
-    cst_first.common().member_flags().IS_MUST_UNDERSTAND(false);
-    cst_first.common().member_flags().IS_KEY(false);
+    cst_first.common().member_flags().TRY_CONSTRUCT1(false); // Unsupported
+    cst_first.common().member_flags().TRY_CONSTRUCT2(false); // Unsupported
+    cst_first.common().member_flags().IS_EXTERNAL(false); // Unsupported
+    cst_first.common().member_flags().IS_OPTIONAL(false); // Doesn't apply
+    cst_first.common().member_flags().IS_MUST_UNDERSTAND(false); // Doesn't apply
+    cst_first.common().member_flags().IS_KEY(false); // Doesn't apply
     cst_first.common().member_flags().IS_DEFAULT(false);
-    {
-        std::string cppType = "int32_t";
-        if (cppType == "long double")
-        {
-            cppType = "longdouble";
-        }
-        cst_first.common().type_id(*TypeObjectFactory::get_instance()->get_type_identifier(cppType, false));
-    }
-
+    cst_first.common().type_id(*TypeObjectFactory::get_instance()->get_type_identifier("int32_t", false));
     cst_first.common().label_seq().emplace_back(A);
 
     cst_first.detail().name("first");
-    //cst_first.detail().ann_builtin()...
-    //cst_first.detail().ann_custom()...
 
     type_object->complete().union_type().member_seq().emplace_back(cst_first);
 
     CompleteUnionMember cst_second;
     cst_second.common().member_id(memberId++);
-    cst_second.common().member_flags().TRY_CONSTRUCT1(false);
-    cst_second.common().member_flags().TRY_CONSTRUCT2(false);
-    cst_second.common().member_flags().IS_EXTERNAL(false);
-    cst_second.common().member_flags().IS_OPTIONAL(false);
-    cst_second.common().member_flags().IS_MUST_UNDERSTAND(false);
-    cst_second.common().member_flags().IS_KEY(false);
+    cst_second.common().member_flags().TRY_CONSTRUCT1(false); // Unsupported
+    cst_second.common().member_flags().TRY_CONSTRUCT2(false); // Unsupported
+    cst_second.common().member_flags().IS_EXTERNAL(false); // Unsupported
+    cst_second.common().member_flags().IS_OPTIONAL(false); // Doesn't apply
+    cst_second.common().member_flags().IS_MUST_UNDERSTAND(false); // Doesn't apply
+    cst_second.common().member_flags().IS_KEY(false); // Doesn't apply
     cst_second.common().member_flags().IS_DEFAULT(false);
-    {
-        std::string cppType = "int64_t";
-        if (cppType == "long double")
-        {
-            cppType = "longdouble";
-        }
-        cst_second.common().type_id(*TypeObjectFactory::get_instance()->get_type_identifier(cppType, false));
-    }
-
+    cst_second.common().type_id(*TypeObjectFactory::get_instance()->get_type_identifier("int64_t", false));
     cst_second.common().label_seq().emplace_back(C);
 
     cst_second.detail().name("second");
-    //cst_second.detail().ann_builtin()...
-    //cst_second.detail().ann_custom()...
 
     type_object->complete().union_type().member_seq().emplace_back(cst_second);
 
 
     // Header
-    //type_object->complete().union_type().header().detail().ann_builtin()..
-    //type_object->complete().union_type().header().detail().ann_builtin()..
     type_object->complete().union_type().header().detail().type_name("SimpleBadUnion");
 
 
@@ -7569,36 +7242,29 @@ const TypeObject* GetMinimalSimpleBadDiscUnionObject()
     type_object->minimal().union_type().union_flags().IS_APPENDABLE(false);
     type_object->minimal().union_type().union_flags().IS_MUTABLE(false);
     type_object->minimal().union_type().union_flags().IS_NESTED(false);
-    type_object->minimal().union_type().union_flags().IS_AUTOID_HASH(false);
+    type_object->minimal().union_type().union_flags().IS_AUTOID_HASH(false); // Unsupported
 
-    type_object->minimal().union_type().discriminator().common().member_flags().TRY_CONSTRUCT1(false);
-    type_object->minimal().union_type().discriminator().common().member_flags().TRY_CONSTRUCT2(false);
-    type_object->minimal().union_type().discriminator().common().member_flags().IS_EXTERNAL(false);
-    type_object->minimal().union_type().discriminator().common().member_flags().IS_OPTIONAL(false);
-    type_object->minimal().union_type().discriminator().common().member_flags().IS_MUST_UNDERSTAND(false);
-    type_object->minimal().union_type().discriminator().common().member_flags().IS_KEY(false);
-    type_object->minimal().union_type().discriminator().common().member_flags().IS_DEFAULT(false);
+    type_object->minimal().union_type().discriminator().common().member_flags().TRY_CONSTRUCT1(false); // Unsupported
+    type_object->minimal().union_type().discriminator().common().member_flags().TRY_CONSTRUCT2(false); // Unsupported
+    type_object->minimal().union_type().discriminator().common().member_flags().IS_EXTERNAL(false); // Doesn't apply
+    type_object->minimal().union_type().discriminator().common().member_flags().IS_OPTIONAL(false); // Doesn't apply
+    type_object->minimal().union_type().discriminator().common().member_flags().IS_MUST_UNDERSTAND(false); // Doesn't apply
+    type_object->minimal().union_type().discriminator().common().member_flags().IS_KEY(false); // Unsupported
+    type_object->minimal().union_type().discriminator().common().member_flags().IS_DEFAULT(false); // Doesn't apply
 
     type_object->minimal().union_type().discriminator().common().type_id(*TypeObjectFactory::get_instance()->get_type_identifier("uint8_t", false));
 
     MemberId memberId = 0;
     MinimalUnionMember mst_first;
     mst_first.common().member_id(memberId++);
-    mst_first.common().member_flags().TRY_CONSTRUCT1(false);
-    mst_first.common().member_flags().TRY_CONSTRUCT2(false);
-    mst_first.common().member_flags().IS_EXTERNAL(false);
-    mst_first.common().member_flags().IS_OPTIONAL(false);
-    mst_first.common().member_flags().IS_MUST_UNDERSTAND(false);
-    mst_first.common().member_flags().IS_KEY(false);
+    mst_first.common().member_flags().TRY_CONSTRUCT1(false); // Unsupported
+    mst_first.common().member_flags().TRY_CONSTRUCT2(false); // Unsupported
+    mst_first.common().member_flags().IS_EXTERNAL(false); // Unsupported
+    mst_first.common().member_flags().IS_OPTIONAL(false); // Doesn't apply
+    mst_first.common().member_flags().IS_MUST_UNDERSTAND(false); // Doesn't apply
+    mst_first.common().member_flags().IS_KEY(false); // Doesn't apply
     mst_first.common().member_flags().IS_DEFAULT(false);
-    {
-        std::string cppType = "int32_t";
-        if (cppType == "long double")
-        {
-            cppType = "longdouble";
-        }
-        mst_first.common().type_id(*TypeObjectFactory::get_instance()->get_type_identifier(cppType, false));
-    }
+    mst_first.common().type_id(*TypeObjectFactory::get_instance()->get_type_identifier("int32_t", false));
 
     mst_first.common().label_seq().emplace_back(0);
     MD5 first_hash("first");
@@ -7610,21 +7276,14 @@ const TypeObject* GetMinimalSimpleBadDiscUnionObject()
 
     MinimalUnionMember mst_second;
     mst_second.common().member_id(memberId++);
-    mst_second.common().member_flags().TRY_CONSTRUCT1(false);
-    mst_second.common().member_flags().TRY_CONSTRUCT2(false);
-    mst_second.common().member_flags().IS_EXTERNAL(false);
-    mst_second.common().member_flags().IS_OPTIONAL(false);
-    mst_second.common().member_flags().IS_MUST_UNDERSTAND(false);
-    mst_second.common().member_flags().IS_KEY(false);
+    mst_second.common().member_flags().TRY_CONSTRUCT1(false); // Unsupported
+    mst_second.common().member_flags().TRY_CONSTRUCT2(false); // Unsupported
+    mst_second.common().member_flags().IS_EXTERNAL(false); // Unsupported
+    mst_second.common().member_flags().IS_OPTIONAL(false); // Doesn't apply
+    mst_second.common().member_flags().IS_MUST_UNDERSTAND(false); // Doesn't apply
+    mst_second.common().member_flags().IS_KEY(false); // Doesn't apply
     mst_second.common().member_flags().IS_DEFAULT(false);
-    {
-        std::string cppType = "int64_t";
-        if (cppType == "long double")
-        {
-            cppType = "longdouble";
-        }
-        mst_second.common().type_id(*TypeObjectFactory::get_instance()->get_type_identifier(cppType, false));
-    }
+    mst_second.common().type_id(*TypeObjectFactory::get_instance()->get_type_identifier("int64_t", false));
 
     mst_second.common().label_seq().emplace_back(1);
     MD5 second_hash("second");
@@ -7682,77 +7341,54 @@ const TypeObject* GetCompleteSimpleBadDiscUnionObject()
     type_object->complete().union_type().union_flags().IS_APPENDABLE(false);
     type_object->complete().union_type().union_flags().IS_MUTABLE(false);
     type_object->complete().union_type().union_flags().IS_NESTED(false);
-    type_object->complete().union_type().union_flags().IS_AUTOID_HASH(false);
+    type_object->complete().union_type().union_flags().IS_AUTOID_HASH(false); // Unsupported
 
-    //type_object->complete().union_type().discriminator().ann_builtin()...
-    //type_object->complete().union_type().discriminator().ann_custom()...
-    type_object->complete().union_type().discriminator().common().member_flags().TRY_CONSTRUCT1(false);
-    type_object->complete().union_type().discriminator().common().member_flags().TRY_CONSTRUCT2(false);
-    type_object->complete().union_type().discriminator().common().member_flags().IS_EXTERNAL(false);
-    type_object->complete().union_type().discriminator().common().member_flags().IS_OPTIONAL(false);
-    type_object->complete().union_type().discriminator().common().member_flags().IS_MUST_UNDERSTAND(false);
-    type_object->complete().union_type().discriminator().common().member_flags().IS_KEY(false);
-    type_object->complete().union_type().discriminator().common().member_flags().IS_DEFAULT(false);
+    type_object->complete().union_type().discriminator().common().member_flags().TRY_CONSTRUCT1(false); // Unsupported
+    type_object->complete().union_type().discriminator().common().member_flags().TRY_CONSTRUCT2(false); // Unsupported
+    type_object->complete().union_type().discriminator().common().member_flags().IS_EXTERNAL(false); // Doesn't apply
+    type_object->complete().union_type().discriminator().common().member_flags().IS_OPTIONAL(false); // Doesn't apply
+    type_object->complete().union_type().discriminator().common().member_flags().IS_MUST_UNDERSTAND(false); // Doesn't apply
+    type_object->complete().union_type().discriminator().common().member_flags().IS_KEY(false); // Unsupported
+    type_object->complete().union_type().discriminator().common().member_flags().IS_DEFAULT(false); // Doesn't apply
 
     type_object->complete().union_type().discriminator().common().type_id(*TypeObjectFactory::get_instance()->get_type_identifier("uint8_t", false));
+
 
     MemberId memberId = 0;
     CompleteUnionMember cst_first;
     cst_first.common().member_id(memberId++);
-    cst_first.common().member_flags().TRY_CONSTRUCT1(false);
-    cst_first.common().member_flags().TRY_CONSTRUCT2(false);
-    cst_first.common().member_flags().IS_EXTERNAL(false);
-    cst_first.common().member_flags().IS_OPTIONAL(false);
-    cst_first.common().member_flags().IS_MUST_UNDERSTAND(false);
-    cst_first.common().member_flags().IS_KEY(false);
+    cst_first.common().member_flags().TRY_CONSTRUCT1(false); // Unsupported
+    cst_first.common().member_flags().TRY_CONSTRUCT2(false); // Unsupported
+    cst_first.common().member_flags().IS_EXTERNAL(false); // Unsupported
+    cst_first.common().member_flags().IS_OPTIONAL(false); // Doesn't apply
+    cst_first.common().member_flags().IS_MUST_UNDERSTAND(false); // Doesn't apply
+    cst_first.common().member_flags().IS_KEY(false); // Doesn't apply
     cst_first.common().member_flags().IS_DEFAULT(false);
-    {
-        std::string cppType = "int32_t";
-        if (cppType == "long double")
-        {
-            cppType = "longdouble";
-        }
-        cst_first.common().type_id(*TypeObjectFactory::get_instance()->get_type_identifier(cppType, false));
-    }
-
+    cst_first.common().type_id(*TypeObjectFactory::get_instance()->get_type_identifier("int32_t", false));
     cst_first.common().label_seq().emplace_back(0);
 
     cst_first.detail().name("first");
-    //cst_first.detail().ann_builtin()...
-    //cst_first.detail().ann_custom()...
 
     type_object->complete().union_type().member_seq().emplace_back(cst_first);
 
     CompleteUnionMember cst_second;
     cst_second.common().member_id(memberId++);
-    cst_second.common().member_flags().TRY_CONSTRUCT1(false);
-    cst_second.common().member_flags().TRY_CONSTRUCT2(false);
-    cst_second.common().member_flags().IS_EXTERNAL(false);
-    cst_second.common().member_flags().IS_OPTIONAL(false);
-    cst_second.common().member_flags().IS_MUST_UNDERSTAND(false);
-    cst_second.common().member_flags().IS_KEY(false);
+    cst_second.common().member_flags().TRY_CONSTRUCT1(false); // Unsupported
+    cst_second.common().member_flags().TRY_CONSTRUCT2(false); // Unsupported
+    cst_second.common().member_flags().IS_EXTERNAL(false); // Unsupported
+    cst_second.common().member_flags().IS_OPTIONAL(false); // Doesn't apply
+    cst_second.common().member_flags().IS_MUST_UNDERSTAND(false); // Doesn't apply
+    cst_second.common().member_flags().IS_KEY(false); // Doesn't apply
     cst_second.common().member_flags().IS_DEFAULT(false);
-    {
-        std::string cppType = "int64_t";
-        if (cppType == "long double")
-        {
-            cppType = "longdouble";
-        }
-        cst_second.common().type_id(*TypeObjectFactory::get_instance()->get_type_identifier(cppType, false));
-    }
-
+    cst_second.common().type_id(*TypeObjectFactory::get_instance()->get_type_identifier("int64_t", false));
     cst_second.common().label_seq().emplace_back(1);
 
     cst_second.detail().name("second");
-    //cst_second.detail().ann_builtin()...
-    //cst_second.detail().ann_custom()...
 
     type_object->complete().union_type().member_seq().emplace_back(cst_second);
 
 
     // Header
-    //type_object->complete().union_type().header().detail().ann_builtin()..
-    //type_object->complete().union_type().header().detail().ann_builtin()..
     type_object->complete().union_type().header().detail().type_name("SimpleBadDiscUnion");
 
 
@@ -7827,18 +7463,18 @@ const TypeObject* GetMinimalSimpleUnionStructObject()
     type_object->minimal().struct_type().struct_flags().IS_APPENDABLE(false);
     type_object->minimal().struct_type().struct_flags().IS_MUTABLE(false);
     type_object->minimal().struct_type().struct_flags().IS_NESTED(false);
-    type_object->minimal().struct_type().struct_flags().IS_AUTOID_HASH(false);
+    type_object->minimal().struct_type().struct_flags().IS_AUTOID_HASH(false); // Unsupported
 
     MemberId memberId = 0;
     MinimalStructMember mst_my_union;
     mst_my_union.common().member_id(memberId++);
-    mst_my_union.common().member_flags().TRY_CONSTRUCT1(false);
-    mst_my_union.common().member_flags().TRY_CONSTRUCT2(false);
-    mst_my_union.common().member_flags().IS_EXTERNAL(false);
+    mst_my_union.common().member_flags().TRY_CONSTRUCT1(false); // Unsupported
+    mst_my_union.common().member_flags().TRY_CONSTRUCT2(false); // Unsupported
+    mst_my_union.common().member_flags().IS_EXTERNAL(false); // Unsupported
     mst_my_union.common().member_flags().IS_OPTIONAL(false);
     mst_my_union.common().member_flags().IS_MUST_UNDERSTAND(false);
     mst_my_union.common().member_flags().IS_KEY(false);
-    mst_my_union.common().member_flags().IS_DEFAULT(false);
+    mst_my_union.common().member_flags().IS_DEFAULT(false); // Doesn't apply
     mst_my_union.common().member_type_id(*GetSimpleUnionIdentifier(false));
     MD5 my_union_hash("my_union");
     for(int i = 0; i < 4; ++i)
@@ -7896,32 +7532,28 @@ const TypeObject* GetCompleteSimpleUnionStructObject()
     type_object->complete().struct_type().struct_flags().IS_APPENDABLE(false);
     type_object->complete().struct_type().struct_flags().IS_MUTABLE(false);
     type_object->complete().struct_type().struct_flags().IS_NESTED(false);
-    type_object->complete().struct_type().struct_flags().IS_AUTOID_HASH(false);
+    type_object->complete().struct_type().struct_flags().IS_AUTOID_HASH(false); // Unsupported
 
     MemberId memberId = 0;
     CompleteStructMember cst_my_union;
     cst_my_union.common().member_id(memberId++);
-    cst_my_union.common().member_flags().TRY_CONSTRUCT1(false);
-    cst_my_union.common().member_flags().TRY_CONSTRUCT2(false);
-    cst_my_union.common().member_flags().IS_EXTERNAL(false);
+    cst_my_union.common().member_flags().TRY_CONSTRUCT1(false); // Unsupported
+    cst_my_union.common().member_flags().TRY_CONSTRUCT2(false); // Unsupported
+    cst_my_union.common().member_flags().IS_EXTERNAL(false); // Unsupported
     cst_my_union.common().member_flags().IS_OPTIONAL(false);
     cst_my_union.common().member_flags().IS_MUST_UNDERSTAND(false);
     cst_my_union.common().member_flags().IS_KEY(false);
-    cst_my_union.common().member_flags().IS_DEFAULT(false);
+    cst_my_union.common().member_flags().IS_DEFAULT(false); // Doesn't apply
     cst_my_union.common().member_type_id(*GetSimpleUnionIdentifier(true));
     cst_my_union.detail().name("my_union");
-    //cst_my_union.detail().ann_builtin()...
-    //cst_my_union.detail().ann_custom()...
+
     type_object->complete().struct_type().member_seq().emplace_back(cst_my_union);
 
 
     // Header
     type_object->complete().struct_type().header().detail().type_name("SimpleUnionStruct");
-    //type_object->complete().struct_type().header().detail().ann_builtin()...
-    //type_object->complete().struct_type().header().detail().ann_custom()...
     // TODO inheritance
-    //type_object->complete().struct_type().header().base_type()._d(EK_COMPLETE);
-    //type_object->complete().struct_type().header().base_type().equivalence_hash()[0..13];
+
 
     TypeIdentifier identifier;
     identifier._d(EK_COMPLETE);
@@ -7993,18 +7625,18 @@ const TypeObject* GetMinimalSimpleUnionStructEqualObject()
     type_object->minimal().struct_type().struct_flags().IS_APPENDABLE(false);
     type_object->minimal().struct_type().struct_flags().IS_MUTABLE(false);
     type_object->minimal().struct_type().struct_flags().IS_NESTED(false);
-    type_object->minimal().struct_type().struct_flags().IS_AUTOID_HASH(false);
+    type_object->minimal().struct_type().struct_flags().IS_AUTOID_HASH(false); // Unsupported
 
     MemberId memberId = 0;
     MinimalStructMember mst_my_union_equal;
     mst_my_union_equal.common().member_id(memberId++);
-    mst_my_union_equal.common().member_flags().TRY_CONSTRUCT1(false);
-    mst_my_union_equal.common().member_flags().TRY_CONSTRUCT2(false);
-    mst_my_union_equal.common().member_flags().IS_EXTERNAL(false);
+    mst_my_union_equal.common().member_flags().TRY_CONSTRUCT1(false); // Unsupported
+    mst_my_union_equal.common().member_flags().TRY_CONSTRUCT2(false); // Unsupported
+    mst_my_union_equal.common().member_flags().IS_EXTERNAL(false); // Unsupported
     mst_my_union_equal.common().member_flags().IS_OPTIONAL(false);
     mst_my_union_equal.common().member_flags().IS_MUST_UNDERSTAND(false);
     mst_my_union_equal.common().member_flags().IS_KEY(false);
-    mst_my_union_equal.common().member_flags().IS_DEFAULT(false);
+    mst_my_union_equal.common().member_flags().IS_DEFAULT(false); // Doesn't apply
     mst_my_union_equal.common().member_type_id(*GetSimpleUnionIdentifier(false));
     MD5 my_union_equal_hash("my_union_equal");
     for(int i = 0; i < 4; ++i)
@@ -8062,32 +7694,28 @@ const TypeObject* GetCompleteSimpleUnionStructEqualObject()
     type_object->complete().struct_type().struct_flags().IS_APPENDABLE(false);
     type_object->complete().struct_type().struct_flags().IS_MUTABLE(false);
     type_object->complete().struct_type().struct_flags().IS_NESTED(false);
-    type_object->complete().struct_type().struct_flags().IS_AUTOID_HASH(false);
+    type_object->complete().struct_type().struct_flags().IS_AUTOID_HASH(false); // Unsupported
 
     MemberId memberId = 0;
     CompleteStructMember cst_my_union_equal;
     cst_my_union_equal.common().member_id(memberId++);
-    cst_my_union_equal.common().member_flags().TRY_CONSTRUCT1(false);
-    cst_my_union_equal.common().member_flags().TRY_CONSTRUCT2(false);
-    cst_my_union_equal.common().member_flags().IS_EXTERNAL(false);
+    cst_my_union_equal.common().member_flags().TRY_CONSTRUCT1(false); // Unsupported
+    cst_my_union_equal.common().member_flags().TRY_CONSTRUCT2(false); // Unsupported
+    cst_my_union_equal.common().member_flags().IS_EXTERNAL(false); // Unsupported
     cst_my_union_equal.common().member_flags().IS_OPTIONAL(false);
     cst_my_union_equal.common().member_flags().IS_MUST_UNDERSTAND(false);
     cst_my_union_equal.common().member_flags().IS_KEY(false);
-    cst_my_union_equal.common().member_flags().IS_DEFAULT(false);
+    cst_my_union_equal.common().member_flags().IS_DEFAULT(false); // Doesn't apply
     cst_my_union_equal.common().member_type_id(*GetSimpleUnionIdentifier(true));
     cst_my_union_equal.detail().name("my_union_equal");
-    //cst_my_union_equal.detail().ann_builtin()...
-    //cst_my_union_equal.detail().ann_custom()...
+
     type_object->complete().struct_type().member_seq().emplace_back(cst_my_union_equal);
 
 
     // Header
     type_object->complete().struct_type().header().detail().type_name("SimpleUnionStructEqual");
-    //type_object->complete().struct_type().header().detail().ann_builtin()...
-    //type_object->complete().struct_type().header().detail().ann_custom()...
     // TODO inheritance
-    //type_object->complete().struct_type().header().base_type()._d(EK_COMPLETE);
-    //type_object->complete().struct_type().header().base_type().equivalence_hash()[0..13];
+
 
     TypeIdentifier identifier;
     identifier._d(EK_COMPLETE);
@@ -8159,18 +7787,18 @@ const TypeObject* GetMinimalSimpleUnionNamesStructObject()
     type_object->minimal().struct_type().struct_flags().IS_APPENDABLE(false);
     type_object->minimal().struct_type().struct_flags().IS_MUTABLE(false);
     type_object->minimal().struct_type().struct_flags().IS_NESTED(false);
-    type_object->minimal().struct_type().struct_flags().IS_AUTOID_HASH(false);
+    type_object->minimal().struct_type().struct_flags().IS_AUTOID_HASH(false); // Unsupported
 
     MemberId memberId = 0;
     MinimalStructMember mst_my_union;
     mst_my_union.common().member_id(memberId++);
-    mst_my_union.common().member_flags().TRY_CONSTRUCT1(false);
-    mst_my_union.common().member_flags().TRY_CONSTRUCT2(false);
-    mst_my_union.common().member_flags().IS_EXTERNAL(false);
+    mst_my_union.common().member_flags().TRY_CONSTRUCT1(false); // Unsupported
+    mst_my_union.common().member_flags().TRY_CONSTRUCT2(false); // Unsupported
+    mst_my_union.common().member_flags().IS_EXTERNAL(false); // Unsupported
     mst_my_union.common().member_flags().IS_OPTIONAL(false);
     mst_my_union.common().member_flags().IS_MUST_UNDERSTAND(false);
     mst_my_union.common().member_flags().IS_KEY(false);
-    mst_my_union.common().member_flags().IS_DEFAULT(false);
+    mst_my_union.common().member_flags().IS_DEFAULT(false); // Doesn't apply
     mst_my_union.common().member_type_id(*GetSimpleUnionNamesIdentifier(false));
     MD5 my_union_hash("my_union");
     for(int i = 0; i < 4; ++i)
@@ -8228,32 +7856,28 @@ const TypeObject* GetCompleteSimpleUnionNamesStructObject()
     type_object->complete().struct_type().struct_flags().IS_APPENDABLE(false);
     type_object->complete().struct_type().struct_flags().IS_MUTABLE(false);
     type_object->complete().struct_type().struct_flags().IS_NESTED(false);
-    type_object->complete().struct_type().struct_flags().IS_AUTOID_HASH(false);
+    type_object->complete().struct_type().struct_flags().IS_AUTOID_HASH(false); // Unsupported
 
     MemberId memberId = 0;
     CompleteStructMember cst_my_union;
     cst_my_union.common().member_id(memberId++);
-    cst_my_union.common().member_flags().TRY_CONSTRUCT1(false);
-    cst_my_union.common().member_flags().TRY_CONSTRUCT2(false);
-    cst_my_union.common().member_flags().IS_EXTERNAL(false);
+    cst_my_union.common().member_flags().TRY_CONSTRUCT1(false); // Unsupported
+    cst_my_union.common().member_flags().TRY_CONSTRUCT2(false); // Unsupported
+    cst_my_union.common().member_flags().IS_EXTERNAL(false); // Unsupported
     cst_my_union.common().member_flags().IS_OPTIONAL(false);
     cst_my_union.common().member_flags().IS_MUST_UNDERSTAND(false);
     cst_my_union.common().member_flags().IS_KEY(false);
-    cst_my_union.common().member_flags().IS_DEFAULT(false);
+    cst_my_union.common().member_flags().IS_DEFAULT(false); // Doesn't apply
     cst_my_union.common().member_type_id(*GetSimpleUnionNamesIdentifier(true));
     cst_my_union.detail().name("my_union");
-    //cst_my_union.detail().ann_builtin()...
-    //cst_my_union.detail().ann_custom()...
+
     type_object->complete().struct_type().member_seq().emplace_back(cst_my_union);
 
 
     // Header
     type_object->complete().struct_type().header().detail().type_name("SimpleUnionNamesStruct");
-    //type_object->complete().struct_type().header().detail().ann_builtin()...
-    //type_object->complete().struct_type().header().detail().ann_custom()...
     // TODO inheritance
-    //type_object->complete().struct_type().header().base_type()._d(EK_COMPLETE);
-    //type_object->complete().struct_type().header().base_type().equivalence_hash()[0..13];
+
 
     TypeIdentifier identifier;
     identifier._d(EK_COMPLETE);
@@ -8325,18 +7949,18 @@ const TypeObject* GetMinimalSimpleTypeUnionStructObject()
     type_object->minimal().struct_type().struct_flags().IS_APPENDABLE(false);
     type_object->minimal().struct_type().struct_flags().IS_MUTABLE(false);
     type_object->minimal().struct_type().struct_flags().IS_NESTED(false);
-    type_object->minimal().struct_type().struct_flags().IS_AUTOID_HASH(false);
+    type_object->minimal().struct_type().struct_flags().IS_AUTOID_HASH(false); // Unsupported
 
     MemberId memberId = 0;
     MinimalStructMember mst_my_union;
     mst_my_union.common().member_id(memberId++);
-    mst_my_union.common().member_flags().TRY_CONSTRUCT1(false);
-    mst_my_union.common().member_flags().TRY_CONSTRUCT2(false);
-    mst_my_union.common().member_flags().IS_EXTERNAL(false);
+    mst_my_union.common().member_flags().TRY_CONSTRUCT1(false); // Unsupported
+    mst_my_union.common().member_flags().TRY_CONSTRUCT2(false); // Unsupported
+    mst_my_union.common().member_flags().IS_EXTERNAL(false); // Unsupported
     mst_my_union.common().member_flags().IS_OPTIONAL(false);
     mst_my_union.common().member_flags().IS_MUST_UNDERSTAND(false);
     mst_my_union.common().member_flags().IS_KEY(false);
-    mst_my_union.common().member_flags().IS_DEFAULT(false);
+    mst_my_union.common().member_flags().IS_DEFAULT(false); // Doesn't apply
     mst_my_union.common().member_type_id(*GetSimpleTypeUnionIdentifier(false));
     MD5 my_union_hash("my_union");
     for(int i = 0; i < 4; ++i)
@@ -8394,32 +8018,28 @@ const TypeObject* GetCompleteSimpleTypeUnionStructObject()
     type_object->complete().struct_type().struct_flags().IS_APPENDABLE(false);
     type_object->complete().struct_type().struct_flags().IS_MUTABLE(false);
     type_object->complete().struct_type().struct_flags().IS_NESTED(false);
-    type_object->complete().struct_type().struct_flags().IS_AUTOID_HASH(false);
+    type_object->complete().struct_type().struct_flags().IS_AUTOID_HASH(false); // Unsupported
 
     MemberId memberId = 0;
     CompleteStructMember cst_my_union;
     cst_my_union.common().member_id(memberId++);
-    cst_my_union.common().member_flags().TRY_CONSTRUCT1(false);
-    cst_my_union.common().member_flags().TRY_CONSTRUCT2(false);
-    cst_my_union.common().member_flags().IS_EXTERNAL(false);
+    cst_my_union.common().member_flags().TRY_CONSTRUCT1(false); // Unsupported
+    cst_my_union.common().member_flags().TRY_CONSTRUCT2(false); // Unsupported
+    cst_my_union.common().member_flags().IS_EXTERNAL(false); // Unsupported
     cst_my_union.common().member_flags().IS_OPTIONAL(false);
     cst_my_union.common().member_flags().IS_MUST_UNDERSTAND(false);
     cst_my_union.common().member_flags().IS_KEY(false);
-    cst_my_union.common().member_flags().IS_DEFAULT(false);
+    cst_my_union.common().member_flags().IS_DEFAULT(false); // Doesn't apply
     cst_my_union.common().member_type_id(*GetSimpleTypeUnionIdentifier(true));
     cst_my_union.detail().name("my_union");
-    //cst_my_union.detail().ann_builtin()...
-    //cst_my_union.detail().ann_custom()...
+
     type_object->complete().struct_type().member_seq().emplace_back(cst_my_union);
 
 
     // Header
     type_object->complete().struct_type().header().detail().type_name("SimpleTypeUnionStruct");
-    //type_object->complete().struct_type().header().detail().ann_builtin()...
-    //type_object->complete().struct_type().header().detail().ann_custom()...
     // TODO inheritance
-    //type_object->complete().struct_type().header().base_type()._d(EK_COMPLETE);
-    //type_object->complete().struct_type().header().base_type().equivalence_hash()[0..13];
+
 
     TypeIdentifier identifier;
     identifier._d(EK_COMPLETE);
@@ -8491,18 +8111,18 @@ const TypeObject* GetMinimalSimpleBadUnionStructObject()
     type_object->minimal().struct_type().struct_flags().IS_APPENDABLE(false);
     type_object->minimal().struct_type().struct_flags().IS_MUTABLE(false);
     type_object->minimal().struct_type().struct_flags().IS_NESTED(false);
-    type_object->minimal().struct_type().struct_flags().IS_AUTOID_HASH(false);
+    type_object->minimal().struct_type().struct_flags().IS_AUTOID_HASH(false); // Unsupported
 
     MemberId memberId = 0;
     MinimalStructMember mst_my_union;
     mst_my_union.common().member_id(memberId++);
-    mst_my_union.common().member_flags().TRY_CONSTRUCT1(false);
-    mst_my_union.common().member_flags().TRY_CONSTRUCT2(false);
-    mst_my_union.common().member_flags().IS_EXTERNAL(false);
+    mst_my_union.common().member_flags().TRY_CONSTRUCT1(false); // Unsupported
+    mst_my_union.common().member_flags().TRY_CONSTRUCT2(false); // Unsupported
+    mst_my_union.common().member_flags().IS_EXTERNAL(false); // Unsupported
     mst_my_union.common().member_flags().IS_OPTIONAL(false);
     mst_my_union.common().member_flags().IS_MUST_UNDERSTAND(false);
     mst_my_union.common().member_flags().IS_KEY(false);
-    mst_my_union.common().member_flags().IS_DEFAULT(false);
+    mst_my_union.common().member_flags().IS_DEFAULT(false); // Doesn't apply
     mst_my_union.common().member_type_id(*GetSimpleBadUnionIdentifier(false));
     MD5 my_union_hash("my_union");
     for(int i = 0; i < 4; ++i)
@@ -8560,32 +8180,28 @@ const TypeObject* GetCompleteSimpleBadUnionStructObject()
     type_object->complete().struct_type().struct_flags().IS_APPENDABLE(false);
     type_object->complete().struct_type().struct_flags().IS_MUTABLE(false);
     type_object->complete().struct_type().struct_flags().IS_NESTED(false);
-    type_object->complete().struct_type().struct_flags().IS_AUTOID_HASH(false);
+    type_object->complete().struct_type().struct_flags().IS_AUTOID_HASH(false); // Unsupported
 
     MemberId memberId = 0;
     CompleteStructMember cst_my_union;
     cst_my_union.common().member_id(memberId++);
-    cst_my_union.common().member_flags().TRY_CONSTRUCT1(false);
-    cst_my_union.common().member_flags().TRY_CONSTRUCT2(false);
-    cst_my_union.common().member_flags().IS_EXTERNAL(false);
+    cst_my_union.common().member_flags().TRY_CONSTRUCT1(false); // Unsupported
+    cst_my_union.common().member_flags().TRY_CONSTRUCT2(false); // Unsupported
+    cst_my_union.common().member_flags().IS_EXTERNAL(false); // Unsupported
     cst_my_union.common().member_flags().IS_OPTIONAL(false);
     cst_my_union.common().member_flags().IS_MUST_UNDERSTAND(false);
     cst_my_union.common().member_flags().IS_KEY(false);
-    cst_my_union.common().member_flags().IS_DEFAULT(false);
+    cst_my_union.common().member_flags().IS_DEFAULT(false); // Doesn't apply
     cst_my_union.common().member_type_id(*GetSimpleBadUnionIdentifier(true));
     cst_my_union.detail().name("my_union");
-    //cst_my_union.detail().ann_builtin()...
-    //cst_my_union.detail().ann_custom()...
+
     type_object->complete().struct_type().member_seq().emplace_back(cst_my_union);
 
 
     // Header
     type_object->complete().struct_type().header().detail().type_name("SimpleBadUnionStruct");
-    //type_object->complete().struct_type().header().detail().ann_builtin()...
-    //type_object->complete().struct_type().header().detail().ann_custom()...
     // TODO inheritance
-    //type_object->complete().struct_type().header().base_type()._d(EK_COMPLETE);
-    //type_object->complete().struct_type().header().base_type().equivalence_hash()[0..13];
+
 
     TypeIdentifier identifier;
     identifier._d(EK_COMPLETE);
@@ -8657,18 +8273,18 @@ const TypeObject* GetMinimalSimplBadDiscUnionStructObject()
     type_object->minimal().struct_type().struct_flags().IS_APPENDABLE(false);
     type_object->minimal().struct_type().struct_flags().IS_MUTABLE(false);
     type_object->minimal().struct_type().struct_flags().IS_NESTED(false);
-    type_object->minimal().struct_type().struct_flags().IS_AUTOID_HASH(false);
+    type_object->minimal().struct_type().struct_flags().IS_AUTOID_HASH(false); // Unsupported
 
     MemberId memberId = 0;
     MinimalStructMember mst_my_union;
     mst_my_union.common().member_id(memberId++);
-    mst_my_union.common().member_flags().TRY_CONSTRUCT1(false);
-    mst_my_union.common().member_flags().TRY_CONSTRUCT2(false);
-    mst_my_union.common().member_flags().IS_EXTERNAL(false);
+    mst_my_union.common().member_flags().TRY_CONSTRUCT1(false); // Unsupported
+    mst_my_union.common().member_flags().TRY_CONSTRUCT2(false); // Unsupported
+    mst_my_union.common().member_flags().IS_EXTERNAL(false); // Unsupported
     mst_my_union.common().member_flags().IS_OPTIONAL(false);
     mst_my_union.common().member_flags().IS_MUST_UNDERSTAND(false);
     mst_my_union.common().member_flags().IS_KEY(false);
-    mst_my_union.common().member_flags().IS_DEFAULT(false);
+    mst_my_union.common().member_flags().IS_DEFAULT(false); // Doesn't apply
     mst_my_union.common().member_type_id(*GetSimpleBadDiscUnionIdentifier(false));
     MD5 my_union_hash("my_union");
     for(int i = 0; i < 4; ++i)
@@ -8726,32 +8342,28 @@ const TypeObject* GetCompleteSimplBadDiscUnionStructObject()
     type_object->complete().struct_type().struct_flags().IS_APPENDABLE(false);
     type_object->complete().struct_type().struct_flags().IS_MUTABLE(false);
     type_object->complete().struct_type().struct_flags().IS_NESTED(false);
-    type_object->complete().struct_type().struct_flags().IS_AUTOID_HASH(false);
+    type_object->complete().struct_type().struct_flags().IS_AUTOID_HASH(false); // Unsupported
 
     MemberId memberId = 0;
     CompleteStructMember cst_my_union;
     cst_my_union.common().member_id(memberId++);
-    cst_my_union.common().member_flags().TRY_CONSTRUCT1(false);
-    cst_my_union.common().member_flags().TRY_CONSTRUCT2(false);
-    cst_my_union.common().member_flags().IS_EXTERNAL(false);
+    cst_my_union.common().member_flags().TRY_CONSTRUCT1(false); // Unsupported
+    cst_my_union.common().member_flags().TRY_CONSTRUCT2(false); // Unsupported
+    cst_my_union.common().member_flags().IS_EXTERNAL(false); // Unsupported
     cst_my_union.common().member_flags().IS_OPTIONAL(false);
     cst_my_union.common().member_flags().IS_MUST_UNDERSTAND(false);
     cst_my_union.common().member_flags().IS_KEY(false);
-    cst_my_union.common().member_flags().IS_DEFAULT(false);
+    cst_my_union.common().member_flags().IS_DEFAULT(false); // Doesn't apply
     cst_my_union.common().member_type_id(*GetSimpleBadDiscUnionIdentifier(true));
     cst_my_union.detail().name("my_union");
-    //cst_my_union.detail().ann_builtin()...
-    //cst_my_union.detail().ann_custom()...
+
     type_object->complete().struct_type().member_seq().emplace_back(cst_my_union);
 
 
     // Header
     type_object->complete().struct_type().header().detail().type_name("SimplBadDiscUnionStruct");
-    //type_object->complete().struct_type().header().detail().ann_builtin()...
-    //type_object->complete().struct_type().header().detail().ann_custom()...
     // TODO inheritance
-    //type_object->complete().struct_type().header().base_type()._d(EK_COMPLETE);
-    //type_object->complete().struct_type().header().base_type().equivalence_hash()[0..13];
+
 
     TypeIdentifier identifier;
     identifier._d(EK_COMPLETE);

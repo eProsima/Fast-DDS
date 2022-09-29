@@ -45,7 +45,7 @@ public:
 
     eProsima_user_DllExport KeyedHelloWorldPubSubType();
 
-    eProsima_user_DllExport virtual ~KeyedHelloWorldPubSubType();
+    eProsima_user_DllExport virtual ~KeyedHelloWorldPubSubType() override;
 
     eProsima_user_DllExport virtual bool serialize(
             void* data,

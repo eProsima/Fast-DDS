@@ -36,7 +36,7 @@ using namespace eprosima::fastcdr::exception;
 
 Data64kb::Data64kb()
 {
-    // m_data com.eprosima.idl.parser.typecode.SequenceTypeCode@6eceb130
+    // m_data com.eprosima.idl.parser.typecode.SequenceTypeCode@76707e36
 
 
 }

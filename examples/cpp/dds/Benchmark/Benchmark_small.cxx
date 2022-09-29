@@ -36,9 +36,9 @@ using namespace eprosima::fastcdr::exception;
 
 BenchMarkSmall::BenchMarkSmall()
 {
-    // m_array com.eprosima.idl.parser.typecode.ArrayTypeCode@4c762604
+    // m_array com.eprosima.idl.parser.typecode.ArrayTypeCode@2b552920
     memset(&m_array, 0, (16384) * 1);
-    // m_index com.eprosima.idl.parser.typecode.PrimitiveTypeCode@2641e737
+    // m_index com.eprosima.idl.parser.typecode.PrimitiveTypeCode@1f36e637
     m_index = 0;
 
 }
@@ -120,7 +120,10 @@ size_t BenchMarkSmall::getCdrSerializedSize(
     size_t initial_alignment = current_alignment;
 
 
-    current_alignment += ((16384) * 1) + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
+    if ((16384) > 0)
+    {
+        current_alignment += ((16384) * 1) + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
+    }
 
     current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
 

@@ -36,11 +36,11 @@ using namespace eprosima::fastcdr::exception;
 
 ExampleMessage::ExampleMessage()
 {
-    // m_index com.eprosima.idl.parser.typecode.PrimitiveTypeCode@7a30d1e6
+    // m_index com.eprosima.idl.parser.typecode.PrimitiveTypeCode@2b552920
     m_index = 0;
-    // m_ownershipStrength com.eprosima.idl.parser.typecode.PrimitiveTypeCode@5891e32e
+    // m_ownershipStrength com.eprosima.idl.parser.typecode.PrimitiveTypeCode@2758fe70
     m_ownershipStrength = 0;
-    // m_message com.eprosima.idl.parser.typecode.StringTypeCode@cb0ed20
+    // m_message com.eprosima.idl.parser.typecode.StringTypeCode@1f36e637
     m_message ="";
 
 }
@@ -147,7 +147,7 @@ void ExampleMessage::serialize(
 
     scdr << m_index;
     scdr << m_ownershipStrength;
-    scdr << m_message;
+    scdr << m_message.c_str();
 
 }
 

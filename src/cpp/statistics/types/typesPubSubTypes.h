@@ -53,7 +53,7 @@ namespace eprosima
 
                     eProsima_user_DllExport EntityId_sPubSubType();
 
-                    eProsima_user_DllExport virtual ~EntityId_sPubSubType();
+                    eProsima_user_DllExport virtual ~EntityId_sPubSubType() override;
 
                     eProsima_user_DllExport virtual bool serialize(
                             void* data,
@@ -117,7 +117,7 @@ namespace eprosima
 
                     eProsima_user_DllExport GuidPrefix_sPubSubType();
 
-                    eProsima_user_DllExport virtual ~GuidPrefix_sPubSubType();
+                    eProsima_user_DllExport virtual ~GuidPrefix_sPubSubType() override;
 
                     eProsima_user_DllExport virtual bool serialize(
                             void* data,
@@ -181,7 +181,7 @@ namespace eprosima
 
                     eProsima_user_DllExport GUID_sPubSubType();
 
-                    eProsima_user_DllExport virtual ~GUID_sPubSubType();
+                    eProsima_user_DllExport virtual ~GUID_sPubSubType() override;
 
                     eProsima_user_DllExport virtual bool serialize(
                             void* data,
@@ -245,7 +245,7 @@ namespace eprosima
 
                     eProsima_user_DllExport SequenceNumber_sPubSubType();
 
-                    eProsima_user_DllExport virtual ~SequenceNumber_sPubSubType();
+                    eProsima_user_DllExport virtual ~SequenceNumber_sPubSubType() override;
 
                     eProsima_user_DllExport virtual bool serialize(
                             void* data,
@@ -309,7 +309,7 @@ namespace eprosima
 
                     eProsima_user_DllExport SampleIdentity_sPubSubType();
 
-                    eProsima_user_DllExport virtual ~SampleIdentity_sPubSubType();
+                    eProsima_user_DllExport virtual ~SampleIdentity_sPubSubType() override;
 
                     eProsima_user_DllExport virtual bool serialize(
                             void* data,
@@ -373,7 +373,7 @@ namespace eprosima
 
                     eProsima_user_DllExport Locator_sPubSubType();
 
-                    eProsima_user_DllExport virtual ~Locator_sPubSubType();
+                    eProsima_user_DllExport virtual ~Locator_sPubSubType() override;
 
                     eProsima_user_DllExport virtual bool serialize(
                             void* data,
@@ -438,7 +438,7 @@ namespace eprosima
 
                 eProsima_user_DllExport DiscoveryTimePubSubType();
 
-                eProsima_user_DllExport virtual ~DiscoveryTimePubSubType();
+                eProsima_user_DllExport virtual ~DiscoveryTimePubSubType() override;
 
                 eProsima_user_DllExport virtual bool serialize(
                         void* data,
@@ -502,7 +502,7 @@ namespace eprosima
 
                 eProsima_user_DllExport EntityCountPubSubType();
 
-                eProsima_user_DllExport virtual ~EntityCountPubSubType();
+                eProsima_user_DllExport virtual ~EntityCountPubSubType() override;
 
                 eProsima_user_DllExport virtual bool serialize(
                         void* data,
@@ -566,7 +566,7 @@ namespace eprosima
 
                 eProsima_user_DllExport SampleIdentityCountPubSubType();
 
-                eProsima_user_DllExport virtual ~SampleIdentityCountPubSubType();
+                eProsima_user_DllExport virtual ~SampleIdentityCountPubSubType() override;
 
                 eProsima_user_DllExport virtual bool serialize(
                         void* data,
@@ -630,7 +630,7 @@ namespace eprosima
 
                 eProsima_user_DllExport Entity2LocatorTrafficPubSubType();
 
-                eProsima_user_DllExport virtual ~Entity2LocatorTrafficPubSubType();
+                eProsima_user_DllExport virtual ~Entity2LocatorTrafficPubSubType() override;
 
                 eProsima_user_DllExport virtual bool serialize(
                         void* data,
@@ -694,7 +694,7 @@ namespace eprosima
 
                 eProsima_user_DllExport WriterReaderDataPubSubType();
 
-                eProsima_user_DllExport virtual ~WriterReaderDataPubSubType();
+                eProsima_user_DllExport virtual ~WriterReaderDataPubSubType() override;
 
                 eProsima_user_DllExport virtual bool serialize(
                         void* data,
@@ -758,7 +758,7 @@ namespace eprosima
 
                 eProsima_user_DllExport Locator2LocatorDataPubSubType();
 
-                eProsima_user_DllExport virtual ~Locator2LocatorDataPubSubType();
+                eProsima_user_DllExport virtual ~Locator2LocatorDataPubSubType() override;
 
                 eProsima_user_DllExport virtual bool serialize(
                         void* data,
@@ -822,7 +822,7 @@ namespace eprosima
 
                 eProsima_user_DllExport EntityDataPubSubType();
 
-                eProsima_user_DllExport virtual ~EntityDataPubSubType();
+                eProsima_user_DllExport virtual ~EntityDataPubSubType() override;
 
                 eProsima_user_DllExport virtual bool serialize(
                         void* data,
@@ -886,7 +886,7 @@ namespace eprosima
 
                 eProsima_user_DllExport PhysicalDataPubSubType();
 
-                eProsima_user_DllExport virtual ~PhysicalDataPubSubType();
+                eProsima_user_DllExport virtual ~PhysicalDataPubSubType() override;
 
                 eProsima_user_DllExport virtual bool serialize(
                         void* data,

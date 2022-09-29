@@ -36,11 +36,11 @@ using namespace eprosima::fastcdr::exception;
 
 HelloWorld::HelloWorld()
 {
-    // m_index com.eprosima.idl.parser.typecode.PrimitiveTypeCode@289d1c02
+    // m_index com.eprosima.idl.parser.typecode.PrimitiveTypeCode@551aa95a
     m_index = 0;
-    // m_message com.eprosima.idl.parser.typecode.StringTypeCode@22eeefeb
+    // m_message com.eprosima.idl.parser.typecode.StringTypeCode@35d176f7
     m_message ="";
-    // m_data com.eprosima.idl.parser.typecode.ArrayTypeCode@17d0685f
+    // m_data com.eprosima.idl.parser.typecode.ArrayTypeCode@1dfe2924
     memset(&m_data, 0, (1024*1024) * 1);
 
 }
@@ -134,7 +134,10 @@ size_t HelloWorld::getCdrSerializedSize(
 
     current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4) + data.message().size() + 1;
 
-    current_alignment += ((1024*1024) * 1) + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
+    if ((1024*1024) > 0)
+    {
+        current_alignment += ((1024*1024) * 1) + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
+    }
 
 
     return current_alignment - initial_alignment;
@@ -145,7 +148,7 @@ void HelloWorld::serialize(
 {
 
     scdr << m_index;
-    scdr << m_message;
+    scdr << m_message.c_str();
     scdr << m_data;
 
 

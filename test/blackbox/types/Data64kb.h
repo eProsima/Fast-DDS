@@ -23,6 +23,8 @@
 #define _FAST_DDS_GENERATED_DATA64KB_H_
 
 
+#include <fastrtps/utils/fixed_size_string.hpp>
+
 #include <stdint.h>
 #include <array>
 #include <string>

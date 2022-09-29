@@ -45,7 +45,7 @@ public:
 
     eProsima_user_DllExport BenchMarkPubSubType();
 
-    eProsima_user_DllExport virtual ~BenchMarkPubSubType();
+    eProsima_user_DllExport virtual ~BenchMarkPubSubType() override;
 
     eProsima_user_DllExport virtual bool serialize(
             void* data,

@@ -36,7 +36,7 @@ using namespace eprosima::fastcdr::exception;
 
 StringTest::StringTest()
 {
-    // m_message com.eprosima.idl.parser.typecode.StringTypeCode@4b44655e
+    // m_message com.eprosima.idl.parser.typecode.StringTypeCode@369f73a2
     m_message ="";
 
 }
@@ -116,7 +116,7 @@ void StringTest::serialize(
         eprosima::fastcdr::Cdr& scdr) const
 {
 
-    scdr << m_message;
+    scdr << m_message.c_str();
 
 }
 
@@ -124,15 +124,18 @@ void StringTest::deserialize(
         eprosima::fastcdr::Cdr& dcdr)
 {
 
-    dcdr >> m_message;
-}
+    {
+        std::string aux;
+        dcdr >> aux;
+        m_message = aux.c_str();
+    }}
 
 /*!
  * @brief This function copies the value in member message
  * @param _message New value to be copied in member message
  */
 void StringTest::message(
-        const std::string& _message)
+        const eprosima::fastrtps::fixed_string<10000>& _message)
 {
     m_message = _message;
 }
@@ -142,7 +145,7 @@ void StringTest::message(
  * @param _message New value to be moved in member message
  */
 void StringTest::message(
-        std::string&& _message)
+        eprosima::fastrtps::fixed_string<10000>&& _message)
 {
     m_message = std::move(_message);
 }
@@ -151,7 +154,7 @@ void StringTest::message(
  * @brief This function returns a constant reference to member message
  * @return Constant reference to member message
  */
-const std::string& StringTest::message() const
+const eprosima::fastrtps::fixed_string<10000>& StringTest::message() const
 {
     return m_message;
 }
@@ -160,7 +163,7 @@ const std::string& StringTest::message() const
  * @brief This function returns a reference to member message
  * @return Reference to member message
  */
-std::string& StringTest::message()
+eprosima::fastrtps::fixed_string<10000>& StringTest::message()
 {
     return m_message;
 }

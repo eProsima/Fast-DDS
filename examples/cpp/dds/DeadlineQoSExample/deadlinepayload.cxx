@@ -36,9 +36,9 @@ using namespace eprosima::fastcdr::exception;
 
 HelloMsg::HelloMsg()
 {
-    // m_deadlinekey com.eprosima.idl.parser.typecode.PrimitiveTypeCode@130f889
+    // m_deadlinekey com.eprosima.idl.parser.typecode.PrimitiveTypeCode@23d2a7e8
     m_deadlinekey = 0;
-    // m_payload com.eprosima.idl.parser.typecode.StringTypeCode@101df177
+    // m_payload com.eprosima.idl.parser.typecode.StringTypeCode@26a7b76d
     m_payload ="";
 
 }
@@ -133,7 +133,7 @@ void HelloMsg::serialize(
 {
 
     scdr << m_deadlinekey;
-    scdr << m_payload;
+    scdr << m_payload.c_str();
 
 }
 
@@ -142,7 +142,11 @@ void HelloMsg::deserialize(
 {
 
     dcdr >> m_deadlinekey;
-    dcdr >> m_payload;
+    {
+        std::string aux;
+        dcdr >> aux;
+        m_payload = aux.c_str();
+    }
 }
 
 /*!
@@ -178,7 +182,7 @@ uint16_t& HelloMsg::deadlinekey()
  * @param _payload New value to be copied in member payload
  */
 void HelloMsg::payload(
-        const std::string& _payload)
+        const eprosima::fastrtps::fixed_string<256>& _payload)
 {
     m_payload = _payload;
 }
@@ -188,7 +192,7 @@ void HelloMsg::payload(
  * @param _payload New value to be moved in member payload
  */
 void HelloMsg::payload(
-        std::string&& _payload)
+        eprosima::fastrtps::fixed_string<256>&& _payload)
 {
     m_payload = std::move(_payload);
 }
@@ -197,7 +201,7 @@ void HelloMsg::payload(
  * @brief This function returns a constant reference to member payload
  * @return Constant reference to member payload
  */
-const std::string& HelloMsg::payload() const
+const eprosima::fastrtps::fixed_string<256>& HelloMsg::payload() const
 {
     return m_payload;
 }
@@ -206,7 +210,7 @@ const std::string& HelloMsg::payload() const
  * @brief This function returns a reference to member payload
  * @return Reference to member payload
  */
-std::string& HelloMsg::payload()
+eprosima::fastrtps::fixed_string<256>& HelloMsg::payload()
 {
     return m_payload;
 }

@@ -36,9 +36,9 @@ using namespace eprosima::fastcdr::exception;
 
 sample::sample()
 {
-    // m_index com.eprosima.idl.parser.typecode.PrimitiveTypeCode@7f416310
+    // m_index com.eprosima.idl.parser.typecode.PrimitiveTypeCode@9a7504c
     m_index = 0;
-    // m_key_value com.eprosima.idl.parser.typecode.PrimitiveTypeCode@50de0926
+    // m_key_value com.eprosima.idl.parser.typecode.PrimitiveTypeCode@587d1d39
     m_key_value = 0;
 
 }

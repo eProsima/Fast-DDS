@@ -36,9 +36,9 @@ using namespace eprosima::fastcdr::exception;
 
 HelloWorld::HelloWorld()
 {
-    // m_index com.eprosima.idl.parser.typecode.PrimitiveTypeCode@51c8530f
+    // m_index com.eprosima.idl.parser.typecode.PrimitiveTypeCode@2b552920
     m_index = 0;
-    // m_message com.eprosima.idl.parser.typecode.ArrayTypeCode@c81cdd1
+    // m_message com.eprosima.idl.parser.typecode.ArrayTypeCode@1f36e637
     memset(&m_message, 0, (20) * 1);
 
 }
@@ -123,7 +123,10 @@ size_t HelloWorld::getCdrSerializedSize(
     current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
 
 
-    current_alignment += ((20) * 1) + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
+    if ((20) > 0)
+    {
+        current_alignment += ((20) * 1) + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
+    }
 
 
     return current_alignment - initial_alignment;

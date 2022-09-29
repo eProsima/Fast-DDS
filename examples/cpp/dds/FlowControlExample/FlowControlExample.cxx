@@ -36,9 +36,9 @@ using namespace eprosima::fastcdr::exception;
 
 FlowControlExample::FlowControlExample()
 {
-    // m_message com.eprosima.idl.parser.typecode.ArrayTypeCode@43bd930a
+    // m_message com.eprosima.idl.parser.typecode.ArrayTypeCode@5b87ed94
     memset(&m_message, 0, (600000) * 1);
-    // m_wasFast com.eprosima.idl.parser.typecode.PrimitiveTypeCode@553a3d88
+    // m_wasFast com.eprosima.idl.parser.typecode.PrimitiveTypeCode@5bc79255
     m_wasFast = 0;
 
 }
@@ -120,7 +120,10 @@ size_t FlowControlExample::getCdrSerializedSize(
     size_t initial_alignment = current_alignment;
 
 
-    current_alignment += ((600000) * 1) + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
+    if ((600000) > 0)
+    {
+        current_alignment += ((600000) * 1) + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
+    }
 
     current_alignment += 1 + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
 

@@ -45,7 +45,7 @@ public:
 
     eProsima_user_DllExport Data64kbPubSubType();
 
-    eProsima_user_DllExport virtual ~Data64kbPubSubType();
+    eProsima_user_DllExport virtual ~Data64kbPubSubType() override;
 
     eProsima_user_DllExport virtual bool serialize(
             void* data,
