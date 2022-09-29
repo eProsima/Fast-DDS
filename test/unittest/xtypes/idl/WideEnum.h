@@ -393,9 +393,6 @@ public:
     eProsima_user_DllExport void deserialize(
             eprosima::fastcdr::Cdr& cdr);
 
-
-
-
 private:
 
     int32_t m__d;

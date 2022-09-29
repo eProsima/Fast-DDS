@@ -1024,7 +1024,8 @@ public:
      * @brief This function returns a constant reference to member my_array_string
      * @return Constant reference to member my_array_string
      */
-    eProsima_user_DllExport const std::array<std::array<eprosima::fastrtps::fixed_string<75>, 5>, 5>& my_array_string() const;
+    eProsima_user_DllExport const std::array<std::array<eprosima::fastrtps::fixed_string<75>, 5>,
+            5>& my_array_string() const;
 
     /*!
      * @brief This function returns a reference to member my_array_string
@@ -1358,9 +1359,6 @@ public:
     eProsima_user_DllExport void deserialize(
             eprosima::fastcdr::Cdr& cdr);
 
-
-
-
 private:
 
     MyEnum m__d;
@@ -1551,9 +1549,6 @@ public:
      */
     eProsima_user_DllExport void deserialize(
             eprosima::fastcdr::Cdr& cdr);
-
-
-
 
 private:
 
