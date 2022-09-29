@@ -192,6 +192,8 @@ bool PDPClient::createPDPEndpoints()
 {
     logInfo(RTPS_PDP, "Beginning PDPClient Endpoints creation");
 
+    const RTPSParticipantAttributes& pattr = mp_RTPSParticipant->getRTPSParticipantAttributes();
+
     HistoryAttributes hatt;
     hatt.payloadMaxSize = mp_builtin->m_att.readerPayloadSize;
     hatt.initialReservedCaches = pdp_initial_reserved_caches;
@@ -203,6 +205,8 @@ bool PDPClient::createPDPEndpoints()
     ratt.endpoint.endpointKind = READER;
     ratt.endpoint.multicastLocatorList = mp_builtin->m_metatrafficMulticastLocatorList;
     ratt.endpoint.unicastLocatorList = mp_builtin->m_metatrafficUnicastLocatorList;
+    ratt.endpoint.external_unicast_locators = mp_builtin->m_att.metatraffic_external_unicast_locators;
+    ratt.endpoint.ignore_non_matching_locators = pattr.ignore_non_matching_locators;
     ratt.endpoint.topicKind = WITH_KEY;
     ratt.endpoint.durabilityKind = TRANSIENT_LOCAL;
     ratt.endpoint.reliabilityKind = RELIABLE;
@@ -248,12 +252,13 @@ bool PDPClient::createPDPEndpoints()
     watt.endpoint.topicKind = WITH_KEY;
     watt.endpoint.multicastLocatorList = mp_builtin->m_metatrafficMulticastLocatorList;
     watt.endpoint.unicastLocatorList = mp_builtin->m_metatrafficUnicastLocatorList;
+    watt.endpoint.external_unicast_locators = mp_builtin->m_att.metatraffic_external_unicast_locators;
+    watt.endpoint.ignore_non_matching_locators = pattr.ignore_non_matching_locators;
     watt.times.heartbeatPeriod = pdp_heartbeat_period;
     watt.times.nackResponseDelay = pdp_nack_response_delay;
     watt.times.nackSupressionDuration = pdp_nack_supression_duration;
 
-    if (mp_RTPSParticipant->getRTPSParticipantAttributes().throughputController.bytesPerPeriod != UINT32_MAX &&
-            mp_RTPSParticipant->getRTPSParticipantAttributes().throughputController.periodMillisecs != 0)
+    if (pattr.throughputController.bytesPerPeriod != UINT32_MAX && pattr.throughputController.periodMillisecs != 0)
     {
         watt.mode = ASYNCHRONOUS_WRITER;
     }

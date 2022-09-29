@@ -2204,6 +2204,10 @@ bool DomainParticipantImpl::can_qos_be_updated(
                 from.wire_protocol().default_unicast_locator_list) ||
                 !(to.wire_protocol().default_multicast_locator_list ==
                 from.wire_protocol().default_multicast_locator_list) ||
+                !(to.wire_protocol().default_external_unicast_locators ==
+                from.wire_protocol().default_external_unicast_locators) ||
+                !(to.wire_protocol().ignore_non_matching_locators ==
+                from.wire_protocol().ignore_non_matching_locators) ||
                 !(to.wire_protocol().builtin.use_WriterLivelinessProtocol ==
                 from.wire_protocol().builtin.use_WriterLivelinessProtocol) ||
                 !(to.wire_protocol().builtin.typelookup_config.use_client ==
@@ -2214,6 +2218,8 @@ bool DomainParticipantImpl::can_qos_be_updated(
                 from.wire_protocol().builtin.metatrafficUnicastLocatorList) ||
                 !(to.wire_protocol().builtin.metatrafficMulticastLocatorList ==
                 from.wire_protocol().builtin.metatrafficMulticastLocatorList) ||
+                !(to.wire_protocol().builtin.metatraffic_external_unicast_locators ==
+                from.wire_protocol().builtin.metatraffic_external_unicast_locators) ||
                 !(to.wire_protocol().builtin.initialPeersList == from.wire_protocol().builtin.initialPeersList) ||
                 !(to.wire_protocol().builtin.readerHistoryMemoryPolicy ==
                 from.wire_protocol().builtin.readerHistoryMemoryPolicy) ||

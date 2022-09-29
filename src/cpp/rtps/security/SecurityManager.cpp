@@ -1090,11 +1090,15 @@ bool SecurityManager::create_participant_stateless_message_writer()
 {
     participant_stateless_message_writer_history_ = new WriterHistory(participant_stateless_message_writer_hattr_);
 
+    const RTPSParticipantAttributes& pattr = participant_->getRTPSParticipantAttributes();
+
     WriterAttributes watt;
+    watt.endpoint.external_unicast_locators = pattr.builtin.metatraffic_external_unicast_locators;
+    watt.endpoint.ignore_non_matching_locators = pattr.ignore_non_matching_locators;
     watt.endpoint.endpointKind = WRITER;
     watt.endpoint.reliabilityKind = BEST_EFFORT;
     watt.endpoint.topicKind = NO_KEY;
-    watt.matched_readers_allocation = participant_->getRTPSParticipantAttributes().allocation.participants;
+    watt.matched_readers_allocation = pattr.allocation.participants;
 
     RTPSWriter* wout = nullptr;
     if (participant_->createWriter(&wout, watt, participant_stateless_message_pool_,
@@ -1135,18 +1139,20 @@ bool SecurityManager::create_participant_stateless_message_reader()
 {
     participant_stateless_message_reader_history_ = new ReaderHistory(participant_stateless_message_reader_hattr_);
 
+    const RTPSParticipantAttributes& pattr = participant_->getRTPSParticipantAttributes();
+
     ReaderAttributes ratt;
     ratt.endpoint.topicKind = NO_KEY;
     ratt.endpoint.reliabilityKind = BEST_EFFORT;
-    if (!participant_->getRTPSParticipantAttributes().builtin.avoid_builtin_multicast)
+    if (!pattr.builtin.avoid_builtin_multicast)
     {
-        ratt.endpoint.multicastLocatorList =
-                participant_->getRTPSParticipantAttributes().builtin.metatrafficMulticastLocatorList;
+        ratt.endpoint.multicastLocatorList = pattr.builtin.metatrafficMulticastLocatorList;
     }
-    ratt.endpoint.unicastLocatorList =
-            participant_->getRTPSParticipantAttributes().builtin.metatrafficUnicastLocatorList;
-    ratt.endpoint.remoteLocatorList = participant_->getRTPSParticipantAttributes().builtin.initialPeersList;
-    ratt.matched_writers_allocation = participant_->getRTPSParticipantAttributes().allocation.participants;
+    ratt.endpoint.unicastLocatorList = pattr.builtin.metatrafficUnicastLocatorList;
+    ratt.endpoint.remoteLocatorList = pattr.builtin.initialPeersList;
+    ratt.endpoint.external_unicast_locators = pattr.builtin.metatraffic_external_unicast_locators;
+    ratt.endpoint.ignore_non_matching_locators = pattr.ignore_non_matching_locators;
+    ratt.matched_writers_allocation = pattr.allocation.participants;
 
     RTPSReader* rout = nullptr;
     if (participant_->createReader(&rout, ratt, participant_stateless_message_pool_,
@@ -1233,18 +1239,21 @@ bool SecurityManager::create_participant_volatile_message_secure_writer()
     participant_volatile_message_secure_writer_history_ =
             new WriterHistory(participant_volatile_message_secure_hattr_);
 
+    const RTPSParticipantAttributes& pattr = participant_->getRTPSParticipantAttributes();
+
     WriterAttributes watt;
     watt.endpoint.endpointKind = WRITER;
     watt.endpoint.reliabilityKind = RELIABLE;
     watt.endpoint.topicKind = NO_KEY;
     watt.endpoint.durabilityKind = VOLATILE;
-    watt.endpoint.unicastLocatorList =
-            participant_->getRTPSParticipantAttributes().builtin.metatrafficUnicastLocatorList;
-    watt.endpoint.remoteLocatorList = participant_->getRTPSParticipantAttributes().builtin.initialPeersList;
+    watt.endpoint.unicastLocatorList = pattr.builtin.metatrafficUnicastLocatorList;
+    watt.endpoint.external_unicast_locators = pattr.builtin.metatraffic_external_unicast_locators;
+    watt.endpoint.ignore_non_matching_locators = pattr.ignore_non_matching_locators;
+    watt.endpoint.remoteLocatorList = pattr.builtin.initialPeersList;
     watt.endpoint.security_attributes().is_submessage_protected = true;
     watt.endpoint.security_attributes().plugin_endpoint_attributes =
             PLUGIN_ENDPOINT_SECURITY_ATTRIBUTES_FLAG_IS_SUBMESSAGE_ENCRYPTED;
-    watt.matched_readers_allocation = participant_->getRTPSParticipantAttributes().allocation.participants;
+    watt.matched_readers_allocation = pattr.allocation.participants;
 
     RTPSWriter* wout = nullptr;
     if (participant_->createWriter(&wout, watt, participant_volatile_message_secure_pool_,
@@ -1284,17 +1293,20 @@ bool SecurityManager::create_participant_volatile_message_secure_reader()
     participant_volatile_message_secure_reader_history_ =
             new ReaderHistory(participant_volatile_message_secure_hattr_);
 
+    const RTPSParticipantAttributes& pattr = participant_->getRTPSParticipantAttributes();
+
     ReaderAttributes ratt;
     ratt.endpoint.topicKind = NO_KEY;
     ratt.endpoint.reliabilityKind = RELIABLE;
     ratt.endpoint.durabilityKind = VOLATILE;
-    ratt.endpoint.unicastLocatorList =
-            participant_->getRTPSParticipantAttributes().builtin.metatrafficUnicastLocatorList;
-    ratt.endpoint.remoteLocatorList = participant_->getRTPSParticipantAttributes().builtin.initialPeersList;
+    ratt.endpoint.unicastLocatorList = pattr.builtin.metatrafficUnicastLocatorList;
+    ratt.endpoint.external_unicast_locators = pattr.builtin.metatraffic_external_unicast_locators;
+    ratt.endpoint.ignore_non_matching_locators = pattr.ignore_non_matching_locators;
+    ratt.endpoint.remoteLocatorList = pattr.builtin.initialPeersList;
     ratt.endpoint.security_attributes().is_submessage_protected = true;
     ratt.endpoint.security_attributes().plugin_endpoint_attributes =
             PLUGIN_ENDPOINT_SECURITY_ATTRIBUTES_FLAG_IS_SUBMESSAGE_ENCRYPTED;
-    ratt.matched_writers_allocation = participant_->getRTPSParticipantAttributes().allocation.participants;
+    ratt.matched_writers_allocation = pattr.allocation.participants;
 
     RTPSReader* rout = nullptr;
     if (participant_->createReader(&rout, ratt, participant_volatile_message_secure_pool_,
