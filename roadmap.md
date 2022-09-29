@@ -15,7 +15,7 @@ at any time.
 
 Disclaimer:
 
-* This section has been last updated in July 2022.
+* This section has been last updated in September 2022.
   Please take into account its content could be obsolete.
 
 ## Short term
@@ -24,11 +24,8 @@ The following list of features are planned to be addressed in the short term, an
 minor release of the product:
 
 * Complete support for dynamic network interfaces
-* ReadCondition implementation
 * Secure Discovery Server
-* Android support
-* Support for Ownership and Time-based filter QoS.
-* SNI support for TLS.
+* Support for Time-based filter QoS
 
 ## Medium term
 
