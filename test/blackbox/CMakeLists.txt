@@ -444,3 +444,8 @@ configure_file(${CMAKE_CURRENT_SOURCE_DIR}/environment_file.json
 
 unset(dns_filter)
 unset(pkcs_filter)
+if(ANDROID)
+    set_property(TARGET BlackboxTests_RTPS PROPERTY CROSSCOMPILING_EMULATOR "adb;shell;cd;${CMAKE_CURRENT_BINARY_DIR};&&")
+    set_property(TARGET BlackboxTests_FastRTPS PROPERTY CROSSCOMPILING_EMULATOR "adb;shell;cd;${CMAKE_CURRENT_BINARY_DIR};&&")
+    set_property(TARGET BlackboxTests_DDS_PIM PROPERTY CROSSCOMPILING_EMULATOR "adb;shell;cd;${CMAKE_CURRENT_BINARY_DIR};&&")
+endif()

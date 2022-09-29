@@ -108,3 +108,7 @@ endif()
 add_gtest(AccessControlTests
     SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/AccessControlTests.cpp
     ENVIRONMENTS "CERTS_PATH=${PROJECT_SOURCE_DIR}/test/certs")
+
+if(ANDROID)
+    set_property(TARGET AccessControlTests PROPERTY CROSSCOMPILING_EMULATOR "adb;shell;cd;${CMAKE_CURRENT_BINARY_DIR};&&")
+endif()

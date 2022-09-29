@@ -96,3 +96,7 @@ add_gtest(SecurityAuthentication
     ${CMAKE_CURRENT_SOURCE_DIR}/SecurityInitializationTests.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/SecurityValidationRemoteTests.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/SecurityHandshakeProcessTests.cpp)
+
+if(ANDROID)
+    set_property(TARGET SecurityAuthentication PROPERTY CROSSCOMPILING_EMULATOR "adb;shell;cd;${CMAKE_CURRENT_BINARY_DIR};&&")
+endif()

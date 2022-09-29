@@ -51,4 +51,9 @@ if(SQLITE3_SUPPORT)
             )
     endif()
     add_gtest(PersistenceTests SOURCES ${PERSISTENCETESTS_SOURCE})
+
+    if(ANDROID)
+        set_property(TARGET PersistenceTests PROPERTY CROSSCOMPILING_EMULATOR "adb;shell;cd;${CMAKE_CURRENT_BINARY_DIR};&&")
+    endif()
 endif(SQLITE3_SUPPORT)
+

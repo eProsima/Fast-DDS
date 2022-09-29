@@ -23,6 +23,20 @@ set(GUID_UTILS_TESTS_SOURCE GuidUtilsTests.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/utils/IPLocator.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/utils/md5.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/utils/SystemInfo.cpp)
+
+if(ANDROID)
+    if (ANDROID_NATIVE_API_LEVEL LESS 24)
+        list(APPEND GUID_UTILS_TESTS_SOURCE
+            ${ANDROID_IFADDRS_SOURCE_DIR}/ifaddrs.c
+            )
+        list(APPEND CACHECHANGETESTS_SOURCE
+            ${ANDROID_IFADDRS_SOURCE_DIR}/ifaddrs.c
+            )
+        
+    endif()
+endif()
+
+
 set(SEQUENCENUMBERTESTS_SOURCE SequenceNumberTests.cpp)
 set(PORTPARAMETERSTESTS_SOURCE PortParametersTests.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/log/Log.cpp
@@ -51,7 +65,8 @@ target_compile_definitions(GuidUtilsTests PRIVATE FASTRTPS_NO_LIB
 target_include_directories(GuidUtilsTests PRIVATE
     ${PROJECT_SOURCE_DIR}/src/cpp
     ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include
-    ${Asio_INCLUDE_DIR})
+    ${Asio_INCLUDE_DIR}
+    $<$<BOOL:${ANDROID}>:${ANDROID_IFADDRS_INCLUDE_DIR}>)
 target_link_libraries(GuidUtilsTests GTest::gtest)
 if(MSVC OR MSVC_IDE)
     target_link_libraries(GuidUtilsTests ws2_32)
@@ -129,3 +144,13 @@ target_include_directories(GuidTests PRIVATE
     ${PROJECT_SOURCE_DIR}/src/cpp)
 target_link_libraries(GuidTests GTest::gtest)
 add_gtest(GuidTests SOURCES ${GUIDTESTS_SOURCE} LABELS "NoMemoryCheck")
+
+if(ANDROID)
+    set_property(TARGET CacheChangeTests PROPERTY CROSSCOMPILING_EMULATOR "adb;shell;cd;${CMAKE_CURRENT_BINARY_DIR};&&")
+    set_property(TARGET EntityIdTests PROPERTY CROSSCOMPILING_EMULATOR "adb;shell;cd;${CMAKE_CURRENT_BINARY_DIR};&&")
+    set_property(TARGET GuidTests PROPERTY CROSSCOMPILING_EMULATOR "adb;shell;cd;${CMAKE_CURRENT_BINARY_DIR};&&")
+    set_property(TARGET GuidPrefixTests PROPERTY CROSSCOMPILING_EMULATOR "adb;shell;cd;${CMAKE_CURRENT_BINARY_DIR};&&")
+    set_property(TARGET GuidUtilsTests PROPERTY CROSSCOMPILING_EMULATOR "adb;shell;cd;${CMAKE_CURRENT_BINARY_DIR};&&")
+    set_property(TARGET PortParametersTests PROPERTY CROSSCOMPILING_EMULATOR "adb;shell;cd;${CMAKE_CURRENT_BINARY_DIR};&&")
+    set_property(TARGET SequenceNumberTests PROPERTY CROSSCOMPILING_EMULATOR "adb;shell;cd;${CMAKE_CURRENT_BINARY_DIR};&&")
+endif()

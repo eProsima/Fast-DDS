@@ -56,6 +56,14 @@ if(WIN32)
     add_definitions(-D_WIN32_WINNT=0x0601)
 endif()
 
+if(ANDROID)
+    if (ANDROID_NATIVE_API_LEVEL LESS 24)
+        list(APPEND BASICPOOLSTESTS_SOURCE
+            ${ANDROID_IFADDRS_SOURCE_DIR}/ifaddrs.c
+            )
+    endif()
+endif()
+
 add_executable(ReaderHistoryTests ${READERHISTORYTESTS_SOURCE})
 target_compile_definitions(ReaderHistoryTests PRIVATE FASTRTPS_NO_LIB
     $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
@@ -111,3 +119,10 @@ target_link_libraries(TopicPayloadPoolTests
     GTest::gtest
     ${CMAKE_DL_LIBS})
 add_gtest(TopicPayloadPoolTests SOURCES ${TOPICPAYLOADPOOLTESTS_SOURCE})
+
+if(ANDROID)
+    set_property(TARGET ReaderHistoryTests PROPERTY CROSSCOMPILING_EMULATOR "adb;shell;cd;${CMAKE_CURRENT_BINARY_DIR};&&")
+    set_property(TARGET BasicPoolsTests PROPERTY CROSSCOMPILING_EMULATOR "adb;shell;cd;${CMAKE_CURRENT_BINARY_DIR};&&")
+    set_property(TARGET CacheChangePoolTests PROPERTY CROSSCOMPILING_EMULATOR "adb;shell;cd;${CMAKE_CURRENT_BINARY_DIR};&&")
+    set_property(TARGET CacheChangeTests PROPERTY CROSSCOMPILING_EMULATOR "adb;shell;cd;${CMAKE_CURRENT_BINARY_DIR};&&")
+endif()

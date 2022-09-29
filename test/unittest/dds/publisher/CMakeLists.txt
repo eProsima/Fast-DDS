@@ -297,6 +297,17 @@ if(WIN32)
         )
 endif()
 
+if(ANDROID)
+    if (ANDROID_NATIVE_API_LEVEL LESS 24)
+        list(APPEND PUBLISHERTESTS_SOURCE
+            ${ANDROID_IFADDRS_SOURCE_DIR}/ifaddrs.c
+            )
+        list(APPEND DATAWRITERTESTS_SOURCE
+            ${ANDROID_IFADDRS_SOURCE_DIR}/ifaddrs.c
+            )
+    endif()
+endif()
+
 add_executable(PublisherTests ${PUBLISHERTESTS_SOURCE})
 target_compile_definitions(PublisherTests PRIVATE FASTRTPS_NO_LIB
     $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
@@ -356,3 +367,8 @@ endif()
 add_gtest(DataWriterTests
     SOURCES ${DATAWRITERTESTS_SOURCE}
     ENVIRONMENTS "CERTS_PATH=${PROJECT_SOURCE_DIR}/test/certs")
+
+if(ANDROID)
+    set_property(TARGET PublisherTests PROPERTY CROSSCOMPILING_EMULATOR "adb;shell;cd;${CMAKE_CURRENT_BINARY_DIR};&&")
+    set_property(TARGET DataWriterTests PROPERTY CROSSCOMPILING_EMULATOR "adb;shell;cd;${CMAKE_CURRENT_BINARY_DIR};&&")
+endif()

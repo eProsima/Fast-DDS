@@ -25,6 +25,15 @@ if(WIN32)
     add_definitions(-D_WIN32_WINNT=0x0601)
 endif()
 
+if(ANDROID)
+    if (ANDROID_NATIVE_API_LEVEL LESS 24)
+        list(APPEND PARTICIPANTTESTS_SOURCE
+            ${ANDROID_IFADDRS_SOURCE_DIR}/ifaddrs.c
+            )
+    endif()
+endif()
+
+
 add_executable(ParticipantTests ${PARTICIPANTTESTS_SOURCE})
 target_compile_definitions(ParticipantTests PRIVATE FASTRTPS_NO_LIB
     $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
@@ -45,3 +54,7 @@ endif()
 add_gtest(ParticipantTests SOURCES ${PARTICIPANTTESTS_SOURCE} IGNORE ${dns_filter})
 
 unset(dns_filter)
+
+if(ANDROID)
+    set_property(TARGET ParticipantTests PROPERTY CROSSCOMPILING_EMULATOR "adb;shell;cd;${CMAKE_CURRENT_BINARY_DIR};&&")
+endif()

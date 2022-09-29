@@ -84,3 +84,8 @@ target_link_libraries(LogFileTests GTest::gtest ${MOCKS}
     fastcdr
     )
 add_gtest(LogFileTests SOURCES ${LOGFILETESTS_TEST_SOURCE})
+
+if(ANDROID)
+    set_property(TARGET LogTests PROPERTY CROSSCOMPILING_EMULATOR "adb;shell;cd;${CMAKE_CURRENT_BINARY_DIR};&&")
+    set_property(TARGET LogFileTests PROPERTY CROSSCOMPILING_EMULATOR "adb;shell;cd;${CMAKE_CURRENT_BINARY_DIR};&&")
+endif()

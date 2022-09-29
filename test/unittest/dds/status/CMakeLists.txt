@@ -134,6 +134,14 @@ if(WIN32)
     add_definitions(-D_WIN32_WINNT=0x0601)
 endif()
 
+if(ANDROID)
+    if (ANDROID_NATIVE_API_LEVEL LESS 24)
+        list(APPEND LISTENERTESTS_SOURCE
+            ${ANDROID_IFADDRS_SOURCE_DIR}/ifaddrs.c
+            )
+    endif()
+endif()
+
 add_executable(ListenerTests ${LISTENERTESTS_SOURCE})
 target_compile_definitions(ListenerTests PRIVATE FASTRTPS_NO_LIB
     BOOST_ASIO_STANDALONE
@@ -192,3 +200,7 @@ if(MSVC OR MSVC_IDE)
 endif()
 
 add_gtest(ListenerTests SOURCES ${LISTENERTESTS_SOURCE})
+
+if(ANDROID)
+    set_property(TARGET ListenerTests PROPERTY CROSSCOMPILING_EMULATOR "adb;shell;cd;${CMAKE_CURRENT_BINARY_DIR};&&")
+endif()

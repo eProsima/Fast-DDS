@@ -65,6 +65,15 @@ if(WIN32)
     add_definitions(-D_WIN32_WINNT=0x0601)
 endif()
 
+if(ANDROID)
+    if (ANDROID_NATIVE_API_LEVEL LESS 24)
+        list(APPEND BUILTIN_DATA_SERIALIZATION_TESTS_SOURCE
+            ${ANDROID_IFADDRS_SOURCE_DIR}/ifaddrs.c
+            )
+    endif()
+endif()
+
+
 add_executable(BuiltinDataSerializationTests ${BUILTIN_DATA_SERIALIZATION_TESTS_SOURCE})
 target_compile_definitions(BuiltinDataSerializationTests PRIVATE FASTRTPS_NO_LIB
     BOOST_ASIO_STANDALONE
@@ -77,6 +86,7 @@ target_include_directories(BuiltinDataSerializationTests PRIVATE
     ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include
     ${PROJECT_SOURCE_DIR}/src/cpp
     ${Asio_INCLUDE_DIR}
+    $<$<BOOL:${ANDROID}>:${ANDROID_IFADDRS_INCLUDE_DIR}>
     )
 target_link_libraries(BuiltinDataSerializationTests foonathan_memory
     GTest::gmock
@@ -88,3 +98,7 @@ else()
 endif()
 
 add_gtest(BuiltinDataSerializationTests SOURCES ${BUILTIN_DATA_SERIALIZATION_TESTS_SOURCE})
+
+if(ANDROID)
+    set_property(TARGET BuiltinDataSerializationTests PROPERTY CROSSCOMPILING_EMULATOR "adb;shell;cd;${CMAKE_CURRENT_BINARY_DIR};&&")
+endif()
