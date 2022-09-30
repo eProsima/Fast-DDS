@@ -58,7 +58,7 @@ void DynamicDataHelper::print_basic_element(
         MemberId id,
         TypeKind kind)
 {
-    switch(kind)
+    switch (kind)
     {
         case TK_NONE:
         {
@@ -386,7 +386,7 @@ void DynamicDataHelper::print_member(
 {
     std::cout << tabs << type->get_name() << ": ";
     const MemberDescriptor* desc = type->get_descriptor();
-    switch(desc->get_kind())
+    switch (desc->get_kind())
     {
         case TK_NONE:
         case TK_BOOLEAN:
