@@ -20,6 +20,7 @@ set(SUBSCRIBERTESTS_SOURCE SubscriberTests.cpp)
 set(DATAREADERTESTS_SOURCE 
     DataReaderTests.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/utils/SystemInfo.cpp
+    )
 set(DATAREADERINSTANCETESTS_SOURCE DataReaderInstanceTests.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/common/Time_t.cpp
     )
