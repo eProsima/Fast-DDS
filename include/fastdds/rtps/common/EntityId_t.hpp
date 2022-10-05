@@ -177,20 +177,6 @@ struct RTPS_DllAPI EntityId_t
         return EntityId_t();
     }
 
-<<<<<<< HEAD
-=======
-    bool is_reader() const
-    {
-        // RTPS Standard table 9.1
-        return 0x4u & to_uint32();
-    }
-
-    bool is_writer() const
-    {
-        // RTPS Standard table 9.1
-        return 0x2u & to_uint32() && !is_reader();
-    }
-
     /**
      * Entity Id minor operator
      * @param other Second entity id to compare
@@ -219,7 +205,6 @@ struct RTPS_DllAPI EntityId_t
         return std::memcmp(entity1.value, entity2.value, size);
     }
 
->>>>>>> c871a2956 (Improve GUID_t operator< performance (#2955))
 };
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC

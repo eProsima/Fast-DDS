@@ -65,7 +65,6 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
         target_link_libraries(SequenceNumberTests GTest::gtest)
         add_gtest(SequenceNumberTests SOURCES ${SEQUENCENUMBERTESTS_SOURCE})
 
-<<<<<<< HEAD
         add_executable(PortParametersTests ${PORTPARAMETERSTESTS_SOURCE})
         target_compile_definitions(PortParametersTests PRIVATE FASTRTPS_NO_LIB
             $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
@@ -77,17 +76,6 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
         add_gtest(PortParametersTests SOURCES ${PORTPARAMETERSTESTS_SOURCE} LABELS "NoMemoryCheck")
     endif()
 endif()
-=======
-add_executable(PortParametersTests ${PORTPARAMETERSTESTS_SOURCE})
-target_compile_definitions(PortParametersTests PRIVATE FASTRTPS_NO_LIB
-    $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
-    $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
-    )
-target_include_directories(PortParametersTests PRIVATE
-    ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include
-    ${PROJECT_SOURCE_DIR}/src/cpp)
-target_link_libraries(PortParametersTests GTest::gtest)
-add_gtest(PortParametersTests SOURCES ${PORTPARAMETERSTESTS_SOURCE} LABELS "NoMemoryCheck")
 
 ###################
 # GuifPrefix test #
@@ -139,4 +127,3 @@ target_include_directories(GuidTests PRIVATE
     ${PROJECT_SOURCE_DIR}/src/cpp)
 target_link_libraries(GuidTests GTest::gtest)
 add_gtest(GuidTests SOURCES ${GUIDTESTS_SOURCE} LABELS "NoMemoryCheck")
->>>>>>> c871a2956 (Improve GUID_t operator< performance (#2955))
