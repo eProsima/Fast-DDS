@@ -787,12 +787,16 @@ DeliveryRetCode StatefulWriter::deliver_sample_to_network(
                 uint32_t last_processed = 0;
                 if (!m_separateSendingEnabled)
                 {
+                    if (locator_selector.locator_selector.state_has_changed())
+                    {
+                        group.flush_and_reset();
+                        network.select_locators(locator_selector.locator_selector);
+                        compute_selected_guids(locator_selector);
+                    }
+
                     size_t num_locators = locator_selector.locator_selector.selected_size();
                     if (num_locators > 0)
                     {
-                        network.select_locators(locator_selector.locator_selector);
-                        compute_selected_guids(locator_selector);
-
                         if (0 < n_fragments)
                         {
                             if (min_unsent_fragment != n_fragments + 1)
