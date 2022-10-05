@@ -1804,16 +1804,6 @@ void StatefulWriter::send_heartbeat_piggyback_nts_(
         size_t number_of_readers = reader == nullptr ? locator_selector.all_remote_readers.size() : 1u;
         if (mp_history->isFull() || next_all_acked_notify_sequence_ < get_seq_num_min())
         {
-            if (reader == nullptr)
-            {
-                locator_selector.locator_selector.reset(true);
-                if (locator_selector.locator_selector.state_has_changed())
-                {
-                    message_group.flush_and_reset();
-                    getRTPSParticipant()->network_factory().select_locators(locator_selector.locator_selector);
-                    compute_selected_guids(locator_selector);
-                }
-            }
             send_heartbeat_nts_(number_of_readers, message_group, disable_positive_acks_);
         }
         else
