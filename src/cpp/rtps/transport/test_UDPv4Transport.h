@@ -60,6 +60,9 @@ public:
     RTPS_DllAPI static bool always_drop_participant_builtin_topic_data;
     RTPS_DllAPI static bool simulate_no_interfaces;
 
+    typedef std::function<bool (const Locator& destination)> DestinationLocatorFilter;
+    RTPS_DllAPI static DestinationLocatorFilter locator_filter;
+
 protected:
 
     virtual void get_ips(
@@ -80,8 +83,6 @@ private:
         uint8_t percentage;
         uint8_t accumulator;
     };
-
-    typedef std::function<bool (fastrtps::rtps::CDRMessage_t& msg)> filter;
 
     PercentageData drop_data_messages_percentage_;
     test_UDPv4TransportDescriptor::filter drop_data_messages_filter_;

@@ -37,6 +37,10 @@ uint32_t test_UDPv4Transport::test_UDPv4Transport_DropLogLength = 0;
 bool test_UDPv4Transport::test_UDPv4Transport_ShutdownAllNetwork = false;
 bool test_UDPv4Transport::always_drop_participant_builtin_topic_data = false;
 bool test_UDPv4Transport::simulate_no_interfaces = false;
+test_UDPv4Transport::DestinationLocatorFilter test_UDPv4Transport::locator_filter([](const Locator&)
+        {
+            return false;
+        });
 
 test_UDPv4Transport::test_UDPv4Transport(
         const test_UDPv4TransportDescriptor& descriptor)
@@ -275,10 +279,11 @@ static bool ReadSubmessageHeader(
 bool test_UDPv4Transport::should_drop_locator(
         const Locator& remote_locator)
 {
-    // If there are no interfaces (simulate_no_interfaces), only multicast and localhost traffic is sent
-    return simulate_no_interfaces &&
+    return locator_filter(remote_locator) ||
+           // If there are no interfaces (simulate_no_interfaces), only multicast and localhost traffic is sent
+           (simulate_no_interfaces &&
            !fastrtps::rtps::IPLocator::isMulticast(remote_locator) &&
-           !fastrtps::rtps::IPLocator::isLocal(remote_locator);
+           !fastrtps::rtps::IPLocator::isLocal(remote_locator));
 }
 
 bool test_UDPv4Transport::packet_should_drop(
