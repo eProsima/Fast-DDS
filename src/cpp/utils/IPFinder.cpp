@@ -22,6 +22,10 @@
 
 #include <fastdds/dds/log/Log.hpp>
 
+#if defined(__APPLE__)
+#include <TargetConditionals.h>
+#endif // if defined(__APPLE__)
+
 #if defined(_WIN32)
 #pragma comment(lib, "Iphlpapi.lib")
 #include <stdio.h>
@@ -40,7 +44,11 @@
 #include <string.h>
 #include <net/if.h>
 #include <sys/ioctl.h>
+#if defined(__APPLE__) && TARGET_OS_IPHONE
+#include <net/ethernet.h>
+#else
 #include <net/if_arp.h>
+#endif // if defined(__APPLE__) && TARGET_OS_IPHONE
 #include <errno.h>
 #if defined(__APPLE__)
 #include <sys/types.h>
