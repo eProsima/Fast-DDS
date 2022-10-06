@@ -100,6 +100,8 @@ private:
     test_UDPv4TransportDescriptor::filter messages_filter_;
     std::vector<fastrtps::rtps::SequenceNumber_t> sequence_number_data_messages_to_drop_;
 
+    bool should_drop_locator(
+            const Locator& remote_locator);
 
     bool log_drop(
             const fastrtps::rtps::octet* buffer,
