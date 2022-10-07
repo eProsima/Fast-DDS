@@ -33,6 +33,7 @@
 #include <fastdds/dds/core/status/SampleRejectedStatus.hpp>
 #include <fastdds/dds/core/status/StatusMask.hpp>
 #include <fastdds/dds/core/status/SubscriptionMatchedStatus.hpp>
+#include <fastdds/dds/subscriber/ReadCondition.hpp>
 #include <fastdds/dds/subscriber/SampleInfo.hpp>
 #include <fastdds/dds/topic/TypeSupport.hpp>
 
@@ -73,7 +74,6 @@ struct LivelinessChangedStatus;
 
 // Not yet implemented
 class QueryCondition;
-class ReadCondition;
 
 using SampleInfoSeq = LoanableSequence<SampleInfo>;
 
