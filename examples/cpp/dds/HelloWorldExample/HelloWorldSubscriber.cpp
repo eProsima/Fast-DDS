@@ -19,7 +19,10 @@
 
 #include "HelloWorldSubscriber.h"
 
-#include "common.hpp"
+#include <thread>
+#include <string>
+
+#include <asio.hpp>
 
 #include <fastdds/dds/domain/DomainParticipantFactory.hpp>
 #include <fastdds/dds/subscriber/DataReader.hpp>
@@ -31,6 +34,8 @@
 #include <fastdds/rtps/transport/UDPv4TransportDescriptor.h>
 #include <fastrtps/attributes/ParticipantAttributes.h>
 #include <fastrtps/attributes/SubscriberAttributes.h>
+
+#include "common.hpp"
 
 using namespace eprosima::fastdds::dds;
 
@@ -103,6 +108,15 @@ bool HelloWorldSubscriber::init(
     for (auto locator : initial_peers)
     {
         pqos.wire_protocol().builtin.initialPeersList.push_back(locator);
+    }
+
+    // Add Host name to participant data
+    std::string host_name = asio::ip::host_name();
+    pqos.user_data().clear();
+    pqos.user_data().resize(host_name.length());
+    for (size_t i = 0; i < host_name.length(); i++)
+    {
+        pqos.user_data().at(i) = (unsigned char)host_name.at(i);
     }
 
     participant_ = factory->create_participant(0, pqos);
