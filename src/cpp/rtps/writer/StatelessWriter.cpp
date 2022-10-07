@@ -746,8 +746,6 @@ DeliveryRetCode StatelessWriter::deliver_sample_nts(
         }
         else
         {
-            bool locator_selector_should_be_reset = false;
-
             if (nullptr != reader_data_filter_)
             {
                 locator_selector.locator_selector.reset(false);
@@ -762,7 +760,6 @@ DeliveryRetCode StatelessWriter::deliver_sample_nts(
                 {
                     network.select_locators(locator_selector.locator_selector);
                     compute_selected_guids(locator_selector);
-                    locator_selector_should_be_reset = true;
                 }
                 num_locators = locator_selector.locator_selector.selected_size() + fixed_locators_.size();
             }
@@ -799,13 +796,6 @@ DeliveryRetCode StatelessWriter::deliver_sample_nts(
                         ret_code = DeliveryRetCode::NOT_DELIVERED;
                     }
                 }
-            }
-
-            if (locator_selector_should_be_reset)
-            {
-                locator_selector.locator_selector.reset(true);
-                network.select_locators(locator_selector.locator_selector);
-                compute_selected_guids(locator_selector);
             }
         }
 

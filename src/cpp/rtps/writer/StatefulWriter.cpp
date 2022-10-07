@@ -973,10 +973,6 @@ DeliveryRetCode StatefulWriter::deliver_sample_to_network(
 
     }
 
-    locator_selector.locator_selector.reset(true);
-    network.select_locators(locator_selector.locator_selector);
-    compute_selected_guids(locator_selector);
-
     if (need_reactivate_periodic_heartbeat)
     {
         periodic_hb_event_->restart_timer(max_blocking_time);
