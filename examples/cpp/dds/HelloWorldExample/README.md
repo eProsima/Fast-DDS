@@ -4,6 +4,7 @@ This example provides a very simple application which can be run as either `publ
 
 1. [Build the example](#build-the-example)
 1. [Run the example](#run-the-example)
+1. [ROS 2 Iron discovery modes](#ros-2-iron-discovery-modes)
 
 ## Build the example
 
@@ -90,3 +91,66 @@ For example, the following configuration will create a participant called `Examp
     </data_reader>
 </profiles>
 ```
+
+## ROS 2 Iron discovery modes
+
+ROS 2 Iron aims to include two orthogonal configurations regarding discovery:
+
+1. **Discovery mode**: controls which participants are automatically discovered by the local participant.
+   It has three possible options:
+    1. `OFF`: The local participant disables automatic discovery.
+    1. `LOCALHOST`: The local participant enables automatic discovery, but only for participants running in the same host.
+    1. `SUBNET`: The local participant enables automatic discovery.
+1. **Static peers**: Allows for setting well-known peers to the local participant.
+
+This example has been extended to be able to set those parameters via CLI to prove the feasibility of the requirements presented by Open Robotics.
+
+With those two parameters, the following matrices summarize the requirements and current status of communication between 2 participants in different scenarios, with an ❌ meaning they should not communicate, and a ✅ meaning they should.
+
+### Node A & B running in the same host
+
+#### Requirements
+
+| NodeA\NodeB | Off+NoStatic | Localhost+NoStatic | Subnet+NoStatic | Off+Static | Localhost+Static | Subnet+Static |
+|-|-|-|-|-|-|-|-|
+| Off+NoStatic | ❌ | ❌ | ❌ | ✅ | ✅ | ✅ |
+| Localhost+NoStatic | ❌ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| Subnet+NoStatic | ❌ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| Off+Static | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| Localhost+Static | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| Subnet+Static | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+
+#### Current status
+
+### Node A & B running in different hosts
+
+| NodeA mode | Off+NoStatic | Localhost+NoStatic | Subnet+NoStatic | Off+Static | Localhost+Static | Subnet+Static |
+|-|-|-|-|-|-|-|-|
+| Off+NoStatic | ❌ | ❌ | ❌ | ✅ | ✅ | ✅ |
+| Localhost+NoStatic | ❌ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| Subnet+NoStatic | ❌ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| Off+Static | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| Localhost+Static | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| Subnet+Static | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+
+#### Requirements
+
+| NodeA\NodeB | Off+NoStatic | Localhost+NoStatic | Subnet+NoStatic | Off+Static | Localhost+Static | Subnet+Static |
+|-|-|-|-|-|-|-|-|
+| Off+NoStatic | ❌ | ❌ | ❌ | ✅ | ✅ | ✅ |
+| Localhost+NoStatic | ❌ | ❌ | ❌ | ✅ | ✅ | ✅ |
+| Subnet+NoStatic | ❌ | ❌ | ✅ | ✅ | ✅ | ✅ |
+| Off+Static | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| Localhost+Static | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| Subnet+Static | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+
+#### Current status
+
+| NodeA\NodeB | Off+NoStatic | Localhost+NoStatic | Subnet+NoStatic | Off+Static | Localhost+Static | Subnet+Static |
+|-|-|-|-|-|-|-|-|
+| Off+NoStatic | ❌ | ❌ | ❌ | ✅ | ✅ | ✅ |
+| Localhost+NoStatic | ❌ | ❌ | ✅(NOK) | ✅ | ✅ | ✅ |
+| Subnet+NoStatic | ❌ | ✅(NOK) | ✅ | ✅ | ✅ | ✅ |
+| Off+Static | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| Localhost+Static | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| Subnet+Static | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
