@@ -154,3 +154,8 @@ With those two parameters, the following matrices summarize the requirements and
 | Off+Static | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
 | Localhost+Static | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
 | Subnet+Static | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+
+##### Notes
+
+Currently, the localhost vs subnet discover each other since, even though the localhost is configuring the multicast TTL to 0, it is still listening on the multicast port corresponding to the domain, and the TTL of the subnet is 1, to the subnet's announcements do reach the localhost participant.
+The proper solution would be to implement `DomainParticipant::ignore_participant` and have a discovery hook that notifies the application of newly discovered participants, so they can be ignored based on discovery `user_data`.
