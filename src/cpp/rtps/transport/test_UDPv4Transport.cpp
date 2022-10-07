@@ -229,17 +229,23 @@ bool test_UDPv4Transport::send(
         bool whitelisted,
         const std::chrono::microseconds& timeout)
 {
-    if (packet_should_drop(send_buffer, send_buffer_size) || should_drop_locator(remote_locator))
+    bool is_multicast_remote_address = fastrtps::rtps::IPLocator::IPLocator::isMulticast(remote_locator);
+    if (is_multicast_remote_address == only_multicast_purpose || whitelisted)
     {
-        statistics_info_.set_statistics_message_data(remote_locator, send_buffer, send_buffer_size);
-        log_drop(send_buffer, send_buffer_size);
-        return true;
+        if (packet_should_drop(send_buffer, send_buffer_size) || should_drop_locator(remote_locator))
+        {
+            statistics_info_.set_statistics_message_data(remote_locator, send_buffer, send_buffer_size);
+            log_drop(send_buffer, send_buffer_size);
+            return true;
+        }
+        else
+        {
+            return UDPv4Transport::send(send_buffer, send_buffer_size, socket, remote_locator, only_multicast_purpose,
+                           whitelisted, timeout);
+        }
     }
-    else
-    {
-        return UDPv4Transport::send(send_buffer, send_buffer_size, socket, remote_locator, only_multicast_purpose,
-                       whitelisted, timeout);
-    }
+
+    return false;
 }
 
 static bool ReadSubmessageHeader(
