@@ -101,6 +101,7 @@ protected:
 public:
 
     MOCK_METHOD0(delete_topic_mock, bool());
+    MOCK_METHOD(bool, ignore_participant, (const InstanceHandle_t&));
 
     virtual ReturnCode_t enable()
     {

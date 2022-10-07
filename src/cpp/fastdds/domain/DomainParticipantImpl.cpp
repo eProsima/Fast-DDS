@@ -823,15 +823,13 @@ PublisherImpl* DomainParticipantImpl::create_publisher_impl(
    }
  */
 
-/* TODO
-   bool DomainParticipantImpl::ignore_participant(
+bool DomainParticipantImpl::ignore_participant(
         const InstanceHandle_t& handle)
-   {
+{
     (void)handle;
     logError(PARTICIPANT, "Not implemented.");
     return false;
-   }
- */
+}
 
 /* TODO
    bool DomainParticipantImpl::ignore_topic(

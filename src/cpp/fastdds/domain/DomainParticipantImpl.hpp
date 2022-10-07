@@ -310,10 +310,8 @@ public:
 
     // TODO Subscriber* get_builtin_subscriber();
 
-    /* TODO
-       bool ignore_participant(
+    bool ignore_participant(
             const InstanceHandle_t& handle);
-     */
 
     /* TODO
        bool ignore_topic(
