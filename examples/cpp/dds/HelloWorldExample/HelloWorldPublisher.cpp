@@ -44,6 +44,7 @@ HelloWorldPublisher::HelloWorldPublisher()
     , publisher_(nullptr)
     , topic_(nullptr)
     , writer_(nullptr)
+    , host_name_(asio::ip::host_name())
     , type_(new HelloWorldPubSubType())
 {
 }
@@ -53,7 +54,8 @@ bool HelloWorldPublisher::init(
         eprosima::examples::helloworld::AutomaticDiscovery discovery_mode,
         const eprosima::fastdds::rtps::LocatorList& initial_peers)
 {
-    std::cout << "Publisher discovery mode: " << discovery_mode << std::endl;
+    discovery_mode_ = discovery_mode;
+    std::cout << "Publisher discovery mode: " << discovery_mode_ << std::endl;
     if (!initial_peers.empty())
     {
         std::cout << "Publisher initial peers list:" << std::endl;
@@ -75,7 +77,7 @@ bool HelloWorldPublisher::init(
         factory->get_default_participant_qos(pqos);
     }
 
-    switch (discovery_mode)
+    switch (discovery_mode_)
     {
         case eprosima::examples::helloworld::AutomaticDiscovery::OFF:
         {
@@ -114,15 +116,14 @@ bool HelloWorldPublisher::init(
     }
 
     // Add Host name to participant data
-    std::string host_name = asio::ip::host_name();
     pqos.user_data().clear();
-    pqos.user_data().resize(host_name.length());
-    for (size_t i = 0; i < host_name.length(); i++)
+    pqos.user_data().resize(host_name_.length());
+    for (size_t i = 0; i < host_name_.length(); i++)
     {
-        pqos.user_data().at(i) = (unsigned char)host_name.at(i);
+        pqos.user_data().at(i) = (unsigned char)host_name_.at(i);
     }
 
-    participant_ = factory->create_participant(0, pqos);
+    participant_ = factory->create_participant(0, pqos, this);
 
     if (participant_ == nullptr)
     {
@@ -290,4 +291,39 @@ bool HelloWorldPublisher::publish(
         return true;
     }
     return false;
+}
+
+void HelloWorldPublisher::on_participant_discovery(
+        eprosima::fastdds::dds::DomainParticipant* participant,
+        eprosima::fastrtps::rtps::ParticipantDiscoveryInfo&& info)
+{
+    // New participant discovered
+    if (eprosima::fastrtps::rtps::ParticipantDiscoveryInfo::DISCOVERED_PARTICIPANT == info.status)
+    {
+        // Get hostname from user data
+        std::string host_name = "";
+        unsigned char c = '0';
+        for (long unsigned int i = 0; i < info.info.m_userData.size() && c != '\0'; i++)
+        {
+            c = info.info.m_userData.at(i);
+            host_name = host_name + (char)c;
+        }
+
+        if (host_name_ == host_name)
+        {
+            std::cout << "Participant discovered in same host: " << std::endl;
+            std::cout << "   - Status: Accepted" << std::endl;
+        }
+        else
+        {
+            std::cout << "Participant discovered in different host: " << std::endl;
+            if (discovery_mode_ == eprosima::examples::helloworld::AutomaticDiscovery::LOCALHOST)
+            {
+                participant->ignore_participant(info.info.m_guid);
+                std::cout << "   - Status: Ignored" << std::endl;
+            }
+        }
+        std::cout << "   - Name: " << info.info.m_participantName << std::endl;
+        std::cout << "   - GUID: " << info.info.m_guid << std::endl;
+    }
 }

@@ -20,17 +20,20 @@
 #ifndef HELLOWORLDPUBLISHER_H_
 #define HELLOWORLDPUBLISHER_H_
 
-#include "HelloWorldPubSubTypes.h"
-
-#include "common.hpp"
+#include <string>
 
 #include <fastdds/dds/domain/DomainParticipant.hpp>
+#include <fastdds/dds/domain/DomainParticipantListener.hpp>
 #include <fastdds/dds/publisher/DataWriterListener.hpp>
 #include <fastdds/dds/topic/TypeSupport.hpp>
 #include <fastdds/rtps/common/Locator.h>
 #include <fastdds/rtps/common/LocatorList.hpp>
+#include <fastdds/rtps/participant/ParticipantDiscoveryInfo.h>
 
-class HelloWorldPublisher
+#include "HelloWorldPubSubTypes.h"
+#include "common.hpp"
+
+class HelloWorldPublisher : private eprosima::fastdds::dds::DomainParticipantListener
 {
 public:
 
@@ -67,6 +70,10 @@ private:
 
     bool stop_;
 
+    std::string host_name_;
+
+    eprosima::examples::helloworld::AutomaticDiscovery discovery_mode_;
+
     class PubListener : public eprosima::fastdds::dds::DataWriterListener
     {
     public:
@@ -94,6 +101,10 @@ private:
     void runThread(
             uint32_t number,
             uint32_t sleep);
+
+    void on_participant_discovery(
+            eprosima::fastdds::dds::DomainParticipant* participant,
+            eprosima::fastrtps::rtps::ParticipantDiscoveryInfo&& info) override;
 
     eprosima::fastdds::dds::TypeSupport type_;
 };

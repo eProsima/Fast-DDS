@@ -20,18 +20,21 @@
 #ifndef HELLOWORLDSUBSCRIBER_H_
 #define HELLOWORLDSUBSCRIBER_H_
 
-#include "HelloWorldPubSubTypes.h"
-
-#include "common.hpp"
+#include <string>
 
 #include <fastdds/dds/core/status/SubscriptionMatchedStatus.hpp>
 #include <fastdds/dds/domain/DomainParticipant.hpp>
+#include <fastdds/dds/domain/DomainParticipantListener.hpp>
 #include <fastdds/dds/subscriber/DataReaderListener.hpp>
 #include <fastdds/rtps/common/Locator.h>
 #include <fastdds/rtps/common/LocatorList.hpp>
 #include <fastrtps/subscriber/SampleInfo.h>
+#include <fastdds/rtps/participant/ParticipantDiscoveryInfo.h>
 
-class HelloWorldSubscriber
+#include "HelloWorldPubSubTypes.h"
+#include "common.hpp"
+
+class HelloWorldSubscriber : private eprosima::fastdds::dds::DomainParticipantListener
 {
 public:
 
@@ -64,6 +67,10 @@ private:
 
     eprosima::fastdds::dds::TypeSupport type_;
 
+    std::string host_name_;
+
+    eprosima::examples::helloworld::AutomaticDiscovery discovery_mode_;
+
     class SubListener : public eprosima::fastdds::dds::DataReaderListener
     {
     public:
@@ -92,6 +99,10 @@ private:
         uint32_t samples_;
     }
     listener_;
+
+    void on_participant_discovery(
+            eprosima::fastdds::dds::DomainParticipant* participant,
+            eprosima::fastrtps::rtps::ParticipantDiscoveryInfo&& info) override;
 };
 
 #endif /* HELLOWORLDSUBSCRIBER_H_ */
