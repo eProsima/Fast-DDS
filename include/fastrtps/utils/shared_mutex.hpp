@@ -569,6 +569,41 @@ shared_lock<Mutex>::try_lock()
     return owns_;
 }
 
+template <class Mutex>
+template <class Clock, class Duration>
+bool
+shared_lock<Mutex>::try_lock_until(
+                       const std::chrono::time_point<Clock, Duration>& abs_time)
+{
+    if (m_ == nullptr)
+        throw std::system_error(std::error_code(EPERM, std::system_category()),
+                          "shared_lock::try_lock_until: references null mutex");
+    if (owns_)
+        throw std::system_error(std::error_code(EDEADLK, std::system_category()),
+                                 "shared_lock::try_lock_until: already locked");
+    owns_ = m_->try_lock_shared_until(abs_time);
+    return owns_;
+}
+
+template <class Mutex>
+void
+shared_lock<Mutex>::unlock()
+{
+    if (!owns_)
+        throw std::system_error(std::error_code(EPERM, std::system_category()),
+                                "shared_lock::unlock: not locked");
+    m_->unlock_shared();
+    owns_ = false;
+}
+
+template <class Mutex>
+inline
+void
+swap(shared_lock<Mutex>&  x, shared_lock<Mutex>&  y)
+{
+    x.swap(y);
+}
+
 } //namespace eprosima
 
 #else // fallback to STL
@@ -579,6 +614,7 @@ namespace eprosima {
 
 using std::shared_mutex;
 using std::shared_lock;
+using std::swap;
 
 } //namespace eprosima
 
