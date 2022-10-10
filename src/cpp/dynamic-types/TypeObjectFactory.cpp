@@ -1121,7 +1121,7 @@ const TypeIdentifier* TypeObjectFactory::get_stored_type_identifier(
     {
         return nullptr;
     }
-    if (identifier->_d() == EK_COMPLETE)
+    if (is_type_identifier_complete(identifier))
     {
         for (auto& it : complete_identifiers_)
         {
@@ -1157,7 +1157,7 @@ std::string TypeObjectFactory::get_type_name(
     {
         return "<NULLPTR>";
     }
-    if (identifier->_d() == EK_COMPLETE)
+    if (is_type_identifier_complete(identifier))
     {
         for (auto& it : complete_identifiers_)
         {
@@ -1289,7 +1289,7 @@ std::string TypeObjectFactory::generate_name_and_store_type_identifier(
 const TypeIdentifier* TypeObjectFactory::try_get_complete(
         const TypeIdentifier* identifier) const
 {
-    if (identifier->_d() == EK_COMPLETE)
+    if (is_type_identifier_complete(identifier))
     {
         return identifier;
     }
@@ -1392,7 +1392,14 @@ void TypeObjectFactory::add_type_object(
         {
             if (object->_d() == EK_MINIMAL)
             {
-                const TypeIdentifier* typeId = identifiers_[type_name];
+                // Use find instead of [] so no nullptr is created in case it does not exist
+                auto it = identifiers_.find(type_name);
+                const TypeIdentifier* typeId = nullptr;
+
+                if (it != identifiers_.end())
+                {
+                    typeId = it->second;
+                }
                 if (objects_.find(typeId) == objects_.end())
                 {
                     TypeObject* obj = new TypeObject();
@@ -1402,7 +1409,13 @@ void TypeObjectFactory::add_type_object(
             }
             else if (object->_d() == EK_COMPLETE)
             {
-                const TypeIdentifier* typeId = complete_identifiers_[type_name];
+                auto it = complete_identifiers_.find(type_name);
+                const TypeIdentifier* typeId = nullptr;
+
+                if (it != complete_identifiers_.end())
+                {
+                    typeId = it->second;
+                }
                 if (complete_objects_.find(typeId) == complete_objects_.end())
                 {
                     TypeObject* obj = new TypeObject();
@@ -1413,7 +1426,13 @@ void TypeObjectFactory::add_type_object(
         }
         else
         {
-            const TypeIdentifier* typeId = identifiers_[type_name];
+            auto it = identifiers_.find(type_name);
+            const TypeIdentifier* typeId = nullptr;
+
+            if (it != identifiers_.end())
+            {
+                typeId = it->second;
+            }
             if (object->_d() == EK_MINIMAL)
             {
                 if (objects_.find(typeId) == objects_.end())

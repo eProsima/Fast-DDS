@@ -1188,18 +1188,24 @@ void DynamicTypeBuilderFactory::build_sequence_type_code(
         object.complete().sequence_type().element().common().element_flags().IS_KEY(false);
         object.complete().sequence_type().element().common().element_flags().IS_DEFAULT(false);
 
-        //TypeIdentifier ident;
-        //build_type_identifier(descriptor->get_base_type()->descriptor_, ident);
         TypeObject obj;
         build_type_object(descriptor->get_element_type(), obj, complete);
-        TypeIdentifier ident = *TypeObjectFactory::get_instance()->get_type_identifier(
-            descriptor->get_element_type()->get_name());
 
-        object.complete().sequence_type().element().common().type(ident);
+        DynamicType_ptr element_type = descriptor->get_element_type();
+        if (element_type == nullptr) {
+          throw std::runtime_error("Could not get the element type");
+        }
+
+        const TypeIdentifier * ident_ptr = TypeObjectFactory::get_instance()->get_type_identifier(element_type->get_name(), true);
+        if (ident_ptr == nullptr) {
+          throw std::runtime_error("Could not get complete type identifier");
+        }
+
+        object.complete().sequence_type().element().common().type(*ident_ptr);
 
         const TypeIdentifier* identifier =
                 TypeObjectFactory::get_instance()->get_sequence_identifier(
-            descriptor->get_element_type()->get_name(),
+            element_type->get_name(),
             descriptor->get_bounds(),
             true);
 
@@ -1225,18 +1231,24 @@ void DynamicTypeBuilderFactory::build_sequence_type_code(
         object.minimal().sequence_type().element().common().element_flags().IS_KEY(false);
         object.minimal().sequence_type().element().common().element_flags().IS_DEFAULT(false);
 
-        //TypeIdentifier ident;
-        //build_type_identifier(descriptor->get_base_type()->descriptor_, ident);
         TypeObject obj;
         build_type_object(descriptor->get_element_type(), obj);
-        TypeIdentifier ident = *TypeObjectFactory::get_instance()->get_type_identifier(
-            descriptor->get_element_type()->get_name());
 
-        object.minimal().sequence_type().element().common().type(ident);
+        DynamicType_ptr element_type = descriptor->get_element_type();
+        if (element_type == nullptr) {
+          throw std::runtime_error("Could not get the element type");
+        }
+
+        const TypeIdentifier * ident_ptr = TypeObjectFactory::get_instance()->get_type_identifier(element_type->get_name());
+        if (ident_ptr == nullptr) {
+          throw std::runtime_error("Could not get minimal type identifier");
+        }
+
+        object.minimal().sequence_type().element().common().type(*ident_ptr);
 
         const TypeIdentifier* identifier =
                 TypeObjectFactory::get_instance()->get_sequence_identifier(
-            descriptor->get_element_type()->get_name(),
+            element_type->get_name(),
             descriptor->get_bounds(),
             false);
 
