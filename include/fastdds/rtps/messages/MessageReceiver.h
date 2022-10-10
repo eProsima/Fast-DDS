@@ -21,6 +21,7 @@
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 
 #include <functional>
+#include <set>
 #include <unordered_map>
 
 #include <fastdds/rtps/common/all_common.h>
@@ -71,11 +72,16 @@ public:
     void removeEndpoint(
             Endpoint* to_remove);
 
+    void ignore_participant(
+            const GuidPrefix_t& ignored_participant);
+
 private:
 
     mutable eprosima::shared_mutex mtx_;
     std::vector<RTPSWriter*> associated_writers_;
     std::unordered_map<EntityId_t, std::vector<RTPSReader*>> associated_readers_;
+    mutable eprosima::shared_mutex ignored_participants_mtx_;
+    std::set<GuidPrefix_t> ignored_participants_;
 
     RTPSParticipantImpl* participant_;
     //!Protocol version of the message

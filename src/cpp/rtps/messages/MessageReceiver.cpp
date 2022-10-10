@@ -301,6 +301,13 @@ void MessageReceiver::removeEndpoint(
     }
 }
 
+void MessageReceiver::ignore_participant(
+        const GuidPrefix_t& ignored_participant)
+{
+    std::lock_guard<eprosima::shared_mutex> guard(ignored_participants_mtx_);
+    ignored_participants_.insert(ignored_participant).second;
+}
+
 void MessageReceiver::reset()
 {
     source_version_ = c_ProtocolVersion;
@@ -346,6 +353,13 @@ void MessageReceiver::processCDRMsg(
         //Once everything is set, the reading begins:
         if (!checkRTPSHeader(msg))
         {
+            return;
+        }
+
+        auto it = ignored_participants_.find(source_guid_prefix_);
+        if (it != ignored_participants_.end())
+        {
+            logInfo(RTPS_MSG_IN, IDSTRING "Ignoring message from participant " << source_guid_prefix_);
             return;
         }
 
