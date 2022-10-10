@@ -52,7 +52,7 @@ HelloWorldSubscriber::HelloWorldSubscriber()
 bool HelloWorldSubscriber::init(
         bool use_env,
         eprosima::examples::helloworld::AutomaticDiscovery discovery_mode,
-        const eprosima::fastdds::rtps::LocatorList& initial_peers)
+        std::vector<std::string> initial_peers)
 {
     discovery_mode_ = discovery_mode;
     std::cout << "Subscriber discovery mode: " << discovery_mode_ << std::endl;
@@ -61,6 +61,14 @@ bool HelloWorldSubscriber::init(
         std::cout << "Subscriber initial peers list:" << std::endl;
         for (auto peer : initial_peers)
         {
+            std::stringstream iss(peer);
+            std::string hostname;
+            std::getline(iss, hostname, '@');
+            std::string locator_stream;
+            std::getline(iss, locator_stream, '@');
+            eprosima::fastrtps::rtps::Locator_t loc;
+            std::istringstream(locator_stream) >> loc;
+            initial_peers_.push_back(std::pair<std::string, eprosima::fastrtps::rtps::Locator_t>(hostname, loc));
             std::cout << "   - " << peer << std::endl;
         }
     }
@@ -106,18 +114,23 @@ bool HelloWorldSubscriber::init(
         }
     }
 
-    // Add static initial peers (if any)
-    for (auto locator : initial_peers)
-    {
-        pqos.wire_protocol().builtin.initialPeersList.push_back(locator);
-    }
-
     // Add Host name to participant data
     pqos.user_data().clear();
     pqos.user_data().resize(host_name_.length());
     for (size_t i = 0; i < host_name_.length(); i++)
     {
         pqos.user_data().at(i) = (unsigned char)host_name_.at(i);
+    }
+
+    // Add static initial peers (if any)
+    for (auto peer : initial_peers_)
+    {
+        pqos.user_data().emplace_back(',');
+        for (size_t i = 0; i < peer.first.length(); i++)
+        {
+            pqos.user_data().emplace_back(peer.first.at(i));
+        }
+        pqos.wire_protocol().builtin.initialPeersList.push_back(peer.second);
     }
 
     participant_ = factory->create_participant(0, pqos, this, eprosima::fastdds::dds::StatusMask::none());
@@ -255,34 +268,82 @@ void HelloWorldSubscriber::on_participant_discovery(
         eprosima::fastdds::dds::DomainParticipant* participant,
         eprosima::fastrtps::rtps::ParticipantDiscoveryInfo&& info)
 {
-    static_cast<void>(participant);
     // New participant discovered
     if (eprosima::fastrtps::rtps::ParticipantDiscoveryInfo::DISCOVERED_PARTICIPANT == info.status)
     {
         // Get hostname from user data
-        std::string host_name = "";
         unsigned char c = '0';
+        std::vector<std::string> hosts;
+        std::string host_aux = "";
         for (long unsigned int i = 0; i < info.info.m_userData.size() && c != '\0'; i++)
         {
             c = info.info.m_userData.at(i);
-            host_name = host_name + (char)c;
+            if (c != ',')
+            {
+                host_aux = host_aux + (char)c;
+            }
+            else
+            {
+                hosts.push_back(host_aux);
+                host_aux = "";
+            }
         }
+        hosts.push_back(host_aux);
 
-        if (host_name_ == host_name)
+        if (host_name_ == hosts[0])
         {
-            std::cout << "Participant discovered in same host: " << std::endl;
+            std::cout << "Participant discovered in same host: " << host_name_ << std::endl;
             std::cout << "   - Status: Accepted" << std::endl;
         }
         else
         {
-            std::cout << "Participant discovered in different host: " << std::endl;
+            std::cout << "Participant discovered in different host: " << hosts[0] << std::endl;
             if (discovery_mode_ == eprosima::examples::helloworld::AutomaticDiscovery::LOCALHOST)
             {
-                participant->ignore_participant(info.info.m_guid);
-                std::cout << "   - Status: Ignored" << std::endl;
+                // Check if this is a peer of mine
+                auto local_peer_it = std::find_if(initial_peers_.begin(), initial_peers_.end(),
+                                [hosts](std::pair<std::string,
+                                eprosima::fastrtps::rtps::Locator_t> const& elem)
+                                {
+                                    return elem.first == hosts[0];
+                                });
+
+                if (local_peer_it != initial_peers_.end())
+                {
+                    std::cout << "   - Status: Accepted due to local initial peers" << std::endl;
+                }
+                // Check if I'm a peer of it
+                else
+                {
+                    auto host_it = std::find(std::next(hosts.begin()), hosts.end(), host_name_);
+                    if (host_it != hosts.end())
+                    {
+                        std::cout << "   - Status: Accepted due to remote initial peers" << std::endl;
+                    }
+                    else
+                    {
+                        participant->ignore_participant(info.info.m_guid);
+                        std::cout << "   - Status: Ignored" << std::endl;
+                    }
+                }
+            }
+            else
+            {
+                std::cout << "   - Status: Accepted" << std::endl;
             }
         }
         std::cout << "   - Name: " << info.info.m_participantName << std::endl;
         std::cout << "   - GUID: " << info.info.m_guid << std::endl;
+        std::cout << "   - Initial Peers: ";
+
+        for (auto peer = std::next(hosts.begin()); peer != hosts.end(); peer++)
+        {
+            std::cout << *peer;
+            if (std::next(peer) != hosts.end())
+            {
+                std::cout << ",";
+            }
+        }
+        std::cout << std::endl;
     }
 }

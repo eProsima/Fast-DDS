@@ -46,7 +46,7 @@ public:
     bool init(
             bool use_env,
             eprosima::examples::helloworld::AutomaticDiscovery discovery_mode,
-            const eprosima::fastdds::rtps::LocatorList& initial_peers);
+            std::vector<std::string> initial_peers);
 
     //!RUN the subscriber
     void run();
@@ -70,6 +70,8 @@ private:
     std::string host_name_;
 
     eprosima::examples::helloworld::AutomaticDiscovery discovery_mode_;
+
+    std::vector<std::pair<std::string, eprosima::fastrtps::rtps::Locator_t>> initial_peers_;
 
     class SubListener : public eprosima::fastdds::dds::DataReaderListener
     {

@@ -45,7 +45,7 @@ public:
     bool init(
             bool use_env,
             eprosima::examples::helloworld::AutomaticDiscovery discovery_mode,
-            const eprosima::fastdds::rtps::LocatorList& initial_peers);
+            std::vector<std::string> initial_peers);
 
     //!Publish a sample
     bool publish(
@@ -73,6 +73,8 @@ private:
     std::string host_name_;
 
     eprosima::examples::helloworld::AutomaticDiscovery discovery_mode_;
+
+    std::vector<std::pair<std::string, eprosima::fastrtps::rtps::Locator_t>> initial_peers_;
 
     class PubListener : public eprosima::fastdds::dds::DataWriterListener
     {

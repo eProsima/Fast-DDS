@@ -112,7 +112,7 @@ With those two parameters, the following matrices summarize the requirements and
 #### Requirements
 
 | NodeA\NodeB | Off+NoStatic | Localhost+NoStatic | Subnet+NoStatic | Off+Static | Localhost+Static | Subnet+Static |
-|-|-|-|-|-|-|-|-|
+|-|-|-|-|-|-|-|
 | Off+NoStatic | ❌ | ❌ | ❌ | ✅ | ✅ | ✅ |
 | Localhost+NoStatic | ❌ | ✅ | ✅ | ✅ | ✅ | ✅ |
 | Subnet+NoStatic | ❌ | ✅ | ✅ | ✅ | ✅ | ✅ |
@@ -120,23 +120,23 @@ With those two parameters, the following matrices summarize the requirements and
 | Localhost+Static | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
 | Subnet+Static | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
 
-#### Current status
-
-### Node A & B running in different hosts
+#### Current status (all requirements are met)
 
 | NodeA mode | Off+NoStatic | Localhost+NoStatic | Subnet+NoStatic | Off+Static | Localhost+Static | Subnet+Static |
-|-|-|-|-|-|-|-|-|
+|-|-|-|-|-|-|-|
 | Off+NoStatic | ❌ | ❌ | ❌ | ✅ | ✅ | ✅ |
 | Localhost+NoStatic | ❌ | ✅ | ✅ | ✅ | ✅ | ✅ |
 | Subnet+NoStatic | ❌ | ✅ | ✅ | ✅ | ✅ | ✅ |
 | Off+Static | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
 | Localhost+Static | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
 | Subnet+Static | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+
+### Node A & B running in different hosts
 
 #### Requirements
 
 | NodeA\NodeB | Off+NoStatic | Localhost+NoStatic | Subnet+NoStatic | Off+Static | Localhost+Static | Subnet+Static |
-|-|-|-|-|-|-|-|-|
+|-|-|-|-|-|-|-|
 | Off+NoStatic | ❌ | ❌ | ❌ | ✅ | ✅ | ✅ |
 | Localhost+NoStatic | ❌ | ❌ | ❌ | ✅ | ✅ | ✅ |
 | Subnet+NoStatic | ❌ | ❌ | ✅ | ✅ | ✅ | ✅ |
@@ -144,18 +144,31 @@ With those two parameters, the following matrices summarize the requirements and
 | Localhost+Static | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
 | Subnet+Static | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
 
-#### Current status
+#### Current status (all requirements are met)
 
 | NodeA\NodeB | Off+NoStatic | Localhost+NoStatic | Subnet+NoStatic | Off+Static | Localhost+Static | Subnet+Static |
-|-|-|-|-|-|-|-|-|
+|-|-|-|-|-|-|-|
 | Off+NoStatic | ❌ | ❌ | ❌ | ✅ | ✅ | ✅ |
-| Localhost+NoStatic | ❌ | ❌ | ✅(NOK) | ✅ | ✅ | ✅ |
-| Subnet+NoStatic | ❌ | ✅(NOK) | ✅ | ✅ | ✅ | ✅ |
+| Localhost+NoStatic | ❌ | ❌ | ✅ | ✅ | ✅ | ✅ |
+| Subnet+NoStatic | ❌ | ✅ | ✅ | ✅ | ✅ | ✅ |
 | Off+Static | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
 | Localhost+Static | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
 | Subnet+Static | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
 
-##### Notes
+### Implementation strategy
 
-Currently, the localhost vs subnet discover each other since, even though the localhost is configuring the multicast TTL to 0, it is still listening on the multicast port corresponding to the domain, and the TTL of the subnet is 1, to the subnet's announcements do reach the localhost participant.
-The proper solution would be to implement `DomainParticipant::ignore_participant` and have a discovery hook that notifies the application of newly discovered participants, so they can be ignored based on discovery `user_data`.
+This PoC implements a PoC of `DomainParticipant::ignore_participant()` so that whenever a remote participant is discovered, the application can tell its local participant to ignore all data coming from the remote participant from that point in time onward.
+This is implemented by propagating within the user data:
+
+1. The local host name
+1. The host names associated to each initial peer that the local instance of the example has
+
+To do so, the initial peers are specified via CLI as `hostname@locator`.
+An example of a `HelloWorldPublisher` with auto discovery set to `OFF` and an initial peer to two other example instances running in a different host (in this case a different docker container) would be:
+
+```bash
+./DDSHelloWorldExample publisher -a off -p 23bdbbebd8cc@UDPv4:[172.17.0.2]:7412,23bdbbebd8cc@UDPv4:[172.17.0.2]:7414
+```
+
+**NOTE**: Mind that the initial peer's locator's port can be set to 0,
+In this case, Fast DDS will create as many initial peers as specified by the `maxInitialPeersRange` (see [Initial Peers](https://fast-dds.docs.eprosima.com/en/latest/fastdds/discovery/simple.html?highlight=initial%20peers#initial-peers))

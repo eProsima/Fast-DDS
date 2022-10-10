@@ -217,7 +217,7 @@ int main(
     bool use_environment_qos = false;
     eprosima::examples::helloworld::AutomaticDiscovery discovery_mode =
             eprosima::examples::helloworld::AutomaticDiscovery::OFF;
-    eprosima::fastdds::rtps::LocatorList initial_peers;
+    std::vector<std::string> initial_peers;
 
     argc -= (argc > 0);
     argv += (argc > 0); // skip program name argv[0] if present
@@ -341,9 +341,7 @@ int main(
 
             while (std::getline(option_stream, initial_peer, ','))
             {
-                eprosima::fastrtps::rtps::Locator_t loc;
-                std::istringstream(initial_peer) >> loc;
-                initial_peers.push_back(loc);
+                initial_peers.push_back(initial_peer);
             }
         }
     }
