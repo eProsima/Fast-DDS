@@ -511,6 +511,19 @@ RTPSParticipantImpl::~RTPSParticipantImpl()
     delete mp_mutex;
 }
 
+bool RTPSParticipantImpl::ignore_participant(
+        const GUID_t& ignored_participant)
+{
+    for (auto& block : m_receiverResourcelist)
+    {
+        block.mp_receiver->ignore_participant(ignored_participant.guidPrefix);
+    }
+
+    // TODO(eduponz): Remove participant from discovery database without deadlock if this is called
+    // from within a PDP discovery callback
+    return true;
+}
+
 template <EndpointKind_t kind, octet no_key, octet with_key>
 bool RTPSParticipantImpl::preprocess_endpoint_attributes(
         const EntityId_t& entity_id,

@@ -212,6 +212,12 @@ bool RTPSParticipant::remove_statistics_listener(
 
 #endif // FASTDDS_STATISTICS
 
+bool RTPSParticipant::ignore_participant(
+        const GUID_t& ignored_participant)
+{
+    return mp_impl->ignore_participant(ignored_participant);
+}
+
 } /* namespace rtps */
 } /* namespace fastrtps */
 } /* namespace eprosima */

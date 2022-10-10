@@ -298,6 +298,9 @@ public:
 
 #endif // FASTDDS_STATISTICS
 
+    bool ignore_participant(
+            const GUID_t& ignored_participant);
+
 private:
 
     //!Pointer to the implementation.

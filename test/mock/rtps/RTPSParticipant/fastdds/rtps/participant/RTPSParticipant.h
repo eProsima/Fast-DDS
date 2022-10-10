@@ -170,6 +170,9 @@ public:
                 const ReaderQos& rqos,
                 const fastdds::rtps::ContentFilterProperty* content_filter));
 
+    MOCK_METHOD1(ignore_participant, bool(
+                const GUID_t& ignored_participant));
+
     const RTPSParticipantAttributes& getRTPSParticipantAttributes()
     {
         return attributes_;

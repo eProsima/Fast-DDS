@@ -512,6 +512,9 @@ public:
         return initialized_;
     }
 
+    bool ignore_participant(
+            const GUID_t& ignored_participant);
+
 private:
 
     //! DomainId
