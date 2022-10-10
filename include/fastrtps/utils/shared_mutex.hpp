@@ -573,14 +573,18 @@ template <class Mutex>
 template <class Clock, class Duration>
 bool
 shared_lock<Mutex>::try_lock_until(
-                       const std::chrono::time_point<Clock, Duration>& abs_time)
+        const std::chrono::time_point<Clock, Duration>& abs_time)
 {
     if (m_ == nullptr)
+    {
         throw std::system_error(std::error_code(EPERM, std::system_category()),
-                          "shared_lock::try_lock_until: references null mutex");
+                      "shared_lock::try_lock_until: references null mutex");
+    }
     if (owns_)
+    {
         throw std::system_error(std::error_code(EDEADLK, std::system_category()),
-                                 "shared_lock::try_lock_until: already locked");
+                      "shared_lock::try_lock_until: already locked");
+    }
     owns_ = m_->try_lock_shared_until(abs_time);
     return owns_;
 }
@@ -590,8 +594,10 @@ void
 shared_lock<Mutex>::unlock()
 {
     if (!owns_)
+    {
         throw std::system_error(std::error_code(EPERM, std::system_category()),
-                                "shared_lock::unlock: not locked");
+                      "shared_lock::unlock: not locked");
+    }
     m_->unlock_shared();
     owns_ = false;
 }
@@ -599,7 +605,9 @@ shared_lock<Mutex>::unlock()
 template <class Mutex>
 inline
 void
-swap(shared_lock<Mutex>&  x, shared_lock<Mutex>&  y)
+swap(
+        shared_lock<Mutex>&  x,
+        shared_lock<Mutex>&  y)
 {
     x.swap(y);
 }
