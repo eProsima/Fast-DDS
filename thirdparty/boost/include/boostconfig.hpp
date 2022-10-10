@@ -42,7 +42,7 @@
 
 // Check that generic emulation has not been accidentally enabled
 #include <boost/interprocess/detail/workaround.hpp>
-#if defined(BOOST_INTERPROCESS_FORCE_GENERIC_EMULATION)
+#if defined(BOOST_INTERPROCESS_FORCE_GENERIC_EMULATION) && !defined(BOOST_INTERPROCESS_WINDOWS)
 #  error "BOOST_INTERPROCESS_FORCE_GENERIC_EMULATION must be disabled in boost/interprocess/detail/workarround.hpp"
 #endif  // BOOST_INTERPROCESS_FORCE_GENERIC_EMULATION
 
