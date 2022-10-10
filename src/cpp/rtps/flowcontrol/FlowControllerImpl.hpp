@@ -5,13 +5,14 @@
 #include <fastdds/rtps/common/Guid.h>
 #include <fastdds/rtps/writer/RTPSWriter.h>
 
-#include <map>
-#include <unordered_map>
-#include <thread>
-#include <mutex>
+#include <atomic>
 #include <cassert>
-#include <condition_variable>
 #include <chrono>
+#include <condition_variable>
+#include <map>
+#include <mutex>
+#include <thread>
+#include <unordered_map>
 
 namespace eprosima {
 namespace fastdds {
@@ -239,7 +240,7 @@ struct FlowControllerAsyncPublishMode
 
     std::thread thread;
 
-    bool running = false;
+    std::atomic_bool running {false};
 
     std::condition_variable cv;
 
@@ -1041,10 +1042,10 @@ private:
     typename std::enable_if<!std::is_same<FlowControllerPureSyncPublishMode, PubMode>::value, void>::type
     initialize_async_thread()
     {
-        if (false == async_mode.running)
+        bool expected = false;
+        if (async_mode.running.compare_exchange_strong(expected, true))
         {
             // Code for initializing the asynchronous thread.
-            async_mode.running = true;
             async_mode.thread = std::thread(&FlowControllerImpl::run, this);
         }
     }
