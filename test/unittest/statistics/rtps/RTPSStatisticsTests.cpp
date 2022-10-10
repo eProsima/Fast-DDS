@@ -13,6 +13,11 @@
 // limitations under the License.
 
 #include <map>
+#if defined(_WIN32)
+#include <process.h>
+#else
+#include <unistd.h>
+#endif // if defined(_WIN32)
 
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
@@ -231,7 +236,13 @@ public:
         p_attr.userTransports.push_back(descriptor);
 
         // random domain_id
-        uint32_t domain_id = SystemInfo::instance().process_id() % 100;
+#if defined(__cplusplus_winrt)
+        uint32_t domain_id = static_cast<uint32_t>(GetCurrentProcessId()) % 100;
+#elif defined(_WIN32)
+        uint32_t domain_id = static_cast<uint32_t>(_getpid()) % 100;
+#else
+        uint32_t domain_id = static_cast<uint32_t>(getpid()) % 100;
+#endif // if defined(__cplusplus_winrt)
 
         participant_ = RTPSDomain::createParticipant(
             domain_id, true, p_attr);
