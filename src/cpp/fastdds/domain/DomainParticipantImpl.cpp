@@ -826,9 +826,7 @@ PublisherImpl* DomainParticipantImpl::create_publisher_impl(
 bool DomainParticipantImpl::ignore_participant(
         const InstanceHandle_t& handle)
 {
-    (void)handle;
-    logError(PARTICIPANT, "Not implemented.");
-    return false;
+    return rtps_participant_->ignore_participant(iHandle2GUID(handle));
 }
 
 /* TODO
