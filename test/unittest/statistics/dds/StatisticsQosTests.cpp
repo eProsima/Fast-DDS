@@ -127,7 +127,7 @@ public:
  * 3. Pull mode enabled
  * 4. Publication mode ASYNCHRONOUS with custom flow controller
  * 5. History kind KEEP LAST
- * 6. History depth 1
+ * 6. History depth 10
  */
 TEST(StatisticsQosTests, StatisticsDataWriterQosTest)
 {
@@ -141,7 +141,7 @@ TEST(StatisticsQosTests, StatisticsDataWriterQosTest)
     EXPECT_EQ(STATISTICS_DATAWRITER_QOS.publish_mode().flow_controller_name,
             eprosima::fastdds::rtps::FASTDDS_STATISTICS_FLOW_CONTROLLER_DEFAULT);
     EXPECT_EQ(STATISTICS_DATAWRITER_QOS.history().kind, eprosima::fastdds::dds::KEEP_LAST_HISTORY_QOS);
-    EXPECT_EQ(STATISTICS_DATAWRITER_QOS.history().depth, 1);
+    EXPECT_EQ(STATISTICS_DATAWRITER_QOS.history().depth, 10);
 }
 
 /*
