@@ -432,11 +432,6 @@ bool StatelessWriter::matched_reader_add(
                     data.remote_locators().multicast,
                     data.m_expectsInlineQos))
                     {
-<<<<<<< HEAD
-=======
-                        filter_remote_locators(*reader.general_locator_selector_entry(),
-                        m_att.external_unicast_locators, m_att.ignore_non_matching_locators);
->>>>>>> 23a788dd0 (Fix selection of output locators (#3003))
                         update_reader_info(true);
                     }
                     return true;
@@ -488,11 +483,6 @@ bool StatelessWriter::matched_reader_add(
             data.remote_locators().multicast,
             data.m_expectsInlineQos,
             is_datasharing_compatible_with(data));
-<<<<<<< HEAD
-=======
-    filter_remote_locators(*new_reader->general_locator_selector_entry(),
-            m_att.external_unicast_locators, m_att.ignore_non_matching_locators);
->>>>>>> 23a788dd0 (Fix selection of output locators (#3003))
 
     locator_selector_.locator_selector.add_entry(new_reader->locator_selector_entry());
 

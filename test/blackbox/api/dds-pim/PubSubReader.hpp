@@ -1278,8 +1278,6 @@ public:
         return *this;
     }
 
-<<<<<<< HEAD
-=======
     PubSubReader& initial_announcements(
             uint32_t count,
             const eprosima::fastrtps::Duration_t& period)
@@ -1289,13 +1287,6 @@ public:
         return *this;
     }
 
-    PubSubReader& ownership_exclusive()
-    {
-        datareader_qos_.ownership().kind = eprosima::fastdds::dds::EXCLUSIVE_OWNERSHIP_QOS;
-        return *this;
-    }
-
->>>>>>> 23a788dd0 (Fix selection of output locators (#3003))
     PubSubReader& load_participant_attr(
             const std::string& /*xml*/)
     {
