@@ -33,6 +33,8 @@ struct test_UDPv4TransportDescriptor : public SocketTransportDescriptor
 {
     //! Custom message filtering functions
     typedef std::function<bool (fastrtps::rtps::CDRMessage_t& msg)> filter;
+    //! Locator filtering function
+    typedef std::function<bool (const Locator& destination)> DestinationLocatorFilter;
 
     //! Test shim parameters
     //! Percentage of data messages being dropped
@@ -66,6 +68,9 @@ struct test_UDPv4TransportDescriptor : public SocketTransportDescriptor
     uint8_t percentageOfMessagesToDrop;
     // General filtering function for all kind of messages (indiscriminate)
     filter messages_filter_;
+
+    //! Filtering function for dropping messages to specific destinations
+    DestinationLocatorFilter locator_filter_;
 
     //! Vector containing the message's sequence numbers being dropped
     std::vector<fastrtps::rtps::SequenceNumber_t> sequenceNumberDataMessagesToDrop;

@@ -37,7 +37,7 @@ uint32_t test_UDPv4Transport::test_UDPv4Transport_DropLogLength = 0;
 bool test_UDPv4Transport::test_UDPv4Transport_ShutdownAllNetwork = false;
 bool test_UDPv4Transport::always_drop_participant_builtin_topic_data = false;
 bool test_UDPv4Transport::simulate_no_interfaces = false;
-test_UDPv4Transport::DestinationLocatorFilter test_UDPv4Transport::locator_filter([](const Locator&)
+test_UDPv4TransportDescriptor::DestinationLocatorFilter test_UDPv4Transport::locator_filter([](const Locator&)
         {
             return false;
         });
@@ -60,6 +60,7 @@ test_UDPv4Transport::test_UDPv4Transport(
     , percentage_of_messages_to_drop_(descriptor.percentageOfMessagesToDrop)
     , messages_filter_(descriptor.messages_filter_)
     , sequence_number_data_messages_to_drop_(descriptor.sequenceNumberDataMessagesToDrop)
+    , locator_filter_(descriptor.locator_filter_)
 {
     test_UDPv4Transport_DropLogLength = 0;
     test_UDPv4Transport_ShutdownAllNetwork = false;
@@ -79,37 +80,41 @@ test_UDPv4TransportDescriptor::test_UDPv4TransportDescriptor()
     , drop_data_messages_filter_([](CDRMessage_t&)
             {
                 return false;
-            }),
-    dropParticipantBuiltinTopicData(false),
-    dropPublicationBuiltinTopicData(false),
-    dropSubscriptionBuiltinTopicData(false),
-    dropDataFragMessagesPercentage(0),
-    drop_data_frag_messages_filter_([](CDRMessage_t&)
+            })
+    , dropParticipantBuiltinTopicData(false)
+    , dropPublicationBuiltinTopicData(false)
+    , dropSubscriptionBuiltinTopicData(false)
+    , dropDataFragMessagesPercentage(0)
+    , drop_data_frag_messages_filter_([](CDRMessage_t&)
             {
                 return false;
-            }),
-    dropHeartbeatMessagesPercentage(0),
-    drop_heartbeat_messages_filter_([](CDRMessage_t&)
+            })
+    , dropHeartbeatMessagesPercentage(0)
+    , drop_heartbeat_messages_filter_([](CDRMessage_t&)
             {
                 return false;
-            }),
-    dropAckNackMessagesPercentage(0),
-    drop_ack_nack_messages_filter_([](CDRMessage_t&)
+            })
+    , dropAckNackMessagesPercentage(0)
+    , drop_ack_nack_messages_filter_([](CDRMessage_t&)
             {
                 return false;
-            }),
-    dropGapMessagesPercentage(0),
-    drop_gap_messages_filter_([](CDRMessage_t&)
+            })
+    , dropGapMessagesPercentage(0)
+    , drop_gap_messages_filter_([](CDRMessage_t&)
             {
                 return false;
-            }),
-    percentageOfMessagesToDrop(0),
-    messages_filter_([](CDRMessage_t&)
+            })
+    , percentageOfMessagesToDrop(0)
+    , messages_filter_([](CDRMessage_t&)
             {
                 return false;
-            }),
-    sequenceNumberDataMessagesToDrop(),
-    dropLogLength(0)
+            })
+    , locator_filter_([](const Locator&)
+            {
+                return false;
+            })
+    , sequenceNumberDataMessagesToDrop()
+    , dropLogLength(0)
 {
 }
 
@@ -286,6 +291,7 @@ bool test_UDPv4Transport::should_drop_locator(
         const Locator& remote_locator)
 {
     return locator_filter(remote_locator) ||
+           locator_filter_(remote_locator) ||
            // If there are no interfaces (simulate_no_interfaces), only multicast and localhost traffic is sent
            (simulate_no_interfaces &&
            !fastrtps::rtps::IPLocator::isMulticast(remote_locator) &&
