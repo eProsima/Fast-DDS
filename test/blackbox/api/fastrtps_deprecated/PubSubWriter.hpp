@@ -1073,6 +1073,26 @@ public:
         return *this;
     }
 
+<<<<<<< HEAD
+=======
+    PubSubWriter& initial_announcements(
+            uint32_t count,
+            const eprosima::fastrtps::Duration_t& period)
+    {
+        participant_attr_.rtps.builtin.discovery_config.initial_announcements.count = count;
+        participant_attr_.rtps.builtin.discovery_config.initial_announcements.period = period;
+        return *this;
+    }
+
+    PubSubWriter& ownership_strength(
+            uint32_t strength)
+    {
+        publisher_attr_.qos.m_ownership.kind = eprosima::fastdds::dds::EXCLUSIVE_OWNERSHIP_QOS;
+        publisher_attr_.qos.m_ownershipStrength.value = strength;
+        return *this;
+    }
+
+>>>>>>> 23a788dd0 (Fix selection of output locators (#3003))
     PubSubWriter& load_publisher_attr(
             const std::string& xml)
     {

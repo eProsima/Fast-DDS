@@ -431,8 +431,11 @@ private:
             LocatorSelectorSender& locator_selector,
             bool create_sender_resources);
 
+    void select_all_readers_nts(
+            RTPSMessageGroup& group,
+            LocatorSelectorSender& locator_selector);
+
     void send_heartbeat_piggyback_nts_(
-            ReaderProxy* reader,
             RTPSMessageGroup& message_group,
             LocatorSelectorSender& locator_selector,
             uint32_t& last_bytes_processed);
