@@ -58,6 +58,21 @@ public:
 
 };
 
+static bool data_exceeds_limitation(
+        uint32_t size_to_add,
+        uint32_t limitation,
+        uint32_t total_sent,
+        uint32_t pending_to_send)
+{
+    return
+        // Limitation has been set and
+        (0 < limitation) &&
+        //   either limitation has already been reached
+        ((limitation <= (total_sent + pending_to_send)) ||
+        //   or adding size_to_add will exceed limitation
+        (size_to_add > (limitation - (total_sent + pending_to_send))));
+}
+
 static bool append_message(
         CDRMessage_t* full_msg,
         CDRMessage_t* submsg)
@@ -422,8 +437,8 @@ bool RTPSMessageGroup::add_data(
     logInfo(RTPS_WRITER, "Sending relevant changes as DATA/DATA_FRAG messages");
 
     // Check limitation
-    if (0 < sent_bytes_limitation_ &&
-            (change.serializedPayload.length > (sent_bytes_limitation_ - (current_sent_bytes_ + full_msg_->length))))
+    uint32_t data_size = change.serializedPayload.length;
+    if (data_exceeds_limitation(data_size, sent_bytes_limitation_, current_sent_bytes_, full_msg_->length))
     {
         flush_and_reset();
         throw limit_exceeded();
@@ -525,8 +540,7 @@ bool RTPSMessageGroup::add_data_frag(
     uint32_t fragment_size = fragment_number < change.getFragmentCount() ? change.getFragmentSize() :
             change.serializedPayload.length - fragment_start;
     // Check limitation
-    if (0 < sent_bytes_limitation_ &&
-            (fragment_size > (sent_bytes_limitation_ - (current_sent_bytes_ + full_msg_->length))))
+    if (data_exceeds_limitation(fragment_size, sent_bytes_limitation_, current_sent_bytes_, full_msg_->length))
     {
         flush_and_reset();
         throw limit_exceeded();

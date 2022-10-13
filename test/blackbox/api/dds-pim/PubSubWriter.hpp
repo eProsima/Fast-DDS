@@ -1258,6 +1258,15 @@ public:
         return *this;
     }
 
+    PubSubWriter& initial_announcements(
+            uint32_t count,
+            const eprosima::fastrtps::Duration_t& period)
+    {
+        participant_qos_.wire_protocol().builtin.discovery_config.initial_announcements.count = count;
+        participant_qos_.wire_protocol().builtin.discovery_config.initial_announcements.period = period;
+        return *this;
+    }
+
     PubSubWriter& ownership_strength(
             uint32_t strength)
     {
