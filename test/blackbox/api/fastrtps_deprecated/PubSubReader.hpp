@@ -1051,7 +1051,7 @@ public:
 
     PubSubReader& initial_announcements(
             uint32_t count,
-            eprosima::fastrtps::Duration_t period)
+            const eprosima::fastrtps::Duration_t& period)
     {
         participant_attr_.rtps.builtin.discovery_config.initial_announcements.count = count;
         participant_attr_.rtps.builtin.discovery_config.initial_announcements.period = period;

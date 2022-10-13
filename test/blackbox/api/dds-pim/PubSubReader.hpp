@@ -1295,7 +1295,7 @@ public:
 
     PubSubReader& initial_announcements(
             uint32_t count,
-            eprosima::fastrtps::Duration_t period)
+            const eprosima::fastrtps::Duration_t& period)
     {
         participant_qos_.wire_protocol().builtin.discovery_config.initial_announcements.count = count;
         participant_qos_.wire_protocol().builtin.discovery_config.initial_announcements.period = period;
