@@ -727,9 +727,9 @@ TEST(RTPS, MultithreadedWriterCreation)
                 writer_attr.flow_controller_name = flow_controller_name;
                 eprosima::fastrtps::rtps::RTPSWriter*  writer = eprosima::fastrtps::rtps::RTPSDomain::createRTPSWriter(
                     rtps_participant, writer_attr, history, nullptr);
-                eprosima::fastrtps::WriterQos writer_qos;
 
                 /* Register writer in participant */
+                eprosima::fastrtps::WriterQos writer_qos;
                 ASSERT_EQ(rtps_participant->registerWriter(writer, topic_attr, writer_qos), true);
 
                 {

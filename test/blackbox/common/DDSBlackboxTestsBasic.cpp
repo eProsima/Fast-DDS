@@ -114,12 +114,12 @@ TEST(DDSBasic, DeleteDisabledEntities)
 }
 
 /**
- * This test checks a race condition on when calling DomainParticipantImpl::create_instance_handle()
+ * This test checks a race condition when calling DomainParticipantImpl::create_instance_handle()
  * from different threads simultaneously. This was resulting in a `free(): invalid pointer` crash
  * when deleting publishers created this way, as there was a clash in their respective instance
  * handles. Not only did the crash occur, but it was also reported by TSan.
  *
- * The tests spawns 200 thread, each creating a publisher and then waiting on a command from the
+ * The test spawns 200 threads, each creating a publisher and then waiting on a command from the
  * main thread to delete them (so all of them at deleted at the same time).
  */
 TEST(DDSBasic, MultithreadedPublisherCreation)
