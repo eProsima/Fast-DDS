@@ -566,11 +566,7 @@ bool StatefulWriter::change_removed_by_history(
 
 void StatefulWriter::send_heartbeat_to_all_readers()
 {
-    // This version is called from send_any_unsent_changes when any of the following conditions is satisfied:
-    // a) history is empty
-    // b) there are no matched readers
-
-    // It may also be called from send_periodic_heartbeat
+    // This method is only called from send_periodic_heartbeat
 
     if (m_separateSendingEnabled)
     {
@@ -594,6 +590,7 @@ void StatefulWriter::send_heartbeat_to_all_readers()
         if (there_are_remote_readers_)
         {
             RTPSMessageGroup group(mp_RTPSParticipant, this, &locator_selector_general_);
+            select_all_readers_nts(group, locator_selector_general_);
 
             // Send a GAP with holes in the history.
             SequenceNumber_t first_seq = get_seq_num_min();
@@ -774,7 +771,17 @@ DeliveryRetCode StatefulWriter::deliver_sample_to_network(
             }
         }
 
-        if (SequenceNumber_t::unknown() != gap_seq_for_all) // Send GAP for all readers
+        bool should_send_global_gap = SequenceNumber_t::unknown() != gap_seq_for_all;
+
+        if (locator_selector.locator_selector.state_has_changed() &&
+                ((should_be_sent && !m_separateSendingEnabled) || should_send_global_gap))
+        {
+            group.flush_and_reset();
+            network.select_locators(locator_selector.locator_selector);
+            compute_selected_guids(locator_selector);
+        }
+
+        if (should_send_global_gap) // Send GAP for all readers
         {
             group.add_gap(gap_seq_for_all, SequenceNumberSet_t(change->sequenceNumber));
         }
@@ -789,9 +796,6 @@ DeliveryRetCode StatefulWriter::deliver_sample_to_network(
                     size_t num_locators = locator_selector.locator_selector.selected_size();
                     if (num_locators > 0)
                     {
-                        network.select_locators(locator_selector.locator_selector);
-                        compute_selected_guids(locator_selector);
-
                         if (0 < n_fragments)
                         {
                             if (min_unsent_fragment != n_fragments + 1)
@@ -865,7 +869,7 @@ DeliveryRetCode StatefulWriter::deliver_sample_to_network(
                             }
                         }
 
-                        send_heartbeat_piggyback_nts_(nullptr, group, locator_selector, last_processed);
+                        send_heartbeat_piggyback_nts_(group, locator_selector, last_processed);
                     }
                 }
                 else
@@ -965,10 +969,6 @@ DeliveryRetCode StatefulWriter::deliver_sample_to_network(
 
     }
 
-    locator_selector.locator_selector.reset(true);
-    network.select_locators(locator_selector.locator_selector);
-    compute_selected_guids(locator_selector);
-
     if (need_reactivate_periodic_heartbeat)
     {
         periodic_hb_event_->restart_timer(max_blocking_time);
@@ -1000,6 +1000,19 @@ void StatefulWriter::update_reader_info(
     there_are_remote_readers_ = !matched_remote_readers_.empty();
     there_are_local_readers_ = !matched_local_readers_.empty();
     there_are_datasharing_readers_ = !matched_datasharing_readers_.empty();
+}
+
+void StatefulWriter::select_all_readers_nts(
+        RTPSMessageGroup& group,
+        LocatorSelectorSender& locator_selector)
+{
+    locator_selector.locator_selector.reset(true);
+    if (locator_selector.locator_selector.state_has_changed())
+    {
+        group.flush_and_reset();
+        mp_RTPSParticipant->network_factory().select_locators(locator_selector.locator_selector);
+        compute_selected_guids(locator_selector);
+    }
 }
 
 bool StatefulWriter::matched_reader_add(
@@ -1655,6 +1668,7 @@ bool StatefulWriter::send_periodic_heartbeat(
     }
     else if (m_separateSendingEnabled)
     {
+        // Send individual liveliness heartbeat to each reader
         for_matched_readers(matched_local_readers_, matched_datasharing_readers_, matched_remote_readers_,
                 [this, &liveliness, &unacked_changes](ReaderProxy* reader)
                 {
@@ -1780,26 +1794,16 @@ void StatefulWriter::send_heartbeat_nts_(
 }
 
 void StatefulWriter::send_heartbeat_piggyback_nts_(
-        ReaderProxy* reader,
         RTPSMessageGroup& message_group,
         LocatorSelectorSender& locator_selector,
         uint32_t& last_bytes_processed)
 {
     if (!disable_heartbeat_piggyback_)
     {
-        size_t number_of_readers = reader == nullptr ? locator_selector.all_remote_readers.size() : 1u;
         if (mp_history->isFull() || next_all_acked_notify_sequence_ < get_seq_num_min())
         {
-            if (reader == nullptr)
-            {
-                locator_selector.locator_selector.reset(true);
-                if (locator_selector.locator_selector.state_has_changed())
-                {
-                    message_group.flush_and_reset();
-                    getRTPSParticipant()->network_factory().select_locators(locator_selector.locator_selector);
-                    compute_selected_guids(locator_selector);
-                }
-            }
+            select_all_readers_nts(message_group, locator_selector);
+            size_t number_of_readers = locator_selector.all_remote_readers.size();
             send_heartbeat_nts_(number_of_readers, message_group, disable_positive_acks_);
         }
         else
@@ -1809,6 +1813,8 @@ void StatefulWriter::send_heartbeat_piggyback_nts_(
             last_bytes_processed = current_bytes;
             if (currentUsageSendBufferSize_ < 0)
             {
+                select_all_readers_nts(message_group, locator_selector);
+                size_t number_of_readers = locator_selector.all_remote_readers.size();
                 send_heartbeat_nts_(number_of_readers, message_group, disable_positive_acks_);
             }
         }

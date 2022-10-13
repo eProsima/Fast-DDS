@@ -1293,6 +1293,24 @@ public:
         return *this;
     }
 
+<<<<<<< HEAD
+=======
+    PubSubReader& initial_announcements(
+            uint32_t count,
+            const eprosima::fastrtps::Duration_t& period)
+    {
+        participant_qos_.wire_protocol().builtin.discovery_config.initial_announcements.count = count;
+        participant_qos_.wire_protocol().builtin.discovery_config.initial_announcements.period = period;
+        return *this;
+    }
+
+    PubSubReader& ownership_exclusive()
+    {
+        datareader_qos_.ownership().kind = eprosima::fastdds::dds::EXCLUSIVE_OWNERSHIP_QOS;
+        return *this;
+    }
+
+>>>>>>> 23a788dd0 (Fix selection of output locators (#3003))
     PubSubReader& load_participant_attr(
             const std::string& /*xml*/)
     {
