@@ -600,6 +600,7 @@ void StatefulWriter::send_heartbeat_to_all_readers()
             assert((SequenceNumber_t::unknown() == first_seq && SequenceNumber_t::unknown() == last_seq) ||
                     (SequenceNumber_t::unknown() != first_seq && SequenceNumber_t::unknown() != last_seq));
 
+
             if (SequenceNumber_t::unknown() != first_seq &&
                     last_seq.to64long() - first_seq.to64long() + 1 != mp_history->getHistorySize())
             {
@@ -1792,6 +1793,15 @@ void StatefulWriter::send_heartbeat_nts_(
     else
     {
         assert(firstSeq <= lastSeq);
+
+        if (!liveliness)
+        {
+            if (SequenceNumber_t::unknown() != firstSeq &&
+                    lastSeq.to64long() - firstSeq.to64long() + 1 != mp_history->getHistorySize())
+            {
+                logError(RTPS_WRITER, "GAP should have been sent here" );
+            }
+        }
 
         // Check if it has to be sent a GAP with the gaps in the history
     }
