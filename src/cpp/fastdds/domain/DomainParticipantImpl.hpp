@@ -447,7 +447,7 @@ protected:
     fastrtps::rtps::GUID_t guid_;
 
     //!For instance handle creation
-    uint32_t next_instance_id_;
+    std::atomic<uint32_t> next_instance_id_;
 
     //!Participant Qos
     DomainParticipantQos qos_;

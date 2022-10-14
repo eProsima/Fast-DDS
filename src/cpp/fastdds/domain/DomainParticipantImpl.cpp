@@ -2254,12 +2254,12 @@ void DomainParticipantImpl::create_instance_handle(
 {
     using eprosima::fastrtps::rtps::octet;
 
-    ++next_instance_id_;
+    uint32_t id = ++next_instance_id_;
     handle = guid_;
     handle.value[15] = 0x01; // Vendor specific;
-    handle.value[14] = static_cast<octet>(next_instance_id_ & 0xFF);
-    handle.value[13] = static_cast<octet>((next_instance_id_ >> 8) & 0xFF);
-    handle.value[12] = static_cast<octet>((next_instance_id_ >> 16) & 0xFF);
+    handle.value[14] = static_cast<octet>(id & 0xFF);
+    handle.value[13] = static_cast<octet>((id >> 8) & 0xFF);
+    handle.value[12] = static_cast<octet>((id >> 16) & 0xFF);
 }
 
 DomainParticipantListener* DomainParticipantImpl::get_listener_for(
