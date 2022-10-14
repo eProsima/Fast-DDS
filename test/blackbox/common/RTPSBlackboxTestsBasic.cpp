@@ -15,10 +15,12 @@
 #include "BlackboxTests.hpp"
 
 #include <chrono>
+#include <memory>
 #include <thread>
 
 #include <gtest/gtest.h>
 
+#include <fastdds/rtps/flowcontrol/FlowControllerDescriptor.hpp>
 #include <fastrtps/rtps/attributes/RTPSParticipantAttributes.h>
 #include <fastrtps/rtps/participant/RTPSParticipant.h>
 #include <fastrtps/rtps/RTPSDomain.h>
@@ -661,6 +663,115 @@ TEST(RTPS, RemoveDisabledParticipant)
 
     ASSERT_NE(nullptr, rtps_participant);
     ASSERT_TRUE(RTPSDomain::removeRTPSParticipant(rtps_participant));
+}
+
+
+/**
+ * This test checks a race condition on initializing a writer's flow controller when creating
+ * several RTPSWriters in parallel: https://eprosima.easyredmine.com/issues/15905
+ *
+ * The test creates a participant with 4 different flow controllers, and then creates 200 threads
+ * which each create an RTPSWriter which uses one of the participant's flow controllers.
+ * The threads wait for a command coming from the main thread to delete the writers. This is to
+ * ensure that all threads are initialized prior to any of them starts deleting.
+ */
+TEST(RTPS, MultithreadedWriterCreation)
+{
+    /* Flow controller builder */
+    using FlowControllerDescriptor_t = eprosima::fastdds::rtps::FlowControllerDescriptor;
+    using SchedulerPolicy_t = eprosima::fastdds::rtps::FlowControllerSchedulerPolicy;
+    auto create_flow_controller =
+            [](const char* name, SchedulerPolicy_t scheduler,
+                    int32_t max_bytes_per_period,
+                    uint64_t period_ms) -> std::shared_ptr<FlowControllerDescriptor_t>
+            {
+                std::shared_ptr<FlowControllerDescriptor_t> descriptor = std::make_shared<FlowControllerDescriptor_t>();
+                descriptor->name = name;
+                descriptor->scheduler = scheduler;
+                descriptor->max_bytes_per_period = max_bytes_per_period;
+                descriptor->period_ms = period_ms;
+                return descriptor;
+            };
+
+    /* Create participant */
+    RTPSParticipantAttributes rtps_attr;
+    // Create one flow controller of each kind to make things interesting
+    const char* flow_controller_name = "fifo_controller";
+    rtps_attr.flow_controllers.push_back(create_flow_controller("high_priority_controller",
+            SchedulerPolicy_t::HIGH_PRIORITY, 200, 10));
+    rtps_attr.flow_controllers.push_back(create_flow_controller("priority_with_reservation_controller",
+            SchedulerPolicy_t::PRIORITY_WITH_RESERVATION, 200, 10));
+    rtps_attr.flow_controllers.push_back(create_flow_controller("round_robin_controller",
+            SchedulerPolicy_t::ROUND_ROBIN, 200, 10));
+    rtps_attr.flow_controllers.push_back(create_flow_controller(flow_controller_name, SchedulerPolicy_t::FIFO, 200,
+            10));
+    RTPSParticipant* rtps_participant = RTPSDomain::createParticipant(
+        (uint32_t)GET_PID() % 230, false, rtps_attr, nullptr);
+
+    /* Test sync variables */
+    std::mutex finish_mtx;
+    std::condition_variable finish_cv;
+    bool should_finish = false;
+
+    /* Lambda function to create a writer with a flow controller, and to destroy it at command */
+    auto thread_run = [rtps_participant, flow_controller_name, &finish_mtx, &finish_cv, &should_finish]()
+            {
+                /* Create writer history */
+                eprosima::fastrtps::rtps::HistoryAttributes hattr;
+                eprosima::fastrtps::rtps::WriterHistory* history = new eprosima::fastrtps::rtps::WriterHistory(hattr);
+                eprosima::fastrtps::TopicAttributes topic_attr;
+
+                /* Create writer with a flow controller */
+                eprosima::fastrtps::rtps::WriterAttributes writer_attr;
+                writer_attr.mode = RTPSWriterPublishMode::ASYNCHRONOUS_WRITER;
+                writer_attr.flow_controller_name = flow_controller_name;
+                eprosima::fastrtps::rtps::RTPSWriter*  writer = eprosima::fastrtps::rtps::RTPSDomain::createRTPSWriter(
+                    rtps_participant, writer_attr, history, nullptr);
+
+                /* Register writer in participant */
+                eprosima::fastrtps::WriterQos writer_qos;
+                ASSERT_EQ(rtps_participant->registerWriter(writer, topic_attr, writer_qos), true);
+
+                {
+                    /* Wait for test completion request */
+                    std::unique_lock<std::mutex> lock(finish_mtx);
+                    finish_cv.wait(lock, [&should_finish]()
+                            {
+                                return should_finish;
+                            });
+                }
+
+                /* Remove writer */
+                ASSERT_TRUE(RTPSDomain::removeRTPSWriter(writer));
+            };
+
+    {
+        /* Create test threads */
+        constexpr size_t num_threads = 200;
+        std::vector<std::thread> threads;
+        for (size_t i = 0; i < num_threads; ++i)
+        {
+            threads.push_back(std::thread(thread_run));
+        }
+
+        /* Once all threads are created, we can start deleting them */
+        {
+            std::lock_guard<std::mutex> guard(finish_mtx);
+            should_finish = true;
+            finish_cv.notify_all();
+        }
+
+        /* Wait until are threads join */
+        for (std::thread& thr : threads)
+        {
+            thr.join();
+        }
+    }
+
+    /* Clean up */
+    ASSERT_TRUE(RTPSDomain::removeRTPSParticipant(rtps_participant));
+    ASSERT_NE(nullptr, rtps_participant);
+    RTPSDomain::stopAll();
 }
 
 #ifdef INSTANTIATE_TEST_SUITE_P
