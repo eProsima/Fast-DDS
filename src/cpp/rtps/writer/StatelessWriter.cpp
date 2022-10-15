@@ -650,7 +650,6 @@ DeliveryRetCode StatelessWriter::deliver_sample_nts(
         LocatorSelectorSender& locator_selector, // Object locked by FlowControllerImpl
         const std::chrono::time_point<std::chrono::steady_clock>& /*TODO max_blocking_time*/)
 {
-    size_t num_locators = locator_selector.locator_selector.selected_size() + fixed_locators_.size();
     uint64_t change_sequence_number = cache_change->sequenceNumber.to64long();
     NetworkFactory& network = mp_RTPSParticipant->network_factory();
     DeliveryRetCode ret_code = DeliveryRetCode::DELIVERED;
@@ -688,7 +687,7 @@ DeliveryRetCode StatelessWriter::deliver_sample_nts(
                                 reader_data_filter_->is_relevant(*cache_change, it->remote_guid()))
                         {
                             group.sender(this, &*it);
-                            num_locators = it->locators_size();
+                            size_t num_locators = it->locators_size();
 
                             if (group.add_data_frag(*cache_change, frag, is_inline_qos_expected_))
                             {
@@ -718,7 +717,7 @@ DeliveryRetCode StatelessWriter::deliver_sample_nts(
                             reader_data_filter_->is_relevant(*cache_change, it->remote_guid()))
                     {
                         group.sender(this, &*it);
-                        num_locators = it->locators_size();
+                        size_t num_locators = it->locators_size();
 
                         if (group.add_data(*cache_change, is_inline_qos_expected_))
                         {
@@ -735,8 +734,6 @@ DeliveryRetCode StatelessWriter::deliver_sample_nts(
         }
         else
         {
-            bool locator_selector_should_be_reset = false;
-
             if (nullptr != reader_data_filter_)
             {
                 locator_selector.locator_selector.reset(false);
@@ -747,14 +744,21 @@ DeliveryRetCode StatelessWriter::deliver_sample_nts(
                         locator_selector.locator_selector.enable(it->remote_guid());
                     }
                 }
-                if (locator_selector.locator_selector.state_has_changed())
-                {
-                    network.select_locators(locator_selector.locator_selector);
-                    compute_selected_guids(locator_selector);
-                    locator_selector_should_be_reset = true;
-                }
-                num_locators = locator_selector.locator_selector.selected_size() + fixed_locators_.size();
             }
+            else
+            {
+                locator_selector.locator_selector.reset(true);
+            }
+
+            if (locator_selector.locator_selector.state_has_changed())
+            {
+                network.select_locators(locator_selector.locator_selector);
+                if (!has_builtin_guid())
+                {
+                    compute_selected_guids(locator_selector);
+                }
+            }
+            size_t num_locators = locator_selector.locator_selector.selected_size() + fixed_locators_.size();
 
             if (0 < num_locators)
             {
@@ -788,13 +792,6 @@ DeliveryRetCode StatelessWriter::deliver_sample_nts(
                         ret_code = DeliveryRetCode::NOT_DELIVERED;
                     }
                 }
-            }
-
-            if (locator_selector_should_be_reset)
-            {
-                locator_selector.locator_selector.reset(true);
-                network.select_locators(locator_selector.locator_selector);
-                compute_selected_guids(locator_selector);
             }
         }
 

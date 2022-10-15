@@ -1073,6 +1073,15 @@ public:
         return *this;
     }
 
+    PubSubWriter& initial_announcements(
+            uint32_t count,
+            const eprosima::fastrtps::Duration_t& period)
+    {
+        participant_attr_.rtps.builtin.discovery_config.initial_announcements.count = count;
+        participant_attr_.rtps.builtin.discovery_config.initial_announcements.period = period;
+        return *this;
+    }
+
     PubSubWriter& load_publisher_attr(
             const std::string& xml)
     {
