@@ -1799,11 +1799,27 @@ void StatefulWriter::send_heartbeat_nts_(
             if (SequenceNumber_t::unknown() != firstSeq &&
                     lastSeq.to64long() - firstSeq.to64long() + 1 != mp_history->getHistorySize())
             {
-                logError(RTPS_WRITER, "GAP should have been sent here" );
+                RTPSGapBuilder gaps(message_group);
+
+                // There are holes in the history.
+                History::const_iterator cit = mp_history->changesBegin();
+                SequenceNumber_t prev = (*cit)->sequenceNumber + 1;
+                ++cit;
+                while (cit != mp_history->changesEnd())
+                {
+                    while (prev != (*cit)->sequenceNumber)
+                    {
+                        gaps.add(prev);
+                        ++prev;
+                    }
+
+                    ++prev;
+                    ++cit;
+                }
+
+                gaps.flush();
             }
         }
-
-        // Check if it has to be sent a GAP with the gaps in the history
     }
 
     incrementHBCount();
