@@ -743,6 +743,7 @@ TEST(RTPS, MultithreadedWriterCreation)
 
                 /* Remove writer */
                 ASSERT_TRUE(RTPSDomain::removeRTPSWriter(writer));
+                delete history;
             };
 
     {
