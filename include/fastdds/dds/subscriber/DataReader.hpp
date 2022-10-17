@@ -314,8 +314,6 @@ public:
             InstanceStateMask instance_states = ANY_INSTANCE_STATE);
 
     /**
-     * NOT YET IMPLEMENTED
-     *
      * This operation accesses via ‘read’ the samples that match the criteria specified in the ReadCondition.
      * This operation is especially useful in combination with QueryCondition to filter data samples based on the
      * content.
@@ -453,8 +451,6 @@ public:
             InstanceStateMask instance_states = ANY_INSTANCE_STATE);
 
     /**
-     * NOT YET IMPLEMENTED
-     *
      * This operation accesses a collection of Data values from the DataReader. The behavior is identical to
      * @ref read_next_instance except that all samples returned satisfy the specified condition. In other words, on
      * success all returned samples belong to the same instance, and the instance is the instance with
@@ -553,8 +549,6 @@ public:
             InstanceStateMask instance_states = ANY_INSTANCE_STATE);
 
     /**
-     * NOT YET IMPLEMENTED
-     *
      * This operation is analogous to @ref read_w_condition except it accesses samples via the ‘take’ operation.
      *
      * The specified ReadCondition must be attached to the DataReader; otherwise the operation will fail and return
@@ -658,8 +652,6 @@ public:
             InstanceStateMask instance_states = ANY_INSTANCE_STATE);
 
     /**
-     * NOT YET IMPLEMENTED
-     *
      * This operation accesses a collection of Data values from the DataReader. The behavior is identical to
      * @ref read_next_instance except that all samples returned satisfy the specified condition. In other words, on
      * success all returned samples belong to the same instance, and the instance is the instance with ‘smallest’

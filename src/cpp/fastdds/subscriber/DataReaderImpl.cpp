@@ -530,7 +530,16 @@ ReturnCode_t DataReaderImpl::read_or_take(
     }
 
     detail::StateFilter states = { sample_states, view_states, instance_states };
-    detail::ReadTakeCommand cmd(*this, data_values, sample_infos, max_samples, states, it.second, single_instance);
+    detail::ReadTakeCommand cmd(
+            *this,
+             data_values,
+             sample_infos,
+             max_samples,
+             states,
+             it.second,
+             single_instance,
+             !exact_instance);
+
     while (!cmd.is_finished())
     {
         cmd.add_instance(should_take);
