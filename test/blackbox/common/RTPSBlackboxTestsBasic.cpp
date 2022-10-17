@@ -474,101 +474,90 @@ TEST_P(RTPS, RTPSAsReliableWithRegistrationAndHolesInHistory)
  * each reader separately.
  */
 
-TEST_P(RTPS, RTPSUnavailableSampleGapWhenSeparateSending)
+TEST(RTPS, RTPSUnavailableSampleGapWhenSeparateSending)
 {
-    if (INTRAPROCESS != GetParam())
-    {
+    RTPSWithRegistrationReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+    RTPSWithRegistrationWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
 
-        RTPSWithRegistrationReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
-        RTPSWithRegistrationWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+    // To simulate lossy conditions
+    auto testTransport = std::make_shared<rtps::test_UDPv4TransportDescriptor>();
 
-        // To simulate lossy conditions
-        auto testTransport = std::make_shared<rtps::test_UDPv4TransportDescriptor>();
+    reader.
+            durability(eprosima::fastrtps::rtps::DurabilityKind_t::TRANSIENT_LOCAL).
+            history_depth(3).
+            reliability(eprosima::fastrtps::rtps::ReliabilityKind_t::RELIABLE).init();
 
-        reader.
-                durability(eprosima::fastrtps::rtps::DurabilityKind_t::TRANSIENT_LOCAL).
-                history_depth(3).
-                reliability(eprosima::fastrtps::rtps::ReliabilityKind_t::RELIABLE).init();
+    ASSERT_TRUE(reader.isInitialized());
 
-        ASSERT_TRUE(reader.isInitialized());
+    // set_separate_sending
 
-        // set_separate_sending
+    writer.durability(eprosima::fastrtps::rtps::DurabilityKind_t::TRANSIENT_LOCAL).
+            disable_builtin_transport().
+            reliability(eprosima::fastrtps::rtps::ReliabilityKind_t::RELIABLE).
+            history_depth(3).
+            add_user_transport_to_pparams(testTransport).init();
 
-        writer.durability(eprosima::fastrtps::rtps::DurabilityKind_t::TRANSIENT_LOCAL).
-                disable_builtin_transport().
-                reliability(eprosima::fastrtps::rtps::ReliabilityKind_t::RELIABLE).
-                history_depth(3).
-                add_user_transport_to_pparams(testTransport).init();
+    ASSERT_TRUE(writer.isInitialized());
 
-        ASSERT_TRUE(writer.isInitialized());
+    writer.set_separate_sending(true);
 
-        writer.set_separate_sending(true);
+    // Wait for discovery.
+    writer.wait_discovery();
+    reader.wait_discovery();
 
-        // Wait for discovery.
-        writer.wait_discovery();
-        reader.wait_discovery();
+    HelloWorld message;
+    message.message("HelloWorld");
 
-        HelloWorld message;
-        message.message("HelloWorld");
+    std::list<HelloWorld> data;
+    std::list<HelloWorld> expected;
 
-        std::list<HelloWorld> data;
-        std::list<HelloWorld> expected;
+    reader.startReception();
 
-        reader.startReception();
+    // Send data
+    int index = 0;
+    message.index(++index);
 
-        // Send data
-        int index = 0;
-        message.index(++index);
+    data.push_back(message);
+    expected.push_back(message);
+    reader.expected_data(expected);
+    writer.send(data);
 
-        data.push_back(message);
-        expected.push_back(message);
-        reader.expected_data(expected);
-        writer.send(data);
+    test_UDPv4Transport::test_UDPv4Transport_ShutdownAllNetwork = true;
 
-        test_UDPv4Transport::test_UDPv4Transport_ShutdownAllNetwork = true;
+    std::this_thread::sleep_for(std::chrono::seconds(1));
 
-        std::this_thread::sleep_for(std::chrono::seconds(1));
+    message.index(++index);
+    data.push_back(message);
+    writer.send(data);
 
-        message.index(++index);
-        data.push_back(message);
-        writer.send(data);
+    message.index(++index);
+    data.push_back(message);
+    expected.push_back(message);
+    reader.expected_data(expected);
+    writer.send(data);
 
-        message.index(++index);
-        data.push_back(message);
-        expected.push_back(message);
-        reader.expected_data(expected);
-        writer.send(data);
+    writer.remove_change({0, 2});
 
-        writer.remove_change({0, 2});
+    std::this_thread::sleep_for(std::chrono::seconds(1));
 
-        std::this_thread::sleep_for(std::chrono::seconds(1));
+    test_UDPv4Transport::test_UDPv4Transport_ShutdownAllNetwork = false;
 
-        test_UDPv4Transport::test_UDPv4Transport_ShutdownAllNetwork = false;
+    std::this_thread::sleep_for(std::chrono::seconds(1));
 
-        std::this_thread::sleep_for(std::chrono::seconds(1));
+    message.index(++index);
+    data.push_back(message);
+    expected.push_back(message);
+    reader.expected_data(expected);
 
-        message.index(++index);
-        data.push_back(message);
-        expected.push_back(message);
-        reader.expected_data(expected);
+    writer.send(data);
 
-        writer.send(data);
+    // Block reader until reception finished or timeout.
+    reader.block_for_all(std::chrono::seconds(1));
+    // Block until all data is ACK'd
+    writer.waitForAllAcked(std::chrono::seconds(1));
 
-        // Block reader until reception finished or timeout.
-        reader.block_for_all(std::chrono::seconds(1));
-        // Block until all data is ACK'd
-        writer.waitForAllAcked(std::chrono::seconds(1));
-
-        EXPECT_EQ(reader.getReceivedCount(), static_cast<unsigned int>(expected.size()));
-
-    }
-    else
-    {
-        GTEST_SKIP() << "INTRAPROCESS does not use transport layer. Disabling Test transport reliant test.";
-    }
-
+    EXPECT_EQ(reader.getReceivedCount(), static_cast<unsigned int>(expected.size()));
 }
-
 
 TEST_P(RTPS, RTPSAsReliableVolatileTwoWritersConsecutives)
 {
