@@ -176,6 +176,11 @@ void PublisherModule::run(
             ++index;
         }
 
+        if (!zero_copy_)
+        {
+            type_.delete_data(sample);
+        }
+
         std::this_thread::sleep_for(std::chrono::milliseconds(250));
     }
 }
