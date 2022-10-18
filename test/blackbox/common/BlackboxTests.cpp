@@ -79,7 +79,7 @@ public:
     {
         //Log::Reset();
         eprosima::fastdds::dds::Log::KillThread();
-        eprosima::fastrtps::rtps::RTPSDomain::stopAll();
+        // eprosima::fastrtps::rtps::RTPSDomain::stopAll();
     }
 
 };
