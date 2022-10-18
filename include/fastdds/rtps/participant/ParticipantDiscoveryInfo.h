@@ -57,7 +57,12 @@ struct ParticipantDiscoveryInfo
     //! Status
     DISCOVERY_STATUS status;
 
-    //! Participant discovery info
+    /**
+     * @brief Participant discovery info
+     *
+     * @todo This is a reference to an object that could be deleted, thus it should not be a reference
+     * (intraprocess case -> BlackboxTests_DDS_PIM.DDSDiscovery.ParticipantProxyPhysicalData).
+     */
     const ParticipantProxyData& info;
 };
 

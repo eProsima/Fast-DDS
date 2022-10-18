@@ -423,14 +423,18 @@ TEST(DDSDiscovery, ParticipantProxyPhysicalData)
                 ParticipantDiscoveryInfo&& info)
         {
             std::unique_lock<std::mutex> lck(*mtx_);
-            static_cast<void>(participant);
-            if (nullptr != remote_participant_info)
+            if (info.status ==
+                eprosima::fastrtps::rtps::ParticipantDiscoveryInfo::DISCOVERY_STATUS::DISCOVERED_PARTICIPANT)
             {
-                delete remote_participant_info;
+                static_cast<void>(participant);
+                if (nullptr != remote_participant_info)
+                {
+                    delete remote_participant_info;
+                }
+                remote_participant_info = new ParticipantDiscoveryInfo(info);
+                found_->store(true);
+                cv_->notify_one();
             }
-            remote_participant_info = new ParticipantDiscoveryInfo(info);
-            found_->store(true);
-            cv_->notify_one();
         }
 
         ParticipantDiscoveryInfo* remote_participant_info;
