@@ -672,7 +672,7 @@ XMLP_ret XMLParser::parseXMLEnumDynamicType(
     XMLP_ret ret = XMLP_ret::XML_OK;
     const char* enumName = p_root->Attribute(NAME);
 
-    if(enumName == nullptr)
+    if (enumName == nullptr)
     {
         logError(XMLPARSER, "Error parsing 'enum' type. No name attribute given.");
         return XMLP_ret::XML_ERROR;
