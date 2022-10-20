@@ -117,6 +117,7 @@ TEST_F(XMLTreeTests, DataNode)
     DataNode<std::string> data_node{NodeType::PUBLISHER};
     std::string* data = new std::string("TESTDATA");
 
+<<<<<<< HEAD
     data_node.setData(std::unique_ptr<std::string>(data));
     data_node.addAttribute(attribute_name0, attribute_value0);
     data_node.addAttribute(attribute_name1, attribute_value1);
@@ -125,6 +126,14 @@ TEST_F(XMLTreeTests, DataNode)
     ASSERT_EQ(data, data_node.getData().get());
     ASSERT_STREQ(attribute_value0.data(), data_node.getAttributes().at(attribute_name0).data());
     ASSERT_STREQ(attribute_value1.data(), data_node.getAttributes().at(attribute_name1).data());
+=======
+    EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParser::loadXML("regressions/12736.xml", root));
+    EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParser::loadXML("regressions/13418.xml", root));
+    EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParser::loadXML("regressions/13454.xml", root));
+    EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParser::loadXML("regressions/13513.xml", root));
+    EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParser::loadXML("regressions/14456.xml", root));
+    EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParser::loadXML("regressions/15344.xml", root));
+>>>>>>> 3f4206479 (Fix null-dereference on parseXMLEnumDynamicType (#3022))
 }
 
 class XMLParserTests : public ::testing::Test
