@@ -394,6 +394,11 @@ XMLP_ret XMLParser::parseXMLBitsetDynamicType(
     uint32_t mId = 0;
 
     const char* name = p_root->Attribute(NAME);
+    if (nullptr == name)
+    {
+        logError(XMLPARSER, "Error parsing 'bitsetDcl' type. No name attribute given.");
+        return XMLP_ret::XML_ERROR;
+    }
 
     const char* baseType = p_root->Attribute(BASE_TYPE);
     if (baseType != nullptr)
