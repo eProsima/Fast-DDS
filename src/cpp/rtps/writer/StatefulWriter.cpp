@@ -600,30 +600,7 @@ void StatefulWriter::send_heartbeat_to_all_readers()
             assert((SequenceNumber_t::unknown() == first_seq && SequenceNumber_t::unknown() == last_seq) ||
                     (SequenceNumber_t::unknown() != first_seq && SequenceNumber_t::unknown() != last_seq));
 
-
-            if (SequenceNumber_t::unknown() != first_seq &&
-                    last_seq.to64long() - first_seq.to64long() + 1 != mp_history->getHistorySize())
-            {
-                RTPSGapBuilder gaps(group);
-
-                // There are holes in the history.
-                History::const_iterator cit = mp_history->changesBegin();
-                SequenceNumber_t prev = (*cit)->sequenceNumber + 1;
-                ++cit;
-                while (cit != mp_history->changesEnd())
-                {
-                    while (prev != (*cit)->sequenceNumber)
-                    {
-                        gaps.add(prev);
-                        ++prev;
-                    }
-
-                    ++prev;
-                    ++cit;
-                }
-
-                gaps.flush();
-            }
+            add_gaps_for_holes_in_history_(group);
 
             send_heartbeat_nts_(locator_selector_general_.all_remote_readers.size(), group, disable_positive_acks_);
         }
@@ -1752,6 +1729,18 @@ void StatefulWriter::send_heartbeat_to_nts(
             try
             {
                 RTPSMessageGroup group(mp_RTPSParticipant, this, remoteReaderProxy.message_sender());
+                SequenceNumber_t firstSeq = get_seq_num_min();
+                SequenceNumber_t lastSeq = get_seq_num_max();
+
+                if (firstSeq != c_SequenceNumber_Unknown && lastSeq != c_SequenceNumber_Unknown)
+                {
+                    assert(firstSeq <= lastSeq);
+                    if (!liveliness)
+                    {
+                        add_gaps_for_holes_in_history_(group);
+                    }
+                }
+
                 send_heartbeat_nts_(1u, group, disable_positive_acks_, liveliness);
             }
             catch (const RTPSMessageGroup::timeout&)
@@ -1788,37 +1777,6 @@ void StatefulWriter::send_heartbeat_nts_(
         else
         {
             return;
-        }
-    }
-    else
-    {
-        assert(firstSeq <= lastSeq);
-
-        if (!liveliness)
-        {
-            if (SequenceNumber_t::unknown() != firstSeq &&
-                    lastSeq.to64long() - firstSeq.to64long() + 1 != mp_history->getHistorySize())
-            {
-                RTPSGapBuilder gaps(message_group);
-
-                // There are holes in the history.
-                History::const_iterator cit = mp_history->changesBegin();
-                SequenceNumber_t prev = (*cit)->sequenceNumber + 1;
-                ++cit;
-                while (cit != mp_history->changesEnd())
-                {
-                    while (prev != (*cit)->sequenceNumber)
-                    {
-                        gaps.add(prev);
-                        ++prev;
-                    }
-
-                    ++prev;
-                    ++cit;
-                }
-
-                gaps.flush();
-            }
         }
     }
 
@@ -2123,6 +2081,34 @@ DeliveryRetCode StatefulWriter::deliver_sample_nts(
     check_acked_status();
 
     return ret_code;
+}
+
+void StatefulWriter::add_gaps_for_holes_in_history_(
+        RTPSMessageGroup& group)
+{
+    SequenceNumber_t firstSeq = get_seq_num_min();
+    SequenceNumber_t lastSeq = get_seq_num_max();
+
+    if (SequenceNumber_t::unknown() != firstSeq &&
+            lastSeq.to64long() - firstSeq.to64long() + 1 != mp_history->getHistorySize())
+    {
+        RTPSGapBuilder gaps(group);
+        // There are holes in the history.
+        History::const_iterator cit = mp_history->changesBegin();
+        SequenceNumber_t prev = (*cit)->sequenceNumber + 1;
+        ++cit;
+        while (cit != mp_history->changesEnd())
+        {
+            while (prev != (*cit)->sequenceNumber)
+            {
+                gaps.add(prev);
+                ++prev;
+            }
+            ++prev;
+            ++cit;
+        }
+        gaps.flush();
+    }
 }
 
 }  // namespace rtps

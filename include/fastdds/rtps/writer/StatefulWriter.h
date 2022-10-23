@@ -472,6 +472,9 @@ private:
     void prepare_datasharing_delivery(
             CacheChange_t* change);
 
+    void add_gaps_for_holes_in_history_(
+            RTPSMessageGroup& group);
+
     //! True to disable piggyback heartbeats
     bool disable_heartbeat_piggyback_;
     //! True to disable positive ACKs
