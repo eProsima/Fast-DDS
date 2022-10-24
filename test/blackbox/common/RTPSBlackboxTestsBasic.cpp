@@ -15,6 +15,7 @@
 #include "BlackboxTests.hpp"
 
 #include <chrono>
+#include <cstdint>
 #include <memory>
 #include <thread>
 
@@ -514,7 +515,7 @@ TEST(RTPS, RTPSUnavailableSampleGapWhenSeparateSending)
     reader.startReception();
 
     // Send data
-    int index = 0;
+    uint16_t index = 0;
     message.index(++index);
 
     data.push_back(message);
