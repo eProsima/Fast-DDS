@@ -274,6 +274,17 @@ private:
     std::array<char, 256> message_;
 };
 
+int process_id()
+{
+#if defined(__cplusplus_winrt)
+    return (int)GetCurrentProcessId();
+#elif defined(_WIN32)
+    return (int)_getpid();
+#else
+    return (int)getpid();
+#endif // platform selection
+}
+
 
 TEST(ParticipantTests, DomainParticipantFactoryGetInstance)
 {
@@ -721,7 +732,7 @@ void set_environment_file(
 std::string get_environment_filename()
 {
     std::ostringstream name;
-    name << "environment_file_" << SystemInfo::instance().process_id() << ".json";
+    name << "environment_file_" << process_id() << ".json";
     std::string fname = name.str();
     // 'touch' the file
     std::ofstream f(fname);
