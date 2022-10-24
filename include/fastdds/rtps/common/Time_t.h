@@ -18,10 +18,13 @@
 
 #ifndef _FASTDDS_RTPS_TIME_T_H_
 #define _FASTDDS_RTPS_TIME_T_H_
-#include <fastrtps/fastrtps_dll.h>
+
 #include <cmath>
 #include <cstdint>
 #include <iostream>
+#include <string>
+
+#include <fastrtps/fastrtps_dll.h>
 
 namespace eprosima {
 namespace fastrtps {
