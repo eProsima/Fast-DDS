@@ -593,12 +593,10 @@ void StatefulWriter::send_heartbeat_to_all_readers()
             RTPSMessageGroup group(mp_RTPSParticipant, this, &locator_selector_general_);
             select_all_readers_nts(group, locator_selector_general_);
 
-            // Send a GAP with holes in the history.
-            SequenceNumber_t first_seq = get_seq_num_min();
-            SequenceNumber_t last_seq = get_seq_num_max();
-
-            assert((SequenceNumber_t::unknown() == first_seq && SequenceNumber_t::unknown() == last_seq) ||
-                    (SequenceNumber_t::unknown() != first_seq && SequenceNumber_t::unknown() != last_seq));
+            assert(
+                (SequenceNumber_t::unknown() == get_seq_num_min() && SequenceNumber_t::unknown() == get_seq_num_max()) ||
+                (SequenceNumber_t::unknown() != get_seq_num_min() &&
+                SequenceNumber_t::unknown() != get_seq_num_max()));
 
             add_gaps_for_holes_in_history_(group);
 
