@@ -472,6 +472,11 @@ private:
     void prepare_datasharing_delivery(
             CacheChange_t* change);
 
+    /**
+     * Check the StatefulWriter's sequence numbers and add the required GAP messages to the provided message group.
+     *
+     * @param group     Reference to the Message Group to which the GAP messages are to be added.
+     */
     void add_gaps_for_holes_in_history_(
             RTPSMessageGroup& group);
 

@@ -1779,6 +1779,10 @@ void StatefulWriter::send_heartbeat_nts_(
             return;
         }
     }
+    else
+    {
+        assert(firstSeq <= lastSeq);
+    }
 
     incrementHBCount();
     message_group.add_heartbeat(firstSeq, lastSeq, m_heartbeatCount, final, liveliness);
