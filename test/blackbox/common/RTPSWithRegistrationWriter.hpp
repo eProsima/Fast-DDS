@@ -453,6 +453,12 @@ public:
         return *this;
     }
 
+    void set_separate_sending(
+            bool separate_sending)
+    {
+        writer_->set_separate_sending(separate_sending);
+    }
+
     uint32_t get_matched() const
     {
         return matched_;
