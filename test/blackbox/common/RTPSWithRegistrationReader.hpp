@@ -407,6 +407,13 @@ public:
         return *this;
     }
 
+    RTPSWithRegistrationReader& history_depth(
+            const int32_t depth)
+    {
+        topic_attr_.historyQos.depth = depth;
+        return *this;
+    }
+
     RTPSWithRegistrationReader& reliability(
             const eprosima::fastrtps::rtps::ReliabilityKind_t kind)
     {
