@@ -15,6 +15,7 @@
 #include "BlackboxTests.hpp"
 
 #include <chrono>
+#include <cstdint>
 #include <memory>
 #include <thread>
 
@@ -469,6 +470,95 @@ TEST_P(RTPS, RTPSAsReliableWithRegistrationAndHolesInHistory)
     late_joiner.block_for_all();
 }
 
+/*
+ * This test checks that GAPs are properly sent when a writer is sending data to
+ * each reader separately.
+ */
+
+TEST(RTPS, RTPSUnavailableSampleGapWhenSeparateSending)
+{
+    RTPSWithRegistrationReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+    RTPSWithRegistrationWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+
+    // To simulate lossy conditions
+    auto testTransport = std::make_shared<rtps::test_UDPv4TransportDescriptor>();
+
+    reader.
+            durability(eprosima::fastrtps::rtps::DurabilityKind_t::TRANSIENT_LOCAL).
+            history_depth(3).
+            reliability(eprosima::fastrtps::rtps::ReliabilityKind_t::RELIABLE).init();
+
+    ASSERT_TRUE(reader.isInitialized());
+
+    // set_separate_sending
+
+    writer.durability(eprosima::fastrtps::rtps::DurabilityKind_t::TRANSIENT_LOCAL).
+            disable_builtin_transport().
+            reliability(eprosima::fastrtps::rtps::ReliabilityKind_t::RELIABLE).
+            history_depth(3).
+            add_user_transport_to_pparams(testTransport).init();
+
+    ASSERT_TRUE(writer.isInitialized());
+
+    writer.set_separate_sending(true);
+
+    // Wait for discovery.
+    writer.wait_discovery();
+    reader.wait_discovery();
+
+    HelloWorld message;
+    message.message("HelloWorld");
+
+    std::list<HelloWorld> data;
+    std::list<HelloWorld> expected;
+
+    reader.startReception();
+
+    // Send data
+    uint16_t index = 0;
+    message.index(++index);
+
+    data.push_back(message);
+    expected.push_back(message);
+    reader.expected_data(expected);
+    writer.send(data);
+
+    test_UDPv4Transport::test_UDPv4Transport_ShutdownAllNetwork = true;
+
+    std::this_thread::sleep_for(std::chrono::seconds(1));
+
+    message.index(++index);
+    data.push_back(message);
+    writer.send(data);
+
+    message.index(++index);
+    data.push_back(message);
+    expected.push_back(message);
+    reader.expected_data(expected);
+    writer.send(data);
+
+    writer.remove_change({0, 2});
+
+    std::this_thread::sleep_for(std::chrono::seconds(1));
+
+    test_UDPv4Transport::test_UDPv4Transport_ShutdownAllNetwork = false;
+
+    std::this_thread::sleep_for(std::chrono::seconds(1));
+
+    message.index(++index);
+    data.push_back(message);
+    expected.push_back(message);
+    reader.expected_data(expected);
+
+    writer.send(data);
+
+    // Block reader until reception finished or timeout.
+    reader.block_for_all(std::chrono::seconds(1));
+    // Block until all data is ACK'd
+    writer.waitForAllAcked(std::chrono::seconds(1));
+
+    EXPECT_EQ(reader.getReceivedCount(), static_cast<unsigned int>(expected.size()));
+}
 
 TEST_P(RTPS, RTPSAsReliableVolatileTwoWritersConsecutives)
 {
