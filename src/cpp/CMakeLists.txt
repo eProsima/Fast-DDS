@@ -553,6 +553,13 @@ install(FILES ${PROJECT_BINARY_DIR}/include/${PROJECT_NAME}/config.h
     COMPONENT headers
     )
 
+# Install public statistics idls
+install(DIRECTORY ${PROJECT_SOURCE_DIR}/include/fastdds/statistics
+    DESTINATION ${INCLUDE_INSTALL_DIR}/fastdds
+    FILES_MATCHING
+    PATTERN "*.idl"
+    )
+
 # Install libraries
 
 # Generate different target names depending on linking
