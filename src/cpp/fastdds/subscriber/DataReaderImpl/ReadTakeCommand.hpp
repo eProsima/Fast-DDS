@@ -197,7 +197,8 @@ struct ReadTakeCommand
             }
         }
 
-        if (single_instance_)
+        // Check if further iteration is required
+        if (single_instance_ && (!loop_for_data_ || (loop_for_data_ && ret_val)))
         {
             finished_ = true;
         }
