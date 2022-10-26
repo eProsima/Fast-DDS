@@ -129,7 +129,6 @@ ReturnCode_t DomainParticipantFactory::delete_participant(
     {
         std::lock_guard<std::mutex> guard(mtx_participants_);
 #ifdef FASTDDS_STATISTICS
-        std::cout << "Deleting builtin statistics" << std::endl;
         // Delete builtin statistics entities
         eprosima::fastdds::statistics::dds::DomainParticipantImpl* stat_part_impl =
                 static_cast<eprosima::fastdds::statistics::dds::DomainParticipantImpl*>(part->impl_);

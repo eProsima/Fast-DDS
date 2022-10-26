@@ -232,6 +232,7 @@ HelloWorldPublisher::~HelloWorldPublisher()
 
         std::cout << "deleting contained entities" << std::endl;
         participant_->delete_contained_entities();
+        std::cout << "deleting participant" << std::endl;
         DomainParticipantFactory::get_instance()->delete_participant(participant_);
     }
 }
