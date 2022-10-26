@@ -10,5 +10,6 @@ runs:
           colcon-mixin \
           vcstool \
           setuptools \
-          gcovr
+          gcovr \
+          tomark
       shell: bash
