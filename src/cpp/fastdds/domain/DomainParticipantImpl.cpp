@@ -159,7 +159,6 @@ void DomainParticipantImpl::disable()
     {
         participant->set_listener(nullptr);
     }
-    rtps_listener_.participant_ = nullptr;
 
     // The function to disable the DomainParticipantImpl is called from
     // DomainParticipantFactory::delete_participant() and DomainParticipantFactory destructor.
@@ -1533,9 +1532,12 @@ void DomainParticipantImpl::MyRTPSParticipantListener::onParticipantDiscovery(
         ParticipantDiscoveryInfo&& info)
 {
     DomainParticipantListener* listener = nullptr;
-    if (participant_ != nullptr && (listener = participant_->get_listener()) != nullptr)
+    DomainParticipant* participant = nullptr;
+    if (participant_ != nullptr
+            && (participant = participant_->get_participant()) != nullptr
+            && (listener = participant_->get_listener()) != nullptr)
     {
-        listener->on_participant_discovery(participant_->participant_, std::move(info));
+        listener->on_participant_discovery(participant, std::move(info));
     }
 }
 
@@ -1545,9 +1547,12 @@ void DomainParticipantImpl::MyRTPSParticipantListener::onParticipantAuthenticati
         ParticipantAuthenticationInfo&& info)
 {
     DomainParticipantListener* listener = nullptr;
-    if (participant_ != nullptr && (listener = participant_->get_listener()) != nullptr)
+    DomainParticipant* participant = nullptr;
+    if (participant_ != nullptr
+            && (participant = participant_->get_participant()) != nullptr
+            && (listener = participant_->get_listener()) != nullptr)
     {
-        listener->onParticipantAuthentication(participant_->participant_, std::move(info));
+        listener->onParticipantAuthentication(participant, std::move(info));
     }
 }
 
@@ -1558,9 +1563,12 @@ void DomainParticipantImpl::MyRTPSParticipantListener::onReaderDiscovery(
         ReaderDiscoveryInfo&& info)
 {
     DomainParticipantListener* listener = nullptr;
-    if (participant_ != nullptr && (listener = participant_->get_listener()) != nullptr)
+    DomainParticipant* participant = nullptr;
+    if (participant_ != nullptr
+            && (participant = participant_->get_participant()) != nullptr
+            && (listener = participant_->get_listener()) != nullptr)
     {
-        listener->on_subscriber_discovery(participant_->participant_, std::move(info));
+        listener->on_subscriber_discovery(participant, std::move(info));
     }
 }
 
@@ -1569,9 +1577,12 @@ void DomainParticipantImpl::MyRTPSParticipantListener::onWriterDiscovery(
         WriterDiscoveryInfo&& info)
 {
     DomainParticipantListener* listener = nullptr;
-    if (participant_ != nullptr && (listener = participant_->get_listener()) != nullptr)
+    DomainParticipant* participant = nullptr;
+    if (participant_ != nullptr
+            && (participant = participant_->get_participant()) != nullptr
+            && (listener = participant_->get_listener()) != nullptr)
     {
-        listener->on_publisher_discovery(participant_->participant_, std::move(info));
+        listener->on_publisher_discovery(participant, std::move(info));
     }
 }
 
@@ -1584,10 +1595,13 @@ void DomainParticipantImpl::MyRTPSParticipantListener::on_type_discovery(
         fastrtps::types::DynamicType_ptr dyn_type)
 {
     DomainParticipantListener* listener = nullptr;
-    if (participant_ != nullptr && (listener = participant_->get_listener()) != nullptr)
+    DomainParticipant* participant = nullptr;
+    if (participant_ != nullptr
+            && (participant = participant_->get_participant()) != nullptr
+            && (listener = participant_->get_listener()) != nullptr)
     {
         listener->on_type_discovery(
-            participant_->participant_,
+            participant,
             request_sample_id,
             topic,
             identifier,
@@ -1604,10 +1618,13 @@ void DomainParticipantImpl::MyRTPSParticipantListener::on_type_dependencies_repl
         const fastrtps::types::TypeIdentifierWithSizeSeq& dependencies)
 {
     DomainParticipantListener* listener = nullptr;
-    if (participant_ != nullptr && (listener = participant_->get_listener()) != nullptr)
+    DomainParticipant* participant = nullptr;
+    if (participant_ != nullptr
+            && (participant = participant_->get_participant()) != nullptr
+            && (listener = participant_->get_listener()) != nullptr)
     {
         listener->on_type_dependencies_reply(
-            participant_->participant_, request_sample_id, dependencies);
+            participant, request_sample_id, dependencies);
     }
 
     participant_->check_get_dependencies_request(request_sample_id, dependencies);
