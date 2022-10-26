@@ -571,7 +571,6 @@ set_public_header(${PROJECT_BINARY_DIR}/include ${PROJECT_NAME} config.h
     INSTALL
     )
 
-
 # Install external sources
 if(UNIX AND EPROSIMA_INSTALLER)
     set_public_header(${TINYXML2_INCLUDE_DIR} "" tinyxml2.h
@@ -615,6 +614,13 @@ if(UNIX AND EPROSIMA_INSTALLER)
         COMPONENT sources
         )
 endif()
+
+# Install public statistics idls
+install(DIRECTORY ${PROJECT_SOURCE_DIR}/include/fastdds/statistics
+    DESTINATION ${INCLUDE_INSTALL_DIR}/fastdds
+    FILES_MATCHING
+    PATTERN "*.idl"
+    )
 
 # Install libraries
 
