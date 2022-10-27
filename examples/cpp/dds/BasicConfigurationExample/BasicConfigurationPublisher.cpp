@@ -214,25 +214,7 @@ HelloWorldPublisher::~HelloWorldPublisher()
 {
     if (participant_ != nullptr)
     {
-        /*if (publisher_ != nullptr)
-        {
-            if (writer_ != nullptr)
-            {
-                std::cout << "deleting writer" << std::endl;
-                publisher_->delete_datawriter(writer_);
-            }
-            std::cout << "deleting publisher" << std::endl;
-            participant_->delete_publisher(publisher_);
-        }
-        if (topic_ != nullptr)
-        {
-            std::cout << "deleting topic" << std::endl;
-            participant_->delete_topic(topic_);
-        }*/
-
-        std::cout << "deleting contained entities" << std::endl;
         participant_->delete_contained_entities();
-        std::cout << "deleting participant" << std::endl;
         DomainParticipantFactory::get_instance()->delete_participant(participant_);
     }
 }
