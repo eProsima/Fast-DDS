@@ -168,8 +168,8 @@ void WriterProxy::update(
 
 void WriterProxy::stop()
 {
-    initial_acknack_->cancel_timer();
-    heartbeat_response_->cancel_timer();
+    initial_acknack_->recreate_timer();
+    heartbeat_response_->recreate_timer();
 
     clear();
 }

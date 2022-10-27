@@ -132,6 +132,11 @@ public:
     void restart_timer(
             const std::chrono::steady_clock::time_point& timeout);
 
+    /*!
+     * @brief Unregisters the event (blocking), sets its state to INACTIVE, and re-registers it.
+     */
+    void recreate_timer();
+
     /**
      * Update event interval.
      * When updating the interval, the timer is not restarted and the new interval will only be used the next time you call restart_timer().
