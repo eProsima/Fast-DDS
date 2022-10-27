@@ -699,6 +699,7 @@ TEST_F(StatisticsDomainParticipantTests, EnableStatisticsDataWriterFailureIncomp
 }
 
 /**
+
  * This test checks that a participant is correctly deleted by the factory
  * after calling delete_contained_entities() method
  * 1. Create a statistics participant, register type
@@ -723,7 +724,7 @@ TEST_F(StatisticsDomainParticipantTests, DeleteParticipantAfterDeleteContainedEn
 
     // 2. Create a sample topic
     participant->create_topic(HEARTBEAT_COUNT_TOPIC,
-                    count_type->getName(), eprosima::fastdds::dds::TOPIC_QOS_DEFAULT);
+            count_type->getName(), eprosima::fastdds::dds::TOPIC_QOS_DEFAULT);
 
     DomainParticipant* statistics_participant = DomainParticipant::narrow(participant);
     ASSERT_NE(statistics_participant, nullptr);
