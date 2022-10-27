@@ -201,6 +201,7 @@ struct ReadTakeCommand
         if (single_instance_ && (!loop_for_data_ || (loop_for_data_ && ret_val)))
         {
             finished_ = true;
+            history_.check_and_remove_instance(instance_);
         }
         else
         {
