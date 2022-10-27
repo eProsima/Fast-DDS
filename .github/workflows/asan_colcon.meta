@@ -14,7 +14,7 @@
                 "-DPERFORMANCE_TESTS=ON",
                 "-DSECURITY=ON",
                 "-DFASTDDS_STATISTICS=ON",
-                "-DASAN_BUILD=ON",
+                "-DSANITIZER=Address",
                 "-DCMAKE_CXX_FLAGS='-Werror'"
             ]
         }
