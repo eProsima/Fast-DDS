@@ -20,6 +20,9 @@
 #ifndef _FASTDDS_PARTICIPANTIMPL_HPP_
 #define _FASTDDS_PARTICIPANTIMPL_HPP_
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
+
+#include <atomic>
+
 #include <fastdds/rtps/common/Guid.h>
 #include <fastdds/rtps/participant/RTPSParticipantListener.h>
 #include <fastdds/rtps/reader/StatefulReader.h>
@@ -402,7 +405,7 @@ protected:
     fastrtps::rtps::GUID_t guid_;
 
     //!For instance handle creation
-    uint32_t next_instance_id_;
+    std::atomic<uint32_t> next_instance_id_;
 
     //!Participant Qos
     DomainParticipantQos qos_;
