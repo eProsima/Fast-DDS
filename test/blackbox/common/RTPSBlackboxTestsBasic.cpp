@@ -28,15 +28,6 @@
 #include "RTPSAsSocketWriter.hpp"
 #include "RTPSWithRegistrationReader.hpp"
 #include "RTPSWithRegistrationWriter.hpp"
-<<<<<<< HEAD
-#include <fastrtps/xmlparser/XMLProfileManager.h>
-#include <fastrtps/transport/test_UDPv4Transport.h>
-
-#include <gtest/gtest.h>
-
-#include <thread>
-=======
->>>>>>> 90777eccd (Fix dataraces when creating DataWriters (#3015))
 
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
