@@ -141,6 +141,8 @@ ReturnCode_t DomainParticipantImpl::enable_statistics_datawriter(
             auto data_writer = builtin_publisher_impl_->create_datawriter(topic, writer_impl, efd::StatusMask::all());
             if (nullptr == data_writer)
             {
+                // Remove already created Impl
+                delete writer_impl;
                 // Remove topic and type
                 delete_topic_and_type(use_topic_name);
                 logError(STATISTICS_DOMAIN_PARTICIPANT, topic_name << " DataWriter creation has failed");
