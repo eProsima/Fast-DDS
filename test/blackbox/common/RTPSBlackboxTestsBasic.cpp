@@ -21,8 +21,8 @@
 #include <gtest/gtest.h>
 
 #include <fastrtps/transport/test_UDPv4TransportDescriptor.h>
+#include <fastrtps/transport/test_UDPv4Transport.h>
 #include <fastrtps/xmlparser/XMLProfileManager.h>
-#include <rtps/transport/test_UDPv4Transport.h>
 
 #include "RTPSAsSocketReader.hpp"
 #include "RTPSAsSocketWriter.hpp"
