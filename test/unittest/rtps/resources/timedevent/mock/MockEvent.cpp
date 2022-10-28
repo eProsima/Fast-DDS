@@ -19,10 +19,12 @@ using namespace eprosima::fastrtps::rtps;
 MockEvent::MockEvent(
         eprosima::fastrtps::rtps::ResourceEvent& service,
         double milliseconds,
-        bool autorestart)
+        bool autorestart,
+        std::function<void()> inner_callback)
     : successed_(0)
     , sem_count_(0)
     , autorestart_(autorestart)
+    , inner_callback_(inner_callback)
     , event_(service, std::bind(&MockEvent::callback, this), milliseconds)
 {
 }
@@ -46,6 +48,11 @@ bool MockEvent::callback()
     ++sem_count_;
     sem_mutex_.unlock();
     sem_cond_.notify_one();
+
+    if (inner_callback_)
+    {
+        inner_callback_();
+    }
 
     return restart;
 }

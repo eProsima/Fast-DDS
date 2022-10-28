@@ -29,7 +29,8 @@ class MockEvent
         MockEvent(
                 eprosima::fastrtps::rtps::ResourceEvent& service,
                 double milliseconds,
-                bool autorestart);
+                bool autorestart,
+                std::function<void()> inner_callback = {});
 
         virtual ~MockEvent();
 
@@ -51,6 +52,7 @@ class MockEvent
         std::mutex sem_mutex_;
         std::condition_variable sem_cond_;
         bool autorestart_;
+        std::function<void()> inner_callback_;
         eprosima::fastrtps::rtps::TimedEvent event_;
 };
 

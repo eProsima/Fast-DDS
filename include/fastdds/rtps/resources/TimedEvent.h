@@ -133,7 +133,8 @@ public:
             const std::chrono::steady_clock::time_point& timeout);
 
     /*!
-     * @brief Unregisters the event (blocking), sets its state to INACTIVE, and re-registers it.
+     * @brief Unregisters the event, sets its state to INACTIVE, and re-registers it.
+     * It may be seen as a blocking version of \c cancel_timer
      */
     void recreate_timer();
 
