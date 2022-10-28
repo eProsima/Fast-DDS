@@ -96,6 +96,13 @@ protected:
         {
             eprosima::fastrtps::rtps::RTPSDomain::removeRTPSParticipant(rtps_participant_);
         }
+
+        if (participant_)
+        {
+            participant_->impl_ = nullptr;
+            delete participant_;
+            participant_ = nullptr;
+        }
     }
 
 public:
@@ -270,6 +277,7 @@ public:
         TopicProxy* proxy = new TopicProxy(topic_name, type_name, mask, topic_impl);
         Topic* topic = proxy->get_topic();
         topics_[topic_name] = proxy;
+        topics_impl_[topic_name] = topic_impl;
         topic->enable();
         return topic;
     }
@@ -302,6 +310,8 @@ public:
     ReturnCode_t delete_topic(
             const Topic* topic)
     {
+        auto topic_name = topic->get_name();
+
         if (delete_topic_mock())
         {
             return ReturnCode_t::RETCODE_ERROR;
@@ -314,8 +324,9 @@ public:
         {
             return ReturnCode_t::RETCODE_PRECONDITION_NOT_MET;
         }
+
         std::lock_guard<std::mutex> lock(mtx_topics_);
-        auto it = topics_.find(topic->get_name());
+        auto it = topics_.find(topic_name);
         if (it != topics_.end())
         {
             if (it->second->is_referenced())
@@ -324,6 +335,11 @@ public:
             }
             delete it->second;
             topics_.erase(it);
+
+            // Destroy also impl, that must exist
+            delete topics_impl_[topic_name];
+            topics_impl_.erase(topic_name);
+
             return ReturnCode_t::RETCODE_OK;
         }
         return ReturnCode_t::RETCODE_ERROR;
@@ -694,6 +710,7 @@ protected:
     mutable std::mutex mtx_subs_;
     SubscriberQos default_sub_qos_;
     std::map<std::string, TopicProxy*> topics_;
+    std::map<std::string, TopicImpl*> topics_impl_;
     mutable std::mutex mtx_topics_;
     std::map<std::string, TypeSupport> types_;
     mutable std::mutex mtx_types_;
