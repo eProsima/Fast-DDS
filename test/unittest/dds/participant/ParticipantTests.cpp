@@ -274,6 +274,9 @@ private:
     std::array<char, 256> message_;
 };
 
+// NOTE: This function is duplicated from SystemInfo because it is not in the API and could not be added to test
+// compilation as that file is already compiled and linked, and doing such thing is wrong and would make a kitten cry.
+// (it duplicates an instantiated variable 'environment_file_' and so provoke a double free).
 int process_id()
 {
 #if defined(__cplusplus_winrt)
