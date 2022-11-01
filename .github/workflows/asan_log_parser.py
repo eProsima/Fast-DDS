@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"Script to parse the colcon test output file."
+"""Script to parse the colcon test output file."""
 
 import re
 import os
@@ -37,12 +37,15 @@ if (not saved_lines):
 
 failed_tests = []
 for test in saved_lines:
-    match = re.search('\d* - .* \(Failed\)', test)
-    if (match):
-        split_test = match.group().split()
+    if (re.search(r'\d* - .* \(.+\)', test)):
+        split_test = test.split()
         failed_tests.insert(
             0,
-            dict({'ID': split_test[0], 'Name': split_test[2]}))
+            dict({
+                'ID': split_test[0],
+                'Name': split_test[2],
+                'Type': test[test.find('(')+1:test.find(')')]
+            }))
 
 # Convert python dict to markdown table
 md_table = Tomark.table(failed_tests)
