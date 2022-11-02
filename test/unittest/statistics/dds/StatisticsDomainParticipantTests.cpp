@@ -733,7 +733,7 @@ TEST_F(StatisticsDomainParticipantTests, DeleteParticipantAfterDeleteContainedEn
             STATISTICS_DATAWRITER_QOS));
 
     // 3. Perform a delete_contained_entities() in the statistics participant
-    EXPECT_EQ(statistics_participant->delete_contained_entities(), ReturnCode_t::RETCODE_OK);
+    EXPECT_EQ(participant->delete_contained_entities(), ReturnCode_t::RETCODE_OK);
 
     // 4. Delete the participant
     EXPECT_EQ(eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->
