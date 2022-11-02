@@ -2015,6 +2015,11 @@ struct oarraystream : virtual arraybuf, std::ostream
 
 };
 
+/*
+ *  This test deals with issues covered on PR #3044.
+ *  It checks (read|take)_next_instance methods iterate properly over all
+ *  instances in the history.
+ */
 TEST_F(DataReaderTests, check_read_take_iteration)
 {
     const std::size_t max_handles = 100;
