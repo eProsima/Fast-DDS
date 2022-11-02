@@ -65,8 +65,8 @@ struct ReadTakeCommand
             int32_t max_samples,
             const StateFilter& states,
             const history_type::instance_info& instance,
-            bool single_instance = false,
-            bool loop_for_data = false)
+            bool single_instance,
+            bool loop_for_data)
         : type_(reader.type_)
         , loan_manager_(reader.loan_manager_)
         , history_(reader.history_)
