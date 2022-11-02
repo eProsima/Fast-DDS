@@ -154,6 +154,10 @@ elseif(${SANITIZER} STREQUAL "THREAD")
     else()
         message(FATAL_ERROR "Thread sanitizer requires Clang or GCC. Aborting.")
     endif()
+
+else()
+    message(WARNING "Sanitizer option not supported. Continuing without any code instrumentation... ")
+
 endif()
 
 ###############################################################################
