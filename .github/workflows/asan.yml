@@ -29,13 +29,6 @@ jobs:
       - name: Install Python packages
         uses: ./src/Fast-DDS/.github/actions/install-python-packages
 
-      - name: Update colcon mixin
-        run: |
-          colcon mixin add default \
-            https://raw.githubusercontent.com/colcon/colcon-mixin-repository/master/index.yaml
-          colcon mixin update default
-        continue-on-error: true
-
       - name: Fetch Fast DDS dependencies
         uses: ./src/Fast-DDS/.github/actions/fetch-fastdds-repos
 
@@ -53,7 +46,9 @@ jobs:
             --packages-select fastrtps \
             --event-handlers=console_direct+ \
             --return-code-on-test-failure \
-            --ctest-args --timeout 60
+            --ctest-args \
+              --label-exclude xfail \
+              --timeout 60
 
       - name: Upload Logs
         uses: actions/upload-artifact@v1
