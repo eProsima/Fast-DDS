@@ -267,6 +267,19 @@ void DomainParticipantImpl::disable()
     efd::DomainParticipantImpl::disable();
 }
 
+ReturnCode_t DomainParticipantImpl::delete_contained_entities()
+{
+    ReturnCode_t ret = efd::DomainParticipantImpl::delete_contained_entities();
+
+    if (ret == ReturnCode_t::RETCODE_OK)
+    {
+        builtin_publisher_impl_ = nullptr;
+        builtin_publisher_ = nullptr;
+    }
+
+    return ret;
+}
+
 efd::PublisherImpl* DomainParticipantImpl::create_publisher_impl(
         const efd::PublisherQos& qos,
         efd::PublisherListener* listener)

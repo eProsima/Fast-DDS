@@ -214,18 +214,7 @@ HelloWorldPublisher::~HelloWorldPublisher()
 {
     if (participant_ != nullptr)
     {
-        if (publisher_ != nullptr)
-        {
-            if (writer_ != nullptr)
-            {
-                publisher_->delete_datawriter(writer_);
-            }
-            participant_->delete_publisher(publisher_);
-        }
-        if (topic_ != nullptr)
-        {
-            participant_->delete_topic(topic_);
-        }
+        participant_->delete_contained_entities();
         DomainParticipantFactory::get_instance()->delete_participant(participant_);
     }
 }

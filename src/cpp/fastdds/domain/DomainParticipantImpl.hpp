@@ -332,7 +332,7 @@ public:
 
     DomainId_t get_domain_id() const;
 
-    ReturnCode_t delete_contained_entities();
+    virtual ReturnCode_t delete_contained_entities();
 
     ReturnCode_t assert_liveliness();
 
