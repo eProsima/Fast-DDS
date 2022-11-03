@@ -255,7 +255,7 @@ jobs:
         run: |
              if($IsWindows)
              {
-                if(!(Test-Path -Path $Env:OPENSSL64_ROOT))
+                if(!(Test-Path -Path Env:OPENSSL64_ROOT))
                 {
                   throw "OpenSSL is not set up properly. Check previous steps."
                 }
@@ -374,7 +374,7 @@ jobs:
                                                "-DNO_TLS=ON"
 
            # single config processing parafernalia
-           if(Test-Path -Path Env:BUILD_TYPE)
+           if(Test-Path Env:BUILD_TYPE)
            {
              $meta.names.fastrtps."cmake-args" += $Env:BUILD_TYPE
            }
@@ -386,7 +386,8 @@ jobs:
            # For convenience use an array to pass the arguments
            $buildargs = "--merge-install",
                         "--symlink-install",
-                        "--event-handlers=console_direct+"
+                        "--event-handlers=console_direct+",
+                        "--mixin", "${{ matrix.configs.config }}"
 
            # On Windows we must load the developer environment and chose a config
            if($IsWindows)
@@ -396,14 +397,13 @@ jobs:
               Enter-VsDevShell -SetDefaultWindowTitle -VsInstallPath $pwshmodule.Directory.Parent.Parent `
                                -StartInPath (pwd) -DevCmdArguments '/arch=x64 /host_arch=x64'
 
-              $buildargs += "--mixin", "${{ matrix.configs.config }}"
               $cmakeargs = "--cmake-args", $Env:BIN_ARCH, $Env:HOST_ARCH
 
               colcon build $buildargs --metas ci.meta --executor sequential $cmakeargs
            }
            else
            {
-              colcon build $buildargs --metas ci.meta $config --executor sequential
+              colcon build $buildargs --metas ci.meta --executor sequential
            }
 
       - name: Test
@@ -422,7 +422,7 @@ jobs:
            # If the CMake version (3.21 et seq.) supports junit use it
            $failed = 0
 
-           if(Test-Path $Env:JUNIT_LOG)
+           if(Test-Path Env:JUNIT_LOG)
            {
              # ancillary for markdown summary
              $modules = Get-Module -ListAvailable | Select ModuleType, Version, Name
