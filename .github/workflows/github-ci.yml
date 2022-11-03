@@ -10,5 +10,7 @@ jobs:
   call-workflow-passing-data:
     uses: ./.github/workflows/reusable-github-ci.yml
     with:
-      os: "[\"ubuntu-22.04\",\"ubuntu-20.04\",\"windows-2022\",\"windows-2019\",\"macos-12\",\"macos-11\"]"
-      config: "[\"debug\",\"release\"]"
+      os: "[\"ubuntu-22.04\",\"windows-2022\",\"macos-12\"]"
+      config: "[\"release\"]"
+      vs_toolset: "[\"v143\",\"v142\",\"v141\"]"
+  

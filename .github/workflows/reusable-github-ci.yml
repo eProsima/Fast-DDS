@@ -63,6 +63,9 @@ jobs:
       matrix:
         os: ${{ fromJSON(inputs.os) }}
         config: ${{ fromJSON(inputs.config) }}
+        include:
+            - toolset: ${{ fromJSON(inputs.vs_toolset) }}
+              os: windows-2022
       fail-fast: false
  
     name: ${{ matrix.os }} ${{ matrix.config }} CI
@@ -84,7 +87,7 @@ jobs:
                  'CXXFLAGS=/MP',
                  'CONFIG_TYPE=--config ${{ matrix.configs.config }}',
                  'BIN_ARCH=-A x64',
-                 'HOST_ARCH=-T $${{ matrix.configs.toolset }},host=x64',
+                 'HOST_ARCH=-T ${{ matrix.configs.toolset }},host=x64',
                  ('VSPWSH=' + $pwshmodule)
              }
              elseif($IsLinux -or $IsMacOS)
