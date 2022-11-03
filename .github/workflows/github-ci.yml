@@ -7,7 +7,7 @@ on:
 
 jobs:
 
-  call-workflow-passing-data:
+  Running-CI:
     uses: ./.github/workflows/reusable-github-ci.yml
     with:
       os: "[\"ubuntu-22.04\",\"windows-2022\",\"macos-12\"]"

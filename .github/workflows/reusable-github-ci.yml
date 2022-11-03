@@ -45,31 +45,27 @@ jobs:
                            foreach($ts in (ConvertFrom-Json '${{ inputs.vs_toolset }}'))
                            {
                                $map.toolset = $ts
-                               $configs += (ConvertTo-Json $map -Compress)
+                               $configs += $map.Clone()
                            }
                        }
                        else
                        {
-                           $configs += (ConvertTo-Json $map -Compress)
+                           $configs += $map
                        }
                    }
                }
-               "configs-matrix=" + (ConvertTo-Json $configs -Compress) |
-                    Out-File $Env:GITHUB_OUTPUT -Append -Encoding OEM
+               'configs-matrix=' + (ConvertTo-Json $configs -Compress) |
+                    Out-File $Env:GITHUB_OUTPUT -Append
 
   build-and-test-ci:
     needs: build-matrix
     strategy:
       matrix:
-        os: ${{ fromJSON(inputs.os) }}
-        config: ${{ fromJSON(inputs.config) }}
-        include:
-            - toolset: ${{ fromJSON(inputs.vs_toolset) }}
-              os: windows-2022
+        configs: ${{ fromJSON(needs.build-matrix.outputs.configs-matrix) }}
       fail-fast: false
  
-    name: ${{ matrix.os }} ${{ matrix.config }} CI
-    runs-on: ${{ matrix.os }} 
+    name: ${{ matrix.configs.os }} ${{ matrix.configs.config }} ${{ matrix.configs.toolset }} CI
+    runs-on: ${{ matrix.configs.os }} 
     steps:
       - name: Setup environment
         run: |
