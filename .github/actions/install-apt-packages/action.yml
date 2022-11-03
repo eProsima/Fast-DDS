@@ -6,12 +6,12 @@ runs:
     - id: install-apt-packages
       run: |
         sudo apt -y install \
+          curl \
+          grep \
+          libasio-dev \
+          libtinyxml2-dev \
           python3 \
           python3-pip \
           software-properties-common \
-          wget \
-          libasio-dev \
-          libtinyxml2-dev \
-          curl \
-          grep
+          wget
       shell: bash
