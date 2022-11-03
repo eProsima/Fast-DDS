@@ -399,6 +399,9 @@ jobs:
 
               $cmakeargs = "--cmake-args", $Env:BIN_ARCH, $Env:HOST_ARCH
 
+              # VS2022 may show warnings using C++11
+              $ErrorActionPreference='Continue'
+
               colcon build $buildargs --metas ci.meta --executor sequential $cmakeargs
            }
            else
@@ -462,6 +465,7 @@ jobs:
            }
 
            "test_failures=$failed" | Out-File $Env:GITHUB_OUTPUT -Append
+           exit $failed
 
       - name: Check test failures
         if: ${{ steps.summary.outcome == 'failure' }}
