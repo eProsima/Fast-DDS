@@ -414,8 +414,14 @@ ReturnCode_t DataWriterImpl::check_delete_preconditions()
 
 DataWriterImpl::~DataWriterImpl()
 {
-    delete lifespan_timer_;
-    delete deadline_timer_;
+    if (lifespan_timer_) {
+        delete lifespan_timer_;
+        lifespan_timer_ = nullptr;
+    }
+    if (deadline_timer_) {
+        delete deadline_timer_;
+        deadline_timer_ = nullptr;
+    }
 
     if (writer_ != nullptr)
     {

@@ -88,8 +88,14 @@ SubscriberImpl::SubscriberImpl(
 
 SubscriberImpl::~SubscriberImpl()
 {
-    delete(lifespan_timer_);
-    delete(deadline_timer_);
+    if (lifespan_timer_) {
+        delete lifespan_timer_;
+        lifespan_timer_ = nullptr;
+    }
+    if (deadline_timer_) {
+        delete deadline_timer_;
+        deadline_timer_ = nullptr;
+    }
 
     if (mp_reader != nullptr)
     {
