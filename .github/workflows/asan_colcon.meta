@@ -1,0 +1,22 @@
+{
+    "names":
+    {
+        "fastrtps":
+        {
+            "cmake-args":
+            [
+                "-DCMAKE_BUILD_TYPE=Debug",
+                "-DEPROSIMA_BUILD_TESTS=ON",
+                "-DGTEST_INDIVIDUAL=ON",
+                "-DRTPS_API_TESTS=ON",
+                "-DFASTRTPS_API_TESTS=ON",
+                "-DFASTDDS_PIM_API_TESTS=ON",
+                "-DPERFORMANCE_TESTS=ON",
+                "-DSECURITY=ON",
+                "-DFASTDDS_STATISTICS=ON",
+                "-DSANITIZER=Address",
+                "-DCMAKE_CXX_FLAGS='-Werror'"
+            ]
+        }
+    }
+}

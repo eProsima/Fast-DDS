@@ -57,7 +57,7 @@ if(MSVC OR MSVC_IDE)
     endif()
 
     # make visual studio more gcc and clang like.
-    # C4101 'identifier' : unreferenced local variable 
+    # C4101 'identifier' : unreferenced local variable
     # C4189 'identifier' : local variable is initialized but not referenced
     # C4555  expression has no effect; expected expression with side-effect
     # C4715: 'Test': not all control paths return a value
@@ -102,6 +102,63 @@ set(FORCE_CXX "11" CACHE STRING "C++ standard fulfillment selection")
 check_stdcxx(${FORCE_CXX})
 
 check_endianness()
+
+###############################################################################
+# Activate Sanitizers
+###############################################################################
+option(SANITIZER "Enable Thread or Address sanitizers" OFF)
+string(TOUPPER ${SANITIZER} SANITIZER)
+
+if(${SANITIZER} STREQUAL "ADDRESS")
+    message(STATUS "Enabling address sanitizer...")
+    # Warning/Error messages
+    if(NOT (CMAKE_BUILD_TYPE STREQUAL "Debug"))
+        message(WARNING "Address sanitizer results with an optimized (non-Debug) build may be misleading")
+    endif()
+
+    if("${CMAKE_C_COMPILER_ID}" MATCHES "(Apple)?[Cc]lang" OR "${CMAKE_CXX_COMPILER_ID}" MATCHES "(Apple)?[Cc]lang")
+        message(STATUS "Building with llvm Address sanitizer Tools")
+
+        set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fsanitize=address")
+        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fsanitize=address")
+
+    elseif(CMAKE_COMPILER_IS_GNUCXX)
+        message(STATUS "Building with Address sanitizer Tools")
+
+        set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fsanitize=address -fno-omit-frame-pointer")
+        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fsanitize=address -fno-omit-frame-pointer")
+
+    else()
+        message(FATAL_ERROR "Address sanitizer requires Clang or GCC. Aborting.")
+    endif()
+
+elseif(${SANITIZER} STREQUAL "THREAD")
+    message(STATUS "Enabling thread sanitizer...")
+    # Warning/Error messages
+    if(NOT (CMAKE_BUILD_TYPE STREQUAL "Debug"))
+        message(WARNING "Thread sanitizer results with an optimized (non-Debug) build may be misleading")
+    endif()
+
+    if("${CMAKE_C_COMPILER_ID}" MATCHES "(Apple)?[Cc]lang" OR "${CMAKE_CXX_COMPILER_ID}" MATCHES "(Apple)?[Cc]lang")
+        message(STATUS "Building with llvm Thread sanitizer Tools")
+
+        set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fsanitize=thread")
+        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fsanitize=thread")
+
+    elseif(CMAKE_COMPILER_IS_GNUCXX)
+        message(STATUS "Building with Thread sanitizer Tools")
+
+        set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fsanitize=thread -fno-omit-frame-pointer")
+        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fsanitize=thread -fno-omit-frame-pointer")
+
+    else()
+        message(FATAL_ERROR "Thread sanitizer requires Clang or GCC. Aborting.")
+    endif()
+
+else()
+    message(WARNING "Sanitizer option not supported. Continuing without any code instrumentation... ")
+
+endif()
 
 ###############################################################################
 # Installation paths
@@ -298,7 +355,7 @@ option(FASTDDS_STATISTICS "Enable Fast DDS Statistics Module" OFF)
 add_subdirectory(src/cpp)
 
 ###############################################################################
-# Add http://optionparser.sourceforge.net/ as unified cli parser 
+# Add http://optionparser.sourceforge.net/ as unified cli parser
 ###############################################################################
 add_subdirectory(thirdparty/optionparser)
 
@@ -425,7 +482,7 @@ if(BUILD_DOCUMENTATION)
         configure_file(${CMAKE_CURRENT_BINARY_DIR}/readthedocs_custom_template.cmake  ${CMAKE_CURRENT_BINARY_DIR}/readthedocs_custom.cmake)
 
         add_custom_target(readthedocs
-            COMMAND ${CMAKE_COMMAND} -P ${CMAKE_CURRENT_BINARY_DIR}/readthedocs_custom.cmake 
+            COMMAND ${CMAKE_COMMAND} -P ${CMAKE_CURRENT_BINARY_DIR}/readthedocs_custom.cmake
             )
 
         add_dependencies(readthedocs docdirs)
