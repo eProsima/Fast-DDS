@@ -183,7 +183,7 @@ jobs:
              'build', 'googletest', 'gtest.log' | del -Recurse -Force 
 
       - name: Make sure OpenSSL is there
-        if: ${{ contains(matrix.os, 'windows') }}
+        if: ${{ contains(matrix.configs.os, 'windows') }}
         run: |
              # Windows host has only the binaries installed, we need the headers too
              # download the last installer
@@ -245,11 +245,11 @@ jobs:
              gc $hostfile
 
       - name: Set up libp11 and SoftHSM
-        if: ${{ !contains(matrix.os, 'macos') }}
+        if: ${{ !contains(matrix.configs.os, 'macos') }}
         run: |
              if($IsWindows)
              {
-                if(!(Test-Path -Path Env:OPENSSL64_ROOT))
+                if(!(Test-Path -Path $Env:OPENSSL64_ROOT))
                 {
                   throw "OpenSSL is not set up properly. Check previous steps."
                 }
