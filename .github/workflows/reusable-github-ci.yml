@@ -124,6 +124,12 @@ jobs:
                   del $tmp
                }
              }
+             elseif($IsMacOS)
+             {
+                 # Add the colcon location to the path
+                 $Env:PATH += "${Env:PATH}:/Library/Frameworks/Python.framework/Versions/Current/bin"
+                 "PATH=" + $Env:PATH | Out-File $Env:GITHUB_ENV -Append -Encoding OEM
+             }
 
              # refresh mixins
              colcon mixin add default 'https://raw.githubusercontent.com/colcon/colcon-mixin-repository/master/index.yaml'
@@ -455,8 +461,7 @@ jobs:
              $summary
            }
 
-           $LastExitCode = $failed
-           "::set-output name=test_failures::$failed"
+           "test_failures=$failed" | Out-File $Env:GITHUB_OUTPUT -Append
 
       - name: Check test failures
         if: ${{ steps.summary.outcome == 'failure' }}
