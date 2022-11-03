@@ -33,9 +33,7 @@ class StatefulReader : public RTPSReader
 {
 public:
 
-    StatefulReader()
-    {
-    }
+    StatefulReader() = default;
 
     StatefulReader(
             ReaderHistory* history,
@@ -59,13 +57,6 @@ public:
 
     MOCK_METHOD1 (matched_writer_is_matched, bool(const GUID_t& writer_guid));
     // *INDENT-ON*
-
-
-    // In real class, inherited from Endpoint base class.
-    inline const GUID_t& getGuid() const
-    {
-        return guid_;
-    }
 
     ReaderTimes& getTimes()
     {
@@ -107,8 +98,6 @@ public:
     }
 
 private:
-
-    GUID_t guid_;
 
     ReaderTimes times_;
 };
