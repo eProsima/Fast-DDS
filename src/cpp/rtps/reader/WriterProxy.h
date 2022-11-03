@@ -59,13 +59,6 @@ class WriterProxy : public RTPSMessageSenderInterface
 
 public:
 
-    enum StateCode
-    {
-        IDLE = 0, //! Writer Proxy is not performing any critical operations.
-        BUSY, //! Writer Proxy is performing a critical operation. Some actions (e.g. stop) should wait for its completion.
-        STOPPED, //! Writer Proxy has been requested to \c stop.
-    };
-
     ~WriterProxy();
 
     /**
@@ -355,6 +348,13 @@ public:
     }
 
 private:
+
+    enum StateCode
+    {
+        IDLE = 0, //! Writer Proxy is not performing any critical operations.
+        BUSY, //! Writer Proxy is performing a critical operation. Some actions (e.g. stop) should wait for its completion.
+        STOPPED, //! Writer Proxy has been requested to \c stop.
+    };
 
     /**
      * Set initial value for last acked sequence number.

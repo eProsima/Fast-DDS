@@ -90,7 +90,7 @@ WriterProxy::WriterProxy(
     , locators_entry_(loc_alloc.max_unicast_locators, loc_alloc.max_multicast_locators)
     , is_datasharing_writer_(false)
     , received_at_least_one_heartbeat_(false)
-    , state_(StateCode::IDLE)
+    , state_(StateCode::STOPPED)
 {
     //Create Events
     ResourceEvent& event_manager = reader_->getRTPSParticipant()->getEventResource();
