@@ -40,18 +40,11 @@ void FlowControllerFactory::init(
                     FlowControllerFifoSchedule>(participant_, nullptr))));
 
 #ifdef FASTDDS_STATISTICS
-<<<<<<< HEAD
-    flow_controllers_.insert({async_statistics_flow_controller_name,
-                              std::unique_ptr<FlowController>(
-                                  new FlowControllerImpl<FlowControllerAsyncPublishMode,
-                                  FlowControllerFifoSchedule>(participant_, nullptr))});
-=======
     flow_controllers_.insert(decltype(flow_controllers_)::value_type(
                 async_statistics_flow_controller_name,
                 std::unique_ptr<FlowController>(
                     new FlowControllerImpl<FlowControllerAsyncPublishMode,
                     FlowControllerFifoSchedule>(participant_, nullptr))));
->>>>>>> f3f994e6f (Construct with decltype when inserting to map on FlowControllerFactory (#3034))
 #endif // ifndef FASTDDS_STATISTICS
 }
 
