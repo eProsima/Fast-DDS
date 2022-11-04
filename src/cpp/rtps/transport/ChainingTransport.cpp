@@ -20,7 +20,8 @@ namespace eprosima {
 namespace fastdds {
 namespace rtps {
 
-void ChainingReceiverResourceDeleter::operator()(ChainingReceiverResource *p)
+void ChainingReceiverResourceDeleter::operator ()(
+        ChainingReceiverResource* p)
 {
     delete p;
 }

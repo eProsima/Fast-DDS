@@ -35,12 +35,13 @@ class ChainingReceiverResource;
  */
 struct ChainingReceiverResourceDeleter
 {
-    void operator()(ChainingReceiverResource *p);
+    void operator ()(
+            ChainingReceiverResource* p);
 };
 
 //! Type of the \c unique_ptr of a \c ChainingReceiverResource .
 using ChainingReceiverResourceReferenceType =
-    std::unique_ptr<ChainingReceiverResource, ChainingReceiverResourceDeleter>;
+        std::unique_ptr<ChainingReceiverResource, ChainingReceiverResourceDeleter>;
 
 /**
  * This is the base class for chaining adapter transports.

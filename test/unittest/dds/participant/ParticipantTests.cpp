@@ -288,7 +288,6 @@ int process_id()
 #endif // platform selection
 }
 
-
 TEST(ParticipantTests, DomainParticipantFactoryGetInstance)
 {
     DomainParticipantFactory* factory = DomainParticipantFactory::get_instance();
