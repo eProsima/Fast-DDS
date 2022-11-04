@@ -36,7 +36,7 @@ struct ReaderFilterInformation
     fastrtps::string_255 filter_class_name;
     IContentFilterFactory* filter_factory = nullptr;
     IContentFilter* filter = nullptr;
-    std::array<uint8_t, 16> filter_signature{ 0 };
+    std::array<uint8_t, 16> filter_signature{ { 0 } };
 };
 
 }  // namespace dds
