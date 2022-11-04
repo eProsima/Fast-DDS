@@ -209,6 +209,7 @@ jobs:
              del "$Env:TMP\Win64OpenSSL.exe"
 
       - name: Update the host file for DNS resolver testing
+        if: ${{ !contains(github.event.pull_request.labels.*.name, 'no-test') }}
         run: |
              # File location is OSpecific
              if($IsWindows)
@@ -410,6 +411,7 @@ jobs:
            }
 
       - name: Test
+        if: ${{ !contains(github.event.pull_request.labels.*.name, 'no-test') }}
         run: |
            # Create a junit file for test results
            $junit = New-Item -Path ./junit.xml -ItemType File

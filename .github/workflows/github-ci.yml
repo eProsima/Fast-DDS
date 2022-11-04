@@ -2,13 +2,25 @@ name: Fast-DDS continuous integration
 
 on:
   workflow_dispatch:
+  push:
+    branches:
+      - 'master'
+    paths-ignore:
+      - '**.md'
+      - '**.txt'
+      - '!**/CMakeLists.txt'
   pull_request:
-    branches: [ master ]
+    branches:
+      - 'master'
+    paths-ignore:
+      - '**.md'
+      - '**.txt'
+      - '!**/CMakeLists.txt'
 
 jobs:
-
   Running-CI:
     uses: ./.github/workflows/reusable-github-ci.yml
+    if: ${{ !contains(github.event.pull_request.labels.*.name, 'skip-ci') }}
     with:
       os: "[\"ubuntu-22.04\",\"windows-2022\",\"macos-12\"]"
       config: "[\"release\"]"
