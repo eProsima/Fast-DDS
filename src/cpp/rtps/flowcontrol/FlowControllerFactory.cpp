@@ -21,29 +21,30 @@ void FlowControllerFactory::init(
     // Create default flow controllers.
 
     // PureSyncFlowController -> used by volatile besteffort writers.
-    flow_controllers_.insert(std::make_pair<std::string, std::unique_ptr<FlowController>>(
+    flow_controllers_.insert(decltype(flow_controllers_)::value_type(
                 pure_sync_flow_controller_name,
                 std::unique_ptr<FlowController>(
                     new FlowControllerImpl<FlowControllerPureSyncPublishMode,
                     FlowControllerFifoSchedule>(participant_, nullptr))));
     // SyncFlowController -> used by rest of besteffort writers.
-    flow_controllers_.insert(std::make_pair<std::string, std::unique_ptr<FlowController>>(
+    flow_controllers_.insert(decltype(flow_controllers_)::value_type(
                 sync_flow_controller_name,
                 std::unique_ptr<FlowController>(
                     new FlowControllerImpl<FlowControllerSyncPublishMode,
                     FlowControllerFifoSchedule>(participant_, nullptr))));
     // AsyncFlowController
-    flow_controllers_.insert(std::make_pair<std::string, std::unique_ptr<FlowController>>(
+    flow_controllers_.insert(decltype(flow_controllers_)::value_type(
                 async_flow_controller_name,
                 std::unique_ptr<FlowController>(
                     new FlowControllerImpl<FlowControllerAsyncPublishMode,
                     FlowControllerFifoSchedule>(participant_, nullptr))));
 
 #ifdef FASTDDS_STATISTICS
-    flow_controllers_.insert({async_statistics_flow_controller_name,
-                              std::unique_ptr<FlowController>(
-                                  new FlowControllerImpl<FlowControllerAsyncPublishMode,
-                                  FlowControllerFifoSchedule>(participant_, nullptr))});
+    flow_controllers_.insert(decltype(flow_controllers_)::value_type(
+                async_statistics_flow_controller_name,
+                std::unique_ptr<FlowController>(
+                    new FlowControllerImpl<FlowControllerAsyncPublishMode,
+                    FlowControllerFifoSchedule>(participant_, nullptr))));
 #endif // ifndef FASTDDS_STATISTICS
 }
 
@@ -62,31 +63,35 @@ void FlowControllerFactory::register_flow_controller (
         switch (flow_controller_descr.scheduler)
         {
             case FlowControllerSchedulerPolicy::FIFO:
-                flow_controllers_.insert({flow_controller_descr.name,
-                                          std::unique_ptr<FlowController>(
-                                              new FlowControllerImpl<FlowControllerLimitedAsyncPublishMode,
-                                              FlowControllerFifoSchedule>(participant_, &flow_controller_descr))});
+                flow_controllers_.insert(decltype(flow_controllers_)::value_type(
+                            flow_controller_descr.name,
+                            std::unique_ptr<FlowController>(
+                                new FlowControllerImpl<FlowControllerLimitedAsyncPublishMode,
+                                FlowControllerFifoSchedule>(participant_, &flow_controller_descr))));
                 break;
             case FlowControllerSchedulerPolicy::ROUND_ROBIN:
-                flow_controllers_.insert({flow_controller_descr.name,
-                                          std::unique_ptr<FlowController>(
-                                              new FlowControllerImpl<FlowControllerLimitedAsyncPublishMode,
-                                              FlowControllerRoundRobinSchedule>(participant_,
-                                              &flow_controller_descr))});
+                flow_controllers_.insert(decltype(flow_controllers_)::value_type(
+                            flow_controller_descr.name,
+                            std::unique_ptr<FlowController>(
+                                new FlowControllerImpl<FlowControllerLimitedAsyncPublishMode,
+                                FlowControllerRoundRobinSchedule>(participant_,
+                                &flow_controller_descr))));
                 break;
             case FlowControllerSchedulerPolicy::HIGH_PRIORITY:
-                flow_controllers_.insert({flow_controller_descr.name,
-                                          std::unique_ptr<FlowController>(
-                                              new FlowControllerImpl<FlowControllerLimitedAsyncPublishMode,
-                                              FlowControllerHighPrioritySchedule>(participant_,
-                                              &flow_controller_descr))});
+                flow_controllers_.insert(decltype(flow_controllers_)::value_type(
+                            flow_controller_descr.name,
+                            std::unique_ptr<FlowController>(
+                                new FlowControllerImpl<FlowControllerLimitedAsyncPublishMode,
+                                FlowControllerHighPrioritySchedule>(participant_,
+                                &flow_controller_descr))));
                 break;
             case FlowControllerSchedulerPolicy::PRIORITY_WITH_RESERVATION:
-                flow_controllers_.insert({flow_controller_descr.name,
-                                          std::unique_ptr<FlowController>(
-                                              new FlowControllerImpl<FlowControllerLimitedAsyncPublishMode,
-                                              FlowControllerPriorityWithReservationSchedule>(participant_,
-                                              &flow_controller_descr))});
+                flow_controllers_.insert(decltype(flow_controllers_)::value_type(
+                            flow_controller_descr.name,
+                            std::unique_ptr<FlowController>(
+                                new FlowControllerImpl<FlowControllerLimitedAsyncPublishMode,
+                                FlowControllerPriorityWithReservationSchedule>(participant_,
+                                &flow_controller_descr))));
                 break;
             default:
                 assert(false);
@@ -97,31 +102,35 @@ void FlowControllerFactory::register_flow_controller (
         switch (flow_controller_descr.scheduler)
         {
             case FlowControllerSchedulerPolicy::FIFO:
-                flow_controllers_.insert({flow_controller_descr.name,
-                                          std::unique_ptr<FlowController>(
-                                              new FlowControllerImpl<FlowControllerAsyncPublishMode,
-                                              FlowControllerFifoSchedule>(participant_, &flow_controller_descr))});
+                flow_controllers_.insert(decltype(flow_controllers_)::value_type(
+                            flow_controller_descr.name,
+                            std::unique_ptr<FlowController>(
+                                new FlowControllerImpl<FlowControllerAsyncPublishMode,
+                                FlowControllerFifoSchedule>(participant_, &flow_controller_descr))));
                 break;
             case FlowControllerSchedulerPolicy::ROUND_ROBIN:
-                flow_controllers_.insert({flow_controller_descr.name,
-                                          std::unique_ptr<FlowController>(
-                                              new FlowControllerImpl<FlowControllerAsyncPublishMode,
-                                              FlowControllerRoundRobinSchedule>(participant_,
-                                              &flow_controller_descr))});
+                flow_controllers_.insert(decltype(flow_controllers_)::value_type(
+                            flow_controller_descr.name,
+                            std::unique_ptr<FlowController>(
+                                new FlowControllerImpl<FlowControllerAsyncPublishMode,
+                                FlowControllerRoundRobinSchedule>(participant_,
+                                &flow_controller_descr))));
                 break;
             case FlowControllerSchedulerPolicy::HIGH_PRIORITY:
-                flow_controllers_.insert({flow_controller_descr.name,
-                                          std::unique_ptr<FlowController>(
-                                              new FlowControllerImpl<FlowControllerAsyncPublishMode,
-                                              FlowControllerHighPrioritySchedule>(participant_,
-                                              &flow_controller_descr))});
+                flow_controllers_.insert(decltype(flow_controllers_)::value_type(
+                            flow_controller_descr.name,
+                            std::unique_ptr<FlowController>(
+                                new FlowControllerImpl<FlowControllerAsyncPublishMode,
+                                FlowControllerHighPrioritySchedule>(participant_,
+                                &flow_controller_descr))));
                 break;
             case FlowControllerSchedulerPolicy::PRIORITY_WITH_RESERVATION:
-                flow_controllers_.insert({flow_controller_descr.name,
-                                          std::unique_ptr<FlowController>(
-                                              new FlowControllerImpl<FlowControllerAsyncPublishMode,
-                                              FlowControllerPriorityWithReservationSchedule>(participant_,
-                                              &flow_controller_descr))});
+                flow_controllers_.insert(decltype(flow_controllers_)::value_type(
+                            flow_controller_descr.name,
+                            std::unique_ptr<FlowController>(
+                                new FlowControllerImpl<FlowControllerAsyncPublishMode,
+                                FlowControllerPriorityWithReservationSchedule>(participant_,
+                                &flow_controller_descr))));
                 break;
             default:
                 assert(false);
