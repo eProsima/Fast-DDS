@@ -150,7 +150,6 @@ bool TypeLookupManager::assign_remote_endpoints(
 {
     const NetworkFactory& network = participant_->network_factory();
     uint32_t endp = pdata.m_availableBuiltinEndpoints;
-    uint32_t partdet = endp;
     uint32_t auxendp = endp;
 
     std::lock_guard<std::mutex> data_guard(temp_data_lock_);
@@ -172,10 +171,9 @@ bool TypeLookupManager::assign_remote_endpoints(
 
     EPROSIMA_LOG_INFO(TYPELOOKUP_SERVICE, "for RTPSParticipant: " << pdata.m_guid);
 
-    partdet &= DISC_BUILTIN_ENDPOINT_PARTICIPANT_DETECTOR; //Habria que quitar esta linea que comprueba si tiene PDP.
     auxendp &= BUILTIN_ENDPOINT_TYPELOOKUP_SERVICE_REQUEST_DATA_WRITER;
 
-    if ((auxendp != 0 || partdet != 0) && builtin_request_reader_ != nullptr)
+    if (auxendp != 0 && builtin_request_reader_ != nullptr)
     {
         EPROSIMA_LOG_INFO(TYPELOOKUP_SERVICE, "Adding remote writer to the local Builtin Request Reader");
         temp_writer_proxy_data_.guid().entityId = fastrtps::rtps::c_EntityId_TypeLookup_request_writer;
@@ -186,7 +184,7 @@ bool TypeLookupManager::assign_remote_endpoints(
     auxendp = endp;
     auxendp &= BUILTIN_ENDPOINT_TYPELOOKUP_SERVICE_REPLY_DATA_WRITER;
 
-    if ((auxendp != 0 || partdet != 0) && builtin_reply_reader_ != nullptr)
+    if (auxendp != 0 && builtin_reply_reader_ != nullptr)
     {
         EPROSIMA_LOG_INFO(TYPELOOKUP_SERVICE, "Adding remote writer to the local Builtin Reply Reader");
         temp_writer_proxy_data_.guid().entityId = fastrtps::rtps::c_EntityId_TypeLookup_reply_writer;
@@ -197,7 +195,7 @@ bool TypeLookupManager::assign_remote_endpoints(
     auxendp = endp;
     auxendp &= BUILTIN_ENDPOINT_TYPELOOKUP_SERVICE_REQUEST_DATA_READER;
 
-    if ((auxendp != 0 || partdet != 0) && builtin_request_writer_ != nullptr)
+    if (auxendp != 0 && builtin_request_writer_ != nullptr)
     {
         EPROSIMA_LOG_INFO(TYPELOOKUP_SERVICE, "Adding remote reader to the local Builtin Request Writer");
         temp_reader_proxy_data_.guid().entityId = fastrtps::rtps::c_EntityId_TypeLookup_request_reader;
@@ -207,7 +205,7 @@ bool TypeLookupManager::assign_remote_endpoints(
     auxendp = endp;
     auxendp &= BUILTIN_ENDPOINT_TYPELOOKUP_SERVICE_REPLY_DATA_READER;
 
-    if ((auxendp != 0 || partdet != 0) && builtin_reply_writer_ != nullptr)
+    if (auxendp != 0 && builtin_reply_writer_ != nullptr)
     {
         EPROSIMA_LOG_INFO(TYPELOOKUP_SERVICE, "Adding remote reader to the local Builtin Reply Writer");
         temp_reader_proxy_data_.guid().entityId = fastrtps::rtps::c_EntityId_TypeLookup_reply_reader;
