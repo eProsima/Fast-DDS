@@ -839,11 +839,11 @@ DeliveryRetCode StatelessWriter::deliver_sample_nts(
             }
         }
 
-        // Do not send data without information (submessages) 
+        // Do not send data without information (submessages)
         if (cache_change->writer_info.num_sent_submessages)
         {
             on_sample_datas(cache_change->write_params.sample_identity(),
-                cache_change->writer_info.num_sent_submessages);
+                    cache_change->writer_info.num_sent_submessages);
             on_data_sent();
         }
 
