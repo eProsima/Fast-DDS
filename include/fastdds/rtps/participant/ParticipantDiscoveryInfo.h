@@ -45,7 +45,7 @@ struct ParticipantDiscoveryInfo
         CHANGED_QOS_PARTICIPANT,
         REMOVED_PARTICIPANT,
         DROPPED_PARTICIPANT
-    }
+    };
 
     ParticipantDiscoveryInfo(
             const ParticipantProxyData& data)
