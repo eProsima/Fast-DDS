@@ -101,6 +101,46 @@ jobs:
 
              $env_variables | Out-File $Env:GITHUB_ENV -Append -Encoding OEM
 
+      - name: Enable WER on windows
+        if: ${{ contains(matrix.configs.os, 'windows') }}
+        run: |
+             $wer = "HKLM:\SOFTWARE\Microsoft\Windows\Windows Error Reporting"
+             $ld = Join-Path $wer LocalDumps
+             $key = Get-Item $wer
+ 
+             if("Disabled" -in $key.Property) {
+                 Set-ItemProperty -Path $wer -Name "Disabled" -Value 0
+             } else {
+                 New-ItemProperty -Path $wer -Name "Disabled" -Value 0 -PropertyType DWord
+             }
+ 
+             if(Test-Path $ld) { $key = Get-Item $ld } else { $key = New-Item -Path $wer -Name "LocalDumps" }
+
+             #destination folder
+             $crashdir = New-Item -Path "CrashDumps" -Type Directory
+             if("DumpFolder" -in $key.Property) {
+                 Set-ItemProperty -Path $ld -Name "DumpFolder" -Value $crashdir
+             } else {
+                 New-ItemProperty -Path $ld -Name "DumpFolder" -Value $crashdir -PropertyType ExpandString
+             }
+
+             # up to DumpCount files in the folder
+             if("DumpCount" -in $key.Property) {
+                 Set-ItemProperty -Path $ld -Name "DumpCount" -Value 100
+             } else {
+                 New-ItemProperty -Path $ld -Name "DumpCount" -Value 100 -PropertyType DWord
+             }
+
+             # 2 -> full dump
+             if("DumpType" -in $key.Property) {
+                 Set-ItemProperty -Path $ld -Name "DumpType" -Value 2
+             } else {
+                 New-ItemProperty -Path $ld -Name "DumpType" -Value 2 -PropertyType DWord
+             }
+
+             # WER service is manual by default
+             Start-Service WerSvc
+
       - name: Installing colcon ancillary
         run: |
              pip3 install -U colcon-common-extensions vcstool colcon-mixin
