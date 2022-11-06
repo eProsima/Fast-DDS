@@ -32,15 +32,15 @@ find_package(GTest CONFIG REQUIRED)
 #   Instead a watchdog thread can be used to launch a termination exception that
 #   activates WER.
 
-add_library(wer SHARED wer.cpp)
+add_library(wer INTERFACE)
 
 # introduce an alias to make even external and internal linking
 add_library(fastdds::wer ALIAS wer)
 
-target_include_directories(wer PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
+target_include_directories(wer INTERFACE ${CMAKE_CURRENT_SOURCE_DIR})
 
 # If the dependent test doesn't use gtest this is harmless
-target_link_libraries(wer PRIVATE GTest::gtest)
+target_link_libraries(wer INTERFACE GTest::gtest)
 
 # Specify the timeout time in seconds
-target_compile_definitions(wer PRIVATE WER_TIMEOUT_TIME=${WER_TIMEOUT_TIME})
+target_compile_definitions(wer INTERFACE WER_ENABLED WER_TIMEOUT_TIME=${WER_TIMEOUT_TIME})

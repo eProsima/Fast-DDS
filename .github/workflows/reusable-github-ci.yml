@@ -102,6 +102,7 @@ jobs:
              $env_variables | Out-File $Env:GITHUB_ENV -Append -Encoding OEM
 
       - name: Enable WER on windows
+        id: WERSetup
         if: ${{ contains(matrix.configs.os, 'windows') }}
         run: |
              $wer = "HKLM:\SOFTWARE\Microsoft\Windows\Windows Error Reporting"
@@ -123,7 +124,7 @@ jobs:
              } else {
                  New-ItemProperty -Path $ld -Name "DumpFolder" -Value $crashdir -PropertyType ExpandString
              }
-             'DumpFolder=$crashdir' | Out-File $Env:GITHUB_OUTPUT -Append
+             "DumpFolder=$crashdir" | Out-File $Env:GITHUB_OUTPUT -Append
 
              # up to DumpCount files in the folder
              if("DumpCount" -in $key.Property) {
@@ -431,11 +432,18 @@ jobs:
 
       - name: Build
         run: |
+           # build type mixin names doesn't match cmake ones
+           $translate = @{
+                "Debug"="debug"
+                "Release"="release"
+                "RelWithDebInfo"="rel-with-deb-info"
+                "MinSizeRel"="min-size-rel"
+                }
            # For convenience use an array to pass the arguments
            $buildargs = "--merge-install",
                         "--symlink-install",
                         "--event-handlers=console_direct+",
-                        "--mixin", "${{ matrix.configs.config }}"
+                        "--mixin", $translate["${{ matrix.configs.config }}"]
 
            # On Windows we must load the developer environment and chose a config
            if($IsWindows)
@@ -516,7 +524,12 @@ jobs:
            "test_failures=$failed" | Out-File $Env:GITHUB_OUTPUT -Append
            exit $failed
 
-
+      - name: Upload crash dumps
+        if: ${{ contains(matrix.configs.os, 'windows') && steps.summary.outcome == 'failure' }}
+        uses: actions/upload-artifact@v3
+        with:
+            name: crash-dumps
+            path: ${{ steps.WERSetup.outputs.DumpFolder }}
 
       - name: Check test failures
         if: ${{ steps.summary.outcome == 'failure' }}

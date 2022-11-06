@@ -20,10 +20,11 @@
 #pragma once
 
 static_assert(_MSC_VER, "This header only applies for microsoft visual Studio compiler");
-static_assert(WER_TIMEOUT_TIME > 0, "The timeout in seconds must be defined");
+static_assert(WER_TIMEOUT_TIME > 1, "The timeout in seconds must be defined");
 
 #include <chrono>
 #include <condition_variable>
+#include <iostream>
 #include <mutex>
 #include <stdexcept>
 #include <thread>
@@ -47,16 +48,15 @@ public:
 
     WerEnforcer()
     {
-        // avoid gtest preemption of crashes
-        testing::GTEST_FLAG(catch_exceptions) = false;
-
         // avoid CTest preemption of crashes
         SetErrorMode(0);
+        SetUnhandledExceptionFilter(&WerEnforcer::UnhandledExceptionFilter);
 
         // launch watchdog timer
         watchdog_ = std::thread([this]
                         {
                             std::unique_lock<std::mutex> lock(mtx_);
+
                             // Wait for test completion or timeout
                             cond_.wait_for(
                                 lock,
@@ -69,7 +69,8 @@ public:
                             // on timeout force crash for WER sake
                             if (!done)
                             {
-                                throw std::runtime_error("Test timeouts");
+                                std::cerr << "Raising WER fail fast exception for timeout" << std::endl;
+                                RaiseFailFastException(nullptr, nullptr, 0);
                             }
                         });
     }
@@ -86,10 +87,38 @@ public:
         watchdog_.join();
     }
 
+    void set_gtest_catch_flag() const
+    {
+        // avoid gtest preemption of crashes
+        testing::GTEST_FLAG(catch_exceptions) = false;
+    }
+
+    // Play along CTest JOB_OBJECT_LIMIT_DIE_ON_UNHANDLED_EXCEPTION setting
+    static LONG UnhandledExceptionFilter(
+            _EXCEPTION_POINTERS* ExceptionInfo)
+    {
+        PEXCEPTION_RECORD ExceptionRecord = nullptr;
+        PCONTEXT ContextRecord = nullptr;
+
+        if (ExceptionInfo)
+        {
+            ExceptionRecord = ExceptionInfo->ExceptionRecord;
+            ContextRecord = ExceptionInfo->ContextRecord;
+        }
+        std::cerr << "Raising WER fail fast exception for exception: " <<
+            ExceptionRecord->ExceptionCode << std::endl;
+        RaiseFailFastException(ExceptionRecord, ContextRecord, FAIL_FAST_GENERATE_EXCEPTION_ADDRESS);
+
+        // unreachable
+        return -1;
+    }
+
 };
 
 } // namespace eprosima
 
-#ifndef wer_EXPORTS
 const extern __declspec(selectany) eprosima::WerEnforcer wer_singleton;
-#endif // wer_EXPORTS
+
+// In case gtest framework is used
+#define RUN_ALL_TESTS() wer_singleton.set_gtest_catch_flag(), \
+    ::testing::UnitTest::GetInstance()->Run()
