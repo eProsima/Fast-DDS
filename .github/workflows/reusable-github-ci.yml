@@ -123,6 +123,7 @@ jobs:
              } else {
                  New-ItemProperty -Path $ld -Name "DumpFolder" -Value $crashdir -PropertyType ExpandString
              }
+             'DumpFolder=$crashdir' | Out-File $Env:GITHUB_OUTPUT -Append
 
              # up to DumpCount files in the folder
              if("DumpCount" -in $key.Property) {
@@ -413,6 +414,12 @@ jobs:
                                                "-DFASTDDS_PIM_API_TESTS=ON",
                                                "-DPERFORMANCE_TESTS=ON",
                                                "-DNO_TLS=ON"
+           if($IsWindows)
+           {
+             # Enable WER
+             $meta.names.fastrtps."cmake-args" += "-DENABLE_WER=ON",
+                                                  "-DWER_TIMEOUT_TIME=240"
+           }
 
            # single config processing parafernalia
            if(Test-Path Env:BUILD_TYPE)
@@ -508,6 +515,8 @@ jobs:
 
            "test_failures=$failed" | Out-File $Env:GITHUB_OUTPUT -Append
            exit $failed
+
+
 
       - name: Check test failures
         if: ${{ steps.summary.outcome == 'failure' }}

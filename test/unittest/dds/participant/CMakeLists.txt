@@ -47,6 +47,7 @@ target_include_directories(ParticipantTests PRIVATE
     )
 target_link_libraries(ParticipantTests fastrtps fastcdr foonathan_memory
     GTest::gmock
+    $<TARGET_NAME_IF_EXISTS:fastdds::wer>
     ${CMAKE_DL_LIBS})
 
 if(EPROSIMA_TEST_DNS_NOT_SET_UP)

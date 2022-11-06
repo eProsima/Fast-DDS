@@ -17,6 +17,15 @@ option(SYSTEM_TESTS "Activate the building and execution of system tests" OFF)
 option(PROFILING_TESTS "Activate the building and execution of profiling tests" OFF)
 option(EPROSIMA_BUILD_TESTS "Activate the building and execution unit tests and integral tests" OFF)
 
+if(MSVC)
+    option(ENABLE_WER "Allow windows crash dump generation on crashes and timeouts" OFF)
+    cmake_dependent_option(WER_TIMEOUT_TIME
+        [=[CTest doesn't support WER thus the testing will timeout independently
+        in the number of seconds specified. If combined with CTest timeout make
+        sure CTest value is larger.]=]
+        300 "ENABLE_WER" 0)
+endif(MSVC)
+
 if(EPROSIMA_BUILD)
     set(EPROSIMA_BUILD_TESTS ON)
     set(SYSTEM_TESTS ON)
@@ -40,6 +49,10 @@ endif(WIN32)
 if(EPROSIMA_BUILD_TESTS)
     find_package(GTest CONFIG REQUIRED)
     include(${PROJECT_SOURCE_DIR}/cmake/common/gtest.cmake)
+
+    if(ENABLE_WER)
+        add_subdirectory(wer) # first because the others may depend on it
+    endif()
 
     add_subdirectory(blackbox)
     add_subdirectory(communication)
