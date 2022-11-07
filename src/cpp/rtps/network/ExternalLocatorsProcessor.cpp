@@ -110,6 +110,27 @@ static void perform_add_external_locators(
     }
 }
 
+template<>
+void perform_add_external_locators<LocatorList>(
+        LocatorList& locators,
+        const ExternalLocators& external_locators)
+{
+    for (const auto& externality_item : external_locators)
+    {
+        // Only add locators with externality greater than 0
+        if (externality_item.first > 0)
+        {
+            for (const auto& cost_item : externality_item.second)
+            {
+                for (const auto& locator : cost_item.second)
+                {
+                    locators.push_back(locator);
+                }
+            }
+        }
+    }
+}
+
 void add_external_locators(
         ParticipantProxyData& data,
         const ExternalLocators& metatraffic_external_locators,
@@ -131,6 +152,13 @@ void add_external_locators(
         const ExternalLocators& external_locators)
 {
     perform_add_external_locators(data, external_locators);
+}
+
+void add_external_locators(
+        LocatorList& list,
+        const ExternalLocators& external_locators)
+{
+    perform_add_external_locators(list, external_locators);
 }
 
 /**

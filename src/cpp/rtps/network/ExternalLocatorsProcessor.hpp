@@ -81,6 +81,16 @@ void add_external_locators(
         const ExternalLocators& external_locators);
 
 /**
+ * Adds external locators to a list of locators.
+ *
+ * @param [in,out]  list               LocatorList to be updated.
+ * @param [in]      external_locators  The external locators collection with the external locators to be announced.
+ */
+void add_external_locators(
+        LocatorList& list,
+        const ExternalLocators& external_locators);
+
+/**
  * Filters the locators of a remote participant according to the matching algorithm.
  *
  * @param [in,out]  data                           ParticipantProxyData of the remote participant to be updated.
