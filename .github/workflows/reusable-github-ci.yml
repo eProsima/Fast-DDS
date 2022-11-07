@@ -525,9 +525,21 @@ jobs:
 
            if($IsWindows -and $failed)
            {
+             "::group::Crash dump files"
              # list crash dumps files ordered by date to hint how pid maps to test number
-             ls (gi "HKLM:\SOFTWARE\Microsoft\Windows\Windows Error Reporting\LocalDumps").GetValue('DumpFolder') |
-                Sort-Object LastWriteTime
+             $dumpfolder = gi (gi "HKLM:\SOFTWARE\Microsoft\Windows\Windows Error Reporting\LocalDumps").GetValue('DumpFolder')
+             ls $dumpfolder | Sort-Object LastWriteTime
+             "::endgroup::"
+
+             # upload too the pdb files associated
+             # 1. To the library
+             ls -Path ./install/* -R -Filter *.pdb | Move-Item -Destination $dumpfolder
+             # 2. To each failed test
+             $test_bin = ((ls -Path $dumpfolder -Filter *.dmp).name |
+                            sls  "(?<file>[^\(^\)^\.]+).*\.\d+\.dmp").Matches |
+                            % { $_.Groups['file'].Value } | Get-Unique
+             ls -Path ./build/* -R -Filter *.pdb | ? basename -in $test_bin |
+                Move-Item -Destination $dumpfolder
            }
 
            exit $failed
