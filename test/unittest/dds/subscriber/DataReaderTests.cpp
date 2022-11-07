@@ -18,6 +18,7 @@
 #include <forward_list>
 #include <iostream>
 #include <thread>
+#include <type_traits>
 
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
@@ -2091,11 +2092,11 @@ TEST_F(DataReaderTests, check_read_take_iteration)
     }
     while ( received < max_handles && !timeout);
 
-    ASSERT_FALSE(timeout);
+    EXPECT_FALSE(timeout);
     received = 0;
 
     // Take only the even handles
-    for (int i = 0; i < max_handles; i += 2, ++received )
+    for (typename std::remove_const<decltype(max_handles)>::type i = 0; i < max_handles; i += 2, ++received )
     {
         FooSeq data;
         SampleInfoSeq infos;
@@ -2103,7 +2104,7 @@ TEST_F(DataReaderTests, check_read_take_iteration)
         EXPECT_EQ(data_reader_->take_instance(data, infos, 1, handles[i]),
                 ReturnCode_t::RETCODE_OK);
 
-        ASSERT_EQ(i, std::atoi(data[0].message().data()));
+        EXPECT_EQ(i, std::atoi(data[0].message().data()));
 
         EXPECT_EQ(ReturnCode_t::RETCODE_OK, data_reader_->return_loan(data, infos));
     }
@@ -2128,13 +2129,13 @@ TEST_F(DataReaderTests, check_read_take_iteration)
         {
             received += data.length();
             handle = infos[0].instance_handle;
-            ASSERT_TRUE(std::atoi(data[0].message().data()) % 2 == 1);
+            EXPECT_TRUE(std::atoi(data[0].message().data()) % 2 == 1);
             EXPECT_EQ(ReturnCode_t::RETCODE_OK, data_reader_->return_loan(data, infos));
         }
     }
     while (ret == ReturnCode_t::RETCODE_OK);
 
-    ASSERT_EQ(received, max_handles);
+    EXPECT_EQ(received, max_handles);
 
     // Iterate over available instances and check all are removed
     received = pending;
@@ -2155,13 +2156,13 @@ TEST_F(DataReaderTests, check_read_take_iteration)
         {
             received += data.length();
             handle = infos[0].instance_handle;
-            ASSERT_TRUE(std::atoi(data[0].message().data()) % 2 == 1);
+            EXPECT_TRUE(std::atoi(data[0].message().data()) % 2 == 1);
             EXPECT_EQ(ReturnCode_t::RETCODE_OK, data_reader_->return_loan(data, infos));
         }
     }
     while (ret == ReturnCode_t::RETCODE_OK);
 
-    ASSERT_EQ(received, max_handles);
+    EXPECT_EQ(received, max_handles);
 }
 
 /*
