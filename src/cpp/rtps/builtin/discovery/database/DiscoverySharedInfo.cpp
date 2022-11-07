@@ -39,6 +39,22 @@ DiscoverySharedInfo::DiscoverySharedInfo(
     add_or_update_ack_participant(known_participant, true);
 }
 
+DiscoverySharedInfo::DiscoverySharedInfo(const DiscoverySharedInfo& other) noexcept
+    : change_(other.change_)
+{
+    // Must be done locking other internal values so they do not change during this process
+    std::lock_guard<std::mutex> _(other.mutex_);
+    relevant_participants_builtin_ack_status_ = other.relevant_participants_builtin_ack_status_;
+}
+
+DiscoverySharedInfo::DiscoverySharedInfo(DiscoverySharedInfo&& other) noexcept
+    : change_(std::move(other.change_))
+    , relevant_participants_builtin_ack_status_(std::move(other.relevant_participants_builtin_ack_status_))
+{
+    // It does not require mutex as other is supposed to not be used from other thread after this call.
+    // Do nothing
+}
+
 eprosima::fastrtps::rtps::CacheChange_t* DiscoverySharedInfo::update_and_unmatch(
         eprosima::fastrtps::rtps::CacheChange_t* change)
 {

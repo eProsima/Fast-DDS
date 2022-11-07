@@ -60,7 +60,7 @@ public:
 
     DiscoveryPDPDataQueueInfo(
             eprosima::fastrtps::rtps::CacheChange_t* change,
-            DiscoveryParticipantChangeData participant_change_data)
+            const DiscoveryParticipantChangeData& participant_change_data)
         : DiscoveryDataQueueInfo(change)
         , participant_change_data_(participant_change_data)
     {
@@ -77,7 +77,7 @@ public:
 
 private:
 
-    DiscoveryParticipantChangeData participant_change_data_;
+    const DiscoveryParticipantChangeData participant_change_data_;
 
 };
 
@@ -87,7 +87,7 @@ public:
 
     DiscoveryEDPDataQueueInfo(
             eprosima::fastrtps::rtps::CacheChange_t* change,
-            eprosima::fastrtps::string_255 topic)
+            const eprosima::fastrtps::string_255& topic)
         : DiscoveryDataQueueInfo(change)
         , topic_(topic)
     {
@@ -104,7 +104,7 @@ public:
 
 private:
 
-    eprosima::fastrtps::string_255 topic_;
+    const eprosima::fastrtps::string_255 topic_;
 
 };
 
