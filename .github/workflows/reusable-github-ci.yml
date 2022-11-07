@@ -522,6 +522,14 @@ jobs:
            }
 
            "test_failures=$failed" | Out-File $Env:GITHUB_OUTPUT -Append
+
+           if($IsWindows -and $failed)
+           {
+             # list crash dumps files ordered by date to hint how pid maps to test number
+             ls (gi "HKLM:\SOFTWARE\Microsoft\Windows\Windows Error Reporting\LocalDumps").GetValue('DumpFolder') |
+                Sort-Object LastWriteTime
+           }
+
            exit $failed
 
       - name: Upload crash dumps
