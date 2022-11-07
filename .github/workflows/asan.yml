@@ -36,10 +36,10 @@ jobs:
 
       - name: Build workspace
         run: |
-          cat src/Fast-DDS/.github/workflows/asan_colcon.meta
+          cat src/Fast-DDS/.github/workflows/asan/asan_colcon.meta
           colcon build \
             --event-handlers=console_direct+ \
-            --metas src/Fast-DDS/.github/workflows/asan_colcon.meta
+            --metas src/Fast-DDS/.github/workflows/asan/asan_colcon.meta
 
       - name: Run tests Fast DDS
         run: |
@@ -64,7 +64,7 @@ jobs:
         run: |
           echo -n "**ASAN Errors**: " >> $GITHUB_STEP_SUMMARY
           echo $(sed 's/==.*==ERROR:/==.*==ERROR:\n/g' log/latest_test/fastrtps/stdout_stderr.log | grep -c "==.*==ERROR:") >> $GITHUB_STEP_SUMMARY
-          python3 src/Fast-DDS/.github/workflows/asan_log_parser.py
+          python3 src/Fast-DDS/.github/workflows/utils/log_parser.py
 
 
   asan-discovery-server-test:
@@ -97,10 +97,10 @@ jobs:
 
       - name: Build workspace
         run: |
-          cat src/Fast-DDS/.github/workflows/asan_colcon.meta
+          cat src/Fast-DDS/.github/workflows/asan/asan_colcon.meta
           colcon build \
             --event-handlers=console_direct+ \
-            --metas src/Fast-DDS/.github/workflows/asan_colcon.meta
+            --metas src/Fast-DDS/.github/workflows/asan/asan_colcon.meta
 
       - name: Run tests Fast DDS
         run: |
@@ -125,4 +125,4 @@ jobs:
         run: |
           echo -n "**ASAN Errors**: " >> $GITHUB_STEP_SUMMARY
           echo $(sed 's/==.*==ERROR:/==.*==ERROR:\n/g' log/latest_test/fastrtps/stdout_stderr.log | grep -c "==.*==ERROR:") >> $GITHUB_STEP_SUMMARY
-          python3 src/Fast-DDS/.github/workflows/asan_log_parser.py
+          python3 src/Fast-DDS/.github/workflows/utils/log_parser.py
