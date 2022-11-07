@@ -23,6 +23,10 @@
 
 #include <thread>
 
+#ifdef WER_ENABLED
+#   include <wer.hpp>
+#endif
+
 using namespace eprosima::fastdds::dds;
 
 /* ARGUMENTS

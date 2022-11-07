@@ -28,6 +28,10 @@
 
 #include <fastdds/dds/log/Log.hpp>
 
+#ifdef WER_ENABLED
+#   include <wer.hpp>
+#endif
+
 using Log = eprosima::fastdds::dds::Log;
 
 /**

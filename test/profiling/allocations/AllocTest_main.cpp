@@ -23,6 +23,10 @@
 #include <fastrtps/Domain.h>
 #include <fastdds/dds/log/Log.hpp>
 
+#ifdef WER_ENABLED
+#   include <wer.hpp>
+#endif
+
 using namespace eprosima;
 using namespace fastrtps;
 using namespace rtps;
