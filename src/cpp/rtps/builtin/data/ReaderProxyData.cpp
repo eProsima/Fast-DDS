@@ -840,9 +840,7 @@ bool ReaderProxyData::readFromCDRMessage(
                         {
                             ProxyDataFilters::filter_locators(
                                 is_shm_transport_available,
-                                &is_shm_transport_possible,
-                                &are_shm_default_locators_present,
-                                &remote_locators_,
+                                remote_locators_,
                                 temp_locator,
                                 true);
                         }
@@ -862,9 +860,7 @@ bool ReaderProxyData::readFromCDRMessage(
                         {
                             ProxyDataFilters::filter_locators(
                                 is_shm_transport_available,
-                                &is_shm_transport_possible,
-                                &are_shm_default_locators_present,
-                                &remote_locators_,
+                                remote_locators_,
                                 temp_locator,
                                 false);
                         }

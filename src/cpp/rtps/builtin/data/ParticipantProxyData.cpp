@@ -468,9 +468,7 @@ bool ParticipantProxyData::readFromCDRMessage(
                         {
                             ProxyDataFilters::filter_locators(
                                 is_shm_transport_available,
-                                &is_shm_transport_possible,
-                                &are_shm_metatraffic_locators_present,
-                                &metatraffic_locators,
+                                metatraffic_locators,
                                 temp_locator,
                                 false);
                         }
@@ -490,9 +488,7 @@ bool ParticipantProxyData::readFromCDRMessage(
                         {
                             ProxyDataFilters::filter_locators(
                                 is_shm_transport_available,
-                                &is_shm_transport_possible,
-                                &are_shm_metatraffic_locators_present,
-                                &metatraffic_locators,
+                                metatraffic_locators,
                                 temp_locator,
                                 true);
                         }
@@ -512,9 +508,7 @@ bool ParticipantProxyData::readFromCDRMessage(
                         {
                             ProxyDataFilters::filter_locators(
                                 is_shm_transport_available,
-                                &is_shm_transport_possible,
-                                &are_shm_default_locators_present,
-                                &default_locators,
+                                default_locators,
                                 temp_locator,
                                 true);
                         }
@@ -534,9 +528,7 @@ bool ParticipantProxyData::readFromCDRMessage(
                         {
                             ProxyDataFilters::filter_locators(
                                 is_shm_transport_available,
-                                &is_shm_transport_possible,
-                                &are_shm_default_locators_present,
-                                &default_locators,
+                                default_locators,
                                 temp_locator,
                                 false);
                         }
