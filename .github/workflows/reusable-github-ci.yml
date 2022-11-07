@@ -528,7 +528,7 @@ jobs:
         if: ${{ contains(matrix.configs.os, 'windows') && steps.summary.outcome == 'failure' }}
         uses: actions/upload-artifact@v3
         with:
-            name: crash-dumps
+            name: crash-dumps-${{ matrix.configs.os }}-${{ matrix.configs.toolset }}-${{ matrix.configs.config }}
             path: ${{ steps.WERSetup.outputs.DumpFolder }}
 
       - name: Check test failures
