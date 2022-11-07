@@ -16,10 +16,12 @@ configure_file(${CMAKE_CURRENT_SOURCE_DIR}/../profiles/test_xml_profiles.xml
     ${CMAKE_CURRENT_BINARY_DIR}/test_xml_profiles.xml
     COPYONLY)
 
+# NOTE: having here ServerAttributes.cpp is dangerous as this .cpp is already compiled.
+# However, I found no way to do it work, so here it stays.
 set(PARTICIPANTTESTS_SOURCE
-    ParticipantTests.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/builtin/discovery/participant/ServerAttributes.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/utils/SystemInfo.cpp)
+        ParticipantTests.cpp
+        ${PROJECT_SOURCE_DIR}/src/cpp/rtps/builtin/discovery/participant/ServerAttributes.cpp
+    )
 
 if(WIN32)
     add_definitions(-D_WIN32_WINNT=0x0601)

@@ -16,6 +16,7 @@
 #define _FASTDDS_RTPS_TRANSPORT_CHAININGTRANSPORT_H_
 
 #include <map>
+#include <memory>
 
 #include "TransportInterface.h"
 #include "ChainingTransportDescriptor.h"
@@ -25,6 +26,22 @@ namespace fastdds {
 namespace rtps {
 
 class ChainingReceiverResource;
+
+/**
+ * @brief Deleter for a ChainingReceiverResource
+ *
+ * @note this is required to create a \c unique_ptr of a \c ChainingReceiverResource as it is
+ * an incomplete class for this header.
+ */
+struct ChainingReceiverResourceDeleter
+{
+    void operator ()(
+            ChainingReceiverResource* p);
+};
+
+//! Type of the \c unique_ptr of a \c ChainingReceiverResource .
+using ChainingReceiverResourceReferenceType =
+        std::unique_ptr<ChainingReceiverResource, ChainingReceiverResourceDeleter>;
 
 /**
  * This is the base class for chaining adapter transports.
@@ -340,7 +357,7 @@ protected:
 
 private:
 
-    std::map<fastrtps::rtps::Locator_t, ChainingReceiverResource*> receiver_resources_;
+    std::map<fastrtps::rtps::Locator_t, ChainingReceiverResourceReferenceType> receiver_resources_;
 };
 
 } // namespace rtps

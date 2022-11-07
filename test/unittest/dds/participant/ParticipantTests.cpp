@@ -274,6 +274,19 @@ private:
     std::array<char, 256> message_;
 };
 
+// NOTE: This function is duplicated from SystemInfo because it is not in the API and could not be added to test
+// compilation as that file is already compiled and linked, and doing such thing is wrong and would make a kitten cry.
+// (it duplicates an instantiated variable 'environment_file_' and so provoke a double free).
+int process_id()
+{
+#if defined(__cplusplus_winrt)
+    return (int)GetCurrentProcessId();
+#elif defined(_WIN32)
+    return (int)_getpid();
+#else
+    return (int)getpid();
+#endif // platform selection
+}
 
 TEST(ParticipantTests, DomainParticipantFactoryGetInstance)
 {
@@ -721,7 +734,7 @@ void set_environment_file(
 std::string get_environment_filename()
 {
     std::ostringstream name;
-    name << "environment_file_" << SystemInfo::instance().process_id() << ".json";
+    name << "environment_file_" << process_id() << ".json";
     std::string fname = name.str();
     // 'touch' the file
     std::ofstream f(fname);

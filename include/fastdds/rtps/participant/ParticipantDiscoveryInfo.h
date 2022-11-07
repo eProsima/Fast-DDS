@@ -28,9 +28,9 @@ namespace fastrtps {
 namespace rtps {
 
 /**
-* Class ParticipantDiscoveryInfo with discovery information of the Participant.
-* @ingroup RTPS_MODULE
-*/
+ * Class ParticipantDiscoveryInfo with discovery information of the Participant.
+ * @ingroup RTPS_MODULE
+ */
 struct ParticipantDiscoveryInfo
 {
     //!Enum DISCOVERY_STATUS, four different status for discovered participants.
@@ -39,7 +39,7 @@ struct ParticipantDiscoveryInfo
     enum RTPS_DllAPI DISCOVERY_STATUS
 #else
     enum DISCOVERY_STATUS
-#endif
+#endif // if defined(_WIN32)
     {
         DISCOVERED_PARTICIPANT,
         CHANGED_QOS_PARTICIPANT,
@@ -47,17 +47,26 @@ struct ParticipantDiscoveryInfo
         DROPPED_PARTICIPANT
     };
 
-    ParticipantDiscoveryInfo(const ParticipantProxyData& data)
+    ParticipantDiscoveryInfo(
+            const ParticipantProxyData& data)
         : status(DISCOVERED_PARTICIPANT)
         , info(data)
-    {}
+    {
+    }
 
-    virtual ~ParticipantDiscoveryInfo() {}
+    virtual ~ParticipantDiscoveryInfo()
+    {
+    }
 
     //! Status
     DISCOVERY_STATUS status;
 
-    //! Participant discovery info
+    /**
+     * @brief Participant discovery info
+     *
+     * @todo This is a reference to an object that could be deleted, thus it should not be a reference
+     * (intraprocess case -> BlackboxTests_DDS_PIM.DDSDiscovery.ParticipantProxyPhysicalData).
+     */
     const ParticipantProxyData& info;
 };
 
@@ -70,9 +79,14 @@ struct ParticipantAuthenticationInfo
         UNAUTHORIZED_PARTICIPANT
     };
 
-    ParticipantAuthenticationInfo() : status(UNAUTHORIZED_PARTICIPANT) {}
+    ParticipantAuthenticationInfo()
+        : status(UNAUTHORIZED_PARTICIPANT)
+    {
+    }
 
-    ~ParticipantAuthenticationInfo() {}
+    ~ParticipantAuthenticationInfo()
+    {
+    }
 
     //! Status
     AUTHENTICATION_STATUS status;
@@ -81,15 +95,18 @@ struct ParticipantAuthenticationInfo
     GUID_t guid;
 };
 
-inline bool operator==(const ParticipantAuthenticationInfo& l, const ParticipantAuthenticationInfo& r)
+inline bool operator ==(
+        const ParticipantAuthenticationInfo& l,
+        const ParticipantAuthenticationInfo& r)
 {
     return l.status == r.status &&
-        l.guid == r.guid;
+           l.guid == r.guid;
 }
-#endif
 
-}
-}
-}
+#endif // if HAVE_SECURITY
+
+} // namespace rtps
+} // namespace fastrtps
+} // namespace eprosima
 
 #endif // _FASTDDS_RTPS_PARTICIPANT_PARTICIPANTDISCOVERYINFO_H__

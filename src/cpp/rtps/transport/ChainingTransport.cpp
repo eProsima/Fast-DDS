@@ -20,6 +20,12 @@ namespace eprosima {
 namespace fastdds {
 namespace rtps {
 
+void ChainingReceiverResourceDeleter::operator ()(
+        ChainingReceiverResource* p)
+{
+    delete p;
+}
+
 bool ChainingTransport::OpenInputChannel(
         const fastrtps::rtps::Locator_t& loc,
         TransportReceiverInterface* receiver_interface,
