@@ -1,4 +1,4 @@
-name: Address Sanitizer analysis
+name: Sanitizer analysis
 
 on:
   workflow_dispatch:

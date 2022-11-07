@@ -11,5 +11,8 @@ runs:
           vcstool \
           setuptools \
           gcovr \
-          tomark
+          tomark \
+          xmltodict \
+          jsondiff \
+          pandas
       shell: bash
