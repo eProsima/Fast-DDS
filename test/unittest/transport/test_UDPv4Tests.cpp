@@ -17,6 +17,10 @@
 #include <string>
 
 #include <gtest/gtest.h>
+
+#ifdef WER_ENABLED
+#   include <wer.hpp>
+#endif
 #include <fastdds/dds/log/Log.hpp>
 #include <fastrtps/transport/test_UDPv4TransportDescriptor.h>
 #include <fastrtps/rtps/common/CDRMessage_t.h>

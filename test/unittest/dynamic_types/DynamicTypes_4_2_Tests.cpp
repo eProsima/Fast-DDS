@@ -14,6 +14,10 @@
 
 #include <fastrtps/types/TypesBase.h>
 #include <gtest/gtest.h>
+
+#ifdef WER_ENABLED
+#   include <wer.hpp>
+#endif
 #include <fastrtps/types/DynamicTypeBuilderFactory.h>
 #include <fastrtps/types/DynamicTypeBuilder.h>
 #include <fastrtps/types/DynamicTypeBuilderPtr.h>

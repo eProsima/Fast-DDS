@@ -84,6 +84,7 @@ target_include_directories(EdpTests PRIVATE
     ${Asio_INCLUDE_DIR}
     )
 target_link_libraries(EdpTests foonathan_memory
+    $<TARGET_NAME_IF_EXISTS:fastdds::wer>
     GTest::gmock
     ${CMAKE_DL_LIBS})
 if(MSVC OR MSVC_IDE)

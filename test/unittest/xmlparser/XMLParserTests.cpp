@@ -12,6 +12,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#include <gtest/gtest.h>
+
+#ifdef WER_ENABLED
+#   include <wer.hpp>
+#endif
+
 #include <fastrtps/xmlparser/XMLParser.h>
 #include <fastrtps/xmlparser/XMLTree.h>
 #include <fastdds/dds/log/Log.hpp>
@@ -32,8 +38,6 @@
 #include "wrapper/XMLParserTest.hpp"
 
 #include <tinyxml2.h>
-#include <gtest/gtest.h>
-
 #include <fstream>
 #include <sstream>
 

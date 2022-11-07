@@ -20,6 +20,10 @@
 
 #include <gtest/gtest.h>
 
+#ifdef WER_ENABLED
+#   include <wer.hpp>
+#endif
+
 using GUID_t = eprosima::fastrtps::rtps::GUID_t;
 using GuidUtils = eprosima::fastdds::rtps::GuidUtils;
 

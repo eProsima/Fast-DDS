@@ -16,6 +16,10 @@
 #include <fastdds/dds/log/Log.hpp>
 #include <fastdds/dds/log/FileConsumer.hpp>
 #include <gtest/gtest.h>
+
+#ifdef WER_ENABLED
+#   include <wer.hpp>
+#endif
 #include <memory>
 #include <thread>
 #include <chrono>

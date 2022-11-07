@@ -13,6 +13,10 @@
 // limitations under the License.
 
 #include <gtest/gtest.h>
+
+#ifdef WER_ENABLED
+#   include <wer.hpp>
+#endif
 #include <gmock/gmock.h>
 #include <fastdds/dds/domain/DomainParticipant.hpp>
 #include <fastdds/dds/domain/DomainParticipantFactory.hpp>

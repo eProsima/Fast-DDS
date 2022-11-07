@@ -23,6 +23,10 @@
 #include <fastdds/rtps/transport/shared_mem/SharedMemTransportDescriptor.h>
 #include <tinyxml2.h>
 #include <gtest/gtest.h>
+
+#ifdef WER_ENABLED
+#   include <wer.hpp>
+#endif
 #include <memory>
 #include <thread>
 #include <chrono>

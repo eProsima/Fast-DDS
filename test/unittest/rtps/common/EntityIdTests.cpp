@@ -14,6 +14,10 @@
 
 #include <gtest/gtest.h>
 
+#ifdef WER_ENABLED
+#   include <wer.hpp>
+#endif
+
 #include <fastdds/rtps/common/EntityId_t.hpp>
 
 using EntityId = eprosima::fastrtps::rtps::EntityId_t;

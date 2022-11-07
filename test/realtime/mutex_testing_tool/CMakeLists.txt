@@ -15,10 +15,10 @@
 add_library(mutex_testing_tool SHARED TMutex.cpp)
 
 add_library(mutex_testing_tool_preload SHARED Mutex.cpp)
-target_link_libraries(mutex_testing_tool_preload PRIVATE mutex_testing_tool ${CMAKE_DL_LIBS})
+target_link_libraries(mutex_testing_tool_preload PRIVATE mutex_testing_tool ${CMAKE_DL_LIBS} $<TARGET_NAME_IF_EXISTS:fastdds::wer>)
 
 add_executable(TMutexTests TMutexTests.cpp)
-target_link_libraries(TMutexTests mutex_testing_tool GTest::gtest)
+target_link_libraries(TMutexTests mutex_testing_tool GTest::gtest $<TARGET_NAME_IF_EXISTS:fastdds::wer>)
 STRING(REPLACE " " "\\ " MUTEX_PRELOAD_LIBRARY_FILE "$<TARGET_FILE:mutex_testing_tool_preload>")
 add_gtest(TMutexTests SOURCES TMutexTests.cpp
     ENVIRONMENTS

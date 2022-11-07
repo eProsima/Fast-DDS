@@ -120,7 +120,8 @@ if(GST_FOUND)
             $ENV{GSTREAMER_1_0_ROOT_X86_64}/lib/gstreamer-1.0.lib
             $ENV{GSTREAMER_1_0_ROOT_X86_64}/lib/gobject-2.0.lib
             $ENV{GSTREAMER_1_0_ROOT_X86_64}/lib/glib-2.0.lib
-        )
+            $<TARGET_NAME_IF_EXISTS:fastdds::wer>
+            )
     else()
         target_link_libraries(
             VideoTest
@@ -132,7 +133,7 @@ if(GST_FOUND)
             ${CMAKE_DL_LIBS}
             ${GST_LIBRARIES}
             gstapp-1.0
-        )
+            )
     endif()
 
     ###########################################################################

@@ -92,6 +92,7 @@ target_include_directories(NetworkFactoryTests PRIVATE
     $<$<BOOL:${ANDROID}>:${ANDROID_IFADDRS_INCLUDE_DIR}>
     )
 target_link_libraries(NetworkFactoryTests fastcdr foonathan_memory
+    $<TARGET_NAME_IF_EXISTS:fastdds::wer>
     GTest::gtest ${MOCKS}
     $<$<BOOL:${TLS_FOUND}>:OpenSSL::SSL$<SEMICOLON>OpenSSL::Crypto>
     ${CMAKE_THREAD_LIBS_INIT} ${CMAKE_DL_LIBS})
@@ -154,13 +155,14 @@ target_include_directories(ExternalLocatorsProcessorTests PRIVATE
     ${PROJECT_SOURCE_DIR}/src/cpp
     )
 target_link_libraries(ExternalLocatorsProcessorTests fastcdr
+    $<TARGET_NAME_IF_EXISTS:fastdds::wer>
     GTest::gtest ${MOCKS}
     ${CMAKE_THREAD_LIBS_INIT} ${CMAKE_DL_LIBS})
 
 if(WIN32)
     add_definitions(-D_WIN32_WINNT=0x0601)
-    target_link_libraries(NetworkFactoryTests IPHLPAPI shlwapi) # Later so mocks have precedence
-    target_link_libraries(ExternalLocatorsProcessorTests IPHLPAPI shlwapi) # Later so mocks have precedence
+    target_link_libraries(NetworkFactoryTests IPHLPAPI shlwapi) # Later so mocks have precedenc
+    target_link_libraries(ExternalLocatorsProcessorTests IPHLPAPI shlwapi) # Later so mocks have precedenc
 endif()
 
 add_gtest(NetworkFactoryTests SOURCES ${NETWORKFACTORYTESTS_SOURCE})

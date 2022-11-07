@@ -89,6 +89,7 @@ target_include_directories(BuiltinDataSerializationTests PRIVATE
     $<$<BOOL:${ANDROID}>:${ANDROID_IFADDRS_INCLUDE_DIR}>
     )
 target_link_libraries(BuiltinDataSerializationTests foonathan_memory
+    $<TARGET_NAME_IF_EXISTS:fastdds::wer>
     GTest::gmock
     ${CMAKE_DL_LIBS})
 if(MSVC OR MSVC_IDE)

@@ -37,7 +37,7 @@ target_include_directories(RTPSStatisticsTests PRIVATE
     ${Asio_INCLUDE_DIR}
     )
 
-target_link_libraries(RTPSStatisticsTests fastrtps fastcdr GTest::gtest GTest::gmock)
+target_link_libraries(RTPSStatisticsTests fastrtps fastcdr GTest::gtest GTest::gmock $<TARGET_NAME_IF_EXISTS:fastdds::wer>)
 add_gtest(RTPSStatisticsTests SOURCES ${STATISTICS_RTPS_TESTS_SOURCE})
 
 if(ANDROID)

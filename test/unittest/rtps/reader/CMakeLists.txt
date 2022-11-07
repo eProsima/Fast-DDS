@@ -52,6 +52,7 @@ target_include_directories(WriterProxyTests PRIVATE
     ${PROJECT_SOURCE_DIR}/src/cpp
     )
 target_link_libraries(WriterProxyTests foonathan_memory
+    $<TARGET_NAME_IF_EXISTS:fastdds::wer>
     GTest::gmock
     ${CMAKE_DL_LIBS})
 add_gtest(WriterProxyTests SOURCES ${WRITERPROXYTESTS_SOURCE})
@@ -59,7 +60,6 @@ add_gtest(WriterProxyTests SOURCES ${WRITERPROXYTESTS_SOURCE})
 if(ANDROID)
     set_property(TARGET WriterProxyTests PROPERTY CROSSCOMPILING_EMULATOR "adb;shell;cd;${CMAKE_CURRENT_BINARY_DIR};&&")
 endif()
-
 
 ###########################################################################
 # WriterProxyStopTest
@@ -102,6 +102,7 @@ target_include_directories(WriterProxyStopTest PRIVATE
     ${PROJECT_SOURCE_DIR}/src/cpp
     )
 target_link_libraries(WriterProxyStopTest foonathan_memory
+    $<TARGET_NAME_IF_EXISTS:fastdds::wer>
     GTest::gmock
     ${CMAKE_DL_LIBS})
 add_gtest(WriterProxyStopTest SOURCES ${WRITERPROXYSTOPTEST_SOURCE})

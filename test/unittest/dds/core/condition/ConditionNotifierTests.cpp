@@ -14,6 +14,10 @@
 
 #include <gtest/gtest.h>
 
+#ifdef WER_ENABLED
+#   include <wer.hpp>
+#endif
+
 // Include mocks first
 #include <fastdds/core/condition/WaitSetImpl.hpp>
 

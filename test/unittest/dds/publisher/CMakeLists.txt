@@ -320,6 +320,7 @@ target_include_directories(PublisherTests PRIVATE
     ${PROJECT_SOURCE_DIR}/thirdparty/taocpp-pegtl
     )
 target_link_libraries(PublisherTests fastrtps fastcdr foonathan_memory
+    $<TARGET_NAME_IF_EXISTS:fastdds::wer>
     GTest::gmock
     ${CMAKE_DL_LIBS})
 add_gtest(PublisherTests SOURCES ${PUBLISHERTESTS_SOURCE})
@@ -351,6 +352,7 @@ target_include_directories(DataWriterTests PRIVATE
     ${PROJECT_SOURCE_DIR}/thirdparty/taocpp-pegtl
     )
 target_link_libraries(DataWriterTests fastcdr foonathan_memory
+    $<TARGET_NAME_IF_EXISTS:fastdds::wer>
     GTest::gmock
     ${CMAKE_DL_LIBS}
     ${TINYXML2_LIBRARY}
@@ -361,9 +363,7 @@ target_link_libraries(DataWriterTests fastcdr foonathan_memory
     eProsima_atomic
     )
 if(MSVC OR MSVC_IDE)
-    target_link_libraries(DataWriterTests ${PRIVACY}
-        iphlpapi Shlwapi
-        )
+    target_link_libraries(DataWriterTests ${PRIVACY} iphlpapi Shlwapi)
 endif()
 add_gtest(DataWriterTests
     SOURCES ${DATAWRITERTESTS_SOURCE}

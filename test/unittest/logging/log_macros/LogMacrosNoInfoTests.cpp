@@ -34,6 +34,10 @@
 #include "LogMacros.hpp"
 #include <gtest/gtest.h>
 
+#ifdef WER_ENABLED
+#   include <wer.hpp>
+#endif
+
 /* Check info is not consumed */
 TEST_F(LogMacrosTests, no_info)
 {

@@ -48,6 +48,7 @@ target_include_directories(DDSSQLFilterTests PRIVATE
     ${PROJECT_SOURCE_DIR}/thirdparty/taocpp-pegtl
     )
 target_link_libraries(DDSSQLFilterTests fastcdr foonathan_memory
+    $<TARGET_NAME_IF_EXISTS:fastdds::wer>
     GTest::gmock
     ${CMAKE_DL_LIBS})
 add_gtest(DDSSQLFilterTests SOURCES ${DDSSQLFILTERTEST_SOURCES})

@@ -30,6 +30,10 @@
 #endif // _WIN32
 
 #include <gtest/gtest.h>
+
+#ifdef WER_ENABLED
+#   include <wer.hpp>
+#endif
 #include <fastdds/rtps/attributes/ServerAttributes.h>
 #include <fastrtps/types/TypesBase.h>
 #include <nlohmann/json.hpp>

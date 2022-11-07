@@ -32,7 +32,9 @@ static_assert(WER_TIMEOUT_TIME > 1, "The timeout in seconds must be defined");
 #include <gtest/gtest.h>
 
 #define WIN32_LEAN_AND_MEAN
-#define NOMINMAX
+#ifndef NOMINMAX
+#   define NOMINMAX
+#endif // NOMINMAX
 #include <windows.h>
 
 namespace eprosima {
@@ -120,5 +122,5 @@ public:
 const extern __declspec(selectany) eprosima::WerEnforcer wer_singleton;
 
 // In case gtest framework is used
-#define RUN_ALL_TESTS() wer_singleton.set_gtest_catch_flag(), \
-    ::testing::UnitTest::GetInstance()->Run()
+#define RUN_ALL_TESTS() (wer_singleton.set_gtest_catch_flag(), \
+    ::testing::UnitTest::GetInstance()->Run())

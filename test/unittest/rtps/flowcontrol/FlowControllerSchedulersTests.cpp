@@ -3,6 +3,10 @@
 
 #include <gtest/gtest.h>
 
+#ifdef WER_ENABLED
+#   include <wer.hpp>
+#endif
+
 namespace eprosima {
 namespace fastrtps {
 namespace rtps {

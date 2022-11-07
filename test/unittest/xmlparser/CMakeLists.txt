@@ -153,6 +153,7 @@ target_link_libraries(XMLProfileParserTests GTest::gmock
     $<$<BOOL:${WIN32}>:ws2_32>
     ${TINYXML2_LIBRARY}
     fastcdr
+    $<TARGET_NAME_IF_EXISTS:fastdds::wer>
     )
 add_gtest(XMLProfileParserTests SOURCES XMLProfileParserTests.cpp)
 ###################################  XMLProfileParserTests  ####################################################
@@ -250,6 +251,7 @@ target_link_libraries(XMLParserTests GTest::gtest
     $<$<BOOL:${WIN32}>:ws2_32>
     ${TINYXML2_LIBRARY}
     fastcdr
+    $<TARGET_NAME_IF_EXISTS:fastdds::wer>
     )
 add_gtest(XMLParserTests SOURCES XMLParserTests.cpp XMLElementParserTests.cpp)
 ######################################  XMLParserTests  ########################################################
@@ -282,6 +284,7 @@ target_include_directories(XMLTreeTests PRIVATE
 target_link_libraries(XMLTreeTests GTest::gtest
     $<$<BOOL:${WIN32}>:iphlpapi$<SEMICOLON>Shlwapi>
     $<$<BOOL:${WIN32}>:ws2_32>
+    $<TARGET_NAME_IF_EXISTS:fastdds::wer>
     )
 add_gtest(XMLTreeTests SOURCES XMLTreeTests.cpp)
 #######################################  XMLTreeTests  #########################################################
@@ -381,6 +384,7 @@ target_link_libraries(XMLEndpointParserTests GTest::gtest
     $<$<BOOL:${WIN32}>:ws2_32>
     ${TINYXML2_LIBRARY}
     fastcdr
+    $<TARGET_NAME_IF_EXISTS:fastdds::wer>
     )
 add_gtest(XMLEndpointParserTests SOURCES XMLEndpointParserTests.cpp)
 

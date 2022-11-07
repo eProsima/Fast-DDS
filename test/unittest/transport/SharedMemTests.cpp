@@ -27,6 +27,10 @@
 #include <streambuf>
 #include <memory>
 #include <gtest/gtest.h>
+
+#ifdef WER_ENABLED
+#   include <wer.hpp>
+#endif
 #include <thread>
 
 using namespace eprosima::fastrtps;

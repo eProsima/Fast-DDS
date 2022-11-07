@@ -70,7 +70,8 @@ target_link_libraries(BuiltinPKIDH
     fastcdr
     foonathan_memory
     $<$<BOOL:${WIN32}>:ws2_32>
-    $<$<BOOL:${LibP11_FOUND}>:eProsima_p11>  # $<TARGET_NAME_IF_EXISTS:eProsima_p11>
+    $<TARGET_NAME_IF_EXISTS:eProsima_p11>
+    $<TARGET_NAME_IF_EXISTS:fastdds::wer>
     )
 add_gtest(BuiltinPKIDH
     SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/BuiltinPKIDHTests.cpp

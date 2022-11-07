@@ -77,6 +77,7 @@ target_include_directories(ReaderHistoryTests PRIVATE
     ${PROJECT_SOURCE_DIR}/src/cpp
     ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include)
 target_link_libraries(ReaderHistoryTests
+    $<TARGET_NAME_IF_EXISTS:fastdds::wer>
     GTest::gmock
     ${CMAKE_DL_LIBS})
 add_gtest(ReaderHistoryTests SOURCES ${READERHISTORYTESTS_SOURCE})
@@ -90,6 +91,7 @@ target_include_directories(BasicPoolsTests PRIVATE
     ${PROJECT_SOURCE_DIR}/src/cpp
     ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include)
 target_link_libraries(BasicPoolsTests
+    $<TARGET_NAME_IF_EXISTS:fastdds::wer>
     GTest::gtest
     ${CMAKE_DL_LIBS})
 add_gtest(BasicPoolsTests SOURCES ${BASICPOOLSTESTS_SOURCE})
@@ -103,6 +105,7 @@ target_include_directories(CacheChangePoolTests PRIVATE
     ${PROJECT_SOURCE_DIR}/src/cpp
     ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include)
 target_link_libraries(CacheChangePoolTests
+    $<TARGET_NAME_IF_EXISTS:fastdds::wer>
     GTest::gtest
     ${CMAKE_DL_LIBS})
 add_gtest(CacheChangePoolTests SOURCES ${CACHECHANGEPOOLTESTS_SOURCE})
@@ -117,6 +120,7 @@ target_include_directories(TopicPayloadPoolTests PRIVATE
     ${PROJECT_SOURCE_DIR}/src/cpp
     ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include)
 target_link_libraries(TopicPayloadPoolTests
+    $<TARGET_NAME_IF_EXISTS:fastdds::wer>
     GTest::gtest
     ${CMAKE_DL_LIBS})
 add_gtest(TopicPayloadPoolTests SOURCES ${TOPICPAYLOADPOOLTESTS_SOURCE})

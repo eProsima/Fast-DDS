@@ -128,6 +128,7 @@ target_include_directories(DynamicTypesTests PRIVATE
     $<$<BOOL:${ANDROID}>:${ANDROID_IFADDRS_INCLUDE_DIR}>
     )
 target_link_libraries(DynamicTypesTests GTest::gtest
+    $<TARGET_NAME_IF_EXISTS:fastdds::wer>
     $<$<BOOL:${WIN32}>:iphlpapi$<SEMICOLON>Shlwapi>
     $<$<BOOL:${WIN32}>:ws2_32>
     ${TINYXML2_LIBRARY}
@@ -149,6 +150,7 @@ target_include_directories(DynamicComplexTypesTests PRIVATE
     ${PROJECT_SOURCE_DIR}/src/cpp
     $<$<BOOL:${ANDROID}>:${ANDROID_IFADDRS_INCLUDE_DIR}>)
 target_link_libraries(DynamicComplexTypesTests GTest::gtest
+    $<TARGET_NAME_IF_EXISTS:fastdds::wer>
     $<$<BOOL:${WIN32}>:iphlpapi$<SEMICOLON>Shlwapi>
     $<$<BOOL:${WIN32}>:ws2_32>
     ${TINYXML2_LIBRARY}
@@ -169,6 +171,7 @@ target_include_directories(DynamicTypes_4_2_Tests PRIVATE
     ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include
     ${PROJECT_SOURCE_DIR}/src/cpp)
     target_link_libraries(DynamicTypes_4_2_Tests GTest::gtest
+    $<TARGET_NAME_IF_EXISTS:fastdds::wer>
     $<$<BOOL:${WIN32}>:iphlpapi$<SEMICOLON>Shlwapi>
     $<$<BOOL:${WIN32}>:ws2_32>
     ${TINYXML2_LIBRARY}

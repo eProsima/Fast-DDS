@@ -25,6 +25,10 @@
 #include <tinyxml2.h>
 #include <gtest/gtest.h>
 
+#ifdef WER_ENABLED
+#   include <wer.hpp>
+#endif
+
 #include <string>
 #include <fstream>
 #include <sstream>

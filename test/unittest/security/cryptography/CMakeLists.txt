@@ -52,7 +52,7 @@ target_include_directories(BuiltinAESGCMGMAC PRIVATE
     ${PROJECT_SOURCE_DIR}/src/cpp
     )
 
-target_link_libraries(BuiltinAESGCMGMAC fastcdr GTest::gmock ${OPENSSL_LIBRARIES})
+target_link_libraries(BuiltinAESGCMGMAC fastcdr GTest::gmock ${OPENSSL_LIBRARIES} $<TARGET_NAME_IF_EXISTS:fastdds::wer>)
 
 add_gtest(BuiltinAESGCMGMAC SOURCES ${COMMON_SOURCES_CRYPTO_PLUGIN_TEST_SOURCE}
     ${CMAKE_CURRENT_SOURCE_DIR}/builtinAESGCMGMACTests.cpp

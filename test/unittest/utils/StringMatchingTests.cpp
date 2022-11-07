@@ -14,6 +14,10 @@
 
 #include <fastrtps/utils/StringMatching.h>
 #include <gtest/gtest.h>
+
+#ifdef WER_ENABLED
+#   include <wer.hpp>
+#endif
 #include <fastdds/dds/log/Log.hpp>
 
 using namespace eprosima::fastrtps;

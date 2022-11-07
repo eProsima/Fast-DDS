@@ -15,6 +15,10 @@
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
 
+#ifdef WER_ENABLED
+#   include <wer.hpp>
+#endif
+
 #include <fastrtps/rtps/writer/ReaderProxy.h>
 #include <fastrtps/rtps/writer/StatefulWriter.h>
 #include <rtps/messages/RTPSGapBuilder.hpp>

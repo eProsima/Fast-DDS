@@ -15,6 +15,10 @@
 #include <utils/collections/FixedSizeQueue.hpp>
 #include <gtest/gtest.h>
 
+#ifdef WER_ENABLED
+#   include <wer.hpp>
+#endif
+
 using namespace eprosima::fastrtps;
 
 constexpr size_t CAPACITY = 32;

@@ -42,7 +42,7 @@ target_include_directories(BuiltinLogging PRIVATE
     ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include
     ${PROJECT_SOURCE_DIR}/src/cpp
     )
-target_link_libraries(BuiltinLogging fastcdr GTest::gtest ${OPENSSL_LIBRARIES})
+target_link_libraries(BuiltinLogging fastcdr GTest::gtest ${OPENSSL_LIBRARIES} $<TARGET_NAME_IF_EXISTS:fastdds::wer>)
 add_gtest(BuiltinLogging SOURCES ${COMMON_SOURCES_LOGGING_PLUGIN_TEST_SOURCE}
     ${CMAKE_CURRENT_SOURCE_DIR}/LoggingPluginTests.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/BuiltinLogTopicTests.cpp)

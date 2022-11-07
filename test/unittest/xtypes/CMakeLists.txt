@@ -83,7 +83,7 @@ target_include_directories(XTypesTests PRIVATE
     ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include
     ${PROJECT_SOURCE_DIR}/src/cpp
     )
-target_link_libraries(XTypesTests GTest::gtest ${MOCKS})
+target_link_libraries(XTypesTests GTest::gtest ${MOCKS} $<TARGET_NAME_IF_EXISTS:fastdds::wer>)
 if(MSVC OR MSVC_IDE)
     target_link_libraries(XTypesTests ${PRIVACY} fastcdr iphlpapi Shlwapi ws2_32)
 else()

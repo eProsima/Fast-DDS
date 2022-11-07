@@ -19,6 +19,10 @@
 #include <fastdds/dds/log/StdoutErrConsumer.hpp>
 #include "mock/MockConsumer.h"
 #include <gtest/gtest.h>
+
+#ifdef WER_ENABLED
+#   include <wer.hpp>
+#endif
 #include <atomic>
 #include <memory>
 #include <thread>

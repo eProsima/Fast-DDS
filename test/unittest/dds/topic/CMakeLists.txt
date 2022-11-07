@@ -32,6 +32,7 @@ target_include_directories(TopicTests PRIVATE
     ${PROJECT_SOURCE_DIR}/src/cpp
     )
 target_link_libraries(TopicTests fastrtps fastcdr foonathan_memory
+    $<TARGET_NAME_IF_EXISTS:fastdds::wer>
     GTest::gmock
     ${CMAKE_DL_LIBS})
 add_gtest(TopicTests SOURCES ${TOPICTESTS_SOURCE})

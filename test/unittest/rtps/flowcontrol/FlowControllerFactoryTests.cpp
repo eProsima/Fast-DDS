@@ -3,6 +3,10 @@
 
 #include <gtest/gtest.h>
 
+#ifdef WER_ENABLED
+#   include <wer.hpp>
+#endif
+
 using namespace eprosima::fastdds::rtps;
 
 TEST(FlowControllerFactory, get_default_flow_controllers)

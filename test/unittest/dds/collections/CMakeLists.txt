@@ -32,7 +32,7 @@ target_compile_definitions(LoanableSequenceTests PRIVATE FASTRTPS_NO_LIB
 target_include_directories(LoanableSequenceTests PRIVATE
     ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include
     ${PROJECT_SOURCE_DIR}/src/cpp)
-target_link_libraries(LoanableSequenceTests GTest::gtest)
+target_link_libraries(LoanableSequenceTests GTest::gtest $<TARGET_NAME_IF_EXISTS:fastdds::wer>)
 add_gtest(LoanableSequenceTests SOURCES ${LOANABLE_SEQUENCE_TESTS_SOURCE})
 
 if(ANDROID)

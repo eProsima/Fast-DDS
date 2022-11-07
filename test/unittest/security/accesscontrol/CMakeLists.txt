@@ -91,6 +91,7 @@ target_include_directories(AccessControlTests PRIVATE
     )
 
 target_link_libraries(AccessControlTests
+    $<TARGET_NAME_IF_EXISTS:fastdds::wer>
     GTest::gmock
     ${OPENSSL_LIBRARIES}
     fastcdr

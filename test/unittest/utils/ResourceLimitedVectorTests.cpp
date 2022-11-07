@@ -15,6 +15,10 @@
 #include <fastrtps/utils/collections/ResourceLimitedVector.hpp>
 #include <gtest/gtest.h>
 
+#ifdef WER_ENABLED
+#   include <wer.hpp>
+#endif
+
 using namespace eprosima::fastrtps;
 
 // Power of two has been chosen to allow for ASSERT_EQ on capacity, as

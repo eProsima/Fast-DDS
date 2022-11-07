@@ -41,8 +41,9 @@ if(SQLITE3_SUPPORT)
         ${PROJECT_SOURCE_DIR}/src/cpp
         )
     target_link_libraries(PersistenceTests
+        $<TARGET_NAME_IF_EXISTS:fastdds::wer>
         foonathan_memory
-            GTest::gmock
+        GTest::gmock
         ${CMAKE_DL_LIBS}
         )
     if(MSVC OR MSVC_IDE)

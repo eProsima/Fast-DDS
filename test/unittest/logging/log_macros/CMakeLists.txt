@@ -40,6 +40,7 @@ target_include_directories(LogMacrosAllActiveTests PRIVATE
     ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include
     ${PROJECT_SOURCE_DIR}/src/cpp)
 target_link_libraries(LogMacrosAllActiveTests GTest::gtest ${MOCKS}
+    $<TARGET_NAME_IF_EXISTS:fastdds::wer>
     $<$<BOOL:${WIN32}>:iphlpapi$<SEMICOLON>Shlwapi>
     )
 add_gtest(LogMacrosAllActiveTests SOURCES ${LOGMACROS_ALL_TEST_SOURCE})
@@ -61,6 +62,7 @@ target_include_directories(LogMacrosNoInfoTests PRIVATE
     ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include
     ${PROJECT_SOURCE_DIR}/src/cpp)
 target_link_libraries(LogMacrosNoInfoTests GTest::gtest ${MOCKS}
+    $<TARGET_NAME_IF_EXISTS:fastdds::wer>
     $<$<BOOL:${WIN32}>:iphlpapi$<SEMICOLON>Shlwapi>
     )
 add_gtest(LogMacrosNoInfoTests SOURCES ${LOGMACROS_NOINFO_TEST_SOURCE})
@@ -82,6 +84,7 @@ target_include_directories(LogMacrosNoWarningTests PRIVATE
     ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include
     ${PROJECT_SOURCE_DIR}/src/cpp)
 target_link_libraries(LogMacrosNoWarningTests GTest::gtest ${MOCKS}
+    $<TARGET_NAME_IF_EXISTS:fastdds::wer>
     $<$<BOOL:${WIN32}>:iphlpapi$<SEMICOLON>Shlwapi>
     )
 add_gtest(LogMacrosNoWarningTests SOURCES ${LOGMACROS_NOWARNING_TEST_SOURCE})
@@ -103,6 +106,7 @@ target_include_directories(LogMacrosNoErrorTests PRIVATE
     ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include
     ${PROJECT_SOURCE_DIR}/src/cpp)
 target_link_libraries(LogMacrosNoErrorTests GTest::gtest ${MOCKS}
+    $<TARGET_NAME_IF_EXISTS:fastdds::wer>
     $<$<BOOL:${WIN32}>:iphlpapi$<SEMICOLON>Shlwapi>
     )
 add_gtest(LogMacrosNoErrorTests SOURCES ${LOGMACROS_NOERROR_TEST_SOURCE})
@@ -124,6 +128,7 @@ target_include_directories(LogMacrosDefaultTests PRIVATE
     ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include
     ${PROJECT_SOURCE_DIR}/src/cpp)
 target_link_libraries(LogMacrosDefaultTests GTest::gtest ${MOCKS}
+    $<TARGET_NAME_IF_EXISTS:fastdds::wer>
     $<$<BOOL:${WIN32}>:iphlpapi$<SEMICOLON>Shlwapi>
     )
 add_gtest(LogMacrosDefaultTests SOURCES ${LOGMACROS_DEFAULT_TEST_SOURCE})
@@ -147,6 +152,7 @@ target_include_directories(LogMacrosInternalDebugOffTests PRIVATE
     ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include
     ${PROJECT_SOURCE_DIR}/src/cpp)
 target_link_libraries(LogMacrosInternalDebugOffTests GTest::gtest ${MOCKS}
+    $<TARGET_NAME_IF_EXISTS:fastdds::wer>
     $<$<BOOL:${WIN32}>:iphlpapi$<SEMICOLON>Shlwapi>
     )
 add_gtest(LogMacrosInternalDebugOffTests SOURCES ${LOGMACROS_INTERNALDEBUG_TEST_SOURCE})

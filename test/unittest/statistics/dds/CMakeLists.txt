@@ -35,7 +35,7 @@ target_compile_definitions(StatisticsDomainParticipantTests PRIVATE FASTRTPS_NO_
     )
 target_include_directories(StatisticsDomainParticipantTests PRIVATE
     ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include ${PROJECT_SOURCE_DIR}/src/cpp)
-target_link_libraries(StatisticsDomainParticipantTests fastrtps fastcdr GTest::gtest)
+target_link_libraries(StatisticsDomainParticipantTests fastrtps fastcdr GTest::gtest $<TARGET_NAME_IF_EXISTS:fastdds::wer>)
 add_gtest(StatisticsDomainParticipantTests SOURCES ${STATISTICS_DOMAINPARTICIPANT_TESTS_SOURCE})
 
 ## StatisticsQosTests
@@ -59,7 +59,7 @@ target_compile_definitions(StatisticsQosTests PRIVATE FASTRTPS_NO_LIB BOOST_ASIO
     )
 target_include_directories(StatisticsQosTests PRIVATE
     ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include ${PROJECT_SOURCE_DIR}/src/cpp ${THIRDPARTY_BOOST_INCLUDE_DIR})
-target_link_libraries(StatisticsQosTests fastrtps fastcdr ${TINYXML2_LIBRARY} foonathan_memory GTest::gtest)
+target_link_libraries(StatisticsQosTests fastrtps fastcdr ${TINYXML2_LIBRARY} foonathan_memory GTest::gtest $<TARGET_NAME_IF_EXISTS:fastdds::wer>)
 add_gtest(StatisticsQosTests SOURCES ${STATISTICS_QOS_TESTS_SOURCE})
 
 ## StatisticsDomainParticipantListenerTests
@@ -85,6 +85,7 @@ if (FASTDDS_STATISTICS)
         ${PROJECT_BINARY_DIR}/include
         ${PROJECT_SOURCE_DIR}/src/cpp)
     target_link_libraries(DomainParticipantStatisticsListenerTests
+        $<TARGET_NAME_IF_EXISTS:fastdds::wer>
         ${TINYXML2_LIBRARY} fastcdr GTest::gmock )
     add_gtest(DomainParticipantStatisticsListenerTests
         SOURCES ${DOMAINPARTICIPANTSTATISTICSLISTENER_TESTS_SOURCE})
@@ -366,6 +367,7 @@ if (SQLITE3_SUPPORT AND FASTDDS_STATISTICS)
         $<$<BOOL:${WIN32}>:iphlpapi$<SEMICOLON>Shlwapi>
         ${THIRDPARTY_BOOST_LINK_LIBS}
         eProsima_atomic
+        $<TARGET_NAME_IF_EXISTS:fastdds::wer>
         )
     if(MSVC OR MSVC_IDE)
         target_link_libraries(StatisticsDomainParticipantMockTests ${PRIVACY}

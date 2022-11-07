@@ -88,6 +88,7 @@ target_include_directories(SecurityAuthentication PRIVATE
     ${PROJECT_SOURCE_DIR}/src/cpp
     )
 target_link_libraries(SecurityAuthentication fastcdr
+    $<TARGET_NAME_IF_EXISTS:fastdds::wer>
     GTest::gmock
     ${OPENSSL_LIBRARIES}
     )

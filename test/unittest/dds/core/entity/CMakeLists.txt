@@ -50,7 +50,7 @@ target_include_directories(EntityTests PRIVATE
     ${PROJECT_BINARY_DIR}/include
     ${PROJECT_SOURCE_DIR}/src/cpp
 )
-target_link_libraries(EntityTests GTest::gtest fastcdr)
+target_link_libraries(EntityTests GTest::gtest fastcdr $<TARGET_NAME_IF_EXISTS:fastdds::wer>)
 add_gtest(EntityTests SOURCES ${ENTITY_TESTS_SOURCE})
 
 if(ANDROID)

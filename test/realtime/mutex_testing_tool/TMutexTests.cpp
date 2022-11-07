@@ -19,6 +19,10 @@
 
 #include "TMutex.hpp"
 #include <gtest/gtest.h>
+
+#ifdef WER_ENABLED
+#   include <wer.hpp>
+#endif
 #include <future>
 #include <chrono>
 #include <mutex>

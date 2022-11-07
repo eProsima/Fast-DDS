@@ -64,6 +64,7 @@ target_include_directories(SubscriberTests PRIVATE
     )
 target_link_libraries(SubscriberTests fastrtps fastcdr foonathan_memory
     GTest::gmock
+    $<TARGET_NAME_IF_EXISTS:fastdds::wer>
     ${CMAKE_DL_LIBS})
 add_gtest(SubscriberTests SOURCES ${SUBSCRIBERTESTS_SOURCE})
 
@@ -77,6 +78,7 @@ target_include_directories(DataReaderTests PRIVATE
     ${PROJECT_SOURCE_DIR}/src/cpp
     )
 target_link_libraries(DataReaderTests fastrtps fastcdr foonathan_memory
+    $<TARGET_NAME_IF_EXISTS:fastdds::wer>
     GTest::gmock
     ${CMAKE_DL_LIBS})
 add_gtest(DataReaderTests SOURCES ${DATAREADERTESTS_SOURCE})
@@ -91,6 +93,7 @@ target_include_directories(DataReaderInstanceTests PRIVATE
     ${PROJECT_SOURCE_DIR}/src/cpp
     )
 target_link_libraries(DataReaderInstanceTests foonathan_memory
+    $<TARGET_NAME_IF_EXISTS:fastdds::wer>
     GTest::gmock
     ${CMAKE_DL_LIBS})
 add_gtest(DataReaderInstanceTests SOURCES ${DATAREADERINSTANCETESTS_SOURCE})
@@ -113,6 +116,7 @@ target_include_directories(DataReaderHistoryTests PRIVATE
     ${THIRDPARTY_BOOST_INCLUDE_DIR}
     )
 target_link_libraries(DataReaderHistoryTests fastcdr foonathan_memory
+    $<TARGET_NAME_IF_EXISTS:fastdds::wer>
     GTest::gmock
     ${CMAKE_DL_LIBS})
 add_gtest(DataReaderHistoryTests SOURCES ${DATAREADERHISTORYTESTS_SOURCE})

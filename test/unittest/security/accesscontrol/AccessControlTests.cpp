@@ -27,6 +27,10 @@
 
 #include <gtest/gtest.h>
 
+#ifdef WER_ENABLED
+#   include <wer.hpp>
+#endif
+
 #include <iostream>
 
 using namespace eprosima::fastrtps::rtps;

@@ -103,5 +103,5 @@ target_compile_definitions(XTypesBlackBoxTests PRIVATE
     $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
     )
 target_include_directories(XTypesBlackBoxTests PRIVATE ${Asio_INCLUDE_DIR})
-target_link_libraries(XTypesBlackBoxTests fastrtps fastcdr GTest::gtest)
+target_link_libraries(XTypesBlackBoxTests fastrtps fastcdr GTest::gtest $<TARGET_NAME_IF_EXISTS:fastdds::wer>)
 add_xtypes_gtest(XTypesBlackBoxTests SOURCES ${XTYPES_TESTS_SOURCE})

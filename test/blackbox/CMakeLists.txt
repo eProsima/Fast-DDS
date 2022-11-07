@@ -272,7 +272,7 @@ target_compile_definitions(BlackboxTests_RTPS PRIVATE
     )
 target_include_directories(BlackboxTests_RTPS PRIVATE
     ${Asio_INCLUDE_DIR})
-target_link_libraries(BlackboxTests_RTPS fastrtps fastcdr foonathan_memory GTest::gtest)
+target_link_libraries(BlackboxTests_RTPS fastrtps fastcdr foonathan_memory GTest::gtest $<TARGET_NAME_IF_EXISTS:fastdds::wer>)
 add_blackbox_gtest(BlackboxTests_RTPS SOURCES ${RTPS_BLACKBOXTESTS_TEST_SOURCE} IGNORE ${pkcs_filter})
 
 file(GLOB BLACKBOXTESTS_TEST_SOURCE "common/BlackboxTests*.cpp")
@@ -364,6 +364,7 @@ if(FASTRTPS_API_TESTS)
         foonathan_memory
         GTest::gtest
         $<$<BOOL:${LibP11_FOUND}>:eProsima_p11>  # $<TARGET_NAME_IF_EXISTS:eProsima_p11>
+        $<TARGET_NAME_IF_EXISTS:fastdds::wer>
         )
 
     add_blackbox_gtest(BlackboxTests_FastRTPS SOURCES ${BLACKBOXTESTS_TEST_SOURCE}
@@ -413,6 +414,7 @@ if(FASTDDS_PIM_API_TESTS)
         foonathan_memory
         GTest::gtest
         $<$<BOOL:${LibP11_FOUND}>:eProsima_p11>  # $<TARGET_NAME_IF_EXISTS:eProsima_p11>
+        $<TARGET_NAME_IF_EXISTS:fastdds::wer>
         )
     add_blackbox_gtest(BlackboxTests_DDS_PIM SOURCES ${DDS_BLACKBOXTESTS_SOURCE}
         ENVIRONMENTS "CERTS_PATH=${PROJECT_SOURCE_DIR}/test/certs"

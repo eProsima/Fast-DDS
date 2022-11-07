@@ -15,6 +15,10 @@
 #include <fastrtps/utils/fixed_size_string.hpp>
 #include <gtest/gtest.h>
 
+#ifdef WER_ENABLED
+#   include <wer.hpp>
+#endif
+
 using namespace eprosima::fastrtps;
 
 constexpr size_t MAX_CHARS = 255;

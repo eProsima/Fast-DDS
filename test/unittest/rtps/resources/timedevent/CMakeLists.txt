@@ -50,7 +50,7 @@ target_include_directories(TimedEventTests PRIVATE
     ${PROJECT_BINARY_DIR}/include
     ${PROJECT_SOURCE_DIR}/src/cpp
     )
-target_link_libraries(TimedEventTests GTest::gtest ${CMAKE_DL_LIBS})
+target_link_libraries(TimedEventTests GTest::gtest ${CMAKE_DL_LIBS} $<TARGET_NAME_IF_EXISTS:fastdds::wer>)
 add_gtest(TimedEventTests SOURCES ${TIMEDEVENTTESTS_SOURCE})
 
 if(ANDROID)

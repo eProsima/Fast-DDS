@@ -46,6 +46,7 @@ target_include_directories(LogTests PRIVATE
     ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include
     ${PROJECT_SOURCE_DIR}/src/cpp)
 target_link_libraries(LogTests GTest::gtest ${MOCKS}
+    $<TARGET_NAME_IF_EXISTS:fastdds::wer>
     $<$<BOOL:${WIN32}>:iphlpapi$<SEMICOLON>Shlwapi>
     )
 add_gtest(LogTests SOURCES ${LOGTESTS_TEST_SOURCE})
@@ -79,6 +80,7 @@ target_include_directories(LogFileTests PRIVATE
     ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include
     ${PROJECT_SOURCE_DIR}/src/cpp)
 target_link_libraries(LogFileTests GTest::gtest ${MOCKS}
+    $<TARGET_NAME_IF_EXISTS:fastdds::wer>
     $<$<BOOL:${WIN32}>:iphlpapi$<SEMICOLON>Shlwapi>
     ${TINYXML2_LIBRARY}
     fastcdr

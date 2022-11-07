@@ -45,11 +45,9 @@ target_include_directories(FlowControllerFactoryTests PRIVATE
     ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include
     ${PROJECT_SOURCE_DIR}/src/cpp
     )
-target_link_libraries(FlowControllerFactoryTests GTest::gmock)
+target_link_libraries(FlowControllerFactoryTests GTest::gmock $<TARGET_NAME_IF_EXISTS:fastdds::wer>)
 if(MSVC OR MSVC_IDE)
-    target_link_libraries(FlowControllerFactoryTests ${PRIVACY}
-        iphlpapi Shlwapi
-        )
+    target_link_libraries(FlowControllerFactoryTests ${PRIVACY} iphlpapi Shlwapi)
 endif()
 add_gtest(FlowControllerFactoryTests SOURCES ${FLOWCONTROLLERFACTORYTESTS_SOURCE})
 
@@ -73,7 +71,7 @@ target_include_directories(FlowControllerPublishModesTests PRIVATE
     ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include
     ${PROJECT_SOURCE_DIR}/src/cpp
     )
-target_link_libraries(FlowControllerPublishModesTests GTest::gmock)
+target_link_libraries(FlowControllerPublishModesTests GTest::gmock $<TARGET_NAME_IF_EXISTS:fastdds::wer>)
 if(MSVC OR MSVC_IDE)
     target_link_libraries(FlowControllerPublishModesTests ${PRIVACY}
         iphlpapi Shlwapi
@@ -97,7 +95,7 @@ target_include_directories(FlowControllerSchedulersTests PRIVATE
     ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include
     ${PROJECT_SOURCE_DIR}/src/cpp
     )
-target_link_libraries(FlowControllerSchedulersTests GTest::gmock)
+target_link_libraries(FlowControllerSchedulersTests GTest::gmock $<TARGET_NAME_IF_EXISTS:fastdds::wer>)
 if(MSVC OR MSVC_IDE)
     target_link_libraries(FlowControllerSchedulersTests ${PRIVACY}
         iphlpapi Shlwapi

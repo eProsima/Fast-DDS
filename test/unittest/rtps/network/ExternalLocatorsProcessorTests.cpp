@@ -14,6 +14,10 @@
 
 #include <gtest/gtest.h>
 
+#ifdef WER_ENABLED
+#   include <wer.hpp>
+#endif
+
 #include <fastdds/rtps/common/LocatorWithMask.hpp>
 #include <fastrtps/utils/IPLocator.h>
 

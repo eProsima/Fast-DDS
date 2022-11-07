@@ -194,6 +194,7 @@ target_link_libraries(ListenerTests fastcdr foonathan_memory
     GTest::gmock
     ${CMAKE_DL_LIBS}
     ${THIRDPARTY_BOOST_LINK_LIBS}
+    $<TARGET_NAME_IF_EXISTS:fastdds::wer>
     )
 if(MSVC OR MSVC_IDE)
     target_link_libraries(ListenerTests iphlpapi Shlwapi ws2_32)

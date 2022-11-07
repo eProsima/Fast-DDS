@@ -23,6 +23,10 @@
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
 
+#ifdef WER_ENABLED
+#   include <wer.hpp>
+#endif
+
 #include <fastcdr/Cdr.h>
 
 #include <fastdds/dds/builtin/topic/PublicationBuiltinTopicData.hpp>

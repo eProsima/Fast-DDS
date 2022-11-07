@@ -40,6 +40,7 @@ target_link_libraries(
     fastdds::optionparser
     ${CMAKE_THREAD_LIBS_INIT}
     ${CMAKE_DL_LIBS}
+    $<TARGET_NAME_IF_EXISTS:fastdds::wer>
 )
 
 ###########################################################################

@@ -60,10 +60,9 @@ target_compile_definitions(StringMatchingTests PRIVATE FASTRTPS_NO_LIB
 target_include_directories(StringMatchingTests PRIVATE
     ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include
     ${PROJECT_SOURCE_DIR}/src/cpp)
-target_link_libraries(StringMatchingTests GTest::gtest ${MOCKS})
+target_link_libraries(StringMatchingTests GTest::gtest ${MOCKS} $<TARGET_NAME_IF_EXISTS:fastdds::wer>)
 if(MSVC OR MSVC_IDE)
-    target_link_libraries(StringMatchingTests ${PRIVACY} iphlpapi Shlwapi
-        )
+    target_link_libraries(StringMatchingTests ${PRIVACY} iphlpapi Shlwapi)
 endif()
 add_gtest(StringMatchingTests SOURCES ${STRINGMATCHINGTESTS_SOURCE})
 
@@ -75,7 +74,7 @@ target_compile_definitions(FixedSizeStringTests PRIVATE FASTRTPS_NO_LIB
     )
 target_include_directories(FixedSizeStringTests PRIVATE
     ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include)
-target_link_libraries(FixedSizeStringTests GTest::gtest ${MOCKS})
+target_link_libraries(FixedSizeStringTests GTest::gtest ${MOCKS} $<TARGET_NAME_IF_EXISTS:fastdds::wer>)
 add_gtest(FixedSizeStringTests SOURCES ${FIXEDSIZESTRINGTESTS_SOURCE})
 
 
@@ -86,7 +85,7 @@ target_compile_definitions(BitmapRangeTests PRIVATE FASTRTPS_NO_LIB
     )
 target_include_directories(BitmapRangeTests PRIVATE
     ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include)
-target_link_libraries(BitmapRangeTests GTest::gtest ${MOCKS})
+target_link_libraries(BitmapRangeTests GTest::gtest ${MOCKS} $<TARGET_NAME_IF_EXISTS:fastdds::wer>)
 add_gtest(BitmapRangeTests SOURCES ${BITMAPRANGETESTS_SOURCE})
 
 
@@ -97,7 +96,7 @@ target_compile_definitions(ResourceLimitedVectorTests PRIVATE FASTRTPS_NO_LIB
     )
 target_include_directories(ResourceLimitedVectorTests PRIVATE
     ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include)
-target_link_libraries(ResourceLimitedVectorTests GTest::gtest ${MOCKS})
+target_link_libraries(ResourceLimitedVectorTests GTest::gtest ${MOCKS} $<TARGET_NAME_IF_EXISTS:fastdds::wer>)
 add_gtest(ResourceLimitedVectorTests SOURCES ${RESOURCELIMITEDVECTORTESTS_SOURCE})
 
 add_executable(LocatorTests ${LOCATORTESTS_SOURCE})
@@ -110,7 +109,7 @@ target_compile_definitions(LocatorTests PRIVATE FASTRTPS_NO_LIB
 target_include_directories(LocatorTests PRIVATE
     ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include ${Asio_INCLUDE_DIR}
     ${PROJECT_SOURCE_DIR}/src/cpp)
-target_link_libraries(LocatorTests GTest::gtest ${MOCKS})
+target_link_libraries(LocatorTests GTest::gtest ${MOCKS} $<TARGET_NAME_IF_EXISTS:fastdds::wer>)
 if(EPROSIMA_TEST_DNS_NOT_SET_UP)
     set(IGNORE_COMMAND LocatorDNSTests)
 endif()
@@ -129,14 +128,14 @@ add_executable(FixedSizeQueueTests ${FIXEDSIZEQUEUETESTS_SOURCE})
 target_compile_definitions(FixedSizeQueueTests PRIVATE FASTRTPS_NO_LIB)
 target_include_directories(FixedSizeQueueTests PRIVATE
     ${PROJECT_SOURCE_DIR}/include ${PROJECT_SOURCE_DIR}/src/cpp ${PROJECT_BINARY_DIR}/include)
-target_link_libraries(FixedSizeQueueTests GTest::gtest ${MOCKS})
+target_link_libraries(FixedSizeQueueTests GTest::gtest ${MOCKS} $<TARGET_NAME_IF_EXISTS:fastdds::wer>)
 add_gtest(FixedSizeQueueTests SOURCES ${FIXEDSIZEQUEUETESTS_SOURCE})
 
 add_executable(SystemInfoTests ${SYSTEMINFOTESTS_SOURCE})
 target_compile_definitions(SystemInfoTests PRIVATE FASTRTPS_NO_LIB)
 target_include_directories(SystemInfoTests PRIVATE
     ${PROJECT_SOURCE_DIR}/include ${PROJECT_SOURCE_DIR}/src/cpp ${PROJECT_BINARY_DIR}/include)
-target_link_libraries(SystemInfoTests GTest::gtest)
+target_link_libraries(SystemInfoTests GTest::gtest $<TARGET_NAME_IF_EXISTS:fastdds::wer>)
 add_gtest(SystemInfoTests SOURCES ${SYSTEMINFOTESTS_SOURCE})
 
 add_executable(SharedMutexTests shared_mutex_tests.cpp)

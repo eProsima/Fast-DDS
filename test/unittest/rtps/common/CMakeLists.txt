@@ -55,7 +55,7 @@ target_compile_definitions(CacheChangeTests PRIVATE FASTRTPS_NO_LIB
     )
 target_include_directories(CacheChangeTests PRIVATE
     ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include)
-target_link_libraries(CacheChangeTests GTest::gtest)
+target_link_libraries(CacheChangeTests GTest::gtest $<TARGET_NAME_IF_EXISTS:fastdds::wer>)
 add_gtest(CacheChangeTests SOURCES ${CACHECHANGETESTS_SOURCE})
 
 add_executable(GuidUtilsTests ${GUID_UTILS_TESTS_SOURCE})
@@ -70,9 +70,9 @@ target_include_directories(GuidUtilsTests PRIVATE
     ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include
     ${Asio_INCLUDE_DIR}
     $<$<BOOL:${ANDROID}>:${ANDROID_IFADDRS_INCLUDE_DIR}>)
-target_link_libraries(GuidUtilsTests GTest::gtest)
+target_link_libraries(GuidUtilsTests GTest::gtest $<TARGET_NAME_IF_EXISTS:fastdds::wer>)
 if(MSVC OR MSVC_IDE)
-    target_link_libraries(GuidUtilsTests ws2_32)
+    target_link_libraries(GuidUtilsTests ws2_32 $<TARGET_NAME_IF_EXISTS:fastdds::wer>)
 endif()
 add_gtest(GuidUtilsTests SOURCES ${GUID_UTILS_TESTS_SOURCE})
 
@@ -83,7 +83,7 @@ target_compile_definitions(SequenceNumberTests PRIVATE FASTRTPS_NO_LIB
     )
 target_include_directories(SequenceNumberTests PRIVATE
     ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include)
-target_link_libraries(SequenceNumberTests GTest::gtest)
+target_link_libraries(SequenceNumberTests GTest::gtest $<TARGET_NAME_IF_EXISTS:fastdds::wer>)
 add_gtest(SequenceNumberTests SOURCES ${SEQUENCENUMBERTESTS_SOURCE})
 
 add_executable(PortParametersTests ${PORTPARAMETERSTESTS_SOURCE})
@@ -94,7 +94,7 @@ target_compile_definitions(PortParametersTests PRIVATE FASTRTPS_NO_LIB
 target_include_directories(PortParametersTests PRIVATE
     ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include
     ${PROJECT_SOURCE_DIR}/src/cpp)
-target_link_libraries(PortParametersTests GTest::gtest)
+target_link_libraries(PortParametersTests GTest::gtest $<TARGET_NAME_IF_EXISTS:fastdds::wer>)
 add_gtest(PortParametersTests SOURCES ${PORTPARAMETERSTESTS_SOURCE} LABELS "NoMemoryCheck")
 
 ###################
@@ -111,7 +111,7 @@ target_compile_definitions(GuidPrefixTests PRIVATE FASTRTPS_NO_LIB
 target_include_directories(GuidPrefixTests PRIVATE
     ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include
     ${PROJECT_SOURCE_DIR}/src/cpp)
-target_link_libraries(GuidPrefixTests GTest::gtest)
+target_link_libraries(GuidPrefixTests GTest::gtest $<TARGET_NAME_IF_EXISTS:fastdds::wer>)
 add_gtest(GuidPrefixTests SOURCES ${GUIDPREFIXTESTS_SOURCE} LABELS "NoMemoryCheck")
 
 #################
@@ -128,7 +128,7 @@ target_compile_definitions(EntityIdTests PRIVATE FASTRTPS_NO_LIB
 target_include_directories(EntityIdTests PRIVATE
     ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include
     ${PROJECT_SOURCE_DIR}/src/cpp)
-target_link_libraries(EntityIdTests GTest::gtest)
+target_link_libraries(EntityIdTests GTest::gtest $<TARGET_NAME_IF_EXISTS:fastdds::wer>)
 add_gtest(EntityIdTests SOURCES ${ENTITYIDTESTS_SOURCE} LABELS "NoMemoryCheck")
 
 #############
@@ -145,7 +145,7 @@ target_compile_definitions(GuidTests PRIVATE FASTRTPS_NO_LIB
 target_include_directories(GuidTests PRIVATE
     ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include
     ${PROJECT_SOURCE_DIR}/src/cpp)
-target_link_libraries(GuidTests GTest::gtest)
+target_link_libraries(GuidTests GTest::gtest $<TARGET_NAME_IF_EXISTS:fastdds::wer>)
 add_gtest(GuidTests SOURCES ${GUIDTESTS_SOURCE} LABELS "NoMemoryCheck")
 
 if(ANDROID)

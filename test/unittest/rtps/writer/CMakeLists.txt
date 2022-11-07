@@ -56,6 +56,7 @@ target_include_directories(ReaderProxyTests PRIVATE
     ${THIRDPARTY_BOOST_INCLUDE_DIR}
     )
 target_link_libraries(ReaderProxyTests
+    $<TARGET_NAME_IF_EXISTS:fastdds::wer>
     GTest::gmock foonathan_memory
     ${CMAKE_DL_LIBS}
     ${THIRDPARTY_BOOST_LINK_LIBS})
@@ -88,6 +89,7 @@ target_include_directories(LivelinessManagerTests PRIVATE
     ${PROJECT_SOURCE_DIR}/src/cpp
     )
 target_link_libraries(LivelinessManagerTests PRIVATE
+    $<TARGET_NAME_IF_EXISTS:fastdds::wer>
     GTest::gmock)
 add_gtest(LivelinessManagerTests SOURCES ${LIVELINESSMANAGERTESTS_SOURCE})
 
@@ -103,6 +105,7 @@ target_compile_definitions(RTPSWriterTests PRIVATE
 target_include_directories(RTPSWriterTests PRIVATE
     ${Asio_INCLUDE_DIR})
 target_link_libraries(RTPSWriterTests fastcdr fastrtps foonathan_memory
+    $<TARGET_NAME_IF_EXISTS:fastdds::wer>
     GTest::gmock
     ${CMAKE_DL_LIBS})
 add_gtest(RTPSWriterTests SOURCES ${RTPSWRITERTESTS_SOURCE})

@@ -16,6 +16,10 @@
 
 #include <gtest/gtest.h>
 
+#ifdef WER_ENABLED
+#   include <wer.hpp>
+#endif
+
 #include <fastrtps/rtps/RTPSDomain.h>
 #include <fastrtps/xmlparser/XMLProfileManager.h>
 #include <fastdds/dds/log/Log.hpp>

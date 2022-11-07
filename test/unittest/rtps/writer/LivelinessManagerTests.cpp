@@ -15,13 +15,16 @@
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
 
+#ifdef WER_ENABLED
+#   include <wer.hpp>
+#endif
+
 #include <fastrtps/rtps/writer/LivelinessManager.h>
 #include <fastrtps/rtps/resources/ResourceEvent.h>
 #include <fastrtps/rtps/common/Time_t.h>
 #include <asio.hpp>
 #include <thread>
 #include <condition_variable>
-#include <gtest/gtest.h>
 
 class LivelinessManagerTests : public ::testing::Test
 {

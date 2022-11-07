@@ -34,7 +34,7 @@ target_compile_definitions(DDSSimpleCommunicationDynamicPublisher PRIVATE
     $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
     $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
     )
-target_link_libraries(DDSSimpleCommunicationDynamicPublisher fastrtps fastcdr foonathan_memory ${CMAKE_DL_LIBS})
+target_link_libraries(DDSSimpleCommunicationDynamicPublisher fastrtps fastcdr foonathan_memory ${CMAKE_DL_LIBS} $<TARGET_NAME_IF_EXISTS:fastdds::wer>)
 
 set(DDS_SUBSCRIBER_DYNAMIC_SOURCE
     SubscriberDynamic.cpp
@@ -44,7 +44,7 @@ target_compile_definitions(DDSSimpleCommunicationDynamicSubscriber PRIVATE
     $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
     $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
     )
-target_link_libraries(DDSSimpleCommunicationDynamicSubscriber fastrtps fastcdr foonathan_memory ${CMAKE_DL_LIBS})
+target_link_libraries(DDSSimpleCommunicationDynamicSubscriber fastrtps fastcdr foonathan_memory ${CMAKE_DL_LIBS} $<TARGET_NAME_IF_EXISTS:fastdds::wer>)
 
 # Standar tests
 set(COMMON_SOURCE ${PROJECT_SOURCE_DIR}/test/blackbox/types/HelloWorld.cxx
@@ -63,7 +63,7 @@ target_compile_definitions(DDSCommunicationPublisher PRIVATE
     $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
     )
 target_include_directories(DDSCommunicationPublisher PRIVATE ${PROJECT_SOURCE_DIR}/test/blackbox)
-target_link_libraries(DDSCommunicationPublisher fastrtps fastcdr foonathan_memory ${CMAKE_DL_LIBS})
+target_link_libraries(DDSCommunicationPublisher fastrtps fastcdr foonathan_memory ${CMAKE_DL_LIBS} $<TARGET_NAME_IF_EXISTS:fastdds::wer>)
 
 set(DDS_SUBSCRIBER_SOURCE ${COMMON_SOURCE}
     SubscriberModule.cpp
@@ -75,7 +75,7 @@ target_compile_definitions(DDSCommunicationSubscriber PRIVATE
     $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
     )
 target_include_directories(DDSCommunicationSubscriber PRIVATE ${PROJECT_SOURCE_DIR}/test/blackbox)
-target_link_libraries(DDSCommunicationSubscriber fastrtps fastcdr foonathan_memory ${CMAKE_DL_LIBS})
+target_link_libraries(DDSCommunicationSubscriber fastrtps fastcdr foonathan_memory ${CMAKE_DL_LIBS} $<TARGET_NAME_IF_EXISTS:fastdds::wer>)
 
 set(DDS_PUBSUB_SOURCE ${COMMON_SOURCE}
     PublisherModule.cpp
@@ -88,7 +88,7 @@ target_compile_definitions(DDSCommunicationPubSub PRIVATE
     $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
     )
 target_include_directories(DDSCommunicationPubSub PRIVATE ${PROJECT_SOURCE_DIR}/test/blackbox)
-target_link_libraries(DDSCommunicationPubSub fastrtps fastcdr foonathan_memory ${CMAKE_DL_LIBS})
+target_link_libraries(DDSCommunicationPubSub fastrtps fastcdr foonathan_memory ${CMAKE_DL_LIBS} $<TARGET_NAME_IF_EXISTS:fastdds::wer>)
 
 ###############################################################################
 # Necessary files

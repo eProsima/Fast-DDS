@@ -17,6 +17,10 @@
 #include <vector>
 
 #include <gtest/gtest.h>
+
+#ifdef WER_ENABLED
+#   include <wer.hpp>
+#endif
 #include <gmock/gmock.h>
 
 #include <fastrtps/rtps/history/ReaderHistory.h>
