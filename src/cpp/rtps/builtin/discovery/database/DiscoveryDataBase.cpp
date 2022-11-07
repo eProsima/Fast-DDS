@@ -2599,6 +2599,8 @@ void DiscoveryDataBase::persistence_enable(
 bool DiscoveryDataBase::is_participant_local(
         const eprosima::fastrtps::rtps::GuidPrefix_t& participant_prefix)
 {
+    std::unique_lock<std::recursive_mutex> lock(mutex_);
+
     auto pit = participants_.find(participant_prefix);
     if (pit != participants_.end())
     {
