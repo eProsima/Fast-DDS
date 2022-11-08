@@ -108,9 +108,30 @@ public:
             const DomainParticipantQos& qos);
 
     ReturnCode_t set_listener(
-            DomainParticipantListener* listener)
+            DomainParticipantListener* listener,
+            const std::chrono::seconds timeout = std::chrono::seconds::zero())
     {
-        std::lock_guard<std::mutex> _(mtx_gs_);
+        std::unique_lock<std::mutex> lock(mtx_gs_);
+        if (timeout == std::chrono::seconds::zero())
+        {
+            cv_gs_.wait(lock, [this]
+                    {
+                        // Proceed if no callbacks are being executed
+                        return !(rtps_listener_.callback_counter_ > 0);
+                    });
+        }
+        else
+        {
+            if (!cv_gs_.wait_for(lock, timeout, [this]
+                    {
+                        // Proceed if no callbacks are being executed
+                        return !(rtps_listener_.callback_counter_ > 0);
+                    }))
+            {
+                return ReturnCode_t::RETCODE_ERROR;
+            }
+        }
+        rtps_listener_.callback_counter_ = (listener == nullptr) ? -1 : 0;
         listener_ = listener;
         return ReturnCode_t::RETCODE_OK;
     }
@@ -513,6 +534,9 @@ protected:
     //! getter/setter mutex
     mutable std::mutex mtx_gs_;
 
+    //! getter/setter condition variable
+    std::condition_variable cv_gs_;
+
     //!Publisher maps
     std::map<Publisher*, PublisherImpl*> publishers_;
     std::map<InstanceHandle_t, Publisher*> publishers_by_handle_;
@@ -561,6 +585,53 @@ protected:
 
     class MyRTPSParticipantListener : public fastrtps::rtps::RTPSParticipantListener
     {
+        struct Sentry
+        {
+            Sentry(
+                    MyRTPSParticipantListener* listener)
+                : listener_(listener)
+                , on_guard_(false)
+            {
+                if (listener_ != nullptr && listener_->participant_ != nullptr)
+                {
+                    std::lock_guard<std::mutex> _(listener_->participant_->mtx_gs_);
+                    if (listener_->callback_counter_ >= 0)
+                    {
+                        ++listener_->callback_counter_;
+                        on_guard_ = true;
+                    }
+                }
+            }
+
+            ~Sentry()
+            {
+                if (on_guard_ && listener_ != nullptr && listener_->participant_ != nullptr)
+                {
+                    bool notify = false;
+                    {
+                        std::lock_guard<std::mutex> lock(listener_->participant_->mtx_gs_);
+                        --listener_->callback_counter_;
+                        if (!listener_->callback_counter_)
+                        {
+                            notify = true;
+                        }
+                    }
+                    if (notify)
+                    {
+                        listener_->participant_->cv_gs_.notify_all();
+                    }
+                }
+            }
+
+            operator bool () const
+            {
+                return on_guard_;
+            }
+
+            MyRTPSParticipantListener* listener_ = nullptr;
+            bool on_guard_;
+        };
+
     public:
 
         MyRTPSParticipantListener(
@@ -611,6 +682,7 @@ protected:
                 const fastrtps::types::TypeInformation& type_information) override;
 
         DomainParticipantImpl* participant_;
+        int callback_counter_ = 0;
 
     }
     rtps_listener_;
