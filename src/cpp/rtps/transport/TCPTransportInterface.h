@@ -22,6 +22,7 @@
 #include <rtps/transport/TCPChannelResourceBasic.h>
 #include <rtps/transport/TCPAcceptorBasic.h>
 #if TLS_FOUND
+#define OPENSSL_API_COMPAT 10101
 #include <rtps/transport/TCPAcceptorSecure.h>
 #include <asio/ssl.hpp>
 #endif // if TLS_FOUND
