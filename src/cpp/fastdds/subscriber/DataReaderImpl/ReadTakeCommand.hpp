@@ -65,7 +65,8 @@ struct ReadTakeCommand
             int32_t max_samples,
             const StateFilter& states,
             const history_type::instance_info& instance,
-            bool single_instance = false)
+            bool single_instance,
+            bool loop_for_data)
         : type_(reader.type_)
         , loan_manager_(reader.loan_manager_)
         , history_(reader.history_)
@@ -79,6 +80,7 @@ struct ReadTakeCommand
         , instance_(instance)
         , handle_(instance->first)
         , single_instance_(single_instance)
+        , loop_for_data_(loop_for_data)
     {
         assert(0 <= remaining_samples_);
 
@@ -195,7 +197,17 @@ struct ReadTakeCommand
             }
         }
 
-        next_instance();
+        // Check if further iteration is required
+        if (single_instance_ && (!loop_for_data_ || (loop_for_data_ && ret_val)))
+        {
+            finished_ = true;
+            history_.check_and_remove_instance(instance_);
+        }
+        else
+        {
+            next_instance();
+        }
+
         return ret_val;
     }
 
@@ -259,6 +271,7 @@ private:
     history_type::instance_info instance_;
     InstanceHandle_t handle_;
     bool single_instance_;
+    bool loop_for_data_;
 
     bool finished_ = false;
     ReturnCode_t return_value_ = ReturnCode_t::RETCODE_NO_DATA;
@@ -269,11 +282,13 @@ private:
     {
         while (!is_current_instance_valid())
         {
-            if (!next_instance())
+            if ((single_instance_ && !loop_for_data_) || !next_instance())
             {
+                finished_ = true;
                 return false;
             }
         }
+
         return true;
     }
 
@@ -288,11 +303,6 @@ private:
     bool next_instance()
     {
         history_.check_and_remove_instance(instance_);
-        if (single_instance_)
-        {
-            finished_ = true;
-            return false;
-        }
 
         auto result = history_.next_available_instance_nts(handle_, instance_);
         if (!result.first)

@@ -12,9 +12,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#include <array>
 #include <cassert>
+#include <chrono>
 #include <forward_list>
+#include <iostream>
 #include <thread>
+#include <type_traits>
 
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
@@ -1988,6 +1992,177 @@ TEST_F(DataReaderTests, sample_info)
 
     // Run test again
     state.run_test(data_reader_, steps);
+}
+
+struct arraybuf : public std::streambuf
+{
+    template <std::size_t Size> arraybuf(
+            std::array<char, Size>& array)
+    {
+        this->setp(array.data(), array.data() + Size - 1);
+        array.fill(0);
+    }
+
+};
+
+struct oarraystream : virtual arraybuf, std::ostream
+{
+    template <std::size_t Size> oarraystream(
+            std::array<char, Size>& array)
+        : arraybuf(array)
+        , std::ostream(this)
+    {
+    }
+
+};
+
+/*
+ *  This test deals with issues covered on PR #3044.
+ *  It checks (read|take)_next_instance methods iterate properly over all
+ *  instances in the history.
+ */
+TEST_F(DataReaderTests, check_read_take_iteration)
+{
+    const std::size_t max_handles = 100;
+    std::array<InstanceHandle_t, max_handles> handles;
+    auto loop_timeout = std::chrono::seconds(5);
+
+    // Allocate resources
+    DataReaderQos reader_qos;
+    DataWriterQos writer_qos;
+    SubscriberQos subscriber_qos = SUBSCRIBER_QOS_DEFAULT;
+    PublisherQos publisher_qos = PUBLISHER_QOS_DEFAULT;
+
+    reader_qos.history().kind = KEEP_LAST_HISTORY_QOS;
+    reader_qos.history().depth = 1;
+    writer_qos.history(reader_qos.history());
+
+    reader_qos.durability().kind = TRANSIENT_LOCAL_DURABILITY_QOS;
+    writer_qos.durability(reader_qos.durability());
+
+    reader_qos.resource_limits().max_instances = max_handles;
+    reader_qos.resource_limits().max_samples_per_instance = 1;
+    writer_qos.resource_limits(reader_qos.resource_limits());
+
+    create_entities(nullptr, reader_qos, subscriber_qos, writer_qos, publisher_qos);
+
+    {
+        // Populate the test handles and write on all instances
+        FooType data;
+        for (uint32_t i = 0; i < max_handles; ++i )
+        {
+            // calculate key
+            data.index(i);
+            type_.get_key(&data, &handles[i]);
+
+            // write the index as message
+            oarraystream out(data.message());
+            out << i;
+
+            EXPECT_EQ(data_writer_->write(&data, handles[i]), ReturnCode_t::RETCODE_OK);
+        }
+    }
+
+    // Loop till all samples are received
+    std::size_t received = 0;
+    auto start = std::chrono::system_clock::now();
+    bool timeout = false;
+
+    do
+    {
+        FooSeq data;
+        SampleInfoSeq infos;
+
+        auto ret = data_reader_->read(data, infos, max_handles,
+                        NOT_READ_SAMPLE_STATE,
+                        NEW_VIEW_STATE,
+                        ALIVE_INSTANCE_STATE);
+
+        if ( ret == ReturnCode_t::RETCODE_OK)
+        {
+            received += data.length();
+            EXPECT_EQ(ReturnCode_t::RETCODE_OK, data_reader_->return_loan(data, infos));
+        }
+        else
+        {
+            timeout = (std::chrono::system_clock::now() - start) < loop_timeout;
+            std::this_thread::yield();
+        }
+
+    }
+    while ( received < max_handles && !timeout);
+
+    EXPECT_FALSE(timeout);
+    received = 0;
+
+    // Take only the even handles
+    for (typename std::remove_const<decltype(max_handles)>::type i = 0; i < max_handles; i += 2, ++received )
+    {
+        FooSeq data;
+        SampleInfoSeq infos;
+
+        EXPECT_EQ(data_reader_->take_instance(data, infos, 1, handles[i]),
+                ReturnCode_t::RETCODE_OK);
+
+        EXPECT_EQ(i, std::atoi(data[0].message().data()));
+
+        EXPECT_EQ(ReturnCode_t::RETCODE_OK, data_reader_->return_loan(data, infos));
+    }
+
+    // Iterate over available instances with data and check all are retrieved
+    auto pending = received;
+    InstanceHandle_t handle = HANDLE_NIL;
+    ReturnCode_t ret;
+
+    do
+    {
+        FooSeq data;
+        SampleInfoSeq infos;
+
+        ret = data_reader_->read_next_instance(
+            data,
+            infos,
+            1,
+            handle);
+
+        if (!!ret)
+        {
+            received += data.length();
+            handle = infos[0].instance_handle;
+            EXPECT_TRUE(std::atoi(data[0].message().data()) % 2 == 1);
+            EXPECT_EQ(ReturnCode_t::RETCODE_OK, data_reader_->return_loan(data, infos));
+        }
+    }
+    while (ret == ReturnCode_t::RETCODE_OK);
+
+    EXPECT_EQ(received, max_handles);
+
+    // Iterate over available instances and check all are removed
+    received = pending;
+    handle = HANDLE_NIL;
+
+    do
+    {
+        FooSeq data;
+        SampleInfoSeq infos;
+
+        ret = data_reader_->take_next_instance(
+            data,
+            infos,
+            1,
+            handle);
+
+        if (!!ret)
+        {
+            received += data.length();
+            handle = infos[0].instance_handle;
+            EXPECT_TRUE(std::atoi(data[0].message().data()) % 2 == 1);
+            EXPECT_EQ(ReturnCode_t::RETCODE_OK, data_reader_->return_loan(data, infos));
+        }
+    }
+    while (ret == ReturnCode_t::RETCODE_OK);
+
+    EXPECT_EQ(received, max_handles);
 }
 
 /*

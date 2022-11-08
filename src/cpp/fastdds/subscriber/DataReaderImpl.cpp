@@ -530,7 +530,16 @@ ReturnCode_t DataReaderImpl::read_or_take(
     }
 
     detail::StateFilter states = { sample_states, view_states, instance_states };
-    detail::ReadTakeCommand cmd(*this, data_values, sample_infos, max_samples, states, it.second, single_instance);
+    detail::ReadTakeCommand cmd(
+        *this,
+        data_values,
+        sample_infos,
+        max_samples,
+        states,
+        it.second,
+        single_instance,
+        !exact_instance);
+
     while (!cmd.is_finished())
     {
         cmd.add_instance(should_take);
@@ -711,7 +720,7 @@ ReturnCode_t DataReaderImpl::read_or_take_next_sample(
     StackAllocatedSequence<SampleInfo, 1> sample_infos;
 
     detail::StateFilter states{ NOT_READ_SAMPLE_STATE, ANY_VIEW_STATE, ANY_INSTANCE_STATE };
-    detail::ReadTakeCommand cmd(*this, data_values, sample_infos, 1, states, it.second, false);
+    detail::ReadTakeCommand cmd(*this, data_values, sample_infos, 1, states, it.second, false, false);
     while (!cmd.is_finished())
     {
         cmd.add_instance(should_take);
