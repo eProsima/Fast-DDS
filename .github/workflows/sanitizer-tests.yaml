@@ -64,9 +64,8 @@ jobs:
       - name: Report ASAN errors
         if: always()
         run: |
-          echo -n "**ASAN Errors**: " >> $GITHUB_STEP_SUMMARY
-          echo $(sed 's/==.*==ERROR:/==.*==ERROR:\n/g' log/latest_test/fastrtps/stdout_stderr.log | grep -c "==.*==ERROR:") >> $GITHUB_STEP_SUMMARY
-          python3 src/Fast-DDS/.github/workflows/utils/log_parser.py
+          bash src/Fast-DDS/.github/workflows/utils/specific_errors_filter.sh "==ERROR:" log/latest_test/fastrtps/stdout_stderr.log _tmp_specific_error_file.log
+          python3 src/Fast-DDS/.github/workflows/utils/log_parser.py --log-file log/latest_test/fastrtps/stdout_stderr.log --specific-error-file _tmp_specific_error_file.log --output-file $GITHUB_STEP_SUMMARY --sanitizer=asan
 
 
   asan-discovery-server-test:
@@ -129,9 +128,9 @@ jobs:
       - name: Report ASAN errors
         if: always()
         run: |
-          echo -n "**ASAN Errors**: " >> $GITHUB_STEP_SUMMARY
-          echo $(sed 's/==.*==ERROR:/==.*==ERROR:\n/g' log/latest_test/discovery-server/stdout_stderr.log | grep -c "==.*==ERROR:") >> $GITHUB_STEP_SUMMARY
-          python3 src/Fast-DDS/.github/workflows/utils/log_parser.py
+          bash src/Fast-DDS/.github/workflows/utils/specific_errors_filter.sh "==ERROR:" log/latest_test/discovery-server/stdout_stderr.log _tmp_specific_error_file.log
+          python3 src/Fast-DDS/.github/workflows/utils/log_parser.py --log-file log/latest_test/discovery-server/stdout_stderr.log --specific-error-file _tmp_specific_error_file.log --output-file $GITHUB_STEP_SUMMARY --sanitizer=asan
+
 
   tsan-test:
 
@@ -186,9 +185,8 @@ jobs:
       - name: Report TSAN errors
         if: always()
         run: |
-          echo -n "**TSAN Errors**: " >> $GITHUB_STEP_SUMMARY
-          echo $(sed 's/WARNING: ThreadSanitizer:/WARNING: ThreadSanitizer:\n/g' log/latest_test/fastrtps/stdout_stderr.log | grep -c "WARNING: ThreadSanitizer:") >> $GITHUB_STEP_SUMMARY
-          python3 src/Fast-DDS/.github/workflows/utils/log_parser.py
+          bash src/Fast-DDS/.github/workflows/utils/specific_errors_filter.sh "WARNING: ThreadSanitizer:" log/latest_test/fastrtps/stdout_stderr.log _tmp_specific_error_file.log
+          python3 src/Fast-DDS/.github/workflows/utils/log_parser.py --log-file log/latest_test/fastrtps/stdout_stderr.log --specific-error-file _tmp_specific_error_file.log --output-file $GITHUB_STEP_SUMMARY --sanitizer=asan
 
 
   tsan-discovery-server-test:
@@ -251,6 +249,5 @@ jobs:
       - name: Report TSAN errors
         if: always()
         run: |
-          echo -n "**TSAN Errors**: " >> $GITHUB_STEP_SUMMARY
-          echo $(sed 's/WARNING: ThreadSanitizer:/WARNING: ThreadSanitizer:\n/g' log/latest_test/discovery-server/stdout_stderr.log | grep -c "WARNING: ThreadSanitizer:") >> $GITHUB_STEP_SUMMARY
-          python3 src/Fast-DDS/.github/workflows/utils/log_parser.py
+          bash src/Fast-DDS/.github/workflows/utils/specific_errors_filter.sh "WARNING: ThreadSanitizer:" log/latest_test/discovery-server/stdout_stderr.log _tmp_specific_error_file.log
+          python3 src/Fast-DDS/.github/workflows/utils/log_parser.py --log-file log/latest_test/discovery-server/stdout_stderr.log --specific-error-file _tmp_specific_error_file.log --output-file $GITHUB_STEP_SUMMARY --sanitizer=tsan
