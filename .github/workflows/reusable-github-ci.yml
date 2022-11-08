@@ -533,7 +533,7 @@ jobs:
 
              # upload too the pdb files associated
              # 1. To the library
-             ls -Path ./install/* -R -Filter *.pdb | Move-Item -Destination $dumpfolder
+             ls -Path ./build/* -R -Filter fast*.pdb | Move-Item -Destination $dumpfolder
              # 2. To each failed test
              $test_bin = ((ls -Path $dumpfolder -Filter *.dmp).name |
                             sls  "(?<file>[^\(^\)^\.]+).*\.\d+\.dmp").Matches |
