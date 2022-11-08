@@ -111,6 +111,43 @@ TEST(TimedEvent, Event_RestartEvents)
 }
 
 /*!
+ * @fn TEST(TimedEvent, Event_RecreateEvents)
+ * @brief This test checks the correct behavior of recreating events.
+ * First it is checked that recreating and restarting an event multiple times is possible.
+ * The event is then recreated (blocking cancel), and an object shared with the callback is modified in the main thread.
+ * A data race would be reported by thread sanitizer if cancelling (\c cancel_timer) the event instead.
+ */
+TEST(TimedEvent, Event_RecreateEvents)
+{
+    int num = 0;
+    auto callback = [&num]() -> void
+            {
+                std::this_thread::sleep_for(std::chrono::milliseconds(1));
+                num++;
+            };
+
+    MockEvent event(*env->service_, 100, false, callback);
+
+    for (int i = 0; i < 10; ++i)
+    {
+        event.event().recreate_timer();
+        event.event().restart_timer();
+        event.wait();
+    }
+
+    // Recreate timer (blocking cancel) and modify object shared with callback
+    // A data race would be reported by thread sanitizer if using cancel_timer instead
+    event.event().recreate_timer();
+    num = 10;
+
+    ASSERT_FALSE(event.wait(120));
+
+    int successed = event.successed_.load(std::memory_order_relaxed);
+
+    ASSERT_EQ(successed, 10);
+}
+
+/*!
  * @fn TEST(TimedEvent, EventOnSuccessAutoDestruc_QuickCancelEvents)
  * @brief This test checks the event is not destroyed when it is canceled.
  * This test launches an event, configured to destroy itself when the event is executed successfully,
