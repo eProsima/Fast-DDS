@@ -12,6 +12,8 @@ on:
 jobs:
 
   asan-test:
+    if: ${{ !(contains(github.event.pull_request.labels.*.name, 'no-test') ||
+              contains(github.event.pull_request.labels.*.name, 'skip-ci')) }}
     runs-on: ubuntu-20.04
 
     steps:
