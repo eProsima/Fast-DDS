@@ -41,6 +41,7 @@ public:
     MOCK_METHOD0(restart_timer, void());
     MOCK_METHOD1(restart_timer, void(const std::chrono::steady_clock::time_point& timeout));
     MOCK_METHOD0(cancel_timer, void());
+    MOCK_METHOD0(recreate_timer, void());
     MOCK_METHOD1(update_interval, bool(const Duration_t&));
     MOCK_METHOD1(update_interval_millisec, bool(double));
 };
