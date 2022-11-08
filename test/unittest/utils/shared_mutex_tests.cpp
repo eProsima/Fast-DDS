@@ -12,15 +12,13 @@
 #include <gtest/gtest.h>
 
 using namespace std;
+using namespace std::chrono;
 using namespace eprosima;
 
-template<class T>
+template<typename T>
 class SharedMutexTest : public testing::Test
 {
-
 public:
-
-    using Mutex = T;
 
     void join_and_clear(
             vector<thread>& threads)
@@ -47,7 +45,7 @@ TYPED_TEST(SharedMutexTest, test_one_writer)
 {
     // One simultaneous writer.
     atomic<int> atom(-1);
-    Mutex mut;
+    TypeParam mut;
     vector<thread> threads;
 
     for (int i = 0; i < 4; ++i)
@@ -57,15 +55,15 @@ TYPED_TEST(SharedMutexTest, test_one_writer)
                     while (atom == -1)
                     {
                     }
-                    lock_guard<Mutex> ExclusiveLock(mut);
+                    lock_guard<TypeParam> ExclusiveLock(mut);
                     const int val = ++atom;
-                    this_thread::sleep_for(25ms); // Not a timing assumption.
+                    this_thread::sleep_for(milliseconds(25)); // Not a timing assumption.
                     ASSERT_EQ(atom, val);
                 });
     }
 
     ASSERT_EQ(atom.exchange(0), -1);
-    join_and_clear(threads);
+    this->join_and_clear(threads);
     ASSERT_EQ(atom, 4);
 }
 
@@ -73,7 +71,7 @@ TYPED_TEST(SharedMutexTest, test_multiple_readers)
 {
     // Many simultaneous readers.
     atomic<int> atom(-1);
-    Mutex mut;
+    TypeParam mut;
     vector<thread> threads;
 
     for (int i = 0; i < 4; ++i)
@@ -83,7 +81,7 @@ TYPED_TEST(SharedMutexTest, test_multiple_readers)
                     while (atom == -1)
                     {
                     }
-                    shared_lock<Mutex> SharedLock(mut);
+                    shared_lock<TypeParam> SharedLock(mut);
                     ++atom;
                     while (atom < 4)
                     {
@@ -92,7 +90,7 @@ TYPED_TEST(SharedMutexTest, test_multiple_readers)
     }
 
     ASSERT_EQ(atom.exchange(0), -1);
-    join_and_clear(threads);
+    this->join_and_clear(threads);
     ASSERT_EQ(atom, 4);
 }
 
@@ -100,7 +98,7 @@ TYPED_TEST(SharedMutexTest, test_writer_blocking_readers)
 {
     // One writer blocking many readers.
     atomic<int> atom(-4);
-    Mutex mut;
+    TypeParam mut;
     vector<thread> threads;
 
     threads.emplace_back([&atom, &mut]
@@ -108,9 +106,9 @@ TYPED_TEST(SharedMutexTest, test_writer_blocking_readers)
                 while (atom < 0)
                 {
                 }
-                lock_guard<Mutex> ExclusiveLock(mut);
+                lock_guard<TypeParam> ExclusiveLock(mut);
                 ASSERT_EQ(atom.exchange(1000), 0);
-                this_thread::sleep_for(50ms); // Not a timing assumption.
+                this_thread::sleep_for(milliseconds(50)); // Not a timing assumption.
                 ASSERT_EQ(atom.exchange(1729), 1000);
             });
 
@@ -122,12 +120,12 @@ TYPED_TEST(SharedMutexTest, test_writer_blocking_readers)
                     while (atom < 1000)
                     {
                     }
-                    shared_lock<Mutex> SharedLock(mut);
+                    shared_lock<TypeParam> SharedLock(mut);
                     ASSERT_EQ(atom, 1729);
                 });
     }
 
-    join_and_clear(threads);
+    this->join_and_clear(threads);
     ASSERT_EQ(atom, 1729);
 }
 
@@ -135,19 +133,19 @@ TYPED_TEST(SharedMutexTest, test_readers_blocking_writer)
 {
     // Many readers blocking one writer.
     atomic<int> atom(-5);
-    Mutex mut;
+    TypeParam mut;
     vector<thread> threads;
 
     for (int i = 0; i < 4; ++i)
     {
         threads.emplace_back([&atom, &mut]
                 {
-                    shared_lock<Mutex> SharedLock(mut);
+                    shared_lock<TypeParam> SharedLock(mut);
                     ++atom;
                     while (atom < 0)
                     {
                     }
-                    this_thread::sleep_for(50ms); // Not a timing assumption.
+                    this_thread::sleep_for(milliseconds(50)); // Not a timing assumption.
                     atom += 10;
                 });
     }
@@ -158,32 +156,32 @@ TYPED_TEST(SharedMutexTest, test_readers_blocking_writer)
                 while (atom < 0)
                 {
                 }
-                lock_guard<Mutex> ExclusiveLock(mut);
+                lock_guard<TypeParam> ExclusiveLock(mut);
                 ASSERT_EQ(atom, 40);
             });
 
-    join_and_clear(threads);
+    this->join_and_clear(threads);
     ASSERT_EQ(atom, 40);
 }
 
 TYPED_TEST(SharedMutexTest, test_try_lock_and_try_lock_shared)
 {
     // Test try_lock() and try_lock_shared().
-    Mutex mut;
+    TypeParam mut;
 
     {
-        unique_lock<Mutex> MainExclusive(mut, try_to_lock);
+        unique_lock<TypeParam> MainExclusive(mut, try_to_lock);
         ASSERT_TRUE(MainExclusive.owns_lock());
 
         thread t([&mut]
                 {
                     {
-                        unique_lock<Mutex> ExclusiveLock(mut, try_to_lock);
+                        unique_lock<TypeParam> ExclusiveLock(mut, try_to_lock);
                         ASSERT_FALSE(ExclusiveLock.owns_lock());
                     }
 
                     {
-                        shared_lock<Mutex> SharedLock(mut, try_to_lock);
+                        shared_lock<TypeParam> SharedLock(mut, try_to_lock);
                         ASSERT_FALSE(SharedLock.owns_lock());
                     }
                 });
@@ -192,18 +190,18 @@ TYPED_TEST(SharedMutexTest, test_try_lock_and_try_lock_shared)
     }
 
     {
-        shared_lock<Mutex> MainShared(mut, try_to_lock);
+        shared_lock<TypeParam> MainShared(mut, try_to_lock);
         ASSERT_TRUE(MainShared.owns_lock());
 
         thread t([&mut]
                 {
                     {
-                        unique_lock<Mutex> ExclusiveLock(mut, try_to_lock);
+                        unique_lock<TypeParam> ExclusiveLock(mut, try_to_lock);
                         ASSERT_FALSE(ExclusiveLock.owns_lock());
                     }
 
                     {
-                        shared_lock<Mutex> SharedLock(mut, try_to_lock);
+                        shared_lock<TypeParam> SharedLock(mut, try_to_lock);
                         ASSERT_TRUE(SharedLock.owns_lock());
                     }
                 });
