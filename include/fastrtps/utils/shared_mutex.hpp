@@ -32,27 +32,6 @@
 #ifndef _UTILS_SHARED_MUTEX_HPP_
 #define _UTILS_SHARED_MUTEX_HPP_
 
-#ifndef USE_THIRDPARTY_SHARED_MUTEX
-#   if defined(_MSC_VER) && _MSVC_LANG < 202302L
-#       pragma message("warning: USE_THIRDPARTY_SHARED_MUTEX not defined. By default use framework version.")
-#   else
-#       warning "USE_THIRDPARTY_SHARED_MUTEX not defined. By default use framework version."
-#   endif // if defined(_MSC_VER) && _MSVC_LANG < 202302L
-#   define USE_THIRDPARTY_SHARED_MUTEX 0
-#endif // ifndef USE_THIRDPARTY_SHARED_MUTEX
-
-#if defined(__has_include) && __has_include(<version>)
-#   include <version>
-#endif // if defined(__has_include) && __has_include(<version>)
-
-// Detect if the share_mutex feature is available
-#if defined(__has_include) && __has_include(<version>) && !defined(__cpp_lib_shared_mutex) || \
-    /* allow users to ignore shared_mutex framework implementation */ \
-    (~USE_THIRDPARTY_SHARED_MUTEX + 1) || \
-    /* deprecated procedure if the good one is not available*/ \
-    ( !(defined(__has_include) && __has_include(<version>)) && \
-    !(defined(HAVE_CXX17) && HAVE_CXX17) &&  __cplusplus < 201703 )
-
 #include <climits>
 #include <condition_variable>
 #include <map>
@@ -316,55 +295,19 @@ public:
 };
 
 } // namespace detail
+} // namespace eprosima
 
-/*
-    Fast-DDS defaults to PTHREAD_RWLOCK_PREFER_READER_NP for two main reasons:
+#if defined(__has_include) && __has_include(<version>)
+#   include <version>
+#endif // if defined(__has_include) && __has_include(<version>)
 
-    - It allows reader side recursiveness.  If we have two threads (T1, T2) and
-      called S a shared lock and E and exclusive one.
+// Detect if the shared_lock feature is available
+#if defined(__has_include) && __has_include(<version>) && !defined(__cpp_lib_shared_mutex) || \
+    /* deprecated procedure if the good one is not available*/ \
+    ( !(defined(__has_include) && __has_include(<version>)) && \
+    !(defined(HAVE_CXX17) && HAVE_CXX17) &&  __cplusplus < 201703 )
 
-        T1: S -> S
-        T2:   E
-
-      PTHREAD_RWLOCK_PREFER_READER_NP will never deadlock. The S locks are not
-      influenced by the E locks.
-
-      PTHREAD_RWLOCK_PREFER_WRITER_NONRECURSIVE_NP will deadlock.  before T1
-      takes S twice. That happens because:
- + T1's second S will wait for E (writer is prioritized)
- + E will wait for T1's first S lock (writer needs atomic access)
- + T1's first S cannot unlock because is blocked in the second S.
-
-      Thus, shared_mutex<PTHREAD_RWLOCK_PREFER_WRITER_NONRECURSIVE_NP> is
-      non-recursive.
-
-    - It prevents ABBA deadlocks with other mutexes. If we have three threads
-      (Ti) and P is an ordinary mutex:
-
-        T1: P -> S
-        T2: S -> P
-        T3:   E
-
-      PTHREAD_RWLOCK_PREFER_READER_NP will never deadlock. The S locks are not
-      influenced by the E locks. Starvation issues can be managed in the user
-      code.
-
-      PTHREAD_RWLOCK_PREFER_WRITER_NONRECURSIVE_NP will deadlock if T3 takes E
-      before T1 takes S. That happens because:
- + T1's S will wait for E (writer is prioritized)
- + E will wait for T2's S lock (writer needs atomic access)
- + T2's S cannot unlock because is blocked in P (owned by T1).
-
-      Thus, shared_mutex<PTHREAD_RWLOCK_PREFER_WRITER_NONRECURSIVE_NP> must be
-      managed like an ordinary mutex in deadlock sense.
- */
-
-#ifdef NDEBUG
-using shared_mutex = detail::shared_mutex<detail::shared_mutex_type::PTHREAD_RWLOCK_PREFER_READER_NP>;
-#else
-using shared_mutex =
-        detail::debug_wrapper<detail::shared_mutex<detail::shared_mutex_type::PTHREAD_RWLOCK_PREFER_READER_NP>>;
-#endif // NDEBUG
+namespace eprosima {
 
 template <class Mutex>
 class shared_lock
@@ -620,12 +563,93 @@ swap(
 
 namespace eprosima {
 
-using std::shared_mutex;
 using std::shared_lock;
 using std::swap;
 
 } //namespace eprosima
 
-#endif // if (__cplusplus < 201402) || (defined(_MSC_VER) && _MSC_VER < 1900 )
+#endif // shared_lock selection
+
+#ifndef USE_THIRDPARTY_SHARED_MUTEX
+#   if defined(_MSC_VER) && _MSVC_LANG < 202302L
+#       pragma message("warning: USE_THIRDPARTY_SHARED_MUTEX not defined. By default use framework version.")
+#   else
+#       warning "USE_THIRDPARTY_SHARED_MUTEX not defined. By default use framework version."
+#   endif // if defined(_MSC_VER) && _MSVC_LANG < 202302L
+#   define USE_THIRDPARTY_SHARED_MUTEX 0
+#endif // ifndef USE_THIRDPARTY_SHARED_MUTEX
+
+// Detect if the share_mutex feature is available or if the user forces it
+#if defined(__has_include) && __has_include(<version>) && !defined(__cpp_lib_shared_mutex) || \
+    /* allow users to ignore shared_mutex framework implementation */ \
+    (~USE_THIRDPARTY_SHARED_MUTEX + 1) || \
+    /* deprecated procedure if the good one is not available*/ \
+    ( !(defined(__has_include) && __has_include(<version>)) && \
+    !(defined(HAVE_CXX17) && HAVE_CXX17) &&  __cplusplus < 201703 )
+
+/*
+    Fast-DDS defaults to PTHREAD_RWLOCK_PREFER_READER_NP for two main reasons:
+
+    - It allows reader side recursiveness.  If we have two threads (T1, T2) and
+      called S a shared lock and E and exclusive one.
+
+        T1: S -> S
+        T2:   E
+
+      PTHREAD_RWLOCK_PREFER_READER_NP will never deadlock. The S locks are not
+      influenced by the E locks.
+
+      PTHREAD_RWLOCK_PREFER_WRITER_NONRECURSIVE_NP will deadlock.  before T1
+      takes S twice. That happens because:
+ + T1's second S will wait for E (writer is prioritized)
+ + E will wait for T1's first S lock (writer needs atomic access)
+ + T1's first S cannot unlock because is blocked in the second S.
+
+      Thus, shared_mutex<PTHREAD_RWLOCK_PREFER_WRITER_NONRECURSIVE_NP> is
+      non-recursive.
+
+    - It prevents ABBA deadlocks with other mutexes. If we have three threads
+      (Ti) and P is an ordinary mutex:
+
+        T1: P -> S
+        T2: S -> P
+        T3:   E
+
+      PTHREAD_RWLOCK_PREFER_READER_NP will never deadlock. The S locks are not
+      influenced by the E locks. Starvation issues can be managed in the user
+      code.
+
+      PTHREAD_RWLOCK_PREFER_WRITER_NONRECURSIVE_NP will deadlock if T3 takes E
+      before T1 takes S. That happens because:
+ + T1's S will wait for E (writer is prioritized)
+ + E will wait for T2's S lock (writer needs atomic access)
+ + T2's S cannot unlock because is blocked in P (owned by T1).
+
+      Thus, shared_mutex<PTHREAD_RWLOCK_PREFER_WRITER_NONRECURSIVE_NP> must be
+      managed like an ordinary mutex in deadlock sense.
+ */
+
+namespace eprosima {
+
+#ifdef NDEBUG
+using shared_mutex = detail::shared_mutex<detail::shared_mutex_type::PTHREAD_RWLOCK_PREFER_READER_NP>;
+#else
+using shared_mutex =
+        detail::debug_wrapper<detail::shared_mutex<detail::shared_mutex_type::PTHREAD_RWLOCK_PREFER_READER_NP>>;
+#endif // NDEBUG
+
+} //namespace eprosima
+
+#else // fallback to STL
+
+#include <shared_mutex>
+
+namespace eprosima {
+
+using std::shared_mutex;
+
+} //namespace eprosima
+
+#endif // shared_mutex selection
 
 #endif // _UTILS_SHARED_MUTEX_HPP_
