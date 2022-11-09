@@ -15,6 +15,24 @@ using namespace std;
 using namespace std::chrono;
 using namespace eprosima;
 
+template<class Mutex>
+detail::shared_mutex_type get_mutex_priority(
+        const Mutex& m);
+
+template<detail::shared_mutex_type mt>
+detail::shared_mutex_type get_mutex_priority(
+        const detail::shared_mutex<mt>&)
+{
+    return mt;
+}
+
+template<detail::shared_mutex_type mt>
+detail::shared_mutex_type get_mutex_priority(
+        const detail::debug_wrapper<detail::shared_mutex<mt>>&)
+{
+    return mt;
+}
+
 template<typename T>
 class SharedMutexTest : public testing::Test
 {
@@ -208,6 +226,48 @@ TYPED_TEST(SharedMutexTest, test_try_lock_and_try_lock_shared)
 
         t.join();
     }
+}
+
+TYPED_TEST(SharedMutexTest, test_mutex_priority)
+{
+    TypeParam sm;
+    atomic_bool mark = false;
+
+    // take first shared lock
+    sm.lock_shared();
+
+    // signal is taken
+    thread exclusive([&]()
+            {
+                mark = true;
+                lock_guard<TypeParam> guard(sm);
+            });
+
+    // Wait till the thread takes the lock
+    do
+    {
+        this_thread::sleep_for(chrono::milliseconds(100));
+    }
+    while (!mark);
+
+    // try take the second shared lock
+    bool success = sm.try_lock_shared();
+    if (success)
+    {
+        sm.unlock_shared();
+        ASSERT_EQ(get_mutex_priority(sm),
+                detail::shared_mutex_type::PTHREAD_RWLOCK_PREFER_READER_NP);
+    }
+    else
+    {
+        ASSERT_EQ(get_mutex_priority(sm),
+                detail::shared_mutex_type::PTHREAD_RWLOCK_PREFER_WRITER_NONRECURSIVE_NP);
+    }
+
+    // release first lock
+    sm.unlock_shared();
+    // wait for the main thread
+    exclusive.join();
 }
 
 int main(
