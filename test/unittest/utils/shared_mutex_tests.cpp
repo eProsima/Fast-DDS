@@ -231,15 +231,15 @@ TYPED_TEST(SharedMutexTest, test_try_lock_and_try_lock_shared)
 TYPED_TEST(SharedMutexTest, test_mutex_priority)
 {
     TypeParam sm;
-    atomic_bool mark = false;
+    atomic_bool mark{false};
 
     // take first shared lock
     sm.lock_shared();
 
     // signal is taken
-    thread exclusive([&]()
+    thread exclusive([&]
             {
-                mark = true;
+                mark.store(true);
                 lock_guard<TypeParam> guard(sm);
             });
 
