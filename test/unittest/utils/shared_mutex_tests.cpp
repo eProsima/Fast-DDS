@@ -57,7 +57,7 @@ using SharedMutexTypes = ::testing::Types<
     detail::debug_wrapper<detail::shared_mutex<detail::shared_mutex_type::PTHREAD_RWLOCK_PREFER_WRITER_NONRECURSIVE_NP>>,
     detail::debug_wrapper<detail::shared_mutex<detail::shared_mutex_type::PTHREAD_RWLOCK_PREFER_READER_NP>>>;
 
-TYPED_TEST_SUITE(SharedMutexTest, SharedMutexTypes);
+TYPED_TEST_SUITE(SharedMutexTest, SharedMutexTypes, );
 
 TYPED_TEST(SharedMutexTest, test_one_writer)
 {
