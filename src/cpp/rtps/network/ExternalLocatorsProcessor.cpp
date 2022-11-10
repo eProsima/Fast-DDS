@@ -24,6 +24,7 @@
 #include <fastdds/rtps/builtin/data/WriterProxyData.h>
 #include <fastdds/rtps/common/LocatorList.hpp>
 #include <fastdds/rtps/common/LocatorSelectorEntry.hpp>
+#include <fastrtps/utils/IPLocator.h>
 
 namespace eprosima {
 namespace fastdds {
@@ -235,6 +236,16 @@ static uint64_t heuristic(
         const ExternalLocators& external_locators,
         bool ignore_non_matching)
 {
+    if (LOCATOR_KIND_SHM == remote_locator.kind)
+    {
+        return heuristic_value(0, 0);
+    }
+
+    if (fastrtps::rtps::IPLocator::isLocal(remote_locator))
+    {
+        return heuristic_value(0, 1);
+    }
+
     for (const auto& externality : external_locators)
     {
         for (const auto& cost : externality.second)
