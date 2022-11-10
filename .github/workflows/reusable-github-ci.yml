@@ -375,6 +375,46 @@ jobs:
 
       - name: Prepare the colcon workspace for build
         run: |
+             # Check if git is behaving
+             $checker = @{
+                Begin = {$errores = 0}
+                Process = {if($_ -is [Management.Automation.ErrorRecord] -and $_.Exception.Message -match "^(error|fatal):") {++$errores} }
+                End = { $errores -eq 0 }
+             }
+
+             # Download Fast-DDS-CI repo and checkout current branch
+             git clone https://github.com/eProsima/Fast-DDS-CI.git Fast-DDS-CI
+             pushd Fast-DDS-CI
+             # locally master is main
+             git symbolic-ref refs/heads/master refs/heads/main
+
+             # selecting specific metas & depends
+             switch -regex ("${{ github.event_name }}")
+             {
+                "pull_request" {
+                     # try source branch
+                     if( git checkout ${{ github.head_ref }} 2>&1 | % @checker )
+                     { $choice = "taking metas & depends from the source branch" }
+                     # try destination branch
+                     elseif( git checkout ${{ github.base_ref }} 2>&1 | % @checker )
+                     { $choice = "taking metas & depends from the destination branch" }
+                }
+                default {
+                    # use the branch that was push or was selected for the workflow
+                     if( git checkout ${{ github.ref }} 2>&1 | % @checker )
+                     { $choice = "taking metas & depends from the pushed or selected branch" }
+                }
+             }
+
+             # On failure fallback to master
+             if(!$choice)
+             {
+                git checkout master *>$null
+                $choice = "fallback: taking metas & depends from master"
+             }
+             Write-Output $choice
+             popd
+
              # Get some convenient tools
              Install-Module -Name ConvertBase64Strings -Force -AllowClobber
              Import-Module -name ConvertBase64Strings -Prefix CI
@@ -454,9 +494,6 @@ jobs:
                                -StartInPath (pwd) -DevCmdArguments '/arch=x64 /host_arch=x64'
 
               $cmakeargs = "--cmake-args", $Env:BIN_ARCH, $Env:HOST_ARCH
-
-              # VS2022 may show warnings using C++11
-              $ErrorActionPreference='Continue'
 
               colcon build $buildargs --metas ci.meta --executor sequential $cmakeargs
            }
