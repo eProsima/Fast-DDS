@@ -90,7 +90,6 @@ public:
         return ret_val;
     }
 
-
 private:
 
     Host()
