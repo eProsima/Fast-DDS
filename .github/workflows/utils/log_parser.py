@@ -99,14 +99,35 @@ def failure_test_list(
     return failed_tests
 
 
+def _common_line_splitter(
+        line: str,
+        text_to_split_start: str,
+        text_to_split_end: str = None) -> str:
+    start_index = line.find(text_to_split_start)
+    if start_index == -1:
+        return line
+    elif text_to_split_end:
+        end_index = line.find(text_to_split_end)
+        if end_index != -1:
+            return line[(start_index
+                        + len(text_to_split_start)):
+                        end_index].strip()
+    return line[(start_index + len(text_to_split_start)):].strip()
+
+
 def asan_line_splitter(
         line: str):
-    return line[line.find('==ERROR: '):].strip()
+    return _common_line_splitter(
+        line=line,
+        text_to_split_start='==ERROR: ')
 
 
 def tsan_line_splitter(
         line: str):
-    return line[line.find('WARNING: ThreadSanitizer: '):line.find(' (pid=')].strip()
+    return _common_line_splitter(
+        line=line,
+        text_to_split_start='WARNING: ThreadSanitizer: ',
+        text_to_split_end=' (pid=')
 
 
 def common_specific_errors_list(
