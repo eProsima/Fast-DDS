@@ -661,9 +661,11 @@ void DiscoveryDataBase::create_new_participant_from_change_(
 {
     fastrtps::rtps::GUID_t change_guid = guid_from_change(ch);
 
-    DiscoveryParticipantInfo part(ch, server_guid_prefix_, change_data);
     std::pair<std::map<eprosima::fastrtps::rtps::GuidPrefix_t, DiscoveryParticipantInfo>::iterator, bool> ret =
-            participants_.insert(std::make_pair(change_guid.guidPrefix, std::move(part)));
+            participants_.insert(
+                std::make_pair(
+                    change_guid.guidPrefix,
+                    DiscoveryParticipantInfo(ch, server_guid_prefix_, change_data)));
 
     // If insert was successful
     if (ret.second)
@@ -1593,6 +1595,8 @@ fastrtps::rtps::CacheChange_t* DiscoveryDataBase::cache_change_own_participant()
 
 const std::vector<fastrtps::rtps::GuidPrefix_t> DiscoveryDataBase::direct_clients_and_servers()
 {
+    std::unique_lock<std::recursive_mutex> lock(mutex_);
+
     std::vector<fastrtps::rtps::GuidPrefix_t> direct_clients_and_servers;
     // Iterate over participants to add the remote ones that are direct clients or servers
     for (auto participant: participants_)
@@ -1612,6 +1616,8 @@ const std::vector<fastrtps::rtps::GuidPrefix_t> DiscoveryDataBase::direct_client
 
 bool DiscoveryDataBase::server_acked_by_my_servers()
 {
+    std::unique_lock<std::recursive_mutex> lock(mutex_);
+
     if (servers_.size() == 0)
     {
         return true;
@@ -1619,8 +1625,8 @@ bool DiscoveryDataBase::server_acked_by_my_servers()
 
     // Find the server's participant and check whether all its servers have ACKed the server's DATA(p)
     auto this_server = participants_.find(server_guid_prefix_);
-
     // check it is always there
+
     assert(this_server != participants_.end());
 
     for (auto prefix : servers_)
@@ -1635,6 +1641,8 @@ bool DiscoveryDataBase::server_acked_by_my_servers()
 
 std::vector<fastrtps::rtps::GuidPrefix_t> DiscoveryDataBase::ack_pending_servers()
 {
+    std::unique_lock<std::recursive_mutex> lock(mutex_);
+
     std::vector<fastrtps::rtps::GuidPrefix_t> ack_pending_servers;
     // Find the server's participant and check whether all its servers have ACKed the server's DATA(p)
     auto this_server = participants_.find(server_guid_prefix_);
@@ -1703,6 +1711,8 @@ DiscoveryDataBase::AckedFunctor::~AckedFunctor()
 void DiscoveryDataBase::AckedFunctor::operator () (
         const eprosima::fastrtps::rtps::ReaderProxy* reader_proxy)
 {
+    std::unique_lock<std::recursive_mutex> lock(db_->mutex_);
+
     EPROSIMA_LOG_INFO(DISCOVERY_DATABASE, "functor operator in change: " << change_->instanceHandle);
     EPROSIMA_LOG_INFO(DISCOVERY_DATABASE, "for reader proxy: " << reader_proxy->guid());
     // Check whether the change has been acknowledged by a given reader
