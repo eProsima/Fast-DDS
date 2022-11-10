@@ -349,13 +349,6 @@ public:
 
 private:
 
-    enum StateCode
-    {
-        IDLE = 0, //! Writer Proxy is not performing any critical operations.
-        BUSY, //! Writer Proxy is performing a critical operation. Some actions (e.g. stop) should wait for its completion.
-        STOPPED, //! Writer Proxy has been requested to \c stop.
-    };
-
     /**
      * Set initial value for last acked sequence number.
      * @param[in] seq_num last acked sequence number.
@@ -415,8 +408,6 @@ private:
     bool is_datasharing_writer_;
     //! Wether at least one heartbeat was recevied.
     bool received_at_least_one_heartbeat_;
-    //! Current state of this Writer Proxy
-    std::atomic<StateCode> state_;
 
     using ChangeIterator = decltype(changes_received_)::iterator;
 
