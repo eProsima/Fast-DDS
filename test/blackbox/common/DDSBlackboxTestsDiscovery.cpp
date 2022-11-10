@@ -573,6 +573,93 @@ TEST(DDSDiscovery, ParticipantProxyPhysicalData)
 }
 
 /**
+ * This is a regression test for readmine issue #16104.
+ *
+ * It first creates a participant with an external locator on IP address 8.8.8.8 and a custom listener that keeps
+ * the locators information of the last discovered participant.
+ *
+ * It then creates participants with different addresses on their external locators, and checks the corresponding
+ * ones are selected.
+ */
+TEST(DDSDiscovery, DDSDiscoveryDoesNotDropUDPLocator)
+{
+    using namespace eprosima::fastdds::dds;
+    using namespace eprosima::fastrtps::rtps;
+
+    struct CustomDomainParticipantListener : public DomainParticipantListener
+    {
+        std::mutex mtx;
+        std::condition_variable cv;
+        GUID_t guid;
+        RemoteLocatorList metatraffic;
+
+        void on_participant_discovery(
+                DomainParticipant* /*participant*/,
+                ParticipantDiscoveryInfo&& info) override
+        {
+            if (info.status == info.DISCOVERED_PARTICIPANT)
+            {
+                std::lock_guard<std::mutex> guard(mtx);
+                guid = info.info.m_guid;
+                metatraffic = info.info.metatraffic_locators;
+                cv.notify_all();
+            }
+        }
+
+    };
+
+    DomainParticipantFactory* factory = DomainParticipantFactory::get_instance();
+
+    CustomDomainParticipantListener listener;
+
+    eprosima::fastdds::rtps::LocatorWithMask loc;
+    loc.port = 1234;
+    loc.mask(24);
+
+    DomainParticipantQos qos1;
+    IPLocator::setIPv4(loc, "8.8.8.8");
+    qos1.allocation().locators.max_unicast_locators = 100;
+    qos1.wire_protocol().builtin.metatraffic_external_unicast_locators[1][0].push_back(loc);
+    DomainParticipant* part1 = factory->create_participant(0, qos1, &listener, StatusMask::none());
+
+    auto perform_check = [&](const char* address, bool shold_be_local)
+            {
+                DomainParticipantQos qos2;
+                IPLocator::setIPv4(loc, address);
+                qos2.allocation().locators.max_unicast_locators = 100;
+                qos2.wire_protocol().builtin.metatraffic_external_unicast_locators[1][0].push_back(loc);
+
+                {
+                    DomainParticipant* part2 = factory->create_participant(0, qos2, nullptr, StatusMask::none());
+                    auto part2_guid = part2->guid();
+                    {
+                        std::unique_lock<std::mutex> lock(listener.mtx);
+                        listener.cv.wait(lock, [&]
+                                {
+                                    return listener.guid == part2_guid;
+                                });
+                    }
+                    factory->delete_participant(part2);
+
+                    std::cout << listener.metatraffic << std::endl;
+                    if (shold_be_local)
+                    {
+                        EXPECT_NE(listener.metatraffic.unicast[0], loc);
+                    }
+                    else
+                    {
+                        EXPECT_EQ(listener.metatraffic.unicast[0], loc);
+                    }
+                }
+            };
+
+    perform_check("8.8.8.8", true);
+    perform_check("8.8.8.9", false);
+
+    factory->delete_participant(part1);
+}
+
+/**
  * This test checks the missing file case of DomainParticipantFactory->check_xml_static_discovery
  * method and checks it returns RETCODE_ERROR
  */
