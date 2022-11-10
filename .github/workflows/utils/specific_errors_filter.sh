@@ -16,4 +16,7 @@ LINE_TO_FIND=${1}
 LOG_FILE=${2}
 OUTPUT_FILE=${3}
 
+# Store in OUTPUT_FILE lines in LOG_FILE that contain substring LINE_TO_FIND
+# It is done with grep as it is able to do it in a very efficient way, while python
+# requires a much longer process
 grep "${LINE_TO_FIND}" ${LOG_FILE} > ${OUTPUT_FILE}

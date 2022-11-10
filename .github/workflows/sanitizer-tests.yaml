@@ -65,6 +65,7 @@ jobs:
         if: always()
         run: |
           bash src/Fast-DDS/.github/workflows/utils/specific_errors_filter.sh "==ERROR:" log/latest_test/fastrtps/stdout_stderr.log _tmp_specific_error_file.log
+          cat _tmp_specific_error_file.log
           python3 src/Fast-DDS/.github/workflows/utils/log_parser.py --log-file log/latest_test/fastrtps/stdout_stderr.log --specific-error-file _tmp_specific_error_file.log --output-file $GITHUB_STEP_SUMMARY --sanitizer=asan
 
 
@@ -129,6 +130,7 @@ jobs:
         if: always()
         run: |
           bash src/Fast-DDS/.github/workflows/utils/specific_errors_filter.sh "==ERROR:" log/latest_test/discovery-server/stdout_stderr.log _tmp_specific_error_file.log
+          cat _tmp_specific_error_file.log
           python3 src/Fast-DDS/.github/workflows/utils/log_parser.py --log-file log/latest_test/discovery-server/stdout_stderr.log --specific-error-file _tmp_specific_error_file.log --output-file $GITHUB_STEP_SUMMARY --sanitizer=asan
 
 
@@ -186,7 +188,8 @@ jobs:
         if: always()
         run: |
           bash src/Fast-DDS/.github/workflows/utils/specific_errors_filter.sh "WARNING: ThreadSanitizer:" log/latest_test/fastrtps/stdout_stderr.log _tmp_specific_error_file.log
-          python3 src/Fast-DDS/.github/workflows/utils/log_parser.py --log-file log/latest_test/fastrtps/stdout_stderr.log --specific-error-file _tmp_specific_error_file.log --output-file $GITHUB_STEP_SUMMARY --sanitizer=asan
+          cat _tmp_specific_error_file.log
+          python3 src/Fast-DDS/.github/workflows/utils/log_parser.py --log-file log/latest_test/fastrtps/stdout_stderr.log --specific-error-file _tmp_specific_error_file.log --output-file $GITHUB_STEP_SUMMARY --sanitizer=tsan
 
 
   tsan-discovery-server-test:
@@ -250,4 +253,5 @@ jobs:
         if: always()
         run: |
           bash src/Fast-DDS/.github/workflows/utils/specific_errors_filter.sh "WARNING: ThreadSanitizer:" log/latest_test/discovery-server/stdout_stderr.log _tmp_specific_error_file.log
+          cat _tmp_specific_error_file.log
           python3 src/Fast-DDS/.github/workflows/utils/log_parser.py --log-file log/latest_test/discovery-server/stdout_stderr.log --specific-error-file _tmp_specific_error_file.log --output-file $GITHUB_STEP_SUMMARY --sanitizer=tsan

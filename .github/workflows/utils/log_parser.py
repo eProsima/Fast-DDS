@@ -101,12 +101,12 @@ def failure_test_list(
 
 def asan_line_splitter(
         line: str):
-    return line[line.find('==ERROR: '):]
+    return line[line.find('==ERROR: '):].strip()
 
 
 def tsan_line_splitter(
         line: str):
-    return line[line.find('WARNING: ThreadSanitizer: '):line.find(' (pid=')]
+    return line[line.find('WARNING: ThreadSanitizer: '):line.find(' (pid=')].strip()
 
 
 def common_specific_errors_list(
