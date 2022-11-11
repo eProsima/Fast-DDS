@@ -25,9 +25,6 @@
             [
                 "-DCMAKE_BUILD_TYPE=Debug",
                 "-DSANITIZER=Address",
-
-                "-D__TODO__='Following line should be remove'",
-                "-DCMAKE_CXX_FLAGS='-fsanitize=address'",
             ]
         }
     }
