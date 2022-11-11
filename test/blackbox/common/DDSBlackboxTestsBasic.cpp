@@ -184,7 +184,7 @@ TEST(DDSBasic, MultithreadedPublisherCreation)
     ASSERT_EQ(ReturnCode_t::RETCODE_OK, factory->delete_participant(participant));
 }
 
-TEST(DDSBasic, MultithreadedReaderCreation)
+TEST(DDSBasic, MultithreadedReaderCreationDoesNotDeadlock)
 {
     // Get factory
     DomainParticipantFactory* factory = DomainParticipantFactory::get_instance();
@@ -212,18 +212,27 @@ TEST(DDSBasic, MultithreadedReaderCreation)
     Topic* topic = participant->create_topic(TEST_TOPIC_NAME, type_support.get_type_name(), TOPIC_QOS_DEFAULT);
     ASSERT_NE(nullptr, topic);
 
+    // Set QoS
+    DataSharingQosPolicy dsp;
+    dsp.off();
+
+    DataWriterQos dw_qos;
+    DataReaderQos dr_qos;
+    dw_qos.data_sharing(dsp);
+    dr_qos.data_sharing(dsp);
+
     // Create DataWriter
-    DataWriter* writer = publisher->create_datawriter(topic, DATAWRITER_QOS_DEFAULT);
+    DataWriter* writer = publisher->create_datawriter(topic, dw_qos);
     ASSERT_NE(nullptr, writer);
 
     std::mutex mtx;
     std::condition_variable cv;
     bool should_finish = false;
 
-    auto thread_run = [subscriber, topic, &mtx, &cv, &should_finish]()
+    auto thread_run = [subscriber, topic, &mtx, &cv, &should_finish, &dr_qos]()
             {
                 // Create reader
-                DataReader* reader = subscriber->create_datareader(topic, DATAREADER_QOS_DEFAULT);
+                DataReader* reader = subscriber->create_datareader(topic, dr_qos);
                 ASSERT_NE(nullptr, reader);
 
                 // Wait for test completion request

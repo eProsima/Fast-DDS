@@ -245,8 +245,8 @@ public:
 
     bool try_lock()
     {
-        std::lock_guard<std::mutex> _(wm_);
         bool res = sm::try_lock();
+        std::lock_guard<std::mutex> _(wm_);
         if (res)
         {
             exclusive_owner_ = std::this_thread::get_id();
@@ -256,8 +256,8 @@ public:
 
     void unlock()
     {
-        std::lock_guard<std::mutex> _(wm_);
         sm::unlock();
+        std::lock_guard<std::mutex> _(wm_);
         exclusive_owner_ = std::thread::id();
     }
 
@@ -272,8 +272,8 @@ public:
 
     bool try_lock_shared()
     {
-        std::lock_guard<std::mutex> _(wm_);
         bool res = sm::try_lock_shared();
+        std::lock_guard<std::mutex> _(wm_);
         if (res)
         {
             ++shared_owners_[std::this_thread::get_id()];
@@ -283,8 +283,8 @@ public:
 
     void unlock_shared()
     {
-        std::lock_guard<std::mutex> _(wm_);
         sm::unlock_shared();
+        std::lock_guard<std::mutex> _(wm_);
         auto owner = shared_owners_.find(std::this_thread::get_id());
         if ( owner != shared_owners_.end() && 0 == --owner->second )
         {
