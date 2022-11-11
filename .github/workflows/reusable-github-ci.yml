@@ -379,6 +379,11 @@ jobs:
 
       - name: Prepare the colcon workspace for build
         run: |
+             # Get some convenient tools
+             Install-Module -Name ConvertBase64Strings -Force -AllowClobber
+             Import-Module -name ConvertBase64Strings -Prefix CI
+             Install-Module powershell-yaml -Force
+
              # Check if git is behaving
              $checker = @{
                 Begin = {$errores = 0}
@@ -413,11 +418,11 @@ jobs:
                           if(git checkout $repo_branch 2>&1 | % @checker)
                           {
                               $choice = "taking metas & depends from branch $repo_branch"      
+                              break;
                           }
                           else
                           {
                               Write-Output "Fast-DDS-CI lacks branch $repo_branch"
-                              break;
                           }
                        }
                     }
@@ -447,19 +452,15 @@ jobs:
 
              popd
 
-             # Get some convenient tools
-             Install-Module -Name ConvertBase64Strings -Force -AllowClobber
-             Import-Module -name ConvertBase64Strings -Prefix CI
-             Install-Module powershell-yaml -Force
-
              # Get action credentials for github REST API
              $secret = ConvertTo-SecureString -String "${{ secrets.GITHUB_TOKEN }}" -AsPlainText
 
              # Check available queries according with github policy
-             "Rate Limits with github action token:",
+             "::group::Crash dump files Rate Limits with github action token"
              ((Invoke-WebRequest -Authentication OAuth -Token $secret `
                 -Uri https://api.github.com/users/octocat).Headers.GetEnumerator() |
                 ? Key -like "X-RateLimit*") | Out-Host
+             "::endgroup::"
 
              # download the repos file
              $repos = ((Invoke-WebRequest -Authentication OAuth -Token $secret `
@@ -469,7 +470,34 @@ jobs:
 
              # checkout the commit
              $repos.repositories.fastrtps.version = "${{ github.ref }}" -replace "^refs/pull","origin/pull"
+
+             # merge with the provided Fast-DDS-CLI depends.repos
+             $depends_path = ".\Fast-DDS-CI\depends.repos"
+             if(Test-Path $depends_path)
+             {
+                $depends = Get-Content $depends_path | ConvertFrom-Yaml
+
+                # Replace fastrtps.repos entires with depends.repos ones
+                $depends.repositories.GetEnumerator() |
+                        % { $repos.repositories[$_.Name] = $_.Value}
+             }
+             else
+             {
+                Write-Output "depends.repos not available in Fast-DDS-CI"
+             }
+
+             # If there is a framework version of googletest use it
+             if($repos.repositories.Contains("googletest-distribution") -and
+                ((cmake --find-package -DNAME=GTest -DCOMPILER_ID=GNU -DLANGUAGE=CXX -DMODE=EXIST 2>$null) `
+                  -notmatch "not found"))
+             {
+                 $repos.repositories.Remove("googletest-distribution")
+                 Write-Output "Using framework version of googletest-distribution"
+             }
+
+             "::group::merged vcstool repos file"
              $repos | ConvertTo-Yaml | Tee-Object -FilePath fastrtps.repos
+             "::endgroup::"
 
              # create source dir and donwload the sources
              mkdir src
@@ -477,16 +505,28 @@ jobs:
 
       - name: Retrieve colcon.meta file
         run: |
-           # Here a dummy that generates dynamically one
-           $meta = [PSCustomObject]@{names=@{fastrtps=@{"cmake-args"=$Null}}}
+           # Try retrieve it from the Fast-DDS-CI
+           $meta_path = ".\Fast-DDS-CI\colcon.meta"
+           if(Test-Path $meta_path)
+           {
+              $meta = Get-Content $meta_path | ConvertFrom-Yaml
+           }
+           else
+           {
+              Write-Output "depends.repos not available in Fast-DDS-CI"
 
-           $meta.names.fastrtps."cmake-args" = "-DEPROSIMA_BUILD=ON",
-                                               "-DINTERNAL_DEBUG=ON",
-                                               "-DGTEST_INDIVIDUAL=ON",
-                                               "-DFASTRTPS_API_TESTS=OFF",
-                                               "-DFASTDDS_PIM_API_TESTS=ON",
-                                               "-DPERFORMANCE_TESTS=ON",
-                                               "-DNO_TLS=ON"
+              # generate dynamically one
+              $meta = [PSCustomObject]@{names=@{fastrtps=@{"cmake-args"=$Null}}}
+
+              $meta.names.fastrtps."cmake-args" = "-DEPROSIMA_BUILD=ON",
+                                                  "-DINTERNAL_DEBUG=ON",
+                                                  "-DGTEST_INDIVIDUAL=ON",
+                                                  "-DFASTRTPS_API_TESTS=OFF",
+                                                  "-DFASTDDS_PIM_API_TESTS=ON",
+                                                  "-DPERFORMANCE_TESTS=ON",
+                                                  "-DNO_TLS=ON"
+           }
+
            if($IsWindows)
            {
              # Enable WER
@@ -499,8 +539,11 @@ jobs:
            {
              $meta.names.fastrtps."cmake-args" += $Env:BUILD_TYPE
            }
+
            # Generate the meta file
+           "::group::deployed colcon.meta file"
            $meta | ConvertTo-Json -Depth 3 | Tee-Object -FilePath ci.meta -Encoding OEM
+           "::endgroup::"
 
       - name: Build
         run: |
