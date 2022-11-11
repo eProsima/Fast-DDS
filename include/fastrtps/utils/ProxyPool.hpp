@@ -154,6 +154,9 @@ class ProxyPool
 
         // return the resource
         mask_.set(idx);
+
+        // notify the resource is free
+        cv_.notify_one();
     }
 
 public:
