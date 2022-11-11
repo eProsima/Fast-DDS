@@ -24,6 +24,7 @@
 #include <fastdds/rtps/builtin/data/WriterProxyData.h>
 #include <fastdds/rtps/common/LocatorList.hpp>
 #include <fastdds/rtps/common/LocatorSelectorEntry.hpp>
+#include <fastrtps/utils/IPLocator.h>
 
 namespace eprosima {
 namespace fastdds {
@@ -110,6 +111,27 @@ static void perform_add_external_locators(
     }
 }
 
+template<>
+void perform_add_external_locators<LocatorList>(
+        LocatorList& locators,
+        const ExternalLocators& external_locators)
+{
+    for (const auto& externality_item : external_locators)
+    {
+        // Only add locators with externality greater than 0
+        if (externality_item.first > 0)
+        {
+            for (const auto& cost_item : externality_item.second)
+            {
+                for (const auto& locator : cost_item.second)
+                {
+                    locators.push_back(locator);
+                }
+            }
+        }
+    }
+}
+
 void add_external_locators(
         ParticipantProxyData& data,
         const ExternalLocators& metatraffic_external_locators,
@@ -131,6 +153,13 @@ void add_external_locators(
         const ExternalLocators& external_locators)
 {
     perform_add_external_locators(data, external_locators);
+}
+
+void add_external_locators(
+        LocatorList& list,
+        const ExternalLocators& external_locators)
+{
+    perform_add_external_locators(list, external_locators);
 }
 
 /**
@@ -207,6 +236,16 @@ static uint64_t heuristic(
         const ExternalLocators& external_locators,
         bool ignore_non_matching)
 {
+    if (LOCATOR_KIND_SHM == remote_locator.kind)
+    {
+        return heuristic_value(0, 0);
+    }
+
+    if (fastrtps::rtps::IPLocator::isLocal(remote_locator))
+    {
+        return heuristic_value(0, 1);
+    }
+
     for (const auto& externality : external_locators)
     {
         for (const auto& cost : externality.second)
