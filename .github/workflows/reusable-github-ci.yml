@@ -227,8 +227,8 @@ jobs:
              {
                $pattern = ("$Env:ProgramFiles" -replace "\\","/") + "/.*/GTestConfig.cmake"
                $matches = sls -Path gtest.log -Pattern $pattern
-               ("GTest_DIR=" + ($matches.Matches.Value | Split-Path -Parent)) |
-                 Out-File $Env:GITHUB_ENV -Append -Encoding OEM
+               $Env:GTest_DIR = $matches.Matches.Value | Split-Path -Parent
+               ("GTest_DIR=" + $Env:GTest_DIR) | Out-File $Env:GITHUB_ENV -Append -Encoding OEM
              }
 
              # clean up
@@ -456,7 +456,7 @@ jobs:
              $secret = ConvertTo-SecureString -String "${{ secrets.GITHUB_TOKEN }}" -AsPlainText
 
              # Check available queries according with github policy
-             "::group::Crash dump files Rate Limits with github action token"
+             "::group::Rate Limits with github action token"
              ((Invoke-WebRequest -Authentication OAuth -Token $secret `
                 -Uri https://api.github.com/users/octocat).Headers.GetEnumerator() |
                 ? Key -like "X-RateLimit*") | Out-Host
@@ -486,10 +486,23 @@ jobs:
                 Write-Output "depends.repos not available in Fast-DDS-CI"
              }
 
+             # cmake --find-package has issues on unix base system
+             # let's use a dummy project
+             $find_gtest = {
+                   $tmpdir = $IsWindows ? "$Env:TMP\" : "/tmp/"
+                   pushd  (New-Item -Type Directory -Path "$tmpdir$(New-Guid)")
+                   $cr = "`n"
+                   'cmake_minimum_required(VERSION 3.5)' + $cr  +
+                   'project(dummy VERSION 1.0.0 LANGUAGES CXX)' + $cr +
+                   'find_package(GTest CONFIG REQUIRED)' + $cr +
+                   'message(STATUS "GTest_FOUND=>>>>${GTest_FOUND}<<<<<")' | 
+                   Out-File CMakeLists.txt 
+                   (cmake .) *>&1 | % {
+                     if($_ -Match "GTest_FOUND=>>>>(?<exec>.*)<<<<<") { return $Matches.exec }
+                   }; popd }
+
              # If there is a framework version of googletest use it
-             if($repos.repositories.Contains("googletest-distribution") -and
-                ((cmake --find-package -DNAME=GTest -DCOMPILER_ID=GNU -DLANGUAGE=CXX -DMODE=EXIST 2>$null) `
-                  -notmatch "not found"))
+             if($repos.repositories.Contains("googletest-distribution") -and (& $find_gtest))
              {
                  $repos.repositories.Remove("googletest-distribution")
                  Write-Output "Using framework version of googletest-distribution"
