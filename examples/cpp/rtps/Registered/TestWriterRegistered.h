@@ -34,10 +34,10 @@ public:
     eprosima::fastrtps::rtps::RTPSParticipant* mp_participant;
     eprosima::fastrtps::rtps::RTPSWriter* mp_writer;
     eprosima::fastrtps::rtps::WriterHistory* mp_history;
-    bool init(); //Initialize writer
+    bool init(const bool &enable_dsp2p_lease); //Initialize writer
     bool reg(); //Register the Writer
     void run(
-            uint16_t samples);  //Run the Writer
+            uint16_t samples, uint16_t interval);  //Run the Writer
     class MyListener : public eprosima::fastrtps::rtps::WriterListener
     {
     public:

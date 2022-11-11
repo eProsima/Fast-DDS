@@ -46,7 +46,7 @@ target_compile_definitions(Registered PRIVATE
     $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
     $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
 )
-target_link_libraries(Registered fastrtps fastcdr foonathan_memory)
+target_link_libraries(Registered fastrtps fastcdr foonathan_memory fastdds::optionparser)
 install(TARGETS Registered
     RUNTIME DESTINATION examples/cpp/rtps/Registered/${BIN_INSTALL_DIR}
     )

@@ -19,6 +19,7 @@
 
 #include "TestWriterRegistered.h"
 
+#include "fastdds/rtps/attributes/RTPSParticipantAttributes.h"
 #include "fastrtps/rtps/writer/RTPSWriter.h"
 #include "fastrtps/rtps/participant/RTPSParticipant.h"
 #include "fastrtps/rtps/RTPSDomain.h"
@@ -31,10 +32,13 @@
 
 #include "fastrtps/attributes/TopicAttributes.h"
 #include "fastrtps/qos/WriterQos.h"
+#include <cstdint>
+#include <forward_list>
 
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
 using namespace std;
+
 
 TestWriterRegistered::TestWriterRegistered()
     : mp_participant(nullptr)
@@ -51,13 +55,40 @@ TestWriterRegistered::~TestWriterRegistered()
     delete(mp_history);
 }
 
-bool TestWriterRegistered::init()
+bool TestWriterRegistered::init(const bool &enable_dsp2p_lease)
 {
     //CREATE PARTICIPANT
     RTPSParticipantAttributes PParam;
-    PParam.builtin.discovery_config.discoveryProtocol = eprosima::fastrtps::rtps::DiscoveryProtocol::SIMPLE;
     PParam.builtin.use_WriterLivelinessProtocol = true;
+    PParam.builtin.discovery_config.leaseDuration = 2.0;
+    PParam.builtin.discovery_config.leaseDuration_announcementperiod = 1.0;
+
+    // Add remote servers from environment variable
+    RemoteServerList_t env_servers;
+    {
+        if (load_environment_server_info(env_servers))
+        {
+            PParam.builtin.discovery_config.discoveryProtocol = DiscoveryProtocol_t::CLIENT;
+            std::cout << " Remote Discovery Servers : \n\t";
+            for (auto server : env_servers)
+            {
+                PParam.builtin.discovery_config.m_DiscoveryServers.push_back(server);
+                std::cout << server  << "\n\t";
+            }
+
+            if (enable_dsp2p_lease)
+            {
+                PParam.properties.properties().emplace_back("ds_p2p_lease_assessment","true","true");
+            }
+
+        } else
+        {
+            PParam.builtin.discovery_config.discoveryProtocol = DiscoveryProtocol_t::SIMPLE;
+        }
+    }
+
     mp_participant = RTPSDomain::createParticipant(0, PParam);
+
     if (mp_participant == nullptr)
     {
         return false;
@@ -66,7 +97,7 @@ bool TestWriterRegistered::init()
     //CREATE WRITERHISTORY
     HistoryAttributes hatt;
     hatt.payloadMaxSize = 255;
-    hatt.maximumReservedCaches = 50;
+    hatt.maximumReservedCaches = 100;
     mp_history = new WriterHistory(hatt);
 
     //CREATE WRITER
@@ -93,12 +124,12 @@ bool TestWriterRegistered::reg()
 }
 
 void TestWriterRegistered::run(
-        uint16_t samples)
+        uint16_t samples, uint16_t interval)
 {
     cout << "Waiting for matched Readers" << endl;
     while (m_listener.n_matched == 0)
     {
-        std::this_thread::sleep_for(std::chrono::milliseconds(250));
+        std::this_thread::sleep_for(std::chrono::milliseconds(interval));
     }
 
     for (int i = 0; i < samples; ++i )
@@ -126,5 +157,8 @@ void TestWriterRegistered::run(
 #endif // if defined(_WIN32)
         printf("Sending: %s\n", (char*)ch->serializedPayload.data);
         mp_history->add_change(ch);
+
+        std::this_thread::sleep_for(std::chrono::milliseconds(interval));
     }
 }
+

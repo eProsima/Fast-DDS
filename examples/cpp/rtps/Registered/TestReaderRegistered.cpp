@@ -50,17 +50,44 @@ TestReaderRegistered::~TestReaderRegistered()
     delete(mp_history);
 }
 
-bool TestReaderRegistered::init()
+bool TestReaderRegistered::init(const bool &enable_dsp2p_lease)
 {
     //CREATE PARTICIPANT
     RTPSParticipantAttributes PParam;
-    PParam.builtin.discovery_config.discoveryProtocol = eprosima::fastrtps::rtps::DiscoveryProtocol::SIMPLE;
     PParam.builtin.use_WriterLivelinessProtocol = true;
+    PParam.builtin.discovery_config.leaseDuration = 2.0;
+    PParam.builtin.discovery_config.leaseDuration_announcementperiod = 1.0;
+
+    // Add remote servers from environment variable
+    RemoteServerList_t env_servers;
+    {
+        if (load_environment_server_info(env_servers))
+        {
+            PParam.builtin.discovery_config.discoveryProtocol = DiscoveryProtocol_t::CLIENT;
+            std::cout << " Remote Discovery Servers : \n\t";
+            for (auto server : env_servers)
+            {
+                PParam.builtin.discovery_config.m_DiscoveryServers.push_back(server);
+                std::cout << server  << "\n\t";
+            }
+
+            if (enable_dsp2p_lease)
+            {
+                PParam.properties.properties().emplace_back("ds_p2p_lease_assessment","true","true");
+            }
+
+        } else
+        {
+            PParam.builtin.discovery_config.discoveryProtocol = DiscoveryProtocol_t::SIMPLE;
+        }
+    }
     mp_participant = RTPSDomain::createParticipant(0, PParam);
+
     if (mp_participant == nullptr)
     {
         return false;
     }
+
     //CREATE READERHISTORY
     HistoryAttributes hatt;
     hatt.payloadMaxSize = 255;

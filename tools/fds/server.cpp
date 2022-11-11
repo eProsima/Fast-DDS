@@ -186,6 +186,10 @@ int fastdds_discovery_server(
             std::cout << "The provided configuration is not valid. Participant must be either SERVER or BACKUP. " <<
                 std::endl;
             return 1;
+        } else
+        {
+            // get server_id from guid prefix
+            server_id = participantQos.wire_protocol().prefix.value[2];
         }
     }
     else if (pOp->count() != 1)
@@ -380,7 +384,8 @@ int fastdds_discovery_server(
 
     // Create the server
     int return_value = 0;
-    DomainParticipant* pServer = DomainParticipantFactory::get_instance()->create_participant(0, participantQos);
+    ServerParticipantListener listener;
+    DomainParticipant* pServer = DomainParticipantFactory::get_instance()->create_participant(0, participantQos, &listener);
 
     if (nullptr == pServer)
     {
@@ -413,6 +418,18 @@ int fastdds_discovery_server(
         }
         std::cout << std::endl;
 
+        std::cout << " Remote Discovery Servers:   ";
+        for (auto locator_it = participantQos.wire_protocol().builtin.discovery_config.m_DiscoveryServers.begin();
+                locator_it != participantQos.wire_protocol().builtin.discovery_config.m_DiscoveryServers.end();)
+        {
+            std::cout << *locator_it;
+            if (++locator_it != participantQos.wire_protocol().builtin.discovery_config.m_DiscoveryServers.end())
+            {
+                std::cout << std::endl << "                      ";
+            }
+        }
+        std::cout << std::endl;
+
         g_signal_cv.wait(lock, []
                 {
                     return 0 != g_signal_status;
@@ -430,6 +447,35 @@ int fastdds_discovery_server(
 } // namespace dds
 } // namespace fastdds
 } // namespace eprosima
+
+void ServerParticipantListener::on_participant_discovery(
+        eprosima::fastdds::dds::DomainParticipant*,
+        eprosima::fastrtps::rtps::ParticipantDiscoveryInfo&& info)
+{
+    if (info.status == info.DISCOVERED_PARTICIPANT)
+    {
+        std::cout << "Participant with name " << info.info.m_participantName
+            << " and GUID " << info.info.m_guid
+            << " matched." << std::endl;
+    }
+    else if (info.status == info.DROPPED_PARTICIPANT)
+    {
+        std::cout << "Participant with name " << info.info.m_participantName
+            << " and GUID " << info.info.m_guid
+            << " dropped." << std::endl;
+    }
+    else if (info.status == info.REMOVED_PARTICIPANT)
+    {
+        std::cout << "Participant with name " << info.info.m_participantName
+            << " and GUID " << info.info.m_guid
+            << " removed." << std::endl;
+    } else
+    {
+        std::cout << "Participant with name " << info.info.m_participantName
+            << " and GUID " << info.info.m_guid
+            << " changed QOS." << std::endl;
+    }
+}
 
 int main (
         int argc,

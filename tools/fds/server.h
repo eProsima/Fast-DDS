@@ -16,6 +16,7 @@
 #define FASTDDS_SERVER_SERVER_H_
 
 // Parsing setup
+#include "fastdds/dds/domain/DomainParticipantListener.hpp"
 #include <optionparser.hpp>
 
 namespace option = eprosima::option;
@@ -29,6 +30,19 @@ enum  optionIndex
     PORT,
     BACKUP,
     XML_FILE
+};
+
+class ServerParticipantListener : public eprosima::fastdds::dds::DomainParticipantListener
+{
+public:
+
+  ServerParticipantListener() = default;
+  ~ServerParticipantListener() = default;
+
+  void on_participant_discovery(
+          eprosima::fastdds::dds::DomainParticipant* participant,
+          eprosima::fastrtps::rtps::ParticipantDiscoveryInfo&& info) override;
+
 };
 
 struct Arg : public option::Arg
