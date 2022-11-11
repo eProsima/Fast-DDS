@@ -73,9 +73,13 @@ public:
                 md5.update(l.address, sizeof(l.address));
             }
             md5.finalize();
+
+            // Hash the 16-bytes md5.digest into a uint16_t
             ret_val = 0;
             for (size_t i = 0; i < sizeof(md5.digest); i += 2)
             {
+                // Treat the next two bytes as a big-endian uint16_t and
+                // hash them into ret_val.
                 uint16_t tmp = static_cast<uint16_t>(md5.digest[i]);
                 tmp = (tmp << 8) | static_cast<uint16_t>(md5.digest[i + 1]);
                 ret_val ^= tmp;
