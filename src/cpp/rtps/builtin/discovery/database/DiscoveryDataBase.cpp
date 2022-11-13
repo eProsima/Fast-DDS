@@ -1598,8 +1598,12 @@ const std::vector<fastrtps::rtps::GuidPrefix_t> DiscoveryDataBase::direct_client
         if (server_guid_prefix_ != participant.first)
         {
             // Only add direct clients or server that are alive, not relayed ones.
-            if (participant.second.is_local() && participant.second.change()->kind == eprosima::fastrtps::rtps::ALIVE)
+            if ((participant.second.is_local() || participant.second.is_peer_to_peer()) && participant.second.change()->kind == eprosima::fastrtps::rtps::ALIVE)
             {
+                if (participant.second.is_peer_to_peer())
+                {
+                    logError(DISCOVERY_DATABASE, "Peer to peer found");
+                }
                 direct_clients_and_servers.push_back(participant.first);
             }
         }
@@ -2422,7 +2426,8 @@ bool DiscoveryDataBase::from_json(
             DiscoveryParticipantChangeData dpcd(
                 rll,
                 it.value()["is_client"].get<bool>(),
-                it.value()["is_local"].get<bool>());
+                it.value()["is_local"].get<bool>(),
+                it.value()["is_peer_to_peer"].get<bool>());
 
             // Populate DiscoveryParticipantInfo
             DiscoveryParticipantInfo dpi(change, server_guid_prefix_, dpcd);

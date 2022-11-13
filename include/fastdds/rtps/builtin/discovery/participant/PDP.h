@@ -19,6 +19,7 @@
 
 #ifndef _FASTDDS_RTPS_PDP_H_
 #define _FASTDDS_RTPS_PDP_H_
+#include "fastdds/rtps/common/GuidPrefix_t.hpp"
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 
 #include <atomic>
@@ -375,6 +376,15 @@ public:
     {
         return temp_writer_proxies_;
     }
+
+     virtual void addPeerToPeerParticipant(ParticipantProxyData* pdata)
+     {
+        (void)pdata; 
+     };
+     virtual void removePeerToPeerParticipant(const GuidPrefix_t& pdata) 
+     {
+        (void)pdata;
+     };
 
 protected:
 

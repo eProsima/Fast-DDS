@@ -17,6 +17,8 @@
  *
  */
 
+#include "fastdds/dds/core/policy/ParameterTypes.hpp"
+#include "fastdds/rtps/common/GuidPrefix_t.hpp"
 #include <rtps/builtin/discovery/participant/PDPClient.h>
 
 #include <algorithm>
@@ -106,6 +108,20 @@ void PDPClient::initializeParticipantProxyData(
             std::string>({fastdds::dds::parameter_property_ds_version,
                           fastdds::dds::parameter_property_current_ds_version}));
 
+
+    if (mp_RTPSParticipant->getAttributes().properties.properties().end() !=
+            std::find_if(mp_RTPSParticipant->getAttributes().properties.properties().begin(),
+            mp_RTPSParticipant->getAttributes().properties.properties().end(), [](Property p)
+            {
+                return p.name() == "ds_p2p_lease_assessment" && p.value() == "true";
+            }))
+    {
+        participant_data->m_properties.push_back(dds::parameter_policy_ds_p2p_lease_assessment, "true");
+        mp_PDPReader->enableMessagesFromUnkownWriters(true);
+    }
+
+
+
     //#if HAVE_SECURITY
     //    if (getRTPSParticipant()->getAttributes().builtin.discovery_config.m_simpleEDP
     //    .enable_builtin_secure_publications_writer_and_subscriptions_reader)
@@ -178,6 +194,32 @@ ParticipantProxyData* PDPClient::createParticipantProxyData(
     {
         // Clients only assert its server lifeliness, other clients liveliness is provided
         // through server's PDP discovery data
+        if ((getLocalParticipantProxyData()->m_properties.end() != std::find_if(
+                    getLocalParticipantProxyData()->m_properties.begin(),
+                    getLocalParticipantProxyData()->m_properties.end(),
+                    [&](const eprosima::fastdds::dds::ParameterProperty_t& property)
+                    {
+                        return property.first() == "ds_p2p_lease_assessment";
+                    })) || pdata->m_properties.end() != std::find_if(
+                    pdata->m_properties.begin(),
+                    pdata->m_properties.end(),
+                    [&](const eprosima::fastdds::dds::ParameterProperty_t& property)
+                    {
+                        return property.first() == "ds_p2p_lease_assessment";
+                    }))
+        {
+
+            (pdata)->lease_duration_event->update_interval((pdata)->m_leaseDuration);
+            (pdata)->lease_duration_event->restart_timer();
+            (pdata)->should_check_lease_duration = true;
+
+            addPeerToPeerParticipant(pdata);
+
+        }
+
+        else
+
+
         if (is_server)
         {
             pdata->lease_duration_event->update_interval(pdata->m_leaseDuration);
@@ -213,7 +255,6 @@ bool PDPClient::createPDPEndpoints()
     ratt.times.heartbeatResponseDelay = pdp_heartbeat_response_delay;
 
     mp_listener = new PDPListener(this);
-
     if (mp_RTPSParticipant->createReader(&mp_PDPReader, ratt, mp_PDPReaderHistory, mp_listener,
             c_EntityId_SPDPReader, true, false))
     {
@@ -541,6 +582,43 @@ void PDPClient::announceParticipantState(
                             locators.push_back(svr.metatrafficUnicastLocatorList);
                         }
                     }
+
+                    for (auto& svr : mp_peer_to_peer_participants)
+                    {
+                        if (!_serverPing)
+                        {
+                            logError(RTPS_PDP, "Sending liveliness to participant" << svr.guidPrefix);
+                            remote_readers.push_back(svr.GetPDPReader());
+                            locators.push_back(svr.metatrafficMulticastLocatorList);
+                            locators.push_back(svr.metatrafficUnicastLocatorList);
+                        }
+                    }
+
+
+                             
+                    // for (auto& proxy: participant_proxies_)
+                    // {
+                    //     if (proxy->m_properties.end() != std::find_if(
+                    //         proxy->m_properties.begin(),
+                    //         proxy->m_properties.end(),
+                    //         [&](const dds::ParameterProperty_t& property)
+                    //         {
+                    //             return property.first() == "ds_p2p_lease_duration";
+                    //         })
+                    //         )
+                    //     {
+                    //         remote_readers.push_back(GUID_t(proxy->m_guid.guidPrefix, c_EntityId_SPDPReader));
+                    //         // split multi and unicast locators
+                    //         for (auto& unicast : proxy->metatraffic_locators.unicast)
+                    //         {
+                    //             locators.push_back(unicast);
+                    //         }
+                    //         for (auto& multicast : proxy->metatraffic_locators.multicast)
+                    //         {
+                    //             locators.push_back(multicast);
+                    //         }                           
+                    //     }
+                    // }
 
                     DirectMessageSender sender(getRTPSParticipant(), &remote_readers, &locators);
                     RTPSMessageGroup group(getRTPSParticipant(), mp_PDPWriter, &sender);
@@ -984,6 +1062,38 @@ bool PDPClient::remove_remote_participant(
         const GUID_t& partGUID,
         ParticipantDiscoveryInfo::DISCOVERY_STATUS reason)
 {
+
+    if (partGUID != getLocalParticipantProxyData()->m_guid)
+    {
+        // Does not make sense to p2p the lease duration to ourselves
+    ParticipantProxyData* pdata;
+    for (ResourceLimitedVector<ParticipantProxyData*>::const_iterator it = ParticipantProxiesBegin(); it != ParticipantProxiesEnd(); it++)
+    {
+        if ((*it)->m_guid.guidPrefix == partGUID.guidPrefix)
+        {
+            pdata = *it;
+            break;
+        }
+    }
+    if ((getLocalParticipantProxyData()->m_properties.end() != std::find_if(
+        getLocalParticipantProxyData()->m_properties.begin(),
+        getLocalParticipantProxyData()->m_properties.end(),
+        [&](const eprosima::fastdds::dds::ParameterProperty_t& property)
+        {
+            return property.first() == "ds_p2p_lease_assessment";
+        })) || pdata->m_properties.end() != std::find_if(
+    pdata->m_properties.begin(),
+    pdata->m_properties.end(),
+    [&](const eprosima::fastdds::dds::ParameterProperty_t& property)
+    {
+        return property.first() == "ds_p2p_lease_assessment";
+    }))
+    {
+        pdata->should_check_lease_duration = false;  
+        removePeerToPeerParticipant(partGUID.guidPrefix);    
+    }
+    }
+
     if (PDP::remove_remote_participant(partGUID, reason))
     {
         // If it works fine, return
@@ -1004,6 +1114,41 @@ bool PDPClient::remove_remote_participant(
     update_remote_servers_list();
 
     return false;
+}
+
+void PDPClient::addPeerToPeerParticipant(ParticipantProxyData* pdata)
+{
+    RemoteServerAttributes att;
+    att.proxy = pdata;
+    att.guidPrefix = pdata->m_guid.guidPrefix;
+
+    logError(RTPS_PDP, "Adding peer to peer participant" << att.guidPrefix);
+    for (auto& locator: pdata->metatraffic_locators.multicast)
+    {
+        if (IsAddressDefined(locator))
+        {
+            att.metatrafficMulticastLocatorList.push_back(locator);
+        }
+    }
+    for (auto& locator: pdata->metatraffic_locators.unicast)
+    {
+        if (IsAddressDefined(locator))
+        {
+            att.metatrafficUnicastLocatorList.push_back(locator);
+        }
+    }
+    mp_peer_to_peer_participants.push_back(att);
+    mp_PDPReader->enableMessagesFromUnkownWriters(true);
+}
+
+
+void PDPClient::removePeerToPeerParticipant(const GuidPrefix_t& pdata)
+{
+    logError(RTPS_PDP, "Removing peer to peer participant" << pdata);
+    mp_peer_to_peer_participants.remove_if([pdata](RemoteServerAttributes att)
+    {
+        return att.guidPrefix == pdata;
+    });
 }
 
 } /* namespace rtps */

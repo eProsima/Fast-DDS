@@ -1081,6 +1081,15 @@ const char* const parameter_policy_physical_data_user = "fastdds.physical_data.u
 const char* const parameter_policy_physical_data_process = "fastdds.physical_data.process";
 
 /**
+ * Parameter property value for Process physical data
+ *
+ * @ingroup PARAMETER_MODULE
+ */
+const char* const parameter_policy_ds_p2p_lease_assessment = "ds_p2p_lease_assessment";
+
+
+
+/**
  * @ingroup PARAMETER_MODULE
  */
 class ParameterPropertyList_t : public Parameter_t

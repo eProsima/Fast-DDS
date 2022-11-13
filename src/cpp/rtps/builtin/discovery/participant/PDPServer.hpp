@@ -34,6 +34,8 @@
 #include <rtps/builtin/discovery/database/DiscoveryDataBase.hpp>
 #include <rtps/builtin/discovery/database/DiscoveryDataFilter.hpp>
 #include <rtps/builtin/discovery/participant/timedevent/DServerEvent.hpp>
+#include <fastdds/rtps/builtin/data/ParticipantProxyData.h>
+#include <fastdds/rtps/common/GuidPrefix_t.hpp>
 
 namespace eprosima {
 namespace fastdds {
@@ -294,6 +296,14 @@ protected:
     void match_pdp_reader_nts_(
             const eprosima::fastdds::rtps::RemoteServerAttributes& server_att);
 
+
+     /**
+     * Methods to handle the peer-to-peer participants list
+     * @param pdata Pointer to the RTPSParticipantProxyData object.
+     */
+     void addPeerToPeerParticipant(eprosima::fastrtps::rtps::ParticipantProxyData* pdata) override;
+     void removePeerToPeerParticipant(const eprosima::fastrtps::rtps::GuidPrefix_t& pdata) override;
+
 private:
 
     //! Server thread
@@ -314,6 +324,9 @@ private:
 
     //! TRANSIENT or TRANSIENT_LOCAL durability;
     fastrtps::rtps::DurabilityKind_t durability_;
+
+    std::list<eprosima::fastdds::rtps::RemoteServerAttributes> mp_peer_to_peer_participants;
+
 
 };
 

@@ -19,6 +19,7 @@
 #ifndef _FASTDDS_RTPS_BUILTIN_DISCOVERY_PARTICIPANT_PDP_H_
 #define _FASTDDS_RTPS_BUILTIN_DISCOVERY_PARTICIPANT_PDP_H_
 
+#include "fastdds/rtps/common/GuidPrefix_t.hpp"
 #include <fastrtps/rtps/builtin/data/ParticipantProxyData.h>
 #include <fastrtps/rtps/builtin/BuiltinProtocols.h>
 #include <fastrtps/rtps/messages/CDRMessage.h>
@@ -79,6 +80,14 @@ public:
     MOCK_METHOD0(ParticipantProxiesBegin, ResourceLimitedVector<ParticipantProxyData*>::const_iterator());
 
     MOCK_METHOD0(ParticipantProxiesEnd, ResourceLimitedVector<ParticipantProxyData*>::const_iterator());
+    
+    MOCK_METHOD0(getLocalParticipantProxyData, ParticipantProxyData*());
+
+    MOCK_METHOD1(addPeerToPeerParticipant, void(ParticipantProxyData*));
+
+    MOCK_METHOD1(removePeerToPeerParticipant, void(const GuidPrefix_t&));
+
+
 
     ProxyPool<ReaderProxyData>& get_temporary_reader_proxies_pool()
     {

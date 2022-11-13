@@ -100,6 +100,11 @@ public:
         return participant_change_data_.is_local();
     }
 
+    bool is_peer_to_peer() const
+    {
+        return participant_change_data_.is_peer_to_peer();
+    }
+
     void participant_change_data(
             const DiscoveryParticipantChangeData& new_participant_change_data)
     {

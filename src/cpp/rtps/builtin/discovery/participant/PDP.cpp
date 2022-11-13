@@ -17,6 +17,7 @@
  *
  */
 
+#include <algorithm>
 #include <fastdds/rtps/builtin/discovery/participant/PDP.h>
 #include <fastdds/rtps/builtin/discovery/participant/PDPListener.h>
 
@@ -46,6 +47,7 @@
 
 #include <fastrtps/utils/TimeConversion.h>
 #include <fastrtps/utils/IPLocator.h>
+#include "fastdds/rtps/attributes/PropertyPolicy.h"
 #include "fastrtps/utils/shared_mutex.hpp"
 
 #include <fastdds/dds/domain/DomainParticipantFactory.hpp>
@@ -1081,7 +1083,7 @@ void PDP::assert_remote_participant_liveliness(
             // TODO Ricardo: Study if isAlive attribute is necessary.
             it->isAlive = true;
             it->assert_liveliness();
-            break;
+            return;
         }
     }
 }
@@ -1133,9 +1135,12 @@ void PDP::check_remote_participant_liveliness(
         auto now = std::chrono::steady_clock::now();
         auto real_lease_tm = remote_participant->last_received_message_tm() +
                 std::chrono::microseconds(TimeConv::Duration_t2MicroSecondsInt64(remote_participant->m_leaseDuration));
+        logError(RTPS_PDP, "Checking participant liveliness "<< remote_participant->m_guid);
+       
         if (now > real_lease_tm)
         {
             guard.unlock();
+            logError(RTPS_PDP, "Lost participant liveliness "<< remote_participant->m_guid);
             remove_remote_participant(remote_participant->m_guid, ParticipantDiscoveryInfo::DROPPED_PARTICIPANT);
             return;
         }

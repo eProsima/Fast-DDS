@@ -48,10 +48,12 @@ public:
     DiscoveryParticipantChangeData(
             fastrtps::rtps::RemoteLocatorList metatraffic_locators,
             bool is_client,
-            bool is_local)
+            bool is_local,
+            bool is_peer_to_peer)
         : metatraffic_locators_(metatraffic_locators)
         , is_client_(is_client)
         , is_local_(is_local)
+        , is_peer_to_peer_(is_peer_to_peer)
     {
     }
 
@@ -64,6 +66,10 @@ public:
     {
         return is_local_;
     }
+    bool is_peer_to_peer() const
+    {
+        return is_peer_to_peer_;
+    }
 
     fastrtps::rtps::RemoteLocatorList metatraffic_locators() const
     {
@@ -75,6 +81,7 @@ public:
     {
         j["is_client"] = is_client_;
         j["is_local"] = is_local_;
+        j["is_peer_to_peer"] = is_peer_to_peer_;
         j["metatraffic_locators"] = object_to_string(metatraffic_locators_);
     }
 
@@ -88,6 +95,8 @@ private:
     bool is_client_ = false;
     // Whether this participant (CLIENT OR SERVER) is a client of this server
     bool is_local_ = false;
+    // Whether this participant is asserting its lease duration on a peer-to-peer basis
+    bool is_peer_to_peer_ = false;
 };
 
 } /* namespace ddb */

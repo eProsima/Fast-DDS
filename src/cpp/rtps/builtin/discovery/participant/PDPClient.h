@@ -19,6 +19,10 @@
 
 #ifndef _FASTDDS_RTPS_PDPCLIENT_H_
 #define _FASTDDS_RTPS_PDPCLIENT_H_
+#include "fastdds/rtps/attributes/ServerAttributes.h"
+#include "fastdds/rtps/builtin/data/ParticipantProxyData.h"
+#include "fastdds/rtps/common/GuidPrefix_t.hpp"
+#include <list>
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 
 #include <fastdds/rtps/builtin/discovery/participant/PDP.h>
@@ -143,6 +147,13 @@ public:
      */
     void update_remote_servers_list();
 
+     /**
+     * Methods to handle the peer-to-peer participants list
+     * @param pdata Pointer to the RTPSParticipantProxyData object.
+     */
+     void addPeerToPeerParticipant(ParticipantProxyData* pdata) override;
+     void removePeerToPeerParticipant(const GuidPrefix_t& pdata) override;
+
 protected:
 
     /**
@@ -170,6 +181,9 @@ private:
      *   second stage: waiting PDP info is up to date before allowing EDP matching
      */
     DSClientEvent* mp_sync;
+
+    std::list<eprosima::fastdds::rtps::RemoteServerAttributes> mp_peer_to_peer_participants;
+    
 
     //! flag to hightlight we need a server ping announcement
     bool _serverPing;

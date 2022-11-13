@@ -253,6 +253,15 @@ void PDPServerListener::onNewCacheChangeAdded(
                 was_local = pdp_server()->discovery_db().is_participant_local(change->writerGUID.guidPrefix);
             }
 
+            bool is_peer_to_peer = (properties.end() != std::find_if(
+                            properties.begin(),
+                            properties.end(),
+                            [&](const dds::ParameterProperty_t& property)
+                            {
+                                return (property.first() == "ds_p2p_lease_assessment" && property.second() == "true"); 
+                            })
+                            ) ;
+
             if (!pdp_server()->discovery_db().backup_in_progress())
             {
                 // Notify the DiscoveryDataBase
@@ -261,7 +270,8 @@ void PDPServerListener::onNewCacheChangeAdded(
                             ddb::DiscoveryParticipantChangeData(
                                 participant_data.metatraffic_locators,
                                 is_client,
-                                is_local)))
+                                is_local,
+                                is_peer_to_peer)))
                 {
                     // Remove change from PDP reader history, but do not return it to the pool. From here on, the discovery
                     // database takes ownership of the CacheChange_t. Henceforth there are no references to the change.
