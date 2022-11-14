@@ -534,8 +534,6 @@ private:
     uint32_t IdCounter;
     //! Mutex to safely access endpoints collections
     mutable shared_mutex endpoints_list_mutex;
-    //! This member avoids shared_mutex reentrancy by tracking last participant into traversing the endpoints collections
-    static thread_local RTPSParticipantImpl* collections_mutex_owner_;
     //!Writer List.
     std::vector<RTPSWriter*> m_allWriterList;
     //!Reader List
@@ -931,15 +929,7 @@ public:
             Functor f)
     {
         // check if we are reentrying
-        shared_lock<shared_mutex> may_lock;
-        RTPSParticipantImpl* previous_owner = collections_mutex_owner_;
-
-        if (collections_mutex_owner_ != this)
-        {
-            shared_lock<shared_mutex> lock(endpoints_list_mutex);
-            may_lock = std::move(lock);
-            collections_mutex_owner_ = this;
-        }
+        shared_lock<shared_mutex> _(endpoints_list_mutex);
 
         // traverse the list
         for ( RTPSWriter* pw : m_userWriterList)
@@ -949,9 +939,6 @@ public:
                 break;
             }
         }
-
-        // restore tls former value
-        std::swap(collections_mutex_owner_, previous_owner);
 
         return f;
     }
@@ -965,15 +952,7 @@ public:
             Functor f)
     {
         // check if we are reentrying
-        shared_lock<shared_mutex> may_lock;
-        RTPSParticipantImpl* previous_owner = collections_mutex_owner_;
-
-        if (collections_mutex_owner_ != this)
-        {
-            shared_lock<shared_mutex> lock(endpoints_list_mutex);
-            may_lock = std::move(lock);
-            collections_mutex_owner_ = this;
-        }
+        shared_lock<shared_mutex> _(endpoints_list_mutex);
 
         for ( RTPSReader* pr : m_userReaderList)
         {
@@ -982,9 +961,6 @@ public:
                 break;
             }
         }
-
-        // restore tls former value
-        std::swap(collections_mutex_owner_, previous_owner);
 
         return f;
     }
