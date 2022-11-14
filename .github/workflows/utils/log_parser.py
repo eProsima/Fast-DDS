@@ -150,10 +150,12 @@ def common_specific_errors_list(
             errors_file_path,
             line_splitter).items()]
 
+    n_errors = len(result)
+
     if len(result) == 0:
         result.append({'Error': 'No errors', 'Repetitions': '0'})
 
-    return result
+    return result, n_errors
 
 
 def common_specific_errors_dict(
@@ -199,7 +201,7 @@ def main():
     file_title = ('ASAN' if asan else 'TSAN') + ' Errors Summary'
 
     # Execute specific errors parse
-    specific_errors = common_specific_errors_list(
+    specific_errors, n_errors = common_specific_errors_list(
         errors_file_path=args.specific_error_file,
         line_splitter=line_splitter)
     print_list_to_markdown(
@@ -208,12 +210,14 @@ def main():
         output_file_path=args.output_file)
 
     # Execute failed tests
-    tests_failed = failure_test_list(
+    tests_failed, _ = failure_test_list(
         log_file_path=args.log_file)
     print_list_to_markdown(
         title='Tests failed',
         result=tests_failed,
         output_file_path=args.output_file)
+
+    return n_errors
 
 
 if __name__ == '__main__':

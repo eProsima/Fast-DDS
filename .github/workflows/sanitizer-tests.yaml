@@ -52,7 +52,8 @@ jobs:
             --return-code-on-test-failure \
             --ctest-args \
               --label-exclude xfail \
-              --timeout 60
+              --timeout 300
+        continue-on-error: true
 
       - name: Upload Logs
         uses: actions/upload-artifact@v1
@@ -117,6 +118,7 @@ jobs:
             --ctest-args \
               --label-exclude xfail \
               --timeout 60
+        continue-on-error: true
 
       - name: Upload Logs
         uses: actions/upload-artifact@v1
