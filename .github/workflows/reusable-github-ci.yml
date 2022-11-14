@@ -15,6 +15,18 @@ on:
         description: 'A json array listing visual studio toolsets'
         required: true
         type: string
+      colcon_args:
+        description: 'Extra arguments for colcon cli'
+        required: false
+        type: string
+      cmake_args:
+        description: 'Extra arguments for cmake cli'
+        required: false
+        type: string
+      ctest_args:
+        description: 'Extra arguments for ctest cli'
+        required: false
+        type: string
       force-meta-branch:
         description: 'Branch to checkout in Fast-DDS-CI'
         required: false
@@ -29,7 +41,7 @@ jobs:
   build-matrix:
     runs-on: windows-latest
     outputs:
-        configs-matrix: ${{ steps.set-matrix.outputs.configs-matrix }}  
+        configs-matrix: ${{ steps.set-matrix.outputs.configs-matrix }}
     steps:
         - id: set-matrix
           run: |
@@ -67,9 +79,9 @@ jobs:
       matrix:
         configs: ${{ fromJSON(needs.build-matrix.outputs.configs-matrix) }}
       fail-fast: false
- 
+
     name: ${{ matrix.configs.os }} ${{ matrix.configs.config }} ${{ matrix.configs.toolset }} CI
-    runs-on: ${{ matrix.configs.os }} 
+    runs-on: ${{ matrix.configs.os }}
     steps:
       - name: Setup environment
         run: |
@@ -97,7 +109,7 @@ jobs:
              }
              else
              {
-               throw "Unsupported platform??"
+               Write-Error -Message "Unknown platform" -Category InvalidOperation
              }
 
              # download the pull request branches on fetch
@@ -112,13 +124,13 @@ jobs:
              $wer = "HKLM:\SOFTWARE\Microsoft\Windows\Windows Error Reporting"
              $ld = Join-Path $wer LocalDumps
              $key = Get-Item $wer
- 
+
              if("Disabled" -in $key.Property) {
                  Set-ItemProperty -Path $wer -Name "Disabled" -Value 0
              } else {
                  New-ItemProperty -Path $wer -Name "Disabled" -Value 0 -PropertyType DWord
              }
- 
+
              if(Test-Path $ld) { $key = Get-Item $ld } else { $key = New-Item -Path $wer -Name "LocalDumps" }
 
              #destination folder
@@ -202,7 +214,7 @@ jobs:
              }
              else
              {
-               throw "Unsupported platform??"
+               Write-Error -Message "Unknown platform" -Category InvalidOperation
              }
 
       - name: Download & build & install googletest system wide
@@ -211,12 +223,12 @@ jobs:
              # windows workaround
              if($IsWindows)
              {
-               $crt = '-Dgtest_force_shared_crt=ON' 
+               $crt = '-Dgtest_force_shared_crt=ON'
              }
 
              # Generate
              cmake -DBUILD_GMOCK=ON $Env:BUILD_TYPE $crt -DCMAKE_VERBOSE_MAKEFILE=ON `
-                   -B ./build/googletest $Env:BIN_ARCH $Env:HOST_ARCH ./googletest 
+                   -B ./build/googletest $Env:BIN_ARCH $Env:HOST_ARCH ./googletest
 
              # Build and install elevated if required
              $build = { cmake --build ./build/googletest --target install $Env:CONFIG_TYPE --verbose }
@@ -232,7 +244,7 @@ jobs:
              }
 
              # clean up
-             'build', 'googletest', 'gtest.log' | del -Recurse -Force 
+             'build', 'googletest', 'gtest.log' | del -Recurse -Force
 
       - name: Make sure OpenSSL is there
         if: ${{ contains(matrix.configs.os, 'windows') }}
@@ -243,13 +255,13 @@ jobs:
                ((iwr 'https://slproweb.com/products/Win32OpenSSL.html').links |
                sls 'href=\"(.*download/Win64OpenSSL-1_1_1.*\.exe)\"').matches.Groups.value[-1]
                iwr -Uri $uri -OutFile "$Env:TMP\Win64OpenSSL.exe"
- 
+
              # Do install
              & "$Env:TMP\Win64OpenSSL.exe" /silent /verysilent /sp- /suppressmsgboxes;
- 
+
              # Update the environment
              "OPENSSL64_ROOT=$Env:ProgramFiles\OpenSSL-Win64" | Out-File $Env:GITHUB_ENV -Append -Encoding OEM
- 
+
              # Wait for the installation to be fulfill
              Get-Process Win??OpenSSL -ErrorAction SilentlyContinue | Wait-Process
              del "$Env:TMP\Win64OpenSSL.exe"
@@ -291,7 +303,7 @@ jobs:
              }
              else
              {
-               throw "Unsupported platform??"
+               Write-Error -Message "Unknown platform" -Category InvalidOperation
              }
 
              # Show the result
@@ -308,7 +320,7 @@ jobs:
                 }
 
                 # Install the HSM emulator (required for testing PKCS #11 support)
-                $urlHSM = "https://github.com/disig/SoftHSM2-for-Windows/releases/download/v2.5.0/SoftHSM2-2.5.0.msi" 
+                $urlHSM = "https://github.com/disig/SoftHSM2-for-Windows/releases/download/v2.5.0/SoftHSM2-2.5.0.msi"
                 $msiHSM = "$Env:tmp\SoftHSM2-2.5.0.msi"
 
                 iwr $urlHSM -OutFile $msiHSM
@@ -329,11 +341,11 @@ jobs:
                 cd $deploy_dir
 
                 nmake .\Makefile.mak OPENSSL_DIR=$Env:OPENSSL64_ROOT BUILD_FOR=WIN64
-                $config = ls -Path $Env:OPENSSL64_ROOT -Recurse -Include openssl.cnf; 
+                $config = ls -Path $Env:OPENSSL64_ROOT -Recurse -Include openssl.cnf;
                 $libp11_path = Join-Path $deploy_dir src
                 'LibP11_ROOT_64=' + $libp11_path | Out-File $Env:GITHUB_ENV -Append -Encoding OEM
 
-                # Wait until installation is completed 
+                # Wait until installation is completed
                 Wait-Process -Name msiexec -ErrorAction SilentlyContinue
                 del $msiHSM
 
@@ -362,7 +374,7 @@ jobs:
 
                 # lead openssl to the right config file
                 $Env:OPENSSL_CONF=$config
-                
+
              }
              elseif ($IsLinux)
              {
@@ -417,7 +429,7 @@ jobs:
                        {
                           if(git checkout $repo_branch 2>&1 | % @checker)
                           {
-                              $choice = "taking metas & depends from branch $repo_branch"      
+                              $choice = "taking metas & depends from branch $repo_branch"
                               break;
                           }
                           else
@@ -426,13 +438,13 @@ jobs:
                           }
                        }
                     }
-                    "push|workflow" 
+                    "push|workflow"
                     {
                        # use the branch that was push or was selected for the workflow
                        $repo_branch = "${{ github.ref }}"
                        if(git checkout $repo_branch 2>&1 | % @checker)
                        {
-                           $choice = "taking metas & depends from branch $repo_branch"      
+                           $choice = "taking metas & depends from branch $repo_branch"
                        }
                        else
                        {
@@ -495,10 +507,10 @@ jobs:
                    'cmake_minimum_required(VERSION 3.5)' + $cr  +
                    'project(dummy VERSION 1.0.0 LANGUAGES CXX)' + $cr +
                    'find_package(GTest CONFIG REQUIRED)' + $cr +
-                   'message(STATUS "GTest_FOUND=>>>>${GTest_FOUND}<<<<<")' | 
-                   Out-File CMakeLists.txt 
+                   'message(STATUS "GTest_FOUND=>>>>${GTest_FOUND}<<<<<")' |
+                   Out-File CMakeLists.txt
                    (cmake .) *>&1 | % {
-                     if($_ -Match "GTest_FOUND=>>>>(?<exec>.*)<<<<<") { return $Matches.exec }
+                     if($_ -Match "GTest_FOUND=>>>>(?<res>.*)<<<<<") { $Matches.res -eq 1 }
                    }; popd }
 
              # If there is a framework version of googletest use it
@@ -573,6 +585,14 @@ jobs:
                         "--event-handlers=console_direct+",
                         "--mixin", $translate["${{ matrix.configs.config }}"]
 
+           # add coverage testing if the install step succeeds
+           if( $${{ steps.coverage.outcome == 'success' }} )
+           {
+              $buildargs += "--mixin", "coverage-gcc"
+           }
+
+           $cmakeargs = ,"--cmake-args" + '${{ inputs.cmake_args }}'.split(" ")
+
            # On Windows we must load the developer environment and chose a config
            if($IsWindows)
            {
@@ -581,14 +601,10 @@ jobs:
               Enter-VsDevShell -SetDefaultWindowTitle -VsInstallPath $pwshmodule.Directory.Parent.Parent `
                                -StartInPath (pwd) -DevCmdArguments '/arch=x64 /host_arch=x64'
 
-              $cmakeargs = "--cmake-args", $Env:BIN_ARCH, $Env:HOST_ARCH
+              $cmakeargs += $Env:BIN_ARCH, $Env:HOST_ARCH
+           }
 
-              colcon build $buildargs --metas ci.meta --executor sequential $cmakeargs
-           }
-           else
-           {
-              colcon build $buildargs --metas ci.meta --executor sequential
-           }
+           colcon build $buildargs --metas ci.meta --executor sequential ${{ inputs.colcon_args }} $cmakeargs
 
       - name: Test
         if: ${{ !contains(github.event.pull_request.labels.*.name, 'no-test') }}
@@ -598,7 +614,54 @@ jobs:
            'JUNIT_LOG=' + $junit.FullName | Out-File $Env:GITHUB_ENV -Append -Encoding OEM
            # Run the testing
            colcon test --packages-select fastrtps --event-handlers=console_direct+ `
-              --merge-install --executor sequential --ctest-args --timeout 300 --output-junit $junit
+              --merge-install --executor sequential --ctest-args ${{ inputs.ctest_args }} --timeout 300 --output-junit $junit
+
+      - name: Process gcc-coverage
+        if: ${{ steps.coverage.outcome == 'success' }}
+        id: process_coverage
+        run: |
+             # ignore coverage on cmake try runs
+             dir -Path build/* -R -Filter "CMake*CompilerId.gcno" | del
+
+             # fails to exclude from coverage
+             $excludes =
+               '.*examples/.*',
+               '.*thirdparty/.*',
+               '.*test/.*',
+               '.*security/.*',
+               '.*/sqlite3.c',
+               '.*/optionparser.h',
+               '.*XMLDynamicParser.cpp',
+               '.*dynamic-types/.*',
+               '.*core/xtypes/.*',
+               '.*include/fastrtps/types/.*',
+               '.*/PDPServer.h',
+               '.*/PDPServerListener.h',
+               '.*/DServerEvent.h',
+               '.*/EDPClient2.hpp',
+               '.*/EDPClient2.cpp',
+               '.*/EDPServer.cpp',
+               '.*/EDPServerListeners.cpp',
+               '.*/DSClientEvent2.cpp',
+               '.*/DSClientEvent2.hpp',
+               '.*/PDPClient2.cpp',
+               '.*/PDPClient2.hpp',
+               '.*/PDPServer.cpp',
+               '.*/PDPServerListener.cpp',
+               '.*/DServerEvent.cpp',
+               '.*/TypeLookupTypes.cpp',
+               '.*/TypeLookupManager.cpp',
+               '.*/TypeObject.h',
+               '.*/AnnotationParameterValue.h'
+
+             $gcov_args = '-x -root src/fastrtps -f src/fastrtps --object-directory "build/fastrtps"'.split(" ") +
+                     '--exclude-unreachable-branches' + ($excludes | % { "--exclude='$_'" })
+
+             $coverageDir = New-Item -Path "coverage" -Type Directory
+             "CoverageFolder=$coverageDir" | Out-File $Env:GITHUB_OUTPUT -Append
+
+             gcovr $gcov_args --xml-pretty -o "`"$(Join-Path $coverageDir coverage.xml)`""
+             gcovr $gcov_args --html --html-details -o "`"$(Join-Path $coverageDir coverage.html)`""
 
       - name: Test Summary
         id: summary
@@ -668,6 +731,13 @@ jobs:
            }
 
            exit $failed
+
+      - name: Upload coverage
+        if: ${{ steps.process_coverage.outcome == 'success' }}
+        uses: actions/upload-artifact@v3
+        with:
+            name: coverage-report-${{ matrix.configs.os }}-${{ matrix.configs.config }}
+            path: ${{ steps.process_coverage.outputs.CoverageFolder }}
 
       - name: Upload crash dumps
         if: ${{ contains(matrix.configs.os, 'windows') && steps.summary.outcome == 'failure' }}
