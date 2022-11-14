@@ -213,6 +213,9 @@ ParticipantProxyData* PDPServer::createParticipantProxyData(
             }
         }
     }
+    else {
+        mp_local_participants.push_back(participant_data.m_guid.guidPrefix);
+    }
 
     ParticipantProxyData* pdata = add_participant_proxy_data(participant_data.m_guid, is_relay, &participant_data);
     bool is_p2p = false;
@@ -477,29 +480,29 @@ void PDPServer::assignRemoteEndpoints(
         return;
     }
 
-    /*if (pdata->m_properties.end() == std::find_if(
-                pdata->m_properties.begin(),
-                pdata->m_properties.end(),
-                [&](const eprosima::fastdds::dds::ParameterProperty_t& property)
-                {
-                    return property.first() == "ds_p2p_lease_assessment";
-                }))
-    {*/
-        //Inform EDP of new RTPSParticipant data:
-        notifyAboveRemoteEndpoints(*pdata);
-    //}   
+    //Inform EDP of new RTPSParticipant data:
+    notifyAboveRemoteEndpoints(*pdata);
 }
 
 void PDPServer::notifyAboveRemoteEndpoints(
         const ParticipantProxyData& pdata)
 {
-    //Inform EDP of new RTPSParticipant data:
-
-    if (mp_EDP != nullptr)
-    {
-        mp_EDP->assignRemoteEndpoints(pdata);
-    }
-
+    //Inform EDP of new RTPSParticipant data, but only if it's local:
+    bool is_local = isLocalClientParticipant(pdata);
+      if ( is_local || pdata.m_properties.end() == std::find_if(
+                  pdata.m_properties.begin(),
+                  pdata.m_properties.end(),
+                  [&](const eprosima::fastdds::dds::ParameterProperty_t& property)
+                  {
+                      return property.first() == "ds_p2p_lease_assessment";
+                  }))
+      {
+        if (mp_EDP != nullptr)
+        {
+            logError(RTPS_PDP_SERVER, "Assigning Remote Endpoints: " << pdata.m_guid);
+            mp_EDP->assignRemoteEndpoints(pdata);
+        }
+      }
     if (mp_builtin->mp_WLP != nullptr)
     {
         mp_builtin->mp_WLP->assignRemoteEndpoints(pdata);
@@ -1857,6 +1860,8 @@ void PDPServer::match_pdp_writer_nts_(
     const NetworkFactory& network = mp_RTPSParticipant->network_factory();
     auto temp_writer_data = get_temporary_writer_proxies_pool().get();
 
+    logError(RTPS_PDP, "Matching PDP writer" << server_att.guidPrefix);
+
     temp_writer_data->clear();
     temp_writer_data->guid(server_att.GetPDPWriter());
     temp_writer_data->set_multicast_locators(server_att.metatrafficMulticastLocatorList, network);
@@ -1871,6 +1876,8 @@ void PDPServer::match_pdp_reader_nts_(
 {
     const NetworkFactory& network = mp_RTPSParticipant->network_factory();
     auto temp_reader_data = get_temporary_reader_proxies_pool().get();
+
+    logError(RTPS_PDP, "Matching PDP reader" << server_att.guidPrefix);
 
     temp_reader_data->clear();
     temp_reader_data->guid(server_att.GetPDPReader());
@@ -1888,6 +1895,8 @@ void PDPServer::addPeerToPeerParticipant(ParticipantProxyData* pdata)
     att.guidPrefix = pdata->m_guid.guidPrefix;
 
     logError(RTPS_PDP, "Adding peer to peer participant" << att.guidPrefix);
+    match_pdp_writer_nts_(att);
+    match_pdp_reader_nts_(att);
     mp_peer_to_peer_participants.push_back(att);
 }
 
@@ -1899,6 +1908,11 @@ void PDPServer::removePeerToPeerParticipant(const GuidPrefix_t& pdata)
     {
         return att.guidPrefix == pdata;
     });
+}
+
+bool PDPServer::isLocalClientParticipant(const eprosima::fastrtps::rtps::ParticipantProxyData& pdata)
+{
+    return mp_local_participants.end() != std::find(mp_local_participants.begin(), mp_local_participants.end(), pdata.m_guid.guidPrefix);
 }
 
 } // namespace rtps

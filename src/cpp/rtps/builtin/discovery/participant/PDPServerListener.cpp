@@ -334,13 +334,13 @@ void PDPServerListener::onNewCacheChangeAdded(
 
                 // All local builtins are connected, the database will avoid any EDP DATA to be send before having PDP
                 // DATA acknowledgement
-                if (pdata && is_local)
+                if (pdata && (is_local || is_peer_to_peer))
                 {
                     pdp_server()->assignRemoteEndpoints(pdata);
                 }
             }
             // Case ParticipantProxyData already exists but was known remotly and now must be local
-            else if (is_local && !was_local)
+            else if (is_local && (!was_local || is_peer_to_peer))
             {
                 // Realease PDP mutex
                 lock.unlock();

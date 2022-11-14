@@ -306,6 +306,8 @@ protected:
 
 private:
 
+    bool isLocalClientParticipant(const eprosima::fastrtps::rtps::ParticipantProxyData& pdata);
+
     //! Server thread
     eprosima::fastrtps::rtps::ResourceEvent resource_event_thread_;
 
@@ -326,6 +328,7 @@ private:
     fastrtps::rtps::DurabilityKind_t durability_;
 
     std::list<eprosima::fastdds::rtps::RemoteServerAttributes> mp_peer_to_peer_participants;
+    std::list<eprosima::fastrtps::rtps::GuidPrefix_t> mp_local_participants;
 
 
 };
