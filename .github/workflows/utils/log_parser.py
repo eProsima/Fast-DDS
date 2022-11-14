@@ -81,10 +81,6 @@ def failure_test_list(
             if (re.search('.*The following tests FAILED:.*', line)):
                 break
 
-    # Exit if no test failed
-    if (not saved_lines):
-        return {}
-
     failed_tests = []
     for test in saved_lines:
         if (re.search(r'\d* - .* \(.+\)', test)):
@@ -97,16 +93,18 @@ def failure_test_list(
                     'Type': test[test.find('(')+1:test.find(')')]
                 }))
 
+    n_errors = len(failed_tests)
+
     if len(failed_tests) == 0:
-        failed_tests.append(
+        failed_tests.insert(
+            0,
             dict({
                     'ID': '-1',
                     'Name': 'No tests failed',
                     'Type': 'Hooray'
-                })
-        )
+                }))
 
-    return failed_tests
+    return failed_tests, n_errors
 
 
 def _common_line_splitter(
