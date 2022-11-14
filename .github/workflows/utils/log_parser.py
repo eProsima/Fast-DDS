@@ -84,12 +84,22 @@ def failure_test_list(
     failed_tests = []
     for test in saved_lines:
         if (re.search(r'\d* - .* \(.+\)', test)):
+
+            # Remove strange chars and break lines and separate by space
             split_test = test.strip().split()
+
+            # NOTE: if there are spaces in the test failure (e.g. Subprocess Aborted)
+            # the parse is more difficult as the values to take from split are different
+            # Thus, it uses this variable to get the correct # of spaces in error name
+            n_spaces_in_error = len(test[test.find('(')+1:test.find(')')].split()) - 1
+
+            # Insert as failed test (in first place, because we are reading them inversed)
+            # the new test failed with the name and id taken from split line
             failed_tests.insert(
                 0,
                 dict({
-                    'ID': split_test[-4],
-                    'Name': split_test[-2],
+                    'ID': split_test[- 4 - n_spaces_in_error],
+                    'Name': split_test[- 2 - n_spaces_in_error],
                     'Type': test[test.find('(')+1:test.find(')')]
                 }))
 
