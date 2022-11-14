@@ -129,7 +129,7 @@ void RTPSReader::init(
         if (access(att.endpoint.data_sharing_configuration().shm_directory().c_str(), W_OK) != F_OK)
         {
             create_datasharing_notification = false;
-            logWarning(RTPS_READER, "Disabling DataSharing due to lack of permissions on folder " << att.endpoint.data_sharing_configuration().shm_directory());
+            logError(RTPS_READER, "Disabling DataSharing due to lack of permissions on folder " << att.endpoint.data_sharing_configuration().shm_directory());
         }
     }
 #endif // ifdef ANDROID
