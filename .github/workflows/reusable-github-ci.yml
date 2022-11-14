@@ -3,6 +3,10 @@ name: reusable Fast-DDS continuous integration
 on:
   workflow_call:
     inputs:
+      label:
+        description: 'id associated to the workflow. Must univocally identify artifacts.'
+        required: true
+        type: string
       os:
         description: 'A json array listing github hosts'
         required: true
@@ -13,7 +17,7 @@ on:
         type: string
       vs_toolset:
         description: 'A json array listing visual studio toolsets'
-        required: true
+        required: false
         type: string
       colcon_args:
         description: 'Extra arguments for colcon cli'
@@ -66,7 +70,7 @@ jobs:
                        }
                        else
                        {
-                           $configs += $map
+                           $configs += $map.Clone()
                        }
                    }
                }
@@ -102,10 +106,16 @@ jobs:
                  'HOST_ARCH=-T ${{ matrix.configs.toolset }},host=x64',
                  ('VSPWSH=' + $pwshmodule)
              }
-             elseif($IsLinux -or $IsMacOS)
+             elseif($IsLinux)
              {
                $env_variables +=
                  'BUILD_TYPE=-DCMAKE_BUILD_TYPE=${{ matrix.configs.config }}'
+             }
+             elseif($IsMacOS)
+             {
+               $env_variables +=
+                 'BUILD_TYPE=-DCMAKE_BUILD_TYPE=${{ matrix.configs.config }}',
+                 'OPENSSL_ROOT_DIR=/usr/local/opt/openssl@1.1'
              }
              else
              {
@@ -214,7 +224,7 @@ jobs:
              }
              else
              {
-               Write-Error -Message "Unknown platform" -Category InvalidOperation
+               Write-Error -Message "Unknown platform" -Category InvalidOperation 
              }
 
       - name: Download & build & install googletest system wide
@@ -266,6 +276,23 @@ jobs:
              Get-Process Win??OpenSSL -ErrorAction SilentlyContinue | Wait-Process
              del "$Env:TMP\Win64OpenSSL.exe"
 
+      - name: Install valgrind
+        if: ${{ contains(matrix.configs.os, 'ubuntu') && contains(inputs.label, 'memcheck') }}
+        id: valgrind
+        run: |
+             if($IsWindows -or $IsMacOS) { Write-Error -Message "valgrind is not available" -Category ResourceUnavailable }
+             elseif ($IsLinux) { sudo apt install valgrind }
+             else { Write-Error -Message "Unknown platform" -Category InvalidOperation }
+
+      - name: Install gcc-coverage
+        if: ${{ !contains(matrix.configs.os, 'windows') && contains(inputs.label, 'coverage') }}
+        id: coverage
+        run: |
+             if($IsWindows) { Write-Error -Message "Coverage is not available" -Category ResourceUnavailable }
+             elseif ($IsLinux) { sudo apt install gcovr }
+             elseif($IsMacOS) { brew install gcovr }
+             else { Write-Error -Message "Unknown platform" -Category InvalidOperation }
+
       - name: Update the host file for DNS resolver testing
         if: ${{ !contains(github.event.pull_request.labels.*.name, 'no-test') }}
         run: |
@@ -316,7 +343,7 @@ jobs:
              {
                 if(!(Test-Path -Path Env:OPENSSL64_ROOT))
                 {
-                  throw "OpenSSL is not set up properly. Check previous steps."
+                  Write-Error -Message "OpenSSL is not set up properly. Check previous steps."
                 }
 
                 # Install the HSM emulator (required for testing PKCS #11 support)
@@ -383,7 +410,7 @@ jobs:
              }
              else
              {
-               throw "Libp11 support for this OS is not yet available"
+               Write-Error -Message "Libp11 support for this OS is not yet available"
              }
 
              # check if is working
@@ -582,7 +609,8 @@ jobs:
            # For convenience use an array to pass the arguments
            $buildargs = "--merge-install",
                         "--symlink-install",
-                        "--event-handlers=console_direct+",
+                        "--event-handlers=console_cohesion+",
+                        "--packages-up-to", "fastrtps", 
                         "--mixin", $translate["${{ matrix.configs.config }}"]
 
            # add coverage testing if the install step succeeds
@@ -604,17 +632,42 @@ jobs:
               $cmakeargs += $Env:BIN_ARCH, $Env:HOST_ARCH
            }
 
+           "::group::cmake summary"
            colcon build $buildargs --metas ci.meta --executor sequential ${{ inputs.colcon_args }} $cmakeargs
+           "::endgroup::"
 
       - name: Test
         if: ${{ !contains(github.event.pull_request.labels.*.name, 'no-test') }}
+        id: test
         run: |
            # Create a junit file for test results
            $junit = New-Item -Path ./junit.xml -ItemType File
            'JUNIT_LOG=' + $junit.FullName | Out-File $Env:GITHUB_ENV -Append -Encoding OEM
+
+           # add valgring testing if the install step succeeds
+           $ctestargs = "${{ inputs.ctest_args }}".split(" ")
+
+           if( $${{ steps.valgrind.outcome == 'success' }} )
+           {
+              $ctestargs += "-T memcheck".split(" ")
+           }
+
            # Run the testing
+           "::group::ctest summary"
            colcon test --packages-select fastrtps --event-handlers=console_direct+ `
-              --merge-install --executor sequential --ctest-args ${{ inputs.ctest_args }} --timeout 300 --output-junit $junit
+              --merge-install --executor sequential --ctest-args $ctestargs --timeout 300 --output-junit $junit
+           "::endgroup::"
+
+           # Move valgrind output if any
+           if( $${{ steps.valgrind.outcome == 'success' }} )
+           {
+              $memoryCheckDir = New-Item -Path "memcheck" -Type Directory
+              gci -Path build/fastrtps/* -R -Filter MemoryChecker.*.log | ? Size -gt 0 | copy -Destination $memoryCheckDir
+              if (gci $memoryCheckDir)
+              {
+                 "MemCheckFolder=$memoryCheckDir" | Out-File $Env:GITHUB_OUTPUT -Append
+              }
+           }
 
       - name: Process gcc-coverage
         if: ${{ steps.coverage.outcome == 'success' }}
@@ -654,14 +707,13 @@ jobs:
                '.*/TypeObject.h',
                '.*/AnnotationParameterValue.h'
 
-             $gcov_args = '-x -root src/fastrtps -f src/fastrtps --object-directory "build/fastrtps"'.split(" ") +
+             $gcov_args = '-x -r src/fastrtps -f src/fastrtps --object-directory build/fastrtps'.split(" ") +
                      '--exclude-unreachable-branches' + ($excludes | % { "--exclude='$_'" })
 
              $coverageDir = New-Item -Path "coverage" -Type Directory
              "CoverageFolder=$coverageDir" | Out-File $Env:GITHUB_OUTPUT -Append
 
-             gcovr $gcov_args --xml-pretty -o "`"$(Join-Path $coverageDir coverage.xml)`""
-             gcovr $gcov_args --html --html-details -o "`"$(Join-Path $coverageDir coverage.html)`""
+             gcovr $gcov_args --html --html-details -o "$coverageDir/coverage.xml" --html="$coverageDir/coverage.html"
 
       - name: Test Summary
         id: summary
@@ -730,20 +782,28 @@ jobs:
                 Move-Item -Destination $dumpfolder
            }
 
+           if($failed) { Write-Error -Message "$failed test(s) failed" }
            exit $failed
+
+      - name: Upload memcheck
+        if: ${{ steps.test.outputs.MemCheckFolder }}
+        uses: actions/upload-artifact@v3
+        with:
+            name: memcheck-report-${{ inputs.label }}-${{ matrix.configs.os }}-${{ matrix.configs.config }}
+            path: ${{ steps.test.outputs.MemCheckFolder }}
 
       - name: Upload coverage
         if: ${{ steps.process_coverage.outcome == 'success' }}
         uses: actions/upload-artifact@v3
         with:
-            name: coverage-report-${{ matrix.configs.os }}-${{ matrix.configs.config }}
+            name: coverage-report-${{ inputs.label }}-${{ matrix.configs.os }}-${{ matrix.configs.config }}
             path: ${{ steps.process_coverage.outputs.CoverageFolder }}
 
       - name: Upload crash dumps
         if: ${{ contains(matrix.configs.os, 'windows') && steps.summary.outcome == 'failure' }}
         uses: actions/upload-artifact@v3
         with:
-            name: crash-dumps-${{ matrix.configs.os }}-${{ matrix.configs.toolset }}-${{ matrix.configs.config }}
+            name: crash-dumps-${{ inputs.label }}-${{ matrix.configs.os }}-${{ matrix.configs.toolset }}-${{ matrix.configs.config }}
             path: ${{ steps.WERSetup.outputs.DumpFolder }}
 
       - name: Check test failures

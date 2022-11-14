@@ -1,0 +1,45 @@
+name: Fast-DDS nightly continuous integration
+
+on:
+  schedule:
+    - cron: '42 23 * * *'
+
+jobs:
+  Running-nosec-nightly-CI:
+    uses: ./.github/workflows/reusable-github-ci.yml
+    with:
+      label: "Running-nosec-nightly-CI"
+      os: "[\"ubuntu-22.04\",\"windows-2022\",\"macos-12\"]"
+      config: "[\"RelWithDebInfo\"]"
+      vs_toolset: "[\"v143\",\"v142\",\"v141\"]"
+      force-meta-branch: "nightly"
+      cmake_args: "-DSECURITY=OFF"
+      ctest_args: "-LE xfail"
+
+  Running-sec-nightly-CI:
+    uses: ./.github/workflows/reusable-github-ci.yml
+    with:
+      label: "Running-sec-nightly-CI"
+      os: "[\"ubuntu-22.04\",\"windows-2022\",\"macos-12\"]"
+      config: "[\"RelWithDebInfo\"]"
+      vs_toolset: "[\"v143\",\"v142\",\"v141\"]"
+      force-meta-branch: "nightly"
+      cmake_args: "-DSECURITY=ON"
+      ctest_args: "-LE xfail"
+
+  Running-memcheck-CI:
+    uses: ./.github/workflows/reusable-github-ci.yml
+    with:
+      label: "Running-memcheck-CI"
+      os: "[\"ubuntu-22.04\"]"
+      config: "[\"RelWithDebInfo\"]"
+      force-meta-branch: "nightly"
+      ctest_args: "-LE NoMemoryCheck"
+
+  Running-coverage-CI:
+    uses: ./.github/workflows/reusable-github-ci.yml
+    with:
+      label: "Running-coverage-CI"
+      os: "[\"ubuntu-22.04\"]"
+      config: "[\"RelWithDebInfo\"]"
+      force-meta-branch: "coverage"
