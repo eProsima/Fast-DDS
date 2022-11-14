@@ -68,7 +68,7 @@ ReturnCode_t WaitSetImpl::attach_condition(
             // Should wake_up when adding a new triggered condition
             if (is_waiting_ && condition.get_trigger_value())
             {
-                wake_up();
+                cond_.notify_one();
             }
         }
     }
@@ -156,6 +156,7 @@ ReturnCode_t WaitSetImpl::get_conditions(
 
 void WaitSetImpl::wake_up()
 {
+    std::lock_guard<std::mutex> guard(mutex_);
     cond_.notify_one();
 }
 
