@@ -17,6 +17,15 @@
                 "-DSANITIZER=Address",
                 "-DCMAKE_CXX_FLAGS='-Werror'"
             ]
+        },
+
+        "discovery-server":
+        {
+            "cmake-args":
+            [
+                "-DCMAKE_BUILD_TYPE=Debug",
+                "-DSANITIZER=Address",
+            ]
         }
     }
 }

@@ -1,0 +1,134 @@
+name: Sanitizer analysis
+
+on:
+  workflow_dispatch:
+  pull_request:
+  push:
+    branches:
+      - master
+  schedule:
+    - cron: '0 1 * * *'
+
+jobs:
+
+  asan-test:
+
+    if: ${{ !(contains(github.event.pull_request.labels.*.name, 'no-test') ||
+              contains(github.event.pull_request.labels.*.name, 'skip-ci')) }}
+
+    runs-on: ubuntu-20.04
+
+    steps:
+      - name: Sync eProsima/Fast-DDS repository
+        uses: actions/checkout@v3
+        with:
+          path: src/Fast-DDS
+
+      - name: Install apt packages
+        uses: ./src/Fast-DDS/.github/actions/install-apt-packages
+
+      - name: Install GTest
+        uses: ./src/Fast-DDS/.github/actions/install-gtest-linux
+
+      - name: Install Python packages
+        uses: ./src/Fast-DDS/.github/actions/install-python-packages
+
+      - name: Fetch Fast DDS dependencies
+        uses: ./src/Fast-DDS/.github/actions/fetch-fastdds-repos
+
+      - name: Build workspace
+        run: |
+          cat src/Fast-DDS/.github/workflows/asan/asan_colcon.meta
+          colcon build \
+            --event-handlers=console_direct+ \
+            --metas src/Fast-DDS/.github/workflows/asan/asan_colcon.meta
+
+      - name: Run tests Fast DDS
+        run: |
+          source install/setup.bash && \
+          colcon test \
+            --packages-select fastrtps \
+            --event-handlers=console_direct+ \
+            --return-code-on-test-failure \
+            --ctest-args \
+              --label-exclude xfail \
+              --timeout 300
+        continue-on-error: true
+
+      - name: Upload Logs
+        uses: actions/upload-artifact@v1
+        with:
+          name: asan-logs
+          path: log/
+        if: always()
+
+      - name: Report ASAN errors
+        if: always()
+        run: |
+          bash src/Fast-DDS/.github/workflows/utils/specific_errors_filter.sh "==ERROR:" log/latest_test/fastrtps/stdout_stderr.log _tmp_specific_error_file.log
+          python3 src/Fast-DDS/.github/workflows/utils/log_parser.py --log-file log/latest_test/fastrtps/stdout_stderr.log --specific-error-file _tmp_specific_error_file.log --output-file $GITHUB_STEP_SUMMARY --sanitizer=asan
+
+
+  asan-discovery-server-test:
+
+    if: ${{ !(contains(github.event.pull_request.labels.*.name, 'no-test') ||
+              contains(github.event.pull_request.labels.*.name, 'skip-ci')) }}
+
+    runs-on: ubuntu-20.04
+
+    steps:
+      - name: Sync eProsima/Fast-DDS repository
+        uses: actions/checkout@v3
+        with:
+          path: src/Fast-DDS
+
+      - name: Install apt packages
+        uses: ./src/Fast-DDS/.github/actions/install-apt-packages
+
+      - name: Install GTest
+        uses: ./src/Fast-DDS/.github/actions/install-gtest-linux
+
+      - name: Install Python packages
+        uses: ./src/Fast-DDS/.github/actions/install-python-packages
+
+      - name: Fetch repositories
+        run: |
+          mkdir -p src
+          cd src
+          git clone https://github.com/eProsima/foonathan_memory_vendor.git
+          git clone https://github.com/eProsima/Fast-CDR.git
+          git clone https://github.com/eProsima/Discovery-Server.git
+          git clone https://github.com/google/googletest.git --branch release-1.10.0
+          cd ..
+
+      - name: Build workspace
+        run: |
+          cat src/Fast-DDS/.github/workflows/asan/asan_colcon.meta
+          colcon build \
+            --event-handlers=console_direct+ \
+            --metas src/Fast-DDS/.github/workflows/asan/asan_colcon.meta
+
+      - name: Run tests Fast DDS
+        run: |
+          source install/setup.bash && \
+          colcon test \
+            --packages-select discovery-server \
+            --event-handlers=console_direct+ \
+            --return-code-on-test-failure \
+            --ctest-args \
+              --label-exclude xfail \
+              --timeout 300
+        continue-on-error: true
+
+      - name: Upload Logs
+        uses: actions/upload-artifact@v1
+        with:
+          name: asan-ds-logs
+          path: log/
+        if: always()
+
+      - name: Report ASAN errors
+        if: always()
+        run: |
+          bash src/Fast-DDS/.github/workflows/utils/specific_errors_filter.sh "==ERROR:" log/latest_test/discovery-server/stdout_stderr.log _tmp_specific_error_file.log
+          python3 src/Fast-DDS/.github/workflows/utils/log_parser.py --log-file log/latest_test/discovery-server/stdout_stderr.log --specific-error-file _tmp_specific_error_file.log --output-file $GITHUB_STEP_SUMMARY --sanitizer=asan
