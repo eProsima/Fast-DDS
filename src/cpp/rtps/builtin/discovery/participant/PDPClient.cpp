@@ -481,6 +481,35 @@ void PDPClient::removeRemoteEndpoints(
             mp_PDPWriter->matched_reader_add(*temp_reader_data);
         }
     }
+    else if (isPeerToPeer(getLocalParticipantProxyData()) || isPeerToPeer(pdata))
+    {
+        // We should unmatch and match the PDP endpoints to renew the PDP reader and writer associated proxies
+        logError(RTPS_PDP, "Unmatching PeerToPeer: " << pdata->m_guid);
+        uint32_t endp = pdata->m_availableBuiltinEndpoints;
+        uint32_t auxendp = endp;
+        auxendp &= DISC_BUILTIN_ENDPOINT_PARTICIPANT_ANNOUNCER;
+
+        if (auxendp != 0)
+        {
+            GUID_t wguid;
+
+            wguid.guidPrefix = pdata->m_guid.guidPrefix;
+            wguid.entityId = c_EntityId_SPDPWriter;
+            mp_PDPReader->matched_writer_remove(wguid);
+        }
+
+        auxendp = endp;
+        auxendp &= DISC_BUILTIN_ENDPOINT_PARTICIPANT_DETECTOR;
+
+        if (auxendp != 0)
+        {
+            GUID_t rguid;
+            rguid.guidPrefix = pdata->m_guid.guidPrefix;
+            rguid.entityId = c_EntityId_SPDPReader;
+            mp_PDPWriter->matched_reader_remove(rguid);
+
+        }
+    }
 }
 
 bool PDPClient::all_servers_acknowledge_PDP()

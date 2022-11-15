@@ -855,6 +855,8 @@ bool PDPServer::remove_remote_participant(
         }
     }
 
+    mp_local_participants.remove(partGUID.guidPrefix);
+
     // check if is a server who has been disposed
     awake_server_thread();
 

@@ -340,13 +340,13 @@ void PDPServerListener::onNewCacheChangeAdded(
                 }
             }
             // Case ParticipantProxyData already exists but was known remotly and now must be local
-            else if (is_local && (!was_local || is_peer_to_peer))
+            else if (is_local && !was_local)
             {
                 // Realease PDP mutex
                 lock.unlock();
 
                 pdp_server()->assignRemoteEndpoints(pdata);
-            }
+            } 
             // Updated participant information case
             else
             {
