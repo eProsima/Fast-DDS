@@ -218,10 +218,10 @@ TEST(WaitSetImplTests, fix_wait_notification_lost)
         ReturnCode_t ret = ReturnCode_t::RETCODE_ERROR;
         std::thread wait_conditions([&]()
                 {
-                  // Not to use `WaitSetImpl::wait` with a timeout value, because the
-                  // `condition_variable::wait_for` could call _Predicate function again.
-                  ret = wait_set.wait(conditions, eprosima::fastrtps::c_TimeInfinite);
-                  promise.set_value();
+                    // Not to use `WaitSetImpl::wait` with a timeout value, because the
+                    // `condition_variable::wait_for` could call _Predicate function again.
+                    ret = wait_set.wait(conditions, eprosima::fastrtps::c_TimeInfinite);
+                    promise.set_value();
                 });
 
         triggered_condition.trigger_value = true;
