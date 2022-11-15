@@ -203,11 +203,11 @@ TEST(WaitSetImplTests, fix_wait_notification_lost)
     ConditionSeq conditions;
     WaitSetImpl wait_set;
 
-    // Waiting should return the added connection while the condition triggered
+    // Waiting should return the added connection after the trigger value is updated and the wait_set waken.
     {
         TestCondition triggered_condition;
 
-        // Expecting calls on the notifier of triggered_condition
+        // Expecting calls on the notifier of triggered_condition.
         auto notifier = triggered_condition.get_notifier();
         EXPECT_CALL(*notifier, attach_to(_)).Times(1);
         EXPECT_CALL(*notifier, will_be_deleted(_)).Times(1);
@@ -216,11 +216,10 @@ TEST(WaitSetImplTests, fix_wait_notification_lost)
         std::promise<void> promise;
         std::future<void> future = promise.get_future();
         ReturnCode_t ret = ReturnCode_t::RETCODE_ERROR;
-        std::thread add_triggered_condition([&]()
+        std::thread wait_conditions([&]()
                 {
-                  // not to use `WaitSetImpl::wait` with a timeout value, because the
-                  // `condition_variable::wait_for` could call _Predicate function again
-                  // after timeout in the `WaitSetImpl::wait`.
+                  // Not to use `WaitSetImpl::wait` with a timeout value, because the
+                  // `condition_variable::wait_for` could call _Predicate function again.
                   ret = wait_set.wait(conditions, eprosima::fastrtps::c_TimeInfinite);
                   promise.set_value();
                 });
@@ -228,12 +227,12 @@ TEST(WaitSetImplTests, fix_wait_notification_lost)
         triggered_condition.trigger_value = true;
         wait_set.wake_up();
 
-        // expect to get notification after wake_up, otherwise output error within 5 seconds
+        // Expecting get notification after wake_up, otherwise output error within 5 seconds.
         future.wait_for(std::chrono::seconds(5));
         ASSERT_EQ(ReturnCode_t::RETCODE_OK, ret);
         EXPECT_EQ(1u, conditions.size());
         EXPECT_NE(conditions.cend(), std::find(conditions.cbegin(), conditions.cend(), &triggered_condition));
-        add_triggered_condition.join();
+        wait_conditions.join();
 
         wait_set.will_be_deleted(triggered_condition);
     }
