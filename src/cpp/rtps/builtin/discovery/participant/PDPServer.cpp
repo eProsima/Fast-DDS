@@ -53,6 +53,17 @@
 
 #include <rtps/builtin/discovery/database/backup/SharedBackupFunctions.hpp>
 
+bool isPeerToPeer(const eprosima::fastrtps::rtps::ParticipantProxyData* pdata)
+{
+    return (pdata->m_properties.end() != std::find_if(
+        pdata->m_properties.begin(),
+        pdata->m_properties.end(),
+        [&](const eprosima::fastdds::dds::ParameterProperty_t& property)
+        {
+            return property.first() == "ds_p2p_lease_assessment";
+        }));
+}
+
 namespace eprosima {
 namespace fastdds {
 namespace rtps {
@@ -219,19 +230,7 @@ ParticipantProxyData* PDPServer::createParticipantProxyData(
 
     ParticipantProxyData* pdata = add_participant_proxy_data(participant_data.m_guid, is_relay, &participant_data);
     bool is_p2p = false;
-    if ((getLocalParticipantProxyData()->m_properties.end() != std::find_if(
-                getLocalParticipantProxyData()->m_properties.begin(),
-                getLocalParticipantProxyData()->m_properties.end(),
-                [&](const eprosima::fastdds::dds::ParameterProperty_t& property)
-                {
-                    return property.first() == "ds_p2p_lease_assessment";
-                })) || pdata->m_properties.end() != std::find_if(
-                pdata->m_properties.begin(),
-                pdata->m_properties.end(),
-                [&](const eprosima::fastdds::dds::ParameterProperty_t& property)
-                {
-                    return property.first() == "ds_p2p_lease_assessment";
-                }))
+    if (isPeerToPeer(getLocalParticipantProxyData()) || (pdata && isPeerToPeer(pdata)))
     {
         is_p2p = true;
     }
@@ -489,17 +488,11 @@ void PDPServer::notifyAboveRemoteEndpoints(
 {
     //Inform EDP of new RTPSParticipant data, but only if it's local:
     bool is_local = isLocalClientParticipant(pdata);
-      if ( is_local || pdata.m_properties.end() == std::find_if(
-                  pdata.m_properties.begin(),
-                  pdata.m_properties.end(),
-                  [&](const eprosima::fastdds::dds::ParameterProperty_t& property)
-                  {
-                      return property.first() == "ds_p2p_lease_assessment";
-                  }))
+      if ( is_local || !isPeerToPeer(&pdata))
       {
         if (mp_EDP != nullptr)
         {
-            logError(RTPS_PDP_SERVER, "Assigning Remote Endpoints: " << pdata.m_guid);
+            //logError(RTPS_PDP_SERVER, "Assigning Remote Endpoints: " << pdata.m_guid);
             mp_EDP->assignRemoteEndpoints(pdata);
         }
       }
@@ -1860,7 +1853,7 @@ void PDPServer::match_pdp_writer_nts_(
     const NetworkFactory& network = mp_RTPSParticipant->network_factory();
     auto temp_writer_data = get_temporary_writer_proxies_pool().get();
 
-    logError(RTPS_PDP, "Matching PDP writer" << server_att.guidPrefix);
+//    logError(RTPS_PDP, "Matching PDP writer" << server_att.guidPrefix);
 
     temp_writer_data->clear();
     temp_writer_data->guid(server_att.GetPDPWriter());
@@ -1877,7 +1870,7 @@ void PDPServer::match_pdp_reader_nts_(
     const NetworkFactory& network = mp_RTPSParticipant->network_factory();
     auto temp_reader_data = get_temporary_reader_proxies_pool().get();
 
-    logError(RTPS_PDP, "Matching PDP reader" << server_att.guidPrefix);
+//    logError(RTPS_PDP, "Matching PDP reader" << server_att.guidPrefix);
 
     temp_reader_data->clear();
     temp_reader_data->guid(server_att.GetPDPReader());
@@ -1894,7 +1887,7 @@ void PDPServer::addPeerToPeerParticipant(ParticipantProxyData* pdata)
     att.proxy = pdata;
     att.guidPrefix = pdata->m_guid.guidPrefix;
 
-    logError(RTPS_PDP, "Adding peer to peer participant" << att.guidPrefix);
+//    logError(RTPS_PDP, "Adding peer to peer participant" << att.guidPrefix);
     match_pdp_writer_nts_(att);
     match_pdp_reader_nts_(att);
     mp_peer_to_peer_participants.push_back(att);
@@ -1903,7 +1896,7 @@ void PDPServer::addPeerToPeerParticipant(ParticipantProxyData* pdata)
 
 void PDPServer::removePeerToPeerParticipant(const GuidPrefix_t& pdata)
 {
-    logError(RTPS_PDP, "Removing peer to peer participant" << pdata);
+//    logError(RTPS_PDP, "Removing peer to peer participant" << pdata);
     mp_peer_to_peer_participants.remove_if([pdata](RemoteServerAttributes att)
     {
         return att.guidPrefix == pdata;

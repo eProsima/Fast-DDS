@@ -2018,7 +2018,6 @@ void RTPSParticipantImpl::ResourceSemaphoreWait()
 void RTPSParticipantImpl::assert_remote_participant_liveliness(
         const GuidPrefix_t& remote_guid)
 {
-    logError(RTPS_PARTICIPANT, "Asserting remote participant liveliness: " << remote_guid );
     if (mp_builtinProtocols && mp_builtinProtocols->mp_PDP)
     {
         mp_builtinProtocols->mp_PDP->assert_remote_participant_liveliness(remote_guid);
