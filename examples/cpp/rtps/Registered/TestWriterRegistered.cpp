@@ -91,7 +91,7 @@ bool TestWriterRegistered::init(const bool &enable_dsp2p_lease)
     PParam.useBuiltinTransports = false;
     std::shared_ptr<eprosima::fastdds::rtps::UDPv4TransportDescriptor> descriptor = std::make_shared<eprosima::fastdds::rtps::UDPv4TransportDescriptor>();
     PParam.userTransports.push_back(descriptor);
-    mp_participant = RTPSDomain::createParticipant(0, PParam);
+    mp_participant = RTPSDomain::createParticipant(0, PParam, &m_participant_listener);
 
     if (mp_participant == nullptr)
     {

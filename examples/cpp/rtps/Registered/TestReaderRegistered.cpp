@@ -19,6 +19,7 @@
 
 #include "TestReaderRegistered.h"
 
+#include "fastdds/rtps/attributes/ReaderAttributes.h"
 #include "fastrtps/rtps/reader/RTPSReader.h"
 #include "fastrtps/rtps/participant/RTPSParticipant.h"
 #include "fastrtps/rtps/RTPSDomain.h"
@@ -86,7 +87,7 @@ bool TestReaderRegistered::init(const bool &enable_dsp2p_lease)
     PParam.useBuiltinTransports = false;
     std::shared_ptr<eprosima::fastdds::rtps::UDPv4TransportDescriptor> descriptor = std::make_shared<eprosima::fastdds::rtps::UDPv4TransportDescriptor>();
     PParam.userTransports.push_back(descriptor);
-    mp_participant = RTPSDomain::createParticipant(0, PParam);
+    mp_participant = RTPSDomain::createParticipant(0, PParam, &m_participant_listener);
 
     if (mp_participant == nullptr)
     {
@@ -95,10 +96,13 @@ bool TestReaderRegistered::init(const bool &enable_dsp2p_lease)
 
     //CREATE READERHISTORY
     HistoryAttributes hatt;
+    hatt.memoryPolicy = PREALLOCATED_WITH_REALLOC_MEMORY_MODE;
     hatt.payloadMaxSize = 255;
+    hatt.maximumReservedCaches = 0;
     mp_history = new ReaderHistory(hatt);
 
     //CREATE READER
+    
     ReaderAttributes ratt;
     Locator_t loc(22222);
     ratt.endpoint.unicastLocatorList.push_back(loc);

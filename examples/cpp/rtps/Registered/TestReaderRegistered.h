@@ -22,7 +22,7 @@
 
 #include "fastrtps/rtps/rtps_fwd.h"
 
-
+#include "fastdds/rtps/participant/RTPSParticipantListener.h"
 #include "fastrtps/rtps/reader/ReaderListener.h"
 
 class TestReaderRegistered
@@ -68,6 +68,49 @@ public:
         uint32_t n_matched;
     }
     m_listener;
+    class MyParticipantListener : public eprosima::fastrtps::rtps::RTPSParticipantListener
+    {
+    public:
+
+        MyParticipantListener()
+        {
+        }
+
+        ~MyParticipantListener()
+        {
+        }
+
+        void onParticipantDiscovery(
+                eprosima::fastrtps::rtps::RTPSParticipant* participant, 
+                eprosima::fastrtps::rtps::ParticipantDiscoveryInfo&& info) override
+        {
+            (void)participant;
+            if (info.status == info.DISCOVERED_PARTICIPANT)
+            {
+                std::cout << "Participant with name " << info.info.m_participantName
+                    << " and GUID " << info.info.m_guid
+                    << " matched." << std::endl;
+            }
+            else if (info.status == info.DROPPED_PARTICIPANT)
+            {
+                std::cout << "Participant with name " << info.info.m_participantName
+                    << " and GUID " << info.info.m_guid
+                    << " dropped." << std::endl;
+            }
+            else if (info.status == info.REMOVED_PARTICIPANT)
+            {
+                std::cout << "Participant with name " << info.info.m_participantName
+                    << " and GUID " << info.info.m_guid
+                    << " removed." << std::endl;
+            } else
+            {
+                std::cout << "Participant with name " << info.info.m_participantName
+                    << " and GUID " << info.info.m_guid
+                    << " changed QOS." << std::endl;
+            }
+        }
+    }
+    m_participant_listener;
 };
 
 #endif /* TESTREADER_H_ */
