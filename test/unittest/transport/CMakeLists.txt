@@ -31,12 +31,14 @@ if(TLS_FOUND)
         ${CMAKE_CURRENT_BINARY_DIR}/mainsubcert.pem COPYONLY)
     configure_file(${PROJECT_SOURCE_DIR}/test/certs/mainsubkey.pem
         ${CMAKE_CURRENT_BINARY_DIR}/mainsubkey.pem COPYONLY)
-    configure_file(${PROJECT_SOURCE_DIR}/test/unittest/transport/ca.pem
-        ${CMAKE_CURRENT_BINARY_DIR}/ca.pem COPYONLY)
-    configure_file(${PROJECT_SOURCE_DIR}/test/unittest/transport/server.pem
-        ${CMAKE_CURRENT_BINARY_DIR}/server.pem COPYONLY)
-    configure_file(${PROJECT_SOURCE_DIR}/test/unittest/transport/dh2048.pem
-        ${CMAKE_CURRENT_BINARY_DIR}/dh2048.pem COPYONLY)
+    configure_file(${PROJECT_SOURCE_DIR}/test/unittest/transport/certs/ca.crt
+        ${CMAKE_CURRENT_BINARY_DIR}/ca.crt COPYONLY)
+    configure_file(${PROJECT_SOURCE_DIR}/test/unittest/transport/certs/fastdds.crt
+        ${CMAKE_CURRENT_BINARY_DIR}/fastdds.crt COPYONLY)
+    configure_file(${PROJECT_SOURCE_DIR}/test/unittest/transport/certs/fastdds.key
+        ${CMAKE_CURRENT_BINARY_DIR}/fastdds.key COPYONLY)
+    configure_file(${PROJECT_SOURCE_DIR}/test/unittest/transport/certs/dh_params.pem
+        ${CMAKE_CURRENT_BINARY_DIR}/dh_params.pem COPYONLY)
     #configure_file(${PROJECT_SOURCE_DIR}/test/certs/governance_helloworld_all_enable.smime
     #    ${CMAKE_CURRENT_BINARY_DIR}/governance_helloworld_all_enable.smime COPYONLY)
     #configure_file(${PROJECT_SOURCE_DIR}/test/certs/permissions_helloworld.smime
