@@ -50,3 +50,11 @@ target_link_libraries(Registered fastrtps fastcdr foonathan_memory fastdds::opti
 install(TARGETS Registered
     RUNTIME DESTINATION examples/cpp/rtps/Registered/${BIN_INSTALL_DIR}
     )
+
+install(FILES ${PROJECT_SOURCE_DIR}/DS1Profile.xml
+    DESTINATION examples/cpp/rtps/Registered
+    )
+
+install(FILES ${PROJECT_SOURCE_DIR}/DS2Profile.xml
+    DESTINATION examples/cpp/rtps/Registered
+    )

@@ -30,6 +30,9 @@
 
 #include "fastrtps/rtps/history/WriterHistory.h"
 
+#include <fastdds/rtps/transport/UDPv4TransportDescriptor.h>
+
+
 #include "fastrtps/attributes/TopicAttributes.h"
 #include "fastrtps/qos/WriterQos.h"
 #include <cstdint>
@@ -59,8 +62,7 @@ bool TestWriterRegistered::init(const bool &enable_dsp2p_lease)
 {
     //CREATE PARTICIPANT
     RTPSParticipantAttributes PParam;
-    PParam.builtin.use_WriterLivelinessProtocol = true;
-    PParam.builtin.discovery_config.leaseDuration = 2.0;
+    PParam.builtin.discovery_config.leaseDuration = 10.0;
     PParam.builtin.discovery_config.leaseDuration_announcementperiod = 1.0;
 
     // Add remote servers from environment variable
@@ -86,7 +88,9 @@ bool TestWriterRegistered::init(const bool &enable_dsp2p_lease)
             PParam.builtin.discovery_config.discoveryProtocol = DiscoveryProtocol_t::SIMPLE;
         }
     }
-
+    PParam.useBuiltinTransports = false;
+    std::shared_ptr<eprosima::fastdds::rtps::UDPv4TransportDescriptor> descriptor = std::make_shared<eprosima::fastdds::rtps::UDPv4TransportDescriptor>();
+    PParam.userTransports.push_back(descriptor);
     mp_participant = RTPSDomain::createParticipant(0, PParam);
 
     if (mp_participant == nullptr)

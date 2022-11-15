@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<profiles xmlns="http://www.eprosima.com/XMLSchemas/fastRTPS_Profiles">
+    <participant profile_name="UDP SERVER 1" is_default_profile="true">
+        <rtps>
+            <prefix>44.53.00.5f.45.50.52.4f.53.49.4d.41</prefix>
+            <builtin>
+                <discovery_config>
+                    <discoveryProtocol>SERVER</discoveryProtocol>
+                    <discoveryServersList>
+                        <RemoteServer prefix="44.53.01.5f.45.50.52.4f.53.49.4d.41"> <!-- ASCII DS_01_EPROSIMA -->
+                            <metatrafficUnicastLocatorList>
+                                <locator>
+						            <udpv4>
+						                <address>127.0.0.1</address>
+						                <port>14521</port>
+						            </udpv4>
+						        </locator>
+                            </metatrafficUnicastLocatorList>
+                        </RemoteServer>
+                    </discoveryServersList>
+                    <leaseAnnouncement>
+                        <sec>1</sec>
+                        <nanosec>0</nanosec>
+                    </leaseAnnouncement>
+                    <leaseDuration>
+                        <sec>10</sec>
+                    </leaseDuration>
+                </discovery_config>
+                <metatrafficUnicastLocatorList>
+                    <locator>
+                        <udpv4>
+                            <address>127.0.0.1</address>
+                            <port>14520</port>
+                        </udpv4>
+                    </locator>
+                </metatrafficUnicastLocatorList>
+            </builtin>
+        </rtps>
+    </participant>
+</profiles>
