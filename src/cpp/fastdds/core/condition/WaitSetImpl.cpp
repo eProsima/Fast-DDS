@@ -36,8 +36,16 @@ namespace detail {
 
 WaitSetImpl::~WaitSetImpl()
 {
-    std::lock_guard<std::mutex> guard(mutex_);
-    for (const Condition* c : entries_)
+    eprosima::utilities::collections::unordered_vector<const Condition*> old_entries;
+
+    {
+        // We only need to protect access to the collection.
+        std::lock_guard<std::mutex> guard(mutex_);
+        old_entries = entries_;
+        entries_.clear();
+    }
+
+    for (const Condition* c : old_entries)
     {
         c->get_notifier()->detach_from(this);
     }
