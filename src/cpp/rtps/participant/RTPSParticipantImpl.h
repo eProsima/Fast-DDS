@@ -28,6 +28,7 @@
 #include <mutex>
 #include <sys/types.h>
 
+#include <fastrtps/fastrtps_dll.h>
 #include <fastrtps/utils/Semaphore.h>
 #include <fastrtps/utils/shared_mutex.hpp>
 
