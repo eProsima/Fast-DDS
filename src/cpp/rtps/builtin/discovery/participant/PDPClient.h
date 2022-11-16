@@ -182,6 +182,8 @@ private:
      */
     DSClientEvent* mp_sync;
 
+    std::mutex mp_peer_to_peer_mutex;
+
     std::list<eprosima::fastdds::rtps::RemoteServerAttributes> mp_peer_to_peer_participants;
     
 

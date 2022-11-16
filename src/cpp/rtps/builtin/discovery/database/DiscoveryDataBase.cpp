@@ -1600,10 +1600,6 @@ const std::vector<fastrtps::rtps::GuidPrefix_t> DiscoveryDataBase::direct_client
             // Only add direct clients or server that are alive, not relayed ones.
             if ((participant.second.is_local() || participant.second.is_peer_to_peer()) && participant.second.change()->kind == eprosima::fastrtps::rtps::ALIVE)
             {
-                // if (participant.second.is_peer_to_peer())
-                // {
-                //     logError(DISCOVERY_DATABASE, "Peer to peer found");
-                // }
                 direct_clients_and_servers.push_back(participant.first);
             }
         }

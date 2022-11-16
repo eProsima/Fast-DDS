@@ -225,6 +225,7 @@ ParticipantProxyData* PDPServer::createParticipantProxyData(
         }
     }
     else {
+        std::unique_lock<std::mutex> _(local_participant_mutex);
         mp_local_participants.push_back(participant_data.m_guid.guidPrefix);
     }
 
@@ -492,7 +493,6 @@ void PDPServer::notifyAboveRemoteEndpoints(
       {
         if (mp_EDP != nullptr)
         {
-            //logError(RTPS_PDP_SERVER, "Assigning Remote Endpoints: " << pdata.m_guid);
             mp_EDP->assignRemoteEndpoints(pdata);
         }
       }
@@ -854,9 +854,10 @@ bool PDPServer::remove_remote_participant(
             }
         }
     }
-
-    mp_local_participants.remove(partGUID.guidPrefix);
-
+    {
+        std::unique_lock<std::mutex> _(local_participant_mutex);
+        mp_local_participants.remove(partGUID.guidPrefix);
+    }
     // check if is a server who has been disposed
     awake_server_thread();
 
@@ -1097,17 +1098,19 @@ bool PDPServer::process_disposals()
         bool is_peer_to_peer=false;
         
         // Does not make sense to p2p the lease duration to ourselves
+        std::unique_lock<std::mutex> lock(peer_to_peer_mutex);
         std::list<eprosima::fastdds::rtps::RemoteServerAttributes>::iterator it = std::find_if(mp_peer_to_peer_participants.begin(), mp_peer_to_peer_participants.end(),
         [change_guid_prefix](RemoteServerAttributes rsa){
             return rsa.guidPrefix == change_guid_prefix;
         } );
-        
-        if (it != mp_peer_to_peer_participants.end())
+        bool found = it != mp_peer_to_peer_participants.end();
+        lock.unlock();
+
+        if (found)
         {
             is_peer_to_peer=true;
             removePeerToPeerParticipant(change_guid_prefix);
         }
-
 
         // DATA(Up) case
         if (discovery_db_.is_participant(change))
@@ -1855,8 +1858,6 @@ void PDPServer::match_pdp_writer_nts_(
     const NetworkFactory& network = mp_RTPSParticipant->network_factory();
     auto temp_writer_data = get_temporary_writer_proxies_pool().get();
 
-//    logError(RTPS_PDP, "Matching PDP writer" << server_att.guidPrefix);
-
     temp_writer_data->clear();
     temp_writer_data->guid(server_att.GetPDPWriter());
     temp_writer_data->set_multicast_locators(server_att.metatrafficMulticastLocatorList, network);
@@ -1871,8 +1872,6 @@ void PDPServer::match_pdp_reader_nts_(
 {
     const NetworkFactory& network = mp_RTPSParticipant->network_factory();
     auto temp_reader_data = get_temporary_reader_proxies_pool().get();
-
-//    logError(RTPS_PDP, "Matching PDP reader" << server_att.guidPrefix);
 
     temp_reader_data->clear();
     temp_reader_data->guid(server_att.GetPDPReader());
@@ -1889,16 +1888,16 @@ void PDPServer::addPeerToPeerParticipant(ParticipantProxyData* pdata)
     att.proxy = pdata;
     att.guidPrefix = pdata->m_guid.guidPrefix;
 
-//    logError(RTPS_PDP, "Adding peer to peer participant" << att.guidPrefix);
     match_pdp_writer_nts_(att);
     match_pdp_reader_nts_(att);
+    std::unique_lock<std::mutex> _(peer_to_peer_mutex);
     mp_peer_to_peer_participants.push_back(att);
 }
 
 
 void PDPServer::removePeerToPeerParticipant(const GuidPrefix_t& pdata)
 {
-//    logError(RTPS_PDP, "Removing peer to peer participant" << pdata);
+    std::unique_lock<std::mutex> _(peer_to_peer_mutex);
     mp_peer_to_peer_participants.remove_if([pdata](RemoteServerAttributes att)
     {
         return att.guidPrefix == pdata;
@@ -1907,6 +1906,7 @@ void PDPServer::removePeerToPeerParticipant(const GuidPrefix_t& pdata)
 
 bool PDPServer::isLocalClientParticipant(const eprosima::fastrtps::rtps::ParticipantProxyData& pdata)
 {
+    std::unique_lock<std::mutex> _(local_participant_mutex);
     return mp_local_participants.end() != std::find(mp_local_participants.begin(), mp_local_participants.end(), pdata.m_guid.guidPrefix);
 }
 

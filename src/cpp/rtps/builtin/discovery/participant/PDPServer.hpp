@@ -327,6 +327,9 @@ private:
     //! TRANSIENT or TRANSIENT_LOCAL durability;
     fastrtps::rtps::DurabilityKind_t durability_;
 
+    std::mutex peer_to_peer_mutex;
+    std::mutex local_participant_mutex;
+
     std::list<eprosima::fastdds::rtps::RemoteServerAttributes> mp_peer_to_peer_participants;
     std::list<eprosima::fastrtps::rtps::GuidPrefix_t> mp_local_participants;
 

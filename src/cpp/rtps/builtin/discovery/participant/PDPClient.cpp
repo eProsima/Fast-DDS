@@ -353,8 +353,6 @@ void PDPClient::assignRemoteEndpoints(
 
     if (!is_server)
     {
-
-    //logError(RTPS_PDP, "Matching non-server: " << pdata->m_guid);
     
     const NetworkFactory& network = mp_RTPSParticipant->network_factory();
     uint32_t endp = pdata->m_availableBuiltinEndpoints;
@@ -399,7 +397,6 @@ void PDPClient::notifyAboveRemoteEndpoints(
         const ParticipantProxyData& pdata)
 {
     // No EDP notification needed. EDP endpoints would be match when PDP synchronization is granted
-    //logError(RTPS_PDP, "Notifying Endpoints: " << pdata.m_guid);
     if (mp_builtin->mp_WLP != nullptr)
     {
         mp_builtin->mp_WLP->assignRemoteEndpoints(pdata);
@@ -484,7 +481,6 @@ void PDPClient::removeRemoteEndpoints(
     else if (isPeerToPeer(getLocalParticipantProxyData()) || isPeerToPeer(pdata))
     {
         // We should unmatch and match the PDP endpoints to renew the PDP reader and writer associated proxies
-        logError(RTPS_PDP, "Unmatching PeerToPeer: " << pdata->m_guid);
         uint32_t endp = pdata->m_availableBuiltinEndpoints;
         uint32_t auxendp = endp;
         auxendp &= DISC_BUILTIN_ENDPOINT_PARTICIPANT_ANNOUNCER;
@@ -659,15 +655,16 @@ void PDPClient::announceParticipantState(
                             }
                         }
 //                    }
-
-                    for (auto& svr : mp_peer_to_peer_participants)
                     {
-                        if (!_serverPing)
+                        std::unique_lock<std::mutex> _(mp_peer_to_peer_mutex);
+                        for (auto& svr : mp_peer_to_peer_participants)
                         {
-                            //logError(RTPS_PDP, "Sending liveliness to participant" << svr.guidPrefix);
-                            remote_readers.push_back(svr.GetPDPReader());
-                            locators.push_back(svr.metatrafficMulticastLocatorList);
-                            locators.push_back(svr.metatrafficUnicastLocatorList);
+                            if (!_serverPing)
+                            {
+                                remote_readers.push_back(svr.GetPDPReader());
+                                locators.push_back(svr.metatrafficMulticastLocatorList);
+                                locators.push_back(svr.metatrafficUnicastLocatorList);
+                            }
                         }
                     }
 
@@ -753,8 +750,6 @@ void PDPClient::match_pdp_writer_nts_(
     const NetworkFactory& network = mp_RTPSParticipant->network_factory();
     auto temp_writer_data = get_temporary_writer_proxies_pool().get();
 
-    //logError(RTPS_PDP, "Matching PDP writer" << server_att.guidPrefix);
-
     temp_writer_data->clear();
     temp_writer_data->guid(server_att.GetPDPWriter());
     temp_writer_data->set_multicast_locators(server_att.metatrafficMulticastLocatorList, network);
@@ -769,8 +764,6 @@ void PDPClient::match_pdp_reader_nts_(
 {
     const NetworkFactory& network = mp_RTPSParticipant->network_factory();
     auto temp_reader_data = get_temporary_reader_proxies_pool().get();
-
-    //logError(RTPS_PDP, "Matching PDP reader" << server_att.guidPrefix);
 
     temp_reader_data->clear();
     temp_reader_data->guid(server_att.GetPDPReader());
@@ -1169,7 +1162,6 @@ void PDPClient::addPeerToPeerParticipant(ParticipantProxyData* pdata)
     att.proxy = pdata;
     att.guidPrefix = pdata->m_guid.guidPrefix;
 
-    //logError(RTPS_PDP, "Adding peer to peer participant" << att.guidPrefix);
     for (auto& locator: pdata->metatraffic_locators.multicast)
     {
         att.metatrafficMulticastLocatorList.push_back(locator);
@@ -1178,17 +1170,17 @@ void PDPClient::addPeerToPeerParticipant(ParticipantProxyData* pdata)
     {
         att.metatrafficUnicastLocatorList.push_back(locator);
     }
-    mp_peer_to_peer_participants.push_back(att);
-//    match_pdp_reader_nts_(att);
-//    match_pdp_writer_nts_(att);
-//    notifyAboveRemoteEndpoints(*pdata);
+    {
+        std::unique_lock<std::mutex> _(mp_peer_to_peer_mutex);
+        mp_peer_to_peer_participants.push_back(att);
+    }
     mp_PDPReader->enableMessagesFromUnkownWriters(true);
 }
 
 
 void PDPClient::removePeerToPeerParticipant(const GuidPrefix_t& pdata)
 {
-//  logError(RTPS_PDP, "Removing peer to peer participant" << pdata);
+    std::unique_lock<std::mutex> _(mp_peer_to_peer_mutex);
     mp_peer_to_peer_participants.remove_if([pdata](RemoteServerAttributes att)
     {
         return att.guidPrefix == pdata;
