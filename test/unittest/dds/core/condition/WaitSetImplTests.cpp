@@ -14,6 +14,7 @@
 
 #include <algorithm>
 #include <future>
+#include <thread>
 
 #include <gtest/gtest.h>
 
@@ -211,7 +212,27 @@ TEST(WaitSetImplTests, fix_wait_notification_lost)
         auto notifier = triggered_condition.get_notifier();
         EXPECT_CALL(*notifier, attach_to(_)).Times(1);
         EXPECT_CALL(*notifier, will_be_deleted(_)).Times(1);
+
+        class AnotherTestCondition : public Condition
+        {
+        public:
+
+            bool get_trigger_value() const override
+            {
+                // Time to simulate thread context switch or something else
+                std::this_thread::sleep_for(std::chrono::seconds(2));
+                return false;
+            }
+
+        } second_simulator_condition;
+
+        // Expecting calls on the notifier of second_simulator_condition.
+        notifier = second_simulator_condition.get_notifier();
+        EXPECT_CALL(*notifier, attach_to(_)).Times(1);
+        EXPECT_CALL(*notifier, will_be_deleted(_)).Times(1);
+
         wait_set.attach_condition(triggered_condition);
+        wait_set.attach_condition(second_simulator_condition);
 
         std::promise<void> promise;
         std::future<void> future = promise.get_future();
@@ -224,17 +245,23 @@ TEST(WaitSetImplTests, fix_wait_notification_lost)
                     promise.set_value();
                 });
 
+        // One second sleep to make the `wait_set.wait` check `triggered_condition` in the above thread
+        std::this_thread::sleep_for(std::chrono::seconds(1));
         triggered_condition.trigger_value = true;
         wait_set.wake_up();
 
         // Expecting get notification after wake_up, otherwise output error within 5 seconds.
         future.wait_for(std::chrono::seconds(5));
-        ASSERT_EQ(ReturnCode_t::RETCODE_OK, ret);
+        EXPECT_EQ(ReturnCode_t::RETCODE_OK, ret);
         EXPECT_EQ(1u, conditions.size());
         EXPECT_NE(conditions.cend(), std::find(conditions.cbegin(), conditions.cend(), &triggered_condition));
+
+        // Wake up the `wait_set` to make sure the thread exit
+        wait_set.wake_up();
         wait_conditions.join();
 
         wait_set.will_be_deleted(triggered_condition);
+        wait_set.will_be_deleted(second_simulator_condition);
     }
 }
 
