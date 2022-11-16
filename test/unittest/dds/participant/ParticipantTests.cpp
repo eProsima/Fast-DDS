@@ -2170,6 +2170,71 @@ TEST(ParticipantTests, SetListener)
     ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), ReturnCode_t::RETCODE_OK);
 }
 
+class CustomListener2 : public DomainParticipantListener
+{
+public:
+
+    CustomListener2(
+            bool& on_execution,
+            std::mutex& mtx,
+            std::condition_variable& cv)
+        : on_execution_(on_execution)
+        , mtx_(mtx)
+        , cv_(cv)
+    {
+    }
+
+    void on_participant_discovery(
+            eprosima::fastdds::dds::DomainParticipant*,
+            eprosima::fastrtps::rtps::ParticipantDiscoveryInfo&&) override
+    {
+        {
+            std::lock_guard<std::mutex> _(mtx_);
+            on_execution_ = true;
+        }
+        cv_.notify_one();
+        std::this_thread::sleep_for(std::chrono::seconds(2));
+    }
+
+private:
+
+    bool& on_execution_;
+    std::mutex& mtx_;
+    std::condition_variable& cv_;
+};
+
+TEST(ParticipantTests, FailingSetListener)
+{
+    bool on_execution = false;
+    std::mutex mtx;
+    std::condition_variable cv;
+
+    CustomListener2 listener(on_execution, mtx, cv);
+
+    DomainParticipant* participant =
+            DomainParticipantFactory::get_instance()->create_participant(0, PARTICIPANT_QOS_DEFAULT, &listener);
+    ASSERT_NE(participant, nullptr);
+    ASSERT_EQ(participant->get_status_mask(), StatusMask::all());
+
+    DomainParticipant* participant_to_discover =
+            DomainParticipantFactory::get_instance()->create_participant(0, PARTICIPANT_QOS_DEFAULT);
+    ASSERT_NE(participant_to_discover, nullptr);
+
+    {
+        // Wait for callback trigger
+        std::unique_lock<std::mutex> _(mtx);
+        cv.wait(_, [&]()
+                {
+                    return on_execution;
+                });
+    }
+
+    ASSERT_EQ(participant->set_listener(nullptr, std::chrono::seconds(1)), ReturnCode_t::RETCODE_ERROR);
+    ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), ReturnCode_t::RETCODE_OK);
+    ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(
+                participant_to_discover), ReturnCode_t::RETCODE_OK);
+}
+
 /*
  * This test checks the negative cases of the check_qos() function.
  * 1. User data is set to be a 5-element size octet vector.
