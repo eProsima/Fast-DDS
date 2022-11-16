@@ -224,7 +224,8 @@ TEST(WaitSetImplTests, fix_wait_notification_lost)
                 return false;
             }
 
-        } second_simulator_condition;
+        }
+        second_simulator_condition;
 
         // Expecting calls on the notifier of second_simulator_condition.
         notifier = second_simulator_condition.get_notifier();
