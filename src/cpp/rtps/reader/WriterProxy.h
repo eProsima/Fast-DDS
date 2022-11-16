@@ -100,8 +100,10 @@ public:
 
     /**
      * Disable this proxy.
+     * @param locked Whether this function is called with \c StatefulReader::wp_manipulation_mutex_ locked. If locked, unlock prior to wait.
+     * @warning Call with \c StatefulReader::wp_manipulation_mutex_ locked (and \c locked=true) to avoid data races.
      */
-    void stop();
+    void stop(bool locked=false);
 
     /**
      * Get the maximum sequenceNumber received from this Writer.

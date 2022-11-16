@@ -93,6 +93,11 @@ public:
             const GUID_t& writer_guid,
             bool removed_by_lease = false) override;
 
+    std::mutex& wp_manipulation_mutex()
+    {
+        return wp_manipulation_mutex_;
+    }
+
     /**
      * Tells us if a specific Writer is matched against this reader.
      * @param writer_guid GUID of the writer to check.
@@ -359,6 +364,7 @@ private:
     ResourceLimitedVector<WriterProxy*> matched_writers_;
     //! Vector containing pointers to all the inactive, ready for reuse, WriterProxies.
     ResourceLimitedVector<WriterProxy*> matched_writers_pool_;
+    std::mutex wp_manipulation_mutex_;
     //!
     ResourceLimitedContainerConfig proxy_changes_config_;
     //! True to disable positive ACKs

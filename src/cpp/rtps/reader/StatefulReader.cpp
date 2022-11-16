@@ -187,6 +187,7 @@ bool StatefulReader::matched_writer_add(
     ReaderListener* listener = nullptr;
 
     {
+        std::lock_guard<std::mutex> wp_guard(wp_manipulation_mutex_);
         std::unique_lock<RecursiveTimedMutex> guard(mp_mutex);
 
         if (!is_alive_)
@@ -281,7 +282,7 @@ bool StatefulReader::matched_writer_add(
                 EPROSIMA_LOG_ERROR(RTPS_READER, "Failed to add Writer Proxy " << wdata.guid()
                                                                               << " to " << this->m_guid.entityId
                                                                               << " with data sharing.");
-                wp->stop();
+                wp->stop(true);
                 matched_writers_pool_.push_back(wp);
                 return false;
             }
@@ -357,6 +358,7 @@ bool StatefulReader::matched_writer_remove(
         }
     }
 
+    std::lock_guard<std::mutex> wp_guard(wp_manipulation_mutex_);
     std::unique_lock<RecursiveTimedMutex> lock(mp_mutex);
     WriterProxy* wproxy = nullptr;
     if (is_alive_)
@@ -389,7 +391,7 @@ bool StatefulReader::matched_writer_remove(
                 (void)removed_from_listener;
                 remove_changes_from(writer_guid, true);
             }
-            wproxy->stop();
+            wproxy->stop(true);
             matched_writers_pool_.push_back(wproxy);
             if (nullptr != mp_listener)
             {

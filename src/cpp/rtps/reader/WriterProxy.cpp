@@ -168,19 +168,27 @@ void WriterProxy::update(
             reader_->getAttributes().external_unicast_locators, reader_->getAttributes().ignore_non_matching_locators);
 }
 
-void WriterProxy::stop()
+void WriterProxy::stop(bool locked)
 {
     StateCode prev_code;
     if ((prev_code = state_.exchange(StateCode::STOPPED)) == StateCode::BUSY)
     {
-        // Initial ack_nack being performed, wait for it to finish
+        if (locked)
+        {
+            // Unlock prior to wait after having modified state to avoid deadlock (wait with reader mutex taken)
+            reader_->wp_manipulation_mutex().unlock();
+        }
+        // TimedEvent being performed, wait for it to finish.
+        // It does not matter which of the two events is the one on execution, but we must wait on initial_acknack_ as
+        // it could be restarted if only cancelled while its callback is being triggered.
+        heartbeat_response_->cancel_timer();
         initial_acknack_->recreate_timer();
     }
     else
     {
+        heartbeat_response_->cancel_timer();
         initial_acknack_->cancel_timer();
     }
-    heartbeat_response_->cancel_timer();
 
     clear();
 }
@@ -512,8 +520,12 @@ bool WriterProxy::perform_initial_ack_nack()
         {
             if (0 == last_heartbeat_count_)
             {
-                reader_->send_acknack(this, sns, this, false);
-                ret_value = true;
+                std::lock_guard<std::mutex> _(reader_->wp_manipulation_mutex());
+                if (state_ != StateCode::STOPPED)
+                {
+                    reader_->send_acknack(this, sns, this, false);
+                    ret_value = true;
+                }
             }
         }
     }
@@ -526,7 +538,21 @@ bool WriterProxy::perform_initial_ack_nack()
 
 void WriterProxy::perform_heartbeat_response()
 {
-    reader_->send_acknack(this, this, heartbeat_final_flag_.load());
+    StateCode expected = StateCode::IDLE;
+    if (!state_.compare_exchange_strong(expected, StateCode::BUSY))
+    {
+        // Stopped from another thread -> abort
+        return;
+    }
+
+    std::lock_guard<std::mutex> _(reader_->wp_manipulation_mutex());
+    if (state_.load() != StateCode::STOPPED)
+    {
+        reader_->send_acknack(this, this, heartbeat_final_flag_.load());
+    }
+
+    expected = StateCode::BUSY;
+    state_.compare_exchange_strong(expected, StateCode::IDLE);
 }
 
 bool WriterProxy::process_heartbeat(
@@ -544,7 +570,7 @@ bool WriterProxy::process_heartbeat(
 #endif // SHOULD_DEBUG_LINUX
 
     assert_liveliness = false;
-    if (last_heartbeat_count_ < count)
+    if (state_ != StateCode::STOPPED && last_heartbeat_count_ < count)
     {
         // If it is the first heartbeat message, we can try to cancel initial ack.
         // TODO: This timer cancelling should be checked if needed with the liveliness implementation.
