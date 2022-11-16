@@ -56,8 +56,6 @@ public:
 
     MOCK_METHOD2(matched_writer_remove, bool(const GUID_t&, bool));
 
-    MOCK_METHOD0(wp_manipulation_mutex, std::mutex&());
-
     MOCK_METHOD1(liveliness_expired, bool(const GUID_t&));
 
     MOCK_METHOD2(change_received, bool(CacheChange_t* a_change, WriterProxy* prox));
