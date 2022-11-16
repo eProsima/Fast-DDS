@@ -276,14 +276,6 @@ jobs:
              Get-Process Win??OpenSSL -ErrorAction SilentlyContinue | Wait-Process
              del "$Env:TMP\Win64OpenSSL.exe"
 
-      - name: Install valgrind
-        if: ${{ contains(matrix.configs.os, 'ubuntu') && contains(inputs.label, 'memcheck') }}
-        id: valgrind
-        run: |
-             if($IsWindows -or $IsMacOS) { Write-Error -Message "valgrind is not available" -Category ResourceUnavailable }
-             elseif ($IsLinux) { sudo apt install valgrind }
-             else { Write-Error -Message "Unknown platform" -Category InvalidOperation }
-
       - name: Install gcc-coverage
         if: ${{ !contains(matrix.configs.os, 'windows') && contains(inputs.label, 'coverage') }}
         id: coverage
@@ -647,27 +639,11 @@ jobs:
            # add valgring testing if the install step succeeds
            $ctestargs = "${{ inputs.ctest_args }}".split(" ")
 
-           if( $${{ steps.valgrind.outcome == 'success' }} )
-           {
-              $ctestargs += "-T memcheck".split(" ")
-           }
-
            # Run the testing
            "::group::ctest summary"
            colcon test --packages-select fastrtps --event-handlers=console_direct+ `
               --merge-install --executor sequential --ctest-args $ctestargs --timeout 300 --output-junit $junit
            "::endgroup::"
-
-           # Move valgrind output if any
-           if( $${{ steps.valgrind.outcome == 'success' }} )
-           {
-              $memoryCheckDir = New-Item -Path "memcheck" -Type Directory
-              gci -Path build/fastrtps/* -R -Filter MemoryChecker.*.log | ? Size -gt 0 | copy -Destination $memoryCheckDir
-              if (gci $memoryCheckDir)
-              {
-                 "MemCheckFolder=$memoryCheckDir" | Out-File $Env:GITHUB_OUTPUT -Append
-              }
-           }
 
       - name: Process gcc-coverage
         if: ${{ steps.coverage.outcome == 'success' }}
@@ -784,13 +760,6 @@ jobs:
 
            if($failed) { Write-Error -Message "$failed test(s) failed" }
            exit $failed
-
-      - name: Upload memcheck
-        if: ${{ steps.test.outputs.MemCheckFolder }}
-        uses: actions/upload-artifact@v3
-        with:
-            name: memcheck-report-${{ inputs.label }}-${{ matrix.configs.os }}-${{ matrix.configs.config }}
-            path: ${{ steps.test.outputs.MemCheckFolder }}
 
       - name: Upload coverage
         if: ${{ steps.process_coverage.outcome == 'success' }}

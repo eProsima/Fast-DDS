@@ -27,15 +27,6 @@ jobs:
       cmake_args: "-DSECURITY=ON"
       ctest_args: "-LE xfail"
 
-  Running-memcheck-CI:
-    uses: ./.github/workflows/reusable-github-ci.yml
-    with:
-      label: "Running-memcheck-CI"
-      os: "[\"ubuntu-22.04\"]"
-      config: "[\"RelWithDebInfo\"]"
-      force-meta-branch: "nightly"
-      ctest_args: "-LE NoMemoryCheck"
-
   Running-coverage-CI:
     uses: ./.github/workflows/reusable-github-ci.yml
     with:
