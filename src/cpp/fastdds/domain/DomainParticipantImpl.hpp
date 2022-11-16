@@ -109,28 +109,18 @@ public:
 
     ReturnCode_t set_listener(
             DomainParticipantListener* listener,
-            const std::chrono::seconds timeout = std::chrono::seconds::zero())
+            const std::chrono::seconds timeout = std::chrono::seconds::max())
     {
         std::unique_lock<std::mutex> lock(mtx_gs_);
-        if (timeout == std::chrono::seconds::zero())
+        if (!cv_gs_.wait_for(lock, timeout, [this]
+                {
+                    // Proceed if no callbacks are being executed
+                    return !(rtps_listener_.callback_counter_ > 0);
+                }))
         {
-            cv_gs_.wait(lock, [this]
-                    {
-                        // Proceed if no callbacks are being executed
-                        return !(rtps_listener_.callback_counter_ > 0);
-                    });
+            return ReturnCode_t::RETCODE_ERROR;
         }
-        else
-        {
-            if (!cv_gs_.wait_for(lock, timeout, [this]
-                    {
-                        // Proceed if no callbacks are being executed
-                        return !(rtps_listener_.callback_counter_ > 0);
-                    }))
-            {
-                return ReturnCode_t::RETCODE_ERROR;
-            }
-        }
+
         rtps_listener_.callback_counter_ = (listener == nullptr) ? -1 : 0;
         listener_ = listener;
         return ReturnCode_t::RETCODE_OK;
@@ -605,16 +595,14 @@ protected:
 
             ~Sentry()
             {
-                if (on_guard_ && listener_ != nullptr && listener_->participant_ != nullptr)
+                if (on_guard_)
                 {
+                    assert(listener_ != nullptr && listener_->participant_ != nullptr);
                     bool notify = false;
                     {
                         std::lock_guard<std::mutex> lock(listener_->participant_->mtx_gs_);
                         --listener_->callback_counter_;
-                        if (!listener_->callback_counter_)
-                        {
-                            notify = true;
-                        }
+                        notify = !listener_->callback_counter_;
                     }
                     if (notify)
                     {
@@ -642,6 +630,7 @@ protected:
 
         virtual ~MyRTPSParticipantListener() override
         {
+            assert(!(callback_counter_ > 0));
         }
 
         void onParticipantDiscovery(

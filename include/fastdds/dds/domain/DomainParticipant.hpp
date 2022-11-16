@@ -135,27 +135,27 @@ public:
      * Modifies the DomainParticipantListener, sets the mask to StatusMask::all()
      *
      * @param listener New value for the DomainParticipantListener
-     * @param timeout Maximum time to wait for executing callbacks to finish. Defaults to 0: no wait limit.
+     * @param timeout Maximum time to wait for executing callbacks to finish.
      * @return RETCODE_OK if successful, RETCODE_ERROR if failed (timeout expired).
      * @warning Do not call this method from a \c DomainParticipantListener callback.
      */
     RTPS_DllAPI ReturnCode_t set_listener(
             DomainParticipantListener* listener,
-            const std::chrono::seconds timeout = std::chrono::seconds::zero());
+            const std::chrono::seconds timeout = std::chrono::seconds::max());
 
     /**
      * Modifies the DomainParticipantListener.
      *
      * @param listener New value for the DomainParticipantListener
      * @param mask StatusMask that holds statuses the listener responds to
-     * @param timeout Maximum time to wait for executing callbacks to finish. Defaults to 0: no wait limit.
+     * @param timeout Maximum time to wait for executing callbacks to finish.
      * @return RETCODE_OK if successful, RETCODE_ERROR if failed (timeout expired)
      * @warning Do not call this method from a \c DomainParticipantListener callback.
      */
     RTPS_DllAPI ReturnCode_t set_listener(
             DomainParticipantListener* listener,
             const StatusMask& mask,
-            const std::chrono::seconds timeout = std::chrono::seconds::zero());
+            const std::chrono::seconds timeout = std::chrono::seconds::max());
 
     /**
      * @brief This operation enables the DomainParticipant
