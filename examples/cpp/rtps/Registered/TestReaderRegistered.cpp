@@ -54,7 +54,7 @@ TestReaderRegistered::~TestReaderRegistered()
     delete(mp_history);
 }
 
-bool TestReaderRegistered::init(const bool &enable_dsp2p_lease)
+bool TestReaderRegistered::init(const bool &enable_dsp2p_lease, const bool &udp_only)
 {
     //CREATE PARTICIPANT
     RTPSParticipantAttributes PParam;
@@ -84,9 +84,12 @@ bool TestReaderRegistered::init(const bool &enable_dsp2p_lease)
             PParam.builtin.discovery_config.discoveryProtocol = DiscoveryProtocol_t::SIMPLE;
         }
     }
-    PParam.useBuiltinTransports = false;
-    std::shared_ptr<eprosima::fastdds::rtps::UDPv4TransportDescriptor> descriptor = std::make_shared<eprosima::fastdds::rtps::UDPv4TransportDescriptor>();
-    PParam.userTransports.push_back(descriptor);
+    if (udp_only)
+    {
+        PParam.useBuiltinTransports = false;
+        std::shared_ptr<eprosima::fastdds::rtps::UDPv4TransportDescriptor> descriptor = std::make_shared<eprosima::fastdds::rtps::UDPv4TransportDescriptor>();
+        PParam.userTransports.push_back(descriptor);
+    }
     mp_participant = RTPSDomain::createParticipant(0, PParam, &m_participant_listener);
 
     if (mp_participant == nullptr)

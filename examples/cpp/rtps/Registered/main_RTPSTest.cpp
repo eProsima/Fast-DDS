@@ -64,6 +64,7 @@ int main(
     uint16_t samples = 100;
     uint16_t interval = 100;
     bool enable_ds_p2p_ppty = false;
+    bool udp_only = false;
 
     argc -= (argc > 0);
     argv += (argc > 0); // skip program name argv[0] if present
@@ -138,6 +139,10 @@ int main(
             case optionIndex::DSP2P:
                 enable_ds_p2p_ppty = true;
                 break;
+            
+            case optionIndex::UDP:
+                udp_only = true;
+                break;
 
             case optionIndex::SAMPLES:
                 samples = strtol(opt.arg, nullptr, 10);
@@ -154,7 +159,7 @@ int main(
         case 1:
         {
             TestWriterRegistered TW;
-            if (TW.init(enable_ds_p2p_ppty) && TW.reg())
+            if (TW.init(enable_ds_p2p_ppty, udp_only) && TW.reg())
             {
                 TW.run(samples,interval);
             }
@@ -163,7 +168,7 @@ int main(
         case 2:
         {
             TestReaderRegistered TR;
-            if (TR.init(enable_ds_p2p_ppty) && TR.reg())
+            if (TR.init(enable_ds_p2p_ppty, udp_only) && TR.reg())
             {
                 TR.run();
             }

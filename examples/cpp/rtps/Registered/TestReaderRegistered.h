@@ -34,7 +34,7 @@ public:
     eprosima::fastrtps::rtps::RTPSParticipant* mp_participant;
     eprosima::fastrtps::rtps::RTPSReader* mp_reader;
     eprosima::fastrtps::rtps::ReaderHistory* mp_history;
-    bool init(const bool &enable_dsp2p_lease); //Initialize reader
+    bool init(const bool &enable_dsp2p_lease, const bool &udp_only); //Initialize reader
     bool reg(); //Register
     void run(); //Run
     class MyListener : public eprosima::fastrtps::rtps::ReaderListener

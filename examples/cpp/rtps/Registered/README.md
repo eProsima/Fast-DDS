@@ -55,7 +55,7 @@ Profile files for the Discovery Servers will be located in `examples/cpp/rtps/Re
 
 cd bin
 source ../../setup.bash
-./fast-discovery-server -x <path_to_DS1Profile.xml>
+./fast-discovery-server -x <path_to_DS1Profile.xml> (with the default paths, ../examples/cpp/rtps/Registered/DS1Profile.xml)
 ```
 
 #### Terminal 2 - Discovery Server 2
@@ -64,7 +64,7 @@ source ../../setup.bash
 
 cd bin
 source ../../setup.bash
-./fast-discovery-server -x <path_to_DS2Profile.xml>
+./fast-discovery-server -x <path_to_DS2Profile.xml> (with the default paths, ../examples/cpp/rtps/Registered/DS2Profile.xml)
 ```
 
 #### Terminal 3 - Reader Client
@@ -89,12 +89,12 @@ Note: if ROS_DISCOVERY_SERVER is not exported, the discovery mode is set to SIMP
 source ../setup.bash
 cd  examples/cpp/rtps/Registered/bin
 export ROS_DISCOVERY_SERVER=";127.0.0.1:14521"
-./Registered writer -s 10 -i 1000
+./Registered writer -s 1000 -i 1000
 ```
 
 #### Test results
 
-Matching and unmatching of participants is shown on the Discovery Servers' terminals with outputs such as this:
+Matching and unmatching of participants is shown on the terminals with outputs such as this:
 
 ```
 Participant with name RTPSParticipant and GUID 01.0f.bf.dc.6c.18.1c.d8.01.00.00.00|0.0.1.c1 matched

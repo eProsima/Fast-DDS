@@ -165,7 +165,8 @@ enum optionIndex
     DSP2P,
     HELP,
     SAMPLES,
-    INTERVAL
+    INTERVAL,
+    UDP
 };
 
 const option::Descriptor usage[] = {
@@ -186,10 +187,15 @@ const option::Descriptor usage[] = {
       "  --ds-p2p \tEnables the p2p_lease property \tWhether to enable or not ds_p2p_lease_assesment"
       " (Default: disabled)." },
 
+    { UDP, 0, "", "udp",                 Arg::None,
+      "  --udp \tDisables the use of builtin Transports \tForces the use of UDPv4"
+      " (Default: disabled)." },
+
+
     { UNKNOWN_OPT, 0, "", "",                Arg::None, "\nReader options:" },
 
-    { DSP2P, 0, "", "ds-p2p",                 Arg::None,
-      "  --ds-p2p \tEnables the p2p_lease property \tWhether to enable or not ds_p2p_lease_assesment"
+    { UDP, 0, "", "udp",                 Arg::None,
+      "  --udp \tDisables the use of builtin Transports \tForces the use of UDPv4"
       " (Default: disabled)." },
 
     { 0, 0, 0, 0, 0, 0 }

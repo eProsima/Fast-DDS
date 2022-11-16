@@ -58,7 +58,7 @@ TestWriterRegistered::~TestWriterRegistered()
     delete(mp_history);
 }
 
-bool TestWriterRegistered::init(const bool &enable_dsp2p_lease)
+bool TestWriterRegistered::init(const bool &enable_dsp2p_lease, const bool &udp_only)
 {
     //CREATE PARTICIPANT
     RTPSParticipantAttributes PParam;
@@ -88,9 +88,12 @@ bool TestWriterRegistered::init(const bool &enable_dsp2p_lease)
             PParam.builtin.discovery_config.discoveryProtocol = DiscoveryProtocol_t::SIMPLE;
         }
     }
-    PParam.useBuiltinTransports = false;
-    std::shared_ptr<eprosima::fastdds::rtps::UDPv4TransportDescriptor> descriptor = std::make_shared<eprosima::fastdds::rtps::UDPv4TransportDescriptor>();
-    PParam.userTransports.push_back(descriptor);
+    if (udp_only)
+    {
+        PParam.useBuiltinTransports = false;
+        std::shared_ptr<eprosima::fastdds::rtps::UDPv4TransportDescriptor> descriptor = std::make_shared<eprosima::fastdds::rtps::UDPv4TransportDescriptor>();
+        PParam.userTransports.push_back(descriptor);
+    }
     mp_participant = RTPSDomain::createParticipant(0, PParam, &m_participant_listener);
 
     if (mp_participant == nullptr)
@@ -101,7 +104,7 @@ bool TestWriterRegistered::init(const bool &enable_dsp2p_lease)
     //CREATE WRITERHISTORY
     HistoryAttributes hatt;
     hatt.payloadMaxSize = 255;
-    hatt.maximumReservedCaches = 100;
+    hatt.maximumReservedCaches = 1000;
     mp_history = new WriterHistory(hatt);
 
     //CREATE WRITER
