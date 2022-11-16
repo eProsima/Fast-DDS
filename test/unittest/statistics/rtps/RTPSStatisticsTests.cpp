@@ -702,8 +702,6 @@ TEST_F(RTPSStatisticsTests, statistics_rpts_listener_callbacks)
     // wait for acknowledgement
     EXPECT_TRUE(writer_->wait_for_all_acked(Duration_t(5, 0)));
 
-    reader_->releaseCache(reader_change);
-
     EXPECT_TRUE(writer_->remove_statistics_listener(writer_listener));
     EXPECT_TRUE(reader_->remove_statistics_listener(reader_listener));
 
@@ -796,8 +794,6 @@ TEST_F(RTPSStatisticsTests, statistics_rpts_listener_callbacks_fragmented)
     // wait for acknowledgement
     EXPECT_TRUE(writer_->wait_for_all_acked(Duration_t(1, 0)));
 
-    reader_->releaseCache(reader_change);
-
     EXPECT_TRUE(participant_->remove_statistics_listener(participant_listener, mask));
 }
 
@@ -865,7 +861,6 @@ TEST_F(RTPSStatisticsTests, statistics_rpts_listener_gap_callback)
 
     // wait for acknowledgement
     EXPECT_TRUE(writer_->wait_for_all_acked(Duration_t(1, 0)));
-    reader_->releaseCache(reader_change);
 
     // release the listeners
     EXPECT_TRUE(writer_->remove_statistics_listener(writer_listener));
