@@ -639,6 +639,8 @@ public:
     bool update_user_data(
             const std::vector<eprosima::fastrtps::rtps::octet>& user_data)
     {
+        // Update QoS before updating user data as statistics properties might have changed internally
+        participant_qos_ = participant_->get_qos();
         participant_qos_.user_data().data_vec(user_data);
         return ReturnCode_t::RETCODE_OK == participant_->set_qos(participant_qos_);
     }
