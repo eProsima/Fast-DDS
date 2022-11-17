@@ -61,11 +61,13 @@ public:
     TopicProxyFactory(
             DomainParticipantImpl* participant,
             const std::string& topic_name,
+            const std::string& type_name,
             const StatusMask& status_mask,
             TypeSupport type_support,
             const TopicQos& qos,
             TopicListener* listener)
         : topic_name_(topic_name)
+        , type_name_(type_name)
         , status_mask_(status_mask)
         , topic_impl_(this, participant, type_support, qos, listener)
     {
@@ -125,6 +127,8 @@ private:
 
     //! Name of the topic managed by the factory.
     std::string topic_name_;
+    //! Name of the topic data type
+    std::string type_name_;
     //! StatusMask of the topic managed by the factory.
     StatusMask status_mask_;
     //! Implementation object for the topic managed by the factory.
