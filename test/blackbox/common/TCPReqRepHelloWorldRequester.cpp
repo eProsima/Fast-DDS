@@ -145,7 +145,6 @@ void TCPReqRepHelloWorldRequester::init(
         descriptor->tls_config.add_option(TLSOptions::SINGLE_DH_USE);
         descriptor->tls_config.add_option(TLSOptions::NO_COMPRESSION);
         descriptor->tls_config.add_option(TLSOptions::NO_SSLV2);
-        descriptor->tls_config.add_option(TLSOptions::NO_SSLV3);
     }
 
     pattr.rtps.userTransports.push_back(descriptor);
