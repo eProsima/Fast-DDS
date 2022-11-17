@@ -53,6 +53,7 @@ public:
      *
      * @param participant   Pointer to the DomainParticipantImpl creating this object.
      * @param topic_name    Name of the topic managed by this factory.
+     * @param type_name     Name of the data type related with this topic.
      * @param status_mask   Initial StatusMask of the topic managed by this factory.
      * @param type_support  TypeSupport to use for the topics created by this factory.
      * @param qos           TopicQos to use on the creation of the implementation object.
