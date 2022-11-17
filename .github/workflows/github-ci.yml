@@ -26,4 +26,3 @@ jobs:
       os: "[\"ubuntu-22.04\",\"windows-2022\",\"macos-12\"]"
       config: "[\"RelWithDebInfo\"]"
       vs_toolset: "[\"v143\",\"v142\",\"v141\"]"
-  

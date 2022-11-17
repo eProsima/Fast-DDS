@@ -330,6 +330,8 @@ jobs:
 
       - name: Set up libp11 and SoftHSM
         if: ${{ !contains(matrix.configs.os, 'macos') }}
+        timeout-minutes: 10
+        continue-on-error: true
         run: |
              if($IsWindows)
              {
@@ -393,6 +395,9 @@ jobs:
 
                 # lead openssl to the right config file
                 $Env:OPENSSL_CONF=$config
+                
+                # introduce openssl binary in the path for the lower check
+                $Env:Path += ";$Env:OPENSSL64_ROOT\bin"
 
              }
              elseif ($IsLinux)
@@ -652,44 +657,44 @@ jobs:
              # ignore coverage on cmake try runs
              dir -Path build/* -R -Filter "CMake*CompilerId.gcno" | del
 
-             # fails to exclude from coverage
-             $excludes =
-               '.*examples/.*',
-               '.*thirdparty/.*',
-               '.*test/.*',
-               '.*security/.*',
-               '.*/sqlite3.c',
-               '.*/optionparser.h',
-               '.*XMLDynamicParser.cpp',
-               '.*dynamic-types/.*',
-               '.*core/xtypes/.*',
-               '.*include/fastrtps/types/.*',
-               '.*/PDPServer.h',
-               '.*/PDPServerListener.h',
-               '.*/DServerEvent.h',
-               '.*/EDPClient2.hpp',
-               '.*/EDPClient2.cpp',
-               '.*/EDPServer.cpp',
-               '.*/EDPServerListeners.cpp',
-               '.*/DSClientEvent2.cpp',
-               '.*/DSClientEvent2.hpp',
-               '.*/PDPClient2.cpp',
-               '.*/PDPClient2.hpp',
-               '.*/PDPServer.cpp',
-               '.*/PDPServerListener.cpp',
-               '.*/DServerEvent.cpp',
-               '.*/TypeLookupTypes.cpp',
-               '.*/TypeLookupManager.cpp',
-               '.*/TypeObject.h',
-               '.*/AnnotationParameterValue.h'
-
-             $gcov_args = '-x -r src/fastrtps -f src/fastrtps --object-directory build/fastrtps'.split(" ") +
-                     '--exclude-unreachable-branches' + ($excludes | % { "--exclude='$_'" })
-
              $coverageDir = New-Item -Path "coverage" -Type Directory
              "CoverageFolder=$coverageDir" | Out-File $Env:GITHUB_OUTPUT -Append
 
-             gcovr $gcov_args --html --html-details -o "$coverageDir/coverage.xml" --html="$coverageDir/coverage.html"
+             # fails to exclude from coverage
+             $excludes = ,
+               '.*/?examples/',
+               '.*/?thirdparty/',
+               '.*/?test/',
+               '.*/?security/',
+               '.*/?sqlite3.c',
+               '.*/?optionparser.h',
+               '.*/?XMLDynamicParser.cpp',
+               '.*/?dynamic-types/',
+               '.*/?core/xtypes/',
+               '.*/?include/fastrtps/types/',
+               '.*/?PDPServer.h',
+               '.*/?PDPServerListener.h',
+               '.*/?DServerEvent.h',
+               '.*/?EDPServer.cpp',
+               '.*/?EDPServerListeners.cpp',
+               '.*/?PDPServer.cpp',
+               '.*/?PDPServerListener.cpp',
+               '.*/?DServerEvent.cpp',
+               '.*/?TypeLookupTypes.cpp',
+               '.*/?TypeLookupManager.cpp',
+               '.*/?TypeObject.h',
+               '.*/?AnnotationParameterValue.h'
+
+             $gcov_args = '--root', 'src/fastrtps/',
+                          '--filter', 'src/fastrtps/',
+                          '--object-directory', 'build/fastrtps',
+                          '--exclude-unreachable-branches' +
+                          ($excludes | % { "--exclude", "$_" }) +
+                          '--xml', "$coverageDir/coverage.xml".replace("\","/"),
+                          '--xml-pretty',
+                          '--html-details', "$coverageDir/coverage.html".replace("\","/")
+
+             gcovr $gcov_args
 
       - name: Test Summary
         id: summary
@@ -741,21 +746,24 @@ jobs:
 
            if($IsWindows -and $failed)
            {
-             "::group::Crash dump files"
              # list crash dumps files ordered by date to hint how pid maps to test number
              $dumpfolder = gi (gi "HKLM:\SOFTWARE\Microsoft\Windows\Windows Error Reporting\LocalDumps").GetValue('DumpFolder')
-             ls $dumpfolder | Sort-Object LastWriteTime
-             "::endgroup::"
 
-             # upload too the pdb files associated
-             # 1. To the library
-             ls -Path ./build/* -R -Filter fast*.pdb | Move-Item -Destination $dumpfolder
-             # 2. To each failed test
+             # upload too:
+             # 1. the pdb/dll files associated to the library
+             $libs = gci -Path ./build/* -R -Include "fast*.pdb", "fast*.dll", "fast*.exe"
+             $libs | Move-Item -Destination $dumpfolder
+
+             # 2. The pdb/exe files for each failed test
              $test_bin = ((ls -Path $dumpfolder -Filter *.dmp).name |
                             sls  "(?<file>[^\(^\)^\.]+).*\.\d+\.dmp").Matches |
                             % { $_.Groups['file'].Value } | Get-Unique
-             ls -Path ./build/* -R -Filter *.pdb | ? basename -in $test_bin |
-                Move-Item -Destination $dumpfolder
+             $exes = gci -Path ./build/* -R -Include "*.pdb", "*.exe"
+             $exes | ? basename -in $test_bin | Move-Item -Destination $dumpfolder
+
+             "::group::Crash dump files"
+             gci $dumpfolder | Sort-Object LastWriteTime
+             "::endgroup::"
            }
 
            if($failed) { Write-Error -Message "$failed test(s) failed" }
