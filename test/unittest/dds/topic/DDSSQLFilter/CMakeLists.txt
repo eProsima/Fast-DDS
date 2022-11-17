@@ -52,6 +52,9 @@ target_link_libraries(DDSSQLFilterTests fastcdr foonathan_memory
     ${CMAKE_DL_LIBS})
 add_gtest(DDSSQLFilterTests SOURCES ${DDSSQLFILTERTEST_SOURCES})
 
+# Tests with specific timeout
+set_tests_properties("DDSSQLFilterValueTests.test_filtered_value" PROPERTIES TIMEOUT 500)
+
 if(ANDROID)
     set_property(TARGET DDSSQLFilterTests PROPERTY CROSSCOMPILING_EMULATOR "adb;shell;cd;${CMAKE_CURRENT_BINARY_DIR};&&")
 endif()
