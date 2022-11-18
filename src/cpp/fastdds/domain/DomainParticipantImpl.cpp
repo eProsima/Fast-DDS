@@ -232,7 +232,14 @@ DomainParticipantImpl::~DomainParticipantImpl()
         types_.clear();
     }
 
-    std::lock_guard<std::mutex> _(mtx_gs_);
+    // Proceed if no callbacks are being executed.
+    // Note that this should never occur since reception and events threads joined when removing rtps_participant.
+    std::unique_lock<std::mutex> _(mtx_gs_);
+    cv_gs_.wait(_, [this]
+            {
+                assert(!(rtps_listener_.callback_counter_ > 0));
+                return !(rtps_listener_.callback_counter_ > 0);
+            });
 
     if (participant_)
     {
@@ -1534,14 +1541,7 @@ void DomainParticipantImpl::MyRTPSParticipantListener::onParticipantDiscovery(
     Sentry sentinel(this);
     if (sentinel)
     {
-        DomainParticipantListener* listener = nullptr;
-        DomainParticipant* participant = nullptr;
-        if (participant_ != nullptr
-                && (participant = participant_->get_participant()) != nullptr
-                && (listener = participant_->get_listener()) != nullptr)
-        {
-            listener->on_participant_discovery(participant, std::move(info));
-        }
+        participant_->listener_->on_participant_discovery(participant_->participant_, std::move(info));
     }
 }
 
@@ -1553,14 +1553,7 @@ void DomainParticipantImpl::MyRTPSParticipantListener::onParticipantAuthenticati
     Sentry sentinel(this);
     if (sentinel)
     {
-        DomainParticipantListener* listener = nullptr;
-        DomainParticipant* participant = nullptr;
-        if (participant_ != nullptr
-                && (participant = participant_->get_participant()) != nullptr
-                && (listener = participant_->get_listener()) != nullptr)
-        {
-            listener->onParticipantAuthentication(participant, std::move(info));
-        }
+        participant_->listener_->onParticipantAuthentication(participant_->participant_, std::move(info));
     }
 }
 
@@ -1573,14 +1566,7 @@ void DomainParticipantImpl::MyRTPSParticipantListener::onReaderDiscovery(
     Sentry sentinel(this);
     if (sentinel)
     {
-        DomainParticipantListener* listener = nullptr;
-        DomainParticipant* participant = nullptr;
-        if (participant_ != nullptr
-                && (participant = participant_->get_participant()) != nullptr
-                && (listener = participant_->get_listener()) != nullptr)
-        {
-            listener->on_subscriber_discovery(participant, std::move(info));
-        }
+        participant_->listener_->on_subscriber_discovery(participant_->participant_, std::move(info));
     }
 }
 
@@ -1591,14 +1577,7 @@ void DomainParticipantImpl::MyRTPSParticipantListener::onWriterDiscovery(
     Sentry sentinel(this);
     if (sentinel)
     {
-        DomainParticipantListener* listener = nullptr;
-        DomainParticipant* participant = nullptr;
-        if (participant_ != nullptr
-                && (participant = participant_->get_participant()) != nullptr
-                && (listener = participant_->get_listener()) != nullptr)
-        {
-            listener->on_publisher_discovery(participant, std::move(info));
-        }
+        participant_->listener_->on_publisher_discovery(participant_->participant_, std::move(info));
     }
 }
 
@@ -1613,20 +1592,13 @@ void DomainParticipantImpl::MyRTPSParticipantListener::on_type_discovery(
     Sentry sentinel(this);
     if (sentinel)
     {
-        DomainParticipantListener* listener = nullptr;
-        DomainParticipant* participant = nullptr;
-        if (participant_ != nullptr
-                && (participant = participant_->get_participant()) != nullptr
-                && (listener = participant_->get_listener()) != nullptr)
-        {
-            listener->on_type_discovery(
-                participant,
-                request_sample_id,
-                topic,
-                identifier,
-                object,
-                dyn_type);
-        }
+        participant_->listener_->on_type_discovery(
+            participant_->participant_,
+            request_sample_id,
+            topic,
+            identifier,
+            object,
+            dyn_type);
 
         participant_->check_get_type_request(request_sample_id, identifier, object, dyn_type);
     }
@@ -1640,15 +1612,8 @@ void DomainParticipantImpl::MyRTPSParticipantListener::on_type_dependencies_repl
     Sentry sentinel(this);
     if (sentinel)
     {
-        DomainParticipantListener* listener = nullptr;
-        DomainParticipant* participant = nullptr;
-        if (participant_ != nullptr
-                && (participant = participant_->get_participant()) != nullptr
-                && (listener = participant_->get_listener()) != nullptr)
-        {
-            listener->on_type_dependencies_reply(
-                participant, request_sample_id, dependencies);
-        }
+        participant_->listener_->on_type_dependencies_reply(
+            participant_->participant_, request_sample_id, dependencies);
 
         participant_->check_get_dependencies_request(request_sample_id, dependencies);
     }
@@ -1663,18 +1628,11 @@ void DomainParticipantImpl::MyRTPSParticipantListener::on_type_information_recei
     Sentry sentinel(this);
     if (sentinel)
     {
-        DomainParticipantListener* listener = nullptr;
-        DomainParticipant* participant = nullptr;
-        if (participant_ != nullptr
-                && (participant = participant_->get_participant()) != nullptr
-                && (listener = participant_->get_listener()) != nullptr)
+        if (type_information.complete().typeid_with_size().type_id()._d() > 0
+                || type_information.minimal().typeid_with_size().type_id()._d() > 0)
         {
-            if (type_information.complete().typeid_with_size().type_id()._d() > 0
-                    || type_information.minimal().typeid_with_size().type_id()._d() > 0)
-            {
-                listener->on_type_information_received(
-                    participant, topic_name, type_name, type_information);
-            }
+            participant_->listener_->on_type_information_received(
+                participant_->participant_, topic_name, type_name, type_information);
         }
     }
 }

@@ -14,6 +14,7 @@
 
 #include <chrono>
 #include <fstream>
+#include <future>
 #include <memory>
 #include <sstream>
 #include <string>
@@ -2175,12 +2176,8 @@ class CustomListener2 : public DomainParticipantListener
 public:
 
     CustomListener2(
-            bool& on_execution,
-            std::mutex& mtx,
-            std::condition_variable& cv)
-        : on_execution_(on_execution)
-        , mtx_(mtx)
-        , cv_(cv)
+            std::promise<void>& promise)
+        : promise_(promise)
     {
     }
 
@@ -2188,28 +2185,22 @@ public:
             eprosima::fastdds::dds::DomainParticipant*,
             eprosima::fastrtps::rtps::ParticipantDiscoveryInfo&&) override
     {
-        {
-            std::lock_guard<std::mutex> _(mtx_);
-            on_execution_ = true;
-        }
-        cv_.notify_one();
+        promise_.set_value();
         std::this_thread::sleep_for(std::chrono::seconds(2));
     }
 
 private:
 
-    bool& on_execution_;
-    std::mutex& mtx_;
-    std::condition_variable& cv_;
+    std::promise<void>& promise_;
 };
 
 TEST(ParticipantTests, FailingSetListener)
 {
-    bool on_execution = false;
-    std::mutex mtx;
-    std::condition_variable cv;
+    std::promise<void> promise;
+    std::future<void> future = promise.get_future();
 
-    CustomListener2 listener(on_execution, mtx, cv);
+    // CustomListener2 listener(on_execution, mtx, cv);
+    CustomListener2 listener(promise);
 
     DomainParticipant* participant =
             DomainParticipantFactory::get_instance()->create_participant(0, PARTICIPANT_QOS_DEFAULT, &listener);
@@ -2220,14 +2211,8 @@ TEST(ParticipantTests, FailingSetListener)
             DomainParticipantFactory::get_instance()->create_participant(0, PARTICIPANT_QOS_DEFAULT);
     ASSERT_NE(participant_to_discover, nullptr);
 
-    {
-        // Wait for callback trigger
-        std::unique_lock<std::mutex> _(mtx);
-        cv.wait(_, [&]()
-                {
-                    return on_execution;
-                });
-    }
+    // Wait for callback trigger
+    future.wait();
 
     ASSERT_EQ(participant->set_listener(nullptr, std::chrono::seconds(1)), ReturnCode_t::RETCODE_ERROR);
     ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), ReturnCode_t::RETCODE_OK);
