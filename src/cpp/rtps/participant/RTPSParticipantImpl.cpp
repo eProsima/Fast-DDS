@@ -153,6 +153,11 @@ RTPSParticipantImpl::RTPSParticipantImpl(
         UDPv4TransportDescriptor descriptor;
         descriptor.sendBufferSize = m_att.sendSocketBufferSize;
         descriptor.receiveBufferSize = m_att.listenSocketBufferSize;
+        if (is_intraprocess_only())
+        {
+            // Avoid multicast leaving the host for intraprocess-only participants
+            descriptor.TTL = 0;
+        }
         m_network_Factory.RegisterTransport(&descriptor, &m_att.properties);
 
 #ifdef SHM_TRANSPORT_BUILTIN
