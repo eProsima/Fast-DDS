@@ -232,14 +232,11 @@ DomainParticipantImpl::~DomainParticipantImpl()
         types_.clear();
     }
 
-    // Proceed if no callbacks are being executed.
+    std::lock_guard<std::mutex> _(mtx_gs_);
+
+    // Assert no callbacks are being executed.
     // Note that this should never occur since reception and events threads joined when removing rtps_participant.
-    std::unique_lock<std::mutex> _(mtx_gs_);
-    cv_gs_.wait(_, [this]
-            {
-                assert(!(rtps_listener_.callback_counter_ > 0));
-                return !(rtps_listener_.callback_counter_ > 0);
-            });
+    assert(!(rtps_listener_.callback_counter_ > 0));
 
     if (participant_)
     {

@@ -2175,10 +2175,14 @@ class CustomListener2 : public DomainParticipantListener
 {
 public:
 
-    CustomListener2(
-            std::promise<void>& promise)
-        : promise_(promise)
+    CustomListener2()
+        : future_(promise_.get_future())
     {
+    }
+
+    std::future<void>& get_future()
+    {
+        return future_;
     }
 
     void on_participant_discovery(
@@ -2191,16 +2195,13 @@ public:
 
 private:
 
-    std::promise<void>& promise_;
+    std::promise<void> promise_;
+    std::future<void> future_;
 };
 
 TEST(ParticipantTests, FailingSetListener)
 {
-    std::promise<void> promise;
-    std::future<void> future = promise.get_future();
-
-    // CustomListener2 listener(on_execution, mtx, cv);
-    CustomListener2 listener(promise);
+    CustomListener2 listener;
 
     DomainParticipant* participant =
             DomainParticipantFactory::get_instance()->create_participant(0, PARTICIPANT_QOS_DEFAULT, &listener);
@@ -2212,7 +2213,7 @@ TEST(ParticipantTests, FailingSetListener)
     ASSERT_NE(participant_to_discover, nullptr);
 
     // Wait for callback trigger
-    future.wait();
+    listener.get_future().wait();
 
     ASSERT_EQ(participant->set_listener(nullptr, std::chrono::seconds(1)), ReturnCode_t::RETCODE_ERROR);
     ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), ReturnCode_t::RETCODE_OK);
