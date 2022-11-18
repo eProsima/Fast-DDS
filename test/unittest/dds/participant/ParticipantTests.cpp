@@ -2001,6 +2001,61 @@ TEST(ParticipantTests, CreateTopic)
     ASSERT_TRUE(DomainParticipantFactory::get_instance()->delete_participant(participant) == ReturnCode_t::RETCODE_OK);
 }
 
+// Test that creating a Topic with a Data Type name different from the Type Support is possible as long
+// as the type has been registered with such name.
+TEST(ParticipantTests, CreateTopicWithDifferentTypeName)
+{
+    DomainParticipant* participant =
+            DomainParticipantFactory::get_instance()->create_participant(0, PARTICIPANT_QOS_DEFAULT);
+
+    std::string type_name = "other_different_type_name_because_of_reasons_eg_mangling";
+    TypeSupport type(new TopicDataTypeMock());
+    type.register_type(participant, type_name);
+
+    // Topic using the default profile
+    Topic* topic = participant->create_topic("footopic", type_name, TOPIC_QOS_DEFAULT);
+    ASSERT_NE(topic, nullptr);
+    ASSERT_EQ(topic->get_type_name(), type_name);
+
+    // Try to create the same topic twice
+    Topic* topic_duplicated = participant->create_topic("footopic", type_name, TOPIC_QOS_DEFAULT);
+    ASSERT_EQ(topic_duplicated, nullptr);
+
+    ASSERT_TRUE(participant->delete_topic(topic) == ReturnCode_t::RETCODE_OK);
+}
+
+// Test that creating a Topic with a Data Type name different from the data type is not possible
+TEST(ParticipantTests, CreateTopicWithDifferentTypeName_negative)
+{
+    // Using other type name
+    {
+        DomainParticipant* participant =
+                DomainParticipantFactory::get_instance()->create_participant(0, PARTICIPANT_QOS_DEFAULT);
+
+        TypeSupport type(new TopicDataTypeMock());
+        type.register_type(participant);
+
+        std::string type_name = "other_different_type_name_because_of_reasons_eg_mangling";
+        // Topic using the default profile
+        Topic* topic = participant->create_topic("footopic", type_name, TOPIC_QOS_DEFAULT);
+        ASSERT_EQ(topic, nullptr);
+    }
+
+    // Using type support type name when registered with other name
+    {
+        DomainParticipant* participant =
+                DomainParticipantFactory::get_instance()->create_participant(0, PARTICIPANT_QOS_DEFAULT);
+
+        std::string type_name = "other_different_type_name_because_of_reasons_eg_mangling";
+        TypeSupport type(new TopicDataTypeMock());
+        type.register_type(participant, type_name);
+
+        // Topic using the default profile
+        Topic* topic = participant->create_topic("footopic", type.get_type_name(), TOPIC_QOS_DEFAULT);
+        ASSERT_EQ(topic, nullptr);
+    }
+}
+
 TEST(ParticipantTests, PSMCreateTopic)
 {
     ::dds::domain::DomainParticipant participant = ::dds::domain::DomainParticipant(0, PARTICIPANT_QOS_DEFAULT);

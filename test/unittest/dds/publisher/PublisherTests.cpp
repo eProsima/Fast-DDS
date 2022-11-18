@@ -493,32 +493,6 @@ TEST(PublisherTests, CreateDataWriter)
     ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), ReturnCode_t::RETCODE_OK);
 }
 
-TEST(PublisherTests, CreateDataWriterWithDifferentTypeName)
-{
-    DomainParticipant* participant =
-            DomainParticipantFactory::get_instance()->create_participant(0, PARTICIPANT_QOS_DEFAULT);
-    ASSERT_NE(participant, nullptr);
-
-    Publisher* publisher = participant->create_publisher(PUBLISHER_QOS_DEFAULT);
-    ASSERT_NE(publisher, nullptr);
-
-    std::string type_name = "other_different_type_name_because_of_reasons_eg_mangling";
-    TypeSupport type(new TopicDataTypeMock());
-    type.register_type(participant, type_name);
-
-    Topic* topic = participant->create_topic("footopic", type_name, TOPIC_QOS_DEFAULT);
-    ASSERT_NE(topic, nullptr);
-
-    DataWriter* datawriter = publisher->create_datawriter(topic, DATAWRITER_QOS_DEFAULT);
-    ASSERT_NE(datawriter, nullptr);
-
-    ASSERT_EQ(publisher->delete_datawriter(datawriter), ReturnCode_t::RETCODE_OK);
-    ASSERT_EQ(participant->delete_publisher(publisher), ReturnCode_t::RETCODE_OK);
-    ASSERT_EQ(participant->delete_topic(topic), ReturnCode_t::RETCODE_OK);
-    ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), ReturnCode_t::RETCODE_OK);
-}
-
-
 void check_datawriter_with_profile (
         DataWriter* datawriter,
         const std::string& profile_name)
