@@ -173,7 +173,9 @@ void WriterProxy::stop()
     StateCode prev_code;
     if ((prev_code = state_.exchange(StateCode::STOPPED)) == StateCode::BUSY)
     {
-        // Initial ack_nack being performed, wait for it to finish
+        // TimedEvent being performed, wait for it to finish.
+        // It does not matter which of the two events is the one on execution, but we must wait on initial_acknack_ as
+        // it could be restarted if only cancelled while its callback is being triggered.
         initial_acknack_->recreate_timer();
     }
     else
@@ -526,7 +528,17 @@ bool WriterProxy::perform_initial_ack_nack()
 
 void WriterProxy::perform_heartbeat_response()
 {
+    StateCode expected = StateCode::IDLE;
+    if (!state_.compare_exchange_strong(expected, StateCode::BUSY))
+    {
+        // Stopped from another thread -> abort
+        return;
+    }
+
     reader_->send_acknack(this, this, heartbeat_final_flag_.load());
+
+    expected = StateCode::BUSY;
+    state_.compare_exchange_strong(expected, StateCode::IDLE);
 }
 
 bool WriterProxy::process_heartbeat(
@@ -544,7 +556,7 @@ bool WriterProxy::process_heartbeat(
 #endif // SHOULD_DEBUG_LINUX
 
     assert_liveliness = false;
-    if (last_heartbeat_count_ < count)
+    if (state_ != StateCode::STOPPED && last_heartbeat_count_ < count)
     {
         // If it is the first heartbeat message, we can try to cancel initial ack.
         // TODO: This timer cancelling should be checked if needed with the liveliness implementation.
