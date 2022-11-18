@@ -1221,6 +1221,11 @@ void StatefulReader::remove_changes_from(
     }
 }
 
+ResourceEvent& StatefulReader::getEventResource() const
+{
+    return mp_RTPSParticipant->getEventResource();
+}
+
 bool StatefulReader::nextUntakenCache(
         CacheChange_t** change,
         WriterProxy** wpout)

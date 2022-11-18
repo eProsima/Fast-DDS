@@ -93,7 +93,7 @@ WriterProxy::WriterProxy(
     , state_(StateCode::STOPPED)
 {
     //Create Events
-    ResourceEvent& event_manager = reader_->getRTPSParticipant()->getEventResource();
+    ResourceEvent& event_manager = reader_->getEventResource();
     auto heartbeat_lambda = [this]() -> bool
             {
                 perform_heartbeat_response();

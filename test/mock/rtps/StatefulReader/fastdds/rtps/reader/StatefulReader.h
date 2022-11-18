@@ -15,6 +15,7 @@
 #ifndef _FASTDDS_RTPS_READER_STATEFULREADER_H_
 #define _FASTDDS_RTPS_READER_STATEFULREADER_H_
 
+#include <fastdds/rtps/resources/ResourceEvent.h>
 #include <fastrtps/rtps/reader/RTPSReader.h>
 #include <fastrtps/rtps/attributes/ReaderAttributes.h>
 #include <fastrtps/rtps/common/Guid.h>
@@ -33,7 +34,11 @@ class StatefulReader : public RTPSReader
 {
 public:
 
-    StatefulReader() = default;
+    StatefulReader()
+    {
+        ON_CALL(*this, getEventResource())
+                .WillByDefault(::testing::ReturnRef(service_));
+    }
 
     StatefulReader(
             ReaderHistory* history,
@@ -88,6 +93,8 @@ public:
         return nullptr;
     }
 
+    MOCK_METHOD0(getEventResource, ResourceEvent & ());
+
     bool send_sync_nts(
             CDRMessage_t* /*message*/,
             const LocatorsIterator& /*destination_locators_begin*/,
@@ -100,6 +107,7 @@ public:
 private:
 
     ReaderTimes times_;
+    ResourceEvent service_;
 };
 
 } // namespace rtps

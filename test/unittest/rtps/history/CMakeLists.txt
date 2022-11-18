@@ -71,6 +71,7 @@ target_compile_definitions(ReaderHistoryTests PRIVATE FASTRTPS_NO_LIB
     )
 target_include_directories(ReaderHistoryTests PRIVATE
     ${PROJECT_SOURCE_DIR}/test/mock/rtps/Endpoint
+    ${PROJECT_SOURCE_DIR}/test/mock/rtps/ResourceEvent
     ${PROJECT_SOURCE_DIR}/test/mock/rtps/RTPSReader
     ${PROJECT_SOURCE_DIR}/test/mock/rtps/StatefulReader
     ${PROJECT_SOURCE_DIR}/src/cpp
