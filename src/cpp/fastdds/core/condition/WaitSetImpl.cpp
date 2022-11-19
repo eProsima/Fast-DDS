@@ -131,7 +131,7 @@ ReturnCode_t WaitSetImpl::wait(
                     }
                 }
                 while(old_counter != notifications_
-                        || active_conditions.size() == entries_.size());
+                        && active_conditions.size() != entries_.size());
 
                 return ret_val;
             };
