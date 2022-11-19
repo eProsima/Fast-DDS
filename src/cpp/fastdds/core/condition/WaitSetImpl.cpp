@@ -36,16 +36,8 @@ namespace detail {
 
 WaitSetImpl::~WaitSetImpl()
 {
-    eprosima::utilities::collections::unordered_vector<const Condition*> old_entries;
-
-    {
-        // We only need to protect access to the collection.
-        std::lock_guard<std::mutex> guard(mutex_);
-        old_entries = entries_;
-        entries_.clear();
-    }
-
-    for (const Condition* c : old_entries)
+    std::lock_guard<std::mutex> guard(mutex_);
+    for (const Condition* c : entries_)
     {
         c->get_notifier()->detach_from(this);
     }
@@ -76,7 +68,7 @@ ReturnCode_t WaitSetImpl::attach_condition(
             // Should wake_up when adding a new triggered condition
             if (is_waiting_ && condition.get_trigger_value())
             {
-                cond_.notify_one();
+                wake_up();
             }
         }
     }
@@ -119,16 +111,28 @@ ReturnCode_t WaitSetImpl::wait(
 
     auto fill_active_conditions = [&]()
             {
-                bool ret_val = false;
-                active_conditions.clear();
-                for (const Condition* c : entries_)
+                bool ret_val;
+                unsigned int old_counter;
+
+                // Loop if predicate may be outdated
+                do
                 {
-                    if (c->get_trigger_value())
+                    ret_val = false;
+                    old_counter = notifications_;
+                    active_conditions.clear();
+
+                    for (const Condition* c : entries_)
                     {
-                        ret_val = true;
-                        active_conditions.push_back(const_cast<Condition*>(c));
+                        if (c->get_trigger_value())
+                        {
+                            ret_val = true;
+                            active_conditions.push_back(const_cast<Condition*>(c));
+                        }
                     }
                 }
+                while(old_counter != notifications_
+                        || active_conditions.size() == entries_.size());
+
                 return ret_val;
             };
 
@@ -164,7 +168,7 @@ ReturnCode_t WaitSetImpl::get_conditions(
 
 void WaitSetImpl::wake_up()
 {
-    std::lock_guard<std::mutex> guard(mutex_);
+    ++notifications_;
     cond_.notify_one();
 }
 
