@@ -110,15 +110,17 @@ inline std::ostream& operator <<(
         std::ostream& output,
         const GuidPrefix_t& guiP)
 {
-    output << std::hex;
-    char old_fill = output.fill('0');
+    std::stringstream ss;
+    ss << std::hex;
+    char old_fill = ss.fill('0');
     for (uint8_t i = 0; i < 11; ++i)
     {
-        output << std::setw(2) << (int)guiP.value[i] << ".";
+        ss << std::setw(2) << (int)guiP.value[i] << ".";
     }
-    output << std::setw(2) << (int)guiP.value[11];
-    output.fill(old_fill);
-    return output << std::dec;
+    ss << std::setw(2) << (int)guiP.value[11];
+    ss.fill(old_fill);
+    ss << std::dec;
+    return output << ss.str();
 }
 
 inline std::istream& operator >>(

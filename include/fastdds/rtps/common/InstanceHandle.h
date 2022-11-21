@@ -293,13 +293,14 @@ inline std::ostream& operator <<(
         std::ostream& output,
         const InstanceHandle_t& iHandle)
 {
-    output << std::hex;
+    std::stringstream ss;
+    ss << std::hex;
     for (uint8_t i = 0; i < 15; ++i)
     {
-        output << (int)iHandle.value[i] << ".";
+        ss << (int)iHandle.value[i] << ".";
     }
-    output << (int)iHandle.value[15] << std::dec;
-    return output;
+    ss << (int)iHandle.value[15] << std::dec;
+    return output << ss.str();
 }
 
 /**
