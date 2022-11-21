@@ -495,6 +495,7 @@ public:
         while (ret);
 
         receiving_.store(true);
+        std::lock_guard<std::mutex> lock(mutex_);
         return get_last_sequence_received();
     }
 
@@ -1841,8 +1842,8 @@ protected:
     eprosima::fastdds::dds::TypeSupport type_;
     using LastSeqInfo = std::pair<eprosima::fastrtps::rtps::InstanceHandle_t, eprosima::fastrtps::rtps::GUID_t>;
     std::map<LastSeqInfo, eprosima::fastrtps::rtps::SequenceNumber_t> last_seq;
-    size_t current_processed_count_;
-    size_t number_samples_expected_;
+    std::atomic<size_t> current_processed_count_;
+    std::atomic<size_t> number_samples_expected_;
     bool discovery_result_;
 
     std::string xml_file_ = "";
