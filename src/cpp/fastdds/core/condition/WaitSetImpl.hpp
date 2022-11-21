@@ -114,7 +114,7 @@ private:
     std::condition_variable cond_;
     eprosima::utilities::collections::unordered_vector<const Condition*> entries_;
     bool is_waiting_ = false;
-    std::atomic_uint notifications_ = {0};
+    std::atomic_uint notifications_ = {1};
 };
 
 }  // namespace detail

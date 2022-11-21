@@ -104,7 +104,7 @@ ReturnCode_t WaitSetImpl::wait(
 {
     std::unique_lock<std::mutex> lock(mutex_);
     // last notification processed
-    unsigned int old_counter = 0;
+    unsigned int old_counter = notifications_ - 1;
 
     if (is_waiting_)
     {
