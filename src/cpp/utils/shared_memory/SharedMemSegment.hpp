@@ -176,6 +176,27 @@ public:
         return named_mutex;
     }
 
+    static deleted_unique_ptr<SharedSegmentBase::named_mutex> open_or_create_named_mutex(
+            const std::string& mutex_name)
+    {
+        deleted_unique_ptr<SharedSegmentBase::named_mutex> named_mutex;
+
+        // Todo(Adolfo) : Dataraces could occur, this algorithm has to be improved
+
+        {
+            std::lock_guard<std::mutex> lock(mtx_());
+
+            named_mutex = deleted_unique_ptr<SharedSegmentBase::named_mutex>(
+                new SharedSegmentBase::named_mutex(boost::interprocess::open_or_create, mutex_name.c_str()), [](SharedSegmentBase::named_mutex* p)
+                {
+                    std::lock_guard<std::mutex> lock(mtx_());
+                    delete p;
+                });
+        }
+
+        return named_mutex;
+    }
+
     static deleted_unique_ptr<SharedSegmentBase::named_mutex> open_named_mutex(
             const std::string& mutex_name)
     {

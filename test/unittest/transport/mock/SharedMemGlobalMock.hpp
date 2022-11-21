@@ -32,12 +32,20 @@ public:
         SharedMemSegment::named_mutex::remove(port_segment_name.c_str());
     }
 
-    static deleted_unique_ptr<SharedMemSegment::named_mutex> get_port_mutex(const std::string& domain_name, uint32_t port_id)
+    static deleted_unique_ptr<SharedMemSegment::named_mutex> get_port_mutex(const std::string& domain_name, uint32_t port_id, bool open_only=true)
     {
         auto port_segment_name = domain_name + "_port" + std::to_string(port_id);
 
-        return deleted_unique_ptr<SharedMemSegment::named_mutex>(SharedMemSegment::open_named_mutex(port_segment_name + "_mutex"));
+        if (open_only)
+        {
+            return deleted_unique_ptr<SharedMemSegment::named_mutex>(SharedMemSegment::open_named_mutex(port_segment_name + "_mutex"));
+        }
+        else
+        {
+            return deleted_unique_ptr<SharedMemSegment::named_mutex>(SharedMemSegment::open_or_create_named_mutex(port_segment_name + "_mutex"));
+        }
     }
+
 
     static bool lock_empty_cv_mutex(SharedMemGlobal::Port& port)
     {
