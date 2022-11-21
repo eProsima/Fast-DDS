@@ -460,7 +460,7 @@ public:
                     // recursive lock of port_mutex in create_port()
                     if (node_->is_port_ok)
                     {
-                        std::unique_ptr<SharedMemSegment::named_mutex> port_mutex =
+                        deleted_unique_ptr<SharedMemSegment::named_mutex> port_mutex =
                                 SharedMemSegment::try_open_and_lock_named_mutex(segment_name + "_mutex");
 
                         std::unique_lock<SharedMemSegment::named_mutex> port_lock(*port_mutex, std::adopt_lock);
@@ -987,7 +987,7 @@ private:
         logInfo(RTPS_TRANSPORT_SHM, THREADID << "Opening "
                                              << port_segment_name);
 
-        std::unique_ptr<SharedMemSegment::named_mutex> port_mutex =
+        deleted_unique_ptr<SharedMemSegment::named_mutex> port_mutex =
                 SharedMemSegment::open_or_create_and_lock_named_mutex(port_segment_name + "_mutex");
 
         std::unique_lock<SharedMemSegment::named_mutex> port_lock(*port_mutex, std::adopt_lock);

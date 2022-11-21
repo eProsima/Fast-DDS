@@ -49,6 +49,9 @@ namespace rtps {
 
 using Log = fastdds::dds::Log;
 
+template<typename T>
+using deleted_unique_ptr = std::unique_ptr<T,std::function<void(T*)>>;
+
 /**
  * Provides shared memory functionallity abstrating from
  * lower level layers
@@ -101,13 +104,21 @@ public:
     virtual SharedSegmentBase::Offset get_offset_from_address(
             void* address) const = 0;
 
-    static std::unique_ptr<SharedSegmentBase::named_mutex> open_or_create_and_lock_named_mutex(
+    static deleted_unique_ptr<SharedSegmentBase::named_mutex> open_or_create_and_lock_named_mutex(
             const std::string& mutex_name)
     {
-        std::unique_ptr<SharedSegmentBase::named_mutex> named_mutex;
+        deleted_unique_ptr<SharedSegmentBase::named_mutex> named_mutex;
 
-        named_mutex = std::unique_ptr<SharedSegmentBase::named_mutex>(
-            new SharedSegmentBase::named_mutex(boost::interprocess::open_or_create, mutex_name.c_str()));
+        {
+            std::lock_guard<std::mutex> lock(mtx_());
+
+            named_mutex = deleted_unique_ptr<SharedSegmentBase::named_mutex>(
+                new SharedSegmentBase::named_mutex(boost::interprocess::open_or_create, mutex_name.c_str()), [](SharedSegmentBase::named_mutex* p)
+                {
+                    std::lock_guard<std::mutex> lock(mtx_());
+                    delete p;
+                });
+        }
 
         boost::posix_time::ptime wait_time
             = boost::posix_time::microsec_clock::universal_time()
@@ -117,9 +128,17 @@ public:
             // Interprocess mutex timeout when locking. Possible deadlock: owner died without unlocking?
             // try to remove and create again
             SharedSegmentBase::named_mutex::remove(mutex_name.c_str());
+            named_mutex.reset();
+            {
+                std::lock_guard<std::mutex> lock(mtx_());
 
-            named_mutex = std::unique_ptr<SharedSegmentBase::named_mutex>(
-                new SharedSegmentBase::named_mutex(boost::interprocess::open_or_create, mutex_name.c_str()));
+                named_mutex = deleted_unique_ptr<SharedSegmentBase::named_mutex>(
+                    new SharedSegmentBase::named_mutex(boost::interprocess::open_or_create, mutex_name.c_str()), [](SharedSegmentBase::named_mutex* p)
+                    {
+                        std::lock_guard<std::mutex> lock(mtx_());
+                        delete p;
+                    });
+            }
 
             if (!named_mutex->try_lock())
             {
@@ -130,13 +149,21 @@ public:
         return named_mutex;
     }
 
-    static std::unique_ptr<SharedSegmentBase::named_mutex> try_open_and_lock_named_mutex(
+    static deleted_unique_ptr<SharedSegmentBase::named_mutex> try_open_and_lock_named_mutex(
             const std::string& mutex_name)
     {
-        std::unique_ptr<SharedSegmentBase::named_mutex> named_mutex;
+        deleted_unique_ptr<SharedSegmentBase::named_mutex> named_mutex;
 
-        named_mutex = std::unique_ptr<SharedSegmentBase::named_mutex>(
-            new SharedSegmentBase::named_mutex(boost::interprocess::open_only, mutex_name.c_str()));
+        {
+            std::lock_guard<std::mutex> lock(mtx_());
+
+            named_mutex = deleted_unique_ptr<SharedSegmentBase::named_mutex>(
+                new SharedSegmentBase::named_mutex(boost::interprocess::open_only, mutex_name.c_str()), [](SharedSegmentBase::named_mutex* p)
+                {
+                    std::lock_guard<std::mutex> lock(mtx_());
+                    delete p;
+                });
+        }
 
         boost::posix_time::ptime wait_time
             = boost::posix_time::microsec_clock::universal_time()
@@ -149,15 +176,23 @@ public:
         return named_mutex;
     }
 
-    static std::unique_ptr<SharedSegmentBase::named_mutex> open_named_mutex(
+    static deleted_unique_ptr<SharedSegmentBase::named_mutex> open_named_mutex(
             const std::string& mutex_name)
     {
-        std::unique_ptr<SharedSegmentBase::named_mutex> named_mutex;
+        deleted_unique_ptr<SharedSegmentBase::named_mutex> named_mutex;
 
         // Todo(Adolfo) : Dataraces could occur, this algorithm has to be improved
 
-        named_mutex = std::unique_ptr<SharedSegmentBase::named_mutex>(
-            new SharedSegmentBase::named_mutex(boost::interprocess::open_only, mutex_name.c_str()));
+        {
+            std::lock_guard<std::mutex> lock(mtx_());
+
+            named_mutex = deleted_unique_ptr<SharedSegmentBase::named_mutex>(
+                new SharedSegmentBase::named_mutex(boost::interprocess::open_only, mutex_name.c_str()), [](SharedSegmentBase::named_mutex* p)
+                {
+                    std::lock_guard<std::mutex> lock(mtx_());
+                    delete p;
+                });
+        }
 
         return named_mutex;
     }
@@ -242,6 +277,12 @@ private:
     shared_mem_environment_initializer_;
 
     std::string name_;
+
+    static std::mutex& mtx_()
+    {
+        static std::mutex mtx_;
+        return mtx_;
+    }
 };
 
 template<typename T, typename U>

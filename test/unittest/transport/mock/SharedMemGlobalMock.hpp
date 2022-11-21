@@ -21,7 +21,7 @@ namespace eprosima{
 namespace fastdds{
 namespace rtps{
 
-class MockPortSharedMemGlobal 
+class MockPortSharedMemGlobal
 {
 public:
 
@@ -32,18 +32,15 @@ public:
         SharedMemSegment::named_mutex::remove(port_segment_name.c_str());
     }
 
-    static std::unique_ptr<SharedMemSegment::named_mutex> get_port_mutex(const std::string& domain_name, uint32_t port_id)
-    {        
+    static deleted_unique_ptr<SharedMemSegment::named_mutex> get_port_mutex(const std::string& domain_name, uint32_t port_id)
+    {
         auto port_segment_name = domain_name + "_port" + std::to_string(port_id);
 
-        std::unique_ptr<SharedMemSegment::named_mutex> port_mutex = 
-                SharedMemSegment::open_named_mutex(port_segment_name + "_mutex");
-
-        return std::unique_ptr<SharedMemSegment::named_mutex>(SharedMemSegment::open_named_mutex(port_segment_name + "_mutex"));
+        return deleted_unique_ptr<SharedMemSegment::named_mutex>(SharedMemSegment::open_named_mutex(port_segment_name + "_mutex"));
     }
 
     static bool lock_empty_cv_mutex(SharedMemGlobal::Port& port)
-    {        
+    {
         return port.node_->empty_cv_mutex.try_lock();
     }
 
@@ -60,7 +57,7 @@ public:
         (void)listener;
 
         std::unique_lock<SharedMemSegment::mutex> lock(port.node_->empty_cv_mutex);
-        
+
         port.node_->waiting_count++;
         auto& status = port.node_->listeners_status[listener_index];
         status.is_waiting = 1;
