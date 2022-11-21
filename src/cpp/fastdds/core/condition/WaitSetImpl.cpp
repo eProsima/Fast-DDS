@@ -115,6 +115,12 @@ ReturnCode_t WaitSetImpl::wait(
             {
                 bool ret_val;
 
+                if ( old_counter == notifications_ )
+                {
+                    // spurious wakeup
+                    return false;
+                }
+
                 // Loop if predicate may be outdated
                 do
                 {
