@@ -663,9 +663,9 @@ void DiscoveryDataBase::create_new_participant_from_change_(
 
     std::pair<std::map<eprosima::fastrtps::rtps::GuidPrefix_t, DiscoveryParticipantInfo>::iterator, bool> ret =
             participants_.insert(
-                std::make_pair(
-                    change_guid.guidPrefix,
-                    DiscoveryParticipantInfo(ch, server_guid_prefix_, change_data)));
+        std::make_pair(
+            change_guid.guidPrefix,
+            DiscoveryParticipantInfo(ch, server_guid_prefix_, change_data)));
 
     // If insert was successful
     if (ret.second)
