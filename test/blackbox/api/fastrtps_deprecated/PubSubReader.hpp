@@ -268,8 +268,8 @@ public:
         subscriber_attr_.topic.topicKind =
                 type_.m_isGetKeyDefined ? ::eprosima::fastrtps::rtps::WITH_KEY : ::eprosima::fastrtps::rtps::NO_KEY;
 
-        // By default, memory mode is preallocated (the most restritive)
-        subscriber_attr_.historyMemoryPolicy = eprosima::fastrtps::rtps::PREALLOCATED_MEMORY_MODE;
+        // By default, memory mode is PREALLOCATED_WITH_REALLOC_MEMORY_MODE
+        subscriber_attr_.historyMemoryPolicy = eprosima::fastrtps::rtps::PREALLOCATED_WITH_REALLOC_MEMORY_MODE;
 
         // By default, heartbeat period delay is 100 milliseconds.
         subscriber_attr_.times.heartbeatResponseDelay.seconds = 0;

@@ -1058,11 +1058,11 @@ void SecurityManager::delete_participant_stateless_message_entities()
 void SecurityManager::create_participant_stateless_message_pool()
 {
     participant_stateless_message_writer_hattr_ =
-    { PREALLOCATED_MEMORY_MODE, participant_->getMaxMessageSize(), 20, 100 };
+    { PREALLOCATED_WITH_REALLOC_MEMORY_MODE, participant_->getMaxMessageSize(), 20, 100 };
     participant_stateless_message_reader_hattr_ =
-    { PREALLOCATED_MEMORY_MODE, participant_->getMaxMessageSize(), 10, 5000 };
+    { PREALLOCATED_WITH_REALLOC_MEMORY_MODE, participant_->getMaxMessageSize(), 10, 5000 };
 
-    BasicPoolConfig cfg{ PREALLOCATED_MEMORY_MODE, participant_->getMaxMessageSize() };
+    BasicPoolConfig cfg{ PREALLOCATED_WITH_REALLOC_MEMORY_MODE, participant_->getMaxMessageSize() };
     participant_stateless_message_pool_ = TopicPayloadPoolRegistry::get("DCPSParticipantStatelessMessage", cfg);
 
     PoolConfig writer_cfg = PoolConfig::from_history_attributes(participant_stateless_message_writer_hattr_);
@@ -1214,7 +1214,7 @@ void SecurityManager::delete_participant_volatile_message_secure_entities()
 void SecurityManager::create_participant_volatile_message_secure_pool()
 {
     participant_volatile_message_secure_hattr_ =
-    { PREALLOCATED_MEMORY_MODE, participant_->getMaxMessageSize(), 10, 0 };
+    { PREALLOCATED_WITH_REALLOC_MEMORY_MODE, participant_->getMaxMessageSize(), 10, 0 };
 
     PoolConfig pool_cfg = PoolConfig::from_history_attributes(participant_volatile_message_secure_hattr_);
     participant_volatile_message_secure_pool_ =

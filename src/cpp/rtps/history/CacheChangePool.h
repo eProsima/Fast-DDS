@@ -114,7 +114,7 @@ private:
 
     uint32_t current_pool_size_ = 0;
     uint32_t max_pool_size_ = 0;
-    MemoryManagementPolicy_t memory_mode_ = MemoryManagementPolicy_t::DYNAMIC_RESERVE_MEMORY_MODE;
+    MemoryManagementPolicy_t memory_mode_ = MemoryManagementPolicy_t::PREALLOCATED_WITH_REALLOC_MEMORY_MODE;
 
     std::vector<CacheChange_t*> free_caches_;
     std::vector<CacheChange_t*> all_caches_;

@@ -55,7 +55,7 @@ protected:
 
     virtual void SetUp()
     {
-        history_attr.memoryPolicy = MemoryManagementPolicy_t::PREALLOCATED_MEMORY_MODE;
+        history_attr.memoryPolicy = MemoryManagementPolicy_t::PREALLOCATED_WITH_REALLOC_MEMORY_MODE;
         history_attr.payloadMaxSize = 4;
         history_attr.initialReservedCaches = 10;
         history_attr.maximumReservedCaches = 20;
@@ -145,8 +145,9 @@ TEST_F(ReaderHistoryTests, cache_change_payload_max_size)
     ch->serializedPayload.length = ch_payload_length;
     ch->writerGUID = GUID_t(GuidPrefix_t::unknown(), 1U);
 
-    ASSERT_FALSE(history->add_change(ch));
-    ASSERT_EQ(history->getHistorySize(), 0U);
+    //! with PREALLOCATED_WITH_REALLOC memory policy this operation should be fine
+    ASSERT_TRUE(history->add_change(ch));
+    ASSERT_EQ(history->getHistorySize(), 1U);
 
     delete ch;
 }

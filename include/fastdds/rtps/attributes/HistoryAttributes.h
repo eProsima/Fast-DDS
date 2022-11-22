@@ -65,7 +65,7 @@ public:
 
     //! Default constructor
     HistoryAttributes()
-        : memoryPolicy(PREALLOCATED_MEMORY_MODE)
+        : memoryPolicy(PREALLOCATED_WITH_REALLOC_MEMORY_MODE)
         , payloadMaxSize(500)
         , initialReservedCaches(500)
         , maximumReservedCaches(0)

@@ -88,7 +88,8 @@ public:
     rtps::ThroughputControllerDescriptor throughputController;
 
     //! Underlying History memory policy
-    rtps::MemoryManagementPolicy_t historyMemoryPolicy = rtps::MemoryManagementPolicy_t::PREALLOCATED_MEMORY_MODE;
+    rtps::MemoryManagementPolicy_t historyMemoryPolicy =
+            rtps::MemoryManagementPolicy_t::PREALLOCATED_WITH_REALLOC_MEMORY_MODE;
 
     //! Properties
     rtps::PropertyPolicy properties;

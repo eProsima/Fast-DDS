@@ -33,7 +33,7 @@ protected:
         : pool(nullptr)
         , pool_size(10)
         , max_pool_size(0)
-        , memory_policy(MemoryManagementPolicy_t::PREALLOCATED_MEMORY_MODE)
+        , memory_policy(MemoryManagementPolicy_t::PREALLOCATED_WITH_REALLOC_MEMORY_MODE)
     {
     }
 

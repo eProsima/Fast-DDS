@@ -163,7 +163,7 @@ public:
 #elif defined(DYNAMIC_RESERVE_MEMORY_MODE_TEST)
         publisher_attr_.historyMemoryPolicy = rtps::DYNAMIC_RESERVE_MEMORY_MODE;
 #else
-        publisher_attr_.historyMemoryPolicy = rtps::PREALLOCATED_MEMORY_MODE;
+        publisher_attr_.historyMemoryPolicy = rtps::PREALLOCATED_WITH_REALLOC_MEMORY_MODE;
 #endif // if defined(PREALLOCATED_WITH_REALLOC_MEMORY_MODE_TEST)
 
         // By default, heartbeat period and nack response delay are 100 milliseconds.

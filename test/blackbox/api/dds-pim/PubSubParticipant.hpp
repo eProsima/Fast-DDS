@@ -247,7 +247,8 @@ public:
 #elif defined(DYNAMIC_RESERVE_MEMORY_MODE_TEST)
         datawriter_qos_.historyMemoryPolicy = rtps::DYNAMIC_RESERVE_MEMORY_MODE;
 #else
-        datawriter_qos_.endpoint().history_memory_policy = eprosima::fastrtps::rtps::PREALLOCATED_MEMORY_MODE;
+        datawriter_qos_.endpoint().history_memory_policy =
+                eprosima::fastrtps::rtps::PREALLOCATED_WITH_REALLOC_MEMORY_MODE;
 #endif // if defined(PREALLOCATED_WITH_REALLOC_MEMORY_MODE_TEST)
 
         // By default, heartbeat period and nack response delay are 100 milliseconds.

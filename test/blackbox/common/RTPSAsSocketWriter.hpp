@@ -63,8 +63,8 @@ public:
         mw << magicword << "_" << asio::ip::host_name() << "_" << GET_PID();
         magicword_ = mw.str();
 
-        // By default, memory mode is preallocated (the most restritive)
-        hattr_.memoryPolicy = eprosima::fastrtps::rtps::PREALLOCATED_MEMORY_MODE;
+        // By default, memory mode is PREALLOCATED_WITH_REALLOC_MEMORY_MODE
+        hattr_.memoryPolicy = eprosima::fastrtps::rtps::PREALLOCATED_WITH_REALLOC_MEMORY_MODE;
 
         // By default, heartbeat period and nack response delay are 100 milliseconds.
         writer_attr_.times.heartbeatPeriod.seconds = 0;
