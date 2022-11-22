@@ -3347,7 +3347,7 @@ static void BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation
     reader.block_for_all();
 }
 
-// Regression test of Refs #16168, Github #.
+// Regression test of Refs #16168, Github #3102.
 TEST_P(Security, RemoveParticipantProxyDataonSecurityManagerLeaseExpired_validation_no_deadlock)
 {
     std::string governance_file("governance_helloworld_disable_liveliness.smime");
