@@ -20,8 +20,6 @@
 #ifndef _FASTDDS_RTPS_DISCOVERY_SHARED_INFO_H_
 #define _FASTDDS_RTPS_DISCOVERY_SHARED_INFO_H_
 
-#include <mutex>
-
 #include <fastdds/rtps/common/CacheChange.h>
 #include <fastdds/rtps/common/GuidPrefix_t.hpp>
 #include <fastdds/dds/log/Log.hpp>
@@ -60,7 +58,6 @@ public:
             const eprosima::fastrtps::rtps::GuidPrefix_t& guid_p,
             bool status = false)
     {
-        std::lock_guard<std::mutex> _(mutex_);
         EPROSIMA_LOG_INFO(
             DISCOVERY_DATABASE,
             "Adding relevant participant " << guid_p
