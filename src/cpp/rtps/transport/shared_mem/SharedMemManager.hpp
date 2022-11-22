@@ -251,9 +251,17 @@ public:
                       " characters");
         }
 
-        uint32_t extra_size =
-                SharedMemSegment::compute_per_allocation_extra_size(std::alignment_of<BufferNode>::value, domain_name);
-        return std::shared_ptr<SharedMemManager>(new SharedMemManager(domain_name, extra_size));
+        try
+        {
+            uint32_t extra_size =
+                    SharedMemSegment::compute_per_allocation_extra_size(std::alignment_of<BufferNode>::value, domain_name);
+            return std::shared_ptr<SharedMemManager>(new SharedMemManager(domain_name, extra_size));
+        }
+        catch(const std::exception& e)
+        {
+            return std::shared_ptr<SharedMemManager>();
+        }
+
     }
 
     ~SharedMemManager()

@@ -326,7 +326,7 @@ public:
     }
 
     /**
-     * Estimates the extra segment space required for an allocation
+     * Estimates the extra segment space required for an allocation. This may throw
      */
     static uint32_t compute_per_allocation_extra_size(
             size_t allocation_alignment,
