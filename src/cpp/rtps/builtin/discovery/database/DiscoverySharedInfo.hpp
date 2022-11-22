@@ -50,12 +50,6 @@ public:
 
     ~DiscoverySharedInfo() = default;
 
-    /**
-     * @brief Copy constructors required as mutex make this class not copyable by default.
-     */
-    DiscoverySharedInfo(const DiscoverySharedInfo& other) noexcept = default;
-    DiscoverySharedInfo(DiscoverySharedInfo&& other) noexcept = default;
-
     virtual eprosima::fastrtps::rtps::CacheChange_t* update_and_unmatch(
             eprosima::fastrtps::rtps::CacheChange_t* change);
 
