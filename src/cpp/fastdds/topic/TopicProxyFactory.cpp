@@ -28,7 +28,7 @@ namespace dds {
 
 TopicProxy* TopicProxyFactory::create_topic()
 {
-    TopicProxy* ret_val = new TopicProxy(topic_name_, topic_impl_.get_type()->getName(), status_mask_, &topic_impl_);
+    TopicProxy* ret_val = new TopicProxy(topic_name_, type_name_, status_mask_, &topic_impl_);
     proxies_.emplace_back(ret_val);
     return ret_val;
 }

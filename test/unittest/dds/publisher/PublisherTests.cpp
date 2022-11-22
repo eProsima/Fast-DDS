@@ -493,7 +493,6 @@ TEST(PublisherTests, CreateDataWriter)
     ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), ReturnCode_t::RETCODE_OK);
 }
 
-
 void check_datawriter_with_profile (
         DataWriter* datawriter,
         const std::string& profile_name)

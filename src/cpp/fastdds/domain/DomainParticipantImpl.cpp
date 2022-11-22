@@ -1324,7 +1324,7 @@ Topic* DomainParticipantImpl::create_topic(
     InstanceHandle_t topic_handle;
     create_instance_handle(topic_handle);
 
-    TopicProxyFactory* factory = new TopicProxyFactory(this, topic_name, mask, type_support, qos, listener);
+    TopicProxyFactory* factory = new TopicProxyFactory(this, topic_name, type_name, mask, type_support, qos, listener);
     TopicProxy* proxy = factory->create_topic();
     Topic* topic = proxy->get_topic();
     topic->set_instance_handle(topic_handle);
