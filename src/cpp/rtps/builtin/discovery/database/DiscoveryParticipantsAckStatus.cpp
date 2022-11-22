@@ -36,7 +36,6 @@ void DiscoveryParticipantsAckStatus::add_or_update_participant(
         const eprosima::fastrtps::rtps::GuidPrefix_t& guid_p,
         bool status = false)
 {
-    std::lock_guard<std::mutex> _(mutex_);
     relevant_participants_map_[guid_p] = status;
 }
 

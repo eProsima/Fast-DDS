@@ -21,7 +21,6 @@
 #define _FASTDDS_RTPS_DISCOVERY_PARTICIPANT_ACK_STATUS_H_
 
 #include <map>
-#include <mutex>
 #include <vector>
 
 #include <fastdds/rtps/common/GuidPrefix_t.hpp>
@@ -42,13 +41,9 @@ class DiscoveryParticipantsAckStatus
 
 public:
 
-    DiscoveryParticipantsAckStatus()
-    {
-    }
+    DiscoveryParticipantsAckStatus() = default;
 
-    ~DiscoveryParticipantsAckStatus()
-    {
-    }
+    ~DiscoveryParticipantsAckStatus() = default;
 
     void add_or_update_participant(
             const eprosima::fastrtps::rtps::GuidPrefix_t& guid_p,
@@ -73,8 +68,6 @@ public:
             nlohmann::json& j) const;
 
 private:
-
-    mutable std::mutex mutex_;
 
     std::map<eprosima::fastrtps::rtps::GuidPrefix_t, bool> relevant_participants_map_;
 };
