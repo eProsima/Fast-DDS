@@ -761,6 +761,10 @@ jobs:
              $exes = gci -Path ./build/* -R -Include "*.pdb", "*.exe"
              $exes | ? basename -in $test_bin | Move-Item -Destination $dumpfolder
 
+             # 3. Enable source indexing to reported pdb files
+             & src/fastrtps/cmake/modules/add_source_listing.ps1 `
+                -pdbs (ls $dumpfolder -Filter *.pdb | ? Name -notmatch fastrtps).FullName
+
              "::group::Crash dump files"
              gci $dumpfolder | Sort-Object LastWriteTime
              "::endgroup::"

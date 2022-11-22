@@ -544,14 +544,16 @@ if(MSVC OR MSVC_IDE)
         target_compile_definitions(${PROJECT_NAME} PUBLIC ${PROJECT_NAME_UPPER}_DYN_LINK)
         set_target_properties(${PROJECT_NAME} PROPERTIES
             PDB_NAME_DEBUG "${PROJECT_NAME}d-${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}"
-            PDB_OUTPUT_DIRECTORY_DEBUG "${CMAKE_CURRENT_BINARY_DIR}/symbols"
+            PDB_NAME_RELWITHDEBINFO "${PROJECT_NAME}-${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}"
+            PDB_OUTPUT_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/symbols"
             )
     else()
         # Rename the library to have a "lib" before.
         set_target_properties(${PROJECT_NAME} PROPERTIES OUTPUT_NAME lib${PROJECT_NAME})
         set_target_properties(${PROJECT_NAME} PROPERTIES
             COMPILE_PDB_NAME_DEBUG "lib${PROJECT_NAME}d-${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}"
-            COMPILE_PDB_OUTPUT_DIRECTORY_DEBUG "${CMAKE_CURRENT_BINARY_DIR}/symbols"
+            COMPILE_PDB_NAME_RELWITHDEBINFO "lib${PROJECT_NAME}-${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}"
+            COMPILE_PDB_OUTPUT_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/symbols"
             )
     endif()
 
@@ -640,27 +642,30 @@ install(EXPORT ${PROJECT_NAME}-${FASTDDS_LINKING}-targets
     )
 
 if(MSVC OR MSVC_IDE)
-
-    # first try dll symbols
-    get_target_property(PDB_FILE ${PROJECT_NAME} PDB_NAME_DEBUG)
-    if(PDB_FILE)
-        get_target_property(PDB_DIR ${PROJECT_NAME} PDB_OUTPUT_DIRECTORY_DEBUG)
-        set(PDB_FILE "${PDB_DIR}/${PDB_FILE}.pdb")
-    else()
-        # fallback to static lib symbols
-        get_target_property(PDB_FILE ${PROJECT_NAME} COMPILE_PDB_NAME_DEBUG)
-        if(PDB_FILE)
-            get_target_property(PDB_DIR ${PROJECT_NAME} COMPILE_PDB_OUTPUT_DIRECTORY_DEBUG)
-            set(PDB_FILE "${PDB_DIR}/${PDB_FILE}.pdb")
-        endif()
-    endif()
-
     # install symbols if any
-    if(PDB_FILE)
-        install(FILES ${PDB_FILE}
-            DESTINATION ${LIB_INSTALL_DIR}${MSVCARCH_DIR_EXTENSION}
-            COMPONENT symbols
-            CONFIGURATIONS Debug
+    install(FILES $<TARGET_PDB_FILE:${PROJECT_NAME}>
+        DESTINATION ${LIB_INSTALL_DIR}${MSVCARCH_DIR_EXTENSION}
+        COMPONENT symbols
+        CONFIGURATIONS Debug RelWithDebInfo
+        )
+
+    # add source indexing to the pdb files
+    find_program(PDBSTR_PATH pdbstr
+        PATHS "[HKLM/SOFTWARE/Microsoft/Windows Kits/Installed Roots;KitsRoot10]" ENV WindowsSdkDir
+        PATH_SUFFIXES srcsrv "Debuggers/x64/srcsrv")
+    if(PDBSTR_PATH)
+        # get the tools path
+        get_filename_component(PDB_TOOLS_PATH "${PDBSTR_PATH}" DIRECTORY ABSOLUTE)
+        # add post build event
+        add_custom_command(
+            TARGET ${PROJECT_NAME} POST_BUILD
+            COMMENT "Adding source indexing to pdb symbols"
+            COMMAND "$<IF:$<CONFIG:Debug,RelWithDebInfo>,powershell,exit>"
+                       -ExecutionPolicy Bypass
+                       -File "${CMAKE_SOURCE_DIR}/cmake/modules/add_source_listing.ps1"
+                       -pdbs "$<TARGET_PDB_FILE:${PROJECT_NAME}>"
+                       -toolsPath "${PDB_TOOLS_PATH}"
+            VERBATIM
             )
     endif()
 endif()
