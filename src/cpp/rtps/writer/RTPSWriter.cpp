@@ -455,6 +455,12 @@ bool RTPSWriter::remove_statistics_listener(
     return remove_statistics_listener_impl(listener);
 }
 
+void RTPSWriter::set_enabled_statistics_writers_mask(
+        uint32_t enabled_writers)
+{
+    set_enabled_statistics_writers_mask_impl(enabled_writers);
+}
+
 #endif // FASTDDS_STATISTICS
 
 void RTPSWriter::add_statistics_sent_submessage(

@@ -445,6 +445,12 @@ bool RTPSReader::remove_statistics_listener(
     return remove_statistics_listener_impl(listener);
 }
 
+void RTPSReader::set_enabled_statistics_writers_mask(
+        uint32_t enabled_writers)
+{
+    set_enabled_statistics_writers_mask_impl(enabled_writers);
+}
+
 #endif // FASTDDS_STATISTICS
 
 } /* namespace rtps */
