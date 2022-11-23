@@ -27,6 +27,7 @@ char dummy;
 #endif  // _WIN32
 
 #include "HelloWorld.h"
+#include "HelloWorldTypeObject.h"
 #include <fastcdr/Cdr.h>
 
 #include <fastcdr/exceptions/BadParamException.h>
@@ -36,15 +37,20 @@ using namespace eprosima::fastcdr::exception;
 
 HelloWorld::HelloWorld()
 {
-    // m_index com.eprosima.idl.parser.typecode.PrimitiveTypeCode@627551fb
+    // m_index com.eprosima.idl.parser.typecode.PrimitiveTypeCode@319b92f3
     m_index = 0;
-    // m_message com.eprosima.idl.parser.typecode.StringTypeCode@2758fe70
+    // m_message com.eprosima.idl.parser.typecode.StringTypeCode@fcd6521
     m_message ="";
+    // m_metadata com.eprosima.idl.parser.typecode.SequenceTypeCode@27d415d9
 
+
+    // Just to register all known types
+    registerHelloWorldTypes();
 }
 
 HelloWorld::~HelloWorld()
 {
+
 
 
 }
@@ -54,6 +60,7 @@ HelloWorld::HelloWorld(
 {
     m_index = x.m_index;
     m_message = x.m_message;
+    m_metadata = x.m_metadata;
 }
 
 HelloWorld::HelloWorld(
@@ -61,6 +68,7 @@ HelloWorld::HelloWorld(
 {
     m_index = x.m_index;
     m_message = std::move(x.m_message);
+    m_metadata = std::move(x.m_metadata);
 }
 
 HelloWorld& HelloWorld::operator =(
@@ -69,6 +77,7 @@ HelloWorld& HelloWorld::operator =(
 
     m_index = x.m_index;
     m_message = x.m_message;
+    m_metadata = x.m_metadata;
 
     return *this;
 }
@@ -79,6 +88,7 @@ HelloWorld& HelloWorld::operator =(
 
     m_index = x.m_index;
     m_message = std::move(x.m_message);
+    m_metadata = std::move(x.m_metadata);
 
     return *this;
 }
@@ -87,7 +97,7 @@ bool HelloWorld::operator ==(
         const HelloWorld& x) const
 {
 
-    return (m_index == x.m_index && m_message == x.m_message);
+    return (m_index == x.m_index && m_message == x.m_message && m_metadata == x.m_metadata);
 }
 
 bool HelloWorld::operator !=(
@@ -107,6 +117,13 @@ size_t HelloWorld::getMaxCdrSerializedSize(
 
     current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4) + 255 + 1;
 
+    current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
+
+
+    for(size_t a = 0; a < 128; ++a)
+    {
+        current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4) + 255 + 1;
+    }
 
     return current_alignment - initial_alignment;
 }
@@ -124,6 +141,14 @@ size_t HelloWorld::getCdrSerializedSize(
 
     current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4) + data.message().size() + 1;
 
+    current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
+
+
+    for(size_t a = 0; a < data.metadata().size(); ++a)
+    {
+        current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4) +
+            data.metadata().at(a).size() + 1;
+    }
 
     return current_alignment - initial_alignment;
 }
@@ -134,6 +159,7 @@ void HelloWorld::serialize(
 
     scdr << m_index;
     scdr << m_message.c_str();
+    scdr << m_metadata;
 
 }
 
@@ -143,6 +169,7 @@ void HelloWorld::deserialize(
 
     dcdr >> m_index;
     dcdr >> m_message;
+    dcdr >> m_metadata;
 }
 
 /*!
@@ -210,11 +237,49 @@ std::string& HelloWorld::message()
 {
     return m_message;
 }
+/*!
+ * @brief This function copies the value in member metadata
+ * @param _metadata New value to be copied in member metadata
+ */
+void HelloWorld::metadata(
+        const std::vector<std::string>& _metadata)
+{
+    m_metadata = _metadata;
+}
+
+/*!
+ * @brief This function moves the value in member metadata
+ * @param _metadata New value to be moved in member metadata
+ */
+void HelloWorld::metadata(
+        std::vector<std::string>&& _metadata)
+{
+    m_metadata = std::move(_metadata);
+}
+
+/*!
+ * @brief This function returns a constant reference to member metadata
+ * @return Constant reference to member metadata
+ */
+const std::vector<std::string>& HelloWorld::metadata() const
+{
+    return m_metadata;
+}
+
+/*!
+ * @brief This function returns a reference to member metadata
+ * @return Reference to member metadata
+ */
+std::vector<std::string>& HelloWorld::metadata()
+{
+    return m_metadata;
+}
 
 size_t HelloWorld::getKeyMaxCdrSerializedSize(
         size_t current_alignment)
 {
     size_t current_align = current_alignment;
+
 
 
 
@@ -232,5 +297,271 @@ void HelloWorld::serializeKey(
         eprosima::fastcdr::Cdr& scdr) const
 {
     (void) scdr;
-      
+       
+}
+
+HelloWorldList::HelloWorldList()
+{
+    // m_name com.eprosima.idl.parser.typecode.StringTypeCode@6b1274d2
+    m_name ="";
+    // m_size com.eprosima.idl.parser.typecode.PrimitiveTypeCode@7bc1a03d
+    m_size = 0;
+    // m_helloworl_list com.eprosima.idl.parser.typecode.SequenceTypeCode@70b0b186
+
+
+    // Just to register all known types
+    registerHelloWorldTypes();
+}
+
+HelloWorldList::~HelloWorldList()
+{
+
+
+
+}
+
+HelloWorldList::HelloWorldList(
+        const HelloWorldList& x)
+{
+    m_name = x.m_name;
+    m_size = x.m_size;
+    m_helloworl_list = x.m_helloworl_list;
+}
+
+HelloWorldList::HelloWorldList(
+        HelloWorldList&& x)
+{
+    m_name = std::move(x.m_name);
+    m_size = x.m_size;
+    m_helloworl_list = std::move(x.m_helloworl_list);
+}
+
+HelloWorldList& HelloWorldList::operator =(
+        const HelloWorldList& x)
+{
+
+    m_name = x.m_name;
+    m_size = x.m_size;
+    m_helloworl_list = x.m_helloworl_list;
+
+    return *this;
+}
+
+HelloWorldList& HelloWorldList::operator =(
+        HelloWorldList&& x)
+{
+
+    m_name = std::move(x.m_name);
+    m_size = x.m_size;
+    m_helloworl_list = std::move(x.m_helloworl_list);
+
+    return *this;
+}
+
+bool HelloWorldList::operator ==(
+        const HelloWorldList& x) const
+{
+
+    return (m_name == x.m_name && m_size == x.m_size && m_helloworl_list == x.m_helloworl_list);
+}
+
+bool HelloWorldList::operator !=(
+        const HelloWorldList& x) const
+{
+    return !(*this == x);
+}
+
+size_t HelloWorldList::getMaxCdrSerializedSize(
+        size_t current_alignment)
+{
+    size_t initial_alignment = current_alignment;
+
+
+    current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4) + 255 + 1;
+
+    current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
+
+
+    current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
+
+
+    for(size_t a = 0; a < 250; ++a)
+    {
+        current_alignment += HelloWorld::getMaxCdrSerializedSize(current_alignment);}
+
+
+    return current_alignment - initial_alignment;
+}
+
+size_t HelloWorldList::getCdrSerializedSize(
+        const HelloWorldList& data,
+        size_t current_alignment)
+{
+    (void)data;
+    size_t initial_alignment = current_alignment;
+
+
+    current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4) + data.name().size() + 1;
+
+    current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
+
+
+    current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
+
+
+    for(size_t a = 0; a < data.helloworl_list().size(); ++a)
+    {
+        current_alignment += HelloWorld::getCdrSerializedSize(data.helloworl_list().at(a), current_alignment);}
+
+
+    return current_alignment - initial_alignment;
+}
+
+void HelloWorldList::serialize(
+        eprosima::fastcdr::Cdr& scdr) const
+{
+
+    scdr << m_name.c_str();
+    scdr << m_size;
+    scdr << m_helloworl_list;
+
+}
+
+void HelloWorldList::deserialize(
+        eprosima::fastcdr::Cdr& dcdr)
+{
+
+    dcdr >> m_name;
+    dcdr >> m_size;
+    dcdr >> m_helloworl_list;
+}
+
+/*!
+ * @brief This function copies the value in member name
+ * @param _name New value to be copied in member name
+ */
+void HelloWorldList::name(
+        const std::string& _name)
+{
+    m_name = _name;
+}
+
+/*!
+ * @brief This function moves the value in member name
+ * @param _name New value to be moved in member name
+ */
+void HelloWorldList::name(
+        std::string&& _name)
+{
+    m_name = std::move(_name);
+}
+
+/*!
+ * @brief This function returns a constant reference to member name
+ * @return Constant reference to member name
+ */
+const std::string& HelloWorldList::name() const
+{
+    return m_name;
+}
+
+/*!
+ * @brief This function returns a reference to member name
+ * @return Reference to member name
+ */
+std::string& HelloWorldList::name()
+{
+    return m_name;
+}
+/*!
+ * @brief This function sets a value in member size
+ * @param _size New value for member size
+ */
+void HelloWorldList::size(
+        int32_t _size)
+{
+    m_size = _size;
+}
+
+/*!
+ * @brief This function returns the value of member size
+ * @return Value of member size
+ */
+int32_t HelloWorldList::size() const
+{
+    return m_size;
+}
+
+/*!
+ * @brief This function returns a reference to member size
+ * @return Reference to member size
+ */
+int32_t& HelloWorldList::size()
+{
+    return m_size;
+}
+
+/*!
+ * @brief This function copies the value in member helloworl_list
+ * @param _helloworl_list New value to be copied in member helloworl_list
+ */
+void HelloWorldList::helloworl_list(
+        const std::vector<HelloWorld>& _helloworl_list)
+{
+    m_helloworl_list = _helloworl_list;
+}
+
+/*!
+ * @brief This function moves the value in member helloworl_list
+ * @param _helloworl_list New value to be moved in member helloworl_list
+ */
+void HelloWorldList::helloworl_list(
+        std::vector<HelloWorld>&& _helloworl_list)
+{
+    m_helloworl_list = std::move(_helloworl_list);
+}
+
+/*!
+ * @brief This function returns a constant reference to member helloworl_list
+ * @return Constant reference to member helloworl_list
+ */
+const std::vector<HelloWorld>& HelloWorldList::helloworl_list() const
+{
+    return m_helloworl_list;
+}
+
+/*!
+ * @brief This function returns a reference to member helloworl_list
+ * @return Reference to member helloworl_list
+ */
+std::vector<HelloWorld>& HelloWorldList::helloworl_list()
+{
+    return m_helloworl_list;
+}
+
+size_t HelloWorldList::getKeyMaxCdrSerializedSize(
+        size_t current_alignment)
+{
+    size_t current_align = current_alignment;
+
+
+     current_align += 4 + eprosima::fastcdr::Cdr::alignment(current_align, 4) + 255 + 1;
+     
+
+
+
+    return current_align;
+}
+
+bool HelloWorldList::isKeyDefined()
+{
+    return true;
+}
+
+void HelloWorldList::serializeKey(
+        eprosima::fastcdr::Cdr& scdr) const
+{
+    (void) scdr;
+     scdr << m_name.c_str();
+        
 }

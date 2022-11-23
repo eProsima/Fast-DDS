@@ -168,3 +168,143 @@ bool HelloWorldPubSubType::getKey(
     return true;
 }
 
+HelloWorldListPubSubType::HelloWorldListPubSubType()
+{
+    setName("HelloWorldList");
+    auto type_size = HelloWorldList::getMaxCdrSerializedSize();
+    type_size += eprosima::fastcdr::Cdr::alignment(type_size, 4); /* possible submessage alignment */
+    m_typeSize = static_cast<uint32_t>(type_size) + 4; /*encapsulation*/
+    m_isGetKeyDefined = HelloWorldList::isKeyDefined();
+    size_t keyLength = HelloWorldList::getKeyMaxCdrSerializedSize() > 16 ?
+            HelloWorldList::getKeyMaxCdrSerializedSize() : 16;
+    m_keyBuffer = reinterpret_cast<unsigned char*>(malloc(keyLength));
+    memset(m_keyBuffer, 0, keyLength);
+}
+
+HelloWorldListPubSubType::~HelloWorldListPubSubType()
+{
+    if (m_keyBuffer != nullptr)
+    {
+        free(m_keyBuffer);
+    }
+}
+
+bool HelloWorldListPubSubType::serialize(
+        void* data,
+        SerializedPayload_t* payload)
+{
+    HelloWorldList* p_type = static_cast<HelloWorldList*>(data);
+
+    // Object that manages the raw buffer.
+    eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->max_size);
+    // Object that serializes the data.
+    eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN, eprosima::fastcdr::Cdr::DDS_CDR);
+    payload->encapsulation = ser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
+    // Serialize encapsulation
+    ser.serialize_encapsulation();
+
+    try
+    {
+        // Serialize the object.
+        p_type->serialize(ser);
+    }
+    catch (eprosima::fastcdr::exception::NotEnoughMemoryException& /*exception*/)
+    {
+        return false;
+    }
+
+    // Get the serialized length
+    payload->length = static_cast<uint32_t>(ser.getSerializedDataLength());
+    return true;
+}
+
+bool HelloWorldListPubSubType::deserialize(
+        SerializedPayload_t* payload,
+        void* data)
+{
+    try
+    {
+        //Convert DATA to pointer of your type
+        HelloWorldList* p_type = static_cast<HelloWorldList*>(data);
+
+        // Object that manages the raw buffer.
+        eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->length);
+
+        // Object that deserializes the data.
+        eprosima::fastcdr::Cdr deser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN, eprosima::fastcdr::Cdr::DDS_CDR);
+
+        // Deserialize encapsulation.
+        deser.read_encapsulation();
+        payload->encapsulation = deser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
+
+        // Deserialize the object.
+        p_type->deserialize(deser);
+    }
+    catch (eprosima::fastcdr::exception::NotEnoughMemoryException& /*exception*/)
+    {
+        return false;
+    }
+
+    return true;
+}
+
+std::function<uint32_t()> HelloWorldListPubSubType::getSerializedSizeProvider(
+        void* data)
+{
+    return [data]() -> uint32_t
+           {
+               return static_cast<uint32_t>(type::getCdrSerializedSize(*static_cast<HelloWorldList*>(data))) +
+                      4u /*encapsulation*/;
+           };
+}
+
+void* HelloWorldListPubSubType::createData()
+{
+    return reinterpret_cast<void*>(new HelloWorldList());
+}
+
+void HelloWorldListPubSubType::deleteData(
+        void* data)
+{
+    delete(reinterpret_cast<HelloWorldList*>(data));
+}
+
+bool HelloWorldListPubSubType::getKey(
+        void* data,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!m_isGetKeyDefined)
+    {
+        return false;
+    }
+
+    HelloWorldList* p_type = static_cast<HelloWorldList*>(data);
+
+    // Object that manages the raw buffer.
+    eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(m_keyBuffer),
+            HelloWorldList::getKeyMaxCdrSerializedSize());
+
+    // Object that serializes the data.
+    eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::BIG_ENDIANNESS);
+    p_type->serializeKey(ser);
+    if (force_md5 || HelloWorldList::getKeyMaxCdrSerializedSize() > 16)
+    {
+        m_md5.init();
+        m_md5.update(m_keyBuffer, static_cast<unsigned int>(ser.getSerializedDataLength()));
+        m_md5.finalize();
+        for (uint8_t i = 0; i < 16; ++i)
+        {
+            handle->value[i] = m_md5.digest[i];
+        }
+    }
+    else
+    {
+        for (uint8_t i = 0; i < 16; ++i)
+        {
+            handle->value[i] = m_keyBuffer[i];
+        }
+    }
+    return true;
+}
+

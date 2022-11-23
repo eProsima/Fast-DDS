@@ -46,6 +46,11 @@ void registerHelloWorldTypes()
     factory->add_type_object("HelloWorld", GetHelloWorldIdentifier(false),
     GetHelloWorldObject(false));
 
+    factory->add_type_object("HelloWorldList", GetHelloWorldListIdentifier(true),
+    GetHelloWorldListObject(true));
+    factory->add_type_object("HelloWorldList", GetHelloWorldListIdentifier(false),
+    GetHelloWorldListObject(false));
+
 }
 
 const TypeIdentifier* GetHelloWorldIdentifier(bool complete)
@@ -131,6 +136,25 @@ const TypeObject* GetMinimalHelloWorldObject()
     }
     type_object->minimal().struct_type().member_seq().emplace_back(mst_message);
 
+    MinimalStructMember mst_metadata;
+    mst_metadata.common().member_id(memberId++);
+    mst_metadata.common().member_flags().TRY_CONSTRUCT1(false); // Unsupported
+    mst_metadata.common().member_flags().TRY_CONSTRUCT2(false); // Unsupported
+    mst_metadata.common().member_flags().IS_EXTERNAL(false); // Unsupported
+    mst_metadata.common().member_flags().IS_OPTIONAL(false);
+    mst_metadata.common().member_flags().IS_MUST_UNDERSTAND(false);
+    mst_metadata.common().member_flags().IS_KEY(false);
+    mst_metadata.common().member_flags().IS_DEFAULT(false); // Doesn't apply
+    mst_metadata.common().member_type_id(*TypeObjectFactory::get_instance()->get_sequence_identifier(TypeNamesGenerator::get_string_type_name(255, false), 128, false));
+
+
+    MD5 metadata_hash("metadata");
+    for(int i = 0; i < 4; ++i)
+    {
+        mst_metadata.detail().name_hash()[i] = metadata_hash.digest[i];
+    }
+    type_object->minimal().struct_type().member_seq().emplace_back(mst_metadata);
+
 
     // Header
     // TODO Inheritance
@@ -214,6 +238,22 @@ const TypeObject* GetCompleteHelloWorldObject()
 
     type_object->complete().struct_type().member_seq().emplace_back(cst_message);
 
+    CompleteStructMember cst_metadata;
+    cst_metadata.common().member_id(memberId++);
+    cst_metadata.common().member_flags().TRY_CONSTRUCT1(false); // Unsupported
+    cst_metadata.common().member_flags().TRY_CONSTRUCT2(false); // Unsupported
+    cst_metadata.common().member_flags().IS_EXTERNAL(false); // Unsupported
+    cst_metadata.common().member_flags().IS_OPTIONAL(false);
+    cst_metadata.common().member_flags().IS_MUST_UNDERSTAND(false);
+    cst_metadata.common().member_flags().IS_KEY(false);
+    cst_metadata.common().member_flags().IS_DEFAULT(false); // Doesn't apply
+    cst_metadata.common().member_type_id(*TypeObjectFactory::get_instance()->get_sequence_identifier(TypeNamesGenerator::get_string_type_name(255, false), 128, true));
+
+
+    cst_metadata.detail().name("metadata");
+
+    type_object->complete().struct_type().member_seq().emplace_back(cst_metadata);
+
 
     // Header
     type_object->complete().struct_type().header().detail().type_name("HelloWorld");
@@ -245,4 +285,259 @@ const TypeObject* GetCompleteHelloWorldObject()
     TypeObjectFactory::get_instance()->add_type_object("HelloWorld", &identifier, type_object);
     delete type_object;
     return TypeObjectFactory::get_instance()->get_type_object("HelloWorld", true);
+}
+
+const TypeIdentifier* GetHelloWorldListIdentifier(bool complete)
+{
+    const TypeIdentifier * c_identifier = TypeObjectFactory::get_instance()->get_type_identifier("HelloWorldList", complete);
+    if (c_identifier != nullptr && (!complete || c_identifier->_d() == EK_COMPLETE))
+    {
+        return c_identifier;
+    }
+
+    GetHelloWorldListObject(complete); // Generated inside
+    return TypeObjectFactory::get_instance()->get_type_identifier("HelloWorldList", complete);
+}
+
+const TypeObject* GetHelloWorldListObject(bool complete)
+{
+    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("HelloWorldList", complete);
+    if (c_type_object != nullptr)
+    {
+        return c_type_object;
+    }
+    else if (complete)
+    {
+        return GetCompleteHelloWorldListObject();
+    }
+    //else
+    return GetMinimalHelloWorldListObject();
+}
+
+const TypeObject* GetMinimalHelloWorldListObject()
+{
+    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("HelloWorldList", false);
+    if (c_type_object != nullptr)
+    {
+        return c_type_object;
+    }
+
+    TypeObject *type_object = new TypeObject();
+    type_object->_d(EK_MINIMAL);
+    type_object->minimal()._d(TK_STRUCTURE);
+
+    type_object->minimal().struct_type().struct_flags().IS_FINAL(false);
+    type_object->minimal().struct_type().struct_flags().IS_APPENDABLE(false);
+    type_object->minimal().struct_type().struct_flags().IS_MUTABLE(false);
+    type_object->minimal().struct_type().struct_flags().IS_NESTED(false);
+    type_object->minimal().struct_type().struct_flags().IS_AUTOID_HASH(false); // Unsupported
+
+    MemberId memberId = 0;
+    MinimalStructMember mst_name;
+    mst_name.common().member_id(memberId++);
+    mst_name.common().member_flags().TRY_CONSTRUCT1(false); // Unsupported
+    mst_name.common().member_flags().TRY_CONSTRUCT2(false); // Unsupported
+    mst_name.common().member_flags().IS_EXTERNAL(false); // Unsupported
+    mst_name.common().member_flags().IS_OPTIONAL(false);
+    mst_name.common().member_flags().IS_MUST_UNDERSTAND(false);
+    mst_name.common().member_flags().IS_KEY(true);
+    mst_name.common().member_flags().IS_DEFAULT(false); // Doesn't apply
+    mst_name.common().member_type_id(*TypeObjectFactory::get_instance()->get_string_identifier(255, false));
+
+
+    MD5 name_hash("name");
+    for(int i = 0; i < 4; ++i)
+    {
+        mst_name.detail().name_hash()[i] = name_hash.digest[i];
+    }
+    type_object->minimal().struct_type().member_seq().emplace_back(mst_name);
+
+    MinimalStructMember mst_size;
+    mst_size.common().member_id(memberId++);
+    mst_size.common().member_flags().TRY_CONSTRUCT1(false); // Unsupported
+    mst_size.common().member_flags().TRY_CONSTRUCT2(false); // Unsupported
+    mst_size.common().member_flags().IS_EXTERNAL(false); // Unsupported
+    mst_size.common().member_flags().IS_OPTIONAL(false);
+    mst_size.common().member_flags().IS_MUST_UNDERSTAND(false);
+    mst_size.common().member_flags().IS_KEY(false);
+    mst_size.common().member_flags().IS_DEFAULT(false); // Doesn't apply
+    mst_size.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier("int32_t", false));
+
+    MD5 size_hash("size");
+    for(int i = 0; i < 4; ++i)
+    {
+        mst_size.detail().name_hash()[i] = size_hash.digest[i];
+    }
+    type_object->minimal().struct_type().member_seq().emplace_back(mst_size);
+
+    MinimalStructMember mst_helloworl_list;
+    mst_helloworl_list.common().member_id(memberId++);
+    mst_helloworl_list.common().member_flags().TRY_CONSTRUCT1(false); // Unsupported
+    mst_helloworl_list.common().member_flags().TRY_CONSTRUCT2(false); // Unsupported
+    mst_helloworl_list.common().member_flags().IS_EXTERNAL(false); // Unsupported
+    mst_helloworl_list.common().member_flags().IS_OPTIONAL(false);
+    mst_helloworl_list.common().member_flags().IS_MUST_UNDERSTAND(false);
+    mst_helloworl_list.common().member_flags().IS_KEY(false);
+    mst_helloworl_list.common().member_flags().IS_DEFAULT(false); // Doesn't apply
+    mst_helloworl_list.common().member_type_id(*TypeObjectFactory::get_instance()->get_sequence_identifier("HelloWorld", 250, false));
+
+
+    MD5 helloworl_list_hash("helloworl_list");
+    for(int i = 0; i < 4; ++i)
+    {
+        mst_helloworl_list.detail().name_hash()[i] = helloworl_list_hash.digest[i];
+    }
+    type_object->minimal().struct_type().member_seq().emplace_back(mst_helloworl_list);
+
+
+    // Header
+    // TODO Inheritance
+    //type_object->minimal().struct_type().header().base_type()._d(EK_MINIMAL);
+    //type_object->minimal().struct_type().header().base_type().equivalence_hash()[0..13];
+
+    TypeIdentifier identifier;
+    identifier._d(EK_MINIMAL);
+
+    SerializedPayload_t payload(static_cast<uint32_t>(
+        MinimalStructType::getCdrSerializedSize(type_object->minimal().struct_type()) + 4));
+    eprosima::fastcdr::FastBuffer fastbuffer((char*) payload.data, payload.max_size);
+    // Fixed endian (Page 221, EquivalenceHash definition of Extensible and Dynamic Topic Types for DDS document)
+    eprosima::fastcdr::Cdr ser(
+        fastbuffer, eprosima::fastcdr::Cdr::LITTLE_ENDIANNESS,
+        eprosima::fastcdr::Cdr::DDS_CDR); // Object that serializes the data.
+    payload.encapsulation = CDR_LE;
+
+    type_object->serialize(ser);
+    payload.length = (uint32_t)ser.getSerializedDataLength(); //Get the serialized length
+    MD5 objectHash;
+    objectHash.update((char*)payload.data, payload.length);
+    objectHash.finalize();
+    for(int i = 0; i < 14; ++i)
+    {
+        identifier.equivalence_hash()[i] = objectHash.digest[i];
+    }
+
+    TypeObjectFactory::get_instance()->add_type_object("HelloWorldList", &identifier, type_object);
+    delete type_object;
+    return TypeObjectFactory::get_instance()->get_type_object("HelloWorldList", false);
+}
+
+const TypeObject* GetCompleteHelloWorldListObject()
+{
+    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("HelloWorldList", true);
+    if (c_type_object != nullptr && c_type_object->_d() == EK_COMPLETE)
+    {
+        return c_type_object;
+    }
+
+    TypeObject *type_object = new TypeObject();
+    type_object->_d(EK_COMPLETE);
+    type_object->complete()._d(TK_STRUCTURE);
+
+    type_object->complete().struct_type().struct_flags().IS_FINAL(false);
+    type_object->complete().struct_type().struct_flags().IS_APPENDABLE(false);
+    type_object->complete().struct_type().struct_flags().IS_MUTABLE(false);
+    type_object->complete().struct_type().struct_flags().IS_NESTED(false);
+    type_object->complete().struct_type().struct_flags().IS_AUTOID_HASH(false); // Unsupported
+
+    MemberId memberId = 0;
+    CompleteStructMember cst_name;
+    cst_name.common().member_id(memberId++);
+    cst_name.common().member_flags().TRY_CONSTRUCT1(false); // Unsupported
+    cst_name.common().member_flags().TRY_CONSTRUCT2(false); // Unsupported
+    cst_name.common().member_flags().IS_EXTERNAL(false); // Unsupported
+    cst_name.common().member_flags().IS_OPTIONAL(false);
+    cst_name.common().member_flags().IS_MUST_UNDERSTAND(false);
+    cst_name.common().member_flags().IS_KEY(true);
+    cst_name.common().member_flags().IS_DEFAULT(false); // Doesn't apply
+    cst_name.common().member_type_id(*TypeObjectFactory::get_instance()->get_string_identifier(255, false));
+
+
+    cst_name.detail().name("name");
+
+    {
+        AppliedAnnotation ann;
+        //ann.annotation_typeid(GetKeyIdentifier(true));
+        ann.annotation_typeid(*TypeObjectFactory::get_instance()->get_type_identifier_trying_complete("Key"));
+            {
+                AppliedAnnotationParameter annParam;
+                MD5 message_hash("value");
+                for(int i = 0; i < 4; ++i)
+                {
+                    annParam.paramname_hash()[i] = message_hash.digest[i];
+                }
+                AnnotationParameterValue paramValue;
+                paramValue._d(TK_BOOLEAN);
+                paramValue.from_string("true");
+                annParam.value(paramValue);
+                ann.param_seq().push_back(annParam);
+            }
+            
+        cst_name.detail().ann_custom().push_back(ann);
+    }
+
+    type_object->complete().struct_type().member_seq().emplace_back(cst_name);
+
+    CompleteStructMember cst_size;
+    cst_size.common().member_id(memberId++);
+    cst_size.common().member_flags().TRY_CONSTRUCT1(false); // Unsupported
+    cst_size.common().member_flags().TRY_CONSTRUCT2(false); // Unsupported
+    cst_size.common().member_flags().IS_EXTERNAL(false); // Unsupported
+    cst_size.common().member_flags().IS_OPTIONAL(false);
+    cst_size.common().member_flags().IS_MUST_UNDERSTAND(false);
+    cst_size.common().member_flags().IS_KEY(false);
+    cst_size.common().member_flags().IS_DEFAULT(false); // Doesn't apply
+    cst_size.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier("int32_t", false));
+
+    cst_size.detail().name("size");
+
+    type_object->complete().struct_type().member_seq().emplace_back(cst_size);
+
+    CompleteStructMember cst_helloworl_list;
+    cst_helloworl_list.common().member_id(memberId++);
+    cst_helloworl_list.common().member_flags().TRY_CONSTRUCT1(false); // Unsupported
+    cst_helloworl_list.common().member_flags().TRY_CONSTRUCT2(false); // Unsupported
+    cst_helloworl_list.common().member_flags().IS_EXTERNAL(false); // Unsupported
+    cst_helloworl_list.common().member_flags().IS_OPTIONAL(false);
+    cst_helloworl_list.common().member_flags().IS_MUST_UNDERSTAND(false);
+    cst_helloworl_list.common().member_flags().IS_KEY(false);
+    cst_helloworl_list.common().member_flags().IS_DEFAULT(false); // Doesn't apply
+    cst_helloworl_list.common().member_type_id(*TypeObjectFactory::get_instance()->get_sequence_identifier("HelloWorld", 250, true));
+
+
+    cst_helloworl_list.detail().name("helloworl_list");
+
+    type_object->complete().struct_type().member_seq().emplace_back(cst_helloworl_list);
+
+
+    // Header
+    type_object->complete().struct_type().header().detail().type_name("HelloWorldList");
+    // TODO inheritance
+
+
+    TypeIdentifier identifier;
+    identifier._d(EK_COMPLETE);
+
+    SerializedPayload_t payload(static_cast<uint32_t>(
+        CompleteStructType::getCdrSerializedSize(type_object->complete().struct_type()) + 4));
+    eprosima::fastcdr::FastBuffer fastbuffer((char*) payload.data, payload.max_size);
+    // Fixed endian (Page 221, EquivalenceHash definition of Extensible and Dynamic Topic Types for DDS document)
+    eprosima::fastcdr::Cdr ser(
+        fastbuffer, eprosima::fastcdr::Cdr::LITTLE_ENDIANNESS,
+        eprosima::fastcdr::Cdr::DDS_CDR); // Object that serializes the data.
+    payload.encapsulation = CDR_LE;
+
+    type_object->serialize(ser);
+    payload.length = (uint32_t)ser.getSerializedDataLength(); //Get the serialized length
+    MD5 objectHash;
+    objectHash.update((char*)payload.data, payload.length);
+    objectHash.finalize();
+    for(int i = 0; i < 14; ++i)
+    {
+        identifier.equivalence_hash()[i] = objectHash.digest[i];
+    }
+
+    TypeObjectFactory::get_instance()->add_type_object("HelloWorldList", &identifier, type_object);
+    delete type_object;
+    return TypeObjectFactory::get_instance()->get_type_object("HelloWorldList", true);
 }

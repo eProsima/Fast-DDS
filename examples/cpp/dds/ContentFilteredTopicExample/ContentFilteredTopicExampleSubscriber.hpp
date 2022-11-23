@@ -78,7 +78,7 @@ private:
     eprosima::fastdds::dds::DataReader* reader_ = nullptr;
 
     //! DDS TypeSupport pointer
-    eprosima::fastdds::dds::TypeSupport type_ = eprosima::fastdds::dds::TypeSupport(new HelloWorldPubSubType());
+    eprosima::fastdds::dds::TypeSupport type_ = eprosima::fastdds::dds::TypeSupport(new HelloWorldListPubSubType());
 
     //! Custom filter factory
     MyCustomFilterFactory filter_factory;

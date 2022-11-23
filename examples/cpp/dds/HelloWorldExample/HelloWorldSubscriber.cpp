@@ -33,7 +33,7 @@ HelloWorldSubscriber::HelloWorldSubscriber()
     , subscriber_(nullptr)
     , topic_(nullptr)
     , reader_(nullptr)
-    , type_(new HelloWorldPubSubType())
+    , type_(new HelloWorldListPubSubType())
 {
 }
 
@@ -50,7 +50,7 @@ bool HelloWorldSubscriber::init(
         factory->get_default_participant_qos(pqos);
     }
 
-    participant_ = factory->create_participant(0, pqos);
+    participant_ = factory->create_participant(37, pqos);
 
     if (participant_ == nullptr)
     {
@@ -85,7 +85,7 @@ bool HelloWorldSubscriber::init(
 
     topic_ = participant_->create_topic(
         "HelloWorldTopic",
-        "HelloWorld",
+        type_->getName(),
         tqos);
 
     if (topic_ == nullptr)

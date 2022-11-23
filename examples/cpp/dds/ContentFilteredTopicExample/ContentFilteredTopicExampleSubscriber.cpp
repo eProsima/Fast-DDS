@@ -27,11 +27,15 @@
 #include <fastdds/dds/subscriber/qos/DataReaderQos.hpp>
 #include <fastdds/dds/subscriber/SampleInfo.hpp>
 
+#include "HelloWorldTypeObject.h"
+
 using namespace eprosima::fastdds::dds;
 
 bool ContentFilteredTopicExampleSubscriber::init(
         bool custom_filter)
 {
+    registerHelloWorldTypes();
+
     // Initialize internal variables
     matched_ = 0;
 
@@ -39,7 +43,7 @@ bool ContentFilteredTopicExampleSubscriber::init(
     DomainParticipantQos pqos;
     pqos.name("Participant_sub");
     // Create DomainParticipant
-    participant_ = DomainParticipantFactory::get_instance()->create_participant(0, pqos);
+    participant_ = DomainParticipantFactory::get_instance()->create_participant(37, pqos);
     if (nullptr == participant_)
     {
         return false;
@@ -91,7 +95,7 @@ bool ContentFilteredTopicExampleSubscriber::init(
     else
     {
         // Default filter: accept samples meeting the given expression: index between the two given parameters
-        expression = "index between %0 and %1";
+        expression = "helloworl_list[0].index between %0 and %1";
         parameters.push_back("5");
         parameters.push_back("9");
         filter_topic_ =

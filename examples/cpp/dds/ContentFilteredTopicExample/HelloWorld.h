@@ -167,6 +167,31 @@ public:
      * @return Reference to member message
      */
     eProsima_user_DllExport std::string& message();
+    /*!
+     * @brief This function copies the value in member metadata
+     * @param _metadata New value to be copied in member metadata
+     */
+    eProsima_user_DllExport void metadata(
+            const std::vector<std::string>& _metadata);
+
+    /*!
+     * @brief This function moves the value in member metadata
+     * @param _metadata New value to be moved in member metadata
+     */
+    eProsima_user_DllExport void metadata(
+            std::vector<std::string>&& _metadata);
+
+    /*!
+     * @brief This function returns a constant reference to member metadata
+     * @return Constant reference to member metadata
+     */
+    eProsima_user_DllExport const std::vector<std::string>& metadata() const;
+
+    /*!
+     * @brief This function returns a reference to member metadata
+     * @return Reference to member metadata
+     */
+    eProsima_user_DllExport std::vector<std::string>& metadata();
 
     /*!
      * @brief This function returns the maximum serialized size of an object
@@ -229,6 +254,200 @@ private:
 
     uint32_t m_index;
     std::string m_message;
+    std::vector<std::string> m_metadata;
+};
+/*!
+ * @brief This class represents the structure HelloWorldList defined by the user in the IDL file.
+ * @ingroup HELLOWORLD
+ */
+class HelloWorldList
+{
+public:
+
+    /*!
+     * @brief Default constructor.
+     */
+    eProsima_user_DllExport HelloWorldList();
+
+    /*!
+     * @brief Default destructor.
+     */
+    eProsima_user_DllExport ~HelloWorldList();
+
+    /*!
+     * @brief Copy constructor.
+     * @param x Reference to the object HelloWorldList that will be copied.
+     */
+    eProsima_user_DllExport HelloWorldList(
+            const HelloWorldList& x);
+
+    /*!
+     * @brief Move constructor.
+     * @param x Reference to the object HelloWorldList that will be copied.
+     */
+    eProsima_user_DllExport HelloWorldList(
+            HelloWorldList&& x);
+
+    /*!
+     * @brief Copy assignment.
+     * @param x Reference to the object HelloWorldList that will be copied.
+     */
+    eProsima_user_DllExport HelloWorldList& operator =(
+            const HelloWorldList& x);
+
+    /*!
+     * @brief Move assignment.
+     * @param x Reference to the object HelloWorldList that will be copied.
+     */
+    eProsima_user_DllExport HelloWorldList& operator =(
+            HelloWorldList&& x);
+
+    /*!
+     * @brief Comparison operator.
+     * @param x HelloWorldList object to compare.
+     */
+    eProsima_user_DllExport bool operator ==(
+            const HelloWorldList& x) const;
+
+    /*!
+     * @brief Comparison operator.
+     * @param x HelloWorldList object to compare.
+     */
+    eProsima_user_DllExport bool operator !=(
+            const HelloWorldList& x) const;
+
+    /*!
+     * @brief This function copies the value in member name
+     * @param _name New value to be copied in member name
+     */
+    eProsima_user_DllExport void name(
+            const std::string& _name);
+
+    /*!
+     * @brief This function moves the value in member name
+     * @param _name New value to be moved in member name
+     */
+    eProsima_user_DllExport void name(
+            std::string&& _name);
+
+    /*!
+     * @brief This function returns a constant reference to member name
+     * @return Constant reference to member name
+     */
+    eProsima_user_DllExport const std::string& name() const;
+
+    /*!
+     * @brief This function returns a reference to member name
+     * @return Reference to member name
+     */
+    eProsima_user_DllExport std::string& name();
+    /*!
+     * @brief This function sets a value in member size
+     * @param _size New value for member size
+     */
+    eProsima_user_DllExport void size(
+            int32_t _size);
+
+    /*!
+     * @brief This function returns the value of member size
+     * @return Value of member size
+     */
+    eProsima_user_DllExport int32_t size() const;
+
+    /*!
+     * @brief This function returns a reference to member size
+     * @return Reference to member size
+     */
+    eProsima_user_DllExport int32_t& size();
+
+    /*!
+     * @brief This function copies the value in member helloworl_list
+     * @param _helloworl_list New value to be copied in member helloworl_list
+     */
+    eProsima_user_DllExport void helloworl_list(
+            const std::vector<HelloWorld>& _helloworl_list);
+
+    /*!
+     * @brief This function moves the value in member helloworl_list
+     * @param _helloworl_list New value to be moved in member helloworl_list
+     */
+    eProsima_user_DllExport void helloworl_list(
+            std::vector<HelloWorld>&& _helloworl_list);
+
+    /*!
+     * @brief This function returns a constant reference to member helloworl_list
+     * @return Constant reference to member helloworl_list
+     */
+    eProsima_user_DllExport const std::vector<HelloWorld>& helloworl_list() const;
+
+    /*!
+     * @brief This function returns a reference to member helloworl_list
+     * @return Reference to member helloworl_list
+     */
+    eProsima_user_DllExport std::vector<HelloWorld>& helloworl_list();
+
+    /*!
+     * @brief This function returns the maximum serialized size of an object
+     * depending on the buffer alignment.
+     * @param current_alignment Buffer alignment.
+     * @return Maximum serialized size.
+     */
+    eProsima_user_DllExport static size_t getMaxCdrSerializedSize(
+            size_t current_alignment = 0);
+
+    /*!
+     * @brief This function returns the serialized size of a data depending on the buffer alignment.
+     * @param data Data which is calculated its serialized size.
+     * @param current_alignment Buffer alignment.
+     * @return Serialized size.
+     */
+    eProsima_user_DllExport static size_t getCdrSerializedSize(
+            const HelloWorldList& data,
+            size_t current_alignment = 0);
+
+
+    /*!
+     * @brief This function serializes an object using CDR serialization.
+     * @param cdr CDR serialization object.
+     */
+    eProsima_user_DllExport void serialize(
+            eprosima::fastcdr::Cdr& cdr) const;
+
+    /*!
+     * @brief This function deserializes an object using CDR serialization.
+     * @param cdr CDR serialization object.
+     */
+    eProsima_user_DllExport void deserialize(
+            eprosima::fastcdr::Cdr& cdr);
+
+
+
+    /*!
+     * @brief This function returns the maximum serialized size of the Key of an object
+     * depending on the buffer alignment.
+     * @param current_alignment Buffer alignment.
+     * @return Maximum serialized size.
+     */
+    eProsima_user_DllExport static size_t getKeyMaxCdrSerializedSize(
+            size_t current_alignment = 0);
+
+    /*!
+     * @brief This function tells you if the Key has been defined for this type
+     */
+    eProsima_user_DllExport static bool isKeyDefined();
+
+    /*!
+     * @brief This function serializes the key members of an object using CDR serialization.
+     * @param cdr CDR serialization object.
+     */
+    eProsima_user_DllExport void serializeKey(
+            eprosima::fastcdr::Cdr& cdr) const;
+
+private:
+
+    std::string m_name;
+    int32_t m_size;
+    std::vector<HelloWorld> m_helloworl_list;
 };
 
 #endif // _FAST_DDS_GENERATED_HELLOWORLD_H_

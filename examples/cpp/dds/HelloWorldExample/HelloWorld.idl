@@ -2,4 +2,12 @@ struct HelloWorld
 {
 	unsigned long index;
 	string message;
+	sequence <string, 128> metadata;
+};
+
+struct HelloWorldList
+{
+	@Key string name;
+	long size;
+	sequence<HelloWorld, 250> helloworl_list;
 };
