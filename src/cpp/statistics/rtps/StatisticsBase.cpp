@@ -128,6 +128,16 @@ bool StatisticsListenersImpl::remove_statistics_listener_impl(
     return 1 == members_->listeners.erase(listener);
 }
 
+void StatisticsListenersImpl::set_enabled_statistics_writers_mask_impl(
+        uint32_t enabled_writers)
+{
+    std::unique_lock<fastrtps::RecursiveTimedMutex> lock(get_statistics_mutex());
+    if (members_)
+    {
+        members_->enabled_writers_mask.store(enabled_writers);
+    }
+}
+
 const eprosima::fastrtps::rtps::GUID_t& StatisticsParticipantImpl::get_guid() const
 {
     using eprosima::fastrtps::rtps::RTPSParticipantImpl;
