@@ -303,12 +303,21 @@ option(LOG_NO_WARNING "Do not compile Warning Log level" OFF)
 
 option(LOG_NO_ERROR "Do not compile Error Log level" OFF)
 
+option(ENABLE_EPROSIMA_LOG_MACROS "Compile logInfo, logWarning and logError macros" ON)
+
 cmake_dependent_option(
     FASTDDS_ENFORCE_LOG_INFO
     "The LOG_NO_INFO option must be enforced regardless of selected configuration"
     OFF
     "NOT LOG_NO_INFO"
     OFF)
+
+# This name changes are required because ON is not considered as a C++ option, instead 1 is required
+if(ENABLE_EPROSIMA_LOG_MACROS)
+    set(ENABLE_EPROSIMA_LOG_MACROS_ 1)
+else()
+    set(ENABLE_EPROSIMA_LOG_MACROS_ 0)
+endif()
 
 if(LOG_NO_INFO)
     set(HAVE_LOG_NO_INFO 1)
