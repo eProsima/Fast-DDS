@@ -34,6 +34,17 @@ void DomainParticipantStatisticsListener::set_datawriter(
 {
     std::lock_guard<std::mutex> guard(mtx_);
     writers_[kind] = writer;
+
+    // If the writer is being activated then activate the corresponding bit in mask,
+    // else deactivate it.
+    if (writer)
+    {
+        enabled_writers_mask_ |= kind;
+    }
+    else
+    {
+        enabled_writers_mask_ &= ~kind;
+    }
 }
 
 void DomainParticipantStatisticsListener::on_statistics_data(
