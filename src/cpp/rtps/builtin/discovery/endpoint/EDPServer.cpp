@@ -114,7 +114,7 @@ bool EDPServer::createSEDPEndpoints()
             // Something went wrong. Delete publications writer history and set it to nullptr. Return false
             delete(publications_writer_.second);
             publications_writer_.second = nullptr;
-            logError(RTPS_EDP, "Error creating SEDP Publications Writer");
+            EPROSIMA_LOG_ERROR(RTPS_EDP, "Error creating SEDP Publications Writer");
             return false;
         }
 
@@ -135,13 +135,13 @@ bool EDPServer::createSEDPEndpoints()
             // Something went wrong. Delete subscriptions reader history and set it to nullptr. Return false
             delete(subscriptions_reader_.second);
             subscriptions_reader_.second = nullptr;
-            logError(RTPS_EDP, "Error creating SEDP Subscriptions Reader");
+            EPROSIMA_LOG_ERROR(RTPS_EDP, "Error creating SEDP Subscriptions Reader");
             return false;
         }
     }
     else
     {
-        logError(RTPS_EDP, "Server operation requires the presence of all 4 builtin endpoints");
+        EPROSIMA_LOG_ERROR(RTPS_EDP, "Server operation requires the presence of all 4 builtin endpoints");
         return false;
     }
 
@@ -182,7 +182,7 @@ bool EDPServer::createSEDPEndpoints()
             // Something went wrong. Delete subscriptions writer history and set it to nullptr. Return false
             delete(subscriptions_writer_.second);
             subscriptions_writer_.second = nullptr;
-            logError(RTPS_EDP, "Error creating SEDP Subscriptions Writer");
+            EPROSIMA_LOG_ERROR(RTPS_EDP, "Error creating SEDP Subscriptions Writer");
             return false;
         }
 
@@ -202,13 +202,13 @@ bool EDPServer::createSEDPEndpoints()
             // Something went wrong. Delete publications reader history and set it to nullptr. Return false
             delete(publications_reader_.second);
             publications_reader_.second = nullptr;
-            logError(RTPS_EDP, "Error creating SEDP Publications Reader");
+            EPROSIMA_LOG_ERROR(RTPS_EDP, "Error creating SEDP Publications Reader");
             return false;
         }
     }
     else
     {
-        logError(RTPS_EDP, "Server operation requires the presence of all 4 builtin endpoints");
+        EPROSIMA_LOG_ERROR(RTPS_EDP, "Server operation requires the presence of all 4 builtin endpoints");
         return false;
     }
 

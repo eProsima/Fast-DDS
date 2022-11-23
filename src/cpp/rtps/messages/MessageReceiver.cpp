@@ -995,7 +995,7 @@ bool MessageReceiver::proc_Submsg_DataFrag(
            msg->msg_endian = LITTLEEND;
            else
            {
-           logError(RTPS_MSG_IN, IDSTRING"Bad encapsulation for KeyHash and status parameter list");
+           EPROSIMA_LOG_ERROR(RTPS_MSG_IN, IDSTRING"Bad encapsulation for KeyHash and status parameter list");
            return false;
            }
            //uint32_t param_size;

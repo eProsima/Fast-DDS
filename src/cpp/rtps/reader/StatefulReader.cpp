@@ -278,7 +278,7 @@ bool StatefulReader::matched_writer_add(
             }
             else
             {
-                logError(RTPS_READER, "Failed to add Writer Proxy " << wdata.guid()
+                EPROSIMA_LOG_ERROR(RTPS_READER, "Failed to add Writer Proxy " << wdata.guid()
                                                                     << " to " << this->m_guid.entityId
                                                                     << " with data sharing.");
                 wp->stop();
@@ -322,7 +322,7 @@ bool StatefulReader::matched_writer_add(
         }
         else
         {
-            logError(RTPS_LIVELINESS, "Finite liveliness lease duration but WLP not enabled, cannot add writer");
+            EPROSIMA_LOG_ERROR(RTPS_LIVELINESS, "Finite liveliness lease duration but WLP not enabled, cannot add writer");
         }
     }
 
@@ -351,7 +351,7 @@ bool StatefulReader::matched_writer_remove(
         }
         else
         {
-            logError(RTPS_LIVELINESS,
+            EPROSIMA_LOG_ERROR(RTPS_LIVELINESS,
                     "Finite liveliness lease duration but WLP not enabled, cannot remove writer");
         }
     }
@@ -486,7 +486,7 @@ void StatefulReader::assert_writer_liveliness(
         }
         else
         {
-            logError(RTPS_LIVELINESS, "Finite liveliness lease duration but WLP not enabled");
+            EPROSIMA_LOG_ERROR(RTPS_LIVELINESS, "Finite liveliness lease duration but WLP not enabled");
         }
     }
 }
@@ -746,7 +746,7 @@ bool StatefulReader::processDataFragMsg(
                     }
                     else
                     {
-                        logError(RTPS_READER, "Change should exist but didn't find it");
+                        EPROSIMA_LOG_ERROR(RTPS_READER, "Change should exist but didn't find it");
                     }
 
                     if (has_to_notify)
@@ -817,7 +817,7 @@ bool StatefulReader::processHeartbeatMsg(
                         }
                         else
                         {
-                            logError(RTPS_LIVELINESS, "Finite liveliness lease duration but WLP not enabled");
+                            EPROSIMA_LOG_ERROR(RTPS_LIVELINESS, "Finite liveliness lease duration but WLP not enabled");
                         }
                     }
                 }
@@ -1520,7 +1520,7 @@ void StatefulReader::send_acknack(
     }
     catch (const RTPSMessageGroup::timeout&)
     {
-        logError(RTPS_READER, "Max blocking time reached");
+        EPROSIMA_LOG_ERROR(RTPS_READER, "Max blocking time reached");
     }
 }
 

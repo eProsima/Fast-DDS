@@ -53,7 +53,7 @@ DiscoveryDataBase::~DiscoveryDataBase()
 {
     if (!clear().empty())
     {
-        logError(DISCOVERY_DATABASE, "Destroying a NOT cleared database");
+        EPROSIMA_LOG_ERROR(DISCOVERY_DATABASE, "Destroying a NOT cleared database");
     }
 
     if (is_persistent_)
@@ -74,7 +74,7 @@ std::vector<fastrtps::rtps::CacheChange_t*> DiscoveryDataBase::clear()
     // Cannot clear an enabled database, since there could be inconsistencies after the process
     if (enabled_)
     {
-        logError(DISCOVERY_DATABASE, "Cannot clear an enabled database");
+        EPROSIMA_LOG_ERROR(DISCOVERY_DATABASE, "Cannot clear an enabled database");
         return std::vector<fastrtps::rtps::CacheChange_t*>({});
     }
     logInfo(DISCOVERY_DATABASE, "Clearing DiscoveryDataBase");
@@ -335,7 +335,7 @@ bool DiscoveryDataBase::update(
 
     if (!is_participant(change))
     {
-        logError(DISCOVERY_DATABASE, "Change is not a DATA(p|Up): " << change->instanceHandle);
+        EPROSIMA_LOG_ERROR(DISCOVERY_DATABASE, "Change is not a DATA(p|Up): " << change->instanceHandle);
         return false;
     }
     logInfo(DISCOVERY_DATABASE, "Adding DATA(p|Up) to the queue: " << change->instanceHandle);
@@ -367,7 +367,7 @@ bool DiscoveryDataBase::update(
 
     if (!is_writer(change) && !is_reader(change))
     {
-        logError(DISCOVERY_DATABASE, "Change is not a DATA(w|Uw|r|Ur): " << change->instanceHandle);
+        EPROSIMA_LOG_ERROR(DISCOVERY_DATABASE, "Change is not a DATA(w|Uw|r|Ur): " << change->instanceHandle);
         return false;
     }
 
@@ -697,7 +697,7 @@ void DiscoveryDataBase::create_new_participant_from_change_(
     }
     else
     {
-        logError(DISCOVERY_DATABASE, "Failed adding new participant " << change_guid.guidPrefix);
+        EPROSIMA_LOG_ERROR(DISCOVERY_DATABASE, "Failed adding new participant " << change_guid.guidPrefix);
     }
 }
 
@@ -847,7 +847,7 @@ void DiscoveryDataBase::create_writers_from_change_(
                 writers_.insert(std::make_pair(writer_guid, tmp_writer));
         if (!ret.second)
         {
-            logError(DISCOVERY_DATABASE, "Error inserting writer " << writer_guid);
+            EPROSIMA_LOG_ERROR(DISCOVERY_DATABASE, "Error inserting writer " << writer_guid);
             return;
         }
         writer_it = ret.first;
@@ -864,7 +864,7 @@ void DiscoveryDataBase::create_writers_from_change_(
         }
         else
         {
-            logError(DISCOVERY_DATABASE, "Writer " << writer_guid << " has no associated participant. Skipping");
+            EPROSIMA_LOG_ERROR(DISCOVERY_DATABASE, "Writer " << writer_guid << " has no associated participant. Skipping");
             return;
         }
 
@@ -888,7 +888,7 @@ void DiscoveryDataBase::create_writers_from_change_(
             auto readers_it = readers_by_topic_.find(topic_name);
             if (readers_it == readers_by_topic_.end())
             {
-                logError(DISCOVERY_DATABASE, "Topic error: " << topic_name << ". Must exist.");
+                EPROSIMA_LOG_ERROR(DISCOVERY_DATABASE, "Topic error: " << topic_name << ". Must exist.");
                 return;
             }
             for (auto reader : readers_it->second)
@@ -964,7 +964,7 @@ void DiscoveryDataBase::create_readers_from_change_(
                 readers_.insert(std::make_pair(reader_guid, tmp_reader));
         if (!ret.second)
         {
-            logError(DISCOVERY_DATABASE, "Error inserting reader " << reader_guid);
+            EPROSIMA_LOG_ERROR(DISCOVERY_DATABASE, "Error inserting reader " << reader_guid);
             return;
         }
         reader_it = ret.first;
@@ -981,7 +981,7 @@ void DiscoveryDataBase::create_readers_from_change_(
         }
         else
         {
-            logError(DISCOVERY_DATABASE, "Reader " << reader_guid << " has no associated participant. Skipping");
+            EPROSIMA_LOG_ERROR(DISCOVERY_DATABASE, "Reader " << reader_guid << " has no associated participant. Skipping");
             return;
         }
 
@@ -1005,7 +1005,7 @@ void DiscoveryDataBase::create_readers_from_change_(
             auto writers_it = writers_by_topic_.find(topic_name);
             if (writers_it == writers_by_topic_.end())
             {
-                logError(DISCOVERY_DATABASE, "Topic error: " << topic_name << ". Must exist.");
+                EPROSIMA_LOG_ERROR(DISCOVERY_DATABASE, "Topic error: " << topic_name << ". Must exist.");
                 return;
             }
             for (auto writer : writers_it->second)
@@ -1028,7 +1028,7 @@ void DiscoveryDataBase::match_writer_reader_(
     auto wit = writers_.find(writer_guid);
     if (wit == writers_.end())
     {
-        logError(DISCOVERY_DATABASE, "Matching unexisting writer " << writer_guid);
+        EPROSIMA_LOG_ERROR(DISCOVERY_DATABASE, "Matching unexisting writer " << writer_guid);
         return;
     }
     DiscoveryEndpointInfo& writer_info = wit->second;
@@ -1037,7 +1037,7 @@ void DiscoveryDataBase::match_writer_reader_(
     auto p_wit = participants_.find(writer_guid.guidPrefix);
     if (p_wit == participants_.end())
     {
-        logError(DISCOVERY_DATABASE, "Matching unexisting participant from writer " << writer_guid);
+        EPROSIMA_LOG_ERROR(DISCOVERY_DATABASE, "Matching unexisting participant from writer " << writer_guid);
         return;
     }
     DiscoveryParticipantInfo& writer_participant_info = p_wit->second;
@@ -1046,7 +1046,7 @@ void DiscoveryDataBase::match_writer_reader_(
     auto rit = readers_.find(reader_guid);
     if (rit == readers_.end())
     {
-        logError(DISCOVERY_DATABASE, "Matching unexisting reader " << reader_guid);
+        EPROSIMA_LOG_ERROR(DISCOVERY_DATABASE, "Matching unexisting reader " << reader_guid);
         return;
     }
     DiscoveryEndpointInfo& reader_info = rit->second;
@@ -1055,7 +1055,7 @@ void DiscoveryDataBase::match_writer_reader_(
     auto p_rit = participants_.find(reader_guid.guidPrefix);
     if (p_rit == participants_.end())
     {
-        logError(DISCOVERY_DATABASE, "Matching unexisting participant from reader " << reader_guid);
+        EPROSIMA_LOG_ERROR(DISCOVERY_DATABASE, "Matching unexisting participant from reader " << reader_guid);
         return;
     }
     DiscoveryParticipantInfo& reader_participant_info = p_rit->second;
@@ -2212,7 +2212,7 @@ std::map<eprosima::fastrtps::rtps::GUID_t, DiscoveryEndpointInfo>::iterator Disc
     auto pit = participants_.find(it->first.guidPrefix);
     if (pit == participants_.end())
     {
-        logError(DISCOVERY_DATABASE, "Attempting to delete and orphan reader");
+        EPROSIMA_LOG_ERROR(DISCOVERY_DATABASE, "Attempting to delete and orphan reader");
         // Returning error here could lead to an infinite loop
     }
     else
@@ -2261,7 +2261,7 @@ std::map<eprosima::fastrtps::rtps::GUID_t, DiscoveryEndpointInfo>::iterator Disc
     auto pit = participants_.find(it->first.guidPrefix);
     if (pit == participants_.end())
     {
-        logError(DISCOVERY_DATABASE, "Attempting to delete and orphan writer");
+        EPROSIMA_LOG_ERROR(DISCOVERY_DATABASE, "Attempting to delete and orphan writer");
         // Returning error here could lead to an infinite loop
     }
     else
@@ -2493,7 +2493,7 @@ bool DiscoveryDataBase::from_json(
             else
             {
                 // Endpoint without participant, corrupted DDB
-                logError(DISCOVERY_DATABASE, "Writer " << guid_aux << " without participant");
+                EPROSIMA_LOG_ERROR(DISCOVERY_DATABASE, "Writer " << guid_aux << " without participant");
                 // TODO handle error
                 return false;
             }
@@ -2564,7 +2564,7 @@ bool DiscoveryDataBase::from_json(
     }
     catch (std::ios_base::failure&)
     {
-        logError(DISCOVERY_DATABASE, "BACKUP CORRUPTED");
+        EPROSIMA_LOG_ERROR(DISCOVERY_DATABASE, "BACKUP CORRUPTED");
     }
 
     // Set dirty topics to all, so next iteration every message pending is sent

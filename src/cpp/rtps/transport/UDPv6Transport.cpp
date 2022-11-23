@@ -120,7 +120,7 @@ UDPv6Transport::UDPv6Transport(
 
         if (interface_whitelist_.empty())
         {
-            logError(TRANSPORT, "All whitelist interfaces were filtered out");
+            EPROSIMA_LOG_ERROR(TRANSPORT, "All whitelist interfaces were filtered out");
             interface_whitelist_.emplace_back(ip::address_v6::from_string("2001:db8::"));
         }
     }

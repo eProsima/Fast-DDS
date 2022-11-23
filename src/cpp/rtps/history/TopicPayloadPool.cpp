@@ -71,7 +71,7 @@ bool TopicPayloadPool::do_get_payload(
             // Failed to resize, but we can still keep it for later.
             free_payloads_.push_back(payload);
             lock.unlock();
-            logError(RTPS_HISTORY, "Failed to resize the payload");
+            EPROSIMA_LOG_ERROR(RTPS_HISTORY, "Failed to resize the payload");
 
             cache_change.serializedPayload.data = nullptr;
             cache_change.serializedPayload.max_size = 0;

@@ -47,7 +47,7 @@
 TEST_F(LogMacrosTests, internal_debug_off)
 {
     int n = 0;
-    logError(SampleCategory, non_valid_function(n));
+    EPROSIMA_LOG_ERROR(SampleCategory, non_valid_function(n));
     logWarning(SampleCategory, non_valid_function(n));
     logInfo(SampleCategory, non_valid_function(n));
 

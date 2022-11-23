@@ -252,7 +252,7 @@ bool SharedMemTransport::init(
 
     if (configuration_.segment_size() < configuration_.max_message_size())
     {
-        logError(RTPS_MSG_OUT, "max_message_size cannot be greater than segment_size");
+        EPROSIMA_LOG_ERROR(RTPS_MSG_OUT, "max_message_size cannot be greater than segment_size");
         return false;
     }
 
@@ -288,7 +288,7 @@ bool SharedMemTransport::init(
     }
     catch (std::exception& e)
     {
-        logError(RTPS_MSG_OUT, e.what());
+        EPROSIMA_LOG_ERROR(RTPS_MSG_OUT, e.what());
         return false;
     }
 
@@ -365,7 +365,7 @@ bool SharedMemTransport::OpenOutputChannel(
     }
     catch (std::exception& e)
     {
-        logError(RTPS_MSG_OUT, "SharedMemTransport error opening port " << std::to_string(locator.port)
+        EPROSIMA_LOG_ERROR(RTPS_MSG_OUT, "SharedMemTransport error opening port " << std::to_string(locator.port)
                                                                         << " with msg: " << e.what());
 
         return false;

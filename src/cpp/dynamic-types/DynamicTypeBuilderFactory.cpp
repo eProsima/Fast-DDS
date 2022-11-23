@@ -167,7 +167,7 @@ DynamicType_ptr DynamicTypeBuilderFactory::create_type(
     }
     else
     {
-        logError(DYN_TYPES, "Error building type, invalid input descriptor");
+        EPROSIMA_LOG_ERROR(DYN_TYPES, "Error building type, invalid input descriptor");
         return DynamicType_ptr(nullptr);
     }
 }
@@ -182,7 +182,7 @@ DynamicType_ptr DynamicTypeBuilderFactory::create_type(
     }
     else
     {
-        logError(DYN_TYPES, "Error building type, invalid input parameter");
+        EPROSIMA_LOG_ERROR(DYN_TYPES, "Error building type, invalid input parameter");
         return DynamicType_ptr(nullptr);
     }
 }
@@ -200,12 +200,12 @@ DynamicTypeBuilder* DynamicTypeBuilderFactory::create_alias_builder(
         }
         else
         {
-            logError(DYN_TYPES, "Error creating alias type, Error creating dynamic type");
+            EPROSIMA_LOG_ERROR(DYN_TYPES, "Error creating alias type, Error creating dynamic type");
         }
     }
     else
     {
-        logError(DYN_TYPES, "Error creating alias type, base_type must be valid");
+        EPROSIMA_LOG_ERROR(DYN_TYPES, "Error creating alias type, base_type must be valid");
     }
     return nullptr;
 }
@@ -235,7 +235,7 @@ DynamicTypeBuilder* DynamicTypeBuilderFactory::create_alias_builder(
     }
     else
     {
-        logError(DYN_TYPES, "Error creating alias type, base_type must be valid");
+        EPROSIMA_LOG_ERROR(DYN_TYPES, "Error creating alias type, base_type must be valid");
     }
     return nullptr;
 }
@@ -253,12 +253,12 @@ DynamicTypeBuilder* DynamicTypeBuilderFactory::create_array_builder(
         }
         else
         {
-            logError(DYN_TYPES, "Error creating array, error creating dynamic type");
+            EPROSIMA_LOG_ERROR(DYN_TYPES, "Error creating array, error creating dynamic type");
         }
     }
     else
     {
-        logError(DYN_TYPES, "Error creating array, element_type must be valid");
+        EPROSIMA_LOG_ERROR(DYN_TYPES, "Error creating array, element_type must be valid");
     }
     return nullptr;
 }
@@ -290,7 +290,7 @@ DynamicTypeBuilder* DynamicTypeBuilderFactory::create_array_builder(
     }
     else
     {
-        logError(DYN_TYPES, "Error creating array, element_type must be valid");
+        EPROSIMA_LOG_ERROR(DYN_TYPES, "Error creating array, element_type must be valid");
     }
     return nullptr;
 }
@@ -317,7 +317,7 @@ DynamicTypeBuilder* DynamicTypeBuilderFactory::create_bitmask_builder(
     }
     else
     {
-        logError(DYN_TYPES, "Error creating bitmask, length exceeds the maximum value '" << MAX_BITMASK_LENGTH << "'");
+        EPROSIMA_LOG_ERROR(DYN_TYPES, "Error creating bitmask, length exceeds the maximum value '" << MAX_BITMASK_LENGTH << "'");
     }
     return nullptr;
 }
@@ -484,12 +484,12 @@ DynamicTypeBuilder* DynamicTypeBuilderFactory::create_map_builder(
         }
         else
         {
-            logError(DYN_TYPES, "Error creating map, Error creating dynamic types.");
+            EPROSIMA_LOG_ERROR(DYN_TYPES, "Error creating map, Error creating dynamic types.");
         }
     }
     else
     {
-        logError(DYN_TYPES, "Error creating map, element_type and key_element_type must be valid.");
+        EPROSIMA_LOG_ERROR(DYN_TYPES, "Error creating map, element_type and key_element_type must be valid.");
     }
     return nullptr;
 }
@@ -522,7 +522,7 @@ DynamicTypeBuilder* DynamicTypeBuilderFactory::create_map_builder(
     }
     else
     {
-        logError(DYN_TYPES, "Error creating map, element_type and key_element_type must be valid.");
+        EPROSIMA_LOG_ERROR(DYN_TYPES, "Error creating map, element_type and key_element_type must be valid.");
     }
     return nullptr;
 }
@@ -540,12 +540,12 @@ DynamicTypeBuilder* DynamicTypeBuilderFactory::create_sequence_builder(
         }
         else
         {
-            logError(DYN_TYPES, "Error creating sequence, error creating dynamic type.");
+            EPROSIMA_LOG_ERROR(DYN_TYPES, "Error creating sequence, error creating dynamic type.");
         }
     }
     else
     {
-        logError(DYN_TYPES, "Error creating sequence, element_type must be valid.");
+        EPROSIMA_LOG_ERROR(DYN_TYPES, "Error creating sequence, element_type must be valid.");
     }
     return nullptr;
 }
@@ -573,7 +573,7 @@ DynamicTypeBuilder* DynamicTypeBuilderFactory::create_sequence_builder(
     }
     else
     {
-        logError(DYN_TYPES, "Error creating sequence, element_type must be valid.");
+        EPROSIMA_LOG_ERROR(DYN_TYPES, "Error creating sequence, element_type must be valid.");
     }
     return nullptr;
 }
@@ -619,7 +619,7 @@ DynamicTypeBuilder* DynamicTypeBuilderFactory::create_child_struct_builder(
     }
     else
     {
-        logError(DYN_TYPES, "Error creating child struct, invalid input type.");
+        EPROSIMA_LOG_ERROR(DYN_TYPES, "Error creating child struct, invalid input type.");
         return nullptr;
     }
 }
@@ -660,12 +660,12 @@ DynamicTypeBuilder* DynamicTypeBuilderFactory::create_custom_builder(
         }
         else
         {
-            logError(DYN_TYPES, "Error creating type, unsupported type kind: " << static_cast<uint32_t>(kind));
+            EPROSIMA_LOG_ERROR(DYN_TYPES, "Error creating type, unsupported type kind: " << static_cast<uint32_t>(kind));
         }
     }
     else
     {
-        logError(DYN_TYPES, "Error creating type, invalid input descriptor.");
+        EPROSIMA_LOG_ERROR(DYN_TYPES, "Error creating type, invalid input descriptor.");
     }
     return nullptr;
 }
@@ -681,7 +681,7 @@ DynamicTypeBuilder* DynamicTypeBuilderFactory::create_builder_copy(
     }
     else
     {
-        logError(DYN_TYPES, "Error creating type, invalid input type.");
+        EPROSIMA_LOG_ERROR(DYN_TYPES, "Error creating type, invalid input type.");
     }
     return nullptr;
 }
@@ -731,13 +731,13 @@ DynamicTypeBuilder* DynamicTypeBuilderFactory::create_union_builder(
         }
         else
         {
-            logError(DYN_TYPES, "Error building Union, Error creating discriminator type");
+            EPROSIMA_LOG_ERROR(DYN_TYPES, "Error building Union, Error creating discriminator type");
             return nullptr;
         }
     }
     else
     {
-        logError(DYN_TYPES, "Error building Union, invalid discriminator type");
+        EPROSIMA_LOG_ERROR(DYN_TYPES, "Error building Union, invalid discriminator type");
         return nullptr;
     }
 }
@@ -758,7 +758,7 @@ DynamicTypeBuilder* DynamicTypeBuilderFactory::create_union_builder(
     }
     else
     {
-        logError(DYN_TYPES, "Error building Union, invalid discriminator type");
+        EPROSIMA_LOG_ERROR(DYN_TYPES, "Error building Union, invalid discriminator type");
         return nullptr;
     }
 }
@@ -1707,7 +1707,7 @@ void DynamicTypeBuilderFactory::build_struct_type_code(
                     TypeObjectFactory::get_instance()->get_type_identifier_trying_complete(member->type_->get_name());
             if (typeId == nullptr)
             {
-                logError(DYN_TYPES, "Member " << member->get_name() << " of struct "
+                EPROSIMA_LOG_ERROR(DYN_TYPES, "Member " << member->get_name() << " of struct "
                                               << descriptor->get_name() << " failed.");
             }
             else
@@ -1799,7 +1799,7 @@ void DynamicTypeBuilderFactory::build_struct_type_code(
                     TypeObjectFactory::get_instance()->get_type_identifier(member->type_->get_name());
             if (typeId == nullptr)
             {
-                logError(DYN_TYPES, "Member " << member->get_name()
+                EPROSIMA_LOG_ERROR(DYN_TYPES, "Member " << member->get_name()
                                               << " of struct " << descriptor->get_name() << " failed.");
             }
             else
@@ -1919,7 +1919,7 @@ void DynamicTypeBuilderFactory::build_union_type_code(
                     TypeObjectFactory::get_instance()->get_type_identifier_trying_complete(member->type_->get_name());
             if (typeId == nullptr)
             {
-                logError(DYN_TYPES, "Member " << member->get_name()
+                EPROSIMA_LOG_ERROR(DYN_TYPES, "Member " << member->get_name()
                                               << " of union " << descriptor->get_name() << " failed.");
             }
             else
@@ -2018,7 +2018,7 @@ void DynamicTypeBuilderFactory::build_union_type_code(
                     TypeObjectFactory::get_instance()->get_type_identifier(member->type_->get_name());
             if (typeId == nullptr)
             {
-                logError(DYN_TYPES, "Member " << member->get_name()
+                EPROSIMA_LOG_ERROR(DYN_TYPES, "Member " << member->get_name()
                                               << " of union " << descriptor->get_name() << " failed.");
             }
             else
@@ -2355,7 +2355,7 @@ void DynamicTypeBuilderFactory::build_annotation_type_code(
                     TypeObjectFactory::get_instance()->get_type_identifier(member->type_->get_name());
             if (typeId == nullptr)
             {
-                logError(DYN_TYPES, "Member " << member->get_name()
+                EPROSIMA_LOG_ERROR(DYN_TYPES, "Member " << member->get_name()
                                               << " of annotation " << descriptor->get_name() << " failed.");
             }
             else
@@ -2420,7 +2420,7 @@ void DynamicTypeBuilderFactory::build_annotation_type_code(
                     TypeObjectFactory::get_instance()->get_type_identifier(member->type_->get_name());
             if (typeId == nullptr)
             {
-                logError(DYN_TYPES, "Member " << member->get_name()
+                EPROSIMA_LOG_ERROR(DYN_TYPES, "Member " << member->get_name()
                                               << " of annotation " << descriptor->get_name() << " failed.");
             }
             else
@@ -2573,12 +2573,12 @@ DynamicType_ptr DynamicTypeBuilderFactory::create_alias_type(
         }
         else
         {
-            logError(DYN_TYPES, "Error creating alias type, Error creating dynamic type");
+            EPROSIMA_LOG_ERROR(DYN_TYPES, "Error creating alias type, Error creating dynamic type");
         }
     }
     else
     {
-        logError(DYN_TYPES, "Error creating alias type, base_type must be valid");
+        EPROSIMA_LOG_ERROR(DYN_TYPES, "Error creating alias type, base_type must be valid");
     }
     return DynamicType_ptr(nullptr);
 }
@@ -2605,7 +2605,7 @@ DynamicType_ptr DynamicTypeBuilderFactory::create_alias_type(
     }
     else
     {
-        logError(DYN_TYPES, "Error creating alias type, base_type must be valid");
+        EPROSIMA_LOG_ERROR(DYN_TYPES, "Error creating alias type, base_type must be valid");
     }
     return DynamicType_ptr(nullptr);
 }
@@ -2732,7 +2732,7 @@ DynamicType_ptr DynamicTypeBuilderFactory::create_bitset_type(
     }
     else
     {
-        logError(DYN_TYPES, "Error creating bitmask, length exceeds the maximum value '" << MAX_BITMASK_LENGTH << "'");
+        EPROSIMA_LOG_ERROR(DYN_TYPES, "Error creating bitmask, length exceeds the maximum value '" << MAX_BITMASK_LENGTH << "'");
     }
     return DynamicType_ptr(nullptr);
 }

@@ -162,7 +162,7 @@ bool SubscriberHistory::received_change(
 {
     if (mp_reader == nullptr || mp_mutex == nullptr)
     {
-        logError(SUBSCRIBER, "You need to create a Reader with this History before using it");
+        EPROSIMA_LOG_ERROR(SUBSCRIBER, "You need to create a Reader with this History before using it");
         return false;
     }
 
@@ -399,7 +399,7 @@ bool SubscriberHistory::deserialize_change(
     {
         if (!type_->deserialize(&change->serializedPayload, data))
         {
-            logError(SUBSCRIBER, "Deserialization of data failed");
+            EPROSIMA_LOG_ERROR(SUBSCRIBER, "Deserialization of data failed");
             return false;
         }
     }
@@ -430,7 +430,7 @@ bool SubscriberHistory::readNextData(
 {
     if (mp_reader == nullptr || mp_mutex == nullptr)
     {
-        logError(SUBSCRIBER, "You need to create a Reader with this History before using it");
+        EPROSIMA_LOG_ERROR(SUBSCRIBER, "You need to create a Reader with this History before using it");
         return false;
     }
 
@@ -460,7 +460,7 @@ bool SubscriberHistory::takeNextData(
 {
     if (mp_reader == nullptr || mp_mutex == nullptr)
     {
-        logError(SUBSCRIBER, "You need to create a Reader with this History before using it");
+        EPROSIMA_LOG_ERROR(SUBSCRIBER, "You need to create a Reader with this History before using it");
         return false;
     }
 
@@ -540,7 +540,7 @@ bool SubscriberHistory::remove_change_sub(
 {
     if (mp_reader == nullptr || mp_mutex == nullptr)
     {
-        logError(SUBSCRIBER, "You need to create a Reader with this History before using it");
+        EPROSIMA_LOG_ERROR(SUBSCRIBER, "You need to create a Reader with this History before using it");
         return false;
     }
 
@@ -563,7 +563,7 @@ bool SubscriberHistory::remove_change_sub(
         }
         if (!found)
         {
-            logError(SUBSCRIBER, "Change not found on this key, something is wrong");
+            EPROSIMA_LOG_ERROR(SUBSCRIBER, "Change not found on this key, something is wrong");
         }
     }
 
@@ -582,7 +582,7 @@ bool SubscriberHistory::remove_change_sub(
 {
     if (mp_reader == nullptr || mp_mutex == nullptr)
     {
-        logError(SUBSCRIBER, "You need to create a Reader with this History before using it");
+        EPROSIMA_LOG_ERROR(SUBSCRIBER, "You need to create a Reader with this History before using it");
         return false;
     }
 
@@ -606,7 +606,7 @@ bool SubscriberHistory::remove_change_sub(
         }
         if (!found)
         {
-            logError(SUBSCRIBER, "Change not found on this key, something is wrong");
+            EPROSIMA_LOG_ERROR(SUBSCRIBER, "Change not found on this key, something is wrong");
         }
     }
 
@@ -634,7 +634,7 @@ bool SubscriberHistory::set_next_deadline(
 {
     if (mp_reader == nullptr || mp_mutex == nullptr)
     {
-        logError(SUBSCRIBER, "You need to create a Reader with this History before using it");
+        EPROSIMA_LOG_ERROR(SUBSCRIBER, "You need to create a Reader with this History before using it");
         return false;
     }
     std::lock_guard<RecursiveTimedMutex> guard(*mp_mutex);
@@ -664,7 +664,7 @@ bool SubscriberHistory::get_next_deadline(
 {
     if (mp_reader == nullptr || mp_mutex == nullptr)
     {
-        logError(SUBSCRIBER, "You need to create a Reader with this History before using it");
+        EPROSIMA_LOG_ERROR(SUBSCRIBER, "You need to create a Reader with this History before using it");
         return false;
     }
     std::lock_guard<RecursiveTimedMutex> guard(*mp_mutex);
@@ -763,7 +763,7 @@ bool SubscriberHistory::completed_change_keep_all_with_key(
                 }
                 else
                 {
-                    logError(RTPS_WRITER_HISTORY, "Change should exists but didn't find it");
+                    EPROSIMA_LOG_ERROR(RTPS_WRITER_HISTORY, "Change should exists but didn't find it");
                 }
             }
         }
@@ -817,7 +817,7 @@ bool SubscriberHistory::completed_change_keep_last_with_key(
                 }
                 else
                 {
-                    logError(RTPS_WRITER_HISTORY, "Change should exists but didn't find it");
+                    EPROSIMA_LOG_ERROR(RTPS_WRITER_HISTORY, "Change should exists but didn't find it");
                 }
             }
         }

@@ -912,7 +912,7 @@ DeliveryRetCode StatefulWriter::deliver_sample_to_network(
                                 }
                                 else
                                 {
-                                    logError(RTPS_WRITER, "Error sending change " << change->sequenceNumber);
+                                    EPROSIMA_LOG_ERROR(RTPS_WRITER, "Error sending change " << change->sequenceNumber);
                                     ret_code = DeliveryRetCode::NOT_DELIVERED;
                                 }
                             }
@@ -928,7 +928,7 @@ DeliveryRetCode StatefulWriter::deliver_sample_to_network(
         }
         catch (const RTPSMessageGroup::timeout&)
         {
-            logError(RTPS_WRITER, "Max blocking time reached");
+            EPROSIMA_LOG_ERROR(RTPS_WRITER, "Max blocking time reached");
             ret_code = DeliveryRetCode::NOT_DELIVERED;
         }
         catch (const RTPSMessageGroup::limit_exceeded&)
@@ -999,7 +999,7 @@ bool StatefulWriter::matched_reader_add(
 
     if (rdata.guid() == c_Guid_Unknown)
     {
-        logError(RTPS_WRITER, "Reliable Writer need GUID_t of matched readers");
+        EPROSIMA_LOG_ERROR(RTPS_WRITER, "Reliable Writer need GUID_t of matched readers");
         return false;
     }
 
@@ -1172,7 +1172,7 @@ bool StatefulWriter::matched_reader_add(
             }
             catch (const RTPSMessageGroup::timeout&)
             {
-                logError(RTPS_WRITER, "Max blocking time reached");
+                EPROSIMA_LOG_ERROR(RTPS_WRITER, "Max blocking time reached");
             }
         }
 
@@ -1649,7 +1649,7 @@ bool StatefulWriter::send_periodic_heartbeat(
             }
             catch (const RTPSMessageGroup::timeout&)
             {
-                logError(RTPS_WRITER, "Max blocking time reached");
+                EPROSIMA_LOG_ERROR(RTPS_WRITER, "Max blocking time reached");
             }
         }
     }
@@ -1694,7 +1694,7 @@ bool StatefulWriter::send_periodic_heartbeat(
         }
         catch (const RTPSMessageGroup::timeout&)
         {
-            logError(RTPS_WRITER, "Max blocking time reached");
+            EPROSIMA_LOG_ERROR(RTPS_WRITER, "Max blocking time reached");
         }
     }
 
@@ -1743,7 +1743,7 @@ void StatefulWriter::send_heartbeat_to_nts(
             }
             catch (const RTPSMessageGroup::timeout&)
             {
-                logError(RTPS_WRITER, "Max blocking time reached");
+                EPROSIMA_LOG_ERROR(RTPS_WRITER, "Max blocking time reached");
             }
         }
     }

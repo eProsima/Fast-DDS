@@ -168,7 +168,7 @@ void PDPServerListener::onNewCacheChangeAdded(
             {
                 if (std::stof(ds_version->second()) < 1.0)
                 {
-                    logError(RTPS_PDP_LISTENER, "Minimum " << dds::parameter_property_ds_version
+                    EPROSIMA_LOG_ERROR(RTPS_PDP_LISTENER, "Minimum " << dds::parameter_property_ds_version
                                                            << " is 1.0, found: " << ds_version->second());
                     return;
                 }
@@ -206,7 +206,7 @@ void PDPServerListener::onNewCacheChangeAdded(
                 }
                 else if (participant_type->second() != ParticipantType::CLIENT)
                 {
-                    logError(RTPS_PDP_LISTENER, "Wrong " << dds::parameter_property_participant_type << ": "
+                    EPROSIMA_LOG_ERROR(RTPS_PDP_LISTENER, "Wrong " << dds::parameter_property_participant_type << ": "
                                                          << participant_type->second());
                     return;
                 }

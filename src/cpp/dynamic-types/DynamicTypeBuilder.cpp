@@ -298,7 +298,7 @@ DynamicType_ptr DynamicTypeBuilder::build()
     }
     else
     {
-        logError(DYN_TYPES, "Error building type. The current descriptor isn't consistent.");
+        EPROSIMA_LOG_ERROR(DYN_TYPES, "Error building type. The current descriptor isn't consistent.");
         return DynamicType_ptr(nullptr);
     }
 }
@@ -339,7 +339,7 @@ ReturnCode_t DynamicTypeBuilder::copy_from(const DynamicTypeBuilder* other)
     }
     else
     {
-        logError(DYN_TYPES, "Error copying DynamicTypeBuilder. Invalid input parameter.");
+        EPROSIMA_LOG_ERROR(DYN_TYPES, "Error copying DynamicTypeBuilder. Invalid input parameter.");
         return ReturnCode_t::RETCODE_BAD_PARAMETER;
     }
 }
@@ -366,7 +366,7 @@ ReturnCode_t DynamicTypeBuilder::copy_from_builder(const DynamicTypeBuilder* oth
     }
     else
     {
-        logError(DYN_TYPES, "Error copying DynamicType, invalid input type");
+        EPROSIMA_LOG_ERROR(DYN_TYPES, "Error copying DynamicType, invalid input type");
         return ReturnCode_t::RETCODE_BAD_PARAMETER;
     }
 }
@@ -463,13 +463,13 @@ ReturnCode_t DynamicTypeBuilder::_apply_annotation_to_member(
         }
         else
         {
-            logError(DYN_TYPES, "Error applying annotation to member. MemberId not found.");
+            EPROSIMA_LOG_ERROR(DYN_TYPES, "Error applying annotation to member. MemberId not found.");
             return ReturnCode_t::RETCODE_BAD_PARAMETER;
         }
     }
     else
     {
-        logError(DYN_TYPES, "Error applying annotation to member. The input descriptor isn't consistent.");
+        EPROSIMA_LOG_ERROR(DYN_TYPES, "Error applying annotation to member. The input descriptor isn't consistent.");
         return ReturnCode_t::RETCODE_BAD_PARAMETER;
     }
 }
@@ -488,7 +488,7 @@ ReturnCode_t DynamicTypeBuilder::_apply_annotation_to_member(
     }
     else
     {
-        logError(DYN_TYPES, "Error applying annotation to member. MemberId not found.");
+        EPROSIMA_LOG_ERROR(DYN_TYPES, "Error applying annotation to member. MemberId not found.");
         return ReturnCode_t::RETCODE_BAD_PARAMETER;
     }
 }

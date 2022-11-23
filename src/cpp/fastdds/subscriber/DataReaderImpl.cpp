@@ -215,7 +215,7 @@ ReturnCode_t DataReaderImpl::enable()
     if (reader == nullptr)
     {
         release_payload_pool();
-        logError(DATA_READER, "Problem creating associated Reader");
+        EPROSIMA_LOG_ERROR(DATA_READER, "Problem creating associated Reader");
         return ReturnCode_t::RETCODE_ERROR;
     }
 
@@ -267,7 +267,7 @@ ReturnCode_t DataReaderImpl::enable()
     }
     if (!subscriber_->rtps_participant()->registerReader(reader_, topic_attributes(), rqos, filter_property))
     {
-        logError(DATA_READER, "Could not register reader on discovery protocols");
+        EPROSIMA_LOG_ERROR(DATA_READER, "Could not register reader on discovery protocols");
 
         reader_->setListener(nullptr);
         stop();
@@ -1030,7 +1030,7 @@ bool DataReaderImpl::on_new_cache_change_added(
                     change->instanceHandle,
                     steady_clock::now() + duration_cast<system_clock::duration>(deadline_duration_us_)))
         {
-            logError(SUBSCRIBER, "Could not set next deadline in the history");
+            EPROSIMA_LOG_ERROR(SUBSCRIBER, "Could not set next deadline in the history");
         }
         else if (timer_owner_ == change->instanceHandle || timer_owner_ == InstanceHandle_t())
         {
@@ -1071,7 +1071,7 @@ bool DataReaderImpl::on_new_cache_change_added(
     }
     else
     {
-        logError(SUBSCRIBER, "A change was added to history that could not be retrieved");
+        EPROSIMA_LOG_ERROR(SUBSCRIBER, "A change was added to history that could not be retrieved");
     }
 
     auto interval = source_timestamp - now + duration_cast<nanoseconds>(lifespan_duration_us_);
@@ -1142,7 +1142,7 @@ bool DataReaderImpl::deadline_timer_reschedule()
     steady_clock::time_point next_deadline_us;
     if (!history_.get_next_deadline(timer_owner_, next_deadline_us))
     {
-        logError(SUBSCRIBER, "Could not get the next deadline from the history");
+        EPROSIMA_LOG_ERROR(SUBSCRIBER, "Could not get the next deadline from the history");
         return false;
     }
     auto interval_ms = duration_cast<milliseconds>(next_deadline_us - steady_clock::now());
@@ -1173,7 +1173,7 @@ bool DataReaderImpl::deadline_missed()
                 timer_owner_,
                 steady_clock::now() + duration_cast<system_clock::duration>(deadline_duration_us_), true))
     {
-        logError(SUBSCRIBER, "Could not set next deadline in the history");
+        EPROSIMA_LOG_ERROR(SUBSCRIBER, "Could not set next deadline in the history");
         return false;
     }
     return deadline_timer_reschedule();
@@ -1431,22 +1431,22 @@ ReturnCode_t DataReaderImpl::check_qos(
 {
     if (qos.durability().kind == PERSISTENT_DURABILITY_QOS)
     {
-        logError(DDS_QOS_CHECK, "PERSISTENT Durability not supported");
+        EPROSIMA_LOG_ERROR(DDS_QOS_CHECK, "PERSISTENT Durability not supported");
         return ReturnCode_t::RETCODE_UNSUPPORTED;
     }
     if (qos.destination_order().kind == BY_SOURCE_TIMESTAMP_DESTINATIONORDER_QOS)
     {
-        logError(DDS_QOS_CHECK, "BY SOURCE TIMESTAMP DestinationOrder not supported");
+        EPROSIMA_LOG_ERROR(DDS_QOS_CHECK, "BY SOURCE TIMESTAMP DestinationOrder not supported");
         return ReturnCode_t::RETCODE_UNSUPPORTED;
     }
     if (qos.reader_resource_limits().max_samples_per_read <= 0)
     {
-        logError(DDS_QOS_CHECK, "max_samples_per_read should be strictly possitive");
+        EPROSIMA_LOG_ERROR(DDS_QOS_CHECK, "max_samples_per_read should be strictly possitive");
         return ReturnCode_t::RETCODE_INCONSISTENT_POLICY;
     }
     if (qos_has_unique_network_request(qos) && qos_has_specific_locators(qos))
     {
-        logError(DDS_QOS_CHECK, "unique_network_request cannot be set along specific locators");
+        EPROSIMA_LOG_ERROR(DDS_QOS_CHECK, "unique_network_request cannot be set along specific locators");
         return ReturnCode_t::RETCODE_INCONSISTENT_POLICY;
     }
     return ReturnCode_t::RETCODE_OK;
@@ -1459,14 +1459,14 @@ ReturnCode_t DataReaderImpl::check_allocation_consistency(
             (qos.resource_limits().max_samples <
             (qos.resource_limits().max_instances * qos.resource_limits().max_samples_per_instance)))
     {
-        logError(DDS_QOS_CHECK,
+        EPROSIMA_LOG_ERROR(DDS_QOS_CHECK,
                 "max_samples should be greater than max_instances * max_samples_per_instance");
         return ReturnCode_t::RETCODE_INCONSISTENT_POLICY;
     }
     if ((qos.resource_limits().max_instances <= 0 || qos.resource_limits().max_samples_per_instance <= 0) &&
             (qos.resource_limits().max_samples > 0))
     {
-        logError(DDS_QOS_CHECK,
+        EPROSIMA_LOG_ERROR(DDS_QOS_CHECK,
                 "max_samples should be infinite when max_instances or max_samples_per_instance are infinite");
         return ReturnCode_t::RETCODE_INCONSISTENT_POLICY;
     }
@@ -1752,7 +1752,7 @@ ReturnCode_t DataReaderImpl::check_datasharing_compatible(
 #if HAVE_SECURITY
             if (has_security_enabled)
             {
-                logError(DATA_READER, "Data sharing cannot be used with security protection.");
+                EPROSIMA_LOG_ERROR(DATA_READER, "Data sharing cannot be used with security protection.");
                 return ReturnCode_t::RETCODE_NOT_ALLOWED_BY_SECURITY;
             }
 #endif // if HAVE_SECURITY
@@ -1764,7 +1764,7 @@ ReturnCode_t DataReaderImpl::check_datasharing_compatible(
 
             if (has_key)
             {
-                logError(DATA_READER, "Data sharing cannot be used with keyed data types");
+                EPROSIMA_LOG_ERROR(DATA_READER, "Data sharing cannot be used with keyed data types");
                 return ReturnCode_t::RETCODE_BAD_PARAMETER;
             }
 
@@ -1796,7 +1796,7 @@ ReturnCode_t DataReaderImpl::check_datasharing_compatible(
             return ReturnCode_t::RETCODE_OK;
             break;
         default:
-            logError(DATA_WRITER, "Unknown data sharing kind.");
+            EPROSIMA_LOG_ERROR(DATA_WRITER, "Unknown data sharing kind.");
             return ReturnCode_t::RETCODE_BAD_PARAMETER;
     }
 }

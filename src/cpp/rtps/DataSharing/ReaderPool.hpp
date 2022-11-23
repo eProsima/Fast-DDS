@@ -99,7 +99,7 @@ public:
         }
         catch (const std::exception& e)
         {
-            logError(HISTORY_DATASHARING_PAYLOADPOOL, "Failed to open segment " << segment_name_
+            EPROSIMA_LOG_ERROR(HISTORY_DATASHARING_PAYLOADPOOL, "Failed to open segment " << segment_name_
                                                                                 << ": " << e.what());
             return false;
         }
@@ -110,7 +110,7 @@ public:
         {
             local_segment.reset();
 
-            logError(HISTORY_DATASHARING_PAYLOADPOOL, "Failed to open payload pool descriptor " << segment_name_);
+            EPROSIMA_LOG_ERROR(HISTORY_DATASHARING_PAYLOADPOOL, "Failed to open payload pool descriptor " << segment_name_);
             return false;
         }
 
@@ -120,7 +120,7 @@ public:
         {
             local_segment.reset();
 
-            logError(HISTORY_DATASHARING_PAYLOADPOOL, "Failed to open payload history " << segment_name_);
+            EPROSIMA_LOG_ERROR(HISTORY_DATASHARING_PAYLOADPOOL, "Failed to open payload history " << segment_name_);
             return false;
         }
 

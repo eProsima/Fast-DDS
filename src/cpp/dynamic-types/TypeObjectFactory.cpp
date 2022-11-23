@@ -2022,7 +2022,7 @@ DynamicType_ptr TypeObjectFactory::build_dynamic_type(
             }
             return bitsetType->build();
 
-            //logError(XTYPES, "Bitset isn't supported by DynamicType");
+            //EPROSIMA_LOG_ERROR(XTYPES, "Bitset isn't supported by DynamicType");
             //return nullptr;
         }
         case TK_UNION:

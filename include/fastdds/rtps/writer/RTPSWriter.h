@@ -550,7 +550,7 @@ protected:
                 }
                 else
                 {
-                    logError(RTPS_WRITER, "Error sending fragment (" << change->sequenceNumber << ", " << frag << ")");
+                    EPROSIMA_LOG_ERROR(RTPS_WRITER, "Error sending fragment (" << change->sequenceNumber << ", " << frag << ")");
                     break;
                 }
             }
@@ -564,7 +564,7 @@ protected:
             }
             else
             {
-                logError(RTPS_WRITER, "Error sending change " << change->sequenceNumber);
+                EPROSIMA_LOG_ERROR(RTPS_WRITER, "Error sending change " << change->sequenceNumber);
             }
         }
 

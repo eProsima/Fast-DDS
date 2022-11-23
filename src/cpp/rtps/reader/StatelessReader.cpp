@@ -143,7 +143,7 @@ bool StatelessReader::matched_writer_add(
             }
             else
             {
-                logError(RTPS_READER, "Failed to add Writer Proxy " << wdata.guid()
+                EPROSIMA_LOG_ERROR(RTPS_READER, "Failed to add Writer Proxy " << wdata.guid()
                                                                     << " to " << this->m_guid.entityId
                                                                     << " with data sharing.");
                 return false;
@@ -187,7 +187,7 @@ bool StatelessReader::matched_writer_add(
         }
         else
         {
-            logError(RTPS_LIVELINESS, "Finite liveliness lease duration but WLP not enabled");
+            EPROSIMA_LOG_ERROR(RTPS_LIVELINESS, "Finite liveliness lease duration but WLP not enabled");
         }
     }
 
@@ -215,7 +215,7 @@ bool StatelessReader::matched_writer_remove(
         }
         else
         {
-            logError(RTPS_LIVELINESS,
+            EPROSIMA_LOG_ERROR(RTPS_LIVELINESS,
                     "Finite liveliness lease duration but WLP not enabled, cannot remove writer");
         }
     }
@@ -768,7 +768,7 @@ void StatelessReader::assert_writer_liveliness(
         }
         else
         {
-            logError(RTPS_LIVELINESS, "Finite liveliness lease duration but WLP not enabled");
+            EPROSIMA_LOG_ERROR(RTPS_LIVELINESS, "Finite liveliness lease duration but WLP not enabled");
         }
     }
 }

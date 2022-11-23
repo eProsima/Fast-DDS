@@ -321,13 +321,13 @@ TCPTransactionId RTCPMessageManager::sendConnectionRequest(
     request.serialize(&payload);
 
     logInfo(RTCP_MSG, "Send [BIND_CONNECTION_REQUEST] PhysicalPort: " << IPLocator::getPhysicalPort(locator));
-    //logError(DEBUG, "Sending Connection Request with locator: " << IPLocator::to_string(request.transportLocator()));
+    //EPROSIMA_LOG_ERROR(DEBUG, "Sending Connection Request with locator: " << IPLocator::to_string(request.transportLocator()));
     channel->change_status(TCPChannelResource::eConnectionStatus::eWaitingForBindResponse);
     TCPTransactionId id = getTransactionId();
     bool success = sendData(channel, BIND_CONNECTION_REQUEST, id, &payload);
     if (!success)
     {
-        logError(RTCP, "Failed sending Connection Request");
+        EPROSIMA_LOG_ERROR(RTCP, "Failed sending Connection Request");
     }
     return id;
 }
@@ -462,7 +462,7 @@ ResponseCode RTCPMessageManager::processBindConnectionRequest(
         return RETCODE_INCOMPATIBLE_VERSION;
     }
 
-    //logError(DEBUG, "Receive Connection Request with locator: " << IPLocator::to_string(request.transportLocator())
+    //EPROSIMA_LOG_ERROR(DEBUG, "Receive Connection Request with locator: " << IPLocator::to_string(request.transportLocator())
     //    << " and will respond with our locator: " << response.locator());
 
     ResponseCode code = channel->process_bind_request(request.transportLocator());
@@ -586,7 +586,7 @@ ResponseCode RTCPMessageManager::processBindConnectionResponse(
                 << IPLocator::getPhysicalPort(channel->locator()) << ")");
         channel->change_status(TCPChannelResource::eConnectionStatus::eEstablished, this);
         removeTransactionId(transaction_id);
-        //logError(DEBUG, "Received Connection Response with locator: " << response.locator());
+        //EPROSIMA_LOG_ERROR(DEBUG, "Received Connection Response with locator: " << response.locator());
         return RETCODE_OK;
     }
     else
@@ -742,7 +742,7 @@ ResponseCode RTCPMessageManager::processRTCPMessage(
                 // If the bind message fails, close the connection and try again.
                 if (respCode == RETCODE_INCOMPATIBLE_VERSION)
                 {
-                    logError(RTCP, "Received RETCODE_INCOMPATIBLE_VERSION from server.");
+                    EPROSIMA_LOG_ERROR(RTCP, "Received RETCODE_INCOMPATIBLE_VERSION from server.");
                 }
                 responseCode = respCode;
             }

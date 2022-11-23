@@ -266,7 +266,7 @@ ReturnCode_t DomainParticipantImpl::enable()
 
         if (part == nullptr)
         {
-            logError(DOMAIN_PARTICIPANT, "Problem creating RTPSParticipant");
+            EPROSIMA_LOG_ERROR(DOMAIN_PARTICIPANT, "Problem creating RTPSParticipant");
             return ReturnCode_t::RETCODE_ERROR;
         }
     }
@@ -553,13 +553,13 @@ ContentFilteredTopic* DomainParticipantImpl::create_contentfilteredtopic(
     if ((topics_.find(name) != topics_.end()) ||
             (filtered_topics_.find(name) != filtered_topics_.end()))
     {
-        logError(PARTICIPANT, "Topic with name : " << name << " already exists");
+        EPROSIMA_LOG_ERROR(PARTICIPANT, "Topic with name : " << name << " already exists");
         return nullptr;
     }
 
     if (related_topic->get_participant() != get_participant())
     {
-        logError(PARTICIPANT, "Creating ContentFilteredTopic with name " << name <<
+        EPROSIMA_LOG_ERROR(PARTICIPANT, "Creating ContentFilteredTopic with name " << name <<
                 ": related_topic not from this participant");
         return nullptr;
     }
@@ -567,7 +567,7 @@ ContentFilteredTopic* DomainParticipantImpl::create_contentfilteredtopic(
     IContentFilterFactory* filter_factory = find_content_filter_factory(filter_class_name);
     if (nullptr == filter_factory)
     {
-        logError(PARTICIPANT, "Could not find factory for filter class " << filter_class_name);
+        EPROSIMA_LOG_ERROR(PARTICIPANT, "Could not find factory for filter class " << filter_class_name);
         return nullptr;
     }
 
@@ -590,7 +590,7 @@ ContentFilteredTopic* DomainParticipantImpl::create_contentfilteredtopic(
             filter_factory->create_content_filter(filter_class_name, related_topic->get_type_name().c_str(),
             type.get(), filter_expression.c_str(), filter_parameters, filter_instance))
     {
-        logError(PARTICIPANT, "Could not create filter of class " << filter_class_name << " for expression \"" <<
+        EPROSIMA_LOG_ERROR(PARTICIPANT, "Could not create filter of class " << filter_class_name << " for expression \"" <<
                 filter_expression);
         return nullptr;
     }
@@ -754,7 +754,7 @@ Publisher* DomainParticipantImpl::create_publisher(
     {
         // The PublisherImpl::check_qos() function is not yet implemented and always returns ReturnCode_t::RETCODE_OK.
         // It will be implemented in future releases of Fast DDS.
-        // logError(PARTICIPANT, "PublisherQos inconsistent or not supported");
+        // EPROSIMA_LOG_ERROR(PARTICIPANT, "PublisherQos inconsistent or not supported");
         // return nullptr;
     }
 
@@ -818,7 +818,7 @@ PublisherImpl* DomainParticipantImpl::create_publisher_impl(
 /* TODO
    Subscriber* DomainParticipantImpl::get_builtin_subscriber()
    {
-    logError(PARTICIPANT, "Not implemented.");
+    EPROSIMA_LOG_ERROR(PARTICIPANT, "Not implemented.");
     return nullptr;
    }
  */
@@ -828,7 +828,7 @@ PublisherImpl* DomainParticipantImpl::create_publisher_impl(
         const InstanceHandle_t& handle)
    {
     (void)handle;
-    logError(PARTICIPANT, "Not implemented.");
+    EPROSIMA_LOG_ERROR(PARTICIPANT, "Not implemented.");
     return false;
    }
  */
@@ -838,7 +838,7 @@ PublisherImpl* DomainParticipantImpl::create_publisher_impl(
         const InstanceHandle_t& handle)
    {
     (void)handle;
-    logError(PARTICIPANT, "Not implemented.");
+    EPROSIMA_LOG_ERROR(PARTICIPANT, "Not implemented.");
     return false;
    }
  */
@@ -848,7 +848,7 @@ PublisherImpl* DomainParticipantImpl::create_publisher_impl(
         const InstanceHandle_t& handle)
    {
     (void)handle;
-    logError(PARTICIPANT, "Not implemented.");
+    EPROSIMA_LOG_ERROR(PARTICIPANT, "Not implemented.");
     return false;
    }
  */
@@ -858,7 +858,7 @@ PublisherImpl* DomainParticipantImpl::create_publisher_impl(
         const InstanceHandle_t& handle)
    {
     (void)handle;
-    logError(PARTICIPANT, "Not implemented.");
+    EPROSIMA_LOG_ERROR(PARTICIPANT, "Not implemented.");
     return false;
    }
  */
@@ -966,7 +966,7 @@ ReturnCode_t DomainParticipantImpl::assert_liveliness()
     }
     else
     {
-        logError(PARTICIPANT, "Invalid WLP, cannot assert liveliness of participant");
+        EPROSIMA_LOG_ERROR(PARTICIPANT, "Invalid WLP, cannot assert liveliness of participant");
     }
     return ReturnCode_t::RETCODE_ERROR;
 }
@@ -1121,7 +1121,7 @@ const ReturnCode_t DomainParticipantImpl::get_topic_qos_from_profile(
         std::vector<InstanceHandle_t>& participant_handles) const
    {
     (void)participant_handles;
-    logError(PARTICIPANT, "Not implemented.");
+    EPROSIMA_LOG_ERROR(PARTICIPANT, "Not implemented.");
     return false;
    }
  */
@@ -1131,7 +1131,7 @@ const ReturnCode_t DomainParticipantImpl::get_topic_qos_from_profile(
         std::vector<InstanceHandle_t>& topic_handles) const
    {
     (void)topic_handles;
-    logError(PARTICIPANT, "Not implemented.");
+    EPROSIMA_LOG_ERROR(PARTICIPANT, "Not implemented.");
     return false;
    }
  */
@@ -1230,7 +1230,7 @@ Subscriber* DomainParticipantImpl::create_subscriber(
     {
         // The SubscriberImpl::check_qos() function is not yet implemented and always returns ReturnCode_t::RETCODE_OK.
         // It will be implemented in future releases of Fast DDS.
-        // logError(PARTICIPANT, "SubscriberQos inconsistent or not supported");
+        // EPROSIMA_LOG_ERROR(PARTICIPANT, "SubscriberQos inconsistent or not supported");
         // return nullptr;
     }
 
@@ -1299,13 +1299,13 @@ Topic* DomainParticipantImpl::create_topic(
     TypeSupport type_support = find_type(type_name);
     if (type_support.empty())
     {
-        logError(PARTICIPANT, "Type : " << type_name << " Not Registered");
+        EPROSIMA_LOG_ERROR(PARTICIPANT, "Type : " << type_name << " Not Registered");
         return nullptr;
     }
 
     if (!TopicImpl::check_qos_including_resource_limits(qos, type_support))
     {
-        logError(PARTICIPANT, "TopicQos inconsistent or not supported");
+        EPROSIMA_LOG_ERROR(PARTICIPANT, "TopicQos inconsistent or not supported");
         return nullptr;
     }
 
@@ -1317,7 +1317,7 @@ Topic* DomainParticipantImpl::create_topic(
     if ((topics_.find(topic_name) != topics_.end()) ||
             (filtered_topics_.find(topic_name) != filtered_topics_.end()))
     {
-        logError(PARTICIPANT, "Topic with name : " << topic_name << " already exists");
+        EPROSIMA_LOG_ERROR(PARTICIPANT, "Topic with name : " << topic_name << " already exists");
         return nullptr;
     }
 
@@ -1406,7 +1406,7 @@ ReturnCode_t DomainParticipantImpl::register_type(
 {
     if (type_name.size() <= 0)
     {
-        logError(PARTICIPANT, "Registered Type must have a name");
+        EPROSIMA_LOG_ERROR(PARTICIPANT, "Registered Type must have a name");
         return ReturnCode_t::RETCODE_BAD_PARAMETER;
     }
 
@@ -1419,7 +1419,7 @@ ReturnCode_t DomainParticipantImpl::register_type(
             return ReturnCode_t::RETCODE_OK;
         }
 
-        logError(PARTICIPANT, "Another type with the same name '" << type_name << "' is already registered.");
+        EPROSIMA_LOG_ERROR(PARTICIPANT, "Another type with the same name '" << type_name << "' is already registered.");
         return ReturnCode_t::RETCODE_PRECONDITION_NOT_MET;
     }
 
@@ -1462,7 +1462,7 @@ bool DomainParticipantImpl::register_dynamic_type_to_factories(
             const TypeObject* type_obj = objectFactory->get_type_object(dpst->getName());
             if (type_id2 == nullptr)
             {
-                logError(DOMAIN_PARTICIPANT, "Cannot register dynamic type " << dpst->getName());
+                EPROSIMA_LOG_ERROR(DOMAIN_PARTICIPANT, "Cannot register dynamic type " << dpst->getName());
             }
             else
             {
@@ -1485,7 +1485,7 @@ ReturnCode_t DomainParticipantImpl::unregister_type(
 {
     if (type_name.size() <= 0)
     {
-        logError(PARTICIPANT, "Registered Type must have a name");
+        EPROSIMA_LOG_ERROR(PARTICIPANT, "Registered Type must have a name");
         return ReturnCode_t::RETCODE_BAD_PARAMETER;
     }
 

@@ -91,7 +91,7 @@ DynamicData* DynamicDataFactory::create_data(DynamicTypeBuilder* pBuilder)
     }
     else
     {
-        logError(DYN_TYPES, "Error creating DynamicData. Invalid dynamic type builder");
+        EPROSIMA_LOG_ERROR(DYN_TYPES, "Error creating DynamicData. Invalid dynamic type builder");
         return nullptr;
     }
 }
@@ -162,13 +162,13 @@ DynamicData* DynamicDataFactory::create_data(DynamicType_ptr pType)
         }
         catch (std::exception& e)
         {
-            logError(DYN_TYPES, "Exception creating DynamicData: " << e.what());
+            EPROSIMA_LOG_ERROR(DYN_TYPES, "Exception creating DynamicData: " << e.what());
             return nullptr;
         }
     }
     else
     {
-        logError(DYN_TYPES, "Error creating DynamicData. Invalid dynamic type");
+        EPROSIMA_LOG_ERROR(DYN_TYPES, "Error creating DynamicData. Invalid dynamic type");
         return nullptr;
     }
 }
@@ -202,7 +202,7 @@ ReturnCode_t DynamicDataFactory::delete_data(DynamicData* pData)
         }
         else
         {
-            logError(DYN_TYPES, "Error deleting DynamicData. It isn't registered in the factory");
+            EPROSIMA_LOG_ERROR(DYN_TYPES, "Error deleting DynamicData. It isn't registered in the factory");
             return ReturnCode_t::RETCODE_ALREADY_DELETED;
         }
 #endif

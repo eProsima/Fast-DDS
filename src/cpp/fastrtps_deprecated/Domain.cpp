@@ -156,7 +156,7 @@ Participant* Domain::createParticipant(
     ParticipantAttributes participant_att;
     if ( XMLP_ret::XML_ERROR == XMLProfileManager::fillParticipantAttributes(participant_profile, participant_att))
     {
-        logError(PARTICIPANT, "Problem loading profile '" << participant_profile << "'");
+        EPROSIMA_LOG_ERROR(PARTICIPANT, "Problem loading profile '" << participant_profile << "'");
         return nullptr;
     }
 
@@ -192,7 +192,7 @@ Participant* Domain::createParticipant(
 
     if (part == nullptr)
     {
-        logError(PARTICIPANT, "Problem creating RTPSParticipant");
+        EPROSIMA_LOG_ERROR(PARTICIPANT, "Problem creating RTPSParticipant");
         delete pspartimpl;
         return nullptr;
     }
@@ -234,7 +234,7 @@ Publisher* Domain::createPublisher(
     PublisherAttributes publisher_att;
     if ( XMLP_ret::XML_ERROR == XMLProfileManager::fillPublisherAttributes(publisher_profile, publisher_att))
     {
-        logError(PUBLISHER, "Problem loading profile '" << publisher_profile << "'");
+        EPROSIMA_LOG_ERROR(PUBLISHER, "Problem loading profile '" << publisher_profile << "'");
         return nullptr;
     }
 
@@ -292,7 +292,7 @@ Subscriber* Domain::createSubscriber(
     SubscriberAttributes subscriber_att;
     if ( XMLP_ret::XML_ERROR == XMLProfileManager::fillSubscriberAttributes(subscriber_profile, subscriber_att))
     {
-        logError(PUBLISHER, "Problem loading profile '" << subscriber_profile << "'");
+        EPROSIMA_LOG_ERROR(PUBLISHER, "Problem loading profile '" << subscriber_profile << "'");
         return nullptr;
     }
 
@@ -375,7 +375,7 @@ bool Domain::registerDynamicType(
         const TypeObject* type_obj = typeFactory->get_type_object(type->getName());
         if (type_id2 == nullptr)
         {
-            logError(DYN_TYPES, "Cannot register dynamic type " << type->getName());
+            EPROSIMA_LOG_ERROR(DYN_TYPES, "Cannot register dynamic type " << type->getName());
         }
         else
         {
@@ -419,7 +419,7 @@ bool Domain::loadXMLProfilesFile(
 
     if ( XMLP_ret::XML_ERROR == XMLProfileManager::loadXMLFile(xml_profile_file))
     {
-        logError(DOMAIN, "Problem loading XML file '" << xml_profile_file << "'");
+        EPROSIMA_LOG_ERROR(DOMAIN, "Problem loading XML file '" << xml_profile_file << "'");
         return false;
     }
     return true;
@@ -437,7 +437,7 @@ bool Domain::loadXMLProfilesString(
 
     if ( XMLP_ret::XML_ERROR == XMLProfileManager::loadXMLString(data, length))
     {
-        logError(DOMAIN, "Problem loading XML string");
+        EPROSIMA_LOG_ERROR(DOMAIN, "Problem loading XML string");
         return false;
     }
     return true;

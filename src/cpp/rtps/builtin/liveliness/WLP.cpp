@@ -271,7 +271,7 @@ bool WLP::createEndpoints()
     }
     else
     {
-        logError(RTPS_LIVELINESS, "Liveliness Writer Creation failed ");
+        EPROSIMA_LOG_ERROR(RTPS_LIVELINESS, "Liveliness Writer Creation failed ");
         delete(mp_builtinWriterHistory);
         mp_builtinWriterHistory = nullptr;
         payload_pool_->release_history(writer_pool_cfg, false);
@@ -318,7 +318,7 @@ bool WLP::createEndpoints()
     }
     else
     {
-        logError(RTPS_LIVELINESS, "Liveliness Reader Creation failed.");
+        EPROSIMA_LOG_ERROR(RTPS_LIVELINESS, "Liveliness Reader Creation failed.");
         delete(mp_builtinReaderHistory);
         mp_builtinReaderHistory = nullptr;
         delete(mp_listener);
@@ -385,7 +385,7 @@ bool WLP::createSecureEndpoints()
     }
     else
     {
-        logError(RTPS_LIVELINESS, "Secure Liveliness Writer Creation failed ");
+        EPROSIMA_LOG_ERROR(RTPS_LIVELINESS, "Secure Liveliness Writer Creation failed ");
         delete(mp_builtinWriterSecureHistory);
         mp_builtinWriterSecureHistory = nullptr;
         secure_payload_pool_->release_history(writer_pool_cfg, false);
@@ -440,7 +440,7 @@ bool WLP::createSecureEndpoints()
     }
     else
     {
-        logError(RTPS_LIVELINESS, "Liveliness Reader Creation failed.");
+        EPROSIMA_LOG_ERROR(RTPS_LIVELINESS, "Liveliness Reader Creation failed.");
         delete(mp_builtinReaderSecureHistory);
         mp_builtinReaderSecureHistory = nullptr;
         secure_payload_pool_->release_history(reader_pool_cfg, true);
@@ -537,7 +537,7 @@ bool WLP::assignRemoteEndpoints(
                     mp_builtinReaderSecure->getGuid(), pdata.m_guid, temp_writer_proxy_data_,
                     mp_builtinReaderSecure->getAttributes().security_attributes()))
         {
-            logError(RTPS_EDP, "Security manager returns an error for reader " <<
+            EPROSIMA_LOG_ERROR(RTPS_EDP, "Security manager returns an error for reader " <<
                     mp_builtinReaderSecure->getGuid());
         }
     }
@@ -551,7 +551,7 @@ bool WLP::assignRemoteEndpoints(
                     mp_builtinWriterSecure->getGuid(), pdata.m_guid, temp_reader_proxy_data_,
                     mp_builtinWriterSecure->getAttributes().security_attributes()))
         {
-            logError(RTPS_EDP, "Security manager returns an error for writer " <<
+            EPROSIMA_LOG_ERROR(RTPS_EDP, "Security manager returns an error for writer " <<
                     mp_builtinWriterSecure->getGuid());
         }
     }
@@ -684,7 +684,7 @@ bool WLP::add_local_writer(
                     wqos.m_liveliness.kind,
                     wqos.m_liveliness.lease_duration))
         {
-            logError(RTPS_LIVELINESS, "Could not add writer " << W->getGuid() << " to liveliness manager");
+            EPROSIMA_LOG_ERROR(RTPS_LIVELINESS, "Could not add writer " << W->getGuid() << " to liveliness manager");
         }
     }
     else if (wqos.m_liveliness.kind == MANUAL_BY_TOPIC_LIVELINESS_QOS)
@@ -696,7 +696,7 @@ bool WLP::add_local_writer(
                     wqos.m_liveliness.kind,
                     wqos.m_liveliness.lease_duration))
         {
-            logError(RTPS_LIVELINESS, "Could not add writer " << W->getGuid() << " to liveliness manager");
+            EPROSIMA_LOG_ERROR(RTPS_LIVELINESS, "Could not add writer " << W->getGuid() << " to liveliness manager");
         }
     }
 
@@ -766,7 +766,7 @@ bool WLP::remove_local_writer(
                     W->get_liveliness_kind(),
                     W->get_liveliness_lease_duration()))
         {
-            logError(RTPS_LIVELINESS, "Could not remove writer " << W->getGuid() << " from liveliness manager");
+            EPROSIMA_LOG_ERROR(RTPS_LIVELINESS, "Could not remove writer " << W->getGuid() << " from liveliness manager");
         }
 
         min_manual_by_participant_ms_ = std::numeric_limits<double>::max();
@@ -808,7 +808,7 @@ bool WLP::remove_local_writer(
                     W->get_liveliness_kind(),
                     W->get_liveliness_lease_duration()))
         {
-            logError(RTPS_LIVELINESS, "Could not remove writer " << W->getGuid() << " from liveliness manager");
+            EPROSIMA_LOG_ERROR(RTPS_LIVELINESS, "Could not remove writer " << W->getGuid() << " from liveliness manager");
         }
         return true;
     }

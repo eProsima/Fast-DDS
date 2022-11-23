@@ -196,7 +196,7 @@ bool DataReaderHistory::received_change(
 
     if (mp_reader == nullptr || mp_mutex == nullptr)
     {
-        logError(SUBSCRIBER, "You need to create a Reader with this History before using it");
+        EPROSIMA_LOG_ERROR(SUBSCRIBER, "You need to create a Reader with this History before using it");
         return false;
     }
 
@@ -427,7 +427,7 @@ bool DataReaderHistory::remove_change_sub(
 {
     if (mp_reader == nullptr || mp_mutex == nullptr)
     {
-        logError(SUBSCRIBER, "You need to create a Reader with this History before using it");
+        EPROSIMA_LOG_ERROR(SUBSCRIBER, "You need to create a Reader with this History before using it");
         return false;
     }
 
@@ -454,7 +454,7 @@ bool DataReaderHistory::remove_change_sub(
     }
     if (!found)
     {
-        logError(SUBSCRIBER, "Change not found on this key, something is wrong");
+        EPROSIMA_LOG_ERROR(SUBSCRIBER, "Change not found on this key, something is wrong");
     }
 
     if (remove_change(change))
@@ -473,7 +473,7 @@ bool DataReaderHistory::remove_change_sub(
 {
     if (mp_reader == nullptr || mp_mutex == nullptr)
     {
-        logError(SUBSCRIBER, "You need to create a Reader with this History before using it");
+        EPROSIMA_LOG_ERROR(SUBSCRIBER, "You need to create a Reader with this History before using it");
         return false;
     }
 
@@ -501,7 +501,7 @@ bool DataReaderHistory::remove_change_sub(
     }
     if (!found)
     {
-        logError(SUBSCRIBER, "Change not found on this key, something is wrong");
+        EPROSIMA_LOG_ERROR(SUBSCRIBER, "Change not found on this key, something is wrong");
     }
 
     const_iterator chit = find_change_nts(change);
@@ -525,7 +525,7 @@ bool DataReaderHistory::set_next_deadline(
 {
     if (mp_reader == nullptr || mp_mutex == nullptr)
     {
-        logError(SUBSCRIBER, "You need to create a Reader with this History before using it");
+        EPROSIMA_LOG_ERROR(SUBSCRIBER, "You need to create a Reader with this History before using it");
         return false;
     }
     std::lock_guard<RecursiveTimedMutex> guard(*getMutex());
@@ -549,7 +549,7 @@ bool DataReaderHistory::get_next_deadline(
 {
     if (mp_reader == nullptr || mp_mutex == nullptr)
     {
-        logError(SUBSCRIBER, "You need to create a Reader with this History before using it");
+        EPROSIMA_LOG_ERROR(SUBSCRIBER, "You need to create a Reader with this History before using it");
         return false;
     }
     std::lock_guard<RecursiveTimedMutex> guard(*getMutex());

@@ -488,7 +488,7 @@ TEST_F(StatisticsDomainParticipantTests, EnableDisableStatisticsDataWriterTest)
  * This test checks that when the topic name provided is not valid, a log error is printed.
  * 1. Create a participant with the property fastdds.statistics set to an invalid topic name
  * 2. Check that there is no topic/type registered in the participant
- * 3. Wait for the logError entry to be consumed
+ * 3. Wait for the EPROSIMA_LOG_ERROR entry to be consumed
  */
 TEST_F(StatisticsDomainParticipantTests, CreateParticipantWithInvalidTopicName)
 {
@@ -549,7 +549,7 @@ TEST_F(StatisticsDomainParticipantTests, CreateParticipantWithInvalidTopicName)
     EXPECT_EQ(nullptr, participant->lookup_topicdescription(SAMPLE_DATAS_TOPIC));
     EXPECT_EQ(nullptr, participant->lookup_topicdescription(PHYSICAL_DATA_TOPIC));
 
-    // 3. Wait until logError entries are captured
+    // 3. Wait until EPROSIMA_LOG_ERROR entries are captured
     helper_block_for_at_least_entries(2);
     auto consumed_entries = mock_consumer_->ConsumedEntries();
     EXPECT_EQ(consumed_entries.size(), 2u);

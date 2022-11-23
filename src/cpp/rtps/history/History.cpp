@@ -50,7 +50,7 @@ History::const_iterator History::find_change_nts(
 {
     if ( nullptr == mp_mutex )
     {
-        logError(RTPS_HISTORY, "You need to create a RTPS Entity with this History before using it");
+        EPROSIMA_LOG_ERROR(RTPS_HISTORY, "You need to create a RTPS Entity with this History before using it");
         return const_iterator();
     }
 
@@ -117,7 +117,7 @@ bool History::remove_all_changes()
 {
     if (mp_mutex == nullptr)
     {
-        logError(RTPS_HISTORY, "You need to create a RTPS Entity with this History before using it");
+        EPROSIMA_LOG_ERROR(RTPS_HISTORY, "You need to create a RTPS Entity with this History before using it");
         return false;
     }
 
@@ -166,7 +166,7 @@ bool History::get_change(
 
     if (mp_mutex == nullptr)
     {
-        logError(RTPS_HISTORY, "You need to create a RTPS Entity with this History before using it");
+        EPROSIMA_LOG_ERROR(RTPS_HISTORY, "You need to create a RTPS Entity with this History before using it");
         return false;
     }
 
@@ -208,7 +208,7 @@ bool History::get_earliest_change(
 {
     if (mp_mutex == nullptr)
     {
-        logError(RTPS_HISTORY, "You need to create a RTPS Entity with this History before using it");
+        EPROSIMA_LOG_ERROR(RTPS_HISTORY, "You need to create a RTPS Entity with this History before using it");
         return false;
     }
 

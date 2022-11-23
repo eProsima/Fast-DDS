@@ -108,7 +108,7 @@ void PDPSimple::initializeParticipantProxyData(
     else if (!getRTPSParticipant()->getAttributes().builtin.discovery_config.
                     use_STATIC_EndpointDiscoveryProtocol)
     {
-        logError(RTPS_PDP, "Neither EDP simple nor EDP static enabled. Endpoints will not be discovered.");
+        EPROSIMA_LOG_ERROR(RTPS_PDP, "Neither EDP simple nor EDP static enabled. Endpoints will not be discovered.");
     }
 }
 
@@ -127,7 +127,7 @@ bool PDPSimple::init(
         mp_EDP = new EDPStatic(this, mp_RTPSParticipant);
         if (!mp_EDP->initEDP(m_discovery))
         {
-            logError(RTPS_PDP, "Endpoint discovery configuration failed");
+            EPROSIMA_LOG_ERROR(RTPS_PDP, "Endpoint discovery configuration failed");
             delete mp_EDP;
             mp_EDP = nullptr;
             return false;
@@ -138,7 +138,7 @@ bool PDPSimple::init(
         mp_EDP = new EDPSimple(this, mp_RTPSParticipant);
         if (!mp_EDP->initEDP(m_discovery))
         {
-            logError(RTPS_PDP, "Endpoint discovery configuration failed");
+            EPROSIMA_LOG_ERROR(RTPS_PDP, "Endpoint discovery configuration failed");
             delete mp_EDP;
             mp_EDP = nullptr;
             return false;
@@ -235,7 +235,7 @@ void PDPSimple::announceParticipantState(
             }
             else
             {
-                logError(RTPS_PDP, "Using PDPSimple protocol with a reliable writer");
+                EPROSIMA_LOG_ERROR(RTPS_PDP, "Using PDPSimple protocol with a reliable writer");
             }
         }
     }
@@ -286,7 +286,7 @@ bool PDPSimple::createPDPEndpoints()
     }
     else
     {
-        logError(RTPS_PDP, "SimplePDP Reader creation failed");
+        EPROSIMA_LOG_ERROR(RTPS_PDP, "SimplePDP Reader creation failed");
         delete mp_PDPReaderHistory;
         mp_PDPReaderHistory = nullptr;
         delete mp_listener;
@@ -347,7 +347,7 @@ bool PDPSimple::createPDPEndpoints()
     }
     else
     {
-        logError(RTPS_PDP, "SimplePDP Writer creation failed");
+        EPROSIMA_LOG_ERROR(RTPS_PDP, "SimplePDP Writer creation failed");
         delete mp_PDPWriterHistory;
         mp_PDPWriterHistory = nullptr;
         writer_payload_pool_->release_history(writer_pool_cfg, false);
@@ -406,7 +406,7 @@ void PDPSimple::assignRemoteEndpoints(
         }
         else
         {
-            logError(RTPS_PDP, "Using PDPSimple protocol with a reliable writer");
+            EPROSIMA_LOG_ERROR(RTPS_PDP, "Using PDPSimple protocol with a reliable writer");
         }
     }
 

@@ -122,7 +122,7 @@ void RTPSWriter::init(
         std::shared_ptr<WriterPool> pool = std::dynamic_pointer_cast<WriterPool>(payload_pool);
         if (!pool || !pool->init_shared_memory(this, att.endpoint.data_sharing_configuration().shm_directory()))
         {
-            logError(RTPS_WRITER, "Could not initialize DataSharing writer pool");
+            EPROSIMA_LOG_ERROR(RTPS_WRITER, "Could not initialize DataSharing writer pool");
         }
     }
 

@@ -1000,7 +1000,7 @@ private:
             }
             catch (std::exception& e)
             {
-                logError(RTPS_TRANSPORT_SHM, THREADID << "Port "
+                EPROSIMA_LOG_ERROR(RTPS_TRANSPORT_SHM, THREADID << "Port "
                                                       << port_id << " failed unlock_read_locks " << e.what());
             }
         }
@@ -1144,7 +1144,7 @@ private:
                 {
                     SharedMemSegment::remove(port_segment_name.c_str());
 
-                    logError(RTPS_TRANSPORT_SHM, "Failed init_port " << port_segment_name
+                    EPROSIMA_LOG_ERROR(RTPS_TRANSPORT_SHM, "Failed init_port " << port_segment_name
                                                                      << ": " << e.what());
 
                     throw;

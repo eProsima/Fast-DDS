@@ -58,12 +58,12 @@ public:
 
         if (!DynamicTypeBuilderFactory::get_instance()->is_empty())
         {
-            logError(DYN_TEST, "DynamicTypeBuilderFactory is not empty.");
+            EPROSIMA_LOG_ERROR(DYN_TEST, "DynamicTypeBuilderFactory is not empty.");
         }
 
         if (!DynamicDataFactory::get_instance()->is_empty())
         {
-            logError(DYN_TEST, "DynamicDataFactory is not empty.");
+            EPROSIMA_LOG_ERROR(DYN_TEST, "DynamicDataFactory is not empty.");
         }
 
         DynamicDataFactory::delete_instance();

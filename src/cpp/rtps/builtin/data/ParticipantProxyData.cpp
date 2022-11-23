@@ -779,7 +779,7 @@ void ParticipantProxyData::set_persistence_guid(
     {
         if (!it->modify(persistent_guid))
         {
-            logError(RTPS_PARTICIPANT, "Failed to change property <"
+            EPROSIMA_LOG_ERROR(RTPS_PARTICIPANT, "Failed to change property <"
                     << it->first() << " | " << it->second() << "> to <"
                     << persistent_guid.first << " | " << persistent_guid.second << ">");
         }

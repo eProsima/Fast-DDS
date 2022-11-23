@@ -369,7 +369,7 @@ bool EDPStatic::removeLocalReader(
                                 R->getAttributes().getUserDefinedID(), R->getGuid().entityId);
                 if (!pit->modify(new_property))
                 {
-                    logError(RTPS_EDP, "Failed to change property <"
+                    EPROSIMA_LOG_ERROR(RTPS_EDP, "Failed to change property <"
                             << pit->first() << " | " << pit->second() << "> to <"
                             << new_property.first << " | " << new_property.second << ">");
                 }
@@ -396,7 +396,7 @@ bool EDPStatic::removeLocalWriter(
                                 W->getAttributes().getUserDefinedID(), W->getGuid().entityId);
                 if (!pit->modify(new_property))
                 {
-                    logError(RTPS_EDP, "Failed to change property <"
+                    EPROSIMA_LOG_ERROR(RTPS_EDP, "Failed to change property <"
                             << pit->first() << " | " << pit->second() << "> to <"
                             << new_property.first << " | " << new_property.second << ">");
                 }
@@ -513,7 +513,7 @@ bool EDPStatic::newRemoteReader(
                     newRPD->guid(reader_guid);
                     if (!checkEntityId(newRPD))
                     {
-                        logError(RTPS_EDP, "The provided entityId for Reader with ID: "
+                        EPROSIMA_LOG_ERROR(RTPS_EDP, "The provided entityId for Reader with ID: "
                                 << newRPD->userDefinedId() << " does not match the topic Kind");
                         return false;
                     }
@@ -565,7 +565,7 @@ bool EDPStatic::newRemoteWriter(
                     newWPD->guid(writer_guid);
                     if (!checkEntityId(newWPD))
                     {
-                        logError(RTPS_EDP, "The provided entityId for Writer with User ID: "
+                        EPROSIMA_LOG_ERROR(RTPS_EDP, "The provided entityId for Writer with User ID: "
                                 << newWPD->userDefinedId() << " does not match the topic Kind");
                         return false;
                     }

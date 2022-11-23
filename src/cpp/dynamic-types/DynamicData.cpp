@@ -1732,7 +1732,7 @@ DynamicData* DynamicData::loan_value(
             {
                 if (get_kind() == TK_MAP && it->second->key_element_)
                 {
-                    logError(DYN_TYPES, "Error loaning Value. Key values can't be loaned.");
+                    EPROSIMA_LOG_ERROR(DYN_TYPES, "Error loaning Value. Key values can't be loaned.");
                     return nullptr;
                 }
                 else
@@ -1759,7 +1759,7 @@ DynamicData* DynamicData::loan_value(
             {
                 if (get_kind() == TK_MAP && ((DynamicData*)it->second)->key_element_)
                 {
-                    logError(DYN_TYPES, "Error loaning Value. Key values can't be loaned.");
+                    EPROSIMA_LOG_ERROR(DYN_TYPES, "Error loaning Value. Key values can't be loaned.");
                     return nullptr;
                 }
                 else
@@ -1784,17 +1784,17 @@ DynamicData* DynamicData::loan_value(
 #endif // ifdef DYNAMIC_TYPES_CHECKING
             else
             {
-                logError(DYN_TYPES, "Error loaning Value. MemberId not found.");
+                EPROSIMA_LOG_ERROR(DYN_TYPES, "Error loaning Value. MemberId not found.");
             }
         }
         else
         {
-            logError(DYN_TYPES, "Error loaning Value. The value has been loaned previously.");
+            EPROSIMA_LOG_ERROR(DYN_TYPES, "Error loaning Value. The value has been loaned previously.");
         }
     }
     else
     {
-        logError(DYN_TYPES, "Error loaning Value. Invalid MemberId.");
+        EPROSIMA_LOG_ERROR(DYN_TYPES, "Error loaning Value. Invalid MemberId.");
     }
     return nullptr;
 }
@@ -1821,7 +1821,7 @@ ReturnCode_t DynamicData::return_loaned_value(
 #endif // ifdef DYNAMIC_TYPES_CHECKING
     }
 
-    logError(DYN_TYPES, "Error returning loaned Value. The value hasn't been loaned.");
+    EPROSIMA_LOG_ERROR(DYN_TYPES, "Error returning loaned Value. The value hasn't been loaned.");
     return ReturnCode_t::RETCODE_PRECONDITION_NOT_MET;
 }
 
@@ -3535,7 +3535,7 @@ ReturnCode_t DynamicData::set_bool_value(
         }
         else
         {
-            logError(DYN_TYPES, "Error setting bool value. The given index is greater than the limit.");
+            EPROSIMA_LOG_ERROR(DYN_TYPES, "Error setting bool value. The given index is greater than the limit.");
             return ReturnCode_t::RETCODE_BAD_PARAMETER;
         }
     }
@@ -3611,7 +3611,7 @@ ReturnCode_t DynamicData::set_bool_value(
             }
             else
             {
-                logError(DYN_TYPES, "Error setting bool value. The given index is greater than the limit.");
+                EPROSIMA_LOG_ERROR(DYN_TYPES, "Error setting bool value. The given index is greater than the limit.");
                 return ReturnCode_t::RETCODE_BAD_PARAMETER;
             }
         }
@@ -3704,7 +3704,7 @@ ReturnCode_t DynamicData::set_string_value(
         }
         else
         {
-            logError(DYN_TYPES, "Error setting string value. The given string is greater than the length limit.");
+            EPROSIMA_LOG_ERROR(DYN_TYPES, "Error setting string value. The given string is greater than the length limit.");
             return ReturnCode_t::RETCODE_BAD_PARAMETER;
         }
     }
@@ -3744,7 +3744,7 @@ ReturnCode_t DynamicData::set_string_value(
             }
             else
             {
-                logError(DYN_TYPES, "Error setting string value. The given string is greater than the length limit.");
+                EPROSIMA_LOG_ERROR(DYN_TYPES, "Error setting string value. The given string is greater than the length limit.");
                 return ReturnCode_t::RETCODE_BAD_PARAMETER;
             }
         }
@@ -3803,7 +3803,7 @@ void DynamicData::update_union_discriminator()
     }
     else
     {
-        logError(DYN_TYPES, "Error updating union id. The kind: " << get_kind() << " doesn't support it.");
+        EPROSIMA_LOG_ERROR(DYN_TYPES, "Error updating union id. The kind: " << get_kind() << " doesn't support it.");
     }
 }
 
@@ -3848,7 +3848,7 @@ ReturnCode_t DynamicData::set_union_id(
     }
     else
     {
-        logError(DYN_TYPES, "Error setting union id. The kind: " << get_kind() << " doesn't support it.");
+        EPROSIMA_LOG_ERROR(DYN_TYPES, "Error setting union id. The kind: " << get_kind() << " doesn't support it.");
     }
     return ReturnCode_t::RETCODE_BAD_PARAMETER;
 }
@@ -3918,7 +3918,7 @@ ReturnCode_t DynamicData::set_wstring_value(
         }
         else
         {
-            logError(DYN_TYPES, "Error setting wstring value. The given string is greater than the length limit.");
+            EPROSIMA_LOG_ERROR(DYN_TYPES, "Error setting wstring value. The given string is greater than the length limit.");
             return ReturnCode_t::RETCODE_BAD_PARAMETER;
         }
     }
@@ -3958,7 +3958,7 @@ ReturnCode_t DynamicData::set_wstring_value(
             }
             else
             {
-                logError(DYN_TYPES, "Error setting wstring value. The given string is greater than the length limit.");
+                EPROSIMA_LOG_ERROR(DYN_TYPES, "Error setting wstring value. The given string is greater than the length limit.");
                 return ReturnCode_t::RETCODE_BAD_PARAMETER;
             }
         }
@@ -4325,12 +4325,12 @@ MemberId DynamicData::get_array_index(
         }
         else
         {
-            logError(DYN_TYPES, "Error getting array index. Invalid dimension count.");
+            EPROSIMA_LOG_ERROR(DYN_TYPES, "Error getting array index. Invalid dimension count.");
         }
     }
     else
     {
-        logError(DYN_TYPES, "Error getting array index. The kind " << get_kind() << "doesn't support it.");
+        EPROSIMA_LOG_ERROR(DYN_TYPES, "Error getting array index. The kind " << get_kind() << "doesn't support it.");
     }
     return MEMBER_ID_INVALID;
 }
@@ -4369,12 +4369,12 @@ ReturnCode_t DynamicData::insert_array_data(
 #endif // ifdef DYNAMIC_TYPES_CHECKING
         else
         {
-            logError(DYN_TYPES, "Error inserting data. Index out of bounds");
+            EPROSIMA_LOG_ERROR(DYN_TYPES, "Error inserting data. Index out of bounds");
         }
     }
     else
     {
-        logError(DYN_TYPES, "Error inserting data. The kind " << get_kind() << " doesn't support this method");
+        EPROSIMA_LOG_ERROR(DYN_TYPES, "Error inserting data. The kind " << get_kind() << " doesn't support this method");
     }
     return ReturnCode_t::RETCODE_BAD_PARAMETER;
 }
@@ -4409,12 +4409,12 @@ ReturnCode_t DynamicData::clear_array_data(
 #endif // ifdef DYNAMIC_TYPES_CHECKING
         else
         {
-            logError(DYN_TYPES, "Error removing data. Index out of bounds");
+            EPROSIMA_LOG_ERROR(DYN_TYPES, "Error removing data. Index out of bounds");
         }
     }
     else
     {
-        logError(DYN_TYPES, "Error removing data. The kind " << get_kind() << " doesn't support this method");
+        EPROSIMA_LOG_ERROR(DYN_TYPES, "Error removing data. The kind " << get_kind() << " doesn't support this method");
     }
     return ReturnCode_t::RETCODE_BAD_PARAMETER;
 }
@@ -4434,7 +4434,7 @@ ReturnCode_t DynamicData::insert_int32_value(
     }
     else
     {
-        logError(DYN_TYPES, "Error inserting data. The current kinds don't support this method");
+        EPROSIMA_LOG_ERROR(DYN_TYPES, "Error inserting data. The current kinds don't support this method");
         return ReturnCode_t::RETCODE_BAD_PARAMETER;
     }
 }
@@ -4454,7 +4454,7 @@ ReturnCode_t DynamicData::insert_uint32_value(
     }
     else
     {
-        logError(DYN_TYPES, "Error inserting data. The current kinds don't support this method");
+        EPROSIMA_LOG_ERROR(DYN_TYPES, "Error inserting data. The current kinds don't support this method");
         return ReturnCode_t::RETCODE_BAD_PARAMETER;
     }
 }
@@ -4474,7 +4474,7 @@ ReturnCode_t DynamicData::insert_int16_value(
     }
     else
     {
-        logError(DYN_TYPES, "Error inserting data. The current kinds don't support this method");
+        EPROSIMA_LOG_ERROR(DYN_TYPES, "Error inserting data. The current kinds don't support this method");
         return ReturnCode_t::RETCODE_BAD_PARAMETER;
     }
 }
@@ -4494,7 +4494,7 @@ ReturnCode_t DynamicData::insert_uint16_value(
     }
     else
     {
-        logError(DYN_TYPES, "Error inserting data. The current kinds don't support this method");
+        EPROSIMA_LOG_ERROR(DYN_TYPES, "Error inserting data. The current kinds don't support this method");
         return ReturnCode_t::RETCODE_BAD_PARAMETER;
     }
 }
@@ -4514,7 +4514,7 @@ ReturnCode_t DynamicData::insert_int64_value(
     }
     else
     {
-        logError(DYN_TYPES, "Error inserting data. The current kinds don't support this method");
+        EPROSIMA_LOG_ERROR(DYN_TYPES, "Error inserting data. The current kinds don't support this method");
         return ReturnCode_t::RETCODE_BAD_PARAMETER;
     }
 }
@@ -4534,7 +4534,7 @@ ReturnCode_t DynamicData::insert_uint64_value(
     }
     else
     {
-        logError(DYN_TYPES, "Error inserting data. The current kinds don't support this method");
+        EPROSIMA_LOG_ERROR(DYN_TYPES, "Error inserting data. The current kinds don't support this method");
         return ReturnCode_t::RETCODE_BAD_PARAMETER;
     }
 }
@@ -4554,7 +4554,7 @@ ReturnCode_t DynamicData::insert_float32_value(
     }
     else
     {
-        logError(DYN_TYPES, "Error inserting data. The current kinds don't support this method");
+        EPROSIMA_LOG_ERROR(DYN_TYPES, "Error inserting data. The current kinds don't support this method");
         return ReturnCode_t::RETCODE_BAD_PARAMETER;
     }
 }
@@ -4574,7 +4574,7 @@ ReturnCode_t DynamicData::insert_float64_value(
     }
     else
     {
-        logError(DYN_TYPES, "Error inserting data. The current kinds don't support this method");
+        EPROSIMA_LOG_ERROR(DYN_TYPES, "Error inserting data. The current kinds don't support this method");
         return ReturnCode_t::RETCODE_BAD_PARAMETER;
     }
 }
@@ -4594,7 +4594,7 @@ ReturnCode_t DynamicData::insert_float128_value(
     }
     else
     {
-        logError(DYN_TYPES, "Error inserting data. The current kinds don't support this method");
+        EPROSIMA_LOG_ERROR(DYN_TYPES, "Error inserting data. The current kinds don't support this method");
         return ReturnCode_t::RETCODE_BAD_PARAMETER;
     }
 }
@@ -4614,7 +4614,7 @@ ReturnCode_t DynamicData::insert_char8_value(
     }
     else
     {
-        logError(DYN_TYPES, "Error inserting data. The current kinds don't support this method");
+        EPROSIMA_LOG_ERROR(DYN_TYPES, "Error inserting data. The current kinds don't support this method");
         return ReturnCode_t::RETCODE_BAD_PARAMETER;
     }
 }
@@ -4634,7 +4634,7 @@ ReturnCode_t DynamicData::insert_char16_value(
     }
     else
     {
-        logError(DYN_TYPES, "Error inserting data. The current kinds don't support this method");
+        EPROSIMA_LOG_ERROR(DYN_TYPES, "Error inserting data. The current kinds don't support this method");
         return ReturnCode_t::RETCODE_BAD_PARAMETER;
     }
 }
@@ -4654,7 +4654,7 @@ ReturnCode_t DynamicData::insert_byte_value(
     }
     else
     {
-        logError(DYN_TYPES, "Error inserting data. The current kinds don't support this method");
+        EPROSIMA_LOG_ERROR(DYN_TYPES, "Error inserting data. The current kinds don't support this method");
         return ReturnCode_t::RETCODE_BAD_PARAMETER;
     }
 }
@@ -4674,7 +4674,7 @@ ReturnCode_t DynamicData::insert_bool_value(
     }
     else
     {
-        logError(DYN_TYPES, "Error inserting data. The current kinds don't support this method");
+        EPROSIMA_LOG_ERROR(DYN_TYPES, "Error inserting data. The current kinds don't support this method");
         return ReturnCode_t::RETCODE_BAD_PARAMETER;
     }
 }
@@ -4694,7 +4694,7 @@ ReturnCode_t DynamicData::insert_string_value(
     }
     else
     {
-        logError(DYN_TYPES, "Error inserting data. The current kinds don't support this method");
+        EPROSIMA_LOG_ERROR(DYN_TYPES, "Error inserting data. The current kinds don't support this method");
         return ReturnCode_t::RETCODE_BAD_PARAMETER;
     }
 }
@@ -4714,7 +4714,7 @@ ReturnCode_t DynamicData::insert_wstring_value(
     }
     else
     {
-        logError(DYN_TYPES, "Error inserting data. The current kinds don't support this method");
+        EPROSIMA_LOG_ERROR(DYN_TYPES, "Error inserting data. The current kinds don't support this method");
         return ReturnCode_t::RETCODE_BAD_PARAMETER;
     }
 }
@@ -4734,7 +4734,7 @@ ReturnCode_t DynamicData::insert_enum_value(
     }
     else
     {
-        logError(DYN_TYPES, "Error inserting data. The current kinds don't support this method");
+        EPROSIMA_LOG_ERROR(DYN_TYPES, "Error inserting data. The current kinds don't support this method");
         return ReturnCode_t::RETCODE_BAD_PARAMETER;
     }
 }
@@ -4759,13 +4759,13 @@ ReturnCode_t DynamicData::insert_complex_value(
         }
         else
         {
-            logError(DYN_TYPES, "Error inserting data. The container is full.");
+            EPROSIMA_LOG_ERROR(DYN_TYPES, "Error inserting data. The container is full.");
             return ReturnCode_t::RETCODE_BAD_PARAMETER;
         }
     }
     else
     {
-        logError(DYN_TYPES, "Error inserting data. The current kinds don't support this method");
+        EPROSIMA_LOG_ERROR(DYN_TYPES, "Error inserting data. The current kinds don't support this method");
         return ReturnCode_t::RETCODE_BAD_PARAMETER;
     }
 }
@@ -4790,13 +4790,13 @@ ReturnCode_t DynamicData::insert_complex_value(
         }
         else
         {
-            logError(DYN_TYPES, "Error inserting data. The container is full.");
+            EPROSIMA_LOG_ERROR(DYN_TYPES, "Error inserting data. The container is full.");
             return ReturnCode_t::RETCODE_BAD_PARAMETER;
         }
     }
     else
     {
-        logError(DYN_TYPES, "Error inserting data. The current kinds don't support this method");
+        EPROSIMA_LOG_ERROR(DYN_TYPES, "Error inserting data. The current kinds don't support this method");
         return ReturnCode_t::RETCODE_BAD_PARAMETER;
     }
 }
@@ -4821,13 +4821,13 @@ ReturnCode_t DynamicData::insert_complex_value(
         }
         else
         {
-            logError(DYN_TYPES, "Error inserting data. The container is full.");
+            EPROSIMA_LOG_ERROR(DYN_TYPES, "Error inserting data. The container is full.");
             return ReturnCode_t::RETCODE_BAD_PARAMETER;
         }
     }
     else
     {
-        logError(DYN_TYPES, "Error inserting data. The current kinds don't support this method");
+        EPROSIMA_LOG_ERROR(DYN_TYPES, "Error inserting data. The current kinds don't support this method");
         return ReturnCode_t::RETCODE_BAD_PARAMETER;
     }
 }
@@ -4854,13 +4854,13 @@ ReturnCode_t DynamicData::insert_sequence_data(
         }
         else
         {
-            logError(DYN_TYPES, "Error inserting data. The container is full.");
+            EPROSIMA_LOG_ERROR(DYN_TYPES, "Error inserting data. The container is full.");
             return ReturnCode_t::RETCODE_BAD_PARAMETER;
         }
     }
     else
     {
-        logError(DYN_TYPES, "Error inserting data. The kind " << get_kind() << " doesn't support this method");
+        EPROSIMA_LOG_ERROR(DYN_TYPES, "Error inserting data. The kind " << get_kind() << " doesn't support this method");
         return ReturnCode_t::RETCODE_BAD_PARAMETER;
     }
 }
@@ -4889,11 +4889,11 @@ ReturnCode_t DynamicData::remove_sequence_data(
             return ReturnCode_t::RETCODE_OK;
         }
 #endif // ifdef DYNAMIC_TYPES_CHECKING
-        logError(DYN_TYPES, "Error removing data. Member not found");
+        EPROSIMA_LOG_ERROR(DYN_TYPES, "Error removing data. Member not found");
         return ReturnCode_t::RETCODE_BAD_PARAMETER;
     }
 
-    logError(DYN_TYPES, "Error removing data. The current Kind " << get_kind()
+    EPROSIMA_LOG_ERROR(DYN_TYPES, "Error removing data. The current Kind " << get_kind()
                                                                  << " doesn't support this method");
 
     return ReturnCode_t::RETCODE_BAD_PARAMETER;
@@ -4913,7 +4913,7 @@ ReturnCode_t DynamicData::insert_map_data(
             {
                 if (it->second->key_element_ && it->second->equals(key))
                 {
-                    logError(DYN_TYPES, "Error inserting to map. The key already exists.");
+                    EPROSIMA_LOG_ERROR(DYN_TYPES, "Error inserting to map. The key already exists.");
                     return ReturnCode_t::RETCODE_BAD_PARAMETER;
                 }
             }
@@ -4931,7 +4931,7 @@ ReturnCode_t DynamicData::insert_map_data(
             {
                 if (((DynamicData*)it->second)->key_element_ && ((DynamicData*)it->second)->equals(key))
                 {
-                    logError(DYN_TYPES, "Error inserting to map. The key already exists.");
+                    EPROSIMA_LOG_ERROR(DYN_TYPES, "Error inserting to map. The key already exists.");
                     return ReturnCode_t::RETCODE_BAD_PARAMETER;
                 }
             }
@@ -4948,13 +4948,13 @@ ReturnCode_t DynamicData::insert_map_data(
         }
         else
         {
-            logError(DYN_TYPES, "Error inserting to map. The map is full");
+            EPROSIMA_LOG_ERROR(DYN_TYPES, "Error inserting to map. The map is full");
             return ReturnCode_t::RETCODE_ERROR;
         }
     }
     else
     {
-        logError(DYN_TYPES, "Error inserting to map. The current Kind " << get_kind()
+        EPROSIMA_LOG_ERROR(DYN_TYPES, "Error inserting to map. The current Kind " << get_kind()
                                                                         << " doesn't support this method");
         return ReturnCode_t::RETCODE_BAD_PARAMETER;
     }
@@ -4976,7 +4976,7 @@ ReturnCode_t DynamicData::insert_map_data(
             {
                 if (it->second->key_element_ && it->second->equals(key))
                 {
-                    logError(DYN_TYPES, "Error inserting to map. The key already exists.");
+                    EPROSIMA_LOG_ERROR(DYN_TYPES, "Error inserting to map. The key already exists.");
                     return ReturnCode_t::RETCODE_BAD_PARAMETER;
                 }
             }
@@ -4993,7 +4993,7 @@ ReturnCode_t DynamicData::insert_map_data(
             {
                 if (it->second == key)
                 {
-                    logError(DYN_TYPES, "Error inserting to map. The key already exists.");
+                    EPROSIMA_LOG_ERROR(DYN_TYPES, "Error inserting to map. The key already exists.");
                     return ReturnCode_t::RETCODE_BAD_PARAMETER;
                 }
             }
@@ -5009,13 +5009,13 @@ ReturnCode_t DynamicData::insert_map_data(
         }
         else
         {
-            logError(DYN_TYPES, "Error inserting to map. The map is full");
+            EPROSIMA_LOG_ERROR(DYN_TYPES, "Error inserting to map. The map is full");
             return ReturnCode_t::RETCODE_ERROR;
         }
     }
     else
     {
-        logError(DYN_TYPES, "Error inserting to map. The current Kind " << get_kind()
+        EPROSIMA_LOG_ERROR(DYN_TYPES, "Error inserting to map. The current Kind " << get_kind()
                                                                         << " doesn't support this method");
         return ReturnCode_t::RETCODE_BAD_PARAMETER;
     }
@@ -5037,7 +5037,7 @@ ReturnCode_t DynamicData::insert_map_data(
             {
                 if (it->second->key_element_ && it->second->equals(key))
                 {
-                    logError(DYN_TYPES, "Error inserting to map. The key already exists.");
+                    EPROSIMA_LOG_ERROR(DYN_TYPES, "Error inserting to map. The key already exists.");
                     return ReturnCode_t::RETCODE_BAD_PARAMETER;
                 }
             }
@@ -5055,7 +5055,7 @@ ReturnCode_t DynamicData::insert_map_data(
             {
                 if (it->second == key)
                 {
-                    logError(DYN_TYPES, "Error inserting to map. The key already exists.");
+                    EPROSIMA_LOG_ERROR(DYN_TYPES, "Error inserting to map. The key already exists.");
                     return ReturnCode_t::RETCODE_BAD_PARAMETER;
                 }
             }
@@ -5072,13 +5072,13 @@ ReturnCode_t DynamicData::insert_map_data(
         }
         else
         {
-            logError(DYN_TYPES, "Error inserting to map. The map is full");
+            EPROSIMA_LOG_ERROR(DYN_TYPES, "Error inserting to map. The map is full");
             return ReturnCode_t::RETCODE_ERROR;
         }
     }
     else
     {
-        logError(DYN_TYPES, "Error inserting to map. The current Kind " << get_kind()
+        EPROSIMA_LOG_ERROR(DYN_TYPES, "Error inserting to map. The current Kind " << get_kind()
                                                                         << " doesn't support this method");
         return ReturnCode_t::RETCODE_BAD_PARAMETER;
     }
@@ -5125,13 +5125,13 @@ ReturnCode_t DynamicData::remove_map_data(
 #endif // ifdef DYNAMIC_TYPES_CHECKING
         else
         {
-            logError(DYN_TYPES, "Error removing from map. Invalid input KeyId");
+            EPROSIMA_LOG_ERROR(DYN_TYPES, "Error removing from map. Invalid input KeyId");
             return ReturnCode_t::RETCODE_BAD_PARAMETER;
         }
     }
     else
     {
-        logError(DYN_TYPES, "Error removing from map. The current Kind " << get_kind()
+        EPROSIMA_LOG_ERROR(DYN_TYPES, "Error removing from map. The current Kind " << get_kind()
                                                                          << " doesn't support this method");
         return ReturnCode_t::RETCODE_ERROR;
     }
@@ -5157,7 +5157,7 @@ ReturnCode_t DynamicData::clear_data()
         return ReturnCode_t::RETCODE_OK;
     }
 
-    logError(DYN_TYPES, "Error clearing data. The current Kind " << get_kind()
+    EPROSIMA_LOG_ERROR(DYN_TYPES, "Error clearing data. The current Kind " << get_kind()
                                                                  << " doesn't support this method");
 
     return ReturnCode_t::RETCODE_BAD_PARAMETER;
@@ -5191,7 +5191,7 @@ ReturnCode_t DynamicData::get_complex_value(
     }
     else
     {
-        logError(DYN_TYPES, "Error settings complex value. The kind " << get_kind() << "doesn't support it");
+        EPROSIMA_LOG_ERROR(DYN_TYPES, "Error settings complex value. The kind " << get_kind() << "doesn't support it");
         return ReturnCode_t::RETCODE_BAD_PARAMETER;
     }
 }
@@ -5214,7 +5214,7 @@ ReturnCode_t DynamicData::set_complex_value(
             {
                 if (get_kind() == TK_MAP && it->second->key_element_)
                 {
-                    logError(DYN_TYPES, "Error setting complex Value. They given id is a Key value.");
+                    EPROSIMA_LOG_ERROR(DYN_TYPES, "Error setting complex Value. They given id is a Key value.");
                     return ReturnCode_t::RETCODE_BAD_PARAMETER;
                 }
                 else
@@ -5244,7 +5244,7 @@ ReturnCode_t DynamicData::set_complex_value(
             {
                 if (get_kind() == TK_MAP && ((DynamicData*)it->second)->key_element_)
                 {
-                    logError(DYN_TYPES, "Error setting complex Value. They given id is a Key value.");
+                    EPROSIMA_LOG_ERROR(DYN_TYPES, "Error setting complex Value. They given id is a Key value.");
                     return ReturnCode_t::RETCODE_BAD_PARAMETER;
                 }
                 else
@@ -5270,14 +5270,14 @@ ReturnCode_t DynamicData::set_complex_value(
         }
         else
         {
-            logError(DYN_TYPES, "Error setting complex Value. id out of bounds.");
+            EPROSIMA_LOG_ERROR(DYN_TYPES, "Error setting complex Value. id out of bounds.");
             return ReturnCode_t::RETCODE_BAD_PARAMETER;
         }
         return ReturnCode_t::RETCODE_OK;
     }
     else
     {
-        logError(DYN_TYPES, "Error settings complex value. The kind " << get_kind() << "doesn't support it");
+        EPROSIMA_LOG_ERROR(DYN_TYPES, "Error settings complex value. The kind " << get_kind() << "doesn't support it");
         return ReturnCode_t::RETCODE_BAD_PARAMETER;
     }
 }
@@ -5294,13 +5294,13 @@ ReturnCode_t DynamicData::get_union_label(
         }
         else
         {
-            logError(DYN_TYPES, "Error getting union label. There isn't any label selected");
+            EPROSIMA_LOG_ERROR(DYN_TYPES, "Error getting union label. There isn't any label selected");
             return ReturnCode_t::RETCODE_ERROR;
         }
     }
     else
     {
-        logError(DYN_TYPES, "Error getting union label. The kind " << get_kind() << "doesn't support it");
+        EPROSIMA_LOG_ERROR(DYN_TYPES, "Error getting union label. The kind " << get_kind() << "doesn't support it");
         return ReturnCode_t::RETCODE_BAD_PARAMETER;
     }
 }
@@ -5520,7 +5520,7 @@ bool DynamicData::deserialize(
                     break;
                 }
                 case 4: cdr >> uint64_value_; break;
-                default: logError(DYN_TYPES, "Cannot deserialize bitmask of size " << type_size);
+                default: EPROSIMA_LOG_ERROR(DYN_TYPES, "Cannot deserialize bitmask of size " << type_size);
             }
 #else
             auto it = values_.begin();
@@ -5530,7 +5530,7 @@ bool DynamicData::deserialize(
                 case 2: cdr >> *((uint16_t*)it->second); break;
                 case 3: cdr >> *((uint32_t*)it->second); break;
                 case 4: cdr >> *((uint64_t*)it->second); break;
-                default: logError(DYN_TYPES, "Cannot deserialize bitmask of size " << type_size);
+                default: EPROSIMA_LOG_ERROR(DYN_TYPES, "Cannot deserialize bitmask of size " << type_size);
             }
 #endif // ifdef DYNAMIC_TYPES_CHECKING
             break;
@@ -5588,7 +5588,7 @@ bool DynamicData::deserialize(
                 }
                 else
                 {
-                    logError(DYN_TYPES, "Missing MemberDescriptor " << i);
+                    EPROSIMA_LOG_ERROR(DYN_TYPES, "Missing MemberDescriptor " << i);
                 }
             }
 #else
@@ -5617,7 +5617,7 @@ bool DynamicData::deserialize(
                 }
                 else
                 {
-                    logError(DYN_TYPES, "Missing MemberDescriptor " << i);
+                    EPROSIMA_LOG_ERROR(DYN_TYPES, "Missing MemberDescriptor " << i);
                 }
             }
 #endif // ifdef DYNAMIC_TYPES_CHECKING
@@ -5980,7 +5980,7 @@ size_t DynamicData::getCdrSerializedSize(
                 }
                 else
                 {
-                    logError(DYN_TYPES, "Missing MemberDescriptor " << i);
+                    EPROSIMA_LOG_ERROR(DYN_TYPES, "Missing MemberDescriptor " << i);
                 }
             }
 
@@ -6007,7 +6007,7 @@ size_t DynamicData::getCdrSerializedSize(
                 }
                 else
                 {
-                    logError(DYN_TYPES, "Missing MemberDescriptor " << i);
+                    EPROSIMA_LOG_ERROR(DYN_TYPES, "Missing MemberDescriptor " << i);
                 }
             }
 #endif // ifdef DYNAMIC_TYPES_CHECKING
@@ -6412,7 +6412,7 @@ void DynamicData::serialize(
                 case 2: cdr << (uint16_t)uint64_value_; break;
                 case 3: cdr << (uint32_t)uint64_value_; break;
                 case 4: cdr << uint64_value_; break;
-                default: logError(DYN_TYPES, "Cannot serialize bitmask of size " << type_size);
+                default: EPROSIMA_LOG_ERROR(DYN_TYPES, "Cannot serialize bitmask of size " << type_size);
             }
 #else
             auto it = values_.begin();
@@ -6422,7 +6422,7 @@ void DynamicData::serialize(
                 case 2: cdr << *((uint16_t*)it->second); break;
                 case 3: cdr << *((uint32_t*)it->second); break;
                 case 4: cdr << *((uint64_t*)it->second); break;
-                default: logError(DYN_TYPES, "Cannot serialize bitmask of size " << type_size);
+                default: EPROSIMA_LOG_ERROR(DYN_TYPES, "Cannot serialize bitmask of size " << type_size);
             }
 #endif // ifdef DYNAMIC_TYPES_CHECKING
             break;
@@ -6479,7 +6479,7 @@ void DynamicData::serialize(
                 }
                 else
                 {
-                    logError(DYN_TYPES, "Missing MemberDescriptor " << idx);
+                    EPROSIMA_LOG_ERROR(DYN_TYPES, "Missing MemberDescriptor " << idx);
                 }
             }
 #else
@@ -6497,7 +6497,7 @@ void DynamicData::serialize(
                 }
                 else
                 {
-                    logError(DYN_TYPES, "Missing MemberDescriptor " << idx);
+                    EPROSIMA_LOG_ERROR(DYN_TYPES, "Missing MemberDescriptor " << idx);
                 }
             }
 #endif // ifdef DYNAMIC_TYPES_CHECKING
@@ -6879,7 +6879,7 @@ void DynamicData::serialize_empty_data(
                 case 2: cdr << static_cast<uint16_t>(0); break;
                 case 3: cdr << static_cast<uint32_t>(0); break;
                 case 4: cdr << static_cast<uint64_t>(0); break;
-                default: logError(DYN_TYPES, "Cannot deserialize bitmask of size " << type_size);
+                default: EPROSIMA_LOG_ERROR(DYN_TYPES, "Cannot deserialize bitmask of size " << type_size);
             }
             break;
         }

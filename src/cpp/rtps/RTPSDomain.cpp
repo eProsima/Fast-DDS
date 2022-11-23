@@ -109,7 +109,7 @@ RTPSParticipant* RTPSDomain::createParticipant(
             PParam.builtin.discovery_config.leaseDuration <=
             PParam.builtin.discovery_config.leaseDuration_announcementperiod)
     {
-        logError(RTPS_PARTICIPANT,
+        EPROSIMA_LOG_ERROR(RTPS_PARTICIPANT,
                 "RTPSParticipant Attributes: LeaseDuration should be >= leaseDuration announcement period");
         return nullptr;
     }
@@ -146,7 +146,7 @@ RTPSParticipant* RTPSDomain::createParticipant(
             ID = PParam.participantID;
             if (m_RTPSParticipantIDs.insert(ID).second == false)
             {
-                logError(RTPS_PARTICIPANT, "RTPSParticipant with the same ID already exists");
+                EPROSIMA_LOG_ERROR(RTPS_PARTICIPANT, "RTPSParticipant with the same ID already exists");
                 return nullptr;
             }
         }
@@ -154,12 +154,12 @@ RTPSParticipant* RTPSDomain::createParticipant(
 
     if (!PParam.defaultUnicastLocatorList.isValid())
     {
-        logError(RTPS_PARTICIPANT, "Default Unicast Locator List contains invalid Locator");
+        EPROSIMA_LOG_ERROR(RTPS_PARTICIPANT, "Default Unicast Locator List contains invalid Locator");
         return nullptr;
     }
     if (!PParam.defaultMulticastLocatorList.isValid())
     {
-        logError(RTPS_PARTICIPANT, "Default Multicast Locator List contains invalid Locator");
+        EPROSIMA_LOG_ERROR(RTPS_PARTICIPANT, "Default Multicast Locator List contains invalid Locator");
         return nullptr;
     }
 
@@ -196,7 +196,7 @@ RTPSParticipant* RTPSDomain::createParticipant(
     // Check implementation was correctly initialized
     if (!pimpl->is_initialized())
     {
-        logError(RTPS_PARTICIPANT, "Cannot create participant due to initialization error");
+        EPROSIMA_LOG_ERROR(RTPS_PARTICIPANT, "Cannot create participant due to initialization error");
         delete pimpl;
         return nullptr;
     }
@@ -213,11 +213,11 @@ RTPSParticipant* RTPSDomain::createParticipant(
         if (PParam.builtin.metatrafficMulticastLocatorList.empty() &&
                 PParam.builtin.metatrafficUnicastLocatorList.empty())
         {
-            logError(RTPS_PARTICIPANT, "Discovery Server requires to specify a listening address.");
+            EPROSIMA_LOG_ERROR(RTPS_PARTICIPANT, "Discovery Server requires to specify a listening address.");
         }
         else
         {
-            logError(RTPS_PARTICIPANT, "Discovery Server wasn't able to allocate the specified listening port.");
+            EPROSIMA_LOG_ERROR(RTPS_PARTICIPANT, "Discovery Server wasn't able to allocate the specified listening port.");
         }
 
         delete pimpl;
@@ -227,7 +227,7 @@ RTPSParticipant* RTPSDomain::createParticipant(
     // Check there is at least one transport registered.
     if (!pimpl->networkFactoryHasRegisteredTransports())
     {
-        logError(RTPS_PARTICIPANT, "Cannot create participant, because there is any transport");
+        EPROSIMA_LOG_ERROR(RTPS_PARTICIPANT, "Cannot create participant, because there is any transport");
         delete pimpl;
         return nullptr;
     }
@@ -273,7 +273,7 @@ bool RTPSDomain::removeRTPSParticipant(
             }
         }
     }
-    logError(RTPS_PARTICIPANT, "RTPSParticipant not valid or not recognized");
+    EPROSIMA_LOG_ERROR(RTPS_PARTICIPANT, "RTPSParticipant not valid or not recognized");
     return false;
 }
 
@@ -519,7 +519,7 @@ RTPSParticipant* RTPSDomain::clientServerEnvironmentCreationOverride(
     if (load_environment_server_info(server_list) && server_list.empty())
     {
         // it's not an error, the environment variable may not be set. Any issue with environment
-        // variable syntax is logError already
+        // variable syntax is EPROSIMA_LOG_ERROR already
         return nullptr;
     }
 
@@ -554,7 +554,7 @@ RTPSParticipant* RTPSDomain::clientServerEnvironmentCreationOverride(
     }
 
     // unable to create auto server-client default participants
-    logError(DOMAIN, "Auto default server-client setup. Unable to create the client.");
+    EPROSIMA_LOG_ERROR(DOMAIN, "Auto default server-client setup. Unable to create the client.");
     return nullptr;
 }
 

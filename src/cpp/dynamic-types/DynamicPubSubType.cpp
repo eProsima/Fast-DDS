@@ -69,7 +69,7 @@ ReturnCode_t DynamicPubSubType::SetDynamicType(
     }
     else
     {
-        logError(DYN_TYPES, "Error Setting the dynamic type. There is already a registered type");
+        EPROSIMA_LOG_ERROR(DYN_TYPES, "Error Setting the dynamic type. There is already a registered type");
         return ReturnCode_t::RETCODE_BAD_PARAMETER;
     }
 }
@@ -85,7 +85,7 @@ ReturnCode_t DynamicPubSubType::SetDynamicType(
     }
     else
     {
-        logError(DYN_TYPES, "Error Setting the dynamic type. There is already a registered type");
+        EPROSIMA_LOG_ERROR(DYN_TYPES, "Error Setting the dynamic type. There is already a registered type");
         return ReturnCode_t::RETCODE_BAD_PARAMETER;
     }
 }

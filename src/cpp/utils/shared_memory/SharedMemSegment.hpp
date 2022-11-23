@@ -365,7 +365,7 @@ public:
         }
         catch (const std::exception& e)
         {
-            logError(RTPS_TRANSPORT_SHM, "Failed to create segment " << uuid.to_string()
+            EPROSIMA_LOG_ERROR(RTPS_TRANSPORT_SHM, "Failed to create segment " << uuid.to_string()
                                                                      << ": " << e.what());
 
             throw;
@@ -415,4 +415,3 @@ using SharedFileSegment = SharedSegment<
 } // namespace eprosima
 
 #endif // _FASTDDS_SHAREDMEM_SEGMENT_H_
-

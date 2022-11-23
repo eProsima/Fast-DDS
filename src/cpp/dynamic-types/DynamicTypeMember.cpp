@@ -123,7 +123,7 @@ ReturnCode_t DynamicTypeMember::get_descriptor(MemberDescriptor* descriptor) con
     }
     else
     {
-        logError(DYN_TYPES, "Error getting MemberDescriptor, invalid input descriptor");
+        EPROSIMA_LOG_ERROR(DYN_TYPES, "Error getting MemberDescriptor, invalid input descriptor");
         return ReturnCode_t::RETCODE_BAD_PARAMETER;
     }
 }

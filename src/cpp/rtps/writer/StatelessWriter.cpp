@@ -531,7 +531,7 @@ bool StatelessWriter::set_fixed_locators(
     if (getAttributes().security_attributes().is_submessage_protected ||
             getAttributes().security_attributes().is_payload_protected)
     {
-        logError(RTPS_WRITER, "A secure besteffort writer cannot add a lonely locator");
+        EPROSIMA_LOG_ERROR(RTPS_WRITER, "A secure besteffort writer cannot add a lonely locator");
         return false;
     }
 #endif // if HAVE_SECURITY
@@ -702,7 +702,7 @@ DeliveryRetCode StatelessWriter::deliver_sample_nts(
                             }
                             else
                             {
-                                logError(RTPS_WRITER,
+                                EPROSIMA_LOG_ERROR(RTPS_WRITER,
                                         "Error sending fragment (" << cache_change->sequenceNumber << ", " << frag <<
                                         ")");
                                 ret_code = DeliveryRetCode::NOT_DELIVERED;
@@ -732,7 +732,7 @@ DeliveryRetCode StatelessWriter::deliver_sample_nts(
                         }
                         else
                         {
-                            logError(RTPS_WRITER, "Error sending change " << cache_change->sequenceNumber);
+                            EPROSIMA_LOG_ERROR(RTPS_WRITER, "Error sending change " << cache_change->sequenceNumber);
                             ret_code = DeliveryRetCode::NOT_DELIVERED;
                         }
                     }
@@ -781,7 +781,7 @@ DeliveryRetCode StatelessWriter::deliver_sample_nts(
                         }
                         else
                         {
-                            logError(RTPS_WRITER,
+                            EPROSIMA_LOG_ERROR(RTPS_WRITER,
                                     "Error sending fragment (" << cache_change->sequenceNumber << ", " << frag << ")");
                             ret_code = DeliveryRetCode::NOT_DELIVERED;
                         }
@@ -795,7 +795,7 @@ DeliveryRetCode StatelessWriter::deliver_sample_nts(
                     }
                     else
                     {
-                        logError(RTPS_WRITER, "Error sending change " << cache_change->sequenceNumber);
+                        EPROSIMA_LOG_ERROR(RTPS_WRITER, "Error sending change " << cache_change->sequenceNumber);
                         ret_code = DeliveryRetCode::NOT_DELIVERED;
                     }
                 }
@@ -809,7 +809,7 @@ DeliveryRetCode StatelessWriter::deliver_sample_nts(
     }
     catch (const RTPSMessageGroup::timeout&)
     {
-        logError(RTPS_WRITER, "Max blocking time reached");
+        EPROSIMA_LOG_ERROR(RTPS_WRITER, "Max blocking time reached");
         ret_code = DeliveryRetCode::NOT_DELIVERED;
     }
     catch (const RTPSMessageGroup::limit_exceeded&)

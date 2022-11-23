@@ -547,19 +547,19 @@ void AESGCMGMAC_KeyExchange::KeyMaterialCDRDeserialize(
         EVP_CIPHER_CTX* e_ctx = EVP_CIPHER_CTX_new();
         if(!EVP_EncryptInit(e_ctx, EVP_aes_128_gcm(), (const unsigned char*)key.data(), iv))
         {
-            logError(SECURITY_CRYPTO, "Unable to encrypt data. EVP_EncryptInit function returns an error");
+            EPROSIMA_LOG_ERROR(SECURITY_CRYPTO, "Unable to encrypt data. EVP_EncryptInit function returns an error");
             output.clear();
             return output;
         }
         if(!EVP_EncryptUpdate(e_ctx, &output[32], &actual_size, (const unsigned char*)plaintext.data(), static_cast<int>(plaintext.size())))
         {
-            logError(SECURITY_CRYPTO, "Unable to encrypt data. EVP_EncryptUpdate function returns an error");
+            EPROSIMA_LOG_ERROR(SECURITY_CRYPTO, "Unable to encrypt data. EVP_EncryptUpdate function returns an error");
             output.clear();
             return output;
         }
         if(!EVP_EncryptFinal(e_ctx, &output[32 + actual_size], &final_size))
         {
-            logError(SECURITY_CRYPTO, "Unable to encrypt data. EVP_EncryptFinal function returns an error");
+            EPROSIMA_LOG_ERROR(SECURITY_CRYPTO, "Unable to encrypt data. EVP_EncryptFinal function returns an error");
             output.clear();
             return output;
         }
@@ -590,20 +590,20 @@ void AESGCMGMAC_KeyExchange::KeyMaterialCDRDeserialize(
         EVP_CIPHER_CTX* d_ctx = EVP_CIPHER_CTX_new();
         if(!EVP_DecryptInit(d_ctx, EVP_aes_128_gcm(), (const unsigned char*)key.data(), iv))
         {
-            logError(SECURITY_CRYPTO, "Unable to decrypt data. EVP_DecryptInit function returns an error");
+            EPROSIMA_LOG_ERROR(SECURITY_CRYPTO, "Unable to decrypt data. EVP_DecryptInit function returns an error");
             plaintext.clear();
             return plaintext;
         }
         if(!EVP_DecryptUpdate(d_ctx, &plaintext[0], &actual_size, (const unsigned char*)crypto.data() + 32, static_cast<int>(crypto.size() - 32)))
         {
-            logError(SECURITY_CRYPTO, "Unable to decrypt data. EVP_DecryptUpdate function returns an error");
+            EPROSIMA_LOG_ERROR(SECURITY_CRYPTO, "Unable to decrypt data. EVP_DecryptUpdate function returns an error");
             plaintext.clear();
             return plaintext;
         }
         EVP_CIPHER_CTX_ctrl(d_ctx, EVP_CTRL_GCM_SET_TAG, 16, tag);
         if(!EVP_DecryptFinal(d_ctx, &plaintext[actual_size], &final_size))
         {
-            logError(SECURITY_CRYPTO, "Unable to decrypt data. EVP_DecryptFinal function returns an error");
+            EPROSIMA_LOG_ERROR(SECURITY_CRYPTO, "Unable to decrypt data. EVP_DecryptFinal function returns an error");
             plaintext.clear();
             return plaintext;
         }

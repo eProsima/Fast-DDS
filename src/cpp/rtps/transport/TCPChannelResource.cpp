@@ -130,7 +130,7 @@ void TCPChannelResource::add_logical_port(
     {
         if (port == 0)
         {
-            logError(RTPS, "Trying to open logical port 0.");
+            EPROSIMA_LOG_ERROR(RTPS, "Trying to open logical port 0.");
         } // But let's continue...
 
         if (std::find(pending_logical_output_ports_.begin(), pending_logical_output_ports_.end(), port)
@@ -230,7 +230,7 @@ void TCPChannelResource::prepare_send_check_logical_ports_req(
 
     if (candidatePorts.empty()) // No more available ports!
     {
-        logError(RTCP, "Cannot find an available logical port.");
+        EPROSIMA_LOG_ERROR(RTCP, "Cannot find an available logical port.");
     }
     else
     {

@@ -364,19 +364,19 @@ int main(
     // Check parameters validity
     if (use_security && test_agent == TestAgent::BOTH)
     {
-        logError(ThroughputTest, "Intra-process delivery NOT supported with security");
+        EPROSIMA_LOG_ERROR(ThroughputTest, "Intra-process delivery NOT supported with security");
         return 1;
     }
     else if ( Arg::EnablerValue::ON == data_sharing && use_security )
     {
-        logError(ThroughputTest, "Sharing sample APIs NOT supported with RTPS encryption");
+        EPROSIMA_LOG_ERROR(ThroughputTest, "Sharing sample APIs NOT supported with RTPS encryption");
         return 1;
     }
 #endif // if HAVE_SECURITY
 
     if ((Arg::EnablerValue::ON == data_sharing || data_loans) && dynamic_types)
     {
-        logError(ThroughputTest, "Sharing sample APIs NOT supported with dynamic types");
+        EPROSIMA_LOG_ERROR(ThroughputTest, "Sharing sample APIs NOT supported with dynamic types");
         return 1;
     }
 

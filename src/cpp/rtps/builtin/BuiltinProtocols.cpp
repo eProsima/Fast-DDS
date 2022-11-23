@@ -101,7 +101,7 @@ bool BuiltinProtocols::initBuiltinProtocols(
             break;
 
         case DiscoveryProtocol_t::EXTERNAL:
-            logError(RTPS_PDP, "Flag only present for debugging purposes");
+            EPROSIMA_LOG_ERROR(RTPS_PDP, "Flag only present for debugging purposes");
             return false;
 
         case DiscoveryProtocol_t::CLIENT:
@@ -123,13 +123,13 @@ bool BuiltinProtocols::initBuiltinProtocols(
             break;
 
         default:
-            logError(RTPS_PDP, "Unknown DiscoveryProtocol_t specified.");
+            EPROSIMA_LOG_ERROR(RTPS_PDP, "Unknown DiscoveryProtocol_t specified.");
             return false;
     }
 
     if (!mp_PDP->init(mp_participantImpl))
     {
-        logError(RTPS_PDP, "Participant discovery configuration failed");
+        EPROSIMA_LOG_ERROR(RTPS_PDP, "Participant discovery configuration failed");
         delete mp_PDP;
         mp_PDP = nullptr;
         return false;
@@ -318,7 +318,7 @@ void BuiltinProtocols::announceRTPSParticipantState()
     }
     else if (m_att.discovery_config.discoveryProtocol != DiscoveryProtocol_t::NONE)
     {
-        logError(RTPS_EDP, "Trying to use BuiltinProtocols interfaces before initBuiltinProtocols call");
+        EPROSIMA_LOG_ERROR(RTPS_EDP, "Trying to use BuiltinProtocols interfaces before initBuiltinProtocols call");
     }
 }
 
@@ -333,7 +333,7 @@ void BuiltinProtocols::stopRTPSParticipantAnnouncement()
     }
     else if (m_att.discovery_config.discoveryProtocol != DiscoveryProtocol_t::NONE)
     {
-        logError(RTPS_EDP, "Trying to use BuiltinProtocols interfaces before initBuiltinProtocols call");
+        EPROSIMA_LOG_ERROR(RTPS_EDP, "Trying to use BuiltinProtocols interfaces before initBuiltinProtocols call");
     }
 }
 
@@ -347,7 +347,7 @@ void BuiltinProtocols::resetRTPSParticipantAnnouncement()
     }
     else if (m_att.discovery_config.discoveryProtocol != DiscoveryProtocol_t::NONE)
     {
-        logError(RTPS_EDP, "Trying to use BuiltinProtocols interfaces before initBuiltinProtocols call");
+        EPROSIMA_LOG_ERROR(RTPS_EDP, "Trying to use BuiltinProtocols interfaces before initBuiltinProtocols call");
     }
 }
 

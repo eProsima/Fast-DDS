@@ -108,7 +108,7 @@ bool EDP::newLocalReaderProxyData(
             {
                 if (updating)
                 {
-                    logError(RTPS_EDP, "Adding already existent reader " << reader->getGuid().entityId << " in topic "
+                    EPROSIMA_LOG_ERROR(RTPS_EDP, "Adding already existent reader " << reader->getGuid().entityId << " in topic "
                                                                          << att.topicName);
                     return false;
                 }
@@ -253,7 +253,7 @@ bool EDP::newLocalWriterProxyData(
             {
                 if (updating)
                 {
-                    logError(RTPS_EDP, "Adding already existent writer " << writer->getGuid().entityId << " in topic "
+                    EPROSIMA_LOG_ERROR(RTPS_EDP, "Adding already existent writer " << writer->getGuid().entityId << " in topic "
                                                                          << att.topicName);
                     return false;
                 }
@@ -1077,7 +1077,7 @@ bool EDP::pairingReader(
                 if (!mp_RTPSParticipant->security_manager().discovered_writer(R->m_guid, (*pit)->m_guid,
                         *wdatait, R->getAttributes().security_attributes()))
                 {
-                    logError(RTPS_EDP, "Security manager returns an error for reader " << reader_guid);
+                    EPROSIMA_LOG_ERROR(RTPS_EDP, "Security manager returns an error for reader " << reader_guid);
                 }
 #else
                 if (R->matched_writer_add(*wdatait))
@@ -1168,7 +1168,7 @@ bool EDP::pairingWriter(
                 if (!mp_RTPSParticipant->security_manager().discovered_reader(W->getGuid(), (*pit)->m_guid,
                         *rdatait, W->getAttributes().security_attributes()))
                 {
-                    logError(RTPS_EDP, "Security manager returns an error for writer " << W->getGuid());
+                    EPROSIMA_LOG_ERROR(RTPS_EDP, "Security manager returns an error for writer " << W->getGuid());
                 }
 #else
                 if (W->matched_reader_add(*rdatait))
@@ -1255,7 +1255,7 @@ bool EDP::pairing_reader_proxy_with_any_local_writer(
                         if (!mp_RTPSParticipant->security_manager().discovered_reader(writerGUID, participant_guid,
                         *rdata, w.getAttributes().security_attributes()))
                         {
-                            logError(RTPS_EDP, "Security manager returns an error for writer " << writerGUID);
+                            EPROSIMA_LOG_ERROR(RTPS_EDP, "Security manager returns an error for writer " << writerGUID);
                         }
 #else
                         if (w.matched_reader_add(*rdata))
@@ -1345,7 +1345,7 @@ bool EDP::pairing_reader_proxy_with_local_writer(
                             if (!mp_RTPSParticipant->security_manager().discovered_reader(writerGUID,
                             remote_participant_guid, rdata, w.getAttributes().security_attributes()))
                             {
-                                logError(RTPS_EDP, "Security manager returns an error for writer " << writerGUID);
+                                EPROSIMA_LOG_ERROR(RTPS_EDP, "Security manager returns an error for writer " << writerGUID);
                             }
                         }
                         else
@@ -1461,7 +1461,7 @@ bool EDP::pairing_writer_proxy_with_any_local_reader(
                         if (!mp_RTPSParticipant->security_manager().discovered_writer(readerGUID, participant_guid,
                         *wdata, r.getAttributes().security_attributes()))
                         {
-                            logError(RTPS_EDP, "Security manager returns an error for reader " << readerGUID);
+                            EPROSIMA_LOG_ERROR(RTPS_EDP, "Security manager returns an error for reader " << readerGUID);
                         }
 #else
                         if (r.matched_writer_add(*wdata))
@@ -1552,7 +1552,7 @@ bool EDP::pairing_writer_proxy_with_local_reader(
                             if (!mp_RTPSParticipant->security_manager().discovered_writer(readerGUID,
                             remote_participant_guid, wdata, r.getAttributes().security_attributes()))
                             {
-                                logError(RTPS_EDP, "Security manager returns an error for reader " << readerGUID);
+                                EPROSIMA_LOG_ERROR(RTPS_EDP, "Security manager returns an error for reader " << readerGUID);
                             }
                         }
                         else

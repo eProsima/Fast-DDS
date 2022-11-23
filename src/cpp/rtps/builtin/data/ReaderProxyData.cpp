@@ -981,7 +981,7 @@ bool ReaderProxyData::readFromCDRMessage(
                         if (!fastdds::dds::QosPoliciesSerializer<DataSharingQosPolicy>::read_from_cdr_message(
                                     m_qos.data_sharing, msg, plength))
                         {
-                            logError(RTPS_READER_PROXY_DATA,
+                            EPROSIMA_LOG_ERROR(RTPS_READER_PROXY_DATA,
                                     "Received with error.");
                             return false;
                         }

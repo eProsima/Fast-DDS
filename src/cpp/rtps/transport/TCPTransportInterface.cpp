@@ -310,14 +310,14 @@ bool TCPTransportInterface::create_acceptor_socket(
     catch (asio::system_error const& e)
     {
         (void)e;
-        logError(RTCP_MSG_OUT, "TCPTransport Error binding at port: (" << IPLocator::getPhysicalPort(
+        EPROSIMA_LOG_ERROR(RTCP_MSG_OUT, "TCPTransport Error binding at port: (" << IPLocator::getPhysicalPort(
                     locator) << ")" << " with msg: " << e.what());
         return false;
     }
     catch (const asio::error_code& code)
     {
         (void)code;
-        logError(RTCP, "TCPTransport Error binding at port: (" << IPLocator::getPhysicalPort(
+        EPROSIMA_LOG_ERROR(RTCP, "TCPTransport Error binding at port: (" << IPLocator::getPhysicalPort(
                     locator) << ")" << " with code: " << code);
         return false;
     }
@@ -390,19 +390,19 @@ bool TCPTransportInterface::init(
 
     if (configuration()->maxMessageSize > s_maximumMessageSize)
     {
-        logError(RTCP_MSG_OUT, "maxMessageSize cannot be greater than 65000");
+        EPROSIMA_LOG_ERROR(RTCP_MSG_OUT, "maxMessageSize cannot be greater than 65000");
         return false;
     }
 
     if (configuration()->maxMessageSize > configuration()->sendBufferSize)
     {
-        logError(RTCP_MSG_OUT, "maxMessageSize cannot be greater than send_buffer_size");
+        EPROSIMA_LOG_ERROR(RTCP_MSG_OUT, "maxMessageSize cannot be greater than send_buffer_size");
         return false;
     }
 
     if (configuration()->maxMessageSize > configuration()->receiveBufferSize)
     {
-        logError(RTCP_MSG_OUT, "maxMessageSize cannot be greater than receive_buffer_size");
+        EPROSIMA_LOG_ERROR(RTCP_MSG_OUT, "maxMessageSize cannot be greater than receive_buffer_size");
         return false;
     }
 
@@ -876,7 +876,7 @@ bool TCPTransportInterface::read_body(
     }
     else if (*bytes_received != body_size)
     {
-        logError(RTCP, "Bad RTCP body size: " << *bytes_received << " (expected: " << body_size << ")");
+        EPROSIMA_LOG_ERROR(RTCP, "Bad RTCP body size: " << *bytes_received << " (expected: " << body_size << ")");
         return false;
     }
 
@@ -1005,7 +1005,7 @@ bool TCPTransportInterface::Receive(
 
             if (body_size > receive_buffer_capacity)
             {
-                logError(RTCP_MSG_IN, "Size of incoming TCP message is bigger than buffer capacity: "
+                EPROSIMA_LOG_ERROR(RTCP_MSG_IN, "Size of incoming TCP message is bigger than buffer capacity: "
                         << static_cast<uint32_t>(body_size) << " vs. " << receive_buffer_capacity << ". "
                         << "The full message will be dropped.");
                 success = false;
@@ -1084,7 +1084,7 @@ bool TCPTransportInterface::Receive(
         if ((code == asio::error::eof) || (code == asio::error::connection_reset))
         {
             // Close the channel
-            logError(RTCP_MSG_IN, "ASIO [RECEIVE]: " << code.message());
+            EPROSIMA_LOG_ERROR(RTCP_MSG_IN, "ASIO [RECEIVE]: " << code.message());
             //channel->ConnectionLost();
             close_tcp_socket(channel);
         }
@@ -1094,7 +1094,7 @@ bool TCPTransportInterface::Receive(
     {
         (void)error;
         // Close the channel
-        logError(RTCP_MSG_IN, "ASIO SYSTEM_ERROR [RECEIVE]: " << error.what());
+        EPROSIMA_LOG_ERROR(RTCP_MSG_IN, "ASIO SYSTEM_ERROR [RECEIVE]: " << error.what());
         //channel->ConnectionLost();
         close_tcp_socket(channel);
         success = false;
@@ -1552,7 +1552,7 @@ bool TCPTransportInterface::apply_tls_config()
             }
             catch (const std::exception& e)
             {
-                logError(TLS, "Error configuring TLS trusted CA certificate: " << e.what());
+                EPROSIMA_LOG_ERROR(TLS, "Error configuring TLS trusted CA certificate: " << e.what());
                 return false; // TODO check wether this should skip the rest of the configuration
             }
         }
@@ -1565,7 +1565,7 @@ bool TCPTransportInterface::apply_tls_config()
             }
             catch (const std::exception& e)
             {
-                logError(TLS, "Error configuring TLS certificate: " << e.what());
+                EPROSIMA_LOG_ERROR(TLS, "Error configuring TLS certificate: " << e.what());
                 return false; // TODO check wether this should skip the rest of the configuration
             }
         }
@@ -1578,7 +1578,7 @@ bool TCPTransportInterface::apply_tls_config()
             }
             catch (const std::exception& e)
             {
-                logError(TLS, "Error configuring TLS private key: " << e.what());
+                EPROSIMA_LOG_ERROR(TLS, "Error configuring TLS private key: " << e.what());
                 return false; // TODO check wether this should skip the rest of the configuration
             }
         }
@@ -1591,7 +1591,7 @@ bool TCPTransportInterface::apply_tls_config()
             }
             catch (const std::exception& e)
             {
-                logError(TLS, "Error configuring TLS dh params: " << e.what());
+                EPROSIMA_LOG_ERROR(TLS, "Error configuring TLS dh params: " << e.what());
                 return false; // TODO check wether this should skip the rest of the configuration
             }
         }

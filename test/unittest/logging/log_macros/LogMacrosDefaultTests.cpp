@@ -36,7 +36,7 @@ TEST_F(LogMacrosTests, default_macros_test)
     macro_print(NDEBUG);
     std::cout << std::endl;
 
-    logError(SampleCategory, "Sample error message");
+    EPROSIMA_LOG_ERROR(SampleCategory, "Sample error message");
     logWarning(SampleCategory, "Sample warning message");
     logInfo(SampleCategory, "Sample info message");
 

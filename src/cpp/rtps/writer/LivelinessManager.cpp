@@ -213,7 +213,7 @@ bool LivelinessManager::assert_liveliness(
     // Updates the timer owner
     if (!calculate_next())
     {
-        logError(RTPS_WRITER, "Error when restarting liveliness timer");
+        EPROSIMA_LOG_ERROR(RTPS_WRITER, "Error when restarting liveliness timer");
         return false;
     }
 
@@ -319,7 +319,7 @@ bool LivelinessManager::timer_expired()
 
     if (timer_owner_ == nullptr)
     {
-        logError(RTPS_WRITER, "Liveliness timer expired but there is no writer");
+        EPROSIMA_LOG_ERROR(RTPS_WRITER, "Liveliness timer expired but there is no writer");
         return false;
     }
     else

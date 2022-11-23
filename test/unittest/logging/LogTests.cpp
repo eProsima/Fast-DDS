@@ -90,7 +90,7 @@ protected:
 
 TEST_F(LogTests, asynchronous_logging)
 {
-    logError(SampleCategory, "Sample error message");
+    EPROSIMA_LOG_ERROR(SampleCategory, "Sample error message");
     logWarning(SampleCategory, "Sample warning message");
     logWarning(DifferentCategory, "Sample warning message in another category");
 
@@ -104,7 +104,7 @@ TEST_F(LogTests, reporting_options)
     Log::ReportFilenames(true);
     Log::ReportFunctions(false);
 
-    logError(Reporting, "Error with different reporting options");
+    EPROSIMA_LOG_ERROR(Reporting, "Error with different reporting options");
     auto consumedEntries = HELPER_WaitForEntries(1);
     ASSERT_EQ(1u, consumedEntries.size());
 
@@ -136,8 +136,8 @@ TEST_F(LogTests, multithreaded_logging)
 TEST_F(LogTests, regex_category_filtering)
 {
     Log::SetCategoryFilter(std::regex("(Good)"));
-    logError(GoodCategory, "This should be logged because my regex filter allows for it");
-    logError(BadCategory, "If you're seeing this, something went wrong");
+    EPROSIMA_LOG_ERROR(GoodCategory, "This should be logged because my regex filter allows for it");
+    EPROSIMA_LOG_ERROR(BadCategory, "If you're seeing this, something went wrong");
     logWarning(EvenMoreGoodCategory, "This should be logged too!");
     auto consumedEntries = HELPER_WaitForEntries(3);
     ASSERT_EQ(2u, consumedEntries.size());
@@ -150,15 +150,15 @@ TEST_F(LogTests, multi_criteria_filtering_with_regex)
     Log::SetErrorStringFilter(std::regex("(Good)"));
     Log::ReportFilenames(true); // For clarity, not necessary.
 
-    logError(GoodCategory, "This should be logged because it contains the word \"Good\" in the " \
+    EPROSIMA_LOG_ERROR(GoodCategory, "This should be logged because it contains the word \"Good\" in the " \
             "error string and the category, and is in the right filename");
-    logError(BadCategory,  "Despite the word \"Good\" being here, this shouldn't be logged");
-    logError(GoodCategory, "And neither should this.");
+    EPROSIMA_LOG_ERROR(BadCategory,  "Despite the word \"Good\" being here, this shouldn't be logged");
+    EPROSIMA_LOG_ERROR(GoodCategory, "And neither should this.");
     auto consumedEntries = HELPER_WaitForEntries(3);
     ASSERT_EQ(1u, consumedEntries.size());
 
     Log::SetFilenameFilter(std::regex("(we shouldn't find this ever)"));
-    logError(GoodCategory,  "Despite the word \"Good\" being here, this shouldn't be logged because " \
+    EPROSIMA_LOG_ERROR(GoodCategory,  "Despite the word \"Good\" being here, this shouldn't be logged because " \
             "the filename is all wrong");
 
     consumedEntries = HELPER_WaitForEntries(2);
@@ -168,14 +168,14 @@ TEST_F(LogTests, multi_criteria_filtering_with_regex)
 TEST_F(LogTests, multiple_verbosity_levels)
 {
     Log::SetVerbosity(Log::Warning);
-    logError(VerbosityChecks, "This should be logged");
+    EPROSIMA_LOG_ERROR(VerbosityChecks, "This should be logged");
     logWarning(VerbosityChecks, "This should be logged too!");
     logInfo(VerbosityChecks, "If you're seeing this, something went wrong");
     auto consumedEntries = HELPER_WaitForEntries(3);
     ASSERT_EQ(2u, consumedEntries.size());
 
     Log::SetVerbosity(Log::Error);
-    logError(VerbosityChecks, "This should be logged");
+    EPROSIMA_LOG_ERROR(VerbosityChecks, "This should be logged");
     logWarning(VerbosityChecks, "If you're seeing this, something went wrong");
     logInfo(VerbosityChecks, "If you're seeing this, something went wrong");
 
@@ -388,7 +388,7 @@ TEST_F(LogTests, stdout_consumer_stream)
     streambuf* stream_buffer_err = std::cerr.rdbuf(out_stream_err.rdbuf());
 
     // Log messages on all levels and wait until they are all consumed
-    logError(stdout_consumer_stream, "Error message");
+    EPROSIMA_LOG_ERROR(stdout_consumer_stream, "Error message");
     logWarning(stdout_consumer_stream, "Warning message");
     logInfo(stdout_consumer_stream, "Info message");
     Log::Flush();
@@ -425,9 +425,9 @@ TEST_F(LogTests, stdout_consumer_stream)
     std::string::difference_type lines_err = std::count(out_string_err.begin(), out_string_err.end(), '\n');
 
     // If CMAKE_BUILD_TYPE is Debug, the INTERNAL_DEBUG flag was set, and the logInfo messages were not deactivated,
-    // then there should be 3 messages in the out buffer, one for the logError, one for the logWarning, and another one
+    // then there should be 3 messages in the out buffer, one for the EPROSIMA_LOG_ERROR, one for the logWarning, and another one
     // for the logInfo.
-    // Else, there should only be 2 messagea in the out buffer, corresponding to logError and logWarning.
+    // Else, there should only be 2 messagea in the out buffer, corresponding to EPROSIMA_LOG_ERROR and logWarning.
 #if !HAVE_LOG_NO_INFO
     ASSERT_EQ(3, lines_out);
 #else
@@ -471,7 +471,7 @@ TEST_F(LogTests, stdouterr_consumer_stream)
     streambuf* stream_buffer_out = std::cout.rdbuf(out_stream_out.rdbuf());
 
     // Log messages on all levels and wait until they are all consumed
-    logError(stdouterr_consumer_stream, "Error message");
+    EPROSIMA_LOG_ERROR(stdouterr_consumer_stream, "Error message");
     logWarning(stdouterr_consumer_stream, "Warning message");
     logInfo(stdouterr_consumer_stream, "Info message");
     Log::Flush();
@@ -512,7 +512,7 @@ TEST_F(LogTests, stdouterr_consumer_stream)
     lines_err = std::count(out_string_err.begin(), out_string_err.end(), '\n');
     lines_out = std::count(out_string_out.begin(), out_string_out.end(), '\n');
 
-    // Only the logError message should be in the error buffer, since stderr_threshold was set to Log::Kind::Error.
+    // Only the EPROSIMA_LOG_ERROR message should be in the error buffer, since stderr_threshold was set to Log::Kind::Error.
     ASSERT_EQ(1, lines_err);
     std::cout << "Number of messages in the error buffer is correct: " << lines_err << std::endl;
 
@@ -606,7 +606,7 @@ TEST_F(LogTests, flush_error)
         std::unique_ptr<LogConsumerMock>(new LogConsumerMock(logs_consumed)));
 
     // Raise a log message
-    logError(TEST_FLUSH, "Error message");
+    EPROSIMA_LOG_ERROR(TEST_FLUSH, "Error message");
 
     // Flush the log
     Log::Flush();

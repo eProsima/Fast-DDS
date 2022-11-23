@@ -85,14 +85,14 @@ XMLP_ret XMLEndpointParser::loadXMLFile(
 
     if (tinyxml2::XML_SUCCESS != eResult)
     {
-        logError(RTPS_EDP, filename << " bad file");
+        EPROSIMA_LOG_ERROR(RTPS_EDP, filename << " bad file");
         return XMLP_ret::XML_ERROR;
     }
 
     tinyxml2::XMLNode* root = doc.FirstChildElement(STATICDISCOVERY);
     if (!root)
     {
-        logError(RTPS_EDP, filename << " XML has errors");
+        EPROSIMA_LOG_ERROR(RTPS_EDP, filename << " XML has errors");
         return XMLP_ret::XML_ERROR;
     }
 
@@ -122,7 +122,7 @@ XMLP_ret XMLEndpointParser::loadXMLNode(
     tinyxml2::XMLNode* root = doc.FirstChildElement(STATICDISCOVERY);
     if (!root)
     {
-        logError(RTPS_EDP, "XML node has errors");
+        EPROSIMA_LOG_ERROR(RTPS_EDP, "XML node has errors");
         return XMLP_ret::XML_ERROR;
     }
 
@@ -164,19 +164,19 @@ void XMLEndpointParser::loadXMLParticipantEndpoint(
         {
             if (loadXMLReaderEndpoint(element, pdata) != XMLP_ret::XML_OK)
             {
-                logError(RTPS_EDP, "Reader Endpoint has error, ignoring");
+                EPROSIMA_LOG_ERROR(RTPS_EDP, "Reader Endpoint has error, ignoring");
             }
         }
         else if (key == WRITER)
         {
             if (loadXMLWriterEndpoint(element, pdata) != XMLP_ret::XML_OK)
             {
-                logError(RTPS_EDP, "Writer Endpoint has error, ignoring");
+                EPROSIMA_LOG_ERROR(RTPS_EDP, "Writer Endpoint has error, ignoring");
             }
         }
         else
         {
-            logError(RTPS_EDP, "Unknown XMK tag: " << key);
+            EPROSIMA_LOG_ERROR(RTPS_EDP, "Unknown XMK tag: " << key);
         }
 
         element = element->NextSiblingElement();
@@ -239,7 +239,7 @@ XMLP_ret XMLEndpointParser::loadXMLReaderEndpoint(
             int16_t id = static_cast<int16_t>(std::strtol(element->GetText(), nullptr, 10));
             if (id <= 0 || m_endpointIds.insert(id).second == false)
             {
-                logError(RTPS_EDP, "Repeated or negative ID in XML file");
+                EPROSIMA_LOG_ERROR(RTPS_EDP, "Repeated or negative ID in XML file");
                 delete(rdata);
                 return XMLP_ret::XML_ERROR;
             }
@@ -250,7 +250,7 @@ XMLP_ret XMLEndpointParser::loadXMLReaderEndpoint(
             int32_t id = std::strtol(element->GetText(), nullptr, 10);
             if (id <= 0 || m_entityIds.insert(id).second == false)
             {
-                logError(RTPS_EDP, "Repeated or negative entityId in XML file");
+                EPROSIMA_LOG_ERROR(RTPS_EDP, "Repeated or negative entityId in XML file");
                 delete(rdata);
                 return XMLP_ret::XML_ERROR;
             }
@@ -272,7 +272,7 @@ XMLP_ret XMLEndpointParser::loadXMLReaderEndpoint(
             }
             else
             {
-                logError(RTPS_EDP, "Bad XML file, endpoint of expectsInlineQos: " << auxString << " is not valid");
+                EPROSIMA_LOG_ERROR(RTPS_EDP, "Bad XML file, endpoint of expectsInlineQos: " << auxString << " is not valid");
                 delete(rdata);
                 return XMLP_ret::XML_ERROR;
             }
@@ -298,13 +298,13 @@ XMLP_ret XMLEndpointParser::loadXMLReaderEndpoint(
             }
             else
             {
-                logError(RTPS_EDP, "Bad XML file, topic of kind: " << auxString << " is not valid");
+                EPROSIMA_LOG_ERROR(RTPS_EDP, "Bad XML file, topic of kind: " << auxString << " is not valid");
                 delete(rdata);
                 return XMLP_ret::XML_ERROR;
             }
             if (rdata->topicName() == EPROSIMA_UNKNOWN_STRING || rdata->typeName() == EPROSIMA_UNKNOWN_STRING)
             {
-                logError(RTPS_EDP,
+                EPROSIMA_LOG_ERROR(RTPS_EDP,
                         "Bad XML file, topic: " << rdata->topicName() << " or typeName: " << rdata->typeName() <<
                         " undefined");
                 delete(rdata);
@@ -334,7 +334,7 @@ XMLP_ret XMLEndpointParser::loadXMLReaderEndpoint(
             }
             else
             {
-                logError(RTPS_EDP, "Bad XML file, topic of kind: " << auxString << " is not valid");
+                EPROSIMA_LOG_ERROR(RTPS_EDP, "Bad XML file, topic of kind: " << auxString << " is not valid");
                 delete(rdata);
                 return XMLP_ret::XML_ERROR;
             }
@@ -352,7 +352,7 @@ XMLP_ret XMLEndpointParser::loadXMLReaderEndpoint(
             }
             else
             {
-                logError(RTPS_EDP, "Bad XML file, endpoint of stateKind: " << auxString << " is not valid");
+                EPROSIMA_LOG_ERROR(RTPS_EDP, "Bad XML file, endpoint of stateKind: " << auxString << " is not valid");
                 delete(rdata);
                 return XMLP_ret::XML_ERROR;
             }
@@ -386,7 +386,7 @@ XMLP_ret XMLEndpointParser::loadXMLReaderEndpoint(
             }
             else
             {
-                logError(RTPS_EDP, "Bad XML file, durability of kind: " << auxstring << " is not valid");
+                EPROSIMA_LOG_ERROR(RTPS_EDP, "Bad XML file, durability of kind: " << auxstring << " is not valid");
                 delete(rdata);
                 return XMLP_ret::XML_ERROR;
             }
@@ -405,7 +405,7 @@ XMLP_ret XMLEndpointParser::loadXMLReaderEndpoint(
             }
             else
             {
-                logError(RTPS_EDP, "Bad XML file, ownership of kind: " << auxstring << " is not valid");
+                EPROSIMA_LOG_ERROR(RTPS_EDP, "Bad XML file, ownership of kind: " << auxstring << " is not valid");
                 delete(rdata);
                 return XMLP_ret::XML_ERROR;
             }
@@ -432,7 +432,7 @@ XMLP_ret XMLEndpointParser::loadXMLReaderEndpoint(
             }
             else
             {
-                logError(RTPS_EDP, "Bad XML file, liveliness of kind: " << auxstring << " is not valid");
+                EPROSIMA_LOG_ERROR(RTPS_EDP, "Bad XML file, liveliness of kind: " << auxstring << " is not valid");
                 delete(rdata);
                 return XMLP_ret::XML_ERROR;
             }
@@ -472,7 +472,7 @@ XMLP_ret XMLEndpointParser::loadXMLReaderEndpoint(
 
     if (rdata->userDefinedId() == 0)
     {
-        logError(RTPS_EDP, "Reader XML endpoint with NO ID defined");
+        EPROSIMA_LOG_ERROR(RTPS_EDP, "Reader XML endpoint with NO ID defined");
         delete(rdata);
         return XMLP_ret::XML_ERROR;
     }
@@ -543,7 +543,7 @@ XMLP_ret XMLEndpointParser::loadXMLWriterEndpoint(
             int16_t id = static_cast<int16_t>(std::strtol(element->GetText(), nullptr, 10));
             if (id <= 0 || m_endpointIds.insert(id).second == false)
             {
-                logError(RTPS_EDP, "Repeated or negative ID in XML file");
+                EPROSIMA_LOG_ERROR(RTPS_EDP, "Repeated or negative ID in XML file");
                 delete(wdata);
                 return XMLP_ret::XML_ERROR;
             }
@@ -554,7 +554,7 @@ XMLP_ret XMLEndpointParser::loadXMLWriterEndpoint(
             int32_t id = std::strtol(element->GetText(), nullptr, 10);
             if (id <= 0 || m_entityIds.insert(id).second == false)
             {
-                logError(RTPS_EDP, "Repeated or negative entityId in XML file");
+                EPROSIMA_LOG_ERROR(RTPS_EDP, "Repeated or negative entityId in XML file");
                 delete(wdata);
                 return XMLP_ret::XML_ERROR;
             }
@@ -587,13 +587,13 @@ XMLP_ret XMLEndpointParser::loadXMLWriterEndpoint(
             }
             else
             {
-                logError(RTPS_EDP, "Bad XML file, topic of kind: " << auxString << " is not valid");
+                EPROSIMA_LOG_ERROR(RTPS_EDP, "Bad XML file, topic of kind: " << auxString << " is not valid");
                 delete(wdata);
                 return XMLP_ret::XML_ERROR;
             }
             if (wdata->topicName() == EPROSIMA_UNKNOWN_STRING || wdata->typeName() == EPROSIMA_UNKNOWN_STRING)
             {
-                logError(RTPS_EDP,
+                EPROSIMA_LOG_ERROR(RTPS_EDP,
                         "Bad XML file, topic: " << wdata->topicName() << " or typeName: " << wdata->typeName() <<
                         " undefined");
                 delete(wdata);
@@ -623,7 +623,7 @@ XMLP_ret XMLEndpointParser::loadXMLWriterEndpoint(
             }
             else
             {
-                logError(RTPS_EDP, "Bad XML file, topic of kind: " << auxString << " is not valid");
+                EPROSIMA_LOG_ERROR(RTPS_EDP, "Bad XML file, topic of kind: " << auxString << " is not valid");
                 delete(wdata);
                 return XMLP_ret::XML_ERROR;
             }
@@ -641,7 +641,7 @@ XMLP_ret XMLEndpointParser::loadXMLWriterEndpoint(
             }
             else
             {
-                logError(RTPS_EDP, "Bad XML file, endpoint of stateKind: " << auxString << " is not valid");
+                EPROSIMA_LOG_ERROR(RTPS_EDP, "Bad XML file, endpoint of stateKind: " << auxString << " is not valid");
                 delete(wdata);
                 return XMLP_ret::XML_ERROR;
             }
@@ -675,7 +675,7 @@ XMLP_ret XMLEndpointParser::loadXMLWriterEndpoint(
             }
             else
             {
-                logError(RTPS_EDP, "Bad XML file, durability of kind: " << auxstring << " is not valid");
+                EPROSIMA_LOG_ERROR(RTPS_EDP, "Bad XML file, durability of kind: " << auxstring << " is not valid");
                 delete(wdata);
                 return XMLP_ret::XML_ERROR;
             }
@@ -694,7 +694,7 @@ XMLP_ret XMLEndpointParser::loadXMLWriterEndpoint(
             }
             else
             {
-                logError(RTPS_EDP, "Bad XML file, ownership of kind: " << auxstring << " is not valid");
+                EPROSIMA_LOG_ERROR(RTPS_EDP, "Bad XML file, ownership of kind: " << auxstring << " is not valid");
                 delete(wdata);
                 return XMLP_ret::XML_ERROR;
             }
@@ -724,7 +724,7 @@ XMLP_ret XMLEndpointParser::loadXMLWriterEndpoint(
             }
             else
             {
-                logError(RTPS_EDP, "Bad XML file, liveliness of kind: " << auxstring << " is not valid");
+                EPROSIMA_LOG_ERROR(RTPS_EDP, "Bad XML file, liveliness of kind: " << auxstring << " is not valid");
                 delete(wdata);
                 return XMLP_ret::XML_ERROR;
             }
@@ -764,7 +764,7 @@ XMLP_ret XMLEndpointParser::loadXMLWriterEndpoint(
 
     if (wdata->userDefinedId() == 0)
     {
-        logError(RTPS_EDP, "Writer XML endpoint with NO ID defined");
+        EPROSIMA_LOG_ERROR(RTPS_EDP, "Writer XML endpoint with NO ID defined");
         delete(wdata);
         return XMLP_ret::XML_ERROR;
     }

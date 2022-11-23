@@ -500,7 +500,7 @@ void PDP::announceParticipantState(
                     }
                     else
                     {
-                        logError(RTPS_PDP, "Cannot serialize ParticipantProxyData.");
+                        EPROSIMA_LOG_ERROR(RTPS_PDP, "Cannot serialize ParticipantProxyData.");
                     }
                 }
             }
@@ -543,7 +543,7 @@ void PDP::announceParticipantState(
                 }
                 else
                 {
-                    logError(RTPS_PDP, "Cannot serialize ParticipantProxyData.");
+                    EPROSIMA_LOG_ERROR(RTPS_PDP, "Cannot serialize ParticipantProxyData.");
                 }
             }
         }

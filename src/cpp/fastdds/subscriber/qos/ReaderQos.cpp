@@ -147,12 +147,12 @@ bool ReaderQos::checkQos() const
 {
     if (m_durability.kind == PERSISTENT_DURABILITY_QOS)
     {
-        logError(RTPS_QOS_CHECK, "PERSISTENT Durability not supported");
+        EPROSIMA_LOG_ERROR(RTPS_QOS_CHECK, "PERSISTENT Durability not supported");
         return false;
     }
     if (m_destinationOrder.kind == BY_SOURCE_TIMESTAMP_DESTINATIONORDER_QOS)
     {
-        logError(RTPS_QOS_CHECK, "BY SOURCE TIMESTAMP DestinationOrder not supported");
+        EPROSIMA_LOG_ERROR(RTPS_QOS_CHECK, "BY SOURCE TIMESTAMP DestinationOrder not supported");
         return false;
     }
 

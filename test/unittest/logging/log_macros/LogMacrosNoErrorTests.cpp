@@ -37,7 +37,7 @@
 /* Check error is not consumed */
 TEST_F(LogMacrosTests, no_error)
 {
-    logError(SampleCategory, "Sample error message");
+    EPROSIMA_LOG_ERROR(SampleCategory, "Sample error message");
     logWarning(SampleCategory, "Sample warning message");
     logInfo(SampleCategory, "Sample info message");
 

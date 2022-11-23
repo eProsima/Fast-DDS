@@ -365,7 +365,7 @@ bool TypeLookupManager::create_endpoints()
         }
         else
         {
-            logError(TYPELOOKUP_SERVICE, "Typelookup request writer creation failed.");
+            EPROSIMA_LOG_ERROR(TYPELOOKUP_SERVICE, "Typelookup request writer creation failed.");
             delete builtin_request_writer_history_;
             builtin_request_writer_history_ = nullptr;
             return false;
@@ -391,7 +391,7 @@ bool TypeLookupManager::create_endpoints()
         }
         else
         {
-            logError(TYPELOOKUP_SERVICE, "Typelookup reply writer creation failed.");
+            EPROSIMA_LOG_ERROR(TYPELOOKUP_SERVICE, "Typelookup reply writer creation failed.");
             delete builtin_reply_writer_history_;
             builtin_reply_writer_history_ = nullptr;
             return false;
@@ -430,7 +430,7 @@ bool TypeLookupManager::create_endpoints()
         }
         else
         {
-            logError(TYPELOOKUP_SERVICE, "Typelookup request reader creation failed.");
+            EPROSIMA_LOG_ERROR(TYPELOOKUP_SERVICE, "Typelookup request reader creation failed.");
             delete builtin_request_reader_history_;
             builtin_request_reader_history_ = nullptr;
             delete request_listener_;
@@ -459,7 +459,7 @@ bool TypeLookupManager::create_endpoints()
         }
         else
         {
-            logError(TYPELOOKUP_SERVICE, "Typelookup reply reader creation failed.");
+            EPROSIMA_LOG_ERROR(TYPELOOKUP_SERVICE, "Typelookup reply reader creation failed.");
             delete builtin_reply_reader_history_;
             builtin_reply_reader_history_ = nullptr;
             delete reply_listener_;

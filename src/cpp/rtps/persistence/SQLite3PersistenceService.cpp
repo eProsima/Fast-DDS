@@ -90,7 +90,7 @@ static int upgrade(
     }
 
     // unsupported upgrade path
-    logError(RTPS_PERSISTENCE, "Unsupported database upgrade from version " << from << " to version " << to);
+    EPROSIMA_LOG_ERROR(RTPS_PERSISTENCE, "Unsupported database upgrade from version " << from << " to version " << to);
     return SQLITE_ERROR;
 }
 
@@ -120,7 +120,7 @@ static sqlite3* open_or_create_database(
         rc = sqlite3_open_v2(filename, &db, flags, 0);
         if (rc != SQLITE_OK)
         {
-            logError(RTPS_PERSISTENCE, "Unable to create persistence database " << filename);
+            EPROSIMA_LOG_ERROR(RTPS_PERSISTENCE, "Unable to create persistence database " << filename);
             sqlite3_close(db);
             return NULL;
         }
@@ -131,7 +131,7 @@ static sqlite3* open_or_create_database(
         int db_version = database_version(db);
         if (db_version == 0)
         {
-            logError(RTPS_PERSISTENCE, "Error retrieving version on database " << filename);
+            EPROSIMA_LOG_ERROR(RTPS_PERSISTENCE, "Error retrieving version on database " << filename);
             sqlite3_close(db);
             return NULL;
         }
@@ -148,7 +148,7 @@ static sqlite3* open_or_create_database(
             }
             else
             {
-                logError(RTPS_PERSISTENCE, "Old schema version " << db_version << " on database " << filename
+                EPROSIMA_LOG_ERROR(RTPS_PERSISTENCE, "Old schema version " << db_version << " on database " << filename
                                                                  << ". Set property dds.persistence.update_schema to force automatic schema upgrade");
                 sqlite3_close(db);
                 return NULL;
@@ -242,7 +242,7 @@ SQLite3PersistenceService::~SQLite3PersistenceService()
     int res = sqlite3_close(db_);
     if (res != SQLITE_OK) // (0) SQLITE_OK
     {
-        logError(RTPS_PERSISTENCE, "Database could not be closed. sqlite3_close code: " << res);
+        EPROSIMA_LOG_ERROR(RTPS_PERSISTENCE, "Database could not be closed. sqlite3_close code: " << res);
     }
     db_ = NULL;
 }

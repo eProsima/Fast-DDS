@@ -368,7 +368,7 @@ public:
             }
             catch (const std::exception& e)
             {
-                logError(RTPS_TRANSPORT_SHM, "Failed to create segment " << segment_name_
+                EPROSIMA_LOG_ERROR(RTPS_TRANSPORT_SHM, "Failed to create segment " << segment_name_
                                                                          << ": " << e.what());
 
                 throw;

@@ -63,7 +63,7 @@ public:
             }
             catch (const std::exception& e)
             {
-                logError(RTPS_TRANSPORT_SHM, "Failed to open/create interprocess mutex for packet_file_log: "
+                EPROSIMA_LOG_ERROR(RTPS_TRANSPORT_SHM, "Failed to open/create interprocess mutex for packet_file_log: "
                         << filename << " named: " << mutex_name << " with err: " << e.what());
 
                 fclose(f_);
@@ -72,7 +72,7 @@ public:
         }
         else
         {
-            logError(RTPS_TRANSPORT_SHM, "Failed to open packet_file_log: " << filename);
+            EPROSIMA_LOG_ERROR(RTPS_TRANSPORT_SHM, "Failed to open packet_file_log: " << filename);
         }
     }
 
@@ -153,7 +153,7 @@ public:
         }
         catch (const std::exception&)
         {
-            logError(RTPS_TRANSPORT_SHM, "Failed to lock interprocess mutex packet_file_log");
+            EPROSIMA_LOG_ERROR(RTPS_TRANSPORT_SHM, "Failed to lock interprocess mutex packet_file_log");
             return;
         }
     }

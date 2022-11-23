@@ -154,19 +154,19 @@ bool UDPTransportInterface::init(
 
     if (configuration()->maxMessageSize > s_maximumMessageSize)
     {
-        logError(RTPS_MSG_OUT, "maxMessageSize cannot be greater than 65000");
+        EPROSIMA_LOG_ERROR(RTPS_MSG_OUT, "maxMessageSize cannot be greater than 65000");
         return false;
     }
 
     if (configuration()->maxMessageSize > configuration()->sendBufferSize)
     {
-        logError(RTPS_MSG_OUT, "maxMessageSize cannot be greater than send_buffer_size");
+        EPROSIMA_LOG_ERROR(RTPS_MSG_OUT, "maxMessageSize cannot be greater than send_buffer_size");
         return false;
     }
 
     if (configuration()->maxMessageSize > configuration()->receiveBufferSize)
     {
-        logError(RTPS_MSG_OUT, "maxMessageSize cannot be greater than receive_buffer_size");
+        EPROSIMA_LOG_ERROR(RTPS_MSG_OUT, "maxMessageSize cannot be greater than receive_buffer_size");
         return false;
     }
 
@@ -356,7 +356,7 @@ bool UDPTransportInterface::OpenOutputChannel(
     {
         (void)e;
         /* TODO Que hacer?
-           logError(RTPS_MSG_OUT, "UDPTransport Error binding at port: (" << IPLocator::getPhysicalPort(locator) << ")"
+           EPROSIMA_LOG_ERROR(RTPS_MSG_OUT, "UDPTransport Error binding at port: (" << IPLocator::getPhysicalPort(locator) << ")"
             << " with msg: " << e.what());
            for (auto& socket : mOutputSockets)
            {

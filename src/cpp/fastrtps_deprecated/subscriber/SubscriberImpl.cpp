@@ -305,7 +305,7 @@ bool SubscriberImpl::onNewCacheChangeAdded(
                     change_in->instanceHandle,
                     steady_clock::now() + duration_cast<system_clock::duration>(deadline_duration_us_)))
         {
-            logError(SUBSCRIBER, "Could not set next deadline in the history");
+            EPROSIMA_LOG_ERROR(SUBSCRIBER, "Could not set next deadline in the history");
         }
         else if (timer_owner_ == change_in->instanceHandle || timer_owner_ == InstanceHandle_t())
         {
@@ -348,7 +348,7 @@ bool SubscriberImpl::onNewCacheChangeAdded(
     }
     else
     {
-        logError(SUBSCRIBER, "A change was added to history that could not be retrieved");
+        EPROSIMA_LOG_ERROR(SUBSCRIBER, "A change was added to history that could not be retrieved");
     }
 
     auto interval = source_timestamp - now + duration_cast<nanoseconds>(lifespan_duration_us_);
@@ -385,7 +385,7 @@ bool SubscriberImpl::deadline_timer_reschedule()
     steady_clock::time_point next_deadline_us;
     if (!m_history.get_next_deadline(timer_owner_, next_deadline_us))
     {
-        logError(SUBSCRIBER, "Could not get the next deadline from the history");
+        EPROSIMA_LOG_ERROR(SUBSCRIBER, "Could not get the next deadline from the history");
         return false;
     }
     auto interval_ms = duration_cast<milliseconds>(next_deadline_us - steady_clock::now());
@@ -409,7 +409,7 @@ bool SubscriberImpl::deadline_missed()
                 timer_owner_,
                 steady_clock::now() + duration_cast<system_clock::duration>(deadline_duration_us_)))
     {
-        logError(SUBSCRIBER, "Could not set next deadline in the history");
+        EPROSIMA_LOG_ERROR(SUBSCRIBER, "Could not set next deadline in the history");
         return false;
     }
     return deadline_timer_reschedule();
