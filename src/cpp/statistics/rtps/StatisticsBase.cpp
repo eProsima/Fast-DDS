@@ -329,6 +329,13 @@ bool StatisticsParticipantImpl::remove_statistics_listener(
            && ((old_mask & mask) == mask); // return false if there were unregistered entities
 }
 
+void StatisticsParticipantImpl::set_enabled_statistics_writers_mask(
+        uint32_t enabled_writers)
+{
+    enabled_writers_mask_.store(enabled_writers);
+    // TODO(eduponz): Propagate mask to all writers and readers
+}
+
 void StatisticsParticipantImpl::on_network_statistics(
         const fastrtps::rtps::GuidPrefix_t& source_participant,
         const fastrtps::rtps::Locator_t& source_locator,

@@ -19,6 +19,9 @@
 #ifndef _STATISTICS_RTPS_STATISTICSBASE_HPP_
 #define _STATISTICS_RTPS_STATISTICSBASE_HPP_
 
+#include <cstdint>
+
+#include <atomic>
 #include <mutex>
 #include <set>
 
@@ -128,6 +131,9 @@ private:
     unsigned long long pdp_counter_ = {};
     // EDP_PACKETS ancillary
     unsigned long long edp_counter_ = {};
+
+    // Mask of enabled statistics writers
+    std::atomic<uint32_t> enabled_writers_mask_{0};
 
     /*
      * Retrieve the GUID_t from derived class
@@ -408,7 +414,7 @@ protected:
 
 public:
 
-    /*
+    /**
      * Registers a listener in participant's statistics callback queue
      * @param listener smart pointer to the listener being registered
      * @param kind combination of fastdds::statistics::EventKind flags used as a mask
@@ -418,7 +424,7 @@ public:
             std::shared_ptr<fastdds::statistics::IListener> listener,
             uint32_t kind);
 
-    /*
+    /**
      * Unregisters a listener in participant's statistics callback queue
      * @param listener smart pointer to the listener being unregistered
      * @param kind combination of fastdds::statistics::EventKind flags used as a mask
@@ -427,6 +433,14 @@ public:
     bool remove_statistics_listener(
             std::shared_ptr<fastdds::statistics::IListener> listener,
             uint32_t kind);
+
+    /**
+     * @brief Set the enabled statistics writers mask
+     *
+     * @param enabled_writers The new mask to set
+     */
+    void set_enabled_statistics_writers_mask(
+            uint32_t enabled_writers);
 };
 
 // auxiliary conversion functions
