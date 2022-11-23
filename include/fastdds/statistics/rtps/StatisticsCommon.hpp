@@ -101,6 +101,15 @@ protected:
             uint32_t enabled_writers);
 
     /**
+     * @brief Check whether the statistics writers in the input mask are enabled
+     *
+     * @param checked_enabled_writers The mask of writers to check
+     * @return True if all enabled, false otherwise
+     */
+    bool are_statistics_writers_enabled(
+            uint32_t checked_enabled_writers);
+
+    /**
      * Lambda function to traverse the listener collection
      * @param f function object to apply to each listener
      * @return function object after being applied to each listener

@@ -199,6 +199,15 @@ protected:
     // retrieve the participant mutex
     std::recursive_mutex& get_statistics_mutex();
 
+    /**
+     * @brief Check whether the statistics writers in the input mask are enabled
+     *
+     * @param checked_enabled_writers The mask of writers to check
+     * @return True if all enabled, false otherwise
+     */
+    bool are_statistics_writers_enabled(
+            uint32_t checked_enabled_writers);
+
     /** Register a listener in participant RTPSWriter entities.
      * @param listener smart pointer to the listener interface to register
      * @param guid RTPSWriter identifier. If unknown the listener is registered in all enable ones
