@@ -169,6 +169,7 @@ ReturnCode_t DomainParticipantImpl::enable_statistics_datawriter(
             else
             {
                 statistics_listener_->set_datawriter(event_kind, data_writer);
+                rtps_participant_->set_enabled_statistics_writers_mask(statistics_listener_->enabled_writers_mask());
             }
         }
         return ReturnCode_t::RETCODE_OK;
@@ -227,12 +228,14 @@ ReturnCode_t DomainParticipantImpl::disable_statistics_datawriter(
     {
         // Avoid calling DataWriter from listener callback
         statistics_listener_->set_datawriter(event_kind, nullptr);
+        rtps_participant_->set_enabled_statistics_writers_mask(statistics_listener_->enabled_writers_mask());
 
         // Delete the DataWriter
         if (ReturnCode_t::RETCODE_OK != builtin_publisher_->delete_datawriter(writer))
         {
             // Restore writer on listener before returning the error
             statistics_listener_->set_datawriter(event_kind, writer);
+            rtps_participant_->set_enabled_statistics_writers_mask(statistics_listener_->enabled_writers_mask());
             ret = ReturnCode_t::RETCODE_ERROR;
         }
 
