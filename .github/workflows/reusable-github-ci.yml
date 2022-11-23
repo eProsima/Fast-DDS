@@ -595,6 +595,7 @@ jobs:
            "::endgroup::"
 
       - name: Build
+        id: build
         run: |
            # build type mixin names doesn't match cmake ones
            $translate = @{
@@ -632,6 +633,33 @@ jobs:
            "::group::cmake summary"
            colcon build $buildargs --metas ci.meta --executor sequential ${{ inputs.colcon_args }} $cmakeargs
            "::endgroup::"
+
+           # Show warnings or error reports
+           $WarningPreference = 'Continue'
+
+           switch($lastexitcode)
+           {
+               0 { $report_kind = "generation or build warnings"; $wm = {Write-Warning $args[0]} } 
+               1 { $report_kind = "CMake errors"; $wm = {Write-Error $args[0]} } 
+               2 { $report_kind = "build errors"; $wm = {Write-Error $args[0]} } 
+           }
+            
+           # Show only reports with warning or errors
+           $reports = gci -Path ./log/* -R -Filter stderr.log | ? { sls -Path $_ -Pattern "error|warning" }
+
+           if($reports)
+           {
+               $msg = "There were $report_kind in some packages:"
+               & $wm $msg
+               (($reports.fullname | sls "log/build_[\d-_]*/(?<package>[^/]*)/stderr.log").Matches.Groups |
+                   ? name -eq "package").value | % {
+                       $msg += "$_ "
+                       & $wm $_
+                       Get-Content (Resolve-Path "./log/*/$_/stderr.log")
+                   }
+
+               "issues=$msg" | Out-File $Env:GITHUB_OUTPUT -Append
+           }
 
       - name: Test
         if: ${{ !contains(github.event.pull_request.labels.*.name, 'no-test') }}
@@ -716,8 +744,10 @@ jobs:
              [long]$failed = $res.testsuite.failures
 
              # Summary
+             $issues = "${{ steps.build.outputs.issues }}";
+             if($issues -match "warning|error") { $issues | Out-File $Env:GITHUB_STEP_SUMMARY }
              $res.testsuite | select name, tests, failures, disabled, hostname, time, timestamp |
-              New-MDTable | Tee-Object -FilePath $Env:GITHUB_STEP_SUMMARY
+                New-MDTable | Tee-Object -FilePath $Env:GITHUB_STEP_SUMMARY -Append
 
              # list the failures if any
              "::group::Failures Summary"
@@ -770,7 +800,7 @@ jobs:
              "::endgroup::"
            }
 
-           if($failed) { Write-Error -Message "$failed test(s) failed" }
+           if($failed) { Write-Error -Message "$failed test(s) failed"; exit $failed }
 
       - name: Upload coverage
         if: ${{ steps.process_coverage.outcome == 'success' }}
@@ -785,7 +815,3 @@ jobs:
         with:
             name: crash-dumps-${{ inputs.label }}-${{ matrix.configs.os }}-${{ matrix.configs.toolset }}-${{ matrix.configs.config }}
             path: ${{ steps.WERSetup.outputs.DumpFolder }}
-
-      - name: Check test failures
-        if: ${{ steps.summary.outcome == 'failure' }}
-        run: exit ${{ steps.summary.outputs.test_failures }}
