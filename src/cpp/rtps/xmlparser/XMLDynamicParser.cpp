@@ -1091,7 +1091,7 @@ p_dynamictypebuilder_t XMLParser::parseXMLMemberDynamicType(
             }
             catch (const std::exception&)
             {
-                logError(XMLPARSER, "Error parsing map member sequence length in line " << p_root->GetLineNum())
+                logError(XMLPARSER, "Error parsing map member sequence length in line " << p_root->GetLineNum());
                 return nullptr;
             }
         }

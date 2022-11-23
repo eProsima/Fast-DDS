@@ -641,7 +641,7 @@ bool RTPSParticipantImpl::create_writer(
         {
             logWarning(RTPS_PARTICIPANT,
                     "Throughput flow controller was configured while writer's publish mode is configured as synchronous." \
-                    "Throughput flow controller configuration is not taken into account.")
+                    "Throughput flow controller configuration is not taken into account.");
 
         }
     }
@@ -656,7 +656,7 @@ bool RTPSParticipantImpl::create_writer(
         {
             logWarning(RTPS_PARTICIPANT,
                     "Throughput flow controller was configured while writer's publish mode is configured as synchronous." \
-                    "Throughput flow controller configuration is not taken into account.")
+                    "Throughput flow controller configuration is not taken into account.");
         }
     }
 

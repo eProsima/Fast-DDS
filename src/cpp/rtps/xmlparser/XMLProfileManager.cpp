@@ -440,7 +440,7 @@ XMLP_ret XMLProfileManager::extractProfiles(
 
     if (profile_count == 0)
     {
-        logError(XMLProfileManager, "Could not extract any profile")
+        logError(XMLProfileManager, "Could not extract any profile");
         ret = XMLP_ret::XML_ERROR;
     }
 

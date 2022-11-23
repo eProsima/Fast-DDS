@@ -56,9 +56,9 @@
 #define logError(cat, msg) logError_(cat, msg)
 
 //! Old internal macros. Just kept them in case some crazy bastard thoughtlessly used them
-#define logInfo_(cat, msg) EPROSIMA_LOG_INFO__(cat, msg)
-#define logWarning_(cat, msg) EPROSIMA_LOG_WARNING__(cat, msg)
-#define logError_(cat, msg) EPROSIMA_LOG_ERROR__(cat, msg)
+#define logInfo_(cat, msg) EPROSIMA_LOG_INFO__(cat, msg);
+#define logWarning_(cat, msg) EPROSIMA_LOG_WARNING__(cat, msg);
+#define logError_(cat, msg) EPROSIMA_LOG_ERROR__(cat, msg);
 
 #endif  // ENABLE_EPROSIMA_LOG_MACROS_
 
