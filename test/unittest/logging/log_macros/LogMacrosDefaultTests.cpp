@@ -46,7 +46,9 @@ TEST_F(LogMacrosTests, default_macros_test)
 # endif  // Visual Studio specific behavior
 #endif  // Check default macro values
 
-#if !HAVE_LOG_NO_INFO && (defined(_DEBUG) || defined(__DEBUG) || !defined(NDEBUG))
+#if !HAVE_LOG_NO_INFO && \
+    ((defined(__INTERNALDEBUG) || defined(_INTERNALDEBUG)) && (defined(_DEBUG) || defined(__DEBUG) || \
+    !defined(NDEBUG)))
     static constexpr unsigned int expected_result = 3;
 #else
     static constexpr unsigned int expected_result = 2;

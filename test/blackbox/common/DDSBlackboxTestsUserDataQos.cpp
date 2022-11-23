@@ -76,7 +76,7 @@ public:
 
 /**
  * This test checks that the user data updates once the participant is initialized are correctly applied
- * In order to check that the user data is correctly updated, tow participants are created and the discovery info is
+ * In order to check that the user data is correctly updated, two participants are created and the discovery info is
  * checked.
  */
 TEST_P(UserDataQos, update_user_data_qos)
