@@ -104,6 +104,11 @@ void DomainParticipantStatisticsListener::on_statistics_data(
     }
 }
 
+uint32_t DomainParticipantStatisticsListener::enabled_writers_mask()
+{
+    return enabled_writers_mask_;
+}
+
 } // dds
 } // statistics
 } // fastdds
