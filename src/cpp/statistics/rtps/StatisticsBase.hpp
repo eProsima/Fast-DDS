@@ -440,7 +440,7 @@ public:
      *
      * @param enabled_writers The new mask to set
      */
-    void set_enabled_statistics_writers_mask(
+    virtual void set_enabled_statistics_writers_mask(
             uint32_t enabled_writers);
 };
 
