@@ -3729,7 +3729,7 @@ int SecurityManager::decode_rtps_submessage(
                 }
                 else
                 {
-                    logWarning(SECURITY, "Cannot decode writer RTPS submessage (" << exception.what() << ")");
+                    EPROSIMA_LOG_WARNING(SECURITY, "Cannot decode writer RTPS submessage (" << exception.what() << ")");
                 }
             }
             else if (category == DATAREADER_SUBMESSAGE)
@@ -3741,7 +3741,7 @@ int SecurityManager::decode_rtps_submessage(
                 }
                 else
                 {
-                    logWarning(SECURITY, "Cannot decode reader RTPS submessage (" << exception.what() << ")");
+                    EPROSIMA_LOG_WARNING(SECURITY, "Cannot decode reader RTPS submessage (" << exception.what() << ")");
                 }
             }
         }

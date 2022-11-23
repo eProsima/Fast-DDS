@@ -187,7 +187,7 @@ public:
             {
                 // Overriden while retrieving. Discard and continue
                 advance(next_payload_);
-                logWarning(RTPS_READER, "Dirty data detected on datasharing writer " << writer());
+                EPROSIMA_LOG_WARNING(RTPS_READER, "Dirty data detected on datasharing writer " << writer());
                 continue;
             }
 
@@ -262,7 +262,7 @@ protected:
                 (next_payload_high < notified_end_high &&
                 static_cast<uint32_t>(next_payload_) <= static_cast<uint32_t>(notified_end)))
         {
-            logWarning(RTPS_READER, "Writer " << writer() << " overtook reader in datasharing pool."
+            EPROSIMA_LOG_WARNING(RTPS_READER, "Writer " << writer() << " overtook reader in datasharing pool."
                                               << " Some changes will be missing.");
 
             // lower part is the index, upper part is the loop counter

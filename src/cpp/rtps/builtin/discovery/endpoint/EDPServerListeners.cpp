@@ -63,7 +63,7 @@ void EDPServerPUBListener::onNewCacheChangeAdded(
     // DATA(w)s should have key
     if (!computeKey(change))
     {
-        logWarning(RTPS_EDP_LISTENER, "Received change with no Key");
+        EPROSIMA_LOG_WARNING(RTPS_EDP_LISTENER, "Received change with no Key");
     }
 
     // Get writer's GUID and EDP publications' reader history
@@ -113,7 +113,7 @@ void EDPServerPUBListener::onNewCacheChangeAdded(
         }
         else
         {
-            logWarning(RTPS_EDP_LISTENER, "Writer Proxy Data missing for change " << auxGUID);
+            EPROSIMA_LOG_WARNING(RTPS_EDP_LISTENER, "Writer Proxy Data missing for change " << auxGUID);
         }
 
 
@@ -177,7 +177,7 @@ void EDPServerSUBListener::onNewCacheChangeAdded(
     // DATA(r)s should have key
     if (!computeKey(change))
     {
-        logWarning(RTPS_EDP_LISTENER, "Received change with no Key");
+        EPROSIMA_LOG_WARNING(RTPS_EDP_LISTENER, "Received change with no Key");
     }
 
     // Related_sample_identity could be lost in message delivered, so we set as sample_identity
@@ -215,7 +215,7 @@ void EDPServerSUBListener::onNewCacheChangeAdded(
         }
         else
         {
-            logWarning(RTPS_EDP_LISTENER, "Reader Proxy Data missing for change " << auxGUID);
+            EPROSIMA_LOG_WARNING(RTPS_EDP_LISTENER, "Reader Proxy Data missing for change " << auxGUID);
         }
     }
     // DATA(Ur) case

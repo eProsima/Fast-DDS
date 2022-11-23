@@ -449,7 +449,7 @@ XMLP_ret XMLEndpointParser::loadXMLReaderEndpoint(
                         TimeConv::MilliSeconds2Time_t((double)milliseclease).to_duration_t();
                 if (milliseclease == 0)
                 {
-                    logWarning(RTPS_EDP, "BAD XML:livelinessQos leaseDuration is 0");
+                    EPROSIMA_LOG_WARNING(RTPS_EDP, "BAD XML:livelinessQos leaseDuration is 0");
                 }
             }
         }
@@ -464,7 +464,7 @@ XMLP_ret XMLEndpointParser::loadXMLReaderEndpoint(
         }
         else
         {
-            logWarning(RTPS_EDP, "Unkown Endpoint-XML tag, ignoring " << key);
+            EPROSIMA_LOG_WARNING(RTPS_EDP, "Unkown Endpoint-XML tag, ignoring " << key);
         }
 
         element = element->NextSiblingElement();
@@ -565,7 +565,7 @@ XMLP_ret XMLEndpointParser::loadXMLWriterEndpoint(
         }
         else if (key == EXPECT_INLINE_QOS)
         {
-            logWarning(RTPS_EDP, "BAD XML tag: Writers don't use expectInlineQos tag");
+            EPROSIMA_LOG_WARNING(RTPS_EDP, "BAD XML tag: Writers don't use expectInlineQos tag");
         }
         else if (key == TOPIC)
         {
@@ -741,7 +741,7 @@ XMLP_ret XMLEndpointParser::loadXMLWriterEndpoint(
                         TimeConv::MilliSeconds2Time_t((double)milliseclease).to_duration_t();
                 if (milliseclease == 0)
                 {
-                    logWarning(RTPS_EDP, "BAD XML:livelinessQos leaseDuration is 0");
+                    EPROSIMA_LOG_WARNING(RTPS_EDP, "BAD XML:livelinessQos leaseDuration is 0");
                 }
             }
         }
@@ -756,7 +756,7 @@ XMLP_ret XMLEndpointParser::loadXMLWriterEndpoint(
         }
         else
         {
-            logWarning(RTPS_EDP, "Unkown Endpoint-XML tag, ignoring " << key);
+            EPROSIMA_LOG_WARNING(RTPS_EDP, "Unkown Endpoint-XML tag, ignoring " << key);
         }
 
         element = element->NextSiblingElement();

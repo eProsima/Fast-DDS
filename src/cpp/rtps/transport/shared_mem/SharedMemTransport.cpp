@@ -228,7 +228,7 @@ void SharedMemTransport::clean_up()
     }
     catch (const std::exception& e)
     {
-        logWarning(RTPS_MSG_OUT, e.what());
+        EPROSIMA_LOG_WARNING(RTPS_MSG_OUT, e.what());
     }
 }
 
@@ -259,7 +259,7 @@ bool SharedMemTransport::init(
 #ifdef ANDROID
     if (access(BOOST_INTERPROCESS_SHARED_DIR_PATH, W_OK) != F_OK)
     {
-        logWarning(RTPS_MSG_OUT,
+        EPROSIMA_LOG_WARNING(RTPS_MSG_OUT,
                 "Unable to write on " << BOOST_INTERPROCESS_SHARED_DIR_PATH << ". SHM Transport not enabled");
         return false;
     }
@@ -509,7 +509,7 @@ bool SharedMemTransport::push_discard(
     }
     catch (const std::exception& error)
     {
-        logWarning(RTPS_MSG_OUT, error.what());
+        EPROSIMA_LOG_WARNING(RTPS_MSG_OUT, error.what());
         return false;
     }
 

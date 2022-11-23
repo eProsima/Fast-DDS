@@ -476,7 +476,7 @@ ReturnCode_t DataWriterImpl::loan_sample(
     switch (initialization)
     {
         default:
-            logWarning(DATA_WRITER, "Using wrong LoanInitializationKind value ("
+            EPROSIMA_LOG_WARNING(DATA_WRITER, "Using wrong LoanInitializationKind value ("
                     << static_cast<int>(initialization) << "). Using default NO_LOAN_INITIALIZATION");
             break;
 
@@ -742,7 +742,7 @@ InstanceHandle_t DataWriterImpl::do_register_instance(
                 payload->reserve(size);
                 if (!type_->serialize(key, payload))
                 {
-                    logWarning(DATA_WRITER, "Key data serialization failed");
+                    EPROSIMA_LOG_WARNING(DATA_WRITER, "Key data serialization failed");
 
                     // Serialization of the sample failed. Remove the instance to keep original state.
                     // Note that we will only end-up here if the instance has just been created, so it will be empty
@@ -924,7 +924,7 @@ ReturnCode_t DataWriterImpl::perform_create_new_change(
 
         if ((ALIVE == change_kind) && !type_->serialize(data, &payload.payload))
         {
-            logWarning(DATA_WRITER, "Data serialization returned false");
+            EPROSIMA_LOG_WARNING(DATA_WRITER, "Data serialization returned false");
             return_payload_to_pool(payload);
             return ReturnCode_t::RETCODE_ERROR;
         }
@@ -1787,56 +1787,56 @@ bool DataWriterImpl::can_qos_be_updated(
     if (to.durability().kind != from.durability().kind)
     {
         updatable = false;
-        logWarning(RTPS_QOS_CHECK, "Durability kind cannot be changed after the creation of a DataWriter.");
+        EPROSIMA_LOG_WARNING(RTPS_QOS_CHECK, "Durability kind cannot be changed after the creation of a DataWriter.");
     }
 
     if (to.liveliness().kind !=  from.liveliness().kind)
     {
         updatable = false;
-        logWarning(RTPS_QOS_CHECK, "Liveliness Kind cannot be changed after the creation of a DataWriter.");
+        EPROSIMA_LOG_WARNING(RTPS_QOS_CHECK, "Liveliness Kind cannot be changed after the creation of a DataWriter.");
     }
 
     if (to.liveliness().lease_duration != from.liveliness().lease_duration)
     {
         updatable = false;
-        logWarning(RTPS_QOS_CHECK, "Liveliness lease duration cannot be changed after the creation of a DataWriter.");
+        EPROSIMA_LOG_WARNING(RTPS_QOS_CHECK, "Liveliness lease duration cannot be changed after the creation of a DataWriter.");
     }
 
     if (to.liveliness().announcement_period != from.liveliness().announcement_period)
     {
         updatable = false;
-        logWarning(RTPS_QOS_CHECK, "Liveliness announcement cannot be changed after the creation of a DataWriter.");
+        EPROSIMA_LOG_WARNING(RTPS_QOS_CHECK, "Liveliness announcement cannot be changed after the creation of a DataWriter.");
     }
 
     if (to.reliability().kind != from.reliability().kind)
     {
         updatable = false;
-        logWarning(RTPS_QOS_CHECK, "Reliability Kind cannot be changed after the creation of a DataWriter.");
+        EPROSIMA_LOG_WARNING(RTPS_QOS_CHECK, "Reliability Kind cannot be changed after the creation of a DataWriter.");
     }
     if (to.ownership().kind != from.ownership().kind)
     {
         updatable = false;
-        logWarning(RTPS_QOS_CHECK, "Ownership Kind cannot be changed after the creation of a DataWriter.");
+        EPROSIMA_LOG_WARNING(RTPS_QOS_CHECK, "Ownership Kind cannot be changed after the creation of a DataWriter.");
     }
     if (to.destination_order().kind != from.destination_order().kind)
     {
         updatable = false;
-        logWarning(RTPS_QOS_CHECK, "Destination order Kind cannot be changed after the creation of a DataWriter.");
+        EPROSIMA_LOG_WARNING(RTPS_QOS_CHECK, "Destination order Kind cannot be changed after the creation of a DataWriter.");
     }
     if (to.data_sharing().kind() != from.data_sharing().kind())
     {
         updatable = false;
-        logWarning(RTPS_QOS_CHECK, "Data sharing configuration cannot be changed after the creation of a DataWriter.");
+        EPROSIMA_LOG_WARNING(RTPS_QOS_CHECK, "Data sharing configuration cannot be changed after the creation of a DataWriter.");
     }
     if (to.data_sharing().shm_directory() != from.data_sharing().shm_directory())
     {
         updatable = false;
-        logWarning(RTPS_QOS_CHECK, "Data sharing configuration cannot be changed after the creation of a DataWriter.");
+        EPROSIMA_LOG_WARNING(RTPS_QOS_CHECK, "Data sharing configuration cannot be changed after the creation of a DataWriter.");
     }
     if (to.data_sharing().domain_ids() != from.data_sharing().domain_ids())
     {
         updatable = false;
-        logWarning(RTPS_QOS_CHECK, "Data sharing configuration cannot be changed after the creation of a DataWriter.");
+        EPROSIMA_LOG_WARNING(RTPS_QOS_CHECK, "Data sharing configuration cannot be changed after the creation of a DataWriter.");
     }
     return updatable;
 }

@@ -125,7 +125,7 @@ private:
         }
         else
         {
-            logWarning(UTILS, "Cannot get MAC addresses. Failing back to IP based ID");
+            EPROSIMA_LOG_WARNING(UTILS, "Cannot get MAC addresses. Failing back to IP based ID");
             for (size_t i = 0; i < mac_id_length; i += 2)
             {
                 mac_id_.value[i] = (id_ >> 8);

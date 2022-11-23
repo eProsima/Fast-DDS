@@ -96,7 +96,7 @@ void EDPBasePUBListener::add_writer_from_change(
 
                     if (updating && !data->is_update_allowed(*temp_writer_data))
                     {
-                        logWarning(RTPS_EDP,
+                        EPROSIMA_LOG_WARNING(RTPS_EDP,
                                 "Received incompatible update for WriterQos. writer_guid = " << data->guid());
                     }
                     *data = *temp_writer_data;
@@ -121,7 +121,7 @@ void EDPBasePUBListener::add_writer_from_change(
         }
         else //NOT ADDED BECAUSE IT WAS ALREADY THERE
         {
-            logWarning(RTPS_EDP, "Received message from UNKNOWN RTPSParticipant, removing");
+            EPROSIMA_LOG_WARNING(RTPS_EDP, "Received message from UNKNOWN RTPSParticipant, removing");
         }
         // Take again the reader lock.
         reader->getMutex().lock();
@@ -137,7 +137,7 @@ void EDPSimplePUBListener::onNewCacheChangeAdded(
     logInfo(RTPS_EDP, "");
     if (!computeKey(change))
     {
-        logWarning(RTPS_EDP, "Received change with no Key");
+        EPROSIMA_LOG_WARNING(RTPS_EDP, "Received change with no Key");
     }
 
     ReaderHistory* reader_history =
@@ -206,7 +206,7 @@ void EDPBaseSUBListener::add_reader_from_change(
 
                     if (updating && !data->is_update_allowed(*temp_reader_data))
                     {
-                        logWarning(RTPS_EDP,
+                        EPROSIMA_LOG_WARNING(RTPS_EDP,
                                 "Received incompatible update for ReaderQos. reader_guid = " << data->guid());
                     }
                     *data = *temp_reader_data;
@@ -234,7 +234,7 @@ void EDPBaseSUBListener::add_reader_from_change(
         }
         else
         {
-            logWarning(RTPS_EDP, "From UNKNOWN RTPSParticipant, removing");
+            EPROSIMA_LOG_WARNING(RTPS_EDP, "From UNKNOWN RTPSParticipant, removing");
         }
 
         // Take again the reader lock.
@@ -251,7 +251,7 @@ void EDPSimpleSUBListener::onNewCacheChangeAdded(
     logInfo(RTPS_EDP, "");
     if (!computeKey(change))
     {
-        logWarning(RTPS_EDP, "Received change with no Key");
+        EPROSIMA_LOG_WARNING(RTPS_EDP, "Received change with no Key");
     }
 
     ReaderHistory* reader_history =

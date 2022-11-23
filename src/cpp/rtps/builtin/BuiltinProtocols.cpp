@@ -93,7 +93,7 @@ bool BuiltinProtocols::initBuiltinProtocols(
     switch (m_att.discovery_config.discoveryProtocol)
     {
         case DiscoveryProtocol_t::NONE:
-            logWarning(RTPS_PDP, "No participant discovery protocol specified");
+            EPROSIMA_LOG_WARNING(RTPS_PDP, "No participant discovery protocol specified");
             return true;
 
         case DiscoveryProtocol_t::SIMPLE:
@@ -200,13 +200,13 @@ bool BuiltinProtocols::addLocalWriter(
 
         if (!ok)
         {
-            logWarning(RTPS_EDP, "Failed register WriterProxyData in EDP");
+            EPROSIMA_LOG_WARNING(RTPS_EDP, "Failed register WriterProxyData in EDP");
             return false;
         }
     }
     else
     {
-        logWarning(RTPS_EDP, "EDP is not used in this Participant, register a Writer is impossible");
+        EPROSIMA_LOG_WARNING(RTPS_EDP, "EDP is not used in this Participant, register a Writer is impossible");
     }
 
     if (mp_WLP != nullptr)
@@ -215,7 +215,7 @@ bool BuiltinProtocols::addLocalWriter(
     }
     else
     {
-        logWarning(RTPS_LIVELINESS, "LIVELINESS is not used in this Participant, register a Writer is impossible");
+        EPROSIMA_LOG_WARNING(RTPS_LIVELINESS, "LIVELINESS is not used in this Participant, register a Writer is impossible");
     }
     return ok;
 }
@@ -234,13 +234,13 @@ bool BuiltinProtocols::addLocalReader(
 
         if (!ok)
         {
-            logWarning(RTPS_EDP, "Failed register ReaderProxyData in EDP");
+            EPROSIMA_LOG_WARNING(RTPS_EDP, "Failed register ReaderProxyData in EDP");
             return false;
         }
     }
     else
     {
-        logWarning(RTPS_EDP, "EDP is not used in this Participant, register a Reader is impossible");
+        EPROSIMA_LOG_WARNING(RTPS_EDP, "EDP is not used in this Participant, register a Reader is impossible");
     }
 
     if (mp_WLP != nullptr)

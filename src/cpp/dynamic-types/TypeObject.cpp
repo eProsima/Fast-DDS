@@ -7460,7 +7460,7 @@ bool CompleteTypeObject::consistent(const CompleteTypeObject &x,
         const TypeObject* aliasedObj = TypeObjectFactory::get_instance()->get_type_object(&aliasedId);
         if (aliasedObj == nullptr)
         {
-            logWarning(XTYPES, "Local type is aliased to an unkown TypeObject");
+            EPROSIMA_LOG_WARNING(XTYPES, "Local type is aliased to an unkown TypeObject");
             return false;
         }
         return aliasedObj->complete().consistent(x, consistency);
@@ -7472,7 +7472,7 @@ bool CompleteTypeObject::consistent(const CompleteTypeObject &x,
         const TypeObject* aliasedObj = TypeObjectFactory::get_instance()->get_type_object(&aliasedId);
         if (aliasedObj == nullptr)
         {
-            logWarning(XTYPES, "Remote type is aliased to an unkown TypeObject");
+            EPROSIMA_LOG_WARNING(XTYPES, "Remote type is aliased to an unkown TypeObject");
             return false;
         }
         return this->consistent(aliasedObj->complete(), consistency);
@@ -8424,7 +8424,7 @@ bool MinimalTypeObject::consistent(const MinimalTypeObject &x,
         const TypeObject* aliasedObj = TypeObjectFactory::get_instance()->get_type_object(&aliasedId);
         if (aliasedObj == nullptr)
         {
-            logWarning(XTYPES, "Local type is aliased to an unkown TypeObject");
+            EPROSIMA_LOG_WARNING(XTYPES, "Local type is aliased to an unkown TypeObject");
             return false;
         }
         return aliasedObj->minimal().consistent(x, consistency);
@@ -8436,7 +8436,7 @@ bool MinimalTypeObject::consistent(const MinimalTypeObject &x,
         const TypeObject* aliasedObj = TypeObjectFactory::get_instance()->get_type_object(&aliasedId);
         if (aliasedObj == nullptr)
         {
-            logWarning(XTYPES, "Remote type is aliased to an unkown TypeObject");
+            EPROSIMA_LOG_WARNING(XTYPES, "Remote type is aliased to an unkown TypeObject");
             return false;
         }
         return this->consistent(aliasedObj->minimal(), consistency);

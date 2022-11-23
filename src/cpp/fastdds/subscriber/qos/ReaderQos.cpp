@@ -166,47 +166,47 @@ bool ReaderQos::canQosBeUpdated(
     if ( m_durability.kind != qos.m_durability.kind)
     {
         updatable = false;
-        logWarning(RTPS_QOS_CHECK, "Durability kind cannot be changed after the creation of a subscriber.");
+        EPROSIMA_LOG_WARNING(RTPS_QOS_CHECK, "Durability kind cannot be changed after the creation of a subscriber.");
     }
 
     if (m_liveliness.kind != qos.m_liveliness.kind)
     {
         updatable = false;
-        logWarning(RTPS_QOS_CHECK, "Liveliness Kind cannot be changed after the creation of a subscriber.");
+        EPROSIMA_LOG_WARNING(RTPS_QOS_CHECK, "Liveliness Kind cannot be changed after the creation of a subscriber.");
     }
 
     if (m_liveliness.lease_duration != qos.m_liveliness.lease_duration)
     {
         updatable = false;
-        logWarning(RTPS_QOS_CHECK, "Liveliness lease duration cannot be changed after the creation of a subscriber.");
+        EPROSIMA_LOG_WARNING(RTPS_QOS_CHECK, "Liveliness lease duration cannot be changed after the creation of a subscriber.");
     }
 
     if (m_liveliness.announcement_period != qos.m_liveliness.announcement_period)
     {
         updatable = false;
-        logWarning(RTPS_QOS_CHECK, "Liveliness announcement cannot be changed after the creation of a subscriber.");
+        EPROSIMA_LOG_WARNING(RTPS_QOS_CHECK, "Liveliness announcement cannot be changed after the creation of a subscriber.");
     }
 
     if (m_reliability.kind != qos.m_reliability.kind)
     {
         updatable = false;
-        logWarning(RTPS_QOS_CHECK, "Reliability Kind cannot be changed after the creation of a subscriber.");
+        EPROSIMA_LOG_WARNING(RTPS_QOS_CHECK, "Reliability Kind cannot be changed after the creation of a subscriber.");
     }
     if (m_ownership.kind != qos.m_ownership.kind)
     {
         updatable = false;
-        logWarning(RTPS_QOS_CHECK, "Ownership Kind cannot be changed after the creation of a subscriber.");
+        EPROSIMA_LOG_WARNING(RTPS_QOS_CHECK, "Ownership Kind cannot be changed after the creation of a subscriber.");
     }
     if (m_destinationOrder.kind != qos.m_destinationOrder.kind)
     {
         updatable = false;
-        logWarning(RTPS_QOS_CHECK, "Destination order Kind cannot be changed after the creation of a subscriber.");
+        EPROSIMA_LOG_WARNING(RTPS_QOS_CHECK, "Destination order Kind cannot be changed after the creation of a subscriber.");
     }
     if (data_sharing.kind() != qos.data_sharing.kind() ||
             data_sharing.domain_ids() != qos.data_sharing.domain_ids())
     {
         updatable = false;
-        logWarning(RTPS_QOS_CHECK, "Data sharing configuration cannot be changed after the creation of a subscriber.");
+        EPROSIMA_LOG_WARNING(RTPS_QOS_CHECK, "Data sharing configuration cannot be changed after the creation of a subscriber.");
     }
     return updatable;
 }

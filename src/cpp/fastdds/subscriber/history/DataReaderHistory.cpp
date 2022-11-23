@@ -153,7 +153,7 @@ DataReaderHistory::DataReaderHistory(
                         return type_->getKey(get_key_object_, &a_change->instanceHandle, is_key_protected);
                     }
 
-                    logWarning(SUBSCRIBER, "NO KEY in topic: " << topic_name_
+                    EPROSIMA_LOG_WARNING(SUBSCRIBER, "NO KEY in topic: " << topic_name_
                                                                << " and no method to obtain it"; );
                     return false;
                 };
@@ -321,7 +321,7 @@ bool DataReaderHistory::add_to_reader_history_if_not_full(
     if (m_isHistoryFull)
     {
         // Discarding the sample.
-        logWarning(SUBSCRIBER, "Attempting to add Data to Full ReaderHistory: " << type_name_);
+        EPROSIMA_LOG_WARNING(SUBSCRIBER, "Attempting to add Data to Full ReaderHistory: " << type_name_);
         rejection_reason = REJECTED_BY_SAMPLES_LIMIT;
         return false;
     }
@@ -406,7 +406,7 @@ bool DataReaderHistory::find_key(
         }
     }
 
-    logWarning(SUBSCRIBER, "History has reached the maximum number of instances");
+    EPROSIMA_LOG_WARNING(SUBSCRIBER, "History has reached the maximum number of instances");
     return false;
 }
 
@@ -756,7 +756,7 @@ bool DataReaderHistory::completed_change_keep_all(
     }
     else
     {
-        logWarning(SUBSCRIBER, "Change not added due to maximum number of samples per instance");
+        EPROSIMA_LOG_WARNING(SUBSCRIBER, "Change not added due to maximum number of samples per instance");
         rejection_reason = REJECTED_BY_SAMPLES_PER_INSTANCE_LIMIT;
     }
 

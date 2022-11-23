@@ -211,7 +211,7 @@ ParticipantProxyData* PDP::add_participant_proxy_data(
         }
         else
         {
-            logWarning(RTPS_PDP, "Maximum number of participant proxies (" << max_proxies << \
+            EPROSIMA_LOG_WARNING(RTPS_PDP, "Maximum number of participant proxies (" << max_proxies << \
                     ") reached for participant " << mp_RTPSParticipant->getGuid() << std::endl);
             return nullptr;
         }
@@ -804,7 +804,7 @@ ReaderProxyData* PDP::addReaderProxyData(
                 }
                 else
                 {
-                    logWarning(RTPS_PDP, "Maximum number of reader proxies (" << max_proxies <<
+                    EPROSIMA_LOG_WARNING(RTPS_PDP, "Maximum number of reader proxies (" << max_proxies <<
                             ") reached for participant " << mp_RTPSParticipant->getGuid() << std::endl);
                     return nullptr;
                 }
@@ -899,7 +899,7 @@ WriterProxyData* PDP::addWriterProxyData(
                 }
                 else
                 {
-                    logWarning(RTPS_PDP, "Maximum number of writer proxies (" << max_proxies <<
+                    EPROSIMA_LOG_WARNING(RTPS_PDP, "Maximum number of writer proxies (" << max_proxies <<
                             ") reached for participant " << mp_RTPSParticipant->getGuid() << std::endl);
                     return nullptr;
                 }
@@ -1249,7 +1249,7 @@ void PDP::set_initial_announcement_interval()
     if ((initial_announcements_.count > 0) && (initial_announcements_.period <= c_TimeZero))
     {
         // Force a small interval (1ms) between initial announcements
-        logWarning(RTPS_PDP, "Initial announcement period is not strictly positive. Changing to 1ms.");
+        EPROSIMA_LOG_WARNING(RTPS_PDP, "Initial announcement period is not strictly positive. Changing to 1ms.");
         initial_announcements_.period = { 0, 1000000 };
     }
     set_next_announcement_interval();

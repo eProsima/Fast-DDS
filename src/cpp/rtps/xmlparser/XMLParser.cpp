@@ -1897,7 +1897,7 @@ XMLP_ret XMLParser::fillDataNode(
             {
                 return XMLP_ret::XML_ERROR;
             }
-            logWarning(XML_PARSER, THROUGHPUT_CONT << " XML tag is deprecated");
+            EPROSIMA_LOG_WARNING(XML_PARSER, THROUGHPUT_CONT << " XML tag is deprecated");
         }
         else if (strcmp(name, USER_TRANS) == 0)
         {

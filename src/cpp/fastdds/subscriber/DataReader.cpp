@@ -428,7 +428,7 @@ QueryCondition* DataReader::create_querycondition(
         const std::string& query_expression,
         const std::vector<std::string>& query_parameters)
 {
-    logWarning(DATA_READER, "create_querycondition method not implemented");
+    EPROSIMA_LOG_WARNING(DATA_READER, "create_querycondition method not implemented");
     static_cast<void> (sample_states);
     static_cast<void> (view_states);
     static_cast<void> (instance_states);

@@ -86,7 +86,7 @@ void PDPServerListener::onNewCacheChangeAdded(
     if (change->instanceHandle == c_InstanceHandle_Unknown
             && !this->get_key(change.get()))
     {
-        logWarning(RTPS_PDP_LISTENER, "Problem getting the key of the change, removing");
+        EPROSIMA_LOG_WARNING(RTPS_PDP_LISTENER, "Problem getting the key of the change, removing");
         logInfo(RTPS_PDP_LISTENER, "------------------ PDP SERVER LISTENER END ------------------");
         logInfo(RTPS_PDP_LISTENER, "");
         return;
@@ -98,7 +98,7 @@ void PDPServerListener::onNewCacheChangeAdded(
     // DATA(p|Up) sample identity should not be unknown
     if (change->write_params.sample_identity() == SampleIdentity::unknown())
     {
-        logWarning(RTPS_PDP_LISTENER, "CacheChange_t is not properly identified for client-server operation");
+        EPROSIMA_LOG_WARNING(RTPS_PDP_LISTENER, "CacheChange_t is not properly identified for client-server operation");
         logInfo(RTPS_PDP_LISTENER, "------------------ PDP SERVER LISTENER END ------------------");
         logInfo(RTPS_PDP_LISTENER, "");
         return;
@@ -123,7 +123,7 @@ void PDPServerListener::onNewCacheChangeAdded(
         if (guid == pdp_server()->getRTPSParticipant()->getGuid())
         {
             // Observation: It never reaches this point
-            logWarning(RTPS_PDP_LISTENER, "Message from own RTPSParticipant, ignoring");
+            EPROSIMA_LOG_WARNING(RTPS_PDP_LISTENER, "Message from own RTPSParticipant, ignoring");
             logInfo(RTPS_PDP_LISTENER, "------------------ PDP SERVER LISTENER END ------------------");
             logInfo(RTPS_PDP_LISTENER, "");
             return;

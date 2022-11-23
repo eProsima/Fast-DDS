@@ -57,7 +57,7 @@ static int ui_read(
         case UIT_PROMPT:
         case UIT_VERIFY:
         {
-            logWarning(PKCS11_PROVIDER, "PKCS#11 engine is asking: " << UI_get0_output_string(uis));
+            EPROSIMA_LOG_WARNING(PKCS11_PROVIDER, "PKCS#11 engine is asking: " << UI_get0_output_string(uis));
             // Return an empty password without asking the user
             UI_set_result(ui, uis, "");
             return 1;

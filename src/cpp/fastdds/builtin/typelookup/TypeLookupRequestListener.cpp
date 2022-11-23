@@ -66,7 +66,7 @@ void TypeLookupRequestListener::onNewCacheChangeAdded(
 
     if (change->writerGUID.entityId != c_EntityId_TypeLookup_request_writer)
     {
-        logWarning(TL_REQUEST_READER, "Received data from a bad endpoint.");
+        EPROSIMA_LOG_WARNING(TL_REQUEST_READER, "Received data from a bad endpoint.");
         reader->getHistory()->remove_change(change);
     }
 

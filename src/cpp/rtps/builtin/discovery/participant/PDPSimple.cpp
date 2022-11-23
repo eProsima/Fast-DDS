@@ -146,7 +146,7 @@ bool PDPSimple::init(
     }
     else
     {
-        logWarning(RTPS_PDP, "No EndpointDiscoveryProtocol defined");
+        EPROSIMA_LOG_WARNING(RTPS_PDP, "No EndpointDiscoveryProtocol defined");
         return false;
     }
 

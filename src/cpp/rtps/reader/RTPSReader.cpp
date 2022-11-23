@@ -171,7 +171,7 @@ bool RTPSReader::reserveCache(
     CacheChange_t* reserved_change = nullptr;
     if (!change_pool_->reserve_cache(reserved_change))
     {
-        logWarning(RTPS_READER, "Problem reserving cache from pool");
+        EPROSIMA_LOG_WARNING(RTPS_READER, "Problem reserving cache from pool");
         return false;
     }
 
@@ -179,7 +179,7 @@ bool RTPSReader::reserveCache(
     if (!payload_pool_->get_payload(payload_size, *reserved_change))
     {
         change_pool_->release_cache(reserved_change);
-        logWarning(RTPS_READER, "Problem reserving payload from pool");
+        EPROSIMA_LOG_WARNING(RTPS_READER, "Problem reserving payload from pool");
         return false;
     }
 

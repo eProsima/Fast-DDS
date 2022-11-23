@@ -91,8 +91,8 @@ protected:
 TEST_F(LogTests, asynchronous_logging)
 {
     EPROSIMA_LOG_ERROR(SampleCategory, "Sample error message");
-    logWarning(SampleCategory, "Sample warning message");
-    logWarning(DifferentCategory, "Sample warning message in another category");
+    EPROSIMA_LOG_WARNING(SampleCategory, "Sample warning message");
+    EPROSIMA_LOG_WARNING(DifferentCategory, "Sample warning message in another category");
 
     auto consumedEntries = HELPER_WaitForEntries(3);
     ASSERT_EQ(3u, consumedEntries.size());
@@ -120,7 +120,7 @@ TEST_F(LogTests, multithreaded_logging)
     {
         threads.emplace_back(new thread([i]
                 {
-                    logWarning(Multithread, "I'm thread " << i);
+                    EPROSIMA_LOG_WARNING(Multithread, "I'm thread " << i);
                 }));
     }
 
@@ -138,7 +138,7 @@ TEST_F(LogTests, regex_category_filtering)
     Log::SetCategoryFilter(std::regex("(Good)"));
     EPROSIMA_LOG_ERROR(GoodCategory, "This should be logged because my regex filter allows for it");
     EPROSIMA_LOG_ERROR(BadCategory, "If you're seeing this, something went wrong");
-    logWarning(EvenMoreGoodCategory, "This should be logged too!");
+    EPROSIMA_LOG_WARNING(EvenMoreGoodCategory, "This should be logged too!");
     auto consumedEntries = HELPER_WaitForEntries(3);
     ASSERT_EQ(2u, consumedEntries.size());
 }
@@ -169,14 +169,14 @@ TEST_F(LogTests, multiple_verbosity_levels)
 {
     Log::SetVerbosity(Log::Warning);
     EPROSIMA_LOG_ERROR(VerbosityChecks, "This should be logged");
-    logWarning(VerbosityChecks, "This should be logged too!");
+    EPROSIMA_LOG_WARNING(VerbosityChecks, "This should be logged too!");
     logInfo(VerbosityChecks, "If you're seeing this, something went wrong");
     auto consumedEntries = HELPER_WaitForEntries(3);
     ASSERT_EQ(2u, consumedEntries.size());
 
     Log::SetVerbosity(Log::Error);
     EPROSIMA_LOG_ERROR(VerbosityChecks, "This should be logged");
-    logWarning(VerbosityChecks, "If you're seeing this, something went wrong");
+    EPROSIMA_LOG_WARNING(VerbosityChecks, "If you're seeing this, something went wrong");
     logInfo(VerbosityChecks, "If you're seeing this, something went wrong");
 
     consumedEntries = HELPER_WaitForEntries(5);
@@ -190,7 +190,7 @@ TEST_F(LogTests, logless_flush_call)
     Log::Flush();
 
     // 2. now we activate the log but removed all entries
-    logWarning(flush_ckecks, "We must add, at least, an entry to activate the log mechanism.");
+    EPROSIMA_LOG_WARNING(flush_ckecks, "We must add, at least, an entry to activate the log mechanism.");
 
     HELPER_WaitForEntries(1); // retrieve the former one to make sure queue is cleaned
 
@@ -232,7 +232,7 @@ TEST_F(LogTests, validate_single_flush_call)
                 {
                     while (!done)
                     {
-                        logWarning(flush_ckecks,
+                        EPROSIMA_LOG_WARNING(flush_ckecks,
                         "I'm thread " << this_thread::get_id() << " logging sample " << committed);
                         // incremented after log
                         ++committed;
@@ -259,7 +259,7 @@ TEST_F(LogTests, validate_single_flush_call)
     // We must assert that at least commited_before_flush have been delivered
     ASSERT_GE(consumed, commited_before_flush);
 
-    logWarning(flush_ckecks, "Flushing successful, consumed: "
+    EPROSIMA_LOG_WARNING(flush_ckecks, "Flushing successful, consumed: "
             << consumed << " commited till flush " << commited_before_flush);
 
     done = true; // direct threads to shut-down
@@ -304,7 +304,7 @@ TEST_F(LogTests, validate_multithread_flush_calls)
                 {
                     while (!done)
                     {
-                        logWarning(flush_ckecks,
+                        EPROSIMA_LOG_WARNING(flush_ckecks,
                         "I'm thread " << this_thread::get_id() << " logging sample " << committed);
                         // incremented after log
                         ++committed;
@@ -331,7 +331,7 @@ TEST_F(LogTests, validate_multithread_flush_calls)
     {
         threads.emplace_back(new thread([this, &committed]
                 {
-                    logWarning(flush_ckecks, "I'm thread " << this_thread::get_id() << " Flushing " << committed);
+                    EPROSIMA_LOG_WARNING(flush_ckecks, "I'm thread " << this_thread::get_id() << " Flushing " << committed);
 
                     int commited_before_flush = ++committed;
 
@@ -344,7 +344,7 @@ TEST_F(LogTests, validate_multithread_flush_calls)
                     // We must assert that at least commited_before_flush have been delivered
                     ASSERT_GE(consumed, commited_before_flush);
 
-                    logWarning(flush_ckecks,
+                    EPROSIMA_LOG_WARNING(flush_ckecks,
                     "I'm thread " << this_thread::get_id() << " Flushing successful, consumed: "
                                   << consumed << " commited till flush " <<
                         commited_before_flush);
@@ -389,7 +389,7 @@ TEST_F(LogTests, stdout_consumer_stream)
 
     // Log messages on all levels and wait until they are all consumed
     EPROSIMA_LOG_ERROR(stdout_consumer_stream, "Error message");
-    logWarning(stdout_consumer_stream, "Warning message");
+    EPROSIMA_LOG_WARNING(stdout_consumer_stream, "Warning message");
     logInfo(stdout_consumer_stream, "Info message");
     Log::Flush();
     std::cout.flush();
@@ -425,9 +425,9 @@ TEST_F(LogTests, stdout_consumer_stream)
     std::string::difference_type lines_err = std::count(out_string_err.begin(), out_string_err.end(), '\n');
 
     // If CMAKE_BUILD_TYPE is Debug, the INTERNAL_DEBUG flag was set, and the logInfo messages were not deactivated,
-    // then there should be 3 messages in the out buffer, one for the EPROSIMA_LOG_ERROR, one for the logWarning, and another one
+    // then there should be 3 messages in the out buffer, one for the EPROSIMA_LOG_ERROR, one for the EPROSIMA_LOG_WARNING, and another one
     // for the logInfo.
-    // Else, there should only be 2 messagea in the out buffer, corresponding to EPROSIMA_LOG_ERROR and logWarning.
+    // Else, there should only be 2 messagea in the out buffer, corresponding to EPROSIMA_LOG_ERROR and EPROSIMA_LOG_WARNING.
 #if !HAVE_LOG_NO_INFO
     ASSERT_EQ(3, lines_out);
 #else
@@ -472,7 +472,7 @@ TEST_F(LogTests, stdouterr_consumer_stream)
 
     // Log messages on all levels and wait until they are all consumed
     EPROSIMA_LOG_ERROR(stdouterr_consumer_stream, "Error message");
-    logWarning(stdouterr_consumer_stream, "Warning message");
+    EPROSIMA_LOG_WARNING(stdouterr_consumer_stream, "Warning message");
     logInfo(stdouterr_consumer_stream, "Info message");
     Log::Flush();
     std::cout.flush();
@@ -517,8 +517,8 @@ TEST_F(LogTests, stdouterr_consumer_stream)
     std::cout << "Number of messages in the error buffer is correct: " << lines_err << std::endl;
 
     // If CMAKE_BUILD_TYPE is Debug, the INTERNAL_DEBUG flag was set, and the logInfo messages were not deactivated,
-    // then there should be 2 messages in the out buffer, one for the logWarning, and another one for the logInfo.
-    // Else, there should only be 1 message in the out buffer, corresponding to the logWarning.
+    // then there should be 2 messages in the out buffer, one for the EPROSIMA_LOG_WARNING, and another one for the logInfo.
+    // Else, there should only be 1 message in the out buffer, corresponding to the EPROSIMA_LOG_WARNING.
 #if !HAVE_LOG_NO_INFO
     ASSERT_EQ(2, lines_out);
 #else
@@ -586,7 +586,7 @@ TEST_F(LogTests, flush_warning)
         std::unique_ptr<LogConsumerMock>(new LogConsumerMock(logs_consumed)));
 
     // Raise a log message
-    logWarning(TEST_FLUSH, "Warning message");
+    EPROSIMA_LOG_WARNING(TEST_FLUSH, "Warning message");
 
     // Flush the log
     Log::Flush();

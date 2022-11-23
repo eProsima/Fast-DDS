@@ -268,7 +268,7 @@ ReturnCode_t DynamicData::get_descriptor(
     }
     else
     {
-        logWarning(DYN_TYPES, "Error getting MemberDescriptor. MemberId not found.");
+        EPROSIMA_LOG_WARNING(DYN_TYPES, "Error getting MemberDescriptor. MemberId not found.");
         return ReturnCode_t::RETCODE_BAD_PARAMETER;
     }
 }
@@ -284,7 +284,7 @@ ReturnCode_t DynamicData::set_descriptor(
     }
     else
     {
-        logWarning(DYN_TYPES, "Error setting MemberDescriptor. MemberId found.");
+        EPROSIMA_LOG_WARNING(DYN_TYPES, "Error setting MemberDescriptor. MemberId found.");
         return ReturnCode_t::RETCODE_BAD_PARAMETER;
     }
 }

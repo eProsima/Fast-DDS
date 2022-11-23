@@ -369,7 +369,7 @@ bool UDPv4Transport::OpenInputChannel(
                 catch (asio::system_error const& e)
                 {
                     (void)e;
-                    logWarning(RTPS_MSG_OUT, "UDPTransport Error binding " << locatorAddressStr << " at port: (" << IPLocator::getPhysicalPort(
+                    EPROSIMA_LOG_WARNING(RTPS_MSG_OUT, "UDPTransport Error binding " << locatorAddressStr << " at port: (" << IPLocator::getPhysicalPort(
                                 locator) << ")"
                                                                            << " with msg: " << e.what());
                 }
@@ -397,7 +397,7 @@ bool UDPv4Transport::OpenInputChannel(
                         catch (std::system_error& ex)
                         {
                             (void)ex;
-                            logWarning(RTPS_MSG_OUT, "Error joining multicast group on " << ip << ": " << ex.what());
+                            EPROSIMA_LOG_WARNING(RTPS_MSG_OUT, "Error joining multicast group on " << ip << ": " << ex.what());
                         }
                     }
                 }
@@ -411,7 +411,7 @@ bool UDPv4Transport::OpenInputChannel(
                     catch (std::system_error& ex)
                     {
                         (void)ex;
-                        logWarning(RTPS_MSG_OUT, "Error joining multicast group on " << ip << ": " << ex.what());
+                        EPROSIMA_LOG_WARNING(RTPS_MSG_OUT, "Error joining multicast group on " << ip << ": " << ex.what());
                     }
                 }
             }
@@ -576,7 +576,7 @@ void UDPv4Transport::update_network_interfaces()
                     catch (std::system_error& ex)
                     {
                         (void)ex;
-                        logWarning(RTPS_MSG_OUT, "Error joining multicast group on " << ip << ": " << ex.what());
+                        EPROSIMA_LOG_WARNING(RTPS_MSG_OUT, "Error joining multicast group on " << ip << ": " << ex.what());
                     }
                 }
             }
@@ -591,7 +591,7 @@ void UDPv4Transport::update_network_interfaces()
                 catch (std::system_error& ex)
                 {
                     (void)ex;
-                    logWarning(RTPS_MSG_OUT, "Error joining multicast group on " << ip << ": " << ex.what());
+                    EPROSIMA_LOG_WARNING(RTPS_MSG_OUT, "Error joining multicast group on " << ip << ": " << ex.what());
                 }
             }
         }

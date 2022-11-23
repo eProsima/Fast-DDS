@@ -721,7 +721,7 @@ bool WLP::remove_local_writer(
 
         if (it == automatic_writers_.end())
         {
-            logWarning(RTPS_LIVELINESS, "Writer " << W->getGuid() << " not found.");
+            EPROSIMA_LOG_WARNING(RTPS_LIVELINESS, "Writer " << W->getGuid() << " not found.");
             return false;
         }
 
@@ -755,7 +755,7 @@ bool WLP::remove_local_writer(
 
         if (it == manual_by_participant_writers_.end())
         {
-            logWarning(RTPS_LIVELINESS, "Writer " << W->getGuid() << " not found.");
+            EPROSIMA_LOG_WARNING(RTPS_LIVELINESS, "Writer " << W->getGuid() << " not found.");
             return false;
         }
 
@@ -797,7 +797,7 @@ bool WLP::remove_local_writer(
 
         if (it == manual_by_topic_writers_.end())
         {
-            logWarning(RTPS_LIVELINESS, "Writer " << W->getGuid() << " not found.");
+            EPROSIMA_LOG_WARNING(RTPS_LIVELINESS, "Writer " << W->getGuid() << " not found.");
             return false;
         }
 
@@ -813,7 +813,7 @@ bool WLP::remove_local_writer(
         return true;
     }
 
-    logWarning(RTPS_LIVELINESS, "Writer " << W->getGuid() << " not found.");
+    EPROSIMA_LOG_WARNING(RTPS_LIVELINESS, "Writer " << W->getGuid() << " not found.");
     return false;
 }
 
@@ -846,7 +846,7 @@ bool WLP::remove_local_reader(
         return true;
     }
 
-    logWarning(RTPS_LIVELINESS, "Reader not removed from WLP, unknown reader");
+    EPROSIMA_LOG_WARNING(RTPS_LIVELINESS, "Reader not removed from WLP, unknown reader");
     return false;
 }
 

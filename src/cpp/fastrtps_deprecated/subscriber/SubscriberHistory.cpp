@@ -227,7 +227,7 @@ bool SubscriberHistory::received_change_keep_all_with_key(
             }
             else
             {
-                logWarning(SUBSCRIBER, "Change not added due to maximum number of samples per instance");
+                EPROSIMA_LOG_WARNING(SUBSCRIBER, "Change not added due to maximum number of samples per instance");
             }
         }
     }
@@ -245,7 +245,7 @@ bool SubscriberHistory::received_change_keep_all_with_key(
         else
         {
             // Discarting the sample.
-            logWarning(SUBSCRIBER, "Attempting to add Data to Full ReaderHistory: " << topic_att_.getTopicDataType());
+            EPROSIMA_LOG_WARNING(SUBSCRIBER, "Attempting to add Data to Full ReaderHistory: " << topic_att_.getTopicDataType());
         }
     }
 
@@ -296,7 +296,7 @@ bool SubscriberHistory::received_change_keep_last_with_key(
         else
         {
             // Discarting the sample.
-            logWarning(SUBSCRIBER, "Attempting to add Data to Full ReaderHistory: " << topic_att_.getTopicDataType());
+            EPROSIMA_LOG_WARNING(SUBSCRIBER, "Attempting to add Data to Full ReaderHistory: " << topic_att_.getTopicDataType());
         }
     }
 
@@ -309,7 +309,7 @@ bool SubscriberHistory::add_received_change(
     if (m_isHistoryFull)
     {
         // Discarding the sample.
-        logWarning(SUBSCRIBER, "Attempting to add Data to Full ReaderHistory: " << topic_att_.getTopicDataType());
+        EPROSIMA_LOG_WARNING(SUBSCRIBER, "Attempting to add Data to Full ReaderHistory: " << topic_att_.getTopicDataType());
         return false;
     }
 
@@ -337,7 +337,7 @@ bool SubscriberHistory::add_received_change_with_key(
     if (m_isHistoryFull)
     {
         // Discarting the sample.
-        logWarning(SUBSCRIBER, "Attempting to add Data to Full ReaderHistory: " << topic_att_.getTopicDataType());
+        EPROSIMA_LOG_WARNING(SUBSCRIBER, "Attempting to add Data to Full ReaderHistory: " << topic_att_.getTopicDataType());
         return false;
     }
 
@@ -381,7 +381,7 @@ bool SubscriberHistory::find_key_for_change(
     }
     else if (!a_change->instanceHandle.isDefined())
     {
-        logWarning(SUBSCRIBER, "NO KEY in topic: " << topic_att_.topicName
+        EPROSIMA_LOG_WARNING(SUBSCRIBER, "NO KEY in topic: " << topic_att_.topicName
                                                    << " and no method to obtain it"; );
         return false;
     }
@@ -530,7 +530,7 @@ bool SubscriberHistory::find_key(
                 return true;
             }
         }
-        logWarning(SUBSCRIBER, "History has reached the maximum number of instances");
+        EPROSIMA_LOG_WARNING(SUBSCRIBER, "History has reached the maximum number of instances");
     }
     return false;
 }
@@ -753,7 +753,7 @@ bool SubscriberHistory::completed_change_keep_all_with_key(
             }
             else
             {
-                logWarning(SUBSCRIBER, "Change not added due to maximum number of samples per instance");
+                EPROSIMA_LOG_WARNING(SUBSCRIBER, "Change not added due to maximum number of samples per instance");
 
                 const_iterator chit = find_change_nts(a_change);
                 if (chit != changesEnd())

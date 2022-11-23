@@ -155,7 +155,7 @@ bool SubscriberImpl::updateAttributes(
     if (att.unicastLocatorList.size() != this->m_att.unicastLocatorList.size() ||
             att.multicastLocatorList.size() != this->m_att.multicastLocatorList.size())
     {
-        logWarning(RTPS_READER, "Locator Lists cannot be changed or updated in this version");
+        EPROSIMA_LOG_WARNING(RTPS_READER, "Locator Lists cannot be changed or updated in this version");
         updated &= false;
     }
     else
@@ -175,8 +175,8 @@ bool SubscriberImpl::updateAttributes(
             }
             if (missing)
             {
-                logWarning(RTPS_READER, "Locator: " << *lit1 << " not present in new list");
-                logWarning(RTPS_READER, "Locator Lists cannot be changed or updated in this version");
+                EPROSIMA_LOG_WARNING(RTPS_READER, "Locator: " << *lit1 << " not present in new list");
+                EPROSIMA_LOG_WARNING(RTPS_READER, "Locator Lists cannot be changed or updated in this version");
             }
         }
         for (LocatorListConstIterator lit1 = this->m_att.multicastLocatorList.begin();
@@ -194,8 +194,8 @@ bool SubscriberImpl::updateAttributes(
             }
             if (missing)
             {
-                logWarning(RTPS_READER, "Locator: " << *lit1 << " not present in new list");
-                logWarning(RTPS_READER, "Locator Lists cannot be changed or updated in this version");
+                EPROSIMA_LOG_WARNING(RTPS_READER, "Locator: " << *lit1 << " not present in new list");
+                EPROSIMA_LOG_WARNING(RTPS_READER, "Locator Lists cannot be changed or updated in this version");
             }
         }
     }
@@ -203,7 +203,7 @@ bool SubscriberImpl::updateAttributes(
     //TOPIC ATTRIBUTES
     if (this->m_att.topic != att.topic)
     {
-        logWarning(RTPS_READER, "Topic Attributes cannot be updated");
+        EPROSIMA_LOG_WARNING(RTPS_READER, "Topic Attributes cannot be updated");
         updated &= false;
     }
     //QOS:

@@ -352,7 +352,7 @@ bool TCPTransportInterface::init(
     if (!apply_tls_config())
     {
         // TODO decide wether the Transport initialization should keep working after this error
-        logWarning(TLS, "Error configuring TLS, using TCP transport without security");
+        EPROSIMA_LOG_WARNING(TLS, "Error configuring TLS, using TCP transport without security");
     }
 
     if (configuration()->sendBufferSize == 0 || configuration()->receiveBufferSize == 0)
@@ -850,7 +850,7 @@ void TCPTransportInterface::perform_listen_operation(
             }
             else
             {
-                logWarning(RTCP, "Received Message, but no TransportReceiverInterface attached: " << logicalPort);
+                EPROSIMA_LOG_WARNING(RTCP, "Received Message, but no TransportReceiverInterface attached: " << logicalPort);
             }
         }
     }
@@ -871,7 +871,7 @@ bool TCPTransportInterface::read_body(
 
     if (ec)
     {
-        logWarning(RTCP, "Error reading RTCP body: " << ec.message());
+        EPROSIMA_LOG_WARNING(RTCP, "Error reading RTCP body: " << ec.message());
         return false;
     }
     else if (*bytes_received != body_size)
@@ -989,14 +989,14 @@ bool TCPTransportInterface::Receive(
         {
             if (ec != asio::error::eof)
             {
-                logWarning(DEBUG, "Failed to read TCP header: " << ec.message());
+                EPROSIMA_LOG_WARNING(DEBUG, "Failed to read TCP header: " << ec.message());
             }
             close_tcp_socket(channel);
             success = false;
         }
         else if (!channel->connection_status())
         {
-            logWarning(DEBUG, "Failed to read TCP header: channel disconnected while reading.");
+            EPROSIMA_LOG_WARNING(DEBUG, "Failed to read TCP header: channel disconnected while reading.");
             success = false;
         }
         else
@@ -1032,7 +1032,7 @@ bool TCPTransportInterface::Receive(
                     if (configuration()->check_crc
                             && !check_crc(tcp_header, receive_buffer, receive_buffer_size))
                     {
-                        logWarning(RTCP_MSG_IN, "Bad TCP header CRC");
+                        EPROSIMA_LOG_WARNING(RTCP_MSG_IN, "Bad TCP header CRC");
                     }
 
                     if (tcp_header.logical_port == 0)
@@ -1163,7 +1163,7 @@ bool TCPTransportInterface::send(
         //std::cout << "ChannelLocator: " << IPLocator::to_string(channel->locator()) << std::endl;
         //std::cout << "RemoteLocator: " << IPLocator::to_string(remote_locator) << std::endl;
 
-        logWarning(RTCP, "SEND [RTPS] Failed: Not connect: " << IPLocator::getLogicalPort(remote_locator) \
+        EPROSIMA_LOG_WARNING(RTCP, "SEND [RTPS] Failed: Not connect: " << IPLocator::getLogicalPort(remote_locator) \
                                                              << " @ IP: " << IPLocator::toIPv4string(remote_locator));
         return false;
     }
@@ -1205,7 +1205,7 @@ bool TCPTransportInterface::send(
 
                     if (sent != static_cast<uint32_t>(TCPHeader::size() + send_buffer_size) || ec)
                     {
-                        logWarning(DEBUG, "Failed to send RTCP message (" << sent << " of " <<
+                        EPROSIMA_LOG_WARNING(DEBUG, "Failed to send RTCP message (" << sent << " of " <<
                                 TCPHeader::size() + send_buffer_size << " b): " << ec.message());
                         success = false;
                     }
@@ -1639,7 +1639,7 @@ bool TCPTransportInterface::apply_tls_config()
             }
             else
             {
-                logWarning(TLS, "Allowing SSL 2.0. This version has known vulnerabilities.");
+                EPROSIMA_LOG_WARNING(TLS, "Allowing SSL 2.0. This version has known vulnerabilities.");
             }
 
             if (config->get_option(TLSOptions::NO_SSLV3))

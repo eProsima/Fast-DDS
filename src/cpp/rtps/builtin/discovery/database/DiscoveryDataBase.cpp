@@ -1491,7 +1491,7 @@ bool DiscoveryDataBase::delete_entity_of_change(
 
     if (change->kind == fastrtps::rtps::ChangeKind_t::ALIVE)
     {
-        logWarning(DISCOVERY_DATABASE,
+        EPROSIMA_LOG_WARNING(DISCOVERY_DATABASE,
                 "Attempting to delete information of an ALIVE entity: " << guid_from_change(change));
         return false;
     }
@@ -1778,7 +1778,7 @@ void DiscoveryDataBase::unmatch_writer_(
     auto wit = writers_.find(guid);
     if (wit == writers_.end())
     {
-        logWarning(DISCOVERY_DATABASE,
+        EPROSIMA_LOG_WARNING(DISCOVERY_DATABASE,
                 "Attempting to unmatch an unexisting writer: " << guid);
         return;
     }
@@ -1801,7 +1801,7 @@ void DiscoveryDataBase::unmatch_writer_(
                 auto rit = readers_.find(reader);
                 if (rit == readers_.end())
                 {
-                    logWarning(DISCOVERY_DATABASE,
+                    EPROSIMA_LOG_WARNING(DISCOVERY_DATABASE,
                             "Unexisting reader " << reader << " in topic: " << topic);
                 }
                 else
@@ -1823,7 +1823,7 @@ void DiscoveryDataBase::unmatch_reader_(
     auto rit = readers_.find(guid);
     if (rit == readers_.end())
     {
-        logWarning(DISCOVERY_DATABASE,
+        EPROSIMA_LOG_WARNING(DISCOVERY_DATABASE,
                 "Attempting to unmatch an unexisting reader: " << guid);
         return;
     }
@@ -1846,7 +1846,7 @@ void DiscoveryDataBase::unmatch_reader_(
                 auto wit = writers_.find(writer);
                 if (wit == writers_.end())
                 {
-                    logWarning(DISCOVERY_DATABASE,
+                    EPROSIMA_LOG_WARNING(DISCOVERY_DATABASE,
                             "Unexisting writer " << writer << " in topic: " << topic);
                 }
                 else
@@ -1867,7 +1867,7 @@ bool DiscoveryDataBase::repeated_writer_topic_(
     auto pit = participants_.find(participant);
     if (pit == participants_.end())
     {
-        logWarning(DISCOVERY_DATABASE,
+        EPROSIMA_LOG_WARNING(DISCOVERY_DATABASE,
                 "Checking repeated writer topics in an unexisting participant: " << participant);
         return false;
     }
@@ -1877,7 +1877,7 @@ bool DiscoveryDataBase::repeated_writer_topic_(
         auto wit = writers_.find(writer_guid);
         if (wit == writers_.end())
         {
-            logWarning(DISCOVERY_DATABASE,
+            EPROSIMA_LOG_WARNING(DISCOVERY_DATABASE,
                     "writer missing: " << writer_guid);
         }
 
@@ -1904,7 +1904,7 @@ bool DiscoveryDataBase::repeated_reader_topic_(
     auto pit = participants_.find(participant);
     if (pit == participants_.end())
     {
-        logWarning(DISCOVERY_DATABASE,
+        EPROSIMA_LOG_WARNING(DISCOVERY_DATABASE,
                 "Checking repeated reader topics in an unexisting participant: " << participant);
         return false;
     }
@@ -1914,7 +1914,7 @@ bool DiscoveryDataBase::repeated_reader_topic_(
         auto rit = readers_.find(reader_guid);
         if (rit == readers_.end())
         {
-            logWarning(DISCOVERY_DATABASE,
+            EPROSIMA_LOG_WARNING(DISCOVERY_DATABASE,
                     "reader missing: " << reader_guid);
             return false;
         }

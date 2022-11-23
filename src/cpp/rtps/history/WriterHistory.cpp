@@ -80,7 +80,7 @@ bool WriterHistory::prepare_and_add_change(
 
     if (m_isHistoryFull)
     {
-        logWarning(RTPS_WRITER_HISTORY, "History full for writer " << a_change->writerGUID);
+        EPROSIMA_LOG_WARNING(RTPS_WRITER_HISTORY, "History full for writer " << a_change->writerGUID);
         return false;
     }
 

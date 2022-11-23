@@ -35,7 +35,7 @@ bool TopicAttributes::checkQos() const
         if (resourceLimitsQos.max_samples <
                 resourceLimitsQos.max_samples_per_instance * resourceLimitsQos.max_instances)
         {
-            logWarning(RTPS_QOS_CHECK,
+            EPROSIMA_LOG_WARNING(RTPS_QOS_CHECK,
                     "TOPIC QOS (" << topicName << "): max_samples < max_samples_per_instance*max_instances");
         }
     }

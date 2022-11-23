@@ -252,7 +252,7 @@ bool Logging::compose_header(
                     EPROSIMA_LOG_ERROR(SECURITY, MESSAGE);                      \
                     break;                                            \
                 case LoggingLevel::WARNING_LEVEL:                     \
-                    logWarning(SECURITY, MESSAGE);                    \
+                    EPROSIMA_LOG_WARNING(SECURITY, MESSAGE);                    \
                     break;                                            \
                 case LoggingLevel::NOTICE_LEVEL:                      \
                 case LoggingLevel::INFORMATIONAL_LEVEL:               \

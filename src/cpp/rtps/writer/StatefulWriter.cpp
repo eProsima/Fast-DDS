@@ -1052,7 +1052,7 @@ bool StatefulWriter::matched_reader_add(
         }
         else
         {
-            logWarning(RTPS_WRITER, "Maximum number of reader proxies (" << max_readers <<
+            EPROSIMA_LOG_WARNING(RTPS_WRITER, "Maximum number of reader proxies (" << max_readers <<
                     ") reached for writer " << m_guid);
             return false;
         }
@@ -1329,7 +1329,7 @@ bool StatefulWriter::is_acked_by_all(
 
     if (change->writerGUID != this->getGuid())
     {
-        logWarning(RTPS_WRITER, "The given change is not from this Writer");
+        EPROSIMA_LOG_WARNING(RTPS_WRITER, "The given change is not from this Writer");
         return false;
     }
 
@@ -2033,7 +2033,7 @@ void StatefulWriter::print_inconsistent_acknack(
         const SequenceNumber_t& max_requested_sequence_number,
         const SequenceNumber_t& next_sequence_number)
 {
-    logWarning(RTPS_WRITER, "Inconsistent acknack received. Local Writer "
+    EPROSIMA_LOG_WARNING(RTPS_WRITER, "Inconsistent acknack received. Local Writer "
             << writer_guid << " next SequenceNumber " << next_sequence_number << ". Remote Reader "
             << reader_guid << " requested range is  [" << min_requested_sequence_number
             << ", " << max_requested_sequence_number << "].");

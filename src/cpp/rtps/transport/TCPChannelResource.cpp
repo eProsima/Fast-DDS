@@ -192,13 +192,13 @@ void TCPChannelResource::add_logical_port_response(
         }
         else
         {
-            logWarning(RTCP, "Received add_logical_port_response for port "
+            EPROSIMA_LOG_WARNING(RTCP, "Received add_logical_port_response for port "
                     << port << ", but it wasn't found in pending list.");
         }
     }
     else
     {
-        logWarning(RTCP, "Received add_logical_port_response, but the transaction id wasn't registered " <<
+        EPROSIMA_LOG_WARNING(RTCP, "Received add_logical_port_response, but the transaction id wasn't registered " <<
                 "(maybe removed" << " while negotiating?).");
     }
 }
@@ -263,7 +263,7 @@ void TCPChannelResource::process_check_logical_ports_response(
     }
     else
     {
-        logWarning(RTCP, "Received process_check_logical_ports_response without sending a Request.");
+        EPROSIMA_LOG_WARNING(RTCP, "Received process_check_logical_ports_response without sending a Request.");
     }
 }
 

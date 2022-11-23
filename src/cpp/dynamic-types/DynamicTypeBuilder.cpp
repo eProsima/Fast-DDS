@@ -95,7 +95,7 @@ ReturnCode_t DynamicTypeBuilder::add_empty_member(
     {
         if (index >= descriptor_->get_bounds(0))
         {
-            logWarning(DYN_TYPES, "Error adding member, out of bounds.");
+            EPROSIMA_LOG_WARNING(DYN_TYPES, "Error adding member, out of bounds.");
             return ReturnCode_t::RETCODE_BAD_PARAMETER;
         }
         descriptor.annotation_set_position(static_cast<uint16_t>(descriptor.get_index()));
@@ -149,19 +149,19 @@ ReturnCode_t DynamicTypeBuilder::add_member(const MemberDescriptor* descriptor)
                 }
                 else
                 {
-                    logWarning(DYN_TYPES, "Error adding member, invalid union parameters.");
+                    EPROSIMA_LOG_WARNING(DYN_TYPES, "Error adding member, invalid union parameters.");
                     return ReturnCode_t::RETCODE_BAD_PARAMETER;
                 }
             }
             else
             {
-                logWarning(DYN_TYPES, "Error adding member, there is other member with the same name.");
+                EPROSIMA_LOG_WARNING(DYN_TYPES, "Error adding member, there is other member with the same name.");
                 return ReturnCode_t::RETCODE_BAD_PARAMETER;
             }
         }
         else
         {
-            logWarning(DYN_TYPES, "Error adding member, the current type " << descriptor_->get_kind()
+            EPROSIMA_LOG_WARNING(DYN_TYPES, "Error adding member, the current type " << descriptor_->get_kind()
                 << " doesn't support members.");
             return ReturnCode_t::RETCODE_PRECONDITION_NOT_MET;
         }
@@ -170,11 +170,11 @@ ReturnCode_t DynamicTypeBuilder::add_member(const MemberDescriptor* descriptor)
     {
         if (descriptor == nullptr)
         {
-            logWarning(DYN_TYPES, "Error adding member, Invalid input descriptor.");
+            EPROSIMA_LOG_WARNING(DYN_TYPES, "Error adding member, Invalid input descriptor.");
         }
         else
         {
-            logWarning(DYN_TYPES, "Error adding member, The input descriptor isn't consistent.");
+            EPROSIMA_LOG_WARNING(DYN_TYPES, "Error adding member, The input descriptor isn't consistent.");
         }
         return ReturnCode_t::RETCODE_BAD_PARAMETER;
     }

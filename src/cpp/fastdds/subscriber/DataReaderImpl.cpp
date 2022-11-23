@@ -336,7 +336,7 @@ bool DataReaderImpl::can_be_deleted(
 
             if (!read_conditions_.empty())
             {
-                logWarning(DATA_READER, "DataReader " << guid() << " has ReadConditions not yet deleted");
+                EPROSIMA_LOG_WARNING(DATA_READER, "DataReader " << guid() << " has ReadConditions not yet deleted");
                 return false;
             }
         }
@@ -1481,66 +1481,66 @@ bool DataReaderImpl::can_qos_be_updated(
     if (!(to.resource_limits() == from.resource_limits()))
     {
         updatable = false;
-        logWarning(DDS_QOS_CHECK, "resource_limits cannot be changed after the creation of a DataReader.");
+        EPROSIMA_LOG_WARNING(DDS_QOS_CHECK, "resource_limits cannot be changed after the creation of a DataReader.");
     }
     if (to.history().kind != from.history().kind ||
             to.history().depth != from.history().depth)
     {
         updatable = false;
-        logWarning(DDS_QOS_CHECK, "History cannot be changed after the creation of a DataReader.");
+        EPROSIMA_LOG_WARNING(DDS_QOS_CHECK, "History cannot be changed after the creation of a DataReader.");
     }
 
     if (to.durability().kind != from.durability().kind)
     {
         updatable = false;
-        logWarning(DDS_QOS_CHECK, "Durability kind cannot be changed after the creation of a DataReader.");
+        EPROSIMA_LOG_WARNING(DDS_QOS_CHECK, "Durability kind cannot be changed after the creation of a DataReader.");
     }
     if (to.liveliness().kind != from.liveliness().kind ||
             to.liveliness().lease_duration != from.liveliness().lease_duration ||
             to.liveliness().announcement_period != from.liveliness().announcement_period)
     {
         updatable = false;
-        logWarning(DDS_QOS_CHECK, "Liveliness cannot be changed after the creation of a DataReader.");
+        EPROSIMA_LOG_WARNING(DDS_QOS_CHECK, "Liveliness cannot be changed after the creation of a DataReader.");
     }
     if (to.reliability().kind != from.reliability().kind)
     {
         updatable = false;
-        logWarning(DDS_QOS_CHECK, "Reliability Kind cannot be changed after the creation of a DataReader.");
+        EPROSIMA_LOG_WARNING(DDS_QOS_CHECK, "Reliability Kind cannot be changed after the creation of a DataReader.");
     }
     if (to.ownership().kind != from.ownership().kind)
     {
         updatable = false;
-        logWarning(DDS_QOS_CHECK, "Ownership Kind cannot be changed after the creation of a DataReader.");
+        EPROSIMA_LOG_WARNING(DDS_QOS_CHECK, "Ownership Kind cannot be changed after the creation of a DataReader.");
     }
     if (to.destination_order().kind != from.destination_order().kind)
     {
         updatable = false;
-        logWarning(DDS_QOS_CHECK, "Destination order Kind cannot be changed after the creation of a DataReader.");
+        EPROSIMA_LOG_WARNING(DDS_QOS_CHECK, "Destination order Kind cannot be changed after the creation of a DataReader.");
     }
     if (!(to.reader_resource_limits() == from.reader_resource_limits()))
     {
         updatable = false;
-        logWarning(DDS_QOS_CHECK, "reader_resource_limits cannot be changed after the creation of a DataReader.");
+        EPROSIMA_LOG_WARNING(DDS_QOS_CHECK, "reader_resource_limits cannot be changed after the creation of a DataReader.");
     }
     if (to.data_sharing().kind() != from.data_sharing().kind())
     {
         updatable = false;
-        logWarning(RTPS_QOS_CHECK, "Data sharing configuration cannot be changed after the creation of a DataReader.");
+        EPROSIMA_LOG_WARNING(RTPS_QOS_CHECK, "Data sharing configuration cannot be changed after the creation of a DataReader.");
     }
     if (to.data_sharing().shm_directory() != from.data_sharing().shm_directory())
     {
         updatable = false;
-        logWarning(RTPS_QOS_CHECK, "Data sharing configuration cannot be changed after the creation of a DataReader.");
+        EPROSIMA_LOG_WARNING(RTPS_QOS_CHECK, "Data sharing configuration cannot be changed after the creation of a DataReader.");
     }
     if (to.data_sharing().domain_ids() != from.data_sharing().domain_ids())
     {
         updatable = false;
-        logWarning(RTPS_QOS_CHECK, "Data sharing configuration cannot be changed after the creation of a DataReader.");
+        EPROSIMA_LOG_WARNING(RTPS_QOS_CHECK, "Data sharing configuration cannot be changed after the creation of a DataReader.");
     }
     if (qos_has_unique_network_request(to) != qos_has_unique_network_request(from))
     {
         updatable = false;
-        logWarning(RTPS_QOS_CHECK,
+        EPROSIMA_LOG_WARNING(RTPS_QOS_CHECK,
                 "Unique network flows request cannot be changed after the creation of a DataReader.");
     }
     return updatable;

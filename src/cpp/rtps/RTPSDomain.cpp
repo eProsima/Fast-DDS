@@ -125,7 +125,7 @@ RTPSParticipant* RTPSDomain::createParticipant(
         }
         else if (!filename.empty())
         {
-            logWarning(RTPS_PARTICIPANT, filename + " does not exist. File watching not initialized.");
+            EPROSIMA_LOG_WARNING(RTPS_PARTICIPANT, filename + " does not exist. File watching not initialized.");
         }
     }
 

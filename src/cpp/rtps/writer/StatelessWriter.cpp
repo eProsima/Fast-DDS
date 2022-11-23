@@ -430,7 +430,7 @@ bool StatelessWriter::matched_reader_add(
             {
                 if (reader.remote_guid() == data.guid())
                 {
-                    logWarning(RTPS_WRITER, "Attempting to add existing reader, updating information.");
+                    EPROSIMA_LOG_WARNING(RTPS_WRITER, "Attempting to add existing reader, updating information.");
                     if (reader.update(data.remote_locators().unicast,
                     data.remote_locators().multicast,
                     data.m_expectsInlineQos))
@@ -472,7 +472,7 @@ bool StatelessWriter::matched_reader_add(
         }
         else
         {
-            logWarning(RTPS_WRITER, "Couldn't add matched reader due to resource limits");
+            EPROSIMA_LOG_WARNING(RTPS_WRITER, "Couldn't add matched reader due to resource limits");
             return false;
         }
     }

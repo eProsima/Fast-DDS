@@ -79,7 +79,7 @@ bool AESGCMGMAC_Transform::encode_serialized_payload(
     AESGCMGMAC_WriterCryptoHandle& local_writer = AESGCMGMAC_WriterCryptoHandle::narrow(sending_datawriter_crypto);
     if (local_writer.nil())
     {
-        logWarning(SECURITY_CRYPTO, "Invalid CryptoHandle");
+        EPROSIMA_LOG_WARNING(SECURITY_CRYPTO, "Invalid CryptoHandle");
         return false;
     }
 
@@ -183,7 +183,7 @@ bool AESGCMGMAC_Transform::encode_datawriter_submessage(
 
     if (local_writer.nil())
     {
-        logWarning(SECURITY_CRYPTO, "Invalid cryptoHandle");
+        EPROSIMA_LOG_WARNING(SECURITY_CRYPTO, "Invalid cryptoHandle");
         return false;
     }
 
@@ -325,7 +325,7 @@ bool AESGCMGMAC_Transform::encode_datareader_submessage(
 
     if (local_reader.nil())
     {
-        logWarning(SECURITY_CRYPTO, "Invalid CryptoHandle");
+        EPROSIMA_LOG_WARNING(SECURITY_CRYPTO, "Invalid CryptoHandle");
         return false;
     }
 
@@ -797,7 +797,7 @@ bool AESGCMGMAC_Transform::decode_rtps_message(
             session_key, initialization_vector,
             &plain_buffer.buffer[plain_buffer.pos], length))
     {
-        logWarning(SECURITY_CRYPTO, "Error decoding content");
+        EPROSIMA_LOG_WARNING(SECURITY_CRYPTO, "Error decoding content");
         return false;
     }
 
@@ -818,7 +818,7 @@ bool AESGCMGMAC_Transform::preprocess_secure_submsg(
     AESGCMGMAC_ParticipantCryptoHandle& remote_participant = AESGCMGMAC_ParticipantCryptoHandle::narrow(sending_crypto);
     if (remote_participant.nil())
     {
-        logWarning(SECURITY_CRYPTO, "Invalid CryptoHandle");
+        EPROSIMA_LOG_WARNING(SECURITY_CRYPTO, "Invalid CryptoHandle");
         exception = SecurityException("Not a valid ParticipantCryptoHandle received");
         return false;
     }
@@ -827,7 +827,7 @@ bool AESGCMGMAC_Transform::preprocess_secure_submsg(
             AESGCMGMAC_ParticipantCryptoHandle::narrow(receiving_crypto);
     if (local_participant.nil())
     {
-        logWarning(SECURITY_CRYPTO, "Invalid CryptoHandle");
+        EPROSIMA_LOG_WARNING(SECURITY_CRYPTO, "Invalid CryptoHandle");
         exception = SecurityException("Not a valid ParticipantCryptoHandle received");
         return false;
     }
@@ -892,7 +892,7 @@ bool AESGCMGMAC_Transform::preprocess_secure_submsg(
 
         if (wKeyMats.size() == 0)
         {
-            logWarning(SECURITY_CRYPTO, "No key material yet");
+            EPROSIMA_LOG_WARNING(SECURITY_CRYPTO, "No key material yet");
             continue;
         }
 
@@ -929,7 +929,7 @@ bool AESGCMGMAC_Transform::preprocess_secure_submsg(
 
         if (rKeyMats.size() == 0)
         {
-            logWarning(SECURITY_CRYPTO, "No key material yet");
+            EPROSIMA_LOG_WARNING(SECURITY_CRYPTO, "No key material yet");
             continue;
         }
 
@@ -958,7 +958,7 @@ bool AESGCMGMAC_Transform::preprocess_secure_submsg(
         } //Remote reader key found
     } //For each datareader present in the remote participant
 
-    // logWarning(SECURITY_CRYPTO,"Unable to determine the nature of the message");
+    // EPROSIMA_LOG_WARNING(SECURITY_CRYPTO,"Unable to determine the nature of the message");
     return false;
 }
 
@@ -979,7 +979,7 @@ bool AESGCMGMAC_Transform::decode_datawriter_submessage(
 
     if (sending_writer->Entity2RemoteKeyMaterial.size() == 0)
     {
-        logWarning(SECURITY_CRYPTO, "No key material yet");
+        EPROSIMA_LOG_WARNING(SECURITY_CRYPTO, "No key material yet");
         return false;
     }
 
@@ -1042,7 +1042,7 @@ bool AESGCMGMAC_Transform::decode_datawriter_submessage(
     auto keyMat = find_key(sending_writer->Entity2RemoteKeyMaterial, header.transform_identifier);
     if (keyMat == nullptr)
     {
-        logWarning(SECURITY_CRYPTO, "Key material not found");
+        EPROSIMA_LOG_WARNING(SECURITY_CRYPTO, "Key material not found");
         return false;
     }
 
@@ -1132,7 +1132,7 @@ bool AESGCMGMAC_Transform::decode_datawriter_submessage(
             keyMat->transformation_kind, session_key, initialization_vector,
             &plain_rtps_submessage.buffer[plain_rtps_submessage.pos], length))
     {
-        logWarning(SECURITY_CRYPTO, "Error decoding content");
+        EPROSIMA_LOG_WARNING(SECURITY_CRYPTO, "Error decoding content");
         return false;
     }
 
@@ -1159,7 +1159,7 @@ bool AESGCMGMAC_Transform::decode_datareader_submessage(
 
     if (sending_reader->Entity2RemoteKeyMaterial.size() == 0)
     {
-        logWarning(SECURITY_CRYPTO, "No key material yet");
+        EPROSIMA_LOG_WARNING(SECURITY_CRYPTO, "No key material yet");
         return false;
     }
 
@@ -1222,7 +1222,7 @@ bool AESGCMGMAC_Transform::decode_datareader_submessage(
     auto keyMat = find_key(sending_reader->Entity2RemoteKeyMaterial, header.transform_identifier);
     if (keyMat == nullptr)
     {
-        logWarning(SECURITY_CRYPTO, "Could not find key material");
+        EPROSIMA_LOG_WARNING(SECURITY_CRYPTO, "Could not find key material");
         return false;
     }
 
@@ -1312,7 +1312,7 @@ bool AESGCMGMAC_Transform::decode_datareader_submessage(
             keyMat->transformation_kind, session_key, initialization_vector,
             &plain_rtps_submessage.buffer[plain_rtps_submessage.pos], length))
     {
-        logWarning(SECURITY_CRYPTO, "Error decoding content");
+        EPROSIMA_LOG_WARNING(SECURITY_CRYPTO, "Error decoding content");
         return false;
     }
 
@@ -1341,7 +1341,7 @@ bool AESGCMGMAC_Transform::decode_serialized_payload(
 
     if (sending_writer->Entity2RemoteKeyMaterial.size() == 0)
     {
-        logWarning(SECURITY_CRYPTO, "No key material yet");
+        EPROSIMA_LOG_WARNING(SECURITY_CRYPTO, "No key material yet");
         return false;
     }
 
@@ -1377,7 +1377,7 @@ bool AESGCMGMAC_Transform::decode_serialized_payload(
     auto keyMat = find_key(sending_writer->Entity2RemoteKeyMaterial, header.transform_identifier);
     if (keyMat == nullptr)
     {
-        logWarning(SECURITY_CRYPTO, "Key material not found");
+        EPROSIMA_LOG_WARNING(SECURITY_CRYPTO, "Key material not found");
         return false;
     }
 
@@ -1439,7 +1439,7 @@ bool AESGCMGMAC_Transform::decode_serialized_payload(
             keyMat->transformation_kind, session_key, initialization_vector,
             plain_payload.data, length))
     {
-        logWarning(SECURITY_CRYPTO, "Error decoding content");
+        EPROSIMA_LOG_WARNING(SECURITY_CRYPTO, "Error decoding content");
         return false;
     }
 
@@ -1730,13 +1730,13 @@ bool AESGCMGMAC_Transform::serialize_SecureDataTag(
 
         if (remote_entity.nil())
         {
-            logWarning(SECURITY_CRYPTO, "Invalid CryptoHandle");
+            EPROSIMA_LOG_WARNING(SECURITY_CRYPTO, "Invalid CryptoHandle");
             continue;
         }
 
         if (remote_entity->Remote2EntityKeyMaterial.size() == 0)
         {
-            logWarning(SECURITY_CRYPTO, "No key material yet");
+            EPROSIMA_LOG_WARNING(SECURITY_CRYPTO, "No key material yet");
             continue;
         }
 
@@ -1835,13 +1835,13 @@ bool AESGCMGMAC_Transform::serialize_SecureDataTag(
 
         if (remote_participant.nil())
         {
-            logWarning(SECURITY_CRYPTO, "Invalid CryptoHandle");
+            EPROSIMA_LOG_WARNING(SECURITY_CRYPTO, "Invalid CryptoHandle");
             continue;
         }
 
         if (remote_participant->Participant2ParticipantKeyMaterial.size() == 0)
         {
-            logWarning(SECURITY_CRYPTO, "No key material yet");
+            EPROSIMA_LOG_WARNING(SECURITY_CRYPTO, "No key material yet");
             continue;
         }
 
@@ -1992,7 +1992,7 @@ bool AESGCMGMAC_Transform::deserialize_SecureDataBody(
         // - EVP_DecryptUpdate needs at maximum: body_length + cipher_block_size.
         if (plain_buffer_len < (protected_len + cipher_block_size))
         {
-            logWarning(SECURITY_CRYPTO, "Not enough memory to decode payload");
+            EPROSIMA_LOG_WARNING(SECURITY_CRYPTO, "Not enough memory to decode payload");
             EVP_CIPHER_CTX_free(d_ctx);
             return false;
         }
@@ -2002,7 +2002,7 @@ bool AESGCMGMAC_Transform::deserialize_SecureDataBody(
     unsigned char* input_buffer = (unsigned char*)decoder.getCurrentPosition();
     if (!EVP_DecryptUpdate(d_ctx, output_buffer, &actual_size, input_buffer, protected_len))
     {
-        logWarning(SECURITY_CRYPTO, "Unable to decode the payload. EVP_DecryptUpdate function returns an error");
+        EPROSIMA_LOG_WARNING(SECURITY_CRYPTO, "Unable to decode the payload. EVP_DecryptUpdate function returns an error");
         EVP_CIPHER_CTX_free(d_ctx);
         return false;
     }
@@ -2011,7 +2011,7 @@ bool AESGCMGMAC_Transform::deserialize_SecureDataBody(
 
     if (!EVP_DecryptFinal(d_ctx, output_buffer ? &output_buffer[actual_size] : NULL, &final_size))
     {
-        logWarning(SECURITY_CRYPTO, "Unable to decode the payload. EVP_DecryptFinal function returns an error");
+        EPROSIMA_LOG_WARNING(SECURITY_CRYPTO, "Unable to decode the payload. EVP_DecryptFinal function returns an error");
         EVP_CIPHER_CTX_free(d_ctx);
         return false;
     }
@@ -2020,7 +2020,7 @@ bool AESGCMGMAC_Transform::deserialize_SecureDataBody(
     uint32_t cnt_len = do_encryption ? static_cast<uint32_t>(actual_size + final_size) : body_length;
     if (plain_buffer_len < cnt_len)
     {
-        logWarning(SECURITY_CRYPTO, "Not enough memory to decode payload");
+        EPROSIMA_LOG_WARNING(SECURITY_CRYPTO, "Not enough memory to decode payload");
         return false;
     }
 
@@ -2110,7 +2110,7 @@ bool AESGCMGMAC_Transform::deserialize_SecureDataTag(
 
         if (!mac_found)
         {
-            logWarning(SECURITY_CRYPTO, "Unable to authenticate the message: message does not target this Participant");
+            EPROSIMA_LOG_WARNING(SECURITY_CRYPTO, "Unable to authenticate the message: message does not target this Participant");
             exception = SecurityException(
                 "Message does not contain a suitable specific MAC for the receiving Participant");
             return false;
@@ -2250,7 +2250,7 @@ bool AESGCMGMAC_Transform::lookup_reader(
 
         if (reader->Remote2EntityKeyMaterial.empty())
         {
-            logWarning(SECURITY_CRYPTO, "No key material yet");
+            EPROSIMA_LOG_WARNING(SECURITY_CRYPTO, "No key material yet");
             continue;
         }
 
@@ -2278,7 +2278,7 @@ bool AESGCMGMAC_Transform::lookup_writer(
 
         if (writer->Remote2EntityKeyMaterial.empty())
         {
-            logWarning(SECURITY_CRYPTO, "No key material yet");
+            EPROSIMA_LOG_WARNING(SECURITY_CRYPTO, "No key material yet");
             continue;
         }
 

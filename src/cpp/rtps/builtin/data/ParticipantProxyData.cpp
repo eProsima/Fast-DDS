@@ -596,7 +596,7 @@ bool ParticipantProxyData::readFromCDRMessage(
 
                         identity_token_ = std::move(p.token);
 #else
-                        logWarning(RTPS_PARTICIPANT, "Received PID_IDENTITY_TOKEN but security is disabled");
+                        EPROSIMA_LOG_WARNING(RTPS_PARTICIPANT, "Received PID_IDENTITY_TOKEN but security is disabled");
 #endif // if HAVE_SECURITY
                         break;
                     }
@@ -612,7 +612,7 @@ bool ParticipantProxyData::readFromCDRMessage(
 
                         permissions_token_ = std::move(p.token);
 #else
-                        logWarning(RTPS_PARTICIPANT, "Received PID_PERMISSIONS_TOKEN but security is disabled");
+                        EPROSIMA_LOG_WARNING(RTPS_PARTICIPANT, "Received PID_PERMISSIONS_TOKEN but security is disabled");
 #endif // if HAVE_SECURITY
                         break;
                     }
@@ -630,7 +630,7 @@ bool ParticipantProxyData::readFromCDRMessage(
                         security_attributes_ = p.security_attributes;
                         plugin_security_attributes_ = p.plugin_security_attributes;
 #else
-                        logWarning(RTPS_PARTICIPANT,
+                        EPROSIMA_LOG_WARNING(RTPS_PARTICIPANT,
                                 "Received PID_PARTICIPANT_SECURITY_INFO but security is disabled");
 #endif // if HAVE_SECURITY
                         break;

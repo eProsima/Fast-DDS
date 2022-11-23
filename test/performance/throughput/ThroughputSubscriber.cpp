@@ -570,7 +570,7 @@ int ThroughputSubscriber::process_message()
                             if (dr_qos.history().depth < 0 ||
                                     static_cast<uint32_t>(dr_qos.history().depth) < max_demand)
                             {
-                                logWarning(THROUGHPUTSUBSCRIBER, "Setting history depth to " << max_demand);
+                                EPROSIMA_LOG_WARNING(THROUGHPUTSUBSCRIBER, "Setting history depth to " << max_demand);
                                 dr_qos.resource_limits().max_samples = max_demand;
                                 dr_qos.history().depth = max_demand;
                             }
@@ -582,7 +582,7 @@ int ThroughputSubscriber::process_message()
                             if (dr_qos.resource_limits().max_samples < 0 ||
                                     static_cast<uint32_t>(dr_qos.resource_limits().max_samples) < max_demand)
                             {
-                                logWarning(THROUGHPUTSUBSCRIBER,
+                                EPROSIMA_LOG_WARNING(THROUGHPUTSUBSCRIBER,
                                         "Setting resource limit max samples to " << max_demand);
                                 dr_qos.resource_limits().max_samples = max_demand;
                             }

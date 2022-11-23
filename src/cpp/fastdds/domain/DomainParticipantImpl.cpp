@@ -2182,12 +2182,12 @@ bool DomainParticipantImpl::can_qos_be_updated(
     if (!(to.allocation() == from.allocation()))
     {
         updatable = false;
-        logWarning(RTPS_QOS_CHECK, "ParticipantResourceLimitsQos cannot be changed after the participant is enabled");
+        EPROSIMA_LOG_WARNING(RTPS_QOS_CHECK, "ParticipantResourceLimitsQos cannot be changed after the participant is enabled");
     }
     if (!(to.properties() == from.properties()))
     {
         updatable = false;
-        logWarning(RTPS_QOS_CHECK, "PropertyPolilyQos cannot be changed after the participant is enabled");
+        EPROSIMA_LOG_WARNING(RTPS_QOS_CHECK, "PropertyPolilyQos cannot be changed after the participant is enabled");
     }
     if (!(to.wire_protocol() == from.wire_protocol()))
     {
@@ -2254,7 +2254,7 @@ bool DomainParticipantImpl::can_qos_be_updated(
                 from.wire_protocol().builtin.discovery_config.ignoreParticipantFlags))))
         {
             updatable = false;
-            logWarning(RTPS_QOS_CHECK, "WireProtocolConfigQos cannot be changed after the participant is enabled, "
+            EPROSIMA_LOG_WARNING(RTPS_QOS_CHECK, "WireProtocolConfigQos cannot be changed after the participant is enabled, "
                     << "with the exception of builtin.discovery_config.m_DiscoveryServers");
         }
         else
@@ -2277,7 +2277,7 @@ bool DomainParticipantImpl::can_qos_be_updated(
                 if (!contained)
                 {
                     updatable = false;
-                    logWarning(RTPS_QOS_CHECK,
+                    EPROSIMA_LOG_WARNING(RTPS_QOS_CHECK,
                             "Discovery Servers cannot be removed from the list; they can only be added");
                     break;
                 }
@@ -2287,12 +2287,12 @@ bool DomainParticipantImpl::can_qos_be_updated(
     if (!(to.transport() == from.transport()))
     {
         updatable = false;
-        logWarning(RTPS_QOS_CHECK, "TransportConfigQos cannot be changed after the participant is enabled");
+        EPROSIMA_LOG_WARNING(RTPS_QOS_CHECK, "TransportConfigQos cannot be changed after the participant is enabled");
     }
     if (!(to.name() == from.name()))
     {
         updatable = false;
-        logWarning(RTPS_QOS_CHECK, "Participant name cannot be changed after the participant is enabled");
+        EPROSIMA_LOG_WARNING(RTPS_QOS_CHECK, "Participant name cannot be changed after the participant is enabled");
     }
     return updatable;
 }

@@ -54,7 +54,7 @@ WriterProxy::~WriterProxy()
 {
     if (is_alive_ && is_on_same_process_)
     {
-        logWarning(RTPS_READER, "Automatically unmatching on ~WriterProxy");
+        EPROSIMA_LOG_WARNING(RTPS_READER, "Automatically unmatching on ~WriterProxy");
         RTPSWriter* writer = RTPSDomainImpl::find_local_writer(guid());
         if (writer)
         {

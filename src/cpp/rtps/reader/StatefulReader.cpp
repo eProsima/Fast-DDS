@@ -241,7 +241,7 @@ bool StatefulReader::matched_writer_add(
             }
             else
             {
-                logWarning(RTPS_READER, "Maximum number of reader proxies (" << max_readers << \
+                EPROSIMA_LOG_WARNING(RTPS_READER, "Maximum number of reader proxies (" << max_readers << \
                         ") reached for writer " << m_guid);
                 return false;
             }
@@ -549,7 +549,7 @@ bool StatefulReader::processDataMsg(
             CacheChange_t* change_to_add = nullptr;
             if (!change_pool_->reserve_cache(change_to_add))
             {
-                logWarning(RTPS_MSG_IN,
+                EPROSIMA_LOG_WARNING(RTPS_MSG_IN,
                         IDSTRING "Reached the maximum number of samples allowed by this reader's QoS. Rejecting change for reader: " <<
                         m_guid );
                 return false;
@@ -571,7 +571,7 @@ bool StatefulReader::processDataMsg(
                 }
                 if (!datasharing_pool)
                 {
-                    logWarning(RTPS_MSG_IN, IDSTRING "Problem copying DataSharing CacheChange from writer "
+                    EPROSIMA_LOG_WARNING(RTPS_MSG_IN, IDSTRING "Problem copying DataSharing CacheChange from writer "
                             << change->writerGUID);
                     change_pool_->release_cache(change_to_add);
                     return false;
@@ -584,7 +584,7 @@ bool StatefulReader::processDataMsg(
             }
             else
             {
-                logWarning(RTPS_MSG_IN, IDSTRING "Problem copying CacheChange, received data is: "
+                EPROSIMA_LOG_WARNING(RTPS_MSG_IN, IDSTRING "Problem copying CacheChange, received data is: "
                         << change->serializedPayload.length << " bytes and max size in reader "
                         << m_guid << " is "
                         << (fixed_payload_size_ > 0 ? fixed_payload_size_ : std::numeric_limits<uint32_t>::max()));
@@ -1249,7 +1249,7 @@ bool StatefulReader::nextUntakenCache(
         }
         else
         {
-            logWarning(RTPS_READER,
+            EPROSIMA_LOG_WARNING(RTPS_READER,
                     "Removing change " << (*it)->sequenceNumber << " from " << (*it)->writerGUID <<
                     " because is no longer paired");
             it = mp_history->remove_change(it);
@@ -1308,7 +1308,7 @@ bool StatefulReader::nextUnreadCache(
         }
         else
         {
-            logWarning(RTPS_READER,
+            EPROSIMA_LOG_WARNING(RTPS_READER,
                     "Removing change " << (*it)->sequenceNumber << " from " << (*it)->writerGUID <<
                     " because is no longer paired");
             it = mp_history->remove_change(it);

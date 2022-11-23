@@ -161,7 +161,7 @@ private:
 
         if (0 != std::remove(SharedDir::get_lock_path(name).c_str()))
         {
-            logWarning(RTPS_TRANSPORT_SHM, "Failed to remove " << SharedDir::get_lock_path(name));
+            EPROSIMA_LOG_WARNING(RTPS_TRANSPORT_SHM, "Failed to remove " << SharedDir::get_lock_path(name));
         }
     }
 
@@ -207,7 +207,7 @@ private:
 
         if (0 != std::remove(SharedDir::get_lock_path(name).c_str()))
         {
-            logWarning(RTPS_TRANSPORT_SHM, "Failed to remove " << SharedDir::get_lock_path(name));
+            EPROSIMA_LOG_WARNING(RTPS_TRANSPORT_SHM, "Failed to remove " << SharedDir::get_lock_path(name));
         }
     }
 

@@ -37,7 +37,7 @@ TEST(LogFileTests, file_consumer)
     for (int i = 0; i != 5; i++)
     {
         threads.emplace_back(new thread([i]{
-            logWarning(Multithread, "I'm thread " << std::to_string(i));
+            EPROSIMA_LOG_WARNING(Multithread, "I'm thread " << std::to_string(i));
         }));
     }
 
@@ -72,7 +72,7 @@ TEST(LogFileTests, file_consumer_append)
     for (int i = 0; i != 5; i++)
     {
         threads.emplace_back(new thread([i]{
-            logWarning(Multithread, "I'm thread " << std::to_string(i));
+            EPROSIMA_LOG_WARNING(Multithread, "I'm thread " << std::to_string(i));
         }));
     }
 
@@ -88,7 +88,7 @@ TEST(LogFileTests, file_consumer_append)
     for (int i = 0; i != 5; i++)
     {
         threads2.emplace_back(new thread([i]{
-            logWarning(Multithread, "I'm thread " << std::to_string(i+5));
+            EPROSIMA_LOG_WARNING(Multithread, "I'm thread " << std::to_string(i+5));
         }));
     }
 

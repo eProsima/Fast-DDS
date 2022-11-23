@@ -176,7 +176,7 @@ static void finalize_statement(
         int res = sqlite3_finalize(stmt);
         if (res != SQLITE_OK)
         {
-            logWarning(RTPS_PERSISTENCE, "Statement could not be finalized. sqlite3_finalize code: " << res);
+            EPROSIMA_LOG_WARNING(RTPS_PERSISTENCE, "Statement could not be finalized. sqlite3_finalize code: " << res);
         }
         stmt = NULL;
     }

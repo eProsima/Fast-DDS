@@ -58,7 +58,7 @@ bool AESGCMGMAC_KeyExchange::create_local_participant_crypto_tokens(
 
     if (local_participant.nil() || remote_participant.nil())
     {
-        logWarning(SECURITY_CRYPTO, "Not a valid ParticipantCryptoHandle received");
+        EPROSIMA_LOG_WARNING(SECURITY_CRYPTO, "Not a valid ParticipantCryptoHandle received");
         return false;
     }
 
@@ -103,19 +103,19 @@ bool AESGCMGMAC_KeyExchange::set_remote_participant_crypto_tokens(
 
     if (local_participant.nil() || remote_participant.nil())
     {
-        logWarning(SECURITY_CRYPTO, "Not a valid ParticipantCryptoHandle received");
+        EPROSIMA_LOG_WARNING(SECURITY_CRYPTO, "Not a valid ParticipantCryptoHandle received");
         return false;
     }
     //As only relevant KeyMaterials are tokenized, only one Token is exchanged
     if (remote_participant_tokens.size() != 1)
     {
-        logWarning(SECURITY_CRYPTO, "Invalid CryptoTokenSeq length");
+        EPROSIMA_LOG_WARNING(SECURITY_CRYPTO, "Invalid CryptoTokenSeq length");
         exception = SecurityException("Incorrect remote CryptoSequence length");
         return false;
     }
     if (remote_participant_tokens.at(0).class_id() != "DDS:Crypto:AES_GCM_GMAC")
     {
-        logWarning(SECURITY_CRYPTO, "MalformedCryptoToken");
+        EPROSIMA_LOG_WARNING(SECURITY_CRYPTO, "MalformedCryptoToken");
         exception = SecurityException("Incorrect token type received");
         return false;
     }
@@ -123,7 +123,7 @@ bool AESGCMGMAC_KeyExchange::set_remote_participant_crypto_tokens(
             remote_participant_tokens.at(0).properties().size() != 0 ||
             remote_participant_tokens.at(0).binary_properties().at(0).name() != "dds.cryp.keymat")
     {
-        logWarning(SECURITY_CRYPTO, "MalformedCryptoToken");
+        EPROSIMA_LOG_WARNING(SECURITY_CRYPTO, "MalformedCryptoToken");
         exception = SecurityException("Malformed CryptoToken");
         return false;
     }
@@ -156,7 +156,7 @@ bool AESGCMGMAC_KeyExchange::create_local_datawriter_crypto_tokens(
 
     if (local_writer.nil() || remote_reader.nil())
     {
-        logWarning(SECURITY_CRYPTO, "Invalid CryptoHandle received");
+        EPROSIMA_LOG_WARNING(SECURITY_CRYPTO, "Invalid CryptoHandle received");
         return false;
     }
 
@@ -199,7 +199,7 @@ bool AESGCMGMAC_KeyExchange::create_local_datareader_crypto_tokens(
 
     if (local_reader.nil() || remote_writer.nil())
     {
-        logWarning(SECURITY_CRYPTO, "Invalid CryptoHandle received");
+        EPROSIMA_LOG_WARNING(SECURITY_CRYPTO, "Invalid CryptoHandle received");
         return false;
     }
 
@@ -241,14 +241,14 @@ bool AESGCMGMAC_KeyExchange::set_remote_datareader_crypto_tokens(
 
     if (local_writer.nil() || remote_reader.nil())
     {
-        logWarning(SECURITY_CRYPTO, "Invalid CryptoHandle received");
+        EPROSIMA_LOG_WARNING(SECURITY_CRYPTO, "Invalid CryptoHandle received");
         return false;
     }
     //As only relevant KeyMaterials are tokenized, only one or two Token are exchanged
     auto nTokens = remote_datareader_tokens.size();
     if (nTokens != 1 && nTokens != 2)
     {
-        logWarning(SECURITY_CRYPTO, "Malformed CryptoTokenSequence");
+        EPROSIMA_LOG_WARNING(SECURITY_CRYPTO, "Malformed CryptoTokenSequence");
         exception = SecurityException("Incorrect remote CryptoSequence length");
         return false;
     }
@@ -256,7 +256,7 @@ bool AESGCMGMAC_KeyExchange::set_remote_datareader_crypto_tokens(
     {
         if (remote_datareader_tokens.at(i).class_id() != "DDS:Crypto:AES_GCM_GMAC")
         {
-            logWarning(SECURITY_CRYPTO, "Malformed CryptoToken");
+            EPROSIMA_LOG_WARNING(SECURITY_CRYPTO, "Malformed CryptoToken");
             exception = SecurityException("Incorrect token type received");
             return false;
         }
@@ -265,7 +265,7 @@ bool AESGCMGMAC_KeyExchange::set_remote_datareader_crypto_tokens(
                 remote_datareader_tokens.at(i).properties().size() != 0 ||
                 remote_datareader_tokens.at(i).binary_properties().at(0).name() != "dds.cryp.keymat")
         {
-            logWarning(SECURITY_CRYPTO, "Malformed CryptoToken");
+            EPROSIMA_LOG_WARNING(SECURITY_CRYPTO, "Malformed CryptoToken");
             exception = SecurityException("Malformed CryptoToken");
             return false;
         }
@@ -308,14 +308,14 @@ bool AESGCMGMAC_KeyExchange::set_remote_datawriter_crypto_tokens(
 
     if (local_reader.nil() || remote_writer.nil())
     {
-        logWarning(SECURITY_CRYPTO, "Invalid CryptoHandle");
+        EPROSIMA_LOG_WARNING(SECURITY_CRYPTO, "Invalid CryptoHandle");
         return false;
     }
     //As only relevant KeyMaterials are tokenized, only one or two Token are exchanged
     auto nTokens = remote_datawriter_tokens.size();
     if (nTokens != 1 && nTokens != 2)
     {
-        logWarning(SECURITY_CRYPTO, "Malformed CryptoTokenSequence");
+        EPROSIMA_LOG_WARNING(SECURITY_CRYPTO, "Malformed CryptoTokenSequence");
         exception = SecurityException("Incorrect remote CryptoSequence length");
         return false;
     }
@@ -324,7 +324,7 @@ bool AESGCMGMAC_KeyExchange::set_remote_datawriter_crypto_tokens(
     {
         if (remote_datawriter_tokens.at(i).class_id() != "DDS:Crypto:AES_GCM_GMAC")
         {
-            logWarning(SECURITY_CRYPTO, "Malformed CryptoToken");
+            EPROSIMA_LOG_WARNING(SECURITY_CRYPTO, "Malformed CryptoToken");
             exception = SecurityException("Incorrect token type received");
             return false;
         }
@@ -333,7 +333,7 @@ bool AESGCMGMAC_KeyExchange::set_remote_datawriter_crypto_tokens(
                 remote_datawriter_tokens.at(i).properties().size() != 0 ||
                 remote_datawriter_tokens.at(i).binary_properties().at(0).name() != "dds.cryp.keymat")
         {
-            logWarning(SECURITY_CRYPTO, "Malformed CryptoToken");
+            EPROSIMA_LOG_WARNING(SECURITY_CRYPTO, "Malformed CryptoToken");
             exception = SecurityException("Malformed CryptoToken");
             return false;
         }

@@ -204,7 +204,7 @@ MultiTopic* DomainParticipant::create_multitopic(
     static_cast<void> (type_name);
     static_cast<void> (subscription_expression);
     static_cast<void> (expression_parameters);
-    logWarning(DOMAIN_PARTICIPANT, "create_multitopic method not implemented");
+    EPROSIMA_LOG_WARNING(DOMAIN_PARTICIPANT, "create_multitopic method not implemented");
     return nullptr;
 }
 
@@ -249,7 +249,7 @@ TopicDescription* DomainParticipant::lookup_topicdescription(
 
 const Subscriber* DomainParticipant::get_builtin_subscriber() const
 {
-    logWarning(DOMAIN_PARTICIPANT, "get_builtin_subscriber method not implemented");
+    EPROSIMA_LOG_WARNING(DOMAIN_PARTICIPANT, "get_builtin_subscriber method not implemented");
     return nullptr;
 }
 

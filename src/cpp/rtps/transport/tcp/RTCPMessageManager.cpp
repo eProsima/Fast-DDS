@@ -456,7 +456,7 @@ ResponseCode RTCPMessageManager::processBindConnectionRequest(
     if (!isCompatibleProtocol(request.protocolVersion()))
     {
         sendData(channel, BIND_CONNECTION_RESPONSE, transaction_id, &payload, RETCODE_INCOMPATIBLE_VERSION);
-        logWarning(RTCP, "Rejected client due to INCOMPATIBLE_VERSION: Expected: " << c_rtcpProtocolVersion
+        EPROSIMA_LOG_WARNING(RTCP, "Rejected client due to INCOMPATIBLE_VERSION: Expected: " << c_rtcpProtocolVersion
                                                                                    << " but received " <<
                 request.protocolVersion());
         return RETCODE_INCOMPATIBLE_VERSION;
@@ -514,7 +514,7 @@ void RTCPMessageManager::processCheckLogicalPortsRequest(
     {
         if (request.logicalPortsRange().empty())
         {
-            logWarning(RTCP, "No available logical ports.");
+            EPROSIMA_LOG_WARNING(RTCP, "No available logical ports.");
         }
         else
         {
@@ -591,7 +591,7 @@ ResponseCode RTCPMessageManager::processBindConnectionResponse(
     }
     else
     {
-        logWarning(RTCP, "Received BindConnectionResponse with an invalid transaction_id: " << transaction_id);
+        EPROSIMA_LOG_WARNING(RTCP, "Received BindConnectionResponse with an invalid transaction_id: " << transaction_id);
         return RETCODE_VOID;
     }
 }
@@ -609,7 +609,7 @@ ResponseCode RTCPMessageManager::processCheckLogicalPortsResponse(
     }
     else
     {
-        logWarning(RTCP, "Received CheckLogicalPortsResponse with an invalid transaction_id: " << transaction_id);
+        EPROSIMA_LOG_WARNING(RTCP, "Received CheckLogicalPortsResponse with an invalid transaction_id: " << transaction_id);
         return RETCODE_VOID;
     }
 }
@@ -634,7 +634,7 @@ ResponseCode RTCPMessageManager::processOpenLogicalPortResponse(
             }
             break;
             default:
-                logWarning(RTCP, "Received response for OpenLogicalPort with error code: "
+                EPROSIMA_LOG_WARNING(RTCP, "Received response for OpenLogicalPort with error code: "
                         << ((respCode == RETCODE_BAD_REQUEST) ? "BAD_REQUEST" : "SERVER_ERROR"));
                 break;
         }
@@ -642,7 +642,7 @@ ResponseCode RTCPMessageManager::processOpenLogicalPortResponse(
     }
     else
     {
-        logWarning(RTCP, "Received OpenLogicalPortResponse with an invalid transaction_id: " << transaction_id);
+        EPROSIMA_LOG_WARNING(RTCP, "Received OpenLogicalPortResponse with an invalid transaction_id: " << transaction_id);
     }
     return RETCODE_OK;
 }
@@ -668,7 +668,7 @@ ResponseCode RTCPMessageManager::processKeepAliveResponse(
     }
     else
     {
-        logWarning(RTCP, "Received response for KeepAlive with an unexpected transaction_id: " << transaction_id);
+        EPROSIMA_LOG_WARNING(RTCP, "Received response for KeepAlive with an unexpected transaction_id: " << transaction_id);
     }
     return RETCODE_OK;
 }

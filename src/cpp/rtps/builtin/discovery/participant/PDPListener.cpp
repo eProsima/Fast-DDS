@@ -63,7 +63,7 @@ void PDPListener::onNewCacheChangeAdded(
     {
         if (!this->get_key(change))
         {
-            logWarning(RTPS_PDP, "Problem getting the key of the change, removing");
+            EPROSIMA_LOG_WARNING(RTPS_PDP, "Problem getting the key of the change, removing");
             parent_pdp_->mp_PDPReaderHistory->remove_change(change);
             return;
         }

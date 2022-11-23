@@ -153,7 +153,7 @@ bool StatelessReader::matched_writer_add(
 
         if (matched_writers_.emplace_back(info) == nullptr)
         {
-            logWarning(RTPS_READER, "No space to add writer " << wdata.guid() << " to reader " << m_guid);
+            EPROSIMA_LOG_WARNING(RTPS_READER, "No space to add writer " << wdata.guid() << " to reader " << m_guid);
             if (is_datasharing)
             {
                 datasharing_listener_->remove_datasharing_writer(wdata.guid());
@@ -501,7 +501,7 @@ bool StatelessReader::processDataMsg(
             CacheChange_t* change_to_add = nullptr;
             if (!change_pool_->reserve_cache(change_to_add))
             {
-                logWarning(RTPS_MSG_IN,
+                EPROSIMA_LOG_WARNING(RTPS_MSG_IN,
                         IDSTRING "Reached the maximum number of samples allowed by this reader's QoS. Rejecting change for reader: " <<
                         m_guid );
                 return false;
@@ -529,7 +529,7 @@ bool StatelessReader::processDataMsg(
                 }
                 if (!datasharing_pool)
                 {
-                    logWarning(RTPS_MSG_IN, IDSTRING "Problem copying DataSharing CacheChange from writer "
+                    EPROSIMA_LOG_WARNING(RTPS_MSG_IN, IDSTRING "Problem copying DataSharing CacheChange from writer "
                             << change->writerGUID);
                     change_pool_->release_cache(change_to_add);
                     return false;
@@ -543,7 +543,7 @@ bool StatelessReader::processDataMsg(
             }
             else
             {
-                logWarning(RTPS_MSG_IN, IDSTRING "Problem copying CacheChange, received data is: "
+                EPROSIMA_LOG_WARNING(RTPS_MSG_IN, IDSTRING "Problem copying CacheChange, received data is: "
                         << change->serializedPayload.length << " bytes and max size in reader "
                         << m_guid << " is "
                         << (fixed_payload_size_ > 0 ? fixed_payload_size_ : std::numeric_limits<uint32_t>::max()));
@@ -700,7 +700,7 @@ bool StatelessReader::processDataFragMsg(
         }
     }
 
-    logWarning(RTPS_MSG_IN, IDSTRING "Reader " << m_guid << " received DATA_FRAG from unknown writer" << writer_guid);
+    EPROSIMA_LOG_WARNING(RTPS_MSG_IN, IDSTRING "Reader " << m_guid << " received DATA_FRAG from unknown writer" << writer_guid);
     return true;
 }
 

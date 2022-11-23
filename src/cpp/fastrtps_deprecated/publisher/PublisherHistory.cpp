@@ -131,7 +131,7 @@ bool PublisherHistory::prepare_change(
 
         if (!ret)
         {
-            logWarning(RTPS_HISTORY, "Attempting to add Data to Full WriterCache: " << topic_att_.getTopicDataType());
+            EPROSIMA_LOG_WARNING(RTPS_HISTORY, "Attempting to add Data to Full WriterCache: " << topic_att_.getTopicDataType());
             return false;
         }
     }

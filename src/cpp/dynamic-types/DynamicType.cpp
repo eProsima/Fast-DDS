@@ -338,7 +338,7 @@ ReturnCode_t DynamicType::get_member_by_name(
     }
     else
     {
-        logWarning(DYN_TYPES, "Error getting member by name, member not found.");
+        EPROSIMA_LOG_WARNING(DYN_TYPES, "Error getting member by name, member not found.");
         return ReturnCode_t::RETCODE_ERROR;
     }
 }
@@ -362,7 +362,7 @@ ReturnCode_t DynamicType::get_member(
     }
     else
     {
-        logWarning(DYN_TYPES, "Error getting member, member not found.");
+        EPROSIMA_LOG_WARNING(DYN_TYPES, "Error getting member, member not found.");
         return ReturnCode_t::RETCODE_ERROR;
     }
 }
@@ -390,7 +390,7 @@ ReturnCode_t DynamicType::get_annotation(
     }
     else
     {
-        logWarning(DYN_TYPES, "Error getting annotation, annotation not found.");
+        EPROSIMA_LOG_WARNING(DYN_TYPES, "Error getting annotation, annotation not found.");
         return ReturnCode_t::RETCODE_ERROR;
     }
 }

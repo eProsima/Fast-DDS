@@ -45,7 +45,7 @@ bool LivelinessManager::add_writer(
 {
     if (!manage_automatic_ && kind == LivelinessQosPolicyKind::AUTOMATIC_LIVELINESS_QOS)
     {
-        logWarning(RTPS_WRITER, "Liveliness manager not managing automatic writers, writer not added");
+        EPROSIMA_LOG_WARNING(RTPS_WRITER, "Liveliness manager not managing automatic writers, writer not added");
         return false;
     }
 
@@ -237,7 +237,7 @@ bool LivelinessManager::assert_liveliness(
 
     if (!manage_automatic_ && kind == LivelinessQosPolicyKind::AUTOMATIC_LIVELINESS_QOS)
     {
-        logWarning(RTPS_WRITER, "Liveliness manager not managing automatic writers, writer not added");
+        EPROSIMA_LOG_WARNING(RTPS_WRITER, "Liveliness manager not managing automatic writers, writer not added");
         return false;
     }
 

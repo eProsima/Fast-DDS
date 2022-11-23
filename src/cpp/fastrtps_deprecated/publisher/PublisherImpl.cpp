@@ -181,7 +181,7 @@ bool PublisherImpl::create_new_change_with_params(
                 //If these two checks are correct, we asume the cachechange is valid and thwn we can write to it.
                 if (!mp_type->serialize(data, &ch->serializedPayload))
                 {
-                    logWarning(RTPS_WRITER, "RTPSWriter:Serialization returns false"; );
+                    EPROSIMA_LOG_WARNING(RTPS_WRITER, "RTPSWriter:Serialization returns false"; );
                     mp_writer->release_change(ch);
                     return false;
                 }
@@ -350,7 +350,7 @@ bool PublisherImpl::updateAttributes(
         if (att.unicastLocatorList.size() != this->m_att.unicastLocatorList.size() ||
                 att.multicastLocatorList.size() != this->m_att.multicastLocatorList.size())
         {
-            logWarning(PUBLISHER, "Locator Lists cannot be changed or updated in this version");
+            EPROSIMA_LOG_WARNING(PUBLISHER, "Locator Lists cannot be changed or updated in this version");
             updated &= false;
         }
         else
@@ -370,8 +370,8 @@ bool PublisherImpl::updateAttributes(
                 }
                 if (missing)
                 {
-                    logWarning(PUBLISHER, "Locator: " << *lit1 << " not present in new list");
-                    logWarning(PUBLISHER, "Locator Lists cannot be changed or updated in this version");
+                    EPROSIMA_LOG_WARNING(PUBLISHER, "Locator: " << *lit1 << " not present in new list");
+                    EPROSIMA_LOG_WARNING(PUBLISHER, "Locator Lists cannot be changed or updated in this version");
                 }
             }
             for (LocatorListConstIterator lit1 = this->m_att.multicastLocatorList.begin();
@@ -389,8 +389,8 @@ bool PublisherImpl::updateAttributes(
                 }
                 if (missing)
                 {
-                    logWarning(PUBLISHER, "Locator: " << *lit1 << " not present in new list");
-                    logWarning(PUBLISHER, "Locator Lists cannot be changed or updated in this version");
+                    EPROSIMA_LOG_WARNING(PUBLISHER, "Locator: " << *lit1 << " not present in new list");
+                    EPROSIMA_LOG_WARNING(PUBLISHER, "Locator Lists cannot be changed or updated in this version");
                 }
             }
         }
@@ -399,7 +399,7 @@ bool PublisherImpl::updateAttributes(
     //TOPIC ATTRIBUTES
     if (this->m_att.topic != att.topic)
     {
-        logWarning(PUBLISHER, "Topic Attributes cannot be updated");
+        EPROSIMA_LOG_WARNING(PUBLISHER, "Topic Attributes cannot be updated");
         updated &= false;
     }
     //QOS:

@@ -179,7 +179,7 @@ TopicPayloadPool::PayloadNode* TopicPayloadPool::allocate(
 {
     if (all_payloads_.size() >= max_pool_size_)
     {
-        logWarning(RTPS_HISTORY, "Maximum number of allowed reserved payloads reached");
+        EPROSIMA_LOG_WARNING(RTPS_HISTORY, "Maximum number of allowed reserved payloads reached");
         return nullptr;
     }
 
@@ -198,7 +198,7 @@ TopicPayloadPool::PayloadNode* TopicPayloadPool::do_allocate(
     }
     else
     {
-        logWarning(RTPS_HISTORY, "Failure to create a new payload ");
+        EPROSIMA_LOG_WARNING(RTPS_HISTORY, "Failure to create a new payload ");
     }
 
     return payload;

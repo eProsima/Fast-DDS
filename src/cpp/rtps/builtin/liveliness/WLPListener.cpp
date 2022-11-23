@@ -60,7 +60,7 @@ void WLPListener::onNewCacheChangeAdded(
     CacheChange_t* change = (CacheChange_t*)changeIN;
     if(!computeKey(change))
     {
-        logWarning(RTPS_LIVELINESS,"Problem obtaining the Key");
+        EPROSIMA_LOG_WARNING(RTPS_LIVELINESS,"Problem obtaining the Key");
         return;
     }
     //Check the serializedPayload:

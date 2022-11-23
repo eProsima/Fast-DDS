@@ -803,7 +803,7 @@ ReturnCode_t DynamicTypeBuilderFactory::delete_builder(
         }
         else
         {
-            logWarning(DYN_TYPES, "The given type has been deleted previously.");
+            EPROSIMA_LOG_WARNING(DYN_TYPES, "The given type has been deleted previously.");
             return ReturnCode_t::RETCODE_ALREADY_DELETED;
         }
 #else

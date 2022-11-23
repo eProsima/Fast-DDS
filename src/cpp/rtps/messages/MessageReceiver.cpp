@@ -318,7 +318,7 @@ void MessageReceiver::processCDRMsg(
 {
     if (msg->length < RTPSMESSAGE_HEADER_SIZE)
     {
-        logWarning(RTPS_MSG_IN, IDSTRING "Received message too short, ignoring");
+        EPROSIMA_LOG_WARNING(RTPS_MSG_IN, IDSTRING "Received message too short, ignoring");
         return;
     }
 
@@ -494,7 +494,7 @@ void MessageReceiver::processCDRMsg(
                 break;
             }
             case PAD:
-                logWarning(RTPS_MSG_IN, IDSTRING "PAD messages not yet implemented, ignoring");
+                EPROSIMA_LOG_WARNING(RTPS_MSG_IN, IDSTRING "PAD messages not yet implemented, ignoring");
                 break;
             case INFO_DST:
                 logInfo(RTPS_MSG_IN, IDSTRING "InfoDST message received, processing...");
@@ -554,7 +554,7 @@ bool MessageReceiver::checkRTPSHeader(
     }
     else
     {
-        logWarning(RTPS_MSG_IN, IDSTRING "Major RTPS Version not supported");
+        EPROSIMA_LOG_WARNING(RTPS_MSG_IN, IDSTRING "Major RTPS Version not supported");
         return false;
     }
 
@@ -575,7 +575,7 @@ bool MessageReceiver::readSubmessageHeader(
 {
     if (msg->length - msg->pos < 4)
     {
-        logWarning(RTPS_MSG_IN, IDSTRING "SubmessageHeader too short");
+        EPROSIMA_LOG_WARNING(RTPS_MSG_IN, IDSTRING "SubmessageHeader too short");
         return false;
     }
 
@@ -590,7 +590,7 @@ bool MessageReceiver::readSubmessageHeader(
     CDRMessage::readUInt16(msg, &length);
     if (msg->pos + length > msg->length)
     {
-        logWarning(RTPS_MSG_IN, IDSTRING "SubMsg of invalid length (" << length <<
+        EPROSIMA_LOG_WARNING(RTPS_MSG_IN, IDSTRING "SubMsg of invalid length (" << length <<
                 ") with current msg position/length (" << msg->pos << "/" << msg->length << ")");
         return false;
     }
@@ -617,7 +617,7 @@ bool MessageReceiver::willAReaderAcceptMsgDirectedTo(
     first_reader = nullptr;
     if (associated_readers_.empty())
     {
-        logWarning(RTPS_MSG_IN, IDSTRING "Data received when NO readers are listening");
+        EPROSIMA_LOG_WARNING(RTPS_MSG_IN, IDSTRING "Data received when NO readers are listening");
         return false;
     }
 
@@ -645,7 +645,7 @@ bool MessageReceiver::willAReaderAcceptMsgDirectedTo(
         }
     }
 
-    logWarning(RTPS_MSG_IN, IDSTRING "No Reader accepts this message (directed to: " << readerID << ")");
+    EPROSIMA_LOG_WARNING(RTPS_MSG_IN, IDSTRING "No Reader accepts this message (directed to: " << readerID << ")");
     return false;
 }
 
@@ -699,7 +699,7 @@ bool MessageReceiver::proc_Submsg_Data(
     bool keyFlag = (smh->flags & BIT(3)) != 0;
     if (keyFlag && dataFlag)
     {
-        logWarning(RTPS_MSG_IN, IDSTRING "Message received with Data and Key Flag set, ignoring");
+        EPROSIMA_LOG_WARNING(RTPS_MSG_IN, IDSTRING "Message received with Data and Key Flag set, ignoring");
         return false;
     }
 
@@ -748,7 +748,7 @@ bool MessageReceiver::proc_Submsg_Data(
 
     if (ch.sequenceNumber <= SequenceNumber_t())
     {
-        logWarning(RTPS_MSG_IN, IDSTRING "Invalid message received, bad sequence Number");
+        EPROSIMA_LOG_WARNING(RTPS_MSG_IN, IDSTRING "Invalid message received, bad sequence Number");
         return false;
     }
 
@@ -758,7 +758,7 @@ bool MessageReceiver::proc_Submsg_Data(
         msg->pos += (octetsToInlineQos - RTPSMESSAGE_OCTETSTOINLINEQOS_DATASUBMSG);
         if (msg->pos > msg->length)
         {
-            logWarning(RTPS_MSG_IN,
+            EPROSIMA_LOG_WARNING(RTPS_MSG_IN,
                     IDSTRING "Invalid jump through msg, msg->pos " << msg->pos << " > msg->length " << msg->length);
             return false;
         }
@@ -798,7 +798,7 @@ bool MessageReceiver::proc_Submsg_Data(
             }
             else
             {
-                logWarning(RTPS_MSG_IN, IDSTRING "Serialized Payload value invalid or larger than maximum allowed size"
+                EPROSIMA_LOG_WARNING(RTPS_MSG_IN, IDSTRING "Serialized Payload value invalid or larger than maximum allowed size"
                         "(" << payload_size << "/" << (msg->length - msg->pos) << ")");
                 return false;
             }
@@ -807,7 +807,7 @@ bool MessageReceiver::proc_Submsg_Data(
         {
             if (payload_size <= 0)
             {
-                logWarning(RTPS_MSG_IN, IDSTRING "Serialized Payload value invalid (" << payload_size << ")");
+                EPROSIMA_LOG_WARNING(RTPS_MSG_IN, IDSTRING "Serialized Payload value invalid (" << payload_size << ")");
                 return false;
             }
 
@@ -817,7 +817,7 @@ bool MessageReceiver::proc_Submsg_Data(
             }
             else
             {
-                logWarning(RTPS_MSG_IN, IDSTRING "Ignoring Serialized Payload for too large key-only data (" <<
+                EPROSIMA_LOG_WARNING(RTPS_MSG_IN, IDSTRING "Ignoring Serialized Payload for too large key-only data (" <<
                         payload_size << ")");
             }
             msg->pos += payload_size;
@@ -907,7 +907,7 @@ bool MessageReceiver::proc_Submsg_DataFrag(
 
     if (ch.sequenceNumber <= SequenceNumber_t())
     {
-        logWarning(RTPS_MSG_IN, IDSTRING "Invalid message received, bad sequence Number");
+        EPROSIMA_LOG_WARNING(RTPS_MSG_IN, IDSTRING "Invalid message received, bad sequence Number");
         return false;
     }
 
@@ -938,7 +938,7 @@ bool MessageReceiver::proc_Submsg_DataFrag(
         msg->pos += (octetsToInlineQos - RTPSMESSAGE_OCTETSTOINLINEQOS_DATAFRAGSUBMSG);
         if (msg->pos > msg->length)
         {
-            logWarning(RTPS_MSG_IN,
+            EPROSIMA_LOG_WARNING(RTPS_MSG_IN,
                     IDSTRING "Invalid jump through msg, msg->pos " << msg->pos << " > msg->length " << msg->length);
             return false;
         }
@@ -980,7 +980,7 @@ bool MessageReceiver::proc_Submsg_DataFrag(
         }
         else
         {
-            logWarning(RTPS_MSG_IN, IDSTRING "Serialized Payload value invalid or larger than maximum allowed size "
+            EPROSIMA_LOG_WARNING(RTPS_MSG_IN, IDSTRING "Serialized Payload value invalid or larger than maximum allowed size "
                     "(" << payload_size << "/" << (msg->length - msg->pos) << ")");
             return false;
         }
@@ -1056,14 +1056,14 @@ bool MessageReceiver::proc_Submsg_Heartbeat(
     CDRMessage::readSequenceNumber(msg, &lastSN);
     if (lastSN < firstSN && lastSN != firstSN - 1)
     {
-        logWarning(RTPS_MSG_IN, IDSTRING "Invalid Heartbeat received (" << firstSN << ") - (" <<
+        EPROSIMA_LOG_WARNING(RTPS_MSG_IN, IDSTRING "Invalid Heartbeat received (" << firstSN << ") - (" <<
                 lastSN << "), ignoring");
         return false;
     }
     uint32_t HBCount;
     if (!CDRMessage::readUInt32(msg, &HBCount))
     {
-        logWarning(RTPS_MSG_IN, IDSTRING "Unable to read heartbeat count from heartbeat message");
+        EPROSIMA_LOG_WARNING(RTPS_MSG_IN, IDSTRING "Unable to read heartbeat count from heartbeat message");
         return false;
     }
 
@@ -1105,7 +1105,7 @@ bool MessageReceiver::proc_Submsg_Acknack(
     uint32_t Ackcount;
     if (!CDRMessage::readUInt32(msg, &Ackcount))
     {
-        logWarning(RTPS_MSG_IN, IDSTRING "Unable to read ackcount from message");
+        EPROSIMA_LOG_WARNING(RTPS_MSG_IN, IDSTRING "Unable to read ackcount from message");
         return false;
     }
 

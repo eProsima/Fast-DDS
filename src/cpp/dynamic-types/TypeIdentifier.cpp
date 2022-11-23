@@ -1453,12 +1453,12 @@ bool TypeIdentifier::consistent(
             const TypeObject* remoteObj = TypeObjectFactory::get_instance()->get_type_object(&x);
             if (localObj == nullptr)
             {
-                logWarning(XTYPES, "Local TypeIdentifier doesn't have a related TypeObject");
+                EPROSIMA_LOG_WARNING(XTYPES, "Local TypeIdentifier doesn't have a related TypeObject");
                 return false;
             }
             if (remoteObj == nullptr)
             {
-                logWarning(XTYPES, "Remote TypeIdentifier doesn't have a related TypeObject");
+                EPROSIMA_LOG_WARNING(XTYPES, "Remote TypeIdentifier doesn't have a related TypeObject");
                 return false;
             }
             return localObj->consistent(*remoteObj, consistency);

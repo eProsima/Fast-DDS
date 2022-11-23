@@ -105,7 +105,7 @@ public:
         catch (std::runtime_error& e)
         {
             // DataReader not enabled yet
-            logWarning(READCONDITION, e.what());
+            EPROSIMA_LOG_WARNING(READCONDITION, e.what());
             return false;
         }
     }

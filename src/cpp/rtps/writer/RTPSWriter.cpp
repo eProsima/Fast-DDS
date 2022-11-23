@@ -175,7 +175,7 @@ CacheChange_t* RTPSWriter::new_change(
     CacheChange_t* reserved_change = nullptr;
     if (!change_pool_->reserve_cache(reserved_change))
     {
-        logWarning(RTPS_WRITER, "Problem reserving cache from pool");
+        EPROSIMA_LOG_WARNING(RTPS_WRITER, "Problem reserving cache from pool");
         return nullptr;
     }
 
@@ -183,14 +183,14 @@ CacheChange_t* RTPSWriter::new_change(
     if (!payload_pool_->get_payload(payload_size, *reserved_change))
     {
         change_pool_->release_cache(reserved_change);
-        logWarning(RTPS_WRITER, "Problem reserving payload from pool");
+        EPROSIMA_LOG_WARNING(RTPS_WRITER, "Problem reserving payload from pool");
         return nullptr;
     }
 
     reserved_change->kind = changeKind;
     if (m_att.topicKind == WITH_KEY && !handle.isDefined())
     {
-        logWarning(RTPS_WRITER, "Changes in KEYED Writers need a valid instanceHandle");
+        EPROSIMA_LOG_WARNING(RTPS_WRITER, "Changes in KEYED Writers need a valid instanceHandle");
     }
     reserved_change->instanceHandle = handle;
     reserved_change->writerGUID = m_guid;
@@ -210,14 +210,14 @@ CacheChange_t* RTPSWriter::new_change(
     CacheChange_t* reserved_change = nullptr;
     if (!change_pool_->reserve_cache(reserved_change))
     {
-        logWarning(RTPS_WRITER, "Problem reserving cache from pool");
+        EPROSIMA_LOG_WARNING(RTPS_WRITER, "Problem reserving cache from pool");
         return nullptr;
     }
 
     reserved_change->kind = changeKind;
     if (m_att.topicKind == WITH_KEY && !handle.isDefined())
     {
-        logWarning(RTPS_WRITER, "Changes in KEYED Writers need a valid instanceHandle");
+        EPROSIMA_LOG_WARNING(RTPS_WRITER, "Changes in KEYED Writers need a valid instanceHandle");
     }
     reserved_change->instanceHandle = handle;
     reserved_change->writerGUID = m_guid;

@@ -365,7 +365,7 @@ RTPSParticipantImpl::RTPSParticipantImpl(
     if (0 < m_att.builtin.metatrafficMulticastLocatorList.size() &&
             m_att.builtin.metatrafficMulticastLocatorList.begin()->port != meta_multicast_port_for_check)
     {
-        logWarning(RTPS_PARTICIPANT,
+        EPROSIMA_LOG_WARNING(RTPS_PARTICIPANT,
                 "Metatraffic multicast port " << meta_multicast_port_for_check << " cannot be opened."
                 " It may is opened by another application. Discovery may fail.");
     }
@@ -639,7 +639,7 @@ bool RTPSParticipantImpl::create_writer(
         }
         else
         {
-            logWarning(RTPS_PARTICIPANT,
+            EPROSIMA_LOG_WARNING(RTPS_PARTICIPANT,
                     "Throughput flow controller was configured while writer's publish mode is configured as synchronous." \
                     "Throughput flow controller configuration is not taken into account.");
 
@@ -654,7 +654,7 @@ bool RTPSParticipantImpl::create_writer(
         }
         else
         {
-            logWarning(RTPS_PARTICIPANT,
+            EPROSIMA_LOG_WARNING(RTPS_PARTICIPANT,
                     "Throughput flow controller was configured while writer's publish mode is configured as synchronous." \
                     "Throughput flow controller configuration is not taken into account.");
         }
@@ -1642,7 +1642,7 @@ bool RTPSParticipantImpl::createSendResources(
     {
         if (!m_network_Factory.build_send_resources(send_resource_list_, (*it)))
         {
-            logWarning(RTPS_PARTICIPANT, "Cannot create send resource for endpoint remote locator (" <<
+            EPROSIMA_LOG_WARNING(RTPS_PARTICIPANT, "Cannot create send resource for endpoint remote locator (" <<
                     pend->getGuid() << ", " << (*it) << ")");
         }
     }
@@ -1992,7 +1992,7 @@ bool RTPSParticipantImpl::newRemoteEndpointDiscovered(
     if (m_att.builtin.discovery_config.discoveryProtocol != DiscoveryProtocol::SIMPLE ||
             m_att.builtin.discovery_config.use_STATIC_EndpointDiscoveryProtocol == false)
     {
-        logWarning(RTPS_PARTICIPANT,
+        EPROSIMA_LOG_WARNING(RTPS_PARTICIPANT,
                 "Remote Endpoints can only be activated with static discovery protocol over PDP simple protocol");
         return false;
     }
@@ -2470,7 +2470,7 @@ void RTPSParticipantImpl::environment_file_has_changed()
     }
     else
     {
-        logWarning(RTPS_QOS_CHECK, "Trying to add Discovery Servers to a participant which is not a SERVER, BACKUP " <<
+        EPROSIMA_LOG_WARNING(RTPS_QOS_CHECK, "Trying to add Discovery Servers to a participant which is not a SERVER, BACKUP " <<
                 "or an overriden CLIENT (SIMPLE participant transformed into CLIENT with the environment variable)");
     }
 }

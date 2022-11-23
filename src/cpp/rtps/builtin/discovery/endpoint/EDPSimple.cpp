@@ -271,7 +271,7 @@ void EDPSimple::processPersistentData(
 
                 if (!change_to_add->copy(change))
                 {
-                    logWarning(RTPS_EDP, "Problem copying CacheChange, received data is: "
+                    EPROSIMA_LOG_WARNING(RTPS_EDP, "Problem copying CacheChange, received data is: "
                         << change->serializedPayload.length << " bytes and max size in EDPServer reader"
                         << " is " << change_to_add->serializedPayload.max_size);
 

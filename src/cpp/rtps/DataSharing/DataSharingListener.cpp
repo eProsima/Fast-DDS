@@ -161,7 +161,7 @@ void DataSharingListener::process_new_data ()
             {
                 if (last_sequence != c_SequenceNumber_Unknown && ch.sequenceNumber != last_sequence + 1)
                 {
-                    logWarning(RTPS_READER, "GAP (" << last_sequence + 1 << " - " << ch.sequenceNumber - 1 << ")"
+                    EPROSIMA_LOG_WARNING(RTPS_READER, "GAP (" << last_sequence + 1 << " - " << ch.sequenceNumber - 1 << ")"
                                                     << " detected on datasharing writer " << pool->writer());
                     reader_->processGapMsg(pool->writer(), last_sequence + 1, SequenceNumberSet_t(ch.sequenceNumber));
                 }
@@ -223,7 +223,7 @@ bool DataSharingListener::add_datasharing_writer(
         if (0 >= reader_history_max_samples ||
                 reader_history_max_samples >= static_cast<int32_t>(pool->history_size()))
         {
-            logWarning(RTPS_READER,
+            EPROSIMA_LOG_WARNING(RTPS_READER,
                     "Reader " << reader_->getGuid() << " was configured to have a large history (" <<
                     reader_history_max_samples << " max samples), but the history size used with writer " <<
                     writer_guid << " will be " << pool->history_size() << " max samples.");

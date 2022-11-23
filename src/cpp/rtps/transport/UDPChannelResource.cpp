@@ -71,7 +71,7 @@ void UDPChannelResource::perform_listen_operation(
         }
         else if (alive())
         {
-            logWarning(RTPS_MSG_IN, "Received Message, but no receiver attached");
+            EPROSIMA_LOG_WARNING(RTPS_MSG_IN, "Received Message, but no receiver attached");
         }
     }
 
@@ -104,7 +104,7 @@ bool UDPChannelResource::Receive(
     catch (const std::exception& error)
     {
         (void)error;
-        logWarning(RTPS_MSG_OUT, "Error receiving data: " << error.what() << " - " << message_receiver()
+        EPROSIMA_LOG_WARNING(RTPS_MSG_OUT, "Error receiving data: " << error.what() << " - " << message_receiver()
                                                           << " (" << this << ")");
         return false;
     }

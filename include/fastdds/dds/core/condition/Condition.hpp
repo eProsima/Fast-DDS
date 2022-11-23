@@ -48,7 +48,7 @@ public:
      */
     RTPS_DllAPI virtual bool get_trigger_value() const
     {
-        logWarning(CONDITION, "get_trigger_value public member function not implemented");
+        EPROSIMA_LOG_WARNING(CONDITION, "get_trigger_value public member function not implemented");
         return false; // TODO return trigger value
     }
 

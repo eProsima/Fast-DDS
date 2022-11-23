@@ -37,7 +37,7 @@ TEST_F(LogMacrosTests, default_macros_test)
     std::cout << std::endl;
 
     EPROSIMA_LOG_ERROR(SampleCategory, "Sample error message");
-    logWarning(SampleCategory, "Sample warning message");
+    EPROSIMA_LOG_WARNING(SampleCategory, "Sample warning message");
     logInfo(SampleCategory, "Sample info message");
 
 #if defined(NDEBUG) && !HAVE_LOG_NO_INFO

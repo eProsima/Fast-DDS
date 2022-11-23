@@ -128,7 +128,7 @@ bool CacheChangePool::allocateGroup(
 
     if (group_size <= 0)
     {
-        logWarning(RTPS_HISTORY, "Maximum number of allowed reserved caches reached");
+        EPROSIMA_LOG_WARNING(RTPS_HISTORY, "Maximum number of allowed reserved caches reached");
         return false;
     }
 
@@ -176,7 +176,7 @@ CacheChange_t* CacheChangePool::allocateSingle()
 
     if (!added)
     {
-        logWarning(RTPS_HISTORY, "Maximum number of allowed reserved caches reached");
+        EPROSIMA_LOG_WARNING(RTPS_HISTORY, "Maximum number of allowed reserved caches reached");
         return nullptr;
     }
 

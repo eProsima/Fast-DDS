@@ -516,7 +516,7 @@ void ThroughputPublisher::run(
             if (dw_qos.history().depth < 0 ||
                     static_cast<uint32_t>(dw_qos.history().depth) < max_demand)
             {
-                logWarning(THROUGHPUTPUBLISHER, "Setting history depth to " << max_demand);
+                EPROSIMA_LOG_WARNING(THROUGHPUTPUBLISHER, "Setting history depth to " << max_demand);
                 dw_qos.resource_limits().max_samples = max_demand;
                 dw_qos.history().depth = max_demand;
             }
@@ -528,7 +528,7 @@ void ThroughputPublisher::run(
             if (dw_qos.resource_limits().max_samples < 0 ||
                     static_cast<uint32_t>(dw_qos.resource_limits().max_samples) < max_demand)
             {
-                logWarning(THROUGHPUTPUBLISHER, "Setting resource limit max samples to " << max_demand);
+                EPROSIMA_LOG_WARNING(THROUGHPUTPUBLISHER, "Setting resource limit max samples to " << max_demand);
                 dw_qos.resource_limits().max_samples = max_demand;
             }
         }
