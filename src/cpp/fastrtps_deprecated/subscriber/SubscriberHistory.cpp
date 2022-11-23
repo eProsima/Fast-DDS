@@ -320,7 +320,7 @@ bool SubscriberHistory::add_received_change(
             m_isHistoryFull = true;
         }
 
-        logInfo(SUBSCRIBER, topic_att_.getTopicDataType()
+        EPROSIMA_LOG_INFO(SUBSCRIBER, topic_att_.getTopicDataType()
                 << ": Change " << a_change->sequenceNumber << " added from: "
                 << a_change->writerGUID; );
 
@@ -352,7 +352,7 @@ bool SubscriberHistory::add_received_change_with_key(
         eprosima::utilities::collections::sorted_vector_insert(instance_changes, a_change,
                 fastdds::rtps::history_order_cmp);
 
-        logInfo(SUBSCRIBER, mp_reader->getGuid().entityId
+        EPROSIMA_LOG_INFO(SUBSCRIBER, mp_reader->getGuid().entityId
                 << ": Change " << a_change->sequenceNumber << " added from: "
                 << a_change->writerGUID << " with KEY: " << a_change->instanceHandle; );
 
@@ -368,7 +368,7 @@ bool SubscriberHistory::find_key_for_change(
 {
     if (!a_change->instanceHandle.isDefined() && type_ != nullptr)
     {
-        logInfo(SUBSCRIBER, "Getting Key of change with no Key transmitted");
+        EPROSIMA_LOG_INFO(SUBSCRIBER, "Getting Key of change with no Key transmitted");
         type_->deserialize(&a_change->serializedPayload, get_key_object_);
         bool is_key_protected = false;
 #if HAVE_SECURITY
@@ -442,7 +442,7 @@ bool SubscriberHistory::readNextData(
         WriterProxy* wp = nullptr;
         if (mp_reader->nextUnreadCache(&change, &wp))
         {
-            logInfo(SUBSCRIBER, mp_reader->getGuid().entityId << ": reading " << change->sequenceNumber);
+            EPROSIMA_LOG_INFO(SUBSCRIBER, mp_reader->getGuid().entityId << ": reading " << change->sequenceNumber);
             uint32_t ownership = wp && qos_.m_ownership.kind == EXCLUSIVE_OWNERSHIP_QOS ?
                     wp->ownership_strength() : 0;
             bool deserialized = deserialize_change(change, ownership, data, info);
@@ -472,7 +472,7 @@ bool SubscriberHistory::takeNextData(
         WriterProxy* wp = nullptr;
         if (mp_reader->nextUntakenCache(&change, &wp))
         {
-            logInfo(SUBSCRIBER, mp_reader->getGuid().entityId << ": taking seqNum" << change->sequenceNumber <<
+            EPROSIMA_LOG_INFO(SUBSCRIBER, mp_reader->getGuid().entityId << ": taking seqNum" << change->sequenceNumber <<
                     " from writer: " << change->writerGUID);
             uint32_t ownership = wp && qos_.m_ownership.kind == EXCLUSIVE_OWNERSHIP_QOS ?
                     wp->ownership_strength() : 0;
@@ -613,7 +613,7 @@ bool SubscriberHistory::remove_change_sub(
     const_iterator chit = find_change_nts(change);
     if (chit == changesEnd())
     {
-        logInfo(RTPS_WRITER_HISTORY, "Trying to remove a change not in history");
+        EPROSIMA_LOG_INFO(RTPS_WRITER_HISTORY, "Trying to remove a change not in history");
         return false;
     }
 
@@ -747,7 +747,7 @@ bool SubscriberHistory::completed_change_keep_all_with_key(
                         fastdds::rtps::history_order_cmp);
                 ret_value = true;
 
-                logInfo(SUBSCRIBER, mp_reader->getGuid().entityId
+                EPROSIMA_LOG_INFO(SUBSCRIBER, mp_reader->getGuid().entityId
                         << ": Change " << a_change->sequenceNumber << " added from: "
                         << a_change->writerGUID << " with KEY: " << a_change->instanceHandle; );
             }
@@ -803,7 +803,7 @@ bool SubscriberHistory::completed_change_keep_last_with_key(
                         fastdds::rtps::history_order_cmp);
                 ret_value = true;
 
-                logInfo(SUBSCRIBER, mp_reader->getGuid().entityId
+                EPROSIMA_LOG_INFO(SUBSCRIBER, mp_reader->getGuid().entityId
                         << ": Change " << a_change->sequenceNumber << " added from: "
                         << a_change->writerGUID << " with KEY: " << a_change->instanceHandle; );
             }

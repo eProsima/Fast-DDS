@@ -111,7 +111,7 @@ WriterProxyData::~WriterProxyData()
     delete m_type_id;
     delete m_type_information;
 
-    logInfo(RTPS_PROXY_DATA, m_guid);
+    EPROSIMA_LOG_INFO(RTPS_PROXY_DATA, m_guid);
 }
 
 WriterProxyData& WriterProxyData::operator =(

@@ -1423,7 +1423,7 @@ ReturnCode_t DomainParticipantImpl::register_type(
         return ReturnCode_t::RETCODE_PRECONDITION_NOT_MET;
     }
 
-    logInfo(PARTICIPANT, "Type " << type_name << " registered.");
+    EPROSIMA_LOG_INFO(PARTICIPANT, "Type " << type_name << " registered.");
     std::lock_guard<std::mutex> lock(mtx_types_);
     types_.insert(std::make_pair(type_name, type));
 

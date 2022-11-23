@@ -387,7 +387,7 @@ bool RTPSMessageGroup::add_info_ts_in_buffer(
 {
     assert(nullptr != sender_);
 
-    logInfo(RTPS_WRITER, "Sending INFO_TS message");
+    EPROSIMA_LOG_INFO(RTPS_WRITER, "Sending INFO_TS message");
 
 #if HAVE_SECURITY
     uint32_t from_buffer_position = submessage_msg_->pos;
@@ -434,7 +434,7 @@ bool RTPSMessageGroup::add_data(
 {
     assert(nullptr != sender_);
 
-    logInfo(RTPS_WRITER, "Sending relevant changes as DATA/DATA_FRAG messages");
+    EPROSIMA_LOG_INFO(RTPS_WRITER, "Sending relevant changes as DATA/DATA_FRAG messages");
 
     // Check limitation
     uint32_t data_size = change.serializedPayload.length;
@@ -532,7 +532,7 @@ bool RTPSMessageGroup::add_data_frag(
 {
     assert(nullptr != sender_);
 
-    logInfo(RTPS_WRITER, "Sending relevant changes as DATA/DATA_FRAG messages");
+    EPROSIMA_LOG_INFO(RTPS_WRITER, "Sending relevant changes as DATA/DATA_FRAG messages");
 
     // Calculate fragment start
     uint32_t fragment_start = change.getFragmentSize() * (fragment_number - 1);

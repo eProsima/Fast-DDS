@@ -190,7 +190,7 @@ ParticipantProxyData* PDPClient::createParticipantProxyData(
 
 bool PDPClient::createPDPEndpoints()
 {
-    logInfo(RTPS_PDP, "Beginning PDPClient Endpoints creation");
+    EPROSIMA_LOG_INFO(RTPS_PDP, "Beginning PDPClient Endpoints creation");
 
     const RTPSParticipantAttributes& pattr = mp_RTPSParticipant->getRTPSParticipantAttributes();
 
@@ -285,7 +285,7 @@ bool PDPClient::createPDPEndpoints()
         mp_PDPWriterHistory = nullptr;
         return false;
     }
-    logInfo(RTPS_PDP, "PDPClient Endpoints creation finished");
+    EPROSIMA_LOG_INFO(RTPS_PDP, "PDPClient Endpoints creation finished");
     return true;
 }
 
@@ -346,7 +346,7 @@ void PDPClient::removeRemoteEndpoints(
     if (is_server)
     {
         // We should unmatch and match the PDP endpoints to renew the PDP reader and writer associated proxies
-        logInfo(RTPS_PDP, "For unmatching for server: " << pdata->m_guid);
+        EPROSIMA_LOG_INFO(RTPS_PDP, "For unmatching for server: " << pdata->m_guid);
         const NetworkFactory& network = mp_RTPSParticipant->network_factory();
         uint32_t endp = pdata->m_availableBuiltinEndpoints;
         uint32_t auxendp = endp;
@@ -578,7 +578,7 @@ bool PDPClient::match_servers_EDP_endpoints()
 
         if (svr.proxy && !mp_EDP->areRemoteEndpointsMatched(svr.proxy))
         {
-            logInfo(RTPS_PDP, "Client "
+            EPROSIMA_LOG_INFO(RTPS_PDP, "Client "
                     << mp_EDP->mp_PDP->getRTPSParticipant()->getGuid()
                     << " matching servers EDP endpoints");
             mp_EDP->assignRemoteEndpoints(*svr.proxy);

@@ -118,7 +118,7 @@ void DataSharingListener::stop()
 
 void DataSharingListener::process_new_data ()
 {
-    logInfo(RTPS_READER, "Received new data notification");
+    EPROSIMA_LOG_INFO(RTPS_READER, "Received new data notification");
 
     std::unique_lock<std::mutex> lock(mutex_);
 
@@ -168,14 +168,14 @@ void DataSharingListener::process_new_data ()
 
                 if (last_sequence == c_SequenceNumber_Unknown && ch.sequenceNumber != SequenceNumber_t(0, 1))
                 {
-                    logInfo(RTPS_READER, "First change with SN " << ch.sequenceNumber
+                    EPROSIMA_LOG_INFO(RTPS_READER, "First change with SN " << ch.sequenceNumber
                                                                  << " detected on datasharing writer " <<
                             pool->writer());
                     reader_->processGapMsg(pool->writer(), SequenceNumber_t(0, 1), SequenceNumberSet_t(
                                 ch.sequenceNumber));
                 }
 
-                logInfo(RTPS_READER, "New data found on writer " << pool->writer()
+                EPROSIMA_LOG_INFO(RTPS_READER, "New data found on writer " << pool->writer()
                                                                  << " with SN " << ch.sequenceNumber);
 
                 if (reader_->processDataMsg(&ch))
@@ -212,7 +212,7 @@ bool DataSharingListener::add_datasharing_writer(
 
     if (writer_is_matched(writer_guid))
     {
-        logInfo(RTPS_READER, "Attempting to add existing datasharing writer " << writer_guid);
+        EPROSIMA_LOG_INFO(RTPS_READER, "Attempting to add existing datasharing writer " << writer_guid);
         return false;
     }
 

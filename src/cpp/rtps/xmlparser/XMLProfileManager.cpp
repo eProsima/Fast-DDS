@@ -211,7 +211,7 @@ XMLP_ret XMLProfileManager::loadXMLProfiles(
 
     if (XMLParser::loadXMLProfiles(profiles, root_node) == XMLP_ret::XML_OK)
     {
-        logInfo(XMLPARSER, "Node parsed successfully");
+        EPROSIMA_LOG_INFO(XMLPARSER, "Node parsed successfully");
         return XMLProfileManager::extractProfiles(std::move(root_node), "-XML Node-");
     }
     else
@@ -240,7 +240,7 @@ XMLP_ret XMLProfileManager::loadXMLNode(
         return XMLP_ret::XML_ERROR;
     }
 
-    logInfo(XMLPARSER, "Node parsed successfully");
+    EPROSIMA_LOG_INFO(XMLPARSER, "Node parsed successfully");
 
     if (NodeType::PROFILES == root_node->getType())
     {
@@ -289,7 +289,7 @@ XMLP_ret XMLProfileManager::loadXMLFile(
     xmlfile_map_iterator_t it = xml_files_.find(filename);
     if (it != xml_files_.end() && XMLP_ret::XML_OK == it->second)
     {
-        logInfo(XMLPARSER, "XML file '" << filename << "' already parsed");
+        EPROSIMA_LOG_INFO(XMLPARSER, "XML file '" << filename << "' already parsed");
         return XMLP_ret::XML_OK;
     }
 
@@ -305,7 +305,7 @@ XMLP_ret XMLProfileManager::loadXMLFile(
         return XMLP_ret::XML_ERROR;
     }
 
-    logInfo(XMLPARSER, "File '" << filename << "' parsed successfully");
+    EPROSIMA_LOG_INFO(XMLPARSER, "File '" << filename << "' parsed successfully");
 
     if (NodeType::ROOT == root_node->getType())
     {

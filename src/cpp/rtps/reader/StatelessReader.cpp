@@ -42,7 +42,7 @@ using namespace eprosima::fastrtps::rtps;
 
 StatelessReader::~StatelessReader()
 {
-    logInfo(RTPS_READER, "Removing reader " << m_guid);
+    EPROSIMA_LOG_INFO(RTPS_READER, "Removing reader " << m_guid);
 
     // Datasharing listener must be stopped to avoid processing notifications
     // while the reader is being destroyed
@@ -101,7 +101,7 @@ bool StatelessReader::matched_writer_add(
         {
             if (writer.guid == wdata.guid())
             {
-                logInfo(RTPS_READER, "Attempting to add existing writer, updating information");
+                EPROSIMA_LOG_INFO(RTPS_READER, "Attempting to add existing writer, updating information");
 
                 if (EXCLUSIVE_OWNERSHIP_QOS == m_att.ownershipKind &&
                         writer.ownership_strength != wdata.m_qos.m_ownershipStrength.value)
@@ -138,7 +138,7 @@ bool StatelessReader::matched_writer_add(
                     m_att.durabilityKind == VOLATILE,
                     mp_history->m_att.maximumReservedCaches))
             {
-                logInfo(RTPS_READER, "Writer Proxy " << wdata.guid() << " added to " << this->m_guid.entityId
+                EPROSIMA_LOG_INFO(RTPS_READER, "Writer Proxy " << wdata.guid() << " added to " << this->m_guid.entityId
                                                      << " with data sharing");
             }
             else
@@ -160,7 +160,7 @@ bool StatelessReader::matched_writer_add(
             }
             return false;
         }
-        logInfo(RTPS_READER, "Writer " << wdata.guid() << " added to reader " << m_guid);
+        EPROSIMA_LOG_INFO(RTPS_READER, "Writer " << wdata.guid() << " added to reader " << m_guid);
 
         add_persistence_guid(info.guid, info.persistence_guid);
 
@@ -230,11 +230,11 @@ bool StatelessReader::matched_writer_remove(
         {
             if (it->guid == writer_guid)
             {
-                logInfo(RTPS_READER, "Writer " << writer_guid << " removed from " << m_guid);
+                EPROSIMA_LOG_INFO(RTPS_READER, "Writer " << writer_guid << " removed from " << m_guid);
 
                 if (it->is_datasharing && datasharing_listener_->remove_datasharing_writer(writer_guid))
                 {
-                    logInfo(RTPS_READER, "Data sharing writer " << writer_guid << " removed from " << m_guid.entityId);
+                    EPROSIMA_LOG_INFO(RTPS_READER, "Data sharing writer " << writer_guid << " removed from " << m_guid.entityId);
                     remove_changes_from(writer_guid, true);
                 }
 
@@ -359,7 +359,7 @@ void StatelessReader::remove_changes_from(
     for (std::vector<CacheChange_t*>::iterator it = toremove.begin();
             it != toremove.end(); ++it)
     {
-        logInfo(RTPS_READER,
+        EPROSIMA_LOG_INFO(RTPS_READER,
                 "Removing change " << (*it)->sequenceNumber << " from " << (*it)->writerGUID);
         if (is_payload_pool_lost)
         {
@@ -403,7 +403,7 @@ bool StatelessReader::nextUnreadCache(
     }
     else
     {
-        logInfo(RTPS_READER, "No Unread elements left");
+        EPROSIMA_LOG_INFO(RTPS_READER, "No Unread elements left");
     }
 
     return found;
@@ -475,7 +475,7 @@ bool StatelessReader::processDataMsg(
                 };
         std::unique_ptr<void, decltype(assert_liveliness_lambda)> p{ this, assert_liveliness_lambda };
 
-        logInfo(RTPS_MSG_IN, IDSTRING "Trying to add change " << change->sequenceNumber << " TO reader: " << m_guid);
+        EPROSIMA_LOG_INFO(RTPS_MSG_IN, IDSTRING "Trying to add change " << change->sequenceNumber << " TO reader: " << m_guid);
 
         // Check rejection by history
         if (!thereIsUpperRecordOf(change->writerGUID, change->sequenceNumber))
@@ -554,7 +554,7 @@ bool StatelessReader::processDataMsg(
             // Perform reception of cache change
             if (!change_received(change_to_add))
             {
-                logInfo(RTPS_MSG_IN, IDSTRING "MessageReceiver not add change " << change_to_add->sequenceNumber);
+                EPROSIMA_LOG_INFO(RTPS_MSG_IN, IDSTRING "MessageReceiver not add change " << change_to_add->sequenceNumber);
                 change_to_add->payload_owner()->release_payload(*change_to_add);
                 change_pool_->release_cache(change_to_add);
                 return false;
@@ -594,7 +594,7 @@ bool StatelessReader::processDataFragMsg(
             // Check if CacheChange was received.
             if (!thereIsUpperRecordOf(writer_guid, incomingChange->sequenceNumber))
             {
-                logInfo(RTPS_MSG_IN, IDSTRING "Trying to add fragment " << incomingChange->sequenceNumber.to64long() <<
+                EPROSIMA_LOG_INFO(RTPS_MSG_IN, IDSTRING "Trying to add fragment " << incomingChange->sequenceNumber.to64long() <<
                         " TO reader: " << m_guid);
 
                 // Early return if we already know about a greater sequence number
@@ -686,7 +686,7 @@ bool StatelessReader::processDataFragMsg(
                     }
                     else if (!change_received(change_completed))
                     {
-                        logInfo(RTPS_MSG_IN,
+                        EPROSIMA_LOG_INFO(RTPS_MSG_IN,
                                 IDSTRING "MessageReceiver not add change " <<
                                 change_completed->sequenceNumber.to64long());
 

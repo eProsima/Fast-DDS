@@ -1003,7 +1003,7 @@ void DynamicTypeBuilderFactory::build_type_identifier(
             {
                 // Need to be registered as TypeObject first
                 // and return them as EK_MINIMAL or EK_COMPLETE
-                logInfo(DYN_TYPE_FACTORY, "Complex types must be built from CompleteTypeObjects.");
+                EPROSIMA_LOG_INFO(DYN_TYPE_FACTORY, "Complex types must be built from CompleteTypeObjects.");
             }
             break;
         }

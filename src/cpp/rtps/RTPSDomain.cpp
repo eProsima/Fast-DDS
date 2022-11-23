@@ -68,7 +68,7 @@ FileWatchHandle RTPSDomainImpl::file_watch_handle_;
 void RTPSDomain::stopAll()
 {
     std::unique_lock<std::mutex> lock(m_mutex);
-    logInfo(RTPS_PARTICIPANT, "DELETING ALL ENDPOINTS IN THIS DOMAIN");
+    EPROSIMA_LOG_INFO(RTPS_PARTICIPANT, "DELETING ALL ENDPOINTS IN THIS DOMAIN");
 
     // Stop monitoring environment file
     SystemInfo::stop_watching_file(RTPSDomainImpl::file_watch_handle_);
@@ -83,7 +83,7 @@ void RTPSDomain::stopAll()
         RTPSDomain::removeRTPSParticipant_nts(participant);
         lock.lock();
     }
-    logInfo(RTPS_PARTICIPANT, "RTPSParticipants deleted correctly ");
+    EPROSIMA_LOG_INFO(RTPS_PARTICIPANT, "RTPSParticipants deleted correctly ");
     std::this_thread::sleep_for(std::chrono::milliseconds(100));
 }
 
@@ -101,7 +101,7 @@ RTPSParticipant* RTPSDomain::createParticipant(
         const RTPSParticipantAttributes& attrs,
         RTPSParticipantListener* listen)
 {
-    logInfo(RTPS_PARTICIPANT, "");
+    EPROSIMA_LOG_INFO(RTPS_PARTICIPANT, "");
 
     RTPSParticipantAttributes PParam = attrs;
 
@@ -505,7 +505,7 @@ RTPSParticipant* RTPSDomain::clientServerEnvironmentCreationOverride(
     // Check the specified discovery protocol: if other than simple it has priority over ros environment variable
     if (att.builtin.discovery_config.discoveryProtocol != DiscoveryProtocol_t::SIMPLE)
     {
-        logInfo(DOMAIN, "Detected non simple discovery protocol attributes."
+        EPROSIMA_LOG_INFO(DOMAIN, "Detected non simple discovery protocol attributes."
                 << " Ignoring auto default client-server setup.");
         return nullptr;
     }
@@ -537,7 +537,7 @@ RTPSParticipant* RTPSDomain::clientServerEnvironmentCreationOverride(
         }
     }
 
-    logInfo(DOMAIN, "Detected auto client-server environment variable."
+    EPROSIMA_LOG_INFO(DOMAIN, "Detected auto client-server environment variable."
             << "Trying to create client with the default server setup: "
             << client_att.builtin.discovery_config.m_DiscoveryServers);
 
@@ -548,7 +548,7 @@ RTPSParticipant* RTPSDomain::clientServerEnvironmentCreationOverride(
     if (nullptr != part)
     {
         // client successfully created
-        logInfo(DOMAIN, "Auto default server-client setup. Default client created.");
+        EPROSIMA_LOG_INFO(DOMAIN, "Auto default server-client setup. Default client created.");
         part->mp_impl->client_override(true);
         return part;
     }

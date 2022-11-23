@@ -236,7 +236,7 @@ void VideoTestSubscriber::DataSubListener::onSubscriptionMatched(Subscriber* /*s
     std::unique_lock<std::mutex> lock(mp_up->mutex_);
     if(info.status == MATCHED_MATCHING)
     {
-        logInfo(VideoTest,"Data Sub Matched ");
+        EPROSIMA_LOG_INFO(VideoTest,"Data Sub Matched ");
         std::cout << "Data Sub Matched " << std::endl;
         ++mp_up->disc_count_;
     }
@@ -257,7 +257,7 @@ void VideoTestSubscriber::CommandPubListener::onPublicationMatched(Publisher* /*
 
     if(info.status == MATCHED_MATCHING)
     {
-        logInfo(VideoTest, "Command Pub Matched ");
+        EPROSIMA_LOG_INFO(VideoTest, "Command Pub Matched ");
         std::cout << "Command Pub Matched " << std::endl;
         ++mp_up->disc_count_;
     }
@@ -277,7 +277,7 @@ void VideoTestSubscriber::CommandSubListener::onSubscriptionMatched(Subscriber* 
     std::unique_lock<std::mutex> lock(mp_up->mutex_);
     if(info.status == MATCHED_MATCHING)
     {
-        logInfo(VideoTest, "Command Sub Matched ");
+        EPROSIMA_LOG_INFO(VideoTest, "Command Sub Matched ");
         std::cout << "Command Sub Matched " << std::endl;
         ++mp_up->disc_count_;
     }

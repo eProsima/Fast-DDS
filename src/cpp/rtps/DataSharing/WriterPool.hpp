@@ -49,7 +49,7 @@ public:
 
     ~WriterPool()
     {
-        logInfo(DATASHARING_PAYLOADPOOL, "DataSharingPayloadPool::WriterPool destructor");
+        EPROSIMA_LOG_INFO(DATASHARING_PAYLOADPOOL, "DataSharingPayloadPool::WriterPool destructor");
 
         // We cannot destroy the objects in the SHM, as the Reader may still be using them.
         // We just remove the segment, and when the Reader closes it, it will be removed from the system.
@@ -134,7 +134,7 @@ public:
         {
             free_payloads_.push_back(payload);
         }
-        logInfo(DATASHARING_PAYLOADPOOL, "Change released with SN " << cache_change.sequenceNumber);
+        EPROSIMA_LOG_INFO(DATASHARING_PAYLOADPOOL, "Change released with SN " << cache_change.sequenceNumber);
 
         return DataSharingPayloadPool::release_payload(cache_change);
     }
@@ -288,7 +288,7 @@ public:
 
         // Add it to the history
         history_[static_cast<uint32_t>(descriptor_->notified_end)] = segment_->get_offset_from_address(node);
-        logInfo(DATASHARING_PAYLOADPOOL, "Change added to shared history"
+        EPROSIMA_LOG_INFO(DATASHARING_PAYLOADPOOL, "Change added to shared history"
                 << " with SN " << cache_change->sequenceNumber);
         advance(descriptor_->notified_end);
         --free_history_size_;
@@ -310,7 +310,7 @@ public:
         assert(descriptor_->notified_end != descriptor_->notified_begin);
         assert(free_history_size_ < descriptor_->history_size);
 
-        logInfo(DATASHARING_PAYLOADPOOL, "Change removed from shared history"
+        EPROSIMA_LOG_INFO(DATASHARING_PAYLOADPOOL, "Change removed from shared history"
                 << " with SN " << cache_change->sequenceNumber);
 
         PayloadNode* payload = PayloadNode::get_from_data(cache_change->serializedPayload.data);

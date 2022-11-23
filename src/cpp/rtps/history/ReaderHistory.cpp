@@ -105,7 +105,7 @@ bool ReaderHistory::add_change(
     }
 
     eprosima::utilities::collections::sorted_vector_insert(m_changes, a_change, fastdds::rtps::history_order_cmp);
-    logInfo(RTPS_READER_HISTORY,
+    EPROSIMA_LOG_INFO(RTPS_READER_HISTORY,
             "Change " << a_change->sequenceNumber << " added with " << a_change->serializedPayload.length << " bytes");
 
     return true;
@@ -138,7 +138,7 @@ History::iterator ReaderHistory::remove_change_nts(
 
     if ( removal == changesEnd())
     {
-        logInfo(RTPS_WRITER_HISTORY, "Trying to remove without a proper CacheChange_t referenced");
+        EPROSIMA_LOG_INFO(RTPS_WRITER_HISTORY, "Trying to remove without a proper CacheChange_t referenced");
         return changesEnd();
     }
 
@@ -206,7 +206,7 @@ bool ReaderHistory::remove_fragmented_changes_until(
             {
                 if (item->is_fully_assembled() == false)
                 {
-                    logInfo(RTPS_READER_HISTORY, "Removing change " << item->sequenceNumber);
+                    EPROSIMA_LOG_INFO(RTPS_READER_HISTORY, "Removing change " << item->sequenceNumber);
                     chit = remove_change_nts(chit);
                     continue;
                 }

@@ -265,7 +265,7 @@ bool LivelinessManager::assert_liveliness(
     // Updates the timer owner
     if (!calculate_next())
     {
-        logInfo(RTPS_WRITER,
+        EPROSIMA_LOG_INFO(RTPS_WRITER,
                 "Error when restarting liveliness timer: " << writers_.size() << " writers, liveliness " <<
                 kind);
         return false;

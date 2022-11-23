@@ -59,7 +59,7 @@ MessageReceiver::MessageReceiver(
 #endif // if HAVE_SECURITY
 {
     (void)rec_buffer_size;
-    logInfo(RTPS_MSG_IN, "Created with CDRMessage of size: " << rec_buffer_size);
+    EPROSIMA_LOG_INFO(RTPS_MSG_IN, "Created with CDRMessage of size: " << rec_buffer_size);
 
 #if HAVE_SECURITY
     if (participant->is_secure())
@@ -104,7 +104,7 @@ MessageReceiver::MessageReceiver(
 
 MessageReceiver::~MessageReceiver()
 {
-    logInfo(RTPS_MSG_IN, "");
+    EPROSIMA_LOG_INFO(RTPS_MSG_IN, "");
     assert(associated_writers_.empty());
     assert(associated_readers_.empty());
 }
@@ -408,11 +408,11 @@ void MessageReceiver::processCDRMsg(
             {
                 if (dest_guid_prefix_ != participantGuidPrefix)
                 {
-                    logInfo(RTPS_MSG_IN, IDSTRING "Data Submsg ignored, DST is another RTPSParticipant");
+                    EPROSIMA_LOG_INFO(RTPS_MSG_IN, IDSTRING "Data Submsg ignored, DST is another RTPSParticipant");
                 }
                 else
                 {
-                    logInfo(RTPS_MSG_IN, IDSTRING "Data Submsg received, processing.");
+                    EPROSIMA_LOG_INFO(RTPS_MSG_IN, IDSTRING "Data Submsg received, processing.");
                     valid = proc_Submsg_Data(submessage, &submsgh);
                 }
                 break;
@@ -420,11 +420,11 @@ void MessageReceiver::processCDRMsg(
             case DATA_FRAG:
                 if (dest_guid_prefix_ != participantGuidPrefix)
                 {
-                    logInfo(RTPS_MSG_IN, IDSTRING "DataFrag Submsg ignored, DST is another RTPSParticipant");
+                    EPROSIMA_LOG_INFO(RTPS_MSG_IN, IDSTRING "DataFrag Submsg ignored, DST is another RTPSParticipant");
                 }
                 else
                 {
-                    logInfo(RTPS_MSG_IN, IDSTRING "DataFrag Submsg received, processing.");
+                    EPROSIMA_LOG_INFO(RTPS_MSG_IN, IDSTRING "DataFrag Submsg received, processing.");
                     valid = proc_Submsg_DataFrag(submessage, &submsgh);
                 }
                 break;
@@ -432,11 +432,11 @@ void MessageReceiver::processCDRMsg(
             {
                 if (dest_guid_prefix_ != participantGuidPrefix)
                 {
-                    logInfo(RTPS_MSG_IN, IDSTRING "Gap Submsg ignored, DST is another RTPSParticipant...");
+                    EPROSIMA_LOG_INFO(RTPS_MSG_IN, IDSTRING "Gap Submsg ignored, DST is another RTPSParticipant...");
                 }
                 else
                 {
-                    logInfo(RTPS_MSG_IN, IDSTRING "Gap Submsg received, processing...");
+                    EPROSIMA_LOG_INFO(RTPS_MSG_IN, IDSTRING "Gap Submsg received, processing...");
                     valid = proc_Submsg_Gap(submessage, &submsgh);
                 }
                 break;
@@ -445,11 +445,11 @@ void MessageReceiver::processCDRMsg(
             {
                 if (dest_guid_prefix_ != participantGuidPrefix)
                 {
-                    logInfo(RTPS_MSG_IN, IDSTRING "Acknack Submsg ignored, DST is another RTPSParticipant...");
+                    EPROSIMA_LOG_INFO(RTPS_MSG_IN, IDSTRING "Acknack Submsg ignored, DST is another RTPSParticipant...");
                 }
                 else
                 {
-                    logInfo(RTPS_MSG_IN, IDSTRING "Acknack Submsg received, processing...");
+                    EPROSIMA_LOG_INFO(RTPS_MSG_IN, IDSTRING "Acknack Submsg received, processing...");
                     valid = proc_Submsg_Acknack(submessage, &submsgh);
                 }
                 break;
@@ -458,11 +458,11 @@ void MessageReceiver::processCDRMsg(
             {
                 if (dest_guid_prefix_ != participantGuidPrefix)
                 {
-                    logInfo(RTPS_MSG_IN, IDSTRING "NackFrag Submsg ignored, DST is another RTPSParticipant...");
+                    EPROSIMA_LOG_INFO(RTPS_MSG_IN, IDSTRING "NackFrag Submsg ignored, DST is another RTPSParticipant...");
                 }
                 else
                 {
-                    logInfo(RTPS_MSG_IN, IDSTRING "NackFrag Submsg received, processing...");
+                    EPROSIMA_LOG_INFO(RTPS_MSG_IN, IDSTRING "NackFrag Submsg received, processing...");
                     valid = proc_Submsg_NackFrag(submessage, &submsgh);
                 }
                 break;
@@ -471,11 +471,11 @@ void MessageReceiver::processCDRMsg(
             {
                 if (dest_guid_prefix_ != participantGuidPrefix)
                 {
-                    logInfo(RTPS_MSG_IN, IDSTRING "HB Submsg ignored, DST is another RTPSParticipant...");
+                    EPROSIMA_LOG_INFO(RTPS_MSG_IN, IDSTRING "HB Submsg ignored, DST is another RTPSParticipant...");
                 }
                 else
                 {
-                    logInfo(RTPS_MSG_IN, IDSTRING "Heartbeat Submsg received, processing...");
+                    EPROSIMA_LOG_INFO(RTPS_MSG_IN, IDSTRING "Heartbeat Submsg received, processing...");
                     valid = proc_Submsg_Heartbeat(submessage, &submsgh);
                 }
                 break;
@@ -484,11 +484,11 @@ void MessageReceiver::processCDRMsg(
             {
                 if (dest_guid_prefix_ != participantGuidPrefix)
                 {
-                    logInfo(RTPS_MSG_IN, IDSTRING "HBFrag Submsg ignored, DST is another RTPSParticipant...");
+                    EPROSIMA_LOG_INFO(RTPS_MSG_IN, IDSTRING "HBFrag Submsg ignored, DST is another RTPSParticipant...");
                 }
                 else
                 {
-                    logInfo(RTPS_MSG_IN, IDSTRING "HeartbeatFrag Submsg received, processing...");
+                    EPROSIMA_LOG_INFO(RTPS_MSG_IN, IDSTRING "HeartbeatFrag Submsg received, processing...");
                     valid = proc_Submsg_HeartbeatFrag(submessage, &submsgh);
                 }
                 break;
@@ -497,16 +497,16 @@ void MessageReceiver::processCDRMsg(
                 EPROSIMA_LOG_WARNING(RTPS_MSG_IN, IDSTRING "PAD messages not yet implemented, ignoring");
                 break;
             case INFO_DST:
-                logInfo(RTPS_MSG_IN, IDSTRING "InfoDST message received, processing...");
+                EPROSIMA_LOG_INFO(RTPS_MSG_IN, IDSTRING "InfoDST message received, processing...");
                 valid = proc_Submsg_InfoDST(submessage, &submsgh);
                 break;
             case INFO_SRC:
-                logInfo(RTPS_MSG_IN, IDSTRING "InfoSRC message received, processing...");
+                EPROSIMA_LOG_INFO(RTPS_MSG_IN, IDSTRING "InfoSRC message received, processing...");
                 valid = proc_Submsg_InfoSRC(submessage, &submsgh);
                 break;
             case INFO_TS:
             {
-                logInfo(RTPS_MSG_IN, IDSTRING "InfoTS Submsg received, processing...");
+                EPROSIMA_LOG_INFO(RTPS_MSG_IN, IDSTRING "InfoTS Submsg received, processing...");
                 valid = proc_Submsg_InfoTS(submessage, &submsgh);
                 break;
             }
@@ -538,7 +538,7 @@ bool MessageReceiver::checkRTPSHeader(
     if (msg->buffer[0] != 'R' ||  msg->buffer[1] != 'T' ||
             msg->buffer[2] != 'P' ||  msg->buffer[3] != 'S')
     {
-        logInfo(RTPS_MSG_IN, IDSTRING "Msg received with no RTPS in header, ignoring...");
+        EPROSIMA_LOG_INFO(RTPS_MSG_IN, IDSTRING "Msg received with no RTPS in header, ignoring...");
         return false;
     }
 
@@ -689,7 +689,7 @@ bool MessageReceiver::proc_Submsg_Data(
     //READ and PROCESS
     if (smh->submessageLength < RTPSMESSAGE_DATA_MIN_LENGTH)
     {
-        logInfo(RTPS_MSG_IN, IDSTRING "Too short submessage received, ignoring");
+        EPROSIMA_LOG_INFO(RTPS_MSG_IN, IDSTRING "Too short submessage received, ignoring");
         return false;
     }
     //Fill flags bool values
@@ -770,7 +770,7 @@ bool MessageReceiver::proc_Submsg_Data(
     {
         if (!ParameterList::updateCacheChangeFromInlineQos(ch, msg, inlineQosSize))
         {
-            logInfo(RTPS_MSG_IN, IDSTRING "SubMessage Data ERROR, Inline Qos ParameterList error");
+            EPROSIMA_LOG_INFO(RTPS_MSG_IN, IDSTRING "SubMessage Data ERROR, Inline Qos ParameterList error");
             return false;
         }
         ch.inline_qos.data = &msg->buffer[msg->pos - inlineQosSize];
@@ -830,7 +830,7 @@ bool MessageReceiver::proc_Submsg_Data(
         ch.sourceTimestamp = timestamp_;
     }
 
-    logInfo(RTPS_MSG_IN, IDSTRING "from Writer " << ch.writerGUID << "; possible RTPSReader entities: " <<
+    EPROSIMA_LOG_INFO(RTPS_MSG_IN, IDSTRING "from Writer " << ch.writerGUID << "; possible RTPSReader entities: " <<
             associated_readers_.size());
 
     //Look for the correct reader to add the change
@@ -846,7 +846,7 @@ bool MessageReceiver::proc_Submsg_Data(
     ch.serializedPayload.data = nullptr;
     ch.inline_qos.data = nullptr;
 
-    logInfo(RTPS_MSG_IN, IDSTRING "Sub Message DATA processed");
+    EPROSIMA_LOG_INFO(RTPS_MSG_IN, IDSTRING "Sub Message DATA processed");
     return true;
 }
 
@@ -859,7 +859,7 @@ bool MessageReceiver::proc_Submsg_DataFrag(
     //READ and PROCESS
     if (smh->submessageLength < RTPSMESSAGE_DATA_MIN_LENGTH)
     {
-        logInfo(RTPS_MSG_IN, IDSTRING "Too short submessage received, ignoring");
+        EPROSIMA_LOG_INFO(RTPS_MSG_IN, IDSTRING "Too short submessage received, ignoring");
         return false;
     }
 
@@ -950,7 +950,7 @@ bool MessageReceiver::proc_Submsg_DataFrag(
     {
         if (!ParameterList::updateCacheChangeFromInlineQos(ch, msg, inlineQosSize))
         {
-            logInfo(RTPS_MSG_IN, IDSTRING "SubMessage Data ERROR, Inline Qos ParameterList error");
+            EPROSIMA_LOG_INFO(RTPS_MSG_IN, IDSTRING "SubMessage Data ERROR, Inline Qos ParameterList error");
             return false;
         }
         ch.inline_qos.data = &msg->buffer[msg->pos - inlineQosSize];
@@ -1001,7 +1001,7 @@ bool MessageReceiver::proc_Submsg_DataFrag(
            //uint32_t param_size;
            if (ParameterList::readParameterListfromCDRMsg(msg, &m_ParamList, ch, false) <= 0)
            {
-           logInfo(RTPS_MSG_IN, IDSTRING"SubMessage Data ERROR, keyFlag ParameterList");
+           EPROSIMA_LOG_INFO(RTPS_MSG_IN, IDSTRING"SubMessage Data ERROR, keyFlag ParameterList");
            return false;
            }
            msg->msg_endian = previous_endian;
@@ -1014,13 +1014,13 @@ bool MessageReceiver::proc_Submsg_DataFrag(
         ch.sourceTimestamp = timestamp_;
     }
 
-    logInfo(RTPS_MSG_IN, IDSTRING "from Writer " << ch.writerGUID << "; possible RTPSReader entities: " <<
+    EPROSIMA_LOG_INFO(RTPS_MSG_IN, IDSTRING "from Writer " << ch.writerGUID << "; possible RTPSReader entities: " <<
             associated_readers_.size());
     process_data_fragment_message_function_(readerID, ch, sampleSize, fragmentStartingNum, fragmentsInSubmessage);
     ch.serializedPayload.data = nullptr;
     ch.inline_qos.data = nullptr;
 
-    logInfo(RTPS_MSG_IN, IDSTRING "Sub Message DATA_FRAG processed");
+    EPROSIMA_LOG_INFO(RTPS_MSG_IN, IDSTRING "Sub Message DATA_FRAG processed");
 
     return true;
 }
@@ -1117,12 +1117,12 @@ bool MessageReceiver::proc_Submsg_Acknack(
         {
             if (!result)
             {
-                logInfo(RTPS_MSG_IN, IDSTRING "Acknack msg to NOT stateful writer ");
+                EPROSIMA_LOG_INFO(RTPS_MSG_IN, IDSTRING "Acknack msg to NOT stateful writer ");
             }
             return result;
         }
     }
-    logInfo(RTPS_MSG_IN, IDSTRING "Acknack msg to UNKNOWN writer (I looked through "
+    EPROSIMA_LOG_INFO(RTPS_MSG_IN, IDSTRING "Acknack msg to UNKNOWN writer (I looked through "
             << associated_writers_.size() << " writers in this ListenResource)");
     return false;
 }
@@ -1219,7 +1219,7 @@ bool MessageReceiver::proc_Submsg_InfoDST(
     if (guidP != c_GuidPrefix_Unknown)
     {
         dest_guid_prefix_ = guidP;
-        logInfo(RTPS_MSG_IN, IDSTRING "DST RTPSParticipant is now: " << dest_guid_prefix_);
+        EPROSIMA_LOG_INFO(RTPS_MSG_IN, IDSTRING "DST RTPSParticipant is now: " << dest_guid_prefix_);
     }
     return true;
 }
@@ -1249,7 +1249,7 @@ bool MessageReceiver::proc_Submsg_InfoSRC(
         CDRMessage::readOctet(msg, &source_version_.m_minor);
         CDRMessage::readData(msg, &source_vendor_id_[0], 2);
         CDRMessage::readData(msg, source_guid_prefix_.value, GuidPrefix_t::size);
-        logInfo(RTPS_MSG_IN, IDSTRING "SRC RTPSParticipant is now: " << source_guid_prefix_);
+        EPROSIMA_LOG_INFO(RTPS_MSG_IN, IDSTRING "SRC RTPSParticipant is now: " << source_guid_prefix_);
         return true;
     }
     return false;
@@ -1288,7 +1288,7 @@ bool MessageReceiver::proc_Submsg_NackFrag(
     uint32_t Ackcount;
     if (!CDRMessage::readUInt32(msg, &Ackcount))
     {
-        logInfo(RTPS_MSG_IN, IDSTRING "Unable to read ackcount from message");
+        EPROSIMA_LOG_INFO(RTPS_MSG_IN, IDSTRING "Unable to read ackcount from message");
         return false;
     }
 
@@ -1300,12 +1300,12 @@ bool MessageReceiver::proc_Submsg_NackFrag(
         {
             if (!result)
             {
-                logInfo(RTPS_MSG_IN, IDSTRING "Acknack msg to NOT stateful writer ");
+                EPROSIMA_LOG_INFO(RTPS_MSG_IN, IDSTRING "Acknack msg to NOT stateful writer ");
             }
             return result;
         }
     }
-    logInfo(RTPS_MSG_IN, IDSTRING "Acknack msg to UNKNOWN writer (I looked through "
+    EPROSIMA_LOG_INFO(RTPS_MSG_IN, IDSTRING "Acknack msg to UNKNOWN writer (I looked through "
             << associated_writers_.size() << " writers in this ListenResource)");
     return false;
 }

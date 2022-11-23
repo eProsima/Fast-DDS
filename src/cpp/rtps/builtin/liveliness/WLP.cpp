@@ -184,7 +184,7 @@ WLP::~WLP()
 bool WLP::initWL(
         RTPSParticipantImpl* p)
 {
-    logInfo(RTPS_LIVELINESS, "Initializing Liveliness Protocol");
+    EPROSIMA_LOG_INFO(RTPS_LIVELINESS, "Initializing Liveliness Protocol");
 
     mp_participant = p;
 
@@ -267,7 +267,7 @@ bool WLP::createEndpoints()
                 true))
     {
         mp_builtinWriter = dynamic_cast<StatefulWriter*>(wout);
-        logInfo(RTPS_LIVELINESS, "Builtin Liveliness Writer created");
+        EPROSIMA_LOG_INFO(RTPS_LIVELINESS, "Builtin Liveliness Writer created");
     }
     else
     {
@@ -314,7 +314,7 @@ bool WLP::createEndpoints()
                 true))
     {
         mp_builtinReader = dynamic_cast<StatefulReader*>(rout);
-        logInfo(RTPS_LIVELINESS, "Builtin Liveliness Reader created");
+        EPROSIMA_LOG_INFO(RTPS_LIVELINESS, "Builtin Liveliness Reader created");
     }
     else
     {
@@ -381,7 +381,7 @@ bool WLP::createSecureEndpoints()
             c_EntityId_WriterLivelinessSecure, true))
     {
         mp_builtinWriterSecure = dynamic_cast<StatefulWriter*>(wout);
-        logInfo(RTPS_LIVELINESS, "Builtin Secure Liveliness Writer created");
+        EPROSIMA_LOG_INFO(RTPS_LIVELINESS, "Builtin Secure Liveliness Writer created");
     }
     else
     {
@@ -436,7 +436,7 @@ bool WLP::createSecureEndpoints()
                 true))
     {
         mp_builtinReaderSecure = dynamic_cast<StatefulReader*>(rout);
-        logInfo(RTPS_LIVELINESS, "Builtin Liveliness Reader created");
+        EPROSIMA_LOG_INFO(RTPS_LIVELINESS, "Builtin Liveliness Reader created");
     }
     else
     {
@@ -510,7 +510,7 @@ bool WLP::assignRemoteEndpoints(
 
     if ((auxendp != 0 || partdet != 0) && this->mp_builtinReader != nullptr)
     {
-        logInfo(RTPS_LIVELINESS, "Adding remote writer to my local Builtin Reader");
+        EPROSIMA_LOG_INFO(RTPS_LIVELINESS, "Adding remote writer to my local Builtin Reader");
         temp_writer_proxy_data_.guid().entityId = c_EntityId_WriterLiveliness;
         temp_writer_proxy_data_.set_persistence_entity_id(c_EntityId_WriterLiveliness);
         mp_builtinReader->matched_writer_add(temp_writer_proxy_data_);
@@ -519,7 +519,7 @@ bool WLP::assignRemoteEndpoints(
     auxendp &= BUILTIN_ENDPOINT_PARTICIPANT_MESSAGE_DATA_READER;
     if ((auxendp != 0 || partdet != 0) && this->mp_builtinWriter != nullptr)
     {
-        logInfo(RTPS_LIVELINESS, "Adding remote reader to my local Builtin Writer");
+        EPROSIMA_LOG_INFO(RTPS_LIVELINESS, "Adding remote reader to my local Builtin Writer");
         temp_reader_proxy_data_.guid().entityId = c_EntityId_ReaderLiveliness;
         mp_builtinWriter->matched_reader_add(temp_reader_proxy_data_);
     }
@@ -529,7 +529,7 @@ bool WLP::assignRemoteEndpoints(
     auxendp &= BUILTIN_ENDPOINT_PARTICIPANT_MESSAGE_SECURE_DATA_WRITER;
     if ((auxendp != 0 || partdet != 0) && this->mp_builtinReaderSecure != nullptr)
     {
-        logInfo(RTPS_LIVELINESS, "Adding remote writer to my local Builtin Secure Reader");
+        EPROSIMA_LOG_INFO(RTPS_LIVELINESS, "Adding remote writer to my local Builtin Secure Reader");
         temp_writer_proxy_data_.guid().entityId = c_EntityId_WriterLivelinessSecure;
         temp_writer_proxy_data_.set_persistence_entity_id(c_EntityId_WriterLivelinessSecure);
 
@@ -545,7 +545,7 @@ bool WLP::assignRemoteEndpoints(
     auxendp &= BUILTIN_ENDPOINT_PARTICIPANT_MESSAGE_SECURE_DATA_READER;
     if ((auxendp != 0 || partdet != 0) && this->mp_builtinWriterSecure != nullptr)
     {
-        logInfo(RTPS_LIVELINESS, "Adding remote reader to my local Builtin Secure Writer");
+        EPROSIMA_LOG_INFO(RTPS_LIVELINESS, "Adding remote reader to my local Builtin Secure Writer");
         temp_reader_proxy_data_.guid().entityId = c_EntityId_ReaderLivelinessSecure;
         if (!mp_participant->security_manager().discovered_builtin_reader(
                     mp_builtinWriterSecure->getGuid(), pdata.m_guid, temp_reader_proxy_data_,
@@ -566,7 +566,7 @@ void WLP::removeRemoteEndpoints(
     GUID_t tmp_guid;
     tmp_guid.guidPrefix = pdata->m_guid.guidPrefix;
 
-    logInfo(RTPS_LIVELINESS, "for RTPSParticipant: " << pdata->m_guid);
+    EPROSIMA_LOG_INFO(RTPS_LIVELINESS, "for RTPSParticipant: " << pdata->m_guid);
     uint32_t endp = pdata->m_availableBuiltinEndpoints;
     uint32_t partdet = endp;
     uint32_t auxendp = endp;
@@ -575,7 +575,7 @@ void WLP::removeRemoteEndpoints(
 
     if ((auxendp != 0 || partdet != 0) && this->mp_builtinReader != nullptr)
     {
-        logInfo(RTPS_LIVELINESS, "Removing remote writer from my local Builtin Reader");
+        EPROSIMA_LOG_INFO(RTPS_LIVELINESS, "Removing remote writer from my local Builtin Reader");
         tmp_guid.entityId = c_EntityId_WriterLiveliness;
         mp_builtinReader->matched_writer_remove(tmp_guid);
     }
@@ -583,7 +583,7 @@ void WLP::removeRemoteEndpoints(
     auxendp &= BUILTIN_ENDPOINT_PARTICIPANT_MESSAGE_DATA_READER;
     if ((auxendp != 0 || partdet != 0) && this->mp_builtinWriter != nullptr)
     {
-        logInfo(RTPS_LIVELINESS, "Removing remote reader from my local Builtin Writer");
+        EPROSIMA_LOG_INFO(RTPS_LIVELINESS, "Removing remote reader from my local Builtin Writer");
         tmp_guid.entityId = c_EntityId_ReaderLiveliness;
         mp_builtinWriter->matched_reader_remove(tmp_guid);
     }
@@ -593,7 +593,7 @@ void WLP::removeRemoteEndpoints(
     auxendp &= BUILTIN_ENDPOINT_PARTICIPANT_MESSAGE_SECURE_DATA_WRITER;
     if ((auxendp != 0 || partdet != 0) && this->mp_builtinReaderSecure != nullptr)
     {
-        logInfo(RTPS_LIVELINESS, "Removing remote writer from my local Builtin Secure Reader");
+        EPROSIMA_LOG_INFO(RTPS_LIVELINESS, "Removing remote writer from my local Builtin Secure Reader");
         tmp_guid.entityId = c_EntityId_WriterLivelinessSecure;
         if (mp_builtinReaderSecure->matched_writer_remove(tmp_guid))
         {
@@ -605,7 +605,7 @@ void WLP::removeRemoteEndpoints(
     auxendp &= BUILTIN_ENDPOINT_PARTICIPANT_MESSAGE_SECURE_DATA_READER;
     if ((auxendp != 0 || partdet != 0) && this->mp_builtinWriterSecure != nullptr)
     {
-        logInfo(RTPS_LIVELINESS, "Removing remote reader from my local Builtin Secure Writer");
+        EPROSIMA_LOG_INFO(RTPS_LIVELINESS, "Removing remote reader from my local Builtin Secure Writer");
         tmp_guid.entityId = c_EntityId_ReaderLivelinessSecure;
         if (mp_builtinWriterSecure->matched_reader_remove(tmp_guid))
         {
@@ -621,7 +621,7 @@ bool WLP::add_local_writer(
         const WriterQos& wqos)
 {
     std::lock_guard<std::recursive_mutex> guard(*mp_builtinProtocols->mp_PDP->getMutex());
-    logInfo(RTPS_LIVELINESS, W->getGuid().entityId << " to Liveliness Protocol");
+    EPROSIMA_LOG_INFO(RTPS_LIVELINESS, W->getGuid().entityId << " to Liveliness Protocol");
 
     double wAnnouncementPeriodMilliSec(TimeConv::Duration_t2MilliSecondsDouble(wqos.m_liveliness.announcement_period));
 
@@ -710,7 +710,7 @@ bool WLP::remove_local_writer(
 {
     std::lock_guard<std::recursive_mutex> guard(*mp_builtinProtocols->mp_PDP->getMutex());
 
-    logInfo(RTPS_LIVELINESS, W->getGuid().entityId << " from Liveliness Protocol");
+    EPROSIMA_LOG_INFO(RTPS_LIVELINESS, W->getGuid().entityId << " from Liveliness Protocol");
 
     if (W->get_liveliness_kind() == AUTOMATIC_LIVELINESS_QOS)
     {

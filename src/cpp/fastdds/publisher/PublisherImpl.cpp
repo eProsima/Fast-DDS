@@ -217,7 +217,7 @@ DataWriter* PublisherImpl::create_datawriter(
         DataWriterListener* listener,
         const StatusMask& mask)
 {
-    logInfo(PUBLISHER, "CREATING WRITER IN TOPIC: " << topic->get_name());
+    EPROSIMA_LOG_INFO(PUBLISHER, "CREATING WRITER IN TOPIC: " << topic->get_name());
     //Look for the correct type registration
     TypeSupport type_support = participant_->find_type(topic->get_type_name());
 

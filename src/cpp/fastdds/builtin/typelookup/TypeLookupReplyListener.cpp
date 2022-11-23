@@ -65,7 +65,7 @@ void TypeLookupReplyListener::onNewCacheChangeAdded(
         EPROSIMA_LOG_WARNING(TL_REPLY_READER, "Received data from a bad endpoint.");
         reader->getHistory()->remove_change(change);
     }
-    logInfo(TYPELOOKUP_SERVICE_REPLY_LISTENER, "Received new cache change");
+    EPROSIMA_LOG_INFO(TYPELOOKUP_SERVICE_REPLY_LISTENER, "Received new cache change");
 
     TypeLookup_Reply reply;
     if (tlm_->recv_reply(*change, reply))

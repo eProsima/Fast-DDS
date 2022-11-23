@@ -161,9 +161,9 @@ public:
 
     /**
      * Not recommended to call this method directly! Use the following macros:
-     *  * logInfo(cat, msg);
-     *  * logWarning(cat, msg);
-     *  * logError(cat, msg);
+     *  * EPROSIMA_LOG_INFO(cat, msg);
+     *  * EPROSIMA_LOG_WARNING(cat, msg);
+     *  * EPROSIMA_LOG_ERROR(cat, msg);
      *
      * @todo this method takes 2 mutexes (same mutex) internally.
      * This is a very high sensible point of the code and it should be refactored to be as efficient as possible.

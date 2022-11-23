@@ -105,7 +105,7 @@ ParticipantProxyData::ParticipantProxyData(
 
 ParticipantProxyData::~ParticipantProxyData()
 {
-    logInfo(RTPS_PARTICIPANT, m_guid);
+    EPROSIMA_LOG_INFO(RTPS_PARTICIPANT, m_guid);
 
     // delete all reader proxies
     if (m_readers)

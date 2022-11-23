@@ -984,7 +984,7 @@ private:
 
         auto port_segment_name = domain_name_ + "_port" + std::to_string(port_id);
 
-        logInfo(RTPS_TRANSPORT_SHM, THREADID << "Opening "
+        EPROSIMA_LOG_INFO(RTPS_TRANSPORT_SHM, THREADID << "Opening "
                                              << port_segment_name);
 
         std::unique_ptr<SharedMemSegment::named_mutex> port_mutex =
@@ -1082,7 +1082,7 @@ private:
                     port_node->is_opened_read_exclusive |= (open_mode == Port::OpenMode::ReadExclusive);
                     port_node->is_opened_for_reading |= (open_mode != Port::OpenMode::Write);
 
-                    logInfo(RTPS_TRANSPORT_SHM, THREADID << "Port "
+                    EPROSIMA_LOG_INFO(RTPS_TRANSPORT_SHM, THREADID << "Port "
                                                          << port_node->port_id << " (" << port_node->uuid.to_string() <<
                             ") Opened" << Port::open_mode_to_string(open_mode));
                 }
@@ -1224,7 +1224,7 @@ private:
             port->lock_read_shared();
         }
 
-        logInfo(RTPS_TRANSPORT_SHM, THREADID << "Port "
+        EPROSIMA_LOG_INFO(RTPS_TRANSPORT_SHM, THREADID << "Port "
                                              << port_node->port_id << " (" << port_node->uuid.to_string()
                                              << Port::open_mode_to_string(open_mode) << ") Created.");
 

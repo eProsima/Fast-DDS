@@ -84,7 +84,7 @@ ResponseCode TCPChannelResource::process_bind_request(
     if (connection_status_.compare_exchange_strong(expected, eConnectionStatus::eEstablished))
     {
         locator_ = IPLocator::toPhysicalLocator(locator);
-        logInfo(RTCP_MSG, "Connection Stablished");
+        EPROSIMA_LOG_INFO(RTCP_MSG, "Connection Stablished");
         return RETCODE_OK;
     }
     else if (expected == eConnectionStatus::eEstablished)
@@ -182,7 +182,7 @@ void TCPChannelResource::add_logical_port_response(
             if (success)
             {
                 logical_output_ports_.push_back(port);
-                logInfo(RTCP, "OpenedLogicalPort: " << port);
+                EPROSIMA_LOG_INFO(RTCP, "OpenedLogicalPort: " << port);
             }
             else
             {

@@ -309,7 +309,7 @@ ReturnCode_t DataWriterImpl::enable()
     if (writer == nullptr &&
             w_att.endpoint.data_sharing_configuration().kind() == DataSharingKind::AUTO)
     {
-        logInfo(DATA_WRITER, "Trying with a non-datasharing pool");
+        EPROSIMA_LOG_INFO(DATA_WRITER, "Trying with a non-datasharing pool");
         release_payload_pool();
         is_data_sharing_compatible_ = false;
         DataSharingQosPolicy datasharing;
@@ -419,7 +419,7 @@ DataWriterImpl::~DataWriterImpl()
 
     if (writer_ != nullptr)
     {
-        logInfo(DATA_WRITER, guid().entityId << " in topic: " << type_->getName());
+        EPROSIMA_LOG_INFO(DATA_WRITER, guid().entityId << " in topic: " << type_->getName());
         RTPSDomain::removeRTPSWriter(writer_);
         release_payload_pool();
     }
@@ -544,7 +544,7 @@ bool DataWriterImpl::write(
         return false;
     }
 
-    logInfo(DATA_WRITER, "Writing new data");
+    EPROSIMA_LOG_INFO(DATA_WRITER, "Writing new data");
     return ReturnCode_t::RETCODE_OK == create_new_change(ALIVE, data);
 }
 
@@ -557,7 +557,7 @@ bool DataWriterImpl::write(
         return false;
     }
 
-    logInfo(DATA_WRITER, "Writing new data with WriteParams");
+    EPROSIMA_LOG_INFO(DATA_WRITER, "Writing new data with WriteParams");
     return ReturnCode_t::RETCODE_OK == create_new_change_with_params(ALIVE, data, params);
 }
 
@@ -598,7 +598,7 @@ ReturnCode_t DataWriterImpl::write(
     ReturnCode_t ret = check_write_preconditions(data, handle, instance_handle);
     if (ReturnCode_t::RETCODE_OK == ret)
     {
-        logInfo(DATA_WRITER, "Writing new data with Handle");
+        EPROSIMA_LOG_INFO(DATA_WRITER, "Writing new data with Handle");
         WriteParams wparams;
         ret = create_new_change_with_params(ALIVE, data, wparams, instance_handle);
     }
@@ -625,7 +625,7 @@ ReturnCode_t DataWriterImpl::write_w_timestamp(
 
     if (ReturnCode_t::RETCODE_OK == ret)
     {
-        logInfo(DATA_WRITER, "Writing new data with Handle and timestamp");
+        EPROSIMA_LOG_INFO(DATA_WRITER, "Writing new data with Handle and timestamp");
         WriteParams wparams;
         wparams.source_timestamp(timestamp);
         ret = create_new_change_with_params(ALIVE, data, wparams, instance_handle);
@@ -1996,21 +1996,21 @@ ReturnCode_t DataWriterImpl::check_datasharing_compatible(
 #if HAVE_SECURITY
             if (has_security_enabled)
             {
-                logInfo(DATA_WRITER, "Data sharing disabled due to security configuration.");
+                EPROSIMA_LOG_INFO(DATA_WRITER, "Data sharing disabled due to security configuration.");
                 return ReturnCode_t::RETCODE_OK;
             }
 #endif // HAVE_SECURITY
 
             if (!has_bound_payload_size)
             {
-                logInfo(DATA_WRITER, "Data sharing disabled because " <<
+                EPROSIMA_LOG_INFO(DATA_WRITER, "Data sharing disabled because " <<
                         (type_.is_bounded() ? "memory policy is not PREALLOCATED" : "data type is not bounded"));
                 return ReturnCode_t::RETCODE_OK;
             }
 
             if (has_key)
             {
-                logInfo(DATA_WRITER, "Data sharing disabled because data type is keyed");
+                EPROSIMA_LOG_INFO(DATA_WRITER, "Data sharing disabled because data type is keyed");
                 return ReturnCode_t::RETCODE_OK;
             }
 

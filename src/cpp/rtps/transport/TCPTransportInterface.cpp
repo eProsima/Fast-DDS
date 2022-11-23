@@ -276,7 +276,7 @@ bool TCPTransportInterface::create_acceptor_socket(
                 acceptor->accept(this);
             }
 
-            logInfo(RTCP, " OpenAndBindInput (physical: " << IPLocator::getPhysicalPort(locator) << "; logical: "
+            EPROSIMA_LOG_INFO(RTCP, " OpenAndBindInput (physical: " << IPLocator::getPhysicalPort(locator) << "; logical: "
                                                           << IPLocator::getLogicalPort(locator) << ")");
 
         }
@@ -302,7 +302,7 @@ bool TCPTransportInterface::create_acceptor_socket(
                     acceptor->accept(this);
                 }
 
-                logInfo(RTCP, " OpenAndBindInput (physical: " << IPLocator::getPhysicalPort(locator) << "; logical: "
+                EPROSIMA_LOG_INFO(RTCP, " OpenAndBindInput (physical: " << IPLocator::getPhysicalPort(locator) << "; logical: "
                                                               << IPLocator::getLogicalPort(locator) << ")");
             }
         }
@@ -642,7 +642,7 @@ bool TCPTransportInterface::OpenOutputChannel(
         // acceptor) or we have to create a new one.
 
         std::unique_lock<std::mutex> scopedLock(sockets_map_mutex_);
-        logInfo(RTCP, "Called to OpenOutputChannel (physical: " << IPLocator::getPhysicalPort(locator) << "; logical: "
+        EPROSIMA_LOG_INFO(RTCP, "Called to OpenOutputChannel (physical: " << IPLocator::getPhysicalPort(locator) << "; logical: "
                                                                 << IPLocator::getLogicalPort(
                     locator) << ") @ " << IPLocator::to_string(locator));
 
@@ -671,7 +671,7 @@ bool TCPTransportInterface::OpenOutputChannel(
         else
         {
             // Create output channel
-            logInfo(OpenOutputChannel, "OpenOutputChannel (physical: "
+            EPROSIMA_LOG_INFO(OpenOutputChannel, "OpenOutputChannel (physical: "
                     << IPLocator::getPhysicalPort(locator) << "; logical: "
                     << IPLocator::getLogicalPort(locator) << ") @ " << IPLocator::to_string(locator));
 
@@ -719,7 +719,7 @@ bool TCPTransportInterface::OpenInputChannel(
                             (receiver, new ReceiverInUseCV());
             }
 
-            logInfo(RTCP, " OpenInputChannel (physical: " << IPLocator::getPhysicalPort(locator) << "; logical: " << \
+            EPROSIMA_LOG_INFO(RTCP, " OpenInputChannel (physical: " << IPLocator::getPhysicalPort(locator) << "; logical: " << \
                     IPLocator::getLogicalPort(locator) << ")");
         }
     }
@@ -780,7 +780,7 @@ void TCPTransportInterface::keep_alive()
             }
         }
        }
-       logInfo(RTCP, "End perform_rtcp_management_thread " << channel->locator());
+       EPROSIMA_LOG_INFO(RTCP, "End perform_rtcp_management_thread " << channel->locator());
      */
 }
 
@@ -855,7 +855,7 @@ void TCPTransportInterface::perform_listen_operation(
         }
     }
 
-    logInfo(RTCP, "End PerformListenOperation " << channel->locator());
+    EPROSIMA_LOG_INFO(RTCP, "End PerformListenOperation " << channel->locator());
 }
 
 bool TCPTransportInterface::read_body(
@@ -1023,7 +1023,7 @@ bool TCPTransportInterface::Receive(
             }
             else
             {
-                logInfo(RTCP_MSG_IN, "Received RTCP MSG. Logical Port " << tcp_header.logical_port);
+                EPROSIMA_LOG_INFO(RTCP_MSG_IN, "Received RTCP MSG. Logical Port " << tcp_header.logical_port);
                 success = read_body(receive_buffer, receive_buffer_capacity, &receive_buffer_size,
                                 channel, body_size);
 
@@ -1071,7 +1071,7 @@ bool TCPTransportInterface::Receive(
                     else
                     {
                         IPLocator::setLogicalPort(remote_locator, tcp_header.logical_port);
-                        logInfo(RTCP_MSG_IN, "[RECEIVE] From: " << remote_locator \
+                        EPROSIMA_LOG_INFO(RTCP_MSG_IN, "[RECEIVE] From: " << remote_locator \
                                                                 << " - " << receive_buffer_size << " bytes.");
                     }
                 }
@@ -1284,13 +1284,13 @@ void TCPTransportInterface::SocketAccepted(
             channel->thread(std::thread(&TCPTransportInterface::perform_listen_operation, this,
                     channel_weak_ptr, rtcp_manager_weak_ptr));
 
-            logInfo(RTCP, " Accepted connection (local: " << IPLocator::to_string(locator)
+            EPROSIMA_LOG_INFO(RTCP, " Accepted connection (local: " << IPLocator::to_string(locator)
                                                           << ", remote: " << channel->remote_endpoint().address()
                                                           << ":" << channel->remote_endpoint().port() << ")");
         }
         else
         {
-            logInfo(RTCP, " Accepting connection (" << error.message() << ")");
+            EPROSIMA_LOG_INFO(RTCP, " Accepting connection (" << error.message() << ")");
             std::this_thread::sleep_for(std::chrono::milliseconds(200)); // Wait a little to accept again.
         }
 
@@ -1330,14 +1330,14 @@ void TCPTransportInterface::SecureSocketAccepted(
             secure_channel->thread(std::thread(&TCPTransportInterface::perform_listen_operation, this,
                     channel_weak_ptr, rtcp_manager_weak_ptr));
 
-            logInfo(RTCP, " Accepted connection (local: " << IPLocator::to_string(locator)
+            EPROSIMA_LOG_INFO(RTCP, " Accepted connection (local: " << IPLocator::to_string(locator)
                                                           << ", remote: " << socket->lowest_layer().remote_endpoint().address()
                                                           << ":" << socket->lowest_layer().remote_endpoint().port() <<
                     ")");
         }
         else
         {
-            logInfo(RTCP, " Accepting connection (" << error.message() << ")");
+            EPROSIMA_LOG_INFO(RTCP, " Accepting connection (" << error.message() << ")");
             std::this_thread::sleep_for(std::chrono::milliseconds(200)); // Wait a little to accept again.
         }
 

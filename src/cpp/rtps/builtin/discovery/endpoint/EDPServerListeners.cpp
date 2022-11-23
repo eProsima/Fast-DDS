@@ -51,14 +51,14 @@ void EDPServerPUBListener::onNewCacheChangeAdded(
         RTPSReader* reader,
         const CacheChange_t* const change_in)
 {
-    logInfo(RTPS_EDP_LISTENER, "");
-    logInfo(RTPS_EDP_LISTENER, "------------------ EDP PUB SERVER LISTENER START ------------------");
-    logInfo(RTPS_EDP_LISTENER,
+    EPROSIMA_LOG_INFO(RTPS_EDP_LISTENER, "");
+    EPROSIMA_LOG_INFO(RTPS_EDP_LISTENER, "------------------ EDP PUB SERVER LISTENER START ------------------");
+    EPROSIMA_LOG_INFO(RTPS_EDP_LISTENER,
             "-------------------- " << sedp_->mp_RTPSParticipant->getGuid() << " --------------------");
 
     // Create a new change from the one received
     CacheChange_t* change = (CacheChange_t*)change_in;
-    logInfo(RTPS_EDP_LISTENER, "EDP Server PUB Message received: " << change_in->instanceHandle);
+    EPROSIMA_LOG_INFO(RTPS_EDP_LISTENER, "EDP Server PUB Message received: " << change_in->instanceHandle);
 
     // DATA(w)s should have key
     if (!computeKey(change))
@@ -103,7 +103,7 @@ void EDPServerPUBListener::onNewCacheChangeAdded(
     // DATA(Uw) case
     else
     {
-        logInfo(RTPS_EDP_LISTENER, "Disposed Remote Writer, removing...");
+        EPROSIMA_LOG_INFO(RTPS_EDP_LISTENER, "Disposed Remote Writer, removing...");
 
         // Retrieve the topic before removing the WriterProxyData. We need it to add the DATA(Uw) to the database
         auto temp_writer_data = get_pdp()->get_temporary_writer_proxies_pool().get();
@@ -144,10 +144,10 @@ void EDPServerPUBListener::onNewCacheChangeAdded(
             reader->releaseCache(change);
         }
     }
-    logInfo(RTPS_EDP_LISTENER,
+    EPROSIMA_LOG_INFO(RTPS_EDP_LISTENER,
             "-------------------- " << sedp_->mp_RTPSParticipant->getGuid() << " --------------------");
-    logInfo(RTPS_EDP_LISTENER, "------------------ EDP PUB SERVER LISTENER END ------------------");
-    logInfo(RTPS_EDP_LISTENER, "");
+    EPROSIMA_LOG_INFO(RTPS_EDP_LISTENER, "------------------ EDP PUB SERVER LISTENER END ------------------");
+    EPROSIMA_LOG_INFO(RTPS_EDP_LISTENER, "");
 }
 
 PDPServer* EDPServerSUBListener::get_pdp()
@@ -165,14 +165,14 @@ void EDPServerSUBListener::onNewCacheChangeAdded(
         RTPSReader* reader,
         const CacheChange_t* const change_in)
 {
-    logInfo(RTPS_EDP_LISTENER, "");
-    logInfo(RTPS_EDP_LISTENER, "------------------ EDP SUB SERVER LISTENER START ------------------");
-    logInfo(RTPS_EDP_LISTENER,
+    EPROSIMA_LOG_INFO(RTPS_EDP_LISTENER, "");
+    EPROSIMA_LOG_INFO(RTPS_EDP_LISTENER, "------------------ EDP SUB SERVER LISTENER START ------------------");
+    EPROSIMA_LOG_INFO(RTPS_EDP_LISTENER,
             "-------------------- " << sedp_->mp_RTPSParticipant->getGuid() << " --------------------");
 
     // Create a new change from the one received
     CacheChange_t* change = (CacheChange_t*)change_in;
-    logInfo(RTPS_EDP_LISTENER, "EDP Server SUB Message received: " << change_in->instanceHandle);
+    EPROSIMA_LOG_INFO(RTPS_EDP_LISTENER, "EDP Server SUB Message received: " << change_in->instanceHandle);
 
     // DATA(r)s should have key
     if (!computeKey(change))
@@ -222,7 +222,7 @@ void EDPServerSUBListener::onNewCacheChangeAdded(
     else
     {
         //REMOVE WRITER FROM OUR READERS:
-        logInfo(RTPS_EDP_LISTENER, "Disposed Remote Reader, removing...");
+        EPROSIMA_LOG_INFO(RTPS_EDP_LISTENER, "Disposed Remote Reader, removing...");
 
         // Retrieve the topic before removing the ReaderProxyData. We need it to add the DATA(Ur) to the database
         auto temp_reader_data = get_pdp()->get_temporary_reader_proxies_pool().get();
@@ -259,10 +259,10 @@ void EDPServerSUBListener::onNewCacheChangeAdded(
         }
     }
 
-    logInfo(RTPS_EDP_LISTENER,
+    EPROSIMA_LOG_INFO(RTPS_EDP_LISTENER,
             "-------------------- " << sedp_->mp_RTPSParticipant->getGuid() << " --------------------");
-    logInfo(RTPS_EDP_LISTENER, "------------------ EDP SUB SERVER LISTENER END ------------------");
-    logInfo(RTPS_EDP_LISTENER, "");
+    EPROSIMA_LOG_INFO(RTPS_EDP_LISTENER, "------------------ EDP SUB SERVER LISTENER END ------------------");
+    EPROSIMA_LOG_INFO(RTPS_EDP_LISTENER, "");
 }
 
 } /* namespace rtps */

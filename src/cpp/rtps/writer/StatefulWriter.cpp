@@ -311,7 +311,7 @@ void StatefulWriter::init(
 
 StatefulWriter::~StatefulWriter()
 {
-    logInfo(RTPS_WRITER, "StatefulWriter destructor");
+    EPROSIMA_LOG_INFO(RTPS_WRITER, "StatefulWriter destructor");
 
     // Disable timed events, because their callbacks use cache changes
     if (disable_positive_acks_)
@@ -380,7 +380,7 @@ void StatefulWriter::prepare_datasharing_delivery(
     assert (pool != nullptr);
 
     pool->add_to_shared_history(change);
-    logInfo(RTPS_WRITER, "Notifying readers of cache change with SN " << change->sequenceNumber);
+    EPROSIMA_LOG_INFO(RTPS_WRITER, "Notifying readers of cache change with SN " << change->sequenceNumber);
 }
 
 void StatefulWriter::unsent_change_added_to_history(
@@ -451,7 +451,7 @@ void StatefulWriter::unsent_change_added_to_history(
     }
     else
     {
-        logInfo(RTPS_WRITER, "No reader proxy to add change.");
+        EPROSIMA_LOG_INFO(RTPS_WRITER, "No reader proxy to add change.");
         check_acked_status();
     }
 
@@ -530,7 +530,7 @@ bool StatefulWriter::change_removed_by_history(
     SequenceNumber_t sequence_number = a_change->sequenceNumber;
 
     std::lock_guard<RecursiveTimedMutex> guard(mp_mutex);
-    logInfo(RTPS_WRITER, "Change " << sequence_number << " to be removed.");
+    EPROSIMA_LOG_INFO(RTPS_WRITER, "Change " << sequence_number << " to be removed.");
 
     flow_controller_->remove_change(a_change);
 
@@ -556,7 +556,7 @@ bool StatefulWriter::change_removed_by_history(
         assert (pool != nullptr);
 
         pool->remove_from_shared_history(a_change);
-        logInfo(RTPS_WRITER, "Removing shared cache change with SN " << a_change->sequenceNumber);
+        EPROSIMA_LOG_INFO(RTPS_WRITER, "Removing shared cache change with SN " << a_change->sequenceNumber);
     }
 
     may_remove_change_ = 2;
@@ -1013,7 +1013,7 @@ bool StatefulWriter::matched_reader_add(
             {
                 if (reader->guid() == rdata.guid())
                 {
-                    logInfo(RTPS_WRITER, "Attempting to add existing reader, updating information.");
+                    EPROSIMA_LOG_INFO(RTPS_WRITER, "Attempting to add existing reader, updating information.");
                     if (reader->update(rdata))
                     {
                         filter_remote_locators(*reader->general_locator_selector_entry(),
@@ -1075,7 +1075,7 @@ bool StatefulWriter::matched_reader_add(
     if (rp->is_local_reader())
     {
         matched_local_readers_.push_back(rp);
-        logInfo(RTPS_WRITER, "Adding reader " << rdata.guid() << " to " << this->m_guid.entityId
+        EPROSIMA_LOG_INFO(RTPS_WRITER, "Adding reader " << rdata.guid() << " to " << this->m_guid.entityId
                                               << " as local reader");
     }
     else
@@ -1083,13 +1083,13 @@ bool StatefulWriter::matched_reader_add(
         if (rp->is_datasharing_reader())
         {
             matched_datasharing_readers_.push_back(rp);
-            logInfo(RTPS_WRITER, "Adding reader " << rdata.guid() << " to " << this->m_guid.entityId
+            EPROSIMA_LOG_INFO(RTPS_WRITER, "Adding reader " << rdata.guid() << " to " << this->m_guid.entityId
                                                   << " as data sharing");
         }
         else
         {
             matched_remote_readers_.push_back(rp);
-            logInfo(RTPS_WRITER, "Adding reader " << rdata.guid() << " to " << this->m_guid.entityId
+            EPROSIMA_LOG_INFO(RTPS_WRITER, "Adding reader " << rdata.guid() << " to " << this->m_guid.entityId
                                                   << " as remote reader");
         }
     }
@@ -1192,7 +1192,7 @@ bool StatefulWriter::matched_reader_add(
         rp->acked_changes_set(mp_history->next_sequence_number());
     }
 
-    logInfo(RTPS_WRITER, "Reader Proxy " << rp->guid() << " added to " << this->m_guid.entityId << " with "
+    EPROSIMA_LOG_INFO(RTPS_WRITER, "Reader Proxy " << rp->guid() << " added to " << this->m_guid.entityId << " with "
                                          << rdata.remote_locators().unicast.size() << "(u)-"
                                          << rdata.remote_locators().multicast.size() <<
             "(m) locators");
@@ -1222,7 +1222,7 @@ bool StatefulWriter::matched_reader_remove(
     {
         if ((*it)->guid() == reader_guid)
         {
-            logInfo(RTPS_WRITER, "Reader Proxy removed: " << reader_guid);
+            EPROSIMA_LOG_INFO(RTPS_WRITER, "Reader Proxy removed: " << reader_guid);
             rproxy = std::move(*it);
             it = matched_local_readers_.erase(it);
             break;
@@ -1236,7 +1236,7 @@ bool StatefulWriter::matched_reader_remove(
         {
             if ((*it)->guid() == reader_guid)
             {
-                logInfo(RTPS_WRITER, "Reader Proxy removed: " << reader_guid);
+                EPROSIMA_LOG_INFO(RTPS_WRITER, "Reader Proxy removed: " << reader_guid);
                 rproxy = std::move(*it);
                 it = matched_datasharing_readers_.erase(it);
                 break;
@@ -1251,7 +1251,7 @@ bool StatefulWriter::matched_reader_remove(
         {
             if ((*it)->guid() == reader_guid)
             {
-                logInfo(RTPS_WRITER, "Reader Proxy removed: " << reader_guid);
+                EPROSIMA_LOG_INFO(RTPS_WRITER, "Reader Proxy removed: " << reader_guid);
                 rproxy = std::move(*it);
                 it = matched_remote_readers_.erase(it);
                 break;
@@ -1288,7 +1288,7 @@ bool StatefulWriter::matched_reader_remove(
         return true;
     }
 
-    logInfo(RTPS_HISTORY, "Reader Proxy doesn't exist in this writer");
+    EPROSIMA_LOG_INFO(RTPS_HISTORY, "Reader Proxy doesn't exist in this writer");
     return false;
 }
 
@@ -1519,7 +1519,7 @@ bool StatefulWriter::try_remove_change(
         const std::chrono::steady_clock::time_point& max_blocking_time_point,
         std::unique_lock<RecursiveTimedMutex>& lock)
 {
-    logInfo(RTPS_WRITER, "Starting process try remove change for writer " << getGuid());
+    EPROSIMA_LOG_INFO(RTPS_WRITER, "Starting process try remove change for writer " << getGuid());
 
     SequenceNumber_t min_low_mark;
 
@@ -1787,7 +1787,7 @@ void StatefulWriter::send_heartbeat_nts_(
     // Update calculate of heartbeat piggyback.
     currentUsageSendBufferSize_ = static_cast<int32_t>(sendBufferSize_);
 
-    logInfo(RTPS_WRITER, getGuid().entityId << " Sending Heartbeat (" << firstSeq << " - " << lastSeq << ")" );
+    EPROSIMA_LOG_INFO(RTPS_WRITER, getGuid().entityId << " Sending Heartbeat (" << firstSeq << " - " << lastSeq << ")" );
 }
 
 void StatefulWriter::send_heartbeat_piggyback_nts_(

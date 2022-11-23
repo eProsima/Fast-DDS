@@ -257,7 +257,7 @@ bool Logging::compose_header(
                 case LoggingLevel::NOTICE_LEVEL:                      \
                 case LoggingLevel::INFORMATIONAL_LEVEL:               \
                 case LoggingLevel::DEBUG_LEVEL:                       \
-                    logInfo(SECURITY, MESSAGE);                       \
+                    EPROSIMA_LOG_INFO(SECURITY, MESSAGE);                       \
                     break;                                            \
             }                                                         \
         }                                                             \

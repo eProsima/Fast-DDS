@@ -110,7 +110,7 @@ bool WriterHistory::prepare_and_add_change(
         m_isHistoryFull = true;
     }
 
-    logInfo(RTPS_WRITER_HISTORY,
+    EPROSIMA_LOG_INFO(RTPS_WRITER_HISTORY,
             "Change " << a_change->sequenceNumber << " added with " << a_change->serializedPayload.length << " bytes");
 
     return true;
@@ -179,7 +179,7 @@ History::iterator WriterHistory::remove_change_nts(
 
     if ( removal == changesEnd())
     {
-        logInfo(RTPS_WRITER_HISTORY, "Trying to remove without a proper CacheChange_t referenced");
+        EPROSIMA_LOG_INFO(RTPS_WRITER_HISTORY, "Trying to remove without a proper CacheChange_t referenced");
         return changesEnd();
     }
 

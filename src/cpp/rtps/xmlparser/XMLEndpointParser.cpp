@@ -69,17 +69,17 @@ XMLP_ret XMLEndpointParser::loadXMLFile(
 
     if (0 == filename.rfind("data://", 0))
     {
-        logInfo(RTPS_EDP, filename);
+        EPROSIMA_LOG_INFO(RTPS_EDP, filename);
         eResult = doc.Parse(filename.c_str() + 7, filename.size() - 7);
     }
     else if (0 == filename.rfind("file://", 0))
     {
-        logInfo(RTPS_EDP, filename);
+        EPROSIMA_LOG_INFO(RTPS_EDP, filename);
         eResult = doc.LoadFile(filename.substr(7).c_str());
     }
     else
     {
-        logInfo(RTPS_EDP, "FileName: " << filename);
+        EPROSIMA_LOG_INFO(RTPS_EDP, "FileName: " << filename);
         eResult = doc.LoadFile(filename.c_str());
     }
 
@@ -110,14 +110,14 @@ XMLP_ret XMLEndpointParser::loadXMLFile(
         xml_RTPSParticipant = xml_RTPSParticipant->NextSiblingElement();
     }
 
-    logInfo(RTPS_EDP, "Finished parsing, " << m_RTPSParticipants.size() << " participants found.");
+    EPROSIMA_LOG_INFO(RTPS_EDP, "Finished parsing, " << m_RTPSParticipants.size() << " participants found.");
     return XMLP_ret::XML_OK;
 }
 
 XMLP_ret XMLEndpointParser::loadXMLNode(
         tinyxml2::XMLDocument& doc)
 {
-    logInfo(RTPS_EDP, "XML node");
+    EPROSIMA_LOG_INFO(RTPS_EDP, "XML node");
 
     tinyxml2::XMLNode* root = doc.FirstChildElement(STATICDISCOVERY);
     if (!root)
@@ -141,7 +141,7 @@ XMLP_ret XMLEndpointParser::loadXMLNode(
         xml_RTPSParticipant = xml_RTPSParticipant->NextSiblingElement();
     }
 
-    logInfo(RTPS_EDP, "Finished parsing, " << m_RTPSParticipants.size() << " participants found.");
+    EPROSIMA_LOG_INFO(RTPS_EDP, "Finished parsing, " << m_RTPSParticipants.size() << " participants found.");
     return XMLP_ret::XML_OK;
 }
 

@@ -144,7 +144,7 @@ DataReaderHistory::DataReaderHistory(
 
                     if (type_ != nullptr)
                     {
-                        logInfo(SUBSCRIBER, "Getting Key of change with no Key transmitted");
+                        EPROSIMA_LOG_INFO(SUBSCRIBER, "Getting Key of change with no Key transmitted");
                         type_->deserialize(&a_change->serializedPayload, get_key_object_);
                         bool is_key_protected = false;
 #if HAVE_SECURITY
@@ -237,7 +237,7 @@ bool DataReaderHistory::received_change_keep_all(
         }
         else
         {
-            logInfo(SUBSCRIBER, "Change not added due to maximum number of samples per instance");
+            EPROSIMA_LOG_INFO(SUBSCRIBER, "Change not added due to maximum number of samples per instance");
             rejection_reason = REJECTED_BY_SAMPLES_PER_INSTANCE_LIMIT;
         }
 
@@ -343,7 +343,7 @@ void DataReaderHistory::add_to_instance(
     eprosima::utilities::collections::sorted_vector_insert(instance.cache_changes, item, rtps::history_order_cmp);
     data_available_instances_[a_change->instanceHandle] = instances_[a_change->instanceHandle];
 
-    logInfo(SUBSCRIBER, mp_reader->getGuid().entityId
+    EPROSIMA_LOG_INFO(SUBSCRIBER, mp_reader->getGuid().entityId
             << ": Change " << a_change->sequenceNumber << " added from: "
             << a_change->writerGUID << " with KEY: " << a_change->instanceHandle; );
 }
@@ -507,7 +507,7 @@ bool DataReaderHistory::remove_change_sub(
     const_iterator chit = find_change_nts(change);
     if (chit == changesEnd())
     {
-        logInfo(RTPS_WRITER_HISTORY, "Trying to remove a change not in history");
+        EPROSIMA_LOG_INFO(RTPS_WRITER_HISTORY, "Trying to remove a change not in history");
         return false;
     }
 

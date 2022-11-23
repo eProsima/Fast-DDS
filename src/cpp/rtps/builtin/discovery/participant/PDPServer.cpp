@@ -131,12 +131,12 @@ bool PDPServer::init(
         {
             if (process_backup_discovery_database_restore(backup_json))
             {
-                logInfo(RTPS_PDP_SERVER, "DiscoveryDataBase restored correctly");
+                EPROSIMA_LOG_INFO(RTPS_PDP_SERVER, "DiscoveryDataBase restored correctly");
             }
         }
         else
         {
-            logInfo(RTPS_PDP_SERVER, "Error reading backup file. Corrupted or unmissing file, restarting from scratch");
+            EPROSIMA_LOG_INFO(RTPS_PDP_SERVER, "Error reading backup file. Corrupted or unmissing file, restarting from scratch");
         }
 
         discovery_db().backup_in_progress(false);
@@ -227,7 +227,7 @@ ParticipantProxyData* PDPServer::createParticipantProxyData(
 
 bool PDPServer::createPDPEndpoints()
 {
-    logInfo(RTPS_PDP_SERVER, "Beginning PDPServer Endpoints creation");
+    EPROSIMA_LOG_INFO(RTPS_PDP_SERVER, "Beginning PDPServer Endpoints creation");
 
     const RTPSParticipantAttributes& pattr = mp_RTPSParticipant->getRTPSParticipantAttributes();
 
@@ -357,7 +357,7 @@ bool PDPServer::createPDPEndpoints()
     // TODO check if this should be done here or before this point in creation
     mp_PDPWriterHistory->remove_all_changes();
 
-    logInfo(RTPS_PDP_SERVER, "PDPServer Endpoints creation finished");
+    EPROSIMA_LOG_INFO(RTPS_PDP_SERVER, "PDPServer Endpoints creation finished");
     return true;
 }
 
@@ -399,7 +399,7 @@ void PDPServer::initializeParticipantProxyData(
 void PDPServer::assignRemoteEndpoints(
         ParticipantProxyData* pdata)
 {
-    logInfo(RTPS_PDP_SERVER, "Assigning remote endpoint for RTPSParticipant: " << pdata->m_guid.guidPrefix);
+    EPROSIMA_LOG_INFO(RTPS_PDP_SERVER, "Assigning remote endpoint for RTPSParticipant: " << pdata->m_guid.guidPrefix);
 
     const NetworkFactory& network = mp_RTPSParticipant->network_factory();
     uint32_t endp = pdata->m_availableBuiltinEndpoints;
@@ -473,7 +473,7 @@ void PDPServer::notifyAboveRemoteEndpoints(
 void PDPServer::removeRemoteEndpoints(
         ParticipantProxyData* pdata)
 {
-    logInfo(RTPS_PDP_SERVER, "For RTPSParticipant: " << pdata->m_guid);
+    EPROSIMA_LOG_INFO(RTPS_PDP_SERVER, "For RTPSParticipant: " << pdata->m_guid);
     uint32_t endp = pdata->m_availableBuiltinEndpoints;
 
     if (endp & DISC_BUILTIN_ENDPOINT_PARTICIPANT_ANNOUNCER)
@@ -553,7 +553,7 @@ void PDPServer::announceParticipantState(
 {
     if (enabled_)
     {
-        logInfo(RTPS_PDP_SERVER,
+        EPROSIMA_LOG_INFO(RTPS_PDP_SERVER,
                 "Announcing Server " << mp_RTPSParticipant->getGuid() << " (new change: " << new_change << ")");
         CacheChange_t* change = nullptr;
 
@@ -832,7 +832,7 @@ bool PDPServer::remove_remote_participant(
 
 bool PDPServer::process_data_queues()
 {
-    logInfo(RTPS_PDP_SERVER, "process_data_queues start");
+    EPROSIMA_LOG_INFO(RTPS_PDP_SERVER, "process_data_queues start");
     discovery_db_.process_pdp_data_queue();
     return discovery_db_.process_edp_data_queue();
 }
@@ -863,9 +863,9 @@ bool PDPServer::server_update_routine()
     {
         discovery_db().unlock_incoming_data();
 
-        logInfo(RTPS_PDP_SERVER, "");
-        logInfo(RTPS_PDP_SERVER, "-------------------- Server routine start --------------------");
-        logInfo(RTPS_PDP_SERVER, "-------------------- " << mp_RTPSParticipant->getGuid() << " --------------------");
+        EPROSIMA_LOG_INFO(RTPS_PDP_SERVER, "");
+        EPROSIMA_LOG_INFO(RTPS_PDP_SERVER, "-------------------- Server routine start --------------------");
+        EPROSIMA_LOG_INFO(RTPS_PDP_SERVER, "-------------------- " << mp_RTPSParticipant->getGuid() << " --------------------");
 
         process_writers_acknowledgements();     // server + ddb(functor_with_ddb)
         process_data_queues();                  // all ddb
@@ -875,9 +875,9 @@ bool PDPServer::server_update_routine()
         process_to_send_lists();                // server + ddb(get_to_send, remove_to_send_this)
         pending_work = pending_ack();           // all server
 
-        logInfo(RTPS_PDP_SERVER, "-------------------- " << mp_RTPSParticipant->getGuid() << " --------------------");
-        logInfo(RTPS_PDP_SERVER, "-------------------- Server routine end --------------------");
-        logInfo(RTPS_PDP_SERVER, "");
+        EPROSIMA_LOG_INFO(RTPS_PDP_SERVER, "-------------------- " << mp_RTPSParticipant->getGuid() << " --------------------");
+        EPROSIMA_LOG_INFO(RTPS_PDP_SERVER, "-------------------- Server routine end --------------------");
+        EPROSIMA_LOG_INFO(RTPS_PDP_SERVER, "");
 
         // Lock new data to check emptyness and to do the dump of the backup in case it is empty
         discovery_db().lock_incoming_data();
@@ -936,7 +936,7 @@ void PDPServer::update_remote_servers_list()
 
 bool PDPServer::process_writers_acknowledgements()
 {
-    logInfo(RTPS_PDP_SERVER, "process_writers_acknowledgements start");
+    EPROSIMA_LOG_INFO(RTPS_PDP_SERVER, "process_writers_acknowledgements start");
 
     // Execute first ACK for endpoints because PDP acked changes relevance in EDP,
     //  which can result in false positives in EDP acknowledgements.
@@ -983,7 +983,7 @@ History::iterator PDPServer::process_change_acknowledgement(
     if (c->kind == fastrtps::rtps::ChangeKind_t::ALIVE)
     {
 
-        logInfo(RTPS_PDP_SERVER, "Processing ack data alive " << c->instanceHandle);
+        EPROSIMA_LOG_INFO(RTPS_PDP_SERVER, "Processing ack data alive " << c->instanceHandle);
 
         // If the change is a DATA(p), and it's the server's DATA(p), and the database knows that
         // it had been acked by all, then skip the change acked check for every reader proxy
@@ -991,7 +991,7 @@ History::iterator PDPServer::process_change_acknowledgement(
                 discovery_db_.guid_from_change(c) == mp_builtin->mp_participantImpl->getGuid() &&
                 discovery_db_.server_acked_by_all())
         {
-            logInfo(RTPS_PDP_SERVER, "Server's DATA(p) already acked by all. Skipping check for every ReaderProxy");
+            EPROSIMA_LOG_INFO(RTPS_PDP_SERVER, "Server's DATA(p) already acked by all. Skipping check for every ReaderProxy");
         }
         else
         {
@@ -1010,7 +1010,7 @@ History::iterator PDPServer::process_change_acknowledgement(
                 {
                     // Remove the entry from writer history, but do not release the cache.
                     // This CacheChange will only be released in the case that is substituted by a DATA(Up|Uw|Ur).
-                    logInfo(RTPS_PDP_SERVER, "Removing change " << c->instanceHandle
+                    EPROSIMA_LOG_INFO(RTPS_PDP_SERVER, "Removing change " << c->instanceHandle
                                                                 << " from history as it has been acked for everyone");
                     return writer_history->remove_change(cit, false);
                 }
@@ -1040,8 +1040,8 @@ History::iterator PDPServer::process_change_acknowledgement(
 
 bool PDPServer::process_disposals()
 {
-    logInfo(RTPS_PDP_SERVER, "process_disposals start");
-    // logInfo(RTPS_PDP_SERVER, "process_disposals start");
+    EPROSIMA_LOG_INFO(RTPS_PDP_SERVER, "process_disposals start");
+    // EPROSIMA_LOG_INFO(RTPS_PDP_SERVER, "process_disposals start");
     EDPServer* edp = static_cast<EDPServer*>(mp_EDP);
     fastrtps::rtps::WriterHistory* pubs_history = edp->publications_writer_.second;
     fastrtps::rtps::WriterHistory* subs_history = edp->subscriptions_writer_.second;
@@ -1051,7 +1051,7 @@ bool PDPServer::process_disposals()
     // Iterate over disposals
     for (auto change: disposals)
     {
-        logInfo(RTPS_PDP_SERVER, "Process disposal change from: " << change->instanceHandle);
+        EPROSIMA_LOG_INFO(RTPS_PDP_SERVER, "Process disposal change from: " << change->instanceHandle);
         // No check is performed on whether the change is an actual disposal, leaving the responsibility of correctly
         // populating the disposals list to discovery_db_.process_data_queue().
 
@@ -1121,7 +1121,7 @@ bool PDPServer::process_disposals()
 
 bool PDPServer::process_changes_release()
 {
-    logInfo(RTPS_PDP_SERVER, "process_changes_release start");
+    EPROSIMA_LOG_INFO(RTPS_PDP_SERVER, "process_changes_release start");
     process_changes_release_(discovery_db_.changes_to_release());
     discovery_db_.clear_changes_to_release();
     return false;
@@ -1252,7 +1252,7 @@ bool PDPServer::announcement_from_same_participant_in_disposals(
 
 bool PDPServer::process_dirty_topics()
 {
-    logInfo(RTPS_PDP_SERVER, "process_dirty_topics start");
+    EPROSIMA_LOG_INFO(RTPS_PDP_SERVER, "process_dirty_topics start");
     return discovery_db_.process_dirty_topics();
 }
 
@@ -1268,22 +1268,22 @@ const RemoteServerList_t& PDPServer::servers()
 
 bool PDPServer::process_to_send_lists()
 {
-    logInfo(RTPS_PDP_SERVER, "process_to_send_lists start");
+    EPROSIMA_LOG_INFO(RTPS_PDP_SERVER, "process_to_send_lists start");
 
     if (discovery_db_.updates_since_last_checked() > 0)
     {
         // Process pdp_to_send_
-        logInfo(RTPS_PDP_SERVER, "Processing pdp_to_send");
+        EPROSIMA_LOG_INFO(RTPS_PDP_SERVER, "Processing pdp_to_send");
         process_to_send_list(discovery_db_.pdp_to_send(), mp_PDPWriter, mp_PDPWriterHistory);
     }
     else
     {
-        logInfo(RTPS_PDP_SERVER, "Skiping sending PDP data because no entities have been discovered or updated");
+        EPROSIMA_LOG_INFO(RTPS_PDP_SERVER, "Skiping sending PDP data because no entities have been discovered or updated");
     }
     discovery_db_.clear_pdp_to_send();
 
     // Process edp_publications_to_send_
-    logInfo(RTPS_PDP_SERVER, "Processing edp_publications_to_send");
+    EPROSIMA_LOG_INFO(RTPS_PDP_SERVER, "Processing edp_publications_to_send");
     EDPServer* edp = static_cast<EDPServer*>(mp_EDP);
     process_to_send_list(
         discovery_db_.edp_publications_to_send(),
@@ -1292,7 +1292,7 @@ bool PDPServer::process_to_send_lists()
     discovery_db_.clear_edp_publications_to_send();
 
     // Process edp_subscriptions_to_send_
-    logInfo(RTPS_PDP_SERVER, "Processing edp_subscriptions_to_send");
+    EPROSIMA_LOG_INFO(RTPS_PDP_SERVER, "Processing edp_subscriptions_to_send");
     process_to_send_list(
         discovery_db_.edp_subscriptions_to_send(),
         edp->subscriptions_writer_.first,
@@ -1316,7 +1316,7 @@ bool PDPServer::process_to_send_list(
         // Set change's writer GUID so it matches with this writer
         change->writerGUID = writer->getGuid();
         // Add DATA to writer's history.
-        logInfo(RTPS_PDP_SERVER, "Adding change from " << change->instanceHandle << " to history");
+        EPROSIMA_LOG_INFO(RTPS_PDP_SERVER, "Adding change from " << change->instanceHandle << " to history");
         eprosima::fastrtps::rtps::WriteParams wp = change->write_params;
         history->add_change(change, wp);
     }
@@ -1367,11 +1367,11 @@ bool PDPServer::pending_ack()
             edp->publications_writer_.second->getHistorySize() > 0 ||
             edp->subscriptions_writer_.second->getHistorySize() > 0);
 
-    logInfo(RTPS_PDP_SERVER, "PDP writer history length " << mp_PDPWriterHistory->getHistorySize());
-    logInfo(RTPS_PDP_SERVER,
+    EPROSIMA_LOG_INFO(RTPS_PDP_SERVER, "PDP writer history length " << mp_PDPWriterHistory->getHistorySize());
+    EPROSIMA_LOG_INFO(RTPS_PDP_SERVER,
             "is server " << mp_PDPWriter->getGuid() << " acked by all? " <<
             discovery_db_.server_acked_by_all());
-    logInfo(RTPS_PDP_SERVER, "Are there pending changes? " << ret);
+    EPROSIMA_LOG_INFO(RTPS_PDP_SERVER, "Are there pending changes? " << ret);
     return ret;
 }
 
@@ -1505,7 +1505,7 @@ bool PDPServer::read_backup(
 bool PDPServer::process_backup_discovery_database_restore(
         nlohmann::json& j)
 {
-    logInfo(RTPS_PDP_SERVER, "Restoring DiscoveryDataBase from backup");
+    EPROSIMA_LOG_INFO(RTPS_PDP_SERVER, "Restoring DiscoveryDataBase from backup");
 
     // We need every listener to resend the changes of every entity (ALIVE) in the DDB, so the PaticipantProxy
     // is restored
@@ -1780,7 +1780,7 @@ bool PDPServer::process_backup_restore_queue(
 
 void PDPServer::process_backup_store()
 {
-    logInfo(DISCOVERY_DATABASE, "Dump DDB in json backup");
+    EPROSIMA_LOG_INFO(DISCOVERY_DATABASE, "Dump DDB in json backup");
 
     // This will erase the last backup stored
     std::ofstream backup_json_file;

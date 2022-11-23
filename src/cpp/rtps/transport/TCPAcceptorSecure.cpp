@@ -46,7 +46,7 @@ void TCPAcceptorSecure::accept(
         TCPTransportInterface* parent,
         ssl::context& ssl_context)
 {
-    logInfo(ACEPTOR, "Listening at: " << acceptor_.local_endpoint().address()
+    EPROSIMA_LOG_INFO(ACEPTOR, "Listening at: " << acceptor_.local_endpoint().address()
                                       << ":" << acceptor_.local_endpoint().port());
 
     using asio::ip::tcp;

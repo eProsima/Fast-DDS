@@ -97,7 +97,7 @@ void ThroughputSubscriber::DataReaderListener::on_data_available(
 
         if (ReturnCode_t::RETCODE_OK != reader->take(data_seq, infos))
         {
-            logInfo(ThroughputTest, "Problem reading Subscriber echoed loaned test data");
+            EPROSIMA_LOG_INFO(ThroughputTest, "Problem reading Subscriber echoed loaned test data");
             return;
         }
 
@@ -130,7 +130,7 @@ void ThroughputSubscriber::DataReaderListener::on_data_available(
         // release the reader loan
         if (ReturnCode_t::RETCODE_OK != reader->return_loan(data_seq, infos))
         {
-            logInfo(ThroughputTest, "Problem returning loaned test data");
+            EPROSIMA_LOG_INFO(ThroughputTest, "Problem returning loaned test data");
             return;
         }
     }
@@ -251,7 +251,7 @@ ThroughputSubscriber::~ThroughputSubscriber()
 
     // Remove the participant
     DomainParticipantFactory::get_instance()->delete_participant(participant_);
-    logInfo(THROUGHPUTSUBSCRIBER, "Sub: Participant removed");
+    EPROSIMA_LOG_INFO(THROUGHPUTSUBSCRIBER, "Sub: Participant removed");
 }
 
 bool ThroughputSubscriber::init(
@@ -637,7 +637,7 @@ int ThroughputSubscriber::process_message()
                         {
                             if (ReturnCode_t::RETCODE_OK != data_reader_->return_loan(data_seq, infos))
                             {
-                                logInfo(ThroughputTest, "Problem returning loan");
+                                EPROSIMA_LOG_INFO(ThroughputTest, "Problem returning loan");
                             }
                         }
                     }

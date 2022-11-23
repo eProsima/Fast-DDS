@@ -78,7 +78,7 @@ ReaderProxyData::~ReaderProxyData()
     delete m_type_id;
     delete m_type_information;
 
-    logInfo(RTPS_PROXY_DATA, "ReaderProxyData destructor: " << m_guid; );
+    EPROSIMA_LOG_INFO(RTPS_PROXY_DATA, "ReaderProxyData destructor: " << m_guid; );
 }
 
 ReaderProxyData::ReaderProxyData(

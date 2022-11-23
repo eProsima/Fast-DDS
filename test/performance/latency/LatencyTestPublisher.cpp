@@ -82,7 +82,7 @@ LatencyTestPublisher::~LatencyTestPublisher()
 
     DomainParticipantFactory::get_instance()->delete_participant(participant_);
 
-    logInfo(LatencyTest, "Pub: Participant removed");
+    EPROSIMA_LOG_INFO(LatencyTest, "Pub: Participant removed");
 }
 
 bool LatencyTestPublisher::init(
@@ -433,7 +433,7 @@ void LatencyTestPublisher::LatencyDataWriterListener::on_publication_matched(
 
     if (info.current_count_change > 0)
     {
-        logInfo(LatencyTest, C_MAGENTA << "Data Pub Matched" << C_DEF);
+        EPROSIMA_LOG_INFO(LatencyTest, C_MAGENTA << "Data Pub Matched" << C_DEF);
     }
 
     lock.unlock();
@@ -452,7 +452,7 @@ void LatencyTestPublisher::LatencyDataReaderListener::on_subscription_matched(
 
     if (info.current_count_change > 0)
     {
-        logInfo(LatencyTest, C_MAGENTA << "Data Sub Matched" << C_DEF);
+        EPROSIMA_LOG_INFO(LatencyTest, C_MAGENTA << "Data Sub Matched" << C_DEF);
     }
 
     lock.unlock();
@@ -471,7 +471,7 @@ void LatencyTestPublisher::ComandWriterListener::on_publication_matched(
 
     if (info.current_count_change > 0)
     {
-        logInfo(LatencyTest, C_MAGENTA << "Command Pub Matched" << C_DEF);
+        EPROSIMA_LOG_INFO(LatencyTest, C_MAGENTA << "Command Pub Matched" << C_DEF);
     }
 
     lock.unlock();
@@ -490,7 +490,7 @@ void LatencyTestPublisher::CommandReaderListener::on_subscription_matched(
 
     if (info.current_count_change > 0)
     {
-        logInfo(LatencyTest, C_MAGENTA << "Command Sub Matched" << C_DEF);
+        EPROSIMA_LOG_INFO(LatencyTest, C_MAGENTA << "Command Sub Matched" << C_DEF);
     }
 
     lock.unlock();
@@ -518,7 +518,7 @@ void LatencyTestPublisher::CommandReaderListener::on_data_available(
     }
     else
     {
-        logInfo(LatencyTest, "Problem reading command message");
+        EPROSIMA_LOG_INFO(LatencyTest, "Problem reading command message");
     }
 }
 
@@ -581,7 +581,7 @@ void LatencyTestPublisher::LatencyDataReaderListener::on_data_available(
                 && (pub->latency_data_in_->seqnum
                 != pub->latency_data_out_->seqnum)))
         {
-            logInfo(LatencyTest, "Echo message received is not the expected one");
+            EPROSIMA_LOG_INFO(LatencyTest, "Echo message received is not the expected one");
         }
         else
         {
@@ -770,7 +770,7 @@ bool LatencyTestPublisher::test(
             return total_matches() == 4 * subscribers_;
         });
 
-    logInfo(LatencyTest, C_B_MAGENTA << "Pub: DISCOVERY COMPLETE " << C_DEF)
+    EPROSIMA_LOG_INFO(LatencyTest, C_B_MAGENTA << "Pub: DISCOVERY COMPLETE " << C_DEF)
 
     // Wait for Subscriber's BEGIN command
     wait_for_command(
@@ -813,7 +813,7 @@ bool LatencyTestPublisher::test(
 
                     if (!loaned)
                     {
-                        logInfo(LatencyTest, "Publisher trying to loan: " << trials);
+                        EPROSIMA_LOG_INFO(LatencyTest, "Publisher trying to loan: " << trials);
                     }
                 }
 

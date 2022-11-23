@@ -131,12 +131,12 @@ void RTPSWriter::init(
 
     flow_controller_->register_writer(this);
 
-    logInfo(RTPS_WRITER, "RTPSWriter created");
+    EPROSIMA_LOG_INFO(RTPS_WRITER, "RTPSWriter created");
 }
 
 RTPSWriter::~RTPSWriter()
 {
-    logInfo(RTPS_WRITER, "RTPSWriter destructor");
+    EPROSIMA_LOG_INFO(RTPS_WRITER, "RTPSWriter destructor");
 
     // Deletion of the events has to be made in child destructor.
     // Also at this point all CacheChange_t must have been released by the child destructor
@@ -169,7 +169,7 @@ CacheChange_t* RTPSWriter::new_change(
         ChangeKind_t changeKind,
         InstanceHandle_t handle)
 {
-    logInfo(RTPS_WRITER, "Creating new change");
+    EPROSIMA_LOG_INFO(RTPS_WRITER, "Creating new change");
 
     std::lock_guard<RecursiveTimedMutex> guard(mp_mutex);
     CacheChange_t* reserved_change = nullptr;
@@ -204,7 +204,7 @@ CacheChange_t* RTPSWriter::new_change(
         ChangeKind_t changeKind,
         InstanceHandle_t handle)
 {
-    logInfo(RTPS_WRITER, "Creating new change");
+    EPROSIMA_LOG_INFO(RTPS_WRITER, "Creating new change");
 
     std::lock_guard<RecursiveTimedMutex> guard(mp_mutex);
     CacheChange_t* reserved_change = nullptr;
@@ -278,7 +278,7 @@ uint32_t RTPSWriter::getTypeMaxSerialized()
 bool RTPSWriter::remove_older_changes(
         unsigned int max)
 {
-    logInfo(RTPS_WRITER, "Starting process clean_history for writer " << getGuid());
+    EPROSIMA_LOG_INFO(RTPS_WRITER, "Starting process clean_history for writer " << getGuid());
     std::lock_guard<RecursiveTimedMutex> guard(mp_mutex);
     bool limit = (max != 0);
 

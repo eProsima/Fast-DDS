@@ -102,7 +102,7 @@ PublisherImpl::~PublisherImpl()
 
     if (mp_writer != nullptr)
     {
-        logInfo(PUBLISHER, this->getGuid().entityId << " in topic: " << this->m_att.topic.topicName);
+        EPROSIMA_LOG_INFO(PUBLISHER, this->getGuid().entityId << " in topic: " << this->m_att.topic.topicName);
     }
 
     RTPSDomain::removeRTPSWriter(mp_writer);

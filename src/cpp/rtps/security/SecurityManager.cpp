@@ -196,9 +196,9 @@ bool SecurityManager::init(
             else
             {
                 //TODO(artivis): If the factory fails instantiating 'authentication_plugin_',
-                // a logInfo is issued and this init function returns true. Is it a bug?
+                // a EPROSIMA_LOG_INFO is issued and this init function returns true. Is it a bug?
                 // in the meantime we'll adopt a similar behavior here.
-                logInfo(SECURITY, "Could not create logging plugin. Security logging will be disabled.");
+                EPROSIMA_LOG_INFO(SECURITY, "Could not create logging plugin. Security logging will be disabled.");
             }
         }
 
@@ -342,7 +342,7 @@ bool SecurityManager::init(
                         }
                         else
                         {
-                            logInfo(SECURITY, "Cryptography plugin not configured.");
+                            EPROSIMA_LOG_INFO(SECURITY, "Cryptography plugin not configured.");
                         }
                     }
                 }
@@ -369,7 +369,7 @@ bool SecurityManager::init(
             }
             else
             {
-                logInfo(SECURITY, "Authentication plugin not configured. Security will be disable");
+                EPROSIMA_LOG_INFO(SECURITY, "Authentication plugin not configured. Security will be disable");
             }
         }
     }
@@ -645,7 +645,7 @@ bool SecurityManager::discovered_participant(
                     EPROSIMA_LOG_ERROR(SECURITY_AUTHENTICATION, exception.what());
                 }
 
-                logInfo(SECURITY, "Authentication failed for participant " <<
+                EPROSIMA_LOG_INFO(SECURITY, "Authentication failed for participant " <<
                         participant_data.m_guid);
 
                 // Inform user about authenticated remote participant.
@@ -667,7 +667,7 @@ bool SecurityManager::discovered_participant(
                 return false;
         }
 
-        logInfo(SECURITY, "Discovered participant " << participant_data.m_guid);
+        EPROSIMA_LOG_INFO(SECURITY, "Discovered participant " << participant_data.m_guid);
 
         // Match entities
         match_builtin_endpoints(participant_data);
@@ -815,7 +815,7 @@ bool SecurityManager::on_process_handshake(
 
     assert(remote_participant_info->identity_handle_ != nullptr);
 
-    logInfo(SECURITY, "Processing handshake from participant " << participant_data.m_guid);
+    EPROSIMA_LOG_INFO(SECURITY, "Processing handshake from participant " << participant_data.m_guid);
 
     if (remote_participant_info->auth_status_ == AUTHENTICATION_REQUEST_NOT_SEND)
     {
@@ -925,7 +925,7 @@ bool SecurityManager::on_process_handshake(
                 change->serializedPayload.length = aux_msg.length;
 
                 // Send
-                logInfo(SECURITY, "Authentication handshake sent to participant " <<
+                EPROSIMA_LOG_INFO(SECURITY, "Authentication handshake sent to participant " <<
                         participant_data.m_guid);
                 if (participant_stateless_message_writer_history_->add_change(change))
                 {
@@ -1015,7 +1015,7 @@ bool SecurityManager::create_entities()
     {
         if (crypto_plugin_ == nullptr || create_participant_volatile_message_secure_entities())
         {
-            logInfo(SECURITY, "Initialized security manager for participant " << participant_->getGuid());
+            EPROSIMA_LOG_INFO(SECURITY, "Initialized security manager for participant " << participant_->getGuid());
             return true;
         }
 
@@ -1454,22 +1454,22 @@ void SecurityManager::process_participant_stateless_message(
     {
         if (message.message_identity().source_guid() == GUID_t::unknown())
         {
-            logInfo(SECURITY, "Bad ParticipantGenericMessage. message_identity.source_guid is GUID_t::unknown()");
+            EPROSIMA_LOG_INFO(SECURITY, "Bad ParticipantGenericMessage. message_identity.source_guid is GUID_t::unknown()");
             return;
         }
         if (message.destination_participant_key() != participant_->getGuid())
         {
-            logInfo(SECURITY, "Destination of ParticipantGenericMessage is not me");
+            EPROSIMA_LOG_INFO(SECURITY, "Destination of ParticipantGenericMessage is not me");
             return;
         }
         if (message.destination_endpoint_key() != GUID_t::unknown())
         {
-            logInfo(SECURITY, "Bad ParticipantGenericMessage. destination_endpoint_key is not GUID_t::unknown()");
+            EPROSIMA_LOG_INFO(SECURITY, "Bad ParticipantGenericMessage. destination_endpoint_key is not GUID_t::unknown()");
             return;
         }
         if (message.source_endpoint_key() != GUID_t::unknown())
         {
-            logInfo(SECURITY, "Bad ParticipantGenericMessage. source_endpoint_key is not GUID_t::unknown()");
+            EPROSIMA_LOG_INFO(SECURITY, "Bad ParticipantGenericMessage. source_endpoint_key is not GUID_t::unknown()");
             return;
         }
 
@@ -1498,14 +1498,14 @@ void SecurityManager::process_participant_stateless_message(
                 // Preconditions
                 if (message.related_message_identity().source_guid() != GUID_t::unknown())
                 {
-                    logInfo(SECURITY,
+                    EPROSIMA_LOG_INFO(SECURITY,
                             "Bad ParticipantGenericMessage. related_message_identity.source_guid is not GUID_t::unknown()");
                     restore_discovered_participant_info(remote_participant_key, remote_participant_info);
                     return;
                 }
                 if (message.message_data().size() != 1)
                 {
-                    logInfo(SECURITY, "Bad ParticipantGenericMessage. message_data size is not 1");
+                    EPROSIMA_LOG_INFO(SECURITY, "Bad ParticipantGenericMessage. message_data size is not 1");
                     restore_discovered_participant_info(remote_participant_key, remote_participant_info);
                     return;
                 }
@@ -1545,7 +1545,7 @@ void SecurityManager::process_participant_stateless_message(
                 if (message.related_message_identity().source_guid()
                         != participant_stateless_message_writer_->getGuid())
                 {
-                    logInfo(SECURITY,
+                    EPROSIMA_LOG_INFO(SECURITY,
                             "Bad ParticipantGenericMessage. related_message_identity.source_guid is not mine");
                     restore_discovered_participant_info(remote_participant_key, remote_participant_info);
                     return;
@@ -1553,14 +1553,14 @@ void SecurityManager::process_participant_stateless_message(
                 if (message.related_message_identity().sequence_number()
                         != remote_participant_info->expected_sequence_number_)
                 {
-                    logInfo(SECURITY,
+                    EPROSIMA_LOG_INFO(SECURITY,
                             "Bad ParticipantGenericMessage. related_message_identity.sequence_number is not expected");
                     restore_discovered_participant_info(remote_participant_key, remote_participant_info);
                     return;
                 }
                 if (message.message_data().size() != 1)
                 {
-                    logInfo(SECURITY, "Bad ParticipantGenericMessage. message_data size is not 1");
+                    EPROSIMA_LOG_INFO(SECURITY, "Bad ParticipantGenericMessage. message_data size is not 1");
                     restore_discovered_participant_info(remote_participant_key, remote_participant_info);
                     return;
                 }
@@ -1571,7 +1571,7 @@ void SecurityManager::process_participant_stateless_message(
                 if (message.related_message_identity().source_guid()
                         != participant_stateless_message_writer_->getGuid())
                 {
-                    logInfo(SECURITY,
+                    EPROSIMA_LOG_INFO(SECURITY,
                             "Bad ParticipantGenericMessage. related_message_identity.source_guid is not mine");
                     restore_discovered_participant_info(remote_participant_key, remote_participant_info);
                     return;
@@ -1579,14 +1579,14 @@ void SecurityManager::process_participant_stateless_message(
                 if (message.related_message_identity().sequence_number()
                         != remote_participant_info->expected_sequence_number_)
                 {
-                    logInfo(SECURITY,
+                    EPROSIMA_LOG_INFO(SECURITY,
                             "Bad ParticipantGenericMessage. related_message_identity.sequence_number is not expected");
                     restore_discovered_participant_info(remote_participant_key, remote_participant_info);
                     return;
                 }
                 if (message.message_data().size() != 1)
                 {
-                    logInfo(SECURITY, "Bad ParticipantGenericMessage. message_data size is not 1");
+                    EPROSIMA_LOG_INFO(SECURITY, "Bad ParticipantGenericMessage. message_data size is not 1");
                     restore_discovered_participant_info(remote_participant_key, remote_participant_info);
                     return;
                 }
@@ -1625,12 +1625,12 @@ void SecurityManager::process_participant_stateless_message(
         }
         else
         {
-            logInfo(SECURITY, "Received Authentication message but not found related remote_participant_key");
+            EPROSIMA_LOG_INFO(SECURITY, "Received Authentication message but not found related remote_participant_key");
         }
     }
     else
     {
-        logInfo(SECURITY, "Discarted ParticipantGenericMessage with class id " << message.message_class_id());
+        EPROSIMA_LOG_INFO(SECURITY, "Discarted ParticipantGenericMessage with class id " << message.message_class_id());
     }
 }
 
@@ -1678,22 +1678,22 @@ void SecurityManager::process_participant_volatile_message_secure(
     {
         if (message.message_identity().source_guid() == GUID_t::unknown())
         {
-            logInfo(SECURITY, "Bad ParticipantGenericMessage. message_identity.source_guid is GUID_t::unknown()");
+            EPROSIMA_LOG_INFO(SECURITY, "Bad ParticipantGenericMessage. message_identity.source_guid is GUID_t::unknown()");
             return;
         }
         if (message.destination_participant_key() != participant_->getGuid())
         {
-            logInfo(SECURITY, "Destination of ParticipantGenericMessage is not me");
+            EPROSIMA_LOG_INFO(SECURITY, "Destination of ParticipantGenericMessage is not me");
             return;
         }
         if (message.destination_endpoint_key() != GUID_t::unknown())
         {
-            logInfo(SECURITY, "Bad ParticipantGenericMessage. destination_endpoint_key is not GUID_t::unknown()");
+            EPROSIMA_LOG_INFO(SECURITY, "Bad ParticipantGenericMessage. destination_endpoint_key is not GUID_t::unknown()");
             return;
         }
         if (message.source_endpoint_key() != GUID_t::unknown())
         {
-            logInfo(SECURITY, "Bad ParticipantGenericMessage. source_endpoint_key is not GUID_t::unknown()");
+            EPROSIMA_LOG_INFO(SECURITY, "Bad ParticipantGenericMessage. source_endpoint_key is not GUID_t::unknown()");
             return;
         }
 
@@ -1718,7 +1718,7 @@ void SecurityManager::process_participant_volatile_message_secure(
             }
             else
             {
-                logInfo(SECURITY,
+                EPROSIMA_LOG_INFO(SECURITY,
                         "Received Participant Cryptography message but not found related remote_participant_key");
             }
         }
@@ -1747,22 +1747,22 @@ void SecurityManager::process_participant_volatile_message_secure(
     {
         if (message.message_identity().source_guid() == GUID_t::unknown())
         {
-            logInfo(SECURITY, "Bad ParticipantGenericMessage. message_identity.source_guid is GUID_t::unknown()");
+            EPROSIMA_LOG_INFO(SECURITY, "Bad ParticipantGenericMessage. message_identity.source_guid is GUID_t::unknown()");
             return;
         }
         if (message.destination_participant_key() != participant_->getGuid())
         {
-            logInfo(SECURITY, "Destination of ParticipantGenericMessage is not me");
+            EPROSIMA_LOG_INFO(SECURITY, "Destination of ParticipantGenericMessage is not me");
             return;
         }
         if (message.destination_endpoint_key() == GUID_t::unknown())
         {
-            logInfo(SECURITY, "Bad ParticipantGenericMessage. destination_endpoint_key is GUID_t::unknown()");
+            EPROSIMA_LOG_INFO(SECURITY, "Bad ParticipantGenericMessage. destination_endpoint_key is GUID_t::unknown()");
             return;
         }
         if (message.source_endpoint_key() == GUID_t::unknown())
         {
-            logInfo(SECURITY, "Bad ParticipantGenericMessage. source_endpoint_key is GUID_t::unknown()");
+            EPROSIMA_LOG_INFO(SECURITY, "Bad ParticipantGenericMessage. source_endpoint_key is GUID_t::unknown()");
             return;
         }
 
@@ -1807,7 +1807,7 @@ void SecurityManager::process_participant_volatile_message_secure(
             }
             else
             {
-                logInfo(SECURITY, "Received Reader Cryptography message but not found local writer " <<
+                EPROSIMA_LOG_INFO(SECURITY, "Received Reader Cryptography message but not found local writer " <<
                         message.destination_endpoint_key());
             }
         }
@@ -1823,22 +1823,22 @@ void SecurityManager::process_participant_volatile_message_secure(
     {
         if (message.message_identity().source_guid() == GUID_t::unknown())
         {
-            logInfo(SECURITY, "Bad ParticipantGenericMessage. message_identity.source_guid is GUID_t::unknown()");
+            EPROSIMA_LOG_INFO(SECURITY, "Bad ParticipantGenericMessage. message_identity.source_guid is GUID_t::unknown()");
             return;
         }
         if (message.destination_participant_key() != participant_->getGuid())
         {
-            logInfo(SECURITY, "Destination of ParticipantGenericMessage is not me");
+            EPROSIMA_LOG_INFO(SECURITY, "Destination of ParticipantGenericMessage is not me");
             return;
         }
         if (message.destination_endpoint_key() == GUID_t::unknown())
         {
-            logInfo(SECURITY, "Bad ParticipantGenericMessage. destination_endpoint_key is GUID_t::unknown()");
+            EPROSIMA_LOG_INFO(SECURITY, "Bad ParticipantGenericMessage. destination_endpoint_key is GUID_t::unknown()");
             return;
         }
         if (message.source_endpoint_key() == GUID_t::unknown())
         {
-            logInfo(SECURITY, "Bad ParticipantGenericMessage. source_endpoint_key is GUID_t::unknown()");
+            EPROSIMA_LOG_INFO(SECURITY, "Bad ParticipantGenericMessage. source_endpoint_key is GUID_t::unknown()");
             return;
         }
 
@@ -1882,7 +1882,7 @@ void SecurityManager::process_participant_volatile_message_secure(
             }
             else
             {
-                logInfo(SECURITY, "Received Writer Cryptography message but not found local reader " <<
+                EPROSIMA_LOG_INFO(SECURITY, "Received Writer Cryptography message but not found local reader " <<
                         message.destination_endpoint_key());
             }
         }
@@ -1895,7 +1895,7 @@ void SecurityManager::process_participant_volatile_message_secure(
     }
     else
     {
-        logInfo(SECURITY, "Discarted ParticipantGenericMessage with class id " << message.message_class_id());
+        EPROSIMA_LOG_INFO(SECURITY, "Discarted ParticipantGenericMessage with class id " << message.message_class_id());
     }
 }
 
@@ -2283,7 +2283,7 @@ bool SecurityManager::encode_rtps_message(
             }
             else
             {
-                logInfo(SECURITY, "Cannot encode message for participant " << remote_participant_key);
+                EPROSIMA_LOG_INFO(SECURITY, "Cannot encode message for participant " << remote_participant_key);
             }
         }
     }
@@ -2355,13 +2355,13 @@ int SecurityManager::decode_rtps_message(
         }
         else
         {
-            logInfo(SECURITY, "Cannot decode rtps message from participant " << remote_participant_key <<
+            EPROSIMA_LOG_INFO(SECURITY, "Cannot decode rtps message from participant " << remote_participant_key <<
                     "(" << exception.what() << ")");
         }
     }
     else
     {
-        logInfo(SECURITY, "Cannot decode message. Participant " << remote_participant_key << " is not yet authorized");
+        EPROSIMA_LOG_INFO(SECURITY, "Cannot decode message. Participant " << remote_participant_key << " is not yet authorized");
     }
 
     return returnedValue;
@@ -2823,7 +2823,7 @@ void SecurityManager::remove_reader(
         }
         else
         {
-            logInfo(SECURITY, "Cannot find remote reader " << remote_reader_guid << std::endl);
+            EPROSIMA_LOG_INFO(SECURITY, "Cannot find remote reader " << remote_reader_guid << std::endl);
         }
     }
 }
@@ -2916,7 +2916,7 @@ bool SecurityManager::discovered_reader(
                 {
                     if (is_key_exchange)
                     {
-                        logInfo(SECURITY, "Process successful discovering local reader " << remote_reader_data.guid());
+                        EPROSIMA_LOG_INFO(SECURITY, "Process successful discovering local reader " << remote_reader_data.guid());
                         local_writer->second.associated_readers.emplace(remote_reader_data.guid(),
                                 std::make_tuple(remote_reader_data, remote_reader_handle));
                         lock.unlock();
@@ -2961,7 +2961,7 @@ bool SecurityManager::discovered_reader(
                         {
                             if (remote_participant_key == participant_->getGuid())
                             {
-                                logInfo(SECURITY, "Process successful discovering local reader "
+                                EPROSIMA_LOG_INFO(SECURITY, "Process successful discovering local reader "
                                         << remote_reader_data.guid());
                                 local_writer->second.associated_readers.emplace(remote_reader_data.guid(),
                                         std::make_tuple(remote_reader_data, remote_reader_handle));
@@ -3047,7 +3047,7 @@ bool SecurityManager::discovered_reader(
                                         // Send
                                         if (participant_volatile_message_secure_writer_history_->add_change(change))
                                         {
-                                            logInfo(SECURITY, "Process successful discovering remote reader "
+                                            EPROSIMA_LOG_INFO(SECURITY, "Process successful discovering remote reader "
                                                     << remote_reader_data.guid());
                                             returned_value = true;
                                         }
@@ -3105,7 +3105,7 @@ bool SecurityManager::discovered_reader(
             }
             else
             {
-                logInfo(SECURITY, "Storing remote reader << " << remote_reader_data.guid() <<
+                EPROSIMA_LOG_INFO(SECURITY, "Storing remote reader << " << remote_reader_data.guid() <<
                         " of participant " << remote_participant_key << " on pendings");
 
                 remote_reader_pending_discovery_messages_.push_back(std::make_tuple(remote_reader_data,
@@ -3169,7 +3169,7 @@ void SecurityManager::remove_writer(
         }
         else
         {
-            logInfo(SECURITY, "Cannot find remote writer " << remote_writer_guid << std::endl);
+            EPROSIMA_LOG_INFO(SECURITY, "Cannot find remote writer " << remote_writer_guid << std::endl);
         }
     }
 }
@@ -3261,7 +3261,7 @@ bool SecurityManager::discovered_writer(
                 {
                     if (is_key_exchange)
                     {
-                        logInfo(SECURITY, "Process successful discovering local writer " << remote_writer_data.guid());
+                        EPROSIMA_LOG_INFO(SECURITY, "Process successful discovering local writer " << remote_writer_data.guid());
                         local_reader->second.associated_writers.emplace(remote_writer_data.guid(),
                                 std::make_tuple(remote_writer_data, remote_writer_handle));
                         lock.unlock();
@@ -3307,7 +3307,7 @@ bool SecurityManager::discovered_writer(
                         {
                             if (remote_participant_key == participant_->getGuid())
                             {
-                                logInfo(SECURITY, "Process successful discovering local writer "
+                                EPROSIMA_LOG_INFO(SECURITY, "Process successful discovering local writer "
                                         << remote_writer_data.guid());
                                 local_reader->second.associated_writers.emplace(remote_writer_data.guid(),
                                         std::make_tuple(remote_writer_data, remote_writer_handle));
@@ -3393,7 +3393,7 @@ bool SecurityManager::discovered_writer(
                                         // Send
                                         if (participant_volatile_message_secure_writer_history_->add_change(change))
                                         {
-                                            logInfo(SECURITY, "Process successful discovering remote writer "
+                                            EPROSIMA_LOG_INFO(SECURITY, "Process successful discovering remote writer "
                                                     << remote_writer_data.guid());
                                             returned_value = true;
                                         }
@@ -3452,7 +3452,7 @@ bool SecurityManager::discovered_writer(
             }
             else
             {
-                logInfo(SECURITY, "Storing remote writer << " << remote_writer_data.guid() <<
+                EPROSIMA_LOG_INFO(SECURITY, "Storing remote writer << " << remote_writer_data.guid() <<
                         " of participant " << remote_participant_key << "on pendings");
 
                 remote_writer_pending_discovery_messages_.push_back(std::make_tuple(remote_writer_data,
@@ -3747,12 +3747,12 @@ int SecurityManager::decode_rtps_submessage(
         }
         else
         {
-            logInfo(SECURITY, "Cannot preprocess RTPS submessage (" << exception.what() << ")");
+            EPROSIMA_LOG_INFO(SECURITY, "Cannot preprocess RTPS submessage (" << exception.what() << ")");
         }
     }
     else
     {
-        logInfo(SECURITY, "Cannot decode RTPS submessage for participant " << remote_participant_key);
+        EPROSIMA_LOG_INFO(SECURITY, "Cannot decode RTPS submessage for participant " << remote_participant_key);
     }
 
     return -1;
@@ -3869,7 +3869,7 @@ bool SecurityManager::participant_authorized(
         return false;
     }
 
-    logInfo(SECURITY, "Authorized participant " << participant_data.m_guid);
+    EPROSIMA_LOG_INFO(SECURITY, "Authorized participant " << participant_data.m_guid);
 
     SecurityException exception;
     PermissionsHandle* remote_permissions = nullptr;
@@ -4036,7 +4036,7 @@ bool SecurityManager::participant_authorized(
 
         participant_->pdpsimple()->notifyAboveRemoteEndpoints(participant_data);
 
-        logInfo(SECURITY, "Participant " << participant_data.m_guid << " authenticated");
+        EPROSIMA_LOG_INFO(SECURITY, "Participant " << participant_data.m_guid << " authenticated");
 
         // Inform user about authenticated remote participant.
         if (participant_->getListener() != nullptr)
@@ -4110,7 +4110,7 @@ uint32_t SecurityManager::calculate_extra_size_for_rtps_submessage(
     }
     else
     {
-        logInfo(SECURITY, "Not found local writer " << writer_guid);
+        EPROSIMA_LOG_INFO(SECURITY, "Not found local writer " << writer_guid);
     }
 
     return 0;
@@ -4141,7 +4141,7 @@ uint32_t SecurityManager::calculate_extra_size_for_encoded_payload(
     }
     else
     {
-        logInfo(SECURITY, "Not found local writer " << writer_guid);
+        EPROSIMA_LOG_INFO(SECURITY, "Not found local writer " << writer_guid);
     }
 
     return 0;
@@ -4174,7 +4174,7 @@ void SecurityManager::resend_handshake_message_token(
 
                 if (p_change != nullptr)
                 {
-                    logInfo(SECURITY, "Authentication handshake resent to participant " <<
+                    EPROSIMA_LOG_INFO(SECURITY, "Authentication handshake resent to participant " <<
                             remote_participant_key);
                     if (participant_stateless_message_writer_history_->add_change(p_change))
                     {

@@ -1650,7 +1650,7 @@ XMLP_ret XMLParser::loadXML(
         return XMLP_ret::XML_ERROR;
     }
 
-    logInfo(XMLPARSER, "File '" << filename << "' opened successfully");
+    EPROSIMA_LOG_INFO(XMLPARSER, "File '" << filename << "' opened successfully");
     return parseXML(xmlDoc, root);
 }
 

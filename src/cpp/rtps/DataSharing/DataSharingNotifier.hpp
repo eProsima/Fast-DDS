@@ -79,7 +79,7 @@ public:
     {
         if (is_enabled())
         {
-            logInfo(RTPS_WRITER, "Notifying reader " << shared_notification_->reader());
+            EPROSIMA_LOG_INFO(RTPS_WRITER, "Notifying reader " << shared_notification_->reader());
             shared_notification_->notify();
         }
     }

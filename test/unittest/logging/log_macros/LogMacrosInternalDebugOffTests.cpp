@@ -49,7 +49,7 @@ TEST_F(LogMacrosTests, internal_debug_off)
     int n = 0;
     EPROSIMA_LOG_ERROR(SampleCategory, non_valid_function(n));
     EPROSIMA_LOG_WARNING(SampleCategory, non_valid_function(n));
-    logInfo(SampleCategory, non_valid_function(n));
+    EPROSIMA_LOG_INFO(SampleCategory, non_valid_function(n));
 
     auto consumedEntries = HELPER_WaitForEntries(0);
     // No logs must be shown

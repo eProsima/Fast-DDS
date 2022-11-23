@@ -243,7 +243,7 @@ void PDPSimple::announceParticipantState(
 
 bool PDPSimple::createPDPEndpoints()
 {
-    logInfo(RTPS_PDP, "Beginning");
+    EPROSIMA_LOG_INFO(RTPS_PDP, "Beginning");
 
     const RTPSParticipantAttributes& pattr = mp_RTPSParticipant->getRTPSParticipantAttributes();
     const RTPSParticipantAllocationAttributes& allocation = pattr.allocation;
@@ -354,14 +354,14 @@ bool PDPSimple::createPDPEndpoints()
         writer_payload_pool_.reset();
         return false;
     }
-    logInfo(RTPS_PDP, "SPDP Endpoints creation finished");
+    EPROSIMA_LOG_INFO(RTPS_PDP, "SPDP Endpoints creation finished");
     return true;
 }
 
 void PDPSimple::assignRemoteEndpoints(
         ParticipantProxyData* pdata)
 {
-    logInfo(RTPS_PDP, "For RTPSParticipant: " << pdata->m_guid.guidPrefix);
+    EPROSIMA_LOG_INFO(RTPS_PDP, "For RTPSParticipant: " << pdata->m_guid.guidPrefix);
 
     const NetworkFactory& network = mp_RTPSParticipant->network_factory();
     uint32_t endp = pdata->m_availableBuiltinEndpoints;
@@ -422,7 +422,7 @@ void PDPSimple::assignRemoteEndpoints(
 void PDPSimple::removeRemoteEndpoints(
         ParticipantProxyData* pdata)
 {
-    logInfo(RTPS_PDP, "For RTPSParticipant: " << pdata->m_guid);
+    EPROSIMA_LOG_INFO(RTPS_PDP, "For RTPSParticipant: " << pdata->m_guid);
     uint32_t endp = pdata->m_availableBuiltinEndpoints;
     uint32_t auxendp = endp;
     auxendp &= DISC_BUILTIN_ENDPOINT_PARTICIPANT_ANNOUNCER;

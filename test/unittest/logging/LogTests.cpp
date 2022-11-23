@@ -170,14 +170,14 @@ TEST_F(LogTests, multiple_verbosity_levels)
     Log::SetVerbosity(Log::Warning);
     EPROSIMA_LOG_ERROR(VerbosityChecks, "This should be logged");
     EPROSIMA_LOG_WARNING(VerbosityChecks, "This should be logged too!");
-    logInfo(VerbosityChecks, "If you're seeing this, something went wrong");
+    EPROSIMA_LOG_INFO(VerbosityChecks, "If you're seeing this, something went wrong");
     auto consumedEntries = HELPER_WaitForEntries(3);
     ASSERT_EQ(2u, consumedEntries.size());
 
     Log::SetVerbosity(Log::Error);
     EPROSIMA_LOG_ERROR(VerbosityChecks, "This should be logged");
     EPROSIMA_LOG_WARNING(VerbosityChecks, "If you're seeing this, something went wrong");
-    logInfo(VerbosityChecks, "If you're seeing this, something went wrong");
+    EPROSIMA_LOG_INFO(VerbosityChecks, "If you're seeing this, something went wrong");
 
     consumedEntries = HELPER_WaitForEntries(5);
     ASSERT_EQ(3u, consumedEntries.size());
@@ -390,7 +390,7 @@ TEST_F(LogTests, stdout_consumer_stream)
     // Log messages on all levels and wait until they are all consumed
     EPROSIMA_LOG_ERROR(stdout_consumer_stream, "Error message");
     EPROSIMA_LOG_WARNING(stdout_consumer_stream, "Warning message");
-    logInfo(stdout_consumer_stream, "Info message");
+    EPROSIMA_LOG_INFO(stdout_consumer_stream, "Info message");
     Log::Flush();
     std::cout.flush();
     std::cerr.flush();
@@ -424,9 +424,9 @@ TEST_F(LogTests, stdout_consumer_stream)
     lines_out = std::count(out_string_out.begin(), out_string_out.end(), '\n');
     std::string::difference_type lines_err = std::count(out_string_err.begin(), out_string_err.end(), '\n');
 
-    // If CMAKE_BUILD_TYPE is Debug, the INTERNAL_DEBUG flag was set, and the logInfo messages were not deactivated,
+    // If CMAKE_BUILD_TYPE is Debug, the INTERNAL_DEBUG flag was set, and the EPROSIMA_LOG_INFO messages were not deactivated,
     // then there should be 3 messages in the out buffer, one for the EPROSIMA_LOG_ERROR, one for the EPROSIMA_LOG_WARNING, and another one
-    // for the logInfo.
+    // for the EPROSIMA_LOG_INFO.
     // Else, there should only be 2 messagea in the out buffer, corresponding to EPROSIMA_LOG_ERROR and EPROSIMA_LOG_WARNING.
 #if !HAVE_LOG_NO_INFO
     ASSERT_EQ(3, lines_out);
@@ -473,7 +473,7 @@ TEST_F(LogTests, stdouterr_consumer_stream)
     // Log messages on all levels and wait until they are all consumed
     EPROSIMA_LOG_ERROR(stdouterr_consumer_stream, "Error message");
     EPROSIMA_LOG_WARNING(stdouterr_consumer_stream, "Warning message");
-    logInfo(stdouterr_consumer_stream, "Info message");
+    EPROSIMA_LOG_INFO(stdouterr_consumer_stream, "Info message");
     Log::Flush();
     std::cout.flush();
     std::cerr.flush();
@@ -516,8 +516,8 @@ TEST_F(LogTests, stdouterr_consumer_stream)
     ASSERT_EQ(1, lines_err);
     std::cout << "Number of messages in the error buffer is correct: " << lines_err << std::endl;
 
-    // If CMAKE_BUILD_TYPE is Debug, the INTERNAL_DEBUG flag was set, and the logInfo messages were not deactivated,
-    // then there should be 2 messages in the out buffer, one for the EPROSIMA_LOG_WARNING, and another one for the logInfo.
+    // If CMAKE_BUILD_TYPE is Debug, the INTERNAL_DEBUG flag was set, and the EPROSIMA_LOG_INFO messages were not deactivated,
+    // then there should be 2 messages in the out buffer, one for the EPROSIMA_LOG_WARNING, and another one for the EPROSIMA_LOG_INFO.
     // Else, there should only be 1 message in the out buffer, corresponding to the EPROSIMA_LOG_WARNING.
 #if !HAVE_LOG_NO_INFO
     ASSERT_EQ(2, lines_out);
@@ -566,7 +566,7 @@ TEST_F(LogTests, flush_info)
         std::unique_ptr<LogConsumerMock>(new LogConsumerMock(logs_consumed)));
 
     // Raise a log message
-    logInfo(TEST_FLUSH, "Info message");
+    EPROSIMA_LOG_INFO(TEST_FLUSH, "Info message");
 
     // Flush the log
     Log::Flush();
@@ -644,7 +644,7 @@ TEST_F(LogTests, flush_n)
         {
             for (unsigned int i = 0; i < n_logs; i++)
             {
-                logInfo(TEST_FLUSH, "Secondary message " << i);
+                EPROSIMA_LOG_INFO(TEST_FLUSH, "Secondary message " << i);
             }
         }
         );
@@ -653,7 +653,7 @@ TEST_F(LogTests, flush_n)
     for (unsigned int i = 1; i < n_logs; i++)
     {
         logs_consumed.store(0);
-        logInfo(TEST_FLUSH, "Info message " << i);
+        EPROSIMA_LOG_INFO(TEST_FLUSH, "Info message " << i);
 
         // Flush the log
         Log::Flush();

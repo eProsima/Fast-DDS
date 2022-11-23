@@ -74,7 +74,7 @@ LatencyTestSubscriber::~LatencyTestSubscriber()
 
     DomainParticipantFactory::get_instance()->delete_participant(participant_);
 
-    logInfo(LatencyTest, "Sub: Participant removed");
+    EPROSIMA_LOG_INFO(LatencyTest, "Sub: Participant removed");
 }
 
 bool LatencyTestSubscriber::init(
@@ -368,7 +368,7 @@ void LatencyTestSubscriber::LatencyDataWriterListener::on_publication_matched(
 
     if (info.current_count_change > 0)
     {
-        logInfo(LatencyTest, C_MAGENTA << "Data Pub Matched" << C_DEF);
+        EPROSIMA_LOG_INFO(LatencyTest, C_MAGENTA << "Data Pub Matched" << C_DEF);
     }
 
     lock.unlock();
@@ -387,7 +387,7 @@ void LatencyTestSubscriber::LatencyDataReaderListener::on_subscription_matched(
 
     if (info.current_count_change > 0)
     {
-        logInfo(LatencyTest, C_MAGENTA << "Data Sub Matched" << C_DEF);
+        EPROSIMA_LOG_INFO(LatencyTest, C_MAGENTA << "Data Sub Matched" << C_DEF);
     }
 
     lock.unlock();
@@ -406,7 +406,7 @@ void LatencyTestSubscriber::ComandWriterListener::on_publication_matched(
 
     if (info.current_count_change > 0)
     {
-        logInfo(LatencyTest, C_MAGENTA << "Command Pub Matched" << C_DEF);
+        EPROSIMA_LOG_INFO(LatencyTest, C_MAGENTA << "Command Pub Matched" << C_DEF);
     }
 
     lock.unlock();
@@ -425,7 +425,7 @@ void LatencyTestSubscriber::CommandReaderListener::on_subscription_matched(
 
     if (info.current_count_change > 0)
     {
-        logInfo(LatencyTest, C_MAGENTA << "Command Sub Matched" << C_DEF);
+        EPROSIMA_LOG_INFO(LatencyTest, C_MAGENTA << "Command Sub Matched" << C_DEF);
     }
 
     lock.unlock();
@@ -481,7 +481,7 @@ void LatencyTestSubscriber::CommandReaderListener::on_data_available(
         log << "Problem reading command message";
     }
 
-    logInfo(LatencyTest, log.str());
+    EPROSIMA_LOG_INFO(LatencyTest, log.str());
 }
 
 void LatencyTestSubscriber::LatencyDataReaderListener::on_data_available(
@@ -503,7 +503,7 @@ void LatencyTestSubscriber::LatencyDataReaderListener::on_data_available(
 
         if (ReturnCode_t::RETCODE_OK != reader->take(data_seq, infos, 1))
         {
-            logInfo(LatencyTest, "Problem reading Subscriber echoed loaned test data");
+            EPROSIMA_LOG_INFO(LatencyTest, "Problem reading Subscriber echoed loaned test data");
             return;
         }
 
@@ -527,7 +527,7 @@ void LatencyTestSubscriber::LatencyDataReaderListener::on_data_available(
             // release the reader loan
             if (ReturnCode_t::RETCODE_OK != reader->return_loan(data_seq, infos))
             {
-                logInfo(LatencyTest, "Problem returning loaned test data");
+                EPROSIMA_LOG_INFO(LatencyTest, "Problem returning loaned test data");
                 return;
             }
 
@@ -551,7 +551,7 @@ void LatencyTestSubscriber::LatencyDataReaderListener::on_data_available(
 
             if (!loaned)
             {
-                logInfo(LatencyTest, "Problem echoing Publisher test data with loan");
+                EPROSIMA_LOG_INFO(LatencyTest, "Problem echoing Publisher test data with loan");
                 // release the reader loan
                 reader->return_loan(data_seq, infos);
                 return;
@@ -598,13 +598,13 @@ void LatencyTestSubscriber::LatencyDataReaderListener::on_data_available(
 
                 if (!sub->data_writer_->write(data))
                 {
-                    logInfo(LatencyTest, "Problem echoing Publisher test data");
+                    EPROSIMA_LOG_INFO(LatencyTest, "Problem echoing Publisher test data");
                 }
             }
         }
         else
         {
-            logInfo(LatencyTest, "Problem reading Publisher test data");
+            EPROSIMA_LOG_INFO(LatencyTest, "Problem reading Publisher test data");
         }
     }
 }
@@ -621,7 +621,7 @@ void LatencyTestSubscriber::run()
             return total_matches() == (dynamic_types_ ? 4 : 2);
         });
 
-    logInfo(LatencyTest, C_B_MAGENTA << "Sub: DISCOVERY COMPLETE " << C_DEF);
+    EPROSIMA_LOG_INFO(LatencyTest, C_B_MAGENTA << "Sub: DISCOVERY COMPLETE " << C_DEF);
 
     for (std::vector<uint32_t>::iterator payload = data_size_sub_.begin(); payload != data_size_sub_.end(); ++payload)
     {
@@ -635,7 +635,7 @@ void LatencyTestSubscriber::run()
 bool LatencyTestSubscriber::test(
         uint32_t datasize)
 {
-    logInfo(LatencyTest, "Preparing test with data size: " << datasize );
+    EPROSIMA_LOG_INFO(LatencyTest, "Preparing test with data size: " << datasize );
 
     // Wait for the Publisher READY command
     // Assures that LatencyTestSubscriber|Publisher data endpoints creation and
@@ -702,7 +702,7 @@ bool LatencyTestSubscriber::test(
         return false;
     }
 
-    logInfo(LatencyTest, "Testing with data size: " << datasize);
+    EPROSIMA_LOG_INFO(LatencyTest, "Testing with data size: " << datasize);
 
     // Wait for the STOP or STOP_ERROR commands
     wait_for_command(
@@ -711,7 +711,7 @@ bool LatencyTestSubscriber::test(
             return command_msg_count_ != 0;
         });
 
-    logInfo(LatencyTest, "TEST OF SIZE: " << datasize << " ENDS");
+    EPROSIMA_LOG_INFO(LatencyTest, "TEST OF SIZE: " << datasize << " ENDS");
     std::this_thread::sleep_for(std::chrono::milliseconds(50));
 
     if (dynamic_types_)

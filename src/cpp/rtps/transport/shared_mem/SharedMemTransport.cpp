@@ -143,7 +143,7 @@ bool SharedMemTransport::OpenInputChannel(
         {
             (void)e;
 
-            logInfo(RTPS_MSG_OUT, std::string("CreateInputChannelResource failed for port ")
+            EPROSIMA_LOG_INFO(RTPS_MSG_OUT, std::string("CreateInputChannelResource failed for port ")
                     << locator.port << " msg: " << e.what());
             return false;
         }
@@ -457,7 +457,7 @@ bool SharedMemTransport::send(
     }
     catch (const std::exception& e)
     {
-        logInfo(RTPS_TRANSPORT_SHM, e.what());
+        EPROSIMA_LOG_INFO(RTPS_TRANSPORT_SHM, e.what());
         (void)e;
 
         // Segment overflow with discard policy doesn't return error.
@@ -504,7 +504,7 @@ bool SharedMemTransport::push_discard(
     {
         if (!find_port(remote_locator.port)->try_push(buffer))
         {
-            logInfo(RTPS_MSG_OUT, "Port " << remote_locator.port << " full. Buffer dropped");
+            EPROSIMA_LOG_INFO(RTPS_MSG_OUT, "Port " << remote_locator.port << " full. Buffer dropped");
         }
     }
     catch (const std::exception& error)
@@ -525,7 +525,7 @@ bool SharedMemTransport::send(
         return false;
     }
 
-    logInfo(RTPS_MSG_OUT,
+    EPROSIMA_LOG_INFO(RTPS_MSG_OUT,
             "(ID:" << std::this_thread::get_id() << ") " << "SharedMemTransport: " << buffer->size() << " bytes to port " <<
             remote_locator.port);
 

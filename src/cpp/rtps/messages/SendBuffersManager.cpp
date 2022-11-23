@@ -88,7 +88,7 @@ std::unique_ptr<RTPSMessageGroup_t> SendBuffersManager::get_buffer(
         }
         else
         {
-            logInfo(RTPS_PARTICIPANT, "Waiting for send buffer");
+            EPROSIMA_LOG_INFO(RTPS_PARTICIPANT, "Waiting for send buffer");
             available_cv_.wait(lock);
         }
     }

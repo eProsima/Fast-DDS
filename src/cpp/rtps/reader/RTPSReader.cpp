@@ -143,12 +143,12 @@ void RTPSReader::init(
     mp_history->mp_reader = this;
     mp_history->mp_mutex = &mp_mutex;
 
-    logInfo(RTPS_READER, "RTPSReader created correctly");
+    EPROSIMA_LOG_INFO(RTPS_READER, "RTPSReader created correctly");
 }
 
 RTPSReader::~RTPSReader()
 {
-    logInfo(RTPS_READER, "Removing reader " << this->getGuid().entityId; );
+    EPROSIMA_LOG_INFO(RTPS_READER, "Removing reader " << this->getGuid().entityId; );
 
     for (auto it = mp_history->changesBegin(); it != mp_history->changesEnd(); ++it)
     {
@@ -251,7 +251,7 @@ void RTPSReader::add_persistence_guid(
         auto spourious_record = history_state_->history_record.find(guid);
         if (spourious_record != history_state_->history_record.end())
         {
-            logInfo(RTPS_READER, "Sporious record found, changing guid "
+            EPROSIMA_LOG_INFO(RTPS_READER, "Sporious record found, changing guid "
                     << guid << " for persistence guid " << persistence_guid);
             update_last_notified(guid, spourious_record->second);
             history_state_->history_record.erase(spourious_record);

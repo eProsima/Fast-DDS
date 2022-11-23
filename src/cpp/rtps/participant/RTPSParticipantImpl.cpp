@@ -200,7 +200,7 @@ RTPSParticipantImpl::RTPSParticipantImpl(
                 TCPTransportDescriptor* pT = dynamic_cast<TCPTransportDescriptor*>(transportDescriptor.get());
                 if (pT && pT->listening_ports.empty())
                 {
-                    logInfo(RTPS_PARTICIPANT,
+                    EPROSIMA_LOG_INFO(RTPS_PARTICIPANT,
                             "Participant " << m_att.getName() << " with GUID " << m_guid <<
                             " tries to use discovery server over TCP without providing a proper listening port.");
                 }
@@ -312,7 +312,7 @@ RTPSParticipantImpl::RTPSParticipantImpl(
         /* INSERT DEFAULT UNICAST LOCATORS FOR THE PARTICIPANT */
         get_default_unicast_locators();
         internal_default_locators_ = true;
-        logInfo(RTPS_PARTICIPANT, m_att.getName() << " Created with NO default Unicast Locator List, adding Locators:"
+        EPROSIMA_LOG_INFO(RTPS_PARTICIPANT, m_att.getName() << " Created with NO default Unicast Locator List, adding Locators:"
                                                   << m_att.defaultUnicastLocatorList);
     }
     else
@@ -426,12 +426,12 @@ RTPSParticipantImpl::RTPSParticipantImpl(
 
     if (c_GuidPrefix_Unknown != persistence_guid)
     {
-        logInfo(RTPS_PARTICIPANT, "RTPSParticipant \"" << m_att.getName() << "\" with guidPrefix: " << m_guid.guidPrefix
+        EPROSIMA_LOG_INFO(RTPS_PARTICIPANT, "RTPSParticipant \"" << m_att.getName() << "\" with guidPrefix: " << m_guid.guidPrefix
                                                        << " and persistence guid: " << persistence_guid);
     }
     else
     {
-        logInfo(RTPS_PARTICIPANT,
+        EPROSIMA_LOG_INFO(RTPS_PARTICIPANT,
                 "RTPSParticipant \"" << m_att.getName() << "\" with guidPrefix: " << m_guid.guidPrefix);
     }
 
@@ -606,7 +606,7 @@ bool RTPSParticipantImpl::create_writer(
         const Functor& callback)
 {
     std::string type = (param.endpoint.reliabilityKind == RELIABLE) ? "RELIABLE" : "BEST_EFFORT";
-    logInfo(RTPS_PARTICIPANT, "Creating writer of type " << type);
+    EPROSIMA_LOG_INFO(RTPS_PARTICIPANT, "Creating writer of type " << type);
     EntityId_t entId;
     if (!preprocess_endpoint_attributes<WRITER, 0x03, 0x02>(entity_id, IdCounter, param.endpoint, entId))
     {
@@ -801,7 +801,7 @@ bool RTPSParticipantImpl::create_reader(
         const Functor& callback)
 {
     std::string type = (param.endpoint.reliabilityKind == RELIABLE) ? "RELIABLE" : "BEST_EFFORT";
-    logInfo(RTPS_PARTICIPANT, "Creating reader of type " << type);
+    EPROSIMA_LOG_INFO(RTPS_PARTICIPANT, "Creating reader of type " << type);
     EntityId_t entId;
     if (!preprocess_endpoint_attributes<READER, 0x04, 0x07>(entity_id, IdCounter, param.endpoint, entId))
     {
@@ -1246,7 +1246,7 @@ void RTPSParticipantImpl::update_attributes(
         if (!(metatraffic_unicast_locator_list == m_att.builtin.metatrafficUnicastLocatorList))
         {
             local_interfaces_changed = true;
-            logInfo(RTPS_PARTICIPANT, m_att.getName() << " updated its metatraffic locators");
+            EPROSIMA_LOG_INFO(RTPS_PARTICIPANT, m_att.getName() << " updated its metatraffic locators");
         }
     }
     if (internal_default_locators_)
@@ -1256,7 +1256,7 @@ void RTPSParticipantImpl::update_attributes(
         if (!(default_unicast_locator_list == m_att.defaultUnicastLocatorList))
         {
             local_interfaces_changed = true;
-            logInfo(RTPS_PARTICIPANT, m_att.getName() << " updated default unicast locator list, current locators: "
+            EPROSIMA_LOG_INFO(RTPS_PARTICIPANT, m_att.getName() << " updated default unicast locator list, current locators: "
                                                       << m_att.defaultUnicastLocatorList);
         }
     }
@@ -1326,7 +1326,7 @@ void RTPSParticipantImpl::update_attributes(
                         {
                             modified_servers.emplace_back(incoming_server.GetParticipant());
                             modified_locators.push_back(incoming_locator);
-                            logInfo(RTPS_QOS_CHECK,
+                            EPROSIMA_LOG_INFO(RTPS_QOS_CHECK,
                                     "DS Server: " << incoming_server.guidPrefix << " has modified its locators: "
                                                   << incoming_locator << " being added")
                         }

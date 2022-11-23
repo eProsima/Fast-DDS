@@ -82,7 +82,7 @@ static void send_ack_if_datasharing(
 
 StatefulReader::~StatefulReader()
 {
-    logInfo(RTPS_READER, "StatefulReader destructor.");
+    EPROSIMA_LOG_INFO(RTPS_READER, "StatefulReader destructor.");
 
     // Only is_alive_ assignment needs to be protected, as
     // matched_writers_ and matched_writers_pool_ are only used
@@ -202,7 +202,7 @@ bool StatefulReader::matched_writer_add(
         {
             if (it->guid() == wdata.guid())
             {
-                logInfo(RTPS_READER, "Attempting to add existing writer, updating information");
+                EPROSIMA_LOG_INFO(RTPS_READER, "Attempting to add existing writer, updating information");
                 // If Ownership strength changes then update all history instances.
                 if (EXCLUSIVE_OWNERSHIP_QOS == m_att.ownershipKind &&
                         it->ownership_strength() != wdata.m_qos.m_ownershipStrength.value)
@@ -273,7 +273,7 @@ bool StatefulReader::matched_writer_add(
                     mp_history->m_att.maximumReservedCaches))
             {
                 matched_writers_.push_back(wp);
-                logInfo(RTPS_READER, "Writer Proxy " << wdata.guid() << " added to " << this->m_guid.entityId
+                EPROSIMA_LOG_INFO(RTPS_READER, "Writer Proxy " << wdata.guid() << " added to " << this->m_guid.entityId
                                                      << " with data sharing");
             }
             else
@@ -307,7 +307,7 @@ bool StatefulReader::matched_writer_add(
         else
         {
             matched_writers_.push_back(wp);
-            logInfo(RTPS_READER, "Writer Proxy " << wp->guid() << " added to " << m_guid.entityId);
+            EPROSIMA_LOG_INFO(RTPS_READER, "Writer Proxy " << wp->guid() << " added to " << m_guid.entityId);
         }
     }
     if (liveliness_lease_duration_ < c_TimeInfinite)
@@ -369,7 +369,7 @@ bool StatefulReader::matched_writer_remove(
         {
             if ((*it)->guid() == writer_guid)
             {
-                logInfo(RTPS_READER, "Writer proxy " << writer_guid << " removed from " << m_guid.entityId);
+                EPROSIMA_LOG_INFO(RTPS_READER, "Writer proxy " << writer_guid << " removed from " << m_guid.entityId);
                 wproxy = *it;
                 matched_writers_.erase(it);
 
@@ -400,7 +400,7 @@ bool StatefulReader::matched_writer_remove(
         }
         else
         {
-            logInfo(RTPS_READER,
+            EPROSIMA_LOG_INFO(RTPS_READER,
                     "Writer Proxy " << writer_guid << " doesn't exist in reader " << this->getGuid().entityId);
         }
     }
@@ -442,12 +442,12 @@ bool StatefulReader::matched_writer_lookup(
 
     if (returnedValue)
     {
-        logInfo(RTPS_READER, this->getGuid().entityId << " FINDS writerProxy " << writerGUID << " from "
+        EPROSIMA_LOG_INFO(RTPS_READER, this->getGuid().entityId << " FINDS writerProxy " << writerGUID << " from "
                                                       << getMatchedWritersSize());
     }
     else
     {
-        logInfo(RTPS_READER, this->getGuid().entityId << " NOT FINDS writerProxy " << writerGUID << " from "
+        EPROSIMA_LOG_INFO(RTPS_READER, this->getGuid().entityId << " NOT FINDS writerProxy " << writerGUID << " from "
                                                       << getMatchedWritersSize());
     }
 
@@ -517,7 +517,7 @@ bool StatefulReader::processDataMsg(
                     };
             std::unique_ptr<void, decltype(assert_liveliness_lambda)> p{ this, assert_liveliness_lambda };
 
-            logInfo(RTPS_MSG_IN,
+            EPROSIMA_LOG_INFO(RTPS_MSG_IN,
                     IDSTRING "Trying to add change " << change->sequenceNumber << " TO reader: " << getGuid().entityId);
 
             size_t unknown_missing_changes_up_to = pWP ? pWP->unknown_missing_changes_up_to(change->sequenceNumber) : 0;
@@ -595,7 +595,7 @@ bool StatefulReader::processDataMsg(
             // Perform reception of cache change
             if (!change_received(change_to_add, pWP, unknown_missing_changes_up_to))
             {
-                logInfo(RTPS_MSG_IN,
+                EPROSIMA_LOG_INFO(RTPS_MSG_IN,
                         IDSTRING "Change " << change_to_add->sequenceNumber << " not added to history");
                 change_to_add->payload_owner()->release_payload(*change_to_add);
                 change_pool_->release_cache(change_to_add);
@@ -639,7 +639,7 @@ bool StatefulReader::processDataFragMsg(
         // Check if CacheChange was received.
         if (!pWP->change_was_received(incomingChange->sequenceNumber))
         {
-            logInfo(RTPS_MSG_IN,
+            EPROSIMA_LOG_INFO(RTPS_MSG_IN,
                     IDSTRING "Trying to add fragment " << incomingChange->sequenceNumber.to64long() << " TO reader: " <<
                     getGuid().entityId);
 
@@ -692,7 +692,7 @@ bool StatefulReader::processDataFragMsg(
             {
                 if (!change_received(change_created, pWP, changes_up_to))
                 {
-                    logInfo(RTPS_MSG_IN,
+                    EPROSIMA_LOG_INFO(RTPS_MSG_IN,
                             IDSTRING "MessageReceiver not add change " << change_created->sequenceNumber.to64long());
 
                     releaseCache(change_created);
@@ -1002,13 +1002,13 @@ bool StatefulReader::change_received(
             // discard non framework messages from unknown writer
             if (a_change->writerGUID.entityId != m_trustedWriterEntityId)
             {
-                logInfo(RTPS_READER,
+                EPROSIMA_LOG_INFO(RTPS_READER,
                         "Writer Proxy " << a_change->writerGUID << " not matched to this Reader " << m_guid.entityId);
                 return false;
             }
             else if (a_change->kind != eprosima::fastrtps::rtps::ChangeKind_t::ALIVE)
             {
-                logInfo(RTPS_READER, "Not alive change " << a_change->writerGUID << " has not WriterProxy");
+                EPROSIMA_LOG_INFO(RTPS_READER, "Not alive change " << a_change->writerGUID << " has not WriterProxy");
                 return false;
             }
             else
@@ -1043,7 +1043,7 @@ bool StatefulReader::change_received(
                     }
                 }
 
-                logInfo(RTPS_READER, "Change received from " << a_change->writerGUID << " with sequence number: "
+                EPROSIMA_LOG_INFO(RTPS_READER, "Change received from " << a_change->writerGUID << " with sequence number: "
                                                              << a_change->sequenceNumber <<
                         " skipped. Higher sequence numbers have been received.");
                 return false;
@@ -1209,7 +1209,7 @@ void StatefulReader::remove_changes_from(
     for (std::vector<CacheChange_t*>::iterator it = toremove.begin();
             it != toremove.end(); ++it)
     {
-        logInfo(RTPS_READER,
+        EPROSIMA_LOG_INFO(RTPS_READER,
                 "Removing change " << (*it)->sequenceNumber << " from " << (*it)->writerGUID);
         if (is_payload_pool_lost)
         {
@@ -1442,7 +1442,7 @@ void StatefulReader::send_acknack(
     acknack_count_++;
 
 
-    logInfo(RTPS_READER, "Sending ACKNACK: " << sns);
+    EPROSIMA_LOG_INFO(RTPS_READER, "Sending ACKNACK: " << sns);
 
     RTPSMessageGroup group(getRTPSParticipant(), this, sender);
     group.add_acknack(sns, acknack_count_, is_final);
@@ -1493,7 +1493,7 @@ void StatefulReader::send_acknack(
                     {
                         if (!sns.add(seq))
                         {
-                            logInfo(RTPS_READER, "Sequence number " << seq
+                            EPROSIMA_LOG_INFO(RTPS_READER, "Sequence number " << seq
                                                                     <<
                                 " exceeded bitmap limit of AckNack. SeqNumSet Base: "
                                                                     << sns.base());
@@ -1504,7 +1504,7 @@ void StatefulReader::send_acknack(
                         FragmentNumberSet_t frag_sns;
                         uncomplete_change->get_missing_fragments(frag_sns);
                         ++nackfrag_count_;
-                        logInfo(RTPS_READER, "Sending NACKFRAG for sample" << seq << ": " << frag_sns; );
+                        EPROSIMA_LOG_INFO(RTPS_READER, "Sending NACKFRAG for sample" << seq << ": " << frag_sns; );
 
                         group.add_nackfrag(seq, frag_sns, nackfrag_count_);
                     }
@@ -1512,7 +1512,7 @@ void StatefulReader::send_acknack(
                 });
 
             acknack_count_++;
-            logInfo(RTPS_READER, "Sending ACKNACK: " << sns; );
+            EPROSIMA_LOG_INFO(RTPS_READER, "Sending ACKNACK: " << sns; );
 
             bool final = sns.empty();
             group.add_acknack(sns, acknack_count_, final);

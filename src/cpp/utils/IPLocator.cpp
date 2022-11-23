@@ -1102,7 +1102,7 @@ std::pair<std::set<std::string>, std::set<std::string>> IPLocator::resolveNameDN
     asio::ip::tcp::resolver::iterator end_it;
     for (; it != end_it; ++it)
     {
-        logInfo(IP_LOCATOR, "IP " << it->endpoint().address() << " found by DNS request to address " << address_name);
+        EPROSIMA_LOG_INFO(IP_LOCATOR, "IP " << it->endpoint().address() << " found by DNS request to address " << address_name);
 
         // Check whether the ip get is v4 or v6
         if (it->endpoint().address().is_v4())

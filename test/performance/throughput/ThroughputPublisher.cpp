@@ -49,7 +49,7 @@ void ThroughputPublisher::DataWriterListener::on_publication_matched(
 {
     if (1 == info.current_count)
     {
-        logInfo(THROUGHPUTPUBLISHER, C_RED << "Pub: DATA Pub Matched "
+        EPROSIMA_LOG_INFO(THROUGHPUTPUBLISHER, C_RED << "Pub: DATA Pub Matched "
                                            << info.total_count << "/" << throughput_publisher_.subscribers_ << C_DEF);
     }
 
@@ -74,7 +74,7 @@ void ThroughputPublisher::CommandReaderListener::on_subscription_matched(
 {
     if (1 == info.current_count)
     {
-        logInfo(THROUGHPUTPUBLISHER, C_RED << "Pub: COMMAND Sub Matched "
+        EPROSIMA_LOG_INFO(THROUGHPUTPUBLISHER, C_RED << "Pub: COMMAND Sub Matched "
                                            << info.total_count << "/" << throughput_publisher_.subscribers_ * 2 <<
                 C_DEF);
     }
@@ -92,7 +92,7 @@ void ThroughputPublisher::CommandWriterListener::on_publication_matched(
 {
     if (1 == info.current_count)
     {
-        logInfo(THROUGHPUTPUBLISHER, C_RED << "Pub: COMMAND Pub Matched "
+        EPROSIMA_LOG_INFO(THROUGHPUTPUBLISHER, C_RED << "Pub: COMMAND Pub Matched "
                                            << info.total_count << "/" << throughput_publisher_.subscribers_ * 2 <<
                 C_DEF);
     }
@@ -417,7 +417,7 @@ ThroughputPublisher::~ThroughputPublisher()
 
     // Remove the participant
     DomainParticipantFactory::get_instance()->delete_participant(participant_);
-    logInfo(THROUGHPUTPUBLISHER, "Pub: Participant removed");
+    EPROSIMA_LOG_INFO(THROUGHPUTPUBLISHER, "Pub: Participant removed");
 }
 
 void ThroughputPublisher::run(

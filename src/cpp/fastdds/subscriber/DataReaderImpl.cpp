@@ -300,7 +300,7 @@ void DataReaderImpl::stop()
 
     if (reader_ != nullptr)
     {
-        logInfo(DATA_READER, "Removing " << guid().entityId << " in topic: " << topic_->get_name());
+        EPROSIMA_LOG_INFO(DATA_READER, "Removing " << guid().entityId << " in topic: " << topic_->get_name());
         RTPSDomain::removeRTPSReader(reader_);
         reader_ = nullptr;
         release_payload_pool();
@@ -1758,7 +1758,7 @@ ReturnCode_t DataReaderImpl::check_datasharing_compatible(
 #endif // if HAVE_SECURITY
             if (!type_.is_bounded())
             {
-                logInfo(DATA_READER, "Data sharing cannot be used with unbounded data types");
+                EPROSIMA_LOG_INFO(DATA_READER, "Data sharing cannot be used with unbounded data types");
                 return ReturnCode_t::RETCODE_BAD_PARAMETER;
             }
 
@@ -1775,20 +1775,20 @@ ReturnCode_t DataReaderImpl::check_datasharing_compatible(
 #if HAVE_SECURITY
             if (has_security_enabled)
             {
-                logInfo(DATA_READER, "Data sharing disabled due to security configuration.");
+                EPROSIMA_LOG_INFO(DATA_READER, "Data sharing disabled due to security configuration.");
                 return ReturnCode_t::RETCODE_OK;
             }
 #endif // if HAVE_SECURITY
 
             if (!type_.is_bounded())
             {
-                logInfo(DATA_READER, "Data sharing disabled because data type is not bounded");
+                EPROSIMA_LOG_INFO(DATA_READER, "Data sharing disabled because data type is not bounded");
                 return ReturnCode_t::RETCODE_OK;
             }
 
             if (has_key)
             {
-                logInfo(DATA_READER, "Data sharing disabled because data type is keyed");
+                EPROSIMA_LOG_INFO(DATA_READER, "Data sharing disabled because data type is keyed");
                 return ReturnCode_t::RETCODE_OK;
             }
 

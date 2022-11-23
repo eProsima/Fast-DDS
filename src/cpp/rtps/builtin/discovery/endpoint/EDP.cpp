@@ -99,7 +99,7 @@ bool EDP::newLocalReaderProxyData(
         const ReaderQos& rqos,
         const fastdds::rtps::ContentFilterProperty* content_filter)
 {
-    logInfo(RTPS_EDP, "Adding " << reader->getGuid().entityId << " in topic " << att.topicName);
+    EPROSIMA_LOG_INFO(RTPS_EDP, "Adding " << reader->getGuid().entityId << " in topic " << att.topicName);
 
     auto init_fun = [this, reader, &att, &rqos, content_filter](
         ReaderProxyData* rpd,
@@ -244,7 +244,7 @@ bool EDP::newLocalWriterProxyData(
         const TopicAttributes& att,
         const WriterQos& wqos)
 {
-    logInfo(RTPS_EDP, "Adding " << writer->getGuid().entityId << " in topic " << att.topicName);
+    EPROSIMA_LOG_INFO(RTPS_EDP, "Adding " << writer->getGuid().entityId << " in topic " << att.topicName);
 
     auto init_fun = [this, writer, &att, &wqos](
         WriterProxyData* wpd,
@@ -563,7 +563,7 @@ bool EDP::unpairWriterProxy(
 {
     (void)participant_guid;
 
-    logInfo(RTPS_EDP, writer_guid);
+    EPROSIMA_LOG_INFO(RTPS_EDP, writer_guid);
 
     mp_RTPSParticipant->forEachUserReader([&, removed_by_lease](RTPSReader& r) -> bool
             {
@@ -603,7 +603,7 @@ bool EDP::unpairReaderProxy(
 {
     (void)participant_guid;
 
-    logInfo(RTPS_EDP, reader_guid);
+    EPROSIMA_LOG_INFO(RTPS_EDP, reader_guid);
 
     mp_RTPSParticipant->forEachUserWriter([&](RTPSWriter& w) -> bool
             {
@@ -848,7 +848,7 @@ bool EDP::checkDataRepresentationQos(
             }
             else // XML_DATA_REPRESENTATION
             {
-                logInfo(EDP, "DataRepresentationQosPolicy XML_DATA_REPRESENTATION isn't supported.");
+                EPROSIMA_LOG_INFO(EDP, "DataRepresentationQosPolicy XML_DATA_REPRESENTATION isn't supported.");
             }
         }
     }
@@ -1056,7 +1056,7 @@ bool EDP::pairingReader(
 {
     (void)participant_guid;
 
-    logInfo(RTPS_EDP, rdata.guid() << " in topic: \"" << rdata.topicName() << "\"");
+    EPROSIMA_LOG_INFO(RTPS_EDP, rdata.guid() << " in topic: \"" << rdata.topicName() << "\"");
     std::lock_guard<std::recursive_mutex> pguard(*mp_PDP->getMutex());
 
     for (ResourceLimitedVector<ParticipantProxyData*>::const_iterator pit = mp_PDP->ParticipantProxiesBegin();
@@ -1082,7 +1082,7 @@ bool EDP::pairingReader(
 #else
                 if (R->matched_writer_add(*wdatait))
                 {
-                    logInfo(RTPS_EDP_MATCH,
+                    EPROSIMA_LOG_INFO(RTPS_EDP_MATCH,
                             "WP:" << wdatait->guid() << " match R:" << R->getGuid() << ". RLoc:" <<
                             wdatait->remote_locators());
                     //MATCHED AND ADDED CORRECTLY:
@@ -1107,7 +1107,7 @@ bool EDP::pairingReader(
                     R->getListener()->on_requested_incompatible_qos(R, incompatible_qos);
                 }
 
-                //logInfo(RTPS_EDP,RTPS_CYAN<<"Valid Matching to writerProxy: "<<wdatait->m_guid<<RTPS_DEF<<endl);
+                //EPROSIMA_LOG_INFO(RTPS_EDP,RTPS_CYAN<<"Valid Matching to writerProxy: "<<wdatait->m_guid<<RTPS_DEF<<endl);
                 if (R->matched_writer_is_matched(wdatait->guid())
                         && R->matched_writer_remove(wdatait->guid()))
                 {
@@ -1143,7 +1143,7 @@ bool EDP::pairingWriter(
 {
     (void)participant_guid;
 
-    logInfo(RTPS_EDP, W->getGuid() << " in topic: \"" << wdata.topicName() << "\"");
+    EPROSIMA_LOG_INFO(RTPS_EDP, W->getGuid() << " in topic: \"" << wdata.topicName() << "\"");
     std::lock_guard<std::recursive_mutex> pguard(*mp_PDP->getMutex());
 
     for (ResourceLimitedVector<ParticipantProxyData*>::const_iterator pit = mp_PDP->ParticipantProxiesBegin();
@@ -1173,7 +1173,7 @@ bool EDP::pairingWriter(
 #else
                 if (W->matched_reader_add(*rdatait))
                 {
-                    logInfo(RTPS_EDP_MATCH,
+                    EPROSIMA_LOG_INFO(RTPS_EDP_MATCH,
                             "RP:" << rdatait->guid() << " match W:" << W->getGuid() << ". WLoc:" <<
                             rdatait->remote_locators());
                     //MATCHED AND ADDED CORRECTLY:
@@ -1199,7 +1199,7 @@ bool EDP::pairingWriter(
                     W->getListener()->on_offered_incompatible_qos(W, incompatible_qos);
                 }
 
-                //logInfo(RTPS_EDP,RTPS_CYAN<<"Valid Matching to writerProxy: "<<wdatait->m_guid<<RTPS_DEF<<endl);
+                //EPROSIMA_LOG_INFO(RTPS_EDP,RTPS_CYAN<<"Valid Matching to writerProxy: "<<wdatait->m_guid<<RTPS_DEF<<endl);
                 if (W->matched_reader_is_matched(reader_guid) && W->matched_reader_remove(reader_guid))
                 {
 #if HAVE_SECURITY
@@ -1233,7 +1233,7 @@ bool EDP::pairing_reader_proxy_with_any_local_writer(
 {
     (void)participant_guid;
 
-    logInfo(RTPS_EDP, rdata->guid() << " in topic: \"" << rdata->topicName() << "\"");
+    EPROSIMA_LOG_INFO(RTPS_EDP, rdata->guid() << " in topic: \"" << rdata->topicName() << "\"");
 
     mp_RTPSParticipant->forEachUserWriter([&, rdata](RTPSWriter& w) -> bool
             {
@@ -1260,7 +1260,7 @@ bool EDP::pairing_reader_proxy_with_any_local_writer(
 #else
                         if (w.matched_reader_add(*rdata))
                         {
-                            logInfo(RTPS_EDP_MATCH,
+                            EPROSIMA_LOG_INFO(RTPS_EDP_MATCH,
                             "RP:" << rdata->guid() << " match W:" << w.getGuid() << ". RLoc:" <<
                                 rdata->remote_locators());
                             //MATCHED AND ADDED CORRECTLY:
@@ -1320,7 +1320,7 @@ bool EDP::pairing_reader_proxy_with_local_writer(
         const GUID_t& remote_participant_guid,
         ReaderProxyData& rdata)
 {
-    logInfo(RTPS_EDP, rdata.guid() << " in topic: \"" << rdata.topicName() << "\"");
+    EPROSIMA_LOG_INFO(RTPS_EDP, rdata.guid() << " in topic: \"" << rdata.topicName() << "\"");
 
     mp_RTPSParticipant->forEachUserWriter([&](RTPSWriter& w) -> bool
             {
@@ -1403,7 +1403,7 @@ bool EDP::pairing_remote_reader_with_local_writer_after_security(
 
                     if (w.matched_reader_add(remote_reader_data))
                     {
-                        logInfo(RTPS_EDP, "Valid Matching to local writer: " << writerGUID.entityId);
+                        EPROSIMA_LOG_INFO(RTPS_EDP, "Valid Matching to local writer: " << writerGUID.entityId);
 
                         matched = true;
 
@@ -1439,7 +1439,7 @@ bool EDP::pairing_writer_proxy_with_any_local_reader(
 {
     (void)participant_guid;
 
-    logInfo(RTPS_EDP, wdata->guid() << " in topic: \"" << wdata->topicName() << "\"");
+    EPROSIMA_LOG_INFO(RTPS_EDP, wdata->guid() << " in topic: \"" << wdata->topicName() << "\"");
 
     mp_RTPSParticipant->forEachUserReader([&, wdata](RTPSReader& r) -> bool
             {
@@ -1466,7 +1466,7 @@ bool EDP::pairing_writer_proxy_with_any_local_reader(
 #else
                         if (r.matched_writer_add(*wdata))
                         {
-                            logInfo(RTPS_EDP_MATCH,
+                            EPROSIMA_LOG_INFO(RTPS_EDP_MATCH,
                             "WP:" << wdata->guid() << " match R:" << r.getGuid() << ". WLoc:" <<
                                 wdata->remote_locators());
                             //MATCHED AND ADDED CORRECTLY:
@@ -1527,7 +1527,7 @@ bool EDP::pairing_writer_proxy_with_local_reader(
         const GUID_t& remote_participant_guid,
         WriterProxyData& wdata)
 {
-    logInfo(RTPS_EDP, wdata.guid() << " in topic: \"" << wdata.topicName() << "\"");
+    EPROSIMA_LOG_INFO(RTPS_EDP, wdata.guid() << " in topic: \"" << wdata.topicName() << "\"");
 
     mp_RTPSParticipant->forEachUserReader([&](RTPSReader& r) -> bool
             {
@@ -1613,7 +1613,7 @@ bool EDP::pairing_remote_writer_with_local_reader_after_security(
                     // TODO(richiware) Implement and use move with attributes
                     if (r.matched_writer_add(remote_writer_data))
                     {
-                        logInfo(RTPS_EDP, "Valid Matching to local reader: " << readerGUID.entityId);
+                        EPROSIMA_LOG_INFO(RTPS_EDP, "Valid Matching to local reader: " << readerGUID.entityId);
 
                         matched = true;
 

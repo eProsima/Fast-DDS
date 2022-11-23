@@ -104,7 +104,7 @@ void WLPListener::onNewCacheChangeAdded(
 
     if(guidP == reader->getGuid().guidPrefix)
     {
-        logInfo(RTPS_LIVELINESS,"Message from own RTPSParticipant, ignoring");
+        EPROSIMA_LOG_INFO(RTPS_LIVELINESS,"Message from own RTPSParticipant, ignoring");
         history->remove_change(change);
         return;
     }

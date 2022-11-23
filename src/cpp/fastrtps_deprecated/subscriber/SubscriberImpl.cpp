@@ -93,7 +93,7 @@ SubscriberImpl::~SubscriberImpl()
 
     if (mp_reader != nullptr)
     {
-        logInfo(SUBSCRIBER, this->getGuid().entityId << " in topic: " << this->m_att.topic.topicName);
+        EPROSIMA_LOG_INFO(SUBSCRIBER, this->getGuid().entityId << " in topic: " << this->m_att.topic.topicName);
     }
 
     RTPSDomain::removeRTPSReader(mp_reader);

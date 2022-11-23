@@ -107,7 +107,7 @@ WriterProxy::WriterProxy(
     initial_acknack_ = new TimedEvent(event_manager, acknack_lambda, 0);
 
     clear();
-    logInfo(RTPS_READER, "Writer Proxy created in reader: " << reader_->getGuid().entityId);
+    EPROSIMA_LOG_INFO(RTPS_READER, "Writer Proxy created in reader: " << reader_->getGuid().entityId);
 }
 
 void WriterProxy::start(
@@ -204,7 +204,7 @@ void WriterProxy::missing_changes_update(
     assert(get_mutex_owner() == get_thread_id());
 #endif // SHOULD_DEBUG_LINUX
 
-    logInfo(RTPS_READER, guid().entityId << ": changes up to seq_num: " << seq_num << " missing.");
+    EPROSIMA_LOG_INFO(RTPS_READER, guid().entityId << ": changes up to seq_num: " << seq_num << " missing.");
 
     // Check was not removed from container.
     if (seq_num > changes_from_writer_low_mark_)
@@ -223,7 +223,7 @@ int32_t WriterProxy::lost_changes_update(
     assert(get_mutex_owner() == get_thread_id());
 #endif // SHOULD_DEBUG_LINUX
 
-    logInfo(RTPS_READER, guid().entityId << ": up to seq_num: " << seq_num);
+    EPROSIMA_LOG_INFO(RTPS_READER, guid().entityId << ": up to seq_num: " << seq_num);
     int32_t current_sample_lost = 0;
 
     // Check was not removed from container.
@@ -264,7 +264,7 @@ int32_t WriterProxy::lost_changes_update(
 bool WriterProxy::received_change_set(
         const SequenceNumber_t& seq_num)
 {
-    logInfo(RTPS_READER, guid().entityId << ": seq_num: " << seq_num);
+    EPROSIMA_LOG_INFO(RTPS_READER, guid().entityId << ": seq_num: " << seq_num);
     return received_change_set(seq_num, true);
 }
 
@@ -285,7 +285,7 @@ bool WriterProxy::received_change_set(
     // Check if CacheChange_t was already and it was already removed from changesFromW container.
     if (seq_num <= changes_from_writer_low_mark_)
     {
-        logInfo(RTPS_READER, "Change " << seq_num << " <= than max available sequence number "
+        EPROSIMA_LOG_INFO(RTPS_READER, "Change " << seq_num << " <= than max available sequence number "
                                        << changes_from_writer_low_mark_);
         return false;
     }

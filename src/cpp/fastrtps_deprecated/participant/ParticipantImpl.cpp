@@ -114,7 +114,7 @@ Publisher* ParticipantImpl::createPublisher(
         const PublisherAttributes& att,
         PublisherListener* listen)
 {
-    logInfo(PARTICIPANT, "CREATING PUBLISHER IN TOPIC: " << att.topic.getTopicName());
+    EPROSIMA_LOG_INFO(PARTICIPANT, "CREATING PUBLISHER IN TOPIC: " << att.topic.getTopicName());
     //Look for the correct type registration
 
     TopicDataType* p_type = nullptr;
@@ -265,7 +265,7 @@ Subscriber* ParticipantImpl::createSubscriber(
         const SubscriberAttributes& att,
         SubscriberListener* listen)
 {
-    logInfo(PARTICIPANT, "CREATING SUBSCRIBER IN TOPIC: " << att.topic.getTopicName());
+    EPROSIMA_LOG_INFO(PARTICIPANT, "CREATING SUBSCRIBER IN TOPIC: " << att.topic.getTopicName());
     //Look for the correct type registration
 
     TopicDataType* p_type = nullptr;
@@ -422,7 +422,7 @@ bool ParticipantImpl::registerType(
         }
     }
     m_types.push_back(type);
-    logInfo(PARTICIPANT, "Type " << type->getName() << " registered.");
+    EPROSIMA_LOG_INFO(PARTICIPANT, "Type " << type->getName() << " registered.");
     return true;
 }
 

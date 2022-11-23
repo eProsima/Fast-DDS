@@ -70,7 +70,7 @@ void TypeLookupRequestListener::onNewCacheChangeAdded(
         reader->getHistory()->remove_change(change);
     }
 
-    logInfo(TYPELOOKUP_SERVICE_REQUEST_LISTENER, "Received new cache change");
+    EPROSIMA_LOG_INFO(TYPELOOKUP_SERVICE_REQUEST_LISTENER, "Received new cache change");
     TypeLookup_Request request;
     if (tlm_->recv_request(*change, request))
     {
