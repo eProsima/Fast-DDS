@@ -104,6 +104,11 @@ public:
         return true;
     }
 
+    void set_enabled_statistics_writers_mask(
+            uint32_t /*enabled_writers*/)
+    {
+    }
+
 #endif // FASTDDS_STATISTICS
 
 

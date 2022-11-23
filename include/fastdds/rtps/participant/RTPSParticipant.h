@@ -19,6 +19,7 @@
 #ifndef _FASTDDS_RTPS_RTPSParticipant_H_
 #define _FASTDDS_RTPS_RTPSParticipant_H_
 
+#include <cstdint>
 #include <cstdlib>
 #include <memory>
 
@@ -276,7 +277,7 @@ public:
 
 #ifdef FASTDDS_STATISTICS
 
-    /*
+    /**
      * Add a listener to receive statistics backend callbacks
      * @param listener
      * @param kind combination of fastdds::statistics::EventKind flags used as a mask. Events to notify.
@@ -286,7 +287,7 @@ public:
             std::shared_ptr<fastdds::statistics::IListener> listener,
             uint32_t kind);
 
-    /*
+    /**
      * Remove a listener from receiving statistics backend callbacks
      * @param listener
      * @param kind combination of fastdds::statistics::EventKind flags used as a mask. Events to ignore.
@@ -295,6 +296,14 @@ public:
     bool remove_statistics_listener(
             std::shared_ptr<fastdds::statistics::IListener> listener,
             uint32_t kind);
+
+    /**
+     * @brief Set the enabled statistics writers mask
+     *
+     * @param enabled_writers The new mask to set
+     */
+    void set_enabled_statistics_writers_mask(
+            uint32_t enabled_writers);
 
 #endif // FASTDDS_STATISTICS
 
