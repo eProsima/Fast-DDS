@@ -77,11 +77,11 @@ Function StatisticsListenersImpl::for_each_listener(
 {
     // Use a collection copy to prevent locking on traversal
     std::unique_lock<fastrtps::RecursiveTimedMutex> lock(get_statistics_mutex());
-    auto listeners = members_->listeners;
-    lock.unlock();
-
     if (members_)
     {
+        auto listeners = members_->listeners;
+        lock.unlock();
+
         for (auto& listener : listeners)
         {
             f(listener);
