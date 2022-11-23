@@ -342,14 +342,15 @@ TEST_F(UDPv6Tests, send_to_wrong_interface)
     ASSERT_TRUE(transportUnderTest.OpenOutputChannel(send_resource_list, outputChannelLocator));
     ASSERT_FALSE(send_resource_list.empty());
 
+    Locator_t empty_locator;
+    empty_locator.kind = LOCATOR_KIND_UDPv6;
+    EXPECT_TRUE(transportUnderTest.OpenOutputChannel(send_resource_list, empty_locator));
+
     LocatorList_t locator_list;
-    Locator_t locator;
-    locator.kind = LOCATOR_KIND_UDPv6;
-    locator_list.push_back(locator);
+    locator_list.push_back(empty_locator);
     Locators locators_begin(locator_list.begin());
     Locators locators_end(locator_list.end());
 
-    //Sending through a different IP will NOT work, except 0.0.0.0
     IPLocator::setIPv6(outputChannelLocator, std::string("fe80::ffff:6f6f:6f6f"));
     std::vector<octet> message = { 'H', 'e', 'l', 'l', 'o' };
     ASSERT_FALSE(send_resource_list.at(0)->send(message.data(), (uint32_t)message.size(), &locators_begin,

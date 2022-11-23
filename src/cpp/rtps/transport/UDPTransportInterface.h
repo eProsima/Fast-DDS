@@ -101,6 +101,7 @@ public:
     /**
      * Blocking Send through the specified channel. In both modes, using a localLocator of 0.0.0.0 will
      * send through all whitelisted interfaces provided the channel is open.
+     *
      * @param send_buffer Slice into the raw data to send.
      * @param send_buffer_size Size of the raw data. It will be used as a bounds check for the previous argument.
      * It must not exceed the send_buffer_size fed to this class during construction.
@@ -112,6 +113,8 @@ public:
      * @param only_multicast_purpose multicast network interface
      * @param whitelisted network interface included in the user whitelist
      * @param max_blocking_time_point maximum blocking time.
+     *
+     * @pre Open the output channel of each remote locator by invoking \ref OpenOutputChannel function.
      */
     virtual bool send(
             const fastrtps::rtps::octet* send_buffer,
