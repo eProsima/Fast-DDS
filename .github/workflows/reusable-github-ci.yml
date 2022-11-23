@@ -713,7 +713,7 @@ jobs:
              }
 
              $res = [xml](gc $Env:JUNIT_LOG)
-             $failed = $res.testsuite.failures
+             [long]$failed = $res.testsuite.failures
 
              # Summary
              $res.testsuite | select name, tests, failures, disabled, hostname, time, timestamp |
@@ -735,7 +735,7 @@ jobs:
              # fallback to parse the ordinary output file
              $pattern = '^(?:.\[0;32m)?(\d+)% tests passed(?:.\[0;0m)?, (\d+) tests failed(?:.\[0;0m)? out of (\d+)$'
              $summary = (cat .\log\latest_test\fastrtps\stdout.log).where({ $_ -match $pattern }, 'skipuntil')
-             $failed = $matches[2]
+             [long]$failed = $matches[2]
 
              $summary[0] | out-file -filepath $env:github_step_summary
 
@@ -771,7 +771,6 @@ jobs:
            }
 
            if($failed) { Write-Error -Message "$failed test(s) failed" }
-           exit $failed
 
       - name: Upload coverage
         if: ${{ steps.process_coverage.outcome == 'success' }}
