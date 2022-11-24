@@ -240,14 +240,10 @@ ParticipantProxyData* PDP::add_participant_proxy_data(
 void PDP::initializeParticipantProxyData(
         ParticipantProxyData* participant_data)
 {
-<<<<<<< HEAD
-    participant_data->m_leaseDuration = mp_RTPSParticipant->getAttributes().builtin.discovery_config.leaseDuration;
-=======
     RTPSParticipantAttributes& attributes = mp_RTPSParticipant->getAttributes();
     bool announce_locators = !mp_RTPSParticipant->is_intraprocess_only();
 
     participant_data->m_leaseDuration = attributes.builtin.discovery_config.leaseDuration;
->>>>>>> 865702b44 (Fix communication with asymmetric ignoreParticipantFlags (#3105))
     //set_VendorId_eProsima(participant_data->m_VendorId);
     participant_data->m_VendorId = c_VendorId_eProsima;
 
@@ -286,15 +282,6 @@ void PDP::initializeParticipantProxyData(
     participant_data->m_availableBuiltinEndpoints |= mp_RTPSParticipant->security_manager().builtin_endpoints();
 #endif // if HAVE_SECURITY
 
-<<<<<<< HEAD
-    for (const Locator_t& loc : mp_RTPSParticipant->getAttributes().defaultUnicastLocatorList)
-    {
-        participant_data->default_locators.add_unicast_locator(loc);
-    }
-    for (const Locator_t& loc : mp_RTPSParticipant->getAttributes().defaultMulticastLocatorList)
-    {
-        participant_data->default_locators.add_multicast_locator(loc);
-=======
     if (announce_locators)
     {
         for (const Locator_t& loc : attributes.defaultUnicastLocatorList)
@@ -305,7 +292,6 @@ void PDP::initializeParticipantProxyData(
         {
             participant_data->default_locators.add_multicast_locator(loc);
         }
->>>>>>> 865702b44 (Fix communication with asymmetric ignoreParticipantFlags (#3105))
     }
     participant_data->m_expectsInlineQos = false;
     participant_data->m_guid = mp_RTPSParticipant->getGuid();
@@ -352,17 +338,9 @@ void PDP::initializeParticipantProxyData(
                 participant_data->metatraffic_locators.add_multicast_locator(loc);
             }
         }
-
-<<<<<<< HEAD
-    participant_data->m_participantName = std::string(mp_RTPSParticipant->getAttributes().getName());
-=======
-        fastdds::rtps::ExternalLocatorsProcessor::add_external_locators(*participant_data,
-                attributes.builtin.metatraffic_external_unicast_locators,
-                attributes.default_external_unicast_locators);
     }
 
     participant_data->m_participantName = std::string(attributes.getName());
->>>>>>> 865702b44 (Fix communication with asymmetric ignoreParticipantFlags (#3105))
 
     participant_data->m_userData = mp_RTPSParticipant->getAttributes().userData;
 
