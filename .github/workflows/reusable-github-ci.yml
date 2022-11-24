@@ -224,7 +224,7 @@ jobs:
              }
              else
              {
-               Write-Error -Message "Unknown platform" -Category InvalidOperation 
+               Write-Error -Message "Unknown platform" -Category InvalidOperation
              }
 
       - name: Download & build & install googletest system wide
@@ -395,7 +395,7 @@ jobs:
 
                 # lead openssl to the right config file
                 $Env:OPENSSL_CONF=$config
-                
+
                 # introduce openssl binary in the path for the lower check
                 $Env:Path += ";$Env:OPENSSL64_ROOT\bin"
 
@@ -608,7 +608,7 @@ jobs:
            $buildargs = "--merge-install",
                         "--symlink-install",
                         "--event-handlers=console_cohesion+",
-                        "--packages-up-to", "fastrtps", 
+                        "--packages-up-to", "fastrtps",
                         "--mixin", $translate["${{ matrix.configs.config }}"]
 
            # add coverage testing if the install step succeeds
@@ -637,13 +637,16 @@ jobs:
            # Show warnings or error reports
            $WarningPreference = 'Continue'
 
+           $warning_sb = {Write-Warning $args[0]; "::warning::" + $args[0]}
+           $error_sb = {Write-Warning $args[0]; "::error::" + $args[0]}
+
            switch($lastexitcode)
            {
-               0 { $report_kind = "generation or build warnings"; $wm = {Write-Warning $args[0]} } 
-               1 { $report_kind = "CMake errors"; $wm = {Write-Error $args[0]} } 
-               2 { $report_kind = "build errors"; $wm = {Write-Error $args[0]} } 
+               0 { $report_kind = "generation or build warnings"; $wm = $warning_sb }
+               1 { $report_kind = "CMake errors"; $wm = $error_sb }
+               2 { $report_kind = "build errors"; $wm = $error_sb }
            }
-            
+
            # Show only reports with warning or errors
            $reports = gci -Path ./log/* -R -Filter stderr.log | ? { sls -Path $_ -Pattern "error|warning" }
 
@@ -653,7 +656,7 @@ jobs:
                & $wm $msg
                (($reports.fullname | sls "log/build_[\d-_]*/(?<package>[^/]*)/stderr.log").Matches.Groups |
                    ? name -eq "package").value | % {
-                       $msg += "$_ "
+                       $msg += " $_"
                        & $wm $_
                        Get-Content (Resolve-Path "./log/*/$_/stderr.log")
                    }
