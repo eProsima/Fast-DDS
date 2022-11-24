@@ -638,14 +638,15 @@ jobs:
            # Show warnings or error reports
            $WarningPreference = 'Continue'
 
-           $warning_sb = {Write-Warning $args[0]; "::warning::" + $args[0]}
-           $error_sb = {Write-Warning $args[0]; "::error::" + $args[0]}
+           $output_buffer = ""
+           $warning_sb = {Write-Warning $args[0]; $output_buffer += $args[0]}
+           $error_sb = {Write-Warning $args[0]; $output_buffer += $args[0]}
 
            switch($lastexitcode)
            {
-               0 { $report_kind = "generation or build warnings"; $wm = $warning_sb }
-               1 { $report_kind = "CMake errors"; $wm = $error_sb }
-               2 { $report_kind = "build errors"; $wm = $error_sb }
+               0 { $report_kind = "generation or build warnings"; $output_buffer = "::warning::"; $wm = $warning_sb }
+               1 { $report_kind = "CMake errors"; $output_buffer = "::error::"; $wm = $error_sb }
+               2 { $report_kind = "build errors"; $output_buffer = "::error::"; $wm = $error_sb }
            }
 
            # Show only reports with warning or errors
@@ -666,7 +667,7 @@ jobs:
                        Get-Content $file
                    }
 
-               "issues=$msg" | Out-File $Env:GITHUB_OUTPUT -Append
+               "BuildWarningsErrors=$output_buffer" | Out-File $Env:GITHUB_OUTPUT -Append
                "BuildLogFolder=" + $logFolder.FullName | Out-File $Env:GITHUB_OUTPUT -Append
            }
 
@@ -754,8 +755,6 @@ jobs:
              [long]$failed = $res.testsuite.failures
 
              # Summary
-             $issues = "${{ steps.build.outputs.issues }}";
-             if($issues -match "warning|error") { $issues | Out-File $Env:GITHUB_STEP_SUMMARY }
              $res.testsuite | select name, tests, failures, disabled, hostname, time, timestamp |
                 New-MDTable | Tee-Object -FilePath $Env:GITHUB_STEP_SUMMARY -Append
 
@@ -774,15 +773,13 @@ jobs:
            {
              # fallback to parse the ordinary output file
              $pattern = '^(?:.\[0;32m)?(\d+)% tests passed(?:.\[0;0m)?, (\d+) tests failed(?:.\[0;0m)? out of (\d+)$'
-             $summary = (cat .\log\latest_test\fastrtps\stdout.log).where({ $_ -match $pattern }, 'skipuntil')
+             $summary = (gc .\log\latest_test\fastrtps\stdout.log).where({ $_ -match $pattern }, 'SkipUntil')
              [long]$failed = $matches[2]
 
-             $summary[0] | out-file -filepath $env:github_step_summary
+             $summary[0] | Out-File -FilePath $Env:GITHUB_STEP_SUMMARY
 
              $summary
            }
-
-           "test_failures=$failed" | Out-File $Env:GITHUB_OUTPUT -Append
 
            if($IsWindows -and $failed)
            {
@@ -813,9 +810,8 @@ jobs:
            if($failed)
            {
              $msg = "$failed test(s) failed"
-             "::error::$msg" 
+             "TestErrors=::error::$msg" | Out-File $Env:GITHUB_OUTPUT -Append
              Write-Error $msg;
-             exit $failed
            }
 
       - name: Upload build warnings and errors
@@ -838,3 +834,10 @@ jobs:
         with:
             name: crash-dumps-${{ inputs.label }}-${{ matrix.configs.os }}-${{ matrix.configs.toolset }}-${{ matrix.configs.config }}
             path: ${{ steps.WERSetup.outputs.DumpFolder }}
+
+      - name: Check test failures
+        if: ${{ steps.build.outcome == 'failure' || steps.summary.outcome == 'failure' }}
+        run: |
+           "${{ steps.build.outputs.BuildWarningsErrors }}"
+           "${{ steps.summary.outputs.TestErrors }}"
+           exit 1
