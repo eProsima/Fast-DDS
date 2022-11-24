@@ -596,6 +596,7 @@ jobs:
 
       - name: Build
         id: build
+        continue-on-error: true
         run: |
            # build type mixin names doesn't match cmake ones
            $translate = @{
@@ -652,20 +653,25 @@ jobs:
 
            if($reports)
            {
+               $logFolder = New-Item -Type Directory -Path build_logs
                $msg = "There were $report_kind in some packages:"
                & $wm $msg
                (($reports.fullname | sls "log/build_[\d-_]*/(?<package>[^/]*)/stderr.log").Matches.Groups |
                    ? name -eq "package").value | % {
                        $msg += " $_"
                        & $wm $_
-                       Get-Content (Resolve-Path "./log/*/$_/stderr.log")
+                       $file = Resolve-Path "./log/*/$_/stderr.log"
+                       $dest_file = Join-Path -Path $logFolder -ChildPath "$_-stderr.log"
+                       Copy-Item -Path $file -Destination $dest_file
+                       Get-Content $file
                    }
 
                "issues=$msg" | Out-File $Env:GITHUB_OUTPUT -Append
+               "BuildLogFolder=" + $logFolder.FullName | Out-File $Env:GITHUB_OUTPUT -Append
            }
 
       - name: Test
-        if: ${{ !contains(github.event.pull_request.labels.*.name, 'no-test') }}
+        if: ${{ !contains(github.event.pull_request.labels.*.name, 'no-test') && steps.build.outcome == 'success'  }}
         id: test
         run: |
            # Create a junit file for test results
@@ -682,7 +688,7 @@ jobs:
            "::endgroup::"
 
       - name: Process gcc-coverage
-        if: ${{ steps.coverage.outcome == 'success' }}
+        if: ${{ steps.coverage.outcome == 'success' && steps.test.outcome == 'success' }}
         id: process_coverage
         run: |
              # ignore coverage on cmake try runs
@@ -729,6 +735,7 @@ jobs:
 
       - name: Test Summary
         id: summary
+        if: ${{ steps.test.outcome == 'success' }}
         continue-on-error: true
         run: |
            # If the CMake version (3.21 et seq.) supports junit use it
@@ -803,7 +810,20 @@ jobs:
              "::endgroup::"
            }
 
-           if($failed) { Write-Error -Message "$failed test(s) failed"; exit $failed }
+           if($failed)
+           {
+             $msg = "$failed test(s) failed"
+             "::error::$msg" 
+             Write-Error $msg;
+             exit $failed
+           }
+
+      - name: Upload build warnings and errors
+        if: ${{ steps.build.outputs.BuildLogFolder != 0 }}
+        uses: actions/upload-artifact@v3
+        with:
+            name: build-issues-${{ inputs.label }}-${{ matrix.configs.os }}-${{ matrix.configs.config }}
+            path: ${{ steps.build.outputs.BuildLogFolder }}
 
       - name: Upload coverage
         if: ${{ steps.process_coverage.outcome == 'success' }}
