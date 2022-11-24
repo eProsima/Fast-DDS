@@ -612,6 +612,19 @@ TEST_F(RTPSStatisticsTests, statistics_rpts_listener_callbacks)
     uint16_t length = 255;
     create_endpoints(length, RELIABLE);
 
+    uint32_t enable_writers_mask =
+        EventKind::HISTORY2HISTORY_LATENCY |
+        EventKind::NETWORK_LATENCY |
+        EventKind::PUBLICATION_THROUGHPUT |
+        EventKind::SUBSCRIPTION_THROUGHPUT |
+        EventKind::RTPS_SENT |
+        EventKind::RTPS_LOST |
+        EventKind::RESENT_DATAS |
+        EventKind::HEARTBEAT_COUNT |
+        EventKind::ACKNACK_COUNT |
+        EventKind::DATA_COUNT |
+        EventKind::SAMPLE_DATAS;
+
     // participant specific callbacks
     auto participant_listener = make_shared<MockListener>();
     ASSERT_TRUE(participant_->add_statistics_listener(participant_listener,
@@ -622,10 +635,12 @@ TEST_F(RTPSStatisticsTests, statistics_rpts_listener_callbacks)
     ASSERT_TRUE(participant_->add_statistics_listener(participant_writer_listener,
             EventKind::DATA_COUNT | EventKind::RESENT_DATAS |
             EventKind::PUBLICATION_THROUGHPUT | EventKind::SAMPLE_DATAS));
+    participant_->set_enabled_statistics_writers_mask(enable_writers_mask);
 
     // writer specific callbacks
     auto writer_listener = make_shared<MockListener>();
     ASSERT_TRUE(writer_->add_statistics_listener(writer_listener));
+    writer_->set_enabled_statistics_writers_mask(enable_writers_mask);
 
     // reader callbacks through participant listener
     auto participant_reader_listener = make_shared<MockListener>();
@@ -636,6 +651,7 @@ TEST_F(RTPSStatisticsTests, statistics_rpts_listener_callbacks)
     // reader specific callbacks
     auto reader_listener = make_shared<MockListener>();
     ASSERT_TRUE(reader_->add_statistics_listener(reader_listener));
+    reader_->set_enabled_statistics_writers_mask(enable_writers_mask);
 
     // we must received the RTPS_SENT, RTPS_LOST and NETWORK_LATENCY notifications
     EXPECT_CALL(*participant_listener, on_rtps_sent)
@@ -758,11 +774,19 @@ TEST_F(RTPSStatisticsTests, statistics_rpts_listener_callbacks_fragmented)
             return false;
         });
 
+    uint32_t enable_writers_mask =
+        EventKind::HISTORY2HISTORY_LATENCY |
+        EventKind::HEARTBEAT_COUNT |
+        EventKind::ACKNACK_COUNT |
+        EventKind::NACKFRAG_COUNT |
+        EventKind::DATA_COUNT;
+
     // writer callbacks through participant listener
     auto participant_listener = make_shared<MockListener>();
     uint32_t mask = EventKind::DATA_COUNT | EventKind::HEARTBEAT_COUNT
             | EventKind::ACKNACK_COUNT | EventKind::NACKFRAG_COUNT | EventKind::HISTORY2HISTORY_LATENCY;
     ASSERT_TRUE(participant_->add_statistics_listener(participant_listener, mask));
+    participant_->set_enabled_statistics_writers_mask(enable_writers_mask);
 
     EXPECT_CALL(*participant_listener, on_data_count)
             .Times(AtLeast(1));
@@ -777,6 +801,8 @@ TEST_F(RTPSStatisticsTests, statistics_rpts_listener_callbacks_fragmented)
 
     // Create the testing endpoints
     create_endpoints(length, RELIABLE);
+    writer_->set_enabled_statistics_writers_mask(enable_writers_mask);
+    reader_->set_enabled_statistics_writers_mask(enable_writers_mask);
 
     // match writer and reader on a dummy topic
     match_endpoints(false, "chunk", "statisticsLargeTopic");
@@ -807,6 +833,16 @@ TEST_F(RTPSStatisticsTests, statistics_rpts_listener_gap_callback)
     using namespace fastrtps::rtps;
     using namespace std;
 
+    uint32_t enable_writers_mask =
+        EventKind::PUBLICATION_THROUGHPUT |
+        EventKind::RESENT_DATAS |
+        EventKind::HEARTBEAT_COUNT |
+        EventKind::ACKNACK_COUNT |
+        EventKind::NACKFRAG_COUNT |
+        EventKind::GAP_COUNT |
+        EventKind::DATA_COUNT |
+        EventKind::SAMPLE_DATAS;
+
     // create the listeners and set expectations
     auto participant_writer_listener = make_shared<MockListener>();
     auto writer_listener = make_shared<MockListener>();
@@ -831,6 +867,7 @@ TEST_F(RTPSStatisticsTests, statistics_rpts_listener_gap_callback)
     // create the writer, reader is a late joiner
     uint16_t length = 255;
     create_writer(length, RELIABLE, TRANSIENT_LOCAL);
+    writer_->set_enabled_statistics_writers_mask(enable_writers_mask);
 
     // writer callback through participant listener
     ASSERT_TRUE(participant_->add_statistics_listener(participant_writer_listener, EventKind::GAP_COUNT));
@@ -877,10 +914,16 @@ TEST_F(RTPSStatisticsTests, statistics_rpts_listener_discovery_callbacks)
     using namespace fastrtps::rtps;
     using namespace std;
 
+    uint32_t enable_writers_mask =
+        EventKind::PDP_PACKETS |
+        EventKind::EDP_PACKETS |
+        EventKind::DISCOVERED_ENTITY;
+
     // create the listener and set expectations
     auto participant_listener = make_shared<MockListener>();
     ASSERT_TRUE(participant_->add_statistics_listener(participant_listener,
             EventKind::DISCOVERED_ENTITY | EventKind::PDP_PACKETS | EventKind::EDP_PACKETS));
+    participant_->set_enabled_statistics_writers_mask(enable_writers_mask);
 
     // check callbacks on data exchange
     atomic_int callbacks(0);
@@ -1007,6 +1050,13 @@ TEST_F(RTPSStatisticsTests, statistics_rpts_avoid_empty_resent_callbacks)
     // create the writer, reader is a late joiner
     uint16_t length = 255;
     create_lazy_writer(length, RELIABLE, TRANSIENT_LOCAL);
+    uint32_t enable_writers_mask =
+        EventKind::HEARTBEAT_COUNT |
+        EventKind::DATA_COUNT |
+        EventKind::SAMPLE_DATAS |
+        EventKind::PUBLICATION_THROUGHPUT |
+        EventKind::RESENT_DATAS;
+    writer_->set_enabled_statistics_writers_mask(enable_writers_mask);
 
     // writer specific callbacks
     ASSERT_TRUE(writer_->add_statistics_listener(writer_listener));
@@ -1109,6 +1159,13 @@ TEST_F(RTPSStatisticsTests, statistics_rpts_unordered_datagrams)
     // create the listener and set expectations
     auto participant_listener = make_shared<MockListener>();
     ASSERT_TRUE(participant_->add_statistics_listener(participant_listener, EventKind::RTPS_LOST));
+    // uint32_t enable_writers_mask =
+    //     EventKind::HEARTBEAT_COUNT |
+    //     EventKind::DATA_COUNT |
+    //     EventKind::SAMPLE_DATAS |
+    //     EventKind::PUBLICATION_THROUGHPUT |
+    //     EventKind::RESENT_DATAS;
+    participant_->set_enabled_statistics_writers_mask(EventKind::RTPS_LOST);
 
     std::vector<Entity2LocatorTraffic> lost_callback_data;
     auto callback_action = [&lost_callback_data](const Entity2LocatorTraffic& data) -> void
