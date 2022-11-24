@@ -560,11 +560,11 @@ TEST_P(PubSubBasic, ReceivedPropertiesDataWithinSizeLimit)
     // Set statistics properties manually to ensure a fix size of participant properties
     PropertyPolicy property_policy;
     property_policy.properties().emplace_back(
-            eprosima::fastdds::dds::parameter_policy_physical_data_host, "test_host");
+        eprosima::fastdds::dds::parameter_policy_physical_data_host, "test_host");
     property_policy.properties().emplace_back(
-            eprosima::fastdds::dds::parameter_policy_physical_data_user, "test_user");
+        eprosima::fastdds::dds::parameter_policy_physical_data_user, "test_user");
     property_policy.properties().emplace_back(
-            eprosima::fastdds::dds::parameter_policy_physical_data_process, "test_process");
+        eprosima::fastdds::dds::parameter_policy_physical_data_process, "test_process");
 
     writer.static_discovery("file://PubSubWriter.xml")
             .unicastLocatorList(WriterUnicastLocators)
