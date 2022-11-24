@@ -87,6 +87,7 @@ jobs:
     name: ${{ matrix.configs.os }} ${{ matrix.configs.config }} ${{ matrix.configs.toolset }} CI
     runs-on: ${{ matrix.configs.os }}
     steps:
+
       - name: Setup environment
         run: |
              # Handle single target/multi target
@@ -636,17 +637,17 @@ jobs:
            "::endgroup::"
 
            # Show warnings or error reports
-           $WarningPreference = 'Continue'
+           $WarningActionPreference = $ErrorActionPreference = 'Continue'
 
            $output_buffer = ""
-           $warning_sb = {Write-Warning $args[0]; $output_buffer += $args[0]}
-           $error_sb = {Write-Warning $args[0]; $output_buffer += $args[0]}
+           $warning_sb = {Write-Warning $args[0]; $global:output_buffer += $args[0]}
+           $error_sb = {Write-Error $args[0]; $global:output_buffer += $args[0]}
 
            switch($lastexitcode)
            {
-               0 { $report_kind = "generation or build warnings"; $output_buffer = "::warning::"; $wm = $warning_sb }
-               1 { $report_kind = "CMake errors"; $output_buffer = "::error::"; $wm = $error_sb }
-               2 { $report_kind = "build errors"; $output_buffer = "::error::"; $wm = $error_sb }
+               0 { $report_kind = "generation or build warnings"; $wm = $warning_sb }
+               1 { $report_kind = "CMake errors"; $wm = $error_sb }
+               2 { $report_kind = "build errors"; $wm = $error_sb }
            }
 
            # Show only reports with warning or errors
@@ -667,7 +668,7 @@ jobs:
                        Get-Content $file
                    }
 
-               "BuildWarningsErrors=$output_buffer" | Out-File $Env:GITHUB_OUTPUT -Append
+               "BuildWarningsErrors=" + $output_buffer | Out-File $Env:GITHUB_OUTPUT
                "BuildLogFolder=" + $logFolder.FullName | Out-File $Env:GITHUB_OUTPUT -Append
            }
 
@@ -740,6 +741,7 @@ jobs:
         continue-on-error: true
         run: |
            # If the CMake version (3.21 et seq.) supports junit use it
+           $ErrorActionPreference = 'Continue'
            $failed = 0
 
            if(Test-Path Env:JUNIT_LOG)
@@ -810,7 +812,7 @@ jobs:
            if($failed)
            {
              $msg = "$failed test(s) failed"
-             "TestErrors=::error::$msg" | Out-File $Env:GITHUB_OUTPUT -Append
+             "TestErrors=" + $msg | Out-File $Env:GITHUB_OUTPUT -Append
              Write-Error $msg;
            }
 
@@ -836,8 +838,27 @@ jobs:
             path: ${{ steps.WERSetup.outputs.DumpFolder }}
 
       - name: Check test failures
-        if: ${{ steps.build.outcome == 'failure' || steps.summary.outcome == 'failure' }}
-        run: |
-           "${{ steps.build.outputs.BuildWarningsErrors }}"
-           "${{ steps.summary.outputs.TestErrors }}"
-           exit 1
+        if: ${{ steps.build.outputs.BuildWarningsErrors != 0 || steps.summary.outcome == 'failure' }}
+        uses: actions/github-script@v6
+        with:
+          script: |
+                  const build_outcome = '${{ steps.build.outcome }}';
+                  const test_outcome = '${{ steps.summary.outcome }}';
+                  const build_info = '${{ steps.build.outputs.BuildWarningsErrors }}';
+                  const test_info = '${{ steps.summary.outputs.TestErrors }}';
+
+                  if(build_outcome == 'success')
+                  {
+                    if(!!build_info)
+                    {
+                      core.warning(build_info);
+                    }
+                    if (test_outcome == 'failure')
+                    {
+                      core.setFailed(test_info);
+                    }
+                  }
+                  else
+                  {
+                    core.setFailed(build_info + test_info);
+                  }
