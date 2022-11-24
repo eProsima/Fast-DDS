@@ -20,6 +20,7 @@
 #include <csignal>
 
 #include <fastdds/dds/domain/DomainParticipantFactory.hpp>
+#include <fastdds/dds/domain/DomainParticipantListener.hpp>
 #include <fastdds/dds/subscriber/DataReader.hpp>
 #include <fastdds/dds/subscriber/qos/DataReaderQos.hpp>
 #include <fastdds/dds/subscriber/SampleInfo.hpp>
@@ -38,6 +39,40 @@ using namespace eprosima::fastdds::rtps;
 std::atomic<bool> HelloWorldSubscriber::stop_(false);
 std::mutex HelloWorldSubscriber::terminate_cv_mtx_;
 std::condition_variable HelloWorldSubscriber::terminate_cv_;
+
+struct MyParticipantListener : public DomainParticipantListener
+{
+    void on_participant_discovery(
+            DomainParticipant* /*participant*/,
+            eprosima::fastrtps::rtps::ParticipantDiscoveryInfo&& info) override
+    {
+        if (info.DISCOVERED_PARTICIPANT == info.status)
+        {
+            std::cout << "Discovered participant "
+                << info.info.m_guid
+                << " on "
+                << info.info.metatraffic_locators.unicast[0]
+                << std::endl;
+        }
+    }
+
+    void on_publisher_discovery(
+            DomainParticipant* /*participant*/,
+            eprosima::fastrtps::rtps::WriterDiscoveryInfo&& info) override
+    {
+        if (info.DISCOVERED_WRITER == info.status)
+        {
+            std::cout << "Discovered DataWriter "
+                << info.info.guid()
+                << " on "
+                << info.info.remote_locators().unicast[0]
+                << std::endl;
+        }
+    }
+
+};
+
+static MyParticipantListener participant_listener_;
 
 HelloWorldSubscriber::HelloWorldSubscriber()
     : participant_(nullptr)
@@ -124,7 +159,8 @@ bool HelloWorldSubscriber::init(
     }
 
     // CREATE THE PARTICIPANT
-    participant_ = DomainParticipantFactory::get_instance()->create_participant(domain, pqos);
+    auto factory = DomainParticipantFactory::get_instance();
+    participant_ = factory->create_participant(domain, pqos, &participant_listener_, StatusMask::none());
 
     if (participant_ == nullptr)
     {
