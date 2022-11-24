@@ -19,8 +19,7 @@
 #include <statistics/rtps/StatisticsBase.hpp>
 
 #include <fastdds/rtps/writer/RTPSWriter.h>
-
-#include "../../types/types.h"
+#include <statistics/types/types.h>
 
 using namespace eprosima::fastdds::statistics;
 

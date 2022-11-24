@@ -23,9 +23,8 @@
 
 #ifdef FASTDDS_STATISTICS
 
-#include <cstdint>
-
 #include <atomic>
+#include <cstdint>
 #include <map>
 #include <mutex>
 

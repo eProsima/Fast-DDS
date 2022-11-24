@@ -917,7 +917,7 @@ TEST_F(RTPSStatisticsTests, statistics_rpts_listener_callbacks_no_enabled_writer
 
     // Check callbacks on data exchange; we must not receive:
     // + RTPSWriter: PUBLICATION_THROUGHPUT, RESENT_DATAS,
-    //               GAP_COUNT, DATA_COUNT, SAMPLE_DATAS & PHYSICAL_DATA
+    //               DATA_COUNT, SAMPLE_DATAS & PHYSICAL_DATA
     //   neither: NACKFRAG_COUNT
     EXPECT_CALL(*writer_listener, on_heartbeat_count)
             .Times(0);
@@ -1321,12 +1321,6 @@ TEST_F(RTPSStatisticsTests, statistics_rpts_unordered_datagrams)
     // create the listener and set expectations
     auto participant_listener = make_shared<MockListener>();
     ASSERT_TRUE(participant_->add_statistics_listener(participant_listener, EventKind::RTPS_LOST));
-    // uint32_t enable_writers_mask =
-    //     EventKind::HEARTBEAT_COUNT |
-    //     EventKind::DATA_COUNT |
-    //     EventKind::SAMPLE_DATAS |
-    //     EventKind::PUBLICATION_THROUGHPUT |
-    //     EventKind::RESENT_DATAS;
     participant_->set_enabled_statistics_writers_mask(EventKind::RTPS_LOST);
 
     std::vector<Entity2LocatorTraffic> lost_callback_data;

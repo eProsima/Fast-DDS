@@ -19,9 +19,8 @@
 #ifndef _STATISTICS_RTPS_STATISTICSBASE_HPP_
 #define _STATISTICS_RTPS_STATISTICSBASE_HPP_
 
-#include <cstdint>
-
 #include <atomic>
+#include <cstdint>
 #include <mutex>
 #include <set>
 
