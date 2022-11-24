@@ -1914,22 +1914,22 @@ TEST(LivelinessTests, Detect_Deadlock_ManualByParticipant_Intraprocess)
     unsigned int announcement_period_ms = 1;
 
     participantA.pub_liveliness_kind(MANUAL_BY_PARTICIPANT_LIVELINESS_QOS)
-                .sub_liveliness_kind(MANUAL_BY_PARTICIPANT_LIVELINESS_QOS)
-                .pub_liveliness_announcement_period(announcement_period_ms * 1e-3)
-                .sub_liveliness_announcement_period(announcement_period_ms * 1e-3)
-                .pub_liveliness_lease_duration(lease_duration_ms * 1e-3)
-                .sub_liveliness_lease_duration(lease_duration_ms * 1e-3)
-//              .disable_builtin_transport()
-                .init();
+            .sub_liveliness_kind(MANUAL_BY_PARTICIPANT_LIVELINESS_QOS)
+            .pub_liveliness_announcement_period(announcement_period_ms * 1e-3)
+            .sub_liveliness_announcement_period(announcement_period_ms * 1e-3)
+            .pub_liveliness_lease_duration(lease_duration_ms * 1e-3)
+            .sub_liveliness_lease_duration(lease_duration_ms * 1e-3)
+    //              .disable_builtin_transport()
+            .init();
 
     participantB.pub_liveliness_kind(MANUAL_BY_PARTICIPANT_LIVELINESS_QOS)
-                .sub_liveliness_kind(MANUAL_BY_PARTICIPANT_LIVELINESS_QOS)
-                .pub_liveliness_announcement_period(announcement_period_ms * 1e-3)
-                .sub_liveliness_announcement_period(announcement_period_ms * 1e-3)
-                .pub_liveliness_lease_duration(lease_duration_ms * 1e-3)
-                .sub_liveliness_lease_duration(lease_duration_ms * 1e-3)
-//              .disable_builtin_transport()
-                .init();
+            .sub_liveliness_kind(MANUAL_BY_PARTICIPANT_LIVELINESS_QOS)
+            .pub_liveliness_announcement_period(announcement_period_ms * 1e-3)
+            .sub_liveliness_announcement_period(announcement_period_ms * 1e-3)
+            .pub_liveliness_lease_duration(lease_duration_ms * 1e-3)
+            .sub_liveliness_lease_duration(lease_duration_ms * 1e-3)
+    //              .disable_builtin_transport()
+            .init();
 
     ASSERT_TRUE(participantA.isInitialized());
     ASSERT_TRUE(participantB.isInitialized());
