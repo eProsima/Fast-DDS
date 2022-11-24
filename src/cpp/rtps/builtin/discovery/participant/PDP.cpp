@@ -242,6 +242,7 @@ void PDP::initializeParticipantProxyData(
         ParticipantProxyData* participant_data)
 {
     RTPSParticipantAttributes& attributes = mp_RTPSParticipant->getAttributes();
+    bool announce_locators = !mp_RTPSParticipant->is_intraprocess_only();
 
     participant_data->m_leaseDuration = attributes.builtin.discovery_config.leaseDuration;
     //set_VendorId_eProsima(participant_data->m_VendorId);
@@ -282,13 +283,16 @@ void PDP::initializeParticipantProxyData(
     participant_data->m_availableBuiltinEndpoints |= mp_RTPSParticipant->security_manager().builtin_endpoints();
 #endif // if HAVE_SECURITY
 
-    for (const Locator_t& loc : attributes.defaultUnicastLocatorList)
+    if (announce_locators)
     {
-        participant_data->default_locators.add_unicast_locator(loc);
-    }
-    for (const Locator_t& loc : attributes.defaultMulticastLocatorList)
-    {
-        participant_data->default_locators.add_multicast_locator(loc);
+        for (const Locator_t& loc : attributes.defaultUnicastLocatorList)
+        {
+            participant_data->default_locators.add_unicast_locator(loc);
+        }
+        for (const Locator_t& loc : attributes.defaultMulticastLocatorList)
+        {
+            participant_data->default_locators.add_multicast_locator(loc);
+        }
     }
     participant_data->m_expectsInlineQos = false;
     participant_data->m_guid = mp_RTPSParticipant->getGuid();
@@ -317,23 +321,29 @@ void PDP::initializeParticipantProxyData(
     }
 
     participant_data->metatraffic_locators.unicast.clear();
-    for (const Locator_t& loc : this->mp_builtin->m_metatrafficUnicastLocatorList)
+    if (announce_locators)
     {
-        participant_data->metatraffic_locators.add_unicast_locator(loc);
-    }
-
-    participant_data->metatraffic_locators.multicast.clear();
-    if (!m_discovery.avoid_builtin_multicast || participant_data->metatraffic_locators.unicast.empty())
-    {
-        for (const Locator_t& loc: this->mp_builtin->m_metatrafficMulticastLocatorList)
+        for (const Locator_t& loc : this->mp_builtin->m_metatrafficUnicastLocatorList)
         {
-            participant_data->metatraffic_locators.add_multicast_locator(loc);
+            participant_data->metatraffic_locators.add_unicast_locator(loc);
         }
     }
 
-    fastdds::rtps::ExternalLocatorsProcessor::add_external_locators(*participant_data,
-            attributes.builtin.metatraffic_external_unicast_locators,
-            attributes.default_external_unicast_locators);
+    participant_data->metatraffic_locators.multicast.clear();
+    if (announce_locators)
+    {
+        if (!m_discovery.avoid_builtin_multicast || participant_data->metatraffic_locators.unicast.empty())
+        {
+            for (const Locator_t& loc: this->mp_builtin->m_metatrafficMulticastLocatorList)
+            {
+                participant_data->metatraffic_locators.add_multicast_locator(loc);
+            }
+        }
+
+        fastdds::rtps::ExternalLocatorsProcessor::add_external_locators(*participant_data,
+                attributes.builtin.metatraffic_external_unicast_locators,
+                attributes.default_external_unicast_locators);
+    }
 
     participant_data->m_participantName = std::string(attributes.getName());
 

@@ -1282,6 +1282,74 @@ TEST_P(Discovery, EndpointCreationMultithreaded)
     endpoint_thr.join();
 }
 
+// Regression test for redmine issue 16253
+TEST_P(Discovery, AsymmeticIgnoreParticipantFlags)
+{
+    if (INTRAPROCESS != GetParam())
+    {
+        GTEST_SKIP() << "Only makes sense on INTRAPROCESS";
+        return;
+    }
+
+    // This participant is created with flags to ignore participants which are not on the same process.
+    // When the announcements of this participant arrive to p2, a single DATA(p) should be sent back.
+    // No other traffic is expected, since it will take place through intraprocess.
+    PubSubReader<HelloWorldPubSubType> p1(TEST_TOPIC_NAME);
+    p1.ignore_participant_flags(static_cast<eprosima::fastrtps::rtps::ParticipantFilteringFlags_t>(
+                eprosima::fastrtps::rtps::ParticipantFilteringFlags_t::FILTER_DIFFERENT_HOST |
+                eprosima::fastrtps::rtps::ParticipantFilteringFlags_t::FILTER_DIFFERENT_PROCESS));
+    p1.init();
+    EXPECT_TRUE(p1.isInitialized());
+
+    // This participant is created with the test transport to check that nothing unexpected is sent to the
+    // multicast metatraffic locators.
+    // Setting localhost in the interface whitelist ensures that the traffic will not leave the host, and also
+    // that multicast datagrams are sent only once.
+    // A very long period for the participant announcement is set, along with 0 initial announcements, so we can
+    // have a exact expectation on the number of datagrams sent to multicast.
+    PubSubWriter<HelloWorldPubSubType> p2(TEST_TOPIC_NAME);
+
+    // This will hold the multicast port. Since the test is not always run in the same domain, we'll need to set
+    // its value when the first multicast datagram is sent.
+    std::atomic<uint32_t> multicast_port{ 0 };
+    // Only two multicast datagrams are allowed: the initial DATA(p) and the DATA(p) sent in response of the discovery
+    // of p1.
+    constexpr uint32_t allowed_messages_on_port = 2;
+
+    auto test_transport = std::make_shared<eprosima::fastdds::rtps::test_UDPv4TransportDescriptor>();
+
+    std::atomic<uint32_t> messages_on_port{ 0 };
+    test_transport->interfaceWhiteList.push_back("127.0.0.1");
+    test_transport->locator_filter_ = [&multicast_port, &messages_on_port](
+        const eprosima::fastdds::rtps::Locator& destination)
+            {
+                if (IPLocator::isMulticast(destination))
+                {
+                    uint32_t port = 0;
+                    multicast_port.compare_exchange_strong(port, destination.port);
+                    if (destination.port == multicast_port)
+                    {
+                        ++messages_on_port;
+                    }
+                }
+                return false;
+            };
+
+    p2.disable_builtin_transport().
+            add_user_transport_to_pparams(test_transport).
+            lease_duration({ 60 * 60, 0 }, { 50 * 60, 0 }).
+            initial_announcements(0, {});
+    p2.init();
+    EXPECT_TRUE(p2.isInitialized());
+
+    // Wait for participants and endpoints to discover each other
+    p1.wait_discovery();
+    p2.wait_discovery();
+
+    // Check expectation on the number of multicast datagrams sent by p2
+    EXPECT_EQ(messages_on_port, allowed_messages_on_port);
+}
+
 #ifdef INSTANTIATE_TEST_SUITE_P
 #define GTEST_INSTANTIATE_TEST_MACRO(x, y, z, w) INSTANTIATE_TEST_SUITE_P(x, y, z, w)
 #else

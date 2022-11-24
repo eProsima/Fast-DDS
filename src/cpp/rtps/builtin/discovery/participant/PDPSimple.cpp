@@ -161,13 +161,22 @@ ParticipantProxyData* PDPSimple::createParticipantProxyData(
 
     // decide if we dismiss the participant using the ParticipantFilteringFlags
     const ParticipantFilteringFlags_t& flags = m_discovery.discovery_config.ignoreParticipantFlags;
+    const GUID_t& remote = participant_data.m_guid;
+    const GUID_t& local = getLocalParticipantProxyData()->m_guid;
+    bool is_same_host = local.is_on_same_host_as(remote);
+    bool is_same_process = local.is_on_same_process_as(remote);
+
+    // Discard participants on different process when they don't have metatraffic locators
+    if (participant_data.metatraffic_locators.multicast.empty() &&
+            participant_data.metatraffic_locators.unicast.empty() &&
+            !is_same_process)
+    {
+        return nullptr;
+    }
 
     if (flags != ParticipantFilteringFlags_t::NO_FILTER)
     {
-        const GUID_t& remote = participant_data.m_guid;
-        const GUID_t& local = getLocalParticipantProxyData()->m_guid;
-
-        if (!local.is_on_same_host_as(remote))
+        if (!is_same_host)
         {
             if (flags & ParticipantFilteringFlags::FILTER_DIFFERENT_HOST)
             {
@@ -184,9 +193,7 @@ ParticipantProxyData* PDPSimple::createParticipantProxyData(
                 return nullptr;
             }
 
-            bool is_same = local.is_on_same_process_as(remote);
-
-            if ((filter_same && is_same) || (filter_different && !is_same))
+            if ((filter_same && is_same_process) || (filter_different && !is_same_process))
             {
                 return nullptr;
             }
