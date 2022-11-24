@@ -24,7 +24,7 @@ using namespace std;
 
 TEST(TopicPayloadPoolRegistryTests, basic_checks)
 {
-    PoolConfig cfg{ PREALLOCATED_WITH_REALLOC_MEMORY_MODE, 4u, 4u, 4u };
+    PoolConfig cfg{ PREALLOCATED_MEMORY_MODE, 4u, 4u, 4u };
 
     // Same topic, same config should result on same pool
     auto pool_a1 = TopicPayloadPoolRegistry::get("topic_a", cfg);

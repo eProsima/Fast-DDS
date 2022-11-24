@@ -357,7 +357,7 @@ TEST_P(PersistenceTest, SchemaVersionUpdate)
             {
                 item->serializedPayload.reserve(128);
             };
-    PoolConfig cfg{ MemoryManagementPolicy_t::PREALLOCATED_WITH_REALLOC_MEMORY_MODE, 0, 10, 0 };
+    PoolConfig cfg{ MemoryManagementPolicy_t::PREALLOCATED_MEMORY_MODE, 0, 10, 0 };
     auto pool = std::make_shared<CacheChangePool>(cfg, init_cache);
     CacheChange_t change;
     GUID_t guid(GuidPrefix_t::unknown(), 1U);

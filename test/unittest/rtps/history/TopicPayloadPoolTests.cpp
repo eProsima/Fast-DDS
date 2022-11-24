@@ -33,7 +33,7 @@ protected:
         , test_input_pool_size(10)
         , test_input_max_pool_size(0)
         , payload_size(128)
-        , memory_policy(MemoryManagementPolicy_t::PREALLOCATED_WITH_REALLOC_MEMORY_MODE)
+        , memory_policy(MemoryManagementPolicy_t::PREALLOCATED_MEMORY_MODE)
         , expected_pool_size_for_writers(0)
         , expected_pool_size_for_readers(0)
         , expected_finite_max_pool_size(0)

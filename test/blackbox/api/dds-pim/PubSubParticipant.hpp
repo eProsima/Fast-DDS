@@ -242,8 +242,8 @@ public:
             datawriter_qos_.properties().properties().emplace_back("fastdds.push_mode", "false");
         }
 
-#if defined(PREALLOCATED_WITH_REALLOC_MEMORY_MODE_TEST)
-        datawriter_qos_.historyMemoryPolicy = rtps::PREALLOCATED_WITH_REALLOC_MEMORY_MODE;
+#if defined(PREALLOCATED_MEMORY_MODE_TEST)
+        datawriter_qos_.historyMemoryPolicy = rtps::PREALLOCATED_MEMORY_MODE;
 #elif defined(DYNAMIC_RESERVE_MEMORY_MODE_TEST)
         datawriter_qos_.historyMemoryPolicy = rtps::DYNAMIC_RESERVE_MEMORY_MODE;
 #else

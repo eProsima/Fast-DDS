@@ -109,7 +109,10 @@ public:
     std::function<uint32_t()> getSerializedSizeProvider(
             void* /*data*/) override
     {
-        return std::function<uint32_t()>();
+        return []()->uint32_t
+               {
+                   return 0;
+               };
     }
 
     void* createData() override
@@ -196,7 +199,10 @@ public:
     std::function<uint32_t()> getSerializedSizeProvider(
             void* /*data*/) override
     {
-        return std::function<uint32_t()>();
+        return []()->uint32_t
+               {
+                   return 0;
+               };
     }
 
     void* createData() override
@@ -450,7 +456,7 @@ TEST(DataWriterTests, ForcedDataSharing)
 
     // DataSharing automatic, unbounded topic data type
     qos = DATAWRITER_QOS_DEFAULT;
-    qos.endpoint().history_memory_policy = fastrtps::rtps::PREALLOCATED_WITH_REALLOC_MEMORY_MODE;
+    qos.endpoint().history_memory_policy = fastrtps::rtps::PREALLOCATED_MEMORY_MODE;
     datawriter = publisher->create_datawriter(topic, qos);
     ASSERT_NE(datawriter, nullptr);
     ASSERT_EQ(publisher->delete_datawriter(datawriter), ReturnCode_t::RETCODE_OK);
@@ -462,7 +468,7 @@ TEST(DataWriterTests, ForcedDataSharing)
 
     // DataSharing enabled, unbounded topic data type
     qos = DATAWRITER_QOS_DEFAULT;
-    qos.endpoint().history_memory_policy = fastrtps::rtps::PREALLOCATED_WITH_REALLOC_MEMORY_MODE;
+    qos.endpoint().history_memory_policy = fastrtps::rtps::PREALLOCATED_MEMORY_MODE;
     qos.data_sharing().on(".");
     datawriter = publisher->create_datawriter(topic, qos);
     ASSERT_EQ(datawriter, nullptr);
@@ -525,7 +531,7 @@ TEST(DataWriterTests, ForcedDataSharing)
 
     qos = DATAWRITER_QOS_DEFAULT;
     qos.data_sharing().on(".");
-    qos.endpoint().history_memory_policy = fastrtps::rtps::PREALLOCATED_WITH_REALLOC_MEMORY_MODE;
+    qos.endpoint().history_memory_policy = fastrtps::rtps::PREALLOCATED_MEMORY_MODE;
 
 
     datawriter = publisher->create_datawriter(bounded_topic, qos);

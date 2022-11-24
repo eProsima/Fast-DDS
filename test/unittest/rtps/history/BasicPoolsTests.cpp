@@ -34,7 +34,7 @@ protected:
         : pool_size_(10)
         , max_pool_size_(0)
         , payload_size_(128)
-        , memory_policy_(MemoryManagementPolicy::PREALLOCATED_WITH_REALLOC_MEMORY_MODE)
+        , memory_policy_(MemoryManagementPolicy::PREALLOCATED_MEMORY_MODE)
     {
     }
 
