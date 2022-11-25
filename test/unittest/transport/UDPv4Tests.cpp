@@ -311,13 +311,14 @@ TEST_F(UDPv4Tests, send_to_wrong_interface)
     ASSERT_TRUE(transportUnderTest.OpenOutputChannel(send_resource_list, outputChannelLocator));
     ASSERT_FALSE(send_resource_list.empty());
 
+    Locator_t empty_locator;
+    EXPECT_TRUE(transportUnderTest.OpenOutputChannel(send_resource_list, empty_locator));
+
     LocatorList_t locator_list;
-    locator_list.push_back(Locator_t());
+    locator_list.push_back(empty_locator);
     Locators locators_begin(locator_list.begin());
     Locators locators_end(locator_list.end());
 
-    //Sending through a different IP will NOT work, except 0.0.0.0
-    IPLocator::setIPv4(outputChannelLocator, 111, 111, 111, 111);
     std::vector<octet> message = { 'H', 'e', 'l', 'l', 'o' };
     ASSERT_FALSE(send_resource_list.at(0)->send(message.data(), (uint32_t)message.size(), &locators_begin,
             &locators_end,
