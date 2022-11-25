@@ -417,7 +417,7 @@ TEST(TimedEvent, Event_UnregisterEventWithinCallbackOfAnotherEvent)
     using TimedEvent = eprosima::fastrtps::rtps::TimedEvent;
 
     constexpr auto expiration_ms = std::chrono::milliseconds(100);
-    bool success = false;
+    std::atomic_bool success(false);
 
     // Dummy callback event
     auto simple_callback = []()
@@ -428,16 +428,25 @@ TEST(TimedEvent, Event_UnregisterEventWithinCallbackOfAnotherEvent)
     //! 1. Create a simple event with longer period
     TimedEvent* simple_event = new TimedEvent(*env->service_, simple_callback, 3.0 * expiration_ms.count());
 
+    std::mutex mtx;
+    std::unique_ptr<TimedEvent> event_ptr;
+
+    {
+        std::lock_guard<std::mutex> _(mtx);
+        event_ptr.reset(simple_event);
+    }
+
     // Tester callback event that will unregister simple_event
     auto tester_callback = [&]()
             {
 
                 //! This will call unregister under the hood
-                if (nullptr != simple_event)
                 {
-                    delete simple_event;
-                    success = true;
+                    std::lock_guard<std::mutex> _(mtx);
+                    event_ptr.reset();
                 }
+
+                success = true;
 
                 return false;
             };
