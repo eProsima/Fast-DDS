@@ -557,7 +557,7 @@ TEST_P(PubSubBasic, ReceivedPropertiesDataWithinSizeLimit)
     LocatorBuffer.port = static_cast<uint16_t>(MULTICAST_PORT_RANDOM_NUMBER);
     WriterMulticastLocators.push_back(LocatorBuffer);
 
-    // Set statistics properties manually to ensure a fix size of participant properties
+    // Set statistics properties manually to ensure a fixed size of participant properties
     PropertyPolicy property_policy;
     property_policy.properties().emplace_back(
         eprosima::fastdds::dds::parameter_policy_physical_data_host, "test_host");
@@ -586,7 +586,7 @@ TEST_P(PubSubBasic, ReceivedPropertiesDataWithinSizeLimit)
     LocatorBuffer.port = static_cast<uint16_t>(MULTICAST_PORT_RANDOM_NUMBER);
     ReaderMulticastLocators.push_back(LocatorBuffer);
 
-    // The calculation of exact maximum properties size has been done according to the following table
+    // The calculation of the exact maximum properties size has been done according to the following table
     //
     // | Type  | Value                               | Size | Alignment | Extra | Total |
     // |-------|-------------------------------------|------|-----------|-------|-------|

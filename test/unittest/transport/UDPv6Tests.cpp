@@ -351,7 +351,6 @@ TEST_F(UDPv6Tests, send_to_wrong_interface)
     Locators locators_begin(locator_list.begin());
     Locators locators_end(locator_list.end());
 
-    IPLocator::setIPv6(outputChannelLocator, std::string("fe80::ffff:6f6f:6f6f"));
     std::vector<octet> message = { 'H', 'e', 'l', 'l', 'o' };
     ASSERT_FALSE(send_resource_list.at(0)->send(message.data(), (uint32_t)message.size(), &locators_begin,
             &locators_end,
