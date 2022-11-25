@@ -73,10 +73,16 @@ void ResourceEvent::unregister_timer(
 
     std::unique_lock<TimedMutex> lock(mutex_);
 
-    cv_manipulation_.wait(lock, [&]()
-            {
-                return allow_vector_manipulation_;
-            });
+    bool is_service_thread = std::this_thread::get_id() == thread_.get_id();
+
+    //! Let the service thread to manipulate resources
+    if (!is_service_thread)
+    {
+        cv_manipulation_.wait(lock, [&]()
+                {
+                    return allow_vector_manipulation_;
+                });
+    }
 
     bool should_notify = false;
     std::vector<TimedEventImpl*>::iterator it;
@@ -94,6 +100,14 @@ void ResourceEvent::unregister_timer(
     if (it != active_timers_.end())
     {
         active_timers_.erase(it);
+
+        if (is_service_thread)
+        {
+            //! Warn the do_timer_actions loop to skip checking the rest of active_timers
+            //! in this iteration to prevent iterator invalidation
+            skip_checking_active_timers_.store(true);
+        }
+
         should_notify = true;
     }
 
@@ -232,12 +246,19 @@ void ResourceEvent::do_timer_actions()
     }
 
     // Trigger active timers
+    skip_checking_active_timers_.store(false);
     for (TimedEventImpl* tp : active_timers_)
     {
         if (tp->next_trigger_time() <= current_time_)
         {
             did_something = true;
             tp->trigger(current_time_, cancel_time);
+
+            //! skip this iteration as active_timers has been manipulated
+            if (skip_checking_active_timers_.load())
+            {
+                break;
+            }
         }
         else
         {
