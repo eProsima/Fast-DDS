@@ -597,7 +597,6 @@ jobs:
 
       - name: Build
         id: build
-        continue-on-error: true
         run: |
            # build type mixin names doesn't match cmake ones
            $translate = @{
@@ -636,21 +635,20 @@ jobs:
            colcon build $buildargs --metas ci.meta --executor sequential ${{ inputs.colcon_args }} $cmakeargs
            "::endgroup::"
 
-           # Show warnings or error reports
-           $WarningActionPreference = $ErrorActionPreference = 'Continue'
-
            $output_buffer = ""
            $warning_sb = {Write-Warning $args[0]; $global:output_buffer += $args[0]}
            $error_sb = {Write-Error $args[0]; $global:output_buffer += $args[0]}
 
-           switch($lastexitcode)
+           switch($LASTEXITCODE)
            {
                0 { $report_kind = "generation or build warnings"; $wm = $warning_sb }
                1 { $report_kind = "CMake errors"; $wm = $error_sb }
                2 { $report_kind = "build errors"; $wm = $error_sb }
            }
 
-           # Show only reports with warning or errors
+           # Show only warnings or error reports but do not fail
+           $LASTEXITCODE=0
+           $WarningPreference = $ErrorActionPreference = 'Continue'
            $reports = gci -Path ./log/* -R -Filter stderr.log | ? { sls -Path $_ -Pattern "error|warning" }
 
            if($reports)
@@ -673,7 +671,9 @@ jobs:
            }
 
       - name: Test
-        if: ${{ !contains(github.event.pull_request.labels.*.name, 'no-test') && steps.build.outcome == 'success'  }}
+        if: ${{ !contains(github.event.pull_request.labels.*.name, 'no-test') &&
+                (steps.build.outputs.BuildWarningsErrors == 0 ||
+                contains(steps.build.outputs.BuildWarningsErrors, 'warning')) }}
         id: test
         run: |
            # Create a junit file for test results
@@ -738,7 +738,6 @@ jobs:
       - name: Test Summary
         id: summary
         if: ${{ steps.test.outcome == 'success' }}
-        continue-on-error: true
         run: |
            # If the CMake version (3.21 et seq.) supports junit use it
            $ErrorActionPreference = 'Continue'
@@ -831,34 +830,39 @@ jobs:
             path: ${{ steps.process_coverage.outputs.CoverageFolder }}
 
       - name: Upload crash dumps
-        if: ${{ contains(matrix.configs.os, 'windows') && steps.summary.outcome == 'failure' }}
+        if: ${{ contains(matrix.configs.os, 'windows') && steps.summary.outputs.TestErrors != 0 }}
         uses: actions/upload-artifact@v3
         with:
             name: crash-dumps-${{ inputs.label }}-${{ matrix.configs.os }}-${{ matrix.configs.toolset }}-${{ matrix.configs.config }}
             path: ${{ steps.WERSetup.outputs.DumpFolder }}
 
       - name: Check test failures
-        if: ${{ steps.build.outputs.BuildWarningsErrors != 0 || steps.summary.outcome == 'failure' }}
+        if: ${{ steps.build.outputs.BuildWarningsErrors != 0 || steps.summary.outputs.TestErrors != 0  }}
         uses: actions/github-script@v6
         with:
           script: |
-                  const build_outcome = '${{ steps.build.outcome }}';
-                  const test_outcome = '${{ steps.summary.outcome }}';
+                  const warnings = /warning/;
+                  const errors = /error/;
                   const build_info = '${{ steps.build.outputs.BuildWarningsErrors }}';
                   const test_info = '${{ steps.summary.outputs.TestErrors }}';
 
-                  if(build_outcome == 'success')
+                  if(!!build_info)
                   {
-                    if(!!build_info)
+                    // build errors
+                    if(errors.test(build_info))
+                    {
+                      core.setFailed(build_info);
+                    }
+
+                    // build warnings
+                    if(warnings.test(build_info))
                     {
                       core.warning(build_info);
                     }
-                    if (test_outcome == 'failure')
-                    {
-                      core.setFailed(test_info);
-                    }
                   }
-                  else
+
+                  // test errors
+                  if (!!test_info)
                   {
-                    core.setFailed(build_info + test_info);
+                    core.setFailed(test_info);
                   }
