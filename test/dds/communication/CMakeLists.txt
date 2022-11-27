@@ -168,7 +168,7 @@ if(PYTHONINTERP_FOUND)
     # Set test with label NoMemoryCheck
     set_property(TEST DDSSimpleCommunicationTypeDiscovery PROPERTY LABELS "NoMemoryCheck")
 
-    set_property(TEST DDSSimpleCommunicationTypeDiscovery PROPERTY ENVIRONMENT
+    set_property(TEST DDSSimpleCommunicationTypeDiscovery APPEND PROPERTY ENVIRONMENT
         "DDS_SIMPLE_COMMUNICATION_PUBLISHER_BIN=$<TARGET_FILE:DDSSimpleCommunicationDynamicPublisher>")
     set_property(TEST DDSSimpleCommunicationTypeDiscovery APPEND PROPERTY ENVIRONMENT
         "DDS_SIMPLE_COMMUNICATION_SUBSCRIBER_BIN=$<TARGET_FILE:DDSSimpleCommunicationDynamicSubscriber>")
@@ -192,7 +192,7 @@ if(PYTHONINTERP_FOUND)
         # Set test with label NoMemoryCheck
         set_property(TEST ${TEST_NAME} PROPERTY LABELS "NoMemoryCheck")
 
-        set_property(TEST ${TEST_NAME} PROPERTY ENVIRONMENT
+        set_property(TEST ${TEST_NAME} APPEND PROPERTY ENVIRONMENT
             "DDS_SIMPLE_COMMUNICATION_PUBLISHER_BIN=$<TARGET_FILE:DDSCommunicationPublisher>")
         set_property(TEST ${TEST_NAME} APPEND PROPERTY ENVIRONMENT
             "DDS_SIMPLE_COMMUNICATION_SUBSCRIBER_BIN=$<TARGET_FILE:DDSCommunicationSubscriber>")

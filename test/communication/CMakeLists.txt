@@ -144,7 +144,7 @@ if(PYTHONINTERP_FOUND)
     # Set test with label NoMemoryCheck
     set_property(TEST SimpleCommunicationBestEffort PROPERTY LABELS "NoMemoryCheck")
 
-    set_property(TEST SimpleCommunicationBestEffort PROPERTY ENVIRONMENT
+    set_property(TEST SimpleCommunicationBestEffort APPEND PROPERTY ENVIRONMENT
         "SIMPLE_COMMUNICATION_PUBLISHER_BIN=$<TARGET_FILE:SimpleCommunicationPublisher>")
     set_property(TEST SimpleCommunicationBestEffort APPEND PROPERTY ENVIRONMENT
         "SIMPLE_COMMUNICATION_SUBSCRIBER_BIN=$<TARGET_FILE:SimpleCommunicationSubscriber>")
@@ -162,7 +162,7 @@ if(PYTHONINTERP_FOUND)
     # Set test with label NoMemoryCheck
     set_property(TEST SimpleCommunicationReliable PROPERTY LABELS "NoMemoryCheck")
 
-    set_property(TEST SimpleCommunicationReliable PROPERTY ENVIRONMENT
+    set_property(TEST SimpleCommunicationReliable APPEND PROPERTY ENVIRONMENT
         "SIMPLE_COMMUNICATION_PUBLISHER_BIN=$<TARGET_FILE:SimpleCommunicationPublisher>")
     set_property(TEST SimpleCommunicationReliable APPEND PROPERTY ENVIRONMENT
         "SIMPLE_COMMUNICATION_SUBSCRIBER_BIN=$<TARGET_FILE:SimpleCommunicationSubscriber>")
@@ -180,7 +180,7 @@ if(PYTHONINTERP_FOUND)
     # Set test with label NoMemoryCheck
     set_property(TEST SimpleCommunicationReliableBestEffort PROPERTY LABELS "NoMemoryCheck")
 
-    set_property(TEST SimpleCommunicationReliableBestEffort PROPERTY ENVIRONMENT
+    set_property(TEST SimpleCommunicationReliableBestEffort APPEND PROPERTY ENVIRONMENT
         "SIMPLE_COMMUNICATION_PUBLISHER_BIN=$<TARGET_FILE:SimpleCommunicationPublisher>")
     set_property(TEST SimpleCommunicationReliableBestEffort APPEND PROPERTY ENVIRONMENT
         "SIMPLE_COMMUNICATION_SUBSCRIBER_BIN=$<TARGET_FILE:SimpleCommunicationSubscriber>")
@@ -198,7 +198,7 @@ if(PYTHONINTERP_FOUND)
     # Set test with label NoMemoryCheck
     set_property(TEST SimpleMixCommunicationBestEffort PROPERTY LABELS "NoMemoryCheck")
 
-    set_property(TEST SimpleMixCommunicationBestEffort PROPERTY ENVIRONMENT
+    set_property(TEST SimpleMixCommunicationBestEffort APPEND PROPERTY ENVIRONMENT
         "SIMPLE_COMMUNICATION_PUBLISHER_BIN=$<TARGET_FILE:SimpleCommunicationPublisher>")
     set_property(TEST SimpleMixCommunicationBestEffort APPEND PROPERTY ENVIRONMENT
         "SIMPLE_COMMUNICATION_SUBSCRIBER_BIN=$<TARGET_FILE:SimpleCommunicationPubSub>")
@@ -216,7 +216,7 @@ if(PYTHONINTERP_FOUND)
     # Set test with label NoMemoryCheck
     set_property(TEST SimpleMixCommunicationReliable PROPERTY LABELS "NoMemoryCheck")
 
-    set_property(TEST SimpleMixCommunicationReliable PROPERTY ENVIRONMENT
+    set_property(TEST SimpleMixCommunicationReliable APPEND PROPERTY ENVIRONMENT
         "SIMPLE_COMMUNICATION_PUBLISHER_BIN=$<TARGET_FILE:SimpleCommunicationPublisher>")
     set_property(TEST SimpleMixCommunicationReliable APPEND PROPERTY ENVIRONMENT
         "SIMPLE_COMMUNICATION_SUBSCRIBER_BIN=$<TARGET_FILE:SimpleCommunicationPubSub>")
@@ -235,7 +235,7 @@ if(PYTHONINTERP_FOUND)
         # Set test with label NoMemoryCheck
         set_property(TEST SimpleCommunicationSecureBestEffort PROPERTY LABELS "NoMemoryCheck")
 
-        set_property(TEST SimpleCommunicationSecureBestEffort PROPERTY ENVIRONMENT
+        set_property(TEST SimpleCommunicationSecureBestEffort APPEND PROPERTY ENVIRONMENT
             "SIMPLE_COMMUNICATION_PUBLISHER_BIN=$<TARGET_FILE:SimpleCommunicationPublisher>")
         set_property(TEST SimpleCommunicationSecureBestEffort APPEND PROPERTY ENVIRONMENT
             "SIMPLE_COMMUNICATION_SUBSCRIBER_BIN=$<TARGET_FILE:SimpleCommunicationSubscriber>")
@@ -309,7 +309,7 @@ if(PYTHONINTERP_FOUND)
     # Set test with label NoMemoryCheck
     set_property(TEST LivelinessAssertion PROPERTY LABELS "NoMemoryCheck")
 
-    set_property(TEST LivelinessAssertion PROPERTY ENVIRONMENT
+    set_property(TEST LivelinessAssertion APPEND PROPERTY ENVIRONMENT
         "SIMPLE_COMMUNICATION_PUBLISHER_BIN=$<TARGET_FILE:SimpleCommunicationPublisher>")
     set_property(TEST LivelinessAssertion APPEND PROPERTY ENVIRONMENT
         "SIMPLE_COMMUNICATION_SUBSCRIBER_BIN=$<TARGET_FILE:SimpleCommunicationSubscriber>")
@@ -324,7 +324,7 @@ if(PYTHONINTERP_FOUND)
     # Set test with label NoMemoryCheck
     set_property(TEST AutomaticLivelinessAssertion PROPERTY LABELS "NoMemoryCheck")
 
-    set_property(TEST AutomaticLivelinessAssertion PROPERTY ENVIRONMENT
+    set_property(TEST AutomaticLivelinessAssertion APPEND PROPERTY ENVIRONMENT
         "SIMPLE_COMMUNICATION_PUBLISHER_BIN=$<TARGET_FILE:SimpleCommunicationPublisher>")
     set_property(TEST AutomaticLivelinessAssertion APPEND PROPERTY ENVIRONMENT
         "SIMPLE_COMMUNICATION_SUBSCRIBER_BIN=$<TARGET_FILE:SimpleCommunicationSubscriber>")
@@ -340,7 +340,7 @@ if(PYTHONINTERP_FOUND)
     # Set test with label NoMemoryCheck
     set_property(TEST TwoPublishersCommunicationBestEffort PROPERTY LABELS "NoMemoryCheck")
 
-    set_property(TEST TwoPublishersCommunicationBestEffort PROPERTY ENVIRONMENT
+    set_property(TEST TwoPublishersCommunicationBestEffort APPEND PROPERTY ENVIRONMENT
         "SIMPLE_COMMUNICATION_PUBLISHER_BIN=$<TARGET_FILE:SimpleCommunicationPublisher>")
     set_property(TEST TwoPublishersCommunicationBestEffort APPEND PROPERTY ENVIRONMENT
         "SIMPLE_COMMUNICATION_SUBSCRIBER_BIN=$<TARGET_FILE:SimpleCommunicationSubscriber>")
@@ -358,7 +358,7 @@ if(PYTHONINTERP_FOUND)
     # Set test with label NoMemoryCheck
     set_property(TEST TwoPublishersCommunicationReliable PROPERTY LABELS "NoMemoryCheck")
 
-    set_property(TEST TwoPublishersCommunicationReliable PROPERTY ENVIRONMENT
+    set_property(TEST TwoPublishersCommunicationReliable APPEND PROPERTY ENVIRONMENT
         "SIMPLE_COMMUNICATION_PUBLISHER_BIN=$<TARGET_FILE:SimpleCommunicationPublisher>")
     set_property(TEST TwoPublishersCommunicationReliable APPEND PROPERTY ENVIRONMENT
         "SIMPLE_COMMUNICATION_SUBSCRIBER_BIN=$<TARGET_FILE:SimpleCommunicationSubscriber>")
@@ -376,7 +376,7 @@ if(PYTHONINTERP_FOUND)
     # Set test with label NoMemoryCheck
     set_property(TEST SimpleCommunicationBestEffortFixed PROPERTY LABELS "NoMemoryCheck")
 
-    set_property(TEST SimpleCommunicationBestEffortFixed PROPERTY ENVIRONMENT
+    set_property(TEST SimpleCommunicationBestEffortFixed APPEND PROPERTY ENVIRONMENT
         "SIMPLE_COMMUNICATION_PUBLISHER_BIN=$<TARGET_FILE:SimpleCommunicationPublisher>")
     set_property(TEST SimpleCommunicationBestEffortFixed APPEND PROPERTY ENVIRONMENT
         "SIMPLE_COMMUNICATION_SUBSCRIBER_BIN=$<TARGET_FILE:SimpleCommunicationSubscriber>")
@@ -398,7 +398,7 @@ if(PYTHONINTERP_FOUND)
     # Set test with label NoMemoryCheck
     set_property(TEST SHMCommunicationSubscriberDiesWhileProcessingMessage PROPERTY LABELS "NoMemoryCheck")
 
-    set_property(TEST SHMCommunicationSubscriberDiesWhileProcessingMessage PROPERTY ENVIRONMENT
+    set_property(TEST SHMCommunicationSubscriberDiesWhileProcessingMessage APPEND PROPERTY ENVIRONMENT
         "SIMPLE_COMMUNICATION_PUBLISHER_BIN=$<TARGET_FILE:SimpleCommunicationPublisher>")
     set_property(TEST SHMCommunicationSubscriberDiesWhileProcessingMessage APPEND PROPERTY ENVIRONMENT
         "SIMPLE_COMMUNICATION_SUBSCRIBER_BIN=$<TARGET_FILE:SimpleCommunicationSubscriber>")

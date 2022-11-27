@@ -61,7 +61,7 @@ if(PYTHONINTERP_FOUND)
     set_property(TEST MemoryTest PROPERTY LABELS "NoMemoryCheck")
 
     if(WIN32)
-        set_property(TEST MemoryTest PROPERTY ENVIRONMENT
+        set_property(TEST MemoryTest APPEND PROPERTY ENVIRONMENT
             "PATH=$<TARGET_FILE_DIR:${PROJECT_NAME}>\\;$ENV{PATH}")
     endif()
     set_property(TEST MemoryTest APPEND PROPERTY ENVIRONMENT
@@ -83,7 +83,7 @@ if(PYTHONINTERP_FOUND)
     set_property(TEST CyclesTest PROPERTY LABELS "NoMemoryCheck")
 
     if(WIN32)
-        set_property(TEST CyclesTest PROPERTY ENVIRONMENT
+        set_property(TEST CyclesTest APPEND PROPERTY ENVIRONMENT
             "PATH=$<TARGET_FILE_DIR:${PROJECT_NAME}>\\;$ENV{PATH}")
     endif()
     set_property(TEST CyclesTest APPEND PROPERTY ENVIRONMENT

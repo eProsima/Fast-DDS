@@ -46,7 +46,7 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER) AND fastcdr_FOUND)
         add_test(NAME AddDiscoveryServerToListFromEnvironmentFile
             COMMAND ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_BINARY_DIR}/client_server_dynamic_discovery.py)
 
-        set_property(TEST AddDiscoveryServerToListFromEnvironmentFile PROPERTY ENVIRONMENT
+        set_property(TEST AddDiscoveryServerToListFromEnvironmentFile APPEND PROPERTY ENVIRONMENT
             "CLIENT_SERVER_DYNAMIC_DISCOVERY_BIN=$<TARGET_FILE:DDSParticipantDiscovery>")
         set_property(TEST AddDiscoveryServerToListFromEnvironmentFile APPEND PROPERTY ENVIRONMENT
             "W_UNICAST_PORT_RANDOM_NUMBER=${W_UNICAST_PORT_RANDOM_NUMBER}")

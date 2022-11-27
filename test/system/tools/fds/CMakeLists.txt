@@ -94,9 +94,10 @@ if(PYTHONINTERP_FOUND)
             system.tools.fastdds.${TEST}
             PROPERTIES
                 LABELS "NoMemoryCheck"
-                ENVIRONMENT "${TEST_ENVIRONMENT}"
             )
 
+        set_property(TEST system.tools.fastdds.${TEST}
+                     APPEND PROPERTY ENVIRONMENT "${TEST_ENVIRONMENT}")
     endforeach()
 
     configure_file("test_xml_discovery_server.xml" "test_xml_discovery_server.xml" COPYONLY)
