@@ -752,23 +752,35 @@ jobs:
                Install-Module -Name MarkdownPS -Force
              }
 
-             $res = [xml](gc $Env:JUNIT_LOG)
+             [xml]$res = gc $Env:JUNIT_LOG
              [long]$failed = $res.testsuite.failures
 
              # Summary
              $res.testsuite | select name, tests, failures, disabled, hostname, time, timestamp |
                 New-MDTable | Tee-Object -FilePath $Env:GITHUB_STEP_SUMMARY -Append
 
-             # list the failures if any
-             "::group::Failures Summary"
-             $failures = $res.testsuite.testcase | ? status -eq fail
-             $failures | select name, time | format-list
-             "::endgroup::"
+             if($failed)
+             {
+               # list the failures if any
+               "::group::Failures Summary"
+               $failures = $res.testsuite.testcase | ? status -eq fail
+               $failures | select name, time | format-list
+               "::endgroup::"
 
-             # list faulty tests output
-             "::group::Failed tests output"
-             $failures
-             "::endgroup::"
+               # list faulty tests output
+               "::group::Failed tests output"
+               $failures
+               "::endgroup::"
+
+               # populate a log folder with the failures
+               $logFolder = New-Item -Type Directory -Path test_logs
+               pushd $logFolder
+               $failures | % { $_.'system-out' | Set-Content -Path ($_.name + ".txt") }
+               popd
+
+               "TestLogFolder=" + $logFolder.FullName | Out-File $Env:GITHUB_OUTPUT -Append
+             }
+
            }
            else
            {
@@ -821,6 +833,13 @@ jobs:
         with:
             name: build-issues-${{ inputs.label }}-${{ matrix.configs.os }}-${{ matrix.configs.config }}
             path: ${{ steps.build.outputs.BuildLogFolder }}
+
+      - name: Upload test errors
+        if: ${{ steps.summary.outputs.TestLogFolder != 0 }}
+        uses: actions/upload-artifact@v3
+        with:
+            name: test-errors-${{ inputs.label }}-${{ matrix.configs.os }}${{ matrix.configs.toolset != 0 && '-' || ''}}${{ matrix.configs.toolset }}-${{ matrix.configs.config }}
+            path: ${{ steps.summary.outputs.TestLogFolder }}
 
       - name: Upload coverage
         if: ${{ steps.process_coverage.outcome == 'success' }}
