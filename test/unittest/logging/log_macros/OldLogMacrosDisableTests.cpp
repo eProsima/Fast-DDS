@@ -44,7 +44,7 @@
 #include "LogMacros.hpp"
 #include <gtest/gtest.h>
 
-// Check that logInfo logWarning and logError and its private ones does not exist.
+// Check that logInfo logWarning and logError and its private definitions does not exist.
 TEST_F(LogMacrosTests, check_old_not_compiled)
 {
 

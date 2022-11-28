@@ -65,7 +65,7 @@ LatencyTestPublisher::~LatencyTestPublisher()
             || nullptr != latency_data_sub_topic_
             || !latency_data_type_)
     {
-        EPROSIMA_LOG_ERROR(LATENCYPUBLISHER, "ERROR unregistering the DATA type and/or removing the endpoints")
+        EPROSIMA_LOG_ERROR(LATENCYPUBLISHER, "ERROR unregistering the DATA type and/or removing the endpoints");
     }
 
     subscriber_->delete_datareader(command_reader_);
@@ -256,7 +256,7 @@ bool LatencyTestPublisher::init(
 
             if (ReturnCode_t::RETCODE_OK != subscriber_->get_datareader_qos_from_profile(sub_profile_name, dr_qos_))
             {
-                EPROSIMA_LOG_ERROR(LATENCYPUBLISHER, "ERROR unable to retrive the " << sub_profile_name << "from XML file")
+                EPROSIMA_LOG_ERROR(LATENCYPUBLISHER, "ERROR unable to retrive the " << sub_profile_name << "from XML file");
             }
         }
         // Create QoS Profiles

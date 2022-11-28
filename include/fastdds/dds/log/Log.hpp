@@ -228,7 +228,7 @@ protected:
 #endif // if defined(WIN32)
 
 /********************
- * Implementation of the log macros depending on the macros defined:
+ * Implementation of the log macros depending on the defined macros:
  * HAVE_LOG_NO_<level> disable completly a verbosity level
  * _INTERNALDEBUG || __INTERNALDEBUG  force to compile the log macro call even when it would not be added to queue
  * EPROSIMA_LOG_INFO__ would only be compiled if HAVE_LOG_NO_INFO is OFF and
@@ -240,10 +240,10 @@ protected:
  * 3. Do not compile
  *
  * Every macro (with implementation) occurs inside a code block so after call every internal variable is destroyed.
- * Every macro declared has a do while(0):
+ * Every macro declared has a do while(0).
  * This will not generate an assembler instruction and forces the user of the macro to use ";" after calling it.
  * https://gcc.gnu.org/onlinedocs/cpp/Swallowing-the-Semicolon.html
- * NOTE: no compilation cases do not use do while loop and so they do not force ";".
+ * NOTE: some compilation cases do not use do while loop and so they do not force ";".
  * It is a risk that a user takes in exchange of a perfect way of non generating code in such cases.
  ********************/
 
@@ -293,7 +293,7 @@ protected:
             Log::QueueLog(                                                                                          \
                 fastdds_log_ss_tmp__.str(), Log::Context{__FILE__, __LINE__, __func__, #cat}, Log::Kind::Warning);  \
         }                                                                                                           \
-    } while(false)
+    } while (0)
 
 #elif (__INTERNALDEBUG || _INTERNALDEBUG)
 
@@ -305,7 +305,7 @@ protected:
                     fastdds_log_ss_tmp__ << msg;                \
                 };                                              \
         (void)fastdds_log_lambda_tmp__;                         \
-    } while(false)
+    } while (0)
 
 #else
 
@@ -332,7 +332,7 @@ protected:
             Log::QueueLog(fastdds_log_ss_tmp__.str(), Log::Context{__FILE__, __LINE__, __func__, #cat}, \
                     Log::Kind::Info);                                                                   \
         }                                                                                               \
-    } while(false)
+    } while (0)
 
 #elif (__INTERNALDEBUG || _INTERNALDEBUG)
 
@@ -344,7 +344,7 @@ protected:
                     fastdds_log_ss_tmp__ << msg;            \
                 };                                          \
         (void)fastdds_log_lambda_tmp__;                     \
-    } while(false)
+    } while (0)
 
 #else
 
