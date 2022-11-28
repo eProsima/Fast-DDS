@@ -770,7 +770,7 @@ bool LatencyTestPublisher::test(
             return total_matches() == 4 * subscribers_;
         });
 
-    EPROSIMA_LOG_INFO(LatencyTest, C_B_MAGENTA << "Pub: DISCOVERY COMPLETE " << C_DEF)
+    EPROSIMA_LOG_INFO(LatencyTest, C_B_MAGENTA << "Pub: DISCOVERY COMPLETE " << C_DEF);
 
     // Wait for Subscriber's BEGIN command
     wait_for_command(

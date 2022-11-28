@@ -698,7 +698,7 @@ bool LatencyTestSubscriber::test(
     command.m_command = BEGIN;
     if (!command_writer_->write(&command))
     {
-        EPROSIMA_LOG_ERROR(LatencyTest, "Subscriber fail to publish the BEGIN command")
+        EPROSIMA_LOG_ERROR(LatencyTest, "Subscriber fail to publish the BEGIN command");
         return false;
     }
 
@@ -743,14 +743,14 @@ bool LatencyTestSubscriber::test(
     command.m_command = END;
     if (!command_writer_->write(&command))
     {
-        EPROSIMA_LOG_ERROR(LatencyTest, "Subscriber fail to publish the END command")
+        EPROSIMA_LOG_ERROR(LatencyTest, "Subscriber fail to publish the END command");
         return false;
     }
 
     // prevent the LatencyTestSubscriber from been destroyed while LatencyTestPublisher is waitin for the END command.
     if ( ReturnCode_t::RETCODE_OK != command_writer_->wait_for_acknowledgments(eprosima::fastrtps::c_TimeInfinite))
     {
-        EPROSIMA_LOG_ERROR(LatencyTest, "Subscriber fail to acknowledge the END command")
+        EPROSIMA_LOG_ERROR(LatencyTest, "Subscriber fail to acknowledge the END command");
         return false;
     }
 

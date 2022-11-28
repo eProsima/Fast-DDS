@@ -38,11 +38,11 @@
 
 // EPROSIMA LOG MACROS
 //! Logs an info message. Disable it through Log::SetVerbosity, define LOG_NO_INFO, or being in a release branch
-#define EPROSIMA_LOG_INFO(cat, msg) EPROSIMA_LOG_INFO_(cat, msg)
+#define EPROSIMA_LOG_INFO(cat, msg) EPROSIMA_LOG_INFO_IMPL_(cat, msg)
 //! Logs a warning. Disable reporting through Log::SetVerbosity or define LOG_NO_WARNING
-#define EPROSIMA_LOG_WARNING(cat, msg) EPROSIMA_LOG_WARNING_(cat, msg)
+#define EPROSIMA_LOG_WARNING(cat, msg) EPROSIMA_LOG_WARNING_IMPL_(cat, msg)
 //! Logs an error. Disable reporting through define LOG_NO_ERROR
-#define EPROSIMA_LOG_ERROR(cat, msg) EPROSIMA_LOG_ERROR_(cat, msg)
+#define EPROSIMA_LOG_ERROR(cat, msg) EPROSIMA_LOG_ERROR_IMPL_(cat, msg)
 
 #if ENABLE_OLD_LOG_MACROS_
 // Compile old eProsima macros for compatibility shake.
@@ -56,9 +56,9 @@
 #define logError(cat, msg) logError_(cat, msg)
 
 //! Old internal macros. Just kept them in case some crazy bastard thoughtlessly used them
-#define logInfo_(cat, msg) EPROSIMA_LOG_INFO_(cat, msg);
-#define logWarning_(cat, msg) EPROSIMA_LOG_WARNING_(cat, msg);
-#define logError_(cat, msg) EPROSIMA_LOG_ERROR_(cat, msg);
+#define logInfo_(cat, msg) EPROSIMA_LOG_INFO_IMPL_(cat, msg);
+#define logWarning_(cat, msg) EPROSIMA_LOG_WARNING_IMPL_(cat, msg);
+#define logError_(cat, msg) EPROSIMA_LOG_ERROR_IMPL_(cat, msg);
 
 #endif  // ENABLE_OLD_LOG_MACROS_
 
@@ -231,7 +231,7 @@ protected:
  * Implementation of the log macros depending on the defined macros:
  * HAVE_LOG_NO_<level> disable completly a verbosity level
  * _INTERNALDEBUG || __INTERNALDEBUG  force to compile the log macro call even when it would not be added to queue
- * EPROSIMA_LOG_INFO_ would only be compiled if HAVE_LOG_NO_INFO is OFF and
+ * EPROSIMA_LOG_INFO_IMPL_ would only be compiled if HAVE_LOG_NO_INFO is OFF and
  * - FASTDDS_ENFORCE_LOG_INFO or (DEBUG and INTERNALDEBUG) are defined
  *
  * There are 3 implementations for each level:
@@ -253,7 +253,7 @@ protected:
 // Name of variables inside macros must be unique, or it could produce an error with external variables
 #if !HAVE_LOG_NO_ERROR
 
-#define EPROSIMA_LOG_ERROR_(cat, msg)                                                                                 \
+#define EPROSIMA_LOG_ERROR_IMPL_(cat, msg)                                                                                 \
     do {                                                                                                               \
         using namespace eprosima::fastdds::dds;                                                                        \
         std::stringstream fastdds_log_ss_tmp__;                                                                        \
@@ -263,7 +263,7 @@ protected:
 
 #elif (__INTERNALDEBUG || _INTERNALDEBUG)
 
-#define EPROSIMA_LOG_ERROR_(cat, msg)                          \
+#define EPROSIMA_LOG_ERROR_IMPL_(cat, msg)                          \
     do {                                                        \
         auto fastdds_log_lambda_tmp__ = [&]()                   \
                 {                                               \
@@ -274,7 +274,7 @@ protected:
     } while (0)
 #else
 
-#define EPROSIMA_LOG_ERROR_(cat, msg)
+#define EPROSIMA_LOG_ERROR_IMPL_(cat, msg)
 
 #endif // ifndef LOG_NO_ERROR
 
@@ -283,7 +283,7 @@ protected:
  ***********/
 #if !HAVE_LOG_NO_WARNING
 
-#define EPROSIMA_LOG_WARNING_(cat, msg)                                                                            \
+#define EPROSIMA_LOG_WARNING_IMPL_(cat, msg)                                                                            \
     do {                                                                                                            \
         using namespace eprosima::fastdds::dds;                                                                     \
         if (Log::GetVerbosity() >= Log::Kind::Warning)                                                              \
@@ -297,7 +297,7 @@ protected:
 
 #elif (__INTERNALDEBUG || _INTERNALDEBUG)
 
-#define EPROSIMA_LOG_WARNING_(cat, msg)                        \
+#define EPROSIMA_LOG_WARNING_IMPL_(cat, msg)                        \
     do {                                                        \
         auto fastdds_log_lambda_tmp__ = [&]()                   \
                 {                                               \
@@ -309,7 +309,7 @@ protected:
 
 #else
 
-#define EPROSIMA_LOG_WARNING_(cat, msg)
+#define EPROSIMA_LOG_WARNING_IMPL_(cat, msg)
 
 #endif // ifndef LOG_NO_WARNING
 
@@ -322,7 +322,7 @@ protected:
     ((defined(__INTERNALDEBUG) || defined(_INTERNALDEBUG)) && (defined(_DEBUG) || defined(__DEBUG) || \
     !defined(NDEBUG))))
 
-#define EPROSIMA_LOG_INFO_(cat, msg)                                                                   \
+#define EPROSIMA_LOG_INFO_IMPL_(cat, msg)                                                                   \
     do {                                                                                                \
         using namespace eprosima::fastdds::dds;                                                         \
         if (Log::GetVerbosity() >= Log::Kind::Info)                                                     \
@@ -336,7 +336,7 @@ protected:
 
 #elif (__INTERNALDEBUG || _INTERNALDEBUG)
 
-#define EPROSIMA_LOG_INFO_(cat, msg)                       \
+#define EPROSIMA_LOG_INFO_IMPL_(cat, msg)                       \
     do {                                                    \
         auto fastdds_log_lambda_tmp__ = [&]()               \
                 {                                           \
@@ -348,7 +348,7 @@ protected:
 
 #else
 
-#define EPROSIMA_LOG_INFO_(cat, msg)
+#define EPROSIMA_LOG_INFO_IMPL_(cat, msg)
 
 #endif // ifndef LOG_NO_INFO
 
