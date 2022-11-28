@@ -2946,7 +2946,7 @@ TEST_P(Security, RemoveParticipantProxyDataonSecurityManagerLeaseExpired_validat
 
     //!Lambda for configuring publisher participant qos and security properties
     auto secure_participant_pub_configurator = [&governance_file,
-                    &permissions_file](const std::shared_ptr<PubSubWriter<HelloWorldPubSubType>>& part,
+                    &permissions_file](const std::shared_ptr<PubSubWriter<HelloWorldType>>& part,
                     const std::shared_ptr<eprosima::fastdds::rtps::TransportDescriptorInterface>& interface)
             {
                 part->lease_duration(3, 1);
@@ -2983,7 +2983,7 @@ TEST_P(Security, RemoveParticipantProxyDataonSecurityManagerLeaseExpired_validat
             };
     //!Lambda for configuring subscriber participant qos and security properties
     auto secure_participant_sub_configurator = [&governance_file,
-                    &permissions_file](const std::shared_ptr<PubSubReader<HelloWorldPubSubType>>& part,
+                    &permissions_file](const std::shared_ptr<PubSubReader<HelloWorldType>>& part,
                     const std::shared_ptr<eprosima::fastdds::rtps::TransportDescriptorInterface>& interface)
             {
                 part->lease_duration(3, 1);
@@ -3021,8 +3021,8 @@ TEST_P(Security, RemoveParticipantProxyDataonSecurityManagerLeaseExpired_validat
 
     //! 1.Spawn a couple of participants writer/reader
     std::string topic_name = "HelloWorldTopic";
-    auto pubsub_writer = std::make_shared<PubSubWriter<HelloWorldPubSubType>>(topic_name);
-    auto pubsub_reader = std::make_shared<PubSubReader<HelloWorldPubSubType>>(topic_name);
+    auto pubsub_writer = std::make_shared<PubSubWriter<HelloWorldType>>(topic_name);
+    auto pubsub_reader = std::make_shared<PubSubReader<HelloWorldType>>(topic_name);
 
     // Initialization of all the participants
     std::cout << "Initializing PubSubs for topic " << topic_name << std::endl;
