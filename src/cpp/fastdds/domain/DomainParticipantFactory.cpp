@@ -322,7 +322,7 @@ ReturnCode_t DomainParticipantFactory::get_participant_qos_from_profile(
         DomainParticipantQos& qos) const
 {
     ParticipantAttributes attr;
-    if (XMLP_ret::XML_OK == XMLProfileManager::fillParticipantAttributes(profile_name, attr))
+    if (XMLP_ret::XML_OK == XMLProfileManager::fillParticipantAttributes(profile_name, attr, false))
     {
         qos = default_participant_qos_;
         utils::set_qos_from_attributes(qos, attr.rtps);
