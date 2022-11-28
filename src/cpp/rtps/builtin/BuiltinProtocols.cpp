@@ -215,7 +215,8 @@ bool BuiltinProtocols::addLocalWriter(
     }
     else
     {
-        EPROSIMA_LOG_WARNING(RTPS_LIVELINESS, "LIVELINESS is not used in this Participant, register a Writer is impossible");
+        EPROSIMA_LOG_WARNING(RTPS_LIVELINESS,
+                "LIVELINESS is not used in this Participant, register a Writer is impossible");
     }
     return ok;
 }

@@ -1076,7 +1076,7 @@ bool StatefulWriter::matched_reader_add(
     {
         matched_local_readers_.push_back(rp);
         EPROSIMA_LOG_INFO(RTPS_WRITER, "Adding reader " << rdata.guid() << " to " << this->m_guid.entityId
-                                              << " as local reader");
+                                                        << " as local reader");
     }
     else
     {
@@ -1084,13 +1084,13 @@ bool StatefulWriter::matched_reader_add(
         {
             matched_datasharing_readers_.push_back(rp);
             EPROSIMA_LOG_INFO(RTPS_WRITER, "Adding reader " << rdata.guid() << " to " << this->m_guid.entityId
-                                                  << " as data sharing");
+                                                            << " as data sharing");
         }
         else
         {
             matched_remote_readers_.push_back(rp);
             EPROSIMA_LOG_INFO(RTPS_WRITER, "Adding reader " << rdata.guid() << " to " << this->m_guid.entityId
-                                                  << " as remote reader");
+                                                            << " as remote reader");
         }
     }
 
@@ -1193,8 +1193,8 @@ bool StatefulWriter::matched_reader_add(
     }
 
     EPROSIMA_LOG_INFO(RTPS_WRITER, "Reader Proxy " << rp->guid() << " added to " << this->m_guid.entityId << " with "
-                                         << rdata.remote_locators().unicast.size() << "(u)-"
-                                         << rdata.remote_locators().multicast.size() <<
+                                                   << rdata.remote_locators().unicast.size() << "(u)-"
+                                                   << rdata.remote_locators().multicast.size() <<
             "(m) locators");
 
     if (nullptr != mp_listener)
@@ -1787,7 +1787,8 @@ void StatefulWriter::send_heartbeat_nts_(
     // Update calculate of heartbeat piggyback.
     currentUsageSendBufferSize_ = static_cast<int32_t>(sendBufferSize_);
 
-    EPROSIMA_LOG_INFO(RTPS_WRITER, getGuid().entityId << " Sending Heartbeat (" << firstSeq << " - " << lastSeq << ")" );
+    EPROSIMA_LOG_INFO(RTPS_WRITER,
+            getGuid().entityId << " Sending Heartbeat (" << firstSeq << " - " << lastSeq << ")" );
 }
 
 void StatefulWriter::send_heartbeat_piggyback_nts_(

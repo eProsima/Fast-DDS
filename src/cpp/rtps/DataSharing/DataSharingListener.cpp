@@ -162,21 +162,21 @@ void DataSharingListener::process_new_data ()
                 if (last_sequence != c_SequenceNumber_Unknown && ch.sequenceNumber != last_sequence + 1)
                 {
                     EPROSIMA_LOG_WARNING(RTPS_READER, "GAP (" << last_sequence + 1 << " - " << ch.sequenceNumber - 1 << ")"
-                                                    << " detected on datasharing writer " << pool->writer());
+                                                              << " detected on datasharing writer " << pool->writer());
                     reader_->processGapMsg(pool->writer(), last_sequence + 1, SequenceNumberSet_t(ch.sequenceNumber));
                 }
 
                 if (last_sequence == c_SequenceNumber_Unknown && ch.sequenceNumber != SequenceNumber_t(0, 1))
                 {
                     EPROSIMA_LOG_INFO(RTPS_READER, "First change with SN " << ch.sequenceNumber
-                                                                 << " detected on datasharing writer " <<
+                                                                           << " detected on datasharing writer " <<
                             pool->writer());
                     reader_->processGapMsg(pool->writer(), SequenceNumber_t(0, 1), SequenceNumberSet_t(
                                 ch.sequenceNumber));
                 }
 
                 EPROSIMA_LOG_INFO(RTPS_READER, "New data found on writer " << pool->writer()
-                                                                 << " with SN " << ch.sequenceNumber);
+                                                                           << " with SN " << ch.sequenceNumber);
 
                 if (reader_->processDataMsg(&ch))
                 {

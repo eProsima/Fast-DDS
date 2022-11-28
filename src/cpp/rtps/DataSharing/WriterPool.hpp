@@ -174,9 +174,9 @@ public:
         if (overflow)
         {
             EPROSIMA_LOG_ERROR(DATASHARING_PAYLOADPOOL, "Failed to create segment " << segment_name_
-                                                                          << ": Segment size is too large: " << estimated_size_for_payloads_pool
-                                                                          << " (max is " << std::numeric_limits<uint32_t>::max() << ")."
-                                                                          << " Please reduce the maximum size of the history");
+                                                                                    << ": Segment size is too large: " << estimated_size_for_payloads_pool
+                                                                                    << " (max is " << std::numeric_limits<uint32_t>::max() << ")."
+                                                                                    << " Please reduce the maximum size of the history");
             return false;
         }
 
@@ -193,7 +193,7 @@ public:
         catch (const std::exception& e)
         {
             EPROSIMA_LOG_ERROR(DATASHARING_PAYLOADPOOL, "Failed to create segment " << segment_name_
-                                                                          << ": " << e.what());
+                                                                                    << ": " << e.what());
             return false;
         }
 
@@ -236,7 +236,7 @@ public:
             T::remove(segment_name_);
 
             EPROSIMA_LOG_ERROR(DATASHARING_PAYLOADPOOL, "Failed to initialize segment " << segment_name_
-                                                                              << ": " << e.what());
+                                                                                        << ": " << e.what());
             return false;
         }
 

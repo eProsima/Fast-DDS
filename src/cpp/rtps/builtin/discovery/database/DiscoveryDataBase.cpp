@@ -524,14 +524,14 @@ bool DiscoveryDataBase::process_edp_data_queue()
             if (is_writer(change))
             {
                 EPROSIMA_LOG_INFO(DISCOVERY_DATABASE, "DATA(w) in topic " << topic_name << " received from: "
-                                                                << change->instanceHandle);
+                                                                          << change->instanceHandle);
                 create_writers_from_change_(change, topic_name);
             }
             // DATA(r) case
             else if (is_reader(change))
             {
                 EPROSIMA_LOG_INFO(DISCOVERY_DATABASE, "DATA(r) in topic " << topic_name << " received from: "
-                                                                << change->instanceHandle);
+                                                                          << change->instanceHandle);
                 create_readers_from_change_(change, topic_name);
             }
         }
@@ -864,7 +864,8 @@ void DiscoveryDataBase::create_writers_from_change_(
         }
         else
         {
-            EPROSIMA_LOG_ERROR(DISCOVERY_DATABASE, "Writer " << writer_guid << " has no associated participant. Skipping");
+            EPROSIMA_LOG_ERROR(DISCOVERY_DATABASE,
+                    "Writer " << writer_guid << " has no associated participant. Skipping");
             return;
         }
 
@@ -981,7 +982,8 @@ void DiscoveryDataBase::create_readers_from_change_(
         }
         else
         {
-            EPROSIMA_LOG_ERROR(DISCOVERY_DATABASE, "Reader " << reader_guid << " has no associated participant. Skipping");
+            EPROSIMA_LOG_ERROR(DISCOVERY_DATABASE,
+                    "Reader " << reader_guid << " has no associated participant. Skipping");
             return;
         }
 

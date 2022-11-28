@@ -497,19 +497,19 @@ bool StatelessWriter::matched_reader_add(
     {
         matched_local_readers_.push_back(std::move(new_reader));
         EPROSIMA_LOG_INFO(RTPS_WRITER, "Adding reader " << data.guid() << " to " << this->m_guid.entityId
-                                              << " as local reader");
+                                                        << " as local reader");
     }
     else if (new_reader->is_datasharing_reader())
     {
         matched_datasharing_readers_.push_back(std::move(new_reader));
         EPROSIMA_LOG_INFO(RTPS_WRITER, "Adding reader " << data.guid() << " to " << this->m_guid.entityId
-                                              << " as data sharing");
+                                                        << " as data sharing");
     }
     else
     {
         matched_remote_readers_.push_back(std::move(new_reader));
         EPROSIMA_LOG_INFO(RTPS_WRITER, "Adding reader " << data.guid() << " to " << this->m_guid.entityId
-                                              << " as remote reader");
+                                                        << " as remote reader");
     }
 
     update_reader_info(true);

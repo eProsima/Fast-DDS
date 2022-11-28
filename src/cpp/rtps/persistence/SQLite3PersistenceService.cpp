@@ -149,7 +149,7 @@ static sqlite3* open_or_create_database(
             else
             {
                 EPROSIMA_LOG_ERROR(RTPS_PERSISTENCE, "Old schema version " << db_version << " on database " << filename
-                                                                 << ". Set property dds.persistence.update_schema to force automatic schema upgrade");
+                                                                           << ". Set property dds.persistence.update_schema to force automatic schema upgrade");
                 sqlite3_close(db);
                 return NULL;
             }
@@ -346,7 +346,8 @@ bool SQLite3PersistenceService::add_writer_change_to_storage(
         const std::string& persistence_guid,
         const CacheChange_t& change)
 {
-    EPROSIMA_LOG_INFO(RTPS_PERSISTENCE, "Writer " << change.writerGUID << " storing change for seq " << change.sequenceNumber);
+    EPROSIMA_LOG_INFO(RTPS_PERSISTENCE,
+            "Writer " << change.writerGUID << " storing change for seq " << change.sequenceNumber);
 
     if (add_writer_change_stmt_ != NULL)
     {
@@ -403,7 +404,8 @@ bool SQLite3PersistenceService::remove_writer_change_from_storage(
         const std::string& persistence_guid,
         const CacheChange_t& change)
 {
-    EPROSIMA_LOG_INFO(RTPS_PERSISTENCE, "Writer " << change.writerGUID << " removing change for seq " << change.sequenceNumber);
+    EPROSIMA_LOG_INFO(RTPS_PERSISTENCE,
+            "Writer " << change.writerGUID << " removing change for seq " << change.sequenceNumber);
 
     if (remove_writer_change_stmt_ != NULL)
     {

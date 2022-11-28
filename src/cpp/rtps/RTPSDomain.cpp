@@ -217,7 +217,8 @@ RTPSParticipant* RTPSDomain::createParticipant(
         }
         else
         {
-            EPROSIMA_LOG_ERROR(RTPS_PARTICIPANT, "Discovery Server wasn't able to allocate the specified listening port.");
+            EPROSIMA_LOG_ERROR(RTPS_PARTICIPANT,
+                    "Discovery Server wasn't able to allocate the specified listening port.");
         }
 
         delete pimpl;

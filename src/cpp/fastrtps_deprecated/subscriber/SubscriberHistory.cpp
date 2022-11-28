@@ -245,7 +245,8 @@ bool SubscriberHistory::received_change_keep_all_with_key(
         else
         {
             // Discarting the sample.
-            EPROSIMA_LOG_WARNING(SUBSCRIBER, "Attempting to add Data to Full ReaderHistory: " << topic_att_.getTopicDataType());
+            EPROSIMA_LOG_WARNING(SUBSCRIBER,
+                    "Attempting to add Data to Full ReaderHistory: " << topic_att_.getTopicDataType());
         }
     }
 
@@ -296,7 +297,8 @@ bool SubscriberHistory::received_change_keep_last_with_key(
         else
         {
             // Discarting the sample.
-            EPROSIMA_LOG_WARNING(SUBSCRIBER, "Attempting to add Data to Full ReaderHistory: " << topic_att_.getTopicDataType());
+            EPROSIMA_LOG_WARNING(SUBSCRIBER,
+                    "Attempting to add Data to Full ReaderHistory: " << topic_att_.getTopicDataType());
         }
     }
 
@@ -309,7 +311,8 @@ bool SubscriberHistory::add_received_change(
     if (m_isHistoryFull)
     {
         // Discarding the sample.
-        EPROSIMA_LOG_WARNING(SUBSCRIBER, "Attempting to add Data to Full ReaderHistory: " << topic_att_.getTopicDataType());
+        EPROSIMA_LOG_WARNING(SUBSCRIBER,
+                "Attempting to add Data to Full ReaderHistory: " << topic_att_.getTopicDataType());
         return false;
     }
 
@@ -337,7 +340,8 @@ bool SubscriberHistory::add_received_change_with_key(
     if (m_isHistoryFull)
     {
         // Discarting the sample.
-        EPROSIMA_LOG_WARNING(SUBSCRIBER, "Attempting to add Data to Full ReaderHistory: " << topic_att_.getTopicDataType());
+        EPROSIMA_LOG_WARNING(SUBSCRIBER,
+                "Attempting to add Data to Full ReaderHistory: " << topic_att_.getTopicDataType());
         return false;
     }
 
@@ -382,7 +386,7 @@ bool SubscriberHistory::find_key_for_change(
     else if (!a_change->instanceHandle.isDefined())
     {
         EPROSIMA_LOG_WARNING(SUBSCRIBER, "NO KEY in topic: " << topic_att_.topicName
-                                                   << " and no method to obtain it"; );
+                                                             << " and no method to obtain it"; );
         return false;
     }
 
@@ -472,7 +476,8 @@ bool SubscriberHistory::takeNextData(
         WriterProxy* wp = nullptr;
         if (mp_reader->nextUntakenCache(&change, &wp))
         {
-            EPROSIMA_LOG_INFO(SUBSCRIBER, mp_reader->getGuid().entityId << ": taking seqNum" << change->sequenceNumber <<
+            EPROSIMA_LOG_INFO(SUBSCRIBER,
+                    mp_reader->getGuid().entityId << ": taking seqNum" << change->sequenceNumber <<
                     " from writer: " << change->writerGUID);
             uint32_t ownership = wp && qos_.m_ownership.kind == EXCLUSIVE_OWNERSHIP_QOS ?
                     wp->ownership_strength() : 0;

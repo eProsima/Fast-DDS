@@ -317,7 +317,8 @@ DynamicTypeBuilder* DynamicTypeBuilderFactory::create_bitmask_builder(
     }
     else
     {
-        EPROSIMA_LOG_ERROR(DYN_TYPES, "Error creating bitmask, length exceeds the maximum value '" << MAX_BITMASK_LENGTH << "'");
+        EPROSIMA_LOG_ERROR(DYN_TYPES,
+                "Error creating bitmask, length exceeds the maximum value '" << MAX_BITMASK_LENGTH << "'");
     }
     return nullptr;
 }
@@ -660,7 +661,8 @@ DynamicTypeBuilder* DynamicTypeBuilderFactory::create_custom_builder(
         }
         else
         {
-            EPROSIMA_LOG_ERROR(DYN_TYPES, "Error creating type, unsupported type kind: " << static_cast<uint32_t>(kind));
+            EPROSIMA_LOG_ERROR(DYN_TYPES,
+                    "Error creating type, unsupported type kind: " << static_cast<uint32_t>(kind));
         }
     }
     else
@@ -1708,7 +1710,7 @@ void DynamicTypeBuilderFactory::build_struct_type_code(
             if (typeId == nullptr)
             {
                 EPROSIMA_LOG_ERROR(DYN_TYPES, "Member " << member->get_name() << " of struct "
-                                              << descriptor->get_name() << " failed.");
+                                                        << descriptor->get_name() << " failed.");
             }
             else
             {
@@ -1800,7 +1802,7 @@ void DynamicTypeBuilderFactory::build_struct_type_code(
             if (typeId == nullptr)
             {
                 EPROSIMA_LOG_ERROR(DYN_TYPES, "Member " << member->get_name()
-                                              << " of struct " << descriptor->get_name() << " failed.");
+                                                        << " of struct " << descriptor->get_name() << " failed.");
             }
             else
             {
@@ -1920,7 +1922,7 @@ void DynamicTypeBuilderFactory::build_union_type_code(
             if (typeId == nullptr)
             {
                 EPROSIMA_LOG_ERROR(DYN_TYPES, "Member " << member->get_name()
-                                              << " of union " << descriptor->get_name() << " failed.");
+                                                        << " of union " << descriptor->get_name() << " failed.");
             }
             else
             {
@@ -2019,7 +2021,7 @@ void DynamicTypeBuilderFactory::build_union_type_code(
             if (typeId == nullptr)
             {
                 EPROSIMA_LOG_ERROR(DYN_TYPES, "Member " << member->get_name()
-                                              << " of union " << descriptor->get_name() << " failed.");
+                                                        << " of union " << descriptor->get_name() << " failed.");
             }
             else
             {
@@ -2356,7 +2358,7 @@ void DynamicTypeBuilderFactory::build_annotation_type_code(
             if (typeId == nullptr)
             {
                 EPROSIMA_LOG_ERROR(DYN_TYPES, "Member " << member->get_name()
-                                              << " of annotation " << descriptor->get_name() << " failed.");
+                                                        << " of annotation " << descriptor->get_name() << " failed.");
             }
             else
             {
@@ -2421,7 +2423,7 @@ void DynamicTypeBuilderFactory::build_annotation_type_code(
             if (typeId == nullptr)
             {
                 EPROSIMA_LOG_ERROR(DYN_TYPES, "Member " << member->get_name()
-                                              << " of annotation " << descriptor->get_name() << " failed.");
+                                                        << " of annotation " << descriptor->get_name() << " failed.");
             }
             else
             {
@@ -2732,7 +2734,8 @@ DynamicType_ptr DynamicTypeBuilderFactory::create_bitset_type(
     }
     else
     {
-        EPROSIMA_LOG_ERROR(DYN_TYPES, "Error creating bitmask, length exceeds the maximum value '" << MAX_BITMASK_LENGTH << "'");
+        EPROSIMA_LOG_ERROR(DYN_TYPES,
+                "Error creating bitmask, length exceeds the maximum value '" << MAX_BITMASK_LENGTH << "'");
     }
     return DynamicType_ptr(nullptr);
 }

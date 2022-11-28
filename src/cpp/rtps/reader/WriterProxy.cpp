@@ -286,7 +286,7 @@ bool WriterProxy::received_change_set(
     if (seq_num <= changes_from_writer_low_mark_)
     {
         EPROSIMA_LOG_INFO(RTPS_READER, "Change " << seq_num << " <= than max available sequence number "
-                                       << changes_from_writer_low_mark_);
+                                                 << changes_from_writer_low_mark_);
         return false;
     }
 

@@ -366,7 +366,7 @@ public:
         catch (const std::exception& e)
         {
             EPROSIMA_LOG_ERROR(RTPS_TRANSPORT_SHM, "Failed to create segment " << uuid.to_string()
-                                                                     << ": " << e.what());
+                                                                               << ": " << e.what());
 
             throw;
         }

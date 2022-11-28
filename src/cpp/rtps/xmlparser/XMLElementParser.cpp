@@ -124,7 +124,8 @@ XMLP_ret XMLParser::getXMLParticipantAllocationAttributes(
         }
         else
         {
-            EPROSIMA_LOG_ERROR(XMLPARSER, "Invalid element found into 'rtpsParticipantAllocationAttributesType'. Name: " << name);
+            EPROSIMA_LOG_ERROR(XMLPARSER,
+                    "Invalid element found into 'rtpsParticipantAllocationAttributesType'. Name: " << name);
             return XMLP_ret::XML_ERROR;
         }
     }
@@ -172,7 +173,8 @@ XMLP_ret XMLParser::getXMLRemoteLocatorsAllocationAttributes(
         }
         else
         {
-            EPROSIMA_LOG_ERROR(XMLPARSER, "Invalid element found into 'remoteLocatorsAllocationConfigType'. Name: " << name);
+            EPROSIMA_LOG_ERROR(XMLPARSER,
+                    "Invalid element found into 'remoteLocatorsAllocationConfigType'. Name: " << name);
             return XMLP_ret::XML_ERROR;
         }
     }
@@ -221,7 +223,8 @@ XMLP_ret XMLParser::getXMLSendBuffersAllocationAttributes(
         }
         else
         {
-            EPROSIMA_LOG_ERROR(XMLPARSER, "Invalid element found into 'sendBuffersAllocationConfigType'. Name: " << name);
+            EPROSIMA_LOG_ERROR(XMLPARSER,
+                    "Invalid element found into 'sendBuffersAllocationConfigType'. Name: " << name);
             return XMLP_ret::XML_ERROR;
         }
     }
@@ -2073,7 +2076,7 @@ XMLP_ret XMLParser::getXMLDataSharingQos(
     if (max_domains != 0 && domain_ids.size() > static_cast<uint32_t>(max_domains))
     {
         EPROSIMA_LOG_ERROR(XMLPARSER, "Node 'data_sharing' defines a maximum of " << max_domains
-                                                                        << " domain IDs but also define " << domain_ids.size() <<
+                                                                                  << " domain IDs but also define " << domain_ids.size() <<
                 " domain IDs");
         return XMLP_ret::XML_ERROR;
     }
@@ -2241,7 +2244,8 @@ XMLP_ret XMLParser::getXMLOwnershipStrengthQos(
         }
         else
         {
-            EPROSIMA_LOG_ERROR(XMLPARSER, "Invalid element found into 'ownershipStrengthQosPolicyType'. Name: " << name);
+            EPROSIMA_LOG_ERROR(XMLPARSER,
+                    "Invalid element found into 'ownershipStrengthQosPolicyType'. Name: " << name);
             return XMLP_ret::XML_ERROR;
         }
     }
@@ -3108,7 +3112,8 @@ static XMLP_ret process_unsigned_attribute(
             }
         }
 
-        EPROSIMA_LOG_ERROR(XMLPARSER, "Wrong value '" << attribute->Value() << "' for attribute '" << name << "' on '" <<
+        EPROSIMA_LOG_ERROR(XMLPARSER,
+                "Wrong value '" << attribute->Value() << "' for attribute '" << name << "' on '" <<
                 elem->Name() << "'");
         return XMLP_ret::XML_ERROR;
     }
@@ -3542,7 +3547,8 @@ XMLP_ret XMLParser::getXMLOctetVector(
         }
         else
         {
-            EPROSIMA_LOG_ERROR(XMLPARSER, "Invalid tag with name of " << p_aux0->Name() << " on line " << p_aux0->GetLineNum());
+            EPROSIMA_LOG_ERROR(XMLPARSER,
+                    "Invalid tag with name of " << p_aux0->Name() << " on line " << p_aux0->GetLineNum());
             ret_value = XMLP_ret::XML_ERROR;
         }
     }

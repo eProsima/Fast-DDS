@@ -331,7 +331,8 @@ TEST_F(LogTests, validate_multithread_flush_calls)
     {
         threads.emplace_back(new thread([this, &committed]
                 {
-                    EPROSIMA_LOG_WARNING(flush_ckecks, "I'm thread " << this_thread::get_id() << " Flushing " << committed);
+                    EPROSIMA_LOG_WARNING(flush_ckecks,
+                    "I'm thread " << this_thread::get_id() << " Flushing " << committed);
 
                     int commited_before_flush = ++committed;
 

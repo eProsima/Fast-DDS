@@ -109,8 +109,8 @@ std::unique_ptr<ParseNode> parse_filter_expression(
     {
         const auto p = e.positions.front();
         EPROSIMA_LOG_ERROR(DDSSQLFILTER, "PARSE ERROR: " << e.what() << std::endl
-                                               << in.line_at(p) << std::endl
-                                               << std::string(p.byte_in_line, ' ') << '^');
+                                                         << in.line_at(p) << std::endl
+                                                         << std::string(p.byte_in_line, ' ') << '^');
     }
     catch (const std::exception& e)
     {
@@ -133,8 +133,8 @@ std::unique_ptr<ParseNode> parse_literal_value(
     {
         const auto p = e.positions.front();
         EPROSIMA_LOG_ERROR(DDSSQLFILTER, "PARSE ERROR: " << e.what() << std::endl
-                                               << in.line_at(p) << std::endl
-                                               << std::string(p.byte_in_line, ' ') << '^');
+                                                         << in.line_at(p) << std::endl
+                                                         << std::string(p.byte_in_line, ' ') << '^');
     }
     catch (const std::exception& e)
     {

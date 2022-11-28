@@ -149,7 +149,8 @@ bool DataWriterHistory::prepare_change(
 
         if (!ret)
         {
-            EPROSIMA_LOG_WARNING(RTPS_HISTORY, "Attempting to add Data to Full WriterCache: " << topic_att_.getTopicDataType());
+            EPROSIMA_LOG_WARNING(RTPS_HISTORY,
+                    "Attempting to add Data to Full WriterCache: " << topic_att_.getTopicDataType());
             return false;
         }
     }

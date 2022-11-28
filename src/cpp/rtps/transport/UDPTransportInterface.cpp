@@ -211,8 +211,9 @@ bool UDPTransportInterface::OpenAndBindInputSockets(
     catch (asio::system_error const& e)
     {
         (void)e;
-        EPROSIMA_LOG_INFO(RTPS_MSG_OUT, "UDPTransport Error binding at port: (" << IPLocator::getPhysicalPort(locator) << ")"
-                                                                      << " with msg: " << e.what());
+        EPROSIMA_LOG_INFO(RTPS_MSG_OUT, "UDPTransport Error binding at port: (" << IPLocator::getPhysicalPort(
+                    locator) << ")"
+                                                                                << " with msg: " << e.what());
         mInputSockets.erase(IPLocator::getPhysicalPort(locator));
         return false;
     }
@@ -517,7 +518,7 @@ bool UDPTransportInterface::send(
 
         (void)bytesSent;
         EPROSIMA_LOG_INFO(RTPS_MSG_OUT, "UDPTransport: " << bytesSent << " bytes TO endpoint: " << destinationEndpoint
-                                               << " FROM " << getSocketPtr(socket)->local_endpoint());
+                                                         << " FROM " << getSocketPtr(socket)->local_endpoint());
         success = true;
     }
 

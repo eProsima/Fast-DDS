@@ -613,7 +613,8 @@ int ThroughputSubscriber::process_message()
                         }
                         else
                         {
-                            EPROSIMA_LOG_ERROR(THROUGHPUTSUBSCRIBER, "Error preparing static types and endpoints for testing");
+                            EPROSIMA_LOG_ERROR(THROUGHPUTSUBSCRIBER,
+                                    "Error preparing static types and endpoints for testing");
                             return 2;
                         }
                     }
@@ -681,7 +682,8 @@ int ThroughputSubscriber::process_message()
                         // remove the data endpoints on static case
                         if (!destroy_data_endpoints())
                         {
-                            EPROSIMA_LOG_ERROR(THROUGHPUTSUBSCRIBER, "Iteration failed: Failed to remove static data endpoints");
+                            EPROSIMA_LOG_ERROR(THROUGHPUTSUBSCRIBER,
+                                    "Iteration failed: Failed to remove static data endpoints");
                             return 2;
                         }
 

@@ -91,7 +91,8 @@ bool DSClientEvent::event()
         // so it is not a periodic announcement
         mp_PDP->_serverPing = true;
         mp_PDP->announceParticipantState(false);
-        EPROSIMA_LOG_INFO(CLIENT_PDP_THREAD, "Client " << mp_PDP->getRTPSParticipant()->getGuid() << " PDP announcement");
+        EPROSIMA_LOG_INFO(CLIENT_PDP_THREAD,
+                "Client " << mp_PDP->getRTPSParticipant()->getGuid() << " PDP announcement");
     }
 
     return restart;

@@ -312,8 +312,9 @@ RTPSParticipantImpl::RTPSParticipantImpl(
         /* INSERT DEFAULT UNICAST LOCATORS FOR THE PARTICIPANT */
         get_default_unicast_locators();
         internal_default_locators_ = true;
-        EPROSIMA_LOG_INFO(RTPS_PARTICIPANT, m_att.getName() << " Created with NO default Unicast Locator List, adding Locators:"
-                                                  << m_att.defaultUnicastLocatorList);
+        EPROSIMA_LOG_INFO(RTPS_PARTICIPANT,
+                m_att.getName() << " Created with NO default Unicast Locator List, adding Locators:"
+                                << m_att.defaultUnicastLocatorList);
     }
     else
     {
@@ -426,8 +427,9 @@ RTPSParticipantImpl::RTPSParticipantImpl(
 
     if (c_GuidPrefix_Unknown != persistence_guid)
     {
-        EPROSIMA_LOG_INFO(RTPS_PARTICIPANT, "RTPSParticipant \"" << m_att.getName() << "\" with guidPrefix: " << m_guid.guidPrefix
-                                                       << " and persistence guid: " << persistence_guid);
+        EPROSIMA_LOG_INFO(RTPS_PARTICIPANT,
+                "RTPSParticipant \"" << m_att.getName() << "\" with guidPrefix: " << m_guid.guidPrefix
+                                     << " and persistence guid: " << persistence_guid);
     }
     else
     {
@@ -533,7 +535,8 @@ bool RTPSParticipantImpl::preprocess_endpoint_attributes(
     }
     if (!att.multicastLocatorList.isValid())
     {
-        EPROSIMA_LOG_ERROR(RTPS_PARTICIPANT, "Multicast Locator List for " << debug_label << " contains invalid Locator");
+        EPROSIMA_LOG_ERROR(RTPS_PARTICIPANT,
+                "Multicast Locator List for " << debug_label << " contains invalid Locator");
         return false;
     }
     if (!att.remoteLocatorList.isValid())
@@ -584,8 +587,8 @@ bool RTPSParticipantImpl::preprocess_endpoint_attributes(
             {
                 // Wrongly configured property
                 EPROSIMA_LOG_ERROR(RTPS_PARTICIPANT, "Cannot configure " << debug_label << "'s persistence GUID from '"
-                                                               << persistence_guid_property->c_str()
-                                                               << "'. Wrong input");
+                                                                         << persistence_guid_property->c_str()
+                                                                         << "'. Wrong input");
                 return false;
             }
         }
@@ -1256,8 +1259,9 @@ void RTPSParticipantImpl::update_attributes(
         if (!(default_unicast_locator_list == m_att.defaultUnicastLocatorList))
         {
             local_interfaces_changed = true;
-            EPROSIMA_LOG_INFO(RTPS_PARTICIPANT, m_att.getName() << " updated default unicast locator list, current locators: "
-                                                      << m_att.defaultUnicastLocatorList);
+            EPROSIMA_LOG_INFO(RTPS_PARTICIPANT,
+                    m_att.getName() << " updated default unicast locator list, current locators: "
+                                    << m_att.defaultUnicastLocatorList);
         }
     }
 

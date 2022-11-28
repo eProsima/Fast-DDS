@@ -250,13 +250,15 @@ bool LatencyTestPublisher::init(
 
             if (ReturnCode_t::RETCODE_OK != publisher_->get_datawriter_qos_from_profile(pub_profile_name, dw_qos_))
             {
-                EPROSIMA_LOG_ERROR(LATENCYPUBLISHER, "ERROR unable to retrive the " << pub_profile_name << "from XML file");
+                EPROSIMA_LOG_ERROR(LATENCYPUBLISHER,
+                        "ERROR unable to retrive the " << pub_profile_name << "from XML file");
                 return false;
             }
 
             if (ReturnCode_t::RETCODE_OK != subscriber_->get_datareader_qos_from_profile(sub_profile_name, dr_qos_))
             {
-                EPROSIMA_LOG_ERROR(LATENCYPUBLISHER, "ERROR unable to retrive the " << sub_profile_name << "from XML file");
+                EPROSIMA_LOG_ERROR(LATENCYPUBLISHER,
+                        "ERROR unable to retrive the " << sub_profile_name << "from XML file");
             }
         }
         // Create QoS Profiles

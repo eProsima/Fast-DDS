@@ -1549,7 +1549,8 @@ bool AESGCMGMAC_Transform::serialize_SecureDataBody(
         if (!EVP_EncryptInit(e_ctx, EVP_aes_128_gcm(), (const unsigned char*)(session_key.data()),
                 initialization_vector.data()))
         {
-            EPROSIMA_LOG_ERROR(SECURITY_CRYPTO, "Unable to encode the payload. EVP_EncryptInit function returns an error");
+            EPROSIMA_LOG_ERROR(SECURITY_CRYPTO,
+                    "Unable to encode the payload. EVP_EncryptInit function returns an error");
             EVP_CIPHER_CTX_free(e_ctx);
             return false;
         }
@@ -1561,7 +1562,8 @@ bool AESGCMGMAC_Transform::serialize_SecureDataBody(
         if (!EVP_EncryptInit(e_ctx, EVP_aes_256_gcm(), (const unsigned char*)(session_key.data()),
                 initialization_vector.data()))
         {
-            EPROSIMA_LOG_ERROR(SECURITY_CRYPTO, "Unable to encode the payload. EVP_EncryptInit function returns an error");
+            EPROSIMA_LOG_ERROR(SECURITY_CRYPTO,
+                    "Unable to encode the payload. EVP_EncryptInit function returns an error");
             EVP_CIPHER_CTX_free(e_ctx);
             return false;
         }
@@ -1584,14 +1586,16 @@ bool AESGCMGMAC_Transform::serialize_SecureDataBody(
 
         if (!EVP_EncryptUpdate(e_ctx, nullptr, &actual_size, plain_buffer, static_cast<int>(plain_buffer_len)))
         {
-            EPROSIMA_LOG_ERROR(SECURITY_CRYPTO, "Unable to encode the payload. EVP_EncryptUpdate function returns an error");
+            EPROSIMA_LOG_ERROR(SECURITY_CRYPTO,
+                    "Unable to encode the payload. EVP_EncryptUpdate function returns an error");
             EVP_CIPHER_CTX_free(e_ctx);
             return false;
         }
 
         if (!EVP_EncryptFinal(e_ctx, nullptr, &final_size))
         {
-            EPROSIMA_LOG_ERROR(SECURITY_CRYPTO, "Unable to encode the payload. EVP_EncryptFinal function returns an error");
+            EPROSIMA_LOG_ERROR(SECURITY_CRYPTO,
+                    "Unable to encode the payload. EVP_EncryptFinal function returns an error");
             EVP_CIPHER_CTX_free(e_ctx);
             return false;
         }
@@ -1643,14 +1647,16 @@ bool AESGCMGMAC_Transform::serialize_SecureDataBody(
         if (!EVP_EncryptUpdate(e_ctx, output_buffer_raw, &actual_size, plain_buffer,
                 static_cast<int>(plain_buffer_len)))
         {
-            EPROSIMA_LOG_ERROR(SECURITY_CRYPTO, "Unable to encode the payload. EVP_EncryptUpdate function returns an error");
+            EPROSIMA_LOG_ERROR(SECURITY_CRYPTO,
+                    "Unable to encode the payload. EVP_EncryptUpdate function returns an error");
             EVP_CIPHER_CTX_free(e_ctx);
             return false;
         }
 
         if (!EVP_EncryptFinal(e_ctx, &output_buffer_raw[actual_size], &final_size))
         {
-            EPROSIMA_LOG_ERROR(SECURITY_CRYPTO, "Unable to encode the payload. EVP_EncryptFinal function returns an error");
+            EPROSIMA_LOG_ERROR(SECURITY_CRYPTO,
+                    "Unable to encode the payload. EVP_EncryptFinal function returns an error");
             EVP_CIPHER_CTX_free(e_ctx);
             return false;
         }
@@ -1767,7 +1773,8 @@ bool AESGCMGMAC_Transform::serialize_SecureDataTag(
                     (const unsigned char*)(remote_entity->Sessions[sessionIndex].SessionKey.data()),
                     initialization_vector.data()))
             {
-                EPROSIMA_LOG_ERROR(SECURITY_CRYPTO, "Unable to encode the payload. EVP_EncryptInit function returns an error");
+                EPROSIMA_LOG_ERROR(SECURITY_CRYPTO,
+                        "Unable to encode the payload. EVP_EncryptInit function returns an error");
                 EVP_CIPHER_CTX_free(e_ctx);
                 continue;
             }
@@ -1779,7 +1786,8 @@ bool AESGCMGMAC_Transform::serialize_SecureDataTag(
                     (const unsigned char*)(remote_entity->Sessions[sessionIndex].SessionKey.data()),
                     initialization_vector.data()))
             {
-                EPROSIMA_LOG_ERROR(SECURITY_CRYPTO, "Unable to encode the payload. EVP_EncryptInit function returns an error");
+                EPROSIMA_LOG_ERROR(SECURITY_CRYPTO,
+                        "Unable to encode the payload. EVP_EncryptInit function returns an error");
                 EVP_CIPHER_CTX_free(e_ctx);
                 continue;
             }
@@ -1879,7 +1887,8 @@ bool AESGCMGMAC_Transform::serialize_SecureDataTag(
                     (const unsigned char*)(remote_participant->Session.SessionKey.data()),
                     initialization_vector.data()))
             {
-                EPROSIMA_LOG_ERROR(SECURITY_CRYPTO, "Unable to encode the payload. EVP_EncryptInit function returns an error");
+                EPROSIMA_LOG_ERROR(SECURITY_CRYPTO,
+                        "Unable to encode the payload. EVP_EncryptInit function returns an error");
                 EVP_CIPHER_CTX_free(e_ctx);
                 continue;
             }
@@ -1891,7 +1900,8 @@ bool AESGCMGMAC_Transform::serialize_SecureDataTag(
                     (const unsigned char*)(remote_participant->Session.SessionKey.data()),
                     initialization_vector.data()))
             {
-                EPROSIMA_LOG_ERROR(SECURITY_CRYPTO, "Unable to encode the payload. EVP_EncryptInit function returns an error");
+                EPROSIMA_LOG_ERROR(SECURITY_CRYPTO,
+                        "Unable to encode the payload. EVP_EncryptInit function returns an error");
                 EVP_CIPHER_CTX_free(e_ctx);
                 continue;
             }
@@ -1963,7 +1973,8 @@ bool AESGCMGMAC_Transform::deserialize_SecureDataBody(
         if (!EVP_DecryptInit(d_ctx, EVP_aes_128_gcm(), (const unsigned char*)session_key.data(),
                 initialization_vector.data()))
         {
-            EPROSIMA_LOG_ERROR(SECURITY_CRYPTO, "Unable to decode the payload. EVP_DecryptInit function returns an error");
+            EPROSIMA_LOG_ERROR(SECURITY_CRYPTO,
+                    "Unable to decode the payload. EVP_DecryptInit function returns an error");
             EVP_CIPHER_CTX_free(d_ctx);
             return false;
         }
@@ -1975,7 +1986,8 @@ bool AESGCMGMAC_Transform::deserialize_SecureDataBody(
         if (!EVP_DecryptInit(d_ctx, EVP_aes_256_gcm(), (const unsigned char*)session_key.data(),
                 initialization_vector.data()))
         {
-            EPROSIMA_LOG_ERROR(SECURITY_CRYPTO, "Unable to decode the payload. EVP_DecryptInit function returns an error");
+            EPROSIMA_LOG_ERROR(SECURITY_CRYPTO,
+                    "Unable to decode the payload. EVP_DecryptInit function returns an error");
             EVP_CIPHER_CTX_free(d_ctx);
             return false;
         }
@@ -2002,7 +2014,8 @@ bool AESGCMGMAC_Transform::deserialize_SecureDataBody(
     unsigned char* input_buffer = (unsigned char*)decoder.getCurrentPosition();
     if (!EVP_DecryptUpdate(d_ctx, output_buffer, &actual_size, input_buffer, protected_len))
     {
-        EPROSIMA_LOG_WARNING(SECURITY_CRYPTO, "Unable to decode the payload. EVP_DecryptUpdate function returns an error");
+        EPROSIMA_LOG_WARNING(SECURITY_CRYPTO,
+                "Unable to decode the payload. EVP_DecryptUpdate function returns an error");
         EVP_CIPHER_CTX_free(d_ctx);
         return false;
     }
@@ -2011,7 +2024,8 @@ bool AESGCMGMAC_Transform::deserialize_SecureDataBody(
 
     if (!EVP_DecryptFinal(d_ctx, output_buffer ? &output_buffer[actual_size] : NULL, &final_size))
     {
-        EPROSIMA_LOG_WARNING(SECURITY_CRYPTO, "Unable to decode the payload. EVP_DecryptFinal function returns an error");
+        EPROSIMA_LOG_WARNING(SECURITY_CRYPTO,
+                "Unable to decode the payload. EVP_DecryptFinal function returns an error");
         EVP_CIPHER_CTX_free(d_ctx);
         return false;
     }
@@ -2110,7 +2124,8 @@ bool AESGCMGMAC_Transform::deserialize_SecureDataTag(
 
         if (!mac_found)
         {
-            EPROSIMA_LOG_WARNING(SECURITY_CRYPTO, "Unable to authenticate the message: message does not target this Participant");
+            EPROSIMA_LOG_WARNING(SECURITY_CRYPTO,
+                    "Unable to authenticate the message: message does not target this Participant");
             exception = SecurityException(
                 "Message does not contain a suitable specific MAC for the receiving Participant");
             return false;
@@ -2148,7 +2163,8 @@ bool AESGCMGMAC_Transform::deserialize_SecureDataTag(
         if (!EVP_DecryptInit(d_ctx, d_cipher, (const unsigned char*)specific_session_key.data(),
                 initialization_vector.data()))
         {
-            EPROSIMA_LOG_ERROR(SECURITY_CRYPTO, "Unable to authenticate the message. EVP_DecryptInit function returns an error");
+            EPROSIMA_LOG_ERROR(SECURITY_CRYPTO,
+                    "Unable to authenticate the message. EVP_DecryptInit function returns an error");
             EVP_CIPHER_CTX_free(d_ctx);
             return false;
         }

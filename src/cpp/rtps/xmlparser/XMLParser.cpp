@@ -659,7 +659,8 @@ XMLP_ret XMLParser::parseXMLCommonTCPTransportData(
             }
             else
             {
-                EPROSIMA_LOG_ERROR(XMLPARSER, "Invalid element found into 'rtpsTransportDescriptorType'. Name: " << name);
+                EPROSIMA_LOG_ERROR(XMLPARSER,
+                        "Invalid element found into 'rtpsTransportDescriptorType'. Name: " << name);
                 return XMLP_ret::XML_ERROR;
             }
         }
@@ -760,7 +761,8 @@ XMLP_ret XMLParser::parseXMLCommonSharedMemTransportData(
             }
             else
             {
-                EPROSIMA_LOG_ERROR(XMLPARSER, "Invalid element found into 'rtpsTransportDescriptorType'. Name: " << name);
+                EPROSIMA_LOG_ERROR(XMLPARSER,
+                        "Invalid element found into 'rtpsTransportDescriptorType'. Name: " << name);
                 return XMLP_ret::XML_ERROR;
             }
         }
@@ -1506,7 +1508,7 @@ XMLP_ret XMLParser::parseXMLConsumer(
                             {
                                 // Continue with the next property if `stderr_threshold` had been already specified.
                                 EPROSIMA_LOG_ERROR(XMLParser, classStr << " only supports one occurrence of 'stderr_threshold'."
-                                                             << " Only the first one is applied.");
+                                                                       << " Only the first one is applied.");
                                 property = property->NextSiblingElement(PROPERTY);
                                 ret = XMLP_ret::XML_NOK;
                                 continue;
@@ -1532,7 +1534,7 @@ XMLP_ret XMLParser::parseXMLConsumer(
                                 else
                                 {
                                     EPROSIMA_LOG_ERROR(XMLParser, "Unkown Log::Kind '" << threshold_str
-                                                                             << "'. Using default threshold.");
+                                                                                       << "'. Using default threshold.");
                                     ret = XMLP_ret::XML_NOK;
                                 }
                             }
@@ -1540,7 +1542,7 @@ XMLP_ret XMLParser::parseXMLConsumer(
                         else
                         {
                             EPROSIMA_LOG_ERROR(XMLParser, "Unkown property value '" << s << "' in " << classStr
-                                                                          << " log consumer");
+                                                                                    << " log consumer");
                             ret = XMLP_ret::XML_NOK;
                         }
                     }
@@ -1585,7 +1587,7 @@ XMLP_ret XMLParser::parseXMLConsumer(
                             else
                             {
                                 EPROSIMA_LOG_ERROR(XMLParser, "Filename value cannot be found for " << classStr
-                                                                                          << " log consumer.");
+                                                                                                    << " log consumer.");
                                 ret = XMLP_ret::XML_NOK;
                             }
                         }
@@ -1603,14 +1605,14 @@ XMLP_ret XMLParser::parseXMLConsumer(
                             else
                             {
                                 EPROSIMA_LOG_ERROR(XMLParser, "Append value cannot be found for " << classStr
-                                                                                        << " log consumer.");
+                                                                                                  << " log consumer.");
                                 ret = XMLP_ret::XML_NOK;
                             }
                         }
                         else
                         {
                             EPROSIMA_LOG_ERROR(XMLParser, "Unknown property " << s << " in " << classStr
-                                                                    << " log consumer.");
+                                                                              << " log consumer.");
                             ret = XMLP_ret::XML_NOK;
                         }
                     }
@@ -1781,7 +1783,8 @@ XMLP_ret XMLParser::fillDataNode(
 
         if (tags_present[name])
         {
-            EPROSIMA_LOG_ERROR(XMLPARSER, "Duplicated element found in 'rtpsParticipantAttributesType'. Name: " << name);
+            EPROSIMA_LOG_ERROR(XMLPARSER,
+                    "Duplicated element found in 'rtpsParticipantAttributesType'. Name: " << name);
             return XMLP_ret::XML_ERROR;
         }
         tags_present[name] = true;

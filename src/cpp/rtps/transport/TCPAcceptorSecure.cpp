@@ -47,7 +47,7 @@ void TCPAcceptorSecure::accept(
         ssl::context& ssl_context)
 {
     EPROSIMA_LOG_INFO(ACEPTOR, "Listening at: " << acceptor_.local_endpoint().address()
-                                      << ":" << acceptor_.local_endpoint().port());
+                                                << ":" << acceptor_.local_endpoint().port());
 
     using asio::ip::tcp;
     using TLSHSRole = TCPTransportDescriptor::TLSConfig::TLSHandShakeRole;

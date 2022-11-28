@@ -346,7 +346,7 @@ public:
                             (*port_it)->node->is_port_ok = false;
 
                             EPROSIMA_LOG_WARNING(RTPS_TRANSPORT_SHM, "Port " << (*port_it)->node->port_id
-                                                                   << ": " << e.what());
+                                                                             << ": " << e.what());
 
                             // Remove the port from watch
                             port_it = watched_ports_.erase(port_it);
@@ -486,7 +486,7 @@ public:
                     }
 
                     EPROSIMA_LOG_WARNING(RTPS_TRANSPORT_SHM, THREADID << segment_name.c_str()
-                                                            << e.what());
+                                                                      << e.what());
                 }
             }
         }
@@ -985,7 +985,7 @@ private:
         auto port_segment_name = domain_name_ + "_port" + std::to_string(port_id);
 
         EPROSIMA_LOG_INFO(RTPS_TRANSPORT_SHM, THREADID << "Opening "
-                                             << port_segment_name);
+                                                       << port_segment_name);
 
         std::unique_ptr<SharedMemSegment::named_mutex> port_mutex =
                 SharedMemSegment::open_or_create_and_lock_named_mutex(port_segment_name + "_mutex");
@@ -1001,7 +1001,7 @@ private:
             catch (std::exception& e)
             {
                 EPROSIMA_LOG_ERROR(RTPS_TRANSPORT_SHM, THREADID << "Port "
-                                                      << port_id << " failed unlock_read_locks " << e.what());
+                                                                << port_id << " failed unlock_read_locks " << e.what());
             }
         }
 
@@ -1010,7 +1010,7 @@ private:
             if (Port::is_zombie(port_id, domain_name_))
             {
                 EPROSIMA_LOG_WARNING(RTPS_TRANSPORT_SHM, THREADID << "Port "
-                                                        << port_id << " Zombie. Reset the port");
+                                                                  << port_id << " Zombie. Reset the port");
 
                 SharedMemSegment::remove(port_segment_name.c_str());
 
@@ -1045,12 +1045,12 @@ private:
             catch (std::exception&)
             {
                 EPROSIMA_LOG_WARNING(RTPS_TRANSPORT_SHM, THREADID << "Port "
-                                                        << port_id << " Couldn't find port_node ");
+                                                                  << port_id << " Couldn't find port_node ");
 
                 SharedMemSegment::remove(port_segment_name.c_str());
 
                 EPROSIMA_LOG_WARNING(RTPS_TRANSPORT_SHM, THREADID << "Port "
-                                                        << port_id << " Removed.");
+                                                                  << port_id << " Removed.");
 
                 throw;
             }
@@ -1083,7 +1083,7 @@ private:
                     port_node->is_opened_for_reading |= (open_mode != Port::OpenMode::Write);
 
                     EPROSIMA_LOG_INFO(RTPS_TRANSPORT_SHM, THREADID << "Port "
-                                                         << port_node->port_id << " (" << port_node->uuid.to_string() <<
+                                                                   << port_node->port_id << " (" << port_node->uuid.to_string() <<
                             ") Opened" << Port::open_mode_to_string(open_mode));
                 }
             }
@@ -1096,12 +1096,12 @@ private:
                 auto port_uuid = port_node->uuid.to_string();
 
                 EPROSIMA_LOG_WARNING(RTPS_TRANSPORT_SHM, THREADID << "Existing Port "
-                                                        << port_id << " (" << port_uuid << ") NOT Healthy.");
+                                                                  << port_id << " (" << port_uuid << ") NOT Healthy.");
 
                 SharedMemSegment::remove(port_segment_name.c_str());
 
                 EPROSIMA_LOG_WARNING(RTPS_TRANSPORT_SHM, THREADID << "Port "
-                                                        << port_id << " (" << port_uuid << ") Removed.");
+                                                                  << port_id << " (" << port_uuid << ") Removed.");
 
                 throw;
             }
@@ -1124,7 +1124,7 @@ private:
             catch (std::exception& e)
             {
                 EPROSIMA_LOG_WARNING(RTPS_TRANSPORT_SHM, "Failed to create port segment " << port_segment_name
-                                                                                << ": " << e.what());
+                                                                                          << ": " << e.what());
             }
 
             if (port_segment)
@@ -1145,7 +1145,7 @@ private:
                     SharedMemSegment::remove(port_segment_name.c_str());
 
                     EPROSIMA_LOG_ERROR(RTPS_TRANSPORT_SHM, "Failed init_port " << port_segment_name
-                                                                     << ": " << e.what());
+                                                                               << ": " << e.what());
 
                     throw;
                 }
@@ -1225,8 +1225,8 @@ private:
         }
 
         EPROSIMA_LOG_INFO(RTPS_TRANSPORT_SHM, THREADID << "Port "
-                                             << port_node->port_id << " (" << port_node->uuid.to_string()
-                                             << Port::open_mode_to_string(open_mode) << ") Created.");
+                                                       << port_node->port_id << " (" << port_node->uuid.to_string()
+                                                       << Port::open_mode_to_string(open_mode) << ") Created.");
 
         return port;
     }

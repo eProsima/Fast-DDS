@@ -228,28 +228,28 @@ protected:
 #endif // if defined(WIN32)
 
 /********************
- * Implementation of the log macros depending on the defined macros:
- * HAVE_LOG_NO_<level> disable completly a verbosity level
- * _INTERNALDEBUG || __INTERNALDEBUG  force to compile the log macro call even when it would not be added to queue
- * EPROSIMA_LOG_INFO_IMPL_ would only be compiled if HAVE_LOG_NO_INFO is OFF and
- * - FASTDDS_ENFORCE_LOG_INFO or (DEBUG and INTERNALDEBUG) are defined
- *
- * There are 3 implementations for each level:
- * 1. Compile and add log to queue
- * 2. Compile but do not add it to queue (with INTERNALDEBUG)
- * 3. Do not compile
- *
- * Every macro (with implementation) occurs inside a code block so after call every internal variable is destroyed.
- * Every macro declared has a do while(0).
- * This will not generate an assembler instruction and forces the user of the macro to use ";" after calling it.
- * https://gcc.gnu.org/onlinedocs/cpp/Swallowing-the-Semicolon.html
- * NOTE: some compilation cases do not use do while loop and so they do not force ";".
- * It is a risk that a user takes in exchange of a perfect way of non generating code in such cases.
- ********************/
+* Implementation of the log macros depending on the defined macros:
+* HAVE_LOG_NO_<level> disable completly a verbosity level
+* _INTERNALDEBUG || __INTERNALDEBUG  force to compile the log macro call even when it would not be added to queue
+* EPROSIMA_LOG_INFO_IMPL_ would only be compiled if HAVE_LOG_NO_INFO is OFF and
+* - FASTDDS_ENFORCE_LOG_INFO or (DEBUG and INTERNALDEBUG) are defined
+*
+* There are 3 implementations for each level:
+* 1. Compile and add log to queue
+* 2. Compile but do not add it to queue (with INTERNALDEBUG)
+* 3. Do not compile
+*
+* Every macro (with implementation) occurs inside a code block so after call every internal variable is destroyed.
+* Every macro declared has a do while(0).
+* This will not generate an assembler instruction and forces the user of the macro to use ";" after calling it.
+* https://gcc.gnu.org/onlinedocs/cpp/Swallowing-the-Semicolon.html
+* NOTE: some compilation cases do not use do while loop and so they do not force ";".
+* It is a risk that a user takes in exchange of a perfect way of non generating code in such cases.
+********************/
 
 /*********
- * ERROR *
- *********/
+* ERROR *
+*********/
 // Name of variables inside macros must be unique, or it could produce an error with external variables
 #if !HAVE_LOG_NO_ERROR
 
@@ -279,8 +279,8 @@ protected:
 #endif // ifndef LOG_NO_ERROR
 
 /***********
- * WARNING *
- ***********/
+* WARNING *
+***********/
 #if !HAVE_LOG_NO_WARNING
 
 #define EPROSIMA_LOG_WARNING_IMPL_(cat, msg)                                                                            \
@@ -314,8 +314,8 @@ protected:
 #endif // ifndef LOG_NO_WARNING
 
 /********
- * INFO *
- ********/
+* INFO *
+********/
 // Allow multiconfig platforms like windows to disable info queueing on Release and other non-debug configs
 #if !HAVE_LOG_NO_INFO &&  \
     (defined(FASTDDS_ENFORCE_LOG_INFO) || \

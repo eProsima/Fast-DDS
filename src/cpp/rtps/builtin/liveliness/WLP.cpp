@@ -766,7 +766,8 @@ bool WLP::remove_local_writer(
                     W->get_liveliness_kind(),
                     W->get_liveliness_lease_duration()))
         {
-            EPROSIMA_LOG_ERROR(RTPS_LIVELINESS, "Could not remove writer " << W->getGuid() << " from liveliness manager");
+            EPROSIMA_LOG_ERROR(RTPS_LIVELINESS,
+                    "Could not remove writer " << W->getGuid() << " from liveliness manager");
         }
 
         min_manual_by_participant_ms_ = std::numeric_limits<double>::max();
@@ -808,7 +809,8 @@ bool WLP::remove_local_writer(
                     W->get_liveliness_kind(),
                     W->get_liveliness_lease_duration()))
         {
-            EPROSIMA_LOG_ERROR(RTPS_LIVELINESS, "Could not remove writer " << W->getGuid() << " from liveliness manager");
+            EPROSIMA_LOG_ERROR(RTPS_LIVELINESS,
+                    "Could not remove writer " << W->getGuid() << " from liveliness manager");
         }
         return true;
     }

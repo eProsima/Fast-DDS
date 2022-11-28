@@ -366,7 +366,7 @@ bool SharedMemTransport::OpenOutputChannel(
     catch (std::exception& e)
     {
         EPROSIMA_LOG_ERROR(RTPS_MSG_OUT, "SharedMemTransport error opening port " << std::to_string(locator.port)
-                                                                        << " with msg: " << e.what());
+                                                                                  << " with msg: " << e.what());
 
         return false;
     }

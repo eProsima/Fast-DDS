@@ -86,7 +86,8 @@ bool ReaderHistory::add_change(
 {
     if (mp_reader == nullptr || mp_mutex == nullptr)
     {
-        EPROSIMA_LOG_ERROR(RTPS_READER_HISTORY, "You need to create a Reader with this History before adding any changes");
+        EPROSIMA_LOG_ERROR(RTPS_READER_HISTORY,
+                "You need to create a Reader with this History before adding any changes");
         return false;
     }
 
@@ -132,7 +133,8 @@ History::iterator ReaderHistory::remove_change_nts(
 {
     if ( mp_reader == nullptr || mp_mutex == nullptr)
     {
-        EPROSIMA_LOG_ERROR(RTPS_WRITER_HISTORY, "You need to create a Writer with this History before removing any changes");
+        EPROSIMA_LOG_ERROR(RTPS_WRITER_HISTORY,
+                "You need to create a Writer with this History before removing any changes");
         return changesEnd();
     }
 

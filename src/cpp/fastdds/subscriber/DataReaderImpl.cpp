@@ -1515,27 +1515,32 @@ bool DataReaderImpl::can_qos_be_updated(
     if (to.destination_order().kind != from.destination_order().kind)
     {
         updatable = false;
-        EPROSIMA_LOG_WARNING(DDS_QOS_CHECK, "Destination order Kind cannot be changed after the creation of a DataReader.");
+        EPROSIMA_LOG_WARNING(DDS_QOS_CHECK,
+                "Destination order Kind cannot be changed after the creation of a DataReader.");
     }
     if (!(to.reader_resource_limits() == from.reader_resource_limits()))
     {
         updatable = false;
-        EPROSIMA_LOG_WARNING(DDS_QOS_CHECK, "reader_resource_limits cannot be changed after the creation of a DataReader.");
+        EPROSIMA_LOG_WARNING(DDS_QOS_CHECK,
+                "reader_resource_limits cannot be changed after the creation of a DataReader.");
     }
     if (to.data_sharing().kind() != from.data_sharing().kind())
     {
         updatable = false;
-        EPROSIMA_LOG_WARNING(RTPS_QOS_CHECK, "Data sharing configuration cannot be changed after the creation of a DataReader.");
+        EPROSIMA_LOG_WARNING(RTPS_QOS_CHECK,
+                "Data sharing configuration cannot be changed after the creation of a DataReader.");
     }
     if (to.data_sharing().shm_directory() != from.data_sharing().shm_directory())
     {
         updatable = false;
-        EPROSIMA_LOG_WARNING(RTPS_QOS_CHECK, "Data sharing configuration cannot be changed after the creation of a DataReader.");
+        EPROSIMA_LOG_WARNING(RTPS_QOS_CHECK,
+                "Data sharing configuration cannot be changed after the creation of a DataReader.");
     }
     if (to.data_sharing().domain_ids() != from.data_sharing().domain_ids())
     {
         updatable = false;
-        EPROSIMA_LOG_WARNING(RTPS_QOS_CHECK, "Data sharing configuration cannot be changed after the creation of a DataReader.");
+        EPROSIMA_LOG_WARNING(RTPS_QOS_CHECK,
+                "Data sharing configuration cannot be changed after the creation of a DataReader.");
     }
     if (qos_has_unique_network_request(to) != qos_has_unique_network_request(from))
     {

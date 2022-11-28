@@ -557,7 +557,8 @@ bool XMLProfileManager::insertTransportById(
         transport_profiles_[transport_id] = transport;
         return true;
     }
-    EPROSIMA_LOG_ERROR(XMLPARSER, "Error adding the transport " << transport_id << ". There is other transport with the same id");
+    EPROSIMA_LOG_ERROR(XMLPARSER,
+            "Error adding the transport " << transport_id << ". There is other transport with the same id");
     return false;
 }
 

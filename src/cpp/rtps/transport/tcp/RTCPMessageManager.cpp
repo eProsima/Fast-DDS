@@ -457,7 +457,7 @@ ResponseCode RTCPMessageManager::processBindConnectionRequest(
     {
         sendData(channel, BIND_CONNECTION_RESPONSE, transaction_id, &payload, RETCODE_INCOMPATIBLE_VERSION);
         EPROSIMA_LOG_WARNING(RTCP, "Rejected client due to INCOMPATIBLE_VERSION: Expected: " << c_rtcpProtocolVersion
-                                                                                   << " but received " <<
+                                                                                             << " but received " <<
                 request.protocolVersion());
         return RETCODE_INCOMPATIBLE_VERSION;
     }
@@ -591,7 +591,8 @@ ResponseCode RTCPMessageManager::processBindConnectionResponse(
     }
     else
     {
-        EPROSIMA_LOG_WARNING(RTCP, "Received BindConnectionResponse with an invalid transaction_id: " << transaction_id);
+        EPROSIMA_LOG_WARNING(RTCP,
+                "Received BindConnectionResponse with an invalid transaction_id: " << transaction_id);
         return RETCODE_VOID;
     }
 }
@@ -609,7 +610,8 @@ ResponseCode RTCPMessageManager::processCheckLogicalPortsResponse(
     }
     else
     {
-        EPROSIMA_LOG_WARNING(RTCP, "Received CheckLogicalPortsResponse with an invalid transaction_id: " << transaction_id);
+        EPROSIMA_LOG_WARNING(RTCP,
+                "Received CheckLogicalPortsResponse with an invalid transaction_id: " << transaction_id);
         return RETCODE_VOID;
     }
 }
@@ -642,7 +644,8 @@ ResponseCode RTCPMessageManager::processOpenLogicalPortResponse(
     }
     else
     {
-        EPROSIMA_LOG_WARNING(RTCP, "Received OpenLogicalPortResponse with an invalid transaction_id: " << transaction_id);
+        EPROSIMA_LOG_WARNING(RTCP,
+                "Received OpenLogicalPortResponse with an invalid transaction_id: " << transaction_id);
     }
     return RETCODE_OK;
 }
@@ -668,7 +671,8 @@ ResponseCode RTCPMessageManager::processKeepAliveResponse(
     }
     else
     {
-        EPROSIMA_LOG_WARNING(RTCP, "Received response for KeepAlive with an unexpected transaction_id: " << transaction_id);
+        EPROSIMA_LOG_WARNING(RTCP,
+                "Received response for KeepAlive with an unexpected transaction_id: " << transaction_id);
     }
     return RETCODE_OK;
 }
@@ -709,7 +713,7 @@ ResponseCode RTCPMessageManager::processRTCPMessage(
             EPROSIMA_LOG_INFO(RTCP_MSG, "Receive [BIND_CONNECTION_REQUEST] " <<
                     "LogicalPort: " << IPLocator::getLogicalPort(
                         request.transportLocator())
-                                                                   << ", Physical remote: " << IPLocator::getPhysicalPort(
+                                                                             << ", Physical remote: " << IPLocator::getPhysicalPort(
                         request.transportLocator()));
 
             responseCode = processBindConnectionRequest(channel, request, controlHeader.transaction_id(), myLocator);
@@ -801,7 +805,8 @@ ResponseCode RTCPMessageManager::processRTCPMessage(
             SerializedPayload_t payload(static_cast<uint32_t>(bufferSize));
             readSerializedPayload(payload, &(receive_buffer[TCPControlMsgHeader::size()]), dataSize);
             request.deserialize(&payload);
-            EPROSIMA_LOG_INFO(RTCP_MSG, "Receive [LOGICAL_PORT_IS_CLOSED_REQUEST] LogicalPort: " << request.logicalPort());
+            EPROSIMA_LOG_INFO(RTCP_MSG,
+                    "Receive [LOGICAL_PORT_IS_CLOSED_REQUEST] LogicalPort: " << request.logicalPort());
             processLogicalPortIsClosedRequest(channel, request, controlHeader.transaction_id());
         }
         break;

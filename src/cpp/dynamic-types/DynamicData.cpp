@@ -3704,7 +3704,8 @@ ReturnCode_t DynamicData::set_string_value(
         }
         else
         {
-            EPROSIMA_LOG_ERROR(DYN_TYPES, "Error setting string value. The given string is greater than the length limit.");
+            EPROSIMA_LOG_ERROR(DYN_TYPES,
+                    "Error setting string value. The given string is greater than the length limit.");
             return ReturnCode_t::RETCODE_BAD_PARAMETER;
         }
     }
@@ -3744,7 +3745,8 @@ ReturnCode_t DynamicData::set_string_value(
             }
             else
             {
-                EPROSIMA_LOG_ERROR(DYN_TYPES, "Error setting string value. The given string is greater than the length limit.");
+                EPROSIMA_LOG_ERROR(DYN_TYPES,
+                        "Error setting string value. The given string is greater than the length limit.");
                 return ReturnCode_t::RETCODE_BAD_PARAMETER;
             }
         }
@@ -3918,7 +3920,8 @@ ReturnCode_t DynamicData::set_wstring_value(
         }
         else
         {
-            EPROSIMA_LOG_ERROR(DYN_TYPES, "Error setting wstring value. The given string is greater than the length limit.");
+            EPROSIMA_LOG_ERROR(DYN_TYPES,
+                    "Error setting wstring value. The given string is greater than the length limit.");
             return ReturnCode_t::RETCODE_BAD_PARAMETER;
         }
     }
@@ -3958,7 +3961,8 @@ ReturnCode_t DynamicData::set_wstring_value(
             }
             else
             {
-                EPROSIMA_LOG_ERROR(DYN_TYPES, "Error setting wstring value. The given string is greater than the length limit.");
+                EPROSIMA_LOG_ERROR(DYN_TYPES,
+                        "Error setting wstring value. The given string is greater than the length limit.");
                 return ReturnCode_t::RETCODE_BAD_PARAMETER;
             }
         }
@@ -4374,7 +4378,8 @@ ReturnCode_t DynamicData::insert_array_data(
     }
     else
     {
-        EPROSIMA_LOG_ERROR(DYN_TYPES, "Error inserting data. The kind " << get_kind() << " doesn't support this method");
+        EPROSIMA_LOG_ERROR(DYN_TYPES,
+                "Error inserting data. The kind " << get_kind() << " doesn't support this method");
     }
     return ReturnCode_t::RETCODE_BAD_PARAMETER;
 }
@@ -4860,7 +4865,8 @@ ReturnCode_t DynamicData::insert_sequence_data(
     }
     else
     {
-        EPROSIMA_LOG_ERROR(DYN_TYPES, "Error inserting data. The kind " << get_kind() << " doesn't support this method");
+        EPROSIMA_LOG_ERROR(DYN_TYPES,
+                "Error inserting data. The kind " << get_kind() << " doesn't support this method");
         return ReturnCode_t::RETCODE_BAD_PARAMETER;
     }
 }
@@ -4894,7 +4900,7 @@ ReturnCode_t DynamicData::remove_sequence_data(
     }
 
     EPROSIMA_LOG_ERROR(DYN_TYPES, "Error removing data. The current Kind " << get_kind()
-                                                                 << " doesn't support this method");
+                                                                           << " doesn't support this method");
 
     return ReturnCode_t::RETCODE_BAD_PARAMETER;
 }
@@ -4955,7 +4961,7 @@ ReturnCode_t DynamicData::insert_map_data(
     else
     {
         EPROSIMA_LOG_ERROR(DYN_TYPES, "Error inserting to map. The current Kind " << get_kind()
-                                                                        << " doesn't support this method");
+                                                                                  << " doesn't support this method");
         return ReturnCode_t::RETCODE_BAD_PARAMETER;
     }
 }
@@ -5016,7 +5022,7 @@ ReturnCode_t DynamicData::insert_map_data(
     else
     {
         EPROSIMA_LOG_ERROR(DYN_TYPES, "Error inserting to map. The current Kind " << get_kind()
-                                                                        << " doesn't support this method");
+                                                                                  << " doesn't support this method");
         return ReturnCode_t::RETCODE_BAD_PARAMETER;
     }
 }
@@ -5079,7 +5085,7 @@ ReturnCode_t DynamicData::insert_map_data(
     else
     {
         EPROSIMA_LOG_ERROR(DYN_TYPES, "Error inserting to map. The current Kind " << get_kind()
-                                                                        << " doesn't support this method");
+                                                                                  << " doesn't support this method");
         return ReturnCode_t::RETCODE_BAD_PARAMETER;
     }
 }
@@ -5132,7 +5138,7 @@ ReturnCode_t DynamicData::remove_map_data(
     else
     {
         EPROSIMA_LOG_ERROR(DYN_TYPES, "Error removing from map. The current Kind " << get_kind()
-                                                                         << " doesn't support this method");
+                                                                                   << " doesn't support this method");
         return ReturnCode_t::RETCODE_ERROR;
     }
 }
@@ -5158,7 +5164,7 @@ ReturnCode_t DynamicData::clear_data()
     }
 
     EPROSIMA_LOG_ERROR(DYN_TYPES, "Error clearing data. The current Kind " << get_kind()
-                                                                 << " doesn't support this method");
+                                                                           << " doesn't support this method");
 
     return ReturnCode_t::RETCODE_BAD_PARAMETER;
 }

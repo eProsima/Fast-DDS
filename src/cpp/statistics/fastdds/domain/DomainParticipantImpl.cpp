@@ -360,7 +360,8 @@ void DomainParticipantImpl::enable_statistics_builtin_datawriters(
         assert(ret != ReturnCode_t::RETCODE_UNSUPPORTED);
         if (ret == ReturnCode_t::RETCODE_BAD_PARAMETER)
         {
-            EPROSIMA_LOG_ERROR(STATISTICS_DOMAIN_PARTICIPANT, "Topic " << topic << " is not a valid statistics topic name/alias");
+            EPROSIMA_LOG_ERROR(STATISTICS_DOMAIN_PARTICIPANT,
+                    "Topic " << topic << " is not a valid statistics topic name/alias");
         }
     }
 }
@@ -477,7 +478,8 @@ bool DomainParticipantImpl::find_or_create_topic_and_type(
     {
         if (topic_desc->get_type_name() != type->getName())
         {
-            EPROSIMA_LOG_ERROR(STATISTICS_DOMAIN_PARTICIPANT, topic_name << " is not using expected type " << type->getName() <<
+            EPROSIMA_LOG_ERROR(STATISTICS_DOMAIN_PARTICIPANT,
+                    topic_name << " is not using expected type " << type->getName() <<
                     " and is using instead type " << topic_desc->get_type_name());
             return false;
         }

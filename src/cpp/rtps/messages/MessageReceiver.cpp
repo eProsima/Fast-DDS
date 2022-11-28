@@ -445,7 +445,8 @@ void MessageReceiver::processCDRMsg(
             {
                 if (dest_guid_prefix_ != participantGuidPrefix)
                 {
-                    EPROSIMA_LOG_INFO(RTPS_MSG_IN, IDSTRING "Acknack Submsg ignored, DST is another RTPSParticipant...");
+                    EPROSIMA_LOG_INFO(RTPS_MSG_IN,
+                            IDSTRING "Acknack Submsg ignored, DST is another RTPSParticipant...");
                 }
                 else
                 {
@@ -458,7 +459,8 @@ void MessageReceiver::processCDRMsg(
             {
                 if (dest_guid_prefix_ != participantGuidPrefix)
                 {
-                    EPROSIMA_LOG_INFO(RTPS_MSG_IN, IDSTRING "NackFrag Submsg ignored, DST is another RTPSParticipant...");
+                    EPROSIMA_LOG_INFO(RTPS_MSG_IN,
+                            IDSTRING "NackFrag Submsg ignored, DST is another RTPSParticipant...");
                 }
                 else
                 {

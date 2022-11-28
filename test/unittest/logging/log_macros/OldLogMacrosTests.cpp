@@ -15,8 +15,8 @@
 //
 
 /*********************************
- * Force old logs to be compiled *
- *********************************/
+* Force old logs to be compiled *
+*********************************/
 // Enforce to compile old macros
 #ifdef ENABLE_OLD_LOG_MACROS_
 #undef ENABLE_OLD_LOG_MACROS_

@@ -369,7 +369,7 @@ public:
             catch (const std::exception& e)
             {
                 EPROSIMA_LOG_ERROR(RTPS_TRANSPORT_SHM, "Failed to create segment " << segment_name_
-                                                                         << ": " << e.what());
+                                                                                   << ": " << e.what());
 
                 throw;
             }
@@ -754,8 +754,9 @@ public:
                 }
                 else
                 {
-                    EPROSIMA_LOG_WARNING(RTPS_TRANSPORT_SHM, "SHM Listener on port " << global_port_->port_id() << " failure: "
-                                                                           << e.what());
+                    EPROSIMA_LOG_WARNING(RTPS_TRANSPORT_SHM,
+                            "SHM Listener on port " << global_port_->port_id() << " failure: "
+                                                    << e.what());
 
                     regenerate_port();
                 }
@@ -866,7 +867,7 @@ public:
                 if (!global_port_->is_port_ok())
                 {
                     EPROSIMA_LOG_WARNING(RTPS_TRANSPORT_SHM, "SHM Port " << global_port_->port_id() << " failure: "
-                                                               << e.what());
+                                                                         << e.what());
 
                     regenerate_port();
                     ret = false;

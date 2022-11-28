@@ -234,7 +234,8 @@ static bool verify_certificate(
             int errorCode = X509_STORE_CTX_get_error(ctx);
             if (errorCode == X509_V_OK)
             {
-                EPROSIMA_LOG_WARNING(SECURITY_AUTHENTICATION, "Invalidation error of certificate, but no error code returned.");
+                EPROSIMA_LOG_WARNING(SECURITY_AUTHENTICATION,
+                        "Invalidation error of certificate, but no error code returned.");
             }
             else
             {
@@ -442,7 +443,8 @@ static bool check_sign_sha256(
                 }
                 else
                 {
-                    EPROSIMA_LOG_WARNING(SECURITY_AUTHENTICATION, "Signature verification error (" << ERR_get_error() << ")");
+                    EPROSIMA_LOG_WARNING(SECURITY_AUTHENTICATION,
+                            "Signature verification error (" << ERR_get_error() << ")");
                 }
             }
             else

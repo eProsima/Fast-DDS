@@ -201,7 +201,8 @@ bool LatencyTestSubscriber::init(
 
             if ( ReturnCode_t::RETCODE_OK != publisher_->get_datawriter_qos_from_profile(pub_profile_name, dw_qos_))
             {
-                EPROSIMA_LOG_ERROR(LATENCYSUBSCRIBER, "ERROR unable to retrieve the " << pub_profile_name << "from XML file");
+                EPROSIMA_LOG_ERROR(LATENCYSUBSCRIBER,
+                        "ERROR unable to retrieve the " << pub_profile_name << "from XML file");
                 return false;
             }
 
@@ -731,7 +732,8 @@ bool LatencyTestSubscriber::test(
         // Remove endpoints associated to the given payload size
         if (!destroy_data_endpoints())
         {
-            EPROSIMA_LOG_ERROR(LatencyTest, "Static endpoints for payload size " << datasize << " could not been removed");
+            EPROSIMA_LOG_ERROR(LatencyTest,
+                    "Static endpoints for payload size " << datasize << " could not been removed");
         }
     }
 

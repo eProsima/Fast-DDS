@@ -169,11 +169,11 @@ void PDPServerListener::onNewCacheChangeAdded(
                 if (std::stof(ds_version->second()) < 1.0)
                 {
                     EPROSIMA_LOG_ERROR(RTPS_PDP_LISTENER, "Minimum " << dds::parameter_property_ds_version
-                                                           << " is 1.0, found: " << ds_version->second());
+                                                                     << " is 1.0, found: " << ds_version->second());
                     return;
                 }
                 EPROSIMA_LOG_INFO(RTPS_PDP_LISTENER, "Participant " << dds::parameter_property_ds_version << ": "
-                                                          << ds_version->second());
+                                                                    << ds_version->second());
             }
             else
             {
@@ -201,13 +201,13 @@ void PDPServerListener::onNewCacheChangeAdded(
                 else if (participant_type->second() == ParticipantType::SIMPLE)
                 {
                     EPROSIMA_LOG_INFO(RTPS_PDP_LISTENER, "Ignoring " << dds::parameter_property_participant_type << ": "
-                                                           << participant_type->second());
+                                                                     << participant_type->second());
                     return;
                 }
                 else if (participant_type->second() != ParticipantType::CLIENT)
                 {
                     EPROSIMA_LOG_ERROR(RTPS_PDP_LISTENER, "Wrong " << dds::parameter_property_participant_type << ": "
-                                                         << participant_type->second());
+                                                                   << participant_type->second());
                     return;
                 }
                 EPROSIMA_LOG_INFO(RTPS_PDP_LISTENER, "Participant type " << participant_type->second());

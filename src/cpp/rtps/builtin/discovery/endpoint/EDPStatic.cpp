@@ -477,7 +477,7 @@ void EDPStatic::assignRemoteEndpoints(
             else
             {
                 EPROSIMA_LOG_WARNING(RTPS_EDP, "EDPStaticProperty with type: " << staticproperty.m_endpointType
-                                                                     << " and status " << staticproperty.m_status <<
+                                                                               << " and status " << staticproperty.m_status <<
                         " not recognized");
             }
         }

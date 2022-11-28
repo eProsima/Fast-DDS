@@ -130,7 +130,8 @@ bool WriterHistory::add_change_(
 {
     if (mp_writer == nullptr || mp_mutex == nullptr)
     {
-        EPROSIMA_LOG_ERROR(RTPS_WRITER_HISTORY, "You need to create a Writer with this History before adding any changes");
+        EPROSIMA_LOG_ERROR(RTPS_WRITER_HISTORY,
+                "You need to create a Writer with this History before adding any changes");
         return false;
     }
 
@@ -173,7 +174,8 @@ History::iterator WriterHistory::remove_change_nts(
 {
     if (mp_writer == nullptr || mp_mutex == nullptr)
     {
-        EPROSIMA_LOG_ERROR(RTPS_WRITER_HISTORY, "You need to create a Writer with this History before removing any changes");
+        EPROSIMA_LOG_ERROR(RTPS_WRITER_HISTORY,
+                "You need to create a Writer with this History before removing any changes");
         return changesEnd();
     }
 
@@ -225,7 +227,8 @@ CacheChange_t* WriterHistory::remove_change_and_reuse(
 {
     if (mp_writer == nullptr || mp_mutex == nullptr)
     {
-        EPROSIMA_LOG_ERROR(RTPS_WRITER_HISTORY, "You need to create a Writer with this History before removing any changes");
+        EPROSIMA_LOG_ERROR(RTPS_WRITER_HISTORY,
+                "You need to create a Writer with this History before removing any changes");
         return nullptr;
     }
 
@@ -253,7 +256,8 @@ bool WriterHistory::remove_min_change()
 
     if (mp_writer == nullptr || mp_mutex == nullptr)
     {
-        EPROSIMA_LOG_ERROR(RTPS_WRITER_HISTORY, "You need to create a Writer with this History before removing any changes");
+        EPROSIMA_LOG_ERROR(RTPS_WRITER_HISTORY,
+                "You need to create a Writer with this History before removing any changes");
         return false;
     }
 

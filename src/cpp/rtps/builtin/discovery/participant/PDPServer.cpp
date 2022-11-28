@@ -136,7 +136,8 @@ bool PDPServer::init(
         }
         else
         {
-            EPROSIMA_LOG_INFO(RTPS_PDP_SERVER, "Error reading backup file. Corrupted or unmissing file, restarting from scratch");
+            EPROSIMA_LOG_INFO(RTPS_PDP_SERVER,
+                    "Error reading backup file. Corrupted or unmissing file, restarting from scratch");
         }
 
         discovery_db().backup_in_progress(false);
@@ -425,7 +426,7 @@ void PDPServer::assignRemoteEndpoints(
     else
     {
         EPROSIMA_LOG_ERROR(RTPS_PDP_SERVER, "Participant " << pdata->m_guid.guidPrefix
-                                                 << " did not send information about builtin writers");
+                                                           << " did not send information about builtin writers");
         return;
     }
 
@@ -447,7 +448,7 @@ void PDPServer::assignRemoteEndpoints(
     else
     {
         EPROSIMA_LOG_ERROR(RTPS_PDP_SERVER, "Participant " << pdata->m_guid.guidPrefix
-                                                 << " did not send information about builtin readers");
+                                                           << " did not send information about builtin readers");
         return;
     }
 
@@ -484,7 +485,7 @@ void PDPServer::removeRemoteEndpoints(
     else
     {
         EPROSIMA_LOG_ERROR(RTPS_PDP_SERVER, "Participant " << pdata->m_guid.guidPrefix
-                                                 << " did not send information about builtin writers");
+                                                           << " did not send information about builtin writers");
         return;
     }
 
@@ -496,7 +497,7 @@ void PDPServer::removeRemoteEndpoints(
     else
     {
         EPROSIMA_LOG_ERROR(RTPS_PDP_SERVER, "Participant " << pdata->m_guid.guidPrefix
-                                                 << " did not send information about builtin readers");
+                                                           << " did not send information about builtin readers");
         return;
     }
 }
@@ -865,7 +866,8 @@ bool PDPServer::server_update_routine()
 
         EPROSIMA_LOG_INFO(RTPS_PDP_SERVER, "");
         EPROSIMA_LOG_INFO(RTPS_PDP_SERVER, "-------------------- Server routine start --------------------");
-        EPROSIMA_LOG_INFO(RTPS_PDP_SERVER, "-------------------- " << mp_RTPSParticipant->getGuid() << " --------------------");
+        EPROSIMA_LOG_INFO(RTPS_PDP_SERVER,
+                "-------------------- " << mp_RTPSParticipant->getGuid() << " --------------------");
 
         process_writers_acknowledgements();     // server + ddb(functor_with_ddb)
         process_data_queues();                  // all ddb
@@ -875,7 +877,8 @@ bool PDPServer::server_update_routine()
         process_to_send_lists();                // server + ddb(get_to_send, remove_to_send_this)
         pending_work = pending_ack();           // all server
 
-        EPROSIMA_LOG_INFO(RTPS_PDP_SERVER, "-------------------- " << mp_RTPSParticipant->getGuid() << " --------------------");
+        EPROSIMA_LOG_INFO(RTPS_PDP_SERVER,
+                "-------------------- " << mp_RTPSParticipant->getGuid() << " --------------------");
         EPROSIMA_LOG_INFO(RTPS_PDP_SERVER, "-------------------- Server routine end --------------------");
         EPROSIMA_LOG_INFO(RTPS_PDP_SERVER, "");
 
@@ -991,7 +994,8 @@ History::iterator PDPServer::process_change_acknowledgement(
                 discovery_db_.guid_from_change(c) == mp_builtin->mp_participantImpl->getGuid() &&
                 discovery_db_.server_acked_by_all())
         {
-            EPROSIMA_LOG_INFO(RTPS_PDP_SERVER, "Server's DATA(p) already acked by all. Skipping check for every ReaderProxy");
+            EPROSIMA_LOG_INFO(RTPS_PDP_SERVER,
+                    "Server's DATA(p) already acked by all. Skipping check for every ReaderProxy");
         }
         else
         {
@@ -1011,7 +1015,7 @@ History::iterator PDPServer::process_change_acknowledgement(
                     // Remove the entry from writer history, but do not release the cache.
                     // This CacheChange will only be released in the case that is substituted by a DATA(Up|Uw|Ur).
                     EPROSIMA_LOG_INFO(RTPS_PDP_SERVER, "Removing change " << c->instanceHandle
-                                                                << " from history as it has been acked for everyone");
+                                                                          << " from history as it has been acked for everyone");
                     return writer_history->remove_change(cit, false);
                 }
             }
@@ -1278,7 +1282,8 @@ bool PDPServer::process_to_send_lists()
     }
     else
     {
-        EPROSIMA_LOG_INFO(RTPS_PDP_SERVER, "Skiping sending PDP data because no entities have been discovered or updated");
+        EPROSIMA_LOG_INFO(RTPS_PDP_SERVER,
+                "Skiping sending PDP data because no entities have been discovered or updated");
     }
     discovery_db_.clear_pdp_to_send();
 

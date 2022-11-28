@@ -154,7 +154,7 @@ DataReaderHistory::DataReaderHistory(
                     }
 
                     EPROSIMA_LOG_WARNING(SUBSCRIBER, "NO KEY in topic: " << topic_name_
-                                                               << " and no method to obtain it"; );
+                                                                         << " and no method to obtain it"; );
                     return false;
                 };
     }

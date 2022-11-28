@@ -72,7 +72,7 @@ protected:
         {
             (void)error;
             EPROSIMA_LOG_WARNING(RTPS_MSG_OUT, "Error receiving data: " << error.what() << " - " << message_receiver()
-                                                              << " (" << this << ")");
+                                                                        << " (" << this << ")");
             return nullptr;
         }
     }

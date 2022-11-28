@@ -24,7 +24,7 @@
 #else
 #define PRINTLINE(node) ""
 #define PRINTLINEPLUSONE(node) ""
-#endif
+#endif // if TIXML2_MAJOR_VERSION >= 6
 
 static const char* DomainId_str = "id";
 static const char* DomainIdRange_str = "id_range";
@@ -34,24 +34,26 @@ static const char* Max_str = "max";
 using namespace eprosima::fastrtps;
 using namespace ::rtps::security;
 
-bool eprosima::fastrtps::rtps::security::parse_domain_id_set(tinyxml2::XMLElement* root, Domains& domains)
+bool eprosima::fastrtps::rtps::security::parse_domain_id_set(
+        tinyxml2::XMLElement* root,
+        Domains& domains)
 {
     assert(root);
 
     bool returned_value = false;
     tinyxml2::XMLElement* node = root->FirstChildElement();
 
-    if(node != nullptr)
+    if (node != nullptr)
     {
         returned_value = true;
 
         do
         {
-            if(strcmp(node->Name(), DomainId_str) == 0)
+            if (strcmp(node->Name(), DomainId_str) == 0)
             {
                 uint32_t domain_id = 0;
 
-                if(tinyxml2::XMLError::XML_SUCCESS == node->QueryUnsignedText(&domain_id))
+                if (tinyxml2::XMLError::XML_SUCCESS == node->QueryUnsignedText(&domain_id))
                 {
                     domains.ranges.push_back(std::make_pair(domain_id, 0));
                 }
@@ -62,17 +64,17 @@ bool eprosima::fastrtps::rtps::security::parse_domain_id_set(tinyxml2::XMLElemen
                     returned_value = false;
                 }
             }
-            else if(strcmp(node->Name() ,DomainIdRange_str) == 0)
+            else if (strcmp(node->Name(), DomainIdRange_str) == 0)
             {
                 tinyxml2::XMLElement* subnode = node->FirstChildElement();
 
-                if(subnode != nullptr)
+                if (subnode != nullptr)
                 {
                     uint32_t min_domain_id = 0;
 
-                    if(strcmp(subnode->Name(), Min_str) == 0)
+                    if (strcmp(subnode->Name(), Min_str) == 0)
                     {
-                        if(tinyxml2::XMLError::XML_SUCCESS != subnode->QueryUnsignedText(&min_domain_id))
+                        if (tinyxml2::XMLError::XML_SUCCESS != subnode->QueryUnsignedText(&min_domain_id))
                         {
                             EPROSIMA_LOG_ERROR(XMLPARSER, "Invalid min value of " << DomainId_str <<
                                     " tag. Line " << PRINTLINE(subnode));
@@ -90,13 +92,13 @@ bool eprosima::fastrtps::rtps::security::parse_domain_id_set(tinyxml2::XMLElemen
                                     if (tinyxml2::XMLError::XML_SUCCESS != subnode->QueryUnsignedText(&max_domain_id))
                                     {
                                         EPROSIMA_LOG_ERROR(XMLPARSER, "Invalid max value of " << DomainId_str <<
-                                            " tag. Line " << PRINTLINE(subnode));
+                                                " tag. Line " << PRINTLINE(subnode));
                                         returned_value = false;
                                     }
                                 }
                             }
 
-                            if(returned_value)
+                            if (returned_value)
                             {
                                 domains.ranges.push_back(std::make_pair(min_domain_id, max_domain_id));
                             }
@@ -112,7 +114,7 @@ bool eprosima::fastrtps::rtps::security::parse_domain_id_set(tinyxml2::XMLElemen
                         else
                         {
                             EPROSIMA_LOG_ERROR(XMLPARSER, "Invalid max value of " << DomainId_str <<
-                                " tag. Line " << PRINTLINE(subnode));
+                                    " tag. Line " << PRINTLINE(subnode));
                             returned_value = false;
                         }
                     }
@@ -133,11 +135,12 @@ bool eprosima::fastrtps::rtps::security::parse_domain_id_set(tinyxml2::XMLElemen
             else
             {
                 EPROSIMA_LOG_ERROR(XMLPARSER, "Not valid tag. Expected " << DomainId_str << " or " << DomainIdRange_str <<
-                        " tag. Line " << PRINTLINE(node));
+                        " tag. Line " << PRINTLINE(
+                            node));
                 returned_value = false;
             }
         }
-        while(returned_value && (node = node->NextSiblingElement()) != nullptr);
+        while (returned_value && (node = node->NextSiblingElement()) != nullptr);
     }
     else
     {

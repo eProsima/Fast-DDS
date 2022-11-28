@@ -276,8 +276,9 @@ bool TCPTransportInterface::create_acceptor_socket(
                 acceptor->accept(this);
             }
 
-            EPROSIMA_LOG_INFO(RTCP, " OpenAndBindInput (physical: " << IPLocator::getPhysicalPort(locator) << "; logical: "
-                                                          << IPLocator::getLogicalPort(locator) << ")");
+            EPROSIMA_LOG_INFO(RTCP, " OpenAndBindInput (physical: " << IPLocator::getPhysicalPort(
+                        locator) << "; logical: "
+                                                                    << IPLocator::getLogicalPort(locator) << ")");
 
         }
         else
@@ -302,8 +303,9 @@ bool TCPTransportInterface::create_acceptor_socket(
                     acceptor->accept(this);
                 }
 
-                EPROSIMA_LOG_INFO(RTCP, " OpenAndBindInput (physical: " << IPLocator::getPhysicalPort(locator) << "; logical: "
-                                                              << IPLocator::getLogicalPort(locator) << ")");
+                EPROSIMA_LOG_INFO(RTCP, " OpenAndBindInput (physical: " << IPLocator::getPhysicalPort(
+                            locator) << "; logical: "
+                                                                        << IPLocator::getLogicalPort(locator) << ")");
             }
         }
     }
@@ -642,8 +644,9 @@ bool TCPTransportInterface::OpenOutputChannel(
         // acceptor) or we have to create a new one.
 
         std::unique_lock<std::mutex> scopedLock(sockets_map_mutex_);
-        EPROSIMA_LOG_INFO(RTCP, "Called to OpenOutputChannel (physical: " << IPLocator::getPhysicalPort(locator) << "; logical: "
-                                                                << IPLocator::getLogicalPort(
+        EPROSIMA_LOG_INFO(RTCP, "Called to OpenOutputChannel (physical: " << IPLocator::getPhysicalPort(
+                    locator) << "; logical: "
+                                                                          << IPLocator::getLogicalPort(
                     locator) << ") @ " << IPLocator::to_string(locator));
 
         auto channel_resource = channel_resources_.find(physical_locator);
@@ -719,7 +722,8 @@ bool TCPTransportInterface::OpenInputChannel(
                             (receiver, new ReceiverInUseCV());
             }
 
-            EPROSIMA_LOG_INFO(RTCP, " OpenInputChannel (physical: " << IPLocator::getPhysicalPort(locator) << "; logical: " << \
+            EPROSIMA_LOG_INFO(RTCP, " OpenInputChannel (physical: " << IPLocator::getPhysicalPort(
+                        locator) << "; logical: " << \
                     IPLocator::getLogicalPort(locator) << ")");
         }
     }
@@ -850,7 +854,8 @@ void TCPTransportInterface::perform_listen_operation(
             }
             else
             {
-                EPROSIMA_LOG_WARNING(RTCP, "Received Message, but no TransportReceiverInterface attached: " << logicalPort);
+                EPROSIMA_LOG_WARNING(RTCP,
+                        "Received Message, but no TransportReceiverInterface attached: " << logicalPort);
             }
         }
     }
@@ -1072,7 +1077,7 @@ bool TCPTransportInterface::Receive(
                     {
                         IPLocator::setLogicalPort(remote_locator, tcp_header.logical_port);
                         EPROSIMA_LOG_INFO(RTCP_MSG_IN, "[RECEIVE] From: " << remote_locator \
-                                                                << " - " << receive_buffer_size << " bytes.");
+                                                                          << " - " << receive_buffer_size << " bytes.");
                     }
                 }
                 // Error message already shown by read_body method.
@@ -1164,7 +1169,8 @@ bool TCPTransportInterface::send(
         //std::cout << "RemoteLocator: " << IPLocator::to_string(remote_locator) << std::endl;
 
         EPROSIMA_LOG_WARNING(RTCP, "SEND [RTPS] Failed: Not connect: " << IPLocator::getLogicalPort(remote_locator) \
-                                                             << " @ IP: " << IPLocator::toIPv4string(remote_locator));
+                                                                       << " @ IP: " <<
+                IPLocator::toIPv4string(remote_locator));
         return false;
     }
 
@@ -1285,8 +1291,8 @@ void TCPTransportInterface::SocketAccepted(
                     channel_weak_ptr, rtcp_manager_weak_ptr));
 
             EPROSIMA_LOG_INFO(RTCP, " Accepted connection (local: " << IPLocator::to_string(locator)
-                                                          << ", remote: " << channel->remote_endpoint().address()
-                                                          << ":" << channel->remote_endpoint().port() << ")");
+                                                                    << ", remote: " << channel->remote_endpoint().address()
+                                                                    << ":" << channel->remote_endpoint().port() << ")");
         }
         else
         {
@@ -1331,8 +1337,8 @@ void TCPTransportInterface::SecureSocketAccepted(
                     channel_weak_ptr, rtcp_manager_weak_ptr));
 
             EPROSIMA_LOG_INFO(RTCP, " Accepted connection (local: " << IPLocator::to_string(locator)
-                                                          << ", remote: " << socket->lowest_layer().remote_endpoint().address()
-                                                          << ":" << socket->lowest_layer().remote_endpoint().port() <<
+                                                                    << ", remote: " << socket->lowest_layer().remote_endpoint().address()
+                                                                    << ":" << socket->lowest_layer().remote_endpoint().port() <<
                     ")");
         }
         else

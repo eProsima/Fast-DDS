@@ -274,13 +274,13 @@ bool StatefulReader::matched_writer_add(
             {
                 matched_writers_.push_back(wp);
                 EPROSIMA_LOG_INFO(RTPS_READER, "Writer Proxy " << wdata.guid() << " added to " << this->m_guid.entityId
-                                                     << " with data sharing");
+                                                               << " with data sharing");
             }
             else
             {
                 EPROSIMA_LOG_ERROR(RTPS_READER, "Failed to add Writer Proxy " << wdata.guid()
-                                                                    << " to " << this->m_guid.entityId
-                                                                    << " with data sharing.");
+                                                                              << " to " << this->m_guid.entityId
+                                                                              << " with data sharing.");
                 wp->stop();
                 matched_writers_pool_.push_back(wp);
                 return false;
@@ -322,7 +322,8 @@ bool StatefulReader::matched_writer_add(
         }
         else
         {
-            EPROSIMA_LOG_ERROR(RTPS_LIVELINESS, "Finite liveliness lease duration but WLP not enabled, cannot add writer");
+            EPROSIMA_LOG_ERROR(RTPS_LIVELINESS,
+                    "Finite liveliness lease duration but WLP not enabled, cannot add writer");
         }
     }
 
@@ -443,12 +444,12 @@ bool StatefulReader::matched_writer_lookup(
     if (returnedValue)
     {
         EPROSIMA_LOG_INFO(RTPS_READER, this->getGuid().entityId << " FINDS writerProxy " << writerGUID << " from "
-                                                      << getMatchedWritersSize());
+                                                                << getMatchedWritersSize());
     }
     else
     {
         EPROSIMA_LOG_INFO(RTPS_READER, this->getGuid().entityId << " NOT FINDS writerProxy " << writerGUID << " from "
-                                                      << getMatchedWritersSize());
+                                                                << getMatchedWritersSize());
     }
 
     return returnedValue;
@@ -1044,7 +1045,7 @@ bool StatefulReader::change_received(
                 }
 
                 EPROSIMA_LOG_INFO(RTPS_READER, "Change received from " << a_change->writerGUID << " with sequence number: "
-                                                             << a_change->sequenceNumber <<
+                                                                       << a_change->sequenceNumber <<
                         " skipped. Higher sequence numbers have been received.");
                 return false;
             }
@@ -1494,9 +1495,9 @@ void StatefulReader::send_acknack(
                         if (!sns.add(seq))
                         {
                             EPROSIMA_LOG_INFO(RTPS_READER, "Sequence number " << seq
-                                                                    <<
+                                                                              <<
                                 " exceeded bitmap limit of AckNack. SeqNumSet Base: "
-                                                                    << sns.base());
+                                                                              << sns.base());
                         }
                     }
                     else

@@ -566,7 +566,8 @@ p_dynamictypebuilder_t XMLParser::parseXMLBitfieldDynamicType(
     }
     else // Unsupported type?
     {
-        EPROSIMA_LOG_ERROR(XMLPARSER, "Failed creating bitfield " << memberName << ": Type " << memberType << " unsupported.");
+        EPROSIMA_LOG_ERROR(XMLPARSER,
+                "Failed creating bitfield " << memberName << ": Type " << memberType << " unsupported.");
     }
 
 
@@ -1091,7 +1092,8 @@ p_dynamictypebuilder_t XMLParser::parseXMLMemberDynamicType(
             }
             catch (const std::exception&)
             {
-                EPROSIMA_LOG_ERROR(XMLPARSER, "Error parsing map member sequence length in line " << p_root->GetLineNum());
+                EPROSIMA_LOG_ERROR(XMLPARSER,
+                        "Error parsing map member sequence length in line " << p_root->GetLineNum());
                 return nullptr;
             }
         }
@@ -1376,7 +1378,8 @@ p_dynamictypebuilder_t XMLParser::parseXMLMemberDynamicType(
         }
         else
         {
-            EPROSIMA_LOG_ERROR(XMLPARSER, "Failed creating " << memberType << " array: " << (memberName ? memberName : ""));
+            EPROSIMA_LOG_ERROR(XMLPARSER,
+                    "Failed creating " << memberType << " array: " << (memberName ? memberName : ""));
         }
         return nullptr;
     }
