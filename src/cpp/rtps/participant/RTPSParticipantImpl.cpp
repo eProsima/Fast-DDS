@@ -1332,7 +1332,7 @@ void RTPSParticipantImpl::update_attributes(
                             modified_locators.push_back(incoming_locator);
                             EPROSIMA_LOG_INFO(RTPS_QOS_CHECK,
                                     "DS Server: " << incoming_server.guidPrefix << " has modified its locators: "
-                                                  << incoming_locator << " being added")
+                                                  << incoming_locator << " being added");
                         }
                     }
                     contained = true;
