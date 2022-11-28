@@ -18,10 +18,10 @@
  * Force old logs to be compiled *
  *********************************/
 // Enforce to compile old macros
-#ifdef ENABLE_EPROSIMA_LOG_MACROS_
-#undef ENABLE_EPROSIMA_LOG_MACROS_
-#endif  // ENABLE_EPROSIMA_LOG_MACROS_
-#define ENABLE_EPROSIMA_LOG_MACROS_ 1
+#ifdef ENABLE_OLD_LOG_MACROS_
+#undef ENABLE_OLD_LOG_MACROS_
+#endif  // ENABLE_OLD_LOG_MACROS_
+#define ENABLE_OLD_LOG_MACROS_ 1
 
 // Enforce log info, warning and error to compile
 #define FASTDDS_ENFORCE_LOG_INFO
