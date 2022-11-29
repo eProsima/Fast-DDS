@@ -3,6 +3,8 @@ Forthcoming
 
 * Default memory management policy set to `PREALLOCATED_WITH_REALLOC_MEMORY_MODE` (behaviour change)
 * Statistics metrics are only calculated/accumulated when their corresponding DataWriter is enabled (behaviour change)
+* Added new log macros `EPROSIMA_LOG_INFO`, `EPROSIMA_LOG_WARNING` and `EPROSIMA_LOG_ERROR`, and change all old macros `logInfo`, `logWarning`, and `logError` in the project.
+* Added `ENABLE_OLD_LOG_MACROS` CMake option to support disabling the compilation of old log macros `logInfo`, `logWarning`, and `logError`.
 
 Version 2.8.0
 -------------
