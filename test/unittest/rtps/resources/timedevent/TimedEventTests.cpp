@@ -407,6 +407,65 @@ TEST(TimedEventMultithread, PendingRaceCheck)
     delete checking_thr;
 }
 
+/*!
+ * @fn TEST(TimedEvent, Event_UnregisterEventWithinCallbackOfAnotherEvent)
+ * @brief This test checks the ability to unregister a TimedEvent
+ * inside another TimedEvent callback
+ */
+TEST(TimedEvent, Event_UnregisterEventWithinCallbackOfAnotherEvent)
+{
+    using TimedEvent = eprosima::fastrtps::rtps::TimedEvent;
+
+    constexpr auto expiration_ms = std::chrono::milliseconds(100);
+    std::atomic_bool success(false);
+
+    // Dummy callback event
+    auto simple_callback = []()
+            {
+                return false;
+            };
+
+    //! 1. Create a simple event with longer period
+    TimedEvent* simple_event = new TimedEvent(*env->service_, simple_callback, 3.0 * expiration_ms.count());
+
+    std::mutex mtx;
+    std::unique_ptr<TimedEvent> event_ptr;
+
+    {
+        std::lock_guard<std::mutex> _(mtx);
+        event_ptr.reset(simple_event);
+    }
+
+    // Tester callback event that will unregister simple_event
+    auto tester_callback = [&]()
+            {
+
+                //! This will call unregister under the hood
+                {
+                    std::lock_guard<std::mutex> _(mtx);
+                    event_ptr.reset();
+                }
+
+                success = true;
+
+                return false;
+            };
+
+    //! 2. Create a second event with shorter period
+    TimedEvent tester_event(*env->service_, tester_callback, 1.0 * expiration_ms.count());
+
+    //! 3. Start event timers
+    simple_event->restart_timer();
+    tester_event.restart_timer();
+
+    //! 4. Give enough time fot events to trigger
+    std::this_thread::sleep_for(6.0 * expiration_ms);
+
+    //! 5. Assert unregister_timer() operation was ok
+    ASSERT_TRUE(success);
+
+}
+
 int main(
         int argc,
         char** argv)

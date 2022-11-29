@@ -3347,6 +3347,145 @@ static void BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation
     reader.block_for_all();
 }
 
+// Regression test of Refs #16168, Github #3102.
+TEST_P(Security, RemoveParticipantProxyDataonSecurityManagerLeaseExpired_validation_no_deadlock)
+{
+    std::string governance_file("governance_helloworld_disable_liveliness.smime");
+    std::string permissions_file("permissions_helloworld.smime");
+
+    //!Lambda for configuring publisher participant qos and security properties
+    auto secure_participant_pub_configurator = [&governance_file,
+                    &permissions_file](const std::shared_ptr<PubSubWriter<HelloWorldPubSubType>>& part,
+                    const std::shared_ptr<eprosima::fastdds::rtps::TransportDescriptorInterface>& interface)
+            {
+                part->lease_duration(3, 1);
+                part->disable_builtin_transport().add_user_transport_to_pparams(interface);
+
+                PropertyPolicy property_policy;
+
+                property_policy.properties().emplace_back(Property("dds.sec.auth.plugin",
+                        "builtin.PKI-DH"));
+                property_policy.properties().emplace_back(Property("dds.sec.auth.builtin.PKI-DH.identity_ca",
+                        "file://" + std::string(certs_path) + "/maincacert.pem"));
+                property_policy.properties().emplace_back(Property("dds.sec.crypto.plugin",
+                        "builtin.AES-GCM-GMAC"));
+                property_policy.properties().emplace_back(Property("dds.sec.access.plugin",
+                        "builtin.Access-Permissions"));
+                property_policy.properties().emplace_back(Property(
+                            "dds.sec.access.builtin.Access-Permissions.permissions_ca",
+                            "file://" + std::string(certs_path) + "/maincacert.pem"));
+                property_policy.properties().emplace_back(Property("dds.sec.auth.builtin.PKI-DH.identity_certificate",
+                        "file://" + std::string(certs_path) + "/mainpubcert.pem"));
+                property_policy.properties().emplace_back(Property("dds.sec.auth.builtin.PKI-DH.private_key",
+                        "file://" + std::string(certs_path) + "/mainpubkey.pem"));
+                property_policy.properties().emplace_back(Property(
+                            "dds.sec.access.builtin.Access-Permissions.governance",
+                            "file://" + std::string(certs_path) + "/" + governance_file));
+                property_policy.properties().emplace_back(Property(
+                            "dds.sec.access.builtin.Access-Permissions.permissions",
+                            "file://" + std::string(certs_path) + "/" + permissions_file));
+
+                std::cout << " Configuring Publisher Participant Properties " << std::endl;
+
+                part->property_policy(property_policy);
+
+            };
+    //!Lambda for configuring subscriber participant qos and security properties
+    auto secure_participant_sub_configurator = [&governance_file,
+                    &permissions_file](const std::shared_ptr<PubSubReader<HelloWorldPubSubType>>& part,
+                    const std::shared_ptr<eprosima::fastdds::rtps::TransportDescriptorInterface>& interface)
+            {
+                part->lease_duration(3, 1);
+                part->disable_builtin_transport().add_user_transport_to_pparams(interface);
+
+                PropertyPolicy property_policy;
+
+                property_policy.properties().emplace_back(Property("dds.sec.auth.plugin",
+                        "builtin.PKI-DH"));
+                property_policy.properties().emplace_back(Property("dds.sec.auth.builtin.PKI-DH.identity_ca",
+                        "file://" + std::string(certs_path) + "/maincacert.pem"));
+                property_policy.properties().emplace_back(Property("dds.sec.crypto.plugin",
+                        "builtin.AES-GCM-GMAC"));
+                property_policy.properties().emplace_back(Property("dds.sec.access.plugin",
+                        "builtin.Access-Permissions"));
+                property_policy.properties().emplace_back(Property(
+                            "dds.sec.access.builtin.Access-Permissions.permissions_ca",
+                            "file://" + std::string(certs_path) + "/maincacert.pem"));
+                property_policy.properties().emplace_back(Property("dds.sec.auth.builtin.PKI-DH.identity_certificate",
+                        "file://" + std::string(certs_path) + "/mainsubcert.pem"));
+                property_policy.properties().emplace_back(Property("dds.sec.auth.builtin.PKI-DH.private_key",
+                        "file://" + std::string(certs_path) + "/mainsubkey.pem"));
+                property_policy.properties().emplace_back(Property(
+                            "dds.sec.access.builtin.Access-Permissions.governance",
+                            "file://" + std::string(certs_path) + "/" + governance_file));
+                property_policy.properties().emplace_back(Property(
+                            "dds.sec.access.builtin.Access-Permissions.permissions",
+                            "file://" + std::string(certs_path) + "/" + permissions_file));
+
+                std::cout << " Configuring Subscriber Participant Properties " << std::endl;
+
+                part->property_policy(property_policy);
+
+            };
+
+    //! 1.Spawn a couple of participants writer/reader
+    std::string topic_name = "HelloWorldTopic";
+    auto pubsub_writer = std::make_shared<PubSubWriter<HelloWorldPubSubType>>(topic_name);
+    auto pubsub_reader = std::make_shared<PubSubReader<HelloWorldPubSubType>>(topic_name);
+
+    // Initialization of all the participants
+    std::cout << "Initializing PubSubs for topic " << topic_name << std::endl;
+
+    auto test_udptransport = std::make_shared<test_UDPv4TransportDescriptor>();
+    auto udp_transport = std::make_shared<UDPv4TransportDescriptor>();
+
+    // 2.Configure the participants
+    secure_participant_pub_configurator(pubsub_writer, test_udptransport);
+    pubsub_writer->init();
+    ASSERT_EQ(pubsub_writer->isInitialized(), true);
+
+    secure_participant_sub_configurator(pubsub_reader, udp_transport);
+    pubsub_reader->init();
+    ASSERT_EQ(pubsub_reader->isInitialized(), true);
+
+    std::cout << std::endl << "Waiting discovery between participants." << std::endl;
+
+    // 3.Wait for authorization
+    pubsub_reader->waitAuthorized();
+    pubsub_writer->waitAuthorized();
+
+    // 4.Wait for discovery.
+    pubsub_reader->wait_discovery();
+    pubsub_writer->wait_discovery();
+
+    auto data = default_helloworld_data_generator();
+
+    pubsub_reader->startReception(data);
+
+    // 5.Send data
+    pubsub_writer->send(data);
+
+    // 6.Block reader until reception finished or timeout.
+    pubsub_reader->block_for_at_least(2);
+
+    std::cout << "Reader received at least two samples, shutting down publisher " << std::endl;
+
+    //! 7.Simulate a force-quit (cntrl+c) on the publisher by dropping connection
+    test_UDPv4Transport::test_UDPv4Transport_ShutdownAllNetwork = true;
+
+    bool pubsub_writer_undiscovered;
+
+    //! 8.Wait reader to remove writer participant
+    //! Writer participant lease duration will expire in 3 secs
+    //! Check if deadlock is produced when accessing ResourceEvent collection
+    //! to unregister a TimedEvent() in ResourceEvent
+    pubsub_writer_undiscovered = pubsub_reader->wait_participant_undiscovery(std::chrono::seconds(6));
+
+    //! 9.Assert if last operation timed out
+    ASSERT_TRUE(pubsub_writer_undiscovered);
+
+}
+
 // *INDENT-OFF*
 TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsDisableDiscoveryDisableAccessEncrypt_validation_ok_enable_discovery_enable_access_encrypt)
 // *INDENT-ON*
