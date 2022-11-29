@@ -1,6 +1,9 @@
 Forthcoming
 -----------
 
+Version 2.8.0
+-------------
+
 * Added API get the WAN address of TCPv4 transport descriptors (API extension)
 * Support `propagate` attribute for Properties in PropertyQoSPolicies so they could be
   set by user and sent in PDP
