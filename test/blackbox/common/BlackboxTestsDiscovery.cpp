@@ -561,11 +561,11 @@ TEST(Discovery, EndpointRediscoveryWithTransientLocalData_2)
     reader.add_user_transport_to_pparams(testTransport);
 
     reader
-        .lease_duration({ 2, 0 }, { 1, 0 })
-        .history_depth(10)
-        .reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS)
-        .durability_kind(eprosima::fastrtps::TRANSIENT_LOCAL_DURABILITY_QOS)
-        .init();
+            .lease_duration({ 2, 0 }, { 1, 0 })
+            .history_depth(10)
+            .reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS)
+            .durability_kind(eprosima::fastrtps::TRANSIENT_LOCAL_DURABILITY_QOS)
+            .init();
 
     ASSERT_TRUE(reader.isInitialized());
 
@@ -573,11 +573,11 @@ TEST(Discovery, EndpointRediscoveryWithTransientLocalData_2)
     writer.add_user_transport_to_pparams(testTransport);
 
     writer
-        .lease_duration({ 2, 0 }, { 1, 0 })
-        .history_depth(10)
-        .reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS)
-        .durability_kind(eprosima::fastrtps::TRANSIENT_LOCAL_DURABILITY_QOS)
-        .init();
+            .lease_duration({ 2, 0 }, { 1, 0 })
+            .history_depth(10)
+            .reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS)
+            .durability_kind(eprosima::fastrtps::TRANSIENT_LOCAL_DURABILITY_QOS)
+            .init();
 
     ASSERT_TRUE(writer.isInitialized());
 
