@@ -2,7 +2,7 @@ Forthcoming
 -----------
 
 * Default memory management policy set to `PREALLOCATED_WITH_REALLOC_MEMORY_MODE` (behaviour change)
-* Statistics metric are only calculated/accumulated when their corresponding DataWriter is enabled (behaviour change)
+* Statistics metrics are only calculated/accumulated when their corresponding DataWriter is enabled (behaviour change)
 
 Version 2.8.0
 -------------
