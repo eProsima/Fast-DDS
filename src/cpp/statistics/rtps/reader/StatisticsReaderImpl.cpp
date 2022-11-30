@@ -19,6 +19,7 @@
 #include <statistics/rtps/StatisticsBase.hpp>
 
 #include <fastdds/rtps/reader/RTPSReader.h>
+#include <statistics/types/types.h>
 
 using namespace eprosima::fastdds::statistics;
 
@@ -62,6 +63,11 @@ void StatisticsReaderImpl::on_data_notify(
         const fastrtps::rtps::GUID_t& writer_guid,
         const fastrtps::rtps::Time_t& source_timestamp)
 {
+    if (!are_statistics_writers_enabled(EventKind::HISTORY2HISTORY_LATENCY))
+    {
+        return;
+    }
+
     // Get current timestamp
     fastrtps::rtps::Time_t current_time;
     fastrtps::rtps::Time_t::now(current_time);
@@ -88,6 +94,11 @@ void StatisticsReaderImpl::on_data_notify(
 void StatisticsReaderImpl::on_acknack(
         int32_t count)
 {
+    if (!are_statistics_writers_enabled(EventKind::ACKNACK_COUNT))
+    {
+        return;
+    }
+
     EntityCount notification;
     notification.guid(to_statistics_type(get_guid()));
     notification.count(count);
@@ -107,6 +118,11 @@ void StatisticsReaderImpl::on_acknack(
 void StatisticsReaderImpl::on_nackfrag(
         int32_t count)
 {
+    if (!are_statistics_writers_enabled(EventKind::NACKFRAG_COUNT))
+    {
+        return;
+    }
+
     EntityCount notification;
     notification.guid(to_statistics_type(get_guid()));
     notification.count(count);
@@ -131,6 +147,10 @@ void StatisticsReaderImpl::on_subscribe_throughput(
 
     if (payload > 0 )
     {
+        if (!are_statistics_writers_enabled(EventKind::SUBSCRIPTION_THROUGHPUT))
+        {
+            return;
+        }
         // update state
         time_point<steady_clock> former_timepoint;
         auto& current_timepoint = get_members()->last_history_change_;

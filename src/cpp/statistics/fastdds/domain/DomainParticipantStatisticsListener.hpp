@@ -23,6 +23,8 @@
 
 #ifdef FASTDDS_STATISTICS
 
+#include <atomic>
+#include <cstdint>
 #include <map>
 #include <mutex>
 
@@ -47,10 +49,13 @@ struct DomainParticipantStatisticsListener : public IListener
     void on_statistics_data(
             const Data& statistics_data) override;
 
+    uint32_t enabled_writers_mask();
+
 private:
 
     std::mutex mtx_;
     std::map<EventKind, DataWriter*> writers_;
+    std::atomic<uint32_t> enabled_writers_mask_{0};
 };
 
 } // dds

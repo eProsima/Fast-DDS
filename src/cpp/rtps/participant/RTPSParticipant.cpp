@@ -210,6 +210,12 @@ bool RTPSParticipant::remove_statistics_listener(
     return mp_impl->remove_statistics_listener(listener, kind);
 }
 
+void RTPSParticipant::set_enabled_statistics_writers_mask(
+        uint32_t enabled_writers)
+{
+    mp_impl->set_enabled_statistics_writers_mask(enabled_writers);
+}
+
 #endif // FASTDDS_STATISTICS
 
 } /* namespace rtps */

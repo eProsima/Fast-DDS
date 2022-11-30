@@ -2586,6 +2586,25 @@ bool RTPSParticipantImpl::unregister_in_reader(
     return res;
 }
 
+void RTPSParticipantImpl::set_enabled_statistics_writers_mask(
+        uint32_t enabled_writers)
+{
+    StatisticsParticipantImpl::set_enabled_statistics_writers_mask(enabled_writers);
+
+    // Propagate mask to all readers and writers
+    shared_lock<shared_mutex> _(endpoints_list_mutex);
+
+    for (auto reader : m_userReaderList)
+    {
+        reader->set_enabled_statistics_writers_mask(enabled_writers);
+    }
+
+    for (auto writer : m_userWriterList)
+    {
+        writer->set_enabled_statistics_writers_mask(enabled_writers);
+    }
+}
+
 #endif // FASTDDS_STATISTICS
 
 } /* namespace rtps */

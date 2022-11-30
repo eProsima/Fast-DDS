@@ -1042,6 +1042,14 @@ public:
     bool unregister_in_reader(
             std::shared_ptr<fastdds::statistics::IListener> listener) override;
 
+    /**
+     * @brief Set the enabled statistics writers mask
+     *
+     * @param enabled_writers The new mask to set
+     */
+    void set_enabled_statistics_writers_mask(
+            uint32_t enabled_writers) override;
+
 #endif // FASTDDS_STATISTICS
 
 };

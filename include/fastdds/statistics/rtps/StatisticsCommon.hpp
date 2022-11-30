@@ -93,6 +93,23 @@ protected:
             std::shared_ptr<fastdds::statistics::IListener> listener);
 
     /**
+     * @brief Set the enabled statistics writers mask
+     *
+     * @param enabled_writers The new mask to set
+     */
+    void set_enabled_statistics_writers_mask_impl(
+            uint32_t enabled_writers);
+
+    /**
+     * @brief Check whether the statistics writers in the input mask are enabled
+     *
+     * @param checked_enabled_writers The mask of writers to check
+     * @return True if all enabled, false otherwise
+     */
+    bool are_statistics_writers_enabled(
+            uint32_t checked_enabled_writers);
+
+    /**
      * Lambda function to traverse the listener collection
      * @param f function object to apply to each listener
      * @return function object after being applied to each listener
