@@ -47,9 +47,9 @@ TCPReqRepHelloWorldReplier::TCPReqRepHelloWorldReplier()
     , initialized_(false)
     , matched_(0)
 {
-    // By default, memory mode is preallocated (the most restritive)
-    sattr.historyMemoryPolicy = PREALLOCATED_MEMORY_MODE;
-    puattr.historyMemoryPolicy = PREALLOCATED_MEMORY_MODE;
+    // By default, memory mode is PREALLOCATED_WITH_REALLOC_MEMORY_MODE
+    sattr.historyMemoryPolicy = PREALLOCATED_WITH_REALLOC_MEMORY_MODE;
+    puattr.historyMemoryPolicy = PREALLOCATED_WITH_REALLOC_MEMORY_MODE;
 }
 
 TCPReqRepHelloWorldReplier::~TCPReqRepHelloWorldReplier()

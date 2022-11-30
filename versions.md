@@ -1,6 +1,8 @@
 Forthcoming
 -----------
 
+* Default memory management policy set to `PREALLOCATED_WITH_REALLOC_MEMORY_MODE`
+
 Version 2.8.0
 -------------
 

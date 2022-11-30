@@ -109,7 +109,10 @@ public:
     std::function<uint32_t()> getSerializedSizeProvider(
             void* /*data*/) override
     {
-        return std::function<uint32_t()>();
+        return []()->uint32_t
+               {
+                   return 0;
+               };
     }
 
     void* createData() override
@@ -196,7 +199,10 @@ public:
     std::function<uint32_t()> getSerializedSizeProvider(
             void* /*data*/) override
     {
-        return std::function<uint32_t()>();
+        return []()->uint32_t
+               {
+                   return 0;
+               };
     }
 
     void* createData() override

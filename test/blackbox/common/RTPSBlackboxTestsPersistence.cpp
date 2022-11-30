@@ -145,7 +145,7 @@ protected:
         const int32_t pid = GET_PID();
         memcpy(guid_prefix_.value + 4, &pid, sizeof(pid));
         guid_prefix_.value[8] = HAVE_SECURITY;
-        guid_prefix_.value[9] = 3; //PREALLOCATED_MEMORY_MODE
+        guid_prefix_.value[9] = 3;
         LocatorList_t loc;
         IPFinder::getIP4Address(&loc);
         if (loc.size() > 0)

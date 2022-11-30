@@ -331,8 +331,9 @@ public:
             datareader_qos_.data_sharing().off();
         }
 
-        // By default, memory mode is preallocated (the most restritive)
-        datareader_qos_.endpoint().history_memory_policy = eprosima::fastrtps::rtps::PREALLOCATED_MEMORY_MODE;
+        // By default, memory mode is PREALLOCATED_WITH_REALLOC_MEMORY_MODE
+        datareader_qos_.endpoint().history_memory_policy =
+                eprosima::fastrtps::rtps::PREALLOCATED_WITH_REALLOC_MEMORY_MODE;
 
         // By default, heartbeat period delay is 100 milliseconds.
         datareader_qos_.reliable_reader_qos().times.heartbeatResponseDelay.seconds = 0;

@@ -2825,8 +2825,9 @@ public:
     //! Entity ID, if the user wants to specify the EntityID of the endpoint. <br> By default, -1.
     int16_t entity_id = -1;
 
-    //! Underlying History memory policy. <br> By default, PREALLOCATED_MEMORY_MODE.
-    fastrtps::rtps::MemoryManagementPolicy_t history_memory_policy = fastrtps::rtps::PREALLOCATED_MEMORY_MODE;
+    //! Underlying History memory policy. <br> By default, PREALLOCATED_WITH_REALLOC_MEMORY_MODE.
+    fastrtps::rtps::MemoryManagementPolicy_t history_memory_policy =
+            fastrtps::rtps::PREALLOCATED_WITH_REALLOC_MEMORY_MODE;
 };
 
 //!Qos Policy to configure the limit of the writer resources
