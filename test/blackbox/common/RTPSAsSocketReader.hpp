@@ -378,7 +378,7 @@ private:
     std::condition_variable cv_;
     std::string magicword_;
     std::atomic<bool> receiving_;
-    std::atomic<eprosima::fastrtps::rtps::SequenceNumber_t> last_seq_;
+    eprosima::fastrtps::rtps::SequenceNumber_t last_seq_;
     std::atomic<size_t> current_received_count_;
     std::atomic<size_t> number_samples_expected_;
     std::string ip_;
