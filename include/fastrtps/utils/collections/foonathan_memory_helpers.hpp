@@ -24,7 +24,7 @@
 #include <foonathan/memory/detail/debug_helpers.hpp>
 
 #include "ResourceLimitedContainerConfig.hpp"
-#include "fastrtps/config.h"
+#include <fastrtps/fastrtps_dll.h>
 
 namespace eprosima {
 namespace fastrtps {

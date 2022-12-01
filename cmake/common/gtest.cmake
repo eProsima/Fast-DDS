@@ -59,6 +59,11 @@ macro(add_gtest)
             # Normal tests
             file(STRINGS ${GTEST_SOURCE_FILE} GTEST_TEST_NAMES REGEX "^([T][Y][P][E][D][_])?TEST")
             foreach(GTEST_TEST_NAME ${GTEST_TEST_NAMES})
+
+                if(GTEST_TEST_NAME MATCHES "TYPED_TEST_SUITE")
+                    continue()
+                endif()
+
                 string(REGEX REPLACE ["\) \(,"] ";" GTEST_TEST_NAME ${GTEST_TEST_NAME})
                 list(GET GTEST_TEST_NAME 1 GTEST_GROUP_NAME)
                 list(GET GTEST_TEST_NAME 3 GTEST_TEST_NAME)
