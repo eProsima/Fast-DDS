@@ -23,6 +23,6 @@ jobs:
     if: ${{ !contains(github.event.pull_request.labels.*.name, 'skip-ci') }}
     with:
       label: "Running-CI"
-      os: "[\"ubuntu-22.04\",\"windows-2022\",\"macos-12\"]"
+      os: "[\"ubuntu-22.04\",\"windows-2019\",\"macos-12\"]"
       config: "[\"RelWithDebInfo\"]"
-      vs_toolset: "[\"v143\",\"v142\",\"v141\"]"
+      vs_toolset: "[\"v142\",\"v141\"]"

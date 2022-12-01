@@ -49,11 +49,14 @@ jobs:
     steps:
         - id: set-matrix
           run: |
+               # lower cmake version that supports VS2019
+               [version]$vsver = "3.21.0"
                # Use a vector of dictionaries instead of a fixed size matrix
                $configs = @()
                foreach($os in (ConvertFrom-Json '${{ inputs.os }}'))
                {
                    $map = @{}
+                   $map.cmake_minimum_requirement = "3.16.3"
                    $map.os = $os
 
                    foreach($config in (ConvertFrom-Json '${{ inputs.config }}'))
@@ -62,6 +65,11 @@ jobs:
 
                        if( $os -match "windows")
                        {
+                           if( $vsver -gt [version]$map.cmake_minimum_requirement)
+                           { # force minimal version supported
+                               $map.cmake_minimum_requirement = $vsver.ToString(3)
+                           }
+
                            foreach($ts in (ConvertFrom-Json '${{ inputs.vs_toolset }}'))
                            {
                                $map.toolset = $ts
@@ -88,8 +96,20 @@ jobs:
     runs-on: ${{ matrix.configs.os }}
     steps:
 
+      - name: Get minimum supported version of CMake
+        uses: lukka/get-cmake@latest
+        with:
+          cmakeVersion: ${{ matrix.configs.cmake_minimum_requirement }}
+
       - name: Setup environment
         run: |
+             # Check the cmake version
+             if( (cmake --version) -join " " -notmatch
+                 "${{ matrix.configs.cmake_minimum_requirement }}".replace(".","\.") )
+             {
+                Write-Error "Using wrong cmake version"
+             }
+
              # Handle single target/multi target
              $env_variables = @()
 
