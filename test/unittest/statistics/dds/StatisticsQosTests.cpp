@@ -332,9 +332,8 @@ TEST_F(StatisticsFromXMLProfileTests, XMLConfigurationForStatisticsDataWritersQo
 
     // SUBSCRIPTION_THROUGHPUT_TOPIC is not defined in the fastdds.statistics property policy,
     // it is just defined as data_writer profile. Thus, should not be created
-    std::string subscription_througput_name = SUBSCRIPTION_THROUGHPUT_TOPIC;
     eprosima::fastdds::dds::DataWriter* subscription_througput_writer =
-            statistics_publisher->lookup_datawriter(subscription_througput_name);
+            statistics_publisher->lookup_datawriter(subscription_throughput_name);
     ASSERT_EQ(subscription_througput_writer, nullptr);
 
     // But user can enable it manually through enable_statistics_datawriter_with_profile()
@@ -343,7 +342,7 @@ TEST_F(StatisticsFromXMLProfileTests, XMLConfigurationForStatisticsDataWritersQo
         "SUBSCRIPTION_THROUGHPUT_TOPIC");
     ASSERT_EQ(ReturnCode_t::RETCODE_OK, ret);
     subscription_througput_writer =
-            statistics_publisher->lookup_datawriter(subscription_througput_name);
+            statistics_publisher->lookup_datawriter(subscription_throughput_name);
     ASSERT_NE(subscription_througput_writer, nullptr);
 
     // Expected QoS construction for Subscription_Throughput topic:
@@ -446,70 +445,70 @@ TEST_F(StatisticsFromXMLProfileTests, XMLConfigurationForStatisticsDataWritersQo
 #ifdef FASTDDS_STATISTICS
 
     const std::string xml =
-            "                                                                                                                 \
-            <?xml version=\"1.0\" encoding=\"utf-8\"  ?>                                                                      \
-                <dds xmlns=\"http://www.eprosima.com/XMLSchemas/fastRTPS_Profiles\">                                          \
-                    <profiles>                                                                                                \
-                        <participant profile_name=\"statistics_participant\" is_default_profile=\"true\">                     \
-                            <rtps>                                                                                            \
-                                <propertiesPolicy>                                                                            \
-                                    <properties>                                                                              \
-                                        <property>                                                                            \
-                                            <name>fastdds.statistics</name>                                                   \
-                                            <value>HISTORY_LATENCY_TOPIC;PUBLICATION_THROUGHPUT_TOPIC;DISCOVERY_TOPIC;</value>\
-                                        </property>                                                                           \
-                                    </properties>                                                                             \
-                                </propertiesPolicy>                                                                           \
-                            </rtps>                                                                                           \
-                        </participant>                                                                                        \
-                        <data_writer profile_name=\"GENERIC_STATISTICS_PROFILE\">                                             \
-                            <qos>                                                                                             \
-                                <reliability>                                                                                 \
-                                    <kind>BEST_EFFORT</kind>                                                                  \
-                                </reliability>                                                                                \
-                                <durability>                                                                                  \
-                                    <kind>VOLATILE</kind>                                                                     \
-                                </durability>                                                                                 \
-                                <publishMode>                                                                                 \
-                                    <kind>SYNCHRONOUS</kind>                                                                  \
-                                </publishMode>                                                                                \
-                            </qos>                                                                                            \
-                        </data_writer>                                                                                        \
-                        <data_writer profile_name=\"NETWORK_LATENCY_TOPIC\">                                                  \
-                        </data_writer>                                                                                        \
-                        <data_writer profile_name=\"SUBSCRIPTION_THROUGHPUT_TOPIC\">                                          \
-                            <qos>                                                                                             \
-                                <reliability>                                                                                 \
-                                    <kind>BEST_EFFORT</kind>                                                                  \
-                                </reliability>                                                                                \
-                                <partition>                                                                                   \
-                                    <names>                                                                                   \
-                                        <name>part1</name>                                                                    \
-                                        <name>part2</name>                                                                    \
-                                    </names>                                                                                  \
-                                </partition>                                                                                  \
-                                <deadline>                                                                                    \
-                                    <period>                                                                                  \
-                                        <sec>3</sec>                                                                          \
-                                    </period>                                                                                 \
-                                </deadline>                                                                                   \
-                                <latencyBudget>                                                                               \
-                                    <duration>                                                                                \
-                                        <sec>2</sec>                                                                          \
-                                    </duration>                                                                               \
-                                </latencyBudget>                                                                              \
-                                <disable_heartbeat_piggyback>true</disable_heartbeat_piggyback>                               \
-                            </qos>                                                                                            \
-                        </data_writer>                                                                                        \
-                        <data_writer profile_name=\"DISCOVERY_TOPIC\">                                                        \
-                            <qos>                                                                                             \
-                                <reliability>                                                                                 \
-                                    <kind>RELIABLE</kind>                                                                     \
-                                </reliability>                                                                                \
-                            </qos>                                                                                            \
-                        </data_writer>                                                                                        \
-                    </profiles>                                                                                               \
-                </dds>                                                                                                        \
+            "                                                                                                                                       \
+            <?xml version=\"1.0\" encoding=\"utf-8\"  ?>                                                                                            \
+                <dds xmlns=\"http://www.eprosima.com/XMLSchemas/fastRTPS_Profiles\">                                                                \
+                    <profiles>                                                                                                                      \
+                        <participant profile_name=\"statistics_participant\" is_default_profile=\"true\">                                           \
+                            <rtps>                                                                                                                  \
+                                <propertiesPolicy>                                                                                                  \
+                                    <properties>                                                                                                    \
+                                        <property>                                                                                                  \
+                                            <name>fastdds.statistics</name>                                                                         \
+                                            <value>HISTORY_LATENCY_TOPIC;PUBLICATION_THROUGHPUT_TOPIC;_fastdds_statistics_discovered_entity;</value>\
+                                            </property>                                                                                             \
+                                    </properties>                                                                                                   \
+                                </propertiesPolicy>                                                                                                 \
+                            </rtps>                                                                                                                 \
+                        </participant>                                                                                                              \
+                        <data_writer profile_name=\"GENERIC_STATISTICS_PROFILE\">                                                                   \
+                            <qos>                                                                                                                   \
+                                <reliability>                                                                                                       \
+                                    <kind>BEST_EFFORT</kind>                                                                                        \
+                                </reliability>                                                                                                      \
+                                <durability>                                                                                                        \
+                                    <kind>VOLATILE</kind>                                                                                           \
+                                </durability>                                                                                                       \
+                                <publishMode>                                                                                                       \
+                                    <kind>SYNCHRONOUS</kind>                                                                                        \
+                                </publishMode>                                                                                                      \
+                            </qos>                                                                                                                  \
+                        </data_writer>                                                                                                              \
+                        <data_writer profile_name=\"NETWORK_LATENCY_TOPIC\">                                                                        \
+                        </data_writer>                                                                                                              \
+                        <data_writer profile_name=\"SUBSCRIPTION_THROUGHPUT_TOPIC\">                                                                \
+                            <qos>                                                                                                                   \
+                                <reliability>                                                                                                       \
+                                    <kind>BEST_EFFORT</kind>                                                                                        \
+                                </reliability>                                                                                                      \
+                                <partition>                                                                                                         \
+                                    <names>                                                                                                         \
+                                        <name>part1</name>                                                                                          \
+                                        <name>part2</name>                                                                                          \
+                                    </names>                                                                                                        \
+                                </partition>                                                                                                        \
+                                <deadline>                                                                                                          \
+                                    <period>                                                                                                        \
+                                        <sec>3</sec>                                                                                                \
+                                    </period>                                                                                                       \
+                                </deadline>                                                                                                         \
+                                <latencyBudget>                                                                                                     \
+                                    <duration>                                                                                                      \
+                                        <sec>2</sec>                                                                                                \
+                                    </duration>                                                                                                     \
+                                </latencyBudget>                                                                                                    \
+                                <disable_heartbeat_piggyback>true</disable_heartbeat_piggyback>                                                     \
+                            </qos>                                                                                                                  \
+                        </data_writer>                                                                                                              \
+                        <data_writer profile_name=\"_fastdds_statistics_discovered_entity\">                                                        \
+                            <qos>                                                                                                                   \
+                                <reliability>                                                                                                       \
+                                    <kind>RELIABLE</kind>                                                                                           \
+                                </reliability>                                                                                                      \
+                            </qos>                                                                                                                  \
+                        </data_writer>                                                                                                              \
+                    </profiles>                                                                                                                     \
+                </dds>                                                                                                                              \
             ";
 
     test_setup_XMLConfigurationForStatisticsDataWritersQoS(
