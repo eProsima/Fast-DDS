@@ -143,7 +143,7 @@ std::basic_ostream<charT>& operator <<(
     }
     if (!sa.metatrafficMulticastLocatorList.empty())
     {
-        output << server_ostream_separators<charT>::locator_separator << sa.metatrafficUnicastLocatorList;
+        output << server_ostream_separators<charT>::locator_separator << sa.metatrafficMulticastLocatorList;
     }
     return output;
 }
