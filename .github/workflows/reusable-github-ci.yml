@@ -759,11 +759,11 @@ jobs:
         id: summary
         if: ${{ steps.test.outcome == 'success' }}
         run: |
-           # If the CMake version (3.21 et seq.) supports junit use it
            $ErrorActionPreference = 'Continue'
            $failed = 0
 
-           if(Test-Path Env:JUNIT_LOG)
+           # If the CMake version (3.21 et seq.) supports junit use it
+           if((Test-Path $Env:JUNIT_LOG) -and (gi $Env:JUNIT_LOG).Length )
            {
              # ancillary for markdown summary
              $modules = Get-Module -ListAvailable | Select ModuleType, Version, Name
@@ -804,14 +804,47 @@ jobs:
            }
            else
            {
-             # fallback to parse the ordinary output file
-             $pattern = '^(?:.\[0;32m)?(\d+)% tests passed(?:.\[0;0m)?, (\d+) tests failed(?:.\[0;0m)? out of (\d+)$'
-             $summary = (gc .\log\latest_test\fastrtps\stdout.log).where({ $_ -match $pattern }, 'SkipUntil')
-             [long]$failed = $matches[2]
 
-             $summary[0] | Out-File -FilePath $Env:GITHUB_STEP_SUMMARY
+             # Let's create a summary table
+             $table = @{}
+
+             # fallback to parse the ordinary output file
+             # check total and passed
+             $pattern = '(?:(?<timestamp>[\d-:T]+)\.\S+ |^)(?:.\[0;32m)?(\d+)% tests passed(?:.\[0;0m)?,' +
+                        ' (?:.\[0;31m)?(?<failed>\d+) tests failed(?:.\[0;0m)? out of (?<total>\d+)$'
+             $logfile = gi ./log/latest_test/fastrtps/stdout.log
+             $summary = (gc $logfile).where({ $_ -match $pattern }, 'SkipUntil')
+             $table.failures = [long]$failed = $matches.failed
+             $table.tests = $matches.total
+             $table.hostname = hostname
+             if($matches.timestamp) { $table.timestamp = $matches.timestamp }
+             else { $table.timestamp = $logfile.LastWriteTime | Get-Date -Format "yyyy-MM-ddThh:mm:ss" }
+             # check time
+             $pattern = "Total Test time \(real\) = (?<time>[\d\.]+) sec"
+             $tail = $summary.where({ $_ -match $pattern }, 'SkipUntil')
+             $table.time = $matches.time
+             # count disabled
+             $pattern = "\d+ - \S+ \(Disabled\)$"
+             $table.disabled = $tail.where{ $_ -match $pattern }.Count
+             # get generator
+             $table.generator = (gi ./build/fastrtps/CMakeCache.txt |
+                    sls "CMAKE_GENERATOR:INTERNAL=(?<gen>.*)").Matches.Groups.Where{$_.Name -eq "gen"}.Value
 
              $summary
+
+             [PSCustomObject]$table | select generator, tests, failures, disabled, hostname, time, timestamp |
+                New-MDTable | Tee-Object -FilePath $Env:GITHUB_STEP_SUMMARY -Append
+
+             if($failed)
+             {
+               # populate a log folder with the failures
+               $logFolder = New-Item -Type Directory -Path test_logs
+
+               # copy the error reports from colcon logs
+               copy .\log\latest_test\fastrtps\stdout_stderr.log $logFolder
+               "TestLogFolder=" + $logFolder.FullName | Out-File $Env:GITHUB_OUTPUT -Append
+             }
+
            }
 
            if($IsWindows -and $failed)
@@ -846,6 +879,9 @@ jobs:
              "TestErrors=" + $msg | Out-File $Env:GITHUB_OUTPUT -Append
              Write-Error $msg;
            }
+
+           # Avoid disturbing exit code 1 message
+           $LASTEXITCODE=0
 
       - name: Upload build warnings and errors
         if: ${{ steps.build.outputs.BuildLogFolder != 0 }}
