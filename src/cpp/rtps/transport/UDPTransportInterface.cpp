@@ -154,19 +154,19 @@ bool UDPTransportInterface::init(
 
     if (configuration()->maxMessageSize > s_maximumMessageSize)
     {
-        logError(RTPS_MSG_OUT, "maxMessageSize cannot be greater than 65000");
+        EPROSIMA_LOG_ERROR(RTPS_MSG_OUT, "maxMessageSize cannot be greater than 65000");
         return false;
     }
 
     if (configuration()->maxMessageSize > configuration()->sendBufferSize)
     {
-        logError(RTPS_MSG_OUT, "maxMessageSize cannot be greater than send_buffer_size");
+        EPROSIMA_LOG_ERROR(RTPS_MSG_OUT, "maxMessageSize cannot be greater than send_buffer_size");
         return false;
     }
 
     if (configuration()->maxMessageSize > configuration()->receiveBufferSize)
     {
-        logError(RTPS_MSG_OUT, "maxMessageSize cannot be greater than receive_buffer_size");
+        EPROSIMA_LOG_ERROR(RTPS_MSG_OUT, "maxMessageSize cannot be greater than receive_buffer_size");
         return false;
     }
 
@@ -211,8 +211,9 @@ bool UDPTransportInterface::OpenAndBindInputSockets(
     catch (asio::system_error const& e)
     {
         (void)e;
-        logInfo(RTPS_MSG_OUT, "UDPTransport Error binding at port: (" << IPLocator::getPhysicalPort(locator) << ")"
-                                                                      << " with msg: " << e.what());
+        EPROSIMA_LOG_INFO(RTPS_MSG_OUT, "UDPTransport Error binding at port: (" << IPLocator::getPhysicalPort(
+                    locator) << ")"
+                                                                                << " with msg: " << e.what());
         mInputSockets.erase(IPLocator::getPhysicalPort(locator));
         return false;
     }
@@ -300,7 +301,7 @@ bool UDPTransportInterface::OpenOutputChannel(
                 catch (asio::system_error const& e)
                 {
                     (void)e;
-                    logWarning(RTPS_MSG_OUT, "UDPTransport Error binding interface "
+                    EPROSIMA_LOG_WARNING(RTPS_MSG_OUT, "UDPTransport Error binding interface "
                             << localhost_name() << " (skipping) with msg: " << e.what());
                 }
             }
@@ -324,7 +325,7 @@ bool UDPTransportInterface::OpenOutputChannel(
                     catch (asio::system_error const& e)
                     {
                         (void)e;
-                        logWarning(RTPS_MSG_OUT, "UDPTransport Error binding interface "
+                        EPROSIMA_LOG_WARNING(RTPS_MSG_OUT, "UDPTransport Error binding interface "
                                 << (*locIt).name << " (skipping) with msg: " << e.what());
                     }
                 }
@@ -356,7 +357,7 @@ bool UDPTransportInterface::OpenOutputChannel(
     {
         (void)e;
         /* TODO Que hacer?
-           logError(RTPS_MSG_OUT, "UDPTransport Error binding at port: (" << IPLocator::getPhysicalPort(locator) << ")"
+           EPROSIMA_LOG_ERROR(RTPS_MSG_OUT, "UDPTransport Error binding at port: (" << IPLocator::getPhysicalPort(locator) << ")"
             << " with msg: " << e.what());
            for (auto& socket : mOutputSockets)
            {
@@ -501,23 +502,23 @@ bool UDPTransportInterface::send(
                 if ((ec.value() == asio::error::would_block) ||
                         (ec.value() == asio::error::try_again))
                 {
-                    logWarning(RTPS_MSG_OUT, "UDP send would have blocked. Packet is dropped.");
+                    EPROSIMA_LOG_WARNING(RTPS_MSG_OUT, "UDP send would have blocked. Packet is dropped.");
                     return true;
                 }
 
-                logWarning(RTPS_MSG_OUT, ec.message());
+                EPROSIMA_LOG_WARNING(RTPS_MSG_OUT, ec.message());
                 return false;
             }
         }
         catch (const std::exception& error)
         {
-            logWarning(RTPS_MSG_OUT, error.what());
+            EPROSIMA_LOG_WARNING(RTPS_MSG_OUT, error.what());
             return false;
         }
 
         (void)bytesSent;
-        logInfo(RTPS_MSG_OUT, "UDPTransport: " << bytesSent << " bytes TO endpoint: " << destinationEndpoint
-                                               << " FROM " << getSocketPtr(socket)->local_endpoint());
+        EPROSIMA_LOG_INFO(RTPS_MSG_OUT, "UDPTransport: " << bytesSent << " bytes TO endpoint: " << destinationEndpoint
+                                                         << " FROM " << getSocketPtr(socket)->local_endpoint());
         success = true;
     }
 

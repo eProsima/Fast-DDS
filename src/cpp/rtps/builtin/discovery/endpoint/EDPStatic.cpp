@@ -113,7 +113,7 @@ EDPStatic::~EDPStatic()
 bool EDPStatic::initEDP(
         BuiltinAttributes& attributes)
 {
-    logInfo(RTPS_EDP, "Beginning STATIC EndpointDiscoveryProtocol");
+    EPROSIMA_LOG_INFO(RTPS_EDP, "Beginning STATIC EndpointDiscoveryProtocol");
 
     bool returned_value = false;
     m_attributes = attributes;
@@ -326,7 +326,7 @@ bool EDPStatic::processLocalReaderProxyData(
         RTPSReader*,
         ReaderProxyData* rdata)
 {
-    logInfo(RTPS_EDP, rdata->guid().entityId << " in topic: " << rdata->topicName());
+    EPROSIMA_LOG_INFO(RTPS_EDP, rdata->guid().entityId << " in topic: " << rdata->topicName());
     mp_PDP->getMutex()->lock();
     //Add the property list entry to our local pdp
     ParticipantProxyData* localpdata = this->mp_PDP->getLocalParticipantProxyData();
@@ -341,7 +341,7 @@ bool EDPStatic::processLocalWriterProxyData(
         RTPSWriter*,
         WriterProxyData* wdata)
 {
-    logInfo(RTPS_EDP, wdata->guid().entityId << " in topic: " << wdata->topicName());
+    EPROSIMA_LOG_INFO(RTPS_EDP, wdata->guid().entityId << " in topic: " << wdata->topicName());
     mp_PDP->getMutex()->lock();
     //Add the property list entry to our local pdp
     ParticipantProxyData* localpdata = this->mp_PDP->getLocalParticipantProxyData();
@@ -369,7 +369,7 @@ bool EDPStatic::removeLocalReader(
                                 R->getAttributes().getUserDefinedID(), R->getGuid().entityId);
                 if (!pit->modify(new_property))
                 {
-                    logError(RTPS_EDP, "Failed to change property <"
+                    EPROSIMA_LOG_ERROR(RTPS_EDP, "Failed to change property <"
                             << pit->first() << " | " << pit->second() << "> to <"
                             << new_property.first << " | " << new_property.second << ">");
                 }
@@ -396,7 +396,7 @@ bool EDPStatic::removeLocalWriter(
                                 W->getAttributes().getUserDefinedID(), W->getGuid().entityId);
                 if (!pit->modify(new_property))
                 {
-                    logError(RTPS_EDP, "Failed to change property <"
+                    EPROSIMA_LOG_ERROR(RTPS_EDP, "Failed to change property <"
                             << pit->first() << " | " << pit->second() << "> to <"
                             << new_property.first << " | " << new_property.second << ">");
                 }
@@ -476,8 +476,8 @@ void EDPStatic::assignRemoteEndpoints(
             }
             else
             {
-                logWarning(RTPS_EDP, "EDPStaticProperty with type: " << staticproperty.m_endpointType
-                                                                     << " and status " << staticproperty.m_status <<
+                EPROSIMA_LOG_WARNING(RTPS_EDP, "EDPStaticProperty with type: " << staticproperty.m_endpointType
+                                                                               << " and status " << staticproperty.m_status <<
                         " not recognized");
             }
         }
@@ -497,7 +497,7 @@ bool EDPStatic::newRemoteReader(
     ReaderProxyData* rpd = NULL;
     if (mp_edpXML->lookforReader(participant_name, user_id, &rpd) == xmlparser::XMLP_ret::XML_OK)
     {
-        logInfo(RTPS_EDP, "Activating: " << rpd->guid().entityId << " in topic " << rpd->topicName());
+        EPROSIMA_LOG_INFO(RTPS_EDP, "Activating: " << rpd->guid().entityId << " in topic " << rpd->topicName());
         GUID_t reader_guid(participant_guid.guidPrefix, ent_id != c_EntityId_Unknown ? ent_id : rpd->guid().entityId);
 
         auto init_fun = [this, participant_guid, reader_guid, rpd](
@@ -513,7 +513,7 @@ bool EDPStatic::newRemoteReader(
                     newRPD->guid(reader_guid);
                     if (!checkEntityId(newRPD))
                     {
-                        logError(RTPS_EDP, "The provided entityId for Reader with ID: "
+                        EPROSIMA_LOG_ERROR(RTPS_EDP, "The provided entityId for Reader with ID: "
                                 << newRPD->userDefinedId() << " does not match the topic Kind");
                         return false;
                     }
@@ -549,7 +549,7 @@ bool EDPStatic::newRemoteWriter(
     WriterProxyData* wpd = NULL;
     if (mp_edpXML->lookforWriter(participant_name, user_id, &wpd) == xmlparser::XMLP_ret::XML_OK)
     {
-        logInfo(RTPS_EDP, "Activating: " << wpd->guid().entityId << " in topic " << wpd->topicName());
+        EPROSIMA_LOG_INFO(RTPS_EDP, "Activating: " << wpd->guid().entityId << " in topic " << wpd->topicName());
         GUID_t writer_guid(participant_guid.guidPrefix, ent_id != c_EntityId_Unknown ? ent_id : wpd->guid().entityId);
 
         auto init_fun = [this, participant_guid, writer_guid, wpd, persistence_guid](
@@ -565,7 +565,7 @@ bool EDPStatic::newRemoteWriter(
                     newWPD->guid(writer_guid);
                     if (!checkEntityId(newWPD))
                     {
-                        logError(RTPS_EDP, "The provided entityId for Writer with User ID: "
+                        EPROSIMA_LOG_ERROR(RTPS_EDP, "The provided entityId for Writer with User ID: "
                                 << newWPD->userDefinedId() << " does not match the topic Kind");
                         return false;
                     }

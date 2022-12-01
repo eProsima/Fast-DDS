@@ -1899,7 +1899,7 @@ DynamicType_ptr TypeObjectFactory::build_dynamic_type(
                 const TypeIdentifier* auxMem = get_stored_type_identifier(&member->common().member_type_id());
                 if (auxMem == nullptr)
                 {
-                    logWarning(DYNAMIC_TYPES, "(Struct) auxMem is nullptr, but original member has "
+                    EPROSIMA_LOG_WARNING(DYNAMIC_TYPES, "(Struct) auxMem is nullptr, but original member has "
                             << (int)member->common().member_type_id()._d());
                 }
                 MemberDescriptor memDesc;
@@ -1931,7 +1931,7 @@ DynamicType_ptr TypeObjectFactory::build_dynamic_type(
                     const TypeIdentifier* anno_id = get_stored_type_identifier(&annotation.annotation_typeid());
                     if (anno_id == nullptr)
                     {
-                        logWarning(DYNAMIC_TYPES, "(Annotation) anno_id is nullptr, but original member has "
+                        EPROSIMA_LOG_WARNING(DYNAMIC_TYPES, "(Annotation) anno_id is nullptr, but original member has "
                             << (int)annotation.annotation_typeid()._d());
                     }
                     AnnotationDescriptor anno_desc;
@@ -2006,7 +2006,7 @@ DynamicType_ptr TypeObjectFactory::build_dynamic_type(
                 const TypeIdentifier* auxMem = get_primitive_type_identifier(member->common().holder_type());
                 if (auxMem == nullptr)
                 {
-                    logWarning(DYNAMIC_TYPES, "(Bitset) auxMem is nullptr, but original member has "
+                    EPROSIMA_LOG_WARNING(DYNAMIC_TYPES, "(Bitset) auxMem is nullptr, but original member has "
                             << (int)member->common().holder_type());
                 }
                 MemberDescriptor memDesc;
@@ -2022,7 +2022,7 @@ DynamicType_ptr TypeObjectFactory::build_dynamic_type(
             }
             return bitsetType->build();
 
-            //logError(XTYPES, "Bitset isn't supported by DynamicType");
+            //EPROSIMA_LOG_ERROR(XTYPES, "Bitset isn't supported by DynamicType");
             //return nullptr;
         }
         case TK_UNION:
@@ -2044,7 +2044,7 @@ DynamicType_ptr TypeObjectFactory::build_dynamic_type(
                 const TypeIdentifier* auxMem = get_stored_type_identifier(&member->common().type_id());
                 if (auxMem == nullptr)
                 {
-                    logWarning(DYNAMIC_TYPES, "(Union) auxMem is nullptr, but original member has "
+                    EPROSIMA_LOG_WARNING(DYNAMIC_TYPES, "(Union) auxMem is nullptr, but original member has "
                             << (int)member->common().type_id()._d());
                 }
                 MemberDescriptor memDesc;
@@ -2087,7 +2087,7 @@ DynamicType_ptr TypeObjectFactory::build_dynamic_type(
                 const TypeIdentifier* aux_mem = get_stored_type_identifier(&member.common().member_type_id());
                 if (aux_mem == nullptr)
                 {
-                    logWarning(DYNAMIC_TYPES, "(Annotation) aux_mem is nullptr, but original member has "
+                    EPROSIMA_LOG_WARNING(DYNAMIC_TYPES, "(Annotation) aux_mem is nullptr, but original member has "
                             << (int)member.common().member_type_id()._d());
                 }
 
@@ -2123,7 +2123,7 @@ void TypeObjectFactory::apply_type_annotations(
         const TypeIdentifier* anno_id = get_stored_type_identifier(&annotation.annotation_typeid());
         if (anno_id == nullptr)
         {
-            logWarning(DYNAMIC_TYPES, "(Annotation) anno_id is nullptr, but original member has "
+            EPROSIMA_LOG_WARNING(DYNAMIC_TYPES, "(Annotation) anno_id is nullptr, but original member has "
                     << (int)annotation.annotation_typeid()._d());
         }
         AnnotationDescriptor anno_desc;
@@ -2148,7 +2148,7 @@ void TypeObjectFactory::apply_member_annotations(
         const TypeIdentifier* anno_id = get_stored_type_identifier(&annotation.annotation_typeid());
         if (anno_id == nullptr)
         {
-            logWarning(DYNAMIC_TYPES, "(Annotation) anno_id is nullptr, but original member has "
+            EPROSIMA_LOG_WARNING(DYNAMIC_TYPES, "(Annotation) anno_id is nullptr, but original member has "
                     << (int)annotation.annotation_typeid()._d());
         }
         AnnotationDescriptor anno_desc;

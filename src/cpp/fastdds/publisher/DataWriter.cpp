@@ -136,7 +136,7 @@ InstanceHandle_t DataWriter::register_instance_w_timestamp(
 {
     static_cast<void> (instance);
     static_cast<void> (timestamp);
-    logWarning(DATA_WRITER, "register_instance_w_timestamp method not yet implemented")
+    EPROSIMA_LOG_WARNING(DATA_WRITER, "register_instance_w_timestamp method not yet implemented");
     return HANDLE_NIL;
 }
 
@@ -177,7 +177,7 @@ InstanceHandle_t DataWriter::lookup_instance(
         const void* instance) const
 {
     static_cast<void> (instance);
-    logWarning(DATA_WRITER, "lookup_instance method not implemented")
+    EPROSIMA_LOG_WARNING(DATA_WRITER, "lookup_instance method not implemented");
     return HANDLE_NIL;
 }
 

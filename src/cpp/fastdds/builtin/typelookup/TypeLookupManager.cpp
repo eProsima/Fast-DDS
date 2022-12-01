@@ -131,7 +131,7 @@ TypeLookupManager::~TypeLookupManager()
 bool TypeLookupManager::init_typelookup_service(
         RTPSParticipantImpl* participant)
 {
-    logInfo(TYPELOOKUP_SERVICE, "Initializing TypeLookup Service");
+    EPROSIMA_LOG_INFO(TYPELOOKUP_SERVICE, "Initializing TypeLookup Service");
     participant_ = participant;
     bool retVal = create_endpoints();
     /*
@@ -170,14 +170,14 @@ bool TypeLookupManager::assign_remote_endpoints(
     temp_reader_proxy_data_.m_qos.m_durability.kind = fastrtps::VOLATILE_DURABILITY_QOS;
     temp_reader_proxy_data_.m_qos.m_reliability.kind = fastrtps::RELIABLE_RELIABILITY_QOS;
 
-    logInfo(TYPELOOKUP_SERVICE, "for RTPSParticipant: " << pdata.m_guid);
+    EPROSIMA_LOG_INFO(TYPELOOKUP_SERVICE, "for RTPSParticipant: " << pdata.m_guid);
 
     partdet &= DISC_BUILTIN_ENDPOINT_PARTICIPANT_DETECTOR; //Habria que quitar esta linea que comprueba si tiene PDP.
     auxendp &= BUILTIN_ENDPOINT_TYPELOOKUP_SERVICE_REQUEST_DATA_WRITER;
 
     if ((auxendp != 0 || partdet != 0) && builtin_request_reader_ != nullptr)
     {
-        logInfo(TYPELOOKUP_SERVICE, "Adding remote writer to the local Builtin Request Reader");
+        EPROSIMA_LOG_INFO(TYPELOOKUP_SERVICE, "Adding remote writer to the local Builtin Request Reader");
         temp_writer_proxy_data_.guid().entityId = fastrtps::rtps::c_EntityId_TypeLookup_request_writer;
         temp_writer_proxy_data_.persistence_guid().entityId = fastrtps::rtps::c_EntityId_TypeLookup_request_writer;
         builtin_request_reader_->matched_writer_add(temp_writer_proxy_data_);
@@ -188,7 +188,7 @@ bool TypeLookupManager::assign_remote_endpoints(
 
     if ((auxendp != 0 || partdet != 0) && builtin_reply_reader_ != nullptr)
     {
-        logInfo(TYPELOOKUP_SERVICE, "Adding remote writer to the local Builtin Reply Reader");
+        EPROSIMA_LOG_INFO(TYPELOOKUP_SERVICE, "Adding remote writer to the local Builtin Reply Reader");
         temp_writer_proxy_data_.guid().entityId = fastrtps::rtps::c_EntityId_TypeLookup_reply_writer;
         temp_writer_proxy_data_.persistence_guid().entityId = fastrtps::rtps::c_EntityId_TypeLookup_reply_writer;
         builtin_reply_reader_->matched_writer_add(temp_writer_proxy_data_);
@@ -199,7 +199,7 @@ bool TypeLookupManager::assign_remote_endpoints(
 
     if ((auxendp != 0 || partdet != 0) && builtin_request_writer_ != nullptr)
     {
-        logInfo(TYPELOOKUP_SERVICE, "Adding remote reader to the local Builtin Request Writer");
+        EPROSIMA_LOG_INFO(TYPELOOKUP_SERVICE, "Adding remote reader to the local Builtin Request Writer");
         temp_reader_proxy_data_.guid().entityId = fastrtps::rtps::c_EntityId_TypeLookup_request_reader;
         builtin_request_writer_->matched_reader_add(temp_reader_proxy_data_);
     }
@@ -209,7 +209,7 @@ bool TypeLookupManager::assign_remote_endpoints(
 
     if ((auxendp != 0 || partdet != 0) && builtin_reply_writer_ != nullptr)
     {
-        logInfo(TYPELOOKUP_SERVICE, "Adding remote reader to the local Builtin Reply Writer");
+        EPROSIMA_LOG_INFO(TYPELOOKUP_SERVICE, "Adding remote reader to the local Builtin Reply Writer");
         temp_reader_proxy_data_.guid().entityId = fastrtps::rtps::c_EntityId_TypeLookup_reply_reader;
         builtin_reply_writer_->matched_reader_add(temp_reader_proxy_data_);
     }
@@ -223,7 +223,7 @@ void TypeLookupManager::remove_remote_endpoints(
     GUID_t tmp_guid;
     tmp_guid.guidPrefix = pdata->m_guid.guidPrefix;
 
-    logInfo(TYPELOOKUP_SERVICE, "for RTPSParticipant: " << pdata->m_guid);
+    EPROSIMA_LOG_INFO(TYPELOOKUP_SERVICE, "for RTPSParticipant: " << pdata->m_guid);
     uint32_t endp = pdata->m_availableBuiltinEndpoints;
     uint32_t partdet = endp;
     uint32_t auxendp = endp;
@@ -232,7 +232,7 @@ void TypeLookupManager::remove_remote_endpoints(
 
     if ((auxendp != 0 || partdet != 0) && builtin_request_reader_ != nullptr)
     {
-        logInfo(TYPELOOKUP_SERVICE, "Removing remote writer from the local Builtin Request Reader");
+        EPROSIMA_LOG_INFO(TYPELOOKUP_SERVICE, "Removing remote writer from the local Builtin Request Reader");
         tmp_guid.entityId = fastrtps::rtps::c_EntityId_TypeLookup_request_writer;
         builtin_request_reader_->matched_writer_remove(tmp_guid);
     }
@@ -242,7 +242,7 @@ void TypeLookupManager::remove_remote_endpoints(
 
     if ((auxendp != 0 || partdet != 0) && builtin_reply_reader_ != nullptr)
     {
-        logInfo(TYPELOOKUP_SERVICE, "Removing remote writer from the local Builtin Reply Reader");
+        EPROSIMA_LOG_INFO(TYPELOOKUP_SERVICE, "Removing remote writer from the local Builtin Reply Reader");
         tmp_guid.entityId = fastrtps::rtps::c_EntityId_TypeLookup_reply_writer;
         builtin_reply_reader_->matched_writer_remove(tmp_guid);
     }
@@ -252,7 +252,7 @@ void TypeLookupManager::remove_remote_endpoints(
 
     if ((auxendp != 0 || partdet != 0) && builtin_request_writer_ != nullptr)
     {
-        logInfo(TYPELOOKUP_SERVICE, "Removing remote reader from the local Builtin Request Writer");
+        EPROSIMA_LOG_INFO(TYPELOOKUP_SERVICE, "Removing remote reader from the local Builtin Request Writer");
         tmp_guid.entityId = fastrtps::rtps::c_EntityId_TypeLookup_request_reader;
         builtin_request_writer_->matched_reader_remove(tmp_guid);
     }
@@ -262,7 +262,7 @@ void TypeLookupManager::remove_remote_endpoints(
 
     if ((auxendp != 0 || partdet != 0) && builtin_reply_writer_ != nullptr)
     {
-        logInfo(TYPELOOKUP_SERVICE, "Removing remote reader from the local Builtin Reply Writer");
+        EPROSIMA_LOG_INFO(TYPELOOKUP_SERVICE, "Removing remote reader from the local Builtin Reply Writer");
         tmp_guid.entityId = fastrtps::rtps::c_EntityId_TypeLookup_reply_reader;
         builtin_reply_writer_->matched_reader_remove(tmp_guid);
     }
@@ -361,11 +361,11 @@ bool TypeLookupManager::create_endpoints()
                     true))
         {
             builtin_request_writer_ = dynamic_cast<StatefulWriter*>(req_writer);
-            logInfo(TYPELOOKUP_SERVICE, "Builtin Typelookup request writer created.");
+            EPROSIMA_LOG_INFO(TYPELOOKUP_SERVICE, "Builtin Typelookup request writer created.");
         }
         else
         {
-            logError(TYPELOOKUP_SERVICE, "Typelookup request writer creation failed.");
+            EPROSIMA_LOG_ERROR(TYPELOOKUP_SERVICE, "Typelookup request writer creation failed.");
             delete builtin_request_writer_history_;
             builtin_request_writer_history_ = nullptr;
             return false;
@@ -387,11 +387,11 @@ bool TypeLookupManager::create_endpoints()
                     true))
         {
             builtin_reply_writer_ = dynamic_cast<StatefulWriter*>(rep_writer);
-            logInfo(TYPELOOKUP_SERVICE, "Builtin Typelookup reply writer created.");
+            EPROSIMA_LOG_INFO(TYPELOOKUP_SERVICE, "Builtin Typelookup reply writer created.");
         }
         else
         {
-            logError(TYPELOOKUP_SERVICE, "Typelookup reply writer creation failed.");
+            EPROSIMA_LOG_ERROR(TYPELOOKUP_SERVICE, "Typelookup reply writer creation failed.");
             delete builtin_reply_writer_history_;
             builtin_reply_writer_history_ = nullptr;
             return false;
@@ -426,11 +426,11 @@ bool TypeLookupManager::create_endpoints()
                     true))
         {
             builtin_request_reader_ = dynamic_cast<StatefulReader*>(req_reader);
-            logInfo(TYPELOOKUP_SERVICE, "Builtin Typelookup request reader created.");
+            EPROSIMA_LOG_INFO(TYPELOOKUP_SERVICE, "Builtin Typelookup request reader created.");
         }
         else
         {
-            logError(TYPELOOKUP_SERVICE, "Typelookup request reader creation failed.");
+            EPROSIMA_LOG_ERROR(TYPELOOKUP_SERVICE, "Typelookup request reader creation failed.");
             delete builtin_request_reader_history_;
             builtin_request_reader_history_ = nullptr;
             delete request_listener_;
@@ -455,11 +455,11 @@ bool TypeLookupManager::create_endpoints()
                     true))
         {
             builtin_reply_reader_ = dynamic_cast<StatefulReader*>(rep_reader);
-            logInfo(TYPELOOKUP_SERVICE, "Builtin Typelookup reply reader created.");
+            EPROSIMA_LOG_INFO(TYPELOOKUP_SERVICE, "Builtin Typelookup reply reader created.");
         }
         else
         {
-            logError(TYPELOOKUP_SERVICE, "Typelookup reply reader creation failed.");
+            EPROSIMA_LOG_ERROR(TYPELOOKUP_SERVICE, "Typelookup reply reader creation failed.");
             delete builtin_reply_reader_history_;
             builtin_reply_reader_history_ = nullptr;
             delete reply_listener_;

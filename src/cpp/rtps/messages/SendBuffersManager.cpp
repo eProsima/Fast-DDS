@@ -53,20 +53,20 @@ void SendBuffersManager::init(
         advance *= secure ? 3 : 2;
 #else
         advance *= 2;
-#endif
+#endif // if HAVE_SECURITY
         size_t data_size = advance * (pool_.capacity() - n_created_);
         common_buffer_.assign(data_size, 0);
 
         octet* raw_buffer = common_buffer_.data();
-        while(n_created_ < pool_.capacity())
+        while (n_created_ < pool_.capacity())
         {
             pool_.emplace_back(new RTPSMessageGroup_t(
-                raw_buffer,
+                        raw_buffer,
 #if HAVE_SECURITY
-                secure,
-#endif
-                payload_size, guid_prefix
-            ));
+                        secure,
+#endif // if HAVE_SECURITY
+                        payload_size, guid_prefix
+                        ));
             raw_buffer += advance;
             ++n_created_;
         }
@@ -88,7 +88,7 @@ std::unique_ptr<RTPSMessageGroup_t> SendBuffersManager::get_buffer(
         }
         else
         {
-            logInfo(RTPS_PARTICIPANT, "Waiting for send buffer");
+            EPROSIMA_LOG_INFO(RTPS_PARTICIPANT, "Waiting for send buffer");
             available_cv_.wait(lock);
         }
     }
@@ -113,7 +113,7 @@ void SendBuffersManager::add_one_buffer(
     RTPSMessageGroup_t* new_item = new RTPSMessageGroup_t(
 #if HAVE_SECURITY
         participant->is_secure(),
-#endif
+#endif // if HAVE_SECURITY
         participant->getMaxMessageSize(), participant->getGuid().guidPrefix);
     pool_.emplace_back(new_item);
     ++n_created_;

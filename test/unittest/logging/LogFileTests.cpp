@@ -36,12 +36,14 @@ TEST(LogFileTests, file_consumer)
     vector<unique_ptr<thread>> threads;
     for (int i = 0; i != 5; i++)
     {
-        threads.emplace_back(new thread([i]{
-            logWarning(Multithread, "I'm thread " << std::to_string(i));
-        }));
+        threads.emplace_back(new thread([i]
+                {
+                    EPROSIMA_LOG_WARNING(Multithread, "I'm thread " << std::to_string(i));
+                }));
     }
 
-    for (auto& thread: threads) {
+    for (auto& thread: threads)
+    {
         thread->join();
     }
 
@@ -49,7 +51,7 @@ TEST(LogFileTests, file_consumer)
 
     std::ifstream ifs("file_consumer.log");
     std::string content((std::istreambuf_iterator<char>(ifs)),
-                        (std::istreambuf_iterator<char>()));
+            (std::istreambuf_iterator<char>()));
 
     for (int i = 0; i != 5; ++i)
     {
@@ -71,12 +73,14 @@ TEST(LogFileTests, file_consumer_append)
     vector<unique_ptr<thread>> threads;
     for (int i = 0; i != 5; i++)
     {
-        threads.emplace_back(new thread([i]{
-            logWarning(Multithread, "I'm thread " << std::to_string(i));
-        }));
+        threads.emplace_back(new thread([i]
+                {
+                    EPROSIMA_LOG_WARNING(Multithread, "I'm thread " << std::to_string(i));
+                }));
     }
 
-    for (auto& thread: threads) {
+    for (auto& thread: threads)
+    {
         thread->join();
     }
 
@@ -87,12 +91,14 @@ TEST(LogFileTests, file_consumer_append)
     vector<unique_ptr<thread>> threads2;
     for (int i = 0; i != 5; i++)
     {
-        threads2.emplace_back(new thread([i]{
-            logWarning(Multithread, "I'm thread " << std::to_string(i+5));
-        }));
+        threads2.emplace_back(new thread([i]
+                {
+                    EPROSIMA_LOG_WARNING(Multithread, "I'm thread " << std::to_string(i + 5));
+                }));
     }
 
-    for (auto& thread: threads2) {
+    for (auto& thread: threads2)
+    {
         thread->join();
     }
 
@@ -100,7 +106,7 @@ TEST(LogFileTests, file_consumer_append)
 
     std::ifstream ifs("append.log");
     std::string content((std::istreambuf_iterator<char>(ifs)),
-                        (std::istreambuf_iterator<char>()));
+            (std::istreambuf_iterator<char>()));
 
     for (int i = 0; i != 10; ++i)
     {
@@ -110,7 +116,9 @@ TEST(LogFileTests, file_consumer_append)
     }
 }
 
-int main(int argc, char **argv)
+int main(
+        int argc,
+        char** argv)
 {
     testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();

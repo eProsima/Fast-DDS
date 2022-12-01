@@ -90,7 +90,7 @@ TCPv4Transport::TCPv4Transport(
 #if !TLS_FOUND
     if (descriptor.apply_security)
     {
-        logError(RTCP_TLS, "Trying to use TCP Transport with TLS but TLS was not found.");
+        EPROSIMA_LOG_ERROR(RTCP_TLS, "Trying to use TCP Transport with TLS but TLS was not found.");
     }
 #endif // if !TLS_FOUND
 }

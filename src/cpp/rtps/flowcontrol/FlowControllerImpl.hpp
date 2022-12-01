@@ -611,14 +611,14 @@ struct FlowControllerHighPrioritySchedule
                 if (-10 > priority || 10 < priority)
                 {
                     priority = 10;
-                    logError(RTPS_WRITER,
+                    EPROSIMA_LOG_ERROR(RTPS_WRITER,
                             "Wrong value for fastdds.sfc.priority property. Range is [-10, 10]. Priority set to lowest (10)");
                 }
             }
             else
             {
                 priority = 10;
-                logError(RTPS_WRITER,
+                EPROSIMA_LOG_ERROR(RTPS_WRITER,
                         "Not numerical value for fastdds.sfc.priority property. Priority set to lowest (10)");
             }
         }
@@ -731,14 +731,14 @@ struct FlowControllerPriorityWithReservationSchedule
                 if (-10 > priority || 10 < priority)
                 {
                     priority = 10;
-                    logError(RTPS_WRITER,
+                    EPROSIMA_LOG_ERROR(RTPS_WRITER,
                             "Wrong value for fastdds.sfc.priority property. Range is [-10, 10]. Priority set to lowest (10)");
                 }
             }
             else
             {
                 priority = 10;
-                logError(RTPS_WRITER,
+                EPROSIMA_LOG_ERROR(RTPS_WRITER,
                         "Not numerical value for fastdds.sfc.priority property. Priority set to lowest (10)");
             }
         }
@@ -757,14 +757,14 @@ struct FlowControllerPriorityWithReservationSchedule
                 if (100 < reservation)
                 {
                     reservation = 0;
-                    logError(RTPS_WRITER,
+                    EPROSIMA_LOG_ERROR(RTPS_WRITER,
                             "Wrong value for fastdds.sfc.bandwidth_reservation property. Range is [0, 100]. Reservation set to lowest (0)");
                 }
             }
             else
             {
                 reservation = 0;
-                logError(RTPS_WRITER,
+                EPROSIMA_LOG_ERROR(RTPS_WRITER,
                         "Not numerical value for fastdds.sfc.bandwidth_reservation property. Reservation set to lowest (0)");
             }
         }

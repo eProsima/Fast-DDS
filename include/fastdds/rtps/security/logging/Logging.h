@@ -243,21 +243,22 @@ bool Logging::compose_header(
                     MESSAGE,                                          \
                     std::string(CLASS ",") + __func__,                \
                     EXCEPTION);                                       \
-        } else {                                                      \
+        } \
+        else {                                                      \
             switch (LEVEL){                                           \
                 case LoggingLevel::EMERGENCY_LEVEL:                   \
                 case LoggingLevel::ALERT_LEVEL:                       \
                 case LoggingLevel::CRITICAL_LEVEL:                    \
                 case LoggingLevel::ERROR_LEVEL:                       \
-                    logError(SECURITY, MESSAGE);                      \
+                    EPROSIMA_LOG_ERROR(SECURITY, MESSAGE);                      \
                     break;                                            \
                 case LoggingLevel::WARNING_LEVEL:                     \
-                    logWarning(SECURITY, MESSAGE);                    \
+                    EPROSIMA_LOG_WARNING(SECURITY, MESSAGE);                    \
                     break;                                            \
                 case LoggingLevel::NOTICE_LEVEL:                      \
                 case LoggingLevel::INFORMATIONAL_LEVEL:               \
                 case LoggingLevel::DEBUG_LEVEL:                       \
-                    logInfo(SECURITY, MESSAGE);                       \
+                    EPROSIMA_LOG_INFO(SECURITY, MESSAGE);                       \
                     break;                                            \
             }                                                         \
         }                                                             \
@@ -276,7 +277,7 @@ bool Logging::compose_header(
         __FASTRTPS_MACRO_SELECTOR(__VA_ARGS__,  \
         __FASTRTPS_SECURITY_LOGGING,            \
         __FASTRTPS_SECURITY_LOGGING_EX,         \
-        _UNUSED)(__VA_ARGS__) )
+        _UNUSED)(__VA_ARGS__))
 
 #define EMERGENCY_SECURITY_LOGGING(...)     SECURITY_LOGGING(LoggingLevel::EMERGENCY_LEVEL, __VA_ARGS__)
 #define ALERT_SECURITY_LOGGING(...)         SECURITY_LOGGING(LoggingLevel::ALERT_LEVEL, __VA_ARGS__)

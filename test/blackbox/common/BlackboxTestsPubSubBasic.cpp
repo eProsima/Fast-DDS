@@ -877,7 +877,7 @@ TEST_P(PubSubBasic, ReliableHelloworldLateJoinersStress)
 }
 
 /*
- * Check that setting FASTDDS_ENVIRONMENT_FILE to an unexisting file issues 1 logWarning
+ * Check that setting FASTDDS_ENVIRONMENT_FILE to an unexisting file issues 1 EPROSIMA_LOG_WARNING
  */
 TEST(PubSubBasic, EnvFileWarningWrongFile)
 {
@@ -885,7 +885,7 @@ TEST(PubSubBasic, EnvFileWarningWrongFile)
 }
 
 /*
- * Check that setting FASTDDS_ENVIRONMENT_FILE to an empty string issues 0 logWarning
+ * Check that setting FASTDDS_ENVIRONMENT_FILE to an empty string issues 0 EPROSIMA_LOG_WARNING
  */
 TEST(PubSubBasic, EnvFileWarningEmpty)
 {

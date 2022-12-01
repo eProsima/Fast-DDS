@@ -461,7 +461,7 @@ inline std::istream& operator >>(
                 if (addresses.first.empty())
                 {
                     loc.kind = LOCATOR_KIND_INVALID;
-                    logWarning(LOCATOR, "Error deserializing Locator");
+                    EPROSIMA_LOG_WARNING(LOCATOR, "Error deserializing Locator");
                     return input;
                 }
                 address = *addresses.first.begin();
@@ -473,7 +473,7 @@ inline std::istream& operator >>(
                 if (addresses.second.empty())
                 {
                     loc.kind = LOCATOR_KIND_INVALID;
-                    logWarning(LOCATOR, "Error deserializing Locator");
+                    EPROSIMA_LOG_WARNING(LOCATOR, "Error deserializing Locator");
                     return input;
                 }
                 address = *addresses.second.begin();
@@ -490,7 +490,7 @@ inline std::istream& operator >>(
         catch (std::ios_base::failure& )
         {
             loc.kind = LOCATOR_KIND_INVALID;
-            logWarning(LOCATOR, "Error deserializing Locator");
+            EPROSIMA_LOG_WARNING(LOCATOR, "Error deserializing Locator");
         }
 
         input.exceptions(excp_mask);

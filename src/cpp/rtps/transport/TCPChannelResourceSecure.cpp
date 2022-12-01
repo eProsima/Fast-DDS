@@ -118,7 +118,7 @@ void TCPChannelResourceSecure::connect(
                                 }
                                 else
                                 {
-                                    logError(RTCP_TLS, "Handshake failed: " << error.message());
+                                    EPROSIMA_LOG_ERROR(RTCP_TLS, "Handshake failed: " << error.message());
                                     std::this_thread::sleep_for(std::chrono::seconds(5)); // Retry, but after a big while
                                     parent->SocketConnected(channel_weak_ptr, error);
                                 }
@@ -126,14 +126,14 @@ void TCPChannelResourceSecure::connect(
                         }
                         else
                         {
-                            //logError(RTCP_TLS, "Connect failed: " << error.message());
+                            //EPROSIMA_LOG_ERROR(RTCP_TLS, "Connect failed: " << error.message());
                             parent->SocketConnected(channel_weak_ptr, error); // Manages errors and retries
                         }
                     });
         }
         catch (const std::system_error& error)
         {
-            logError(RTCP, "Openning socket " << error.what());
+            EPROSIMA_LOG_ERROR(RTCP, "Openning socket " << error.what());
         }
     }
 }

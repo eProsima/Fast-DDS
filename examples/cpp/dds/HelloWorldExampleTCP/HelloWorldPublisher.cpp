@@ -182,7 +182,7 @@ void HelloWorldPublisher::runThread(
         {
             if (publish(false))
             {
-                //logError(HW, "SENT " <<  hello_.index());
+                //EPROSIMA_LOG_ERROR(HW, "SENT " <<  hello_.index());
                 std::cout << "[RTCP] Message: " << hello_.message() << " with index: "
                           << hello_.index() << " SENT" << std::endl;
             }

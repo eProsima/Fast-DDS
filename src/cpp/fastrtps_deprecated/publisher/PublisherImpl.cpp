@@ -102,7 +102,7 @@ PublisherImpl::~PublisherImpl()
 
     if (mp_writer != nullptr)
     {
-        logInfo(PUBLISHER, this->getGuid().entityId << " in topic: " << this->m_att.topic.topicName);
+        EPROSIMA_LOG_INFO(PUBLISHER, this->getGuid().entityId << " in topic: " << this->m_att.topic.topicName);
     }
 
     RTPSDomain::removeRTPSWriter(mp_writer);
@@ -148,7 +148,7 @@ bool PublisherImpl::create_new_change_with_params(
     /// Preconditions
     if (data == nullptr)
     {
-        logError(PUBLISHER, "Data pointer not valid");
+        EPROSIMA_LOG_ERROR(PUBLISHER, "Data pointer not valid");
         return false;
     }
 
@@ -157,7 +157,7 @@ bool PublisherImpl::create_new_change_with_params(
     {
         if (m_att.topic.topicKind == NO_KEY)
         {
-            logError(PUBLISHER, "Topic is NO_KEY, operation not permitted");
+            EPROSIMA_LOG_ERROR(PUBLISHER, "Topic is NO_KEY, operation not permitted");
             return false;
         }
     }
@@ -181,7 +181,7 @@ bool PublisherImpl::create_new_change_with_params(
                 //If these two checks are correct, we asume the cachechange is valid and thwn we can write to it.
                 if (!mp_type->serialize(data, &ch->serializedPayload))
                 {
-                    logWarning(RTPS_WRITER, "RTPSWriter:Serialization returns false"; );
+                    EPROSIMA_LOG_WARNING(RTPS_WRITER, "RTPSWriter:Serialization returns false"; );
                     mp_writer->release_change(ch);
                     return false;
                 }
@@ -200,7 +200,7 @@ bool PublisherImpl::create_new_change_with_params(
                             change_handle,
                             steady_clock::now() + duration_cast<system_clock::duration>(deadline_duration_us_)))
                 {
-                    logError(PUBLISHER, "Could not set the next deadline in the history");
+                    EPROSIMA_LOG_ERROR(PUBLISHER, "Could not set the next deadline in the history");
                 }
                 else
                 {
@@ -236,13 +236,13 @@ InstanceHandle_t PublisherImpl::register_instance(
     /// Preconditions
     if (instance == nullptr)
     {
-        logError(PUBLISHER, "Data pointer not valid");
+        EPROSIMA_LOG_ERROR(PUBLISHER, "Data pointer not valid");
         return c_InstanceHandle_Unknown;
     }
 
     if (m_att.topic.topicKind == NO_KEY)
     {
-        logError(PUBLISHER, "Topic is NO_KEY, operation not permitted");
+        EPROSIMA_LOG_ERROR(PUBLISHER, "Topic is NO_KEY, operation not permitted");
         return c_InstanceHandle_Unknown;
     }
 
@@ -281,13 +281,13 @@ bool PublisherImpl::unregister_instance(
     /// Preconditions
     if (instance == nullptr)
     {
-        logError(PUBLISHER, "Data pointer not valid");
+        EPROSIMA_LOG_ERROR(PUBLISHER, "Data pointer not valid");
         return false;
     }
 
     if (m_att.topic.topicKind == NO_KEY)
     {
-        logError(PUBLISHER, "Topic is NO_KEY, operation not permitted");
+        EPROSIMA_LOG_ERROR(PUBLISHER, "Topic is NO_KEY, operation not permitted");
         return false;
     }
 
@@ -308,7 +308,7 @@ bool PublisherImpl::unregister_instance(
 #if !defined(NDEBUG)
     if (c_InstanceHandle_Unknown != handle && ih != handle)
     {
-        logError(PUBLISHER, "handle differs from data's key.");
+        EPROSIMA_LOG_ERROR(PUBLISHER, "handle differs from data's key.");
         return false;
     }
 #endif // if !defined(NDEBUG)
@@ -350,7 +350,7 @@ bool PublisherImpl::updateAttributes(
         if (att.unicastLocatorList.size() != this->m_att.unicastLocatorList.size() ||
                 att.multicastLocatorList.size() != this->m_att.multicastLocatorList.size())
         {
-            logWarning(PUBLISHER, "Locator Lists cannot be changed or updated in this version");
+            EPROSIMA_LOG_WARNING(PUBLISHER, "Locator Lists cannot be changed or updated in this version");
             updated &= false;
         }
         else
@@ -370,8 +370,8 @@ bool PublisherImpl::updateAttributes(
                 }
                 if (missing)
                 {
-                    logWarning(PUBLISHER, "Locator: " << *lit1 << " not present in new list");
-                    logWarning(PUBLISHER, "Locator Lists cannot be changed or updated in this version");
+                    EPROSIMA_LOG_WARNING(PUBLISHER, "Locator: " << *lit1 << " not present in new list");
+                    EPROSIMA_LOG_WARNING(PUBLISHER, "Locator Lists cannot be changed or updated in this version");
                 }
             }
             for (LocatorListConstIterator lit1 = this->m_att.multicastLocatorList.begin();
@@ -389,8 +389,8 @@ bool PublisherImpl::updateAttributes(
                 }
                 if (missing)
                 {
-                    logWarning(PUBLISHER, "Locator: " << *lit1 << " not present in new list");
-                    logWarning(PUBLISHER, "Locator Lists cannot be changed or updated in this version");
+                    EPROSIMA_LOG_WARNING(PUBLISHER, "Locator: " << *lit1 << " not present in new list");
+                    EPROSIMA_LOG_WARNING(PUBLISHER, "Locator Lists cannot be changed or updated in this version");
                 }
             }
         }
@@ -399,7 +399,7 @@ bool PublisherImpl::updateAttributes(
     //TOPIC ATTRIBUTES
     if (this->m_att.topic != att.topic)
     {
-        logWarning(PUBLISHER, "Topic Attributes cannot be updated");
+        EPROSIMA_LOG_WARNING(PUBLISHER, "Topic Attributes cannot be updated");
         updated &= false;
     }
     //QOS:
@@ -507,7 +507,7 @@ bool PublisherImpl::deadline_timer_reschedule()
     steady_clock::time_point next_deadline_us;
     if (!m_history.get_next_deadline(timer_owner_, next_deadline_us))
     {
-        logError(PUBLISHER, "Could not get the next deadline from the history");
+        EPROSIMA_LOG_ERROR(PUBLISHER, "Could not get the next deadline from the history");
         return false;
     }
 
@@ -533,7 +533,7 @@ bool PublisherImpl::deadline_missed()
                 timer_owner_,
                 steady_clock::now() + duration_cast<system_clock::duration>(deadline_duration_us_)))
     {
-        logError(PUBLISHER, "Could not set the next deadline in the history");
+        EPROSIMA_LOG_ERROR(PUBLISHER, "Could not set the next deadline in the history");
         return false;
     }
 
@@ -608,7 +608,7 @@ void PublisherImpl::assert_liveliness()
                 mp_writer->get_liveliness_kind(),
                 mp_writer->get_liveliness_lease_duration()))
     {
-        logError(PUBLISHER, "Could not assert liveliness of writer " << mp_writer->getGuid());
+        EPROSIMA_LOG_ERROR(PUBLISHER, "Could not assert liveliness of writer " << mp_writer->getGuid());
     }
 
     if (m_att.qos.m_liveliness.kind == MANUAL_BY_TOPIC_LIVELINESS_QOS)

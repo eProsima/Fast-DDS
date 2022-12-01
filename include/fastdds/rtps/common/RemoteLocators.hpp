@@ -224,7 +224,7 @@ inline std::istream& operator >>(
         {
             locList.unicast.clear();
             locList.multicast.clear();
-            logWarning(REMOTE_LOCATOR_LIST, "Error deserializing RemoteLocatorList");
+            EPROSIMA_LOG_WARNING(REMOTE_LOCATOR_LIST, "Error deserializing RemoteLocatorList");
         }
 
         input.exceptions(excp_mask);

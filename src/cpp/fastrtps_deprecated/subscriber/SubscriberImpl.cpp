@@ -93,7 +93,7 @@ SubscriberImpl::~SubscriberImpl()
 
     if (mp_reader != nullptr)
     {
-        logInfo(SUBSCRIBER, this->getGuid().entityId << " in topic: " << this->m_att.topic.topicName);
+        EPROSIMA_LOG_INFO(SUBSCRIBER, this->getGuid().entityId << " in topic: " << this->m_att.topic.topicName);
     }
 
     RTPSDomain::removeRTPSReader(mp_reader);
@@ -155,7 +155,7 @@ bool SubscriberImpl::updateAttributes(
     if (att.unicastLocatorList.size() != this->m_att.unicastLocatorList.size() ||
             att.multicastLocatorList.size() != this->m_att.multicastLocatorList.size())
     {
-        logWarning(RTPS_READER, "Locator Lists cannot be changed or updated in this version");
+        EPROSIMA_LOG_WARNING(RTPS_READER, "Locator Lists cannot be changed or updated in this version");
         updated &= false;
     }
     else
@@ -175,8 +175,8 @@ bool SubscriberImpl::updateAttributes(
             }
             if (missing)
             {
-                logWarning(RTPS_READER, "Locator: " << *lit1 << " not present in new list");
-                logWarning(RTPS_READER, "Locator Lists cannot be changed or updated in this version");
+                EPROSIMA_LOG_WARNING(RTPS_READER, "Locator: " << *lit1 << " not present in new list");
+                EPROSIMA_LOG_WARNING(RTPS_READER, "Locator Lists cannot be changed or updated in this version");
             }
         }
         for (LocatorListConstIterator lit1 = this->m_att.multicastLocatorList.begin();
@@ -194,8 +194,8 @@ bool SubscriberImpl::updateAttributes(
             }
             if (missing)
             {
-                logWarning(RTPS_READER, "Locator: " << *lit1 << " not present in new list");
-                logWarning(RTPS_READER, "Locator Lists cannot be changed or updated in this version");
+                EPROSIMA_LOG_WARNING(RTPS_READER, "Locator: " << *lit1 << " not present in new list");
+                EPROSIMA_LOG_WARNING(RTPS_READER, "Locator Lists cannot be changed or updated in this version");
             }
         }
     }
@@ -203,7 +203,7 @@ bool SubscriberImpl::updateAttributes(
     //TOPIC ATTRIBUTES
     if (this->m_att.topic != att.topic)
     {
-        logWarning(RTPS_READER, "Topic Attributes cannot be updated");
+        EPROSIMA_LOG_WARNING(RTPS_READER, "Topic Attributes cannot be updated");
         updated &= false;
     }
     //QOS:
@@ -305,7 +305,7 @@ bool SubscriberImpl::onNewCacheChangeAdded(
                     change_in->instanceHandle,
                     steady_clock::now() + duration_cast<system_clock::duration>(deadline_duration_us_)))
         {
-            logError(SUBSCRIBER, "Could not set next deadline in the history");
+            EPROSIMA_LOG_ERROR(SUBSCRIBER, "Could not set next deadline in the history");
         }
         else if (timer_owner_ == change_in->instanceHandle || timer_owner_ == InstanceHandle_t())
         {
@@ -348,7 +348,7 @@ bool SubscriberImpl::onNewCacheChangeAdded(
     }
     else
     {
-        logError(SUBSCRIBER, "A change was added to history that could not be retrieved");
+        EPROSIMA_LOG_ERROR(SUBSCRIBER, "A change was added to history that could not be retrieved");
     }
 
     auto interval = source_timestamp - now + duration_cast<nanoseconds>(lifespan_duration_us_);
@@ -385,7 +385,7 @@ bool SubscriberImpl::deadline_timer_reschedule()
     steady_clock::time_point next_deadline_us;
     if (!m_history.get_next_deadline(timer_owner_, next_deadline_us))
     {
-        logError(SUBSCRIBER, "Could not get the next deadline from the history");
+        EPROSIMA_LOG_ERROR(SUBSCRIBER, "Could not get the next deadline from the history");
         return false;
     }
     auto interval_ms = duration_cast<milliseconds>(next_deadline_us - steady_clock::now());
@@ -409,7 +409,7 @@ bool SubscriberImpl::deadline_missed()
                 timer_owner_,
                 steady_clock::now() + duration_cast<system_clock::duration>(deadline_duration_us_)))
     {
-        logError(SUBSCRIBER, "Could not set next deadline in the history");
+        EPROSIMA_LOG_ERROR(SUBSCRIBER, "Could not set next deadline in the history");
         return false;
     }
     return deadline_timer_reschedule();

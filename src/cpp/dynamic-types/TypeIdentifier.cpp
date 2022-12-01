@@ -141,7 +141,7 @@ TypeIdentifier::TypeIdentifier(
     }
 }
 
-TypeIdentifier& TypeIdentifier::operator=(
+TypeIdentifier& TypeIdentifier::operator =(
         const TypeIdentifier& x)
 {
     m__d = x.m__d;
@@ -189,7 +189,7 @@ TypeIdentifier& TypeIdentifier::operator=(
     return *this;
 }
 
-TypeIdentifier& TypeIdentifier::operator=(
+TypeIdentifier& TypeIdentifier::operator =(
         TypeIdentifier&& x)
 {
     m__d = x.m__d;
@@ -443,6 +443,7 @@ StringSTypeDefn& TypeIdentifier::string_sdefn()
 
     return m_string_sdefn;
 }
+
 void TypeIdentifier::string_ldefn(
         StringLTypeDefn _string_ldefn)
 {
@@ -493,6 +494,7 @@ StringLTypeDefn& TypeIdentifier::string_ldefn()
 
     return m_string_ldefn;
 }
+
 void TypeIdentifier::seq_sdefn(
         PlainSequenceSElemDefn _seq_sdefn)
 {
@@ -541,6 +543,7 @@ PlainSequenceSElemDefn& TypeIdentifier::seq_sdefn()
 
     return m_seq_sdefn;
 }
+
 void TypeIdentifier::seq_ldefn(
         PlainSequenceLElemDefn _seq_ldefn)
 {
@@ -589,6 +592,7 @@ PlainSequenceLElemDefn& TypeIdentifier::seq_ldefn()
 
     return m_seq_ldefn;
 }
+
 void TypeIdentifier::array_sdefn(
         PlainArraySElemDefn _array_sdefn)
 {
@@ -637,6 +641,7 @@ PlainArraySElemDefn& TypeIdentifier::array_sdefn()
 
     return m_array_sdefn;
 }
+
 void TypeIdentifier::array_ldefn(
         PlainArrayLElemDefn _array_ldefn)
 {
@@ -685,6 +690,7 @@ PlainArrayLElemDefn& TypeIdentifier::array_ldefn()
 
     return m_array_ldefn;
 }
+
 void TypeIdentifier::map_sdefn(
         PlainMapSTypeDefn _map_sdefn)
 {
@@ -733,6 +739,7 @@ PlainMapSTypeDefn& TypeIdentifier::map_sdefn()
 
     return m_map_sdefn;
 }
+
 void TypeIdentifier::map_ldefn(
         PlainMapLTypeDefn _map_ldefn)
 {
@@ -781,6 +788,7 @@ PlainMapLTypeDefn& TypeIdentifier::map_ldefn()
 
     return m_map_ldefn;
 }
+
 void TypeIdentifier::sc_component_id(
         StronglyConnectedComponentId _sc_component_id)
 {
@@ -829,6 +837,7 @@ StronglyConnectedComponentId& TypeIdentifier::sc_component_id()
 
     return m_sc_component_id;
 }
+
 void TypeIdentifier::equivalence_hash(
         EquivalenceHash _equivalence_hash)
 {
@@ -1243,9 +1252,7 @@ void TypeIdentifier::deserialize(
     }
 }
 
-
-
-bool TypeIdentifier::operator==(
+bool TypeIdentifier::operator ==(
         const TypeIdentifier& other) const
 {
     if (this == &other)
@@ -1453,12 +1460,12 @@ bool TypeIdentifier::consistent(
             const TypeObject* remoteObj = TypeObjectFactory::get_instance()->get_type_object(&x);
             if (localObj == nullptr)
             {
-                logWarning(XTYPES, "Local TypeIdentifier doesn't have a related TypeObject");
+                EPROSIMA_LOG_WARNING(XTYPES, "Local TypeIdentifier doesn't have a related TypeObject");
                 return false;
             }
             if (remoteObj == nullptr)
             {
-                logWarning(XTYPES, "Remote TypeIdentifier doesn't have a related TypeObject");
+                EPROSIMA_LOG_WARNING(XTYPES, "Remote TypeIdentifier doesn't have a related TypeObject");
                 return false;
             }
             return localObj->consistent(*remoteObj, consistency);

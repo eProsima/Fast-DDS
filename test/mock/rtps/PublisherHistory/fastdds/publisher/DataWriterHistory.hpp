@@ -133,7 +133,7 @@ public:
     {
         if (mp_writer == nullptr || mp_mutex == nullptr)
         {
-            logError(RTPS_HISTORY, "You need to create a Writer with this History before using it");
+            EPROSIMA_LOG_ERROR(RTPS_HISTORY, "You need to create a Writer with this History before using it");
             return false;
         }
         std::lock_guard<RecursiveTimedMutex> guard(*this->mp_mutex);

@@ -105,7 +105,7 @@ ParticipantProxyData::ParticipantProxyData(
 
 ParticipantProxyData::~ParticipantProxyData()
 {
-    logInfo(RTPS_PARTICIPANT, m_guid);
+    EPROSIMA_LOG_INFO(RTPS_PARTICIPANT, m_guid);
 
     // delete all reader proxies
     if (m_readers)
@@ -596,7 +596,7 @@ bool ParticipantProxyData::readFromCDRMessage(
 
                         identity_token_ = std::move(p.token);
 #else
-                        logWarning(RTPS_PARTICIPANT, "Received PID_IDENTITY_TOKEN but security is disabled");
+                        EPROSIMA_LOG_WARNING(RTPS_PARTICIPANT, "Received PID_IDENTITY_TOKEN but security is disabled");
 #endif // if HAVE_SECURITY
                         break;
                     }
@@ -612,7 +612,8 @@ bool ParticipantProxyData::readFromCDRMessage(
 
                         permissions_token_ = std::move(p.token);
 #else
-                        logWarning(RTPS_PARTICIPANT, "Received PID_PERMISSIONS_TOKEN but security is disabled");
+                        EPROSIMA_LOG_WARNING(RTPS_PARTICIPANT,
+                                "Received PID_PERMISSIONS_TOKEN but security is disabled");
 #endif // if HAVE_SECURITY
                         break;
                     }
@@ -630,7 +631,7 @@ bool ParticipantProxyData::readFromCDRMessage(
                         security_attributes_ = p.security_attributes;
                         plugin_security_attributes_ = p.plugin_security_attributes;
 #else
-                        logWarning(RTPS_PARTICIPANT,
+                        EPROSIMA_LOG_WARNING(RTPS_PARTICIPANT,
                                 "Received PID_PARTICIPANT_SECURITY_INFO but security is disabled");
 #endif // if HAVE_SECURITY
                         break;
@@ -779,7 +780,7 @@ void ParticipantProxyData::set_persistence_guid(
     {
         if (!it->modify(persistent_guid))
         {
-            logError(RTPS_PARTICIPANT, "Failed to change property <"
+            EPROSIMA_LOG_ERROR(RTPS_PARTICIPANT, "Failed to change property <"
                     << it->first() << " | " << it->second() << "> to <"
                     << persistent_guid.first << " | " << persistent_guid.second << ">");
         }

@@ -79,7 +79,7 @@ void EDPBasePUBListener::add_writer_from_change(
     {
         if (temp_writer_data->guid().guidPrefix == edp->mp_RTPSParticipant->getGuid().guidPrefix)
         {
-            logInfo(RTPS_EDP, "Message from own RTPSParticipant, ignoring");
+            EPROSIMA_LOG_INFO(RTPS_EDP, "Message from own RTPSParticipant, ignoring");
             return;
         }
 
@@ -96,7 +96,7 @@ void EDPBasePUBListener::add_writer_from_change(
 
                     if (updating && !data->is_update_allowed(*temp_writer_data))
                     {
-                        logWarning(RTPS_EDP,
+                        EPROSIMA_LOG_WARNING(RTPS_EDP,
                                 "Received incompatible update for WriterQos. writer_guid = " << data->guid());
                     }
                     *data = *temp_writer_data;
@@ -121,7 +121,7 @@ void EDPBasePUBListener::add_writer_from_change(
         }
         else //NOT ADDED BECAUSE IT WAS ALREADY THERE
         {
-            logWarning(RTPS_EDP, "Received message from UNKNOWN RTPSParticipant, removing");
+            EPROSIMA_LOG_WARNING(RTPS_EDP, "Received message from UNKNOWN RTPSParticipant, removing");
         }
         // Take again the reader lock.
         reader->getMutex().lock();
@@ -134,10 +134,10 @@ void EDPSimplePUBListener::onNewCacheChangeAdded(
 {
     CacheChange_t* change = (CacheChange_t*)change_in;
     //std::lock_guard<std::recursive_mutex> guard(*this->sedp_->publications_reader_.first->getMutex());
-    logInfo(RTPS_EDP, "");
+    EPROSIMA_LOG_INFO(RTPS_EDP, "");
     if (!computeKey(change))
     {
-        logWarning(RTPS_EDP, "Received change with no Key");
+        EPROSIMA_LOG_WARNING(RTPS_EDP, "Received change with no Key");
     }
 
     ReaderHistory* reader_history =
@@ -157,7 +157,7 @@ void EDPSimplePUBListener::onNewCacheChangeAdded(
     else
     {
         //REMOVE WRITER FROM OUR READERS:
-        logInfo(RTPS_EDP, "Disposed Remote Writer, removing...");
+        EPROSIMA_LOG_INFO(RTPS_EDP, "Disposed Remote Writer, removing...");
         GUID_t writer_guid = iHandle2GUID(change->instanceHandle);
         //Removing change from history
         reader_history->remove_change(change);
@@ -190,7 +190,7 @@ void EDPBaseSUBListener::add_reader_from_change(
     {
         if (temp_reader_data->guid().guidPrefix == edp->mp_RTPSParticipant->getGuid().guidPrefix)
         {
-            logInfo(RTPS_EDP, "From own RTPSParticipant, ignoring");
+            EPROSIMA_LOG_INFO(RTPS_EDP, "From own RTPSParticipant, ignoring");
             return;
         }
 
@@ -206,7 +206,7 @@ void EDPBaseSUBListener::add_reader_from_change(
 
                     if (updating && !data->is_update_allowed(*temp_reader_data))
                     {
-                        logWarning(RTPS_EDP,
+                        EPROSIMA_LOG_WARNING(RTPS_EDP,
                                 "Received incompatible update for ReaderQos. reader_guid = " << data->guid());
                     }
                     *data = *temp_reader_data;
@@ -234,7 +234,7 @@ void EDPBaseSUBListener::add_reader_from_change(
         }
         else
         {
-            logWarning(RTPS_EDP, "From UNKNOWN RTPSParticipant, removing");
+            EPROSIMA_LOG_WARNING(RTPS_EDP, "From UNKNOWN RTPSParticipant, removing");
         }
 
         // Take again the reader lock.
@@ -248,10 +248,10 @@ void EDPSimpleSUBListener::onNewCacheChangeAdded(
 {
     CacheChange_t* change = (CacheChange_t*)change_in;
     //std::lock_guard<std::recursive_mutex> guard(*this->sedp_->subscriptions_reader_.first->getMutex());
-    logInfo(RTPS_EDP, "");
+    EPROSIMA_LOG_INFO(RTPS_EDP, "");
     if (!computeKey(change))
     {
-        logWarning(RTPS_EDP, "Received change with no Key");
+        EPROSIMA_LOG_WARNING(RTPS_EDP, "Received change with no Key");
     }
 
     ReaderHistory* reader_history =
@@ -271,7 +271,7 @@ void EDPSimpleSUBListener::onNewCacheChangeAdded(
     else
     {
         //REMOVE WRITER FROM OUR READERS:
-        logInfo(RTPS_EDP, "Disposed Remote Reader, removing...");
+        EPROSIMA_LOG_INFO(RTPS_EDP, "Disposed Remote Reader, removing...");
 
         GUID_t reader_guid = iHandle2GUID(change->instanceHandle);
         //Removing change from history

@@ -139,7 +139,7 @@ public:
             if (this->add_change_with_commit_hook(change, wparams, pre_commit, time_point))
     #endif // if HAVE_STRICT_REALTIME
             {
-                logInfo(RTPS_HISTORY,
+                EPROSIMA_LOG_INFO(RTPS_HISTORY,
                         topic_att_.getTopicDataType()
                         << " Change " << change->sequenceNumber << " added with key: " << change->instanceHandle
                         << " and " << change->serializedPayload.length << " bytes");

@@ -108,13 +108,13 @@ std::unique_ptr<ParseNode> parse_filter_expression(
     catch (const parse_error& e)
     {
         const auto p = e.positions.front();
-        logError(DDSSQLFILTER, "PARSE ERROR: " << e.what() << std::endl
-                                               << in.line_at(p) << std::endl
-                                               << std::string(p.byte_in_line, ' ') << '^');
+        EPROSIMA_LOG_ERROR(DDSSQLFILTER, "PARSE ERROR: " << e.what() << std::endl
+                                                         << in.line_at(p) << std::endl
+                                                         << std::string(p.byte_in_line, ' ') << '^');
     }
     catch (const std::exception& e)
     {
-        logError(DDSSQLFILTER, "ERROR '" << e.what() << "' while parsing " << expression);
+        EPROSIMA_LOG_ERROR(DDSSQLFILTER, "ERROR '" << e.what() << "' while parsing " << expression);
     }
 
     return nullptr;
@@ -132,13 +132,13 @@ std::unique_ptr<ParseNode> parse_literal_value(
     catch (const parse_error& e)
     {
         const auto p = e.positions.front();
-        logError(DDSSQLFILTER, "PARSE ERROR: " << e.what() << std::endl
-                                               << in.line_at(p) << std::endl
-                                               << std::string(p.byte_in_line, ' ') << '^');
+        EPROSIMA_LOG_ERROR(DDSSQLFILTER, "PARSE ERROR: " << e.what() << std::endl
+                                                         << in.line_at(p) << std::endl
+                                                         << std::string(p.byte_in_line, ' ') << '^');
     }
     catch (const std::exception& e)
     {
-        logError(DDSSQLFILTER, "ERROR '" << e.what() << "' while parsing " << expression);
+        EPROSIMA_LOG_ERROR(DDSSQLFILTER, "ERROR '" << e.what() << "' while parsing " << expression);
     }
 
     return nullptr;

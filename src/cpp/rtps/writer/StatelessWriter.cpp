@@ -216,7 +216,7 @@ void StatelessWriter::init(
 
 StatelessWriter::~StatelessWriter()
 {
-    logInfo(RTPS_WRITER, "StatelessWriter destructor"; );
+    EPROSIMA_LOG_INFO(RTPS_WRITER, "StatelessWriter destructor"; );
     deinit();
 }
 
@@ -289,7 +289,7 @@ bool StatelessWriter::datasharing_delivery(
     assert(pool != nullptr);
 
     pool->add_to_shared_history(change);
-    logInfo(RTPS_WRITER, "Notifying readers of cache change with SN " << change->sequenceNumber);
+    EPROSIMA_LOG_INFO(RTPS_WRITER, "Notifying readers of cache change with SN " << change->sequenceNumber);
     for (std::unique_ptr<ReaderLocator>& reader : matched_datasharing_readers_)
     {
         if (!reader_data_filter_ || reader_data_filter_->is_relevant(*change, reader->remote_guid()))
@@ -329,7 +329,7 @@ void StatelessWriter::unsent_change_added_to_history(
     }
     else
     {
-        logInfo(RTPS_WRITER, "No reader to add change.");
+        EPROSIMA_LOG_INFO(RTPS_WRITER, "No reader to add change.");
         if (mp_listener != nullptr)
         {
             mp_listener->onWriterChangeReceivedByAll(this, change);
@@ -373,7 +373,7 @@ bool StatelessWriter::change_removed_by_history(
         assert (pool != nullptr);
 
         pool->remove_from_shared_history(change);
-        logInfo(RTPS_WRITER, "Removing shared cache change with SN " << change->sequenceNumber);
+        EPROSIMA_LOG_INFO(RTPS_WRITER, "Removing shared cache change with SN " << change->sequenceNumber);
     }
 
     const uint64_t sequence_number = change->sequenceNumber.to64long();
@@ -430,7 +430,7 @@ bool StatelessWriter::matched_reader_add(
             {
                 if (reader.remote_guid() == data.guid())
                 {
-                    logWarning(RTPS_WRITER, "Attempting to add existing reader, updating information.");
+                    EPROSIMA_LOG_WARNING(RTPS_WRITER, "Attempting to add existing reader, updating information.");
                     if (reader.update(data.remote_locators().unicast,
                     data.remote_locators().multicast,
                     data.m_expectsInlineQos))
@@ -472,7 +472,7 @@ bool StatelessWriter::matched_reader_add(
         }
         else
         {
-            logWarning(RTPS_WRITER, "Couldn't add matched reader due to resource limits");
+            EPROSIMA_LOG_WARNING(RTPS_WRITER, "Couldn't add matched reader due to resource limits");
             return false;
         }
     }
@@ -496,20 +496,20 @@ bool StatelessWriter::matched_reader_add(
     if (new_reader->is_local_reader())
     {
         matched_local_readers_.push_back(std::move(new_reader));
-        logInfo(RTPS_WRITER, "Adding reader " << data.guid() << " to " << this->m_guid.entityId
-                                              << " as local reader");
+        EPROSIMA_LOG_INFO(RTPS_WRITER, "Adding reader " << data.guid() << " to " << this->m_guid.entityId
+                                                        << " as local reader");
     }
     else if (new_reader->is_datasharing_reader())
     {
         matched_datasharing_readers_.push_back(std::move(new_reader));
-        logInfo(RTPS_WRITER, "Adding reader " << data.guid() << " to " << this->m_guid.entityId
-                                              << " as data sharing");
+        EPROSIMA_LOG_INFO(RTPS_WRITER, "Adding reader " << data.guid() << " to " << this->m_guid.entityId
+                                                        << " as data sharing");
     }
     else
     {
         matched_remote_readers_.push_back(std::move(new_reader));
-        logInfo(RTPS_WRITER, "Adding reader " << data.guid() << " to " << this->m_guid.entityId
-                                              << " as remote reader");
+        EPROSIMA_LOG_INFO(RTPS_WRITER, "Adding reader " << data.guid() << " to " << this->m_guid.entityId
+                                                        << " as remote reader");
     }
 
     update_reader_info(true);
@@ -531,7 +531,7 @@ bool StatelessWriter::set_fixed_locators(
     if (getAttributes().security_attributes().is_submessage_protected ||
             getAttributes().security_attributes().is_payload_protected)
     {
-        logError(RTPS_WRITER, "A secure besteffort writer cannot add a lonely locator");
+        EPROSIMA_LOG_ERROR(RTPS_WRITER, "A secure besteffort writer cannot add a lonely locator");
         return false;
     }
 #endif // if HAVE_SECURITY
@@ -598,7 +598,7 @@ bool StatelessWriter::matched_reader_remove(
         reader->stop();
         matched_readers_pool_.push_back(std::move(reader));
         update_reader_info(false);
-        logInfo(RTPS_WRITER, "Reader Proxy removed: " << reader_guid);
+        EPROSIMA_LOG_INFO(RTPS_WRITER, "Reader Proxy removed: " << reader_guid);
         if (nullptr != mp_listener)
         {
             // call the listener without locks taken
@@ -702,7 +702,7 @@ DeliveryRetCode StatelessWriter::deliver_sample_nts(
                             }
                             else
                             {
-                                logError(RTPS_WRITER,
+                                EPROSIMA_LOG_ERROR(RTPS_WRITER,
                                         "Error sending fragment (" << cache_change->sequenceNumber << ", " << frag <<
                                         ")");
                                 ret_code = DeliveryRetCode::NOT_DELIVERED;
@@ -732,7 +732,7 @@ DeliveryRetCode StatelessWriter::deliver_sample_nts(
                         }
                         else
                         {
-                            logError(RTPS_WRITER, "Error sending change " << cache_change->sequenceNumber);
+                            EPROSIMA_LOG_ERROR(RTPS_WRITER, "Error sending change " << cache_change->sequenceNumber);
                             ret_code = DeliveryRetCode::NOT_DELIVERED;
                         }
                     }
@@ -781,7 +781,7 @@ DeliveryRetCode StatelessWriter::deliver_sample_nts(
                         }
                         else
                         {
-                            logError(RTPS_WRITER,
+                            EPROSIMA_LOG_ERROR(RTPS_WRITER,
                                     "Error sending fragment (" << cache_change->sequenceNumber << ", " << frag << ")");
                             ret_code = DeliveryRetCode::NOT_DELIVERED;
                         }
@@ -795,7 +795,7 @@ DeliveryRetCode StatelessWriter::deliver_sample_nts(
                     }
                     else
                     {
-                        logError(RTPS_WRITER, "Error sending change " << cache_change->sequenceNumber);
+                        EPROSIMA_LOG_ERROR(RTPS_WRITER, "Error sending change " << cache_change->sequenceNumber);
                         ret_code = DeliveryRetCode::NOT_DELIVERED;
                     }
                 }
@@ -809,7 +809,7 @@ DeliveryRetCode StatelessWriter::deliver_sample_nts(
     }
     catch (const RTPSMessageGroup::timeout&)
     {
-        logError(RTPS_WRITER, "Max blocking time reached");
+        EPROSIMA_LOG_ERROR(RTPS_WRITER, "Max blocking time reached");
         ret_code = DeliveryRetCode::NOT_DELIVERED;
     }
     catch (const RTPSMessageGroup::limit_exceeded&)

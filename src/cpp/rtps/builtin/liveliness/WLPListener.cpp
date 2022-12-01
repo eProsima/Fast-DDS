@@ -34,11 +34,12 @@
 
 
 namespace eprosima {
-namespace fastrtps{
+namespace fastrtps {
 namespace rtps {
 
 
-WLPListener::WLPListener(WLP* plwp)
+WLPListener::WLPListener(
+        WLP* plwp)
     : mp_WLP(plwp)
 {
 }
@@ -58,16 +59,16 @@ void WLPListener::onNewCacheChangeAdded(
     GuidPrefix_t guidP;
     LivelinessQosPolicyKind livelinessKind;
     CacheChange_t* change = (CacheChange_t*)changeIN;
-    if(!computeKey(change))
+    if (!computeKey(change))
     {
-        logWarning(RTPS_LIVELINESS,"Problem obtaining the Key");
+        EPROSIMA_LOG_WARNING(RTPS_LIVELINESS, "Problem obtaining the Key");
         return;
     }
     //Check the serializedPayload:
     auto history = reader->getHistory();
-    for(auto ch = history->changesBegin(); ch!=history->changesEnd(); ++ch)
+    for (auto ch = history->changesBegin(); ch != history->changesEnd(); ++ch)
     {
-        if((*ch)->instanceHandle == change->instanceHandle && (*ch)->sequenceNumber < change->sequenceNumber)
+        if ((*ch)->instanceHandle == change->instanceHandle && (*ch)->sequenceNumber < change->sequenceNumber)
         {
             history->remove_change(*ch);
             break;
@@ -84,16 +85,16 @@ void WLPListener::onNewCacheChangeAdded(
             change->serializedPayload.encapsulation = (uint16_t)PL_CDR_LE;
         }
 
-        for(size_t i = 0; i<12; ++i)
+        for (size_t i = 0; i < 12; ++i)
         {
             guidP.value[i] = change->serializedPayload.data[i + 4];
         }
-        livelinessKind = (LivelinessQosPolicyKind)(change->serializedPayload.data[19]-0x01);
+        livelinessKind = (LivelinessQosPolicyKind)(change->serializedPayload.data[19] - 0x01);
 
     }
     else
     {
-        if(!separateKey(
+        if (!separateKey(
                     change->instanceHandle,
                     &guidP,
                     &livelinessKind))
@@ -102,9 +103,9 @@ void WLPListener::onNewCacheChangeAdded(
         }
     }
 
-    if(guidP == reader->getGuid().guidPrefix)
+    if (guidP == reader->getGuid().guidPrefix)
     {
-        logInfo(RTPS_LIVELINESS,"Message from own RTPSParticipant, ignoring");
+        EPROSIMA_LOG_INFO(RTPS_LIVELINESS, "Message from own RTPSParticipant, ignoring");
         history->remove_change(change);
         return;
     }
@@ -129,7 +130,7 @@ bool WLPListener::separateKey(
         GuidPrefix_t* guidP,
         LivelinessQosPolicyKind* liveliness)
 {
-    for(uint8_t i=0;i<12;++i)
+    for (uint8_t i = 0; i < 12; ++i)
     {
         guidP->value[i] = key.value[i];
     }
@@ -137,12 +138,13 @@ bool WLPListener::separateKey(
     return true;
 }
 
-bool WLPListener::computeKey(CacheChange_t* change)
+bool WLPListener::computeKey(
+        CacheChange_t* change)
 {
-    if(change->instanceHandle == c_InstanceHandle_Unknown)
+    if (change->instanceHandle == c_InstanceHandle_Unknown)
     {
         SerializedPayload_t* pl = &change->serializedPayload;
-        if(pl->length >= 20)
+        if (pl->length >= 20)
         {
             memcpy(change->instanceHandle.value, pl->data + 4, 16);
             return true;
@@ -152,7 +154,6 @@ bool WLPListener::computeKey(CacheChange_t* change)
     return true;
 }
 
-
 } /* namespace rtps */
 } /* namespace eprosima */
-}
+} // namespace eprosima

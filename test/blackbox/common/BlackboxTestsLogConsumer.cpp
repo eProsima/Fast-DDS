@@ -53,7 +53,7 @@ TEST(LogConsumer, CheckLogConsumerPrintMemberFunctions)
     Log::SetVerbosity(Log::Warning);
     Log::SetCategoryFilter(std::regex("(CUSTOM_LOG_CONSUMER_TEST)"));
 
-    logError(CUSTOM_LOG_CONSUMER_TEST, "Testing log consumer protected functions")
+    EPROSIMA_LOG_ERROR(CUSTOM_LOG_CONSUMER_TEST, "Testing log consumer protected functions");
 
     Log::Flush();
 }

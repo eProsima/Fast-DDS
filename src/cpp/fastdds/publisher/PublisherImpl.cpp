@@ -217,7 +217,7 @@ DataWriter* PublisherImpl::create_datawriter(
         DataWriterListener* listener,
         const StatusMask& mask)
 {
-    logInfo(PUBLISHER, "CREATING WRITER IN TOPIC: " << topic->get_name());
+    EPROSIMA_LOG_INFO(PUBLISHER, "CREATING WRITER IN TOPIC: " << topic->get_name());
     //Look for the correct type registration
     TypeSupport type_support = participant_->find_type(topic->get_type_name());
 
@@ -225,7 +225,7 @@ DataWriter* PublisherImpl::create_datawriter(
     // Check the type was registered.
     if (type_support.empty())
     {
-        logError(PUBLISHER, "Type: " << topic->get_type_name() << " Not Registered");
+        EPROSIMA_LOG_ERROR(PUBLISHER, "Type: " << topic->get_type_name() << " Not Registered");
         return nullptr;
     }
 
@@ -377,7 +377,7 @@ bool PublisherImpl::contains_entity(
 /* TODO
    bool PublisherImpl::suspend_publications()
    {
-    logError(PUBLISHER, "Operation not implemented");
+    EPROSIMA_LOG_ERROR(PUBLISHER, "Operation not implemented");
     return false;
    }
  */
@@ -385,7 +385,7 @@ bool PublisherImpl::contains_entity(
 /* TODO
    bool PublisherImpl::resume_publications()
    {
-    logError(PUBLISHER, "Operation not implemented");
+    EPROSIMA_LOG_ERROR(PUBLISHER, "Operation not implemented");
     return false;
    }
  */
@@ -393,7 +393,7 @@ bool PublisherImpl::contains_entity(
 /* TODO
    bool PublisherImpl::begin_coherent_changes()
    {
-    logError(PUBLISHER, "Operation not implemented");
+    EPROSIMA_LOG_ERROR(PUBLISHER, "Operation not implemented");
     return false;
    }
  */
@@ -401,7 +401,7 @@ bool PublisherImpl::contains_entity(
 /* TODO
    bool PublisherImpl::end_coherent_changes()
    {
-    logError(PUBLISHER, "Operation not implemented");
+    EPROSIMA_LOG_ERROR(PUBLISHER, "Operation not implemented");
     return false;
    }
  */
@@ -459,7 +459,7 @@ const ReturnCode_t PublisherImpl::get_datawriter_qos_from_profile(
         fastrtps::WriterQos&,
         const fastrtps::TopicAttributes&) const
    {
-    logError(PUBLISHER, "Operation not implemented");
+    EPROSIMA_LOG_ERROR(PUBLISHER, "Operation not implemented");
     return false;
    }
  */

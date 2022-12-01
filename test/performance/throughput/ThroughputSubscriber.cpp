@@ -97,7 +97,7 @@ void ThroughputSubscriber::DataReaderListener::on_data_available(
 
         if (ReturnCode_t::RETCODE_OK != reader->take(data_seq, infos))
         {
-            logInfo(ThroughputTest, "Problem reading Subscriber echoed loaned test data");
+            EPROSIMA_LOG_INFO(ThroughputTest, "Problem reading Subscriber echoed loaned test data");
             return;
         }
 
@@ -130,7 +130,7 @@ void ThroughputSubscriber::DataReaderListener::on_data_available(
         // release the reader loan
         if (ReturnCode_t::RETCODE_OK != reader->return_loan(data_seq, infos))
         {
-            logInfo(ThroughputTest, "Problem returning loaned test data");
+            EPROSIMA_LOG_INFO(ThroughputTest, "Problem returning loaned test data");
             return;
         }
     }
@@ -235,7 +235,7 @@ ThroughputSubscriber::~ThroughputSubscriber()
             || nullptr != data_sub_topic_
             || throughput_data_type_)
     {
-        logError(THROUGHPUTSUBSCRIBER, "ERROR unregistering the DATA type");
+        EPROSIMA_LOG_ERROR(THROUGHPUTSUBSCRIBER, "ERROR unregistering the DATA type");
         return;
     }
 
@@ -251,7 +251,7 @@ ThroughputSubscriber::~ThroughputSubscriber()
 
     // Remove the participant
     DomainParticipantFactory::get_instance()->delete_participant(participant_);
-    logInfo(THROUGHPUTSUBSCRIBER, "Sub: Participant removed");
+    EPROSIMA_LOG_INFO(THROUGHPUTSUBSCRIBER, "Sub: Participant removed");
 }
 
 bool ThroughputSubscriber::init(
@@ -349,7 +349,7 @@ bool ThroughputSubscriber::init(
     if (ReturnCode_t::RETCODE_OK
             != throughput_command_type_.register_type(participant_))
     {
-        logError(THROUGHPUTSUBSCRIBER, "ERROR registering command type");
+        EPROSIMA_LOG_ERROR(THROUGHPUTSUBSCRIBER, "ERROR registering command type");
         return false;
     }
 
@@ -357,7 +357,7 @@ bool ThroughputSubscriber::init(
     publisher_ = participant_->create_publisher(PUBLISHER_QOS_DEFAULT, nullptr);
     if (publisher_ == nullptr)
     {
-        logError(THROUGHPUTSUBSCRIBER, "ERROR creating the Publisher");
+        EPROSIMA_LOG_ERROR(THROUGHPUTSUBSCRIBER, "ERROR creating the Publisher");
         return false;
     }
 
@@ -365,7 +365,7 @@ bool ThroughputSubscriber::init(
     subscriber_ = participant_->create_subscriber(SUBSCRIBER_QOS_DEFAULT, nullptr);
     if (subscriber_ == nullptr)
     {
-        logError(THROUGHPUTSUBSCRIBER, "ERROR creating the Subscriber");
+        EPROSIMA_LOG_ERROR(THROUGHPUTSUBSCRIBER, "ERROR creating the Subscriber");
         return false;
     }
 
@@ -375,7 +375,7 @@ bool ThroughputSubscriber::init(
     if (xml_config_file_.length() > 0
             && ReturnCode_t::RETCODE_OK != subscriber_->get_datareader_qos_from_profile(profile_name, dr_qos_))
     {
-        logError(THROUGHPUTSUBSCRIBER, "ERROR unable to retrieve the " << profile_name);
+        EPROSIMA_LOG_ERROR(THROUGHPUTSUBSCRIBER, "ERROR unable to retrieve the " << profile_name);
         return false;
     }
 
@@ -418,7 +418,7 @@ bool ThroughputSubscriber::init(
 
         if (nullptr == command_sub_topic_)
         {
-            logError(THROUGHPUTSUBSCRIBER, "ERROR creating the COMMAND Sub topic");
+            EPROSIMA_LOG_ERROR(THROUGHPUTSUBSCRIBER, "ERROR creating the COMMAND Sub topic");
             return false;
         }
 
@@ -438,7 +438,7 @@ bool ThroughputSubscriber::init(
 
         if (nullptr == command_pub_topic_)
         {
-            logError(THROUGHPUTSUBSCRIBER, "ERROR creating the COMMAND Pub topic");
+            EPROSIMA_LOG_ERROR(THROUGHPUTSUBSCRIBER, "ERROR creating the COMMAND Pub topic");
             return false;
         }
     }
@@ -464,7 +464,7 @@ bool ThroughputSubscriber::init(
 
         if (command_reader_ == nullptr)
         {
-            logError(THROUGHPUTSUBSCRIBER, "ERROR creating the COMMAND DataWriter");
+            EPROSIMA_LOG_ERROR(THROUGHPUTSUBSCRIBER, "ERROR creating the COMMAND DataWriter");
             return false;
         }
     }
@@ -491,7 +491,7 @@ bool ThroughputSubscriber::init(
 
         if (command_writer_ == nullptr)
         {
-            logError(THROUGHPUTSUBSCRIBER, "ERROR creating the COMMAND DataReader");
+            EPROSIMA_LOG_ERROR(THROUGHPUTSUBSCRIBER, "ERROR creating the COMMAND DataReader");
             return false;
         }
     }
@@ -545,7 +545,7 @@ int ThroughputSubscriber::process_message()
 
                         if (nullptr == dynamic_data_)
                         {
-                            logError(THROUGHPUTSUBSCRIBER, "Iteration failed: Failed to create Dynamic Data");
+                            EPROSIMA_LOG_ERROR(THROUGHPUTSUBSCRIBER, "Iteration failed: Failed to create Dynamic Data");
                             return 2;
                         }
 
@@ -570,7 +570,7 @@ int ThroughputSubscriber::process_message()
                             if (dr_qos.history().depth < 0 ||
                                     static_cast<uint32_t>(dr_qos.history().depth) < max_demand)
                             {
-                                logWarning(THROUGHPUTSUBSCRIBER, "Setting history depth to " << max_demand);
+                                EPROSIMA_LOG_WARNING(THROUGHPUTSUBSCRIBER, "Setting history depth to " << max_demand);
                                 dr_qos.resource_limits().max_samples = max_demand;
                                 dr_qos.history().depth = max_demand;
                             }
@@ -582,7 +582,7 @@ int ThroughputSubscriber::process_message()
                             if (dr_qos.resource_limits().max_samples < 0 ||
                                     static_cast<uint32_t>(dr_qos.resource_limits().max_samples) < max_demand)
                             {
-                                logWarning(THROUGHPUTSUBSCRIBER,
+                                EPROSIMA_LOG_WARNING(THROUGHPUTSUBSCRIBER,
                                         "Setting resource limit max samples to " << max_demand);
                                 dr_qos.resource_limits().max_samples = max_demand;
                             }
@@ -613,7 +613,8 @@ int ThroughputSubscriber::process_message()
                         }
                         else
                         {
-                            logError(THROUGHPUTSUBSCRIBER, "Error preparing static types and endpoints for testing");
+                            EPROSIMA_LOG_ERROR(THROUGHPUTSUBSCRIBER,
+                                    "Error preparing static types and endpoints for testing");
                             return 2;
                         }
                     }
@@ -637,7 +638,7 @@ int ThroughputSubscriber::process_message()
                         {
                             if (ReturnCode_t::RETCODE_OK != data_reader_->return_loan(data_seq, infos))
                             {
-                                logInfo(ThroughputTest, "Problem returning loan");
+                                EPROSIMA_LOG_INFO(ThroughputTest, "Problem returning loan");
                             }
                         }
                     }
@@ -681,7 +682,8 @@ int ThroughputSubscriber::process_message()
                         // remove the data endpoints on static case
                         if (!destroy_data_endpoints())
                         {
-                            logError(THROUGHPUTSUBSCRIBER, "Iteration failed: Failed to remove static data endpoints");
+                            EPROSIMA_LOG_ERROR(THROUGHPUTSUBSCRIBER,
+                                    "Iteration failed: Failed to remove static data endpoints");
                             return 2;
                         }
 
@@ -795,12 +797,12 @@ bool ThroughputSubscriber::init_dynamic_types()
     // Check if it has been initialized before
     if (dynamic_pub_sub_type_)
     {
-        logError(THROUGHPUTSUBSCRIBER, "ERROR DYNAMIC DATA type already initialized");
+        EPROSIMA_LOG_ERROR(THROUGHPUTSUBSCRIBER, "ERROR DYNAMIC DATA type already initialized");
         return false;
     }
     else if (participant_->find_type(ThroughputDataType::type_name_))
     {
-        logError(THROUGHPUTSUBSCRIBER, "ERROR DYNAMIC DATA type already registered");
+        EPROSIMA_LOG_ERROR(THROUGHPUTSUBSCRIBER, "ERROR DYNAMIC DATA type already registered");
         return false;
     }
 
@@ -819,7 +821,7 @@ bool ThroughputSubscriber::init_dynamic_types()
     if (ReturnCode_t::RETCODE_OK
             != dynamic_pub_sub_type_.register_type(participant_))
     {
-        logError(THROUGHPUTSUBSCRIBER, "ERROR registering the DYNAMIC DATA topic");
+        EPROSIMA_LOG_ERROR(THROUGHPUTSUBSCRIBER, "ERROR registering the DYNAMIC DATA topic");
         return false;
     }
 
@@ -834,12 +836,12 @@ bool ThroughputSubscriber::init_static_types(
     // Check if it has been initialized before
     if (throughput_data_type_)
     {
-        logError(THROUGHPUTSUBSCRIBER, "ERROR STATIC DATA type already initialized");
+        EPROSIMA_LOG_ERROR(THROUGHPUTSUBSCRIBER, "ERROR STATIC DATA type already initialized");
         return false;
     }
     else if (participant_->find_type(ThroughputDataType::type_name_))
     {
-        logError(THROUGHPUTSUBSCRIBER, "ERROR STATIC DATA type already registered");
+        EPROSIMA_LOG_ERROR(THROUGHPUTSUBSCRIBER, "ERROR STATIC DATA type already registered");
         return false;
     }
 
@@ -860,13 +862,13 @@ bool ThroughputSubscriber::create_data_endpoints(
 {
     if (nullptr != data_sub_topic_)
     {
-        logError(THROUGHPUTSUBSCRIBER, "ERROR topic already initialized");
+        EPROSIMA_LOG_ERROR(THROUGHPUTSUBSCRIBER, "ERROR topic already initialized");
         return false;
     }
 
     if (nullptr != data_reader_)
     {
-        logError(THROUGHPUTSUBSCRIBER, "ERROR data_writer_ already initialized");
+        EPROSIMA_LOG_ERROR(THROUGHPUTSUBSCRIBER, "ERROR data_writer_ already initialized");
         return false;
     }
 
@@ -886,7 +888,7 @@ bool ThroughputSubscriber::create_data_endpoints(
 
     if (nullptr == data_sub_topic_)
     {
-        logError(THROUGHPUTSUBSCRIBER, "ERROR creating the DATA topic");
+        EPROSIMA_LOG_ERROR(THROUGHPUTSUBSCRIBER, "ERROR creating the DATA topic");
         return false;
     }
 
@@ -912,7 +914,7 @@ bool ThroughputSubscriber::destroy_data_endpoints()
     if (nullptr == data_reader_
             || ReturnCode_t::RETCODE_OK != subscriber_->delete_datareader(data_reader_))
     {
-        logError(THROUGHPUTSUBSCRIBER, "ERROR destroying the DataWriter");
+        EPROSIMA_LOG_ERROR(THROUGHPUTSUBSCRIBER, "ERROR destroying the DataWriter");
         return false;
     }
     data_reader_ = nullptr;
@@ -922,7 +924,7 @@ bool ThroughputSubscriber::destroy_data_endpoints()
     if (nullptr == data_sub_topic_
             || ReturnCode_t::RETCODE_OK != participant_->delete_topic(data_sub_topic_))
     {
-        logError(THROUGHPUTSUBSCRIBER, "ERROR destroying the DATA topic");
+        EPROSIMA_LOG_ERROR(THROUGHPUTSUBSCRIBER, "ERROR destroying the DATA topic");
         return false;
     }
     data_sub_topic_ = nullptr;
@@ -931,7 +933,7 @@ bool ThroughputSubscriber::destroy_data_endpoints()
     if (ReturnCode_t::RETCODE_OK
             != participant_->unregister_type(ThroughputDataType::type_name_))
     {
-        logError(THROUGHPUTSUBSCRIBER, "ERROR unregistering the DATA type");
+        EPROSIMA_LOG_ERROR(THROUGHPUTSUBSCRIBER, "ERROR unregistering the DATA type");
         return false;
     }
 

@@ -22,7 +22,7 @@ namespace fastrtps {
 namespace types {
 
 AnnotationDescriptor::AnnotationDescriptor()
-: type_(nullptr)
+    : type_(nullptr)
 {
 }
 
@@ -31,17 +31,20 @@ AnnotationDescriptor::~AnnotationDescriptor()
     type_ = nullptr;
 }
 
-AnnotationDescriptor::AnnotationDescriptor(const AnnotationDescriptor* descriptor)
+AnnotationDescriptor::AnnotationDescriptor(
+        const AnnotationDescriptor* descriptor)
 {
     copy_from(descriptor);
 }
 
-AnnotationDescriptor::AnnotationDescriptor(DynamicType_ptr pType)
+AnnotationDescriptor::AnnotationDescriptor(
+        DynamicType_ptr pType)
 {
     type_ = pType;
 }
 
-ReturnCode_t AnnotationDescriptor::copy_from(const AnnotationDescriptor* descriptor)
+ReturnCode_t AnnotationDescriptor::copy_from(
+        const AnnotationDescriptor* descriptor)
 {
     if (descriptor != nullptr)
     {
@@ -50,20 +53,21 @@ ReturnCode_t AnnotationDescriptor::copy_from(const AnnotationDescriptor* descrip
             type_ = descriptor->type_;
             value_ = descriptor->value_;
         }
-        catch(std::exception& /*e*/)
+        catch (std::exception& /*e*/)
         {
             return ReturnCode_t::RETCODE_ERROR;
         }
     }
     else
     {
-        logError(DYN_TYPES, "Error copying AnnotationDescriptor, invalid input descriptor");
+        EPROSIMA_LOG_ERROR(DYN_TYPES, "Error copying AnnotationDescriptor, invalid input descriptor");
         return ReturnCode_t::RETCODE_BAD_PARAMETER;
     }
     return ReturnCode_t::RETCODE_OK;
 }
 
-bool AnnotationDescriptor::equals(const AnnotationDescriptor* other) const
+bool AnnotationDescriptor::equals(
+        const AnnotationDescriptor* other) const
 {
     if (other != nullptr && (type_ == other->type_ || (type_ != nullptr && type_->equals(other->type_.get()))))
     {
@@ -94,7 +98,8 @@ bool AnnotationDescriptor::key_annotation() const
     return (it != value_.end() && it->second == CONST_TRUE);
 }
 
-ReturnCode_t AnnotationDescriptor::get_value(std::string& value)
+ReturnCode_t AnnotationDescriptor::get_value(
+        std::string& value)
 {
     return get_value(value, "value");
 }
@@ -112,7 +117,8 @@ ReturnCode_t AnnotationDescriptor::get_value(
     return ReturnCode_t::RETCODE_BAD_PARAMETER;
 }
 
-ReturnCode_t AnnotationDescriptor::get_all_value(std::map<std::string, std::string>& value) const
+ReturnCode_t AnnotationDescriptor::get_all_value(
+        std::map<std::string, std::string>& value) const
 {
     value = value_;
     return ReturnCode_t::RETCODE_OK;
@@ -129,7 +135,8 @@ bool AnnotationDescriptor::is_consistent() const
     return true;
 }
 
-void AnnotationDescriptor::set_type(DynamicType_ptr pType)
+void AnnotationDescriptor::set_type(
+        DynamicType_ptr pType)
 {
     type_ = pType;
 }

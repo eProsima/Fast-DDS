@@ -104,7 +104,7 @@ bool EDPServer::createSEDPEndpoints()
             publications_writer_.first->reader_data_filter(edp_publications_filter);
             // 1.2. Enable separate sending so the filter can be called for each change and reader proxy
             publications_writer_.first->set_separate_sending(true);
-            logInfo(RTPS_EDP, "SEDP Publications Writer created");
+            EPROSIMA_LOG_INFO(RTPS_EDP, "SEDP Publications Writer created");
 
             // TODO check if this should be done here or below
             publications_writer_.second->remove_all_changes();
@@ -114,7 +114,7 @@ bool EDPServer::createSEDPEndpoints()
             // Something went wrong. Delete publications writer history and set it to nullptr. Return false
             delete(publications_writer_.second);
             publications_writer_.second = nullptr;
-            logError(RTPS_EDP, "Error creating SEDP Publications Writer");
+            EPROSIMA_LOG_ERROR(RTPS_EDP, "Error creating SEDP Publications Writer");
             return false;
         }
 
@@ -128,20 +128,20 @@ bool EDPServer::createSEDPEndpoints()
         {
             // Cast subscriptions reader to a StatefulReader, since we now that's what it is
             subscriptions_reader_.first = dynamic_cast<StatefulReader*>(raux);
-            logInfo(RTPS_EDP, "SEDP Subscriptions Reader created");
+            EPROSIMA_LOG_INFO(RTPS_EDP, "SEDP Subscriptions Reader created");
         }
         else
         {
             // Something went wrong. Delete subscriptions reader history and set it to nullptr. Return false
             delete(subscriptions_reader_.second);
             subscriptions_reader_.second = nullptr;
-            logError(RTPS_EDP, "Error creating SEDP Subscriptions Reader");
+            EPROSIMA_LOG_ERROR(RTPS_EDP, "Error creating SEDP Subscriptions Reader");
             return false;
         }
     }
     else
     {
-        logError(RTPS_EDP, "Server operation requires the presence of all 4 builtin endpoints");
+        EPROSIMA_LOG_ERROR(RTPS_EDP, "Server operation requires the presence of all 4 builtin endpoints");
         return false;
     }
 
@@ -172,7 +172,7 @@ bool EDPServer::createSEDPEndpoints()
             subscriptions_writer_.first->reader_data_filter(edp_subscriptions_filter);
             // 1.2. Enable separate sending so the filter can be called for each change and reader proxy
             subscriptions_writer_.first->set_separate_sending(true);
-            logInfo(RTPS_EDP, "SEDP Subscriptions Writer created");
+            EPROSIMA_LOG_INFO(RTPS_EDP, "SEDP Subscriptions Writer created");
 
             // TODO check if this should be done here or below
             subscriptions_writer_.second->remove_all_changes();
@@ -182,7 +182,7 @@ bool EDPServer::createSEDPEndpoints()
             // Something went wrong. Delete subscriptions writer history and set it to nullptr. Return false
             delete(subscriptions_writer_.second);
             subscriptions_writer_.second = nullptr;
-            logError(RTPS_EDP, "Error creating SEDP Subscriptions Writer");
+            EPROSIMA_LOG_ERROR(RTPS_EDP, "Error creating SEDP Subscriptions Writer");
             return false;
         }
 
@@ -195,31 +195,31 @@ bool EDPServer::createSEDPEndpoints()
         {
             // Cast publications reader to a StatefulReader, since we now that's what it is
             publications_reader_.first = dynamic_cast<StatefulReader*>(raux);
-            logInfo(RTPS_EDP, "SEDP Publications Reader created");
+            EPROSIMA_LOG_INFO(RTPS_EDP, "SEDP Publications Reader created");
         }
         else
         {
             // Something went wrong. Delete publications reader history and set it to nullptr. Return false
             delete(publications_reader_.second);
             publications_reader_.second = nullptr;
-            logError(RTPS_EDP, "Error creating SEDP Publications Reader");
+            EPROSIMA_LOG_ERROR(RTPS_EDP, "Error creating SEDP Publications Reader");
             return false;
         }
     }
     else
     {
-        logError(RTPS_EDP, "Server operation requires the presence of all 4 builtin endpoints");
+        EPROSIMA_LOG_ERROR(RTPS_EDP, "Server operation requires the presence of all 4 builtin endpoints");
         return false;
     }
 
-    logInfo(RTPS_EDP, "Creation finished");
+    EPROSIMA_LOG_INFO(RTPS_EDP, "Creation finished");
     return created;
 }
 
 bool EDPServer::removeLocalReader(
         RTPSReader* R)
 {
-    logInfo(RTPS_EDP, "Removing local reader: " << R->getGuid().entityId);
+    EPROSIMA_LOG_INFO(RTPS_EDP, "Removing local reader: " << R->getGuid().entityId);
 
     // Get subscriptions writer and reader guid
     auto* writer = &subscriptions_writer_;
@@ -278,7 +278,7 @@ bool EDPServer::removeLocalReader(
 bool EDPServer::removeLocalWriter(
         RTPSWriter* W)
 {
-    logInfo(RTPS_EDP, "Removing local writer: " << W->getGuid().entityId);
+    EPROSIMA_LOG_INFO(RTPS_EDP, "Removing local writer: " << W->getGuid().entityId);
 
     // Get publications writer and writer guid
     auto* writer = &publications_writer_;
@@ -339,7 +339,7 @@ bool EDPServer::processLocalWriterProxyData(
         RTPSWriter* local_writer,
         WriterProxyData* wdata)
 {
-    logInfo(RTPS_EDP, "Processing local writer: " << wdata->guid().entityId);
+    EPROSIMA_LOG_INFO(RTPS_EDP, "Processing local writer: " << wdata->guid().entityId);
     // We actually don't need the writer here
     (void)local_writer;
 
@@ -389,7 +389,7 @@ bool EDPServer::processLocalReaderProxyData(
         RTPSReader* local_reader,
         ReaderProxyData* rdata)
 {
-    logInfo(RTPS_EDP, "Processing local reader: " << rdata->guid().entityId);
+    EPROSIMA_LOG_INFO(RTPS_EDP, "Processing local reader: " << rdata->guid().entityId);
     // We actually don't need the reader here
     (void)local_reader;
 

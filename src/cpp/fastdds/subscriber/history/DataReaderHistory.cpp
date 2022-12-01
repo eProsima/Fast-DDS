@@ -144,7 +144,7 @@ DataReaderHistory::DataReaderHistory(
 
                     if (type_ != nullptr)
                     {
-                        logInfo(SUBSCRIBER, "Getting Key of change with no Key transmitted");
+                        EPROSIMA_LOG_INFO(SUBSCRIBER, "Getting Key of change with no Key transmitted");
                         type_->deserialize(&a_change->serializedPayload, get_key_object_);
                         bool is_key_protected = false;
 #if HAVE_SECURITY
@@ -153,8 +153,8 @@ DataReaderHistory::DataReaderHistory(
                         return type_->getKey(get_key_object_, &a_change->instanceHandle, is_key_protected);
                     }
 
-                    logWarning(SUBSCRIBER, "NO KEY in topic: " << topic_name_
-                                                               << " and no method to obtain it"; );
+                    EPROSIMA_LOG_WARNING(SUBSCRIBER, "NO KEY in topic: " << topic_name_
+                                                                         << " and no method to obtain it"; );
                     return false;
                 };
     }
@@ -196,7 +196,7 @@ bool DataReaderHistory::received_change(
 
     if (mp_reader == nullptr || mp_mutex == nullptr)
     {
-        logError(SUBSCRIBER, "You need to create a Reader with this History before using it");
+        EPROSIMA_LOG_ERROR(SUBSCRIBER, "You need to create a Reader with this History before using it");
         return false;
     }
 
@@ -237,7 +237,7 @@ bool DataReaderHistory::received_change_keep_all(
         }
         else
         {
-            logInfo(SUBSCRIBER, "Change not added due to maximum number of samples per instance");
+            EPROSIMA_LOG_INFO(SUBSCRIBER, "Change not added due to maximum number of samples per instance");
             rejection_reason = REJECTED_BY_SAMPLES_PER_INSTANCE_LIMIT;
         }
 
@@ -321,7 +321,7 @@ bool DataReaderHistory::add_to_reader_history_if_not_full(
     if (m_isHistoryFull)
     {
         // Discarding the sample.
-        logWarning(SUBSCRIBER, "Attempting to add Data to Full ReaderHistory: " << type_name_);
+        EPROSIMA_LOG_WARNING(SUBSCRIBER, "Attempting to add Data to Full ReaderHistory: " << type_name_);
         rejection_reason = REJECTED_BY_SAMPLES_LIMIT;
         return false;
     }
@@ -343,7 +343,7 @@ void DataReaderHistory::add_to_instance(
     eprosima::utilities::collections::sorted_vector_insert(instance.cache_changes, item, rtps::history_order_cmp);
     data_available_instances_[a_change->instanceHandle] = instances_[a_change->instanceHandle];
 
-    logInfo(SUBSCRIBER, mp_reader->getGuid().entityId
+    EPROSIMA_LOG_INFO(SUBSCRIBER, mp_reader->getGuid().entityId
             << ": Change " << a_change->sequenceNumber << " added from: "
             << a_change->writerGUID << " with KEY: " << a_change->instanceHandle; );
 }
@@ -406,7 +406,7 @@ bool DataReaderHistory::find_key(
         }
     }
 
-    logWarning(SUBSCRIBER, "History has reached the maximum number of instances");
+    EPROSIMA_LOG_WARNING(SUBSCRIBER, "History has reached the maximum number of instances");
     return false;
 }
 
@@ -427,7 +427,7 @@ bool DataReaderHistory::remove_change_sub(
 {
     if (mp_reader == nullptr || mp_mutex == nullptr)
     {
-        logError(SUBSCRIBER, "You need to create a Reader with this History before using it");
+        EPROSIMA_LOG_ERROR(SUBSCRIBER, "You need to create a Reader with this History before using it");
         return false;
     }
 
@@ -454,7 +454,7 @@ bool DataReaderHistory::remove_change_sub(
     }
     if (!found)
     {
-        logError(SUBSCRIBER, "Change not found on this key, something is wrong");
+        EPROSIMA_LOG_ERROR(SUBSCRIBER, "Change not found on this key, something is wrong");
     }
 
     if (remove_change(change))
@@ -473,7 +473,7 @@ bool DataReaderHistory::remove_change_sub(
 {
     if (mp_reader == nullptr || mp_mutex == nullptr)
     {
-        logError(SUBSCRIBER, "You need to create a Reader with this History before using it");
+        EPROSIMA_LOG_ERROR(SUBSCRIBER, "You need to create a Reader with this History before using it");
         return false;
     }
 
@@ -501,13 +501,13 @@ bool DataReaderHistory::remove_change_sub(
     }
     if (!found)
     {
-        logError(SUBSCRIBER, "Change not found on this key, something is wrong");
+        EPROSIMA_LOG_ERROR(SUBSCRIBER, "Change not found on this key, something is wrong");
     }
 
     const_iterator chit = find_change_nts(change);
     if (chit == changesEnd())
     {
-        logInfo(RTPS_WRITER_HISTORY, "Trying to remove a change not in history");
+        EPROSIMA_LOG_INFO(RTPS_WRITER_HISTORY, "Trying to remove a change not in history");
         return false;
     }
 
@@ -525,7 +525,7 @@ bool DataReaderHistory::set_next_deadline(
 {
     if (mp_reader == nullptr || mp_mutex == nullptr)
     {
-        logError(SUBSCRIBER, "You need to create a Reader with this History before using it");
+        EPROSIMA_LOG_ERROR(SUBSCRIBER, "You need to create a Reader with this History before using it");
         return false;
     }
     std::lock_guard<RecursiveTimedMutex> guard(*getMutex());
@@ -549,7 +549,7 @@ bool DataReaderHistory::get_next_deadline(
 {
     if (mp_reader == nullptr || mp_mutex == nullptr)
     {
-        logError(SUBSCRIBER, "You need to create a Reader with this History before using it");
+        EPROSIMA_LOG_ERROR(SUBSCRIBER, "You need to create a Reader with this History before using it");
         return false;
     }
     std::lock_guard<RecursiveTimedMutex> guard(*getMutex());
@@ -756,7 +756,7 @@ bool DataReaderHistory::completed_change_keep_all(
     }
     else
     {
-        logWarning(SUBSCRIBER, "Change not added due to maximum number of samples per instance");
+        EPROSIMA_LOG_WARNING(SUBSCRIBER, "Change not added due to maximum number of samples per instance");
         rejection_reason = REJECTED_BY_SAMPLES_PER_INSTANCE_LIMIT;
     }
 

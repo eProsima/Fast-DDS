@@ -14,6 +14,16 @@
 // limitations under the License.
 //
 
+/*********************************
+* Force old logs to be compiled *
+*********************************/
+// Enforce to compile old macros
+#ifdef ENABLE_OLD_LOG_MACROS_
+#undef ENABLE_OLD_LOG_MACROS_
+#endif  // ENABLE_OLD_LOG_MACROS_
+#define ENABLE_OLD_LOG_MACROS_ 1
+
+// Enforce log info, warning and error to compile
 #define FASTDDS_ENFORCE_LOG_INFO
 #ifdef HAVE_LOG_NO_INFO
 #undef HAVE_LOG_NO_INFO
@@ -38,7 +48,17 @@
  * This test's name can be misunderstood. All active refers to all log level activated, that is why
  * all define clauses are set to 0 (negative macros)
  */
-TEST_F(LogMacrosTests, all_active)
+TEST_F(LogMacrosTests, all_active_old_ones)
+{
+    logError(SampleCategory, "Sample error message");
+    logWarning(SampleCategory, "Sample warning message");
+    logInfo(SampleCategory, "Sample info message");
+
+    auto consumedEntries = HELPER_WaitForEntries(3);
+    ASSERT_EQ(3u, consumedEntries.size());
+}
+
+TEST_F(LogMacrosTests, all_active_new_ones)
 {
     EPROSIMA_LOG_ERROR(SampleCategory, "Sample error message");
     EPROSIMA_LOG_WARNING(SampleCategory, "Sample warning message");

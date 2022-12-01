@@ -150,7 +150,7 @@ public:
     //! Disable the possibility to add new entries to the database
     void disable()
     {
-        logInfo(DISCOVERY_DATABASE, "DISCOVERY DATA BASE DISABLED");
+        EPROSIMA_LOG_INFO(DISCOVERY_DATABASE, "DISCOVERY DATA BASE DISABLED");
         enabled_ = false;
     }
 

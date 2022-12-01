@@ -45,7 +45,7 @@ public:
 
     virtual ~TopicPayloadPool()
     {
-        logInfo(RTPS_UTILS, "PayloadPool destructor");
+        EPROSIMA_LOG_INFO(RTPS_UTILS, "PayloadPool destructor");
 
         for (PayloadNode* payload : all_payloads_)
         {

@@ -96,7 +96,7 @@ bool IPFinder::getIPs(
 
     if (rv != ERROR_SUCCESS)
     {
-        logWarning(UTILS, "GetAdaptersAddresses() failed");
+        EPROSIMA_LOG_WARNING(UTILS, "GetAdaptersAddresses() failed");
         free(adapter_addresses);
         return false;
     }
@@ -183,7 +183,7 @@ bool IPFinder::getIPs(
                             host, NI_MAXHOST, NULL, 0, NI_NUMERICHOST);
             if (s != 0)
             {
-                logWarning(UTILS, "getnameinfo() failed: " << gai_strerror(s));
+                EPROSIMA_LOG_WARNING(UTILS, "getnameinfo() failed: " << gai_strerror(s));
                 continue;
             }
             info_IP info;
@@ -203,7 +203,7 @@ bool IPFinder::getIPs(
                             host, NI_MAXHOST, NULL, 0, NI_NUMERICHOST);
             if (s != 0)
             {
-                logWarning(UTILS, "getnameinfo() failed: " << gai_strerror(s));
+                EPROSIMA_LOG_WARNING(UTILS, "getnameinfo() failed: " << gai_strerror(s));
                 continue;
             }
             info_IP info;
@@ -247,7 +247,7 @@ bool IPFinder::getAllMACAddress(
 
     if (rv != ERROR_SUCCESS)
     {
-        logWarning(UTILS, "GetAdaptersAddresses() failed");
+        EPROSIMA_LOG_WARNING(UTILS, "GetAdaptersAddresses() failed");
         free(adapter_addresses);
         return false;
     }
@@ -288,7 +288,7 @@ bool IPFinder::getAllMACAddress(
     {
         if ((mib[5] = if_nametoindex(ip.dev.c_str())) == 0)
         {
-            logWarning(UTILS, "Error on nametoindex: " << strerror(errno));
+            EPROSIMA_LOG_WARNING(UTILS, "Error on nametoindex: " << strerror(errno));
             return false;
         }
 
@@ -296,19 +296,19 @@ bool IPFinder::getAllMACAddress(
         unsigned char* buf;
         if (sysctl(mib, 6, NULL, &len, NULL, 0) < 0)
         {
-            logWarning(UTILS, "Error on nametoindex: " << strerror(errno));
+            EPROSIMA_LOG_WARNING(UTILS, "Error on nametoindex: " << strerror(errno));
             return false;
         }
 
         if ((buf = (unsigned char*)malloc(len)) == NULL)
         {
-            logWarning(UTILS, "Falure allocating " << len << " octets");
+            EPROSIMA_LOG_WARNING(UTILS, "Falure allocating " << len << " octets");
             return false;
         }
 
         if (sysctl(mib, 6, buf, &len, NULL, 0) < 0)
         {
-            logWarning(UTILS, "Error on sysctl: " << strerror(errno));
+            EPROSIMA_LOG_WARNING(UTILS, "Error on sysctl: " << strerror(errno));
             return false;
         }
 
@@ -340,13 +340,13 @@ bool IPFinder::getAllMACAddress(
         int fd = socket(PF_INET, SOCK_DGRAM, 0);
         if (fd == -1)
         {
-            logWarning(UTILS, "Error creating socket: " << strerror(errno));
+            EPROSIMA_LOG_WARNING(UTILS, "Error creating socket: " << strerror(errno));
             return false;
         }
 
         if (ioctl(fd, SIOCGIFHWADDR, &ifr) == -1)
         {
-            logWarning(UTILS, "Error on ioctl: " << strerror(errno));
+            EPROSIMA_LOG_WARNING(UTILS, "Error on ioctl: " << strerror(errno));
             close(fd);
             return false;
         }
@@ -377,7 +377,7 @@ bool IPFinder::getAllMACAddress(
 
     if (getifaddrs(&ifaphead) != 0)
     {
-        logWarning(UTILS, "getifaddrs() failed: " << strerror(errno));
+        EPROSIMA_LOG_WARNING(UTILS, "getifaddrs() failed: " << strerror(errno));
         return false;
     }
 

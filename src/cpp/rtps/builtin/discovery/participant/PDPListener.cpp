@@ -56,14 +56,14 @@ void PDPListener::onNewCacheChangeAdded(
 {
     CacheChange_t* change = const_cast<CacheChange_t*>(change_in);
     GUID_t writer_guid = change->writerGUID;
-    logInfo(RTPS_PDP, "SPDP Message received from: " << change_in->writerGUID);
+    EPROSIMA_LOG_INFO(RTPS_PDP, "SPDP Message received from: " << change_in->writerGUID);
 
     // Make sure we have an instance handle (i.e GUID)
     if (change->instanceHandle == c_InstanceHandle_Unknown)
     {
         if (!this->get_key(change))
         {
-            logWarning(RTPS_PDP, "Problem getting the key of the change, removing");
+            EPROSIMA_LOG_WARNING(RTPS_PDP, "Problem getting the key of the change, removing");
             parent_pdp_->mp_PDPReaderHistory->remove_change(change);
             return;
         }
@@ -78,7 +78,7 @@ void PDPListener::onNewCacheChangeAdded(
         // Ignore announcement from own RTPSParticipant
         if (guid == parent_pdp_->getRTPSParticipant()->getGuid())
         {
-            logInfo(RTPS_PDP, "Message from own RTPSParticipant, removing");
+            EPROSIMA_LOG_INFO(RTPS_PDP, "Message from own RTPSParticipant, removing");
             parent_pdp_->mp_PDPReaderHistory->remove_change(change);
             return;
         }
@@ -138,7 +138,7 @@ void PDPListener::onNewCacheChangeAdded(
 
                 if (pdata != nullptr)
                 {
-                    logInfo(RTPS_PDP_DISCOVERY, "New participant "
+                    EPROSIMA_LOG_INFO(RTPS_PDP_DISCOVERY, "New participant "
                             << pdata->m_guid << " at "
                             << "MTTLoc: " << pdata->metatraffic_locators
                             << " DefLoc:" << pdata->default_locators);
@@ -174,7 +174,7 @@ void PDPListener::onNewCacheChangeAdded(
                 pdata->isAlive = true;
                 reader->getMutex().unlock();
 
-                logInfo(RTPS_PDP_DISCOVERY, "Update participant "
+                EPROSIMA_LOG_INFO(RTPS_PDP_DISCOVERY, "Update participant "
                         << pdata->m_guid << " at "
                         << "MTTLoc: " << pdata->metatraffic_locators
                         << " DefLoc:" << pdata->default_locators);

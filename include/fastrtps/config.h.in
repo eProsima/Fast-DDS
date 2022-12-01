@@ -77,6 +77,11 @@
 
 /* Log Macros */
 
+// Enable compilation for eProsima Log Macros
+#ifndef ENABLE_OLD_LOG_MACROS_
+#define ENABLE_OLD_LOG_MACROS_ @ENABLE_OLD_LOG_MACROS_@
+#endif /* ifndef ENABLE_OLD_LOG_MACROS_ */
+
 // Log Info
 #cmakedefine FASTDDS_ENFORCE_LOG_INFO
 #ifndef HAVE_LOG_NO_INFO

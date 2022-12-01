@@ -68,7 +68,7 @@ FileWatchHandle RTPSDomainImpl::file_watch_handle_;
 void RTPSDomain::stopAll()
 {
     std::unique_lock<std::mutex> lock(m_mutex);
-    logInfo(RTPS_PARTICIPANT, "DELETING ALL ENDPOINTS IN THIS DOMAIN");
+    EPROSIMA_LOG_INFO(RTPS_PARTICIPANT, "DELETING ALL ENDPOINTS IN THIS DOMAIN");
 
     // Stop monitoring environment file
     SystemInfo::stop_watching_file(RTPSDomainImpl::file_watch_handle_);
@@ -83,7 +83,7 @@ void RTPSDomain::stopAll()
         RTPSDomain::removeRTPSParticipant_nts(participant);
         lock.lock();
     }
-    logInfo(RTPS_PARTICIPANT, "RTPSParticipants deleted correctly ");
+    EPROSIMA_LOG_INFO(RTPS_PARTICIPANT, "RTPSParticipants deleted correctly ");
     std::this_thread::sleep_for(std::chrono::milliseconds(100));
 }
 
@@ -101,7 +101,7 @@ RTPSParticipant* RTPSDomain::createParticipant(
         const RTPSParticipantAttributes& attrs,
         RTPSParticipantListener* listen)
 {
-    logInfo(RTPS_PARTICIPANT, "");
+    EPROSIMA_LOG_INFO(RTPS_PARTICIPANT, "");
 
     RTPSParticipantAttributes PParam = attrs;
 
@@ -109,7 +109,7 @@ RTPSParticipant* RTPSDomain::createParticipant(
             PParam.builtin.discovery_config.leaseDuration <=
             PParam.builtin.discovery_config.leaseDuration_announcementperiod)
     {
-        logError(RTPS_PARTICIPANT,
+        EPROSIMA_LOG_ERROR(RTPS_PARTICIPANT,
                 "RTPSParticipant Attributes: LeaseDuration should be >= leaseDuration announcement period");
         return nullptr;
     }
@@ -125,7 +125,7 @@ RTPSParticipant* RTPSDomain::createParticipant(
         }
         else if (!filename.empty())
         {
-            logWarning(RTPS_PARTICIPANT, filename + " does not exist. File watching not initialized.");
+            EPROSIMA_LOG_WARNING(RTPS_PARTICIPANT, filename + " does not exist. File watching not initialized.");
         }
     }
 
@@ -146,7 +146,7 @@ RTPSParticipant* RTPSDomain::createParticipant(
             ID = PParam.participantID;
             if (m_RTPSParticipantIDs.insert(ID).second == false)
             {
-                logError(RTPS_PARTICIPANT, "RTPSParticipant with the same ID already exists");
+                EPROSIMA_LOG_ERROR(RTPS_PARTICIPANT, "RTPSParticipant with the same ID already exists");
                 return nullptr;
             }
         }
@@ -154,12 +154,12 @@ RTPSParticipant* RTPSDomain::createParticipant(
 
     if (!PParam.defaultUnicastLocatorList.isValid())
     {
-        logError(RTPS_PARTICIPANT, "Default Unicast Locator List contains invalid Locator");
+        EPROSIMA_LOG_ERROR(RTPS_PARTICIPANT, "Default Unicast Locator List contains invalid Locator");
         return nullptr;
     }
     if (!PParam.defaultMulticastLocatorList.isValid())
     {
-        logError(RTPS_PARTICIPANT, "Default Multicast Locator List contains invalid Locator");
+        EPROSIMA_LOG_ERROR(RTPS_PARTICIPANT, "Default Multicast Locator List contains invalid Locator");
         return nullptr;
     }
 
@@ -196,7 +196,7 @@ RTPSParticipant* RTPSDomain::createParticipant(
     // Check implementation was correctly initialized
     if (!pimpl->is_initialized())
     {
-        logError(RTPS_PARTICIPANT, "Cannot create participant due to initialization error");
+        EPROSIMA_LOG_ERROR(RTPS_PARTICIPANT, "Cannot create participant due to initialization error");
         delete pimpl;
         return nullptr;
     }
@@ -213,11 +213,12 @@ RTPSParticipant* RTPSDomain::createParticipant(
         if (PParam.builtin.metatrafficMulticastLocatorList.empty() &&
                 PParam.builtin.metatrafficUnicastLocatorList.empty())
         {
-            logError(RTPS_PARTICIPANT, "Discovery Server requires to specify a listening address.");
+            EPROSIMA_LOG_ERROR(RTPS_PARTICIPANT, "Discovery Server requires to specify a listening address.");
         }
         else
         {
-            logError(RTPS_PARTICIPANT, "Discovery Server wasn't able to allocate the specified listening port.");
+            EPROSIMA_LOG_ERROR(RTPS_PARTICIPANT,
+                    "Discovery Server wasn't able to allocate the specified listening port.");
         }
 
         delete pimpl;
@@ -227,7 +228,7 @@ RTPSParticipant* RTPSDomain::createParticipant(
     // Check there is at least one transport registered.
     if (!pimpl->networkFactoryHasRegisteredTransports())
     {
-        logError(RTPS_PARTICIPANT, "Cannot create participant, because there is any transport");
+        EPROSIMA_LOG_ERROR(RTPS_PARTICIPANT, "Cannot create participant, because there is any transport");
         delete pimpl;
         return nullptr;
     }
@@ -273,7 +274,7 @@ bool RTPSDomain::removeRTPSParticipant(
             }
         }
     }
-    logError(RTPS_PARTICIPANT, "RTPSParticipant not valid or not recognized");
+    EPROSIMA_LOG_ERROR(RTPS_PARTICIPANT, "RTPSParticipant not valid or not recognized");
     return false;
 }
 
@@ -505,7 +506,7 @@ RTPSParticipant* RTPSDomain::clientServerEnvironmentCreationOverride(
     // Check the specified discovery protocol: if other than simple it has priority over ros environment variable
     if (att.builtin.discovery_config.discoveryProtocol != DiscoveryProtocol_t::SIMPLE)
     {
-        logInfo(DOMAIN, "Detected non simple discovery protocol attributes."
+        EPROSIMA_LOG_INFO(DOMAIN, "Detected non simple discovery protocol attributes."
                 << " Ignoring auto default client-server setup.");
         return nullptr;
     }
@@ -519,7 +520,7 @@ RTPSParticipant* RTPSDomain::clientServerEnvironmentCreationOverride(
     if (load_environment_server_info(server_list) && server_list.empty())
     {
         // it's not an error, the environment variable may not be set. Any issue with environment
-        // variable syntax is logError already
+        // variable syntax is EPROSIMA_LOG_ERROR already
         return nullptr;
     }
 
@@ -537,7 +538,7 @@ RTPSParticipant* RTPSDomain::clientServerEnvironmentCreationOverride(
         }
     }
 
-    logInfo(DOMAIN, "Detected auto client-server environment variable."
+    EPROSIMA_LOG_INFO(DOMAIN, "Detected auto client-server environment variable."
             << "Trying to create client with the default server setup: "
             << client_att.builtin.discovery_config.m_DiscoveryServers);
 
@@ -548,13 +549,13 @@ RTPSParticipant* RTPSDomain::clientServerEnvironmentCreationOverride(
     if (nullptr != part)
     {
         // client successfully created
-        logInfo(DOMAIN, "Auto default server-client setup. Default client created.");
+        EPROSIMA_LOG_INFO(DOMAIN, "Auto default server-client setup. Default client created.");
         part->mp_impl->client_override(true);
         return part;
     }
 
     // unable to create auto server-client default participants
-    logError(DOMAIN, "Auto default server-client setup. Unable to create the client.");
+    EPROSIMA_LOG_ERROR(DOMAIN, "Auto default server-client setup. Unable to create the client.");
     return nullptr;
 }
 

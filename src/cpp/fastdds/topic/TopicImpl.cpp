@@ -68,12 +68,12 @@ ReturnCode_t TopicImpl::check_qos(
 {
     if (PERSISTENT_DURABILITY_QOS == qos.durability().kind)
     {
-        logError(DDS_QOS_CHECK, "PERSISTENT Durability not supported");
+        EPROSIMA_LOG_ERROR(DDS_QOS_CHECK, "PERSISTENT Durability not supported");
         return ReturnCode_t::RETCODE_UNSUPPORTED;
     }
     if (BY_SOURCE_TIMESTAMP_DESTINATIONORDER_QOS == qos.destination_order().kind)
     {
-        logError(DDS_QOS_CHECK, "BY SOURCE TIMESTAMP DestinationOrder not supported");
+        EPROSIMA_LOG_ERROR(DDS_QOS_CHECK, "BY SOURCE TIMESTAMP DestinationOrder not supported");
         return ReturnCode_t::RETCODE_UNSUPPORTED;
     }
     if (AUTOMATIC_LIVELINESS_QOS == qos.liveliness().kind ||
@@ -82,7 +82,7 @@ ReturnCode_t TopicImpl::check_qos(
         if (qos.liveliness().lease_duration < eprosima::fastrtps::c_TimeInfinite &&
                 qos.liveliness().lease_duration <= qos.liveliness().announcement_period)
         {
-            logError(DDS_QOS_CHECK, "lease_duration <= announcement period.");
+            EPROSIMA_LOG_ERROR(DDS_QOS_CHECK, "lease_duration <= announcement period.");
             return ReturnCode_t::RETCODE_INCONSISTENT_POLICY;
         }
     }
@@ -96,14 +96,14 @@ ReturnCode_t TopicImpl::check_allocation_consistency(
             (qos.resource_limits().max_samples <
             (qos.resource_limits().max_instances * qos.resource_limits().max_samples_per_instance)))
     {
-        logError(DDS_QOS_CHECK,
+        EPROSIMA_LOG_ERROR(DDS_QOS_CHECK,
                 "max_samples should be greater than max_instances * max_samples_per_instance");
         return ReturnCode_t::RETCODE_INCONSISTENT_POLICY;
     }
     if ((qos.resource_limits().max_instances <= 0 || qos.resource_limits().max_samples_per_instance <= 0) &&
             (qos.resource_limits().max_samples > 0))
     {
-        logError(DDS_QOS_CHECK,
+        EPROSIMA_LOG_ERROR(DDS_QOS_CHECK,
                 "max_samples should be infinite when max_instances or max_samples_per_instance are infinite");
         return ReturnCode_t::RETCODE_INCONSISTENT_POLICY;
     }

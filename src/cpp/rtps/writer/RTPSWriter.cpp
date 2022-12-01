@@ -122,7 +122,7 @@ void RTPSWriter::init(
         std::shared_ptr<WriterPool> pool = std::dynamic_pointer_cast<WriterPool>(payload_pool);
         if (!pool || !pool->init_shared_memory(this, att.endpoint.data_sharing_configuration().shm_directory()))
         {
-            logError(RTPS_WRITER, "Could not initialize DataSharing writer pool");
+            EPROSIMA_LOG_ERROR(RTPS_WRITER, "Could not initialize DataSharing writer pool");
         }
     }
 
@@ -131,12 +131,12 @@ void RTPSWriter::init(
 
     flow_controller_->register_writer(this);
 
-    logInfo(RTPS_WRITER, "RTPSWriter created");
+    EPROSIMA_LOG_INFO(RTPS_WRITER, "RTPSWriter created");
 }
 
 RTPSWriter::~RTPSWriter()
 {
-    logInfo(RTPS_WRITER, "RTPSWriter destructor");
+    EPROSIMA_LOG_INFO(RTPS_WRITER, "RTPSWriter destructor");
 
     // Deletion of the events has to be made in child destructor.
     // Also at this point all CacheChange_t must have been released by the child destructor
@@ -169,13 +169,13 @@ CacheChange_t* RTPSWriter::new_change(
         ChangeKind_t changeKind,
         InstanceHandle_t handle)
 {
-    logInfo(RTPS_WRITER, "Creating new change");
+    EPROSIMA_LOG_INFO(RTPS_WRITER, "Creating new change");
 
     std::lock_guard<RecursiveTimedMutex> guard(mp_mutex);
     CacheChange_t* reserved_change = nullptr;
     if (!change_pool_->reserve_cache(reserved_change))
     {
-        logWarning(RTPS_WRITER, "Problem reserving cache from pool");
+        EPROSIMA_LOG_WARNING(RTPS_WRITER, "Problem reserving cache from pool");
         return nullptr;
     }
 
@@ -183,14 +183,14 @@ CacheChange_t* RTPSWriter::new_change(
     if (!payload_pool_->get_payload(payload_size, *reserved_change))
     {
         change_pool_->release_cache(reserved_change);
-        logWarning(RTPS_WRITER, "Problem reserving payload from pool");
+        EPROSIMA_LOG_WARNING(RTPS_WRITER, "Problem reserving payload from pool");
         return nullptr;
     }
 
     reserved_change->kind = changeKind;
     if (m_att.topicKind == WITH_KEY && !handle.isDefined())
     {
-        logWarning(RTPS_WRITER, "Changes in KEYED Writers need a valid instanceHandle");
+        EPROSIMA_LOG_WARNING(RTPS_WRITER, "Changes in KEYED Writers need a valid instanceHandle");
     }
     reserved_change->instanceHandle = handle;
     reserved_change->writerGUID = m_guid;
@@ -204,20 +204,20 @@ CacheChange_t* RTPSWriter::new_change(
         ChangeKind_t changeKind,
         InstanceHandle_t handle)
 {
-    logInfo(RTPS_WRITER, "Creating new change");
+    EPROSIMA_LOG_INFO(RTPS_WRITER, "Creating new change");
 
     std::lock_guard<RecursiveTimedMutex> guard(mp_mutex);
     CacheChange_t* reserved_change = nullptr;
     if (!change_pool_->reserve_cache(reserved_change))
     {
-        logWarning(RTPS_WRITER, "Problem reserving cache from pool");
+        EPROSIMA_LOG_WARNING(RTPS_WRITER, "Problem reserving cache from pool");
         return nullptr;
     }
 
     reserved_change->kind = changeKind;
     if (m_att.topicKind == WITH_KEY && !handle.isDefined())
     {
-        logWarning(RTPS_WRITER, "Changes in KEYED Writers need a valid instanceHandle");
+        EPROSIMA_LOG_WARNING(RTPS_WRITER, "Changes in KEYED Writers need a valid instanceHandle");
     }
     reserved_change->instanceHandle = handle;
     reserved_change->writerGUID = m_guid;
@@ -278,7 +278,7 @@ uint32_t RTPSWriter::getTypeMaxSerialized()
 bool RTPSWriter::remove_older_changes(
         unsigned int max)
 {
-    logInfo(RTPS_WRITER, "Starting process clean_history for writer " << getGuid());
+    EPROSIMA_LOG_INFO(RTPS_WRITER, "Starting process clean_history for writer " << getGuid());
     std::lock_guard<RecursiveTimedMutex> guard(mp_mutex);
     bool limit = (max != 0);
 

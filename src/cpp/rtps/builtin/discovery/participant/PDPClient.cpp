@@ -84,7 +84,7 @@ void PDPClient::initializeParticipantProxyData(
         getRTPSParticipant()->getAttributes().builtin.discovery_config.discoveryProtocol
         != DiscoveryProtocol_t::SUPER_CLIENT    )
     {
-        logError(RTPS_PDP, "Using a PDP client object with another user's settings");
+        EPROSIMA_LOG_ERROR(RTPS_PDP, "Using a PDP client object with another user's settings");
     }
 
     if (getRTPSParticipant()->getAttributes().builtin.discovery_config.m_simpleEDP.
@@ -140,7 +140,7 @@ bool PDPClient::init(
     mp_EDP = new EDPClient(this, mp_RTPSParticipant);
     if (!mp_EDP->initEDP(m_discovery))
     {
-        logError(RTPS_PDP, "Endpoint discovery configuration failed");
+        EPROSIMA_LOG_ERROR(RTPS_PDP, "Endpoint discovery configuration failed");
         return false;
     }
 
@@ -190,7 +190,7 @@ ParticipantProxyData* PDPClient::createParticipantProxyData(
 
 bool PDPClient::createPDPEndpoints()
 {
-    logInfo(RTPS_PDP, "Beginning PDPClient Endpoints creation");
+    EPROSIMA_LOG_INFO(RTPS_PDP, "Beginning PDPClient Endpoints creation");
 
     const RTPSParticipantAttributes& pattr = mp_RTPSParticipant->getRTPSParticipantAttributes();
 
@@ -232,7 +232,7 @@ bool PDPClient::createPDPEndpoints()
     }
     else
     {
-        logError(RTPS_PDP, "PDPClient Reader creation failed");
+        EPROSIMA_LOG_ERROR(RTPS_PDP, "PDPClient Reader creation failed");
         delete(mp_PDPReaderHistory);
         mp_PDPReaderHistory = nullptr;
         delete(mp_listener);
@@ -280,12 +280,12 @@ bool PDPClient::createPDPEndpoints()
     }
     else
     {
-        logError(RTPS_PDP, "PDPClient Writer creation failed");
+        EPROSIMA_LOG_ERROR(RTPS_PDP, "PDPClient Writer creation failed");
         delete(mp_PDPWriterHistory);
         mp_PDPWriterHistory = nullptr;
         return false;
     }
-    logInfo(RTPS_PDP, "PDPClient Endpoints creation finished");
+    EPROSIMA_LOG_INFO(RTPS_PDP, "PDPClient Endpoints creation finished");
     return true;
 }
 
@@ -346,7 +346,7 @@ void PDPClient::removeRemoteEndpoints(
     if (is_server)
     {
         // We should unmatch and match the PDP endpoints to renew the PDP reader and writer associated proxies
-        logInfo(RTPS_PDP, "For unmatching for server: " << pdata->m_guid);
+        EPROSIMA_LOG_INFO(RTPS_PDP, "For unmatching for server: " << pdata->m_guid);
         const NetworkFactory& network = mp_RTPSParticipant->network_factory();
         uint32_t endp = pdata->m_availableBuiltinEndpoints;
         uint32_t auxendp = endp;
@@ -410,7 +410,7 @@ bool PDPClient::all_servers_acknowledge_PDP()
     }
     else
     {
-        logError(RTPS_PDP, "ParticipantProxy data should have been added to client PDP history cache "
+        EPROSIMA_LOG_ERROR(RTPS_PDP, "ParticipantProxy data should have been added to client PDP history cache "
                 "by a previous call to announceParticipantState()");
     }
 
@@ -508,7 +508,7 @@ void PDPClient::announceParticipantState(
                 RTPSMessageGroup group(getRTPSParticipant(), mp_PDPWriter, &sender);
                 if (!group.add_data(*change, false))
                 {
-                    logError(RTPS_PDP, "Error sending announcement from client to servers");
+                    EPROSIMA_LOG_ERROR(RTPS_PDP, "Error sending announcement from client to servers");
                 }
             }
 
@@ -547,7 +547,7 @@ void PDPClient::announceParticipantState(
 
                     if (!group.add_data(*pPD, false))
                     {
-                        logError(RTPS_PDP, "Error sending announcement from client to servers");
+                        EPROSIMA_LOG_ERROR(RTPS_PDP, "Error sending announcement from client to servers");
                     }
 
                     // ping done independtly of which triggered the announcement
@@ -556,7 +556,7 @@ void PDPClient::announceParticipantState(
                 }
                 else
                 {
-                    logError(RTPS_PDP, "ParticipantProxy data should have been added to client PDP history "
+                    EPROSIMA_LOG_ERROR(RTPS_PDP, "ParticipantProxy data should have been added to client PDP history "
                             "cache by a previous call to announceParticipantState()");
                 }
             }
@@ -578,7 +578,7 @@ bool PDPClient::match_servers_EDP_endpoints()
 
         if (svr.proxy && !mp_EDP->areRemoteEndpointsMatched(svr.proxy))
         {
-            logInfo(RTPS_PDP, "Client "
+            EPROSIMA_LOG_INFO(RTPS_PDP, "Client "
                     << mp_EDP->mp_PDP->getRTPSParticipant()->getGuid()
                     << " matching servers EDP endpoints");
             mp_EDP->assignRemoteEndpoints(*svr.proxy);
@@ -592,7 +592,7 @@ void PDPClient::update_remote_servers_list()
 {
     if (!mp_PDPReader || !mp_PDPWriter)
     {
-        logError(SERVER_CLIENT_DISCOVERY, "Cannot update server list within an uninitialized Client");
+        EPROSIMA_LOG_ERROR(SERVER_CLIENT_DISCOVERY, "Cannot update server list within an uninitialized Client");
         return;
     }
 
@@ -940,7 +940,7 @@ bool load_environment_server_info(
     }
     catch (std::exception& e)
     {
-        logError(SERVER_CLIENT_DISCOVERY, e.what());
+        EPROSIMA_LOG_ERROR(SERVER_CLIENT_DISCOVERY, e.what());
         attributes.clear();
         return false;
     }

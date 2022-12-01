@@ -51,7 +51,7 @@ XMLP_ret XMLProfileManager::fillParticipantAttributes(
     {
         if (log_error)
         {
-            logError(XMLPARSER, "Profile '" << profile_name << "' not found");
+            EPROSIMA_LOG_ERROR(XMLPARSER, "Profile '" << profile_name << "' not found");
         }
         return XMLP_ret::XML_ERROR;
     }
@@ -69,7 +69,7 @@ XMLP_ret XMLProfileManager::fillPublisherAttributes(
     {
         if (log_error)
         {
-            logError(XMLPARSER, "Profile '" << profile_name << "' not found");
+            EPROSIMA_LOG_ERROR(XMLPARSER, "Profile '" << profile_name << "' not found");
         }
         return XMLP_ret::XML_ERROR;
     }
@@ -87,7 +87,7 @@ XMLP_ret XMLProfileManager::fillSubscriberAttributes(
     {
         if (log_error)
         {
-            logError(XMLPARSER, "Profile '" << profile_name << "' not found");
+            EPROSIMA_LOG_ERROR(XMLPARSER, "Profile '" << profile_name << "' not found");
         }
         return XMLP_ret::XML_ERROR;
     }
@@ -102,7 +102,7 @@ XMLP_ret XMLProfileManager::fillTopicAttributes(
     topic_map_iterator_t it = topic_profiles_.find(profile_name);
     if (it == topic_profiles_.end())
     {
-        logError(XMLPARSER, "Profile '" << profile_name << "' not found");
+        EPROSIMA_LOG_ERROR(XMLPARSER, "Profile '" << profile_name << "' not found");
         return XMLP_ret::XML_ERROR;
     }
     atts = *(it->second);
@@ -116,7 +116,7 @@ XMLP_ret XMLProfileManager::fillRequesterAttributes(
     requester_map_iterator_t it = requester_profiles_.find(profile_name);
     if (it == requester_profiles_.end())
     {
-        logError(XMLPARSER, "Profile '" << profile_name << "' not found");
+        EPROSIMA_LOG_ERROR(XMLPARSER, "Profile '" << profile_name << "' not found");
         return XMLP_ret::XML_ERROR;
     }
     atts = *(it->second);
@@ -130,7 +130,7 @@ XMLP_ret XMLProfileManager::fillReplierAttributes(
     replier_map_iterator_t it = replier_profiles_.find(profile_name);
     if (it == replier_profiles_.end())
     {
-        logError(XMLPARSER, "Profile '" << profile_name << "' not found");
+        EPROSIMA_LOG_ERROR(XMLPARSER, "Profile '" << profile_name << "' not found");
         return XMLP_ret::XML_ERROR;
     }
     atts = *(it->second);
@@ -205,18 +205,18 @@ XMLP_ret XMLProfileManager::loadXMLProfiles(
     up_base_node_t root_node;
     if (strcmp(profiles.Name(), PROFILES) != 0)
     {
-        logError(XMLPARSER, "<profiles> element not found");
+        EPROSIMA_LOG_ERROR(XMLPARSER, "<profiles> element not found");
         return XMLP_ret::XML_ERROR;
     }
 
     if (XMLParser::loadXMLProfiles(profiles, root_node) == XMLP_ret::XML_OK)
     {
-        logInfo(XMLPARSER, "Node parsed successfully");
+        EPROSIMA_LOG_INFO(XMLPARSER, "Node parsed successfully");
         return XMLProfileManager::extractProfiles(std::move(root_node), "-XML Node-");
     }
     else
     {
-        logError(XMLPARSER, "Error parsing profiles");
+        EPROSIMA_LOG_ERROR(XMLPARSER, "Error parsing profiles");
         return XMLP_ret::XML_ERROR;
     }
 }
@@ -236,11 +236,11 @@ XMLP_ret XMLProfileManager::loadXMLNode(
 
     if (!root_node)
     {
-        logError(XMLPARSER, "Error parsing node");
+        EPROSIMA_LOG_ERROR(XMLPARSER, "Error parsing node");
         return XMLP_ret::XML_ERROR;
     }
 
-    logInfo(XMLPARSER, "Node parsed successfully");
+    EPROSIMA_LOG_INFO(XMLPARSER, "Node parsed successfully");
 
     if (NodeType::PROFILES == root_node->getType())
     {
@@ -282,14 +282,14 @@ XMLP_ret XMLProfileManager::loadXMLFile(
 {
     if (filename.empty())
     {
-        logError(XMLPARSER, "Error loading XML file, filename empty");
+        EPROSIMA_LOG_ERROR(XMLPARSER, "Error loading XML file, filename empty");
         return XMLP_ret::XML_ERROR;
     }
 
     xmlfile_map_iterator_t it = xml_files_.find(filename);
     if (it != xml_files_.end() && XMLP_ret::XML_OK == it->second)
     {
-        logInfo(XMLPARSER, "XML file '" << filename << "' already parsed");
+        EPROSIMA_LOG_INFO(XMLPARSER, "XML file '" << filename << "' already parsed");
         return XMLP_ret::XML_OK;
     }
 
@@ -299,13 +299,13 @@ XMLP_ret XMLProfileManager::loadXMLFile(
     {
         if (filename != std::string(DEFAULT_FASTRTPS_PROFILES))
         {
-            logError(XMLPARSER, "Error parsing '" << filename << "'");
+            EPROSIMA_LOG_ERROR(XMLPARSER, "Error parsing '" << filename << "'");
         }
         xml_files_.emplace(filename, XMLP_ret::XML_ERROR);
         return XMLP_ret::XML_ERROR;
     }
 
-    logInfo(XMLPARSER, "File '" << filename << "' parsed successfully");
+    EPROSIMA_LOG_INFO(XMLPARSER, "File '" << filename << "' parsed successfully");
 
     if (NodeType::ROOT == root_node->getType())
     {
@@ -334,7 +334,7 @@ XMLP_ret XMLProfileManager::loadXMLString(
     XMLP_ret loaded_ret = XMLParser::loadXML(data, length, root_node);
     if (!root_node || loaded_ret != XMLP_ret::XML_OK)
     {
-        logError(XMLPARSER, "Error parsing string");
+        EPROSIMA_LOG_ERROR(XMLPARSER, "Error parsing string");
         return XMLP_ret::XML_ERROR;
     }
 
@@ -440,7 +440,7 @@ XMLP_ret XMLProfileManager::extractProfiles(
 
     if (profile_count == 0)
     {
-        logError(XMLProfileManager, "Could not extract any profile")
+        EPROSIMA_LOG_ERROR(XMLProfileManager, "Could not extract any profile");
         ret = XMLP_ret::XML_ERROR;
     }
 
@@ -460,7 +460,7 @@ XMLP_ret XMLProfileManager::extractParticipantProfile(
     node_att_map_cit_t it = node_part->getAttributes().find(PROFILE_NAME);
     if (it == node_part->getAttributes().end() || it->second.empty())
     {
-        logError(XMLPARSER, "Error adding profile from file '" << filename << "': no name found");
+        EPROSIMA_LOG_ERROR(XMLPARSER, "Error adding profile from file '" << filename << "': no name found");
         return XMLP_ret::XML_ERROR;
     }
 
@@ -469,7 +469,7 @@ XMLP_ret XMLProfileManager::extractParticipantProfile(
     std::pair<part_map_iterator_t, bool> emplace = participant_profiles_.emplace(profile_name, node_part->getData());
     if (false == emplace.second)
     {
-        logError(XMLPARSER, "Error adding profile '" << profile_name << "' from file '" << filename << "'");
+        EPROSIMA_LOG_ERROR(XMLPARSER, "Error adding profile '" << profile_name << "' from file '" << filename << "'");
         return XMLP_ret::XML_ERROR;
     }
 
@@ -493,7 +493,7 @@ XMLP_ret XMLProfileManager::extractPublisherProfile(
     node_att_map_cit_t it = node_part->getAttributes().find(PROFILE_NAME);
     if (it == node_part->getAttributes().end() || it->second.empty())
     {
-        logError(XMLPARSER, "Error adding profile from file '" << filename << "': no name found");
+        EPROSIMA_LOG_ERROR(XMLPARSER, "Error adding profile from file '" << filename << "': no name found");
         return XMLP_ret::XML_ERROR;
     }
 
@@ -502,7 +502,7 @@ XMLP_ret XMLProfileManager::extractPublisherProfile(
     std::pair<publ_map_iterator_t, bool> emplace = publisher_profiles_.emplace(profile_name, node_part->getData());
     if (false == emplace.second)
     {
-        logError(XMLPARSER, "Error adding profile '" << profile_name << "' from file '" << filename << "'");
+        EPROSIMA_LOG_ERROR(XMLPARSER, "Error adding profile '" << profile_name << "' from file '" << filename << "'");
         return XMLP_ret::XML_ERROR;
     }
 
@@ -526,7 +526,7 @@ XMLP_ret XMLProfileManager::extractSubscriberProfile(
     node_att_map_cit_t it = node_part->getAttributes().find(PROFILE_NAME);
     if (it == node_part->getAttributes().end() || it->second.empty())
     {
-        logError(XMLPARSER, "Error adding profile from file '" << filename << "': no name found");
+        EPROSIMA_LOG_ERROR(XMLPARSER, "Error adding profile from file '" << filename << "': no name found");
         return XMLP_ret::XML_ERROR;
     }
 
@@ -535,7 +535,7 @@ XMLP_ret XMLProfileManager::extractSubscriberProfile(
     std::pair<subs_map_iterator_t, bool> emplace = subscriber_profiles_.emplace(profile_name, node_part->getData());
     if (false == emplace.second)
     {
-        logError(XMLPARSER, "Error adding profile '" << profile_name << "' from file '" << filename << "'");
+        EPROSIMA_LOG_ERROR(XMLPARSER, "Error adding profile '" << profile_name << "' from file '" << filename << "'");
         return XMLP_ret::XML_ERROR;
     }
 
@@ -557,7 +557,8 @@ bool XMLProfileManager::insertTransportById(
         transport_profiles_[transport_id] = transport;
         return true;
     }
-    logError(XMLPARSER, "Error adding the transport " << transport_id << ". There is other transport with the same id");
+    EPROSIMA_LOG_ERROR(XMLPARSER,
+            "Error adding the transport " << transport_id << ". There is other transport with the same id");
     return false;
 }
 
@@ -591,7 +592,7 @@ bool XMLProfileManager::insertDynamicTypeByName(
         dynamic_types_[type_name] = type;
         return true;
     }
-    logError(XMLPARSER, "Error adding the type " << type_name << ". There is other type with the same name.");
+    EPROSIMA_LOG_ERROR(XMLPARSER, "Error adding the type " << type_name << ". There is other type with the same name.");
     return false;
 }
 
@@ -616,7 +617,7 @@ XMLP_ret XMLProfileManager::extractTopicProfile(
     node_att_map_cit_t it = node_topic->getAttributes().find(PROFILE_NAME);
     if (it == node_topic->getAttributes().end() || it->second.empty())
     {
-        logError(XMLPARSER, "Error adding profile from file '" << filename << "': no name found");
+        EPROSIMA_LOG_ERROR(XMLPARSER, "Error adding profile from file '" << filename << "': no name found");
         return XMLP_ret::XML_ERROR;
     }
 
@@ -625,7 +626,7 @@ XMLP_ret XMLProfileManager::extractTopicProfile(
     std::pair<topic_map_iterator_t, bool> emplace = topic_profiles_.emplace(profile_name, node_topic->getData());
     if (false == emplace.second)
     {
-        logError(XMLPARSER, "Error adding profile '" << profile_name << "' from file '" << filename << "'");
+        EPROSIMA_LOG_ERROR(XMLPARSER, "Error adding profile '" << profile_name << "' from file '" << filename << "'");
         return XMLP_ret::XML_ERROR;
     }
 
@@ -649,7 +650,7 @@ XMLP_ret XMLProfileManager::extractRequesterProfile(
     node_att_map_cit_t it = node_requester->getAttributes().find(PROFILE_NAME);
     if (it == node_requester->getAttributes().end() || it->second.empty())
     {
-        logError(XMLPARSER, "Error adding profile from file '" << filename << "': no name found");
+        EPROSIMA_LOG_ERROR(XMLPARSER, "Error adding profile from file '" << filename << "': no name found");
         return XMLP_ret::XML_ERROR;
     }
 
@@ -659,7 +660,7 @@ XMLP_ret XMLProfileManager::extractRequesterProfile(
                     node_requester->getData());
     if (false == emplace.second)
     {
-        logError(XMLPARSER, "Error adding profile '" << profile_name << "' from file '" << filename << "'");
+        EPROSIMA_LOG_ERROR(XMLPARSER, "Error adding profile '" << profile_name << "' from file '" << filename << "'");
         return XMLP_ret::XML_ERROR;
     }
 
@@ -677,7 +678,7 @@ XMLP_ret XMLProfileManager::extractReplierProfile(
     node_att_map_cit_t it = node_replier->getAttributes().find(PROFILE_NAME);
     if (it == node_replier->getAttributes().end() || it->second.empty())
     {
-        logError(XMLPARSER, "Error adding profile from file '" << filename << "': no name found");
+        EPROSIMA_LOG_ERROR(XMLPARSER, "Error adding profile from file '" << filename << "': no name found");
         return XMLP_ret::XML_ERROR;
     }
 
@@ -686,7 +687,7 @@ XMLP_ret XMLProfileManager::extractReplierProfile(
     std::pair<replier_map_iterator_t, bool> emplace = replier_profiles_.emplace(profile_name, node_replier->getData());
     if (false == emplace.second)
     {
-        logError(XMLPARSER, "Error adding profile '" << profile_name << "' from file '" << filename << "'");
+        EPROSIMA_LOG_ERROR(XMLPARSER, "Error adding profile '" << profile_name << "' from file '" << filename << "'");
         return XMLP_ret::XML_ERROR;
     }
 

@@ -24,10 +24,12 @@ namespace types {
 class DynamicDataFactoryReleaser
 {
 public:
+
     ~DynamicDataFactoryReleaser()
     {
         DynamicDataFactory::delete_instance();
     }
+
 };
 
 static DynamicDataFactoryReleaser s_releaser;
@@ -66,10 +68,11 @@ DynamicDataFactory::~DynamicDataFactory()
         delete_data(dynamic_datas_[dynamic_datas_.size() - 1]);
     }
     dynamic_datas_.clear();
-#endif
+#endif // ifndef DISABLE_DYNAMIC_MEMORY_CHECK
 }
 
-DynamicData* DynamicDataFactory::create_copy(const DynamicData* pData)
+DynamicData* DynamicDataFactory::create_copy(
+        const DynamicData* pData)
 {
     DynamicData* newData = new DynamicData(pData);
 #ifndef DISABLE_DYNAMIC_MEMORY_CHECK
@@ -77,12 +80,13 @@ DynamicData* DynamicDataFactory::create_copy(const DynamicData* pData)
         std::unique_lock<std::recursive_mutex> scoped(mutex_);
         dynamic_datas_.push_back(newData);
     }
-#endif
+#endif // ifndef DISABLE_DYNAMIC_MEMORY_CHECK
 
     return newData;
 }
 
-DynamicData* DynamicDataFactory::create_data(DynamicTypeBuilder* pBuilder)
+DynamicData* DynamicDataFactory::create_data(
+        DynamicTypeBuilder* pBuilder)
 {
     if (pBuilder != nullptr && pBuilder->is_consistent())
     {
@@ -91,12 +95,13 @@ DynamicData* DynamicDataFactory::create_data(DynamicTypeBuilder* pBuilder)
     }
     else
     {
-        logError(DYN_TYPES, "Error creating DynamicData. Invalid dynamic type builder");
+        EPROSIMA_LOG_ERROR(DYN_TYPES, "Error creating DynamicData. Invalid dynamic type builder");
         return nullptr;
     }
 }
 
-DynamicData* DynamicDataFactory::create_data(DynamicType_ptr pType)
+DynamicData* DynamicDataFactory::create_data(
+        DynamicType_ptr pType)
 {
     if (pType != nullptr && pType->is_consistent())
     {
@@ -119,7 +124,7 @@ DynamicData* DynamicDataFactory::create_data(DynamicType_ptr pType)
                         std::unique_lock<std::recursive_mutex> scoped(mutex_);
                         dynamic_datas_.push_back(newData);
                     }
-#endif
+#endif // ifndef DISABLE_DYNAMIC_MEMORY_CHECK
                     create_members(newData, pType->get_base_type());
                 }
             }
@@ -131,7 +136,7 @@ DynamicData* DynamicDataFactory::create_data(DynamicType_ptr pType)
                     std::unique_lock<std::recursive_mutex> scoped(mutex_);
                     dynamic_datas_.push_back(newData);
                 }
-#endif
+#endif // ifndef DISABLE_DYNAMIC_MEMORY_CHECK
 
                 // Arrays must have created every members for serialization.
                 if (pType->get_kind() == TK_ARRAY)
@@ -142,7 +147,7 @@ DynamicData* DynamicDataFactory::create_data(DynamicType_ptr pType)
                         std::unique_lock<std::recursive_mutex> scoped(mutex_);
                         dynamic_datas_.push_back(defaultArrayData);
                     }
-#endif
+#endif // ifndef DISABLE_DYNAMIC_MEMORY_CHECK
                     newData->default_array_value_ = defaultArrayData;
                 }
                 // Unions need a discriminator data
@@ -154,7 +159,7 @@ DynamicData* DynamicDataFactory::create_data(DynamicType_ptr pType)
                         std::unique_lock<std::recursive_mutex> scoped(mutex_);
                         dynamic_datas_.push_back(discriminatorData);
                     }
-#endif
+#endif // ifndef DISABLE_DYNAMIC_MEMORY_CHECK
                     newData->set_union_discriminator(discriminatorData);
                 }
             }
@@ -162,13 +167,13 @@ DynamicData* DynamicDataFactory::create_data(DynamicType_ptr pType)
         }
         catch (std::exception& e)
         {
-            logError(DYN_TYPES, "Exception creating DynamicData: " << e.what());
+            EPROSIMA_LOG_ERROR(DYN_TYPES, "Exception creating DynamicData: " << e.what());
             return nullptr;
         }
     }
     else
     {
-        logError(DYN_TYPES, "Error creating DynamicData. Invalid dynamic type");
+        EPROSIMA_LOG_ERROR(DYN_TYPES, "Error creating DynamicData. Invalid dynamic type");
         return nullptr;
     }
 }
@@ -189,7 +194,8 @@ ReturnCode_t DynamicDataFactory::create_members(
     return ReturnCode_t::RETCODE_BAD_PARAMETER;
 }
 
-ReturnCode_t DynamicDataFactory::delete_data(DynamicData* pData)
+ReturnCode_t DynamicDataFactory::delete_data(
+        DynamicData* pData)
 {
     if (pData != nullptr)
     {
@@ -202,10 +208,10 @@ ReturnCode_t DynamicDataFactory::delete_data(DynamicData* pData)
         }
         else
         {
-            logError(DYN_TYPES, "Error deleting DynamicData. It isn't registered in the factory");
+            EPROSIMA_LOG_ERROR(DYN_TYPES, "Error deleting DynamicData. It isn't registered in the factory");
             return ReturnCode_t::RETCODE_ALREADY_DELETED;
         }
-#endif
+#endif // ifndef DISABLE_DYNAMIC_MEMORY_CHECK
         delete pData;
     }
     return ReturnCode_t::RETCODE_OK;
@@ -218,9 +224,8 @@ bool DynamicDataFactory::is_empty() const
     return dynamic_datas_.empty();
 #else
     return true;
-#endif
+#endif // ifndef DISABLE_DYNAMIC_MEMORY_CHECK
 }
-
 
 } // namespace types
 } // namespace fastrtps

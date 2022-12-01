@@ -407,7 +407,7 @@ private:
 
         if (!is_valid)
         {
-            logWarning(RTPS_READER,
+            EPROSIMA_LOG_WARNING(RTPS_READER,
                     "Change " << change->sequenceNumber << " from " << change->writerGUID << " is overidden");
             return false;
         }

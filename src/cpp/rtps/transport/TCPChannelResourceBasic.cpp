@@ -96,7 +96,7 @@ void TCPChannelResourceBasic::connect(
         }
         catch (const std::system_error& error)
         {
-            logError(RTCP, "Openning socket " << error.what());
+            EPROSIMA_LOG_ERROR(RTCP, "Openning socket " << error.what());
         }
     }
 }

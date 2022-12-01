@@ -46,7 +46,7 @@ ResourceEvent::~ResourceEvent()
 
 void ResourceEvent::stop_thread()
 {
-    logInfo(RTPS_PARTICIPANT, "Removing event thread");
+    EPROSIMA_LOG_INFO(RTPS_PARTICIPANT, "Removing event thread");
     if (thread_.joinable())
     {
         {

@@ -131,7 +131,8 @@ bool PublisherHistory::prepare_change(
 
         if (!ret)
         {
-            logWarning(RTPS_HISTORY, "Attempting to add Data to Full WriterCache: " << topic_att_.getTopicDataType());
+            EPROSIMA_LOG_WARNING(RTPS_HISTORY,
+                    "Attempting to add Data to Full WriterCache: " << topic_att_.getTopicDataType());
             return false;
         }
     }
@@ -227,7 +228,7 @@ bool PublisherHistory::add_pub_change(
         if (this->add_change_(change, wparams))
 #endif // if HAVE_STRICT_REALTIME
         {
-            logInfo(RTPS_HISTORY,
+            EPROSIMA_LOG_INFO(RTPS_HISTORY,
                     topic_att_.getTopicDataType()
                     << " Change " << change->sequenceNumber << " added with key: " << change->instanceHandle
                     << " and " << change->serializedPayload.length << " bytes");
@@ -292,7 +293,7 @@ bool PublisherHistory::removeMinChange()
 {
     if (mp_writer == nullptr || mp_mutex == nullptr)
     {
-        logError(RTPS_HISTORY, "You need to create a Writer with this History before using it");
+        EPROSIMA_LOG_ERROR(RTPS_HISTORY, "You need to create a Writer with this History before using it");
         return false;
     }
 
@@ -309,7 +310,7 @@ bool PublisherHistory::remove_change_pub(
 {
     if (mp_writer == nullptr || mp_mutex == nullptr)
     {
-        logError(RTPS_HISTORY, "You need to create a Writer with this History before using it");
+        EPROSIMA_LOG_ERROR(RTPS_HISTORY, "You need to create a Writer with this History before using it");
         return false;
     }
 
@@ -344,7 +345,7 @@ bool PublisherHistory::remove_change_pub(
                 }
             }
         }
-        logError(PUBLISHER, "Change not found, something is wrong");
+        EPROSIMA_LOG_ERROR(PUBLISHER, "Change not found, something is wrong");
     }
     return false;
 }
@@ -361,13 +362,13 @@ bool PublisherHistory::remove_instance_changes(
 {
     if (mp_writer == nullptr || mp_mutex == nullptr)
     {
-        logError(RTPS_HISTORY, "You need to create a Writer with this History before using it");
+        EPROSIMA_LOG_ERROR(RTPS_HISTORY, "You need to create a Writer with this History before using it");
         return false;
     }
 
     if (topic_att_.getTopicKind() == NO_KEY)
     {
-        logError(RTPS_HISTORY, "Cannot be removed instance changes of a NO_KEY DataType");
+        EPROSIMA_LOG_ERROR(RTPS_HISTORY, "Cannot be removed instance changes of a NO_KEY DataType");
         return false;
     }
 
@@ -405,7 +406,7 @@ bool PublisherHistory::set_next_deadline(
 {
     if (mp_writer == nullptr || mp_mutex == nullptr)
     {
-        logError(RTPS_HISTORY, "You need to create a Writer with this History before using it");
+        EPROSIMA_LOG_ERROR(RTPS_HISTORY, "You need to create a Writer with this History before using it");
         return false;
     }
     std::lock_guard<RecursiveTimedMutex> guard(*this->mp_mutex);
@@ -435,7 +436,7 @@ bool PublisherHistory::get_next_deadline(
 {
     if (mp_writer == nullptr || mp_mutex == nullptr)
     {
-        logError(RTPS_HISTORY, "You need to create a Writer with this History before using it");
+        EPROSIMA_LOG_ERROR(RTPS_HISTORY, "You need to create a Writer with this History before using it");
         return false;
     }
     std::lock_guard<RecursiveTimedMutex> guard(*this->mp_mutex);
@@ -470,7 +471,7 @@ bool PublisherHistory::is_key_registered(
 {
     if (mp_writer == nullptr || mp_mutex == nullptr)
     {
-        logError(RTPS_HISTORY, "You need to create a Writer with this History before using it");
+        EPROSIMA_LOG_ERROR(RTPS_HISTORY, "You need to create a Writer with this History before using it");
         return false;
     }
     std::lock_guard<RecursiveTimedMutex> guard(*this->mp_mutex);

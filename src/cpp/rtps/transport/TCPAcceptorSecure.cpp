@@ -46,8 +46,8 @@ void TCPAcceptorSecure::accept(
         TCPTransportInterface* parent,
         ssl::context& ssl_context)
 {
-    logInfo(ACEPTOR, "Listening at: " << acceptor_.local_endpoint().address()
-                                      << ":" << acceptor_.local_endpoint().port());
+    EPROSIMA_LOG_INFO(ACEPTOR, "Listening at: " << acceptor_.local_endpoint().address()
+                                                << ":" << acceptor_.local_endpoint().port());
 
     using asio::ip::tcp;
     using TLSHSRole = TCPTransportDescriptor::TLSConfig::TLSHandShakeRole;
@@ -73,7 +73,7 @@ void TCPAcceptorSecure::accept(
                     secure_socket->async_handshake(role,
                     [secure_socket, locator, parent](const std::error_code& error)
                     {
-                        //logError(RTCP_TLS, "Handshake: " << error.message());
+                        //EPROSIMA_LOG_ERROR(RTCP_TLS, "Handshake: " << error.message());
                         parent->SecureSocketAccepted(secure_socket, locator, error);
                     });
                 }
@@ -99,7 +99,7 @@ void TCPAcceptorSecure::accept(
                         secure_socket->async_handshake(role,
                         [secure_socket, locator, parent](const std::error_code& error)
                         {
-                            //logError(RTCP_TLS, "Handshake: " << error.message());
+                            //EPROSIMA_LOG_ERROR(RTCP_TLS, "Handshake: " << error.message());
                             parent->SecureSocketAccepted(secure_socket, locator, error);
                         });
                     }
@@ -112,7 +112,7 @@ void TCPAcceptorSecure::accept(
     }
     catch (std::error_code& error)
     {
-        logError(RTCP_TLS, "Exception accepting: " << error.message());
+        EPROSIMA_LOG_ERROR(RTCP_TLS, "Exception accepting: " << error.message());
     }
 }
 

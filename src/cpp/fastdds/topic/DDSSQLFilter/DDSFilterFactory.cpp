@@ -520,7 +520,7 @@ IContentFilterFactory::ReturnCode_t DDSFilterFactory::create_content_filter(
         auto type_object = TypeObjectFactory::get_instance()->get_type_object(type_name, true);
         if (!type_object)
         {
-            logError(DDSSQLFILTER, "No TypeObject found for type " << type_name);
+            EPROSIMA_LOG_ERROR(DDSSQLFILTER, "No TypeObject found for type " << type_name);
             ret = ReturnCode_t::RETCODE_BAD_PARAMETER;
         }
         else

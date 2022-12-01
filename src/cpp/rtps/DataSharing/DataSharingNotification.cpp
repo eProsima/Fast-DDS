@@ -94,7 +94,8 @@ void DataSharingNotification::destroy()
     }
     else
     {
-        logError(HISTORY_DATASHARING_LISTENER, "Trying to destroy non-owned notification segment " << segment_name_);
+        EPROSIMA_LOG_ERROR(HISTORY_DATASHARING_LISTENER,
+                "Trying to destroy non-owned notification segment " << segment_name_);
     }
 }
 

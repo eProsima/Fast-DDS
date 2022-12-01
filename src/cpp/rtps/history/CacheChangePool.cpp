@@ -33,7 +33,7 @@ namespace rtps {
 
 CacheChangePool::~CacheChangePool()
 {
-    logInfo(RTPS_UTILS, "ChangePool destructor");
+    EPROSIMA_LOG_INFO(RTPS_UTILS, "ChangePool destructor");
 
     // Deletion process does not depend on the memory management policy
     for (CacheChange_t* cache : all_caches_)
@@ -51,7 +51,7 @@ void CacheChangePool::init(
     uint32_t pool_size = config.initial_size;
     uint32_t max_pool_size = config.maximum_size;
 
-    logInfo(RTPS_UTILS, "Creating CacheChangePool of size: " << pool_size);
+    EPROSIMA_LOG_INFO(RTPS_UTILS, "Creating CacheChangePool of size: " << pool_size);
 
     current_pool_size_ = 0;
     if (max_pool_size > 0)
@@ -73,19 +73,19 @@ void CacheChangePool::init(
     switch (memory_mode_)
     {
         case PREALLOCATED_MEMORY_MODE:
-            logInfo(RTPS_UTILS, "Static Mode is active, preallocating memory for pool_size elements");
+            EPROSIMA_LOG_INFO(RTPS_UTILS, "Static Mode is active, preallocating memory for pool_size elements");
             allocateGroup(pool_size ? pool_size : 1);
             break;
         case PREALLOCATED_WITH_REALLOC_MEMORY_MODE:
-            logInfo(RTPS_UTILS,
+            EPROSIMA_LOG_INFO(RTPS_UTILS,
                     "Semi-Static Mode is active, preallocating memory for pool_size. Size of the cachechanges can be increased");
             allocateGroup(pool_size ? pool_size : 1);
             break;
         case DYNAMIC_RESERVE_MEMORY_MODE:
-            logInfo(RTPS_UTILS, "Dynamic Mode is active, CacheChanges are allocated on request");
+            EPROSIMA_LOG_INFO(RTPS_UTILS, "Dynamic Mode is active, CacheChanges are allocated on request");
             break;
         case DYNAMIC_REUSABLE_MEMORY_MODE:
-            logInfo(RTPS_UTILS,
+            EPROSIMA_LOG_INFO(RTPS_UTILS,
                     "Semi-Dynamic Mode is active, no preallocation but dynamically allocated CacheChanges are reused for future cachechanges");
             break;
     }
@@ -117,7 +117,7 @@ bool CacheChangePool::allocateGroup(
     assert(memory_mode_ == PREALLOCATED_MEMORY_MODE ||
             memory_mode_ == PREALLOCATED_WITH_REALLOC_MEMORY_MODE);
 
-    logInfo(RTPS_UTILS, "Allocating group of cache changes of size: " << group_size);
+    EPROSIMA_LOG_INFO(RTPS_UTILS, "Allocating group of cache changes of size: " << group_size);
 
     uint32_t desired_size = current_pool_size_ + group_size;
     if (desired_size > max_pool_size_)
@@ -128,7 +128,7 @@ bool CacheChangePool::allocateGroup(
 
     if (group_size <= 0)
     {
-        logWarning(RTPS_HISTORY, "Maximum number of allowed reserved caches reached");
+        EPROSIMA_LOG_WARNING(RTPS_HISTORY, "Maximum number of allowed reserved caches reached");
         return false;
     }
 
@@ -176,7 +176,7 @@ CacheChange_t* CacheChangePool::allocateSingle()
 
     if (!added)
     {
-        logWarning(RTPS_HISTORY, "Maximum number of allowed reserved caches reached");
+        EPROSIMA_LOG_WARNING(RTPS_HISTORY, "Maximum number of allowed reserved caches reached");
         return nullptr;
     }
 
@@ -243,7 +243,7 @@ bool CacheChangePool::release_cache(
             }
             else
             {
-                logInfo(RTPS_UTILS, "Tried to release a CacheChange that is not logged in the Pool");
+                EPROSIMA_LOG_INFO(RTPS_UTILS, "Tried to release a CacheChange that is not logged in the Pool");
                 return false;
             }
 

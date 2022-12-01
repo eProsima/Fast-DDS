@@ -111,7 +111,7 @@ WriterProxyData::~WriterProxyData()
     delete m_type_id;
     delete m_type_information;
 
-    logInfo(RTPS_PROXY_DATA, m_guid);
+    EPROSIMA_LOG_INFO(RTPS_PROXY_DATA, m_guid);
 }
 
 WriterProxyData& WriterProxyData::operator =(
@@ -939,7 +939,7 @@ bool WriterProxyData::readFromCDRMessage(
                     }
                     case fastdds::dds::PID_TYPE_CONSISTENCY_ENFORCEMENT:
                     {
-                        logError(RTPS_PROXY_DATA,
+                        EPROSIMA_LOG_ERROR(RTPS_PROXY_DATA,
                                 "Received TypeConsistencyEnforcementQos from a writer, but they haven't.");
                         break;
                     }
@@ -959,7 +959,7 @@ bool WriterProxyData::readFromCDRMessage(
                         if (!fastdds::dds::QosPoliciesSerializer<DataSharingQosPolicy>::read_from_cdr_message(
                                     m_qos.data_sharing, msg, plength))
                         {
-                            logError(RTPS_WRITER_PROXY_DATA,
+                            EPROSIMA_LOG_ERROR(RTPS_WRITER_PROXY_DATA,
                                     "Received with error.");
                             return false;
                         }

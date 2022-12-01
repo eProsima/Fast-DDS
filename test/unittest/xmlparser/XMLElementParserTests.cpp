@@ -1490,13 +1490,13 @@ TEST_F(XMLParserTests, getXMLWriterReaderQosPolicies)
 }
 
 /*
- * This test checks that there is a logError when setting up a non supported <data_writer>/<data_reader> qos
- * 1. Check that there is a logError when trying to set up the <durabilityService> Qos.
- * 3. Check that there is a logError when trying to set up the <timeBasedFilter> Qos.
- * 4. Check that there is a logError when trying to set up the <ownership> Qos.
- * 5. Check that there is a logError when trying to set up the <ownershipStrength> Qos.
- * 6. Check that there is a logError when trying to set up the <destinationOrder> Qos.
- * 7. Check that there is a logError when trying to set up the <presentation> Qos.
+ * This test checks that there is a EPROSIMA_LOG_ERROR when setting up a non supported <data_writer>/<data_reader> qos
+ * 1. Check that there is a EPROSIMA_LOG_ERROR when trying to set up the <durabilityService> Qos.
+ * 3. Check that there is a EPROSIMA_LOG_ERROR when trying to set up the <timeBasedFilter> Qos.
+ * 4. Check that there is a EPROSIMA_LOG_ERROR when trying to set up the <ownership> Qos.
+ * 5. Check that there is a EPROSIMA_LOG_ERROR when trying to set up the <ownershipStrength> Qos.
+ * 6. Check that there is a EPROSIMA_LOG_ERROR when trying to set up the <destinationOrder> Qos.
+ * 7. Check that there is a EPROSIMA_LOG_ERROR when trying to set up the <presentation> Qos.
  */
 TEST_F(XMLParserTests, getXMLWriterReaderUnsupportedQosPolicies)
 {
@@ -1521,28 +1521,28 @@ TEST_F(XMLParserTests, getXMLWriterReaderUnsupportedQosPolicies)
 
     char xml[600];
 
-    // Check that there is a logError when trying to set up the <durabilityService> Qos.
+    // Check that there is a EPROSIMA_LOG_ERROR when trying to set up the <durabilityService> Qos.
     sprintf(xml, xml_p, "<durabilityService></durabilityService>");
     ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
     titleElement = xml_doc.RootElement();
     EXPECT_EQ(XMLP_ret::XML_OK, XMLParserTest::getXMLWriterQosPolicies_wrapper(titleElement, wqos, ident));
     EXPECT_EQ(XMLP_ret::XML_OK, XMLParserTest::getXMLReaderQosPolicies_wrapper(titleElement, rqos, ident));
 
-    // Check that there is a logError when trying to set up the <timeBasedFilter> Qos.
+    // Check that there is a EPROSIMA_LOG_ERROR when trying to set up the <timeBasedFilter> Qos.
     sprintf(xml, xml_p, "<timeBasedFilter></timeBasedFilter>");
     ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
     titleElement = xml_doc.RootElement();
     EXPECT_EQ(XMLP_ret::XML_OK, XMLParserTest::getXMLWriterQosPolicies_wrapper(titleElement, wqos, ident));
     EXPECT_EQ(XMLP_ret::XML_OK, XMLParserTest::getXMLReaderQosPolicies_wrapper(titleElement, rqos, ident));
 
-    // Check that there is a logError when trying to set up the <destinationOrder> Qos.
+    // Check that there is a EPROSIMA_LOG_ERROR when trying to set up the <destinationOrder> Qos.
     sprintf(xml, xml_p, "<destinationOrder></destinationOrder>");
     ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
     titleElement = xml_doc.RootElement();
     EXPECT_EQ(XMLP_ret::XML_OK, XMLParserTest::getXMLWriterQosPolicies_wrapper(titleElement, wqos, ident));
     EXPECT_EQ(XMLP_ret::XML_OK, XMLParserTest::getXMLReaderQosPolicies_wrapper(titleElement, rqos, ident));
 
-    // Check that there is a logError when trying to set up the <presentation> Qos.
+    // Check that there is a EPROSIMA_LOG_ERROR when trying to set up the <presentation> Qos.
     sprintf(xml, xml_p, "<presentation></presentation>");
     ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
     titleElement = xml_doc.RootElement();

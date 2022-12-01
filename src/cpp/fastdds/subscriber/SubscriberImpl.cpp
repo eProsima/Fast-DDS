@@ -186,7 +186,7 @@ DataReader* SubscriberImpl::create_datareader(
         DataReaderListener* listener,
         const StatusMask& mask)
 {
-    logInfo(SUBSCRIBER, "CREATING SUBSCRIBER IN TOPIC: " << topic->get_name());
+    EPROSIMA_LOG_INFO(SUBSCRIBER, "CREATING SUBSCRIBER IN TOPIC: " << topic->get_name());
     //Look for the correct type registration
     TypeSupport type_support = participant_->find_type(topic->get_type_name());
 
@@ -194,7 +194,7 @@ DataReader* SubscriberImpl::create_datareader(
     // Check the type was registered.
     if (type_support.empty())
     {
-        logError(SUBSCRIBER, "Type : " << topic->get_type_name() << " Not Registered");
+        EPROSIMA_LOG_ERROR(SUBSCRIBER, "Type : " << topic->get_type_name() << " Not Registered");
         return nullptr;
     }
 
@@ -319,7 +319,7 @@ bool SubscriberImpl::has_datareaders() const
 /* TODO
    bool SubscriberImpl::begin_access()
    {
-    logError(PUBLISHER, "Operation not implemented");
+    EPROSIMA_LOG_ERROR(PUBLISHER, "Operation not implemented");
     return false;
    }
  */
@@ -327,7 +327,7 @@ bool SubscriberImpl::has_datareaders() const
 /* TODO
    bool SubscriberImpl::end_access()
    {
-    logError(PUBLISHER, "Operation not implemented");
+    EPROSIMA_LOG_ERROR(PUBLISHER, "Operation not implemented");
     return false;
    }
  */
@@ -420,7 +420,7 @@ const ReturnCode_t SubscriberImpl::get_datareader_qos_from_profile(
         DataReaderQos&,
         const fastrtps::TopicAttributes&) const
    {
-    logError(PUBLISHER, "Operation not implemented");
+    EPROSIMA_LOG_ERROR(PUBLISHER, "Operation not implemented");
     return false;
    }
  */

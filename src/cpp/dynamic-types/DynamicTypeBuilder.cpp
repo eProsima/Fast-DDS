@@ -32,14 +32,16 @@ DynamicTypeBuilder::DynamicTypeBuilder()
 {
 }
 
-DynamicTypeBuilder::DynamicTypeBuilder(const DynamicTypeBuilder* builder)
+DynamicTypeBuilder::DynamicTypeBuilder(
+        const DynamicTypeBuilder* builder)
     : current_member_id_(0)
     , max_index_(0)
 {
     copy_from_builder(builder);
 }
 
-DynamicTypeBuilder::DynamicTypeBuilder(const TypeDescriptor* descriptor)
+DynamicTypeBuilder::DynamicTypeBuilder(
+        const TypeDescriptor* descriptor)
     : current_member_id_(0)
     , max_index_(0)
 {
@@ -59,7 +61,7 @@ DynamicTypeBuilder::DynamicTypeBuilder(const TypeDescriptor* descriptor)
     if (kind_ == TK_ALIAS)
     {
         for (auto it = descriptor_->get_base_type()->member_by_id_.begin();
-            it != descriptor_->get_base_type()->member_by_id_.end(); ++it)
+                it != descriptor_->get_base_type()->member_by_id_.end(); ++it)
         {
             member_by_name_.insert(std::make_pair(it->second->get_name(), it->second));
         }
@@ -95,7 +97,7 @@ ReturnCode_t DynamicTypeBuilder::add_empty_member(
     {
         if (index >= descriptor_->get_bounds(0))
         {
-            logWarning(DYN_TYPES, "Error adding member, out of bounds.");
+            EPROSIMA_LOG_WARNING(DYN_TYPES, "Error adding member, out of bounds.");
             return ReturnCode_t::RETCODE_BAD_PARAMETER;
         }
         descriptor.annotation_set_position(static_cast<uint16_t>(descriptor.get_index()));
@@ -103,13 +105,14 @@ ReturnCode_t DynamicTypeBuilder::add_empty_member(
     return add_member(&descriptor);
 }
 
-ReturnCode_t DynamicTypeBuilder::add_member(const MemberDescriptor* descriptor)
+ReturnCode_t DynamicTypeBuilder::add_member(
+        const MemberDescriptor* descriptor)
 {
     if (descriptor_ != nullptr && descriptor != nullptr && descriptor->is_consistent(descriptor_->get_kind()))
     {
         if (descriptor_->get_kind() == TK_ANNOTATION || descriptor_->get_kind() == TK_BITMASK
-            || descriptor_->get_kind() == TK_ENUM || descriptor_->get_kind() == TK_STRUCTURE
-            || descriptor_->get_kind() == TK_UNION || descriptor_->get_kind() == TK_BITSET)
+                || descriptor_->get_kind() == TK_ENUM || descriptor_->get_kind() == TK_STRUCTURE
+                || descriptor_->get_kind() == TK_UNION || descriptor_->get_kind() == TK_BITSET)
         {
             if (!exists_member_by_name(descriptor->get_name()) ||
                     (kind_ == TK_BITSET && descriptor->get_name().empty())) // Bitsets allow multiple empty members.
@@ -149,20 +152,20 @@ ReturnCode_t DynamicTypeBuilder::add_member(const MemberDescriptor* descriptor)
                 }
                 else
                 {
-                    logWarning(DYN_TYPES, "Error adding member, invalid union parameters.");
+                    EPROSIMA_LOG_WARNING(DYN_TYPES, "Error adding member, invalid union parameters.");
                     return ReturnCode_t::RETCODE_BAD_PARAMETER;
                 }
             }
             else
             {
-                logWarning(DYN_TYPES, "Error adding member, there is other member with the same name.");
+                EPROSIMA_LOG_WARNING(DYN_TYPES, "Error adding member, there is other member with the same name.");
                 return ReturnCode_t::RETCODE_BAD_PARAMETER;
             }
         }
         else
         {
-            logWarning(DYN_TYPES, "Error adding member, the current type " << descriptor_->get_kind()
-                << " doesn't support members.");
+            EPROSIMA_LOG_WARNING(DYN_TYPES, "Error adding member, the current type " << descriptor_->get_kind()
+                                                                                     << " doesn't support members.");
             return ReturnCode_t::RETCODE_PRECONDITION_NOT_MET;
         }
     }
@@ -170,17 +173,18 @@ ReturnCode_t DynamicTypeBuilder::add_member(const MemberDescriptor* descriptor)
     {
         if (descriptor == nullptr)
         {
-            logWarning(DYN_TYPES, "Error adding member, Invalid input descriptor.");
+            EPROSIMA_LOG_WARNING(DYN_TYPES, "Error adding member, Invalid input descriptor.");
         }
         else
         {
-            logWarning(DYN_TYPES, "Error adding member, The input descriptor isn't consistent.");
+            EPROSIMA_LOG_WARNING(DYN_TYPES, "Error adding member, The input descriptor isn't consistent.");
         }
         return ReturnCode_t::RETCODE_BAD_PARAMETER;
     }
 }
 
-RTPS_DllAPI MemberId DynamicTypeBuilder::get_member_id_by_name(const std::string& name) const
+RTPS_DllAPI MemberId DynamicTypeBuilder::get_member_id_by_name(
+        const std::string& name) const
 {
     auto it = member_by_name_.find(name);
     if (it != member_by_name_.end())
@@ -226,7 +230,7 @@ ReturnCode_t DynamicTypeBuilder::add_member(
         bool isDefaultLabel)
 {
     MemberDescriptor descriptor(id, name, DynamicTypeBuilderFactory::get_instance()->create_type(type),
-        defaultValue, unionLabels, isDefaultLabel);
+            defaultValue, unionLabels, isDefaultLabel);
     return add_member(&descriptor);
 }
 
@@ -261,7 +265,8 @@ ReturnCode_t DynamicTypeBuilder::add_member(
     return add_member(&descriptor);
 }
 
-ReturnCode_t DynamicTypeBuilder::apply_annotation(AnnotationDescriptor& descriptor)
+ReturnCode_t DynamicTypeBuilder::apply_annotation(
+        AnnotationDescriptor& descriptor)
 {
     return descriptor_->apply_annotation(descriptor);
 }
@@ -298,12 +303,13 @@ DynamicType_ptr DynamicTypeBuilder::build()
     }
     else
     {
-        logError(DYN_TYPES, "Error building type. The current descriptor isn't consistent.");
+        EPROSIMA_LOG_ERROR(DYN_TYPES, "Error building type. The current descriptor isn't consistent.");
         return DynamicType_ptr(nullptr);
     }
 }
 
-bool DynamicTypeBuilder::check_union_configuration(const MemberDescriptor* descriptor)
+bool DynamicTypeBuilder::check_union_configuration(
+        const MemberDescriptor* descriptor)
 {
     if (descriptor_->get_kind() == TK_UNION)
     {
@@ -315,7 +321,7 @@ bool DynamicTypeBuilder::check_union_configuration(const MemberDescriptor* descr
         {
             // Check that there isn't any member as default label and that there isn't any member with the same case.
             if ((descriptor->is_default_union_value() && it->second->is_default_union_value()) ||
-                !descriptor->check_union_labels(it->second->get_union_labels()))
+                    !descriptor->check_union_labels(it->second->get_union_labels()))
             {
                 return false;
             }
@@ -324,7 +330,8 @@ bool DynamicTypeBuilder::check_union_configuration(const MemberDescriptor* descr
     return true;
 }
 
-ReturnCode_t DynamicTypeBuilder::copy_from(const DynamicTypeBuilder* other)
+ReturnCode_t DynamicTypeBuilder::copy_from(
+        const DynamicTypeBuilder* other)
 {
     if (other != nullptr)
     {
@@ -339,13 +346,13 @@ ReturnCode_t DynamicTypeBuilder::copy_from(const DynamicTypeBuilder* other)
     }
     else
     {
-        logError(DYN_TYPES, "Error copying DynamicTypeBuilder. Invalid input parameter.");
+        EPROSIMA_LOG_ERROR(DYN_TYPES, "Error copying DynamicTypeBuilder. Invalid input parameter.");
         return ReturnCode_t::RETCODE_BAD_PARAMETER;
     }
 }
 
-
-ReturnCode_t DynamicTypeBuilder::copy_from_builder(const DynamicTypeBuilder* other)
+ReturnCode_t DynamicTypeBuilder::copy_from_builder(
+        const DynamicTypeBuilder* other)
 {
     if (other != nullptr)
     {
@@ -366,7 +373,7 @@ ReturnCode_t DynamicTypeBuilder::copy_from_builder(const DynamicTypeBuilder* oth
     }
     else
     {
-        logError(DYN_TYPES, "Error copying DynamicType, invalid input type");
+        EPROSIMA_LOG_ERROR(DYN_TYPES, "Error copying DynamicType, invalid input type");
         return ReturnCode_t::RETCODE_BAD_PARAMETER;
     }
 }
@@ -390,7 +397,8 @@ void DynamicTypeBuilder::clear()
     current_member_id_ = 0;
 }
 
-bool DynamicTypeBuilder::exists_member_by_name(const std::string& name) const
+bool DynamicTypeBuilder::exists_member_by_name(
+        const std::string& name) const
 {
     if (descriptor_->get_base_type() != nullptr)
     {
@@ -402,7 +410,8 @@ bool DynamicTypeBuilder::exists_member_by_name(const std::string& name) const
     return member_by_name_.find(name) != member_by_name_.end();
 }
 
-ReturnCode_t DynamicTypeBuilder::get_all_members(std::map<MemberId, DynamicTypeMember*>& members)
+ReturnCode_t DynamicTypeBuilder::get_all_members(
+        std::map<MemberId, DynamicTypeMember*>& members)
 {
     members = member_by_id_;
     return ReturnCode_t::RETCODE_OK;
@@ -425,9 +434,9 @@ bool DynamicTypeBuilder::is_discriminator_type() const
         return descriptor_->get_base_type()->is_discriminator_type();
     }
     return kind_ == TK_BOOLEAN || kind_ == TK_BYTE || kind_ == TK_INT16 || kind_ == TK_INT32 ||
-        kind_ == TK_INT64 || kind_ == TK_UINT16 || kind_ == TK_UINT32 || kind_ == TK_UINT64 ||
-        kind_ == TK_FLOAT32 || kind_ == TK_FLOAT64 || kind_ == TK_FLOAT128 || kind_ == TK_CHAR8 ||
-        kind_ == TK_CHAR16 || kind_ == TK_STRING8 || kind_ == TK_STRING16 || kind_ == TK_ENUM || kind_ == TK_BITMASK;
+           kind_ == TK_INT64 || kind_ == TK_UINT16 || kind_ == TK_UINT32 || kind_ == TK_UINT64 ||
+           kind_ == TK_FLOAT32 || kind_ == TK_FLOAT64 || kind_ == TK_FLOAT128 || kind_ == TK_CHAR8 ||
+           kind_ == TK_CHAR16 || kind_ == TK_STRING8 || kind_ == TK_STRING16 || kind_ == TK_ENUM || kind_ == TK_BITMASK;
 }
 
 void DynamicTypeBuilder::refresh_member_ids()
@@ -439,7 +448,8 @@ void DynamicTypeBuilder::refresh_member_ids()
     }
 }
 
-ReturnCode_t DynamicTypeBuilder::set_name(const std::string& name)
+ReturnCode_t DynamicTypeBuilder::set_name(
+        const std::string& name)
 {
     if (descriptor_ != nullptr)
     {
@@ -463,13 +473,13 @@ ReturnCode_t DynamicTypeBuilder::_apply_annotation_to_member(
         }
         else
         {
-            logError(DYN_TYPES, "Error applying annotation to member. MemberId not found.");
+            EPROSIMA_LOG_ERROR(DYN_TYPES, "Error applying annotation to member. MemberId not found.");
             return ReturnCode_t::RETCODE_BAD_PARAMETER;
         }
     }
     else
     {
-        logError(DYN_TYPES, "Error applying annotation to member. The input descriptor isn't consistent.");
+        EPROSIMA_LOG_ERROR(DYN_TYPES, "Error applying annotation to member. The input descriptor isn't consistent.");
         return ReturnCode_t::RETCODE_BAD_PARAMETER;
     }
 }
@@ -488,7 +498,7 @@ ReturnCode_t DynamicTypeBuilder::_apply_annotation_to_member(
     }
     else
     {
-        logError(DYN_TYPES, "Error applying annotation to member. MemberId not found.");
+        EPROSIMA_LOG_ERROR(DYN_TYPES, "Error applying annotation to member. MemberId not found.");
         return ReturnCode_t::RETCODE_BAD_PARAMETER;
     }
 }
