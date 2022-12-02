@@ -53,12 +53,12 @@ public:
     virtual LocatorList NormalizeLocator(
             const Locator& locator) override;
 
-    RTPS_DllAPI static bool test_UDPv4Transport_ShutdownAllNetwork;
+    RTPS_DllAPI static std::atomic<bool> test_UDPv4Transport_ShutdownAllNetwork;
     // Handle to a persistent log of dropped packets. Defaults to length 0 (no logging) to prevent wasted resources.
     RTPS_DllAPI static std::vector<std::vector<fastrtps::rtps::octet>> test_UDPv4Transport_DropLog;
-    RTPS_DllAPI static uint32_t test_UDPv4Transport_DropLogLength;
-    RTPS_DllAPI static bool always_drop_participant_builtin_topic_data;
-    RTPS_DllAPI static bool simulate_no_interfaces;
+    RTPS_DllAPI static std::atomic<uint32_t> test_UDPv4Transport_DropLogLength;
+    RTPS_DllAPI static std::atomic<bool> always_drop_participant_builtin_topic_data;
+    RTPS_DllAPI static std::atomic<bool> simulate_no_interfaces;
 
     RTPS_DllAPI static test_UDPv4TransportDescriptor::DestinationLocatorFilter locator_filter;
 

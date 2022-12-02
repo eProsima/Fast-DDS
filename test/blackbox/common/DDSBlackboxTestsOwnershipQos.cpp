@@ -1250,17 +1250,17 @@ void exclusive_kind_non_keyed_lost_liveliness(
     PubSubWriter<HelloWorldPubSubType> writer2(TEST_TOPIC_NAME);
     PubSubWriter<HelloWorldPubSubType> writer3(TEST_TOPIC_NAME);
 
-    bool drop_messages1 = false;
+    std::atomic<bool> drop_messages1(false);
     auto testTransport1 = std::make_shared<test_UDPv4TransportDescriptor>();
     testTransport1->messages_filter_ = [&drop_messages1](eprosima::fastrtps::rtps::CDRMessage_t&)
             {
-                return drop_messages1;
+                return drop_messages1.load();
             };
-    bool drop_messages3 = false;
+    std::atomic<bool> drop_messages3(false);
     auto testTransport3 = std::make_shared<test_UDPv4TransportDescriptor>();
     testTransport3->messages_filter_ = [&drop_messages3](eprosima::fastrtps::rtps::CDRMessage_t&)
             {
-                return drop_messages3;
+                return drop_messages3.load();
             };
 
     reader.ownership_exclusive().reliability(
@@ -1408,23 +1408,23 @@ void exclusive_kind_keyed_lost_liveliness(
     PubSubWriter<KeyedHelloWorldPubSubType> writer3(TEST_TOPIC_NAME);
     PubSubWriter<KeyedHelloWorldPubSubType> writer4(TEST_TOPIC_NAME);
 
-    bool drop_messages2 = false;
+    std::atomic<bool> drop_messages2(false);
     auto testTransport2 = std::make_shared<test_UDPv4TransportDescriptor>();
     testTransport2->messages_filter_ = [&drop_messages2](eprosima::fastrtps::rtps::CDRMessage_t&)
             {
-                return drop_messages2;
+                return drop_messages2.load();
             };
-    bool drop_messages3 = false;
+    std::atomic<bool> drop_messages3(false);
     auto testTransport3 = std::make_shared<test_UDPv4TransportDescriptor>();
     testTransport3->messages_filter_ = [&drop_messages3](eprosima::fastrtps::rtps::CDRMessage_t&)
             {
-                return drop_messages3;
+                return drop_messages3.load();
             };
-    bool drop_messages4 = false;
+    std::atomic<bool> drop_messages4(false);
     auto testTransport4 = std::make_shared<test_UDPv4TransportDescriptor>();
     testTransport4->messages_filter_ = [&drop_messages4](eprosima::fastrtps::rtps::CDRMessage_t&)
             {
-                return drop_messages4;
+                return drop_messages4.load();
             };
 
     reader.ownership_exclusive().reliability(

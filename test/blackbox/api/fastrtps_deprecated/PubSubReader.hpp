@@ -1386,8 +1386,8 @@ private:
     std::atomic<bool> receiving_;
     type_support type_;
     std::map<eprosima::fastrtps::rtps::InstanceHandle_t, eprosima::fastrtps::rtps::SequenceNumber_t> last_seq;
-    size_t current_processed_count_;
-    size_t number_samples_expected_;
+    std::atomic<size_t> current_processed_count_;
+    std::atomic<size_t> number_samples_expected_;
     bool discovery_result_;
 
     std::function<bool(const eprosima::fastrtps::rtps::ParticipantDiscoveryInfo& info)> onDiscovery_;

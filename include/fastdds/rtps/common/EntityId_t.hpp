@@ -275,9 +275,11 @@ inline std::ostream& operator <<(
         std::ostream& output,
         const EntityId_t& enI)
 {
-    output << std::hex;
-    output << (int)enI.value[0] << "." << (int)enI.value[1] << "." << (int)enI.value[2] << "." << (int)enI.value[3];
-    return output << std::dec;
+    std::stringstream ss;
+    ss << std::hex;
+    ss << (int)enI.value[0] << "." << (int)enI.value[1] << "." << (int)enI.value[2] << "." << (int)enI.value[3];
+    ss << std::dec;
+    return output << ss.str();
 }
 
 inline std::istream& operator >>(
