@@ -525,6 +525,7 @@ public:
         while (ret);
 
         receiving_.store(true);
+        std::lock_guard<std::mutex> lock(mutex_);
         return get_last_sequence_received();
     }
 
