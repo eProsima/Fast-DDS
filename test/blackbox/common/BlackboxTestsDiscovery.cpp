@@ -976,7 +976,7 @@ TEST_P(Discovery, EndpointCreationMultithreaded)
 // Regression test for redmine issue 16253
 TEST_P(Discovery, AsymmeticIgnoreParticipantFlags)
 {
-    if (INTRAPROCESS != GetParam())
+    if (true != GetParam())
     {
         GTEST_SKIP() << "Only makes sense on INTRAPROCESS";
         return;
@@ -985,7 +985,7 @@ TEST_P(Discovery, AsymmeticIgnoreParticipantFlags)
     // This participant is created with flags to ignore participants which are not on the same process.
     // When the announcements of this participant arrive to p2, a single DATA(p) should be sent back.
     // No other traffic is expected, since it will take place through intraprocess.
-    PubSubReader<HelloWorldPubSubType> p1(TEST_TOPIC_NAME);
+    PubSubReader<HelloWorldType> p1(TEST_TOPIC_NAME);
     p1.ignore_participant_flags(static_cast<eprosima::fastrtps::rtps::ParticipantFilteringFlags_t>(
                 eprosima::fastrtps::rtps::ParticipantFilteringFlags_t::FILTER_DIFFERENT_HOST |
                 eprosima::fastrtps::rtps::ParticipantFilteringFlags_t::FILTER_DIFFERENT_PROCESS));
@@ -998,7 +998,7 @@ TEST_P(Discovery, AsymmeticIgnoreParticipantFlags)
     // that multicast datagrams are sent only once.
     // A very long period for the participant announcement is set, along with 0 initial announcements, so we can
     // have a exact expectation on the number of datagrams sent to multicast.
-    PubSubWriter<HelloWorldPubSubType> p2(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldType> p2(TEST_TOPIC_NAME);
 
     // This will hold the multicast port. Since the test is not always run in the same domain, we'll need to set
     // its value when the first multicast datagram is sent.
