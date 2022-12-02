@@ -2189,8 +2189,15 @@ public:
             eprosima::fastdds::dds::DomainParticipant*,
             eprosima::fastrtps::rtps::ParticipantDiscoveryInfo&&) override
     {
-        promise_.set_value();
-        std::this_thread::sleep_for(std::chrono::seconds(2));
+        try
+        {
+            promise_.set_value();
+            std::this_thread::sleep_for(std::chrono::seconds(2));
+        }
+        catch (std::future_error&)
+        {
+            // do nothing
+        }
     }
 
 private:
