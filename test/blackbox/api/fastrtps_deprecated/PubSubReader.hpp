@@ -946,6 +946,13 @@ public:
         return *this;
     }
 
+    PubSubReader& ignore_participant_flags(
+            eprosima::fastrtps::rtps::ParticipantFilteringFlags_t flags)
+    {
+        participant_attr_.rtps.builtin.discovery_config.ignoreParticipantFlags = flags;
+        return *this;
+    }
+
     PubSubReader& socket_buffer_size(
             uint32_t sockerBufferSize)
     {
