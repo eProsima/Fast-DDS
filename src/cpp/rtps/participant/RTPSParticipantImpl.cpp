@@ -152,18 +152,26 @@ RTPSParticipantImpl::RTPSParticipantImpl(
         UDPv4TransportDescriptor descriptor;
         descriptor.sendBufferSize = m_att.sendSocketBufferSize;
         descriptor.receiveBufferSize = m_att.listenSocketBufferSize;
+        if (is_intraprocess_only())
+        {
+            // Avoid multicast leaving the host for intraprocess-only participants
+            descriptor.TTL = 0;
+        }
         m_network_Factory.RegisterTransport(&descriptor, &m_att.properties);
 
 #ifdef SHM_TRANSPORT_BUILTIN
-        SharedMemTransportDescriptor shm_transport;
-        // We assume (Linux) UDP doubles the user socket buffer size in kernel, so
-        // the equivalent segment size in SHM would be socket buffer size x 2
-        auto segment_size_udp_equivalent =
-                std::max(m_att.sendSocketBufferSize, m_att.listenSocketBufferSize) * 2;
-        shm_transport.segment_size(segment_size_udp_equivalent);
-        // Use same default max_message_size on both UDP and SHM
-        shm_transport.max_message_size(descriptor.max_message_size());
-        has_shm_transport_ |= m_network_Factory.RegisterTransport(&shm_transport);
+        if (!is_intraprocess_only())
+        {
+            SharedMemTransportDescriptor shm_transport;
+            // We assume (Linux) UDP doubles the user socket buffer size in kernel, so
+            // the equivalent segment size in SHM would be socket buffer size x 2
+            auto segment_size_udp_equivalent =
+                    std::max(m_att.sendSocketBufferSize, m_att.listenSocketBufferSize) * 2;
+            shm_transport.segment_size(segment_size_udp_equivalent);
+            // Use same default max_message_size on both UDP and SHM
+            shm_transport.max_message_size(descriptor.max_message_size());
+            has_shm_transport_ |= m_network_Factory.RegisterTransport(&shm_transport);
+        }
 #endif // ifdef SHM_TRANSPORT_BUILTIN
     }
 
