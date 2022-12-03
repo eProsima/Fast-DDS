@@ -618,23 +618,21 @@ install(DIRECTORY ${PROJECT_SOURCE_DIR}/include/fastdds/statistics
 
 # Install libraries
 
-# Generate different target names depending on linking
-get_target_property(TARGET_TYPE ${PROJECT_NAME} TYPE)
-if(TARGET_TYPE STREQUAL "SHARED_LIBRARY")
-    set(FASTDDS_LINKING dynamic)
-else()
-    set(FASTDDS_LINKING static)
-endif()
-
 install(TARGETS ${PROJECT_NAME} eProsima_atomic
-    EXPORT ${PROJECT_NAME}-${FASTDDS_LINKING}-targets
+    EXPORT ${PROJECT_NAME}-targets
     COMPONENT libraries
     RUNTIME DESTINATION "${BIN_INSTALL_DIR}${MSVCARCH_DIR_EXTENSION}"
     LIBRARY DESTINATION "${LIB_INSTALL_DIR}${MSVCARCH_DIR_EXTENSION}"
     ARCHIVE DESTINATION "${LIB_INSTALL_DIR}${MSVCARCH_DIR_EXTENSION}"
     )
 
-export(TARGETS ${PROJECT_NAME} eProsima_atomic FILE ${PROJECT_BINARY_DIR}/cmake/config/${PROJECT_NAME}-${FASTDDS_LINKING}-targets.cmake)
+# Generate different target names depending on linking
+get_target_property(TARGET_TYPE ${PROJECT_NAME} TYPE)
+if(TARGET_TYPE STREQUAL "SHARED_LIBRARY")
+    set(FASTDDS_LINKING shared)
+else()
+    set(FASTDDS_LINKING static)
+endif()
 
 if(INSTALLER_PLATFORM)
     set(INSTALL_DESTINATION_PATH ${DATA_INSTALL_DIR}/${PROJECT_NAME}-${INSTALLER_PLATFORM}/cmake)
@@ -642,8 +640,9 @@ else()
     set(INSTALL_DESTINATION_PATH ${DATA_INSTALL_DIR}/${PROJECT_NAME}/cmake${MSVCARCH_DIR_EXTENSION_EXT})
 endif()
 
-install(EXPORT ${PROJECT_NAME}-${FASTDDS_LINKING}-targets
+install(EXPORT ${PROJECT_NAME}-targets
     DESTINATION ${INSTALL_DESTINATION_PATH}
+    FILE ${PROJECT_NAME}-${FASTDDS_LINKING}-targets.cmake
     COMPONENT cmake
     )
 
