@@ -22,8 +22,10 @@ if(MSVC)
     cmake_dependent_option(WER_TIMEOUT_TIME
         [=[CTest doesn't support WER thus the testing will timeout independently
         in the number of seconds specified. If combined with CTest timeout make
-        sure CTest value is larger.]=]
-        300 "ENABLE_WER" 0)
+        sure CTest value is larger.
+        Timeout can only be used if the binaries are launched for each individual
+        test otherwise set a timeout value is impossible. ]=]
+        300 "ENABLE_WER;GTEST_INDIVIDUAL" 21600)
 endif(MSVC)
 
 if(EPROSIMA_BUILD)
