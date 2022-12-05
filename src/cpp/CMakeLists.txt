@@ -663,7 +663,7 @@ if(MSVC OR MSVC_IDE)
             COMMAND "$<IF:$<CONFIG:Debug,RelWithDebInfo>,powershell,exit>"
                        -ExecutionPolicy Bypass
                        -File "${CMAKE_SOURCE_DIR}/cmake/modules/add_source_listing.ps1"
-                       -pdbs "$<TARGET_PDB_FILE:${PROJECT_NAME}>"
+                       -pdbfiles "$<TARGET_PDB_FILE:${PROJECT_NAME}>"
                        -toolsPath "${PDB_TOOLS_PATH}"
             VERBATIM
             )

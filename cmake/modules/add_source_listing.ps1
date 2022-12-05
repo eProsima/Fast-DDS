@@ -29,7 +29,6 @@ script from cmd.')]
 [ValidateScript({ $_ -split(";") | % { Test-Path $_ -PathType Leaf }})]
 [String]$pdbfiles,
 [Parameter(
-ParameterSetName='shell',
 HelpMessage = 'Path to the srcsrv ancillary tools')]
 [ValidateScript({(Test-Path $_ -PathType Container) -and (ls -Path (Join-Path $_ *) -Include pdbstr.exe, srctool.exe) })]
 [String]$toolsPath
@@ -52,10 +51,9 @@ else
 {
     # if not provided make some introspection
     $kitskey = gi "HKLM:SOFTWARE/Microsoft/Windows Kits/Installed Roots"
-    $kitspath = $kitskey.GetValue($kitskey.GetValueNames() -match "kitsRoot")
-    $pdbstr = Resolve-Path "$kitspath*/x64/srcsrv/pdbstr.exe"
+    $kitspath = $kitskey.GetValue($kitskey.GetValueNames() -match "KitsRoot")
+    $pdbstr = Resolve-Path "$kitspath/*/x64/srcsrv/pdbstr.exe"
     $srctool = Resolve-Path "$kitspath/*/x64/srcsrv/srctool.exe"
-
 }
 
 $ErrorActionPreference = 'SilentlyContinue'

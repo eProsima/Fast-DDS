@@ -96,6 +96,18 @@ jobs:
     runs-on: ${{ matrix.configs.os }}
     steps:
 
+      - name: Patch SDK for source indexing
+        if: ${{ matrix.configs.os == 'windows-2019' }}
+        run: |
+            # This is a well known issue and the workarond is taken from there
+            # https://github.com/actions/runner-images/issues/4208
+            $kitskey = gi "HKLM:SOFTWARE/Microsoft/Windows Kits/Installed Roots"
+            $kitspath = $kitskey.GetValue($kitskey.GetValueNames() -match "KitsRoot")
+            $pdbstr64 = Resolve-Path "$kitspath/*/x64/srcsrv/pdbstr.exe"
+            $pdbstr86 = Resolve-Path "$kitspath/*/x86/srcsrv/pdbstr.exe"
+            rm $pdbstr64
+            New-Item -ItemType SymbolicLink -Target $pdbstr86 -Path $pdbstr64
+
       - name: Get minimum supported version of CMake
         uses: lukka/get-cmake@latest
         with:
@@ -109,6 +121,21 @@ jobs:
              {
                 Write-Error "Using wrong cmake version"
              }
+
+             # Introduce EchoArgs to check colcon/cmake calls
+             $mdir = New-Item -Type Directory -Path (Join-Path ($Env:TMP ?? "/tmp") (New-GUID))
+             if($IsWindows)
+             {
+                 Save-Module -Name Pscx -Path $mdir -Repository PSGallery
+                 $echo = gci -Path $mdir -R -Filter EchoArgs*
+             }
+             else # on unix redirect to echo
+             {
+                 $mdir = New-Item -Type Directory -Path (Join-Path /tmp (New-GUID))
+                 $echo = New-Item -Type SymbolicLink -Target (which echo) -Path (Join-Path $mdir EchoArgs)
+             }
+             "PATH=$Env:PATH" + [IO.Path]::PathSeparator + ($echo | Split-Path | gi)
+             | Out-File $Env:GITHUB_ENV -Append -Encoding OEM
 
              # Handle single target/multi target
              $env_variables = @()
@@ -234,6 +261,11 @@ jobs:
                 iwr -Uri https://github.com/ros2/choco-packages/releases/download/2020-02-24/tinyxml2.6.0.0.nupkg -OutFile "$tmpdir\tinyxml2.6.0.0.nupkg"
                 choco install -y -s $tmpdir asio tinyxml2
                 del $tmpdir -Recurse
+
+                # Need to be very explictit in path location due to poor choice on ros2 choco-package composition
+                "CMAKE_PREFIX_PATH=$Env:ProgramData\chocolatey\lib\asio\share\cmake;" +
+                "$Env:ProgramData\chocolatey\lib\tinyxml2\share\cmake;$Env:CMAKE_PREFIX_PATH" |
+                Out-File $Env:GITHUB_ENV -Append -Encoding OEM
              }
              elseif($IsLinux)
              {
@@ -256,6 +288,10 @@ jobs:
              {
                $crt = '-Dgtest_force_shared_crt=ON'
              }
+
+             # Show the args
+             EchoArgs -DBUILD_GMOCK=ON $Env:BUILD_TYPE $crt -DCMAKE_VERBOSE_MAKEFILE=ON `
+                   -B ./build/googletest $Env:BIN_ARCH $Env:HOST_ARCH ./googletest
 
              # Generate
              cmake -DBUILD_GMOCK=ON $Env:BUILD_TYPE $crt -DCMAKE_VERBOSE_MAKEFILE=ON `
@@ -628,7 +664,7 @@ jobs:
            # For convenience use an array to pass the arguments
            $buildargs = "--merge-install",
                         "--symlink-install",
-                        "--event-handlers=console_cohesion+",
+                        "--event-handlers=console_direct+",
                         "--packages-up-to", "fastrtps",
                         "--mixin", $translate["${{ matrix.configs.config }}"]
 
@@ -651,6 +687,9 @@ jobs:
               $cmakeargs += $Env:BIN_ARCH, $Env:HOST_ARCH
            }
 
+           # Show the args
+           EchoArgs $buildargs --metas ci.meta --executor sequential ${{ inputs.colcon_args }} $cmakeargs
+
            "::group::cmake summary"
            colcon build $buildargs --metas ci.meta --executor sequential ${{ inputs.colcon_args }} $cmakeargs
            "::endgroup::"
@@ -669,14 +708,16 @@ jobs:
            # Show only warnings or error reports but do not fail
            $LASTEXITCODE=0
            $WarningPreference = $ErrorActionPreference = 'Continue'
-           $reports = gci -Path ./log/* -R -Filter stderr.log | ? { sls -Path $_ -Pattern "error|warning" }
+           $reports = gci -Path ./log/build_* -R -Filter stderr.log | ? { sls -Path $_ -Pattern "error|warning" }
+
+           $reports.FullName
 
            if($reports)
            {
                $logFolder = New-Item -Type Directory -Path build_logs
                $msg = "There were $report_kind in some packages:"
                & $wm $msg
-               (($reports.fullname | sls "log/build_[\d-_]*/(?<package>[^/]*)/stderr.log").Matches.Groups |
+               (($reports.FullName | sls "log.build_[\d-_]*.(?<package>[^/]*).stderr.log").Matches.Groups |
                    ? name -eq "package").value | % {
                        $msg += " $_"
                        & $wm $_
@@ -702,6 +743,10 @@ jobs:
 
            # add valgring testing if the install step succeeds
            $ctestargs = "${{ inputs.ctest_args }}".split(" ")
+
+           # Show the arguments
+           EchoArgs --packages-select fastrtps --event-handlers=console_direct+ `
+              --merge-install --executor sequential --ctest-args $ctestargs --timeout 300 --output-junit $junit
 
            # Run the testing
            "::group::ctest summary"
@@ -753,6 +798,10 @@ jobs:
                           '--xml-pretty',
                           '--html-details', "$coverageDir/coverage.html".replace("\","/")
 
+             # Show the args
+             EchoArgs $gcov_args
+
+             # Actual call
              gcovr $gcov_args
 
       - name: Test Summary
