@@ -50,7 +50,7 @@ namespace rtps {
 using Log = fastdds::dds::Log;
 
 template<typename T>
-using deleted_unique_ptr = std::unique_ptr<T,std::function<void(T*)>>;
+using deleted_unique_ptr = std::unique_ptr<T, std::function<void (T*)>>;
 
 /**
  * Provides shared memory functionallity abstrating from
@@ -113,7 +113,8 @@ public:
             std::lock_guard<std::mutex> lock(mtx_());
 
             named_mutex = deleted_unique_ptr<SharedSegmentBase::named_mutex>(
-                new SharedSegmentBase::named_mutex(boost::interprocess::open_or_create, mutex_name.c_str()), [](SharedSegmentBase::named_mutex* p)
+                new SharedSegmentBase::named_mutex(boost::interprocess::open_or_create, mutex_name.c_str()),
+                [](SharedSegmentBase::named_mutex* p)
                 {
                     std::lock_guard<std::mutex> lock(mtx_());
                     delete p;
@@ -133,7 +134,8 @@ public:
                 std::lock_guard<std::mutex> lock(mtx_());
 
                 named_mutex = deleted_unique_ptr<SharedSegmentBase::named_mutex>(
-                    new SharedSegmentBase::named_mutex(boost::interprocess::open_or_create, mutex_name.c_str()), [](SharedSegmentBase::named_mutex* p)
+                    new SharedSegmentBase::named_mutex(boost::interprocess::open_or_create, mutex_name.c_str()),
+                    [](SharedSegmentBase::named_mutex* p)
                     {
                         std::lock_guard<std::mutex> lock(mtx_());
                         delete p;
@@ -158,7 +160,8 @@ public:
             std::lock_guard<std::mutex> lock(mtx_());
 
             named_mutex = deleted_unique_ptr<SharedSegmentBase::named_mutex>(
-                new SharedSegmentBase::named_mutex(boost::interprocess::open_only, mutex_name.c_str()), [](SharedSegmentBase::named_mutex* p)
+                new SharedSegmentBase::named_mutex(boost::interprocess::open_only, mutex_name.c_str()),
+                [](SharedSegmentBase::named_mutex* p)
                 {
                     std::lock_guard<std::mutex> lock(mtx_());
                     delete p;
@@ -187,7 +190,8 @@ public:
             std::lock_guard<std::mutex> lock(mtx_());
 
             named_mutex = deleted_unique_ptr<SharedSegmentBase::named_mutex>(
-                new SharedSegmentBase::named_mutex(boost::interprocess::open_or_create, mutex_name.c_str()), [](SharedSegmentBase::named_mutex* p)
+                new SharedSegmentBase::named_mutex(boost::interprocess::open_or_create, mutex_name.c_str()),
+                [](SharedSegmentBase::named_mutex* p)
                 {
                     std::lock_guard<std::mutex> lock(mtx_());
                     delete p;
@@ -208,7 +212,8 @@ public:
             std::lock_guard<std::mutex> lock(mtx_());
 
             named_mutex = deleted_unique_ptr<SharedSegmentBase::named_mutex>(
-                new SharedSegmentBase::named_mutex(boost::interprocess::open_only, mutex_name.c_str()), [](SharedSegmentBase::named_mutex* p)
+                new SharedSegmentBase::named_mutex(boost::interprocess::open_only, mutex_name.c_str()),
+                [](SharedSegmentBase::named_mutex* p)
                 {
                     std::lock_guard<std::mutex> lock(mtx_());
                     delete p;
@@ -304,6 +309,7 @@ private:
         static std::mutex mtx_;
         return mtx_;
     }
+
 };
 
 template<typename T, typename U>
