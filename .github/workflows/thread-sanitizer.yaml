@@ -154,8 +154,10 @@ jobs:
           pushd ./ws/build/fastdds/reports
           # Install the report parser module
           Find-Module -Repository PSGallery -Name SanReportParser | Install-Module -Scope CurrentUser -Force
-          # Parse the report files
-          $rp = Show-Tsan (gci)
+          ## Parse the report files
+          ## $rp = Show-Tsan (gci)
+          # Parse the report files ... in a single thread
+          $rp = gci | Show-Tsan
           # filter duplicates
           $rp = $rp | group md5hash | % { $_.group[0] }
           # Export raw data
