@@ -33,7 +33,6 @@
 
 #ifdef FASTDDS_STATISTICS
 #include <statistics/fastdds/domain/DomainParticipantImpl.hpp>
-#include <statistics/fastdds/publisher/PublisherImpl.hpp>
 #endif // ifdef FASTDDS_STATISTICS
 
 namespace eprosima {
