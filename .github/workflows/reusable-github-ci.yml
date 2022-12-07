@@ -49,27 +49,35 @@ jobs:
     steps:
         - id: set-matrix
           run: |
-               # lower cmake version that supports VS2019
+               # lower cmake version required for Fast-DDS
+               [version]$cmake_minimum_requirement = "3.16.3"
+               # lower cmake version that supports VS2022
                [version]$vsver = "3.21.0"
+
                # Use a vector of dictionaries instead of a fixed size matrix
                $configs = @()
                foreach($os in (ConvertFrom-Json '${{ inputs.os }}'))
                {
                    $map = @{}
-                   $map.cmake_minimum_requirement = "3.16.3"
+
+                   # if we are using windows-2022 upgrade CMake version 
+                   if( $os -eq "windows-2022" )
+                   {
+                       $map.cmake_minimum_requirement = $vsver.ToString(3)
+                   }
+                   else
+                   {
+                       $map.cmake_minimum_requirement = $cmake_minimum_requirement.ToString(3)
+                   }
+
                    $map.os = $os
 
                    foreach($config in (ConvertFrom-Json '${{ inputs.config }}'))
                    {
                        $map.config = $config
 
-                       if( $os -match "windows")
+                       if( $os -match "windows" )
                        {
-                           if( $vsver -gt [version]$map.cmake_minimum_requirement)
-                           { # force minimal version supported
-                               $map.cmake_minimum_requirement = $vsver.ToString(3)
-                           }
-
                            foreach($ts in (ConvertFrom-Json '${{ inputs.vs_toolset }}'))
                            {
                                $map.toolset = $ts
@@ -291,22 +299,22 @@ jobs:
 
              # Show the args
              EchoArgs -DBUILD_GMOCK=ON $Env:BUILD_TYPE $crt -DCMAKE_VERBOSE_MAKEFILE=ON `
-                   -B ./build/googletest $Env:BIN_ARCH $Env:HOST_ARCH ./googletest
+                   -B ./build/googletest "$Env:BIN_ARCH".split(" ") "$Env:HOST_ARCH".split(" ") ./googletest
 
              # Generate
              cmake -DBUILD_GMOCK=ON $Env:BUILD_TYPE $crt -DCMAKE_VERBOSE_MAKEFILE=ON `
-                   -B ./build/googletest $Env:BIN_ARCH $Env:HOST_ARCH ./googletest
+                   -B ./build/googletest "$Env:BIN_ARCH".split(" ") "$Env:HOST_ARCH".split(" ") ./googletest
 
              # Build and install elevated if required
-             $build = { cmake --build ./build/googletest --target install $Env:CONFIG_TYPE --verbose }
+             $build = { cmake --build ./build/googletest --target install "$Env:CONFIG_TYPE".split(" ") --verbose }
              $IsLinux ? (sudo pwsh -C $build) : (& $build) | Tee-Object -FilePath gtest.log
 
              # Hint install dir
              if($IsWindows)
              {
-               $pattern = ("$Env:ProgramFiles" -replace "\\","/") + "/.*/GTestConfig.cmake"
+               $pattern = "-- Installing:\s+(?<cmake_path>.*)/GTestConfig.cmake"
                $matches = sls -Path gtest.log -Pattern $pattern
-               $Env:GTest_DIR = $matches.Matches.Value | Split-Path -Parent
+               $Env:GTest_DIR = ($matches.Matches.Groups | ? name -eq cmake_path).Value
                ("GTest_DIR=" + $Env:GTest_DIR) | Out-File $Env:GITHUB_ENV -Append -Encoding OEM
              }
 
@@ -674,7 +682,7 @@ jobs:
               $buildargs += "--mixin", "coverage-gcc"
            }
 
-           $cmakeargs = ,"--cmake-args" + '${{ inputs.cmake_args }}'.split(" ")
+           $cmakeargs = '--cmake-args ${{ inputs.cmake_args }} '
 
            # On Windows we must load the developer environment and chose a config
            if($IsWindows)
@@ -684,14 +692,14 @@ jobs:
               Enter-VsDevShell -SetDefaultWindowTitle -VsInstallPath $pwshmodule.Directory.Parent.Parent `
                                -StartInPath (pwd) -DevCmdArguments '/arch=x64 /host_arch=x64'
 
-              $cmakeargs += $Env:BIN_ARCH, $Env:HOST_ARCH
+              $cmakeargs += "$Env:BIN_ARCH $Env:HOST_ARCH"
            }
 
            # Show the args
-           EchoArgs $buildargs --metas ci.meta --executor sequential ${{ inputs.colcon_args }} $cmakeargs
+           EchoArgs $buildargs --metas ci.meta --executor sequential ${{ inputs.colcon_args }} $cmakeargs.split(" ")
 
            "::group::cmake summary"
-           colcon build $buildargs --metas ci.meta --executor sequential ${{ inputs.colcon_args }} $cmakeargs
+           colcon build $buildargs --metas ci.meta --executor sequential ${{ inputs.colcon_args }} $cmakeargs.split(" ")
            "::endgroup::"
 
            $output_buffer = ""
@@ -742,7 +750,7 @@ jobs:
            'JUNIT_LOG=' + $junit.FullName | Out-File $Env:GITHUB_ENV -Append -Encoding OEM
 
            # add valgring testing if the install step succeeds
-           $ctestargs = "${{ inputs.ctest_args }}".split(" ")
+           $ctestargs = '${{ inputs.ctest_args }}'.split(" ")
 
            # Show the arguments
            EchoArgs --packages-select fastrtps --event-handlers=console_direct+ `

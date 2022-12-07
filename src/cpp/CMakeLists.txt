@@ -660,7 +660,9 @@ if(MSVC OR MSVC_IDE)
         add_custom_command(
             TARGET ${PROJECT_NAME} POST_BUILD
             COMMENT "Adding source indexing to pdb symbols"
-            COMMAND "$<IF:$<CONFIG:Debug,RelWithDebInfo>,powershell,exit>"
+# TODO (Barro): upgrade generator expression when upgraded to version 3.19
+#           COMMAND "$<IF:$<CONFIG:Debug,RelWithDebInfo>,powershell,exit>"
+            COMMAND "$<IF:$<OR:$<CONFIG:Debug>,$<CONFIG:RelWithDebInfo>>,powershell,exit>"
                        -ExecutionPolicy Bypass
                        -File "${CMAKE_SOURCE_DIR}/cmake/modules/add_source_listing.ps1"
                        -pdbfiles "$<TARGET_PDB_FILE:${PROJECT_NAME}>"
