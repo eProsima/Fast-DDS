@@ -732,7 +732,7 @@ TEST_F(RTPSStatisticsTests, statistics_rpts_listener_callbacks_fragmented)
             static uint32_t max_fragment = 0;
             static bool keep_filtering = true;
 
-            uint32_t fragmentNum;
+            uint32_t fragmentNum = 0;
             uint32_t old_pos = msg.pos;
             msg.pos += 20;
             fastrtps::rtps::CDRMessage::readUInt32(&msg, &fragmentNum);
