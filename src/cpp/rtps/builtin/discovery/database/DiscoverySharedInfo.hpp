@@ -61,8 +61,8 @@ public:
         EPROSIMA_LOG_INFO(
             DISCOVERY_DATABASE,
             "Adding relevant participant " << guid_p
-                << " with status " << status
-                << " to " << fastrtps::rtps::iHandle2GUID(change_->instanceHandle));
+                                           << " with status " << status
+                                           << " to " << fastrtps::rtps::iHandle2GUID(change_->instanceHandle));
         relevant_participants_builtin_ack_status_.add_or_update_participant(guid_p, status);
     }
 
