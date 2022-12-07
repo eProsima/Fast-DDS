@@ -15,8 +15,13 @@
 #ifndef _FASTDDS_TCP_ACCEPTOR_SECURE_
 #define _FASTDDS_TCP_ACCEPTOR_SECURE_
 
+<<<<<<< HEAD:include/fastdds/rtps/transport/TCPAcceptorSecure.h
 #include <fastdds/rtps/transport/TCPAcceptor.h>
 #include <fastdds/rtps/transport/TCPChannelResourceSecure.h>
+=======
+#define OPENSSL_API_COMPAT 10101
+
+>>>>>>> d024c109e (Several fixes to remove warnings in Ubuntu Jammy (22.04) (#3078)):src/cpp/rtps/transport/TCPAcceptorSecure.h
 #include <asio/ssl.hpp>
 
 namespace eprosima{
