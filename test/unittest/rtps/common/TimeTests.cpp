@@ -37,7 +37,7 @@ TEST(TimeTest, serialize_operator)
     Time_t t2(1, 0);
     t2.nanosec(1);
     ss << t2;
-    ASSERT_EQ(ss.str(), "1.000000001");
+    ASSERT_EQ(ss.str(), "1.1");
     ss.str("");
     ss.clear();
 
@@ -55,16 +55,17 @@ TEST(TimeTest, serialize_operator)
     ss.str("");
     ss.clear();
 
-    Time_t t5(0.000000002);
+    //! numeric converison when fraction precision
+    Time_t t5(0.000002);
     ss << t5;
-    ASSERT_EQ(ss.str(), "0.000000002");
+    ASSERT_EQ(ss.str(), "0.1999");
     ss.str("");
     ss.clear();
 
     // sec & frac constructor
     Time_t t6(4346, 5);
     ss << t6;
-    ASSERT_EQ(ss.str(), "4346.000000001");
+    ASSERT_EQ(ss.str(), "4346.1");
     ss.str("");
     ss.clear();
 }
@@ -85,12 +86,12 @@ TEST(TimeTest, deserialize_operator)
     std::stringstream st1("1.002");
     st1 >> t;
     ASSERT_EQ(t.seconds(), 1);
-    ASSERT_EQ(t.nanosec(), 2000000u);
+    ASSERT_EQ(t.nanosec(), 2u);
 
     std::stringstream st2("0.000003");
     st2 >> t;
     ASSERT_EQ(t.seconds(), 0);
-    ASSERT_EQ(t.nanosec(), 3000u);
+    ASSERT_EQ(t.nanosec(), 3u);
 
     // Non nanosecs
     std::stringstream st3("12");
@@ -113,7 +114,7 @@ TEST(TimeTest, deserialize_operator)
     std::stringstream st6("123.456789");
     st6 >> t;
     ASSERT_EQ(t.seconds(), 123);
-    ASSERT_EQ(t.nanosec(), 456789000u);
+    ASSERT_EQ(t.nanosec(), 456789u);
 }
 
 /*
@@ -128,34 +129,41 @@ TEST(TimeTest, bad_format_deserialize_operator)
         std::stringstream st("1.1231231231");
         st >> t;
         ASSERT_EQ(t.seconds(), 1);
-        ASSERT_EQ(t.nanosec(), 123123123u);
+        ASSERT_EQ(t.nanosec(), 231231231u);
     }
 
     {
         std::stringstream st("2.789789789789");
         st >> t;
         ASSERT_EQ(t.seconds(), 2);
-        ASSERT_EQ(t.nanosec(), 789789789u);
+        ASSERT_EQ(t.nanosec(), 294967295);
     }
 
     {
         std::stringstream st("1234.999999999999");
         st >> t;
         ASSERT_EQ(t.seconds(), 1234);
-        ASSERT_EQ(t.nanosec(), 999999999u);
+        ASSERT_EQ(t.nanosec(), 294967295);
     }
 
     {
         std::stringstream st("55.1000000001");
         st >> t;
         ASSERT_EQ(t.seconds(), 55);
-        ASSERT_EQ(t.nanosec(), 100000000u);
+        ASSERT_EQ(t.nanosec(), 1u);
     }
 
-    // Check if incorrect format, the time is not set
-    // Negative case
+    // Check a negative case
     {
         std::stringstream st("-3");
+        st >> t;
+        ASSERT_EQ(t.seconds(), -3);
+        ASSERT_EQ(t.nanosec(), 0u);
+    }
+
+    // One second from nanosecond case, set to zero time
+    {
+        std::stringstream st("0.1000000000");
         st >> t;
         ASSERT_EQ(t.seconds(), 0);
         ASSERT_EQ(t.nanosec(), 0u);
@@ -181,7 +189,7 @@ TEST(TimeTest, bad_format_deserialize_operator)
         std::stringstream st("9.3non_number4");
         st >> t;
         ASSERT_EQ(t.seconds(), 9);
-        ASSERT_EQ(t.nanosec(), 300000000u);
+        ASSERT_EQ(t.nanosec(), 3u);
     }
 }
 

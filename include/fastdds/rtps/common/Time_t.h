@@ -18,13 +18,10 @@
 
 #ifndef _FASTDDS_RTPS_TIME_T_H_
 #define _FASTDDS_RTPS_TIME_T_H_
-
+#include <fastrtps/fastrtps_dll.h>
 #include <cmath>
 #include <cstdint>
 #include <iostream>
-#include <string>
-
-#include <fastrtps/fastrtps_dll.h>
 
 namespace eprosima {
 namespace fastrtps {
@@ -376,15 +373,7 @@ inline std::ostream& operator <<(
         std::ostream& output,
         const Time_t& t)
 {
-    std::string nano_st = std::to_string(t.nanosec());
-    nano_st.insert(0, 9 - nano_st.length(), '0');
-
-    while (nano_st.length() > 1 && nano_st.at(nano_st.length() - 1) == '0')
-    {
-        nano_st.pop_back();
-    }
-
-    return output << t.seconds() << "." << nano_st;
+    return output << t.seconds() << "." << t.nanosec();
 }
 
 inline std::istream& operator >>(
@@ -395,30 +384,30 @@ inline std::istream& operator >>(
 
     if (s)
     {
-        // Variable to store point in double
-        long double time_in_double;
-
+        char point;
+        int32_t sec = 0;
+        uint32_t nano = 0;
         std::ios_base::iostate excp_mask = input.exceptions();
 
         try
         {
             input.exceptions(excp_mask | std::ios_base::failbit | std::ios_base::badbit);
 
-            input >> time_in_double;
-            if (time_in_double < 0)
+            input >> sec;
+            input >> point >> nano;
+            // nano could not be bigger or equal than 1 sec
+            if ( point != '.' || nano >= 1000000000 )
             {
-                // Error, negative time
-                t = Time_t();
-            }
-            else
-            {
-                t = Time_t(time_in_double);
+                input.setstate(std::ios_base::failbit);
+                nano = 0;
             }
         }
         catch (std::ios_base::failure& )
         {
-            t = Time_t();
         }
+
+        t.seconds(sec);
+        t.nanosec(nano);
 
         input.exceptions(excp_mask);
     }
