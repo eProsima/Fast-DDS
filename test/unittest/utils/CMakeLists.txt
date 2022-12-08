@@ -141,7 +141,7 @@ add_gtest(SystemInfoTests SOURCES ${SYSTEMINFOTESTS_SOURCE})
 add_executable(SharedMutexTests shared_mutex_tests.cpp)
 target_compile_definitions(SharedMutexTests PUBLIC USE_THIRDPARTY_SHARED_MUTEX=1)
 target_include_directories(SharedMutexTests PUBLIC ${PROJECT_SOURCE_DIR}/include)
-target_link_libraries(SharedMutexTests PUBLIC GTest::gtest)
+target_link_libraries(SharedMutexTests PUBLIC GTest::gtest $<TARGET_NAME_IF_EXISTS:fastdds::wer>)
 add_gtest(SharedMutexTests SOURCES shared_mutex_tests.cpp)
 
 ###############################################################################

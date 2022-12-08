@@ -174,6 +174,7 @@ target_include_directories(OldLogMacrosTests PRIVATE
     ${PROJECT_SOURCE_DIR}/src/cpp)
 target_link_libraries(OldLogMacrosTests GTest::gtest ${MOCKS}
     $<$<BOOL:${WIN32}>:iphlpapi$<SEMICOLON>Shlwapi>
+    $<TARGET_NAME_IF_EXISTS:fastdds::wer>
     )
 add_gtest(OldLogMacrosTests SOURCES ${LOGMACROS_ALL_TEST_SOURCE})
 
@@ -195,6 +196,7 @@ target_include_directories(OldLogMacrosDisableTests PRIVATE
     ${PROJECT_SOURCE_DIR}/src/cpp)
 target_link_libraries(OldLogMacrosDisableTests GTest::gtest ${MOCKS}
     $<$<BOOL:${WIN32}>:iphlpapi$<SEMICOLON>Shlwapi>
+    $<TARGET_NAME_IF_EXISTS:fastdds::wer>
     )
 add_gtest(OldLogMacrosDisableTests SOURCES ${LOGMACROS_ALL_TEST_SOURCE})
 
