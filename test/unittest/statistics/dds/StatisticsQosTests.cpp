@@ -16,10 +16,6 @@
 
 #include <gtest/gtest.h>
 
-#ifdef WER_ENABLED
-#   include <wer.hpp>
-#endif
-
 #include <tinyxml2.h>
 
 #include <fastdds/dds/core/policy/QosPolicies.hpp>

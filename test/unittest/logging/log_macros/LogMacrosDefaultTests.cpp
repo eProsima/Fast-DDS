@@ -18,10 +18,6 @@
 #include "LogMacros.hpp"
 #include <gtest/gtest.h>
 
-#ifdef WER_ENABLED
-#   include <wer.hpp>
-#endif
-
 #define log_str(x) #x
 #define macro_print(mname) std::cout << #mname << " = " << \
         (std::string(#mname) == log_str(mname) ? "" : log_str(mname)) << std::endl

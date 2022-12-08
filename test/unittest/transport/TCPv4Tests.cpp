@@ -17,10 +17,6 @@
 
 #include <asio.hpp>
 #include <gtest/gtest.h>
-
-#ifdef WER_ENABLED
-#   include <wer.hpp>
-#endif
 #include <MockReceiverResource.h>
 #include "mock/MockTCPChannelResource.h"
 #include "mock/MockTCPv4Transport.h"

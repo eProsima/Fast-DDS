@@ -34,10 +34,6 @@
 #include "LogMacros.hpp"
 #include <gtest/gtest.h>
 
-#ifdef WER_ENABLED
-#   include <wer.hpp>
-#endif
-
 /* Check all log levels are actived and consumed
  * This test's name can be misunderstood. All active refers to all log level activated, that is why
  * all define clauses are set to 0 (negative macros)

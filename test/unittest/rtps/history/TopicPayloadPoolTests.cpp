@@ -14,10 +14,6 @@
 
 #include <gtest/gtest.h>
 
-#ifdef WER_ENABLED
-#   include <wer.hpp>
-#endif
-
 #include <rtps/history/TopicPayloadPool.hpp>
 
 #include <tuple>

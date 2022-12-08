@@ -15,10 +15,6 @@
 #include <array>
 
 #include <gtest/gtest.h>
-
-#ifdef WER_ENABLED
-#   include <wer.hpp>
-#endif
 #include <gmock/gmock.h>
 
 #include <fastdds/dds/publisher/DataWriter.hpp>

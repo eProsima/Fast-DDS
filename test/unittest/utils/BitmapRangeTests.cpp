@@ -16,10 +16,6 @@
 #include <fastrtps/utils/fixed_size_bitmap.hpp>
 #include <gtest/gtest.h>
 
-#ifdef WER_ENABLED
-#   include <wer.hpp>
-#endif
-
 #include <algorithm>
 #include <vector>
 #include <set>

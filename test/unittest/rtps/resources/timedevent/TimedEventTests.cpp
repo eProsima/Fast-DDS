@@ -18,10 +18,6 @@
 #include <random>
 #include <gtest/gtest.h>
 
-#ifdef WER_ENABLED
-#   include <wer.hpp>
-#endif
-
 class TimedEventEnvironment : public ::testing::Environment
 {
 public:

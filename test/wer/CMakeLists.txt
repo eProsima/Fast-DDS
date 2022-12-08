@@ -37,10 +37,8 @@ add_library(wer INTERFACE)
 # introduce an alias to make even external and internal linking
 add_library(fastdds::wer ALIAS wer)
 
-target_include_directories(wer INTERFACE ${CMAKE_CURRENT_SOURCE_DIR})
-
-# If the dependent test doesn't use gtest this is harmless
-target_link_libraries(wer INTERFACE GTest::gtest)
+# Include this source on the project
+target_sources(wer INTERFACE wer.cpp)
 
 # Specify the timeout time in seconds
 target_compile_definitions(wer INTERFACE WER_ENABLED WER_TIMEOUT_TIME=${WER_TIMEOUT_TIME})

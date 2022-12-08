@@ -14,10 +14,6 @@
 
 #include <gtest/gtest.h>
 
-#ifdef WER_ENABLED
-#   include <wer.hpp>
-#endif
-
 #include <fastdds/rtps/common/GuidPrefix_t.hpp>
 
 using GuidPrefix = eprosima::fastrtps::rtps::GuidPrefix_t;

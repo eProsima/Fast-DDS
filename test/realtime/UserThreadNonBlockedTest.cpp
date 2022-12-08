@@ -14,10 +14,6 @@
 #include <chrono>
 #include <gtest/gtest.h>
 
-#ifdef WER_ENABLED
-#   include <wer.hpp>
-#endif
-
 class DummyType:public eprosima::fastrtps::TopicDataType
 {
     public:

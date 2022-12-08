@@ -3,10 +3,6 @@
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
 
-#ifdef WER_ENABLED
-#   include <wer.hpp>
-#endif
-
 /*!
  * \test DDS-OWN-INST-01 Tests instance's owner changes successfully when the current owner's instance changes its
  * ownership strength.

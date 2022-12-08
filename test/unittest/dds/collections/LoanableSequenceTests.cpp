@@ -24,10 +24,6 @@
 
 #include <gtest/gtest.h>
 
-#ifdef WER_ENABLED
-#   include <wer.hpp>
-#endif
-
 using namespace eprosima::fastdds::dds;
 using test_size_type = LoanableCollection::size_type;
 

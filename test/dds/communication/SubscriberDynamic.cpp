@@ -38,10 +38,6 @@
 #include <fastrtps/types/DynamicData.h>
 #include <fastrtps/types/TypeObjectFactory.h>
 
-#ifdef WER_ENABLED
-#   include <wer.hpp>
-#endif
-
 using namespace eprosima::fastdds::dds;
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;

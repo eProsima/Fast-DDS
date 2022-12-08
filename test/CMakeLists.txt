@@ -17,16 +17,16 @@ option(SYSTEM_TESTS "Activate the building and execution of system tests" OFF)
 option(PROFILING_TESTS "Activate the building and execution of profiling tests" OFF)
 option(EPROSIMA_BUILD_TESTS "Activate the building and execution unit tests and integral tests" OFF)
 
-if(MSVC)
-    option(ENABLE_WER "Allow windows crash dump generation on crashes and timeouts" OFF)
-    cmake_dependent_option(WER_TIMEOUT_TIME
-        [=[CTest doesn't support WER thus the testing will timeout independently
-        in the number of seconds specified. If combined with CTest timeout make
-        sure CTest value is larger.
-        Timeout can only be used if the binaries are launched for each individual
-        test otherwise set a timeout value is impossible. ]=]
-        300 "ENABLE_WER;GTEST_INDIVIDUAL" 21600)
-endif(MSVC)
+cmake_dependent_option(ENABLE_WER
+    [=[Allow windows crash dump generation on crashes and timeouts.
+    WER can only be used if the binaries are launched for each individual
+    test otherwise some of the tests may not be executed. ]=]
+    OFF "WIN32;GTEST_INDIVIDUAL" OFF)
+
+cmake_dependent_option(WER_TIMEOUT_TIME
+    [=[Timeout in seconds to raise a WER exception.
+    If combined with CTest timeout make sure CTest value is larger.]=]
+    300 "ENABLE_WER" 0)
 
 if(EPROSIMA_BUILD)
     set(EPROSIMA_BUILD_TESTS ON)

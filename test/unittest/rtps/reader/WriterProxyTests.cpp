@@ -15,10 +15,6 @@
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
 
-#ifdef WER_ENABLED
-#   include <wer.hpp>
-#endif
-
 #define TEST_FRIENDS \
     FRIEND_TEST(WriterProxyTests, MissingChangesUpdate); \
     FRIEND_TEST(WriterProxyTests, LostChangesUpdate); \

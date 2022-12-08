@@ -20,10 +20,6 @@
 #include <fastdds/dds/domain/DomainParticipantFactory.hpp>
 #include <fastrtps/Domain.h>
 
-#ifdef WER_ENABLED
-#   include <wer.hpp>
-#endif
-
 using namespace eprosima::fastdds::dds;
 
 /* ARGUMENTS

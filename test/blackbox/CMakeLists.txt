@@ -52,14 +52,28 @@ macro(add_blackbox_gtest)
             string(REPLACE ";" "\\;" WIN_PATH "${WIN_PATH}")
         endif()
 
+        # Add environment
+        set(GTEST_ENVIRONMENT "")
+        if(WIN32)
+            set(GTEST_ENVIRONMENT "PATH=${WIN_PATH}")
+        endif()
+
+        foreach(property ${GTEST_ENVIRONMENTS})
+            list(APPEND GTEST_ENVIRONMENT "${property}")
+        endforeach()
+
+        if(ENABLE_WER)
+        # To enable operation on gtest disable unexpected exception catching
+        # Note individual must be enforced to avoid running multiple tests in a suite
+            list(APPEND GTEST_ENVIRONMENT "GTEST_CATCH_EXCEPTIONS=0")
+        endif()
+
         foreach(GTEST_SOURCE_FILE ${GTEST_SOURCES})
             file(STRINGS ${GTEST_SOURCE_FILE} GTEST_TEST_NAMES REGEX "^TEST(\\(|_F)" )
             foreach(GTEST_TEST_NAME ${GTEST_TEST_NAMES})
                 string(REGEX REPLACE ["\) \(,"] ";" GTEST_TEST_NAME ${GTEST_TEST_NAME})
                 list(GET GTEST_TEST_NAME 1 GTEST_GROUP_NAME)
                 list(GET GTEST_TEST_NAME 3 GTEST_TEST_NAME)
-                add_test(NAME ${test}.${GTEST_GROUP_NAME}.${GTEST_TEST_NAME}
-                    COMMAND ${command} --gtest_filter=${GTEST_GROUP_NAME}.${GTEST_TEST_NAME})
 
                 # decide if disable
                 unset(GTEST_USER_DISABLED)
@@ -70,17 +84,12 @@ macro(add_blackbox_gtest)
                     endif()
                 endforeach()
 
-                # Add environment
-                if(WIN32)
-                    set_property(TEST ${test}.${GTEST_GROUP_NAME}.${GTEST_TEST_NAME} APPEND PROPERTY ENVIRONMENT "PATH=${WIN_PATH}")
-                endif()
+                add_test(NAME ${test}.${GTEST_GROUP_NAME}.${GTEST_TEST_NAME}
+                    COMMAND ${command} --gtest_filter=${GTEST_GROUP_NAME}.${GTEST_TEST_NAME})
 
-                foreach(property ${GTEST_ENVIRONMENTS})
-                    set_property(TEST ${test}.${GTEST_GROUP_NAME}.${GTEST_TEST_NAME} APPEND PROPERTY ENVIRONMENT "${property}")
-                endforeach()
-
-                # Add labels and enable
+                # Add environment, labels and enable
                 set_tests_properties(${test}.${GTEST_GROUP_NAME}.${GTEST_TEST_NAME} PROPERTIES
+                    ENVIRONMENT "${GTEST_ENVIRONMENT}"
                     LABELS "${GTEST_LABELS}"
                     DISABLED $<BOOL:${GTEST_USER_DISABLED}>)
 
@@ -91,9 +100,6 @@ macro(add_blackbox_gtest)
                 list(GET GTEST_TEST_NAME 1 GTEST_GROUP_NAME)
                 list(GET GTEST_TEST_NAME 3 GTEST_TEST_NAME)
 
-                add_test(NAME ${test}.${GTEST_GROUP_NAME}.${GTEST_TEST_NAME}.Transport
-                    COMMAND ${command} --gtest_filter=*/${GTEST_GROUP_NAME}.${GTEST_TEST_NAME}/Transport*)
-
                 # decide if disable
                 unset(GTEST_USER_DISABLED)
                 foreach(GTEST_USER_FILTER ${GTEST_IGNORE})
@@ -103,59 +109,40 @@ macro(add_blackbox_gtest)
                     endif()
                 endforeach()
 
-                # Add environment
-                if(WIN32)
-                    set_property(TEST ${test}.${GTEST_GROUP_NAME}.${GTEST_TEST_NAME}.Transport APPEND PROPERTY ENVIRONMENT "PATH=${WIN_PATH}")
-                endif()
+                add_test(NAME ${test}.${GTEST_GROUP_NAME}.${GTEST_TEST_NAME}.Transport
+                    COMMAND ${command} --gtest_filter=*/${GTEST_GROUP_NAME}.${GTEST_TEST_NAME}/Transport*)
 
-                foreach(property ${GTEST_ENVIRONMENTS})
-                    set_property(TEST ${test}.${GTEST_GROUP_NAME}.${GTEST_TEST_NAME}.Transport APPEND PROPERTY ENVIRONMENT "${property}")
-                endforeach()
-
-                # Add labels and enable
+                # Add environment, labels and enable
                 set_tests_properties(${test}.${GTEST_GROUP_NAME}.${GTEST_TEST_NAME}.Transport PROPERTIES
+                    ENVIRONMENT "${GTEST_ENVIRONMENT}"
                     LABELS "${GTEST_LABELS}"
                     DISABLED $<BOOL:${GTEST_USER_DISABLED}>)
 
                 add_test(NAME ${test}.${GTEST_GROUP_NAME}.${GTEST_TEST_NAME}.Intraprocess
                     COMMAND ${command} --gtest_filter=*/${GTEST_GROUP_NAME}.${GTEST_TEST_NAME}/Intraprocess*)
 
-                # Add environment
-                if(WIN32)
-                    set_property(TEST ${test}.${GTEST_GROUP_NAME}.${GTEST_TEST_NAME}.Intraprocess APPEND PROPERTY ENVIRONMENT "PATH=${WIN_PATH}")
-                endif()
-
-                foreach(property ${GTEST_ENVIRONMENTS})
-                    set_property(TEST ${test}.${GTEST_GROUP_NAME}.${GTEST_TEST_NAME}.Intraprocess APPEND PROPERTY ENVIRONMENT "${property}")
-                endforeach()
-
-                # Add labels and enable
+                # Add environment, labels and enable
                 set_tests_properties(${test}.${GTEST_GROUP_NAME}.${GTEST_TEST_NAME}.Intraprocess PROPERTIES
+                    ENVIRONMENT "${GTEST_ENVIRONMENT}"
                     LABELS "${GTEST_LABELS}"
                     DISABLED $<BOOL:${GTEST_USER_DISABLED}>)
 
                 if(${test} MATCHES ".*_DDS_PIM$")
+
                     add_test(NAME ${test}.${GTEST_GROUP_NAME}.${GTEST_TEST_NAME}.Datasharing
                         COMMAND ${command} --gtest_filter=*/${GTEST_GROUP_NAME}.${GTEST_TEST_NAME}/Datasharing*)
 
-                    # Add environment
-                    if(WIN32)
-                        set_property(TEST ${test}.${GTEST_GROUP_NAME}.${GTEST_TEST_NAME}.Datasharing APPEND PROPERTY ENVIRONMENT "PATH=${WIN_PATH}")
-                    endif()
-
-                    foreach(property ${GTEST_ENVIRONMENTS})
-                        set_property(TEST ${test}.${GTEST_GROUP_NAME}.${GTEST_TEST_NAME}.Datasharing APPEND PROPERTY ENVIRONMENT "${property}")
-                    endforeach()
-
-                    # Add labels and enable
+                    # Add environment, labels and enable
                     set_tests_properties(${test}.${GTEST_GROUP_NAME}.${GTEST_TEST_NAME}.Datasharing PROPERTIES
+                        ENVIRONMENT "${GTEST_ENVIRONMENT}"
                         LABELS "${GTEST_LABELS}"
                         DISABLED $<BOOL:${GTEST_USER_DISABLED}>)
 
                 endif()
-
             endforeach()
         endforeach()
+        unset(GTEST_ENVIRONMENT)
+
     else()
 
         # add filtering statement if required

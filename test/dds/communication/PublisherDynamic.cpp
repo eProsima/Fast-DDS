@@ -37,10 +37,6 @@
 #include <fstream>
 #include <string>
 
-#ifdef WER_ENABLED
-#   include <wer.hpp>
-#endif
-
 using namespace eprosima::fastdds::dds;
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;

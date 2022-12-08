@@ -14,10 +14,6 @@
 
 #include <gtest/gtest.h>
 
-#ifdef WER_ENABLED
-#   include <wer.hpp>
-#endif
-
 #include <fastdds/rtps/common/Guid.h>
 
 using Guid = eprosima::fastrtps::rtps::GUID_t;

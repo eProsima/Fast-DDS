@@ -3,10 +3,6 @@
 #include <fastrtps/Domain.h>
 #include <fastrtps/TopicDataType.h>
 
-#ifdef WER_ENABLED
-#   include <wer.hpp>
-#endif
-
 int main(
         int argc,
         char** argv)

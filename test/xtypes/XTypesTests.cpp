@@ -12,14 +12,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include <gtest/gtest.h>
-
-#ifdef WER_ENABLED
-#   include <wer.hpp>
-#endif
-
 #include "idl/TypesPubSubTypes.h"
 #include "idl/TypesTypeObject.h"
+
+#include <thread>
 
 #include "TestPublisher.h"
 #include "TestSubscriber.h"
@@ -35,6 +31,7 @@
 #include <memory>
 #include <cstdlib>
 #include <string>
+#include <gtest/gtest.h>
 
 #if defined(_WIN32)
 #define GET_PID _getpid

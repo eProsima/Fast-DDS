@@ -28,10 +28,6 @@
 #include <fastrtps/Domain.h>
 #include <fastrtps/xmlparser/XMLProfileManager.h>
 
-#ifdef WER_ENABLED
-#   include <wer.hpp>
-#endif
-
 #if defined(_MSC_VER)
 #pragma warning (push)
 #pragma warning (disable:4512)

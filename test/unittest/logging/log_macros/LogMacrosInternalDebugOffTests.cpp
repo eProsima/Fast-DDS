@@ -39,10 +39,6 @@
 #include "LogMacros.hpp"
 #include <gtest/gtest.h>
 
-#ifdef WER_ENABLED
-#   include <wer.hpp>
-#endif
-
 /*
  * WARNING: If this test is not properly working, the expected behaviour would be a compilation failure
  * This test try to send in a macro a value (void) that is not convertible to string, so the compilation

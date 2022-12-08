@@ -5,10 +5,6 @@
 
 #include <gtest/gtest.h>
 
-#ifdef WER_ENABLED
-#   include <wer.hpp>
-#endif
-
 using namespace eprosima::fastrtps::xmlparser;
 
 using namespace ::testing;

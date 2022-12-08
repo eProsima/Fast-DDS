@@ -42,13 +42,27 @@ macro(add_xtypes_gtest test)
                     --gtest_filter=${GTEST_GROUP_NAME}.${GTEST_NAME})
 
                 # Add environment
+                set(GTEST_ENVIRONMENT "")
                 if(WIN32)
-                    set_tests_properties(${GTEST_GROUP_NAME}.${GTEST_NAME} PROPERTIES ENVIRONMENT "PATH=${WIN_PATH}")
+                    set(GTEST_ENVIRONMENT "PATH=${WIN_PATH}")
                 endif()
 
                 foreach(property ${GTEST_ENVIRONMENTS})
-                    set_property(TEST ${GTEST_GROUP_NAME}.${GTEST_NAME} APPEND PROPERTY ENVIRONMENT "${property}")
+                    list(APPEND GTEST_ENVIRONMENT "${property}")
                 endforeach()
+
+                if(ENABLE_WER)
+                # To enable operation on gtest disable unexpected exception catching
+                # Note individual must be enforced to avoid running multiple tests in a suite
+                    list(APPEND GTEST_ENVIRONMENT "GTEST_CATCH_EXCEPTIONS=0")
+                endif()
+
+                if(GTEST_ENVIRONMENT)
+                    set_tests_properties(${GTEST_GROUP_NAME}.${GTEST_NAME} 
+                        PROPERTIES ENVIRONMENT "${GTEST_ENVIRONMENT}")
+                endif()
+                unset(GTEST_ENVIRONMENT)
+
             endforeach()
         endforeach()
     else()

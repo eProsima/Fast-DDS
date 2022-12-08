@@ -90,6 +90,12 @@ macro(add_gtest)
                     list(APPEND GTEST_ENVIRONMENT "${property}")
                 endforeach()
 
+                if(ENABLE_WER)
+                # To enable operation on gtest disable unexpected exception catching
+                # Note individual must be enforced to avoid running multiple tests in a suite
+                    list(APPEND GTEST_ENVIRONMENT "GTEST_CATCH_EXCEPTIONS=0")
+                endif()
+
                 if(GTEST_ENVIRONMENT)
                     set_tests_properties(${GTEST_GROUP_NAME}.${GTEST_TEST_NAME}
                         PROPERTIES ENVIRONMENT "${GTEST_ENVIRONMENT}")
