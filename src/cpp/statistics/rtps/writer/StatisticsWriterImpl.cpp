@@ -21,11 +21,13 @@
 #include <fastdds/rtps/writer/RTPSWriter.h>
 #include <statistics/types/types.h>
 
-using namespace eprosima::fastdds::statistics;
-
 using eprosima::fastrtps::RecursiveTimedMutex;
 using eprosima::fastrtps::rtps::RTPSWriter;
 using eprosima::fastrtps::rtps::GUID_t;
+
+namespace eprosima {
+namespace fastdds {
+namespace statistics {
 
 StatisticsWriterImpl::StatisticsWriterImpl()
 {
@@ -241,3 +243,7 @@ void StatisticsWriterImpl::on_publish_throughput(
                 });
     }
 }
+
+}  // namespace statistics
+}  // namespace fastdds
+}  // namespace eprosima
