@@ -136,14 +136,14 @@ TEST(TimeTest, bad_format_deserialize_operator)
         std::stringstream st("2.789789789789");
         st >> t;
         ASSERT_EQ(t.seconds(), 2);
-        ASSERT_EQ(t.nanosec(), 294967295);
+        ASSERT_EQ(t.nanosec(), 294967295u);
     }
 
     {
         std::stringstream st("1234.999999999999");
         st >> t;
         ASSERT_EQ(t.seconds(), 1234);
-        ASSERT_EQ(t.nanosec(), 294967295);
+        ASSERT_EQ(t.nanosec(), 294967295u);
     }
 
     {
