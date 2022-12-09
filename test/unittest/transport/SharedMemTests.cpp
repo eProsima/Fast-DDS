@@ -2211,8 +2211,8 @@ TEST_F(SHMTransportTests, named_mutex_concurrent_open)
                 // lock has to be done in another thread because
                 // boost::inteprocess_named_mutex and  interprocess_mutex are recursive in Win32
                 auto port_mutex = port_mocker.get_port_mutex(domain_name, 0);
-                bool locked;
-                if ((locked = port_mutex->try_lock()))
+                bool locked = port_mutex->try_lock();
+                if (locked)
                 {
                     ++lock_count;
                 }
@@ -2236,8 +2236,8 @@ TEST_F(SHMTransportTests, named_mutex_concurrent_open)
             );
 
     auto port_mutex = port_mocker.get_port_mutex(domain_name, 0);
-    bool locked;
-    if ((locked = port_mutex->try_lock()))
+    bool locked = port_mutex->try_lock();
+    if (locked)
     {
         ++lock_count;
     }
