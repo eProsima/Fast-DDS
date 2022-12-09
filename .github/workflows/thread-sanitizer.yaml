@@ -157,7 +157,7 @@ jobs:
           ## Parse the report files
           ## $rp = Show-Tsan (gci)
           # Parse the report files ... in a single thread
-          $rp = gci | Show-Tsan
+          $rp = gci | Show-Tsan -Verbose
           # filter duplicates
           $rp = $rp | group md5hash | % { $_.group[0] }
           # Export raw data
