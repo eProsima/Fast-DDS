@@ -52,7 +52,7 @@ StringTest::StringTest(
 }
 
 StringTest::StringTest(
-        StringTest&& x)
+        StringTest&& x) noexcept 
 {
     m_message = std::move(x.m_message);
 }
@@ -67,7 +67,7 @@ StringTest& StringTest::operator =(
 }
 
 StringTest& StringTest::operator =(
-        StringTest&& x)
+        StringTest&& x) noexcept
 {
 
     m_message = std::move(x.m_message);

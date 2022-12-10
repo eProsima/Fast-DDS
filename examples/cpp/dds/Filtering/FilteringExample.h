@@ -93,7 +93,7 @@ public:
      * @param x Reference to the object FilteringExample that will be copied.
      */
     eProsima_user_DllExport FilteringExample(
-            FilteringExample&& x);
+            FilteringExample&& x) noexcept;
 
     /*!
      * @brief Copy assignment.
@@ -107,7 +107,7 @@ public:
      * @param x Reference to the object FilteringExample that will be copied.
      */
     eProsima_user_DllExport FilteringExample& operator =(
-            FilteringExample&& x);
+            FilteringExample&& x) noexcept;
 
     /*!
      * @brief Comparison operator.

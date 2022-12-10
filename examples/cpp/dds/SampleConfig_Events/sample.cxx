@@ -57,7 +57,7 @@ sample::sample(
 }
 
 sample::sample(
-        sample&& x)
+        sample&& x) noexcept 
 {
     m_index = x.m_index;
     m_key_value = x.m_key_value;
@@ -74,7 +74,7 @@ sample& sample::operator =(
 }
 
 sample& sample::operator =(
-        sample&& x)
+        sample&& x) noexcept
 {
 
     m_index = x.m_index;

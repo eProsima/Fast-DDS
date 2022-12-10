@@ -93,7 +93,7 @@ public:
      * @param x Reference to the object StringTest that will be copied.
      */
     eProsima_user_DllExport StringTest(
-            StringTest&& x);
+            StringTest&& x) noexcept;
 
     /*!
      * @brief Copy assignment.
@@ -107,7 +107,7 @@ public:
      * @param x Reference to the object StringTest that will be copied.
      */
     eProsima_user_DllExport StringTest& operator =(
-            StringTest&& x);
+            StringTest&& x) noexcept;
 
     /*!
      * @brief Comparison operator.

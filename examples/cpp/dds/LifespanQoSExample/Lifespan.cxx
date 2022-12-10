@@ -57,7 +57,7 @@ Lifespan::Lifespan(
 }
 
 Lifespan::Lifespan(
-        Lifespan&& x)
+        Lifespan&& x) noexcept 
 {
     m_index = x.m_index;
     m_message = std::move(x.m_message);
@@ -74,7 +74,7 @@ Lifespan& Lifespan::operator =(
 }
 
 Lifespan& Lifespan::operator =(
-        Lifespan&& x)
+        Lifespan&& x) noexcept
 {
 
     m_index = x.m_index;

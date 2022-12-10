@@ -57,7 +57,7 @@ KeyedData1mb::KeyedData1mb(
 }
 
 KeyedData1mb::KeyedData1mb(
-        KeyedData1mb&& x)
+        KeyedData1mb&& x) noexcept 
 {
     m_key = x.m_key;
     m_data = std::move(x.m_data);
@@ -74,7 +74,7 @@ KeyedData1mb& KeyedData1mb::operator =(
 }
 
 KeyedData1mb& KeyedData1mb::operator =(
-        KeyedData1mb&& x)
+        KeyedData1mb&& x) noexcept
 {
 
     m_key = x.m_key;

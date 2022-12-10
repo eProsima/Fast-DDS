@@ -57,7 +57,7 @@ Topic::Topic(
 }
 
 Topic::Topic(
-        Topic&& x)
+        Topic&& x) noexcept 
 {
     m_index = x.m_index;
     m_message = std::move(x.m_message);
@@ -74,7 +74,7 @@ Topic& Topic::operator =(
 }
 
 Topic& Topic::operator =(
-        Topic&& x)
+        Topic&& x) noexcept
 {
 
     m_index = x.m_index;

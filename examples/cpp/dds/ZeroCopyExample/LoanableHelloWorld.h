@@ -93,7 +93,7 @@ public:
      * @param x Reference to the object LoanableHelloWorld that will be copied.
      */
     eProsima_user_DllExport LoanableHelloWorld(
-            LoanableHelloWorld&& x);
+            LoanableHelloWorld&& x) noexcept;
 
     /*!
      * @brief Copy assignment.
@@ -107,7 +107,7 @@ public:
      * @param x Reference to the object LoanableHelloWorld that will be copied.
      */
     eProsima_user_DllExport LoanableHelloWorld& operator =(
-            LoanableHelloWorld&& x);
+            LoanableHelloWorld&& x) noexcept;
 
     /*!
      * @brief Comparison operator.

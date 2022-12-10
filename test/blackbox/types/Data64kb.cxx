@@ -52,7 +52,7 @@ Data64kb::Data64kb(
 }
 
 Data64kb::Data64kb(
-        Data64kb&& x)
+        Data64kb&& x) noexcept 
 {
     m_data = std::move(x.m_data);
 }
@@ -67,7 +67,7 @@ Data64kb& Data64kb::operator =(
 }
 
 Data64kb& Data64kb::operator =(
-        Data64kb&& x)
+        Data64kb&& x) noexcept
 {
 
     m_data = std::move(x.m_data);

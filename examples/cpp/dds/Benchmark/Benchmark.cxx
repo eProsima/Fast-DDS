@@ -52,7 +52,7 @@ BenchMark::BenchMark(
 }
 
 BenchMark::BenchMark(
-        BenchMark&& x)
+        BenchMark&& x) noexcept 
 {
     m_index = x.m_index;
 }
@@ -67,7 +67,7 @@ BenchMark& BenchMark::operator =(
 }
 
 BenchMark& BenchMark::operator =(
-        BenchMark&& x)
+        BenchMark&& x) noexcept
 {
 
     m_index = x.m_index;

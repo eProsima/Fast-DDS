@@ -57,7 +57,7 @@ BenchMarkSmall::BenchMarkSmall(
 }
 
 BenchMarkSmall::BenchMarkSmall(
-        BenchMarkSmall&& x)
+        BenchMarkSmall&& x) noexcept
 {
     m_array = std::move(x.m_array);
     m_index = x.m_index;
@@ -74,7 +74,7 @@ BenchMarkSmall& BenchMarkSmall::operator =(
 }
 
 BenchMarkSmall& BenchMarkSmall::operator =(
-        BenchMarkSmall&& x)
+        BenchMarkSmall&& x) noexcept
 {
 
     m_array = std::move(x.m_array);
@@ -235,5 +235,5 @@ void BenchMarkSmall::serializeKey(
         eprosima::fastcdr::Cdr& scdr) const
 {
     (void) scdr;
-      
+
 }

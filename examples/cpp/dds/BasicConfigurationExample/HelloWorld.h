@@ -93,7 +93,7 @@ public:
      * @param x Reference to the object HelloWorld that will be copied.
      */
     eProsima_user_DllExport HelloWorld(
-            HelloWorld&& x);
+            HelloWorld&& x) noexcept;
 
     /*!
      * @brief Copy assignment.
@@ -107,7 +107,7 @@ public:
      * @param x Reference to the object HelloWorld that will be copied.
      */
     eProsima_user_DllExport HelloWorld& operator =(
-            HelloWorld&& x);
+            HelloWorld&& x) noexcept;
 
     /*!
      * @brief Comparison operator.

@@ -117,7 +117,7 @@ public:
      * @param x Reference to the object StructType that will be copied.
      */
     eProsima_user_DllExport StructType(
-            StructType&& x);
+            StructType&& x) noexcept;
 
     /*!
      * @brief Copy assignment.
@@ -131,7 +131,7 @@ public:
      * @param x Reference to the object StructType that will be copied.
      */
     eProsima_user_DllExport StructType& operator =(
-            StructType&& x);
+            StructType&& x) noexcept;
 
     /*!
      * @brief Comparison operator.
@@ -546,7 +546,7 @@ public:
      * @param x Reference to the object ContentFilterTestType that will be copied.
      */
     eProsima_user_DllExport ContentFilterTestType(
-            ContentFilterTestType&& x);
+            ContentFilterTestType&& x) noexcept;
 
     /*!
      * @brief Copy assignment.
@@ -560,7 +560,7 @@ public:
      * @param x Reference to the object ContentFilterTestType that will be copied.
      */
     eProsima_user_DllExport ContentFilterTestType& operator =(
-            ContentFilterTestType&& x);
+            ContentFilterTestType&& x) noexcept;
 
     /*!
      * @brief Comparison operator.

@@ -57,7 +57,7 @@ FlowControlExample::FlowControlExample(
 }
 
 FlowControlExample::FlowControlExample(
-        FlowControlExample&& x)
+        FlowControlExample&& x) noexcept
 {
     m_message = std::move(x.m_message);
     m_wasFast = x.m_wasFast;
@@ -74,7 +74,7 @@ FlowControlExample& FlowControlExample::operator =(
 }
 
 FlowControlExample& FlowControlExample::operator =(
-        FlowControlExample&& x)
+        FlowControlExample&& x) noexcept
 {
 
     m_message = std::move(x.m_message);
@@ -235,5 +235,5 @@ void FlowControlExample::serializeKey(
         eprosima::fastcdr::Cdr& scdr) const
 {
     (void) scdr;
-      
+
 }

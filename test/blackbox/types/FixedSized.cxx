@@ -52,7 +52,7 @@ FixedSized::FixedSized(
 }
 
 FixedSized::FixedSized(
-        FixedSized&& x)
+        FixedSized&& x) noexcept 
 {
     m_index = x.m_index;
 }
@@ -67,7 +67,7 @@ FixedSized& FixedSized::operator =(
 }
 
 FixedSized& FixedSized::operator =(
-        FixedSized&& x)
+        FixedSized&& x) noexcept
 {
 
     m_index = x.m_index;

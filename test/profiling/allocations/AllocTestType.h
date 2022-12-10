@@ -93,7 +93,7 @@ public:
      * @param x Reference to the object AllocTestType that will be copied.
      */
     eProsima_user_DllExport AllocTestType(
-            AllocTestType&& x);
+            AllocTestType&& x) noexcept;
 
     /*!
      * @brief Copy assignment.
@@ -107,7 +107,7 @@ public:
      * @param x Reference to the object AllocTestType that will be copied.
      */
     eProsima_user_DllExport AllocTestType& operator =(
-            AllocTestType&& x);
+            AllocTestType&& x) noexcept;
 
     /*!
      * @brief Comparison operator.

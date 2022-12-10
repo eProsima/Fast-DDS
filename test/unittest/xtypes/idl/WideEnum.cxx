@@ -56,7 +56,7 @@ MyEnumWideStruct::MyEnumWideStruct(
 }
 
 MyEnumWideStruct::MyEnumWideStruct(
-        MyEnumWideStruct&& x)
+        MyEnumWideStruct&& x) noexcept 
 {
     m_my_enum_wide = x.m_my_enum_wide;
 }
@@ -71,7 +71,7 @@ MyEnumWideStruct& MyEnumWideStruct::operator =(
 }
 
 MyEnumWideStruct& MyEnumWideStruct::operator =(
-        MyEnumWideStruct&& x)
+        MyEnumWideStruct&& x) noexcept
 {
 
     m_my_enum_wide = x.m_my_enum_wide;
@@ -226,7 +226,7 @@ SimpleWideUnion::SimpleWideUnion(
 }
 
 SimpleWideUnion::SimpleWideUnion(
-        SimpleWideUnion&& x)
+        SimpleWideUnion&& x) noexcept
 {
     m__d = x.m__d;
 
@@ -270,7 +270,7 @@ SimpleWideUnion& SimpleWideUnion::operator =(
 }
 
 SimpleWideUnion& SimpleWideUnion::operator =(
-        SimpleWideUnion&& x)
+        SimpleWideUnion&& x) noexcept
 {
     m__d = x.m__d;
 
@@ -657,7 +657,7 @@ SimpleWideUnionStruct::SimpleWideUnionStruct(
 }
 
 SimpleWideUnionStruct::SimpleWideUnionStruct(
-        SimpleWideUnionStruct&& x)
+        SimpleWideUnionStruct&& x) noexcept 
 {
     m_my_union = std::move(x.m_my_union);
 }
@@ -672,7 +672,7 @@ SimpleWideUnionStruct& SimpleWideUnionStruct::operator =(
 }
 
 SimpleWideUnionStruct& SimpleWideUnionStruct::operator =(
-        SimpleWideUnionStruct&& x)
+        SimpleWideUnionStruct&& x) noexcept
 {
 
     m_my_union = std::move(x.m_my_union);

@@ -116,7 +116,7 @@ BasicStruct::BasicStruct(
 }
 
 BasicStruct::BasicStruct(
-        BasicStruct&& x)
+        BasicStruct&& x) noexcept
 {
     m_my_bool = x.m_my_bool;
     m_my_octet = x.m_my_octet;
@@ -159,7 +159,7 @@ BasicStruct& BasicStruct::operator =(
 }
 
 BasicStruct& BasicStruct::operator =(
-        BasicStruct&& x)
+        BasicStruct&& x) noexcept
 {
 
     m_my_bool = x.m_my_bool;
@@ -816,7 +816,7 @@ void BasicStruct::serializeKey(
         eprosima::fastcdr::Cdr& scdr) const
 {
     (void) scdr;
-                   
+
 }
 
 
@@ -929,7 +929,7 @@ ComplexStruct::ComplexStruct(
 }
 
 ComplexStruct::ComplexStruct(
-        ComplexStruct&& x)
+        ComplexStruct&& x) noexcept
 {
     m_my_octet = x.m_my_octet;
     m_my_basic_struct = std::move(x.m_my_basic_struct);
@@ -986,7 +986,7 @@ ComplexStruct& ComplexStruct::operator =(
 }
 
 ComplexStruct& ComplexStruct::operator =(
-        ComplexStruct&& x)
+        ComplexStruct&& x) noexcept
 {
 
     m_my_octet = x.m_my_octet;
@@ -1328,7 +1328,7 @@ size_t ComplexStruct::getCdrSerializedSize(
 
     for(size_t a = 0; a < data.my_array_arrays().size(); ++a)
     {
-            current_alignment += ((2) * 4) + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
+        current_alignment += ((2) * 4) + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
     }
 
     for(size_t a = 0; a < data.my_sequences_array().size(); ++a)
@@ -2286,7 +2286,7 @@ void ComplexStruct::serializeKey(
         eprosima::fastcdr::Cdr& scdr) const
 {
     (void) scdr;
-                          
+
 }
 
 MyUnion::MyUnion()
@@ -2322,7 +2322,7 @@ MyUnion::MyUnion(
 }
 
 MyUnion::MyUnion(
-        MyUnion&& x)
+        MyUnion&& x) noexcept
 {
     m__d = x.m__d;
 
@@ -2362,7 +2362,7 @@ MyUnion& MyUnion::operator =(
 }
 
 MyUnion& MyUnion::operator =(
-        MyUnion&& x)
+        MyUnion&& x) noexcept
 {
     m__d = x.m__d;
 
@@ -2586,7 +2586,7 @@ size_t MyUnion::getMaxCdrSerializedSize(
         if(union_max_size_serialized < reset_alignment)
             union_max_size_serialized = reset_alignment;
 
-        
+
         reset_alignment = current_alignment;
 
         reset_alignment += ComplexStruct::getMaxCdrSerializedSize(reset_alignment);
@@ -2594,7 +2594,7 @@ size_t MyUnion::getMaxCdrSerializedSize(
         if(union_max_size_serialized < reset_alignment)
             union_max_size_serialized = reset_alignment;
 
-        
+
 
     return union_max_size_serialized - initial_alignment;
 }
@@ -2708,7 +2708,7 @@ MyUnion2::MyUnion2(
 }
 
 MyUnion2::MyUnion2(
-        MyUnion2&& x)
+        MyUnion2&& x) noexcept
 {
     m__d = x.m__d;
 
@@ -2752,7 +2752,7 @@ MyUnion2& MyUnion2::operator =(
 }
 
 MyUnion2& MyUnion2::operator =(
-        MyUnion2&& x)
+        MyUnion2&& x) noexcept
 {
     m__d = x.m__d;
 
@@ -3026,7 +3026,7 @@ size_t MyUnion2::getMaxCdrSerializedSize(
         if(union_max_size_serialized < reset_alignment)
             union_max_size_serialized = reset_alignment;
 
-        
+
         reset_alignment = current_alignment;
 
         reset_alignment += 4 + eprosima::fastcdr::Cdr::alignment(reset_alignment, 4) + 255 + 1;
@@ -3034,7 +3034,7 @@ size_t MyUnion2::getMaxCdrSerializedSize(
         if(union_max_size_serialized < reset_alignment)
             union_max_size_serialized = reset_alignment;
 
-        
+
         reset_alignment = current_alignment;
 
         reset_alignment += 4 + eprosima::fastcdr::Cdr::alignment(reset_alignment, 4);
@@ -3043,7 +3043,7 @@ size_t MyUnion2::getMaxCdrSerializedSize(
         if(union_max_size_serialized < reset_alignment)
             union_max_size_serialized = reset_alignment;
 
-        
+
 
     return union_max_size_serialized - initial_alignment;
 }
@@ -3148,7 +3148,7 @@ CompleteStruct::CompleteStruct(
 }
 
 CompleteStruct::CompleteStruct(
-        CompleteStruct&& x)
+        CompleteStruct&& x) noexcept
 {
     m_my_union = std::move(x.m_my_union);
     m_my_union_2 = std::move(x.m_my_union_2);
@@ -3165,7 +3165,7 @@ CompleteStruct& CompleteStruct::operator =(
 }
 
 CompleteStruct& CompleteStruct::operator =(
-        CompleteStruct&& x)
+        CompleteStruct&& x) noexcept
 {
 
     m_my_union = std::move(x.m_my_union);
@@ -3326,7 +3326,7 @@ void CompleteStruct::serializeKey(
         eprosima::fastcdr::Cdr& scdr) const
 {
     (void) scdr;
-      
+
 }
 
 KeyedStruct::KeyedStruct()
@@ -3354,7 +3354,7 @@ KeyedStruct::KeyedStruct(
 }
 
 KeyedStruct::KeyedStruct(
-        KeyedStruct&& x)
+        KeyedStruct&& x) noexcept
 {
     m_key = x.m_key;
     m_basic = std::move(x.m_basic);
@@ -3371,7 +3371,7 @@ KeyedStruct& KeyedStruct::operator =(
 }
 
 KeyedStruct& KeyedStruct::operator =(
-        KeyedStruct&& x)
+        KeyedStruct&& x) noexcept
 {
 
     m_key = x.m_key;
@@ -3514,7 +3514,7 @@ size_t KeyedStruct::getKeyMaxCdrSerializedSize(
 
      current_align += 1 + eprosima::fastcdr::Cdr::alignment(current_align, 1);
 
-     
+
 
 
     return current_align;
@@ -3530,5 +3530,5 @@ void KeyedStruct::serializeKey(
 {
     (void) scdr;
      scdr << m_key;
-       
+
 }

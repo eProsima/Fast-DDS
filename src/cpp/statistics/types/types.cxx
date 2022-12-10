@@ -52,7 +52,7 @@ eprosima::fastdds::statistics::detail::EntityId_s::EntityId_s(
 }
 
 eprosima::fastdds::statistics::detail::EntityId_s::EntityId_s(
-        EntityId_s&& x)
+        EntityId_s&& x) noexcept
 {
     m_value = std::move(x.m_value);
 }
@@ -67,7 +67,7 @@ eprosima::fastdds::statistics::detail::EntityId_s& eprosima::fastdds::statistics
 }
 
 eprosima::fastdds::statistics::detail::EntityId_s& eprosima::fastdds::statistics::detail::EntityId_s::operator =(
-        EntityId_s&& x)
+        EntityId_s&& x) noexcept
 {
 
     m_value = std::move(x.m_value);
@@ -187,7 +187,7 @@ void eprosima::fastdds::statistics::detail::EntityId_s::serializeKey(
         eprosima::fastcdr::Cdr& scdr) const
 {
     (void) scdr;
-     
+
 }
 
 eprosima::fastdds::statistics::detail::GuidPrefix_s::GuidPrefix_s()
@@ -208,7 +208,7 @@ eprosima::fastdds::statistics::detail::GuidPrefix_s::GuidPrefix_s(
 }
 
 eprosima::fastdds::statistics::detail::GuidPrefix_s::GuidPrefix_s(
-        GuidPrefix_s&& x)
+        GuidPrefix_s&& x) noexcept
 {
     m_value = std::move(x.m_value);
 }
@@ -223,7 +223,7 @@ eprosima::fastdds::statistics::detail::GuidPrefix_s& eprosima::fastdds::statisti
 }
 
 eprosima::fastdds::statistics::detail::GuidPrefix_s& eprosima::fastdds::statistics::detail::GuidPrefix_s::operator =(
-        GuidPrefix_s&& x)
+        GuidPrefix_s&& x) noexcept
 {
 
     m_value = std::move(x.m_value);
@@ -343,7 +343,7 @@ void eprosima::fastdds::statistics::detail::GuidPrefix_s::serializeKey(
         eprosima::fastcdr::Cdr& scdr) const
 {
     (void) scdr;
-     
+
 }
 
 eprosima::fastdds::statistics::detail::GUID_s::GUID_s()
@@ -369,7 +369,7 @@ eprosima::fastdds::statistics::detail::GUID_s::GUID_s(
 }
 
 eprosima::fastdds::statistics::detail::GUID_s::GUID_s(
-        GUID_s&& x)
+        GUID_s&& x) noexcept
 {
     m_guidPrefix = std::move(x.m_guidPrefix);
     m_entityId = std::move(x.m_entityId);
@@ -386,7 +386,7 @@ eprosima::fastdds::statistics::detail::GUID_s& eprosima::fastdds::statistics::de
 }
 
 eprosima::fastdds::statistics::detail::GUID_s& eprosima::fastdds::statistics::detail::GUID_s::operator =(
-        GUID_s&& x)
+        GUID_s&& x) noexcept
 {
 
     m_guidPrefix = std::move(x.m_guidPrefix);
@@ -547,7 +547,7 @@ void eprosima::fastdds::statistics::detail::GUID_s::serializeKey(
         eprosima::fastcdr::Cdr& scdr) const
 {
     (void) scdr;
-      
+
 }
 
 eprosima::fastdds::statistics::detail::SequenceNumber_s::SequenceNumber_s()
@@ -573,7 +573,7 @@ eprosima::fastdds::statistics::detail::SequenceNumber_s::SequenceNumber_s(
 }
 
 eprosima::fastdds::statistics::detail::SequenceNumber_s::SequenceNumber_s(
-        SequenceNumber_s&& x)
+        SequenceNumber_s&& x) noexcept
 {
     m_high = x.m_high;
     m_low = x.m_low;
@@ -590,7 +590,7 @@ eprosima::fastdds::statistics::detail::SequenceNumber_s& eprosima::fastdds::stat
 }
 
 eprosima::fastdds::statistics::detail::SequenceNumber_s& eprosima::fastdds::statistics::detail::SequenceNumber_s::operator =(
-        SequenceNumber_s&& x)
+        SequenceNumber_s&& x) noexcept
 {
 
     m_high = x.m_high;
@@ -741,7 +741,7 @@ void eprosima::fastdds::statistics::detail::SequenceNumber_s::serializeKey(
         eprosima::fastcdr::Cdr& scdr) const
 {
     (void) scdr;
-      
+
 }
 
 eprosima::fastdds::statistics::detail::SampleIdentity_s::SampleIdentity_s()
@@ -767,7 +767,7 @@ eprosima::fastdds::statistics::detail::SampleIdentity_s::SampleIdentity_s(
 }
 
 eprosima::fastdds::statistics::detail::SampleIdentity_s::SampleIdentity_s(
-        SampleIdentity_s&& x)
+        SampleIdentity_s&& x) noexcept
 {
     m_writer_guid = std::move(x.m_writer_guid);
     m_sequence_number = std::move(x.m_sequence_number);
@@ -784,7 +784,7 @@ eprosima::fastdds::statistics::detail::SampleIdentity_s& eprosima::fastdds::stat
 }
 
 eprosima::fastdds::statistics::detail::SampleIdentity_s& eprosima::fastdds::statistics::detail::SampleIdentity_s::operator =(
-        SampleIdentity_s&& x)
+        SampleIdentity_s&& x) noexcept
 {
 
     m_writer_guid = std::move(x.m_writer_guid);
@@ -945,7 +945,7 @@ void eprosima::fastdds::statistics::detail::SampleIdentity_s::serializeKey(
         eprosima::fastcdr::Cdr& scdr) const
 {
     (void) scdr;
-      
+
 }
 
 eprosima::fastdds::statistics::detail::Locator_s::Locator_s()
@@ -975,7 +975,7 @@ eprosima::fastdds::statistics::detail::Locator_s::Locator_s(
 }
 
 eprosima::fastdds::statistics::detail::Locator_s::Locator_s(
-        Locator_s&& x)
+        Locator_s&& x) noexcept
 {
     m_kind = x.m_kind;
     m_port = x.m_port;
@@ -994,7 +994,7 @@ eprosima::fastdds::statistics::detail::Locator_s& eprosima::fastdds::statistics:
 }
 
 eprosima::fastdds::statistics::detail::Locator_s& eprosima::fastdds::statistics::detail::Locator_s::operator =(
-        Locator_s&& x)
+        Locator_s&& x) noexcept
 {
 
     m_kind = x.m_kind;
@@ -1193,7 +1193,7 @@ void eprosima::fastdds::statistics::detail::Locator_s::serializeKey(
         eprosima::fastcdr::Cdr& scdr) const
 {
     (void) scdr;
-       
+
 }
 
 
@@ -1236,7 +1236,7 @@ eprosima::fastdds::statistics::DiscoveryTime::DiscoveryTime(
 }
 
 eprosima::fastdds::statistics::DiscoveryTime::DiscoveryTime(
-        DiscoveryTime&& x)
+        DiscoveryTime&& x) noexcept
 {
     m_local_participant_guid = std::move(x.m_local_participant_guid);
     m_remote_entity_guid = std::move(x.m_remote_entity_guid);
@@ -1261,7 +1261,7 @@ eprosima::fastdds::statistics::DiscoveryTime& eprosima::fastdds::statistics::Dis
 }
 
 eprosima::fastdds::statistics::DiscoveryTime& eprosima::fastdds::statistics::DiscoveryTime::operator =(
-        DiscoveryTime&& x)
+        DiscoveryTime&& x) noexcept
 {
 
     m_local_participant_guid = std::move(x.m_local_participant_guid);
@@ -1576,8 +1576,8 @@ size_t eprosima::fastdds::statistics::DiscoveryTime::getKeyMaxCdrSerializedSize(
     size_t current_align = current_alignment;
 
 
-     current_align += eprosima::fastdds::statistics::detail::GUID_s::getMaxCdrSerializedSize(current_align); 
-     current_align += eprosima::fastdds::statistics::detail::GUID_s::getMaxCdrSerializedSize(current_align); 
+     current_align += eprosima::fastdds::statistics::detail::GUID_s::getMaxCdrSerializedSize(current_align);
+     current_align += eprosima::fastdds::statistics::detail::GUID_s::getMaxCdrSerializedSize(current_align);
 
 
 
@@ -1597,7 +1597,7 @@ void eprosima::fastdds::statistics::DiscoveryTime::serializeKey(
     (void) scdr;
      scdr << m_local_participant_guid;
        scdr << m_remote_entity_guid;
-          
+
 }
 
 eprosima::fastdds::statistics::EntityCount::EntityCount()
@@ -1623,7 +1623,7 @@ eprosima::fastdds::statistics::EntityCount::EntityCount(
 }
 
 eprosima::fastdds::statistics::EntityCount::EntityCount(
-        EntityCount&& x)
+        EntityCount&& x) noexcept
 {
     m_guid = std::move(x.m_guid);
     m_count = x.m_count;
@@ -1640,7 +1640,7 @@ eprosima::fastdds::statistics::EntityCount& eprosima::fastdds::statistics::Entit
 }
 
 eprosima::fastdds::statistics::EntityCount& eprosima::fastdds::statistics::EntityCount::operator =(
-        EntityCount&& x)
+        EntityCount&& x) noexcept
 {
 
     m_guid = std::move(x.m_guid);
@@ -1781,7 +1781,7 @@ size_t eprosima::fastdds::statistics::EntityCount::getKeyMaxCdrSerializedSize(
     size_t current_align = current_alignment;
 
 
-     current_align += eprosima::fastdds::statistics::detail::GUID_s::getMaxCdrSerializedSize(current_align); 
+     current_align += eprosima::fastdds::statistics::detail::GUID_s::getMaxCdrSerializedSize(current_align);
 
 
     return current_align;
@@ -1797,14 +1797,14 @@ void eprosima::fastdds::statistics::EntityCount::serializeKey(
 {
     (void) scdr;
      scdr << m_guid;
-       
+
 }
 
 eprosima::fastdds::statistics::SampleIdentityCount::SampleIdentityCount()
 {
-    // m_sample_id com.eprosima.fastdds.idl.parser.typecode.StructTypeCode@3cc2931c
+    // m_sample_id com.eprosima.fastdds.idl.parser.typecode.StructTypeCode@4b5a5ed1
 
-    // m_count com.eprosima.idl.parser.typecode.PrimitiveTypeCode@20d28811
+    // m_count com.eprosima.idl.parser.typecode.PrimitiveTypeCode@59d016c9
     m_count = 0;
 
 }
@@ -1823,7 +1823,7 @@ eprosima::fastdds::statistics::SampleIdentityCount::SampleIdentityCount(
 }
 
 eprosima::fastdds::statistics::SampleIdentityCount::SampleIdentityCount(
-        SampleIdentityCount&& x)
+        SampleIdentityCount&& x) noexcept
 {
     m_sample_id = std::move(x.m_sample_id);
     m_count = x.m_count;
@@ -1840,7 +1840,7 @@ eprosima::fastdds::statistics::SampleIdentityCount& eprosima::fastdds::statistic
 }
 
 eprosima::fastdds::statistics::SampleIdentityCount& eprosima::fastdds::statistics::SampleIdentityCount::operator =(
-        SampleIdentityCount&& x)
+        SampleIdentityCount&& x) noexcept
 {
 
     m_sample_id = std::move(x.m_sample_id);
@@ -1981,7 +1981,7 @@ size_t eprosima::fastdds::statistics::SampleIdentityCount::getKeyMaxCdrSerialize
     size_t current_align = current_alignment;
 
 
-     current_align += eprosima::fastdds::statistics::detail::SampleIdentity_s::getMaxCdrSerializedSize(current_align); 
+     current_align += eprosima::fastdds::statistics::detail::SampleIdentity_s::getMaxCdrSerializedSize(current_align);
 
 
     return current_align;
@@ -1997,7 +1997,7 @@ void eprosima::fastdds::statistics::SampleIdentityCount::serializeKey(
 {
     (void) scdr;
      scdr << m_sample_id;
-       
+
 }
 
 eprosima::fastdds::statistics::Entity2LocatorTraffic::Entity2LocatorTraffic()
@@ -2035,7 +2035,7 @@ eprosima::fastdds::statistics::Entity2LocatorTraffic::Entity2LocatorTraffic(
 }
 
 eprosima::fastdds::statistics::Entity2LocatorTraffic::Entity2LocatorTraffic(
-        Entity2LocatorTraffic&& x)
+        Entity2LocatorTraffic&& x) noexcept
 {
     m_src_guid = std::move(x.m_src_guid);
     m_dst_locator = std::move(x.m_dst_locator);
@@ -2058,7 +2058,7 @@ eprosima::fastdds::statistics::Entity2LocatorTraffic& eprosima::fastdds::statist
 }
 
 eprosima::fastdds::statistics::Entity2LocatorTraffic& eprosima::fastdds::statistics::Entity2LocatorTraffic::operator =(
-        Entity2LocatorTraffic&& x)
+        Entity2LocatorTraffic&& x) noexcept
 {
 
     m_src_guid = std::move(x.m_src_guid);
@@ -2315,8 +2315,8 @@ size_t eprosima::fastdds::statistics::Entity2LocatorTraffic::getKeyMaxCdrSeriali
     size_t current_align = current_alignment;
 
 
-     current_align += eprosima::fastdds::statistics::detail::GUID_s::getMaxCdrSerializedSize(current_align); 
-     current_align += eprosima::fastdds::statistics::detail::Locator_s::getMaxCdrSerializedSize(current_align); 
+     current_align += eprosima::fastdds::statistics::detail::GUID_s::getMaxCdrSerializedSize(current_align);
+     current_align += eprosima::fastdds::statistics::detail::Locator_s::getMaxCdrSerializedSize(current_align);
 
 
 
@@ -2335,7 +2335,7 @@ void eprosima::fastdds::statistics::Entity2LocatorTraffic::serializeKey(
     (void) scdr;
      scdr << m_src_guid;
        scdr << m_dst_locator;
-         
+
 }
 
 eprosima::fastdds::statistics::WriterReaderData::WriterReaderData()
@@ -2365,7 +2365,7 @@ eprosima::fastdds::statistics::WriterReaderData::WriterReaderData(
 }
 
 eprosima::fastdds::statistics::WriterReaderData::WriterReaderData(
-        WriterReaderData&& x)
+        WriterReaderData&& x) noexcept
 {
     m_writer_guid = std::move(x.m_writer_guid);
     m_reader_guid = std::move(x.m_reader_guid);
@@ -2384,7 +2384,7 @@ eprosima::fastdds::statistics::WriterReaderData& eprosima::fastdds::statistics::
 }
 
 eprosima::fastdds::statistics::WriterReaderData& eprosima::fastdds::statistics::WriterReaderData::operator =(
-        WriterReaderData&& x)
+        WriterReaderData&& x) noexcept
 {
 
     m_writer_guid = std::move(x.m_writer_guid);
@@ -2567,8 +2567,8 @@ size_t eprosima::fastdds::statistics::WriterReaderData::getKeyMaxCdrSerializedSi
     size_t current_align = current_alignment;
 
 
-     current_align += eprosima::fastdds::statistics::detail::GUID_s::getMaxCdrSerializedSize(current_align); 
-     current_align += eprosima::fastdds::statistics::detail::GUID_s::getMaxCdrSerializedSize(current_align); 
+     current_align += eprosima::fastdds::statistics::detail::GUID_s::getMaxCdrSerializedSize(current_align);
+     current_align += eprosima::fastdds::statistics::detail::GUID_s::getMaxCdrSerializedSize(current_align);
 
 
     return current_align;
@@ -2585,7 +2585,7 @@ void eprosima::fastdds::statistics::WriterReaderData::serializeKey(
     (void) scdr;
      scdr << m_writer_guid;
        scdr << m_reader_guid;
-       
+
 }
 
 eprosima::fastdds::statistics::Locator2LocatorData::Locator2LocatorData()
@@ -2615,7 +2615,7 @@ eprosima::fastdds::statistics::Locator2LocatorData::Locator2LocatorData(
 }
 
 eprosima::fastdds::statistics::Locator2LocatorData::Locator2LocatorData(
-        Locator2LocatorData&& x)
+        Locator2LocatorData&& x) noexcept
 {
     m_src_locator = std::move(x.m_src_locator);
     m_dst_locator = std::move(x.m_dst_locator);
@@ -2634,7 +2634,7 @@ eprosima::fastdds::statistics::Locator2LocatorData& eprosima::fastdds::statistic
 }
 
 eprosima::fastdds::statistics::Locator2LocatorData& eprosima::fastdds::statistics::Locator2LocatorData::operator =(
-        Locator2LocatorData&& x)
+        Locator2LocatorData&& x) noexcept
 {
 
     m_src_locator = std::move(x.m_src_locator);
@@ -2817,8 +2817,8 @@ size_t eprosima::fastdds::statistics::Locator2LocatorData::getKeyMaxCdrSerialize
     size_t current_align = current_alignment;
 
 
-     current_align += eprosima::fastdds::statistics::detail::Locator_s::getMaxCdrSerializedSize(current_align); 
-     current_align += eprosima::fastdds::statistics::detail::Locator_s::getMaxCdrSerializedSize(current_align); 
+     current_align += eprosima::fastdds::statistics::detail::Locator_s::getMaxCdrSerializedSize(current_align);
+     current_align += eprosima::fastdds::statistics::detail::Locator_s::getMaxCdrSerializedSize(current_align);
 
 
     return current_align;
@@ -2835,7 +2835,7 @@ void eprosima::fastdds::statistics::Locator2LocatorData::serializeKey(
     (void) scdr;
      scdr << m_src_locator;
        scdr << m_dst_locator;
-       
+
 }
 
 eprosima::fastdds::statistics::EntityData::EntityData()
@@ -2861,7 +2861,7 @@ eprosima::fastdds::statistics::EntityData::EntityData(
 }
 
 eprosima::fastdds::statistics::EntityData::EntityData(
-        EntityData&& x)
+        EntityData&& x) noexcept
 {
     m_guid = std::move(x.m_guid);
     m_data = x.m_data;
@@ -2878,7 +2878,7 @@ eprosima::fastdds::statistics::EntityData& eprosima::fastdds::statistics::Entity
 }
 
 eprosima::fastdds::statistics::EntityData& eprosima::fastdds::statistics::EntityData::operator =(
-        EntityData&& x)
+        EntityData&& x) noexcept
 {
 
     m_guid = std::move(x.m_guid);
@@ -3019,7 +3019,7 @@ size_t eprosima::fastdds::statistics::EntityData::getKeyMaxCdrSerializedSize(
     size_t current_align = current_alignment;
 
 
-     current_align += eprosima::fastdds::statistics::detail::GUID_s::getMaxCdrSerializedSize(current_align); 
+     current_align += eprosima::fastdds::statistics::detail::GUID_s::getMaxCdrSerializedSize(current_align);
 
 
     return current_align;
@@ -3035,7 +3035,7 @@ void eprosima::fastdds::statistics::EntityData::serializeKey(
 {
     (void) scdr;
      scdr << m_guid;
-       
+
 }
 
 eprosima::fastdds::statistics::PhysicalData::PhysicalData()
@@ -3069,7 +3069,7 @@ eprosima::fastdds::statistics::PhysicalData::PhysicalData(
 }
 
 eprosima::fastdds::statistics::PhysicalData::PhysicalData(
-        PhysicalData&& x)
+        PhysicalData&& x) noexcept
 {
     m_participant_guid = std::move(x.m_participant_guid);
     m_host = std::move(x.m_host);
@@ -3090,7 +3090,7 @@ eprosima::fastdds::statistics::PhysicalData& eprosima::fastdds::statistics::Phys
 }
 
 eprosima::fastdds::statistics::PhysicalData& eprosima::fastdds::statistics::PhysicalData::operator =(
-        PhysicalData&& x)
+        PhysicalData&& x) noexcept
 {
 
     m_participant_guid = std::move(x.m_participant_guid);
@@ -3326,7 +3326,7 @@ size_t eprosima::fastdds::statistics::PhysicalData::getKeyMaxCdrSerializedSize(
     size_t current_align = current_alignment;
 
 
-     current_align += eprosima::fastdds::statistics::detail::GUID_s::getMaxCdrSerializedSize(current_align); 
+     current_align += eprosima::fastdds::statistics::detail::GUID_s::getMaxCdrSerializedSize(current_align);
 
 
 
@@ -3344,7 +3344,7 @@ void eprosima::fastdds::statistics::PhysicalData::serializeKey(
 {
     (void) scdr;
      scdr << m_participant_guid;
-         
+
 }
 
 
@@ -3419,7 +3419,7 @@ eprosima::fastdds::statistics::Data::Data(
 }
 
 eprosima::fastdds::statistics::Data::Data(
-        Data&& x)
+        Data&& x) noexcept
 {
     m__d = x.m__d;
 
@@ -3511,7 +3511,7 @@ eprosima::fastdds::statistics::Data& eprosima::fastdds::statistics::Data::operat
 }
 
 eprosima::fastdds::statistics::Data& eprosima::fastdds::statistics::Data::operator =(
-        Data&& x)
+        Data&& x) noexcept
 {
     m__d = x.m__d;
 
@@ -4197,7 +4197,7 @@ size_t eprosima::fastdds::statistics::Data::getMaxCdrSerializedSize(
         if(union_max_size_serialized < reset_alignment)
             union_max_size_serialized = reset_alignment;
 
-        
+
         reset_alignment = current_alignment;
 
         reset_alignment += eprosima::fastdds::statistics::Locator2LocatorData::getMaxCdrSerializedSize(reset_alignment);
@@ -4205,7 +4205,7 @@ size_t eprosima::fastdds::statistics::Data::getMaxCdrSerializedSize(
         if(union_max_size_serialized < reset_alignment)
             union_max_size_serialized = reset_alignment;
 
-        
+
         reset_alignment = current_alignment;
 
         reset_alignment += eprosima::fastdds::statistics::EntityData::getMaxCdrSerializedSize(reset_alignment);
@@ -4213,7 +4213,7 @@ size_t eprosima::fastdds::statistics::Data::getMaxCdrSerializedSize(
         if(union_max_size_serialized < reset_alignment)
             union_max_size_serialized = reset_alignment;
 
-        
+
         reset_alignment = current_alignment;
 
         reset_alignment += eprosima::fastdds::statistics::Entity2LocatorTraffic::getMaxCdrSerializedSize(reset_alignment);
@@ -4221,7 +4221,7 @@ size_t eprosima::fastdds::statistics::Data::getMaxCdrSerializedSize(
         if(union_max_size_serialized < reset_alignment)
             union_max_size_serialized = reset_alignment;
 
-        
+
         reset_alignment = current_alignment;
 
         reset_alignment += eprosima::fastdds::statistics::EntityCount::getMaxCdrSerializedSize(reset_alignment);
@@ -4229,7 +4229,7 @@ size_t eprosima::fastdds::statistics::Data::getMaxCdrSerializedSize(
         if(union_max_size_serialized < reset_alignment)
             union_max_size_serialized = reset_alignment;
 
-        
+
         reset_alignment = current_alignment;
 
         reset_alignment += eprosima::fastdds::statistics::DiscoveryTime::getMaxCdrSerializedSize(reset_alignment);
@@ -4237,7 +4237,7 @@ size_t eprosima::fastdds::statistics::Data::getMaxCdrSerializedSize(
         if(union_max_size_serialized < reset_alignment)
             union_max_size_serialized = reset_alignment;
 
-        
+
         reset_alignment = current_alignment;
 
         reset_alignment += eprosima::fastdds::statistics::SampleIdentityCount::getMaxCdrSerializedSize(reset_alignment);
@@ -4245,7 +4245,7 @@ size_t eprosima::fastdds::statistics::Data::getMaxCdrSerializedSize(
         if(union_max_size_serialized < reset_alignment)
             union_max_size_serialized = reset_alignment;
 
-        
+
         reset_alignment = current_alignment;
 
         reset_alignment += eprosima::fastdds::statistics::PhysicalData::getMaxCdrSerializedSize(reset_alignment);
@@ -4253,7 +4253,7 @@ size_t eprosima::fastdds::statistics::Data::getMaxCdrSerializedSize(
         if(union_max_size_serialized < reset_alignment)
             union_max_size_serialized = reset_alignment;
 
-        
+
 
     return union_max_size_serialized - initial_alignment;
 }

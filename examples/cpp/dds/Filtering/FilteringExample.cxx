@@ -52,7 +52,7 @@ FilteringExample::FilteringExample(
 }
 
 FilteringExample::FilteringExample(
-        FilteringExample&& x)
+        FilteringExample&& x) noexcept 
 {
     m_sampleNumber = x.m_sampleNumber;
 }
@@ -67,7 +67,7 @@ FilteringExample& FilteringExample::operator =(
 }
 
 FilteringExample& FilteringExample::operator =(
-        FilteringExample&& x)
+        FilteringExample&& x) noexcept
 {
 
     m_sampleNumber = x.m_sampleNumber;

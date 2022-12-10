@@ -93,7 +93,7 @@ public:
      * @param x Reference to the object HelloMsg that will be copied.
      */
     eProsima_user_DllExport HelloMsg(
-            HelloMsg&& x);
+            HelloMsg&& x) noexcept;
 
     /*!
      * @brief Copy assignment.
@@ -107,7 +107,7 @@ public:
      * @param x Reference to the object HelloMsg that will be copied.
      */
     eProsima_user_DllExport HelloMsg& operator =(
-            HelloMsg&& x);
+            HelloMsg&& x) noexcept;
 
     /*!
      * @brief Comparison operator.

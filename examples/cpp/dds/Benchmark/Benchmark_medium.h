@@ -93,7 +93,7 @@ public:
      * @param x Reference to the object BenchMarkMedium that will be copied.
      */
     eProsima_user_DllExport BenchMarkMedium(
-            BenchMarkMedium&& x);
+            BenchMarkMedium&& x) noexcept;
 
     /*!
      * @brief Copy assignment.
@@ -107,7 +107,7 @@ public:
      * @param x Reference to the object BenchMarkMedium that will be copied.
      */
     eProsima_user_DllExport BenchMarkMedium& operator =(
-            BenchMarkMedium&& x);
+            BenchMarkMedium&& x) noexcept;
 
     /*!
      * @brief Comparison operator.

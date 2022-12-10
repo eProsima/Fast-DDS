@@ -93,7 +93,7 @@ public:
      * @param x Reference to the object Lifespan that will be copied.
      */
     eProsima_user_DllExport Lifespan(
-            Lifespan&& x);
+            Lifespan&& x) noexcept;
 
     /*!
      * @brief Copy assignment.
@@ -107,7 +107,7 @@ public:
      * @param x Reference to the object Lifespan that will be copied.
      */
     eProsima_user_DllExport Lifespan& operator =(
-            Lifespan&& x);
+            Lifespan&& x) noexcept;
 
     /*!
      * @brief Comparison operator.

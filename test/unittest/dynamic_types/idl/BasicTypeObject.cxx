@@ -41,125 +41,205 @@ using namespace eprosima::fastrtps::rtps;
 void registerBasicTypes()
 {
     TypeObjectFactory *factory = TypeObjectFactory::get_instance();
-    factory->add_type_object("MyEnum", GetMyEnumIdentifier(true), GetMyEnumObject(true));
-    factory->add_type_object("MyEnum", GetMyEnumIdentifier(false), GetMyEnumObject(false));
+    factory->add_type_object("MyEnum", GetMyEnumIdentifier(true),
+    GetMyEnumObject(true));
+    factory->add_type_object("MyEnum", GetMyEnumIdentifier(false),
+    GetMyEnumObject(false));
 
-    factory->add_type_object("MyAliasEnum", GetMyAliasEnumIdentifier(true), GetMyAliasEnumObject(true));
-    factory->add_type_object("MyAliasEnum", GetMyAliasEnumIdentifier(false), GetMyAliasEnumObject(false));
+    factory->add_type_object("MyAliasEnum", GetMyAliasEnumIdentifier(true),
+    GetMyAliasEnumObject(true));
+    factory->add_type_object("MyAliasEnum", GetMyAliasEnumIdentifier(false),
+    GetMyAliasEnumObject(false));
 
-    factory->add_type_object("MyAliasAliasEnum", GetMyAliasAliasEnumIdentifier(true), GetMyAliasAliasEnumObject(true));
-    factory->add_type_object("MyAliasAliasEnum", GetMyAliasAliasEnumIdentifier(false), GetMyAliasAliasEnumObject(false));
+    factory->add_type_object("MyAliasAliasEnum", GetMyAliasAliasEnumIdentifier(true),
+    GetMyAliasAliasEnumObject(true));
+    factory->add_type_object("MyAliasAliasEnum", GetMyAliasAliasEnumIdentifier(false),
+    GetMyAliasAliasEnumObject(false));
 
-    factory->add_type_object("EnumStruct", GetEnumStructIdentifier(true), GetEnumStructObject(true));
-    factory->add_type_object("EnumStruct", GetEnumStructIdentifier(false), GetEnumStructObject(false));
+    factory->add_type_object("EnumStruct", GetEnumStructIdentifier(true),
+    GetEnumStructObject(true));
+    factory->add_type_object("EnumStruct", GetEnumStructIdentifier(false),
+    GetEnumStructObject(false));
 
-    factory->add_type_object("AliasStruct", GetAliasStructIdentifier(true), GetAliasStructObject(true));
-    factory->add_type_object("AliasStruct", GetAliasStructIdentifier(false), GetAliasStructObject(false));
+    factory->add_type_object("AliasStruct", GetAliasStructIdentifier(true),
+    GetAliasStructObject(true));
+    factory->add_type_object("AliasStruct", GetAliasStructIdentifier(false),
+    GetAliasStructObject(false));
 
-    factory->add_type_object("AliasAliasStruct", GetAliasAliasStructIdentifier(true), GetAliasAliasStructObject(true));
-    factory->add_type_object("AliasAliasStruct", GetAliasAliasStructIdentifier(false), GetAliasAliasStructObject(false));
+    factory->add_type_object("AliasAliasStruct", GetAliasAliasStructIdentifier(true),
+    GetAliasAliasStructObject(true));
+    factory->add_type_object("AliasAliasStruct", GetAliasAliasStructIdentifier(false),
+    GetAliasAliasStructObject(false));
 
-    factory->add_type_object("BoolStruct", GetBoolStructIdentifier(true), GetBoolStructObject(true));
-    factory->add_type_object("BoolStruct", GetBoolStructIdentifier(false), GetBoolStructObject(false));
+    factory->add_type_object("BoolStruct", GetBoolStructIdentifier(true),
+    GetBoolStructObject(true));
+    factory->add_type_object("BoolStruct", GetBoolStructIdentifier(false),
+    GetBoolStructObject(false));
 
-    factory->add_type_object("OctetStruct", GetOctetStructIdentifier(true), GetOctetStructObject(true));
-    factory->add_type_object("OctetStruct", GetOctetStructIdentifier(false), GetOctetStructObject(false));
+    factory->add_type_object("OctetStruct", GetOctetStructIdentifier(true),
+    GetOctetStructObject(true));
+    factory->add_type_object("OctetStruct", GetOctetStructIdentifier(false),
+    GetOctetStructObject(false));
 
-    factory->add_type_object("ShortStruct", GetShortStructIdentifier(true), GetShortStructObject(true));
-    factory->add_type_object("ShortStruct", GetShortStructIdentifier(false), GetShortStructObject(false));
+    factory->add_type_object("ShortStruct", GetShortStructIdentifier(true),
+    GetShortStructObject(true));
+    factory->add_type_object("ShortStruct", GetShortStructIdentifier(false),
+    GetShortStructObject(false));
 
-    factory->add_type_object("LongStruct", GetLongStructIdentifier(true), GetLongStructObject(true));
-    factory->add_type_object("LongStruct", GetLongStructIdentifier(false), GetLongStructObject(false));
+    factory->add_type_object("LongStruct", GetLongStructIdentifier(true),
+    GetLongStructObject(true));
+    factory->add_type_object("LongStruct", GetLongStructIdentifier(false),
+    GetLongStructObject(false));
 
-    factory->add_type_object("LongLongStruct", GetLongLongStructIdentifier(true), GetLongLongStructObject(true));
-    factory->add_type_object("LongLongStruct", GetLongLongStructIdentifier(false), GetLongLongStructObject(false));
+    factory->add_type_object("LongLongStruct", GetLongLongStructIdentifier(true),
+    GetLongLongStructObject(true));
+    factory->add_type_object("LongLongStruct", GetLongLongStructIdentifier(false),
+    GetLongLongStructObject(false));
 
-    factory->add_type_object("UShortStruct", GetUShortStructIdentifier(true), GetUShortStructObject(true));
-    factory->add_type_object("UShortStruct", GetUShortStructIdentifier(false), GetUShortStructObject(false));
+    factory->add_type_object("UShortStruct", GetUShortStructIdentifier(true),
+    GetUShortStructObject(true));
+    factory->add_type_object("UShortStruct", GetUShortStructIdentifier(false),
+    GetUShortStructObject(false));
 
-    factory->add_type_object("ULongStruct", GetULongStructIdentifier(true), GetULongStructObject(true));
-    factory->add_type_object("ULongStruct", GetULongStructIdentifier(false), GetULongStructObject(false));
+    factory->add_type_object("ULongStruct", GetULongStructIdentifier(true),
+    GetULongStructObject(true));
+    factory->add_type_object("ULongStruct", GetULongStructIdentifier(false),
+    GetULongStructObject(false));
 
-    factory->add_type_object("ULongLongStruct", GetULongLongStructIdentifier(true), GetULongLongStructObject(true));
-    factory->add_type_object("ULongLongStruct", GetULongLongStructIdentifier(false), GetULongLongStructObject(false));
+    factory->add_type_object("ULongLongStruct", GetULongLongStructIdentifier(true),
+    GetULongLongStructObject(true));
+    factory->add_type_object("ULongLongStruct", GetULongLongStructIdentifier(false),
+    GetULongLongStructObject(false));
 
-    factory->add_type_object("FloatStruct", GetFloatStructIdentifier(true), GetFloatStructObject(true));
-    factory->add_type_object("FloatStruct", GetFloatStructIdentifier(false), GetFloatStructObject(false));
+    factory->add_type_object("FloatStruct", GetFloatStructIdentifier(true),
+    GetFloatStructObject(true));
+    factory->add_type_object("FloatStruct", GetFloatStructIdentifier(false),
+    GetFloatStructObject(false));
 
-    factory->add_type_object("DoubleStruct", GetDoubleStructIdentifier(true), GetDoubleStructObject(true));
-    factory->add_type_object("DoubleStruct", GetDoubleStructIdentifier(false), GetDoubleStructObject(false));
+    factory->add_type_object("DoubleStruct", GetDoubleStructIdentifier(true),
+    GetDoubleStructObject(true));
+    factory->add_type_object("DoubleStruct", GetDoubleStructIdentifier(false),
+    GetDoubleStructObject(false));
 
-    factory->add_type_object("LongDoubleStruct", GetLongDoubleStructIdentifier(true), GetLongDoubleStructObject(true));
-    factory->add_type_object("LongDoubleStruct", GetLongDoubleStructIdentifier(false), GetLongDoubleStructObject(false));
+    factory->add_type_object("LongDoubleStruct", GetLongDoubleStructIdentifier(true),
+    GetLongDoubleStructObject(true));
+    factory->add_type_object("LongDoubleStruct", GetLongDoubleStructIdentifier(false),
+    GetLongDoubleStructObject(false));
 
-    factory->add_type_object("CharStruct", GetCharStructIdentifier(true), GetCharStructObject(true));
-    factory->add_type_object("CharStruct", GetCharStructIdentifier(false), GetCharStructObject(false));
+    factory->add_type_object("CharStruct", GetCharStructIdentifier(true),
+    GetCharStructObject(true));
+    factory->add_type_object("CharStruct", GetCharStructIdentifier(false),
+    GetCharStructObject(false));
 
-    factory->add_type_object("WCharStruct", GetWCharStructIdentifier(true), GetWCharStructObject(true));
-    factory->add_type_object("WCharStruct", GetWCharStructIdentifier(false), GetWCharStructObject(false));
+    factory->add_type_object("WCharStruct", GetWCharStructIdentifier(true),
+    GetWCharStructObject(true));
+    factory->add_type_object("WCharStruct", GetWCharStructIdentifier(false),
+    GetWCharStructObject(false));
 
-    factory->add_type_object("StringStruct", GetStringStructIdentifier(true), GetStringStructObject(true));
-    factory->add_type_object("StringStruct", GetStringStructIdentifier(false), GetStringStructObject(false));
+    factory->add_type_object("StringStruct", GetStringStructIdentifier(true),
+    GetStringStructObject(true));
+    factory->add_type_object("StringStruct", GetStringStructIdentifier(false),
+    GetStringStructObject(false));
 
-    factory->add_type_object("WStringStruct", GetWStringStructIdentifier(true), GetWStringStructObject(true));
-    factory->add_type_object("WStringStruct", GetWStringStructIdentifier(false), GetWStringStructObject(false));
+    factory->add_type_object("WStringStruct", GetWStringStructIdentifier(true),
+    GetWStringStructObject(true));
+    factory->add_type_object("WStringStruct", GetWStringStructIdentifier(false),
+    GetWStringStructObject(false));
 
-    factory->add_type_object("LargeStringStruct", GetLargeStringStructIdentifier(true), GetLargeStringStructObject(true));
-    factory->add_type_object("LargeStringStruct", GetLargeStringStructIdentifier(false), GetLargeStringStructObject(false));
+    factory->add_type_object("LargeStringStruct", GetLargeStringStructIdentifier(true),
+    GetLargeStringStructObject(true));
+    factory->add_type_object("LargeStringStruct", GetLargeStringStructIdentifier(false),
+    GetLargeStringStructObject(false));
 
-    factory->add_type_object("LargeWStringStruct", GetLargeWStringStructIdentifier(true), GetLargeWStringStructObject(true));
-    factory->add_type_object("LargeWStringStruct", GetLargeWStringStructIdentifier(false), GetLargeWStringStructObject(false));
+    factory->add_type_object("LargeWStringStruct", GetLargeWStringStructIdentifier(true),
+    GetLargeWStringStructObject(true));
+    factory->add_type_object("LargeWStringStruct", GetLargeWStringStructIdentifier(false),
+    GetLargeWStringStructObject(false));
 
-    factory->add_type_object("ArraytStruct", GetArraytStructIdentifier(true), GetArraytStructObject(true));
-    factory->add_type_object("ArraytStruct", GetArraytStructIdentifier(false), GetArraytStructObject(false));
+    factory->add_type_object("ArraytStruct", GetArraytStructIdentifier(true),
+    GetArraytStructObject(true));
+    factory->add_type_object("ArraytStruct", GetArraytStructIdentifier(false),
+    GetArraytStructObject(false));
 
-    factory->add_type_object("MyArray", GetMyArrayIdentifier(true), GetMyArrayObject(true));
-    factory->add_type_object("MyArray", GetMyArrayIdentifier(false), GetMyArrayObject(false));
+    factory->add_type_object("MyArray", GetMyArrayIdentifier(true),
+    GetMyArrayObject(true));
+    factory->add_type_object("MyArray", GetMyArrayIdentifier(false),
+    GetMyArrayObject(false));
 
-    factory->add_type_object("ArrayArrayStruct", GetArrayArrayStructIdentifier(true), GetArrayArrayStructObject(true));
-    factory->add_type_object("ArrayArrayStruct", GetArrayArrayStructIdentifier(false), GetArrayArrayStructObject(false));
+    factory->add_type_object("ArrayArrayStruct", GetArrayArrayStructIdentifier(true),
+    GetArrayArrayStructObject(true));
+    factory->add_type_object("ArrayArrayStruct", GetArrayArrayStructIdentifier(false),
+    GetArrayArrayStructObject(false));
 
-    factory->add_type_object("SequenceStruct", GetSequenceStructIdentifier(true), GetSequenceStructObject(true));
-    factory->add_type_object("SequenceStruct", GetSequenceStructIdentifier(false), GetSequenceStructObject(false));
+    factory->add_type_object("SequenceStruct", GetSequenceStructIdentifier(true),
+    GetSequenceStructObject(true));
+    factory->add_type_object("SequenceStruct", GetSequenceStructIdentifier(false),
+    GetSequenceStructObject(false));
 
-    factory->add_type_object("SequenceSequenceStruct", GetSequenceSequenceStructIdentifier(true), GetSequenceSequenceStructObject(true));
-    factory->add_type_object("SequenceSequenceStruct", GetSequenceSequenceStructIdentifier(false), GetSequenceSequenceStructObject(false));
+    factory->add_type_object("SequenceSequenceStruct", GetSequenceSequenceStructIdentifier(true),
+    GetSequenceSequenceStructObject(true));
+    factory->add_type_object("SequenceSequenceStruct", GetSequenceSequenceStructIdentifier(false),
+    GetSequenceSequenceStructObject(false));
 
-    factory->add_type_object("MapStruct", GetMapStructIdentifier(true), GetMapStructObject(true));
-    factory->add_type_object("MapStruct", GetMapStructIdentifier(false), GetMapStructObject(false));
+    factory->add_type_object("MapStruct", GetMapStructIdentifier(true),
+    GetMapStructObject(true));
+    factory->add_type_object("MapStruct", GetMapStructIdentifier(false),
+    GetMapStructObject(false));
 
-    factory->add_type_object("MapMapStruct", GetMapMapStructIdentifier(true), GetMapMapStructObject(true));
-    factory->add_type_object("MapMapStruct", GetMapMapStructIdentifier(false), GetMapMapStructObject(false));
+    factory->add_type_object("MapMapStruct", GetMapMapStructIdentifier(true),
+    GetMapMapStructObject(true));
+    factory->add_type_object("MapMapStruct", GetMapMapStructIdentifier(false),
+    GetMapMapStructObject(false));
 
-    factory->add_type_object("MyBitset", GetMyBitsetIdentifier(true), GetMyBitsetObject(true));
-    factory->add_type_object("MyBitset", GetMyBitsetIdentifier(false), GetMyBitsetObject(false));
+    factory->add_type_object("MyBitset", GetMyBitsetIdentifier(true),
+    GetMyBitsetObject(true));
+    factory->add_type_object("MyBitset", GetMyBitsetIdentifier(false),
+    GetMyBitsetObject(false));
 
-    factory->add_type_object("BitsetStruct", GetBitsetStructIdentifier(true), GetBitsetStructObject(true));
-    factory->add_type_object("BitsetStruct", GetBitsetStructIdentifier(false), GetBitsetStructObject(false));
+    factory->add_type_object("BitsetStruct", GetBitsetStructIdentifier(true),
+    GetBitsetStructObject(true));
+    factory->add_type_object("BitsetStruct", GetBitsetStructIdentifier(false),
+    GetBitsetStructObject(false));
 
-    factory->add_type_object("StructStruct", GetStructStructIdentifier(true), GetStructStructObject(true));
-    factory->add_type_object("StructStruct", GetStructStructIdentifier(false), GetStructStructObject(false));
+    factory->add_type_object("StructStruct", GetStructStructIdentifier(true),
+    GetStructStructObject(true));
+    factory->add_type_object("StructStruct", GetStructStructIdentifier(false),
+    GetStructStructObject(false));
 
-    factory->add_type_object("StructStructStruct", GetStructStructStructIdentifier(true), GetStructStructStructObject(true));
-    factory->add_type_object("StructStructStruct", GetStructStructStructIdentifier(false), GetStructStructStructObject(false));
+    factory->add_type_object("StructStructStruct", GetStructStructStructIdentifier(true),
+    GetStructStructStructObject(true));
+    factory->add_type_object("StructStructStruct", GetStructStructStructIdentifier(false),
+    GetStructStructStructObject(false));
 
-    factory->add_type_object("SimpleUnion", GetSimpleUnionIdentifier(true), GetSimpleUnionObject(true));
-    factory->add_type_object("SimpleUnion", GetSimpleUnionIdentifier(false), GetSimpleUnionObject(false));
+    factory->add_type_object("SimpleUnion", GetSimpleUnionIdentifier(true),
+    GetSimpleUnionObject(true));
+    factory->add_type_object("SimpleUnion", GetSimpleUnionIdentifier(false),
+    GetSimpleUnionObject(false));
 
-    factory->add_type_object("UnionUnion", GetUnionUnionIdentifier(true), GetUnionUnionObject(true));
-    factory->add_type_object("UnionUnion", GetUnionUnionIdentifier(false), GetUnionUnionObject(false));
+    factory->add_type_object("UnionUnion", GetUnionUnionIdentifier(true),
+    GetUnionUnionObject(true));
+    factory->add_type_object("UnionUnion", GetUnionUnionIdentifier(false),
+    GetUnionUnionObject(false));
 
-    factory->add_type_object("WCharUnion", GetWCharUnionIdentifier(true), GetWCharUnionObject(true));
-    factory->add_type_object("WCharUnion", GetWCharUnionIdentifier(false), GetWCharUnionObject(false));
+    factory->add_type_object("WCharUnion", GetWCharUnionIdentifier(true),
+    GetWCharUnionObject(true));
+    factory->add_type_object("WCharUnion", GetWCharUnionIdentifier(false),
+    GetWCharUnionObject(false));
 
-    factory->add_type_object("SimpleUnionStruct", GetSimpleUnionStructIdentifier(true), GetSimpleUnionStructObject(true));
-    factory->add_type_object("SimpleUnionStruct", GetSimpleUnionStructIdentifier(false), GetSimpleUnionStructObject(false));
+    factory->add_type_object("SimpleUnionStruct", GetSimpleUnionStructIdentifier(true),
+    GetSimpleUnionStructObject(true));
+    factory->add_type_object("SimpleUnionStruct", GetSimpleUnionStructIdentifier(false),
+    GetSimpleUnionStructObject(false));
 
-    factory->add_type_object("UnionUnionUnionStruct", GetUnionUnionUnionStructIdentifier(true), GetUnionUnionUnionStructObject(true));
-    factory->add_type_object("UnionUnionUnionStruct", GetUnionUnionUnionStructIdentifier(false), GetUnionUnionUnionStructObject(false));
+    factory->add_type_object("UnionUnionUnionStruct", GetUnionUnionUnionStructIdentifier(true),
+    GetUnionUnionUnionStructObject(true));
+    factory->add_type_object("UnionUnionUnionStruct", GetUnionUnionUnionStructIdentifier(false),
+    GetUnionUnionUnionStructObject(false));
 
-    factory->add_type_object("WCharUnionStruct", GetWCharUnionStructIdentifier(true), GetWCharUnionStructObject(true));
-    factory->add_type_object("WCharUnionStruct", GetWCharUnionStructIdentifier(false), GetWCharUnionStructObject(false));
+    factory->add_type_object("WCharUnionStruct", GetWCharUnionStructIdentifier(true),
+    GetWCharUnionStructObject(true));
+    factory->add_type_object("WCharUnionStruct", GetWCharUnionStructIdentifier(false),
+    GetWCharUnionStructObject(false));
 
 }
 
@@ -1292,14 +1372,7 @@ const TypeObject* GetMinimalBoolStructObject()
     mst_my_bool.common().member_flags().IS_MUST_UNDERSTAND(false);
     mst_my_bool.common().member_flags().IS_KEY(false);
     mst_my_bool.common().member_flags().IS_DEFAULT(false); // Doesn't apply
-    {
-        std::string cppType = "bool";
-        if (cppType == "long double")
-        {
-            cppType = "longdouble";
-        }
-        mst_my_bool.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier(cppType, false));
-    }
+    mst_my_bool.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier("bool", false));
 
     MD5 my_bool_hash("my_bool");
     for(int i = 0; i < 4; ++i)
@@ -1369,14 +1442,7 @@ const TypeObject* GetCompleteBoolStructObject()
     cst_my_bool.common().member_flags().IS_MUST_UNDERSTAND(false);
     cst_my_bool.common().member_flags().IS_KEY(false);
     cst_my_bool.common().member_flags().IS_DEFAULT(false); // Doesn't apply
-    {
-        std::string cppType = "bool";
-        if (cppType == "long double")
-        {
-            cppType = "longdouble";
-        }
-        cst_my_bool.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier(cppType, false));
-    }
+    cst_my_bool.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier("bool", false));
 
     cst_my_bool.detail().name("my_bool");
 
@@ -1470,14 +1536,7 @@ const TypeObject* GetMinimalOctetStructObject()
     mst_my_octet.common().member_flags().IS_MUST_UNDERSTAND(false);
     mst_my_octet.common().member_flags().IS_KEY(false);
     mst_my_octet.common().member_flags().IS_DEFAULT(false); // Doesn't apply
-    {
-        std::string cppType = "uint8_t";
-        if (cppType == "long double")
-        {
-            cppType = "longdouble";
-        }
-        mst_my_octet.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier(cppType, false));
-    }
+    mst_my_octet.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier("uint8_t", false));
 
     MD5 my_octet_hash("my_octet");
     for(int i = 0; i < 4; ++i)
@@ -1547,14 +1606,7 @@ const TypeObject* GetCompleteOctetStructObject()
     cst_my_octet.common().member_flags().IS_MUST_UNDERSTAND(false);
     cst_my_octet.common().member_flags().IS_KEY(false);
     cst_my_octet.common().member_flags().IS_DEFAULT(false); // Doesn't apply
-    {
-        std::string cppType = "uint8_t";
-        if (cppType == "long double")
-        {
-            cppType = "longdouble";
-        }
-        cst_my_octet.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier(cppType, false));
-    }
+    cst_my_octet.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier("uint8_t", false));
 
     cst_my_octet.detail().name("my_octet");
 
@@ -1648,14 +1700,7 @@ const TypeObject* GetMinimalShortStructObject()
     mst_my_int16.common().member_flags().IS_MUST_UNDERSTAND(false);
     mst_my_int16.common().member_flags().IS_KEY(false);
     mst_my_int16.common().member_flags().IS_DEFAULT(false); // Doesn't apply
-    {
-        std::string cppType = "int16_t";
-        if (cppType == "long double")
-        {
-            cppType = "longdouble";
-        }
-        mst_my_int16.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier(cppType, false));
-    }
+    mst_my_int16.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier("int16_t", false));
 
     MD5 my_int16_hash("my_int16");
     for(int i = 0; i < 4; ++i)
@@ -1725,14 +1770,7 @@ const TypeObject* GetCompleteShortStructObject()
     cst_my_int16.common().member_flags().IS_MUST_UNDERSTAND(false);
     cst_my_int16.common().member_flags().IS_KEY(false);
     cst_my_int16.common().member_flags().IS_DEFAULT(false); // Doesn't apply
-    {
-        std::string cppType = "int16_t";
-        if (cppType == "long double")
-        {
-            cppType = "longdouble";
-        }
-        cst_my_int16.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier(cppType, false));
-    }
+    cst_my_int16.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier("int16_t", false));
 
     cst_my_int16.detail().name("my_int16");
 
@@ -1826,14 +1864,7 @@ const TypeObject* GetMinimalLongStructObject()
     mst_my_int32.common().member_flags().IS_MUST_UNDERSTAND(false);
     mst_my_int32.common().member_flags().IS_KEY(false);
     mst_my_int32.common().member_flags().IS_DEFAULT(false); // Doesn't apply
-    {
-        std::string cppType = "int32_t";
-        if (cppType == "long double")
-        {
-            cppType = "longdouble";
-        }
-        mst_my_int32.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier(cppType, false));
-    }
+    mst_my_int32.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier("int32_t", false));
 
     MD5 my_int32_hash("my_int32");
     for(int i = 0; i < 4; ++i)
@@ -1903,14 +1934,7 @@ const TypeObject* GetCompleteLongStructObject()
     cst_my_int32.common().member_flags().IS_MUST_UNDERSTAND(false);
     cst_my_int32.common().member_flags().IS_KEY(false);
     cst_my_int32.common().member_flags().IS_DEFAULT(false); // Doesn't apply
-    {
-        std::string cppType = "int32_t";
-        if (cppType == "long double")
-        {
-            cppType = "longdouble";
-        }
-        cst_my_int32.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier(cppType, false));
-    }
+    cst_my_int32.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier("int32_t", false));
 
     cst_my_int32.detail().name("my_int32");
 
@@ -2004,14 +2028,7 @@ const TypeObject* GetMinimalLongLongStructObject()
     mst_my_int64.common().member_flags().IS_MUST_UNDERSTAND(false);
     mst_my_int64.common().member_flags().IS_KEY(false);
     mst_my_int64.common().member_flags().IS_DEFAULT(false); // Doesn't apply
-    {
-        std::string cppType = "int64_t";
-        if (cppType == "long double")
-        {
-            cppType = "longdouble";
-        }
-        mst_my_int64.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier(cppType, false));
-    }
+    mst_my_int64.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier("int64_t", false));
 
     MD5 my_int64_hash("my_int64");
     for(int i = 0; i < 4; ++i)
@@ -2081,14 +2098,7 @@ const TypeObject* GetCompleteLongLongStructObject()
     cst_my_int64.common().member_flags().IS_MUST_UNDERSTAND(false);
     cst_my_int64.common().member_flags().IS_KEY(false);
     cst_my_int64.common().member_flags().IS_DEFAULT(false); // Doesn't apply
-    {
-        std::string cppType = "int64_t";
-        if (cppType == "long double")
-        {
-            cppType = "longdouble";
-        }
-        cst_my_int64.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier(cppType, false));
-    }
+    cst_my_int64.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier("int64_t", false));
 
     cst_my_int64.detail().name("my_int64");
 
@@ -2182,14 +2192,7 @@ const TypeObject* GetMinimalUShortStructObject()
     mst_my_uint16.common().member_flags().IS_MUST_UNDERSTAND(false);
     mst_my_uint16.common().member_flags().IS_KEY(false);
     mst_my_uint16.common().member_flags().IS_DEFAULT(false); // Doesn't apply
-    {
-        std::string cppType = "uint16_t";
-        if (cppType == "long double")
-        {
-            cppType = "longdouble";
-        }
-        mst_my_uint16.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier(cppType, false));
-    }
+    mst_my_uint16.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier("uint16_t", false));
 
     MD5 my_uint16_hash("my_uint16");
     for(int i = 0; i < 4; ++i)
@@ -2259,14 +2262,7 @@ const TypeObject* GetCompleteUShortStructObject()
     cst_my_uint16.common().member_flags().IS_MUST_UNDERSTAND(false);
     cst_my_uint16.common().member_flags().IS_KEY(false);
     cst_my_uint16.common().member_flags().IS_DEFAULT(false); // Doesn't apply
-    {
-        std::string cppType = "uint16_t";
-        if (cppType == "long double")
-        {
-            cppType = "longdouble";
-        }
-        cst_my_uint16.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier(cppType, false));
-    }
+    cst_my_uint16.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier("uint16_t", false));
 
     cst_my_uint16.detail().name("my_uint16");
 
@@ -2360,14 +2356,7 @@ const TypeObject* GetMinimalULongStructObject()
     mst_my_uint32.common().member_flags().IS_MUST_UNDERSTAND(false);
     mst_my_uint32.common().member_flags().IS_KEY(false);
     mst_my_uint32.common().member_flags().IS_DEFAULT(false); // Doesn't apply
-    {
-        std::string cppType = "uint32_t";
-        if (cppType == "long double")
-        {
-            cppType = "longdouble";
-        }
-        mst_my_uint32.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier(cppType, false));
-    }
+    mst_my_uint32.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier("uint32_t", false));
 
     MD5 my_uint32_hash("my_uint32");
     for(int i = 0; i < 4; ++i)
@@ -2437,14 +2426,7 @@ const TypeObject* GetCompleteULongStructObject()
     cst_my_uint32.common().member_flags().IS_MUST_UNDERSTAND(false);
     cst_my_uint32.common().member_flags().IS_KEY(false);
     cst_my_uint32.common().member_flags().IS_DEFAULT(false); // Doesn't apply
-    {
-        std::string cppType = "uint32_t";
-        if (cppType == "long double")
-        {
-            cppType = "longdouble";
-        }
-        cst_my_uint32.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier(cppType, false));
-    }
+    cst_my_uint32.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier("uint32_t", false));
 
     cst_my_uint32.detail().name("my_uint32");
 
@@ -2538,14 +2520,7 @@ const TypeObject* GetMinimalULongLongStructObject()
     mst_my_uint64.common().member_flags().IS_MUST_UNDERSTAND(false);
     mst_my_uint64.common().member_flags().IS_KEY(false);
     mst_my_uint64.common().member_flags().IS_DEFAULT(false); // Doesn't apply
-    {
-        std::string cppType = "uint64_t";
-        if (cppType == "long double")
-        {
-            cppType = "longdouble";
-        }
-        mst_my_uint64.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier(cppType, false));
-    }
+    mst_my_uint64.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier("uint64_t", false));
 
     MD5 my_uint64_hash("my_uint64");
     for(int i = 0; i < 4; ++i)
@@ -2615,14 +2590,7 @@ const TypeObject* GetCompleteULongLongStructObject()
     cst_my_uint64.common().member_flags().IS_MUST_UNDERSTAND(false);
     cst_my_uint64.common().member_flags().IS_KEY(false);
     cst_my_uint64.common().member_flags().IS_DEFAULT(false); // Doesn't apply
-    {
-        std::string cppType = "uint64_t";
-        if (cppType == "long double")
-        {
-            cppType = "longdouble";
-        }
-        cst_my_uint64.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier(cppType, false));
-    }
+    cst_my_uint64.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier("uint64_t", false));
 
     cst_my_uint64.detail().name("my_uint64");
 
@@ -2716,14 +2684,7 @@ const TypeObject* GetMinimalFloatStructObject()
     mst_my_float32.common().member_flags().IS_MUST_UNDERSTAND(false);
     mst_my_float32.common().member_flags().IS_KEY(false);
     mst_my_float32.common().member_flags().IS_DEFAULT(false); // Doesn't apply
-    {
-        std::string cppType = "float";
-        if (cppType == "long double")
-        {
-            cppType = "longdouble";
-        }
-        mst_my_float32.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier(cppType, false));
-    }
+    mst_my_float32.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier("float", false));
 
     MD5 my_float32_hash("my_float32");
     for(int i = 0; i < 4; ++i)
@@ -2793,14 +2754,7 @@ const TypeObject* GetCompleteFloatStructObject()
     cst_my_float32.common().member_flags().IS_MUST_UNDERSTAND(false);
     cst_my_float32.common().member_flags().IS_KEY(false);
     cst_my_float32.common().member_flags().IS_DEFAULT(false); // Doesn't apply
-    {
-        std::string cppType = "float";
-        if (cppType == "long double")
-        {
-            cppType = "longdouble";
-        }
-        cst_my_float32.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier(cppType, false));
-    }
+    cst_my_float32.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier("float", false));
 
     cst_my_float32.detail().name("my_float32");
 
@@ -2894,14 +2848,7 @@ const TypeObject* GetMinimalDoubleStructObject()
     mst_my_float64.common().member_flags().IS_MUST_UNDERSTAND(false);
     mst_my_float64.common().member_flags().IS_KEY(false);
     mst_my_float64.common().member_flags().IS_DEFAULT(false); // Doesn't apply
-    {
-        std::string cppType = "double";
-        if (cppType == "long double")
-        {
-            cppType = "longdouble";
-        }
-        mst_my_float64.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier(cppType, false));
-    }
+    mst_my_float64.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier("double", false));
 
     MD5 my_float64_hash("my_float64");
     for(int i = 0; i < 4; ++i)
@@ -2971,14 +2918,7 @@ const TypeObject* GetCompleteDoubleStructObject()
     cst_my_float64.common().member_flags().IS_MUST_UNDERSTAND(false);
     cst_my_float64.common().member_flags().IS_KEY(false);
     cst_my_float64.common().member_flags().IS_DEFAULT(false); // Doesn't apply
-    {
-        std::string cppType = "double";
-        if (cppType == "long double")
-        {
-            cppType = "longdouble";
-        }
-        cst_my_float64.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier(cppType, false));
-    }
+    cst_my_float64.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier("double", false));
 
     cst_my_float64.detail().name("my_float64");
 
@@ -3072,14 +3012,7 @@ const TypeObject* GetMinimalLongDoubleStructObject()
     mst_my_float128.common().member_flags().IS_MUST_UNDERSTAND(false);
     mst_my_float128.common().member_flags().IS_KEY(false);
     mst_my_float128.common().member_flags().IS_DEFAULT(false); // Doesn't apply
-    {
-        std::string cppType = "long double";
-        if (cppType == "long double")
-        {
-            cppType = "longdouble";
-        }
-        mst_my_float128.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier(cppType, false));
-    }
+    mst_my_float128.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier("longdouble", false));
 
     MD5 my_float128_hash("my_float128");
     for(int i = 0; i < 4; ++i)
@@ -3149,14 +3082,7 @@ const TypeObject* GetCompleteLongDoubleStructObject()
     cst_my_float128.common().member_flags().IS_MUST_UNDERSTAND(false);
     cst_my_float128.common().member_flags().IS_KEY(false);
     cst_my_float128.common().member_flags().IS_DEFAULT(false); // Doesn't apply
-    {
-        std::string cppType = "long double";
-        if (cppType == "long double")
-        {
-            cppType = "longdouble";
-        }
-        cst_my_float128.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier(cppType, false));
-    }
+    cst_my_float128.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier("longdouble", false));
 
     cst_my_float128.detail().name("my_float128");
 
@@ -3250,14 +3176,7 @@ const TypeObject* GetMinimalCharStructObject()
     mst_my_char.common().member_flags().IS_MUST_UNDERSTAND(false);
     mst_my_char.common().member_flags().IS_KEY(false);
     mst_my_char.common().member_flags().IS_DEFAULT(false); // Doesn't apply
-    {
-        std::string cppType = "char";
-        if (cppType == "long double")
-        {
-            cppType = "longdouble";
-        }
-        mst_my_char.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier(cppType, false));
-    }
+    mst_my_char.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier("char", false));
 
     MD5 my_char_hash("my_char");
     for(int i = 0; i < 4; ++i)
@@ -3327,14 +3246,7 @@ const TypeObject* GetCompleteCharStructObject()
     cst_my_char.common().member_flags().IS_MUST_UNDERSTAND(false);
     cst_my_char.common().member_flags().IS_KEY(false);
     cst_my_char.common().member_flags().IS_DEFAULT(false); // Doesn't apply
-    {
-        std::string cppType = "char";
-        if (cppType == "long double")
-        {
-            cppType = "longdouble";
-        }
-        cst_my_char.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier(cppType, false));
-    }
+    cst_my_char.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier("char", false));
 
     cst_my_char.detail().name("my_char");
 
@@ -3428,14 +3340,7 @@ const TypeObject* GetMinimalWCharStructObject()
     mst_my_wchar.common().member_flags().IS_MUST_UNDERSTAND(false);
     mst_my_wchar.common().member_flags().IS_KEY(false);
     mst_my_wchar.common().member_flags().IS_DEFAULT(false); // Doesn't apply
-    {
-        std::string cppType = "wchar_t";
-        if (cppType == "long double")
-        {
-            cppType = "longdouble";
-        }
-        mst_my_wchar.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier(cppType, false));
-    }
+    mst_my_wchar.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier("wchar_t", false));
 
     MD5 my_wchar_hash("my_wchar");
     for(int i = 0; i < 4; ++i)
@@ -3505,14 +3410,7 @@ const TypeObject* GetCompleteWCharStructObject()
     cst_my_wchar.common().member_flags().IS_MUST_UNDERSTAND(false);
     cst_my_wchar.common().member_flags().IS_KEY(false);
     cst_my_wchar.common().member_flags().IS_DEFAULT(false); // Doesn't apply
-    {
-        std::string cppType = "wchar_t";
-        if (cppType == "long double")
-        {
-            cppType = "longdouble";
-        }
-        cst_my_wchar.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier(cppType, false));
-    }
+    cst_my_wchar.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier("wchar_t", false));
 
     cst_my_wchar.detail().name("my_wchar");
 
@@ -5877,14 +5775,7 @@ const TypeObject* GetMinimalStructStructObject()
     mst_a.common().member_flags().IS_MUST_UNDERSTAND(false);
     mst_a.common().member_flags().IS_KEY(false);
     mst_a.common().member_flags().IS_DEFAULT(false); // Doesn't apply
-    {
-        std::string cppType = "int32_t";
-        if (cppType == "long double")
-        {
-            cppType = "longdouble";
-        }
-        mst_a.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier(cppType, false));
-    }
+    mst_a.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier("int32_t", false));
 
     MD5 a_hash("a");
     for(int i = 0; i < 4; ++i)
@@ -5902,14 +5793,7 @@ const TypeObject* GetMinimalStructStructObject()
     mst_b.common().member_flags().IS_MUST_UNDERSTAND(false);
     mst_b.common().member_flags().IS_KEY(false);
     mst_b.common().member_flags().IS_DEFAULT(false); // Doesn't apply
-    {
-        std::string cppType = "int64_t";
-        if (cppType == "long double")
-        {
-            cppType = "longdouble";
-        }
-        mst_b.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier(cppType, false));
-    }
+    mst_b.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier("int64_t", false));
 
     MD5 b_hash("b");
     for(int i = 0; i < 4; ++i)
@@ -5979,14 +5863,7 @@ const TypeObject* GetCompleteStructStructObject()
     cst_a.common().member_flags().IS_MUST_UNDERSTAND(false);
     cst_a.common().member_flags().IS_KEY(false);
     cst_a.common().member_flags().IS_DEFAULT(false); // Doesn't apply
-    {
-        std::string cppType = "int32_t";
-        if (cppType == "long double")
-        {
-            cppType = "longdouble";
-        }
-        cst_a.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier(cppType, false));
-    }
+    cst_a.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier("int32_t", false));
 
     cst_a.detail().name("a");
 
@@ -6001,14 +5878,7 @@ const TypeObject* GetCompleteStructStructObject()
     cst_b.common().member_flags().IS_MUST_UNDERSTAND(false);
     cst_b.common().member_flags().IS_KEY(false);
     cst_b.common().member_flags().IS_DEFAULT(false); // Doesn't apply
-    {
-        std::string cppType = "int64_t";
-        if (cppType == "long double")
-        {
-            cppType = "longdouble";
-        }
-        cst_b.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier(cppType, false));
-    }
+    cst_b.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier("int64_t", false));
 
     cst_b.detail().name("b");
 
@@ -6119,14 +5989,7 @@ const TypeObject* GetMinimalStructStructStructObject()
     mst_child_int64.common().member_flags().IS_MUST_UNDERSTAND(false);
     mst_child_int64.common().member_flags().IS_KEY(false);
     mst_child_int64.common().member_flags().IS_DEFAULT(false); // Doesn't apply
-    {
-        std::string cppType = "int64_t";
-        if (cppType == "long double")
-        {
-            cppType = "longdouble";
-        }
-        mst_child_int64.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier(cppType, false));
-    }
+    mst_child_int64.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier("int64_t", false));
 
     MD5 child_int64_hash("child_int64");
     for(int i = 0; i < 4; ++i)
@@ -6210,14 +6073,7 @@ const TypeObject* GetCompleteStructStructStructObject()
     cst_child_int64.common().member_flags().IS_MUST_UNDERSTAND(false);
     cst_child_int64.common().member_flags().IS_KEY(false);
     cst_child_int64.common().member_flags().IS_DEFAULT(false); // Doesn't apply
-    {
-        std::string cppType = "int64_t";
-        if (cppType == "long double")
-        {
-            cppType = "longdouble";
-        }
-        cst_child_int64.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier(cppType, false));
-    }
+    cst_child_int64.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier("int64_t", false));
 
     cst_child_int64.detail().name("child_int64");
 
@@ -6321,14 +6177,7 @@ const TypeObject* GetMinimalSimpleUnionObject()
     mst_first.common().member_flags().IS_MUST_UNDERSTAND(false); // Doesn't apply
     mst_first.common().member_flags().IS_KEY(false); // Doesn't apply
     mst_first.common().member_flags().IS_DEFAULT(false);
-    {
-        std::string cppType = "int32_t";
-        if (cppType == "long double")
-        {
-            cppType = "longdouble";
-        }
-        mst_first.common().type_id(*TypeObjectFactory::get_instance()->get_type_identifier(cppType, false));
-    }
+    mst_first.common().type_id(*TypeObjectFactory::get_instance()->get_type_identifier("int32_t", false));
 
     mst_first.common().label_seq().emplace_back(A);
     MD5 first_hash("first");
@@ -6347,14 +6196,7 @@ const TypeObject* GetMinimalSimpleUnionObject()
     mst_second.common().member_flags().IS_MUST_UNDERSTAND(false); // Doesn't apply
     mst_second.common().member_flags().IS_KEY(false); // Doesn't apply
     mst_second.common().member_flags().IS_DEFAULT(false);
-    {
-        std::string cppType = "int64_t";
-        if (cppType == "long double")
-        {
-            cppType = "longdouble";
-        }
-        mst_second.common().type_id(*TypeObjectFactory::get_instance()->get_type_identifier(cppType, false));
-    }
+    mst_second.common().type_id(*TypeObjectFactory::get_instance()->get_type_identifier("int64_t", false));
 
     mst_second.common().label_seq().emplace_back(B);
     MD5 second_hash("second");
@@ -6435,14 +6277,7 @@ const TypeObject* GetCompleteSimpleUnionObject()
     cst_first.common().member_flags().IS_MUST_UNDERSTAND(false); // Doesn't apply
     cst_first.common().member_flags().IS_KEY(false); // Doesn't apply
     cst_first.common().member_flags().IS_DEFAULT(false);
-    {
-        std::string cppType = "int32_t";
-        if (cppType == "long double")
-        {
-            cppType = "longdouble";
-        }
-        cst_first.common().type_id(*TypeObjectFactory::get_instance()->get_type_identifier(cppType, false));
-    }
+    cst_first.common().type_id(*TypeObjectFactory::get_instance()->get_type_identifier("int32_t", false));
     cst_first.common().label_seq().emplace_back(A);
 
     cst_first.detail().name("first");
@@ -6458,14 +6293,7 @@ const TypeObject* GetCompleteSimpleUnionObject()
     cst_second.common().member_flags().IS_MUST_UNDERSTAND(false); // Doesn't apply
     cst_second.common().member_flags().IS_KEY(false); // Doesn't apply
     cst_second.common().member_flags().IS_DEFAULT(false);
-    {
-        std::string cppType = "int64_t";
-        if (cppType == "long double")
-        {
-            cppType = "longdouble";
-        }
-        cst_second.common().type_id(*TypeObjectFactory::get_instance()->get_type_identifier(cppType, false));
-    }
+    cst_second.common().type_id(*TypeObjectFactory::get_instance()->get_type_identifier("int64_t", false));
     cst_second.common().label_seq().emplace_back(B);
 
     cst_second.detail().name("second");
@@ -6570,14 +6398,7 @@ const TypeObject* GetMinimalUnionUnionObject()
     mst_first.common().member_flags().IS_MUST_UNDERSTAND(false); // Doesn't apply
     mst_first.common().member_flags().IS_KEY(false); // Doesn't apply
     mst_first.common().member_flags().IS_DEFAULT(false);
-    {
-        std::string cppType = "int32_t";
-        if (cppType == "long double")
-        {
-            cppType = "longdouble";
-        }
-        mst_first.common().type_id(*TypeObjectFactory::get_instance()->get_type_identifier(cppType, false));
-    }
+    mst_first.common().type_id(*TypeObjectFactory::get_instance()->get_type_identifier("int32_t", false));
 
     mst_first.common().label_seq().emplace_back(A);
     MD5 first_hash("first");
@@ -6676,14 +6497,7 @@ const TypeObject* GetCompleteUnionUnionObject()
     cst_first.common().member_flags().IS_MUST_UNDERSTAND(false); // Doesn't apply
     cst_first.common().member_flags().IS_KEY(false); // Doesn't apply
     cst_first.common().member_flags().IS_DEFAULT(false);
-    {
-        std::string cppType = "int32_t";
-        if (cppType == "long double")
-        {
-            cppType = "longdouble";
-        }
-        cst_first.common().type_id(*TypeObjectFactory::get_instance()->get_type_identifier(cppType, false));
-    }
+    cst_first.common().type_id(*TypeObjectFactory::get_instance()->get_type_identifier("int32_t", false));
     cst_first.common().label_seq().emplace_back(A);
 
     cst_first.detail().name("first");
@@ -6803,14 +6617,7 @@ const TypeObject* GetMinimalWCharUnionObject()
     mst_first.common().member_flags().IS_MUST_UNDERSTAND(false); // Doesn't apply
     mst_first.common().member_flags().IS_KEY(false); // Doesn't apply
     mst_first.common().member_flags().IS_DEFAULT(false);
-    {
-        std::string cppType = "int32_t";
-        if (cppType == "long double")
-        {
-            cppType = "longdouble";
-        }
-        mst_first.common().type_id(*TypeObjectFactory::get_instance()->get_type_identifier(cppType, false));
-    }
+    mst_first.common().type_id(*TypeObjectFactory::get_instance()->get_type_identifier("int32_t", false));
 
     mst_first.common().label_seq().emplace_back(A);
     MD5 first_hash("first");
@@ -6829,14 +6636,7 @@ const TypeObject* GetMinimalWCharUnionObject()
     mst_second.common().member_flags().IS_MUST_UNDERSTAND(false); // Doesn't apply
     mst_second.common().member_flags().IS_KEY(false); // Doesn't apply
     mst_second.common().member_flags().IS_DEFAULT(false);
-    {
-        std::string cppType = "int64_t";
-        if (cppType == "long double")
-        {
-            cppType = "longdouble";
-        }
-        mst_second.common().type_id(*TypeObjectFactory::get_instance()->get_type_identifier(cppType, false));
-    }
+    mst_second.common().type_id(*TypeObjectFactory::get_instance()->get_type_identifier("int64_t", false));
 
     mst_second.common().label_seq().emplace_back(B);
     MD5 second_hash("second");
@@ -6917,14 +6717,7 @@ const TypeObject* GetCompleteWCharUnionObject()
     cst_first.common().member_flags().IS_MUST_UNDERSTAND(false); // Doesn't apply
     cst_first.common().member_flags().IS_KEY(false); // Doesn't apply
     cst_first.common().member_flags().IS_DEFAULT(false);
-    {
-        std::string cppType = "int32_t";
-        if (cppType == "long double")
-        {
-            cppType = "longdouble";
-        }
-        cst_first.common().type_id(*TypeObjectFactory::get_instance()->get_type_identifier(cppType, false));
-    }
+    cst_first.common().type_id(*TypeObjectFactory::get_instance()->get_type_identifier("int32_t", false));
     cst_first.common().label_seq().emplace_back(A);
 
     cst_first.detail().name("first");
@@ -6940,14 +6733,7 @@ const TypeObject* GetCompleteWCharUnionObject()
     cst_second.common().member_flags().IS_MUST_UNDERSTAND(false); // Doesn't apply
     cst_second.common().member_flags().IS_KEY(false); // Doesn't apply
     cst_second.common().member_flags().IS_DEFAULT(false);
-    {
-        std::string cppType = "int64_t";
-        if (cppType == "long double")
-        {
-            cppType = "longdouble";
-        }
-        cst_second.common().type_id(*TypeObjectFactory::get_instance()->get_type_identifier(cppType, false));
-    }
+    cst_second.common().type_id(*TypeObjectFactory::get_instance()->get_type_identifier("int64_t", false));
     cst_second.common().label_seq().emplace_back(B);
 
     cst_second.detail().name("second");

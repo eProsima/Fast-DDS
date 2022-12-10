@@ -57,7 +57,7 @@ MyEnumStruct::MyEnumStruct(
 }
 
 MyEnumStruct::MyEnumStruct(
-        MyEnumStruct&& x)
+        MyEnumStruct&& x) noexcept
 {
     m_my_enum = x.m_my_enum;
 }
@@ -72,7 +72,7 @@ MyEnumStruct& MyEnumStruct::operator =(
 }
 
 MyEnumStruct& MyEnumStruct::operator =(
-        MyEnumStruct&& x)
+        MyEnumStruct&& x) noexcept
 {
 
     m_my_enum = x.m_my_enum;
@@ -187,7 +187,7 @@ void MyEnumStruct::serializeKey(
         eprosima::fastcdr::Cdr& scdr) const
 {
     (void) scdr;
-     
+
 }
 
 MyBadEnumStruct::MyBadEnumStruct()
@@ -210,7 +210,7 @@ MyBadEnumStruct::MyBadEnumStruct(
 }
 
 MyBadEnumStruct::MyBadEnumStruct(
-        MyBadEnumStruct&& x)
+        MyBadEnumStruct&& x) noexcept
 {
     m_my_enum = x.m_my_enum;
 }
@@ -225,7 +225,7 @@ MyBadEnumStruct& MyBadEnumStruct::operator =(
 }
 
 MyBadEnumStruct& MyBadEnumStruct::operator =(
-        MyBadEnumStruct&& x)
+        MyBadEnumStruct&& x) noexcept
 {
 
     m_my_enum = x.m_my_enum;
@@ -340,7 +340,7 @@ void MyBadEnumStruct::serializeKey(
         eprosima::fastcdr::Cdr& scdr) const
 {
     (void) scdr;
-     
+
 }
 
 
@@ -364,7 +364,7 @@ MyAliasEnumStruct::MyAliasEnumStruct(
 }
 
 MyAliasEnumStruct::MyAliasEnumStruct(
-        MyAliasEnumStruct&& x)
+        MyAliasEnumStruct&& x) noexcept
 {
     m_my_enum = x.m_my_enum;
 }
@@ -379,7 +379,7 @@ MyAliasEnumStruct& MyAliasEnumStruct::operator =(
 }
 
 MyAliasEnumStruct& MyAliasEnumStruct::operator =(
-        MyAliasEnumStruct&& x)
+        MyAliasEnumStruct&& x) noexcept
 {
 
     m_my_enum = x.m_my_enum;
@@ -494,7 +494,7 @@ void MyAliasEnumStruct::serializeKey(
         eprosima::fastcdr::Cdr& scdr) const
 {
     (void) scdr;
-     
+
 }
 
 BasicStruct::BasicStruct()
@@ -526,7 +526,7 @@ BasicStruct::BasicStruct(
 }
 
 BasicStruct::BasicStruct(
-        BasicStruct&& x)
+        BasicStruct&& x) noexcept
 {
     m_my_bool = x.m_my_bool;
     m_my_int32 = x.m_my_int32;
@@ -545,7 +545,7 @@ BasicStruct& BasicStruct::operator =(
 }
 
 BasicStruct& BasicStruct::operator =(
-        BasicStruct&& x)
+        BasicStruct&& x) noexcept
 {
 
     m_my_bool = x.m_my_bool;
@@ -741,7 +741,7 @@ void BasicStruct::serializeKey(
         eprosima::fastcdr::Cdr& scdr) const
 {
     (void) scdr;
-       
+
 }
 
 BasicNamesStruct::BasicNamesStruct()
@@ -773,7 +773,7 @@ BasicNamesStruct::BasicNamesStruct(
 }
 
 BasicNamesStruct::BasicNamesStruct(
-        BasicNamesStruct&& x)
+        BasicNamesStruct&& x) noexcept
 {
     m_my_bool_name = x.m_my_bool_name;
     m_my_int32_name = x.m_my_int32_name;
@@ -792,7 +792,7 @@ BasicNamesStruct& BasicNamesStruct::operator =(
 }
 
 BasicNamesStruct& BasicNamesStruct::operator =(
-        BasicNamesStruct&& x)
+        BasicNamesStruct&& x) noexcept
 {
 
     m_my_bool_name = x.m_my_bool_name;
@@ -988,7 +988,7 @@ void BasicNamesStruct::serializeKey(
         eprosima::fastcdr::Cdr& scdr) const
 {
     (void) scdr;
-       
+
 }
 
 BasicBadStruct::BasicBadStruct()
@@ -1020,7 +1020,7 @@ BasicBadStruct::BasicBadStruct(
 }
 
 BasicBadStruct::BasicBadStruct(
-        BasicBadStruct&& x)
+        BasicBadStruct&& x) noexcept
 {
     m_my_bool = x.m_my_bool;
     m_my_int32 = x.m_my_int32;
@@ -1039,7 +1039,7 @@ BasicBadStruct& BasicBadStruct::operator =(
 }
 
 BasicBadStruct& BasicBadStruct::operator =(
-        BasicBadStruct&& x)
+        BasicBadStruct&& x) noexcept
 {
 
     m_my_bool = x.m_my_bool;
@@ -1235,7 +1235,7 @@ void BasicBadStruct::serializeKey(
         eprosima::fastcdr::Cdr& scdr) const
 {
     (void) scdr;
-       
+
 }
 
 BasicWideStruct::BasicWideStruct()
@@ -1275,7 +1275,7 @@ BasicWideStruct::BasicWideStruct(
 }
 
 BasicWideStruct::BasicWideStruct(
-        BasicWideStruct&& x)
+        BasicWideStruct&& x) noexcept
 {
     m_my_bool = x.m_my_bool;
     m_my_int32 = x.m_my_int32;
@@ -1298,7 +1298,7 @@ BasicWideStruct& BasicWideStruct::operator =(
 }
 
 BasicWideStruct& BasicWideStruct::operator =(
-        BasicWideStruct&& x)
+        BasicWideStruct&& x) noexcept
 {
 
     m_my_bool = x.m_my_bool;
@@ -1577,7 +1577,7 @@ void BasicWideStruct::serializeKey(
         eprosima::fastcdr::Cdr& scdr) const
 {
     (void) scdr;
-         
+
 }
 
 BadBasicWideStruct::BadBasicWideStruct()
@@ -1617,7 +1617,7 @@ BadBasicWideStruct::BadBasicWideStruct(
 }
 
 BadBasicWideStruct::BadBasicWideStruct(
-        BadBasicWideStruct&& x)
+        BadBasicWideStruct&& x) noexcept
 {
     m_new_int32 = x.m_new_int32;
     m_new_string = std::move(x.m_new_string);
@@ -1640,7 +1640,7 @@ BadBasicWideStruct& BadBasicWideStruct::operator =(
 }
 
 BadBasicWideStruct& BadBasicWideStruct::operator =(
-        BadBasicWideStruct&& x)
+        BadBasicWideStruct&& x) noexcept
 {
 
     m_new_int32 = x.m_new_int32;
@@ -1919,7 +1919,7 @@ void BadBasicWideStruct::serializeKey(
         eprosima::fastcdr::Cdr& scdr) const
 {
     (void) scdr;
-         
+
 }
 
 StringStruct::StringStruct()
@@ -1942,7 +1942,7 @@ StringStruct::StringStruct(
 }
 
 StringStruct::StringStruct(
-        StringStruct&& x)
+        StringStruct&& x) noexcept
 {
     m_my_string = std::move(x.m_my_string);
 }
@@ -1957,7 +1957,7 @@ StringStruct& StringStruct::operator =(
 }
 
 StringStruct& StringStruct::operator =(
-        StringStruct&& x)
+        StringStruct&& x) noexcept
 {
 
     m_my_string = std::move(x.m_my_string);
@@ -2073,7 +2073,7 @@ void StringStruct::serializeKey(
         eprosima::fastcdr::Cdr& scdr) const
 {
     (void) scdr;
-     
+
 }
 
 LargeStringStruct::LargeStringStruct()
@@ -2096,7 +2096,7 @@ LargeStringStruct::LargeStringStruct(
 }
 
 LargeStringStruct::LargeStringStruct(
-        LargeStringStruct&& x)
+        LargeStringStruct&& x) noexcept
 {
     m_my_large_string = std::move(x.m_my_large_string);
 }
@@ -2111,7 +2111,7 @@ LargeStringStruct& LargeStringStruct::operator =(
 }
 
 LargeStringStruct& LargeStringStruct::operator =(
-        LargeStringStruct&& x)
+        LargeStringStruct&& x) noexcept
 {
 
     m_my_large_string = std::move(x.m_my_large_string);
@@ -2231,7 +2231,7 @@ void LargeStringStruct::serializeKey(
         eprosima::fastcdr::Cdr& scdr) const
 {
     (void) scdr;
-     
+
 }
 
 WStringStruct::WStringStruct()
@@ -2254,7 +2254,7 @@ WStringStruct::WStringStruct(
 }
 
 WStringStruct::WStringStruct(
-        WStringStruct&& x)
+        WStringStruct&& x) noexcept
 {
     m_my_wstring = std::move(x.m_my_wstring);
 }
@@ -2269,7 +2269,7 @@ WStringStruct& WStringStruct::operator =(
 }
 
 WStringStruct& WStringStruct::operator =(
-        WStringStruct&& x)
+        WStringStruct&& x) noexcept
 {
 
     m_my_wstring = std::move(x.m_my_wstring);
@@ -2386,7 +2386,7 @@ void WStringStruct::serializeKey(
         eprosima::fastcdr::Cdr& scdr) const
 {
     (void) scdr;
-     
+
 }
 
 LargeWStringStruct::LargeWStringStruct()
@@ -2409,7 +2409,7 @@ LargeWStringStruct::LargeWStringStruct(
 }
 
 LargeWStringStruct::LargeWStringStruct(
-        LargeWStringStruct&& x)
+        LargeWStringStruct&& x) noexcept
 {
     m_my_large_wstring = std::move(x.m_my_large_wstring);
 }
@@ -2424,7 +2424,7 @@ LargeWStringStruct& LargeWStringStruct::operator =(
 }
 
 LargeWStringStruct& LargeWStringStruct::operator =(
-        LargeWStringStruct&& x)
+        LargeWStringStruct&& x) noexcept
 {
 
     m_my_large_wstring = std::move(x.m_my_large_wstring);
@@ -2541,7 +2541,7 @@ void LargeWStringStruct::serializeKey(
         eprosima::fastcdr::Cdr& scdr) const
 {
     (void) scdr;
-     
+
 }
 
 ArrayStruct::ArrayStruct()
@@ -2564,7 +2564,7 @@ ArrayStruct::ArrayStruct(
 }
 
 ArrayStruct::ArrayStruct(
-        ArrayStruct&& x)
+        ArrayStruct&& x) noexcept
 {
     m_my_array = std::move(x.m_my_array);
 }
@@ -2579,7 +2579,7 @@ ArrayStruct& ArrayStruct::operator =(
 }
 
 ArrayStruct& ArrayStruct::operator =(
-        ArrayStruct&& x)
+        ArrayStruct&& x) noexcept
 {
 
     m_my_array = std::move(x.m_my_array);
@@ -2699,7 +2699,7 @@ void ArrayStruct::serializeKey(
         eprosima::fastcdr::Cdr& scdr) const
 {
     (void) scdr;
-     
+
 }
 
 ArrayStructEqual::ArrayStructEqual()
@@ -2722,7 +2722,7 @@ ArrayStructEqual::ArrayStructEqual(
 }
 
 ArrayStructEqual::ArrayStructEqual(
-        ArrayStructEqual&& x)
+        ArrayStructEqual&& x) noexcept
 {
     m_my_array_equal = std::move(x.m_my_array_equal);
 }
@@ -2737,7 +2737,7 @@ ArrayStructEqual& ArrayStructEqual::operator =(
 }
 
 ArrayStructEqual& ArrayStructEqual::operator =(
-        ArrayStructEqual&& x)
+        ArrayStructEqual&& x) noexcept
 {
 
     m_my_array_equal = std::move(x.m_my_array_equal);
@@ -2857,7 +2857,7 @@ void ArrayStructEqual::serializeKey(
         eprosima::fastcdr::Cdr& scdr) const
 {
     (void) scdr;
-     
+
 }
 
 ArrayBadStruct::ArrayBadStruct()
@@ -2880,7 +2880,7 @@ ArrayBadStruct::ArrayBadStruct(
 }
 
 ArrayBadStruct::ArrayBadStruct(
-        ArrayBadStruct&& x)
+        ArrayBadStruct&& x) noexcept
 {
     m_my_array = std::move(x.m_my_array);
 }
@@ -2895,7 +2895,7 @@ ArrayBadStruct& ArrayBadStruct::operator =(
 }
 
 ArrayBadStruct& ArrayBadStruct::operator =(
-        ArrayBadStruct&& x)
+        ArrayBadStruct&& x) noexcept
 {
 
     m_my_array = std::move(x.m_my_array);
@@ -3015,7 +3015,7 @@ void ArrayBadStruct::serializeKey(
         eprosima::fastcdr::Cdr& scdr) const
 {
     (void) scdr;
-     
+
 }
 
 ArrayDimensionsStruct::ArrayDimensionsStruct()
@@ -3038,7 +3038,7 @@ ArrayDimensionsStruct::ArrayDimensionsStruct(
 }
 
 ArrayDimensionsStruct::ArrayDimensionsStruct(
-        ArrayDimensionsStruct&& x)
+        ArrayDimensionsStruct&& x) noexcept
 {
     m_my_array = std::move(x.m_my_array);
 }
@@ -3053,7 +3053,7 @@ ArrayDimensionsStruct& ArrayDimensionsStruct::operator =(
 }
 
 ArrayDimensionsStruct& ArrayDimensionsStruct::operator =(
-        ArrayDimensionsStruct&& x)
+        ArrayDimensionsStruct&& x) noexcept
 {
 
     m_my_array = std::move(x.m_my_array);
@@ -3173,7 +3173,7 @@ void ArrayDimensionsStruct::serializeKey(
         eprosima::fastcdr::Cdr& scdr) const
 {
     (void) scdr;
-     
+
 }
 
 ArraySizeStruct::ArraySizeStruct()
@@ -3196,7 +3196,7 @@ ArraySizeStruct::ArraySizeStruct(
 }
 
 ArraySizeStruct::ArraySizeStruct(
-        ArraySizeStruct&& x)
+        ArraySizeStruct&& x) noexcept
 {
     m_my_array = std::move(x.m_my_array);
 }
@@ -3211,7 +3211,7 @@ ArraySizeStruct& ArraySizeStruct::operator =(
 }
 
 ArraySizeStruct& ArraySizeStruct::operator =(
-        ArraySizeStruct&& x)
+        ArraySizeStruct&& x) noexcept
 {
 
     m_my_array = std::move(x.m_my_array);
@@ -3331,7 +3331,7 @@ void ArraySizeStruct::serializeKey(
         eprosima::fastcdr::Cdr& scdr) const
 {
     (void) scdr;
-     
+
 }
 
 SequenceStruct::SequenceStruct()
@@ -3354,7 +3354,7 @@ SequenceStruct::SequenceStruct(
 }
 
 SequenceStruct::SequenceStruct(
-        SequenceStruct&& x)
+        SequenceStruct&& x) noexcept
 {
     m_my_sequence = std::move(x.m_my_sequence);
 }
@@ -3369,7 +3369,7 @@ SequenceStruct& SequenceStruct::operator =(
 }
 
 SequenceStruct& SequenceStruct::operator =(
-        SequenceStruct&& x)
+        SequenceStruct&& x) noexcept
 {
 
     m_my_sequence = std::move(x.m_my_sequence);
@@ -3495,7 +3495,7 @@ void SequenceStruct::serializeKey(
         eprosima::fastcdr::Cdr& scdr) const
 {
     (void) scdr;
-     
+
 }
 
 SequenceStructEqual::SequenceStructEqual()
@@ -3518,7 +3518,7 @@ SequenceStructEqual::SequenceStructEqual(
 }
 
 SequenceStructEqual::SequenceStructEqual(
-        SequenceStructEqual&& x)
+        SequenceStructEqual&& x) noexcept
 {
     m_my_sequence_equal = std::move(x.m_my_sequence_equal);
 }
@@ -3533,7 +3533,7 @@ SequenceStructEqual& SequenceStructEqual::operator =(
 }
 
 SequenceStructEqual& SequenceStructEqual::operator =(
-        SequenceStructEqual&& x)
+        SequenceStructEqual&& x) noexcept
 {
 
     m_my_sequence_equal = std::move(x.m_my_sequence_equal);
@@ -3659,7 +3659,7 @@ void SequenceStructEqual::serializeKey(
         eprosima::fastcdr::Cdr& scdr) const
 {
     (void) scdr;
-     
+
 }
 
 SequenceBadStruct::SequenceBadStruct()
@@ -3682,7 +3682,7 @@ SequenceBadStruct::SequenceBadStruct(
 }
 
 SequenceBadStruct::SequenceBadStruct(
-        SequenceBadStruct&& x)
+        SequenceBadStruct&& x) noexcept
 {
     m_my_sequence = std::move(x.m_my_sequence);
 }
@@ -3697,7 +3697,7 @@ SequenceBadStruct& SequenceBadStruct::operator =(
 }
 
 SequenceBadStruct& SequenceBadStruct::operator =(
-        SequenceBadStruct&& x)
+        SequenceBadStruct&& x) noexcept
 {
 
     m_my_sequence = std::move(x.m_my_sequence);
@@ -3823,7 +3823,7 @@ void SequenceBadStruct::serializeKey(
         eprosima::fastcdr::Cdr& scdr) const
 {
     (void) scdr;
-     
+
 }
 
 SequenceBoundsStruct::SequenceBoundsStruct()
@@ -3846,7 +3846,7 @@ SequenceBoundsStruct::SequenceBoundsStruct(
 }
 
 SequenceBoundsStruct::SequenceBoundsStruct(
-        SequenceBoundsStruct&& x)
+        SequenceBoundsStruct&& x) noexcept
 {
     m_my_sequence = std::move(x.m_my_sequence);
 }
@@ -3861,7 +3861,7 @@ SequenceBoundsStruct& SequenceBoundsStruct::operator =(
 }
 
 SequenceBoundsStruct& SequenceBoundsStruct::operator =(
-        SequenceBoundsStruct&& x)
+        SequenceBoundsStruct&& x) noexcept
 {
 
     m_my_sequence = std::move(x.m_my_sequence);
@@ -3987,7 +3987,7 @@ void SequenceBoundsStruct::serializeKey(
         eprosima::fastcdr::Cdr& scdr) const
 {
     (void) scdr;
-     
+
 }
 
 SequenceSequenceStruct::SequenceSequenceStruct()
@@ -4010,7 +4010,7 @@ SequenceSequenceStruct::SequenceSequenceStruct(
 }
 
 SequenceSequenceStruct::SequenceSequenceStruct(
-        SequenceSequenceStruct&& x)
+        SequenceSequenceStruct&& x) noexcept
 {
     m_my_sequence_sequence = std::move(x.m_my_sequence_sequence);
 }
@@ -4025,7 +4025,7 @@ SequenceSequenceStruct& SequenceSequenceStruct::operator =(
 }
 
 SequenceSequenceStruct& SequenceSequenceStruct::operator =(
-        SequenceSequenceStruct&& x)
+        SequenceSequenceStruct&& x) noexcept
 {
 
     m_my_sequence_sequence = std::move(x.m_my_sequence_sequence);
@@ -4163,7 +4163,7 @@ void SequenceSequenceStruct::serializeKey(
         eprosima::fastcdr::Cdr& scdr) const
 {
     (void) scdr;
-     
+
 }
 
 SequenceSequenceBoundsStruct::SequenceSequenceBoundsStruct()
@@ -4186,7 +4186,7 @@ SequenceSequenceBoundsStruct::SequenceSequenceBoundsStruct(
 }
 
 SequenceSequenceBoundsStruct::SequenceSequenceBoundsStruct(
-        SequenceSequenceBoundsStruct&& x)
+        SequenceSequenceBoundsStruct&& x) noexcept
 {
     m_my_sequence_sequence = std::move(x.m_my_sequence_sequence);
 }
@@ -4201,7 +4201,7 @@ SequenceSequenceBoundsStruct& SequenceSequenceBoundsStruct::operator =(
 }
 
 SequenceSequenceBoundsStruct& SequenceSequenceBoundsStruct::operator =(
-        SequenceSequenceBoundsStruct&& x)
+        SequenceSequenceBoundsStruct&& x) noexcept
 {
 
     m_my_sequence_sequence = std::move(x.m_my_sequence_sequence);
@@ -4339,7 +4339,7 @@ void SequenceSequenceBoundsStruct::serializeKey(
         eprosima::fastcdr::Cdr& scdr) const
 {
     (void) scdr;
-     
+
 }
 
 MapStruct::MapStruct()
@@ -4362,7 +4362,7 @@ MapStruct::MapStruct(
 }
 
 MapStruct::MapStruct(
-        MapStruct&& x)
+        MapStruct&& x) noexcept
 {
     m_my_map = std::move(x.m_my_map);
 }
@@ -4377,7 +4377,7 @@ MapStruct& MapStruct::operator =(
 }
 
 MapStruct& MapStruct::operator =(
-        MapStruct&& x)
+        MapStruct&& x) noexcept
 {
 
     m_my_map = std::move(x.m_my_map);
@@ -4513,7 +4513,7 @@ void MapStruct::serializeKey(
         eprosima::fastcdr::Cdr& scdr) const
 {
     (void) scdr;
-     
+
 }
 
 MapStructEqual::MapStructEqual()
@@ -4536,7 +4536,7 @@ MapStructEqual::MapStructEqual(
 }
 
 MapStructEqual::MapStructEqual(
-        MapStructEqual&& x)
+        MapStructEqual&& x) noexcept
 {
     m_my_map_equal = std::move(x.m_my_map_equal);
 }
@@ -4551,7 +4551,7 @@ MapStructEqual& MapStructEqual::operator =(
 }
 
 MapStructEqual& MapStructEqual::operator =(
-        MapStructEqual&& x)
+        MapStructEqual&& x) noexcept
 {
 
     m_my_map_equal = std::move(x.m_my_map_equal);
@@ -4687,7 +4687,7 @@ void MapStructEqual::serializeKey(
         eprosima::fastcdr::Cdr& scdr) const
 {
     (void) scdr;
-     
+
 }
 
 MapBadKeyStruct::MapBadKeyStruct()
@@ -4710,7 +4710,7 @@ MapBadKeyStruct::MapBadKeyStruct(
 }
 
 MapBadKeyStruct::MapBadKeyStruct(
-        MapBadKeyStruct&& x)
+        MapBadKeyStruct&& x) noexcept
 {
     m_my_map = std::move(x.m_my_map);
 }
@@ -4725,7 +4725,7 @@ MapBadKeyStruct& MapBadKeyStruct::operator =(
 }
 
 MapBadKeyStruct& MapBadKeyStruct::operator =(
-        MapBadKeyStruct&& x)
+        MapBadKeyStruct&& x) noexcept
 {
 
     m_my_map = std::move(x.m_my_map);
@@ -4861,7 +4861,7 @@ void MapBadKeyStruct::serializeKey(
         eprosima::fastcdr::Cdr& scdr) const
 {
     (void) scdr;
-     
+
 }
 
 MapBadElemStruct::MapBadElemStruct()
@@ -4884,7 +4884,7 @@ MapBadElemStruct::MapBadElemStruct(
 }
 
 MapBadElemStruct::MapBadElemStruct(
-        MapBadElemStruct&& x)
+        MapBadElemStruct&& x) noexcept
 {
     m_my_map = std::move(x.m_my_map);
 }
@@ -4899,7 +4899,7 @@ MapBadElemStruct& MapBadElemStruct::operator =(
 }
 
 MapBadElemStruct& MapBadElemStruct::operator =(
-        MapBadElemStruct&& x)
+        MapBadElemStruct&& x) noexcept
 {
 
     m_my_map = std::move(x.m_my_map);
@@ -5035,7 +5035,7 @@ void MapBadElemStruct::serializeKey(
         eprosima::fastcdr::Cdr& scdr) const
 {
     (void) scdr;
-     
+
 }
 
 MapBoundsStruct::MapBoundsStruct()
@@ -5058,7 +5058,7 @@ MapBoundsStruct::MapBoundsStruct(
 }
 
 MapBoundsStruct::MapBoundsStruct(
-        MapBoundsStruct&& x)
+        MapBoundsStruct&& x) noexcept
 {
     m_my_map = std::move(x.m_my_map);
 }
@@ -5073,7 +5073,7 @@ MapBoundsStruct& MapBoundsStruct::operator =(
 }
 
 MapBoundsStruct& MapBoundsStruct::operator =(
-        MapBoundsStruct&& x)
+        MapBoundsStruct&& x) noexcept
 {
 
     m_my_map = std::move(x.m_my_map);
@@ -5209,7 +5209,7 @@ void MapBoundsStruct::serializeKey(
         eprosima::fastcdr::Cdr& scdr) const
 {
     (void) scdr;
-     
+
 }
 
 MapMapStruct::MapMapStruct()
@@ -5232,7 +5232,7 @@ MapMapStruct::MapMapStruct(
 }
 
 MapMapStruct::MapMapStruct(
-        MapMapStruct&& x)
+        MapMapStruct&& x) noexcept
 {
     m_my_map_map = std::move(x.m_my_map_map);
 }
@@ -5247,7 +5247,7 @@ MapMapStruct& MapMapStruct::operator =(
 }
 
 MapMapStruct& MapMapStruct::operator =(
-        MapMapStruct&& x)
+        MapMapStruct&& x) noexcept
 {
 
     m_my_map_map = std::move(x.m_my_map_map);
@@ -5401,7 +5401,7 @@ void MapMapStruct::serializeKey(
         eprosima::fastcdr::Cdr& scdr) const
 {
     (void) scdr;
-     
+
 }
 
 MapMapBoundsStruct::MapMapBoundsStruct()
@@ -5424,7 +5424,7 @@ MapMapBoundsStruct::MapMapBoundsStruct(
 }
 
 MapMapBoundsStruct::MapMapBoundsStruct(
-        MapMapBoundsStruct&& x)
+        MapMapBoundsStruct&& x) noexcept
 {
     m_my_map_map = std::move(x.m_my_map_map);
 }
@@ -5439,7 +5439,7 @@ MapMapBoundsStruct& MapMapBoundsStruct::operator =(
 }
 
 MapMapBoundsStruct& MapMapBoundsStruct::operator =(
-        MapMapBoundsStruct&& x)
+        MapMapBoundsStruct&& x) noexcept
 {
 
     m_my_map_map = std::move(x.m_my_map_map);
@@ -5593,7 +5593,7 @@ void MapMapBoundsStruct::serializeKey(
         eprosima::fastcdr::Cdr& scdr) const
 {
     (void) scdr;
-     
+
 }
 
 SimpleUnion::SimpleUnion()
@@ -5628,7 +5628,7 @@ SimpleUnion::SimpleUnion(
 }
 
 SimpleUnion::SimpleUnion(
-        SimpleUnion&& x)
+        SimpleUnion&& x) noexcept
 {
     m__d = x.m__d;
 
@@ -5666,7 +5666,7 @@ SimpleUnion& SimpleUnion::operator =(
 }
 
 SimpleUnion& SimpleUnion::operator =(
-        SimpleUnion&& x)
+        SimpleUnion&& x) noexcept
 {
     m__d = x.m__d;
 
@@ -5871,7 +5871,7 @@ size_t SimpleUnion::getMaxCdrSerializedSize(
         if(union_max_size_serialized < reset_alignment)
             union_max_size_serialized = reset_alignment;
 
-        
+
         reset_alignment = current_alignment;
 
         reset_alignment += 8 + eprosima::fastcdr::Cdr::alignment(reset_alignment, 8);
@@ -5880,7 +5880,7 @@ size_t SimpleUnion::getMaxCdrSerializedSize(
         if(union_max_size_serialized < reset_alignment)
             union_max_size_serialized = reset_alignment;
 
-        
+
 
     return union_max_size_serialized - initial_alignment;
 }
@@ -5983,7 +5983,7 @@ SimpleUnionNames::SimpleUnionNames(
 }
 
 SimpleUnionNames::SimpleUnionNames(
-        SimpleUnionNames&& x)
+        SimpleUnionNames&& x) noexcept
 {
     m__d = x.m__d;
 
@@ -6021,7 +6021,7 @@ SimpleUnionNames& SimpleUnionNames::operator =(
 }
 
 SimpleUnionNames& SimpleUnionNames::operator =(
-        SimpleUnionNames&& x)
+        SimpleUnionNames&& x) noexcept
 {
     m__d = x.m__d;
 
@@ -6226,7 +6226,7 @@ size_t SimpleUnionNames::getMaxCdrSerializedSize(
         if(union_max_size_serialized < reset_alignment)
             union_max_size_serialized = reset_alignment;
 
-        
+
         reset_alignment = current_alignment;
 
         reset_alignment += 8 + eprosima::fastcdr::Cdr::alignment(reset_alignment, 8);
@@ -6235,7 +6235,7 @@ size_t SimpleUnionNames::getMaxCdrSerializedSize(
         if(union_max_size_serialized < reset_alignment)
             union_max_size_serialized = reset_alignment;
 
-        
+
 
     return union_max_size_serialized - initial_alignment;
 }
@@ -6338,7 +6338,7 @@ SimpleTypeUnion::SimpleTypeUnion(
 }
 
 SimpleTypeUnion::SimpleTypeUnion(
-        SimpleTypeUnion&& x)
+        SimpleTypeUnion&& x) noexcept
 {
     m__d = x.m__d;
 
@@ -6376,7 +6376,7 @@ SimpleTypeUnion& SimpleTypeUnion::operator =(
 }
 
 SimpleTypeUnion& SimpleTypeUnion::operator =(
-        SimpleTypeUnion&& x)
+        SimpleTypeUnion&& x) noexcept
 {
     m__d = x.m__d;
 
@@ -6581,7 +6581,7 @@ size_t SimpleTypeUnion::getMaxCdrSerializedSize(
         if(union_max_size_serialized < reset_alignment)
             union_max_size_serialized = reset_alignment;
 
-        
+
         reset_alignment = current_alignment;
 
         reset_alignment += 8 + eprosima::fastcdr::Cdr::alignment(reset_alignment, 8);
@@ -6590,7 +6590,7 @@ size_t SimpleTypeUnion::getMaxCdrSerializedSize(
         if(union_max_size_serialized < reset_alignment)
             union_max_size_serialized = reset_alignment;
 
-        
+
 
     return union_max_size_serialized - initial_alignment;
 }
@@ -6693,7 +6693,7 @@ SimpleBadUnion::SimpleBadUnion(
 }
 
 SimpleBadUnion::SimpleBadUnion(
-        SimpleBadUnion&& x)
+        SimpleBadUnion&& x) noexcept
 {
     m__d = x.m__d;
 
@@ -6731,7 +6731,7 @@ SimpleBadUnion& SimpleBadUnion::operator =(
 }
 
 SimpleBadUnion& SimpleBadUnion::operator =(
-        SimpleBadUnion&& x)
+        SimpleBadUnion&& x) noexcept
 {
     m__d = x.m__d;
 
@@ -6936,7 +6936,7 @@ size_t SimpleBadUnion::getMaxCdrSerializedSize(
         if(union_max_size_serialized < reset_alignment)
             union_max_size_serialized = reset_alignment;
 
-        
+
         reset_alignment = current_alignment;
 
         reset_alignment += 8 + eprosima::fastcdr::Cdr::alignment(reset_alignment, 8);
@@ -6945,7 +6945,7 @@ size_t SimpleBadUnion::getMaxCdrSerializedSize(
         if(union_max_size_serialized < reset_alignment)
             union_max_size_serialized = reset_alignment;
 
-        
+
 
     return union_max_size_serialized - initial_alignment;
 }
@@ -7048,7 +7048,7 @@ SimpleBadDiscUnion::SimpleBadDiscUnion(
 }
 
 SimpleBadDiscUnion::SimpleBadDiscUnion(
-        SimpleBadDiscUnion&& x)
+        SimpleBadDiscUnion&& x) noexcept
 {
     m__d = x.m__d;
 
@@ -7086,7 +7086,7 @@ SimpleBadDiscUnion& SimpleBadDiscUnion::operator =(
 }
 
 SimpleBadDiscUnion& SimpleBadDiscUnion::operator =(
-        SimpleBadDiscUnion&& x)
+        SimpleBadDiscUnion&& x) noexcept
 {
     m__d = x.m__d;
 
@@ -7291,7 +7291,7 @@ size_t SimpleBadDiscUnion::getMaxCdrSerializedSize(
         if(union_max_size_serialized < reset_alignment)
             union_max_size_serialized = reset_alignment;
 
-        
+
         reset_alignment = current_alignment;
 
         reset_alignment += 8 + eprosima::fastcdr::Cdr::alignment(reset_alignment, 8);
@@ -7300,7 +7300,7 @@ size_t SimpleBadDiscUnion::getMaxCdrSerializedSize(
         if(union_max_size_serialized < reset_alignment)
             union_max_size_serialized = reset_alignment;
 
-        
+
 
     return union_max_size_serialized - initial_alignment;
 }
@@ -7391,7 +7391,7 @@ SimpleUnionStruct::SimpleUnionStruct(
 }
 
 SimpleUnionStruct::SimpleUnionStruct(
-        SimpleUnionStruct&& x)
+        SimpleUnionStruct&& x) noexcept
 {
     m_my_union = std::move(x.m_my_union);
 }
@@ -7406,7 +7406,7 @@ SimpleUnionStruct& SimpleUnionStruct::operator =(
 }
 
 SimpleUnionStruct& SimpleUnionStruct::operator =(
-        SimpleUnionStruct&& x)
+        SimpleUnionStruct&& x) noexcept
 {
 
     m_my_union = std::move(x.m_my_union);
@@ -7523,7 +7523,7 @@ void SimpleUnionStruct::serializeKey(
         eprosima::fastcdr::Cdr& scdr) const
 {
     (void) scdr;
-     
+
 }
 
 SimpleUnionStructEqual::SimpleUnionStructEqual()
@@ -7546,7 +7546,7 @@ SimpleUnionStructEqual::SimpleUnionStructEqual(
 }
 
 SimpleUnionStructEqual::SimpleUnionStructEqual(
-        SimpleUnionStructEqual&& x)
+        SimpleUnionStructEqual&& x) noexcept
 {
     m_my_union_equal = std::move(x.m_my_union_equal);
 }
@@ -7561,7 +7561,7 @@ SimpleUnionStructEqual& SimpleUnionStructEqual::operator =(
 }
 
 SimpleUnionStructEqual& SimpleUnionStructEqual::operator =(
-        SimpleUnionStructEqual&& x)
+        SimpleUnionStructEqual&& x) noexcept
 {
 
     m_my_union_equal = std::move(x.m_my_union_equal);
@@ -7678,7 +7678,7 @@ void SimpleUnionStructEqual::serializeKey(
         eprosima::fastcdr::Cdr& scdr) const
 {
     (void) scdr;
-     
+
 }
 
 SimpleUnionNamesStruct::SimpleUnionNamesStruct()
@@ -7701,7 +7701,7 @@ SimpleUnionNamesStruct::SimpleUnionNamesStruct(
 }
 
 SimpleUnionNamesStruct::SimpleUnionNamesStruct(
-        SimpleUnionNamesStruct&& x)
+        SimpleUnionNamesStruct&& x) noexcept
 {
     m_my_union = std::move(x.m_my_union);
 }
@@ -7716,7 +7716,7 @@ SimpleUnionNamesStruct& SimpleUnionNamesStruct::operator =(
 }
 
 SimpleUnionNamesStruct& SimpleUnionNamesStruct::operator =(
-        SimpleUnionNamesStruct&& x)
+        SimpleUnionNamesStruct&& x) noexcept
 {
 
     m_my_union = std::move(x.m_my_union);
@@ -7833,7 +7833,7 @@ void SimpleUnionNamesStruct::serializeKey(
         eprosima::fastcdr::Cdr& scdr) const
 {
     (void) scdr;
-     
+
 }
 
 SimpleTypeUnionStruct::SimpleTypeUnionStruct()
@@ -7856,7 +7856,7 @@ SimpleTypeUnionStruct::SimpleTypeUnionStruct(
 }
 
 SimpleTypeUnionStruct::SimpleTypeUnionStruct(
-        SimpleTypeUnionStruct&& x)
+        SimpleTypeUnionStruct&& x) noexcept
 {
     m_my_union = std::move(x.m_my_union);
 }
@@ -7871,7 +7871,7 @@ SimpleTypeUnionStruct& SimpleTypeUnionStruct::operator =(
 }
 
 SimpleTypeUnionStruct& SimpleTypeUnionStruct::operator =(
-        SimpleTypeUnionStruct&& x)
+        SimpleTypeUnionStruct&& x) noexcept
 {
 
     m_my_union = std::move(x.m_my_union);
@@ -7988,7 +7988,7 @@ void SimpleTypeUnionStruct::serializeKey(
         eprosima::fastcdr::Cdr& scdr) const
 {
     (void) scdr;
-     
+
 }
 
 SimpleBadUnionStruct::SimpleBadUnionStruct()
@@ -8011,7 +8011,7 @@ SimpleBadUnionStruct::SimpleBadUnionStruct(
 }
 
 SimpleBadUnionStruct::SimpleBadUnionStruct(
-        SimpleBadUnionStruct&& x)
+        SimpleBadUnionStruct&& x) noexcept
 {
     m_my_union = std::move(x.m_my_union);
 }
@@ -8026,7 +8026,7 @@ SimpleBadUnionStruct& SimpleBadUnionStruct::operator =(
 }
 
 SimpleBadUnionStruct& SimpleBadUnionStruct::operator =(
-        SimpleBadUnionStruct&& x)
+        SimpleBadUnionStruct&& x) noexcept
 {
 
     m_my_union = std::move(x.m_my_union);
@@ -8143,7 +8143,7 @@ void SimpleBadUnionStruct::serializeKey(
         eprosima::fastcdr::Cdr& scdr) const
 {
     (void) scdr;
-     
+
 }
 
 SimplBadDiscUnionStruct::SimplBadDiscUnionStruct()
@@ -8166,7 +8166,7 @@ SimplBadDiscUnionStruct::SimplBadDiscUnionStruct(
 }
 
 SimplBadDiscUnionStruct::SimplBadDiscUnionStruct(
-        SimplBadDiscUnionStruct&& x)
+        SimplBadDiscUnionStruct&& x) noexcept
 {
     m_my_union = std::move(x.m_my_union);
 }
@@ -8181,7 +8181,7 @@ SimplBadDiscUnionStruct& SimplBadDiscUnionStruct::operator =(
 }
 
 SimplBadDiscUnionStruct& SimplBadDiscUnionStruct::operator =(
-        SimplBadDiscUnionStruct&& x)
+        SimplBadDiscUnionStruct&& x) noexcept
 {
 
     m_my_union = std::move(x.m_my_union);
@@ -8298,5 +8298,5 @@ void SimplBadDiscUnionStruct::serializeKey(
         eprosima::fastcdr::Cdr& scdr) const
 {
     (void) scdr;
-     
+
 }

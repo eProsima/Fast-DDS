@@ -93,7 +93,7 @@ public:
      * @param x Reference to the object HelloWorld that will be copied.
      */
     eProsima_user_DllExport HelloWorld(
-            HelloWorld&& x);
+            HelloWorld&& x) noexcept;
 
     /*!
      * @brief Copy assignment.
@@ -107,7 +107,7 @@ public:
      * @param x Reference to the object HelloWorld that will be copied.
      */
     eProsima_user_DllExport HelloWorld& operator =(
-            HelloWorld&& x);
+            HelloWorld&& x) noexcept;
 
     /*!
      * @brief Comparison operator.
@@ -172,26 +172,26 @@ public:
      * @param _data New value to be copied in member data
      */
     eProsima_user_DllExport void data(
-            const std::array<char, 1024 * 1024>& _data);
+            const std::array<char, 1024*1024>& _data);
 
     /*!
      * @brief This function moves the value in member data
      * @param _data New value to be moved in member data
      */
     eProsima_user_DllExport void data(
-            std::array<char, 1024 * 1024>&& _data);
+            std::array<char, 1024*1024>&& _data);
 
     /*!
      * @brief This function returns a constant reference to member data
      * @return Constant reference to member data
      */
-    eProsima_user_DllExport const std::array<char, 1024 * 1024>& data() const;
+    eProsima_user_DllExport const std::array<char, 1024*1024>& data() const;
 
     /*!
      * @brief This function returns a reference to member data
      * @return Reference to member data
      */
-    eProsima_user_DllExport std::array<char, 1024 * 1024>& data();
+    eProsima_user_DllExport std::array<char, 1024*1024>& data();
 
     /*!
      * @brief This function returns the maximum serialized size of an object
@@ -254,7 +254,7 @@ private:
 
     uint32_t m_index;
     std::string m_message;
-    std::array<char, 1024 * 1024> m_data;
+    std::array<char, 1024*1024> m_data;
 };
 
 #endif // _FAST_DDS_GENERATED_HELLOWORLD_H_
