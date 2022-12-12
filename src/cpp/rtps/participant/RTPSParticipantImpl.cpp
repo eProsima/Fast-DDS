@@ -787,6 +787,8 @@ bool RTPSParticipantImpl::create_writer(
                         register_in_writer(listener->get_shared_ptr(), guid);
                     }
                 });
+
+        SWriter->set_enabled_statistics_writers_mask(StatisticsParticipantImpl::get_enabled_statistics_writers_mask());
     }
 
 #endif // FASTDDS_STATISTICS
@@ -926,6 +928,8 @@ bool RTPSParticipantImpl::create_reader(
                         register_in_reader(listener->get_shared_ptr(), guid);
                     }
                 });
+
+        SReader->set_enabled_statistics_writers_mask(StatisticsParticipantImpl::get_enabled_statistics_writers_mask());
     }
 
 #endif // FASTDDS_STATISTICS
