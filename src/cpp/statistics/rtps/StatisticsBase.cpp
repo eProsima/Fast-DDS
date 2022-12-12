@@ -27,9 +27,6 @@
 #include <fastrtps/qos/ParameterTypes.h>
 #include <rtps/participant/RTPSParticipantImpl.h>
 
-using namespace eprosima::fastdds::statistics;
-using eprosima::fastrtps::rtps::RTPSParticipantImpl;
-
 namespace eprosima {
 namespace fastdds {
 namespace statistics {
@@ -89,10 +86,6 @@ detail::SampleIdentity_s to_statistics_type(
 {
     return *reinterpret_cast<detail::SampleIdentity_s*>(&sample_id);
 }
-
-} // statistics
-} // fastdds
-} // eprosima
 
 StatisticsAncillary* StatisticsListenersImpl::get_aux_members() const
 {
@@ -644,3 +637,7 @@ void StatisticsParticipantImpl::on_edp_packet(
                 listener->on_statistics_data(data);
             });
 }
+
+} // statistics
+} // fastdds
+} // eprosima

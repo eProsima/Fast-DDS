@@ -349,7 +349,7 @@ endif()
 ###############################################################################
 # Fast DDS statistics tool default setup
 ###############################################################################
-option(FASTDDS_STATISTICS "Enable Fast DDS Statistics Module" OFF)
+option(FASTDDS_STATISTICS "Enable Fast DDS Statistics Module" ON)
 
 ###############################################################################
 # Compile library.

@@ -313,6 +313,7 @@ public:
 
         if (participant_ != nullptr)
         {
+            participant_qos_ = participant_->get_qos();
             type_.reset(new type_support());
             participant_->register_type(type_);
             return true;

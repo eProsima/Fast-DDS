@@ -21,11 +21,13 @@
 #include <fastdds/rtps/reader/RTPSReader.h>
 #include <statistics/types/types.h>
 
-using namespace eprosima::fastdds::statistics;
-
 using eprosima::fastrtps::RecursiveTimedMutex;
 using eprosima::fastrtps::rtps::RTPSReader;
 using eprosima::fastrtps::rtps::GUID_t;
+
+namespace eprosima {
+namespace fastdds {
+namespace statistics {
 
 StatisticsReaderImpl::StatisticsReaderImpl()
 {
@@ -176,3 +178,7 @@ void StatisticsReaderImpl::on_subscribe_throughput(
                 });
     }
 }
+
+}  // namespace statistics
+}  // namespace fastdds
+}  // namespace eprosima
