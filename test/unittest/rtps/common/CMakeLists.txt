@@ -32,7 +32,7 @@ if(ANDROID)
         list(APPEND CACHECHANGETESTS_SOURCE
             ${ANDROID_IFADDRS_SOURCE_DIR}/ifaddrs.c
             )
-        
+
     endif()
 endif()
 
@@ -44,6 +44,9 @@ set(PORTPARAMETERSTESTS_SOURCE PortParametersTests.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/log/StdoutConsumer.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/log/StdoutErrConsumer.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/utils/SystemInfo.cpp)
+
+set(TIMETESTS_SOURCE TimeTests.cpp
+    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/common/Time_t.cpp)
 
 add_executable(CacheChangeTests ${CACHECHANGETESTS_SOURCE})
 target_compile_definitions(CacheChangeTests PRIVATE FASTRTPS_NO_LIB
@@ -154,3 +157,17 @@ if(ANDROID)
     set_property(TARGET PortParametersTests PROPERTY CROSSCOMPILING_EMULATOR "adb;shell;cd;${CMAKE_CURRENT_BINARY_DIR};&&")
     set_property(TARGET SequenceNumberTests PROPERTY CROSSCOMPILING_EMULATOR "adb;shell;cd;${CMAKE_CURRENT_BINARY_DIR};&&")
 endif()
+
+#############
+# Time test #
+#############
+
+add_executable(TimeTests ${TIMETESTS_SOURCE})
+target_compile_definitions(TimeTests PRIVATE FASTRTPS_NO_LIB
+    $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
+    $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
+    )
+target_include_directories(TimeTests PRIVATE ${GTEST_INCLUDE_DIRS}
+    ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include)
+target_link_libraries(TimeTests GTest::gtest)
+add_gtest(TimeTests SOURCES ${TIMETESTS_SOURCE} LABELS "NoMemoryCheck")
