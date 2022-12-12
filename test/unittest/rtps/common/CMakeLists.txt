@@ -29,6 +29,9 @@ set(PORTPARAMETERSTESTS_SOURCE PortParametersTests.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/log/StdoutConsumer.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/log/StdoutErrConsumer.cpp)
 
+set(TIMETESTS_SOURCE TimeTests.cpp
+    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/common/Time_t.cpp)
+
 add_executable(CacheChangeTests ${CACHECHANGETESTS_SOURCE})
 target_compile_definitions(CacheChangeTests PRIVATE
     $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
@@ -126,3 +129,18 @@ target_include_directories(GuidTests PRIVATE
     ${PROJECT_SOURCE_DIR}/src/cpp)
 target_link_libraries(GuidTests GTest::gtest)
 add_gtest(GuidTests SOURCES ${GUIDTESTS_SOURCE} LABELS "NoMemoryCheck")
+
+
+#############
+# Time test #
+#############
+
+add_executable(TimeTests ${TIMETESTS_SOURCE})
+target_compile_definitions(TimeTests PRIVATE FASTRTPS_NO_LIB
+    $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
+    $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
+    )
+target_include_directories(TimeTests PRIVATE ${GTEST_INCLUDE_DIRS}
+    ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include)
+target_link_libraries(TimeTests GTest::gtest)
+add_gtest(TimeTests SOURCES ${TIMETESTS_SOURCE} LABELS "NoMemoryCheck")

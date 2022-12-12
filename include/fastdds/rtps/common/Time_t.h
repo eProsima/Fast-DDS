@@ -18,7 +18,9 @@
 
 #ifndef _FASTDDS_RTPS_TIME_T_H_
 #define _FASTDDS_RTPS_TIME_T_H_
+
 #include <fastrtps/fastrtps_dll.h>
+
 #include <cmath>
 #include <cstdint>
 #include <iostream>
@@ -400,8 +402,8 @@ inline std::istream& operator >>(
 
             input >> sec;
             input >> point >> nano;
-            // nano could not be bigger than 1 sec
-            if ( point != '.' || nano > 1000000000 )
+            // nano could not be bigger or equal than 1 sec
+            if ( point != '.' || nano >= 1000000000 )
             {
                 input.setstate(std::ios_base::failbit);
                 nano = 0;
