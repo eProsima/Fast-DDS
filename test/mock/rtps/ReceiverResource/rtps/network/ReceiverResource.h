@@ -21,9 +21,9 @@
 #include <fastrtps/transport/TransportInterface.h>
 #include <fastrtps/rtps/Endpoint.h>
 
-namespace eprosima{
-namespace fastrtps{
-namespace rtps{
+namespace eprosima {
+namespace fastrtps {
+namespace rtps {
 
 class RTPSWriter;
 class RTPSReader;
@@ -39,7 +39,9 @@ class ReceiverResource : public TransportReceiverInterface
     friend class NetworkFactory;
 
 public:
-    bool SupportsLocator(const Locator_t& localLocator)
+
+    bool SupportsLocator(
+            const Locator_t& localLocator)
     {
         if (LocatorMapsToManagedChannel)
         {
@@ -47,8 +49,16 @@ public:
         }
         return false;
     }
-    void Abort() {}
-    ReceiverResource(ReceiverResource&&) {}
+
+    void Abort()
+    {
+    }
+
+    ReceiverResource(
+            ReceiverResource&&)
+    {
+    }
+
     virtual ~ReceiverResource() override
     {
         if (Cleanup)
@@ -56,16 +66,40 @@ public:
             Cleanup();
         }
     }
-    virtual void OnDataReceived(const octet*, const uint32_t,
-        const Locator_t&, const Locator_t&) override
-    { }
 
-    virtual MessageReceiver* CreateMessageReceiver() { return nullptr; }
-    void associateEndpoint(Endpoint *) {}
-    void removeEndpoint(Endpoint *) {}
-    bool checkReaders(EntityId_t) { return false; }
+    virtual void OnDataReceived(
+            const octet*,
+            const uint32_t,
+            const Locator_t&,
+            const Locator_t&) override
+    {
+    }
+
+    virtual MessageReceiver* CreateMessageReceiver()
+    {
+        return nullptr;
+    }
+
+    void associateEndpoint(
+            Endpoint*)
+    {
+    }
+
+    void removeEndpoint(
+            Endpoint*)
+    {
+    }
+
+    bool checkReaders(
+            EntityId_t)
+    {
+        return false;
+    }
+
 protected:
-    ReceiverResource(TransportInterface& transport,
+
+    ReceiverResource(
+            TransportInterface& transport,
             const Locator_t& locator,
             uint32_t max_recv_buffer_size)
         : mValid(false)
@@ -76,24 +110,35 @@ protected:
         {
             return;
         }
-        Cleanup = [&transport, locator]() { transport.CloseInputChannel(locator); };
+        Cleanup = [&transport, locator]()
+                {
+                    transport.CloseInputChannel(locator);
+                };
         LocatorMapsToManagedChannel = [&transport, locator](const Locator_t& locatorToCheck) -> bool
-        { return transport.DoInputLocatorsMatch(locator, locatorToCheck); };
+                {
+                    return transport.DoInputLocatorsMatch(locator, locatorToCheck);
+                };
     }
 
-    ReceiverResource() {}
+    ReceiverResource()
+    {
+    }
+
     std::function<void()> Cleanup;
     std::function<bool(const Locator_t&)> LocatorMapsToManagedChannel;
     bool mValid;
     uint32_t m_maxMsgSize;
 
 private:
-    ReceiverResource(const ReceiverResource&) = delete;
-    ReceiverResource& operator=(const ReceiverResource&) = delete;
+
+    ReceiverResource(
+            const ReceiverResource&) = delete;
+    ReceiverResource& operator =(
+            const ReceiverResource&) = delete;
 };
 
 } // namespace rtps
 } // namespace fastrtps
 } // namespace eprosima
 
-#endif
+#endif // ifndef _FASTDDS_RTPS_RECEIVER_RESOURCE_H

@@ -23,9 +23,9 @@
 #include <vector>
 #include <memory>
 
-namespace eprosima{
-namespace fastrtps{
-namespace rtps{
+namespace eprosima {
+namespace fastrtps {
+namespace rtps {
 
 class RTPSParticipantAttributes;
 
@@ -38,23 +38,29 @@ class RTPSParticipantAttributes;
  */
 class NetworkFactory
 {
-    public:
+public:
 
-        NetworkFactory() {}
+    NetworkFactory()
+    {
+    }
 
-        bool transform_remote_locator(
-                const Locator_t& remote_locator,
-                Locator_t& result_locator) const
-        {
-            result_locator = remote_locator;
-            return true;
-        }
+    bool transform_remote_locator(
+            const Locator_t& remote_locator,
+            Locator_t& result_locator) const
+    {
+        result_locator = remote_locator;
+        return true;
+    }
 
-        uint32_t get_min_send_buffer_size() { return 65536; }
+    uint32_t get_min_send_buffer_size()
+    {
+        return 65536;
+    }
+
 };
 
 } // namespace rtps
 } // namespace fastrtps
 } // namespace eprosima
 
-#endif
+#endif // ifndef _FASTDDS_RTPS_NETWORK_FACTORY_HPP
