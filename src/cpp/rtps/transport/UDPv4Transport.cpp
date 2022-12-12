@@ -19,8 +19,8 @@
 #include <algorithm>
 
 #include <fastdds/rtps/transport/TransportInterface.h>
-#include <fastdds/rtps/network/ReceiverResource.h>
-#include <fastdds/rtps/network/SenderResource.h>
+#include <rtps/network/ReceiverResource.h>
+#include <rtps/network/SenderResource.h>
 #include <fastdds/rtps/messages/CDRMessage.h>
 #include <fastdds/rtps/messages/MessageReceiver.h>
 #include <fastdds/dds/log/Log.hpp>

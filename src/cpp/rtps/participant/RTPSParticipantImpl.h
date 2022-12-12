@@ -48,9 +48,9 @@
 #include <fastdds/rtps/history/IChangePool.h>
 #include <fastdds/rtps/history/IPayloadPool.h>
 
-#include <fastdds/rtps/network/NetworkFactory.h>
-#include <fastdds/rtps/network/ReceiverResource.h>
-#include <fastdds/rtps/network/SenderResource.h>
+#include <rtps/network/NetworkFactory.h>
+#include <rtps/network/ReceiverResource.h>
+#include <rtps/network/SenderResource.h>
 
 #include <fastdds/rtps/messages/MessageReceiver.h>
 

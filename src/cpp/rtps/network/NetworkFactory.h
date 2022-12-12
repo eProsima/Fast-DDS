@@ -21,9 +21,10 @@
 #include <fastdds/rtps/common/Locator.h>
 #include <fastdds/rtps/common/LocatorSelector.hpp>
 #include <fastdds/rtps/messages/MessageReceiver.h>
-#include <fastdds/rtps/network/ReceiverResource.h>
-#include <fastdds/rtps/network/SenderResource.h>
 #include <fastdds/rtps/transport/TransportInterface.h>
+
+#include <rtps/network/ReceiverResource.h>
+#include <rtps/network/SenderResource.h>
 
 namespace eprosima {
 namespace fastrtps {

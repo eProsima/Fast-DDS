@@ -17,8 +17,8 @@
 
 #include <fastrtps/transport/TransportInterface.h>
 #include <fastrtps/rtps/common/LocatorSelector.hpp>
-#include <fastrtps/rtps/network/ReceiverResource.h>
-#include <fastrtps/rtps/network/SenderResource.h>
+#include <rtps/network/ReceiverResource.h>
+#include <rtps/network/SenderResource.h>
 #include <fastrtps/rtps/messages/MessageReceiver.h>
 #include <vector>
 #include <memory>

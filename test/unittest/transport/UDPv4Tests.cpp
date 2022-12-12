@@ -19,7 +19,7 @@
 #include <gtest/gtest.h>
 #include <MockReceiverResource.h>
 #include <fastrtps/transport/UDPv4TransportDescriptor.h>
-#include <fastrtps/rtps/network/NetworkFactory.h>
+#include <rtps/network/NetworkFactory.h>
 #include <fastrtps/utils/Semaphore.h>
 #include <fastrtps/utils/IPFinder.h>
 #include <fastrtps/utils/IPLocator.h>

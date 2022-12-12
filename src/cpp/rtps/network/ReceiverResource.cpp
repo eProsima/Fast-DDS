@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include <fastdds/rtps/network/ReceiverResource.h>
+#include "ReceiverResource.h"
 #include <fastdds/rtps/messages/MessageReceiver.h>
 #include <cassert>
 #include <fastdds/dds/log/Log.hpp>

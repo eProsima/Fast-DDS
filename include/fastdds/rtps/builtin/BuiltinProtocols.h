@@ -25,7 +25,7 @@
 
 #include <fastdds/rtps/attributes/RTPSParticipantAttributes.h>
 #include <fastdds/rtps/builtin/data/ContentFilterProperty.hpp>
-#include <fastdds/rtps/network/NetworkFactory.h>
+#include <rtps/network/NetworkFactory.h>
 
 #include <fastrtps/utils/shared_mutex.hpp>
 

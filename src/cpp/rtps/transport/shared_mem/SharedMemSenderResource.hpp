@@ -15,7 +15,7 @@
 #ifndef _FASTDDS_SHAREDMEM_SENDERRESOURCE_HPP_
 #define _FASTDDS_SHAREDMEM_SENDERRESOURCE_HPP_
 
-#include <fastrtps/rtps/network/SenderResource.h>
+#include <rtps/network/SenderResource.h>
 #include <rtps/transport/shared_mem/SharedMemTransport.h>
 
 namespace eprosima {

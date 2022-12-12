@@ -20,7 +20,7 @@
 #include <MockReceiverResource.h>
 #include <fastdds/dds/log/Log.hpp>
 #include <fastrtps/transport/UDPv6TransportDescriptor.h>
-#include <fastrtps/rtps/network/NetworkFactory.h>
+#include <rtps/network/NetworkFactory.h>
 #include <fastrtps/utils/Semaphore.h>
 #include <fastrtps/utils/IPLocator.h>
 #include <rtps/transport/UDPv6Transport.h>

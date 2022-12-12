@@ -22,7 +22,7 @@
 #include <fastdds/rtps/common/PortParameters.h>
 #include <fastdds/rtps/transport/TransportDescriptorInterface.h>
 #include <fastdds/rtps/transport/TransportReceiverInterface.h>
-#include <fastdds/rtps/network/SenderResource.h>
+#include <rtps/network/SenderResource.h>
 #include <fastdds/rtps/attributes/PropertyPolicy.h>
 
 namespace eprosima {
