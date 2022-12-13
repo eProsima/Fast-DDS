@@ -79,7 +79,7 @@ std::vector<fastrtps::rtps::CacheChange_t*> DiscoveryDataBase::clear()
     }
     EPROSIMA_LOG_INFO(DISCOVERY_DATABASE, "Clearing DiscoveryDataBase");
 
-    std::unique_lock<std::recursive_mutex> lock(mutex_);
+    std::lock_guard<std::recursive_mutex> guard(mutex_);
 
     /* Clear receive queues. Set changes inside to release */
     while (!pdp_data_queue_.Empty())
@@ -161,7 +161,7 @@ bool DiscoveryDataBase::pdp_is_relevant(
     }
 
     // Lock(shared mode) mutex locally
-    std::unique_lock<std::recursive_mutex> lock(mutex_);
+    std::lock_guard<std::recursive_mutex> guard(mutex_);
 
     EPROSIMA_LOG_INFO(DISCOVERY_DATABASE, "PDP is " << change.instanceHandle << " relevant to " << reader_guid);
 
@@ -185,7 +185,7 @@ bool DiscoveryDataBase::edp_publications_is_relevant(
     fastrtps::rtps::GUID_t change_guid = guid_from_change(&change);
 
     // Lock(shared mode) mutex locally
-    std::unique_lock<std::recursive_mutex> lock(mutex_);
+    std::lock_guard<std::recursive_mutex> guard(mutex_);
 
     auto itp = participants_.find(change_guid.guidPrefix);
     if (itp == participants_.end())
@@ -218,7 +218,7 @@ bool DiscoveryDataBase::edp_subscriptions_is_relevant(
     fastrtps::rtps::GUID_t change_guid = guid_from_change(&change);
 
     // Lock(shared mode) mutex locally
-    std::unique_lock<std::recursive_mutex> lock(mutex_);
+    std::lock_guard<std::recursive_mutex> guard(mutex_);
 
     auto itp = participants_.find(change_guid.guidPrefix);
     if (itp == participants_.end())
@@ -320,7 +320,7 @@ bool DiscoveryDataBase::update(
     if (is_persistent_ && guid_from_change(change).guidPrefix != server_guid_prefix_)
     {
         // Does not allow to the server to erase the ddb before this message has been processed
-        std::unique_lock<std::recursive_mutex> lock(data_queues_mutex_);
+        std::lock_guard<std::recursive_mutex> guard(data_queues_mutex_);
         nlohmann::json j;
         ddb::to_json(j, *change);
         backup_file_ << j;
@@ -352,7 +352,7 @@ bool DiscoveryDataBase::update(
     if (is_persistent_ && guid_from_change(change).guidPrefix != server_guid_prefix_)
     {
         // Does not allow to the server to erase the ddb before this message has been process
-        std::unique_lock<std::recursive_mutex> lock(data_queues_mutex_);
+        std::lock_guard<std::recursive_mutex> guard(data_queues_mutex_);
         nlohmann::json j;
         ddb::to_json(j, *change);
         backup_file_ << j;
@@ -380,14 +380,14 @@ bool DiscoveryDataBase::update(
 const std::vector<eprosima::fastrtps::rtps::CacheChange_t*> DiscoveryDataBase::changes_to_dispose()
 {
     // lock(sharing mode) mutex locally
-    std::unique_lock<std::recursive_mutex> lock(mutex_);
+    std::lock_guard<std::recursive_mutex> guard(mutex_);
     return disposals_;
 }
 
 void DiscoveryDataBase::clear_changes_to_dispose()
 {
     // lock(exclusive mode) mutex locally
-    std::unique_lock<std::recursive_mutex> lock(mutex_);
+    std::lock_guard<std::recursive_mutex> guard(mutex_);
     disposals_.clear();
 }
 
@@ -396,56 +396,56 @@ void DiscoveryDataBase::clear_changes_to_dispose()
 const std::vector<eprosima::fastrtps::rtps::CacheChange_t*> DiscoveryDataBase::pdp_to_send()
 {
     // lock(sharing mode) mutex locally
-    std::unique_lock<std::recursive_mutex> lock(mutex_);
+    std::lock_guard<std::recursive_mutex> guard(mutex_);
     return pdp_to_send_;
 }
 
 void DiscoveryDataBase::clear_pdp_to_send()
 {
     // lock(exclusive mode) mutex locally
-    std::unique_lock<std::recursive_mutex> lock(mutex_);
+    std::lock_guard<std::recursive_mutex> guard(mutex_);
     pdp_to_send_.clear();
 }
 
 const std::vector<eprosima::fastrtps::rtps::CacheChange_t*> DiscoveryDataBase::edp_publications_to_send()
 {
     // lock(sharing mode) mutex locally
-    std::unique_lock<std::recursive_mutex> lock(mutex_);
+    std::lock_guard<std::recursive_mutex> guard(mutex_);
     return edp_publications_to_send_;
 }
 
 void DiscoveryDataBase::clear_edp_publications_to_send()
 {
     // lock(exclusive mode) mutex locally
-    std::unique_lock<std::recursive_mutex> lock(mutex_);
+    std::lock_guard<std::recursive_mutex> guard(mutex_);
     edp_publications_to_send_.clear();
 }
 
 const std::vector<eprosima::fastrtps::rtps::CacheChange_t*> DiscoveryDataBase::edp_subscriptions_to_send()
 {
     // lock(sharing mode) mutex locally
-    std::unique_lock<std::recursive_mutex> lock(mutex_);
+    std::lock_guard<std::recursive_mutex> guard(mutex_);
     return edp_subscriptions_to_send_;
 }
 
 void DiscoveryDataBase::clear_edp_subscriptions_to_send()
 {
     // lock(exclusive mode) mutex locally
-    std::unique_lock<std::recursive_mutex> lock(mutex_);
+    std::lock_guard<std::recursive_mutex> guard(mutex_);
     edp_subscriptions_to_send_.clear();
 }
 
 const std::vector<eprosima::fastrtps::rtps::CacheChange_t*> DiscoveryDataBase::changes_to_release()
 {
     // lock(sharing mode) mutex locally
-    std::unique_lock<std::recursive_mutex> lock(mutex_);
+    std::lock_guard<std::recursive_mutex> guard(mutex_);
     return changes_to_release_;
 }
 
 void DiscoveryDataBase::clear_changes_to_release()
 {
     // lock(exclusive mode) mutex locally
-    std::unique_lock<std::recursive_mutex> lock(mutex_);
+    std::lock_guard<std::recursive_mutex> guard(mutex_);
     changes_to_release_.clear();
 }
 
@@ -460,7 +460,7 @@ void DiscoveryDataBase::process_pdp_data_queue()
     }
 
     // Lock(exclusive mode) mutex locally
-    std::unique_lock<std::recursive_mutex> lock(mutex_);
+    std::lock_guard<std::recursive_mutex> guard(mutex_);
 
     // Swap DATA queues
     pdp_data_queue_.Swap();
@@ -500,7 +500,7 @@ bool DiscoveryDataBase::process_edp_data_queue()
     bool is_dirty_topic = false;
 
     // Lock(exclusive mode) mutex locally
-    std::unique_lock<std::recursive_mutex> lock(mutex_);
+    std::lock_guard<std::recursive_mutex> guard(mutex_);
 
     // Swap DATA queues
     edp_data_queue_.Swap();
@@ -661,9 +661,12 @@ void DiscoveryDataBase::create_new_participant_from_change_(
 {
     fastrtps::rtps::GUID_t change_guid = guid_from_change(ch);
 
-    DiscoveryParticipantInfo part(ch, server_guid_prefix_, change_data);
     std::pair<std::map<eprosima::fastrtps::rtps::GuidPrefix_t, DiscoveryParticipantInfo>::iterator, bool> ret =
-            participants_.insert(std::make_pair(change_guid.guidPrefix, part));
+            participants_.insert(
+        std::make_pair(
+            change_guid.guidPrefix,
+            DiscoveryParticipantInfo(ch, server_guid_prefix_, change_data)));
+
     // If insert was successful
     if (ret.second)
     {
@@ -1346,7 +1349,7 @@ bool DiscoveryDataBase::process_dirty_topics()
 
     // EPROSIMA_LOG_INFO(DISCOVERY_DATABASE, "process_dirty_topics start");
     // Get shared lock
-    std::unique_lock<std::recursive_mutex> lock(mutex_);
+    std::lock_guard<std::recursive_mutex> guard(mutex_);
 
     // Iterator objects are declared here because they are reused in each iteration of the loops
     std::map<eprosima::fastrtps::rtps::GuidPrefix_t, DiscoveryParticipantInfo>::iterator parts_reader_it;
@@ -1489,7 +1492,7 @@ bool DiscoveryDataBase::delete_entity_of_change(
     }
 
     // Lock(exclusive mode) mutex locally
-    std::unique_lock<std::recursive_mutex> lock(mutex_);
+    std::lock_guard<std::recursive_mutex> guard(mutex_);
 
     if (change->kind == fastrtps::rtps::ChangeKind_t::ALIVE)
     {
@@ -1592,6 +1595,8 @@ fastrtps::rtps::CacheChange_t* DiscoveryDataBase::cache_change_own_participant()
 
 const std::vector<fastrtps::rtps::GuidPrefix_t> DiscoveryDataBase::direct_clients_and_servers()
 {
+    std::lock_guard<std::recursive_mutex> guard(mutex_);
+
     std::vector<fastrtps::rtps::GuidPrefix_t> direct_clients_and_servers;
     // Iterate over participants to add the remote ones that are direct clients or servers
     for (auto participant: participants_)
@@ -1611,6 +1616,8 @@ const std::vector<fastrtps::rtps::GuidPrefix_t> DiscoveryDataBase::direct_client
 
 bool DiscoveryDataBase::server_acked_by_my_servers()
 {
+    std::lock_guard<std::recursive_mutex> guard(mutex_);
+
     if (servers_.size() == 0)
     {
         return true;
@@ -1618,8 +1625,8 @@ bool DiscoveryDataBase::server_acked_by_my_servers()
 
     // Find the server's participant and check whether all its servers have ACKed the server's DATA(p)
     auto this_server = participants_.find(server_guid_prefix_);
-
     // check it is always there
+
     assert(this_server != participants_.end());
 
     for (auto prefix : servers_)
@@ -1634,6 +1641,8 @@ bool DiscoveryDataBase::server_acked_by_my_servers()
 
 std::vector<fastrtps::rtps::GuidPrefix_t> DiscoveryDataBase::ack_pending_servers()
 {
+    std::lock_guard<std::recursive_mutex> guard(mutex_);
+
     std::vector<fastrtps::rtps::GuidPrefix_t> ack_pending_servers;
     // Find the server's participant and check whether all its servers have ACKed the server's DATA(p)
     auto this_server = participants_.find(server_guid_prefix_);
@@ -1702,6 +1711,8 @@ DiscoveryDataBase::AckedFunctor::~AckedFunctor()
 void DiscoveryDataBase::AckedFunctor::operator () (
         const eprosima::fastrtps::rtps::ReaderProxy* reader_proxy)
 {
+    std::lock_guard<std::recursive_mutex> guard(db_->mutex_);
+
     EPROSIMA_LOG_INFO(DISCOVERY_DATABASE, "functor operator in change: " << change_->instanceHandle);
     EPROSIMA_LOG_INFO(DISCOVERY_DATABASE, "for reader proxy: " << reader_proxy->guid());
     // Check whether the change has been acknowledged by a given reader
@@ -2599,6 +2610,8 @@ void DiscoveryDataBase::persistence_enable(
 bool DiscoveryDataBase::is_participant_local(
         const eprosima::fastrtps::rtps::GuidPrefix_t& participant_prefix)
 {
+    std::lock_guard<std::recursive_mutex> guard(mutex_);
+
     auto pit = participants_.find(participant_prefix);
     if (pit != participants_.end())
     {

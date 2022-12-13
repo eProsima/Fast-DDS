@@ -41,13 +41,9 @@ class DiscoveryParticipantsAckStatus
 
 public:
 
-    DiscoveryParticipantsAckStatus()
-    {
-    }
+    DiscoveryParticipantsAckStatus() = default;
 
-    ~DiscoveryParticipantsAckStatus()
-    {
-    }
+    ~DiscoveryParticipantsAckStatus() = default;
 
     void add_or_update_participant(
             const eprosima::fastrtps::rtps::GuidPrefix_t& guid_p,
