@@ -30,7 +30,7 @@ private:
 
     uint16_t dump_id_ = 0;
     FILE* f_;
-    std::unique_ptr<SharedMemSegment::named_mutex> f_mutex_;
+    deleted_unique_ptr<SharedMemSegment::named_mutex> f_mutex_;
 
 public:
 

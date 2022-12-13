@@ -2161,6 +2161,108 @@ TEST_F(SHMTransportTests, dump_file)
     std::remove(log_file.c_str());
 }
 
+TEST_F(SHMTransportTests, named_mutex_concurrent_open_create)
+{
+    const std::string domain_name("SHMTests");
+
+    auto shared_mem_manager = SharedMemManager::create(domain_name);
+    SharedMemGlobal* shared_mem_global = shared_mem_manager->global_segment();
+    MockPortSharedMemGlobal port_mocker;
+
+    port_mocker.remove_port_mutex(domain_name, 0);
+
+    Semaphore sem_get_port;
+    Semaphore sem_end_thread_get_port;
+    std::thread thread_get_port([&]
+            {
+                auto port_mutex = port_mocker.get_port_mutex(domain_name, 0, false);
+
+                sem_get_port.post();
+                sem_end_thread_get_port.wait();
+            }
+            );
+
+    auto global_port = shared_mem_global->open_port(0, 1, 1000);
+
+    sem_get_port.wait();
+    sem_end_thread_get_port.post();
+    thread_get_port.join();
+}
+
+TEST_F(SHMTransportTests, named_mutex_concurrent_open)
+{
+    const std::string domain_name("SHMTests");
+
+    auto shared_mem_manager = SharedMemManager::create(domain_name);
+    SharedMemGlobal* shared_mem_global = shared_mem_manager->global_segment();
+    MockPortSharedMemGlobal port_mocker;
+
+    port_mocker.remove_port_mutex(domain_name, 0);
+
+    auto global_port = shared_mem_global->open_port(0, 1, 1000);
+
+    Semaphore sem_lock_done;
+    Semaphore sem_second_lock;
+    Semaphore sem_second_lock_done;
+    Semaphore sem_end_thread_locker;
+    std::atomic<int> lock_count(0);
+    std::thread thread_locker([&]
+            {
+                // lock has to be done in another thread because
+                // boost::inteprocess_named_mutex and  interprocess_mutex are recursive in Win32
+                auto port_mutex = port_mocker.get_port_mutex(domain_name, 0);
+                bool locked = port_mutex->try_lock();
+                if (locked)
+                {
+                    ++lock_count;
+                }
+
+                sem_lock_done.post();
+                sem_second_lock.wait();
+
+                if (locked)
+                {
+                    port_mutex->unlock();
+                }
+                else
+                {
+                    port_mutex->lock();
+                    ++lock_count;
+                }
+
+                sem_second_lock_done.post();
+                sem_end_thread_locker.wait();
+            }
+            );
+
+    auto port_mutex = port_mocker.get_port_mutex(domain_name, 0);
+    bool locked = port_mutex->try_lock();
+    if (locked)
+    {
+        ++lock_count;
+    }
+
+    sem_lock_done.wait();
+    ASSERT_EQ(lock_count, 1);
+
+    sem_second_lock.post();
+    if (locked)
+    {
+        port_mutex->unlock();
+    }
+    else
+    {
+        port_mutex->lock();
+        ++lock_count;
+    }
+
+    sem_second_lock_done.wait();
+    ASSERT_EQ(lock_count, 2);
+
+    sem_end_thread_locker.post();
+    thread_locker.join();
+}
+
 int main(
         int argc,
         char** argv)
