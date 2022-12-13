@@ -525,7 +525,7 @@ if(MSVC OR MSVC_IDE)
             @ONLY
             )
 
-        file(TO_NATIVE_PATH "${CMAKE_CURRENT_BINARY_DIR}/fastrtps.manifest" MANIFEST_FILE_PATH)
+        file(TO_NATIVE_PATH "${PROJECT_BINARY_DIR}/fastrtps.manifest" MANIFEST_FILE_PATH)
         target_link_options(${PROJECT_NAME} PRIVATE "/MANIFEST:EMBED" "/MANIFESTINPUT:${MANIFEST_FILE_PATH}")
 
         unset(WINDOWS_SOURCE_DIR)
