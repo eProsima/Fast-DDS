@@ -41,7 +41,7 @@ jobs:
     name: Sanitizer Evaluation
     if: ${{ !(contains(github.event.pull_request.labels.*.name, 'no-test') ||
               contains(github.event.pull_request.labels.*.name, 'skip-ci')) }}
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
     steps:
       - name: Download the sanitizers cmake module and apply some fixes
         run: |
