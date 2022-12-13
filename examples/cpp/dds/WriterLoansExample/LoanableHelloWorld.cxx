@@ -57,7 +57,7 @@ LoanableHelloWorld::LoanableHelloWorld(
 }
 
 LoanableHelloWorld::LoanableHelloWorld(
-        LoanableHelloWorld&& x)
+        LoanableHelloWorld&& x) noexcept
 {
     m_index = x.m_index;
     m_message = std::move(x.m_message);
@@ -74,7 +74,7 @@ LoanableHelloWorld& LoanableHelloWorld::operator =(
 }
 
 LoanableHelloWorld& LoanableHelloWorld::operator =(
-        LoanableHelloWorld&& x)
+        LoanableHelloWorld&& x) noexcept
 {
 
     m_index = x.m_index;
@@ -235,5 +235,5 @@ void LoanableHelloWorld::serializeKey(
         eprosima::fastcdr::Cdr& scdr) const
 {
     (void) scdr;
-      
+
 }

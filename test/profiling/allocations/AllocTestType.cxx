@@ -52,7 +52,7 @@ AllocTestType::AllocTestType(
 }
 
 AllocTestType::AllocTestType(
-        AllocTestType&& x)
+        AllocTestType&& x) noexcept 
 {
     m_index = x.m_index;
 }
@@ -67,7 +67,7 @@ AllocTestType& AllocTestType::operator =(
 }
 
 AllocTestType& AllocTestType::operator =(
-        AllocTestType&& x)
+        AllocTestType&& x) noexcept
 {
 
     m_index = x.m_index;

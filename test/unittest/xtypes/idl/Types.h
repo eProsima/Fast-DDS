@@ -113,7 +113,7 @@ public:
      * @param x Reference to the object MyEnumStruct that will be copied.
      */
     eProsima_user_DllExport MyEnumStruct(
-            MyEnumStruct&& x);
+            MyEnumStruct&& x) noexcept;
 
     /*!
      * @brief Copy assignment.
@@ -127,7 +127,7 @@ public:
      * @param x Reference to the object MyEnumStruct that will be copied.
      */
     eProsima_user_DllExport MyEnumStruct& operator =(
-            MyEnumStruct&& x);
+            MyEnumStruct&& x) noexcept;
 
     /*!
      * @brief Comparison operator.
@@ -254,7 +254,7 @@ public:
      * @param x Reference to the object MyBadEnumStruct that will be copied.
      */
     eProsima_user_DllExport MyBadEnumStruct(
-            MyBadEnumStruct&& x);
+            MyBadEnumStruct&& x) noexcept;
 
     /*!
      * @brief Copy assignment.
@@ -268,7 +268,7 @@ public:
      * @param x Reference to the object MyBadEnumStruct that will be copied.
      */
     eProsima_user_DllExport MyBadEnumStruct& operator =(
-            MyBadEnumStruct&& x);
+            MyBadEnumStruct&& x) noexcept;
 
     /*!
      * @brief Comparison operator.
@@ -396,7 +396,7 @@ public:
      * @param x Reference to the object MyAliasEnumStruct that will be copied.
      */
     eProsima_user_DllExport MyAliasEnumStruct(
-            MyAliasEnumStruct&& x);
+            MyAliasEnumStruct&& x) noexcept;
 
     /*!
      * @brief Copy assignment.
@@ -410,7 +410,7 @@ public:
      * @param x Reference to the object MyAliasEnumStruct that will be copied.
      */
     eProsima_user_DllExport MyAliasEnumStruct& operator =(
-            MyAliasEnumStruct&& x);
+            MyAliasEnumStruct&& x) noexcept;
 
     /*!
      * @brief Comparison operator.
@@ -537,7 +537,7 @@ public:
      * @param x Reference to the object BasicStruct that will be copied.
      */
     eProsima_user_DllExport BasicStruct(
-            BasicStruct&& x);
+            BasicStruct&& x) noexcept;
 
     /*!
      * @brief Copy assignment.
@@ -551,7 +551,7 @@ public:
      * @param x Reference to the object BasicStruct that will be copied.
      */
     eProsima_user_DllExport BasicStruct& operator =(
-            BasicStruct&& x);
+            BasicStruct&& x) noexcept;
 
     /*!
      * @brief Comparison operator.
@@ -724,7 +724,7 @@ public:
      * @param x Reference to the object BasicNamesStruct that will be copied.
      */
     eProsima_user_DllExport BasicNamesStruct(
-            BasicNamesStruct&& x);
+            BasicNamesStruct&& x) noexcept;
 
     /*!
      * @brief Copy assignment.
@@ -738,7 +738,7 @@ public:
      * @param x Reference to the object BasicNamesStruct that will be copied.
      */
     eProsima_user_DllExport BasicNamesStruct& operator =(
-            BasicNamesStruct&& x);
+            BasicNamesStruct&& x) noexcept;
 
     /*!
      * @brief Comparison operator.
@@ -911,7 +911,7 @@ public:
      * @param x Reference to the object BasicBadStruct that will be copied.
      */
     eProsima_user_DllExport BasicBadStruct(
-            BasicBadStruct&& x);
+            BasicBadStruct&& x) noexcept;
 
     /*!
      * @brief Copy assignment.
@@ -925,7 +925,7 @@ public:
      * @param x Reference to the object BasicBadStruct that will be copied.
      */
     eProsima_user_DllExport BasicBadStruct& operator =(
-            BasicBadStruct&& x);
+            BasicBadStruct&& x) noexcept;
 
     /*!
      * @brief Comparison operator.
@@ -1098,7 +1098,7 @@ public:
      * @param x Reference to the object BasicWideStruct that will be copied.
      */
     eProsima_user_DllExport BasicWideStruct(
-            BasicWideStruct&& x);
+            BasicWideStruct&& x) noexcept;
 
     /*!
      * @brief Copy assignment.
@@ -1112,7 +1112,7 @@ public:
      * @param x Reference to the object BasicWideStruct that will be copied.
      */
     eProsima_user_DllExport BasicWideStruct& operator =(
-            BasicWideStruct&& x);
+            BasicWideStruct&& x) noexcept;
 
     /*!
      * @brief Comparison operator.
@@ -1331,7 +1331,7 @@ public:
      * @param x Reference to the object BadBasicWideStruct that will be copied.
      */
     eProsima_user_DllExport BadBasicWideStruct(
-            BadBasicWideStruct&& x);
+            BadBasicWideStruct&& x) noexcept;
 
     /*!
      * @brief Copy assignment.
@@ -1345,7 +1345,7 @@ public:
      * @param x Reference to the object BadBasicWideStruct that will be copied.
      */
     eProsima_user_DllExport BadBasicWideStruct& operator =(
-            BadBasicWideStruct&& x);
+            BadBasicWideStruct&& x) noexcept;
 
     /*!
      * @brief Comparison operator.
@@ -1564,7 +1564,7 @@ public:
      * @param x Reference to the object StringStruct that will be copied.
      */
     eProsima_user_DllExport StringStruct(
-            StringStruct&& x);
+            StringStruct&& x) noexcept;
 
     /*!
      * @brief Copy assignment.
@@ -1578,7 +1578,7 @@ public:
      * @param x Reference to the object StringStruct that will be copied.
      */
     eProsima_user_DllExport StringStruct& operator =(
-            StringStruct&& x);
+            StringStruct&& x) noexcept;
 
     /*!
      * @brief Comparison operator.
@@ -1711,7 +1711,7 @@ public:
      * @param x Reference to the object LargeStringStruct that will be copied.
      */
     eProsima_user_DllExport LargeStringStruct(
-            LargeStringStruct&& x);
+            LargeStringStruct&& x) noexcept;
 
     /*!
      * @brief Copy assignment.
@@ -1725,7 +1725,7 @@ public:
      * @param x Reference to the object LargeStringStruct that will be copied.
      */
     eProsima_user_DllExport LargeStringStruct& operator =(
-            LargeStringStruct&& x);
+            LargeStringStruct&& x) noexcept;
 
     /*!
      * @brief Comparison operator.
@@ -1858,7 +1858,7 @@ public:
      * @param x Reference to the object WStringStruct that will be copied.
      */
     eProsima_user_DllExport WStringStruct(
-            WStringStruct&& x);
+            WStringStruct&& x) noexcept;
 
     /*!
      * @brief Copy assignment.
@@ -1872,7 +1872,7 @@ public:
      * @param x Reference to the object WStringStruct that will be copied.
      */
     eProsima_user_DllExport WStringStruct& operator =(
-            WStringStruct&& x);
+            WStringStruct&& x) noexcept;
 
     /*!
      * @brief Comparison operator.
@@ -2005,7 +2005,7 @@ public:
      * @param x Reference to the object LargeWStringStruct that will be copied.
      */
     eProsima_user_DllExport LargeWStringStruct(
-            LargeWStringStruct&& x);
+            LargeWStringStruct&& x) noexcept;
 
     /*!
      * @brief Copy assignment.
@@ -2019,7 +2019,7 @@ public:
      * @param x Reference to the object LargeWStringStruct that will be copied.
      */
     eProsima_user_DllExport LargeWStringStruct& operator =(
-            LargeWStringStruct&& x);
+            LargeWStringStruct&& x) noexcept;
 
     /*!
      * @brief Comparison operator.
@@ -2152,7 +2152,7 @@ public:
      * @param x Reference to the object ArrayStruct that will be copied.
      */
     eProsima_user_DllExport ArrayStruct(
-            ArrayStruct&& x);
+            ArrayStruct&& x) noexcept;
 
     /*!
      * @brief Copy assignment.
@@ -2166,7 +2166,7 @@ public:
      * @param x Reference to the object ArrayStruct that will be copied.
      */
     eProsima_user_DllExport ArrayStruct& operator =(
-            ArrayStruct&& x);
+            ArrayStruct&& x) noexcept;
 
     /*!
      * @brief Comparison operator.
@@ -2299,7 +2299,7 @@ public:
      * @param x Reference to the object ArrayStructEqual that will be copied.
      */
     eProsima_user_DllExport ArrayStructEqual(
-            ArrayStructEqual&& x);
+            ArrayStructEqual&& x) noexcept;
 
     /*!
      * @brief Copy assignment.
@@ -2313,7 +2313,7 @@ public:
      * @param x Reference to the object ArrayStructEqual that will be copied.
      */
     eProsima_user_DllExport ArrayStructEqual& operator =(
-            ArrayStructEqual&& x);
+            ArrayStructEqual&& x) noexcept;
 
     /*!
      * @brief Comparison operator.
@@ -2446,7 +2446,7 @@ public:
      * @param x Reference to the object ArrayBadStruct that will be copied.
      */
     eProsima_user_DllExport ArrayBadStruct(
-            ArrayBadStruct&& x);
+            ArrayBadStruct&& x) noexcept;
 
     /*!
      * @brief Copy assignment.
@@ -2460,7 +2460,7 @@ public:
      * @param x Reference to the object ArrayBadStruct that will be copied.
      */
     eProsima_user_DllExport ArrayBadStruct& operator =(
-            ArrayBadStruct&& x);
+            ArrayBadStruct&& x) noexcept;
 
     /*!
      * @brief Comparison operator.
@@ -2593,7 +2593,7 @@ public:
      * @param x Reference to the object ArrayDimensionsStruct that will be copied.
      */
     eProsima_user_DllExport ArrayDimensionsStruct(
-            ArrayDimensionsStruct&& x);
+            ArrayDimensionsStruct&& x) noexcept;
 
     /*!
      * @brief Copy assignment.
@@ -2607,7 +2607,7 @@ public:
      * @param x Reference to the object ArrayDimensionsStruct that will be copied.
      */
     eProsima_user_DllExport ArrayDimensionsStruct& operator =(
-            ArrayDimensionsStruct&& x);
+            ArrayDimensionsStruct&& x) noexcept;
 
     /*!
      * @brief Comparison operator.
@@ -2740,7 +2740,7 @@ public:
      * @param x Reference to the object ArraySizeStruct that will be copied.
      */
     eProsima_user_DllExport ArraySizeStruct(
-            ArraySizeStruct&& x);
+            ArraySizeStruct&& x) noexcept;
 
     /*!
      * @brief Copy assignment.
@@ -2754,7 +2754,7 @@ public:
      * @param x Reference to the object ArraySizeStruct that will be copied.
      */
     eProsima_user_DllExport ArraySizeStruct& operator =(
-            ArraySizeStruct&& x);
+            ArraySizeStruct&& x) noexcept;
 
     /*!
      * @brief Comparison operator.
@@ -2887,7 +2887,7 @@ public:
      * @param x Reference to the object SequenceStruct that will be copied.
      */
     eProsima_user_DllExport SequenceStruct(
-            SequenceStruct&& x);
+            SequenceStruct&& x) noexcept;
 
     /*!
      * @brief Copy assignment.
@@ -2901,7 +2901,7 @@ public:
      * @param x Reference to the object SequenceStruct that will be copied.
      */
     eProsima_user_DllExport SequenceStruct& operator =(
-            SequenceStruct&& x);
+            SequenceStruct&& x) noexcept;
 
     /*!
      * @brief Comparison operator.
@@ -3034,7 +3034,7 @@ public:
      * @param x Reference to the object SequenceStructEqual that will be copied.
      */
     eProsima_user_DllExport SequenceStructEqual(
-            SequenceStructEqual&& x);
+            SequenceStructEqual&& x) noexcept;
 
     /*!
      * @brief Copy assignment.
@@ -3048,7 +3048,7 @@ public:
      * @param x Reference to the object SequenceStructEqual that will be copied.
      */
     eProsima_user_DllExport SequenceStructEqual& operator =(
-            SequenceStructEqual&& x);
+            SequenceStructEqual&& x) noexcept;
 
     /*!
      * @brief Comparison operator.
@@ -3181,7 +3181,7 @@ public:
      * @param x Reference to the object SequenceBadStruct that will be copied.
      */
     eProsima_user_DllExport SequenceBadStruct(
-            SequenceBadStruct&& x);
+            SequenceBadStruct&& x) noexcept;
 
     /*!
      * @brief Copy assignment.
@@ -3195,7 +3195,7 @@ public:
      * @param x Reference to the object SequenceBadStruct that will be copied.
      */
     eProsima_user_DllExport SequenceBadStruct& operator =(
-            SequenceBadStruct&& x);
+            SequenceBadStruct&& x) noexcept;
 
     /*!
      * @brief Comparison operator.
@@ -3328,7 +3328,7 @@ public:
      * @param x Reference to the object SequenceBoundsStruct that will be copied.
      */
     eProsima_user_DllExport SequenceBoundsStruct(
-            SequenceBoundsStruct&& x);
+            SequenceBoundsStruct&& x) noexcept;
 
     /*!
      * @brief Copy assignment.
@@ -3342,7 +3342,7 @@ public:
      * @param x Reference to the object SequenceBoundsStruct that will be copied.
      */
     eProsima_user_DllExport SequenceBoundsStruct& operator =(
-            SequenceBoundsStruct&& x);
+            SequenceBoundsStruct&& x) noexcept;
 
     /*!
      * @brief Comparison operator.
@@ -3475,7 +3475,7 @@ public:
      * @param x Reference to the object SequenceSequenceStruct that will be copied.
      */
     eProsima_user_DllExport SequenceSequenceStruct(
-            SequenceSequenceStruct&& x);
+            SequenceSequenceStruct&& x) noexcept;
 
     /*!
      * @brief Copy assignment.
@@ -3489,7 +3489,7 @@ public:
      * @param x Reference to the object SequenceSequenceStruct that will be copied.
      */
     eProsima_user_DllExport SequenceSequenceStruct& operator =(
-            SequenceSequenceStruct&& x);
+            SequenceSequenceStruct&& x) noexcept;
 
     /*!
      * @brief Comparison operator.
@@ -3622,7 +3622,7 @@ public:
      * @param x Reference to the object SequenceSequenceBoundsStruct that will be copied.
      */
     eProsima_user_DllExport SequenceSequenceBoundsStruct(
-            SequenceSequenceBoundsStruct&& x);
+            SequenceSequenceBoundsStruct&& x) noexcept;
 
     /*!
      * @brief Copy assignment.
@@ -3636,7 +3636,7 @@ public:
      * @param x Reference to the object SequenceSequenceBoundsStruct that will be copied.
      */
     eProsima_user_DllExport SequenceSequenceBoundsStruct& operator =(
-            SequenceSequenceBoundsStruct&& x);
+            SequenceSequenceBoundsStruct&& x) noexcept;
 
     /*!
      * @brief Comparison operator.
@@ -3769,7 +3769,7 @@ public:
      * @param x Reference to the object MapStruct that will be copied.
      */
     eProsima_user_DllExport MapStruct(
-            MapStruct&& x);
+            MapStruct&& x) noexcept;
 
     /*!
      * @brief Copy assignment.
@@ -3783,7 +3783,7 @@ public:
      * @param x Reference to the object MapStruct that will be copied.
      */
     eProsima_user_DllExport MapStruct& operator =(
-            MapStruct&& x);
+            MapStruct&& x) noexcept;
 
     /*!
      * @brief Comparison operator.
@@ -3916,7 +3916,7 @@ public:
      * @param x Reference to the object MapStructEqual that will be copied.
      */
     eProsima_user_DllExport MapStructEqual(
-            MapStructEqual&& x);
+            MapStructEqual&& x) noexcept;
 
     /*!
      * @brief Copy assignment.
@@ -3930,7 +3930,7 @@ public:
      * @param x Reference to the object MapStructEqual that will be copied.
      */
     eProsima_user_DllExport MapStructEqual& operator =(
-            MapStructEqual&& x);
+            MapStructEqual&& x) noexcept;
 
     /*!
      * @brief Comparison operator.
@@ -4063,7 +4063,7 @@ public:
      * @param x Reference to the object MapBadKeyStruct that will be copied.
      */
     eProsima_user_DllExport MapBadKeyStruct(
-            MapBadKeyStruct&& x);
+            MapBadKeyStruct&& x) noexcept;
 
     /*!
      * @brief Copy assignment.
@@ -4077,7 +4077,7 @@ public:
      * @param x Reference to the object MapBadKeyStruct that will be copied.
      */
     eProsima_user_DllExport MapBadKeyStruct& operator =(
-            MapBadKeyStruct&& x);
+            MapBadKeyStruct&& x) noexcept;
 
     /*!
      * @brief Comparison operator.
@@ -4210,7 +4210,7 @@ public:
      * @param x Reference to the object MapBadElemStruct that will be copied.
      */
     eProsima_user_DllExport MapBadElemStruct(
-            MapBadElemStruct&& x);
+            MapBadElemStruct&& x) noexcept;
 
     /*!
      * @brief Copy assignment.
@@ -4224,7 +4224,7 @@ public:
      * @param x Reference to the object MapBadElemStruct that will be copied.
      */
     eProsima_user_DllExport MapBadElemStruct& operator =(
-            MapBadElemStruct&& x);
+            MapBadElemStruct&& x) noexcept;
 
     /*!
      * @brief Comparison operator.
@@ -4357,7 +4357,7 @@ public:
      * @param x Reference to the object MapBoundsStruct that will be copied.
      */
     eProsima_user_DllExport MapBoundsStruct(
-            MapBoundsStruct&& x);
+            MapBoundsStruct&& x) noexcept;
 
     /*!
      * @brief Copy assignment.
@@ -4371,7 +4371,7 @@ public:
      * @param x Reference to the object MapBoundsStruct that will be copied.
      */
     eProsima_user_DllExport MapBoundsStruct& operator =(
-            MapBoundsStruct&& x);
+            MapBoundsStruct&& x) noexcept;
 
     /*!
      * @brief Comparison operator.
@@ -4504,7 +4504,7 @@ public:
      * @param x Reference to the object MapMapStruct that will be copied.
      */
     eProsima_user_DllExport MapMapStruct(
-            MapMapStruct&& x);
+            MapMapStruct&& x) noexcept;
 
     /*!
      * @brief Copy assignment.
@@ -4518,7 +4518,7 @@ public:
      * @param x Reference to the object MapMapStruct that will be copied.
      */
     eProsima_user_DllExport MapMapStruct& operator =(
-            MapMapStruct&& x);
+            MapMapStruct&& x) noexcept;
 
     /*!
      * @brief Comparison operator.
@@ -4651,7 +4651,7 @@ public:
      * @param x Reference to the object MapMapBoundsStruct that will be copied.
      */
     eProsima_user_DllExport MapMapBoundsStruct(
-            MapMapBoundsStruct&& x);
+            MapMapBoundsStruct&& x) noexcept;
 
     /*!
      * @brief Copy assignment.
@@ -4665,7 +4665,7 @@ public:
      * @param x Reference to the object MapMapBoundsStruct that will be copied.
      */
     eProsima_user_DllExport MapMapBoundsStruct& operator =(
-            MapMapBoundsStruct&& x);
+            MapMapBoundsStruct&& x) noexcept;
 
     /*!
      * @brief Comparison operator.
@@ -4798,7 +4798,7 @@ public:
      * @param x Reference to the object SimpleUnion that will be copied.
      */
     eProsima_user_DllExport SimpleUnion(
-            SimpleUnion&& x);
+            SimpleUnion&& x) noexcept;
 
     /*!
      * @brief Copy assignment.
@@ -4812,7 +4812,7 @@ public:
      * @param x Reference to the object SimpleUnion that will be copied.
      */
     eProsima_user_DllExport SimpleUnion& operator =(
-            SimpleUnion&& x);
+            SimpleUnion&& x) noexcept;
 
     /*!
      * @brief Comparison operator.
@@ -4925,6 +4925,9 @@ public:
     eProsima_user_DllExport void deserialize(
             eprosima::fastcdr::Cdr& cdr);
 
+
+
+
 private:
 
     int32_t m__d;
@@ -4962,7 +4965,7 @@ public:
      * @param x Reference to the object SimpleUnionNames that will be copied.
      */
     eProsima_user_DllExport SimpleUnionNames(
-            SimpleUnionNames&& x);
+            SimpleUnionNames&& x) noexcept;
 
     /*!
      * @brief Copy assignment.
@@ -4976,7 +4979,7 @@ public:
      * @param x Reference to the object SimpleUnionNames that will be copied.
      */
     eProsima_user_DllExport SimpleUnionNames& operator =(
-            SimpleUnionNames&& x);
+            SimpleUnionNames&& x) noexcept;
 
     /*!
      * @brief Comparison operator.
@@ -5089,6 +5092,9 @@ public:
     eProsima_user_DllExport void deserialize(
             eprosima::fastcdr::Cdr& cdr);
 
+
+
+
 private:
 
     int32_t m__d;
@@ -5126,7 +5132,7 @@ public:
      * @param x Reference to the object SimpleTypeUnion that will be copied.
      */
     eProsima_user_DllExport SimpleTypeUnion(
-            SimpleTypeUnion&& x);
+            SimpleTypeUnion&& x) noexcept;
 
     /*!
      * @brief Copy assignment.
@@ -5140,7 +5146,7 @@ public:
      * @param x Reference to the object SimpleTypeUnion that will be copied.
      */
     eProsima_user_DllExport SimpleTypeUnion& operator =(
-            SimpleTypeUnion&& x);
+            SimpleTypeUnion&& x) noexcept;
 
     /*!
      * @brief Comparison operator.
@@ -5253,6 +5259,9 @@ public:
     eProsima_user_DllExport void deserialize(
             eprosima::fastcdr::Cdr& cdr);
 
+
+
+
 private:
 
     int32_t m__d;
@@ -5290,7 +5299,7 @@ public:
      * @param x Reference to the object SimpleBadUnion that will be copied.
      */
     eProsima_user_DllExport SimpleBadUnion(
-            SimpleBadUnion&& x);
+            SimpleBadUnion&& x) noexcept;
 
     /*!
      * @brief Copy assignment.
@@ -5304,7 +5313,7 @@ public:
      * @param x Reference to the object SimpleBadUnion that will be copied.
      */
     eProsima_user_DllExport SimpleBadUnion& operator =(
-            SimpleBadUnion&& x);
+            SimpleBadUnion&& x) noexcept;
 
     /*!
      * @brief Comparison operator.
@@ -5417,6 +5426,9 @@ public:
     eProsima_user_DllExport void deserialize(
             eprosima::fastcdr::Cdr& cdr);
 
+
+
+
 private:
 
     int32_t m__d;
@@ -5454,7 +5466,7 @@ public:
      * @param x Reference to the object SimpleBadDiscUnion that will be copied.
      */
     eProsima_user_DllExport SimpleBadDiscUnion(
-            SimpleBadDiscUnion&& x);
+            SimpleBadDiscUnion&& x) noexcept;
 
     /*!
      * @brief Copy assignment.
@@ -5468,7 +5480,7 @@ public:
      * @param x Reference to the object SimpleBadDiscUnion that will be copied.
      */
     eProsima_user_DllExport SimpleBadDiscUnion& operator =(
-            SimpleBadDiscUnion&& x);
+            SimpleBadDiscUnion&& x) noexcept;
 
     /*!
      * @brief Comparison operator.
@@ -5581,6 +5593,9 @@ public:
     eProsima_user_DllExport void deserialize(
             eprosima::fastcdr::Cdr& cdr);
 
+
+
+
 private:
 
     uint8_t m__d;
@@ -5618,7 +5633,7 @@ public:
      * @param x Reference to the object SimpleUnionStruct that will be copied.
      */
     eProsima_user_DllExport SimpleUnionStruct(
-            SimpleUnionStruct&& x);
+            SimpleUnionStruct&& x) noexcept;
 
     /*!
      * @brief Copy assignment.
@@ -5632,7 +5647,7 @@ public:
      * @param x Reference to the object SimpleUnionStruct that will be copied.
      */
     eProsima_user_DllExport SimpleUnionStruct& operator =(
-            SimpleUnionStruct&& x);
+            SimpleUnionStruct&& x) noexcept;
 
     /*!
      * @brief Comparison operator.
@@ -5765,7 +5780,7 @@ public:
      * @param x Reference to the object SimpleUnionStructEqual that will be copied.
      */
     eProsima_user_DllExport SimpleUnionStructEqual(
-            SimpleUnionStructEqual&& x);
+            SimpleUnionStructEqual&& x) noexcept;
 
     /*!
      * @brief Copy assignment.
@@ -5779,7 +5794,7 @@ public:
      * @param x Reference to the object SimpleUnionStructEqual that will be copied.
      */
     eProsima_user_DllExport SimpleUnionStructEqual& operator =(
-            SimpleUnionStructEqual&& x);
+            SimpleUnionStructEqual&& x) noexcept;
 
     /*!
      * @brief Comparison operator.
@@ -5912,7 +5927,7 @@ public:
      * @param x Reference to the object SimpleUnionNamesStruct that will be copied.
      */
     eProsima_user_DllExport SimpleUnionNamesStruct(
-            SimpleUnionNamesStruct&& x);
+            SimpleUnionNamesStruct&& x) noexcept;
 
     /*!
      * @brief Copy assignment.
@@ -5926,7 +5941,7 @@ public:
      * @param x Reference to the object SimpleUnionNamesStruct that will be copied.
      */
     eProsima_user_DllExport SimpleUnionNamesStruct& operator =(
-            SimpleUnionNamesStruct&& x);
+            SimpleUnionNamesStruct&& x) noexcept;
 
     /*!
      * @brief Comparison operator.
@@ -6059,7 +6074,7 @@ public:
      * @param x Reference to the object SimpleTypeUnionStruct that will be copied.
      */
     eProsima_user_DllExport SimpleTypeUnionStruct(
-            SimpleTypeUnionStruct&& x);
+            SimpleTypeUnionStruct&& x) noexcept;
 
     /*!
      * @brief Copy assignment.
@@ -6073,7 +6088,7 @@ public:
      * @param x Reference to the object SimpleTypeUnionStruct that will be copied.
      */
     eProsima_user_DllExport SimpleTypeUnionStruct& operator =(
-            SimpleTypeUnionStruct&& x);
+            SimpleTypeUnionStruct&& x) noexcept;
 
     /*!
      * @brief Comparison operator.
@@ -6206,7 +6221,7 @@ public:
      * @param x Reference to the object SimpleBadUnionStruct that will be copied.
      */
     eProsima_user_DllExport SimpleBadUnionStruct(
-            SimpleBadUnionStruct&& x);
+            SimpleBadUnionStruct&& x) noexcept;
 
     /*!
      * @brief Copy assignment.
@@ -6220,7 +6235,7 @@ public:
      * @param x Reference to the object SimpleBadUnionStruct that will be copied.
      */
     eProsima_user_DllExport SimpleBadUnionStruct& operator =(
-            SimpleBadUnionStruct&& x);
+            SimpleBadUnionStruct&& x) noexcept;
 
     /*!
      * @brief Comparison operator.
@@ -6353,7 +6368,7 @@ public:
      * @param x Reference to the object SimplBadDiscUnionStruct that will be copied.
      */
     eProsima_user_DllExport SimplBadDiscUnionStruct(
-            SimplBadDiscUnionStruct&& x);
+            SimplBadDiscUnionStruct&& x) noexcept;
 
     /*!
      * @brief Copy assignment.
@@ -6367,7 +6382,7 @@ public:
      * @param x Reference to the object SimplBadDiscUnionStruct that will be copied.
      */
     eProsima_user_DllExport SimplBadDiscUnionStruct& operator =(
-            SimplBadDiscUnionStruct&& x);
+            SimplBadDiscUnionStruct&& x) noexcept;
 
     /*!
      * @brief Comparison operator.

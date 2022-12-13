@@ -61,7 +61,7 @@ KeyedHelloWorld::KeyedHelloWorld(
 }
 
 KeyedHelloWorld::KeyedHelloWorld(
-        KeyedHelloWorld&& x)
+        KeyedHelloWorld&& x) noexcept 
 {
     m_key = x.m_key;
     m_index = x.m_index;
@@ -80,7 +80,7 @@ KeyedHelloWorld& KeyedHelloWorld::operator =(
 }
 
 KeyedHelloWorld& KeyedHelloWorld::operator =(
-        KeyedHelloWorld&& x)
+        KeyedHelloWorld&& x) noexcept
 {
 
     m_key = x.m_key;

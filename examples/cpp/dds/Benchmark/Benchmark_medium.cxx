@@ -57,7 +57,7 @@ BenchMarkMedium::BenchMarkMedium(
 }
 
 BenchMarkMedium::BenchMarkMedium(
-        BenchMarkMedium&& x)
+        BenchMarkMedium&& x) noexcept
 {
     m_data = std::move(x.m_data);
     m_index = x.m_index;
@@ -74,7 +74,7 @@ BenchMarkMedium& BenchMarkMedium::operator =(
 }
 
 BenchMarkMedium& BenchMarkMedium::operator =(
-        BenchMarkMedium&& x)
+        BenchMarkMedium&& x) noexcept
 {
 
     m_data = std::move(x.m_data);
@@ -235,5 +235,5 @@ void BenchMarkMedium::serializeKey(
         eprosima::fastcdr::Cdr& scdr) const
 {
     (void) scdr;
-      
+
 }

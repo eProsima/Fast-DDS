@@ -104,7 +104,7 @@ public:
      * @param x Reference to the object MyEnumWideStruct that will be copied.
      */
     eProsima_user_DllExport MyEnumWideStruct(
-            MyEnumWideStruct&& x);
+            MyEnumWideStruct&& x) noexcept;
 
     /*!
      * @brief Copy assignment.
@@ -118,7 +118,7 @@ public:
      * @param x Reference to the object MyEnumWideStruct that will be copied.
      */
     eProsima_user_DllExport MyEnumWideStruct& operator =(
-            MyEnumWideStruct&& x);
+            MyEnumWideStruct&& x) noexcept;
 
     /*!
      * @brief Comparison operator.
@@ -245,7 +245,7 @@ public:
      * @param x Reference to the object SimpleWideUnion that will be copied.
      */
     eProsima_user_DllExport SimpleWideUnion(
-            SimpleWideUnion&& x);
+            SimpleWideUnion&& x) noexcept;
 
     /*!
      * @brief Copy assignment.
@@ -259,7 +259,7 @@ public:
      * @param x Reference to the object SimpleWideUnion that will be copied.
      */
     eProsima_user_DllExport SimpleWideUnion& operator =(
-            SimpleWideUnion&& x);
+            SimpleWideUnion&& x) noexcept;
 
     /*!
      * @brief Comparison operator.
@@ -393,6 +393,9 @@ public:
     eProsima_user_DllExport void deserialize(
             eprosima::fastcdr::Cdr& cdr);
 
+
+
+
 private:
 
     int32_t m__d;
@@ -431,7 +434,7 @@ public:
      * @param x Reference to the object SimpleWideUnionStruct that will be copied.
      */
     eProsima_user_DllExport SimpleWideUnionStruct(
-            SimpleWideUnionStruct&& x);
+            SimpleWideUnionStruct&& x) noexcept;
 
     /*!
      * @brief Copy assignment.
@@ -445,7 +448,7 @@ public:
      * @param x Reference to the object SimpleWideUnionStruct that will be copied.
      */
     eProsima_user_DllExport SimpleWideUnionStruct& operator =(
-            SimpleWideUnionStruct&& x);
+            SimpleWideUnionStruct&& x) noexcept;
 
     /*!
      * @brief Comparison operator.

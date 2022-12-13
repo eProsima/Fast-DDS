@@ -93,7 +93,7 @@ public:
      * @param x Reference to the object Data64kb that will be copied.
      */
     eProsima_user_DllExport Data64kb(
-            Data64kb&& x);
+            Data64kb&& x) noexcept;
 
     /*!
      * @brief Copy assignment.
@@ -107,7 +107,7 @@ public:
      * @param x Reference to the object Data64kb that will be copied.
      */
     eProsima_user_DllExport Data64kb& operator =(
-            Data64kb&& x);
+            Data64kb&& x) noexcept;
 
     /*!
      * @brief Comparison operator.

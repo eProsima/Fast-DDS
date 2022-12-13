@@ -93,7 +93,7 @@ public:
      * @param x Reference to the object FixedSized that will be copied.
      */
     eProsima_user_DllExport FixedSized(
-            FixedSized&& x);
+            FixedSized&& x) noexcept;
 
     /*!
      * @brief Copy assignment.
@@ -107,7 +107,7 @@ public:
      * @param x Reference to the object FixedSized that will be copied.
      */
     eProsima_user_DllExport FixedSized& operator =(
-            FixedSized&& x);
+            FixedSized&& x) noexcept;
 
     /*!
      * @brief Comparison operator.

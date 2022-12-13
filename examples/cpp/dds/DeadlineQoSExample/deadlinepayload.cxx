@@ -57,7 +57,7 @@ HelloMsg::HelloMsg(
 }
 
 HelloMsg::HelloMsg(
-        HelloMsg&& x)
+        HelloMsg&& x) noexcept 
 {
     m_deadlinekey = x.m_deadlinekey;
     m_payload = std::move(x.m_payload);
@@ -74,7 +74,7 @@ HelloMsg& HelloMsg::operator =(
 }
 
 HelloMsg& HelloMsg::operator =(
-        HelloMsg&& x)
+        HelloMsg&& x) noexcept
 {
 
     m_deadlinekey = x.m_deadlinekey;

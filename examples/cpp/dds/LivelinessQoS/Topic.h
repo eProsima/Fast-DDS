@@ -93,7 +93,7 @@ public:
      * @param x Reference to the object Topic that will be copied.
      */
     eProsima_user_DllExport Topic(
-            Topic&& x);
+            Topic&& x) noexcept;
 
     /*!
      * @brief Copy assignment.
@@ -107,7 +107,7 @@ public:
      * @param x Reference to the object Topic that will be copied.
      */
     eProsima_user_DllExport Topic& operator =(
-            Topic&& x);
+            Topic&& x) noexcept;
 
     /*!
      * @brief Comparison operator.

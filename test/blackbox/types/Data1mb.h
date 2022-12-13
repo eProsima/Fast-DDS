@@ -93,7 +93,7 @@ public:
      * @param x Reference to the object Data1mb that will be copied.
      */
     eProsima_user_DllExport Data1mb(
-            Data1mb&& x);
+            Data1mb&& x) noexcept;
 
     /*!
      * @brief Copy assignment.
@@ -107,7 +107,7 @@ public:
      * @param x Reference to the object Data1mb that will be copied.
      */
     eProsima_user_DllExport Data1mb& operator =(
-            Data1mb&& x);
+            Data1mb&& x) noexcept;
 
     /*!
      * @brief Comparison operator.

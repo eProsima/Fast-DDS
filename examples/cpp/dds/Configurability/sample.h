@@ -93,7 +93,7 @@ public:
      * @param x Reference to the object sample that will be copied.
      */
     eProsima_user_DllExport sample(
-            sample&& x);
+            sample&& x) noexcept;
 
     /*!
      * @brief Copy assignment.
@@ -107,7 +107,7 @@ public:
      * @param x Reference to the object sample that will be copied.
      */
     eProsima_user_DllExport sample& operator =(
-            sample&& x);
+            sample&& x) noexcept;
 
     /*!
      * @brief Comparison operator.

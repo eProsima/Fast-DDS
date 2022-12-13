@@ -52,7 +52,7 @@ Data1mb::Data1mb(
 }
 
 Data1mb::Data1mb(
-        Data1mb&& x)
+        Data1mb&& x) noexcept 
 {
     m_data = std::move(x.m_data);
 }
@@ -67,7 +67,7 @@ Data1mb& Data1mb::operator =(
 }
 
 Data1mb& Data1mb::operator =(
-        Data1mb&& x)
+        Data1mb&& x) noexcept
 {
 
     m_data = std::move(x.m_data);

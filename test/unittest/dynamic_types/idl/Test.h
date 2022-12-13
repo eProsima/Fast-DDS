@@ -106,7 +106,7 @@ public:
      * @param x Reference to the object BasicStruct that will be copied.
      */
     eProsima_user_DllExport BasicStruct(
-            BasicStruct&& x);
+            BasicStruct&& x) noexcept;
 
     /*!
      * @brief Copy assignment.
@@ -120,7 +120,7 @@ public:
      * @param x Reference to the object BasicStruct that will be copied.
      */
     eProsima_user_DllExport BasicStruct& operator =(
-            BasicStruct&& x);
+            BasicStruct&& x) noexcept;
 
     /*!
      * @brief Comparison operator.
@@ -544,7 +544,7 @@ public:
      * @param x Reference to the object ComplexStruct that will be copied.
      */
     eProsima_user_DllExport ComplexStruct(
-            ComplexStruct&& x);
+            ComplexStruct&& x) noexcept;
 
     /*!
      * @brief Copy assignment.
@@ -558,7 +558,7 @@ public:
      * @param x Reference to the object ComplexStruct that will be copied.
      */
     eProsima_user_DllExport ComplexStruct& operator =(
-            ComplexStruct&& x);
+            ComplexStruct&& x) noexcept;
 
     /*!
      * @brief Comparison operator.
@@ -1024,8 +1024,7 @@ public:
      * @brief This function returns a constant reference to member my_array_string
      * @return Constant reference to member my_array_string
      */
-    eProsima_user_DllExport const std::array<std::array<eprosima::fastrtps::fixed_string<75>, 5>,
-            5>& my_array_string() const;
+    eProsima_user_DllExport const std::array<std::array<eprosima::fastrtps::fixed_string<75>, 5>, 5>& my_array_string() const;
 
     /*!
      * @brief This function returns a reference to member my_array_string
@@ -1220,7 +1219,7 @@ public:
      * @param x Reference to the object MyUnion that will be copied.
      */
     eProsima_user_DllExport MyUnion(
-            MyUnion&& x);
+            MyUnion&& x) noexcept;
 
     /*!
      * @brief Copy assignment.
@@ -1234,7 +1233,7 @@ public:
      * @param x Reference to the object MyUnion that will be copied.
      */
     eProsima_user_DllExport MyUnion& operator =(
-            MyUnion&& x);
+            MyUnion&& x) noexcept;
 
     /*!
      * @brief Comparison operator.
@@ -1359,6 +1358,9 @@ public:
     eProsima_user_DllExport void deserialize(
             eprosima::fastcdr::Cdr& cdr);
 
+
+
+
 private:
 
     MyEnum m__d;
@@ -1396,7 +1398,7 @@ public:
      * @param x Reference to the object MyUnion2 that will be copied.
      */
     eProsima_user_DllExport MyUnion2(
-            MyUnion2&& x);
+            MyUnion2&& x) noexcept;
 
     /*!
      * @brief Copy assignment.
@@ -1410,7 +1412,7 @@ public:
      * @param x Reference to the object MyUnion2 that will be copied.
      */
     eProsima_user_DllExport MyUnion2& operator =(
-            MyUnion2&& x);
+            MyUnion2&& x) noexcept;
 
     /*!
      * @brief Comparison operator.
@@ -1550,6 +1552,9 @@ public:
     eProsima_user_DllExport void deserialize(
             eprosima::fastcdr::Cdr& cdr);
 
+
+
+
 private:
 
     uint8_t m__d;
@@ -1588,7 +1593,7 @@ public:
      * @param x Reference to the object CompleteStruct that will be copied.
      */
     eProsima_user_DllExport CompleteStruct(
-            CompleteStruct&& x);
+            CompleteStruct&& x) noexcept;
 
     /*!
      * @brief Copy assignment.
@@ -1602,7 +1607,7 @@ public:
      * @param x Reference to the object CompleteStruct that will be copied.
      */
     eProsima_user_DllExport CompleteStruct& operator =(
-            CompleteStruct&& x);
+            CompleteStruct&& x) noexcept;
 
     /*!
      * @brief Comparison operator.
@@ -1761,7 +1766,7 @@ public:
      * @param x Reference to the object KeyedStruct that will be copied.
      */
     eProsima_user_DllExport KeyedStruct(
-            KeyedStruct&& x);
+            KeyedStruct&& x) noexcept;
 
     /*!
      * @brief Copy assignment.
@@ -1775,7 +1780,7 @@ public:
      * @param x Reference to the object KeyedStruct that will be copied.
      */
     eProsima_user_DllExport KeyedStruct& operator =(
-            KeyedStruct&& x);
+            KeyedStruct&& x) noexcept;
 
     /*!
      * @brief Comparison operator.

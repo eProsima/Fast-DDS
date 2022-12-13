@@ -57,7 +57,7 @@ BenchMarkBig::BenchMarkBig(
 }
 
 BenchMarkBig::BenchMarkBig(
-        BenchMarkBig&& x)
+        BenchMarkBig&& x) noexcept
 {
     m_data = std::move(x.m_data);
     m_index = x.m_index;
@@ -74,7 +74,7 @@ BenchMarkBig& BenchMarkBig::operator =(
 }
 
 BenchMarkBig& BenchMarkBig::operator =(
-        BenchMarkBig&& x)
+        BenchMarkBig&& x) noexcept
 {
 
     m_data = std::move(x.m_data);
@@ -235,5 +235,5 @@ void BenchMarkBig::serializeKey(
         eprosima::fastcdr::Cdr& scdr) const
 {
     (void) scdr;
-      
+
 }

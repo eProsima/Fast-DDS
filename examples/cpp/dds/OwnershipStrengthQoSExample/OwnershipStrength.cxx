@@ -61,7 +61,7 @@ ExampleMessage::ExampleMessage(
 }
 
 ExampleMessage::ExampleMessage(
-        ExampleMessage&& x)
+        ExampleMessage&& x) noexcept 
 {
     m_index = x.m_index;
     m_ownershipStrength = x.m_ownershipStrength;
@@ -80,7 +80,7 @@ ExampleMessage& ExampleMessage::operator =(
 }
 
 ExampleMessage& ExampleMessage::operator =(
-        ExampleMessage&& x)
+        ExampleMessage&& x) noexcept
 {
 
     m_index = x.m_index;

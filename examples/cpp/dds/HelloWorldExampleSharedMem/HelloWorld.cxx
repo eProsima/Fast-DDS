@@ -61,7 +61,7 @@ HelloWorld::HelloWorld(
 }
 
 HelloWorld::HelloWorld(
-        HelloWorld&& x)
+        HelloWorld&& x) noexcept
 {
     m_index = x.m_index;
     m_message = std::move(x.m_message);
@@ -80,7 +80,7 @@ HelloWorld& HelloWorld::operator =(
 }
 
 HelloWorld& HelloWorld::operator =(
-        HelloWorld&& x)
+        HelloWorld&& x) noexcept
 {
 
     m_index = x.m_index;
@@ -286,5 +286,5 @@ void HelloWorld::serializeKey(
         eprosima::fastcdr::Cdr& scdr) const
 {
     (void) scdr;
-       
+
 }

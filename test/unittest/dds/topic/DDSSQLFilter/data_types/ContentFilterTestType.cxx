@@ -111,7 +111,7 @@ StructType::StructType(
 }
 
 StructType::StructType(
-        StructType&& x)
+        StructType&& x) noexcept
 {
     m_char_field = x.m_char_field;
     m_uint8_field = x.m_uint8_field;
@@ -154,7 +154,7 @@ StructType& StructType::operator =(
 }
 
 StructType& StructType::operator =(
-        StructType&& x)
+        StructType&& x) noexcept
 {
 
     m_char_field = x.m_char_field;
@@ -814,7 +814,7 @@ void StructType::serializeKey(
         eprosima::fastcdr::Cdr& scdr) const
 {
     (void) scdr;
-                   
+
 }
 
 
@@ -1090,7 +1090,7 @@ ContentFilterTestType::ContentFilterTestType(
 }
 
 ContentFilterTestType::ContentFilterTestType(
-        ContentFilterTestType&& x)
+        ContentFilterTestType&& x) noexcept
 {
     m_char_field = x.m_char_field;
     m_uint8_field = x.m_uint8_field;
@@ -1231,7 +1231,7 @@ ContentFilterTestType& ContentFilterTestType::operator =(
 }
 
 ContentFilterTestType& ContentFilterTestType::operator =(
-        ContentFilterTestType&& x)
+        ContentFilterTestType&& x) noexcept
 {
 
     m_char_field = x.m_char_field;
@@ -1669,39 +1669,26 @@ size_t ContentFilterTestType::getCdrSerializedSize(
 
     current_alignment += StructType::getCdrSerializedSize(data.struct_field(), current_alignment);
     current_alignment += ((max_array_size) * 1) + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
-
     current_alignment += ((max_array_size) * 1) + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
-
     current_alignment += ((max_array_size) * 2) + eprosima::fastcdr::Cdr::alignment(current_alignment, 2);
-
     current_alignment += ((max_array_size) * 2) + eprosima::fastcdr::Cdr::alignment(current_alignment, 2);
-
     current_alignment += ((max_array_size) * 4) + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
-
     current_alignment += ((max_array_size) * 4) + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
-
     current_alignment += ((max_array_size) * 8) + eprosima::fastcdr::Cdr::alignment(current_alignment, 8);
-
     current_alignment += ((max_array_size) * 8) + eprosima::fastcdr::Cdr::alignment(current_alignment, 8);
-
     current_alignment += ((max_array_size) * 4) + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
-
     current_alignment += ((max_array_size) * 8) + eprosima::fastcdr::Cdr::alignment(current_alignment, 8);
-
     current_alignment += ((max_array_size) * 16) + eprosima::fastcdr::Cdr::alignment(current_alignment, 16);
-
     current_alignment += ((max_array_size) * 1) + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
-
 
     for(size_t a = 0; a < data.array_string_field().size(); ++a)
     {
             current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4) + data.array_string_field().at(a).size() + 1;
 
     }
-    current_alignment += ((max_array_size) * 4) + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
 
     current_alignment += ((max_array_size) * 4) + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
-
+    current_alignment += ((max_array_size) * 4) + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
 
     for(size_t a = 0; a < data.array_struct_field().size(); ++a)
     {
@@ -4545,5 +4532,5 @@ void ContentFilterTestType::serializeKey(
         eprosima::fastcdr::Cdr& scdr) const
 {
     (void) scdr;
-                                                                    
+
 }
