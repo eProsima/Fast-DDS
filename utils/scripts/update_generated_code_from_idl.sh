@@ -5,6 +5,7 @@ files_to_exclude=(
     )
 
 files_needing_typeobject=(
+    './examples/cpp/dds/ContentFilteredTopicExample/HelloWorld.idl'
     './test/unittest/dynamic_types/idl/Basic.idl'
     './test/unittest/dynamic_types/idl/new_features_4_2.idl'
     './test/unittest/dynamic_types/idl/Test.idl'
