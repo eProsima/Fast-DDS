@@ -68,14 +68,29 @@ const DomainParticipantListener* DomainParticipant::get_listener() const
 ReturnCode_t DomainParticipant::set_listener(
         DomainParticipantListener* listener)
 {
-    return set_listener(listener, StatusMask::all());
+    return set_listener(listener, std::chrono::seconds::max());
+}
+
+ReturnCode_t DomainParticipant::set_listener(
+        DomainParticipantListener* listener,
+        const std::chrono::seconds timeout)
+{
+    return set_listener(listener, StatusMask::all(), timeout);
 }
 
 ReturnCode_t DomainParticipant::set_listener(
         DomainParticipantListener* listener,
         const StatusMask& mask)
 {
-    ReturnCode_t ret_val = impl_->set_listener(listener);
+    return set_listener(listener, mask, std::chrono::seconds::max());
+}
+
+ReturnCode_t DomainParticipant::set_listener(
+        DomainParticipantListener* listener,
+        const StatusMask& mask,
+        const std::chrono::seconds timeout)
+{
+    ReturnCode_t ret_val = impl_->set_listener(listener, timeout);
     if (ret_val == ReturnCode_t::RETCODE_OK)
     {
         status_mask_ = mask;

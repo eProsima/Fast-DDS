@@ -159,7 +159,6 @@ void DomainParticipantImpl::disable()
     {
         participant->set_listener(nullptr);
     }
-    rtps_listener_.participant_ = nullptr;
 
     // The function to disable the DomainParticipantImpl is called from
     // DomainParticipantFactory::delete_participant() and DomainParticipantFactory destructor.
@@ -234,6 +233,10 @@ DomainParticipantImpl::~DomainParticipantImpl()
     }
 
     std::lock_guard<std::mutex> _(mtx_gs_);
+
+    // Assert no callbacks are being executed.
+    // Note that this should never occur since reception and events threads joined when removing rtps_participant.
+    assert(!(rtps_listener_.callback_counter_ > 0));
 
     if (participant_)
     {
@@ -1532,10 +1535,10 @@ void DomainParticipantImpl::MyRTPSParticipantListener::onParticipantDiscovery(
         RTPSParticipant*,
         ParticipantDiscoveryInfo&& info)
 {
-    DomainParticipantListener* listener = nullptr;
-    if (participant_ != nullptr && (listener = participant_->get_listener()) != nullptr)
+    Sentry sentinel(this);
+    if (sentinel)
     {
-        listener->on_participant_discovery(participant_->participant_, std::move(info));
+        participant_->listener_->on_participant_discovery(participant_->participant_, std::move(info));
     }
 }
 
@@ -1544,10 +1547,10 @@ void DomainParticipantImpl::MyRTPSParticipantListener::onParticipantAuthenticati
         RTPSParticipant*,
         ParticipantAuthenticationInfo&& info)
 {
-    DomainParticipantListener* listener = nullptr;
-    if (participant_ != nullptr && (listener = participant_->get_listener()) != nullptr)
+    Sentry sentinel(this);
+    if (sentinel)
     {
-        listener->onParticipantAuthentication(participant_->participant_, std::move(info));
+        participant_->listener_->onParticipantAuthentication(participant_->participant_, std::move(info));
     }
 }
 
@@ -1557,10 +1560,10 @@ void DomainParticipantImpl::MyRTPSParticipantListener::onReaderDiscovery(
         RTPSParticipant*,
         ReaderDiscoveryInfo&& info)
 {
-    DomainParticipantListener* listener = nullptr;
-    if (participant_ != nullptr && (listener = participant_->get_listener()) != nullptr)
+    Sentry sentinel(this);
+    if (sentinel)
     {
-        listener->on_subscriber_discovery(participant_->participant_, std::move(info));
+        participant_->listener_->on_subscriber_discovery(participant_->participant_, std::move(info));
     }
 }
 
@@ -1568,10 +1571,10 @@ void DomainParticipantImpl::MyRTPSParticipantListener::onWriterDiscovery(
         RTPSParticipant*,
         WriterDiscoveryInfo&& info)
 {
-    DomainParticipantListener* listener = nullptr;
-    if (participant_ != nullptr && (listener = participant_->get_listener()) != nullptr)
+    Sentry sentinel(this);
+    if (sentinel)
     {
-        listener->on_publisher_discovery(participant_->participant_, std::move(info));
+        participant_->listener_->on_publisher_discovery(participant_->participant_, std::move(info));
     }
 }
 
@@ -1583,19 +1586,19 @@ void DomainParticipantImpl::MyRTPSParticipantListener::on_type_discovery(
         const fastrtps::types::TypeObject* object,
         fastrtps::types::DynamicType_ptr dyn_type)
 {
-    DomainParticipantListener* listener = nullptr;
-    if (participant_ != nullptr && (listener = participant_->get_listener()) != nullptr)
+    Sentry sentinel(this);
+    if (sentinel)
     {
-        listener->on_type_discovery(
+        participant_->listener_->on_type_discovery(
             participant_->participant_,
             request_sample_id,
             topic,
             identifier,
             object,
             dyn_type);
-    }
 
-    participant_->check_get_type_request(request_sample_id, identifier, object, dyn_type);
+        participant_->check_get_type_request(request_sample_id, identifier, object, dyn_type);
+    }
 }
 
 void DomainParticipantImpl::MyRTPSParticipantListener::on_type_dependencies_reply(
@@ -1603,14 +1606,14 @@ void DomainParticipantImpl::MyRTPSParticipantListener::on_type_dependencies_repl
         const fastrtps::rtps::SampleIdentity& request_sample_id,
         const fastrtps::types::TypeIdentifierWithSizeSeq& dependencies)
 {
-    DomainParticipantListener* listener = nullptr;
-    if (participant_ != nullptr && (listener = participant_->get_listener()) != nullptr)
+    Sentry sentinel(this);
+    if (sentinel)
     {
-        listener->on_type_dependencies_reply(
+        participant_->listener_->on_type_dependencies_reply(
             participant_->participant_, request_sample_id, dependencies);
-    }
 
-    participant_->check_get_dependencies_request(request_sample_id, dependencies);
+        participant_->check_get_dependencies_request(request_sample_id, dependencies);
+    }
 }
 
 void DomainParticipantImpl::MyRTPSParticipantListener::on_type_information_received(
@@ -1619,17 +1622,14 @@ void DomainParticipantImpl::MyRTPSParticipantListener::on_type_information_recei
         const fastrtps::string_255& type_name,
         const fastrtps::types::TypeInformation& type_information)
 {
-    DomainParticipantListener* listener = nullptr;
-    DomainParticipant* participant = nullptr;
-    if (participant_ != nullptr
-            && (participant = participant_->get_participant()) != nullptr
-            && (listener = participant_->get_listener()) != nullptr)
+    Sentry sentinel(this);
+    if (sentinel)
     {
         if (type_information.complete().typeid_with_size().type_id()._d() > 0
                 || type_information.minimal().typeid_with_size().type_id()._d() > 0)
         {
-            listener->on_type_information_received(
-                participant, topic_name, type_name, type_information);
+            participant_->listener_->on_type_information_received(
+                participant_->participant_, topic_name, type_name, type_information);
         }
     }
 }

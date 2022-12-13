@@ -14,6 +14,7 @@
 
 #include <chrono>
 #include <fstream>
+#include <future>
 #include <memory>
 #include <sstream>
 #include <string>
@@ -2229,6 +2230,63 @@ TEST(ParticipantTests, SetListener)
     }
 
     ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), ReturnCode_t::RETCODE_OK);
+}
+
+class CustomListener2 : public DomainParticipantListener
+{
+public:
+
+    CustomListener2()
+        : future_(promise_.get_future())
+    {
+    }
+
+    std::future<void>& get_future()
+    {
+        return future_;
+    }
+
+    void on_participant_discovery(
+            eprosima::fastdds::dds::DomainParticipant*,
+            eprosima::fastrtps::rtps::ParticipantDiscoveryInfo&&) override
+    {
+        try
+        {
+            promise_.set_value();
+            std::this_thread::sleep_for(std::chrono::seconds(2));
+        }
+        catch (std::future_error&)
+        {
+            // do nothing
+        }
+    }
+
+private:
+
+    std::promise<void> promise_;
+    std::future<void> future_;
+};
+
+TEST(ParticipantTests, FailingSetListener)
+{
+    CustomListener2 listener;
+
+    DomainParticipant* participant =
+            DomainParticipantFactory::get_instance()->create_participant(0, PARTICIPANT_QOS_DEFAULT, &listener);
+    ASSERT_NE(participant, nullptr);
+    ASSERT_EQ(participant->get_status_mask(), StatusMask::all());
+
+    DomainParticipant* participant_to_discover =
+            DomainParticipantFactory::get_instance()->create_participant(0, PARTICIPANT_QOS_DEFAULT);
+    ASSERT_NE(participant_to_discover, nullptr);
+
+    // Wait for callback trigger
+    listener.get_future().wait();
+
+    ASSERT_EQ(participant->set_listener(nullptr, std::chrono::seconds(1)), ReturnCode_t::RETCODE_ERROR);
+    ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), ReturnCode_t::RETCODE_OK);
+    ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(
+                participant_to_discover), ReturnCode_t::RETCODE_OK);
 }
 
 /*
