@@ -90,9 +90,10 @@ WriterProxy::WriterProxy(
     , locators_entry_(loc_alloc.max_unicast_locators, loc_alloc.max_multicast_locators)
     , is_datasharing_writer_(false)
     , received_at_least_one_heartbeat_(false)
+    , state_(StateCode::STOPPED)
 {
     //Create Events
-    ResourceEvent& event_manager = reader_->getRTPSParticipant()->getEventResource();
+    ResourceEvent& event_manager = reader_->getEventResource();
     auto heartbeat_lambda = [this]() -> bool
             {
                 perform_heartbeat_response();
@@ -144,6 +145,7 @@ void WriterProxy::start(
     filter_remote_locators(locators_entry_,
             reader_->getAttributes().external_unicast_locators, reader_->getAttributes().ignore_non_matching_locators);
     is_datasharing_writer_ = is_datasharing;
+    state_.store(StateCode::IDLE);
     initial_acknack_->restart_timer();
     loaded_from_storage(initial_sequence);
     received_at_least_one_heartbeat_ = false;
@@ -168,7 +170,18 @@ void WriterProxy::update(
 
 void WriterProxy::stop()
 {
-    initial_acknack_->cancel_timer();
+    StateCode prev_code;
+    if ((prev_code = state_.exchange(StateCode::STOPPED)) == StateCode::BUSY)
+    {
+        // TimedEvent being performed, wait for it to finish.
+        // It does not matter which of the two events is the one on execution, but we must wait on initial_acknack_ as
+        // it could be restarted if only cancelled while its callback is being triggered.
+        initial_acknack_->recreate_timer();
+    }
+    else
+    {
+        initial_acknack_->cancel_timer();
+    }
     heartbeat_response_->cancel_timer();
 
     clear();
@@ -477,6 +490,13 @@ bool WriterProxy::perform_initial_ack_nack()
 {
     bool ret_value = false;
 
+    StateCode expected = StateCode::IDLE;
+    if (!state_.compare_exchange_strong(expected, StateCode::BUSY))
+    {
+        // Stopped from another thread -> abort
+        return ret_value;
+    }
+
     if (!is_datasharing_writer_)
     {
         // Send initial NACK.
@@ -500,12 +520,25 @@ bool WriterProxy::perform_initial_ack_nack()
         }
     }
 
+    expected = StateCode::BUSY;
+    state_.compare_exchange_strong(expected, StateCode::IDLE);
+
     return ret_value;
 }
 
 void WriterProxy::perform_heartbeat_response()
 {
+    StateCode expected = StateCode::IDLE;
+    if (!state_.compare_exchange_strong(expected, StateCode::BUSY))
+    {
+        // Stopped from another thread -> abort
+        return;
+    }
+
     reader_->send_acknack(this, this, heartbeat_final_flag_.load());
+
+    expected = StateCode::BUSY;
+    state_.compare_exchange_strong(expected, StateCode::IDLE);
 }
 
 bool WriterProxy::process_heartbeat(
@@ -523,7 +556,7 @@ bool WriterProxy::process_heartbeat(
 #endif // SHOULD_DEBUG_LINUX
 
     assert_liveliness = false;
-    if (last_heartbeat_count_ < count)
+    if (state_ != StateCode::STOPPED && last_heartbeat_count_ < count)
     {
         // If it is the first heartbeat message, we can try to cancel initial ack.
         // TODO: This timer cancelling should be checked if needed with the liveliness implementation.

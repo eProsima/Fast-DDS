@@ -281,7 +281,13 @@ bool StatefulReader::matched_writer_add(
                 EPROSIMA_LOG_ERROR(RTPS_READER, "Failed to add Writer Proxy " << wdata.guid()
                                                                               << " to " << this->m_guid.entityId
                                                                               << " with data sharing.");
-                wp->stop();
+                {
+                    // Release reader's lock to avoid deadlock when waiting for event (requiring mutex) to finish
+                    guard.unlock();
+                    assert(!guard.owns_lock());
+                    wp->stop();
+                    guard.lock();
+                }
                 matched_writers_pool_.push_back(wp);
                 return false;
             }
@@ -389,7 +395,13 @@ bool StatefulReader::matched_writer_remove(
                 (void)removed_from_listener;
                 remove_changes_from(writer_guid, true);
             }
-            wproxy->stop();
+            {
+                // Release reader's lock to avoid deadlock when waiting for event (requiring mutex) to finish
+                lock.unlock();
+                assert(!lock.owns_lock());
+                wproxy->stop();
+                lock.lock();
+            }
             matched_writers_pool_.push_back(wproxy);
             if (nullptr != mp_listener)
             {
@@ -1219,6 +1231,11 @@ void StatefulReader::remove_changes_from(
         }
         mp_history->remove_change(*it);
     }
+}
+
+ResourceEvent& StatefulReader::getEventResource() const
+{
+    return mp_RTPSParticipant->getEventResource();
 }
 
 bool StatefulReader::nextUntakenCache(

@@ -186,6 +186,12 @@ public:
     }
 
     /**
+     * Get reference to associated RTPS partiicipant's \c ResourceEvent
+     * @return Reference to associated RTPS partiicipant's \c ResourceEvent
+     */
+    ResourceEvent& getEventResource() const;
+
+    /**
      * Read the next unread CacheChange_t from the history
      * @param change Pointer to pointer of CacheChange_t
      * @param wpout Pointer to pointer the matched writer proxy
