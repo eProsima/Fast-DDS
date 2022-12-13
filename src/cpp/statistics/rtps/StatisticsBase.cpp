@@ -138,7 +138,8 @@ bool StatisticsListenersImpl::are_statistics_writers_enabled(
     std::unique_lock<fastrtps::RecursiveTimedMutex> lock(get_statistics_mutex());
     if (members_)
     {
-        return (members_->enabled_writers_mask & checked_enabled_writers);
+        // Casting a number other than 1 to bool is not guaranteed to yield true
+        return (0 != (members_->enabled_writers_mask & checked_enabled_writers));
     }
     return false;
 }
@@ -354,6 +355,11 @@ void StatisticsParticipantImpl::set_enabled_statistics_writers_mask(
         uint32_t enabled_writers)
 {
     enabled_writers_mask_.store(enabled_writers);
+}
+
+uint32_t StatisticsParticipantImpl::get_enabled_statistics_writers_mask()
+{
+    return enabled_writers_mask_.load();
 }
 
 void StatisticsParticipantImpl::on_network_statistics(

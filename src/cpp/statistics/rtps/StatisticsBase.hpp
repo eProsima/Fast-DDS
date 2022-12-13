@@ -450,6 +450,13 @@ public:
      */
     virtual void set_enabled_statistics_writers_mask(
             uint32_t enabled_writers);
+
+    /**
+     * @brief Get the enabled statistics writers mask
+     *
+     * @return The mask of enabled writers
+     */
+    virtual uint32_t get_enabled_statistics_writers_mask();
 };
 
 // auxiliary conversion functions
