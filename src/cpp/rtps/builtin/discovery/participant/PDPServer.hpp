@@ -306,6 +306,23 @@ protected:
 
 private:
 
+#if HAVE_SECURITY
+    /**
+     * Returns whether discovery should be secured
+     */
+    bool should_protect_discovery();
+
+    /**
+     * Performs creation of secured DS PDP endpoints
+     */
+    bool create_secure_ds_pdp_endpoints();
+#endif  // HAVE_SECURITY
+
+    /**
+     * Performs creation of standard DS PDP endpoints
+     */
+    bool create_ds_pdp_endpoints();
+
     //! Server thread
     eprosima::fastrtps::rtps::ResourceEvent resource_event_thread_;
 

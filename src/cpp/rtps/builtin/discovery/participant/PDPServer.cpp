@@ -237,6 +237,30 @@ bool PDPServer::createPDPEndpoints()
 {
     EPROSIMA_LOG_INFO(RTPS_PDP_SERVER, "Beginning PDPServer Endpoints creation");
 
+#if HAVE_SECURITY
+    if (should_protect_discovery())
+    {
+        return create_secure_ds_pdp_endpoints();
+    }
+#endif  // HAVE_SECURITY
+
+    return create_ds_pdp_endpoints();
+}
+
+#if HAVE_SECURITY
+bool PDPServer::should_protect_discovery()
+{
+    return false;
+}
+
+bool PDPServer::create_secure_ds_pdp_endpoints()
+{
+    return false;
+}
+#endif  // HAVE_SECURITY
+
+bool PDPServer::create_ds_pdp_endpoints()
+{
     const RTPSParticipantAttributes& pattr = mp_RTPSParticipant->getRTPSParticipantAttributes();
 
     auto endpoints = new fastdds::rtps::DiscoveryServerPDPEndpoints();
