@@ -250,7 +250,7 @@ bool PDPServer::createPDPEndpoints()
 #if HAVE_SECURITY
 bool PDPServer::should_protect_discovery()
 {
-    return false;
+    return mp_RTPSParticipant->is_secure() && mp_RTPSParticipant->security_attributes().is_discovery_protected;
 }
 
 bool PDPServer::create_secure_ds_pdp_endpoints()
