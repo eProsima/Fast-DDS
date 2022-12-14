@@ -22,8 +22,9 @@
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 
 #include <atomic>
-#include <mutex>
 #include <functional>
+#include <memory>
+#include <mutex>
 
 #include <fastdds/rtps/attributes/RTPSParticipantAttributes.h>
 #include <fastdds/rtps/builtin/data/ReaderProxyData.h>
@@ -40,6 +41,7 @@ namespace fastdds {
 namespace rtps {
 
 class PDPServerListener;
+class PDPEndpoints;
 
 } // namespace rtps
 } // namespace fastdds
@@ -384,6 +386,8 @@ protected:
     RTPSParticipantImpl* mp_RTPSParticipant;
     //!Discovery attributes.
     BuiltinAttributes m_discovery;
+    //!Builtin PDP endpoints
+    std::unique_ptr<fastdds::rtps::PDPEndpoints> builtin_endpoints_;
     //!Pointer to the PDPWriter.
     RTPSWriter* mp_PDPWriter;
     //!Pointer to the PDPReader.
