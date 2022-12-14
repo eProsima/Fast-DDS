@@ -213,6 +213,7 @@ RTPSParticipant* RTPSDomain::createParticipant(
         return nullptr;
     }
 
+/*
     // Check there is at least one transport registered.
     if (!pimpl->networkFactoryHasRegisteredTransports())
     {
@@ -220,6 +221,7 @@ RTPSParticipant* RTPSDomain::createParticipant(
         delete pimpl;
         return nullptr;
     }
+*/
 
     {
         std::lock_guard<std::mutex> guard(m_mutex);

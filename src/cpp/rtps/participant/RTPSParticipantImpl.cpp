@@ -238,10 +238,12 @@ RTPSParticipantImpl::RTPSParticipantImpl(
     mp_userParticipant->mp_impl = this;
     mp_event_thr.init_thread();
 
+/*
     if (!networkFactoryHasRegisteredTransports())
     {
         return;
     }
+*/
 
     /* If metatrafficMulticastLocatorList is empty, add mandatory default Locators
        Else -> Take them */
