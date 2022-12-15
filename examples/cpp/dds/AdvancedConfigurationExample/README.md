@@ -47,6 +47,10 @@ Publisher options:
                   --strength=<num>
                     Set this Publisher strength. Set Topic with
                     EXCLUSIVE_OWNERSHIP. Default: 0
+  -k              --keys=<num>
+                    Enable Topic instances and the number of instaces to be used.
+                  --message-size=<num>
+                    Number of bytes of the HelloWorld string message.
 
 Subscriber options:
   -t <topic_name> --topic=<topic_name>
