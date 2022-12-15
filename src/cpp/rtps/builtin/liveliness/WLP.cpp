@@ -866,12 +866,13 @@ bool WLP::automatic_liveliness_assertion()
 
 bool WLP::participant_liveliness_assertion()
 {
-    std::lock_guard<std::recursive_mutex> guard(*mp_builtinProtocols->mp_PDP->getMutex());
+    std::unique_lock<std::recursive_mutex> lock(*mp_builtinProtocols->mp_PDP->getMutex());
 
     if (0 < manual_by_participant_writers_.size())
     {
         if (pub_liveliness_manager_->is_any_alive(MANUAL_BY_PARTICIPANT_LIVELINESS_QOS))
         {
+            lock.unlock();
             return send_liveliness_message(manual_by_participant_instance_handle_);
         }
     }
