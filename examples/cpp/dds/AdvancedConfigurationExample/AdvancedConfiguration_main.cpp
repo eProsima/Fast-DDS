@@ -66,7 +66,10 @@ int main(
     std::string partitions = "";
     bool use_ownership = false;
     unsigned int ownership_strength = 0;
-    //
+    bool keyed = false; // Use topic instances
+    long instance_number = 0;
+    long message_size = 0;
+
     argc -= (argc > 0);
     argv += (argc > 0); // skip program name argv[0] if present
     option::Stats stats(true, usage, argc, argv);
@@ -216,6 +219,27 @@ int main(
                 {
                     use_ownership = true;
                     ownership_strength = strtol(opt.arg, nullptr, 10);
+                }
+                else
+                {
+                    print_warning("publisher", opt.name);
+                }
+                break;
+            case optionIndex::INSTANCES:
+                if (type == PUBLISHER)
+                {
+                    keyed = true;
+                    instance_number = strtol(opt.arg, nullptr, 10);
+                }
+                else
+                {
+                    print_warning("publisher", opt.name);
+                }
+                break;
+            case optionIndex::MESSAGE_SIZE:
+                if (type == PUBLISHER)
+                {
+                    message_size = strtol(opt.arg, nullptr, 10);
                 }
                 else
                 {
