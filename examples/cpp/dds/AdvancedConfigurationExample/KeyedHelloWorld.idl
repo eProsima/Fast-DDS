@@ -1,0 +1,6 @@
+struct KeyedHelloWorld
+{
+    @key unsigned long instance;
+    unsigned long index;
+    string message;
+};
