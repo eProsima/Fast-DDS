@@ -175,7 +175,9 @@ enum optionIndex
     TTL,
     PARTITIONS,
     OWNERSHIP_STRENGTH,
-    OWNERSHIP
+    OWNERSHIP,
+    INSTANCES,
+    MESSAGE_SIZE
 };
 
 const option::Descriptor usage[] = {
@@ -205,6 +207,10 @@ const option::Descriptor usage[] = {
       "  -o \t--ownership \tUse Topic with EXCLUSIVE_OWNERSHIP (SHARED_OWNERSHIP by default)."},
     { OWNERSHIP_STRENGTH, 0, "", "strength",        Arg::NumericRange<>,
       "  \t--strength=<num> \tSet this Publisher strength. Set Topic with EXCLUSIVE_OWNERSHIP. Default: 0"},
+    { INSTANCES, 0, "k", "keys",        Arg::NumericRange<1>,
+      "  -k \t--keys=<num> \tNumber of topic instances. Default: 1"},
+    { MESSAGE_SIZE, 0, "", "message-size",        Arg::NumericRange<1>,
+      "  \t--message-size=<num> \tNumber of bytes to be sent."},
 
     { UNKNOWN_OPT, 0, "", "",                Arg::None,      "\nSubscriber options:"},
     { TOPIC, 0, "t", "topic",                  Arg::String,
