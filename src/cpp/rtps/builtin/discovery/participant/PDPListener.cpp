@@ -32,6 +32,7 @@
 #include <fastrtps/utils/TimeConversion.h>
 
 #include <fastdds/core/policy/ParameterList.hpp>
+#include <rtps/builtin/discovery/participant/PDPEndpoints.hpp>
 #include <rtps/network/ExternalLocatorsProcessor.hpp>
 #include <rtps/participant/RTPSParticipantImpl.h>
 
@@ -64,7 +65,7 @@ void PDPListener::onNewCacheChangeAdded(
         if (!this->get_key(change))
         {
             EPROSIMA_LOG_WARNING(RTPS_PDP, "Problem getting the key of the change, removing");
-            parent_pdp_->mp_PDPReaderHistory->remove_change(change);
+            parent_pdp_->builtin_endpoints_->remove_from_pdp_reader_history(change);
             return;
         }
     }
@@ -79,7 +80,7 @@ void PDPListener::onNewCacheChangeAdded(
         if (guid == parent_pdp_->getRTPSParticipant()->getGuid())
         {
             EPROSIMA_LOG_INFO(RTPS_PDP, "Message from own RTPSParticipant, removing");
-            parent_pdp_->mp_PDPReaderHistory->remove_change(change);
+            parent_pdp_->builtin_endpoints_->remove_from_pdp_reader_history(change);
             return;
         }
 
@@ -216,7 +217,7 @@ void PDPListener::onNewCacheChangeAdded(
     }
 
     //Remove change form history.
-    parent_pdp_->mp_PDPReaderHistory->remove_change(change);
+    parent_pdp_->builtin_endpoints_->remove_from_pdp_reader_history(change);
 }
 
 bool PDPListener::get_key(

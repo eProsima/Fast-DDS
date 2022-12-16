@@ -1436,6 +1436,7 @@ eprosima::fastrtps::rtps::ResourceEvent& PDPServer::get_resource_event_thread()
 bool PDPServer::all_servers_acknowledge_pdp()
 {
     // check if already initialized
+    auto endpoints = static_cast<fastdds::rtps::DiscoveryServerPDPEndpoints*>(builtin_endpoints_.get());
     assert(endpoints->writer.history_ && endpoints->writer.writer_);
 
     return discovery_db_.server_acked_by_my_servers();

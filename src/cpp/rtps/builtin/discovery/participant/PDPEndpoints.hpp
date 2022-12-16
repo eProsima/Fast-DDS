@@ -53,6 +53,8 @@ public:
             fastrtps::rtps::RTPSParticipantImpl* participant) = 0;
     virtual void remove_from_pdp_reader_history(
             const fastrtps::rtps::InstanceHandle_t& remote_participant) = 0;
+    virtual void remove_from_pdp_reader_history(
+            fastrtps::rtps::CacheChange_t* change) = 0;
 
 protected:
 

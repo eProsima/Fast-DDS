@@ -71,6 +71,12 @@ struct DiscoveryServerPDPEndpoints : public PDPEndpoints
         reader.remove_from_history(remote_participant);
     }
 
+    void remove_from_pdp_reader_history(
+            fastrtps::rtps::CacheChange_t* change) override
+    {
+        reader.history_->remove_change(change);
+    }
+
     //! Builtin Simple PDP reader
     BuiltinReader<fastrtps::rtps::StatefulReader> reader;
 
