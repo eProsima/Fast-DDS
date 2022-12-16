@@ -187,6 +187,8 @@ public:
 
 protected:
 
+    void update_builtin_locators() override;
+
     /*
      * Get Pointer to the server resource event thread.
      */
