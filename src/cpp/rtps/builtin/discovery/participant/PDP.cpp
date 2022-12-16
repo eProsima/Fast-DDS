@@ -229,13 +229,9 @@ void PDP::initializeParticipantProxyData(
     //set_VendorId_eProsima(participant_data->m_VendorId);
     participant_data->m_VendorId = c_VendorId_eProsima;
 
-    participant_data->m_availableBuiltinEndpoints |= DISC_BUILTIN_ENDPOINT_PARTICIPANT_ANNOUNCER;
-    participant_data->m_availableBuiltinEndpoints |= DISC_BUILTIN_ENDPOINT_PARTICIPANT_DETECTOR;
+    // TODO: participant_data->m_availableBuiltinEndpoints |= mp_builtin->available_builtin_endpoints();
 
-#if HAVE_SECURITY
-    participant_data->m_availableBuiltinEndpoints |= DISC_BUILTIN_ENDPOINT_PARTICIPANT_SECURE_ANNOUNCER;
-    participant_data->m_availableBuiltinEndpoints |= DISC_BUILTIN_ENDPOINT_PARTICIPANT_SECURE_DETECTOR;
-#endif // if HAVE_SECURITY
+    participant_data->m_availableBuiltinEndpoints |= builtin_endpoints_->builtin_endpoints();
 
     if (attributes.builtin.use_WriterLivelinessProtocol)
     {
@@ -243,8 +239,11 @@ void PDP::initializeParticipantProxyData(
         participant_data->m_availableBuiltinEndpoints |= BUILTIN_ENDPOINT_PARTICIPANT_MESSAGE_DATA_READER;
 
 #if HAVE_SECURITY
-        participant_data->m_availableBuiltinEndpoints |= BUILTIN_ENDPOINT_PARTICIPANT_MESSAGE_SECURE_DATA_WRITER;
-        participant_data->m_availableBuiltinEndpoints |= BUILTIN_ENDPOINT_PARTICIPANT_MESSAGE_SECURE_DATA_READER;
+        if (mp_RTPSParticipant->is_secure())
+        {
+            participant_data->m_availableBuiltinEndpoints |= BUILTIN_ENDPOINT_PARTICIPANT_MESSAGE_SECURE_DATA_WRITER;
+            participant_data->m_availableBuiltinEndpoints |= BUILTIN_ENDPOINT_PARTICIPANT_MESSAGE_SECURE_DATA_READER;
+        }
 #endif // if HAVE_SECURITY
     }
 
@@ -261,7 +260,10 @@ void PDP::initializeParticipantProxyData(
     }
 
 #if HAVE_SECURITY
-    participant_data->m_availableBuiltinEndpoints |= mp_RTPSParticipant->security_manager().builtin_endpoints();
+    if (mp_RTPSParticipant->is_secure())
+    {
+        participant_data->m_availableBuiltinEndpoints |= mp_RTPSParticipant->security_manager().builtin_endpoints();
+    }
 #endif // if HAVE_SECURITY
 
     if (announce_locators)
@@ -331,23 +333,23 @@ void PDP::initializeParticipantProxyData(
     participant_data->m_userData = attributes.userData;
 
 #if HAVE_SECURITY
-    IdentityToken* identity_token = nullptr;
-    if (mp_RTPSParticipant->security_manager().get_identity_token(&identity_token) && identity_token != nullptr)
-    {
-        participant_data->identity_token_ = std::move(*identity_token);
-        mp_RTPSParticipant->security_manager().return_identity_token(identity_token);
-    }
-
-    PermissionsToken* permissions_token = nullptr;
-    if (mp_RTPSParticipant->security_manager().get_permissions_token(&permissions_token)
-            && permissions_token != nullptr)
-    {
-        participant_data->permissions_token_ = std::move(*permissions_token);
-        mp_RTPSParticipant->security_manager().return_permissions_token(permissions_token);
-    }
-
     if (mp_RTPSParticipant->is_secure())
     {
+        IdentityToken* identity_token = nullptr;
+        if (mp_RTPSParticipant->security_manager().get_identity_token(&identity_token) && identity_token != nullptr)
+        {
+            participant_data->identity_token_ = std::move(*identity_token);
+            mp_RTPSParticipant->security_manager().return_identity_token(identity_token);
+        }
+
+        PermissionsToken* permissions_token = nullptr;
+        if (mp_RTPSParticipant->security_manager().get_permissions_token(&permissions_token)
+                && permissions_token != nullptr)
+        {
+            participant_data->permissions_token_ = std::move(*permissions_token);
+            mp_RTPSParticipant->security_manager().return_permissions_token(permissions_token);
+        }
+
         const security::ParticipantSecurityAttributes& sec_attrs = mp_RTPSParticipant->security_attributes();
         participant_data->security_attributes_ = sec_attrs.mask();
         participant_data->plugin_security_attributes_ = sec_attrs.plugin_participant_attributes;
