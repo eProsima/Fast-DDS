@@ -21,6 +21,8 @@
 
 #include <fastdds/rtps/common/Types.h>
 
+#include <rtps/participant/RTPSParticipantImpl.h>
+
 namespace eprosima {
 namespace fastdds {
 namespace rtps {
@@ -42,6 +44,15 @@ public:
      * @return The list of builtin endpoints to announce.
      */
     virtual fastrtps::rtps::BuiltinEndpointSet_t builtin_endpoints() const = 0;
+
+    virtual bool enable_pdp_readers(
+            fastrtps::rtps::RTPSParticipantImpl* participant) = 0;
+    virtual void disable_pdp_readers(
+            fastrtps::rtps::RTPSParticipantImpl* participant) = 0;
+    virtual void delete_pdp_endpoints(
+            fastrtps::rtps::RTPSParticipantImpl* participant) = 0;
+    virtual void remove_from_pdp_reader_history(
+            const fastrtps::rtps::InstanceHandle_t& remote_participant) = 0;
 
 protected:
 

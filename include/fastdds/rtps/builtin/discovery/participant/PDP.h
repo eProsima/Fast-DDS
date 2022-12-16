@@ -130,7 +130,7 @@ public:
     virtual void announceParticipantState(
             bool new_change,
             bool dispose = false,
-            WriteParams& wparams = WriteParams::WRITE_PARAM_DEFAULT);
+            WriteParams& wparams = WriteParams::WRITE_PARAM_DEFAULT) = 0;
 
     //!Stop the RTPSParticipantAnnouncement (only used in tests).
     virtual void stopParticipantAnnouncement();
@@ -388,10 +388,6 @@ protected:
     BuiltinAttributes m_discovery;
     //!Builtin PDP endpoints
     std::unique_ptr<fastdds::rtps::PDPEndpoints> builtin_endpoints_;
-    //!Pointer to the PDPWriter.
-    RTPSWriter* mp_PDPWriter;
-    //!Pointer to the PDPReader.
-    RTPSReader* mp_PDPReader;
     //!Pointer to the EDP object.
     EDP* mp_EDP;
     //!Number of participant proxy data objects created
@@ -412,14 +408,6 @@ protected:
     std::atomic_bool m_hasChangedLocalPDP;
     //!Listener for the SPDP messages.
     ReaderListener* mp_listener;
-    //!WriterHistory
-    WriterHistory* mp_PDPWriterHistory;
-    //!Writer payload pool
-    std::shared_ptr<ITopicPayloadPool> writer_payload_pool_;
-    //!Reader History
-    ReaderHistory* mp_PDPReaderHistory;
-    //!Reader payload pool
-    std::shared_ptr<ITopicPayloadPool> reader_payload_pool_;
     //! ProxyPool for temporary reader proxies
     ProxyPool<ReaderProxyData> temp_reader_proxies_;
     //! ProxyPool for temporary writer proxies
@@ -457,6 +445,26 @@ protected:
     bool lookup_participant_key(
             const GUID_t& participant_guid,
             InstanceHandle_t& key);
+
+    /**
+     * Force the sending of our local DPD to all remote RTPSParticipants and multicast Locators.
+     * @param writer RTPSWriter to use for sending the announcement
+     * @param history history where the change should be added
+     * @param new_change If true a new change (with new seqNum) is created and sent;If false the last change is re-sent
+     * @param dispose sets change kind to NOT_ALIVE_DISPOSED_UNREGISTERED
+     * @param wparams allows to identify the change
+     */
+    void announceParticipantState(
+            RTPSWriter& writer,
+            WriterHistory& history,
+            bool new_change,
+            bool dispose = false,
+            WriteParams& wparams = WriteParams::WRITE_PARAM_DEFAULT);
+
+    /**
+     * Called after creating the builtin endpoints to update the metatraffic unicast locators of BuiltinProtocols
+     */
+    virtual void update_builtin_locators() = 0;
 
 private:
 
