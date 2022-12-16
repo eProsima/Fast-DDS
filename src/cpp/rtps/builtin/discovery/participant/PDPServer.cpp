@@ -1870,6 +1870,13 @@ void PDPServer::match_pdp_reader_nts_(
     endpoints->writer.writer_->matched_reader_add(*temp_reader_data);
 }
 
+void PDPServer::release_change_from_writer(
+        eprosima::fastrtps::rtps::CacheChange_t* change)
+{
+    auto endpoints = static_cast<fastdds::rtps::DiscoveryServerPDPEndpoints*>(builtin_endpoints_.get());
+    endpoints->writer.writer_->release_change(change);
+}
+
 } // namespace rtps
 } // namespace fastdds
 } // namespace eprosima

@@ -296,6 +296,14 @@ protected:
     void match_pdp_reader_nts_(
             const eprosima::fastdds::rtps::RemoteServerAttributes& server_att);
 
+    /**
+     * Release a change from the history of the PDP writer.
+     *
+     * @param change The CacheChange_t to be released.
+     */
+    void release_change_from_writer(
+            eprosima::fastrtps::rtps::CacheChange_t* change);
+
 private:
 
     //! Server thread
