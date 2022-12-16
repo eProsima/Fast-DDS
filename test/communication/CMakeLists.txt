@@ -120,6 +120,15 @@ configure_file(${CMAKE_CURRENT_SOURCE_DIR}/secure_submsg_crypto_besteffort_sub.x
     ${CMAKE_CURRENT_BINARY_DIR}/secure_submsg_crypto_besteffort_sub.xml COPYONLY)
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/shm_communication_subscriber_dies_while_processing_message.xml
     ${CMAKE_CURRENT_BINARY_DIR}/shm_communication_subscriber_dies_while_processing_message.xml COPYONLY)
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/secure_ds_pubsub_secure_crypto_communication.py
+    ${CMAKE_CURRENT_BINARY_DIR}/secure_ds_pubsub_secure_crypto_communication.py COPYONLY)
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/secure_ds_simple_secure_msg_crypto_pub.xml
+    ${CMAKE_CURRENT_BINARY_DIR}/secure_ds_simple_secure_msg_crypto_pub.xml COPYONLY)
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/secure_ds_simple_secure_msg_crypto_sub.xml
+    ${CMAKE_CURRENT_BINARY_DIR}/secure_ds_simple_secure_msg_crypto_sub.xml COPYONLY)
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/secure_simple_ds_server.xml
+    ${CMAKE_CURRENT_BINARY_DIR}/secure_simple_ds_server.xml COPYONLY)
+
 if(SECURITY)
     configure_file(${PROJECT_SOURCE_DIR}/test/certs/maincacert.pem
         ${CMAKE_CURRENT_BINARY_DIR}/maincacert.pem COPYONLY)
@@ -301,6 +310,27 @@ if(PYTHONINTERP_FOUND)
             set_property(TEST SimpleCommunicationSecureSubmsgCryptoBestEffort APPEND PROPERTY ENVIRONMENT
                 "PATH=$<TARGET_FILE_DIR:${PROJECT_NAME}>\\;$<TARGET_FILE_DIR:fastcdr>\\;${WIN_PATH}")
         endif()
+
+        add_test(NAME SecureDiscoverServerSimplePubSubSecureMsgCrypto
+            COMMAND ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_BINARY_DIR}/secure_ds_pubsub_secure_crypto_communication.py
+            --pub $<TARGET_FILE:SimpleCommunicationPublisher>
+            --xml-pub secure_ds_simple_secure_msg_crypto_pub.xml
+            --sub $<TARGET_FILE:SimpleCommunicationSubscriber>
+            --xml-sub secure_ds_simple_secure_msg_crypto_sub.xml
+            --samples 10 --wait 2
+            --ds $<TARGET_FILE:fast-discovery-server>
+            --xml-ds secure_simple_ds_server.xml
+            --server-id 0)
+
+        # Set test with label NoMemoryCheck
+        set_property(TEST SecureDiscoverServerSimplePubSubSecureMsgCrypto PROPERTY LABELS "NoMemoryCheck")
+
+        if(WIN32)
+            string(REPLACE ";" "\\;" WIN_PATH "$ENV{PATH}")
+            set_property(TEST SecureDiscoverServerSimplePubSubSecureMsgCrypto APPEND PROPERTY ENVIRONMENT
+                "PATH=$<TARGET_FILE_DIR:${PROJECT_NAME}>\\;$<TARGET_FILE_DIR:fastcdr>\\;${WIN_PATH}")
+        endif()
+
     endif()
 
     add_test(NAME LivelinessAssertion
