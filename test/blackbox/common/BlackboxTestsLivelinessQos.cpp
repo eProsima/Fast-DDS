@@ -14,8 +14,11 @@
 
 #include "BlackboxTests.hpp"
 
+#include <thread>
+
 #include "PubSubReader.hpp"
 #include "PubSubWriter.hpp"
+#include "PubSubWriterReader.hpp"
 #include "PubSubParticipant.hpp"
 #include "ReqRepAsReliableHelloWorldRequester.hpp"
 #include "ReqRepAsReliableHelloWorldReplier.hpp"
@@ -1889,6 +1892,58 @@ TEST_P(LivelinessQos, AssertLivelinessParticipant)
     // Only the two MANUAL_BY_PARTICIPANT publishers will have lost liveliness, as the
     // MANUAL_BY_TOPIC one was never asserted
     EXPECT_EQ(publishers.pub_times_liveliness_lost(), 2u);
+}
+
+//! Tests associated with an ABBA deadlock discovered between PDP mutexes on two different participants.
+//! The deadlock scenario involved:
+//! + Intraprocess
+//! + WLP assertions due to MANUAL_BY_PARTICIPANT set up
+//! + Both participants' event thread trigger the liveliness assertion simultaneously
+TEST(LivelinessTests, Detect_Deadlock_ManualByParticipant_Intraprocess)
+{
+    // Set up intraprocess
+    LibrarySettingsAttributes library_settings;
+    library_settings.intraprocess_delivery = IntraprocessDeliveryType::INTRAPROCESS_FULL;
+    xmlparser::XMLProfileManager::library_settings(library_settings);
+
+    // Create two participants
+    PubSubWriterReader<HelloWorldPubSubType> participantA(TEST_TOPIC_NAME), participantB(TEST_TOPIC_NAME);
+
+    // Set up MANUAL_BY_PARTICIPANT liveliness and make it fast
+    unsigned int lease_duration_ms = 1000;
+    unsigned int announcement_period_ms = 1;
+
+    participantA.pub_liveliness_kind(MANUAL_BY_PARTICIPANT_LIVELINESS_QOS)
+            .sub_liveliness_kind(MANUAL_BY_PARTICIPANT_LIVELINESS_QOS)
+            .pub_liveliness_announcement_period(announcement_period_ms * 1e-3)
+            .sub_liveliness_announcement_period(announcement_period_ms * 1e-3)
+            .pub_liveliness_lease_duration(lease_duration_ms * 1e-3)
+            .sub_liveliness_lease_duration(lease_duration_ms * 1e-3)
+            .init();
+
+    participantB.pub_liveliness_kind(MANUAL_BY_PARTICIPANT_LIVELINESS_QOS)
+            .sub_liveliness_kind(MANUAL_BY_PARTICIPANT_LIVELINESS_QOS)
+            .pub_liveliness_announcement_period(announcement_period_ms * 1e-3)
+            .sub_liveliness_announcement_period(announcement_period_ms * 1e-3)
+            .pub_liveliness_lease_duration(lease_duration_ms * 1e-3)
+            .sub_liveliness_lease_duration(lease_duration_ms * 1e-3)
+            .init();
+
+    ASSERT_TRUE(participantA.isInitialized());
+    ASSERT_TRUE(participantB.isInitialized());
+
+    // Wait for discovery.
+    participantA.wait_discovery();
+    participantB.wait_discovery();
+
+    // The DataWriter is alive
+    participantA.assert_liveliness();
+    participantB.assert_liveliness();
+
+    // Wait a second expecting a deadlock
+    std::this_thread::sleep_for(std::chrono::seconds(1));
+
+    // Test failure is due to timeout
 }
 
 #ifdef INSTANTIATE_TEST_SUITE_P
