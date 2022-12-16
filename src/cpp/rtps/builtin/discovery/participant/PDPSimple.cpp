@@ -68,6 +68,12 @@ PDPSimple::~PDPSimple()
 {
 }
 
+void PDPSimple::update_builtin_locators()
+{
+    auto endpoints = static_cast<fastdds::rtps::SimplePDPEndpoints*>(builtin_endpoints_.get());
+    mp_builtin->updateMetatrafficLocators(endpoints->reader.reader_->getAttributes().unicastLocatorList);
+}
+
 void PDPSimple::initializeParticipantProxyData(
         ParticipantProxyData* participant_data)
 {
@@ -224,21 +230,15 @@ void PDPSimple::announceParticipantState(
 {
     if (enabled_)
     {
-        PDP::announceParticipantState(new_change, dispose, wp);
+        auto endpoints = static_cast<fastdds::rtps::SimplePDPEndpoints*>(builtin_endpoints_.get());
+        StatelessWriter& writer = *(endpoints->writer.writer_);
+        WriterHistory& history = *endpoints->writer.history_;
+
+        PDP::announceParticipantState(writer, history, new_change, dispose, wp);
 
         if (!(dispose || new_change))
         {
-            auto endpoints = static_cast<fastdds::rtps::SimplePDPEndpoints*>(builtin_endpoints_.get());
-            StatelessWriter* pW = endpoints->writer.writer_;
-
-            if (pW != nullptr)
-            {
-                pW->unsent_changes_reset();
-            }
-            else
-            {
-                EPROSIMA_LOG_ERROR(RTPS_PDP, "Using PDPSimple protocol with a reliable writer");
-            }
+            writer.unsent_changes_reset();
         }
     }
 }
@@ -286,8 +286,8 @@ bool PDPSimple::createPDPEndpoints()
     mp_listener = new PDPListener(this);
     RTPSReader* reader = nullptr;
     if (mp_RTPSParticipant->createReader(&reader, ratt,
-        endpoints->reader.payload_pool_, endpoints->reader.history_.get(),
-        mp_listener, c_EntityId_SPDPReader, true, false))
+            endpoints->reader.payload_pool_, endpoints->reader.history_.get(),
+            mp_listener, c_EntityId_SPDPReader, true, false))
     {
 #if HAVE_SECURITY
         mp_RTPSParticipant->set_endpoint_rtps_protection_supports(reader, false);
@@ -330,7 +330,8 @@ bool PDPSimple::createPDPEndpoints()
     }
 
     RTPSWriter* wout = nullptr;
-    if (mp_RTPSParticipant->createWriter(&wout, watt, endpoints->writer.payload_pool_, endpoints->writer.history_.get(), nullptr,
+    if (mp_RTPSParticipant->createWriter(&wout, watt, endpoints->writer.payload_pool_, endpoints->writer.history_.get(),
+            nullptr,
             c_EntityId_SPDPWriter, true))
     {
 #if HAVE_SECURITY

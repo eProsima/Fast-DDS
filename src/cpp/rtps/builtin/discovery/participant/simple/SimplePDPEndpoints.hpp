@@ -46,6 +46,31 @@ struct SimplePDPEndpoints : public PDPEndpoints
         return DISC_BUILTIN_ENDPOINT_PARTICIPANT_ANNOUNCER | DISC_BUILTIN_ENDPOINT_PARTICIPANT_DETECTOR;
     }
 
+    bool enable_pdp_readers(
+            fastrtps::rtps::RTPSParticipantImpl* participant) override
+    {
+        return participant->enableReader(reader.reader_);
+    }
+
+    void disable_pdp_readers(
+            fastrtps::rtps::RTPSParticipantImpl* participant) override
+    {
+        participant->disableReader(reader.reader_);
+    }
+
+    void delete_pdp_endpoints(
+            fastrtps::rtps::RTPSParticipantImpl* participant) override
+    {
+        participant->deleteUserEndpoint(writer.writer_->getGuid());
+        participant->deleteUserEndpoint(reader.reader_->getGuid());
+    }
+
+    void remove_from_pdp_reader_history(
+            const fastrtps::rtps::InstanceHandle_t& remote_participant) override
+    {
+        reader.remove_from_history(remote_participant);
+    }
+
     //! Builtin Simple PDP reader
     BuiltinReader<fastrtps::rtps::StatelessReader> reader;
 
