@@ -280,6 +280,8 @@ bool PDPServer::createPDPEndpoints()
     if (mp_RTPSParticipant->createReader(&reader, ratt, endpoints->reader.history_.get(),
             mp_listener, c_EntityId_SPDPReader, true, false))
     {
+        endpoints->reader.reader_ = dynamic_cast<fastrtps::rtps::StatefulReader*>(reader);
+
         // Enable unknown clients to reach this reader
         reader->enableMessagesFromUnkownWriters(true);
 
@@ -296,7 +298,6 @@ bool PDPServer::createPDPEndpoints()
                 match_pdp_writer_nts_(it);
             }
         }
-        endpoints->reader.reader_ = dynamic_cast<fastrtps::rtps::StatefulReader*>(reader);
     }
     // Could not create PDP Reader, so return false
     else

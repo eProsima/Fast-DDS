@@ -289,10 +289,10 @@ bool PDPSimple::createPDPEndpoints()
             endpoints->reader.payload_pool_, endpoints->reader.history_.get(),
             mp_listener, c_EntityId_SPDPReader, true, false))
     {
+        endpoints->reader.reader_ = dynamic_cast<StatelessReader*>(reader);
 #if HAVE_SECURITY
         mp_RTPSParticipant->set_endpoint_rtps_protection_supports(reader, false);
 #endif // if HAVE_SECURITY
-        endpoints->reader.reader_ = dynamic_cast<StatelessReader*>(reader);
     }
     else
     {
@@ -334,10 +334,10 @@ bool PDPSimple::createPDPEndpoints()
             nullptr,
             c_EntityId_SPDPWriter, true))
     {
+        endpoints->writer.writer_ = dynamic_cast<StatelessWriter*>(wout);
 #if HAVE_SECURITY
         mp_RTPSParticipant->set_endpoint_rtps_protection_supports(wout, false);
 #endif // if HAVE_SECURITY
-        endpoints->writer.writer_ = dynamic_cast<StatelessWriter*>(wout);
         if (endpoints->writer.writer_ != nullptr)
         {
             const NetworkFactory& network = mp_RTPSParticipant->network_factory();

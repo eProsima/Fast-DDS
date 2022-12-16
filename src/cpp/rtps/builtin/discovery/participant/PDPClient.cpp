@@ -228,6 +228,8 @@ bool PDPClient::createPDPEndpoints()
     if (mp_RTPSParticipant->createReader(&reader, ratt, endpoints->reader.history_.get(), mp_listener,
             c_EntityId_SPDPReader, true, false))
     {
+        endpoints->reader.reader_ = dynamic_cast<fastrtps::rtps::StatefulReader*>(reader);
+
 #if HAVE_SECURITY
         mp_RTPSParticipant->set_endpoint_rtps_protection_supports(reader, false);
 #endif // if HAVE_SECURITY
@@ -241,7 +243,6 @@ bool PDPClient::createPDPEndpoints()
                 match_pdp_writer_nts_(it);
             }
         }
-        endpoints->reader.reader_ = dynamic_cast<fastrtps::rtps::StatefulReader*>(reader);
     }
     else
     {
@@ -279,6 +280,8 @@ bool PDPClient::createPDPEndpoints()
     if (mp_RTPSParticipant->createWriter(&wout, watt, endpoints->writer.history_.get(), nullptr,
             c_EntityId_SPDPWriter, true))
     {
+        endpoints->writer.writer_ = dynamic_cast<fastrtps::rtps::StatefulWriter*>(wout);
+
 #if HAVE_SECURITY
         mp_RTPSParticipant->set_endpoint_rtps_protection_supports(wout, false);
 #endif // if HAVE_SECURITY
@@ -291,7 +294,6 @@ bool PDPClient::createPDPEndpoints()
                 match_pdp_reader_nts_(it);
             }
         }
-        endpoints->writer.writer_ = dynamic_cast<fastrtps::rtps::StatefulWriter*>(wout);
     }
     else
     {
