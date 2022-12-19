@@ -54,7 +54,8 @@ public:
      * @param part Pointer to the RTPSParticipant.
      * @return True on success
      */
-    bool init(RTPSParticipantImpl* part) override;
+    bool init(
+            RTPSParticipantImpl* part) override;
 
     /**
      * Creates an initializes a new participant proxy from a DATA(p) raw info
@@ -63,8 +64,8 @@ public:
      * @return new ParticipantProxyData * or nullptr on failure
      */
     ParticipantProxyData* createParticipantProxyData(
-        const ParticipantProxyData& p,
-        const GUID_t& writer_guid) override;
+            const ParticipantProxyData& p,
+            const GUID_t& writer_guid) override;
 
     /**
      * Some PDP classes require EDP matching with update PDP DATAs like EDPStatic
@@ -79,28 +80,31 @@ public:
      * @param wparams allows to identify the change
      */
     void announceParticipantState(
-        bool new_change,
-        bool dispose = false,
-        WriteParams& wparams = WriteParams::WRITE_PARAM_DEFAULT) override;
+            bool new_change,
+            bool dispose = false,
+            WriteParams& wparams = WriteParams::WRITE_PARAM_DEFAULT) override;
 
     /**
      * This method assigns remote endpoints to the builtin endpoints defined in this protocol. It also calls
      * the corresponding methods in EDP and WLP.
      * @param pdata Pointer to the ParticipantProxyData object.
      */
-    void assignRemoteEndpoints(ParticipantProxyData* pdata) override;
+    void assignRemoteEndpoints(
+            ParticipantProxyData* pdata) override;
 
     /**
      * Remove remote endpoints from the participant discovery protocol
      * @param pdata Pointer to the ParticipantProxyData to remove
      */
-    void removeRemoteEndpoints(ParticipantProxyData * pdata) override;
+    void removeRemoteEndpoints(
+            ParticipantProxyData* pdata) override;
 
     /**
      * This method notifies EDP and WLP of the existence of a new participant.
      * @param pdata
      */
-    void notifyAboveRemoteEndpoints(const ParticipantProxyData& pdata) override;
+    void notifyAboveRemoteEndpoints(
+            const ParticipantProxyData& pdata) override;
 
     /**
      * Activate a new Remote Endpoint that has been statically discovered.
@@ -113,10 +117,12 @@ public:
             int16_t userDefinedId,
             EndpointKind_t kind);
 
+    void update_builtin_locators() override;
 
 private:
 
-    void initializeParticipantProxyData(ParticipantProxyData* participant_data) override;
+    void initializeParticipantProxyData(
+            ParticipantProxyData* participant_data) override;
 
     /**
      * Create the SPDP Writer and Reader
@@ -130,5 +136,5 @@ private:
 } /* namespace fastrtps */
 } /* namespace eprosima */
 
-#endif
+#endif // ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 #endif //_FASTDDS_RTPS_BUILTIN_DISCOVERY_PARTICIPANT_PDPSIMPLE_H_

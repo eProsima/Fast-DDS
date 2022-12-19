@@ -145,6 +145,8 @@ public:
 
 protected:
 
+    void update_builtin_locators() override;
+
     /**
      * Manually match the local PDP reader with the PDP writer of a given server. The function is
      * not thread safe (nts) in the sense that it does not take the PDP mutex. It does however take

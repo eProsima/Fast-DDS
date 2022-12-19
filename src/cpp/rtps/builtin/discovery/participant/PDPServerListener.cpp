@@ -30,6 +30,7 @@
 
 #include <rtps/builtin/discovery/database/DiscoveryParticipantChangeData.hpp>
 #include <rtps/builtin/discovery/participant/PDPServer.hpp>
+#include <rtps/builtin/discovery/participant/DS/DiscoveryServerPDPEndpoints.hpp>
 #include <rtps/network/ExternalLocatorsProcessor.hpp>
 #include <rtps/participant/RTPSParticipantImpl.h>
 
@@ -61,10 +62,11 @@ void PDPServerListener::onNewCacheChangeAdded(
             " --------------------");
     EPROSIMA_LOG_INFO(RTPS_PDP_LISTENER, "PDP Server Message received: " << change_in->instanceHandle);
 
+    auto endpoints = static_cast<fastdds::rtps::DiscoveryServerPDPEndpoints*>(pdp_server()->builtin_endpoints_.get());
     // Get PDP reader history
-    auto pdp_history = pdp_server()->mp_PDPReaderHistory;
+    auto pdp_history = endpoints->reader.history_.get();
     // Get PDP reader to release change
-    auto pdp_reader = pdp_server()->mp_PDPReader;
+    auto pdp_reader = endpoints->reader.reader_;
 
     bool routine_should_be_awake = false;
 
