@@ -334,6 +334,7 @@ bool PDPServer::create_ds_pdp_reliable_endpoints(
         mp_RTPSParticipant->set_endpoint_rtps_protection_supports(reader, false);
 #endif // if HAVE_SECURITY
 
+        if (!secure)
         {
             eprosima::shared_lock<eprosima::shared_mutex> disc_lock(mp_builtin->getDiscoveryMutex());
 
@@ -414,6 +415,7 @@ bool PDPServer::create_ds_pdp_reliable_endpoints(
         // Enable separate sending so the filter can be called for each change and reader proxy
         wout->set_separate_sending(true);
 
+        if (!secure)
         {
             eprosima::shared_lock<eprosima::shared_mutex> disc_lock(mp_builtin->getDiscoveryMutex());
 
