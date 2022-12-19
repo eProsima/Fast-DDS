@@ -236,8 +236,6 @@ void PDPServer::update_builtin_locators()
 
 bool PDPServer::createPDPEndpoints()
 {
-    EPROSIMA_LOG_INFO(RTPS_PDP_SERVER, "Beginning PDPServer Endpoints creation");
-
 #if HAVE_SECURITY
     if (should_protect_discovery())
     {
@@ -256,10 +254,16 @@ bool PDPServer::should_protect_discovery()
 
 bool PDPServer::create_secure_ds_pdp_endpoints()
 {
+    EPROSIMA_LOG_INFO(RTPS_PDP_SERVER, "Beginning PDPServer Endpoints creation");
+
     auto endpoints = new fastdds::rtps::DiscoveryServerPDPEndpointsSecure();
     builtin_endpoints_.reset(endpoints);
 
-    return create_ds_pdp_reliable_endpoints(*endpoints, true) && create_ds_pdp_best_effort_reader(*endpoints);
+    bool ret_val = create_ds_pdp_reliable_endpoints(*endpoints, true) && create_ds_pdp_best_effort_reader(*endpoints);
+
+    EPROSIMA_LOG_INFO(RTPS_PDP_SERVER, "PDPServer Endpoints creation finished");
+
+    return ret_val;
 }
 
 bool PDPServer::create_ds_pdp_best_effort_reader(
@@ -303,7 +307,7 @@ bool PDPServer::create_ds_pdp_best_effort_reader(
     // Could not create PDP Reader, so return false
     else
     {
-        EPROSIMA_LOG_ERROR(RTPS_PDP_SERVER, "PDPServer Reader " << c_EntityId_SPDPReader << " creation failed");
+        EPROSIMA_LOG_ERROR(RTPS_PDP_SERVER, "PDPServer security initiation Reader creation failed");
 
         endpoints.stateless_listener.reset();
         endpoints.stateless_reader.release();
@@ -317,11 +321,16 @@ bool PDPServer::create_ds_pdp_best_effort_reader(
 
 bool PDPServer::create_ds_pdp_endpoints()
 {
+    EPROSIMA_LOG_INFO(RTPS_PDP_SERVER, "Beginning PDPServer Endpoints creation");
 
     auto endpoints = new fastdds::rtps::DiscoveryServerPDPEndpoints();
     builtin_endpoints_.reset(endpoints);
 
-    return create_ds_pdp_reliable_endpoints(*endpoints, false);
+    bool ret_val = create_ds_pdp_reliable_endpoints(*endpoints, false);
+
+    EPROSIMA_LOG_INFO(RTPS_PDP_SERVER, "PDPServer Endpoints creation finished");
+
+    return ret_val;
 }
 
 bool PDPServer::create_ds_pdp_reliable_endpoints(
@@ -486,7 +495,6 @@ bool PDPServer::create_ds_pdp_reliable_endpoints(
     // TODO check if this should be done here or before this point in creation
     endpoints.writer.history_->remove_all_changes();
 
-    EPROSIMA_LOG_INFO(RTPS_PDP_SERVER, "PDPServer Endpoints creation finished");
     return true;
 }
 
