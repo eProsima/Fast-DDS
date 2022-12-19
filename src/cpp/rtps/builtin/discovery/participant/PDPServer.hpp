@@ -323,6 +323,18 @@ private:
      */
     bool create_ds_pdp_endpoints();
 
+    /**
+     * Performs creation of DS (reliable) PDP endpoints.
+     *
+     * @param [in,out]  endpoints  Container where the created resources should be kept.
+     * @param [in]      secure     Whether the created endpoints should be secure.
+     *
+     * @return whether the endpoints were successfully created.
+     */
+    bool create_ds_pdp_reliable_endpoints(
+            DiscoveryServerPDPEndpoints& endpoints,
+            bool secure);
+
     //! Server thread
     eprosima::fastrtps::rtps::ResourceEvent resource_event_thread_;
 

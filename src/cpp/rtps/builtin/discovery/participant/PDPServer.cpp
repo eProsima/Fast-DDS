@@ -39,6 +39,7 @@
 #include <fastdds/dds/core/policy/QosPolicies.hpp>
 
 #include <rtps/builtin/discovery/participant/DS/DiscoveryServerPDPEndpoints.hpp>
+#include <rtps/builtin/discovery/participant/DS/DiscoveryServerPDPEndpointsSecure.hpp>
 #include <rtps/builtin/discovery/participant/DirectMessageSender.hpp>
 #include <rtps/participant/RTPSParticipantImpl.h>
 
@@ -255,16 +256,28 @@ bool PDPServer::should_protect_discovery()
 
 bool PDPServer::create_secure_ds_pdp_endpoints()
 {
-    return false;
+    auto endpoints = new fastdds::rtps::DiscoveryServerPDPEndpointsSecure();
+    builtin_endpoints_.reset(endpoints);
+
+    return create_ds_pdp_reliable_endpoints(*endpoints, true);
 }
+
 #endif  // HAVE_SECURITY
 
 bool PDPServer::create_ds_pdp_endpoints()
 {
-    const RTPSParticipantAttributes& pattr = mp_RTPSParticipant->getRTPSParticipantAttributes();
 
     auto endpoints = new fastdds::rtps::DiscoveryServerPDPEndpoints();
     builtin_endpoints_.reset(endpoints);
+
+    return create_ds_pdp_reliable_endpoints(*endpoints, false);
+}
+
+bool PDPServer::create_ds_pdp_reliable_endpoints(
+        DiscoveryServerPDPEndpoints& endpoints,
+        bool secure)
+{
+    const RTPSParticipantAttributes& pattr = mp_RTPSParticipant->getRTPSParticipantAttributes();
 
     /***********************************
     * PDP READER
@@ -274,7 +287,7 @@ bool PDPServer::create_ds_pdp_endpoints()
     hatt.payloadMaxSize = mp_builtin->m_att.readerPayloadSize;
     hatt.initialReservedCaches = pdp_initial_reserved_caches;
     hatt.memoryPolicy = mp_builtin->m_att.readerHistoryMemoryPolicy;
-    endpoints->reader.history_.reset(new ReaderHistory(hatt));
+    endpoints.reader.history_.reset(new ReaderHistory(hatt));
 
     // PDP Reader Attributes
     ReaderAttributes ratt;
@@ -289,6 +302,14 @@ bool PDPServer::create_ds_pdp_endpoints()
     ratt.endpoint.durabilityKind = durability_;
     ratt.endpoint.reliabilityKind = RELIABLE;
     ratt.times.heartbeatResponseDelay = pdp_heartbeat_response_delay;
+#if HAVE_SECURITY
+    if (secure)
+    {
+        ratt.endpoint.security_attributes().is_submessage_protected = true;
+        ratt.endpoint.security_attributes().plugin_endpoint_attributes =
+                PLUGIN_ENDPOINT_SECURITY_ATTRIBUTES_FLAG_IS_SUBMESSAGE_ENCRYPTED;
+    }
+#endif // HAVE_SECURITY
 
 #if HAVE_SQLITE3
     ratt.endpoint.properties.properties().push_back(Property("dds.persistence.plugin", "builtin.SQLITE3"));
@@ -301,10 +322,10 @@ bool PDPServer::create_ds_pdp_endpoints()
 
     // Create PDP Reader
     RTPSReader* reader = nullptr;
-    if (mp_RTPSParticipant->createReader(&reader, ratt, endpoints->reader.history_.get(),
-            mp_listener, c_EntityId_SPDPReader, true, false))
+    if (mp_RTPSParticipant->createReader(&reader, ratt, endpoints.reader.history_.get(), mp_listener,
+            secure ? c_EntityId_spdp_reliable_participant_secure_reader : c_EntityId_SPDPReader, true, false))
     {
-        endpoints->reader.reader_ = dynamic_cast<fastrtps::rtps::StatefulReader*>(reader);
+        endpoints.reader.reader_ = dynamic_cast<fastrtps::rtps::StatefulReader*>(reader);
 
         // Enable unknown clients to reach this reader
         reader->enableMessagesFromUnkownWriters(true);
@@ -329,7 +350,7 @@ bool PDPServer::create_ds_pdp_endpoints()
         EPROSIMA_LOG_ERROR(RTPS_PDP_SERVER, "PDPServer Reader creation failed");
         delete mp_listener;
         mp_listener = nullptr;
-        endpoints->reader.release();
+        endpoints.reader.release();
         return false;
     }
 
@@ -341,7 +362,7 @@ bool PDPServer::create_ds_pdp_endpoints()
     hatt.payloadMaxSize = mp_builtin->m_att.writerPayloadSize;
     hatt.initialReservedCaches = pdp_initial_reserved_caches;
     hatt.memoryPolicy = mp_builtin->m_att.writerHistoryMemoryPolicy;
-    endpoints->writer.history_.reset(new WriterHistory(hatt));
+    endpoints.writer.history_.reset(new WriterHistory(hatt));
 
     // PDP Writer Attributes
     WriterAttributes watt;
@@ -367,13 +388,21 @@ bool PDPServer::create_ds_pdp_endpoints()
     watt.times.nackResponseDelay = pdp_nack_response_delay;
     watt.times.nackSupressionDuration = pdp_nack_supression_duration;
     watt.mode = ASYNCHRONOUS_WRITER;
+#if HAVE_SECURITY
+    if (secure)
+    {
+        watt.endpoint.security_attributes().is_submessage_protected = true;
+        watt.endpoint.security_attributes().plugin_endpoint_attributes =
+                PLUGIN_ENDPOINT_SECURITY_ATTRIBUTES_FLAG_IS_SUBMESSAGE_ENCRYPTED;
+    }
+#endif // HAVE_SECURITY
 
     // Create PDP Writer
     RTPSWriter* wout = nullptr;
-    if (mp_RTPSParticipant->createWriter(&wout, watt, endpoints->writer.history_.get(),
-            nullptr, c_EntityId_SPDPWriter, true))
+    if (mp_RTPSParticipant->createWriter(&wout, watt, endpoints.writer.history_.get(), nullptr,
+            secure ? c_EntityId_spdp_reliable_participant_secure_writer : c_EntityId_SPDPWriter, true))
     {
-        endpoints->writer.writer_ = dynamic_cast<fastrtps::rtps::StatefulWriter*>(wout);
+        endpoints.writer.writer_ = dynamic_cast<fastrtps::rtps::StatefulWriter*>(wout);
 
 #if HAVE_SECURITY
         mp_RTPSParticipant->set_endpoint_rtps_protection_supports(wout, false);
@@ -398,11 +427,11 @@ bool PDPServer::create_ds_pdp_endpoints()
     else
     {
         EPROSIMA_LOG_ERROR(RTPS_PDP_SERVER, "PDPServer Writer creation failed");
-        endpoints->writer.release();
+        endpoints.writer.release();
         return false;
     }
     // TODO check if this should be done here or before this point in creation
-    endpoints->writer.history_->remove_all_changes();
+    endpoints.writer.history_->remove_all_changes();
 
     EPROSIMA_LOG_INFO(RTPS_PDP_SERVER, "PDPServer Endpoints creation finished");
     return true;
