@@ -47,6 +47,7 @@
 
 #include <rtps/builtin/discovery/participant/PDPServer.hpp>
 #include <rtps/builtin/discovery/participant/PDPServerListener.hpp>
+#include <rtps/builtin/discovery/participant/DS/PDPSecurityInitiatorListener.hpp>
 #include <rtps/builtin/discovery/participant/timedevent/DServerEvent.hpp>
 #include <rtps/builtin/discovery/endpoint/EDPServer.hpp>
 #include <rtps/builtin/discovery/endpoint/EDPServerListeners.hpp>
@@ -289,8 +290,7 @@ bool PDPServer::create_ds_pdp_best_effort_reader(
     ratt.endpoint.durabilityKind = VOLATILE;
     ratt.endpoint.reliabilityKind = BEST_EFFORT;
 
-    // TODO: PDP Listener for initiating PKI
-    // endpoints.stateless_listener.reset(new PDPSecurityInitiatorListener(this));
+    endpoints.stateless_listener.reset(new PDPSecurityInitiatorListener(this));
 
     // Create PDP Reader
     RTPSReader* reader = nullptr;

@@ -76,6 +76,7 @@ class PDP
     friend class PDPListener;
     friend class PDPServerListener;
     friend class fastdds::rtps::PDPServerListener;
+    friend class PDPSecurityInitiatorListener;
 
 public:
 

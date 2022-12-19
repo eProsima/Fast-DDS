@@ -34,6 +34,7 @@
 #include <rtps/builtin/discovery/database/DiscoveryDataBase.hpp>
 #include <rtps/builtin/discovery/database/DiscoveryDataFilter.hpp>
 #include <rtps/builtin/discovery/participant/timedevent/DServerEvent.hpp>
+#include <rtps/builtin/discovery/participant/DS/DiscoveryServerPDPEndpointsSecure.hpp>
 
 namespace eprosima {
 namespace fastdds {
