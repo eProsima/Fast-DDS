@@ -232,7 +232,7 @@ void PDPSimple::announceParticipantState(
     {
         auto endpoints = static_cast<fastdds::rtps::SimplePDPEndpoints*>(builtin_endpoints_.get());
         StatelessWriter& writer = *(endpoints->writer.writer_);
-        WriterHistory& history = *endpoints->writer.history_;
+        WriterHistory& history = *(endpoints->writer.history_);
 
         PDP::announceParticipantState(writer, history, new_change, dispose, wp);
 
