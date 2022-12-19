@@ -1227,7 +1227,11 @@ void PDPServer::process_changes_release_(
             // take it out upon reading it in the listeners
             if (discovery_db_.is_participant(ch))
             {
-                remove_change_from_writer_history(endpoints->writer.writer_, endpoints->writer.history_.get(), ch, false);
+                remove_change_from_writer_history(
+                    endpoints->writer.writer_,
+                    endpoints->writer.history_.get(),
+                    ch,
+                    false);
                 endpoints->reader.reader_->releaseCache(ch);
             }
             else if (discovery_db_.is_writer(ch))
