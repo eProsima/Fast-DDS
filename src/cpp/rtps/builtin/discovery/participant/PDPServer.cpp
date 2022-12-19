@@ -38,6 +38,7 @@
 #include <fastrtps/utils/TimeConversion.h>
 #include <fastdds/dds/core/policy/QosPolicies.hpp>
 
+#include <rtps/builtin/discovery/participant/DS/DiscoveryServerPDPEndpoints.hpp>
 #include <rtps/builtin/discovery/participant/DirectMessageSender.hpp>
 #include <rtps/participant/RTPSParticipantImpl.h>
 
@@ -152,7 +153,7 @@ bool PDPServer::init(
 
     // Activate listeners
     EDPServer* edp = static_cast<EDPServer*>(mp_EDP);
-    getRTPSParticipant()->enableReader(mp_PDPReader);
+    builtin_endpoints_->enable_pdp_readers(getRTPSParticipant());
     getRTPSParticipant()->enableReader(edp->subscriptions_reader_.first);
     getRTPSParticipant()->enableReader(edp->publications_reader_.first);
 
@@ -226,11 +227,20 @@ ParticipantProxyData* PDPServer::createParticipantProxyData(
     return pdata;
 }
 
+void PDPServer::update_builtin_locators()
+{
+    auto endpoints = static_cast<fastdds::rtps::DiscoveryServerPDPEndpoints*>(builtin_endpoints_.get());
+    mp_builtin->updateMetatrafficLocators(endpoints->reader.reader_->getAttributes().unicastLocatorList);
+}
+
 bool PDPServer::createPDPEndpoints()
 {
     EPROSIMA_LOG_INFO(RTPS_PDP_SERVER, "Beginning PDPServer Endpoints creation");
 
     const RTPSParticipantAttributes& pattr = mp_RTPSParticipant->getRTPSParticipantAttributes();
+
+    auto endpoints = new fastdds::rtps::DiscoveryServerPDPEndpoints();
+    builtin_endpoints_.reset(endpoints);
 
     /***********************************
     * PDP READER
@@ -240,7 +250,7 @@ bool PDPServer::createPDPEndpoints()
     hatt.payloadMaxSize = mp_builtin->m_att.readerPayloadSize;
     hatt.initialReservedCaches = pdp_initial_reserved_caches;
     hatt.memoryPolicy = mp_builtin->m_att.readerHistoryMemoryPolicy;
-    mp_PDPReaderHistory = new ReaderHistory(hatt);
+    endpoints->reader.history_.reset(new ReaderHistory(hatt));
 
     // PDP Reader Attributes
     ReaderAttributes ratt;
@@ -266,11 +276,18 @@ bool PDPServer::createPDPEndpoints()
     mp_listener = new PDPServerListener(this);
 
     // Create PDP Reader
-    if (mp_RTPSParticipant->createReader(&mp_PDPReader, ratt, mp_PDPReaderHistory,
+    RTPSReader* reader = nullptr;
+    if (mp_RTPSParticipant->createReader(&reader, ratt, endpoints->reader.history_.get(),
             mp_listener, c_EntityId_SPDPReader, true, false))
     {
+        endpoints->reader.reader_ = dynamic_cast<fastrtps::rtps::StatefulReader*>(reader);
+
         // Enable unknown clients to reach this reader
-        mp_PDPReader->enableMessagesFromUnkownWriters(true);
+        reader->enableMessagesFromUnkownWriters(true);
+
+#if HAVE_SECURITY
+        mp_RTPSParticipant->set_endpoint_rtps_protection_supports(reader, false);
+#endif // if HAVE_SECURITY
 
         {
             eprosima::shared_lock<eprosima::shared_mutex> disc_lock(mp_builtin->getDiscoveryMutex());
@@ -286,10 +303,9 @@ bool PDPServer::createPDPEndpoints()
     else
     {
         EPROSIMA_LOG_ERROR(RTPS_PDP_SERVER, "PDPServer Reader creation failed");
-        delete(mp_PDPReaderHistory);
-        mp_PDPReaderHistory = nullptr;
-        delete(mp_listener);
+        delete mp_listener;
         mp_listener = nullptr;
+        endpoints->reader.release();
         return false;
     }
 
@@ -301,7 +317,7 @@ bool PDPServer::createPDPEndpoints()
     hatt.payloadMaxSize = mp_builtin->m_att.writerPayloadSize;
     hatt.initialReservedCaches = pdp_initial_reserved_caches;
     hatt.memoryPolicy = mp_builtin->m_att.writerHistoryMemoryPolicy;
-    mp_PDPWriterHistory = new WriterHistory(hatt);
+    endpoints->writer.history_.reset(new WriterHistory(hatt));
 
     // PDP Writer Attributes
     WriterAttributes watt;
@@ -329,14 +345,21 @@ bool PDPServer::createPDPEndpoints()
     watt.mode = ASYNCHRONOUS_WRITER;
 
     // Create PDP Writer
-    if (mp_RTPSParticipant->createWriter(&mp_PDPWriter, watt, mp_PDPWriterHistory,
+    RTPSWriter* wout = nullptr;
+    if (mp_RTPSParticipant->createWriter(&wout, watt, endpoints->writer.history_.get(),
             nullptr, c_EntityId_SPDPWriter, true))
     {
+        endpoints->writer.writer_ = dynamic_cast<fastrtps::rtps::StatefulWriter*>(wout);
+
+#if HAVE_SECURITY
+        mp_RTPSParticipant->set_endpoint_rtps_protection_supports(wout, false);
+#endif // if HAVE_SECURITY
+
         // Set pdp filter to writer
         IReaderDataFilter* pdp_filter = static_cast<ddb::PDPDataFilter<ddb::DiscoveryDataBase>*>(&discovery_db_);
-        mp_PDPWriter->reader_data_filter(pdp_filter);
+        wout->reader_data_filter(pdp_filter);
         // Enable separate sending so the filter can be called for each change and reader proxy
-        mp_PDPWriter->set_separate_sending(true);
+        wout->set_separate_sending(true);
 
         {
             eprosima::shared_lock<eprosima::shared_mutex> disc_lock(mp_builtin->getDiscoveryMutex());
@@ -351,12 +374,11 @@ bool PDPServer::createPDPEndpoints()
     else
     {
         EPROSIMA_LOG_ERROR(RTPS_PDP_SERVER, "PDPServer Writer creation failed");
-        delete(mp_PDPWriterHistory);
-        mp_PDPWriterHistory = nullptr;
+        endpoints->writer.release();
         return false;
     }
     // TODO check if this should be done here or before this point in creation
-    mp_PDPWriterHistory->remove_all_changes();
+    endpoints->writer.history_->remove_all_changes();
 
     EPROSIMA_LOG_INFO(RTPS_PDP_SERVER, "PDPServer Endpoints creation finished");
     return true;
@@ -402,6 +424,7 @@ void PDPServer::assignRemoteEndpoints(
 {
     EPROSIMA_LOG_INFO(RTPS_PDP_SERVER, "Assigning remote endpoint for RTPSParticipant: " << pdata->m_guid.guidPrefix);
 
+    auto endpoints = static_cast<fastdds::rtps::DiscoveryServerPDPEndpoints*>(builtin_endpoints_.get());
     const NetworkFactory& network = mp_RTPSParticipant->network_factory();
     uint32_t endp = pdata->m_availableBuiltinEndpoints;
     bool use_multicast_locators = !mp_RTPSParticipant->getAttributes().builtin.avoid_builtin_multicast ||
@@ -421,7 +444,7 @@ void PDPServer::assignRemoteEndpoints(
         temp_writer_data->set_remote_locators(pdata->metatraffic_locators, network, use_multicast_locators);
         temp_writer_data->m_qos.m_reliability.kind = dds::RELIABLE_RELIABILITY_QOS;
         temp_writer_data->m_qos.m_durability.kind = dds::TRANSIENT_LOCAL_DURABILITY_QOS;
-        mp_PDPReader->matched_writer_add(*temp_writer_data);
+        endpoints->reader.reader_->matched_writer_add(*temp_writer_data);
     }
     else
     {
@@ -443,7 +466,7 @@ void PDPServer::assignRemoteEndpoints(
         temp_reader_data->set_remote_locators(pdata->metatraffic_locators, network, use_multicast_locators);
         temp_reader_data->m_qos.m_reliability.kind = dds::RELIABLE_RELIABILITY_QOS;
         temp_reader_data->m_qos.m_durability.kind = dds::TRANSIENT_LOCAL_DURABILITY_QOS;
-        mp_PDPWriter->matched_reader_add(*temp_reader_data);
+        endpoints->writer.writer_->matched_reader_add(*temp_reader_data);
     }
     else
     {
@@ -477,10 +500,12 @@ void PDPServer::removeRemoteEndpoints(
     EPROSIMA_LOG_INFO(RTPS_PDP_SERVER, "For RTPSParticipant: " << pdata->m_guid);
     uint32_t endp = pdata->m_availableBuiltinEndpoints;
 
+    auto endpoints = static_cast<fastdds::rtps::DiscoveryServerPDPEndpoints*>(builtin_endpoints_.get());
+
     if (endp & DISC_BUILTIN_ENDPOINT_PARTICIPANT_ANNOUNCER)
     {
         GUID_t writer_guid(pdata->m_guid.guidPrefix, c_EntityId_SPDPWriter);
-        mp_PDPReader->matched_writer_remove(writer_guid);
+        endpoints->reader.reader_->matched_writer_remove(writer_guid);
     }
     else
     {
@@ -492,7 +517,7 @@ void PDPServer::removeRemoteEndpoints(
     if (endp & DISC_BUILTIN_ENDPOINT_PARTICIPANT_DETECTOR)
     {
         GUID_t reader_guid(pdata->m_guid.guidPrefix, c_EntityId_SPDPReader);
-        mp_PDPWriter->matched_reader_remove(reader_guid);
+        endpoints->writer.writer_->matched_reader_remove(reader_guid);
     }
     else
     {
@@ -558,9 +583,6 @@ void PDPServer::announceParticipantState(
                 "Announcing Server " << mp_RTPSParticipant->getGuid() << " (new change: " << new_change << ")");
         CacheChange_t* change = nullptr;
 
-        StatefulWriter* pW = dynamic_cast<StatefulWriter*>(mp_PDPWriter);
-        assert(pW);
-
         /*
            Protect writer sequence number. Make sure in order to prevent AB BA deadlock that the
            PDP mutex is systematically locked before the writer one (if needed):
@@ -572,7 +594,13 @@ void PDPServer::announceParticipantState(
 
         getMutex()->lock();
 
-        std::lock_guard<fastrtps::RecursiveTimedMutex> wlock(pW->getMutex());
+        auto endpoints = static_cast<fastdds::rtps::DiscoveryServerPDPEndpoints*>(builtin_endpoints_.get());
+        assert(endpoints->writer.writer_);
+
+        fastrtps::rtps::StatefulWriter& writer = *(endpoints->writer.writer_);
+        WriterHistory& history = *endpoints->writer.history_;
+
+        std::lock_guard<fastrtps::RecursiveTimedMutex> wlock(writer.getMutex());
 
         if (!dispose)
         {
@@ -584,10 +612,10 @@ void PDPServer::announceParticipantState(
 
                 // Prepare identity
                 WriteParams wp;
-                SequenceNumber_t sn = mp_PDPWriterHistory->next_sequence_number();
+                SequenceNumber_t sn = history.next_sequence_number();
                 {
                     SampleIdentity local;
-                    local.writer_guid(mp_PDPWriter->getGuid());
+                    local.writer_guid(writer.getGuid());
                     local.sequence_number(sn);
                     wp.sample_identity(local);
                     wp.related_sample_identity(local);
@@ -597,7 +625,7 @@ void PDPServer::announceParticipantState(
                 getMutex()->unlock();
 
                 uint32_t cdr_size = proxy_data_copy.get_serialized_size(true);
-                change = mp_PDPWriter->new_change(
+                change = writer.new_change(
                     [cdr_size]() -> uint32_t
                     {
                         return cdr_size;
@@ -646,7 +674,7 @@ void PDPServer::announceParticipantState(
                     }
 
                     // Add our change to PDPWriterHistory
-                    mp_PDPWriterHistory->add_change(change, wp);
+                    history.add_change(change, wp);
                     change->write_params = wp;
 
                     // Update the database with our own data
@@ -662,7 +690,7 @@ void PDPServer::announceParticipantState(
                         // Already there, dispose
                         EPROSIMA_LOG_ERROR(RTPS_PDP_SERVER,
                                 "DiscoveryDatabase already initialized with local DATA(p) on creation");
-                        mp_PDPWriter->release_change(change);
+                        writer.release_change(change);
                     }
                 }
                 // Doesn't make sense to send the DATA directly if it hasn't been introduced in the history yet (missing
@@ -698,10 +726,10 @@ void PDPServer::announceParticipantState(
 
             // Prepare identity
             WriteParams wp;
-            SequenceNumber_t sn = mp_PDPWriterHistory->next_sequence_number();
+            SequenceNumber_t sn = history.next_sequence_number();
             {
                 SampleIdentity local;
-                local.writer_guid(mp_PDPWriter->getGuid());
+                local.writer_guid(writer.getGuid());
                 local.sequence_number(sn);
                 wp.sample_identity(local);
                 wp.related_sample_identity(local);
@@ -710,7 +738,7 @@ void PDPServer::announceParticipantState(
             // Unlock PDP mutex since it's no longer needed.
             getMutex()->unlock();
 
-            change = pW->new_change(
+            change = writer.new_change(
                 [cdr_size]() -> uint32_t
                 {
                     return cdr_size;
@@ -734,7 +762,7 @@ void PDPServer::announceParticipantState(
                 {
                     // Dispose if already there
                     // It may happen if the participant is not removed fast enough
-                    mp_PDPWriter->release_change(change);
+                    writer.release_change(change);
                     return;
                 }
             }
@@ -778,6 +806,8 @@ bool PDPServer::remove_remote_participant(
         const GUID_t& partGUID,
         ParticipantDiscoveryInfo::DISCOVERY_STATUS reason)
 {
+    auto endpoints = static_cast<fastdds::rtps::DiscoveryServerPDPEndpoints*>(builtin_endpoints_.get());
+
     // Notify the DiscoveryDataBase on lease duration removal because the listener
     // has already notified the database in all other cases
     if (ParticipantDiscoveryInfo::DROPPED_PARTICIPANT == reason)
@@ -786,14 +816,14 @@ bool PDPServer::remove_remote_participant(
 
         // TODO check in standard if DROP payload is always 0
         // We create the drop from Reader to make release simplier
-        mp_PDPReader->reserveCache(&pC, mp_builtin->m_att.writerPayloadSize);
+        endpoints->reader.reader_->reserveCache(&pC, mp_builtin->m_att.writerPayloadSize);
 
         // We must create the corresponding DATA(p[UD])
         if (nullptr != pC)
         {
             pC->instanceHandle = partGUID;
             pC->kind = NOT_ALIVE_DISPOSED_UNREGISTERED;
-            pC->writerGUID = mp_PDPWriter->getGuid();
+            pC->writerGUID = endpoints->writer.writer_->getGuid();
             // Reset the internal CacheChange_t union.
             pC->writer_info.next = nullptr;
             pC->writer_info.previous = nullptr;
@@ -802,8 +832,8 @@ bool PDPServer::remove_remote_participant(
             // Use this server identity in order to hint clients it's a lease duration demise
             WriteParams& wp = pC->write_params;
             SampleIdentity local;
-            local.writer_guid(mp_PDPWriter->getGuid());
-            local.sequence_number(mp_PDPWriterHistory->next_sequence_number());
+            local.writer_guid(endpoints->writer.writer_->getGuid());
+            local.sequence_number(endpoints->writer.history_->next_sequence_number());
             wp.sample_identity(local);
             wp.related_sample_identity(local);
 
@@ -819,7 +849,7 @@ bool PDPServer::remove_remote_participant(
             else
             {
                 // if the database doesn't take the ownership remove
-                mp_PDPReader->releaseCache(pC);
+                endpoints->reader.reader_->releaseCache(pC);
             }
         }
     }
@@ -908,7 +938,8 @@ bool PDPServer::server_update_routine()
 
 void PDPServer::update_remote_servers_list()
 {
-    if (!mp_PDPReader || !mp_PDPWriter)
+    auto endpoints = static_cast<fastdds::rtps::DiscoveryServerPDPEndpoints*>(builtin_endpoints_.get());
+    if (!endpoints->reader.reader_ || !endpoints->writer.writer_)
     {
         EPROSIMA_LOG_ERROR(RTPS_PDP_SERVER, "Cannot update server list within an uninitialized Server");
         return;
@@ -920,12 +951,12 @@ void PDPServer::update_remote_servers_list()
 
     for (const eprosima::fastdds::rtps::RemoteServerAttributes& it : mp_builtin->m_DiscoveryServers)
     {
-        if (!mp_PDPReader->matched_writer_is_matched(it.GetPDPWriter()))
+        if (!endpoints->reader.reader_->matched_writer_is_matched(it.GetPDPWriter()))
         {
             match_pdp_writer_nts_(it);
         }
 
-        if (!mp_PDPWriter->matched_reader_is_matched(it.GetPDPReader()))
+        if (!endpoints->writer.writer_->matched_reader_is_matched(it.GetPDPReader()))
         {
             match_pdp_reader_nts_(it);
         }
@@ -941,6 +972,8 @@ bool PDPServer::process_writers_acknowledgements()
 {
     EPROSIMA_LOG_INFO(RTPS_PDP_SERVER, "process_writers_acknowledgements start");
 
+    auto endpoints = static_cast<fastdds::rtps::DiscoveryServerPDPEndpoints*>(builtin_endpoints_.get());
+
     // Execute first ACK for endpoints because PDP acked changes relevance in EDP,
     //  which can result in false positives in EDP acknowledgements.
 
@@ -952,8 +985,7 @@ bool PDPServer::process_writers_acknowledgements()
     pending |= process_history_acknowledgement(edp->publications_writer_.first, edp->publications_writer_.second);
 
     /* PDP Writer's History */
-    pending |= process_history_acknowledgement(
-        static_cast<fastrtps::rtps::StatefulWriter*>(mp_PDPWriter), mp_PDPWriterHistory);
+    pending |= process_history_acknowledgement(endpoints->writer.writer_, endpoints->writer.history_.get());
 
     return pending;
 }
@@ -1045,7 +1077,8 @@ History::iterator PDPServer::process_change_acknowledgement(
 bool PDPServer::process_disposals()
 {
     EPROSIMA_LOG_INFO(RTPS_PDP_SERVER, "process_disposals start");
-    // EPROSIMA_LOG_INFO(RTPS_PDP_SERVER, "process_disposals start");
+
+    auto endpoints = static_cast<fastdds::rtps::DiscoveryServerPDPEndpoints*>(builtin_endpoints_.get());
     EDPServer* edp = static_cast<EDPServer*>(mp_EDP);
     fastrtps::rtps::WriterHistory* pubs_history = edp->publications_writer_.second;
     fastrtps::rtps::WriterHistory* subs_history = edp->subscriptions_writer_.second;
@@ -1062,20 +1095,20 @@ bool PDPServer::process_disposals()
         // Get the identity of the participant from which the change came.
         fastrtps::rtps::GuidPrefix_t change_guid_prefix = discovery_db_.guid_from_change(change).guidPrefix;
 
-        change->writerGUID.guidPrefix = mp_PDPWriter->getGuid().guidPrefix;
+        change->writerGUID.guidPrefix = endpoints->writer.writer_->getGuid().guidPrefix;
 
         // DATA(Up) case
         if (discovery_db_.is_participant(change))
         {
             // Lock PDP writer
-            std::unique_lock<fastrtps::RecursiveTimedMutex> lock(mp_PDPWriter->getMutex());
+            std::unique_lock<fastrtps::RecursiveTimedMutex> lock(endpoints->writer.writer_->getMutex());
 
             // Remove all DATA(p) with the same sample identity as the DATA(Up) from PDP writer's history.
-            remove_related_alive_from_history_nts(mp_PDPWriterHistory, change_guid_prefix);
+            remove_related_alive_from_history_nts(endpoints->writer.history_.get(), change_guid_prefix);
 
             // Add DATA(Up) to PDP writer's history
             eprosima::fastrtps::rtps::WriteParams wp = change->write_params;
-            mp_PDPWriterHistory->add_change(change, wp);
+            endpoints->writer.history_->add_change(change, wp);
         }
         // DATA(Uw) case
         else if (discovery_db_.is_writer(change))
@@ -1135,6 +1168,7 @@ void PDPServer::process_changes_release_(
         const std::vector<fastrtps::rtps::CacheChange_t*>& changes)
 {
     // We will need the EDP publications/subscriptions writers, readers, and histories
+    auto endpoints = static_cast<fastdds::rtps::DiscoveryServerPDPEndpoints*>(builtin_endpoints_.get());
     EDPServer* edp = static_cast<EDPServer*>(mp_EDP);
 
     // For each change to erase, first try to erase in case is in writer history and then it releases it
@@ -1143,15 +1177,15 @@ void PDPServer::process_changes_release_(
         // Check if change owner is this participant. In that case, the change comes from a writer pool (PDP, EDP
         // publications or EDP subscriptions)
         // We compare the instance handle, as the only changes from our own server are its owns
-        if (discovery_db().guid_from_change(ch) == mp_PDPWriter->getGuid())
+        if (discovery_db().guid_from_change(ch) == endpoints->writer.writer_->getGuid())
         {
             if (discovery_db_.is_participant(ch))
             {
                 // The change must return to the pool even if not present in the history
                 // Normally Data(Up) will not be in history except in Own Server destruction
-                if (!remove_change_from_writer_history(mp_PDPWriter, mp_PDPWriterHistory, ch))
+                if (!remove_change_from_writer_history(endpoints->writer.writer_, endpoints->writer.history_.get(), ch))
                 {
-                    mp_PDPWriter->release_change(ch);
+                    endpoints->writer.writer_->release_change(ch);
                 }
             }
             else if (discovery_db_.is_writer(ch))
@@ -1193,8 +1227,12 @@ void PDPServer::process_changes_release_(
             // take it out upon reading it in the listeners
             if (discovery_db_.is_participant(ch))
             {
-                remove_change_from_writer_history(mp_PDPWriter, mp_PDPWriterHistory, ch, false);
-                mp_PDPReader->releaseCache(ch);
+                remove_change_from_writer_history(
+                    endpoints->writer.writer_,
+                    endpoints->writer.history_.get(),
+                    ch,
+                    false);
+                endpoints->reader.reader_->releaseCache(ch);
             }
             else if (discovery_db_.is_writer(ch))
             {
@@ -1278,7 +1316,8 @@ bool PDPServer::process_to_send_lists()
     {
         // Process pdp_to_send_
         EPROSIMA_LOG_INFO(RTPS_PDP_SERVER, "Processing pdp_to_send");
-        process_to_send_list(discovery_db_.pdp_to_send(), mp_PDPWriter, mp_PDPWriterHistory);
+        auto endpoints = static_cast<fastdds::rtps::DiscoveryServerPDPEndpoints*>(builtin_endpoints_.get());
+        process_to_send_list(discovery_db_.pdp_to_send(), endpoints->writer.writer_, endpoints->writer.history_.get());
     }
     else
     {
@@ -1366,15 +1405,16 @@ bool PDPServer::remove_change_from_history_nts(
 
 bool PDPServer::pending_ack()
 {
+    auto endpoints = static_cast<fastdds::rtps::DiscoveryServerPDPEndpoints*>(builtin_endpoints_.get());
     EDPServer* edp = static_cast<EDPServer*>(mp_EDP);
     bool ret = (!discovery_db_.server_acked_by_all() ||
-            mp_PDPWriterHistory->getHistorySize() > 1 ||
+            endpoints->writer.history_->getHistorySize() > 1 ||
             edp->publications_writer_.second->getHistorySize() > 0 ||
             edp->subscriptions_writer_.second->getHistorySize() > 0);
 
-    EPROSIMA_LOG_INFO(RTPS_PDP_SERVER, "PDP writer history length " << mp_PDPWriterHistory->getHistorySize());
+    EPROSIMA_LOG_INFO(RTPS_PDP_SERVER, "PDP writer history length " << endpoints->writer.history_->getHistorySize());
     EPROSIMA_LOG_INFO(RTPS_PDP_SERVER,
-            "is server " << mp_PDPWriter->getGuid() << " acked by all? " <<
+            "is server " << endpoints->writer.writer_->getGuid() << " acked by all? " <<
             discovery_db_.server_acked_by_all());
     EPROSIMA_LOG_INFO(RTPS_PDP_SERVER, "Are there pending changes? " << ret);
     return ret;
@@ -1401,7 +1441,9 @@ eprosima::fastrtps::rtps::ResourceEvent& PDPServer::get_resource_event_thread()
 bool PDPServer::all_servers_acknowledge_pdp()
 {
     // check if already initialized
-    assert(mp_PDPWriterHistory && mp_PDPWriter);
+    auto endpoints = static_cast<fastdds::rtps::DiscoveryServerPDPEndpoints*>(builtin_endpoints_.get());
+    static_cast<void>(endpoints);
+    assert(endpoints->writer.history_ && endpoints->writer.writer_);
 
     return discovery_db_.server_acked_by_my_servers();
 }
@@ -1446,17 +1488,17 @@ void PDPServer::send_announcement(
         return;
     }
 
+    auto endpoints = static_cast<fastdds::rtps::DiscoveryServerPDPEndpoints*>(builtin_endpoints_.get());
     DirectMessageSender sender(getRTPSParticipant(), &remote_readers, &locators);
-    RTPSMessageGroup group(getRTPSParticipant(), mp_PDPWriter, &sender);
+    RTPSMessageGroup group(getRTPSParticipant(), endpoints->writer.writer_, &sender);
 
     if (dispose)
     {
-        fastrtps::rtps::StatefulWriter* writer = static_cast<fastrtps::rtps::StatefulWriter*>(mp_PDPWriter);
-        writer->fastrtps::rtps::StatefulWriter::incrementHBCount();
+        endpoints->writer.writer_->fastrtps::rtps::StatefulWriter::incrementHBCount();
         group.add_heartbeat(
             change->sequenceNumber,
             change->sequenceNumber,
-            writer->getHeartbeatCount(),
+            endpoints->writer.writer_->getHeartbeatCount(),
             true,
             false);
     }
@@ -1519,7 +1561,8 @@ bool PDPServer::process_backup_discovery_database_restore(
     EDPServerSUBListener* edp_sub_listener = static_cast<EDPServerSUBListener*>(edp->subscriptions_listener_);
 
     // These mutexes are necessary to send messages to the listeners
-    std::unique_lock<fastrtps::RecursiveTimedMutex> lock(mp_PDPReader->getMutex());
+    auto endpoints = static_cast<fastdds::rtps::DiscoveryServerPDPEndpoints*>(builtin_endpoints_.get());
+    std::unique_lock<fastrtps::RecursiveTimedMutex> lock(endpoints->reader.reader_->getMutex());
     std::unique_lock<fastrtps::RecursiveTimedMutex> lock_edpp(edp->publications_reader_.first->getMutex());
     std::unique_lock<fastrtps::RecursiveTimedMutex> lock_edps(edp->subscriptions_reader_.first->getMutex());
 
@@ -1539,7 +1582,7 @@ bool PDPServer::process_backup_discovery_database_restore(
             std::istringstream(it.value()["change"]["sample_identity"].get<std::string>()) >> sample_identity_aux;
 
             // Reserve memory for new change. There will not be changes from own server
-            if (!mp_PDPReader->reserveCache(&change_aux, length))
+            if (!endpoints->reader.reader_->reserveCache(&change_aux, length))
             {
                 EPROSIMA_LOG_ERROR(RTPS_PDP_SERVER, "Error creating CacheChange");
                 // TODO release changes and exit
@@ -1555,12 +1598,12 @@ bool PDPServer::process_backup_discovery_database_restore(
             // If the change was read as is_local we must pass it to listener with his own writer_guid
             if (it.value()["is_local"].get<bool>() &&
                     change_aux->write_params.sample_identity().writer_guid().guidPrefix !=
-                    mp_PDPWriter->getGuid().guidPrefix &&
+                    endpoints->writer.writer_->getGuid().guidPrefix &&
                     change_aux->kind == fastrtps::rtps::ALIVE)
             {
                 change_aux->writerGUID = change_aux->write_params.sample_identity().writer_guid();
                 change_aux->sequenceNumber = change_aux->write_params.sample_identity().sequence_number();
-                mp_listener->onNewCacheChangeAdded(mp_PDPReader, change_aux);
+                mp_listener->onNewCacheChangeAdded(endpoints->reader.reader_, change_aux);
             }
         }
 
@@ -1596,7 +1639,7 @@ bool PDPServer::process_backup_discovery_database_restore(
             // should store in DDB if it is local even for endpoints
             // call listener to create proxy info for other entities different than server
             if (change_aux->write_params.sample_identity().writer_guid().guidPrefix !=
-                    mp_PDPWriter->getGuid().guidPrefix
+                    endpoints->writer.writer_->getGuid().guidPrefix
                     && change_aux->kind == fastrtps::rtps::ALIVE
                     && it.value()["topic"] != discovery_db().virtual_topic())
             {
@@ -1632,7 +1675,7 @@ bool PDPServer::process_backup_discovery_database_restore(
 
             // call listener to create proxy info for other entities different than server
             if (change_aux->write_params.sample_identity().writer_guid().guidPrefix !=
-                    mp_PDPWriter->getGuid().guidPrefix
+                    endpoints->writer.writer_->getGuid().guidPrefix
                     && change_aux->kind == fastrtps::rtps::ALIVE
                     && it.value()["topic"] != discovery_db().virtual_topic())
             {
@@ -1663,7 +1706,7 @@ bool PDPServer::process_backup_restore_queue(
     // EDPServerPUBListener* edp_pub_listener = static_cast<EDPServerPUBListener*>(edp->publications_listener_);
     // EDPServerSUBListener* edp_sub_listener = static_cast<EDPServerSUBListener*>(edp->subscriptions_listener_);
 
-    // std::unique_lock<fastrtps::RecursiveTimedMutex> lock(mp_PDPReader->getMutex());
+    // std::unique_lock<fastrtps::RecursiveTimedMutex> lock(endpoints->reader.reader_->getMutex());
     // std::unique_lock<fastrtps::RecursiveTimedMutex> lock_edpp(edp->publications_reader_.first->getMutex());
     // std::unique_lock<fastrtps::RecursiveTimedMutex> lock_edps(edp->subscriptions_reader_.first->getMutex());
 
@@ -1680,11 +1723,11 @@ bool PDPServer::process_backup_restore_queue(
     //         (std::istringstream) json_change["instance_handle"].get<std::string>() >> instance_handle_aux;
 
     //         // Belongs to own server
-    //         if (sample_identity_aux.writer_guid() == mp_PDPWriter->getGuid())
+    //         if (sample_identity_aux.writer_guid() == endpoints->writer.writer_->getGuid())
     //         {
     //             if (discovery_db_.is_participant(iHandle2GUID(instance_handle_aux)))
     //             {
-    //                 if (!mp_PDPWriterHistory->reserve_Cache(&change_aux, length))
+    //                 if (!endpoints->writer.history_->reserve_Cache(&change_aux, length))
     //                             [this]() -> uint32_t
     //                             {
     //                                 return mp_PDP->builtin_attributes().readerPayloadSize;
@@ -1697,7 +1740,7 @@ bool PDPServer::process_backup_restore_queue(
     //                 else
     //                 {
     //                     ddb::from_json(json_change, *change_aux);
-    //                     mp_listener->onNewCacheChangeAdded(mp_PDPReader, change_aux);
+    //                     mp_listener->onNewCacheChangeAdded(endpoints->reader.reader_, change_aux);
     //                 }
 
     //             }
@@ -1733,7 +1776,7 @@ bool PDPServer::process_backup_restore_queue(
     //         {
     //             if (discovery_db_.is_participant(iHandle2GUID(instance_handle_aux)))
     //             {
-    //                 if (!mp_PDPReaderHistory->reserve_Cache(&change_aux, length))
+    //                 if (!endpoints->reader.history_->reserve_Cache(&change_aux, length))
     //                 {
     //                     EPROSIMA_LOG_ERROR(RTPS_PDP_SERVER, "Error creating CacheChange");
     //                     // TODO release changes and exit
@@ -1741,7 +1784,7 @@ bool PDPServer::process_backup_restore_queue(
     //                 else
     //                 {
     //                     ddb::from_json(json_change, *change_aux);
-    //                     mp_listener->onNewCacheChangeAdded(mp_PDPReader, change_aux);
+    //                     mp_listener->onNewCacheChangeAdded(endpoints->reader.reader_, change_aux);
     //                 }
 
     //             }
@@ -1805,6 +1848,7 @@ void PDPServer::process_backup_store()
 void PDPServer::match_pdp_writer_nts_(
         const eprosima::fastdds::rtps::RemoteServerAttributes& server_att)
 {
+    auto endpoints = static_cast<fastdds::rtps::DiscoveryServerPDPEndpoints*>(builtin_endpoints_.get());
     const NetworkFactory& network = mp_RTPSParticipant->network_factory();
     auto temp_writer_data = get_temporary_writer_proxies_pool().get();
 
@@ -1814,12 +1858,13 @@ void PDPServer::match_pdp_writer_nts_(
     temp_writer_data->set_remote_unicast_locators(server_att.metatrafficUnicastLocatorList, network);
     temp_writer_data->m_qos.m_durability.durabilityKind(durability_);
     temp_writer_data->m_qos.m_reliability.kind = dds::RELIABLE_RELIABILITY_QOS;
-    mp_PDPReader->matched_writer_add(*temp_writer_data);
+    endpoints->reader.reader_->matched_writer_add(*temp_writer_data);
 }
 
 void PDPServer::match_pdp_reader_nts_(
         const eprosima::fastdds::rtps::RemoteServerAttributes& server_att)
 {
+    auto endpoints = static_cast<fastdds::rtps::DiscoveryServerPDPEndpoints*>(builtin_endpoints_.get());
     const NetworkFactory& network = mp_RTPSParticipant->network_factory();
     auto temp_reader_data = get_temporary_reader_proxies_pool().get();
 
@@ -1829,7 +1874,14 @@ void PDPServer::match_pdp_reader_nts_(
     temp_reader_data->set_remote_unicast_locators(server_att.metatrafficUnicastLocatorList, network);
     temp_reader_data->m_qos.m_durability.kind = dds::TRANSIENT_LOCAL_DURABILITY_QOS;
     temp_reader_data->m_qos.m_reliability.kind = dds::RELIABLE_RELIABILITY_QOS;
-    mp_PDPWriter->matched_reader_add(*temp_reader_data);
+    endpoints->writer.writer_->matched_reader_add(*temp_reader_data);
+}
+
+void PDPServer::release_change_from_writer(
+        eprosima::fastrtps::rtps::CacheChange_t* change)
+{
+    auto endpoints = static_cast<fastdds::rtps::DiscoveryServerPDPEndpoints*>(builtin_endpoints_.get());
+    endpoints->writer.writer_->release_change(change);
 }
 
 } // namespace rtps
