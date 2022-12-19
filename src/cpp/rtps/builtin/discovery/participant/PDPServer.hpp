@@ -335,6 +335,16 @@ private:
             DiscoveryServerPDPEndpoints& endpoints,
             bool secure);
 
+    /**
+     * Performs creation of DS best-effort PDP reader.
+     *
+     * @param [in,out]  endpoints  Container where the created resources should be kept.
+     *
+     * @return whether the reader was successfully created.
+     */
+    bool create_ds_pdp_best_effort_reader(
+            DiscoveryServerPDPEndpointsSecure& endpoints);
+
     //! Server thread
     eprosima::fastrtps::rtps::ResourceEvent resource_event_thread_;
 

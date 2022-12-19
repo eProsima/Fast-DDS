@@ -259,7 +259,58 @@ bool PDPServer::create_secure_ds_pdp_endpoints()
     auto endpoints = new fastdds::rtps::DiscoveryServerPDPEndpointsSecure();
     builtin_endpoints_.reset(endpoints);
 
-    return create_ds_pdp_reliable_endpoints(*endpoints, true);
+    return create_ds_pdp_reliable_endpoints(*endpoints, true) && create_ds_pdp_best_effort_reader(*endpoints);
+}
+
+bool PDPServer::create_ds_pdp_best_effort_reader(
+        DiscoveryServerPDPEndpointsSecure& endpoints)
+{
+    const RTPSParticipantAttributes& pattr = mp_RTPSParticipant->getRTPSParticipantAttributes();
+
+    HistoryAttributes hatt;
+    hatt.payloadMaxSize = mp_builtin->m_att.readerPayloadSize;
+    hatt.initialReservedCaches = pdp_initial_reserved_caches;
+    hatt.memoryPolicy = mp_builtin->m_att.readerHistoryMemoryPolicy;
+    endpoints.stateless_reader.history_.reset(new ReaderHistory(hatt));
+
+    ReaderAttributes ratt;
+    ratt.expectsInlineQos = false;
+    ratt.endpoint.endpointKind = READER;
+    ratt.endpoint.multicastLocatorList = mp_builtin->m_metatrafficMulticastLocatorList;
+    ratt.endpoint.unicastLocatorList = mp_builtin->m_metatrafficUnicastLocatorList;
+    ratt.endpoint.external_unicast_locators = mp_builtin->m_att.metatraffic_external_unicast_locators;
+    ratt.endpoint.ignore_non_matching_locators = pattr.ignore_non_matching_locators;
+    ratt.endpoint.topicKind = WITH_KEY;
+    // change depending of backup mode
+    ratt.endpoint.durabilityKind = VOLATILE;
+    ratt.endpoint.reliabilityKind = BEST_EFFORT;
+
+    // TODO: PDP Listener for initiating PKI
+    // endpoints.stateless_listener.reset(new PDPSecurityInitiatorListener(this));
+
+    // Create PDP Reader
+    RTPSReader* reader = nullptr;
+    if (mp_RTPSParticipant->createReader(&reader, ratt, endpoints.stateless_reader.history_.get(),
+            endpoints.stateless_listener.get(), c_EntityId_SPDPReader, true, false))
+    {
+        endpoints.stateless_reader.reader_ = dynamic_cast<fastrtps::rtps::StatelessReader*>(reader);
+
+        // Enable unknown clients to reach this reader
+        reader->enableMessagesFromUnkownWriters(true);
+
+        mp_RTPSParticipant->set_endpoint_rtps_protection_supports(reader, false);
+    }
+    // Could not create PDP Reader, so return false
+    else
+    {
+        EPROSIMA_LOG_ERROR(RTPS_PDP_SERVER, "PDPServer Reader " << c_EntityId_SPDPReader << " creation failed");
+
+        endpoints.stateless_listener.reset();
+        endpoints.stateless_reader.release();
+        return false;
+    }
+
+    return true;
 }
 
 #endif  // HAVE_SECURITY

@@ -89,6 +89,8 @@ struct DiscoveryServerPDPEndpointsSecure : public DiscoveryServerPDPEndpoints
 
     //! Builtin Simple PDP reader
     BuiltinReader<fastrtps::rtps::StatelessReader> stateless_reader;
+    //! Listener for stateless_reader
+    std::unique_ptr<fastrtps::rtps::ReaderListener> stateless_listener;
 };
 
 } // namespace rtps
