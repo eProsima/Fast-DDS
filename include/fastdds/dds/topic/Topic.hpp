@@ -91,7 +91,7 @@ public:
      * @return RETCODE_OK
      * @warning Not supported yet. Currently returns RETCODE_UNSUPPORTED
      */
-    ReturnCode_t get_inconsistent_topic_status(
+    RTPS_DllAPI ReturnCode_t get_inconsistent_topic_status(
             InconsistentTopicStatus& status);
 
     /**
