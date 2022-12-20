@@ -133,11 +133,8 @@ void PDPSecurityInitiatorListener::onNewCacheChangeAdded(
                 reader->getMutex().unlock();
                 lock.unlock();
 
-                if (pdata != nullptr)
-                {
-                    //! notify security manager in order to start handshake
-                    parent_pdp_->getRTPSParticipant()->security_manager().discovered_participant(temp_participant_data_);
-                }
+                //! notify security manager in order to start handshake
+                parent_pdp_->getRTPSParticipant()->security_manager().discovered_participant(temp_participant_data_);
 
                 // Take again the reader lock
                 reader->getMutex().lock();
