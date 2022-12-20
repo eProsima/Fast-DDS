@@ -129,18 +129,12 @@ void PDPSecurityInitiatorListener::onNewCacheChangeAdded(
             if (pdata == nullptr)
             {
                 // Create a new one when not found
-                pdata = parent_pdp_->createParticipantProxyData(temp_participant_data_, writer_guid);
 
                 reader->getMutex().unlock();
                 lock.unlock();
 
                 if (pdata != nullptr)
                 {
-                    EPROSIMA_LOG_INFO(RTPS_PDP_DISCOVERY, "New participant "
-                            << pdata->m_guid << " at "
-                            << "MTTLoc: " << pdata->metatraffic_locators
-                            << " DefLoc:" << pdata->default_locators);
-
                     //! notify security manager in order to start handshake
                     parent_pdp_->getRTPSParticipant()->security_manager().discovered_participant(temp_participant_data_);
                 }
