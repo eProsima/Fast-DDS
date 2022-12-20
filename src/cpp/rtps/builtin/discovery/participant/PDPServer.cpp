@@ -37,20 +37,20 @@
 
 #include <fastrtps/utils/TimeConversion.h>
 #include <fastdds/dds/core/policy/QosPolicies.hpp>
-
-#include <rtps/builtin/discovery/participant/DS/DiscoveryServerPDPEndpoints.hpp>
-#include <rtps/builtin/discovery/participant/DS/DiscoveryServerPDPEndpointsSecure.hpp>
-#include <rtps/builtin/discovery/participant/DirectMessageSender.hpp>
-#include <rtps/participant/RTPSParticipantImpl.h>
-
 #include <fastdds/dds/log/Log.hpp>
 
-#include <rtps/builtin/discovery/participant/PDPServer.hpp>
-#include <rtps/builtin/discovery/participant/PDPServerListener.hpp>
-#include <rtps/builtin/discovery/participant/DS/PDPSecurityInitiatorListener.hpp>
-#include <rtps/builtin/discovery/participant/timedevent/DServerEvent.hpp>
 #include <rtps/builtin/discovery/endpoint/EDPServer.hpp>
 #include <rtps/builtin/discovery/endpoint/EDPServerListeners.hpp>
+#include <rtps/builtin/discovery/participant/DirectMessageSender.hpp>
+#include <rtps/builtin/discovery/participant/PDPServer.hpp>
+#include <rtps/builtin/discovery/participant/PDPServerListener.hpp>
+#include <rtps/builtin/discovery/participant/DS/DiscoveryServerPDPEndpoints.hpp>
+#include <rtps/builtin/discovery/participant/DS/DiscoveryServerPDPEndpointsSecure.hpp>
+#include <rtps/builtin/discovery/participant/DS/FakeWriter.hpp>
+#include <rtps/builtin/discovery/participant/DS/PDPSecurityInitiatorListener.hpp>
+#include <rtps/builtin/discovery/participant/timedevent/DServerEvent.hpp>
+
+#include <rtps/participant/RTPSParticipantImpl.h>
 
 #include <rtps/builtin/discovery/database/backup/SharedBackupFunctions.hpp>
 
@@ -1604,10 +1604,10 @@ void PDPServer::send_announcement(
 
     auto endpoints = static_cast<fastdds::rtps::DiscoveryServerPDPEndpoints*>(builtin_endpoints_.get());
     DirectMessageSender sender(getRTPSParticipant(), &remote_readers, &locators);
-    RTPSMessageGroup group(getRTPSParticipant(), endpoints->writer.writer_, &sender);
 
     if (dispose)
     {
+        RTPSMessageGroup group(getRTPSParticipant(), endpoints->writer.writer_, &sender);
         endpoints->writer.writer_->fastrtps::rtps::StatefulWriter::incrementHBCount();
         group.add_heartbeat(
             change->sequenceNumber,
@@ -1615,12 +1615,22 @@ void PDPServer::send_announcement(
             endpoints->writer.writer_->getHeartbeatCount(),
             true,
             false);
+
+        if (!group.add_data(*change, false))
+        {
+            EPROSIMA_LOG_ERROR(RTPS_PDP_SERVER, "Error sending announcement from server to clients");
+        }
+    }
+    else
+    {
+        FakeWriter writer(getRTPSParticipant(), c_EntityId_SPDPWriter);
+        RTPSMessageGroup group(getRTPSParticipant(), &writer, &sender);
+        if (!group.add_data(*change, false))
+        {
+            EPROSIMA_LOG_ERROR(RTPS_PDP_SERVER, "Error sending announcement from server to clients");
+        }
     }
 
-    if (!group.add_data(*change, false))
-    {
-        EPROSIMA_LOG_ERROR(RTPS_PDP_SERVER, "Error sending announcement from server to clients");
-    }
 }
 
 bool PDPServer::read_backup(
