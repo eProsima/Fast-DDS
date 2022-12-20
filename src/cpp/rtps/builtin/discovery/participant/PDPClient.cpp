@@ -41,8 +41,9 @@
 #include <fastrtps/utils/shared_mutex.hpp>
 #include <rtps/builtin/discovery/endpoint/EDPClient.h>
 #include <rtps/builtin/discovery/participant/DirectMessageSender.hpp>
-#include <rtps/builtin/discovery/participant/timedevent/DSClientEvent.h>
+#include <rtps/builtin/discovery/participant/DS/FakeWriter.hpp>
 #include <rtps/builtin/discovery/participant/DS/PDPSecurityInitiatorListener.hpp>
+#include <rtps/builtin/discovery/participant/timedevent/DSClientEvent.h>
 #include <rtps/participant/RTPSParticipantImpl.h>
 #include <utils/SystemInfo.hpp>
 
@@ -53,6 +54,21 @@ namespace fastdds {
 namespace rtps {
 
 using namespace fastrtps::rtps;
+
+static void direct_send(
+        RTPSParticipantImpl* participant,
+        std::vector<GUID_t>& remote_readers,
+        LocatorList& locators,
+        const CacheChange_t& change)
+{
+    FakeWriter writer(participant, c_EntityId_SPDPWriter);
+    DirectMessageSender sender(participant, &remote_readers, &locators);
+    RTPSMessageGroup group(participant, &writer, &sender);
+    if (!group.add_data(change, false))
+    {
+        EPROSIMA_LOG_ERROR(RTPS_PDP, "Error sending announcement from client to servers");
+    }
+}
 
 PDPClient::PDPClient(
         BuiltinProtocols* builtin,
@@ -652,12 +668,7 @@ void PDPClient::announceParticipantState(
                     }
                 }
 
-                DirectMessageSender sender(getRTPSParticipant(), &remote_readers, &locators);
-                RTPSMessageGroup group(getRTPSParticipant(), &writer, &sender);
-                if (!group.add_data(*change, false))
-                {
-                    EPROSIMA_LOG_ERROR(RTPS_PDP, "Error sending announcement from client to servers");
-                }
+                direct_send(getRTPSParticipant(), remote_readers, locators, *change);
             }
 
             // free change
@@ -690,13 +701,7 @@ void PDPClient::announceParticipantState(
                         }
                     }
 
-                    DirectMessageSender sender(getRTPSParticipant(), &remote_readers, &locators);
-                    RTPSMessageGroup group(getRTPSParticipant(), &writer, &sender);
-
-                    if (!group.add_data(*pPD, false))
-                    {
-                        EPROSIMA_LOG_ERROR(RTPS_PDP, "Error sending announcement from client to servers");
-                    }
+                    direct_send(getRTPSParticipant(), remote_readers, locators, *pPD);
 
                     // ping done independtly of which triggered the announcement
                     // note all event callbacks are currently serialized
