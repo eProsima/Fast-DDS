@@ -145,10 +145,11 @@ void PDPSecurityInitiatorListener::onNewCacheChangeAdded(
                     parent_pdp_->getRTPSParticipant()->security_manager().discovered_participant(temp_participant_data_);
                 }
 
+                // Take again the reader lock
+                reader->getMutex().lock();
+
             } //! Do nothing if already discovered
 
-            // Take again the reader lock
-            reader->getMutex().lock();
         }
 
     } //! Do nothing on participant removal
