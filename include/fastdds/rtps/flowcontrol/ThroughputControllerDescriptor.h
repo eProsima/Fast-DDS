@@ -26,6 +26,7 @@ namespace rtps{
  * Descriptor for a Throughput Controller, containing all constructor information
  * for it.
  * @ingroup NETWORK_MODULE
+ * @deprecated Use FlowControllerDescriptor
  */
 struct ThroughputControllerDescriptor
 {
