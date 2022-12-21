@@ -292,6 +292,7 @@ set(${PROJECT_NAME}_security_source_files
     rtps/security/logging/Logging.cpp
     rtps/security/SecurityManager.cpp
     rtps/security/SecurityPluginFactory.cpp
+    rtps/builtin/discovery/participant/DS/PDPSecurityInitiatorListener.cpp
     security/authentication/PKIDH.cpp
     security/accesscontrol/Permissions.cpp
     security/cryptography/AESGCMGMAC.cpp
@@ -390,7 +391,7 @@ find_package(Atomic MODULE)
 # prioritizes writes
 
 # try_run cannot manage targets yet
-get_target_property(CMAKE_ATOMIC_LIB eProsima_atomic INTERFACE_LINK_LIBRARIES)    
+get_target_property(CMAKE_ATOMIC_LIB eProsima_atomic INTERFACE_LINK_LIBRARIES)
 if(NOT CMAKE_ATOMIC_LIB)
     set(CMAKE_ATOMIC_LIB)
 endif()
@@ -508,7 +509,7 @@ if(MSVC OR MSVC_IDE)
         endif()
 
         # Get OpenSSL version suitable manifest format
-        execute_process( COMMAND PowerShell -NoLogo -Command "&{ param([string]$original) 
+        execute_process( COMMAND PowerShell -NoLogo -Command "&{ param([string]$original)
         if ($original -notmatch '\\d+$')
             { $res = $original.Substring(0,$original.length-1) + '.' +
             ([int]$original[$original.length-1]-[int][char]'a'+1); }

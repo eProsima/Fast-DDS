@@ -26,6 +26,9 @@
 
 #include <rtps/builtin/discovery/participant/timedevent/DSClientEvent.h>
 
+#include <rtps/builtin/discovery/participant/DS/DiscoveryServerPDPEndpoints.hpp>
+#include <rtps/builtin/discovery/participant/DS/DiscoveryServerPDPEndpointsSecure.hpp>
+
 namespace eprosima {
 namespace fastdds {
 namespace rtps {
@@ -164,6 +167,46 @@ protected:
             const eprosima::fastdds::rtps::RemoteServerAttributes& server_att);
 
 private:
+
+#if HAVE_SECURITY
+    /**
+     * Returns whether discovery should be secured
+     */
+    bool should_protect_discovery();
+
+    /**
+     * Performs creation of secured DS PDP endpoints
+     */
+    bool create_secure_ds_pdp_endpoints();
+
+#endif  // HAVE_SECURITY
+
+    /**
+     * Performs creation of standard DS PDP endpoints
+     */
+    bool create_ds_pdp_endpoints();
+
+    /**
+     * Performs creation of DS (reliable) PDP endpoints.
+     *
+     * @param [in,out]  endpoints  Container where the created resources should be kept.
+     * @param [in]      secure     Whether the created endpoints should be secure.
+     *
+     * @return whether the endpoints were successfully created.
+     */
+    bool create_ds_pdp_reliable_endpoints(
+            DiscoveryServerPDPEndpoints& endpoints,
+            bool secure);
+
+    /**
+     * Performs creation of DS best-effort PDP reader.
+     *
+     * @param [in,out]  endpoints  Container where the created resources should be kept.
+     *
+     * @return whether the reader was successfully created.
+     */
+    bool create_ds_pdp_best_effort_reader(
+            DiscoveryServerPDPEndpointsSecure& endpoints);
 
     /**
      * TimedEvent for server synchronization:
