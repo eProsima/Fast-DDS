@@ -45,9 +45,11 @@ namespace fastrtps {
 namespace rtps {
 
 PDPSecurityInitiatorListener::PDPSecurityInitiatorListener(
-        PDP* parent)
+        PDP* parent,
+        ResponseCallback response_cb)
     : parent_pdp_(parent)
     , temp_participant_data_(parent->getRTPSParticipant()->getRTPSParticipantAttributes().allocation)
+    , response_cb_(response_cb)
 {
 }
 
@@ -135,6 +137,9 @@ void PDPSecurityInitiatorListener::onNewCacheChangeAdded(
 
                 //! notify security manager in order to start handshake
                 parent_pdp_->getRTPSParticipant()->security_manager().discovered_participant(temp_participant_data_);
+
+                //! Reply to the remote participant
+                response_cb_(temp_participant_data_);
 
                 // Take again the reader lock
                 reader->getMutex().lock();

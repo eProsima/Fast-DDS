@@ -36,22 +36,27 @@ class PDP;
  * Class PDPSecurityInitiatorListener, implementation for the secure discovery server handshake initiator.
  * @ingroup DISCOVERY_MODULE
  */
-class PDPSecurityInitiatorListener: public ReaderListener
+class PDPSecurityInitiatorListener : public ReaderListener
 {
 
+    using ResponseCallback = std::function<void (const ParticipantProxyData& participant_data)>;
+
 public:
+
     /**
      * @param parent Pointer to object creating this object
      */
-    PDPSecurityInitiatorListener(PDP* parent);
+    PDPSecurityInitiatorListener(
+            PDP* parent,
+            ResponseCallback response_cb = [] (const ParticipantProxyData&)->void {});
 
     virtual ~PDPSecurityInitiatorListener() override = default;
 
     /**
-    * New added cache
-    * @param reader
-    * @param change
-    */
+     * New added cache
+     * @param reader
+     * @param change
+     */
     void onNewCacheChangeAdded(
             RTPSReader* reader,
             const CacheChange_t* const change) override;
@@ -63,7 +68,8 @@ protected:
      * @param change Pointer to the CacheChange_t
      * @return True on success
      */
-    bool get_key(CacheChange_t* change);
+    bool get_key(
+            CacheChange_t* change);
 
     //!Pointer to the associated mp_SPDP;
     PDP* parent_pdp_;
@@ -74,6 +80,9 @@ protected:
      * @remarks This should be always accessed with the pdp_reader lock taken
      */
     ParticipantProxyData temp_participant_data_;
+
+    //! What action to perform upon participant discovery
+    ResponseCallback response_cb_;
 };
 
 
@@ -81,5 +90,5 @@ protected:
 } /* namespace fastrtps */
 } /* namespace eprosima */
 
-#endif
+#endif // ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 #endif /* _DS_PDP_SECURITY_INITIATOR_LISTENER_H_ */
