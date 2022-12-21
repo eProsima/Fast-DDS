@@ -628,10 +628,15 @@ void PDPServer::assignRemoteEndpoints(
     }
 
     //Inform EDP of new RTPSParticipant data:
-    notifyAboveRemoteEndpoints(*pdata);
+    perform_builtin_endpoints_matching(*pdata);
 }
 
 void PDPServer::notifyAboveRemoteEndpoints(
+        const ParticipantProxyData& pdata)
+{
+}
+
+void PDPServer::perform_builtin_endpoints_matching(
         const ParticipantProxyData& pdata)
 {
     //Inform EDP of new RTPSParticipant data:

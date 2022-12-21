@@ -346,6 +346,12 @@ private:
     bool create_ds_pdp_best_effort_reader(
             DiscoveryServerPDPEndpointsSecure& endpoints);
 
+    /**
+     * Provides the functionality of notifyAboveRemoteEndpoints without being an override of that method.
+     */
+    void perform_builtin_endpoints_matching(
+            const fastrtps::rtps::ParticipantProxyData& pdata);
+
     //! Server thread
     eprosima::fastrtps::rtps::ResourceEvent resource_event_thread_;
 
