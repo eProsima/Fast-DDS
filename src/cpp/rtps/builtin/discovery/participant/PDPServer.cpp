@@ -303,7 +303,7 @@ bool PDPServer::create_ds_pdp_best_effort_reader(
                     std::vector<GUID_t> remote_readers;
                     LocatorList locators;
 
-                    remote_readers.emplace_back(participant_data.m_guid.guidPrefix,c_EntityId_SPDPReader);
+                    remote_readers.emplace_back(participant_data.m_guid.guidPrefix, c_EntityId_SPDPReader);
 
                     for (auto& locator : participant_data.metatraffic_locators.unicast)
                     {

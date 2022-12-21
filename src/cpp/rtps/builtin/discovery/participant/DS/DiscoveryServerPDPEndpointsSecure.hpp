@@ -42,14 +42,14 @@ struct DiscoveryServerPDPEndpointsSecure : public DiscoveryServerPDPEndpoints
     fastrtps::rtps::BuiltinEndpointSet_t builtin_endpoints() const override
     {
         return DiscoveryServerPDPEndpoints::builtin_endpoints() |
-            DISC_BUILTIN_ENDPOINT_PARTICIPANT_SECURE_ANNOUNCER | DISC_BUILTIN_ENDPOINT_PARTICIPANT_SECURE_DETECTOR;
+               DISC_BUILTIN_ENDPOINT_PARTICIPANT_SECURE_ANNOUNCER | DISC_BUILTIN_ENDPOINT_PARTICIPANT_SECURE_DETECTOR;
     }
 
     bool enable_pdp_readers(
             fastrtps::rtps::RTPSParticipantImpl* participant) override
     {
         return DiscoveryServerPDPEndpoints::enable_pdp_readers(participant) &&
-            participant->enableReader(stateless_reader.reader_);
+               participant->enableReader(stateless_reader.reader_);
     }
 
     void disable_pdp_readers(

@@ -52,7 +52,7 @@ namespace types {
 class TypeObject;
 class TypeIdentifier;
 
-}
+} // namespace types
 namespace rtps {
 
 class RTPSWriter;
