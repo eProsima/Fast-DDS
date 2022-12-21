@@ -231,6 +231,8 @@ public:
         return true;
     }
 
+    MOCK_METHOD0(pdp, PDP * ());
+
     MOCK_METHOD0(pdpsimple, PDPSimple * ());
 
     MockParticipantListener* getListener()

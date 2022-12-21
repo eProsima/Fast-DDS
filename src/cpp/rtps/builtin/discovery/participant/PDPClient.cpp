@@ -41,7 +41,8 @@
 #include <fastrtps/utils/shared_mutex.hpp>
 #include <rtps/builtin/discovery/endpoint/EDPClient.h>
 #include <rtps/builtin/discovery/participant/DirectMessageSender.hpp>
-#include <rtps/builtin/discovery/participant/DS/DiscoveryServerPDPEndpoints.hpp>
+#include <rtps/builtin/discovery/participant/DS/FakeWriter.hpp>
+#include <rtps/builtin/discovery/participant/DS/PDPSecurityInitiatorListener.hpp>
 #include <rtps/builtin/discovery/participant/timedevent/DSClientEvent.h>
 #include <rtps/participant/RTPSParticipantImpl.h>
 #include <utils/SystemInfo.hpp>
@@ -53,6 +54,21 @@ namespace fastdds {
 namespace rtps {
 
 using namespace fastrtps::rtps;
+
+static void direct_send(
+        RTPSParticipantImpl* participant,
+        std::vector<GUID_t>& remote_readers,
+        LocatorList& locators,
+        const CacheChange_t& change)
+{
+    FakeWriter writer(participant, c_EntityId_SPDPWriter);
+    DirectMessageSender sender(participant, &remote_readers, &locators);
+    RTPSMessageGroup group(participant, &writer, &sender);
+    if (!group.add_data(change, false))
+    {
+        EPROSIMA_LOG_ERROR(RTPS_PDP, "Error sending announcement from client to servers");
+    }
+}
 
 PDPClient::PDPClient(
         BuiltinProtocols* builtin,
@@ -197,18 +213,121 @@ void PDPClient::update_builtin_locators()
 
 bool PDPClient::createPDPEndpoints()
 {
-    EPROSIMA_LOG_INFO(RTPS_PDP, "Beginning PDPClient Endpoints creation");
+#if HAVE_SECURITY
+    if (should_protect_discovery())
+    {
+        return create_secure_ds_pdp_endpoints();
+    }
+#endif  // HAVE_SECURITY
 
-    const RTPSParticipantAttributes& pattr = mp_RTPSParticipant->getRTPSParticipantAttributes();
+    return create_ds_pdp_endpoints();
+}
 
-    auto endpoints = new fastdds::rtps::DiscoveryServerPDPEndpoints();
+#if HAVE_SECURITY
+bool PDPClient::should_protect_discovery()
+{
+    return mp_RTPSParticipant->is_secure() && mp_RTPSParticipant->security_attributes().is_discovery_protected;
+}
+
+bool PDPClient::create_secure_ds_pdp_endpoints()
+{
+    EPROSIMA_LOG_INFO(RTPS_PDP_SERVER, "Beginning PDPClient Secure PDP Endpoints creation");
+
+    auto endpoints = new fastdds::rtps::DiscoveryServerPDPEndpointsSecure();
     builtin_endpoints_.reset(endpoints);
+
+    bool ret_val = create_ds_pdp_reliable_endpoints(*endpoints, true) && create_ds_pdp_best_effort_reader(*endpoints);
+
+    EPROSIMA_LOG_INFO(RTPS_PDP_SERVER, "PDPClient Secure PDP Endpoints creation finished");
+
+    return ret_val;
+}
+
+bool PDPClient::create_ds_pdp_best_effort_reader(
+        DiscoveryServerPDPEndpointsSecure& endpoints)
+{
+    const RTPSParticipantAttributes& pattr = mp_RTPSParticipant->getRTPSParticipantAttributes();
 
     HistoryAttributes hatt;
     hatt.payloadMaxSize = mp_builtin->m_att.readerPayloadSize;
     hatt.initialReservedCaches = pdp_initial_reserved_caches;
     hatt.memoryPolicy = mp_builtin->m_att.readerHistoryMemoryPolicy;
-    endpoints->reader.history_.reset(new ReaderHistory(hatt));
+    endpoints.stateless_reader.history_.reset(new ReaderHistory(hatt));
+
+    ReaderAttributes ratt;
+    ratt.expectsInlineQos = false;
+    ratt.endpoint.endpointKind = READER;
+    ratt.endpoint.multicastLocatorList = mp_builtin->m_metatrafficMulticastLocatorList;
+    ratt.endpoint.unicastLocatorList = mp_builtin->m_metatrafficUnicastLocatorList;
+    ratt.endpoint.external_unicast_locators = mp_builtin->m_att.metatraffic_external_unicast_locators;
+    ratt.endpoint.ignore_non_matching_locators = pattr.ignore_non_matching_locators;
+    ratt.endpoint.topicKind = WITH_KEY;
+
+    // change depending of backup mode
+    ratt.endpoint.durabilityKind = VOLATILE;
+    ratt.endpoint.reliabilityKind = BEST_EFFORT;
+
+    endpoints.stateless_listener.reset(new PDPSecurityInitiatorListener(this));
+
+    // Create PDP Reader
+    RTPSReader* reader = nullptr;
+    if (mp_RTPSParticipant->createReader(&reader, ratt, endpoints.stateless_reader.history_.get(),
+            endpoints.stateless_listener.get(), c_EntityId_SPDPReader, true, false))
+    {
+        endpoints.stateless_reader.reader_ = dynamic_cast<fastrtps::rtps::StatelessReader*>(reader);
+
+        // Enable unknown clients to reach this reader
+        reader->enableMessagesFromUnkownWriters(true);
+
+        mp_RTPSParticipant->set_endpoint_rtps_protection_supports(reader, false);
+    }
+    // Could not create PDP Reader, so return false
+    else
+    {
+        EPROSIMA_LOG_ERROR(RTPS_PDP_SERVER, "PDPServer security initiation Reader creation failed");
+
+        endpoints.stateless_listener.reset();
+        endpoints.stateless_reader.release();
+        return false;
+    }
+
+    return true;
+}
+
+#endif  // HAVE_SECURITY
+
+bool PDPClient::create_ds_pdp_endpoints()
+{
+    EPROSIMA_LOG_INFO(RTPS_PDP_SERVER, "Beginning PDPCLient Endpoints creation");
+
+    auto endpoints = new fastdds::rtps::DiscoveryServerPDPEndpoints();
+    builtin_endpoints_.reset(endpoints);
+
+    bool ret_val = create_ds_pdp_reliable_endpoints(*endpoints, false);
+
+    EPROSIMA_LOG_INFO(RTPS_PDP_SERVER, "PDPCLient Endpoints creation finished");
+
+    return ret_val;
+}
+
+bool PDPClient::create_ds_pdp_reliable_endpoints(
+        DiscoveryServerPDPEndpoints& endpoints,
+        bool secure)
+{
+
+    EPROSIMA_LOG_INFO(RTPS_PDP, "Beginning PDPClient Endpoints creation");
+
+    const RTPSParticipantAttributes& pattr = mp_RTPSParticipant->getRTPSParticipantAttributes();
+
+    /***********************************
+    * PDP READER
+    ***********************************/
+
+    HistoryAttributes hatt;
+    hatt.payloadMaxSize = mp_builtin->m_att.readerPayloadSize;
+    hatt.initialReservedCaches = pdp_initial_reserved_caches;
+    hatt.memoryPolicy = mp_builtin->m_att.readerHistoryMemoryPolicy;
+    endpoints.reader.history_.reset(new ReaderHistory(hatt));
 
     ReaderAttributes ratt;
     ratt.expectsInlineQos = false;
@@ -221,42 +340,49 @@ bool PDPClient::createPDPEndpoints()
     ratt.endpoint.durabilityKind = TRANSIENT_LOCAL;
     ratt.endpoint.reliabilityKind = RELIABLE;
     ratt.times.heartbeatResponseDelay = pdp_heartbeat_response_delay;
+#if HAVE_SECURITY
+    if (secure)
+    {
+        ratt.endpoint.security_attributes().is_submessage_protected = true;
+        ratt.endpoint.security_attributes().plugin_endpoint_attributes =
+                PLUGIN_ENDPOINT_SECURITY_ATTRIBUTES_FLAG_IS_SUBMESSAGE_ENCRYPTED;
+    }
+#endif // HAVE_SECURITY
 
     mp_listener = new PDPListener(this);
 
     RTPSReader* reader = nullptr;
-    if (mp_RTPSParticipant->createReader(&reader, ratt, endpoints->reader.history_.get(), mp_listener,
-            c_EntityId_SPDPReader, true, false))
+#if HAVE_SECURITY
+    EntityId_t reader_entity = secure ? c_EntityId_spdp_reliable_participant_secure_reader : c_EntityId_SPDPReader;
+#else
+    EntityId_t reader_entity = c_EntityId_SPDPReader;
+#endif // if HAVE_SECURITY
+    if (mp_RTPSParticipant->createReader(&reader, ratt, endpoints.reader.history_.get(), mp_listener,
+            reader_entity, true, false))
     {
-        endpoints->reader.reader_ = dynamic_cast<fastrtps::rtps::StatefulReader*>(reader);
+        endpoints.reader.reader_ = dynamic_cast<fastrtps::rtps::StatefulReader*>(reader);
 
 #if HAVE_SECURITY
         mp_RTPSParticipant->set_endpoint_rtps_protection_supports(reader, false);
 #endif // if HAVE_SECURITY
-
-        // Initial peer list doesn't make sense in server scenario. Client should match its server list
-        {
-            eprosima::shared_lock<eprosima::shared_mutex> disc_lock(mp_builtin->getDiscoveryMutex());
-
-            for (const eprosima::fastdds::rtps::RemoteServerAttributes& it : mp_builtin->m_DiscoveryServers)
-            {
-                match_pdp_writer_nts_(it);
-            }
-        }
     }
     else
     {
         EPROSIMA_LOG_ERROR(RTPS_PDP, "PDPClient Reader creation failed");
         delete mp_listener;
         mp_listener = nullptr;
-        endpoints->reader.release();
+        endpoints.reader.release();
         return false;
     }
+
+    /***********************************
+    * PDP WRITER
+    ***********************************/
 
     hatt.payloadMaxSize = mp_builtin->m_att.writerPayloadSize;
     hatt.initialReservedCaches = pdp_initial_reserved_caches;
     hatt.memoryPolicy = mp_builtin->m_att.writerHistoryMemoryPolicy;
-    endpoints->writer.history_.reset(new WriterHistory(hatt));
+    endpoints.writer.history_.reset(new WriterHistory(hatt));
 
     WriterAttributes watt;
     watt.endpoint.endpointKind = WRITER;
@@ -271,36 +397,59 @@ bool PDPClient::createPDPEndpoints()
     watt.times.nackResponseDelay = pdp_nack_response_delay;
     watt.times.nackSupressionDuration = pdp_nack_supression_duration;
 
+#if HAVE_SECURITY
+    if (secure)
+    {
+        watt.endpoint.security_attributes().is_submessage_protected = true;
+        watt.endpoint.security_attributes().plugin_endpoint_attributes =
+                PLUGIN_ENDPOINT_SECURITY_ATTRIBUTES_FLAG_IS_SUBMESSAGE_ENCRYPTED;
+    }
+#endif // HAVE_SECURITY
+
     if (pattr.throughputController.bytesPerPeriod != UINT32_MAX && pattr.throughputController.periodMillisecs != 0)
     {
         watt.mode = ASYNCHRONOUS_WRITER;
     }
 
     RTPSWriter* wout = nullptr;
-    if (mp_RTPSParticipant->createWriter(&wout, watt, endpoints->writer.history_.get(), nullptr,
-            c_EntityId_SPDPWriter, true))
+#if HAVE_SECURITY
+    EntityId_t writer_entity = secure ? c_EntityId_spdp_reliable_participant_secure_writer : c_EntityId_SPDPWriter;
+#else
+    EntityId_t writer_entity = c_EntityId_SPDPWriter;
+#endif // if HAVE_SECURITY
+    if (mp_RTPSParticipant->createWriter(&wout, watt, endpoints.writer.history_.get(), nullptr, writer_entity, true))
     {
-        endpoints->writer.writer_ = dynamic_cast<fastrtps::rtps::StatefulWriter*>(wout);
+        endpoints.writer.writer_ = dynamic_cast<fastrtps::rtps::StatefulWriter*>(wout);
 
 #if HAVE_SECURITY
         mp_RTPSParticipant->set_endpoint_rtps_protection_supports(wout, false);
 #endif // if HAVE_SECURITY
-
-        {
-            eprosima::shared_lock<eprosima::shared_mutex> disc_lock(mp_builtin->getDiscoveryMutex());
-
-            for (const eprosima::fastdds::rtps::RemoteServerAttributes& it : mp_builtin->m_DiscoveryServers)
-            {
-                match_pdp_reader_nts_(it);
-            }
-        }
     }
     else
     {
         EPROSIMA_LOG_ERROR(RTPS_PDP, "PDPClient Writer creation failed");
-        endpoints->writer.release();
+        endpoints.writer.release();
         return false;
     }
+
+    // Perform matching with remote servers and ensure output channels are open in the transport for the corresponding
+    // locators
+    {
+        eprosima::shared_lock<eprosima::shared_mutex> disc_lock(mp_builtin->getDiscoveryMutex());
+
+        for (const eprosima::fastdds::rtps::RemoteServerAttributes& it : mp_builtin->m_DiscoveryServers)
+        {
+            mp_RTPSParticipant->createSenderResources(it.metatrafficMulticastLocatorList);
+            mp_RTPSParticipant->createSenderResources(it.metatrafficUnicastLocatorList);
+
+            if (!secure)
+            {
+                match_pdp_writer_nts_(it);
+                match_pdp_reader_nts_(it);
+            }
+        }
+    }
+
     EPROSIMA_LOG_INFO(RTPS_PDP, "PDPClient Endpoints creation finished");
     return true;
 }
@@ -525,12 +674,7 @@ void PDPClient::announceParticipantState(
                     }
                 }
 
-                DirectMessageSender sender(getRTPSParticipant(), &remote_readers, &locators);
-                RTPSMessageGroup group(getRTPSParticipant(), &writer, &sender);
-                if (!group.add_data(*change, false))
-                {
-                    EPROSIMA_LOG_ERROR(RTPS_PDP, "Error sending announcement from client to servers");
-                }
+                direct_send(getRTPSParticipant(), remote_readers, locators, *change);
             }
 
             // free change
@@ -563,13 +707,7 @@ void PDPClient::announceParticipantState(
                         }
                     }
 
-                    DirectMessageSender sender(getRTPSParticipant(), &remote_readers, &locators);
-                    RTPSMessageGroup group(getRTPSParticipant(), &writer, &sender);
-
-                    if (!group.add_data(*pPD, false))
-                    {
-                        EPROSIMA_LOG_ERROR(RTPS_PDP, "Error sending announcement from client to servers");
-                    }
+                    direct_send(getRTPSParticipant(), remote_readers, locators, *pPD);
 
                     // ping done independtly of which triggered the announcement
                     // note all event callbacks are currently serialized

@@ -2184,6 +2184,11 @@ bool RTPSParticipantImpl::is_security_enabled_for_reader(
 
 #endif // if HAVE_SECURITY
 
+PDP* RTPSParticipantImpl::pdp()
+{
+    return mp_builtinProtocols->mp_PDP;
+}
+
 PDPSimple* RTPSParticipantImpl::pdpsimple()
 {
     return dynamic_cast<PDPSimple*>(mp_builtinProtocols->mp_PDP);

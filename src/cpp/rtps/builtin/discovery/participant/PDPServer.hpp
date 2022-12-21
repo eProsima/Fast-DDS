@@ -34,6 +34,7 @@
 #include <rtps/builtin/discovery/database/DiscoveryDataBase.hpp>
 #include <rtps/builtin/discovery/database/DiscoveryDataFilter.hpp>
 #include <rtps/builtin/discovery/participant/timedevent/DServerEvent.hpp>
+#include <rtps/builtin/discovery/participant/DS/DiscoveryServerPDPEndpointsSecure.hpp>
 
 namespace eprosima {
 namespace fastdds {
@@ -305,6 +306,45 @@ protected:
             eprosima::fastrtps::rtps::CacheChange_t* change);
 
 private:
+
+#if HAVE_SECURITY
+    /**
+     * Returns whether discovery should be secured
+     */
+    bool should_protect_discovery();
+
+    /**
+     * Performs creation of secured DS PDP endpoints
+     */
+    bool create_secure_ds_pdp_endpoints();
+#endif  // HAVE_SECURITY
+
+    /**
+     * Performs creation of standard DS PDP endpoints
+     */
+    bool create_ds_pdp_endpoints();
+
+    /**
+     * Performs creation of DS (reliable) PDP endpoints.
+     *
+     * @param [in,out]  endpoints  Container where the created resources should be kept.
+     * @param [in]      secure     Whether the created endpoints should be secure.
+     *
+     * @return whether the endpoints were successfully created.
+     */
+    bool create_ds_pdp_reliable_endpoints(
+            DiscoveryServerPDPEndpoints& endpoints,
+            bool secure);
+
+    /**
+     * Performs creation of DS best-effort PDP reader.
+     *
+     * @param [in,out]  endpoints  Container where the created resources should be kept.
+     *
+     * @return whether the reader was successfully created.
+     */
+    bool create_ds_pdp_best_effort_reader(
+            DiscoveryServerPDPEndpointsSecure& endpoints);
 
     //! Server thread
     eprosima::fastrtps::rtps::ResourceEvent resource_event_thread_;
