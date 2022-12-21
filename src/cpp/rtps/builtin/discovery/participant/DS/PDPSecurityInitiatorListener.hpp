@@ -39,7 +39,7 @@ class PDP;
 class PDPSecurityInitiatorListener : public ReaderListener
 {
 
-    using ResponseCallback = std::function<void (const ParticipantProxyData& participant_data)>;
+    using SecurityInitiatedCallback = std::function<void (const ParticipantProxyData& participant_data)>;
 
 public:
 
@@ -48,7 +48,7 @@ public:
      */
     PDPSecurityInitiatorListener(
             PDP* parent,
-            ResponseCallback response_cb = [] (const ParticipantProxyData&)->void {});
+            SecurityInitiatedCallback response_cb = [] (const ParticipantProxyData&)->void {});
 
     virtual ~PDPSecurityInitiatorListener() override = default;
 
@@ -82,7 +82,7 @@ protected:
     ParticipantProxyData temp_participant_data_;
 
     //! What action to perform upon participant discovery
-    ResponseCallback response_cb_;
+    SecurityInitiatedCallback response_cb_;
 };
 
 

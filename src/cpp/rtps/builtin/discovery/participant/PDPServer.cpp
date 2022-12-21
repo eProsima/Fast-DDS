@@ -297,7 +297,6 @@ bool PDPServer::create_ds_pdp_best_effort_reader(
                 std::lock_guard<fastrtps::RecursiveTimedMutex> wlock(endpoints->writer.writer_->getMutex());
 
                 CacheChange_t* change = discovery_db().cache_change_own_participant();
-
                 if (change != nullptr)
                 {
                     std::vector<GUID_t> remote_readers;
@@ -313,7 +312,6 @@ bool PDPServer::create_ds_pdp_best_effort_reader(
                     send_announcement(change, remote_readers, locators, false);
 
                 }
-
             }));
 
     // Create PDP Reader

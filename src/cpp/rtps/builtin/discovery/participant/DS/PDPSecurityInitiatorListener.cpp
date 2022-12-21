@@ -46,7 +46,7 @@ namespace rtps {
 
 PDPSecurityInitiatorListener::PDPSecurityInitiatorListener(
         PDP* parent,
-        ResponseCallback response_cb)
+        SecurityInitiatedCallback response_cb)
     : parent_pdp_(parent)
     , temp_participant_data_(parent->getRTPSParticipant()->getRTPSParticipantAttributes().allocation)
     , response_cb_(response_cb)
