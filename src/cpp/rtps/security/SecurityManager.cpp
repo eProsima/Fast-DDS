@@ -30,8 +30,7 @@
 #include <fastdds/rtps/builtin/data/ReaderProxyData.h>
 #include <fastdds/rtps/builtin/data/WriterProxyData.h>
 #include <fastdds/rtps/builtin/discovery/endpoint/EDP.h>
-//#include <fastdds/rtps/builtin/discovery/participant/PDP.h>
-#include <fastdds/rtps/builtin/discovery/participant/PDPSimple.h>
+#include <fastdds/rtps/builtin/discovery/participant/PDP.h>
 #include <fastdds/rtps/history/ReaderHistory.h>
 #include <fastdds/rtps/history/WriterHistory.h>
 #include <fastdds/rtps/messages/CDRMessage.h>

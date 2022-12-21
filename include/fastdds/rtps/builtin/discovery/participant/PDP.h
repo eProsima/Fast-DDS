@@ -47,6 +47,12 @@ class PDPEndpoints;
 } // namespace fastdds
 
 namespace fastrtps {
+namespace types {
+
+class TypeObject;
+class TypeIdentifier;
+
+}
 namespace rtps {
 
 class RTPSWriter;
