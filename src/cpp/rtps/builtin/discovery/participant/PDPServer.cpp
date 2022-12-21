@@ -290,7 +290,31 @@ bool PDPServer::create_ds_pdp_best_effort_reader(
     ratt.endpoint.durabilityKind = VOLATILE;
     ratt.endpoint.reliabilityKind = BEST_EFFORT;
 
-    endpoints.stateless_listener.reset(new PDPSecurityInitiatorListener(this));
+    endpoints.stateless_listener.reset(new PDPSecurityInitiatorListener(this,
+            [this](const ParticipantProxyData& participant_data)
+            {
+                auto endpoints = static_cast<fastdds::rtps::DiscoveryServerPDPEndpoints*>(builtin_endpoints_.get());
+                std::lock_guard<fastrtps::RecursiveTimedMutex> wlock(endpoints->writer.writer_->getMutex());
+
+                CacheChange_t* change = discovery_db().cache_change_own_participant();
+
+                if (change != nullptr)
+                {
+                    std::vector<GUID_t> remote_readers;
+                    LocatorList locators;
+
+                    remote_readers.emplace_back(participant_data.m_guid.guidPrefix,c_EntityId_SPDPReader);
+
+                    for (auto& locator : participant_data.metatraffic_locators.unicast)
+                    {
+                        locators.push_back(locator);
+                    }
+
+                    send_announcement(change, remote_readers, locators, false);
+
+                }
+
+            }));
 
     // Create PDP Reader
     RTPSReader* reader = nullptr;
