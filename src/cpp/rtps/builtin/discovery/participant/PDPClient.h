@@ -209,6 +209,12 @@ private:
             DiscoveryServerPDPEndpointsSecure& endpoints);
 
     /**
+     * Provides the functionality of notifyAboveRemoteEndpoints without being an override of that method.
+     */
+    void perform_builtin_endpoints_matching(
+            const ParticipantProxyData& pdata);
+
+    /**
      * TimedEvent for server synchronization:
      *   first stage: periodically resend the local RTPSParticipant information until
      *    all servers have acknowledge reception

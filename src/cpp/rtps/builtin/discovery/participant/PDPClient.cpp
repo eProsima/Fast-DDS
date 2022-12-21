@@ -472,10 +472,38 @@ void PDPClient::assignRemoteEndpoints(
         }
     }
 
-    notifyAboveRemoteEndpoints(*pdata);
+#if HAVE_SECURITY
+    mp_RTPSParticipant->security_manager().discovered_participant(*pdata);
+#else
+    perform_builtin_endpoints_matching(*pdata);
+#endif // HAVE_SECURITY
 }
 
 void PDPClient::notifyAboveRemoteEndpoints(
+        const ParticipantProxyData& pdata)
+{
+#if HAVE_SECURITY
+    if (should_protect_discovery())
+    {
+        eprosima::shared_lock<eprosima::shared_mutex> disc_lock(mp_builtin->getDiscoveryMutex());
+
+        // Verify if this participant is a server
+        for (auto& svr : mp_builtin->m_DiscoveryServers)
+        {
+            if (svr.guidPrefix == pdata.m_guid.guidPrefix)
+            {
+                match_pdp_reader_nts_(svr);
+                match_pdp_writer_nts_(svr);
+                break;
+            }
+        }
+    }
+#endif // HAVE_SECURITY
+
+    perform_builtin_endpoints_matching(pdata);
+}
+
+void PDPClient::perform_builtin_endpoints_matching(
         const ParticipantProxyData& pdata)
 {
     // No EDP notification needed. EDP endpoints would be match when PDP synchronization is granted
