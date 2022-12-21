@@ -30,6 +30,7 @@
 #include <fastdds/rtps/builtin/data/ReaderProxyData.h>
 #include <fastdds/rtps/builtin/data/WriterProxyData.h>
 #include <fastdds/rtps/builtin/discovery/endpoint/EDP.h>
+//#include <fastdds/rtps/builtin/discovery/participant/PDP.h>
 #include <fastdds/rtps/builtin/discovery/participant/PDPSimple.h>
 #include <fastdds/rtps/history/ReaderHistory.h>
 #include <fastdds/rtps/history/WriterHistory.h>
@@ -578,7 +579,7 @@ bool SecurityManager::discovered_participant(
 
     if (authentication_plugin_ == nullptr)
     {
-        participant_->pdpsimple()->notifyAboveRemoteEndpoints(participant_data);
+        participant_->pdp()->notifyAboveRemoteEndpoints(participant_data);
         return true;
     }
 
@@ -823,7 +824,7 @@ bool SecurityManager::on_process_handshake(
                         &handshake_message,
                         *local_identity_handle_,
                         *remote_participant_info->identity_handle_,
-                        participant_->pdpsimple()->get_participant_proxy_data_serialized(BIGEND),
+                        participant_->pdp()->get_participant_proxy_data_serialized(BIGEND),
                         exception);
     }
     else if (remote_participant_info->auth_status_ == AUTHENTICATION_WAITING_REQUEST)
@@ -834,7 +835,7 @@ bool SecurityManager::on_process_handshake(
                         std::move(message_in),
                         *remote_participant_info->identity_handle_,
                         *local_identity_handle_,
-                        participant_->pdpsimple()->get_participant_proxy_data_serialized(BIGEND),
+                        participant_->pdp()->get_participant_proxy_data_serialized(BIGEND),
                         exception);
     }
     else if (remote_participant_info->auth_status_ == AUTHENTICATION_WAITING_REPLY ||
@@ -4046,7 +4047,7 @@ bool SecurityManager::participant_authorized(
             match_builtin_key_exchange_endpoints(participant_data);
         }
 
-        participant_->pdpsimple()->notifyAboveRemoteEndpoints(participant_data);
+        participant_->pdp()->notifyAboveRemoteEndpoints(participant_data);
 
         EPROSIMA_LOG_INFO(SECURITY, "Participant " << participant_data.m_guid << " authenticated");
 
@@ -4062,13 +4063,13 @@ bool SecurityManager::participant_authorized(
 
         for (auto& remote_reader : temp_readers)
         {
-            participant_->pdpsimple()->getEDP()->pairing_reader_proxy_with_local_writer(remote_reader.second,
+            participant_->pdp()->getEDP()->pairing_reader_proxy_with_local_writer(remote_reader.second,
                     participant_data.m_guid, remote_reader.first);
         }
 
         for (auto& remote_writer : temp_writers)
         {
-            participant_->pdpsimple()->getEDP()->pairing_writer_proxy_with_local_reader(remote_writer.second,
+            participant_->pdp()->getEDP()->pairing_writer_proxy_with_local_reader(remote_writer.second,
                     participant_data.m_guid, remote_writer.first);
         }
 
