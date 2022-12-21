@@ -223,7 +223,6 @@ set(${PROJECT_NAME}_source_files
     rtps/builtin/discovery/participant/PDPClient.cpp
     rtps/builtin/discovery/participant/PDPServer.cpp
     rtps/builtin/discovery/participant/PDPServerListener.cpp
-    rtps/builtin/discovery/participant/DS/PDPSecurityInitiatorListener.cpp
     rtps/builtin/discovery/participant/timedevent/DSClientEvent.cpp
     rtps/builtin/discovery/participant/timedevent/DServerEvent.cpp
 
@@ -293,6 +292,7 @@ set(${PROJECT_NAME}_security_source_files
     rtps/security/logging/Logging.cpp
     rtps/security/SecurityManager.cpp
     rtps/security/SecurityPluginFactory.cpp
+    rtps/builtin/discovery/participant/DS/PDPSecurityInitiatorListener.cpp
     security/authentication/PKIDH.cpp
     security/accesscontrol/Permissions.cpp
     security/cryptography/AESGCMGMAC.cpp
