@@ -47,6 +47,12 @@ class PDPEndpoints;
 } // namespace fastdds
 
 namespace fastrtps {
+namespace types {
+
+class TypeObject;
+class TypeIdentifier;
+
+} // namespace types
 namespace rtps {
 
 class RTPSWriter;
@@ -76,6 +82,7 @@ class PDP
     friend class PDPListener;
     friend class PDPServerListener;
     friend class fastdds::rtps::PDPServerListener;
+    friend class PDPSecurityInitiatorListener;
 
 public:
 

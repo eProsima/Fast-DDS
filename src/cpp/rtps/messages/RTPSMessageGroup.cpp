@@ -461,6 +461,7 @@ bool RTPSMessageGroup::add_data(
     change_to_add.copy_not_memcpy(&change);
     change_to_add.serializedPayload.data = change.serializedPayload.data;
     change_to_add.serializedPayload.length = change.serializedPayload.length;
+    change_to_add.writerGUID = endpoint_->getGuid();
 
 #if HAVE_SECURITY
     if (endpoint_->getAttributes().security_attributes().is_payload_protected)
@@ -564,6 +565,7 @@ bool RTPSMessageGroup::add_data_frag(
     change_to_add.copy_not_memcpy(&change);
     change_to_add.serializedPayload.data = change.serializedPayload.data + fragment_start;
     change_to_add.serializedPayload.length = fragment_size;
+    change_to_add.writerGUID = endpoint_->getGuid();
 
 #if HAVE_SECURITY
     if (endpoint_->getAttributes().security_attributes().is_payload_protected)
