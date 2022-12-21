@@ -406,8 +406,13 @@ bool PDPServer::create_ds_pdp_reliable_endpoints(
 
     // Create PDP Reader
     RTPSReader* reader = nullptr;
+#if HAVE_SECURITY
+    EntityId_t reader_entity = secure ? c_EntityId_spdp_reliable_participant_secure_reader : c_EntityId_SPDPReader;
+#else
+    EntityId_t reader_entity = c_EntityId_SPDPReader;
+#endif // if HAVE_SECURITY
     if (mp_RTPSParticipant->createReader(&reader, ratt, endpoints.reader.history_.get(), mp_listener,
-            secure ? c_EntityId_spdp_reliable_participant_secure_reader : c_EntityId_SPDPReader, true, false))
+            reader_entity, true, false))
     {
         endpoints.reader.reader_ = dynamic_cast<fastrtps::rtps::StatefulReader*>(reader);
 
@@ -473,8 +478,12 @@ bool PDPServer::create_ds_pdp_reliable_endpoints(
 
     // Create PDP Writer
     RTPSWriter* wout = nullptr;
-    if (mp_RTPSParticipant->createWriter(&wout, watt, endpoints.writer.history_.get(), nullptr,
-            secure ? c_EntityId_spdp_reliable_participant_secure_writer : c_EntityId_SPDPWriter, true))
+#if HAVE_SECURITY
+    EntityId_t writer_entity = secure ? c_EntityId_spdp_reliable_participant_secure_writer : c_EntityId_SPDPWriter;
+#else
+    EntityId_t writer_entity = c_EntityId_SPDPWriter;
+#endif // if HAVE_SECURITY
+    if (mp_RTPSParticipant->createWriter(&wout, watt, endpoints.writer.history_.get(), nullptr, writer_entity, true))
     {
         endpoints.writer.writer_ = dynamic_cast<fastrtps::rtps::StatefulWriter*>(wout);
 
