@@ -135,12 +135,6 @@ public:
             const GUID_t& participant_guid,
             ParticipantDiscoveryInfo::DISCOVERY_STATUS reason) override;
 
-    /**
-     * Matching server EDP endpoints
-     * @return true if all servers have been discovered
-     */
-    bool match_servers_EDP_endpoints();
-
     /*
      * Update the list of remote servers
      */

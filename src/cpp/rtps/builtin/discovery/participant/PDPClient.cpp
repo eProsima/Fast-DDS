@@ -751,30 +751,6 @@ void PDPClient::announceParticipantState(
     }
 }
 
-bool PDPClient::match_servers_EDP_endpoints()
-{
-    // PDP must have been initialize
-    assert(mp_EDP);
-
-    bool all = true; // have all servers been discovered?
-
-    eprosima::shared_lock<eprosima::shared_mutex> disc_lock(mp_builtin->getDiscoveryMutex());
-    for (auto& svr : mp_builtin->m_DiscoveryServers)
-    {
-        all &= (svr.proxy != nullptr);
-
-        if (svr.proxy && !mp_EDP->areRemoteEndpointsMatched(svr.proxy))
-        {
-            EPROSIMA_LOG_INFO(RTPS_PDP, "Client "
-                    << mp_EDP->mp_PDP->getRTPSParticipant()->getGuid()
-                    << " matching servers EDP endpoints");
-            mp_EDP->assignRemoteEndpoints(*svr.proxy);
-        }
-    }
-
-    return all;
-}
-
 void PDPClient::update_remote_servers_list()
 {
     auto endpoints = static_cast<fastdds::rtps::DiscoveryServerPDPEndpoints*>(builtin_endpoints_.get());
