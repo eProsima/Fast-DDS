@@ -952,6 +952,8 @@ bool StatefulReader::change_removed_by_history(
                 if (0 < total_unread_)
                 {
                     --total_unread_;
+                    logError(DEBUG,
+                        "Stateful Reader " << m_guid << " remove a change (" << total_unread_ << ")" << " [" << mp_history->getHistorySize() << "]");
                 }
             }
 
@@ -1159,6 +1161,7 @@ void StatefulReader::NotifyChanges(
         assert(false == aux_ch->isRead);
         new_data_available = true;
         ++total_unread_;
+        logError(DEBUG, "New change notify in Stateful Reader " << m_guid << " (" << total_unread_ << ")" << " [" << mp_history->getHistorySize() << "]");
         on_data_notify(proxGUID, aux_ch->sourceTimestamp);
 
         ++it;
@@ -1429,6 +1432,7 @@ void StatefulReader::change_read_by_user(
         if (0 < total_unread_)
         {
             --total_unread_;
+            logError(DEBUG, "Stateful Reader " << m_guid << " unread a change (" << total_unread_ << ")" << " [" << mp_history->getHistorySize() << "]");
         }
     }
 

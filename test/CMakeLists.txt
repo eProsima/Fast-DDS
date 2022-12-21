@@ -98,3 +98,5 @@ if (ANDROID)
                         execute_process(COMMAND adb push \"${CMAKE_BINARY_DIR}/test\" \"${ANDROID_TESTING_ROOT}\") ")
     endif()
 endif()
+
+add_subdirectory(basic)

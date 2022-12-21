@@ -1,0 +1,4 @@
+struct StringTest
+{
+    string<10000> message;
+};

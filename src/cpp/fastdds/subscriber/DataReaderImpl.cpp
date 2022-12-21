@@ -688,11 +688,6 @@ ReturnCode_t DataReaderImpl::read_or_take_next_sample(
         return ReturnCode_t::RETCODE_NOT_ENABLED;
     }
 
-    if (history_.getHistorySize() == 0)
-    {
-        return ReturnCode_t::RETCODE_NO_DATA;
-    }
-
     auto max_blocking_time = std::chrono::steady_clock::now() +
 #if HAVE_STRICT_REALTIME
             std::chrono::microseconds(::TimeConv::Time_t2MicroSecondsInt64(qos_.reliability().max_blocking_time));
@@ -707,11 +702,18 @@ ReturnCode_t DataReaderImpl::read_or_take_next_sample(
         return ReturnCode_t::RETCODE_TIMEOUT;
     }
 
+    if (history_.getHistorySize() == 0)
+    {
+        logError(DEBUG, "History Size 0 unread count (" << get_unread_count(false) << ") : [" << history_.getHistorySize() << "]");
+        return ReturnCode_t::RETCODE_NO_DATA;
+    }
+
     set_read_communication_status(false);
 
     auto it = history_.lookup_available_instance(HANDLE_NIL, false);
     if (!it.first)
     {
+        logError(DEBUG, "No available instance");
         return ReturnCode_t::RETCODE_NO_DATA;
     }
 
@@ -729,6 +731,11 @@ ReturnCode_t DataReaderImpl::read_or_take_next_sample(
     ReturnCode_t code = cmd.return_value();
     if (ReturnCode_t::RETCODE_OK == code)
     {
+        *info = sample_infos[0];
+    }
+    if (ReturnCode_t::RETCODE_NO_DATA == code)
+    {
+        logError(DEBUG, "return value");
         *info = sample_infos[0];
     }
 
