@@ -393,17 +393,6 @@ bool PDPServer::create_ds_pdp_reliable_endpoints(
 #if HAVE_SECURITY
         mp_RTPSParticipant->set_endpoint_rtps_protection_supports(reader, false);
 #endif // if HAVE_SECURITY
-
-        if (!secure)
-        {
-            eprosima::shared_lock<eprosima::shared_mutex> disc_lock(mp_builtin->getDiscoveryMutex());
-
-            // Initial peer list doesn't make sense in server scenario. Client should match its server list
-            for (const eprosima::fastdds::rtps::RemoteServerAttributes& it : mp_builtin->m_DiscoveryServers)
-            {
-                match_pdp_writer_nts_(it);
-            }
-        }
     }
     // Could not create PDP Reader, so return false
     else
@@ -494,6 +483,24 @@ bool PDPServer::create_ds_pdp_reliable_endpoints(
     }
     // TODO check if this should be done here or before this point in creation
     endpoints.writer.history_->remove_all_changes();
+
+    // Perform matching with remote servers and ensure output channels are open in the transport for the corresponding
+    // locators
+    {
+        eprosima::shared_lock<eprosima::shared_mutex> disc_lock(mp_builtin->getDiscoveryMutex());
+
+        for (const eprosima::fastdds::rtps::RemoteServerAttributes& it : mp_builtin->m_DiscoveryServers)
+        {
+            mp_RTPSParticipant->createSenderResources(it.metatrafficMulticastLocatorList);
+            mp_RTPSParticipant->createSenderResources(it.metatrafficUnicastLocatorList);
+
+            if (!secure)
+            {
+                match_pdp_writer_nts_(it);
+                match_pdp_reader_nts_(it);
+            }
+        }
+    }
 
     return true;
 }
