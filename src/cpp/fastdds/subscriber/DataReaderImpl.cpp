@@ -688,14 +688,6 @@ ReturnCode_t DataReaderImpl::read_or_take_next_sample(
         return ReturnCode_t::RETCODE_NOT_ENABLED;
     }
 
-    auto unread_count = get_unread_count(false);
-    if (history_.getHistorySize() == 0)
-    {
-        auto unread_count_no_history = get_unread_count(false);
-        assert(unread_count_no_history != unread_count || unread_count_no_history == 0);
-        return ReturnCode_t::RETCODE_NO_DATA;
-    }
-
     auto max_blocking_time = std::chrono::steady_clock::now() +
 #if HAVE_STRICT_REALTIME
             std::chrono::microseconds(::TimeConv::Time_t2MicroSecondsInt64(qos_.reliability().max_blocking_time));
@@ -709,6 +701,16 @@ ReturnCode_t DataReaderImpl::read_or_take_next_sample(
     {
         return ReturnCode_t::RETCODE_TIMEOUT;
     }
+
+    auto unread_count = get_unread_count(false);
+    if (history_.getHistorySize() == 0)
+    {
+        auto unread_count_no_history = get_unread_count(false);
+        assert(unread_count_no_history != unread_count || unread_count_no_history == 0);
+        // assert(get_unread_count() == 0);
+        return ReturnCode_t::RETCODE_NO_DATA;
+    }
+
 
     set_read_communication_status(false);
 

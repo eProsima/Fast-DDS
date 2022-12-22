@@ -953,6 +953,10 @@ bool StatefulReader::change_removed_by_history(
                 {
                     --total_unread_;
                 }
+                else
+                {
+                    assert(false);
+                }
             }
 
             WriterProxy* proxy = wp;
@@ -1426,10 +1430,15 @@ void StatefulReader::change_read_by_user(
     // Mark change as read
     if (mark_as_read && !change->isRead)
     {
+        assert(get_last_notified(change->writerGUID) >= change->sequenceNumber);
         change->isRead = true;
         if (0 < total_unread_)
         {
             --total_unread_;
+        }
+        else
+        {
+            assert(false);
         }
     }
 
