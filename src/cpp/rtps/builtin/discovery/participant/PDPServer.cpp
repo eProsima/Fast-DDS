@@ -633,8 +633,11 @@ void PDPServer::assignRemoteEndpoints(
 
     match_reliable_pdp_endpoints(*pdata);
 
-    //Inform EDP of new RTPSParticipant data:
+#if HAVE_SECURITY
+    mp_RTPSParticipant->security_manager().discovered_participant(*pdata);
+#else
     perform_builtin_endpoints_matching(*pdata);
+#endif // HAVE_SECURITY
 }
 
 void PDPServer::notifyAboveRemoteEndpoints(
@@ -646,11 +649,12 @@ void PDPServer::notifyAboveRemoteEndpoints(
         // Grant atomic access to PDP inherited proxies database
         std::unique_lock<std::recursive_mutex> lock(*getMutex());
 
-        // Check if participant proxy already exists (means the DATA(p) brings updated info)
+        // Check if participant proxy already exists (means participant is known by the database)
         for (ParticipantProxyData* it : participant_proxies_)
         {
             if (pdata.m_guid == it->m_guid)
             {
+                perform_builtin_endpoints_matching(pdata);
                 return;
             }
         }
