@@ -1159,6 +1159,7 @@ void StatefulReader::NotifyChanges(
         assert(false == aux_ch->isRead);
         new_data_available = true;
         ++total_unread_;
+        assert(total_unread_ <= mp_history->getHistorySize());
         on_data_notify(proxGUID, aux_ch->sourceTimestamp);
 
         ++it;
