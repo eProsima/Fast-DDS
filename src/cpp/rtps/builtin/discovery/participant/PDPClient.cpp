@@ -458,6 +458,10 @@ bool PDPClient::create_ds_pdp_reliable_endpoints(
 void PDPClient::assignRemoteEndpoints(
         ParticipantProxyData* pdata)
 {
+#if HAVE_SECURITY
+    bool is_server = false;
+#endif // HAVE_SECURITY
+
     {
         eprosima::shared_lock<eprosima::shared_mutex> disc_lock(mp_builtin->getDiscoveryMutex());
 
@@ -468,15 +472,23 @@ void PDPClient::assignRemoteEndpoints(
             {
                 std::unique_lock<std::recursive_mutex> lock(*getMutex());
                 svr.proxy = pdata;
+#if HAVE_SECURITY
+                is_server = true;
+#endif // HAVE_SECURITY
             }
         }
     }
 
 #if HAVE_SECURITY
-    mp_RTPSParticipant->security_manager().discovered_participant(*pdata);
-#else
-    perform_builtin_endpoints_matching(*pdata);
+    if (!is_server || !should_protect_discovery())
+    {
+        mp_RTPSParticipant->security_manager().discovered_participant(*pdata);
+    }
+    else
 #endif // HAVE_SECURITY
+    {
+        perform_builtin_endpoints_matching(*pdata);
+    }
 }
 
 void PDPClient::notifyAboveRemoteEndpoints(
@@ -492,8 +504,8 @@ void PDPClient::notifyAboveRemoteEndpoints(
         {
             if (svr.guidPrefix == pdata.m_guid.guidPrefix)
             {
-                match_pdp_reader_nts_(svr);
-                match_pdp_writer_nts_(svr);
+                match_pdp_reader_nts_(svr, pdata.m_guid.guidPrefix);
+                match_pdp_writer_nts_(svr, pdata.m_guid.guidPrefix);
                 break;
             }
         }
@@ -780,12 +792,19 @@ void PDPClient::update_remote_servers_list()
 void PDPClient::match_pdp_writer_nts_(
         const eprosima::fastdds::rtps::RemoteServerAttributes& server_att)
 {
+    match_pdp_writer_nts_(server_att, server_att.guidPrefix);
+}
+
+void PDPClient::match_pdp_writer_nts_(
+        const eprosima::fastdds::rtps::RemoteServerAttributes& server_att,
+        const eprosima::fastdds::rtps::GuidPrefix_t& prefix_override)
+{
     auto endpoints = static_cast<fastdds::rtps::DiscoveryServerPDPEndpoints*>(builtin_endpoints_.get());
     const NetworkFactory& network = mp_RTPSParticipant->network_factory();
     auto temp_writer_data = get_temporary_writer_proxies_pool().get();
 
     temp_writer_data->clear();
-    temp_writer_data->guid(server_att.GetPDPWriter());
+    temp_writer_data->guid({ prefix_override, endpoints->writer.writer_->getGuid().entityId });
     temp_writer_data->set_multicast_locators(server_att.metatrafficMulticastLocatorList, network);
     temp_writer_data->set_remote_unicast_locators(server_att.metatrafficUnicastLocatorList, network);
     temp_writer_data->m_qos.m_durability.kind = TRANSIENT_DURABILITY_QOS;
@@ -796,12 +815,19 @@ void PDPClient::match_pdp_writer_nts_(
 void PDPClient::match_pdp_reader_nts_(
         const eprosima::fastdds::rtps::RemoteServerAttributes& server_att)
 {
+    match_pdp_reader_nts_(server_att, server_att.guidPrefix);
+}
+
+void PDPClient::match_pdp_reader_nts_(
+        const eprosima::fastdds::rtps::RemoteServerAttributes& server_att,
+        const eprosima::fastdds::rtps::GuidPrefix_t& prefix_override)
+{
     auto endpoints = static_cast<fastdds::rtps::DiscoveryServerPDPEndpoints*>(builtin_endpoints_.get());
     const NetworkFactory& network = mp_RTPSParticipant->network_factory();
     auto temp_reader_data = get_temporary_reader_proxies_pool().get();
 
     temp_reader_data->clear();
-    temp_reader_data->guid(server_att.GetPDPReader());
+    temp_reader_data->guid({ prefix_override, endpoints->reader.reader_->getGuid().entityId });
     temp_reader_data->set_multicast_locators(server_att.metatrafficMulticastLocatorList, network);
     temp_reader_data->set_remote_unicast_locators(server_att.metatrafficUnicastLocatorList, network);
     temp_reader_data->m_qos.m_durability.kind = TRANSIENT_LOCAL_DURABILITY_QOS;
