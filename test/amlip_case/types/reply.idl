@@ -1,0 +1,5 @@
+#include "request.idl"
+struct Reply : Request
+{
+	unsigned short server_id;
+};

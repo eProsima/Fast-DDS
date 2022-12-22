@@ -688,8 +688,12 @@ ReturnCode_t DataReaderImpl::read_or_take_next_sample(
         return ReturnCode_t::RETCODE_NOT_ENABLED;
     }
 
+    // (jparisu) AML-IP
+    // This probably should be done with mutex guarded. However, this does not fix the error
     if (history_.getHistorySize() == 0)
     {
+        // (jparisu) AML-IP
+        // Here the problem is produced. Fast says history size is 0 when total_unread_ is higher than 0
         return ReturnCode_t::RETCODE_NO_DATA;
     }
 

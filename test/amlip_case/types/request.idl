@@ -1,0 +1,5 @@
+struct Request
+{
+	unsigned short task_id;
+	unsigned short client_id;
+};

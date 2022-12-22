@@ -1425,6 +1425,9 @@ void StatefulReader::change_read_by_user(
     // Mark change as read
     if (mark_as_read && !change->isRead)
     {
+        // (jparisu) AML-IP
+        // It should not be here with a data that is not yet notified
+        // get_last_notified(a_change->writerGUID) >= a_change->sequenceNumber
         change->isRead = true;
         if (0 < total_unread_)
         {
