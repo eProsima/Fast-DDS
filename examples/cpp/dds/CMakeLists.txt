@@ -15,7 +15,6 @@
 add_subdirectory(AdvancedConfigurationExample)
 add_subdirectory(BasicConfigurationExample)
 add_subdirectory(Benchmark)
-add_subdirectory(ClientServerTest)
 add_subdirectory(Configurability)
 add_subdirectory(ContentFilteredTopicExample)
 add_subdirectory(CustomListenerExample)
