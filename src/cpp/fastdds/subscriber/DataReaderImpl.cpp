@@ -688,8 +688,11 @@ ReturnCode_t DataReaderImpl::read_or_take_next_sample(
         return ReturnCode_t::RETCODE_NOT_ENABLED;
     }
 
+    auto unread_count = get_unread_count(false);
     if (history_.getHistorySize() == 0)
     {
+        auto unread_count_no_history = get_unread_count(false);
+        assert(unread_count_no_history != unread_count || unread_count_no_history == 0);
         return ReturnCode_t::RETCODE_NO_DATA;
     }
 
