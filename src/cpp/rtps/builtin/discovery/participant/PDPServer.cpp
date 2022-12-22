@@ -571,16 +571,14 @@ void PDPServer::initializeParticipantProxyData(
         std::string>({dds::parameter_property_ds_version, dds::parameter_property_current_ds_version}));
 }
 
-void PDPServer::assignRemoteEndpoints(
-        ParticipantProxyData* pdata)
+void PDPServer::match_reliable_pdp_endpoints(
+        const ParticipantProxyData& pdata)
 {
-    EPROSIMA_LOG_INFO(RTPS_PDP_SERVER, "Assigning remote endpoint for RTPSParticipant: " << pdata->m_guid.guidPrefix);
-
     auto endpoints = static_cast<fastdds::rtps::DiscoveryServerPDPEndpoints*>(builtin_endpoints_.get());
     const NetworkFactory& network = mp_RTPSParticipant->network_factory();
-    uint32_t endp = pdata->m_availableBuiltinEndpoints;
+    uint32_t endp = pdata.m_availableBuiltinEndpoints;
     bool use_multicast_locators = !mp_RTPSParticipant->getAttributes().builtin.avoid_builtin_multicast ||
-            pdata->metatraffic_locators.unicast.empty();
+            pdata.metatraffic_locators.unicast.empty();
 
     // only SERVER and CLIENT participants will be received. All builtin must be there
     uint32_t auxendp = endp & (DISC_BUILTIN_ENDPOINT_PARTICIPANT_ANNOUNCER | DISC_BUILTIN_ENDPOINT_PARTICIPANT_SECURE_ANNOUNCER);
@@ -589,18 +587,18 @@ void PDPServer::assignRemoteEndpoints(
         auto temp_writer_data = get_temporary_writer_proxies_pool().get();
 
         temp_writer_data->clear();
-        temp_writer_data->guid().guidPrefix = pdata->m_guid.guidPrefix;
+        temp_writer_data->guid().guidPrefix = pdata.m_guid.guidPrefix;
         temp_writer_data->guid().entityId = endpoints->writer.writer_->getGuid().entityId;
-        temp_writer_data->persistence_guid(pdata->get_persistence_guid());
+        temp_writer_data->persistence_guid(pdata.get_persistence_guid());
         temp_writer_data->set_persistence_entity_id(c_EntityId_SPDPWriter);
-        temp_writer_data->set_remote_locators(pdata->metatraffic_locators, network, use_multicast_locators);
+        temp_writer_data->set_remote_locators(pdata.metatraffic_locators, network, use_multicast_locators);
         temp_writer_data->m_qos.m_reliability.kind = dds::RELIABLE_RELIABILITY_QOS;
         temp_writer_data->m_qos.m_durability.kind = dds::TRANSIENT_LOCAL_DURABILITY_QOS;
         endpoints->reader.reader_->matched_writer_add(*temp_writer_data);
     }
     else
     {
-        EPROSIMA_LOG_ERROR(RTPS_PDP_SERVER, "Participant " << pdata->m_guid.guidPrefix
+        EPROSIMA_LOG_ERROR(RTPS_PDP_SERVER, "Participant " << pdata.m_guid.guidPrefix
                                                            << " did not send information about builtin writers");
         return;
     }
@@ -613,19 +611,27 @@ void PDPServer::assignRemoteEndpoints(
 
         temp_reader_data->clear();
         temp_reader_data->m_expectsInlineQos = false;
-        temp_reader_data->guid().guidPrefix = pdata->m_guid.guidPrefix;
+        temp_reader_data->guid().guidPrefix = pdata.m_guid.guidPrefix;
         temp_reader_data->guid().entityId = endpoints->reader.reader_->getGuid().entityId;
-        temp_reader_data->set_remote_locators(pdata->metatraffic_locators, network, use_multicast_locators);
+        temp_reader_data->set_remote_locators(pdata.metatraffic_locators, network, use_multicast_locators);
         temp_reader_data->m_qos.m_reliability.kind = dds::RELIABLE_RELIABILITY_QOS;
         temp_reader_data->m_qos.m_durability.kind = dds::TRANSIENT_LOCAL_DURABILITY_QOS;
         endpoints->writer.writer_->matched_reader_add(*temp_reader_data);
     }
     else
     {
-        EPROSIMA_LOG_ERROR(RTPS_PDP_SERVER, "Participant " << pdata->m_guid.guidPrefix
+        EPROSIMA_LOG_ERROR(RTPS_PDP_SERVER, "Participant " << pdata.m_guid.guidPrefix
                                                            << " did not send information about builtin readers");
         return;
     }
+}
+
+void PDPServer::assignRemoteEndpoints(
+        ParticipantProxyData* pdata)
+{
+    EPROSIMA_LOG_INFO(RTPS_PDP_SERVER, "Assigning remote endpoint for RTPSParticipant: " << pdata->m_guid.guidPrefix);
+
+    match_reliable_pdp_endpoints(*pdata);
 
     //Inform EDP of new RTPSParticipant data:
     perform_builtin_endpoints_matching(*pdata);
@@ -634,6 +640,24 @@ void PDPServer::assignRemoteEndpoints(
 void PDPServer::notifyAboveRemoteEndpoints(
         const ParticipantProxyData& pdata)
 {
+#if HAVE_SECURITY
+    if (should_protect_discovery())
+    {
+        // Grant atomic access to PDP inherited proxies database
+        std::unique_lock<std::recursive_mutex> lock(*getMutex());
+
+        // Check if participant proxy already exists (means the DATA(p) brings updated info)
+        for (ParticipantProxyData* it : participant_proxies_)
+        {
+            if (pdata.m_guid == it->m_guid)
+            {
+                return;
+            }
+        }
+
+        match_reliable_pdp_endpoints(pdata);
+    }
+#endif // HAVE_SECURITY
 }
 
 void PDPServer::perform_builtin_endpoints_matching(

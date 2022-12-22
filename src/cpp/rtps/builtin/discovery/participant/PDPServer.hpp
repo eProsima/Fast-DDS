@@ -352,6 +352,9 @@ private:
     void perform_builtin_endpoints_matching(
             const fastrtps::rtps::ParticipantProxyData& pdata);
 
+    void match_reliable_pdp_endpoints(
+            const fastrtps::rtps::ParticipantProxyData& pdata);
+
     //! Server thread
     eprosima::fastrtps::rtps::ResourceEvent resource_event_thread_;
 
