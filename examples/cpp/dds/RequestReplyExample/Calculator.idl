@@ -1,0 +1,19 @@
+enum OperationType
+{
+    ADDITION,
+    SUBSTRACTION,
+    MULTIPLICATION,
+    DIVISION
+};
+
+struct RequestType
+{
+    OperationType operation;
+    long x;
+    long y;
+};
+
+struct ReplyType
+{
+    long long z;
+};
