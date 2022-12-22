@@ -594,7 +594,18 @@ void PDPServer::match_reliable_pdp_endpoints(
         temp_writer_data->set_remote_locators(pdata.metatraffic_locators, network, use_multicast_locators);
         temp_writer_data->m_qos.m_reliability.kind = dds::RELIABLE_RELIABILITY_QOS;
         temp_writer_data->m_qos.m_durability.kind = dds::TRANSIENT_LOCAL_DURABILITY_QOS;
-        endpoints->reader.reader_->matched_writer_add(*temp_writer_data);
+#if HAVE_SECURITY
+        if (should_protect_discovery())
+        {
+            mp_RTPSParticipant->security_manager().discovered_builtin_writer(
+                endpoints->reader.reader_->getGuid(), pdata.m_guid,
+                *temp_writer_data, endpoints->reader.reader_->getAttributes().security_attributes());
+        }
+        else
+#endif // HAVE_SECURITY
+        {
+            endpoints->reader.reader_->matched_writer_add(*temp_writer_data);
+        }
     }
     else
     {
@@ -616,7 +627,18 @@ void PDPServer::match_reliable_pdp_endpoints(
         temp_reader_data->set_remote_locators(pdata.metatraffic_locators, network, use_multicast_locators);
         temp_reader_data->m_qos.m_reliability.kind = dds::RELIABLE_RELIABILITY_QOS;
         temp_reader_data->m_qos.m_durability.kind = dds::TRANSIENT_LOCAL_DURABILITY_QOS;
-        endpoints->writer.writer_->matched_reader_add(*temp_reader_data);
+#if HAVE_SECURITY
+        if (should_protect_discovery())
+        {
+            mp_RTPSParticipant->security_manager().discovered_builtin_reader(
+                endpoints->writer.writer_->getGuid(), pdata.m_guid,
+                *temp_reader_data, endpoints->writer.writer_->getAttributes().security_attributes());
+        }
+        else
+#endif // HAVE_SECURITY
+        {
+            endpoints->writer.writer_->matched_reader_add(*temp_reader_data);
+        }
     }
     else
     {
