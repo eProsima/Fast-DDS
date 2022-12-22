@@ -583,14 +583,14 @@ void PDPServer::assignRemoteEndpoints(
             pdata->metatraffic_locators.unicast.empty();
 
     // only SERVER and CLIENT participants will be received. All builtin must be there
-    uint32_t auxendp = endp & DISC_BUILTIN_ENDPOINT_PARTICIPANT_ANNOUNCER;
+    uint32_t auxendp = endp & (DISC_BUILTIN_ENDPOINT_PARTICIPANT_ANNOUNCER | DISC_BUILTIN_ENDPOINT_PARTICIPANT_SECURE_ANNOUNCER);
     if (0 != auxendp)
     {
         auto temp_writer_data = get_temporary_writer_proxies_pool().get();
 
         temp_writer_data->clear();
         temp_writer_data->guid().guidPrefix = pdata->m_guid.guidPrefix;
-        temp_writer_data->guid().entityId = c_EntityId_SPDPWriter;
+        temp_writer_data->guid().entityId = endpoints->writer.writer_->getGuid().entityId;
         temp_writer_data->persistence_guid(pdata->get_persistence_guid());
         temp_writer_data->set_persistence_entity_id(c_EntityId_SPDPWriter);
         temp_writer_data->set_remote_locators(pdata->metatraffic_locators, network, use_multicast_locators);
@@ -606,7 +606,7 @@ void PDPServer::assignRemoteEndpoints(
     }
 
     // only SERVER and CLIENT participants will be received. All builtin must be there
-    auxendp = endp & DISC_BUILTIN_ENDPOINT_PARTICIPANT_DETECTOR;
+    auxendp = endp & (DISC_BUILTIN_ENDPOINT_PARTICIPANT_DETECTOR | DISC_BUILTIN_ENDPOINT_PARTICIPANT_SECURE_DETECTOR);
     if (0 != auxendp)
     {
         auto temp_reader_data = get_temporary_reader_proxies_pool().get();
@@ -614,7 +614,7 @@ void PDPServer::assignRemoteEndpoints(
         temp_reader_data->clear();
         temp_reader_data->m_expectsInlineQos = false;
         temp_reader_data->guid().guidPrefix = pdata->m_guid.guidPrefix;
-        temp_reader_data->guid().entityId = c_EntityId_SPDPReader;
+        temp_reader_data->guid().entityId = endpoints->reader.reader_->getGuid().entityId;
         temp_reader_data->set_remote_locators(pdata->metatraffic_locators, network, use_multicast_locators);
         temp_reader_data->m_qos.m_reliability.kind = dds::RELIABLE_RELIABILITY_QOS;
         temp_reader_data->m_qos.m_durability.kind = dds::TRANSIENT_LOCAL_DURABILITY_QOS;
