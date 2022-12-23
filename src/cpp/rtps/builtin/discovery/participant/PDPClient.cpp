@@ -515,6 +515,39 @@ void PDPClient::notifyAboveRemoteEndpoints(
     perform_builtin_endpoints_matching(pdata);
 }
 
+#if HAVE_SECURITY
+bool PDPClient::pairing_remote_writer_with_local_reader_after_security(
+        const GUID_t& local_reader,
+        const WriterProxyData& remote_writer_data)
+{
+    auto endpoints = static_cast<fastdds::rtps::DiscoveryServerPDPEndpoints*>(builtin_endpoints_.get());
+
+    if (local_reader == endpoints->reader.reader_->getGuid())
+    {
+        endpoints->reader.reader_->matched_writer_add(remote_writer_data);
+        return true;
+    }
+
+    return PDP::pairing_remote_writer_with_local_reader_after_security(local_reader, remote_writer_data);
+}
+
+bool PDPClient::pairing_remote_reader_with_local_writer_after_security(
+        const GUID_t& local_writer,
+        const ReaderProxyData& remote_reader_data)
+{
+    auto endpoints = static_cast<fastdds::rtps::DiscoveryServerPDPEndpoints*>(builtin_endpoints_.get());
+
+    if (local_writer == endpoints->writer.writer_->getGuid())
+    {
+        endpoints->writer.writer_->matched_reader_add(remote_reader_data);
+        return true;
+    }
+
+    return PDP::pairing_remote_reader_with_local_writer_after_security(local_writer, remote_reader_data);
+}
+
+#endif // HAVE_SECURITY
+
 void PDPClient::perform_builtin_endpoints_matching(
         const ParticipantProxyData& pdata)
 {
@@ -724,6 +757,7 @@ void PDPClient::announceParticipantState(
                     }
                 }
 
+                // TODO: This should be done with the configuration of the reliable writer
                 direct_send(getRTPSParticipant(), remote_readers, locators, *change);
             }
 

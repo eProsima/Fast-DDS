@@ -135,6 +135,16 @@ public:
             const GUID_t& participant_guid,
             ParticipantDiscoveryInfo::DISCOVERY_STATUS reason) override;
 
+#if HAVE_SECURITY
+    bool pairing_remote_writer_with_local_reader_after_security(
+            const GUID_t& local_reader,
+            const WriterProxyData& remote_writer_data) override;
+
+    bool pairing_remote_reader_with_local_writer_after_security(
+            const GUID_t& local_reader,
+            const ReaderProxyData& remote_reader_data) override;
+#endif // HAVE_SECURITY
+
     /*
      * Update the list of remote servers
      */
