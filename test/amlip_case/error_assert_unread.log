@@ -1,0 +1,41 @@
+(gdb) bt
+#0  __GI_raise (sig=sig@entry=6) at ../sysdeps/unix/sysv/linux/raise.c:50
+#1  0x00007f18510bd859 in __GI_abort () at abort.c:79
+#2  0x00007f18510bd729 in __assert_fail_base (
+    fmt=0x7f1851253588 "%s%s%s:%u: %s%sAssertion `%s' failed.\n%n",
+    assertion=0x7f18526e5160 "get_last_notified(change->writerGUID) >= change->sequenceNumber",
+    file=0x7f18526e4790 "/home/paris/applications/eprosima/core/src/fastdds/src/cpp/rtps/reader/StatefulReader.cpp", line=1433, function=<optimized out>) at assert.c:92
+#3  0x00007f18510cefd6 in __GI___assert_fail (
+    assertion=0x7f18526e5160 "get_last_notified(change->writerGUID) >= change->sequenceNumber",
+    file=0x7f18526e4790 "/home/paris/applications/eprosima/core/src/fastdds/src/cpp/rtps/reader/StatefulReader.cpp", line=1433,
+    function=0x7f18526e5088 "virtual void eprosima::fastrtps::rtps::StatefulReader::change_read_by_user(eprosima::fastrtps::rtps::CacheChange_t*, eprosima::fastrtps::rtps::WriterProxy*, bool)")
+    at assert.c:101
+#4  0x00007f18520ca04b in eprosima::fastrtps::rtps::StatefulReader::change_read_by_user (
+    this=0x7f183c0b3dd0, change=0x7f183c0ba560, writer=0x0, mark_as_read=true)
+    at /home/paris/applications/eprosima/core/src/fastdds/src/cpp/rtps/reader/StatefulReader.cpp:1433
+#5  0x00007f18520c9f5c in eprosima::fastrtps::rtps::StatefulReader::end_sample_access_nts (
+    this=0x7f183c0b3dd0, change=0x7f183c0ba560, wp=@0x7f184f4fbfd8: 0x0, mark_as_read=true)
+    at /home/paris/applications/eprosima/core/src/fastdds/src/cpp/rtps/reader/StatefulReader.cpp:1420
+#6  0x00007f18521e5c47 in eprosima::fastdds::dds::detail::ReadTakeCommand::add_instance (
+    this=0x7f184f4fc0b0, take_samples=true)
+    at /home/paris/applications/eprosima/core/src/fastdds/src/cpp/fastdds/subscriber/DataReaderImpl/ReadTakeCommand.hpp:151
+#7  0x00007f18521da280 in eprosima::fastdds::dds::DataReaderImpl::read_or_take_next_sample (
+    this=0x7f183c0a9450, data=0x7f184f4fc6b0, info=0x7f184f4fc2e0, should_take=true)
+    at /home/paris/applications/eprosima/core/src/fastdds/src/cpp/fastdds/subscriber/DataReaderImpl.cpp:731
+#8  0x00007f18521da3c7 in eprosima::fastdds::dds::DataReaderImpl::take_next_sample (
+    this=0x7f183c0a9450, data=0x7f184f4fc6b0, info=0x7f184f4fc2e0)
+    at /home/paris/applications/eprosima/core/src/fastdds/src/cpp/fastdds/subscriber/DataReaderImpl.cpp:756
+#9  0x00007f18521d4bf9 in eprosima::fastdds::dds::DataReader::take_next_sample (
+    this=0x7f183c0ac150, data=0x7f184f4fc6b0, info=0x7f184f4fc2e0)
+#10 0x0000556379fc1125 in eprosima::amlip::dds::Reader<eprosima::amlip::types::MsReferenceDataType>::read (this=0x7f183c095210) at /home/paris/applications/eprosima/annapurna/src/amlip/amlip_cpp/src/cpp/dds/impl/Reader.ipp:110
+#11 0x0000556379fbbcb6 in eprosima::amlip::dds::MultiServiceServer<test::TestDataType, test::TestDataType>::process_task_sync(std::function<test::TestDataType (test::TestDataType const&)>) (this=0x7f183c094c70, process_callback=...) at /home/paris/applications/eprosima/annapurna/src/amlip/amlip_cpp/src/cpp/dds/multiservice/impl/MultiServiceServer.ipp:104
+#12 0x0000556379faaf97 in MultiServiceTest_communicate_service_n_to_n_Test::<lambda(int, int)>::operator()(int, int) const (__closure=0x55637a537d98, id=1, tasks_to_process=1) at /home/paris/applications/eprosima/annapurna/src/amlip/amlip_cpp/test/integration/communication/multiserviceTest.cpp:154
+#13 0x0000556379faeb17 in std::__invoke_impl<void, MultiServiceTest_communicate_service_n_to_n_Test::TestBody()::<lambda(int, int)>, unsigned int, unsigned int>(std::__invoke_other, MultiServiceTest_communicate_service_n_to_n_Test::<lambda(int, int)> &&) (__f=...) at /usr/include/c++/9/bits/invoke.h:60
+#14 0x0000556379fae8e5 in std::__invoke<MultiServiceTest_communicate_service_n_to_n_Test::TestBody()::<lambda(int, int)>, unsigned int, unsigned int>(MultiServiceTest_communicate_service_n_to_n_Test::<lambda(int, int)> &&) (__fn=...) at /usr/include/c++/9/bits/invoke.h:95
+#15 0x0000556379fae773 in std::thread::_Invoker<std::tuple<MultiServiceTest_communicate_service_n_to_n_Test::TestBody()::<lambda(int, int)>, unsigned int, unsigned int> >::_M_invoke<0, 1, 2>(std::_Index_tuple<0, 1, 2>) (this=0x55637a537d98) at /usr/include/c++/9/thread:244
+#16 0x0000556379fae681 in std::thread::_Invoker<std::tuple<MultiServiceTest_communicate_service_n_to_n_Test::TestBody()::<lambda(int, int)>, unsigned int, unsigned int> >::operator()(void) (this=0x55637a537d98) at /usr/include/c++/9/thread:251
+#17 0x0000556379fae60e in std::thread::_State_impl<std::thread::_Invoker<std::tuple<MultiServiceTest_communicate_service_n_to_n_Test::TestBody()::<lambda(int, int)>, unsigned int, unsigned int> > >::_M_run(void) (this=0x55637a537d90) at /usr/include/c++/9/thread:195
+#18 0x00007f18514cdde4 in ?? () from /lib/x86_64-linux-gnu/libstdc++.so.6
+#19 0x00007f1853017609 in start_thread (arg=<optimized out>) at pthread_create.c:477
+#20 0x00007f18511ba133 in clone () at ../sysdeps/unix/sysv/linux/x86_64/clone.S:95
+(gdb)

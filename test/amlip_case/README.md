@@ -3,10 +3,14 @@
 We encountered an issue developing AML-IP when reading data.
 This test simulates our scenario to reproduce the error, as it depends on a complex series of events difficult to reproduce in a small scenario.
 
+---
+
 ## Issue
 
 The issue happens when a DataReader notifies that there is data available (both by `on_data_available` and by `wait_for_unread_message`) and calls `take_next_sample`.
 This call can return NO_DATA (it happens very few times) even when there are data in the Reader ready to be read.
+
+---
 
 ## Multiservice
 
@@ -33,6 +37,8 @@ send_task               process_task
             <------     reply
  target     ------>
 
+---
+
 ## Test
 
 This test implements classes `ParticipantClient` and `ParticipantServer` that represents a MultiServiceClient and a MultiServiceServer.
@@ -41,6 +47,29 @@ Each Client sends X messages and each Server waits to be chosen N*X/M times.
 
 Every read along the threads is done using `take_next_sample` and always after `wait_for_unread_message` returns that there are messages.
 There are `ASSERT_EQ` after each `take_next_sample`, that should never happen (everything is intraprocess).
+
+### Test failing
+
+This tests does not usually fails, thus it must be executed several times in order to find the error:
+
+* If using cmake command add the following flag
+  * `./<path-to-fastdds-ws>/build/fastrtps/test/amlip_case/amlip_case_test --gtest_repeat=100`
+* If using the colcon test command add the following flag:
+  * `colcon test --packages-select fastrtps --ctest-args --timeout 20 -R amlip_case_test --repeat-until-fail=100`
+
+This the failure message found:
+
+```log
+1: /home/paris/applications/eprosima/core/src/fastdds/test/amlip_case/amlip_case.cpp:228: Failure
+1: Expected equality of these values:
+1:   result
+1:     Which is: 4-byte object <0B-00 00-00>
+1:   ReturnCode_t::RETCODE_OK
+1:     Which is: 0
+1: in topic reply when reader has still data to read: 2
+```
+
+`<0B-00 00-00>` ReturnCode is 11 : `RETCODE_NO_DATA`
 
 ### on_data_available callback
 
@@ -73,6 +102,8 @@ constexpr const int CLIENT_TIME_AFTER_TASK = 20;
 constexpr const int SERVER_TIME_AFTER_TASK = 10;
 ```
 
+---
+
 ## Investigation
 
 ### QoS
@@ -93,10 +124,14 @@ All this test (and AML-IP case) uses the following QoS:
 1. Before and after calling `take_next_sample`, `get_unread_count` gives a number higher than 0 (which makes no sense receiving a NO_DATA in take call). This is tested by adding a `get_unread_count` right after `assert` fails.
 1. This only happens (or it looks like) if callback `on_data_available` is implemented.
 1. If `take_next_sample` call is repeated right after returning NO_DATA, some of the times it returns the correct value (probably when there have been an addition at that specific time, so there are more data to retrieve).
+1. Checking previous versions of Fast DDS the error is reproducible.
+    1. Versions checked: `v2.9.0`, `v2.8.0`, `v2.7.0`, `v2.6.0`, `v2.5.0`.
 
 ### Fast DDS traces
 
 There are some traces left in the code with comment `// (jparisu) AML-IP` in hot points where the error could be originated or at least traced.
+
+---
 
 ## Attachments
 
