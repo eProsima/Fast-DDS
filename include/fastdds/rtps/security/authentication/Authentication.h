@@ -249,6 +249,21 @@ public:
             PermissionsCredentialToken* token,
             SecurityException& ex) = 0;
 
+    /**
+     * Returns whether a mangled guid is the same as the original
+     * @param adjusted Original guid prefix candidate to compare
+     * @param original Mangled guid prefix
+     * @return true on success
+     */
+    virtual bool check_guid_comes_from(
+                IdentityHandle* /*identity_handle*/,
+                const GUID_t& adjusted,
+                const GUID_t& original)
+    {
+        //! By default, return this comparison
+        return adjusted == original;
+    }
+
     bool set_logger(
             Logging* logger,
             SecurityException& /*exception*/)
