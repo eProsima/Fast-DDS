@@ -684,8 +684,11 @@ void PDPServer::notifyAboveRemoteEndpoints(
         }
 
         match_reliable_pdp_endpoints(pdata);
+        return;
     }
 #endif // HAVE_SECURITY
+
+    perform_builtin_endpoints_matching(pdata);
 }
 
 #if HAVE_SECURITY
