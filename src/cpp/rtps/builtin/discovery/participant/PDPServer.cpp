@@ -581,7 +581,9 @@ void PDPServer::match_reliable_pdp_endpoints(
             pdata.metatraffic_locators.unicast.empty();
 
     // only SERVER and CLIENT participants will be received. All builtin must be there
-    uint32_t auxendp = endp & (DISC_BUILTIN_ENDPOINT_PARTICIPANT_ANNOUNCER | DISC_BUILTIN_ENDPOINT_PARTICIPANT_SECURE_ANNOUNCER);
+    uint32_t auxendp = endp &
+            (DISC_BUILTIN_ENDPOINT_PARTICIPANT_ANNOUNCER |
+            DISC_BUILTIN_ENDPOINT_PARTICIPANT_SECURE_ANNOUNCER);
     if (0 != auxendp)
     {
         auto temp_writer_data = get_temporary_writer_proxies_pool().get();
@@ -742,7 +744,7 @@ void PDPServer::removeRemoteEndpoints(
 
     auto endpoints = static_cast<fastdds::rtps::DiscoveryServerPDPEndpoints*>(builtin_endpoints_.get());
 
-    if (endp & (DISC_BUILTIN_ENDPOINT_PARTICIPANT_ANNOUNCER | DISC_BUILTIN_ENDPOINT_PARTICIPANT_SECURE_ANNOUNCER) )
+    if (endp & (DISC_BUILTIN_ENDPOINT_PARTICIPANT_ANNOUNCER | DISC_BUILTIN_ENDPOINT_PARTICIPANT_SECURE_ANNOUNCER))
     {
         GUID_t writer_guid(pdata->m_guid.guidPrefix, endpoints->writer.writer_->getGuid().entityId);
         endpoints->reader.reader_->matched_writer_remove(writer_guid);
@@ -754,7 +756,7 @@ void PDPServer::removeRemoteEndpoints(
         return;
     }
 
-    if (endp & (DISC_BUILTIN_ENDPOINT_PARTICIPANT_DETECTOR | DISC_BUILTIN_ENDPOINT_PARTICIPANT_SECURE_DETECTOR) )
+    if (endp & (DISC_BUILTIN_ENDPOINT_PARTICIPANT_DETECTOR | DISC_BUILTIN_ENDPOINT_PARTICIPANT_SECURE_DETECTOR))
     {
         GUID_t reader_guid(pdata->m_guid.guidPrefix, endpoints->reader.reader_->getGuid().entityId);
         endpoints->writer.writer_->matched_reader_remove(reader_guid);
