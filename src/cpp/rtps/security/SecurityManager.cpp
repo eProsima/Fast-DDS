@@ -2047,6 +2047,24 @@ uint32_t SecurityManager::builtin_endpoints() const
     return be;
 }
 
+bool SecurityManager::check_guid_comes_from(const GUID_t &adjusted, const GUID_t &original) const
+{
+    shared_lock<shared_mutex> _(mutex_);
+
+    if (authentication_plugin_ != nullptr)
+    {
+        auto discp_it = discovered_participants_.find(adjusted);
+
+        if (discp_it != discovered_participants_.end() &&
+                discp_it->second->get_auth()->auth_status_ == AuthenticationStatus::AUTHENTICATION_OK)
+        {
+            return authentication_plugin_->check_guid_comes_from(discp_it->second->get_auth()->identity_handle_, adjusted, original);
+        }
+    }
+
+    return original == adjusted;
+}
+
 void SecurityManager::match_builtin_endpoints(
         const ParticipantProxyData& participant_data)
 {

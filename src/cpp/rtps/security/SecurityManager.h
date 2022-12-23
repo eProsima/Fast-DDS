@@ -236,6 +236,14 @@ public:
      */
     uint32_t builtin_endpoints() const;
 
+    /**
+     * Returns whether a mangled guid is the same as the original. Proxy to auth plugin
+     * @param adjusted Original guid prefix candidate to compare
+     * @param original Mangled guid prefix
+     * @return true on success
+     */
+    bool check_guid_comes_from(const GUID_t& adjusted, const GUID_t& original) const;
+
     RTPSParticipantImpl* participant() const
     {
         return participant_;
