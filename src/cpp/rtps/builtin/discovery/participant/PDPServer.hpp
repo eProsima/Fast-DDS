@@ -137,6 +137,16 @@ public:
     void notifyAboveRemoteEndpoints(
             const fastrtps::rtps::ParticipantProxyData& pdata) override;
 
+#if HAVE_SECURITY
+    bool pairing_remote_writer_with_local_reader_after_security(
+            const fastrtps::rtps::GUID_t& local_reader,
+            const fastrtps::rtps::WriterProxyData& remote_writer_data) override;
+
+    bool pairing_remote_reader_with_local_writer_after_security(
+            const fastrtps::rtps::GUID_t& local_reader,
+            const fastrtps::rtps::ReaderProxyData& remote_reader_data) override;
+#endif // HAVE_SECURITY
+
     //! Get filename for writer persistence database file
     std::string get_writer_persistence_file_name() const;
 
