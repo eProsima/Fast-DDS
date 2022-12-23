@@ -204,6 +204,11 @@ private:
 #endif  // HAVE_SECURITY
 
     /**
+     * Searches for secure discovery servers by rectifying the guids
+     */
+    bool data_matches_with_server(const RemoteServerAttributes& remote_server_att, const ParticipantProxyData& participant_data);
+
+    /**
      * Performs creation of standard DS PDP endpoints
      */
     bool create_ds_pdp_endpoints();
