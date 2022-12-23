@@ -92,7 +92,7 @@ All this test (and AML-IP case) uses the following QoS:
 
 1. Before and after calling `take_next_sample`, `get_unread_count` gives a number higher than 0 (which makes no sense receiving a NO_DATA in take call). This is tested by adding a `get_unread_count` right after `assert` fails.
 1. This only happens (or it looks like) if callback `on_data_available` is implemented.
-1. If `take_next_sample` call is repeated right after returning NO_DATA, most (if not all) of the times it returns the correct value.
+1. If `take_next_sample` call is repeated right after returning NO_DATA, some of the times it returns the correct value (probably when there have been an addition at that specific time, so there are more data to retrieve).
 
 ### Fast DDS traces
 
