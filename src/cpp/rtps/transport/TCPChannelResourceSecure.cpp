@@ -225,20 +225,15 @@ size_t TCPChannelResourceSecure::send(
                 {
                     if (socket->lowest_layer().is_open())
                     {
-                        asio::async_write(*socket, buffers,
-                        [&, socket](const std::error_code& error, const size_t& bytes_transferred)
+                        size_t bytes_transferred = asio::write(*socket, buffers, ec);
+                        if (!ec)
                         {
-                            ec = error;
-
-                            if (!error)
-                            {
-                                write_bytes_promise.set_value(bytes_transferred);
-                            }
-                            else
-                            {
-                                write_bytes_promise.set_value(0);
-                            }
-                        });
+                            write_bytes_promise.set_value(bytes_transferred);
+                        }
+                        else
+                        {
+                            write_bytes_promise.set_value(0);
+                        }
                     }
                     else
                     {
