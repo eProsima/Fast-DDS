@@ -2051,18 +2051,19 @@ bool SecurityManager::check_guid_comes_from(const GUID_t &adjusted, const GUID_t
 {
     shared_lock<shared_mutex> _(mutex_);
 
+    bool ret = (original == adjusted);
+
     if (authentication_plugin_ != nullptr)
     {
-        auto discp_it = discovered_participants_.find(adjusted);
+        auto mguid_it = guids_mangling_info_.find(adjusted);
 
-        if (discp_it != discovered_participants_.end() &&
-                discp_it->second->get_auth()->auth_status_ == AuthenticationStatus::AUTHENTICATION_OK)
+        if (mguid_it != guids_mangling_info_.end())
         {
-            return authentication_plugin_->check_guid_comes_from(discp_it->second->get_auth()->identity_handle_, adjusted, original);
+            ret = authentication_plugin_->check_guid_comes_from(mguid_it->second, adjusted, original);
         }
     }
 
-    return original == adjusted;
+    return ret;
 }
 
 void SecurityManager::match_builtin_endpoints(
@@ -4062,6 +4063,22 @@ bool SecurityManager::participant_authorized(
             }
 
             match_builtin_key_exchange_endpoints(participant_data);
+        }
+
+        if (participant_->getRTPSParticipantAttributes().builtin.discovery_config.discoveryProtocol !=
+                DiscoveryProtocol_t::SIMPLE)
+        {
+            //! Search if mangling info already exists for this participant
+            auto mguid_it = guids_mangling_info_.find(participant_data.m_guid);
+
+            if (mguid_it == guids_mangling_info_.end())
+            {
+                auto ih = remote_participant_info->identity_handle_;
+
+                //! store mangled guid information for this participant
+                guids_mangling_info_.insert({participant_data.m_guid, ih});
+            }
+
         }
 
         participant_->pdp()->notifyAboveRemoteEndpoints(participant_data);

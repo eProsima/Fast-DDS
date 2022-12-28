@@ -724,6 +724,9 @@ private:
     // synchronization
     std::map<GUID_t, std::unique_ptr<DiscoveredParticipantInfo>> discovered_participants_;
 
+    // collection of well known participants IdentityHandles for a quick lookup guid translation
+    std::map<GUID_t, eprosima::fastrtps::rtps::security::IdentityHandle*> guids_mangling_info_;
+
     GUID_t auth_source_guid;
 
     /**
