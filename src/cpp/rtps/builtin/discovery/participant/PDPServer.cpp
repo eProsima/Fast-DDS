@@ -557,6 +557,16 @@ void PDPServer::initializeParticipantProxyData(
             | DISC_BUILTIN_ENDPOINT_SUBSCRIPTION_DETECTOR
             | DISC_BUILTIN_ENDPOINT_PUBLICATION_DETECTOR
             | DISC_BUILTIN_ENDPOINT_SUBSCRIPTION_ANNOUNCER;
+#ifdef HAVE_SECURITY
+    if (getRTPSParticipant()->is_secure())
+    {
+        participant_data->m_availableBuiltinEndpoints
+            |= DISC_BUILTIN_ENDPOINT_PUBLICATION_SECURE_ANNOUNCER
+                | DISC_BUILTIN_ENDPOINT_SUBSCRIPTION_SECURE_DETECTOR
+                | DISC_BUILTIN_ENDPOINT_SUBSCRIPTION_SECURE_ANNOUNCER
+                | DISC_BUILTIN_ENDPOINT_PUBLICATION_SECURE_DETECTOR;
+    }
+#endif //HAVE_SECURITY
 
     const SimpleEDPAttributes& se = getRTPSParticipant()->getAttributes().builtin.discovery_config.m_simpleEDP;
 
