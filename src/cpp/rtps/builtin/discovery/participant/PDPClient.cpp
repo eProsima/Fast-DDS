@@ -184,7 +184,7 @@ ParticipantProxyData* PDPClient::createParticipantProxyData(
 
         for (auto& svr : mp_builtin->m_DiscoveryServers)
         {
-            if (svr.guidPrefix == participant_data.m_guid.guidPrefix)
+            if (data_matches_with_server(svr, participant_data))
             {
                 is_server = true;
             }
