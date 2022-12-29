@@ -219,6 +219,11 @@ ParticipantProxyData* PDP::add_participant_proxy_data(
     return ret_val;
 }
 
+bool PDP::data_matches_with_server(const RemoteServerAttributes& remote_server_att, const ParticipantProxyData& participant_data)
+{
+    return (remote_server_att.guidPrefix == participant_data.m_guid.guidPrefix);
+}
+
 void PDP::initializeParticipantProxyData(
         ParticipantProxyData* participant_data)
 {
@@ -1109,6 +1114,20 @@ ParticipantProxyData* PDP::get_participant_proxy_data(
     for (auto pit = ParticipantProxiesBegin(); pit != ParticipantProxiesEnd(); ++pit)
     {
         if (guid_prefix == (*pit)->m_guid.guidPrefix)
+        {
+            return *(pit);
+        }
+    }
+    return nullptr;
+}
+
+
+ParticipantProxyData* PDP::get_remote_server_participant_proxy_data(
+            const RemoteServerAttributes& rsatt)
+{
+    for (auto pit = ParticipantProxiesBegin(); pit != ParticipantProxiesEnd(); ++pit)
+    {
+        if (data_matches_with_server(rsatt, **pit))
         {
             return *(pit);
         }
