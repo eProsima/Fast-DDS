@@ -206,7 +206,7 @@ private:
     /**
      * Searches for secure discovery servers by rectifying the guids
      */
-    bool data_matches_with_server(const RemoteServerAttributes& remote_server_att, const ParticipantProxyData& participant_data);
+    bool data_matches_with_server(const RemoteServerAttributes& remote_server_att, const ParticipantProxyData& participant_data) override;
 
     /**
      * Performs creation of standard DS PDP endpoints

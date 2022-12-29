@@ -299,7 +299,7 @@ bool PDPClient::create_ds_pdp_best_effort_reader(
 
 bool PDPClient::data_matches_with_server(const RemoteServerAttributes& remote_server_att, const ParticipantProxyData& participant_data)
 {
-    if (remote_server_att.guidPrefix == participant_data.m_guid.guidPrefix)
+    if (PDP::data_matches_with_server(remote_server_att, participant_data))
     {
         return true;
     }
