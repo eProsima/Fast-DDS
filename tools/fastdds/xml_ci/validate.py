@@ -13,25 +13,23 @@
 # limitations under the License.
 
 """
-    Sub-Command Validate implementation.
+Sub-Command Validate implementation.
 
-    This sub-command validates the Fast DDS XML configuration files using an
-    XSD schema.
-
+This sub-command validates the Fast DDS XML configuration files using an
+XSD schema.
 """
 
 import os
-
-from lxml import etree
+from xml import etree
 
 from xmlschema import XMLSchema, XMLSchemaValidationError
-from xmlschema.exceptions import XMLSchemaKeyError
 
 
 class Validate:
     """Fast DDS XML configuration files validator."""
 
     def __init__(self, xsd_file):
+        """Initialize Validate class."""
         self.xsd_file = xsd_file
         self.__visited_dirs = []
 
@@ -46,13 +44,13 @@ class Validate:
         if not os.path.isfile(xsd_file):
             print(f'The XSD schema does not exist: {xsd_file}')
             exit(1)
-
         if isinstance(xsd_file, XMLSchema):
             self.__xsd_file = xsd_file
         else:
             try:
                 self.__xsd_file = XMLSchema(xsd_file)
-            except etree.ParseError as e:
+            except etree.ElementTree.ParseError as e:
+                print(f'cannot load XSD file: {xsd_file}')
                 print(e)
                 exit(1)
 
@@ -97,12 +95,11 @@ class Validate:
 
         :param file: The Fast DDS XML configuration file.
         """
-        xml_etree = etree.parse(file)
-        xml_etree_encoded = etree.fromstring(etree.tostring(xml_etree))
+        xml_etree = etree.ElementTree.parse(file)
         try:
-            self.xsd_file.validate(xml_etree_encoded)
+            self.xsd_file.validate(xml_etree)
             print(f'Valid XML file: {file}')
-        except (XMLSchemaValidationError, XMLSchemaKeyError) as error:
+        except XMLSchemaValidationError as error:
             print(f'NOT valid XML file: {file}')
             print(error)
 
