@@ -13,22 +13,21 @@
 # limitations under the License.
 
 """
-    fastdds xml sub-command.
+fastdds xml sub-command.
 
-    This verb validates the Fast DDS XML profiles files.
+This verb validates the Fast DDS XML profiles files.
 
-    usage: fastdds xml [<xml-command>]
+usage: fastdds xml [<xml-command>]
 
-    xml-commands:
+xml-commands:
 
-        validate    validate XML profiles files using an XSD schema
+    validate    validate XML profiles files using an XSD schema
 
-    positional arguments:
-        command     xml-command to run
+positional arguments:
+    command     xml-command to run
 
-    optional arguments:
-        -h, --help  show this help message and exit
-
+optional arguments:
+    -h, --help  show this help message and exit
 """
 
 import argparse

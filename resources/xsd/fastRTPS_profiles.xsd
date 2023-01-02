@@ -823,7 +823,9 @@
             <xs:element name="request_topic_name" type="stringType" minOccurs="0"/>
             <xs:element name="reply_topic_name" type="stringType" minOccurs="0"/>
             <xs:element name="publisher" type="publisherProfileType"/>
+            <xs:element name="data_writer" type="publisherProfileType"/>
             <xs:element name="subscriber" type="subscriberProfileType"/>
+            <xs:element name="data_reader" type="subscriberProfileType"/>
         </xs:all>
         <xs:attribute name="profile_name" type="stringType" use="required"/>
         <xs:attribute name="service_name" type="stringType" use="required"/>
@@ -836,7 +838,9 @@
             <xs:element name="request_topic_name" type="stringType" minOccurs="0"/>
             <xs:element name="reply_topic_name" type="stringType" minOccurs="0"/>
             <xs:element name="publisher" type="publisherProfileType"/>
+            <xs:element name="data_writer" type="publisherProfileType"/>
             <xs:element name="subscriber" type="subscriberProfileType"/>
+            <xs:element name="data_reader" type="subscriberProfileType"/>
         </xs:all>
         <xs:attribute name="profile_name" type="stringType" use="required"/>
         <xs:attribute name="service_name" type="stringType" use="required"/>
@@ -930,6 +934,8 @@
                 <xs:element name="participant" type="participantProfileType" minOccurs="0" maxOccurs="unbounded"/>
                 <xs:element name="publisher" type="publisherProfileType" minOccurs="0" maxOccurs="unbounded"/>
                 <xs:element name="subscriber" type="subscriberProfileType" minOccurs="0" maxOccurs="unbounded"/>
+                <xs:element name="data_writer" type="publisherProfileType" minOccurs="0" maxOccurs="unbounded"/>
+                <xs:element name="data_reader" type="subscriberProfileType" minOccurs="0" maxOccurs="unbounded"/>
                 <xs:element name="topic" type="topicAttributesType" minOccurs="0" maxOccurs="unbounded"/>
                 <xs:element name="types" type="topicAttributesType" minOccurs="0" maxOccurs="unbounded"/>
             </xs:choice>
