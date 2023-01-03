@@ -385,6 +385,16 @@ public:
         return temp_writer_proxies_;
     }
 
+#if HAVE_SECURITY
+    virtual bool pairing_remote_writer_with_local_reader_after_security(
+            const GUID_t& local_reader,
+            const WriterProxyData& remote_writer_data);
+
+    virtual bool pairing_remote_reader_with_local_writer_after_security(
+            const GUID_t& local_writer,
+            const ReaderProxyData& remote_reader_data);
+#endif // HAVE_SECURITY
+
 protected:
 
     //!Pointer to the builtin protocols object.

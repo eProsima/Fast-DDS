@@ -135,11 +135,15 @@ public:
             const GUID_t& participant_guid,
             ParticipantDiscoveryInfo::DISCOVERY_STATUS reason) override;
 
-    /**
-     * Matching server EDP endpoints
-     * @return true if all servers have been discovered
-     */
-    bool match_servers_EDP_endpoints();
+#if HAVE_SECURITY
+    bool pairing_remote_writer_with_local_reader_after_security(
+            const GUID_t& local_reader,
+            const WriterProxyData& remote_writer_data) override;
+
+    bool pairing_remote_reader_with_local_writer_after_security(
+            const GUID_t& local_reader,
+            const ReaderProxyData& remote_reader_data) override;
+#endif // HAVE_SECURITY
 
     /*
      * Update the list of remote servers
@@ -167,6 +171,24 @@ protected:
             const eprosima::fastdds::rtps::RemoteServerAttributes& server_att);
 
 private:
+
+    /**
+     * Manually match the local PDP reader with the PDP writer of a given server. The function is
+     * not thread safe (nts) in the sense that it does not take the PDP mutex. It does however take
+     * temp_data_lock_
+     */
+    void match_pdp_writer_nts_(
+            const eprosima::fastdds::rtps::RemoteServerAttributes& server_att,
+            const eprosima::fastdds::rtps::GuidPrefix_t& prefix_override);
+
+    /**
+     * Manually match the local PDP writer with the PDP reader of a given server. The function is
+     * not thread safe (nts) in the sense that it does not take the PDP mutex. It does however take
+     * temp_data_lock_
+     */
+    void match_pdp_reader_nts_(
+            const eprosima::fastdds::rtps::RemoteServerAttributes& server_att,
+            const eprosima::fastdds::rtps::GuidPrefix_t& prefix_override);
 
 #if HAVE_SECURITY
     /**
@@ -207,6 +229,12 @@ private:
      */
     bool create_ds_pdp_best_effort_reader(
             DiscoveryServerPDPEndpointsSecure& endpoints);
+
+    /**
+     * Provides the functionality of notifyAboveRemoteEndpoints without being an override of that method.
+     */
+    void perform_builtin_endpoints_matching(
+            const ParticipantProxyData& pdata);
 
     /**
      * TimedEvent for server synchronization:
