@@ -36,6 +36,9 @@ namespace eprosima {
 
 namespace fastrtps {
 namespace rtps {
+
+class RTPSDomainImpl;
+
 namespace detail {
 class TopicPayloadPoolRegistry;
 }  // namespace detail
@@ -303,6 +306,8 @@ protected:
     DomainParticipantQos default_participant_qos_;
 
     std::shared_ptr<fastrtps::rtps::detail::TopicPayloadPoolRegistry> topic_pool_;
+
+    std::shared_ptr<fastrtps::rtps::RTPSDomainImpl> rtps_domain_;
 };
 
 }  // namespace dds
