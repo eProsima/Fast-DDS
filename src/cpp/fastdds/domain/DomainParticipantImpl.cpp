@@ -75,6 +75,7 @@ using fastrtps::TopicAttributes;
 using fastrtps::SubscriberAttributes;
 using fastrtps::PublisherAttributes;
 using fastrtps::rtps::RTPSDomain;
+using fastrtps::rtps::RTPSDomainImpl;
 using fastrtps::rtps::RTPSParticipant;
 using fastrtps::rtps::ParticipantDiscoveryInfo;
 #if HAVE_SECURITY
@@ -257,7 +258,7 @@ ReturnCode_t DomainParticipantImpl::enable()
 
     // If DEFAULT_ROS2_MASTER_URI is specified then try to create default client if
     // that already exists.
-    RTPSParticipant* part = RTPSDomain::clientServerEnvironmentCreationOverride(
+    RTPSParticipant* part = RTPSDomainImpl::clientServerEnvironmentCreationOverride(
         domain_id_,
         false,
         rtps_attr,

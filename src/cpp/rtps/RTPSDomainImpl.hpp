@@ -41,6 +41,86 @@ class RTPSDomainImpl
 {
 public:
 
+    typedef std::pair<RTPSParticipant*, RTPSParticipantImpl*> t_p_RTPSParticipant;
+
+    /**
+     * Method to shut down all RTPSParticipants, readers, writers, etc.
+     * It must be called at the end of the process to avoid memory leaks.
+     * It also shut downs the DomainRTPSParticipant.
+     *
+     * \post After this call, all the pointers to RTPS entities are invalidated and their use may
+     *       result in undefined behaviour.
+     */
+    static void stopAll();
+
+    /**
+     * @brief Create a RTPSParticipant.
+     * @param domain_id DomainId to be used by the RTPSParticipant (80 by default).
+     * @param enabled True if the RTPSParticipant should be enabled on creation. False if it will be enabled later with RTPSParticipant::enable()
+     * @param attrs RTPSParticipant Attributes.
+     * @param plisten Pointer to the ParticipantListener.
+     * @return Pointer to the RTPSParticipant.
+     *
+     * \warning The returned pointer is invalidated after a call to removeRTPSParticipant() or stopAll(),
+     *          so its use may result in undefined behaviour.
+     */
+    static RTPSParticipant* createParticipant(
+            uint32_t domain_id,
+            bool enabled,
+            const RTPSParticipantAttributes& attrs,
+            RTPSParticipantListener* plisten);
+
+    /**
+     * Remove a RTPSWriter.
+     * @param writer Pointer to the writer you want to remove.
+     * @return  True if correctly removed.
+     */
+    static bool removeRTPSWriter(
+            RTPSWriter* writer);
+
+    /**
+     * Remove a RTPSReader.
+     * @param reader Pointer to the reader you want to remove.
+     * @return  True if correctly removed.
+     */
+    static bool removeRTPSReader(
+            RTPSReader* reader);
+
+    /**
+     * Remove a RTPSParticipant and delete all its associated Writers, Readers, resources, etc.
+     * @param[in] p Pointer to the RTPSParticipant;
+     * @return True if correct.
+     */
+    static bool removeRTPSParticipant(
+            RTPSParticipant* p);
+
+    /**
+     * Set the maximum RTPSParticipantID.
+     * @param maxRTPSParticipantId ID.
+     */
+    static inline void setMaxRTPSParticipantId(
+            uint32_t maxRTPSParticipantId)
+    {
+        m_maxRTPSParticipantID = maxRTPSParticipantId;
+    }
+
+    /**
+     * Creates a RTPSParticipant as default server or client if ROS_MASTER_URI environment variable is set.
+     * @param domain_id DDS domain associated
+     * @param enabled True if the RTPSParticipant should be enabled on creation. False if it will be enabled later with RTPSParticipant::enable()
+     * @param attrs RTPSParticipant Attributes.
+     * @param listen Pointer to the ParticipantListener.
+     * @return Pointer to the RTPSParticipant.
+     *
+     * \warning The returned pointer is invalidated after a call to removeRTPSParticipant() or stopAll(),
+     *          so its use may result in undefined behaviour.
+     */
+    static RTPSParticipant* clientServerEnvironmentCreationOverride(
+            uint32_t domain_id,
+            bool enabled,
+            const RTPSParticipantAttributes& attrs,
+            RTPSParticipantListener* listen /*= nullptr*/);
+
     /**
      * Create a RTPSWriter in a participant.
      * @param p Pointer to the RTPSParticipant.
@@ -144,6 +224,23 @@ public:
      * Callback run when the monitored environment file is modified
      */
     static void file_watch_callback();
+
+    /**
+     * @brief Get Id to create a RTPSParticipant.
+     * @return Different ID for each call.
+     */
+    static uint32_t getNewId();
+
+    static void removeRTPSParticipant_nts(
+            t_p_RTPSParticipant&);
+
+    static std::mutex m_mutex;
+
+    static std::atomic<uint32_t> m_maxRTPSParticipantID;
+
+    static std::vector<t_p_RTPSParticipant> m_RTPSParticipants;
+
+    static std::set<uint32_t> m_RTPSParticipantIDs;
 
     static FileWatchHandle file_watch_handle_;
 };
