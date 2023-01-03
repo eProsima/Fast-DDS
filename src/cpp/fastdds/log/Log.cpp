@@ -32,7 +32,7 @@ namespace eprosima {
 namespace fastdds {
 namespace dds {
 
-struct Resources
+struct LogResources
 {
     fastrtps::DBQueue<Log::Entry> logs;
     std::vector<std::unique_ptr<LogConsumer>> consumers;
@@ -55,7 +55,7 @@ struct Resources
 
     std::atomic<Log::Kind> verbosity;
 
-    Resources()
+    LogResources()
         : logging(false)
         , work(false)
         , current_loop(0)
@@ -70,7 +70,7 @@ struct Resources
 #endif // STDOUTERR_LOG_CONSUMER
     }
 
-    ~Resources()
+    ~LogResources()
     {
         KillThread();
     }
@@ -79,9 +79,9 @@ struct Resources
 
 };
 
-static std::shared_ptr<Resources> resources_instance()
+static std::shared_ptr<LogResources> resources_instance()
 {
-    static std::shared_ptr<Resources> instance = std::make_shared<Resources>();
+    static std::shared_ptr<LogResources> instance = std::make_shared<LogResources>();
     return instance;
 }
 
@@ -260,7 +260,7 @@ void Log::KillThread()
     resources_instance()->KillThread();
 }
 
-void Resources::KillThread()
+void LogResources::KillThread()
 {
     {
         std::unique_lock<std::mutex> guard(cv_mutex);
