@@ -17,6 +17,7 @@
 #define _RTPS_RTPSDOMAINIMPL_HPP_
 
 #include <chrono>
+#include <memory>
 #include <thread>
 
 #if defined(_WIN32) || defined(__unix__)
@@ -42,6 +43,13 @@ class RTPSDomainImpl
 public:
 
     typedef std::pair<RTPSParticipant*, RTPSParticipantImpl*> t_p_RTPSParticipant;
+
+    /**
+     * Get singleton instance.
+     *
+     * @return Shared pointer to RTPSDomainImpl singleton instance.
+     */
+    static std::shared_ptr<RTPSDomainImpl> get_instance();
 
     /**
      * Method to shut down all RTPSParticipants, readers, writers, etc.
@@ -101,7 +109,7 @@ public:
     static inline void setMaxRTPSParticipantId(
             uint32_t maxRTPSParticipantId)
     {
-        m_maxRTPSParticipantID = maxRTPSParticipantId;
+        get_instance()->m_maxRTPSParticipantID = maxRTPSParticipantId;
     }
 
     /**
@@ -178,8 +186,8 @@ public:
     static void for_each_participant(
             UnaryPredicate pred)
     {
-        std::lock_guard<std::mutex> guard(RTPSDomain::m_mutex);
-        for (const RTPSDomain::t_p_RTPSParticipant& participant : RTPSDomain::m_RTPSParticipants)
+        std::lock_guard<std::mutex> guard(m_mutex);
+        for (const t_p_RTPSParticipant& participant : m_RTPSParticipants)
         {
             if (!pred(participant))
             {
@@ -225,24 +233,26 @@ public:
      */
     static void file_watch_callback();
 
+private:
+
     /**
      * @brief Get Id to create a RTPSParticipant.
      * @return Different ID for each call.
      */
-    static uint32_t getNewId();
+    uint32_t getNewId();
 
-    static void removeRTPSParticipant_nts(
+    void removeRTPSParticipant_nts(
             t_p_RTPSParticipant&);
 
-    static std::mutex m_mutex;
+    std::mutex m_mutex;
 
-    static std::atomic<uint32_t> m_maxRTPSParticipantID;
+    std::atomic<uint32_t> m_maxRTPSParticipantID;
 
-    static std::vector<t_p_RTPSParticipant> m_RTPSParticipants;
+    std::vector<t_p_RTPSParticipant> m_RTPSParticipants;
 
-    static std::set<uint32_t> m_RTPSParticipantIDs;
+    std::set<uint32_t> m_RTPSParticipantIDs;
 
-    static FileWatchHandle file_watch_handle_;
+    FileWatchHandle file_watch_handle_;
 };
 
 } // namespace rtps
