@@ -139,3 +139,16 @@ There are 2 files attached to this test:
 
 * `error_assert_unread` is a backtrace produces by adding an assert in `StatefulReader::change_read_by_user` (where the comment is)
 * `error_out_of_range` other issue that happens from time to time (not sure it is related)
+
+---
+
+## Problem description
+
+`mp_reader->nextUntakenCache()` in `get_first_untaken_info()` is removing the change (`it->remove_change()`) if `matched_writer_lookup()` returns false. This, in turn calls `change_removed_by_history()` but `if (... &&get_last_notified())` returns always false in that case because no writerGUID is found hence a sequence number of 0.0 in returned. This situation provokes that `total_unread_` is not decremented despite removing the change, so the history size and `total_unread_` variable are uncorrelated and the issue arises.
+
+---
+
+## Proposed solution
+
+`get_first_untaken_info()` should be a read-only API and `mp_reader->nextUntakenCache()` should not be called from inside because it modifies the history in certain cases.
+
