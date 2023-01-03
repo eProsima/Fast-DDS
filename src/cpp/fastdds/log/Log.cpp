@@ -79,7 +79,7 @@ struct LogResources
 
 };
 
-static std::shared_ptr<LogResources> get_log_resources()
+std::shared_ptr<LogResources> get_log_resources()
 {
     static std::shared_ptr<LogResources> instance = std::make_shared<LogResources>();
     return instance;
