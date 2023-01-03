@@ -71,8 +71,10 @@ struct Resources
 
     ~Resources()
     {
-        Log::KillThread();
+        KillThread();
     }
+
+    void KillThread();
 
 };
 
@@ -246,22 +248,27 @@ bool Log::preprocess(
 
 void Log::KillThread()
 {
+    resources().KillThread();
+}
+
+void Resources::KillThread()
+{
     {
-        std::unique_lock<std::mutex> guard(resources().cv_mutex);
-        resources().logging = false;
-        resources().work = false;
+        std::unique_lock<std::mutex> guard(cv_mutex);
+        logging = false;
+        work = false;
     }
 
-    if (resources().logging_thread)
+    if (logging_thread)
     {
-        resources().cv.notify_all();
+        cv.notify_all();
         // The #ifdef workaround here is due to an unsolved MSVC bug, which Microsoft has announced
         // they have no intention of solving: https://connect.microsoft.com/VisualStudio/feedback/details/747145
         // Each VS version deals with post-main deallocation of threads in a very different way.
 #if !defined(_WIN32) || defined(FASTRTPS_STATIC_LINK) || _MSC_VER >= 1800
-        resources().logging_thread->join();
+        logging_thread->join();
 #endif // if !defined(_WIN32) || defined(FASTRTPS_STATIC_LINK) || _MSC_VER >= 1800
-        resources().logging_thread.reset();
+        logging_thread.reset();
     }
 }
 
