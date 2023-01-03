@@ -323,10 +323,7 @@ private:
      * @brief Get Id to create a RTPSParticipant.
      * @return Different ID for each call.
      */
-    static inline uint32_t getNewId()
-    {
-        return m_maxRTPSParticipantID++;
-    }
+    static uint32_t getNewId();
 
     static void removeRTPSParticipant_nts(
             t_p_RTPSParticipant&);

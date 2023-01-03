@@ -559,6 +559,11 @@ RTPSParticipant* RTPSDomain::clientServerEnvironmentCreationOverride(
     return nullptr;
 }
 
+uint32_t RTPSDomain::getNewId()
+{
+    return m_maxRTPSParticipantID++;
+}
+
 void RTPSDomainImpl::create_participant_guid(
         int32_t& participant_id,
         GUID_t& guid)
