@@ -46,7 +46,8 @@ bool EDPClient::processLocalReaderProxyData(
 
     auto* writer = &subscriptions_writer_;
 
-#if HAVE_SECURITY
+// TODO(Miguel C): Re-enable this when EDPServer creates the secure EDP endpoints
+#if 0 // HAVE_SECURITY
     if (local_reader->getAttributes().security_attributes().is_discovery_protected)
     {
         writer = &subscriptions_secure_writer_;
@@ -79,7 +80,8 @@ bool EDPClient::processLocalWriterProxyData(
 
     auto* writer = &publications_writer_;
 
-#if HAVE_SECURITY
+    // TODO(Miguel C): Re-enable this when EDPServer creates the secure EDP endpoints
+#if 0 //HAVE_SECURITY
     if (local_writer->getAttributes().security_attributes().is_discovery_protected)
     {
         writer = &publications_secure_writer_;
@@ -110,7 +112,8 @@ bool EDPClient::removeLocalWriter(
 
     auto* writer = &publications_writer_;
 
-#if HAVE_SECURITY
+    // TODO(Miguel C): Re-enable this when EDPServer creates the secure EDP endpoints
+#if 0 // HAVE_SECURITY
     if (W->getAttributes().security_attributes().is_discovery_protected)
     {
         writer = &publications_secure_writer_;
@@ -163,7 +166,8 @@ bool EDPClient::removeLocalReader(
 
     auto* writer = &subscriptions_writer_;
 
-#if HAVE_SECURITY
+    // TODO(Miguel C): Re-enable this when EDPServer creates the secure EDP endpoints
+#if 0 // HAVE_SECURITY
     if (R->getAttributes().security_attributes().is_discovery_protected)
     {
         writer = &subscriptions_secure_writer_;

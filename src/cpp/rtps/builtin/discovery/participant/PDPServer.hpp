@@ -137,6 +137,16 @@ public:
     void notifyAboveRemoteEndpoints(
             const fastrtps::rtps::ParticipantProxyData& pdata) override;
 
+#if HAVE_SECURITY
+    bool pairing_remote_writer_with_local_reader_after_security(
+            const fastrtps::rtps::GUID_t& local_reader,
+            const fastrtps::rtps::WriterProxyData& remote_writer_data) override;
+
+    bool pairing_remote_reader_with_local_writer_after_security(
+            const fastrtps::rtps::GUID_t& local_reader,
+            const fastrtps::rtps::ReaderProxyData& remote_reader_data) override;
+#endif // HAVE_SECURITY
+
     //! Get filename for writer persistence database file
     std::string get_writer_persistence_file_name() const;
 
@@ -345,6 +355,15 @@ private:
      */
     bool create_ds_pdp_best_effort_reader(
             DiscoveryServerPDPEndpointsSecure& endpoints);
+
+    /**
+     * Provides the functionality of notifyAboveRemoteEndpoints without being an override of that method.
+     */
+    void perform_builtin_endpoints_matching(
+            const fastrtps::rtps::ParticipantProxyData& pdata);
+
+    void match_reliable_pdp_endpoints(
+            const fastrtps::rtps::ParticipantProxyData& pdata);
 
     //! Server thread
     eprosima::fastrtps::rtps::ResourceEvent resource_event_thread_;
