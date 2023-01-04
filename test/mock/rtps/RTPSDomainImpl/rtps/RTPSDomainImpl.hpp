@@ -15,6 +15,8 @@
 #ifndef _RTPS_RTPSDOMAINIMPL_HPP_
 #define _RTPS_RTPSDOMAINIMPL_HPP_
 
+#include <memory>
+
 #include <fastdds/rtps/RTPSDomain.h>
 
 namespace eprosima {
@@ -31,6 +33,12 @@ class IChangePool;
 class RTPSDomainImpl
 {
 public:
+
+    static std::shared_ptr<RTPSDomainImpl> get_instance()
+    {
+        static std::shared_ptr<RTPSDomainImpl> instance = std::make_shared<RTPSDomainImpl>();
+        return instance;
+    }
 
     /**
      * Check whether intraprocess delivery should be used between two GUIDs.
