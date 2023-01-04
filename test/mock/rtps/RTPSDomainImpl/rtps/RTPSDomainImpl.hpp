@@ -93,6 +93,15 @@ public:
         return RTPSDomain::createRTPSWriter(p, entity_id, watt, payload_pool, hist, listen);
     }
 
+    static RTPSParticipant* clientServerEnvironmentCreationOverride(
+            uint32_t domain_id,
+            bool enabled,
+            const RTPSParticipantAttributes& att,
+            RTPSParticipantListener* listen)
+    {
+        return RTPSDomain::createParticipant(domain_id, enabled, att, listen);
+    }
+
 };
 
 } // namespace rtps
