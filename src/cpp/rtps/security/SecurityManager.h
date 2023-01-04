@@ -237,10 +237,10 @@ public:
     uint32_t builtin_endpoints() const;
 
     /**
-     * Returns whether a mangled guid is the same as the original. Proxy to auth plugin
-     * @param adjusted Original guid prefix candidate to compare
-     * @param original Mangled guid prefix
-     * @return true on success
+     * Returns whether a mangled GUID is the same as the original.
+     * @param adjusted Mangled GUID prefix
+     * @param original Original GUID prefix candidate to compare
+     * @return true when @c adjusted corresponds to @c original
      */
     bool check_guid_comes_from(const GUID_t& adjusted, const GUID_t& original) const;
 
