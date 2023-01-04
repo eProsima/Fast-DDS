@@ -746,6 +746,7 @@ void PDPClient::announceParticipantState(
                     }
                 }
 
+                // TODO: This should be done with the configuration of the reliable writer
                 direct_send(getRTPSParticipant(), locators, *change);
             }
 
