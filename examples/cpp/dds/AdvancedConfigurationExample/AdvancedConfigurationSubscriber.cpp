@@ -68,7 +68,8 @@ bool HelloWorldSubscriber::init(
         bool transient,
         int hops,
         const std::string& partitions,
-        bool use_ownership)
+        bool use_ownership,
+        bool keyed)
 {
     DomainParticipantQos pqos;
     pqos.name("Participant_sub");

@@ -68,6 +68,8 @@ Subscriber options:
   -o              --ownership
                     Use Topic with EXCLUSIVE_OWNERSHIP (SHARED_OWNERSHIP by
                     default).
+  -k              --keys
+                    Enable Topic instances.
 
 QoS options:
   -r              --reliable

@@ -53,7 +53,8 @@ public:
             bool transient,
             int hops,
             const std::string& partitions,
-            bool use_ownership);
+            bool use_ownership,
+            bool keyed);
 
     //! RUN the subscriber until number samples are received
     void run(

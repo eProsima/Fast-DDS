@@ -225,7 +225,7 @@ int main(
                     print_warning("publisher", opt.name);
                 }
                 break;
-            case optionIndex::INSTANCES:
+            case optionIndex::PUB_INSTANCES:
                 if (type == PUBLISHER)
                 {
                     keyed = true;
@@ -236,6 +236,15 @@ int main(
                     print_warning("publisher", opt.name);
                 }
                 break;
+            case optionIndex::SUB_INSTANCES:
+                if (type == SUBSCRIBER)
+                {
+                    keyed = true;
+                }
+                else
+                {
+                    print_warning("subscriber", opt.name);
+                }
             case optionIndex::MESSAGE_SIZE:
                 if (type == PUBLISHER)
                 {
@@ -270,7 +279,8 @@ int main(
         {
             HelloWorldPublisher mypub;
             if (mypub.init(topic_name, static_cast<uint32_t>(domain), static_cast<uint32_t>(num_wait_matched), async,
-                    transport, reliable, transient, hops, partitions, use_ownership, ownership_strength))
+                    transport, reliable, transient, hops, partitions, use_ownership, ownership_strength, keyed,
+                    instance_number, message_size))
             {
                 mypub.run(static_cast<uint32_t>(count), static_cast<uint32_t>(sleep));
             }
@@ -280,7 +290,7 @@ int main(
         {
             HelloWorldSubscriber mysub;
             if (mysub.init(topic_name, static_cast<uint32_t>(count), static_cast<uint32_t>(domain), transport,
-                    reliable, transient, hops, partitions, use_ownership))
+                    reliable, transient, hops, partitions, use_ownership, keyed))
             {
                 mysub.run(static_cast<uint32_t>(count));
             }

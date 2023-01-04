@@ -176,7 +176,8 @@ enum optionIndex
     PARTITIONS,
     OWNERSHIP_STRENGTH,
     OWNERSHIP,
-    INSTANCES,
+    PUB_INSTANCES,
+    SUB_INSTANCES,
     MESSAGE_SIZE
 };
 
@@ -207,7 +208,7 @@ const option::Descriptor usage[] = {
       "  -o \t--ownership \tUse Topic with EXCLUSIVE_OWNERSHIP (SHARED_OWNERSHIP by default)."},
     { OWNERSHIP_STRENGTH, 0, "", "strength",        Arg::NumericRange<>,
       "  \t--strength=<num> \tSet this Publisher strength. Set Topic with EXCLUSIVE_OWNERSHIP. Default: 0"},
-    { INSTANCES, 0, "k", "keys",        Arg::NumericRange<1>,
+    { PUB_INSTANCES, 0, "k", "keys",        Arg::NumericRange<1>,
       "  -k \t--keys=<num> \tNumber of topic instances. Default: 1"},
     { MESSAGE_SIZE, 0, "", "message-size",        Arg::NumericRange<1>,
       "  \t--message-size=<num> \tNumber of bytes to be sent."},
@@ -225,6 +226,8 @@ const option::Descriptor usage[] = {
       " data-sharing delivery mechanism > shared-memory > UDP)." },
     { OWNERSHIP, 0, "o", "ownership",        Arg::None,
       "  -o \t--ownership \tUse Topic with EXCLUSIVE_OWNERSHIP (SHARED_OWNERSHIP by default)."},
+    { SUB_INSTANCES, 0, "k", "keys",        Arg::None,
+      "  -k \t--keys \tEnable Topic Subscriber instances."},
 
     { UNKNOWN_OPT, 0, "", "",                Arg::None,      "\nQoS options:"},
     { RELIABLE, 0, "r", "reliable",         Arg::None,

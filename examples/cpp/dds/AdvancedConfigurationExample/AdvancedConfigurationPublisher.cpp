@@ -72,7 +72,10 @@ bool HelloWorldPublisher::init(
         int hops,
         const std::string& partitions,
         bool use_ownership,
-        unsigned int ownership_strength /* = 0 */)
+        unsigned int ownership_strength,
+        bool keyed,
+        long instance_number,
+        long message_size)
 {
     hello_.index(0);
     memcpy(hello_.message().data(), "HelloWorld ", strlen("HelloWorld") + 1);

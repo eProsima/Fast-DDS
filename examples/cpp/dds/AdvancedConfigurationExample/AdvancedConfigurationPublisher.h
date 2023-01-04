@@ -55,7 +55,10 @@ public:
             int hops,
             const std::string& partitions,
             bool use_ownership,
-            unsigned int ownership_strength);
+            unsigned int ownership_strength,
+            bool keyed,
+            long instance_number,
+            long message_size);
 
     //! Publish a sample
     void publish();
