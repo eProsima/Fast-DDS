@@ -111,8 +111,15 @@ public:
             DomainParticipantListener* listener,
             const std::chrono::seconds timeout = std::chrono::seconds::max())
     {
+        auto time_out = std::chrono::time_point<std::chrono::system_clock>::max();
+        if (timeout < std::chrono::seconds::max())
+        {
+            auto now = std::chrono::system_clock::now();
+            time_out = now + timeout;
+        }
+
         std::unique_lock<std::mutex> lock(mtx_gs_);
-        if (!cv_gs_.wait_for(lock, timeout, [this]
+        if (!cv_gs_.wait_until(lock, time_out, [this]
                 {
                     // Proceed if no callbacks are being executed
                     return !(rtps_listener_.callback_counter_ > 0);
