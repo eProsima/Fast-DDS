@@ -51,6 +51,7 @@ namespace dds {
 class DomainParticipantListener;
 class DomainParticipant;
 class DomainParticipantImpl;
+struct LogResources;
 
 /**
  * Class DomainParticipantFactory
@@ -308,6 +309,8 @@ protected:
     std::shared_ptr<fastrtps::rtps::detail::TopicPayloadPoolRegistry> topic_pool_;
 
     std::shared_ptr<fastrtps::rtps::RTPSDomainImpl> rtps_domain_;
+
+    std::shared_ptr<LogResources> log_resources_;
 };
 
 }  // namespace dds

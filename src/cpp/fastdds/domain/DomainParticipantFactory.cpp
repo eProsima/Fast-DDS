@@ -28,6 +28,7 @@
 #include <fastrtps/xmlparser/XMLProfileManager.h>
 #include <fastrtps/xmlparser/XMLEndpointParser.h>
 
+#include <fastdds/log/LogResources.hpp>
 #include <fastdds/domain/DomainParticipantImpl.hpp>
 #include <fastdds/utils/QosConverters.hpp>
 #include <rtps/RTPSDomainImpl.hpp>
@@ -56,6 +57,7 @@ DomainParticipantFactory::DomainParticipantFactory()
     , default_participant_qos_(PARTICIPANT_QOS_DEFAULT)
     , topic_pool_(fastrtps::rtps::TopicPayloadPoolRegistry::instance())
     , rtps_domain_(fastrtps::rtps::RTPSDomainImpl::get_instance())
+    , log_resources_(get_log_resources())
 {
 }
 
