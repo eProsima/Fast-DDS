@@ -603,6 +603,7 @@ bool SecurityManager::discovered_participant(
         remote_participant_info = map_ret.first->second->get_auth();
     }
 
+    bool notify_part_authorized = false;
     if (undiscovered && remote_participant_info)
     {
         // Configure the timed event but do not start it
@@ -682,7 +683,7 @@ bool SecurityManager::discovered_participant(
         {
             //TODO(Ricardo) Shared secret on this case?
             std::shared_ptr<SecretHandle> ss;
-            participant_authorized(participant_data, remote_participant_info, ss);
+            notify_part_authorized = participant_authorized(participant_data, remote_participant_info, ss);
         }
     }
     else
@@ -701,7 +702,7 @@ bool SecurityManager::discovered_participant(
     {
         // Maybe send request.
         returnedValue = on_process_handshake(participant_data, remote_participant_info,
-                        MessageIdentity(), HandshakeMessageToken());
+                        MessageIdentity(), HandshakeMessageToken(), notify_part_authorized);
     }
 
     restore_discovered_participant_info(participant_data.m_guid, remote_participant_info);
@@ -800,7 +801,8 @@ bool SecurityManager::on_process_handshake(
         const ParticipantProxyData& participant_data,
         DiscoveredParticipantInfo::AuthUniquePtr& remote_participant_info,
         MessageIdentity&& message_identity,
-        HandshakeMessageToken&& message_in)
+        HandshakeMessageToken&& message_in,
+        bool& notify_part_authorized)
 {
     auto sentry = is_security_manager_initialized();
     if (!sentry)
@@ -983,6 +985,10 @@ bool SecurityManager::on_process_handshake(
                             shared_secret_handle))
                     {
                         authentication_plugin_->return_sharedsecret_handle(shared_secret_handle, exception);
+                    }
+                    else
+                    {
+                        notify_part_authorized = true;
                     }
 
                 }
@@ -1620,10 +1626,16 @@ void SecurityManager::process_participant_stateless_message(
                 return;
             }
 
+            bool notify_part_authorized = false;
             on_process_handshake(*participant_data, remote_participant_info,
-                    std::move(message.message_identity()), std::move(message.message_data().at(0)));
+                    std::move(message.message_identity()), std::move(message.message_data().at(0)), notify_part_authorized);
 
             restore_discovered_participant_info(remote_participant_key, remote_participant_info);
+
+            if (notify_part_authorized)
+            {
+                notify_participant_authorized(*participant_data);
+            }
         }
         else
         {
@@ -2049,20 +2061,16 @@ uint32_t SecurityManager::builtin_endpoints() const
 
 bool SecurityManager::check_guid_comes_from(const GUID_t &adjusted, const GUID_t &original) const
 {
-    shared_lock<shared_mutex> _(mutex_);
-
     bool ret = (original == adjusted);
-
-    if (authentication_plugin_ != nullptr)
+    if (!ret && authentication_plugin_ != nullptr)
     {
-        auto mguid_it = guids_mangling_info_.find(adjusted);
-
-        if (mguid_it != guids_mangling_info_.end())
+        shared_lock<shared_mutex> _(mutex_);
+        auto part_it = discovered_participants_.find(adjusted);
+        if (part_it != discovered_participants_.end())
         {
-            ret = authentication_plugin_->check_guid_comes_from(mguid_it->second, adjusted, original);
+            ret = part_it->second->check_guid_comes_from(authentication_plugin_, adjusted, original);
         }
     }
-
     return ret;
 }
 
@@ -4065,36 +4073,6 @@ bool SecurityManager::participant_authorized(
             match_builtin_key_exchange_endpoints(participant_data);
         }
 
-        if (participant_->getRTPSParticipantAttributes().builtin.discovery_config.discoveryProtocol !=
-                DiscoveryProtocol_t::SIMPLE)
-        {
-            //! Search if mangling info already exists for this participant
-            auto mguid_it = guids_mangling_info_.find(participant_data.m_guid);
-
-            if (mguid_it == guids_mangling_info_.end())
-            {
-                auto ih = remote_participant_info->identity_handle_;
-
-                //! store mangled guid information for this participant
-                guids_mangling_info_.insert({participant_data.m_guid, ih});
-            }
-
-        }
-
-        participant_->pdp()->notifyAboveRemoteEndpoints(participant_data);
-
-        EPROSIMA_LOG_INFO(SECURITY, "Participant " << participant_data.m_guid << " authenticated");
-
-        // Inform user about authenticated remote participant.
-        if (participant_->getListener() != nullptr)
-        {
-            ParticipantAuthenticationInfo info;
-            info.status = ParticipantAuthenticationInfo::AUTHORIZED_PARTICIPANT;
-            info.guid = participant_data.m_guid;
-            participant_->getListener()->onParticipantAuthentication(
-                participant_->getUserRTPSParticipant(), std::move(info));
-        }
-
         for (auto& remote_reader : temp_readers)
         {
             participant_->pdp()->getEDP()->pairing_reader_proxy_with_local_writer(remote_reader.second,
@@ -4111,6 +4089,23 @@ bool SecurityManager::participant_authorized(
     }
 
     return false;
+}
+
+void SecurityManager::notify_participant_authorized(const ParticipantProxyData& participant_data)
+{
+    participant_->pdp()->notifyAboveRemoteEndpoints(participant_data);
+
+    EPROSIMA_LOG_INFO(SECURITY, "Participant " << participant_data.m_guid << " authenticated");
+
+    // Inform user about authenticated remote participant.
+    if (participant_->getListener() != nullptr)
+    {
+        ParticipantAuthenticationInfo info;
+        info.status = ParticipantAuthenticationInfo::AUTHORIZED_PARTICIPANT;
+        info.guid = participant_data.m_guid;
+        participant_->getListener()->onParticipantAuthentication(
+            participant_->getUserRTPSParticipant(), std::move(info));
+    }
 }
 
 uint32_t SecurityManager::calculate_extra_size_for_rtps_message() const
@@ -4234,4 +4229,22 @@ void SecurityManager::resend_handshake_message_token(
             dp_it->second->set_auth(remote_participant_info);
         }
     }
+}
+
+bool SecurityManager::DiscoveredParticipantInfo::check_guid_comes_from(
+        Authentication* const auth_plugin,
+        const GUID_t &adjusted,
+        const GUID_t &original)
+{
+    bool ret = false;
+    if (auth_plugin != nullptr)
+     {
+        std::lock_guard<std::mutex> g(mtx_);
+
+        if (nullptr != auth_ && AuthenticationStatus::AUTHENTICATION_OK == auth_->auth_status_)
+        {
+            ret = auth_plugin->check_guid_comes_from(auth_->identity_handle_, adjusted, original);
+        }
+     }
+    return ret;
 }

@@ -250,10 +250,11 @@ public:
             SecurityException& ex) = 0;
 
     /**
-     * Returns whether a mangled guid is the same as the original
-     * @param adjusted Original guid prefix candidate to compare
-     * @param original Mangled guid prefix
-     * @return true on success
+     * Returns whether a mangled GUID is the same as the original
+     * @param identity_handle Identity Handle of remote peer
+     * @param adjusted Mangled GUID prefix
+     * @param original Original GUID prefix candidate to compare
+     * @return true when @c adjusted corresponds to @c original
      */
     virtual bool check_guid_comes_from(
                 IdentityHandle* /*identity_handle*/,
