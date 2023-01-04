@@ -46,6 +46,7 @@
 
 #include <fastrtps/utils/TimeConversion.h>
 #include <fastrtps/utils/IPLocator.h>
+#include "fastdds/rtps/common/Guid.h"
 #include "fastrtps/utils/shared_mutex.hpp"
 
 #include <fastdds/dds/domain/DomainParticipantFactory.hpp>
@@ -219,9 +220,24 @@ ParticipantProxyData* PDP::add_participant_proxy_data(
     return ret_val;
 }
 
-bool PDP::data_matches_with_server(const RemoteServerAttributes& remote_server_att, const ParticipantProxyData& participant_data)
+bool PDP::data_matches_with_prefix(
+        const GuidPrefix_t& guid_prefix,
+        const ParticipantProxyData& participant_data)
 {
-    return (remote_server_att.guidPrefix == participant_data.m_guid.guidPrefix);
+    if (guid_prefix == participant_data.m_guid.guidPrefix)
+    {
+        return true;
+    }
+#ifdef HAVE_SECURITY
+    else
+    {
+        GUID_t guid = GUID_t(guid_prefix, c_EntityId_RTPSParticipant);
+        return getRTPSParticipant()->security_manager().check_guid_comes_from(participant_data.m_guid, guid);
+    }
+#endif  // HAVE_SECURITY
+
+    return false;
+
 }
 
 void PDP::initializeParticipantProxyData(
@@ -1113,21 +1129,7 @@ ParticipantProxyData* PDP::get_participant_proxy_data(
 {
     for (auto pit = ParticipantProxiesBegin(); pit != ParticipantProxiesEnd(); ++pit)
     {
-        if (guid_prefix == (*pit)->m_guid.guidPrefix)
-        {
-            return *(pit);
-        }
-    }
-    return nullptr;
-}
-
-
-ParticipantProxyData* PDP::get_remote_server_participant_proxy_data(
-            const RemoteServerAttributes& rsatt)
-{
-    for (auto pit = ParticipantProxiesBegin(); pit != ParticipantProxiesEnd(); ++pit)
-    {
-        if (data_matches_with_server(rsatt, **pit))
+        if (data_matches_with_prefix(guid_prefix, **pit))
         {
             return *(pit);
         }

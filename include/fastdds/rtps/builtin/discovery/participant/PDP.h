@@ -362,14 +362,6 @@ public:
             const GuidPrefix_t& guid_prefix);
 
     /**
-     * Returns the ParticipantProxyData of a participant with mangled prefix if exists
-     * @param rsatt The RemoteServer guid
-     * @return A pointer to the ParticipantProxyData. nullptr if there is no such ParticipantProxyData
-     */
-    ParticipantProxyData* get_remote_server_participant_proxy_data(
-            const RemoteServerAttributes& rsatt);
-
-    /**
      * Get the list of remote servers to which the client should connect
      * @return A reference to the list of RemoteServerAttributes
      */
@@ -460,9 +452,16 @@ protected:
             const ParticipantProxyData* participant_proxy_data = nullptr);
 
     /**
-     * Searches for secure discovery servers by rectifying the guids
+     * Checks whether to participant prefixes are equal by calculating the mangled
+     * GUID and comparing it with the remote participant prefix.
+     *
+     * @param guid_prefix the original desired guid_prefix to compare
+     * @param participant_proxy_data The participant proxy data to compare against
+     *
+     * @return true when prefixes are equivalent
      */
-    virtual bool data_matches_with_server(const RemoteServerAttributes& remote_server_att,
+    bool data_matches_with_prefix(
+            const GuidPrefix_t& guid_prefix,
             const ParticipantProxyData& participant_data);
 
     /**

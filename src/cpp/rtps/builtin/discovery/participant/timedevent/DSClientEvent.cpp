@@ -65,7 +65,7 @@ bool DSClientEvent::event()
     {
         std::unique_lock<std::recursive_mutex> pdp_lock(*mp_PDP->getMutex());
         // Get the participant proxy data of the server
-        part_proxy_data = mp_PDP->get_remote_server_participant_proxy_data(server);
+        part_proxy_data = mp_PDP->get_participant_proxy_data(server.guidPrefix);
 
         // If the server is known (meaning the client has a proxy for it), it means that this client has
         // received the server's DATA(p), which in turn means that the server has received the client's DATA(p)

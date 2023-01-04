@@ -184,7 +184,7 @@ ParticipantProxyData* PDPClient::createParticipantProxyData(
 
         for (auto& svr : mp_builtin->m_DiscoveryServers)
         {
-            if (data_matches_with_server(svr, participant_data))
+            if (data_matches_with_prefix(svr.guidPrefix, participant_data))
             {
                 is_server = true;
             }
@@ -296,23 +296,6 @@ bool PDPClient::create_ds_pdp_best_effort_reader(
 }
 
 #endif  // HAVE_SECURITY
-
-bool PDPClient::data_matches_with_server(const RemoteServerAttributes& remote_server_att, const ParticipantProxyData& participant_data)
-{
-    if (PDP::data_matches_with_server(remote_server_att, participant_data))
-    {
-        return true;
-    }
-#ifdef HAVE_SECURITY
-    else
-    {
-        return getRTPSParticipant()->security_manager().check_guid_comes_from(participant_data.m_guid, remote_server_att.GetParticipant());
-    }
-#endif  // HAVE_SECURITY
-
-    return false;
-
-}
 
 bool PDPClient::create_ds_pdp_endpoints()
 {
@@ -482,7 +465,7 @@ void PDPClient::assignRemoteEndpoints(
         // Verify if this participant is a server
         for (auto& svr : mp_builtin->m_DiscoveryServers)
         {
-            if (data_matches_with_server(svr,*pdata))
+            if (data_matches_with_prefix(svr.guidPrefix,*pdata))
             {
                 std::unique_lock<std::recursive_mutex> lock(*getMutex());
                 svr.proxy = pdata;
@@ -509,7 +492,7 @@ void PDPClient::notifyAboveRemoteEndpoints(
         // Verify if this participant is a server
         for (auto& svr : mp_builtin->m_DiscoveryServers)
         {
-            if (data_matches_with_server(svr,pdata))
+            if (data_matches_with_prefix(svr.guidPrefix,pdata))
             {
                 match_pdp_reader_nts_(svr, pdata.m_guid.guidPrefix);
                 match_pdp_writer_nts_(svr, pdata.m_guid.guidPrefix);
