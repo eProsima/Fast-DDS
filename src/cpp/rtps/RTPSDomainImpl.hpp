@@ -172,31 +172,6 @@ public:
             const GUID_t& guid);
 
     /**
-     * Apply a predicate to every local participant.
-     *
-     * Will apply the predicate to all the participants registered by a call to RTPSDomain::createParticipant.
-     *
-     * @param pred   Unary function that accepts a std::pair<RTPSParticipant*,RTPSParticipantImpl*> const ref as
-     *               argument and returns a value convertible to bool.
-     *               The value returned indicates whether the loop should continue or not.
-     *               The function shall not modify its argument.
-     *               This can either be a function pointer or a function object.
-     */
-    template<class UnaryPredicate>
-    static void for_each_participant(
-            UnaryPredicate pred)
-    {
-        std::lock_guard<std::mutex> guard(m_mutex);
-        for (const t_p_RTPSParticipant& participant : m_RTPSParticipants)
-        {
-            if (!pred(participant))
-            {
-                break;
-            }
-        }
-    }
-
-    /**
      * Find a local-process reader.
      *
      * @param reader_guid GUID of the local reader to search.
