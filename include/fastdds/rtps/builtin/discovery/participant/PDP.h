@@ -452,6 +452,19 @@ protected:
             const ParticipantProxyData* participant_proxy_data = nullptr);
 
     /**
+     * Checks whether two participant prefixes are equal by calculating the mangled
+     * GUID and comparing it with the remote participant prefix.
+     *
+     * @param guid_prefix the original desired guid_prefix to compare
+     * @param participant_proxy_data The participant proxy data to compare against
+     *
+     * @return true when prefixes are equivalent
+     */
+    bool data_matches_with_prefix(
+            const GuidPrefix_t& guid_prefix,
+            const ParticipantProxyData& participant_data);
+
+    /**
      * Gets the key of a participant proxy data.
      *
      * @param [in] participant_guid GUID of the participant to look for.

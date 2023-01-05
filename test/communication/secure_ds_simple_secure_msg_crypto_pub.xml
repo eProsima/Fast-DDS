@@ -7,10 +7,7 @@
                     <discovery_config>
                         <discoveryProtocol>CLIENT</discoveryProtocol>
                         <discoveryServersList>
-                            <!-- TODO(Miguel C): Temporarily using mangled prefix
                             <RemoteServer prefix="44.53.00.5f.45.50.52.4f.53.49.4d.41">
-                            -->
-                            <RemoteServer prefix="a6.b1.a0.7e.9c.49.25.ff.38.7f.fc.76">
                                 <metatrafficUnicastLocatorList>
                                     <locator>
                                         <udpv4>
