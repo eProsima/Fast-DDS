@@ -242,7 +242,9 @@ public:
      * @param original Original GUID prefix candidate to compare
      * @return true when @c adjusted corresponds to @c original
      */
-    bool check_guid_comes_from(const GUID_t& adjusted, const GUID_t& original) const;
+    bool check_guid_comes_from(
+            const GUID_t& adjusted,
+            const GUID_t& original) const;
 
     RTPSParticipantImpl* participant() const
     {
@@ -469,8 +471,8 @@ private:
 
         bool check_guid_comes_from(
                 Authentication* const auth_plugin,
-                const GUID_t &adjusted,
-                const GUID_t &original);
+                const GUID_t& adjusted,
+                const GUID_t& original);
 
     private:
 
@@ -712,8 +714,7 @@ private:
      * @param participant_data ParticipantProxyData& remote partner
      */
     void notify_participant_authorized(
-        const ParticipantProxyData& participant_data
-    );
+            const ParticipantProxyData& participant_data);
 
     void resend_handshake_message_token(
             const GUID_t& remote_participant_key) const;

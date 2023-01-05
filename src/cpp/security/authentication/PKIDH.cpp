@@ -2547,7 +2547,10 @@ bool PKIDH::return_authenticated_peer_credential_token(
     return true;
 }
 
-bool PKIDH::check_guid_comes_from(IdentityHandle* identity_handle, const GUID_t &adjusted, const GUID_t &original)
+bool PKIDH::check_guid_comes_from(
+        IdentityHandle* identity_handle,
+        const GUID_t& adjusted,
+        const GUID_t& original)
 {
     SecurityException exception;
 

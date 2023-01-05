@@ -1633,7 +1633,8 @@ void SecurityManager::process_participant_stateless_message(
 
             bool notify_part_authorized = false;
             on_process_handshake(*participant_data, remote_participant_info,
-                    std::move(message.message_identity()), std::move(message.message_data().at(0)), notify_part_authorized);
+                    std::move(message.message_identity()),
+                    std::move(message.message_data().at(0)), notify_part_authorized);
 
             restore_discovered_participant_info(remote_participant_key, remote_participant_info);
 
@@ -2064,7 +2065,9 @@ uint32_t SecurityManager::builtin_endpoints() const
     return be;
 }
 
-bool SecurityManager::check_guid_comes_from(const GUID_t &adjusted, const GUID_t &original) const
+bool SecurityManager::check_guid_comes_from(
+        const GUID_t& adjusted,
+        const GUID_t& original) const
 {
     bool ret = (original == adjusted);
     if (!ret && authentication_plugin_ != nullptr)
@@ -4096,7 +4099,8 @@ bool SecurityManager::participant_authorized(
     return false;
 }
 
-void SecurityManager::notify_participant_authorized(const ParticipantProxyData& participant_data)
+void SecurityManager::notify_participant_authorized(
+        const ParticipantProxyData& participant_data)
 {
     participant_->pdp()->notifyAboveRemoteEndpoints(participant_data);
 
@@ -4238,18 +4242,18 @@ void SecurityManager::resend_handshake_message_token(
 
 bool SecurityManager::DiscoveredParticipantInfo::check_guid_comes_from(
         Authentication* const auth_plugin,
-        const GUID_t &adjusted,
-        const GUID_t &original)
+        const GUID_t& adjusted,
+        const GUID_t& original)
 {
     bool ret = false;
     if (auth_plugin != nullptr)
-     {
+    {
         std::lock_guard<std::mutex> g(mtx_);
 
         if (nullptr != auth_ && AuthenticationStatus::AUTHENTICATION_OK == auth_->auth_status_)
         {
             ret = auth_plugin->check_guid_comes_from(auth_->identity_handle_, adjusted, original);
         }
-     }
+    }
     return ret;
 }

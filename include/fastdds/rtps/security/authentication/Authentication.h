@@ -257,9 +257,9 @@ public:
      * @return true when @c adjusted corresponds to @c original
      */
     virtual bool check_guid_comes_from(
-                IdentityHandle* /*identity_handle*/,
-                const GUID_t& adjusted,
-                const GUID_t& original)
+            IdentityHandle* /*identity_handle*/,
+            const GUID_t& adjusted,
+            const GUID_t& original)
     {
         //! By default, return this comparison
         return adjusted == original;

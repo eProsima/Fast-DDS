@@ -465,7 +465,7 @@ void PDPClient::assignRemoteEndpoints(
         // Verify if this participant is a server
         for (auto& svr : mp_builtin->m_DiscoveryServers)
         {
-            if (data_matches_with_prefix(svr.guidPrefix,*pdata))
+            if (data_matches_with_prefix(svr.guidPrefix, *pdata))
             {
                 std::unique_lock<std::recursive_mutex> lock(*getMutex());
                 svr.proxy = pdata;
@@ -492,7 +492,7 @@ void PDPClient::notifyAboveRemoteEndpoints(
         // Verify if this participant is a server
         for (auto& svr : mp_builtin->m_DiscoveryServers)
         {
-            if (data_matches_with_prefix(svr.guidPrefix,pdata))
+            if (data_matches_with_prefix(svr.guidPrefix, pdata))
             {
                 match_pdp_reader_nts_(svr, pdata.m_guid.guidPrefix);
                 match_pdp_writer_nts_(svr, pdata.m_guid.guidPrefix);
