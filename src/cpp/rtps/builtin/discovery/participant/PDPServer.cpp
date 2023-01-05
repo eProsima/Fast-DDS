@@ -208,7 +208,7 @@ ParticipantProxyData* PDPServer::createParticipantProxyData(
             eprosima::shared_lock<eprosima::shared_mutex> disc_lock(mp_builtin->getDiscoveryMutex());
             for (auto& svr : mp_builtin->m_DiscoveryServers)
             {
-                if (svr.guidPrefix == participant_data.m_guid.guidPrefix)
+                if (data_matches_with_prefix(svr.guidPrefix, participant_data))
                 {
                     do_lease = true;
                 }
