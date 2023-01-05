@@ -40,6 +40,7 @@
 #include <boost/interprocess/offset_ptr.hpp>
 #include <boost/thread/thread_time.hpp>
 
+#include "BoostAtExitRegistry.hpp"
 #include "RobustInterprocessCondition.hpp"
 #include "SharedMemUUID.hpp"
 
@@ -84,6 +85,7 @@ public:
     explicit SharedSegmentBase(
             const std::string& name)
         : name_(name)
+        , boost_singleton_handler_(eprosima::detail::BoostAtExitRegistry::get_instance())
     {
     }
 
@@ -303,6 +305,8 @@ private:
     shared_mem_environment_initializer_;
 
     std::string name_;
+
+    std::shared_ptr<eprosima::detail::BoostAtExitRegistry> boost_singleton_handler_;
 
     static std::mutex& mtx_()
     {
