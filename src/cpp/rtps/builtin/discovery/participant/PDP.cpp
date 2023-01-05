@@ -227,7 +227,7 @@ bool PDP::data_matches_with_prefix(
     {
         return true;
     }
-#ifdef HAVE_SECURITY
+#if HAVE_SECURITY
     else
     {
         GUID_t guid = GUID_t(guid_prefix, c_EntityId_RTPSParticipant);
