@@ -46,6 +46,7 @@
 #include <rtps/builtin/discovery/participant/timedevent/DSClientEvent.h>
 #include <rtps/participant/RTPSParticipantImpl.h>
 #include <utils/SystemInfo.hpp>
+#include <vector>
 
 using namespace eprosima::fastrtps;
 
@@ -57,12 +58,12 @@ using namespace fastrtps::rtps;
 
 static void direct_send(
         RTPSParticipantImpl* participant,
-        std::vector<GUID_t>& remote_readers,
         LocatorList& locators,
         const CacheChange_t& change)
 {
     FakeWriter writer(participant, c_EntityId_SPDPWriter);
-    DirectMessageSender sender(participant, &remote_readers, &locators);
+    std::vector<GUID_t> readers;
+    DirectMessageSender sender(participant, &readers, &locators);
     RTPSMessageGroup group(participant, &writer, &sender);
     if (!group.add_data(change, false))
     {
@@ -183,7 +184,7 @@ ParticipantProxyData* PDPClient::createParticipantProxyData(
 
         for (auto& svr : mp_builtin->m_DiscoveryServers)
         {
-            if (svr.guidPrefix == participant_data.m_guid.guidPrefix)
+            if (data_matches_with_prefix(svr.guidPrefix, participant_data))
             {
                 is_server = true;
             }
@@ -464,7 +465,7 @@ void PDPClient::assignRemoteEndpoints(
         // Verify if this participant is a server
         for (auto& svr : mp_builtin->m_DiscoveryServers)
         {
-            if (svr.guidPrefix == pdata->m_guid.guidPrefix)
+            if (data_matches_with_prefix(svr.guidPrefix, *pdata))
             {
                 std::unique_lock<std::recursive_mutex> lock(*getMutex());
                 svr.proxy = pdata;
@@ -491,7 +492,7 @@ void PDPClient::notifyAboveRemoteEndpoints(
         // Verify if this participant is a server
         for (auto& svr : mp_builtin->m_DiscoveryServers)
         {
-            if (svr.guidPrefix == pdata.m_guid.guidPrefix)
+            if (data_matches_with_prefix(svr.guidPrefix, pdata))
             {
                 match_pdp_reader_nts_(svr, pdata.m_guid.guidPrefix);
                 match_pdp_writer_nts_(svr, pdata.m_guid.guidPrefix);
@@ -739,7 +740,6 @@ void PDPClient::announceParticipantState(
                         // if we are matched to a server report demise
                         if (svr.proxy != nullptr)
                         {
-                            remote_readers.push_back(svr.GetPDPReader());
                             //locators.push_back(svr.metatrafficMulticastLocatorList);
                             locators.push_back(svr.metatrafficUnicastLocatorList);
                         }
@@ -747,7 +747,7 @@ void PDPClient::announceParticipantState(
                 }
 
                 // TODO: This should be done with the configuration of the reliable writer
-                direct_send(getRTPSParticipant(), remote_readers, locators, *change);
+                direct_send(getRTPSParticipant(), locators, *change);
             }
 
             // free change
@@ -763,7 +763,6 @@ void PDPClient::announceParticipantState(
                 CacheChange_t* pPD;
                 if (history.get_min_change(&pPD))
                 {
-                    std::vector<GUID_t> remote_readers;
                     LocatorList locators;
 
                     eprosima::shared_lock<eprosima::shared_mutex> disc_lock(mp_builtin->getDiscoveryMutex());
@@ -774,13 +773,12 @@ void PDPClient::announceParticipantState(
                         // broadcast to all servers
                         if (svr.proxy == nullptr || !_serverPing)
                         {
-                            remote_readers.push_back(svr.GetPDPReader());
                             locators.push_back(svr.metatrafficMulticastLocatorList);
                             locators.push_back(svr.metatrafficUnicastLocatorList);
                         }
                     }
 
-                    direct_send(getRTPSParticipant(), remote_readers, locators, *pPD);
+                    direct_send(getRTPSParticipant(), locators, *pPD);
 
                     // ping done independtly of which triggered the announcement
                     // note all event callbacks are currently serialized
