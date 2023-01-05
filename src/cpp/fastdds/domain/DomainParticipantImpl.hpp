@@ -111,8 +111,15 @@ public:
             DomainParticipantListener* listener,
             const std::chrono::seconds timeout = std::chrono::seconds::max())
     {
+        auto time_out = std::chrono::time_point<std::chrono::system_clock>::max();
+        if (timeout < std::chrono::seconds::max())
+        {
+            auto now = std::chrono::system_clock::now();
+            time_out = now + timeout;
+        }
+
         std::unique_lock<std::mutex> lock(mtx_gs_);
-        if (!cv_gs_.wait_for(lock, timeout, [this]
+        if (!cv_gs_.wait_until(lock, time_out, [this]
                 {
                     // Proceed if no callbacks are being executed
                     return !(rtps_listener_.callback_counter_ > 0);
@@ -582,11 +589,11 @@ protected:
                 : listener_(listener)
                 , on_guard_(false)
             {
+                std::lock_guard<std::mutex> _(listener_->participant_->mtx_gs_);
                 if (listener_ != nullptr && listener_->participant_ != nullptr &&
                         listener_->participant_->listener_ != nullptr &&
                         listener_->participant_->participant_ != nullptr)
                 {
-                    std::lock_guard<std::mutex> _(listener_->participant_->mtx_gs_);
                     if (listener_->callback_counter_ >= 0)
                     {
                         ++listener_->callback_counter_;
@@ -599,12 +606,12 @@ protected:
             {
                 if (on_guard_)
                 {
-                    assert(
-                        listener_ != nullptr && listener_->participant_ != nullptr && listener_->participant_->listener_ != nullptr &&
-                        listener_->participant_->participant_ != nullptr);
                     bool notify = false;
                     {
                         std::lock_guard<std::mutex> lock(listener_->participant_->mtx_gs_);
+                        assert(
+                            listener_ != nullptr && listener_->participant_ != nullptr && listener_->participant_->listener_ != nullptr &&
+                            listener_->participant_->participant_ != nullptr);
                         --listener_->callback_counter_;
                         notify = !listener_->callback_counter_;
                     }
