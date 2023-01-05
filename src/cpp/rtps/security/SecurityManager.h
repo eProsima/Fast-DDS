@@ -662,8 +662,8 @@ private:
      * @param participant_data ParticipantProxyData& exchange partner
      * @param remote_participant_info DiscoveredParticipantInfo::AuthUniquePtr& exchange partner authorization data
      * @param message_identity MessageIdentity&& identifies the message to process
-     * @param message HandshakeMessageToken&& required by the protocol
-     * @param notify_part_authorized Whether to notify afterwards if Authentication was successful
+     * @param message_in HandshakeMessageToken&& required by the protocol
+     * @param notify_part_authorized [out] Whether to notify afterwards if Authentication was successfulful
      * @return true on success
      */
     bool on_process_handshake(
