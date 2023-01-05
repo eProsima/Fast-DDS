@@ -707,6 +707,11 @@ bool SecurityManager::discovered_participant(
 
     restore_discovered_participant_info(participant_data.m_guid, remote_participant_info);
 
+    if (notify_part_authorized)
+    {
+        notify_participant_authorized(participant_data);
+    }
+
     return returnedValue;
 }
 
