@@ -13,6 +13,8 @@
 // limitations under the License.
 
 #include <algorithm>
+#include <future>
+#include <thread>
 
 #include <gtest/gtest.h>
 
@@ -33,7 +35,7 @@ class TestCondition : public Condition
 {
 public:
 
-    bool trigger_value = false;
+    volatile bool trigger_value = false;
 
     bool get_trigger_value() const override
     {
@@ -194,6 +196,73 @@ TEST(WaitSetImplTests, wait)
         }
 
         wait_set.will_be_deleted(condition);
+    }
+}
+
+TEST(WaitSetImplTests, fix_wait_notification_lost)
+{
+    ConditionSeq conditions;
+    WaitSetImpl wait_set;
+
+    // Waiting should return the added connection after the trigger value is updated and the wait_set waken.
+    {
+        TestCondition triggered_condition;
+
+        // Expecting calls on the notifier of triggered_condition.
+        auto notifier = triggered_condition.get_notifier();
+        EXPECT_CALL(*notifier, attach_to(_)).Times(1);
+        EXPECT_CALL(*notifier, will_be_deleted(_)).Times(1);
+
+        class AnotherTestCondition : public Condition
+        {
+        public:
+
+            bool get_trigger_value() const override
+            {
+                // Time to simulate thread context switch or something else
+                std::this_thread::sleep_for(std::chrono::seconds(2));
+                return false;
+            }
+
+        }
+        second_simulator_condition;
+
+        // Expecting calls on the notifier of second_simulator_condition.
+        notifier = second_simulator_condition.get_notifier();
+        EXPECT_CALL(*notifier, attach_to(_)).Times(1);
+        EXPECT_CALL(*notifier, will_be_deleted(_)).Times(1);
+
+        wait_set.attach_condition(triggered_condition);
+        wait_set.attach_condition(second_simulator_condition);
+
+        std::promise<void> promise;
+        std::future<void> future = promise.get_future();
+        ReturnCode_t ret = ReturnCode_t::RETCODE_ERROR;
+        std::thread wait_conditions([&]()
+                {
+                    // Not to use `WaitSetImpl::wait` with a timeout value, because the
+                    // `condition_variable::wait_for` could call _Predicate function again.
+                    ret = wait_set.wait(conditions, eprosima::fastrtps::c_TimeInfinite);
+                    promise.set_value();
+                });
+
+        // One second sleep to make the `wait_set.wait` check `triggered_condition` in the above thread
+        std::this_thread::sleep_for(std::chrono::seconds(1));
+        triggered_condition.trigger_value = true;
+        wait_set.wake_up();
+
+        // Expecting get notification after wake_up, otherwise output error within 5 seconds.
+        future.wait_for(std::chrono::seconds(5));
+        EXPECT_EQ(ReturnCode_t::RETCODE_OK, ret);
+        EXPECT_EQ(1u, conditions.size());
+        EXPECT_NE(conditions.cend(), std::find(conditions.cbegin(), conditions.cend(), &triggered_condition));
+
+        // Wake up the `wait_set` to make sure the thread exit
+        wait_set.wake_up();
+        wait_conditions.join();
+
+        wait_set.will_be_deleted(triggered_condition);
+        wait_set.will_be_deleted(second_simulator_condition);
     }
 }
 
