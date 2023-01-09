@@ -1920,6 +1920,13 @@ ReadCondition* DataReaderImpl::create_readcondition(
         return nullptr;
     }
 
+
+    eprosima::fastdds::dds::detail::StateFilter current_mask{};
+    if (nullptr != reader_)
+    {
+        current_mask = get_last_mask_state();
+    }
+
     std::lock_guard<std::recursive_mutex> _(get_conditions_mutex());
 
     // Check if there is an associated ReadConditionImpl object already
@@ -1950,6 +1957,7 @@ ReadCondition* DataReaderImpl::create_readcondition(
     {
         // create a new one
         impl = std::make_shared<detail::ReadConditionImpl>(*this, key);
+        impl->set_trigger_value(current_mask);
         // Add the implementation object to the collection
         read_conditions_.insert(impl.get());
     }

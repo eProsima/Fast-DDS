@@ -61,16 +61,6 @@ public:
         , value_()
         , mutex_(data_reader.get_conditions_mutex())
     {
-        try
-        {
-            auto value = data_reader_.get_last_mask_state();
-            std::lock_guard<std::mutex> _(value_mtx_);
-            value_ = value;
-        }
-        catch (std::runtime_error& e)
-        {
-            // DataReader not enabled yet
-        }
     }
 
     ~ReadConditionImpl()
