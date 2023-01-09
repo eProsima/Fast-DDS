@@ -19,7 +19,6 @@
 #ifndef _FASTDDS_CORE_CONDITION_WAITSETIMPL_HPP_
 #define _FASTDDS_CORE_CONDITION_WAITSETIMPL_HPP_
 
-#include <atomic>
 #include <condition_variable>
 #include <mutex>
 
@@ -114,7 +113,6 @@ private:
     std::condition_variable cond_;
     eprosima::utilities::collections::unordered_vector<const Condition*> entries_;
     bool is_waiting_ = false;
-    std::atomic_uint notifications_ = {1};
 };
 
 }  // namespace detail

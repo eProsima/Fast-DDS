@@ -103,8 +103,6 @@ ReturnCode_t WaitSetImpl::wait(
         const fastrtps::Duration_t& timeout)
 {
     std::unique_lock<std::mutex> lock(mutex_);
-    // last notification processed
-    unsigned int old_counter = notifications_ - 1;
 
     if (is_waiting_)
     {
@@ -113,54 +111,31 @@ ReturnCode_t WaitSetImpl::wait(
 
     auto fill_active_conditions = [&]()
             {
-                bool ret_val;
-
-                if ( old_counter == notifications_ )
+                bool ret_val = false;
+                active_conditions.clear();
+                for (const Condition* c : entries_)
                 {
-                    // spurious wakeup
-                    return false;
-                }
-
-                // Loop if predicate may be outdated
-                do
-                {
-                    ret_val = false;
-                    old_counter = notifications_;
-                    active_conditions.clear();
-
-                    for (const Condition* c : entries_)
+                    if (c->get_trigger_value())
                     {
-                        if (c->get_trigger_value())
-                        {
-                            ret_val = true;
-                            active_conditions.push_back(const_cast<Condition*>(c));
-                        }
+                        ret_val = true;
+                        active_conditions.push_back(const_cast<Condition*>(c));
                     }
                 }
-                while (old_counter != notifications_
-                && active_conditions.size() != entries_.size());
-
                 return ret_val;
             };
 
     bool condition_value = false;
     is_waiting_ = true;
-    auto missing_notification_outage = std::chrono::milliseconds(500);
-    auto now = std::chrono::steady_clock::now();
-    auto deadline = fastrtps::c_TimeInfinite == timeout ?
-            std::chrono::steady_clock::time_point::max() :
-            now + std::chrono::nanoseconds(timeout.to_ns());
-
-    do
+    if (fastrtps::c_TimeInfinite == timeout)
     {
-        now = std::chrono::steady_clock::now();
-        auto next_outage_timeout = now + missing_notification_outage;
-        auto ctimeout = std::min(next_outage_timeout, deadline);
-
-        condition_value = cond_.wait_until(lock, ctimeout, fill_active_conditions);
+        cond_.wait(lock, fill_active_conditions);
+        condition_value = true;
     }
-    while (!condition_value && ( old_counter != notifications_ || deadline > now));
-
+    else
+    {
+        auto ns = timeout.to_ns();
+        condition_value = cond_.wait_for(lock, std::chrono::nanoseconds(ns), fill_active_conditions);
+    }
     is_waiting_ = false;
 
     return condition_value ? ReturnCode_t::RETCODE_OK : ReturnCode_t::RETCODE_TIMEOUT;
@@ -181,7 +156,6 @@ ReturnCode_t WaitSetImpl::get_conditions(
 
 void WaitSetImpl::wake_up()
 {
-    ++notifications_;
     cond_.notify_one();
 }
 
