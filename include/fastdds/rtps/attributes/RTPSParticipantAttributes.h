@@ -360,7 +360,7 @@ public:
     bool use_client = false;
 
     //!Indicates to use the TypeLookup Service server endpoints
-    bool use_server = false;
+    bool use_server = true;
 
 };
 
