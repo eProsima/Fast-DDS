@@ -101,21 +101,8 @@ public:
 
     bool get_trigger_value() const noexcept
     {
-<<<<<<< HEAD
-        try
-        {
-            return get_trigger_value(data_reader_.get_last_mask_state());
-        }
-        catch (std::runtime_error& e)
-        {
-            // DataReader not enabled yet
-            logWarning(READCONDITION, e.what());
-            return false;
-        }
-=======
         std::lock_guard<std::mutex> _(value_mtx_);
         return get_trigger_value(value_);
->>>>>>> df2857a5f (Fix notification lost (#3194))
     }
 
     DataReader* get_datareader() const noexcept
