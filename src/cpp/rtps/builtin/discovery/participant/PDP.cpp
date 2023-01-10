@@ -226,7 +226,7 @@ bool PDP::data_matches_with_prefix(
     bool ret_val = (guid_prefix == participant_data.m_guid.guidPrefix);
 
 #if HAVE_SECURITY
-    if(!ret_val)
+    if (!ret_val)
     {
         GUID_t guid = GUID_t(guid_prefix, c_EntityId_RTPSParticipant);
         return getRTPSParticipant()->security_manager().check_guid_comes_from(participant_data.m_guid, guid);
