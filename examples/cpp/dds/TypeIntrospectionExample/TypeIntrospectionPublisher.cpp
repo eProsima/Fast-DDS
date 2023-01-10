@@ -62,18 +62,15 @@ TypeIntrospectionPublisher::TypeIntrospectionPublisher(
     DomainParticipantQos pqos;
     pqos.name("TypeIntrospectionExample_Participant_Publisher");
 
-    // Set to be used as a type lookup server
-    pqos.wire_protocol().builtin.discovery_config.discoveryProtocol = SIMPLE;
-    pqos.wire_protocol().builtin.discovery_config.use_SIMPLE_EndpointDiscoveryProtocol = true;
-    pqos.wire_protocol().builtin.discovery_config.m_simpleEDP.use_PublicationReaderANDSubscriptionWriter = true;
-    pqos.wire_protocol().builtin.discovery_config.m_simpleEDP.use_PublicationWriterANDSubscriptionReader = true;
-    pqos.wire_protocol().builtin.use_WriterLivelinessProtocol = false;
-    pqos.wire_protocol().builtin.discovery_config.leaseDuration = c_TimeInfinite;
-
     if (use_type_information)
     {
         pqos.wire_protocol().builtin.typelookup_config.use_server = true;
     }
+    else
+    {
+        pqos.wire_protocol().builtin.typelookup_config.use_server = false;
+    }
+    pqos.wire_protocol().builtin.typelookup_config.use_client = false;
 
     // CREATE THE PARTICIPANT
     participant_ = DomainParticipantFactory::get_instance()->create_participant(domain, pqos);
@@ -93,10 +90,18 @@ TypeIntrospectionPublisher::TypeIntrospectionPublisher(
     {
         type->auto_fill_type_information(true);
     }
+    else
+    {
+        type->auto_fill_type_information(false);
+    }
 
     if (use_type_object)
     {
         type->auto_fill_type_object(true);
+    }
+    else
+    {
+        type->auto_fill_type_object(false);
     }
 
     // Register Participant

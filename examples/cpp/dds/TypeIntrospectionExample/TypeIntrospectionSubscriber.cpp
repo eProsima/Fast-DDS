@@ -68,18 +68,15 @@ TypeIntrospectionSubscriber::TypeIntrospectionSubscriber(
     DomainParticipantQos pqos;
     pqos.name("TypeIntrospectionExample_Participant_Subscriber");
 
-    // Set to be used as a client type lookup
-    pqos.wire_protocol().builtin.discovery_config.discoveryProtocol = SIMPLE;
-    pqos.wire_protocol().builtin.discovery_config.use_SIMPLE_EndpointDiscoveryProtocol = true;
-    pqos.wire_protocol().builtin.discovery_config.m_simpleEDP.use_PublicationReaderANDSubscriptionWriter = true;
-    pqos.wire_protocol().builtin.discovery_config.m_simpleEDP.use_PublicationWriterANDSubscriptionReader = true;
-    pqos.wire_protocol().builtin.use_WriterLivelinessProtocol = false;
-    pqos.wire_protocol().builtin.discovery_config.leaseDuration = c_TimeInfinite;
-
     if (use_type_information_)
     {
         pqos.wire_protocol().builtin.typelookup_config.use_client = true;
     }
+    else
+    {
+        pqos.wire_protocol().builtin.typelookup_config.use_client = false;
+    }
+    pqos.wire_protocol().builtin.typelookup_config.use_server = false;
 
     // Create listener mask so the data do not go to on_data_on_readers from subscriber
     StatusMask mask;
