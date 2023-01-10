@@ -44,6 +44,8 @@ class ReadConditionImpl : public std::enable_shared_from_this<ReadConditionImpl>
 {
     DataReaderImpl& data_reader_;
     const StateFilter state_;
+    StateFilter value_;
+    mutable std::mutex value_mtx_;
     std::recursive_mutex& mutex_;
     std::forward_list<const ReadCondition*> conditions_;
 
@@ -56,6 +58,7 @@ public:
             const StateFilter& state)
         : data_reader_(data_reader)
         , state_(state)
+        , value_()
         , mutex_(data_reader.get_conditions_mutex())
     {
     }
@@ -98,16 +101,8 @@ public:
 
     bool get_trigger_value() const noexcept
     {
-        try
-        {
-            return get_trigger_value(data_reader_.get_last_mask_state());
-        }
-        catch (std::runtime_error& e)
-        {
-            // DataReader not enabled yet
-            EPROSIMA_LOG_WARNING(READCONDITION, e.what());
-            return false;
-        }
+        std::lock_guard<std::mutex> _(value_mtx_);
+        return get_trigger_value(value_);
     }
 
     DataReader* get_datareader() const noexcept
@@ -205,6 +200,13 @@ public:
         }
 
         return ReturnCode_t::RETCODE_PRECONDITION_NOT_MET;
+    }
+
+    void set_trigger_value(
+            const StateFilter& value) noexcept
+    {
+        std::lock_guard<std::mutex> _(value_mtx_);
+        value_ = value;
     }
 
     /**
