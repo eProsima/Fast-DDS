@@ -20,8 +20,8 @@
 #define _FASTDDS_RTPS_INSTANCEHANDLE_H_
 
 #include <array>
-
 #include <cstdint>
+#include <cstring>
 #include <fastrtps/fastrtps_dll.h>
 #include <fastdds/rtps/common/Types.h>
 #include <fastdds/rtps/common/Guid.h>
@@ -120,7 +120,8 @@ struct RTPS_DllAPI InstanceHandleValue_t
     bool operator == (
             const InstanceHandleValue_t& other) const noexcept
     {
-        return (has_been_set_ == other.has_been_set_) && (value_ == other.value_);
+        return (has_been_set_ == other.has_been_set_) &&
+               (std::memcmp(value_.data(), other.value_.data(), value_.size()) == 0);
     }
 
     /**
@@ -131,7 +132,7 @@ struct RTPS_DllAPI InstanceHandleValue_t
     {
         if (has_been_set_)
         {
-            return other.has_been_set_ && value_ < other.value_;
+            return other.has_been_set_ && (std::memcmp(value_.data(), other.value_.data(), value_.size()) < 0);
         }
 
         return other.has_been_set_;
