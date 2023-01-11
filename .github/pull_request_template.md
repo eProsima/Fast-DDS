@@ -38,6 +38,7 @@
 - [ ] New feature has been added to the `versions.md` file (if applicable).
 - [ ] New feature has been documented/Current behavior is correctly described in the documentation. <!-- Please uncomment following line with the corresponding PR to the documentation project: -->
 <!-- Related documentation PR: eProsima/Fast-DDS-docs# (PR) -->
+- [ ] Applicable backports have been included in the description.
 
 
 ## Reviewer Checklist
