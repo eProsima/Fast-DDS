@@ -98,12 +98,18 @@ cmake(
     ]
 )
 
+filegroup(
+    name = "all_srcs",
+    srcs = glob(["**"]),
+    visibility = ["//visibility:public"],
+)
+
 cmake(
     name = "fastdds",
     cache_entries = {
         "CMAKE_C_FLAGS": "-fPIC",
     },
-    lib_source = "@fastdds//:all_srcs",
+    lib_source = "//:all_srcs",
     out_binaries = ["fastdds"],
     out_shared_libs = select({
         "@bazel_tools//src/conditions:linux": [

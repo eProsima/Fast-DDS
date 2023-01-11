@@ -86,23 +86,3 @@ http_archive(
     ],
     sha256 = "a203f64195ffd8168bb329617c1bbc3b00843c762e949084f012f415136b9403",
 )
-
-http_archive(
-    name = "fastdds",
-    build_file_content = _ALL_CONTENT,
-    strip_prefix = "Fast-DDS-2.8.1",
-    urls = [
-        "https://github.com/eProsima/Fast-DDS/archive/refs/tags/v2.8.1.zip"
-    ],
-    sha256 = "3d7332ae6bcd142182419e2883f89a14d808f308b2289f18984197ac85b1ab26",
-)
-
-http_archive(
-    name = "fastddsgen",
-    build_file_content = _ALL_CONTENT,
-    strip_prefix = "Fast-DDS-Gen-2.2.0",
-    urls = [
-        "https://github.com/eProsima/Fast-DDS-Gen/archive/refs/tags/v2.2.0.zip"
-    ],
-    sha256 = "39e4efd263ee45c20877751468ce280963148754afbd49cb10e5650341be1129",
-)
