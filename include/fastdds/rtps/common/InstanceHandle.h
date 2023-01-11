@@ -21,6 +21,7 @@
 
 #include <array>
 
+#include <cstdint>
 #include <fastrtps/fastrtps_dll.h>
 #include <fastdds/rtps/common/Types.h>
 #include <fastdds/rtps/common/Guid.h>
@@ -356,7 +357,40 @@ inline std::istream& operator >>(
     return input;
 }
 
+struct hash_fastrtps_instancehandle
+{
+    std::size_t operator ()(
+            const eprosima::fastrtps::rtps::InstanceHandle_t& instance_handle) const
+    {
+
+        if (!instance_handle.value.has_been_set())
+        {
+            return 0;
+        }
+
+
+        const octet* value = static_cast<const octet*>(instance_handle.value);
+
+        const uint32_t* hash = reinterpret_cast<const uint32_t*>(value);
+
+        constexpr std::size_t prime_1 = 7;
+        constexpr std::size_t prime_2 = 31;
+        constexpr std::size_t prime_3 = 59;
+
+        size_t ret_val = prime_1 * hash[0];
+        ret_val = prime_2 * (hash[1] + ret_val);
+        ret_val = prime_3 * (hash[2] + ret_val);
+        ret_val = hash[3] + ret_val;
+
+        return ret_val;
+    }
+
+};
+
+
 #endif // ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
+
+
 
 } // namespace rtps
 } // namespace fastrtps
