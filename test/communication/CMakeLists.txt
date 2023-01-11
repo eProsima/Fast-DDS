@@ -317,7 +317,7 @@ if(PYTHONINTERP_FOUND)
             --xml-pub secure_ds_simple_secure_msg_crypto_pub.xml
             --sub $<TARGET_FILE:SimpleCommunicationSubscriber>
             --xml-sub secure_ds_simple_secure_msg_crypto_sub.xml
-            --samples 10 --wait 2
+            --samples 10
             --ds $<TARGET_FILE:fast-discovery-server>
             --xml-ds secure_simple_ds_server.xml
             --server-id 0)

@@ -29,7 +29,7 @@
 #include <rtps/security/SecurityPluginFactory.h>
 #include <rtps/security/SecurityManager.h>
 #include <fastrtps/rtps/security/accesscontrol/ParticipantSecurityAttributes.h>
-#include <fastrtps/rtps/builtin/discovery/participant/PDPSimple.h>
+#include <fastrtps/rtps/builtin/discovery/participant/PDP.h>
 
 #include <gtest/gtest.h>
 
@@ -161,7 +161,7 @@ public:
     ::testing::NiceMock<StatelessReader>* stateless_reader_;
     ::testing::NiceMock<StatefulWriter>* volatile_writer_;
     ::testing::NiceMock<StatefulReader>* volatile_reader_;
-    PDPSimple pdpsimple_;
+    PDP pdp_;
     SecurityManager manager_;
 
     // handles
