@@ -223,20 +223,17 @@ bool PDP::data_matches_with_prefix(
         const GuidPrefix_t& guid_prefix,
         const ParticipantProxyData& participant_data)
 {
-    if (guid_prefix == participant_data.m_guid.guidPrefix)
-    {
-        return true;
-    }
-#ifdef HAVE_SECURITY
-    else
+    bool ret_val = (guid_prefix == participant_data.m_guid.guidPrefix);
+
+#if HAVE_SECURITY
+    if (!ret_val)
     {
         GUID_t guid = GUID_t(guid_prefix, c_EntityId_RTPSParticipant);
         return getRTPSParticipant()->security_manager().check_guid_comes_from(participant_data.m_guid, guid);
     }
 #endif  // HAVE_SECURITY
 
-    return false;
-
+    return ret_val;
 }
 
 void PDP::initializeParticipantProxyData(
