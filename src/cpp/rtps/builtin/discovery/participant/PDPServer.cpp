@@ -557,7 +557,7 @@ void PDPServer::initializeParticipantProxyData(
             | DISC_BUILTIN_ENDPOINT_SUBSCRIPTION_DETECTOR
             | DISC_BUILTIN_ENDPOINT_PUBLICATION_DETECTOR
             | DISC_BUILTIN_ENDPOINT_SUBSCRIPTION_ANNOUNCER;
-#ifdef HAVE_SECURITY
+#if HAVE_SECURITY
     if (getRTPSParticipant()->is_secure())
     {
         participant_data->m_availableBuiltinEndpoints
@@ -678,6 +678,7 @@ void PDPServer::assignRemoteEndpoints(
 void PDPServer::notifyAboveRemoteEndpoints(
         const ParticipantProxyData& pdata)
 {
+    static_cast<void>(pdata);
 #if HAVE_SECURITY
     match_reliable_pdp_endpoints(pdata);
 #endif // HAVE_SECURITY
