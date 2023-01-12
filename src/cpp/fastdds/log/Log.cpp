@@ -277,7 +277,10 @@ void LogResources::KillThread()
         // they have no intention of solving: https://connect.microsoft.com/VisualStudio/feedback/details/747145
         // Each VS version deals with post-main deallocation of threads in a very different way.
 #if !defined(_WIN32) || defined(FASTRTPS_STATIC_LINK) || _MSC_VER >= 1800
-        logging_thread->join();
+        if (logging_thread->joinable() && logging_thread->get_id() != std::this_thread::get_id())
+        {
+            logging_thread->join();
+        }
 #endif // if !defined(_WIN32) || defined(FASTRTPS_STATIC_LINK) || _MSC_VER >= 1800
         logging_thread.reset();
     }
