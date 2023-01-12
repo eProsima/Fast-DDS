@@ -167,47 +167,49 @@ void Log::Flush()
 
 void Log::run()
 {
-    auto resources = get_log_resources();
-    std::unique_lock<std::mutex> guard(resources->cv_mutex);
+    // Note we can (should) keep a raw reference to the resources, since this method runs on a thread
+    // that will be killed and joined on the destructor of the resources.
+    LogResources& resources = *(get_log_resources().get());
+    std::unique_lock<std::mutex> guard(resources.cv_mutex);
 
-    while (resources->logging)
+    while (resources.logging)
     {
-        resources->cv.wait(guard,
+        resources.cv.wait(guard,
                 [&]()
                 {
-                    return !resources->logging || resources->work;
+                    return !resources.logging || resources.work;
                 });
 
-        resources->work = false;
+        resources.work = false;
 
         guard.unlock();
         {
-            resources->logs.Swap();
-            while (!resources->logs.Empty())
+            resources.logs.Swap();
+            while (!resources.logs.Empty())
             {
-                std::unique_lock<std::mutex> configGuard(resources->config_mutex);
+                std::unique_lock<std::mutex> configGuard(resources.config_mutex);
 
-                Log::Entry& entry = resources->logs.Front();
+                Log::Entry& entry = resources.logs.Front();
                 if (preprocess(entry))
                 {
-                    for (auto& consumer : resources->consumers)
+                    for (auto& consumer : resources.consumers)
                     {
                         consumer->Consume(entry);
                     }
                 }
                 // This Pop() is also a barrier for Log::Flush wait condition
-                resources->logs.Pop();
+                resources.logs.Pop();
             }
         }
         guard.lock();
 
         // avoid overflow
-        if (++resources->current_loop > 10000)
+        if (++resources.current_loop > 10000)
         {
-            resources->current_loop = 0;
+            resources.current_loop = 0;
         }
 
-        resources->cv.notify_all();
+        resources.cv.notify_all();
     }
 }
 
