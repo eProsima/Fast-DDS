@@ -30,6 +30,7 @@
 #include <fastrtps/qos/QosPolicies.h>
 
 #include <fastdds/publisher/history/DataWriterInstance.hpp>
+#include <fastdds/publisher/history/DataWriterInstancePool.hpp>
 
 namespace eprosima {
 namespace fastdds {
@@ -221,7 +222,9 @@ public:
 
 private:
 
-    typedef std::map<fastrtps::rtps::InstanceHandle_t, detail::DataWriterInstance> t_m_Inst_Caches;
+    typedef std::map<fastrtps::rtps::InstanceHandle_t, detail::DataWriterInstance*> t_m_Inst_Caches;
+
+    detail::DataWriterInstancePool instance_pool_;
 
     //!Map where keys are instance handles and values are vectors of cache changes associated
     t_m_Inst_Caches keyed_changes_;

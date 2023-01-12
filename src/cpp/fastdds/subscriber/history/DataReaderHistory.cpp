@@ -91,6 +91,7 @@ DataReaderHistory::DataReaderHistory(
 
         if (resource_limited_qos_.max_samples_per_instance < std::numeric_limits<int32_t>::max())
         {
+            key_changes_allocation_.initial = resource_limited_qos_.max_samples_per_instance;
             key_changes_allocation_.maximum = resource_limited_qos_.max_samples_per_instance;
         }
     }

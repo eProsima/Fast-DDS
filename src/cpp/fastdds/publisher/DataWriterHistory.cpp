@@ -15,6 +15,8 @@
 /**
  * @file DataWriterHistory.cpp
  */
+#include "fastdds/dds/core/policy/QosPolicies.hpp"
+#include "fastdds/publisher/history/DataWriterInstancePool.hpp"
 #include <fastdds/publisher/DataWriterHistory.hpp>
 
 #include <chrono>
@@ -61,6 +63,7 @@ DataWriterHistory::DataWriterHistory(
         uint32_t payloadMaxSize,
         MemoryManagementPolicy_t mempolicy)
     : WriterHistory(to_history_attributes(topic_att, payloadMaxSize, mempolicy))
+    , instance_pool_(topic_att.resourceLimitsQos)
     , history_qos_(topic_att.historyQos)
     , resource_limited_qos_(topic_att.resourceLimitsQos)
     , topic_att_(topic_att)
@@ -89,7 +92,7 @@ void DataWriterHistory::rebuild_instances()
             t_m_Inst_Caches::iterator vit;
             if (find_or_add_key(change->instanceHandle, change->serializedPayload, &vit))
             {
-                vit->second.cache_changes.push_back(change);
+                vit->second->cache_changes.push_back(change);
             }
         }
     }
@@ -113,7 +116,7 @@ bool DataWriterHistory::register_instance(
     bool result = find_or_add_key(instance_handle, {}, &vit);
     if (result)
     {
-        payload = &vit->second.key_payload;
+        payload = &vit->second->key_payload;
     }
     return result;
 }
@@ -122,9 +125,9 @@ fastrtps::rtps::SerializedPayload_t* DataWriterHistory::get_key_value(
         const fastrtps::rtps::InstanceHandle_t& handle)
 {
     t_m_Inst_Caches::iterator vit = keyed_changes_.find(handle);
-    if (vit != keyed_changes_.end() && vit->second.is_registered())
+    if (vit != keyed_changes_.end() && vit->second->is_registered())
     {
-        return &vit->second.key_payload;
+        return &vit->second->key_payload;
     }
     return nullptr;
 }
@@ -176,25 +179,25 @@ bool DataWriterHistory::prepare_change(
 
             if (history_qos_.kind == KEEP_LAST_HISTORY_QOS)
             {
-                if (vit->second.cache_changes.size() < static_cast<size_t>(history_qos_.depth))
+                if (vit->second->cache_changes.size() < static_cast<size_t>(history_qos_.depth))
                 {
                     add = true;
                 }
                 else
                 {
-                    add = remove_change_pub(vit->second.cache_changes.front());
+                    add = remove_change_pub(vit->second->cache_changes.front());
                 }
             }
             else if (history_qos_.kind == KEEP_ALL_HISTORY_QOS)
             {
-                if (vit->second.cache_changes.size() <
+                if (vit->second->cache_changes.size() <
                         static_cast<size_t>(resource_limited_qos_.max_samples_per_instance))
                 {
                     add = true;
                 }
                 else
                 {
-                    SequenceNumber_t seq_to_remove = vit->second.cache_changes.front()->sequenceNumber;
+                    SequenceNumber_t seq_to_remove = vit->second->cache_changes.front()->sequenceNumber;
                     if (!mp_writer->wait_for_acknowledgement(seq_to_remove, max_blocking_time, lock))
                     {
                         // Timeout waiting. Will not add change to history.
@@ -208,21 +211,21 @@ bool DataWriterHistory::prepare_change(
                     }
 
                     // If the change we were trying to remove was already removed, try again
-                    if (vit->second.cache_changes.empty() ||
-                            vit->second.cache_changes.front()->sequenceNumber != seq_to_remove)
+                    if (vit->second->cache_changes.empty() ||
+                            vit->second->cache_changes.front()->sequenceNumber != seq_to_remove)
                     {
                         continue;
                     }
 
                     // Remove change if still present
-                    add = remove_change_pub(vit->second.cache_changes.front());
+                    add = remove_change_pub(vit->second->cache_changes.front());
                 }
             }
         }
 
         if (add)
         {
-            vit->second.cache_changes.push_back(change);
+            vit->second->cache_changes.push_back(change);
         }
     }
 
@@ -274,8 +277,8 @@ bool DataWriterHistory::find_or_add_key(
 
     if (static_cast<int>(keyed_changes_.size()) < resource_limited_qos_.max_instances)
     {
-        vit = keyed_changes_.insert(std::make_pair(instance_handle, detail::DataWriterInstance())).first;
-        vit->second.key_payload.copy(&payload, false);
+        vit = keyed_changes_.insert(std::make_pair(instance_handle, instance_pool_.get_item())).first;
+        vit->second->key_payload.copy(&payload, false);
         *vit_out = vit;
         return true;
     }
@@ -357,13 +360,13 @@ bool DataWriterHistory::remove_change_pub(
             return false;
         }
 
-        for (auto chit = vit->second.cache_changes.begin(); chit != vit->second.cache_changes.end(); ++chit)
+        for (auto chit = vit->second->cache_changes.begin(); chit != vit->second->cache_changes.end(); ++chit)
         {
             if (((*chit)->sequenceNumber == change->sequenceNumber) && ((*chit)->writerGUID == change->writerGUID))
             {
                 if (remove_change(change))
                 {
-                    vit->second.cache_changes.erase(chit);
+                    vit->second->cache_changes.erase(chit);
                     m_isHistoryFull = false;
                     return true;
                 }
@@ -404,9 +407,9 @@ bool DataWriterHistory::remove_instance_changes(
         return false;
     }
 
-    auto chit = vit->second.cache_changes.begin();
+    auto chit = vit->second->cache_changes.begin();
 
-    for (; chit != vit->second.cache_changes.end() && (*chit)->sequenceNumber <= seq_up_to; ++chit)
+    for (; chit != vit->second->cache_changes.end() && (*chit)->sequenceNumber <= seq_up_to; ++chit)
     {
         if (remove_change(*chit))
         {
@@ -414,10 +417,11 @@ bool DataWriterHistory::remove_instance_changes(
         }
     }
 
-    vit->second.cache_changes.erase(vit->second.cache_changes.begin(), chit);
+    vit->second->cache_changes.erase(vit->second->cache_changes.begin(), chit);
 
-    if (vit->second.cache_changes.empty())
+    if (vit->second->cache_changes.empty())
     {
+        instance_pool_.return_item(vit->second);
         keyed_changes_.erase(vit);
     }
 
@@ -447,7 +451,7 @@ bool DataWriterHistory::set_next_deadline(
             return false;
         }
 
-        keyed_changes_[handle].next_deadline_us = next_deadline_us;
+        keyed_changes_[handle]->next_deadline_us = next_deadline_us;
         return true;
     }
 
@@ -474,11 +478,11 @@ bool DataWriterHistory::get_next_deadline(
                 const t_m_Inst_Caches::value_type& lhs,
                 const t_m_Inst_Caches::value_type& rhs)
             {
-                return lhs.second.next_deadline_us < rhs.second.next_deadline_us;
+                return lhs.second->next_deadline_us < rhs.second->next_deadline_us;
             });
 
         handle = min->first;
-        next_deadline_us = min->second.next_deadline_us;
+        next_deadline_us = min->second->next_deadline_us;
         return true;
     }
     else if (topic_att_.getTopicKind() == NO_KEY)
@@ -501,7 +505,7 @@ bool DataWriterHistory::is_key_registered(
     std::lock_guard<RecursiveTimedMutex> guard(*this->mp_mutex);
     t_m_Inst_Caches::iterator vit;
     vit = keyed_changes_.find(handle);
-    return vit != keyed_changes_.end() && vit->second.is_registered();
+    return vit != keyed_changes_.end() && vit->second->is_registered();
 }
 
 bool DataWriterHistory::wait_for_acknowledgement_last_change(
@@ -515,7 +519,7 @@ bool DataWriterHistory::wait_for_acknowledgement_last_change(
         t_m_Inst_Caches::iterator vit = keyed_changes_.find(handle);
         if (vit != keyed_changes_.end())
         {
-            SequenceNumber_t seq = vit->second.cache_changes.back()->sequenceNumber;
+            SequenceNumber_t seq = vit->second->cache_changes.back()->sequenceNumber;
             return mp_writer->wait_for_acknowledgement(seq, max_blocking_time, lock);
         }
     }

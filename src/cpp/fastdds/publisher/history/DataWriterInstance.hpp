@@ -21,6 +21,7 @@
 
 #include <chrono>
 
+#include <cstddef>
 #include <fastdds/rtps/common/CacheChange.h>
 #include <fastdds/rtps/common/ChangeKind_t.hpp>
 #include <fastdds/rtps/common/SerializedPayload.h>
@@ -43,6 +44,11 @@ struct DataWriterInstance
     fastrtps::rtps::SerializedPayload_t key_payload;
 
     DataWriterInstance() = default;
+    DataWriterInstance(
+            size_t preallocated_changes)
+    {
+        cache_changes.reserve(preallocated_changes);
+    }
 
     FASTDDS_DELETED_COPY(DataWriterInstance);
     FASTDDS_DEFAULT_MOVE(DataWriterInstance);
@@ -52,6 +58,13 @@ struct DataWriterInstance
         return cache_changes.empty() ||
                (fastrtps::rtps::NOT_ALIVE_UNREGISTERED != cache_changes.back()->kind &&
                fastrtps::rtps::NOT_ALIVE_DISPOSED_UNREGISTERED != cache_changes.back()->kind);
+    }
+
+    void clear()
+    {
+        cache_changes.clear();
+        next_deadline_us = std::chrono::steady_clock::time_point();
+        key_payload.empty();
     }
 
 };
