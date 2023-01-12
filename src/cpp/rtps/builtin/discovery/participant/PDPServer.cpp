@@ -1706,7 +1706,6 @@ void PDPServer::ping_remote_servers()
             if (server_it != ack_pending_servers.end())
             {
                 // get the info to send to this already known locators
-                remote_readers.push_back(GUID_t(server.guidPrefix, c_EntityId_SPDPReader));
                 locators.push_back(server.metatrafficUnicastLocatorList);
             }
         }
