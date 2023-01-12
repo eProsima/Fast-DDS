@@ -55,6 +55,10 @@ struct DataWriterInstancePool
         {
             delete it;
         }
+        for (DataWriterInstance* it : used_items_)
+        {
+            delete it;
+        }
     }
 
     size_t num_allocated()
