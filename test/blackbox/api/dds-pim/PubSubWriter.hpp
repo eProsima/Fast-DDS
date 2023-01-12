@@ -170,6 +170,7 @@ class PubSubWriter
             : writer_(writer)
             , times_deadline_missed_(0)
             , times_liveliness_lost_(0)
+            , times_unack_sample_removed_(0)
         {
         }
 
@@ -197,7 +198,7 @@ class PubSubWriter
                 eprosima::fastdds::dds::DataWriter* datawriter,
                 const eprosima::fastrtps::OfferedDeadlineMissedStatus& status) override
         {
-            (void)datawriter;
+            static_cast<void>(datawriter);
             times_deadline_missed_ = status.total_count;
         }
 
@@ -205,7 +206,7 @@ class PubSubWriter
                 eprosima::fastdds::dds::DataWriter* datawriter,
                 const eprosima::fastdds::dds::OfferedIncompatibleQosStatus& status) override
         {
-            (void)datawriter;
+            static_cast<void>(datawriter);
             writer_.incompatible_qos(status);
         }
 
@@ -213,9 +214,18 @@ class PubSubWriter
                 eprosima::fastdds::dds::DataWriter* datawriter,
                 const eprosima::fastrtps::LivelinessLostStatus& status) override
         {
-            (void)datawriter;
+            static_cast<void>(datawriter);
             times_liveliness_lost_ = status.total_count;
             writer_.liveliness_lost();
+        }
+
+        void on_unacknowledged_sample_removed(
+                eprosima::fastdds::dds::DataWriter* datawriter,
+                const eprosima::fastdds::dds::InstanceHandle_t& handle) override
+        {
+            static_cast<void>(handle);
+            EXPECT_EQ(writer_.datawriter_, datawriter);
+            times_unack_sample_removed_++;
         }
 
         unsigned int missed_deadlines() const
@@ -226,6 +236,11 @@ class PubSubWriter
         unsigned int times_liveliness_lost() const
         {
             return times_liveliness_lost_;
+        }
+
+        unsigned int times_unack_sample_removed() const
+        {
+            return times_unack_sample_removed_;
         }
 
     private:
@@ -239,6 +254,8 @@ class PubSubWriter
         unsigned int times_deadline_missed_;
         //! The number of times liveliness was lost
         unsigned int times_liveliness_lost_;
+        //! The number of times a sample has been removed unacknowledged
+        unsigned int times_unack_sample_removed_;
 
     }
     listener_;
@@ -1419,6 +1436,11 @@ public:
     unsigned int times_liveliness_lost() const
     {
         return listener_.times_liveliness_lost();
+    }
+
+    unsigned int times_unack_sample_removed() const
+    {
+        return listener_.times_unack_sample_removed();
     }
 
     unsigned int times_incompatible_qos() const
