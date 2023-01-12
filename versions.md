@@ -1,6 +1,8 @@
 Forthcoming
 -----------
 
+* Added non-standard DataWriterListener callback `on_unacknowledged_sample_removed` (API extension on DDS layer).
+
 Version 2.9.0
 -------------
 
