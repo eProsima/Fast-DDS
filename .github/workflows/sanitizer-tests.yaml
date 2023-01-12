@@ -21,7 +21,7 @@ jobs:
     if: ${{ !(contains(github.event.pull_request.labels.*.name, 'no-test') ||
               contains(github.event.pull_request.labels.*.name, 'skip-ci')) }}
 
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
 
     steps:
       - name: Sync eProsima/Fast-DDS repository
@@ -41,10 +41,17 @@ jobs:
       - name: Fetch Fast DDS dependencies
         uses: ./src/Fast-DDS/.github/actions/fetch-fastdds-repos
 
+      - name: Build Gtest (without -Wall)
+        run: |
+          cat src/Fast-DDS/.github/workflows/asan/asan_colcon.meta
+          colcon build \
+            --packages-select googletest-distribution
+
       - name: Build workspace
         run: |
           cat src/Fast-DDS/.github/workflows/asan/asan_colcon.meta
           colcon build \
+            --packages-skip googletest-distribution \
             --event-handlers=console_direct+ \
             --metas src/Fast-DDS/.github/workflows/asan/asan_colcon.meta
 
@@ -79,7 +86,7 @@ jobs:
     if: ${{ !(contains(github.event.pull_request.labels.*.name, 'no-test') ||
               contains(github.event.pull_request.labels.*.name, 'skip-ci')) }}
 
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
 
     steps:
       - name: Sync eProsima/Fast-DDS repository
@@ -108,10 +115,17 @@ jobs:
           git clone https://github.com/google/googletest.git --branch release-1.10.0
           cd ..
 
+      - name: Build Gtest (without -Wall)
+        run: |
+          cat src/Fast-DDS/.github/workflows/asan/asan_colcon.meta
+          colcon build \
+            --packages-select googletest-distribution
+
       - name: Build workspace
         run: |
           cat src/Fast-DDS/.github/workflows/asan/asan_colcon.meta
           colcon build \
+            --packages-skip googletest-distribution \
             --event-handlers=console_direct+ \
             --metas src/Fast-DDS/.github/workflows/asan/asan_colcon.meta
 
