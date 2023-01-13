@@ -32,26 +32,19 @@ jobs:
       - name: Install apt packages
         uses: ./src/Fast-DDS/.github/actions/install-apt-packages
 
-      - name: Install GTest
-        uses: ./src/Fast-DDS/.github/actions/install-gtest-linux
-
       - name: Install Python packages
         uses: ./src/Fast-DDS/.github/actions/install-python-packages
 
       - name: Fetch Fast DDS dependencies
         uses: ./src/Fast-DDS/.github/actions/fetch-fastdds-repos
-
-      - name: Build Gtest (without -Wall)
-        run: |
-          cat src/Fast-DDS/.github/workflows/asan/asan_colcon.meta
-          colcon build \
-            --packages-select googletest-distribution
+        with:
+          target_directory: src
+          googletest: true
 
       - name: Build workspace
         run: |
           cat src/Fast-DDS/.github/workflows/asan/asan_colcon.meta
           colcon build \
-            --packages-skip googletest-distribution \
             --event-handlers=console_direct+ \
             --metas src/Fast-DDS/.github/workflows/asan/asan_colcon.meta
 
@@ -97,23 +90,15 @@ jobs:
       - name: Install apt packages
         uses: ./src/Fast-DDS/.github/actions/install-apt-packages
 
-      - name: Install GTest
-        uses: ./src/Fast-DDS/.github/actions/install-gtest-linux
-
       - name: Install Python packages
         uses: ./src/Fast-DDS/.github/actions/install-python-packages
 
-      - name: Fetch repositories
-        env:
-          DEFAULT_DISCOVERY_SERVER_BRANCH: 'master'
-        run: |
-          mkdir -p src
-          cd src
-          git clone https://github.com/eProsima/foonathan_memory_vendor.git
-          git clone https://github.com/eProsima/Fast-CDR.git
-          git clone https://github.com/eProsima/Discovery-Server.git --branch ${{ github.event.inputs.discovery_server_branch || env.DEFAULT_DISCOVERY_SERVER_BRANCH }}
-          git clone https://github.com/google/googletest.git --branch release-1.10.0
-          cd ..
+      - name: Fetch Fast DDS dependencies
+        uses: ./src/Fast-DDS/.github/actions/fetch-fastdds-repos
+        with:
+          target_directory: src
+          googletest: true
+          discovery_server: true
 
       - name: Build Gtest (without -Wall)
         run: |

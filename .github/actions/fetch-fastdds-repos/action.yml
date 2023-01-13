@@ -1,13 +1,31 @@
 name: 'fetch-fastdds-repos'
 description: 'Fetch Fast DDS dependencies'
+inputs:
+  target_directory:
+    description: 'Target directory where the dependencies will be downloaded.'
+    required: true
+    default: '.'
+  googletest:
+    description: 'Specifies if Discovery Server repository should be downloaded.'
+    required: false
+    default: 'false'
+  discovery_server:
+    description: 'Specifies if Discovery Server repository should be downloaded.'
+    required: false
+    default: 'false'
 runs:
   using: "composite"
   steps:
-    - id: fetch-fastdds-repos
+    - name: Fetch eProsima dependencies
       run: |
-        cd src
-        git clone https://github.com/eProsima/foonathan_memory_vendor.git
-        git clone https://github.com/eProsima/Fast-CDR.git
-        git clone https://github.com/google/googletest.git --branch release-1.12.1
-        cd ..
+        git clone https://github.com/eProsima/foonathan_memory_vendor.git ${{ inputs.target_directory }}
+        git clone https://github.com/eProsima/Fast-CDR.git ${{ inputs.target_directory }}
+      shell: bash
+    - name: Fetch GoogleTest
+      if: ${{ ${{ inputs.googletest }} == 'true' }}
+      run: git clone https://github.com/google/googletest.git --branch release-1.12.1 ${{ inputs.target_directory }}
+      shell: bash
+    - name: Fetch Discovery Server
+      if: ${{ ${{ inputs.discovery_server }} == 'true' }}
+      run: git clone https://github.com/eProsima/Discovery-Server.git ${{ inputs.target_directory }}
       shell: bash
