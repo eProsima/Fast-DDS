@@ -75,16 +75,273 @@ struct LogResources
         KillThread();
     }
 
-    void KillThread();
+    /**
+     * Registers an user defined consumer to route log output.
+     * There is a default stdout consumer active as default.
+     * @param consumer r-value to a consumer unique_ptr. It will be invalidated after the call.
+     */
+    void RegisterConsumer(
+            std::unique_ptr<LogConsumer>&& consumer)
+    {
+        std::unique_lock<std::mutex> guard(config_mutex);
+        consumers.emplace_back(std::move(consumer));
+    }
 
-    void StartThread();
+    //! Removes all registered consumers, including the default stdout.
+    void ClearConsumers()
+    {
+        Flush();
+
+        std::lock_guard<std::mutex> guard(config_mutex);
+        consumers.clear();
+    }
+
+    //! Enables the reporting of filenames in log entries. Disabled by default.
+    void ReportFilenames(
+            bool report)
+    {
+        std::lock_guard<std::mutex> configGuard(config_mutex);
+        filenames = report;
+    }
+
+    //! Enables the reporting of function names in log entries. Enabled by default when supported.
+    void ReportFunctions(
+            bool report)
+    {
+        std::lock_guard<std::mutex> configGuard(config_mutex);
+        functions = report;
+    }
+
+    //! Sets the verbosity level, allowing for messages equal or under that priority to be logged.
+    void SetVerbosity(
+            Log::Kind kind)
+    {
+        verbosity = kind;
+    }
+
+    //! Returns the current verbosity level.
+    Log::Kind GetVerbosity()
+    {
+        return verbosity;
+    }
+
+    //! Sets a filter that will pattern-match against log categories, dropping any unmatched categories.
+    void SetCategoryFilter(
+            const std::regex& filter)
+    {
+        std::unique_lock<std::mutex> configGuard(config_mutex);
+        category_filter.reset(new std::regex(filter));
+    }
+
+    //! Sets a filter that will pattern-match against filenames, dropping any unmatched categories.
+    void SetFilenameFilter(
+            const std::regex& filter)
+    {
+        std::unique_lock<std::mutex> configGuard(config_mutex);
+        filename_filter.reset(new std::regex(filter));
+    }
+
+    //! Sets a filter that will pattern-match against the provided error string, dropping any unmatched categories.
+    void SetErrorStringFilter(
+            const std::regex& filter)
+    {
+        std::unique_lock<std::mutex> configGuard(config_mutex);
+        error_string_filter.reset(new std::regex(filter));
+    }
+
+    //! Returns the logging engine to configuration defaults.
+    void Reset()
+    {
+        std::unique_lock<std::mutex> configGuard(config_mutex);
+        category_filter.reset();
+        filename_filter.reset();
+        error_string_filter.reset();
+        filenames = false;
+        functions = true;
+        verbosity = Log::Error;
+        consumers.clear();
+
+#if STDOUTERR_LOG_CONSUMER
+        consumers.emplace_back(new StdoutErrConsumer);
+#else
+        consumers.emplace_back(new StdoutConsumer);
+#endif // if STDOUTERR_LOG_CONSUMER
+    }
+
+    //! Waits until all info logged up to the call time is consumed
+    void Flush()
+    {
+        std::unique_lock<std::mutex> guard(cv_mutex);
+
+        if (!logging && !logging_thread)
+        {
+            // already killed
+            return;
+        }
+
+        /*   Flush() two steps strategy:
+
+             I must assure Log::Run swaps the queues because only swapping the queues the background content
+             will be consumed (first Run() loop).
+
+             Then, I must assure the new front queue content is consumed (second Run() loop).
+         */
+
+        int last_loop = -1;
+
+        for (int i = 0; i < 2; ++i)
+        {
+            cv.wait(guard,
+                    [&]()
+                    {
+                        /* I must avoid:
+                         + the two calls be processed without an intermediate Run() loop (by using last_loop sequence number)
+                         + deadlock by absence of Run() loop activity (by using BothEmpty() call)
+                         */
+                        return !logging ||
+                        (logs.Empty() &&
+                        (last_loop != current_loop || logs.BothEmpty()));
+                    });
+
+            last_loop = current_loop;
+
+        }
+    }
+
+    /**
+     * Not recommended to call this method directly! Use the following macros:
+     *  * EPROSIMA_LOG_INFO(cat, msg);
+     *  * EPROSIMA_LOG_WARNING(cat, msg);
+     *  * EPROSIMA_LOG_ERROR(cat, msg);
+     *
+     * @todo this method takes 2 mutexes (same mutex) internally.
+     * This is a very high sensible point of the code and it should be refactored to be as efficient as possible.
+     */
+    void QueueLog(
+            const std::string& message,
+            const Log::Context& context,
+            Log::Kind kind)
+    {
+        StartThread();
+
+        std::string timestamp = SystemInfo::get_timestamp();
+        logs.Push(Log::Entry{ message, context, kind, timestamp });
+        {
+            std::unique_lock<std::mutex> guard(cv_mutex);
+            work = true;
+        }
+        cv.notify_all();
+    }
+
+    //! Stops the logging thread. It will re-launch on the next call to QueueLog.
+    void KillThread()
+    {
+        {
+            std::unique_lock<std::mutex> guard(cv_mutex);
+            logging = false;
+            work = false;
+        }
+
+        if (logging_thread)
+        {
+            cv.notify_all();
+            // The #ifdef workaround here is due to an unsolved MSVC bug, which Microsoft has announced
+            // they have no intention of solving: https://connect.microsoft.com/VisualStudio/feedback/details/747145
+            // Each VS version deals with post-main deallocation of threads in a very different way.
+#if !defined(_WIN32) || defined(FASTRTPS_STATIC_LINK) || _MSC_VER >= 1800
+            if (logging_thread->joinable() && logging_thread->get_id() != std::this_thread::get_id())
+            {
+                logging_thread->join();
+            }
+#endif // if !defined(_WIN32) || defined(FASTRTPS_STATIC_LINK) || _MSC_VER >= 1800
+            logging_thread.reset();
+        }
+    }
 
 private:
 
-    void run();
+    void StartThread()
+    {
+        std::unique_lock<std::mutex> guard(cv_mutex);
+        if (!logging && !logging_thread)
+        {
+            logging = true;
+            logging_thread.reset(new thread(&LogResources::run, this));
+        }
+    }
+
+    void run()
+    {
+        std::unique_lock<std::mutex> guard(cv_mutex);
+
+        while (logging)
+        {
+            cv.wait(guard,
+                    [&]()
+                    {
+                        return !logging || work;
+                    });
+
+            work = false;
+
+            guard.unlock();
+            {
+                logs.Swap();
+                while (!logs.Empty())
+                {
+                    std::unique_lock<std::mutex> configGuard(config_mutex);
+
+                    Log::Entry& entry = logs.Front();
+                    if (preprocess(entry))
+                    {
+                        for (auto& consumer : consumers)
+                        {
+                            consumer->Consume(entry);
+                        }
+                    }
+                    // This Pop() is also a barrier for Log::Flush wait condition
+                    logs.Pop();
+                }
+            }
+            guard.lock();
+
+            // avoid overflow
+            if (++current_loop > 10000)
+            {
+                current_loop = 0;
+            }
+
+            cv.notify_all();
+        }
+    }
 
     bool preprocess(
-            Log::Entry& entry);
+            Log::Entry& entry)
+    {
+        if (category_filter && !regex_search(entry.context.category, *category_filter))
+        {
+            return false;
+        }
+        if (filename_filter && !regex_search(entry.context.filename, *filename_filter))
+        {
+            return false;
+        }
+        if (error_string_filter && !regex_search(entry.message, *error_string_filter))
+        {
+            return false;
+        }
+        if (!filenames)
+        {
+            entry.context.filename = nullptr;
+        }
+        if (!functions)
+        {
+            entry.context.function = nullptr;
+        }
+
+        return true;
+    }
+
 };
 
 std::shared_ptr<LogResources> get_log_resources()
@@ -96,169 +353,34 @@ std::shared_ptr<LogResources> get_log_resources()
 void Log::RegisterConsumer(
         std::unique_ptr<LogConsumer>&& consumer)
 {
-    auto resources = get_log_resources();
-    std::unique_lock<std::mutex> guard(resources->config_mutex);
-    resources->consumers.emplace_back(std::move(consumer));
+    get_log_resources()->RegisterConsumer(std::move(consumer));
 }
 
 void Log::ClearConsumers()
 {
-    auto resources = get_log_resources();
-    std::unique_lock<std::mutex> working(resources->cv_mutex);
-    resources->cv.wait(working,
-            [&]()
-            {
-                return resources->logs.BothEmpty();
-            });
-    std::unique_lock<std::mutex> guard(resources->config_mutex);
-    resources->consumers.clear();
+    get_log_resources()->ClearConsumers();
 }
 
 void Log::Reset()
 {
-    auto resources = get_log_resources();
-    std::unique_lock<std::mutex> configGuard(resources->config_mutex);
-    resources->category_filter.reset();
-    resources->filename_filter.reset();
-    resources->error_string_filter.reset();
-    resources->filenames = false;
-    resources->functions = true;
-    resources->verbosity = Log::Error;
-    resources->consumers.clear();
-
-#if STDOUTERR_LOG_CONSUMER
-    resources->consumers.emplace_back(new StdoutErrConsumer);
-#else
-    resources->consumers.emplace_back(new StdoutConsumer);
-#endif // if STDOUTERR_LOG_CONSUMER
+    get_log_resources()->Reset();
 }
 
 void Log::Flush()
 {
-    auto resources = get_log_resources();
-    std::unique_lock<std::mutex> guard(resources->cv_mutex);
-
-    if (!resources->logging && !resources->logging_thread)
-    {
-        // already killed
-        return;
-    }
-
-    /*   Flush() two steps strategy:
-
-         I must assure Log::Run swaps the queues because only swapping the queues the background content
-         will be consumed (first Run() loop).
-
-         Then, I must assure the new front queue content is consumed (second Run() loop).
-     */
-
-    int last_loop = -1;
-
-    for (int i = 0; i < 2; ++i)
-    {
-        resources->cv.wait(guard,
-                [&]()
-                {
-                    /* I must avoid:
-                     + the two calls be processed without an intermediate Run() loop (by using last_loop sequence number)
-                     + deadlock by absence of Run() loop activity (by using BothEmpty() call)
-                     */
-                    return !resources->logging ||
-                    ( resources->logs.Empty() &&
-                    ( last_loop != resources->current_loop || resources->logs.BothEmpty()));
-                });
-
-        last_loop = resources->current_loop;
-
-    }
-}
-
-void LogResources::run()
-{
-    std::unique_lock<std::mutex> guard(cv_mutex);
-
-    while (logging)
-    {
-        cv.wait(guard,
-                [&]()
-                {
-                    return !logging || work;
-                });
-
-        work = false;
-
-        guard.unlock();
-        {
-            logs.Swap();
-            while (!logs.Empty())
-            {
-                std::unique_lock<std::mutex> configGuard(config_mutex);
-
-                Log::Entry& entry = logs.Front();
-                if (preprocess(entry))
-                {
-                    for (auto& consumer : consumers)
-                    {
-                        consumer->Consume(entry);
-                    }
-                }
-                // This Pop() is also a barrier for Log::Flush wait condition
-                logs.Pop();
-            }
-        }
-        guard.lock();
-
-        // avoid overflow
-        if (++current_loop > 10000)
-        {
-            current_loop = 0;
-        }
-
-        cv.notify_all();
-    }
+    get_log_resources()->Flush();
 }
 
 void Log::ReportFilenames(
         bool report)
 {
-    auto resources = get_log_resources();
-    std::unique_lock<std::mutex> configGuard(resources->config_mutex);
-    resources->filenames = report;
+    get_log_resources()->ReportFilenames(report);
 }
 
 void Log::ReportFunctions(
         bool report)
 {
-    auto resources = get_log_resources();
-    std::unique_lock<std::mutex> configGuard(resources->config_mutex);
-    resources->functions = report;
-}
-
-bool LogResources::preprocess(
-        Log::Entry& entry)
-{
-    if (category_filter && !regex_search(entry.context.category, *category_filter))
-    {
-        return false;
-    }
-    if (filename_filter && !regex_search(entry.context.filename, *filename_filter))
-    {
-        return false;
-    }
-    if (error_string_filter && !regex_search(entry.message, *error_string_filter))
-    {
-        return false;
-    }
-    if (!filenames)
-    {
-        entry.context.filename = nullptr;
-    }
-    if (!functions)
-    {
-        entry.context.function = nullptr;
-    }
-
-    return true;
+    get_log_resources()->ReportFunctions(report);
 }
 
 void Log::KillThread()
@@ -266,92 +388,41 @@ void Log::KillThread()
     get_log_resources()->KillThread();
 }
 
-void LogResources::StartThread()
-{
-    std::unique_lock<std::mutex> guard(cv_mutex);
-    if (!logging && !logging_thread)
-    {
-        logging = true;
-        logging_thread.reset(new thread(&LogResources::run, this));
-    }
-}
-
-void LogResources::KillThread()
-{
-    {
-        std::unique_lock<std::mutex> guard(cv_mutex);
-        logging = false;
-        work = false;
-    }
-
-    if (logging_thread)
-    {
-        cv.notify_all();
-        // The #ifdef workaround here is due to an unsolved MSVC bug, which Microsoft has announced
-        // they have no intention of solving: https://connect.microsoft.com/VisualStudio/feedback/details/747145
-        // Each VS version deals with post-main deallocation of threads in a very different way.
-#if !defined(_WIN32) || defined(FASTRTPS_STATIC_LINK) || _MSC_VER >= 1800
-        if (logging_thread->joinable() && logging_thread->get_id() != std::this_thread::get_id())
-        {
-            logging_thread->join();
-        }
-#endif // if !defined(_WIN32) || defined(FASTRTPS_STATIC_LINK) || _MSC_VER >= 1800
-        logging_thread.reset();
-    }
-}
-
 void Log::QueueLog(
         const std::string& message,
         const Log::Context& context,
         Log::Kind kind)
 {
-    auto resources = get_log_resources();
-    resources->StartThread();
-
-    std::string timestamp = SystemInfo::get_timestamp();
-    resources->logs.Push(Log::Entry{message, context, kind, timestamp});
-    {
-        std::unique_lock<std::mutex> guard(resources->cv_mutex);
-        resources->work = true;
-    }
-    resources->cv.notify_all();
+    get_log_resources()->QueueLog(message, context, kind);
 }
 
 Log::Kind Log::GetVerbosity()
 {
-    return get_log_resources()->verbosity;
+    return get_log_resources()->GetVerbosity();
 }
 
 void Log::SetVerbosity(
         Log::Kind kind)
 {
-    auto resources = get_log_resources();
-    std::unique_lock<std::mutex> configGuard(resources->config_mutex);
-    resources->verbosity = kind;
+    get_log_resources()->SetVerbosity(kind);
 }
 
 void Log::SetCategoryFilter(
         const std::regex& filter)
 {
-    auto resources = get_log_resources();
-    std::unique_lock<std::mutex> configGuard(resources->config_mutex);
-    resources->category_filter.reset(new std::regex(filter));
+    get_log_resources()->SetCategoryFilter(filter);
 }
 
 void Log::SetFilenameFilter(
         const std::regex& filter)
 {
-    auto resources = get_log_resources();
-    std::unique_lock<std::mutex> configGuard(resources->config_mutex);
-    resources->filename_filter.reset(new std::regex(filter));
+    get_log_resources()->SetFilenameFilter(filter);
 }
 
 void Log::SetErrorStringFilter(
         const std::regex& filter)
 {
-    auto resources = get_log_resources();
-    std::unique_lock<std::mutex> configGuard(resources->config_mutex);
-    resources->error_string_filter.reset(new std::regex(filter));
+    get_log_resources()->SetErrorStringFilter(filter);
 }
 
 void LogConsumer::print_timestamp(
