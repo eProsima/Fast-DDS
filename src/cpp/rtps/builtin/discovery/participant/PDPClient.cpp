@@ -59,16 +59,26 @@ using namespace fastrtps::rtps;
 static void direct_send(
         RTPSParticipantImpl* participant,
         LocatorList& locators,
-        const CacheChange_t& change)
+        std::vector<GUID_t>& remote_readers,
+        const CacheChange_t& change,
+        fastrtps::rtps::Endpoint& sender_endpt)
 {
-    FakeWriter writer(participant, c_EntityId_SPDPWriter);
-    std::vector<GUID_t> readers;
-    DirectMessageSender sender(participant, &readers, &locators);
-    RTPSMessageGroup group(participant, &writer, &sender);
+    DirectMessageSender sender(participant, &remote_readers, &locators);
+    RTPSMessageGroup group(participant, &sender_endpt, &sender);
     if (!group.add_data(change, false))
     {
         EPROSIMA_LOG_ERROR(RTPS_PDP, "Error sending announcement from client to servers");
     }
+}
+
+static void direct_send(
+        RTPSParticipantImpl* participant,
+        LocatorList& locators,
+        const CacheChange_t& change)
+{
+    FakeWriter writer(participant, c_EntityId_SPDPWriter);
+    std::vector<GUID_t> remote_readers;
+    direct_send(participant, locators, remote_readers, change, writer);
 }
 
 PDPClient::PDPClient(
@@ -742,12 +752,12 @@ void PDPClient::announceParticipantState(
                         {
                             //locators.push_back(svr.metatrafficMulticastLocatorList);
                             locators.push_back(svr.metatrafficUnicastLocatorList);
+                            remote_readers.emplace_back(svr.proxy->m_guid.guidPrefix, endpoints->reader.reader_->getGuid().entityId);
                         }
                     }
                 }
 
-                // TODO: This should be done with the configuration of the reliable writer
-                direct_send(getRTPSParticipant(), locators, *change);
+                direct_send(getRTPSParticipant(), locators, remote_readers, *change, *endpoints->writer.writer_);
             }
 
             // free change
