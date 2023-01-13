@@ -130,6 +130,10 @@ int main(
                     {
                         data_type = DataTypeKind::ARRAY;
                     }
+                    else if (strcmp(opt.arg, SEQUENCE_DATA_TYPE_ARG) == 0)
+                    {
+                        data_type = DataTypeKind::SEQUENCE;
+                    }
                     else if (strcmp(opt.arg, STRUCT_DATA_TYPE_ARG) == 0)
                     {
                         data_type = DataTypeKind::STRUCT;
@@ -137,6 +141,10 @@ int main(
                     else if (strcmp(opt.arg, PLAIN_DATA_TYPE_ARG) == 0)
                     {
                         data_type = DataTypeKind::PLAIN;
+                    }
+                    else if (strcmp(opt.arg, SIMPLELARGE_DATA_TYPE_ARG) == 0)
+                    {
+                        data_type = DataTypeKind::SIMPLELARGE;
                     }
                     else if (strcmp(opt.arg, KEY_DATA_TYPE_ARG) == 0)
                     {

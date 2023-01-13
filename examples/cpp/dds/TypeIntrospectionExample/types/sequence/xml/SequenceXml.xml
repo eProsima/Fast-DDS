@@ -1,0 +1,9 @@
+<types>
+    <type>
+        <typedef name="my_sequence_inner" type="int32"/>
+        <struct name="Sequence_TypeIntrospectionExample">
+            <member name="index" type="uint32"/>
+            <member name="points" type="nonBasic" nonBasicTypeName="my_sequence_inner"/>
+        </struct>
+    </type>
+</types>

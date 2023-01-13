@@ -29,8 +29,10 @@ namespace option = eprosima::option;
 
 constexpr const char* HELLO_WORLD_DATA_TYPE_ARG = "hw";
 constexpr const char* ARRAY_DATA_TYPE_ARG = "array";
+constexpr const char* SEQUENCE_DATA_TYPE_ARG = "seq";
 constexpr const char* STRUCT_DATA_TYPE_ARG = "struct";
 constexpr const char* PLAIN_DATA_TYPE_ARG = "plain";
+constexpr const char* SIMPLELARGE_DATA_TYPE_ARG = "simple";
 constexpr const char* KEY_DATA_TYPE_ARG = "key";
 constexpr const char* COMPLEX_DATA_TYPE_ARG = "complex";
 
@@ -121,8 +123,10 @@ struct Arg : public option::Arg
             std::string data_type = std::string(option.arg);
             if (data_type != HELLO_WORLD_DATA_TYPE_ARG &&
                 data_type != ARRAY_DATA_TYPE_ARG &&
+                data_type != SEQUENCE_DATA_TYPE_ARG &&
                 data_type != STRUCT_DATA_TYPE_ARG &&
                 data_type != PLAIN_DATA_TYPE_ARG &&
+                data_type != SIMPLELARGE_DATA_TYPE_ARG &&
                 data_type != KEY_DATA_TYPE_ARG &&
                 data_type != COMPLEX_DATA_TYPE_ARG)
             {
@@ -194,6 +198,7 @@ const option::Descriptor usage[] = {
       "  -x <data_type_name> \t--type=<data_type_name>  \tTopic Data Type name (Default: hw). "
       "hw      -> HelloWorld data type (one string and one integer). "
       "array   -> Data type with an array (one uint and an array of size 3 integer). "
+      "seq     -> Data type with a sequence (one uint and a sequence of size 3 shorts). "
       "struct  -> Complex data type with an internal struct (3 integers). "
       "plain   -> HelloWorld struct (index and string) but string is an array of 20 chars, so data type is Plain. "
       "key     -> Struct with an index, a keyed string value and 1 integer. "

@@ -39,11 +39,17 @@ std::string DataType<Data, Gen>::name() const
         case DataTypeKind::ARRAY:
             return ARRAY_DATA_TYPE_NAME;
 
+        case DataTypeKind::SEQUENCE:
+            return SEQUENCE_DATA_TYPE_NAME;
+
         case DataTypeKind::STRUCT:
             return STRUCT_DATA_TYPE_NAME;
 
         case DataTypeKind::PLAIN:
             return PLAIN_DATA_TYPE_NAME;
+
+        case DataTypeKind::SIMPLELARGE:
+            return SIMPLELARGE_DATA_TYPE_NAME;
 
         case DataTypeKind::KEY:
             return KEY_DATA_TYPE_NAME;

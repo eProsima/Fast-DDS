@@ -1,0 +1,5 @@
+struct Sequence_TypeIntrospectionExample
+{
+	unsigned long index;
+    sequence<long> points;
+};
