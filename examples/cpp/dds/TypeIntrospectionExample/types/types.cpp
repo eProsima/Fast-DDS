@@ -63,6 +63,21 @@ std::unique_ptr<IDataType> data_type_factory(
             return std::unique_ptr<IDataType>(new DataType<DataTypeKind::ARRAY, GeneratorKind::XML>());
         }
     }
+    else if (data_kind == DataTypeKind::SEQUENCE)
+    {
+        if (gen_kind == GeneratorKind::GEN)
+        {
+            return std::unique_ptr<IDataType>(new DataType<DataTypeKind::SEQUENCE, GeneratorKind::GEN>());
+        }
+        else if (gen_kind == GeneratorKind::CODE)
+        {
+            return std::unique_ptr<IDataType>(new DataType<DataTypeKind::SEQUENCE, GeneratorKind::CODE>());
+        }
+        else if (gen_kind == GeneratorKind::XML)
+        {
+            return std::unique_ptr<IDataType>(new DataType<DataTypeKind::SEQUENCE, GeneratorKind::XML>());
+        }
+    }
     else if (data_kind == DataTypeKind::STRUCT)
     {
         if (gen_kind == GeneratorKind::GEN)
@@ -91,6 +106,21 @@ std::unique_ptr<IDataType> data_type_factory(
         else if (gen_kind == GeneratorKind::XML)
         {
             return std::unique_ptr<IDataType>(new DataType<DataTypeKind::PLAIN, GeneratorKind::XML>());
+        }
+    }
+    else if (data_kind == DataTypeKind::SIMPLELARGE)
+    {
+        if (gen_kind == GeneratorKind::GEN)
+        {
+            return std::unique_ptr<IDataType>(new DataType<DataTypeKind::SIMPLELARGE, GeneratorKind::GEN>());
+        }
+        else if (gen_kind == GeneratorKind::CODE)
+        {
+            return std::unique_ptr<IDataType>(new DataType<DataTypeKind::SIMPLELARGE, GeneratorKind::CODE>());
+        }
+        else if (gen_kind == GeneratorKind::XML)
+        {
+            return std::unique_ptr<IDataType>(new DataType<DataTypeKind::SIMPLELARGE, GeneratorKind::XML>());
         }
     }
     else if (data_kind == DataTypeKind::KEY)
