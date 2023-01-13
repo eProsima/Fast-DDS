@@ -172,10 +172,6 @@ public:
             const std::string& message,
             const Log::Context&,
             Log::Kind);
-
-private:
-
-    static void run();
 };
 
 /**

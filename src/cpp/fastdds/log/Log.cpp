@@ -77,6 +77,12 @@ struct LogResources
 
     void KillThread();
 
+    void StartThread();
+
+private:
+
+    void run();
+
     bool preprocess(
             Log::Entry& entry);
 };
@@ -167,51 +173,48 @@ void Log::Flush()
     }
 }
 
-void Log::run()
+void LogResources::run()
 {
-    // Note we can (should) keep a raw reference to the resources, since this method runs on a thread
-    // that will be killed and joined on the destructor of the resources.
-    LogResources& resources = *(get_log_resources().get());
-    std::unique_lock<std::mutex> guard(resources.cv_mutex);
+    std::unique_lock<std::mutex> guard(cv_mutex);
 
-    while (resources.logging)
+    while (logging)
     {
-        resources.cv.wait(guard,
+        cv.wait(guard,
                 [&]()
                 {
-                    return !resources.logging || resources.work;
+                    return !logging || work;
                 });
 
-        resources.work = false;
+        work = false;
 
         guard.unlock();
         {
-            resources.logs.Swap();
-            while (!resources.logs.Empty())
+            logs.Swap();
+            while (!logs.Empty())
             {
-                std::unique_lock<std::mutex> configGuard(resources.config_mutex);
+                std::unique_lock<std::mutex> configGuard(config_mutex);
 
-                Log::Entry& entry = resources.logs.Front();
-                if (resources.preprocess(entry))
+                Log::Entry& entry = logs.Front();
+                if (preprocess(entry))
                 {
-                    for (auto& consumer : resources.consumers)
+                    for (auto& consumer : consumers)
                     {
                         consumer->Consume(entry);
                     }
                 }
                 // This Pop() is also a barrier for Log::Flush wait condition
-                resources.logs.Pop();
+                logs.Pop();
             }
         }
         guard.lock();
 
         // avoid overflow
-        if (++resources.current_loop > 10000)
+        if (++current_loop > 10000)
         {
-            resources.current_loop = 0;
+            current_loop = 0;
         }
 
-        resources.cv.notify_all();
+        cv.notify_all();
     }
 }
 
@@ -263,6 +266,16 @@ void Log::KillThread()
     get_log_resources()->KillThread();
 }
 
+void LogResources::StartThread()
+{
+    std::unique_lock<std::mutex> guard(cv_mutex);
+    if (!logging && !logging_thread)
+    {
+        logging = true;
+        logging_thread.reset(new thread(&LogResources::run, this));
+    }
+}
+
 void LogResources::KillThread()
 {
     {
@@ -293,14 +306,7 @@ void Log::QueueLog(
         Log::Kind kind)
 {
     auto resources = get_log_resources();
-    {
-        std::unique_lock<std::mutex> guard(resources->cv_mutex);
-        if (!resources->logging && !resources->logging_thread)
-        {
-            resources->logging = true;
-            resources->logging_thread.reset(new thread(Log::run));
-        }
-    }
+    resources->StartThread();
 
     std::string timestamp = SystemInfo::get_timestamp();
     resources->logs.Push(Log::Entry{message, context, kind, timestamp});
