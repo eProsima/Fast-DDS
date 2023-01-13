@@ -72,6 +72,7 @@ struct LogResources
 
     ~LogResources()
     {
+        Flush();
         KillThread();
     }
 
