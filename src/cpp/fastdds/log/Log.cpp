@@ -77,6 +77,8 @@ struct LogResources
 
     void KillThread();
 
+    bool preprocess(
+            Log::Entry& entry);
 };
 
 std::shared_ptr<LogResources> get_log_resources()
@@ -190,7 +192,7 @@ void Log::run()
                 std::unique_lock<std::mutex> configGuard(resources.config_mutex);
 
                 Log::Entry& entry = resources.logs.Front();
-                if (preprocess(entry))
+                if (resources.preprocess(entry))
                 {
                     for (auto& consumer : resources.consumers)
                     {
@@ -229,27 +231,26 @@ void Log::ReportFunctions(
     resources->functions = report;
 }
 
-bool Log::preprocess(
+bool LogResources::preprocess(
         Log::Entry& entry)
 {
-    auto resources = get_log_resources();
-    if (resources->category_filter && !regex_search(entry.context.category, *resources->category_filter))
+    if (category_filter && !regex_search(entry.context.category, *category_filter))
     {
         return false;
     }
-    if (resources->filename_filter && !regex_search(entry.context.filename, *resources->filename_filter))
+    if (filename_filter && !regex_search(entry.context.filename, *filename_filter))
     {
         return false;
     }
-    if (resources->error_string_filter && !regex_search(entry.message, *resources->error_string_filter))
+    if (error_string_filter && !regex_search(entry.message, *error_string_filter))
     {
         return false;
     }
-    if (!resources->filenames)
+    if (!filenames)
     {
         entry.context.filename = nullptr;
     }
-    if (!resources->functions)
+    if (!functions)
     {
         entry.context.function = nullptr;
     }
