@@ -1,8 +1,7 @@
 # Advanced Configuration Example
 
-This example extends the configuration options of a trivial HelloWorld by letting the user specify properties of
-entities such as durability, reliability or specify the transport protocol to be used, among other possibilities. This
-could be useful, for example, to quickly test whether two endpoints are compatible and hence would match.
+This example extends the configuration options of a trivial HelloWorld by letting the user specify properties of entities such as durability, reliability or specify the transport protocol to be used, among other possibilities.
+This could be useful, for example, to quickly test whether two endpoints are compatible and hence would match.
 
 ## Execution instructions
 
@@ -89,3 +88,6 @@ Discovery options:
                     Increase it to avoid discovery issues on scenarios with
                     several routers. Maximum: 255.
 ```
+
+**Important**: in case of using Topic instances (`-k|--keys`) option, it should be enabled both at the subscriber and publisher applications.
+Otherwise, Data Type would not be the same and there would be no endpoint matching and no communication.
