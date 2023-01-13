@@ -113,14 +113,14 @@ public:
      * @brief Method called when a sample has been removed unacknowledged
      *
      * @param writer Pointer to the associated DataWriter
-     * @param instance Instance handle
+     * @param instance Handle to the instance the sample was removed from
      */
     virtual void on_unacknowledged_sample_removed(
             DataWriter* writer,
-            const InstanceHandle_t& handle)
+            const InstanceHandle_t& instance)
     {
         static_cast<void>(writer);
-        static_cast<void>(handle);
+        static_cast<void>(instance);
     }
 
 };
