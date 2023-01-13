@@ -18,14 +18,14 @@ runs:
   steps:
     - name: Fetch eProsima dependencies
       run: |
-        git clone https://github.com/eProsima/foonathan_memory_vendor.git ${{ inputs.target_directory }}
-        git clone https://github.com/eProsima/Fast-CDR.git ${{ inputs.target_directory }}
+        git clone https://github.com/eProsima/foonathan_memory_vendor.git ${{ inputs.target_directory }}/foonathan_memory_vendor
+        git clone https://github.com/eProsima/Fast-CDR.git ${{ inputs.target_directory }}/fastcdr
       shell: bash
     - name: Fetch GoogleTest
-      if: ${{ ${{ inputs.googletest }} == 'true' }}
-      run: git clone https://github.com/google/googletest.git --branch release-1.12.1 ${{ inputs.target_directory }}
+      if: ${{ inputs.googletest }} == 'true'
+      run: git clone https://github.com/google/googletest.git --branch release-1.12.1 ${{ inputs.target_directory }}/googletest
       shell: bash
     - name: Fetch Discovery Server
-      if: ${{ ${{ inputs.discovery_server }} == 'true' }}
-      run: git clone https://github.com/eProsima/Discovery-Server.git ${{ inputs.target_directory }}
+      if: ${{ inputs.discovery_server }} == 'true'
+      run: git clone https://github.com/eProsima/Discovery-Server.git ${{ inputs.target_directory }}/discovery_server
       shell: bash

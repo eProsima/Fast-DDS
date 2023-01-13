@@ -100,17 +100,10 @@ jobs:
           googletest: true
           discovery_server: true
 
-      - name: Build Gtest (without -Wall)
-        run: |
-          cat src/Fast-DDS/.github/workflows/asan/asan_colcon.meta
-          colcon build \
-            --packages-select googletest-distribution
-
       - name: Build workspace
         run: |
           cat src/Fast-DDS/.github/workflows/asan/asan_colcon.meta
           colcon build \
-            --packages-skip googletest-distribution \
             --event-handlers=console_direct+ \
             --metas src/Fast-DDS/.github/workflows/asan/asan_colcon.meta
 
