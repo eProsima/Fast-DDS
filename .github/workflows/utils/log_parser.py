@@ -16,6 +16,7 @@
 
 import argparse
 import re
+import sys
 
 from tomark import Tomark
 
@@ -130,14 +131,14 @@ def _common_line_splitter(
             return line[(start_index
                         + len(text_to_split_start)):
                         end_index].strip()
-    return line[(start_index + len(text_to_split_start)):].strip()
+    return line[(start_index + len(text_to_split_start)):].split(None, 1)[0]
 
 
 def asan_line_splitter(
         line: str):
     return _common_line_splitter(
         line=line,
-        text_to_split_start='==ERROR: ')
+        text_to_split_start='==ERROR: AddressSanitizer: ')
 
 
 def tsan_line_splitter(
@@ -229,4 +230,4 @@ def main():
 
 
 if __name__ == '__main__':
-    main()
+    exit(1 if main() else 0)
