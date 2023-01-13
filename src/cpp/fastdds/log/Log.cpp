@@ -31,6 +31,7 @@ using namespace std;
 namespace eprosima {
 namespace fastdds {
 namespace dds {
+namespace detail {
 
 struct LogResources
 {
@@ -350,6 +351,8 @@ std::shared_ptr<LogResources> get_log_resources()
     static std::shared_ptr<LogResources> instance = std::make_shared<LogResources>();
     return instance;
 }
+
+}  // namespace detail
 
 void Log::RegisterConsumer(
         std::unique_ptr<LogConsumer>&& consumer)

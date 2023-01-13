@@ -20,13 +20,15 @@
 namespace eprosima {
 namespace fastdds {
 namespace dds {
+namespace detail {
 
 struct LogResources;
 
 std::shared_ptr<LogResources> get_log_resources();
 
-} //namespace dds
-} //namespace fastdds
-} //namespace eprosima
+}  // namespace detail
+}  // namespace dds
+}  // namespace fastdds
+}  // namespace eprosima
 
 #endif  // FASTDDS_LOG__LOGRESOURCES_HPP
