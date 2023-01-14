@@ -1692,10 +1692,8 @@ private:
 
         if (!take_ && !read_)
         {
-            std::unique_lock<std::mutex> lock(mutex_);
-
             current_unread_count_ = datareader->get_unread_count();
-            std::cout << "Total unread count " << datareader->get_unread_count() << std::endl;
+            std::cout << "Total unread count " << current_unread_count_ << std::endl;
             cv_.notify_one();
             return;
         }
