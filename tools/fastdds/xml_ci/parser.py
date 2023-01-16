@@ -52,6 +52,15 @@ class XMLParser:
         param argv list(str):
             list containing the arguments for the command
         """
+
+        try:  # Try catch for new python dependency
+            from xml import etree
+            etree.Element()  # non used call to avoid Flake8 error
+        except ImportError:
+            raise ImportError(
+                'xml module not found. Try to install using "pip install xml"')
+            exit(1)
+
         parser = argparse.ArgumentParser(
             formatter_class=argparse.ArgumentDefaultsHelpFormatter,
             description="""
@@ -88,7 +97,8 @@ class XMLParser:
         if args.xml_command:
             if args.xml_command[0] == 'validate':
                 args.xml_command.pop(0)
-                Validate(args.xsd_file).run(args.xml_command)
+                if not Validate(args.xsd_file).run(args.xml_command):
+                    exit(1)
             else:
                 print(f'xml-command "{args.xml_command[0]}" is not valid')
         else:

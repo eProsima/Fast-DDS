@@ -59,17 +59,21 @@ class Validate:
         Run Fast DDS XML configuration files validation.
 
         :param validate_list: List with the directories and files to validate.
+        :return: False if failed parsing, otherwise True.
         """
+        valid = True
         self.__visited_dirs.clear()
         for element in validate_list:
             element = os.path.abspath(element)
             if os.path.isdir(element):
-                self.__validate_xml_from_dir(element)
+                valid = valid and self.__validate_xml_from_dir(element)
             elif os.path.isfile(element):
                 if self.__is_xml(element):
-                    self.__validate_xml_file(element)
+                    valid = valid and self.__validate_xml_file(element)
                 else:
                     print(f'The file is not an XML file: {element}')
+                    valid = False
+        return valid
 
     def __validate_xml_from_dir(self, directory, recursive=True):
         """
@@ -78,22 +82,27 @@ class Validate:
         :param directory: The directory containing the XML files.
         :param recursive: True to do an iterative search for XML files
             through all the directories contained in the given directory.
+        :return: False if failed parsing, otherwise True.
         """
+        valid = True
         for root, dirs, files in os.walk(directory):
             print(f'Scanning directory {root}')
             if root not in self.__visited_dirs:
                 self.__visited_dirs.append(root)
                 for f in files:
                     if self.__is_xml(f):
-                        self.__validate_xml_file(os.path.join(root, f))
+                        valid = valid and self.__validate_xml_file(os.path.join(root, f))
                 if not recursive:
                     break
+        return valid
 
     def __validate_xml_file(self, file):
         """
         Validate a single Fast DDS XML configuration file.
 
         :param file: The Fast DDS XML configuration file.
+        :return: False if failed parsing, otherwise True.
+
         """
         xml_etree = etree.ElementTree.parse(file)
         try:
@@ -102,6 +111,8 @@ class Validate:
         except XMLSchemaValidationError as error:
             print(f'NOT valid XML file: {file}')
             print(error)
+            return False
+        return True
 
     def __is_xml(self, file):
         """

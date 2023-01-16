@@ -521,6 +521,12 @@ install(FILES ${PROJECT_SOURCE_DIR}/LICENSE
     COMPONENT licenses
     )
 
+# Install xml validator
+install(FILES ${PROJECT_SOURCE_DIR}/resources/xsd/fastRTPS_profiles.xsd
+    DESTINATION ${DATA_INSTALL_DIR}
+    COMPONENT xsd
+    )
+
 option(INSTALL_EXAMPLES "Install example" OFF)
 
 if(INSTALL_EXAMPLES)
