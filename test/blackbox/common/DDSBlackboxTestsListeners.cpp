@@ -2886,7 +2886,7 @@ TEST(DDSStatus, best_effort_on_unack_sample_removed)
     writer.send(data);
 
     EXPECT_EQ(reader.getReceivedCount(), 0u);
-    EXPECT_EQ(writer.times_unack_sample_removed(), 10);
+    EXPECT_EQ(writer.times_unack_sample_removed(), 10u);
 }
 
 // Auxiliary method to initialize DataWriter configuring sample drops in the transport
@@ -2963,7 +2963,7 @@ TEST(DDSStatus, reliable_on_unack_sample_removed)
 
     reader.block_for_at_least(8);
     EXPECT_EQ(reader.getReceivedCount(), 8u);
-    EXPECT_EQ(writer.times_unack_sample_removed(), 2);
+    EXPECT_EQ(writer.times_unack_sample_removed(), 2u);
 }
 
 /*!
@@ -2991,7 +2991,7 @@ TEST(DDSStatus, keyed_reliable_on_unack_sample_removed)
 
     reader.block_for_at_least(8);
     EXPECT_EQ(reader.getReceivedCount(), 8u);
-    EXPECT_EQ(writer.times_unack_sample_removed(), 2);
+    EXPECT_EQ(writer.times_unack_sample_removed(), 2u);
 
     auto instances = writer.instances_removed_unack();
     for (auto instance : instances)
@@ -3106,7 +3106,7 @@ TEST(DDSStatus, reliable_positive_acks_disabled_unack_sample_removed)
     writer_1.send(data);
 
     EXPECT_EQ(reader.getReceivedCount(), 0u);
-    EXPECT_EQ(listener.times_unack_sample_removed(), 10);
+    EXPECT_EQ(listener.times_unack_sample_removed(), 10u);
     EXPECT_EQ(listener.notified_writer(), &(writer_1.get_native_writer()));
 
     listener.assign_writer(&writer_2.get_native_writer());
@@ -3114,8 +3114,8 @@ TEST(DDSStatus, reliable_positive_acks_disabled_unack_sample_removed)
     writer_2.send(data_2);
 
     reader.block_for_at_least(10);
-    EXPECT_EQ(reader.getReceivedCount(), 10);
-    EXPECT_EQ(listener.times_unack_sample_removed(), 10);
+    EXPECT_EQ(reader.getReceivedCount(), 10u);
+    EXPECT_EQ(listener.times_unack_sample_removed(), 10u);
     EXPECT_EQ(listener.notified_writer(), &(writer_1.get_native_writer()));
 }
 
