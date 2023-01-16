@@ -752,7 +752,8 @@ void PDPClient::announceParticipantState(
                         {
                             //locators.push_back(svr.metatrafficMulticastLocatorList);
                             locators.push_back(svr.metatrafficUnicastLocatorList);
-                            remote_readers.emplace_back(svr.proxy->m_guid.guidPrefix, endpoints->reader.reader_->getGuid().entityId);
+                            remote_readers.emplace_back(svr.proxy->m_guid.guidPrefix,
+                                    endpoints->reader.reader_->getGuid().entityId);
                         }
                     }
                 }
