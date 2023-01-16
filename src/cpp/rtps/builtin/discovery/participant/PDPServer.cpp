@@ -1024,13 +1024,16 @@ void PDPServer::announceParticipantState(
         std::vector<GuidPrefix_t> direct_clients_and_servers = discovery_db_.direct_clients_and_servers();
         for (GuidPrefix_t participant_prefix: direct_clients_and_servers)
         {
-            // Add remote reader
-            GUID_t remote_guid(participant_prefix, c_EntityId_SPDPReader);
-            remote_readers.push_back(remote_guid);
-
+            // Add corresponding remote reader and locator
+            remote_readers.emplace_back(participant_prefix, endpoints->reader.reader_->getGuid().entityId);
             locators.push_back(discovery_db_.participant_metatraffic_locators(participant_prefix));
         }
-        send_announcement(change, remote_readers, locators, dispose);
+
+        //! Send announcement only if we have someone to inform
+        if (!remote_readers.empty())
+        {
+            send_announcement(change, remote_readers, locators, dispose);
+        }
     }
 }
 
