@@ -61,18 +61,18 @@ private:
 
     ~BoostAtExitRegistry()
     {
-        // Get a local copy of the collection
-        std::vector<void (*)()> collection;
+        // Execute the registered functions in reverse order.
+        std::unique_lock<std::mutex> lock(mtx_);
+        while (!registered_functions_.empty())
         {
-            std::lock_guard<std::mutex> _(mtx_);
-            std::swap(collection, registered_functions_);
-        }
+            // Pop one function
+            auto f = registered_functions_.back();
+            registered_functions_.pop_back();
 
-        // Traverse the local copy in reverse order
-        for (auto it = collection.crbegin(); it != collection.crend(); ++it)
-        {
-            auto f = *it;
+            // Execute function with the mutex released, to allow registering another function in the mean time.
+            lock.unlock();
             f();
+            lock.lock();
         }
     }
 
