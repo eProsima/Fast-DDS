@@ -159,6 +159,91 @@ TEST_P(DDSDataReader, LivelinessChangedStatusGet)
 
 }
 
+// Regression test of Refs #16608, Github #3203. Checks that total_unread_ variable is consistent with
+// unread changes in reader's history after performing a get_first_untaken_info() on a change with no writer matched.
+TEST_P(DDSDataReader, ConsistentTotalUnreadAfterGetFirstUntakenInfo)
+{
+    //! Spawn a couple of participants writer/reader
+    auto pubsub_writer = std::make_shared<PubSubWriter<HelloWorldPubSubType>>(TEST_TOPIC_NAME);
+    //! Create a reader that does nothing when new data is available. Neither take nor read it.
+    auto pubsub_reader = std::make_shared<PubSubReader<HelloWorldPubSubType>>(TEST_TOPIC_NAME, false, false, false);
+
+    // Initialization of all the participants
+    std::cout << "Initializing PubSubs for topic " << TEST_TOPIC_NAME << std::endl;
+
+    //! Participant Writer configuration and qos
+    pubsub_writer->reliability(eprosima::fastdds::dds::ReliabilityQosPolicyKind::RELIABLE_RELIABILITY_QOS);
+    pubsub_writer->durability_kind(eprosima::fastdds::dds::DurabilityQosPolicyKind::TRANSIENT_LOCAL_DURABILITY_QOS);
+    pubsub_writer->history_kind(eprosima::fastdds::dds::HistoryQosPolicyKind::KEEP_ALL_HISTORY_QOS);
+    pubsub_writer->init();
+    ASSERT_EQ(pubsub_writer->isInitialized(), true);
+
+    //! Participant Reader configuration and qos
+    pubsub_reader->reliability(eprosima::fastdds::dds::ReliabilityQosPolicyKind::RELIABLE_RELIABILITY_QOS);
+    pubsub_reader->durability_kind(eprosima::fastdds::dds::DurabilityQosPolicyKind::TRANSIENT_LOCAL_DURABILITY_QOS);
+    pubsub_reader->history_kind(eprosima::fastdds::dds::HistoryQosPolicyKind::KEEP_ALL_HISTORY_QOS);
+    pubsub_reader->init();
+    ASSERT_EQ(pubsub_reader->isInitialized(), true);
+
+    // Wait for discovery.
+    pubsub_reader->wait_discovery();
+    pubsub_writer->wait_discovery();
+
+    auto data = default_helloworld_data_generator();
+
+    pubsub_reader->startReception(data);
+
+    std::mutex mtx;
+    bool should_stop(false);
+    auto ret = std::async(std::launch::async, [&pubsub_writer, &data, &should_stop, &mtx]
+                    {
+                        for (auto sample : data)
+                        {
+                            std::unique_lock<std::mutex>  lock(mtx);
+                            if (!should_stop)
+                            {
+                                lock.unlock();
+                                pubsub_writer->send_sample(sample);
+                                std::this_thread::sleep_for(std::chrono::milliseconds(50));
+                            }
+                            else
+                            {
+                                break;
+                            }
+                        }
+                        //! drop publisher
+                        pubsub_writer->removePublisher();
+                    }
+                    );
+
+    pubsub_reader->block_for_unread_count_of(3);
+
+    {
+        std::unique_lock<std::mutex> lock(mtx);
+        should_stop = true;
+    }
+
+    pubsub_reader->wait_writer_undiscovery();
+
+    eprosima::fastdds::dds::DataReader& reader = pubsub_reader->get_native_reader();
+    eprosima::fastdds::dds::SampleInfo info;
+
+    //! Try reading the first untaken info.
+    //! Checks whether total_unread_ is consistent with
+    //! the number of unread changes in history
+    //! This API call should NOT modify the history
+    reader.get_first_untaken_info(&info);
+
+    HelloWorld msg;
+    eprosima::fastdds::dds::SampleInfo sinfo;
+
+    //! Try getting a sample
+    auto result = reader.take_next_sample((void*)&msg, &sinfo);
+
+    //! Assert last operation
+    ASSERT_EQ(result, ReturnCode_t::RETCODE_OK) << "Reader's unread count is: " << reader.get_unread_count();
+}
+
 #ifdef INSTANTIATE_TEST_SUITE_P
 #define GTEST_INSTANTIATE_TEST_MACRO(x, y, z, w) INSTANTIATE_TEST_SUITE_P(x, y, z, w)
 #else
