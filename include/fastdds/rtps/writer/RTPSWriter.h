@@ -201,7 +201,7 @@ public:
      * @return true if delivered. False otherwise.
      */
     RTPS_DllAPI virtual bool has_been_delivered(
-                const CacheChange_t* change) const
+            const CacheChange_t* change) const
     {
         static_cast<void>(change);
         return false;
