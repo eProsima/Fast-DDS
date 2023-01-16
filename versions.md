@@ -2,6 +2,7 @@ Forthcoming
 -----------
 
 * Added non-standard DataWriterListener callback `on_unacknowledged_sample_removed` (API extension on DDS layer).
+* Added `RTPSWriter::has_been_delivered` virtual method (ABI break on RTPS layer).
 
 Version 2.9.0
 -------------
