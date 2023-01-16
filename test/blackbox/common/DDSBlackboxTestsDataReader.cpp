@@ -193,36 +193,11 @@ TEST_P(DDSDataReader, ConsistentTotalUnreadAfterGetFirstUntakenInfo)
 
     pubsub_reader->startReception(data);
 
-    std::mutex mtx;
-    bool should_stop(false);
-    auto ret = std::async(std::launch::async, [&pubsub_writer, &data, &should_stop, &mtx]
-                    {
-                        for (auto sample : data)
-                        {
-                            std::unique_lock<std::mutex>  lock(mtx);
-                            if (!should_stop)
-                            {
-                                lock.unlock();
-                                pubsub_writer->send_sample(sample);
-                                std::this_thread::sleep_for(std::chrono::milliseconds(50));
-                            }
-                            else
-                            {
-                                break;
-                            }
-                        }
-                        //! drop publisher
-                        pubsub_writer->removePublisher();
-                    }
-                    );
+    pubsub_writer->send(data);
+    EXPECT_TRUE(data.empty());
 
     pubsub_reader->block_for_unread_count_of(3);
-
-    {
-        std::unique_lock<std::mutex> lock(mtx);
-        should_stop = true;
-    }
-
+    pubsub_writer->removePublisher();
     pubsub_reader->wait_writer_undiscovery();
 
     eprosima::fastdds::dds::DataReader& reader = pubsub_reader->get_native_reader();
