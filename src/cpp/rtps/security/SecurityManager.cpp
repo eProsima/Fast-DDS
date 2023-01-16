@@ -3155,6 +3155,8 @@ bool SecurityManager::discovered_reader(
 
                 remote_reader_pending_discovery_messages_.push_back(std::make_tuple(remote_reader_data,
                         remote_participant_key, writer_guid));
+
+                returned_value = true;
             }
         }
         else
@@ -3504,6 +3506,8 @@ bool SecurityManager::discovered_writer(
 
                 remote_writer_pending_discovery_messages_.push_back(std::make_tuple(remote_writer_data,
                         remote_participant_key, reader_guid));
+
+                returned_value = true;
             }
         }
         else
