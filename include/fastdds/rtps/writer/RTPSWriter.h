@@ -195,6 +195,19 @@ public:
     RTPS_DllAPI virtual const fastdds::rtps::IReaderDataFilter* reader_data_filter() const = 0;
 
     /**
+     * @brief Check if a specific change has been delivered to the transport layer at least once.
+     *
+     * @param change Pointer to the CacheChange to check.
+     * @return true if delivered. False otherwise.
+     */
+    RTPS_DllAPI virtual bool has_been_delivered(
+                const CacheChange_t* change) const
+    {
+        static_cast<void>(change);
+        return false;
+    }
+
+    /**
      * Check if a specific change has been acknowledged by all Readers.
      * Is only useful in reliable Writer. In BE Writers returns false when pending to be sent.
      * @return True if acknowledged by all.
