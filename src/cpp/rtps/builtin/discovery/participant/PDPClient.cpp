@@ -758,7 +758,10 @@ void PDPClient::announceParticipantState(
                     }
                 }
 
-                direct_send(getRTPSParticipant(), locators, remote_readers, *change, *endpoints->writer.writer_);
+                if (!remote_readers.empty())
+                {
+                    direct_send(getRTPSParticipant(), locators, remote_readers, *change, *endpoints->writer.writer_);
+                }
             }
 
             // free change
