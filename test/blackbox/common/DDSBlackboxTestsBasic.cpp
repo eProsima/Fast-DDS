@@ -15,6 +15,7 @@
 #include <condition_variable>
 #include <mutex>
 #include <thread>
+#include <future>
 
 #include <gtest/gtest.h>
 
@@ -34,9 +35,12 @@
 #include <fastdds/dds/topic/Topic.hpp>
 #include <fastdds/dds/topic/TypeSupport.hpp>
 #include <fastrtps/types/TypesBase.h>
+#include <fastrtps/xmlparser/XMLProfileManager.h>
 
 #include "BlackboxTests.hpp"
 #include "../types/HelloWorldPubSubTypes.h"
+#include "PubSubReader.hpp"
+#include "PubSubWriter.hpp"
 
 namespace eprosima {
 namespace fastdds {
@@ -184,6 +188,95 @@ TEST(DDSBasic, MultithreadedPublisherCreation)
     ASSERT_EQ(ReturnCode_t::RETCODE_OK, factory->delete_participant(participant));
 }
 
+<<<<<<< HEAD
+=======
+TEST(DDSBasic, MultithreadedReaderCreationDoesNotDeadlock)
+{
+    // Get factory
+    DomainParticipantFactory* factory = DomainParticipantFactory::get_instance();
+    ASSERT_NE(nullptr, factory);
+
+    // Create participant
+    DomainParticipant* participant = factory->create_participant((uint32_t)GET_PID() % 230, PARTICIPANT_QOS_DEFAULT);
+    ASSERT_NE(nullptr, participant);
+
+    // Register type
+    TypeSupport type_support;
+    type_support.reset(new FixedSizedPubSubType());
+    type_support.register_type(participant);
+    ASSERT_NE(nullptr, type_support);
+
+    // Create subscriber
+    Subscriber* subscriber = participant->create_subscriber(SUBSCRIBER_QOS_DEFAULT);
+    ASSERT_NE(nullptr, subscriber);
+
+    // Create publisher
+    Publisher* publisher = participant->create_publisher(PUBLISHER_QOS_DEFAULT);
+    ASSERT_NE(nullptr, publisher);
+
+    // Create Topic
+    Topic* topic = participant->create_topic(TEST_TOPIC_NAME, type_support.get_type_name(), TOPIC_QOS_DEFAULT);
+    ASSERT_NE(nullptr, topic);
+
+    // Set QoS
+    DataSharingQosPolicy dsp;
+    dsp.off();
+
+    DataWriterQos dw_qos;
+    DataReaderQos dr_qos;
+    dw_qos.data_sharing(dsp);
+    dr_qos.data_sharing(dsp);
+
+    // Create DataWriter
+    DataWriter* writer = publisher->create_datawriter(topic, dw_qos);
+    ASSERT_NE(nullptr, writer);
+
+    std::mutex mtx;
+    std::condition_variable cv;
+    bool should_finish = false;
+
+    auto thread_run = [subscriber, topic, &mtx, &cv, &should_finish, &dr_qos]()
+            {
+                // Create reader
+                DataReader* reader = subscriber->create_datareader(topic, dr_qos);
+                ASSERT_NE(nullptr, reader);
+
+                // Wait for test completion request
+                std::unique_lock<std::mutex> lock(mtx);
+                cv.wait(lock, [&should_finish]()
+                        {
+                            return should_finish;
+                        });
+
+                ASSERT_EQ(ReturnCode_t::RETCODE_OK, subscriber->delete_datareader(reader));
+            };
+
+    {
+        std::vector<std::thread> threads;
+        for (size_t i = 0; i < 10; ++i)
+        {
+            threads.push_back(std::thread(thread_run));
+        }
+
+        {
+            std::lock_guard<std::mutex> guard(mtx);
+            should_finish = true;
+            cv.notify_all();
+        }
+
+        for (std::thread& thr : threads)
+        {
+            thr.join();
+        }
+    }
+
+    ASSERT_EQ(ReturnCode_t::RETCODE_OK, publisher->delete_datawriter(writer));
+    ASSERT_EQ(ReturnCode_t::RETCODE_OK, participant->delete_publisher(publisher));
+    ASSERT_EQ(ReturnCode_t::RETCODE_OK, participant->delete_subscriber(subscriber));
+    ASSERT_EQ(ReturnCode_t::RETCODE_OK, participant->delete_topic(topic));
+    ASSERT_EQ(ReturnCode_t::RETCODE_OK, factory->delete_participant(participant));
+}
+>>>>>>> de5cd9c2e (Fix total_unread_ consistent with reader's history after get_first_untaken_info (#3203))
 } // namespace dds
 } // namespace fastdds
 } // namespace eprosima
