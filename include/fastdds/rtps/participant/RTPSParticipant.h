@@ -69,6 +69,7 @@ class RTPS_DllAPI RTPSParticipant
 {
     friend class RTPSParticipantImpl;
     friend class RTPSDomain;
+    friend class RTPSDomainImpl;
 
 private:
 

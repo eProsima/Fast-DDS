@@ -160,16 +160,6 @@ public:
         m_maxRTPSParticipantID = maxRTPSParticipantId;
     }
 
-    static RTPSParticipant* clientServerEnvironmentCreationOverride(
-            uint32_t,
-            bool,
-            const RTPSParticipantAttributes&,
-            RTPSParticipantListener* listen /*= nullptr*/)
-    {
-        participant_->set_listener(listen);
-        return participant_;
-    }
-
     static inline uint32_t getNewId()
     {
         return m_maxRTPSParticipantID++;

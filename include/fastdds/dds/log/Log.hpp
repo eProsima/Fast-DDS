@@ -172,16 +172,6 @@ public:
             const std::string& message,
             const Log::Context&,
             Log::Kind);
-
-private:
-
-    // Applies transformations to the entries compliant with the options selected (such as
-    // erasure of certain context information, or filtering by category. Returns false
-    // if the log entry is blacklisted.
-    static bool preprocess(
-            Entry&);
-
-    static void run();
 };
 
 /**

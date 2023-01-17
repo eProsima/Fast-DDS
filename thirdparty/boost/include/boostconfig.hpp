@@ -15,6 +15,8 @@
 #ifndef _FASTDDS_THIRDPARTYBOOST_BOOSTCONFIG_H_
 #define _FASTDDS_THIRDPARTYBOOST_BOOSTCONFIG_H_
 
+#include <utils/shared_memory/BoostAtExitRegistry.hpp>
+
 #define BOOST_DATE_TIME_NO_LIB
 #define BOOST_INTERPROCESS_ENABLE_TIMEOUT_WHEN_LOCKING
 #define BOOST_INTERPROCESS_TIMEOUT_WHEN_LOCKING_DURATION_MS 1000
@@ -29,6 +31,8 @@
 #ifdef ANDROID
 #define BOOST_INTERPROCESS_SHARED_DIR_PATH "/data/local/tmp"
 #endif
+
+#define BOOST_INTERPROCESS_ATEXIT(f) eprosima::detail::BoostAtExitRegistry::get_instance()->at_exit_register((f))
 
 #ifdef _MSC_VER
 
