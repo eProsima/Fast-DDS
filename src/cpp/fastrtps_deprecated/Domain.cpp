@@ -38,6 +38,8 @@
 #include <fastrtps/xmlparser/XMLProfileManager.h>
 
 #include <fastrtps_deprecated/participant/ParticipantImpl.h>
+
+#include <rtps/RTPSDomainImpl.hpp>
 #include <utils/SystemInfo.hpp>
 
 using namespace eprosima::fastrtps::rtps;
@@ -178,7 +180,7 @@ Participant* Domain::createParticipant(
 
     // If DEFAULT_ROS2_MASTER_URI is specified then try to create default client if
     // that already exists.
-    RTPSParticipant* part = RTPSDomain::clientServerEnvironmentCreationOverride(
+    RTPSParticipant* part = RTPSDomainImpl::clientServerEnvironmentCreationOverride(
         att.domainId,
         false,
         att.rtps,

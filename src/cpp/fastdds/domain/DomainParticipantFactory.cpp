@@ -28,15 +28,13 @@
 #include <fastrtps/xmlparser/XMLProfileManager.h>
 #include <fastrtps/xmlparser/XMLEndpointParser.h>
 
+#include <fastdds/log/LogResources.hpp>
 #include <fastdds/domain/DomainParticipantImpl.hpp>
 #include <fastdds/utils/QosConverters.hpp>
+#include <rtps/RTPSDomainImpl.hpp>
 #include <rtps/history/TopicPayloadPoolRegistry.hpp>
 #include <statistics/fastdds/domain/DomainParticipantImpl.hpp>
 #include <utils/SystemInfo.hpp>
-
-// We include boost through this internal header, to ensure we use our custom boost config file
-#include <utils/shared_memory/SharedMemSegment.hpp>
-#include <boost/interprocess/sync/interprocess_mutex.hpp>
 
 using namespace eprosima::fastrtps::xmlparser;
 
@@ -54,6 +52,8 @@ DomainParticipantFactory::DomainParticipantFactory()
     : default_xml_profiles_loaded(false)
     , default_participant_qos_(PARTICIPANT_QOS_DEFAULT)
     , topic_pool_(fastrtps::rtps::TopicPayloadPoolRegistry::instance())
+    , rtps_domain_(fastrtps::rtps::RTPSDomainImpl::get_instance())
+    , log_resources_(detail::get_log_resources())
 {
 }
 
@@ -88,27 +88,6 @@ DomainParticipantFactory* DomainParticipantFactory::get_instance()
 
 std::shared_ptr<DomainParticipantFactory> DomainParticipantFactory::get_shared_instance()
 {
-    /*
-     * The first time an interprocess synchronization object is created by boost, a singleton is instantiated and
-     * its destructor is registered with std::atexit(&atexit_work).
-     *
-     * We need to ensure that the boost singleton is destroyed after the instance of DomainParticipantFactory, to
-     * ensure that the interprocess objects keep working until all the participants are destroyed.
-     *
-     * We achieve this behavior by having an static instance of an auxiliary struct that instantiates a synchronization
-     * object on the constructor, just to ensure that the boost singleton is instantiated before the
-     * DomainParticipantFactory.
-     */
-    struct AuxiliaryBoostFunctor
-    {
-        AuxiliaryBoostFunctor()
-        {
-            boost::interprocess::interprocess_mutex mtx;
-        }
-
-    };
-    static AuxiliaryBoostFunctor boost_functor;
-
     // Note we need a custom deleter, since the destructor is protected.
     static std::shared_ptr<DomainParticipantFactory> instance(
         new DomainParticipantFactory(),

@@ -52,9 +52,6 @@ class RTPSDomainImpl;
  */
 class RTPSDomain
 {
-
-    friend class RTPSDomainImpl;
-
 public:
 
     /**
@@ -281,36 +278,7 @@ public:
     RTPS_DllAPI static bool removeRTPSParticipant(
             RTPSParticipant* p);
 
-    /**
-     * Set the maximum RTPSParticipantID.
-     * @param maxRTPSParticipantId ID.
-     */
-    static inline void setMaxRTPSParticipantId(
-            uint32_t maxRTPSParticipantId)
-    {
-        m_maxRTPSParticipantID = maxRTPSParticipantId;
-    }
-
-    /**
-     * Creates a RTPSParticipant as default server or client if ROS_MASTER_URI environment variable is set.
-     * @param domain_id DDS domain associated
-     * @param enabled True if the RTPSParticipant should be enabled on creation. False if it will be enabled later with RTPSParticipant::enable()
-     * @param attrs RTPSParticipant Attributes.
-     * @param listen Pointer to the ParticipantListener.
-     * @return Pointer to the RTPSParticipant.
-     *
-     * \warning The returned pointer is invalidated after a call to removeRTPSParticipant() or stopAll(),
-     *          so its use may result in undefined behaviour.
-     */
-    static RTPSParticipant* clientServerEnvironmentCreationOverride(
-            uint32_t domain_id,
-            bool enabled,
-            const RTPSParticipantAttributes& attrs,
-            RTPSParticipantListener* listen /*= nullptr*/);
-
 private:
-
-    typedef std::pair<RTPSParticipant*, RTPSParticipantImpl*> t_p_RTPSParticipant;
 
     RTPSDomain() = delete;
 
@@ -318,26 +286,6 @@ private:
      * DomainRTPSParticipant destructor
      */
     ~RTPSDomain() = delete;
-
-    /**
-     * @brief Get Id to create a RTPSParticipant.
-     * @return Different ID for each call.
-     */
-    static inline uint32_t getNewId()
-    {
-        return m_maxRTPSParticipantID++;
-    }
-
-    static void removeRTPSParticipant_nts(
-            t_p_RTPSParticipant&);
-
-    static std::mutex m_mutex;
-
-    static std::atomic<uint32_t> m_maxRTPSParticipantID;
-
-    static std::vector<t_p_RTPSParticipant> m_RTPSParticipants;
-
-    static std::set<uint32_t> m_RTPSParticipantIDs;
 };
 
 } // namespace rtps
