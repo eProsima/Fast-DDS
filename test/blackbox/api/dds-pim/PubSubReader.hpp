@@ -278,7 +278,8 @@ public:
     PubSubReader(
             const std::string& topic_name,
             bool take = true,
-            bool statistics = false)
+            bool statistics = false,
+            bool read = true)
         : participant_listener_(*this)
         , listener_(*this)
         , participant_(nullptr)
@@ -293,10 +294,12 @@ public:
         , receiving_(false)
         , current_processed_count_(0)
         , number_samples_expected_(0)
+        , current_unread_count_(0)
         , discovery_result_(false)
         , onDiscovery_(nullptr)
         , onEndpointDiscovery_(nullptr)
         , take_(take)
+        , read_(read)
         , statistics_(statistics)
 #if HAVE_SECURITY
         , authorized_(0)
@@ -548,6 +551,16 @@ public:
                     return current_processed_count_ >= at_least;
                 });
         return current_processed_count_;
+    }
+
+    size_t block_for_unread_count_of(
+            size_t n_unread)
+    {
+        block([this, n_unread]() -> bool
+                {
+                    return current_unread_count_ >= n_unread;
+                });
+        return current_unread_count_;
     }
 
     void block(
@@ -1677,6 +1690,14 @@ private:
         type data;
         eprosima::fastdds::dds::SampleInfo info;
 
+        if (!take_ && !read_)
+        {
+            current_unread_count_ = datareader->get_unread_count();
+            std::cout << "Total unread count " << current_unread_count_ << std::endl;
+            cv_.notify_one();
+            return;
+        }
+
         ReturnCode_t success = take_ ?
                 datareader->take_next_sample((void*)&data, &info) :
                 datareader->read_next_sample((void*)&data, &info);
@@ -1845,6 +1866,7 @@ protected:
     std::map<LastSeqInfo, eprosima::fastrtps::rtps::SequenceNumber_t> last_seq;
     std::atomic<size_t> current_processed_count_;
     std::atomic<size_t> number_samples_expected_;
+    std::atomic<size_t> current_unread_count_;
     bool discovery_result_;
 
     std::string xml_file_ = "";
@@ -1854,8 +1876,11 @@ protected:
     std::function<bool(const eprosima::fastrtps::rtps::ParticipantDiscoveryInfo& info)> onDiscovery_;
     std::function<bool(const eprosima::fastrtps::rtps::WriterDiscoveryInfo& info)> onEndpointDiscovery_;
 
-    //! True to take data from history. False to read
+    //! True to take data from history. On False, read_ is checked.
     bool take_;
+
+    //! True to read data from history. False, do nothing on data reception.
+    bool read_;
 
     //! True if the class is called from the statistics blackbox (specific topic name and domain id).
     bool statistics_;
