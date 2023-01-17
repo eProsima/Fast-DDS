@@ -163,6 +163,13 @@ TEST_P(DDSDataReader, LivelinessChangedStatusGet)
 // unread changes in reader's history after performing a get_first_untaken_info() on a change with no writer matched.
 TEST_P(DDSDataReader, ConsistentTotalUnreadAfterGetFirstUntakenInfo)
 {
+    if (enable_datasharing)
+    {
+        //! TODO: Datasharing changes the behavior of this test. Changes are
+        //! instantly removed on removePublisher() call and on the PUBListener callback
+        GTEST_SKIP() << "Data-sharing removes the changes instantly changing the behavior of this test. Skipping";
+    }
+
     //! Spawn a couple of participants writer/reader
     auto pubsub_writer = std::make_shared<PubSubWriter<HelloWorldPubSubType>>(TEST_TOPIC_NAME);
     //! Create a reader that does nothing when new data is available. Neither take nor read it.
