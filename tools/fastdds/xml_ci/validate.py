@@ -20,9 +20,20 @@ XSD schema.
 """
 
 import os
-from xml import etree
 
-from xmlschema import XMLSchema, XMLSchemaValidationError
+try:  # Try catch for new python dependency
+    from xml import etree
+except ImportError:
+    print(
+        'xml module not found. Try to install running "pip install xml"')
+    exit(1)
+
+try:  # Try catch for new python dependency
+    from xmlschema import XMLSchema, XMLSchemaValidationError
+except ImportError:
+    print(
+        'xmlschema module not found. Try to install running "pip install xmlschema"')
+    exit(1)
 
 
 class Validate:

@@ -36,7 +36,6 @@ import platform
 
 from xml_ci.validate import Validate
 
-
 class XMLParser:
     """XML sub-commands parser."""
 
@@ -52,15 +51,6 @@ class XMLParser:
         param argv list(str):
             list containing the arguments for the command
         """
-
-        try:  # Try catch for new python dependency
-            from xml import etree
-            etree.Element()  # non used call to avoid Flake8 error
-        except ImportError:
-            raise ImportError(
-                'xml module not found. Try to install using "pip install xml"')
-            exit(1)
-
         parser = argparse.ArgumentParser(
             formatter_class=argparse.ArgumentDefaultsHelpFormatter,
             description="""
