@@ -507,7 +507,6 @@ public:
     bool send_sample(
             type& msg)
     {
-        default_send_print(msg);
         return datawriter_->write((void*)&msg);
     }
 
