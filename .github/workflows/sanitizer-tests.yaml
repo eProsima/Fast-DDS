@@ -2,6 +2,11 @@ name: Sanitizer analysis
 
 on:
   workflow_dispatch:
+    inputs:
+      discovery_server_branch:
+        description: 'Branch or tag of Discovery Server repository (https://github.com/eProsima/Discovery-Server)'
+        required: true
+        default: 'master'
   pull_request:
   push:
     branches:
@@ -92,12 +97,14 @@ jobs:
         uses: ./src/Fast-DDS/.github/actions/install-python-packages
 
       - name: Fetch repositories
+        env:
+          DEFAULT_DISCOVERY_SERVER_BRANCH: 'master'
         run: |
           mkdir -p src
           cd src
           git clone https://github.com/eProsima/foonathan_memory_vendor.git
           git clone https://github.com/eProsima/Fast-CDR.git
-          git clone https://github.com/eProsima/Discovery-Server.git
+          git clone https://github.com/eProsima/Discovery-Server.git --branch ${{ github.event.inputs.discovery_server_branch || env.DEFAULT_DISCOVERY_SERVER_BRANCH }}
           git clone https://github.com/google/googletest.git --branch release-1.10.0
           cd ..
 
