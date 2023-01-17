@@ -15,6 +15,7 @@
 #include <condition_variable>
 #include <mutex>
 #include <thread>
+#include <future>
 
 #include <gtest/gtest.h>
 
@@ -34,9 +35,12 @@
 #include <fastdds/dds/topic/Topic.hpp>
 #include <fastdds/dds/topic/TypeSupport.hpp>
 #include <fastrtps/types/TypesBase.h>
+#include <fastrtps/xmlparser/XMLProfileManager.h>
 
 #include "BlackboxTests.hpp"
 #include "../types/HelloWorldPubSubTypes.h"
+#include "PubSubReader.hpp"
+#include "PubSubWriter.hpp"
 
 namespace eprosima {
 namespace fastdds {
@@ -270,7 +274,6 @@ TEST(DDSBasic, MultithreadedReaderCreationDoesNotDeadlock)
     ASSERT_EQ(ReturnCode_t::RETCODE_OK, participant->delete_topic(topic));
     ASSERT_EQ(ReturnCode_t::RETCODE_OK, factory->delete_participant(participant));
 }
-
 } // namespace dds
 } // namespace fastdds
 } // namespace eprosima
