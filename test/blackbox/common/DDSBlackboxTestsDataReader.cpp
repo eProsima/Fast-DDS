@@ -192,6 +192,11 @@ TEST_P(DDSDataReader, ConsistentTotalUnreadAfterGetFirstUntakenInfo)
             .init();
     ASSERT_EQ(pubsub_reader.isInitialized(), true);
 
+    eprosima::fastdds::dds::DataReader& reader = pubsub_reader.get_native_reader();
+    eprosima::fastdds::dds::SampleInfo info;
+
+    EXPECT_EQ(ReturnCode_t::RETCODE_NO_DATA, reader.get_first_untaken_info(&info));
+
     // Wait for discovery.
     pubsub_reader.wait_discovery();
     pubsub_writer.wait_discovery();
@@ -206,9 +211,6 @@ TEST_P(DDSDataReader, ConsistentTotalUnreadAfterGetFirstUntakenInfo)
     pubsub_reader.block_for_unread_count_of(3);
     pubsub_writer.removePublisher();
     pubsub_reader.wait_writer_undiscovery();
-
-    eprosima::fastdds::dds::DataReader& reader = pubsub_reader.get_native_reader();
-    eprosima::fastdds::dds::SampleInfo info;
 
     //! Try reading the first untaken info.
     //! Checks whether total_unread_ is consistent with
