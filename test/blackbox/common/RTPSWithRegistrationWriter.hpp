@@ -432,6 +432,22 @@ public:
         return *this;
     }
 
+    RTPSWithRegistrationWriter& add_flow_controller_descriptor_to_pparams(
+            eprosima::fastdds::rtps::FlowControllerSchedulerPolicy scheduler_policy,
+            uint32_t bytes_per_period,
+            uint32_t period_in_ms)
+    {
+        const char* flow_controller_name = "my_flow_controller";
+        auto flow_controller_descriptor = std::make_shared<eprosima::fastdds::rtps::FlowControllerDescriptor>();
+        flow_controller_descriptor->name = flow_controller_name;
+        flow_controller_descriptor->scheduler = scheduler_policy;
+        flow_controller_descriptor->max_bytes_per_period = bytes_per_period;
+        flow_controller_descriptor->period_ms = period_in_ms;
+        participant_attr_.flow_controllers.push_back(flow_controller_descriptor);
+        writer_attr_.flow_controller_name = flow_controller_name;
+        return *this;
+    }
+
     RTPSWithRegistrationWriter& user_data(
             const std::vector<eprosima::fastrtps::rtps::octet>& user_data)
     {
