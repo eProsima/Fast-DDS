@@ -350,13 +350,14 @@ bool DataReaderHistory::get_first_untaken_info(
 {
     std::lock_guard<RecursiveTimedMutex> lock(*getMutex());
 
-    if (!data_available_instances_.empty())
+    for (auto &it : data_available_instances_)
     {
-        auto it = data_available_instances_.begin();
-        auto& instance_changes = it->second->cache_changes;
-        auto item = instance_changes.cbegin();
-        ReadTakeCommand::generate_info(info, *(it->second), *item);
-        return true;
+        auto& instance_changes = it.second->cache_changes;
+        if (!instance_changes.empty())
+        {
+            ReadTakeCommand::generate_info(info, *(it.second), instance_changes.front());
+            return true;
+        }
     }
 
     return false;
