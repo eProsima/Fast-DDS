@@ -482,25 +482,31 @@ bool EDPServer::process_and_release_change(
 
     auto builtin_to_remove_from = get_builtin_writer_history_pair_by_entity(change->writerGUID.entityId);
 
-    pdp->remove_change_from_writer_history(
-        builtin_to_remove_from.first,
-        builtin_to_remove_from.second,
-        change,
-        false);
-
-    if (is_remote_participant)
+    if (nullptr != builtin_to_remove_from.first && nullptr != builtin_to_remove_from.second)
     {
-        auto builtin_to_release = get_builtin_reader_history_pair_by_entity(change->writerGUID.entityId);
+        pdp->remove_change_from_writer_history(
+            builtin_to_remove_from.first,
+            builtin_to_remove_from.second,
+            change,
+            false);
 
-        builtin_to_release.first->releaseCache(change);
-        ret_val = true;
-    }
-    else
-    {
-        auto builtin_to_release = builtin_to_remove_from;
+        if (is_remote_participant)
+        {
+            auto builtin_to_release = get_builtin_reader_history_pair_by_entity(change->writerGUID.entityId);
 
-        builtin_to_release.first->release_change(change);
-        ret_val = true;
+            if (nullptr != builtin_to_release.first)
+            {
+                builtin_to_release.first->releaseCache(change);
+                ret_val = true;
+            }
+        }
+        else
+        {
+            auto builtin_to_release = builtin_to_remove_from;
+
+            builtin_to_release.first->release_change(change);
+            ret_val = true;
+        }
     }
 
     return ret_val;
