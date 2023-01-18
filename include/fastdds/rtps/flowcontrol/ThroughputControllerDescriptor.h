@@ -18,14 +18,15 @@
 #include <fastrtps/fastrtps_dll.h>
 #include <cstdint>
 
-namespace eprosima{
-namespace fastrtps{
-namespace rtps{
+namespace eprosima {
+namespace fastrtps {
+namespace rtps {
 
 /**
  * Descriptor for a Throughput Controller, containing all constructor information
  * for it.
  * @ingroup NETWORK_MODULE
+ * @deprecated Use FlowControllerDescriptor
  */
 struct ThroughputControllerDescriptor
 {
@@ -35,13 +36,17 @@ struct ThroughputControllerDescriptor
     uint32_t periodMillisecs;
 
     RTPS_DllAPI ThroughputControllerDescriptor();
-    RTPS_DllAPI ThroughputControllerDescriptor(uint32_t size, uint32_t time);
+    RTPS_DllAPI ThroughputControllerDescriptor(
+            uint32_t size,
+            uint32_t time);
 
-    bool operator==(const ThroughputControllerDescriptor& b) const
+    bool operator ==(
+            const ThroughputControllerDescriptor& b) const
     {
         return (this->bytesPerPeriod == b.bytesPerPeriod) &&
                (this->periodMillisecs == b.periodMillisecs);
     }
+
 };
 
 } // namespace rtps
