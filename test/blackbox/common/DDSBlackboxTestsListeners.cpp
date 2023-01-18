@@ -2853,6 +2853,26 @@ TEST(DDSStatus, sample_rejected_waitset)
     ASSERT_EQ(c_InstanceHandle_Unknown, test_status.last_instance_handle);
 }
 
+template<typename T>
+void best_effort_on_unack_test_init(
+        PubSubWriter<T>& writer,
+        PubSubReader<T>& reader)
+{
+    writer.reliability(eprosima::fastdds::dds::BEST_EFFORT_RELIABILITY_QOS)
+            .durability_kind(eprosima::fastdds::dds::TRANSIENT_LOCAL_DURABILITY_QOS)
+            .history_kind(eprosima::fastdds::dds::KEEP_LAST_HISTORY_QOS)
+            .history_depth(1)
+            .asynchronously(eprosima::fastdds::dds::PublishModeQosPolicyKind::ASYNCHRONOUS_PUBLISH_MODE)
+            .add_throughput_controller_descriptor_to_pparams(
+        eprosima::fastdds::rtps::FlowControllerSchedulerPolicy::FIFO, 1, 1000)
+            .init();
+    ASSERT_TRUE(writer.isInitialized());
+
+    reader.durability_kind(eprosima::fastdds::dds::TRANSIENT_LOCAL_DURABILITY_QOS)
+            .init();
+    ASSERT_TRUE(reader.isInitialized());
+}
+
 /*!
  * \test DDS-USR-01 test: `on_unacknowledged_sample_removed` callback with Best Effort DataWriter
  * Constrained History with Flow Controller configured preventing the sending of samples.
@@ -2862,19 +2882,7 @@ TEST(DDSStatus, best_effort_on_unack_sample_removed)
     PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
     PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
 
-    writer.reliability(eprosima::fastdds::dds::BEST_EFFORT_RELIABILITY_QOS)
-            .durability_kind(eprosima::fastdds::dds::TRANSIENT_LOCAL_DURABILITY_QOS)
-            .history_kind(eprosima::fastdds::dds::KEEP_LAST_HISTORY_QOS)
-            .history_depth(1)
-            .asynchronously(eprosima::fastdds::dds::PublishModeQosPolicyKind::ASYNCHRONOUS_PUBLISH_MODE)
-            .add_throughput_controller_descriptor_to_pparams(
-        eprosima::fastdds::rtps::FlowControllerSchedulerPolicy::FIFO, 1, 1000)
-            .init();
-    reader.durability_kind(eprosima::fastdds::dds::TRANSIENT_LOCAL_DURABILITY_QOS)
-            .init();
-
-    ASSERT_TRUE(writer.isInitialized());
-    ASSERT_TRUE(reader.isInitialized());
+    best_effort_on_unack_test_init(writer, reader);
 
     // Wait for discovery
     writer.wait_discovery();
@@ -2886,10 +2894,43 @@ TEST(DDSStatus, best_effort_on_unack_sample_removed)
     writer.send(data);
 
     EXPECT_EQ(reader.getReceivedCount(), 0u);
-    EXPECT_EQ(writer.times_unack_sample_removed(), 10u);
+    EXPECT_EQ(writer.times_unack_sample_removed(), 9u);
 }
 
-// Auxiliary method to initialize DataWriter configuring sample drops in the transport
+/*!
+ * \test DDS-USR-02 test: `on_unacknowledged_sample_removed` callback with Best Effort Keyed DataWriter
+ */
+TEST(DDSStatus, keyed_best_effort_on_unack_sample_removed)
+{
+    PubSubWriter<KeyedHelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+    PubSubReader<KeyedHelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+
+    best_effort_on_unack_test_init(writer, reader);
+
+    // Wait for discovery
+    writer.wait_discovery();
+    reader.wait_discovery();
+
+    auto data = default_keyedhelloworld_data_generator();
+
+    auto dummy_data = new KeyedHelloWorldPubSubType();
+    eprosima::fastdds::dds::InstanceHandle_t handle;
+    dummy_data->getKey(&data.back(), &handle);
+
+    reader.startReception(data);
+    writer.send(data);
+
+    EXPECT_EQ(reader.getReceivedCount(), 0u);
+    EXPECT_EQ(writer.times_unack_sample_removed(), 8u);
+
+    auto instances = writer.instances_removed_unack();
+    for (auto instance : instances)
+    {
+        EXPECT_EQ(instance, handle);
+    }
+}
+
+// Auxiliary method to initialize Reliable DataWriter configuring sample drops in the transport
 template<typename T>
 void reliable_on_unack_test_init(
         PubSubWriter<T>& writer,
@@ -2942,7 +2983,7 @@ void reliable_on_unack_test_init(
 }
 
 /*!
- * \test DDS-USR-02 test: `on_unacknowledged_sample_removed` callback with Reliable DataWriter
+ * \test DDS-USR-03 test: `on_unacknowledged_sample_removed` callback with Reliable DataWriter
  * Drop samples using test_UDPv4Transport
  */
 TEST(DDSStatus, reliable_on_unack_sample_removed)
@@ -2967,7 +3008,7 @@ TEST(DDSStatus, reliable_on_unack_sample_removed)
 }
 
 /*!
- * DDS-USR-03 test: `on_unacknowledged_sample_removed` callback with Reliable Keyed DataWriter
+ * DDS-USR-04 test: `on_unacknowledged_sample_removed` callback with Reliable Keyed DataWriter
  */
 TEST(DDSStatus, keyed_reliable_on_unack_sample_removed)
 {
@@ -3052,17 +3093,12 @@ private:
     unsigned int times_unack_sample_removed_;
 };
 
-/*!
- * DDS-USR-04 test: `on_unacknowledged_sample_removed` callback with reliable DataWriter and disable positive ACKs QoS
- * enabled.
- * Check that the callback returns the proper DataWriter.
- */
-TEST(DDSStatus, reliable_positive_acks_disabled_unack_sample_removed)
+template<typename T>
+void reliable_disable_acks_on_unack_test_init(
+        PubSubWriter<T>& writer_1,
+        PubSubWriter<T>& writer_2,
+        PubSubReader<T>& reader)
 {
-    PubSubWriter<HelloWorldPubSubType> writer_1(TEST_TOPIC_NAME);
-    PubSubWriter<HelloWorldPubSubType> writer_2(TEST_TOPIC_NAME);
-    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
-
     writer_1.reliability(eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS)
             .durability_kind(eprosima::fastdds::dds::TRANSIENT_LOCAL_DURABILITY_QOS)
             .history_kind(eprosima::fastdds::dds::KEEP_LAST_HISTORY_QOS)
@@ -3072,7 +3108,6 @@ TEST(DDSStatus, reliable_positive_acks_disabled_unack_sample_removed)
         eprosima::fastdds::rtps::FlowControllerSchedulerPolicy::FIFO, 1, 1000)
             .keep_duration(eprosima::fastrtps::c_TimeInfinite)
             .init();
-
     ASSERT_TRUE(writer_1.isInitialized());
 
     writer_2.reliability(eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS)
@@ -3080,14 +3115,26 @@ TEST(DDSStatus, reliable_positive_acks_disabled_unack_sample_removed)
             .history_kind(eprosima::fastdds::dds::KEEP_ALL_HISTORY_QOS)
             .keep_duration(eprosima::fastrtps::c_TimeInfinite)
             .init();
-
     ASSERT_TRUE(writer_2.isInitialized());
 
     reader.reliability(eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS)
             .durability_kind(eprosima::fastdds::dds::TRANSIENT_LOCAL_DURABILITY_QOS)
             .init();
-
     ASSERT_TRUE(reader.isInitialized());
+}
+
+/*!
+ * DDS-USR-05 test: `on_unacknowledged_sample_removed` callback with reliable DataWriter and disable positive ACKs QoS
+ * enabled.
+ * Check that the callback returns the proper DataWriter.
+ */
+TEST(DDSStatus, reliable_positive_acks_disabled_on_unack_sample_removed)
+{
+    PubSubWriter<HelloWorldPubSubType> writer_1(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldPubSubType> writer_2(TEST_TOPIC_NAME);
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+
+    reliable_disable_acks_on_unack_test_init(writer_1, writer_2, reader);
 
     writer_1.wait_discovery();
     writer_2.wait_discovery();
@@ -3106,7 +3153,7 @@ TEST(DDSStatus, reliable_positive_acks_disabled_unack_sample_removed)
     writer_1.send(data);
 
     EXPECT_EQ(reader.getReceivedCount(), 0u);
-    EXPECT_EQ(listener.times_unack_sample_removed(), 10u);
+    EXPECT_EQ(listener.times_unack_sample_removed(), 9u);
     EXPECT_EQ(listener.notified_writer(), &(writer_1.get_native_writer()));
 
     listener.assign_writer(&writer_2.get_native_writer());
@@ -3115,10 +3162,51 @@ TEST(DDSStatus, reliable_positive_acks_disabled_unack_sample_removed)
 
     reader.block_for_at_least(10);
     EXPECT_EQ(reader.getReceivedCount(), 10u);
-    EXPECT_EQ(listener.times_unack_sample_removed(), 10u);
+    EXPECT_EQ(listener.times_unack_sample_removed(), 9u);
     EXPECT_EQ(listener.notified_writer(), &(writer_1.get_native_writer()));
 }
 
+/*!
+ * DDS-USR-06 test: `on_unacknowledged_sample_removed` callback with reliable keyed DataWriter and disable positive ACKs
+ * QoS enabled.
+ */
+TEST(DDSStatus, keyed_reliable_positive_acks_disabled_on_unack_sample_removed)
+{
+    PubSubWriter<KeyedHelloWorldPubSubType> writer_1(TEST_TOPIC_NAME);
+    PubSubWriter<KeyedHelloWorldPubSubType> writer_2(TEST_TOPIC_NAME);
+    PubSubReader<KeyedHelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+
+    reliable_disable_acks_on_unack_test_init(writer_1, writer_2, reader);
+
+    writer_1.wait_discovery();
+    writer_2.wait_discovery();
+    reader.wait_discovery();
+
+    auto data = default_keyedhelloworld_data_generator();
+    auto data_2 = data;
+
+    reader.startReception(data);
+
+    CustomDataWriterListener listener;
+    listener.assign_writer(&writer_1.get_native_writer());
+    writer_1.get_native_writer().set_listener(&listener);
+    writer_2.get_native_writer().set_listener(&listener);
+
+    writer_1.send(data);
+
+    EXPECT_EQ(reader.getReceivedCount(), 0u);
+    EXPECT_EQ(listener.times_unack_sample_removed(), 8u);
+    EXPECT_EQ(listener.notified_writer(), &(writer_1.get_native_writer()));
+
+    listener.assign_writer(&writer_2.get_native_writer());
+
+    writer_2.send(data_2);
+
+    reader.block_for_at_least(10);
+    EXPECT_EQ(reader.getReceivedCount(), 10u);
+    EXPECT_EQ(listener.times_unack_sample_removed(), 8u);
+    EXPECT_EQ(listener.notified_writer(), &(writer_1.get_native_writer()));
+}
 
 #ifdef INSTANTIATE_TEST_SUITE_P
 #define GTEST_INSTANTIATE_TEST_MACRO(x, y, z, w) INSTANTIATE_TEST_SUITE_P(x, y, z, w)
