@@ -435,6 +435,77 @@ bool EDPServer::processLocalReaderProxyData(
     return false;
 }
 
+bool EDPServer::process_disposal(
+        fastrtps::rtps::CacheChange_t* disposal_change,
+        fastdds::rtps::ddb::DiscoveryDataBase& discovery_db,
+        fastrtps::rtps::GuidPrefix_t& change_guid_prefix)
+{
+    bool ret_val = false;
+    eprosima::fastrtps::rtps::WriteParams wp = disposal_change->write_params;
+
+    // DATA(Uw) or DATA(Ur) cases
+    if (discovery_db.is_writer(disposal_change) || discovery_db.is_reader(disposal_change))
+    {
+        EPROSIMA_LOG_INFO(RTPS_PDP_SERVER_DISPOSAL, "Disposal is: " <<
+                (discovery_db.is_writer(
+                    disposal_change) ? "writer" : "reader") << " handle: " << disposal_change->instanceHandle);
+
+        auto builtin_pair = get_builtin_writer_history_pair_by_entity(disposal_change->writerGUID.entityId);
+
+        if (nullptr != builtin_pair.first && nullptr != builtin_pair.second)
+        {
+            // Lock EDP writer
+            std::unique_lock<fastrtps::RecursiveTimedMutex> lock(builtin_pair.first->getMutex());
+
+            // Remove all DATA(w/r) with the same sample identity as the DATA(Uw/Ur) from EDP PUBs/Subs writer's history
+            discovery_db.remove_related_alive_from_history_nts(builtin_pair.second, change_guid_prefix);
+
+            disposal_change->writerGUID.entityId = builtin_pair.first->getGuid().entityId;
+
+            if (builtin_pair.second->add_change(disposal_change, wp))
+            {
+                ret_val = true;
+            }
+        }
+    }
+
+    return ret_val;
+}
+
+bool EDPServer::process_and_release_change(
+        fastrtps::rtps::CacheChange_t* change,
+        const bool& is_remote_participant)
+{
+    bool ret_val = false;
+
+    auto pdp = get_pdp();
+
+    auto builtin_to_remove_from = get_builtin_writer_history_pair_by_entity(change->writerGUID.entityId);
+
+    pdp->remove_change_from_writer_history(
+        builtin_to_remove_from.first,
+        builtin_to_remove_from.second,
+        change,
+        false);
+
+    if (is_remote_participant)
+    {
+        auto builtin_to_release = get_builtin_reader_history_pair_by_entity(change->writerGUID.entityId);
+
+        builtin_to_release.first->releaseCache(change);
+        ret_val = true;
+    }
+    else
+    {
+        auto builtin_to_release = builtin_to_remove_from;
+
+        builtin_to_release.first->release_change(change);
+        ret_val = true;
+    }
+
+    return ret_val;
+}
+
 } /* namespace rtps */
 } /* namespace fastdds */
 } /* namespace eprosima */
