@@ -328,7 +328,7 @@ bool DataReaderHistory::get_first_untaken_info(
 {
     std::lock_guard<RecursiveTimedMutex> lock(*mp_mutex);
 
-    for (auto &it : data_available_instances_)
+    for (auto& it : data_available_instances_)
     {
         auto& instance_changes = it.second->cache_changes;
         if (!instance_changes.empty())
