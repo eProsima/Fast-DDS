@@ -474,7 +474,7 @@ bool EDPServer::process_disposal(
 
 bool EDPServer::process_and_release_change(
         fastrtps::rtps::CacheChange_t* change,
-        const bool& is_remote_participant)
+        bool release_from_reader)
 {
     bool ret_val = false;
 
@@ -490,7 +490,7 @@ bool EDPServer::process_and_release_change(
             change,
             false);
 
-        if (is_remote_participant)
+        if (release_from_reader)
         {
             auto builtin_to_release = get_builtin_reader_history_pair_by_entity(change->writerGUID.entityId);
 

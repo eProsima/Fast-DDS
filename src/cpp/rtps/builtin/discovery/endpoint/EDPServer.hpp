@@ -126,7 +126,7 @@ public:
      */
     bool process_and_release_change(
             fastrtps::rtps::CacheChange_t* change,
-            const bool& is_remote_participant = false);
+            bool release_from_reader = false);
 
 private:
 
