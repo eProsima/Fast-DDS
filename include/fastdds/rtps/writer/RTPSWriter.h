@@ -195,12 +195,13 @@ public:
     RTPS_DllAPI virtual const fastdds::rtps::IReaderDataFilter* reader_data_filter() const = 0;
 
     /**
-     * @brief Check if a specific change has been delivered to the transport layer at least once.
+     * @brief Check if a specific change has been delivered to the transport layer of every matched remote RTPSReader
+     * at least once.
      *
      * @param change Pointer to the CacheChange to check.
      * @return true if delivered. False otherwise.
      */
-    RTPS_DllAPI virtual bool has_been_delivered(
+    RTPS_DllAPI virtual bool has_been_fully_delivered(
             const CacheChange_t* change) const
     {
         static_cast<void>(change);
