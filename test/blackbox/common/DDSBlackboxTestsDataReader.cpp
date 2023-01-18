@@ -171,50 +171,50 @@ TEST_P(DDSDataReader, ConsistentTotalUnreadAfterGetFirstUntakenInfo)
     }
 
     //! Spawn a couple of participants writer/reader
-    auto pubsub_writer = std::make_shared<PubSubWriter<HelloWorldPubSubType>>(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldPubSubType> pubsub_writer(TEST_TOPIC_NAME);
     //! Create a reader that does nothing when new data is available. Neither take nor read it.
-    auto pubsub_reader = std::make_shared<PubSubReader<HelloWorldPubSubType>>(TEST_TOPIC_NAME, false, false, false);
+    PubSubReader<HelloWorldPubSubType> pubsub_reader(TEST_TOPIC_NAME, false, false, false);
 
     // Initialization of all the participants
     std::cout << "Initializing PubSubs for topic " << TEST_TOPIC_NAME << std::endl;
 
     //! Participant Writer configuration and qos
-    pubsub_writer->reliability(eprosima::fastdds::dds::ReliabilityQosPolicyKind::RELIABLE_RELIABILITY_QOS);
-    pubsub_writer->durability_kind(eprosima::fastdds::dds::DurabilityQosPolicyKind::TRANSIENT_LOCAL_DURABILITY_QOS);
-    pubsub_writer->history_kind(eprosima::fastdds::dds::HistoryQosPolicyKind::KEEP_ALL_HISTORY_QOS);
-    pubsub_writer->init();
-    ASSERT_EQ(pubsub_writer->isInitialized(), true);
+    pubsub_writer.reliability(eprosima::fastdds::dds::ReliabilityQosPolicyKind::RELIABLE_RELIABILITY_QOS)
+            .durability_kind(eprosima::fastdds::dds::DurabilityQosPolicyKind::TRANSIENT_LOCAL_DURABILITY_QOS)
+            .history_kind(eprosima::fastdds::dds::HistoryQosPolicyKind::KEEP_ALL_HISTORY_QOS)
+            .init();
+    ASSERT_EQ(pubsub_writer.isInitialized(), true);
 
     //! Participant Reader configuration and qos
-    pubsub_reader->reliability(eprosima::fastdds::dds::ReliabilityQosPolicyKind::RELIABLE_RELIABILITY_QOS);
-    pubsub_reader->durability_kind(eprosima::fastdds::dds::DurabilityQosPolicyKind::TRANSIENT_LOCAL_DURABILITY_QOS);
-    pubsub_reader->history_kind(eprosima::fastdds::dds::HistoryQosPolicyKind::KEEP_ALL_HISTORY_QOS);
-    pubsub_reader->init();
-    ASSERT_EQ(pubsub_reader->isInitialized(), true);
+    pubsub_reader.reliability(eprosima::fastdds::dds::ReliabilityQosPolicyKind::RELIABLE_RELIABILITY_QOS)
+            .durability_kind(eprosima::fastdds::dds::DurabilityQosPolicyKind::TRANSIENT_LOCAL_DURABILITY_QOS)
+            .history_kind(eprosima::fastdds::dds::HistoryQosPolicyKind::KEEP_ALL_HISTORY_QOS)
+            .init();
+    ASSERT_EQ(pubsub_reader.isInitialized(), true);
 
     // Wait for discovery.
-    pubsub_reader->wait_discovery();
-    pubsub_writer->wait_discovery();
+    pubsub_reader.wait_discovery();
+    pubsub_writer.wait_discovery();
 
     auto data = default_helloworld_data_generator();
 
-    pubsub_reader->startReception(data);
+    pubsub_reader.startReception(data);
 
-    pubsub_writer->send(data);
+    pubsub_writer.send(data);
     EXPECT_TRUE(data.empty());
 
-    pubsub_reader->block_for_unread_count_of(3);
-    pubsub_writer->removePublisher();
-    pubsub_reader->wait_writer_undiscovery();
+    pubsub_reader.block_for_unread_count_of(3);
+    pubsub_writer.removePublisher();
+    pubsub_reader.wait_writer_undiscovery();
 
-    eprosima::fastdds::dds::DataReader& reader = pubsub_reader->get_native_reader();
+    eprosima::fastdds::dds::DataReader& reader = pubsub_reader.get_native_reader();
     eprosima::fastdds::dds::SampleInfo info;
 
     //! Try reading the first untaken info.
     //! Checks whether total_unread_ is consistent with
     //! the number of unread changes in history
     //! This API call should NOT modify the history
-    reader.get_first_untaken_info(&info);
+    EXPECT_EQ(ReturnCode_t::RETCODE_OK, reader.get_first_untaken_info(&info));
 
     HelloWorld msg;
     eprosima::fastdds::dds::SampleInfo sinfo;
