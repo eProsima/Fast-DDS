@@ -233,12 +233,6 @@ protected:
             fastrtps::rtps::CacheChange_t* change,
             bool release_change = true);
 
-
-    // Remove from writer_history all the changes whose original sender was entity_guid_prefix
-    void remove_related_alive_from_history_nts(
-            fastrtps::rtps::WriterHistory* writer_history,
-            const fastrtps::rtps::GuidPrefix_t& entity_guid_prefix);
-
     bool announcement_from_same_participant_in_disposals(
             const std::vector<fastrtps::rtps::CacheChange_t*>& disposals,
             const fastrtps::rtps::GuidPrefix_t& participant);

@@ -1321,8 +1321,6 @@ bool PDPServer::process_disposals()
 
     auto endpoints = static_cast<fastdds::rtps::DiscoveryServerPDPEndpoints*>(builtin_endpoints_.get());
     EDPServer* edp = static_cast<EDPServer*>(mp_EDP);
-    fastrtps::rtps::WriterHistory* pubs_history = edp->publications_writer_.second;
-    fastrtps::rtps::WriterHistory* subs_history = edp->subscriptions_writer_.second;
 
     // Get list of disposals from database
     std::vector<fastrtps::rtps::CacheChange_t*> disposals = discovery_db_.changes_to_dispose();
@@ -1345,51 +1343,21 @@ bool PDPServer::process_disposals()
             std::unique_lock<fastrtps::RecursiveTimedMutex> lock(endpoints->writer.writer_->getMutex());
 
             // Remove all DATA(p) with the same sample identity as the DATA(Up) from PDP writer's history.
-            remove_related_alive_from_history_nts(endpoints->writer.history_.get(), change_guid_prefix);
+            discovery_db_.remove_related_alive_from_history_nts(endpoints->writer.history_.get(), change_guid_prefix);
 
             // Add DATA(Up) to PDP writer's history
             eprosima::fastrtps::rtps::WriteParams wp = change->write_params;
             endpoints->writer.history_->add_change(change, wp);
         }
-        // DATA(Uw) case
-        else if (discovery_db_.is_writer(change))
+        // Check whether disposals contains a DATA(Up) from the same participant as the DATA(Uw) or DATA(Ur).
+        // If it does, then there is no need of adding the DATA(Uw) or DATA(Ur).
+        else if (!announcement_from_same_participant_in_disposals(disposals, change_guid_prefix))
         {
-            // Lock EDP publications writer
-            std::unique_lock<fastrtps::RecursiveTimedMutex> lock(edp->publications_writer_.first->getMutex());
-
-            // Remove all DATA(w) with the same sample identity as the DATA(Uw) from EDP publications writer's history
-            remove_related_alive_from_history_nts(pubs_history, change_guid_prefix);
-
-            // Check whether disposals contains a DATA(Up) from the same participant as the DATA(Uw).
-            // If it does, then there is no need of adding the DATA(Uw).
-            if (!announcement_from_same_participant_in_disposals(disposals, change_guid_prefix))
+            if (!edp->process_disposal(change, discovery_db_, change_guid_prefix))
             {
-                // Add DATA(Uw) to EDP publications writer's history.
-                eprosima::fastrtps::rtps::WriteParams wp = change->write_params;
-                pubs_history->add_change(change, wp);
+                EPROSIMA_LOG_ERROR(RTPS_PDP_SERVER_DISPOSAL,
+                        "Wrong DATA received from disposals " << change->instanceHandle);
             }
-        }
-        // DATA(Ur) case
-        else if (discovery_db_.is_reader(change))
-        {
-            // Lock EDP subscriptions writer
-            std::unique_lock<fastrtps::RecursiveTimedMutex> lock(edp->subscriptions_writer_.first->getMutex());
-
-            // Remove all DATA(r) with the same sample identity as the DATA(Ur) from EDP subscriptions writer's history
-            remove_related_alive_from_history_nts(subs_history, change_guid_prefix);
-
-            // Check whether disposals contains a DATA(Up) from the same participant as the DATA(Ur).
-            // If it does, then there is no need of adding the DATA(Ur).
-            if (!announcement_from_same_participant_in_disposals(disposals, change_guid_prefix))
-            {
-                // Add DATA(Ur) to EDP subscriptions writer's history.
-                eprosima::fastrtps::rtps::WriteParams wp = change->write_params;
-                subs_history->add_change(change, wp);
-            }
-        }
-        else
-        {
-            EPROSIMA_LOG_ERROR(RTPS_PDP_SERVER, "Wrong DATA received from disposals " << change->instanceHandle);
         }
     }
     // Clear database disposals list
@@ -1429,34 +1397,13 @@ void PDPServer::process_changes_release_(
                     endpoints->writer.writer_->release_change(ch);
                 }
             }
-            else if (discovery_db_.is_writer(ch))
-            {
-                // The change must return to the pool even if not present in the history
-                // Normally Data(Uw) will not be in history except in Own Server destruction
-                if (!remove_change_from_writer_history(
-                            edp->publications_writer_.first,
-                            edp->publications_writer_.second,
-                            ch))
-                {
-                    edp->publications_writer_.first->release_change(ch);
-                }
-            }
-            else if (discovery_db_.is_reader(ch))
-            {
-                // The change must return to the pool even if not present in the history
-                // Normally Data(Ur) will not be in history except in Own Server destruction
-                if (!remove_change_from_writer_history(
-                            edp->subscriptions_writer_.first,
-                            edp->subscriptions_writer_.second,
-                            ch))
-                {
-                    edp->subscriptions_writer_.first->release_change(ch);
-                }
-            }
             else
             {
-                EPROSIMA_LOG_ERROR(RTPS_PDP_SERVER, "Wrong DATA received to remove from this participant: "
-                        << ch->instanceHandle);
+                if (!edp->process_and_release_change(ch))
+                {
+                    EPROSIMA_LOG_ERROR(RTPS_PDP_SERVER, "Wrong DATA received to remove from this participant: "
+                            << ch->instanceHandle);
+                }
             }
         }
         // The change is not from this participant. In that case, the change comes from a reader pool (PDP, EDP
@@ -1475,46 +1422,16 @@ void PDPServer::process_changes_release_(
                     false);
                 endpoints->reader.reader_->releaseCache(ch);
             }
-            else if (discovery_db_.is_writer(ch))
-            {
-                remove_change_from_writer_history(
-                    edp->publications_writer_.first,
-                    edp->publications_writer_.second,
-                    ch,
-                    false);
-                edp->publications_reader_.first->releaseCache(ch);
-            }
-            else if (discovery_db_.is_reader(ch))
-            {
-                remove_change_from_writer_history(
-                    edp->subscriptions_writer_.first,
-                    edp->subscriptions_writer_.second,
-                    ch,
-                    false);
-                edp->subscriptions_reader_.first->releaseCache(ch);
-            }
             else
             {
-                EPROSIMA_LOG_ERROR(PDPServer, "Wrong DATA received to remove");
+                if ((discovery_db_.is_writer(ch) || discovery_db_.is_reader(ch)) &&
+                        !edp->process_and_release_change(ch, true))
+                {
+                    EPROSIMA_LOG_ERROR(RTPS_PDP_SERVER, "Wrong DATA received to remove from this participant: "
+                            << ch->instanceHandle);
+                }
             }
         }
-    }
-}
-
-void PDPServer::remove_related_alive_from_history_nts(
-        fastrtps::rtps::WriterHistory* writer_history,
-        const fastrtps::rtps::GuidPrefix_t& entity_guid_prefix)
-{
-    // Iterate over changes in writer_history
-    for (auto chit = writer_history->changesBegin(); chit != writer_history->changesEnd();)
-    {
-        // Remove all DATA whose original sender was entity_guid_prefix from writer_history
-        if (entity_guid_prefix == discovery_db_.guid_from_change(*chit).guidPrefix)
-        {
-            chit = writer_history->remove_change(chit, false);
-            continue;
-        }
-        chit++;
     }
 }
 
