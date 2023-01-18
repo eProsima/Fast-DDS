@@ -1856,14 +1856,9 @@ protected:
     eprosima::fastdds::dds::TypeSupport type_;
     using LastSeqInfo = std::pair<eprosima::fastrtps::rtps::InstanceHandle_t, eprosima::fastrtps::rtps::GUID_t>;
     std::map<LastSeqInfo, eprosima::fastrtps::rtps::SequenceNumber_t> last_seq;
-<<<<<<< HEAD
-    size_t current_processed_count_;
-    size_t number_samples_expected_;
-=======
     std::atomic<size_t> current_processed_count_;
     std::atomic<size_t> number_samples_expected_;
     std::atomic<size_t> current_unread_count_;
->>>>>>> de5cd9c2e (Fix total_unread_ consistent with reader's history after get_first_untaken_info (#3203))
     bool discovery_result_;
 
     std::string xml_file_ = "";

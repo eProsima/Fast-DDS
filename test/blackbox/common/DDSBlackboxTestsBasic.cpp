@@ -188,8 +188,6 @@ TEST(DDSBasic, MultithreadedPublisherCreation)
     ASSERT_EQ(ReturnCode_t::RETCODE_OK, factory->delete_participant(participant));
 }
 
-<<<<<<< HEAD
-=======
 TEST(DDSBasic, MultithreadedReaderCreationDoesNotDeadlock)
 {
     // Get factory
@@ -276,7 +274,6 @@ TEST(DDSBasic, MultithreadedReaderCreationDoesNotDeadlock)
     ASSERT_EQ(ReturnCode_t::RETCODE_OK, participant->delete_topic(topic));
     ASSERT_EQ(ReturnCode_t::RETCODE_OK, factory->delete_participant(participant));
 }
->>>>>>> de5cd9c2e (Fix total_unread_ consistent with reader's history after get_first_untaken_info (#3203))
 } // namespace dds
 } // namespace fastdds
 } // namespace eprosima
