@@ -61,7 +61,7 @@ MessageReceiver::MessageReceiver(
     (void)rec_buffer_size;
     EPROSIMA_LOG_INFO(RTPS_MSG_IN, "Created with CDRMessage of size: " << rec_buffer_size);
 
-#if HAVE_SECURITY
+#if HAVE_SECURITY && !defined(FUZZING_BUILD_MODE_UNSAFE_FOR_PRODUCTION)
     if (participant->is_secure())
     {
         process_data_message_function_ = std::bind(
@@ -81,7 +81,7 @@ MessageReceiver::MessageReceiver(
     }
     else
     {
-#endif // if HAVE SECURITY
+#endif // if HAVE_SECURITY && !defined(FUZZING_BUILD_MODE_UNSAFE_FOR_PRODUCTION)
     process_data_message_function_ = std::bind(
         &MessageReceiver::process_data_message_without_security,
         this,
@@ -96,10 +96,10 @@ MessageReceiver::MessageReceiver(
         std::placeholders::_3,
         std::placeholders::_4,
         std::placeholders::_5);
-#if HAVE_SECURITY
+#if HAVE_SECURITY && !defined(FUZZING_BUILD_MODE_UNSAFE_FOR_PRODUCTION)
 }
 
-#endif // if HAVE SECURITY
+#endif // if HAVE_SECURITY && !defined(FUZZING_BUILD_MODE_UNSAFE_FOR_PRODUCTION)
 }
 
 MessageReceiver::~MessageReceiver()
@@ -109,7 +109,7 @@ MessageReceiver::~MessageReceiver()
     assert(associated_readers_.empty());
 }
 
- #if HAVE_SECURITY
+ #if HAVE_SECURITY && !defined(FUZZING_BUILD_MODE_UNSAFE_FOR_PRODUCTION)
 void MessageReceiver::process_data_message_with_security(
         const EntityId_t& reader_id,
         CacheChange_t& change)
@@ -189,7 +189,7 @@ void MessageReceiver::process_data_fragment_message_with_security(
     findAllReaders(reader_id, process_message);
 }
 
-#endif // if HAVE SECURITY
+#endif // if HAVE_SECURITY && !defined(FUZZING_BUILD_MODE_UNSAFE_FOR_PRODUCTION)
 
 void MessageReceiver::process_data_message_without_security(
         const EntityId_t& reader_id,
@@ -328,11 +328,11 @@ void MessageReceiver::processCDRMsg(
     GuidPrefix_t participantGuidPrefix = participant_->getGuid().guidPrefix;
 #endif // ifdef FUZZING_BUILD_MODE_UNSAFE_FOR_PRODUCTION
 
-#if HAVE_SECURITY
+#if HAVE_SECURITY && !defined(FUZZING_BUILD_MODE_UNSAFE_FOR_PRODUCTION)
     security::SecurityManager& security = participant_->security_manager();
     CDRMessage_t* auxiliary_buffer = &crypto_msg_;
     int decode_ret = 0;
-#endif // if HAVE_SECURITY
+#endif // if HAVE_SECURITY && !defined(FUZZING_BUILD_MODE_UNSAFE_FOR_PRODUCTION)
 
     {
         std::lock_guard<eprosima::shared_mutex> guard(mtx_);
@@ -351,7 +351,7 @@ void MessageReceiver::processCDRMsg(
 
         notify_network_statistics(source_locator, reception_locator, msg);
 
-#if HAVE_SECURITY
+#if HAVE_SECURITY && !defined(FUZZING_BUILD_MODE_UNSAFE_FOR_PRODUCTION)
         decode_ret = security.decode_rtps_message(*msg, *auxiliary_buffer, source_guid_prefix_);
 
         if (decode_ret < 0)
@@ -367,7 +367,7 @@ void MessageReceiver::processCDRMsg(
             msg = auxiliary_buffer;
             auxiliary_buffer = &crypto_submsg_;
         }
-#endif // if HAVE_SECURITY
+#endif // if HAVE_SECURITY && !defined(FUZZING_BUILD_MODE_UNSAFE_FOR_PRODUCTION)
     }
 
     // Loop until there are no more submessages
@@ -379,7 +379,7 @@ void MessageReceiver::processCDRMsg(
     {
         CDRMessage_t* submessage = msg;
 
-#if HAVE_SECURITY
+#if HAVE_SECURITY && !defined(FUZZING_BUILD_MODE_UNSAFE_FOR_PRODUCTION)
         decode_ret = security.decode_rtps_submessage(*msg, *auxiliary_buffer, source_guid_prefix_);
 
         if (decode_ret < 0)
@@ -391,7 +391,7 @@ void MessageReceiver::processCDRMsg(
         {
             submessage = auxiliary_buffer;
         }
-#endif // if HAVE_SECURITY
+#endif // if HAVE_SECURITY && !defined(FUZZING_BUILD_MODE_UNSAFE_FOR_PRODUCTION)
 
         //First 4 bytes must contain: ID | flags | octets to next header
         if (!readSubmessageHeader(submessage, &submsgh))
@@ -528,9 +528,9 @@ void MessageReceiver::processCDRMsg(
         submessage->pos = next_msg_pos;
     }
 
-#ifndef FUZZING_BUILD_MODE_UNSAFE_FOR_PRODUCTION
+#if !defined(FUZZING_BUILD_MODE_UNSAFE_FOR_PRODUCTION)
     participant_->assert_remote_participant_liveliness(source_guid_prefix_);
-#endif // ifndef FUZZING_BUILD_MODE_UNSAFE_FOR_PRODUCTION
+#endif // if !defined(FUZZING_BUILD_MODE_UNSAFE_FOR_PRODUCTION)
 }
 
 bool MessageReceiver::checkRTPSHeader(
@@ -1403,8 +1403,10 @@ void MessageReceiver::notify_network_statistics(
 
             StatisticsSubmessageData data;
             read_statistics_submessage(msg, data);
+#if !defined(FUZZING_BUILD_MODE_UNSAFE_FOR_PRODUCTION)
             participant_->on_network_statistics(
                 source_guid_prefix_, source_locator, reception_locator, data, msg_length);
+#endif // if !defined(FUZZING_BUILD_MODE_UNSAFE_FOR_PRODUCTION)
             break;
         }
 
