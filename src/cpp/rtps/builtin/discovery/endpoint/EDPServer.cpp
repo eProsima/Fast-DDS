@@ -438,7 +438,8 @@ bool EDPServer::processLocalReaderProxyData(
 bool EDPServer::process_disposal(
         fastrtps::rtps::CacheChange_t* disposal_change,
         fastdds::rtps::ddb::DiscoveryDataBase& discovery_db,
-        fastrtps::rtps::GuidPrefix_t& change_guid_prefix)
+        fastrtps::rtps::GuidPrefix_t& change_guid_prefix,
+        bool should_publish_disposal)
 {
     bool ret_val = false;
     eprosima::fastrtps::rtps::WriteParams wp = disposal_change->write_params;
@@ -460,12 +461,13 @@ bool EDPServer::process_disposal(
             // Remove all DATA(w/r) with the same sample identity as the DATA(Uw/Ur) from EDP PUBs/Subs writer's history
             discovery_db.remove_related_alive_from_history_nts(builtin_pair.second, change_guid_prefix);
 
-            disposal_change->writerGUID.entityId = builtin_pair.first->getGuid().entityId;
-
-            if (builtin_pair.second->add_change(disposal_change, wp))
+            if (should_publish_disposal)
             {
-                ret_val = true;
+                disposal_change->writerGUID.entityId = builtin_pair.first->getGuid().entityId;
+                builtin_pair.second->add_change(disposal_change, wp);
             }
+
+            ret_val = true;
         }
     }
 

@@ -115,7 +115,8 @@ public:
     bool process_disposal(
             fastrtps::rtps::CacheChange_t* disposal_change,
             fastdds::rtps::ddb::DiscoveryDataBase& discovery_db,
-            fastrtps::rtps::GuidPrefix_t& change_guid_prefix);
+            fastrtps::rtps::GuidPrefix_t& change_guid_prefix,
+            bool should_publish_disposal);
 
     /**
      * This method removes all changes from the correct data writer history (change->witerGUID.enitity)

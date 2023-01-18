@@ -1351,9 +1351,12 @@ bool PDPServer::process_disposals()
         }
         // Check whether disposals contains a DATA(Up) from the same participant as the DATA(Uw) or DATA(Ur).
         // If it does, then there is no need of adding the DATA(Uw) or DATA(Ur).
-        else if (!announcement_from_same_participant_in_disposals(disposals, change_guid_prefix))
+        else
         {
-            if (!edp->process_disposal(change, discovery_db_, change_guid_prefix))
+            // Check whether disposals contains a DATA(Up) from the same participant as the DATA(Uw/r).
+            // If it does, then there is no need of adding the DATA(Uw/r).
+            bool should_publish_disposal = !announcement_from_same_participant_in_disposals(disposals, change_guid_prefix);
+            if (!edp->process_disposal(change, discovery_db_, change_guid_prefix, should_publish_disposal))
             {
                 EPROSIMA_LOG_ERROR(RTPS_PDP_SERVER_DISPOSAL,
                         "Wrong DATA received from disposals " << change->instanceHandle);
@@ -1400,7 +1403,7 @@ void PDPServer::process_changes_release_(
             else
             {
                 bool ret = (discovery_db_.is_writer(ch) || discovery_db_.is_reader(ch)) &&
-                        !edp->process_and_release_change(ch, true);
+                        !edp->process_and_release_change(ch);
 
                 if (!ret)
                 {
