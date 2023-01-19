@@ -238,6 +238,26 @@ public:
         }
     }
 
+    eprosima::fastrtps::rtps::CacheChange_t* send_sample(
+            type& msg)
+    {
+        eprosima::fastrtps::rtps::CacheChange_t* ch = writer_->new_change(msg, eprosima::fastrtps::rtps::ALIVE);
+
+        eprosima::fastcdr::FastBuffer buffer((char*)ch->serializedPayload.data, ch->serializedPayload.max_size);
+        eprosima::fastcdr::Cdr cdr(buffer);
+
+        cdr << msg;
+
+        ch->serializedPayload.length = static_cast<uint32_t>(cdr.getSerializedDataLength());
+        if (ch->serializedPayload.length > 65000u)
+        {
+            ch->setFragmentSize(65000u);
+        }
+
+        history_->add_change(ch);
+        return ch;
+    }
+
     bool remove_change (
             const eprosima::fastrtps::rtps::SequenceNumber_t& sequence_number)
     {
