@@ -879,7 +879,7 @@ public:
             const eprosima::fastrtps::rtps::GUID_t& reader_guid) const override
     {
         static_cast<void>(reader_guid);
-        if (change.sequenceNumber == SequenceNumber_t{0,3})
+        if (change.sequenceNumber == SequenceNumber_t{0, 3})
         {
             return false;
         }
