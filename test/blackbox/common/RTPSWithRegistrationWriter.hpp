@@ -34,6 +34,7 @@
 #include <fastdds/rtps/attributes/RTPSParticipantAttributes.h>
 #include <fastdds/rtps/attributes/WriterAttributes.h>
 #include <fastdds/rtps/history/WriterHistory.h>
+#include <fastdds/rtps/interfaces/IReaderDataFilter.hpp>
 #include <fastdds/rtps/participant/RTPSParticipant.h>
 #include <fastdds/rtps/RTPSDomain.h>
 #include <fastdds/rtps/transport/TransportDescriptorInterface.h>
@@ -446,6 +447,20 @@ public:
         participant_attr_.flow_controllers.push_back(flow_controller_descriptor);
         writer_attr_.flow_controller_name = flow_controller_name;
         return *this;
+    }
+
+    /**
+     * @brief Add filter to RTPSWriter.
+     *
+     * IMPORTANT: RTPSWithRegistrationWriter must have been initialized previously.
+     *
+     * @param filter Filter interface implementation
+     */
+    void reader_data_filter(
+            eprosima::fastdds::rtps::IReaderDataFilter* filter)
+    {
+        ASSERT_TRUE(initialized_);
+        writer_->reader_data_filter(filter);
     }
 
     RTPSWithRegistrationWriter& user_data(
