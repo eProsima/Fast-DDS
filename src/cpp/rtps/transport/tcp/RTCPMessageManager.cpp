@@ -93,7 +93,8 @@ size_t RTCPMessageManager::sendMessage(
     size_t send = channel->send(nullptr, 0, msg.buffer, msg.length, ec);
     if (send != msg.length || ec)
     {
-        EPROSIMA_LOG_INFO(RTCP, "Bad sent size..." << send << " bytes of " << msg.length << " bytes: " << ec.message());
+        EPROSIMA_LOG_WARNING(RTCP,
+                "Bad sent size..." << send << " bytes of " << msg.length << " bytes: " << ec.message());
         send = 0;
     }
 
