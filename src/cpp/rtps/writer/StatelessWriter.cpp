@@ -377,7 +377,7 @@ bool StatelessWriter::change_removed_by_history(
     }
 
     const uint64_t sequence_number = change->sequenceNumber.to64long();
-    if (sequence_number > last_sequence_number_sent_)
+    if (sequence_number < last_sequence_number_sent_)
     {
         unsent_changes_cond_.notify_all();
     }
@@ -389,7 +389,7 @@ bool StatelessWriter::is_acked_by_all(
         const CacheChange_t* change) const
 {
     std::lock_guard<RecursiveTimedMutex> guard(mp_mutex);
-    return change->sequenceNumber.to64long() >= last_sequence_number_sent_;
+    return change->sequenceNumber.to64long() <= last_sequence_number_sent_;
 }
 
 bool StatelessWriter::try_remove_change(
@@ -407,7 +407,7 @@ bool StatelessWriter::wait_for_acknowledgement(
     uint64_t sequence_number = seq.to64long();
     auto change_is_acknowledged = [this, sequence_number]()
             {
-                return sequence_number >= last_sequence_number_sent_;
+                return sequence_number <= last_sequence_number_sent_;
             };
     return unsent_changes_cond_.wait_until(lock, max_blocking_time_point, change_is_acknowledged);
 }
