@@ -353,22 +353,14 @@ bool DataReaderHistory::get_first_untaken_info(
 {
     std::lock_guard<RecursiveTimedMutex> lock(*getMutex());
 
-    CacheChange_t* change = nullptr;
-    WriterProxy* wp = nullptr;
-    if (mp_reader->nextUntakenCache(&change, &wp))
+    for (auto& it : data_available_instances_)
     {
-        auto it = data_available_instances_.find(change->instanceHandle);
-        assert(it != data_available_instances_.end());
-        auto& instance_changes = it->second->cache_changes;
-        auto item =
-                std::find_if(instance_changes.cbegin(), instance_changes.cend(),
-                        [change](const DataReaderCacheChange& v)
-                        {
-                            return v == change;
-                        });
-        ReadTakeCommand::generate_info(info, *(it->second), *item);
-        mp_reader->change_read_by_user(change, wp, false);
-        return true;
+        auto& instance_changes = it.second->cache_changes;
+        if (!instance_changes.empty())
+        {
+            ReadTakeCommand::generate_info(info, *(it.second), instance_changes.front());
+            return true;
+        }
     }
 
     return false;
