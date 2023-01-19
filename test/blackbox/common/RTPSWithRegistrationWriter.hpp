@@ -515,6 +515,12 @@ public:
         return matched_;
     }
 
+    bool has_been_fully_delivered(
+            eprosima::fastrtps::rtps::CacheChange_t* change)
+    {
+        return writer_->has_been_fully_delivered(change);
+    }
+
     void participant_update_attributes()
     {
         participant_->update_attributes(participant_attr_);
