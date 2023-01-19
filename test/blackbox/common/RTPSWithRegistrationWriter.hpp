@@ -20,26 +20,26 @@
 #ifndef _TEST_BLACKBOX_RTPSWITHREGISTRATIONWRITER_HPP_
 #define _TEST_BLACKBOX_RTPSWITHREGISTRATIONWRITER_HPP_
 
-#include <fastrtps/rtps/RTPSDomain.h>
-#include <fastrtps/rtps/participant/RTPSParticipant.h>
-#include <fastrtps/rtps/attributes/RTPSParticipantAttributes.h>
-#include <fastrtps/rtps/attributes/WriterAttributes.h>
-#include <fastrtps/rtps/writer/WriterListener.h>
-#include <fastrtps/qos/WriterQos.h>
-#include <fastrtps/attributes/TopicAttributes.h>
-#include <fastrtps/rtps/writer/RTPSWriter.h>
-#include <fastrtps/rtps/attributes/HistoryAttributes.h>
-#include <fastrtps/rtps/history/WriterHistory.h>
-#include <fastrtps/transport/TransportDescriptorInterface.h>
-
-#include <fastcdr/FastBuffer.h>
-#include <fastcdr/Cdr.h>
-
-#include <string>
-#include <list>
-#include <asio.hpp>
 #include <condition_variable>
+#include <list>
+#include <string>
+
+#include <asio.hpp>
+#include <fastcdr/Cdr.h>
+#include <fastcdr/FastBuffer.h>
 #include <gtest/gtest.h>
+
+#include <fastdds/dds/publisher/qos/WriterQos.hpp>
+#include <fastdds/rtps/attributes/HistoryAttributes.h>
+#include <fastdds/rtps/attributes/RTPSParticipantAttributes.h>
+#include <fastdds/rtps/attributes/WriterAttributes.h>
+#include <fastdds/rtps/history/WriterHistory.h>
+#include <fastdds/rtps/participant/RTPSParticipant.h>
+#include <fastdds/rtps/RTPSDomain.h>
+#include <fastdds/rtps/transport/TransportDescriptorInterface.h>
+#include <fastdds/rtps/writer/RTPSWriter.h>
+#include <fastdds/rtps/writer/WriterListener.h>
+#include <fastrtps/attributes/TopicAttributes.h>
 
 template<class TypeSupport>
 class RTPSWithRegistrationWriter
@@ -426,7 +426,7 @@ public:
     }
 
     RTPSWithRegistrationWriter& add_user_transport_to_pparams(
-            std::shared_ptr<eprosima::fastrtps::rtps::TransportDescriptorInterface> userTransportDescriptor)
+            std::shared_ptr<eprosima::fastdds::rtps::TransportDescriptorInterface> userTransportDescriptor)
     {
         participant_attr_.userTransports.push_back(userTransportDescriptor);
         return *this;
