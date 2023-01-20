@@ -13,7 +13,7 @@
 // limitations under the License.
 
 /**
- * @file ComplexGenDataType.cpp
+ * @file SuperComplex.cpp
  *
  */
 
@@ -29,10 +29,10 @@ using namespace eprosima::fastrtps;
 
 template <>
 eprosima::fastrtps::types::DynamicType_ptr
-    DataType<DataTypeKind::COMPLEX , GeneratorKind::XML>::generate_type_() const
+    DataType<DataTypeKind::SUPER_COMPLEX , GeneratorKind::XML>::generate_type_() const
 {
     // Load XML file
-    std::string xml_file_name = "ComplexXml.xml";
+    std::string xml_file_name = "SuperComplexXml.xml";
 
     if (eprosima::fastrtps::xmlparser::XMLP_ret::XML_OK !=
         eprosima::fastrtps::xmlparser::XMLProfileManager::loadXMLFile(xml_file_name))

@@ -150,9 +150,17 @@ int main(
                     {
                         data_type = DataTypeKind::KEY;
                     }
-                    else if (strcmp(opt.arg, COMPLEX_DATA_TYPE_ARG) == 0)
+                    else if (strcmp(opt.arg, COMPLEX_ARRAY_DATA_TYPE_ARG) == 0)
                     {
-                        data_type = DataTypeKind::COMPLEX;
+                        data_type = DataTypeKind::COMPLEX_ARRAY;
+                    }
+                    else if (strcmp(opt.arg, COMPLEX_SEQUENCE_DATA_TYPE_ARG) == 0)
+                    {
+                        data_type = DataTypeKind::COMPLEX_SEQUENCE;
+                    }
+                    else if (strcmp(opt.arg, SUPER_COMPLEX_DATA_TYPE_ARG) == 0)
+                    {
+                        data_type = DataTypeKind::SUPER_COMPLEX;
                     }
                     else
                     {

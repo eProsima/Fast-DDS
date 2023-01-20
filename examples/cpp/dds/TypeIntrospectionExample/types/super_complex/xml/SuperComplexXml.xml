@@ -1,0 +1,39 @@
+<types>
+    <type>
+        <struct name="InternalTimestamp_TypeIntrospectionExample">
+            <member name="seconds" type="int32"/>
+            <member name="milliseconds" type="int32"/>
+        </struct>
+    </type>
+    <type>
+        <struct name="InternalPoints_TypeIntrospectionExample">
+            <member name="x_member" type="int32"/>
+            <member name="y_member" type="int32"/>
+            <member name="z_member" type="int32"/>
+            <member name="t_member" type="nonBasic" nonBasicTypeName="InternalTimestamp_TypeIntrospectionExample"/>
+        </struct>
+    </type>
+    <type>
+        <struct name="InternalMsgDescriptor_TypeIntrospectionExample">
+            <member name="id" type="uint32"/>
+            <member name="topic" type="string"/>
+            <member name="timestamp" type="nonBasic" nonBasicTypeName="InternalTimestamp_TypeIntrospectionExample"/>
+        </struct>
+    </type>
+    <type>
+        <struct name="InternalMessage_TypeIntrospectionExample">
+            <member name="descriptor" type="nonBasic" nonBasicTypeName="InternalMsgDescriptor_TypeIntrospectionExample"/>
+            <member name="message" type="string"/>
+            <member name="timestamps" type="nonBasic" nonBasicTypeName="InternalTimestamp_TypeIntrospectionExample" arrayDimensions="2"/>
+        </struct>
+    </type>
+    <type>
+        <struct name="SuperComplex_TypeIntrospectionExample">
+            <member name="index" type="uint32"/>
+            <member name="main_point" type="nonBasic" nonBasicTypeName="InternalPoints_TypeIntrospectionExample"/>
+            <member name="internal_data" type="nonBasic" nonBasicTypeName="InternalPoints_TypeIntrospectionExample" sequenceMaxLength="0"/>
+            <member name="internal_data_bounded" type="nonBasic" nonBasicTypeName="InternalPoints_TypeIntrospectionExample" sequenceMaxLength="3"/>
+            <member name="messages" type="nonBasic" nonBasicTypeName="InternalMessage_TypeIntrospectionExample" arrayDimensions="2"/>
+        </struct>
+    </type>
+</types>
