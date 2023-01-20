@@ -138,19 +138,49 @@ std::unique_ptr<IDataType> data_type_factory(
             return std::unique_ptr<IDataType>(new DataType<DataTypeKind::KEY, GeneratorKind::XML>());
         }
     }
-    else if (data_kind == DataTypeKind::COMPLEX)
+    else if (data_kind == DataTypeKind::COMPLEX_ARRAY)
     {
         if (gen_kind == GeneratorKind::GEN)
         {
-            return std::unique_ptr<IDataType>(new DataType<DataTypeKind::COMPLEX, GeneratorKind::GEN>());
+            return std::unique_ptr<IDataType>(new DataType<DataTypeKind::COMPLEX_ARRAY, GeneratorKind::GEN>());
         }
         else if (gen_kind == GeneratorKind::CODE)
         {
-            return std::unique_ptr<IDataType>(new DataType<DataTypeKind::COMPLEX, GeneratorKind::CODE>());
+            return std::unique_ptr<IDataType>(new DataType<DataTypeKind::COMPLEX_ARRAY, GeneratorKind::CODE>());
         }
         else if (gen_kind == GeneratorKind::XML)
         {
-            return std::unique_ptr<IDataType>(new DataType<DataTypeKind::COMPLEX, GeneratorKind::XML>());
+            return std::unique_ptr<IDataType>(new DataType<DataTypeKind::COMPLEX_ARRAY, GeneratorKind::XML>());
+        }
+    }
+    else if (data_kind == DataTypeKind::COMPLEX_SEQUENCE)
+    {
+        if (gen_kind == GeneratorKind::GEN)
+        {
+            return std::unique_ptr<IDataType>(new DataType<DataTypeKind::COMPLEX_SEQUENCE, GeneratorKind::GEN>());
+        }
+        else if (gen_kind == GeneratorKind::CODE)
+        {
+            return std::unique_ptr<IDataType>(new DataType<DataTypeKind::COMPLEX_SEQUENCE, GeneratorKind::CODE>());
+        }
+        else if (gen_kind == GeneratorKind::XML)
+        {
+            return std::unique_ptr<IDataType>(new DataType<DataTypeKind::COMPLEX_SEQUENCE, GeneratorKind::XML>());
+        }
+    }
+    else if (data_kind == DataTypeKind::SUPER_COMPLEX)
+    {
+        if (gen_kind == GeneratorKind::GEN)
+        {
+            return std::unique_ptr<IDataType>(new DataType<DataTypeKind::SUPER_COMPLEX, GeneratorKind::GEN>());
+        }
+        else if (gen_kind == GeneratorKind::CODE)
+        {
+            return std::unique_ptr<IDataType>(new DataType<DataTypeKind::SUPER_COMPLEX, GeneratorKind::CODE>());
+        }
+        else if (gen_kind == GeneratorKind::XML)
+        {
+            return std::unique_ptr<IDataType>(new DataType<DataTypeKind::SUPER_COMPLEX, GeneratorKind::XML>());
         }
     }
 

@@ -1,0 +1,21 @@
+<types>
+    <type>
+        <struct name="InternalSequencePoints_TypeIntrospectionExample">
+            <member name="x_member" type="int32"/>
+            <member name="y_member" type="int32"/>
+            <member name="z_member" type="int32"/>
+        </struct>
+    </type>
+    <type>
+        <struct name="InternalSequenceMessage_TypeIntrospectionExample">
+            <member name="message" type="string"/>
+        </struct>
+    </type>
+    <type>
+        <struct name="ComplexSequence_TypeIntrospectionExample">
+            <member name="index" type="uint32"/>
+            <member name="internal_data" type="nonBasic" nonBasicTypeName="InternalSequencePoints_TypeIntrospectionExample" sequenceMaxLength="0"/>
+            <member name="messages" type="nonBasic" nonBasicTypeName="InternalSequenceMessage_TypeIntrospectionExample" sequenceMaxLength="2"/>
+        </struct>
+    </type>
+</types>
