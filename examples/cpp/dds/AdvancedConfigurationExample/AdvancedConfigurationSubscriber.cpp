@@ -17,6 +17,8 @@
  *
  */
 
+#include "AdvancedConfigurationSubscriber.h"
+
 #include <csignal>
 
 #include <fastdds/dds/domain/DomainParticipantFactory.hpp>
@@ -30,7 +32,8 @@
 #include <fastrtps/attributes/ParticipantAttributes.h>
 #include <fastrtps/attributes/SubscriberAttributes.h>
 
-#include "AdvancedConfigurationSubscriber.h"
+#include "HelloWorldPubSubTypes.h"
+#include "KeyedHelloWorldPubSubTypes.h"
 
 using namespace eprosima::fastdds::dds;
 using namespace eprosima::fastdds::rtps;
@@ -45,6 +48,7 @@ HelloWorldSubscriber::HelloWorldSubscriber()
     , topic_(nullptr)
     , reader_(nullptr)
     , type_(new HelloWorldPubSubType())
+    , keyed_type_(new KeyedHelloWorldPubSubType())
 {
 }
 
@@ -134,8 +138,16 @@ bool HelloWorldSubscriber::init(
         return false;
     }
 
+    keyed_ = keyed;
     // REGISTER THE TYPE
-    type_.register_type(participant_);
+    if (keyed_)
+    {
+        keyed_type_.register_type(participant_);
+    }
+    else
+    {
+        type_.register_type(participant_);
+    }
 
     // CREATE THE SUBSCRIBER
     SubscriberQos sqos;
@@ -211,6 +223,12 @@ bool HelloWorldSubscriber::init(
         rqos.ownership().kind = OwnershipQosPolicyKind::EXCLUSIVE_OWNERSHIP_QOS;
     }
 
+    // If using topic instances, use unlimited instances at the subscriber side
+    if (keyed_)
+    {
+        rqos.resource_limits().max_instances = 0;
+    }
+
     reader_ = subscriber_->create_datareader(topic_, rqos, &listener_);
 
     if (reader_ == nullptr)
@@ -274,16 +292,36 @@ void HelloWorldSubscriber::SubListener::on_data_available(
         DataReader* reader)
 {
     SampleInfo info;
-    while ((reader->take_next_sample(&hello_, &info) == ReturnCode_t::RETCODE_OK) && !is_stopped())
+    if (keyed_)
     {
-        if (info.instance_state == ALIVE_INSTANCE_STATE)
+        while ((reader->take_next_sample(&keyed_hello_, &info) == ReturnCode_t::RETCODE_OK) && !is_stopped)
         {
-            samples_++;
-            // Print your structure data here.
-            std::cout << "Message " << hello_.message().data() << " " << hello_.index() << " RECEIVED" << std::endl;
-            if (max_messages_ > 0 && (samples_ >= max_messages_))
+            if (info.instance_state == ALIVE_INSTANCE_STATE)
             {
-                stop();
+                samples_++;
+                // Print your structure data here.
+                std::cout << "Instance " << keyed_hello_.instance() << "\t" << "Message " <<
+                    keyed_hello_.message().data() << " " << keyed_hello_.index() << " RECEIVED" << std::endl;
+                if (max_messages_ > 0 && (samples_ >= max_messages_))
+                {
+                    stop();
+                }
+            }
+        }
+    }
+    else
+    {
+        while ((reader->take_next_sample(&hello_, &info) == ReturnCode_t::RETCODE_OK) && !is_stopped())
+        {
+            if (info.instance_state == ALIVE_INSTANCE_STATE)
+            {
+                samples_++;
+                // Print your structure data here.
+                std::cout << "Message " << hello_.message().data() << " " << hello_.index() << " RECEIVED" << std::endl;
+                if (max_messages_ > 0 && (samples_ >= max_messages_))
+                {
+                    stop();
+                }
             }
         }
     }

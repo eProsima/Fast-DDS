@@ -28,7 +28,8 @@
 #include <fastdds/dds/domain/DomainParticipant.hpp>
 #include <fastdds/dds/subscriber/DataReaderListener.hpp>
 
-#include "HelloWorldPubSubTypes.h"
+#include "HelloWorld.h"
+#include "KeyedHelloWorld.h"
 #include "types.hpp"
 
 /**
@@ -78,6 +79,10 @@ private:
 
     eprosima::fastdds::dds::TypeSupport type_;
 
+    eprosima::fastdds::dds::TypeSupport keyed_type_;
+
+    bool keyed_;
+
     /**
      * Class handling discovery and dataflow events
      */
@@ -112,6 +117,8 @@ private:
     private:
 
         HelloWorld hello_;
+
+        KeyedHelloWorld keyed_hello_;
 
         //! Number of DataWriters matched to the associated DataReader
         int matched_;
