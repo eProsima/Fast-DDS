@@ -1405,7 +1405,7 @@ void PDPServer::process_changes_release_(
             {
                 bool ret = (discovery_db_.is_writer(ch) || discovery_db_.is_reader(ch));
 
-                if (!ret || !edp->process_and_release_change(ch,false))
+                if (!ret || !edp->process_and_release_change(ch, false))
                 {
                     EPROSIMA_LOG_ERROR(RTPS_PDP_SERVER, "Wrong DATA received to remove from this participant: "
                             << ch->instanceHandle);
