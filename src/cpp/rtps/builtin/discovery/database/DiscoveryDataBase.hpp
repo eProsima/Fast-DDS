@@ -28,6 +28,7 @@
 #include <vector>
 
 #include <fastrtps/utils/fixed_size_string.hpp>
+#include <fastdds/rtps/history/WriterHistory.h>
 #include <fastdds/rtps/writer/ReaderProxy.h>
 #include <fastdds/rtps/common/CacheChange.h>
 #include <fastrtps/utils/DBQueue.h>
@@ -346,6 +347,11 @@ public:
     //! Add a server to the list of remote servers
     void add_server(
             fastrtps::rtps::GuidPrefix_t server);
+
+    // Removes all the changes whose original sender was entity_guid_prefix from writer_history
+    void remove_related_alive_from_history_nts(
+            fastrtps::rtps::WriterHistory* writer_history,
+            const fastrtps::rtps::GuidPrefix_t& entity_guid_prefix);
 
 protected:
 
