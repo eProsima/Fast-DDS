@@ -681,6 +681,21 @@ ReaderProxy::ChangeConstIterator ReaderProxy::find_change(
            : it->getSequenceNumber() == seq_num ? it : end;
 }
 
+bool ReaderProxy::has_been_delivered(
+        const SequenceNumber_t& seq_number,
+        bool& found) const
+{
+    for (auto change : changes_for_reader_)
+    {
+        if (change.getSequenceNumber() == seq_number)
+        {
+            found = true;
+            return change.has_been_delivered();
+        }
+    }
+    return false;
+}
+
 }   // namespace rtps
 }   // namespace fastrtps
 }   // namespace eprosima

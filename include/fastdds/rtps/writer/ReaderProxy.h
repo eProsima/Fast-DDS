@@ -405,6 +405,11 @@ public:
         active_ = active;
     }
 
+    //! Check if the sequence number given has been delivered at least once to the transport layer.
+    bool has_been_delivered(
+            const SequenceNumber_t& seq_number,
+            bool& found) const;
+
 private:
 
     //!Is this proxy active? I.e. does it have a remote reader associated?
