@@ -1,0 +1,36 @@
+struct InternalTimestamp_TypeIntrospectionExample
+{
+    long seconds;
+    long milliseconds;
+};
+
+struct InternalPoints_TypeIntrospectionExample
+{
+    long x_member;
+    long y_member;
+    long z_member;
+    InternalTimestamp_TypeIntrospectionExample t_member;
+};
+
+struct InternalMsgDescriptor_TypeIntrospectionExample
+{
+    unsigned long id;
+    string topic;
+    InternalTimestamp_TypeIntrospectionExample timestamp;
+};
+
+struct InternalMessage_TypeIntrospectionExample
+{
+    InternalMsgDescriptor_TypeIntrospectionExample descriptor;
+    string message;
+    InternalTimestamp_TypeIntrospectionExample timestamps[2];
+};
+
+struct SuperComplex_TypeIntrospectionExample
+{
+	unsigned long index;
+    InternalPoints_TypeIntrospectionExample main_point;
+    sequence<InternalPoints_TypeIntrospectionExample> internal_data;
+    sequence<InternalPoints_TypeIntrospectionExample, 3> internal_data_bounded;
+    InternalMessage_TypeIntrospectionExample messages[2];
+};
