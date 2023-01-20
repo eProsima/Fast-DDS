@@ -1449,7 +1449,8 @@ bool DomainParticipantImpl::register_dynamic_type_to_factories(
         TypeObjectFactory* objectFactory = TypeObjectFactory::get_instance();
         DynamicTypeBuilderFactory* dynFactory = DynamicTypeBuilderFactory::get_instance();
         const TypeIdentifier* id = objectFactory->get_type_identifier_trying_complete(dpst->getName());
-        if (id == nullptr)
+        // if (id == nullptr)
+        if (true)
         {
             std::map<MemberId, DynamicTypeMember*> membersMap;
             dpst->GetDynamicType()->get_all_members(membersMap);
@@ -1788,6 +1789,7 @@ bool DomainParticipantImpl::check_get_type_request(
         const fastrtps::types::TypeObject* object,
         fastrtps::types::DynamicType_ptr dyn_type)
 {
+    eprosima::fastrtps::types::TypeObjectFactory* factory = eprosima::fastrtps::types::TypeObjectFactory::get_instance();
     // Maybe we have a pending request?
     if (builtin::INVALID_SAMPLE_IDENTITY != requestId)
     {
@@ -1816,8 +1818,9 @@ bool DomainParticipantImpl::check_get_type_request(
             // Register the received TypeObject into factory and recreate the DynamicType.
             fastrtps::types::TypeObjectFactory::get_instance()->add_type_object(name, identifier, object);
 
-            auto pending = parent_requests_.find(requestId);
-            if (pending != parent_requests_.end() && pending->second.size() < 2) // Exists and everything is solved.
+            // auto pending = parent_requests_.find(requestId);
+            // if (pending != parent_requests_.end() && pending->second.size() < 2) // Exists and everything is solved.
+            if (true)
             {
                 fastrtps::types::DynamicType_ptr dynamic =
                         fastrtps::types::TypeObjectFactory::get_instance()->build_dynamic_type(name, identifier,
@@ -1833,9 +1836,16 @@ bool DomainParticipantImpl::check_get_type_request(
                     }
                 }
             }
+            pending_names.push_back(name);
+            pending_identifiers.push_back(identifier);
+            pending_objects.push_back(object);
+            pending_requests.push_back(requestId);
             // Failed, cannot register the type yet, probably child request still pending.
             return false;
         }
+
+        fastrtps::types::TypeObjectFactory::get_instance()->add_type_object(
+                get_inner_type_name(requestId), identifier, object);
 
         // Child request?
         auto child_it = child_requests_.find(requestId);
@@ -1843,12 +1853,46 @@ bool DomainParticipantImpl::check_get_type_request(
         if (child_it != child_requests_.end())
         {
             // Register received TypeObject into factory, remove the iterator from the map and check our parent.
-            fastrtps::types::TypeObjectFactory::get_instance()->add_type_object(
-                get_inner_type_name(requestId), identifier, object);
+            // fastrtps::types::TypeObjectFactory::get_instance()->add_type_object(
+            //     get_inner_type_name(requestId), identifier, object);
             remove_child_request(requestId);
         }
+        attempt_register_pending();
     }
     return false;
+}
+
+void DomainParticipantImpl::attempt_register_pending()
+{
+    std::vector<int> to_delete;
+    for (int i = 0; i < pending_names.size(); i++)
+    {
+        auto name = pending_names[i];
+        auto ident = pending_identifiers[i];
+        auto obj = pending_objects[i];
+        auto cb_it = register_callbacks_.find(pending_requests[i]);
+        const auto& callback = cb_it->second.second;
+
+        fastrtps::types::DynamicType_ptr dynamic = fastrtps::types::TypeObjectFactory::get_instance()->build_dynamic_type(name, ident, obj);
+        if (nullptr != dynamic)
+        {
+            if (register_dynamic_type(dynamic) == ReturnCode_t::RETCODE_OK)
+            {
+                callback(name, dynamic);
+                to_delete.push_back(i);
+            }
+        }
+    }
+
+    std::vector<int>::iterator it = to_delete.end();
+    while (it != to_delete.begin())
+    {
+        --it;
+        pending_names.erase(pending_names.begin() + *it);
+        pending_identifiers.erase(pending_identifiers.begin() + *it);
+        pending_objects.erase(pending_objects.begin() + *it);
+        pending_requests.erase(pending_requests.begin() + *it);
+    }
 }
 
 void DomainParticipantImpl::fill_pending_dependencies(
@@ -1865,7 +1909,8 @@ void DomainParticipantImpl::fill_pending_dependencies(
             pending_identifiers.push_back(tiws.type_id());
         }
         // Check if we need to retrieve the TypeObject
-        if (tiws.type_id()._d() >= EK_MINIMAL)
+        // if (tiws.type_id()._d() >= EK_MINIMAL)
+        if (true)
         {
             TypeObject obj;
             TypeObjectFactory::get_instance()->typelookup_get_type(tiws.type_id(), obj);
@@ -2076,8 +2121,8 @@ void DomainParticipantImpl::on_child_requests_finished(
             {
                 parent_requests_.erase(pending_requests_it);
             }
-            cb_it->second.second(cb_it->second.first, fastrtps::types::DynamicType_ptr(nullptr)); // Everything should be already registered
-            register_callbacks_.erase(cb_it);
+            // cb_it->second.second(cb_it->second.first, fastrtps::types::DynamicType_ptr(nullptr)); // Everything should be already registered
+            // register_callbacks_.erase(cb_it);
         }
     }
 }
@@ -2095,7 +2140,21 @@ std::string DomainParticipantImpl::get_inner_type_name(
             });
     str.erase(std::remove(str.begin(), str.end(), '.'), str.end());
     std::replace(str.begin(), str.end(), '|', '_');
-    return str;
+
+    if (fastrtps::types::TypeObjectFactory::get_instance()->get_type_identifier(str, true))
+    {
+        fastrtps::rtps::SampleIdentity new_id;
+        fastrtps::rtps::SequenceNumber_t new_seq;
+        new_id = id;
+        new_seq = new_id.sequence_number();
+        new_seq++;
+        new_id.sequence_number(new_seq);
+        return get_inner_type_name(new_id);
+    }
+    else
+    {
+        return str;
+    }
 }
 
 bool DomainParticipantImpl::has_active_entities()
