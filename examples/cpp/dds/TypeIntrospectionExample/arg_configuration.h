@@ -34,7 +34,9 @@ constexpr const char* STRUCT_DATA_TYPE_ARG = "struct";
 constexpr const char* PLAIN_DATA_TYPE_ARG = "plain";
 constexpr const char* SIMPLELARGE_DATA_TYPE_ARG = "simple";
 constexpr const char* KEY_DATA_TYPE_ARG = "key";
-constexpr const char* COMPLEX_DATA_TYPE_ARG = "complex";
+constexpr const char* COMPLEX_ARRAY_DATA_TYPE_ARG = "complex_array";
+constexpr const char* COMPLEX_SEQUENCE_DATA_TYPE_ARG = "complex_seq";
+constexpr const char* SUPER_COMPLEX_DATA_TYPE_ARG = "super_complex";
 
 constexpr const char* GENERATOR_DATA_TYPE_GEN_ARG = "gen";
 constexpr const char* GENERATOR_DATA_TYPE_CODE_ARG = "code";
@@ -128,11 +130,13 @@ struct Arg : public option::Arg
                 data_type != PLAIN_DATA_TYPE_ARG &&
                 data_type != SIMPLELARGE_DATA_TYPE_ARG &&
                 data_type != KEY_DATA_TYPE_ARG &&
-                data_type != COMPLEX_DATA_TYPE_ARG)
+                data_type != COMPLEX_ARRAY_DATA_TYPE_ARG &&
+                data_type != COMPLEX_SEQUENCE_DATA_TYPE_ARG &&
+                data_type != SUPER_COMPLEX_DATA_TYPE_ARG)
             {
                 if (msg)
                 {
-                    print_error("Option '", option, "' only accepts <hw|array|struct|plain|key|complex> values\n");
+                    print_error("Option '", option, "' only accepts <hw|array|seq|struct|plain|simple|key|complex_array|complex_seq|super_complex> values\n");
                 }
                 return option::ARG_ILLEGAL;
             }
@@ -196,14 +200,16 @@ const option::Descriptor usage[] = {
       "  -t <topic_name> \t--topic=<topic_name>  \tTopic name (Default: TypeIntrospectionTopic)." },
     { DATA_TYPE, 0, "x", "type",                  Arg::DataType,
       "  -x <data_type_name> \t--type=<data_type_name>  \tTopic Data Type name (Default: hw). "
-      "hw      -> HelloWorld data type (one string and one integer). "
-      "array   -> Data type with an array (one uint and an array of size 3 integer). "
-      "seq     -> Data type with a sequence (one uint and a sequence of size 3 shorts). "
-      "struct  -> Complex data type with an internal struct (3 integers). "
-      "plain   -> HelloWorld struct (index and string) but string is an array of 20 chars, so data type is Plain. "
-      "key     -> Struct with an index, a keyed string value and 1 integer. "
-      "complex -> Complex data type with 1 index, 1 substructure with 3 integers and an array of size 3 substructures, "
-      "with a string and a char each. "
+      "hw            -> HelloWorld data type (one string and one integer). "
+      "array         -> Data type with an array (one uint and an array of size 3 integer). "
+      "seq           -> Data type with a sequence (one uint and a sequence of size 3 shorts). "
+      "struct        -> Complex data type with an internal struct (3 integers). "
+      "plain         -> HelloWorld struct (index and string) but string is an array of 20 chars, so data type is "
+      "Plain. "
+      "key           -> Struct with an index, a keyed string value and 1 integer. "
+      "complex_array -> Data type with an array of non-primitive objects. "
+      "complex_seq   -> Data type with a sequence of non-primitive objects.  "
+      "super_complex -> Complex data type composed of several of the other types at multiple levels.  "
     },
     { DATA_TYPE_GENERATOR, 0, "g", "generator",                  Arg::Generator,
       "  -g <generator_name> \t--generator=<generator_name>  \tData Type Generator (Default: gen). "
