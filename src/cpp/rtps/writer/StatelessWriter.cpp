@@ -388,8 +388,14 @@ bool StatelessWriter::change_removed_by_history(
 bool StatelessWriter::is_acked_by_all(
         const CacheChange_t* change) const
 {
+    return is_acked_by_all(change->sequenceNumber);
+}
+
+bool StatelessWriter::is_acked_by_all(
+        const SequenceNumber_t& seq_num) const
+{
     std::lock_guard<RecursiveTimedMutex> guard(mp_mutex);
-    return change->sequenceNumber.to64long() <= last_sequence_number_sent_;
+    return seq_num.to64long() <= last_sequence_number_sent_;
 }
 
 bool StatelessWriter::try_remove_change(

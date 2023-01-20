@@ -248,6 +248,11 @@ private:
             CacheChange_t* change,
             ReaderLocator& reader_locator);
 
+    //! Check if a specific sequence number has been sent to every remote RTPSReader
+    bool is_acked_by_all(
+            const SequenceNumber_t& seq_num) const;
+
+
     bool is_inline_qos_expected_ = false;
     LocatorList_t fixed_locators_;
     ResourceLimitedVector<std::unique_ptr<ReaderLocator>> matched_remote_readers_;
