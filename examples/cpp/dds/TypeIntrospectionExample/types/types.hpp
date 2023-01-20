@@ -37,7 +37,9 @@ enum class DataTypeKind
     PLAIN,
     SIMPLELARGE,
     KEY,
-    COMPLEX,
+    COMPLEX_ARRAY,
+    COMPLEX_SEQUENCE,
+    SUPER_COMPLEX,
 };
 
 enum class GeneratorKind
@@ -54,7 +56,9 @@ constexpr const char * STRUCT_DATA_TYPE_NAME = "Struct_TypeIntrospectionExample"
 constexpr const char * PLAIN_DATA_TYPE_NAME = "Plain_TypeIntrospectionExample";
 constexpr const char * SIMPLELARGE_DATA_TYPE_NAME = "SimpleLarge_TypeIntrospectionExample";
 constexpr const char * KEY_DATA_TYPE_NAME = "Key_TypeIntrospectionExample";
-constexpr const char * COMPLEX_DATA_TYPE_NAME = "Complex_TypeIntrospectionExample";
+constexpr const char * COMPLEX_ARRAY_DATA_TYPE_NAME = "ComplexArray_TypeIntrospectionExample";
+constexpr const char * COMPLEX_SEQUENCE_DATA_TYPE_NAME = "ComplexSequence_TypeIntrospectionExample";
+constexpr const char * SUPER_COMPLEX_DATA_TYPE_NAME = "SuperComplex_TypeIntrospectionExample";
 
 class IDataType
 {

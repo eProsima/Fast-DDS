@@ -1,0 +1,19 @@
+
+struct InternalSequencePoints_TypeIntrospectionExample
+{
+    long x_member;
+    long y_member;
+    long z_member;
+};
+
+struct InternalSequenceMessage_TypeIntrospectionExample
+{
+    string message;
+};
+
+struct ComplexSequence_TypeIntrospectionExample
+{
+	unsigned long index;
+    sequence<InternalSequencePoints_TypeIntrospectionExample> internal_data;
+    sequence<InternalSequenceMessage_TypeIntrospectionExample, 2> messages;
+};

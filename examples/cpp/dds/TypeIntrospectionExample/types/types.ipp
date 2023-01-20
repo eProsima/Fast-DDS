@@ -54,8 +54,14 @@ std::string DataType<Data, Gen>::name() const
         case DataTypeKind::KEY:
             return KEY_DATA_TYPE_NAME;
 
-        case DataTypeKind::COMPLEX:
-            return COMPLEX_DATA_TYPE_NAME;
+        case DataTypeKind::COMPLEX_ARRAY:
+            return COMPLEX_ARRAY_DATA_TYPE_NAME;
+
+        case DataTypeKind::COMPLEX_SEQUENCE:
+            return COMPLEX_SEQUENCE_DATA_TYPE_NAME;
+
+        case DataTypeKind::SUPER_COMPLEX:
+            return SUPER_COMPLEX_DATA_TYPE_NAME;
 
         default:
             throw std::runtime_error("Unsupported data type");

@@ -256,6 +256,11 @@ void DynamicData::create_members(
     }
 }
 
+DynamicType_ptr DynamicData::get_type()
+{
+    return type_;
+}
+
 ReturnCode_t DynamicData::get_descriptor(
         MemberDescriptor& value,
         MemberId id)
