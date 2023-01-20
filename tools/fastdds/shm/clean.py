@@ -1,4 +1,4 @@
-# Copyright 2020 Proyectos y Sistemas de Mantenimiento SL (eProsima).
+# Copyright 2023 Proyectos y Sistemas de Mantenimiento SL (eProsima).
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -13,9 +13,9 @@
 # limitations under the License.
 
 """
-    Sub-Command Clean implementation.
+Sub-Command Clean implementation.
 
-    This sub-command finds and remove unused shared-memory files.
+This sub-command finds and remove unused shared-memory files.
 
 """
 
@@ -80,8 +80,10 @@ class Clean:
         """Return a list of files in the default SHM dir."""
         try:
             return os.listdir(self.__shm_dir())
-        except BaseException:
+        except FileNotFoundError:
             return []
+        # except BaseException:
+        #    return []
 
     def __clean_zombie_segments(self):
         """
@@ -172,14 +174,16 @@ class Clean:
 
         Always return void, even if the function fails.
 
-        param file str: 
+        param file str:
             The complete file_path
 
         """
         try:
             os.remove(file)
-        except BaseException:
+        except OSError:
             pass
+        # except BaseException:
+        #    pass
 
     def __is_file_locked(self, file):
         """Return whether a file is locked or not.
@@ -201,5 +205,7 @@ class Clean:
                     overlapped = pywintypes.OVERLAPPED()
                     win32file.LockFileEx(h_file, mode, 0, -0x10000, overlapped)
             return False
-        except BaseException:
+        except OSError:
             return True
+        # except BaseException:
+        #    return True

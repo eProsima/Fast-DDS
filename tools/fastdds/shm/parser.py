@@ -1,4 +1,4 @@
-# Copyright 2020 Proyectos y Sistemas de Mantenimiento SL (eProsima).
+# Copyright 2023 Proyectos y Sistemas de Mantenimiento SL (eProsima).
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -13,22 +13,22 @@
 # limitations under the License.
 
 """
-    fastdds shm sub-command.
+fastdds shm sub-command.
 
-    This verb provides maintenance tasks related with Fast-DDS shared-memory
-    transport.
+This verb provides maintenance tasks related with Fast-DDS shared-memory
+transport.
 
-    usage: fastdds shm [<shm-command>]
+usage: fastdds shm [<shm-command>]
 
-    shm-commands:
+shm-commands:
 
-        clean     clean SHM zombie files
+    clean     clean SHM zombie files
 
-    positional arguments:
-        command     shm-command to run
+positional arguments:
+    command     shm-command to run
 
-    optional arguments:
-        -h, --help  show this help message and exit
+optional arguments:
+    -h, --help  show this help message and exit
 
 """
 

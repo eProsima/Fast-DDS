@@ -1,4 +1,4 @@
-# Copyright 2020 Proyectos y Sistemas de Mantenimiento SL (eProsima).
+# Copyright 2023 Proyectos y Sistemas de Mantenimiento SL (eProsima).
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -13,10 +13,10 @@
 # limitations under the License.
 
 """
-    fastdds discovery verb parser.
+fastdds discovery verb parser.
 
-    The parser just forward the sub-commands to the fast-discovery-server
-    tool application.
+The parser just forward the sub-commands to the fast-discovery-server
+tool application.
 
 """
 
@@ -63,7 +63,7 @@ class Parser:
                 if result.returncode != 0:
                     sys.exit(result.returncode)
 
-        except KeyboardInterrupt as e:
+        except KeyboardInterrupt:  # as e:
             # it lets the subprocess to handle the exception
             pass
 
