@@ -13,7 +13,7 @@
 // limitations under the License.
 
 /**
- * @file ComplexCode.h
+ * @file ComplexArrayCommon.cpp
  *
  */
 
@@ -27,7 +27,7 @@
 using namespace eprosima::fastrtps;
 
 template <>
-eprosima::fastrtps::types::DynamicData_ptr get_data_by_type<DataTypeKind::COMPLEX>(
+eprosima::fastrtps::types::DynamicData_ptr get_data_by_type<DataTypeKind::COMPLEX_ARRAY>(
         const unsigned int& index,
         eprosima::fastrtps::types::DynamicType_ptr dyn_type)
 {
@@ -38,27 +38,45 @@ eprosima::fastrtps::types::DynamicData_ptr get_data_by_type<DataTypeKind::COMPLE
     // Set index
     new_data->set_uint32_value(index, 0);
 
-    // Set points (it requires to loan the array)
-    eprosima::fastrtps::types::DynamicData* points_substructure = new_data->loan_value(1);
+    ///////////////////////////////////////////
 
-    points_substructure->set_int32_value(index + 1, 0);
-    points_substructure->set_int32_value(index * 0.5, 1);
-    points_substructure->set_int32_value(index * -1, 2);
+    // Get points array
+    eprosima::fastrtps::types::DynamicData* array = new_data->loan_value(1);
 
-    new_data->return_loaned_value(points_substructure);
+    // Set array element 1
+    eprosima::fastrtps::types::DynamicData* elem = array->loan_value(0);
+    elem->set_int32_value(0, 0);
+    elem->set_int32_value(1, 1);
+    elem->set_int32_value(2, 2);
+    array->return_loaned_value(elem);
+
+    // Set array element 2
+    elem = array->loan_value(1);
+    elem->set_int32_value(3, 0);
+    elem->set_int32_value(4, 1);
+    elem->set_int32_value(5, 2);
+    array->return_loaned_value(elem);
+
+    // Set array element 3
+    elem = array->loan_value(2);
+    elem->set_int32_value(6, 0);
+    elem->set_int32_value(7, 1);
+    elem->set_int32_value(8, 2);
+    array->return_loaned_value(elem);
+
+    new_data->return_loaned_value(array);
+
+    ///////////////////////////////////////////
 
     // Set messages
     eprosima::fastrtps::types::DynamicData* messages_substructure = new_data->loan_value(2);
 
-    for (int i=0; i<3; i++)
+    for (int i=0; i<2; i++)
     {
         // Message
-        eprosima::fastrtps::types::DynamicData* message;
-        messages_substructure->get_complex_value(&message, i);
-        message->set_string_value("message #" + std::to_string(i), 0);
-
-        // Set complex type
-        messages_substructure->set_complex_value(message, i);
+        elem = messages_substructure->loan_value(i);
+        elem->set_string_value("message #" + std::to_string(i), 0);
+        messages_substructure->return_loaned_value(elem);
     }
 
     new_data->return_loaned_value(messages_substructure);
