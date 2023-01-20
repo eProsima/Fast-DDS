@@ -219,6 +219,17 @@ public:
             std::unique_lock<fastrtps::RecursiveTimedMutex>& lock,
             const std::chrono::time_point<std::chrono::steady_clock>& max_blocking_time);
 
+    /**
+     * @brief Set unacknowledged sample removed functor.
+     *
+     * @param functor Functor to be set.
+     */
+    void unacknowledged_sample_removed_functor(
+            std::function<void (const fastrtps::rtps::InstanceHandle_t&)> functor)
+    {
+        unacknowledged_sample_removed_functor_ = functor;
+    }
+
 private:
 
     typedef std::map<fastrtps::rtps::InstanceHandle_t, detail::DataWriterInstance> t_m_Inst_Caches;
@@ -233,6 +244,9 @@ private:
     ResourceLimitsQosPolicy resource_limited_qos_;
     //!Topic Attributes
     fastrtps::TopicAttributes topic_att_;
+
+    //! Unacknowledged sample removed functor
+    std::function<void (const fastrtps::rtps::InstanceHandle_t&)> unacknowledged_sample_removed_functor_;
 
     /**
      * @brief Method that finds a key in the DataWriterHistory or tries to add it if not found
