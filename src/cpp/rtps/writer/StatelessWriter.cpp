@@ -377,7 +377,7 @@ bool StatelessWriter::change_removed_by_history(
     }
 
     const uint64_t sequence_number = change->sequenceNumber.to64long();
-    if (sequence_number < last_sequence_number_sent_)
+    if (sequence_number <= last_sequence_number_sent_)
     {
         unsent_changes_cond_.notify_all();
     }
