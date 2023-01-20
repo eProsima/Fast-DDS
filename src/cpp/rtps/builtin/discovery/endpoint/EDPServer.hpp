@@ -104,6 +104,31 @@ public:
     bool removeLocalWriter(
             fastrtps::rtps::RTPSWriter* W) override;
 
+    /**
+     * This method removes all changes from the correct data writer history with the same identity as the one in the disposal_change
+     * and adds it to the corresponding builtin EDP endpoint for forwarding it to interested remotes.
+     * @param change Pointer to the CacheChange_t.
+     * @param discovery_db Reference to the discovery DB.
+     * @param change_guid_prefix The identity of the participant from which the change came.
+     * @return True if successful.
+     */
+    bool process_disposal(
+            fastrtps::rtps::CacheChange_t* disposal_change,
+            fastdds::rtps::ddb::DiscoveryDataBase& discovery_db,
+            fastrtps::rtps::GuidPrefix_t& change_guid_prefix,
+            bool should_publish_disposal);
+
+    /**
+     * This method removes all changes from the correct data writer history (change->witerGUID.enitity)
+     * and releases the change from the correct history dependeing whether the change is from
+     * this participant or remote
+     * @param change Pointer to the CacheChange_t.
+     * @return True if successful.
+     */
+    bool process_and_release_change(
+            fastrtps::rtps::CacheChange_t* change,
+            bool release_from_reader);
+
 private:
 
     /**
