@@ -385,6 +385,16 @@ bool StatelessWriter::change_removed_by_history(
     return true;
 }
 
+bool StatelessWriter::has_been_fully_delivered(
+        const SequenceNumber_t& seq_num) const
+{
+    if (getMatchedReadersSize() > 0)
+    {
+        return is_acked_by_all(seq_num);
+    }
+    return true;
+}
+
 bool StatelessWriter::is_acked_by_all(
         const CacheChange_t* change) const
 {
