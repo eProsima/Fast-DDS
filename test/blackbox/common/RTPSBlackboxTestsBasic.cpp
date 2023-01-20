@@ -907,7 +907,7 @@ void has_been_fully_delivered_test(
     auto data = default_helloworld_data_generator(3);
     // No matched RTPSReaders: sample considered delivered
     eprosima::fastrtps::rtps::CacheChange_t* change = writer_1.send_sample(data.front());
-    EXPECT_TRUE(writer_1.has_been_fully_delivered(change));
+    EXPECT_TRUE(writer_1.has_been_fully_delivered(change->sequenceNumber));
     data.pop_front();
 
     writer_2.reliability(reliability_mode).asynchronously(RTPSWriterPublishMode::ASYNCHRONOUS_WRITER)
