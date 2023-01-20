@@ -1167,6 +1167,14 @@ bool TypeIdentifier::operator ==(
                     return false;
                 }
             }
+            if (!(this->array_sdefn().element_identifier()) || !(other.array_sdefn().element_identifier()))
+            {
+                return false;
+            }
+            if (!(this->array_sdefn().element_identifier()->_d()) || !(other.array_sdefn().element_identifier()->_d()))
+            {
+                return false;
+            }
             return *this->array_sdefn().element_identifier() == *other.array_sdefn().element_identifier();
         }
 
@@ -1182,6 +1190,14 @@ bool TypeIdentifier::operator ==(
                 {
                     return false;
                 }
+            }
+            if (!(this->array_ldefn().element_identifier()) || !(other.array_ldefn().element_identifier()))
+            {
+                return false;
+            }
+            if (!(this->array_ldefn().element_identifier()->_d()) || !(other.array_ldefn().element_identifier()->_d()))
+            {
+                return false;
             }
             return *this->array_ldefn().element_identifier() == *other.array_ldefn().element_identifier();
         }

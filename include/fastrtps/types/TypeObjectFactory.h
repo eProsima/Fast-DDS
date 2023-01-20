@@ -52,7 +52,8 @@ protected:
             const TypeIdentifier* identifier) const;
 
     const TypeIdentifier* get_stored_type_identifier(
-            const TypeIdentifier* identifier) const;
+            const TypeIdentifier* identifier,
+            bool complete=true) const;
 
     std::string generate_name_and_store_type_identifier(
             const TypeIdentifier* identifier) const;
@@ -200,7 +201,8 @@ public:
 
     RTPS_DllAPI void add_type_identifier(
             const std::string& type_name,
-            const TypeIdentifier* identifier);
+            const TypeIdentifier* identifier,
+            bool force_complete = false);
 
     RTPS_DllAPI void add_type_object(
             const std::string& type_name,
