@@ -1322,6 +1322,26 @@ bool StatefulWriter::matched_reader_lookup(
                    );
 }
 
+bool StatefulWriter::has_been_fully_delivered(
+        const SequenceNumber_t& seq_num) const
+{
+    std::lock_guard<RecursiveTimedMutex> guard(mp_mutex);
+    bool found = false;
+    if (seq_num > (mp_history->next_sequence_number() - 1))
+    {
+        return false;
+    }
+    for (auto reader : matched_remote_readers_)
+    {
+        bool ret_code = reader->has_been_delivered(seq_num, found);
+        if (found && !ret_code)
+        {
+            return false;
+        }
+    }
+    return true;
+}
+
 bool StatefulWriter::is_acked_by_all(
         const CacheChange_t* change) const
 {
