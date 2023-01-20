@@ -202,9 +202,9 @@ public:
      * @return true if delivered. False otherwise.
      */
     RTPS_DllAPI virtual bool has_been_fully_delivered(
-            const CacheChange_t* change) const
+            const SequenceNumber_t& seq_num) const
     {
-        static_cast<void>(change);
+        static_cast<void>(seq_num);
         return false;
     }
 
