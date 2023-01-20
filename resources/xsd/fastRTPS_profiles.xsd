@@ -37,15 +37,15 @@
         ├ data_reader (=subscriber)[0~*],
         └ transport_descriptors    [0~1] -->
     <xs:complexType name="profilesType">
-        <xs:sequence minOccurs="0" maxOccurs="unbounded">   <!-- multiple instances of the elements -->
-            <xs:choice> <!-- each instance can be one of the elements below -->
-                <xs:element name="library_settings" type="LibrarySettingsType" minOccurs="0" maxOccurs="1"/>
-                <xs:element name="participant" type="participantProfileType" minOccurs="0" maxOccurs="unbounded"/>
-                <xs:element name="data_writer" type="publisherProfileType" minOccurs="0" maxOccurs="unbounded"/>
-                <xs:element name="publisher" type="publisherProfileType" minOccurs="0" maxOccurs="unbounded"/>
-                <xs:element name="data_reader" type="subscriberProfileType" minOccurs="0" maxOccurs="unbounded"/>
-                <xs:element name="subscriber" type="subscriberProfileType" minOccurs="0" maxOccurs="unbounded"/>
-                <xs:element name="transport_descriptors" type="TransportDescriptorListType" minOccurs="0" maxOccurs="1"/>
+        <xs:sequence minOccurs="1" maxOccurs="unbounded">   <!-- multiple instances of the elements -->
+            <xs:choice minOccurs="1"> <!-- each instance can be one of the elements below -->
+                <xs:element name="library_settings" type="LibrarySettingsType" maxOccurs="1"/>
+                <xs:element name="participant" type="participantProfileType" maxOccurs="unbounded"/>
+                <xs:element name="data_writer" type="publisherProfileType" maxOccurs="unbounded"/>
+                <xs:element name="publisher" type="publisherProfileType" maxOccurs="unbounded"/>
+                <xs:element name="data_reader" type="subscriberProfileType" maxOccurs="unbounded"/>
+                <xs:element name="subscriber" type="subscriberProfileType" maxOccurs="unbounded"/>
+                <xs:element name="transport_descriptors" type="TransportDescriptorListType" maxOccurs="1"/>
             </xs:choice>
         </xs:sequence>
     </xs:complexType>
@@ -276,14 +276,14 @@
         ├ bitset  [0~*],
         └ bitmask [0~*]-->
     <xs:complexType name="typeType">
-        <xs:sequence minOccurs="0" maxOccurs="unbounded">
-            <xs:choice maxOccurs="unbounded">
-                <xs:element name="enum" type="enumDcl" minOccurs="0" maxOccurs="unbounded"/>
-                <xs:element name="typedef" type="typedefDcl" minOccurs="0" maxOccurs="unbounded"/>
-                <xs:element name="struct" type="structDcl" minOccurs="0" maxOccurs="unbounded"/>
-                <xs:element name="union" type="unionDcl" minOccurs="0" maxOccurs="unbounded"/>
-                <xs:element name="bitset" type="bitsetDcl" minOccurs="0" maxOccurs="unbounded"/>
-                <xs:element name="bitmask" type="bitmaskDcl" minOccurs="0" maxOccurs="unbounded"/>
+        <xs:sequence minOccurs="1" maxOccurs="unbounded">
+            <xs:choice minOccurs="1">
+                <xs:element name="enum" type="enumDcl" maxOccurs="unbounded"/>
+                <xs:element name="typedef" type="typedefDcl" maxOccurs="unbounded"/>
+                <xs:element name="struct" type="structDcl" maxOccurs="unbounded"/>
+                <xs:element name="union" type="unionDcl" maxOccurs="unbounded"/>
+                <xs:element name="bitset" type="bitsetDcl" maxOccurs="unbounded"/>
+                <xs:element name="bitmask" type="bitmaskDcl" maxOccurs="unbounded"/>
             </xs:choice>
         </xs:sequence>
     </xs:complexType>
@@ -923,14 +923,14 @@
     <!--Locator list:
         └ locator [0~*]-->
     <xs:complexType name="locatorListType">
-        <xs:sequence  minOccurs="0" maxOccurs="unbounded">
+        <xs:sequence  minOccurs="1" maxOccurs="unbounded">
             <xs:element name="locator" minOccurs="1" maxOccurs="unbounded">
                 <xs:complexType>
-                    <xs:choice>
-                        <xs:element name="udpv4" type="udpv4LocatorType" minOccurs="0" maxOccurs="unbounded"/>
-                        <xs:element name="udpv6" type="udpv6LocatorType" minOccurs="0" maxOccurs="unbounded"/>
-                        <xs:element name="tcpv4" type="tcpv4LocatorType" minOccurs="0" maxOccurs="unbounded"/>
-                        <xs:element name="tcpv6" type="tcpv6LocatorType" minOccurs="0" maxOccurs="unbounded"/>
+                    <xs:choice minOccurs="1">
+                        <xs:element name="udpv4" type="udpv4LocatorType" maxOccurs="unbounded"/>
+                        <xs:element name="udpv6" type="udpv6LocatorType" maxOccurs="unbounded"/>
+                        <xs:element name="tcpv4" type="tcpv4LocatorType" maxOccurs="unbounded"/>
+                        <xs:element name="tcpv6" type="tcpv6LocatorType" maxOccurs="unbounded"/>
                     </xs:choice>
                 </xs:complexType>
             </xs:element>
@@ -941,10 +941,10 @@
         ├ udpv4ExternalLocator [0~*],
         └ udpv6ExternalLocator [0~*]-->
     <xs:complexType name="externalLocatorListType">
-        <xs:sequence minOccurs="0" maxOccurs="unbounded">
-            <xs:choice>
-                <xs:element name="udpv4" type="udpv4ExternalLocatorType" minOccurs="0" maxOccurs="unbounded"/>
-                <xs:element name="udpv6" type="udpv6ExternalLocatorType" minOccurs="0" maxOccurs="unbounded"/>
+        <xs:sequence minOccurs="1" maxOccurs="unbounded">
+            <xs:choice minOccurs="1">
+                <xs:element name="udpv4" type="udpv4ExternalLocatorType" maxOccurs="unbounded"/>
+                <xs:element name="udpv6" type="udpv6ExternalLocatorType" maxOccurs="unbounded"/>
             </xs:choice>
         </xs:sequence>
     </xs:complexType>
@@ -969,12 +969,15 @@
         └ nanosec [uint32 OR "DURATION_INFINITY" OR "DURATION_INFINITE_NSEC"] REQ -->
     <xs:complexType name="durationType">
         <xs:all>
-            <xs:element name="sec" default="0" minOccurs="1" maxOccurs="1">
+            <xs:element name="sec" minOccurs="1" maxOccurs="1" nillable="true">
                 <xs:simpleType>
                     <xs:union>
                         <xs:simpleType>
                             <xs:restriction base="xs:string">
-                                <xs:pattern value="\s*(DURATION_INFINITY|DURATION_INFINITE_SEC)\s*"/>
+                                <xs:minLength value="1"/>
+                                <xs:enumeration value="DURATION_INFINITY"/>
+                                <xs:enumeration value="DURATION_INFINITE_SEC"/>
+                                <!-- <xs:pattern value="\s*(DURATION_INFINITY|DURATION_INFINITE_SEC)\s*"/> -->
                             </xs:restriction>
                         </xs:simpleType>
                         <xs:simpleType>
@@ -983,12 +986,14 @@
                     </xs:union>
                 </xs:simpleType>
             </xs:element>
-            <xs:element name="nanosec" default="0" minOccurs="1" maxOccurs="1">
+            <xs:element name="nanosec" minOccurs="1" maxOccurs="1">
                 <xs:simpleType>
                     <xs:union>
                         <xs:simpleType>
                             <xs:restriction base="xs:string">
-                                <xs:pattern value="\s*(DURATION_INFINITY|DURATION_INFINITE_NSEC)\s*"/>
+                                <xs:enumeration value="DURATION_INFINITY"/>
+                                <xs:enumeration value="DURATION_INFINITE_NSEC"/>
+                                <!-- <xs:pattern value="\s*(DURATION_INFINITY|DURATION_INFINITE_NSEC)\s*"/> -->
                             </xs:restriction>
                         </xs:simpleType>
                         <xs:simpleType>
@@ -1537,7 +1542,9 @@
 
     <!--STRING-->
     <xs:simpleType name="string">
-        <xs:restriction base="xs:string"/>
+        <xs:restriction base="xs:string">
+            <xs:minLength value="1"/>
+        </xs:restriction>
     </xs:simpleType>
 
     <!-- 8b 1B integer-->

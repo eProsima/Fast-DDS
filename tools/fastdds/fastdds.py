@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-# Copyright 2020 Proyectos y Sistemas de Mantenimiento SL (eProsima).
+# Copyright 2023 Proyectos y Sistemas de Mantenimiento SL (eProsima).
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -15,29 +15,29 @@
 # limitations under the License.
 
 """
-    fastdds CLI tool.
+fastdds CLI tool.
 
-    This CLI tool provide a set commands and sub-commands to perform, Fast-DDS
-    related, maintenance / configuration tasks.
+This CLI tool provide a set commands and sub-commands to perform, Fast-DDS
+related, maintenance / configuration tasks.
 
-    usage: fastdds <command> [<command-args>]
+usage: fastdds <command> [<command-args>]
 
-        Commands:
+    Commands:
 
-            discovery     Server-Client discovery auxiliary generator
+        discovery     Server-Client discovery auxiliary generator
 
-            shm           Shared-memory commands
+        shm           Shared-memory commands
 
-            xml           XML commands
+        xml           XML commands
 
-        fastdds <command> [-h] shows command usage
+    fastdds <command> [-h] shows command usage
 
 
-    positional arguments:
-    command     Command to run
+positional arguments:
+command     Command to run
 
-    optional arguments:
-    -h, --help  show this help message and exit
+optional arguments:
+-h, --help  show this help message and exit
 
 """
 
@@ -114,6 +114,7 @@ class FastDDSParser:
     def xml(self):
         """Discovery server command handler."""
         XMLParser(sys.argv[2:])
+
 
 if __name__ == '__main__':
 
