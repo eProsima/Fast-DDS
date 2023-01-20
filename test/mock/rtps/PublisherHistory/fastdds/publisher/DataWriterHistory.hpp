@@ -284,6 +284,11 @@ public:
         return false;
     }
 
+    void unacknowledged_sample_removed_functor(
+            std::function<void (const fastrtps::rtps::InstanceHandle_t&)> /*functor*/)
+    {
+    }
+
 private:
 
     typedef std::map<InstanceHandle_t, detail::DataWriterInstance> t_m_Inst_Caches;
