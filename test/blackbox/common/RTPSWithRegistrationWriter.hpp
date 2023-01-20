@@ -516,9 +516,9 @@ public:
     }
 
     bool has_been_fully_delivered(
-            eprosima::fastrtps::rtps::CacheChange_t* change)
+            const eprosima::fastrtps::rtps::SequenceNumber_t& seq_num)
     {
-        return writer_->has_been_fully_delivered(change);
+        return writer_->has_been_fully_delivered(seq_num);
     }
 
     void participant_update_attributes()
