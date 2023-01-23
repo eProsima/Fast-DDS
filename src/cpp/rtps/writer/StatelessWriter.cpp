@@ -404,15 +404,18 @@ bool StatelessWriter::wait_for_acknowledgement(
         const std::chrono::steady_clock::time_point& max_blocking_time_point,
         std::unique_lock<RecursiveTimedMutex>& lock)
 {
-    auto change_is_acknowledged = [this, seq]()
+    uint64_t seq_long_64 = seq.to64long();
+    auto change_is_acknowledged = [this, seq, seq_long_64]()
             {
                 bool ret = false;
-                if (seq.to64long() <= last_sequence_number_sent_)
+                if (seq_long_64 <= last_sequence_number_sent_)
                 {
+                    // Stop waiting if the sequence number has been sent
                     ret = true;
                 }
                 else
                 {
+                    // If the sequence number has not been sent, stop waiting if it is not present in the history
                     CacheChange_t* change = nullptr;
                     ret = !mp_history->get_change(seq, m_guid, &change);
                 }
