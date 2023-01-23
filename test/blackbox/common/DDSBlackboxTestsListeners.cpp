@@ -12,21 +12,18 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include "BlackboxTests.hpp"
+#include <set>
+#include <vector>
 
-#include "PubSubReader.hpp"
-#include "PubSubWriter.hpp"
+#include <fastdds/dds/core/condition/GuardCondition.hpp>
+#include <fastdds/dds/core/condition/StatusCondition.hpp>
+#include <fastdds/dds/core/condition/WaitSet.hpp>
+#include <fastdds/rtps/transport/test_UDPv4TransportDescriptor.h>
 #include <fastrtps/xmlparser/XMLProfileManager.h>
 
-#include <fastdds/dds/core/condition/StatusCondition.hpp>
-#include <fastdds/dds/core/condition/GuardCondition.hpp>
-#include <fastdds/dds/core/condition/WaitSet.hpp>
-
-#include <fastdds/rtps/transport/test_UDPv4TransportDescriptor.h>
-
-#include <set>
-
-#include <gtest/gtest.h>
+#include "BlackboxTests.hpp"
+#include "PubSubReader.hpp"
+#include "PubSubWriter.hpp"
 
 using namespace eprosima::fastrtps::rtps;
 using namespace eprosima::fastrtps::xmlparser;
@@ -2895,6 +2892,12 @@ TEST(DDSStatus, best_effort_on_unack_sample_removed)
 
     EXPECT_EQ(reader.getReceivedCount(), 0u);
     EXPECT_EQ(writer.times_unack_sample_removed(), 9u);
+
+    auto instances = writer.instances_removed_unack();
+    for (auto instance : instances)
+    {
+        EXPECT_EQ(instance, eprosima::fastdds::dds::HANDLE_NIL);
+    }
 }
 
 /*!
@@ -2914,8 +2917,10 @@ TEST(DDSStatus, keyed_best_effort_on_unack_sample_removed)
     auto data = default_keyedhelloworld_data_generator();
 
     auto dummy_data = new KeyedHelloWorldPubSubType();
-    eprosima::fastdds::dds::InstanceHandle_t handle;
-    dummy_data->getKey(&data.back(), &handle);
+    eprosima::fastdds::dds::InstanceHandle_t handle_odd;
+    eprosima::fastdds::dds::InstanceHandle_t handle_even;
+    dummy_data->getKey(&data.front(), &handle_even);
+    dummy_data->getKey(&data.back(), &handle_odd);
 
     reader.startReception(data);
     writer.send(data);
@@ -2924,9 +2929,11 @@ TEST(DDSStatus, keyed_best_effort_on_unack_sample_removed)
     EXPECT_EQ(writer.times_unack_sample_removed(), 8u);
 
     auto instances = writer.instances_removed_unack();
+    uint32_t index = 0;
     for (auto instance : instances)
     {
-        EXPECT_EQ(instance, handle);
+        EXPECT_EQ(instance, (index % 2) == 0 ? handle_even : handle_odd);
+        index++;
     }
 }
 
@@ -3005,6 +3012,12 @@ TEST(DDSStatus, reliable_on_unack_sample_removed)
     reader.block_for_at_least(8);
     EXPECT_EQ(reader.getReceivedCount(), 8u);
     EXPECT_EQ(writer.times_unack_sample_removed(), 2u);
+
+    auto instances = writer.instances_removed_unack();
+    for (auto instance : instances)
+    {
+        EXPECT_EQ(instance, eprosima::fastdds::dds::HANDLE_NIL);
+    }
 }
 
 /*!
@@ -3056,12 +3069,12 @@ public:
             eprosima::fastdds::dds::DataWriter* datawriter,
             const eprosima::fastdds::dds::InstanceHandle_t& handle) override
     {
-        static_cast<void>(handle);
         notified_writer_ = datawriter;
         if (writer_ == datawriter)
         {
             times_unack_sample_removed_++;
         }
+        instances_removed_unack_.push_back(handle);
     }
 
     void assign_writer(
@@ -3080,6 +3093,11 @@ public:
         return times_unack_sample_removed_;
     }
 
+    std::vector<eprosima::fastdds::dds::InstanceHandle_t> instances_removed_unack() const
+    {
+        return instances_removed_unack_;
+    }
+
 private:
 
     CustomDataWriterListener& operator =(
@@ -3091,6 +3109,8 @@ private:
     eprosima::fastdds::dds::DataWriter* notified_writer_;
     //! Number of times a sample has been removed unacknowledged
     unsigned int times_unack_sample_removed_;
+    //! Instances notified in the callback
+    std::vector<eprosima::fastdds::dds::InstanceHandle_t> instances_removed_unack_;
 };
 
 template<typename T>
@@ -3164,6 +3184,12 @@ TEST(DDSStatus, reliable_positive_acks_disabled_on_unack_sample_removed)
     EXPECT_EQ(reader.getReceivedCount(), 10u);
     EXPECT_EQ(listener.times_unack_sample_removed(), 9u);
     EXPECT_EQ(listener.notified_writer(), &(writer_1.get_native_writer()));
+
+    auto instances = listener.instances_removed_unack();
+    for (auto instance : instances)
+    {
+        EXPECT_EQ(instance, eprosima::fastdds::dds::HANDLE_NIL);
+    }
 }
 
 /*!
@@ -3185,6 +3211,12 @@ TEST(DDSStatus, keyed_reliable_positive_acks_disabled_on_unack_sample_removed)
     auto data = default_keyedhelloworld_data_generator();
     auto data_2 = data;
 
+    auto dummy_data = new KeyedHelloWorldPubSubType();
+    eprosima::fastdds::dds::InstanceHandle_t handle_odd;
+    eprosima::fastdds::dds::InstanceHandle_t handle_even;
+    dummy_data->getKey(&data.front(), &handle_even);
+    dummy_data->getKey(&data.back(), &handle_odd);
+
     reader.startReception(data);
 
     CustomDataWriterListener listener;
@@ -3197,6 +3229,14 @@ TEST(DDSStatus, keyed_reliable_positive_acks_disabled_on_unack_sample_removed)
     EXPECT_EQ(reader.getReceivedCount(), 0u);
     EXPECT_EQ(listener.times_unack_sample_removed(), 8u);
     EXPECT_EQ(listener.notified_writer(), &(writer_1.get_native_writer()));
+
+    auto instances = listener.instances_removed_unack();
+    uint32_t index = 0;
+    for (auto instance : instances)
+    {
+        EXPECT_EQ(instance, (index % 2) == 0 ? handle_even : handle_odd);
+        index++;
+    }
 
     listener.assign_writer(&writer_2.get_native_writer());
 
