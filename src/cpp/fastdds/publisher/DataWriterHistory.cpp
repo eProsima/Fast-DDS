@@ -21,10 +21,11 @@
 #include <limits>
 #include <mutex>
 
+#include <fastdds/dds/log/Log.hpp>
 #include <fastdds/rtps/common/InstanceHandle.h>
 #include <fastdds/rtps/common/Time_t.h>
-#include <fastdds/dds/log/Log.hpp>
 #include <fastdds/rtps/writer/RTPSWriter.h>
+#include <fastdds/rtps/writer/StatefulWriter.h>
 
 namespace eprosima {
 namespace fastdds {
@@ -520,6 +521,29 @@ bool DataWriterHistory::wait_for_acknowledgement_last_change(
         }
     }
     return false;
+}
+
+bool DataWriterHistory::change_is_acked_or_fully_delivered(
+        const CacheChange_t* change)
+{
+    bool is_acked = false;
+    if (mp_writer->getAttributes().reliabilityKind == ReliabilityKind_t::RELIABLE)
+    {
+        auto stateful_writer = dynamic_cast<StatefulWriter*>(mp_writer);
+        if (stateful_writer->get_disable_positive_acks())
+        {
+            is_acked = stateful_writer->has_been_fully_delivered(change->sequenceNumber);
+        }
+        else
+        {
+            is_acked = stateful_writer->is_acked_by_all(change);
+        }
+    }
+    else
+    {
+        is_acked = mp_writer->is_acked_by_all(change);
+    }
+    return is_acked;
 }
 
 }  // namespace dds

@@ -297,6 +297,12 @@ ReturnCode_t DataWriterImpl::enable()
         return ReturnCode_t::RETCODE_ERROR;
     }
 
+    history_.unacknowledged_sample_removed_functor([&](
+                const InstanceHandle_t& handle)
+            {
+                listener_->on_unacknowledged_sample_removed(user_datawriter_, handle);
+            });
+
     RTPSWriter* writer =  RTPSDomainImpl::create_rtps_writer(
         publisher_->rtps_participant(),
         guid_.entityId,

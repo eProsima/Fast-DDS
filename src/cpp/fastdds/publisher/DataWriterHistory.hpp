@@ -271,6 +271,17 @@ private:
             fastrtps::rtps::CacheChange_t* change,
             std::unique_lock<fastrtps::RecursiveTimedMutex>& lock,
             const std::chrono::time_point<std::chrono::steady_clock>& max_blocking_time);
+
+    /**
+     * @brief Check if a specific change has been acknowledged or fully delivered if disable positive ACKs QoS is
+     *        enabled.
+     *
+     * @param change CacheChange to check
+     * @return true if acknowledged or fully delivered. False otherwise.
+     */
+    bool change_is_acked_or_fully_delivered(
+            const fastrtps::rtps::CacheChange_t* change);
+
 };
 
 }  // namespace dds
