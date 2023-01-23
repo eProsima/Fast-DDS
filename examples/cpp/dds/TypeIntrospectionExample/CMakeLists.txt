@@ -70,7 +70,7 @@ target_compile_definitions(${PROJECT_NAME} PRIVATE
 )
 target_link_libraries(${PROJECT_NAME} fastrtps fastcdr fastdds::optionparser)
 install(TARGETS ${PROJECT_NAME}
-    RUNTIME DESTINATION examples/C++/DDS/${PROJECT_NAME}/${BIN_INSTALL_DIR})
+    RUNTIME DESTINATION examples/cpp/dds/${PROJECT_NAME}/${BIN_INSTALL_DIR})
 
 
 file(GLOB DATATYPE_XML "types/**/xml/*.xml")
