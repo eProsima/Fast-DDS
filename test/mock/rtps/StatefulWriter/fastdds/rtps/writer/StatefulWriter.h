@@ -102,6 +102,17 @@ public:
         return reader_data_filter_;
     }
 
+    bool get_disable_positive_acks() const
+    {
+        return false;
+    }
+
+    bool has_been_fully_delivered(
+            const SequenceNumber_t& /*seq_num*/)
+    {
+        return false;
+    }
+
 private:
 
     friend class ReaderProxy;
