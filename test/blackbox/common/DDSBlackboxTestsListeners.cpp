@@ -3007,7 +3007,8 @@ TEST(DDSStatus, reliable_on_unack_sample_removed)
     auto data = default_helloworld_data_generator();
 
     reader.startReception(data);
-    writer.send(data);
+    // To avoid race condition receiving ACK, wait some time between samples
+    writer.send(data, 125);
 
     reader.block_for_at_least(8);
     EXPECT_EQ(reader.getReceivedCount(), 8u);
@@ -3041,7 +3042,8 @@ TEST(DDSStatus, keyed_reliable_on_unack_sample_removed)
     dummy_data->getKey(&data.back(), &handle);
 
     reader.startReception(data);
-    writer.send(data, 30);
+    // To avoid race condition receiving ACK, wait some time between samples
+    writer.send(data, 125);
 
     reader.block_for_at_least(8);
     EXPECT_EQ(reader.getReceivedCount(), 8u);
