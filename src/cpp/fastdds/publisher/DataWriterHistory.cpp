@@ -21,8 +21,8 @@
 #include <limits>
 #include <mutex>
 
+#include <fastdds/dds/common/InstanceHandle.hpp>
 #include <fastdds/dds/log/Log.hpp>
-#include <fastdds/rtps/common/InstanceHandle.h>
 #include <fastdds/rtps/common/Time_t.h>
 #include <fastdds/rtps/writer/RTPSWriter.h>
 #include <fastdds/rtps/writer/StatefulWriter.h>
@@ -138,6 +138,9 @@ bool DataWriterHistory::prepare_change(
     if (m_isHistoryFull)
     {
         bool ret = false;
+        bool is_acked = change_is_acked_or_fully_delivered(m_changes.front());
+        InstanceHandle_t instance = topic_att_.getTopicKind() == NO_KEY ?
+                HANDLE_NIL : m_changes.front()->instanceHandle;
 
         if (history_qos_.kind == KEEP_ALL_HISTORY_QOS)
         {
@@ -148,7 +151,12 @@ bool DataWriterHistory::prepare_change(
             ret = this->remove_min_change();
         }
 
-        if (!ret)
+        // Notify if change has been removed unacknowledged
+        if (ret && !is_acked)
+        {
+            unacknowledged_sample_removed_functor_(instance);
+        }
+        else if(!ret)
         {
             EPROSIMA_LOG_WARNING(RTPS_HISTORY,
                     "Attempting to add Data to Full WriterCache: " << topic_att_.getTopicDataType());
@@ -183,7 +191,14 @@ bool DataWriterHistory::prepare_change(
                 }
                 else
                 {
+                    bool is_acked = change_is_acked_or_fully_delivered(vit->second.cache_changes.front());
+                    InstanceHandle_t instance = vit->second.cache_changes.front()->instanceHandle;
                     add = remove_change_pub(vit->second.cache_changes.front());
+                    // Notify if removed unacknowledged
+                    if (add && !is_acked)
+                    {
+                        unacknowledged_sample_removed_functor_(instance);
+                    }
                 }
             }
             else if (history_qos_.kind == KEEP_ALL_HISTORY_QOS)
