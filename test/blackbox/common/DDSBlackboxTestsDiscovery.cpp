@@ -92,11 +92,18 @@ TEST(DDSDiscovery, AddDiscoveryServerToList)
     using namespace eprosima::fastdds::dds;
     using namespace eprosima::fastrtps::rtps;
 
+    char* value = nullptr;
+    std::string W_UNICAST_PORT_RANDOM_NUMBER_STR;
+
     /* Get random port from the environment */
-    std::string value;
-    if (eprosima::ReturnCode_t::RETCODE_OK != SystemInfo::get_env("W_UNICAST_PORT_RANDOM_NUMBER", value))
+    value = std::getenv("W_UNICAST_PORT_RANDOM_NUMBER");
+    if (value != nullptr)
     {
-        value = std::string("11811");
+        W_UNICAST_PORT_RANDOM_NUMBER_STR = value;
+    }
+    else
+    {
+        W_UNICAST_PORT_RANDOM_NUMBER_STR = "11811";
     }
 
     /* Create first server */
@@ -115,7 +122,7 @@ TEST(DDSDiscovery, AddDiscoveryServerToList)
     // Generate server's listening locator
     Locator_t locator_server_1;
     IPLocator::setIPv4(locator_server_1, 127, 0, 0, 1);
-    uint32_t server_1_port = atol(value.c_str());
+    uint32_t server_1_port = stoi(W_UNICAST_PORT_RANDOM_NUMBER_STR);
     locator_server_1.port = server_1_port;
     server_1_qos.builtin.metatrafficUnicastLocatorList.push_back(locator_server_1);
     // Init server
@@ -133,7 +140,7 @@ TEST(DDSDiscovery, AddDiscoveryServerToList)
     // Generate server's listening locator
     Locator_t locator_server_2;
     IPLocator::setIPv4(locator_server_2, 127, 0, 0, 1);
-    uint32_t server_2_port = atol(value.c_str()) + 1;
+    uint32_t server_2_port = stoi(W_UNICAST_PORT_RANDOM_NUMBER_STR) + 1;
     locator_server_2.port = server_2_port;
     server_2_qos.builtin.metatrafficUnicastLocatorList.push_back(locator_server_2);
     // Init server

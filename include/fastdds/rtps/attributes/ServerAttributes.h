@@ -118,8 +118,8 @@ typedef std::list<RemoteServerAttributes> RemoteServerList_t;
 template<class charT>
 struct server_ostream_separators
 {
-    static const charT* list_separator;
-    static const charT* locator_separator;
+    RTPS_DllAPI static const charT* list_separator;
+    RTPS_DllAPI static const charT* locator_separator;
 };
 
 #ifndef _MSC_VER
