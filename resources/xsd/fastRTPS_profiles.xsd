@@ -112,14 +112,15 @@
             |   └ transport_id                  [1~*] [string],
             ├ useBuiltinTransports              [bool],
             ├ propertiesPolicy                  [0~1],
-            └ allocation                        [0~1]-->
+            ├ allocation                        [0~1],
+            └ prefix                            [0~1]-->
     <!-- TODO:  How to ensure that the userTransports identifiers exist in transport descriptors in the XML file? -->
     <xs:complexType name="participantProfileType">
         <xs:all>
             <xs:element name="rtps" minOccurs="0" maxOccurs="1">
                 <xs:complexType>
                     <xs:all>
-                        <xs:element name="name" type="string"/>
+                        <xs:element name="name" type="string" minOccurs="0" maxOccurs="1"/>
                         <xs:element name="defaultUnicastLocatorList" type="locatorListType" minOccurs="0" maxOccurs="1"/>
                         <xs:element name="defaultMulticastLocatorList" type="locatorListType" minOccurs="0" maxOccurs="1"/>
                         <xs:element name="default_external_unicast_locators" type="externalLocatorListType" minOccurs="0" maxOccurs="1"/>
@@ -146,6 +147,7 @@
                                 </xs:all>
                             </xs:complexType>
                         </xs:element>
+                        <xs:element name="prefix" type="prefixType" minOccurs="0" maxOccurs="1"/>
                     </xs:all>
                 </xs:complexType>
             </xs:element>
@@ -592,6 +594,11 @@
 
     <!--builtin Discovery Configuration:
         ├ discoveryProtocol         [string] ("SIMPLE", "CLIENT", "SERVER", "BACKUP", "NONE"),
+        ├ discoveryServersList      [0~1],
+        |   └ RemoteServer          [1],
+        |      |   ╚ att. prefix    [string] REQ,
+        |      ├ metatrafficUnicastLocatorList   [0~1],
+        |      └ metatrafficMulticastLocatorList [0~1],
         ├ ignoreParticipantFlags    [string] ("NO_FILTER", "FILTER_DIFFERENT_HOST", "FILTER_DIFFERENT_PROCESS", "FILTER_SAME_PROCESS", "FILTER_DIFFERENT_PROCESS | FILTER_SAME_PROCESS"),
         ├ EDP                       [string] ("SIMPLE", "STATIC"),
         ├ simpleEDP                 [0~1],
@@ -617,6 +624,21 @@
                         <xs:enumeration value="NONE"/>
                     </xs:restriction>
                 </xs:simpleType>
+            </xs:element>
+            <xs:element name="discoveryServersList" minOccurs="0" maxOccurs="1">
+                <xs:complexType>
+                    <xs:all>
+                        <xs:element name="RemoteServer" minOccurs="1" maxOccurs="1">
+                            <xs:complexType>
+                                <xs:all>
+                                    <xs:element name="metatrafficUnicastLocatorList" type="locatorListType" minOccurs="0" maxOccurs="1"/>
+                                    <xs:element name="metatrafficMulticastLocatorList" type="locatorListType" minOccurs="0" maxOccurs="1"/>
+                                </xs:all>
+                                <xs:attribute name="prefix" type="prefixType" use="required"/>
+                            </xs:complexType>
+                        </xs:element>
+                    </xs:all>
+                </xs:complexType>
             </xs:element>
             <xs:element name="ignoreParticipantFlags" minOccurs="0" maxOccurs="1">
                 <xs:simpleType>
@@ -1065,7 +1087,13 @@
         </xs:all>
     </xs:complexType>
 
-
+    <!--GUID Prefix Type:
+         (12 bytes prefix)-->
+    <xs:simpleType name="prefixType">
+        <xs:restriction base="xs:string">
+            <xs:pattern value="[0-9a-fA-F]{2}((\.[0-9a-fA-F]{2}){11})" />
+        </xs:restriction>
+    </xs:simpleType>
 
 
     <!--| LOCATOR TYPES DEFINITION |-->
@@ -1457,7 +1485,7 @@
         <xs:all>
             <xs:element name="name" type="string" minOccurs="1" maxOccurs="1"/>
             <xs:element name="value" type="string" minOccurs="1" maxOccurs="1"/>
-            <xs:element name="propagate" type="boolean" minOccurs="1" maxOccurs="1"/>
+            <xs:element name="propagate" type="boolean" minOccurs="0" maxOccurs="1"/>
         </xs:all>
     </xs:complexType>
 
