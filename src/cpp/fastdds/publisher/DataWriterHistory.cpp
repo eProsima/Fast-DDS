@@ -156,7 +156,7 @@ bool DataWriterHistory::prepare_change(
         {
             unacknowledged_sample_removed_functor_(instance);
         }
-        else if(!ret)
+        else if (!ret)
         {
             EPROSIMA_LOG_WARNING(RTPS_HISTORY,
                     "Attempting to add Data to Full WriterCache: " << topic_att_.getTopicDataType());
