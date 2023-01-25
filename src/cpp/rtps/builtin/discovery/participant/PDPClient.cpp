@@ -453,10 +453,15 @@ bool PDPClient::create_ds_pdp_reliable_endpoints(
             mp_RTPSParticipant->createSenderResources(it.metatrafficMulticastLocatorList);
             mp_RTPSParticipant->createSenderResources(it.metatrafficUnicastLocatorList);
 
-            if (!secure)
+            if (!mp_RTPSParticipant->is_secure())
             {
                 match_pdp_writer_nts_(it);
                 match_pdp_reader_nts_(it);
+            }
+            else if (mp_RTPSParticipant->is_secure() &&
+                    !mp_RTPSParticipant->security_attributes().is_discovery_protected)
+            {
+                endpoints.reader.reader_->enableMessagesFromUnkownWriters(true);
             }
         }
     }
@@ -495,7 +500,7 @@ void PDPClient::notifyAboveRemoteEndpoints(
         const ParticipantProxyData& pdata)
 {
 #if HAVE_SECURITY
-    if (should_protect_discovery())
+    if (mp_RTPSParticipant->is_secure())
     {
         eprosima::shared_lock<eprosima::shared_mutex> disc_lock(mp_builtin->getDiscoveryMutex());
 
@@ -748,7 +753,14 @@ void PDPClient::announceParticipantState(
                     for (auto& svr : mp_builtin->m_DiscoveryServers)
                     {
                         // if we are matched to a server report demise
-                        if (svr.proxy != nullptr)
+                        if (nullptr == svr.proxy)
+                        {
+                            //! try to retrieve the participant proxy data from an unmangled prefix in case
+                            //! we could not fill svr.proxy in assignRemoteEndpoints()
+                            svr.proxy = get_participant_proxy_data(svr.guidPrefix);
+                        }
+
+                        if (nullptr != svr.proxy)
                         {
                             //locators.push_back(svr.metatrafficMulticastLocatorList);
                             locators.push_back(svr.metatrafficUnicastLocatorList);

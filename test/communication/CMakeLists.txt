@@ -144,7 +144,8 @@ configure_file(${CMAKE_CURRENT_SOURCE_DIR}/secure_simple_ds_server_no_discovery_
     ${CMAKE_CURRENT_BINARY_DIR}/secure_simple_ds_server_no_discovery_no_rtps_protection.xml COPYONLY)
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/secure_simple_ds_server_no_discovery_protection.xml
     ${CMAKE_CURRENT_BINARY_DIR}/secure_simple_ds_server_no_discovery_protection.xml COPYONLY)
-    configure_file(${CMAKE_CURRENT_SOURCE_DIR}/secure_simple_ds_server_no_rtps_protection.xml    ${CMAKE_CURRENT_BINARY_DIR}/secure_simple_ds_server_no_rtps_protection.xml COPYONLY)
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/secure_simple_ds_server_no_rtps_protection.xml
+    ${CMAKE_CURRENT_BINARY_DIR}/secure_simple_ds_server_no_rtps_protection.xml COPYONLY)
 
 if(SECURITY)
     configure_file(${PROJECT_SOURCE_DIR}/test/certs/maincacert.pem
