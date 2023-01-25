@@ -453,16 +453,23 @@ bool PDPClient::create_ds_pdp_reliable_endpoints(
             mp_RTPSParticipant->createSenderResources(it.metatrafficMulticastLocatorList);
             mp_RTPSParticipant->createSenderResources(it.metatrafficUnicastLocatorList);
 
+#if HAVE_SECURITY
             if (!mp_RTPSParticipant->is_secure())
             {
                 match_pdp_writer_nts_(it);
                 match_pdp_reader_nts_(it);
             }
-            else if (mp_RTPSParticipant->is_secure() &&
-                    !mp_RTPSParticipant->security_attributes().is_discovery_protected)
+            else if (!should_protect_discovery())
             {
                 endpoints.reader.reader_->enableMessagesFromUnkownWriters(true);
             }
+#else
+            if (!secure)
+            {
+                match_pdp_writer_nts_(it);
+                match_pdp_reader_nts_(it);
+            }
+#endif // HAVE_SECURITY
         }
     }
 
