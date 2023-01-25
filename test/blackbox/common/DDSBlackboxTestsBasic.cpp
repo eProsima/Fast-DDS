@@ -183,7 +183,6 @@ TEST(DDSBasic, MultithreadedPublisherCreation)
     /* Clean up */
     ASSERT_EQ(ReturnCode_t::RETCODE_OK, factory->delete_participant(participant));
 }
-
 } // namespace dds
 } // namespace fastdds
 } // namespace eprosima
