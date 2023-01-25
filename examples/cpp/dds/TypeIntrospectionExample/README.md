@@ -1,4 +1,4 @@
-# Basic Configuration Example
+# Type Introspection Example
 
 This example shows two different features of Fast DDS related with Dynamic Types:
 
@@ -27,52 +27,40 @@ First argument is `publisher` or `subscriber` and then the rest of arguments are
 TODO refactor with this example arguments
 
 ```sh
-Usage: TypeIntrospectionExample <publisher|subscriber>
+Usage: TypeIntrospectionExample <publisher|subscriber> <-i|-o>
 
 General options:
-  -h              --help
-                    Produce help message.
+  -h                    --help
+                          Produce help message.
 
 Publisher options:
-  -t <topic_name> --topic=<topic_name>
-                    Topic name (Default: HelloWorldTopic).
-  -d <id>         --domain=<id>
-                    DDS domain ID (Default: 0).
-  -w <num>        --wait=<num>
-                    Number of matched subscribers required to publish (Default:
-                    0 => does not wait).
-  -s <num>        --samples=<num>
-                    Number of samples to send (Default: 0 => infinite samples).
-  -i <num>        --interval=<num>
-                    Time between samples in milliseconds (Default: 100).
-  -a              --async
-                    Asynchronous publish mode (synchronous by default).
-                  --transport=<shm|udp|udpv6>
-                    Use only shared-memory, UDPv4, or UDPv6 transport.If not
-                    set, use Fast DDS default transports (depending on the
-                    scenario it will use the most efficient one:  data-sharing
-                    delivery mechanism > shared-memory > UDP ).
+  -t <topic_name>       --topic=<topic_name>
+                          Topic name (Default: HelloWorldTopic).
+  -x <data_type_name>   --type=<data_type_name>
+                          Topic Data Type name (Default: hw).
+  -g <generator_name>   --generator=<gen|xml|code>
+                          Data Type Generator (Default: gen).
+  -d <id>               --domain=<id>
+                          DDS domain ID (Default: 0).
+  -s <num>              --samples=<num>
+                          Number of samples to send (Default: 0 => infinite samples).
+  -i                    --type-information
+                          Use Type Information to send Data Type Introspection info.
+  -o                    --type-object
+                          Use Type Object to send Data Type Introspection info.
 
 Subscriber options:
-  -t <topic_name> --topic=<topic_name>
-                    Topic name (Default: HelloWorldTopic).
-  -d <id>         --domain=<id>
-                    DDS domain ID (Default: 0).
-  -s <num>        --samples=<num>
-                    Number of samples to wait for (Default: 0 => infinite
-                    samples).
-                  --transport=<shm|udp|udpv6>
-                    Use only shared-memory, UDPv4, or UDPv6 transport.If not
-                    set, use Fast DDS default transports (depending on the
-                    scenario it will use the most efficient one:  data-sharing
-                    delivery mechanism > shared-memory > UDP ).
+  -t <topic_name>       --topic=<topic_name>
+                          Topic name (Default: HelloWorldTopic).
+  -d <id>               --domain=<id>
+                          DDS domain ID (Default: 0).
+  -s <num>              --samples=<num>
+                          Number of samples to wait for (Default: 0 => infinite samples).
+  -i                    --type-information
+                          Use Type Information to send Data Type Introspection info.
+  -o                    --type-object
+                          Use Type Object to send Data Type Introspection info.
 
-QoS options:
-  -r              --reliable
-                    Set reliability to reliable (best-effort by default).
-                  --transient
-                    Set durability to transient local (volatile by default,
-                    ineffective when not reliable).
 ```
 
 ### Publisher Data Type
@@ -84,7 +72,15 @@ be done.
 
 This Data Types are:
 
-TODO
+- hw: HelloWorld data type (one string and one integer).
+- array: Data type with an array (one uint and an array of size 3 integer).
+- seq: Data type with a sequence (one uint and a sequence of size 3 shorts).
+- struct: Complex data type with an internal struct (3 integers).
+- plain: HelloWorld struct (index and string) but string is an array of 20 chars, so data type is Plain.
+- key: Struct with an index, a keyed string value and 1 integer.
+- complex_array: Data type with an array of non-primitive objects.
+- complex_seq: Data type with a sequence of non-primitive objects.
+- super_complex: Complex data type composed of several of the other types at multiple levels.
 
 ### Subscriber Data Type
 
