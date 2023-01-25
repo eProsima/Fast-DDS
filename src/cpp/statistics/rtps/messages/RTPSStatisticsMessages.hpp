@@ -199,9 +199,6 @@ inline void set_statistics_submessage_from_transport(
         Time_t ts;
         Time_t::now(ts);
 
-
-        auto fraction = ts.fraction();
-
         /*
          * This set of memcpy blocks is intended to prevent an undefined behavior caused when casting from an octet* to a StatisticsSubmessageData*
          * since these classes have different alignment.
@@ -210,7 +207,7 @@ inline void set_statistics_submessage_from_transport(
         memcpy((char*)current_pos + offsetof(StatisticsSubmessageData, destination), &destination, sizeof(destination));
         memcpy((char*)current_pos + offsetof(StatisticsSubmessageData, ts.seconds), &ts.seconds(),
                 sizeof(StatisticsSubmessageData::ts.seconds));
-        memcpy((char*)current_pos + offsetof(StatisticsSubmessageData, ts.fraction), &fraction,
+        memcpy((char*)current_pos + offsetof(StatisticsSubmessageData, ts.fraction), &ts.fraction(),
                 sizeof(StatisticsSubmessageData::ts.fraction));
         memcpy((char*)current_pos + offsetof(StatisticsSubmessageData, seq.sequence), &sequence.sequence,
                 sizeof(sequence.sequence));
