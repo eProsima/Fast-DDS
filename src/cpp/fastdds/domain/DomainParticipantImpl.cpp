@@ -1465,7 +1465,7 @@ bool DomainParticipantImpl::register_dynamic_type_to_factories(
     {
         TypeObjectFactory* objectFactory = TypeObjectFactory::get_instance();
         DynamicTypeBuilderFactory* dynFactory = DynamicTypeBuilderFactory::get_instance();
-        const TypeIdentifier* id = objectFactory->get_type_identifier_trying_complete(dpst->getName());
+        // const TypeIdentifier* id = objectFactory->get_type_identifier_trying_complete(dpst->getName());
         // if (id == nullptr)
         if (true)
         {
@@ -1813,7 +1813,6 @@ bool DomainParticipantImpl::check_get_type_request(
         const fastrtps::types::TypeObject* object,
         fastrtps::types::DynamicType_ptr dyn_type)
 {
-    eprosima::fastrtps::types::TypeObjectFactory* factory = eprosima::fastrtps::types::TypeObjectFactory::get_instance();
     // Maybe we have a pending request?
     if (builtin::INVALID_SAMPLE_IDENTITY != requestId)
     {
@@ -1860,10 +1859,6 @@ bool DomainParticipantImpl::check_get_type_request(
                     }
                 }
             }
-            pending_names.push_back(name);
-            pending_identifiers.push_back(identifier);
-            pending_objects.push_back(object);
-            pending_requests.push_back(requestId);
             // Failed, cannot register the type yet, probably child request still pending.
             return false;
         }
@@ -1881,42 +1876,8 @@ bool DomainParticipantImpl::check_get_type_request(
             //     get_inner_type_name(requestId), identifier, object);
             remove_child_request(requestId);
         }
-        attempt_register_pending();
     }
     return false;
-}
-
-void DomainParticipantImpl::attempt_register_pending()
-{
-    std::vector<int> to_delete;
-    for (int i = 0; i < pending_names.size(); i++)
-    {
-        auto name = pending_names[i];
-        auto ident = pending_identifiers[i];
-        auto obj = pending_objects[i];
-        auto cb_it = register_callbacks_.find(pending_requests[i]);
-        const auto& callback = cb_it->second.second;
-
-        fastrtps::types::DynamicType_ptr dynamic = fastrtps::types::TypeObjectFactory::get_instance()->build_dynamic_type(name, ident, obj);
-        if (nullptr != dynamic)
-        {
-            if (register_dynamic_type(dynamic) == ReturnCode_t::RETCODE_OK)
-            {
-                callback(name, dynamic);
-                to_delete.push_back(i);
-            }
-        }
-    }
-
-    std::vector<int>::iterator it = to_delete.end();
-    while (it != to_delete.begin())
-    {
-        --it;
-        pending_names.erase(pending_names.begin() + *it);
-        pending_identifiers.erase(pending_identifiers.begin() + *it);
-        pending_objects.erase(pending_objects.begin() + *it);
-        pending_requests.erase(pending_requests.begin() + *it);
-    }
 }
 
 void DomainParticipantImpl::fill_pending_dependencies(
@@ -2140,7 +2101,7 @@ void DomainParticipantImpl::on_child_requests_finished(
         else
         {
             // Or a top-level request?
-            auto cb_it = register_callbacks_.find(parent);
+            // auto cb_it = register_callbacks_.find(parent);
             if (pending_requests_it->second.size() < 2)
             {
                 parent_requests_.erase(pending_requests_it);
