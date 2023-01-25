@@ -191,7 +191,7 @@ enum optionIndex
 
 const option::Descriptor usage[] = {
     { UNKNOWN_OPT, 0, "", "",                Arg::None,
-      "Usage: TypeIntrospectionExample <publisher|subscriber>\n\nGeneral options:" },
+      "Usage: TypeIntrospectionExample <publisher|subscriber> <-i|-o>\n\nGeneral options:" },
     { HELP,    0, "h", "help",               Arg::None,      "  -h \t--help  \tProduce help message." },
 
     { UNKNOWN_OPT, 0, "", "",                Arg::None,      "\nPublisher options:"},
