@@ -36,7 +36,7 @@ bool ChainingTransport::OpenInputChannel(
     if (iterator == receiver_resources_.end())
     {
         ChainingReceiverResource* receiver_resource = new ChainingReceiverResource(*this, receiver_interface);
-        receiver_resources_.emplace(loc, receiver_resource);
+        receiver_resources_.emplace(loc, ChainingReceiverResourceReferenceType(receiver_resource));
         return low_level_transport_->OpenInputChannel(loc, receiver_resource, max_message_size);
     }
 
