@@ -65,7 +65,7 @@ int main(
 
     long sleep = 1000; // This is not set by configuration
 
-    if (argc > 1)
+    if (argc > 2)
     {
         if (!strcmp(argv[1], "publisher"))
         {
@@ -212,7 +212,7 @@ int main(
     }
     else
     {
-        std::cerr << "ERROR: <publisher|subscriber> argument is required." << std::endl;
+        std::cerr << "ERROR: <publisher|subscriber> <-i|-o> arguments are required." << std::endl;
         option::printUsage(fwrite, stdout, usage, columns);
         return 1;
     }
