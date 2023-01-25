@@ -767,13 +767,6 @@ protected:
     std::string get_inner_type_name(
             const fastrtps::rtps::SampleIdentity& id) const;
 
-    void attempt_register_pending();
-
-    std::vector<std::string> pending_names;
-    std::vector<const fastrtps::types::TypeIdentifier*> pending_identifiers;
-    std::vector<const fastrtps::types::TypeObject*> pending_objects;
-    std::vector<fastrtps::rtps::SampleIdentity> pending_requests;
-
     IContentFilterFactory* find_content_filter_factory(
             const char* filter_class_name);
 
