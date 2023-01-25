@@ -604,9 +604,9 @@
         ├ initialAnnouncements      [0~1],
         |   ├ count                 [uint32],
         |   └ period                [durationType],
-        └ staticEndpointXMLFilename [0~1] [string] -->
+        └ static_edp_xml_config [0~1] [string] -->
     <!-- TODO:  How to ensure that simpleEDP is defined only when EDP is set as "SIMPLE"?
-                How to ensure that staticEndpointXMLFilename is defined only when EDP is set as "STATIC"? -->
+                How to ensure that static_edp_xml_config is defined only when EDP is set as "STATIC"? -->
     <xs:complexType name="discoverySettingsType">
         <xs:all minOccurs="0">
             <xs:element name="discoveryProtocol" minOccurs="0" maxOccurs="1">
@@ -668,7 +668,7 @@
                     </xs:all>
                 </xs:complexType>
             </xs:element>
-            <xs:element name="staticEndpointXMLFilename" type="string" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="static_edp_xml_config" type="string" minOccurs="0" maxOccurs="1"/>
         </xs:all>
     </xs:complexType>
 
