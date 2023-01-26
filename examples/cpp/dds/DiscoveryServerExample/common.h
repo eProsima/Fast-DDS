@@ -26,9 +26,7 @@
 enum class TransportKind
 {
     UDPv4,
-    TCPv4,
     UDPv6,
-    TCPv6,
     SHM,
 };
 
@@ -54,7 +52,7 @@ inline std::string get_ip_from_dns(const std::string& domain_name, TransportKind
     std::pair<std::set<std::string>, std::set<std::string>> dns_response =
             eprosima::fastrtps::rtps::IPLocator::resolveNameDNS(domain_name);
 
-    if (kind == TransportKind::UDPv4 || kind == TransportKind::TCPv4)
+    if (kind == TransportKind::UDPv4)
     {
         if (dns_response.first.empty())
         {
@@ -68,7 +66,7 @@ inline std::string get_ip_from_dns(const std::string& domain_name, TransportKind
             return solution;
         }
     }
-    else if (kind == TransportKind::UDPv6 || kind == TransportKind::TCPv6)
+    else if (kind == TransportKind::UDPv6)
     {
         if (dns_response.second.empty())
         {

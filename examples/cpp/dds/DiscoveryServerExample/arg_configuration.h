@@ -138,8 +138,6 @@ struct Arg : public option::Arg
             // we must check if it is a correct ip address plus port number
             std::string transport = std::string(option.arg);
             if (
-                    // transport == "tcpv4" ||
-                    // transport == "tcpv6" ||
                     // transport == "shm" ||
                     transport == "udpv4" ||
                     transport == "udpv6"

@@ -169,17 +169,9 @@ int main(
                     {
                         transport = TransportKind::UDPv4;
                     }
-                    else if (transport_str == "tcpv4")
-                    {
-                        transport = TransportKind::TCPv4;
-                    }
                     else if (transport_str == "udpv6")
                     {
                         transport = TransportKind::UDPv6;
-                    }
-                    else if (transport_str == "tcpv6")
-                    {
-                        transport = TransportKind::TCPv6;
                     }
                     else if (transport_str == "shm")
                     {
@@ -187,7 +179,7 @@ int main(
                     }
                     else
                     {
-                        print_warning("udpv4|tcpv4|udpv6|tcpv6|shm", opt.name);
+                        print_warning("udpv4|udpv6|shm", opt.name);
                     }
 
                     break;

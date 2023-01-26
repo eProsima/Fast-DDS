@@ -32,8 +32,6 @@ Publisher options:
                   --connection-address=<IPaddress[:port number]>
                     Server address (Default address: 127.0.0.1, default port:
                     60006).
-                  --tcp
-                    Use TCP transport (UDP by default).
 
 Subscriber options:
   -t <topic_name> --topic=<topic_name>
@@ -44,13 +42,9 @@ Subscriber options:
                   --connection-address=<IPaddress[:port number]>
                     Server address (Default address: 127.0.0.1, default port:
                     60006).
-                  --tcp
-                    Use TCP transport (UDP by default).
 
 DiscoveryServer options:
                   --listening-address=<IPaddress[:port number]>
                     Server address (Default address: 127.0.0.1, default port:
                     60006).
-                  --tcp
-                    Use TCP transport (UDP by default).
 ```
