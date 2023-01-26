@@ -519,15 +519,11 @@ public:
     //!Participant ID
     int32_t participantID;
 
-<<<<<<< HEAD
-    //!Throughput controller parameters. Leave default for uncontrolled flow.
-=======
     /**
      * @brief Throughput controller parameters. Leave default for uncontrolled flow.
      *
      * @deprecated Use flow_controllers on RTPSParticipantAttributes
      */
->>>>>>> d34a07640 (Doxygen documentation: add deprecation notice to ThroughputControllerDescriptor (#3165))
     ThroughputControllerDescriptor throughputController;
 
     //!User defined transports to use alongside or in place of builtins.

@@ -2696,15 +2696,11 @@ public:
     //!Port Parameters
     fastrtps::rtps::PortParameters port;
 
-<<<<<<< HEAD
-    //!Throughput controller parameters. Leave default for uncontrolled flow.
-=======
     /**
      * @brief Throughput controller parameters. Leave default for uncontrolled flow.
      *
      * @deprecated Use flow_controllers() on DomainParticipantQoS
      */
->>>>>>> d34a07640 (Doxygen documentation: add deprecation notice to ThroughputControllerDescriptor (#3165))
     fastrtps::rtps::ThroughputControllerDescriptor throughput_controller;
 
     /**
