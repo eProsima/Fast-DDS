@@ -49,16 +49,16 @@ enum class GeneratorKind
     CODE
 };
 
-constexpr const char * HELLO_WORLD_DATA_TYPE_NAME = "HelloWorld_TypeIntrospectionExample";
-constexpr const char * ARRAY_DATA_TYPE_NAME = "Array_TypeIntrospectionExample";
-constexpr const char * SEQUENCE_DATA_TYPE_NAME = "Sequence_TypeIntrospectionExample";
-constexpr const char * STRUCT_DATA_TYPE_NAME = "Struct_TypeIntrospectionExample";
-constexpr const char * PLAIN_DATA_TYPE_NAME = "Plain_TypeIntrospectionExample";
-constexpr const char * SIMPLELARGE_DATA_TYPE_NAME = "SimpleLarge_TypeIntrospectionExample";
-constexpr const char * KEY_DATA_TYPE_NAME = "Key_TypeIntrospectionExample";
-constexpr const char * COMPLEX_ARRAY_DATA_TYPE_NAME = "ComplexArray_TypeIntrospectionExample";
-constexpr const char * COMPLEX_SEQUENCE_DATA_TYPE_NAME = "ComplexSequence_TypeIntrospectionExample";
-constexpr const char * SUPER_COMPLEX_DATA_TYPE_NAME = "SuperComplex_TypeIntrospectionExample";
+constexpr const char* HELLO_WORLD_DATA_TYPE_NAME = "HelloWorld_TypeIntrospectionExample";
+constexpr const char* ARRAY_DATA_TYPE_NAME = "Array_TypeIntrospectionExample";
+constexpr const char* SEQUENCE_DATA_TYPE_NAME = "Sequence_TypeIntrospectionExample";
+constexpr const char* STRUCT_DATA_TYPE_NAME = "Struct_TypeIntrospectionExample";
+constexpr const char* PLAIN_DATA_TYPE_NAME = "Plain_TypeIntrospectionExample";
+constexpr const char* SIMPLELARGE_DATA_TYPE_NAME = "SimpleLarge_TypeIntrospectionExample";
+constexpr const char* KEY_DATA_TYPE_NAME = "Key_TypeIntrospectionExample";
+constexpr const char* COMPLEX_ARRAY_DATA_TYPE_NAME = "ComplexArray_TypeIntrospectionExample";
+constexpr const char* COMPLEX_SEQUENCE_DATA_TYPE_NAME = "ComplexSequence_TypeIntrospectionExample";
+constexpr const char* SUPER_COMPLEX_DATA_TYPE_NAME = "SuperComplex_TypeIntrospectionExample";
 
 class IDataType
 {
@@ -117,7 +117,7 @@ bool is_basic_kind(
         const eprosima::fastrtps::types::TypeKind kind);
 
 eprosima::fastrtps::types::DynamicType_ptr internal_array_type(
-    const eprosima::fastrtps::types::DynamicType_ptr& type);
+        const eprosima::fastrtps::types::DynamicType_ptr& type);
 
 ///////////////////////////////////////////
 // Serialization operators

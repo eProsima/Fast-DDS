@@ -49,7 +49,7 @@ eprosima::fastrtps::types::DynamicData_ptr get_data_by_type<DataTypeKind::PLAIN>
         char_array->set_char8_value(c, i++);
     }
 
-    for (;i < 20; i++)
+    for (; i < 20; i++)
     {
         char_array->set_char8_value('_', i);
     }

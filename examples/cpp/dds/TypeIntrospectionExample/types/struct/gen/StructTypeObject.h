@@ -31,10 +31,10 @@
 #define eProsima_user_DllExport __declspec( dllexport )
 #else
 #define eProsima_user_DllExport
-#endif
+#endif // if defined(EPROSIMA_USER_DLL_EXPORT)
 #else
 #define eProsima_user_DllExport
-#endif
+#endif // if defined(_WIN32)
 
 #if defined(_WIN32)
 #if defined(EPROSIMA_USER_DLL_EXPORT)
@@ -45,7 +45,7 @@
 #endif // Struct_SOURCE
 #else
 #define Struct_DllAPI
-#endif
+#endif // if defined(EPROSIMA_USER_DLL_EXPORT)
 #else
 #define Struct_DllAPI
 #endif // _WIN32
@@ -54,13 +54,17 @@ using namespace eprosima::fastrtps::types;
 
 eProsima_user_DllExport void registerStructTypes();
 
-eProsima_user_DllExport const TypeIdentifier* GetInternalStruct_TypeIntrospectionExampleIdentifier(bool complete = false);
-eProsima_user_DllExport const TypeObject* GetInternalStruct_TypeIntrospectionExampleObject(bool complete = false);
+eProsima_user_DllExport const TypeIdentifier* GetInternalStruct_TypeIntrospectionExampleIdentifier(
+        bool complete = false);
+eProsima_user_DllExport const TypeObject* GetInternalStruct_TypeIntrospectionExampleObject(
+        bool complete = false);
 eProsima_user_DllExport const TypeObject* GetMinimalInternalStruct_TypeIntrospectionExampleObject();
 eProsima_user_DllExport const TypeObject* GetCompleteInternalStruct_TypeIntrospectionExampleObject();
 
-eProsima_user_DllExport const TypeIdentifier* GetStruct_TypeIntrospectionExampleIdentifier(bool complete = false);
-eProsima_user_DllExport const TypeObject* GetStruct_TypeIntrospectionExampleObject(bool complete = false);
+eProsima_user_DllExport const TypeIdentifier* GetStruct_TypeIntrospectionExampleIdentifier(
+        bool complete = false);
+eProsima_user_DllExport const TypeObject* GetStruct_TypeIntrospectionExampleObject(
+        bool complete = false);
 eProsima_user_DllExport const TypeObject* GetMinimalStruct_TypeIntrospectionExampleObject();
 eProsima_user_DllExport const TypeObject* GetCompleteStruct_TypeIntrospectionExampleObject();
 

@@ -203,11 +203,11 @@ void TypeIntrospectionSubscriber::on_data_available(
 }
 
 void TypeIntrospectionSubscriber::on_type_discovery(
-        eprosima::fastdds::dds::DomainParticipant* ,
-        const eprosima::fastrtps::rtps::SampleIdentity& ,
+        eprosima::fastdds::dds::DomainParticipant*,
+        const eprosima::fastrtps::rtps::SampleIdentity&,
         const eprosima::fastrtps::string_255& topic,
-        const eprosima::fastrtps::types::TypeIdentifier* ,
-        const eprosima::fastrtps::types::TypeObject* ,
+        const eprosima::fastrtps::types::TypeIdentifier*,
+        const eprosima::fastrtps::types::TypeObject*,
         eprosima::fastrtps::types::DynamicType_ptr dyn_type)
 {
     if (use_type_object_)
@@ -270,7 +270,7 @@ void TypeIntrospectionSubscriber::on_type_information_received(
 
         std::function<void(const std::string&, const eprosima::fastrtps::types::DynamicType_ptr)> callback(
             [this]
-            (const std::string& , const eprosima::fastrtps::types::DynamicType_ptr type)
+                (const std::string&, const eprosima::fastrtps::types::DynamicType_ptr type)
             {
                 this->on_type_discovered_and_registered_(type);
             });
@@ -298,7 +298,7 @@ void TypeIntrospectionSubscriber::run(
 
     // WAIT FOR TYPE DISCOVERY
     std::cout << "Subscriber waiting to discover type for topic < " << topic_name_
-        << " > . Please press CTRL+C to stop the Subscriber." << std::endl;
+              << " > . Please press CTRL+C to stop the Subscriber." << std::endl;
 
     // Wait for type discovered
     {
@@ -356,9 +356,9 @@ void TypeIntrospectionSubscriber::on_type_discovered_and_registered_(
 
     // Create topic
     topic_ = participant_->create_topic(
-            topic_name_,
-            type->get_name(),
-            TOPIC_QOS_DEFAULT);
+        topic_name_,
+        type->get_name(),
+        TOPIC_QOS_DEFAULT);
 
     if (topic_ == nullptr)
     {
@@ -367,9 +367,9 @@ void TypeIntrospectionSubscriber::on_type_discovered_and_registered_(
 
     // Create DataReader
     reader_ = subscriber_->create_datareader(
-            topic_,
-            DATAREADER_QOS_DEFAULT,
-            this);
+        topic_,
+        DATAREADER_QOS_DEFAULT,
+        this);
 
     std::cout <<
         "Participant < " << participant_->guid() <<

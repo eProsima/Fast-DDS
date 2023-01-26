@@ -99,7 +99,8 @@ protected:
      * This method creates each time a variable of type \c data_type_ , initializes it
      * depending on the \c msg_index and publishes it.
      */
-    void publish(unsigned int msg_index);
+    void publish(
+            unsigned int msg_index);
 
     //! Run thread for number samples, publish every sleep seconds
     void runThread(

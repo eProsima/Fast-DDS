@@ -248,7 +248,8 @@ void TypeIntrospectionPublisher::run(
     thread.join();
 }
 
-void TypeIntrospectionPublisher::publish(unsigned int msg_index)
+void TypeIntrospectionPublisher::publish(
+        unsigned int msg_index)
 {
     // Get data depending on data_type
     auto dyn_data_ = data_type_->get_data(msg_index);

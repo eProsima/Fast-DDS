@@ -28,7 +28,7 @@ using namespace eprosima::fastrtps;
 
 template <>
 eprosima::fastrtps::types::DynamicType_ptr
-    DataType<DataTypeKind::COMPLEX_SEQUENCE, GeneratorKind::CODE>::generate_type_() const
+DataType<DataTypeKind::COMPLEX_SEQUENCE, GeneratorKind::CODE>::generate_type_() const
 {
     return eprosima::fastrtps::types::DynamicType_ptr();
 }
