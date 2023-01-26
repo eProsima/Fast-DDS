@@ -31,10 +31,10 @@
 #define eProsima_user_DllExport __declspec( dllexport )
 #else
 #define eProsima_user_DllExport
-#endif
+#endif // if defined(EPROSIMA_USER_DLL_EXPORT)
 #else
 #define eProsima_user_DllExport
-#endif
+#endif // if defined(_WIN32)
 
 #if defined(_WIN32)
 #if defined(EPROSIMA_USER_DLL_EXPORT)
@@ -45,7 +45,7 @@
 #endif // SuperComplex_SOURCE
 #else
 #define SuperComplex_DllAPI
-#endif
+#endif // if defined(EPROSIMA_USER_DLL_EXPORT)
 #else
 #define SuperComplex_DllAPI
 #endif // _WIN32
@@ -54,28 +54,38 @@ using namespace eprosima::fastrtps::types;
 
 eProsima_user_DllExport void registerSuperComplexTypes();
 
-eProsima_user_DllExport const TypeIdentifier* GetInternalTimestamp_TypeIntrospectionExampleIdentifier(bool complete = false);
-eProsima_user_DllExport const TypeObject* GetInternalTimestamp_TypeIntrospectionExampleObject(bool complete = false);
+eProsima_user_DllExport const TypeIdentifier* GetInternalTimestamp_TypeIntrospectionExampleIdentifier(
+        bool complete = false);
+eProsima_user_DllExport const TypeObject* GetInternalTimestamp_TypeIntrospectionExampleObject(
+        bool complete = false);
 eProsima_user_DllExport const TypeObject* GetMinimalInternalTimestamp_TypeIntrospectionExampleObject();
 eProsima_user_DllExport const TypeObject* GetCompleteInternalTimestamp_TypeIntrospectionExampleObject();
 
-eProsima_user_DllExport const TypeIdentifier* GetInternalPoints_TypeIntrospectionExampleIdentifier(bool complete = false);
-eProsima_user_DllExport const TypeObject* GetInternalPoints_TypeIntrospectionExampleObject(bool complete = false);
+eProsima_user_DllExport const TypeIdentifier* GetInternalPoints_TypeIntrospectionExampleIdentifier(
+        bool complete = false);
+eProsima_user_DllExport const TypeObject* GetInternalPoints_TypeIntrospectionExampleObject(
+        bool complete = false);
 eProsima_user_DllExport const TypeObject* GetMinimalInternalPoints_TypeIntrospectionExampleObject();
 eProsima_user_DllExport const TypeObject* GetCompleteInternalPoints_TypeIntrospectionExampleObject();
 
-eProsima_user_DllExport const TypeIdentifier* GetInternalMsgDescriptor_TypeIntrospectionExampleIdentifier(bool complete = false);
-eProsima_user_DllExport const TypeObject* GetInternalMsgDescriptor_TypeIntrospectionExampleObject(bool complete = false);
+eProsima_user_DllExport const TypeIdentifier* GetInternalMsgDescriptor_TypeIntrospectionExampleIdentifier(
+        bool complete = false);
+eProsima_user_DllExport const TypeObject* GetInternalMsgDescriptor_TypeIntrospectionExampleObject(
+        bool complete = false);
 eProsima_user_DllExport const TypeObject* GetMinimalInternalMsgDescriptor_TypeIntrospectionExampleObject();
 eProsima_user_DllExport const TypeObject* GetCompleteInternalMsgDescriptor_TypeIntrospectionExampleObject();
 
-eProsima_user_DllExport const TypeIdentifier* GetInternalMessage_TypeIntrospectionExampleIdentifier(bool complete = false);
-eProsima_user_DllExport const TypeObject* GetInternalMessage_TypeIntrospectionExampleObject(bool complete = false);
+eProsima_user_DllExport const TypeIdentifier* GetInternalMessage_TypeIntrospectionExampleIdentifier(
+        bool complete = false);
+eProsima_user_DllExport const TypeObject* GetInternalMessage_TypeIntrospectionExampleObject(
+        bool complete = false);
 eProsima_user_DllExport const TypeObject* GetMinimalInternalMessage_TypeIntrospectionExampleObject();
 eProsima_user_DllExport const TypeObject* GetCompleteInternalMessage_TypeIntrospectionExampleObject();
 
-eProsima_user_DllExport const TypeIdentifier* GetSuperComplex_TypeIntrospectionExampleIdentifier(bool complete = false);
-eProsima_user_DllExport const TypeObject* GetSuperComplex_TypeIntrospectionExampleObject(bool complete = false);
+eProsima_user_DllExport const TypeIdentifier* GetSuperComplex_TypeIntrospectionExampleIdentifier(
+        bool complete = false);
+eProsima_user_DllExport const TypeObject* GetSuperComplex_TypeIntrospectionExampleObject(
+        bool complete = false);
 eProsima_user_DllExport const TypeObject* GetMinimalSuperComplex_TypeIntrospectionExampleObject();
 eProsima_user_DllExport const TypeObject* GetCompleteSuperComplex_TypeIntrospectionExampleObject();
 

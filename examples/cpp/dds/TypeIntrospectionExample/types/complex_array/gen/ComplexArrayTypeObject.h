@@ -31,10 +31,10 @@
 #define eProsima_user_DllExport __declspec( dllexport )
 #else
 #define eProsima_user_DllExport
-#endif
+#endif // if defined(EPROSIMA_USER_DLL_EXPORT)
 #else
 #define eProsima_user_DllExport
-#endif
+#endif // if defined(_WIN32)
 
 #if defined(_WIN32)
 #if defined(EPROSIMA_USER_DLL_EXPORT)
@@ -45,7 +45,7 @@
 #endif // ComplexArray_SOURCE
 #else
 #define ComplexArray_DllAPI
-#endif
+#endif // if defined(EPROSIMA_USER_DLL_EXPORT)
 #else
 #define ComplexArray_DllAPI
 #endif // _WIN32
@@ -54,18 +54,24 @@ using namespace eprosima::fastrtps::types;
 
 eProsima_user_DllExport void registerComplexArrayTypes();
 
-eProsima_user_DllExport const TypeIdentifier* GetInternalArrayPoints_TypeIntrospectionExampleIdentifier(bool complete = false);
-eProsima_user_DllExport const TypeObject* GetInternalArrayPoints_TypeIntrospectionExampleObject(bool complete = false);
+eProsima_user_DllExport const TypeIdentifier* GetInternalArrayPoints_TypeIntrospectionExampleIdentifier(
+        bool complete = false);
+eProsima_user_DllExport const TypeObject* GetInternalArrayPoints_TypeIntrospectionExampleObject(
+        bool complete = false);
 eProsima_user_DllExport const TypeObject* GetMinimalInternalArrayPoints_TypeIntrospectionExampleObject();
 eProsima_user_DllExport const TypeObject* GetCompleteInternalArrayPoints_TypeIntrospectionExampleObject();
 
-eProsima_user_DllExport const TypeIdentifier* GetInternalArrayMessage_TypeIntrospectionExampleIdentifier(bool complete = false);
-eProsima_user_DllExport const TypeObject* GetInternalArrayMessage_TypeIntrospectionExampleObject(bool complete = false);
+eProsima_user_DllExport const TypeIdentifier* GetInternalArrayMessage_TypeIntrospectionExampleIdentifier(
+        bool complete = false);
+eProsima_user_DllExport const TypeObject* GetInternalArrayMessage_TypeIntrospectionExampleObject(
+        bool complete = false);
 eProsima_user_DllExport const TypeObject* GetMinimalInternalArrayMessage_TypeIntrospectionExampleObject();
 eProsima_user_DllExport const TypeObject* GetCompleteInternalArrayMessage_TypeIntrospectionExampleObject();
 
-eProsima_user_DllExport const TypeIdentifier* GetComplexArray_TypeIntrospectionExampleIdentifier(bool complete = false);
-eProsima_user_DllExport const TypeObject* GetComplexArray_TypeIntrospectionExampleObject(bool complete = false);
+eProsima_user_DllExport const TypeIdentifier* GetComplexArray_TypeIntrospectionExampleIdentifier(
+        bool complete = false);
+eProsima_user_DllExport const TypeObject* GetComplexArray_TypeIntrospectionExampleObject(
+        bool complete = false);
 eProsima_user_DllExport const TypeObject* GetMinimalComplexArray_TypeIntrospectionExampleObject();
 eProsima_user_DllExport const TypeObject* GetCompleteComplexArray_TypeIntrospectionExampleObject();
 

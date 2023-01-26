@@ -124,19 +124,20 @@ struct Arg : public option::Arg
         {
             std::string data_type = std::string(option.arg);
             if (data_type != HELLO_WORLD_DATA_TYPE_ARG &&
-                data_type != ARRAY_DATA_TYPE_ARG &&
-                data_type != SEQUENCE_DATA_TYPE_ARG &&
-                data_type != STRUCT_DATA_TYPE_ARG &&
-                data_type != PLAIN_DATA_TYPE_ARG &&
-                data_type != SIMPLELARGE_DATA_TYPE_ARG &&
-                data_type != KEY_DATA_TYPE_ARG &&
-                data_type != COMPLEX_ARRAY_DATA_TYPE_ARG &&
-                data_type != COMPLEX_SEQUENCE_DATA_TYPE_ARG &&
-                data_type != SUPER_COMPLEX_DATA_TYPE_ARG)
+                    data_type != ARRAY_DATA_TYPE_ARG &&
+                    data_type != SEQUENCE_DATA_TYPE_ARG &&
+                    data_type != STRUCT_DATA_TYPE_ARG &&
+                    data_type != PLAIN_DATA_TYPE_ARG &&
+                    data_type != SIMPLELARGE_DATA_TYPE_ARG &&
+                    data_type != KEY_DATA_TYPE_ARG &&
+                    data_type != COMPLEX_ARRAY_DATA_TYPE_ARG &&
+                    data_type != COMPLEX_SEQUENCE_DATA_TYPE_ARG &&
+                    data_type != SUPER_COMPLEX_DATA_TYPE_ARG)
             {
                 if (msg)
                 {
-                    print_error("Option '", option, "' only accepts <hw|array|seq|struct|plain|simple|key|complex_array|complex_seq|super_complex> values\n");
+                    print_error("Option '", option,
+                            "' only accepts <hw|array|seq|struct|plain|simple|key|complex_array|complex_seq|super_complex> values\n");
                 }
                 return option::ARG_ILLEGAL;
             }
@@ -157,8 +158,8 @@ struct Arg : public option::Arg
         {
             std::string data_type = std::string(option.arg);
             if (data_type != GENERATOR_DATA_TYPE_GEN_ARG &&
-                data_type != GENERATOR_DATA_TYPE_CODE_ARG &&
-                data_type != GENERATOR_DATA_TYPE_XML_ARG)
+                    data_type != GENERATOR_DATA_TYPE_CODE_ARG &&
+                    data_type != GENERATOR_DATA_TYPE_XML_ARG)
             {
                 if (msg)
                 {
@@ -174,6 +175,7 @@ struct Arg : public option::Arg
         }
         return option::ARG_ILLEGAL;
     }
+
 };
 
 enum optionIndex

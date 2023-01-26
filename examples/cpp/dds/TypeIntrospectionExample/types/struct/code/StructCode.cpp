@@ -28,16 +28,16 @@ using namespace eprosima::fastrtps;
 
 template <>
 eprosima::fastrtps::types::DynamicType_ptr
-    DataType<DataTypeKind::STRUCT , GeneratorKind::CODE>::generate_type_() const
+DataType<DataTypeKind::STRUCT, GeneratorKind::CODE>::generate_type_() const
 {
     // Tmp variable to avoid calling get_instance many times
-    types::DynamicTypeBuilderFactory *builder_factory =
-        types::DynamicTypeBuilderFactory::get_instance();
+    types::DynamicTypeBuilderFactory* builder_factory =
+            types::DynamicTypeBuilderFactory::get_instance();
 
     /////
     // Internal data structure
     types::DynamicTypeBuilder_ptr internal_builder =
-        types::DynamicTypeBuilderFactory::get_instance()->create_struct_builder();
+            types::DynamicTypeBuilderFactory::get_instance()->create_struct_builder();
     internal_builder->add_member(0, "x_member", types::DynamicTypeBuilderFactory::get_instance()->create_int32_type());
     internal_builder->add_member(1, "y_member", types::DynamicTypeBuilderFactory::get_instance()->create_int32_type());
     internal_builder->add_member(2, "z_member", types::DynamicTypeBuilderFactory::get_instance()->create_int32_type());

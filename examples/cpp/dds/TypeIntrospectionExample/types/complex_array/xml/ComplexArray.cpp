@@ -29,14 +29,14 @@ using namespace eprosima::fastrtps;
 
 template <>
 eprosima::fastrtps::types::DynamicType_ptr
-    DataType<DataTypeKind::COMPLEX_ARRAY , GeneratorKind::XML>::generate_type_() const
+DataType<DataTypeKind::COMPLEX_ARRAY, GeneratorKind::XML>::generate_type_() const
 {
 
     if (eprosima::fastrtps::xmlparser::XMLP_ret::XML_OK !=
-        eprosima::fastrtps::xmlparser::XMLProfileManager::loadXMLFile(xml()))
+            eprosima::fastrtps::xmlparser::XMLProfileManager::loadXMLFile(xml()))
     {
         throw std::ios_base::failure(
-            "Cannot open XML file. Please, run the publisher from the folder that contains this XML file.");
+                  "Cannot open XML file. Please, run the publisher from the folder that contains this XML file.");
     }
 
     // Create Dynamic data

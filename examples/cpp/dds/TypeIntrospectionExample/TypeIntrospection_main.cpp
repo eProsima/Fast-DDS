@@ -227,7 +227,7 @@ int main(
             "ERROR: type-object and type-information argument are disabled. " <<
             "Subscriber will not be able to receive Data Type and read messages." <<
             std::endl;
-            return 1;
+        return 1;
     }
 
     if (use_type_information && use_type_object)
@@ -236,7 +236,7 @@ int main(
             "ERROR: type-object and type-information argument are activated. " <<
             "Subscriber will not be able to receive Data Type and read messages." <<
             std::endl;
-            return 1;
+        return 1;
     }
 
     try
@@ -275,7 +275,7 @@ int main(
             }
         }
     }
-    catch(const std::exception& e)
+    catch (const std::exception& e)
     {
         std::cerr << "Execution failed with error:\n " << e.what() << std::endl;
     }

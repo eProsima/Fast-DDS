@@ -31,10 +31,10 @@
 #define eProsima_user_DllExport __declspec( dllexport )
 #else
 #define eProsima_user_DllExport
-#endif
+#endif // if defined(EPROSIMA_USER_DLL_EXPORT)
 #else
 #define eProsima_user_DllExport
-#endif
+#endif // if defined(_WIN32)
 
 #if defined(_WIN32)
 #if defined(EPROSIMA_USER_DLL_EXPORT)
@@ -45,7 +45,7 @@
 #endif // Plain_SOURCE
 #else
 #define Plain_DllAPI
-#endif
+#endif // if defined(EPROSIMA_USER_DLL_EXPORT)
 #else
 #define Plain_DllAPI
 #endif // _WIN32
@@ -54,8 +54,10 @@ using namespace eprosima::fastrtps::types;
 
 eProsima_user_DllExport void registerPlainTypes();
 
-eProsima_user_DllExport const TypeIdentifier* GetPlain_TypeIntrospectionExampleIdentifier(bool complete = false);
-eProsima_user_DllExport const TypeObject* GetPlain_TypeIntrospectionExampleObject(bool complete = false);
+eProsima_user_DllExport const TypeIdentifier* GetPlain_TypeIntrospectionExampleIdentifier(
+        bool complete = false);
+eProsima_user_DllExport const TypeObject* GetPlain_TypeIntrospectionExampleObject(
+        bool complete = false);
 eProsima_user_DllExport const TypeObject* GetMinimalPlain_TypeIntrospectionExampleObject();
 eProsima_user_DllExport const TypeObject* GetCompletePlain_TypeIntrospectionExampleObject();
 

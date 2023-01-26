@@ -42,7 +42,8 @@ eprosima::fastrtps::types::DynamicData_ptr get_data_by_type<DataTypeKind::COMPLE
 
     // Get points sequence
     eprosima::fastrtps::types::DynamicData* sequence = new_data->loan_value(1);
-    eprosima::fastrtps::types::DynamicType_ptr seq_elem_type = sequence->get_type()->get_descriptor()->get_element_type();
+    eprosima::fastrtps::types::DynamicType_ptr seq_elem_type =
+            sequence->get_type()->get_descriptor()->get_element_type();
 
     // Set sequence element 1
     eprosima::fastrtps::types::DynamicData_ptr seq_elem;
@@ -77,7 +78,7 @@ eprosima::fastrtps::types::DynamicData_ptr get_data_by_type<DataTypeKind::COMPLE
     sequence = new_data->loan_value(2);
     seq_elem_type = sequence->get_type()->get_descriptor()->get_element_type();
     eprosima::fastrtps::types::MemberId id;
-    for (int i=0; i<2; i++)
+    for (int i = 0; i < 2; i++)
     {
         // Message
         seq_elem = eprosima::fastrtps::types::DynamicDataFactory::get_instance()->create_data(seq_elem_type);

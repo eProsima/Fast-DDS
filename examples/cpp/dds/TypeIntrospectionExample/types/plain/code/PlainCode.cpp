@@ -28,18 +28,18 @@ using namespace eprosima::fastrtps;
 
 template <>
 eprosima::fastrtps::types::DynamicType_ptr
-    DataType<DataTypeKind::PLAIN , GeneratorKind::CODE>::generate_type_() const
+DataType<DataTypeKind::PLAIN, GeneratorKind::CODE>::generate_type_() const
 {
     // Tmp variable to avoid calling get_instance many times
-    types::DynamicTypeBuilderFactory *builder_factory =
-        types::DynamicTypeBuilderFactory::get_instance();
+    types::DynamicTypeBuilderFactory* builder_factory =
+            types::DynamicTypeBuilderFactory::get_instance();
 
     /////
     // Array internal data structure
     types::DynamicTypeBuilder_ptr array_builder =
-        types::DynamicTypeBuilderFactory::get_instance()->create_array_builder(
-            builder_factory->create_char8_type(),
-            {20});
+            types::DynamicTypeBuilderFactory::get_instance()->create_array_builder(
+        builder_factory->create_char8_type(),
+        {20});
 
     /////
     // Main Data structure

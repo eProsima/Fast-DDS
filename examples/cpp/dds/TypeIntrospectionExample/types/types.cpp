@@ -190,7 +190,7 @@ std::unique_ptr<IDataType> data_type_factory(
 bool is_basic_type(
         const eprosima::fastrtps::types::TypeKind kind)
 {
-    switch(kind)
+    switch (kind)
     {
         case TK_NONE:
         case TK_BOOLEAN:
@@ -299,7 +299,8 @@ std::ostream& operator <<(
             break;
 
         case TK_ARRAY:
-            output << "[ " << internal_array_type(type) << " (" << type->get_total_bounds() << ") " << annotations << " ]";
+            output << "[ " << internal_array_type(type) << " (" << type->get_total_bounds() << ") " << annotations <<
+                " ]";
             break;
 
         case TK_SEQUENCE:
@@ -342,7 +343,7 @@ std::ostream& operator <<(
         std::ostream& output,
         const TypeKind& kind)
 {
-    switch(kind)
+    switch (kind)
     {
         case TK_NONE:
         {
@@ -480,7 +481,7 @@ std::ostream& operator <<(
 {
     auto kind = member->get_descriptor()->get_kind();
 
-    switch(kind)
+    switch (kind)
     {
         case TK_NONE:
         case TK_BOOLEAN:
@@ -508,7 +509,8 @@ std::ostream& operator <<(
         case TK_UNION:
         case TK_SEQUENCE:
         case TK_ARRAY:
-            output << "< " << kind << " [ " << member->get_descriptor()->get_type()->get_descriptor()->get_element_type() << " ] >";
+            output << "< " << kind << " [ " <<
+                member->get_descriptor()->get_type()->get_descriptor()->get_element_type() << " ] >";
             break;
 
         case TK_MAP:

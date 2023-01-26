@@ -31,10 +31,10 @@
 #define eProsima_user_DllExport __declspec( dllexport )
 #else
 #define eProsima_user_DllExport
-#endif
+#endif // if defined(EPROSIMA_USER_DLL_EXPORT)
 #else
 #define eProsima_user_DllExport
-#endif
+#endif // if defined(_WIN32)
 
 #if defined(_WIN32)
 #if defined(EPROSIMA_USER_DLL_EXPORT)
@@ -45,7 +45,7 @@
 #endif // ComplexSequence_SOURCE
 #else
 #define ComplexSequence_DllAPI
-#endif
+#endif // if defined(EPROSIMA_USER_DLL_EXPORT)
 #else
 #define ComplexSequence_DllAPI
 #endif // _WIN32
@@ -54,18 +54,24 @@ using namespace eprosima::fastrtps::types;
 
 eProsima_user_DllExport void registerComplexSequenceTypes();
 
-eProsima_user_DllExport const TypeIdentifier* GetInternalSequencePoints_TypeIntrospectionExampleIdentifier(bool complete = false);
-eProsima_user_DllExport const TypeObject* GetInternalSequencePoints_TypeIntrospectionExampleObject(bool complete = false);
+eProsima_user_DllExport const TypeIdentifier* GetInternalSequencePoints_TypeIntrospectionExampleIdentifier(
+        bool complete = false);
+eProsima_user_DllExport const TypeObject* GetInternalSequencePoints_TypeIntrospectionExampleObject(
+        bool complete = false);
 eProsima_user_DllExport const TypeObject* GetMinimalInternalSequencePoints_TypeIntrospectionExampleObject();
 eProsima_user_DllExport const TypeObject* GetCompleteInternalSequencePoints_TypeIntrospectionExampleObject();
 
-eProsima_user_DllExport const TypeIdentifier* GetInternalSequenceMessage_TypeIntrospectionExampleIdentifier(bool complete = false);
-eProsima_user_DllExport const TypeObject* GetInternalSequenceMessage_TypeIntrospectionExampleObject(bool complete = false);
+eProsima_user_DllExport const TypeIdentifier* GetInternalSequenceMessage_TypeIntrospectionExampleIdentifier(
+        bool complete = false);
+eProsima_user_DllExport const TypeObject* GetInternalSequenceMessage_TypeIntrospectionExampleObject(
+        bool complete = false);
 eProsima_user_DllExport const TypeObject* GetMinimalInternalSequenceMessage_TypeIntrospectionExampleObject();
 eProsima_user_DllExport const TypeObject* GetCompleteInternalSequenceMessage_TypeIntrospectionExampleObject();
 
-eProsima_user_DllExport const TypeIdentifier* GetComplexSequence_TypeIntrospectionExampleIdentifier(bool complete = false);
-eProsima_user_DllExport const TypeObject* GetComplexSequence_TypeIntrospectionExampleObject(bool complete = false);
+eProsima_user_DllExport const TypeIdentifier* GetComplexSequence_TypeIntrospectionExampleIdentifier(
+        bool complete = false);
+eProsima_user_DllExport const TypeObject* GetComplexSequence_TypeIntrospectionExampleObject(
+        bool complete = false);
 eProsima_user_DllExport const TypeObject* GetMinimalComplexSequence_TypeIntrospectionExampleObject();
 eProsima_user_DllExport const TypeObject* GetCompleteComplexSequence_TypeIntrospectionExampleObject();
 
