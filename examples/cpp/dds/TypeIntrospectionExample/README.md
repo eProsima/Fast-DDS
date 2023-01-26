@@ -24,10 +24,8 @@ In the second one: ./TypeIntrospectionExample subscriber (or TypeIntrospectionEx
 
 First argument is `publisher` or `subscriber` and then the rest of arguments are read unordered
 
-TODO refactor with this example arguments
-
 ```sh
-Usage: TypeIntrospectionExample <publisher|subscriber> <-i|-o>
+Usage: TypeIntrospectionExample <publisher|subscriber>
 
 General options:
   -h                    --help
@@ -45,7 +43,7 @@ Publisher options:
   -s <num>              --samples=<num>
                           Number of samples to send (Default: 0 => infinite samples).
   -i                    --type-information
-                          Use Type Information to send Data Type Introspection info.
+                          Use Type Information to send Data Type Introspection info. (Default).
   -o                    --type-object
                           Use Type Object to send Data Type Introspection info.
 
@@ -57,7 +55,9 @@ Subscriber options:
   -s <num>              --samples=<num>
                           Number of samples to wait for (Default: 0 => infinite samples).
   -i                    --type-information
-                          Use Type Information to send Data Type Introspection info.
+                          Use Type Information to send Data Type Introspection info (Default).
+                        --type-information-disable
+                          Deactivate Type Information to send Data Type Introspection info.
   -o                    --type-object
                           Use Type Object to send Data Type Introspection info.
 
@@ -87,7 +87,7 @@ This Data Types are:
 The Subscriber will detect the data type name and will register the type by the information sent by the
 publisher, so the subscriber does not need to know the type.
 In order to introspect a Data Type, just launch the Subscriber with the topic name and the domain ID of a Data Writer
-that uses this Data Type (be sure the DataWriter is configured to transmit Data Type introspection information).
+that uses this Data Type (be sure the Publisher is configured to transmit Data Type introspection information).
 
 ---
 

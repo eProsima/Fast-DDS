@@ -61,11 +61,11 @@ int main(
     int count = 0;
     int domain = 0;
     bool use_type_object = false;
-    bool use_type_information = false;
+    bool use_type_information = true;
 
     long sleep = 1000; // This is not set by configuration
 
-    if (argc > 2)
+    if (argc > 1)
     {
         if (!strcmp(argv[1], "publisher"))
         {
@@ -202,6 +202,10 @@ int main(
                     use_type_information = true;
                     break;
 
+                case optionIndex::TYPE_INFORMATION_DISABLE:
+                    use_type_information = false;
+                    break;
+
                 case optionIndex::UNKNOWN_OPT:
                     std::cerr << "ERROR: " << opt.name << " is not a valid argument." << std::endl;
                     option::printUsage(fwrite, stdout, usage, columns);
@@ -212,7 +216,7 @@ int main(
     }
     else
     {
-        std::cerr << "ERROR: <publisher|subscriber> <-i|-o> arguments are required." << std::endl;
+        std::cerr << "ERROR: <publisher|subscriber> argument is required." << std::endl;
         option::printUsage(fwrite, stdout, usage, columns);
         return 1;
     }
@@ -220,9 +224,19 @@ int main(
     if (!use_type_information && !use_type_object)
     {
         std::cerr <<
-            "WARNING: type-object or type-information argument are disabled. " <<
+            "ERROR: type-object and type-information argument are disabled. " <<
             "Subscriber will not be able to receive Data Type and read messages." <<
             std::endl;
+            return 1;
+    }
+
+    if (use_type_information && use_type_object)
+    {
+        std::cerr <<
+            "ERROR: type-object and type-information argument are activated. " <<
+            "Subscriber will not be able to receive Data Type and read messages." <<
+            std::endl;
+            return 1;
     }
 
     try

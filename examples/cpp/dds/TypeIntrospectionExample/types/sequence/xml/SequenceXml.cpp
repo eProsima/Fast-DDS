@@ -31,11 +31,9 @@ template <>
 eprosima::fastrtps::types::DynamicType_ptr
     DataType<DataTypeKind::SEQUENCE , GeneratorKind::XML>::generate_type_() const
 {
-    // Load XML file
-    std::string xml_file_name = "SequenceXml.xml";
 
     if (eprosima::fastrtps::xmlparser::XMLP_ret::XML_OK !=
-        eprosima::fastrtps::xmlparser::XMLProfileManager::loadXMLFile(xml_file_name))
+        eprosima::fastrtps::xmlparser::XMLProfileManager::loadXMLFile(xml()))
     {
         throw std::ios_base::failure(
             "Cannot open XML file. Please, run the publisher from the folder that contains this XML file.");
