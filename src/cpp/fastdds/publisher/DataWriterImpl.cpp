@@ -300,7 +300,10 @@ ReturnCode_t DataWriterImpl::enable()
     history_.unacknowledged_sample_removed_functor([&](
                 const InstanceHandle_t& handle)
             {
-                listener_->on_unacknowledged_sample_removed(user_datawriter_, handle);
+                if (nullptr != listener_)
+                {
+                    listener_->on_unacknowledged_sample_removed(user_datawriter_, handle);
+                }
             });
 
     RTPSWriter* writer =  RTPSDomainImpl::create_rtps_writer(
