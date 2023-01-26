@@ -62,7 +62,8 @@ eprosima::fastrtps::types::DynamicData_ptr get_data_by_type<DataTypeKind::SUPER_
     // INTERNAL DATA
     ///////////////////////////////////////////
     eprosima::fastrtps::types::DynamicData* points_sequence = new_data->loan_value(2);
-    eprosima::fastrtps::types::DynamicType_ptr seq_elem_type = points_sequence->get_type()->get_descriptor()->get_element_type();
+    eprosima::fastrtps::types::DynamicType_ptr seq_elem_type =
+            points_sequence->get_type()->get_descriptor()->get_element_type();
     eprosima::fastrtps::types::DynamicData_ptr seq_elem;
     eprosima::fastrtps::types::MemberId id;
 
@@ -152,7 +153,7 @@ eprosima::fastrtps::types::DynamicData_ptr get_data_by_type<DataTypeKind::SUPER_
     eprosima::fastrtps::types::DynamicData* messages_array = new_data->loan_value(4);
     eprosima::fastrtps::types::DynamicData* array_elem;
     eprosima::fastrtps::types::DynamicData* sub_elem;
-    for (int i=0; i<2; i++)
+    for (int i = 0; i < 2; i++)
     {
         array_elem = messages_array->loan_value(i);
 

@@ -45,7 +45,8 @@ eprosima::fastrtps::types::DynamicData_ptr get_data_by_type<DataTypeKind::SEQUEN
     eprosima::fastrtps::types::DynamicData* sequence = new_data->loan_value(1);
 
     unsigned int new_index = index % max_len_seq;
-    for (eprosima::fastrtps::types::MemberId id = 0; id < new_index; id++) {
+    for (eprosima::fastrtps::types::MemberId id = 0; id < new_index; id++)
+    {
         sequence->insert_int32_value(id + 1, id);
     }
 

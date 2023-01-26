@@ -71,7 +71,7 @@ eprosima::fastrtps::types::DynamicData_ptr get_data_by_type<DataTypeKind::COMPLE
     // Set messages
     eprosima::fastrtps::types::DynamicData* messages_substructure = new_data->loan_value(2);
 
-    for (int i=0; i<2; i++)
+    for (int i = 0; i < 2; i++)
     {
         // Message
         elem = messages_substructure->loan_value(i);
