@@ -31,20 +31,18 @@
 
 
     <!--PROFILES:
-        ├ library_settings         [0~1],
-        ├ participant              [0~*],
-        ├ data_writer (=publisher) [0~*],
-        ├ data_reader (=subscriber)[0~*],
-        └ transport_descriptors    [0~1] -->
+        ├ library_settings      [0~1],
+        ├ participant           [0~*],
+        ├ data_writer           [0~*],
+        ├ data_reader           [0~*],
+        └ transport_descriptors [0~1] -->
     <xs:complexType name="profilesType">
         <xs:sequence minOccurs="1" maxOccurs="unbounded">   <!-- multiple instances of the elements -->
             <xs:choice minOccurs="1"> <!-- each instance can be one of the elements below -->
                 <xs:element name="library_settings" type="LibrarySettingsType" maxOccurs="1"/>
                 <xs:element name="participant" type="participantProfileType" maxOccurs="unbounded"/>
                 <xs:element name="data_writer" type="publisherProfileType" maxOccurs="unbounded"/>
-                <xs:element name="publisher" type="publisherProfileType" maxOccurs="unbounded"/>
                 <xs:element name="data_reader" type="subscriberProfileType" maxOccurs="unbounded"/>
-                <xs:element name="subscriber" type="subscriberProfileType" maxOccurs="unbounded"/>
                 <xs:element name="transport_descriptors" type="TransportDescriptorListType" maxOccurs="1"/>
             </xs:choice>
         </xs:sequence>
