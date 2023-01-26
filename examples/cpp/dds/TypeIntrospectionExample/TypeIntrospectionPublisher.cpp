@@ -189,7 +189,6 @@ void TypeIntrospectionPublisher::on_participant_discovery(
     {
         std::cout << "Participant found with guid: " << info.info.m_guid << std::endl;
     }
-    // TODO
 }
 
 void TypeIntrospectionPublisher::on_publication_matched(

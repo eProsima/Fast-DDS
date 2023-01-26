@@ -68,6 +68,8 @@ public:
 
     virtual std::string name() const = 0;
 
+    virtual std::string xml() const = 0;
+
     virtual eprosima::fastrtps::types::DynamicData_ptr get_data(
             const unsigned int& index) const = 0;
 
@@ -82,6 +84,8 @@ public:
     DataType();
 
     virtual std::string name() const override;
+
+    virtual std::string xml() const override;
 
     virtual eprosima::fastrtps::types::DynamicData_ptr get_data(
             const unsigned int& index) const override;

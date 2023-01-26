@@ -35,16 +35,19 @@ eprosima::fastrtps::types::DynamicData_ptr get_data_by_type<DataTypeKind::SEQUEN
     eprosima::fastrtps::types::DynamicData_ptr new_data;
     new_data = eprosima::fastrtps::types::DynamicDataFactory::get_instance()->create_data(dyn_type);
 
+    // Set max length sequence
+    int max_len_seq = 128;
+
     // Set index
     new_data->set_uint32_value(index, 0);
 
     // Set points (it requires to loan the Sequence)
     eprosima::fastrtps::types::DynamicData* sequence = new_data->loan_value(1);
 
-    eprosima::fastrtps::types::MemberId id0, id1, id2;
-    sequence->insert_int32_value(index + 1, id0);
-    sequence->insert_int32_value(index * 0.5, id1);
-    sequence->insert_int32_value(index * -1, id2);
+    unsigned int new_index = index % max_len_seq;
+    for (eprosima::fastrtps::types::MemberId id = 0; id < new_index; id++) {
+        sequence->insert_int32_value(id + 1, id);
+    }
 
     new_data->return_loaned_value(sequence);
 

@@ -32,7 +32,7 @@ constexpr const char* ARRAY_DATA_TYPE_ARG = "array";
 constexpr const char* SEQUENCE_DATA_TYPE_ARG = "seq";
 constexpr const char* STRUCT_DATA_TYPE_ARG = "struct";
 constexpr const char* PLAIN_DATA_TYPE_ARG = "plain";
-constexpr const char* SIMPLELARGE_DATA_TYPE_ARG = "simple";
+constexpr const char* SIMPLELARGE_DATA_TYPE_ARG = "simple_large";
 constexpr const char* KEY_DATA_TYPE_ARG = "key";
 constexpr const char* COMPLEX_ARRAY_DATA_TYPE_ARG = "complex_array";
 constexpr const char* COMPLEX_SEQUENCE_DATA_TYPE_ARG = "complex_seq";
@@ -187,11 +187,12 @@ enum optionIndex
     SAMPLES,
     TYPE_OBJECT,
     TYPE_INFORMATION,
+    TYPE_INFORMATION_DISABLE,
 };
 
 const option::Descriptor usage[] = {
     { UNKNOWN_OPT, 0, "", "",                Arg::None,
-      "Usage: TypeIntrospectionExample <publisher|subscriber> <-i|-o>\n\nGeneral options:" },
+      "Usage: TypeIntrospectionExample <publisher|subscriber>\n\nGeneral options:" },
     { HELP,    0, "h", "help",               Arg::None,      "  -h \t--help  \tProduce help message." },
 
     { UNKNOWN_OPT, 0, "", "",                Arg::None,      "\nPublisher options:"},
@@ -223,9 +224,10 @@ const option::Descriptor usage[] = {
       "  -s <num> \t--samples=<num>  \tNumber of samples to send (Default: 0 => infinite samples)." },
     { TYPE_OBJECT, 0, "o", "type-object",              Arg::None,
       "  -o \t--type-object=  \tUse Type Object to send Data Type Introspection info." },
-    { TYPE_INFORMATION, 0, "i", "type-information",              Arg::None,
+    { TYPE_INFORMATION, 1, "i", "type-information",              Arg::None,
       "  -i \t--type-information=  \tUse Type Information to send Data Type Introspection info." },
-
+    { TYPE_INFORMATION_DISABLE, 0, "i", "type-information-disable",              Arg::None,
+      "     \t--type-information-disable=  \tDeactivate Type Information to send Data Type Introspection info." },
     { UNKNOWN_OPT, 0, "", "",                Arg::None,      "\nSubscriber options:"},
 
     { TOPIC_NAME, 0, "t", "topic",                  Arg::String,
@@ -236,8 +238,10 @@ const option::Descriptor usage[] = {
       "  -s <num> \t--samples=<num>  \tNumber of samples to wait for (Default: 0 => infinite samples)." },
     { TYPE_OBJECT, 0, "o", "type-object",              Arg::None,
       "  -o \t--type-object=  \tUse Type Object to send Data Type Introspection info." },
-    { TYPE_INFORMATION, 0, "i", "type-information",              Arg::None,
+    { TYPE_INFORMATION, 1, "i", "type-information",              Arg::None,
       "  -i \t--type-information=  \tUse Type Information to send Data Type Introspection info." },
+    { TYPE_INFORMATION_DISABLE, 0, "i", "type-information-disable",              Arg::None,
+      "     \t--type-information-disable=  \tDeactivate Type Information to send Data Type Introspection info." },
 
     { 0, 0, 0, 0, 0, 0 }
 };
