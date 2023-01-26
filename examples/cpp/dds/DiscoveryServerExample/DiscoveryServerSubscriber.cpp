@@ -43,261 +43,261 @@ std::mutex HelloWorldSubscriber::terminate_cv_mtx_;
 std::condition_variable HelloWorldSubscriber::terminate_cv_;
 
 HelloWorldSubscriber::HelloWorldSubscriber()
-    : participant_(nullptr)
-    , subscriber_(nullptr)
-    , topic_(nullptr)
-    , reader_(nullptr)
-    , type_(new HelloWorldPubSubType())
+	: participant_(nullptr)
+	, subscriber_(nullptr)
+	, topic_(nullptr)
+	, reader_(nullptr)
+	, type_(new HelloWorldPubSubType())
 {
 }
 
 bool HelloWorldSubscriber::is_stopped()
 {
-    return stop_;
+	return stop_;
 }
 
 void HelloWorldSubscriber::stop()
 {
-    stop_ = true;
-    terminate_cv_.notify_all();
+	stop_ = true;
+	terminate_cv_.notify_all();
 }
 
 bool HelloWorldSubscriber::init(
-        const std::string& topic_name,
-        uint32_t max_messages,
-        const std::string& server_address,
-        unsigned short server_port,
-        unsigned short server_id,
-        TransportKind transport)
+	const std::string& topic_name,
+	uint32_t max_messages,
+	const std::string& server_address,
+	unsigned short server_port,
+	unsigned short server_id,
+	TransportKind transport)
 {
-    DomainParticipantQos pqos;
-    pqos.name("DS-Client_sub");
-    pqos.transport().use_builtin_transports = false;
+	DomainParticipantQos pqos;
+	pqos.name("DS-Client_sub");
+	pqos.transport().use_builtin_transports = false;
 
-    std::string ip_server_address(server_address);
-    // Check if DNS is required
-    if (!is_ip(server_address))
-    {
-        ip_server_address = get_ip_from_dns(server_address, transport);
-    }
+	std::string ip_server_address(server_address);
+	// Check if DNS is required
+	if (!is_ip(server_address))
+	{
+		ip_server_address = get_ip_from_dns(server_address, transport);
+	}
 
-    if (ip_server_address.empty())
-    {
-        return false;
-    }
+	if (ip_server_address.empty())
+	{
+		return false;
+	}
 
-    // Create DS SERVER locator
-    eprosima::fastdds::rtps::Locator server_locator;
-    eprosima::fastrtps::rtps::IPLocator::setPhysicalPort(server_locator, server_port);
+	// Create DS SERVER locator
+	eprosima::fastdds::rtps::Locator server_locator;
+	eprosima::fastrtps::rtps::IPLocator::setPhysicalPort(server_locator, server_port);
 
-    std::shared_ptr<eprosima::fastdds::rtps::TransportDescriptorInterface> descriptor;
+	std::shared_ptr<eprosima::fastdds::rtps::TransportDescriptorInterface> descriptor;
 
-    switch (transport)
-    {
-    case TransportKind::SHM:
-        descriptor = std::make_shared<eprosima::fastdds::rtps::SharedMemTransportDescriptor>();
-        server_locator.kind = LOCATOR_KIND_SHM;
-        break;
+	switch (transport)
+	{
+	case TransportKind::SHM:
+		descriptor = std::make_shared<eprosima::fastdds::rtps::SharedMemTransportDescriptor>();
+		server_locator.kind = LOCATOR_KIND_SHM;
+		break;
 
-    case TransportKind::UDPv4:
-    {
-        auto descriptor_tmp = std::make_shared<eprosima::fastdds::rtps::UDPv4TransportDescriptor>();
-        // descriptor_tmp->interfaceWhiteList.push_back(ip_server_address);
-        descriptor = descriptor_tmp;
+	case TransportKind::UDPv4:
+	{
+		auto descriptor_tmp = std::make_shared<eprosima::fastdds::rtps::UDPv4TransportDescriptor>();
+		// descriptor_tmp->interfaceWhiteList.push_back(ip_server_address);
+		descriptor = descriptor_tmp;
 
-        server_locator.kind = LOCATOR_KIND_UDPv4;
-        eprosima::fastrtps::rtps::IPLocator::setIPv4(server_locator, ip_server_address);
-        break;
-    }
+		server_locator.kind = LOCATOR_KIND_UDPv4;
+		eprosima::fastrtps::rtps::IPLocator::setIPv4(server_locator, ip_server_address);
+		break;
+	}
 
-    case TransportKind::UDPv6:
-    {
-        auto descriptor_tmp = std::make_shared<eprosima::fastdds::rtps::UDPv6TransportDescriptor>();
-        // descriptor_tmp->interfaceWhiteList.push_back(ip_server_address);
-        descriptor = descriptor_tmp;
+	case TransportKind::UDPv6:
+	{
+		auto descriptor_tmp = std::make_shared<eprosima::fastdds::rtps::UDPv6TransportDescriptor>();
+		// descriptor_tmp->interfaceWhiteList.push_back(ip_server_address);
+		descriptor = descriptor_tmp;
 
-        server_locator.kind = LOCATOR_KIND_UDPv6;
-        eprosima::fastrtps::rtps::IPLocator::setIPv6(server_locator, ip_server_address);
-        break;
-    }
+		server_locator.kind = LOCATOR_KIND_UDPv6;
+		eprosima::fastrtps::rtps::IPLocator::setIPv6(server_locator, ip_server_address);
+		break;
+	}
 
-    default:
-        break;
-    }
+	default:
+		break;
+	}
 
-    // Set participant as DS CLIENT
-    pqos.wire_protocol().builtin.discovery_config.discoveryProtocol =
-            eprosima::fastrtps::rtps::DiscoveryProtocol_t::CLIENT;
+	// Set participant as DS CLIENT
+	pqos.wire_protocol().builtin.discovery_config.discoveryProtocol =
+		eprosima::fastrtps::rtps::DiscoveryProtocol_t::CLIENT;
 
-    // Set SERVER's GUID prefix
-    RemoteServerAttributes remote_server_att;
-    remote_server_att.guidPrefix = get_discovery_server_guid_from_id(server_id);
+	// Set SERVER's GUID prefix
+	RemoteServerAttributes remote_server_att;
+	remote_server_att.guidPrefix = get_discovery_server_guid_from_id(server_id);
 
-    // Set SERVER's listening locator for PDP
-    remote_server_att.metatrafficUnicastLocatorList.push_back(server_locator);
+	// Set SERVER's listening locator for PDP
+	remote_server_att.metatrafficUnicastLocatorList.push_back(server_locator);
 
-    // Add remote SERVER to CLIENT's list of SERVERs
-    pqos.wire_protocol().builtin.discovery_config.m_DiscoveryServers.push_back(remote_server_att);
+	// Add remote SERVER to CLIENT's list of SERVERs
+	pqos.wire_protocol().builtin.discovery_config.m_DiscoveryServers.push_back(remote_server_att);
 
-    // Add descriptor
-    pqos.transport().user_transports.push_back(descriptor);
+	// Add descriptor
+	pqos.transport().user_transports.push_back(descriptor);
 
-    // CREATE THE PARTICIPANT
-    participant_ = DomainParticipantFactory::get_instance()->create_participant(0, pqos, &listener_,
-                    StatusMask::all() >> StatusMask::data_on_readers());
+	// CREATE THE PARTICIPANT
+	participant_ = DomainParticipantFactory::get_instance()->create_participant(0, pqos, &listener_,
+	                                                                            StatusMask::all() >> StatusMask::data_on_readers());
 
-    if (participant_ == nullptr)
-    {
-        return false;
-    }
+	if (participant_ == nullptr)
+	{
+		return false;
+	}
 
-    std::cout <<
-        "Subscriber Participant " << pqos.name() <<
-        " created with GUID " << participant_->guid() <<
-        " connecting to server <" << server_locator  << "> " <<
-        " with Guid: <" << remote_server_att.guidPrefix << "> " <<
-        std::endl;
+	std::cout <<
+	        "Subscriber Participant " << pqos.name() <<
+	        " created with GUID " << participant_->guid() <<
+	        " connecting to server <" << server_locator  << "> " <<
+	        " with Guid: <" << remote_server_att.guidPrefix << "> " <<
+	        std::endl;
 
-    // REGISTER THE TYPE
-    type_.register_type(participant_);
+	// REGISTER THE TYPE
+	type_.register_type(participant_);
 
-    // CREATE THE SUBSCRIBER
-    subscriber_ = participant_->create_subscriber(SUBSCRIBER_QOS_DEFAULT, nullptr);
+	// CREATE THE SUBSCRIBER
+	subscriber_ = participant_->create_subscriber(SUBSCRIBER_QOS_DEFAULT, nullptr);
 
-    if (subscriber_ == nullptr)
-    {
-        return false;
-    }
+	if (subscriber_ == nullptr)
+	{
+		return false;
+	}
 
-    // CREATE THE TOPIC
-    topic_ = participant_->create_topic(
-        topic_name,
-        "HelloWorld",
-        TOPIC_QOS_DEFAULT);
+	// CREATE THE TOPIC
+	topic_ = participant_->create_topic(
+		topic_name,
+		"HelloWorld",
+		TOPIC_QOS_DEFAULT);
 
-    if (topic_ == nullptr)
-    {
-        return false;
-    }
+	if (topic_ == nullptr)
+	{
+		return false;
+	}
 
-    // CREATE THE READER
-    if (max_messages > 0)
-    {
-        listener_.set_max_messages(max_messages);
-    }
-    DataReaderQos rqos = DATAREADER_QOS_DEFAULT;
-    reader_ = subscriber_->create_datareader(topic_, rqos, &listener_);
+	// CREATE THE READER
+	if (max_messages > 0)
+	{
+		listener_.set_max_messages(max_messages);
+	}
+	DataReaderQos rqos = DATAREADER_QOS_DEFAULT;
+	reader_ = subscriber_->create_datareader(topic_, rqos, &listener_);
 
-    if (reader_ == nullptr)
-    {
-        return false;
-    }
+	if (reader_ == nullptr)
+	{
+		return false;
+	}
 
-    return true;
+	return true;
 }
 
 HelloWorldSubscriber::~HelloWorldSubscriber()
 {
-    if (participant_ != nullptr)
-    {
-        if (topic_ != nullptr)
-        {
-            participant_->delete_topic(topic_);
-        }
-        if (subscriber_ != nullptr)
-        {
-            if (reader_ != nullptr)
-            {
-                subscriber_->delete_datareader(reader_);
-            }
-            participant_->delete_subscriber(subscriber_);
-        }
-        DomainParticipantFactory::get_instance()->delete_participant(participant_);
-    }
+	if (participant_ != nullptr)
+	{
+		if (topic_ != nullptr)
+		{
+			participant_->delete_topic(topic_);
+		}
+		if (subscriber_ != nullptr)
+		{
+			if (reader_ != nullptr)
+			{
+				subscriber_->delete_datareader(reader_);
+			}
+			participant_->delete_subscriber(subscriber_);
+		}
+		DomainParticipantFactory::get_instance()->delete_participant(participant_);
+	}
 }
 
 void HelloWorldSubscriber::SubListener::set_max_messages(
-        uint32_t max_messages)
+	uint32_t max_messages)
 {
-    max_messages_ = max_messages;
+	max_messages_ = max_messages;
 }
 
 void HelloWorldSubscriber::SubListener::on_subscription_matched(
-        DataReader*,
-        const SubscriptionMatchedStatus& info)
+	DataReader*,
+	const SubscriptionMatchedStatus& info)
 {
-    if (info.current_count_change == 1)
-    {
-        matched_ = info.current_count;
-        std::cout << "Subscriber matched." << std::endl;
-    }
-    else if (info.current_count_change == -1)
-    {
-        matched_ = info.current_count;
-        std::cout << "Subscriber unmatched." << std::endl;
-    }
-    else
-    {
-        std::cout << info.current_count_change
-                  << " is not a valid value for SubscriptionMatchedStatus current count change" << std::endl;
-    }
+	if (info.current_count_change == 1)
+	{
+		matched_ = info.current_count;
+		std::cout << "Subscriber matched." << std::endl;
+	}
+	else if (info.current_count_change == -1)
+	{
+		matched_ = info.current_count;
+		std::cout << "Subscriber unmatched." << std::endl;
+	}
+	else
+	{
+		std::cout << info.current_count_change
+		          << " is not a valid value for SubscriptionMatchedStatus current count change" << std::endl;
+	}
 }
 
 void HelloWorldSubscriber::SubListener::on_data_available(
-        DataReader* reader)
+	DataReader* reader)
 {
-    SampleInfo info;
-    while ((reader->take_next_sample(&hello_, &info) == ReturnCode_t::RETCODE_OK) && !is_stopped())
-    {
-        if (info.instance_state == ALIVE_INSTANCE_STATE)
-        {
-            samples_++;
-            // Print your structure data here.
-            std::cout << "Message " << hello_.message() << " " << hello_.index() << " RECEIVED" << std::endl;
-            if (max_messages_ > 0 && (samples_ >= max_messages_))
-            {
-                stop();
-            }
-        }
-    }
+	SampleInfo info;
+	while ((reader->take_next_sample(&hello_, &info) == ReturnCode_t::RETCODE_OK) && !is_stopped())
+	{
+		if (info.instance_state == ALIVE_INSTANCE_STATE)
+		{
+			samples_++;
+			// Print your structure data here.
+			std::cout << "Message " << hello_.message() << " " << hello_.index() << " RECEIVED" << std::endl;
+			if (max_messages_ > 0 && (samples_ >= max_messages_))
+			{
+				stop();
+			}
+		}
+	}
 }
 
 void HelloWorldSubscriber::SubListener::on_participant_discovery(
-        eprosima::fastdds::dds::DomainParticipant* /*participant*/,
-        eprosima::fastrtps::rtps::ParticipantDiscoveryInfo&& info)
+	eprosima::fastdds::dds::DomainParticipant* /*participant*/,
+	eprosima::fastrtps::rtps::ParticipantDiscoveryInfo&& info)
 {
-    if (info.status == eprosima::fastrtps::rtps::ParticipantDiscoveryInfo::DISCOVERED_PARTICIPANT)
-    {
-        std::cout << "Discovered Participant with GUID " << info.info.m_guid << std::endl;
-    }
-    else if (info.status == eprosima::fastrtps::rtps::ParticipantDiscoveryInfo::DROPPED_PARTICIPANT ||
-            info.status == eprosima::fastrtps::rtps::ParticipantDiscoveryInfo::REMOVED_PARTICIPANT)
-    {
-        std::cout << "Dropped Participant with GUID " << info.info.m_guid << std::endl;
-    }
+	if (info.status == eprosima::fastrtps::rtps::ParticipantDiscoveryInfo::DISCOVERED_PARTICIPANT)
+	{
+		std::cout << "Discovered Participant with GUID " << info.info.m_guid << std::endl;
+	}
+	else if (info.status == eprosima::fastrtps::rtps::ParticipantDiscoveryInfo::DROPPED_PARTICIPANT ||
+	         info.status == eprosima::fastrtps::rtps::ParticipantDiscoveryInfo::REMOVED_PARTICIPANT)
+	{
+		std::cout << "Dropped Participant with GUID " << info.info.m_guid << std::endl;
+	}
 }
 
 void HelloWorldSubscriber::run(
-        uint32_t samples)
+	uint32_t samples)
 {
-    stop_ = false;
-    if (samples > 0)
-    {
-        std::cout << "Subscriber running until " << samples <<
-            " samples have been received. Please press CTRL+C to stop the Subscriber at any time." << std::endl;
-    }
-    else
-    {
-        std::cout << "Subscriber running. Please press CTRL+C to stop the Subscriber." << std::endl;
-    }
-    signal(SIGINT, [](int signum)
-            {
-                std::cout << "SIGINT received, stopping Subscriber execution." << std::endl;
-                static_cast<void>(signum); HelloWorldSubscriber::stop();
-            });
-    std::unique_lock<std::mutex> lck(terminate_cv_mtx_);
-    terminate_cv_.wait(lck, []
-            {
-                return is_stopped();
-            });
+	stop_ = false;
+	if (samples > 0)
+	{
+		std::cout << "Subscriber running until " << samples <<
+		        " samples have been received. Please press CTRL+C to stop the Subscriber at any time." << std::endl;
+	}
+	else
+	{
+		std::cout << "Subscriber running. Please press CTRL+C to stop the Subscriber." << std::endl;
+	}
+	signal(SIGINT, [](int signum)
+	{
+		std::cout << "SIGINT received, stopping Subscriber execution." << std::endl;
+		static_cast<void>(signum); HelloWorldSubscriber::stop();
+	});
+	std::unique_lock<std::mutex> lck(terminate_cv_mtx_);
+	terminate_cv_.wait(lck, []
+	{
+		return is_stopped();
+	});
 }
