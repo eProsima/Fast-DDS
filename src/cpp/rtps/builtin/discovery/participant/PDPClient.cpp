@@ -364,7 +364,8 @@ bool PDPClient::create_ds_pdp_reliable_endpoints(
 
     RTPSReader* reader = nullptr;
 #if HAVE_SECURITY
-    EntityId_t reader_entity = is_discovery_protected ? c_EntityId_spdp_reliable_participant_secure_reader : c_EntityId_SPDPReader;
+    EntityId_t reader_entity =
+            is_discovery_protected ? c_EntityId_spdp_reliable_participant_secure_reader : c_EntityId_SPDPReader;
 #else
     EntityId_t reader_entity = c_EntityId_SPDPReader;
 #endif // if HAVE_SECURITY
@@ -424,7 +425,8 @@ bool PDPClient::create_ds_pdp_reliable_endpoints(
 
     RTPSWriter* wout = nullptr;
 #if HAVE_SECURITY
-    EntityId_t writer_entity = is_discovery_protected ? c_EntityId_spdp_reliable_participant_secure_writer : c_EntityId_SPDPWriter;
+    EntityId_t writer_entity =
+            is_discovery_protected ? c_EntityId_spdp_reliable_participant_secure_writer : c_EntityId_SPDPWriter;
 #else
     EntityId_t writer_entity = c_EntityId_SPDPWriter;
 #endif // if HAVE_SECURITY
