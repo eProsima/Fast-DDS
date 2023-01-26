@@ -165,6 +165,11 @@ public:
     uint32_t fraction() const;
 
     /**
+     * Retrieve the fraction field by ref.
+     */
+    uint32_t& fraction();
+
+    /**
      * Sets fraction field and updates the nanoseconds.
      */
     void fraction(
