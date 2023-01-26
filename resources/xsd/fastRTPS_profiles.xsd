@@ -236,10 +236,7 @@
         | ╠ att. profile_name          [string] REQ,
         | ╚ att. is_default_profile    [bool],
         |
-        ├ name ???          [string], ???
         ├ historyQoS        [0~1],
-        |   ├ kind          [string] ("KEEP_LAST", "KEEP_ALL"),
-        |   └ depth         [uint32],
         └ resourceLimitsQos [0~1],
             ├ max_samples              [uint32],
             ├ max_instances            [uint32],
@@ -248,15 +245,7 @@
             └ extra_samples            [uint32] -->
     <xs:complexType name="topicAttributesType">
         <xs:all>
-            <!-- <xs:element name="name" type="string" minOccurs="0" maxOccurs="1"/> -->
-            <xs:element name="historyQos" minOccurs="0" maxOccurs="1">
-                <xs:complexType>
-                    <xs:all>
-                        <xs:element name="kind" type="historyQosKindType" minOccurs="0" maxOccurs="1"/>
-                        <xs:element name="depth" type="uint32" minOccurs="0" maxOccurs="1"/>
-                    </xs:all>
-                </xs:complexType>
-            </xs:element>
+            <xs:element name="historyQos" type="historyQosPolicyType" minOccurs="0" maxOccurs="1"/>
             <xs:element name="resourceLimitsQos" minOccurs="0" maxOccurs="1">
                 <xs:complexType>
                     <xs:all>
@@ -1037,9 +1026,14 @@
     <!--QoS Policies:
         ├ data_sharing                [0~1],
         ├ deadline                    [0~1],
+        ├ destination_order           [0~1] NOT SUPPORTED YET: COMMENTED,
         ├ disable_heartbeat_piggyback [0~1],
         ├ disablePositiveAcks         [0~1],
         ├ durability                  [0~1],
+        ├ durability_service          [0~1] NOT SUPPORTED YET: COMMENTED,
+        ├ entity_factory              [0~1] NOT SUPPORTED YET: COMMENTED,
+        ├ groupData                   [0~1],
+        ├ history                     [0~1] NOT SUPPORTED IN THIS SECTION,
         ├ latencyBudget               [0~1],
         ├ lifespan                    [0~1],
         ├ liveliness                  [0~1],
@@ -1052,9 +1046,14 @@
         <xs:all>
             <xs:element name="data_sharing" type="dataSharingQosPolicyType" minOccurs="0" maxOccurs="1"/>
             <xs:element name="deadline" type="deadlineQosPolicyType" minOccurs="0" maxOccurs="1"/>
+            <!-- <xs:element name="destination_order" type="destinationOrderQosPolicyType" minOccurs="0" maxOccurs="1"/> -->
             <xs:element name="disable_heartbeat_piggyback" type="boolean" minOccurs="0" maxOccurs="1"/>
             <xs:element name="disablePositiveAcks" type="disablePositiveAcksQosPolicyType" minOccurs="0" maxOccurs="1"/>
             <xs:element name="durability" type="durabilityQosPolicyType" minOccurs="0" maxOccurs="1"/>
+            <!-- <xs:element name="durability_service" type="durabilityServiceQosPolicyType" minOccurs="0" maxOccurs="1"/> -->
+            <!-- <xs:element name="entity_factory" type="entityFactoryQoSPolicyType" minOccurs="0" maxOccurs="1"/> -->
+            <xs:element name="groupData" type="groupDataQosPolicyType" minOccurs="0" maxOccurs="1"/>
+            <!-- <xs:element name="history" type="historyQosPolicyType" minOccurs="0" maxOccurs="1"/> -->
             <xs:element name="latencyBudget" type="latencyBudgetQosPolicyType" minOccurs="0" maxOccurs="1"/>
             <xs:element name="lifespan" type="lifespanQosPolicyType" minOccurs="0" maxOccurs="1"/>
             <xs:element name="liveliness" type="livelinessQosPolicyType" minOccurs="0" maxOccurs="1"/>
@@ -1265,6 +1264,23 @@
         </xs:all>
     </xs:complexType>
 
+    <!--QoS Destination Oder:
+        └ period [durationType], -->
+    <!-- NOT IN USE YET, COMMENTED
+    <xs:complexType name="destinationOrderQosPolicyType">
+        <xs:all>
+            <xs:element name="kind" minOccurs="0" maxOccurs="1">
+                <xs:simpleType>
+                    <xs:restriction base="xs:string">
+                        <xs:enumeration value="BY_RECEPTION_TIMESTAMP"/>
+                        <xs:enumeration value="BY_SOURCE_TIMESTAMP"/>
+                    </xs:restriction>
+                </xs:simpleType>
+            </xs:element>
+        </xs:all>
+    </xs:complexType>
+    -->
+
     <!--QoS Disable Positive ACKs:
         ├ enabled  [bool],
         └ duration [durationType], -->
@@ -1291,6 +1307,64 @@
             </xs:element>
         </xs:all>
     </xs:complexType>
+
+    <!--QoS Durability Service:
+        ├ service_cleanup_delay    [durationType],
+        ├ history_kind             [0~1],
+        ├ history_depth            [int32],
+        ├ max_samples              [int32],
+        ├ max_instances            [int32],
+        └ max_samples_per_instance [int32] -->
+    <!-- NOT IN USE YET, COMMENTED
+    <xs:complexType name="durabilityServiceQosPolicyType">
+        <xs:all>
+            <xs:element name="service_cleanup_delay" type="durationType" minOccurs="0" maxOccurs="1">
+            <xs:element name="history_kind" type="historyQosKindPolicyType" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="history_depth" type="int32" minOccurs="0" maxOccurs="1">
+            <xs:element name="max_samples" type="int32" minOccurs="0" maxOccurs="1">
+            <xs:element name="max_instances" type="int32" minOccurs="0" maxOccurs="1">
+            <xs:element name="max_samples_per_instance" type="int32" minOccurs="0" maxOccurs="1">
+        </xs:all>
+    </xs:complexType>
+    -->
+
+    <!--QoS Entity Factory:
+        └ autoenable_created_entities [bool] -->
+    <!-- NOT IN USE YET, COMMENTED
+    <xs:complexType name="entityFactoryQoSPolicyType">
+        <xs:all>
+            <xs:element name="autoenable_created_entities" type="bool" minOccurs="1" maxOccurs="1"/>
+        </xs:all>
+    </xs:complexType>
+    -->
+
+    <!--QoS Group Data:
+        └ value [octectVector] -->
+    <xs:complexType name="groupDataQosPolicyType">
+        <xs:all>
+            <xs:element name="value" type="octectVector" minOccurs="1" maxOccurs="1"/>
+        </xs:all>
+    </xs:complexType>
+
+
+    <!--QoS History:
+        ├ kind  [0~1],
+        └ depth [uint32] -->
+    <xs:complexType name="historyQosPolicyType">
+        <xs:all>
+            <xs:element name="kind" type="historyQosKindPolicyType" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="depth" type="uint32" minOccurs="0" maxOccurs="1"/>
+        </xs:all>
+    </xs:complexType>
+
+    <!--QoS History kind:
+        ("KEEP_LAST", "KEEP_ALL") -->
+    <xs:simpleType name="historyQosKindPolicyType">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="KEEP_LAST"/>
+            <xs:enumeration value="KEEP_ALL"/>
+        </xs:restriction>
+    </xs:simpleType>
 
     <!--QoS Latency Budget:
         └ duration [durationType], -->
@@ -1470,15 +1544,6 @@
         </xs:restriction>
     </xs:simpleType>
 
-    <!--History QoS Kind Type
-        ("KEEP_LAST", "KEEP_ALL") -->
-    <xs:simpleType name="historyQosKindType">
-        <xs:restriction base="xs:string">
-            <xs:enumeration value="KEEP_LAST"/>
-            <xs:enumeration value="KEEP_ALL"/>
-        </xs:restriction>
-    </xs:simpleType>
-
     <!--Property Type:
         ├ name      [string],
         ├ value     [string],
@@ -1603,6 +1668,13 @@
 
     <xs:simpleType name="uint32">
         <xs:restriction base="xs:unsignedInt"/>
+    </xs:simpleType>
+
+    <!--Octect vector-->
+    <xs:simpleType name="octectVector">
+        <xs:restriction base="xs:string">
+            <xs:pattern value="[0-9a-fA-F]{1}(\.[0-9a-fA-F]{1})*" />
+        </xs:restriction>
     </xs:simpleType>
 
 </xs:schema>
