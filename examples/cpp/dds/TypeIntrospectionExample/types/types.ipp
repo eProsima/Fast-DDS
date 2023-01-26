@@ -69,6 +69,38 @@ std::string DataType<Data, Gen>::name() const
 }
 
 template <DataTypeKind Data, GeneratorKind Gen>
+std::string DataType<Data, Gen>::xml() const
+{
+    // This method is generic to avoid implementing the same code for each Generator
+    // because C++ does not allow partial specialization of methods.
+    switch (Data)
+    {
+        case DataTypeKind::HELLO_WORLD:
+            return "hello_world/xml/HelloWorldXml.cpp";
+        case DataTypeKind::ARRAY:
+            return "array/xml/ArrayXml.cpp";
+        case DataTypeKind::SEQUENCE:
+            return "sequence/xml/SequencedXml.cpp";
+        case DataTypeKind::STRUCT:
+            return "struct/xml/StructXml.cpp";
+        case DataTypeKind::PLAIN:
+            return "plain/xml/PlainXml.cpp";
+        case DataTypeKind::SIMPLELARGE:
+            return "simple_large/xml/SimpleLargeXml.cpp";
+        case DataTypeKind::KEY:
+            return "key/xml/KeyXml.cpp";
+        case DataTypeKind::COMPLEX_ARRAY:
+            return "complex_array/xml/ComplexArrayXml.cpp";
+        case DataTypeKind::COMPLEX_SEQUENCE:
+            return "complex_sequence/xml/ComplexSequenceXml.cpp";
+        case DataTypeKind::SUPER_COMPLEX:
+            return "super_complex/xml/SuperComplexXml.cpp";
+        default:
+            throw std::runtime_error("Unsupported data type");
+    }
+}
+
+template <DataTypeKind Data, GeneratorKind Gen>
 eprosima::fastrtps::types::DynamicData_ptr DataType<Data, Gen>::get_data(
         const unsigned int& index) const
 {
