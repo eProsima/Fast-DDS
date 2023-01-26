@@ -519,7 +519,11 @@ public:
     //!Participant ID
     int32_t participantID;
 
-    //!Throughput controller parameters. Leave default for uncontrolled flow.
+    /**
+     * @brief Throughput controller parameters. Leave default for uncontrolled flow.
+     *
+     * @deprecated Use flow_controllers on RTPSParticipantAttributes
+     */
     ThroughputControllerDescriptor throughputController;
 
     //!User defined transports to use alongside or in place of builtins.

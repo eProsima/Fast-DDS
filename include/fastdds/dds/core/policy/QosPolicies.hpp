@@ -2696,7 +2696,11 @@ public:
     //!Port Parameters
     fastrtps::rtps::PortParameters port;
 
-    //!Throughput controller parameters. Leave default for uncontrolled flow.
+    /**
+     * @brief Throughput controller parameters. Leave default for uncontrolled flow.
+     *
+     * @deprecated Use flow_controllers() on DomainParticipantQoS
+     */
     fastrtps::rtps::ThroughputControllerDescriptor throughput_controller;
 
     /**
