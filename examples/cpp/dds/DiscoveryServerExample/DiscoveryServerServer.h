@@ -36,64 +36,64 @@ class DiscoveryServer
 {
 public:
 
-DiscoveryServer();
+	DiscoveryServer();
 
-virtual ~DiscoveryServer();
+	virtual ~DiscoveryServer();
 
-//! Initialize the server
-bool init(
-	const std::string& server_address,
-	unsigned short server_port,
-	unsigned short server_id,
-	TransportKind transport,
-	bool has_connection_server,
-	const std::string& connection_server_address,
-	unsigned short connection_server_port,
-	unsigned short connection_server_id);
+	//! Initialize the server
+	bool init(
+		const std::string& server_address,
+		unsigned short server_port,
+		unsigned short server_id,
+		TransportKind transport,
+		bool has_connection_server,
+		const std::string& connection_server_address,
+		unsigned short connection_server_port,
+		unsigned short connection_server_id);
 
-//! Run
-void run(unsigned int timeout);
+	//! Run
+	void run(unsigned int timeout);
 
-//! Return the current state of execution
-static bool is_stopped();
+	//! Return the current state of execution
+	static bool is_stopped();
 
-//! Trigger the end of execution
-static void stop();
+	//! Trigger the end of execution
+	static void stop();
 
 private:
 
-eprosima::fastdds::dds::DomainParticipant* participant_;
+	eprosima::fastdds::dds::DomainParticipant* participant_;
 
-/**
- * Class handling discovery events
- */
-class ServerListener : public eprosima::fastdds::dds::DomainParticipantListener
-{
-public:
+	/**
+	 * Class handling discovery events
+	 */
+	class ServerListener : public eprosima::fastdds::dds::DomainParticipantListener
+	{
+	public:
 
-ServerListener()
-{
-}
+	ServerListener()
+	{
+	}
 
-~ServerListener() override
-{
-}
+	~ServerListener() override
+	{
+	}
 
-//! Callback executed when a DomainParticipant is discovered, dropped or removed
-void on_participant_discovery(
-	eprosima::fastdds::dds::DomainParticipant* /*participant*/,
-	eprosima::fastrtps::rtps::ParticipantDiscoveryInfo&& info) override;
-}
-listener_;
+	//! Callback executed when a DomainParticipant is discovered, dropped or removed
+	void on_participant_discovery(
+		eprosima::fastdds::dds::DomainParticipant* /*participant*/,
+		eprosima::fastrtps::rtps::ParticipantDiscoveryInfo&& info) override;
+	}
+	listener_;
 
-//! Member used for control flow purposes
-static std::atomic<bool> stop_;
+	//! Member used for control flow purposes
+	static std::atomic<bool> stop_;
 
-//! Protects terminate condition variable
-static std::mutex terminate_cv_mtx_;
+	//! Protects terminate condition variable
+	static std::mutex terminate_cv_mtx_;
 
-//! Waits during execution until SIGINT or max_messages_ samples are received
-static std::condition_variable terminate_cv_;
+	//! Waits during execution until SIGINT or max_messages_ samples are received
+	static std::condition_variable terminate_cv_;
 };
 
 
