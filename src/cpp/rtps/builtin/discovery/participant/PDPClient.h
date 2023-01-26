@@ -218,7 +218,7 @@ private:
      */
     bool create_ds_pdp_reliable_endpoints(
             DiscoveryServerPDPEndpoints& endpoints,
-            bool secure);
+            bool is_discovery_protected);
 
     /**
      * Performs creation of DS best-effort PDP reader.
