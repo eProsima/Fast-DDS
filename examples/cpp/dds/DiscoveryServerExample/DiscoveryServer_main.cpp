@@ -62,13 +62,13 @@ int main(
     TransportKind transport = TransportKind::UDPv4;
 
     // Discovery Server connection
-    std::string connection_address = "::1";   // default ip address
+    std::string connection_address = "127.0.0.1";   // default ip address
     uint16_t connection_port = 16166;   // default physical port
     uint16_t connection_ds_id = 0;   // default DS id
     bool id_ds_set = false;
 
     // Discovery Server listening
-    std::string listening_address = "::1";   // default ip address
+    std::string listening_address = "127.0.0.1";   // default ip address
     uint16_t listening_port = 16166;   // default physical port
     uint16_t listening_ds_id = 0;   // default DS id
     uint32_t timeout = 0;   // default DS id

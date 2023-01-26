@@ -218,7 +218,7 @@ const option::Descriptor usage[] = {
         "c",
         "connection-address",
         Arg::String,
-        "  -c <IPaddress> \t--connection-address=<IPaddress>  \tServer address (Default address: ::1)."
+        "  -c <IPaddress> \t--connection-address=<IPaddress>  \tServer address (Default address: 127.0.0.1)."
     },
     {
         CONNECTION_PORT,
@@ -270,7 +270,7 @@ const option::Descriptor usage[] = {
         "c",
         "connection-address",
         Arg::String,
-        "  -c <IPaddress> \t--connection-address=<IPaddress>  \tServer address (Default address: ::1)."
+        "  -c <IPaddress> \t--connection-address=<IPaddress>  \tServer address (Default address: 127.0.0.1)."
     },
     {
         CONNECTION_PORT,
@@ -306,7 +306,7 @@ const option::Descriptor usage[] = {
         "",
         "listening-address",
         Arg::String,
-        "  \t--listening-address=<IPaddress>  \tServer address (Default address: ::1)."
+        "  \t--listening-address=<IPaddress>  \tServer address (Default address: 127.0.0.1)."
     },
     {
         LISTENING_DISCOVERY_SERVER_ID,
@@ -346,7 +346,7 @@ const option::Descriptor usage[] = {
         "c",
         "connection-address",
         Arg::String,
-        "  -c <num> \t--connection-address=<IPaddress>  \tServer address (Default address: ::1)."
+        "  -c <num> \t--connection-address=<IPaddress>  \tServer address (Default address: 127.0.0.1)."
     },
     {
         CONNECTION_DISCOVERY_SERVER_ID,
