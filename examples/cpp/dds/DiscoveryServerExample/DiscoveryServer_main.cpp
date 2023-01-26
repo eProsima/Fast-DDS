@@ -59,7 +59,7 @@ int main(
     long sleep = 100;
 
     // Transport
-    TransportKind transport = TransportKind::UDPv6;
+    TransportKind transport = TransportKind::UDPv4;
 
     // Discovery Server connection
     std::string connection_address = "::1";   // default ip address
@@ -275,9 +275,9 @@ int main(
 
     // Check that a DS has not same ip and port in listening and connection
     if (id_ds_set &&
-        type == EntityKind::SERVER &&
-        listening_address == connection_address &&
-        listening_port == connection_port)
+            type == EntityKind::SERVER &&
+            listening_address == connection_address &&
+            listening_port == connection_port)
     {
         std::cerr << "ERROR: Discovery Servers ports must be different, "
                   << " cannot connect to a server with same listening address "
@@ -292,11 +292,11 @@ int main(
         {
             HelloWorldPublisher mypub;
             if (mypub.init(
-                    topic_name,
-                    connection_address,
-                    connection_port,
-                    connection_ds_id,
-                    transport))
+                        topic_name,
+                        connection_address,
+                        connection_port,
+                        connection_ds_id,
+                        transport))
             {
                 mypub.run(static_cast<uint32_t>(count), static_cast<uint32_t>(sleep));
             }
@@ -311,12 +311,12 @@ int main(
         {
             HelloWorldSubscriber mysub;
             if (mysub.init(
-                    topic_name,
-                    static_cast<uint32_t>(count),
-                    connection_address,
-                    connection_port,
-                    connection_ds_id,
-                    transport))
+                        topic_name,
+                        static_cast<uint32_t>(count),
+                        connection_address,
+                        connection_port,
+                        connection_ds_id,
+                        transport))
             {
                 mysub.run(static_cast<uint32_t>(count));
             }
@@ -331,14 +331,14 @@ int main(
         {
             DiscoveryServer myserver;
             if (myserver.init(
-                    listening_address,
-                    listening_port,
-                    listening_ds_id,
-                    transport,
-                    id_ds_set,
-                    connection_address,
-                    connection_port,
-                    connection_ds_id))
+                        listening_address,
+                        listening_port,
+                        listening_ds_id,
+                        transport,
+                        id_ds_set,
+                        connection_address,
+                        connection_port,
+                        connection_ds_id))
             {
                 myserver.run(timeout);
             }

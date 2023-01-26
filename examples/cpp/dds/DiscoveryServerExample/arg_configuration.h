@@ -138,9 +138,9 @@ struct Arg : public option::Arg
             // we must check if it is a correct ip address plus port number
             std::string transport = std::string(option.arg);
             if (
-                    // transport == "shm" ||
-                    transport == "udpv4" ||
-                    transport == "udpv6"
+                // transport == "shm" ||
+                transport == "udpv4" ||
+                transport == "udpv6"
                 )
             {
                 return option::ARG_OK;
@@ -176,7 +176,7 @@ enum  optionIndex
 
 const option::Descriptor usage[] = {
     {UNKNOWN_OPT, 0, "", "", Arg::None,
-        "Usage: DiscoveryServerExample <publisher|subscriber|server>\n\nGeneral options:" },
+    "Usage: DiscoveryServerExample <publisher|subscriber|server>\n\nGeneral options:" },
     {
         HELP,
         0,
@@ -234,7 +234,7 @@ const option::Descriptor usage[] = {
         "t",
         "transport",
         Arg::Transport,
-      "  -t <trans>\t--transport <trans> \tUse Transport Protocol [udpv4|udpv6] (UDPv6 by default)."
+        "  -t <trans>\t--transport <trans> \tUse Transport Protocol [udpv4|udpv6] (UDPv4 by default)."
     },
     {
         CONNECTION_DISCOVERY_SERVER_ID,
@@ -242,8 +242,8 @@ const option::Descriptor usage[] = {
         "d",
         "discovery-server-id",
         Arg::Numeric,
-      "  -d <num>\t--discovery-server-id <num> \tId of the Discovery Server to connect with. "
-      "GUID will be calculated from id (0 by default)."
+        "  -d <num>\t--discovery-server-id <num> \tId of the Discovery Server to connect with. "
+        "GUID will be calculated from id (0 by default)."
     },
 
     /// SUBSCRIBER OPTIONS
@@ -286,7 +286,7 @@ const option::Descriptor usage[] = {
         "t",
         "transport",
         Arg::Transport,
-        "  -t <trans>\t--transport <trans> \tUse Transport Protocol [udpv4|udpv6] (UDPv6 by default)."
+        "  -t <trans>\t--transport <trans> \tUse Transport Protocol [udpv4|udpv6] (UDPv4 by default)."
     },
     {
         CONNECTION_DISCOVERY_SERVER_ID,
@@ -294,8 +294,8 @@ const option::Descriptor usage[] = {
         "d",
         "discovery-server-id",
         Arg::Numeric,
-      "  -d <num>\t--discovery-server-id <num> \tId of the Discovery Server to connect with. "
-      "GUID will be calculated from id (0 by default)."
+        "  -d <num>\t--discovery-server-id <num> \tId of the Discovery Server to connect with. "
+        "GUID will be calculated from id (0 by default)."
     },
 
     /// SERVER OPTIONS
@@ -314,7 +314,7 @@ const option::Descriptor usage[] = {
         "",
         "id",
         Arg::Numeric,
-      "  \t--id <num> \tId of this Discovery Server. GUID will be calculated from id (0 by default)."
+        "  \t--id <num> \tId of this Discovery Server. GUID will be calculated from id (0 by default)."
     },
     {
         LISTENING_PORT,
@@ -330,7 +330,7 @@ const option::Descriptor usage[] = {
         "t",
         "transport",
         Arg::Transport,
-        "  -t <trans>\t--transport <trans> \tUse Transport Protocol [udpv4|udpv6] (UDPv6 by default)."
+        "  -t <trans>\t--transport <trans> \tUse Transport Protocol [udpv4|udpv6] (UDPv4 by default)."
     },
     {
         CONNECTION_PORT,
@@ -354,8 +354,8 @@ const option::Descriptor usage[] = {
         "d",
         "connection-discovery-server-id",
         Arg::Numeric,
-      "  -d <num>\t--connection-discovery-server-id <num> \tId of the Discovery Server to connect with. "
-      "GUID will be calculated from id (if not set, this DS will not connect to other server)."
+        "  -d <num>\t--connection-discovery-server-id <num> \tId of the Discovery Server to connect with. "
+        "GUID will be calculated from id (if not set, this DS will not connect to other server)."
     },
     {
         TIMEOUT,
@@ -363,7 +363,7 @@ const option::Descriptor usage[] = {
         "z",
         "timeout",
         Arg::Numeric,
-      "  -z <num>\t--timeout <num> \tNumber of seconds before finish the process (Default: 0 = till ^C). "
+        "  -z <num>\t--timeout <num> \tNumber of seconds before finish the process (Default: 0 = till ^C). "
     },
 
     { 0, 0, 0, 0, 0, 0 }
