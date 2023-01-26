@@ -323,7 +323,7 @@ bool PDPClient::create_ds_pdp_endpoints()
 
 bool PDPClient::create_ds_pdp_reliable_endpoints(
         DiscoveryServerPDPEndpoints& endpoints,
-        bool secure)
+        bool is_discovery_protected)
 {
 
     EPROSIMA_LOG_INFO(RTPS_PDP, "Beginning PDPClient Endpoints creation");
@@ -352,7 +352,7 @@ bool PDPClient::create_ds_pdp_reliable_endpoints(
     ratt.endpoint.reliabilityKind = RELIABLE;
     ratt.times.heartbeatResponseDelay = pdp_heartbeat_response_delay;
 #if HAVE_SECURITY
-    if (secure)
+    if (is_discovery_protected)
     {
         ratt.endpoint.security_attributes().is_submessage_protected = true;
         ratt.endpoint.security_attributes().plugin_endpoint_attributes =
@@ -364,7 +364,7 @@ bool PDPClient::create_ds_pdp_reliable_endpoints(
 
     RTPSReader* reader = nullptr;
 #if HAVE_SECURITY
-    EntityId_t reader_entity = secure ? c_EntityId_spdp_reliable_participant_secure_reader : c_EntityId_SPDPReader;
+    EntityId_t reader_entity = is_discovery_protected ? c_EntityId_spdp_reliable_participant_secure_reader : c_EntityId_SPDPReader;
 #else
     EntityId_t reader_entity = c_EntityId_SPDPReader;
 #endif // if HAVE_SECURITY
@@ -409,7 +409,7 @@ bool PDPClient::create_ds_pdp_reliable_endpoints(
     watt.times.nackSupressionDuration = pdp_nack_supression_duration;
 
 #if HAVE_SECURITY
-    if (secure)
+    if (is_discovery_protected)
     {
         watt.endpoint.security_attributes().is_submessage_protected = true;
         watt.endpoint.security_attributes().plugin_endpoint_attributes =
@@ -424,7 +424,7 @@ bool PDPClient::create_ds_pdp_reliable_endpoints(
 
     RTPSWriter* wout = nullptr;
 #if HAVE_SECURITY
-    EntityId_t writer_entity = secure ? c_EntityId_spdp_reliable_participant_secure_writer : c_EntityId_SPDPWriter;
+    EntityId_t writer_entity = is_discovery_protected ? c_EntityId_spdp_reliable_participant_secure_writer : c_EntityId_SPDPWriter;
 #else
     EntityId_t writer_entity = c_EntityId_SPDPWriter;
 #endif // if HAVE_SECURITY
@@ -459,12 +459,12 @@ bool PDPClient::create_ds_pdp_reliable_endpoints(
                 match_pdp_writer_nts_(it);
                 match_pdp_reader_nts_(it);
             }
-            else if (!should_protect_discovery())
+            else if (!is_discovery_protected)
             {
                 endpoints.reader.reader_->enableMessagesFromUnkownWriters(true);
             }
 #else
-            if (!secure)
+            if (!is_discovery_protected)
             {
                 match_pdp_writer_nts_(it);
                 match_pdp_reader_nts_(it);
@@ -516,6 +516,13 @@ void PDPClient::notifyAboveRemoteEndpoints(
         {
             if (data_matches_with_prefix(svr.guidPrefix, pdata))
             {
+                if (nullptr == svr.proxy)
+                {
+                    //! try to retrieve the participant proxy data from an unmangled prefix in case
+                    //! we could not fill svr.proxy in assignRemoteEndpoints()
+                    svr.proxy = get_participant_proxy_data(svr.guidPrefix);
+                }
+
                 match_pdp_reader_nts_(svr, pdata.m_guid.guidPrefix);
                 match_pdp_writer_nts_(svr, pdata.m_guid.guidPrefix);
                 break;
@@ -760,14 +767,7 @@ void PDPClient::announceParticipantState(
                     for (auto& svr : mp_builtin->m_DiscoveryServers)
                     {
                         // if we are matched to a server report demise
-                        if (nullptr == svr.proxy)
-                        {
-                            //! try to retrieve the participant proxy data from an unmangled prefix in case
-                            //! we could not fill svr.proxy in assignRemoteEndpoints()
-                            svr.proxy = get_participant_proxy_data(svr.guidPrefix);
-                        }
-
-                        if (nullptr != svr.proxy)
+                        if (svr.proxy != nullptr)
                         {
                             //locators.push_back(svr.metatrafficMulticastLocatorList);
                             locators.push_back(svr.metatrafficUnicastLocatorList);
