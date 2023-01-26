@@ -243,7 +243,10 @@ ParticipantProxyData* PDP::add_participant_proxy_data(
 void PDP::initializeParticipantProxyData(
         ParticipantProxyData* participant_data)
 {
-    participant_data->m_leaseDuration = mp_RTPSParticipant->getAttributes().builtin.discovery_config.leaseDuration;
+    RTPSParticipantAttributes& attributes = mp_RTPSParticipant->getAttributes();
+    bool announce_locators = !mp_RTPSParticipant->is_intraprocess_only();
+
+    participant_data->m_leaseDuration = attributes.builtin.discovery_config.leaseDuration;
     //set_VendorId_eProsima(participant_data->m_VendorId);
     participant_data->m_VendorId = c_VendorId_eProsima;
 
@@ -282,13 +285,16 @@ void PDP::initializeParticipantProxyData(
     participant_data->m_availableBuiltinEndpoints |= mp_RTPSParticipant->security_manager().builtin_endpoints();
 #endif // if HAVE_SECURITY
 
-    for (const Locator_t& loc : mp_RTPSParticipant->getAttributes().defaultUnicastLocatorList)
+    if (announce_locators)
     {
-        participant_data->default_locators.add_unicast_locator(loc);
-    }
-    for (const Locator_t& loc : mp_RTPSParticipant->getAttributes().defaultMulticastLocatorList)
-    {
-        participant_data->default_locators.add_multicast_locator(loc);
+        for (const Locator_t& loc : attributes.defaultUnicastLocatorList)
+        {
+            participant_data->default_locators.add_unicast_locator(loc);
+        }
+        for (const Locator_t& loc : attributes.defaultMulticastLocatorList)
+        {
+            participant_data->default_locators.add_multicast_locator(loc);
+        }
     }
     participant_data->m_expectsInlineQos = false;
     participant_data->m_guid = mp_RTPSParticipant->getGuid();
@@ -317,21 +323,27 @@ void PDP::initializeParticipantProxyData(
     }
 
     participant_data->metatraffic_locators.unicast.clear();
-    for (const Locator_t& loc : this->mp_builtin->m_metatrafficUnicastLocatorList)
+    if (announce_locators)
     {
-        participant_data->metatraffic_locators.add_unicast_locator(loc);
-    }
-
-    participant_data->metatraffic_locators.multicast.clear();
-    if (!m_discovery.avoid_builtin_multicast || participant_data->metatraffic_locators.unicast.empty())
-    {
-        for (const Locator_t& loc: this->mp_builtin->m_metatrafficMulticastLocatorList)
+        for (const Locator_t& loc : this->mp_builtin->m_metatrafficUnicastLocatorList)
         {
-            participant_data->metatraffic_locators.add_multicast_locator(loc);
+            participant_data->metatraffic_locators.add_unicast_locator(loc);
         }
     }
 
-    participant_data->m_participantName = std::string(mp_RTPSParticipant->getAttributes().getName());
+    participant_data->metatraffic_locators.multicast.clear();
+    if (announce_locators)
+    {
+        if (!m_discovery.avoid_builtin_multicast || participant_data->metatraffic_locators.unicast.empty())
+        {
+            for (const Locator_t& loc: this->mp_builtin->m_metatrafficMulticastLocatorList)
+            {
+                participant_data->metatraffic_locators.add_multicast_locator(loc);
+            }
+        }
+    }
+
+    participant_data->m_participantName = std::string(attributes.getName());
 
     participant_data->m_userData = mp_RTPSParticipant->getAttributes().userData;
 
