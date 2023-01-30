@@ -1481,11 +1481,9 @@
     <!--QoS Octect Vector Data:
         └ value [1~*] (octectVector) -->
     <xs:complexType name="octectVectorQosPolicyType">
-        <xs:complexType>
-            <xs:sequence>
-                <xs:element name="value" type="octectVector" minOccurs="1" maxOccurs="unbounded"/>
-            </xs:sequence>
-        </xs:complexType>
+        <xs:sequence>
+            <xs:element name="value" type="octectVector" minOccurs="1" maxOccurs="unbounded"/>
+        </xs:sequence>
     </xs:complexType>
 
 
