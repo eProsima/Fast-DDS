@@ -109,6 +109,7 @@
             ├ useBuiltinTransports              [bool],
             ├ propertiesPolicy                  [0~1],
             ├ allocation                        [0~1],
+            ├ userData                          [0~1],
             └ prefix                            [0~1]-->
     <!-- TODO:  How to ensure that the userTransports identifiers exist in transport descriptors in the XML file? -->
     <xs:complexType name="participantProfileType">
@@ -136,13 +137,7 @@
                         <xs:element name="useBuiltinTransports" type="boolean" minOccurs="0" maxOccurs="1"/>
                         <xs:element name="propertiesPolicy" type="propertyPolicyType" minOccurs="0" maxOccurs="1"/>
                         <xs:element name="allocation" type="rtpsParticipantAllocationAttributesType"  minOccurs="0" maxOccurs="1"/>
-                        <xs:element name="userData" minOccurs="0" maxOccurs="1">
-                            <xs:complexType>
-                                <xs:all>
-                                    <xs:element name="value" type="xs:string"/>
-                                </xs:all>
-                            </xs:complexType>
-                        </xs:element>
+                        <xs:element name="userData" type="octectVectorQosPolicyType" minOccurs="0" maxOccurs="1"/>
                         <xs:element name="prefix" type="prefixType" minOccurs="0" maxOccurs="1"/>
                     </xs:all>
                 </xs:complexType>
@@ -502,8 +497,7 @@
     <xs:complexType name ="logConsumerPropertyType">
         <xs:all>
             <xs:element name="name" minOccurs="1">
-                <xs:simpleType>  <!-- Restriction based on Fast DDS doc -->
-                <!-- https://fast-dds.docs.eprosima.com/en/latest/fastdds/xml_configuration/log.html#propertytype -->
+                <xs:simpleType>
                     <xs:restriction base="xs:string">
                         <xs:enumeration value="filename"/>
                         <xs:enumeration value="append"/>
@@ -512,8 +506,7 @@
                 </xs:simpleType>
             </xs:element>
             <xs:element name="value" minOccurs="1">
-                <xs:simpleType>  <!-- Restriction based on Fast DDS doc -->
-                <!-- https://fast-dds.docs.eprosima.com/en/latest/fastdds/xml_configuration/log.html#propertytype -->
+                <xs:simpleType>
                     <xs:union>
                         <xs:simpleType> <!-- FileConsumer: name = filename -->
                             <xs:restriction base="xs:string"/>
@@ -579,7 +572,7 @@
     <!--builtin Discovery Configuration:
         ├ discoveryProtocol         [string] ("SIMPLE", "CLIENT", "SERVER", "BACKUP", "NONE"),
         ├ discoveryServersList      [0~1],
-        |   └ RemoteServer          [1],
+        |   └ RemoteServer          [1~*],
         |      |   ╚ att. prefix    [string] REQ,
         |      ├ metatrafficUnicastLocatorList   [0~1],
         |      └ metatrafficMulticastLocatorList [0~1],
@@ -1049,7 +1042,7 @@
             <xs:element name="durability" type="durabilityQosPolicyType" minOccurs="0" maxOccurs="1"/>
             <!-- <xs:element name="durability_service" type="durabilityServiceQosPolicyType" minOccurs="0" maxOccurs="1"/> -->
             <!-- <xs:element name="entity_factory" type="entityFactoryQoSPolicyType" minOccurs="0" maxOccurs="1"/> -->
-            <xs:element name="groupData" type="groupDataQosPolicyType" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="groupData" type="octectVectorQosPolicyType" minOccurs="0" maxOccurs="1"/>
             <xs:element name="latencyBudget" type="latencyBudgetQosPolicyType" minOccurs="0" maxOccurs="1"/>
             <xs:element name="lifespan" type="lifespanQosPolicyType" minOccurs="0" maxOccurs="1"/>
             <xs:element name="liveliness" type="livelinessQosPolicyType" minOccurs="0" maxOccurs="1"/>
@@ -1059,8 +1052,8 @@
             <!-- <xs:element name="presentation" type="presentationQosPolicyType" minOccurs="0" maxOccurs="1"/> -->
             <xs:element name="publishMode" type="publishModeQosPolicyType" minOccurs="0" maxOccurs="1"/>
             <xs:element name="reliability" type="reliabilityQosPolicyType" minOccurs="0" maxOccurs="1"/>
-            <xs:element name="topicData" type="topicDataQosPolicyType" minOccurs="0" maxOccurs="1"/>
-            <xs:element name="userData" type="userDataQosPolicyType" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="topicData" type="octectVectorQosPolicyType" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="userData" type="octectVectorQosPolicyType" minOccurs="0" maxOccurs="1"/>
         </xs:all>
     </xs:complexType>
 
@@ -1337,14 +1330,6 @@
     </xs:complexType>
     -->
 
-    <!--QoS Group Data:
-        └ value [octectVector] -->
-    <xs:complexType name="groupDataQosPolicyType">
-        <xs:all>
-            <xs:element name="value" type="octectVector" minOccurs="1" maxOccurs="1"/>
-        </xs:all>
-    </xs:complexType>
-
     <!--QoS History:
         ├ kind  [0~1],
         └ depth [uint32] -->
@@ -1492,22 +1477,16 @@
         </xs:all>
     </xs:complexType>
 
-    <!--QoS Topic Data:
-        └ value [octectVector] -->
-    <xs:complexType name="topicDataQosPolicyType">
-        <xs:all>
-            <xs:element name="value" type="octectVector" minOccurs="1" maxOccurs="1"/>
-        </xs:all>
-    </xs:complexType>
 
-    <!--QoS User Data:
-        └ value [octectVector] -->
-    <xs:complexType name="userDataQosPolicyType">
-        <xs:all>
-            <xs:element name="value" type="octectVector" minOccurs="1" maxOccurs="1"/>
-        </xs:all>
+    <!--QoS Octect Vector Data:
+        └ value [1~*] (octectVector) -->
+    <xs:complexType name="octectVectorQosPolicyType">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="value" type="octectVector" minOccurs="1" maxOccurs="unbounded"/>
+            </xs:sequence>
+        </xs:complexType>
     </xs:complexType>
-
 
 
     <!--| BASIC TYPES DEFINITION |-->
