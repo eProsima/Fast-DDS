@@ -34,7 +34,7 @@ std::string TypeNamesGenerator::get_sequence_type_name(
     if (generate_identifier)
     {
         TypeObjectFactory::get_instance()->get_sequence_identifier(type_name, bound, true);
-        // TypeObjectFactory::get_instance()->get_sequence_identifier(type_name, bound, false);
+        TypeObjectFactory::get_instance()->get_sequence_identifier(type_name, bound, false);
     }
     return auxType.str();
 }
@@ -76,7 +76,7 @@ std::string TypeNamesGenerator::get_array_type_name(
     if (generate_identifier)
     {
         TypeObjectFactory::get_instance()->get_array_identifier(type_name, bound, true);
-        // TypeObjectFactory::get_instance()->get_array_identifier(type_name, bound, false);
+        TypeObjectFactory::get_instance()->get_array_identifier(type_name, bound, false);
     }
     return auxType.str();
 }
