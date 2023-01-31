@@ -189,20 +189,18 @@ TopicPayloadPool::PayloadNode* TopicPayloadPool::allocate(
 TopicPayloadPool::PayloadNode* TopicPayloadPool::do_allocate(
         uint32_t size)
 {
-    PayloadNode* payload = nullptr;
+    PayloadNode* payload = new (std::nothrow) PayloadNode(size);
 
-    try
+    if (payload != nullptr)
     {
-        payload = new PayloadNode(size);
+        payload->data_index(static_cast<uint32_t>(all_payloads_.size()));
+        all_payloads_.push_back(payload);
     }
-    catch (std::bad_alloc& exception)
+    else
     {
-        logWarning(RTPS_HISTORY, "Failure to create a new payload " << exception.what());
-        return nullptr;
+        logWarning(RTPS_HISTORY, "Failure to create a new payload ");
     }
 
-    payload->data_index(static_cast<uint32_t>(all_payloads_.size()));
-    all_payloads_.push_back(payload);
     return payload;
 }
 
@@ -253,7 +251,11 @@ void TopicPayloadPool::reserve (
     for (size_t i = all_payloads_.size(); i < min_num_payloads; ++i)
     {
         PayloadNode* payload = do_allocate(size);
-        free_payloads_.push_back(payload);
+
+        if (payload != nullptr)
+        {
+            free_payloads_.push_back(payload);
+        }
     }
 }
 

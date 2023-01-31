@@ -207,15 +207,6 @@ endif()
 
 option(SQLITE3_SUPPORT "Activate SQLITE3 support" ON)
 
-option(USE_THIRDPARTY_SHARED_MUTEX [=[
-Forces the use of a Boost-based shared_mutex implementation
-instead of the framework one. Useful to cope with issues on
-framework implementations like misguided sanitizer reports.
-This implementation will be used by default on frameworks
-lacking the shared_mutex feature like those not fulfilling
-C++17.
-]=] OFF)
-
 ###############################################################################
 # SHM as Default transport
 ###############################################################################
