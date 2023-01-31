@@ -1593,9 +1593,11 @@ void DynamicTypeBuilderFactory::build_enum_type_code(
             mel.detail().name(member->get_name());
 
             // Apply member annotations
-            TypeDescriptor member_type_descriptor;
-            member->type_->get_descriptor(&member_type_descriptor);
-            apply_type_annotations(mel.detail().ann_custom(), &member_type_descriptor);
+            // This should not be set for enums, or previously a primitive type (TK_INT32, TK_INT16 or TK_BYTE) should
+            // have been assigned to each member depending on bitbound
+            // TypeDescriptor member_type_descriptor;
+            // member->type_->get_descriptor(&member_type_descriptor);
+            // apply_type_annotations(mel.detail().ann_custom(), &member_type_descriptor);
 
             object.complete().enumerated_type().literal_seq().emplace_back(mel);
         }
@@ -1919,10 +1921,10 @@ void DynamicTypeBuilderFactory::build_union_type_code(
         object.complete().union_type().discriminator().common().member_flags().IS_DEFAULT(false);
 
         // Apply annotations
-        apply_type_annotations(object.complete().struct_type().header().detail().ann_custom(), descriptor);
+        apply_type_annotations(object.complete().union_type().header().detail().ann_custom(), descriptor);
 
         TypeObject discObj;
-        build_type_object(descriptor->discriminator_type_->descriptor_, discObj, nullptr, true);
+        build_type_object(descriptor->discriminator_type_, discObj);
         TypeIdentifier discIdent =
                 *TypeObjectFactory::get_instance()->get_type_identifier_trying_complete(descriptor->discriminator_type_->get_name());
         object.complete().union_type().discriminator().common().type_id(discIdent);
@@ -2297,9 +2299,9 @@ void DynamicTypeBuilderFactory::build_bitmask_type_code(
             msm.detail().name(member->get_name());
 
             // Apply member annotations
-            TypeDescriptor member_type_descriptor;
-            member->type_->get_descriptor(&member_type_descriptor);
-            apply_type_annotations(msm.detail().ann_custom(), &member_type_descriptor);
+            // TypeDescriptor member_type_descriptor;
+            // member->type_->get_descriptor(&member_type_descriptor);
+            // apply_type_annotations(msm.detail().ann_custom(), &member_type_descriptor);
 
             object.complete().bitmask_type().flag_seq().emplace_back(msm);
         }
