@@ -163,7 +163,6 @@
         ├ multicastLocatorList         [0~1],
         ├ external_unicast_locators    [0~1],
         ├ ignore_non_matching_locators [bool],
-        ├ throughputController         [0~1],
         ├ historyMemoryPolicy          [0~1],
         ├ propertiesPolicy             [0~1],
         ├ userDefinedID                [int16],
@@ -207,7 +206,7 @@
         └ matchedPublishersAllocation  [0~1]-->
     <xs:complexType name="subscriberProfileType">
         <xs:all minOccurs="0">
-            <xs:element name="topic" type="topicAttributesType" minOccurs="0"/>
+            <xs:element name="topic" type="topicAttributesType" minOccurs="0" maxOccurs="1"/>
             <xs:element name="qos" type="QosPoliciesType" minOccurs="0"/>
             <xs:element name="times" type="readerTimesType" minOccurs="0"/>
             <xs:element name="unicastLocatorList" type="locatorListType" minOccurs="0"/>
@@ -233,7 +232,39 @@
       </xs:sequence>
     </xs:complexType>
 
-
+    <!--Topic:
+        ├ historyQoS        [0~1],
+        |   ├ kind          [string] ("KEEP_LAST", "KEEP_ALL"),
+        |   └ depth         [uint32],
+        └ resourceLimitsQos [0~1],
+            ├ max_samples              [uint32],
+            ├ max_instances            [uint32],
+            ├ max_samples_per_instance [uint32],
+            ├ allocated_samples        [uint32],
+            └ extra_samples            [uint32] -->
+    <xs:complexType name="topicAttributesType">
+        <xs:all>
+            <xs:element name="historyQos" minOccurs="0" maxOccurs="1">
+                <xs:complexType>
+                    <xs:all>
+                        <xs:element name="kind" type="historyQosKindType" minOccurs="0" maxOccurs="1"/>
+                        <xs:element name="depth" type="uint32" minOccurs="0" maxOccurs="1"/>
+                    </xs:all>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="resourceLimitsQos" minOccurs="0" maxOccurs="1">
+                <xs:complexType>
+                    <xs:all>
+                        <xs:element name="max_samples" type="uint32" minOccurs="0" maxOccurs="1"/>
+                        <xs:element name="max_instances" type="uint32" minOccurs="0" maxOccurs="1"/>
+                        <xs:element name="max_samples_per_instance" type="uint32" minOccurs="0" maxOccurs="1"/>
+                        <xs:element name="allocated_samples" type="uint32" minOccurs="0" maxOccurs="1"/>
+                        <xs:element name="extra_samples" type="uint32" minOccurs="0" maxOccurs="1"/>
+                    </xs:all>
+                </xs:complexType>
+            </xs:element>
+        </xs:all>
+    </xs:complexType>
 
 
     <!--| DYNAMIC TYPES ELEMENTS |-->
@@ -527,7 +558,7 @@
     <!--builtin:
         ├ discovery_config                      [0~1],
         ├ avoid_builtin_multicast               [bool],
-        ├ use_WriterLivelinessProtocol          [0~1],
+        ├ use_WriterLivelinessProtocol          [bool],
         ├ metatrafficUnicastLocatorList         [0~1],
         ├ metatrafficMulticastLocatorList       [0~1],
         ├ initialPeersList                      [0~1],
@@ -965,53 +996,6 @@
                         </xs:simpleType>
                     </xs:union>
                 </xs:simpleType>
-            </xs:element>
-        </xs:all>
-    </xs:complexType>
-
-    <!--Topic:
-        ├ kind              [string] ("NO_KEY", "WITH_KEY"),
-        ├ name              [string],
-        ├ dataType          [string],
-        ├ historyQoS        [0~1],
-        |   ├ kind          [string] ("KEEP_LAST", "KEEP_ALL"),
-        |   └ depth         [uint32],
-        └ resourceLimitsQos [0~1],
-            ├ max_samples              [uint32],
-            ├ max_instances            [uint32],
-            ├ max_samples_per_instance [uint32],
-            ├ allocated_samples        [uint32],
-            └ extra_samples            [uint32] -->
-    <xs:complexType name="topicAttributesType">
-        <xs:all>
-            <!--<xs:element name="kind" minOccurs="0" maxOccurs="1">
-                <xs:simpleType>
-                    <xs:restriction base="xs:string">
-                        <xs:enumeration value="NO_KEY"/>
-                        <xs:enumeration value="WITH_KEY"/>
-                    </xs:restriction>
-                </xs:simpleType>
-            </xs:element>
-            <xs:element name="name" type="string" minOccurs="0" maxOccurs="1"/>
-            <xs:element name="dataType" type="string" minOccurs="0" maxOccurs="1"/> -->
-            <xs:element name="historyQos" minOccurs="0" maxOccurs="1">
-                <xs:complexType>
-                    <xs:all>
-                        <xs:element name="kind" type="historyQosKindType" minOccurs="0" maxOccurs="1"/>
-                        <xs:element name="depth" type="uint32" minOccurs="0" maxOccurs="1"/>
-                    </xs:all>
-                </xs:complexType>
-            </xs:element>
-            <xs:element name="resourceLimitsQos" minOccurs="0" maxOccurs="1">
-                <xs:complexType>
-                    <xs:all>
-                        <xs:element name="max_samples" type="uint32" minOccurs="0" maxOccurs="1"/>
-                        <xs:element name="max_instances" type="uint32" minOccurs="0" maxOccurs="1"/>
-                        <xs:element name="max_samples_per_instance" type="uint32" minOccurs="0" maxOccurs="1"/>
-                        <xs:element name="allocated_samples" type="uint32" minOccurs="0" maxOccurs="1"/>
-                        <xs:element name="extra_samples" type="uint32" minOccurs="0" maxOccurs="1"/>
-                    </xs:all>
-                </xs:complexType>
             </xs:element>
         </xs:all>
     </xs:complexType>
