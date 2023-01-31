@@ -1482,7 +1482,7 @@ bool DomainParticipantImpl::register_dynamic_type_to_factories(
             dynFactory->build_type_object(dpst->GetDynamicType()->get_type_descriptor(), typeObj, &members, false);
             const TypeIdentifier* type_id2 = objectFactory->get_type_identifier(dpst->getName());
             const TypeObject* type_obj = objectFactory->get_type_object(dpst->getName());
-            if (type_id2 == nullptr)
+            if (type_id2 == nullptr || type_obj == nullptr)
             {
                 EPROSIMA_LOG_ERROR(DOMAIN_PARTICIPANT, "Cannot register dynamic type " << dpst->getName());
             }
