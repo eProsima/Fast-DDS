@@ -85,11 +85,8 @@ public:
 
     bool init()
     {
-        eprosima::fastdds::dds::DomainParticipantQos participant_qos;
-        eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->get_default_participant_qos(participant_qos);
-
         participant_ = eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->create_participant(0,
-                        participant_qos);
+                        eprosima::fastdds::dds::PARTICIPANT_QOS_DEFAULT);
 
         if (nullptr == participant_)
         {
