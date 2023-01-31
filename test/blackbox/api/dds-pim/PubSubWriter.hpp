@@ -226,7 +226,7 @@ class PubSubWriter
         {
             EXPECT_EQ(writer_.datawriter_, datawriter);
             times_unack_sample_removed_++;
-            writer_.instances_removed_unack_.push_back(handle);
+            instances_removed_unack_.push_back(handle);
         }
 
         unsigned int missed_deadlines() const
@@ -244,6 +244,11 @@ class PubSubWriter
             return times_unack_sample_removed_;
         }
 
+        std::vector<eprosima::fastdds::dds::InstanceHandle_t>& instances_removed_unack()
+        {
+            return instances_removed_unack_;
+        }
+
     private:
 
         Listener& operator =(
@@ -257,6 +262,8 @@ class PubSubWriter
         unsigned int times_liveliness_lost_;
         //! The number of times a sample has been removed unacknowledged
         unsigned int times_unack_sample_removed_;
+        //! Instance handle collection of those instances that have removed samples unacknowledged
+        std::vector<eprosima::fastdds::dds::InstanceHandle_t> instances_removed_unack_;
 
     }
     listener_;
@@ -1444,9 +1451,9 @@ public:
         return listener_.times_unack_sample_removed();
     }
 
-    std::vector<eprosima::fastdds::dds::InstanceHandle_t> instances_removed_unack() const
+    std::vector<eprosima::fastdds::dds::InstanceHandle_t>& instances_removed_unack()
     {
-        return instances_removed_unack_;
+        return listener_.instances_removed_unack();
     }
 
     unsigned int times_incompatible_qos() const
@@ -1784,7 +1791,6 @@ protected:
     std::map<std::string,  int> mapTopicCountList_;
     std::map<std::string,  int> mapPartitionCountList_;
     bool discovery_result_;
-    std::vector<eprosima::fastdds::dds::InstanceHandle_t> instances_removed_unack_;
 
     std::string xml_file_ = "";
     std::string participant_profile_ = "";
