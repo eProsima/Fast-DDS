@@ -66,6 +66,6 @@ target_compile_definitions(DDSCalculatorServer PRIVATE
     $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
     $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
 )
-target_link_libraries(DDSCalculatorServer fastrtps fastcdr fastdds::optionparser)
+target_link_libraries(DDSCalculatorServer fastrtps fastcdr)
 install(TARGETS DDSCalculatorServer
     RUNTIME DESTINATION examples/cpp/dds/RequestReplyExample/${BIN_INSTALL_DIR})

@@ -1,3 +1,21 @@
+// Copyright 2022 Proyectos y Sistemas de Mantenimiento SL (eProsima).
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+#include <condition_variable>
+#include <mutex>
+#include <vector>
+
 #include <fastdds/dds/domain/DomainParticipantFactory.hpp>
 #include <fastdds/dds/domain/DomainParticipant.hpp>
 #include <fastdds/dds/publisher/Publisher.hpp>
@@ -6,10 +24,6 @@
 #include <fastdds/dds/subscriber/DataReader.hpp>
 #include <fastrtps/subscriber/SampleInfo.h>
 #include "CalculatorPubSubTypes.h"
-
-#include <vector>
-#include <mutex>
-#include <condition_variable>
 
 class CalculatorServer
 {
@@ -145,46 +159,10 @@ public:
 
     void deinit()
     {
-        if (nullptr != request_reader_)
-        {
-            subscriber_->delete_datareader(request_reader_);
-            request_reader_ = nullptr;
-        }
-
-        if (nullptr != reply_writer_)
-        {
-            publisher_->delete_datawriter(reply_writer_);
-            reply_writer_ = nullptr;
-        }
-
-        if (nullptr != reply_topic_)
-        {
-            participant_->delete_topic(reply_topic_);
-            reply_topic_ = nullptr;
-        }
-
-        if (nullptr != request_topic_)
-        {
-            participant_->delete_topic(request_topic_);
-            request_topic_ = nullptr;
-        }
-
-        if ( nullptr != subscriber_)
-        {
-            participant_->delete_subscriber(subscriber_);
-            subscriber_ = nullptr;
-        }
-
-        if (nullptr != publisher_)
-        {
-            participant_->delete_publisher(publisher_);
-            publisher_ = nullptr;
-        }
-
         if (nullptr != participant_)
         {
+            participant_->delete_contained_entities();
             eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->delete_participant(participant_);
-            participant_ = nullptr;
         }
     }
 
@@ -219,6 +197,8 @@ int main()
     std::cout << "Press a key + ENTER to close the server" << std::endl;
     char c;
     std::cin >> c;
+
+    server.deinit();
 
     return 0;
 }
