@@ -19,7 +19,9 @@
 #ifndef _STATISTICS_RTPS_MESSAGES_RTPSSTATISTICSMESSAGES_HPP_
 #define _STATISTICS_RTPS_MESSAGES_RTPSSTATISTICSMESSAGES_HPP_
 
+#include <cstddef>
 #include <cstdint>
+#include <cstring>
 
 #include <fastdds/rtps/common/CDRMessage_t.h>
 #include <fastdds/rtps/common/Types.h>
@@ -193,16 +195,26 @@ inline void set_statistics_submessage_from_transport(
         statistics_pos += RTPSMESSAGE_SUBMESSAGEHEADER_SIZE;
 
         // Set current timestamp and sequence
-        auto submessage = (StatisticsSubmessageData*)(&send_buffer[statistics_pos]);
+        auto current_pos = &send_buffer[statistics_pos];
         Time_t ts;
         Time_t::now(ts);
 
-        submessage->destination = destination;
-        submessage->ts.seconds = ts.seconds();
-        submessage->ts.fraction = ts.fraction();
-        submessage->seq.sequence = sequence.sequence;
-        submessage->seq.bytes = sequence.bytes;
-        submessage->seq.bytes_high = sequence.bytes_high;
+        /*
+         * This set of memcpy blocks is intended to prevent an undefined behavior caused when casting from an octet* to a StatisticsSubmessageData*
+         * since these classes have different alignment.
+         */
+
+        memcpy((char*)current_pos + offsetof(StatisticsSubmessageData, destination), &destination, sizeof(destination));
+        memcpy((char*)current_pos + offsetof(StatisticsSubmessageData, ts.seconds), &ts.seconds(),
+                sizeof(StatisticsSubmessageData::ts.seconds));
+        memcpy((char*)current_pos + offsetof(StatisticsSubmessageData, ts.fraction), &ts.fraction(),
+                sizeof(StatisticsSubmessageData::ts.fraction));
+        memcpy((char*)current_pos + offsetof(StatisticsSubmessageData, seq.sequence), &sequence.sequence,
+                sizeof(sequence.sequence));
+        memcpy((char*)current_pos + offsetof(StatisticsSubmessageData, seq.bytes), &sequence.bytes,
+                sizeof(sequence.bytes));
+        memcpy((char*)current_pos + offsetof(StatisticsSubmessageData, seq.bytes_high), &sequence.bytes_high,
+                sizeof(sequence.bytes_high));
     }
 #endif // FASTDDS_STATISTICS
 }

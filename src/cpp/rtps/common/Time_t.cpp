@@ -225,6 +225,11 @@ uint32_t Time_t::fraction() const
     return fraction_;
 }
 
+uint32_t& Time_t::fraction()
+{
+    return fraction_;
+}
+
 void Time_t::fraction(
         uint32_t frac)
 {
