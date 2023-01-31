@@ -150,7 +150,8 @@ public:
             bool complete = false) const;
 
     RTPS_DllAPI const TypeObject* get_type_object(
-            const TypeIdentifier* identifier) const;
+            const TypeIdentifier* identifier,
+            bool force_minimal=false) const;
 
     RTPS_DllAPI TypeKind get_type_kind(
             const std::string& type_name) const;
