@@ -179,6 +179,10 @@ protected:
 
 public:
 
+    RTPS_DllAPI size_t get_size() const;
+
+    RTPS_DllAPI DynamicType_ptr get_type() const;
+
     RTPS_DllAPI ReturnCode_t get_descriptor(
             MemberDescriptor& value,
             MemberId id);

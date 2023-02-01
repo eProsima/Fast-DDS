@@ -256,6 +256,32 @@ void DynamicData::create_members(
     }
 }
 
+size_t DynamicData::get_size() const
+{
+    switch (type_->kind_)
+    {
+        default:
+            return 1;
+
+        case TK_ARRAY:
+        case TK_SEQUENCE:
+        case TK_BITSET:
+        case TK_MAP:
+        {
+#ifdef DYNAMIC_TYPES_CHECKING
+            return complex_values_.size();
+#else
+            return values_.size();
+#endif // ifdef DYNAMIC_TYPES_CHECKING
+        }
+    }
+}
+
+DynamicType_ptr DynamicData::get_type() const
+{
+    return type_;
+}
+
 ReturnCode_t DynamicData::get_descriptor(
         MemberDescriptor& value,
         MemberId id)
