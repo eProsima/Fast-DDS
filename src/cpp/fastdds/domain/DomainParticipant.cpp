@@ -215,7 +215,7 @@ MultiTopic* DomainParticipant::create_multitopic(
         const std::string& subscription_expression,
         const std::vector<std::string>& expression_parameters)
 {
-    static_cast<void> (name);
+    // static_cast<void> (name);
     static_cast<void> (type_name);
     static_cast<void> (subscription_expression);
     static_cast<void> (expression_parameters);
