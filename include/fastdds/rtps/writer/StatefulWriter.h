@@ -307,7 +307,7 @@ public:
      *
      * @return True if positive acks are disabled, false otherwise
      */
-    inline bool get_disable_positive_acks() const
+    bool get_disable_positive_acks() const override
     {
         return disable_positive_acks_;
     }
