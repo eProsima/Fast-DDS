@@ -167,7 +167,7 @@ public:
      * @brief Check if a specific change has been delivered to the transport layer at least once for every matched
      * remote RTPSReader.
      *
-     * @param change Pointer to the CacheChange to check.
+     * @param seq_num Sequence number of the change to check.
      * @return true if delivered.
      * @return false otherwise.
      */
