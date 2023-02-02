@@ -691,11 +691,11 @@ bool ReaderProxy::has_been_delivered(
         return true;
     }
 
-    ChangeIterator it = find_change(seq_number, true);
+    ChangeConstIterator it = find_change(seq_number);
     if (it != changes_for_reader_.end())
     {
         found = true;
-        return change.has_been_delivered();
+        return it->has_been_delivered();
     }
 
     return false;
