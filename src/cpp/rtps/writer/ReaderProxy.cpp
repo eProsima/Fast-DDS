@@ -685,14 +685,19 @@ bool ReaderProxy::has_been_delivered(
         const SequenceNumber_t& seq_number,
         bool& found) const
 {
-    for (auto change : changes_for_reader_)
+    if (seq_number <= changes_low_mark_)
     {
-        if (change.getSequenceNumber() == seq_number)
-        {
-            found = true;
-            return change.has_been_delivered();
-        }
+        // Change has already been acknowledged, so it has been delivered
+        return true;
     }
+
+    ChangeIterator it = find_change(seq_number, true);
+    if (it != changes_for_reader_.end())
+    {
+        found = true;
+        return change.has_been_delivered();
+    }
+
     return false;
 }
 

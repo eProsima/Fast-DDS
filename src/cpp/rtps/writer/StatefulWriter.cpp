@@ -1337,8 +1337,7 @@ bool StatefulWriter::has_been_fully_delivered(
         bool ret_code = reader->has_been_delivered(seq_num, found);
         if (found && !ret_code)
         {
-            // The change has not been fully delivered if at least is found in one ReaderProxy without having been
-            // delivered.
+            // The change has not been fully delivered if it is pending delivery on at least one ReaderProxy.
             return false;
         }
     }
