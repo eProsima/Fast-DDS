@@ -926,7 +926,14 @@ void has_been_fully_delivered_test(
     reader.startReception();
 
     change = writer_1.send_sample(data.front());
-    EXPECT_TRUE(writer_1.waitForAllAcked(std::chrono::milliseconds(150)));
+    if (reliability_mode == ReliabilityKind_t::BEST_EFFORT)
+    {
+        EXPECT_TRUE(writer_1.waitForAllAcked(std::chrono::milliseconds(150)));
+    }
+    else
+    {
+        EXPECT_TRUE(writer_1.waitForAllAcked(std::chrono::seconds::zero()));
+    }
     EXPECT_TRUE(writer_1.has_been_fully_delivered(change->sequenceNumber));
     // Flow controller prevents data sending
     change = writer_2.send_sample(data.front());
