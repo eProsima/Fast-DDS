@@ -33,7 +33,6 @@
 - [ ] Any new/modified methods have been properly documented using Doxygen. <!-- Even internal classes, and private methods and members should be documented, not only the public API. -->
 - [ ] Changes are ABI compatible. <!-- Bug fixes should be ABI compatible if possible so a backport to previous affected releases can be made. -->
 - [ ] Changes are API compatible. <!-- Public API must not be broken within the same major release. -->
-- [ ] Documentation builds and tests pass locally. <!-- Check there are no typos in the Doxygen documentation. -->
 - [ ] New feature has been added to the `versions.md` file (if applicable).
 - [ ] New feature has been documented/Current behavior is correctly described in the documentation. <!-- Please uncomment following line with the corresponding PR to the documentation project: -->
 <!-- Related documentation PR: eProsima/Fast-DDS-docs# (PR) -->
