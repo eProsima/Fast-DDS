@@ -47,6 +47,7 @@ if(EPROSIMA_BUILD_TESTS)
     add_subdirectory(xtypes)
     add_subdirectory(dds/communication)
     add_subdirectory(dds/discovery)
+    add_subdirectory(xmlvalidation)
 
     if(UNIX AND NOT APPLE AND STRICT_REALTIME)
         add_subdirectory(realtime)

@@ -1,4 +1,4 @@
-# Copyright 2020 Proyectos y Sistemas de Mantenimiento SL (eProsima).
+# Copyright 2023 Proyectos y Sistemas de Mantenimiento SL (eProsima).
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -22,7 +22,7 @@ project(fastdds-tool LANGUAGES CXX)
 install(DIRECTORY ${PROJECT_SOURCE_DIR}/
     DESTINATION ${CMAKE_INSTALL_PREFIX}/tools/fastdds
     USE_SOURCE_PERMISSIONS
-    FILES_MATCHING 
+    FILES_MATCHING
         PATTERN "*.py"
         PATTERN "__pycache__" EXCLUDE
 )
