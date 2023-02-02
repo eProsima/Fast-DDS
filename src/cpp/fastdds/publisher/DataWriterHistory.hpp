@@ -48,12 +48,14 @@ public:
      * Constructor of the DataWriterHistory.
      * @param topic_att TopicAttributed
      * @param payloadMax Maximum payload size.
-     * @param mempolicy Set whether the payloads ccan dynamically resized or not.
+     * @param mempolicy Set whether the payloads can dynamically resized or not.
+     * @param unack_sample_remove_functor Functor to call DDS listener callback on_unacknowledged_sample_removed
      */
     DataWriterHistory(
             const fastrtps::TopicAttributes& topic_att,
             uint32_t payloadMax,
-            fastrtps::rtps::MemoryManagementPolicy_t mempolicy);
+            fastrtps::rtps::MemoryManagementPolicy_t mempolicy,
+            std::function<void (const fastrtps::rtps::InstanceHandle_t&)> unack_sample_remove_functor);
 
     virtual ~DataWriterHistory();
 
@@ -218,17 +220,6 @@ public:
             const fastrtps::rtps::InstanceHandle_t& handle,
             std::unique_lock<fastrtps::RecursiveTimedMutex>& lock,
             const std::chrono::time_point<std::chrono::steady_clock>& max_blocking_time);
-
-    /**
-     * @brief Set unacknowledged sample removed functor.
-     *
-     * @param functor Functor to be set.
-     */
-    void unacknowledged_sample_removed_functor(
-            std::function<void (const fastrtps::rtps::InstanceHandle_t&)> functor)
-    {
-        unacknowledged_sample_removed_functor_ = functor;
-    }
 
 private:
 

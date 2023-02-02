@@ -151,8 +151,16 @@ DataWriterImpl::DataWriterImpl(
     , type_(type)
     , topic_(topic)
     , qos_(&qos == &DATAWRITER_QOS_DEFAULT ? publisher_->get_default_datawriter_qos() : qos)
-    , history_(get_topic_attributes(qos_, *topic_, type_), type_->m_typeSize, qos_.endpoint().history_memory_policy)
     , listener_(listen)
+    , history_(get_topic_attributes(qos_, *topic_, type_), type_->m_typeSize, qos_.endpoint().history_memory_policy,
+        [&](
+                const InstanceHandle_t& handle) -> void
+            {
+                if (nullptr != listener_)
+                {
+                    listener_->on_unacknowledged_sample_removed(user_datawriter_, handle);
+                }
+            })
 #pragma warning (disable : 4355 )
     , writer_listener_(this)
     , deadline_duration_us_(qos_.deadline().period.to_ns() * 1e-3)
@@ -179,8 +187,16 @@ DataWriterImpl::DataWriterImpl(
     , type_(type)
     , topic_(topic)
     , qos_(&qos == &DATAWRITER_QOS_DEFAULT ? publisher_->get_default_datawriter_qos() : qos)
-    , history_(get_topic_attributes(qos_, *topic_, type_), type_->m_typeSize, qos_.endpoint().history_memory_policy)
     , listener_(listen)
+    , history_(get_topic_attributes(qos_, *topic_, type_), type_->m_typeSize, qos_.endpoint().history_memory_policy,
+        [&](
+                const InstanceHandle_t& handle) -> void
+            {
+                if (nullptr != listener_)
+                {
+                    listener_->on_unacknowledged_sample_removed(user_datawriter_, handle);
+                }
+            })
 #pragma warning (disable : 4355 )
     , writer_listener_(this)
     , deadline_duration_us_(qos_.deadline().period.to_ns() * 1e-3)
@@ -296,15 +312,6 @@ ReturnCode_t DataWriterImpl::enable()
         EPROSIMA_LOG_ERROR(DATA_WRITER, "Problem creating payload pool for associated Writer");
         return ReturnCode_t::RETCODE_ERROR;
     }
-
-    history_.unacknowledged_sample_removed_functor([&](
-                const InstanceHandle_t& handle)
-            {
-                if (nullptr != listener_)
-                {
-                    listener_->on_unacknowledged_sample_removed(user_datawriter_, handle);
-                }
-            });
 
     RTPSWriter* writer =  RTPSDomainImpl::create_rtps_writer(
         publisher_->rtps_participant(),
