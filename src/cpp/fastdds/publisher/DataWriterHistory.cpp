@@ -194,7 +194,7 @@ bool DataWriterHistory::prepare_change(
                 else
                 {
                     bool is_acked = change_is_acked_or_fully_delivered(vit->second.cache_changes.front());
-                    InstanceHandle_t instance = vit->second.cache_changes.front()->instanceHandle;
+                    InstanceHandle_t instance = change->instanceHandle;
                     add = remove_change_pub(vit->second.cache_changes.front());
                     // Notify if removed unacknowledged
                     if (add && !is_acked)
@@ -544,17 +544,9 @@ bool DataWriterHistory::change_is_acked_or_fully_delivered(
         const CacheChange_t* change)
 {
     bool is_acked = false;
-    if (mp_writer->getAttributes().reliabilityKind == ReliabilityKind_t::RELIABLE)
+    if (mp_writer->get_disable_positive_acks())
     {
-        auto stateful_writer = dynamic_cast<StatefulWriter*>(mp_writer);
-        if (stateful_writer->get_disable_positive_acks())
-        {
-            is_acked = stateful_writer->has_been_fully_delivered(change->sequenceNumber);
-        }
-        else
-        {
-            is_acked = stateful_writer->is_acked_by_all(change);
-        }
+        is_acked = mp_writer->has_been_fully_delivered(change->sequenceNumber);
     }
     else
     {
