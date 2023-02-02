@@ -321,11 +321,19 @@ public:
     bool waitForAllAcked(
             const std::chrono::duration<_Rep, _Period>& max_wait)
     {
-        auto nsecs = std::chrono::duration_cast<std::chrono::nanoseconds>(max_wait);
-        auto secs = std::chrono::duration_cast<std::chrono::seconds>(nsecs);
-        nsecs -= secs;
-        eprosima::fastrtps::Duration_t timeout {static_cast<int32_t>(secs.count()),
-                                                static_cast<uint32_t>(nsecs.count())};
+        eprosima::fastrtps::Duration_t timeout;
+        if (max_wait == std::chrono::seconds::zero())
+        {
+            timeout = eprosima::fastrtps::c_TimeInfinite;
+        }
+        else
+        {
+            auto nsecs = std::chrono::duration_cast<std::chrono::nanoseconds>(max_wait);
+            auto secs = std::chrono::duration_cast<std::chrono::seconds>(nsecs);
+            nsecs -= secs;
+            timeout.seconds = static_cast<int32_t>(secs.count());
+            timeout.nanosec = static_cast<uint32_t>(nsecs.count());
+        }
         return writer_->wait_for_all_acked(timeout);
     }
 
