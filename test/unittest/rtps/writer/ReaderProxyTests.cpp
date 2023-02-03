@@ -331,6 +331,49 @@ TEST(ReaderProxyTests, process_nack_frag_multiple_fragments_different_windows_te
             TOTAL_NUMBER_OF_FRAGMENTS + 1u), TOTAL_NUMBER_OF_FRAGMENTS + 1u);
 }
 
+TEST(ReaderProxyTests, has_been_delivered_test)
+{
+    StatefulWriter writer_mock;
+    WriterTimes w_times;
+    RemoteLocatorsAllocationAttributes alloc;
+    ReaderProxy rproxy(w_times, alloc, &writer_mock);
+
+    CacheChange_t seq1;
+    CacheChange_t seq2;
+    seq1.sequenceNumber = {0, 1};
+    seq2.sequenceNumber = {0, 2};
+
+    ReaderProxyData reader_attributes(0, 0);
+    reader_attributes.m_qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
+    rproxy.start(reader_attributes);
+
+    // Change 1 has been acknowledged and has been removed from the ReaderProxy
+    // Change 2 has been delivered
+    // Change 3 is pending to be delivered
+    rproxy.add_change(ChangeForReader_t(&seq1), true, false);
+    rproxy.add_change(ChangeForReader_t(&seq2), true, false);
+    rproxy.from_unsent_to_status(seq2.sequenceNumber, ACKNOWLEDGED, false, true);
+
+    // Change delivered
+    bool found = false;
+    EXPECT_FALSE(rproxy.has_been_delivered(seq1.sequenceNumber, found));
+    EXPECT_TRUE(found);
+    // Change not delivered
+    found = false;
+    EXPECT_TRUE(rproxy.has_been_delivered(seq2.sequenceNumber, found));
+    EXPECT_TRUE(found);
+    // Change acknowledged
+    rproxy.from_unsent_to_status(seq1.sequenceNumber, ACKNOWLEDGED, false, true);
+    rproxy.acked_changes_set(seq1.sequenceNumber);
+    found = false;
+    EXPECT_TRUE(rproxy.has_been_delivered(seq1.sequenceNumber, found));
+    EXPECT_FALSE(found);
+    // Change not added
+    found = false;
+    EXPECT_FALSE(rproxy.has_been_delivered({0, 4}, found));
+    EXPECT_FALSE(found);
+}
+
 } // namespace rtps
 } // namespace fastrtps
 } // namespace eprosima
