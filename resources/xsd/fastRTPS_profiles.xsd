@@ -971,44 +971,46 @@
     </xs:complexType>
 
     <!--Duration Type:
-        ├ sec     [uint32 OR "DURATION_INFINITY" OR "DURATION_INFINITE_SEC"]  REQ,
-        └ nanosec [uint32 OR "DURATION_INFINITY" OR "DURATION_INFINITE_NSEC"] REQ -->
+        ├ sec     [uint32 OR "DURATION_INFINITY" OR "DURATION_INFINITE_SEC"],
+        └ nanosec [uint32 OR "DURATION_INFINITY" OR "DURATION_INFINITE_NSEC"] -->
     <xs:complexType name="durationType">
-        <xs:all>
-            <xs:element name="sec" minOccurs="1" maxOccurs="1" nillable="true">
-                <xs:simpleType>
-                    <xs:union>
-                        <xs:simpleType>
-                            <xs:restriction base="xs:string">
-                                <xs:minLength value="1"/>
-                                <xs:enumeration value="DURATION_INFINITY"/>
-                                <xs:enumeration value="DURATION_INFINITE_SEC"/>
-                                <!-- <xs:pattern value="\s*(DURATION_INFINITY|DURATION_INFINITE_SEC)\s*"/> -->
-                            </xs:restriction>
-                        </xs:simpleType>
-                        <xs:simpleType>
-                            <xs:restriction base="xs:unsignedInt"/>
-                        </xs:simpleType>
-                    </xs:union>
-                </xs:simpleType>
-            </xs:element>
-            <xs:element name="nanosec" minOccurs="1" maxOccurs="1">
-                <xs:simpleType>
-                    <xs:union>
-                        <xs:simpleType>
-                            <xs:restriction base="xs:string">
-                                <xs:enumeration value="DURATION_INFINITY"/>
-                                <xs:enumeration value="DURATION_INFINITE_NSEC"/>
-                                <!-- <xs:pattern value="\s*(DURATION_INFINITY|DURATION_INFINITE_NSEC)\s*"/> -->
-                            </xs:restriction>
-                        </xs:simpleType>
-                        <xs:simpleType>
-                            <xs:restriction base="xs:unsignedInt"/>
-                        </xs:simpleType>
-                    </xs:union>
-                </xs:simpleType>
-            </xs:element>
-        </xs:all>
+        <xs:sequence minOccurs="1" maxOccurs="unbounded">
+            <xs:choice minOccurs="1">
+                <xs:element name="sec" minOccurs="0" maxOccurs="1" nillable="true">
+                    <xs:simpleType>
+                        <xs:union>
+                            <xs:simpleType>
+                                <xs:restriction base="xs:string">
+                                    <xs:minLength value="1"/>
+                                    <xs:enumeration value="DURATION_INFINITY"/>
+                                    <xs:enumeration value="DURATION_INFINITE_SEC"/>
+                                    <!-- <xs:pattern value="\s*(DURATION_INFINITY|DURATION_INFINITE_SEC)\s*"/> -->
+                                </xs:restriction>
+                            </xs:simpleType>
+                            <xs:simpleType>
+                                <xs:restriction base="xs:unsignedInt"/>
+                            </xs:simpleType>
+                        </xs:union>
+                    </xs:simpleType>
+                </xs:element>
+                <xs:element name="nanosec" minOccurs="0" maxOccurs="1">
+                    <xs:simpleType>
+                        <xs:union>
+                            <xs:simpleType>
+                                <xs:restriction base="xs:string">
+                                    <xs:enumeration value="DURATION_INFINITY"/>
+                                    <xs:enumeration value="DURATION_INFINITE_NSEC"/>
+                                    <!-- <xs:pattern value="\s*(DURATION_INFINITY|DURATION_INFINITE_NSEC)\s*"/> -->
+                                </xs:restriction>
+                            </xs:simpleType>
+                            <xs:simpleType>
+                                <xs:restriction base="xs:unsignedInt"/>
+                            </xs:simpleType>
+                        </xs:union>
+                    </xs:simpleType>
+                </xs:element>
+            </xs:choice>
+        </xs:sequence>
     </xs:complexType>
 
     <!--QoS Policies:
