@@ -102,7 +102,7 @@ public:
         return reader_data_filter_;
     }
 
-    bool get_disable_positive_acks() const
+    bool get_disable_positive_acks() const override
     {
         return false;
     }
