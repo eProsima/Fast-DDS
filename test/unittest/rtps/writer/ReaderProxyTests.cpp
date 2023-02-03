@@ -347,31 +347,37 @@ TEST(ReaderProxyTests, has_been_delivered_test)
     reader_attributes.m_qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
     rproxy.start(reader_attributes);
 
-    // Change 1 has been acknowledged and has been removed from the ReaderProxy
-    // Change 2 has been delivered
-    // Change 3 is pending to be delivered
+    auto expect_result = [&rproxy](SequenceNumber_t seq, bool delivered, bool should_be_found)
+            {
+                bool found = false;
+                EXPECT_EQ(delivered, rproxy.has_been_delivered(seq, found));
+                EXPECT_EQ(should_be_found, found);
+            };
+
+    // Add changes 1 and 2
     rproxy.add_change(ChangeForReader_t(&seq1), true, false);
     rproxy.add_change(ChangeForReader_t(&seq2), true, false);
-    rproxy.from_unsent_to_status(seq2.sequenceNumber, ACKNOWLEDGED, false, true);
 
-    // Change delivered
-    bool found = false;
-    EXPECT_FALSE(rproxy.has_been_delivered(seq1.sequenceNumber, found));
-    EXPECT_TRUE(found);
-    // Change not delivered
-    found = false;
-    EXPECT_TRUE(rproxy.has_been_delivered(seq2.sequenceNumber, found));
-    EXPECT_TRUE(found);
-    // Change acknowledged
-    rproxy.from_unsent_to_status(seq1.sequenceNumber, ACKNOWLEDGED, false, true);
-    rproxy.acked_changes_set(seq1.sequenceNumber);
-    found = false;
-    EXPECT_TRUE(rproxy.has_been_delivered(seq1.sequenceNumber, found));
-    EXPECT_FALSE(found);
-    // Change not added
-    found = false;
-    EXPECT_FALSE(rproxy.has_been_delivered({0, 4}, found));
-    EXPECT_FALSE(found);
+    // None of them has been delivered
+    expect_result(seq1.sequenceNumber, false, true);
+    expect_result(seq2.sequenceNumber, false, true);
+
+    // Change 1 is sent
+    rproxy.from_unsent_to_status(seq1.sequenceNumber, UNACKNOWLEDGED, false, true);
+
+    // Only change 1 has been delivered. Both are found
+    expect_result(seq1.sequenceNumber, true, true);
+    expect_result(seq2.sequenceNumber, false, true);
+
+    // Change 1 is acknowledged
+    rproxy.acked_changes_set(seq1.sequenceNumber + 1);
+
+    // Only change 1 has been delivered. Only change 2 is found
+    expect_result(seq1.sequenceNumber, true, false);
+    expect_result(seq2.sequenceNumber, false, true);
+
+    // Change in the future should return not delivered and not found
+    expect_result({0, 3}, false, false);
 }
 
 } // namespace rtps
