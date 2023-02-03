@@ -25,7 +25,6 @@
 #include <fastdds/dds/log/Log.hpp>
 #include <fastdds/rtps/common/Time_t.h>
 #include <fastdds/rtps/writer/RTPSWriter.h>
-#include <fastdds/rtps/writer/StatefulWriter.h>
 
 namespace eprosima {
 namespace fastdds {

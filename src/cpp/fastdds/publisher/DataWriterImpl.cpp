@@ -189,7 +189,7 @@ DataWriterImpl::DataWriterImpl(
     , qos_(&qos == &DATAWRITER_QOS_DEFAULT ? publisher_->get_default_datawriter_qos() : qos)
     , listener_(listen)
     , history_(get_topic_attributes(qos_, *topic_, type_), type_->m_typeSize, qos_.endpoint().history_memory_policy,
-            [&](
+            [this](
                 const InstanceHandle_t& handle) -> void
             {
                 if (nullptr != listener_)
