@@ -108,7 +108,7 @@ public:
     }
 
     bool has_been_fully_delivered(
-            const SequenceNumber_t& /*seq_num*/)
+            const SequenceNumber_t& /*seq_num*/) const override
     {
         return false;
     }
