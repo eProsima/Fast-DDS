@@ -10,7 +10,6 @@ runs:
           g++ \
           cmake \
           libssl-dev \
-          # Fast DDS documentation dependencies
           git \
           doxygen \
           doc8 \
