@@ -44,7 +44,7 @@ jobs:
 
       - name: Download FastDDS and documentation dependencies
         run: |
-          pip3 install vcs
+          pip3 install vcstool
           vcs import src < ./src/fastrtps/.github/workflows/documentation/ci-documentation.repos
 
       - name: Move to the given Fast DDS Documentation branch
