@@ -145,10 +145,10 @@ public:
 
     struct Context
     {
-        const char* filename;
+        std::string filename;
         int line;
-        const char* function;
-        const char* category;
+        std::string function;
+        std::string category;
     };
 
     struct Entry
@@ -169,8 +169,8 @@ public:
      * This is a very high sensible point of the code and it should be refactored to be as efficient as possible.
      */
     RTPS_DllAPI static void QueueLog(
-            const std::string& message,
-            const Log::Context&,
+            std::string&& message,
+            Log::Context&&,
             Log::Kind);
 };
 

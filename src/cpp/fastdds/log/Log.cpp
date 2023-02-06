@@ -198,19 +198,22 @@ struct LogResources
      * This is a very high sensible point of the code and it should be refactored to be as efficient as possible.
      */
     void QueueLog(
-            const std::string& message,
-            const Log::Context& context,
+            std::string&& message,
+            Log::Context&& context,
             Log::Kind kind)
     {
         StartThread();
 
         std::string timestamp = SystemInfo::get_timestamp();
-        logs_.Push(Log::Entry{ message, context, kind, timestamp });
+        logs_.Push(Log::Entry{ std::move(message), std::move(context), kind, std::move(timestamp) });
         {
             std::unique_lock<std::mutex> guard(cv_mutex_);
             work_ = true;
+            // pessimization
+            cv_.notify_all();
+            // wait till the thread is initialized
+            cv_.wait(guard, [&]{ return current_loop_; });
         }
-        cv_.notify_all();
     }
 
     //! Stops the logging_ thread. It will re-launch on the next call to QueueLog.
@@ -269,18 +272,20 @@ private:
                 logs_.Swap();
                 while (!logs_.Empty())
                 {
-                    std::unique_lock<std::mutex> configGuard(config_mutex_);
 
                     Log::Entry& entry = logs_.Front();
-                    if (preprocess(entry))
                     {
-                        for (auto& consumer : consumers_)
+                        std::unique_lock<std::mutex> configGuard(config_mutex_);
+                        if (preprocess(entry))
                         {
-                            consumer->Consume(entry);
+                            for (auto& consumer : consumers_)
+                            {
+                                consumer->Consume(entry);
+                            }
                         }
+                        // This Pop() is also a barrier for Log::Flush wait condition
+                        logs_.Pop();
                     }
-                    // This Pop() is also a barrier for Log::Flush wait condition
-                    logs_.Pop();
                 }
             }
             guard.lock();
@@ -312,11 +317,11 @@ private:
         }
         if (!filenames_)
         {
-            entry.context.filename = nullptr;
+            entry.context.filename.clear();
         }
         if (!functions_)
         {
-            entry.context.function = nullptr;
+            entry.context.function.clear();
         }
 
         return true;
@@ -392,11 +397,14 @@ void Log::KillThread()
 }
 
 void Log::QueueLog(
-        const std::string& message,
-        const Log::Context& context,
+        std::string&& message,
+        Log::Context&& context,
         Log::Kind kind)
 {
-    detail::get_log_resources()->QueueLog(message, context, kind);
+    detail::get_log_resources()->QueueLog(
+        std::move(message),
+        std::move(context),
+        kind);
 }
 
 Log::Kind Log::GetVerbosity()
@@ -465,12 +473,12 @@ void LogConsumer::print_context(
     {
         stream << C_B_BLUE;
     }
-    if (entry.context.filename)
+    if (!entry.context.filename.empty())
     {
         stream << " (" << entry.context.filename;
         stream << ":" << entry.context.line << ")";
     }
-    if (entry.context.function)
+    if (!entry.context.function.empty())
     {
         stream << " -> Function ";
         if (color)

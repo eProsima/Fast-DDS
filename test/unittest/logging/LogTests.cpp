@@ -109,8 +109,8 @@ TEST_F(LogTests, reporting_options)
     ASSERT_EQ(1u, consumedEntries.size());
 
     auto entry = consumedEntries.back();
-    ASSERT_NE(entry.context.filename, nullptr);
-    ASSERT_EQ(entry.context.function, nullptr);
+    ASSERT_FALSE(entry.context.filename.empty());
+    ASSERT_TRUE(entry.context.function.empty());
 }
 
 TEST_F(LogTests, multithreaded_logging)

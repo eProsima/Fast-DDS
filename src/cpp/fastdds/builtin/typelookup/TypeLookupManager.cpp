@@ -346,6 +346,11 @@ bool TypeLookupManager::create_endpoints()
     watt.endpoint.reliabilityKind = fastrtps::rtps::RELIABLE;
     watt.endpoint.durabilityKind = fastrtps::rtps::VOLATILE;
 
+    // disable datasharing
+    DataSharingQosPolicy ds;
+    ds.off();
+    watt.endpoint.set_data_sharing_configuration(ds);
+
     // Built-in request writer
     if (builtin_protocols_->m_att.typelookup_config.use_client)
     {
@@ -409,6 +414,9 @@ bool TypeLookupManager::create_endpoints()
     ratt.endpoint.topicKind = fastrtps::rtps::NO_KEY;
     ratt.endpoint.reliabilityKind = fastrtps::rtps::RELIABLE;
     ratt.endpoint.durabilityKind = fastrtps::rtps::VOLATILE;
+
+    // disable datasharing
+    ratt.endpoint.set_data_sharing_configuration(ds);
 
     // Built-in request reader
     if (builtin_protocols_->m_att.typelookup_config.use_server)
