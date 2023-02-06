@@ -212,7 +212,10 @@ struct LogResources
             // pessimization
             cv_.notify_all();
             // wait till the thread is initialized
-            cv_.wait(guard, [&]{ return current_loop_; });
+            cv_.wait(guard, [&]
+                    {
+                        return current_loop_;
+                    });
         }
     }
 
