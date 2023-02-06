@@ -6,15 +6,7 @@ on:
         description: 'Optional Documentation branch name'
         required: false
         type: string
-      optional_cmake_args:
-        description: 'Optional CMake Compilation Flags'
-        required: false
-        type: string
-      optional_ctest_args:
-        description: 'Optional CTest Testing Flags'
-        required: false
-        type: string
-
+        default: 'master'
 
   push:
     branches:
@@ -32,15 +24,6 @@ on:
       - '**.txt'
       - '!**/CMakeLists.txt'
 
-env:
-  TSAN_OPTIONS: second_deadlock_stack=1
-  # ubuntu host doesn't have an environment SHELL value (docker and vm images does)???
-  SHELL: /bin/bash
-
-defaults:
-  run:
-    shell: pwsh
-    working-directory: /home/runner/work
 jobs:
   ubuntu-build-and-test-documentation:
     name: Documentation build and test
@@ -48,102 +31,36 @@ jobs:
               contains(github.event.pull_request.labels.*.name, 'skip-ci')) }}
     runs-on: ubuntu-20.04
     steps:
-      - name: Download the documentation framework
-        run: |
-          git config --global user.email "dummy@mail.com"
-          git config --global user.name "dummy"
-          cd (New-Item -ItemType Directory -Path ./ws)
-          git clone https://github.com/arsenm/sanitizers-cmake
-          cd sanitizers-cmake
-          git remote add efork https://github.com/MiguelBarro/sanitizers-cmake.git
-          git fetch efork
-          git merge --no-edit efork/bugfix/cmake_updates
+      - name: Sync eProsima/Fast-DDS repository
+        uses: actions/checkout@v3
+        with:
+          path: src/fastrtps
 
-      - name: Download googletest and make it sanitizer aware
-        run: |
-          cd ws
-          git clone --branch release-1.11.0 https://github.com/google/googletest.git
-          cd googletest
-          git remote add efork https://github.com/MiguelBarro/googletest.git
-          git fetch efork
-          git merge --no-edit efork/bugfix/add_sanitizer_support
+      - name: Install Fast DDS packages
+        uses: ./src/fastrtps/.github/actions/install-apt-packages
 
-      - name: Build & install googletest
-        run: |
-          cd ws
-          cmake -DCMAKE_MODULE_PATH="$(pwd)/sanitizers-cmake/cmake" -DCMAKE_INSTALL_PREFIX="./install" `
-                -DBUILD_GMOCK=ON -DSANITIZE_THREAD=ON -DCMAKE_BUILD_TYPE=Debug `
-                -DCMAKE_VERBOSE_MAKEFILE=ON -B ./build/googletest ./googletest
-          cmake --build ./build/googletest --target install --verbose
+      - name: Install documentation packages
+        uses: ./src/fastrtps/.github/actions/install-apt-packages-documentation
 
-      - name: Download Fast-CDR and make it sanitizer aware
+      - name: Download FastDDS and documentation dependencies
         run: |
-          cd ws
-          git clone https://github.com/eProsima/Fast-CDR.git
-          cd Fast-CDR
-          git remote add efork https://github.com/MiguelBarro/Fast-CDR.git
-          git fetch efork
-          git merge --no-edit efork/bugfix/add_sanitizer_support
+          vcs import src < ./src/fastrtps/.github/workflows/documentation/ci-documentation.repos
+          cd src
+          git clone https://github.com/eProsima/Fast-DDS-docs fastdds-docs
 
-      - name: Build & install Fast-CDR
+      - name: Move to the given Fast DDS Documentation branch
         run: |
-          cd ws
-          cmake -DCMAKE_INSTALL_PREFIX="./install" -DCMAKE_PREFIX_PATH="./install" `
-                -DCMAKE_MODULE_PATH="$(pwd)/sanitizers-cmake/cmake" -DCMAKE_VERBOSE_MAKEFILE=ON `
-                -DSANITIZE_THREAD=ON -DCMAKE_BUILD_TYPE=Debug -B ./build/fastcdr ./Fast-CDR
-          cmake --build ./build/fastcdr --target install --verbose
+          cd fastdds-docs
+          git checkout ${{ inputs.documentation_branch_name }}
+          cd ../..
 
-      - name: Download foonathan/memory and make it sanitizer aware
+      - name: Create python virtual environment
         run: |
-          cd ws
-          git clone https://github.com/foonathan/memory.git
-          cd memory
-          git remote add efork https://github.com/MiguelBarro/memory.git
-          git fetch efork
-          git merge --no-edit efork/bugfix/add_sanitizer_support
+          python3 -m venv fastdds-docs-venv
+          source fastdds-docs-venv/bin/activate
+          pip3 install -r src/fastdds-docs/docs/requirements.txt
 
-      - name: Build & install foonathan/memory
+      - name: Build and test documentation
         run: |
-          cd ws
-          cmake -DCMAKE_MODULE_PATH="$(pwd)/sanitizers-cmake/cmake" -DCMAKE_VERBOSE_MAKEFILE=ON -DSANITIZE_THREAD=ON `
-                -DCMAKE_INSTALL_PREFIX="./install" -DFOONATHAN_MEMORY_BUILD_TOOLS=ON -DCMAKE_POSITION_INDEPENDENT_CODE=ON `
-                -DFOONATHAN_MEMORY_BUILD_TESTS=ON -DFOONATHAN_MEMORY_BUILD_EXAMPLES=ON -DFOONATHAN_MEMORY_BUILD_TOOLS=ON  `
-                -DCMAKE_BUILD_TYPE=Debug -B ./build/memory ./memory
-          cmake --build ./build/memory --target install --verbose
-
-      - name: Download Fast-DDS and make it sanitizer aware
-        run: |
-          cd ws
-          git clone https://github.com/eProsima/Fast-DDS.git
-          cd Fast-DDS
-          git fetch origin ${{ github.ref }}:merge-branch
-          git checkout merge-branch
-          echo "Modified files against destination branch"
-          git diff --name-only HEAD~1
-          git remote add efork https://github.com/MiguelBarro/Fast-DDS.git
-          git fetch efork
-          git merge --no-edit efork/bugfix/add_sanitizer_support
-
-      - name: Build & install Fast-DDS
-        run: |
-          cd ws
-          cmake -DCMAKE_PREFIX_PATH="$(pwd)/install" -DCMAKE_INSTALL_PREFIX='./install' `
-                -DCMAKE_MODULE_PATH="$(pwd)/sanitizers-cmake/cmake" -DCMAKE_VERBOSE_MAKEFILE=ON -DSANITIZE_THREAD=ON `
-                -DGTEST_INDIVIDUAL=ON -DFASTDDS_STATISTICS=ON -DTHIRDPARTY=ON `
-                -DCOMPILE_EXAMPLES=OFF -DEPROSIMA_BUILD_TESTS=ON -DSECURITY=ON `
-                -DRTPS_API_TESTS=ON -DFASTRTPS_API_TESTS=ON -DFASTDDS_PIM_API_TESTS=ON `
-                -DCMAKE_BUILD_TYPE=Debug ${{ inputs.optional_cmake_args }} -B ./build/fastdds ./Fast-DDS
-          # Create a symlink to the reports folder
-          $report_dir = gci -Path ./build/fastdds -Attributes D |
-            ? Name -like "$(Get-Date -Format 'MMMM-dd-yyyy')*"
-          $report_dir = Join-Path $report_dir tsan | gi
-          echo "report folder is: $report_dir"
-          New-Item -ItemType SymbolicLink -Target $report_dir -Path ./build/fastdds/reports
-          cmake --build ./build/fastdds --target install -j 2 --verbose
-
-      - name: Run Fast-DDS test & generate sanitizer reports
-        run: |
-          cd ws/build/fastdds
-          ctest --timeout 30 -j 2 -V ${{ inputs.optional_ctest_args }}
-          # ctest fails if sanitizer reports are present
-          $LASTEXITCODE=0
+          colcon build
+          colcon test --event-handlers=console_direct+ --packages-select fastdds-docs
