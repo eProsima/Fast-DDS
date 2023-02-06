@@ -48,12 +48,14 @@ public:
      * Constructor of the DataWriterHistory.
      * @param topic_att TopicAttributed
      * @param payloadMax Maximum payload size.
-     * @param mempolicy Set whether the payloads ccan dynamically resized or not.
+     * @param mempolicy Set whether the payloads can dynamically resized or not.
+     * @param unack_sample_remove_functor Functor to call DDS listener callback on_unacknowledged_sample_removed
      */
     DataWriterHistory(
             const fastrtps::TopicAttributes& topic_att,
             uint32_t payloadMax,
-            fastrtps::rtps::MemoryManagementPolicy_t mempolicy);
+            fastrtps::rtps::MemoryManagementPolicy_t mempolicy,
+            std::function<void (const fastrtps::rtps::InstanceHandle_t&)> unack_sample_remove_functor);
 
     virtual ~DataWriterHistory();
 
@@ -234,6 +236,9 @@ private:
     //!Topic Attributes
     fastrtps::TopicAttributes topic_att_;
 
+    //! Unacknowledged sample removed functor
+    std::function<void (const fastrtps::rtps::InstanceHandle_t&)> unacknowledged_sample_removed_functor_;
+
     /**
      * @brief Method that finds a key in the DataWriterHistory or tries to add it if not found
      * @param [in]  instance_handle  Instance of the key.
@@ -257,6 +262,17 @@ private:
             fastrtps::rtps::CacheChange_t* change,
             std::unique_lock<fastrtps::RecursiveTimedMutex>& lock,
             const std::chrono::time_point<std::chrono::steady_clock>& max_blocking_time);
+
+    /**
+     * @brief Check if a specific change has been acknowledged or fully delivered if disable positive ACKs QoS is
+     *        enabled.
+     *
+     * @param change CacheChange to check
+     * @return true if acknowledged or fully delivered. False otherwise.
+     */
+    bool change_is_acked_or_fully_delivered(
+            const fastrtps::rtps::CacheChange_t* change);
+
 };
 
 }  // namespace dds

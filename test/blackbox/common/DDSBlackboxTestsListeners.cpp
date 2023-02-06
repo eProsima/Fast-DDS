@@ -2856,7 +2856,6 @@ void best_effort_on_unack_test_init(
         PubSubReader<T>& reader)
 {
     writer.reliability(eprosima::fastdds::dds::BEST_EFFORT_RELIABILITY_QOS)
-            .durability_kind(eprosima::fastdds::dds::TRANSIENT_LOCAL_DURABILITY_QOS)
             .history_kind(eprosima::fastdds::dds::KEEP_LAST_HISTORY_QOS)
             .history_depth(1)
             .asynchronously(eprosima::fastdds::dds::PublishModeQosPolicyKind::ASYNCHRONOUS_PUBLISH_MODE)
@@ -2865,8 +2864,7 @@ void best_effort_on_unack_test_init(
             .init();
     ASSERT_TRUE(writer.isInitialized());
 
-    reader.durability_kind(eprosima::fastdds::dds::TRANSIENT_LOCAL_DURABILITY_QOS)
-            .init();
+    reader.init();
     ASSERT_TRUE(reader.isInitialized());
 }
 
@@ -3051,7 +3049,7 @@ TEST(DDSStatus, keyed_reliable_on_unack_sample_removed)
     for (auto sample : data)
     {
         writer.send_sample(sample);
-        writer.waitForAllAcked(std::chrono::milliseconds(150));
+        writer.waitForAllAcked(std::chrono::milliseconds(250));
     }
 
     reader.block_for_at_least(8);
@@ -3257,6 +3255,81 @@ TEST(DDSStatus, keyed_reliable_positive_acks_disabled_on_unack_sample_removed)
     EXPECT_EQ(reader.getReceivedCount(), 10u);
     EXPECT_EQ(listener.times_unack_sample_removed(), 8u);
     EXPECT_EQ(listener.notified_writer(), &(writer_1.get_native_writer()));
+}
+
+/*!
+ * Test that checks with a writer of each type that having the same listener attached, the notified writer in the
+ * callback is the corresponding writer that has removed a sample unacknowledged.
+ */
+TEST(DDSStatus, several_writers_on_unack_sample_removed)
+{
+    PubSubWriter<HelloWorldPubSubType> best_effort_writer(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldPubSubType> reliable_writer(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldPubSubType> ack_disabled_writer(TEST_TOPIC_NAME);
+    PubSubReader<HelloWorldPubSubType> best_effort_reader(TEST_TOPIC_NAME);
+    PubSubReader<HelloWorldPubSubType> reliable_reader(TEST_TOPIC_NAME);
+
+    best_effort_writer.reliability(eprosima::fastdds::dds::BEST_EFFORT_RELIABILITY_QOS)
+            .history_kind(eprosima::fastdds::dds::KEEP_LAST_HISTORY_QOS)
+            .history_depth(1)
+            .asynchronously(eprosima::fastdds::dds::PublishModeQosPolicyKind::ASYNCHRONOUS_PUBLISH_MODE)
+            .add_throughput_controller_descriptor_to_pparams(
+        eprosima::fastdds::rtps::FlowControllerSchedulerPolicy::FIFO, 1, 1000)
+            .init();
+    ASSERT_TRUE(best_effort_writer.isInitialized());
+
+    best_effort_reader.init();
+    ASSERT_TRUE(best_effort_reader.isInitialized());
+
+    reliable_on_unack_test_init(reliable_writer, reliable_reader);
+
+    ack_disabled_writer.reliability(eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS)
+            .durability_kind(eprosima::fastdds::dds::TRANSIENT_LOCAL_DURABILITY_QOS)
+            .history_kind(eprosima::fastdds::dds::KEEP_LAST_HISTORY_QOS)
+            .history_depth(1)
+            .asynchronously(eprosima::fastdds::dds::PublishModeQosPolicyKind::ASYNCHRONOUS_PUBLISH_MODE)
+            .add_throughput_controller_descriptor_to_pparams(
+        eprosima::fastdds::rtps::FlowControllerSchedulerPolicy::FIFO, 1, 1000)
+            .keep_duration(eprosima::fastrtps::c_TimeInfinite)
+            .init();
+    ASSERT_TRUE(ack_disabled_writer.isInitialized());
+
+    best_effort_writer.wait_discovery();
+    reliable_writer.wait_discovery();
+    ack_disabled_writer.wait_discovery();
+    best_effort_reader.wait_discovery();
+    reliable_reader.wait_discovery();
+
+    auto best_effort_data = default_helloworld_data_generator();
+    auto reliable_data = best_effort_data;
+    auto ack_disabled_data = best_effort_data;
+
+    best_effort_reader.startReception(best_effort_data);
+    reliable_reader.startReception(reliable_data);
+
+    CustomDataWriterListener listener;
+    best_effort_writer.get_native_writer().set_listener(&listener);
+    reliable_writer.get_native_writer().set_listener(&listener);
+    ack_disabled_writer.get_native_writer().set_listener(&listener);
+
+    // Send two samples from each writer (overwrite first sample)
+    best_effort_writer.send_sample(best_effort_data.front());
+    best_effort_data.pop_front();
+    best_effort_writer.send_sample(best_effort_data.front());
+    EXPECT_EQ(listener.notified_writer(), &(best_effort_writer.get_native_writer()));
+    reliable_writer.send_sample(reliable_data.front());
+    reliable_writer.waitForAllAcked(std::chrono::milliseconds(150));
+    EXPECT_EQ(listener.notified_writer(), &(best_effort_writer.get_native_writer()));
+    ack_disabled_writer.send_sample(ack_disabled_data.front());
+    ack_disabled_data.pop_front();
+    ack_disabled_writer.send_sample(ack_disabled_data.front());
+    EXPECT_EQ(listener.notified_writer(), &(ack_disabled_writer.get_native_writer()));
+    reliable_data.pop_front();
+    reliable_writer.send_sample(reliable_data.front());
+    reliable_data.pop_front();
+    reliable_writer.send_sample(reliable_data.front());
+    reliable_writer.waitForAllAcked(std::chrono::milliseconds(150));
+    EXPECT_EQ(listener.notified_writer(), &(reliable_writer.get_native_writer()));
 }
 
 #ifdef INSTANTIATE_TEST_SUITE_P

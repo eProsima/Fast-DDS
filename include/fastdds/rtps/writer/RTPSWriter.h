@@ -295,6 +295,17 @@ public:
             unsigned int max = 0);
 
     /**
+     * @brief Returns if disable positive ACKs QoS is enabled.
+     *
+     * @return Best effort writers always return false.
+     *         Reliable writers override this method.
+     */
+    RTPS_DllAPI virtual bool get_disable_positive_acks() const
+    {
+        return false;
+    }
+
+    /**
      * Tries to remove a change waiting a maximum of the provided microseconds.
      * @param max_blocking_time_point Maximum time to wait for.
      * @param lock Lock of the Change list.
