@@ -44,15 +44,22 @@ jobs:
 
       - name: Download FastDDS and documentation dependencies
         run: |
+          pip3 install vcs
           vcs import src < ./src/fastrtps/.github/workflows/documentation/ci-documentation.repos
-          cd src
-          git clone https://github.com/eProsima/Fast-DDS-docs fastdds-docs
 
       - name: Move to the given Fast DDS Documentation branch
         run: |
+          local BRANCH_NAME=${{ inputs.documentation_branch_name }}
+          if [ -z "${BRANCH_NAME}" ]
+          then
+            BRANCH_NAME=${GITHUB_REF##*/}
+          fi
           cd fastdds-docs
+          if ! git show-ref --quiet refs/heads/${BRANCH_NAME} ; then
+            BRANCH_NAME="master"
+          fi
+          cd src/fastdds-docs
           git checkout ${{ inputs.documentation_branch_name }}
-          cd ../..
 
       - name: Create python virtual environment
         run: |
