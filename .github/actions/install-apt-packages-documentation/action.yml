@@ -12,7 +12,6 @@ runs:
           libssl-dev \
           git \
           doxygen \
-          doc8 \
           python3-venv \
           imagemagick \
           plantuml
