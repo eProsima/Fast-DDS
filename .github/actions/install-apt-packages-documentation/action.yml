@@ -5,6 +5,7 @@ runs:
   steps:
     - id: install-apt-packages-documentation
       run: |
+        sudo apt-get update
         sudo apt -y install \
           gcc \
           g++ \
