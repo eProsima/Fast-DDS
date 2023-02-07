@@ -570,6 +570,10 @@ def test_fast_discovery_security_disabled(fast_discovery_tool):
 
     command = [fast_discovery_tool, '-i', '0']
     output, err, exit_code = send_command(command)
+    if exit_code != 0:
+        print(output)
+        sys.exit(exit_code)
+
     exit_code = check_output(output, err, "Security:           NO", True)
     sys.exit(exit_code)
 
@@ -579,9 +583,18 @@ def test_fast_discovery_security_enabled_xml_prefix(fast_discovery_tool):
     XML_file_path = "test_xml_secure_discovery_server.xml"
     command = [fast_discovery_tool, '-x', XML_file_path]
     output, err, exit_code = send_command(command)
-    exit_code = check_output(output, err, "Security:           YES", True)
-    output, err, exit_code = send_command(command)
-    exit_code = check_output(output, err, "44.53.00.5f.45.50.52.4f.53.49.4d.41", True)
+    if exit_code != 0:
+        print(output)
+        sys.exit(exit_code)
+    EXPECTED_OUTPUTS = [
+        "Security:           YES",
+        "44.53.00.5f.45.50.52.4f.53.49.4d.41",
+    ]
+    for pattern in EXPECTED_OUTPUTS:
+        exit_code = check_output(output, err, pattern, False)
+        if exit_code != 0:
+            break
+
     sys.exit(exit_code)
 
 def test_fast_discovery_security_enabled_cli_prefix(fast_discovery_tool):
@@ -590,9 +603,18 @@ def test_fast_discovery_security_enabled_cli_prefix(fast_discovery_tool):
     XML_file_path = "test_xml_secure_discovery_server.xml"
     command = [fast_discovery_tool, '-i', '0', '-x', 'secure_ds_no_prefix@' + XML_file_path]
     output, err, exit_code = send_command(command)
-    exit_code = check_output(output, err, "Security:           YES", True)
-    output, err, exit_code = send_command(command)
-    exit_code = check_output(output, err, "44.53.00.5f.45.50.52.4f.53.49.4d.41", True)
+    if exit_code != 0:
+        print(output)
+        sys.exit(exit_code)
+    EXPECTED_OUTPUTS = [
+        "Security:           YES",
+        "44.53.00.5f.45.50.52.4f.53.49.4d.41",
+    ]
+    for pattern in EXPECTED_OUTPUTS:
+        exit_code = check_output(output, err, pattern, False)
+        if exit_code != 0:
+            break
+
     sys.exit(exit_code)
 
 if __name__ == '__main__':
