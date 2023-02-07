@@ -409,7 +409,9 @@ int fastdds_discovery_server(
             std::endl;
         std::cout << "  Security:           " << (has_security ? "YES" : "NO") << std::endl;
         std::cout << "  Server ID:          " << server_id << std::endl;
-        std::cout << "  Server GUID prefix: " << (has_security ? participantQos.wire_protocol().prefix : pServer->guid().guidPrefix) << std::endl;
+        std::cout << "  Server GUID prefix: " <<
+            (has_security ? participantQos.wire_protocol().prefix : pServer->guid().guidPrefix) <<
+            std::endl;
         std::cout << "  Server Addresses:   ";
         for (auto locator_it = participantQos.wire_protocol().builtin.metatrafficUnicastLocatorList.begin();
                 locator_it != participantQos.wire_protocol().builtin.metatrafficUnicastLocatorList.end();)
