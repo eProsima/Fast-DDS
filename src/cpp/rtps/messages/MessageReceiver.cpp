@@ -1058,7 +1058,7 @@ bool MessageReceiver::proc_Submsg_Heartbeat(
     CDRMessage::readSequenceNumber(msg, &lastSN);
 
     SequenceNumber_t zeroSN;
-    if (fisrtSN <= zeroSN)
+    if (firstSN <= zeroSN)
     {
         EPROSIMA_LOG_WARNING(RTPS_MSG_IN, IDSTRING "Invalid Heartbeat received (" << firstSN << " <= 0), ignoring");
         return false;
