@@ -105,11 +105,29 @@
 
             <builtin>
                 <discovery_config>
-                    <discoveryProtocol>NONE</discoveryProtocol>
+                    <discoveryProtocol>CLIENT</discoveryProtocol>
+
+                    <discoveryServersList>
+                        <RemoteServer prefix="72.61.73.70.66.61.72.6d.74.65.73.74">
+                            <metatrafficUnicastLocatorList>
+                                <locator>
+                                    <udpv4>
+                                        <address>192.168.10.57</address>
+                                        <port>56542</port>
+                                    </udpv4>
+                                </locator>
+                            </metatrafficUnicastLocatorList>
+                        </RemoteServer>
+                    </discoveryServersList>
 
                     <ignoreParticipantFlags>FILTER_DIFFERENT_HOST</ignoreParticipantFlags>
 
                     <EDP>SIMPLE</EDP>
+
+                    <simpleEDP>
+                        <PUBWRITER_SUBREADER>true</PUBWRITER_SUBREADER>
+                        <PUBREADER_SUBWRITER>true</PUBREADER_SUBWRITER>
+                    </simpleEDP>
 
                     <leaseDuration>
                         <sec>20</sec>
@@ -129,12 +147,7 @@
                         </period>
                     </initialAnnouncements>
 
-                    <simpleEDP>
-                        <PUBWRITER_SUBREADER>true</PUBWRITER_SUBREADER>
-                        <PUBREADER_SUBWRITER>true</PUBREADER_SUBWRITER>
-                    </simpleEDP>
-
-                    <staticEndpointXMLFilename>file://filename.xml</staticEndpointXMLFilename>
+                    <static_edp_xml_config>file://filename.xml</static_edp_xml_config>
                 </discovery_config>
 
                 <avoid_builtin_multicast>true</avoid_builtin_multicast>
