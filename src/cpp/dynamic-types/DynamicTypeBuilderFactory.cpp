@@ -77,53 +77,20 @@ static std::string get_type_name(
     return "UNDEF";
 }
 
-//static uint32_t s_typeNameCounter = 0;
-static std::string GenerateTypeName(
-        const std::string& kind)
-{
-    std::string tempKind = kind;
-    std::replace(tempKind.begin(), tempKind.end(), ' ', '_');
-    return tempKind;// + "_" + std::to_string(++s_typeNameCounter);
-}
-
-class DynamicTypeBuilderFactoryReleaser
-{
-public:
-
-    ~DynamicTypeBuilderFactoryReleaser()
-    {
-        DynamicTypeBuilderFactory::delete_instance();
-    }
-
-};
-
-static DynamicTypeBuilderFactoryReleaser s_releaser;
-static DynamicTypeBuilderFactory* g_instance = nullptr;
 DynamicTypeBuilderFactory* DynamicTypeBuilderFactory::get_instance()
 {
-    if (g_instance == nullptr)
-    {
-        g_instance = new DynamicTypeBuilderFactory();
-    }
-    return g_instance;
+    // C++11 guarantees the construction to be atomic
+    static DynamicTypeBuilderFactory instance;
+    return &instance;
 }
 
 ReturnCode_t DynamicTypeBuilderFactory::delete_instance()
 {
-    if (g_instance != nullptr)
-    {
-        delete g_instance;
-        g_instance = nullptr;
-        return ReturnCode_t::RETCODE_OK;
-    }
-    return ReturnCode_t::RETCODE_ERROR;
+    get_instance()->reset();
+    return ReturnCode_t::RETCODE_OK;
 }
 
-DynamicTypeBuilderFactory::DynamicTypeBuilderFactory()
-{
-}
-
-DynamicTypeBuilderFactory::~DynamicTypeBuilderFactory()
+void DynamicTypeBuilderFactory::reset()
 {
 #ifndef DISABLE_DYNAMIC_MEMORY_CHECK
     std::unique_lock<std::recursive_mutex> scoped(mutex_);
@@ -133,6 +100,11 @@ DynamicTypeBuilderFactory::~DynamicTypeBuilderFactory()
     }
     builders_list_.clear();
 #endif // ifndef DISABLE_DYNAMIC_MEMORY_CHECK
+}
+
+DynamicTypeBuilderFactory::~DynamicTypeBuilderFactory()
+{
+    reset();
 }
 
 void DynamicTypeBuilderFactory::add_builder_to_list(
