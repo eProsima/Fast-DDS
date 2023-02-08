@@ -131,18 +131,15 @@
 
                     <leaseDuration>
                         <sec>20</sec>
-                        <nanosec>0</nanosec>
                     </leaseDuration>
 
                     <leaseAnnouncement>
                         <sec>3</sec>
-                        <nanosec>0</nanosec>
                     </leaseAnnouncement>
 
                     <initialAnnouncements>
                         <count>5</count>
                         <period>
-                            <sec>0</sec>
                             <nanosec>10000</nanosec>
                         </period>
                     </initialAnnouncements>
