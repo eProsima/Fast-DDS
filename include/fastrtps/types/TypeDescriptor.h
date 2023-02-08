@@ -16,7 +16,6 @@
 #define TYPES_TYPE_DESCRIPTOR_H
 
 #include <fastrtps/types/AnnotationDescriptor.h>
-#include <fastrtps/types/DynamicTypePtr.h>
 #include <fastrtps/types/TypesBase.h>
 
 class MemberDescriptor;

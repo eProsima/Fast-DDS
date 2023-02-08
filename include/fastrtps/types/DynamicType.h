@@ -16,7 +16,6 @@
 #define TYPES_DYNAMIC_TYPE_H
 
 #include <fastrtps/types/TypesBase.h>
-#include <fastrtps/types/DynamicTypePtr.h>
 
 namespace eprosima {
 
@@ -33,9 +32,34 @@ class AnnotationDescriptor;
 class TypeDescriptor;
 class DynamicTypeMember;
 class DynamicTypeBuilder;
+class DynamicTypeBuilderFactory;
 
 class DynamicType
+    : public std::enable_shared_from_this<DynamicType>
 {
+    // Only create objects from the associated factory
+    struct use_the_create_method
+    {
+        explicit use_the_create_method() = default;
+    };
+
+public:
+
+    DynamicType(
+            use_the_create_method);
+
+    DynamicType(
+            use_the_create_method,
+            const TypeDescriptor* descriptor);
+
+    DynamicType(
+            use_the_create_method,
+            const DynamicTypeBuilder* other);
+
+    RTPS_DllAPI virtual ~DynamicType();
+
+    friend class DynamicTypeBuilderFactory;
+
 protected:
 
     friend class DynamicTypeBuilder;
@@ -49,16 +73,6 @@ protected:
     friend class DynamicTypeMember;
     friend class DynamicDataHelper;
     friend class fastdds::dds::DomainParticipantImpl;
-
-    DynamicType();
-
-    RTPS_DllAPI DynamicType(
-            const TypeDescriptor* descriptor);
-
-    DynamicType(
-            const DynamicTypeBuilder* other);
-
-    RTPS_DllAPI virtual ~DynamicType();
 
     RTPS_DllAPI virtual void clear();
 

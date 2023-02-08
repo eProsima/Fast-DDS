@@ -26,7 +26,6 @@
 #include <fastrtps/transport/TCPv4TransportDescriptor.h>
 #include <fastrtps/transport/UDPv6TransportDescriptor.h>
 #include <fastrtps/transport/TCPv6TransportDescriptor.h>
-#include <fastrtps/types/DynamicTypePtr.h>
 #include <fastrtps/types/DynamicType.h>
 #include <fastdds/dds/subscriber/Subscriber.hpp>
 #include <fastdds/dds/subscriber/DataReader.hpp>

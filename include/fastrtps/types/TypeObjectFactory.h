@@ -18,7 +18,6 @@
 #include <fastrtps/types/TypeObject.h>
 #include <fastrtps/types/DynamicTypeBuilder.h>
 #include <fastrtps/types/DynamicTypeBuilderPtr.h>
-#include <fastrtps/types/DynamicTypePtr.h>
 #include <mutex>
 
 namespace eprosima {

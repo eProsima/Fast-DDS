@@ -17,8 +17,11 @@
 
 #include <fastrtps/types/TypesBase.h>
 #include <fastrtps/types/AnnotationParameterValue.h>
-#include <fastrtps/types/DynamicTypePtr.h>
+
+#include <cassert>
+#include <memory>
 #include <mutex>
+#include <type_traits>
 
 //#define DISABLE_DYNAMIC_MEMORY_CHECK
 
@@ -33,11 +36,69 @@ class TypeIdentifier;
 class MemberDescriptor;
 class TypeObject;
 class DynamicType;
-class DynamicType_ptr;
 class AnnotationParameterValue;
 
-class DynamicTypeBuilderFactory
+namespace detail {
+
+template<class T, class B>
+class BuilderAllocator
+    : public std::allocator<T>
 {
+public:
+
+    template <class Other>
+    struct rebind
+    {
+        using other = typename std::conditional<
+            std::is_same<Other, T>::value,
+            BuilderAllocator,
+            std::allocator<Other>>::type;
+    };
+
+    // Ancillary overrides to use std::allocate_shared
+    [[nodiscard]] T* allocate(
+            std::size_t n)
+    {
+        if (n != 1)
+        {
+            throw std::bad_alloc{};
+        }
+
+        return std::allocator<T>::allocate(n);
+    }
+
+    void deallocate(
+            T* p,
+            std::size_t n) noexcept
+    {
+        (void)n; assert(n == 1);
+
+        // delegate into the derived class
+        B::on_deallocation(p);
+
+        std::allocator<T>::deallocate(p, 1);
+    }
+
+};
+
+} // namespace detail
+
+class DynamicTypeBuilderFactory
+    : public detail::BuilderAllocator<DynamicType, DynamicTypeBuilderFactory>
+{
+    // BuilderAllocator ancillary
+    template<class T>
+    const detail::BuilderAllocator<T, DynamicTypeBuilderFactory>& get_allocator() const
+    {
+        return static_cast<const detail::BuilderAllocator<DynamicType, DynamicTypeBuilderFactory>&>(*this);
+    }
+
+    void on_deallocation(
+            DynamicType* p)
+    {
+        delete_type(p);
+    }
+
 protected:
 
     DynamicTypeBuilderFactory();

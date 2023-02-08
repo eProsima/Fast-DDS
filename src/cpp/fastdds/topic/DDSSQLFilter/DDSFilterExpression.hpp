@@ -27,7 +27,6 @@
 #include <fastdds/dds/topic/IContentFilter.hpp>
 #include <fastrtps/types/DynamicData.h>
 #include <fastrtps/types/DynamicDataFactory.h>
-#include <fastrtps/types/DynamicTypePtr.h>
 
 #include "DDSFilterCondition.hpp"
 #include "DDSFilterField.hpp"
