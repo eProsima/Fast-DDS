@@ -108,7 +108,7 @@
                 </nackResponseDelay>
 
                 <nackSupressionDuration>
-                    <sec>0</nanosec>
+                    <sec>0</sec>
                 </nackSupressionDuration>
             </times>
 
