@@ -178,6 +178,8 @@ public:
         return *this;
     }
 
+    static WriteParams WRITE_PARAM_DEFAULT;
+
     /**
      * Default value for methods receiving a WriteParams.
      *
@@ -185,8 +187,14 @@ public:
      * - sample_identity: Invalid SampleIdentity
      * - related_sample_identity: Invalid SampleIdentity
      * - source_timestamp: Invalid Time_t
+     *
+     * @note This should not return a reference to the static value if this value is meant to be
+     * read and written from different threads.
      */
-    static WriteParams WRITE_PARAM_DEFAULT;
+    static WriteParams write_params_default() noexcept
+    {
+        return WriteParams();
+    }
 
 private:
 
