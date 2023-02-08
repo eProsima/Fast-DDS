@@ -34,6 +34,7 @@ import argparse
 import os.path
 import platform
 
+from pathlib import Path
 from xml_ci.validate import Validate
 
 class XMLParser:
@@ -73,16 +74,17 @@ class XMLParser:
         parser.add_argument(
             '-x',
             '--xsd-file',
-            required=True,
             help='Fast DDS XSD schema for validation'
         )
         args = parser.parse_args(argv)
 
-        # args.xsd_file = self.__xsd_dir()
-
-        if not os.path.isfile(args.xsd_file):
-            print(f'The XSD schema does not exist: {args.xsd_file}')
-            exit(1)
+        try:
+            if not os.path.isfile(args.xsd_file):
+                print(f'The XSD schema does not exist: {args.xsd_file}. Using default schema.')
+                args.xsd_file = self.__xsd_dir()
+        # xsd schema argument not set, do not print error message
+        except TypeError:
+            args.xsd_file = self.__xsd_dir()  # get default schema path
 
         if args.xml_command:
             if args.xml_command[0] == 'validate':
@@ -102,17 +104,6 @@ class XMLParser:
         :return: The path to the platform specific the XSD directory
 
         """
-        # Windows
-        if os.name == 'nt':
-            xsd_path = 'c:\\path\\to\\fastRTPS_profiles.xsd\\'
-        elif os.name == 'posix':
-            # MAC
-            if platform.mac_ver()[0] != '':
-                xsd_path = 'path/to/fastRTPS_profiles.xsd'
-            # Linux
-            else:
-                xsd_path = 'path/to/fastRTPS_profiles.xsd'
-        else:
-            raise RuntimeError(f'{os.name} not supported')
-
-        return xsd_path
+        tool_path = Path(os.path.dirname(os.path.realpath(__file__)))
+        # We asume the schema path is relative to our installation path
+        return tool_path / '../../../share/fastRTPS_profiles.xsd'
