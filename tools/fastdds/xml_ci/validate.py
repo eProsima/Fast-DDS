@@ -115,7 +115,13 @@ class Validate:
         :return: False if failed parsing, otherwise True.
 
         """
-        xml_etree = etree.ElementTree.parse(file)
+        try:
+            xml_etree = etree.ElementTree.parse(file)
+        except etree.ElementTree.ParseError as e:
+            print(f'cannot parse file: {file}')
+            print(e)
+            exit(1)
+
         try:
             self.xsd_file.validate(xml_etree)
             print(f'Valid XML file: {file}')
