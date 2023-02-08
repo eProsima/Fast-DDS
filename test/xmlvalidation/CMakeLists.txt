@@ -17,10 +17,6 @@
 ###############################################################################
 message(STATUS "Configuring CLI xml validation...")
 
-# Copy the schema to the build directory
-configure_file(${PROJECT_SOURCE_DIR}/resources/xsd/fastRTPS_profiles.xsd
-    ${CMAKE_CURRENT_BINARY_DIR}/fastRTPS_profiles.xsd COPYONLY)
-
 # Copy the neccessary files over to the build directory
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/profileAll.xml
     ${CMAKE_CURRENT_BINARY_DIR}/xmldocuments/profileAll.xml COPYONLY)
@@ -41,4 +37,4 @@ configure_file(${CMAKE_CURRENT_SOURCE_DIR}/XMLTesterExample.xml
 
 
 # Check XML profile validation against schema
-add_test(NAME xml.validate COMMAND fastdds xml validate xmldocuments -x fastRTPS_profiles.xsd)
+add_test(NAME xml.validate COMMAND fastdds xml validate xmldocuments)
