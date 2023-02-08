@@ -85,7 +85,7 @@ class Validate:
                     print(f'The file is not an XML file: {element}')
                     valid = False
             else:
-                print(f'NOT valid XML file or directory: {element}')
+                print(f'{element} path not found')
                 valid = False
         return valid
 
