@@ -12,8 +12,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#ifndef TYPES_DYNAMIC_TYPE_BUILDER_H
-#define TYPES_DYNAMIC_TYPE_BUILDER_H
+#ifndef FASTRTPS_TYPES_DYNAMIC_TYPE_BUILDER_H
+#define FASTRTPS_TYPES_DYNAMIC_TYPE_BUILDER_H
+
+#include <map>
 
 #include <map>
 
@@ -30,6 +32,7 @@ class TypeDescriptor;
 class MemberDescriptor;
 class DynamicType;
 class DynamicTypeMember;
+class DynamicTypeBuilderFactory;
 
 using MemberId = eprosima::fastdds::dds::xtypes::MemberId;
 using TypeKind = eprosima::fastdds::dds::xtypes::TypeKind;
@@ -56,7 +59,7 @@ protected:
     std::map<MemberId, DynamicTypeMember*> member_by_id_;         // Aggregated members
     std::map<std::string, DynamicTypeMember*> member_by_name_;    // Uses the pointers from "member_by_id_".
     std::string name_;
-    TypeKind kind_;
+    octet kind_;
     MemberId current_member_id_;
     uint32_t max_index_;
 
@@ -157,7 +160,7 @@ public:
     ReturnCode_t get_all_members(
             std::map<MemberId, DynamicTypeMember*>& members);
 
-    RTPS_DllAPI inline TypeKind get_kind() const
+    RTPS_DllAPI inline octet get_kind() const
     {
         return kind_;
     }
@@ -184,4 +187,4 @@ public:
 } // namespace fastrtps
 } // namespace eprosima
 
-#endif // TYPES_DYNAMIC_TYPE_BUILDER_H
+#endif // FASTRTPS_TYPES_DYNAMIC_TYPE_BUILDER_H

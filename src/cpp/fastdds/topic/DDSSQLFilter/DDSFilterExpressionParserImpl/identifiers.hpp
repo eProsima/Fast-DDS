@@ -76,9 +76,11 @@ struct identifier_processor
                 out_type = ti.seq_ldefn().element_identifier().get();
                 max_size = process_bound(ti.seq_ldefn().bound());
                 return true;
+
+            default:
+                out_type = &ti;
         }
 
-        out_type = &ti;
         return false;
     }
 
@@ -141,59 +143,65 @@ struct identifier_processor
             const TypeIdentifier& ti,
             const position& pos)
     {
+        DDSFilterValue::ValueKind res {eprosima::fastdds::dds::xtypes::TK_NONE};
+
         switch (ti._d())
         {
             case eprosima::fastdds::dds::xtypes::TK_BOOLEAN:
-                return DDSFilterValue::ValueKind::BOOLEAN;
-
+                res = DDSFilterValue::ValueKind::BOOLEAN;
+                break;
             case eprosima::fastdds::dds::xtypes::TK_CHAR8:
-                return DDSFilterValue::ValueKind::CHAR;
-
+                res = DDSFilterValue::ValueKind::CHAR;
+                break;
             case eprosima::fastdds::dds::xtypes::TK_STRING8:
             case TI_STRING8_SMALL:
             case TI_STRING8_LARGE:
-                return DDSFilterValue::ValueKind::STRING;
+                res = DDSFilterValue::ValueKind::STRING;
+                break;
 
             case eprosima::fastdds::dds::xtypes::TK_INT8:
             case eprosima::fastdds::dds::xtypes::TK_INT16:
             case eprosima::fastdds::dds::xtypes::TK_INT32:
             case eprosima::fastdds::dds::xtypes::TK_INT64:
-                return DDSFilterValue::ValueKind::SIGNED_INTEGER;
-
+                res = DDSFilterValue::ValueKind::SIGNED_INTEGER;
+                break;
             case eprosima::fastdds::dds::xtypes::TK_BYTE:
             case eprosima::fastdds::dds::xtypes::TK_UINT8:
             case eprosima::fastdds::dds::xtypes::TK_UINT16:
             case eprosima::fastdds::dds::xtypes::TK_UINT32:
             case eprosima::fastdds::dds::xtypes::TK_UINT64:
-                return DDSFilterValue::ValueKind::UNSIGNED_INTEGER;
-
+                res = DDSFilterValue::ValueKind::UNSIGNED_INTEGER;
+                break;
             case eprosima::fastdds::dds::xtypes::TK_FLOAT32:
-                return DDSFilterValue::ValueKind::FLOAT_FIELD;
-
+                res = DDSFilterValue::ValueKind::FLOAT_FIELD;
+                break;
             case eprosima::fastdds::dds::xtypes::TK_FLOAT64:
-                return DDSFilterValue::ValueKind::DOUBLE_FIELD;
-
+                res = DDSFilterValue::ValueKind::DOUBLE_FIELD;
+                break;
             case eprosima::fastdds::dds::xtypes::TK_FLOAT128:
-                return DDSFilterValue::ValueKind::LONG_DOUBLE_FIELD;
-
+                res = DDSFilterValue::ValueKind::LONG_DOUBLE_FIELD;
+                break;
             case EK_COMPLETE:
                 TypeObject type_object;
                 DomainParticipantFactory::get_instance()->type_object_registry().get_type_object(ti, type_object);
                 if (eprosima::fastdds::dds::xtypes::TK_ENUM == type_object.complete()._d())
                 {
-                    return DDSFilterValue::ValueKind::ENUM;
+                    res = DDSFilterValue::ValueKind::ENUM;
+                    break;
                 }
                 if (eprosima::fastdds::dds::xtypes::TK_ALIAS == type_object.complete()._d())
                 {
                     const TypeIdentifier& aliasedId =
                             type_object.complete().alias_type().body().common().related_type();
-                    return get_value_kind(aliasedId, pos);
+                    res = get_value_kind(aliasedId, pos);
                 }
                 break;
 
+            default:
+                throw parse_error("type is not primitive", pos);
         }
 
-        throw parse_error("type is not primitive", pos);
+        return res;
     }
 
     template< typename ... States >

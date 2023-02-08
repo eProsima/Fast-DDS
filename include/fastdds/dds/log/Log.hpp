@@ -123,9 +123,15 @@ public:
     RTPS_DllAPI static void SetCategoryFilter(
             const std::regex&);
 
+    //! Returns a copy of the current category filter or an empty object otherwise
+    RTPS_DllAPI static std::regex GetCategoryFilter();
+
     //! Sets a filter that will pattern-match against filenames, dropping any unmatched categories.
     RTPS_DllAPI static void SetFilenameFilter(
             const std::regex&);
+
+    //! Returns a copy of the current filename filter or an empty object otherwise
+    RTPS_DllAPI static std::regex GetFilenameFilter();
 
     //! Sets a filter that will pattern-match against the provided error string, dropping any unmatched categories.
     RTPS_DllAPI static void SetErrorStringFilter(
@@ -134,6 +140,9 @@ public:
     //! Sets thread configuration for the logging thread.
     RTPS_DllAPI static void SetThreadConfig(
             const rtps::ThreadSettings&);
+
+    //! Returns a copy of the current error string filter or an empty object otherwise
+    RTPS_DllAPI static std::regex GetErrorStringFilter();
 
     //! Returns the logging engine to configuration defaults.
     RTPS_DllAPI static void Reset();
@@ -176,6 +185,45 @@ public:
             const std::string& message,
             const Log::Context&,
             Log::Kind);
+
+    //! RAII to setup Logging
+    struct ScopeLogs
+    {
+        //! Set a specific category filter
+        ScopeLogs(
+                std::string category_filter)
+        {
+#ifdef __cpp_lib_make_unique
+            filter_ = std::make_unique<std::regex>(Log::GetCategoryFilter());
+#else
+            filter_ = std::unique_ptr<std::regex>(new std::regex(Log::GetCategoryFilter()));
+#endif // ifdef __cpp_lib_make_unique
+            Log::SetCategoryFilter(std::regex{category_filter});
+        }
+
+        //! Set a specified level
+        ScopeLogs(
+                Log::Kind new_verbosity = Log::Error)
+        {
+            old_ = Log::GetVerbosity();
+            Log::SetVerbosity(new_verbosity);
+        }
+
+        ~ScopeLogs()
+        {
+            if (filter_)
+            {
+                Log::SetCategoryFilter(*filter_);
+            }
+            else
+            {
+                Log::SetVerbosity(old_);
+            }
+        }
+
+        Log::Kind old_;
+        std::unique_ptr<std::regex> filter_;
+    };
 };
 
 //! Streams Log::Kind serialization

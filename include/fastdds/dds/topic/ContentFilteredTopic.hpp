@@ -20,6 +20,7 @@
 #define _FASTDDS_DDS_TOPIC_CONTENTFILTEREDTOPIC_HPP_
 
 #include <fastrtps/fastrtps_dll.h>
+#include <fastdds/dds/core/ReturnCode.hpp>
 #include <fastdds/dds/topic/TopicDescription.hpp>
 #include <fastdds/dds/topic/Topic.hpp>
 

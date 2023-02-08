@@ -26,6 +26,9 @@
 #include <fastdds/dds/publisher/Publisher.hpp>
 #include <fastdds/dds/publisher/qos/DataWriterQos.hpp>
 #include <fastdds/dds/publisher/qos/PublisherQos.hpp>
+#include <fastdds/dds/xtypes/dynamic_types/DynamicDataFactory.hpp>
+#include <fastdds/dds/xtypes/dynamic_types/DynamicData.hpp>
+#include <fastdds/dds/xtypes/dynamic_types/DynamicType.hpp>
 #include <fastrtps/types/DynamicDataFactory.h>
 #include <fastrtps/xmlparser/XMLProfileManager.h>
 
@@ -39,8 +42,9 @@ HelloWorldPublisher::HelloWorldPublisher()
 
 bool HelloWorldPublisher::init()
 {
-    if (eprosima::fastrtps::xmlparser::XMLP_ret::XML_OK !=
-            eprosima::fastrtps::xmlparser::XMLProfileManager::loadXMLFile("helloworld_example_type_profile.xml"))
+    using namespace eprosima::fastrtps::xmlparser;
+
+    if ( XMLP_ret::XML_OK != XMLProfileManager::loadXMLFile("helloworld_example_type_profile.xml"))
     {
         std::cout <<
             "Cannot open XML file \"helloworld_example_type_profile.xml\". Please, run the publisher from the folder "
@@ -48,25 +52,33 @@ bool HelloWorldPublisher::init()
         return false;
     }
 
-    eprosima::fastrtps::types::DynamicType_ptr dyn_type =
-            eprosima::fastrtps::xmlparser::XMLProfileManager::getDynamicTypeByName("HelloWorld")->build();
-    TypeSupport m_type(new eprosima::fastrtps::types::DynamicPubSubType(dyn_type));
-    m_Hello = eprosima::fastrtps::types::DynamicDataFactory::get_instance()->create_data(dyn_type);
+    DynamicTypeBuilder* dyn_builder {nullptr};
+    if ( XMLProfileManager::getDynamicTypeByName(dyn_builder, "HelloWorld") != XMLP_ret::XML_OK )
+    {
+        return false;
+    }
 
+    //TODO(richiware) delete type
+    const DynamicType* dyn_type {dyn_builder->build()};
+    TypeSupport m_type(new DynamicPubSubType(*dyn_type));
+    m_Hello = DynamicDataFactory::get_instance().create_data(*dyn_type);
     m_Hello->set_string_value("Hello DDS Dynamic World", 0);
     m_Hello->set_uint32_value(0, 1);
-    eprosima::fastrtps::types::DynamicData* array = m_Hello->loan_value(2);
-    array->set_uint32_value(10, array->get_array_index({0, 0}));
-    array->set_uint32_value(20, array->get_array_index({1, 0}));
-    array->set_uint32_value(30, array->get_array_index({2, 0}));
-    array->set_uint32_value(40, array->get_array_index({3, 0}));
-    array->set_uint32_value(50, array->get_array_index({4, 0}));
-    array->set_uint32_value(60, array->get_array_index({0, 1}));
-    array->set_uint32_value(70, array->get_array_index({1, 1}));
-    array->set_uint32_value(80, array->get_array_index({2, 1}));
-    array->set_uint32_value(90, array->get_array_index({3, 1}));
-    array->set_uint32_value(100, array->get_array_index({4, 1}));
-    m_Hello->return_loaned_value(array);
+
+    DynamicData* array {m_Hello->loan_value(2)};
+
+    /*TODO(richiware)
+       array->set_uint32_value(10, array.get_array_index({0, 0}));
+       array->set_uint32_value(20, array.get_array_index({1, 0}));
+       array->set_uint32_value(30, array.get_array_index({2, 0}));
+       array->set_uint32_value(40, array.get_array_index({3, 0}));
+       array->set_uint32_value(50, array.get_array_index({4, 0}));
+       array->set_uint32_value(60, array.get_array_index({0, 1}));
+       array->set_uint32_value(70, array.get_array_index({1, 1}));
+       array->set_uint32_value(80, array.get_array_index({2, 1}));
+       array->set_uint32_value(90, array.get_array_index({3, 1}));
+       array->set_uint32_value(100, array.get_array_index({4, 1}));
+     */
 
     DomainParticipantQos pqos;
     pqos.name("Participant_pub");
@@ -159,24 +171,24 @@ void HelloWorldPublisher::runThread(
         {
             if (publish(false))
             {
-                std::string message;
-                m_Hello->get_string_value(message, 0);
-                uint32_t index;
-                m_Hello->get_uint32_value(index, 1);
+                std::string message = m_Hello->get_string_value(0);
+                uint32_t index = m_Hello->get_uint32_value(1);
                 std::string aux_array = "[";
-                eprosima::fastrtps::types::DynamicData* array = m_Hello->loan_value(2);
+
+                DynamicData* array {m_Hello->loan_value(2)};
+
                 for (uint32_t i = 0; i < 5; ++i)
                 {
                     aux_array += "[";
                     for (uint32_t j = 0; j < 2; ++j)
                     {
                         uint32_t elem;
-                        array->get_uint32_value(elem, array->get_array_index({i, j}));
+                        //TODO(richiware)array->get_uint32_value(elem, array.get_array_index({i, j}));
                         aux_array += std::to_string(elem) + (j == 1 ? "]" : ", ");
                     }
                     aux_array += (i == 4 ? "]" : "], ");
                 }
-                m_Hello->return_loaned_value(array);
+
                 std::cout << "Message: " << message << " with index: " << index
                           << " array: " << aux_array << " SENT" << std::endl;
             }
@@ -193,24 +205,22 @@ void HelloWorldPublisher::runThread(
             }
             else
             {
-                std::string message;
-                m_Hello->get_string_value(message, 0);
+                std::string message = m_Hello->get_string_value(0);
                 uint32_t index;
                 m_Hello->get_uint32_value(index, 1);
                 std::string aux_array = "[";
-                eprosima::fastrtps::types::DynamicData* array = m_Hello->loan_value(2);
+                DynamicData* array {m_Hello->loan_value(2)};
                 for (uint32_t i = 0; i < 5; ++i)
                 {
                     aux_array += "[";
                     for (uint32_t j = 0; j < 2; ++j)
                     {
                         uint32_t elem;
-                        array->get_uint32_value(elem, array->get_array_index({i, j}));
+                        //TODO(richiware)array->get_uint32_value(elem, array.get_array_index({i, j}));
                         aux_array += std::to_string(elem) + (j == 1 ? "]" : ", ");
                     }
                     aux_array += (i == 4 ? "]" : "], ");
                 }
-                m_Hello->return_loaned_value(array);
                 std::cout << "Message: " << message << " with index: " << index
                           << " array: " << aux_array << " SENT" << std::endl;
             }
@@ -247,20 +257,22 @@ bool HelloWorldPublisher::publish(
         m_Hello->get_uint32_value(index, 1);
         m_Hello->set_uint32_value(index + 1, 1);
 
-        eprosima::fastrtps::types::DynamicData* array = m_Hello->loan_value(2);
-        array->set_uint32_value(10 + index, array->get_array_index({0, 0}));
-        array->set_uint32_value(20 + index, array->get_array_index({1, 0}));
-        array->set_uint32_value(30 + index, array->get_array_index({2, 0}));
-        array->set_uint32_value(40 + index, array->get_array_index({3, 0}));
-        array->set_uint32_value(50 + index, array->get_array_index({4, 0}));
-        array->set_uint32_value(60 + index, array->get_array_index({0, 1}));
-        array->set_uint32_value(70 + index, array->get_array_index({1, 1}));
-        array->set_uint32_value(80 + index, array->get_array_index({2, 1}));
-        array->set_uint32_value(90 + index, array->get_array_index({3, 1}));
-        array->set_uint32_value(100 + index, array->get_array_index({4, 1}));
-        m_Hello->return_loaned_value(array);
+        DynamicData* array {m_Hello->loan_value(2)};
 
-        writer_->write(m_Hello.get());
+        /*TODO(richiware)
+           array->set_uint32_value(10 + index, array.get_array_index({0, 0}));
+           array->set_uint32_value(20 + index, array.get_array_index({1, 0}));
+           array->set_uint32_value(30 + index, array.get_array_index({2, 0}));
+           array->set_uint32_value(40 + index, array.get_array_index({3, 0}));
+           array->set_uint32_value(50 + index, array.get_array_index({4, 0}));
+           array->set_uint32_value(60 + index, array.get_array_index({0, 1}));
+           array->set_uint32_value(70 + index, array.get_array_index({1, 1}));
+           array->set_uint32_value(80 + index, array.get_array_index({2, 1}));
+           array->set_uint32_value(90 + index, array.get_array_index({3, 1}));
+           array->set_uint32_value(100 + index, array.get_array_index({4, 1}));
+         */
+
+        writer_->write(m_Hello);
         return true;
     }
     return false;

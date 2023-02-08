@@ -546,24 +546,24 @@ void ThroughputPublisher::run(
         {
             assert(nullptr == dynamic_data_);
             // Create the data sample
-            eprosima::fastrtps::types::MemberId id;
-            dynamic_data_ = static_cast<eprosima::fastrtps::types::DynamicData*>(dynamic_pub_sub_type_->createData());
+            MemberId id;
+            dynamic_data_ = static_cast<DynamicData*>(dynamic_pub_sub_type_->createData());
 
             if (nullptr == dynamic_data_)
             {
                 EPROSIMA_LOG_ERROR(THROUGHPUTPUBLISHER,
-                        "Iteration failed: Failed to create eprosima::fastrtps::types::Dynamic Data");
+                        "Iteration failed: Failed to create Dynamic Data");
                 return;
             }
 
             // Modify the data Sample
             dynamic_data_->set_uint32_value(0, 0);
-            eprosima::fastrtps::types::DynamicData* member_data = dynamic_data_->loan_value(
+            DynamicData* member_data = dynamic_data_->loan_value(
                 dynamic_data_->get_member_id_at_index(1));
 
             for (int i = 0; i < msg_size; ++i)
             {
-                member_data->insert_sequence_data(id);
+                //TODO(richiware)member_data->insert_sequence_data(id);
                 member_data->set_byte_value(0, id);
             }
             dynamic_data_->return_loaned_value(member_data);
@@ -641,7 +641,7 @@ void ThroughputPublisher::run(
         // Delete the Data Sample
         if (dynamic_types_)
         {
-            eprosima::fastrtps::types::DynamicDataFactory::get_instance()->delete_data(dynamic_data_);
+            DynamicDataFactory::get_instance().delete_data(dynamic_data_);
             dynamic_data_ = nullptr;
         }
         else
@@ -1041,20 +1041,18 @@ bool ThroughputPublisher::init_dynamic_types()
     }
 
     // Dummy type registration
+    auto& factory = DynamicTypeBuilderFactory::get_instance();
     // Create basic builders
-    eprosima::fastrtps::types::DynamicTypeBuilder_ptr struct_type_builder(eprosima::fastrtps::types::
-                    DynamicTypeBuilderFactory::get_instance()->
-                    create_struct_builder());
+    DynamicTypeBuilder* struct_type_builder {factory.create_struct_type()};
 
     // Add members to the struct.
-    struct_type_builder->add_member(0, "seqnum",
-            eprosima::fastrtps::types::DynamicTypeBuilderFactory::get_instance()->create_uint32_type());
-    struct_type_builder->add_member(1, "data",
-            eprosima::fastrtps::types::DynamicTypeBuilderFactory::get_instance()->create_sequence_builder(
-                eprosima::fastrtps::types::DynamicTypeBuilderFactory::get_instance()->create_byte_type(),
-                eprosima::fastrtps::types::BOUND_UNLIMITED));
-    struct_type_builder->set_name(ThroughputDataType::type_name_);
-    dynamic_pub_sub_type_.reset(new eprosima::fastrtps::types::DynamicPubSubType(struct_type_builder->build()));
+    // TODO(richiware) type not released.
+    struct_type_builder->add_member({0, "seqnum", factory.create_uint32_type()->build()});
+    struct_type_builder->add_member({1, "data", factory.create_sequence_type(
+                                         *factory.create_byte_type()->build(),
+                                         eprosima::fastdds::dds::BOUND_UNLIMITED)->build()});
+    struct_type_builder->set_name(ThroughputDataType::type_name_.c_str());
+    dynamic_pub_sub_type_.reset(new DynamicPubSubType(struct_type_builder->build()));
 
     // Register the data type
     if (RETCODE_OK

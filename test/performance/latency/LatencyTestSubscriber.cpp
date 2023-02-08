@@ -35,6 +35,7 @@
 
 using namespace eprosima::fastrtps::rtps;
 using namespace eprosima::fastdds::dds;
+using namespace eprosima::fastdds::dds::xtypes;
 
 LatencyTestSubscriber::LatencyTestSubscriber()
     : latency_command_type_(new TestCommandDataType())
@@ -651,18 +652,18 @@ bool LatencyTestSubscriber::test(
     if (dynamic_types_)
     {
         // Create the data sample
-        eprosima::fastrtps::types::MemberId id;
-        dynamic_data_ = static_cast<eprosima::fastrtps::types::DynamicData*>(dynamic_pub_sub_type_->createData());
+        MemberId id;
+        dynamic_data_ = static_cast<DynamicData*>(dynamic_pub_sub_type_->createData());
 
         if (nullptr == dynamic_data_)
         {
             EPROSIMA_LOG_ERROR(LatencyTest,
-                    "Iteration failed: Failed to create eprosima::fastrtps::types::Dynamic Data");
+                    "Iteration failed: Failed to create Dynamic Data");
             return false;
         }
 
         // Modify the data Sample
-        eprosima::fastrtps::types::DynamicData* member_data = dynamic_data_->loan_value(
+        DynamicData* member_data = dynamic_data_->loan_value(
             dynamic_data_->get_member_id_at_index(1));
 
         // fill until complete the desired payload size
@@ -670,7 +671,7 @@ bool LatencyTestSubscriber::test(
 
         for (uint32_t i = 0; i < padding; ++i)
         {
-            member_data->insert_sequence_data(id);
+            //TODO(richiware)member_data->insert_sequence_data(id);
             member_data->set_byte_value(0, id);
         }
         dynamic_data_->return_loaned_value(member_data);
@@ -720,7 +721,7 @@ bool LatencyTestSubscriber::test(
     if (dynamic_types_)
     {
         dynamic_pub_sub_type_->deleteData(dynamic_data_);
-        // eprosima::fastrtps::types::DynamicDataFactory::get_instance()->delete_data(dynamic_data_);
+        // DynamicDataFactory::get_instance()->delete_data(dynamic_data_);
         //
         // Reset history for the new test
         size_t removed;
@@ -794,20 +795,18 @@ bool LatencyTestSubscriber::init_dynamic_types()
     }
 
     // Dummy type registration
+    auto& factory = DynamicTypeBuilderFactory::get_instance();
     // Create basic builders
-    eprosima::fastrtps::types::DynamicTypeBuilder_ptr struct_type_builder(eprosima::fastrtps::types::
-                    DynamicTypeBuilderFactory::get_instance()->
-                    create_struct_builder());
+    DynamicTypeBuilder* struct_type_builder {factory.create_struct_type()};
 
     // Add members to the struct.
-    struct_type_builder->add_member(0, "seqnum",
-            eprosima::fastrtps::types::DynamicTypeBuilderFactory::get_instance()->create_uint32_type());
-    struct_type_builder->add_member(1, "data",
-            eprosima::fastrtps::types::DynamicTypeBuilderFactory::get_instance()->create_sequence_builder(
-                eprosima::fastrtps::types::DynamicTypeBuilderFactory::get_instance()->create_byte_type(),
-                eprosima::fastrtps::types::BOUND_UNLIMITED));
-    struct_type_builder->set_name(LatencyDataType::type_name_);
-    dynamic_pub_sub_type_.reset(new eprosima::fastrtps::types::DynamicPubSubType(struct_type_builder->build()));
+    //TODO(richiware) types not released, also in publisher
+    struct_type_builder->add_member({0, "seqnum", factory.create_uint32_type()->build()});
+    struct_type_builder->add_member({1, "data", factory.create_sequence_type(
+                                         *factory.create_byte_type()->build(),
+                                         eprosima::fastdds::dds::BOUND_UNLIMITED)->build()});
+    struct_type_builder->set_name(LatencyDataType::type_name_.c_str());
+    dynamic_pub_sub_type_.reset(new DynamicPubSubType(struct_type_builder->build()));
 
     // Register the data type
     if (RETCODE_OK != dynamic_pub_sub_type_.register_type(participant_))
@@ -989,7 +988,7 @@ bool LatencyTestSubscriber::destroy_data_endpoints()
 
     latency_data_type_.reset();
     dynamic_pub_sub_type_.reset();
-    eprosima::fastrtps::types::DynamicTypeBuilderFactory::delete_instance();
+    DynamicTypeBuilderFactory::delete_instance();
 
     return true;
 }

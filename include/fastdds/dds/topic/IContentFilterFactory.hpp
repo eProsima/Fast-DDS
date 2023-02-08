@@ -25,7 +25,6 @@
 #include <fastdds/dds/core/ReturnCode.hpp>
 #include <fastdds/dds/topic/IContentFilter.hpp>
 #include <fastdds/dds/topic/TopicDataType.hpp>
-#include <fastrtps/types/TypeDescriptor.h>
 
 namespace eprosima {
 namespace fastdds {
@@ -37,7 +36,6 @@ namespace dds {
 struct IContentFilterFactory
 {
     using ParameterSeq = LoanableTypedCollection<const char*>;
-    using TypeDescriptor = eprosima::fastrtps::types::TypeDescriptor;
 
     /**
      * Create or update an IContentFilter instance.

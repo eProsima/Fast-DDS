@@ -26,7 +26,6 @@
 #include <fastdds/dds/domain/DomainParticipant.hpp>
 #include <fastdds/dds/publisher/qos/DataWriterQos.hpp>
 #include <fastrtps/fastrtps_dll.h>
-#include <fastrtps/types/TypesBase.h>
 
 namespace eprosima {
 namespace fastrtps {
@@ -65,7 +64,7 @@ public:
      * RETCODE_OK if the DataWriter has been created or if it has been created previously,
      * and RETCODE_ERROR otherwise
      */
-    RTPS_DllAPI eprosima::fastdds::dds::ReturnCode_t enable_statistics_datawriter(
+    RTPS_DllAPI fastdds::dds::ReturnCode_t enable_statistics_datawriter(
             const std::string& topic_name,
             const eprosima::fastdds::dds::DataWriterQos& dwqos);
 
@@ -80,7 +79,7 @@ public:
      * RETCODE_OK if the DataWriter has been created or if it has been created previously,
      * and RETCODE_ERROR otherwise
      */
-    RTPS_DllAPI eprosima::fastdds::dds::ReturnCode_t enable_statistics_datawriter_with_profile(
+    RTPS_DllAPI fastdds::dds::ReturnCode_t enable_statistics_datawriter_with_profile(
             const std::string& profile_name,
             const std::string& topic_name);
 
@@ -92,7 +91,7 @@ public:
      * RETCODE_OK if the DataWriter has been correctly deleted or does not exist,
      * and RETCODE_ERROR otherwise
      */
-    RTPS_DllAPI eprosima::fastdds::dds::ReturnCode_t disable_statistics_datawriter(
+    RTPS_DllAPI fastdds::dds::ReturnCode_t disable_statistics_datawriter(
             const std::string& topic_name);
 
     /**

@@ -12,14 +12,15 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#ifndef TYPES_ANNOTATION_DESCRIPTOR_H
-#define TYPES_ANNOTATION_DESCRIPTOR_H
+#ifndef FASTRTPS_TYPES_ANNOTATION_DESCRIPTOR_H
+#define FASTRTPS_TYPES_ANNOTATION_DESCRIPTOR_H
 
 #include <map>
 #include <string>
 
 #include <fastdds/dds/core/ReturnCode.hpp>
 #include <fastrtps/types/DynamicTypePtr.h>
+#include <fastrtps/types/TypesBase.h>
 
 namespace eprosima {
 namespace fastrtps {
@@ -27,8 +28,8 @@ namespace types {
 
 using ReturnCode_t = eprosima::fastdds::dds::ReturnCode_t;
 
-class MemberDescriptor;
 class DynamicType;
+class MemberDescriptor;
 
 class AnnotationDescriptor
 {
@@ -83,4 +84,4 @@ public:
 } // namespace fastrtps
 } // namespace eprosima
 
-#endif // TYPES_ANNOTATION_DESCRIPTOR_H
+#endif // FASTRTPS_TYPES_ANNOTATION_DESCRIPTOR_H

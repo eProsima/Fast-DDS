@@ -26,10 +26,12 @@
 #include <fastdds/dds/subscriber/qos/DataReaderQos.hpp>
 #include <fastdds/dds/subscriber/SampleInfo.hpp>
 #include <fastdds/dds/subscriber/Subscriber.hpp>
-#include <fastrtps/types/DynamicDataFactory.h>
+#include <fastdds/dds/xtypes/dynamic_types/DynamicData.hpp>
+#include <fastdds/dds/xtypes/dynamic_types/DynamicDataFactory.hpp>
 #include <fastrtps/types/DynamicDataHelper.hpp>
 
 using namespace eprosima::fastdds::dds;
+using namespace eprosima::fastdds::dds::xtypes;
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
 
@@ -141,16 +143,17 @@ void TypeLookupSubscriber::SubListener::on_data_available(
 
     if (dit != subscriber_->datas_.end())
     {
-        types::DynamicData_ptr data = dit->second;
+        DynamicData* data {dit->second};
         SampleInfo info;
-        if (reader->take_next_sample(data.get(), &info) == RETCODE_OK)
+        if (reader->take_next_sample(data, &info) == RETCODE_OK)
         {
             if (info.valid_data)
             {
-                types::DynamicType_ptr type = subscriber_->readers_[reader];
+                const DynamicType* type {subscriber_->readers_[reader]};
                 this->n_samples++;
                 std::cout << "Received data of type " << type->get_name() << std::endl;
-                types::DynamicDataHelper::print(data);
+                // TODO Barro: Substitute with ostream operator
+                // DynamicDataHelper::print(data);
             }
         }
     }

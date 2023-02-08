@@ -12,8 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#ifndef TYPES_TYPE_DESCRIPTOR_H
-#define TYPES_TYPE_DESCRIPTOR_H
+#ifndef FASTRTPS_TYPES_TYPE_DESCRIPTOR_H
+#define FASTRTPS_TYPES_TYPE_DESCRIPTOR_H
 
 #include <string>
 #include <vector>
@@ -23,20 +23,21 @@
 #include <fastrtps/types/DynamicTypePtr.h>
 #include <fastrtps/types/TypesBase.h>
 
-class MemberDescriptor;
-class DynamicType;
-
 namespace eprosima {
 namespace fastrtps {
 namespace types {
 
 using ReturnCode_t = eprosima::fastdds::dds::ReturnCode_t;
+class DynamicDataHelper;
+
+class MemberDescriptor;
+class DynamicType;
 
 class TypeDescriptor
 {
 protected:
 
-    TypeKind kind_;                         // Type Kind.
+    octet kind_;                         // Type Kind.
     std::string name_;                      // Type Name.
     DynamicType_ptr base_type_;             // SuperType of an structure or base type of an alias type.
     DynamicType_ptr discriminator_type_;    // Discrimination type for a union.
@@ -51,10 +52,10 @@ protected:
             const std::string& sName);
 
     friend class DynamicTypeBuilderFactory;
-    friend class TypeObjectFactory;
     friend class DynamicType;
     friend class MemberDescriptor;
-    friend class DynamicDataHelper;
+    friend class types::DynamicDataHelper;
+    friend class types::TypeObjectFactory;
 
 public:
 
@@ -65,7 +66,7 @@ public:
 
     RTPS_DllAPI TypeDescriptor(
             const std::string& name,
-            TypeKind kind);
+            octet kind);
 
     RTPS_DllAPI ~TypeDescriptor();
 
@@ -90,14 +91,14 @@ public:
 
     RTPS_DllAPI DynamicType_ptr get_key_element_type() const;
 
-    RTPS_DllAPI TypeKind get_kind() const;
+    RTPS_DllAPI octet get_kind() const;
 
     RTPS_DllAPI std::string get_name() const;
 
     RTPS_DllAPI uint32_t get_total_bounds() const;
 
     RTPS_DllAPI void set_kind(
-            TypeKind kind);
+            octet kind);
 
     RTPS_DllAPI void set_name(
             std::string name);
@@ -166,4 +167,4 @@ public:
 } // namespace fastrtps
 } // namespace eprosima
 
-#endif // TYPES_TYPE_DESCRIPTOR_H
+#endif // FASTRTPS_TYPES_TYPE_DESCRIPTOR_H

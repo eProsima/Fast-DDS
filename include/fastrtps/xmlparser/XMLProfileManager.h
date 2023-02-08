@@ -20,12 +20,13 @@
 #include <string>
 
 #include <fastdds/dds/domain/qos/DomainParticipantFactoryQos.hpp>
+#include <fastdds/dds/xtypes/dynamic_types/DynamicTypeBuilder.hpp>
 #include <fastrtps/attributes/ParticipantAttributes.h>
 #include <fastrtps/attributes/PublisherAttributes.h>
 #include <fastrtps/attributes/SubscriberAttributes.h>
 #include <fastrtps/types/DynamicPubSubType.h>
 #include <fastrtps/types/DynamicTypeBuilder.h>
-#include <fastrtps/types/DynamicTypeBuilderFactory.h>
+#include <fastrtps/types/DynamicTypeBuilderPtr.h>
 #include <fastrtps/xmlparser/XMLParser.h>
 #include <fastrtps/xmlparser/XMLParserCommon.h>
 
@@ -215,12 +216,19 @@ public:
     //!Add a new dynamic type instance along with its name.
     RTPS_DllAPI static bool insertDynamicTypeByName(
             const std::string& type_name,
-            p_dynamictypebuilder_t type);
+            fastdds::dds::DynamicTypeBuilder* type);
 
     //!Retrieves a transport instance by its name.
     RTPS_DllAPI static p_dynamictypebuilder_t getDynamicTypeByName(
             const std::string& type_name);
 
+    RTPS_DllAPI static XMLP_ret getDynamicTypeByName(
+            types::DynamicTypeBuilder_ptr& builder,
+            const std::string& type_name);
+
+    RTPS_DllAPI static XMLP_ret getDynamicTypeByName(
+            fastdds::dds::DynamicTypeBuilder*& builder,
+            const std::string& type_name);
 
     /**
      * Search for the profile specified and fill the structure.
@@ -258,8 +266,11 @@ public:
         topic_profiles_.clear();
         xml_files_.clear();
         transport_profiles_.clear();
+        dynamic_types_.clear();
+        old_dynamic_types_.clear();
     }
 
+    // TODO(richiware) Version for v1.3
     /**
      * Retrieves a DynamicPubSubType for the given dynamic type name.
      * Any instance retrieve by calling this method must be deleted calling the
@@ -268,9 +279,9 @@ public:
     RTPS_DllAPI static types::DynamicPubSubType* CreateDynamicPubSubType(
             const std::string& type_name)
     {
-        if (dynamic_types_.find(type_name) != dynamic_types_.end())
+        if (old_dynamic_types_.find(type_name) != old_dynamic_types_.end())
         {
-            return new types::DynamicPubSubType(dynamic_types_[type_name]->build());
+            return new types::DynamicPubSubType(old_dynamic_types_[type_name]->build());
         }
         return nullptr;
     }
@@ -342,6 +353,8 @@ private:
     static sp_transport_map_t transport_profiles_;
 
     static p_dynamictype_map_t dynamic_types_;
+
+    static p_oldbackup_map_t old_dynamic_types_;
 };
 
 } /* xmlparser */

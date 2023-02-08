@@ -12,8 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#ifndef TYPES_DYNAMIC_TYPE_BUILDER_FACTORY_H
-#define TYPES_DYNAMIC_TYPE_BUILDER_FACTORY_H
+#ifndef FASTRTPS_TYPES_DYNAMIC_TYPE_BUILDER_FACTORY_H
+#define FASTRTPS_TYPES_DYNAMIC_TYPE_BUILDER_FACTORY_H
 
 #include <mutex>
 
@@ -137,7 +137,7 @@ public:
     ~DynamicTypeBuilderFactory();
 
     RTPS_DllAPI DynamicType_ptr get_primitive_type(
-            TypeKind kind);
+            octet kind);
 
     RTPS_DllAPI ReturnCode_t delete_builder(
             DynamicTypeBuilder* builder);
@@ -319,4 +319,4 @@ public:
 } // namespace fastrtps
 } // namespace eprosima
 
-#endif // TYPES_DYNAMIC_TYPE_BUILDER_FACTORY_H
+#endif // FASTRTPS_TYPES_DYNAMIC_TYPE_BUILDER_FACTORY_H

@@ -12,8 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#ifndef TYPES_DYNAMIC_DATA_FACTORY_H
-#define TYPES_DYNAMIC_DATA_FACTORY_H
+#ifndef FASTRTPS_TYPES_DYNAMIC_DATA_FACTORY_H
+#define FASTRTPS_TYPES_DYNAMIC_DATA_FACTORY_H
 
 #include <fastdds/dds/core/ReturnCode.hpp>
 #include <fastrtps/types/DynamicTypePtr.h>
@@ -21,8 +21,6 @@
 #include <fastrtps/types/DynamicType.h>
 #include <fastrtps/types/DynamicData.h>
 #include <mutex>
-
-//#define DISABLE_DYNAMIC_MEMORY_CHECK
 
 namespace eprosima {
 namespace fastrtps {
@@ -66,9 +64,8 @@ public:
     RTPS_DllAPI bool is_empty() const;
 };
 
-
 } // namespace types
 } // namespace fastrtps
 } // namespace eprosima
 
-#endif // TYPES_DYNAMIC_DATA_FACTORY_H
+#endif // FASTRTPS_TYPES_DYNAMIC_DATA_FACTORY_H

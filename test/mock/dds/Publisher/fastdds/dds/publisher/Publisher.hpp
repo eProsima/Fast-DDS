@@ -20,12 +20,12 @@
 
 #include <gmock/gmock.h>
 #include <fastdds/dds/core/Entity.hpp>
+#include <fastdds/dds/core/ReturnCode.hpp>
 #include <fastdds/dds/core/status/StatusMask.hpp>
 #include <fastdds/dds/domain/DomainParticipant.hpp>
 #include <fastdds/dds/publisher/qos/DataWriterQos.hpp>
 #include <fastdds/dds/publisher/qos/PublisherQos.hpp>
 #include <fastdds/rtps/common/InstanceHandle.h>
-#include <fastrtps/types/TypesBase.h>
 
 #include <fastdds/publisher/PublisherImpl.hpp>
 

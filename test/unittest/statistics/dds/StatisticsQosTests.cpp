@@ -19,6 +19,7 @@
 #include <tinyxml2.h>
 
 #include <fastdds/dds/core/policy/QosPolicies.hpp>
+#include <fastdds/dds/core/ReturnCode.hpp>
 #include <fastdds/dds/domain/DomainParticipantFactory.hpp>
 #include <fastdds/dds/log/Log.hpp>
 #include <fastdds/dds/publisher/DataWriter.hpp>
@@ -318,7 +319,7 @@ TEST_F(StatisticsFromXMLProfileTests, XMLConfigurationForStatisticsDataWritersQo
     ASSERT_EQ(network_latency_writer, nullptr);
 
     // But user can enable it manually through enable_statistics_datawriter_with_profile()
-    ReturnCode_t ret = statistics_participant->enable_statistics_datawriter_with_profile(
+    fastdds::dds::ReturnCode_t ret = statistics_participant->enable_statistics_datawriter_with_profile(
         "NETWORK_LATENCY_TOPIC",
         "NETWORK_LATENCY_TOPIC");
     ASSERT_EQ(fastdds::dds::RETCODE_OK, ret);
@@ -414,7 +415,7 @@ TEST_F(StatisticsFromXMLProfileTests, XMLConfigurationForStatisticsDataWritersQo
     statistics_participant = static_cast<DomainParticipant*>(participant);
     ASSERT_NE(statistics_participant, nullptr);
 
-    ReturnCode_t ret = statistics_participant->enable_statistics_datawriter_with_profile(
+    fastdds::dds::ReturnCode_t ret = statistics_participant->enable_statistics_datawriter_with_profile(
         "HISTORY_LATENCY_TOPIC",
         "HISTORY_LATENCY_TOPIC");
     ASSERT_EQ(fastdds::dds::RETCODE_UNSUPPORTED, ret);

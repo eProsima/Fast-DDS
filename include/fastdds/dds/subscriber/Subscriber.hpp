@@ -20,6 +20,7 @@
 #define _FASTDDS_SUBSCRIBER_HPP_
 
 #include <fastdds/dds/core/Entity.hpp>
+#include <fastdds/dds/core/ReturnCode.hpp>
 #include <fastdds/dds/subscriber/DataReaderListener.hpp>
 #include <fastdds/dds/subscriber/InstanceState.hpp>
 #include <fastdds/dds/subscriber/qos/DataReaderQos.hpp>
@@ -28,7 +29,6 @@
 #include <fastdds/dds/subscriber/ViewState.hpp>
 #include <fastdds/dds/topic/qos/TopicQos.hpp>
 #include <fastdds/dds/topic/TypeSupport.hpp>
-#include <fastrtps/types/TypesBase.h>
 
 namespace dds {
 namespace sub {

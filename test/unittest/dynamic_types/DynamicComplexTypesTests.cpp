@@ -15,20 +15,15 @@
 #include <gtest/gtest.h>
 
 #include <fastdds/dds/log/Log.hpp>
+#include <fastdds/dds/xtypes/dynamic_types/DynamicData.hpp>
+#include <fastdds/dds/xtypes/dynamic_types/DynamicDataFactory.hpp>
+#include <fastdds/dds/xtypes/dynamic_types/DynamicPubSubType.hpp>
+#include <fastdds/dds/xtypes/dynamic_types/DynamicTypeBuilder.hpp>
+#include <fastdds/dds/xtypes/dynamic_types/DynamicTypeBuilderFactory.hpp>
+#include <fastdds/dds/xtypes/dynamic_types/DynamicTypeMember.hpp>
+#include <fastdds/dds/xtypes/dynamic_types/MemberDescriptor.hpp>
+#include <fastdds/dds/xtypes/dynamic_types/TypeDescriptor.hpp>
 #include <fastdds/rtps/common/CdrSerialization.hpp>
-#include <fastrtps/types/DynamicData.h>
-#include <fastrtps/types/DynamicDataFactory.h>
-#include <fastrtps/types/DynamicDataPtr.h>
-#include <fastrtps/types/DynamicPubSubType.h>
-#include <fastrtps/types/DynamicType.h>
-#include <fastrtps/types/DynamicTypeBuilder.h>
-#include <fastrtps/types/DynamicTypeBuilderFactory.h>
-#include <fastrtps/types/DynamicTypeBuilderPtr.h>
-#include <fastrtps/types/DynamicTypeMember.h>
-#include <fastrtps/types/DynamicTypePtr.h>
-#include <fastrtps/types/MemberDescriptor.h>
-#include <fastrtps/types/TypeDescriptor.h>
-#include <fastrtps/types/TypesBase.h>
 
 #include "idl/Test.hpp"
 #include "idl/TestPubSubTypes.h"
@@ -36,16 +31,17 @@
 
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
-using namespace eprosima::fastrtps::types;
+using namespace eprosima::fastdds::dds::xtypes;
 
-class DynamicComplexTypesTests : public ::testing::Test
-{
-public:
+/*TODO(richiware)
+   class DynamicComplexTypesTests : public ::testing::Test
+   {
+   public:
 
     DynamicComplexTypesTests()
+        : m_factory{DynamicTypeBuilderFactory::get_instance()}
     {
         register_Test_type_objects();
-        m_factory = DynamicTypeBuilderFactory::get_instance();
         init();
     }
 
@@ -57,12 +53,12 @@ public:
         m_DynManualType = nullptr;
         //DynamicDataFactory::get_instance()->delete_data(m_DynManual);
 
-        if (!DynamicTypeBuilderFactory::get_instance()->is_empty())
+        if (!m_factory.is_empty())
         {
             EPROSIMA_LOG_ERROR(DYN_TEST, "DynamicTypeBuilderFactory is not empty.");
         }
 
-        if (!DynamicDataFactory::get_instance()->is_empty())
+        if (!DynamicDataFactory::get_instance().is_empty())
         {
             EPROSIMA_LOG_ERROR(DYN_TEST, "DynamicDataFactory is not empty.");
         }
@@ -79,50 +75,51 @@ public:
 
     void init();
 
-    types::DynamicType_ptr GetMyEnumType();
-    types::DynamicType_ptr GetMyAliasEnumType();
-    types::DynamicType_ptr GetMyAliasEnum2Type();
-    types::DynamicType_ptr GetMyAliasEnum3Type();
-    types::DynamicType_ptr GetMyOctetArray500Type();
-    types::DynamicType_ptr GetBSAlias5Type();
-    types::DynamicType_ptr GetMA3Type();
-    types::DynamicType_ptr GetMyMiniArrayType();
-    types::DynamicType_ptr GetMySequenceLongType();
-    types::DynamicType_ptr GetBasicStructType();
-    types::DynamicType_ptr GetComplexStructType();
-    types::DynamicType_ptr GetUnionSwitchType();
-    types::DynamicType_ptr GetUnion2SwitchType();
-    types::DynamicType_ptr GetCompleteStructType();
-    types::DynamicType_ptr GetKeyedStructType();
+    std::unique_ptr<const DynamicType>& GetMyEnumType();
+    std::unique_ptr<const DynamicType>& GetMyAliasEnumType();
+    std::unique_ptr<const DynamicType>& GetMyAliasEnum2Type();
+    std::unique_ptr<const DynamicType>& GetMyAliasEnum3Type();
+    std::unique_ptr<const DynamicType>& GetMyOctetArray500Type();
+    std::unique_ptr<const DynamicType>& GetBSAlias5Type();
+    std::unique_ptr<const DynamicType>& GetMA3Type();
+    std::unique_ptr<const DynamicType>& GetMyMiniArrayType();
+    std::unique_ptr<const DynamicType>& GetMySequenceLongType();
+    std::unique_ptr<const DynamicType>& GetBasicStructType();
+    std::unique_ptr<const DynamicType>& GetComplexStructType();
+    std::unique_ptr<const DynamicType>& GetUnionSwitchType();
+    std::unique_ptr<const DynamicType>& GetUnion2SwitchType();
+    std::unique_ptr<const DynamicType>& GetCompleteStructType();
+    std::unique_ptr<const DynamicType>& GetKeyedStructType();
 
     // Static types
     //CompleteStruct m_Static;
     CompleteStructPubSubType m_StaticType;
     // Dynamic Types
     //DynamicData* m_DynAuto;
-    types::DynamicType_ptr m_DynAutoType;
+    std::unique_ptr<const DynamicType> m_DynAutoType;
     //DynamicData* m_DynManual;
-    types::DynamicType_ptr m_DynManualType;
-    DynamicTypeBuilderFactory* m_factory;
+    std::unique_ptr<const DynamicType> m_DynManualType;
+    DynamicTypeBuilderFactory& m_factory;
 
-private:
+   private:
 
-    types::DynamicType_ptr m_MyEnumType;
-    types::DynamicType_ptr m_MyAliasEnumType;
-    types::DynamicType_ptr m_MyAliasEnum2Type;
-    types::DynamicType_ptr m_MyAliasEnum3Type;
-    types::DynamicType_ptr m_MyOctetArray500;
-    types::DynamicType_ptr m_BSAlias5;
-    types::DynamicType_ptr m_MA3;
-    types::DynamicType_ptr m_MyMiniArray;
-    types::DynamicType_ptr m_MySequenceLong;
-    types::DynamicType_ptr m_BasicStructType;
-    types::DynamicType_ptr m_ComplexStructType;
-    types::DynamicType_ptr m_UnionSwitchType;
-    types::DynamicType_ptr m_Union2SwitchType;
-    types::DynamicType_ptr m_CompleteStructType;
-    types::DynamicType_ptr m_KeyedStructType;
-};
+    std::unique_ptr<const DynamicType> m_MyEnumType;
+    std::unique_ptr<const DynamicType> m_MyAliasEnumType;
+    std::unique_ptr<const DynamicType> m_MyAliasEnum2Type;
+    std::unique_ptr<const DynamicType> m_MyAliasEnum3Type;
+    std::unique_ptr<const DynamicType> m_MyOctetArray500;
+    std::unique_ptr<const DynamicType> m_BSAlias5;
+    std::unique_ptr<const DynamicType> m_MA3;
+    std::unique_ptr<const DynamicType> m_MyMiniArray;
+    std::unique_ptr<const DynamicType> m_MySequenceLong;
+    std::unique_ptr<const DynamicType> m_BasicStructType;
+    std::unique_ptr<const DynamicType> m_ComplexStructType;
+    std::unique_ptr<const DynamicType> m_UnionSwitchType;
+    std::unique_ptr<const DynamicType> m_Union2SwitchType;
+    std::unique_ptr<const DynamicType> m_CompleteStructType;
+    std::unique_ptr<const DynamicType> m_KeyedStructType;
+   };
+ */
 
 /*
 
@@ -132,299 +129,317 @@ private:
     BasicStruct basic;
    };
  */
-types::DynamicType_ptr DynamicComplexTypesTests::GetKeyedStructType()
-{
+/*TODO(richiware)
+   DynamicType_ptr DynamicComplexTypesTests::GetKeyedStructType()
+   {
     if (m_KeyedStructType.get() == nullptr)
     {
-        DynamicTypeBuilder_ptr keyedStruct_builder = m_factory->create_struct_builder();
-        DynamicTypeBuilder_ptr octet_builder = m_factory->create_byte_builder();
+        DynamicTypeBuilder_ptr keyedStruct_builder = m_factory.create_struct_type();
+        DynamicTypeBuilder_ptr octet_builder = m_factory.create_type(
+ * m_factory.create_byte_type());
         octet_builder->apply_annotation(ANNOTATION_KEY_ID, "value", "true");
-        keyedStruct_builder->add_member(0, "key", octet_builder->build());
-        keyedStruct_builder->add_member(1, "basic", GetBasicStructType());
+        keyedStruct_builder->add_member(0_id, "key", octet_builder->build());
+        keyedStruct_builder->add_member(1_id, "basic", GetBasicStructType());
         keyedStruct_builder->apply_annotation(ANNOTATION_KEY_ID, "value", "true");
         keyedStruct_builder->set_name("KeyedStruct");
         m_KeyedStructType = keyedStruct_builder->build();
     }
 
     return m_KeyedStructType;
-}
+   }
 
-types::DynamicType_ptr DynamicComplexTypesTests::GetMyEnumType()
-{
+   DynamicType_ptr DynamicComplexTypesTests::GetMyEnumType()
+   {
     if (m_MyEnumType.get() == nullptr)
     {
-        DynamicTypeBuilder_ptr myEnum_builder = m_factory->create_enum_builder();
+        DynamicTypeBuilder_ptr myEnum_builder = m_factory.create_enum_type();
         myEnum_builder->set_name("MyEnum");
-        myEnum_builder->add_empty_member(0, "A");
-        myEnum_builder->add_empty_member(1, "B");
-        myEnum_builder->add_empty_member(2, "C");
+        myEnum_builder->add_member(0_id, "A");
+        myEnum_builder->add_member(1_id, "B");
+        myEnum_builder->add_member(2_id, "C");
         m_MyEnumType = myEnum_builder->build();
     }
 
     return m_MyEnumType;
-}
+   }
 
-types::DynamicType_ptr DynamicComplexTypesTests::GetMyAliasEnumType()
-{
+   DynamicType_ptr DynamicComplexTypesTests::GetMyAliasEnumType()
+   {
     if (m_MyAliasEnumType.get() == nullptr)
     {
-        DynamicTypeBuilder_ptr myAliasEnum_builder = m_factory->create_alias_builder(GetMyEnumType(), "MyAliasEnum");
+        DynamicTypeBuilder_ptr myAliasEnum_builder = m_factory.create_alias_type(*GetMyEnumType(), "MyAliasEnum");
         m_MyAliasEnumType = myAliasEnum_builder->build();
     }
 
     return m_MyAliasEnumType;
-}
+   }
 
-types::DynamicType_ptr DynamicComplexTypesTests::GetMyAliasEnum2Type()
-{
+   DynamicType_ptr DynamicComplexTypesTests::GetMyAliasEnum2Type()
+   {
     if (m_MyAliasEnum2Type.get() == nullptr)
     {
-        DynamicTypeBuilder_ptr myAliasEnum2_builder = m_factory->create_alias_builder(
-            GetMyAliasEnumType(), "MyAliasEnum2");
+        DynamicTypeBuilder_ptr myAliasEnum2_builder = m_factory.create_alias_type(
+ * GetMyAliasEnumType(), "MyAliasEnum2");
         m_MyAliasEnum2Type = myAliasEnum2_builder->build();
     }
 
     return m_MyAliasEnum2Type;
-}
+   }
 
-types::DynamicType_ptr DynamicComplexTypesTests::GetMyAliasEnum3Type()
-{
+   DynamicType_ptr DynamicComplexTypesTests::GetMyAliasEnum3Type()
+   {
     if (m_MyAliasEnum3Type.get() == nullptr)
     {
-        DynamicTypeBuilder_ptr myAliasEnum3_builder = m_factory->create_alias_builder(
-            GetMyAliasEnum2Type(), "MyAliasEnum3");
+        DynamicTypeBuilder_ptr myAliasEnum3_builder = m_factory.create_alias_type(
+ * GetMyAliasEnum2Type(), "MyAliasEnum3");
         m_MyAliasEnum3Type = myAliasEnum3_builder->build();
     }
 
     return m_MyAliasEnum3Type;
-}
+   }
 
-types::DynamicType_ptr DynamicComplexTypesTests::GetMyOctetArray500Type()
-{
+   DynamicType_ptr DynamicComplexTypesTests::GetMyOctetArray500Type()
+   {
     if (m_MyOctetArray500.get() == nullptr)
     {
-        DynamicTypeBuilder_ptr octet_builder = m_factory->create_byte_builder();
-        DynamicTypeBuilder_ptr myOctetArray500_builder = m_factory->create_array_builder(octet_builder.get(), { 500 });
-        myOctetArray500_builder->set_name("MyOctetArray500");
-        m_MyOctetArray500 = myOctetArray500_builder->build();
+        DynamicType_ptr octet_type = m_factory.get_byte_type();
+        DynamicTypeBuilder_ptr myOctetArray500_builder = m_factory.create_array_type(*octet_type, { 500 });
+        m_MyOctetArray500 = m_factory.get_alias_type(*myOctetArray500_builder->build(), "MyOctetArray500");
     }
 
     return m_MyOctetArray500;
-}
+   }
 
-types::DynamicType_ptr DynamicComplexTypesTests::GetBSAlias5Type()
-{
+   DynamicType_ptr DynamicComplexTypesTests::GetBSAlias5Type()
+   {
     if (m_BSAlias5.get() == nullptr)
     {
-        DynamicTypeBuilder_ptr bSAlias5_builder = m_factory->create_array_builder(GetBasicStructType(), { 5 });
-        bSAlias5_builder->set_name("BSAlias5");
-        m_BSAlias5 = bSAlias5_builder->build();
+        DynamicTypeBuilder_ptr bSAlias5_builder = m_factory.create_array_type(*GetBasicStructType(), { 5 });
+        m_BSAlias5 = m_factory.get_alias_type(*bSAlias5_builder->build(), "BSAlias5");
     }
 
     return m_BSAlias5;
-}
+   }
 
-types::DynamicType_ptr DynamicComplexTypesTests::GetMA3Type()
-{
+   DynamicType_ptr DynamicComplexTypesTests::GetMA3Type()
+   {
     if (m_MA3.get() == nullptr)
     {
-        DynamicTypeBuilder_ptr mA3_builder = m_factory->create_array_builder(GetMyAliasEnum3Type(), { 42 });
-        mA3_builder->set_name("MA3");
-        m_MA3 = mA3_builder->build();
+        DynamicTypeBuilder_ptr mA3_builder = m_factory.create_array_type(*GetMyAliasEnum3Type(), { 42 });
+        m_MA3 = m_factory.get_alias_type(*mA3_builder->build(), "MA3");
     }
 
     return m_MA3;
-}
+   }
 
-types::DynamicType_ptr DynamicComplexTypesTests::GetMyMiniArrayType()
-{
+   DynamicType_ptr DynamicComplexTypesTests::GetMyMiniArrayType()
+   {
     if (m_MyMiniArray.get() == nullptr)
     {
-        DynamicTypeBuilder_ptr int32_builder = m_factory->create_int32_builder();
-        DynamicTypeBuilder_ptr myMiniArray_builder = m_factory->create_array_builder(int32_builder.get(), { 2 });
-        myMiniArray_builder->set_name("MyMiniArray");
-        m_MyMiniArray = myMiniArray_builder->build();
+        DynamicType_ptr int32_type = m_factory.get_int32_type();
+        DynamicTypeBuilder_ptr myMiniArray_builder = m_factory.create_array_type(*int32_type, { 2 });
+        m_MyMiniArray = m_factory.get_alias_type(*myMiniArray_builder->build(), "MyMiniArray");
     }
 
     return m_MyMiniArray;
-}
+   }
 
-types::DynamicType_ptr DynamicComplexTypesTests::GetMySequenceLongType()
-{
+   DynamicType_ptr DynamicComplexTypesTests::GetMySequenceLongType()
+   {
     if (m_MySequenceLong.get() == nullptr)
     {
-        DynamicTypeBuilder_ptr int32_builder = m_factory->create_int32_builder();
-        DynamicTypeBuilder_ptr seqLong_builder = m_factory->create_sequence_builder(int32_builder.get());
-        DynamicTypeBuilder_ptr mySequenceLong_builder = m_factory->create_alias_builder(
-            seqLong_builder.get(), "MySequenceLong");
+        DynamicType_ptr int32_type = m_factory.get_int32_type();
+        DynamicTypeBuilder_ptr seqLong_builder = m_factory.create_sequence_type(*int32_type);
+        DynamicTypeBuilder_ptr mySequenceLong_builder = m_factory.create_alias_type(
+ * seqLong_builder->build(), "MySequenceLong");
         m_MySequenceLong = mySequenceLong_builder->build();
     }
 
     return m_MySequenceLong;
-}
+   }
 
-types::DynamicType_ptr DynamicComplexTypesTests::GetBasicStructType()
-{
+   DynamicType_ptr DynamicComplexTypesTests::GetBasicStructType()
+   {
     if (m_BasicStructType.get() == nullptr)
     {
         // Members
-        DynamicTypeBuilder_ptr bool_builder = m_factory->create_bool_builder();
-        DynamicTypeBuilder_ptr octet_builder = m_factory->create_byte_builder();
-        DynamicTypeBuilder_ptr int16_builder = m_factory->create_int16_builder();
-        DynamicTypeBuilder_ptr int32_builder = m_factory->create_int32_builder();
-        DynamicTypeBuilder_ptr int64_builder = m_factory->create_int64_builder();
-        DynamicTypeBuilder_ptr uint16_builder = m_factory->create_uint16_builder();
-        DynamicTypeBuilder_ptr uint32_builder = m_factory->create_uint32_builder();
-        DynamicTypeBuilder_ptr uint64_builder = m_factory->create_uint64_builder();
-        DynamicTypeBuilder_ptr float_builder = m_factory->create_float32_builder();
-        DynamicTypeBuilder_ptr double_builder = m_factory->create_float64_builder();
-        DynamicTypeBuilder_ptr ldouble_builder = m_factory->create_float128_builder();
-        DynamicTypeBuilder_ptr char_builder = m_factory->create_char8_builder();
-        //DynamicTypeBuilder_ptr wchar_builder = m_factory->create_char16_builder();
-        DynamicTypeBuilder_ptr string_builder = m_factory->create_string_builder();
-        //DynamicTypeBuilder_ptr wstring_builder = m_factory->create_wstring_builder();
-        DynamicTypeBuilder_ptr basicStruct_builder = m_factory->create_struct_builder();
+        DynamicType_ptr bool_type = m_factory.get_bool_type();
+        DynamicType_ptr octet_type = m_factory.get_byte_type();
+        DynamicType_ptr int16_type = m_factory.get_int16_type();
+        DynamicType_ptr int32_type = m_factory.get_int32_type();
+        DynamicType_ptr int64_type = m_factory.get_int64_type();
+        DynamicType_ptr uint16_type = m_factory.get_uint16_type();
+        DynamicType_ptr uint32_type = m_factory.get_uint32_type();
+        DynamicType_ptr uint64_type = m_factory.get_uint64_type();
+        DynamicType_ptr float_type = m_factory.get_float32_type();
+        DynamicType_ptr double_type = m_factory.get_float64_type();
+        DynamicType_ptr ldouble_type = m_factory.get_float128_type();
+        DynamicType_ptr char_type = m_factory.get_char8_type();
+        DynamicType_ptr wchar_type = m_factory.get_char16_type();
+        DynamicType_ptr string_type = m_factory.get_string_type();
+        DynamicType_ptr wstring_type = m_factory.get_wstring_type();
+        DynamicTypeBuilder_ptr basicStruct_builder = m_factory.create_struct_type();
 
         // Add members to the struct.
         int idx = 0;
-        basicStruct_builder->add_member(idx++, "my_bool", bool_builder.get());
-        basicStruct_builder->add_member(idx++, "my_octet", octet_builder.get());
-        basicStruct_builder->add_member(idx++, "my_int16", int16_builder.get());
-        basicStruct_builder->add_member(idx++, "my_int32", int32_builder.get());
-        basicStruct_builder->add_member(idx++, "my_int64", int64_builder.get());
-        basicStruct_builder->add_member(idx++, "my_uint16", uint16_builder.get());
-        basicStruct_builder->add_member(idx++, "my_uint32", uint32_builder.get());
-        basicStruct_builder->add_member(idx++, "my_uint64", uint64_builder.get());
-        basicStruct_builder->add_member(idx++, "my_float32", float_builder.get());
-        basicStruct_builder->add_member(idx++, "my_float64", double_builder.get());
-        basicStruct_builder->add_member(idx++, "my_float128", ldouble_builder.get());
-        basicStruct_builder->add_member(idx++, "my_char", char_builder.get());
-        //basicStruct_builder->add_member(idx++, "my_wchar", wchar_builder.get());
-        basicStruct_builder->add_member(idx++, "my_string", string_builder.get());
-        //basicStruct_builder->add_member(idx++, "my_wstring", wstring_builder.get());
+        basicStruct_builder->add_member(idx++, "my_bool", bool_type);
+        basicStruct_builder->add_member(idx++, "my_octet", octet_type);
+        basicStruct_builder->add_member(idx++, "my_int16", int16_type);
+        basicStruct_builder->add_member(idx++, "my_int32", int32_type);
+        basicStruct_builder->add_member(idx++, "my_int64", int64_type);
+        basicStruct_builder->add_member(idx++, "my_uint16", uint16_type);
+        basicStruct_builder->add_member(idx++, "my_uint32", uint32_type);
+        basicStruct_builder->add_member(idx++, "my_uint64", uint64_type);
+        basicStruct_builder->add_member(idx++, "my_float32", float_type);
+        basicStruct_builder->add_member(idx++, "my_float64", double_type);
+        basicStruct_builder->add_member(idx++, "my_float128", ldouble_type);
+        basicStruct_builder->add_member(idx++, "my_char", char_type);
+        basicStruct_builder->add_member(idx++, "my_wchar", wchar_type);
+        basicStruct_builder->add_member(idx++, "my_string", string_type);
+        basicStruct_builder->add_member(idx++, "my_wstring", wstring_type);
         basicStruct_builder->set_name("BasicStruct");
 
         m_BasicStructType = basicStruct_builder->build();
     }
 
     return m_BasicStructType;
-}
+   }
 
-types::DynamicType_ptr DynamicComplexTypesTests::GetComplexStructType()
-{
+   DynamicType_ptr DynamicComplexTypesTests::GetComplexStructType()
+   {
     if (m_ComplexStructType.get() == nullptr)
     {
         // Members (auxiliar types are tab)
-        DynamicTypeBuilder_ptr octet_builder = m_factory->create_byte_builder();
-        DynamicTypeBuilder_ptr my_sequence_octet_builder = m_factory->create_sequence_builder(octet_builder.get(), 55);
-        DynamicTypeBuilder_ptr my_sequence_struct_builder = m_factory->create_sequence_builder(GetBasicStructType());
-        DynamicTypeBuilder_ptr char_builder = m_factory->create_char8_builder();
-        DynamicTypeBuilder_ptr byte_builder = m_factory->create_byte_builder();
-        DynamicTypeBuilder_ptr my_array_octet_builder = m_factory->create_array_builder(
-            byte_builder.get(), { 500, 5, 4 });
+        DynamicType_ptr octet_type = m_factory.get_byte_type();
+        DynamicTypeBuilder_ptr my_sequence_octet_builder = m_factory.create_sequence_type(*octet_type, 55);
+        DynamicType_ptr my_sequence_octet_type = my_sequence_octet_builder->build();
+
+        DynamicTypeBuilder_ptr my_sequence_struct_builder = m_factory.create_sequence_type(*GetBasicStructType());
+        DynamicType_ptr my_sequence_struct_type = my_sequence_struct_builder->build();
+
+        DynamicType_ptr char_type = m_factory.get_char8_type();
+        DynamicTypeBuilder_ptr my_array_octet_builder = m_factory.create_array_type(
+ * char_type, { 500, 5, 4 });
+        DynamicType_ptr my_array_octet_type = my_array_octet_builder->build();
+
         // MyOctetArray500 is already created
         // We reuse the bounds... { 5 }
-        DynamicTypeBuilder_ptr my_array_struct_builder = m_factory->create_array_builder(GetBasicStructType(), { 5 });
-        DynamicTypeBuilder_ptr int16_builder = m_factory->create_int16_builder();
-        DynamicTypeBuilder_ptr my_map_octet_short_builder = m_factory->create_map_builder(
-            octet_builder.get(), int16_builder.get());
-        DynamicTypeBuilder_ptr int32_builder = m_factory->create_int32_builder();
-        DynamicTypeBuilder_ptr my_map_long_struct_builder = m_factory->create_map_builder(
-            int32_builder.get()->build(), GetBasicStructType());
-        DynamicTypeBuilder_ptr seqOctet_builder = m_factory->create_sequence_builder(octet_builder.get());
-        DynamicTypeBuilder_ptr seqSeqOctet_builder = m_factory->create_sequence_builder(seqOctet_builder.get());
-        DynamicTypeBuilder_ptr my_map_long_seq_octet_builder = m_factory->create_map_builder(
-            int32_builder.get(), seqSeqOctet_builder.get());
-        DynamicTypeBuilder_ptr my_map_long_octet_array_500_builder = m_factory->create_map_builder(
-            int32_builder.get()->build(), GetMyOctetArray500Type());
-        DynamicTypeBuilder_ptr map_octet_bsalias5_builder = m_factory->create_map_builder(
-            octet_builder.get()->build(), GetBSAlias5Type());
-        DynamicTypeBuilder_ptr my_map_long_lol_type_builder = m_factory->create_map_builder(
-            int32_builder.get(), map_octet_bsalias5_builder.get());
-        DynamicTypeBuilder_ptr my_small_string_8_builder = m_factory->create_string_builder(128);
-        //DynamicTypeBuilder_ptr my_small_string_16_builder = m_factory->create_wstring_builder(64);
-        DynamicTypeBuilder_ptr my_large_string_8_builder = m_factory->create_string_builder(500);
-        //DynamicTypeBuilder_ptr my_large_string_16_builder = m_factory->create_wstring_builder(1024);
-        DynamicTypeBuilder_ptr string75_8_builder = m_factory->create_string_builder(75);
-        DynamicTypeBuilder_ptr my_array_string_builder = m_factory->create_array_builder(
-            string75_8_builder.get(), { 5, 5 });
+        DynamicTypeBuilder_ptr my_array_struct_builder =
+                DynamicTypeBuilderFactory::get_instance().create_array_type(*GetBasicStructType(), { 5 });
+        DynamicType_ptr int16_type = DynamicTypeBuilderFactory::get_instance().get_int16_type();
+        DynamicTypeBuilder_ptr my_map_octet_short_builder =
+                DynamicTypeBuilderFactory::get_instance().create_map_type(*octet_type, *int16_type);
+        DynamicType_ptr int32_type = DynamicTypeBuilderFactory::get_instance().get_int32_type();
+        DynamicTypeBuilder_ptr my_map_long_struct_builder =
+                DynamicTypeBuilderFactory::get_instance().create_map_type(*int32_type, *GetBasicStructType());
+        DynamicTypeBuilder_ptr seqOctet_builder =
+                DynamicTypeBuilderFactory::get_instance().create_sequence_type(*octet_type);
+        DynamicTypeBuilder_ptr seqSeqOctet_builder =
+                DynamicTypeBuilderFactory::get_instance().create_sequence_type(*seqOctet_builder->build());
+        DynamicTypeBuilder_ptr my_map_long_seq_octet_builder =
+                DynamicTypeBuilderFactory::get_instance().create_map_type(*int32_type,
+ * seqSeqOctet_builder->build());
+        DynamicType_ptr my_map_long_seq_octet_type = my_map_long_seq_octet_builder->build();
+        DynamicTypeBuilder_ptr my_map_long_octet_array_500_builder =
+                DynamicTypeBuilderFactory::get_instance().create_map_type(*int32_type, *GetMyOctetArray500Type());
+        DynamicTypeBuilder_ptr map_octet_bsalias5_builder =
+                DynamicTypeBuilderFactory::get_instance().create_map_type(*octet_type, *GetBSAlias5Type());
+        DynamicTypeBuilder_ptr my_map_long_lol_type_builder =
+                DynamicTypeBuilderFactory::get_instance().create_map_type(*int32_type,
+ * map_octet_bsalias5_builder->build());
+        DynamicType_ptr my_small_string_8_type =
+                DynamicTypeBuilderFactory::get_instance().get_string_type(128);
+        DynamicType_ptr my_small_string_16_type =
+                DynamicTypeBuilderFactory::get_instance().get_wstring_type(64);
+        DynamicType_ptr my_large_string_8_type =
+                DynamicTypeBuilderFactory::get_instance().get_string_type(500);
+        DynamicType_ptr my_large_string_16_type =
+                DynamicTypeBuilderFactory::get_instance().get_wstring_type(1024);
+        DynamicType_ptr string75_8_type =
+                DynamicTypeBuilderFactory::get_instance().get_string_type(75);
+        DynamicTypeBuilder_ptr my_array_string_builder =
+                DynamicTypeBuilderFactory::get_instance().create_array_type(*string75_8_type, { 5, 5 });
 
         // MA3 is already defined.
         // { 5 } being reused
-        DynamicTypeBuilder_ptr my_array_arrays_builder = m_factory->create_array_builder(GetMyMiniArrayType(), { 5 });
-        DynamicTypeBuilder_ptr my_sequences_array_builder = m_factory->create_array_builder(
-            GetMySequenceLongType(), { 23 });
-        DynamicTypeBuilder_ptr complexStruct_builder = m_factory->create_struct_builder();
+        DynamicTypeBuilder_ptr my_array_arrays_builder =
+                DynamicTypeBuilderFactory::get_instance().create_array_type(*GetMyMiniArrayType(), { 5 });
+        DynamicTypeBuilder_ptr my_sequences_array_builder =
+                DynamicTypeBuilderFactory::get_instance().create_array_type(*GetMySequenceLongType(), { 23 });
+        DynamicTypeBuilder_ptr complexStruct_builder =
+                DynamicTypeBuilderFactory::get_instance().create_struct_type();
 
         // Add members to the struct.
         int idx = 0;
-        complexStruct_builder->add_member(idx++, "my_octet", octet_builder.get());
+        complexStruct_builder->add_member(idx++, "my_octet", octet_type);
         complexStruct_builder->add_member(idx++, "my_basic_struct", GetBasicStructType());
         complexStruct_builder->add_member(idx++, "my_alias_enum", GetMyAliasEnumType());
         complexStruct_builder->add_member(idx++, "my_enum", GetMyEnumType());
-        complexStruct_builder->add_member(idx++, "my_sequence_octet", my_sequence_octet_builder.get());
-        complexStruct_builder->add_member(idx++, "my_sequence_struct", my_sequence_struct_builder.get());
-        complexStruct_builder->add_member(idx++, "my_array_octet", my_array_octet_builder.get());
+        complexStruct_builder->add_member(idx++, "my_sequence_octet", my_sequence_octet_type);
+        complexStruct_builder->add_member(idx++, "my_sequence_struct", my_sequence_struct_builder->build());
+        complexStruct_builder->add_member(idx++, "my_array_octet", my_array_octet_type);
         complexStruct_builder->add_member(idx++, "my_octet_array_500", GetMyOctetArray500Type());
-        complexStruct_builder->add_member(idx++, "my_array_struct", my_array_struct_builder.get());
-        complexStruct_builder->add_member(idx++, "my_map_octet_short", my_map_octet_short_builder.get());
-        complexStruct_builder->add_member(idx++, "my_map_long_struct", my_map_long_struct_builder.get());
-        complexStruct_builder->add_member(idx++, "my_map_long_seq_octet", my_map_long_seq_octet_builder.get());
+        complexStruct_builder->add_member(idx++, "my_array_struct", my_array_struct_builder->build());
+        complexStruct_builder->add_member(idx++, "my_map_octet_short", my_map_octet_short_builder->build());
+        complexStruct_builder->add_member(idx++, "my_map_long_struct", my_map_long_struct_builder->build());
+        complexStruct_builder->add_member(idx++, "my_map_long_seq_octet", my_map_long_seq_octet_type);
         complexStruct_builder->add_member(idx++, "my_map_long_octet_array_500",
-                my_map_long_octet_array_500_builder.get());
-        complexStruct_builder->add_member(idx++, "my_map_long_lol_type", my_map_long_lol_type_builder.get());
-        complexStruct_builder->add_member(idx++, "my_small_string_8", my_small_string_8_builder.get());
-        //complexStruct_builder->add_member(idx++, "my_small_string_16", my_small_string_16_builder.get());
-        complexStruct_builder->add_member(idx++, "my_large_string_8", my_large_string_8_builder.get());
-        //complexStruct_builder->add_member(idx++, "my_large_string_16", my_large_string_16_builder.get());
-        complexStruct_builder->add_member(idx++, "my_array_string", my_array_string_builder.get());
+                my_map_long_octet_array_500_builder->build());
+        complexStruct_builder->add_member(idx++, "my_map_long_lol_type", my_map_long_lol_type_builder->build());
+        complexStruct_builder->add_member(idx++, "my_small_string_8", my_small_string_8_type);
+        complexStruct_builder->add_member(idx++, "my_small_string_16", my_small_string_16_type);
+        complexStruct_builder->add_member(idx++, "my_large_string_8", my_large_string_8_type);
+        complexStruct_builder->add_member(idx++, "my_large_string_16", my_large_string_16_type);
+        complexStruct_builder->add_member(idx++, "my_array_string", my_array_string_builder->build());
         complexStruct_builder->add_member(idx++, "multi_alias_array_42", GetMA3Type());
-        complexStruct_builder->add_member(idx++, "my_array_arrays", my_array_arrays_builder.get());
-        complexStruct_builder->add_member(idx++, "my_sequences_array", my_sequences_array_builder.get());
+        complexStruct_builder->add_member(idx++, "my_array_arrays", my_array_arrays_builder->build());
+        complexStruct_builder->add_member(idx++, "my_sequences_array", my_sequences_array_builder->build());
         complexStruct_builder->set_name("ComplexStruct");
         m_ComplexStructType = complexStruct_builder->build();
     }
 
     return m_ComplexStructType;
-}
+   }
 
-types::DynamicType_ptr DynamicComplexTypesTests::GetUnionSwitchType()
-{
+   DynamicType_ptr DynamicComplexTypesTests::GetUnionSwitchType()
+   {
     if (m_UnionSwitchType.get() == nullptr)
     {
-        DynamicTypeBuilder_ptr myUnion_builder = m_factory->create_union_builder(GetMyEnumType());
-        myUnion_builder->add_member(0, "basic", GetBasicStructType(), "A", { 0 }, false);
-        myUnion_builder->add_member(1, "complex", GetComplexStructType(), "B", { 1, 2 }, false);
+        DynamicTypeBuilder_ptr myUnion_builder = DynamicTypeBuilderFactory::get_instance().create_union_type(
+ * GetMyEnumType());
+        myUnion_builder->add_member(0_id, "basic", GetBasicStructType(), "A", std::vector<uint64_t>{ 0 }, false);
+        myUnion_builder->add_member(1_id, "complex", GetComplexStructType(), "B", std::vector<uint64_t>{ 1, 2 }, false);
         myUnion_builder->set_name("MyUnion");
         m_UnionSwitchType = myUnion_builder->build();
     }
 
     return m_UnionSwitchType;
-}
+   }
 
-types::DynamicType_ptr DynamicComplexTypesTests::GetUnion2SwitchType()
-{
-    if (m_Union2SwitchType.get() == nullptr)
+   DynamicType_ptr DynamicComplexTypesTests::GetUnion2SwitchType()
+   {
+    if (!m_Union2SwitchType)
     {
-        DynamicTypeBuilder_ptr octet_builder = m_factory->create_byte_builder();
-        DynamicTypeBuilder_ptr int32_builder = m_factory->create_int32_builder();
-        DynamicTypeBuilder_ptr string_builder = m_factory->create_string_builder();
-        DynamicTypeBuilder_ptr myUnion2_builder = m_factory->create_union_builder(octet_builder.get());
-        myUnion2_builder->add_member(0, "uno", int32_builder.get(), "0", { 0 }, false);
-        myUnion2_builder->add_member(1, "imString", string_builder.get(), "1", { 1 }, false);
-        myUnion2_builder->add_member(2, "tres", int32_builder.get(), "2", { 2 }, false);
+        DynamicType_ptr octet_type = DynamicTypeBuilderFactory::get_instance().get_byte_type();
+        DynamicType_ptr int32_type = DynamicTypeBuilderFactory::get_instance().get_int32_type();
+        DynamicType_ptr string_type = DynamicTypeBuilderFactory::get_instance().get_string_type();
+        DynamicTypeBuilder_ptr myUnion2_builder = DynamicTypeBuilderFactory::get_instance().create_union_type(
+ * octet_type);
+        myUnion2_builder->add_member(0_id, "uno", int32_type, "0", std::vector<uint64_t>{ 0 }, false);
+        myUnion2_builder->add_member(1_id, "imString", string_type, "1", std::vector<uint64_t>{ 1 }, false);
+        myUnion2_builder->add_member(2_id, "tres", int32_type, "2", std::vector<uint64_t>{ 2 }, false);
         myUnion2_builder->set_name("MyUnion2");
         m_Union2SwitchType = myUnion2_builder->build();
     }
 
     return m_Union2SwitchType;
-}
+   }
 
-types::DynamicType_ptr DynamicComplexTypesTests::GetCompleteStructType()
-{
+   DynamicType_ptr DynamicComplexTypesTests::GetCompleteStructType()
+   {
     if (m_CompleteStructType.get() == nullptr)
     {
-        DynamicTypeBuilder_ptr completeStruct_builder = m_factory->create_struct_builder();
+        DynamicTypeBuilder_ptr completeStruct_builder = m_factory.create_struct_type();
         // Add members to the struct.
         int idx = 0;
         completeStruct_builder->add_member(idx++, "my_union", GetUnionSwitchType());
@@ -434,22 +449,22 @@ types::DynamicType_ptr DynamicComplexTypesTests::GetCompleteStructType()
     }
 
     return m_CompleteStructType;
-}
+   }
 
-void DynamicComplexTypesTests::init()
-{
+   void DynamicComplexTypesTests::init()
+   {
     // TODO(XTypes): PENDING implementation DynamicTypeBuilderFactory::create_type_w_type_object
     // m_DynAutoType = TypeObjectFactory::get_instance()->build_dynamic_type("CompleteStruct", id, obj);
 
     m_DynManualType = GetCompleteStructType();
-}
+   }
 
-TEST_F(DynamicComplexTypesTests, Static_Manual_Comparison)
-{
+   TEST_F(DynamicComplexTypesTests, Static_Manual_Comparison)
+   {
     // Serialize <-> Deserialize Test
     DynamicPubSubType pubsubType(m_DynManualType);
-    types::DynamicData_ptr dynData(DynamicDataFactory::get_instance()->create_data(m_DynManualType));
-    types::DynamicData_ptr dynData2(DynamicDataFactory::get_instance()->create_data(m_DynManualType));
+    DynamicData_ptr dynData(DynamicDataFactory::get_instance()->create_data(m_DynManualType));
+    DynamicData_ptr dynData2(DynamicDataFactory::get_instance()->create_data(m_DynManualType));
     ASSERT_TRUE(dynData2->equals(dynData.get()));
 
     uint32_t payloadSize = static_cast<uint32_t>(pubsubType.getSerializedSizeProvider(dynData.get())());
@@ -465,24 +480,26 @@ TEST_F(DynamicComplexTypesTests, Static_Manual_Comparison)
 
     ASSERT_TRUE(pubsubType.deserialize(&payload2, dynData2.get()));
     ASSERT_TRUE(dynData2->equals(dynData.get()));
-}
+   }
 
-TEST_F(DynamicComplexTypesTests, Manual_Auto_Comparision)
-{
-    types::DynamicData* dynAutoData = DynamicDataFactory::get_instance()->create_data(m_DynAutoType);
-    types::DynamicData* dynManualData = DynamicDataFactory::get_instance()->create_data(m_DynManualType);
+   TEST_F(DynamicComplexTypesTests, Manual_Auto_Comparision)
+   {
+    EXPECT_EQ(*m_DynAutoType, *m_DynManualType);
 
-    ASSERT_TRUE(dynManualData->equals(dynAutoData));
+    DynamicData* dynAutoData = DynamicDataFactory::get_instance()->create_data(m_DynAutoType);
+    DynamicData* dynManualData = DynamicDataFactory::get_instance()->create_data(m_DynManualType);
+
+    EXPECT_TRUE(dynManualData->equals(dynAutoData));
 
     DynamicDataFactory::get_instance()->delete_data(dynAutoData);
     DynamicDataFactory::get_instance()->delete_data(dynManualData);
-}
+   }
 
-TEST_F(DynamicComplexTypesTests, Static_Auto_Comparision)
-{
+   TEST_F(DynamicComplexTypesTests, Static_Auto_Comparision)
+   {
     // Serialize <-> Deserialize Test
     DynamicPubSubType pubsubtype(m_DynAutoType);
-    types::DynamicData_ptr dynData(DynamicDataFactory::get_instance()->create_data(m_DynAutoType));
+    DynamicData_ptr dynData(DynamicDataFactory::get_instance()->create_data(m_DynAutoType));
     uint32_t payloadSize = static_cast<uint32_t>(pubsubtype.getSerializedSizeProvider(dynData.get())());
     SerializedPayload_t payload(payloadSize);
     ASSERT_TRUE(pubsubtype.serialize(dynData.get(), &payload));
@@ -496,18 +513,18 @@ TEST_F(DynamicComplexTypesTests, Static_Auto_Comparision)
     ASSERT_TRUE(m_StaticType.serialize(&staticData, &payload2));
     ASSERT_TRUE(payloadSize2 == payload2.length);
 
-    types::DynamicData_ptr dynData2(DynamicDataFactory::get_instance()->create_data(m_DynAutoType));
+    DynamicData_ptr dynData2(DynamicDataFactory::get_instance()->create_data(m_DynAutoType));
     ASSERT_TRUE(pubsubtype.deserialize(&payload2, dynData2.get()));
 
     ASSERT_TRUE(dynData2->equals(dynData.get()));
-}
+   }
 
-TEST_F(DynamicComplexTypesTests, Data_Comparison_A_A)
-{
+   TEST_F(DynamicComplexTypesTests, Data_Comparison_A_A)
+   {
     // Serialize <-> Deserialize Test
     DynamicPubSubType pubsubType(m_DynManualType);
-    types::DynamicData_ptr dynData(DynamicDataFactory::get_instance()->create_data(m_DynManualType));
-    types::DynamicData_ptr dynDataFromStatic(DynamicDataFactory::get_instance()->create_data(m_DynAutoType));
+    DynamicData_ptr dynData(DynamicDataFactory::get_instance()->create_data(m_DynManualType));
+    DynamicData_ptr dynDataFromStatic(DynamicDataFactory::get_instance()->create_data(m_DynAutoType));
 
     CompleteStruct staticData;
     staticData.my_union()._d(MyEnum::A);
@@ -569,14 +586,14 @@ TEST_F(DynamicComplexTypesTests, Data_Comparison_A_A)
     ASSERT_TRUE(pubsubType.deserialize(&payload, dynDataFromStatic.get()));
 
     ASSERT_TRUE(dynDataFromStatic->equals(dynData.get()));
-}
+   }
 
-TEST_F(DynamicComplexTypesTests, Data_Comparison_A_B)
-{
+   TEST_F(DynamicComplexTypesTests, Data_Comparison_A_B)
+   {
     // Serialize <-> Deserialize Test
     DynamicPubSubType pubsubType(m_DynManualType);
-    types::DynamicData_ptr dynData(DynamicDataFactory::get_instance()->create_data(m_DynManualType));
-    types::DynamicData_ptr dynDataFromStatic(DynamicDataFactory::get_instance()->create_data(m_DynAutoType));
+    DynamicData_ptr dynData(DynamicDataFactory::get_instance()->create_data(m_DynManualType));
+    DynamicData_ptr dynDataFromStatic(DynamicDataFactory::get_instance()->create_data(m_DynAutoType));
 
     CompleteStruct staticData;
     staticData.my_union()._d(MyEnum::A);
@@ -638,14 +655,14 @@ TEST_F(DynamicComplexTypesTests, Data_Comparison_A_B)
     ASSERT_TRUE(pubsubType.deserialize(&payload, dynDataFromStatic.get()));
 
     ASSERT_TRUE(dynDataFromStatic->equals(dynData.get()));
-}
+   }
 
-TEST_F(DynamicComplexTypesTests, Data_Comparison_A_C)
-{
+   TEST_F(DynamicComplexTypesTests, Data_Comparison_A_C)
+   {
     // Serialize <-> Deserialize Test
     DynamicPubSubType pubsubType(m_DynManualType);
-    types::DynamicData_ptr dynData(DynamicDataFactory::get_instance()->create_data(m_DynManualType));
-    types::DynamicData_ptr dynDataFromStatic(DynamicDataFactory::get_instance()->create_data(m_DynAutoType));
+    DynamicData_ptr dynData(DynamicDataFactory::get_instance()->create_data(m_DynManualType));
+    DynamicData_ptr dynDataFromStatic(DynamicDataFactory::get_instance()->create_data(m_DynAutoType));
 
     CompleteStruct staticData;
     staticData.my_union()._d(MyEnum::A);
@@ -706,11 +723,11 @@ TEST_F(DynamicComplexTypesTests, Data_Comparison_A_C)
     ASSERT_TRUE(pubsubType.deserialize(&payload, dynDataFromStatic.get()));
 
     ASSERT_TRUE(dynDataFromStatic->equals(dynData.get()));
-}
+   }
 
-TEST_F(DynamicComplexTypesTests, Data_Comparison_B_A)
-{
-    types::DynamicData_ptr dynData(DynamicDataFactory::get_instance()->create_data(m_DynManualType));
+   TEST_F(DynamicComplexTypesTests, Data_Comparison_B_A)
+   {
+    DynamicData_ptr dynData(DynamicDataFactory::get_instance()->create_data(m_DynManualType));
 
     CompleteStruct staticData;
     staticData.my_union()._d() = MyEnum::B;
@@ -868,7 +885,7 @@ TEST_F(DynamicComplexTypesTests, Data_Comparison_B_A)
             for (unsigned int k = 0; k < 4; ++k)
             {
                 MemberId array_idx = my_array_octet->get_array_index({ i, j, k });
-                my_array_octet->set_byte_value(static_cast<uint8_t>(j * k), array_idx);
+                my_array_octet->set_char8_value(static_cast<uint8_t>(j * k), array_idx);
             }
         }
         //staticData.my_union().complex().my_array_octet()[i][j][k] = j*k;
@@ -893,13 +910,13 @@ TEST_F(DynamicComplexTypesTests, Data_Comparison_B_A)
         tempBasic->set_char8_value('J', tempBasic->get_member_id_by_name("my_char"));
         //tempBasic->set_char16_value(L'C', tempBasic->get_member_id_by_name("my_wchar"));
         tempBasic->set_string_value("JC@eProsima", tempBasic->get_member_id_by_name("my_string"));
-        //tempBasic->set_wstring_value(L"JC-BOOM-Armadilo!@eProsima", tempBasic->get_member_id_by_name("my_wstring"));
-        my_array_struct->set_complex_value(tempBasic, i);
+        tempBasic->set_wstring_value(L"JC-BOOM-Armadilo!@eProsima", tempBasic->get_member_id_by_name("my_wstring"));
+        my_array_struct->set_complex_value(tempBasic, MemberId{i});
     }
     complex->return_loaned_value(my_array_struct);
 
-    DynamicTypeBuilder_ptr octet_builder = m_factory->create_byte_builder();
-    DynamicData_ptr key_oct(DynamicDataFactory::get_instance()->create_data(octet_builder->build()));
+    DynamicType_ptr octet_type = m_factory.get_byte_type();
+    DynamicData_ptr key_oct(DynamicDataFactory::get_instance()->create_data(octet_type));
     MemberId kId;
     MemberId vId;
     MemberId ssId;
@@ -908,7 +925,7 @@ TEST_F(DynamicComplexTypesTests, Data_Comparison_B_A)
     key_oct->set_byte_value(0);
     my_map_octet_short->insert_map_data(key_oct.get(), kId, vId);
     my_map_octet_short->set_int16_value((short)1340, vId);
-    key_oct = DynamicDataFactory::get_instance()->create_data(octet_builder->build());
+    key_oct = DynamicDataFactory::get_instance()->create_data(octet_type);
     key_oct->set_byte_value(1);
     my_map_octet_short->insert_map_data(key_oct.get(), kId, vId);
     my_map_octet_short->set_int16_value((short)1341, vId);
@@ -916,12 +933,12 @@ TEST_F(DynamicComplexTypesTests, Data_Comparison_B_A)
     //staticData.my_union().complex().my_map_octet_short()[1] = 1341;
     complex->return_loaned_value(my_map_octet_short);
 
-    DynamicTypeBuilder_ptr long_builder = m_factory->create_int32_builder();
-    DynamicData_ptr key(DynamicDataFactory::get_instance()->create_data(long_builder->build()));
+    DynamicType_ptr long_type = m_factory.get_int32_type();
+    DynamicData_ptr key(DynamicDataFactory::get_instance()->create_data(long_type));
     DynamicData* my_map_long_struct = complex->loan_value(complex->get_member_id_by_name("my_map_long_struct"));
 
     //DynamicData *mas3 = my_array_struct->loan_value(3);
-    key = DynamicDataFactory::get_instance()->create_data(long_builder->build());
+    key = DynamicDataFactory::get_instance()->create_data(long_type);
     key->set_int32_value(55);
     my_map_long_struct->insert_map_data(key.get(), kId, vId);
     basic = my_map_long_struct->loan_value(vId);
@@ -941,7 +958,7 @@ TEST_F(DynamicComplexTypesTests, Data_Comparison_B_A)
     basic->set_string_value("Luis@eProsima", basic->get_member_id_by_name("my_string"));
     //basic->set_wstring_value(L"LuisGasco@eProsima", basic->get_member_id_by_name("my_wstring"));
     my_map_long_struct->return_loaned_value(basic);
-    key = DynamicDataFactory::get_instance()->create_data(long_builder->build());
+    key = DynamicDataFactory::get_instance()->create_data(long_type);
     key->set_int32_value(1000);
     my_map_long_struct->insert_map_data(key.get(), kId, vId);
     DynamicData* mas3 = my_map_long_struct->loan_value(vId);
@@ -970,9 +987,9 @@ TEST_F(DynamicComplexTypesTests, Data_Comparison_B_A)
     DynamicData* my_map_long_seq_octet = complex->loan_value(complex->get_member_id_by_name("my_map_long_seq_octet"));
     //std::vector my_vector_octet = {1, 2, 3, 4, 5};
     //MemberId id;
-    /*DynamicTypeBuilder_ptr octet_builder = m_factory->create_byte_builder();
-       types::DynamicTypeBuilder_ptr seqOctet_builder = m_factory->create_sequence_builder(octet_builder.get());
-       types::DynamicType_ptr seqSeqOctet_builder = m_factory->create_sequence_builder(seqOctet_builder.get())->build();
+    //DynamicType_ptr octet_type = m_factory.get_byte_type();
+       types::DynamicTypeBuilder_ptr seqOctet_builder = m_factory.create_sequence_type(*octet_type);
+       types::DynamicType_ptr seqSeqOctet_builder = m_factory.get_sequence_type(seqOctet_builder->build())->build();
        DynamicData *dataSeqOctet = seqOctet_builder->build();
        DynamicData *dataSeqSeqOctet = seqSeqOctet_builder->build();
        dataSeqOctet->insert_sequence_data(id);
@@ -986,11 +1003,12 @@ TEST_F(DynamicComplexTypesTests, Data_Comparison_B_A)
        dataSeqOctet->insert_sequence_data(id);
        dataSeqOctet->set_byte_value(5, id);
        dataSeqSeqOctet->insert_sequence_data(id);
-       dataSeqSeqOctet->set_complex_value(dataSeqOctet, id);*/
+       dataSeqSeqOctet->set_complex_value(dataSeqOctet, id);//
+
     // insert_map_data(DynamicData_ptr key, MemberId& outKeyId, MemberId& outValueId);
     // TODO De la muerte para Juan Carlos - Esto no es NADA práctico...
 
-    key = DynamicDataFactory::get_instance()->create_data(long_builder->build());
+    key = DynamicDataFactory::get_instance()->create_data(long_type);
     key->set_int32_value(0);
     my_map_long_seq_octet->insert_map_data(key.get(), kId, vId);
 
@@ -1010,7 +1028,7 @@ TEST_F(DynamicComplexTypesTests, Data_Comparison_B_A)
     seq_seq_oct->return_loaned_value(seq_oct);
     my_map_long_seq_octet->return_loaned_value(seq_seq_oct);
 
-    key = DynamicDataFactory::get_instance()->create_data(long_builder->build());
+    key = DynamicDataFactory::get_instance()->create_data(long_type);
     key->set_int32_value(55);
     my_map_long_seq_octet->insert_map_data(key.get(), kId, vId);
 
@@ -1050,26 +1068,26 @@ TEST_F(DynamicComplexTypesTests, Data_Comparison_B_A)
     DynamicData* my_map_long_octet_array_500 =
             complex->loan_value(complex->get_member_id_by_name("my_map_long_octet_array_500"));
 
-    key = DynamicDataFactory::get_instance()->create_data(long_builder->build());
+    key = DynamicDataFactory::get_instance()->create_data(long_type);
     key->set_int32_value(0);
     my_map_long_octet_array_500->insert_map_data(key.get(), kId, vId);
 
     DynamicData* oct_array_500 = my_map_long_octet_array_500->loan_value(vId);
     for (int j = 0; j < 500; ++j)
     {
-        oct_array_500->set_byte_value(j % 256, j);
+        oct_array_500->set_byte_value(j % 256, MemberId{j});
         //staticData.my_union().complex().my_map_long_octet_array_500()[0][i] = i%256;
     }
     my_map_long_octet_array_500->return_loaned_value(oct_array_500);
 
-    key = DynamicDataFactory::get_instance()->create_data(long_builder->build());
+    key = DynamicDataFactory::get_instance()->create_data(long_type);
     key->set_int32_value(10);
     my_map_long_octet_array_500->insert_map_data(key.get(), kId, vId);
     oct_array_500 = my_map_long_octet_array_500->loan_value(vId);
 
     for (int j = 0; j < 500; ++j)
     {
-        oct_array_500->set_byte_value((j + 55) % 256, j);
+        oct_array_500->set_byte_value((j + 55) % 256, MemberId{j});
         //staticData.my_union().complex().my_map_long_octet_array_500()[10][i] = (i+55)%256;
     }
     my_map_long_octet_array_500->return_loaned_value(oct_array_500);
@@ -1103,7 +1121,7 @@ TEST_F(DynamicComplexTypesTests, Data_Comparison_B_A)
     DynamicData* multi_alias_array_42 = complex->loan_value(complex->get_member_id_by_name("multi_alias_array_42"));
     for (int j = 0; j < 42; ++j)
     {
-        multi_alias_array_42->set_enum_value(j % 3, j);
+        multi_alias_array_42->set_enum_value(j % 3, MemberId{j});
         //staticData.my_union().complex().multi_alias_array_42()[i](i%3);
     }
     complex->return_loaned_value(multi_alias_array_42);
@@ -1111,10 +1129,10 @@ TEST_F(DynamicComplexTypesTests, Data_Comparison_B_A)
     DynamicData* my_array_arrays = complex->loan_value(complex->get_member_id_by_name("my_array_arrays"));
     for (unsigned int j = 0; j < 5; ++j)
     {
-        DynamicData* myMiniArray = my_array_arrays->loan_value(j);
+        DynamicData* myMiniArray = my_array_arrays->loan_value(MemberId{j});
         for (unsigned int k = 0; k < 2; ++k)
         {
-            myMiniArray->set_int32_value(j * k, k);
+            myMiniArray->set_int32_value(j * k, MemberId{k});
             //staticData.my_union().complex().my_array_arrays()[i][j](i*j);
         }
         my_array_arrays->return_loaned_value(myMiniArray);
@@ -1131,7 +1149,7 @@ TEST_F(DynamicComplexTypesTests, Data_Comparison_B_A)
         seq->set_int32_value(j * 10, id);
         seq->insert_sequence_data(id);
         seq->set_int32_value(j * 100, id);
-        my_sequences_array->set_complex_value(seq, j);
+        my_sequences_array->set_complex_value(seq, MemberId{j});
         // staticData.my_union().complex().my_sequences_array()[i].push_back(i);
         // staticData.my_union().complex().my_sequences_array()[i].push_back(i*10);
         // staticData.my_union().complex().my_sequences_array()[i].push_back(i*100);
@@ -1150,9 +1168,9 @@ TEST_F(DynamicComplexTypesTests, Data_Comparison_B_A)
     DynamicPubSubType pubsubType(m_DynManualType);
     uint32_t payloadSize = static_cast<uint32_t>(pubsubType.getSerializedSizeProvider(dynData.get())());
     SerializedPayload_t payload(payloadSize);
-    ASSERT_TRUE(pubsubType.serialize(dynData.get(), &payload));
-    ASSERT_TRUE(payload.length == payloadSize);
-    /*
+    EXPECT_TRUE(pubsubType.serialize(dynData.get(), &payload));
+    EXPECT_TRUE(payload.length == payloadSize);
+    //
        std::cout << "BEGIN" << std::endl;
        for (uint32_t j = 0; j < payload.length; j += 100)
        {
@@ -1173,46 +1191,46 @@ TEST_F(DynamicComplexTypesTests, Data_Comparison_B_A)
         }
        }
        std::cout << "END" << std::endl;
-     */
+     //
     CompleteStructPubSubType pbComplete;
     uint32_t payloadSize2 = static_cast<uint32_t>(m_StaticType.getSerializedSizeProvider(&staticData)());
     SerializedPayload_t stPayload(payloadSize2);
-    ASSERT_TRUE(pbComplete.serialize(&staticData, &stPayload));
-    ASSERT_TRUE(stPayload.length == payloadSize2);
-    /*
-       std::cout << "BEGIN" << std::endl;
-       for (uint32_t j = 0; j < stPayload.length; j += 100)
-       {
-        std::cout << std::endl;
-        for (uint32_t k = 0; k < 100; k++)
-        {
-            if (j + k < stPayload.length)
-            {
-                if ((int)stPayload.data[j + k] == 204)
-                {
-                    std::cout << 0 << " ";
-                }
-                else
-                {
-                    std::cout << (int)stPayload.data[j + k] << " ";
-                }
-            }
-        }
-       }
-       std::cout << "END" << std::endl;
-     */
-    types::DynamicData_ptr dynDataFromDynamic(DynamicDataFactory::get_instance()->create_data(m_DynAutoType));
-    ASSERT_TRUE(pubsubType.deserialize(&payload, dynDataFromDynamic.get()));
+    EXPECT_TRUE(pbComplete.serialize(&staticData, &stPayload));
+    EXPECT_TRUE(stPayload.length == payloadSize2);
 
-    types::DynamicData_ptr dynDataFromStatic(DynamicDataFactory::get_instance()->create_data(m_DynAutoType));
-    ASSERT_TRUE(pubsubType.deserialize(&stPayload, dynDataFromStatic.get()));
+    //       std::cout << "BEGIN" << std::endl;
+    //       for (uint32_t j = 0; j < stPayload.length; j += 100)
+    //       {
+    //        std::cout << std::endl;
+    //        for (uint32_t k = 0; k < 100; k++)
+    //        {
+    //            if (j + k < stPayload.length)
+    //            {
+    //                if ((int)stPayload.data[j + k] == 204)
+    //                {
+    //                    std::cout << 0 << " ";
+    //                }
+    //                else
+    //                {
+    //                    std::cout << (int)stPayload.data[j + k] << " ";
+    //                }
+    //            }
+    //        }
+    //       }
+    //       std::cout << "END" << std::endl;
 
-    ASSERT_TRUE(dynDataFromStatic->equals(dynDataFromDynamic.get()));
-}
+    DynamicData_ptr dynDataFromDynamic(DynamicDataFactory::get_instance()->create_data(m_DynAutoType));
+    EXPECT_TRUE(pubsubType.deserialize(&payload, dynDataFromDynamic.get()));
 
-TEST_F(DynamicComplexTypesTests, Data_Comparison_B_B)
-{
-    types::DynamicData_ptr dynData(DynamicDataFactory::get_instance()->create_data(m_DynManualType));
+    DynamicData_ptr dynDataFromStatic(DynamicDataFactory::get_instance()->create_data(m_DynAutoType));
+    EXPECT_TRUE(pubsubType.deserialize(&stPayload, dynDataFromStatic.get()));
+
+    EXPECT_TRUE(dynDataFromStatic->equals(dynDataFromDynamic.get()));
+   }
+
+   TEST_F(DynamicComplexTypesTests, Data_Comparison_B_B)
+   {
+    DynamicData_ptr dynData(DynamicDataFactory::get_instance()->create_data(m_DynManualType));
 
     CompleteStruct staticData;
     staticData.my_union()._d() = MyEnum::B;
@@ -1370,7 +1388,7 @@ TEST_F(DynamicComplexTypesTests, Data_Comparison_B_B)
             for (unsigned int k = 0; k < 4; ++k)
             {
                 MemberId array_idx = my_array_octet->get_array_index({ i, j, k });
-                my_array_octet->set_byte_value(static_cast<uint8_t>(j * k), array_idx);
+                my_array_octet->set_char8_value(static_cast<uint8_t>(j * k), array_idx);
             }
         }
         //staticData.my_union().complex().my_array_octet()[i][j][k] = j*k;
@@ -1395,13 +1413,13 @@ TEST_F(DynamicComplexTypesTests, Data_Comparison_B_B)
         tempBasic->set_char8_value('J', tempBasic->get_member_id_by_name("my_char"));
         //tempBasic->set_char16_value(L'C', tempBasic->get_member_id_by_name("my_wchar"));
         tempBasic->set_string_value("JC@eProsima", tempBasic->get_member_id_by_name("my_string"));
-        //tempBasic->set_wstring_value(L"JC-BOOM-Armadilo!@eProsima", tempBasic->get_member_id_by_name("my_wstring"));
-        my_array_struct->set_complex_value(tempBasic, i);
+        tempBasic->set_wstring_value(L"JC-BOOM-Armadilo!@eProsima", tempBasic->get_member_id_by_name("my_wstring"));
+        my_array_struct->set_complex_value(tempBasic, MemberId{i});
     }
     complex->return_loaned_value(my_array_struct);
 
-    DynamicTypeBuilder_ptr octet_builder = m_factory->create_byte_builder();
-    DynamicData_ptr key_oct(DynamicDataFactory::get_instance()->create_data(octet_builder->build()));
+    DynamicType_ptr octet_type = m_factory.get_byte_type();
+    DynamicData_ptr key_oct(DynamicDataFactory::get_instance()->create_data(octet_type));
     MemberId kId;
     MemberId vId;
     MemberId ssId;
@@ -1410,7 +1428,7 @@ TEST_F(DynamicComplexTypesTests, Data_Comparison_B_B)
     key_oct->set_byte_value(0);
     my_map_octet_short->insert_map_data(key_oct.get(), kId, vId);
     my_map_octet_short->set_int16_value((short)1340, vId);
-    key_oct = DynamicDataFactory::get_instance()->create_data(octet_builder->build());
+    key_oct = DynamicDataFactory::get_instance()->create_data(octet_type);
     key_oct->set_byte_value(1);
     my_map_octet_short->insert_map_data(key_oct.get(), kId, vId);
     my_map_octet_short->set_int16_value((short)1341, vId);
@@ -1418,12 +1436,12 @@ TEST_F(DynamicComplexTypesTests, Data_Comparison_B_B)
     //staticData.my_union().complex().my_map_octet_short()[1] = 1341;
     complex->return_loaned_value(my_map_octet_short);
 
-    DynamicTypeBuilder_ptr long_builder = m_factory->create_int32_builder();
-    DynamicData_ptr key(DynamicDataFactory::get_instance()->create_data(long_builder->build()));
+    DynamicType_ptr long_type = m_factory.get_int32_type();
+    DynamicData_ptr key(DynamicDataFactory::get_instance()->create_data(long_type));
     DynamicData* my_map_long_struct = complex->loan_value(complex->get_member_id_by_name("my_map_long_struct"));
 
     //DynamicData *mas3 = my_array_struct->loan_value(3);
-    key = DynamicDataFactory::get_instance()->create_data(long_builder->build());
+    key = DynamicDataFactory::get_instance()->create_data(long_type);
     key->set_int32_value(55);
     my_map_long_struct->insert_map_data(key.get(), kId, vId);
     basic = my_map_long_struct->loan_value(vId);
@@ -1443,7 +1461,7 @@ TEST_F(DynamicComplexTypesTests, Data_Comparison_B_B)
     basic->set_string_value("Luis@eProsima", basic->get_member_id_by_name("my_string"));
     //basic->set_wstring_value(L"LuisGasco@eProsima", basic->get_member_id_by_name("my_wstring"));
     my_map_long_struct->return_loaned_value(basic);
-    key = DynamicDataFactory::get_instance()->create_data(long_builder->build());
+    key = DynamicDataFactory::get_instance()->create_data(long_type);
     key->set_int32_value(1000);
     my_map_long_struct->insert_map_data(key.get(), kId, vId);
     DynamicData* mas3 = my_map_long_struct->loan_value(vId);
@@ -1472,9 +1490,9 @@ TEST_F(DynamicComplexTypesTests, Data_Comparison_B_B)
     DynamicData* my_map_long_seq_octet = complex->loan_value(complex->get_member_id_by_name("my_map_long_seq_octet"));
     //std::vector my_vector_octet = {1, 2, 3, 4, 5};
     //MemberId id;
-    /*DynamicTypeBuilder_ptr octet_builder = m_factory->create_byte_builder();
-       types::DynamicTypeBuilder_ptr seqOctet_builder = m_factory->create_sequence_builder(octet_builder.get());
-       types::DynamicType_ptr seqSeqOctet_builder = m_factory->create_sequence_builder(seqOctet_builder.get())->build();
+    //DynamicType_ptr octet_type = m_factory.get_byte_type();
+       types::DynamicTypeBuilder_ptr seqOctet_builder = m_factory.create_sequence_type(octet_type);
+       types::DynamicType_ptr seqSeqOctet_builder = m_factory.create_sequence_type(seqOctet_builder.get())->build();
        DynamicData *dataSeqOctet = seqOctet_builder->build();
        DynamicData *dataSeqSeqOctet = seqSeqOctet_builder->build();
        dataSeqOctet->insert_sequence_data(id);
@@ -1488,11 +1506,11 @@ TEST_F(DynamicComplexTypesTests, Data_Comparison_B_B)
        dataSeqOctet->insert_sequence_data(id);
        dataSeqOctet->set_byte_value(5, id);
        dataSeqSeqOctet->insert_sequence_data(id);
-       dataSeqSeqOctet->set_complex_value(dataSeqOctet, id);*/
+       dataSeqSeqOctet->set_complex_value(dataSeqOctet, id);//
     // insert_map_data(DynamicData_ptr key, MemberId& outKeyId, MemberId& outValueId);
     // TODO De la muerte para Juan Carlos - Esto no es NADA práctico...
 
-    key = DynamicDataFactory::get_instance()->create_data(long_builder->build());
+    key = DynamicDataFactory::get_instance()->create_data(long_type);
     key->set_int32_value(0);
     my_map_long_seq_octet->insert_map_data(key.get(), kId, vId);
 
@@ -1512,7 +1530,7 @@ TEST_F(DynamicComplexTypesTests, Data_Comparison_B_B)
     seq_seq_oct->return_loaned_value(seq_oct);
     my_map_long_seq_octet->return_loaned_value(seq_seq_oct);
 
-    key = DynamicDataFactory::get_instance()->create_data(long_builder->build());
+    key = DynamicDataFactory::get_instance()->create_data(long_type);
     key->set_int32_value(55);
     my_map_long_seq_octet->insert_map_data(key.get(), kId, vId);
 
@@ -1552,26 +1570,26 @@ TEST_F(DynamicComplexTypesTests, Data_Comparison_B_B)
     DynamicData* my_map_long_octet_array_500 =
             complex->loan_value(complex->get_member_id_by_name("my_map_long_octet_array_500"));
 
-    key = DynamicDataFactory::get_instance()->create_data(long_builder->build());
+    key = DynamicDataFactory::get_instance()->create_data(long_type);
     key->set_int32_value(0);
     my_map_long_octet_array_500->insert_map_data(key.get(), kId, vId);
 
     DynamicData* oct_array_500 = my_map_long_octet_array_500->loan_value(vId);
     for (int j = 0; j < 500; ++j)
     {
-        oct_array_500->set_byte_value(j % 256, j);
+        oct_array_500->set_byte_value(j % 256, MemberId{j});
         //staticData.my_union().complex().my_map_long_octet_array_500()[0][i] = i%256;
     }
     my_map_long_octet_array_500->return_loaned_value(oct_array_500);
 
-    key = DynamicDataFactory::get_instance()->create_data(long_builder->build());
+    key = DynamicDataFactory::get_instance()->create_data(long_type);
     key->set_int32_value(10);
     my_map_long_octet_array_500->insert_map_data(key.get(), kId, vId);
     oct_array_500 = my_map_long_octet_array_500->loan_value(vId);
 
     for (int j = 0; j < 500; ++j)
     {
-        oct_array_500->set_byte_value((j + 55) % 256, j);
+        oct_array_500->set_byte_value((j + 55) % 256, MemberId{j});
         //staticData.my_union().complex().my_map_long_octet_array_500()[10][i] = (i+55)%256;
     }
     my_map_long_octet_array_500->return_loaned_value(oct_array_500);
@@ -1605,7 +1623,7 @@ TEST_F(DynamicComplexTypesTests, Data_Comparison_B_B)
     DynamicData* multi_alias_array_42 = complex->loan_value(complex->get_member_id_by_name("multi_alias_array_42"));
     for (int j = 0; j < 42; ++j)
     {
-        multi_alias_array_42->set_enum_value(j % 3, j);
+        multi_alias_array_42->set_enum_value(j % 3, MemberId{j});
         //staticData.my_union().complex().multi_alias_array_42()[i](i%3);
     }
     complex->return_loaned_value(multi_alias_array_42);
@@ -1613,10 +1631,10 @@ TEST_F(DynamicComplexTypesTests, Data_Comparison_B_B)
     DynamicData* my_array_arrays = complex->loan_value(complex->get_member_id_by_name("my_array_arrays"));
     for (unsigned int j = 0; j < 5; ++j)
     {
-        DynamicData* myMiniArray = my_array_arrays->loan_value(j);
+        DynamicData* myMiniArray = my_array_arrays->loan_value(MemberId{j});
         for (unsigned int k = 0; k < 2; ++k)
         {
-            myMiniArray->set_int32_value(j * k, k);
+            myMiniArray->set_int32_value(j * k, MemberId{k});
             //staticData.my_union().complex().my_array_arrays()[i][j](i*j);
         }
         my_array_arrays->return_loaned_value(myMiniArray);
@@ -1633,7 +1651,7 @@ TEST_F(DynamicComplexTypesTests, Data_Comparison_B_B)
         seq->set_int32_value(j * 10, id);
         seq->insert_sequence_data(id);
         seq->set_int32_value(j * 100, id);
-        my_sequences_array->set_complex_value(seq, j);
+        my_sequences_array->set_complex_value(seq, MemberId{j});
         // staticData.my_union().complex().my_sequences_array()[i].push_back(i);
         // staticData.my_union().complex().my_sequences_array()[i].push_back(i*10);
         // staticData.my_union().complex().my_sequences_array()[i].push_back(i*100);
@@ -1661,18 +1679,18 @@ TEST_F(DynamicComplexTypesTests, Data_Comparison_B_B)
     ASSERT_TRUE(pbComplete.serialize(&staticData, &stPayload));
     ASSERT_TRUE(stPayload.length == payloadSize2);
 
-    types::DynamicData_ptr dynDataFromDynamic(DynamicDataFactory::get_instance()->create_data(m_DynAutoType));
+    DynamicData_ptr dynDataFromDynamic(DynamicDataFactory::get_instance()->create_data(m_DynAutoType));
     ASSERT_TRUE(pubsubType.deserialize(&payload, dynDataFromDynamic.get()));
 
-    types::DynamicData_ptr dynDataFromStatic(DynamicDataFactory::get_instance()->create_data(m_DynAutoType));
+    DynamicData_ptr dynDataFromStatic(DynamicDataFactory::get_instance()->create_data(m_DynAutoType));
     ASSERT_TRUE(pubsubType.deserialize(&stPayload, dynDataFromStatic.get()));
 
     ASSERT_TRUE(dynDataFromStatic->equals(dynDataFromDynamic.get()));
-}
+   }
 
-TEST_F(DynamicComplexTypesTests, Data_Comparison_B_C)
-{
-    types::DynamicData_ptr dynData(DynamicDataFactory::get_instance()->create_data(m_DynManualType));
+   TEST_F(DynamicComplexTypesTests, Data_Comparison_B_C)
+   {
+    DynamicData_ptr dynData(DynamicDataFactory::get_instance()->create_data(m_DynManualType));
 
     CompleteStruct staticData;
     staticData.my_union()._d() = MyEnum::B;
@@ -1829,7 +1847,7 @@ TEST_F(DynamicComplexTypesTests, Data_Comparison_B_C)
             for (unsigned int k = 0; k < 4; ++k)
             {
                 MemberId array_idx = my_array_octet->get_array_index({ i, j, k });
-                my_array_octet->set_byte_value(static_cast<uint8_t>(j * k), array_idx);
+                my_array_octet->set_char8_value(static_cast<uint8_t>(j * k), array_idx);
             }
         }
         //staticData.my_union().complex().my_array_octet()[i][j][k] = j*k;
@@ -1854,13 +1872,13 @@ TEST_F(DynamicComplexTypesTests, Data_Comparison_B_C)
         tempBasic->set_char8_value('J', tempBasic->get_member_id_by_name("my_char"));
         //tempBasic->set_char16_value(L'C', tempBasic->get_member_id_by_name("my_wchar"));
         tempBasic->set_string_value("JC@eProsima", tempBasic->get_member_id_by_name("my_string"));
-        //tempBasic->set_wstring_value(L"JC-BOOM-Armadilo!@eProsima", tempBasic->get_member_id_by_name("my_wstring"));
-        my_array_struct->set_complex_value(tempBasic, i);
+        tempBasic->set_wstring_value(L"JC-BOOM-Armadilo!@eProsima", tempBasic->get_member_id_by_name("my_wstring"));
+        my_array_struct->set_complex_value(tempBasic, MemberId{i});
     }
     complex->return_loaned_value(my_array_struct);
 
-    DynamicTypeBuilder_ptr octet_builder = m_factory->create_byte_builder();
-    DynamicData_ptr key_oct(DynamicDataFactory::get_instance()->create_data(octet_builder->build()));
+    DynamicType_ptr octet_type = m_factory.get_byte_type();
+    DynamicData_ptr key_oct(DynamicDataFactory::get_instance()->create_data(octet_type));
     MemberId kId;
     MemberId vId;
     MemberId ssId;
@@ -1869,7 +1887,7 @@ TEST_F(DynamicComplexTypesTests, Data_Comparison_B_C)
     key_oct->set_byte_value(0);
     my_map_octet_short->insert_map_data(key_oct.get(), kId, vId);
     my_map_octet_short->set_int16_value((short)1340, vId);
-    key_oct = DynamicDataFactory::get_instance()->create_data(octet_builder->build());
+    key_oct = DynamicDataFactory::get_instance()->create_data(octet_type);
     key_oct->set_byte_value(1);
     my_map_octet_short->insert_map_data(key_oct.get(), kId, vId);
     my_map_octet_short->set_int16_value((short)1341, vId);
@@ -1877,12 +1895,12 @@ TEST_F(DynamicComplexTypesTests, Data_Comparison_B_C)
     //staticData.my_union().complex().my_map_octet_short()[1] = 1341;
     complex->return_loaned_value(my_map_octet_short);
 
-    DynamicTypeBuilder_ptr long_builder = m_factory->create_int32_builder();
-    DynamicData_ptr key(DynamicDataFactory::get_instance()->create_data(long_builder->build()));
+    DynamicType_ptr long_type = m_factory.get_int32_type();
+    DynamicData_ptr key(DynamicDataFactory::get_instance()->create_data(long_type));
     DynamicData* my_map_long_struct = complex->loan_value(complex->get_member_id_by_name("my_map_long_struct"));
 
     //DynamicData *mas3 = my_array_struct->loan_value(3);
-    key = DynamicDataFactory::get_instance()->create_data(long_builder->build());
+    key = DynamicDataFactory::get_instance()->create_data(long_type);
     key->set_int32_value(55);
     my_map_long_struct->insert_map_data(key.get(), kId, vId);
     basic = my_map_long_struct->loan_value(vId);
@@ -1902,7 +1920,7 @@ TEST_F(DynamicComplexTypesTests, Data_Comparison_B_C)
     basic->set_string_value("Luis@eProsima", basic->get_member_id_by_name("my_string"));
     //basic->set_wstring_value(L"LuisGasco@eProsima", basic->get_member_id_by_name("my_wstring"));
     my_map_long_struct->return_loaned_value(basic);
-    key = DynamicDataFactory::get_instance()->create_data(long_builder->build());
+    key = DynamicDataFactory::get_instance()->create_data(long_type);
     key->set_int32_value(1000);
     my_map_long_struct->insert_map_data(key.get(), kId, vId);
     DynamicData* mas3 = my_map_long_struct->loan_value(vId);
@@ -1931,9 +1949,9 @@ TEST_F(DynamicComplexTypesTests, Data_Comparison_B_C)
     DynamicData* my_map_long_seq_octet = complex->loan_value(complex->get_member_id_by_name("my_map_long_seq_octet"));
     //std::vector my_vector_octet = {1, 2, 3, 4, 5};
     //MemberId id;
-    /*DynamicTypeBuilder_ptr octet_builder = m_factory->create_byte_builder();
-       types::DynamicTypeBuilder_ptr seqOctet_builder = m_factory->create_sequence_builder(octet_builder.get());
-       types::DynamicType_ptr seqSeqOctet_builder = m_factory->create_sequence_builder(seqOctet_builder.get())->build();
+    //DynamicType_ptr octet_type = m_factory.get_byte_type();
+       types::DynamicTypeBuilder_ptr seqOctet_builder = m_factory.create_sequence_type(octet_type);
+       types::DynamicType_ptr seqSeqOctet_builder = m_factory.create_sequence_type(seqOctet_builder.get())->build();
        DynamicData *dataSeqOctet = seqOctet_builder->build();
        DynamicData *dataSeqSeqOctet = seqSeqOctet_builder->build();
        dataSeqOctet->insert_sequence_data(id);
@@ -1947,10 +1965,10 @@ TEST_F(DynamicComplexTypesTests, Data_Comparison_B_C)
        dataSeqOctet->insert_sequence_data(id);
        dataSeqOctet->set_byte_value(5, id);
        dataSeqSeqOctet->insert_sequence_data(id);
-       dataSeqSeqOctet->set_complex_value(dataSeqOctet, id);*/
+       dataSeqSeqOctet->set_complex_value(dataSeqOctet, id);//
     // insert_map_data(DynamicData_ptr key, MemberId& outKeyId, MemberId& outValueId);
 
-    key = DynamicDataFactory::get_instance()->create_data(long_builder->build());
+    key = DynamicDataFactory::get_instance()->create_data(long_type);
     key->set_int32_value(0);
     my_map_long_seq_octet->insert_map_data(key.get(), kId, vId);
 
@@ -1970,7 +1988,7 @@ TEST_F(DynamicComplexTypesTests, Data_Comparison_B_C)
     seq_seq_oct->return_loaned_value(seq_oct);
     my_map_long_seq_octet->return_loaned_value(seq_seq_oct);
 
-    key = DynamicDataFactory::get_instance()->create_data(long_builder->build());
+    key = DynamicDataFactory::get_instance()->create_data(long_type);
     key->set_int32_value(55);
     my_map_long_seq_octet->insert_map_data(key.get(), kId, vId);
 
@@ -2010,26 +2028,26 @@ TEST_F(DynamicComplexTypesTests, Data_Comparison_B_C)
     DynamicData* my_map_long_octet_array_500 =
             complex->loan_value(complex->get_member_id_by_name("my_map_long_octet_array_500"));
 
-    key = DynamicDataFactory::get_instance()->create_data(long_builder->build());
+    key = DynamicDataFactory::get_instance()->create_data(long_type);
     key->set_int32_value(0);
     my_map_long_octet_array_500->insert_map_data(key.get(), kId, vId);
 
     DynamicData* oct_array_500 = my_map_long_octet_array_500->loan_value(vId);
     for (int j = 0; j < 500; ++j)
     {
-        oct_array_500->set_byte_value(j % 256, j);
+        oct_array_500->set_byte_value(j % 256, MemberId{j});
         //staticData.my_union().complex().my_map_long_octet_array_500()[0][i] = i%256;
     }
     my_map_long_octet_array_500->return_loaned_value(oct_array_500);
 
-    key = DynamicDataFactory::get_instance()->create_data(long_builder->build());
+    key = DynamicDataFactory::get_instance()->create_data(long_type);
     key->set_int32_value(10);
     my_map_long_octet_array_500->insert_map_data(key.get(), kId, vId);
     oct_array_500 = my_map_long_octet_array_500->loan_value(vId);
 
     for (int j = 0; j < 500; ++j)
     {
-        oct_array_500->set_byte_value((j + 55) % 256, j);
+        oct_array_500->set_byte_value((j + 55) % 256, MemberId{j});
         //staticData.my_union().complex().my_map_long_octet_array_500()[10][i] = (i+55)%256;
     }
     my_map_long_octet_array_500->return_loaned_value(oct_array_500);
@@ -2063,7 +2081,7 @@ TEST_F(DynamicComplexTypesTests, Data_Comparison_B_C)
     DynamicData* multi_alias_array_42 = complex->loan_value(complex->get_member_id_by_name("multi_alias_array_42"));
     for (int j = 0; j < 42; ++j)
     {
-        multi_alias_array_42->set_enum_value(j % 3, j);
+        multi_alias_array_42->set_enum_value(j % 3, MemberId{j});
         //staticData.my_union().complex().multi_alias_array_42()[i](i%3);
     }
     complex->return_loaned_value(multi_alias_array_42);
@@ -2071,10 +2089,10 @@ TEST_F(DynamicComplexTypesTests, Data_Comparison_B_C)
     DynamicData* my_array_arrays = complex->loan_value(complex->get_member_id_by_name("my_array_arrays"));
     for (unsigned int j = 0; j < 5; ++j)
     {
-        DynamicData* myMiniArray = my_array_arrays->loan_value(j);
+        DynamicData* myMiniArray = my_array_arrays->loan_value(MemberId{j});
         for (unsigned int k = 0; k < 2; ++k)
         {
-            myMiniArray->set_int32_value(j * k, k);
+            myMiniArray->set_int32_value(j * k, MemberId{k});
             //staticData.my_union().complex().my_array_arrays()[i][j](i*j);
         }
         my_array_arrays->return_loaned_value(myMiniArray);
@@ -2091,7 +2109,7 @@ TEST_F(DynamicComplexTypesTests, Data_Comparison_B_C)
         seq->set_int32_value(j * 10, id);
         seq->insert_sequence_data(id);
         seq->set_int32_value(j * 100, id);
-        my_sequences_array->set_complex_value(seq, j);
+        my_sequences_array->set_complex_value(seq, MemberId{j});
         // staticData.my_union().complex().my_sequences_array()[i].push_back(i);
         // staticData.my_union().complex().my_sequences_array()[i].push_back(i*10);
         // staticData.my_union().complex().my_sequences_array()[i].push_back(i*100);
@@ -2112,66 +2130,22 @@ TEST_F(DynamicComplexTypesTests, Data_Comparison_B_C)
     SerializedPayload_t payload(payloadSize);
     ASSERT_TRUE(pubsubType.serialize(dynData.get(), &payload));
     ASSERT_TRUE(payload.length == payloadSize);
-    /*
-       std::cout << "BEGIN" << std::endl;
-       for (uint32_t j = 0; j < payload.length; j += 100)
-       {
-       std::cout << std::endl;
-       for (uint32_t k = 0; k < 100; k++)
-       {
-       if (j + k < payload.length)
-       {
-       if ((int)payload.data[j + k] == 204)
-       {
-       std::cout << 0 << " ";
-       }
-       else
-       {
-       std::cout << (int)payload.data[j + k] << " ";
-       }
-       }
-       }
-       }
-       std::cout << "END" << std::endl;
-     */
     CompleteStructPubSubType pbComplete;
     uint32_t payloadSize2 = static_cast<uint32_t>(m_StaticType.getSerializedSizeProvider(&staticData)());
     SerializedPayload_t stPayload(payloadSize2);
     ASSERT_TRUE(pbComplete.serialize(&staticData, &stPayload));
     ASSERT_TRUE(stPayload.length == payloadSize2);
-    /*
-       std::cout << "BEGIN" << std::endl;
-       for (uint32_t j = 0; j < stPayload.length; j += 100)
-       {
-       std::cout << std::endl;
-       for (uint32_t k = 0; k < 100; k++)
-       {
-       if (j + k < stPayload.length)
-       {
-       if ((int)stPayload.data[j + k] == 204)
-       {
-       std::cout << 0 << " ";
-       }
-       else
-       {
-       std::cout << (int)stPayload.data[j + k] << " ";
-       }
-       }
-       }
-       }
-       std::cout << "END" << std::endl;
-     */
-    types::DynamicData_ptr dynDataFromDynamic(DynamicDataFactory::get_instance()->create_data(m_DynAutoType));
+    DynamicData_ptr dynDataFromDynamic(DynamicDataFactory::get_instance()->create_data(m_DynAutoType));
     ASSERT_TRUE(pubsubType.deserialize(&payload, dynDataFromDynamic.get()));
 
-    types::DynamicData_ptr dynDataFromStatic(DynamicDataFactory::get_instance()->create_data(m_DynAutoType));
+    DynamicData_ptr dynDataFromStatic(DynamicDataFactory::get_instance()->create_data(m_DynAutoType));
     ASSERT_TRUE(pubsubType.deserialize(&stPayload, dynDataFromStatic.get()));
 
     ASSERT_TRUE(dynDataFromStatic->equals(dynDataFromDynamic.get()));
-}
+   }
 
-TEST_F(DynamicComplexTypesTests, Data_Comparison_with_Keys)
-{
+   TEST_F(DynamicComplexTypesTests, Data_Comparison_with_Keys)
+   {
     KeyedStruct staticData;
 
     staticData.basic().my_bool(true);
@@ -2224,10 +2198,10 @@ TEST_F(DynamicComplexTypesTests, Data_Comparison_with_Keys)
     ASSERT_TRUE(dynPubSub.serialize(dynData, &dynPayload));
     ASSERT_TRUE(payloadSize2 == dynPayload.length);
 
-    types::DynamicData* dynDataFromStatic = DynamicDataFactory::get_instance()->create_data(GetKeyedStructType());
+    DynamicData* dynDataFromStatic = DynamicDataFactory::get_instance()->create_data(GetKeyedStructType());
     ASSERT_TRUE(pubsubType.deserialize(&stPayload, dynDataFromStatic));
 
-    types::DynamicData* dynDataFromDynamic = DynamicDataFactory::get_instance()->create_data(GetKeyedStructType());
+    DynamicData* dynDataFromDynamic = DynamicDataFactory::get_instance()->create_data(GetKeyedStructType());
     ASSERT_TRUE(dynPubSub.deserialize(&dynPayload, dynDataFromDynamic));
 
     ASSERT_TRUE(dynDataFromStatic->equals(dynDataFromDynamic));
@@ -2235,7 +2209,9 @@ TEST_F(DynamicComplexTypesTests, Data_Comparison_with_Keys)
     DynamicDataFactory::get_instance()->delete_data(dynData);
     DynamicDataFactory::get_instance()->delete_data(dynDataFromStatic);
     DynamicDataFactory::get_instance()->delete_data(dynDataFromDynamic);
-}
+   }
+
+ */
 
 int main(
         int argc,

@@ -34,12 +34,18 @@
 #include <fastdds/dds/subscriber/SampleInfo.hpp>
 #include <fastdds/dds/subscriber/Subscriber.hpp>
 #include <fastdds/dds/subscriber/SubscriberListener.hpp>
+#include <fastdds/dds/xtypes/dynamic_types/DynamicData.hpp>
 #include <fastdds/dds/xtypes/type_representation/ITypeObjectRegistry.hpp>
-#include <fastrtps/types/DynamicData.h>
 
 using namespace eprosima::fastdds::dds;
 using namespace eprosima::fastdds::dds::xtypes;
 using namespace eprosima::fastrtps::rtps;
+using namespace eprosima::fastdds::dds::xtypes;
+
+using eprosima::fastrtps::types::TypeInformation;
+using eprosima::fastrtps::types::TypeIdentifier;
+using eprosima::fastrtps::types::TypeObjectFactory;
+using eprosima::fastrtps::types::TypeObject;
 
 class ParListener : public DomainParticipantListener
 {
@@ -261,12 +267,13 @@ int main(
         auto& topic_name = remote_names.first;
         auto& type_name = remote_names.second;
 
-        eprosima::fastrtps::types::DynamicType_ptr type;
+        const DynamicType* type {nullptr};
 
         {
             TypeObjectPair type_objects;
             if (RETCODE_OK != DomainParticipantFactory::get_instance()->type_object_registry().get_type_objects(
                         type_name, type_objects))
+
             {
                 std::cout << "ERROR: TypeObject cannot be retrieved for type: "
                           << type_name << std::endl;
@@ -281,6 +288,8 @@ int main(
                 std::cout << "ERROR: DynamicType cannot be created for type: " << type_name << std::endl;
                 throw 1;
             }
+
+            type = ret_type;
         }
 
         // Create the Topic & DataReader
@@ -315,12 +324,11 @@ int main(
         while ((notexit || number_samples < samples ) && listener.run_)
         {
             // loop taking samples
-            eprosima::fastrtps::types::DynamicPubSubType pst(type);
-            eprosima::fastrtps::types::DynamicData_ptr sample(static_cast<eprosima::fastrtps::types::DynamicData*>(pst.
-                            createData()));
+            DynamicPubSubType pst(*type);
+            DynamicData* sample {static_cast<DynamicData*>(pst.createData())};
             eprosima::fastdds::dds::SampleInfo info;
 
-            if (RETCODE_OK == reader->take_next_sample(sample.get(), &info))
+            if (RETCODE_OK == reader->take_next_sample(sample, &info))
             {
                 if (info.valid_data)
                 {
@@ -330,12 +338,11 @@ int main(
 
                     ++number_samples;
 
-                    sample->get_string_value(message, 0);
-                    sample->get_uint32_value(index, 1);
+                    message = sample->get_string_value(0);
+                    index = sample->get_uint32_value(1);
 
-                    eprosima::fastrtps::types::DynamicData* inner = sample->loan_value(2);
+                    DynamicData* inner {sample->loan_value(2)};
                     inner->get_byte_value(count, 0);
-                    sample->return_loaned_value(inner);
 
                     std::cout << "Received sample: index(" << index << "), message("
                               << message << "), inner_count(" << std::hex << (uint32_t)count << ")" << std::endl;

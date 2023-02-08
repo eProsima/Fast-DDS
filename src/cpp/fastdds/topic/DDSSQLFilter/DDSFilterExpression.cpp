@@ -15,32 +15,22 @@
 /**
  * @file DDSFilterExpression.cpp
  */
-
-#include "DDSFilterExpression.hpp"
-
 #include <map>
 #include <memory>
 #include <string>
 #include <vector>
-
-#include <fastdds/dds/topic/IContentFilter.hpp>
-#include <fastrtps/types/DynamicData.h>
-#include <fastrtps/types/DynamicDataFactory.h>
-#include <fastrtps/types/DynamicTypePtr.h>
 
 #include <fastcdr/Cdr.h>
 #include <fastcdr/FastBuffer.h>
 #include <fastcdr/exceptions/Exception.h>
 
 #include "DDSFilterCondition.hpp"
-
+#include "DDSFilterExpression.hpp"
 #include "DDSFilterField.hpp"
 #include "DDSFilterParameter.hpp"
 
-namespace eprosima {
-namespace fastdds {
-namespace dds {
-namespace DDSSQLFilter {
+using namespace eprosima::fastdds::dds;
+using namespace eprosima::fastdds::dds::DDSSQLFilter;
 
 bool DDSFilterExpression::evaluate(
         const IContentFilter::SerializedPayload& payload,
@@ -95,13 +85,8 @@ void DDSFilterExpression::clear()
 }
 
 void DDSFilterExpression::set_type(
-        const eprosima::fastrtps::types::DynamicType_ptr& type)
+        const DynamicType* const type)
 {
-    dyn_type_ = type;
-    dyn_data_.reset(eprosima::fastrtps::types::DynamicDataFactory::get_instance()->create_data(type));
+    dyn_type_.reset(type);
+    dyn_data_.reset(DynamicDataFactory::get_instance().create_data(*type));
 }
-
-}  // namespace DDSSQLFilter
-}  // namespace dds
-}  // namespace fastdds
-}  // namespace eprosima

@@ -1,4 +1,4 @@
-// Copyright 2018 Proyectos y Sistemas de Mantenimiento SL (eProsima).
+﻿// Copyright 2018 Proyectos y Sistemas de Mantenimiento SL (eProsima).
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -12,10 +12,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#include <fastrtps/types/AnnotationDescriptor.h>
 #include <fastrtps/types/DynamicType.h>
 #include <fastrtps/types/DynamicTypeBuilderFactory.h>
 #include <fastrtps/types/TypeDescriptor.h>
-#include <fastrtps/types/AnnotationDescriptor.h>
 #include <fastdds/dds/log/Log.hpp>
 #include <fastrtps/types/TypesBase.h>
 
@@ -61,7 +61,7 @@ TypeDescriptor::TypeDescriptor()
 
 TypeDescriptor::TypeDescriptor(
         const std::string& name,
-        TypeKind kind)
+        octet kind)
     : kind_(kind)
     , name_(name)
     , base_type_(nullptr)
@@ -186,7 +186,7 @@ DynamicType_ptr TypeDescriptor::get_key_element_type() const
     return key_element_type_;
 }
 
-TypeKind TypeDescriptor::get_kind() const
+octet TypeDescriptor::get_kind() const
 {
     return kind_;
 }
@@ -322,7 +322,7 @@ bool TypeDescriptor::is_type_name_consistent(
 }
 
 void TypeDescriptor::set_kind(
-        TypeKind kind)
+        octet kind)
 {
     kind_ = kind;
 }

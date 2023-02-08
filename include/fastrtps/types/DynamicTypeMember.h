@@ -12,8 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#ifndef TYPES_DYNAMIC_TYPE_MEMBER_H
-#define TYPES_DYNAMIC_TYPE_MEMBER_H
+#ifndef FASTRTPS_TYPES_DYNAMIC_TYPE_MEMBER_H
+#define FASTRTPS_TYPES_DYNAMIC_TYPE_MEMBER_H
 
 #include <fastdds/dds/core/ReturnCode.hpp>
 #include <fastrtps/types/MemberDescriptor.h>
@@ -101,4 +101,4 @@ public:
 } // namespace fastrtps
 } // namespace eprosima
 
-#endif // TYPES_DYNAMIC_TYPE_MEMBER_H
+#endif // FASTRTPS_TYPES_DYNAMIC_TYPE_MEMBER_H

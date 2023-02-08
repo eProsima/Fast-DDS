@@ -27,6 +27,8 @@
 #include <thread>
 
 #include <fastdds/dds/log/Log.hpp>
+#include <fastdds/dds/xtypes/dynamic_types/DynamicDataFactory.hpp>
+#include <fastdds/dds/xtypes/dynamic_types/DynamicTypeBuilderFactory.hpp>
 #include <fastdds/rtps/history/WriterHistory.h>
 #include <fastdds/rtps/participant/RTPSParticipant.h>
 #include <fastdds/rtps/reader/RTPSReader.h>
@@ -38,6 +40,9 @@
 #include <rtps/transport/TCPv4Transport.h>
 #include <rtps/transport/TCPv6Transport.h>
 
+#include <fastrtps/types/DynamicDataFactory.h>
+#include <fastrtps/types/DynamicTypeBuilderFactory.h>
+#include <fastrtps/types/TypeObjectFactory.h>
 #include <fastrtps/utils/IPFinder.h>
 #include <fastrtps/utils/IPLocator.h>
 #include <fastrtps/utils/md5.h>
@@ -121,6 +126,16 @@ void RTPSDomainImpl::stopAll()
         instance->removeRTPSParticipant_nts(participant);
         lock.lock();
     }
+
+    // TODO(richiware) Why this layer contains calls to dynamictypes
+    // Deletes DynamicTypes and TypeObject factories
+    types::DynamicTypeBuilderFactory::delete_instance();
+    types::DynamicDataFactory::delete_instance();
+    fastdds::dds::DynamicTypeBuilderFactory::delete_instance();
+    fastdds::dds::DynamicDataFactory::delete_instance();
+    types::TypeObjectFactory::delete_instance();
+    xmlparser::XMLProfileManager::DeleteInstance();
+
     EPROSIMA_LOG_INFO(RTPS_PARTICIPANT, "RTPSParticipants deleted correctly ");
     std::this_thread::sleep_for(std::chrono::milliseconds(100));
 }

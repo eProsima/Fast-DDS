@@ -24,9 +24,9 @@
 #include <vector>
 
 #include <fastdds/dds/core/ReturnCode.hpp>
+#include <fastdds/dds/xtypes/dynamic_types/DynamicData.hpp>
 #include <fastdds/dds/xtypes/type_representation/TypeObject.hpp>
 #include <fastdds/rtps/common/SerializedPayload.h>
-#include <fastrtps/types/DynamicData.h>
 
 #include "DDSFilterPredicate.hpp"
 #include "DDSFilterValue.hpp"
@@ -104,7 +104,7 @@ public:
      * @post Method @c has_value returns true.
      */
     inline bool set_value(
-            eprosima::fastrtps::types::DynamicData& data_value)
+            DynamicData& data_value)
     {
         return set_value(data_value, 0);
     }
@@ -120,7 +120,7 @@ public:
      * @post Method @c has_value returns true.
      */
     bool set_value(
-            eprosima::fastrtps::types::DynamicData& data,
+            DynamicData& data,
             size_t n);
 
 protected:
@@ -135,8 +135,8 @@ protected:
 private:
 
     bool set_value(
-            const eprosima::fastrtps::types::DynamicData* data,
-            eprosima::fastrtps::types::MemberId member_id);
+            const DynamicData* data,
+            MemberId member_id);
 
     bool has_value_ = false;
     std::vector<FieldAccessor> access_path_;

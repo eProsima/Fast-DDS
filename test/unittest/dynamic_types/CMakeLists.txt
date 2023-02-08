@@ -115,6 +115,7 @@ add_executable(DynamicTypesTests ${DYNAMIC_TYPES_TEST_SOURCE})
 target_compile_definitions(DynamicTypesTests PRIVATE
     BOOST_ASIO_STANDALONE
     ASIO_STANDALONE
+    ENABLE_DYNAMIC_MEMORY_CHECK
     $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
     $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
     )
@@ -145,11 +146,38 @@ if(QNX)
 endif()
 gtest_discover_tests(DynamicTypesTests)
 
+# in order to check proper dllexports on windows build DynamicTypesTests dynamically link to fastrtps target
+if(WIN32)
+
+    add_executable(DynamicTypesTests_dynlink
+            DynamicTypesTests.cpp
+            idl/Basic.cxx
+            idl/BasicPubSubTypes.cxx
+            idl/BasicTypeObject.cxx
+        )
+
+    target_compile_definitions(DynamicTypesTests_dynlink PRIVATE
+            ENABLE_DYNAMIC_MEMORY_CHECK
+        )
+
+    target_include_directories(DynamicTypesTests_dynlink PRIVATE
+        $<$<BOOL:${TINYXML2_INCLUDE_DIR}>:${TINYXML2_INCLUDE_DIR}>
+        )
+
+    target_link_libraries(DynamicTypesTests_dynlink
+            GTest::gtest
+            ${TINYXML2_LIBRARY}
+            fastcdr
+            fastrtps
+        )
+
+endif(WIN32)
 
 add_executable(DynamicComplexTypesTests ${DYNAMIC_COMPLEX_TYPES_TEST_SOURCE})
 target_compile_definitions(DynamicComplexTypesTests PRIVATE
     BOOST_ASIO_STANDALONE
     ASIO_STANDALONE
+    ENABLE_DYNAMIC_MEMORY_CHECK
     $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
     $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
     )
@@ -167,6 +195,7 @@ target_link_libraries(DynamicComplexTypesTests GTest::gtest
     $<$<BOOL:${WIN32}>:ws2_32>
     ${TINYXML2_LIBRARY}
     fastcdr
+    fastdds::xtypes
     )
 if(QNX)
     target_link_libraries(DynamicComplexTypesTests socket)
@@ -178,6 +207,7 @@ add_executable(DynamicTypes_4_2_Tests ${DYNAMIC_TYPES_4_2_TEST_SOURCE})
 target_compile_definitions(DynamicTypes_4_2_Tests PRIVATE
     BOOST_ASIO_STANDALONE
     ASIO_STANDALONE
+    ENABLE_DYNAMIC_MEMORY_CHECK
     $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
     $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
     )
@@ -196,6 +226,7 @@ target_link_libraries(DynamicTypes_4_2_Tests GTest::gtest
     fastcdr
     $<$<BOOL:${ANDROID}>:${ANDROID_IFADDRS_INCLUDE_DIR}>
     )
+target_link_libraries(DynamicTypes_4_2_Tests fastdds::xtypes)
 if(QNX)
     target_link_libraries(DynamicTypes_4_2_Tests socket)
 endif()

@@ -23,6 +23,10 @@
 
 #include <fastdds/dds/domain/qos/DomainParticipantFactoryQos.hpp>
 #include <fastdds/dds/log/Log.hpp>
+#include <fastrtps/types/TypeObjectFactory.h>
+#include <fastrtps/types/DynamicType.h>
+#include <fastrtps/types/DynamicTypeBuilderFactory.h>
+#include <fastrtps/types/DynamicTypeMember.h>
 #include <fastrtps/xmlparser/XMLTree.h>
 
 using namespace eprosima::fastrtps;
@@ -45,7 +49,9 @@ std::map<std::string, up_replier_t> XMLProfileManager::replier_profiles_;
 std::map<std::string, XMLP_ret> XMLProfileManager::xml_files_;
 sp_transport_map_t XMLProfileManager::transport_profiles_;
 p_dynamictype_map_t XMLProfileManager::dynamic_types_;
+p_oldbackup_map_t XMLProfileManager::old_dynamic_types_;
 BaseNode* XMLProfileManager::root = nullptr;
+
 
 XMLP_ret XMLProfileManager::fillParticipantAttributes(
         const std::string& profile_name,
@@ -659,11 +665,11 @@ sp_transport_t XMLProfileManager::getTransportById(
 
 bool XMLProfileManager::insertDynamicTypeByName(
         const std::string& type_name,
-        p_dynamictypebuilder_t type)
+        eprosima::fastdds::dds::DynamicTypeBuilder* type)
 {
     if (dynamic_types_.find(type_name) == dynamic_types_.end())
     {
-        dynamic_types_[type_name] = type;
+        dynamic_types_[type_name].reset(type);
         return true;
     }
     EPROSIMA_LOG_ERROR(XMLPARSER, "Error adding the type " << type_name << ". There is other type with the same name.");
@@ -673,11 +679,78 @@ bool XMLProfileManager::insertDynamicTypeByName(
 p_dynamictypebuilder_t XMLProfileManager::getDynamicTypeByName(
         const std::string& type_name)
 {
+    // hit the cache
+    if (old_dynamic_types_.find(type_name) != old_dynamic_types_.end())
+    {
+        return old_dynamic_types_[type_name].get();
+    }
+
+    // query the actual map
+    types::DynamicTypeBuilder_ptr p;
+    if ( XMLP_ret::XML_OK == getDynamicTypeByName(p, type_name))
+    {
+        auto ret = p.get();
+        old_dynamic_types_[type_name] = std::move(p);
+        return ret;
+    }
+
+    return nullptr;
+}
+
+XMLP_ret XMLProfileManager::getDynamicTypeByName(
+        types::DynamicTypeBuilder_ptr& builder,
+        const std::string& type_name)
+{
+    eprosima::fastdds::dds::DynamicTypeBuilder* p;
+    auto res = getDynamicTypeByName(p, type_name);
+
+    if (XMLP_ret::XML_OK != res)
+    {
+        return res;
+    }
+
+    // version downgrade
+    // Get intermediate type object
+    types::TypeObject obj;
+    types::TypeIdentifier id;
+
+    eprosima::fastdds::dds::DynamicTypeBuilderFactory::get_instance().build_type_object(*p, obj);
+    eprosima::fastdds::dds::DynamicTypeBuilderFactory::get_instance().build_type_identifier(*p, id);
+
+    // Build old dynamic type
+    types::DynamicType_ptr ptr;
+
+    if (!types::TypeObjectFactory::get_instance()->build_dynamic_type(ptr, type_name, &id, &obj))
+    {
+        return XMLP_ret::XML_ERROR;
+    }
+
+    builder = types::DynamicTypeBuilderFactory::get_instance()->create_custom_builder(
+        ptr->get_descriptor(),
+        ptr->get_name());
+
+    // Manually add members if required
+    std::map<types::MemberId, types::DynamicTypeMember*> members;
+    ptr->get_all_members(members);
+    for (auto node : members)
+    {
+        builder->add_member(node.second->get_descriptor());
+    }
+
+    return builder ? XMLP_ret::XML_OK : XMLP_ret::XML_ERROR;
+}
+
+XMLP_ret XMLProfileManager::getDynamicTypeByName(
+        eprosima::fastdds::dds::DynamicTypeBuilder*& builder,
+        const std::string& type_name)
+{
     if (dynamic_types_.find(type_name) != dynamic_types_.end())
     {
-        return dynamic_types_[type_name];
+        builder = dynamic_types_[type_name].get();
+        return XMLP_ret::XML_OK;
     }
-    return nullptr;
+
+    return XMLP_ret::XML_ERROR;
 }
 
 XMLP_ret XMLProfileManager::extractTopicProfile(

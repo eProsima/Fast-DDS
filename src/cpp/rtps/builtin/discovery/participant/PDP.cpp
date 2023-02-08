@@ -17,6 +17,11 @@
  *
  */
 
+#include <fastdds/dds/core/ReturnCode.hpp>
+
+#include <fastdds/dds/xtypes/dynamic_types/DynamicPubSubType.hpp>
+#include <fastdds/dds/xtypes/dynamic_types/DynamicType.hpp>
+
 #include <fastdds/rtps/builtin/discovery/participant/PDP.h>
 #include <fastdds/rtps/builtin/discovery/participant/PDPListener.h>
 
@@ -75,7 +80,7 @@ const Duration_t pdp_nack_response_delay{ 0, 100 * 1000000  }; // 100 millisecon
 const Duration_t pdp_nack_supression_duration{ 0, 11 * 1000000 }; // 11 milliseconds
 const Duration_t pdp_heartbeat_response_delay{ 0, 11 * 1000000 }; // 11 milliseconds
 
-const int32_t pdp_initial_reserved_caches = 20;
+const int32_t eprosima::fastrtps::rtps::pdp_initial_reserved_caches = 20;
 
 
 PDP::PDP (

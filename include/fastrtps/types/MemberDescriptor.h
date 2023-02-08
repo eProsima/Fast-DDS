@@ -12,8 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#ifndef TYPES_MEMBER_DESCRIPTOR_H
-#define TYPES_MEMBER_DESCRIPTOR_H
+#ifndef FASTRTPS_TYPES_MEMBER_DESCRIPTOR_H
+#define FASTRTPS_TYPES_MEMBER_DESCRIPTOR_H
 
 #include <string>
 #include <vector>
@@ -48,7 +48,7 @@ protected:
     friend class DynamicTypeBuilderFactory;
     friend class DynamicData;
     friend class DynamicTypeMember;
-    friend class TypeObjectFactory;
+    friend class types::TypeObjectFactory;
 
     bool is_default_value_consistent(
             const std::string& sDefaultValue) const;
@@ -97,7 +97,7 @@ public:
     RTPS_DllAPI bool equals(
             const MemberDescriptor* other) const;
 
-    RTPS_DllAPI TypeKind get_kind() const;
+    RTPS_DllAPI octet get_kind() const;
 
     RTPS_DllAPI MemberId get_id() const;
 
@@ -223,4 +223,4 @@ public:
 } // namespace fastrtps
 } // namespace eprosima
 
-#endif // TYPES_MEMBER_DESCRIPTOR_H
+#endif // FASTRTPS_TYPES_MEMBER_DESCRIPTOR_H

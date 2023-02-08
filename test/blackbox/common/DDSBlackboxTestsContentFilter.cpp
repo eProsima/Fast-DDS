@@ -17,6 +17,7 @@
 
 #include <gtest/gtest.h>
 
+#include <fastdds/dds/core/ReturnCode.hpp>
 #include <fastdds/dds/subscriber/DataReader.hpp>
 #include <fastdds/dds/subscriber/qos/DataReaderQos.hpp>
 #include <fastdds/dds/subscriber/Subscriber.hpp>
@@ -34,8 +35,6 @@
 namespace eprosima {
 namespace fastdds {
 namespace dds {
-
-using ReturnCode_t = eprosima::fastdds::dds::ReturnCode_t;
 
 struct ContentFilterInfoCounter
 {

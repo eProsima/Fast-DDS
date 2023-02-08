@@ -19,10 +19,10 @@
 #ifndef _FASTDDS_TYPE_SUPPORT_HPP_
 #define _FASTDDS_TYPE_SUPPORT_HPP_
 
-#include <fastdds/dds/topic/TopicDataType.hpp>
 #include <fastdds/dds/common/InstanceHandle.hpp>
-#include <fastrtps/types/DynamicPubSubType.h>
-#include <fastrtps/types/TypesBase.h>
+#include <fastdds/dds/core/ReturnCode.hpp>
+#include <fastdds/dds/topic/TopicDataType.hpp>
+#include <fastdds/dds/xtypes/dynamic_types/DynamicPubSubType.hpp>
 
 #include <string>
 #include <functional>
@@ -42,11 +42,11 @@ class DomainParticipant;
  * where Serialize and deserialize methods MUST be implemented.
  * @ingroup FASTDDS_MODULE
  */
-class TypeSupport : public std::shared_ptr<fastdds::dds::TopicDataType>
+class TypeSupport : public std::shared_ptr<TopicDataType>
 {
 public:
 
-    using Base = std::shared_ptr<fastdds::dds::TopicDataType>;
+    using Base = std::shared_ptr<TopicDataType>;
 
     /**
      * @brief Constructor
@@ -93,20 +93,15 @@ public:
      * @param ptr
      */
     RTPS_DllAPI explicit TypeSupport(
-            fastdds::dds::TopicDataType* ptr)
-        : std::shared_ptr<fastdds::dds::TopicDataType>(ptr)
+            TopicDataType* ptr)
+        : std::shared_ptr<TopicDataType>(ptr)
     {
     }
 
-    /*!
-     * @brief TypeSupport constructor that receives a DynamicPubSubType.
-     * It will copy the instance so the user will keep the ownership of his object.
-     *
-     * @param ptr
-     */
     RTPS_DllAPI TypeSupport(
-            fastrtps::types::DynamicPubSubType ptr)
-        : std::shared_ptr<fastdds::dds::TopicDataType>(std::make_shared<fastrtps::types::DynamicPubSubType>(std::move(
+            DynamicPubSubType ptr)
+        : std::shared_ptr<TopicDataType>(std::make_shared<DynamicPubSubType>(std::
+                        move(
                     ptr)))
     {
     }

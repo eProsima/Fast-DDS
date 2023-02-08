@@ -23,9 +23,9 @@
 #include <vector>
 
 #include <fastdds/dds/core/ReturnCode.hpp>
+#include <fastdds/dds/xtypes/dynamic_types/DynamicData.hpp>
 #include <fastdds/dds/xtypes/type_representation/TypeObject.hpp>
 #include <fastdds/rtps/common/SerializedPayload.h>
-#include <fastrtps/types/DynamicData.h>
 
 #include "DDSFilterPredicate.hpp"
 #include "DDSFilterValue.hpp"
@@ -36,22 +36,20 @@ namespace dds {
 namespace DDSSQLFilter {
 
 bool DDSFilterField::set_value(
-        eprosima::fastrtps::types::DynamicData& data,
+        DynamicData& data,
         size_t n)
 {
-    using namespace eprosima::fastrtps::types;
-
     uint32_t index = static_cast<uint32_t>(access_path_[n].member_index);
     auto member_id = data.get_member_id_at_index(index);
     bool last_step = access_path_.size() - 1 == n;
     bool ret = false;
 
-    if (access_path_[n].array_index < MEMBER_ID_INVALID)
+    if (access_path_[n].array_index != MEMBER_ID_INVALID)
     {
         DynamicData* array_data = data.loan_value(member_id);
         if (nullptr != array_data)
         {
-            member_id = static_cast<MemberId>(access_path_[n].array_index);
+            member_id = access_path_[n].array_index;
             if (array_data->get_item_count() > member_id)
             {
                 if (last_step)
@@ -104,8 +102,8 @@ bool DDSFilterField::set_value(
 }
 
 bool DDSFilterField::set_value(
-        const eprosima::fastrtps::types::DynamicData* data,
-        eprosima::fastrtps::types::MemberId member_id)
+        const DynamicData* data,
+        MemberId member_id)
 {
     using namespace eprosima::fastrtps::types;
 

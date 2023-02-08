@@ -115,7 +115,6 @@ if (SQLITE3_SUPPORT AND FASTDDS_STATISTICS AND NOT QNX)
 
     file(GLOB STATISTICS_DOMAINPARTICIPANT_MOCK_TESTS_SOURCE
         StatisticsDomainParticipantMockTests.cpp
-        ${PROJECT_SOURCE_DIR}/src/cpp/dynamic-types/*.cpp
         ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/builtin/type_lookup_service/detail/*.cxx
         ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/builtin/type_lookup_service/*.cpp
         ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/core/condition/*.cpp
@@ -137,6 +136,7 @@ if (SQLITE3_SUPPORT AND FASTDDS_STATISTICS AND NOT QNX)
         ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/topic/qos/*.cpp
         ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/utils/QosConverters.cpp
         ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/xtypes/exception/*.cpp
+        ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/xtypes/dynamic_types/*.cpp
         ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/xtypes/type_representation/*.cpp
         ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/xtypes/type_representation/*.cxx
         ${PROJECT_SOURCE_DIR}/src/cpp/rtps/*.cpp
@@ -465,6 +465,7 @@ if (SQLITE3_SUPPORT AND FASTDDS_STATISTICS AND NOT QNX)
         $<$<BOOL:${WIN32}>:iphlpapi$<SEMICOLON>Shlwapi>
         ${THIRDPARTY_BOOST_LINK_LIBS}
         eProsima_atomic
+        fastdds::xtypes
         )
     if(MSVC OR MSVC_IDE)
         target_link_libraries(StatisticsDomainParticipantMockTests ${PRIVACY}

@@ -14,7 +14,7 @@
 
 cmake_minimum_required(VERSION 3.20)
 
-project(TypeLookupExample VERSION 1 LANGUAGES CXX)
+project(TypeLookupExample VERSION 1.3 LANGUAGES CXX)
 
 # Find requirements
 if(NOT fastcdr_FOUND)
