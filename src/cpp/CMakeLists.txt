@@ -146,7 +146,6 @@ set(${PROJECT_NAME}_source_files
     dynamic-types/DynamicDataFactory.cpp
     dynamic-types/DynamicType.cpp
     dynamic-types/DynamicPubSubType.cpp
-    dynamic-types/DynamicTypePtr.cpp
     dynamic-types/DynamicDataPtr.cpp
     dynamic-types/DynamicTypeBuilder.cpp
     dynamic-types/DynamicTypeBuilderPtr.cpp

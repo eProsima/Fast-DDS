@@ -28,7 +28,6 @@
 #include <fastrtps/rtps/common/Types.h>
 
 #include <fastrtps/types/DynamicPubSubType.h>
-#include <fastrtps/types/DynamicTypePtr.h>
 
 #include <fastrtps/attributes/SubscriberAttributes.h>
 

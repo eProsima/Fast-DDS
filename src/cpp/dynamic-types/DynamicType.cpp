@@ -24,7 +24,8 @@ namespace eprosima {
 namespace fastrtps {
 namespace types {
 
-DynamicType::DynamicType()
+DynamicType::DynamicType(
+        use_the_create_method)
     : descriptor_(nullptr)
     , name_("")
     , kind_(TK_NONE)
@@ -33,6 +34,7 @@ DynamicType::DynamicType()
 }
 
 DynamicType::DynamicType(
+        use_the_create_method,
         const TypeDescriptor* descriptor)
     : is_key_defined_(false)
 {
@@ -60,6 +62,7 @@ DynamicType::DynamicType(
 }
 
 DynamicType::DynamicType(
+        use_the_create_method,
         const DynamicTypeBuilder* other)
     : descriptor_(nullptr)
     , name_("")

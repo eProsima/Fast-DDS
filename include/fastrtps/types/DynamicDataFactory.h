@@ -16,7 +16,6 @@
 #define TYPES_DYNAMIC_DATA_FACTORY_H
 
 #include <fastrtps/types/TypesBase.h>
-#include <fastrtps/types/DynamicTypePtr.h>
 #include <fastrtps/types/DynamicTypeBuilder.h>
 #include <fastrtps/types/DynamicType.h>
 #include <fastrtps/types/DynamicData.h>

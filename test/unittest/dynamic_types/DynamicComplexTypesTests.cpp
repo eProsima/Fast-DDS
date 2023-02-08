@@ -22,7 +22,6 @@
 #include <fastrtps/types/DynamicDataFactory.h>
 #include <fastrtps/types/TypeDescriptor.h>
 #include <fastrtps/types/MemberDescriptor.h>
-#include <fastrtps/types/DynamicTypePtr.h>
 #include <fastrtps/types/DynamicPubSubType.h>
 #include <fastrtps/types/DynamicType.h>
 #include <fastrtps/types/DynamicData.h>

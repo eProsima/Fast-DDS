@@ -54,7 +54,6 @@
 #include <fastrtps/attributes/SubscriberAttributes.h>
 #include <fastrtps/types/DynamicDataFactory.h>
 #include <fastrtps/types/DynamicType.h>
-#include <fastrtps/types/DynamicTypePtr.h>
 #include <fastrtps/types/TypeDescriptor.h>
 #include <fastrtps/types/TypeObjectFactory.h>
 #include <fastrtps/utils/IPLocator.h>

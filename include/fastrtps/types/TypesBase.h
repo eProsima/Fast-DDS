@@ -607,6 +607,9 @@ const uint16_t TypeFlagMinimalMask = 0x0007; // Selects  M, A, F
 const uint32_t ANNOTATION_STR_VALUE_MAX_LEN = 128;
 const uint32_t ANNOTATION_OCTETSEC_VALUE_MAX_LEN = 128;
 
+class DynamicType;
+using DynamicType_ptr = std::shared_ptr<DynamicType>;
+
 } // namespace types
 } // namespace fastrtps
 } // namespace eprosima

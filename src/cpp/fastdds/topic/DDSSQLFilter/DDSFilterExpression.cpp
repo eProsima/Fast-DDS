@@ -26,7 +26,6 @@
 #include <fastdds/dds/topic/IContentFilter.hpp>
 #include <fastrtps/types/DynamicData.h>
 #include <fastrtps/types/DynamicDataFactory.h>
-#include <fastrtps/types/DynamicTypePtr.h>
 #include <fastcdr/Cdr.h>
 #include <fastcdr/FastBuffer.h>
 
