@@ -321,11 +321,17 @@ ReturnCode_t DomainParticipantFactory::get_participant_qos_from_profile(
 
 ReturnCode_t DomainParticipantFactory::load_profiles()
 {
-    if (false == default_xml_profiles_loaded)
+    // NOTE: This could be done with a bool atomic to avoid taking the mutex in most cases, however the use of
+    // atomic over mutex is not deterministically better, and this way is easier to read and understand.
+
+    // Only load profiles once, if not, wait for profiles to be loaded
+    std::lock_guard<std::mutex> _(default_xml_profiles_loaded_mtx_);
+    if (!default_xml_profiles_loaded)
     {
         SystemInfo::set_environment_file();
         XMLProfileManager::loadDefaultXMLFile();
-        // Only load profile once
+
+        // Change as already loaded
         default_xml_profiles_loaded = true;
 
         // Only change default participant qos when not explicitly set by the user
