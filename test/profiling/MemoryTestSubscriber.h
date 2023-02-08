@@ -26,7 +26,6 @@
 #include <fastrtps/types/DynamicTypeBuilderFactory.h>
 #include <fastrtps/types/DynamicDataFactory.h>
 #include <fastrtps/types/DynamicTypeBuilder.h>
-#include <fastrtps/types/DynamicTypeBuilderPtr.h>
 #include <fastrtps/types/TypeDescriptor.h>
 #include <fastrtps/types/MemberDescriptor.h>
 #include <fastrtps/types/DynamicType.h>
@@ -36,6 +35,7 @@
 class MemoryTestSubscriber
 {
 public:
+
     MemoryTestSubscriber();
     virtual ~MemoryTestSubscriber();
 
@@ -54,45 +54,88 @@ public:
     int m_status;
     int n_received;
     int n_samples;
-    bool init(bool echo, int nsam, bool reliable, uint32_t pid, bool hostname,
-        const eprosima::fastrtps::rtps::PropertyPolicy& part_property_policy,
-        const eprosima::fastrtps::rtps::PropertyPolicy& property_policy,
-        const std::string& sXMLConfigFile, uint32_t data_size, bool dynamic_types);
+    bool init(
+            bool echo,
+            int nsam,
+            bool reliable,
+            uint32_t pid,
+            bool hostname,
+            const eprosima::fastrtps::rtps::PropertyPolicy& part_property_policy,
+            const eprosima::fastrtps::rtps::PropertyPolicy& property_policy,
+            const std::string& sXMLConfigFile,
+            uint32_t data_size,
+            bool dynamic_types);
 
     void run();
-    bool test(uint32_t datasize);
+    bool test(
+            uint32_t datasize);
 
     class DataSubListener : public eprosima::fastrtps::SubscriberListener
     {
     public:
-        DataSubListener(MemoryTestSubscriber* up) :mp_up(up) {}
-        ~DataSubListener() {}
-        void onSubscriptionMatched(eprosima::fastrtps::Subscriber* sub,
-            eprosima::fastrtps::rtps::MatchingInfo& into);
-        void onNewDataMessage(eprosima::fastrtps::Subscriber* sub);
+
+        DataSubListener(
+                MemoryTestSubscriber* up)
+            : mp_up(up)
+        {
+        }
+
+        ~DataSubListener()
+        {
+        }
+
+        void onSubscriptionMatched(
+                eprosima::fastrtps::Subscriber* sub,
+                eprosima::fastrtps::rtps::MatchingInfo& into);
+        void onNewDataMessage(
+                eprosima::fastrtps::Subscriber* sub);
         MemoryTestSubscriber* mp_up;
-    } m_datasublistener;
+    }
+    m_datasublistener;
 
     class CommandPubListener : public eprosima::fastrtps::PublisherListener
     {
     public:
-        CommandPubListener(MemoryTestSubscriber* up) :mp_up(up) {}
-        ~CommandPubListener() {}
-        void onPublicationMatched(eprosima::fastrtps::Publisher* pub,
-            eprosima::fastrtps::rtps::MatchingInfo& info);
+
+        CommandPubListener(
+                MemoryTestSubscriber* up)
+            : mp_up(up)
+        {
+        }
+
+        ~CommandPubListener()
+        {
+        }
+
+        void onPublicationMatched(
+                eprosima::fastrtps::Publisher* pub,
+                eprosima::fastrtps::rtps::MatchingInfo& info);
         MemoryTestSubscriber* mp_up;
-    } m_commandpublistener;
+    }
+    m_commandpublistener;
 
     class CommandSubListener : public eprosima::fastrtps::SubscriberListener
     {
     public:
-        CommandSubListener(MemoryTestSubscriber* up) :mp_up(up) {}
-        ~CommandSubListener() {}
-        void onSubscriptionMatched(eprosima::fastrtps::Subscriber* sub,
-            eprosima::fastrtps::rtps::MatchingInfo& into);
-        void onNewDataMessage(eprosima::fastrtps::Subscriber* sub);
+
+        CommandSubListener(
+                MemoryTestSubscriber* up)
+            : mp_up(up)
+        {
+        }
+
+        ~CommandSubListener()
+        {
+        }
+
+        void onSubscriptionMatched(
+                eprosima::fastrtps::Subscriber* sub,
+                eprosima::fastrtps::rtps::MatchingInfo& into);
+        void onNewDataMessage(
+                eprosima::fastrtps::Subscriber* sub);
         MemoryTestSubscriber* mp_up;
-    } m_commandsublistener;
+    }
+    m_commandsublistener;
 
     bool m_echo;
     TestCommandDataType command_t;

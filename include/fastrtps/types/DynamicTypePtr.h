@@ -12,8 +12,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#ifndef TYPES_DYNAMIC_TYPE_PTR_H
-#define TYPES_DYNAMIC_TYPE_PTR_H
+#ifndef FASTRTPS_TYPES_DYNAMIC_TYPE_PTR_H
+#define FASTRTPS_TYPES_DYNAMIC_TYPE_PTR_H
+
+#include <memory>
 
 #include <memory>
 
@@ -76,4 +78,4 @@ public:
 } // namespace fastrtps
 } // namespace eprosima
 
-#endif // TYPES_DYNAMIC_TYPE_PTR_H
+#endif // FASTRTPS_TYPES_DYNAMIC_TYPE_PTR_H

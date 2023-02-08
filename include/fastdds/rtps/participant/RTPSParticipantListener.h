@@ -20,6 +20,7 @@
 #ifndef _FASTDDS_RTPS_PARTICIPANT_RTPSPARTICIPANTLISTENER_H__
 #define _FASTDDS_RTPS_PARTICIPANT_RTPSPARTICIPANTLISTENER_H__
 
+#include <fastdds/dds/xtypes/dynamic_types/DynamicType.hpp>
 #include <fastdds/rtps/participant/ParticipantDiscoveryInfo.h>
 #include <fastdds/rtps/reader/ReaderDiscoveryInfo.h>
 #include <fastdds/rtps/writer/WriterDiscoveryInfo.h>

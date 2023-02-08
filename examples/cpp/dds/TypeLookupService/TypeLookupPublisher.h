@@ -23,8 +23,8 @@
 #include <fastdds/dds/publisher/DataWriterListener.hpp>
 #include <fastdds/dds/domain/DomainParticipant.hpp>
 
-#include <fastrtps/types/DynamicPubSubType.h>
-#include <fastrtps/types/DynamicDataPtr.h>
+#include <fastdds/dds/xtypes/dynamic_types/DynamicPubSubType.hpp>
+#include <fastdds/dds/xtypes/dynamic_types/DynamicData.hpp>
 
 class TypeLookupPublisher
 {
@@ -48,7 +48,7 @@ public:
 
 private:
 
-    eprosima::fastrtps::types::DynamicData_ptr m_Hello;
+    eprosima::fastdds::dds::DynamicData* m_Hello {nullptr};
 
     eprosima::fastdds::dds::DomainParticipant* mp_participant;
 

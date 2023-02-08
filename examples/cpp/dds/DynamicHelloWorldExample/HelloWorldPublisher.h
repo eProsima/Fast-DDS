@@ -20,6 +20,8 @@
 #ifndef HELLOWORLDPUBLISHER_H_
 #define HELLOWORLDPUBLISHER_H_
 
+#include <fastdds/dds/xtypes/dynamic_types/DynamicData.hpp>
+
 #include <fastdds/dds/publisher/DataWriterListener.hpp>
 #include <fastdds/dds/domain/DomainParticipant.hpp>
 
@@ -45,7 +47,7 @@ public:
 
 private:
 
-    eprosima::fastrtps::types::DynamicData_ptr m_Hello;
+    eprosima::fastdds::dds::DynamicData* m_Hello {nullptr};
 
     eprosima::fastdds::dds::DomainParticipant* mp_participant;
 

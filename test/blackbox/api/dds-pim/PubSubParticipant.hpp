@@ -42,6 +42,8 @@
 #include <fastdds/dds/subscriber/qos/DataReaderQos.hpp>
 #include <fastdds/rtps/participant/ParticipantDiscoveryInfo.h>
 
+using eprosima::fastdds::dds::ReturnCode_t;
+
 /**
  * @brief A class with one participant that can have multiple publishers and subscribers
  */

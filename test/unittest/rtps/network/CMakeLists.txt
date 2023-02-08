@@ -97,19 +97,16 @@ if(QNX)
 endif()
 add_executable(ExternalLocatorsProcessorTests
     ExternalLocatorsProcessorTests.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/dynamic-types/AnnotationDescriptor.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/dynamic-types/DynamicData.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/dynamic-types/DynamicDataFactory.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/dynamic-types/DynamicDataPtr.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/dynamic-types/DynamicPubSubType.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/dynamic-types/DynamicType.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/dynamic-types/DynamicTypeBuilder.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/dynamic-types/DynamicTypeBuilderFactory.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/dynamic-types/DynamicTypeBuilderPtr.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/dynamic-types/DynamicTypeMember.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/dynamic-types/DynamicTypePtr.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/dynamic-types/MemberDescriptor.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/dynamic-types/TypeDescriptor.cpp
+    ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/xtypes/dynamic_types/AnnotationDescriptor.cpp
+    ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/xtypes/dynamic_types/DynamicData.cpp
+    ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/xtypes/dynamic_types/DynamicDataFactory.cpp
+    ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/xtypes/dynamic_types/DynamicPubSubType.cpp
+    ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/xtypes/dynamic_types/DynamicType.cpp
+    ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/xtypes/dynamic_types/DynamicTypeBuilder.cpp
+    ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/xtypes/dynamic_types/DynamicTypeBuilderFactory.cpp
+    ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/xtypes/dynamic_types/DynamicTypeMember.cpp
+    ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/xtypes/dynamic_types/MemberDescriptor.cpp
+    ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/xtypes/dynamic_types/TypeDescriptor.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/log/Log.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/log/OStreamConsumer.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/log/StdoutConsumer.cpp
@@ -142,6 +139,7 @@ target_include_directories(ExternalLocatorsProcessorTests PRIVATE
     )
 target_link_libraries(ExternalLocatorsProcessorTests fastcdr
     GTest::gtest ${MOCKS}
+    fastdds::xtypes
     ${CMAKE_THREAD_LIBS_INIT} ${CMAKE_DL_LIBS})
 
 if(QNX)

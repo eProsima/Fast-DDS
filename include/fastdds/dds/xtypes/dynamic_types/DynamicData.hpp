@@ -21,7 +21,7 @@
 #include <fastdds/dds/core/ReturnCode.hpp>
 #include <fastdds/dds/xtypes/dynamic_types/DynamicType.hpp>
 #include <fastdds/dds/xtypes/dynamic_types/Types.hpp>
-#include <fastdds/fastdds_dll.h>
+#include <fastdds/fastdds_dll.hpp>
 #include <fastdds/rtps/common/Types.h>
 
 namespace eprosima {

@@ -21,10 +21,6 @@
 #define _FASTDDS_PARTICIPANTIMPL_HPP_
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 
-#include <atomic>
-#include <mutex>
-#include <condition_variable>
-
 #include <fastdds/rtps/common/Guid.h>
 #include <fastdds/rtps/participant/RTPSParticipantListener.h>
 #include <fastdds/rtps/reader/StatefulReader.h>
@@ -659,7 +655,7 @@ protected:
             InstanceHandle_t& handle);
 
     ReturnCode_t register_dynamic_type(
-            fastrtps::types::DynamicType_ptr dyn_type);
+            const DynamicType* dyn_type);
 
     virtual PublisherImpl* create_publisher_impl(
             const PublisherQos& qos,

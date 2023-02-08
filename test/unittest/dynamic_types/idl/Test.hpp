@@ -102,31 +102,31 @@ public:
     eProsima_user_DllExport BasicStruct(
             const BasicStruct& x)
     {
-                    m_my_bool = x.m_my_bool;
+        m_my_bool = x.m_my_bool;
 
-                    m_my_octet = x.m_my_octet;
+        m_my_octet = x.m_my_octet;
 
-                    m_my_int16 = x.m_my_int16;
+        m_my_int16 = x.m_my_int16;
 
-                    m_my_int32 = x.m_my_int32;
+        m_my_int32 = x.m_my_int32;
 
-                    m_my_int64 = x.m_my_int64;
+        m_my_int64 = x.m_my_int64;
 
-                    m_my_uint16 = x.m_my_uint16;
+        m_my_uint16 = x.m_my_uint16;
 
-                    m_my_uint32 = x.m_my_uint32;
+        m_my_uint32 = x.m_my_uint32;
 
-                    m_my_uint64 = x.m_my_uint64;
+        m_my_uint64 = x.m_my_uint64;
 
-                    m_my_float32 = x.m_my_float32;
+        m_my_float32 = x.m_my_float32;
 
-                    m_my_float64 = x.m_my_float64;
+        m_my_float64 = x.m_my_float64;
 
-                    m_my_float128 = x.m_my_float128;
+        m_my_float128 = x.m_my_float128;
 
-                    m_my_char = x.m_my_char;
+        m_my_char = x.m_my_char;
 
-                    m_my_string = x.m_my_string;
+        m_my_string = x.m_my_string;
 
     }
 
@@ -160,31 +160,31 @@ public:
             const BasicStruct& x)
     {
 
-                    m_my_bool = x.m_my_bool;
+        m_my_bool = x.m_my_bool;
 
-                    m_my_octet = x.m_my_octet;
+        m_my_octet = x.m_my_octet;
 
-                    m_my_int16 = x.m_my_int16;
+        m_my_int16 = x.m_my_int16;
 
-                    m_my_int32 = x.m_my_int32;
+        m_my_int32 = x.m_my_int32;
 
-                    m_my_int64 = x.m_my_int64;
+        m_my_int64 = x.m_my_int64;
 
-                    m_my_uint16 = x.m_my_uint16;
+        m_my_uint16 = x.m_my_uint16;
 
-                    m_my_uint32 = x.m_my_uint32;
+        m_my_uint32 = x.m_my_uint32;
 
-                    m_my_uint64 = x.m_my_uint64;
+        m_my_uint64 = x.m_my_uint64;
 
-                    m_my_float32 = x.m_my_float32;
+        m_my_float32 = x.m_my_float32;
 
-                    m_my_float64 = x.m_my_float64;
+        m_my_float64 = x.m_my_float64;
 
-                    m_my_float128 = x.m_my_float128;
+        m_my_float128 = x.m_my_float128;
 
-                    m_my_char = x.m_my_char;
+        m_my_char = x.m_my_char;
 
-                    m_my_string = x.m_my_string;
+        m_my_string = x.m_my_string;
 
         return *this;
     }
@@ -221,18 +221,18 @@ public:
             const BasicStruct& x) const
     {
         return (m_my_bool == x.m_my_bool &&
-           m_my_octet == x.m_my_octet &&
-           m_my_int16 == x.m_my_int16 &&
-           m_my_int32 == x.m_my_int32 &&
-           m_my_int64 == x.m_my_int64 &&
-           m_my_uint16 == x.m_my_uint16 &&
-           m_my_uint32 == x.m_my_uint32 &&
-           m_my_uint64 == x.m_my_uint64 &&
-           m_my_float32 == x.m_my_float32 &&
-           m_my_float64 == x.m_my_float64 &&
-           m_my_float128 == x.m_my_float128 &&
-           m_my_char == x.m_my_char &&
-           m_my_string == x.m_my_string);
+               m_my_octet == x.m_my_octet &&
+               m_my_int16 == x.m_my_int16 &&
+               m_my_int32 == x.m_my_int32 &&
+               m_my_int64 == x.m_my_int64 &&
+               m_my_uint16 == x.m_my_uint16 &&
+               m_my_uint32 == x.m_my_uint32 &&
+               m_my_uint64 == x.m_my_uint64 &&
+               m_my_float32 == x.m_my_float32 &&
+               m_my_float64 == x.m_my_float64 &&
+               m_my_float128 == x.m_my_float128 &&
+               m_my_char == x.m_my_char &&
+               m_my_string == x.m_my_string);
     }
 
     /*!
@@ -273,7 +273,6 @@ public:
         return m_my_bool;
     }
 
-
     /*!
      * @brief This function sets a value in member my_octet
      * @param _my_octet New value for member my_octet
@@ -301,7 +300,6 @@ public:
     {
         return m_my_octet;
     }
-
 
     /*!
      * @brief This function sets a value in member my_int16
@@ -331,7 +329,6 @@ public:
         return m_my_int16;
     }
 
-
     /*!
      * @brief This function sets a value in member my_int32
      * @param _my_int32 New value for member my_int32
@@ -359,7 +356,6 @@ public:
     {
         return m_my_int32;
     }
-
 
     /*!
      * @brief This function sets a value in member my_int64
@@ -389,7 +385,6 @@ public:
         return m_my_int64;
     }
 
-
     /*!
      * @brief This function sets a value in member my_uint16
      * @param _my_uint16 New value for member my_uint16
@@ -417,7 +412,6 @@ public:
     {
         return m_my_uint16;
     }
-
 
     /*!
      * @brief This function sets a value in member my_uint32
@@ -447,7 +441,6 @@ public:
         return m_my_uint32;
     }
 
-
     /*!
      * @brief This function sets a value in member my_uint64
      * @param _my_uint64 New value for member my_uint64
@@ -475,7 +468,6 @@ public:
     {
         return m_my_uint64;
     }
-
 
     /*!
      * @brief This function sets a value in member my_float32
@@ -505,7 +497,6 @@ public:
         return m_my_float32;
     }
 
-
     /*!
      * @brief This function sets a value in member my_float64
      * @param _my_float64 New value for member my_float64
@@ -533,7 +524,6 @@ public:
     {
         return m_my_float64;
     }
-
 
     /*!
      * @brief This function sets a value in member my_float128
@@ -563,7 +553,6 @@ public:
         return m_my_float128;
     }
 
-
     /*!
      * @brief This function sets a value in member my_char
      * @param _my_char New value for member my_char
@@ -591,7 +580,6 @@ public:
     {
         return m_my_char;
     }
-
 
     /*!
      * @brief This function copies the value in member my_string
@@ -630,8 +618,6 @@ public:
     {
         return m_my_string;
     }
-
-
 
 private:
 
@@ -689,45 +675,45 @@ public:
     eProsima_user_DllExport ComplexStruct(
             const ComplexStruct& x)
     {
-                    m_my_octet = x.m_my_octet;
+        m_my_octet = x.m_my_octet;
 
-                    m_my_basic_struct = x.m_my_basic_struct;
+        m_my_basic_struct = x.m_my_basic_struct;
 
-                    m_my_alias_enum = x.m_my_alias_enum;
+        m_my_alias_enum = x.m_my_alias_enum;
 
-                    m_my_enum = x.m_my_enum;
+        m_my_enum = x.m_my_enum;
 
-                    m_my_sequence_octet = x.m_my_sequence_octet;
+        m_my_sequence_octet = x.m_my_sequence_octet;
 
-                    m_my_sequence_struct = x.m_my_sequence_struct;
+        m_my_sequence_struct = x.m_my_sequence_struct;
 
-                    m_my_array_octet = x.m_my_array_octet;
+        m_my_array_octet = x.m_my_array_octet;
 
-                    m_my_octet_array_500 = x.m_my_octet_array_500;
+        m_my_octet_array_500 = x.m_my_octet_array_500;
 
-                    m_my_array_struct = x.m_my_array_struct;
+        m_my_array_struct = x.m_my_array_struct;
 
-                    m_my_map_octet_short = x.m_my_map_octet_short;
+        m_my_map_octet_short = x.m_my_map_octet_short;
 
-                    m_my_map_long_struct = x.m_my_map_long_struct;
+        m_my_map_long_struct = x.m_my_map_long_struct;
 
-                    m_my_map_long_seq_octet = x.m_my_map_long_seq_octet;
+        m_my_map_long_seq_octet = x.m_my_map_long_seq_octet;
 
-                    m_my_map_long_octet_array_500 = x.m_my_map_long_octet_array_500;
+        m_my_map_long_octet_array_500 = x.m_my_map_long_octet_array_500;
 
-                    m_my_map_long_lol_type = x.m_my_map_long_lol_type;
+        m_my_map_long_lol_type = x.m_my_map_long_lol_type;
 
-                    m_my_small_string_8 = x.m_my_small_string_8;
+        m_my_small_string_8 = x.m_my_small_string_8;
 
-                    m_my_large_string_8 = x.m_my_large_string_8;
+        m_my_large_string_8 = x.m_my_large_string_8;
 
-                    m_my_array_string = x.m_my_array_string;
+        m_my_array_string = x.m_my_array_string;
 
-                    m_multi_alias_array_42 = x.m_multi_alias_array_42;
+        m_multi_alias_array_42 = x.m_multi_alias_array_42;
 
-                    m_my_array_arrays = x.m_my_array_arrays;
+        m_my_array_arrays = x.m_my_array_arrays;
 
-                    m_my_sequences_array = x.m_my_sequences_array;
+        m_my_sequences_array = x.m_my_sequences_array;
 
     }
 
@@ -768,45 +754,45 @@ public:
             const ComplexStruct& x)
     {
 
-                    m_my_octet = x.m_my_octet;
+        m_my_octet = x.m_my_octet;
 
-                    m_my_basic_struct = x.m_my_basic_struct;
+        m_my_basic_struct = x.m_my_basic_struct;
 
-                    m_my_alias_enum = x.m_my_alias_enum;
+        m_my_alias_enum = x.m_my_alias_enum;
 
-                    m_my_enum = x.m_my_enum;
+        m_my_enum = x.m_my_enum;
 
-                    m_my_sequence_octet = x.m_my_sequence_octet;
+        m_my_sequence_octet = x.m_my_sequence_octet;
 
-                    m_my_sequence_struct = x.m_my_sequence_struct;
+        m_my_sequence_struct = x.m_my_sequence_struct;
 
-                    m_my_array_octet = x.m_my_array_octet;
+        m_my_array_octet = x.m_my_array_octet;
 
-                    m_my_octet_array_500 = x.m_my_octet_array_500;
+        m_my_octet_array_500 = x.m_my_octet_array_500;
 
-                    m_my_array_struct = x.m_my_array_struct;
+        m_my_array_struct = x.m_my_array_struct;
 
-                    m_my_map_octet_short = x.m_my_map_octet_short;
+        m_my_map_octet_short = x.m_my_map_octet_short;
 
-                    m_my_map_long_struct = x.m_my_map_long_struct;
+        m_my_map_long_struct = x.m_my_map_long_struct;
 
-                    m_my_map_long_seq_octet = x.m_my_map_long_seq_octet;
+        m_my_map_long_seq_octet = x.m_my_map_long_seq_octet;
 
-                    m_my_map_long_octet_array_500 = x.m_my_map_long_octet_array_500;
+        m_my_map_long_octet_array_500 = x.m_my_map_long_octet_array_500;
 
-                    m_my_map_long_lol_type = x.m_my_map_long_lol_type;
+        m_my_map_long_lol_type = x.m_my_map_long_lol_type;
 
-                    m_my_small_string_8 = x.m_my_small_string_8;
+        m_my_small_string_8 = x.m_my_small_string_8;
 
-                    m_my_large_string_8 = x.m_my_large_string_8;
+        m_my_large_string_8 = x.m_my_large_string_8;
 
-                    m_my_array_string = x.m_my_array_string;
+        m_my_array_string = x.m_my_array_string;
 
-                    m_multi_alias_array_42 = x.m_multi_alias_array_42;
+        m_multi_alias_array_42 = x.m_multi_alias_array_42;
 
-                    m_my_array_arrays = x.m_my_array_arrays;
+        m_my_array_arrays = x.m_my_array_arrays;
 
-                    m_my_sequences_array = x.m_my_sequences_array;
+        m_my_sequences_array = x.m_my_sequences_array;
 
         return *this;
     }
@@ -850,25 +836,25 @@ public:
             const ComplexStruct& x) const
     {
         return (m_my_octet == x.m_my_octet &&
-           m_my_basic_struct == x.m_my_basic_struct &&
-           m_my_alias_enum == x.m_my_alias_enum &&
-           m_my_enum == x.m_my_enum &&
-           m_my_sequence_octet == x.m_my_sequence_octet &&
-           m_my_sequence_struct == x.m_my_sequence_struct &&
-           m_my_array_octet == x.m_my_array_octet &&
-           m_my_octet_array_500 == x.m_my_octet_array_500 &&
-           m_my_array_struct == x.m_my_array_struct &&
-           m_my_map_octet_short == x.m_my_map_octet_short &&
-           m_my_map_long_struct == x.m_my_map_long_struct &&
-           m_my_map_long_seq_octet == x.m_my_map_long_seq_octet &&
-           m_my_map_long_octet_array_500 == x.m_my_map_long_octet_array_500 &&
-           m_my_map_long_lol_type == x.m_my_map_long_lol_type &&
-           m_my_small_string_8 == x.m_my_small_string_8 &&
-           m_my_large_string_8 == x.m_my_large_string_8 &&
-           m_my_array_string == x.m_my_array_string &&
-           m_multi_alias_array_42 == x.m_multi_alias_array_42 &&
-           m_my_array_arrays == x.m_my_array_arrays &&
-           m_my_sequences_array == x.m_my_sequences_array);
+               m_my_basic_struct == x.m_my_basic_struct &&
+               m_my_alias_enum == x.m_my_alias_enum &&
+               m_my_enum == x.m_my_enum &&
+               m_my_sequence_octet == x.m_my_sequence_octet &&
+               m_my_sequence_struct == x.m_my_sequence_struct &&
+               m_my_array_octet == x.m_my_array_octet &&
+               m_my_octet_array_500 == x.m_my_octet_array_500 &&
+               m_my_array_struct == x.m_my_array_struct &&
+               m_my_map_octet_short == x.m_my_map_octet_short &&
+               m_my_map_long_struct == x.m_my_map_long_struct &&
+               m_my_map_long_seq_octet == x.m_my_map_long_seq_octet &&
+               m_my_map_long_octet_array_500 == x.m_my_map_long_octet_array_500 &&
+               m_my_map_long_lol_type == x.m_my_map_long_lol_type &&
+               m_my_small_string_8 == x.m_my_small_string_8 &&
+               m_my_large_string_8 == x.m_my_large_string_8 &&
+               m_my_array_string == x.m_my_array_string &&
+               m_multi_alias_array_42 == x.m_multi_alias_array_42 &&
+               m_my_array_arrays == x.m_my_array_arrays &&
+               m_my_sequences_array == x.m_my_sequences_array);
     }
 
     /*!
@@ -909,7 +895,6 @@ public:
         return m_my_octet;
     }
 
-
     /*!
      * @brief This function copies the value in member my_basic_struct
      * @param _my_basic_struct New value to be copied in member my_basic_struct
@@ -948,7 +933,6 @@ public:
         return m_my_basic_struct;
     }
 
-
     /*!
      * @brief This function sets a value in member my_alias_enum
      * @param _my_alias_enum New value for member my_alias_enum
@@ -977,7 +961,6 @@ public:
         return m_my_alias_enum;
     }
 
-
     /*!
      * @brief This function sets a value in member my_enum
      * @param _my_enum New value for member my_enum
@@ -1005,7 +988,6 @@ public:
     {
         return m_my_enum;
     }
-
 
     /*!
      * @brief This function copies the value in member my_sequence_octet
@@ -1045,7 +1027,6 @@ public:
         return m_my_sequence_octet;
     }
 
-
     /*!
      * @brief This function copies the value in member my_sequence_struct
      * @param _my_sequence_struct New value to be copied in member my_sequence_struct
@@ -1083,7 +1064,6 @@ public:
     {
         return m_my_sequence_struct;
     }
-
 
     /*!
      * @brief This function copies the value in member my_array_octet
@@ -1123,7 +1103,6 @@ public:
         return m_my_array_octet;
     }
 
-
     /*!
      * @brief This function copies the value in member my_octet_array_500
      * @param _my_octet_array_500 New value to be copied in member my_octet_array_500
@@ -1161,7 +1140,6 @@ public:
     {
         return m_my_octet_array_500;
     }
-
 
     /*!
      * @brief This function copies the value in member my_array_struct
@@ -1201,7 +1179,6 @@ public:
         return m_my_array_struct;
     }
 
-
     /*!
      * @brief This function copies the value in member my_map_octet_short
      * @param _my_map_octet_short New value to be copied in member my_map_octet_short
@@ -1239,7 +1216,6 @@ public:
     {
         return m_my_map_octet_short;
     }
-
 
     /*!
      * @brief This function copies the value in member my_map_long_struct
@@ -1279,7 +1255,6 @@ public:
         return m_my_map_long_struct;
     }
 
-
     /*!
      * @brief This function copies the value in member my_map_long_seq_octet
      * @param _my_map_long_seq_octet New value to be copied in member my_map_long_seq_octet
@@ -1317,7 +1292,6 @@ public:
     {
         return m_my_map_long_seq_octet;
     }
-
 
     /*!
      * @brief This function copies the value in member my_map_long_octet_array_500
@@ -1357,7 +1331,6 @@ public:
         return m_my_map_long_octet_array_500;
     }
 
-
     /*!
      * @brief This function copies the value in member my_map_long_lol_type
      * @param _my_map_long_lol_type New value to be copied in member my_map_long_lol_type
@@ -1395,7 +1368,6 @@ public:
     {
         return m_my_map_long_lol_type;
     }
-
 
     /*!
      * @brief This function copies the value in member my_small_string_8
@@ -1435,7 +1407,6 @@ public:
         return m_my_small_string_8;
     }
 
-
     /*!
      * @brief This function copies the value in member my_large_string_8
      * @param _my_large_string_8 New value to be copied in member my_large_string_8
@@ -1474,7 +1445,6 @@ public:
         return m_my_large_string_8;
     }
 
-
     /*!
      * @brief This function copies the value in member my_array_string
      * @param _my_array_string New value to be copied in member my_array_string
@@ -1499,7 +1469,8 @@ public:
      * @brief This function returns a constant reference to member my_array_string
      * @return Constant reference to member my_array_string
      */
-    eProsima_user_DllExport const std::array<std::array<eprosima::fastcdr::fixed_string<75>, 5>, 5>& my_array_string() const
+    eProsima_user_DllExport const std::array<std::array<eprosima::fastcdr::fixed_string<75>, 5>,
+            5>& my_array_string() const
     {
         return m_my_array_string;
     }
@@ -1512,7 +1483,6 @@ public:
     {
         return m_my_array_string;
     }
-
 
     /*!
      * @brief This function copies the value in member multi_alias_array_42
@@ -1552,7 +1522,6 @@ public:
         return m_multi_alias_array_42;
     }
 
-
     /*!
      * @brief This function copies the value in member my_array_arrays
      * @param _my_array_arrays New value to be copied in member my_array_arrays
@@ -1591,7 +1560,6 @@ public:
         return m_my_array_arrays;
     }
 
-
     /*!
      * @brief This function copies the value in member my_sequences_array
      * @param _my_sequences_array New value to be copied in member my_sequences_array
@@ -1629,8 +1597,6 @@ public:
     {
         return m_my_sequences_array;
     }
-
-
 
 private:
 
@@ -1874,7 +1840,8 @@ public:
 
         if (!b)
         {
-            throw eprosima::fastcdr::exception::BadParamException("Discriminator doesn't correspond with the selected union member");
+            throw eprosima::fastcdr::exception::BadParamException(
+                      "Discriminator doesn't correspond with the selected union member");
         }
 
         m__d = __d;
@@ -1974,7 +1941,6 @@ public:
         return m_basic;
     }
 
-
     /*!
      * @brief This function copies the value in member complex
      * @param _complex New value to be copied in member complex
@@ -2052,8 +2018,6 @@ public:
 
         return m_complex;
     }
-
-
 
 private:
 
@@ -2308,7 +2272,8 @@ public:
 
         if (!b)
         {
-            throw eprosima::fastcdr::exception::BadParamException("Discriminator doesn't correspond with the selected union member");
+            throw eprosima::fastcdr::exception::BadParamException(
+                      "Discriminator doesn't correspond with the selected union member");
         }
 
         m__d = __d;
@@ -2396,7 +2361,6 @@ public:
         return m_uno;
     }
 
-
     /*!
      * @brief This function copies the value in member imString
      * @param _imString New value to be copied in member imString
@@ -2473,7 +2437,6 @@ public:
         return m_imString;
     }
 
-
     /*!
      * @brief This function sets a value in member tres
      * @param _tres New value for member tres
@@ -2538,8 +2501,6 @@ public:
         return m_tres;
     }
 
-
-
 private:
 
     uint8_t m__d;
@@ -2577,9 +2538,9 @@ public:
     eProsima_user_DllExport CompleteStruct(
             const CompleteStruct& x)
     {
-                    m_my_union = x.m_my_union;
+        m_my_union = x.m_my_union;
 
-                    m_my_union_2 = x.m_my_union_2;
+        m_my_union_2 = x.m_my_union_2;
 
     }
 
@@ -2602,9 +2563,9 @@ public:
             const CompleteStruct& x)
     {
 
-                    m_my_union = x.m_my_union;
+        m_my_union = x.m_my_union;
 
-                    m_my_union_2 = x.m_my_union_2;
+        m_my_union_2 = x.m_my_union_2;
 
         return *this;
     }
@@ -2630,7 +2591,7 @@ public:
             const CompleteStruct& x) const
     {
         return (m_my_union == x.m_my_union &&
-           m_my_union_2 == x.m_my_union_2);
+               m_my_union_2 == x.m_my_union_2);
     }
 
     /*!
@@ -2681,7 +2642,6 @@ public:
         return m_my_union;
     }
 
-
     /*!
      * @brief This function copies the value in member my_union_2
      * @param _my_union_2 New value to be copied in member my_union_2
@@ -2720,8 +2680,6 @@ public:
         return m_my_union_2;
     }
 
-
-
 private:
 
     MyUnion m_my_union;
@@ -2757,9 +2715,9 @@ public:
     eProsima_user_DllExport KeyedStruct(
             const KeyedStruct& x)
     {
-                    m_key = x.m_key;
+        m_key = x.m_key;
 
-                    m_basic = x.m_basic;
+        m_basic = x.m_basic;
 
     }
 
@@ -2782,9 +2740,9 @@ public:
             const KeyedStruct& x)
     {
 
-                    m_key = x.m_key;
+        m_key = x.m_key;
 
-                    m_basic = x.m_basic;
+        m_basic = x.m_basic;
 
         return *this;
     }
@@ -2810,7 +2768,7 @@ public:
             const KeyedStruct& x) const
     {
         return (m_key == x.m_key &&
-           m_basic == x.m_basic);
+               m_basic == x.m_basic);
     }
 
     /*!
@@ -2851,7 +2809,6 @@ public:
         return m_key;
     }
 
-
     /*!
      * @brief This function copies the value in member basic
      * @param _basic New value to be copied in member basic
@@ -2889,8 +2846,6 @@ public:
     {
         return m_basic;
     }
-
-
 
 private:
 

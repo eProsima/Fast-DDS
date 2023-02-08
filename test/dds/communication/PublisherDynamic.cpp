@@ -32,11 +32,14 @@
 #include <fastdds/dds/publisher/PublisherListener.hpp>
 #include <fastdds/dds/publisher/qos/DataWriterQos.hpp>
 #include <fastdds/dds/publisher/qos/PublisherQos.hpp>
+#include <fastdds/dds/xtypes/dynamic_types/DynamicDataFactory.hpp>
+#include <fastdds/dds/xtypes/dynamic_types/DynamicData.hpp>
 #include <fastrtps/types/DynamicDataFactory.h>
 
 using namespace eprosima::fastdds::dds;
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
+using namespace eprosima::fastdds::dds::xtypes;
 
 static bool run = true;
 
@@ -240,7 +243,7 @@ int main(
         return 1;
     }
 
-    types::DynamicTypeBuilder* dyn_type_builder = nullptr;
+    DynamicTypeBuilder* dyn_type_build {nullptr};
     if (RETCODE_OK !=
             DomainParticipantFactory::get_instance()->get_dynamic_type_builder_from_xml_by_name("TypeLookup",
             dyn_type_builder))
@@ -249,8 +252,8 @@ int main(
         return 1;
     }
 
-    types::DynamicType_ptr dyn_type = dyn_type_builder->build();
-    TypeSupport type(new types::DynamicPubSubType(dyn_type));
+    auto dyn_type = dyn_type_build->build();
+    TypeSupport type(new DynamicPubSubType(dyn_type));
     type.register_type(participant);
 
     PubListener listener;
@@ -300,16 +303,15 @@ int main(
                 });
     }
 
-    types::DynamicData_ptr data(types::DynamicDataFactory::get_instance()->create_data(dyn_type));
+    DynamicData* data {DynamicDataFactory::get_instance().create_data(*dyn_type)};
     data->set_string_value("Hello DDS Dynamic World", 0);
     data->set_uint32_value(1, 1);
-    types::DynamicData* inner = data->loan_value(2);
+    DynamicData* inner {data->loan_value(2)};
     inner->set_byte_value(10, 0);
-    data->return_loaned_value(inner);
 
     while (run)
     {
-        writer->write(data.get());
+        writer->write(data);
 
         uint32_t index;
         data->get_uint32_value(index, 1);
@@ -327,7 +329,6 @@ int main(
         octet inner_count;
         inner->get_byte_value(inner_count, 0);
         inner->set_byte_value(inner_count + 1, 0);
-        data->return_loaned_value(inner);
 
         std::this_thread::sleep_for(std::chrono::milliseconds(250));
     }

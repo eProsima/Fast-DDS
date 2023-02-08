@@ -53,11 +53,12 @@
 #include <fastdds/rtps/transport/TCPv6TransportDescriptor.h>
 #include <fastrtps/utils/IPLocator.h>
 
-using DomainParticipantFactory = eprosima::fastdds::dds::DomainParticipantFactory;
-using eprosima::fastrtps::rtps::IPLocator;
+using eprosima::fastdds::dds::DomainParticipantFactory;
+using eprosima::fastdds::dds::ReturnCode_t;
 using eprosima::fastdds::rtps::UDPTransportDescriptor;
 using eprosima::fastdds::rtps::UDPv4TransportDescriptor;
 using eprosima::fastdds::rtps::UDPv6TransportDescriptor;
+using eprosima::fastrtps::rtps::IPLocator;
 
 template<class TypeSupport>
 class PubSubWriter

@@ -1,4 +1,4 @@
-// Copyright 2018 Proyectos y Sistemas de Mantenimiento SL (eProsima).
+﻿// Copyright 2018 Proyectos y Sistemas de Mantenimiento SL (eProsima).
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -12,9 +12,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include <fastrtps/types/DynamicDataPtr.h>
 #include <fastrtps/types/DynamicData.h>
 #include <fastrtps/types/DynamicDataFactory.h>
+#include <fastrtps/types/DynamicDataPtr.h>
 
 namespace eprosima {
 namespace fastrtps {
@@ -23,9 +23,9 @@ namespace types {
 DynamicData_ptr::DynamicData_ptr(
         DynamicData* pData)
     : Base(pData, [](DynamicData* pData)
-{
-    DynamicDataFactory::get_instance()->delete_data(pData);
-})
+            {
+                DynamicDataFactory::get_instance()->delete_data(pData);
+            })
 {
 }
 

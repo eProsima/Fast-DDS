@@ -24,6 +24,7 @@
 #include <memory>
 #include <mutex>
 
+#include <fastdds/dds/core/ReturnCode.hpp>
 #include <fastdds/dds/core/status/StatusMask.hpp>
 #include <fastdds/dds/domain/qos/DomainParticipantFactoryQos.hpp>
 #include <fastdds/dds/domain/qos/DomainParticipantQos.hpp>

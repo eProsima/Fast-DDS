@@ -39,6 +39,9 @@
 #include <fastdds/dds/subscriber/Subscriber.hpp>
 #include <fastdds/dds/topic/IContentFilterFactory.hpp>
 #include <fastdds/dds/topic/TypeSupport.hpp>
+#include <fastdds/dds/xtypes/dynamic_types/DynamicPubSubType.hpp>
+#include <fastdds/dds/xtypes/dynamic_types/DynamicType.hpp>
+#include <fastdds/dds/xtypes/dynamic_types/DynamicTypeBuilderFactory.hpp>
 #include <fastdds/rtps/attributes/PropertyPolicy.h>
 #include <fastdds/rtps/attributes/RTPSParticipantAttributes.h>
 #include <fastdds/rtps/builtin/liveliness/WLP.h>
@@ -51,10 +54,6 @@
 #include <fastdds/rtps/writer/WriterDiscoveryInfo.h>
 #include <fastrtps/attributes/PublisherAttributes.h>
 #include <fastrtps/attributes/SubscriberAttributes.h>
-#include <fastrtps/types/DynamicPubSubType.h>
-#include <fastrtps/types/DynamicType.h>
-#include <fastrtps/types/DynamicTypeBuilderFactory.h>
-#include <fastrtps/types/DynamicTypeMember.h>
 
 #include <fastdds/core/policy/QosPolicyUtils.hpp>
 #include <fastdds/publisher/DataWriterImpl.hpp>
@@ -93,6 +92,28 @@ using fastrtps::rtps::WriterProxyData;
 using fastrtps::rtps::EndpointKind_t;
 using fastrtps::rtps::ResourceEvent;
 using eprosima::fastdds::dds::Log;
+
+bool DomainParticipantImpl::version_1_3_state::find_callback(
+        const fastrtps::rtps::SampleIdentity& id)
+{
+    return register_callbacks_.find(id) != register_callbacks_.end();
+}
+
+void DomainParticipantImpl::version_1_3_state::remove_callback(
+        const fastrtps::rtps::SampleIdentity& id)
+{
+    register_callbacks_.erase(id);
+}
+
+void DomainParticipantImpl::version_1_3_state::empty_callback(
+        const fastrtps::rtps::SampleIdentity& id)
+{
+    auto it = register_callbacks_.find(id);
+    if (it != register_callbacks_.end())
+    {
+        it->second.second(it->second.first, {}); // Everything should be already registered
+    }
+}
 
 DomainParticipantImpl::DomainParticipantImpl(
         DomainParticipant* dp,
@@ -1579,9 +1600,9 @@ ResourceEvent& DomainParticipantImpl::get_resource_event() const
 }
 
 ReturnCode_t DomainParticipantImpl::register_dynamic_type(
-        fastrtps::types::DynamicType_ptr dyn_type)
+        const DynamicType* dyn_type)
 {
-    TypeSupport type(new fastrtps::types::DynamicPubSubType(dyn_type));
+    TypeSupport type(new DynamicPubSubType(*dyn_type));
     return get_participant()->register_type(type);
 }
 

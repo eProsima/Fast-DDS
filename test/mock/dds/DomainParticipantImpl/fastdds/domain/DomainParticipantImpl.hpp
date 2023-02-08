@@ -22,6 +22,7 @@
 #include <vector>
 
 #include <fastdds/builtin/type_lookup_service/TypeLookupManager.hpp>
+#include <fastdds/dds/core/ReturnCode.hpp>
 #include <fastdds/dds/core/status/StatusMask.hpp>
 #include <fastdds/dds/domain/qos/DomainParticipantQos.hpp>
 #include <fastdds/dds/publisher/Publisher.hpp>
@@ -39,7 +40,6 @@
 #include <fastdds/rtps/resources/ResourceEvent.h>
 #include <fastdds/rtps/RTPSDomain.h>
 #include <fastrtps/attributes/TopicAttributes.h>
-#include <fastrtps/types/TypesBase.h>
 #include <gmock/gmock.h>
 
 #include <fastdds/publisher/PublisherImpl.hpp>

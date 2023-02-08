@@ -1,4 +1,4 @@
-// Copyright 2018 Proyectos y Sistemas de Mantenimiento SL (eProsima).
+﻿// Copyright 2018 Proyectos y Sistemas de Mantenimiento SL (eProsima).
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -16,8 +16,8 @@
 #include <fastrtps/types/DynamicType.h>
 #include <fastrtps/types/DynamicTypeBuilder.h>
 #include <fastrtps/types/DynamicTypeBuilderFactory.h>
-#include <fastrtps/types/TypeDescriptor.h>
 #include <fastrtps/types/DynamicTypeMember.h>
+#include <fastrtps/types/TypeDescriptor.h>
 #include <fastdds/dds/log/Log.hpp>
 
 namespace eprosima {

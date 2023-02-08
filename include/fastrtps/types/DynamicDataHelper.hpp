@@ -49,7 +49,7 @@ protected:
     static void print_basic_element(
             DynamicData* data,
             MemberId id,
-            TypeKind kind);
+            octet kind);
 
     static void print_basic_element(
             DynamicData* data,

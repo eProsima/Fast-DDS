@@ -23,6 +23,7 @@
 
 #include <fastdds/dds/core/policy/QosPolicies.hpp>
 #include <fastdds/dds/domain/qos/DomainParticipantFactoryQos.hpp>
+#include <fastdds/dds/xtypes/dynamic_types/DynamicTypeBuilder.hpp>
 #include <fastdds/LibrarySettings.hpp>
 #include <fastdds/rtps/attributes/ThreadSettings.hpp>
 #include <fastdds/rtps/transport/PortBasedTransportDescriptor.hpp>
@@ -33,8 +34,6 @@
 #include <fastrtps/attributes/ReplierAttributes.hpp>
 #include <fastrtps/attributes/RequesterAttributes.hpp>
 #include <fastrtps/attributes/SubscriberAttributes.h>
-#include <fastrtps/types/DynamicTypeBuilderPtr.h>
-#include <fastrtps/types/TypesBase.h>
 
 #include <xmlparser/XMLParserCommon.h>
 
@@ -59,7 +58,8 @@ typedef node_att_map_t::const_iterator node_att_map_cit_t;
 typedef std::shared_ptr<fastdds::rtps::TransportDescriptorInterface> sp_transport_t;
 typedef std::map<std::string, sp_transport_t>  sp_transport_map_t;
 typedef types::DynamicTypeBuilder*             p_dynamictypebuilder_t;
-typedef std::map<std::string, p_dynamictypebuilder_t> p_dynamictype_map_t;
+typedef std::map<std::string, std::unique_ptr<fastdds::dds::DynamicTypeBuilder>> p_dynamictype_map_t;
+typedef std::map<std::string, types::DynamicTypeBuilder_ptr> p_oldbackup_map_t;
 
 typedef std::unique_ptr<fastdds::dds::DomainParticipantFactoryQos> up_participantfactory_t;
 typedef DataNode<fastdds::dds::DomainParticipantFactoryQos>        node_participantfactory_t;
@@ -291,26 +291,29 @@ protected:
     static XMLP_ret parseXMLBitmaskDynamicType(
             tinyxml2::XMLElement* p_root);
 
-    static p_dynamictypebuilder_t parseXMLBitfieldDynamicType(
+    static const fastdds::dds::DynamicTypeBuilder* parseXMLBitfieldDynamicType(
             tinyxml2::XMLElement* p_root,
-            p_dynamictypebuilder_t p_dynamictype,
-            types::MemberId mId,
+            fastdds::dds::DynamicTypeBuilder& builder,
+            fastdds::dds::MemberId mId,
             uint16_t& position);
 
     static XMLP_ret parseXMLBitvalueDynamicType(
             tinyxml2::XMLElement* p_root,
-            p_dynamictypebuilder_t p_dynamictype,
+            fastdds::dds::DynamicTypeBuilder& builder,
             uint16_t& position);
 
-    static p_dynamictypebuilder_t parseXMLMemberDynamicType(
-            tinyxml2::XMLElement* p_root,
-            p_dynamictypebuilder_t p_dynamictype,
-            types::MemberId mId);
+    static const fastdds::dds::DynamicTypeBuilder* parseXMLMemberDynamicType(
+            tinyxml2::XMLElement* p_root);
 
-    static p_dynamictypebuilder_t parseXMLMemberDynamicType(
+    static const fastdds::dds::DynamicTypeBuilder* parseXMLMemberDynamicType(
             tinyxml2::XMLElement* p_root,
-            p_dynamictypebuilder_t p_dynamictype,
-            types::MemberId mId,
+            fastdds::dds::DynamicTypeBuilder& p_dynamictype,
+            fastdds::dds::MemberId mId);
+
+    static const fastdds::dds::DynamicTypeBuilder* parseXMLMemberDynamicType(
+            tinyxml2::XMLElement* p_root,
+            fastdds::dds::DynamicTypeBuilder& p_dynamictype,
+            fastdds::dds::MemberId mId,
             const std::string& values);
 
     static XMLP_ret fillDataNode(

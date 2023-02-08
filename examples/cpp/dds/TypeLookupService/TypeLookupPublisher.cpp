@@ -48,21 +48,23 @@ bool TypeLookupPublisher::init()
         return false;
     }
 
-    eprosima::fastrtps::types::DynamicTypeBuilder* type;
+    DynamicTypeBuilder* dyn_build {nullptr};
     if (RETCODE_OK !=
-            DomainParticipantFactory::get_instance()->get_dynamic_type_builder_from_xml_by_name("TypeLookup", type))
+            DomainParticipantFactory::get_instance()->get_dynamic_type_builder_from_xml_by_name("TypeLookup",
+            dyn_builder))
     {
         std::cout <<
             "Error getting dynamic type \"TypeLookup\"." << std::endl;
         return false;
     }
-    types::DynamicType_ptr dyn_type = type->build();
-    TypeSupport m_type(new types::DynamicPubSubType(dyn_type));
-    m_Hello = types::DynamicDataFactory::get_instance()->create_data(dyn_type);
+
+    const DynamicType* dyn_type {dyn_build->build()};
+    TypeSupport m_type(new DynamicPubSubType(*dyn_type));
+    m_Hello = DynamicDataFactory::get_instance().create_data(*dyn_type);
 
     m_Hello->set_string_value("Hello DDS Dynamic World", 0);
     m_Hello->set_uint32_value(0, 1);
-    types::DynamicData* inner = m_Hello->loan_value(2);
+    DynamicData* inner {m_Hello->loan_value(2)};
     inner->set_byte_value(10, 0);
     m_Hello->return_loaned_value(inner);
 
@@ -167,10 +169,8 @@ void TypeLookupPublisher::runThread(
         {
             if (publish(false))
             {
-                std::string message;
-                m_Hello->get_string_value(message, 0);
-                uint32_t index;
-                m_Hello->get_uint32_value(index, 1);
+                std::string message = m_Hello->get_string_value(0);
+                uint32_t index = m_Hello->get_uint32_value(1);
                 std::cout << "Message: " << message << " with index: " << index << " SENT" << std::endl;
             }
             std::this_thread::sleep_for(std::chrono::milliseconds(sleep));
@@ -186,10 +186,8 @@ void TypeLookupPublisher::runThread(
             }
             else
             {
-                std::string message;
-                m_Hello->get_string_value(message, 0);
-                uint32_t index;
-                m_Hello->get_uint32_value(index, 1);
+                std::string message = m_Hello->get_string_value(0);
+                uint32_t index = m_Hello->get_uint32_value(1);
                 std::cout << "Message: " << message << " with index: " << index << " SENT" << std::endl;
             }
             std::this_thread::sleep_for(std::chrono::milliseconds(sleep));
@@ -224,12 +222,12 @@ bool TypeLookupPublisher::publish(
         uint32_t index;
         m_Hello->get_uint32_value(index, 1);
         m_Hello->set_uint32_value(index + 1, 1);
-        types::DynamicData* inner = m_Hello->loan_value(2);
+        DynamicData* inner = m_Hello->loan_value(2);
         octet inner_count;
         inner->get_byte_value(inner_count, 0);
         inner->set_byte_value(inner_count + 1, 0);
         m_Hello->return_loaned_value(inner);
-        writer_->write(m_Hello.get());
+        writer_->write(m_Hello);
         return true;
     }
     return false;

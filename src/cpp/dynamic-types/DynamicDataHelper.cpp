@@ -1,4 +1,4 @@
-// Copyright 2019 Proyectos y Sistemas de Mantenimiento SL (eProsima).
+// Copyright 2023 Proyectos y Sistemas de Mantenimiento SL (eProsima).
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -95,7 +95,7 @@ std::ostream& DynamicDataHelper::print(
 void DynamicDataHelper::print_basic_element(
         DynamicData* data,
         MemberId id,
-        TypeKind kind)
+        octet kind)
 {
     switch (kind)
     {

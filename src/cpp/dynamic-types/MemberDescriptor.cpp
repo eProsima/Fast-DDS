@@ -1,4 +1,4 @@
-// Copyright 2018 Proyectos y Sistemas de Mantenimiento SL (eProsima).
+﻿// Copyright 2018 Proyectos y Sistemas de Mantenimiento SL (eProsima).
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -12,11 +12,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include <fastrtps/types/MemberDescriptor.h>
-#include <fastrtps/types/DynamicType.h>
-#include <fastrtps/types/TypeDescriptor.h>
 #include <fastrtps/types/AnnotationDescriptor.h>
+#include <fastrtps/types/DynamicType.h>
 #include <fastrtps/types/DynamicTypeBuilderFactory.h>
+#include <fastrtps/types/MemberDescriptor.h>
+#include <fastrtps/types/TypeDescriptor.h>
 #include <fastdds/dds/log/Log.hpp>
 
 namespace eprosima {
@@ -204,7 +204,7 @@ uint32_t MemberDescriptor::get_index() const
     return index_;
 }
 
-TypeKind MemberDescriptor::get_kind() const
+octet MemberDescriptor::get_kind() const
 {
     if (type_ != nullptr)
     {
@@ -224,7 +224,7 @@ std::vector<uint64_t> MemberDescriptor::get_union_labels() const
 }
 
 bool MemberDescriptor::is_consistent(
-        TypeKind parentKind) const
+        octet parentKind) const
 {
     // The type field is mandatory in every type except bitmasks and enums.
     if ((parentKind != eprosima::fastdds::dds::xtypes::TK_BITMASK &&
