@@ -163,6 +163,17 @@ public:
     //!Reset the unsent changes.
     void unsent_changes_reset();
 
+    /**
+     * @brief Check if a specific change has been delivered to the transport layer at least once for every matched
+     * remote RTPSReader.
+     *
+     * @param seq_num Sequence number of the change to check.
+     * @return true if delivered.
+     * @return false otherwise.
+     */
+    bool has_been_fully_delivered(
+            const SequenceNumber_t& seq_num) const override;
+
     bool is_acked_by_all(
             const CacheChange_t* change) const override;
 
@@ -247,6 +258,11 @@ private:
     bool intraprocess_delivery(
             CacheChange_t* change,
             ReaderLocator& reader_locator);
+
+    //! Check if a specific sequence number has been sent to every remote RTPSReader
+    bool is_acked_by_all(
+            const SequenceNumber_t& seq_num) const;
+
 
     bool is_inline_qos_expected_ = false;
     LocatorList_t fixed_locators_;

@@ -83,6 +83,17 @@ public:
         return true;
     }
 
+    virtual bool get_disable_positive_acks() const
+    {
+        return false;
+    }
+
+    virtual bool has_been_fully_delivered(
+            const SequenceNumber_t& /*seq_num*/) const
+    {
+        return false;
+    }
+
 #ifdef FASTDDS_STATISTICS
 
     template<typename T>

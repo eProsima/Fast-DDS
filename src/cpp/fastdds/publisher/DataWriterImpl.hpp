@@ -406,11 +406,11 @@ protected:
 
     DataWriterQos qos_;
 
-    //!History
-    DataWriterHistory history_;
-
     //! DataWriterListener
     DataWriterListener* listener_ = nullptr;
+
+    //!History
+    DataWriterHistory history_;
 
     //!Listener to capture the events of the Writer
     class InnerDataWriterListener : public fastrtps::rtps::WriterListener
