@@ -136,7 +136,8 @@ void PDPSecurityInitiatorListener::onNewCacheChangeAdded(
                 lock.unlock();
 
                 //! notify security manager in order to start handshake
-                bool ret = parent_pdp_->getRTPSParticipant()->security_manager().discovered_participant(temp_participant_data_);
+                bool ret = parent_pdp_->getRTPSParticipant()->security_manager().discovered_participant(
+                    temp_participant_data_);
 
                 //! Reply to the remote participant
                 if (ret)
