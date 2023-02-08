@@ -198,7 +198,7 @@ public:
      * @brief Check if a specific change has been delivered to the transport layer of every matched remote RTPSReader
      * at least once.
      *
-     * @param change Pointer to the CacheChange to check.
+     * @param seq_num Sequence number of the change to check.
      * @return true if delivered. False otherwise.
      */
     RTPS_DllAPI virtual bool has_been_fully_delivered(
