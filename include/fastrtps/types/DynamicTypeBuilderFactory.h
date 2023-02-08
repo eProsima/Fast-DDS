@@ -99,9 +99,12 @@ class DynamicTypeBuilderFactory
         delete_type(p);
     }
 
+    // free any allocated resources
+    void reset();
+
 protected:
 
-    DynamicTypeBuilderFactory();
+    DynamicTypeBuilderFactory() = default;
 
     inline void add_builder_to_list(
             DynamicTypeBuilder* pBuilder);
