@@ -84,6 +84,9 @@ class Validate:
                 else:
                     print(f'The file is not an XML file: {element}')
                     valid = False
+            else:
+                print(f'NOT valid XML file or directory: {element}')
+                valid = False
         return valid
 
     def __validate_xml_from_dir(self, directory, recursive=True):
