@@ -60,9 +60,11 @@
         ├ use_default [bool],
         └ consumer    [1~*],-->
     <xs:complexType name="logType">
-        <xs:sequence maxOccurs="unbounded">
-            <xs:element name="use_default" type="boolean" minOccurs="0" maxOccurs="1"/>
-            <xs:element name="consumer" type="logConsumerType" minOccurs="1" maxOccurs="unbounded"/>
+        <xs:sequence minOccurs="1" maxOccurs="unbounded">
+            <xs:choice minOccurs="1">
+                <xs:element name="use_default" type="boolean" minOccurs="0" maxOccurs="1"/>
+                <xs:element name="consumer" type="logConsumerType" minOccurs="0" maxOccurs="unbounded"/>
+            </xs:choice>
         </xs:sequence>
     </xs:complexType>
 
@@ -343,32 +345,36 @@
             └ member            [1]-->
     <!-- TODO:  How to ensure caseDiscriminator value att. is the same type as discriminator type att. primitive type? -->
     <xs:complexType name="unionDcl">
-        <xs:sequence minOccurs="0" maxOccurs="unbounded">
-            <xs:element name="discriminator" minOccurs="1" maxOccurs="1">
-                <xs:complexType>
-                    <xs:attribute name="type" use="required">
-                        <xs:simpleType>
-                            <xs:union memberTypes="primitiveTypes nonBasicType"/>
-                        </xs:simpleType>
-                    </xs:attribute>
-                </xs:complexType>
-            </xs:element>
-            <xs:element name="case" minOccurs="1" maxOccurs="unbounded">
-                <xs:complexType>
-                    <xs:sequence>
-                        <xs:element name="caseDiscriminator" minOccurs="1" maxOccurs="unbounded">
-                            <xs:complexType>
-                                <xs:attribute name="value" use="required">
-                                    <xs:simpleType>
-                                        <xs:union memberTypes="string defaultType"/>
-                                    </xs:simpleType>
-                                </xs:attribute>
-                            </xs:complexType>
-                        </xs:element>
-                        <xs:element name="member" type="memberDcl" minOccurs="1" maxOccurs="1"/>
-                    </xs:sequence>
-                </xs:complexType>
-            </xs:element>
+        <xs:sequence minOccurs="1" maxOccurs="unbounded">
+            <xs:choice minOccurs="1">
+                <xs:element name="discriminator" minOccurs="0" maxOccurs="1">
+                    <xs:complexType>
+                        <xs:attribute name="type" use="required">
+                            <xs:simpleType>
+                                <xs:union memberTypes="primitiveTypes nonBasicType"/>
+                            </xs:simpleType>
+                        </xs:attribute>
+                    </xs:complexType>
+                </xs:element>
+                <xs:element name="case" minOccurs="0" maxOccurs="unbounded">
+                    <xs:complexType>
+                        <xs:sequence minOccurs="1" maxOccurs="unbounded">
+                            <xs:choice minOccurs="1">
+                                <xs:element name="caseDiscriminator" minOccurs="0" maxOccurs="unbounded">
+                                    <xs:complexType>
+                                        <xs:attribute name="value" use="required">
+                                            <xs:simpleType>
+                                                <xs:union memberTypes="string defaultType"/>
+                                            </xs:simpleType>
+                                        </xs:attribute>
+                                    </xs:complexType>
+                                </xs:element>
+                                <xs:element name="member" type="memberDcl" minOccurs="0" maxOccurs="1"/>
+                            </xs:choice>
+                        </xs:sequence>
+                    </xs:complexType>
+                </xs:element>
+            </xs:choice>
         </xs:sequence>
         <xs:attribute name="name" type="string" use="required"/>
     </xs:complexType>
@@ -473,17 +479,19 @@
         └ property      [0~*]-->
     <!-- TODO:  How to ensure that class "StdoutConsumer" does NOT have properties? -->
     <xs:complexType name="logConsumerType">
-        <xs:sequence minOccurs="0" maxOccurs="unbounded">
-            <xs:element name="class" minOccurs="1" maxOccurs="1">
-                <xs:simpleType>
-                    <xs:restriction base="xs:string">
-                        <xs:enumeration value="StdoutConsumer"/>
-                        <xs:enumeration value="StdoutErrConsumer"/>
-                        <xs:enumeration value="FileConsumer"/>
-                    </xs:restriction>
-                </xs:simpleType>
-            </xs:element>
-            <xs:element name="property" type="logConsumerPropertyType" minOccurs="0" maxOccurs="unbounded"/>
+        <xs:sequence minOccurs="1" maxOccurs="unbounded">
+            <xs:choice minOccurs="1">
+                <xs:element name="class" minOccurs="0" maxOccurs="1">
+                    <xs:simpleType>
+                        <xs:restriction base="xs:string">
+                            <xs:enumeration value="StdoutConsumer"/>
+                            <xs:enumeration value="StdoutErrConsumer"/>
+                            <xs:enumeration value="FileConsumer"/>
+                        </xs:restriction>
+                    </xs:simpleType>
+                </xs:element>
+                <xs:element name="property" type="logConsumerPropertyType" minOccurs="0" maxOccurs="unbounded"/>
+            </xs:choice>
         </xs:sequence>
     </xs:complexType>
 
@@ -591,68 +599,70 @@
     <!-- TODO:  How to ensure that simpleEDP is defined only when EDP is set as "SIMPLE"?
                 How to ensure that static_edp_xml_config is defined only when EDP is set as "STATIC"? -->
     <xs:complexType name="discoverySettingsType">
-        <xs:sequence minOccurs="0">
-            <xs:element name="discoveryProtocol" minOccurs="0" maxOccurs="1">
-                <xs:simpleType>
-                    <xs:restriction base="xs:string">
-                        <xs:enumeration value="SIMPLE"/>
-                        <xs:enumeration value="CLIENT"/>
-                        <xs:enumeration value="SERVER"/>
-                        <xs:enumeration value="BACKUP"/>
-                        <xs:enumeration value="NONE"/>
-                    </xs:restriction>
-                </xs:simpleType>
-            </xs:element>
-            <xs:element name="discoveryServersList" minOccurs="0" maxOccurs="1">
-                <xs:complexType>
-                    <xs:sequence minOccurs="1" maxOccurs="unbounded">
-                        <xs:element name="RemoteServer" minOccurs="1" maxOccurs="unbounded">
-                            <xs:complexType>
-                                <xs:all>
-                                    <xs:element name="metatrafficUnicastLocatorList" type="locatorListType" minOccurs="0" maxOccurs="1"/>
-                                    <xs:element name="metatrafficMulticastLocatorList" type="locatorListType" minOccurs="0" maxOccurs="1"/>
-                                </xs:all>
-                                <xs:attribute name="prefix" type="prefixType" use="required"/>
-                            </xs:complexType>
-                        </xs:element>
-                    </xs:sequence>
-                </xs:complexType>
-            </xs:element>
-            <xs:element name="ignoreParticipantFlags" minOccurs="0" maxOccurs="1">
-                <xs:simpleType>
-                    <xs:restriction base="xs:string">
-                        <xs:pattern value="((FILTER_DIFFERENT_HOST|FILTER_DIFFERENT_PROCESS|FILTER_SAME_PROCESS|NO_FILTER)(\||\s)*)*" />
-                    </xs:restriction>
-                </xs:simpleType>
-            </xs:element>
-            <xs:element name="EDP" minOccurs="0" maxOccurs="1">
-                <xs:simpleType>
-                    <xs:restriction base="xs:string">
-                        <xs:enumeration value="SIMPLE"/>
-                        <xs:enumeration value="STATIC"/>
-                    </xs:restriction>
-                </xs:simpleType>
-            </xs:element>
-            <xs:element name="simpleEDP" minOccurs="0" maxOccurs="1">
-                <xs:complexType>
-                    <xs:all>
-                        <xs:element name="PUBWRITER_SUBREADER" type="boolean" minOccurs="0" maxOccurs="1"/>
-                        <xs:element name="PUBREADER_SUBWRITER" type="boolean" minOccurs="0" maxOccurs="1"/>
-                    </xs:all>
-                </xs:complexType>
-            </xs:element>
-            <xs:element name="leaseDuration" type="durationType" minOccurs="0" maxOccurs="1"/>
-            <xs:element name="leaseAnnouncement" type="durationType" minOccurs="0" maxOccurs="1"/>
-            <xs:element name="initialAnnouncements" minOccurs="0" maxOccurs="1">
-                <xs:complexType>
-                    <xs:all>
-                        <xs:element name="count" type="uint32" minOccurs="0" maxOccurs="1"/>
-                        <xs:element name="period" type="durationType" minOccurs="0" maxOccurs="1"/>
-                    </xs:all>
-                </xs:complexType>
-            </xs:element>
-            <xs:element name="clientAnnouncementPeriod" type="durationType" minOccurs="0" maxOccurs="1"/>
-            <xs:element name="static_edp_xml_config" type="string" minOccurs="0" maxOccurs="unbounded"/>
+        <xs:sequence minOccurs="1" maxOccurs="unbounded">
+            <xs:choice minOccurs="1">
+                <xs:element name="discoveryProtocol" minOccurs="0" maxOccurs="1">
+                    <xs:simpleType>
+                        <xs:restriction base="xs:string">
+                            <xs:enumeration value="SIMPLE"/>
+                            <xs:enumeration value="CLIENT"/>
+                            <xs:enumeration value="SERVER"/>
+                            <xs:enumeration value="BACKUP"/>
+                            <xs:enumeration value="NONE"/>
+                        </xs:restriction>
+                    </xs:simpleType>
+                </xs:element>
+                <xs:element name="discoveryServersList" minOccurs="0" maxOccurs="1">
+                    <xs:complexType>
+                        <xs:sequence minOccurs="1" maxOccurs="unbounded">
+                            <xs:element name="RemoteServer" minOccurs="1" maxOccurs="unbounded">
+                                <xs:complexType>
+                                    <xs:all>
+                                        <xs:element name="metatrafficUnicastLocatorList" type="locatorListType" minOccurs="0" maxOccurs="1"/>
+                                        <xs:element name="metatrafficMulticastLocatorList" type="locatorListType" minOccurs="0" maxOccurs="1"/>
+                                    </xs:all>
+                                    <xs:attribute name="prefix" type="prefixType" use="required"/>
+                                </xs:complexType>
+                            </xs:element>
+                        </xs:sequence>
+                    </xs:complexType>
+                </xs:element>
+                <xs:element name="ignoreParticipantFlags" minOccurs="0" maxOccurs="1">
+                    <xs:simpleType>
+                        <xs:restriction base="xs:string">
+                            <xs:pattern value="((FILTER_DIFFERENT_HOST|FILTER_DIFFERENT_PROCESS|FILTER_SAME_PROCESS|NO_FILTER)(\||\s)*)*" />
+                        </xs:restriction>
+                    </xs:simpleType>
+                </xs:element>
+                <xs:element name="EDP" minOccurs="0" maxOccurs="1">
+                    <xs:simpleType>
+                        <xs:restriction base="xs:string">
+                            <xs:enumeration value="SIMPLE"/>
+                            <xs:enumeration value="STATIC"/>
+                        </xs:restriction>
+                    </xs:simpleType>
+                </xs:element>
+                <xs:element name="simpleEDP" minOccurs="0" maxOccurs="1">
+                    <xs:complexType>
+                        <xs:all>
+                            <xs:element name="PUBWRITER_SUBREADER" type="boolean" minOccurs="0" maxOccurs="1"/>
+                            <xs:element name="PUBREADER_SUBWRITER" type="boolean" minOccurs="0" maxOccurs="1"/>
+                        </xs:all>
+                    </xs:complexType>
+                </xs:element>
+                <xs:element name="leaseDuration" type="durationType" minOccurs="0" maxOccurs="1"/>
+                <xs:element name="leaseAnnouncement" type="durationType" minOccurs="0" maxOccurs="1"/>
+                <xs:element name="initialAnnouncements" minOccurs="0" maxOccurs="1">
+                    <xs:complexType>
+                        <xs:all>
+                            <xs:element name="count" type="uint32" minOccurs="0" maxOccurs="1"/>
+                            <xs:element name="period" type="durationType" minOccurs="0" maxOccurs="1"/>
+                        </xs:all>
+                    </xs:complexType>
+                </xs:element>
+                <xs:element name="clientAnnouncementPeriod" type="durationType" minOccurs="0" maxOccurs="1"/>
+                <xs:element name="static_edp_xml_config" type="string" minOccurs="0" maxOccurs="unbounded"/>
+            </xs:choice>
         </xs:sequence>
     </xs:complexType>
 
