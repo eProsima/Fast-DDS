@@ -456,7 +456,7 @@ protected:
      * GUID and comparing it with the remote participant prefix.
      *
      * @param guid_prefix the original desired guid_prefix to compare
-     * @param participant_proxy_data The participant proxy data to compare against
+     * @param participant_data The participant proxy data to compare against
      *
      * @return true when prefixes are equivalent
      */
