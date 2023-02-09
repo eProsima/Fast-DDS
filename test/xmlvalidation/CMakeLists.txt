@@ -35,6 +35,5 @@ configure_file(${CMAKE_CURRENT_SOURCE_DIR}/profileTypes.xml
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/XMLTesterExample.xml
     ${CMAKE_CURRENT_BINARY_DIR}/xmldocuments/XMLTesterExample.xml COPYONLY)
 
-
 # Check XML profile validation against schema
 add_test(NAME xml.validate COMMAND fastdds xml validate xmldocuments)

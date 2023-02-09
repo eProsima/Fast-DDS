@@ -32,10 +32,10 @@ optional arguments:
 
 import argparse
 import os.path
-import platform
-
 from pathlib import Path
+
 from xml_ci.validate import Validate
+
 
 class XMLParser:
     """XML sub-commands parser."""
@@ -80,11 +80,13 @@ class XMLParser:
 
         try:
             if not os.path.isfile(args.xsd_file):
-                print(f'The XSD schema does not exist: {args.xsd_file}. Using default schema.')
-                args.xsd_file = self.__xsd_dir()
+                print(f'The XSD schema does not exist: {args.xsd_file}. '
+                      'Using default schema.')
+
+                args.xsd_file = self.xsd_dir()
         # xsd schema argument not set, do not print error message
         except TypeError:
-            args.xsd_file = self.__xsd_dir()  # get default schema path
+            args.xsd_file = self.xsd_dir()  # get default schema path
 
         if args.xml_command:
             if args.xml_command[0] == 'validate':
@@ -97,7 +99,7 @@ class XMLParser:
             parser.print_help()
             exit(1)
 
-    def __xsd_dir(self):
+    def xsd_dir(self):
         """
         Calculate the xsd directory.
 
@@ -105,5 +107,5 @@ class XMLParser:
 
         """
         tool_path = Path(os.path.dirname(os.path.realpath(__file__)))
-        # We asume the schema path is relative to our installation path
+        # We assume the schema path is relative to our installation path
         return tool_path / '../../../share/fastRTPS_profiles.xsd'

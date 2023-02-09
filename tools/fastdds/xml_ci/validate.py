@@ -20,20 +20,22 @@ XSD schema.
 """
 
 import os
+import sys
 
 try:  # Try catch for new python dependency
     from xml import etree
 except ImportError:
     print(
         'xml module not found. Try to install running "pip install xml"')
-    exit(1)
+    sys.exit(1)
 
 try:  # Try catch for new python dependency
     from xmlschema import XMLSchema, XMLSchemaValidationError
 except ImportError:
     print(
-        'xmlschema module not found. Try to install running "pip install xmlschema"')
-    exit(1)
+        'xmlschema module not found. '
+        'Try to install running "pip install xmlschema"')
+    sys.exit(1)
 
 
 class Validate:
@@ -54,16 +56,16 @@ class Validate:
         """XSD schema setter."""
         if not os.path.isfile(xsd_file):
             print(f'The XSD schema does not exist: {xsd_file}')
-            exit(1)
+            sys.exit(1)
         if isinstance(xsd_file, XMLSchema):
             self.__xsd_file = xsd_file
         else:
             try:
                 self.__xsd_file = XMLSchema(xsd_file)
-            except etree.ElementTree.ParseError as e:
+            except etree.ElementTree.ParseError as exception:
                 print(f'cannot load XSD file: {xsd_file}')
-                print(e)
-                exit(1)
+                print(exception)
+                sys.exit(1)
 
     def run(self, validate_list):
         """
@@ -99,13 +101,14 @@ class Validate:
         :return: False if failed parsing, otherwise True.
         """
         valid = True
-        for root, dirs, files in os.walk(directory):
+        for root, _, files in os.walk(directory):
             print(f'Scanning directory {root}')
             if root not in self.__visited_dirs:
                 self.__visited_dirs.append(root)
-                for f in files:
-                    if self.__is_xml(f):
-                        valid = valid and self.__validate_xml_file(os.path.join(root, f))
+                for file in files:
+                    if self.__is_xml(file):
+                        valid = valid and self.__validate_xml_file(
+                            os.path.join(root, file))
                 if not recursive:
                     break
         return valid
@@ -120,10 +123,10 @@ class Validate:
         """
         try:
             xml_etree = etree.ElementTree.parse(file)
-        except etree.ElementTree.ParseError as e:
+        except etree.ElementTree.ParseError as exception:
             print(f'cannot parse file: {file}')
-            print(e)
-            exit(1)
+            print(exception)
+            sys.exit(1)
 
         try:
             self.xsd_file.validate(xml_etree)
