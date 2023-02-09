@@ -3,7 +3,6 @@
     <profiles>
 
         <participant profile_name="test_participant_profile" is_default_profile="true">
-            <domainId>2019102</domainId>
             <rtps>
                 <allocation>
                     <remote_locators>
@@ -116,20 +115,13 @@
                     <offsetd3>456</offsetd3>
                 </port>
                 <participantID>9898</participantID>
-                <throughputController>
-                    <bytesPerPeriod>2048</bytesPerPeriod>
-                    <periodMillisecs>45</periodMillisecs>
-                </throughputController>
                 <useBuiltinTransports>true</useBuiltinTransports>
                 <name>test_name</name>
             </rtps>
         </participant>
 
-        <publisher profile_name="test_publisher_profile" is_default_profile="true">
+        <data_writer profile_name="test_publisher_profile" is_default_profile="true">
             <topic>
-                <kind>NO_KEY</kind>
-                <name>samplePubSubTopic</name>
-                <dataType>samplePubSubTopicType</dataType>
                 <historyQos>
                     <kind>KEEP_LAST</kind>
                     <depth>50</depth>
@@ -221,10 +213,6 @@
                     </udpv4>
                 </locator>
             </multicastLocatorList>
-            <throughputController>
-                <bytesPerPeriod>9236</bytesPerPeriod>
-                <periodMillisecs>234</periodMillisecs>
-            </throughputController>
             <historyMemoryPolicy>DYNAMIC</historyMemoryPolicy>
             <userDefinedID>67</userDefinedID>
             <entityID>87</entityID>
@@ -233,13 +221,10 @@
                 <maximum>20</maximum>
                 <increment>2</increment>
             </matchedSubscribersAllocation>
-        </publisher>
+        </data_writer>
 
-        <subscriber profile_name="test_subscriber_profile" is_default_profile="true">
+        <data_reader profile_name="test_subscriber_profile" is_default_profile="true">
             <topic>
-                <kind>WITH_KEY</kind>
-                <name>otherSamplePubSubTopic</name>
-                <dataType>otherSamplePubSubTopicType</dataType>
                 <historyQos>
                     <kind>KEEP_ALL</kind>
                     <depth>1001</depth>
@@ -331,11 +316,7 @@
                 <maximum>20</maximum>
                 <increment>2</increment>
             </matchedPublishersAllocation>
-        </subscriber>
+        </data_reader>
 
     </profiles>
-    <topic>
-        <name>SampleTopicNode</name>
-        <dataType>SampleTopicNodeType</dataType>
-    </topic>
 </dds>

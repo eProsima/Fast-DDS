@@ -29,7 +29,6 @@
 
         <!-- PARTICIPANTS -->
         <participant profile_name="pub_participant_profile">
-            <domainId>229</domainId>
             <rtps>
                 <userTransports>
                     <transport_id>video_publisher_tcp_transport</transport_id>
@@ -40,7 +39,6 @@
         </participant>
 
         <participant profile_name="sub_participant_profile">
-            <domainId>229</domainId>
             <rtps>
                 <builtin>
                     <initialPeersList>
@@ -61,11 +59,8 @@
         </participant>
 
         <!-- PUBLISHER -->
-        <publisher profile_name="publisher_profile">
+        <data_writer profile_name="publisher_profile">
             <topic>
-                <name>video_interprocess</name>
-                <dataType>VideoType</dataType>
-                <kind>NO_KEY</kind>
                 <historyQos>
                     <kind>KEEP_ALL</kind>
                 </historyQos>
@@ -92,14 +87,11 @@
                 </heartbeatPeriod>
             </times>
             <historyMemoryPolicy>PREALLOCATED_WITH_REALLOC</historyMemoryPolicy>
-        </publisher>
+        </data_writer>
 
         <!-- SUBSCRIBER -->
-        <subscriber profile_name="subscriber_profile">
+        <data_reader profile_name="subscriber_profile">
             <topic>
-                <name>video_interprocess</name>
-                <dataType>VideoType</dataType>
-                <kind>NO_KEY</kind>
                 <historyQos>
                     <kind>KEEP_ALL</kind>
                 </historyQos>
@@ -110,6 +102,6 @@
                 </reliability>
             </qos>
             <historyMemoryPolicy>PREALLOCATED_WITH_REALLOC</historyMemoryPolicy>
-        </subscriber>
+        </data_reader>
     </profiles>
 </dds>

@@ -23,7 +23,7 @@
             </rtps>
         </participant>
 
-        <publisher profile_name="simple_publisher_profile" is_default_profile="true">
+        <data_writer profile_name="simple_publisher_profile" is_default_profile="true">
             <topic>
                 <historyQos>
                     <kind>KEEP_LAST</kind>
@@ -38,9 +38,9 @@
                     <kind>TRANSIENT_LOCAL</kind>
                 </durability>
             </qos>
-        </publisher>
+        </data_writer>
 
-        <subscriber profile_name="simple_subscriber_profile" is_default_profile="true">
+        <data_reader profile_name="simple_subscriber_profile" is_default_profile="true">
             <qos>
                 <reliability>
                     <kind>RELIABLE</kind>
@@ -49,6 +49,6 @@
                     <kind>TRANSIENT_LOCAL</kind>
                 </durability>
             </qos>
-        </subscriber>
+        </data_reader>
     </profiles>
 </dds>

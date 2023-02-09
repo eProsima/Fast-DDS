@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<dds>
+<dds xmlns="http://www.eprosima.com/XMLSchemas/fastRTPS_Profiles" >
     <log>
-        <use_default>TRUE</use_default>
+        <use_default>true</use_default>
         <consumer>
             <class>FileConsumer</class>
         </consumer>

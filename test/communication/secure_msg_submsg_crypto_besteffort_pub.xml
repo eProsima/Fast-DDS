@@ -7,7 +7,7 @@
                 <type>SHM</type>
             </transport_descriptor>
         </transport_descriptors>
-        
+
         <participant profile_name="secure_participant_profile" is_default_profile="true">
             <rtps>
                 <userTransports>
@@ -48,7 +48,7 @@
             </rtps>
         </participant>
 
-        <publisher profile_name="secure_publisher_profile" is_default_profile="true">
+        <data_writer profile_name="secure_publisher_profile" is_default_profile="true">
             <qos>
                 <reliability>
                     <kind>BEST_EFFORT</kind>
@@ -63,6 +63,6 @@
                     </property>
                 </properties>
             </propertiesPolicy>
-        </publisher>
+        </data_writer>
     </profiles>
 </dds>

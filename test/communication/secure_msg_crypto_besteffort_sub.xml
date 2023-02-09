@@ -7,7 +7,7 @@
                 <type>SHM</type>
             </transport_descriptor>
         </transport_descriptors>
-        
+
         <participant profile_name="secure_participant_profile" is_default_profile="true">
             <rtps>
                 <userTransports>
@@ -49,12 +49,12 @@
             </rtps>
         </participant>
 
-        <subscriber profile_name="secure_subscriber_profile" is_default_profile="true">
+        <data_reader profile_name="secure_subscriber_profile" is_default_profile="true">
             <qos>
                 <reliability>
                     <kind>BEST_EFFORT</kind>
                 </reliability>
             </qos>
-        </subscriber>
+        </data_reader>
     </profiles>
 </dds>

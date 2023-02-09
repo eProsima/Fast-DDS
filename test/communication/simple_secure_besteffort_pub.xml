@@ -54,13 +54,13 @@
             </rtps>
         </participant>
 
-        <publisher profile_name="simple_publisher_profile" is_default_profile="true">
+        <data_writer profile_name="simple_publisher_profile" is_default_profile="true">
             <qos>
                 <reliability>
                     <kind>BEST_EFFORT</kind>
                 </reliability>
             </qos>
-        </publisher>
+        </data_writer>
     </profiles>
 </dds>
 

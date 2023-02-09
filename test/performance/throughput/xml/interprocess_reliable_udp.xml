@@ -12,7 +12,6 @@
         </transport_descriptors>
         <!-- PARTICIPANTS -->
         <participant profile_name="pub_participant_profile">
-            <domainId>222</domainId>
             <rtps>
                 <name>throughput_test_publisher</name>
                 <useBuiltinTransports>false</useBuiltinTransports>
@@ -23,7 +22,6 @@
         </participant>
 
         <participant profile_name="sub_participant_profile">
-            <domainId>222</domainId>
             <rtps>
                 <name>throughput_test_subscriber</name>
                 <useBuiltinTransports>false</useBuiltinTransports>
@@ -36,9 +34,6 @@
         <!-- PUBLISHER -->
         <data_writer profile_name="publisher_profile">
             <topic>
-                <name>throughput_interprocess</name>
-                <dataType>ThroughputType</dataType>
-                <kind>NO_KEY</kind>
                 <historyQos>
                     <kind>KEEP_ALL</kind>
                 </historyQos>
@@ -65,9 +60,6 @@
         <!-- SUBSCRIBER -->
         <data_reader profile_name="subscriber_profile">
             <topic>
-                <name>throughput_interprocess</name>
-                <dataType>ThroughputType</dataType>
-                <kind>NO_KEY</kind>
                 <historyQos>
                     <kind>KEEP_ALL</kind>
                 </historyQos>

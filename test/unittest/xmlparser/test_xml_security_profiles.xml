@@ -16,21 +16,11 @@
                             <propagate>true</propagate>
                         </property>
                     </properties>
-                    <binary_properties>
-                        <property>
-                            <name>binary_prop_a</name>
-                            <propagate>false</propagate>
-                        </property>
-                        <property>
-                            <name>binary_prop_b</name>
-                            <propagate>true</propagate>
-                        </property>
-                    </binary_properties>
                 </propertiesPolicy>
             </rtps>
         </participant>
 
-        <publisher profile_name="test_publisher_security_profile">
+        <data_writer profile_name="test_publisher_security_profile">
             <propertiesPolicy>
                 <properties>
                     <property>
@@ -44,20 +34,10 @@
                         <propagate>true</propagate>
                     </property>
                 </properties>
-                <binary_properties>
-                    <property>
-                        <name>binary_prop_c</name>
-                        <propagate>true</propagate>
-                    </property>
-                    <property>
-                        <name>binary_prop_d</name>
-                        <propagate>false</propagate>
-                    </property>
-                </binary_properties>
             </propertiesPolicy>
-        </publisher>
+        </data_writer>
 
-        <subscriber profile_name="test_subscriber_security_profile">
+        <data_reader profile_name="test_subscriber_security_profile">
             <propertiesPolicy>
                 <properties>
                     <property>
@@ -71,18 +51,8 @@
                         <propagate>true</propagate>
                     </property>
                 </properties>
-                <binary_properties>
-                    <property>
-                        <name>binary_prop_e</name>
-                        <propagate>true</propagate>
-                    </property>
-                    <property>
-                        <name>binary_prop_f</name>
-                        <propagate>false</propagate>
-                    </property>
-                </binary_properties>
             </propertiesPolicy>
-        </subscriber>
+        </data_reader>
 
     </profiles>
 </dds>

@@ -1,9 +1,8 @@
-
+<?xml version="1.0" encoding="UTF-8" ?>
+<types xmlns="http://www.eprosima.com/XMLSchemas/fastRTPS_Profiles" >
 <!-- Types defined following OMG Extensible and Dynamic Topic types for DDS, DDS-XTypes Version 1.2 -->
-
-<types>
     <type>
-        <enum name="MyEnum" bitBound="16">
+        <enum name="MyEnum">
             <enumerator name="A" value="0"/>
             <enumerator name="B" value="1"/>
             <enumerator name="C" value="2"/>
@@ -174,7 +173,7 @@
     </type>
     <type>
         <struct name="MapStruct">
-            <member name="my_map" type="int32" key_type="int32" mapMaxLength="2 + 5"/>
+            <member name="my_map" type="int32" key_type="int32" mapMaxLength="7"/>
         </struct>
     </type>
     <type>

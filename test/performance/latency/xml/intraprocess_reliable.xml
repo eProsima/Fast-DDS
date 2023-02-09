@@ -1,13 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <dds xmlns="http://www.eprosima.com/XMLSchemas/fastRTPS_Profiles">
-    <library_settings>
-        <intraprocess_delivery>FULL</intraprocess_delivery>
-    </library_settings>
-
     <profiles>
         <!-- PUBLISHER -->
         <participant profile_name="pub_participant_profile">
-            <domainId>231</domainId>
             <rtps>
                 <builtin>
                     <discovery_config>
@@ -26,12 +21,7 @@
                 <name>latency_test_publisher</name>
             </rtps>
         </participant>
-        <publisher profile_name="pub_publisher_profile">
-            <topic>
-                <name>latency_intraprocess_pub2sub</name>
-                <dataType>LatencyType</dataType>
-                <kind>NO_KEY</kind>
-            </topic>
+        <data_writer profile_name="pub_publisher_profile">
             <qos>
                 <reliability>
                     <kind>RELIABLE</kind>
@@ -43,13 +33,8 @@
                     <kind>OFF</kind>
                 </data_sharing>
             </qos>
-        </publisher>
-        <subscriber profile_name="pub_subscriber_profile">
-            <topic>
-                <name>latency_intraprocess_sub2pub</name>
-                <dataType>LatencyType</dataType>
-                <kind>NO_KEY</kind>
-            </topic>
+        </data_writer>
+        <data_reader profile_name="pub_subscriber_profile">
             <qos>
                 <reliability>
                     <kind>RELIABLE</kind>
@@ -61,11 +46,10 @@
                     <kind>OFF</kind>
                 </data_sharing>
             </qos>
-        </subscriber>
+        </data_reader>
 
         <!-- SUBSCRIBER -->
         <participant profile_name="sub_participant_profile">
-            <domainId>231</domainId>
             <rtps>
                 <builtin>
                     <discovery_config>
@@ -84,12 +68,7 @@
                 <name>latency_test_subscriber</name>
             </rtps>
         </participant>
-        <publisher profile_name="sub_publisher_profile">
-            <topic>
-                <name>latency_intraprocess_sub2pub</name>
-                <dataType>LatencyType</dataType>
-                <kind>NO_KEY</kind>
-            </topic>
+        <data_writer profile_name="sub_publisher_profile">
             <qos>
                 <reliability>
                     <kind>RELIABLE</kind>
@@ -101,13 +80,8 @@
                     <kind>OFF</kind>
                 </data_sharing>
             </qos>
-        </publisher>
+        </data_writer>
         <data_reader profile_name="sub_subscriber_profile">
-            <topic>
-                <name>latency_intraprocess_pub2sub</name>
-                <dataType>LatencyType</dataType>
-                <kind>NO_KEY</kind>
-            </topic>
             <qos>
                 <reliability>
                     <kind>RELIABLE</kind>

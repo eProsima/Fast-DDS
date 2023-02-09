@@ -14,7 +14,7 @@
                 </data_sharing>
             </qos>
         </data_writer>
-        <subscriber profile_name="simple_subscriber_profile" is_default_profile="true">
+        <data_reader profile_name="simple_subscriber_profile" is_default_profile="true">
             <qos>
                 <reliability>
                     <kind>RELIABLE</kind>
@@ -23,7 +23,7 @@
                     <kind>AUTOMATIC</kind>
                 </data_sharing>
             </qos>
-        </subscriber>
+        </data_reader>
     </profiles>
 </dds>
 

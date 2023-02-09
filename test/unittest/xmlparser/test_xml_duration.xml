@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<profiles>
-
+<profiles xmlns="http://www.eprosima.com/XMLSchemas/fastRTPS_Profiles" >
     <participant profile_name="test_participant_profile" is_default_profile="true">
-        <domainId>80</domainId>
         <rtps>
             <builtin>
                 <discovery_config>
@@ -18,11 +16,8 @@
         </rtps>
     </participant>
 
-    <publisher profile_name="test_publisher_profile" is_default_profile="true">
+    <data_writer profile_name="test_publisher_profile" is_default_profile="true">
         <topic>
-            <name>xml_profiles_topic</name>
-            <dataType>DurationTest</dataType>
-            <kind>NO_KEY</kind>
             <historyQos>
                 <kind>KEEP_LAST</kind>
                 <depth>20</depth>
@@ -54,13 +49,10 @@
             </liveliness>
         </qos>
         <historyMemoryPolicy>PREALLOCATED</historyMemoryPolicy>
-    </publisher>
+    </data_writer>
 
-    <subscriber profile_name="test_subscriber_profile" is_default_profile="true">
+    <data_reader profile_name="test_subscriber_profile" is_default_profile="true">
         <topic>
-            <name>xml_profiles_topic</name>
-            <dataType>DurationTest</dataType>
-            <kind>NO_KEY</kind>
             <historyQos>
                 <kind>KEEP_LAST</kind>
                 <depth>20</depth>
@@ -92,6 +84,6 @@
             </liveliness>
         </qos>
         <historyMemoryPolicy>PREALLOCATED</historyMemoryPolicy>
-    </subscriber>
+    </data_reader>
 
 </profiles>

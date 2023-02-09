@@ -1,13 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <dds xmlns="http://www.eprosima.com/XMLSchemas/fastRTPS_Profiles">
-    <library_settings>
-        <intraprocess_delivery>USER_DATA_ONLY</intraprocess_delivery>
-    </library_settings>
-
     <profiles>
         <!-- PARTICIPANTS -->
         <participant profile_name="pub_participant_profile">
-            <domainId>222</domainId>
             <rtps>
                 <builtin>
                     <discovery_config>
@@ -28,7 +23,6 @@
         </participant>
 
         <participant profile_name="sub_participant_profile">
-            <domainId>222</domainId>
             <rtps>
                 <builtin>
                     <discovery_config>
@@ -51,9 +45,6 @@
         <!-- PUBLISHER -->
         <data_writer profile_name="publisher_profile">
             <topic>
-                <name>throughput_interprocess</name>
-                <dataType>ThroughputType</dataType>
-                <kind>NO_KEY</kind>
                 <historyQos>
                     <kind>KEEP_ALL</kind>
                 </historyQos>
@@ -80,9 +71,6 @@
         <!-- SUBSCRIBER -->
         <data_reader profile_name="subscriber_profile">
             <topic>
-                <name>throughput_interprocess</name>
-                <dataType>ThroughputType</dataType>
-                <kind>NO_KEY</kind>
                 <historyQos>
                     <kind>KEEP_ALL</kind>
                 </historyQos>
@@ -102,6 +90,11 @@
                 </data_sharing>
             </qos>
         </data_reader>
+
+        <!-- INTRA-PROCESS -->
+        <library_settings>
+            <intraprocess_delivery>USER_DATA_ONLY</intraprocess_delivery>
+        </library_settings>
     </profiles>
 
     <!-- INTRA-PROCESS -->

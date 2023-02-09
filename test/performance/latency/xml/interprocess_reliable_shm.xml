@@ -9,7 +9,6 @@
             </transport_descriptor>
         </transport_descriptors>
         <participant profile_name="pub_participant_profile">
-            <domainId>231</domainId>
             <rtps>
                 <name>latency_test_publisher</name>
                 <userTransports>
@@ -18,12 +17,7 @@
                 <useBuiltinTransports>false</useBuiltinTransports>
             </rtps>
         </participant>
-        <publisher profile_name="pub_publisher_profile">
-            <topic>
-                <name>latency_interprocess_pub2sub</name>
-                <dataType>LatencyType</dataType>
-                <kind>NO_KEY</kind>
-            </topic>
+        <data_writer profile_name="pub_publisher_profile">
             <qos>
                 <reliability>
                     <kind>RELIABLE</kind>
@@ -35,13 +29,8 @@
                     <kind>OFF</kind>
                 </data_sharing>
             </qos>
-        </publisher>
-        <subscriber profile_name="pub_subscriber_profile">
-            <topic>
-                <name>latency_interprocess_sub2pub</name>
-                <dataType>LatencyType</dataType>
-                <kind>NO_KEY</kind>
-            </topic>
+        </data_writer>
+        <data_reader profile_name="pub_subscriber_profile">
             <qos>
                 <reliability>
                     <kind>RELIABLE</kind>
@@ -53,7 +42,7 @@
                     <kind>OFF</kind>
                 </data_sharing>
             </qos>
-        </subscriber>
+        </data_reader>
 
         <!-- SUBSCRIBER -->
         <transport_descriptors>
@@ -63,7 +52,6 @@
             </transport_descriptor>
         </transport_descriptors>
         <participant profile_name="sub_participant_profile">
-            <domainId>231</domainId>
             <rtps>
                 <name>latency_test_subscriber</name>
                 <userTransports>
@@ -72,12 +60,7 @@
                 <useBuiltinTransports>false</useBuiltinTransports>
             </rtps>
         </participant>
-        <publisher profile_name="sub_publisher_profile">
-            <topic>
-                <name>latency_interprocess_sub2pub</name>
-                <dataType>LatencyType</dataType>
-                <kind>NO_KEY</kind>
-            </topic>
+        <data_writer profile_name="sub_publisher_profile">
             <qos>
                 <reliability>
                     <kind>RELIABLE</kind>
@@ -89,13 +72,8 @@
                     <kind>OFF</kind>
                 </data_sharing>
             </qos>
-        </publisher>
-        <subscriber profile_name="sub_subscriber_profile">
-            <topic>
-                <name>latency_interprocess_pub2sub</name>
-                <dataType>LatencyType</dataType>
-                <kind>NO_KEY</kind>
-            </topic>
+        </data_writer>
+        <data_reader profile_name="sub_subscriber_profile">
             <qos>
                 <reliability>
                     <kind>RELIABLE</kind>
@@ -107,6 +85,6 @@
                     <kind>OFF</kind>
                 </data_sharing>
             </qos>
-        </subscriber>
+        </data_reader>
     </profiles>
 </dds>

@@ -11,12 +11,12 @@
                 </reliability>
             </qos>
         </data_writer>
-        <subscriber profile_name="simple_subscriber_profile" is_default_profile="true">
+        <data_reader profile_name="simple_subscriber_profile" is_default_profile="true">
             <qos>
                 <reliability>
                     <kind>BEST_EFFORT</kind>
                 </reliability>
             </qos>
-        </subscriber>
+        </data_reader>
     </profiles>
 </dds>

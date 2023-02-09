@@ -43,7 +43,7 @@
             </rtps>
         </participant>
 
-        <subscriber profile_name="secure_subscriber_profile" is_default_profile="true">
+        <data_reader profile_name="secure_subscriber_profile" is_default_profile="true">
             <qos>
                 <reliability>
                     <kind>BEST_EFFORT</kind>
@@ -58,6 +58,6 @@
                     </property>
                 </properties>
             </propertiesPolicy>
-        </subscriber>
+        </data_reader>
     </profiles>
 </dds>
