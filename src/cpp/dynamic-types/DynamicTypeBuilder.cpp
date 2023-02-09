@@ -25,7 +25,8 @@ namespace eprosima {
 namespace fastrtps {
 namespace types {
 
-DynamicTypeBuilder::DynamicTypeBuilder()
+DynamicTypeBuilder::DynamicTypeBuilder(
+        use_the_create_method)
     : descriptor_(nullptr)
     , current_member_id_(0)
     , max_index_(0)
@@ -33,6 +34,7 @@ DynamicTypeBuilder::DynamicTypeBuilder()
 }
 
 DynamicTypeBuilder::DynamicTypeBuilder(
+        use_the_create_method,
         const DynamicTypeBuilder* builder)
     : current_member_id_(0)
     , max_index_(0)
@@ -41,6 +43,7 @@ DynamicTypeBuilder::DynamicTypeBuilder(
 }
 
 DynamicTypeBuilder::DynamicTypeBuilder(
+        use_the_create_method,
         const TypeDescriptor* descriptor)
     : current_member_id_(0)
     , max_index_(0)
@@ -304,7 +307,7 @@ DynamicType_ptr DynamicTypeBuilder::build()
     else
     {
         EPROSIMA_LOG_ERROR(DYN_TYPES, "Error building type. The current descriptor isn't consistent.");
-        return DynamicType_ptr(nullptr);
+        return nullptr;
     }
 }
 

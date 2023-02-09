@@ -608,7 +608,9 @@ const uint32_t ANNOTATION_STR_VALUE_MAX_LEN = 128;
 const uint32_t ANNOTATION_OCTETSEC_VALUE_MAX_LEN = 128;
 
 class DynamicType;
+class DynamicTypeBuilder;
 using DynamicType_ptr = std::shared_ptr<DynamicType>;
+using DynamicTypeBuilder_ptr = std::shared_ptr<DynamicTypeBuilder>;
 
 } // namespace types
 } // namespace fastrtps

@@ -15,18 +15,18 @@
 #ifndef XML_PARSER_H_
 #define XML_PARSER_H_
 
-#include <stdio.h>
-#include <fastrtps/transport/TransportDescriptorInterface.h>
+#include <fastrtps/attributes/LibrarySettingsAttributes.h>
 #include <fastrtps/attributes/ParticipantAttributes.h>
 #include <fastrtps/attributes/PublisherAttributes.h>
-#include <fastrtps/attributes/SubscriberAttributes.h>
-#include <fastrtps/attributes/RequesterAttributes.hpp>
 #include <fastrtps/attributes/ReplierAttributes.hpp>
+#include <fastrtps/attributes/RequesterAttributes.hpp>
+#include <fastrtps/attributes/SubscriberAttributes.h>
+#include <fastrtps/transport/TransportDescriptorInterface.h>
+#include <fastrtps/types/TypesBase.h>
 #include <fastrtps/xmlparser/XMLParserCommon.h>
-#include <fastrtps/types/DynamicTypeBuilderPtr.h>
-#include <fastrtps/attributes/LibrarySettingsAttributes.h>
 
 #include <map>
+#include <stdio.h>
 #include <string>
 
 namespace tinyxml2 {
@@ -50,7 +50,7 @@ typedef node_att_map_t::const_iterator node_att_map_cit_t;
 typedef std::shared_ptr<fastdds::rtps::TransportDescriptorInterface> sp_transport_t;
 typedef std::map<std::string, sp_transport_t>  sp_transport_map_t;
 typedef types::DynamicTypeBuilder*             p_dynamictypebuilder_t;
-typedef std::map<std::string, p_dynamictypebuilder_t> p_dynamictype_map_t;
+typedef std::map<std::string, types::DynamicTypeBuilder_ptr> p_dynamictype_map_t;
 
 typedef std::unique_ptr<ParticipantAttributes> up_participant_t;
 typedef DataNode<ParticipantAttributes>        node_participant_t;
@@ -258,7 +258,7 @@ protected:
     RTPS_DllAPI static XMLP_ret parseXMLBitmaskDynamicType(
             tinyxml2::XMLElement* p_root);
 
-    RTPS_DllAPI static p_dynamictypebuilder_t parseXMLBitfieldDynamicType(
+    RTPS_DllAPI static types::DynamicTypeBuilder_ptr parseXMLBitfieldDynamicType(
             tinyxml2::XMLElement* p_root,
             p_dynamictypebuilder_t p_dynamictype,
             types::MemberId mId,
@@ -269,12 +269,12 @@ protected:
             p_dynamictypebuilder_t p_dynamictype,
             uint16_t& position);
 
-    RTPS_DllAPI static p_dynamictypebuilder_t parseXMLMemberDynamicType(
+    RTPS_DllAPI static types::DynamicTypeBuilder_ptr parseXMLMemberDynamicType(
             tinyxml2::XMLElement* p_root,
             p_dynamictypebuilder_t p_dynamictype,
             types::MemberId mId);
 
-    RTPS_DllAPI static p_dynamictypebuilder_t parseXMLMemberDynamicType(
+    RTPS_DllAPI static types::DynamicTypeBuilder_ptr parseXMLMemberDynamicType(
             tinyxml2::XMLElement* p_root,
             p_dynamictypebuilder_t p_dynamictype,
             types::MemberId mId,

@@ -28,26 +28,21 @@ class DynamicType;
 class DynamicTypeMember;
 
 class DynamicTypeBuilder
+    : public std::enable_shared_from_this<DynamicTypeBuilder>
 {
-protected:
-    DynamicTypeBuilder();
+    // Only create objects from the associated factory
+    struct use_the_create_method
+    {
+        explicit use_the_create_method() = default;
+    };
 
-    DynamicTypeBuilder(const DynamicTypeBuilder* builder);
-
-    DynamicTypeBuilder(const TypeDescriptor* descriptor);
-
-    virtual ~DynamicTypeBuilder();
-
-    friend class DynamicType;
-    friend class DynamicTypeBuilderFactory;
-
-    TypeDescriptor* descriptor_;
+    TypeDescriptor* descriptor_ = nullptr;
     std::map<MemberId, DynamicTypeMember*> member_by_id_;         // Aggregated members
     std::map<std::string, DynamicTypeMember*> member_by_name_;    // Uses the pointers from "member_by_id_".
     std::string name_;
     TypeKind kind_;
-    MemberId current_member_id_;
-    uint32_t max_index_;
+    MemberId current_member_id_ = 0;
+    uint32_t max_index_ = 0;
 
     ReturnCode_t _apply_annotation_to_member(
             MemberId id,
@@ -71,6 +66,24 @@ protected:
     ReturnCode_t copy_from_builder(const DynamicTypeBuilder* other);
 
 public:
+
+    DynamicTypeBuilder(
+            use_the_create_method);
+
+    DynamicTypeBuilder(
+            use_the_create_method,
+            const DynamicTypeBuilder* builder);
+
+    DynamicTypeBuilder(
+            use_the_create_method,
+            const TypeDescriptor* descriptor);
+
+    virtual ~DynamicTypeBuilder();
+
+    friend class DynamicType;
+    friend class DynamicTypeBuilderFactory;
+
+
     RTPS_DllAPI ReturnCode_t add_empty_member(
             uint32_t index,
             const std::string& name);
@@ -99,7 +112,7 @@ public:
     RTPS_DllAPI ReturnCode_t add_member(
             MemberId id,
             const std::string& name,
-        DynamicType_ptr type_ = DynamicType_ptr(nullptr));
+            DynamicType_ptr type_ = nullptr);
 
     RTPS_DllAPI ReturnCode_t add_member(
             MemberId id,

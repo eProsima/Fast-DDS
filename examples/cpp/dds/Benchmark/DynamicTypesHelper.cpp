@@ -20,7 +20,6 @@
 #include "DynamicTypesHelper.h"
 #include <fastrtps/types/DynamicDataFactory.h>
 #include <fastrtps/types/DynamicTypeBuilderFactory.h>
-#include <fastrtps/types/DynamicTypeBuilderPtr.h>
 
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::types;

@@ -193,7 +193,7 @@ public:
     //!Add a new dynamic type instance along with its name.
     RTPS_DllAPI static bool insertDynamicTypeByName(
             const std::string& type_name,
-            p_dynamictypebuilder_t type);
+            types::DynamicTypeBuilder_ptr&& type);
 
     //!Retrieves a transport instance by its name.
     RTPS_DllAPI static p_dynamictypebuilder_t getDynamicTypeByName(

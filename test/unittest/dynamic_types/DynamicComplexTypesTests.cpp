@@ -16,7 +16,6 @@
 #include <gtest/gtest.h>
 #include <fastrtps/types/DynamicTypeBuilderFactory.h>
 #include <fastrtps/types/DynamicTypeBuilder.h>
-#include <fastrtps/types/DynamicTypeBuilderPtr.h>
 #include <fastrtps/types/DynamicDataPtr.h>
 #include <fastrtps/types/DynamicTypeMember.h>
 #include <fastrtps/types/DynamicDataFactory.h>

@@ -585,11 +585,11 @@ sp_transport_t XMLProfileManager::getTransportById(
 
 bool XMLProfileManager::insertDynamicTypeByName(
         const std::string& type_name,
-        p_dynamictypebuilder_t type)
+        types::DynamicTypeBuilder_ptr&& type)
 {
     if (dynamic_types_.find(type_name) == dynamic_types_.end())
     {
-        dynamic_types_[type_name] = type;
+        dynamic_types_[type_name] = std::move(type);
         return true;
     }
     EPROSIMA_LOG_ERROR(XMLPARSER, "Error adding the type " << type_name << ". There is other type with the same name.");
@@ -601,7 +601,7 @@ p_dynamictypebuilder_t XMLProfileManager::getDynamicTypeByName(
 {
     if (dynamic_types_.find(type_name) != dynamic_types_.end())
     {
-        return dynamic_types_[type_name];
+        return dynamic_types_[type_name].get();
     }
     return nullptr;
 }
