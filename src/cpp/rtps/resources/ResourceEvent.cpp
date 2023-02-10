@@ -137,9 +137,13 @@ void ResourceEvent::notify(
         TimedEventImpl* event,
         const std::chrono::steady_clock::time_point& timeout)
 {
+#if HAVE_STRICT_REALTIME
     std::unique_lock<TimedMutex> lock(mutex_, std::defer_lock);
-
     if (lock.try_lock_until(timeout))
+#else
+    static_cast<void>(timeout);
+    std::lock_guard<TimedMutex> _(mutex_);
+#endif  // HAVE_STRICT_REALTIME
     {
         if (register_timer_nts(event))
         {

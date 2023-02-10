@@ -238,19 +238,72 @@ ReturnCode_t DataReaderImpl::read_next_sample(
         return ReturnCode_t::RETCODE_NO_DATA;
     }
 
-    auto max_blocking_time = std::chrono::steady_clock::now() +
 #if HAVE_STRICT_REALTIME
+    auto max_blocking_time = std::chrono::steady_clock::now() +
             std::chrono::microseconds(::TimeConv::Time_t2MicroSecondsInt64(qos_.reliability().max_blocking_time));
+<<<<<<< HEAD
 #else
             std::chrono::hours(24);
 #endif // if HAVE_STRICT_REALTIME
     SampleInfo_t rtps_info;
     if (history_.readNextData(data, &rtps_info, max_blocking_time))
+=======
+    std::unique_lock<RecursiveTimedMutex> lock(reader_->getMutex(), std::defer_lock);
+
+    if (!lock.try_lock_until(max_blocking_time))
+>>>>>>> 0cf43de20 (Improve behavior when HAVE_STRICT_REALTIME is not set (#3288))
     {
         sample_info_to_dds(rtps_info, info);
         return ReturnCode_t::RETCODE_OK;
     }
+<<<<<<< HEAD
     return ReturnCode_t::RETCODE_ERROR;
+=======
+#else
+    std::lock_guard<RecursiveTimedMutex> _(reader_->getMutex());
+#endif // if HAVE_STRICT_REALTIME
+
+    set_read_communication_status(false);
+
+    auto it = history_.lookup_available_instance(handle, exact_instance);
+    if (!it.first)
+    {
+        if (exact_instance && !history_.is_instance_present(handle))
+        {
+            return ReturnCode_t::RETCODE_BAD_PARAMETER;
+        }
+        else
+        {
+            return ReturnCode_t::RETCODE_NO_DATA;
+        }
+    }
+
+    code = prepare_loan(data_values, sample_infos, max_samples);
+    if (!code)
+    {
+        return code;
+    }
+
+    detail::StateFilter states = { sample_states, view_states, instance_states };
+    detail::ReadTakeCommand cmd(
+        *this,
+        data_values,
+        sample_infos,
+        max_samples,
+        states,
+        it.second,
+        single_instance,
+        !exact_instance);
+
+    while (!cmd.is_finished())
+    {
+        cmd.add_instance(should_take);
+    }
+
+    try_notify_read_conditions();
+
+    return cmd.return_value();
+>>>>>>> 0cf43de20 (Improve behavior when HAVE_STRICT_REALTIME is not set (#3288))
 }
 
 ReturnCode_t DataReaderImpl::take_next_sample(
@@ -267,20 +320,76 @@ ReturnCode_t DataReaderImpl::take_next_sample(
         return ReturnCode_t::RETCODE_NO_DATA;
     }
 
-    auto max_blocking_time = std::chrono::steady_clock::now() +
 #if HAVE_STRICT_REALTIME
+    auto max_blocking_time = std::chrono::steady_clock::now() +
             std::chrono::microseconds(::TimeConv::Time_t2MicroSecondsInt64(qos_.reliability().max_blocking_time));
+<<<<<<< HEAD
 #else
             std::chrono::hours(24);
 #endif // if HAVE_STRICT_REALTIME
 
     SampleInfo_t rtps_info;
     if (history_.takeNextData(data, &rtps_info, max_blocking_time))
+=======
+    std::unique_lock<RecursiveTimedMutex> lock(reader_->getMutex(), std::defer_lock);
+
+    if (!lock.try_lock_until(max_blocking_time))
+>>>>>>> 0cf43de20 (Improve behavior when HAVE_STRICT_REALTIME is not set (#3288))
     {
         sample_info_to_dds(rtps_info, info);
         return ReturnCode_t::RETCODE_OK;
     }
+<<<<<<< HEAD
     return ReturnCode_t::RETCODE_ERROR;
+=======
+
+#else
+    std::lock_guard<RecursiveTimedMutex> _(reader_->getMutex());
+#endif // if HAVE_STRICT_REALTIME
+
+    set_read_communication_status(false);
+
+    auto it = history_.lookup_available_instance(HANDLE_NIL, false);
+    if (!it.first)
+    {
+        return ReturnCode_t::RETCODE_NO_DATA;
+    }
+
+    StackAllocatedSequence<void*, 1> data_values;
+    const_cast<void**>(data_values.buffer())[0] = data;
+    StackAllocatedSequence<SampleInfo, 1> sample_infos;
+
+    detail::StateFilter states{ NOT_READ_SAMPLE_STATE, ANY_VIEW_STATE, ANY_INSTANCE_STATE };
+    detail::ReadTakeCommand cmd(*this, data_values, sample_infos, 1, states, it.second, false, false);
+    while (!cmd.is_finished())
+    {
+        cmd.add_instance(should_take);
+    }
+
+    ReturnCode_t code = cmd.return_value();
+    if (ReturnCode_t::RETCODE_OK == code)
+    {
+        *info = sample_infos[0];
+    }
+
+    try_notify_read_conditions();
+
+    return code;
+}
+
+ReturnCode_t DataReaderImpl::read_next_sample(
+        void* data,
+        SampleInfo* info)
+{
+    return read_or_take_next_sample(data, info, false);
+}
+
+ReturnCode_t DataReaderImpl::take_next_sample(
+        void* data,
+        SampleInfo* info)
+{
+    return read_or_take_next_sample(data, info, true);
+>>>>>>> 0cf43de20 (Improve behavior when HAVE_STRICT_REALTIME is not set (#3288))
 }
 
 ReturnCode_t DataReaderImpl::get_first_untaken_info(
