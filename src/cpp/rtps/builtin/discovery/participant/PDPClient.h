@@ -26,6 +26,9 @@
 
 #include <rtps/builtin/discovery/participant/timedevent/DSClientEvent.h>
 
+#include <rtps/builtin/discovery/participant/DS/DiscoveryServerPDPEndpoints.hpp>
+#include <rtps/builtin/discovery/participant/DS/DiscoveryServerPDPEndpointsSecure.hpp>
+
 namespace eprosima {
 namespace fastdds {
 namespace rtps {
@@ -132,11 +135,15 @@ public:
             const GUID_t& participant_guid,
             ParticipantDiscoveryInfo::DISCOVERY_STATUS reason) override;
 
-    /**
-     * Matching server EDP endpoints
-     * @return true if all servers have been discovered
-     */
-    bool match_servers_EDP_endpoints();
+#if HAVE_SECURITY
+    bool pairing_remote_writer_with_local_reader_after_security(
+            const GUID_t& local_reader,
+            const WriterProxyData& remote_writer_data) override;
+
+    bool pairing_remote_reader_with_local_writer_after_security(
+            const GUID_t& local_reader,
+            const ReaderProxyData& remote_reader_data) override;
+#endif // HAVE_SECURITY
 
     /*
      * Update the list of remote servers
@@ -144,6 +151,8 @@ public:
     void update_remote_servers_list();
 
 protected:
+
+    void update_builtin_locators() override;
 
     /**
      * Manually match the local PDP reader with the PDP writer of a given server. The function is
@@ -162,6 +171,70 @@ protected:
             const eprosima::fastdds::rtps::RemoteServerAttributes& server_att);
 
 private:
+
+    /**
+     * Manually match the local PDP reader with the PDP writer of a given server. The function is
+     * not thread safe (nts) in the sense that it does not take the PDP mutex. It does however take
+     * temp_data_lock_
+     */
+    void match_pdp_writer_nts_(
+            const eprosima::fastdds::rtps::RemoteServerAttributes& server_att,
+            const eprosima::fastdds::rtps::GuidPrefix_t& prefix_override);
+
+    /**
+     * Manually match the local PDP writer with the PDP reader of a given server. The function is
+     * not thread safe (nts) in the sense that it does not take the PDP mutex. It does however take
+     * temp_data_lock_
+     */
+    void match_pdp_reader_nts_(
+            const eprosima::fastdds::rtps::RemoteServerAttributes& server_att,
+            const eprosima::fastdds::rtps::GuidPrefix_t& prefix_override);
+
+#if HAVE_SECURITY
+    /**
+     * Returns whether discovery should be secured
+     */
+    bool should_protect_discovery();
+
+    /**
+     * Performs creation of secured DS PDP endpoints
+     */
+    bool create_secure_ds_pdp_endpoints();
+
+#endif  // HAVE_SECURITY
+
+    /**
+     * Performs creation of standard DS PDP endpoints
+     */
+    bool create_ds_pdp_endpoints();
+
+    /**
+     * Performs creation of DS (reliable) PDP endpoints.
+     *
+     * @param [in,out]  endpoints  Container where the created resources should be kept.
+     * @param [in]      secure     Whether the created endpoints should be secure.
+     *
+     * @return whether the endpoints were successfully created.
+     */
+    bool create_ds_pdp_reliable_endpoints(
+            DiscoveryServerPDPEndpoints& endpoints,
+            bool is_discovery_protected);
+
+    /**
+     * Performs creation of DS best-effort PDP reader.
+     *
+     * @param [in,out]  endpoints  Container where the created resources should be kept.
+     *
+     * @return whether the reader was successfully created.
+     */
+    bool create_ds_pdp_best_effort_reader(
+            DiscoveryServerPDPEndpointsSecure& endpoints);
+
+    /**
+     * Provides the functionality of notifyAboveRemoteEndpoints without being an override of that method.
+     */
+    void perform_builtin_endpoints_matching(
+            const ParticipantProxyData& pdata);
 
     /**
      * TimedEvent for server synchronization:

@@ -1,6 +1,7 @@
 Forthcoming
 -----------
 
+* Enabled secure communications on Discovery Server (ABI break on RTPS layer)
 * Added non-standard DataWriterListener callback `on_unacknowledged_sample_removed` (API extension on DDS layer).
 * Added `RTPSWriter::has_been_delivered` virtual method (ABI break on RTPS layer).
 * Refactor `StatefulWriter::get_disable_positive_acks` as virtual method of `RTPSWriter` (ABI break on RTPS layer).
