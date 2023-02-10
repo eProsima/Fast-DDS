@@ -448,19 +448,18 @@ ReturnCode_t DataReaderImpl::read_or_take(
         return code;
     }
 
-    auto max_blocking_time = std::chrono::steady_clock::now() +
 #if HAVE_STRICT_REALTIME
+    auto max_blocking_time = std::chrono::steady_clock::now() +
             std::chrono::microseconds(::TimeConv::Time_t2MicroSecondsInt64(qos_.reliability().max_blocking_time));
-#else
-            std::chrono::hours(24);
-#endif // if HAVE_STRICT_REALTIME
-
     std::unique_lock<RecursiveTimedMutex> lock(reader_->getMutex(), std::defer_lock);
 
     if (!lock.try_lock_until(max_blocking_time))
     {
         return ReturnCode_t::RETCODE_TIMEOUT;
     }
+#else
+    std::lock_guard<RecursiveTimedMutex> _(reader_->getMutex());
+#endif // if HAVE_STRICT_REALTIME
 
     auto it = history_.lookup_instance(handle, exact_instance);
     if (!it.first)
@@ -626,19 +625,18 @@ ReturnCode_t DataReaderImpl::read_or_take_next_sample(
         return ReturnCode_t::RETCODE_NO_DATA;
     }
 
-    auto max_blocking_time = std::chrono::steady_clock::now() +
 #if HAVE_STRICT_REALTIME
+    auto max_blocking_time = std::chrono::steady_clock::now() +
             std::chrono::microseconds(::TimeConv::Time_t2MicroSecondsInt64(qos_.reliability().max_blocking_time));
-#else
-            std::chrono::hours(24);
-#endif // if HAVE_STRICT_REALTIME
-
     std::unique_lock<RecursiveTimedMutex> lock(reader_->getMutex(), std::defer_lock);
 
     if (!lock.try_lock_until(max_blocking_time))
     {
         return ReturnCode_t::RETCODE_TIMEOUT;
     }
+#else
+    std::lock_guard<RecursiveTimedMutex> _(reader_->getMutex());
+#endif // if HAVE_STRICT_REALTIME
 
     auto it = history_.lookup_instance(HANDLE_NIL, false);
     if (!it.first)
