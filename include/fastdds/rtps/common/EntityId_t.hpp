@@ -361,6 +361,11 @@ const EntityId_t participant_volatile_message_secure_reader_entity_id =
 
 const EntityId_t c_EntityId_WriterLivelinessSecure = ENTITYID_P2P_BUILTIN_PARTICIPANT_MESSAGE_SECURE_WRITER;
 const EntityId_t c_EntityId_ReaderLivelinessSecure = ENTITYID_P2P_BUILTIN_PARTICIPANT_MESSAGE_SECURE_READER;
+
+const EntityId_t c_EntityId_spdp_reliable_participant_secure_reader =
+        ENTITYID_SPDP_RELIABLE_BUILTIN_PARTICIPANT_SECURE_READER;
+const EntityId_t c_EntityId_spdp_reliable_participant_secure_writer =
+        ENTITYID_SPDP_RELIABLE_BUILTIN_PARTICIPANT_SECURE_WRITER;
 #endif // if HAVE_SECURITY
 
 const EntityId_t ds_server_virtual_writer = ENTITYID_DS_SERVER_VIRTUAL_WRITER;

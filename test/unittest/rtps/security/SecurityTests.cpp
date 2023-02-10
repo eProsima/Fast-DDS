@@ -87,8 +87,8 @@ void SecurityTest::request_process_ok(
             WillOnce(Return(change));
     EXPECT_CALL(*stateless_writer_->history_, add_change_mock(change)).Times(1).
             WillOnce(Return(true));
-    EXPECT_CALL(participant_, pdpsimple()).Times(1).WillOnce(Return(&pdpsimple_));
-    EXPECT_CALL(pdpsimple_, get_participant_proxy_data_serialized(BIGEND)).Times(1);
+    EXPECT_CALL(participant_, pdp()).Times(1).WillOnce(Return(&pdp_));
+    EXPECT_CALL(pdp_, get_participant_proxy_data_serialized(BIGEND)).Times(1);
 
     fill_participant_key(participant_data_.m_guid);
     ASSERT_TRUE(manager_.discovered_participant(participant_data_));
@@ -152,8 +152,8 @@ void SecurityTest::reply_process_ok(
             WillOnce(Return(true));
     EXPECT_CALL(*stateless_reader_->history_, remove_change_mock(change)).Times(1).
             WillOnce(Return(true));
-    EXPECT_CALL(participant_, pdpsimple()).Times(1).WillOnce(Return(&pdpsimple_));
-    EXPECT_CALL(pdpsimple_, get_participant_proxy_data_serialized(BIGEND)).Times(1);
+    EXPECT_CALL(participant_, pdp()).Times(1).WillOnce(Return(&pdp_));
+    EXPECT_CALL(pdp_, get_participant_proxy_data_serialized(BIGEND)).Times(1);
 
     stateless_reader_->listener_->onNewCacheChangeAdded(stateless_reader_, change);
 
@@ -221,8 +221,8 @@ void SecurityTest::final_message_process_ok(
     EXPECT_CALL(*stateless_reader_->history_, remove_change_mock(change)).Times(1).
             WillOnce(Return(true));
     //TODO(Ricardo) Verify parameter passed to notifyAboveRemoteEndpoints
-    EXPECT_CALL(participant_, pdpsimple()).Times(1).WillOnce(Return(&pdpsimple_));
-    EXPECT_CALL(pdpsimple_, notifyAboveRemoteEndpoints(_, true)).Times(1);
+    EXPECT_CALL(participant_, pdp()).Times(1).WillOnce(Return(&pdp_));
+    EXPECT_CALL(pdp_, notifyAboveRemoteEndpoints(_, true)).Times(1);
     EXPECT_CALL(*auth_plugin_, get_shared_secret(Ref(handshake_handle_), _)).Times(1).
             WillOnce(Return(shared_secret_handle));
     EXPECT_CALL(*auth_plugin_, return_sharedsecret_handle(shared_secret_handle, _)).Times(1).

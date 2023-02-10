@@ -249,6 +249,24 @@ public:
             PermissionsCredentialToken* token,
             SecurityException& ex) = 0;
 
+    /**
+     * Returns whether a mangled GUID is the same as the original
+     * @param identity_handle Identity Handle of remote peer
+     * @param adjusted Mangled GUID prefix
+     * @param original Original GUID prefix candidate to compare
+     * @return true when @c adjusted corresponds to @c original
+     */
+    virtual bool check_guid_comes_from(
+            IdentityHandle* identity_handle,
+            const GUID_t& adjusted,
+            const GUID_t& original)
+    {
+        static_cast<void>(identity_handle);
+
+        //! By default, return this comparison
+        return adjusted == original;
+    }
+
     bool set_logger(
             Logging* logger,
             SecurityException& /*exception*/)

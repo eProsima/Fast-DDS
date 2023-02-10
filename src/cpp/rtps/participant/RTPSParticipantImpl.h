@@ -102,6 +102,7 @@ class ReaderAttributes;
 class ReaderHistory;
 class ReaderListener;
 class StatefulReader;
+class PDP;
 class PDPSimple;
 class IPersistenceService;
 class WLP;
@@ -417,6 +418,8 @@ public:
 #endif // if HAVE_SECURITY
 
     PDPSimple* pdpsimple();
+
+    PDP* pdp();
 
     WLP* wlp();
 

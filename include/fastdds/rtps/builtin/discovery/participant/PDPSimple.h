@@ -119,6 +119,8 @@ public:
             int16_t userDefinedId,
             EndpointKind_t kind);
 
+    void update_builtin_locators() override;
+
 private:
 
     void initializeParticipantProxyData(

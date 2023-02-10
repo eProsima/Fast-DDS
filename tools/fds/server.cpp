@@ -482,6 +482,8 @@ int fastdds_discovery_server(
         }
     }
 
+    fastrtps::rtps::GuidPrefix_t guid_prefix = participantQos.wire_protocol().prefix;
+
     // Create the server
     int return_value = 0;
     DomainParticipant* pServer = DomainParticipantFactory::get_instance()->create_participant(0, participantQos);
@@ -499,13 +501,22 @@ int fastdds_discovery_server(
         signal(SIGINT, sigint_handler);
         signal(SIGTERM, sigint_handler);
 
+        bool has_security = false;
+        if (guid_prefix != pServer->guid().guidPrefix)
+        {
+            has_security = true;
+        }
+
         // Print running server attributes
         std::cout << "### Server is running ###" << std::endl;
         std::cout << "  Participant Type:   " <<
             participantQos.wire_protocol().builtin.discovery_config.discoveryProtocol <<
             std::endl;
+        std::cout << "  Security:           " << (has_security ? "YES" : "NO") << std::endl;
         std::cout << "  Server ID:          " << server_id << std::endl;
-        std::cout << "  Server GUID prefix: " << pServer->guid().guidPrefix << std::endl;
+        std::cout << "  Server GUID prefix: " <<
+            (has_security ? participantQos.wire_protocol().prefix : pServer->guid().guidPrefix) <<
+            std::endl;
         std::cout << "  Server Addresses:   ";
         for (auto locator_it = participantQos.wire_protocol().builtin.metatrafficUnicastLocatorList.begin();
                 locator_it != participantQos.wire_protocol().builtin.metatrafficUnicastLocatorList.end();)

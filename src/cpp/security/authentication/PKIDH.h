@@ -117,6 +117,11 @@ public:
             PermissionsCredentialToken* token,
             SecurityException& ex) override;
 
+    bool check_guid_comes_from(
+            IdentityHandle* identity_handle,
+            const GUID_t& adjusted,
+            const GUID_t& original) override;
+
     std::unique_ptr<detail::Pkcs11Provider> pkcs11_provider;
 
 private:

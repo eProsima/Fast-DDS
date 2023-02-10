@@ -2068,7 +2068,7 @@ bool RTPSParticipantImpl::pairing_remote_reader_with_local_writer_after_security
 {
     bool return_value;
 
-    return_value = mp_builtinProtocols->mp_PDP->getEDP()->pairing_remote_reader_with_local_writer_after_security(
+    return_value = mp_builtinProtocols->mp_PDP->pairing_remote_reader_with_local_writer_after_security(
         local_writer, remote_reader_data);
     if (!return_value && mp_builtinProtocols->mp_WLP != nullptr)
     {
@@ -2085,7 +2085,7 @@ bool RTPSParticipantImpl::pairing_remote_writer_with_local_reader_after_security
 {
     bool return_value;
 
-    return_value = mp_builtinProtocols->mp_PDP->getEDP()->pairing_remote_writer_with_local_reader_after_security(
+    return_value = mp_builtinProtocols->mp_PDP->pairing_remote_writer_with_local_reader_after_security(
         local_reader, remote_writer_data);
     if (!return_value && mp_builtinProtocols->mp_WLP != nullptr)
     {
@@ -2143,6 +2143,11 @@ bool RTPSParticipantImpl::is_security_enabled_for_reader(
 }
 
 #endif // if HAVE_SECURITY
+
+PDP* RTPSParticipantImpl::pdp()
+{
+    return mp_builtinProtocols->mp_PDP;
+}
 
 PDPSimple* RTPSParticipantImpl::pdpsimple()
 {

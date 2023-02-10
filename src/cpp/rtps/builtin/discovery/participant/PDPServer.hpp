@@ -34,6 +34,7 @@
 #include <rtps/builtin/discovery/database/DiscoveryDataBase.hpp>
 #include <rtps/builtin/discovery/database/DiscoveryDataFilter.hpp>
 #include <rtps/builtin/discovery/participant/timedevent/DServerEvent.hpp>
+#include <rtps/builtin/discovery/participant/DS/DiscoveryServerPDPEndpointsSecure.hpp>
 
 namespace eprosima {
 namespace fastdds {
@@ -137,6 +138,16 @@ public:
             const fastrtps::rtps::ParticipantProxyData& pdata,
             bool notify_secure_endpoints) override;
 
+#if HAVE_SECURITY
+    bool pairing_remote_writer_with_local_reader_after_security(
+            const fastrtps::rtps::GUID_t& local_reader,
+            const fastrtps::rtps::WriterProxyData& remote_writer_data) override;
+
+    bool pairing_remote_reader_with_local_writer_after_security(
+            const fastrtps::rtps::GUID_t& local_reader,
+            const fastrtps::rtps::ReaderProxyData& remote_reader_data) override;
+#endif // HAVE_SECURITY
+
     //! Get filename for writer persistence database file
     std::string get_writer_persistence_file_name() const;
 
@@ -188,6 +199,8 @@ public:
 
 protected:
 
+    void update_builtin_locators() override;
+
     /*
      * Get Pointer to the server resource event thread.
      */
@@ -220,12 +233,6 @@ protected:
             fastrtps::rtps::WriterHistory* history,
             fastrtps::rtps::CacheChange_t* change,
             bool release_change = true);
-
-
-    // Remove from writer_history all the changes whose original sender was entity_guid_prefix
-    void remove_related_alive_from_history_nts(
-            fastrtps::rtps::WriterHistory* writer_history,
-            const fastrtps::rtps::GuidPrefix_t& entity_guid_prefix);
 
     bool announcement_from_same_participant_in_disposals(
             const std::vector<fastrtps::rtps::CacheChange_t*>& disposals,
@@ -295,7 +302,63 @@ protected:
     void match_pdp_reader_nts_(
             const eprosima::fastdds::rtps::RemoteServerAttributes& server_att);
 
+    /**
+     * Release a change from the history of the PDP writer.
+     *
+     * @param change The CacheChange_t to be released.
+     */
+    void release_change_from_writer(
+            eprosima::fastrtps::rtps::CacheChange_t* change);
+
 private:
+
+#if HAVE_SECURITY
+    /**
+     * Returns whether discovery should be secured
+     */
+    bool should_protect_discovery();
+
+    /**
+     * Performs creation of secured DS PDP endpoints
+     */
+    bool create_secure_ds_pdp_endpoints();
+#endif  // HAVE_SECURITY
+
+    /**
+     * Performs creation of standard DS PDP endpoints
+     */
+    bool create_ds_pdp_endpoints();
+
+    /**
+     * Performs creation of DS (reliable) PDP endpoints.
+     *
+     * @param [in,out]  endpoints  Container where the created resources should be kept.
+     * @param [in]      secure     Whether the created endpoints should be secure.
+     *
+     * @return whether the endpoints were successfully created.
+     */
+    bool create_ds_pdp_reliable_endpoints(
+            DiscoveryServerPDPEndpoints& endpoints,
+            bool secure);
+
+    /**
+     * Performs creation of DS best-effort PDP reader.
+     *
+     * @param [in,out]  endpoints  Container where the created resources should be kept.
+     *
+     * @return whether the reader was successfully created.
+     */
+    bool create_ds_pdp_best_effort_reader(
+            DiscoveryServerPDPEndpointsSecure& endpoints);
+
+    /**
+     * Provides the functionality of notifyAboveRemoteEndpoints without being an override of that method.
+     */
+    void perform_builtin_endpoints_matching(
+            const fastrtps::rtps::ParticipantProxyData& pdata);
+
+    void match_reliable_pdp_endpoints(
+            const fastrtps::rtps::ParticipantProxyData& pdata);
 
     //! Server thread
     eprosima::fastrtps::rtps::ResourceEvent resource_event_thread_;

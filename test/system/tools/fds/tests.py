@@ -227,7 +227,7 @@ def test_fast_discovery_parse_XML_file_URI_profile(fast_discovery_tool):
     for add in EXPECTED_SERVER_ADDRESS:
         exit_code = check_output(output, err, add, False)
         if exit_code != 0:
-            sys.exit(exit_code)    
+            sys.exit(exit_code)
     sys.exit(exit_code)
 
 
@@ -437,7 +437,7 @@ def test_fast_discovery_backup(fast_discovery_tool):
     if exit_code != 0:
         sys.exit(exit_code)
     for add in EXPECTED_SERVER_ADDRESS:
-        exit_code = check_output(output, err, add, False)    
+        exit_code = check_output(output, err, add, False)
         if exit_code != 0:
             sys.exit(exit_code)
 
@@ -455,7 +455,7 @@ def test_fast_discovery_backup(fast_discovery_tool):
     if exit_code != 0:
         sys.exit(exit_code)
     for add in EXPECTED_XML_SERVER_ADDRESS:
-        exit_code = check_output(output, err, add, False)    
+        exit_code = check_output(output, err, add, False)
         if exit_code != 0:
             sys.exit(exit_code)
 
@@ -528,6 +528,57 @@ def test_fast_discovery_non_existent_profile(fast_discovery_tool):
     exit_code = check_output(output, err, "Error loading specified profile from XML file", True)
     sys.exit(exit_code)
 
+def test_fast_discovery_security_disabled(fast_discovery_tool):
+    """Test failure when Security is YES without being secure"""
+
+    command = [fast_discovery_tool, '-i', '0']
+    output, err, exit_code = send_command(command)
+    if exit_code != 0:
+        print(output)
+        sys.exit(exit_code)
+
+    exit_code = check_output(output, err, "Security:           NO", True)
+    sys.exit(exit_code)
+
+def test_fast_discovery_security_enabled_xml_prefix(fast_discovery_tool):
+    """Test failure when the printed guid is not the specified in the XML file"""
+
+    XML_file_path = "test_xml_secure_discovery_server.xml"
+    command = [fast_discovery_tool, '-x', XML_file_path]
+    output, err, exit_code = send_command(command)
+    if exit_code != 0:
+        print(output)
+        sys.exit(exit_code)
+    EXPECTED_OUTPUTS = [
+        "Security:           YES",
+        "44.53.00.5f.45.50.52.4f.53.49.4d.41",
+    ]
+    for pattern in EXPECTED_OUTPUTS:
+        exit_code = check_output(output, err, pattern, False)
+        if exit_code != 0:
+            break
+
+    sys.exit(exit_code)
+
+def test_fast_discovery_security_enabled_cli_prefix(fast_discovery_tool):
+    """Test failure when the printed guid is not the specified in the XML file"""
+
+    XML_file_path = "test_xml_secure_discovery_server.xml"
+    command = [fast_discovery_tool, '-i', '0', '-x', 'secure_ds_no_prefix@' + XML_file_path]
+    output, err, exit_code = send_command(command)
+    if exit_code != 0:
+        print(output)
+        sys.exit(exit_code)
+    EXPECTED_OUTPUTS = [
+        "Security:           YES",
+        "44.53.00.5f.45.50.52.4f.53.49.4d.41",
+    ]
+    for pattern in EXPECTED_OUTPUTS:
+        exit_code = check_output(output, err, pattern, False)
+        if exit_code != 0:
+            break
+
+    sys.exit(exit_code)
 
 if __name__ == '__main__':
 
@@ -576,6 +627,12 @@ if __name__ == '__main__':
             test_fast_discovery_invalid_locator(args.binary_path),
         'test_fast_discovery_non_existent_profile': lambda:
             test_fast_discovery_non_existent_profile(args.binary_path),
+        'test_fast_discovery_security_disabled': lambda:
+            test_fast_discovery_security_disabled(args.binary_path),
+        'test_fast_discovery_security_enabled_xml_prefix': lambda:
+            test_fast_discovery_security_enabled_xml_prefix(args.binary_path),
+        'test_fast_discovery_security_enabled_cli_prefix': lambda:
+            test_fast_discovery_security_enabled_cli_prefix(args.binary_path)
     }
 
     tests[args.test_name]()

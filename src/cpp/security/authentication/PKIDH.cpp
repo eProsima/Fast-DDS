@@ -2551,3 +2551,37 @@ bool PKIDH::return_authenticated_peer_credential_token(
     delete token;
     return true;
 }
+
+bool PKIDH::check_guid_comes_from(
+        IdentityHandle* identity_handle,
+        const GUID_t& adjusted,
+        const GUID_t& original)
+{
+    SecurityException exception;
+
+    if (identity_handle != nullptr)
+    {
+        PKIIdentityHandle* pkiih = &PKIIdentityHandle::narrow(*identity_handle);
+        GUID_t adjusted_original_guid;
+
+        if (pkiih != nullptr && !(*pkiih).nil() && (*pkiih)->cert_ != nullptr)
+        {
+            adjust_participant_key((*pkiih)->cert_, original, adjusted_original_guid, exception);
+            return adjusted == adjusted_original_guid;
+        }
+        else
+        {
+            exception = _SecurityException_("Invalid PKI Identity handle or Invalid Certificate");
+            EMERGENCY_SECURITY_LOGGING("PKIDH", exception.what());
+        }
+
+    }
+    else
+    {
+        exception = _SecurityException_("Invalid Identity handle");
+        EMERGENCY_SECURITY_LOGGING("PKIDH", exception.what());
+    }
+
+    return adjusted == original;
+
+}

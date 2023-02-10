@@ -298,6 +298,71 @@ void EDPSimple::processPersistentData(
     // We don't need to awake the server thread because we are in it
 }
 
+EDPSimple::t_p_StatefulWriter EDPSimple::get_builtin_writer_history_pair_by_entity(
+        const EntityId_t& entity_id)
+{
+    t_p_StatefulWriter ret{nullptr, nullptr};
+
+    if (entity_id == c_EntityId_SEDPPubWriter)
+    {
+        ret = publications_writer_;
+
+    }
+    else if (entity_id == c_EntityId_SEDPSubWriter)
+    {
+        ret = subscriptions_writer_;
+    }
+#if HAVE_SECURITY
+    else if (entity_id == sedp_builtin_publications_secure_writer)
+    {
+        ret = publications_secure_writer_;
+    }
+    else if (entity_id == sedp_builtin_subscriptions_secure_writer)
+    {
+        ret = subscriptions_secure_writer_;
+    }
+#endif // HAVE_SECURITY
+    else
+    {
+        logError(RTPS_EDP, "Could not find the requested writer builtin endpoint");
+    }
+
+    return ret;
+}
+
+EDPSimple::t_p_StatefulReader EDPSimple::get_builtin_reader_history_pair_by_entity(
+        const EntityId_t& entity_id)
+{
+    t_p_StatefulReader ret{nullptr, nullptr};
+
+    if (entity_id == c_EntityId_SEDPPubReader || entity_id == c_EntityId_SEDPPubWriter)
+    {
+        ret = publications_reader_;
+    }
+    else if (entity_id == c_EntityId_SEDPSubReader || entity_id == c_EntityId_SEDPSubWriter)
+    {
+        ret = subscriptions_reader_;
+    }
+#if HAVE_SECURITY
+    else if (entity_id == sedp_builtin_publications_secure_reader ||
+            entity_id == sedp_builtin_publications_secure_writer)
+    {
+        ret = publications_secure_reader_;
+    }
+    else if (entity_id == sedp_builtin_subscriptions_secure_reader ||
+            entity_id == sedp_builtin_subscriptions_secure_writer)
+    {
+        ret = subscriptions_secure_reader_;
+    }
+#endif // HAVE_SECURITY
+    else
+    {
+        logError(RTPS_EDP, "Could not find the requested reader builtin endpoint");
+    }
+
+    return ret;
+}
+
 void EDPSimple::set_builtin_reader_history_attributes(
         HistoryAttributes& attributes)
 {
