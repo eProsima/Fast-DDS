@@ -424,7 +424,7 @@ XMLP_ret XMLParser::parseXMLBitsetDynamicType(
         element_name = p_element->Name();
         if (strcmp(element_name, BITFIELD) == 0)
         {
-            if(!parseXMLBitfieldDynamicType(p_element, typeBuilder.get(), mId++, position))
+            if (!parseXMLBitfieldDynamicType(p_element, typeBuilder.get(), mId++, position))
             {
                 return XMLP_ret::XML_ERROR;
             }
@@ -745,7 +745,7 @@ XMLP_ret XMLParser::parseXMLStructDynamicType(
         element_name = p_element->Name();
         if (strcmp(element_name, MEMBER) == 0)
         {
-            if(!parseXMLMemberDynamicType(p_element, typeBuilder.get(), mId++))
+            if (!parseXMLMemberDynamicType(p_element, typeBuilder.get(), mId++))
             {
                 return XMLP_ret::XML_ERROR;
             }
@@ -1043,7 +1043,7 @@ DynamicTypeBuilder_ptr XMLParser::parseXMLMemberDynamicType(
         const char* memberMapKeyType = p_root->Attribute(MAP_KEY_TYPE);
         if (memberMapKeyType != nullptr)
         {
-            if(!getDiscriminatorTypeBuilder(memberMapKeyType))
+            if (!getDiscriminatorTypeBuilder(memberMapKeyType))
             {
                 EPROSIMA_LOG_ERROR(XMLPARSER, "Error parsing map's key element type: Cannot be recognized.");
                 return nullptr;
