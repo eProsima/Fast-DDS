@@ -36,6 +36,7 @@ class BuilderAllocator
     : public std::allocator<T>
 {
 public:
+
     template <class Other>
     struct rebind
     {
@@ -51,6 +52,7 @@ public:
         // delegate into the derived class
         static_cast<B*>(this)->on_deallocation(p);
     }
+
 };
 
 } // namespace detail
@@ -67,19 +69,26 @@ struct std::allocator_traits<eprosima::fastrtps::types::detail::BuilderAllocator
     template <class Other>
     using rebind_alloc = typename BA::template rebind<Other>::other;
 
-    template <class... Types>
-    static constexpr void construct(BA& alloc, T* const p, Types&&... args) {
+    template <class ... Types>
+    static constexpr void construct(
+            BA& alloc,
+            T* const p,
+            Types&&... args)
+    {
         return std::allocator_traits<std::allocator<T>>::construct(
-                alloc,
-                p,
-                std::forward<Types>(args)...);
+            alloc,
+            p,
+            std::forward<Types>(args)...);
     }
 
-    static constexpr void destroy(BA& alloc, T* p)
+    static constexpr void destroy(
+            BA& alloc,
+            T* p)
     {
         alloc.on_deallocation(p);
-        std::allocator_traits<std::allocator<T>>::destroy(alloc,p);
+        std::allocator_traits<std::allocator<T>>::destroy(alloc, p);
     }
+
 };
 
 namespace eprosima {
