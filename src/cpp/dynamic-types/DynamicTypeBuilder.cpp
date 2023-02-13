@@ -27,19 +27,15 @@ namespace types {
 
 DynamicTypeBuilder::DynamicTypeBuilder(
         use_the_create_method)
-    : descriptor_(nullptr)
-    , current_member_id_(0)
-    , max_index_(0)
 {
 }
 
 DynamicTypeBuilder::DynamicTypeBuilder(
         use_the_create_method,
         const DynamicTypeBuilder* builder)
-    : current_member_id_(0)
-    , max_index_(0)
 {
-    copy_from_builder(builder);
+    assert(builder);
+    *this = *builder;
 }
 
 DynamicTypeBuilder::DynamicTypeBuilder(
@@ -48,40 +44,35 @@ DynamicTypeBuilder::DynamicTypeBuilder(
     : current_member_id_(0)
     , max_index_(0)
 {
-    descriptor_ = new TypeDescriptor(descriptor);
-    try
-    {
-        name_ = descriptor->get_name();
-        kind_ = descriptor->get_kind();
-    }
-    catch (...)
-    {
-        name_ = "";
-        kind_ = TK_NONE;
-    }
-
-    // Alias types use the same members than it's base class.
-    if (kind_ == TK_ALIAS)
-    {
-        for (auto it = descriptor_->get_base_type()->member_by_id_.begin();
-                it != descriptor_->get_base_type()->member_by_id_.end(); ++it)
-        {
-            member_by_name_.insert(std::make_pair(it->second->get_name(), it->second));
-        }
-    }
-
-    refresh_member_ids();
+    static_assert(false);
+//    descriptor_ = new TypeDescriptor(descriptor);
+//    try
+//    {
+//        name_ = descriptor->get_name();
+//        kind_ = descriptor->get_kind();
+//    }
+//    catch (...)
+//    {
+//        name_ = "";
+//        kind_ = TK_NONE;
+//    }
+//
+//    // Alias types use the same members than it's base class.
+//    if (kind_ == TK_ALIAS)
+//    {
+//        for (auto it = descriptor_->get_base_type()->member_by_id_.begin();
+//                it != descriptor_->get_base_type()->member_by_id_.end(); ++it)
+//        {
+//            member_by_name_.insert(std::make_pair(it->second->get_name(), it->second));
+//        }
+//    }
+//
+//    refresh_member_ids();
 }
 
 DynamicTypeBuilder::~DynamicTypeBuilder()
 {
-    name_ = "";
-    kind_ = 0;
-    if (descriptor_ != nullptr)
-    {
-        delete descriptor_;
-        descriptor_ = nullptr;
-    }
+    TypeDescriptor::clean();
 
     for (auto it = member_by_id_.begin(); it != member_by_id_.end(); ++it)
     {
@@ -96,9 +87,9 @@ ReturnCode_t DynamicTypeBuilder::add_empty_member(
         const std::string& name)
 {
     MemberDescriptor descriptor(index, name);
-    if (descriptor_->get_kind() == TK_BITMASK)
+    if (get_kind() == TK_BITMASK)
     {
-        if (index >= descriptor_->get_bounds(0))
+        if (index >= get_bounds(0))
         {
             EPROSIMA_LOG_WARNING(DYN_TYPES, "Error adding member, out of bounds.");
             return ReturnCode_t::RETCODE_BAD_PARAMETER;
@@ -111,11 +102,11 @@ ReturnCode_t DynamicTypeBuilder::add_empty_member(
 ReturnCode_t DynamicTypeBuilder::add_member(
         const MemberDescriptor* descriptor)
 {
-    if (descriptor_ != nullptr && descriptor != nullptr && descriptor->is_consistent(descriptor_->get_kind()))
+    if (descriptor != nullptr && descriptor->is_consistent(get_kind()))
     {
-        if (descriptor_->get_kind() == TK_ANNOTATION || descriptor_->get_kind() == TK_BITMASK
-                || descriptor_->get_kind() == TK_ENUM || descriptor_->get_kind() == TK_STRUCTURE
-                || descriptor_->get_kind() == TK_UNION || descriptor_->get_kind() == TK_BITSET)
+        if (get_kind() == TK_ANNOTATION || get_kind() == TK_BITMASK
+                || get_kind() == TK_ENUM || get_kind() == TK_STRUCTURE
+                || get_kind() == TK_UNION || get_kind() == TK_BITSET)
         {
             if (!exists_member_by_name(descriptor->get_name()) ||
                     (kind_ == TK_BITSET && descriptor->get_name().empty())) // Bitsets allow multiple empty members.
@@ -167,7 +158,7 @@ ReturnCode_t DynamicTypeBuilder::add_member(
         }
         else
         {
-            EPROSIMA_LOG_WARNING(DYN_TYPES, "Error adding member, the current type " << descriptor_->get_kind()
+            EPROSIMA_LOG_WARNING(DYN_TYPES, "Error adding member, the current type " << get_kind()
                                                                                      << " doesn't support members.");
             return ReturnCode_t::RETCODE_PRECONDITION_NOT_MET;
         }
@@ -268,39 +259,9 @@ ReturnCode_t DynamicTypeBuilder::add_member(
     return add_member(&descriptor);
 }
 
-ReturnCode_t DynamicTypeBuilder::apply_annotation(
-        AnnotationDescriptor& descriptor)
+DynamicType_ptr DynamicTypeBuilder::build() const
 {
-    return descriptor_->apply_annotation(descriptor);
-}
-
-ReturnCode_t DynamicTypeBuilder::apply_annotation(
-        const std::string& annotation_name,
-        const std::string& key,
-        const std::string& value)
-{
-    return descriptor_->apply_annotation(annotation_name, key, value);
-}
-
-ReturnCode_t DynamicTypeBuilder::apply_annotation_to_member(
-        MemberId id,
-        AnnotationDescriptor& descriptor)
-{
-    return _apply_annotation_to_member(id, descriptor);
-}
-
-ReturnCode_t DynamicTypeBuilder::apply_annotation_to_member(
-        MemberId id,
-        const std::string& annotation_name,
-        const std::string& key,
-        const std::string& value)
-{
-    return _apply_annotation_to_member(id, annotation_name, key, value);
-}
-
-DynamicType_ptr DynamicTypeBuilder::build()
-{
-    if (descriptor_->is_consistent())
+    if (is_consistent())
     {
         return DynamicTypeBuilderFactory::get_instance()->create_type(this);
     }
@@ -333,64 +294,8 @@ bool DynamicTypeBuilder::check_union_configuration(
     return true;
 }
 
-ReturnCode_t DynamicTypeBuilder::copy_from(
-        const DynamicTypeBuilder* other)
-{
-    if (other != nullptr)
-    {
-        clear();
-
-        ReturnCode_t res = copy_from_builder(other);
-        if (res == ReturnCode_t::RETCODE_OK)
-        {
-            current_member_id_ = other->current_member_id_;
-        }
-        return res;
-    }
-    else
-    {
-        EPROSIMA_LOG_ERROR(DYN_TYPES, "Error copying DynamicTypeBuilder. Invalid input parameter.");
-        return ReturnCode_t::RETCODE_BAD_PARAMETER;
-    }
-}
-
-ReturnCode_t DynamicTypeBuilder::copy_from_builder(
-        const DynamicTypeBuilder* other)
-{
-    if (other != nullptr)
-    {
-        clear();
-
-        name_ = other->name_;
-        kind_ = other->kind_;
-        descriptor_ = new TypeDescriptor(other->descriptor_);
-
-        for (auto it = other->member_by_id_.begin(); it != other->member_by_id_.end(); ++it)
-        {
-            DynamicTypeMember* newMember = new DynamicTypeMember(it->second);
-            member_by_id_.insert(std::make_pair(newMember->get_id(), newMember));
-            member_by_name_.insert(std::make_pair(newMember->get_name(), newMember));
-        }
-
-        return ReturnCode_t::RETCODE_OK;
-    }
-    else
-    {
-        EPROSIMA_LOG_ERROR(DYN_TYPES, "Error copying DynamicType, invalid input type");
-        return ReturnCode_t::RETCODE_BAD_PARAMETER;
-    }
-}
-
 void DynamicTypeBuilder::clear()
 {
-    name_ = "";
-    kind_ = 0;
-    if (descriptor_ != nullptr)
-    {
-        delete descriptor_;
-        descriptor_ = nullptr;
-    }
-
     for (auto it = member_by_id_.begin(); it != member_by_id_.end(); ++it)
     {
         delete it->second;
@@ -403,9 +308,9 @@ void DynamicTypeBuilder::clear()
 bool DynamicTypeBuilder::exists_member_by_name(
         const std::string& name) const
 {
-    if (descriptor_->get_base_type() != nullptr)
+    if (get_base_type() != nullptr)
     {
-        if (descriptor_->get_base_type()->exists_member_by_name(name))
+        if (get_base_type()->exists_member_by_name(name))
         {
             return true;
         }
@@ -420,21 +325,11 @@ ReturnCode_t DynamicTypeBuilder::get_all_members(
     return ReturnCode_t::RETCODE_OK;
 }
 
-std::string DynamicTypeBuilder::get_name() const
-{
-    return name_;
-}
-
-bool DynamicTypeBuilder::is_consistent() const
-{
-    return descriptor_->is_consistent();
-}
-
 bool DynamicTypeBuilder::is_discriminator_type() const
 {
-    if (kind_ == TK_ALIAS && descriptor_ != nullptr && descriptor_->get_base_type() != nullptr)
+    if (kind_ == TK_ALIAS && get_base_type() != nullptr)
     {
-        return descriptor_->get_base_type()->is_discriminator_type();
+        return get_base_type()->is_discriminator_type();
     }
     return kind_ == TK_BOOLEAN || kind_ == TK_BYTE || kind_ == TK_INT16 || kind_ == TK_INT32 ||
            kind_ == TK_INT64 || kind_ == TK_UINT16 || kind_ == TK_UINT32 || kind_ == TK_UINT64 ||
@@ -451,18 +346,7 @@ void DynamicTypeBuilder::refresh_member_ids()
     }
 }
 
-ReturnCode_t DynamicTypeBuilder::set_name(
-        const std::string& name)
-{
-    if (descriptor_ != nullptr)
-    {
-        descriptor_->set_name(name);
-    }
-    name_ = name;
-    return ReturnCode_t::RETCODE_OK;
-}
-
-ReturnCode_t DynamicTypeBuilder::_apply_annotation_to_member(
+ReturnCode_t DynamicTypeBuilder::apply_annotation_to_member(
         MemberId id,
         AnnotationDescriptor& descriptor)
 {
@@ -487,7 +371,7 @@ ReturnCode_t DynamicTypeBuilder::_apply_annotation_to_member(
     }
 }
 
-ReturnCode_t DynamicTypeBuilder::_apply_annotation_to_member(
+ReturnCode_t DynamicTypeBuilder::apply_annotation_to_member(
         MemberId id,
         const std::string& annotation_name,
         const std::string& key,
@@ -504,6 +388,126 @@ ReturnCode_t DynamicTypeBuilder::_apply_annotation_to_member(
         EPROSIMA_LOG_ERROR(DYN_TYPES, "Error applying annotation to member. MemberId not found.");
         return ReturnCode_t::RETCODE_BAD_PARAMETER;
     }
+}
+
+// Annotation setters
+void TypeDescriptor::annotation_set_extensibility(
+        const std::string& extensibility)
+{
+    AnnotationDescriptor* ann = get_annotation(ANNOTATION_EXTENSIBILITY_ID);
+    if (ann == nullptr)
+    {
+        ann = new AnnotationDescriptor();
+        ann->set_type(
+            DynamicTypeBuilderFactory::get_instance()->create_annotation_primitive(ANNOTATION_EXTENSIBILITY_ID));
+        apply_annotation(*ann);
+        delete ann;
+        ann = get_annotation(ANNOTATION_EXTENSIBILITY_ID);
+    }
+    ann->set_value("value", extensibility);
+}
+
+void TypeDescriptor::annotation_set_mutable()
+{
+    AnnotationDescriptor* ann = get_annotation(ANNOTATION_MUTABLE_ID);
+    if (ann == nullptr)
+    {
+        ann = new AnnotationDescriptor();
+        ann->set_type(DynamicTypeBuilderFactory::get_instance()->create_annotation_primitive(ANNOTATION_MUTABLE_ID));
+        apply_annotation(*ann);
+        delete ann;
+        ann = get_annotation(ANNOTATION_MUTABLE_ID);
+    }
+    ann->set_value("value", CONST_TRUE);
+}
+
+void TypeDescriptor::annotation_set_final()
+{
+    AnnotationDescriptor* ann = get_annotation(ANNOTATION_FINAL_ID);
+    if (ann == nullptr)
+    {
+        ann = new AnnotationDescriptor();
+        ann->set_type(DynamicTypeBuilderFactory::get_instance()->create_annotation_primitive(ANNOTATION_FINAL_ID));
+        apply_annotation(*ann);
+        delete ann;
+        ann = get_annotation(ANNOTATION_FINAL_ID);
+    }
+    ann->set_value("value", CONST_TRUE);
+}
+
+void TypeDescriptor::annotation_set_appendable()
+{
+    AnnotationDescriptor* ann = get_annotation(ANNOTATION_APPENDABLE_ID);
+    if (ann == nullptr)
+    {
+        ann = new AnnotationDescriptor();
+        ann->set_type(DynamicTypeBuilderFactory::get_instance()->create_annotation_primitive(ANNOTATION_APPENDABLE_ID));
+        apply_annotation(*ann);
+        delete ann;
+        ann = get_annotation(ANNOTATION_APPENDABLE_ID);
+    }
+    ann->set_value("value", CONST_TRUE);
+}
+
+void TypeDescriptor::annotation_set_nested(
+        bool nested)
+{
+    AnnotationDescriptor* ann = get_annotation(ANNOTATION_NESTED_ID);
+    if (ann == nullptr)
+    {
+        ann = new AnnotationDescriptor();
+        ann->set_type(DynamicTypeBuilderFactory::get_instance()->create_annotation_primitive(ANNOTATION_NESTED_ID));
+        apply_annotation(*ann);
+        delete ann;
+        ann = get_annotation(ANNOTATION_NESTED_ID);
+    }
+    ann->set_value("value", nested ? CONST_TRUE : CONST_FALSE);
+}
+
+void TypeDescriptor::annotation_set_key(
+        bool key)
+{
+    AnnotationDescriptor* ann = get_annotation(ANNOTATION_KEY_ID);
+    if (ann == nullptr)
+    {
+        ann = new AnnotationDescriptor();
+        ann->set_type(DynamicTypeBuilderFactory::get_instance()->create_annotation_primitive(ANNOTATION_KEY_ID));
+        apply_annotation(*ann);
+        delete ann;
+        ann = get_annotation(ANNOTATION_KEY_ID);
+    }
+    ann->set_value("value", key ? CONST_TRUE : CONST_FALSE);
+}
+
+void TypeDescriptor::annotation_set_bit_bound(
+        uint16_t bit_bound)
+{
+    AnnotationDescriptor* ann = get_annotation(ANNOTATION_BIT_BOUND_ID);
+    if (ann == nullptr)
+    {
+        ann = new AnnotationDescriptor();
+        ann->set_type(DynamicTypeBuilderFactory::get_instance()->create_annotation_primitive(ANNOTATION_BIT_BOUND_ID));
+        apply_annotation(*ann);
+        delete ann;
+        ann = get_annotation(ANNOTATION_BIT_BOUND_ID);
+    }
+    ann->set_value("value", std::to_string(bit_bound));
+}
+
+void TypeDescriptor::annotation_set_non_serialized(
+        bool non_serialized)
+{
+    AnnotationDescriptor* ann = get_annotation(ANNOTATION_NON_SERIALIZED_ID);
+    if (ann == nullptr)
+    {
+        ann = new AnnotationDescriptor();
+        ann->set_type(
+            DynamicTypeBuilderFactory::get_instance()->create_annotation_primitive(ANNOTATION_NON_SERIALIZED_ID));
+        apply_annotation(*ann);
+        delete ann;
+        ann = get_annotation(ANNOTATION_NON_SERIALIZED_ID);
+    }
+    ann->set_value("value", non_serialized ? CONST_TRUE : CONST_FALSE);
 }
 
 } // namespace types

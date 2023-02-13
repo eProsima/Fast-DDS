@@ -77,10 +77,6 @@ protected:
     ReturnCode_t insert_array_data(
             MemberId indexId);
 
-    void serialize_empty_data(
-            const DynamicType_ptr pType,
-            eprosima::fastcdr::Cdr& cdr) const;
-
     void set_default_value(
             MemberId id);
 
@@ -91,9 +87,6 @@ protected:
     void set_value(
             const std::string& sValue,
             MemberId id = MEMBER_ID_INVALID);
-
-    void set_type_name(
-            const std::string& name);
 
     MemberId get_union_id() const;
 
@@ -107,38 +100,6 @@ protected:
 
     void set_union_discriminator(
             DynamicData* pData);
-
-    // Serializes and deserializes the Dynamic Data.
-    bool deserialize(
-            eprosima::fastcdr::Cdr& cdr);
-
-    bool deserialize_discriminator(
-            eprosima::fastcdr::Cdr& cdr);
-
-    static size_t getCdrSerializedSize(
-            const DynamicData* data,
-            size_t current_alignment = 0);
-
-    static size_t getEmptyCdrSerializedSize(
-            const DynamicType* type,
-            size_t current_alignment = 0);
-
-    static size_t getKeyMaxCdrSerializedSize(
-            const DynamicType_ptr type,
-            size_t current_alignment = 0);
-
-    static size_t getMaxCdrSerializedSize(
-            const DynamicType_ptr type,
-            size_t current_alignment = 0);
-
-    void serialize(
-            eprosima::fastcdr::Cdr& cdr) const;
-
-    void serialize_discriminator(
-            eprosima::fastcdr::Cdr& cdr) const;
-
-    void serializeKey(
-            eprosima::fastcdr::Cdr& cdr) const;
 
     DynamicType_ptr type_;
     std::map<MemberId, MemberDescriptor*> descriptors_;
@@ -777,6 +738,28 @@ public:
         discriminator_value_ = value;
     }
 
+    // Serializes and deserializes the Dynamic Data.
+    RTPS_DllAPI void DynamicData::serialize(
+            eprosima::fastcdr::Cdr& cdr) const;
+
+    RTPS_DllAPI bool deserialize(
+            eprosima::fastcdr::Cdr& cdr);
+
+    RTPS_DllAPI static size_t getCdrSerializedSize(
+            const DynamicData* data,
+            size_t current_alignment = 0);
+
+    RTPS_DllAPI static size_t getEmptyCdrSerializedSize(
+            const DynamicType* type,
+            size_t current_alignment = 0);
+
+    RTPS_DllAPI static size_t getKeyMaxCdrSerializedSize(
+            const DynamicType_ptr type,
+            size_t current_alignment = 0);
+
+    RTPS_DllAPI static size_t getMaxCdrSerializedSize(
+            const DynamicType_ptr type,
+            size_t current_alignment = 0);
 };
 
 

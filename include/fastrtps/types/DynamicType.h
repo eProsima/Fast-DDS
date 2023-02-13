@@ -15,7 +15,7 @@
 #ifndef TYPES_DYNAMIC_TYPE_H
 #define TYPES_DYNAMIC_TYPE_H
 
-#include <fastrtps/types/TypesBase.h>
+#include <fastrtps/types/TypeDescriptor.h>
 
 namespace eprosima {
 
@@ -35,7 +35,8 @@ class DynamicTypeBuilder;
 class DynamicTypeBuilderFactory;
 
 class DynamicType
-    : public std::enable_shared_from_this<DynamicType>
+    : protected TypeDescriptor
+    , public std::enable_shared_from_this<DynamicType>
 {
     // Only create objects from the associated factory
     struct use_the_create_method
@@ -52,13 +53,7 @@ public:
             use_the_create_method,
             const TypeDescriptor* descriptor);
 
-    DynamicType(
-            use_the_create_method,
-            const DynamicTypeBuilder* other);
-
     RTPS_DllAPI virtual ~DynamicType();
-
-    friend class DynamicTypeBuilderFactory;
 
 protected:
 
@@ -76,63 +71,94 @@ protected:
 
     RTPS_DllAPI virtual void clear();
 
-    ReturnCode_t copy_from_builder(
-            const DynamicTypeBuilder* other);
-
     // Checks if there is a member with the given name.
     bool exists_member_by_name(
             const std::string& name) const;
 
-    // This method is used by Dynamic Data to override the name of the types based on ALIAS.
-    void set_name(
-            const std::string& name);
-
-    ReturnCode_t apply_annotation(
-            AnnotationDescriptor& descriptor);
-
-    ReturnCode_t apply_annotation(
-            const std::string& annotation_name,
-            const std::string& key,
-            const std::string& value);
-
-    ReturnCode_t apply_annotation_to_member(
-            MemberId id,
-            AnnotationDescriptor& descriptor);
-
-    ReturnCode_t apply_annotation_to_member(
-            MemberId id,
-            const std::string& annotation_name,
-            const std::string& key,
-            const std::string& value);
+//    ReturnCode_t apply_annotation(
+//            AnnotationDescriptor& descriptor);
+//
+//    ReturnCode_t apply_annotation(
+//            const std::string& annotation_name,
+//            const std::string& key,
+//            const std::string& value);
+//
+//    ReturnCode_t apply_annotation_to_member(
+//            MemberId id,
+//            AnnotationDescriptor& descriptor);
+//
+//    ReturnCode_t apply_annotation_to_member(
+//            MemberId id,
+//            const std::string& annotation_name,
+//            const std::string& key,
+//            const std::string& value);
 
     ReturnCode_t get_annotation(
             AnnotationDescriptor& descriptor,
-            uint32_t idx);
+            uint32_t idx) const;
 
-    uint32_t get_annotation_count();
+    uint32_t get_annotation_count() const;
 
-    DynamicType_ptr get_base_type() const;
+    using TypeDescriptor::get_base_type;
 
-    DynamicType_ptr get_discriminator_type() const;
+    using TypeDescriptor::get_discriminator_type;
 
-    DynamicType_ptr get_element_type() const;
+    using TypeDescriptor::get_element_type;
 
-    DynamicType_ptr get_key_element_type() const;
+    using TypeDescriptor::get_key_element_type;
 
     ReturnCode_t get_member(
             DynamicTypeMember& member,
-            MemberId id);
+            MemberId id) const;
 
     ReturnCode_t get_member_by_name(
             DynamicTypeMember& member,
-            const std::string& name);
+            const std::string& name) const;
 
-    TypeDescriptor* descriptor_;
     std::map<MemberId, DynamicTypeMember*> member_by_id_;         // Aggregated members
     std::map<std::string, DynamicTypeMember*> member_by_name_;    // Uses the pointers from "member_by_id_".
-    std::string name_;
-    TypeKind kind_;
-    bool is_key_defined_;
+    bool is_key_defined_ = false;
+
+    // Serialization ancillary
+    void serialize_empty_data(
+            const DynamicType_ptr pType,
+            eprosima::fastcdr::Cdr& cdr) const;
+
+    bool deserialize_discriminator(
+            uint64_t& discriminator_value,
+            eprosima::fastcdr::Cdr& cdr);
+
+    void serialize_discriminator(
+            DynamicData& data,
+            eprosima::fastcdr::Cdr& cdr) const;
+
+    void serializeKey(
+            DynamicData& data,
+            eprosima::fastcdr::Cdr& cdr) const;
+
+public:
+
+    // Serializes and deserializes the Dynamic Data.
+    void serialize(
+            DynamicData& data,
+            eprosima::fastcdr::Cdr& cdr) const;
+
+    bool deserialize(
+            DynamicData& data,
+            eprosima::fastcdr::Cdr& cdr);
+
+    size_t getCdrSerializedSize(
+            const DynamicData& data,
+            size_t current_alignment = 0);
+
+    size_t getEmptyCdrSerializedSize(
+            size_t current_alignment = 0);
+
+    size_t getKeyMaxCdrSerializedSize(
+            size_t current_alignment = 0);
+
+    size_t getMaxCdrSerializedSize(
+            size_t current_alignment = 0);
 
 public:
 
@@ -140,22 +166,19 @@ public:
             const DynamicType* other) const;
 
     RTPS_DllAPI ReturnCode_t get_all_members(
-            std::map<MemberId, DynamicTypeMember*>& members);
+            std::map<MemberId, DynamicTypeMember*>& members) const;
 
     RTPS_DllAPI ReturnCode_t get_all_members_by_name(
-            std::map<std::string, DynamicTypeMember*>& members);
+            std::map<std::string, DynamicTypeMember*>& members) const;
 
-    RTPS_DllAPI uint32_t get_bounds(
-            uint32_t index = 0) const;
+    using TypeDescriptor::get_bounds;
 
-    RTPS_DllAPI uint32_t get_bounds_size() const;
+    using TypeDescriptor::get_bounds_size;
 
     RTPS_DllAPI ReturnCode_t get_descriptor(
-            TypeDescriptor* descriptor) const;
+            TypeDescriptor& descriptor) const;
 
-    RTPS_DllAPI const TypeDescriptor* get_descriptor() const;
-
-    RTPS_DllAPI TypeDescriptor* get_descriptor();
+    RTPS_DllAPI const TypeDescriptor& get_descriptor() const;
 
     RTPS_DllAPI bool key_annotation() const;
 
@@ -168,11 +191,11 @@ public:
 
     RTPS_DllAPI MemberId get_members_count() const;
 
-    RTPS_DllAPI uint32_t get_total_bounds() const;
+    using TypeDescriptor::get_total_bounds;
 
-    RTPS_DllAPI const TypeDescriptor* get_type_descriptor() const
+    RTPS_DllAPI const TypeDescriptor& get_type_descriptor() const
     {
-        return descriptor_;
+        return static_cast<const TypeDescriptor&>(*this);
     }
 
     RTPS_DllAPI bool has_children() const;

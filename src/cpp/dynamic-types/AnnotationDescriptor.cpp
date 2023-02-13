@@ -66,26 +66,37 @@ ReturnCode_t AnnotationDescriptor::copy_from(
     return ReturnCode_t::RETCODE_OK;
 }
 
-bool AnnotationDescriptor::equals(
-        const AnnotationDescriptor* other) const
+bool AnnotationDescriptor::operator==(const AnnotationDescriptor& other) const
 {
-    if (other != nullptr && (type_ == other->type_ || (type_ != nullptr && type_->equals(other->type_.get()))))
+    if (type_ == other->type_ || (type_ && type_->equals(other.type_.get())))
     {
-        if (value_.size() != other->value_.size())
+        if (value_.size() != other.value_.size())
         {
             return false;
         }
 
         for (auto it = value_.begin(); it != value_.end(); ++it)
         {
-            auto it2 = other->value_.find(it->first);
-            if (it2 == other->value_.end() || it2->second != it->second)
+            auto it2 = other.value_.find(it->first);
+            if (it2 == other.value_.end() || it2->second != it->second)
             {
                 return false;
             }
         }
     }
     return true;
+}
+
+bool operator!=(const AnnotationDescriptor& other) const
+{
+    return !(*this == other);
+}
+
+bool AnnotationDescriptor::equals(
+        const AnnotationDescriptor* other) const
+{
+    assert(other);
+    return *this == *other;
 }
 
 bool AnnotationDescriptor::key_annotation() const
@@ -99,14 +110,14 @@ bool AnnotationDescriptor::key_annotation() const
 }
 
 ReturnCode_t AnnotationDescriptor::get_value(
-        std::string& value)
+        std::string& value) const
 {
     return get_value(value, "value");
 }
 
 ReturnCode_t AnnotationDescriptor::get_value(
         std::string& value,
-        const std::string& key)
+        const std::string& key) const
 {
     auto it = value_.find(key);
     if (it != value_.end())

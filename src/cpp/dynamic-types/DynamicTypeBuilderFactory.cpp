@@ -104,6 +104,7 @@ void DynamicTypeBuilderFactory::reset()
 #ifndef DISABLE_DYNAMIC_MEMORY_CHECK
     std::lock_guard<std::mutex> _(mutex_);
     builders_list_.clear();
+    types_list_.clear();
 #endif // ifndef DISABLE_DYNAMIC_MEMORY_CHECK
 }
 
@@ -113,13 +114,27 @@ DynamicTypeBuilderFactory::~DynamicTypeBuilderFactory()
     reset();
 }
 
-void DynamicTypeBuilderFactory::add_builder_to_list(
-        DynamicTypeBuilder* pBuilder)
+void DynamicTypeBuilderFactory::on_allocation(DynamicType* pType)
+{
+    (void)pType;
+#ifndef DISABLE_DYNAMIC_MEMORY_CHECK
+    std::lock_guard<std::mutex> _(mutex_);
+    if(!types_list_.insert(const_cast<DynamicType* const>(pType)).second)
+    {
+        EPROSIMA_LOG_ERROR(DYN_TYPES, "The given type has been inserted previously.");
+    }
+#endif // ifndef DISABLE_DYNAMIC_MEMORY_CHECK
+}
+
+void DynamicTypeBuilderFactory::on_allocation(DynamicTypeBuilder* pBuilder)
 {
     (void)pBuilder;
 #ifndef DISABLE_DYNAMIC_MEMORY_CHECK
     std::lock_guard<std::mutex> _(mutex_);
-    builders_list_.push_back(pBuilder);
+    if(!builders_list_.insert(pBuilder).second)
+    {
+        EPROSIMA_LOG_ERROR(DYN_TYPES, "The given type builder has been inserted previously.");
+    }
 #endif // ifndef DISABLE_DYNAMIC_MEMORY_CHECK
 }
 
@@ -151,8 +166,7 @@ DynamicType_ptr DynamicTypeBuilderFactory::create_type(
 {
     if (other != nullptr)
     {
-        return std::allocate_shared<DynamicType>(
-            get_allocator<DynamicType>(), DynamicType::use_the_create_method{}, other);
+        return other->build();
     }
     else
     {
@@ -206,7 +220,6 @@ DynamicTypeBuilder_ptr DynamicTypeBuilderFactory::create_alias_builder(
         DynamicTypeBuilder_ptr pNewTypeBuilder = std::allocate_shared<DynamicTypeBuilder>(
             get_allocator<DynamicTypeBuilder>(), DynamicTypeBuilder::use_the_create_method{},
             &pDescriptor);
-        add_builder_to_list(pNewTypeBuilder.get());
         return pNewTypeBuilder;
     }
     else
@@ -263,7 +276,6 @@ DynamicTypeBuilder_ptr DynamicTypeBuilderFactory::create_array_builder(
         DynamicTypeBuilder_ptr pNewTypeBuilder = std::allocate_shared<DynamicTypeBuilder>(
             get_allocator<DynamicTypeBuilder>(), DynamicTypeBuilder::use_the_create_method{},
             &pDescriptor);
-        add_builder_to_list(pNewTypeBuilder.get());
         return pNewTypeBuilder;
     }
     else
@@ -292,7 +304,6 @@ DynamicTypeBuilder_ptr DynamicTypeBuilderFactory::create_bitmask_builder(
         DynamicTypeBuilder_ptr pNewTypeBuilder = std::allocate_shared<DynamicTypeBuilder>(
             get_allocator<DynamicTypeBuilder>(), DynamicTypeBuilder::use_the_create_method{},
             &pDescriptor);
-        add_builder_to_list(pNewTypeBuilder.get());
         return pNewTypeBuilder;
     }
     else
@@ -312,7 +323,6 @@ DynamicTypeBuilder_ptr DynamicTypeBuilderFactory::create_bitset_builder()
 
     DynamicTypeBuilder_ptr pNewTypeBuilder = std::allocate_shared<DynamicTypeBuilder>(
         get_allocator<DynamicTypeBuilder>(), DynamicTypeBuilder::use_the_create_method{}, &pDescriptor);
-    add_builder_to_list(pNewTypeBuilder.get());
     return pNewTypeBuilder;
 }
 
@@ -325,7 +335,6 @@ DynamicTypeBuilder_ptr DynamicTypeBuilderFactory::create_bool_builder()
     DynamicTypeBuilder_ptr pNewTypeBuilder = std::allocate_shared<DynamicTypeBuilder>(
         get_allocator<DynamicTypeBuilder>(), DynamicTypeBuilder::use_the_create_method{},
         &pBoolDescriptor);
-    add_builder_to_list(pNewTypeBuilder.get());
     return pNewTypeBuilder;
 }
 
@@ -338,7 +347,6 @@ DynamicTypeBuilder_ptr DynamicTypeBuilderFactory::create_byte_builder()
     DynamicTypeBuilder_ptr pNewTypeBuilder = std::allocate_shared<DynamicTypeBuilder>(
         get_allocator<DynamicTypeBuilder>(), DynamicTypeBuilder::use_the_create_method{},
         &pByteDescriptor);
-    add_builder_to_list(pNewTypeBuilder.get());
     return pNewTypeBuilder;
 }
 
@@ -351,7 +359,6 @@ DynamicTypeBuilder_ptr DynamicTypeBuilderFactory::create_char8_builder()
     DynamicTypeBuilder_ptr pNewTypeBuilder = std::allocate_shared<DynamicTypeBuilder>(
         get_allocator<DynamicTypeBuilder>(), DynamicTypeBuilder::use_the_create_method{},
         &pChar8Descriptor);
-    add_builder_to_list(pNewTypeBuilder.get());
     return pNewTypeBuilder;
 }
 
@@ -364,7 +371,6 @@ DynamicTypeBuilder_ptr DynamicTypeBuilderFactory::create_char16_builder()
     DynamicTypeBuilder_ptr pNewTypeBuilder = std::allocate_shared<DynamicTypeBuilder>(
         get_allocator<DynamicTypeBuilder>(), DynamicTypeBuilder::use_the_create_method{},
         &pChar16Descriptor);
-    add_builder_to_list(pNewTypeBuilder.get());
     return pNewTypeBuilder;
 }
 
@@ -391,7 +397,6 @@ DynamicTypeBuilder_ptr DynamicTypeBuilderFactory::create_enum_builder()
     DynamicTypeBuilder_ptr pNewTypeBuilder = std::allocate_shared<DynamicTypeBuilder>(
         get_allocator<DynamicTypeBuilder>(), DynamicTypeBuilder::use_the_create_method{},
         &pEnumDescriptor);
-    add_builder_to_list(pNewTypeBuilder.get());
     return pNewTypeBuilder;
 }
 
@@ -404,7 +409,6 @@ DynamicTypeBuilder_ptr DynamicTypeBuilderFactory::create_float32_builder()
     DynamicTypeBuilder_ptr pNewTypeBuilder = std::allocate_shared<DynamicTypeBuilder>(
         get_allocator<DynamicTypeBuilder>(), DynamicTypeBuilder::use_the_create_method{},
         &pFloat32Descriptor);
-    add_builder_to_list(pNewTypeBuilder.get());
     return pNewTypeBuilder;
 }
 
@@ -417,7 +421,6 @@ DynamicTypeBuilder_ptr DynamicTypeBuilderFactory::create_float64_builder()
     DynamicTypeBuilder_ptr pNewTypeBuilder = std::allocate_shared<DynamicTypeBuilder>(
         get_allocator<DynamicTypeBuilder>(), DynamicTypeBuilder::use_the_create_method{},
         &pFloat64Descriptor);
-    add_builder_to_list(pNewTypeBuilder.get());
     return pNewTypeBuilder;
 }
 
@@ -430,7 +433,6 @@ DynamicTypeBuilder_ptr DynamicTypeBuilderFactory::create_float128_builder()
     DynamicTypeBuilder_ptr pNewTypeBuilder = std::allocate_shared<DynamicTypeBuilder>(
         get_allocator<DynamicTypeBuilder>(), DynamicTypeBuilder::use_the_create_method{},
         &pFloat128Descriptor);
-    add_builder_to_list(pNewTypeBuilder.get());
     return pNewTypeBuilder;
 }
 
@@ -443,7 +445,6 @@ DynamicTypeBuilder_ptr DynamicTypeBuilderFactory::create_int16_builder()
     DynamicTypeBuilder_ptr pNewTypeBuilder = std::allocate_shared<DynamicTypeBuilder>(
         get_allocator<DynamicTypeBuilder>(), DynamicTypeBuilder::use_the_create_method{},
         &pInt16Descriptor);
-    add_builder_to_list(pNewTypeBuilder.get());
     return pNewTypeBuilder;
 }
 
@@ -456,7 +457,6 @@ DynamicTypeBuilder_ptr DynamicTypeBuilderFactory::create_int32_builder()
     DynamicTypeBuilder_ptr pNewTypeBuilder = std::allocate_shared<DynamicTypeBuilder>(
         get_allocator<DynamicTypeBuilder>(), DynamicTypeBuilder::use_the_create_method{},
         &pInt32Descriptor);
-    add_builder_to_list(pNewTypeBuilder.get());
     return pNewTypeBuilder;
 }
 
@@ -469,7 +469,6 @@ DynamicTypeBuilder_ptr DynamicTypeBuilderFactory::create_int64_builder()
     DynamicTypeBuilder_ptr pNewTypeBuilder = std::allocate_shared<DynamicTypeBuilder>(
         get_allocator<DynamicTypeBuilder>(), DynamicTypeBuilder::use_the_create_method{},
         &pInt64Descriptor);
-    add_builder_to_list(pNewTypeBuilder.get());
     return pNewTypeBuilder;
 }
 
@@ -523,7 +522,6 @@ DynamicTypeBuilder_ptr DynamicTypeBuilderFactory::create_map_builder(
         DynamicTypeBuilder_ptr pNewTypeBuilder = std::allocate_shared<DynamicTypeBuilder>(
             get_allocator<DynamicTypeBuilder>(), DynamicTypeBuilder::use_the_create_method{},
             &pDescriptor);
-        add_builder_to_list(pNewTypeBuilder.get());
         return pNewTypeBuilder;
     }
     else
@@ -576,7 +574,6 @@ DynamicTypeBuilder_ptr DynamicTypeBuilderFactory::create_sequence_builder(
         DynamicTypeBuilder_ptr pNewTypeBuilder = std::allocate_shared<DynamicTypeBuilder>(
             get_allocator<DynamicTypeBuilder>(), DynamicTypeBuilder::use_the_create_method{},
             &pDescriptor);
-        add_builder_to_list(pNewTypeBuilder.get());
         return pNewTypeBuilder;
     }
     else
@@ -608,7 +605,6 @@ DynamicTypeBuilder_ptr DynamicTypeBuilderFactory::create_string_builder(
 
     DynamicTypeBuilder_ptr pNewTypeBuilder = std::allocate_shared<DynamicTypeBuilder>(
         get_allocator<DynamicTypeBuilder>(), DynamicTypeBuilder::use_the_create_method{}, &pDescriptor);
-    add_builder_to_list(pNewTypeBuilder.get());
     return pNewTypeBuilder;
 }
 
@@ -625,7 +621,6 @@ DynamicTypeBuilder_ptr DynamicTypeBuilderFactory::create_child_struct_builder(
         DynamicTypeBuilder_ptr pNewTypeBuilder = std::allocate_shared<DynamicTypeBuilder>(
             get_allocator<DynamicTypeBuilder>(), DynamicTypeBuilder::use_the_create_method{},
             &pDescriptor);
-        add_builder_to_list(pNewTypeBuilder.get());
         return pNewTypeBuilder;
     }
     else
@@ -643,7 +638,6 @@ DynamicTypeBuilder_ptr DynamicTypeBuilderFactory::create_struct_builder()
 
     DynamicTypeBuilder_ptr pNewTypeBuilder = std::allocate_shared<DynamicTypeBuilder>(
         get_allocator<DynamicTypeBuilder>(), DynamicTypeBuilder::use_the_create_method{}, &pDescriptor);
-    add_builder_to_list(pNewTypeBuilder.get());
     return pNewTypeBuilder;
 }
 
@@ -669,7 +663,6 @@ DynamicTypeBuilder_ptr DynamicTypeBuilderFactory::create_custom_builder(
             {
                 pNewType->set_name(name);
             }
-            add_builder_to_list(pNewType.get());
             return pNewType;
         }
         else
@@ -692,7 +685,6 @@ DynamicTypeBuilder_ptr DynamicTypeBuilderFactory::create_builder_copy(
     {
         DynamicTypeBuilder_ptr pNewType = std::allocate_shared<DynamicTypeBuilder>(
             get_allocator<DynamicTypeBuilder>(), DynamicTypeBuilder::use_the_create_method{}, type);
-        add_builder_to_list(pNewType.get());
         return pNewType;
     }
     else
@@ -711,7 +703,6 @@ DynamicTypeBuilder_ptr DynamicTypeBuilderFactory::create_uint16_builder()
     DynamicTypeBuilder_ptr pNewTypeBuilder = std::allocate_shared<DynamicTypeBuilder>(
         get_allocator<DynamicTypeBuilder>(), DynamicTypeBuilder::use_the_create_method{},
         &pUInt16Descriptor);
-    add_builder_to_list(pNewTypeBuilder.get());
     return pNewTypeBuilder;
 }
 
@@ -724,7 +715,6 @@ DynamicTypeBuilder_ptr DynamicTypeBuilderFactory::create_uint32_builder()
     DynamicTypeBuilder_ptr pNewTypeBuilder = std::allocate_shared<DynamicTypeBuilder>(
         get_allocator<DynamicTypeBuilder>(), DynamicTypeBuilder::use_the_create_method{},
         &pUInt32Descriptor);
-    add_builder_to_list(pNewTypeBuilder.get());
     return pNewTypeBuilder;
 }
 
@@ -737,7 +727,6 @@ DynamicTypeBuilder_ptr DynamicTypeBuilderFactory::create_uint64_builder()
     DynamicTypeBuilder_ptr pNewTypeBuilder = std::allocate_shared<DynamicTypeBuilder>(
         get_allocator<DynamicTypeBuilder>(), DynamicTypeBuilder::use_the_create_method{},
         &pUInt64Descriptor);
-    add_builder_to_list(pNewTypeBuilder.get());
     return pNewTypeBuilder;
 }
 
@@ -777,7 +766,6 @@ DynamicTypeBuilder_ptr DynamicTypeBuilderFactory::create_union_builder(
         DynamicTypeBuilder_ptr pNewTypeBuilder = std::allocate_shared<DynamicTypeBuilder>(
             get_allocator<DynamicTypeBuilder>(), DynamicTypeBuilder::use_the_create_method{},
             &pUnionDescriptor);
-        add_builder_to_list(pNewTypeBuilder.get());
         return pNewTypeBuilder;
     }
     else
@@ -809,36 +797,38 @@ DynamicTypeBuilder_ptr DynamicTypeBuilderFactory::create_wstring_builder(
 
     DynamicTypeBuilder_ptr pNewTypeBuilder = std::allocate_shared<DynamicTypeBuilder>(
         get_allocator<DynamicTypeBuilder>(), DynamicTypeBuilder::use_the_create_method{}, &pDescriptor);
-    add_builder_to_list(pNewTypeBuilder.get());
     return pNewTypeBuilder;
 }
 
 ReturnCode_t DynamicTypeBuilderFactory::delete_builder(
         DynamicTypeBuilder* builder)
 {
-    if (builder != nullptr)
-    {
+    (void*)builder;
 #ifndef DISABLE_DYNAMIC_MEMORY_CHECK
         std::lock_guard<std::mutex> _(mutex_);
-        auto it = std::find(builders_list_.begin(), builders_list_.end(), builder);
-        if (it != builders_list_.end())
+        if(0 == builders_list_.erase(builder))
         {
-            builders_list_.erase(it);
-        }
-        else
-        {
-            EPROSIMA_LOG_WARNING(DYN_TYPES, "The given type has been deleted previously.");
+            EPROSIMA_LOG_ERROR(DYN_TYPES, "The given type builder has been deleted previously.");
             return ReturnCode_t::RETCODE_ALREADY_DELETED;
         }
 #endif // ifndef DISABLE_DYNAMIC_MEMORY_CHECK
-    }
     return ReturnCode_t::RETCODE_OK;
 }
 
 ReturnCode_t DynamicTypeBuilderFactory::delete_type(
-        DynamicType* )
+        DynamicType* type)
 {
     // non-heap related clean up goes here
+    (void*)type;
+#ifndef DISABLE_DYNAMIC_MEMORY_CHECK
+        std::lock_guard<std::mutex> _(mutex_);
+        if(0 == types_list_.erase(type))
+        {
+            EPROSIMA_LOG_ERROR(DYN_TYPES, "The given type has been deleted previously.");
+            return ReturnCode_t::RETCODE_ALREADY_DELETED;
+        }
+#endif // ifndef DISABLE_DYNAMIC_MEMORY_CHECK
+
     return ReturnCode_t::RETCODE_OK;
 }
 
@@ -855,7 +845,7 @@ bool DynamicTypeBuilderFactory::is_empty() const
 {
 #ifndef DISABLE_DYNAMIC_MEMORY_CHECK
     std::lock_guard<std::mutex> _(mutex_);
-    return builders_list_.empty();
+    return builders_list_.empty() && types_list_.empty();
 #else
     return true;
 #endif // ifndef DISABLE_DYNAMIC_MEMORY_CHECK
@@ -871,20 +861,20 @@ void DynamicTypeBuilderFactory::build_type_identifier(
 }
 
 void DynamicTypeBuilderFactory::build_type_identifier(
-        const TypeDescriptor* descriptor,
+        const TypeDescriptor& descriptor,
         TypeIdentifier& identifier,
         bool complete) const
 {
     const TypeIdentifier* id2 = (complete)
-        ? TypeObjectFactory::get_instance()->get_type_identifier_trying_complete(descriptor->get_name())
-        : TypeObjectFactory::get_instance()->get_type_identifier(descriptor->get_name());
+        ? TypeObjectFactory::get_instance()->get_type_identifier_trying_complete(descriptor.get_name())
+        : TypeObjectFactory::get_instance()->get_type_identifier(descriptor.get_name());
     if (id2 != nullptr)
     {
         identifier = *id2;
     }
     else
     {
-        switch (descriptor->kind_)
+        switch (descriptor.kind_)
         {
             // Basic types
             case TK_NONE:
@@ -902,55 +892,55 @@ void DynamicTypeBuilderFactory::build_type_identifier(
             case TK_CHAR8:
             case TK_CHAR16:
             {
-                identifier._d(descriptor->kind_);
+                identifier._d(descriptor.kind_);
             }
             break;
             // String TKs
             case TK_STRING8:
             {
-                if (descriptor->bound_[0] < 256)
+                if (descriptor.bound_[0] < 256)
                 {
                     identifier._d(TI_STRING8_SMALL);
-                    identifier.string_sdefn().bound(static_cast<SBound>(descriptor->bound_[0]));
+                    identifier.string_sdefn().bound(static_cast<SBound>(descriptor.bound_[0]));
                 }
                 else
                 {
                     identifier._d(TI_STRING8_LARGE);
-                    identifier.string_ldefn().bound(descriptor->bound_[0]);
+                    identifier.string_ldefn().bound(descriptor.bound_[0]);
                 }
             }
             break;
             case TK_STRING16:
             {
-                if (descriptor->bound_[0] < 256)
+                if (descriptor.bound_[0] < 256)
                 {
                     identifier._d(TI_STRING16_SMALL);
-                    identifier.string_sdefn().bound(static_cast<SBound>(descriptor->bound_[0]));
+                    identifier.string_sdefn().bound(static_cast<SBound>(descriptor.bound_[0]));
                 }
                 else
                 {
                     identifier._d(TI_STRING16_LARGE);
-                    identifier.string_ldefn().bound(descriptor->bound_[0]);
+                    identifier.string_ldefn().bound(descriptor.bound_[0]);
                 }
             }
             break;
             // Collection TKs
             case TK_SEQUENCE:
             {
-                if (descriptor->bound_[0] < 256)
+                if (descriptor.bound_[0] < 256)
                 {
                     identifier._d(TI_PLAIN_SEQUENCE_SMALL);
-                    identifier.seq_sdefn().bound(static_cast<SBound>(descriptor->bound_[0]));
+                    identifier.seq_sdefn().bound(static_cast<SBound>(descriptor.bound_[0]));
                     TypeIdentifier elem_id;
-                    build_type_identifier(descriptor->get_element_type()->descriptor_, elem_id, complete);
+                    build_type_identifier(descriptor.get_element_type()->descriptor_, elem_id, complete);
                     identifier.seq_sdefn().element_identifier(&elem_id);
                 }
                 else
                 {
                     identifier._d(TI_PLAIN_SEQUENCE_LARGE);
-                    identifier.seq_ldefn().bound(descriptor->bound_[0]);
+                    identifier.seq_ldefn().bound(descriptor.bound_[0]);
                     TypeIdentifier elem_id;
-                    build_type_identifier(descriptor->get_element_type()->descriptor_, elem_id, complete);
+                    build_type_identifier(descriptor.get_element_type()->descriptor_, elem_id, complete);
                     identifier.seq_ldefn().element_identifier(&elem_id);
                 }
             }
@@ -958,7 +948,7 @@ void DynamicTypeBuilderFactory::build_type_identifier(
             case TK_ARRAY:
             {
                 uint32_t size = 0;
-                for (uint32_t s : descriptor->bound_)
+                for (uint32_t s : descriptor.bound_)
                 {
                     size += s;
                 }
@@ -966,46 +956,46 @@ void DynamicTypeBuilderFactory::build_type_identifier(
                 if (size < 256)
                 {
                     identifier._d(TI_PLAIN_ARRAY_SMALL);
-                    for (uint32_t b : descriptor->bound_)
+                    for (uint32_t b : descriptor.bound_)
                     {
                         identifier.array_sdefn().array_bound_seq().emplace_back(static_cast<SBound>(b));
                     }
                     TypeIdentifier elem_id;
-                    build_type_identifier(descriptor->get_element_type()->descriptor_, elem_id, complete);
+                    build_type_identifier(descriptor.get_element_type()->descriptor_, elem_id, complete);
                     identifier.array_sdefn().element_identifier(&elem_id);
                 }
                 else
                 {
                     identifier._d(TI_PLAIN_ARRAY_LARGE);
-                    identifier.array_ldefn().array_bound_seq(descriptor->bound_);
+                    identifier.array_ldefn().array_bound_seq(descriptor.bound_);
                     TypeIdentifier elem_id;
-                    build_type_identifier(descriptor->get_element_type()->descriptor_, elem_id, complete);
+                    build_type_identifier(descriptor.get_element_type()->descriptor_, elem_id, complete);
                     identifier.array_ldefn().element_identifier(&elem_id);
                 }
             }
             break;
             case TK_MAP:
             {
-                if (descriptor->bound_[0] < 256)
+                if (descriptor.bound_[0] < 256)
                 {
                     identifier._d(TI_PLAIN_MAP_SMALL);
-                    identifier.map_sdefn().bound(static_cast<SBound>(descriptor->bound_[0]));
+                    identifier.map_sdefn().bound(static_cast<SBound>(descriptor.bound_[0]));
                     TypeIdentifier elem_id;
-                    build_type_identifier(descriptor->get_element_type()->descriptor_, elem_id, complete);
+                    build_type_identifier(descriptor.get_element_type()->descriptor_, elem_id, complete);
                     identifier.map_sdefn().element_identifier(&elem_id);
                     TypeIdentifier key_id;
-                    build_type_identifier(descriptor->get_key_element_type()->descriptor_, key_id, complete);
+                    build_type_identifier(descriptor.get_key_element_type()->descriptor_, key_id, complete);
                     identifier.map_sdefn().key_identifier(&key_id);
                 }
                 else
                 {
                     identifier._d(TI_PLAIN_MAP_LARGE);
-                    identifier.map_ldefn().bound(static_cast<SBound>(descriptor->bound_[0]));
+                    identifier.map_ldefn().bound(static_cast<SBound>(descriptor.bound_[0]));
                     TypeIdentifier elem_id;
-                    build_type_identifier(descriptor->get_element_type()->descriptor_, elem_id, complete);
+                    build_type_identifier(descriptor.get_element_type()->descriptor_, elem_id, complete);
                     identifier.map_ldefn().element_identifier(&elem_id);
                     TypeIdentifier key_id;
-                    build_type_identifier(descriptor->get_key_element_type()->descriptor_, key_id, complete);
+                    build_type_identifier(descriptor.get_key_element_type()->descriptor_, key_id, complete);
                     identifier.map_ldefn().key_identifier(&key_id);
                 }
             }
@@ -1028,7 +1018,7 @@ void DynamicTypeBuilderFactory::build_type_identifier(
             break;
         }
 
-        TypeObjectFactory::get_instance()->add_type_identifier(descriptor->get_name(), &identifier);
+        TypeObjectFactory::get_instance()->add_type_identifier(descriptor.get_name(), &identifier);
     }
 }
 
@@ -1052,7 +1042,7 @@ void DynamicTypeBuilderFactory::build_type_object(
 }
 
 void DynamicTypeBuilderFactory::build_type_object(
-        const TypeDescriptor* descriptor,
+        const TypeDescriptor& descriptor,
         TypeObject& object,
         const std::vector<const MemberDescriptor*>* members,
         bool complete,
@@ -1060,7 +1050,7 @@ void DynamicTypeBuilderFactory::build_type_object(
 {
     const TypeObject* obj2 = (force)
         ? nullptr
-        : TypeObjectFactory::get_instance()->get_type_object(descriptor->get_name(), complete);
+        : TypeObjectFactory::get_instance()->get_type_object(descriptor.get_name(), complete);
 
     if (obj2 != nullptr)
     {
@@ -1068,7 +1058,7 @@ void DynamicTypeBuilderFactory::build_type_object(
     }
     else
     {
-        switch (descriptor->kind_)
+        switch (descriptor.kind_)
         {
             // Basic types
             case TK_NONE:

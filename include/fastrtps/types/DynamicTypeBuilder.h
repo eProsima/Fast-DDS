@@ -15,7 +15,7 @@
 #ifndef TYPES_DYNAMIC_TYPE_BUILDER_H
 #define TYPES_DYNAMIC_TYPE_BUILDER_H
 
-#include <fastrtps/types/TypesBase.h>
+#include <fastrtps/types/TypeDescriptor.h>
 
 namespace eprosima {
 namespace fastrtps {
@@ -28,7 +28,8 @@ class DynamicType;
 class DynamicTypeMember;
 
 class DynamicTypeBuilder
-    : public std::enable_shared_from_this<DynamicTypeBuilder>
+    : protected TypeDescriptor
+    , public std::enable_shared_from_this<DynamicTypeBuilder>
 {
     // Only create objects from the associated factory
     struct use_the_create_method
@@ -36,23 +37,10 @@ class DynamicTypeBuilder
         explicit use_the_create_method() = default;
     };
 
-    TypeDescriptor* descriptor_ = nullptr;
     std::map<MemberId, DynamicTypeMember*> member_by_id_;         // Aggregated members
     std::map<std::string, DynamicTypeMember*> member_by_name_;    // Uses the pointers from "member_by_id_".
-    std::string name_;
-    TypeKind kind_;
     MemberId current_member_id_ = 0;
     uint32_t max_index_ = 0;
-
-    ReturnCode_t _apply_annotation_to_member(
-            MemberId id,
-            AnnotationDescriptor& descriptor);
-
-    ReturnCode_t _apply_annotation_to_member(
-            MemberId id,
-            const std::string& annotation_name,
-            const std::string& key,
-            const std::string& value);
 
     bool check_union_configuration(
             const MemberDescriptor* descriptor);
@@ -65,8 +53,32 @@ class DynamicTypeBuilder
 
     void clear();
 
-    ReturnCode_t copy_from_builder(
-            const DynamicTypeBuilder* other);
+    DynamicTypeBuilder(const DynamicTypeBuilder&) = default;
+    DynamicTypeBuilder(DynamicTypeBuilder&&) = delete;
+    DynamicTypeBuilder& operator=(const DynamicTypeBuilder&) = default;
+    DynamicTypeBuilder& operator=(DynamicTypeBuilder&&) = delete;
+
+    // Annotation setters
+    void annotation_set_extensibility(
+            const std::string& extensibility);
+
+    void annotation_set_mutable();
+
+    void annotation_set_final();
+
+    void annotation_set_appendable();
+
+    void annotation_set_nested(
+            bool nested);
+
+    void annotation_set_bit_bound(
+            uint16_t bit_bound);
+
+    void annotation_set_key(
+            bool key);
+
+    void annotation_set_non_serialized(
+            bool non_serialized);
 
 public:
 
@@ -83,9 +95,7 @@ public:
 
     virtual ~DynamicTypeBuilder();
 
-    friend class DynamicType;
     friend class DynamicTypeBuilderFactory;
-
 
     RTPS_DllAPI ReturnCode_t add_empty_member(
             uint32_t index,
@@ -150,7 +160,7 @@ public:
             const std::string& key,
             const std::string& value);
 
-    RTPS_DllAPI DynamicType_ptr build();
+    RTPS_DllAPI DynamicType_ptr build() const;
 
     RTPS_DllAPI ReturnCode_t copy_from(
             const DynamicTypeBuilder* other);
@@ -163,22 +173,21 @@ public:
         return kind_;
     }
 
-    RTPS_DllAPI std::string get_name() const;
+    using TypeDescriptor::get_name;
 
     RTPS_DllAPI MemberId get_member_id_by_name(
             const std::string& name) const;
 
-    const TypeDescriptor* get_type_descriptor() const
+    const TypeDescriptor& get_type_descriptor() const
     {
-        return descriptor_;
+        return static_cast<const TypeDescriptor&>(*this);
     }
 
-    bool is_consistent() const;
+    using TypeDescriptor::is_consistent;
 
     bool is_discriminator_type() const;
 
-    RTPS_DllAPI ReturnCode_t set_name(
-            const std::string& name);
+    using TypeDescriptor::set_name;
 };
 
 } // namespace types

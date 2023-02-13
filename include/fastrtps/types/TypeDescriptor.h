@@ -18,25 +18,27 @@
 #include <fastrtps/types/AnnotationDescriptor.h>
 #include <fastrtps/types/TypesBase.h>
 
-class MemberDescriptor;
-class DynamicType;
+#include <memory>
 
 namespace eprosima {
 namespace fastrtps {
 namespace types {
 
+class MemberDescriptor;
+class DynamicType;
+
 class TypeDescriptor
 {
 protected:
 
-    TypeKind kind_;                         // Type Kind.
+    TypeKind kind_ = TK_NONE;               // Type Kind.
     std::string name_;                      // Type Name.
     DynamicType_ptr base_type_;             // SuperType of an structure or base type of an alias type.
     DynamicType_ptr discriminator_type_;    // Discrimination type for a union.
     std::vector<uint32_t> bound_;           // Length for strings, arrays, sequences, maps and bitmasks.
     DynamicType_ptr element_type_;          // Value Type for arrays, sequences, maps, bitmasks.
     DynamicType_ptr key_element_type_;      // Key Type for maps.
-    std::vector<AnnotationDescriptor*> annotation_; // Annotations to apply
+    std::vector<AnnotationDescriptor> annotation_; // Annotations to apply
 
     RTPS_DllAPI void clean();
 
@@ -49,12 +51,41 @@ protected:
     friend class MemberDescriptor;
     friend class DynamicDataHelper;
 
+    // Annotations application
+    bool annotation_is_extensibility() const;
+
+    bool annotation_is_mutable() const;
+
+    bool annotation_is_final() const;
+
+    bool annotation_is_appendable() const;
+
+    bool annotation_is_nested() const;
+
+    bool annotation_is_bit_bound() const;
+
+    bool annotation_is_key() const;
+
+    bool annotation_is_non_serialized() const;
+
+    // Annotation getters
+    std::string annotation_get_extensibility() const;
+
+    bool annotation_get_nested() const;
+
+    uint16_t annotation_get_bit_bound() const;
+
+    bool annotation_get_key() const;
+
 public:
 
-    RTPS_DllAPI TypeDescriptor();
+    RTPS_DllAPI TypeDescriptor() = default;
 
     RTPS_DllAPI TypeDescriptor(
-            const TypeDescriptor* other);
+            const TypeDescriptor& other) = default;
+
+    RTPS_DllAPI TypeDescriptor& operator=(
+            const TypeDescriptor& descriptor) = default;
 
     RTPS_DllAPI TypeDescriptor(
             const std::string& name,
@@ -63,10 +94,12 @@ public:
     RTPS_DllAPI ~TypeDescriptor();
 
     RTPS_DllAPI ReturnCode_t copy_from(
-            const TypeDescriptor* descriptor);
+            const TypeDescriptor& descriptor);
+
+    RTPS_DllAPI bool operator==(const TypeDescriptor& descriptor) const;
 
     RTPS_DllAPI bool equals(
-            const TypeDescriptor* descriptor) const;
+            const TypeDescriptor& descriptor) const;
 
     RTPS_DllAPI bool is_consistent() const;
 
@@ -95,64 +128,9 @@ public:
     RTPS_DllAPI void set_name(
             std::string name);
 
-    RTPS_DllAPI ReturnCode_t apply_annotation(
-            AnnotationDescriptor& descriptor);
-
-    RTPS_DllAPI ReturnCode_t apply_annotation(
-            const std::string& annotation_name,
-            const std::string& key,
-            const std::string& value);
-
-    RTPS_DllAPI AnnotationDescriptor* get_annotation(
+    RTPS_DllAPI const AnnotationDescriptor* get_annotation(
             const std::string& name) const;
 
-    // Annotations application
-    RTPS_DllAPI bool annotation_is_extensibility() const;
-
-    RTPS_DllAPI bool annotation_is_mutable() const;
-
-    RTPS_DllAPI bool annotation_is_final() const;
-
-    RTPS_DllAPI bool annotation_is_appendable() const;
-
-    RTPS_DllAPI bool annotation_is_nested() const;
-
-    RTPS_DllAPI bool annotation_is_bit_bound() const;
-
-    RTPS_DllAPI bool annotation_is_key() const;
-
-    RTPS_DllAPI bool annotation_is_non_serialized() const;
-
-    // Annotation getters
-    RTPS_DllAPI std::string annotation_get_extensibility() const;
-
-    RTPS_DllAPI bool annotation_get_nested() const;
-
-    RTPS_DllAPI uint16_t annotation_get_bit_bound() const;
-
-    RTPS_DllAPI bool annotation_get_key() const;
-
-    // Annotation setters
-    RTPS_DllAPI void annotation_set_extensibility(
-            const std::string& extensibility);
-
-    RTPS_DllAPI void annotation_set_mutable();
-
-    RTPS_DllAPI void annotation_set_final();
-
-    RTPS_DllAPI void annotation_set_appendable();
-
-    RTPS_DllAPI void annotation_set_nested(
-            bool nested);
-
-    RTPS_DllAPI void annotation_set_bit_bound(
-            uint16_t bit_bound);
-
-    RTPS_DllAPI void annotation_set_key(
-            bool key);
-
-    RTPS_DllAPI void annotation_set_non_serialized(
-            bool non_serialized);
 };
 
 } // namespace types

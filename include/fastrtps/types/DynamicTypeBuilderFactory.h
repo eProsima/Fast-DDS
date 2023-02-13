@@ -19,9 +19,9 @@
 #include <fastrtps/types/AnnotationParameterValue.h>
 
 #include <cassert>
-#include <deque>
 #include <memory>
 #include <mutex>
+#include <set>
 #include <type_traits>
 
 //#define DISABLE_DYNAMIC_MEMORY_CHECK
@@ -45,6 +45,13 @@ public:
             BuilderAllocator,
             std::allocator<Other>>::type;
     };
+
+    void on_allocation(
+            T* p)
+    {
+        // delegate into the derived class
+        static_cast<B*>(this)->on_deallocation(p);
+    }
 
     void on_deallocation(
             T* p)
@@ -75,10 +82,11 @@ struct std::allocator_traits<eprosima::fastrtps::types::detail::BuilderAllocator
             T* const p,
             Types&&... args)
     {
-        return std::allocator_traits<std::allocator<T>>::construct(
+        std::allocator_traits<std::allocator<T>>::construct(
             alloc,
             p,
             std::forward<Types>(args)...);
+        alloc.on_allocation(p);
     }
 
     static constexpr void destroy(
@@ -118,11 +126,15 @@ class DynamicTypeBuilderFactory
     friend class detail::BuilderAllocator<DynamicType, DynamicTypeBuilderFactory>;
     friend class detail::BuilderAllocator<DynamicTypeBuilder, DynamicTypeBuilderFactory>;
 
+    void on_allocation(DynamicType* p);
+
     void on_deallocation(
             DynamicType* p)
     {
         delete_type(p);
     }
+
+    void on_allocation(DynamicTypeBuilder* b);
 
     void on_deallocation(
             DynamicTypeBuilder* b)
@@ -144,9 +156,6 @@ class DynamicTypeBuilderFactory
             const DynamicTypeBuilder* other);
 
     friend class DynamicTypeBuilder;
-
-    inline void add_builder_to_list(
-            DynamicTypeBuilder* pBuilder);
 
     void build_alias_type_code(
             const TypeDescriptor* descriptor,
@@ -219,7 +228,8 @@ class DynamicTypeBuilderFactory
             const TypeDescriptor* descriptor) const;
 
 #ifndef DISABLE_DYNAMIC_MEMORY_CHECK
-    std::deque<DynamicTypeBuilder*> builders_list_;
+    std::set<DynamicType*> types_list_;
+    std::set<DynamicTypeBuilder*> builders_list_;
     mutable std::mutex mutex_;
 #endif // ifndef DISABLE_DYNAMIC_MEMORY_CHECK
 
@@ -383,7 +393,7 @@ public:
             bool complete = true) const;
 
     RTPS_DllAPI void build_type_identifier(
-            const TypeDescriptor* descriptor,
+            const TypeDescriptor& descriptor,
             TypeIdentifier& identifier,
             bool complete = true) const;
 
@@ -394,7 +404,7 @@ public:
             bool force = false) const;
 
     RTPS_DllAPI void build_type_object(
-            const TypeDescriptor* descriptor,
+            const TypeDescriptor& descriptor,
             TypeObject& object,
             const std::vector<const MemberDescriptor*>* members = nullptr,
             bool complete = true,
