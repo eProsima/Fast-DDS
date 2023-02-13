@@ -346,6 +346,46 @@ static bool rfc2253_string_compare(
 }
 
 // Auxiliary functions
+static BIO* load_and_verify_document(
+        X509_STORE* store,
+        BIO* in,
+        SecurityException& exception)
+{
+    BIO* out = nullptr;
+
+    assert(nullptr != store);
+    assert(nullptr != in);
+
+    BIO* indata = nullptr;
+    PKCS7* p7 = SMIME_read_PKCS7(in, &indata);
+    if (nullptr == p7)
+    {
+        exception = _SecurityException_("Cannot read as PKCS7 the file ");
+        return nullptr;
+    }
+
+    out = BIO_new(BIO_s_mem());
+    if (nullptr == out)
+    {
+        exception = _SecurityException_("Cannot allocate output BIO");
+    }
+    else if (!PKCS7_verify(p7, nullptr, store, indata, out, PKCS7_TEXT))
+    {
+        exception = _SecurityException_("Failed verification of the file ");
+        BIO_free(out);
+        out = nullptr;
+    }
+
+    PKCS7_free(p7);
+
+    if (indata != nullptr)
+    {
+        BIO_free(indata);
+    }
+
+    return out;
+}
+
 static X509_STORE* load_permissions_ca(
         const std::string& permissions_ca,
         bool& there_are_crls,
@@ -374,34 +414,9 @@ static BIO* load_signed_file(
     if (file.size() >= 7 && file.compare(0, 7, "file://") == 0)
     {
         BIO* in = BIO_new_file(file.substr(7).c_str(), "r");
-
         if (in != nullptr)
         {
-            BIO* indata = nullptr;
-            PKCS7* p7 = SMIME_read_PKCS7(in, &indata);
-
-            if (p7 != nullptr)
-            {
-                out = BIO_new(BIO_s_mem());
-                if (!PKCS7_verify(p7, nullptr, store, indata, out, PKCS7_TEXT))
-                {
-                    exception = _SecurityException_(std::string("Failed verification of the file ") + file);
-                    BIO_free(out);
-                    out = nullptr;
-                }
-
-                PKCS7_free(p7);
-            }
-            else
-            {
-                exception = _SecurityException_(std::string("Cannot read as PKCS7 the file ") + file);
-            }
-
-            if (indata != nullptr)
-            {
-                BIO_free(indata);
-            }
-
+            out = load_and_verify_document(store, in, exception);
             BIO_free(in);
         }
         else
@@ -506,55 +521,37 @@ static bool verify_permissions_file(
     if (permissions_file.size() <= static_cast<size_t>(std::numeric_limits<int>::max()))
     {
         BIO* permissions_buf = BIO_new_mem_buf(permissions_file.data(), static_cast<int>(permissions_file.size()));
-
         if (permissions_buf != nullptr)
         {
-            BIO* indata = nullptr;
-            PKCS7* p7 = SMIME_read_PKCS7(permissions_buf, &indata);
-
-            if (p7 != nullptr)
+            BIO* out = load_and_verify_document(local_handle->store_, permissions_buf, exception);
+            if (nullptr != out)
             {
-                BIO* out = BIO_new(BIO_s_mem());
-                if (PKCS7_verify(p7, nullptr, local_handle->store_, indata, out, PKCS7_TEXT))
-                {
-                    BUF_MEM* ptr = nullptr;
-                    BIO_get_mem_ptr(out, &ptr);
+                BUF_MEM* ptr = nullptr;
+                BIO_get_mem_ptr(out, &ptr);
 
-                    if (ptr != nullptr)
+                if (ptr != nullptr)
+                {
+                    PermissionsParser parser;
+                    if ((returned_value = parser.parse_stream(ptr->data, ptr->length)) == true)
                     {
-                        PermissionsParser parser;
-                        if ((returned_value = parser.parse_stream(ptr->data, ptr->length)) == true)
-                        {
-                            parser.swap(permissions);
-                            returned_value = true;
-                        }
-                        else
-                        {
-                            exception = _SecurityException_(std::string(
-                                                "Malformed permissions file ") + permissions_file);
-                        }
+                        parser.swap(permissions);
+                        returned_value = true;
                     }
                     else
                     {
-                        exception = _SecurityException_("OpenSSL library cannot retrieve mem ptr from file.");
+                        exception = _SecurityException_(std::string(
+                                            "Malformed permissions file ") + permissions_file);
                     }
                 }
                 else
                 {
-                    exception = _SecurityException_("Failed verification of the permissions file");
+                    exception = _SecurityException_("OpenSSL library cannot retrieve mem ptr from file.");
                 }
-
                 BIO_free(out);
-                PKCS7_free(p7);
             }
             else
             {
                 exception = _SecurityException_("Cannot read as PKCS7 the permissions file.");
-            }
-
-            if (indata != nullptr)
-            {
-                BIO_free(indata);
             }
 
             BIO_free(permissions_buf);
