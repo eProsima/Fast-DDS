@@ -1639,7 +1639,7 @@ bool RTPSParticipantImpl::createReceiverResources(
             while (!ret && (tries < m_att.builtin.mutation_tries))
             {
                 tries++;
-                *it_loc = applyLocatorAdaptRule(*it_loc);
+                applyLocatorAdaptRule(*it_loc);
                 ret = m_network_Factory.BuildReceiverResources(*it_loc, newItemsBuffer, max_receiver_buffer_size);
             }
         }
