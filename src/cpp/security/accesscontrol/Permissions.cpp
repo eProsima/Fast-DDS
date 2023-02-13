@@ -356,6 +356,7 @@ static BIO* load_and_verify_document(
     assert(nullptr != store);
     assert(nullptr != in);
 
+    // Create PKCS7 object from input data
     BIO* indata = nullptr;
     PKCS7* p7 = SMIME_read_PKCS7(in, &indata);
     if (nullptr == p7)
@@ -364,16 +365,49 @@ static BIO* load_and_verify_document(
         return nullptr;
     }
 
+    // Allocate output data
     out = BIO_new(BIO_s_mem());
     if (nullptr == out)
     {
         exception = _SecurityException_("Cannot allocate output BIO");
     }
-    else if (!PKCS7_verify(p7, nullptr, store, indata, out, PKCS7_TEXT))
+    else
     {
-        exception = _SecurityException_("Failed verification of the file ");
-        BIO_free(out);
-        out = nullptr;
+        // ---- Get certificate stack from store ----
+        // The following lines are almost equivalent to the OpenSSL 3 API X509_STORE_get1_all_certs.
+        // It creates a stack of X509 objects and populates the stack with the X509 objects contained in the store.
+        STACK_OF(X509)* stack = sk_X509_new_null();
+        if (nullptr == stack)
+        {
+            exception = _SecurityException_("Cannot read as PKCS7 the file ");
+            return nullptr;
+        }
+
+        STACK_OF(X509_OBJECT)* objects = X509_STORE_get0_objects(store);
+        int i = 0;
+        for (i = 0; i < sk_X509_OBJECT_num(objects); i++)
+        {
+            X509_OBJECT* tmp = sk_X509_OBJECT_value(objects, i);
+            X509* cert = X509_OBJECT_get0_X509(tmp);
+            if (nullptr != cert)
+            {
+                sk_X509_push(stack, cert);
+            }
+        }
+        // ---- Finished getting certificate stack from store ----
+
+        // Verify the input data using exclusively the certificates in the stack.
+        // PKCS7_NOINTERN is used to ignore certificates coming alongside the signed data.
+        // PKCS7_NOVERIFY is used since the permissions CA certificate will not be chain verified.
+        if (!PKCS7_verify(p7, stack, nullptr, indata, out, PKCS7_TEXT | PKCS7_NOVERIFY | PKCS7_NOINTERN))
+        {
+            exception = _SecurityException_("Failed verification of the file ");
+            BIO_free(out);
+            out = nullptr;
+        }
+
+        // Free the 
+        sk_X509_free(stack);
     }
 
     PKCS7_free(p7);
