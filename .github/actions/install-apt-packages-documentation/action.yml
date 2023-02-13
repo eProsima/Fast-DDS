@@ -6,14 +6,8 @@ runs:
     - id: install-apt-packages-documentation
       run: |
         sudo apt-get update
-        sudo apt -y install \
-          gcc \
-          g++ \
-          cmake \
-          libssl-dev \
-          git \
+        sudo apt-get -y install \
           doxygen \
-          python3-venv \
           imagemagick \
           plantuml
       shell: bash
