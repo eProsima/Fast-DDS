@@ -49,7 +49,7 @@ jobs:
 
       - name: Move to the given Fast DDS Documentation branch
         run: |
-          set __ACTION_BRANCH_NAME=${{ inputs.documentation_branch_name }}
+          set __ACTION_BRANCH_NAME=${{ inputs.optional_documentation_branch }}
           if [ -z "${BRANCH_NAME}" ]
           then
             set __ACTION_BRANCH_NAME=${GITHUB_REF##*/}
