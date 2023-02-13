@@ -414,7 +414,7 @@ public:
             {
                 uuid.generate();
 
-                auto name = "//" + domain_name + "_" + uuid.to_string();
+                auto name = domain_name + "_" + uuid.to_string();
 
                 SharedMemEnvironment::get().init();
 

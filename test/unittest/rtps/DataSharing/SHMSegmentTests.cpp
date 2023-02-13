@@ -1,4 +1,4 @@
-// Copyright 2020 Proyectos y Sistemas de Mantenimiento SL (eProsima).
+// Copyright 2023 Proyectos y Sistemas de Mantenimiento SL (eProsima).
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -34,6 +34,8 @@ namespace rtps {
 
 using namespace testing;
 
+// This test will attempt to create enable DataSharing while being unable to compute the segment size due to a lack
+// of permissions. This should fail but not propagate an uncaught boost::interprocess::interprocess_exception
 TEST(SHMSegmentTests, Writer)
 {
     RTPSParticipantAttributes p_attr;
@@ -59,12 +61,9 @@ TEST(SHMSegmentTests, Writer)
 
     RTPSWriter* writer;
     EXPECT_NO_THROW(writer = RTPSDomain::createRTPSWriter(participant, writer_attr, payload_pool, history));
-    EXPECT_NE(nullptr, writer);
+    // RTPSWriter creation failed, as expected.
+    EXPECT_EQ(writer, nullptr);
 
-    if (nullptr != writer)
-    {
-        RTPSDomain::removeRTPSWriter(writer);
-    }
     RTPSDomain::removeRTPSParticipant(participant);
     delete(history);
 }
