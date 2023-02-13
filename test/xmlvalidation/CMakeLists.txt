@@ -36,4 +36,15 @@ configure_file(${CMAKE_CURRENT_SOURCE_DIR}/XMLTesterExample.xml
     ${CMAKE_CURRENT_BINARY_DIR}/xmldocuments/XMLTesterExample.xml COPYONLY)
 
 # Check XML profile validation against schema
-add_test(NAME xml.validate COMMAND fastdds xml validate xmldocuments)
+
+if (MSVC)
+
+    # WINDOWS
+    add_test(NAME xml.validate COMMAND fastdds.bat xml validate xmldocuments)
+
+else()
+
+    # POSIX
+    add_test(NAME xml.validate COMMAND fastdds xml validate xmldocuments)
+
+endif()
