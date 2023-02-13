@@ -15,7 +15,7 @@
 #ifndef TYPES_DYNAMIC_TYPE_H
 #define TYPES_DYNAMIC_TYPE_H
 
-#include <fastrtps/types/TypesBase.h>
+#include <fastrtps/types/TypeDescriptor.h>
 
 namespace eprosima {
 
@@ -35,7 +35,8 @@ class DynamicTypeBuilder;
 class DynamicTypeBuilderFactory;
 
 class DynamicType
-    : public std::enable_shared_from_this<DynamicType>
+    : public TypeDescriptor
+    , public std::enable_shared_from_this<DynamicType>
 {
     // Only create objects from the associated factory
     struct use_the_create_method
@@ -50,141 +51,116 @@ public:
 
     DynamicType(
             use_the_create_method,
-            const TypeDescriptor* descriptor);
-
-    DynamicType(
-            use_the_create_method,
-            const DynamicTypeBuilder* other);
+            const TypeDescriptor& descriptor);
 
     RTPS_DllAPI virtual ~DynamicType();
 
-    friend class DynamicTypeBuilderFactory;
+    const TypeDescriptor& get_type_descriptor() const
+    {
+        return static_cast<const TypeDescriptor&>(*this);
+    }
 
 protected:
 
     friend class DynamicTypeBuilder;
-    friend class DynamicTypeBuilderFactory;
+
     friend class MemberDescriptor;
-    friend class TypeDescriptor;
+    friend class DynamicTypeMember;
     friend class DynamicData;
     friend class DynamicDataFactory;
     friend class AnnotationDescriptor;
     friend class TypeObjectFactory;
-    friend class DynamicTypeMember;
     friend class DynamicDataHelper;
     friend class fastdds::dds::DomainParticipantImpl;
 
     RTPS_DllAPI virtual void clear();
 
-    ReturnCode_t copy_from_builder(
-            const DynamicTypeBuilder* other);
+    using TypeDescriptor::get_base_type;
+
+    using TypeDescriptor::get_discriminator_type;
+
+    using TypeDescriptor::get_element_type;
+
+    using TypeDescriptor::get_key_element_type;
+
+    // Serialization ancillary
+    void serialize_empty_data(
+            eprosima::fastcdr::Cdr& cdr) const;
+
+    bool deserialize_discriminator(
+            uint64_t& discriminator_value,
+            eprosima::fastcdr::Cdr& cdr) const;
+
+    void serialize_discriminator(
+            DynamicData& data,
+            eprosima::fastcdr::Cdr& cdr) const;
+
+    void serializeKey(
+            const DynamicData& data,
+            eprosima::fastcdr::Cdr& cdr) const;
+
+public:
+
+    // Serializes and deserializes the Dynamic Data.
+    void serialize(
+            const DynamicData& data,
+            eprosima::fastcdr::Cdr& cdr) const;
+
+    bool deserialize(
+            DynamicData& data,
+            eprosima::fastcdr::Cdr& cdr) const;
+
+    size_t getCdrSerializedSize(
+            const DynamicData& data,
+            size_t current_alignment = 0) const;
+
+    size_t getEmptyCdrSerializedSize(
+            size_t current_alignment = 0) const;
+
+    size_t getKeyMaxCdrSerializedSize(
+            size_t current_alignment = 0) const;
+
+    size_t getMaxCdrSerializedSize(
+            size_t current_alignment = 0) const;
+
+public:
+    // ancillary for DynamicData interfaces
+    using TypeDescriptor::get_member_id_by_name;
+    using TypeDescriptor::get_member_id_at_index;
+    using TypeDescriptor::get_descriptor;
 
     // Checks if there is a member with the given name.
     bool exists_member_by_name(
             const std::string& name) const;
 
-    // This method is used by Dynamic Data to override the name of the types based on ALIAS.
-    void set_name(
-            const std::string& name);
-
-    ReturnCode_t apply_annotation(
-            AnnotationDescriptor& descriptor);
-
-    ReturnCode_t apply_annotation(
-            const std::string& annotation_name,
-            const std::string& key,
-            const std::string& value);
-
-    ReturnCode_t apply_annotation_to_member(
-            MemberId id,
-            AnnotationDescriptor& descriptor);
-
-    ReturnCode_t apply_annotation_to_member(
-            MemberId id,
-            const std::string& annotation_name,
-            const std::string& key,
-            const std::string& value);
-
-    ReturnCode_t get_annotation(
-            AnnotationDescriptor& descriptor,
-            uint32_t idx);
-
-    uint32_t get_annotation_count();
-
-    DynamicType_ptr get_base_type() const;
-
-    DynamicType_ptr get_discriminator_type() const;
-
-    DynamicType_ptr get_element_type() const;
-
-    DynamicType_ptr get_key_element_type() const;
-
-    ReturnCode_t get_member(
-            DynamicTypeMember& member,
-            MemberId id);
-
-    ReturnCode_t get_member_by_name(
-            DynamicTypeMember& member,
-            const std::string& name);
-
-    TypeDescriptor* descriptor_;
-    std::map<MemberId, DynamicTypeMember*> member_by_id_;         // Aggregated members
-    std::map<std::string, DynamicTypeMember*> member_by_name_;    // Uses the pointers from "member_by_id_".
-    std::string name_;
-    TypeKind kind_;
-    bool is_key_defined_;
-
 public:
 
+    // TODO: doxigen
     RTPS_DllAPI bool equals(
-            const DynamicType* other) const;
+            const DynamicType& other) const;
 
-    RTPS_DllAPI ReturnCode_t get_all_members(
-            std::map<MemberId, DynamicTypeMember*>& members);
-
-    RTPS_DllAPI ReturnCode_t get_all_members_by_name(
-            std::map<std::string, DynamicTypeMember*>& members);
-
-    RTPS_DllAPI uint32_t get_bounds(
-            uint32_t index = 0) const;
-
-    RTPS_DllAPI uint32_t get_bounds_size() const;
-
-    RTPS_DllAPI ReturnCode_t get_descriptor(
-            TypeDescriptor* descriptor) const;
-
-    RTPS_DllAPI const TypeDescriptor* get_descriptor() const;
-
-    RTPS_DllAPI TypeDescriptor* get_descriptor();
-
-    RTPS_DllAPI bool key_annotation() const;
-
-    RTPS_DllAPI inline TypeKind get_kind() const
-    {
-        return kind_;
-    }
-
-    RTPS_DllAPI std::string get_name() const;
-
-    RTPS_DllAPI MemberId get_members_count() const;
-
-    RTPS_DllAPI uint32_t get_total_bounds() const;
-
-    RTPS_DllAPI const TypeDescriptor* get_type_descriptor() const
-    {
-        return descriptor_;
-    }
+    using TypeDescriptor::get_all_members;
+    using TypeDescriptor::get_all_members_by_name;
+    using TypeDescriptor::get_member;
+    using TypeDescriptor::get_member_by_name;
+    using TypeDescriptor::get_bounds;
+    using TypeDescriptor::get_bounds_size;
+    using TypeDescriptor::get_kind;
+    using TypeDescriptor::get_name;
+    using TypeDescriptor::get_members_count;
+    using TypeDescriptor::get_total_bounds;
+    using TypeDescriptor::get_annotation;
+    using TypeDescriptor::get_annotation_count;
 
     RTPS_DllAPI bool has_children() const;
 
-    RTPS_DllAPI bool is_consistent() const;
+    using TypeDescriptor::is_consistent;
 
     RTPS_DllAPI bool is_complex_kind() const;
 
     RTPS_DllAPI bool is_discriminator_type() const;
 
     RTPS_DllAPI size_t get_size() const;
-
 };
 
 } // namespace types

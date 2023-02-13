@@ -17,46 +17,14 @@
 #include <fastrtps/types/DynamicTypeBuilderFactory.h>
 #include <fastdds/dds/log/Log.hpp>
 
-namespace eprosima {
-namespace fastrtps {
-namespace types {
-
-AnnotationDescriptor::AnnotationDescriptor()
-    : type_(nullptr)
-{
-}
-
-AnnotationDescriptor::~AnnotationDescriptor()
-{
-    type_ = nullptr;
-}
-
-AnnotationDescriptor::AnnotationDescriptor(
-        const AnnotationDescriptor* descriptor)
-{
-    copy_from(descriptor);
-}
-
-AnnotationDescriptor::AnnotationDescriptor(
-        DynamicType_ptr pType)
-{
-    type_ = pType;
-}
+using namespace eprosima::fastrtps::types;
 
 ReturnCode_t AnnotationDescriptor::copy_from(
         const AnnotationDescriptor* descriptor)
 {
     if (descriptor != nullptr)
     {
-        try
-        {
-            type_ = descriptor->type_;
-            value_ = descriptor->value_;
-        }
-        catch (std::exception& /*e*/)
-        {
-            return ReturnCode_t::RETCODE_ERROR;
-        }
+        *this = *descriptor;
     }
     else
     {
@@ -66,26 +34,32 @@ ReturnCode_t AnnotationDescriptor::copy_from(
     return ReturnCode_t::RETCODE_OK;
 }
 
+bool AnnotationDescriptor::operator==(const AnnotationDescriptor& other) const
+{
+    if ( type_ == other.type_ || (type_ && other.type_ && type_->equals(*other.type_)))
+    {
+        return value_ == other.value_;
+    }
+    return true;
+}
+
+bool AnnotationDescriptor::operator!=(const AnnotationDescriptor& other) const
+{
+    return !(*this == other);
+}
+
+bool AnnotationDescriptor::operator<(const AnnotationDescriptor& other) const
+{
+    auto name = type_->get_name();
+    auto other_name = other.type_->get_name();
+    return name == other_name ? value_ < other.value_ : name < other_name;
+}
+
 bool AnnotationDescriptor::equals(
         const AnnotationDescriptor* other) const
 {
-    if (other != nullptr && (type_ == other->type_ || (type_ != nullptr && type_->equals(other->type_.get()))))
-    {
-        if (value_.size() != other->value_.size())
-        {
-            return false;
-        }
-
-        for (auto it = value_.begin(); it != value_.end(); ++it)
-        {
-            auto it2 = other->value_.find(it->first);
-            if (it2 == other->value_.end() || it2->second != it->second)
-            {
-                return false;
-            }
-        }
-    }
-    return true;
+    assert(other);
+    return *this == *other;
 }
 
 bool AnnotationDescriptor::key_annotation() const
@@ -99,14 +73,14 @@ bool AnnotationDescriptor::key_annotation() const
 }
 
 ReturnCode_t AnnotationDescriptor::get_value(
-        std::string& value)
+        std::string& value) const
 {
     return get_value(value, "value");
 }
 
 ReturnCode_t AnnotationDescriptor::get_value(
         std::string& value,
-        const std::string& key)
+        const std::string& key) const
 {
     auto it = value_.find(key);
     if (it != value_.end())
@@ -126,19 +100,13 @@ ReturnCode_t AnnotationDescriptor::get_all_value(
 
 bool AnnotationDescriptor::is_consistent() const
 {
-    if (type_ == nullptr || type_->get_kind() != TK_ANNOTATION)
+    if (!type_ || type_->get_kind() != TK_ANNOTATION)
     {
         return false;
     }
 
     //TODO: Check consistency of value_
     return true;
-}
-
-void AnnotationDescriptor::set_type(
-        DynamicType_ptr pType)
-{
-    type_ = pType;
 }
 
 ReturnCode_t AnnotationDescriptor::set_value(
@@ -148,7 +116,3 @@ ReturnCode_t AnnotationDescriptor::set_value(
     value_[key] = value;
     return ReturnCode_t::RETCODE_OK;
 }
-
-} // namespace types
-} // namespace fastrtps
-} // namespace eprosima

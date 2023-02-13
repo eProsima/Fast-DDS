@@ -17,6 +17,8 @@
 
 #include <fastrtps/types/TypesBase.h>
 #include <fastrtps/types/MemberDescriptor.h>
+#include <fastrtps/types/AnnotationDescriptor.h>
+#include <fastrtps/types/AnnotationManager.h>
 
 namespace eprosima {
 namespace fastrtps {
@@ -26,73 +28,66 @@ class AnnotationDescriptor;
 class DynamicType;
 
 class DynamicTypeMember
+    : public MemberDescriptor
+    , protected AnnotationManager
 {
 protected:
-
-    DynamicType* parent_;
-    MemberDescriptor descriptor_;
-    MemberId id_;
-
-    uint32_t get_index() const;
-
-    void set_index(
-            uint32_t index);
-
-    void set_parent(
-            DynamicType* pType);
 
     friend class DynamicTypeBuilder;
     friend class DynamicType;
     friend class DynamicData;
 
+    using MemberDescriptor::MemberDescriptor;
+    using MemberDescriptor::operator=;
+
 public:
 
-    RTPS_DllAPI DynamicTypeMember();
+    using AnnotationManager::annotation_is_bit_bound;
+    using AnnotationManager::annotation_is_key;
+    using AnnotationManager::annotation_is_non_serialized;
 
-    RTPS_DllAPI DynamicTypeMember(
-            const DynamicTypeMember* other);
+    using AnnotationManager::annotation_is_extensibility;
+    using AnnotationManager::annotation_is_mutable;
+    using AnnotationManager::annotation_is_final;
+    using AnnotationManager::annotation_is_appendable;
+    using AnnotationManager::annotation_is_nested;
+    using AnnotationManager::key_annotation;
 
-    RTPS_DllAPI DynamicTypeMember(
-            const MemberDescriptor* descriptor,
-            MemberId id);
+public:
 
-    ~DynamicTypeMember();
-
-    RTPS_DllAPI ReturnCode_t apply_annotation(
-            AnnotationDescriptor& descriptor);
-
-    RTPS_DllAPI ReturnCode_t apply_annotation(
-            const std::string& annotation_name,
-            const std::string& key,
-            const std::string& value);
-
-    RTPS_DllAPI bool equals(
-            const DynamicTypeMember*) const;
-
-    RTPS_DllAPI ReturnCode_t get_annotation(
-            AnnotationDescriptor& descriptor,
-            uint32_t idx);
-
-    RTPS_DllAPI uint32_t get_annotation_count();
-
-    RTPS_DllAPI bool key_annotation() const;
-
-    RTPS_DllAPI std::vector<uint64_t> get_union_labels() const;
-
-    RTPS_DllAPI ReturnCode_t get_descriptor(
-            MemberDescriptor* descriptor) const;
-
-    RTPS_DllAPI MemberId get_id() const;
-
-    RTPS_DllAPI std::string get_name() const;
-
-    RTPS_DllAPI bool is_default_union_value() const;
-
-    RTPS_DllAPI const MemberDescriptor* get_descriptor() const
+    const MemberDescriptor& get_descriptor() const
     {
-        return &descriptor_;
+        return static_cast<const MemberDescriptor&>(*this);
     }
 
+    using MemberDescriptor::get_kind;
+
+    using MemberDescriptor::get_id;
+
+    using MemberDescriptor::get_index;
+
+    using MemberDescriptor::get_name;
+
+    // TODO: doxygen
+    RTPS_DllAPI std::string get_default_value() const;
+
+    using MemberDescriptor::get_type;
+
+    using AnnotationManager::get_annotation_count;
+
+    using AnnotationManager::get_annotation;
+
+    bool operator==(const DynamicTypeMember& other) const;
+
+    // TODO: doxygen
+    RTPS_DllAPI bool equals(
+            const DynamicTypeMember&) const;
+
+    using MemberDescriptor::get_union_labels;
+
+    // TODO: doxygen
+    RTPS_DllAPI ReturnCode_t get_descriptor(
+            MemberDescriptor& descriptor) const;
 };
 
 } // namespace types

@@ -202,11 +202,11 @@ bool DynamicPubSubType::serialize(
 
 void DynamicPubSubType::UpdateDynamicTypeInfo()
 {
-    if (dynamic_type_ != nullptr)
+    if (dynamic_type_)
     {
         m_isGetKeyDefined = dynamic_type_->key_annotation();
 
-        std::map<MemberId, DynamicTypeMember*> membersMap;
+        std::map<MemberId, const DynamicTypeMember*> membersMap;
         dynamic_type_->get_all_members(membersMap);
         for (auto it = membersMap.begin(); it != membersMap.end(); ++it)
         {

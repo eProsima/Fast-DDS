@@ -17,6 +17,8 @@
 
 #include <fastrtps/types/TypesBase.h>
 
+#include <set>
+
 namespace eprosima{
 namespace fastrtps{
 namespace types{
@@ -28,15 +30,14 @@ class MemberDescriptor
 {
 protected:
     std::string name_;                  // Name of the member
-    MemberId id_;                       // MemberId, it should be filled automatically when the member is added.
+    MemberId id_ = MEMBER_ID_INVALID;   // MemberId, it should be filled automatically when the member is added.
     DynamicType_ptr type_;              // Member's Type.
     std::string default_value_;         // Default value of the member in string.
-    uint32_t index_;                    // Definition order of the member inside it's parent.
-    std::vector<uint64_t> labels_;      // Case Labels for unions.
-    bool default_label_;                // TRUE if it's the default option of a union.
+    uint32_t index_ = INDEX_INVALID;    // Definition order of the member inside it's parent.
+    std::set<uint64_t> labels_;         // Case Labels for unions.
+    bool default_label_ = false;        // TRUE if it's the default option of a union.
 
-    std::vector<AnnotationDescriptor*> annotation_; // Annotations to apply
-
+    friend class DynamicTypeBuilder;
     friend class DynamicTypeBuilderFactory;
     friend class DynamicData;
     friend class DynamicTypeMember;
@@ -47,7 +48,11 @@ protected:
     bool is_type_name_consistent(const std::string& sName) const;
 
 public:
-    RTPS_DllAPI MemberDescriptor();
+    RTPS_DllAPI MemberDescriptor() = default;
+
+    RTPS_DllAPI MemberDescriptor(const MemberDescriptor& descriptor) = default;
+
+    RTPS_DllAPI MemberDescriptor(MemberDescriptor&& descriptor) = default;
 
     RTPS_DllAPI MemberDescriptor(
             uint32_t index,
@@ -72,118 +77,71 @@ public:
             const std::vector<uint64_t>& unionLabels,
             bool isDefaultLabel);
 
-    RTPS_DllAPI MemberDescriptor(const MemberDescriptor* descriptor);
+    RTPS_DllAPI MemberDescriptor& operator=(const MemberDescriptor& descriptor) = default;
 
-    RTPS_DllAPI ~MemberDescriptor();
+    RTPS_DllAPI MemberDescriptor& operator=(MemberDescriptor&& descriptor) = default;
+
+    RTPS_DllAPI ~MemberDescriptor() = default;
 
     bool check_union_labels(const std::vector<uint64_t>& labels) const;
 
-    RTPS_DllAPI ReturnCode_t copy_from(const MemberDescriptor* other);
+    // TODO: doxygen
+    RTPS_DllAPI ReturnCode_t copy_from(const MemberDescriptor& other);
 
-    RTPS_DllAPI bool equals(const MemberDescriptor* other) const;
+    bool operator==(const MemberDescriptor& other) const;
+
+    // TODO: doxygen
+    RTPS_DllAPI bool equals(const MemberDescriptor& other) const;
 
     RTPS_DllAPI TypeKind get_kind() const;
 
+    // TODO: doxygen
     RTPS_DllAPI MemberId get_id() const;
 
+    // TODO: doxygen
     RTPS_DllAPI  uint32_t get_index() const;
 
+    // TODO: doxygen
     RTPS_DllAPI std::string get_name() const;
 
     RTPS_DllAPI std::vector<uint64_t> get_union_labels() const;
 
-    RTPS_DllAPI std::string get_default_value() const
-    {
-        if (!default_value_.empty())
-        {
-            return default_value_;
-        }
-        // Try annotation
-        return annotation_get_default();
-    }
+    // TODO: doxygen
+    RTPS_DllAPI std::string get_default_value() const;
 
     RTPS_DllAPI bool is_default_union_value() const;
 
+    // TODO: doxygen
     RTPS_DllAPI bool is_consistent(TypeKind parentKind) const;
 
     RTPS_DllAPI void add_union_case_index(uint64_t value);
 
+    // TODO: doxygen
     RTPS_DllAPI void set_id(MemberId id);
 
+    // TODO: doxygen
     RTPS_DllAPI void set_index(uint32_t index);
 
+    // TODO: doxygen
     RTPS_DllAPI void set_name(const std::string& name);
 
-    RTPS_DllAPI void set_type(DynamicType_ptr type);
+    // TODO: doxygen
+    RTPS_DllAPI void set_type(DynamicType_ptr&& type);
+    RTPS_DllAPI void set_type(const DynamicType_ptr& type);
 
-    RTPS_DllAPI DynamicType_ptr get_type() const
-    {
-        return type_;
-    }
+    // TODO: doxygen
+    RTPS_DllAPI DynamicType_ptr get_type() const;
 
     RTPS_DllAPI void set_default_union_value(bool bDefault);
 
+    // TODO: doxygen
     RTPS_DllAPI void set_default_value(const std::string& value)
     {
         default_value_ = value;
     }
 
-    // Annotations
-    ReturnCode_t apply_annotation(AnnotationDescriptor& descriptor);
+    // TODO: getters and setters for labels & default_label
 
-    ReturnCode_t apply_annotation(
-            const std::string& annotation_name,
-            const std::string& key,
-            const std::string& value);
-
-    AnnotationDescriptor* get_annotation(const std::string& name) const;
-
-    // Annotations application
-    RTPS_DllAPI bool annotation_is_optional() const;
-
-    RTPS_DllAPI bool annotation_is_key() const;
-
-    RTPS_DllAPI bool annotation_is_must_understand() const;
-
-    RTPS_DllAPI bool annotation_is_non_serialized() const;
-
-    RTPS_DllAPI bool annotation_is_value() const;
-
-    RTPS_DllAPI bool annotation_is_default_literal() const;
-
-    RTPS_DllAPI bool annotation_is_position() const;
-
-    RTPS_DllAPI bool annotation_is_bit_bound() const;
-
-    // Annotations getters
-    RTPS_DllAPI bool annotation_get_key() const;
-
-    RTPS_DllAPI std::string annotation_get_value() const;
-
-    RTPS_DllAPI std::string annotation_get_default() const;
-
-    RTPS_DllAPI uint16_t annotation_get_position() const;
-
-    RTPS_DllAPI uint16_t annotation_get_bit_bound() const;
-
-    // Annotations setters
-    RTPS_DllAPI void annotation_set_optional(bool optional);
-
-    RTPS_DllAPI void annotation_set_key(bool key);
-
-    RTPS_DllAPI void annotation_set_must_understand(bool must_understand);
-
-    RTPS_DllAPI void annotation_set_non_serialized(bool non_serialized);
-
-    RTPS_DllAPI void annotation_set_value(const std::string& value);
-
-    RTPS_DllAPI void annotation_set_default(const std::string& default_value);
-
-    RTPS_DllAPI void annotation_set_default_literal();
-
-    RTPS_DllAPI void annotation_set_position(uint16_t position);
-
-    RTPS_DllAPI void annotation_set_bit_bound(uint16_t bit_bound);
 };
 
 } // namespace types

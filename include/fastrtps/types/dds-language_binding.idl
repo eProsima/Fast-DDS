@@ -97,7 +97,8 @@ module DDS {
  
     local interface DynamicTypeMember {        
         DDS::ReturnCode_t get_descriptor( inout MemberDescriptor descriptor);
- 
+
+        // Barro: This APIs doesn't make sense. Better follow 7.5.2.6 and return a read-only AnnotationDescriptor sequence
         unsigned long get_annotation_count();        
         DDS::ReturnCode_t get_annotation( inout AnnotationDescriptor descriptor, in unsigned long idx);
  
@@ -119,14 +120,16 @@ module DDS {
         DDS::ReturnCode_t get_member_by_name( inout DynamicTypeMember member, in ObjectName name);        
         DDS::ReturnCode_t get_all_members_by_name( inout DynamicTypeMembersByName member);
 
-         DDS::ReturnCode_t get_member( inout DynamicTypeMember member, in MemberId id);        
-         DDS::ReturnCode_t get_all_members( inout DynamicTypeMembersById member);
+        DDS::ReturnCode_t get_member( inout DynamicTypeMember member, in MemberId id);        
+        DDS::ReturnCode_t get_all_members( inout DynamicTypeMembersById member);
  
         unsigned long get_annotation_count();        
         DDS::ReturnCode_t get_annotation( inout AnnotationDescriptor descriptor, in unsigned long idx);
  
         boolean equals(in DynamicType other);        
         DDS::ReturnCode_t add_member(in MemberDescriptor descriptor);        
+        // Barro: There is an extra API to apply annotations to members 7.5.2.9
+        // DDS::ReturnCode_t apply_annotation_to_member(in MemberId member_id, in AnnotationDescriptor descriptor)
         DDS::ReturnCode_t apply_annotation( in AnnotationDescriptor descriptor);
  
         DynamicType build();    
@@ -181,6 +184,7 @@ module DDS {
         readonly attribute DynamicType type;
  
         DDS::ReturnCode_t get_descriptor( inout MemberDescriptor value, in MemberId id);
+        // Barro: This is an errata (see 7.5.2.11.2)
         DDS::ReturnCode_t set_descriptor( in MemberId id, in MemberDescriptor value);
  
         boolean equals(in DynamicData other);

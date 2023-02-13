@@ -16,14 +16,16 @@
 #define TYPES_BASE_H
 
 #include <fastdds/rtps/common/Types.h>
-#include <bitset>
-#include <string>
-#include <map>
-#include <vector>
-#include <cctype>
+
 #include <algorithm>
+#include <bitset>
+#include <cctype>
+#include <map>
 #include <memory>
+#include <string>
+#include <system_error>
 #include <type_traits>
+#include <vector>
 
 namespace eprosima {
 namespace fastdds {
@@ -137,7 +139,6 @@ const octet TK_CHAR16 = 0x11;
 const octet TK_STRING8 = 0x20;
 const octet TK_STRING16 = 0x21;
 
-
 // Constructed/Named types
 const octet TK_ALIAS = 0x30;
 
@@ -157,6 +158,17 @@ const octet TK_ARRAY = 0x61;
 const octet TK_MAP = 0x62;
 
 // ---------- TypeKinds (end) ------------------
+
+// Auxiliary metadata
+
+template<TypeKind kind>
+using is_primitive = std::conditional<(kind > TK_NONE)&&(kind <= TK_CHAR16), std::true_type, std::false_type>;
+
+template<TypeKind kind>
+using is_primitive_t = typename is_primitive<kind>::type;
+
+template<TypeKind kind>
+constexpr bool is_primitive_v = is_primitive_t<kind>::value;
 
 // The name of some element (e.g. type, type member, module)
 // Valid characters are alphanumeric plus the "_" cannot start with digit
@@ -245,6 +257,66 @@ public:
     }
 
 };
+
+// Integrating ReturnCode_t into STL error framework
+namespace {
+
+struct FastDDSErrCategory : std::error_category
+{
+    const char* name() const noexcept
+    {
+        return "Fast-DDS error reporting";
+    }
+
+    std::string message(int ev) const
+    {
+        switch (ReturnCode_t(ev)())
+        {
+            case ReturnCode_t::RETCODE_OK:
+                return "Success";
+            case ReturnCode_t::RETCODE_UNSUPPORTED:
+                return "Unsupported feature";
+            case ReturnCode_t::RETCODE_BAD_PARAMETER:
+                return "Bad parameter";
+            case ReturnCode_t::RETCODE_PRECONDITION_NOT_MET:
+                return "Precondition not met";
+            case ReturnCode_t::RETCODE_OUT_OF_RESOURCES:
+                return "Out of resources";
+            case ReturnCode_t::RETCODE_NOT_ENABLED:
+                return "Disabled";
+            case ReturnCode_t::RETCODE_IMMUTABLE_POLICY:
+                return "Immutable policy";
+            case ReturnCode_t::RETCODE_INCONSISTENT_POLICY:
+                return "Inconsistent policy";
+            case ReturnCode_t::RETCODE_ALREADY_DELETED:
+                return "Already deleted";
+            case ReturnCode_t::RETCODE_TIMEOUT:
+                return "Timeout";
+            case ReturnCode_t::RETCODE_NO_DATA:
+                return "No data";
+            case ReturnCode_t::RETCODE_ILLEGAL_OPERATION:
+                return "Illegal operation";
+            case ReturnCode_t::RETCODE_NOT_ALLOWED_BY_SECURITY:
+                return "Security preemption";
+            case ReturnCode_t::RETCODE_ERROR:
+            default:
+                return "Unrecognized error";
+        }
+    }
+};
+
+} // anonymous namespace
+
+inline std::error_code make_error_code(ReturnCode_t::ReturnCodeValue r)
+{
+    static FastDDSErrCategory eprosima_fastdds;
+    return { r, eprosima_fastdds };
+}
+
+inline std::error_code make_error_code(const ReturnCode_t & r)
+{
+    return make_error_code(static_cast<ReturnCode_t::ReturnCodeValue>(r()));
+}
 
 template<class T>
 typename std::enable_if<std::is_arithmetic<T>::value || std::is_enum<T>::value, bool>::type
@@ -609,11 +681,25 @@ const uint32_t ANNOTATION_OCTETSEC_VALUE_MAX_LEN = 128;
 
 class DynamicType;
 class DynamicTypeBuilder;
-using DynamicType_ptr = std::shared_ptr<DynamicType>;
+using DynamicType_ptr = std::shared_ptr<const DynamicType>;
+using DynamicType_wptr = std::weak_ptr<const DynamicType>;
 using DynamicTypeBuilder_ptr = std::shared_ptr<DynamicTypeBuilder>;
+using DynamicTypeBuilder_cptr = std::shared_ptr<const DynamicTypeBuilder>;
 
 } // namespace types
 } // namespace fastrtps
 } // namespace eprosima
+
+// linking ReturnCode_t to std::error_code
+
+namespace std {
+
+  template <>
+    struct is_error_code_enum<eprosima::fastrtps::types::ReturnCode_t> : true_type {};
+
+  template <>
+    struct is_error_code_enum<eprosima::fastrtps::types::ReturnCode_t::ReturnCodeValue> : true_type {};
+
+} // namespace std
 
 #endif // TYPES_BASE_H

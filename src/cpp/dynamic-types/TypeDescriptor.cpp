@@ -12,16 +12,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#include <fastdds/dds/log/Log.hpp>
+#include <fastrtps/types/AnnotationDescriptor.h>
 #include <fastrtps/types/DynamicType.h>
 #include <fastrtps/types/DynamicTypeBuilderFactory.h>
 #include <fastrtps/types/TypeDescriptor.h>
-#include <fastrtps/types/AnnotationDescriptor.h>
-#include <fastdds/dds/log/Log.hpp>
 #include <fastrtps/types/TypesBase.h>
 
-namespace eprosima {
-namespace fastrtps {
-namespace types {
+using namespace eprosima::fastrtps::types;
 
 enum FSM_INPUTS
 {
@@ -49,38 +47,26 @@ static const int stateTable[4][6] =
     {VALID,       VALID,   VALID,   VALID,      SINGLECOLON, INVALID}
 };
 
-TypeDescriptor::TypeDescriptor()
-    : kind_(0)
-    , name_("")
-    , base_type_(nullptr)
-    , discriminator_type_(nullptr)
-    , element_type_(nullptr)
-    , key_element_type_(nullptr)
-{
-}
-
 TypeDescriptor::TypeDescriptor(
         const std::string& name,
         TypeKind kind)
-    : kind_(kind)
-    , name_(name)
-    , base_type_(nullptr)
-    , discriminator_type_(nullptr)
-    , element_type_(nullptr)
-    , key_element_type_(nullptr)
+    : TypeDescriptorData{name, kind}
 {
 }
 
 TypeDescriptor::TypeDescriptor(
-        const TypeDescriptor* other)
-    : kind_(0)
-    , name_("")
-    , base_type_(nullptr)
-    , discriminator_type_(nullptr)
-    , element_type_(nullptr)
-    , key_element_type_(nullptr)
+        const TypeDescriptor& other)
+        : TypeDescriptorData(other)
 {
-    copy_from(other);
+    refresh_indexes();
+}
+
+TypeDescriptor& TypeDescriptor::operator=(
+        const TypeDescriptor& descriptor)
+{
+    TypeDescriptorData::operator=(descriptor);
+    refresh_indexes();
+    return *this;
 }
 
 TypeDescriptor::~TypeDescriptor()
@@ -88,63 +74,69 @@ TypeDescriptor::~TypeDescriptor()
     clean();
 }
 
+void TypeDescriptor::refresh_indexes()
+{
+    member_by_id_.clear();
+    member_by_name_.clear();
+
+    // update indexes with member info
+    for (DynamicTypeMember& m : members_)
+    {
+        member_by_id_[m.get_id()] = &m;
+        member_by_name_[m.get_name()] = &m;
+    }
+}
+
 void TypeDescriptor::clean()
 {
-    for (auto it = annotation_.begin(); it != annotation_.end(); ++it)
-    {
-        delete *it;
-    }
     annotation_.clear();
 
-    base_type_ = nullptr;
-    discriminator_type_ = nullptr;
-    element_type_ = nullptr;
-    key_element_type_ = nullptr;
+    base_type_.reset();
+    discriminator_type_.reset();
+    element_type_.reset();
+    key_element_type_.reset();
+
+    members_.clear();
+    member_by_id_.clear();
+    member_by_name_.clear();
 }
 
 ReturnCode_t TypeDescriptor::copy_from(
-        const TypeDescriptor* descriptor)
+        const TypeDescriptor& descriptor)
 {
-    if (descriptor != nullptr)
-    {
-        try
-        {
-            clean();
+    *this = descriptor;
+    return ReturnCode_t::RETCODE_OK;
+}
 
-            for (auto it = descriptor->annotation_.begin(); it != descriptor->annotation_.end(); ++it)
-            {
-                AnnotationDescriptor* newDescriptor = new AnnotationDescriptor(*it);
-                annotation_.push_back(newDescriptor);
-            }
-
-            kind_ = descriptor->kind_;
-            name_ = descriptor->name_;
-            base_type_ = descriptor->base_type_;
-            discriminator_type_ = descriptor->discriminator_type_;
-            bound_ = descriptor->bound_;
-            element_type_ = descriptor->element_type_;
-            key_element_type_ = descriptor->key_element_type_;
-            return ReturnCode_t::RETCODE_OK;
-        }
-        catch (std::exception& /*e*/)
-        {
-            return ReturnCode_t::RETCODE_ERROR;
-        }
-    }
-    else
-    {
-        EPROSIMA_LOG_ERROR(DYN_TYPES, "Error copying TypeDescriptor, invalid input descriptor");
-        return ReturnCode_t::RETCODE_BAD_PARAMETER;
-    }
+bool TypeDescriptor::operator==(const TypeDescriptor& descriptor) const
+{
+    return name_ == descriptor.name_ &&
+           kind_ == descriptor.kind_ &&
+           base_type_ == descriptor.base_type_ &&
+           discriminator_type_ == descriptor.discriminator_type_ &&
+           bound_ == descriptor.bound_ &&
+           element_type_ == descriptor.element_type_ &&
+           key_element_type_ == descriptor.key_element_type_ &&
+           annotation_ == descriptor.annotation_ &&
+           members_ == descriptor.members_;
 }
 
 bool TypeDescriptor::equals(
-        const TypeDescriptor* descriptor) const
+        const TypeDescriptor& descriptor) const
 {
-    return descriptor != nullptr && name_ == descriptor->name_ && kind_ == descriptor->kind_ &&
-           base_type_ == descriptor->base_type_ && discriminator_type_ == descriptor->discriminator_type_ &&
-           bound_ == descriptor->bound_ && element_type_ == descriptor->element_type_ &&
-           key_element_type_ == descriptor->key_element_type_;
+    return *this == descriptor;
+}
+
+void TypeDescriptor::set_base_type(
+        const DynamicType_ptr& type)
+{
+    base_type_ = type;
+}
+
+void TypeDescriptor::set_base_type(
+        DynamicType_ptr&& type)
+{
+    base_type_ = std::move(type);
 }
 
 DynamicType_ptr TypeDescriptor::get_base_type() const
@@ -213,13 +205,13 @@ uint32_t TypeDescriptor::get_total_bounds() const
 bool TypeDescriptor::is_consistent() const
 {
     // Alias Types need the base type to indicate what type has been aliased.
-    if (kind_ == TK_ALIAS && base_type_ == nullptr)
+    if (kind_ == TK_ALIAS && !base_type_)
     {
         return false;
     }
 
     // Alias must have base type, and structures and bitsets optionally can have it.
-    if (base_type_ != nullptr && kind_ != TK_ALIAS && kind_ != TK_STRUCTURE && kind_ != TK_BITSET)
+    if (base_type_ && kind_ != TK_ALIAS && kind_ != TK_STRUCTURE && kind_ != TK_BITSET)
     {
         return false;
     }
@@ -238,13 +230,13 @@ bool TypeDescriptor::is_consistent() const
     }
 
     // Only union types need the discriminator of the union
-    if ((discriminator_type_ == nullptr) == (kind_ == TK_UNION))
+    if (!discriminator_type_ && kind_ == TK_UNION)
     {
         return false;
     }
 
     // ElementType is used by these types to set the "value" type of the element, otherwise it should be null.
-    if ((element_type_ == nullptr) == (kind_ == TK_ARRAY || kind_ == TK_SEQUENCE || kind_ == TK_STRING8 ||
+    if (!element_type_ && (kind_ == TK_ARRAY || kind_ == TK_SEQUENCE || kind_ == TK_STRING8 ||
             kind_ == TK_STRING16 || kind_ == TK_MAP || kind_ == TK_BITMASK))
     {
         return false;
@@ -257,7 +249,7 @@ bool TypeDescriptor::is_consistent() const
     }
 
     // Only map types need the keyElementType to store the "Key" type of the pair.
-    if ((key_element_type_ == nullptr) == (kind_ == TK_MAP))
+    if (!key_element_type_ && kind_ == TK_MAP)
     {
         return false;
     }
@@ -268,6 +260,11 @@ bool TypeDescriptor::is_consistent() const
     }
 
     return true;
+}
+
+bool TypeDescriptor::is_primitive() const
+{
+    return kind_ > TK_NONE && kind_ <= TK_CHAR16;
 }
 
 bool TypeDescriptor::is_type_name_consistent(
@@ -317,349 +314,140 @@ void TypeDescriptor::set_kind(
 }
 
 void TypeDescriptor::set_name(
-        std::string name)
+        const std::string& name)
 {
     name_ = name;
 }
 
-ReturnCode_t TypeDescriptor::apply_annotation(
-        AnnotationDescriptor& descriptor)
+void TypeDescriptor::set_name(
+        std::string&& name)
 {
-    if (descriptor.is_consistent())
+    name_ = std::move(name);
+}
+
+ReturnCode_t TypeDescriptor::get_all_members_by_name(
+        std::map<std::string, const DynamicTypeMember*>& members) const
+{
+    members = std::map<std::string, const DynamicTypeMember*>(member_by_name_.begin(), member_by_name_.end());
+    return ReturnCode_t::RETCODE_OK;
+}
+
+ReturnCode_t TypeDescriptor::get_all_members(
+        std::map<MemberId, const DynamicTypeMember*>& members) const
+{
+    members = std::map<MemberId, const DynamicTypeMember*>(member_by_id_.begin(), member_by_id_.end());
+    return ReturnCode_t::RETCODE_OK;
+}
+
+ReturnCode_t TypeDescriptor::get_member_by_name(
+        MemberDescriptor& member,
+        const std::string& name) const
+{
+    auto it = member_by_name_.find(name);
+    if (it != member_by_name_.end())
     {
-        AnnotationDescriptor* pNewDescriptor = new AnnotationDescriptor();
-        pNewDescriptor->copy_from(&descriptor);
-        annotation_.push_back(pNewDescriptor);
+        member = it->second->get_descriptor();
         return ReturnCode_t::RETCODE_OK;
     }
     else
     {
-        EPROSIMA_LOG_ERROR(DYN_TYPES, "Error applying annotation. The input descriptor isn't consistent.");
-        return ReturnCode_t::RETCODE_BAD_PARAMETER;
+        EPROSIMA_LOG_WARNING(DYN_TYPES, "Error getting member by name, member not found.");
+        return ReturnCode_t::RETCODE_ERROR;
     }
 }
 
-ReturnCode_t TypeDescriptor::apply_annotation(
-        const std::string& annotation_name,
-        const std::string& key,
-        const std::string& value)
+std::pair<const DynamicTypeMember*, bool>
+TypeDescriptor::get_member(
+        MemberId id) const
 {
-    AnnotationDescriptor* ann = get_annotation(annotation_name);
-    if (ann != nullptr)
+    auto it = member_by_id_.find(id);
+    if (it != member_by_id_.end())
     {
-        ann->set_value(key, value);
+        return {it->second, true};
     }
     else
     {
-        AnnotationDescriptor* pNewDescriptor = new AnnotationDescriptor();
-        pNewDescriptor->set_type(
-            DynamicTypeBuilderFactory::get_instance()->create_annotation_primitive(annotation_name));
-        pNewDescriptor->set_value(key, value);
-        annotation_.push_back(pNewDescriptor);
+        return {nullptr, false};
     }
-    return ReturnCode_t::RETCODE_OK;
 }
 
-AnnotationDescriptor* TypeDescriptor::get_annotation(
+ReturnCode_t TypeDescriptor::get_member(
+        MemberDescriptor& member,
+        MemberId id) const
+{
+    const DynamicTypeMember* pM;
+    bool found;
+
+    std::tie(pM, found) = get_member(id);
+    if(found)
+    {
+        member = pM->get_descriptor();
+        return ReturnCode_t::RETCODE_OK;
+    }
+    else
+    {
+        EPROSIMA_LOG_WARNING(DYN_TYPES, "Error getting member, member not found.");
+        return ReturnCode_t::RETCODE_ERROR;
+    }
+}
+
+uint32_t TypeDescriptor::get_members_count() const
+{
+    return static_cast<uint32_t>(members_.size());
+}
+
+MemberId TypeDescriptor::get_member_id_by_name(
         const std::string& name) const
 {
-    auto it = annotation_.begin();
+    auto it = member_by_name_.find(name);
 
-    for (; it != annotation_.end(); ++it)
+    if(it != member_by_name_.end())
     {
-        AnnotationDescriptor* ann = *it;
-        //if (ann->type()->get_name().compare(name) == 0)
-        if (ann != nullptr
-                && ann->type() != nullptr
-                && ann->type()->kind_ > 0
-                && !ann->type()->get_name().empty()
-                && ann->type()->get_name().compare(name) == 0)
+        return it->second->get_id();
+    }
+
+    return MEMBER_ID_INVALID;
+}
+
+MemberId TypeDescriptor::get_member_id_at_index(
+        uint32_t index) const
+{
+    if(index >= members_.size())
+    {
+        return MEMBER_ID_INVALID;
+    }
+
+    auto it = members_.begin();
+    std::advance(it, index);
+    assert(it->get_index() == index);
+    return it->get_id();
+}
+
+bool TypeDescriptor::exists_member_by_name(
+        const std::string& name) const
+{
+    auto base = get_base_type();
+    if (base)
+    {
+        if (base->exists_member_by_name(name))
         {
-            return ann;
+            return true;
         }
     }
-    return nullptr;
+    return member_by_name_.find(name) != member_by_name_.end();
 }
 
-// Annotations application
-bool TypeDescriptor::annotation_is_extensibility() const
+bool TypeDescriptor::exists_member_by_id(
+        MemberId id) const
 {
-    return get_annotation(ANNOTATION_EXTENSIBILITY_ID) != nullptr;
-}
-
-bool TypeDescriptor::annotation_is_mutable() const
-{
-    if (get_annotation(ANNOTATION_MUTABLE_ID) != nullptr)
+    auto base = get_base_type();
+    if (base)
     {
-        return true;
-    }
-    else
-    {
-        AnnotationDescriptor* ann = get_annotation(ANNOTATION_EXTENSIBILITY_ID);
-        if (ann != nullptr)
+        if (base->exists_member_by_id(id))
         {
-            std::string value;
-            if (ann->get_value(value) == ReturnCode_t::RETCODE_OK)
-            {
-                return value.compare(EXTENSIBILITY_MUTABLE) == 0;
-            }
+            return true;
         }
     }
-    return false;
+    return member_by_id_.find(id) != member_by_id_.end();
 }
 
-bool TypeDescriptor::annotation_is_final() const
-{
-    if (get_annotation(ANNOTATION_FINAL_ID) != nullptr)
-    {
-        return true;
-    }
-    else
-    {
-        AnnotationDescriptor* ann = get_annotation(ANNOTATION_EXTENSIBILITY_ID);
-        if (ann != nullptr)
-        {
-            std::string value;
-            if (ann->get_value(value) == ReturnCode_t::RETCODE_OK)
-            {
-                return value.compare(EXTENSIBILITY_FINAL) == 0;
-            }
-        }
-    }
-    return false;
-}
-
-bool TypeDescriptor::annotation_is_appendable() const
-{
-    if (get_annotation(ANNOTATION_APPENDABLE_ID) != nullptr)
-    {
-        return true;
-    }
-    else
-    {
-        AnnotationDescriptor* ann = get_annotation(ANNOTATION_EXTENSIBILITY_ID);
-        if (ann != nullptr)
-        {
-            std::string value;
-            if (ann->get_value(value) == ReturnCode_t::RETCODE_OK)
-            {
-                return value.compare(EXTENSIBILITY_APPENDABLE) == 0;
-            }
-        }
-    }
-    return false;
-}
-
-bool TypeDescriptor::annotation_is_nested() const
-{
-    return get_annotation(ANNOTATION_NESTED_ID) != nullptr;
-}
-
-bool TypeDescriptor::annotation_is_bit_bound() const
-{
-    return get_annotation(ANNOTATION_BIT_BOUND_ID) != nullptr;
-}
-
-bool TypeDescriptor::annotation_is_key() const
-{
-    return get_annotation(ANNOTATION_KEY_ID) != nullptr || get_annotation(ANNOTATION_EPKEY_ID) != nullptr;
-}
-
-bool TypeDescriptor::annotation_is_non_serialized() const
-{
-    AnnotationDescriptor* ann = get_annotation(ANNOTATION_NON_SERIALIZED_ID);
-    if (ann != nullptr)
-    {
-        std::string value;
-        if (ann->get_value(value) == ReturnCode_t::RETCODE_OK)
-        {
-            return value == CONST_TRUE;
-        }
-    }
-    return false;
-}
-
-// Annotation getters
-std::string TypeDescriptor::annotation_get_extensibility() const
-{
-    AnnotationDescriptor* ann = get_annotation(ANNOTATION_EXTENSIBILITY_ID);
-    if (ann != nullptr)
-    {
-        std::string value;
-        if (ann->get_value(value) == ReturnCode_t::RETCODE_OK)
-        {
-            return value;
-        }
-    }
-    return "";
-}
-
-bool TypeDescriptor::annotation_get_nested() const
-{
-    AnnotationDescriptor* ann = get_annotation(ANNOTATION_NESTED_ID);
-    if (ann != nullptr)
-    {
-        std::string value;
-        if (ann->get_value(value) == ReturnCode_t::RETCODE_OK)
-        {
-            return value == CONST_TRUE;
-        }
-    }
-    return false;
-}
-
-bool TypeDescriptor::annotation_get_key() const
-{
-    AnnotationDescriptor* ann = get_annotation(ANNOTATION_KEY_ID);
-    if (ann == nullptr)
-    {
-        ann = get_annotation(ANNOTATION_EPKEY_ID);
-    }
-    if (ann != nullptr)
-    {
-        std::string value;
-        if (ann->get_value(value) == ReturnCode_t::RETCODE_OK)
-        {
-            return value == CONST_TRUE;
-        }
-    }
-    return false;
-}
-
-uint16_t TypeDescriptor::annotation_get_bit_bound() const
-{
-    AnnotationDescriptor* ann = get_annotation(ANNOTATION_BIT_BOUND_ID);
-    if (ann != nullptr)
-    {
-        std::string value;
-        if (ann->get_value(value) == ReturnCode_t::RETCODE_OK)
-        {
-            return static_cast<uint16_t>(std::stoi(value));
-        }
-    }
-    return 32; // Default value
-}
-
-// Annotation setters
-void TypeDescriptor::annotation_set_extensibility(
-        const std::string& extensibility)
-{
-    AnnotationDescriptor* ann = get_annotation(ANNOTATION_EXTENSIBILITY_ID);
-    if (ann == nullptr)
-    {
-        ann = new AnnotationDescriptor();
-        ann->set_type(
-            DynamicTypeBuilderFactory::get_instance()->create_annotation_primitive(ANNOTATION_EXTENSIBILITY_ID));
-        apply_annotation(*ann);
-        delete ann;
-        ann = get_annotation(ANNOTATION_EXTENSIBILITY_ID);
-    }
-    ann->set_value("value", extensibility);
-}
-
-void TypeDescriptor::annotation_set_mutable()
-{
-    AnnotationDescriptor* ann = get_annotation(ANNOTATION_MUTABLE_ID);
-    if (ann == nullptr)
-    {
-        ann = new AnnotationDescriptor();
-        ann->set_type(DynamicTypeBuilderFactory::get_instance()->create_annotation_primitive(ANNOTATION_MUTABLE_ID));
-        apply_annotation(*ann);
-        delete ann;
-        ann = get_annotation(ANNOTATION_MUTABLE_ID);
-    }
-    ann->set_value("value", CONST_TRUE);
-}
-
-void TypeDescriptor::annotation_set_final()
-{
-    AnnotationDescriptor* ann = get_annotation(ANNOTATION_FINAL_ID);
-    if (ann == nullptr)
-    {
-        ann = new AnnotationDescriptor();
-        ann->set_type(DynamicTypeBuilderFactory::get_instance()->create_annotation_primitive(ANNOTATION_FINAL_ID));
-        apply_annotation(*ann);
-        delete ann;
-        ann = get_annotation(ANNOTATION_FINAL_ID);
-    }
-    ann->set_value("value", CONST_TRUE);
-}
-
-void TypeDescriptor::annotation_set_appendable()
-{
-    AnnotationDescriptor* ann = get_annotation(ANNOTATION_APPENDABLE_ID);
-    if (ann == nullptr)
-    {
-        ann = new AnnotationDescriptor();
-        ann->set_type(DynamicTypeBuilderFactory::get_instance()->create_annotation_primitive(ANNOTATION_APPENDABLE_ID));
-        apply_annotation(*ann);
-        delete ann;
-        ann = get_annotation(ANNOTATION_APPENDABLE_ID);
-    }
-    ann->set_value("value", CONST_TRUE);
-}
-
-void TypeDescriptor::annotation_set_nested(
-        bool nested)
-{
-    AnnotationDescriptor* ann = get_annotation(ANNOTATION_NESTED_ID);
-    if (ann == nullptr)
-    {
-        ann = new AnnotationDescriptor();
-        ann->set_type(DynamicTypeBuilderFactory::get_instance()->create_annotation_primitive(ANNOTATION_NESTED_ID));
-        apply_annotation(*ann);
-        delete ann;
-        ann = get_annotation(ANNOTATION_NESTED_ID);
-    }
-    ann->set_value("value", nested ? CONST_TRUE : CONST_FALSE);
-}
-
-void TypeDescriptor::annotation_set_key(
-        bool key)
-{
-    AnnotationDescriptor* ann = get_annotation(ANNOTATION_KEY_ID);
-    if (ann == nullptr)
-    {
-        ann = new AnnotationDescriptor();
-        ann->set_type(DynamicTypeBuilderFactory::get_instance()->create_annotation_primitive(ANNOTATION_KEY_ID));
-        apply_annotation(*ann);
-        delete ann;
-        ann = get_annotation(ANNOTATION_KEY_ID);
-    }
-    ann->set_value("value", key ? CONST_TRUE : CONST_FALSE);
-}
-
-void TypeDescriptor::annotation_set_bit_bound(
-        uint16_t bit_bound)
-{
-    AnnotationDescriptor* ann = get_annotation(ANNOTATION_BIT_BOUND_ID);
-    if (ann == nullptr)
-    {
-        ann = new AnnotationDescriptor();
-        ann->set_type(DynamicTypeBuilderFactory::get_instance()->create_annotation_primitive(ANNOTATION_BIT_BOUND_ID));
-        apply_annotation(*ann);
-        delete ann;
-        ann = get_annotation(ANNOTATION_BIT_BOUND_ID);
-    }
-    ann->set_value("value", std::to_string(bit_bound));
-}
-
-void TypeDescriptor::annotation_set_non_serialized(
-        bool non_serialized)
-{
-    AnnotationDescriptor* ann = get_annotation(ANNOTATION_NON_SERIALIZED_ID);
-    if (ann == nullptr)
-    {
-        ann = new AnnotationDescriptor();
-        ann->set_type(
-            DynamicTypeBuilderFactory::get_instance()->create_annotation_primitive(ANNOTATION_NON_SERIALIZED_ID));
-        apply_annotation(*ann);
-        delete ann;
-        ann = get_annotation(ANNOTATION_NON_SERIALIZED_ID);
-    }
-    ann->set_value("value", non_serialized ? CONST_TRUE : CONST_FALSE);
-}
-
-} // namespace types
-} // namespace fastrtps
-} // namespace eprosima

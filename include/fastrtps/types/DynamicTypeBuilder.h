@@ -15,7 +15,9 @@
 #ifndef TYPES_DYNAMIC_TYPE_BUILDER_H
 #define TYPES_DYNAMIC_TYPE_BUILDER_H
 
-#include <fastrtps/types/TypesBase.h>
+#include <fastdds/dds/log/Log.hpp>
+#include <fastrtps/types/TypeDescriptor.h>
+#include <fastrtps/utils/custom_allocators.hpp>
 
 namespace eprosima {
 namespace fastrtps {
@@ -28,46 +30,50 @@ class DynamicType;
 class DynamicTypeMember;
 
 class DynamicTypeBuilder
-    : public std::enable_shared_from_this<DynamicTypeBuilder>
+    : public TypeDescriptor
+    , public std::enable_shared_from_this<DynamicTypeBuilder>
 {
+    using builder_allocator = detail::BuilderAllocator<DynamicType, DynamicTypeBuilder, false>;
+
+    friend builder_allocator;
+
+    static void after_construction(DynamicType* b);
+
+    static void before_destruction(DynamicType* b);
+
     // Only create objects from the associated factory
     struct use_the_create_method
     {
         explicit use_the_create_method() = default;
     };
 
-    TypeDescriptor* descriptor_ = nullptr;
-    std::map<MemberId, DynamicTypeMember*> member_by_id_;         // Aggregated members
-    std::map<std::string, DynamicTypeMember*> member_by_name_;    // Uses the pointers from "member_by_id_".
-    std::string name_;
-    TypeKind kind_;
     MemberId current_member_id_ = 0;
-    uint32_t max_index_ = 0;
-
-    ReturnCode_t _apply_annotation_to_member(
-            MemberId id,
-            AnnotationDescriptor& descriptor);
-
-    ReturnCode_t _apply_annotation_to_member(
-            MemberId id,
-            const std::string& annotation_name,
-            const std::string& key,
-            const std::string& value);
 
     bool check_union_configuration(
-            const MemberDescriptor* descriptor);
+            const MemberDescriptor& descriptor);
 
-    // Checks if there is a member with the given name.
-    bool exists_member_by_name(
-            const std::string& name) const;
-
-    void refresh_member_ids();
+    using TypeDescriptor::exists_member_by_name;
+    using TypeDescriptor::exists_member_by_id;
 
     void clear();
 
-    ReturnCode_t copy_from_builder(
-            const DynamicTypeBuilder* other);
+    DynamicTypeBuilder(const DynamicTypeBuilder&) = default;
+    DynamicTypeBuilder(DynamicTypeBuilder&&) = delete;
+    DynamicTypeBuilder& operator=(const DynamicTypeBuilder&) = default;
+    DynamicTypeBuilder& operator=(DynamicTypeBuilder&&) = delete;
 
+    const TypeDescriptor& get_type_descriptor() const
+    {
+        return static_cast<const TypeDescriptor&>(*this);
+    }
+
+public:
+
+    // TODO Barro: remove this from public
+    //! This method only adds an empty element to the members collection with the right index
+    member_iterator add_empty_member(
+            uint32_t index,
+            const std::string& name);
 public:
 
     DynamicTypeBuilder(
@@ -75,110 +81,79 @@ public:
 
     DynamicTypeBuilder(
             use_the_create_method,
-            const DynamicTypeBuilder* builder);
+            const DynamicTypeBuilder& builder);
 
     DynamicTypeBuilder(
             use_the_create_method,
-            const TypeDescriptor* descriptor);
+            const TypeDescriptor& descriptor);
 
-    virtual ~DynamicTypeBuilder();
+    ~DynamicTypeBuilder() = default;
 
-    friend class DynamicType;
     friend class DynamicTypeBuilderFactory;
 
+    RTPS_DllAPI bool equals(
+            const DynamicType& other) const;
 
-    RTPS_DllAPI ReturnCode_t add_empty_member(
-            uint32_t index,
-            const std::string& name);
+    using TypeDescriptor::get_annotation;
+
+    using TypeDescriptor::get_annotation_count;
+
+    using TypeDescriptor::get_descriptor;
+
+    // TODO: doxygen
+    RTPS_DllAPI ReturnCode_t add_member(
+            const MemberDescriptor& descriptor) noexcept;
 
     RTPS_DllAPI ReturnCode_t add_member(
-            const MemberDescriptor* descriptor);
+            MemberDescriptor&& descriptor) noexcept;
 
-    RTPS_DllAPI ReturnCode_t add_member(
+    template<typename... Ts>
+    ReturnCode_t add_member(Ts&&... Args) noexcept
+    {
+        return add_member(MemberDescriptor(std::forward<Ts>(Args)...));
+    }
+
+    using AnnotationManager::apply_annotation;
+
+    // TODO: doxygen
+    template<typename... Ts>
+    ReturnCode_t apply_annotation_to_member(
             MemberId id,
-            const std::string& name,
-            DynamicTypeBuilder* type_ = nullptr);
+            Ts&&... Args)
+    {
+        auto it = member_by_id_.find(id);
+        if (it != member_by_id_.end())
+        {
+            it->second->apply_annotation(std::forward<Ts>(Args)...);
+            return ReturnCode_t::RETCODE_OK;
+        }
+        else
+        {
+            EPROSIMA_LOG_ERROR(DYN_TYPES, "Error applying annotation to member. MemberId not found.");
+            return ReturnCode_t::RETCODE_BAD_PARAMETER;
+        }
+    }
 
-    RTPS_DllAPI ReturnCode_t add_member(
-            MemberId id,
-            const std::string& name,
-            DynamicTypeBuilder* type_,
-            const std::string& defaultValue);
-
-    RTPS_DllAPI ReturnCode_t add_member(
-            MemberId id,
-            const std::string& name,
-            DynamicTypeBuilder* type_,
-            const std::string& defaultValue,
-            const std::vector<uint64_t>& unionLabels,
-            bool isDefaultLabel);
-
-    RTPS_DllAPI ReturnCode_t add_member(
-            MemberId id,
-            const std::string& name,
-            DynamicType_ptr type_ = nullptr);
-
-    RTPS_DllAPI ReturnCode_t add_member(
-            MemberId id,
-            const std::string& name,
-            DynamicType_ptr type_,
-            const std::string& defaultValue);
-
-    RTPS_DllAPI ReturnCode_t add_member(
-            MemberId id,
-            const std::string& name,
-            DynamicType_ptr type_,
-            const std::string& defaultValue,
-            const std::vector<uint64_t>& unionLabels,
-            bool isDefaultLabel);
-
-    RTPS_DllAPI ReturnCode_t apply_annotation(
-            AnnotationDescriptor& descriptor);
-
-    RTPS_DllAPI ReturnCode_t apply_annotation(
-            const std::string& annotation_name,
-            const std::string& key,
-            const std::string& value);
-
-    RTPS_DllAPI ReturnCode_t apply_annotation_to_member(
-            MemberId id,
-            AnnotationDescriptor& descriptor);
-
-    RTPS_DllAPI ReturnCode_t apply_annotation_to_member(
-            MemberId id,
-            const std::string& annotation_name,
-            const std::string& key,
-            const std::string& value);
-
-    RTPS_DllAPI DynamicType_ptr build();
+    RTPS_DllAPI DynamicType_ptr build() const;
 
     RTPS_DllAPI ReturnCode_t copy_from(
             const DynamicTypeBuilder* other);
 
-    ReturnCode_t get_all_members(
-            std::map<MemberId, DynamicTypeMember*>& members);
+    using TypeDescriptor::get_all_members;
 
-    RTPS_DllAPI inline TypeKind get_kind() const
-    {
-        return kind_;
-    }
+    using TypeDescriptor::get_all_members_by_name;
 
-    RTPS_DllAPI std::string get_name() const;
+    using TypeDescriptor::get_name;
 
-    RTPS_DllAPI MemberId get_member_id_by_name(
-            const std::string& name) const;
+    using TypeDescriptor::get_member_id_by_name;
 
-    const TypeDescriptor* get_type_descriptor() const
-    {
-        return descriptor_;
-    }
-
-    bool is_consistent() const;
+    using TypeDescriptor::is_consistent;
 
     bool is_discriminator_type() const;
 
-    RTPS_DllAPI ReturnCode_t set_name(
-            const std::string& name);
+    using TypeDescriptor::set_name;
+
+    using TypeDescriptor::set_base_type;
 };
 
 } // namespace types
