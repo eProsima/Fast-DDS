@@ -68,5 +68,6 @@ jobs:
 
       - name: Build and test documentation
         run: |
+          source fastdds-docs-venv/bin/activate
           colcon build
           colcon test --event-handlers=console_direct+ --packages-select fastdds-docs
