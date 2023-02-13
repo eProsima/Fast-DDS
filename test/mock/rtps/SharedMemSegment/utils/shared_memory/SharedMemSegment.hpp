@@ -40,9 +40,9 @@
 #include <boost/interprocess/offset_ptr.hpp>
 #include <boost/thread/thread_time.hpp>
 
-#include "BoostAtExitRegistry.hpp"
-#include "RobustInterprocessCondition.hpp"
-#include "SharedMemUUID.hpp"
+#include "../../../../../../src/cpp/utils/shared_memory/BoostAtExitRegistry.hpp"
+#include "../../../../../../src/cpp/utils/shared_memory/RobustInterprocessCondition.hpp"
+#include "../../../../../../src/cpp/utils/shared_memory/SharedMemUUID.hpp"
 
 namespace eprosima {
 namespace fastdds {
@@ -414,7 +414,8 @@ public:
             {
                 uuid.generate();
 
-                auto name = "//" + domain_name + "_" + uuid.to_string();
+                // Additional invalid path characters to trigger the exception
+                auto name = "///" + domain_name + "_" + uuid.to_string();
 
                 SharedMemEnvironment::get().init();
 
