@@ -49,14 +49,14 @@ jobs:
 
       - name: Move to the given Fast DDS Documentation branch
         run: |
-          local BRANCH_NAME=${{ inputs.documentation_branch_name }}
+          set __ACTION_BRANCH_NAME=${{ inputs.documentation_branch_name }}
           if [ -z "${BRANCH_NAME}" ]
           then
-            BRANCH_NAME=${GITHUB_REF##*/}
+            set __ACTION_BRANCH_NAME=${GITHUB_REF##*/}
           fi
           cd fastdds-docs
-          if ! git show-ref --quiet refs/heads/${BRANCH_NAME} ; then
-            BRANCH_NAME="master"
+          if ! git show-ref --quiet refs/heads/${__ACTION_BRANCH_NAME} ; then
+            set __ACTION_BRANCH_NAME="master"
           fi
           cd src/fastdds-docs
           git checkout ${{ inputs.documentation_branch_name }}
