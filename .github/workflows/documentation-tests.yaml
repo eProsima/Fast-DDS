@@ -54,12 +54,11 @@ jobs:
           then
             set __ACTION_BRANCH_NAME=${GITHUB_REF##*/}
           fi
-          cd fastdds-docs
+          cd src/fastdds-docs
           if ! git show-ref --quiet refs/heads/${__ACTION_BRANCH_NAME} ; then
             set __ACTION_BRANCH_NAME="master"
           fi
-          cd src/fastdds-docs
-          git checkout ${{ inputs.documentation_branch_name }}
+          git checkout ${__ACTION_BRANCH_NAME}
 
       - name: Create python virtual environment
         run: |
