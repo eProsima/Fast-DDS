@@ -22,7 +22,7 @@ Even though the current version is `< 1.0.0`, `foonathan_memory` is in [maintena
 
 *eprosima Fast DDS* ensures `foonathan_memory` version stability by pinning to a specific [release](https://github.com/foonathan/memory/releases/tag/v0.7-3).
 Both *eprosima* `foonathan_memory_vendor` utility and *eprosima Fast DDS* CI tests use this specific release.
-The specific tag was released September 5th, 2021.
+The specific tag was released January 11th, 2023.
 
 *eprosima Fast DDS* maintainers will keep a continuous watch over new releases in order to assess the impact they could have over *eprosima Fast DDS*.
 Any `bugfix` or security vulnerability corrected that affects the API used by *eprosima Fast DDS* will be analyzed by the maintainers.
