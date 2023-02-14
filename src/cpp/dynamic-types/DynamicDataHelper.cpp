@@ -267,7 +267,7 @@ void DynamicDataHelper::print_basic_collection(
     }
     else
     {
-        const std::vector<uint32_t>& bounds = data->type_->get_descriptor().bound_;
+        const std::vector<uint32_t>& bounds = data->type_->get_type_descriptor().bound_;
 
         std::vector<std::vector<uint32_t>> positions;
         fill_array_positions(bounds, positions);
@@ -305,7 +305,7 @@ void DynamicDataHelper::print_complex_collection(
     }
     else
     {
-        const std::vector<uint32_t>& bounds = data->type_->get_descriptor().bound_;
+        const std::vector<uint32_t>& bounds = data->type_->get_type_descriptor().bound_;
 
         std::vector<std::vector<uint32_t>> positions;
         fill_array_positions(bounds, positions);

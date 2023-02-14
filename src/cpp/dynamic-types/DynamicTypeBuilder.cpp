@@ -21,9 +21,7 @@
 #include <fastrtps/types/AnnotationDescriptor.h>
 #include <fastdds/dds/log/Log.hpp>
 
-namespace eprosima {
-namespace fastrtps {
-namespace types {
+using namespace eprosima::fastrtps::types;
 
 DynamicTypeBuilder::DynamicTypeBuilder(
         use_the_create_method)
@@ -275,7 +273,7 @@ DynamicType_ptr DynamicTypeBuilder::build() const
 bool DynamicTypeBuilder::check_union_configuration(
         const MemberDescriptor* descriptor)
 {
-    if (descriptor_->get_kind() == TK_UNION)
+    if (get_kind() == TK_UNION)
     {
         if (!descriptor->is_default_union_value() && descriptor->get_union_labels().size() == 0)
         {
@@ -318,13 +316,6 @@ bool DynamicTypeBuilder::exists_member_by_name(
     return member_by_name_.find(name) != member_by_name_.end();
 }
 
-ReturnCode_t DynamicTypeBuilder::get_all_members(
-        std::map<MemberId, DynamicTypeMember*>& members)
-{
-    members = member_by_id_;
-    return ReturnCode_t::RETCODE_OK;
-}
-
 bool DynamicTypeBuilder::is_discriminator_type() const
 {
     if (kind_ == TK_ALIAS && get_base_type() != nullptr)
@@ -339,10 +330,10 @@ bool DynamicTypeBuilder::is_discriminator_type() const
 
 void DynamicTypeBuilder::refresh_member_ids()
 {
-    if ((descriptor_->get_kind() == TK_STRUCTURE || descriptor_->get_kind() == TK_BITSET) &&
-            descriptor_->get_base_type() != nullptr)
+    if ((get_kind() == TK_STRUCTURE || get_kind() == TK_BITSET) &&
+            get_base_type() != nullptr)
     {
-        current_member_id_ = descriptor_->get_base_type()->get_members_count();
+        current_member_id_ = get_base_type()->get_members_count();
     }
 }
 
@@ -390,126 +381,158 @@ ReturnCode_t DynamicTypeBuilder::apply_annotation_to_member(
     }
 }
 
+ReturnCode_t DynamicTypeBuilder::apply_annotation(
+        AnnotationDescriptor& descriptor)
+{
+    if (descriptor.is_consistent())
+    {
+        annotation_.push_back(descriptor);
+        is_key_defined_ = key_annotation();
+        return ReturnCode_t::RETCODE_OK;
+    }
+    else
+    {
+        EPROSIMA_LOG_ERROR(DYN_TYPES, "Error applying annotation. The input descriptor isn't consistent.");
+        return ReturnCode_t::RETCODE_BAD_PARAMETER;
+    }
+}
+
+ReturnCode_t DynamicTypeBuilder::apply_annotation(
+        const std::string& annotation_name,
+        const std::string& key,
+        const std::string& value)
+{
+    AnnotationDescriptor* ann = get_annotation(annotation_name);
+    if (ann != nullptr)
+    {
+        ann->set_value(key, value);
+    }
+    else
+    {
+        AnnotationDescriptor new_descriptor;
+        new_descriptor.set_type(
+            DynamicTypeBuilderFactory::get_instance()->create_annotation_primitive(annotation_name));
+        new_descriptor.set_value(key, value);
+        annotation_.push_back(new_descriptor);
+        is_key_defined_ = key_annotation();
+    }
+    return ReturnCode_t::RETCODE_OK;
+}
+
 // Annotation setters
-void TypeDescriptor::annotation_set_extensibility(
+void DynamicTypeBuilder::annotation_set_extensibility(
         const std::string& extensibility)
 {
-    AnnotationDescriptor* ann = get_annotation(ANNOTATION_EXTENSIBILITY_ID);
+    const AnnotationDescriptor* ann = get_annotation(ANNOTATION_EXTENSIBILITY_ID);
     if (ann == nullptr)
     {
-        ann = new AnnotationDescriptor();
-        ann->set_type(
+        AnnotationDescriptor descriptor;
+        descriptor.set_type(
             DynamicTypeBuilderFactory::get_instance()->create_annotation_primitive(ANNOTATION_EXTENSIBILITY_ID));
-        apply_annotation(*ann);
-        delete ann;
+        apply_annotation(descriptor);
         ann = get_annotation(ANNOTATION_EXTENSIBILITY_ID);
     }
     ann->set_value("value", extensibility);
 }
 
-void TypeDescriptor::annotation_set_mutable()
+void DynamicTypeBuilder::annotation_set_mutable()
 {
-    AnnotationDescriptor* ann = get_annotation(ANNOTATION_MUTABLE_ID);
+    const AnnotationDescriptor* ann = get_annotation(ANNOTATION_MUTABLE_ID);
     if (ann == nullptr)
     {
-        ann = new AnnotationDescriptor();
-        ann->set_type(DynamicTypeBuilderFactory::get_instance()->create_annotation_primitive(ANNOTATION_MUTABLE_ID));
+        AnnotationDescriptor descriptor;
+        descriptor.set_type(DynamicTypeBuilderFactory::get_instance()->create_annotation_primitive(ANNOTATION_MUTABLE_ID));
         apply_annotation(*ann);
-        delete ann;
         ann = get_annotation(ANNOTATION_MUTABLE_ID);
     }
     ann->set_value("value", CONST_TRUE);
 }
 
-void TypeDescriptor::annotation_set_final()
+void DynamicTypeBuilder::annotation_set_final()
 {
-    AnnotationDescriptor* ann = get_annotation(ANNOTATION_FINAL_ID);
+    const AnnotationDescriptor* ann = get_annotation(ANNOTATION_FINAL_ID);
     if (ann == nullptr)
     {
-        ann = new AnnotationDescriptor();
-        ann->set_type(DynamicTypeBuilderFactory::get_instance()->create_annotation_primitive(ANNOTATION_FINAL_ID));
+        AnnotationDescriptor descriptor;
+        descriptor.set_type(DynamicTypeBuilderFactory::get_instance()->create_annotation_primitive(ANNOTATION_FINAL_ID));
         apply_annotation(*ann);
-        delete ann;
         ann = get_annotation(ANNOTATION_FINAL_ID);
     }
     ann->set_value("value", CONST_TRUE);
 }
 
-void TypeDescriptor::annotation_set_appendable()
+void DynamicTypeBuilder::annotation_set_appendable()
 {
-    AnnotationDescriptor* ann = get_annotation(ANNOTATION_APPENDABLE_ID);
+    const AnnotationDescriptor* ann = get_annotation(ANNOTATION_APPENDABLE_ID);
     if (ann == nullptr)
     {
-        ann = new AnnotationDescriptor();
-        ann->set_type(DynamicTypeBuilderFactory::get_instance()->create_annotation_primitive(ANNOTATION_APPENDABLE_ID));
+        AnnotationDescriptor descriptor;
+        descriptor.set_type(DynamicTypeBuilderFactory::get_instance()->create_annotation_primitive(ANNOTATION_APPENDABLE_ID));
         apply_annotation(*ann);
-        delete ann;
         ann = get_annotation(ANNOTATION_APPENDABLE_ID);
     }
     ann->set_value("value", CONST_TRUE);
 }
 
-void TypeDescriptor::annotation_set_nested(
+void DynamicTypeBuilder::annotation_set_nested(
         bool nested)
 {
-    AnnotationDescriptor* ann = get_annotation(ANNOTATION_NESTED_ID);
+    const AnnotationDescriptor* ann = get_annotation(ANNOTATION_NESTED_ID);
     if (ann == nullptr)
     {
-        ann = new AnnotationDescriptor();
-        ann->set_type(DynamicTypeBuilderFactory::get_instance()->create_annotation_primitive(ANNOTATION_NESTED_ID));
+        AnnotationDescriptor descriptor;
+        descriptor.set_type(DynamicTypeBuilderFactory::get_instance()->create_annotation_primitive(ANNOTATION_NESTED_ID));
         apply_annotation(*ann);
-        delete ann;
         ann = get_annotation(ANNOTATION_NESTED_ID);
     }
     ann->set_value("value", nested ? CONST_TRUE : CONST_FALSE);
 }
 
-void TypeDescriptor::annotation_set_key(
+void DynamicTypeBuilder::annotation_set_key(
         bool key)
 {
-    AnnotationDescriptor* ann = get_annotation(ANNOTATION_KEY_ID);
+    const AnnotationDescriptor* ann = get_annotation(ANNOTATION_KEY_ID);
     if (ann == nullptr)
     {
-        ann = new AnnotationDescriptor();
-        ann->set_type(DynamicTypeBuilderFactory::get_instance()->create_annotation_primitive(ANNOTATION_KEY_ID));
+        AnnotationDescriptor descriptor;
+        descriptor.set_type(DynamicTypeBuilderFactory::get_instance()->create_annotation_primitive(ANNOTATION_KEY_ID));
         apply_annotation(*ann);
-        delete ann;
         ann = get_annotation(ANNOTATION_KEY_ID);
     }
     ann->set_value("value", key ? CONST_TRUE : CONST_FALSE);
 }
 
-void TypeDescriptor::annotation_set_bit_bound(
+void DynamicTypeBuilder::annotation_set_bit_bound(
         uint16_t bit_bound)
 {
-    AnnotationDescriptor* ann = get_annotation(ANNOTATION_BIT_BOUND_ID);
+    const AnnotationDescriptor* ann = get_annotation(ANNOTATION_BIT_BOUND_ID);
     if (ann == nullptr)
     {
-        ann = new AnnotationDescriptor();
-        ann->set_type(DynamicTypeBuilderFactory::get_instance()->create_annotation_primitive(ANNOTATION_BIT_BOUND_ID));
+        AnnotationDescriptor descriptor;
+        descriptor.set_type(DynamicTypeBuilderFactory::get_instance()->create_annotation_primitive(ANNOTATION_BIT_BOUND_ID));
         apply_annotation(*ann);
-        delete ann;
         ann = get_annotation(ANNOTATION_BIT_BOUND_ID);
     }
     ann->set_value("value", std::to_string(bit_bound));
 }
 
-void TypeDescriptor::annotation_set_non_serialized(
+void DynamicTypeBuilder::annotation_set_non_serialized(
         bool non_serialized)
 {
-    AnnotationDescriptor* ann = get_annotation(ANNOTATION_NON_SERIALIZED_ID);
+    const AnnotationDescriptor* ann = get_annotation(ANNOTATION_NON_SERIALIZED_ID);
     if (ann == nullptr)
     {
-        ann = new AnnotationDescriptor();
-        ann->set_type(
+        AnnotationDescriptor descriptor;
+        descriptor.set_type(
             DynamicTypeBuilderFactory::get_instance()->create_annotation_primitive(ANNOTATION_NON_SERIALIZED_ID));
-        apply_annotation(*ann);
-        delete ann;
+        apply_annotation(descriptor);
         ann = get_annotation(ANNOTATION_NON_SERIALIZED_ID);
     }
     ann->set_value("value", non_serialized ? CONST_TRUE : CONST_FALSE);
 }
 
-} // namespace types
-} // namespace fastrtps
-} // namespace eprosima
+bool DynamicTypeBuilder::equals(
+        const DynamicType& other) const
+{
+    return get_type_descriptor() == other.get_type_descriptor();
+}

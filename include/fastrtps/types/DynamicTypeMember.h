@@ -26,73 +26,114 @@ class AnnotationDescriptor;
 class DynamicType;
 
 class DynamicTypeMember
+    : protected MemberDescriptor
 {
+    std::set<AnnotationDescriptor> annotation_; // Annotations to apply
+
 protected:
-
-    DynamicType* parent_;
-    MemberDescriptor descriptor_;
-    MemberId id_;
-
-    uint32_t get_index() const;
-
-    void set_index(
-            uint32_t index);
-
-    void set_parent(
-            DynamicType* pType);
 
     friend class DynamicTypeBuilder;
     friend class DynamicType;
     friend class DynamicData;
 
-public:
+    const MemberDescriptor& get_descriptor() const
+    {
+        return static_cast<const MemberDescriptor&>(*this);
+    }
 
-    RTPS_DllAPI DynamicTypeMember();
+    const AnnotationDescriptor* get_annotation(const std::string& name) const;
 
-    RTPS_DllAPI DynamicTypeMember(
-            const DynamicTypeMember* other);
+    // Annotations
+    ReturnCode_t apply_annotation(AnnotationDescriptor& descriptor);
 
-    RTPS_DllAPI DynamicTypeMember(
-            const MemberDescriptor* descriptor,
-            MemberId id);
-
-    ~DynamicTypeMember();
-
-    RTPS_DllAPI ReturnCode_t apply_annotation(
-            AnnotationDescriptor& descriptor);
-
-    RTPS_DllAPI ReturnCode_t apply_annotation(
+    ReturnCode_t apply_annotation(
             const std::string& annotation_name,
             const std::string& key,
             const std::string& value);
 
-    RTPS_DllAPI bool equals(
-            const DynamicTypeMember*) const;
+    // Annotations application
+    bool annotation_is_optional() const;
 
+    bool annotation_is_key() const;
+
+    bool annotation_is_must_understand() const;
+
+    bool annotation_is_non_serialized() const;
+
+    bool annotation_is_value() const;
+
+    bool annotation_is_default_literal() const;
+
+    bool annotation_is_position() const;
+
+    bool annotation_is_bit_bound() const;
+
+    // Annotations getters
+    bool annotation_get_key() const;
+
+    std::string annotation_get_value() const;
+
+    std::string annotation_get_default() const;
+
+    uint16_t annotation_get_position() const;
+
+    uint16_t annotation_get_bit_bound() const;
+
+    // Annotations setters
+    void annotation_set_optional(bool optional);
+
+    void annotation_set_key(bool key);
+
+    void annotation_set_must_understand(bool must_understand);
+
+    void annotation_set_non_serialized(bool non_serialized);
+
+    void annotation_set_value(const std::string& value);
+
+    void annotation_set_default(const std::string& default_value);
+
+    void annotation_set_default_literal();
+
+    void annotation_set_position(uint16_t position);
+
+    void annotation_set_bit_bound(uint16_t bit_bound);
+
+    ReturnCode_t apply_annotation(
+            AnnotationDescriptor& descriptor);
+
+    ReturnCode_t apply_annotation(
+            const std::string& annotation_name,
+            const std::string& key,
+            const std::string& value);
+public:
+
+    // TODO: doxygen
+    RTPS_DllAPI MemberId get_annotation_count();
+
+    // TODO: doxygen
+    RTPS_DllAPI ReturnCode_t get_annotation(
+            AnnotationDescriptor& descriptor,
+            MemberId idx);
+
+    bool operator==(const DynamicTypeMember& other) const;
+
+    // TODO: doxygen
+    RTPS_DllAPI bool equals(
+            const DynamicTypeMember&) const;
+
+    // TODO: doxygen
     RTPS_DllAPI ReturnCode_t get_annotation(
             AnnotationDescriptor& descriptor,
             uint32_t idx);
 
+    // TODO: doxygen
     RTPS_DllAPI uint32_t get_annotation_count();
 
-    RTPS_DllAPI bool key_annotation() const;
+    using MemberDescriptor::get_union_labels;
 
-    RTPS_DllAPI std::vector<uint64_t> get_union_labels() const;
-
+    // TODO: doxygen
     RTPS_DllAPI ReturnCode_t get_descriptor(
-            MemberDescriptor* descriptor) const;
-
-    RTPS_DllAPI MemberId get_id() const;
-
-    RTPS_DllAPI std::string get_name() const;
-
-    RTPS_DllAPI bool is_default_union_value() const;
-
-    RTPS_DllAPI const MemberDescriptor* get_descriptor() const
-    {
-        return &descriptor_;
-    }
-
+            MemberDescriptor& descriptor) const;
 };
 
 } // namespace types

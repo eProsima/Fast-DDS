@@ -19,9 +19,7 @@
 #include <fastdds/dds/log/Log.hpp>
 #include <fastrtps/types/TypesBase.h>
 
-namespace eprosima {
-namespace fastrtps {
-namespace types {
+using namespace eprosima::fastrtps::types;
 
 enum FSM_INPUTS
 {
@@ -87,7 +85,9 @@ bool TypeDescriptor::operator==(const TypeDescriptor& descriptor) const
            bound_ == descriptor.bound_ &&
            element_type_ == descriptor.element_type_ &&
            key_element_type_ == descriptor.key_element_type_ &&
-           annotation_ == descriptor.annotation_;
+           annotation_ == descriptor.annotation_ &&
+           member_by_id_ == descriptor.member_by_id_ &&
+           member_by_name_ == descriptor.member_by_name_;
 }
 
 bool TypeDescriptor::equals(
@@ -271,44 +271,6 @@ void TypeDescriptor::set_name(
     name_ = name;
 }
 
-//ReturnCode_t TypeDescriptor::apply_annotation(
-//        AnnotationDescriptor& descriptor)
-//{
-//    if (descriptor.is_consistent())
-//    {
-//        AnnotationDescriptor* pNewDescriptor = new AnnotationDescriptor();
-//        pNewDescriptor->copy_from(&descriptor);
-//        annotation_.push_back(pNewDescriptor);
-//        return ReturnCode_t::RETCODE_OK;
-//    }
-//    else
-//    {
-//        EPROSIMA_LOG_ERROR(DYN_TYPES, "Error applying annotation. The input descriptor isn't consistent.");
-//        return ReturnCode_t::RETCODE_BAD_PARAMETER;
-//    }
-//}
-//
-//ReturnCode_t TypeDescriptor::apply_annotation(
-//        const std::string& annotation_name,
-//        const std::string& key,
-//        const std::string& value)
-//{
-//    AnnotationDescriptor* ann = get_annotation(annotation_name);
-//    if (ann != nullptr)
-//    {
-//        ann.set_value(key, value);
-//    }
-//    else
-//    {
-//        AnnotationDescriptor* pNewDescriptor = new AnnotationDescriptor();
-//        pNewDescriptor->set_type(
-//            DynamicTypeBuilderFactory::get_instance()->create_annotation_primitive(annotation_name));
-//        pNewDescriptor->set_value(key, value);
-//        annotation_.push_back(pNewDescriptor);
-//    }
-//    return ReturnCode_t::RETCODE_OK;
-//}
-
 const AnnotationDescriptor* TypeDescriptor::get_annotation(
         const std::string& name) const
 {
@@ -363,7 +325,7 @@ bool TypeDescriptor::annotation_is_final() const
     }
     else
     {
-        AnnotationDescriptor* ann = get_annotation(ANNOTATION_EXTENSIBILITY_ID);
+        const AnnotationDescriptor* ann = get_annotation(ANNOTATION_EXTENSIBILITY_ID);
         if (ann != nullptr)
         {
             std::string value;
@@ -384,7 +346,7 @@ bool TypeDescriptor::annotation_is_appendable() const
     }
     else
     {
-        AnnotationDescriptor* ann = get_annotation(ANNOTATION_EXTENSIBILITY_ID);
+        const AnnotationDescriptor* ann = get_annotation(ANNOTATION_EXTENSIBILITY_ID);
         if (ann != nullptr)
         {
             std::string value;
@@ -414,7 +376,7 @@ bool TypeDescriptor::annotation_is_key() const
 
 bool TypeDescriptor::annotation_is_non_serialized() const
 {
-    AnnotationDescriptor* ann = get_annotation(ANNOTATION_NON_SERIALIZED_ID);
+    const AnnotationDescriptor* ann = get_annotation(ANNOTATION_NON_SERIALIZED_ID);
     if (ann != nullptr)
     {
         std::string value;
@@ -429,7 +391,7 @@ bool TypeDescriptor::annotation_is_non_serialized() const
 // Annotation getters
 std::string TypeDescriptor::annotation_get_extensibility() const
 {
-    AnnotationDescriptor* ann = get_annotation(ANNOTATION_EXTENSIBILITY_ID);
+    const AnnotationDescriptor* ann = get_annotation(ANNOTATION_EXTENSIBILITY_ID);
     if (ann != nullptr)
     {
         std::string value;
@@ -443,7 +405,7 @@ std::string TypeDescriptor::annotation_get_extensibility() const
 
 bool TypeDescriptor::annotation_get_nested() const
 {
-    AnnotationDescriptor* ann = get_annotation(ANNOTATION_NESTED_ID);
+    const AnnotationDescriptor* ann = get_annotation(ANNOTATION_NESTED_ID);
     if (ann != nullptr)
     {
         std::string value;
@@ -457,7 +419,7 @@ bool TypeDescriptor::annotation_get_nested() const
 
 bool TypeDescriptor::annotation_get_key() const
 {
-    AnnotationDescriptor* ann = get_annotation(ANNOTATION_KEY_ID);
+    const AnnotationDescriptor* ann = get_annotation(ANNOTATION_KEY_ID);
     if (ann == nullptr)
     {
         ann = get_annotation(ANNOTATION_EPKEY_ID);
@@ -475,7 +437,7 @@ bool TypeDescriptor::annotation_get_key() const
 
 uint16_t TypeDescriptor::annotation_get_bit_bound() const
 {
-    AnnotationDescriptor* ann = get_annotation(ANNOTATION_BIT_BOUND_ID);
+    const AnnotationDescriptor* ann = get_annotation(ANNOTATION_BIT_BOUND_ID);
     if (ann != nullptr)
     {
         std::string value;
@@ -487,6 +449,88 @@ uint16_t TypeDescriptor::annotation_get_bit_bound() const
     return 32; // Default value
 }
 
-} // namespace types
-} // namespace fastrtps
-} // namespace eprosima
+uint32_t TypeDescriptor::get_annotation_count() const
+{
+    return static_cast<uint32_t>(annotation_.size());
+}
+
+ReturnCode_t TypeDescriptor::get_annotation(
+        AnnotationDescriptor& descriptor,
+        uint32_t idx) const
+{
+    if (idx < annotation_.size())
+    {
+        descriptor = annotation_[idx];
+        return ReturnCode_t::RETCODE_OK;
+    }
+    else
+    {
+        EPROSIMA_LOG_WARNING(DYN_TYPES, "Error getting annotation, annotation not found.");
+        return ReturnCode_t::RETCODE_ERROR;
+    }
+}
+
+bool TypeDescriptor::key_annotation() const
+{
+    for (auto anIt = annotation_.begin(); anIt != annotation_.end(); ++anIt)
+    {
+        if ((*anIt).key_annotation())
+        {
+            return true;
+        }
+    }
+    return false;
+}
+
+ReturnCode_t TypeDescriptor::get_all_members_by_name(
+        std::map<std::string, DynamicTypeMember*>& members) const
+{
+    members = member_by_name_;
+    return ReturnCode_t::RETCODE_OK;
+}
+
+ReturnCode_t TypeDescriptor::get_all_members(
+        std::map<MemberId, DynamicTypeMember*>& members) const
+{
+    members = member_by_id_;
+    return ReturnCode_t::RETCODE_OK;
+}
+
+ReturnCode_t TypeDescriptor::get_member_by_name(
+        DynamicTypeMember& member,
+        const std::string& name) const
+{
+    auto it = member_by_name_.find(name);
+    if (it != member_by_name_.end())
+    {
+        member = it->second;
+        return ReturnCode_t::RETCODE_OK;
+    }
+    else
+    {
+        EPROSIMA_LOG_WARNING(DYN_TYPES, "Error getting member by name, member not found.");
+        return ReturnCode_t::RETCODE_ERROR;
+    }
+}
+
+ReturnCode_t TypeDescriptor::get_member(
+        DynamicTypeMember& member,
+        MemberId id) const
+{
+    auto it = member_by_id_.find(id);
+    if (it != member_by_id_.end())
+    {
+        member = it->second;
+        return ReturnCode_t::RETCODE_OK;
+    }
+    else
+    {
+        EPROSIMA_LOG_WARNING(DYN_TYPES, "Error getting member, member not found.");
+        return ReturnCode_t::RETCODE_ERROR;
+    }
+}
+
+MemberId TypeDescriptor::get_members_count() const
+{
+    return static_cast<MemberId>(member_by_id_.size());
+}

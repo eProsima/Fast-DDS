@@ -12,13 +12,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#include <fastdds/dds/log/Log.hpp>
 #include <fastrtps/types/AnnotationDescriptor.h>
+#include <fastrtps/types/DynamicData.h>
 #include <fastrtps/types/DynamicType.h>
 #include <fastrtps/types/DynamicTypeBuilder.h>
 #include <fastrtps/types/DynamicTypeBuilderFactory.h>
-#include <fastrtps/types/TypeDescriptor.h>
 #include <fastrtps/types/DynamicTypeMember.h>
-#include <fastdds/dds/log/Log.hpp>
+#include <fastrtps/types/TypeDescriptor.h>
 
 using namespace eprosima::fastrtps::types;
 
@@ -61,90 +62,6 @@ DynamicType::~DynamicType()
     clear();
 }
 
-//ReturnCode_t DynamicType::apply_annotation(
-//        AnnotationDescriptor& descriptor)
-//{
-//    if (descriptor.is_consistent())
-//    {
-//        AnnotationDescriptor* pNewDescriptor = new AnnotationDescriptor();
-//        pNewDescriptor->copy_from(&descriptor);
-//        descriptor_->annotation_.push_back(pNewDescriptor);
-//        is_key_defined_ = key_annotation();
-//        return ReturnCode_t::RETCODE_OK;
-//    }
-//    else
-//    {
-//        EPROSIMA_LOG_ERROR(DYN_TYPES, "Error applying annotation. The input descriptor isn't consistent.");
-//        return ReturnCode_t::RETCODE_BAD_PARAMETER;
-//    }
-//}
-//
-//ReturnCode_t DynamicType::apply_annotation(
-//        const std::string& annotation_name,
-//        const std::string& key,
-//        const std::string& value)
-//{
-//    AnnotationDescriptor* ann = descriptor_->get_annotation(annotation_name);
-//    if (ann != nullptr)
-//    {
-//        ann->set_value(key, value);
-//    }
-//    else
-//    {
-//        AnnotationDescriptor* pNewDescriptor = new AnnotationDescriptor();
-//        pNewDescriptor->set_type(
-//            DynamicTypeBuilderFactory::get_instance()->create_annotation_primitive(annotation_name));
-//        pNewDescriptor->set_value(key, value);
-//        descriptor_->annotation_.push_back(pNewDescriptor);
-//        is_key_defined_ = key_annotation();
-//    }
-//    return ReturnCode_t::RETCODE_OK;
-//}
-//
-//ReturnCode_t DynamicType::apply_annotation_to_member(
-//        MemberId id,
-//        AnnotationDescriptor& descriptor)
-//{
-//    if (descriptor.is_consistent())
-//    {
-//        auto it = member_by_id_.find(id);
-//        if (it != member_by_id_.end())
-//        {
-//            it->second->apply_annotation(descriptor);
-//            return ReturnCode_t::RETCODE_OK;
-//        }
-//        else
-//        {
-//            EPROSIMA_LOG_ERROR(DYN_TYPES, "Error applying annotation to member. MemberId not found.");
-//            return ReturnCode_t::RETCODE_BAD_PARAMETER;
-//        }
-//    }
-//    else
-//    {
-//        EPROSIMA_LOG_ERROR(DYN_TYPES, "Error applying annotation to member. The input descriptor isn't consistent.");
-//        return ReturnCode_t::RETCODE_BAD_PARAMETER;
-//    }
-//}
-//
-//ReturnCode_t DynamicType::apply_annotation_to_member(
-//        MemberId id,
-//        const std::string& annotation_name,
-//        const std::string& key,
-//        const std::string& value)
-//{
-//    auto it = member_by_id_.find(id);
-//    if (it != member_by_id_.end())
-//    {
-//        it->second->apply_annotation(annotation_name, key, value);
-//        return ReturnCode_t::RETCODE_OK;
-//    }
-//    else
-//    {
-//        EPROSIMA_LOG_ERROR(DYN_TYPES, "Error applying annotation to member. MemberId not found.");
-//        return ReturnCode_t::RETCODE_BAD_PARAMETER;
-//    }
-//}
-
 void DynamicType::clear()
 {
     TypeDescriptor::clean();
@@ -177,161 +94,10 @@ ReturnCode_t DynamicType::get_descriptor(
     return ReturnCode_t::RETCODE_OK;
 }
 
-const TypeDescriptor& DynamicType::get_descriptor() const
-{
-    return static_cast<const TypeDescriptor&>(*this);
-}
-
-bool DynamicType::key_annotation() const
-{
-    for (auto anIt = annotation_.begin(); anIt != annotation_.end(); ++anIt)
-    {
-        if ((*anIt).key_annotation())
-        {
-            return true;
-        }
-    }
-    return false;
-}
-
 bool DynamicType::equals(
-        const DynamicType* other) const
+        const DynamicType& other) const
 {
-    if (other != nullptr && annotation_.size() == other->annotation_.size() &&
-            member_by_id_.size() == other->member_by_id_.size() &&
-            member_by_name_.size() == other->member_by_name_.size())
-    {
-        // Check the annotation list
-        for (auto it = annotation_.begin(),
-                it2 = other->annotation_.begin();
-                it != annotation_.end(); ++it, ++it2)
-        {
-            if (*it != *it2)
-            {
-                return false;
-            }
-        }
-
-        // Check the members by Id
-        for (auto it = member_by_id_.begin(); it != member_by_id_.end(); ++it)
-        {
-            auto it2 = other->member_by_id_.find(it->first);
-            if (it2 == other->member_by_id_.end() || !it2->second->equals(it->second))
-            {
-                return false;
-            }
-        }
-
-        for (auto it = other->member_by_id_.begin(); it != other->member_by_id_.end(); ++it)
-        {
-            auto it2 = member_by_id_.find(it->first);
-            if (it2 == member_by_id_.end() || !it2->second->equals(it->second))
-            {
-                return false;
-            }
-        }
-
-        // Check the members by Name
-        for (auto it = member_by_name_.begin(); it != member_by_name_.end(); ++it)
-        {
-            auto it2 = other->member_by_name_.find(it->first);
-            if (it2 == other->member_by_name_.end() || !it2->second->equals(it->second))
-            {
-                return false;
-            }
-        }
-
-        for (auto it = other->member_by_name_.begin(); it != other->member_by_name_.end(); ++it)
-        {
-            auto it2 = member_by_name_.find(it->first);
-            if (it2 == member_by_name_.end() || !it2->second->equals(it->second))
-            {
-                return false;
-            }
-        }
-
-        return true;
-    }
-    return false;
-}
-
-MemberId DynamicType::get_members_count() const
-{
-    return static_cast<MemberId>(member_by_id_.size());
-}
-
-std::string DynamicType::get_name() const
-{
-    return name_;
-}
-
-ReturnCode_t DynamicType::get_member_by_name(
-        DynamicTypeMember& member,
-        const std::string& name) const
-{
-    auto it = member_by_name_.find(name);
-    if (it != member_by_name_.end())
-    {
-        member = it->second;
-        return ReturnCode_t::RETCODE_OK;
-    }
-    else
-    {
-        EPROSIMA_LOG_WARNING(DYN_TYPES, "Error getting member by name, member not found.");
-        return ReturnCode_t::RETCODE_ERROR;
-    }
-}
-
-ReturnCode_t DynamicType::get_all_members_by_name(
-        std::map<std::string, DynamicTypeMember*>& members) const
-{
-    members = member_by_name_;
-    return ReturnCode_t::RETCODE_OK;
-}
-
-ReturnCode_t DynamicType::get_member(
-        DynamicTypeMember& member,
-        MemberId id)
-{
-    auto it = member_by_id_.find(id);
-    if (it != member_by_id_.end())
-    {
-        member = it->second;
-        return ReturnCode_t::RETCODE_OK;
-    }
-    else
-    {
-        EPROSIMA_LOG_WARNING(DYN_TYPES, "Error getting member, member not found.");
-        return ReturnCode_t::RETCODE_ERROR;
-    }
-}
-
-ReturnCode_t DynamicType::get_all_members(
-        std::map<MemberId, DynamicTypeMember*>& members) const
-{
-    members = member_by_id_;
-    return ReturnCode_t::RETCODE_OK;
-}
-
-uint32_t DynamicType::get_annotation_count() const
-{
-    return static_cast<uint32_t>(annotation_.size());
-}
-
-ReturnCode_t DynamicType::get_annotation(
-        AnnotationDescriptor& descriptor,
-        uint32_t idx) const
-{
-    if (idx < annotation_.size())
-    {
-        descriptor = *annotation_[idx];
-        return ReturnCode_t::RETCODE_OK;
-    }
-    else
-    {
-        EPROSIMA_LOG_WARNING(DYN_TYPES, "Error getting annotation, annotation not found.");
-        return ReturnCode_t::RETCODE_ERROR;
-    }
+    return get_type_descriptor() == other.get_type_descriptor();
 }
 
 bool DynamicType::has_children() const
@@ -347,31 +113,16 @@ bool DynamicType::is_complex_kind() const
            kind_ == TK_BITSET;
 }
 
-bool DynamicType::is_consistent() const
-{
-    return descriptor_->is_consistent();
-}
-
 bool DynamicType::is_discriminator_type() const
 {
-    if (kind_ == TK_ALIAS && descriptor_ != nullptr && descriptor_->get_base_type() != nullptr)
+    if (kind_ == TK_ALIAS && get_base_type())
     {
-        return descriptor_->get_base_type()->is_discriminator_type();
+        return get_base_type()->is_discriminator_type();
     }
     return kind_ == TK_BOOLEAN || kind_ == TK_BYTE || kind_ == TK_INT16 || kind_ == TK_INT32 ||
            kind_ == TK_INT64 || kind_ == TK_UINT16 || kind_ == TK_UINT32 || kind_ == TK_UINT64 ||
            kind_ == TK_FLOAT32 || kind_ == TK_FLOAT64 || kind_ == TK_FLOAT128 || kind_ == TK_CHAR8 ||
            kind_ == TK_CHAR16 || kind_ == TK_STRING8 || kind_ == TK_STRING16 || kind_ == TK_ENUM || kind_ == TK_BITMASK;
-}
-
-void DynamicType::set_name(
-        const std::string& name)
-{
-    if (descriptor_ != nullptr)
-    {
-        descriptor_->set_name(name);
-    }
-    name_ = name;
 }
 
 size_t DynamicType::get_size() const
@@ -385,7 +136,7 @@ size_t DynamicType::get_size() const
         case TK_FLOAT128: return 16;
         case TK_BITMASK: case TK_ENUM:
         {
-            size_t bits = descriptor_->get_bounds(0);
+            size_t bits = get_bounds(0);
 
             if (bits % 8 == 0)
             {
@@ -405,7 +156,7 @@ bool DynamicType::deserialize(
         DynamicData& data,
         eprosima::fastcdr::Cdr& cdr)
 {
-    if (get_descriptor().annotation_is_non_serialized())
+    if (get_type_descriptor().annotation_is_non_serialized())
     {
         return true;
     }

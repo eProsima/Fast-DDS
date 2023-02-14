@@ -37,8 +37,6 @@ class DynamicTypeBuilder
         explicit use_the_create_method() = default;
     };
 
-    std::map<MemberId, DynamicTypeMember*> member_by_id_;         // Aggregated members
-    std::map<std::string, DynamicTypeMember*> member_by_name_;    // Uses the pointers from "member_by_id_".
     MemberId current_member_id_ = 0;
     uint32_t max_index_ = 0;
 
@@ -57,6 +55,11 @@ class DynamicTypeBuilder
     DynamicTypeBuilder(DynamicTypeBuilder&&) = delete;
     DynamicTypeBuilder& operator=(const DynamicTypeBuilder&) = default;
     DynamicTypeBuilder& operator=(DynamicTypeBuilder&&) = delete;
+
+    const TypeDescriptor& get_type_descriptor() const
+    {
+        return static_cast<const TypeDescriptor&>(*this);
+    }
 
     // Annotation setters
     void annotation_set_extensibility(
@@ -96,6 +99,19 @@ public:
     virtual ~DynamicTypeBuilder();
 
     friend class DynamicTypeBuilderFactory;
+
+    RTPS_DllAPI bool equals(
+            const DynamicType& other) const;
+
+    using TypeDescriptor::get_annotation;
+
+    using TypeDescriptor::get_annotation_count;
+
+    RTPS_DllAPI ReturnCode_t get_descriptor(TypeDescriptor& descriptor)
+    {
+        descriptor = get_type_descriptor();
+        return ReturnCode_t::RETCODE_OK;
+    }
 
     RTPS_DllAPI ReturnCode_t add_empty_member(
             uint32_t index,
@@ -165,23 +181,14 @@ public:
     RTPS_DllAPI ReturnCode_t copy_from(
             const DynamicTypeBuilder* other);
 
-    ReturnCode_t get_all_members(
-            std::map<MemberId, DynamicTypeMember*>& members);
+    using TypeDescriptor::get_all_members;
 
-    RTPS_DllAPI inline TypeKind get_kind() const
-    {
-        return kind_;
-    }
+    using TypeDescriptor::get_all_members_by_name;
 
     using TypeDescriptor::get_name;
 
     RTPS_DllAPI MemberId get_member_id_by_name(
             const std::string& name) const;
-
-    const TypeDescriptor& get_type_descriptor() const
-    {
-        return static_cast<const TypeDescriptor&>(*this);
-    }
 
     using TypeDescriptor::is_consistent;
 

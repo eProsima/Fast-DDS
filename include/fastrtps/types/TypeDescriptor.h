@@ -18,6 +18,7 @@
 #include <fastrtps/types/AnnotationDescriptor.h>
 #include <fastrtps/types/TypesBase.h>
 
+#include <map>
 #include <memory>
 
 namespace eprosima {
@@ -25,6 +26,7 @@ namespace fastrtps {
 namespace types {
 
 class MemberDescriptor;
+class DynamicTypeMember;
 class DynamicType;
 
 class TypeDescriptor
@@ -38,9 +40,16 @@ protected:
     std::vector<uint32_t> bound_;           // Length for strings, arrays, sequences, maps and bitmasks.
     DynamicType_ptr element_type_;          // Value Type for arrays, sequences, maps, bitmasks.
     DynamicType_ptr key_element_type_;      // Key Type for maps.
-    std::vector<AnnotationDescriptor> annotation_; // Annotations to apply
+    std::set<AnnotationDescriptor> annotation_; // Annotations to apply
+
+    bool is_key_defined_ = false;
+
+    std::map<MemberId, DynamicTypeMember*> member_by_id_;         // Aggregated members
+    std::map<std::string, DynamicTypeMember*> member_by_name_;    // Uses the pointers from "member_by_id_".
 
     RTPS_DllAPI void clean();
+
+    RTPS_DllAPI MemberId get_members_count() const;
 
     static bool is_type_name_consistent(
             const std::string& sName);
@@ -68,6 +77,8 @@ protected:
 
     bool annotation_is_non_serialized() const;
 
+    bool key_annotation() const;
+
     // Annotation getters
     std::string annotation_get_extensibility() const;
 
@@ -76,6 +87,12 @@ protected:
     uint16_t annotation_get_bit_bound() const;
 
     bool annotation_get_key() const;
+
+    RTPS_DllAPI ReturnCode_t get_annotation(
+            AnnotationDescriptor& descriptor,
+            uint32_t idx) const;
+
+    RTPS_DllAPI uint32_t get_annotation_count() const;
 
 public:
 
@@ -131,6 +148,19 @@ public:
     RTPS_DllAPI const AnnotationDescriptor* get_annotation(
             const std::string& name) const;
 
+    RTPS_DllAPI ReturnCode_t get_all_members(
+            std::map<MemberId, DynamicTypeMember*>& members) const;
+
+    RTPS_DllAPI ReturnCode_t get_all_members_by_name(
+            std::map<std::string, DynamicTypeMember*>& members) const;
+
+    RTPS_DllAPI ReturnCode_t get_member(
+            DynamicTypeMember& member,
+            MemberId id) const;
+
+    RTPS_DllAPI ReturnCode_t get_member_by_name(
+            DynamicTypeMember& member,
+            const std::string& name) const;
 };
 
 } // namespace types
