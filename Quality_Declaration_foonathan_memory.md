@@ -20,9 +20,9 @@ Below are the rationales, notes and caveats for this claim, organized by the req
 The latest release can be found [here](https://github.com/foonathan/memory/releases) and the release notes can be found in the [CHANGELOG](https://github.com/foonathan/memory/blob/main/CHANGELOG.md).
 Even though the current version is `< 1.0.0`, `foonathan_memory` is in [maintenance mode](https://www.jonathanmueller.dev/project/).
 
-*eprosima Fast DDS* ensures `foonathan_memory` version stability by pinning to a specific [release](https://github.com/foonathan/memory/releases/tag/v0.7-1).
+*eprosima Fast DDS* ensures `foonathan_memory` version stability by pinning to a specific [release](https://github.com/foonathan/memory/releases/tag/v0.7-3).
 Both *eprosima* `foonathan_memory_vendor` utility and *eprosima Fast DDS* CI tests use this specific release.
-The specific tag was released September 5th, 2021.
+The specific tag was released January 11th, 2023.
 
 *eprosima Fast DDS* maintainers will keep a continuous watch over new releases in order to assess the impact they could have over *eprosima Fast DDS*.
 Any `bugfix` or security vulnerability corrected that affects the API used by *eprosima Fast DDS* will be analyzed by the maintainers.
@@ -115,9 +115,9 @@ The copyright holders each provide a statement of copyright in each source file 
 
 Specifically, the API used by *eprosima Fast DDS* is tested in the following tests:
 
-* Allocators: [test/default_allocator.cpp](https://github.com/foonathan/memory/blob/v0.7-1/test/default_allocator.cpp)
-* Allocator implementations: [test/memory_pool.cpp](https://github.com/foonathan/memory/blob/v0.7-1/test/memory_pool.cpp)
-* Adapters and Wrappers: [test/segregator.cpp](https://github.com/foonathan/memory/blob/v0.7-1/test/segregator.cpp)
+* Allocators: [test/default_allocator.cpp](https://github.com/foonathan/memory/blob/v0.7-3/test/default_allocator.cpp)
+* Allocator implementations: [test/memory_pool.cpp](https://github.com/foonathan/memory/blob/v0.7-3/test/memory_pool.cpp)
+* Adapters and Wrappers: [test/segregator.cpp](https://github.com/foonathan/memory/blob/v0.7-3/test/segregator.cpp)
 * Alias templates: `foonathan_memory` does not provide any tests to check this functionality.
 Regardless, *eprosima Fast DDS* tests these features in the [PersistenceTests](https://github.com/eProsima/Fast-DDS/tree/master/test/unittest/rtps/persistence) and the [WriterProxyTests](https://github.com/eProsima/Fast-DDS/tree/master/test/unittest/rtps/reader).
 
