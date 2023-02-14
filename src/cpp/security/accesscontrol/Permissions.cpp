@@ -376,14 +376,14 @@ static BIO* load_and_verify_document(
         // ---- Get certificate stack from store ----
         // The following lines are almost equivalent to the OpenSSL 3 API X509_STORE_get1_all_certs.
         // It creates a stack of X509 objects and populates the stack with the X509 objects contained in the store.
-        STACK_OF(X509)* stack = sk_X509_new_null();
+        STACK_OF(X509) * stack = sk_X509_new_null();
         if (nullptr == stack)
         {
             exception = _SecurityException_("Cannot read as PKCS7 the file ");
             return nullptr;
         }
 
-        STACK_OF(X509_OBJECT)* objects = X509_STORE_get0_objects(store);
+        STACK_OF(X509_OBJECT) * objects = X509_STORE_get0_objects(store);
         int i = 0;
         for (i = 0; i < sk_X509_OBJECT_num(objects); i++)
         {
@@ -406,7 +406,7 @@ static BIO* load_and_verify_document(
             out = nullptr;
         }
 
-        // Free the 
+        // Free the certificate stack
         sk_X509_free(stack);
     }
 
