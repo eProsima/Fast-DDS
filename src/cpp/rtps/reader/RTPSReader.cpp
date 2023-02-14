@@ -343,9 +343,12 @@ bool RTPSReader::wait_for_unread_cache(
     auto time_out = std::chrono::steady_clock::now() + std::chrono::seconds(timeout.seconds) +
             std::chrono::nanoseconds(timeout.nanosec);
 
+#if HAVE_STRICT_REALTIME
     std::unique_lock<RecursiveTimedMutex> lock(mp_mutex, std::defer_lock);
-
     if (lock.try_lock_until(time_out))
+#else
+    std::unique_lock<RecursiveTimedMutex> lock(mp_mutex);
+#endif  // HAVE_STRICT_REALTIME
     {
         if (new_notification_cv_.wait_until(
                     lock, time_out,
