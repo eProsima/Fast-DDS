@@ -262,7 +262,7 @@ public:
         {
             EPROSIMA_LOG_ERROR(RTPS_TRANSPORT_SHM, "Failed to create Shared Memory Manager for domain " << domain_name
                                                                                                         << ": " <<
-                                e.what());
+                    e.what());
             return std::shared_ptr<SharedMemManager>();
         }
 
