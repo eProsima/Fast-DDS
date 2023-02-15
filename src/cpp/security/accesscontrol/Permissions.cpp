@@ -361,7 +361,7 @@ static BIO* load_and_verify_document(
     PKCS7* p7 = SMIME_read_PKCS7(in, &indata);
     if (nullptr == p7)
     {
-        exception = _SecurityException_("Cannot read as PKCS7 the file ");
+        exception = _SecurityException_("Input data has not PKCS7 S/MIME format");
         return nullptr;
     }
 
@@ -412,7 +412,7 @@ static BIO* load_and_verify_document(
             // PKCS7_NOVERIFY is used since the permissions CA certificate will not be chain verified.
             if (!PKCS7_verify(p7, stack, nullptr, indata, out, PKCS7_TEXT | PKCS7_NOVERIFY | PKCS7_NOINTERN))
             {
-                exception = _SecurityException_("Failed verification of the file ");
+                exception = _SecurityException_("PKCS7 data verification failed");
                 BIO_free(out);
                 out = nullptr;
             }
