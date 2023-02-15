@@ -277,9 +277,12 @@ public:
             std::chrono::steady_clock::time_point& max_blocking_time_point)
     {
         bool ret_code = false;
+#if HAVE_STRICT_REALTIME
         std::unique_lock<std::timed_mutex> lock(m_send_resources_mutex_, std::defer_lock);
-
         if (lock.try_lock_until(max_blocking_time_point))
+#else
+        std::unique_lock<std::timed_mutex> lock(m_send_resources_mutex_);
+#endif // if HAVE_STRICT_REALTIME
         {
             ret_code = true;
 
