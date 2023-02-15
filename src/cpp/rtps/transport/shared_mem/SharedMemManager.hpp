@@ -254,11 +254,15 @@ public:
         try
         {
             uint32_t extra_size =
-                    SharedMemSegment::compute_per_allocation_extra_size(std::alignment_of<BufferNode>::value, domain_name);
+                    SharedMemSegment::compute_per_allocation_extra_size(std::alignment_of<BufferNode>::value,
+                            domain_name);
             return std::shared_ptr<SharedMemManager>(new SharedMemManager(domain_name, extra_size));
         }
-        catch(const std::exception& e)
+        catch (const std::exception& e)
         {
+            EPROSIMA_LOG_ERROR(RTPS_TRANSPORT_SHM, "Failed to create Shared Memory Manager for domain " << domain_name
+                                                                                                        << ": " <<
+                                e.what());
             return std::shared_ptr<SharedMemManager>();
         }
 
