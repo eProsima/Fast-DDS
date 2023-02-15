@@ -24,6 +24,7 @@ target_compile_definitions(SHMSegmentTests PRIVATE FASTRTPS_NO_LIB
     ASIO_STANDALONE
     $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
     $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
+    $<$<BOOL:${WIN32}>:_ENABLE_ATOMIC_ALIGNMENT_FIX>
     )
 target_include_directories(SHMSegmentTests PRIVATE
     ${Asio_INCLUDE_DIR}
