@@ -24,8 +24,12 @@ on:
       - '**.txt'
       - '!**/CMakeLists.txt'
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
 env:
-  BRANCH_NAME: ${{ github.head_ref || github.base_ref }}
+  ACTION_BRANCH_NAME: ${{ github.head_ref || github.base_ref }}
 
 jobs:
   ubuntu-build-and-test-documentation:
@@ -51,34 +55,41 @@ jobs:
       - name: Download FastDDS dependencies
         run: |
           pip3 install vcstool
-          REPOS_FILE="./src/fastrtps/fastrtps.repos"
-          LINE_N=`grep -n "    fastrtps:" $REPOS_FILE`
-          LINE_N=${LINE_N%:*:}
-          TOTAL_LINES=`wc -l < $REPOS_FILE`
-          mkdir ./src/fastrtps/.github/workflows/documentation/
-          touch ./src/fastrtps/.github/workflows/documentation/ci-docs.repos
-          { head -n -$((LINE_N+2)) $REPOS_FILE ; tail -n -$((TOTAL_LINES-LINE_N-2)) $REPOS_FILE ;} > ./src/fastrtps/.github/workflows/documentation/ci-docs.repos
-          vcs import src < ./src/fastrtps/.github/workflows/documentation/ci-docs.repos
+          vcs import --skip-existing src  < ./src/fastrtps/fastrtps.repos
 
       - name: Determine the Fast DDS Documentation branch to be used
         run: |
-          set __ACTION_BRANCH_NAME=${{ inputs.optional_documentation_branch }}
-          if [ -z "${__ACTION_BRANCH_NAME}" ]
+          BASE_QUERY_URL=https://api.github.com/repos/eprosima/fast-dds-docs/git/trees
+          if ! [ -z "${{ inputs.optional_documentation_branch }}" ]
           then
-            set __ACTION_BRANCH_NAME=${{ BRANCH_NAME }}
-            echo "name" + $__ACTION_BRANCH_NAME
+            echo "ACTION_BRANCH_NAME=${{ inputs.optional_documentation_branch }}" >> $GITHUB_ENV
+            RESPONSE_CODE=$(curl -s -o /dev/null -w "%{http_code}" ${BASE_QUERY_URL}/${{ env.ACTION_BRANCH_NAME }} )
+            if [[ ${RESPONSE_CODE} != "200" ]]
+            then
+              echo "ACTION_BRANCH_NAME=${{ github.head_ref }}" >> $GITHUB_ENV
+            fi
           fi
-          echo "final_name" + $__ACTION_BRANCH_NAME
+
+          RESPONSE_CODE=$(curl -s -o /dev/null -w "%{http_code}" ${BASE_QUERY_URL}/${{ env.ACTION_BRANCH_NAME }} )
+          if [[ ${RESPONSE_CODE} != "200" ]]
+          then
+            echo "ACTION_BRANCH_NAME=${{ github.base_ref }}" >> $GITHUB_ENV
+            RESPONSE_CODE=$(curl -s -o /dev/null -w "%{http_code}" ${BASE_QUERY_URL}/${{ env.ACTION_BRANCH_NAME }} )
+            if [[ ${RESPONSE_CODE} != "200" ]]
+            then
+              echo "ACTION_BRANCH_NAME=master" >> $GITHUB_ENV
+            fi
+          fi
 
       - name: Download FastDDS documentation repo
         uses: actions/checkout@v3
         with:
           repository: eProsima/Fast-DDS-docs
-          ref: ${__ACTION_BRANCH_NAME}
+          path: src/fastdds-docs
+          ref: ${{ env.ACTION_BRANCH_NAME }}
 
       - name: Install required python packages
         run: |
-          echo "final_name2" + ${__ACTION_BRANCH_NAME}
           pip3 install -r src/fastdds-docs/docs/requirements.txt
 
       - name: Build and test documentation
