@@ -20,24 +20,9 @@
 #include <fastdds/dds/log/Log.hpp>
 
 #include <cassert>
+#include <tuple>
 
 using namespace eprosima::fastrtps::types;
-
-ReturnCode_t DynamicTypeMember::apply_annotation(
-        AnnotationDescriptor& descriptor)
-{
-    // Update the annotations on the member Dynamic Type.
-    return descriptor_.apply_annotation(descriptor);
-}
-
-ReturnCode_t DynamicTypeMember::apply_annotation(
-        const std::string& annotation_name,
-        const std::string& key,
-        const std::string& value)
-{
-    // Update the annotations on the member Dynamic Type.
-    return descriptor_.apply_annotation(annotation_name, key, value);
-}
 
 bool DynamicTypeMember::operator==(const DynamicTypeMember& other) const
 {
@@ -55,13 +40,15 @@ ReturnCode_t DynamicTypeMember::get_annotation(
         MemberId idx)
 {
     assert(idx < get_annotation_count());
-    descriptor = *std::advance(annotation_.begin(), idx);
+    auto it = annotation_.begin();
+    std::advance(it, idx);
+    descriptor = *it;
     return ReturnCode_t::RETCODE_OK;
 }
 
 MemberId DynamicTypeMember::get_annotation_count()
 {
-    return annotation_.size();
+    return MemberId(annotation_.size());
 }
 
 ReturnCode_t DynamicTypeMember::get_descriptor(
@@ -74,11 +61,14 @@ ReturnCode_t DynamicTypeMember::get_descriptor(
 // Annotations application
 bool DynamicTypeMember::annotation_is_optional() const
 {
-    AnnotationDescriptor* ann = get_annotation(ANNOTATION_OPTIONAL_ID);
-    if (ann != nullptr)
+    annotation_iterator it;
+    bool found;
+
+    std::tie(it, found) = get_annotation(ANNOTATION_OPTIONAL_ID);
+    if (found)
     {
         std::string value;
-        if (ann->get_value(value) == ReturnCode_t::RETCODE_OK)
+        if (it->get_value(value) == ReturnCode_t::RETCODE_OK)
         {
             return value == CONST_TRUE;
         }
@@ -93,15 +83,18 @@ bool DynamicTypeMember::annotation_is_key() const
 
 bool DynamicTypeMember::annotation_get_key() const
 {
-    AnnotationDescriptor* ann = get_annotation(ANNOTATION_KEY_ID);
-    if (ann == nullptr)
+    annotation_iterator it;
+    bool found;
+
+    std::tie(it, found) = get_annotation(ANNOTATION_KEY_ID);
+    if (!found)
     {
-        ann = get_annotation(ANNOTATION_EPKEY_ID);
+        std::tie(it, found) = get_annotation(ANNOTATION_EPKEY_ID);
     }
-    if (ann != nullptr)
+    if (found)
     {
         std::string value;
-        if (ann->get_value(value) == ReturnCode_t::RETCODE_OK)
+        if (it->get_value(value) == ReturnCode_t::RETCODE_OK)
         {
             return value == CONST_TRUE;
         }
@@ -111,11 +104,14 @@ bool DynamicTypeMember::annotation_get_key() const
 
 bool DynamicTypeMember::annotation_is_must_understand() const
 {
-    AnnotationDescriptor* ann = get_annotation(ANNOTATION_MUST_UNDERSTAND_ID);
-    if (ann != nullptr)
+    annotation_iterator it;
+    bool found;
+
+    std::tie(it, found) = get_annotation(ANNOTATION_MUST_UNDERSTAND_ID);
+    if (found)
     {
         std::string value;
-        if (ann->get_value(value) == ReturnCode_t::RETCODE_OK)
+        if (it->get_value(value) == ReturnCode_t::RETCODE_OK)
         {
             return value == CONST_TRUE;
         }
@@ -125,11 +121,14 @@ bool DynamicTypeMember::annotation_is_must_understand() const
 
 bool DynamicTypeMember::annotation_is_non_serialized() const
 {
-    AnnotationDescriptor* ann = get_annotation(ANNOTATION_NON_SERIALIZED_ID);
-    if (ann != nullptr)
+    annotation_iterator it;
+    bool found;
+
+    std::tie(it, found) = get_annotation(ANNOTATION_NON_SERIALIZED_ID);
+    if (found)
     {
         std::string value;
-        if (ann->get_value(value) == ReturnCode_t::RETCODE_OK)
+        if (it->get_value(value) == ReturnCode_t::RETCODE_OK)
         {
             return value == CONST_TRUE;
         }
@@ -155,39 +154,48 @@ bool DynamicTypeMember::annotation_is_position() const
 // Annotations getters
 std::string DynamicTypeMember::annotation_get_value() const
 {
-    AnnotationDescriptor* ann = get_annotation(ANNOTATION_VALUE_ID);
-    if (ann != nullptr)
+    annotation_iterator it;
+    bool found;
+
+    std::tie(it, found) = get_annotation(ANNOTATION_VALUE_ID);
+    if (found)
     {
         std::string value;
-        if (ann->get_value(value) == ReturnCode_t::RETCODE_OK)
+        if (it->get_value(value) == ReturnCode_t::RETCODE_OK)
         {
             return value;
         }
     }
-    return "";
+    return {};
 }
 
 std::string DynamicTypeMember::annotation_get_default() const
 {
-    AnnotationDescriptor* ann = get_annotation(ANNOTATION_DEFAULT_ID);
-    if (ann != nullptr)
+    annotation_iterator it;
+    bool found;
+
+    std::tie(it, found) = get_annotation(ANNOTATION_DEFAULT_ID);
+    if (found)
     {
         std::string value;
-        if (ann->get_value(value) == ReturnCode_t::RETCODE_OK)
+        if (it->get_value(value) == ReturnCode_t::RETCODE_OK)
         {
             return value;
         }
     }
-    return "";
+    return {};
 }
 
 uint16_t DynamicTypeMember::annotation_get_position() const
 {
-    AnnotationDescriptor* ann = get_annotation(ANNOTATION_POSITION_ID);
-    if (ann != nullptr)
+    annotation_iterator it;
+    bool found;
+
+    std::tie(it, found) = get_annotation(ANNOTATION_POSITION_ID);
+    if (found)
     {
         std::string value;
-        if (ann->get_value(value) == ReturnCode_t::RETCODE_OK)
+        if (it->get_value(value) == ReturnCode_t::RETCODE_OK)
         {
             return static_cast<uint16_t>(std::stoi(value));
         }
@@ -196,126 +204,102 @@ uint16_t DynamicTypeMember::annotation_get_position() const
 }
 
 // Annotations setters
+
+/* Ancillary method for setters
+ * @param id annotation name
+ * @param C functor that checks if the annotation should be modified: bool(const AnnotationDescriptor&)
+ * @param M functor that modifies the annotation if present: void(AnnotationDescriptor&)
+ */
+template<typename C, typename M>
+void DynamicTypeMember::annotation_set( const std::string& id, C& c, M& m)
+{
+    annotation_iterator it;
+    bool found;
+
+    std::tie(it, found) = get_annotation(id);
+    if(!found)
+    {
+        AnnotationDescriptor descriptor;
+        descriptor.set_type(
+            DynamicTypeBuilderFactory::get_instance()->create_annotation_primitive(id));
+        m(descriptor);
+        apply_annotation(descriptor);
+    }
+    else if(c(*it))
+    {
+        // Reinsert because order may be modified
+        AnnotationDescriptor descriptor(std::move(*it));
+        it = annotation_.erase(it);
+        m(descriptor);
+        annotation_.insert(it, std::move(descriptor));
+    }
+
+    std::tie(it, found) = get_annotation(id);
+    assert(found);
+}
+
+//! Specialization of the above template to simple values
+void DynamicTypeMember::annotation_set(const std::string& id, std::string& new_val);
+{
+    annotation_set(
+            id,
+            [&new_val](const AnnotationDescriptor& d) -> bool
+            {
+               std::string val;
+               d.get_value(val, "value");
+               return new_val != val;
+            },
+            [&new_val](AnnotationDescriptor& d)
+            {
+                d.set_value("value", new_val);
+            });
+}
+
 void DynamicTypeMember::annotation_set_optional(
         bool optional)
 {
-    AnnotationDescriptor* ann = get_annotation(ANNOTATION_OPTIONAL_ID);
-    if (ann == nullptr)
-    {
-        AnnotationDescriptor ann;
-        ann->set_type(DynamicTypeBuilderFactory::get_instance()->create_annotation_primitive(ANNOTATION_OPTIONAL_ID));
-        apply_annotation(*ann);
-        delete ann;
-        ann = get_annotation(ANNOTATION_OPTIONAL_ID);
-    }
-    ann->set_value("value", optional ? "true" : "false");
+    annotation_set(ANNOTATION_OPTIONAL_ID, optional ? "true" : "false");
 }
 
 void DynamicTypeMember::annotation_set_key(
         bool key)
 {
-    AnnotationDescriptor* ann = get_annotation(ANNOTATION_KEY_ID);
-    if (ann == nullptr)
-    {
-        ann = new AnnotationDescriptor();
-        ann->set_type(DynamicTypeBuilderFactory::get_instance()->create_annotation_primitive(ANNOTATION_KEY_ID));
-        apply_annotation(*ann);
-        delete ann;
-        ann = get_annotation(ANNOTATION_KEY_ID);
-    }
-    ann->set_value("value", key ? "true" : "false");
+    annotation_set(ANNOTATION_KEY_ID, key ? "true" : "false");
 }
 
 void DynamicTypeMember::annotation_set_must_understand(
         bool must_understand)
 {
-    AnnotationDescriptor* ann = get_annotation(ANNOTATION_MUST_UNDERSTAND_ID);
-    if (ann == nullptr)
-    {
-        ann = new AnnotationDescriptor();
-        ann->set_type(
-            DynamicTypeBuilderFactory::get_instance()->create_annotation_primitive(ANNOTATION_MUST_UNDERSTAND_ID));
-        apply_annotation(*ann);
-        delete ann;
-        ann = get_annotation(ANNOTATION_MUST_UNDERSTAND_ID);
-    }
-    ann->set_value("value", must_understand ? "true" : "false");
+    annotation_set(ANNOTATION_MUST_UNDERSTAND_ID, must_understand ? "true" : "false");
 }
 
 void DynamicTypeMember::annotation_set_non_serialized(
         bool non_serialized)
 {
-    AnnotationDescriptor* ann = get_annotation(ANNOTATION_NON_SERIALIZED_ID);
-    if (ann == nullptr)
-    {
-        ann = new AnnotationDescriptor();
-        ann->set_type(
-            DynamicTypeBuilderFactory::get_instance()->create_annotation_primitive(ANNOTATION_NON_SERIALIZED_ID));
-        apply_annotation(*ann);
-        delete ann;
-        ann = get_annotation(ANNOTATION_NON_SERIALIZED_ID);
-    }
-    ann->set_value("value", non_serialized ? "true" : "false");
+    annotation_set(ANNOTATION_NON_SERIALIZED_ID, non_serialized ? "true" : "false");
 }
 
 void DynamicTypeMember::annotation_set_value(
         const std::string& value)
 {
-    AnnotationDescriptor* ann = get_annotation(ANNOTATION_VALUE_ID);
-    if (ann == nullptr)
-    {
-        ann = new AnnotationDescriptor();
-        ann->set_type(DynamicTypeBuilderFactory::get_instance()->create_annotation_primitive(ANNOTATION_VALUE_ID));
-        apply_annotation(*ann);
-        delete ann;
-        ann = get_annotation(ANNOTATION_VALUE_ID);
-    }
-    ann->set_value("value", value);
+    annotation_set(ANNOTATION_VALUE_ID, value);
 }
 
 void DynamicTypeMember::annotation_set_default_literal()
 {
-    AnnotationDescriptor* ann = get_annotation(ANNOTATION_DEFAULT_LITERAL_ID);
-    if (ann == nullptr)
-    {
-        ann = new AnnotationDescriptor();
-        ann->set_type(
-            DynamicTypeBuilderFactory::get_instance()->create_annotation_primitive(ANNOTATION_DEFAULT_LITERAL_ID));
-        apply_annotation(*ann);
-        delete ann;
-        ann = get_annotation(ANNOTATION_DEFAULT_LITERAL_ID);
-    }
-    ann->set_value("value", "true");
+    annotation_set(ANNOTATION_DEFAULT_LITERAL_ID, "true");
 }
 
 void DynamicTypeMember::annotation_set_position(
         uint16_t position)
 {
-    AnnotationDescriptor* ann = get_annotation(ANNOTATION_POSITION_ID);
-    if (ann == nullptr)
-    {
-        ann = new AnnotationDescriptor();
-        ann->set_type(DynamicTypeBuilderFactory::get_instance()->create_annotation_primitive(ANNOTATION_POSITION_ID));
-        apply_annotation(*ann);
-        delete ann;
-        ann = get_annotation(ANNOTATION_POSITION_ID);
-    }
-    ann->set_value("value", std::to_string(position));
+    annotation_set(ANNOTATION_POSITION_ID, std::to_string(position));
 }
 
 void DynamicTypeMember::annotation_set_default(
         const std::string& default_value)
 {
-    AnnotationDescriptor* ann = get_annotation(ANNOTATION_DEFAULT_ID);
-    if (ann == nullptr)
-    {
-        ann = new AnnotationDescriptor();
-        ann->set_type(DynamicTypeBuilderFactory::get_instance()->create_annotation_primitive(ANNOTATION_DEFAULT_ID));
-        apply_annotation(*ann);
-        delete ann;
-        ann = get_annotation(ANNOTATION_DEFAULT_ID);
-    }
-    ann->set_value("value", default_value);
+    annotation_set(ANNOTATION_DEFAULT_ID, default_value);
 }
 
 bool DynamicTypeMember::annotation_is_bit_bound() const
@@ -325,11 +309,14 @@ bool DynamicTypeMember::annotation_is_bit_bound() const
 
 uint16_t DynamicTypeMember::annotation_get_bit_bound() const
 {
-    AnnotationDescriptor* ann = get_annotation(ANNOTATION_BIT_BOUND_ID);
-    if (ann != nullptr)
+    annotation_iterator it;
+    bool found;
+
+    std::tie(it, found) = get_annotation(ANNOTATION_BIT_BOUND_ID);
+    if (found)
     {
         std::string value;
-        if (ann->get_value(value) == ReturnCode_t::RETCODE_OK)
+        if (it->get_value(value) == ReturnCode_t::RETCODE_OK)
         {
             return static_cast<uint16_t>(std::stoi(value));
         }
@@ -340,16 +327,7 @@ uint16_t DynamicTypeMember::annotation_get_bit_bound() const
 void DynamicTypeMember::annotation_set_bit_bound(
         uint16_t bit_bound)
 {
-    AnnotationDescriptor* ann = get_annotation(ANNOTATION_BIT_BOUND_ID);
-    if (ann == nullptr)
-    {
-        ann = new AnnotationDescriptor();
-        ann->set_type(DynamicTypeBuilderFactory::get_instance()->create_annotation_primitive(ANNOTATION_BIT_BOUND_ID));
-        apply_annotation(*ann);
-        delete ann;
-        ann = get_annotation(ANNOTATION_BIT_BOUND_ID);
-    }
-    ann->set_value("value", std::to_string(bit_bound));
+    annotation_set(ANNOTATION_BIT_BOUND_ID, std::to_string(bit_bound));
 }
 
 ReturnCode_t DynamicTypeMember::apply_annotation(
@@ -357,9 +335,7 @@ ReturnCode_t DynamicTypeMember::apply_annotation(
 {
     if (descriptor.is_consistent())
     {
-        AnnotationDescriptor* pNewDescriptor = new AnnotationDescriptor();
-        pNewDescriptor->copy_from(&descriptor);
-        annotation_.push_back(pNewDescriptor);
+        annotation_.insert(descriptor);
         return ReturnCode_t::RETCODE_OK;
     }
     else
@@ -381,39 +357,38 @@ ReturnCode_t DynamicTypeMember::apply_annotation(
     }
     else
     {
-        AnnotationDescriptor* pNewDescriptor = new AnnotationDescriptor();
-        pNewDescriptor->set_type(
+        AnnotationDescriptor descriptor;
+        descriptor->set_value(key, value);
+        descriptor->set_type(
             DynamicTypeBuilderFactory::get_instance()->create_annotation_primitive(annotation_name));
-        pNewDescriptor->set_value(key, value);
-        annotation_.push_back(pNewDescriptor);
+        annotation_.insert(descriptor);
     }
     return ReturnCode_t::RETCODE_OK;
 }
 
-AnnotationDescriptor* DynamicTypeMember::get_annotation(
+std::pair<DynamicTypeMember::annotation_iterator, bool>
+DynamicTypeMember::get_annotation(
         const std::string& name)
 {
-    auto it = annotation_.begin();
+    annotation_iterator it = annotation_.begin();
 
-    for (; it != annotation_.end(); ++it)
+    for(; it != annotation_.end(); ++it)
     {
-        AnnotationDescriptor* ann = *it;
-        if (ann->type()->get_name().compare(name) == 0)
+        const AnnotationDescriptor& d = *it;
+        if ( d.type() && d.type()->kind_ > 0
+             && !d.type()->get_name().empty()
+             && d.type()->get_name().compare(name) == 0)
         {
-            return ann;
+            return std::make_pair(it, true);
         }
     }
-    return nullptr;
+
+    return std::make_pair(it, false);
 }
 
-MemberId DynamicTypeMember::get_annotation_count()
+std::string DynamicTypeMember::get_default_value() const
 {
-    static_assert(false);
-}
-
-ReturnCode_t DynamicTypeMember::get_annotation(
-        AnnotationDescriptor& descriptor,
-        MemberId idx)
-{
-    static_assert(false);
+    // Fallback to annotation
+    std::string res = MemberDescriptor::get_default_value();
+    return res.empty() ? annotation_get_default() : res;
 }

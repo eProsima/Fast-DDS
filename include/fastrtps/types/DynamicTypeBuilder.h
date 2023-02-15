@@ -38,14 +38,22 @@ class DynamicTypeBuilder
     };
 
     MemberId current_member_id_ = 0;
-    uint32_t max_index_ = 0;
 
     bool check_union_configuration(
-            const MemberDescriptor* descriptor);
+            const MemberDescriptor& descriptor);
 
     // Checks if there is a member with the given name.
     bool exists_member_by_name(
             const std::string& name) const;
+
+    // Checks if there is a member with the given id.
+    bool exists_member_by_id(
+            MemberId id) const;
+
+    //! This method only adds an empty element to the members collection with the right index
+    member_iterator add_empty_member(
+            uint32_t index,
+            const std::string& name);
 
     void refresh_member_ids();
 
@@ -62,6 +70,14 @@ class DynamicTypeBuilder
     }
 
     // Annotation setters
+
+    //! auxiliary method for all bellow
+    template<typename C, typename M>
+    void annotation_set(const std::string& id, C& c, M& m);
+
+    //! auxiliary method for all bellow
+    void annotation_set(const std::string& id, std::string& new_val);
+
     void annotation_set_extensibility(
             const std::string& extensibility);
 
@@ -96,7 +112,7 @@ public:
             use_the_create_method,
             const TypeDescriptor* descriptor);
 
-    virtual ~DynamicTypeBuilder();
+    ~DynamicTypeBuilder() = default;
 
     friend class DynamicTypeBuilderFactory;
 
@@ -113,68 +129,43 @@ public:
         return ReturnCode_t::RETCODE_OK;
     }
 
-    RTPS_DllAPI ReturnCode_t add_empty_member(
-            uint32_t index,
-            const std::string& name);
-
     RTPS_DllAPI ReturnCode_t add_member(
-            const MemberDescriptor* descriptor);
+            const MemberDescriptor& descriptor);
 
-    RTPS_DllAPI ReturnCode_t add_member(
-            MemberId id,
-            const std::string& name,
-            DynamicTypeBuilder* type_ = nullptr);
+    template<typename... Ts>
+    ReturnCode_t add_member(Ts&&... Args)
+    {
+        return add_member(MemberDescriptor(std::forward<Ts>(Args)...));
+    }
 
-    RTPS_DllAPI ReturnCode_t add_member(
-            MemberId id,
-            const std::string& name,
-            DynamicTypeBuilder* type_,
-            const std::string& defaultValue);
-
-    RTPS_DllAPI ReturnCode_t add_member(
-            MemberId id,
-            const std::string& name,
-            DynamicTypeBuilder* type_,
-            const std::string& defaultValue,
-            const std::vector<uint64_t>& unionLabels,
-            bool isDefaultLabel);
-
-    RTPS_DllAPI ReturnCode_t add_member(
-            MemberId id,
-            const std::string& name,
-            DynamicType_ptr type_ = nullptr);
-
-    RTPS_DllAPI ReturnCode_t add_member(
-            MemberId id,
-            const std::string& name,
-            DynamicType_ptr type_,
-            const std::string& defaultValue);
-
-    RTPS_DllAPI ReturnCode_t add_member(
-            MemberId id,
-            const std::string& name,
-            DynamicType_ptr type_,
-            const std::string& defaultValue,
-            const std::vector<uint64_t>& unionLabels,
-            bool isDefaultLabel);
-
+    // TODO: doxygen
     RTPS_DllAPI ReturnCode_t apply_annotation(
             AnnotationDescriptor& descriptor);
 
+    // TODO: doxygen
     RTPS_DllAPI ReturnCode_t apply_annotation(
             const std::string& annotation_name,
             const std::string& key,
             const std::string& value);
 
-    RTPS_DllAPI ReturnCode_t apply_annotation_to_member(
+    // TODO: doxygen
+    template<typename... Ts>
+    ReturnCode_t apply_annotation_to_member(
             MemberId id,
-            AnnotationDescriptor& descriptor);
-
-    RTPS_DllAPI ReturnCode_t apply_annotation_to_member(
-            MemberId id,
-            const std::string& annotation_name,
-            const std::string& key,
-            const std::string& value);
+            Ts&&... Args)
+    {
+        auto it = member_by_id_.find(id);
+        if (it != member_by_id_.end())
+        {
+            it->second->apply_annotation(std::forward<Ts>(Args)...);
+            return ReturnCode_t::RETCODE_OK;
+        }
+        else
+        {
+            EPROSIMA_LOG_ERROR(DYN_TYPES, "Error applying annotation to member. MemberId not found.");
+            return ReturnCode_t::RETCODE_BAD_PARAMETER;
+        }
+    }
 
     RTPS_DllAPI DynamicType_ptr build() const;
 

@@ -32,29 +32,23 @@ MemberDescriptor::MemberDescriptor(
 }
 
 MemberDescriptor::MemberDescriptor(
-        const MemberDescriptor& descriptor)
-{
-    copy_from(descriptor);
-}
-
-MemberDescriptor::MemberDescriptor(
         MemberId id,
         const std::string& name,
-        DynamicType_wptr&& type_)
+        DynamicType_ptr type)
     : name_(name)
     , id_(id)
-    , type_(std::move(type_))
+    , type_(type)
 {
 }
 
 MemberDescriptor::MemberDescriptor(
         MemberId id,
         const std::string& name,
-        DynamicType_wptr&& type_,
+        DynamicType_ptr type,
         const std::string& defaultValue)
     : name_(name)
     , id_(id)
-    , type_(type_)
+    , type_(type)
     , default_value_(defaultValue)
     , index_(INDEX_INVALID)
     , default_label_(false)
@@ -64,18 +58,18 @@ MemberDescriptor::MemberDescriptor(
 MemberDescriptor::MemberDescriptor(
         MemberId id,
         const std::string& name,
-        DynamicType_ptr type_,
+        DynamicType_ptr type,
         const std::string& defaultValue,
         const std::vector<uint64_t>& unionLabels,
         bool isDefaultLabel)
     : name_(name)
     , id_(id)
-    , type_(type_)
+    , type_(type)
     , default_value_(defaultValue)
     , index_(INDEX_INVALID)
+    , labels_{unionLabels.begin(), unionLabels.end()}
     , default_label_(isDefaultLabel)
 {
-    labels_ = unionLabels;
 }
 
 void MemberDescriptor::add_union_case_index(
@@ -108,11 +102,11 @@ bool MemberDescriptor::operator==(const MemberDescriptor& other) const
 {
     return name_ == other.name_ &&
            id_ == other.id_ &&
-           type_ == other.type_ &&
            default_value_ == other.default_value_ &&
            index_ == other.index_ &&
            labels_ == other.labels_ &&
-           default_label_ == default_label;
+           default_label_ == default_label &&
+           (type_ == other.type_ || type_ && other.type_ && *type_ == *other.type_ );
 }
 
 bool MemberDescriptor::equals(
@@ -151,7 +145,7 @@ bool MemberDescriptor::is_consistent(
         TypeKind parentKind) const
 {
     // The type field is mandatory in every type except bitmasks and enums.
-    if ((parentKind != TK_BITMASK && parentKind != TK_ENUM) && !type_.expired())
+    if ((parentKind != TK_BITMASK && parentKind != TK_ENUM) && !type_)
     {
         return false;
     }
@@ -168,7 +162,7 @@ bool MemberDescriptor::is_consistent(
         return false;
     }
 
-    if (!type_.expired() && !is_type_name_consistent(type_->name_)) // Enums and bitmask don't have type
+    if (type_ && !is_type_name_consistent(type_->name_)) // Enums and bitmask don't have type
     {
         return false;
     }
@@ -185,6 +179,11 @@ bool MemberDescriptor::is_consistent(
     }
 
     return true;
+}
+
+std::string MemberDescriptor::get_default_value() const
+{
+    return default_value_;
 }
 
 bool MemberDescriptor::is_default_union_value() const
@@ -342,14 +341,20 @@ void MemberDescriptor::set_name(
 }
 
 void MemberDescriptor::set_type(
-        DynamicType_wptr&& type)
+        DynamicType_ptr&& type)
 {
     type_ = std::move(type);
 }
 
+void MemberDescriptor::set_type(
+        const DynamicType_ptr type)
+{
+    type_ = type;
+}
+
 DynamicType_ptr MemberDescriptor::get_type() const
 {
-    return type_.lock();
+    return type_;
 }
 
 void MemberDescriptor::set_default_union_value(

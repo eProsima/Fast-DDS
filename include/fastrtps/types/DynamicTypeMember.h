@@ -29,6 +29,7 @@ class DynamicTypeMember
     : protected MemberDescriptor
 {
     std::set<AnnotationDescriptor> annotation_; // Annotations to apply
+    using annotation_iterator = std::set<AnnotationDescriptor>::iterator;
 
 protected:
 
@@ -41,15 +42,7 @@ protected:
         return static_cast<const MemberDescriptor&>(*this);
     }
 
-    const AnnotationDescriptor* get_annotation(const std::string& name) const;
-
-    // Annotations
-    ReturnCode_t apply_annotation(AnnotationDescriptor& descriptor);
-
-    ReturnCode_t apply_annotation(
-            const std::string& annotation_name,
-            const std::string& key,
-            const std::string& value);
+    std::pair<annotation_iterator, bool> get_annotation(const std::string& name) const;
 
     // Annotations application
     bool annotation_is_optional() const;
@@ -80,6 +73,14 @@ protected:
     uint16_t annotation_get_bit_bound() const;
 
     // Annotations setters
+
+    //! auxiliary method for all bellow
+    template<typename C, typename M>
+    void annotation_set(const std::string& id, C& c, M& m);
+
+    //! auxiliary method for all bellow
+    void annotation_set(const std::string& id, std::string& new_val);
+
     void annotation_set_optional(bool optional);
 
     void annotation_set_key(bool key);
@@ -98,14 +99,27 @@ protected:
 
     void annotation_set_bit_bound(uint16_t bit_bound);
 
-    ReturnCode_t apply_annotation(
+    RTPS_DllAPI ReturnCode_t apply_annotation(
             AnnotationDescriptor& descriptor);
 
-    ReturnCode_t apply_annotation(
+    RTPS_DllAPI ReturnCode_t apply_annotation(
             const std::string& annotation_name,
             const std::string& key,
             const std::string& value);
 public:
+
+    using MemberDescriptor::get_kind;
+
+    using MemberDescriptor::get_id;
+
+    using MemberDescriptor::get_index;
+
+    using MemberDescriptor::get_name;
+
+    // TODO: doxygen
+    RTPS_DllAPI std::string get_default_value() const;
+
+    using MemberDescriptor::get_type;
 
     // TODO: doxygen
     RTPS_DllAPI MemberId get_annotation_count();
@@ -120,14 +134,6 @@ public:
     // TODO: doxygen
     RTPS_DllAPI bool equals(
             const DynamicTypeMember&) const;
-
-    // TODO: doxygen
-    RTPS_DllAPI ReturnCode_t get_annotation(
-            AnnotationDescriptor& descriptor,
-            uint32_t idx);
-
-    // TODO: doxygen
-    RTPS_DllAPI uint32_t get_annotation_count();
 
     using MemberDescriptor::get_union_labels;
 

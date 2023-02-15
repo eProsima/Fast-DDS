@@ -31,7 +31,7 @@ class MemberDescriptor
 protected:
     std::string name_;                  // Name of the member
     MemberId id_ = MEMBER_ID_INVALID;   // MemberId, it should be filled automatically when the member is added.
-    DynamicType_wptr type_;             // Member's Type.
+    DynamicType_ptr type_;             // Member's Type.
     std::string default_value_ = false; // Default value of the member in string.
     uint32_t index_ = INDEX_INVALID;    // Definition order of the member inside it's parent.
     std::set<uint64_t> labels_;         // Case Labels for unions.
@@ -49,6 +49,8 @@ protected:
 public:
     RTPS_DllAPI MemberDescriptor() = default;
 
+    RTPS_DllAPI MemberDescriptor(const MemberDescriptor& descriptor) = default;
+
     RTPS_DllAPI MemberDescriptor(
             uint32_t index,
             const std::string& name);
@@ -56,27 +58,25 @@ public:
     RTPS_DllAPI MemberDescriptor(
             MemberId id,
             const std::string& name,
-            DynamicType_wptr&& type_);
+            DynamicType_ptr type_);
 
     RTPS_DllAPI MemberDescriptor(
             MemberId id,
             const std::string& name,
-            DynamicType_wptr&& type_,
+            DynamicType_ptr type_,
             const std::string& defaultValue);
 
     RTPS_DllAPI MemberDescriptor(
             MemberId id,
             const std::string& name,
-            DynamicType_wptr&& type_,
+            DynamicType_ptr type_,
             const std::string& defaultValue,
             const std::vector<uint64_t>& unionLabels,
             bool isDefaultLabel);
 
-    RTPS_DllAPI MemberDescriptor(const MemberDescriptor& descriptor) = default;
-
     MemberDescriptor& operator=(const MemberDescriptor& descriptor) = default;
 
-    RTPS_DllAPI ~MemberDescriptor() = default;;
+    RTPS_DllAPI ~MemberDescriptor() = default;
 
     bool check_union_labels(const std::vector<uint64_t>& labels) const;
 
@@ -102,15 +102,7 @@ public:
     RTPS_DllAPI std::vector<uint64_t> get_union_labels() const;
 
     // TODO: doxygen
-    RTPS_DllAPI std::string get_default_value() const
-    {
-        if (!default_value_.empty())
-        {
-            return default_value_;
-        }
-        // Try annotation
-        return annotation_get_default();
-    }
+    RTPS_DllAPI std::string get_default_value() const;
 
     RTPS_DllAPI bool is_default_union_value() const;
 
@@ -129,7 +121,8 @@ public:
     RTPS_DllAPI void set_name(const std::string& name);
 
     // TODO: doxygen
-    RTPS_DllAPI void set_type(DynamicType_wptr&& type);
+    RTPS_DllAPI void set_type(DynamicType_ptr&& type);
+    RTPS_DllAPI void set_type(const DynamicType_ptr& type);
 
     // TODO: doxygen
     RTPS_DllAPI DynamicType_ptr get_type() const;

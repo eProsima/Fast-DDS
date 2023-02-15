@@ -21,6 +21,8 @@
 #include <fastrtps/types/AnnotationDescriptor.h>
 #include <fastdds/dds/log/Log.hpp>
 
+#include <tuple>
+
 using namespace eprosima::fastrtps::types;
 
 DynamicTypeBuilder::DynamicTypeBuilder(
@@ -40,7 +42,6 @@ DynamicTypeBuilder::DynamicTypeBuilder(
         use_the_create_method,
         const TypeDescriptor* descriptor)
     : current_member_id_(0)
-    , max_index_(0)
 {
     static_assert(false);
 //    descriptor_ = new TypeDescriptor(descriptor);
@@ -68,89 +69,109 @@ DynamicTypeBuilder::DynamicTypeBuilder(
 //    refresh_member_ids();
 }
 
-DynamicTypeBuilder::~DynamicTypeBuilder()
-{
-    TypeDescriptor::clean();
-
-    for (auto it = member_by_id_.begin(); it != member_by_id_.end(); ++it)
-    {
-        delete it->second;
-    }
-    member_by_id_.clear();
-    member_by_name_.clear();
-}
-
-ReturnCode_t DynamicTypeBuilder::add_empty_member(
+member_iterator DynamicTypeBuilder::add_empty_member(
         uint32_t index,
         const std::string& name)
 {
-    MemberDescriptor descriptor(index, name);
-    if (get_kind() == TK_BITMASK)
+    // insert the new member
+    member_iterator it;
+    if( index >=  members_.size() )
     {
-        if (index >= get_bounds(0))
-        {
-            EPROSIMA_LOG_WARNING(DYN_TYPES, "Error adding member, out of bounds.");
-            return ReturnCode_t::RETCODE_BAD_PARAMETER;
-        }
-        descriptor.annotation_set_position(static_cast<uint16_t>(descriptor.get_index()));
+        // at the end
+        index = members_.size();
+        it = members_.emplace_back(index, name);
     }
-    return add_member(&descriptor);
+    else
+    {
+        // move all the others
+        it = members_.begin();
+        std::advance(it, index);
+        it = members_.emplace(it, index, name);
+        // rename the others
+        for(auto i = index; it != members_.end(); ++it)
+        {
+            it->set_index(++i);
+            assert(it->get_index() == i);
+        }
+    }
+
+    if (get_kind() == TK_BITMASK && index >= get_bounds(0))
+    {
+        EPROSIMA_LOG_WARNING(DYN_TYPES, "Error adding member, out of bounds.");
+        return ReturnCode_t::RETCODE_BAD_PARAMETER;
+
+        it->annotation_set_position(static_cast<uint16_t>(index));
+    }
+
+    return ReturnCode_t::RETCODE_OK;
 }
 
 ReturnCode_t DynamicTypeBuilder::add_member(
-        const MemberDescriptor* descriptor)
+        const MemberDescriptor& descriptor)
 {
-    if (descriptor != nullptr && descriptor->is_consistent(get_kind()))
+    if (descriptor.is_consistent(get_kind()))
     {
         if (get_kind() == TK_ANNOTATION || get_kind() == TK_BITMASK
                 || get_kind() == TK_ENUM || get_kind() == TK_STRUCTURE
                 || get_kind() == TK_UNION || get_kind() == TK_BITSET)
         {
-            if (!exists_member_by_name(descriptor->get_name()) ||
-                    (kind_ == TK_BITSET && descriptor->get_name().empty())) // Bitsets allow multiple empty members.
+            auto member_name = descriptor.get_name();
+
+            // Bitsets allow multiple empty members.
+            if( kind_ != TK_BITSET && descriptor.get_name().empty())
             {
-                if (check_union_configuration(descriptor))
-                {
-                    DynamicTypeMember* newMember = new DynamicTypeMember(descriptor, current_member_id_);
+                EPROSIMA_LOG_ERROR(DYN_TYPES, "Error adding member, missing proper name.");
+                return ReturnCode_t::RETCODE_BAD_PARAMETER;
+            }
 
-                    // If the index of the new member is bigger than the current maximum, put it at the end.
-                    if (newMember->get_index() > max_index_)
+            if(!member_name.empty() && exists_member_by_name(member_name) ||
+            )
+            {
+                EPROSIMA_LOG_ERROR(DYN_TYPES, "Error adding member, there is other member with the same name.");
+                return ReturnCode_t::RETCODE_BAD_PARAMETER;
+            }
+
+            auto member_id = descriptor.get_id();
+            if (member_id != MEMBER_ID_INVALID && exists_member_by_id(member_id))
+            {
+                EPROSIMA_LOG_ERROR(DYN_TYPES, "Error adding member, there is other member with the same id.");
+                return ReturnCode_t::RETCODE_BAD_PARAMETER;
+            }
+
+            if (check_union_configuration(descriptor))
+            {
+                auto it = add_empty_member(descriptor.get_index(), member_name);
+
+                DynamicTypeMember& newMember = *it;
+                // Copy all elements but keep the index
+                auto member_index = newMember.get_index();
+                newMember = descriptor;
+                newMember.set_index(member_index);
+
+                if(member_id == MEMBER_ID_INVALID)
+                {
+                    // assing a new one
+                    while(exists_member_by_id(current_member_id_))
                     {
-                        newMember->set_index(max_index_++);
-                    }
-                    else
-                    {
-                        // Move every member bigger than the current index to the right.
-                        for (auto it = member_by_id_.begin(); it != member_by_id_.end(); ++it)
-                        {
-                            if (it->second->get_index() >= newMember->get_index())
-                            {
-                                it->second->set_index(it->second->get_index() + 1);
-                            }
-                        }
+                        member_id = ++current_member_id_;
                     }
 
-                    if (!descriptor->get_name().empty()) // Don't store empty bitset members.
-                    {
-                        member_by_id_.insert(std::make_pair(current_member_id_, newMember));
-                        member_by_name_.insert(std::make_pair(newMember->get_name(), newMember));
-                    }
-                    else
-                    {
-                        delete newMember;
-                    }
-                    ++current_member_id_;
-                    return ReturnCode_t::RETCODE_OK;
+                    newMember.set_id(member_id);
                 }
-                else
+
+                // update the indexes collections
+                if (!member_name.empty()) // Don't store empty bitset members.
                 {
-                    EPROSIMA_LOG_WARNING(DYN_TYPES, "Error adding member, invalid union parameters.");
-                    return ReturnCode_t::RETCODE_BAD_PARAMETER;
+                    member_by_id_.insert(std::make_pair(member_id, &newMember));
+                    member_by_name_.insert(std::make_pair(member_name, &newMember));
                 }
+
+                // advance
+                ++current_member_id_;
             }
             else
             {
-                EPROSIMA_LOG_WARNING(DYN_TYPES, "Error adding member, there is other member with the same name.");
+                EPROSIMA_LOG_WARNING(DYN_TYPES, "Error adding member, invalid union parameters.");
                 return ReturnCode_t::RETCODE_BAD_PARAMETER;
             }
         }
@@ -163,16 +184,11 @@ ReturnCode_t DynamicTypeBuilder::add_member(
     }
     else
     {
-        if (descriptor == nullptr)
-        {
-            EPROSIMA_LOG_WARNING(DYN_TYPES, "Error adding member, Invalid input descriptor.");
-        }
-        else
-        {
-            EPROSIMA_LOG_WARNING(DYN_TYPES, "Error adding member, The input descriptor isn't consistent.");
-        }
+        EPROSIMA_LOG_WARNING(DYN_TYPES, "Error adding member, The input descriptor isn't consistent.");
         return ReturnCode_t::RETCODE_BAD_PARAMETER;
     }
+
+    return ReturnCode_t::RETCODE_OK;
 }
 
 RTPS_DllAPI MemberId DynamicTypeBuilder::get_member_id_by_name(
@@ -184,77 +200,6 @@ RTPS_DllAPI MemberId DynamicTypeBuilder::get_member_id_by_name(
         return it->second->get_id();
     }
     return MEMBER_ID_INVALID;
-}
-
-ReturnCode_t DynamicTypeBuilder::add_member(
-        MemberId id,
-        const std::string& name,
-        DynamicTypeBuilder* type)
-{
-    if (type != nullptr)
-    {
-        MemberDescriptor descriptor(id, name, DynamicTypeBuilderFactory::get_instance()->create_type(type));
-        return add_member(&descriptor);
-    }
-    else
-    {
-        MemberDescriptor descriptor(id, name, DynamicType_ptr(nullptr));
-        return add_member(&descriptor);
-    }
-}
-
-ReturnCode_t DynamicTypeBuilder::add_member(
-        MemberId id,
-        const std::string& name,
-        DynamicTypeBuilder* type,
-        const std::string& defaultValue)
-{
-    MemberDescriptor descriptor(id, name, DynamicTypeBuilderFactory::get_instance()->create_type(type), defaultValue);
-    return add_member(&descriptor);
-}
-
-ReturnCode_t DynamicTypeBuilder::add_member(
-        MemberId id,
-        const std::string& name,
-        DynamicTypeBuilder* type,
-        const std::string& defaultValue,
-        const std::vector<uint64_t>& unionLabels,
-        bool isDefaultLabel)
-{
-    MemberDescriptor descriptor(id, name, DynamicTypeBuilderFactory::get_instance()->create_type(type),
-            defaultValue, unionLabels, isDefaultLabel);
-    return add_member(&descriptor);
-}
-
-ReturnCode_t DynamicTypeBuilder::add_member(
-        MemberId id,
-        const std::string& name,
-        DynamicType_ptr type)
-{
-    MemberDescriptor descriptor(id, name, type);
-    return add_member(&descriptor);
-}
-
-ReturnCode_t DynamicTypeBuilder::add_member(
-        MemberId id,
-        const std::string& name,
-        DynamicType_ptr type,
-        const std::string& defaultValue)
-{
-    MemberDescriptor descriptor(id, name, type, defaultValue);
-    return add_member(&descriptor);
-}
-
-ReturnCode_t DynamicTypeBuilder::add_member(
-        MemberId id,
-        const std::string& name,
-        DynamicType_ptr type_,
-        const std::string& defaultValue,
-        const std::vector<uint64_t>& unionLabels,
-        bool isDefaultLabel)
-{
-    MemberDescriptor descriptor(id, name, type_, defaultValue, unionLabels, isDefaultLabel);
-    return add_member(&descriptor);
 }
 
 DynamicType_ptr DynamicTypeBuilder::build() const
@@ -271,19 +216,20 @@ DynamicType_ptr DynamicTypeBuilder::build() const
 }
 
 bool DynamicTypeBuilder::check_union_configuration(
-        const MemberDescriptor* descriptor)
+        const MemberDescriptor& descriptor)
 {
     if (get_kind() == TK_UNION)
     {
-        if (!descriptor->is_default_union_value() && descriptor->get_union_labels().size() == 0)
+        bool default_union_value = descriptor.is_default_union_value();
+        if (!default_union_value && descriptor.get_union_labels().size() == 0)
         {
             return false;
         }
-        for (auto it = member_by_id_.begin(); it != member_by_id_.end(); ++it)
+        for (auto& m : members_ )
         {
             // Check that there isn't any member as default label and that there isn't any member with the same case.
-            if ((descriptor->is_default_union_value() && it->second->is_default_union_value()) ||
-                    !descriptor->check_union_labels(it->second->get_union_labels()))
+            if (default_union_value && m.is_default_union_value() ||
+                    !descriptor.check_union_labels(m.get_union_labels()))
             {
                 return false;
             }
@@ -294,21 +240,17 @@ bool DynamicTypeBuilder::check_union_configuration(
 
 void DynamicTypeBuilder::clear()
 {
-    for (auto it = member_by_id_.begin(); it != member_by_id_.end(); ++it)
-    {
-        delete it->second;
-    }
-    member_by_id_.clear();
-    member_by_name_.clear();
+    TypeDescriptor::clean();
     current_member_id_ = 0;
 }
 
 bool DynamicTypeBuilder::exists_member_by_name(
         const std::string& name) const
 {
-    if (get_base_type() != nullptr)
+    auto base = get_base_type();
+    if (base)
     {
-        if (get_base_type()->exists_member_by_name(name))
+        if (base->exists_member_by_name(name))
         {
             return true;
         }
@@ -316,68 +258,43 @@ bool DynamicTypeBuilder::exists_member_by_name(
     return member_by_name_.find(name) != member_by_name_.end();
 }
 
+bool DynamicTypeBuilder::exists_member_by_id(
+        MemberId id) const
+{
+    auto base = get_base_type();
+    if (base)
+    {
+        if (base->exists_member_by_name(name))
+        {
+            return true;
+        }
+    }
+    return member_by_id_.find(id) != member_by_id_.end();
+}
+
 bool DynamicTypeBuilder::is_discriminator_type() const
 {
-    if (kind_ == TK_ALIAS && get_base_type() != nullptr)
+    auto base = get_base_type();
+    auto kind = get_kind();
+
+    if (kind == TK_ALIAS && base)
     {
-        return get_base_type()->is_discriminator_type();
+        return base->is_discriminator_type();
     }
-    return kind_ == TK_BOOLEAN || kind_ == TK_BYTE || kind_ == TK_INT16 || kind_ == TK_INT32 ||
-           kind_ == TK_INT64 || kind_ == TK_UINT16 || kind_ == TK_UINT32 || kind_ == TK_UINT64 ||
-           kind_ == TK_FLOAT32 || kind_ == TK_FLOAT64 || kind_ == TK_FLOAT128 || kind_ == TK_CHAR8 ||
-           kind_ == TK_CHAR16 || kind_ == TK_STRING8 || kind_ == TK_STRING16 || kind_ == TK_ENUM || kind_ == TK_BITMASK;
+    return kind == TK_BOOLEAN || kind == TK_BYTE || kind == TK_INT16 || kind == TK_INT32 ||
+           kind == TK_INT64 || kind == TK_UINT16 || kind == TK_UINT32 || kind == TK_UINT64 ||
+           kind == TK_FLOAT32 || kind == TK_FLOAT64 || kind == TK_FLOAT128 || kind == TK_CHAR8 ||
+           kind == TK_CHAR16 || kind == TK_STRING8 || kind == TK_STRING16 || kind == TK_ENUM || kind == TK_BITMASK;
 }
 
 void DynamicTypeBuilder::refresh_member_ids()
 {
-    if ((get_kind() == TK_STRUCTURE || get_kind() == TK_BITSET) &&
-            get_base_type() != nullptr)
-    {
-        current_member_id_ = get_base_type()->get_members_count();
-    }
-}
+    auto base = get_base_type();
+    auto kind = get_kind();
 
-ReturnCode_t DynamicTypeBuilder::apply_annotation_to_member(
-        MemberId id,
-        AnnotationDescriptor& descriptor)
-{
-    if (descriptor.is_consistent())
+    if ((kind == TK_STRUCTURE || kind == TK_BITSET) && base)
     {
-        auto it = member_by_id_.find(id);
-        if (it != member_by_id_.end())
-        {
-            it->second->apply_annotation(descriptor);
-            return ReturnCode_t::RETCODE_OK;
-        }
-        else
-        {
-            EPROSIMA_LOG_ERROR(DYN_TYPES, "Error applying annotation to member. MemberId not found.");
-            return ReturnCode_t::RETCODE_BAD_PARAMETER;
-        }
-    }
-    else
-    {
-        EPROSIMA_LOG_ERROR(DYN_TYPES, "Error applying annotation to member. The input descriptor isn't consistent.");
-        return ReturnCode_t::RETCODE_BAD_PARAMETER;
-    }
-}
-
-ReturnCode_t DynamicTypeBuilder::apply_annotation_to_member(
-        MemberId id,
-        const std::string& annotation_name,
-        const std::string& key,
-        const std::string& value)
-{
-    auto it = member_by_id_.find(id);
-    if (it != member_by_id_.end())
-    {
-        it->second->apply_annotation(annotation_name, key, value);
-        return ReturnCode_t::RETCODE_OK;
-    }
-    else
-    {
-        EPROSIMA_LOG_ERROR(DYN_TYPES, "Error applying annotation to member. MemberId not found.");
-        return ReturnCode_t::RETCODE_BAD_PARAMETER;
+        current_member_id_ = base->get_members_count();
     }
 }
 
@@ -386,8 +303,18 @@ ReturnCode_t DynamicTypeBuilder::apply_annotation(
 {
     if (descriptor.is_consistent())
     {
-        annotation_.push_back(descriptor);
+        bool inserted = false;
+
+        std::tie(std::ignore, inserted) = annotation_.insert(descriptor);
+
+        if(!inserted)
+        {
+            EPROSIMA_LOG_ERROR(DYN_TYPES, "Error applying annotation: it was already there.");
+            return ReturnCode_t::RETCODE_BAD_PARAMETER;
+        }
+
         is_key_defined_ = key_annotation();
+
         return ReturnCode_t::RETCODE_OK;
     }
     else
@@ -402,10 +329,14 @@ ReturnCode_t DynamicTypeBuilder::apply_annotation(
         const std::string& key,
         const std::string& value)
 {
-    AnnotationDescriptor* ann = get_annotation(annotation_name);
-    if (ann != nullptr)
+    annotation_iterator it;
+    bool found;
+
+    std::tie(it, found) = get_annotation(annotation_name);
+    if (found)
     {
         ann->set_value(key, value);
+        return ReturnCode_t::RETCODE_OK;
     }
     else
     {
@@ -413,122 +344,105 @@ ReturnCode_t DynamicTypeBuilder::apply_annotation(
         new_descriptor.set_type(
             DynamicTypeBuilderFactory::get_instance()->create_annotation_primitive(annotation_name));
         new_descriptor.set_value(key, value);
-        annotation_.push_back(new_descriptor);
-        is_key_defined_ = key_annotation();
+        return apply_annotation(new_descriptor);
     }
-    return ReturnCode_t::RETCODE_OK;
 }
 
 // Annotation setters
-void DynamicTypeBuilder::annotation_set_extensibility(
-        const std::string& extensibility)
+
+/* Ancillary method for setters
+ * @param id annotation name
+ * @param C functor that checks if the annotation should be modified: bool(const AnnotationDescriptor&)
+ * @param M functor that modifies the annotation if present: void(AnnotationDescriptor&)
+ */
+template<typename C, typename M>
+void DynamicTypeBuilder::annotation_set( const std::string& id, C& c, M& m)
 {
-    const AnnotationDescriptor* ann = get_annotation(ANNOTATION_EXTENSIBILITY_ID);
-    if (ann == nullptr)
+    annotation_iterator it;
+    bool found;
+
+    std::tie(it, found) = get_annotation(id);
+    if(!found)
     {
         AnnotationDescriptor descriptor;
         descriptor.set_type(
-            DynamicTypeBuilderFactory::get_instance()->create_annotation_primitive(ANNOTATION_EXTENSIBILITY_ID));
+            DynamicTypeBuilderFactory::get_instance()->create_annotation_primitive(id));
+        m(descriptor);
         apply_annotation(descriptor);
-        ann = get_annotation(ANNOTATION_EXTENSIBILITY_ID);
     }
-    ann->set_value("value", extensibility);
+    else if(c(*it))
+    {
+        // Reinsert because order may be modified
+        AnnotationDescriptor descriptor(std::move(*it));
+        it = annotation_.erase(it);
+        m(descriptor);
+        annotation_.insert(it, std::move(descriptor));
+    }
+
+    std::tie(it, found) = get_annotation(id);
+    assert(found);
+}
+
+//! Specialization of the above template to simple values
+void DynamicTypeBuilder::annotation_set(const std::string& id, std::string& new_val);
+{
+    annotation_set(
+            id,
+            [&new_val](const AnnotationDescriptor& d) -> bool
+            {
+               std::string val;
+               d.get_value(val, "value");
+               return new_val != val;
+            },
+            [&new_val](AnnotationDescriptor& d)
+            {
+                d.set_value("value", new_val);
+            });
+}
+
+void DynamicTypeBuilder::annotation_set_extensibility(
+        const std::string& extensibility)
+{
+    annotation_set(ANNOTATION_EXTENSIBILITY_ID, extensibility);
 }
 
 void DynamicTypeBuilder::annotation_set_mutable()
 {
-    const AnnotationDescriptor* ann = get_annotation(ANNOTATION_MUTABLE_ID);
-    if (ann == nullptr)
-    {
-        AnnotationDescriptor descriptor;
-        descriptor.set_type(DynamicTypeBuilderFactory::get_instance()->create_annotation_primitive(ANNOTATION_MUTABLE_ID));
-        apply_annotation(*ann);
-        ann = get_annotation(ANNOTATION_MUTABLE_ID);
-    }
-    ann->set_value("value", CONST_TRUE);
+    annotation_set(ANNOTATION_MUTABLE_ID, CONST_TRUE);
 }
 
 void DynamicTypeBuilder::annotation_set_final()
 {
-    const AnnotationDescriptor* ann = get_annotation(ANNOTATION_FINAL_ID);
-    if (ann == nullptr)
-    {
-        AnnotationDescriptor descriptor;
-        descriptor.set_type(DynamicTypeBuilderFactory::get_instance()->create_annotation_primitive(ANNOTATION_FINAL_ID));
-        apply_annotation(*ann);
-        ann = get_annotation(ANNOTATION_FINAL_ID);
-    }
-    ann->set_value("value", CONST_TRUE);
+    annotation_set(ANNOTATION_FINAL_ID, CONST_TRUE);
 }
 
 void DynamicTypeBuilder::annotation_set_appendable()
 {
-    const AnnotationDescriptor* ann = get_annotation(ANNOTATION_APPENDABLE_ID);
-    if (ann == nullptr)
-    {
-        AnnotationDescriptor descriptor;
-        descriptor.set_type(DynamicTypeBuilderFactory::get_instance()->create_annotation_primitive(ANNOTATION_APPENDABLE_ID));
-        apply_annotation(*ann);
-        ann = get_annotation(ANNOTATION_APPENDABLE_ID);
-    }
-    ann->set_value("value", CONST_TRUE);
+    annotation_set(ANNOTATION_APPENDABLE_ID, CONST_TRUE);
 }
 
 void DynamicTypeBuilder::annotation_set_nested(
         bool nested)
 {
-    const AnnotationDescriptor* ann = get_annotation(ANNOTATION_NESTED_ID);
-    if (ann == nullptr)
-    {
-        AnnotationDescriptor descriptor;
-        descriptor.set_type(DynamicTypeBuilderFactory::get_instance()->create_annotation_primitive(ANNOTATION_NESTED_ID));
-        apply_annotation(*ann);
-        ann = get_annotation(ANNOTATION_NESTED_ID);
-    }
-    ann->set_value("value", nested ? CONST_TRUE : CONST_FALSE);
+    annotation_set(ANNOTATION_NESTED_ID, CONST_TRUE);
 }
 
 void DynamicTypeBuilder::annotation_set_key(
         bool key)
 {
-    const AnnotationDescriptor* ann = get_annotation(ANNOTATION_KEY_ID);
-    if (ann == nullptr)
-    {
-        AnnotationDescriptor descriptor;
-        descriptor.set_type(DynamicTypeBuilderFactory::get_instance()->create_annotation_primitive(ANNOTATION_KEY_ID));
-        apply_annotation(*ann);
-        ann = get_annotation(ANNOTATION_KEY_ID);
-    }
-    ann->set_value("value", key ? CONST_TRUE : CONST_FALSE);
+    annotation_set(ANNOTATION_KEY_ID, key ? CONST_TRUE : CONST_FALSE);
 }
 
 void DynamicTypeBuilder::annotation_set_bit_bound(
         uint16_t bit_bound)
 {
-    const AnnotationDescriptor* ann = get_annotation(ANNOTATION_BIT_BOUND_ID);
-    if (ann == nullptr)
-    {
-        AnnotationDescriptor descriptor;
-        descriptor.set_type(DynamicTypeBuilderFactory::get_instance()->create_annotation_primitive(ANNOTATION_BIT_BOUND_ID));
-        apply_annotation(*ann);
-        ann = get_annotation(ANNOTATION_BIT_BOUND_ID);
-    }
-    ann->set_value("value", std::to_string(bit_bound));
+    annotation_set(ANNOTATION_BIT_BOUND_ID, std::to_string(bit_bound));
 }
 
 void DynamicTypeBuilder::annotation_set_non_serialized(
         bool non_serialized)
 {
-    const AnnotationDescriptor* ann = get_annotation(ANNOTATION_NON_SERIALIZED_ID);
-    if (ann == nullptr)
-    {
-        AnnotationDescriptor descriptor;
-        descriptor.set_type(
-            DynamicTypeBuilderFactory::get_instance()->create_annotation_primitive(ANNOTATION_NON_SERIALIZED_ID));
-        apply_annotation(descriptor);
-        ann = get_annotation(ANNOTATION_NON_SERIALIZED_ID);
-    }
-    ann->set_value("value", non_serialized ? CONST_TRUE : CONST_FALSE);
+    annotation_set(ANNOTATION_NON_SERIALIZED_ID, non_serialized ? CONST_TRUE : CONST_FALSE);
 }
 
 bool DynamicTypeBuilder::equals(

@@ -384,8 +384,9 @@ void DynamicDataHelper::print_member(
         const std::string& tabs)
 {
     std::cout << tabs << type->get_name() << ": ";
-    const MemberDescriptor* desc = type->get_descriptor();
-    switch (desc->get_kind())
+    MemberDescriptor desc;
+    type->get_descriptor(desc);
+    switch (desc.get_kind())
     {
         case TK_NONE:
         case TK_BOOLEAN:
@@ -406,7 +407,7 @@ void DynamicDataHelper::print_member(
         case TK_ENUM:
         case TK_BITMASK:
         {
-            print_basic_element(data, type->get_id(), desc->get_kind());
+            print_basic_element(data, type->get_id(), desc.get_kind());
             std::cout << std::endl;
             break;
         }
@@ -416,7 +417,7 @@ void DynamicDataHelper::print_member(
             DynamicData* st_data = data->loan_value(type->get_id());
             std::cout << "<struct/bitset>" << std::endl;
             std::map<types::MemberId, types::DynamicTypeMember*> members;
-            desc->get_type()->get_all_members(members);
+            desc.get_type()->get_all_members(members);
             for (auto it : members)
             {
                 print_member(st_data, it.second, tabs + "\t");
@@ -429,7 +430,7 @@ void DynamicDataHelper::print_member(
             std::cout << "<union>" << std::endl;
             DynamicData* st_data = data->loan_value(type->get_id());
             DynamicTypeMember member;
-            desc->get_type()->get_member(member, data->union_id_);
+            desc.get_type()->get_member(member, data->union_id_);
             print_member(st_data, &member, tabs + "\t");
             break;
         }
@@ -446,7 +447,7 @@ void DynamicDataHelper::print_member(
             std::cout << "<map>" << std::endl;
             DynamicData* st_data = data->loan_value(type->get_id());
             std::map<types::MemberId, types::DynamicTypeMember*> members;
-            desc->get_type()->get_all_members(members);
+            desc.get_type()->get_all_members(members);
             size_t size = data->get_item_count();
             for (size_t i = 0; i < size; ++i)
             {

@@ -68,6 +68,10 @@ void TypeDescriptor::clean()
     discriminator_type_.reset();
     element_type_.reset();
     key_element_type_.reset();
+
+    members_.clear;
+    member_by_id_.clear();
+    member_by_name_.clear();
 }
 
 ReturnCode_t TypeDescriptor::copy_from(
@@ -86,8 +90,7 @@ bool TypeDescriptor::operator==(const TypeDescriptor& descriptor) const
            element_type_ == descriptor.element_type_ &&
            key_element_type_ == descriptor.key_element_type_ &&
            annotation_ == descriptor.annotation_ &&
-           member_by_id_ == descriptor.member_by_id_ &&
-           member_by_name_ == descriptor.member_by_name_;
+           members_ == descriptor.members_;
 }
 
 bool TypeDescriptor::equals(
@@ -162,13 +165,13 @@ uint32_t TypeDescriptor::get_total_bounds() const
 bool TypeDescriptor::is_consistent() const
 {
     // Alias Types need the base type to indicate what type has been aliased.
-    if (kind_ == TK_ALIAS && base_type_ == nullptr)
+    if (kind_ == TK_ALIAS && !base_type_)
     {
         return false;
     }
 
     // Alias must have base type, and structures and bitsets optionally can have it.
-    if (base_type_ != nullptr && kind_ != TK_ALIAS && kind_ != TK_STRUCTURE && kind_ != TK_BITSET)
+    if (base_type_ && kind_ != TK_ALIAS && kind_ != TK_STRUCTURE && kind_ != TK_BITSET)
     {
         return false;
     }
@@ -187,13 +190,13 @@ bool TypeDescriptor::is_consistent() const
     }
 
     // Only union types need the discriminator of the union
-    if ((discriminator_type_ == nullptr) == (kind_ == TK_UNION))
+    if (!discriminator_type_ && kind_ == TK_UNION)
     {
         return false;
     }
 
     // ElementType is used by these types to set the "value" type of the element, otherwise it should be null.
-    if ((element_type_ == nullptr) == (kind_ == TK_ARRAY || kind_ == TK_SEQUENCE || kind_ == TK_STRING8 ||
+    if (!element_type_ && (kind_ == TK_ARRAY || kind_ == TK_SEQUENCE || kind_ == TK_STRING8 ||
             kind_ == TK_STRING16 || kind_ == TK_MAP || kind_ == TK_BITMASK))
     {
         return false;
@@ -206,7 +209,7 @@ bool TypeDescriptor::is_consistent() const
     }
 
     // Only map types need the keyElementType to store the "Key" type of the pair.
-    if ((key_element_type_ == nullptr) == (kind_ == TK_MAP))
+    if (!key_element_type_ && kind_ == TK_MAP)
     {
         return false;
     }
@@ -271,23 +274,24 @@ void TypeDescriptor::set_name(
     name_ = name;
 }
 
-const AnnotationDescriptor* TypeDescriptor::get_annotation(
-        const std::string& name) const
+std::pair<TypeDescriptor::annotation_iterator, bool>
+TypeDescriptor::get_annotation(
+        const std::string& name)
 {
-    auto it = annotation_.begin();
+    annotation_iterator it = annotation_.begin();
 
-    for (; it != annotation_.end(); ++it)
+    for(; it != annotation_.end(); ++it)
     {
-        const AnnotationDescriptor& ann = *it;
-        if ( ann.type()
-             && ann.type()->kind_ > 0
-             && !ann.type()->get_name().empty()
-             && ann.type()->get_name().compare(name) == 0)
+        const AnnotationDescriptor& d = *it;
+        if ( d.type() && d.type()->kind_ > 0
+             && !d.type()->get_name().empty()
+             && d.type()->get_name().compare(name) == 0)
         {
-            return &ann;
+            return std::make_pair(it, true);
         }
     }
-    return nullptr;
+
+    return std::make_pair(it, false);
 }
 
 // Annotations application
@@ -449,25 +453,18 @@ uint16_t TypeDescriptor::annotation_get_bit_bound() const
     return 32; // Default value
 }
 
-uint32_t TypeDescriptor::get_annotation_count() const
+MemberId TypeDescriptor::get_annotation_count() const
 {
-    return static_cast<uint32_t>(annotation_.size());
+    return MemberId(annotation_.size());
 }
 
 ReturnCode_t TypeDescriptor::get_annotation(
         AnnotationDescriptor& descriptor,
-        uint32_t idx) const
+        MemberId idx) const
 {
-    if (idx < annotation_.size())
-    {
-        descriptor = annotation_[idx];
-        return ReturnCode_t::RETCODE_OK;
-    }
-    else
-    {
-        EPROSIMA_LOG_WARNING(DYN_TYPES, "Error getting annotation, annotation not found.");
-        return ReturnCode_t::RETCODE_ERROR;
-    }
+    assert(idx < get_annotation_count());
+    descriptor = *std::advance(annotation_.begin(), idx);
+    return ReturnCode_t::RETCODE_OK;
 }
 
 bool TypeDescriptor::key_annotation() const
@@ -483,14 +480,14 @@ bool TypeDescriptor::key_annotation() const
 }
 
 ReturnCode_t TypeDescriptor::get_all_members_by_name(
-        std::map<std::string, DynamicTypeMember*>& members) const
+        std::map<std::string,const DynamicTypeMember*>& members) const
 {
     members = member_by_name_;
     return ReturnCode_t::RETCODE_OK;
 }
 
 ReturnCode_t TypeDescriptor::get_all_members(
-        std::map<MemberId, DynamicTypeMember*>& members) const
+        std::map<MemberId,const DynamicTypeMember*>& members) const
 {
     members = member_by_id_;
     return ReturnCode_t::RETCODE_OK;
@@ -503,7 +500,7 @@ ReturnCode_t TypeDescriptor::get_member_by_name(
     auto it = member_by_name_.find(name);
     if (it != member_by_name_.end())
     {
-        member = it->second;
+        member = *it->second;
         return ReturnCode_t::RETCODE_OK;
     }
     else
@@ -520,7 +517,7 @@ ReturnCode_t TypeDescriptor::get_member(
     auto it = member_by_id_.find(id);
     if (it != member_by_id_.end())
     {
-        member = it->second;
+        member = *it->second;
         return ReturnCode_t::RETCODE_OK;
     }
     else
@@ -532,5 +529,5 @@ ReturnCode_t TypeDescriptor::get_member(
 
 MemberId TypeDescriptor::get_members_count() const
 {
-    return static_cast<MemberId>(member_by_id_.size());
+    return static_cast<MemberId>(members_.size());
 }

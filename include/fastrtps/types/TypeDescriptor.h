@@ -18,8 +18,10 @@
 #include <fastrtps/types/AnnotationDescriptor.h>
 #include <fastrtps/types/TypesBase.h>
 
+#include <list>
 #include <map>
 #include <memory>
+#include <set>
 
 namespace eprosima {
 namespace fastrtps {
@@ -44,8 +46,12 @@ protected:
 
     bool is_key_defined_ = false;
 
-    std::map<MemberId, DynamicTypeMember*> member_by_id_;         // Aggregated members
-    std::map<std::string, DynamicTypeMember*> member_by_name_;    // Uses the pointers from "member_by_id_".
+    std::list<DynamicTypeMember> members_;
+    std::map<MemberId, const DynamicTypeMember*> member_by_id_;      // members references indexed by id
+    std::set<std::string, const DynamicTypeMember*> member_by_name_;    // members references indexed by name
+
+    using annotation_iterator = std::set<AnnotationDescriptor>::iterator;
+    using member_iterator = std::list<DynamicTypeMember>::iterator;
 
     RTPS_DllAPI void clean();
 
@@ -88,11 +94,17 @@ protected:
 
     bool annotation_get_key() const;
 
+    //! Returns a Type annotation based on DynamicType name
+    std::pair<annotation_iterator, bool> get_annotation(
+            const std::string& name) const;
+
+    // TODO: doxygen
     RTPS_DllAPI ReturnCode_t get_annotation(
             AnnotationDescriptor& descriptor,
-            uint32_t idx) const;
+            MemberId idx) const;
 
-    RTPS_DllAPI uint32_t get_annotation_count() const;
+    // TODO: doxygen
+    RTPS_DllAPI MemberId get_annotation_count() const;
 
 public:
 
@@ -144,9 +156,6 @@ public:
 
     RTPS_DllAPI void set_name(
             std::string name);
-
-    RTPS_DllAPI const AnnotationDescriptor* get_annotation(
-            const std::string& name) const;
 
     RTPS_DllAPI ReturnCode_t get_all_members(
             std::map<MemberId, DynamicTypeMember*>& members) const;

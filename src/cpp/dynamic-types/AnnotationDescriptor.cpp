@@ -48,7 +48,7 @@ bool AnnotationDescriptor::operator!=(const AnnotationDescriptor& other) const
     return !(*this == other);
 }
 
-bool operator<(const AnnotationDescriptor& other) const
+bool AnnotationDescriptor::operator<(const AnnotationDescriptor& other) const
 {
     auto name = type_->get_name();
     auto other_name = other.type_->get_name();

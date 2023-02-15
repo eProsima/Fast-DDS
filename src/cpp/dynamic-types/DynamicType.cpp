@@ -65,13 +65,6 @@ DynamicType::~DynamicType()
 void DynamicType::clear()
 {
     TypeDescriptor::clean();
-
-    for (auto it = member_by_id_.begin(); it != member_by_id_.end(); ++it)
-    {
-        delete it->second;
-    }
-    member_by_id_.clear();
-    member_by_name_.clear();
 }
 
 bool DynamicType::exists_member_by_name(
@@ -991,12 +984,12 @@ size_t DynamicType::getEmptyCdrSerializedSize(
         case TK_STRUCTURE:
         case TK_BITSET:
         {
-            for (auto it = member_by_id_.begin(); it != member_by_id_.end(); ++it)
+            for (const DynamicTypeMember& m : members_)
             {
-                if (!it->second->descriptor_.annotation_is_non_serialized())
+                if (!m.annotation_is_non_serialized())
                 {
                     current_alignment +=
-                            it->second->descriptor_.type_->getEmptyCdrSerializedSize(current_alignment);
+                            m.get_type()->getEmptyCdrSerializedSize(current_alignment);
                 }
             }
             break;
@@ -1035,11 +1028,11 @@ size_t DynamicType::getKeyMaxCdrSerializedSize(
     // Structures check the the size of the key for their children
     if (get_kind() == TK_STRUCTURE || get_kind() == TK_BITSET)
     {
-        for (auto it = member_by_id_.begin(); it != member_by_id_.end(); ++it)
+        for (const DynamicTypeMember& m : members_)
         {
-            if (it->second->key_annotation())
+            if (m.key_annotation())
             {
-                current_alignment += it->second->descriptor_.type_->getKeyMaxCdrSerializedSize(current_alignment);
+                current_alignment += m.get_type()->getKeyMaxCdrSerializedSize(current_alignment);
             }
         }
     }
@@ -1125,9 +1118,9 @@ size_t DynamicType::getMaxCdrSerializedSize(
             // Check the size of all members and take the size of the biggest one.
             size_t temp_size(0);
             size_t max_element_size(0);
-            for (auto it = member_by_id_.begin(); it != member_by_id_.end(); ++it)
+            for (const DynamicTypeMember& m : members_)
             {
-                temp_size = it->second->descriptor_.type_->getMaxCdrSerializedSize(current_alignment);
+                temp_size = m.get_type()->getMaxCdrSerializedSize(current_alignment);
                 if (temp_size > max_element_size)
                 {
                     max_element_size = temp_size;
@@ -1139,11 +1132,11 @@ size_t DynamicType::getMaxCdrSerializedSize(
         case TK_STRUCTURE:
         case TK_BITSET:
         {
-            for (auto it = member_by_id_.begin(); it != member_by_id_.end(); ++it)
+            for (const DynamicTypeMember& m : members_)
             {
-                if (!it->second->descriptor_.annotation_is_non_serialized())
+                if (!m.annotation_is_non_serialized())
                 {
-                    current_alignment += it->second->get_descriptor().type_->getMaxCdrSerializedSize(current_alignment);
+                    current_alignment += m.get_type()->getMaxCdrSerializedSize(current_alignment);
                 }
             }
             break;
@@ -1748,12 +1741,11 @@ void DynamicType::serialize_empty_data(
         case TK_STRUCTURE:
         case TK_BITSET:
         {
-            for (uint32_t idx = 0; idx < member_by_id_.size(); ++idx)
+            for (const DynamicTypeMember& m : members_)
             {
-                auto it = member_by_id_.at(idx);
-                if (!it->descriptor_.annotation_is_non_serialized())
+                if (!m.annotation_is_non_serialized())
                 {
-                    it->descriptor_.type_->serialize_empty_data(cdr);
+                    m.get_type()->serialize_empty_data(cdr);
                 }
             }
             break;
