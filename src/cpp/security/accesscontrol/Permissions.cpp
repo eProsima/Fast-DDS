@@ -346,6 +346,92 @@ static bool rfc2253_string_compare(
 }
 
 // Auxiliary functions
+static BIO* load_and_verify_document(
+        X509_STORE* store,
+        BIO* in,
+        SecurityException& exception)
+{
+    BIO* out = nullptr;
+
+    assert(nullptr != store);
+    assert(nullptr != in);
+
+    // Create PKCS7 object from input data
+    BIO* indata = nullptr;
+    PKCS7* p7 = SMIME_read_PKCS7(in, &indata);
+    if (nullptr == p7)
+    {
+        exception = _SecurityException_("Input data has not PKCS7 S/MIME format");
+        return nullptr;
+    }
+
+    // ---- Get certificate stack from store ----
+    // The following lines are almost equivalent to the OpenSSL 3 API X509_STORE_get1_all_certs.
+    // It creates a stack of X509 objects and populates the stack with the X509 objects contained in the store.
+    STACK_OF(X509) * stack = sk_X509_new_null();
+    if (nullptr == stack)
+    {
+        exception = _SecurityException_("Cannot allocate certificate stack");
+    }
+    else
+    {
+        STACK_OF(X509_OBJECT) * objects = X509_STORE_get0_objects(store);
+        int i = 0;
+        for (i = 0; i < sk_X509_OBJECT_num(objects); i++)
+        {
+            X509_OBJECT* tmp = sk_X509_OBJECT_value(objects, i);
+            X509* cert = X509_OBJECT_get0_X509(tmp);
+            if (nullptr != cert)
+            {
+                sk_X509_push(stack, cert);
+            }
+        }
+
+        if (1 != sk_X509_num(stack))
+        {
+            exception = _SecurityException_("Certificate store should have exactly one certificate");
+
+            sk_X509_free(stack);
+            stack = nullptr;
+        }
+    }
+    // ---- Finished getting certificate stack from store ----
+
+    if (nullptr != stack)
+    {
+        // Allocate output data
+        out = BIO_new(BIO_s_mem());
+        if (nullptr == out)
+        {
+            exception = _SecurityException_("Cannot allocate output BIO");
+        }
+        else
+        {
+            // Verify the input data using exclusively the certificates in the stack.
+            // PKCS7_NOINTERN is used to ignore certificates coming alongside the signed data.
+            // PKCS7_NOVERIFY is used since the permissions CA certificate will not be chain verified.
+            if (!PKCS7_verify(p7, stack, nullptr, indata, out, PKCS7_TEXT | PKCS7_NOVERIFY | PKCS7_NOINTERN))
+            {
+                exception = _SecurityException_("PKCS7 data verification failed");
+                BIO_free(out);
+                out = nullptr;
+            }
+        }
+
+        // Free the certificate stack
+        sk_X509_free(stack);
+    }
+
+    PKCS7_free(p7);
+
+    if (indata != nullptr)
+    {
+        BIO_free(indata);
+    }
+
+    return out;
+}
+
 static X509_STORE* load_permissions_ca(
         const std::string& permissions_ca,
         bool& there_are_crls,
@@ -374,34 +460,9 @@ static BIO* load_signed_file(
     if (file.size() >= 7 && file.compare(0, 7, "file://") == 0)
     {
         BIO* in = BIO_new_file(file.substr(7).c_str(), "r");
-
         if (in != nullptr)
         {
-            BIO* indata = nullptr;
-            PKCS7* p7 = SMIME_read_PKCS7(in, &indata);
-
-            if (p7 != nullptr)
-            {
-                out = BIO_new(BIO_s_mem());
-                if (!PKCS7_verify(p7, nullptr, store, indata, out, PKCS7_TEXT))
-                {
-                    exception = _SecurityException_(std::string("Failed verification of the file ") + file);
-                    BIO_free(out);
-                    out = nullptr;
-                }
-
-                PKCS7_free(p7);
-            }
-            else
-            {
-                exception = _SecurityException_(std::string("Cannot read as PKCS7 the file ") + file);
-            }
-
-            if (indata != nullptr)
-            {
-                BIO_free(indata);
-            }
-
+            out = load_and_verify_document(store, in, exception);
             BIO_free(in);
         }
         else
@@ -506,55 +567,37 @@ static bool verify_permissions_file(
     if (permissions_file.size() <= static_cast<size_t>(std::numeric_limits<int>::max()))
     {
         BIO* permissions_buf = BIO_new_mem_buf(permissions_file.data(), static_cast<int>(permissions_file.size()));
-
         if (permissions_buf != nullptr)
         {
-            BIO* indata = nullptr;
-            PKCS7* p7 = SMIME_read_PKCS7(permissions_buf, &indata);
-
-            if (p7 != nullptr)
+            BIO* out = load_and_verify_document(local_handle->store_, permissions_buf, exception);
+            if (nullptr != out)
             {
-                BIO* out = BIO_new(BIO_s_mem());
-                if (PKCS7_verify(p7, nullptr, local_handle->store_, indata, out, PKCS7_TEXT))
-                {
-                    BUF_MEM* ptr = nullptr;
-                    BIO_get_mem_ptr(out, &ptr);
+                BUF_MEM* ptr = nullptr;
+                BIO_get_mem_ptr(out, &ptr);
 
-                    if (ptr != nullptr)
+                if (ptr != nullptr)
+                {
+                    PermissionsParser parser;
+                    if ((returned_value = parser.parse_stream(ptr->data, ptr->length)) == true)
                     {
-                        PermissionsParser parser;
-                        if ((returned_value = parser.parse_stream(ptr->data, ptr->length)) == true)
-                        {
-                            parser.swap(permissions);
-                            returned_value = true;
-                        }
-                        else
-                        {
-                            exception = _SecurityException_(std::string(
-                                                "Malformed permissions file ") + permissions_file);
-                        }
+                        parser.swap(permissions);
+                        returned_value = true;
                     }
                     else
                     {
-                        exception = _SecurityException_("OpenSSL library cannot retrieve mem ptr from file.");
+                        exception = _SecurityException_(std::string(
+                                            "Malformed permissions file ") + permissions_file);
                     }
                 }
                 else
                 {
-                    exception = _SecurityException_("Failed verification of the permissions file");
+                    exception = _SecurityException_("OpenSSL library cannot retrieve mem ptr from file.");
                 }
-
                 BIO_free(out);
-                PKCS7_free(p7);
             }
             else
             {
                 exception = _SecurityException_("Cannot read as PKCS7 the permissions file.");
-            }
-
-            if (indata != nullptr)
-            {
-                BIO_free(indata);
             }
 
             BIO_free(permissions_buf);
