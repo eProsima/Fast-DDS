@@ -12,7 +12,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-set(SHMSEGMENTTESTS_SOURCE SHMSegmentTests.cpp)
+set(SHMSEGMENTTESTS_SOURCE SHMSegmentTests.cpp
+    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/DataSharing/DataSharingPayloadPool.cpp
+    )
 
 if(WIN32)
     add_definitions(-D_WIN32_WINNT=0x0601)
@@ -25,6 +27,7 @@ target_compile_definitions(SHMSegmentTests PRIVATE FASTRTPS_NO_LIB
     $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
     $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
     $<$<BOOL:${WIN32}>:_ENABLE_ATOMIC_ALIGNMENT_FIX>
+    $<$<BOOL:${MSVC}>:NOMINMAX> # avoid conflict with std::min & std::max in visual studio
     )
 target_include_directories(SHMSegmentTests PRIVATE
     ${Asio_INCLUDE_DIR}
