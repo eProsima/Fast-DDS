@@ -780,11 +780,7 @@ void ThroughputSubscriber::run()
             std::cout << "Last Received Sample: " << command_sample.m_lastrecsample << std::endl;
             std::cout << "Lost Samples: " << command_sample.m_lostsamples << std::endl;
             std::cout << "Received Samples: " << command_sample.m_receivedsamples << std::endl;
-            std::cout << "Samples per second, (old calculation): "
-                      << (double)(command_sample.m_lastrecsample - command_sample.m_lostsamples) * 1000000 /
-                command_sample.m_totaltime
-                      << std::endl;
-            std::cout << "Samples per second, (new calculation): "
+            std::cout << "Samples per second: "
                       << (double)(command_sample.m_receivedsamples) * 1000000 /
                 command_sample.m_totaltime
                       << std::endl;
