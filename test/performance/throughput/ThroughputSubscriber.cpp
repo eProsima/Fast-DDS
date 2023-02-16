@@ -127,7 +127,7 @@ void ThroughputSubscriber::DataReaderListener::on_data_available(
             lost_samples_ += last_seq_num - last_seq_num_ - size;
         }
         last_seq_num_ = last_seq_num;
-        //received_samples_ += 1;
+        received_samples_ += 1;
 
         // release the reader loan
         if (ReturnCode_t::RETCODE_OK != reader->return_loan(data_seq, infos))
