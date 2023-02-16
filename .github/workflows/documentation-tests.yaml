@@ -1,0 +1,98 @@
+name: Documentation build and test
+on:
+  workflow_dispatch:
+    inputs:
+      optional_documentation_branch:
+        description: 'Optional Documentation branch name'
+        required: false
+        type: string
+        default: 'master'
+
+  push:
+    branches:
+      - 'master'
+    paths-ignore:
+      - '**.md'
+      - '**.txt'
+      - '!**/CMakeLists.txt'
+
+  pull_request:
+    branches:
+      - 'master'
+    paths-ignore:
+      - '**.md'
+      - '**.txt'
+      - '!**/CMakeLists.txt'
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+env:
+  ACTION_BRANCH_NAME: ${{ github.head_ref || github.base_ref }}
+
+jobs:
+  ubuntu-build-and-test-documentation:
+    name: Documentation build and test
+
+    if: ${{ !(contains(github.event.pull_request.labels.*.name, 'no-test') ||
+              contains(github.event.pull_request.labels.*.name, 'skip-ci')) }}
+
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Sync eProsima/Fast-DDS repository
+        uses: actions/checkout@v3
+        with:
+          path: src/fastrtps
+          submodules: true
+
+      - name: Install Fast DDS packages
+        uses: ./src/fastrtps/.github/actions/install-apt-packages
+
+      - name: Install documentation packages
+        uses: ./src/fastrtps/.github/actions/install-apt-packages-documentation
+
+      - name: Download FastDDS dependencies
+        run: |
+          pip3 install vcstool
+          vcs import --skip-existing src  < ./src/fastrtps/fastrtps.repos
+
+      - name: Determine the Fast DDS Documentation branch to be used
+        run: |
+          BASE_QUERY_URL=https://api.github.com/repos/eprosima/fast-dds-docs/git/trees
+          if ! [ -z "${{ inputs.optional_documentation_branch }}" ]
+          then
+            echo "ACTION_BRANCH_NAME=${{ inputs.optional_documentation_branch }}" >> $GITHUB_ENV
+            RESPONSE_CODE=$(curl -s -o /dev/null -w "%{http_code}" ${BASE_QUERY_URL}/${{ env.ACTION_BRANCH_NAME }} )
+            if [[ ${RESPONSE_CODE} != "200" ]]
+            then
+              echo "ACTION_BRANCH_NAME=${{ github.head_ref }}" >> $GITHUB_ENV
+            fi
+          fi
+
+          RESPONSE_CODE=$(curl -s -o /dev/null -w "%{http_code}" ${BASE_QUERY_URL}/${{ env.ACTION_BRANCH_NAME }} )
+          if [[ ${RESPONSE_CODE} != "200" ]]
+          then
+            echo "ACTION_BRANCH_NAME=${{ github.base_ref }}" >> $GITHUB_ENV
+            RESPONSE_CODE=$(curl -s -o /dev/null -w "%{http_code}" ${BASE_QUERY_URL}/${{ env.ACTION_BRANCH_NAME }} )
+            if [[ ${RESPONSE_CODE} != "200" ]]
+            then
+              echo "ACTION_BRANCH_NAME=master" >> $GITHUB_ENV
+            fi
+          fi
+
+      - name: Download FastDDS documentation repo
+        uses: actions/checkout@v3
+        with:
+          repository: eProsima/Fast-DDS-docs
+          path: src/fastdds-docs
+          ref: ${{ env.ACTION_BRANCH_NAME }}
+
+      - name: Install required python packages
+        run: |
+          pip3 install -r src/fastdds-docs/docs/requirements.txt
+
+      - name: Build and test documentation
+        run: |
+          colcon build --event-handlers=console_direct+ --metas
+          colcon test --event-handlers=console_direct+ --packages-select fastdds-docs

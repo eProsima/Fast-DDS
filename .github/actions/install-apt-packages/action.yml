@@ -5,7 +5,8 @@ runs:
   steps:
     - id: install-apt-packages
       run: |
-        sudo apt -y install \
+        sudo apt-get update
+        sudo apt-get -y install \
           curl \
           grep \
           libasio-dev \
