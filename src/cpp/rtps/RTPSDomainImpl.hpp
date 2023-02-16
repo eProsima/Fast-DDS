@@ -30,6 +30,8 @@
 
 #include <utils/SystemInfo.hpp>
 
+#include <utils/shared_memory/BoostAtExitRegistry.hpp>
+
 namespace eprosima {
 namespace fastrtps {
 namespace rtps {
@@ -218,6 +220,10 @@ private:
 
     void removeRTPSParticipant_nts(
             t_p_RTPSParticipant&);
+
+    std::shared_ptr<eprosima::detail::BoostAtExitRegistry> boost_singleton_handler_ { eprosima::detail::
+                                                                                              BoostAtExitRegistry::
+                                                                                              get_instance() };
 
     std::mutex m_mutex;
 

@@ -35,7 +35,6 @@ public:
     RobustInterprocessCondition()
         : list_listening_(SemaphoreList::LIST_NULL, SemaphoreList::LIST_NULL)
         , list_free_(0, MAX_LISTENERS - 1)
-        , boost_singleton_handler_(eprosima::detail::BoostAtExitRegistry::get_instance())
     {
         init_sem_list();
     }
@@ -325,7 +324,6 @@ private:
     SemaphoreList list_listening_;
     SemaphoreList list_free_;
     bi::interprocess_mutex semaphore_lists_mutex_;
-    std::shared_ptr<eprosima::detail::BoostAtExitRegistry> boost_singleton_handler_;
 
     void init_sem_list()
     {
