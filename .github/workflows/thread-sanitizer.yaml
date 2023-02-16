@@ -27,6 +27,10 @@ on:
       - '**.txt'
       - '!**/CMakeLists.txt'
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
 env:
   TSAN_OPTIONS: second_deadlock_stack=1
   # ubuntu host doesn't have an environment SHELL value (docker and vm images does)???
