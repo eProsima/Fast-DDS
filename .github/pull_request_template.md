@@ -40,6 +40,7 @@
 
 
 ## Reviewer Checklist
+- [ ] The PR has a milestone assigned.
 - [ ] Check contributor checklist is correct.
 - [ ] Check CI results: changes do not issue any warning.
 - [ ] Check CI results: failing tests are unrelated with the changes.
