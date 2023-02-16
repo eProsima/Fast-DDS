@@ -200,6 +200,7 @@ typedef struct ThroughputCommandType
     e_Command m_command;
     uint32_t m_size = 0;
     uint32_t m_demand = 0;
+    uint64_t m_receivedsamples = 0;
     uint32_t m_lostsamples = 0;
     uint64_t m_lastrecsample = 0;
     uint64_t m_totaltime = 0;
