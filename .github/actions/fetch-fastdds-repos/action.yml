@@ -26,10 +26,10 @@ runs:
         git clone https://github.com/eProsima/Fast-CDR.git ${{ inputs.target_directory }}/fastcdr
       shell: bash
     - name: Fetch GoogleTest
-      if: ${{ inputs.googletest }} == 'true'
+      if: ${{ inputs.googletest == 'true' }}
       run: git clone https://github.com/google/googletest.git --branch release-1.12.1 ${{ inputs.target_directory }}/googletest
       shell: bash
     - name: Fetch Discovery Server
-      if: ${{ inputs.discovery_server }} == 'true'
-      run: git clone https://github.com/eProsima/Discovery-Server.git ${{ inputs.target_directory }}/discovery_server
+      if: ${{ inputs.discovery_server == 'true' }}
+      run: git clone https://github.com/eProsima/Discovery-Server.git ${{ inputs.target_directory }}/discovery_server --branch ${{ inputs.discovery_server_branch }}
       shell: bash
