@@ -101,7 +101,7 @@ jobs:
           target_directory: src
           googletest: true
           discovery_server: true
-          discovery_server_branch: ${{ github.event.inputs.discovery_server_branch || env.DEFAULT_DISCOVERY_SERVER_BRANCH }}
+          discovery_server_branch: ${{ github.base_ref || github.head_ref || github.event.inputs.discovery_server_branch || env.DEFAULT_DISCOVERY_SERVER_BRANCH }}
 
       - name: Build workspace
         run: |

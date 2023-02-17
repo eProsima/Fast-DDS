@@ -31,5 +31,13 @@ runs:
       shell: bash
     - name: Fetch Discovery Server
       if: ${{ inputs.discovery_server == 'true' }}
-      run: git clone https://github.com/eProsima/Discovery-Server.git ${{ inputs.target_directory }}/discovery_server --branch ${{ inputs.discovery_server_branch }}
+      run: |
+        base_dir=${PWD}
+        git clone https://github.com/eProsima/Discovery-Server.git ${{ inputs.target_directory }}/discovery_server
+        cd ${{ inputs.target_directory }}/discovery_server
+        branch_exists=$(git ls-remote --heads origin '${{ inputs.discovery_server_branch }}')
+        if [[ -z ${branch_exists} ]]; then
+            git checkout '${{ inputs.discovery_server_branch }}'
+        fi
+        cd ${base_dir}
       shell: bash
