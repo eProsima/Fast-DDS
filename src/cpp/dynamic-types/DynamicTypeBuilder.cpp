@@ -69,7 +69,7 @@ DynamicTypeBuilder::DynamicTypeBuilder(
 //    refresh_member_ids();
 }
 
-member_iterator DynamicTypeBuilder::add_empty_member(
+DynamicTypeBuilder::member_iterator DynamicTypeBuilder::add_empty_member(
         uint32_t index,
         const std::string& name)
 {
@@ -78,8 +78,8 @@ member_iterator DynamicTypeBuilder::add_empty_member(
     if( index >=  members_.size() )
     {
         // at the end
-        index = members_.size();
-        it = members_.emplace_back(index, name);
+        index = uint32_t(members_.size());
+        it = members_.emplace(members_.end(), index, name);
     }
     else
     {
@@ -95,111 +95,113 @@ member_iterator DynamicTypeBuilder::add_empty_member(
         }
     }
 
-    if (get_kind() == TK_BITMASK && index >= get_bounds(0))
+    if (get_kind() == TK_BITMASK)
     {
-        EPROSIMA_LOG_WARNING(DYN_TYPES, "Error adding member, out of bounds.");
-        return ReturnCode_t::RETCODE_BAD_PARAMETER;
+        if (index >= get_bounds(0))
+        {
+            throw std::system_error(
+                    ReturnCode_t::RETCODE_BAD_PARAMETER,
+                    "Error adding member, out of bounds.");
+        }
 
         it->annotation_set_position(static_cast<uint16_t>(index));
     }
 
-    return ReturnCode_t::RETCODE_OK;
+    return it;
 }
 
 ReturnCode_t DynamicTypeBuilder::add_member(
-        const MemberDescriptor& descriptor)
+        const MemberDescriptor& descriptor) noexcept
 {
-    if (descriptor.is_consistent(get_kind()))
+    try
     {
-        if (get_kind() == TK_ANNOTATION || get_kind() == TK_BITMASK
-                || get_kind() == TK_ENUM || get_kind() == TK_STRUCTURE
-                || get_kind() == TK_UNION || get_kind() == TK_BITSET)
+        if (!descriptor.is_consistent(get_kind()))
         {
-            auto member_name = descriptor.get_name();
-
-            // Bitsets allow multiple empty members.
-            if( kind_ != TK_BITSET && descriptor.get_name().empty())
-            {
-                EPROSIMA_LOG_ERROR(DYN_TYPES, "Error adding member, missing proper name.");
-                return ReturnCode_t::RETCODE_BAD_PARAMETER;
-            }
-
-            if(!member_name.empty() && exists_member_by_name(member_name) ||
-            )
-            {
-                EPROSIMA_LOG_ERROR(DYN_TYPES, "Error adding member, there is other member with the same name.");
-                return ReturnCode_t::RETCODE_BAD_PARAMETER;
-            }
-
-            auto member_id = descriptor.get_id();
-            if (member_id != MEMBER_ID_INVALID && exists_member_by_id(member_id))
-            {
-                EPROSIMA_LOG_ERROR(DYN_TYPES, "Error adding member, there is other member with the same id.");
-                return ReturnCode_t::RETCODE_BAD_PARAMETER;
-            }
-
-            if (check_union_configuration(descriptor))
-            {
-                auto it = add_empty_member(descriptor.get_index(), member_name);
-
-                DynamicTypeMember& newMember = *it;
-                // Copy all elements but keep the index
-                auto member_index = newMember.get_index();
-                newMember = descriptor;
-                newMember.set_index(member_index);
-
-                if(member_id == MEMBER_ID_INVALID)
-                {
-                    // assing a new one
-                    while(exists_member_by_id(current_member_id_))
-                    {
-                        member_id = ++current_member_id_;
-                    }
-
-                    newMember.set_id(member_id);
-                }
-
-                // update the indexes collections
-                if (!member_name.empty()) // Don't store empty bitset members.
-                {
-                    member_by_id_.insert(std::make_pair(member_id, &newMember));
-                    member_by_name_.insert(std::make_pair(member_name, &newMember));
-                }
-
-                // advance
-                ++current_member_id_;
-            }
-            else
-            {
-                EPROSIMA_LOG_WARNING(DYN_TYPES, "Error adding member, invalid union parameters.");
-                return ReturnCode_t::RETCODE_BAD_PARAMETER;
-            }
+            throw std::system_error(
+                    ReturnCode_t::RETCODE_BAD_PARAMETER,
+                    "Error adding member, The input descriptor isn't consistent.");
         }
-        else
+
+        if (get_kind() != TK_ANNOTATION && get_kind() != TK_BITMASK
+                && get_kind() != TK_ENUM && get_kind() != TK_STRUCTURE
+                && get_kind() != TK_UNION && get_kind() != TK_BITSET)
         {
-            EPROSIMA_LOG_WARNING(DYN_TYPES, "Error adding member, the current type " << get_kind()
-                                                                                     << " doesn't support members.");
-            return ReturnCode_t::RETCODE_PRECONDITION_NOT_MET;
+            std::ostringstream os;
+            os << "Error adding member, the current type " << get_kind() << " doesn't support members.";
+
+            throw std::system_error(
+                    ReturnCode_t::RETCODE_PRECONDITION_NOT_MET,
+                    os.str());
         }
+
+        auto member_name = descriptor.get_name();
+
+        // Bitsets allow multiple empty members.
+        if( get_kind() != TK_BITSET && descriptor.get_name().empty())
+        {
+            throw std::system_error(
+                    ReturnCode_t::RETCODE_BAD_PARAMETER,
+                    "Error adding member, missing proper name.");
+        }
+
+        if(!member_name.empty() && exists_member_by_name(member_name))
+        {
+            throw std::system_error(
+                    ReturnCode_t::RETCODE_BAD_PARAMETER,
+                    "Error adding member, there is other member with the same name.");
+        }
+
+        auto member_id = descriptor.get_id();
+        if (member_id != MEMBER_ID_INVALID && exists_member_by_id(member_id))
+        {
+            throw std::system_error(
+                    ReturnCode_t::RETCODE_BAD_PARAMETER,
+                    "Error adding member, there is other member with the same id.");
+        }
+
+        if (!check_union_configuration(descriptor))
+        {
+            throw std::system_error(
+                    ReturnCode_t::RETCODE_BAD_PARAMETER,
+                    "Error adding member, invalid union parameters.");
+        }
+
+        auto it = add_empty_member(descriptor.get_index(), member_name);
+
+        DynamicTypeMember& newMember = *it;
+        // Copy all elements but keep the index
+        auto member_index = newMember.get_index();
+        newMember = descriptor;
+        newMember.set_index(member_index);
+
+        if(member_id == MEMBER_ID_INVALID)
+        {
+            // assing a new one
+            while(exists_member_by_id(current_member_id_))
+            {
+                member_id = ++current_member_id_;
+            }
+
+            newMember.set_id(member_id);
+        }
+
+        // update the indexes collections
+        if (!member_name.empty()) // Don't store empty bitset members.
+        {
+            member_by_id_.insert(std::make_pair(member_id, &newMember));
+            member_by_name_.insert(std::make_pair(member_name, &newMember));
+        }
+
+        // advance
+        ++current_member_id_;
     }
-    else
+    catch(std::system_error& e)
     {
-        EPROSIMA_LOG_WARNING(DYN_TYPES, "Error adding member, The input descriptor isn't consistent.");
-        return ReturnCode_t::RETCODE_BAD_PARAMETER;
+        EPROSIMA_LOG_ERROR(DYN_TYPES, e.what());
+        return e.code();
     }
 
     return ReturnCode_t::RETCODE_OK;
-}
-
-RTPS_DllAPI MemberId DynamicTypeBuilder::get_member_id_by_name(
-        const std::string& name) const
-{
-    auto it = member_by_name_.find(name);
-    if (it != member_by_name_.end())
-    {
-        return it->second->get_id();
-    }
-    return MEMBER_ID_INVALID;
 }
 
 DynamicType_ptr DynamicTypeBuilder::build() const

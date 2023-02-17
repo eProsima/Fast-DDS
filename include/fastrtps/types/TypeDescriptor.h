@@ -15,8 +15,7 @@
 #ifndef TYPES_TYPE_DESCRIPTOR_H
 #define TYPES_TYPE_DESCRIPTOR_H
 
-#include <fastrtps/types/AnnotationDescriptor.h>
-#include <fastrtps/types/TypesBase.h>
+#include <fastrtps/types/DynamicTypeMember.h>
 
 #include <list>
 #include <map>
@@ -27,8 +26,6 @@ namespace eprosima {
 namespace fastrtps {
 namespace types {
 
-class MemberDescriptor;
-class DynamicTypeMember;
 class DynamicType;
 
 class TypeDescriptor
@@ -55,7 +52,7 @@ protected:
 
     RTPS_DllAPI void clean();
 
-    RTPS_DllAPI MemberId get_members_count() const;
+    RTPS_DllAPI uint32_t get_members_count() const;
 
     static bool is_type_name_consistent(
             const std::string& sName);
@@ -107,6 +104,16 @@ protected:
     RTPS_DllAPI MemberId get_annotation_count() const;
 
 public:
+    // ancillary for DynamicData interfaces
+    RTPS_DllAPI MemberId get_member_id_by_name(
+            const std::string& name) const;
+
+    RTPS_DllAPI MemberId get_member_id_at_index(
+            uint32_t index) const;
+
+    RTPS_DllAPI std::pair<const DynamicTypeMember*, bool> get_member(
+            MemberId id) const;
+public:
 
     RTPS_DllAPI TypeDescriptor() = default;
 
@@ -157,16 +164,20 @@ public:
     RTPS_DllAPI void set_name(
             std::string name);
 
+    // TODO: doxygen
     RTPS_DllAPI ReturnCode_t get_all_members(
-            std::map<MemberId, DynamicTypeMember*>& members) const;
+            std::map<MemberId, const DynamicTypeMember*>& members) const;
 
+    // TODO: doxygen
     RTPS_DllAPI ReturnCode_t get_all_members_by_name(
-            std::map<std::string, DynamicTypeMember*>& members) const;
+            std::map<std::string, const DynamicTypeMember*>& members) const;
 
+    // TODO: doxygen
     RTPS_DllAPI ReturnCode_t get_member(
             DynamicTypeMember& member,
             MemberId id) const;
 
+    // TODO: doxygen
     RTPS_DllAPI ReturnCode_t get_member_by_name(
             DynamicTypeMember& member,
             const std::string& name) const;

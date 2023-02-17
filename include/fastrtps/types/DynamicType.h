@@ -93,13 +93,13 @@ protected:
             const DynamicType_ptr pType,
             eprosima::fastcdr::Cdr& cdr) const;
 
-    bool deserialize_discriminator(
+    static bool deserialize_discriminator(
             uint64_t& discriminator_value,
             eprosima::fastcdr::Cdr& cdr);
 
-    void serialize_discriminator(
+    static void serialize_discriminator(
             DynamicData& data,
-            eprosima::fastcdr::Cdr& cdr) const;
+            eprosima::fastcdr::Cdr& cdr);
 
     void serializeKey(
             DynamicData& data,
@@ -130,35 +130,32 @@ public:
             size_t current_alignment = 0);
 
 public:
+    // ancillary for DynamicData interfaces
+    using get_member_id_by_name;
+    using get_member_id_at_index;
 
+public:
+
+    // TODO: doxigen
     RTPS_DllAPI bool equals(
             const DynamicType& other) const;
 
     using TypeDescriptor::get_all_members;
-
     using TypeDescriptor::get_all_members_by_name;
-
     using TypeDescriptor::get_member;
-
     using TypeDescriptor::get_member_by_name;
-
     using TypeDescriptor::get_bounds;
-
     using TypeDescriptor::get_bounds_size;
 
+    // TODO: doxigen
     RTPS_DllAPI ReturnCode_t get_descriptor(
             TypeDescriptor& descriptor) const;
 
     using TypeDescriptor::get_kind;
-
     using TypeDescriptor::get_name;
-
     using TypeDescriptor::get_members_count;
-
     using TypeDescriptor::get_total_bounds;
-
     using TypeDescriptor::get_annotation;
-
     using TypeDescriptor::get_annotation_count;
 
     RTPS_DllAPI bool has_children() const;

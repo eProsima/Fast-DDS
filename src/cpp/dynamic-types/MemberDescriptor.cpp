@@ -75,7 +75,7 @@ MemberDescriptor::MemberDescriptor(
 void MemberDescriptor::add_union_case_index(
         uint64_t value)
 {
-    labels_.push_back(value);
+    labels_.insert(value);
 }
 
 bool MemberDescriptor::check_union_labels(
@@ -105,7 +105,7 @@ bool MemberDescriptor::operator==(const MemberDescriptor& other) const
            default_value_ == other.default_value_ &&
            index_ == other.index_ &&
            labels_ == other.labels_ &&
-           default_label_ == default_label &&
+           default_label_ == other.default_label_ &&
            (type_ == other.type_ || type_ && other.type_ && *type_ == *other.type_ );
 }
 
@@ -127,8 +127,7 @@ uint32_t MemberDescriptor::get_index() const
 
 TypeKind MemberDescriptor::get_kind() const
 {
-    auto sp = get_type();
-    return sp ? sp->get_kind() : TK_NONE;
+    return type_ ? type_->get_kind() : TK_NONE;
 }
 
 std::string MemberDescriptor::get_name() const
@@ -138,7 +137,7 @@ std::string MemberDescriptor::get_name() const
 
 std::vector<uint64_t> MemberDescriptor::get_union_labels() const
 {
-    return std::vector<uint64_t>(labels_.begin(), labels.end());
+    return std::vector<uint64_t>(labels_.begin(), labels_.end());
 }
 
 bool MemberDescriptor::is_consistent(
@@ -347,7 +346,7 @@ void MemberDescriptor::set_type(
 }
 
 void MemberDescriptor::set_type(
-        const DynamicType_ptr type)
+        const DynamicType_ptr& type)
 {
     type_ = type;
 }

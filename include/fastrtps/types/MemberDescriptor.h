@@ -31,11 +31,11 @@ class MemberDescriptor
 protected:
     std::string name_;                  // Name of the member
     MemberId id_ = MEMBER_ID_INVALID;   // MemberId, it should be filled automatically when the member is added.
-    DynamicType_ptr type_;             // Member's Type.
-    std::string default_value_ = false; // Default value of the member in string.
+    DynamicType_ptr type_;              // Member's Type.
+    std::string default_value_;         // Default value of the member in string.
     uint32_t index_ = INDEX_INVALID;    // Definition order of the member inside it's parent.
     std::set<uint64_t> labels_;         // Case Labels for unions.
-    bool default_label_;                // TRUE if it's the default option of a union.
+    bool default_label_ = false;        // TRUE if it's the default option of a union.
 
     friend class DynamicTypeBuilderFactory;
     friend class DynamicData;

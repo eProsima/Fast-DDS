@@ -21,6 +21,8 @@
 #include <fastrtps/types/DynamicTypeMember.h>
 #include <fastrtps/types/TypeDescriptor.h>
 
+#include <fastcdr/Cdr.h>
+
 using namespace eprosima::fastrtps::types;
 
 DynamicType::DynamicType(
@@ -165,7 +167,7 @@ bool DynamicType::deserialize(
 
 #else
             auto it = data.values_.begin();
-            cdr >> *((int32_t*)it->second);
+            cdr >> *(int32_t*)it->second;
 #endif // ifdef DYNAMIC_TYPES_CHECKING
             break;
         }
@@ -378,7 +380,7 @@ bool DynamicType::deserialize(
         }
         case TK_UNION:
         {
-            data.union_discriminator_->deserialize_discriminator(cdr);
+            DynamicType::deserialize_discriminator(data.union_discriminator_, cdr);
             data.update_union_discriminator();
             data.set_union_id(data.union_id_);
             if (data.union_id_ != MEMBER_ID_INVALID)

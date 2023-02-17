@@ -129,11 +129,12 @@ public:
         return ReturnCode_t::RETCODE_OK;
     }
 
+    // TODO: doxygen
     RTPS_DllAPI ReturnCode_t add_member(
-            const MemberDescriptor& descriptor);
+            const MemberDescriptor& descriptor) noexcept;
 
     template<typename... Ts>
-    ReturnCode_t add_member(Ts&&... Args)
+    ReturnCode_t add_member(Ts&&... Args) noexcept
     {
         return add_member(MemberDescriptor(std::forward<Ts>(Args)...));
     }
@@ -178,8 +179,7 @@ public:
 
     using TypeDescriptor::get_name;
 
-    RTPS_DllAPI MemberId get_member_id_by_name(
-            const std::string& name) const;
+    using TypeDescriptor::get_member_id_by_name;
 
     using TypeDescriptor::is_consistent;
 

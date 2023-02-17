@@ -184,6 +184,7 @@ module DDS {
         readonly attribute DynamicType type;
  
         DDS::ReturnCode_t get_descriptor( inout MemberDescriptor value, in MemberId id);
+        // Barro: This is an errata (see 7.5.2.11.2)
         DDS::ReturnCode_t set_descriptor( in MemberId id, in MemberDescriptor value);
  
         boolean equals(in DynamicData other);

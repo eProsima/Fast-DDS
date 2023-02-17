@@ -17,6 +17,7 @@
 
 #include <fastrtps/types/TypesBase.h>
 #include <fastrtps/types/MemberDescriptor.h>
+#include <fastrtps/types/AnnotationDescriptor.h>
 
 namespace eprosima {
 namespace fastrtps {

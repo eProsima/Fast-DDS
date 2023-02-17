@@ -69,7 +69,7 @@ void TypeDescriptor::clean()
     element_type_.reset();
     key_element_type_.reset();
 
-    members_.clear;
+    members_.clear();
     member_by_id_.clear();
     member_by_name_.clear();
 }
@@ -276,7 +276,7 @@ void TypeDescriptor::set_name(
 
 std::pair<TypeDescriptor::annotation_iterator, bool>
 TypeDescriptor::get_annotation(
-        const std::string& name)
+        const std::string& name) const
 {
     annotation_iterator it = annotation_.begin();
 
@@ -297,12 +297,12 @@ TypeDescriptor::get_annotation(
 // Annotations application
 bool TypeDescriptor::annotation_is_extensibility() const
 {
-    return get_annotation(ANNOTATION_EXTENSIBILITY_ID) != nullptr;
+    return get_annotation(ANNOTATION_EXTENSIBILITY_ID).second;
 }
 
 bool TypeDescriptor::annotation_is_mutable() const
 {
-    if (get_annotation(ANNOTATION_MUTABLE_ID) != nullptr)
+    if (get_annotation(ANNOTATION_MUTABLE_ID).second)
     {
         return true;
     }
@@ -323,7 +323,7 @@ bool TypeDescriptor::annotation_is_mutable() const
 
 bool TypeDescriptor::annotation_is_final() const
 {
-    if (get_annotation(ANNOTATION_FINAL_ID) != nullptr)
+    if (get_annotation(ANNOTATION_FINAL_ID).second)
     {
         return true;
     }
@@ -344,7 +344,7 @@ bool TypeDescriptor::annotation_is_final() const
 
 bool TypeDescriptor::annotation_is_appendable() const
 {
-    if (get_annotation(ANNOTATION_APPENDABLE_ID) != nullptr)
+    if (get_annotation(ANNOTATION_APPENDABLE_ID).second)
     {
         return true;
     }
@@ -365,17 +365,17 @@ bool TypeDescriptor::annotation_is_appendable() const
 
 bool TypeDescriptor::annotation_is_nested() const
 {
-    return get_annotation(ANNOTATION_NESTED_ID) != nullptr;
+    return get_annotation(ANNOTATION_NESTED_ID).second;
 }
 
 bool TypeDescriptor::annotation_is_bit_bound() const
 {
-    return get_annotation(ANNOTATION_BIT_BOUND_ID) != nullptr;
+    return get_annotation(ANNOTATION_BIT_BOUND_ID).second;
 }
 
 bool TypeDescriptor::annotation_is_key() const
 {
-    return get_annotation(ANNOTATION_KEY_ID) != nullptr || get_annotation(ANNOTATION_EPKEY_ID) != nullptr;
+    return get_annotation(ANNOTATION_KEY_ID).second || get_annotation(ANNOTATION_EPKEY_ID).second;
 }
 
 bool TypeDescriptor::annotation_is_non_serialized() const
@@ -480,14 +480,14 @@ bool TypeDescriptor::key_annotation() const
 }
 
 ReturnCode_t TypeDescriptor::get_all_members_by_name(
-        std::map<std::string,const DynamicTypeMember*>& members) const
+        std::map<std::string, const DynamicTypeMember*>& members) const
 {
     members = member_by_name_;
     return ReturnCode_t::RETCODE_OK;
 }
 
 ReturnCode_t TypeDescriptor::get_all_members(
-        std::map<MemberId,const DynamicTypeMember*>& members) const
+        std::map<MemberId, const DynamicTypeMember*>& members) const
 {
     members = member_by_id_;
     return ReturnCode_t::RETCODE_OK;
@@ -510,14 +510,32 @@ ReturnCode_t TypeDescriptor::get_member_by_name(
     }
 }
 
-ReturnCode_t TypeDescriptor::get_member(
-        DynamicTypeMember& member,
+std::pair<const DynamicTypeMember*, bool>
+TypeDescriptor::get_member(
         MemberId id) const
 {
     auto it = member_by_id_.find(id);
     if (it != member_by_id_.end())
     {
-        member = *it->second;
+        return {it->second, true};
+    }
+    else
+    {
+        return {nullptr, false};
+    }
+}
+
+ReturnCode_t TypeDescriptor::get_member(
+        DynamicTypeMember& member,
+        MemberId id) const
+{
+    const DynamicTypeMember* pM;
+    bool found;
+
+    std::tie(pM, found) = get_member(id);
+    if(found)
+    {
+        member = *pM;
         return ReturnCode_t::RETCODE_OK;
     }
     else
@@ -527,7 +545,37 @@ ReturnCode_t TypeDescriptor::get_member(
     }
 }
 
-MemberId TypeDescriptor::get_members_count() const
+uint32_t TypeDescriptor::get_members_count() const
 {
-    return static_cast<MemberId>(members_.size());
+    return static_cast<uint32_t>(members_.size());
+}
+
+MemberId TypeDescriptor::get_member_id_by_name(
+        const std::string& name) const
+{
+    member_iterator it;
+    bool found;
+
+    std::tie(it, found) = member_by_name_.find(name);
+
+    if(found)
+    {
+        return it->get_id();
+    }
+
+    return MEMBER_ID_INVALID;
+}
+
+MemberId TypeDescriptor::get_member_id_at_index(
+        uint32_t index) const
+{
+    if(index >= members_.size())
+    {
+        return MEMBER_ID_INVALID;
+    }
+
+    member_iterator it = members_.begin();
+    std::advance(it, index);
+    assert(it->get_index() == index);
+    return it->get_id();
 }

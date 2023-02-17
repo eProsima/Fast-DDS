@@ -21,10 +21,10 @@
 #include <fastrtps/types/DynamicDataFactory.h>
 #include <fastrtps/types/DynamicDataPtr.h>
 #include <fastdds/dds/log/Log.hpp>
-#include <fastcdr/Cdr.h>
 
 #include <locale>
 #include <codecvt>
+#include <algorithm>
 
 namespace eprosima {
 namespace fastrtps {
@@ -56,61 +56,16 @@ bool map_compare(
     return left.size() == right.size() && std::equal(left.begin(), left.end(), right.begin(), pred);
 }
 
-DynamicData::DynamicData()
-    : type_(nullptr)
-#ifdef DYNAMIC_TYPES_CHECKING
-    , int32_value_(0)
-    , uint32_value_(0)
-    , int16_value_(0)
-    , uint16_value_(0)
-    , int64_value_(0)
-    , uint64_value_(0)
-    , float32_value_(0.0f)
-    , float64_value_(0.0)
-    , float128_value_(0.0)
-    , char8_value_(0)
-    , char16_value_(0)
-    , byte_value_(0)
-    , bool_value_(false)
-#endif // ifdef DYNAMIC_TYPES_CHECKING
-    , key_element_(false)
-    , default_array_value_(nullptr)
-    , union_label_(UINT64_MAX)
-    , union_id_(MEMBER_ID_INVALID)
-    , union_discriminator_(nullptr)
-{
-}
-
 DynamicData::DynamicData(
         DynamicType_ptr pType)
     : type_(pType)
-#ifdef DYNAMIC_TYPES_CHECKING
-    , int32_value_(0)
-    , uint32_value_(0)
-    , int16_value_(0)
-    , uint16_value_(0)
-    , int64_value_(0)
-    , uint64_value_(0)
-    , float32_value_(0.0f)
-    , float64_value_(0.0)
-    , float128_value_(0.0)
-    , char8_value_(0)
-    , char16_value_(0)
-    , byte_value_(0)
-    , bool_value_(false)
-#endif // ifdef DYNAMIC_TYPES_CHECKING
-    , key_element_(false)
-    , default_array_value_(nullptr)
-    , union_label_(UINT64_MAX)
-    , union_id_(MEMBER_ID_INVALID)
-    , union_discriminator_(nullptr)
 {
     create_members(type_);
 }
 
 DynamicData::DynamicData(
         const DynamicData* pData)
-    : type_(pData->type_)
+    : type_(pData->get_type())
 #ifdef DYNAMIC_TYPES_CHECKING
     , int32_value_(pData->int32_value_)
     , uint32_value_(pData->uint32_value_)
@@ -142,13 +97,15 @@ DynamicData::~DynamicData()
     clean();
 }
 
+DynamicType_ptr DynamicData::get_type() const
+{
+    return type_;
+}
+
 void DynamicData::create_members(
         const DynamicData* pData)
 {
-    for (auto it = pData->descriptors_.begin(); it != pData->descriptors_.end(); ++it)
-    {
-        descriptors_.insert(std::make_pair(it->first, new MemberDescriptor(it->second)));
-    }
+    assert(type_ == pData->type_);
 
 #ifdef DYNAMIC_TYPES_CHECKING
     for (auto it = pData->complex_values_.begin(); it != pData->complex_values_.end(); ++it)
@@ -164,11 +121,15 @@ void DynamicData::create_members(
                     DynamicDataFactory::get_instance()->create_copy((DynamicData*)it->second)));
         }
     }
-    else if (pData->descriptors_.size() > 0)
+    else if (pData->values_.size() > 0)
     {
-        for (auto it = pData->descriptors_.begin(); it != pData->descriptors_.end(); ++it)
+        std::map<MemberId,const DynamicTypeMember*> members;
+        auto res = type_->get_all_members(members);
+        assert(res == ReturnCode_t::RETCODE_OK);
+
+        for(auto& m : members)
         {
-            values_.insert(std::make_pair(it->first, pData->clone_value(it->first, it->second->get_kind())));
+            values_[m.get_id()] = pData->clone_value(m.get_id(), m.get_kind());
         }
     }
     else
@@ -181,7 +142,7 @@ void DynamicData::create_members(
 void DynamicData::create_members(
         DynamicType_ptr pType)
 {
-    std::map<MemberId, DynamicTypeMember*> members;
+    std::map<MemberId, const DynamicTypeMember*> members;
     if (pType->get_all_members(members) == ReturnCode_t::RETCODE_OK)
     {
         if (pType->is_complex_kind())
@@ -192,38 +153,29 @@ void DynamicData::create_members(
                 add_value(pType->get_kind(), MEMBER_ID_INVALID);
             }
 
-            for (auto it = members.begin(); it != members.end(); ++it)
+            for (const auto& m : members)
             {
-                MemberDescriptor* newDescriptor = new MemberDescriptor();
-                if (it->second->get_descriptor(newDescriptor) == ReturnCode_t::RETCODE_OK)
+                if (pType->get_kind() != TK_BITMASK && pType->get_kind() != TK_ENUM)
                 {
-                    descriptors_.insert(std::make_pair(it->first, newDescriptor));
-                    if (pType->get_kind() != TK_BITMASK && pType->get_kind() != TK_ENUM)
+                    DynamicData* data = DynamicDataFactory::get_instance()->create_data(m.second.get_type());
+                    if (m.second.get_kind() != TK_BITSET &&
+                        m.second.get_kind() != TK_STRUCTURE &&
+                        m.second.get_kind() != TK_UNION &&
+                        m.second.get_kind() != TK_SEQUENCE &&
+                        m.second.get_kind() != TK_ARRAY &&
+                        m.second.get_kind() != TK_MAP)
                     {
-                        DynamicData* data = DynamicDataFactory::get_instance()->create_data(newDescriptor->type_);
-                        if (newDescriptor->type_->get_kind() != TK_BITSET &&
-                                newDescriptor->type_->get_kind() != TK_STRUCTURE &&
-                                newDescriptor->type_->get_kind() != TK_UNION &&
-                                newDescriptor->type_->get_kind() != TK_SEQUENCE &&
-                                newDescriptor->type_->get_kind() != TK_ARRAY &&
-                                newDescriptor->type_->get_kind() != TK_MAP)
+                        std::string def_value = m.second.annotation_get_default();
+                        if (!def_value.empty())
                         {
-                            std::string def_value = newDescriptor->annotation_get_default();
-                            if (!def_value.empty())
-                            {
-                                data->set_value(def_value);
-                            }
+                            data->set_value(def_value);
                         }
-#ifdef DYNAMIC_TYPES_CHECKING
-                        complex_values_.insert(std::make_pair(it->first, data));
-#else
-                        values_.insert(std::make_pair(it->first, data));
-#endif // ifdef DYNAMIC_TYPES_CHECKING
                     }
-                }
-                else
-                {
-                    delete newDescriptor;
+#ifdef DYNAMIC_TYPES_CHECKING
+                    complex_values_.insert(std::make_pair(m.first, data));
+#else
+                    values_.insert(std::make_pair(m.first, data));
+#endif // ifdef DYNAMIC_TYPES_CHECKING
                 }
             }
 
@@ -232,20 +184,20 @@ void DynamicData::create_members(
             {
                 bool defaultValue = false;
                 // Search the default value.
-                for (auto it = descriptors_.begin(); it != descriptors_.end(); ++it)
+                for (const auto& m : members)
                 {
-                    if (it->second->is_default_union_value())
+                    if (m.second.is_default_union_value())
                     {
-                        set_union_id(it->first);
+                        set_union_id(m.first);
                         defaultValue = true;
                         break;
                     }
                 }
 
                 // If there isn't a default value... set the first element of the union
-                if (!defaultValue && descriptors_.size() > 0)
+                if (!defaultValue && members.size() > 0)
                 {
-                    set_union_id(descriptors_.begin()->first);
+                    set_union_id(get_member_id_at_index(0));
                 }
             }
         }
@@ -260,33 +212,8 @@ ReturnCode_t DynamicData::get_descriptor(
         MemberDescriptor& value,
         MemberId id)
 {
-    auto it = descriptors_.find(id);
-    if (it != descriptors_.end())
-    {
-        value.copy_from(it->second);
-        return ReturnCode_t::RETCODE_OK;
-    }
-    else
-    {
-        EPROSIMA_LOG_WARNING(DYN_TYPES, "Error getting MemberDescriptor. MemberId not found.");
-        return ReturnCode_t::RETCODE_BAD_PARAMETER;
-    }
-}
-
-ReturnCode_t DynamicData::set_descriptor(
-        MemberId id,
-        const MemberDescriptor* value)
-{
-    if (descriptors_.find(id) == descriptors_.end())
-    {
-        descriptors_.insert(std::make_pair(id, new MemberDescriptor(value)));
-        return ReturnCode_t::RETCODE_OK;
-    }
-    else
-    {
-        EPROSIMA_LOG_WARNING(DYN_TYPES, "Error setting MemberDescriptor. MemberId found.");
-        return ReturnCode_t::RETCODE_BAD_PARAMETER;
-    }
+    assert(type_);
+    return type_->get_descriptor(value, id);
 }
 
 bool DynamicData::equals(
@@ -298,18 +225,8 @@ bool DynamicData::equals(
         {
             return true;
         }
-        else if (get_item_count() == other->get_item_count() && type_->equals(other->type_.get()) &&
-                descriptors_.size() == other->descriptors_.size())
+        else if (type_ == other->type_ || type_->equals(other->type_.get()))
         {
-            for (auto it = descriptors_.begin(); it != descriptors_.end(); ++it)
-            {
-                auto otherDescIt = other->descriptors_.find(it->first);
-                if (otherDescIt == other->descriptors_.end() || !it->second->equals(otherDescIt->second))
-                {
-                    return false;
-                }
-            }
-
             // Optimization for unions, only check the selected element.
             if (get_kind() == TK_UNION)
             {
@@ -392,30 +309,20 @@ bool DynamicData::equals(
                 }
                 else if (type_->is_complex_kind())
                 {
-                    for (auto it = descriptors_.begin(); it != descriptors_.end(); ++it)
-                    {
-                        auto currentIt = values_.find(it->first);
-                        auto otherIt = other->values_.find(it->first);
-                        if (!((DynamicData*)currentIt->second)->equals(((DynamicData*)otherIt->second)))
-                        {
-                            return false;
-                        }
-                    }
-                }
-                else if (descriptors_.size() > 0)
-                {
-                    for (auto it = descriptors_.begin(); it != descriptors_.end(); ++it)
-                    {
-                        auto currentIt = values_.find(it->first);
-                        auto otherIt = other->values_.find(it->first);
-                        if (!compare_values(it->second->get_kind(), currentIt->second, otherIt->second))
-                        {
-                            return false;
-                        }
-                    }
+                    // array, map, sequence, structure, bitset, anotation
+                    return values_.size() != other->values_.size() &&
+                           std::equal(
+                                values_.begin(),
+                                values_.end(),
+                                other->values_.begin(),
+                                [](const decltype(values_)::value_type& l, const decltype(values_)::value_type& r)
+                                {
+                                    return ((DynamicData*)l.second)->equals((DynamicData*)r.second);
+                                });
                 }
                 else
                 {
+                    // primitives
                     if (!compare_values(get_kind(), values_.begin()->second, other->values_.begin()->second))
                     {
                         return false;
@@ -432,27 +339,15 @@ bool DynamicData::equals(
 MemberId DynamicData::get_member_id_by_name(
         const std::string& name) const
 {
-    for (auto it = descriptors_.begin(); it != descriptors_.end(); ++it)
-    {
-        if (it->second->get_name() == name)
-        {
-            return it->first;
-        }
-    }
-    return MEMBER_ID_INVALID;
+    assert(type_);
+    return type_->get_member_id_by_name(name);
 }
 
 MemberId DynamicData::get_member_id_at_index(
         uint32_t index) const
 {
-    for (auto it = descriptors_.begin(); it != descriptors_.end(); ++it)
-    {
-        if (it->second->get_index() == index)
-        {
-            return it->first;
-        }
-    }
-    return MEMBER_ID_INVALID;
+    assert(type_);
+    return type_->get_member_id_at_index(name);
 }
 
 TypeKind DynamicData::get_kind() const
@@ -635,13 +530,7 @@ void DynamicData::clean()
 
     clean_members();
 
-    type_ = nullptr;
-
-    for (auto it = descriptors_.begin(); it != descriptors_.end(); ++it)
-    {
-        delete it->second;
-    }
-    descriptors_.clear();
+    type_.reset();
 }
 
 ReturnCode_t DynamicData::clear_all_values()
@@ -654,23 +543,17 @@ ReturnCode_t DynamicData::clear_all_values()
         }
         else
         {
-            for (auto it = descriptors_.begin(); it != descriptors_.end(); ++it)
-            {
 #ifdef DYNAMIC_TYPES_CHECKING
-                auto itValue = complex_values_.find(it->first);
-                if (itValue != complex_values_.end())
-                {
-                    itValue->second->clear_all_values();
-                }
-#else
-                auto itValue = values_.find(it->first);
-                if (itValue != values_.end())
-                {
-                    ((DynamicData*)itValue->second)->clear_all_values();
-                }
-#endif // ifdef DYNAMIC_TYPES_CHECKING
+            for (auto& e : complex_values_)
+            {
+                e.second->clear_all_values();
             }
-        }
+#else
+            for (auto& e : values_)
+            {
+                ((DynamicData*)e.second)->clear_all_values();
+            }
+#endif // ifdef DYNAMIC_TYPES_CHECKING
     }
     else
     {
@@ -857,22 +740,17 @@ ReturnCode_t DynamicData::clear_nonkey_values()
 {
     if (type_->is_complex_kind())
     {
-        for (auto it = descriptors_.begin(); it != descriptors_.end(); ++it)
-        {
 #ifdef DYNAMIC_TYPES_CHECKING
-            auto itValue = complex_values_.find(it->first);
-            if (itValue != complex_values_.end())
+            for (auto& e : complex_values_)
             {
-                itValue->second->clear_nonkey_values();
+                e.second->clear_nonkey_values();
             }
 #else
-            auto itValue = values_.find(it->first);
-            if (itValue != values_.end())
+            for (auto& e : values_)
             {
-                ((DynamicData*)itValue->second)->clear_nonkey_values();
+                ((DynamicData*)e.second)->clear_nonkey_values();
             }
 #endif // ifdef DYNAMIC_TYPES_CHECKING
-        }
     }
     else
     {
@@ -887,30 +765,19 @@ ReturnCode_t DynamicData::clear_nonkey_values()
 ReturnCode_t DynamicData::clear_value(
         MemberId id)
 {
-    auto it = descriptors_.find(id);
-    if (it != descriptors_.end())
-    {
-        if (type_->is_complex_kind())
-        {
 #ifdef DYNAMIC_TYPES_CHECKING
-            auto itValue = complex_values_.find(it->first);
-            if (itValue != complex_values_.end())
-            {
-                itValue->second->clear_all_values();
-            }
-#else
-            auto itValue = values_.find(it->first);
-            if (itValue != values_.end())
-            {
-                ((DynamicData*)itValue->second)->clear_all_values();
-            }
-#endif // ifdef DYNAMIC_TYPES_CHECKING
-        }
-        else
-        {
-            set_default_value(id);
-        }
+    auto itValue = complex_values_.find(id);
+    if (itValue != complex_values_.end())
+    {
+        itValue->second->clear_all_values();
     }
+#else
+    auto itValue = values_.find(id);
+    if (itValue != values_.end())
+    {
+        ((DynamicData*)itValue->second)->clear_all_values();
+    }
+#endif // ifdef DYNAMIC_TYPES_CHECKING
     else
     {
         set_default_value(id);
@@ -1474,12 +1341,20 @@ void DynamicData::set_value(
 void DynamicData::set_default_value(
         MemberId id)
 {
-    std::string defaultValue = "";
-    auto it = descriptors_.find(id);
-    if (it != descriptors_.end())
+    assert(type_);
+
+    std::string defaultValue;
+    const DynamicTypeMember* pM;
+    bool found;
+
+    std::tie(pM, found) = type_->get_member(id);
+
+    if(!found)
     {
-        defaultValue = it->second->get_default_value();
+        return;
     }
+
+    defaultValue = pM->get_default_value();
 
     switch (type_->kind_)
     {
@@ -1932,14 +1807,18 @@ ReturnCode_t DynamicData::set_int32_value(
         }
         else if (id != MEMBER_ID_INVALID)
         {
-            auto itDescriptor = descriptors_.find(id);
             if (get_kind() == TK_BITSET)
             {
-                if (itDescriptor == descriptors_.end())
+                const DynamicTypeMember* pM = nullptr;
+                bool found;
+
+                std::tie(pM, found) = type_->get_member(id);
+                if (!found)
                 {
                     return ReturnCode_t::RETCODE_BAD_PARAMETER;
                 }
-                uint16_t bit_bound = ((MemberDescriptor*)itDescriptor->second)->annotation_get_bit_bound();
+
+                uint16_t bit_bound = pM->annotation_get_bit_bound();
                 int32_t mask = 0x00;
                 for (uint16_t i = 0; i < bit_bound; ++i)
                 {
@@ -1948,6 +1827,7 @@ ReturnCode_t DynamicData::set_int32_value(
                 }
                 value &= mask;
             }
+
             ReturnCode_t result = ((DynamicData*)it->second)->set_int32_value(value, MEMBER_ID_INVALID);
             if (result == ReturnCode_t::RETCODE_OK && get_kind() == TK_UNION)
             {
@@ -2077,14 +1957,18 @@ ReturnCode_t DynamicData::set_uint32_value(
         }
         else if (id != MEMBER_ID_INVALID)
         {
-            auto itDescriptor = descriptors_.find(id);
+            const DynamicTypeMember* member;
+            bool found;
+
+            std::tie(member, found) = type_->get_member(id);
+
             if (get_kind() == TK_BITSET)
             {
-                if (itDescriptor == descriptors_.end())
+                if (!found)
                 {
                     return ReturnCode_t::RETCODE_BAD_PARAMETER;
                 }
-                uint16_t bit_bound = ((MemberDescriptor*)itDescriptor->second)->annotation_get_bit_bound();
+                uint16_t bit_bound = member->annotation_get_bit_bound();
                 uint32_t mask = 0x00;
                 for (uint16_t i = 0; i < bit_bound; ++i)
                 {
@@ -2222,14 +2106,18 @@ ReturnCode_t DynamicData::set_int16_value(
         }
         else if (id != MEMBER_ID_INVALID)
         {
-            auto itDescriptor = descriptors_.find(id);
+            const DynamicTypeMember* member;
+            bool found;
+
+            std::tie(member, found) = type_->get_member(id);
+
             if (get_kind() == TK_BITSET)
             {
-                if (itDescriptor == descriptors_.end())
+                if (!found)
                 {
                     return ReturnCode_t::RETCODE_BAD_PARAMETER;
                 }
-                uint16_t bit_bound = ((MemberDescriptor*)itDescriptor->second)->annotation_get_bit_bound();
+                uint16_t bit_bound = member->annotation_get_bit_bound();
                 int16_t mask = 0x00;
                 for (uint16_t i = 0; i < bit_bound; ++i)
                 {
@@ -2367,14 +2255,18 @@ ReturnCode_t DynamicData::set_uint16_value(
         }
         else if (id != MEMBER_ID_INVALID)
         {
-            auto itDescriptor = descriptors_.find(id);
+            const DynamicTypeMember* member;
+            bool found;
+
+            std::tie(member, found) = type_->get_member(id);
+
             if (get_kind() == TK_BITSET)
             {
-                if (itDescriptor == descriptors_.end())
+                if (!found)
                 {
                     return ReturnCode_t::RETCODE_BAD_PARAMETER;
                 }
-                uint16_t bit_bound = ((MemberDescriptor*)itDescriptor->second)->annotation_get_bit_bound();
+                uint16_t bit_bound = member->annotation_get_bit_bound();
                 uint16_t mask = 0x00;
                 for (uint16_t i = 0; i < bit_bound; ++i)
                 {
@@ -2511,14 +2403,18 @@ ReturnCode_t DynamicData::set_int64_value(
         }
         else if (id != MEMBER_ID_INVALID)
         {
-            auto itDescriptor = descriptors_.find(id);
+            const DynamicTypeMember* member;
+            bool found;
+
+            std::tie(member, found) = type_->get_member(id);
+
             if (get_kind() == TK_BITSET)
             {
-                if (itDescriptor == descriptors_.end())
+                if (!found)
                 {
                     return ReturnCode_t::RETCODE_BAD_PARAMETER;
                 }
-                uint16_t bit_bound = ((MemberDescriptor*)itDescriptor->second)->annotation_get_bit_bound();
+                uint16_t bit_bound = member->annotation_get_bit_bound();
                 int64_t mask = 0x00;
                 for (uint16_t i = 0; i < bit_bound; ++i)
                 {
@@ -2656,14 +2552,18 @@ ReturnCode_t DynamicData::set_uint64_value(
         }
         else if (id != MEMBER_ID_INVALID)
         {
-            auto itDescriptor = descriptors_.find(id);
+            const DynamicTypeMember* member;
+            bool found;
+
+            std::tie(member, found) = type_->get_member(id);
+
             if (get_kind() == TK_BITSET)
             {
-                if (itDescriptor == descriptors_.end())
+                if (!found)
                 {
                     return ReturnCode_t::RETCODE_BAD_PARAMETER;
                 }
-                uint16_t bit_bound = ((MemberDescriptor*)itDescriptor->second)->annotation_get_bit_bound();
+                uint16_t bit_bound = member->annotation_get_bit_bound();
                 uint64_t mask = 0x00;
                 for (uint16_t i = 0; i < bit_bound; ++i)
                 {
@@ -3388,14 +3288,18 @@ ReturnCode_t DynamicData::set_byte_value(
         }
         else if (id != MEMBER_ID_INVALID)
         {
-            auto itDescriptor = descriptors_.find(id);
+            const DynamicTypeMember* member;
+            bool found;
+
+            std::tie(member, found) = type_->get_member(id);
+
             if (get_kind() == TK_BITSET)
             {
-                if (itDescriptor == descriptors_.end())
+                if (!found)
                 {
                     return ReturnCode_t::RETCODE_BAD_PARAMETER;
                 }
-                uint16_t bit_bound = ((MemberDescriptor*)itDescriptor->second)->annotation_get_bit_bound();
+                uint16_t bit_bound = member->annotation_get_bit_bound();
                 octet mask = 0x00;
                 for (uint16_t i = 0; i < bit_bound; ++i)
                 {
@@ -3476,8 +3380,11 @@ ReturnCode_t DynamicData::get_bool_value(
         }
         else if (get_kind() == TK_BITMASK && id < type_->get_bounds())
         {
-            auto m_id = descriptors_.find(id);
-            MemberDescriptor* member = m_id->second;
+            const DynamicTypeMember* member;
+            bool found;
+
+            std::tie(member, found) = type_->get_member(id);
+            assert(found);
             uint16_t position = member->annotation_get_position();
             value = (*((uint64_t*)it->second) & ((uint64_t)1 << position)) != 0;
             return ReturnCode_t::RETCODE_OK;
@@ -3596,8 +3503,11 @@ ReturnCode_t DynamicData::set_bool_value(
             }
             else if (type_->get_bounds() == BOUND_UNLIMITED || id < type_->get_bounds())
             {
-                auto m_id = descriptors_.find(id);
-                MemberDescriptor* member = m_id->second;
+                const DynamicTypeMember* member;
+                bool found;
+
+                std::tie(member, found) = type_->get_member(id);
+                assert(found);
                 uint16_t position = member->annotation_get_position();
                 if (value)
                 {
@@ -3779,15 +3689,22 @@ void DynamicData::update_union_discriminator()
     if (get_kind() == TK_UNION)
     {
         uint64_t sUnionValue;
+        const DynamicTypeMember* pM;
+        bool found;
+
         union_discriminator_->get_discriminator_value(sUnionValue);
-        for (auto it = descriptors_.begin(); it != descriptors_.end(); ++it)
+
+        for (MemberId id, uint32_t index = 0; index < get_members_count(); ++index)
         {
-            std::vector<uint64_t> unionLabels = it->second->get_union_labels();
-            for (uint64_t label : unionLabels)
+            id = get_member_id_at_index(index);
+            assert(id != MEMBER_ID_INVALID);
+            std::tie(pM, found) = type_->get_member(id);
+            assert(found);
+            for (uint64_t label : pM->get_union_labels())
             {
                 if (sUnionValue == label)
                 {
-                    union_id_ = it->first;
+                    union_id_ = id;
                     union_label_ = label;
                     break;
                 }
@@ -3820,13 +3737,21 @@ ReturnCode_t DynamicData::set_union_id(
 {
     if (get_kind() == TK_UNION)
     {
-        auto it = descriptors_.find(id);
-        if (id == MEMBER_ID_INVALID || it != descriptors_.end())
+        const DynamicTypeMember* pM;
+        bool found = id != MEMBER_ID_INVALID;
+
+        if(found)
+        {
+            std::tie(pM, found) = type_->get_member(id);
+        }
+
+        if (id == MEMBER_ID_INVALID || found)
         {
             union_id_ = id;
-            if (it != descriptors_.end())
+
+            if (found)
             {
-                std::vector<uint64_t> unionLabels = it->second->get_union_labels();
+                std::vector<uint64_t> unionLabels = pM->get_union_labels();
                 if (unionLabels.size() > 0)
                 {
                     union_label_ = unionLabels[0];
@@ -4039,11 +3964,15 @@ ReturnCode_t DynamicData::set_enum_value(
 #ifdef DYNAMIC_TYPES_CHECKING
     if (get_kind() == TK_ENUM && id == MEMBER_ID_INVALID)
     {
-        if (descriptors_.find(value) != descriptors_.end())
+        bool found;
+        std::tie(std::ignore, found) = type_->get_member(value);
+        if (!found)
         {
-            uint32_value_ = value;
-            return ReturnCode_t::RETCODE_OK;
+            return ReturnCode_t::RETCODE_BAD_PARAMETER;
         }
+
+        uint32_value_ = value;
+        return ReturnCode_t::RETCODE_OK;
     }
     else if (id != MEMBER_ID_INVALID)
     {
@@ -4067,18 +3996,21 @@ ReturnCode_t DynamicData::set_enum_value(
             return insertResult;
         }
     }
-    return ReturnCode_t::RETCODE_BAD_PARAMETER;
 #else
     auto itValue = values_.find(id);
     if (itValue != values_.end())
     {
         if (get_kind() == TK_ENUM && id == MEMBER_ID_INVALID)
         {
-            if (descriptors_.find(value) != descriptors_.end())
+            bool found;
+            std::tie(std::ignore, found) = type_->get_member(value);
+            if (!found)
             {
-                *((uint32_t*)itValue->second) = value;
-                return ReturnCode_t::RETCODE_OK;
+                return ReturnCode_t::RETCODE_BAD_PARAMETER;
             }
+
+            *((uint32_t*)itValue->second) = value;
+            return ReturnCode_t::RETCODE_OK;
         }
         else if (id != MEMBER_ID_INVALID)
         {
@@ -4099,8 +4031,6 @@ ReturnCode_t DynamicData::set_enum_value(
         }
         return insertResult;
     }
-
-    return ReturnCode_t::RETCODE_BAD_PARAMETER;
 #endif // ifdef DYNAMIC_TYPES_CHECKING
 }
 
@@ -4111,12 +4041,18 @@ ReturnCode_t DynamicData::get_enum_value(
 #ifdef DYNAMIC_TYPES_CHECKING
     if (get_kind() == TK_ENUM && id == MEMBER_ID_INVALID)
     {
-        auto it = descriptors_.find(uint32_value_);
-        if (it != descriptors_.end())
+        const DynamicTypeMember* pM;
+        bool found;
+
+        std::tie(pM, found) = type_->get_member(uint32_value_);
+
+        if(!found)
         {
-            value = it->second->get_name();
-            return ReturnCode_t::RETCODE_OK;
+            return ReturnCode_t::RETCODE_BAD_PARAMETER;
         }
+
+        value = pM->get_name();
+        return ReturnCode_t::RETCODE_OK;
     }
     else if (id != MEMBER_ID_INVALID)
     {
@@ -4140,12 +4076,18 @@ ReturnCode_t DynamicData::get_enum_value(
     {
         if (get_kind() == TK_ENUM && id == MEMBER_ID_INVALID)
         {
-            auto it = descriptors_.find(*((uint32_t*)itValue->second));
-            if (it != descriptors_.end())
+            const DynamicTypeMember* pM;
+            bool found;
+
+            std::tie(pM, found) = type_->get_member(*((uint32_t*)itValue->second));
+
+            if(!found)
             {
-                value = it->second->get_name();
-                return ReturnCode_t::RETCODE_OK;
+                return ReturnCode_t::RETCODE_BAD_PARAMETER;
             }
+
+            value = pM->get_name();
+            return ReturnCode_t::RETCODE_OK;
         }
         else if (id != MEMBER_ID_INVALID)
         {
@@ -4170,14 +4112,14 @@ ReturnCode_t DynamicData::set_enum_value(
 #ifdef DYNAMIC_TYPES_CHECKING
     if (get_kind() == TK_ENUM && id == MEMBER_ID_INVALID)
     {
-        for (auto it = descriptors_.begin(); it != descriptors_.end(); ++it)
-        {
-            if (it->second->get_name() == value)
-            {
-                uint32_value_ = it->first;
-                return ReturnCode_t::RETCODE_OK;
-            }
+        MemberId eid = get_member_id_by_name(value);
+        if(eid == MEMBER_ID_INVALID)
+        {
+            return ReturnCode_t::RETCODE_BAD_PARAMETER;
         }
+
+        uint32_value_ = eid;
+        return ReturnCode_t::RETCODE_OK;
     }
     else if (id != MEMBER_ID_INVALID)
     {
@@ -4208,14 +4150,14 @@ ReturnCode_t DynamicData::set_enum_value(
     {
         if (get_kind() == TK_ENUM && id == MEMBER_ID_INVALID)
         {
-            for (auto it = descriptors_.begin(); it != descriptors_.end(); ++it)
-            {
-                if (it->second->get_name() == value)
-                {
-                    *((uint32_t*)itValue->second) = it->first;
-                    return ReturnCode_t::RETCODE_OK;
-                }
+            MemberId eid = get_member_id_by_name(value);
+            if(eid == MEMBER_ID_INVALID)
+            {
+                return ReturnCode_t::RETCODE_BAD_PARAMETER;
             }
+
+            *((uint32_t*)itValue->second) = eid;
+            return ReturnCode_t::RETCODE_OK;
         }
         else if (id != MEMBER_ID_INVALID)
         {
