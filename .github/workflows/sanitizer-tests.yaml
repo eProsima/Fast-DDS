@@ -95,10 +95,13 @@ jobs:
 
       - name: Fetch Fast DDS dependencies
         uses: ./src/Fast-DDS/.github/actions/fetch-fastdds-repos
+        env:
+          DEFAULT_DISCOVERY_SERVER_BRANCH: 'master'
         with:
           target_directory: src
           googletest: true
           discovery_server: true
+          discovery_server_branch: ${{ github.event.inputs.discovery_server_branch || env.DEFAULT_DISCOVERY_SERVER_BRANCH }}
 
       - name: Build workspace
         run: |

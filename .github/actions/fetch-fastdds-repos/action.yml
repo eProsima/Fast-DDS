@@ -6,13 +6,17 @@ inputs:
     required: true
     default: '.'
   googletest:
-    description: 'Specifies if Discovery Server repository should be downloaded.'
+    description: 'Specifies if GoogleTest repository should be downloaded.'
     required: false
     default: 'false'
   discovery_server:
     description: 'Specifies if Discovery Server repository should be downloaded.'
     required: false
     default: 'false'
+  discovery_server_branch:
+    description: 'Specifies if Discovery Server branch.'
+    required: false
+    default: 'master'
 runs:
   using: "composite"
   steps:
