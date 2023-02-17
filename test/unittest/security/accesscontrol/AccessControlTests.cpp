@@ -62,7 +62,8 @@ protected:
 
     void get_access_handle(
             const RTPSParticipantAttributes& participant_attr,
-            PermissionsHandle** access_handle);
+            PermissionsHandle** access_handle,
+            bool should_success = true);
     void fill_candidate_participant_key();
 
     GUID_t candidate_participant_key;
@@ -159,7 +160,8 @@ void AccessControlTest::fill_common_participant_security_attributes(
 
 void AccessControlTest::get_access_handle(
         const RTPSParticipantAttributes& participant_attr,
-        PermissionsHandle** access_handle)
+        PermissionsHandle** access_handle,
+        bool should_success)
 {
     IdentityHandle* identity_handle = nullptr;
 
@@ -186,7 +188,8 @@ void AccessControlTest::get_access_handle(
         participant_attr,
         exception);
 
-    ASSERT_TRUE(*access_handle != nullptr) << exception.what();
+    bool success = *access_handle != nullptr;
+    ASSERT_EQ(success, should_success) << exception.what();
     ASSERT_TRUE(authentication_plugin.return_identity_handle(identity_handle, exception)) << exception.what();
 }
 
@@ -446,6 +449,21 @@ TEST_F(AccessControlTest, validate_partition_access_ok_on_permission_wildcards)
     fill_publisher_participant_security_attributes(publisher_participant_attr);
     check_local_datawriter(publisher_participant_attr, true);
     check_remote_datawriter(publisher_participant_attr, true);
+}
+
+/* Regression test for Redmine 17099 (Github 3239).
+ *
+ * Using a modified permissions file signed with the subscriber identity certificate should fail.
+ */
+TEST_F(AccessControlTest, validate_fail_on_self_signed_permissions)
+{
+    permissions_file = "permissions_access_control_tests_malicious.smime";
+
+    RTPSParticipantAttributes subscriber_participant_attr;
+    fill_subscriber_participant_security_attributes(subscriber_participant_attr);
+
+    PermissionsHandle* access_handle;
+    get_access_handle(subscriber_participant_attr, &access_handle, false);
 }
 
 int main(
