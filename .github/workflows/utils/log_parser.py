@@ -16,7 +16,6 @@
 
 import argparse
 import re
-import sys
 
 from tomark import Tomark
 
