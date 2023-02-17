@@ -137,7 +137,7 @@ def asan_line_splitter(
         line: str):
     return _common_line_splitter(
         line=line,
-        text_to_split_start='==ERROR: AddressSanitizer: ')
+        text_to_split_start='==ERROR: ')
 
 
 def tsan_line_splitter(
