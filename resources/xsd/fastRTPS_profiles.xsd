@@ -95,7 +95,8 @@
         | ╠ att. profile_name       [string] REQ,
         | ╚ att. is_default_profile [bool],
         |
-        └ rtps [0~1]
+        ├ domainID [uint32], (0~232)
+        └ rtps     [0~1]
             ├ name                              [string],
             ├ defaultUnicastLocatorList         [0~1],
             ├ defaultMulticastLocatorList       [0~1],
@@ -116,6 +117,7 @@
     <!-- TODO:  How to ensure that the userTransports identifiers exist in transport descriptors in the XML file? -->
     <xs:complexType name="participantProfileType">
         <xs:all>
+            <xs:element name="domainId" type="domainIDType" minOccurs="0" maxOccurs="1"/>
             <xs:element name="rtps" minOccurs="0" maxOccurs="1">
                 <xs:complexType>
                     <xs:all>
