@@ -63,7 +63,7 @@ class Parser:
                 if result.returncode != 0:
                     sys.exit(result.returncode)
 
-        except KeyboardInterrupt:  # as e:
+        except KeyboardInterrupt:
             # it lets the subprocess to handle the exception
             pass
 

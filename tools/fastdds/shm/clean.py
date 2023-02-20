@@ -82,8 +82,6 @@ class Clean:
             return os.listdir(self.__shm_dir())
         except FileNotFoundError:
             return []
-        # except BaseException:
-        #    return []
 
     def __clean_zombie_segments(self):
         """
@@ -182,8 +180,6 @@ class Clean:
             os.remove(file)
         except OSError:
             pass
-        # except BaseException:
-        #    pass
 
     def __is_file_locked(self, file):
         """Return whether a file is locked or not.
@@ -207,5 +203,3 @@ class Clean:
             return False
         except OSError:
             return True
-        # except BaseException:
-        #    return True
