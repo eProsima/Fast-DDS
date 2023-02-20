@@ -15,6 +15,7 @@
 #include <fastdds/dds/log/Log.hpp>
 #include <fastrtps/types/AnnotationDescriptor.h>
 #include <fastrtps/types/DynamicData.h>
+#include <fastrtps/types/DynamicDataFactory.h>
 #include <fastrtps/types/DynamicType.h>
 #include <fastrtps/types/DynamicTypeBuilder.h>
 #include <fastrtps/types/DynamicTypeBuilderFactory.h>
@@ -380,7 +381,7 @@ bool DynamicType::deserialize(
         }
         case TK_UNION:
         {
-            DynamicType::deserialize_discriminator(data.union_discriminator_, cdr);
+            DynamicType::deserialize_discriminator(data.discriminator_value_, cdr);
             data.update_union_discriminator();
             data.set_union_id(data.union_id_);
             if (data.union_id_ != MEMBER_ID_INVALID)
@@ -410,8 +411,12 @@ bool DynamicType::deserialize(
             for (uint32_t i = 0; i < data.complex_values_.size(); ++i)
             {
                 //cdr >> memberId;
-                MemberDescriptor* member_desc = data.descriptors_[i];
-                if (member_desc != nullptr)
+                const DynamicTypeMember* member_desc;
+                bool found;
+
+                std::tie(member_desc, found) = get_member(get_member_id_at_index(i));
+
+                if (found)
                 {
                     if (!member_desc->annotation_is_non_serialized())
                     {
@@ -439,8 +444,12 @@ bool DynamicType::deserialize(
             for (uint32_t i = 0; i < data.values_.size(); ++i)
             {
                 //cdr >> memberId;
-                MemberDescriptor* member_desc = data.descriptors_[i];
-                if (member_desc != nullptr)
+                const DynamicTypeMember* member_desc;
+                bool found;
+
+                std::tie(member_desc, found) = get_member(get_member_id_at_index(i));
+
+                if (found)
                 {
                     if (!member_desc->annotation_is_non_serialized())
                     {
@@ -811,10 +820,13 @@ size_t DynamicType::getCdrSerializedSize(
             for (uint32_t i = 0; i < data.complex_values_.size(); ++i)
             {
                 //cdr >> memberId;
-                auto d_it = data.descriptors_.find(i);
-                if (d_it != data.descriptors_.end())
+                const DynamicTypeMember* member_desc;
+                bool found;
+
+                std::tie(member_desc, found) = get_member(get_member_id_at_index(i));
+
+                if (found)
                 {
-                    const MemberDescriptor* member_desc = d_it->second;
                     if (!member_desc->annotation_is_non_serialized())
                     {
                         auto it = data.complex_values_.find(i);
@@ -838,10 +850,13 @@ size_t DynamicType::getCdrSerializedSize(
             for (uint32_t i = 0; i < data.values_.size(); ++i)
             {
                 //cdr >> memberId;
-                auto d_it = data.descriptors_.find(i);
-                if (d_it != data.descriptors_.end())
+                const DynamicTypeMember* member_desc;
+                bool found;
+
+                std::tie(member_desc, found) = get_member(get_member_id_at_index(i));
+
+                if (found)
                 {
-                    const MemberDescriptor* member_desc = d_it->second;
                     if (!member_desc->annotation_is_non_serialized())
                     {
                         auto it = data.values_.find(i);
@@ -1423,8 +1438,12 @@ void DynamicType::serialize(
 #ifdef DYNAMIC_TYPES_CHECKING
             for (uint32_t idx = 0; idx < static_cast<uint32_t>(data.complex_values_.size()); ++idx)
             {
-                auto d_it = data.descriptors_.find(idx);
-                if (d_it != data.descriptors_.end())
+                const DynamicTypeMember* member_desc;
+                bool found;
+
+                std::tie(member_desc, found) = get_member(get_member_id_at_index(i));
+
+                if (found)
                 {
                     const MemberDescriptor* member_desc = d_it->second;
                     if (!member_desc->annotation_is_non_serialized())
@@ -1441,8 +1460,12 @@ void DynamicType::serialize(
 #else
             for (uint32_t idx = 0; idx < static_cast<uint32_t>(data.values_.size()); ++idx)
             {
-                auto d_it = data.descriptors_.find(idx);
-                if (d_it != data.descriptors_.end())
+                const DynamicTypeMember* member_desc;
+                bool found;
+
+                std::tie(member_desc, found) = get_member(get_member_id_at_index(i));
+
+                if (found)
                 {
                     const MemberDescriptor* member_desc = d_it->second;
                     if (!member_desc->annotation_is_non_serialized())

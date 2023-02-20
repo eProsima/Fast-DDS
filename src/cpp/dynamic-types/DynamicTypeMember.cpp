@@ -78,11 +78,6 @@ bool DynamicTypeMember::annotation_is_optional() const
 
 bool DynamicTypeMember::annotation_is_key() const
 {
-    return annotation_get_key();
-}
-
-bool DynamicTypeMember::annotation_get_key() const
-{
     annotation_iterator it;
     bool found;
 
@@ -138,17 +133,17 @@ bool DynamicTypeMember::annotation_is_non_serialized() const
 
 bool DynamicTypeMember::annotation_is_value() const
 {
-    return get_annotation(ANNOTATION_VALUE_ID) != nullptr;
+    return get_annotation(ANNOTATION_VALUE_ID).second;
 }
 
 bool DynamicTypeMember::annotation_is_default_literal() const
 {
-    return get_annotation(ANNOTATION_DEFAULT_LITERAL_ID) != nullptr;
+    return get_annotation(ANNOTATION_DEFAULT_LITERAL_ID).second;
 }
 
 bool DynamicTypeMember::annotation_is_position() const
 {
-    return get_annotation(ANNOTATION_OPTIONAL_ID) != nullptr;
+    return get_annotation(ANNOTATION_OPTIONAL_ID).second;
 }
 
 // Annotations getters
@@ -211,7 +206,7 @@ uint16_t DynamicTypeMember::annotation_get_position() const
  * @param M functor that modifies the annotation if present: void(AnnotationDescriptor&)
  */
 template<typename C, typename M>
-void DynamicTypeMember::annotation_set( const std::string& id, C& c, M& m)
+void DynamicTypeMember::annotation_set( const std::string& id, const C& c, const M& m)
 {
     annotation_iterator it;
     bool found;
@@ -239,20 +234,25 @@ void DynamicTypeMember::annotation_set( const std::string& id, C& c, M& m)
 }
 
 //! Specialization of the above template to simple values
-void DynamicTypeMember::annotation_set(const std::string& id, std::string& new_val);
+void DynamicTypeMember::annotation_set(const std::string& id, const char* new_val)
 {
     annotation_set(
             id,
-            [&new_val](const AnnotationDescriptor& d) -> bool
+            [new_val](const AnnotationDescriptor& d) -> bool
             {
                std::string val;
                d.get_value(val, "value");
-               return new_val != val;
+               return 0 != val.compare(new_val);
             },
-            [&new_val](AnnotationDescriptor& d)
+            [new_val](AnnotationDescriptor& d)
             {
                 d.set_value("value", new_val);
             });
+}
+
+void DynamicTypeMember::annotation_set(const std::string& id, const std::string& new_val)
+{
+    return annotation_set(id, new_val.c_str());
 }
 
 void DynamicTypeMember::annotation_set_optional(
@@ -304,7 +304,7 @@ void DynamicTypeMember::annotation_set_default(
 
 bool DynamicTypeMember::annotation_is_bit_bound() const
 {
-    return get_annotation(ANNOTATION_BIT_BOUND_ID) != nullptr;
+    return get_annotation(ANNOTATION_BIT_BOUND_ID).second;
 }
 
 uint16_t DynamicTypeMember::annotation_get_bit_bound() const
@@ -350,25 +350,25 @@ ReturnCode_t DynamicTypeMember::apply_annotation(
         const std::string& key,
         const std::string& value)
 {
-    AnnotationDescriptor* ann = get_annotation(annotation_name);
-    if (ann != nullptr)
-    {
-        ann->set_value(key, value);
-    }
-    else
-    {
-        AnnotationDescriptor descriptor;
-        descriptor->set_value(key, value);
-        descriptor->set_type(
-            DynamicTypeBuilderFactory::get_instance()->create_annotation_primitive(annotation_name));
-        annotation_.insert(descriptor);
-    }
+    annotation_set(
+            annotation_name,
+            [&key, &value](const AnnotationDescriptor& d) -> bool
+            {
+               std::string val;
+               d.get_value(val, key);
+               return val != value;
+            },
+            [&key, &value](AnnotationDescriptor& d)
+            {
+                d.set_value(key, value);
+            });
+
     return ReturnCode_t::RETCODE_OK;
 }
 
 std::pair<DynamicTypeMember::annotation_iterator, bool>
 DynamicTypeMember::get_annotation(
-        const std::string& name)
+        const std::string& name) const
 {
     annotation_iterator it = annotation_.begin();
 

@@ -45,7 +45,7 @@ protected:
 
     std::list<DynamicTypeMember> members_;
     std::map<MemberId, const DynamicTypeMember*> member_by_id_;      // members references indexed by id
-    std::set<std::string, const DynamicTypeMember*> member_by_name_;    // members references indexed by name
+    std::map<std::string, const DynamicTypeMember*> member_by_name_;    // members references indexed by name
 
     using annotation_iterator = std::set<AnnotationDescriptor>::iterator;
     using member_iterator = std::list<DynamicTypeMember>::iterator;
@@ -62,6 +62,14 @@ protected:
     friend class DynamicType;
     friend class MemberDescriptor;
     friend class DynamicDataHelper;
+
+    // Checks if there is a member with the given name.
+    bool exists_member_by_name(
+            const std::string& name) const;
+
+    // Checks if there is a member with the given id.
+    bool exists_member_by_id(
+            MemberId id) const;
 
     // Annotations application
     bool annotation_is_extensibility() const;

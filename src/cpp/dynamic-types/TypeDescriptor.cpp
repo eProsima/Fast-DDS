@@ -302,70 +302,39 @@ bool TypeDescriptor::annotation_is_extensibility() const
 
 bool TypeDescriptor::annotation_is_mutable() const
 {
-    if (get_annotation(ANNOTATION_MUTABLE_ID).second)
-    {
-        return true;
-    }
-    else
-    {
-        const AnnotationDescriptor* ann = get_annotation(ANNOTATION_EXTENSIBILITY_ID);
-        if (ann != nullptr)
-        {
-            std::string value;
-            if (ann->get_value(value) == ReturnCode_t::RETCODE_OK)
-            {
-                return value.compare(EXTENSIBILITY_MUTABLE) == 0;
-            }
-        }
-    }
-    return false;
+    return get_annotation(ANNOTATION_MUTABLE_ID).second ||
+           annotation_get_extensibility().compare(EXTENSIBILITY_MUTABLE) == 0;
 }
 
 bool TypeDescriptor::annotation_is_final() const
 {
-    if (get_annotation(ANNOTATION_FINAL_ID).second)
-    {
-        return true;
-    }
-    else
-    {
-        const AnnotationDescriptor* ann = get_annotation(ANNOTATION_EXTENSIBILITY_ID);
-        if (ann != nullptr)
-        {
-            std::string value;
-            if (ann->get_value(value) == ReturnCode_t::RETCODE_OK)
-            {
-                return value.compare(EXTENSIBILITY_FINAL) == 0;
-            }
-        }
-    }
-    return false;
+    return get_annotation(ANNOTATION_FINAL_ID).second ||
+           annotation_get_extensibility().compare(EXTENSIBILITY_FINAL) == 0;
 }
 
 bool TypeDescriptor::annotation_is_appendable() const
 {
-    if (get_annotation(ANNOTATION_APPENDABLE_ID).second)
-    {
-        return true;
-    }
-    else
-    {
-        const AnnotationDescriptor* ann = get_annotation(ANNOTATION_EXTENSIBILITY_ID);
-        if (ann != nullptr)
-        {
-            std::string value;
-            if (ann->get_value(value) == ReturnCode_t::RETCODE_OK)
-            {
-                return value.compare(EXTENSIBILITY_APPENDABLE) == 0;
-            }
-        }
-    }
-    return false;
+    return get_annotation(ANNOTATION_APPENDABLE_ID).second ||
+           annotation_get_extensibility().compare(EXTENSIBILITY_APPENDABLE) == 0;
 }
 
 bool TypeDescriptor::annotation_is_nested() const
 {
-    return get_annotation(ANNOTATION_NESTED_ID).second;
+    annotation_iterator it;
+    bool found;
+
+    std::tie(it, found) = get_annotation(ANNOTATION_NESTED_ID);
+
+    if (found)
+    {
+        std::string value;
+        if (it->get_value(value) == ReturnCode_t::RETCODE_OK)
+        {
+            return value == CONST_TRUE;
+        }
+    }
+
+    return false;
 }
 
 bool TypeDescriptor::annotation_is_bit_bound() const
@@ -375,16 +344,38 @@ bool TypeDescriptor::annotation_is_bit_bound() const
 
 bool TypeDescriptor::annotation_is_key() const
 {
-    return get_annotation(ANNOTATION_KEY_ID).second || get_annotation(ANNOTATION_EPKEY_ID).second;
+    annotation_iterator it;
+    bool found;
+
+    std::tie(it, found) = get_annotation(ANNOTATION_KEY_ID);
+
+    if(!found)
+    {
+        std::tie(it, found) = get_annotation(ANNOTATION_EPKEY_ID);
+    }
+
+    if(found)
+    {
+        std::string value;
+        if (it->get_value(value) == ReturnCode_t::RETCODE_OK)
+        {
+            return value == CONST_TRUE;
+        }
+    }
+
+    return false;
 }
 
 bool TypeDescriptor::annotation_is_non_serialized() const
 {
-    const AnnotationDescriptor* ann = get_annotation(ANNOTATION_NON_SERIALIZED_ID);
-    if (ann != nullptr)
+    annotation_iterator it;
+    bool found;
+
+    std::tie(it, found) = get_annotation(ANNOTATION_NON_SERIALIZED_ID);
+    if (found)
     {
         std::string value;
-        if (ann->get_value(value) == ReturnCode_t::RETCODE_OK)
+        if (it->get_value(value) == ReturnCode_t::RETCODE_OK)
         {
             return value == CONST_TRUE;
         }
@@ -395,57 +386,32 @@ bool TypeDescriptor::annotation_is_non_serialized() const
 // Annotation getters
 std::string TypeDescriptor::annotation_get_extensibility() const
 {
-    const AnnotationDescriptor* ann = get_annotation(ANNOTATION_EXTENSIBILITY_ID);
-    if (ann != nullptr)
+    annotation_iterator it;
+    bool found;
+
+    std::tie(it, found) = get_annotation(ANNOTATION_EXTENSIBILITY_ID);
+    if (found)
     {
         std::string value;
-        if (ann->get_value(value) == ReturnCode_t::RETCODE_OK)
+        if (it->get_value(value) == ReturnCode_t::RETCODE_OK)
         {
             return value;
         }
     }
-    return "";
-}
-
-bool TypeDescriptor::annotation_get_nested() const
-{
-    const AnnotationDescriptor* ann = get_annotation(ANNOTATION_NESTED_ID);
-    if (ann != nullptr)
-    {
-        std::string value;
-        if (ann->get_value(value) == ReturnCode_t::RETCODE_OK)
-        {
-            return value == CONST_TRUE;
-        }
-    }
-    return false;
-}
-
-bool TypeDescriptor::annotation_get_key() const
-{
-    const AnnotationDescriptor* ann = get_annotation(ANNOTATION_KEY_ID);
-    if (ann == nullptr)
-    {
-        ann = get_annotation(ANNOTATION_EPKEY_ID);
-    }
-    if (ann != nullptr)
-    {
-        std::string value;
-        if (ann->get_value(value) == ReturnCode_t::RETCODE_OK)
-        {
-            return value == CONST_TRUE;
-        }
-    }
-    return false;
+    return {};
 }
 
 uint16_t TypeDescriptor::annotation_get_bit_bound() const
 {
-    const AnnotationDescriptor* ann = get_annotation(ANNOTATION_BIT_BOUND_ID);
-    if (ann != nullptr)
+    annotation_iterator it;
+    bool found;
+
+    std::tie(it, found) = get_annotation(ANNOTATION_BIT_BOUND_ID);
+
+    if (found)
     {
         std::string value;
-        if (ann->get_value(value) == ReturnCode_t::RETCODE_OK)
+        if (it->get_value(value) == ReturnCode_t::RETCODE_OK)
         {
             return static_cast<uint16_t>(std::stoi(value));
         }
@@ -463,7 +429,8 @@ ReturnCode_t TypeDescriptor::get_annotation(
         MemberId idx) const
 {
     assert(idx < get_annotation_count());
-    descriptor = *std::advance(annotation_.begin(), idx);
+    auto it = annotation_.begin();
+    descriptor = *std::advance(it, idx);
     return ReturnCode_t::RETCODE_OK;
 }
 
@@ -553,14 +520,11 @@ uint32_t TypeDescriptor::get_members_count() const
 MemberId TypeDescriptor::get_member_id_by_name(
         const std::string& name) const
 {
-    member_iterator it;
-    bool found;
+    auto it = member_by_name_.find(name);
 
-    std::tie(it, found) = member_by_name_.find(name);
-
-    if(found)
+    if(it != member_by_name_.end())
     {
-        return it->get_id();
+        return it.second->get_id();
     }
 
     return MEMBER_ID_INVALID;
@@ -578,4 +542,32 @@ MemberId TypeDescriptor::get_member_id_at_index(
     std::advance(it, index);
     assert(it->get_index() == index);
     return it->get_id();
+}
+
+bool TypeDescriptor:::exists_member_by_name(
+        const std::string& name) const
+{
+    auto base = get_base_type();
+    if (base)
+    {
+        if (base->exists_member_by_name(name))
+        {
+            return true;
+        }
+    }
+    return member_by_name_.find(name) != member_by_name_.end();
+}
+
+bool TypeDescriptor:::exists_member_by_id(
+        MemberId id) const
+{
+    auto base = get_base_type();
+    if (base)
+    {
+        if (base->exists_member_by_id(id))
+        {
+            return true;
+        }
+    }
+    return member_by_id_.find(id) != member_by_id_.end();
 }

@@ -93,11 +93,11 @@ protected:
             const DynamicType_ptr pType,
             eprosima::fastcdr::Cdr& cdr) const;
 
-    static bool deserialize_discriminator(
+    bool deserialize_discriminator(
             uint64_t& discriminator_value,
             eprosima::fastcdr::Cdr& cdr);
 
-    static void serialize_discriminator(
+    void serialize_discriminator(
             DynamicData& data,
             eprosima::fastcdr::Cdr& cdr);
 
@@ -131,8 +131,8 @@ public:
 
 public:
     // ancillary for DynamicData interfaces
-    using get_member_id_by_name;
-    using get_member_id_at_index;
+    using TypeDescriptor::get_member_id_by_name;
+    using TypeDescriptor::get_member_id_at_index;
 
 public:
 

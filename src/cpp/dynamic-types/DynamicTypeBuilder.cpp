@@ -198,7 +198,7 @@ ReturnCode_t DynamicTypeBuilder::add_member(
     catch(std::system_error& e)
     {
         EPROSIMA_LOG_ERROR(DYN_TYPES, e.what());
-        return e.code();
+        return e.code().value();
     }
 
     return ReturnCode_t::RETCODE_OK;
@@ -244,34 +244,6 @@ void DynamicTypeBuilder::clear()
 {
     TypeDescriptor::clean();
     current_member_id_ = 0;
-}
-
-bool DynamicTypeBuilder::exists_member_by_name(
-        const std::string& name) const
-{
-    auto base = get_base_type();
-    if (base)
-    {
-        if (base->exists_member_by_name(name))
-        {
-            return true;
-        }
-    }
-    return member_by_name_.find(name) != member_by_name_.end();
-}
-
-bool DynamicTypeBuilder::exists_member_by_id(
-        MemberId id) const
-{
-    auto base = get_base_type();
-    if (base)
-    {
-        if (base->exists_member_by_name(name))
-        {
-            return true;
-        }
-    }
-    return member_by_id_.find(id) != member_by_id_.end();
 }
 
 bool DynamicTypeBuilder::is_discriminator_type() const
@@ -337,7 +309,7 @@ ReturnCode_t DynamicTypeBuilder::apply_annotation(
     std::tie(it, found) = get_annotation(annotation_name);
     if (found)
     {
-        ann->set_value(key, value);
+        it->set_value(key, value);
         return ReturnCode_t::RETCODE_OK;
     }
     else

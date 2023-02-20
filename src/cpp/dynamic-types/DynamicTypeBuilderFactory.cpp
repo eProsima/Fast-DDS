@@ -1680,7 +1680,7 @@ void DynamicTypeBuilderFactory::build_struct_type_code(
         object.complete().struct_type().struct_flags().IS_FINAL(descriptor->annotation_is_final());
         object.complete().struct_type().struct_flags().IS_APPENDABLE(descriptor->annotation_is_appendable());
         object.complete().struct_type().struct_flags().IS_MUTABLE(descriptor->annotation_is_mutable());
-        object.complete().struct_type().struct_flags().IS_NESTED(descriptor->annotation_get_nested());
+        object.complete().struct_type().struct_flags().IS_NESTED(descriptor->annotation_is_nested());
         object.complete().struct_type().struct_flags().IS_AUTOID_HASH(false);
 
         // Apply annotations
@@ -1778,7 +1778,7 @@ void DynamicTypeBuilderFactory::build_struct_type_code(
         object.minimal().struct_type().struct_flags().IS_FINAL(descriptor->annotation_is_final());
         object.minimal().struct_type().struct_flags().IS_APPENDABLE(descriptor->annotation_is_appendable());
         object.minimal().struct_type().struct_flags().IS_MUTABLE(descriptor->annotation_is_mutable());
-        object.minimal().struct_type().struct_flags().IS_NESTED(descriptor->annotation_get_nested());
+        object.minimal().struct_type().struct_flags().IS_NESTED(descriptor->annotation_is_nested());
         object.minimal().struct_type().struct_flags().IS_AUTOID_HASH(false);
 
         for (const MemberDescriptor* member : members)
@@ -1877,7 +1877,7 @@ void DynamicTypeBuilderFactory::build_union_type_code(
         object.complete().union_type().union_flags().IS_FINAL(descriptor->annotation_is_final());
         object.complete().union_type().union_flags().IS_APPENDABLE(descriptor->annotation_is_appendable());
         object.complete().union_type().union_flags().IS_MUTABLE(descriptor->annotation_is_mutable());
-        object.complete().union_type().union_flags().IS_NESTED(descriptor->annotation_get_nested());
+        object.complete().union_type().union_flags().IS_NESTED(descriptor->annotation_is_nested());
         object.complete().union_type().union_flags().IS_AUTOID_HASH(false);
 
         object.complete().union_type().discriminator().common().member_flags().TRY_CONSTRUCT1(false);
@@ -1886,7 +1886,7 @@ void DynamicTypeBuilderFactory::build_union_type_code(
         object.complete().union_type().discriminator().common().member_flags().IS_OPTIONAL(false);
         object.complete().union_type().discriminator().common().member_flags().IS_MUST_UNDERSTAND(false);
         object.complete().union_type().discriminator().common().member_flags().IS_KEY(
-            descriptor->discriminator_type_->descriptor_->annotation_get_key());
+            descriptor->discriminator_type_->descriptor_->annotation_is_key());
         object.complete().union_type().discriminator().common().member_flags().IS_DEFAULT(false);
 
         // Apply annotations
@@ -1980,7 +1980,7 @@ void DynamicTypeBuilderFactory::build_union_type_code(
         object.minimal().union_type().union_flags().IS_FINAL(descriptor->annotation_is_final());
         object.minimal().union_type().union_flags().IS_APPENDABLE(descriptor->annotation_is_appendable());
         object.minimal().union_type().union_flags().IS_MUTABLE(descriptor->annotation_is_mutable());
-        object.minimal().union_type().union_flags().IS_NESTED(descriptor->annotation_get_nested());
+        object.minimal().union_type().union_flags().IS_NESTED(descriptor->annotation_is_nested());
         object.minimal().union_type().union_flags().IS_AUTOID_HASH(false);
 
         object.minimal().union_type().discriminator().common().member_flags().TRY_CONSTRUCT1(false);
@@ -1989,7 +1989,7 @@ void DynamicTypeBuilderFactory::build_union_type_code(
         object.minimal().union_type().discriminator().common().member_flags().IS_OPTIONAL(false);
         object.minimal().union_type().discriminator().common().member_flags().IS_MUST_UNDERSTAND(false);
         object.minimal().union_type().discriminator().common().member_flags().IS_KEY(
-            descriptor->discriminator_type_->descriptor_->annotation_get_key());
+            descriptor->discriminator_type_->descriptor_->annotation_is_key());
         object.minimal().union_type().discriminator().common().member_flags().IS_DEFAULT(false);
 
         TypeObject discObj;

@@ -42,13 +42,8 @@ class DynamicTypeBuilder
     bool check_union_configuration(
             const MemberDescriptor& descriptor);
 
-    // Checks if there is a member with the given name.
-    bool exists_member_by_name(
-            const std::string& name) const;
-
-    // Checks if there is a member with the given id.
-    bool exists_member_by_id(
-            MemberId id) const;
+    using TypeDescriptor::exists_member_by_name;
+    using TypeDescriptor::exists_member_by_id;
 
     //! This method only adds an empty element to the members collection with the right index
     member_iterator add_empty_member(

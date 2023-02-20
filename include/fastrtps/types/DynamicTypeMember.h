@@ -38,6 +38,8 @@ protected:
     friend class DynamicType;
     friend class DynamicData;
 
+    using MemberDescriptor::operator=;
+
     const MemberDescriptor& get_descriptor() const
     {
         return static_cast<const MemberDescriptor&>(*this);
@@ -77,10 +79,11 @@ protected:
 
     //! auxiliary method for all bellow
     template<typename C, typename M>
-    void annotation_set(const std::string& id, C& c, M& m);
+    void annotation_set(const std::string& id, const C& c, const M& m);
 
     //! auxiliary method for all bellow
-    void annotation_set(const std::string& id, std::string& new_val);
+    void annotation_set(const std::string& id, const std::string& new_val);
+    void annotation_set(const std::string& id, const char* new_val);
 
     void annotation_set_optional(bool optional);
 
