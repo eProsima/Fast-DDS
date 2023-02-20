@@ -73,6 +73,7 @@
         </transport_descriptors>
 
         <participant profile_name="participant_profile_example">
+            <domainID>1</domainID>
             <rtps>
                 <name>Participant Name</name> <!-- String -->
 
