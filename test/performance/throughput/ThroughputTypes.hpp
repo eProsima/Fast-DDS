@@ -239,7 +239,7 @@ public:
     ThroughputCommandDataType()
     {
         setName("ThroughputCommand");
-        m_typeSize = 4 * sizeof(uint32_t) + 2 * sizeof(uint64_t) + sizeof(double);
+        m_typeSize = 4 * sizeof(uint32_t) + 3 * sizeof(uint64_t) + sizeof(double);
         m_isGetKeyDefined = false;
     }
 

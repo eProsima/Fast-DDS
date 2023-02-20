@@ -153,7 +153,7 @@ std::function<uint32_t()> ThroughputCommandDataType::getSerializedSizeProvider(
                uint32_t size = 0;
 
                size = (uint32_t)(sizeof(uint32_t) + sizeof(uint32_t) + sizeof(uint32_t)  + sizeof(uint32_t) +
-                       sizeof(uint64_t) + sizeof(uint64_t));
+                       sizeof(uint64_t) + sizeof(uint64_t) + sizeof(uint64_t));
 
                return size;
            };
