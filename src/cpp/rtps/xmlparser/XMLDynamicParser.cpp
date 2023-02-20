@@ -573,7 +573,7 @@ DynamicTypeBuilder_ptr XMLParser::parseXMLBitfieldDynamicType(
 
     if (p_dynamictype != nullptr)
     {
-        p_dynamictype->add_member(mId, memberName, memberBuilder.get());
+        p_dynamictype->add_member(mId, memberName, memberBuilder->build());
         if (!std::string(memberName).empty())
         {
             p_dynamictype->apply_annotation_to_member(mId, ANNOTATION_BIT_BOUND_ID, "value", bit_bound);
@@ -1374,11 +1374,11 @@ DynamicTypeBuilder_ptr XMLParser::parseXMLMemberDynamicType(
         {
             std::vector<uint64_t> labels;
             bool defaultLabel = dimensionsToLabels(values, labels);
-            p_dynamictype->add_member(mId, memberName, memberBuilder.get(), "", labels, defaultLabel);
+            p_dynamictype->add_member(mId, memberName, memberBuilder->build(), "", labels, defaultLabel);
         }
         else
         {
-            p_dynamictype->add_member(mId, memberName, memberBuilder.get());
+            p_dynamictype->add_member(mId, memberName, memberBuilder->build());
         }
     }
 

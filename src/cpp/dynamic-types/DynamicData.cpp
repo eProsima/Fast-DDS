@@ -129,7 +129,7 @@ void DynamicData::create_members(
 
         for(auto& m : members)
         {
-            values_[m.get_id()] = pData->clone_value(m.get_id(), m.get_kind());
+            values_[m.second->get_id()] = pData->clone_value(m.second->get_id(), m.second->get_kind());
         }
     }
     else
@@ -157,15 +157,15 @@ void DynamicData::create_members(
             {
                 if (pType->get_kind() != TK_BITMASK && pType->get_kind() != TK_ENUM)
                 {
-                    DynamicData* data = DynamicDataFactory::get_instance()->create_data(m.second.get_type());
-                    if (m.second.get_kind() != TK_BITSET &&
-                        m.second.get_kind() != TK_STRUCTURE &&
-                        m.second.get_kind() != TK_UNION &&
-                        m.second.get_kind() != TK_SEQUENCE &&
-                        m.second.get_kind() != TK_ARRAY &&
-                        m.second.get_kind() != TK_MAP)
+                    DynamicData* data = DynamicDataFactory::get_instance()->create_data(m.second->get_type());
+                    if (m.second->get_kind() != TK_BITSET &&
+                        m.second->get_kind() != TK_STRUCTURE &&
+                        m.second->get_kind() != TK_UNION &&
+                        m.second->get_kind() != TK_SEQUENCE &&
+                        m.second->get_kind() != TK_ARRAY &&
+                        m.second->get_kind() != TK_MAP)
                     {
-                        std::string def_value = m.second.annotation_get_default();
+                        std::string def_value = m.second->annotation_get_default();
                         if (!def_value.empty())
                         {
                             data->set_value(def_value);
@@ -186,7 +186,7 @@ void DynamicData::create_members(
                 // Search the default value.
                 for (const auto& m : members)
                 {
-                    if (m.second.is_default_union_value())
+                    if (m.second->is_default_union_value())
                     {
                         set_union_id(m.first);
                         defaultValue = true;
@@ -213,7 +213,7 @@ ReturnCode_t DynamicData::get_descriptor(
         MemberId id)
 {
     assert(type_);
-    return type_->get_descriptor(value, id);
+    return type_->get_member(value, id);
 }
 
 bool DynamicData::equals(
@@ -225,7 +225,7 @@ bool DynamicData::equals(
         {
             return true;
         }
-        else if (type_ == other->type_ || type_->equals(other->type_.get()))
+        else if (type_ == other->type_ || type_->equals(*other->type_.get()))
         {
             // Optimization for unions, only check the selected element.
             if (get_kind() == TK_UNION)
@@ -347,7 +347,7 @@ MemberId DynamicData::get_member_id_at_index(
         uint32_t index) const
 {
     assert(type_);
-    return type_->get_member_id_at_index(name);
+    return type_->get_member_id_at_index(index);
 }
 
 TypeKind DynamicData::get_kind() const
@@ -554,6 +554,7 @@ ReturnCode_t DynamicData::clear_all_values()
                 ((DynamicData*)e.second)->clear_all_values();
             }
 #endif // ifdef DYNAMIC_TYPES_CHECKING
+        }
     }
     else
     {
@@ -3694,9 +3695,9 @@ void DynamicData::update_union_discriminator()
 
         union_discriminator_->get_discriminator_value(sUnionValue);
 
-        for (MemberId id, uint32_t index = 0; index < get_members_count(); ++index)
+        for (uint32_t index = 0; index < type_->get_members_count(); ++index)
         {
-            id = get_member_id_at_index(index);
+            auto id = get_member_id_at_index(index);
             assert(id != MEMBER_ID_INVALID);
             std::tie(pM, found) = type_->get_member(id);
             assert(found);
@@ -3738,14 +3739,11 @@ ReturnCode_t DynamicData::set_union_id(
     if (get_kind() == TK_UNION)
     {
         const DynamicTypeMember* pM;
-        bool found = id != MEMBER_ID_INVALID;
+        bool found;
 
-        if(found)
-        {
-            std::tie(pM, found) = type_->get_member(id);
-        }
+        std::tie(pM, found) = type_->get_member(id);
 
-        if (id == MEMBER_ID_INVALID || found)
+        if (found || id == MEMBER_ID_INVALID)
         {
             union_id_ = id;
 
@@ -4152,7 +4150,7 @@ ReturnCode_t DynamicData::set_enum_value(
         {
             MemberId eid = get_member_id_by_name(value);
             if(eid == MEMBER_ID_INVALID)
-            {
+            {
                 return ReturnCode_t::RETCODE_BAD_PARAMETER;
             }
 
@@ -4681,7 +4679,7 @@ ReturnCode_t DynamicData::insert_complex_value(
         const DynamicData* value,
         MemberId& outId)
 {
-    if (get_kind() == TK_SEQUENCE && type_->get_element_type()->equals(value->type_.get()))
+    if (get_kind() == TK_SEQUENCE && type_->get_element_type()->equals(*value->type_.get()))
     {
         if (type_->get_bounds() == BOUND_UNLIMITED || get_item_count() < type_->get_bounds())
         {
@@ -4712,7 +4710,7 @@ ReturnCode_t DynamicData::insert_complex_value(
         DynamicData_ptr value,
         MemberId& outId)
 {
-    if (get_kind() == TK_SEQUENCE && type_->get_element_type()->equals(value->type_.get()))
+    if (get_kind() == TK_SEQUENCE && type_->get_element_type()->equals(*value->type_.get()))
     {
         if (type_->get_bounds() == BOUND_UNLIMITED || get_item_count() < type_->get_bounds())
         {
@@ -4743,7 +4741,7 @@ ReturnCode_t DynamicData::insert_complex_value(
         DynamicData* value,
         MemberId& outId)
 {
-    if (get_kind() == TK_SEQUENCE && type_->get_element_type()->equals(value->type_.get()))
+    if (get_kind() == TK_SEQUENCE && type_->get_element_type()->equals(*value->type_.get()))
     {
         if (type_->get_bounds() == BOUND_UNLIMITED || get_item_count() < type_->get_bounds())
         {
@@ -4843,7 +4841,7 @@ ReturnCode_t DynamicData::insert_map_data(
         MemberId& outKeyId,
         MemberId& outValueId)
 {
-    if (get_kind() == TK_MAP && type_->get_key_element_type()->equals(key->type_.get()))
+    if (get_kind() == TK_MAP && type_->get_key_element_type()->equals(*key->type_.get()))
     {
         if (type_->get_bounds() == BOUND_UNLIMITED || get_item_count() < type_->get_bounds())
         {
@@ -4905,8 +4903,8 @@ ReturnCode_t DynamicData::insert_map_data(
         MemberId& outKey,
         MemberId& outValue)
 {
-    if (get_kind() == TK_MAP && type_->get_key_element_type()->equals(key->type_.get()) &&
-            type_->get_element_type()->equals(value->type_.get()))
+    if (get_kind() == TK_MAP && type_->get_key_element_type()->equals(*key->type_.get()) &&
+            type_->get_element_type()->equals(*value->type_.get()))
     {
         if (type_->get_bounds() == BOUND_UNLIMITED || get_item_count() < type_->get_bounds())
         {
@@ -4966,8 +4964,8 @@ ReturnCode_t DynamicData::insert_map_data(
         MemberId& outKey,
         MemberId& outValue)
 {
-    if (get_kind() == TK_MAP && type_->get_key_element_type()->equals(key->type_.get()) &&
-            type_->get_element_type()->equals(value->type_.get()))
+    if (get_kind() == TK_MAP && type_->get_key_element_type()->equals(*key->type_.get()) &&
+            type_->get_element_type()->equals(*value->type_.get()))
     {
         if (type_->get_bounds() == BOUND_UNLIMITED || get_item_count() < type_->get_bounds())
         {
@@ -5251,21 +5249,13 @@ bool DynamicData::deserialize(
     return type_->deserialize(*this, cdr);
 }
 
-bool DynamicData::deserialize_discriminator(
-        eprosima::fastcdr::Cdr& cdr)
-{
-    assert(type_);
-    return type_->deserialize_discriminator(discriminator_value_, cdr);
-}
-
 size_t DynamicData::getCdrSerializedSize(
         const DynamicData* data,
         size_t current_alignment /*= 0*/)
 {
-    assert(type_);
     assert(data);
 
-    return type_->getCdrSerializedSize(*data, current_alignment);
+    return data->get_type()->getCdrSerializedSize(*data, current_alignment);
 }
 
 size_t DynamicData::getKeyMaxCdrSerializedSize(
@@ -5289,13 +5279,6 @@ void DynamicData::serialize(
 {
     assert(type_);
     type_->serialize(*this, cdr);
-}
-
-void DynamicData::serialize_discriminator(
-        eprosima::fastcdr::Cdr& cdr) const
-{
-    assert(type_);
-    type_->serialize_discriminator(*this, cdr);
 }
 
 void DynamicData::serializeKey(

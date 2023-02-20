@@ -36,7 +36,7 @@ void DynamicDataHelper::print(
                 data->type_->get_all_members(members);
                 for (auto it : members)
                 {
-                    print_member(const_cast<DynamicData*>(data), it.second);
+                    print_member(const_cast<DynamicData*>(data), it.second->get_descriptor());
                 }
                 break;
             }
@@ -336,16 +336,16 @@ void DynamicDataHelper::print_complex_element(
             st_data->type_->get_all_members(members);
             for (auto it : members)
             {
-                print_member(st_data, it.second, tabs + "\t");
+                print_member(st_data, it.second->get_descriptor(), tabs + "\t");
             }
             break;
         }
         case TK_UNION:
         {
             std::cout << "<union>" << std::endl;
-            DynamicTypeMember member;
+            MemberDescriptor member;
             st_data->type_->get_member(member, st_data->union_id_);
-            print_member(st_data, &member, tabs + "\t");
+            print_member(st_data, member, tabs + "\t");
             break;
         }
         case TK_SEQUENCE:
@@ -365,10 +365,10 @@ void DynamicDataHelper::print_complex_element(
                 size_t index = i * 2;
                 MemberId member_id = st_data->get_member_id_at_index(static_cast<uint32_t>(index));
                 std::cout << "Key: ";
-                print_member(st_data, members[member_id], tabs + "\t");
+                print_member(st_data, members[member_id]->get_descriptor(), tabs + "\t");
                 member_id = data->get_member_id_at_index(static_cast<uint32_t>(index + 1));
                 std::cout << "Value: ";
-                print_member(st_data, members[member_id], tabs + "\t");
+                print_member(st_data, members[member_id]->get_descriptor(), tabs + "\t");
             }
             break;
         }
@@ -380,12 +380,10 @@ void DynamicDataHelper::print_complex_element(
 
 void DynamicDataHelper::print_member(
         DynamicData* data,
-        const DynamicTypeMember* type,
+        const MemberDescriptor& desc,
         const std::string& tabs)
 {
-    std::cout << tabs << type->get_name() << ": ";
-    MemberDescriptor desc;
-    type->get_descriptor(desc);
+    std::cout << tabs << desc.get_name() << ": ";
     switch (desc.get_kind())
     {
         case TK_NONE:
@@ -407,20 +405,20 @@ void DynamicDataHelper::print_member(
         case TK_ENUM:
         case TK_BITMASK:
         {
-            print_basic_element(data, type->get_id(), desc.get_kind());
+            print_basic_element(data, desc.get_id(), desc.get_kind());
             std::cout << std::endl;
             break;
         }
         case TK_STRUCTURE:
         case TK_BITSET:
         {
-            DynamicData* st_data = data->loan_value(type->get_id());
+            DynamicData* st_data = data->loan_value(desc.get_id());
             std::cout << "<struct/bitset>" << std::endl;
             std::map<types::MemberId, const types::DynamicTypeMember*> members;
             desc.get_type()->get_all_members(members);
             for (auto it : members)
             {
-                print_member(st_data, it.second, tabs + "\t");
+                print_member(st_data, it.second->get_descriptor(), tabs + "\t");
             }
             data->return_loaned_value(st_data);
             break;
@@ -428,16 +426,16 @@ void DynamicDataHelper::print_member(
         case TK_UNION:
         {
             std::cout << "<union>" << std::endl;
-            DynamicData* st_data = data->loan_value(type->get_id());
-            DynamicTypeMember member;
+            DynamicData* st_data = data->loan_value(desc.get_id());
+            MemberDescriptor member;
             desc.get_type()->get_member(member, data->union_id_);
-            print_member(st_data, &member, tabs + "\t");
+            print_member(st_data, member, tabs + "\t");
             break;
         }
         case TK_SEQUENCE:
         case TK_ARRAY:
         {
-            DynamicData* st_data = data->loan_value(type->get_id());
+            DynamicData* st_data = data->loan_value(desc.get_id());
             print_collection(st_data, tabs + "\t");
             data->return_loaned_value(st_data);
             break;
@@ -445,7 +443,7 @@ void DynamicDataHelper::print_member(
         case TK_MAP:
         {
             std::cout << "<map>" << std::endl;
-            DynamicData* st_data = data->loan_value(type->get_id());
+            DynamicData* st_data = data->loan_value(desc.get_id());
             std::map<types::MemberId, const types::DynamicTypeMember*> members;
             desc.get_type()->get_all_members(members);
             size_t size = data->get_item_count();
@@ -454,10 +452,10 @@ void DynamicDataHelper::print_member(
                 size_t index = i * 2;
                 MemberId id = data->get_member_id_at_index(static_cast<uint32_t>(index));
                 std::cout << "Key: ";
-                print_member(st_data, members[id], tabs + "\t");
+                print_member(st_data, members[id]->get_descriptor(), tabs + "\t");
                 id = data->get_member_id_at_index(static_cast<uint32_t>(index + 1));
                 std::cout << "Value: ";
-                print_member(st_data, members[id], tabs + "\t");
+                print_member(st_data, members[id]->get_descriptor(), tabs + "\t");
             }
             data->return_loaned_value(st_data);
             break;

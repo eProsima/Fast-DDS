@@ -97,6 +97,7 @@ if (SQLITE3_SUPPORT AND FASTDDS_STATISTICS)
 
     set(STATISTICS_DOMAINPARTICIPANT_MOCK_TESTS_SOURCE
         StatisticsDomainParticipantMockTests.cpp
+        ${PROJECT_SOURCE_DIR}/src/cpp/dynamic-types/AnnotationManager.cpp
         ${PROJECT_SOURCE_DIR}/src/cpp/dynamic-types/AnnotationDescriptor.cpp
         ${PROJECT_SOURCE_DIR}/src/cpp/dynamic-types/AnnotationParameterValue.cpp
         ${PROJECT_SOURCE_DIR}/src/cpp/dynamic-types/BuiltinAnnotationsTypeObject.cpp

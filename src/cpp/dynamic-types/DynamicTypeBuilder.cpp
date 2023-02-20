@@ -32,18 +32,19 @@ DynamicTypeBuilder::DynamicTypeBuilder(
 
 DynamicTypeBuilder::DynamicTypeBuilder(
         use_the_create_method,
-        const DynamicTypeBuilder* builder)
+        const DynamicTypeBuilder& builder)
 {
-    assert(builder);
-    *this = *builder;
+    *this = builder;
 }
 
 DynamicTypeBuilder::DynamicTypeBuilder(
         use_the_create_method,
-        const TypeDescriptor* descriptor)
+        const TypeDescriptor& descriptor)
     : current_member_id_(0)
 {
-    static_assert(false);
+    (void)descriptor;
+    // TODO BARR: refactor
+
 //    descriptor_ = new TypeDescriptor(descriptor);
 //    try
 //    {
@@ -270,153 +271,6 @@ void DynamicTypeBuilder::refresh_member_ids()
     {
         current_member_id_ = base->get_members_count();
     }
-}
-
-ReturnCode_t DynamicTypeBuilder::apply_annotation(
-        AnnotationDescriptor& descriptor)
-{
-    if (descriptor.is_consistent())
-    {
-        bool inserted = false;
-
-        std::tie(std::ignore, inserted) = annotation_.insert(descriptor);
-
-        if(!inserted)
-        {
-            EPROSIMA_LOG_ERROR(DYN_TYPES, "Error applying annotation: it was already there.");
-            return ReturnCode_t::RETCODE_BAD_PARAMETER;
-        }
-
-        is_key_defined_ = key_annotation();
-
-        return ReturnCode_t::RETCODE_OK;
-    }
-    else
-    {
-        EPROSIMA_LOG_ERROR(DYN_TYPES, "Error applying annotation. The input descriptor isn't consistent.");
-        return ReturnCode_t::RETCODE_BAD_PARAMETER;
-    }
-}
-
-ReturnCode_t DynamicTypeBuilder::apply_annotation(
-        const std::string& annotation_name,
-        const std::string& key,
-        const std::string& value)
-{
-    annotation_iterator it;
-    bool found;
-
-    std::tie(it, found) = get_annotation(annotation_name);
-    if (found)
-    {
-        it->set_value(key, value);
-        return ReturnCode_t::RETCODE_OK;
-    }
-    else
-    {
-        AnnotationDescriptor new_descriptor;
-        new_descriptor.set_type(
-            DynamicTypeBuilderFactory::get_instance()->create_annotation_primitive(annotation_name));
-        new_descriptor.set_value(key, value);
-        return apply_annotation(new_descriptor);
-    }
-}
-
-// Annotation setters
-
-/* Ancillary method for setters
- * @param id annotation name
- * @param C functor that checks if the annotation should be modified: bool(const AnnotationDescriptor&)
- * @param M functor that modifies the annotation if present: void(AnnotationDescriptor&)
- */
-template<typename C, typename M>
-void DynamicTypeBuilder::annotation_set( const std::string& id, C& c, M& m)
-{
-    annotation_iterator it;
-    bool found;
-
-    std::tie(it, found) = get_annotation(id);
-    if(!found)
-    {
-        AnnotationDescriptor descriptor;
-        descriptor.set_type(
-            DynamicTypeBuilderFactory::get_instance()->create_annotation_primitive(id));
-        m(descriptor);
-        apply_annotation(descriptor);
-    }
-    else if(c(*it))
-    {
-        // Reinsert because order may be modified
-        AnnotationDescriptor descriptor(std::move(*it));
-        it = annotation_.erase(it);
-        m(descriptor);
-        annotation_.insert(it, std::move(descriptor));
-    }
-
-    std::tie(it, found) = get_annotation(id);
-    assert(found);
-}
-
-//! Specialization of the above template to simple values
-void DynamicTypeBuilder::annotation_set(const std::string& id, std::string& new_val);
-{
-    annotation_set(
-            id,
-            [&new_val](const AnnotationDescriptor& d) -> bool
-            {
-               std::string val;
-               d.get_value(val, "value");
-               return new_val != val;
-            },
-            [&new_val](AnnotationDescriptor& d)
-            {
-                d.set_value("value", new_val);
-            });
-}
-
-void DynamicTypeBuilder::annotation_set_extensibility(
-        const std::string& extensibility)
-{
-    annotation_set(ANNOTATION_EXTENSIBILITY_ID, extensibility);
-}
-
-void DynamicTypeBuilder::annotation_set_mutable()
-{
-    annotation_set(ANNOTATION_MUTABLE_ID, CONST_TRUE);
-}
-
-void DynamicTypeBuilder::annotation_set_final()
-{
-    annotation_set(ANNOTATION_FINAL_ID, CONST_TRUE);
-}
-
-void DynamicTypeBuilder::annotation_set_appendable()
-{
-    annotation_set(ANNOTATION_APPENDABLE_ID, CONST_TRUE);
-}
-
-void DynamicTypeBuilder::annotation_set_nested(
-        bool nested)
-{
-    annotation_set(ANNOTATION_NESTED_ID, CONST_TRUE);
-}
-
-void DynamicTypeBuilder::annotation_set_key(
-        bool key)
-{
-    annotation_set(ANNOTATION_KEY_ID, key ? CONST_TRUE : CONST_FALSE);
-}
-
-void DynamicTypeBuilder::annotation_set_bit_bound(
-        uint16_t bit_bound)
-{
-    annotation_set(ANNOTATION_BIT_BOUND_ID, std::to_string(bit_bound));
-}
-
-void DynamicTypeBuilder::annotation_set_non_serialized(
-        bool non_serialized)
-{
-    annotation_set(ANNOTATION_NON_SERIALIZED_ID, non_serialized ? CONST_TRUE : CONST_FALSE);
 }
 
 bool DynamicTypeBuilder::equals(

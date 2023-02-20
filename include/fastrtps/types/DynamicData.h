@@ -823,6 +823,9 @@ public:
 
     RTPS_DllAPI DynamicType_ptr get_type() const;
 
+    void serializeKey(
+            eprosima::fastcdr::Cdr& cdr) const;
+
     // TODO: clone()
 };
 

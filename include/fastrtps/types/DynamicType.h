@@ -35,7 +35,7 @@ class DynamicTypeBuilder;
 class DynamicTypeBuilderFactory;
 
 class DynamicType
-    : protected TypeDescriptor
+    : public TypeDescriptor
     , public std::enable_shared_from_this<DynamicType>
 {
     // Only create objects from the associated factory
@@ -44,11 +44,6 @@ class DynamicType
         explicit use_the_create_method() = default;
     };
 
-    const TypeDescriptor& get_type_descriptor() const
-    {
-        return static_cast<const TypeDescriptor&>(*this);
-    }
-
 public:
 
     DynamicType(
@@ -56,9 +51,14 @@ public:
 
     DynamicType(
             use_the_create_method,
-            const TypeDescriptor* descriptor);
+            const TypeDescriptor& descriptor);
 
     RTPS_DllAPI virtual ~DynamicType();
+
+    const TypeDescriptor& get_type_descriptor() const
+    {
+        return static_cast<const TypeDescriptor&>(*this);
+    }
 
 protected:
 
@@ -90,49 +90,49 @@ protected:
 
     // Serialization ancillary
     void serialize_empty_data(
-            const DynamicType_ptr pType,
             eprosima::fastcdr::Cdr& cdr) const;
 
     bool deserialize_discriminator(
             uint64_t& discriminator_value,
-            eprosima::fastcdr::Cdr& cdr);
+            eprosima::fastcdr::Cdr& cdr) const;
 
     void serialize_discriminator(
             DynamicData& data,
-            eprosima::fastcdr::Cdr& cdr);
+            eprosima::fastcdr::Cdr& cdr) const;
 
     void serializeKey(
-            DynamicData& data,
+            const DynamicData& data,
             eprosima::fastcdr::Cdr& cdr) const;
 
 public:
 
     // Serializes and deserializes the Dynamic Data.
     void serialize(
-            DynamicData& data,
+            const DynamicData& data,
             eprosima::fastcdr::Cdr& cdr) const;
 
     bool deserialize(
             DynamicData& data,
-            eprosima::fastcdr::Cdr& cdr);
+            eprosima::fastcdr::Cdr& cdr) const;
 
     size_t getCdrSerializedSize(
             const DynamicData& data,
-            size_t current_alignment = 0);
+            size_t current_alignment = 0) const;
 
     size_t getEmptyCdrSerializedSize(
-            size_t current_alignment = 0);
+            size_t current_alignment = 0) const;
 
     size_t getKeyMaxCdrSerializedSize(
-            size_t current_alignment = 0);
+            size_t current_alignment = 0) const;
 
     size_t getMaxCdrSerializedSize(
-            size_t current_alignment = 0);
+            size_t current_alignment = 0) const;
 
 public:
     // ancillary for DynamicData interfaces
     using TypeDescriptor::get_member_id_by_name;
     using TypeDescriptor::get_member_id_at_index;
+    using TypeDescriptor::get_descriptor;
 
 public:
 
@@ -146,11 +146,6 @@ public:
     using TypeDescriptor::get_member_by_name;
     using TypeDescriptor::get_bounds;
     using TypeDescriptor::get_bounds_size;
-
-    // TODO: doxigen
-    RTPS_DllAPI ReturnCode_t get_descriptor(
-            TypeDescriptor& descriptor) const;
-
     using TypeDescriptor::get_kind;
     using TypeDescriptor::get_name;
     using TypeDescriptor::get_members_count;

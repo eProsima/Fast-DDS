@@ -12,11 +12,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#include <fastdds/dds/log/Log.hpp>
+#include <fastrtps/types/AnnotationDescriptor.h>
 #include <fastrtps/types/DynamicType.h>
 #include <fastrtps/types/DynamicTypeBuilderFactory.h>
 #include <fastrtps/types/TypeDescriptor.h>
-#include <fastrtps/types/AnnotationDescriptor.h>
-#include <fastdds/dds/log/Log.hpp>
 #include <fastrtps/types/TypesBase.h>
 
 using namespace eprosima::fastrtps::types;
@@ -78,6 +78,7 @@ ReturnCode_t TypeDescriptor::copy_from(
         const TypeDescriptor& descriptor)
 {
     *this = descriptor;
+    return ReturnCode_t::RETCODE_OK;
 }
 
 bool TypeDescriptor::operator==(const TypeDescriptor& descriptor) const
@@ -274,200 +275,28 @@ void TypeDescriptor::set_name(
     name_ = name;
 }
 
-std::pair<TypeDescriptor::annotation_iterator, bool>
-TypeDescriptor::get_annotation(
-        const std::string& name) const
-{
-    annotation_iterator it = annotation_.begin();
-
-    for(; it != annotation_.end(); ++it)
-    {
-        const AnnotationDescriptor& d = *it;
-        if ( d.type() && d.type()->kind_ > 0
-             && !d.type()->get_name().empty()
-             && d.type()->get_name().compare(name) == 0)
-        {
-            return std::make_pair(it, true);
-        }
-    }
-
-    return std::make_pair(it, false);
-}
-
-// Annotations application
-bool TypeDescriptor::annotation_is_extensibility() const
-{
-    return get_annotation(ANNOTATION_EXTENSIBILITY_ID).second;
-}
-
-bool TypeDescriptor::annotation_is_mutable() const
-{
-    return get_annotation(ANNOTATION_MUTABLE_ID).second ||
-           annotation_get_extensibility().compare(EXTENSIBILITY_MUTABLE) == 0;
-}
-
-bool TypeDescriptor::annotation_is_final() const
-{
-    return get_annotation(ANNOTATION_FINAL_ID).second ||
-           annotation_get_extensibility().compare(EXTENSIBILITY_FINAL) == 0;
-}
-
-bool TypeDescriptor::annotation_is_appendable() const
-{
-    return get_annotation(ANNOTATION_APPENDABLE_ID).second ||
-           annotation_get_extensibility().compare(EXTENSIBILITY_APPENDABLE) == 0;
-}
-
-bool TypeDescriptor::annotation_is_nested() const
-{
-    annotation_iterator it;
-    bool found;
-
-    std::tie(it, found) = get_annotation(ANNOTATION_NESTED_ID);
-
-    if (found)
-    {
-        std::string value;
-        if (it->get_value(value) == ReturnCode_t::RETCODE_OK)
-        {
-            return value == CONST_TRUE;
-        }
-    }
-
-    return false;
-}
-
-bool TypeDescriptor::annotation_is_bit_bound() const
-{
-    return get_annotation(ANNOTATION_BIT_BOUND_ID).second;
-}
-
-bool TypeDescriptor::annotation_is_key() const
-{
-    annotation_iterator it;
-    bool found;
-
-    std::tie(it, found) = get_annotation(ANNOTATION_KEY_ID);
-
-    if(!found)
-    {
-        std::tie(it, found) = get_annotation(ANNOTATION_EPKEY_ID);
-    }
-
-    if(found)
-    {
-        std::string value;
-        if (it->get_value(value) == ReturnCode_t::RETCODE_OK)
-        {
-            return value == CONST_TRUE;
-        }
-    }
-
-    return false;
-}
-
-bool TypeDescriptor::annotation_is_non_serialized() const
-{
-    annotation_iterator it;
-    bool found;
-
-    std::tie(it, found) = get_annotation(ANNOTATION_NON_SERIALIZED_ID);
-    if (found)
-    {
-        std::string value;
-        if (it->get_value(value) == ReturnCode_t::RETCODE_OK)
-        {
-            return value == CONST_TRUE;
-        }
-    }
-    return false;
-}
-
-// Annotation getters
-std::string TypeDescriptor::annotation_get_extensibility() const
-{
-    annotation_iterator it;
-    bool found;
-
-    std::tie(it, found) = get_annotation(ANNOTATION_EXTENSIBILITY_ID);
-    if (found)
-    {
-        std::string value;
-        if (it->get_value(value) == ReturnCode_t::RETCODE_OK)
-        {
-            return value;
-        }
-    }
-    return {};
-}
-
-uint16_t TypeDescriptor::annotation_get_bit_bound() const
-{
-    annotation_iterator it;
-    bool found;
-
-    std::tie(it, found) = get_annotation(ANNOTATION_BIT_BOUND_ID);
-
-    if (found)
-    {
-        std::string value;
-        if (it->get_value(value) == ReturnCode_t::RETCODE_OK)
-        {
-            return static_cast<uint16_t>(std::stoi(value));
-        }
-    }
-    return 32; // Default value
-}
-
-MemberId TypeDescriptor::get_annotation_count() const
-{
-    return MemberId(annotation_.size());
-}
-
-ReturnCode_t TypeDescriptor::get_annotation(
-        AnnotationDescriptor& descriptor,
-        MemberId idx) const
-{
-    assert(idx < get_annotation_count());
-    auto it = annotation_.begin();
-    descriptor = *std::advance(it, idx);
-    return ReturnCode_t::RETCODE_OK;
-}
-
-bool TypeDescriptor::key_annotation() const
-{
-    for (auto anIt = annotation_.begin(); anIt != annotation_.end(); ++anIt)
-    {
-        if ((*anIt).key_annotation())
-        {
-            return true;
-        }
-    }
-    return false;
-}
-
 ReturnCode_t TypeDescriptor::get_all_members_by_name(
         std::map<std::string, const DynamicTypeMember*>& members) const
 {
-    members = member_by_name_;
+    members = std::map<std::string, const DynamicTypeMember*>(member_by_name_.begin(), member_by_name_.end());
     return ReturnCode_t::RETCODE_OK;
 }
 
 ReturnCode_t TypeDescriptor::get_all_members(
         std::map<MemberId, const DynamicTypeMember*>& members) const
 {
-    members = member_by_id_;
+    members = std::map<MemberId, const DynamicTypeMember*>(member_by_id_.begin(), member_by_id_.end());
     return ReturnCode_t::RETCODE_OK;
 }
 
 ReturnCode_t TypeDescriptor::get_member_by_name(
-        DynamicTypeMember& member,
+        MemberDescriptor& member,
         const std::string& name) const
 {
     auto it = member_by_name_.find(name);
     if (it != member_by_name_.end())
     {
-        member = *it->second;
+        member = it->second->get_descriptor();
         return ReturnCode_t::RETCODE_OK;
     }
     else
@@ -493,7 +322,7 @@ TypeDescriptor::get_member(
 }
 
 ReturnCode_t TypeDescriptor::get_member(
-        DynamicTypeMember& member,
+        MemberDescriptor& member,
         MemberId id) const
 {
     const DynamicTypeMember* pM;
@@ -502,7 +331,7 @@ ReturnCode_t TypeDescriptor::get_member(
     std::tie(pM, found) = get_member(id);
     if(found)
     {
-        member = *pM;
+        member = pM->get_descriptor();
         return ReturnCode_t::RETCODE_OK;
     }
     else
@@ -524,7 +353,7 @@ MemberId TypeDescriptor::get_member_id_by_name(
 
     if(it != member_by_name_.end())
     {
-        return it.second->get_id();
+        return it->second->get_id();
     }
 
     return MEMBER_ID_INVALID;
@@ -538,13 +367,13 @@ MemberId TypeDescriptor::get_member_id_at_index(
         return MEMBER_ID_INVALID;
     }
 
-    member_iterator it = members_.begin();
+    auto it = members_.begin();
     std::advance(it, index);
     assert(it->get_index() == index);
     return it->get_id();
 }
 
-bool TypeDescriptor:::exists_member_by_name(
+bool TypeDescriptor::exists_member_by_name(
         const std::string& name) const
 {
     auto base = get_base_type();
@@ -558,7 +387,7 @@ bool TypeDescriptor:::exists_member_by_name(
     return member_by_name_.find(name) != member_by_name_.end();
 }
 
-bool TypeDescriptor:::exists_member_by_id(
+bool TypeDescriptor::exists_member_by_id(
         MemberId id) const
 {
     auto base = get_base_type();
@@ -571,3 +400,4 @@ bool TypeDescriptor:::exists_member_by_id(
     }
     return member_by_id_.find(id) != member_by_id_.end();
 }
+

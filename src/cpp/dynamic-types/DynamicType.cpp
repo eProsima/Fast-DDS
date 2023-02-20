@@ -33,10 +33,10 @@ DynamicType::DynamicType(
 
 DynamicType::DynamicType(
         use_the_create_method,
-        const TypeDescriptor* descriptor)
+        const TypeDescriptor& descriptor)
 {
-    static_assert(false);
-
+    // TODO BARR: refactor
+    (void)descriptor;
 //    descriptor_ = new TypeDescriptor(descriptor);
 //    try
 //    {
@@ -81,13 +81,6 @@ bool DynamicType::exists_member_by_name(
         }
     }
     return member_by_name_.find(name) != member_by_name_.end();
-}
-
-ReturnCode_t DynamicType::get_descriptor(
-        TypeDescriptor& descriptor) const
-{
-    descriptor = *this;
-    return ReturnCode_t::RETCODE_OK;
 }
 
 bool DynamicType::equals(
@@ -150,7 +143,7 @@ size_t DynamicType::get_size() const
 
 bool DynamicType::deserialize(
         DynamicData& data,
-        eprosima::fastcdr::Cdr& cdr)
+        eprosima::fastcdr::Cdr& cdr) const
 {
     if (get_type_descriptor().annotation_is_non_serialized())
     {
@@ -381,7 +374,7 @@ bool DynamicType::deserialize(
         }
         case TK_UNION:
         {
-            DynamicType::deserialize_discriminator(data.discriminator_value_, cdr);
+            deserialize_discriminator(data.discriminator_value_, cdr);
             data.update_union_discriminator();
             data.set_union_id(data.union_id_);
             if (data.union_id_ != MEMBER_ID_INVALID)
@@ -609,7 +602,7 @@ bool DynamicType::deserialize(
 
 bool DynamicType::deserialize_discriminator(
         uint64_t& discriminator_value,
-        eprosima::fastcdr::Cdr& cdr)
+        eprosima::fastcdr::Cdr& cdr) const
 {
     switch (get_kind())
     {
@@ -712,7 +705,7 @@ bool DynamicType::deserialize_discriminator(
 
 size_t DynamicType::getCdrSerializedSize(
         const DynamicData& data,
-        size_t current_alignment /*= 0*/)
+        size_t current_alignment /*= 0*/) const
 {
     if (data.type_ != nullptr && get_descriptor().annotation_is_non_serialized())
     {
@@ -927,7 +920,7 @@ size_t DynamicType::getCdrSerializedSize(
 }
 
 size_t DynamicType::getEmptyCdrSerializedSize(
-        size_t current_alignment /*= 0*/)
+        size_t current_alignment /*= 0*/) const
 {
     if (get_descriptor().annotation_is_non_serialized())
     {
@@ -1018,7 +1011,7 @@ size_t DynamicType::getEmptyCdrSerializedSize(
 
             // Element size with the maximum size
             current_alignment += get_total_bounds() *
-                    descriptor_->get_element_type()->getEmptyCdrSerializedSize();
+                    get_element_type()->getEmptyCdrSerializedSize();
             break;
         }
         case TK_SEQUENCE:
@@ -1038,7 +1031,7 @@ size_t DynamicType::getEmptyCdrSerializedSize(
 }
 
 size_t DynamicType::getKeyMaxCdrSerializedSize(
-        size_t current_alignment /*= 0*/)
+        size_t current_alignment /*= 0*/) const
 {
     size_t initial_alignment = current_alignment;
 
@@ -1061,7 +1054,7 @@ size_t DynamicType::getKeyMaxCdrSerializedSize(
 }
 
 size_t DynamicType::getMaxCdrSerializedSize(
-        size_t current_alignment /*= 0*/)
+        size_t current_alignment /*= 0*/) const
 {
     if (get_descriptor().annotation_is_non_serialized())
     {
@@ -1201,7 +1194,7 @@ size_t DynamicType::getMaxCdrSerializedSize(
 }
 
 void DynamicType::serialize(
-        DynamicData& data,
+        const DynamicData& data,
         eprosima::fastcdr::Cdr& cdr) const
 {
     if (annotation_is_non_serialized())
@@ -1400,7 +1393,7 @@ void DynamicType::serialize(
         }
         case TK_UNION:
         {
-            data.union_discriminator_->serialize_discriminator(cdr);
+            serialize_discriminator(*data.union_discriminator_, cdr);
             //cdr << data.union_id_;
             if (data.union_id_ != MEMBER_ID_INVALID)
             {
@@ -1445,7 +1438,6 @@ void DynamicType::serialize(
 
                 if (found)
                 {
-                    const MemberDescriptor* member_desc = d_it->second;
                     if (!member_desc->annotation_is_non_serialized())
                     {
                         auto it = data.complex_values_.at(idx);
@@ -1463,11 +1455,10 @@ void DynamicType::serialize(
                 const DynamicTypeMember* member_desc;
                 bool found;
 
-                std::tie(member_desc, found) = get_member(get_member_id_at_index(i));
+                std::tie(member_desc, found) = get_member(get_member_id_at_index(idx));
 
                 if (found)
                 {
-                    const MemberDescriptor* member_desc = d_it->second;
                     if (!member_desc->annotation_is_non_serialized())
                     {
                         auto it = data.values_.at(idx);
@@ -1617,7 +1608,7 @@ void DynamicType::serialize_discriminator(
 }
 
 void DynamicType::serializeKey(
-        DynamicData& data,
+        const DynamicData& data,
         eprosima::fastcdr::Cdr& cdr) const
 {
     // Structures check the the size of the key for their children
@@ -1630,7 +1621,7 @@ void DynamicType::serializeKey(
             cdata.type_->serializeKey(cdata, cdr);
         }
 #else
-        for (auto it = values_.begin(); it != values_.end(); ++it)
+        for (auto it = data.values_.begin(); it != data.values_.end(); ++it)
         {
             auto& cdata = *static_cast<DynamicData*>(it->second);
             cdata.type_->serializeKey(cdata, cdr);

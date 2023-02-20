@@ -115,7 +115,7 @@ DynamicData* DynamicDataFactory::create_data(
                 {
                     newData = create_data(pType->get_base_type());
                     // newData->set_type_name(pType->get_name());
-                    static_assert(false);
+                    // TODO BARR: refactor
                 }
                 else if (pType->get_kind() == TK_STRUCTURE || pType->get_kind() == TK_BITSET)
                 {

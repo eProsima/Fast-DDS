@@ -29,6 +29,7 @@ namespace types {
 class DynamicType;
 
 class TypeDescriptor
+      : protected AnnotationManager
 {
 protected:
 
@@ -39,15 +40,19 @@ protected:
     std::vector<uint32_t> bound_;           // Length for strings, arrays, sequences, maps and bitmasks.
     DynamicType_ptr element_type_;          // Value Type for arrays, sequences, maps, bitmasks.
     DynamicType_ptr key_element_type_;      // Key Type for maps.
-    std::set<AnnotationDescriptor> annotation_; // Annotations to apply
 
     bool is_key_defined_ = false;
 
     std::list<DynamicTypeMember> members_;
-    std::map<MemberId, const DynamicTypeMember*> member_by_id_;      // members references indexed by id
-    std::map<std::string, const DynamicTypeMember*> member_by_name_;    // members references indexed by name
+    std::map<MemberId, DynamicTypeMember*> member_by_id_;      // members references indexed by id
+    std::map<std::string, DynamicTypeMember*> member_by_name_;    // members references indexed by name
 
-    using annotation_iterator = std::set<AnnotationDescriptor>::iterator;
+    // TODO: doxigen
+    RTPS_DllAPI ReturnCode_t get_descriptor(
+            TypeDescriptor& descriptor) const;
+
+    const TypeDescriptor& get_descriptor() const;
+
     using member_iterator = std::list<DynamicTypeMember>::iterator;
 
     RTPS_DllAPI void clean();
@@ -71,45 +76,24 @@ protected:
     bool exists_member_by_id(
             MemberId id) const;
 
-    // Annotations application
-    bool annotation_is_extensibility() const;
+    RTPS_DllAPI void set_name(
+            std::string name);
 
-    bool annotation_is_mutable() const;
+    RTPS_DllAPI void set_kind(
+            TypeKind kind);
 
-    bool annotation_is_final() const;
+public:
 
-    bool annotation_is_appendable() const;
+    using AnnotationManager::annotation_is_bit_bound;
+    using AnnotationManager::annotation_is_key;
+    using AnnotationManager::annotation_is_non_serialized;
 
-    bool annotation_is_nested() const;
-
-    bool annotation_is_bit_bound() const;
-
-    bool annotation_is_key() const;
-
-    bool annotation_is_non_serialized() const;
-
-    bool key_annotation() const;
-
-    // Annotation getters
-    std::string annotation_get_extensibility() const;
-
-    bool annotation_get_nested() const;
-
-    uint16_t annotation_get_bit_bound() const;
-
-    bool annotation_get_key() const;
-
-    //! Returns a Type annotation based on DynamicType name
-    std::pair<annotation_iterator, bool> get_annotation(
-            const std::string& name) const;
-
-    // TODO: doxygen
-    RTPS_DllAPI ReturnCode_t get_annotation(
-            AnnotationDescriptor& descriptor,
-            MemberId idx) const;
-
-    // TODO: doxygen
-    RTPS_DllAPI MemberId get_annotation_count() const;
+    using AnnotationManager::annotation_is_extensibility;
+    using AnnotationManager::annotation_is_mutable;
+    using AnnotationManager::annotation_is_final;
+    using AnnotationManager::annotation_is_appendable;
+    using AnnotationManager::annotation_is_nested;
+    using AnnotationManager::key_annotation;
 
 public:
     // ancillary for DynamicData interfaces
@@ -166,12 +150,6 @@ public:
 
     RTPS_DllAPI uint32_t get_total_bounds() const;
 
-    RTPS_DllAPI void set_kind(
-            TypeKind kind);
-
-    RTPS_DllAPI void set_name(
-            std::string name);
-
     // TODO: doxygen
     RTPS_DllAPI ReturnCode_t get_all_members(
             std::map<MemberId, const DynamicTypeMember*>& members) const;
@@ -182,12 +160,12 @@ public:
 
     // TODO: doxygen
     RTPS_DllAPI ReturnCode_t get_member(
-            DynamicTypeMember& member,
+            MemberDescriptor& member,
             MemberId id) const;
 
     // TODO: doxygen
     RTPS_DllAPI ReturnCode_t get_member_by_name(
-            DynamicTypeMember& member,
+            MemberDescriptor& member,
             const std::string& name) const;
 };
 

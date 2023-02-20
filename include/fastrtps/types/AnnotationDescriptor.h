@@ -57,7 +57,7 @@ public:
         const std::string& key,
         const std::string& value);
 
-    void set_type(DynamicType_ptr type)
+    void set_type(const DynamicType_ptr& type)
     {
         type_ = type;
     }

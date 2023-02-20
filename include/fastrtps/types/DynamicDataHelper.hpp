@@ -74,7 +74,7 @@ protected:
 
     static void print_member(
             DynamicData* data,
-            const DynamicTypeMember* type,
+            const MemberDescriptor& type,
             const std::string& tabs = "");
 };
 

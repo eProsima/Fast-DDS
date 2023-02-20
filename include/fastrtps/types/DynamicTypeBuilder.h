@@ -15,6 +15,7 @@
 #ifndef TYPES_DYNAMIC_TYPE_BUILDER_H
 #define TYPES_DYNAMIC_TYPE_BUILDER_H
 
+#include <fastdds/dds/log/Log.hpp>
 #include <fastrtps/types/TypeDescriptor.h>
 
 namespace eprosima {
@@ -28,7 +29,7 @@ class DynamicType;
 class DynamicTypeMember;
 
 class DynamicTypeBuilder
-    : protected TypeDescriptor
+    : public TypeDescriptor
     , public std::enable_shared_from_this<DynamicTypeBuilder>
 {
     // Only create objects from the associated factory
@@ -45,11 +46,6 @@ class DynamicTypeBuilder
     using TypeDescriptor::exists_member_by_name;
     using TypeDescriptor::exists_member_by_id;
 
-    //! This method only adds an empty element to the members collection with the right index
-    member_iterator add_empty_member(
-            uint32_t index,
-            const std::string& name);
-
     void refresh_member_ids();
 
     void clear();
@@ -64,36 +60,13 @@ class DynamicTypeBuilder
         return static_cast<const TypeDescriptor&>(*this);
     }
 
-    // Annotation setters
+public:
 
-    //! auxiliary method for all bellow
-    template<typename C, typename M>
-    void annotation_set(const std::string& id, C& c, M& m);
-
-    //! auxiliary method for all bellow
-    void annotation_set(const std::string& id, std::string& new_val);
-
-    void annotation_set_extensibility(
-            const std::string& extensibility);
-
-    void annotation_set_mutable();
-
-    void annotation_set_final();
-
-    void annotation_set_appendable();
-
-    void annotation_set_nested(
-            bool nested);
-
-    void annotation_set_bit_bound(
-            uint16_t bit_bound);
-
-    void annotation_set_key(
-            bool key);
-
-    void annotation_set_non_serialized(
-            bool non_serialized);
-
+        // TODO Barro: remove this from public
+    //! This method only adds an empty element to the members collection with the right index
+    member_iterator add_empty_member(
+            uint32_t index,
+            const std::string& name);
 public:
 
     DynamicTypeBuilder(
@@ -101,11 +74,11 @@ public:
 
     DynamicTypeBuilder(
             use_the_create_method,
-            const DynamicTypeBuilder* builder);
+            const DynamicTypeBuilder& builder);
 
     DynamicTypeBuilder(
             use_the_create_method,
-            const TypeDescriptor* descriptor);
+            const TypeDescriptor& descriptor);
 
     ~DynamicTypeBuilder() = default;
 
@@ -118,11 +91,7 @@ public:
 
     using TypeDescriptor::get_annotation_count;
 
-    RTPS_DllAPI ReturnCode_t get_descriptor(TypeDescriptor& descriptor)
-    {
-        descriptor = get_type_descriptor();
-        return ReturnCode_t::RETCODE_OK;
-    }
+    using TypeDescriptor::get_descriptor;
 
     // TODO: doxygen
     RTPS_DllAPI ReturnCode_t add_member(
@@ -134,15 +103,7 @@ public:
         return add_member(MemberDescriptor(std::forward<Ts>(Args)...));
     }
 
-    // TODO: doxygen
-    RTPS_DllAPI ReturnCode_t apply_annotation(
-            AnnotationDescriptor& descriptor);
-
-    // TODO: doxygen
-    RTPS_DllAPI ReturnCode_t apply_annotation(
-            const std::string& annotation_name,
-            const std::string& key,
-            const std::string& value);
+    using AnnotationManager::apply_annotation;
 
     // TODO: doxygen
     template<typename... Ts>

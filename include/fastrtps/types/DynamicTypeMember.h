@@ -18,6 +18,7 @@
 #include <fastrtps/types/TypesBase.h>
 #include <fastrtps/types/MemberDescriptor.h>
 #include <fastrtps/types/AnnotationDescriptor.h>
+#include <fastrtps/types/AnnotationManager.h>
 
 namespace eprosima {
 namespace fastrtps {
@@ -27,11 +28,9 @@ class AnnotationDescriptor;
 class DynamicType;
 
 class DynamicTypeMember
-    : protected MemberDescriptor
+    : public MemberDescriptor
+    , protected AnnotationManager
 {
-    std::set<AnnotationDescriptor> annotation_; // Annotations to apply
-    using annotation_iterator = std::set<AnnotationDescriptor>::iterator;
-
 protected:
 
     friend class DynamicTypeBuilder;
@@ -40,77 +39,26 @@ protected:
 
     using MemberDescriptor::operator=;
 
+public:
+
+    using AnnotationManager::annotation_is_bit_bound;
+    using AnnotationManager::annotation_is_key;
+    using AnnotationManager::annotation_is_non_serialized;
+
+    using AnnotationManager::annotation_is_extensibility;
+    using AnnotationManager::annotation_is_mutable;
+    using AnnotationManager::annotation_is_final;
+    using AnnotationManager::annotation_is_appendable;
+    using AnnotationManager::annotation_is_nested;
+    using AnnotationManager::key_annotation;
+
+public:
+
+    using MemberDescriptor::MemberDescriptor;
     const MemberDescriptor& get_descriptor() const
     {
         return static_cast<const MemberDescriptor&>(*this);
     }
-
-    std::pair<annotation_iterator, bool> get_annotation(const std::string& name) const;
-
-    // Annotations application
-    bool annotation_is_optional() const;
-
-    bool annotation_is_key() const;
-
-    bool annotation_is_must_understand() const;
-
-    bool annotation_is_non_serialized() const;
-
-    bool annotation_is_value() const;
-
-    bool annotation_is_default_literal() const;
-
-    bool annotation_is_position() const;
-
-    bool annotation_is_bit_bound() const;
-
-    // Annotations getters
-    bool annotation_get_key() const;
-
-    std::string annotation_get_value() const;
-
-    std::string annotation_get_default() const;
-
-    uint16_t annotation_get_position() const;
-
-    uint16_t annotation_get_bit_bound() const;
-
-    // Annotations setters
-
-    //! auxiliary method for all bellow
-    template<typename C, typename M>
-    void annotation_set(const std::string& id, const C& c, const M& m);
-
-    //! auxiliary method for all bellow
-    void annotation_set(const std::string& id, const std::string& new_val);
-    void annotation_set(const std::string& id, const char* new_val);
-
-    void annotation_set_optional(bool optional);
-
-    void annotation_set_key(bool key);
-
-    void annotation_set_must_understand(bool must_understand);
-
-    void annotation_set_non_serialized(bool non_serialized);
-
-    void annotation_set_value(const std::string& value);
-
-    void annotation_set_default(const std::string& default_value);
-
-    void annotation_set_default_literal();
-
-    void annotation_set_position(uint16_t position);
-
-    void annotation_set_bit_bound(uint16_t bit_bound);
-
-    RTPS_DllAPI ReturnCode_t apply_annotation(
-            AnnotationDescriptor& descriptor);
-
-    RTPS_DllAPI ReturnCode_t apply_annotation(
-            const std::string& annotation_name,
-            const std::string& key,
-            const std::string& value);
-public:
 
     using MemberDescriptor::get_kind;
 
@@ -125,13 +73,9 @@ public:
 
     using MemberDescriptor::get_type;
 
-    // TODO: doxygen
-    RTPS_DllAPI MemberId get_annotation_count();
+    using AnnotationManager::get_annotation_count;
 
-    // TODO: doxygen
-    RTPS_DllAPI ReturnCode_t get_annotation(
-            AnnotationDescriptor& descriptor,
-            MemberId idx);
+    using AnnotationManager::get_annotation;
 
     bool operator==(const DynamicTypeMember& other) const;
 

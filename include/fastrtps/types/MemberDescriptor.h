@@ -37,6 +37,7 @@ protected:
     std::set<uint64_t> labels_;         // Case Labels for unions.
     bool default_label_ = false;        // TRUE if it's the default option of a union.
 
+    friend class DynamicTypeBuilder;
     friend class DynamicTypeBuilderFactory;
     friend class DynamicData;
     friend class DynamicTypeMember;
