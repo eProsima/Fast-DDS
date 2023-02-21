@@ -34,6 +34,76 @@ namespace eprosima {
 namespace fastrtps {
 namespace types {
 
+dtypes_memory_check dynamic_tracker;
+
+#ifdef ENABLE_DYNAMIC_MEMORY_CHECK
+
+void dtypes_memory_check::reset() noexcept
+{
+    std::lock_guard<std::mutex> _(mutex_);
+    builders_list_.clear();
+    types_list_.clear();
+}
+
+bool dtypes_memory_check::is_empty() noexcept
+{
+    std::lock_guard<std::mutex> _(mutex_);
+    return builders_list_.empty() && types_list_.empty();
+}
+
+void dtypes_memory_check::add_primitive(const DynamicTypeBuilder* pBuilder) noexcept
+{
+    std::lock_guard<std::mutex> _(mutex_);
+    primitive_builders_list_.insert(pBuilder);
+}
+
+bool dtypes_memory_check::add(const DynamicTypeBuilder* pBuilder) noexcept
+{
+    std::lock_guard<std::mutex> _(mutex_);
+    if(!builders_list_.insert(pBuilder).second)
+    {
+        EPROSIMA_LOG_ERROR(DYN_TYPES, "The given type builder has been inserted previously.");
+        return false;
+    }
+    return true;
+}
+
+bool dtypes_memory_check::remove(const DynamicTypeBuilder* pBuilder) noexcept
+{
+    std::lock_guard<std::mutex> _(mutex_);
+    if(!builders_list_.erase(pBuilder)
+        && primitive_builders_list_.find(pBuilder) != primitive_builders_list_.end())
+    {
+        EPROSIMA_LOG_ERROR(DYN_TYPES, "The given type builder has been already removed.");
+        return false;
+    }
+    return true;
+}
+
+bool dtypes_memory_check::add(const DynamicType* pType) noexcept
+{
+    std::lock_guard<std::mutex> _(mutex_);
+    if(!types_list_.insert(pType).second)
+    {
+        EPROSIMA_LOG_ERROR(DYN_TYPES, "The given type has been inserted previously.");
+        return false;
+    }
+    return true;
+}
+
+bool dtypes_memory_check::remove(const DynamicType*) noexcept
+{
+    std::lock_guard<std::mutex> _(mutex_);
+    if(!types_list_.erase(pBuilder))
+    {
+        EPROSIMA_LOG_ERROR(DYN_TYPES, "The given type has been already removed.");
+        return false;
+    }
+    return true;
+}
+
+#endif // ifdef ENABLE_DYNAMIC_MEMORY_CHECK
+
 static std::string get_type_name(
         TypeKind kind)
 {
@@ -101,11 +171,7 @@ ReturnCode_t DynamicTypeBuilderFactory::delete_instance() noexcept
 
 void DynamicTypeBuilderFactory::reset()
 {
-#ifndef DISABLE_DYNAMIC_MEMORY_CHECK
-    std::lock_guard<std::mutex> _(mutex_);
-    builders_list_.clear();
-    types_list_.clear();
-#endif // ifndef DISABLE_DYNAMIC_MEMORY_CHECK
+    dynamic_tracker.reset();
 }
 
 DynamicTypeBuilderFactory::~DynamicTypeBuilderFactory()
@@ -114,28 +180,14 @@ DynamicTypeBuilderFactory::~DynamicTypeBuilderFactory()
     reset();
 }
 
-void DynamicTypeBuilderFactory::on_allocation(DynamicType* pType)
+void DynamicTypeBuilderFactory::after_construction(DynamicTypeBuilder* pBuilder)
 {
-    (void)pType;
-#ifndef DISABLE_DYNAMIC_MEMORY_CHECK
-    std::lock_guard<std::mutex> _(mutex_);
-    if(!types_list_.insert(const_cast<DynamicType* const>(pType)).second)
-    {
-        EPROSIMA_LOG_ERROR(DYN_TYPES, "The given type has been inserted previously.");
-    }
-#endif // ifndef DISABLE_DYNAMIC_MEMORY_CHECK
+    dynamic_tracker.add(pBuilder);
 }
 
-void DynamicTypeBuilderFactory::on_allocation(DynamicTypeBuilder* pBuilder)
+void DynamicTypeBuilderFactory::before_destruction(DynamicTypeBuilder* builder)
 {
-    (void)pBuilder;
-#ifndef DISABLE_DYNAMIC_MEMORY_CHECK
-    std::lock_guard<std::mutex> _(mutex_);
-    if(!builders_list_.insert(pBuilder).second)
-    {
-        EPROSIMA_LOG_ERROR(DYN_TYPES, "The given type builder has been inserted previously.");
-    }
-#endif // ifndef DISABLE_DYNAMIC_MEMORY_CHECK
+    dynamic_tracker.remove(builder);
 }
 
 DynamicType_ptr DynamicTypeBuilderFactory::create_type(
@@ -207,31 +259,28 @@ DynamicTypeBuilder_ptr DynamicTypeBuilderFactory::create_alias_builder(
         DynamicType_ptr base_type,
         const std::string& sName)
 {
-    if (base_type != nullptr)
+    if (base_type)
     {
-        TypeDescriptor pDescriptor;
-        pDescriptor.kind_ = TK_ALIAS;
-        pDescriptor.base_type_ = base_type;
+        DynamicTypeBuilder_ptr builder = std::allocate_shared<DynamicTypeBuilder>(
+            get_allocator(),
+            DynamicTypeBuilder::use_the_create_method{},
+            base_type->get_descriptor());
+
+        builder.set_kind(TK_ALIAS);
+        builder.set_base_type(base_type);
+
         if (sName.length() > 0)
         {
-            pDescriptor.name_ = sName;
-        }
-        else
-        {
-            //pDescriptor.name_ = GenerateTypeName(get_type_name(TK_ALIAS));
-            pDescriptor.name_ = base_type->get_name();
+            builder.set_name(sName);
         }
 
-        DynamicTypeBuilder_ptr pNewTypeBuilder = std::allocate_shared<DynamicTypeBuilder>(
-            get_allocator<DynamicTypeBuilder>(), DynamicTypeBuilder::use_the_create_method{},
-            pDescriptor);
-        return pNewTypeBuilder;
+        return builder;
     }
     else
     {
         EPROSIMA_LOG_ERROR(DYN_TYPES, "Error creating alias type, base_type must be valid");
     }
-    return nullptr;
+    return {};
 }
 
 DynamicTypeBuilder_ptr DynamicTypeBuilderFactory::create_array_builder(
@@ -319,66 +368,61 @@ DynamicTypeBuilder_ptr DynamicTypeBuilderFactory::create_bitmask_builder(
     return nullptr;
 }
 
+// Beware! this method doesn't return a static object
+DynamicTypeBuilder_ptr DynamicTypeBuilderFactory::create_primitive_builder(TypeDescriptor&& td) noexcept
+{
+    // create on heap
+    DynamicTypeBuilder_ptr builder = std::make_shared<DynamicTypeBuilder>(
+                DynamicTypeBuilder::use_the_create_method{},
+                td);
+    // notify the tracker
+    dynamic_tracker.add_primitive(builder.get());
+    return builder;
+}
+
+// TODO:BARRO this is not a primitive type
 DynamicTypeBuilder_ptr DynamicTypeBuilderFactory::create_bitset_builder()
 {
-    TypeDescriptor pDescriptor;
-    pDescriptor.kind_ = TK_BITSET;
-    // TODO Review on implementation for IDL
-    pDescriptor.name_ = GenerateTypeName(get_type_name(TK_BITSET));
-
-    DynamicTypeBuilder_ptr pNewTypeBuilder = std::allocate_shared<DynamicTypeBuilder>(
-        get_allocator<DynamicTypeBuilder>(), DynamicTypeBuilder::use_the_create_method{}, pDescriptor);
-    return pNewTypeBuilder;
+//    static DynamicTypeBuilder_ptr builder = create_primitive_builder(
+//            TypeDescriptor(GenerateTypeName(get_type_name(TK_BITSET)), TK_BITSET));
+//
+    return builder;
 }
 
-DynamicTypeBuilder_ptr DynamicTypeBuilderFactory::create_bool_builder()
+DynamicTypeBuilder_cptr& DynamicTypeBuilderFactory::create_bool_builder()
 {
-    TypeDescriptor pBoolDescriptor;
-    pBoolDescriptor.kind_ = TK_BOOLEAN;
-    pBoolDescriptor.name_ = GenerateTypeName(get_type_name(TK_BOOLEAN));
+    // C++11 compiler uses double-checked locking pattern to avoid concurrency issues
+    static DynamicTypeBuilder_cptr builder = create_primitive_builder(
+            TypeDescriptor(GenerateTypeName(get_type_name(TK_BOOLEAN)), TK_BOOLEAN));
 
-    DynamicTypeBuilder_ptr pNewTypeBuilder = std::allocate_shared<DynamicTypeBuilder>(
-        get_allocator<DynamicTypeBuilder>(), DynamicTypeBuilder::use_the_create_method{},
-        pBoolDescriptor);
-    return pNewTypeBuilder;
+    return builder;
 }
 
-DynamicTypeBuilder_ptr DynamicTypeBuilderFactory::create_byte_builder()
+DynamicTypeBuilder_cptr& DynamicTypeBuilderFactory::create_byte_builder()
 {
-    TypeDescriptor pByteDescriptor;
-    pByteDescriptor.kind_ = TK_BYTE;
-    pByteDescriptor.name_ = GenerateTypeName(get_type_name(TK_BYTE));
+    static DynamicTypeBuilder_cptr builder = create_primitive_builder(
+            TypeDescriptor(GenerateTypeName(get_type_name(TK_BYTE)), TK_BYTE));
 
-    DynamicTypeBuilder_ptr pNewTypeBuilder = std::allocate_shared<DynamicTypeBuilder>(
-        get_allocator<DynamicTypeBuilder>(), DynamicTypeBuilder::use_the_create_method{},
-        pByteDescriptor);
-    return pNewTypeBuilder;
+    return builder;
 }
 
-DynamicTypeBuilder_ptr DynamicTypeBuilderFactory::create_char8_builder()
+DynamicTypeBuilder_cptr& DynamicTypeBuilderFactory::create_char8_builder()
 {
-    TypeDescriptor pChar8Descriptor;
-    pChar8Descriptor.kind_ = TK_CHAR8;
-    pChar8Descriptor.name_ = GenerateTypeName(get_type_name(TK_CHAR8));
+    static DynamicTypeBuilder_cptr builder = create_primitive_builder(
+            TypeDescriptor(GenerateTypeName(get_type_name(TK_CHAR8)), TK_CHAR8));
 
-    DynamicTypeBuilder_ptr pNewTypeBuilder = std::allocate_shared<DynamicTypeBuilder>(
-        get_allocator<DynamicTypeBuilder>(), DynamicTypeBuilder::use_the_create_method{},
-        pChar8Descriptor);
-    return pNewTypeBuilder;
+    return builder;
 }
 
-DynamicTypeBuilder_ptr DynamicTypeBuilderFactory::create_char16_builder()
+DynamicTypeBuilder_cptr& DynamicTypeBuilderFactory::create_char16_builder()
 {
-    TypeDescriptor pChar16Descriptor;
-    pChar16Descriptor.kind_ = TK_CHAR16;
-    pChar16Descriptor.name_ = GenerateTypeName(get_type_name(TK_CHAR16));
+    static DynamicTypeBuilder_cptr builder = create_primitive_builder(
+            TypeDescriptor(GenerateTypeName(get_type_name(TK_CHAR16)), TK_CHAR16));
 
-    DynamicTypeBuilder_ptr pNewTypeBuilder = std::allocate_shared<DynamicTypeBuilder>(
-        get_allocator<DynamicTypeBuilder>(), DynamicTypeBuilder::use_the_create_method{},
-        pChar16Descriptor);
-    return pNewTypeBuilder;
+    return builder;
 }
 
+// TODO:BARRO revamp manually
 DynamicType_ptr DynamicTypeBuilderFactory::create_annotation_primitive(
         const std::string& name)
 {
@@ -391,90 +435,62 @@ DynamicType_ptr DynamicTypeBuilderFactory::create_annotation_primitive(
         get_allocator<DynamicType>(), DynamicType::use_the_create_method{}, pEnumDescriptor);
 }
 
+// TODO:BARRO revamp (enum is not a primitive)
 DynamicTypeBuilder_ptr DynamicTypeBuilderFactory::create_enum_builder()
 {
-    TypeDescriptor pEnumDescriptor;
-    pEnumDescriptor.kind_ = TK_ENUM;
-    //pEnumDescriptor.name_ = GenerateTypeName(get_type_name(TK_ENUM));
-    // Enum currently is an alias for uint32_t
-    pEnumDescriptor.name_ = GenerateTypeName(get_type_name(TK_UINT32));
+    // Enum is currently an alias for uint32_t
+    static DynamicTypeBuilder_cptr builder = create_primitive_builder(
+            TypeDescriptor(GenerateTypeName(get_type_name(TK_UINT32)), TK_ENUM));
 
-    DynamicTypeBuilder_ptr pNewTypeBuilder = std::allocate_shared<DynamicTypeBuilder>(
-        get_allocator<DynamicTypeBuilder>(), DynamicTypeBuilder::use_the_create_method{},
-        pEnumDescriptor);
-    return pNewTypeBuilder;
+    return builder;
 }
 
-DynamicTypeBuilder_ptr DynamicTypeBuilderFactory::create_float32_builder()
+DynamicTypeBuilder_cptr& DynamicTypeBuilderFactory::create_float32_builder()
 {
-    TypeDescriptor pFloat32Descriptor;
-    pFloat32Descriptor.kind_ = TK_FLOAT32;
-    pFloat32Descriptor.name_ = GenerateTypeName(get_type_name(TK_FLOAT32));
+    static DynamicTypeBuilder_cptr builder = create_primitive_builder(
+            TypeDescriptor(GenerateTypeName(get_type_name(TK_FLOAT32)), TK_FLOAT32));
 
-    DynamicTypeBuilder_ptr pNewTypeBuilder = std::allocate_shared<DynamicTypeBuilder>(
-        get_allocator<DynamicTypeBuilder>(), DynamicTypeBuilder::use_the_create_method{},
-        pFloat32Descriptor);
-    return pNewTypeBuilder;
+    return builder;
 }
 
-DynamicTypeBuilder_ptr DynamicTypeBuilderFactory::create_float64_builder()
+DynamicTypeBuilder_cptr& DynamicTypeBuilderFactory::create_float64_builder()
 {
-    TypeDescriptor pFloat64Descriptor;
-    pFloat64Descriptor.kind_ = TK_FLOAT64;
-    pFloat64Descriptor.name_ = GenerateTypeName(get_type_name(TK_FLOAT64));
+    static DynamicTypeBuilder_cptr builder = create_primitive_builder(
+            TypeDescriptor(GenerateTypeName(get_type_name(TK_FLOAT64)), TK_FLOAT64));
 
-    DynamicTypeBuilder_ptr pNewTypeBuilder = std::allocate_shared<DynamicTypeBuilder>(
-        get_allocator<DynamicTypeBuilder>(), DynamicTypeBuilder::use_the_create_method{},
-        pFloat64Descriptor);
-    return pNewTypeBuilder;
+    return builder;
 }
 
-DynamicTypeBuilder_ptr DynamicTypeBuilderFactory::create_float128_builder()
+DynamicTypeBuilder_cptr& DynamicTypeBuilderFactory::create_float128_builder()
 {
-    TypeDescriptor pFloat128Descriptor;
-    pFloat128Descriptor.kind_ = TK_FLOAT128;
-    pFloat128Descriptor.name_ = GenerateTypeName(get_type_name(TK_FLOAT128));
+    static DynamicTypeBuilder_cptr builder = create_primitive_builder(
+            TypeDescriptor(GenerateTypeName(get_type_name(TK_FLOAT128)), TK_FLOAT128));
 
-    DynamicTypeBuilder_ptr pNewTypeBuilder = std::allocate_shared<DynamicTypeBuilder>(
-        get_allocator<DynamicTypeBuilder>(), DynamicTypeBuilder::use_the_create_method{},
-        pFloat128Descriptor);
-    return pNewTypeBuilder;
+    return builder;
 }
 
-DynamicTypeBuilder_ptr DynamicTypeBuilderFactory::create_int16_builder()
+DynamicTypeBuilder_cptr& DynamicTypeBuilderFactory::create_int16_builder()
 {
-    TypeDescriptor pInt16Descriptor;
-    pInt16Descriptor.kind_ = TK_INT16;
-    pInt16Descriptor.name_ = GenerateTypeName(get_type_name(TK_INT16));
+    static DynamicTypeBuilder_cptr builder = create_primitive_builder(
+            TypeDescriptor(GenerateTypeName(get_type_name(TK_INT16)), TK_INT16));
 
-    DynamicTypeBuilder_ptr pNewTypeBuilder = std::allocate_shared<DynamicTypeBuilder>(
-        get_allocator<DynamicTypeBuilder>(), DynamicTypeBuilder::use_the_create_method{},
-        pInt16Descriptor);
-    return pNewTypeBuilder;
+    return builder;
 }
 
-DynamicTypeBuilder_ptr DynamicTypeBuilderFactory::create_int32_builder()
+DynamicTypeBuilder_cptr& DynamicTypeBuilderFactory::create_int32_builder()
 {
-    TypeDescriptor pInt32Descriptor;
-    pInt32Descriptor.kind_ = TK_INT32;
-    pInt32Descriptor.name_ = GenerateTypeName(get_type_name(TK_INT32));
+    static DynamicTypeBuilder_cptr builder = create_primitive_builder(
+            TypeDescriptor(GenerateTypeName(get_type_name(TK_INT32)), TK_INT32));
 
-    DynamicTypeBuilder_ptr pNewTypeBuilder = std::allocate_shared<DynamicTypeBuilder>(
-        get_allocator<DynamicTypeBuilder>(), DynamicTypeBuilder::use_the_create_method{},
-        pInt32Descriptor);
-    return pNewTypeBuilder;
+    return builder;
 }
 
-DynamicTypeBuilder_ptr DynamicTypeBuilderFactory::create_int64_builder()
+DynamicTypeBuilder_cptr& DynamicTypeBuilderFactory::create_int64_builder()
 {
-    TypeDescriptor pInt64Descriptor;
-    pInt64Descriptor.kind_ = TK_INT64;
-    pInt64Descriptor.name_ = GenerateTypeName(get_type_name(TK_INT64));
+    static DynamicTypeBuilder_cptr builder = create_primitive_builder(
+            TypeDescriptor(GenerateTypeName(get_type_name(TK_INT64)), TK_INT64));
 
-    DynamicTypeBuilder_ptr pNewTypeBuilder = std::allocate_shared<DynamicTypeBuilder>(
-        get_allocator<DynamicTypeBuilder>(), DynamicTypeBuilder::use_the_create_method{},
-        pInt64Descriptor);
-    return pNewTypeBuilder;
+    return builder;
 }
 
 DynamicTypeBuilder_ptr DynamicTypeBuilderFactory::create_map_builder(
@@ -684,40 +700,28 @@ DynamicTypeBuilder_ptr DynamicTypeBuilderFactory::create_builder_copy(
             get_allocator<DynamicTypeBuilder>(), DynamicTypeBuilder::use_the_create_method{}, type);
 }
 
-DynamicTypeBuilder_ptr DynamicTypeBuilderFactory::create_uint16_builder()
+DynamicTypeBuilder_cptr& DynamicTypeBuilderFactory::create_uint16_builder()
 {
-    TypeDescriptor pUInt16Descriptor;
-    pUInt16Descriptor.kind_ = TK_UINT16;
-    pUInt16Descriptor.name_ = GenerateTypeName(get_type_name(TK_UINT16));
+    static DynamicTypeBuilder_cptr builder = create_primitive_builder(
+            TypeDescriptor(GenerateTypeName(get_type_name(TK_UINT16)), TK_UINT16));
 
-    DynamicTypeBuilder_ptr pNewTypeBuilder = std::allocate_shared<DynamicTypeBuilder>(
-        get_allocator<DynamicTypeBuilder>(), DynamicTypeBuilder::use_the_create_method{},
-        pUInt16Descriptor);
-    return pNewTypeBuilder;
+    return builder;
 }
 
-DynamicTypeBuilder_ptr DynamicTypeBuilderFactory::create_uint32_builder()
+DynamicTypeBuilder_cptr& DynamicTypeBuilderFactory::create_uint32_builder()
 {
-    TypeDescriptor pUInt32Descriptor;
-    pUInt32Descriptor.kind_ = TK_UINT32;
-    pUInt32Descriptor.name_ = GenerateTypeName(get_type_name(TK_UINT32));
+    static DynamicTypeBuilder_cptr builder = create_primitive_builder(
+            TypeDescriptor(GenerateTypeName(get_type_name(TK_UINT32)), TK_UINT32));
 
-    DynamicTypeBuilder_ptr pNewTypeBuilder = std::allocate_shared<DynamicTypeBuilder>(
-        get_allocator<DynamicTypeBuilder>(), DynamicTypeBuilder::use_the_create_method{},
-        pUInt32Descriptor);
-    return pNewTypeBuilder;
+    return builder;
 }
 
-DynamicTypeBuilder_ptr DynamicTypeBuilderFactory::create_uint64_builder()
+DynamicTypeBuilder_cptr& DynamicTypeBuilderFactory::create_uint64_builder()
 {
-    TypeDescriptor pUInt64Descriptor;
-    pUInt64Descriptor.kind_ = TK_UINT64;
-    pUInt64Descriptor.name_ = GenerateTypeName(get_type_name(TK_UINT64));
+    static DynamicTypeBuilder_cptr builder = create_primitive_builder(
+            TypeDescriptor(GenerateTypeName(get_type_name(TK_UINT64)), TK_UINT64));
 
-    DynamicTypeBuilder_ptr pNewTypeBuilder = std::allocate_shared<DynamicTypeBuilder>(
-        get_allocator<DynamicTypeBuilder>(), DynamicTypeBuilder::use_the_create_method{},
-        pUInt64Descriptor);
-    return pNewTypeBuilder;
+    return builder;
 }
 
 DynamicTypeBuilder_ptr DynamicTypeBuilderFactory::create_union_builder(
@@ -791,54 +795,71 @@ DynamicTypeBuilder_ptr DynamicTypeBuilderFactory::create_wstring_builder(
 }
 
 ReturnCode_t DynamicTypeBuilderFactory::delete_builder(
-        DynamicTypeBuilder* builder)
+        DynamicTypeBuilder* builder) noexcept
 {
-    (void*)builder;
-#ifndef DISABLE_DYNAMIC_MEMORY_CHECK
-        std::lock_guard<std::mutex> _(mutex_);
-        if(0 == builders_list_.erase(builder))
-        {
-            EPROSIMA_LOG_ERROR(DYN_TYPES, "The given type builder has been deleted previously.");
-            return ReturnCode_t::RETCODE_ALREADY_DELETED;
-        }
-#endif // ifndef DISABLE_DYNAMIC_MEMORY_CHECK
-    return ReturnCode_t::RETCODE_OK;
+    return dynamic_tracker.remove(builder) ? ReturnCode_t::RETCODE_OK : ReturnCode_t::RETCODE_ALREADY_DELETED;
 }
 
 ReturnCode_t DynamicTypeBuilderFactory::delete_type(
         DynamicType* type) noexcept
 {
-    // non-heap related clean up goes here
-    (void*)type;
-#ifndef DISABLE_DYNAMIC_MEMORY_CHECK
-        std::lock_guard<std::mutex> _(mutex_);
-        if(0 == types_list_.erase(type))
-        {
-            EPROSIMA_LOG_ERROR(DYN_TYPES, "The given type has been deleted previously.");
-            return ReturnCode_t::RETCODE_ALREADY_DELETED;
-        }
-#endif // ifndef DISABLE_DYNAMIC_MEMORY_CHECK
-
-    return ReturnCode_t::RETCODE_OK;
+    return dynamic_tracker.remove(type) ? ReturnCode_t::RETCODE_OK : ReturnCode_t::RETCODE_ALREADY_DELETED;
 }
 
 DynamicType_ptr DynamicTypeBuilderFactory::get_primitive_type(
         TypeKind kind) noexcept
 {
-    TypeDescriptor pDescriptor;
-    pDescriptor.kind_ = kind;
-    pDescriptor.name_ = GenerateTypeName(get_type_name(kind));
-    return create_type(pDescriptor);
+    DynamicTypeBuilder* builder = nullptr;
+
+    switch(kind)
+    {
+        case TK_BOOLEAN:
+            builder = create_bool_builder().get();
+            break;
+        case TK_BYTE:
+            builder = create_byte_builder().get();
+            break;
+        case TK_INT16:
+            builder = create_int16_builder().get();
+            break;
+        case TK_INT32:
+            builder = create_int32_builder().get();
+            break;
+        case TK_INT64:
+            builder = create_int64_builder().get();
+            break;
+        case TK_UINT16:
+            builder = create_uint16_builder().get();
+            break;
+        case TK_UINT32:
+            builder = create_uint32_builder().get();
+            break;
+        case TK_UINT64:
+            builder = create_uint64_builder().get();
+            break;
+        case TK_FLOAT32:
+            builder = create_float32_builder().get();
+            break;
+        case TK_FLOAT64:
+            builder = create_float64_builder().get();
+            break;
+        case TK_FLOAT128:
+            builder = create_float128_builder().get();
+            break;
+        case TK_CHAR8:
+            builder = create_char8_builder().get();
+            break;
+        case TK_CHAR16:
+            builder = create_char16_builder().get();
+            break;
+    }
+
+    return nullptr != builder ? builder->build() : DynamicType_ptr{};
 }
 
 bool DynamicTypeBuilderFactory::is_empty() const
 {
-#ifndef DISABLE_DYNAMIC_MEMORY_CHECK
-    std::lock_guard<std::mutex> _(mutex_);
-    return builders_list_.empty() && types_list_.empty();
-#else
-    return true;
-#endif // ifndef DISABLE_DYNAMIC_MEMORY_CHECK
+    return dynamic_tracker.is_empty();
 }
 
 void DynamicTypeBuilderFactory::build_type_identifier(
@@ -2617,93 +2638,67 @@ DynamicType_ptr DynamicTypeBuilderFactory::create_alias_type(
 
 DynamicType_ptr DynamicTypeBuilderFactory::create_int32_type()
 {
-    TypeDescriptor pInt32Descriptor(GenerateTypeName(get_type_name(TK_INT32)), TK_INT32);
-    return std::allocate_shared<DynamicType>(
-        get_allocator<DynamicType>(), DynamicType::use_the_create_method{}, pInt32Descriptor);
+    return create_int32_builder()->build();
 }
 
 DynamicType_ptr DynamicTypeBuilderFactory::create_uint32_type()
 {
-    TypeDescriptor pUint32Descriptor(GenerateTypeName(get_type_name(TK_UINT32)), TK_UINT32);
-    return std::allocate_shared<DynamicType>(
-        get_allocator<DynamicType>(), DynamicType::use_the_create_method{}, pUint32Descriptor);
+    return create_uint32_builder()->build();
 }
 
 DynamicType_ptr DynamicTypeBuilderFactory::create_int16_type()
 {
-    TypeDescriptor pInt16Descriptor(GenerateTypeName(get_type_name(TK_INT16)), TK_INT16);
-    return std::allocate_shared<DynamicType>(
-        get_allocator<DynamicType>(), DynamicType::use_the_create_method{}, pInt16Descriptor);
+    return create_int16_builder()->build();
 }
 
 DynamicType_ptr DynamicTypeBuilderFactory::create_uint16_type()
 {
-    TypeDescriptor pUint16Descriptor(GenerateTypeName(get_type_name(TK_UINT16)), TK_UINT16);
-    return std::allocate_shared<DynamicType>(
-        get_allocator<DynamicType>(), DynamicType::use_the_create_method{}, pUint16Descriptor);
+    return create_uint16_builder()->build();
 }
 
 DynamicType_ptr DynamicTypeBuilderFactory::create_int64_type()
 {
-    TypeDescriptor pInt64Descriptor(GenerateTypeName(get_type_name(TK_INT64)), TK_INT64);
-    return std::allocate_shared<DynamicType>(
-        get_allocator<DynamicType>(), DynamicType::use_the_create_method{}, pInt64Descriptor);
+    return create_int64_builder()->build();
 }
 
 DynamicType_ptr DynamicTypeBuilderFactory::create_uint64_type()
 {
-    TypeDescriptor pUint64Descriptor(GenerateTypeName(get_type_name(TK_UINT64)), TK_UINT64);
-    return std::allocate_shared<DynamicType>(
-        get_allocator<DynamicType>(), DynamicType::use_the_create_method{}, pUint64Descriptor);
+    return create_uint64_builder()->build();
 }
 
 DynamicType_ptr DynamicTypeBuilderFactory::create_float32_type()
 {
-    TypeDescriptor pFloat32Descriptor(GenerateTypeName(get_type_name(TK_FLOAT32)), TK_FLOAT32);
-    return std::allocate_shared<DynamicType>(
-        get_allocator<DynamicType>(), DynamicType::use_the_create_method{}, pFloat32Descriptor);
+    return create_float32_builder()->build();
 }
 
 DynamicType_ptr DynamicTypeBuilderFactory::create_float64_type()
 {
-    TypeDescriptor pFloat64Descriptor(GenerateTypeName(get_type_name(TK_FLOAT64)), TK_FLOAT64);
-    return std::allocate_shared<DynamicType>(
-        get_allocator<DynamicType>(), DynamicType::use_the_create_method{}, pFloat64Descriptor);
+    return create_float64_builder()->build();
 }
 
 DynamicType_ptr DynamicTypeBuilderFactory::create_float128_type()
 {
-    TypeDescriptor pFloat128Descriptor(GenerateTypeName(get_type_name(TK_FLOAT128)), TK_FLOAT128);
-    return std::allocate_shared<DynamicType>(
-        get_allocator<DynamicType>(), DynamicType::use_the_create_method{}, pFloat128Descriptor);
+    return create_float128_builder()->build();
 }
 
 DynamicType_ptr DynamicTypeBuilderFactory::create_char8_type()
 {
-    TypeDescriptor pChar8Descriptor(GenerateTypeName(get_type_name(TK_CHAR8)), TK_CHAR8);
-    return std::allocate_shared<DynamicType>(
-        get_allocator<DynamicType>(), DynamicType::use_the_create_method{}, pChar8Descriptor);
+    return create_char8_builder()->build();
 }
 
 DynamicType_ptr DynamicTypeBuilderFactory::create_char16_type()
 {
-    TypeDescriptor pChar16Descriptor(GenerateTypeName(get_type_name(TK_CHAR16)), TK_CHAR16);
-    return std::allocate_shared<DynamicType>(
-        get_allocator<DynamicType>(), DynamicType::use_the_create_method{}, pChar16Descriptor);
+    return create_char16_builder()->build();
 }
 
 DynamicType_ptr DynamicTypeBuilderFactory::create_bool_type()
 {
-    TypeDescriptor pBoolDescriptor(GenerateTypeName(get_type_name(TK_BOOLEAN)), TK_BOOLEAN);
-    return std::allocate_shared<DynamicType>(
-        get_allocator<DynamicType>(), DynamicType::use_the_create_method{}, pBoolDescriptor);
+    return create_bool_builder()->build();
 }
 
 DynamicType_ptr DynamicTypeBuilderFactory::create_byte_type()
 {
-    TypeDescriptor pByteDescriptor(GenerateTypeName(get_type_name(TK_BYTE)), TK_BYTE);
-    return std::allocate_shared<DynamicType>(
-        get_allocator<DynamicType>(), DynamicType::use_the_create_method{}, pByteDescriptor);
+    return create_byte_builder()->build();
 }
 
 DynamicType_ptr DynamicTypeBuilderFactory::create_string_type(

@@ -100,6 +100,12 @@ bool TypeDescriptor::equals(
     return *this == descriptor;
 }
 
+void TypeDescriptor::set_base_type(
+            const DynamicType_ptr& type)
+{
+    base_type_ = type;
+}
+
 DynamicType_ptr TypeDescriptor::get_base_type() const
 {
     return base_type_;

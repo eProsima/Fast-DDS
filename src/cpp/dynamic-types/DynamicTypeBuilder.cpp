@@ -40,34 +40,21 @@ DynamicTypeBuilder::DynamicTypeBuilder(
 DynamicTypeBuilder::DynamicTypeBuilder(
         use_the_create_method,
         const TypeDescriptor& descriptor)
-    : current_member_id_(0)
+    : TypeDescriptor(descriptor)
+    , current_member_id_(0)
 {
-    (void)descriptor;
-    // TODO BARR: refactor
+    // the factory should only create consistent builders
+    assert(is_consistent());
+}
 
-//    descriptor_ = new TypeDescriptor(descriptor);
-//    try
-//    {
-//        name_ = descriptor->get_name();
-//        kind_ = descriptor->get_kind();
-//    }
-//    catch (...)
-//    {
-//        name_ = "";
-//        kind_ = TK_NONE;
-//    }
-//
-//    // Alias types use the same members than it's base class.
-//    if (kind_ == TK_ALIAS)
-//    {
-//        for (auto it = descriptor_->get_base_type()->member_by_id_.begin();
-//                it != descriptor_->get_base_type()->member_by_id_.end(); ++it)
-//        {
-//            member_by_name_.insert(std::make_pair(it->second->get_name(), it->second));
-//        }
-//    }
-//
-//    refresh_member_ids();
+void DynamicTypeBuilder::after_construction(DynamicType* type)
+{
+    dynamic_tracker.add(type);
+}
+
+void DynamicTypeBuilder::before_destruction(DynamicType* type)
+{
+    dynamic_tracker.remove(type);
 }
 
 DynamicTypeBuilder::member_iterator DynamicTypeBuilder::add_empty_member(
@@ -209,7 +196,10 @@ DynamicType_ptr DynamicTypeBuilder::build() const
 {
     if (is_consistent())
     {
-        return DynamicTypeBuilderFactory::get_instance()->create_type(this);
+        return std::allocate_shared<DynamicType>(
+            builder_allocator,
+            DynamicType::use_the_create_method{},
+            get_descriptor());
     }
     else
     {
@@ -260,17 +250,6 @@ bool DynamicTypeBuilder::is_discriminator_type() const
            kind == TK_INT64 || kind == TK_UINT16 || kind == TK_UINT32 || kind == TK_UINT64 ||
            kind == TK_FLOAT32 || kind == TK_FLOAT64 || kind == TK_FLOAT128 || kind == TK_CHAR8 ||
            kind == TK_CHAR16 || kind == TK_STRING8 || kind == TK_STRING16 || kind == TK_ENUM || kind == TK_BITMASK;
-}
-
-void DynamicTypeBuilder::refresh_member_ids()
-{
-    auto base = get_base_type();
-    auto kind = get_kind();
-
-    if ((kind == TK_STRUCTURE || kind == TK_BITSET) && base)
-    {
-        current_member_id_ = base->get_members_count();
-    }
 }
 
 bool DynamicTypeBuilder::equals(

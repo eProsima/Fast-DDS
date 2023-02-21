@@ -63,14 +63,13 @@ public:
 protected:
 
     friend class DynamicTypeBuilder;
-    friend class DynamicTypeBuilderFactory;
+
     friend class MemberDescriptor;
-    friend class TypeDescriptor;
+    friend class DynamicTypeMember;
     friend class DynamicData;
     friend class DynamicDataFactory;
     friend class AnnotationDescriptor;
     friend class TypeObjectFactory;
-    friend class DynamicTypeMember;
     friend class DynamicDataHelper;
     friend class fastdds::dds::DomainParticipantImpl;
 

@@ -15,10 +15,11 @@
 #ifndef TYPES_BASE_H
 #define TYPES_BASE_H
 
+#include <fastdds/rtps/common/Types.h>
+
 #include <algorithm>
 #include <bitset>
 #include <cctype>
-#include <fastdds/rtps/common/Types.h>
 #include <map>
 #include <memory>
 #include <string>
@@ -138,7 +139,6 @@ const octet TK_CHAR16 = 0x11;
 const octet TK_STRING8 = 0x20;
 const octet TK_STRING16 = 0x21;
 
-
 // Constructed/Named types
 const octet TK_ALIAS = 0x30;
 
@@ -158,6 +158,17 @@ const octet TK_ARRAY = 0x61;
 const octet TK_MAP = 0x62;
 
 // ---------- TypeKinds (end) ------------------
+
+// Auxiliary metadata
+
+template<TypeKind kind>
+using is_primitive = std::conditional<(kind > TK_NONE)&&(kind <= TK_CHAR16), std::true_type, std::false_type>;
+
+template<TypeKind kind>
+using is_primitive_t = typename is_primitive<kind>::type;
+
+template<TypeKind kind>
+constexpr bool is_primitive_v = is_primitive_t<kind>::value;
 
 // The name of some element (e.g. type, type member, module)
 // Valid characters are alphanumeric plus the "_" cannot start with digit
@@ -673,6 +684,7 @@ class DynamicTypeBuilder;
 using DynamicType_ptr = std::shared_ptr<const DynamicType>;
 using DynamicType_wptr = std::weak_ptr<const DynamicType>;
 using DynamicTypeBuilder_ptr = std::shared_ptr<DynamicTypeBuilder>;
+using DynamicTypeBuilder_cptr = std::shared_ptr<const DynamicTypeBuilder>;
 
 } // namespace types
 } // namespace fastrtps

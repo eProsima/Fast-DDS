@@ -17,6 +17,7 @@
 
 #include <fastdds/dds/log/Log.hpp>
 #include <fastrtps/types/TypeDescriptor.h>
+#include <fastrtps/utils/custom_allocators.hpp>
 
 namespace eprosima {
 namespace fastrtps {
@@ -32,6 +33,14 @@ class DynamicTypeBuilder
     : public TypeDescriptor
     , public std::enable_shared_from_this<DynamicTypeBuilder>
 {
+    using builder_allocator = detail::BuilderAllocator<DynamicType, DynamicTypeBuilder, false>;
+
+    friend builder_allocator;
+
+    static void after_construction(DynamicType* b);
+
+    static void before_destruction(DynamicType* b);
+
     // Only create objects from the associated factory
     struct use_the_create_method
     {
@@ -45,8 +54,6 @@ class DynamicTypeBuilder
 
     using TypeDescriptor::exists_member_by_name;
     using TypeDescriptor::exists_member_by_id;
-
-    void refresh_member_ids();
 
     void clear();
 
@@ -62,7 +69,7 @@ class DynamicTypeBuilder
 
 public:
 
-        // TODO Barro: remove this from public
+    // TODO Barro: remove this from public
     //! This method only adds an empty element to the members collection with the right index
     member_iterator add_empty_member(
             uint32_t index,
@@ -142,6 +149,8 @@ public:
     bool is_discriminator_type() const;
 
     using TypeDescriptor::set_name;
+
+    using TypeDescriptor::set_base_type;
 };
 
 } // namespace types

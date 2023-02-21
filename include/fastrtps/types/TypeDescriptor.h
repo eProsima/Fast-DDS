@@ -82,6 +82,9 @@ protected:
     RTPS_DllAPI void set_kind(
             TypeKind kind);
 
+    RTPS_DllAPI void set_base_type(
+            DynamicType_ptr type);
+
 public:
 
     using AnnotationManager::annotation_is_bit_bound;
