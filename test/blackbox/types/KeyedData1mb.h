@@ -169,11 +169,11 @@ public:
     eProsima_user_DllExport std::vector<uint8_t>& data();
 
     /*!
-     * @brief This function returns the maximum serialized size of an object
-     * depending on the buffer alignment.
-     * @param current_alignment Buffer alignment.
-     * @return Maximum serialized size.
-     */
+    * @brief This function returns the maximum serialized size of an object
+    * depending on the buffer alignment.
+    * @param current_alignment Buffer alignment.
+    * @return Maximum serialized size.
+    */
     eProsima_user_DllExport static size_t getMaxCdrSerializedSize(
             size_t current_alignment = 0);
 
@@ -229,6 +229,7 @@ private:
 
     uint16_t m_key;
     std::vector<uint8_t> m_data;
+
 };
 
 #endif // _FAST_DDS_GENERATED_KEYEDDATA1MB_H_

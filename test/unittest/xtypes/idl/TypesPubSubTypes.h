@@ -1162,7 +1162,7 @@ public:
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_BOUNDED
     eProsima_user_DllExport inline bool is_bounded() const override
     {
-        return true;
+        return false;
     }
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_BOUNDED
@@ -1226,7 +1226,7 @@ public:
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_BOUNDED
     eProsima_user_DllExport inline bool is_bounded() const override
     {
-        return true;
+        return false;
     }
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_BOUNDED
@@ -1290,7 +1290,7 @@ public:
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_BOUNDED
     eProsima_user_DllExport inline bool is_bounded() const override
     {
-        return true;
+        return false;
     }
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_BOUNDED
@@ -1354,7 +1354,7 @@ public:
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_BOUNDED
     eProsima_user_DllExport inline bool is_bounded() const override
     {
-        return true;
+        return false;
     }
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_BOUNDED
@@ -1418,7 +1418,7 @@ public:
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_BOUNDED
     eProsima_user_DllExport inline bool is_bounded() const override
     {
-        return true;
+        return false;
     }
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_BOUNDED
@@ -1482,7 +1482,7 @@ public:
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_BOUNDED
     eProsima_user_DllExport inline bool is_bounded() const override
     {
-        return true;
+        return false;
     }
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_BOUNDED

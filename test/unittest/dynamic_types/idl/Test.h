@@ -435,11 +435,11 @@ public:
     eProsima_user_DllExport std::wstring& my_wstring();
 
     /*!
-     * @brief This function returns the maximum serialized size of an object
-     * depending on the buffer alignment.
-     * @param current_alignment Buffer alignment.
-     * @return Maximum serialized size.
-     */
+    * @brief This function returns the maximum serialized size of an object
+    * depending on the buffer alignment.
+    * @param current_alignment Buffer alignment.
+    * @return Maximum serialized size.
+    */
     eProsima_user_DllExport static size_t getMaxCdrSerializedSize(
             size_t current_alignment = 0);
 
@@ -508,6 +508,7 @@ private:
     wchar_t m_my_wchar;
     std::string m_my_string;
     std::wstring m_my_wstring;
+
 };
 typedef std::array<uint8_t, 500> MyOctetArray500;
 typedef std::array<BasicStruct, 5> BSAlias5;
@@ -1108,11 +1109,11 @@ public:
     eProsima_user_DllExport std::array<MySequenceLong, 23>& my_sequences_array();
 
     /*!
-     * @brief This function returns the maximum serialized size of an object
-     * depending on the buffer alignment.
-     * @param current_alignment Buffer alignment.
-     * @return Maximum serialized size.
-     */
+    * @brief This function returns the maximum serialized size of an object
+    * depending on the buffer alignment.
+    * @param current_alignment Buffer alignment.
+    * @return Maximum serialized size.
+    */
     eProsima_user_DllExport static size_t getMaxCdrSerializedSize(
             size_t current_alignment = 0);
 
@@ -1188,6 +1189,7 @@ private:
     MA3 m_multi_alias_array_42;
     std::array<MyMiniArray, 5> m_my_array_arrays;
     std::array<MySequenceLong, 23> m_my_sequences_array;
+
 };
 /*!
  * @brief This class represents the union MyUnion defined by the user in the IDL file.
@@ -1323,15 +1325,6 @@ public:
      * @exception eprosima::fastcdr::BadParamException This exception is thrown if the requested union member is not the current selection.
      */
     eProsima_user_DllExport ComplexStruct& complex();
-
-    /*!
-     * @brief This function returns the maximum serialized size of an object
-     * depending on the buffer alignment.
-     * @param current_alignment Buffer alignment.
-     * @return Maximum serialized size.
-     */
-    eProsima_user_DllExport static size_t getMaxCdrSerializedSize(
-            size_t current_alignment = 0);
 
     /*!
      * @brief This function returns the serialized size of a data depending on the buffer alignment.
@@ -1519,15 +1512,6 @@ public:
 
 
     /*!
-     * @brief This function returns the maximum serialized size of an object
-     * depending on the buffer alignment.
-     * @param current_alignment Buffer alignment.
-     * @return Maximum serialized size.
-     */
-    eProsima_user_DllExport static size_t getMaxCdrSerializedSize(
-            size_t current_alignment = 0);
-
-    /*!
      * @brief This function returns the serialized size of a data depending on the buffer alignment.
      * @param data Data which is calculated its serialized size.
      * @param current_alignment Buffer alignment.
@@ -1675,11 +1659,11 @@ public:
     eProsima_user_DllExport MyUnion2& my_union_2();
 
     /*!
-     * @brief This function returns the maximum serialized size of an object
-     * depending on the buffer alignment.
-     * @param current_alignment Buffer alignment.
-     * @return Maximum serialized size.
-     */
+    * @brief This function returns the maximum serialized size of an object
+    * depending on the buffer alignment.
+    * @param current_alignment Buffer alignment.
+    * @return Maximum serialized size.
+    */
     eProsima_user_DllExport static size_t getMaxCdrSerializedSize(
             size_t current_alignment = 0);
 
@@ -1735,6 +1719,7 @@ private:
 
     MyUnion m_my_union;
     MyUnion2 m_my_union_2;
+
 };
 /*!
  * @brief This class represents the structure KeyedStruct defined by the user in the IDL file.
@@ -1842,11 +1827,11 @@ public:
     eProsima_user_DllExport BasicStruct& basic();
 
     /*!
-     * @brief This function returns the maximum serialized size of an object
-     * depending on the buffer alignment.
-     * @param current_alignment Buffer alignment.
-     * @return Maximum serialized size.
-     */
+    * @brief This function returns the maximum serialized size of an object
+    * depending on the buffer alignment.
+    * @param current_alignment Buffer alignment.
+    * @return Maximum serialized size.
+    */
     eProsima_user_DllExport static size_t getMaxCdrSerializedSize(
             size_t current_alignment = 0);
 
@@ -1902,6 +1887,7 @@ private:
 
     uint8_t m_key;
     BasicStruct m_basic;
+
 };
 
 #endif // _FAST_DDS_GENERATED_TEST_H_

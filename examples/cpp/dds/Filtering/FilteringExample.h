@@ -144,11 +144,11 @@ public:
 
 
     /*!
-     * @brief This function returns the maximum serialized size of an object
-     * depending on the buffer alignment.
-     * @param current_alignment Buffer alignment.
-     * @return Maximum serialized size.
-     */
+    * @brief This function returns the maximum serialized size of an object
+    * depending on the buffer alignment.
+    * @param current_alignment Buffer alignment.
+    * @return Maximum serialized size.
+    */
     eProsima_user_DllExport static size_t getMaxCdrSerializedSize(
             size_t current_alignment = 0);
 
@@ -203,6 +203,7 @@ public:
 private:
 
     int32_t m_sampleNumber;
+
 };
 
 #endif // _FAST_DDS_GENERATED_FILTERINGEXAMPLE_H_

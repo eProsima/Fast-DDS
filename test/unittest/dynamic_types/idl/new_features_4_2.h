@@ -302,11 +302,11 @@ public:
     eProsima_user_DllExport std::string& local_string();
 
     /*!
-     * @brief This function returns the maximum serialized size of an object
-     * depending on the buffer alignment.
-     * @param current_alignment Buffer alignment.
-     * @return Maximum serialized size.
-     */
+    * @brief This function returns the maximum serialized size of an object
+    * depending on the buffer alignment.
+    * @param current_alignment Buffer alignment.
+    * @return Maximum serialized size.
+    */
     eProsima_user_DllExport static size_t getMaxCdrSerializedSize(
             size_t current_alignment = 0);
 
@@ -369,6 +369,7 @@ private:
     int64_t m_int64_;
     uint64_t m_uint64_;
     std::string m_local_string;
+
 };
 /*!
  * @brief This class represents the union WCharUnion defined by the user in the IDL file.
@@ -492,15 +493,6 @@ public:
      */
     eProsima_user_DllExport int32_t& case_one();
 
-
-    /*!
-     * @brief This function returns the maximum serialized size of an object
-     * depending on the buffer alignment.
-     * @param current_alignment Buffer alignment.
-     * @return Maximum serialized size.
-     */
-    eProsima_user_DllExport static size_t getMaxCdrSerializedSize(
-            size_t current_alignment = 0);
 
     /*!
      * @brief This function returns the serialized size of a data depending on the buffer alignment.
@@ -661,15 +653,6 @@ public:
 
 
     /*!
-     * @brief This function returns the maximum serialized size of an object
-     * depending on the buffer alignment.
-     * @param current_alignment Buffer alignment.
-     * @return Maximum serialized size.
-     */
-    eProsima_user_DllExport static size_t getMaxCdrSerializedSize(
-            size_t current_alignment = 0);
-
-    /*!
      * @brief This function returns the serialized size of a data depending on the buffer alignment.
      * @param data Data which is calculated its serialized size.
      * @param current_alignment Buffer alignment.
@@ -828,15 +811,6 @@ public:
 
 
     /*!
-     * @brief This function returns the maximum serialized size of an object
-     * depending on the buffer alignment.
-     * @param current_alignment Buffer alignment.
-     * @return Maximum serialized size.
-     */
-    eProsima_user_DllExport static size_t getMaxCdrSerializedSize(
-            size_t current_alignment = 0);
-
-    /*!
      * @brief This function returns the serialized size of a data depending on the buffer alignment.
      * @param data Data which is calculated its serialized size.
      * @param current_alignment Buffer alignment.
@@ -944,15 +918,6 @@ namespace bitmodule {
          * @return Value of member parent_bitfield
          */
         eProsima_user_DllExport uint32_t parent_bitfield() const;
-
-        /*!
-         * @brief This function returns the maximum serialized size of an object
-         * depending on the buffer alignment.
-         * @param current_alignment Buffer alignment.
-         * @return Maximum serialized size.
-         */
-        eProsima_user_DllExport static size_t getMaxCdrSerializedSize(
-                size_t current_alignment = 0);
 
         /*!
          * @brief This function returns the serialized size of a data depending on the buffer alignment.
@@ -1121,15 +1086,6 @@ namespace bitmodule {
         eProsima_user_DllExport int16_t f() const;
 
         /*!
-         * @brief This function returns the maximum serialized size of an object
-         * depending on the buffer alignment.
-         * @param current_alignment Buffer alignment.
-         * @return Maximum serialized size.
-         */
-        eProsima_user_DllExport static size_t getMaxCdrSerializedSize(
-                size_t current_alignment = 0);
-
-        /*!
          * @brief This function returns the serialized size of a data depending on the buffer alignment.
          * @param data Data which is calculated its serialized size.
          * @param current_alignment Buffer alignment.
@@ -1279,11 +1235,11 @@ namespace bitmodule {
 
 
         /*!
-         * @brief This function returns the maximum serialized size of an object
-         * depending on the buffer alignment.
-         * @param current_alignment Buffer alignment.
-         * @return Maximum serialized size.
-         */
+        * @brief This function returns the maximum serialized size of an object
+        * depending on the buffer alignment.
+        * @param current_alignment Buffer alignment.
+        * @return Maximum serialized size.
+        */
         eProsima_user_DllExport static size_t getMaxCdrSerializedSize(
                 size_t current_alignment = 0);
 
@@ -1339,6 +1295,7 @@ namespace bitmodule {
 
         bitmodule::MyBitset m_mybitset;
         bitmodule::MyBitMask m_mybitmask;
+
     };
     /*!
      * @brief This class represents the structure BM2 defined by the user in the IDL file.
@@ -1440,11 +1397,11 @@ namespace bitmodule {
 
 
         /*!
-         * @brief This function returns the maximum serialized size of an object
-         * depending on the buffer alignment.
-         * @param current_alignment Buffer alignment.
-         * @return Maximum serialized size.
-         */
+        * @brief This function returns the maximum serialized size of an object
+        * depending on the buffer alignment.
+        * @param current_alignment Buffer alignment.
+        * @return Maximum serialized size.
+        */
         eProsima_user_DllExport static size_t getMaxCdrSerializedSize(
                 size_t current_alignment = 0);
 
@@ -1500,6 +1457,7 @@ namespace bitmodule {
 
         bitmodule::MyBitMask m_two;
         int32_t m_mylong;
+
     };
 } // namespace bitmodule
 /*!
@@ -1664,11 +1622,11 @@ public:
     eProsima_user_DllExport bitmodule::BM2& myStructBits();
 
     /*!
-     * @brief This function returns the maximum serialized size of an object
-     * depending on the buffer alignment.
-     * @param current_alignment Buffer alignment.
-     * @return Maximum serialized size.
-     */
+    * @brief This function returns the maximum serialized size of an object
+    * depending on the buffer alignment.
+    * @param current_alignment Buffer alignment.
+    * @return Maximum serialized size.
+    */
     eProsima_user_DllExport static size_t getMaxCdrSerializedSize(
             size_t current_alignment = 0);
 
@@ -1726,6 +1684,7 @@ private:
     OctetUnion m_octetUnion;
     Int8Union m_int8Union;
     bitmodule::BM2 m_myStructBits;
+
 };
 
 #endif // _FAST_DDS_GENERATED_NEW_FEATURES_4_2_H_
