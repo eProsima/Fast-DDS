@@ -3038,11 +3038,7 @@ size_t ArraytStruct::getCdrSerializedSize(
     (void)data;
     size_t initial_alignment = current_alignment;
 
-
-    if ((2 * 2 * 2) > 0)
-    {
-        current_alignment += ((2 * 2 * 2) * 4) + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
-    }
+    current_alignment += ((2 * 2 * 2) * 4) + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
 
     return current_alignment - initial_alignment;
 }
