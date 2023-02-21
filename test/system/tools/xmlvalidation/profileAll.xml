@@ -2,7 +2,7 @@
 <dds xmlns="http://www.eprosima.com/XMLSchemas/fastRTPS_Profiles" >
     <profiles>
         <participant profile_name="domainparticipant_profile_name">
-            <domainID>1</domainID>
+            <domainId>1</domainId>
             <rtps>
                 <name>DomainParticipant Name</name>
 
