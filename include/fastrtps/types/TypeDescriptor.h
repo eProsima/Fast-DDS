@@ -28,24 +28,51 @@ namespace types {
 
 class DynamicType;
 
-class TypeDescriptor
-      : protected AnnotationManager
+struct TypeDescriptorData
 {
+    std::string name_;                      //!< Type Name.
+    TypeKind kind_ = TK_NONE;               //!< Type Kind.
+    DynamicType_ptr base_type_;             //!< SuperType of an structure or base type of an alias type.
+    DynamicType_ptr discriminator_type_;    //!< Discrimination type for a union.
+    std::vector<uint32_t> bound_;           //!< Length for strings, arrays, sequences, maps and bitmasks.
+    DynamicType_ptr element_type_;          //!< Value Type for arrays, sequences, maps, bitmasks.
+    DynamicType_ptr key_element_type_;      //!< Key Type for maps.
+    std::list<DynamicTypeMember> members_;  //!< Member descriptors sequence
+};
+
+class TypeDescriptor
+      : protected TypeDescriptorData
+      , protected AnnotationManager
+{
+public:
+
+    RTPS_DllAPI TypeDescriptor(
+            const std::string& name,
+            TypeKind kind);
+
+    RTPS_DllAPI TypeDescriptor() = default;
+
+    RTPS_DllAPI TypeDescriptor(
+            const TypeDescriptor& other);
+
+    RTPS_DllAPI TypeDescriptor(
+            TypeDescriptor&& other) = default;
+
+    RTPS_DllAPI TypeDescriptor& operator=(
+            const TypeDescriptor& descriptor);
+
+    RTPS_DllAPI TypeDescriptor& operator=(
+            TypeDescriptor&& descriptor) = default;
+
+    RTPS_DllAPI ~TypeDescriptor();
+
 protected:
 
-    TypeKind kind_ = TK_NONE;               // Type Kind.
-    std::string name_;                      // Type Name.
-    DynamicType_ptr base_type_;             // SuperType of an structure or base type of an alias type.
-    DynamicType_ptr discriminator_type_;    // Discrimination type for a union.
-    std::vector<uint32_t> bound_;           // Length for strings, arrays, sequences, maps and bitmasks.
-    DynamicType_ptr element_type_;          // Value Type for arrays, sequences, maps, bitmasks.
-    DynamicType_ptr key_element_type_;      // Key Type for maps.
-
     bool is_key_defined_ = false;
+    std::map<MemberId, DynamicTypeMember*> member_by_id_;       //!< members references indexed by id
+    std::map<std::string, DynamicTypeMember*> member_by_name_;  //!< members references indexed by name
 
-    std::list<DynamicTypeMember> members_;
-    std::map<MemberId, DynamicTypeMember*> member_by_id_;      // members references indexed by id
-    std::map<std::string, DynamicTypeMember*> member_by_name_;    // members references indexed by name
+    void refresh_indexes();
 
     // TODO: doxigen
     RTPS_DllAPI ReturnCode_t get_descriptor(
@@ -64,8 +91,6 @@ protected:
 
     friend class DynamicTypeBuilderFactory;
     friend class TypeObjectFactory;
-    friend class DynamicType;
-    friend class MemberDescriptor;
     friend class DynamicDataHelper;
 
     // Checks if there is a member with the given name.
@@ -77,13 +102,19 @@ protected:
             MemberId id) const;
 
     RTPS_DllAPI void set_name(
-            std::string name);
+            const std::string& name);
+
+    RTPS_DllAPI void set_name(
+            std::string&& name);
 
     RTPS_DllAPI void set_kind(
             TypeKind kind);
 
     RTPS_DllAPI void set_base_type(
-            DynamicType_ptr type);
+            const DynamicType_ptr& type);
+
+    RTPS_DllAPI void set_base_type(
+            DynamicType_ptr&& type);
 
 public:
 
@@ -108,21 +139,8 @@ public:
 
     RTPS_DllAPI std::pair<const DynamicTypeMember*, bool> get_member(
             MemberId id) const;
+
 public:
-
-    RTPS_DllAPI TypeDescriptor() = default;
-
-    RTPS_DllAPI TypeDescriptor(
-            const TypeDescriptor& other) = default;
-
-    RTPS_DllAPI TypeDescriptor& operator=(
-            const TypeDescriptor& descriptor) = default;
-
-    RTPS_DllAPI TypeDescriptor(
-            const std::string& name,
-            TypeKind kind);
-
-    RTPS_DllAPI ~TypeDescriptor();
 
     RTPS_DllAPI ReturnCode_t copy_from(
             const TypeDescriptor& descriptor);
@@ -133,6 +151,8 @@ public:
             const TypeDescriptor& descriptor) const;
 
     RTPS_DllAPI bool is_consistent() const;
+
+    RTPS_DllAPI bool is_primitive() const;
 
     RTPS_DllAPI DynamicType_ptr get_base_type() const;
 

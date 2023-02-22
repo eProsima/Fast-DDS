@@ -49,12 +49,12 @@ DynamicTypeBuilder::DynamicTypeBuilder(
 
 void DynamicTypeBuilder::after_construction(DynamicType* type)
 {
-    dynamic_tracker.add(type);
+    get_dynamic_tracker().add(type);
 }
 
 void DynamicTypeBuilder::before_destruction(DynamicType* type)
 {
-    dynamic_tracker.remove(type);
+    get_dynamic_tracker().remove(type);
 }
 
 DynamicTypeBuilder::member_iterator DynamicTypeBuilder::add_empty_member(
@@ -100,6 +100,13 @@ DynamicTypeBuilder::member_iterator DynamicTypeBuilder::add_empty_member(
 
 ReturnCode_t DynamicTypeBuilder::add_member(
         const MemberDescriptor& descriptor) noexcept
+{
+    // implementation on the rvalue argument version
+    return add_member(MemberDescriptor(descriptor));
+}
+
+ReturnCode_t DynamicTypeBuilder::add_member(
+            MemberDescriptor&& descriptor) noexcept
 {
     try
     {
@@ -158,9 +165,9 @@ ReturnCode_t DynamicTypeBuilder::add_member(
 
         DynamicTypeMember& newMember = *it;
         // Copy all elements but keep the index
-        auto member_index = newMember.get_index();
-        newMember = descriptor;
-        newMember.set_index(member_index);
+        assert(newMember.get_index() == descriptor.get_index()
+            || descriptor.get_index() >= members_.size() );
+        newMember = std::move(descriptor);
 
         if(member_id == MEMBER_ID_INVALID)
         {
@@ -197,15 +204,16 @@ DynamicType_ptr DynamicTypeBuilder::build() const
     if (is_consistent())
     {
         return std::allocate_shared<DynamicType>(
-            builder_allocator,
+            builder_allocator{},
             DynamicType::use_the_create_method{},
             get_descriptor());
     }
     else
     {
         EPROSIMA_LOG_ERROR(DYN_TYPES, "Error building type. The current descriptor isn't consistent.");
-        return nullptr;
     }
+
+    return {};
 }
 
 bool DynamicTypeBuilder::check_union_configuration(

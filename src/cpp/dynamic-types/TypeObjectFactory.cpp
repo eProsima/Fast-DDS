@@ -1751,7 +1751,7 @@ DynamicType_ptr TypeObjectFactory::build_dynamic_type(
             {
                 descriptor.bound_.emplace_back(identifier->string_ldefn().bound());
             }
-            descriptor.element_type_ = DynamicTypeBuilderFactory::get_instance()->create_char8_type();
+            descriptor.element_type_ = DynamicTypeBuilderFactory::get_instance().create_char8_type();
             break;
         }
         case TK_STRING16:
@@ -1764,7 +1764,7 @@ DynamicType_ptr TypeObjectFactory::build_dynamic_type(
             {
                 descriptor.bound_.emplace_back(identifier->string_ldefn().bound());
             }
-            descriptor.element_type_ = DynamicTypeBuilderFactory::get_instance()->create_char16_type();
+            descriptor.element_type_ = DynamicTypeBuilderFactory::get_instance().create_char16_type();
             break;
         }
         case TK_SEQUENCE:
@@ -1836,7 +1836,7 @@ DynamicType_ptr TypeObjectFactory::build_dynamic_type(
             break;
     }
 
-    DynamicTypeBuilder_ptr outputType = DynamicTypeBuilderFactory::get_instance()->create_custom_builder(descriptor);
+    DynamicTypeBuilder_ptr outputType = DynamicTypeBuilderFactory::get_instance().create_builder(descriptor);
     //outputType->set_name(name);
     if (outputType)
     {
@@ -1869,7 +1869,7 @@ DynamicType_ptr TypeObjectFactory::build_dynamic_type(
             descriptor.base_type_ = build_dynamic_type(get_type_name(aux), aux, get_type_object(aux));
             descriptor.set_name(object->complete().alias_type().header().detail().type_name());
             DynamicTypeBuilder_ptr alias_type =
-                    DynamicTypeBuilderFactory::get_instance()->create_custom_builder(descriptor);
+                    DynamicTypeBuilderFactory::get_instance().create_builder(descriptor);
 
             // Apply type's annotations
             apply_type_annotations(alias_type, object->complete().alias_type().header().detail().ann_custom());
@@ -1885,7 +1885,7 @@ DynamicType_ptr TypeObjectFactory::build_dynamic_type(
             }
 
             DynamicTypeBuilder_ptr struct_type =
-                    DynamicTypeBuilderFactory::get_instance()->create_custom_builder(descriptor);
+                    DynamicTypeBuilderFactory::get_instance().create_builder(descriptor);
 
             // Apply type's annotations
             apply_type_annotations(struct_type, object->complete().struct_type().header().detail().ann_custom());
@@ -1917,7 +1917,7 @@ DynamicType_ptr TypeObjectFactory::build_dynamic_type(
             descriptor.annotation_set_bit_bound(object->complete().enumerated_type().header().common().bit_bound());
 
             DynamicTypeBuilder_ptr enum_type =
-                    DynamicTypeBuilderFactory::get_instance()->create_custom_builder(descriptor);
+                    DynamicTypeBuilderFactory::get_instance().create_builder(descriptor);
 
             // Apply type's annotations
             apply_type_annotations(enum_type, object->complete().enumerated_type().header().detail().ann_custom());
@@ -1965,10 +1965,10 @@ DynamicType_ptr TypeObjectFactory::build_dynamic_type(
             descriptor.annotation_set_bit_bound(object->complete().bitmask_type().header().common().bit_bound());
             descriptor.bound_.emplace_back(static_cast<uint32_t>(
                         object->complete().bitmask_type().header().common().bit_bound()));
-            descriptor.element_type_ = DynamicTypeBuilderFactory::get_instance()->create_bool_type();
+            descriptor.element_type_ = DynamicTypeBuilderFactory::get_instance().create_bool_type();
 
             DynamicTypeBuilder_ptr bitmask_type =
-                    DynamicTypeBuilderFactory::get_instance()->create_custom_builder(descriptor);
+                    DynamicTypeBuilderFactory::get_instance().create_builder(descriptor);
 
             // Apply type's annotations
             apply_type_annotations(bitmask_type, object->complete().bitmask_type().header().detail().ann_custom());
@@ -1992,7 +1992,7 @@ DynamicType_ptr TypeObjectFactory::build_dynamic_type(
             }
 
             DynamicTypeBuilder_ptr bitsetType =
-                    DynamicTypeBuilderFactory::get_instance()->create_custom_builder(descriptor);
+                    DynamicTypeBuilderFactory::get_instance().create_builder(descriptor);
 
             // Apply type's annotations
             apply_type_annotations(bitsetType, object->complete().bitset_type().header().detail().ann_custom());
@@ -2031,7 +2031,7 @@ DynamicType_ptr TypeObjectFactory::build_dynamic_type(
             descriptor.discriminator_type_ = build_dynamic_type(get_type_name(aux), aux, get_type_object(aux));
 
             DynamicTypeBuilder_ptr union_type =
-                    DynamicTypeBuilderFactory::get_instance()->create_custom_builder(descriptor);
+                    DynamicTypeBuilderFactory::get_instance().create_builder(descriptor);
 
             // Apply type's annotations
             apply_type_annotations(union_type, object->complete().union_type().header().detail().ann_custom());
@@ -2079,7 +2079,7 @@ DynamicType_ptr TypeObjectFactory::build_dynamic_type(
         case TK_ANNOTATION:
         {
             DynamicTypeBuilder_ptr annotation_type =
-                    DynamicTypeBuilderFactory::get_instance()->create_custom_builder(descriptor);
+                    DynamicTypeBuilderFactory::get_instance().create_builder(descriptor);
 
             for (const CompleteAnnotationParameter& member : object->complete().annotation_type().member_seq())
             {

@@ -52,6 +52,8 @@ public:
 
     RTPS_DllAPI MemberDescriptor(const MemberDescriptor& descriptor) = default;
 
+    RTPS_DllAPI MemberDescriptor(MemberDescriptor&& descriptor) = default;
+
     RTPS_DllAPI MemberDescriptor(
             uint32_t index,
             const std::string& name);
@@ -75,7 +77,9 @@ public:
             const std::vector<uint64_t>& unionLabels,
             bool isDefaultLabel);
 
-    MemberDescriptor& operator=(const MemberDescriptor& descriptor) = default;
+    RTPS_DllAPI MemberDescriptor& operator=(const MemberDescriptor& descriptor) = default;
+
+    RTPS_DllAPI MemberDescriptor& operator=(MemberDescriptor&& descriptor) = default;
 
     RTPS_DllAPI ~MemberDescriptor() = default;
 

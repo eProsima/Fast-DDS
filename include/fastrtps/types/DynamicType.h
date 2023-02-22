@@ -75,10 +75,6 @@ protected:
 
     RTPS_DllAPI virtual void clear();
 
-    // Checks if there is a member with the given name.
-    bool exists_member_by_name(
-            const std::string& name) const;
-
     using TypeDescriptor::get_base_type;
 
     using TypeDescriptor::get_discriminator_type;
@@ -132,6 +128,10 @@ public:
     using TypeDescriptor::get_member_id_by_name;
     using TypeDescriptor::get_member_id_at_index;
     using TypeDescriptor::get_descriptor;
+
+    // Checks if there is a member with the given name.
+    bool exists_member_by_name(
+            const std::string& name) const;
 
 public:
 

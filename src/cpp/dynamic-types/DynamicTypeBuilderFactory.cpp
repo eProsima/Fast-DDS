@@ -34,10 +34,6 @@ namespace eprosima {
 namespace fastrtps {
 namespace types {
 
-dtypes_memory_check dynamic_tracker;
-
-#ifdef ENABLE_DYNAMIC_MEMORY_CHECK
-
 void dtypes_memory_check::reset() noexcept
 {
     std::lock_guard<std::mutex> _(mutex_);
@@ -91,18 +87,16 @@ bool dtypes_memory_check::add(const DynamicType* pType) noexcept
     return true;
 }
 
-bool dtypes_memory_check::remove(const DynamicType*) noexcept
+bool dtypes_memory_check::remove(const DynamicType* type) noexcept
 {
     std::lock_guard<std::mutex> _(mutex_);
-    if(!types_list_.erase(pBuilder))
+    if(!types_list_.erase(type))
     {
         EPROSIMA_LOG_ERROR(DYN_TYPES, "The given type has been already removed.");
         return false;
     }
     return true;
 }
-
-#endif // ifdef ENABLE_DYNAMIC_MEMORY_CHECK
 
 static std::string get_type_name(
         TypeKind kind)
@@ -156,22 +150,22 @@ static std::string GenerateTypeName(
     return tempKind;// + "_" + std::to_string(++s_typeNameCounter);
 }
 
-DynamicTypeBuilderFactory* DynamicTypeBuilderFactory::get_instance() noexcept
+DynamicTypeBuilderFactory& DynamicTypeBuilderFactory::get_instance() noexcept
 {
     // C++11 guarantees the construction to be atomic
     static DynamicTypeBuilderFactory instance;
-    return &instance;
+    return instance;
 }
 
 ReturnCode_t DynamicTypeBuilderFactory::delete_instance() noexcept
 {
-    get_instance()->reset();
+    get_instance().reset();
     return ReturnCode_t::RETCODE_OK;
 }
 
 void DynamicTypeBuilderFactory::reset()
 {
-    dynamic_tracker.reset();
+    get_dynamic_tracker().reset();
 }
 
 DynamicTypeBuilderFactory::~DynamicTypeBuilderFactory()
@@ -182,161 +176,121 @@ DynamicTypeBuilderFactory::~DynamicTypeBuilderFactory()
 
 void DynamicTypeBuilderFactory::after_construction(DynamicTypeBuilder* pBuilder)
 {
-    dynamic_tracker.add(pBuilder);
+    get_dynamic_tracker().add(pBuilder);
 }
 
 void DynamicTypeBuilderFactory::before_destruction(DynamicTypeBuilder* builder)
 {
-    dynamic_tracker.remove(builder);
+    get_dynamic_tracker().remove(builder);
 }
 
-DynamicType_ptr DynamicTypeBuilderFactory::create_type(
-        const TypeDescriptor& descriptor,
-        const std::string& name) noexcept
+DynamicTypeBuilder_ptr DynamicTypeBuilderFactory::create_builder(const TypeDescriptor& td) noexcept
 {
-    // TODO BARRO: refactor
-    (void)descriptor;
-    (void)name;
-//
-//    if (descriptor.is_consistent())
-//    {
-//        DynamicType_ptr pNewType = std::allocate_shared<DynamicType>(
-//            get_allocator<DynamicType>(), DynamicType::use_the_create_method{},
-//            descriptor);
-//
-//        if (name.length() > 0)
-//        {
-//            pNewType->set_name(name);
-//        }
-//        return pNewType;
-//    }
-//    else
-//    {
-//        EPROSIMA_LOG_ERROR(DYN_TYPES, "Error building type, inconsistent input descriptor");
-//        return nullptr;
-//    }
+    if (td.is_consistent())
+    {
+        return std::allocate_shared<DynamicTypeBuilder>(
+            get_allocator(),
+            DynamicTypeBuilder::use_the_create_method{},
+            td);
+    }
+    else
+    {
+        EPROSIMA_LOG_ERROR(DYN_TYPES, "Error building type builder. The current descriptor isn't consistent.");
+    }
+
     return {};
 }
 
-DynamicType_ptr DynamicTypeBuilderFactory::create_type(
-        const DynamicTypeBuilder* other)
+DynamicTypeBuilder_ptr DynamicTypeBuilderFactory::create_builder_copy(const DynamicType& type) noexcept
 {
-    if (other != nullptr)
-    {
-        return other->build();
-    }
-    else
-    {
-        EPROSIMA_LOG_ERROR(DYN_TYPES, "Error building type, invalid input parameter");
-        return nullptr;
-    }
+    assert(type.is_consistent());
+    return create_builder(type.get_descriptor());
+}
+
+DynamicTypeBuilder_ptr DynamicTypeBuilderFactory::create_builder_copy(const DynamicTypeBuilder& builder) noexcept
+{
+    assert(builder.is_consistent());
+    return create_builder(builder.get_descriptor());
 }
 
 DynamicTypeBuilder_ptr DynamicTypeBuilderFactory::create_alias_builder(
-        DynamicTypeBuilder* base_type,
+        const DynamicTypeBuilder& base_type,
         const std::string& sName)
 {
-    if (base_type != nullptr)
+    DynamicType_ptr pType = base_type.build();
+    if (pType)
     {
-        DynamicType_ptr pType = create_type(base_type);
-        if (pType != nullptr)
-        {
-            return create_alias_builder(pType, sName);
-        }
-        else
-        {
-            EPROSIMA_LOG_ERROR(DYN_TYPES, "Error creating alias type, Error creating dynamic type");
-        }
+        return create_alias_builder(*pType, sName);
     }
     else
     {
-        EPROSIMA_LOG_ERROR(DYN_TYPES, "Error creating alias type, base_type must be valid");
+        EPROSIMA_LOG_ERROR(DYN_TYPES, "Error creating alias type, Error creating dynamic type");
     }
-    return nullptr;
+
+    return {};
 }
 
 DynamicTypeBuilder_ptr DynamicTypeBuilderFactory::create_alias_builder(
-        DynamicType_ptr base_type,
+        const DynamicType& base_type,
         const std::string& sName)
 {
-    if (base_type)
-    {
-        DynamicTypeBuilder_ptr builder = std::allocate_shared<DynamicTypeBuilder>(
-            get_allocator(),
-            DynamicTypeBuilder::use_the_create_method{},
-            base_type->get_descriptor());
+    // Get a builder copy of base_type
+    DynamicTypeBuilder_ptr builder = create_builder_copy(base_type);
 
-        builder.set_kind(TK_ALIAS);
-        builder.set_base_type(base_type);
+    if(builder)
+    {
+        builder->set_kind(TK_ALIAS);
+        builder->set_base_type(base_type.shared_from_this());
 
         if (sName.length() > 0)
         {
-            builder.set_name(sName);
+            builder->set_name(sName);
         }
 
         return builder;
     }
-    else
-    {
-        EPROSIMA_LOG_ERROR(DYN_TYPES, "Error creating alias type, base_type must be valid");
-    }
+
+    EPROSIMA_LOG_ERROR(DYN_TYPES, "Error creating alias type, Error creating dynamic type builder");
+
     return {};
 }
 
 DynamicTypeBuilder_ptr DynamicTypeBuilderFactory::create_array_builder(
-        const DynamicTypeBuilder* element_type,
+        const DynamicTypeBuilder& element_type,
         const std::vector<uint32_t>& bounds)
 {
-    if (element_type != nullptr)
+    DynamicType_ptr pType = element_type.build();
+    if (pType)
     {
-        DynamicType_ptr pType = create_type(element_type);
-        if (pType != nullptr)
-        {
-            return create_array_builder(pType, bounds);
-        }
-        else
-        {
-            EPROSIMA_LOG_ERROR(DYN_TYPES, "Error creating array, error creating dynamic type");
-        }
+        return create_array_builder(*pType, bounds);
     }
     else
     {
-        EPROSIMA_LOG_ERROR(DYN_TYPES, "Error creating array, element_type must be valid");
+        EPROSIMA_LOG_ERROR(DYN_TYPES, "Error creating array, error creating dynamic type");
     }
-    return nullptr;
+
+    return {};
 }
 
 DynamicTypeBuilder_ptr DynamicTypeBuilderFactory::create_array_builder(
-        const DynamicType_ptr type,
+        const DynamicType& type,
         const std::vector<uint32_t>& bounds) noexcept
 {
-    if (type != nullptr)
-    {
-        TypeDescriptor pDescriptor;
-        pDescriptor.kind_ = TK_ARRAY;
-        pDescriptor.name_ = TypeNamesGenerator::get_array_type_name(type->get_name(), bounds, false);
-        pDescriptor.element_type_ = type;
-        pDescriptor.bound_ = bounds;
+    TypeDescriptor descriptor;
+    descriptor.set_kind(TK_ARRAY);
+    descriptor.set_name(TypeNamesGenerator::get_array_type_name(type.get_name(), bounds, false));
+    descriptor.element_type_ = type.shared_from_this();
+    descriptor.bound_ = bounds;
 
-        for (uint32_t i = 0; i < pDescriptor.bound_.size(); ++i)
+    for (uint32_t i = 0; i < descriptor.bound_.size(); ++i)
+    {
+        if (descriptor.bound_[i] == 0)
         {
-            if (pDescriptor.bound_[i] == 0)
-            {
-                pDescriptor.bound_[i] = MAX_ELEMENTS_COUNT;
-            }
+            descriptor.bound_[i] = MAX_ELEMENTS_COUNT;
         }
-
-
-        DynamicTypeBuilder_ptr pNewTypeBuilder = std::allocate_shared<DynamicTypeBuilder>(
-            get_allocator<DynamicTypeBuilder>(), DynamicTypeBuilder::use_the_create_method{},
-            pDescriptor);
-        return pNewTypeBuilder;
     }
-    else
-    {
-        EPROSIMA_LOG_ERROR(DYN_TYPES, "Error creating array, element_type must be valid");
-    }
-    return nullptr;
+
+    return create_builder(descriptor);
 }
 
 DynamicTypeBuilder_ptr DynamicTypeBuilderFactory::create_bitmask_builder(
@@ -344,264 +298,195 @@ DynamicTypeBuilder_ptr DynamicTypeBuilderFactory::create_bitmask_builder(
 {
     if (bound <= MAX_BITMASK_LENGTH)
     {
-        TypeDescriptor pBoolDescriptor;
-        pBoolDescriptor.kind_ = TK_BOOLEAN;
-        pBoolDescriptor.name_ = GenerateTypeName(get_type_name(TK_BOOLEAN));
-
-        TypeDescriptor pDescriptor;
-        pDescriptor.kind_ = TK_BITMASK;
+        TypeDescriptor descriptor;
+        descriptor.set_kind(TK_BITMASK);
         // TODO review on implementation for IDL
-        pDescriptor.name_ = GenerateTypeName(get_type_name(TK_BITMASK));
-        pDescriptor.element_type_ = create_type(pBoolDescriptor);
-        pDescriptor.bound_.push_back(bound);
+        descriptor.set_name(GenerateTypeName(get_type_name(TK_BITMASK)));
+        descriptor.element_type_ = create_bool_type();
+        descriptor.bound_.push_back(bound);
 
-        DynamicTypeBuilder_ptr pNewTypeBuilder = std::allocate_shared<DynamicTypeBuilder>(
-            get_allocator<DynamicTypeBuilder>(), DynamicTypeBuilder::use_the_create_method{},
-            pDescriptor);
-        return pNewTypeBuilder;
+        return create_builder(descriptor);
     }
     else
     {
         EPROSIMA_LOG_ERROR(DYN_TYPES,
                 "Error creating bitmask, length exceeds the maximum value '" << MAX_BITMASK_LENGTH << "'");
     }
-    return nullptr;
+    return {};
 }
 
-// Beware! this method doesn't return a static object
-DynamicTypeBuilder_ptr DynamicTypeBuilderFactory::create_primitive_builder(TypeDescriptor&& td) noexcept
+DynamicTypeBuilder_ptr DynamicTypeBuilderFactory::create_bitset_builder(uint32_t bound) noexcept
+{
+    if (bound <= MAX_BITMASK_LENGTH)
+    {
+        TypeDescriptor descriptor;
+        descriptor.set_kind(TK_BITSET);
+        // TODO Review on implementation for IDL
+        descriptor.set_name(GenerateTypeName(get_type_name(TK_BITSET)));
+        descriptor.bound_.push_back(bound);
+        return create_builder(descriptor);
+    }
+    else
+    {
+        EPROSIMA_LOG_ERROR(DYN_TYPES,
+                "Error creating bitmask, length exceeds the maximum value '" << MAX_BITMASK_LENGTH << "'");
+    }
+
+    return {};
+}
+
+// Beware! this method doesn't return a static object but creates it
+DynamicTypeBuilder_ptr DynamicTypeBuilderFactory::new_primitive_builder(TypeKind kind) noexcept
 {
     // create on heap
     DynamicTypeBuilder_ptr builder = std::make_shared<DynamicTypeBuilder>(
                 DynamicTypeBuilder::use_the_create_method{},
-                td);
+                TypeDescriptor{GenerateTypeName(get_type_name(kind)), kind});
     // notify the tracker
-    dynamic_tracker.add_primitive(builder.get());
-    return builder;
-}
-
-// TODO:BARRO this is not a primitive type
-DynamicTypeBuilder_ptr DynamicTypeBuilderFactory::create_bitset_builder()
-{
-//    static DynamicTypeBuilder_ptr builder = create_primitive_builder(
-//            TypeDescriptor(GenerateTypeName(get_type_name(TK_BITSET)), TK_BITSET));
-//
+    get_dynamic_tracker().add_primitive(builder.get());
     return builder;
 }
 
 DynamicTypeBuilder_cptr& DynamicTypeBuilderFactory::create_bool_builder()
 {
-    // C++11 compiler uses double-checked locking pattern to avoid concurrency issues
-    static DynamicTypeBuilder_cptr builder = create_primitive_builder(
-            TypeDescriptor(GenerateTypeName(get_type_name(TK_BOOLEAN)), TK_BOOLEAN));
-
-    return builder;
+    return create_primitive_builder<TK_BOOLEAN>();
 }
 
 DynamicTypeBuilder_cptr& DynamicTypeBuilderFactory::create_byte_builder()
 {
-    static DynamicTypeBuilder_cptr builder = create_primitive_builder(
-            TypeDescriptor(GenerateTypeName(get_type_name(TK_BYTE)), TK_BYTE));
-
-    return builder;
+    return create_primitive_builder<TK_BYTE>();
 }
 
 DynamicTypeBuilder_cptr& DynamicTypeBuilderFactory::create_char8_builder()
 {
-    static DynamicTypeBuilder_cptr builder = create_primitive_builder(
-            TypeDescriptor(GenerateTypeName(get_type_name(TK_CHAR8)), TK_CHAR8));
-
-    return builder;
+    return create_primitive_builder<TK_CHAR8>();
 }
 
 DynamicTypeBuilder_cptr& DynamicTypeBuilderFactory::create_char16_builder()
 {
-    static DynamicTypeBuilder_cptr builder = create_primitive_builder(
-            TypeDescriptor(GenerateTypeName(get_type_name(TK_CHAR16)), TK_CHAR16));
-
-    return builder;
+    return create_primitive_builder<TK_CHAR16>();
 }
 
-// TODO:BARRO revamp manually
 DynamicType_ptr DynamicTypeBuilderFactory::create_annotation_primitive(
         const std::string& name)
 {
-    TypeDescriptor pEnumDescriptor;
-    pEnumDescriptor.kind_ = TK_ANNOTATION;
-    //pEnumDescriptor.name_ = GenerateTypeName(get_type_name(TK_ANNOTATION));
-    pEnumDescriptor.name_ = name;
-
-    return std::allocate_shared<DynamicType>(
-        get_allocator<DynamicType>(), DynamicType::use_the_create_method{}, pEnumDescriptor);
+    TypeDescriptor descriptor;
+    descriptor.set_kind(TK_ANNOTATION);
+    descriptor.set_name(name);
+    return create_builder(descriptor)->build();
 }
 
-// TODO:BARRO revamp (enum is not a primitive)
 DynamicTypeBuilder_ptr DynamicTypeBuilderFactory::create_enum_builder()
 {
-    // Enum is currently an alias for uint32_t
-    static DynamicTypeBuilder_cptr builder = create_primitive_builder(
-            TypeDescriptor(GenerateTypeName(get_type_name(TK_UINT32)), TK_ENUM));
-
-    return builder;
+    TypeDescriptor pEnumDescriptor;
+    pEnumDescriptor.set_kind(TK_ENUM);
+    // Enum currently is an alias for uint32_t
+    pEnumDescriptor.set_name(GenerateTypeName(get_type_name(TK_UINT32)));
+    return create_builder(pEnumDescriptor);
 }
 
 DynamicTypeBuilder_cptr& DynamicTypeBuilderFactory::create_float32_builder()
 {
-    static DynamicTypeBuilder_cptr builder = create_primitive_builder(
-            TypeDescriptor(GenerateTypeName(get_type_name(TK_FLOAT32)), TK_FLOAT32));
-
-    return builder;
+    return create_primitive_builder<TK_FLOAT32>();
 }
 
 DynamicTypeBuilder_cptr& DynamicTypeBuilderFactory::create_float64_builder()
 {
-    static DynamicTypeBuilder_cptr builder = create_primitive_builder(
-            TypeDescriptor(GenerateTypeName(get_type_name(TK_FLOAT64)), TK_FLOAT64));
-
-    return builder;
+    return create_primitive_builder<TK_FLOAT64>();
 }
 
 DynamicTypeBuilder_cptr& DynamicTypeBuilderFactory::create_float128_builder()
 {
-    static DynamicTypeBuilder_cptr builder = create_primitive_builder(
-            TypeDescriptor(GenerateTypeName(get_type_name(TK_FLOAT128)), TK_FLOAT128));
-
-    return builder;
+    return create_primitive_builder<TK_FLOAT128>();
 }
 
 DynamicTypeBuilder_cptr& DynamicTypeBuilderFactory::create_int16_builder()
 {
-    static DynamicTypeBuilder_cptr builder = create_primitive_builder(
-            TypeDescriptor(GenerateTypeName(get_type_name(TK_INT16)), TK_INT16));
-
-    return builder;
+    return create_primitive_builder<TK_INT16>();
 }
 
 DynamicTypeBuilder_cptr& DynamicTypeBuilderFactory::create_int32_builder()
 {
-    static DynamicTypeBuilder_cptr builder = create_primitive_builder(
-            TypeDescriptor(GenerateTypeName(get_type_name(TK_INT32)), TK_INT32));
-
-    return builder;
+    return create_primitive_builder<TK_INT32>();
 }
 
 DynamicTypeBuilder_cptr& DynamicTypeBuilderFactory::create_int64_builder()
 {
-    static DynamicTypeBuilder_cptr builder = create_primitive_builder(
-            TypeDescriptor(GenerateTypeName(get_type_name(TK_INT64)), TK_INT64));
-
-    return builder;
+    return create_primitive_builder<TK_INT64>();
 }
 
 DynamicTypeBuilder_ptr DynamicTypeBuilderFactory::create_map_builder(
-        DynamicTypeBuilder* key_element_type,
-        DynamicTypeBuilder* element_type,
+        const DynamicTypeBuilder& key_element_type,
+        const DynamicTypeBuilder& element_type,
         uint32_t bound)
 {
-    if (key_element_type != nullptr && element_type != nullptr)
+    DynamicType_ptr pKeyType = key_element_type.build();
+    DynamicType_ptr pValueType = element_type.build();
+    if (pKeyType && pValueType)
     {
-        DynamicType_ptr pKeyType = create_type(key_element_type);
-        DynamicType_ptr pValueType = create_type(element_type);
-        if (pKeyType != nullptr && pValueType != nullptr)
-        {
-            return create_map_builder(pKeyType, pValueType, bound);
-        }
-        else
-        {
-            EPROSIMA_LOG_ERROR(DYN_TYPES, "Error creating map, Error creating dynamic types.");
-        }
+        return create_map_builder(*pKeyType, *pValueType, bound);
     }
     else
     {
-        EPROSIMA_LOG_ERROR(DYN_TYPES, "Error creating map, element_type and key_element_type must be valid.");
+        EPROSIMA_LOG_ERROR(DYN_TYPES, "Error creating map, Error creating dynamic types.");
     }
-    return nullptr;
+
+    return {};
 }
 
 DynamicTypeBuilder_ptr DynamicTypeBuilderFactory::create_map_builder(
-        DynamicType_ptr key_type,
-        DynamicType_ptr value_type,
+        const DynamicType& key_type,
+        const DynamicType& value_type,
         uint32_t bound) noexcept
 {
-    if (key_type != nullptr && value_type != nullptr)
+    if (bound == BOUND_UNLIMITED)
     {
-        if (bound == BOUND_UNLIMITED)
-        {
-            bound = MAX_ELEMENTS_COUNT;
-        }
-
-        TypeDescriptor pDescriptor;
-        pDescriptor.kind_ = TK_MAP;
-        //pDescriptor.name_ = GenerateTypeName(get_type_name(TK_MAP));
-        pDescriptor.bound_.push_back(bound);
-        pDescriptor.key_element_type_ = key_type;
-        pDescriptor.element_type_ = value_type;
-
-        pDescriptor.name_ = TypeNamesGenerator::get_map_type_name(key_type->get_name(), value_type->get_name(),
-                        bound, false);
-
-        DynamicTypeBuilder_ptr pNewTypeBuilder = std::allocate_shared<DynamicTypeBuilder>(
-            get_allocator<DynamicTypeBuilder>(), DynamicTypeBuilder::use_the_create_method{},
-            pDescriptor);
-        return pNewTypeBuilder;
+        bound = MAX_ELEMENTS_COUNT;
     }
-    else
-    {
-        EPROSIMA_LOG_ERROR(DYN_TYPES, "Error creating map, element_type and key_element_type must be valid.");
-    }
-    return nullptr;
+
+    TypeDescriptor descriptor;
+    descriptor.set_kind(TK_MAP);
+    descriptor.bound_.push_back(bound);
+    descriptor.key_element_type_ = key_type.shared_from_this();
+    descriptor.element_type_ = value_type.shared_from_this();
+    descriptor.set_name(
+            TypeNamesGenerator::get_map_type_name(
+                    key_type.get_name(),
+                    value_type.get_name(),
+            bound, false));
+    return create_builder(descriptor);
 }
 
 DynamicTypeBuilder_ptr DynamicTypeBuilderFactory::create_sequence_builder(
-        const DynamicTypeBuilder* element_type,
+        const DynamicTypeBuilder& element_type,
         uint32_t bound)
 {
-    if (element_type != nullptr)
+    DynamicType_ptr pType = element_type.build();
+    if (pType)
     {
-        DynamicType_ptr pType = create_type(element_type);
-        if (pType != nullptr)
-        {
-            return create_sequence_builder(pType, bound);
-        }
-        else
-        {
-            EPROSIMA_LOG_ERROR(DYN_TYPES, "Error creating sequence, error creating dynamic type.");
-        }
+        return create_sequence_builder(*pType, bound);
     }
-    else
-    {
-        EPROSIMA_LOG_ERROR(DYN_TYPES, "Error creating sequence, element_type must be valid.");
-    }
-    return nullptr;
+
+    EPROSIMA_LOG_ERROR(DYN_TYPES, "Error creating sequence, error creating dynamic type.");
+    return {};
 }
 
 DynamicTypeBuilder_ptr DynamicTypeBuilderFactory::create_sequence_builder(
-        const DynamicType_ptr type,
+        const DynamicType& type,
         uint32_t bound) noexcept
 {
-    if (type != nullptr)
+    if (bound == BOUND_UNLIMITED)
     {
-        if (bound == BOUND_UNLIMITED)
-        {
-            bound = MAX_ELEMENTS_COUNT;
-        }
-
-        TypeDescriptor pDescriptor;
-        pDescriptor.kind_ = TK_SEQUENCE;
-        pDescriptor.name_ = TypeNamesGenerator::get_sequence_type_name(type->get_name(), bound, false);
-        pDescriptor.bound_.push_back(bound);
-        pDescriptor.element_type_ = type;
-
-        DynamicTypeBuilder_ptr pNewTypeBuilder = std::allocate_shared<DynamicTypeBuilder>(
-            get_allocator<DynamicTypeBuilder>(), DynamicTypeBuilder::use_the_create_method{},
-            pDescriptor);
-        return pNewTypeBuilder;
+        bound = MAX_ELEMENTS_COUNT;
     }
-    else
-    {
-        EPROSIMA_LOG_ERROR(DYN_TYPES, "Error creating sequence, element_type must be valid.");
-    }
-    return nullptr;
+
+    TypeDescriptor descriptor;
+    descriptor.set_kind(TK_SEQUENCE);
+    descriptor.set_name(TypeNamesGenerator::get_sequence_type_name(type.get_name(), bound, false));
+    descriptor.bound_.push_back(bound);
+    descriptor.element_type_ = type.shared_from_this();
+
+    return create_builder(descriptor);
 }
 
 DynamicTypeBuilder_ptr DynamicTypeBuilderFactory::create_string_builder(
@@ -612,161 +497,95 @@ DynamicTypeBuilder_ptr DynamicTypeBuilderFactory::create_string_builder(
         bound = MAX_STRING_LENGTH;
     }
 
-    TypeDescriptor pCharDescriptor;
-    pCharDescriptor.kind_ = TK_CHAR8;
-    pCharDescriptor.name_ = GenerateTypeName(get_type_name(TK_CHAR8));
+    TypeDescriptor descriptor;
+    descriptor.set_kind(TK_STRING8);
+    descriptor.set_name(TypeNamesGenerator::get_string_type_name(bound, false, true));
+    descriptor.element_type_ = create_char8_type();
+    descriptor.bound_.push_back(bound);
 
-    TypeDescriptor pDescriptor;
-    pDescriptor.kind_ = TK_STRING8;
-    //pDescriptor.name_ = GenerateTypeName(get_type_name(TK_STRING8));
-    pDescriptor.element_type_ = create_type(pCharDescriptor);
-    pDescriptor.bound_.push_back(bound);
-
-    pDescriptor.name_ = TypeNamesGenerator::get_string_type_name(bound, false, true);
-
-    DynamicTypeBuilder_ptr pNewTypeBuilder = std::allocate_shared<DynamicTypeBuilder>(
-        get_allocator<DynamicTypeBuilder>(), DynamicTypeBuilder::use_the_create_method{}, pDescriptor);
-    return pNewTypeBuilder;
+    return create_builder(descriptor);
 }
 
 DynamicTypeBuilder_ptr DynamicTypeBuilderFactory::create_child_struct_builder(
-        DynamicTypeBuilder* parent_type)
+        const DynamicTypeBuilder& parent_type)
 {
-    if (parent_type != nullptr && (parent_type->get_kind() == TK_STRUCTURE || parent_type->get_kind() == TK_BITSET))
+    auto kind = parent_type.get_kind();
+    if (kind == TK_STRUCTURE || kind == TK_BITSET)
     {
-        TypeDescriptor pDescriptor;
-        pDescriptor.kind_ = parent_type->get_kind();
-        pDescriptor.name_ = GenerateTypeName(get_type_name(parent_type->get_kind()));
-        pDescriptor.base_type_ = create_type(parent_type);
+        TypeDescriptor descriptor;
+        descriptor.set_kind(kind);
+        descriptor.set_name(GenerateTypeName(get_type_name(kind)));
+        descriptor.base_type_ = parent_type.build();
 
-        DynamicTypeBuilder_ptr pNewTypeBuilder = std::allocate_shared<DynamicTypeBuilder>(
-            get_allocator<DynamicTypeBuilder>(), DynamicTypeBuilder::use_the_create_method{},
-            pDescriptor);
-        return pNewTypeBuilder;
+        return create_builder(descriptor);
     }
     else
     {
         EPROSIMA_LOG_ERROR(DYN_TYPES, "Error creating child struct, invalid input type.");
-        return nullptr;
+        return {};
     }
 }
 
 DynamicTypeBuilder_ptr DynamicTypeBuilderFactory::create_struct_builder()
 {
-    TypeDescriptor pDescriptor;
-    pDescriptor.kind_ = TK_STRUCTURE;
-    pDescriptor.name_ = GenerateTypeName(get_type_name(TK_STRUCTURE));
+    TypeDescriptor descriptor;
+    descriptor.set_kind(TK_STRUCTURE);
+    descriptor.set_name(GenerateTypeName(get_type_name(TK_STRUCTURE)));
 
-    DynamicTypeBuilder_ptr pNewTypeBuilder = std::allocate_shared<DynamicTypeBuilder>(
-        get_allocator<DynamicTypeBuilder>(), DynamicTypeBuilder::use_the_create_method{}, pDescriptor);
-    return pNewTypeBuilder;
+    return create_builder(descriptor);
 }
 
-DynamicTypeBuilder_ptr DynamicTypeBuilderFactory::create_custom_builder(
-        const TypeDescriptor& descriptor,
-        const std::string& name /*= ""*/)
+DynamicTypeBuilder_cptr& DynamicTypeBuilderFactory::create_uint16_builder()
 {
-    TypeKind kind = descriptor.get_kind();
-    if (kind == TK_BOOLEAN || kind == TK_BYTE || kind == TK_INT16 || kind == TK_INT32 ||
-            kind == TK_INT64 || kind == TK_UINT16 || kind == TK_UINT32 || kind == TK_UINT64 ||
-            kind == TK_FLOAT32 || kind == TK_FLOAT64 || kind == TK_FLOAT128 || kind == TK_CHAR8 ||
-            kind == TK_CHAR16 || kind == TK_STRING8 || kind == TK_STRING16 || kind == TK_ALIAS ||
-            kind == TK_ENUM || kind == TK_BITMASK || kind == TK_STRUCTURE || kind == TK_UNION ||
-            kind == TK_BITSET || kind == TK_SEQUENCE || kind == TK_ARRAY || kind == TK_MAP ||
-            kind == TK_ANNOTATION)
+    return create_primitive_builder<TK_UINT16>();
+}
+
+DynamicTypeBuilder_cptr& DynamicTypeBuilderFactory::create_uint32_builder()
+{
+    return create_primitive_builder<TK_UINT32>();
+}
+
+DynamicTypeBuilder_cptr& DynamicTypeBuilderFactory::create_uint64_builder()
+{
+    return create_primitive_builder<TK_UINT64>();
+}
+
+DynamicTypeBuilder_ptr DynamicTypeBuilderFactory::create_union_builder(
+        const DynamicTypeBuilder& discriminator_type)
+{
+    if (discriminator_type.is_discriminator_type())
     {
-        DynamicTypeBuilder_ptr pNewType = std::allocate_shared<DynamicTypeBuilder>(
-            get_allocator<DynamicTypeBuilder>(), DynamicTypeBuilder::use_the_create_method{},
-            descriptor);
-        if (pNewType != nullptr && name.length() > 0)
+        DynamicType_ptr pType = discriminator_type.build();
+        if (pType)
         {
-            pNewType->set_name(name);
+            return create_union_builder(*pType);
         }
-        return pNewType;
+
+        EPROSIMA_LOG_ERROR(DYN_TYPES, "Error building Union, Error creating discriminator type");
     }
     else
     {
-        EPROSIMA_LOG_ERROR(DYN_TYPES,
-                "Error creating type, unsupported type kind: " << static_cast<uint32_t>(kind));
+        EPROSIMA_LOG_ERROR(DYN_TYPES, "Error building Union, invalid discriminator type");
     }
 
     return {};
 }
 
-DynamicTypeBuilder_ptr DynamicTypeBuilderFactory::create_builder_copy(
-        const DynamicTypeBuilder& type)
-{
-    return std::allocate_shared<DynamicTypeBuilder>(
-            get_allocator<DynamicTypeBuilder>(), DynamicTypeBuilder::use_the_create_method{}, type);
-}
-
-DynamicTypeBuilder_cptr& DynamicTypeBuilderFactory::create_uint16_builder()
-{
-    static DynamicTypeBuilder_cptr builder = create_primitive_builder(
-            TypeDescriptor(GenerateTypeName(get_type_name(TK_UINT16)), TK_UINT16));
-
-    return builder;
-}
-
-DynamicTypeBuilder_cptr& DynamicTypeBuilderFactory::create_uint32_builder()
-{
-    static DynamicTypeBuilder_cptr builder = create_primitive_builder(
-            TypeDescriptor(GenerateTypeName(get_type_name(TK_UINT32)), TK_UINT32));
-
-    return builder;
-}
-
-DynamicTypeBuilder_cptr& DynamicTypeBuilderFactory::create_uint64_builder()
-{
-    static DynamicTypeBuilder_cptr builder = create_primitive_builder(
-            TypeDescriptor(GenerateTypeName(get_type_name(TK_UINT64)), TK_UINT64));
-
-    return builder;
-}
-
 DynamicTypeBuilder_ptr DynamicTypeBuilderFactory::create_union_builder(
-        DynamicTypeBuilder* discriminator_type)
+        const DynamicType& discriminator_type)
 {
-    if (discriminator_type != nullptr && discriminator_type->is_discriminator_type())
+    if (discriminator_type.is_discriminator_type())
     {
-        DynamicType_ptr pType = create_type(discriminator_type);
-        if (pType != nullptr)
-        {
-            return create_union_builder(pType);
-        }
-        else
-        {
-            EPROSIMA_LOG_ERROR(DYN_TYPES, "Error building Union, Error creating discriminator type");
-            return nullptr;
-        }
-    }
-    else
-    {
-        EPROSIMA_LOG_ERROR(DYN_TYPES, "Error building Union, invalid discriminator type");
-        return nullptr;
-    }
-}
+        TypeDescriptor descriptor;
+        descriptor.set_kind(TK_UNION);
+        descriptor.set_name(GenerateTypeName(get_type_name(TK_UNION)));
+        descriptor.discriminator_type_ = discriminator_type.shared_from_this();
 
-DynamicTypeBuilder_ptr DynamicTypeBuilderFactory::create_union_builder(
-        DynamicType_ptr discriminator_type)
-{
-    if (discriminator_type != nullptr && discriminator_type->is_discriminator_type())
-    {
-        TypeDescriptor pUnionDescriptor;
-        pUnionDescriptor.kind_ = TK_UNION;
-        pUnionDescriptor.name_ = GenerateTypeName(get_type_name(TK_UNION));
-        pUnionDescriptor.discriminator_type_ = discriminator_type;
+        return create_builder(descriptor);
+    }
 
-        DynamicTypeBuilder_ptr pNewTypeBuilder = std::allocate_shared<DynamicTypeBuilder>(
-            get_allocator<DynamicTypeBuilder>(), DynamicTypeBuilder::use_the_create_method{},
-            pUnionDescriptor);
-        return pNewTypeBuilder;
-    }
-    else
-    {
-        EPROSIMA_LOG_ERROR(DYN_TYPES, "Error building Union, invalid discriminator type");
-        return nullptr;
-    }
+    EPROSIMA_LOG_ERROR(DYN_TYPES, "Error building Union, invalid discriminator type");
+    return {};
 }
 
 DynamicTypeBuilder_ptr DynamicTypeBuilderFactory::create_wstring_builder(
@@ -777,89 +596,78 @@ DynamicTypeBuilder_ptr DynamicTypeBuilderFactory::create_wstring_builder(
         bound = MAX_STRING_LENGTH;
     }
 
-    TypeDescriptor pCharDescriptor;
-    pCharDescriptor.kind_ = TK_CHAR16;
-    pCharDescriptor.name_ = GenerateTypeName(get_type_name(TK_CHAR16));
+    TypeDescriptor descriptor;
+    descriptor.kind_ = TK_STRING16;
+    descriptor.name_ = TypeNamesGenerator::get_string_type_name(bound, true, true);
+    descriptor.element_type_ = create_char16_type();
+    descriptor.bound_.push_back(bound);
 
-    TypeDescriptor pDescriptor;
-    pDescriptor.kind_ = TK_STRING16;
-    //pDescriptor.name_ = GenerateTypeName(get_type_name(TK_STRING16));
-    pDescriptor.element_type_ = create_type(pCharDescriptor);
-    pDescriptor.bound_.push_back(bound);
-
-    pDescriptor.name_ = TypeNamesGenerator::get_string_type_name(bound, true, true);
-
-    DynamicTypeBuilder_ptr pNewTypeBuilder = std::allocate_shared<DynamicTypeBuilder>(
-        get_allocator<DynamicTypeBuilder>(), DynamicTypeBuilder::use_the_create_method{}, pDescriptor);
-    return pNewTypeBuilder;
+    return create_builder(descriptor);
 }
 
 ReturnCode_t DynamicTypeBuilderFactory::delete_builder(
         DynamicTypeBuilder* builder) noexcept
 {
-    return dynamic_tracker.remove(builder) ? ReturnCode_t::RETCODE_OK : ReturnCode_t::RETCODE_ALREADY_DELETED;
+    return get_dynamic_tracker().remove(builder) ? ReturnCode_t::RETCODE_OK : ReturnCode_t::RETCODE_ALREADY_DELETED;
 }
 
 ReturnCode_t DynamicTypeBuilderFactory::delete_type(
         DynamicType* type) noexcept
 {
-    return dynamic_tracker.remove(type) ? ReturnCode_t::RETCODE_OK : ReturnCode_t::RETCODE_ALREADY_DELETED;
+    return get_dynamic_tracker().remove(type) ? ReturnCode_t::RETCODE_OK : ReturnCode_t::RETCODE_ALREADY_DELETED;
 }
 
-DynamicType_ptr DynamicTypeBuilderFactory::get_primitive_type(
-        TypeKind kind) noexcept
+DynamicTypeBuilder_cptr& DynamicTypeBuilderFactory::create_primitive_builder(TypeKind kind)
 {
-    DynamicTypeBuilder* builder = nullptr;
+    static DynamicTypeBuilder_cptr empty_means_failure;
 
     switch(kind)
     {
         case TK_BOOLEAN:
-            builder = create_bool_builder().get();
-            break;
+            return create_bool_builder();
         case TK_BYTE:
-            builder = create_byte_builder().get();
-            break;
+            return create_byte_builder();
         case TK_INT16:
-            builder = create_int16_builder().get();
-            break;
+            return create_int16_builder();
         case TK_INT32:
-            builder = create_int32_builder().get();
-            break;
+            return create_int32_builder();
         case TK_INT64:
-            builder = create_int64_builder().get();
-            break;
+            return create_int64_builder();
         case TK_UINT16:
-            builder = create_uint16_builder().get();
-            break;
+            return create_uint16_builder();
         case TK_UINT32:
-            builder = create_uint32_builder().get();
-            break;
+            return create_uint32_builder();
         case TK_UINT64:
-            builder = create_uint64_builder().get();
-            break;
+            return create_uint64_builder();
         case TK_FLOAT32:
-            builder = create_float32_builder().get();
-            break;
+            return create_float32_builder();
         case TK_FLOAT64:
-            builder = create_float64_builder().get();
-            break;
+            return create_float64_builder();
         case TK_FLOAT128:
-            builder = create_float128_builder().get();
-            break;
+            return create_float128_builder();
         case TK_CHAR8:
-            builder = create_char8_builder().get();
-            break;
+            return create_char8_builder();
         case TK_CHAR16:
-            builder = create_char16_builder().get();
-            break;
+            return create_char16_builder();
+        default:
+            EPROSIMA_LOG_ERROR(DYN_TYPES, "The type provided " << kind << " is not primitive");
+            return empty_means_failure;
     }
+}
 
-    return nullptr != builder ? builder->build() : DynamicType_ptr{};
+DynamicType_ptr DynamicTypeBuilderFactory::get_primitive_type(TypeKind kind) noexcept
+{
+    DynamicTypeBuilder_cptr builder = create_primitive_builder(kind);
+    if(builder)
+    {
+        return builder->build();
+    }
+    return {};
 }
 
 bool DynamicTypeBuilderFactory::is_empty() const
 {
-    return dynamic_tracker.is_empty();
+    return get_dynamic_tracker().is_empty();
 }
 
 void DynamicTypeBuilderFactory::build_type_identifier(
@@ -2587,53 +2395,19 @@ void DynamicTypeBuilderFactory::set_annotation_default_value(
 }
 
 DynamicType_ptr DynamicTypeBuilderFactory::create_alias_type(
-        DynamicTypeBuilder* base_type,
+        const DynamicTypeBuilder& base_type,
         const std::string& sName)
 {
-    if (base_type != nullptr)
-    {
-        DynamicType_ptr pType = create_type(base_type);
-        if (pType != nullptr)
-        {
-            return create_alias_type(pType, sName);
-        }
-        else
-        {
-            EPROSIMA_LOG_ERROR(DYN_TYPES, "Error creating alias type, Error creating dynamic type");
-        }
-    }
-    else
-    {
-        EPROSIMA_LOG_ERROR(DYN_TYPES, "Error creating alias type, base_type must be valid");
-    }
-    return nullptr;
+    DynamicTypeBuilder_ptr builder = create_alias_builder(base_type, sName);
+    return builder ? builder->build() : DynamicType_ptr{};
 }
 
 DynamicType_ptr DynamicTypeBuilderFactory::create_alias_type(
-        DynamicType_ptr base_type,
+        const DynamicType& base_type,
         const std::string& sName)
 {
-    if (base_type != nullptr)
-    {
-        TypeDescriptor pDescriptor;
-        pDescriptor.kind_ = TK_ALIAS;
-        pDescriptor.base_type_ = base_type;
-        if (sName.length() > 0)
-        {
-            pDescriptor.name_ = sName;
-        }
-        else
-        {
-            pDescriptor.name_ = base_type->get_name();
-        }
-
-        return create_type(pDescriptor, sName);
-    }
-    else
-    {
-        EPROSIMA_LOG_ERROR(DYN_TYPES, "Error creating alias type, base_type must be valid");
-    }
-    return nullptr;
+    DynamicTypeBuilder_ptr builder = create_alias_builder(base_type, sName);
+    return builder ? builder->build() : DynamicType_ptr{};
 }
 
 DynamicType_ptr DynamicTypeBuilderFactory::create_int32_type()
@@ -2704,53 +2478,22 @@ DynamicType_ptr DynamicTypeBuilderFactory::create_byte_type()
 DynamicType_ptr DynamicTypeBuilderFactory::create_string_type(
         uint32_t bound /*= MAX_STRING_LENGTH*/) noexcept
 {
-    if (bound == BOUND_UNLIMITED)
-    {
-        bound = MAX_STRING_LENGTH;
-    }
-    TypeDescriptor pStringDescriptor("", TK_STRING8);
-    pStringDescriptor.name_ = TypeNamesGenerator::get_string_type_name(bound, false, true);
-    pStringDescriptor.element_type_ = create_char8_type();
-    pStringDescriptor.bound_.push_back(bound);
-
-    return std::allocate_shared<DynamicType>(
-        get_allocator<DynamicType>(), DynamicType::use_the_create_method{}, pStringDescriptor);
+    DynamicTypeBuilder_ptr builder = create_string_builder(bound);
+    return builder ? builder->build() : DynamicType_ptr{};
 }
 
 DynamicType_ptr DynamicTypeBuilderFactory::create_wstring_type(
         uint32_t bound /*= MAX_STRING_LENGTH*/) noexcept
 {
-    if (bound == BOUND_UNLIMITED)
-    {
-        bound = MAX_STRING_LENGTH;
-    }
-
-    TypeDescriptor pStringDescriptor("", TK_STRING16);
-    pStringDescriptor.name_ = TypeNamesGenerator::get_string_type_name(bound, true, true);
-    pStringDescriptor.element_type_ = create_char16_type();
-    pStringDescriptor.bound_.push_back(bound);
-
-    return std::allocate_shared<DynamicType>(
-        get_allocator<DynamicType>(), DynamicType::use_the_create_method{}, pStringDescriptor);
+    DynamicTypeBuilder_ptr builder = create_wstring_builder(bound);
+    return builder ? builder->build() : DynamicType_ptr{};
 }
 
 DynamicType_ptr DynamicTypeBuilderFactory::create_bitset_type(
         uint32_t bound)
 {
-    if (bound <= MAX_BITMASK_LENGTH)
-    {
-        TypeDescriptor pDescriptor;
-        pDescriptor.kind_ = TK_BITSET;
-        pDescriptor.name_ = GenerateTypeName(get_type_name(TK_BITSET));
-        pDescriptor.bound_.push_back(bound);
-        return create_type(pDescriptor, pDescriptor.name_);
-    }
-    else
-    {
-        EPROSIMA_LOG_ERROR(DYN_TYPES,
-                "Error creating bitmask, length exceeds the maximum value '" << MAX_BITMASK_LENGTH << "'");
-    }
-    return DynamicType_ptr(nullptr);
+    DynamicTypeBuilder_ptr builder = create_bitset_builder(bound);
+    return builder ? builder->build() : DynamicType_ptr{};
 }
 
 void DynamicTypeBuilderFactory::apply_type_annotations(

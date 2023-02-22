@@ -1447,7 +1447,7 @@ bool DomainParticipantImpl::register_dynamic_type_to_factories(
     if (dpst != nullptr) // Registering a dynamic type.
     {
         TypeObjectFactory* objectFactory = TypeObjectFactory::get_instance();
-        DynamicTypeBuilderFactory* dynFactory = DynamicTypeBuilderFactory::get_instance();
+        DynamicTypeBuilderFactory& dynFactory = DynamicTypeBuilderFactory::get_instance();
         const TypeIdentifier* id = objectFactory->get_type_identifier_trying_complete(dpst->getName());
         if (id == nullptr)
         {
@@ -1459,9 +1459,9 @@ bool DomainParticipantImpl::register_dynamic_type_to_factories(
                 members.push_back(it.second->get_descriptor());
             }
             TypeObject typeObj;
-            dynFactory->build_type_object(dpst->GetDynamicType()->get_type_descriptor(), typeObj, members);
+            dynFactory.build_type_object(dpst->GetDynamicType()->get_type_descriptor(), typeObj, members);
             // Minimal too
-            dynFactory->build_type_object(dpst->GetDynamicType()->get_type_descriptor(), typeObj, members, false);
+            dynFactory.build_type_object(dpst->GetDynamicType()->get_type_descriptor(), typeObj, members, false);
             const TypeIdentifier* type_id2 = objectFactory->get_type_identifier(dpst->getName());
             const TypeObject* type_obj = objectFactory->get_type_object(dpst->getName());
             if (type_id2 == nullptr)

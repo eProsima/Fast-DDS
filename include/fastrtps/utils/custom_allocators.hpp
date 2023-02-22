@@ -75,14 +75,6 @@ public:
     {}
 
     /**
-     * Stateful constructor.
-     * @param [in] factory The object that provides the callbacks
-     */
-    BuilderAllocator(B& factory)
-        : factory_(factory)
-    {}
-
-    /**
      * Callback to be invoked after construction.
      * @param [in] p object just constructed
      */
@@ -150,6 +142,9 @@ public:
     }
 };
 
+} // namespace detail
+} // eprosima namespace
+
 /**
  * Specialization of `std::allocator_traits` for @ref BuilderAllocator.
  * @tparam T instantiable class to allocate.
@@ -161,9 +156,9 @@ public:
  * [see N3730](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2013/n3730.html)
  */
 template<class T, class B, bool state>
-struct std::allocator_traits<detail::BuilderAllocator<T, B, state>>
+struct std::allocator_traits<eprosima::detail::BuilderAllocator<T, B, state>>
 {
-    using BA = detail::BuilderAllocator<T, B, state>;
+    using BA = eprosima::detail::BuilderAllocator<T, B, state>;
 
     template <class Other>
     using rebind_alloc = typename BA::template rebind<Other>::other;
@@ -190,8 +185,5 @@ struct std::allocator_traits<detail::BuilderAllocator<T, B, state>>
     }
 
 };
-
-} // namespace detail
-} // eprosima namespace
 
 #endif /* FASTRTPS_UTILS_CUSTOM_ALLOCATORS_HPP_ */

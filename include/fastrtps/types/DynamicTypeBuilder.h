@@ -104,6 +104,9 @@ public:
     RTPS_DllAPI ReturnCode_t add_member(
             const MemberDescriptor& descriptor) noexcept;
 
+    RTPS_DllAPI ReturnCode_t add_member(
+            MemberDescriptor&& descriptor) noexcept;
+
     template<typename... Ts>
     ReturnCode_t add_member(Ts&&... Args) noexcept
     {

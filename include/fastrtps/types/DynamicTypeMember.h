@@ -37,6 +37,7 @@ protected:
     friend class DynamicType;
     friend class DynamicData;
 
+    using MemberDescriptor::MemberDescriptor;
     using MemberDescriptor::operator=;
 
 public:
@@ -54,7 +55,6 @@ public:
 
 public:
 
-    using MemberDescriptor::MemberDescriptor;
     const MemberDescriptor& get_descriptor() const
     {
         return static_cast<const MemberDescriptor&>(*this);

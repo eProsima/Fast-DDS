@@ -50,14 +50,41 @@ static const int stateTable[4][6] =
 TypeDescriptor::TypeDescriptor(
         const std::string& name,
         TypeKind kind)
-    : kind_(kind)
-    , name_(name)
+    : TypeDescriptorData{name, kind}
 {
+}
+
+TypeDescriptor::TypeDescriptor(
+        const TypeDescriptor& other)
+        : TypeDescriptorData(other)
+{
+    refresh_indexes();
+}
+
+TypeDescriptor& TypeDescriptor::operator=(
+        const TypeDescriptor& descriptor)
+{
+    TypeDescriptorData::operator=(descriptor);
+    refresh_indexes();
+    return *this;
 }
 
 TypeDescriptor::~TypeDescriptor()
 {
     clean();
+}
+
+void TypeDescriptor::refresh_indexes()
+{
+    member_by_id_.clear();
+    member_by_name_.clear();
+
+    // update indexes with member info
+    for (DynamicTypeMember& m : members_)
+    {
+        member_by_id_[m.get_id()] = &m;
+        member_by_name_[m.get_name()] = &m;
+    }
 }
 
 void TypeDescriptor::clean()
@@ -101,9 +128,15 @@ bool TypeDescriptor::equals(
 }
 
 void TypeDescriptor::set_base_type(
-            const DynamicType_ptr& type)
+        const DynamicType_ptr& type)
 {
     base_type_ = type;
+}
+
+void TypeDescriptor::set_base_type(
+        DynamicType_ptr&& type)
+{
+    base_type_ = std::move(type);
 }
 
 DynamicType_ptr TypeDescriptor::get_base_type() const
@@ -229,6 +262,11 @@ bool TypeDescriptor::is_consistent() const
     return true;
 }
 
+bool TypeDescriptor::is_primitive() const
+{
+    return kind_ > TK_NONE && kind_ <= TK_CHAR16;
+}
+
 bool TypeDescriptor::is_type_name_consistent(
         const std::string& sName)
 {
@@ -276,9 +314,15 @@ void TypeDescriptor::set_kind(
 }
 
 void TypeDescriptor::set_name(
-        std::string name)
+        const std::string& name)
 {
     name_ = name;
+}
+
+void TypeDescriptor::set_name(
+        std::string&& name)
+{
+    name_ = std::move(name);
 }
 
 ReturnCode_t TypeDescriptor::get_all_members_by_name(

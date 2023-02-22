@@ -220,7 +220,7 @@ void AnnotationManager::annotation_set( const std::string& id, const C& c, const
     {
         AnnotationDescriptor descriptor;
         descriptor.set_type(
-            DynamicTypeBuilderFactory::get_instance()->create_annotation_primitive(id));
+            DynamicTypeBuilderFactory::get_instance().create_annotation_primitive(id));
         m(descriptor);
         apply_annotation(descriptor);
     }

@@ -44,7 +44,7 @@ struct dynamic_tracker_interface
     //! check if there are leakages
     virtual bool is_empty() noexcept { return true; }
     //! add primitive builder
-    virtual void add_primitive(const DynamicTypeBuilder*) noexcept { return true; }
+    virtual void add_primitive(const DynamicTypeBuilder*) noexcept {}
     //! add new builder
     virtual bool add(const DynamicTypeBuilder*) noexcept { return true; }
     //! remove builder
@@ -61,7 +61,6 @@ struct dynamic_tracker_interface
 class dtypes_memory_check
     : public dynamic_tracker_interface
 {
-#ifdef ENABLE_DYNAMIC_MEMORY_CHECK
     std::set<const DynamicTypeBuilder*> primitive_builders_list_; /*!< Collection of static builder instances */
     std::set<const DynamicTypeBuilder*> builders_list_; /*!< Collection of active DynamicTypeBuilder instances */
     std::set<const DynamicType*> types_list_; /*!< Collection of active DynamicType instances */
@@ -77,10 +76,17 @@ class dtypes_memory_check
     bool remove(const DynamicTypeBuilder*) noexcept override;
     bool add(const DynamicType*) noexcept override;
     bool remove(const DynamicType*) noexcept override;
-#endif
 };
 
-extern dtypes_memory_check dynamic_tracker;
+inline dynamic_tracker_interface& get_dynamic_tracker()
+{
+#ifdef ENABLE_DYNAMIC_MEMORY_CHECK
+    static dtypes_memory_check dynamic_tracker;
+#else
+    static dynamic_tracker_interface dynamic_tracker;
+#endif
+    return dynamic_tracker;
+}
 
 class TypeDescriptor;
 class TypeIdentifier;
@@ -114,16 +120,7 @@ class DynamicTypeBuilderFactory
     DynamicTypeBuilderFactory() = default;
 
     //! auxiliary method that atomically modifies the dynamic_tracker
-    DynamicTypeBuilder_ptr create_primitive_builder(TypeDescriptor&& td) noexcept;
-
-    // TODO: doxygen
-    DynamicType_ptr create_type(
-            const TypeDescriptor& descriptor,
-            const std::string& name = "") noexcept;
-
-    // For DynamicTypeBuilder class only
-    DynamicType_ptr create_type(
-            const DynamicTypeBuilder* other);
+    DynamicTypeBuilder_ptr new_primitive_builder(TypeKind kind) noexcept;
 
     void build_alias_type_code(
             const TypeDescriptor& descriptor,
@@ -196,13 +193,23 @@ class DynamicTypeBuilderFactory
             const TypeDescriptor& descriptor) const;
 public:
 
+    ~DynamicTypeBuilderFactory();
+
     // TODO: doxygen
-    RTPS_DllAPI static DynamicTypeBuilderFactory* get_instance() noexcept;
+    RTPS_DllAPI static DynamicTypeBuilderFactory& get_instance() noexcept;
 
     // TODO: doxygen
     RTPS_DllAPI static ReturnCode_t delete_instance() noexcept;
 
-    ~DynamicTypeBuilderFactory();
+    // TODO: doxygen
+    // in the standard is called create_type
+    RTPS_DllAPI DynamicTypeBuilder_ptr create_builder(const TypeDescriptor& td) noexcept;
+
+    // TODO: doxygen
+    // in the standard is called create_type_copy
+    RTPS_DllAPI DynamicTypeBuilder_ptr create_builder_copy(const DynamicType& type) noexcept;
+
+    RTPS_DllAPI DynamicTypeBuilder_ptr create_builder_copy(const DynamicTypeBuilder& builder) noexcept;
 
     // TODO: doxygen
     RTPS_DllAPI DynamicType_ptr get_primitive_type(
@@ -215,136 +222,184 @@ public:
     RTPS_DllAPI ReturnCode_t delete_type(
             DynamicType* type) noexcept;
 
-    RTPS_DllAPI DynamicTypeBuilder_ptr create_custom_builder(
-            const TypeDescriptor& descriptor,
-            const std::string& name = "");
+    template<TypeKind kind>
+    typename std::enable_if<is_primitive_v<kind>, DynamicTypeBuilder_cptr&>::type
+    create_primitive_builder() noexcept
+    {
+        // C++11 compiler uses double-checked locking pattern to avoid concurrency issues
+        static DynamicTypeBuilder_cptr builder = new_primitive_builder(kind);
+        return builder;
+    }
 
-    RTPS_DllAPI DynamicTypeBuilder_ptr create_builder_copy(
-            const DynamicTypeBuilder& type);
+    // TODO: doxygen
+    RTPS_DllAPI DynamicTypeBuilder_cptr& create_primitive_builder(TypeKind kind);
 
+    // TODO: doxygen
     RTPS_DllAPI DynamicTypeBuilder_cptr& create_int32_builder();
 
+    // TODO: doxygen
     RTPS_DllAPI DynamicTypeBuilder_cptr& create_uint32_builder();
 
+    // TODO: doxygen
     RTPS_DllAPI DynamicTypeBuilder_cptr& create_int16_builder();
 
+    // TODO: doxygen
     RTPS_DllAPI DynamicTypeBuilder_cptr& create_uint16_builder();
 
+    // TODO: doxygen
     RTPS_DllAPI DynamicTypeBuilder_cptr& create_int64_builder();
 
+    // TODO: doxygen
     RTPS_DllAPI DynamicTypeBuilder_cptr& create_uint64_builder();
 
+    // TODO: doxygen
     RTPS_DllAPI DynamicTypeBuilder_cptr& create_float32_builder();
 
+    // TODO: doxygen
     RTPS_DllAPI DynamicTypeBuilder_cptr& create_float64_builder();
 
+    // TODO: doxygen
     RTPS_DllAPI DynamicTypeBuilder_cptr& create_float128_builder();
 
+    // TODO: doxygen
     RTPS_DllAPI DynamicTypeBuilder_cptr& create_char8_builder();
 
+    // TODO: doxygen
     RTPS_DllAPI DynamicTypeBuilder_cptr& create_char16_builder();
 
+    // TODO: doxygen
     RTPS_DllAPI DynamicTypeBuilder_cptr& create_bool_builder();
 
+    // TODO: doxygen
     RTPS_DllAPI DynamicTypeBuilder_cptr& create_byte_builder();
 
+    // TODO: doxygen
     RTPS_DllAPI DynamicTypeBuilder_ptr create_string_builder(
             uint32_t bound = MAX_STRING_LENGTH);
 
+    // TODO: doxygen
     RTPS_DllAPI DynamicTypeBuilder_ptr create_wstring_builder(
             uint32_t bound = MAX_STRING_LENGTH);
 
+    // TODO: doxygen
     RTPS_DllAPI DynamicTypeBuilder_ptr create_sequence_builder(
-            const DynamicTypeBuilder* element_type,
+            const DynamicTypeBuilder& element_type,
             uint32_t bound = MAX_ELEMENTS_COUNT);
 
     // TODO: doxygen
     RTPS_DllAPI DynamicTypeBuilder_ptr create_sequence_builder(
-            const DynamicType_ptr type,
+            const DynamicType& type,
             uint32_t bound = MAX_ELEMENTS_COUNT) noexcept;
 
+    // TODO: doxygen
     RTPS_DllAPI DynamicTypeBuilder_ptr create_array_builder(
-            const DynamicTypeBuilder* element_type,
+            const DynamicTypeBuilder& element_type,
             const std::vector<uint32_t>& bounds);
 
     // TODO: doxygen
     RTPS_DllAPI DynamicTypeBuilder_ptr create_array_builder(
-            const DynamicType_ptr type,
+            const DynamicType& type,
             const std::vector<uint32_t>& bounds) noexcept;
 
+    // TODO: doxygen
     RTPS_DllAPI DynamicTypeBuilder_ptr create_map_builder(
-            DynamicTypeBuilder* key_element_type,
-            DynamicTypeBuilder* element_type,
+            const DynamicTypeBuilder& key_element_type,
+            const DynamicTypeBuilder& element_type,
             uint32_t bound = MAX_ELEMENTS_COUNT);
 
     // TODO: doxygen
     RTPS_DllAPI DynamicTypeBuilder_ptr create_map_builder(
-            DynamicType_ptr key_type,
-            DynamicType_ptr value_type,
+            const DynamicType& key_type,
+            const DynamicType& value_type,
             uint32_t bound = MAX_ELEMENTS_COUNT) noexcept;
 
     // TODO: doxygen
     RTPS_DllAPI DynamicTypeBuilder_ptr create_bitmask_builder(
-            uint32_t bound) noexcept;
+            uint32_t bound = 32) noexcept;
 
-    RTPS_DllAPI DynamicTypeBuilder_ptr create_bitset_builder();
+    // TODO: doxygen
+    RTPS_DllAPI DynamicTypeBuilder_ptr create_bitset_builder(
+            uint32_t bound = 32) noexcept;
 
+    // TODO: doxygen
     RTPS_DllAPI DynamicTypeBuilder_ptr create_alias_builder(
-            DynamicTypeBuilder* base_type,
+            const DynamicTypeBuilder& base_type,
             const std::string& sName);
 
+    // TODO: doxygen
     RTPS_DllAPI DynamicTypeBuilder_ptr create_alias_builder(
-            DynamicType_ptr base_type,
+            const DynamicType& base_type,
             const std::string& sName);
 
+    // TODO: doxygen
     RTPS_DllAPI DynamicTypeBuilder_ptr create_enum_builder();
 
+    // TODO: doxygen
     RTPS_DllAPI DynamicTypeBuilder_ptr create_struct_builder();
 
+    // TODO: doxygen
     RTPS_DllAPI DynamicTypeBuilder_ptr create_child_struct_builder(
-            DynamicTypeBuilder* parent_type);
+            const DynamicTypeBuilder& parent_type);
 
+    // TODO: doxygen
     RTPS_DllAPI DynamicTypeBuilder_ptr create_union_builder(
-            DynamicTypeBuilder* discriminator_type);
+            const DynamicTypeBuilder& discriminator_type);
 
+    // TODO: doxygen
     RTPS_DllAPI DynamicTypeBuilder_ptr create_union_builder(
-            DynamicType_ptr discriminator_type);
+            const DynamicType& discriminator_type);
 
+    // TODO: doxygen
     RTPS_DllAPI DynamicType_ptr create_annotation_primitive(
             const std::string& name);
 
+    // TODO: doxygen
     RTPS_DllAPI DynamicType_ptr create_alias_type(
-            DynamicTypeBuilder* base_type,
+            const DynamicTypeBuilder& base_type,
             const std::string& sName);
 
+    // TODO: doxygen
     RTPS_DllAPI DynamicType_ptr create_alias_type(
-            DynamicType_ptr base_type,
+            const DynamicType& base_type,
             const std::string& sName);
 
+    // TODO: doxygen
     RTPS_DllAPI DynamicType_ptr create_int32_type();
 
+    // TODO: doxygen
     RTPS_DllAPI DynamicType_ptr create_uint32_type();
 
+    // TODO: doxygen
     RTPS_DllAPI DynamicType_ptr create_int16_type();
 
+    // TODO: doxygen
     RTPS_DllAPI DynamicType_ptr create_uint16_type();
 
+    // TODO: doxygen
     RTPS_DllAPI DynamicType_ptr create_int64_type();
 
+    // TODO: doxygen
     RTPS_DllAPI DynamicType_ptr create_uint64_type();
 
+    // TODO: doxygen
     RTPS_DllAPI DynamicType_ptr create_float32_type();
 
+    // TODO: doxygen
     RTPS_DllAPI DynamicType_ptr create_float64_type();
 
+    // TODO: doxygen
     RTPS_DllAPI DynamicType_ptr create_float128_type();
 
+    // TODO: doxygen
     RTPS_DllAPI DynamicType_ptr create_char8_type();
 
+    // TODO: doxygen
     RTPS_DllAPI DynamicType_ptr create_char16_type();
 
+    // TODO: doxygen
     RTPS_DllAPI DynamicType_ptr create_bool_type();
 
+    // TODO: doxygen
     RTPS_DllAPI DynamicType_ptr create_byte_type();
 
     // TODO: doxygen
@@ -355,6 +410,7 @@ public:
     RTPS_DllAPI DynamicType_ptr create_wstring_type(
             uint32_t bound = MAX_STRING_LENGTH) noexcept;
 
+    // TODO: doxygen
     RTPS_DllAPI DynamicType_ptr create_bitset_type(
             uint32_t bound);
 
