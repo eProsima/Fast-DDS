@@ -1144,11 +1144,8 @@ size_t ComplexStruct::getCdrSerializedSize(
 
         }
     }
-    if ((42) > 0)
-    {
-        current_alignment += ((42) * 4) + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
-    }
 
+    current_alignment += ((42) * 4) + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
 
     for(size_t a = 0; a < data.my_array_arrays().size(); ++a)
     {

@@ -3195,10 +3195,7 @@ size_t ArrayArrayStruct::getCdrSerializedSize(
 
         for(size_t b = 0; b < data.my_array_array().at(a).size(); ++b)
         {
-                if ((2 * 2) > 0)
-                {
-                    current_alignment += ((2 * 2) * 4) + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
-                }
+                current_alignment += ((2 * 2) * 4) + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
         }
     }
     return current_alignment - initial_alignment;
