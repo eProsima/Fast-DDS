@@ -267,6 +267,8 @@ void KeyedHelloWorld::serializeKey(
         eprosima::fastcdr::Cdr& scdr) const
 {
     (void) scdr;
-      scdr << m_key;
-         
+   scdr << m_key;
+   
+ 
+  
 }

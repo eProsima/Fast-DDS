@@ -228,8 +228,4 @@ void FlowControlExample::serializeKey(
         eprosima::fastcdr::Cdr& scdr) const
 {
     (void) scdr;
-    scdr << m_message;
-
-     scdr << m_wasFast;
-     
 }

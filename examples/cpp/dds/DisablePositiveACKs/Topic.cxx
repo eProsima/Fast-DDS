@@ -223,7 +223,4 @@ void Topic::serializeKey(
         eprosima::fastcdr::Cdr& scdr) const
 {
     (void) scdr;
-    scdr << m_index;
-     scdr << m_message.c_str();
-     
 }

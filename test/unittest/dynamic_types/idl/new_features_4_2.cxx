@@ -522,16 +522,6 @@ void NewAliases::serializeKey(
         eprosima::fastcdr::Cdr& scdr) const
 {
     (void) scdr;
-    scdr << m_int8_;
-     scdr << m_uint8_;
-     scdr << m_int16_;
-     scdr << m_uint16_;
-     scdr << m_int32_;
-     scdr << m_uint32_;
-     scdr << m_int64_;
-     scdr << m_uint64_;
-     scdr << m_local_string.c_str();
-     
 }
 
 WCharUnion::WCharUnion()
@@ -2054,9 +2044,6 @@ void bitmodule::BitsetBitmask::serializeKey(
         eprosima::fastcdr::Cdr& scdr) const
 {
     (void) scdr;
-    scdr << m_mybitset;
-     scdr << (uint8_t)m_mybitmask;
-     
 }
 
 bitmodule::BM2::BM2()    : bitmodule::BitsetBitmask() 
@@ -2253,10 +2240,7 @@ void bitmodule::BM2::serializeKey(
         eprosima::fastcdr::Cdr& scdr) const
 {
     (void) scdr;
-    bitmodule::BitsetBitmask::serializeKey(scdr); 
-    scdr << (uint8_t)m_two;
-     scdr << m_mylong;
-     
+ bitmodule::BitsetBitmask::serializeKey(scdr);  
 }
 
 
@@ -2556,10 +2540,5 @@ void StructTest::serializeKey(
         eprosima::fastcdr::Cdr& scdr) const
 {
     (void) scdr;
-    NewAliases::serializeKey(scdr); 
-    scdr << m_charUnion;
-     scdr << m_octetUnion;
-     scdr << m_int8Union;
-     scdr << m_myStructBits;
-     
+ NewAliases::serializeKey(scdr);  
 }

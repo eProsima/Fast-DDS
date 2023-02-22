@@ -186,6 +186,4 @@ void Data1mb::serializeKey(
         eprosima::fastcdr::Cdr& scdr) const
 {
     (void) scdr;
-    scdr << m_data;
-     
 }

@@ -265,10 +265,6 @@ void RequestType::serializeKey(
         eprosima::fastcdr::Cdr& scdr) const
 {
     (void) scdr;
-    scdr << (uint32_t)m_operation;
-     scdr << m_x;
-     scdr << m_y;
-     
 }
 
 ReplyType::ReplyType()
@@ -407,6 +403,4 @@ void ReplyType::serializeKey(
         eprosima::fastcdr::Cdr& scdr) const
 {
     (void) scdr;
-    scdr << m_z;
-     
 }

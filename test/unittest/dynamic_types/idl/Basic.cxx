@@ -262,8 +262,6 @@ void EnumStruct::serializeKey(
         eprosima::fastcdr::Cdr& scdr) const
 {
     (void) scdr;
-    scdr << (uint32_t)m_my_enum;
-     
 }
 
 AliasStruct::AliasStruct()
@@ -409,8 +407,6 @@ void AliasStruct::serializeKey(
         eprosima::fastcdr::Cdr& scdr) const
 {
     (void) scdr;
-    scdr << (uint32_t)m_my_alias;
-     
 }
 
 AliasAliasStruct::AliasAliasStruct()
@@ -556,8 +552,6 @@ void AliasAliasStruct::serializeKey(
         eprosima::fastcdr::Cdr& scdr) const
 {
     (void) scdr;
-    scdr << (uint32_t)m_my_alias_alias;
-     
 }
 
 BoolStruct::BoolStruct()
@@ -698,8 +692,6 @@ void BoolStruct::serializeKey(
         eprosima::fastcdr::Cdr& scdr) const
 {
     (void) scdr;
-    scdr << m_my_bool;
-     
 }
 
 OctetStruct::OctetStruct()
@@ -840,8 +832,6 @@ void OctetStruct::serializeKey(
         eprosima::fastcdr::Cdr& scdr) const
 {
     (void) scdr;
-    scdr << m_my_octet;
-     
 }
 
 ShortStruct::ShortStruct()
@@ -982,8 +972,6 @@ void ShortStruct::serializeKey(
         eprosima::fastcdr::Cdr& scdr) const
 {
     (void) scdr;
-    scdr << m_my_int16;
-     
 }
 
 LongStruct::LongStruct()
@@ -1124,8 +1112,6 @@ void LongStruct::serializeKey(
         eprosima::fastcdr::Cdr& scdr) const
 {
     (void) scdr;
-    scdr << m_my_int32;
-     
 }
 
 LongLongStruct::LongLongStruct()
@@ -1266,8 +1252,6 @@ void LongLongStruct::serializeKey(
         eprosima::fastcdr::Cdr& scdr) const
 {
     (void) scdr;
-    scdr << m_my_int64;
-     
 }
 
 UShortStruct::UShortStruct()
@@ -1408,8 +1392,6 @@ void UShortStruct::serializeKey(
         eprosima::fastcdr::Cdr& scdr) const
 {
     (void) scdr;
-    scdr << m_my_uint16;
-     
 }
 
 ULongStruct::ULongStruct()
@@ -1550,8 +1532,6 @@ void ULongStruct::serializeKey(
         eprosima::fastcdr::Cdr& scdr) const
 {
     (void) scdr;
-    scdr << m_my_uint32;
-     
 }
 
 ULongLongStruct::ULongLongStruct()
@@ -1692,8 +1672,6 @@ void ULongLongStruct::serializeKey(
         eprosima::fastcdr::Cdr& scdr) const
 {
     (void) scdr;
-    scdr << m_my_uint64;
-     
 }
 
 FloatStruct::FloatStruct()
@@ -1834,8 +1812,6 @@ void FloatStruct::serializeKey(
         eprosima::fastcdr::Cdr& scdr) const
 {
     (void) scdr;
-    scdr << m_my_float32;
-     
 }
 
 DoubleStruct::DoubleStruct()
@@ -1976,8 +1952,6 @@ void DoubleStruct::serializeKey(
         eprosima::fastcdr::Cdr& scdr) const
 {
     (void) scdr;
-    scdr << m_my_float64;
-     
 }
 
 LongDoubleStruct::LongDoubleStruct()
@@ -2118,8 +2092,6 @@ void LongDoubleStruct::serializeKey(
         eprosima::fastcdr::Cdr& scdr) const
 {
     (void) scdr;
-    scdr << m_my_float128;
-     
 }
 
 CharStruct::CharStruct()
@@ -2260,8 +2232,6 @@ void CharStruct::serializeKey(
         eprosima::fastcdr::Cdr& scdr) const
 {
     (void) scdr;
-    scdr << m_my_char;
-     
 }
 
 WCharStruct::WCharStruct()
@@ -2402,8 +2372,6 @@ void WCharStruct::serializeKey(
         eprosima::fastcdr::Cdr& scdr) const
 {
     (void) scdr;
-    scdr << m_my_wchar;
-     
 }
 
 StringStruct::StringStruct()
@@ -2551,8 +2519,6 @@ void StringStruct::serializeKey(
         eprosima::fastcdr::Cdr& scdr) const
 {
     (void) scdr;
-    scdr << m_my_string.c_str();
-     
 }
 
 WStringStruct::WStringStruct()
@@ -2701,8 +2667,6 @@ void WStringStruct::serializeKey(
         eprosima::fastcdr::Cdr& scdr) const
 {
     (void) scdr;
-    scdr << m_my_wstring;
-     
 }
 
 LargeStringStruct::LargeStringStruct()
@@ -2854,8 +2818,6 @@ void LargeStringStruct::serializeKey(
         eprosima::fastcdr::Cdr& scdr) const
 {
     (void) scdr;
-    scdr << m_my_large_string.c_str();
-     
 }
 
 LargeWStringStruct::LargeWStringStruct()
@@ -3004,8 +2966,6 @@ void LargeWStringStruct::serializeKey(
         eprosima::fastcdr::Cdr& scdr) const
 {
     (void) scdr;
-    scdr << m_my_large_wstring;
-     
 }
 
 ArraytStruct::ArraytStruct()
@@ -3159,9 +3119,6 @@ void ArraytStruct::serializeKey(
         eprosima::fastcdr::Cdr& scdr) const
 {
     (void) scdr;
-    scdr << m_my_array;
-
-     
 }
 
 
@@ -3323,9 +3280,6 @@ void ArrayArrayStruct::serializeKey(
         eprosima::fastcdr::Cdr& scdr) const
 {
     (void) scdr;
-    scdr << m_my_array_array;
-
-     
 }
 
 SequenceStruct::SequenceStruct()
@@ -3479,8 +3433,6 @@ void SequenceStruct::serializeKey(
         eprosima::fastcdr::Cdr& scdr) const
 {
     (void) scdr;
-    scdr << m_my_sequence;
-     
 }
 
 SequenceSequenceStruct::SequenceSequenceStruct()
@@ -3640,8 +3592,6 @@ void SequenceSequenceStruct::serializeKey(
         eprosima::fastcdr::Cdr& scdr) const
 {
     (void) scdr;
-    scdr << m_my_sequence_sequence;
-     
 }
 
 MapStruct::MapStruct()
@@ -3798,8 +3748,6 @@ void MapStruct::serializeKey(
         eprosima::fastcdr::Cdr& scdr) const
 {
     (void) scdr;
-    scdr << m_my_map;
-     
 }
 
 MapMapStruct::MapMapStruct()
@@ -3965,8 +3913,6 @@ void MapMapStruct::serializeKey(
         eprosima::fastcdr::Cdr& scdr) const
 {
     (void) scdr;
-    scdr << m_my_map_map;
-     
 }
 
 MyBitset::MyBitset()
@@ -4255,8 +4201,6 @@ void BitsetStruct::serializeKey(
         eprosima::fastcdr::Cdr& scdr) const
 {
     (void) scdr;
-    scdr << m_a;
-     
 }
 
 StructStruct::StructStruct()
@@ -4439,9 +4383,6 @@ void StructStruct::serializeKey(
         eprosima::fastcdr::Cdr& scdr) const
 {
     (void) scdr;
-    scdr << m_a;
-     scdr << m_b;
-     
 }
 
 StructStructStruct::StructStructStruct()
@@ -4631,9 +4572,6 @@ void StructStructStruct::serializeKey(
         eprosima::fastcdr::Cdr& scdr) const
 {
     (void) scdr;
-    scdr << m_child_struct;
-     scdr << m_child_int64;
-     
 }
 
 SimpleUnion::SimpleUnion()
@@ -5757,8 +5695,6 @@ void SimpleUnionStruct::serializeKey(
         eprosima::fastcdr::Cdr& scdr) const
 {
     (void) scdr;
-    scdr << m_my_union;
-     
 }
 
 UnionUnionUnionStruct::UnionUnionUnionStruct()
@@ -5907,8 +5843,6 @@ void UnionUnionUnionStruct::serializeKey(
         eprosima::fastcdr::Cdr& scdr) const
 {
     (void) scdr;
-    scdr << m_my_union;
-     
 }
 
 WCharUnionStruct::WCharUnionStruct()
@@ -6057,6 +5991,4 @@ void WCharUnionStruct::serializeKey(
         eprosima::fastcdr::Cdr& scdr) const
 {
     (void) scdr;
-    scdr << m_my_union;
-     
 }

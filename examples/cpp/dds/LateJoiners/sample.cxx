@@ -215,6 +215,7 @@ void sample::serializeKey(
         eprosima::fastcdr::Cdr& scdr) const
 {
     (void) scdr;
-       scdr << m_key_value;
-       
+  
+  scdr << m_key_value;
+    
 }

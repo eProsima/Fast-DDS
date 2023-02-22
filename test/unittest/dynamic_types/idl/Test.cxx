@@ -41,10 +41,10 @@ using namespace eprosima::fastcdr::exception;
 
 #define BasicStruct_max_cdr_typesize 1356ULL;
 
-#define ComplexStruct_max_cdr_typesize 82760828ULL;
+#define ComplexStruct_max_cdr_typesize 82991252ULL;
 
 
-#define CompleteStruct_max_cdr_typesize 82761096ULL;
+#define CompleteStruct_max_cdr_typesize 82991516ULL;
 
 
 
@@ -785,22 +785,6 @@ void BasicStruct::serializeKey(
         eprosima::fastcdr::Cdr& scdr) const
 {
     (void) scdr;
-    scdr << m_my_bool;
-     scdr << m_my_octet;
-     scdr << m_my_int16;
-     scdr << m_my_int32;
-     scdr << m_my_int64;
-     scdr << m_my_uint16;
-     scdr << m_my_uint32;
-     scdr << m_my_uint64;
-     scdr << m_my_float32;
-     scdr << m_my_float64;
-     scdr << m_my_float128;
-     scdr << m_my_char;
-     scdr << m_my_wchar;
-     scdr << m_my_string.c_str();
-     scdr << m_my_wstring;
-     
 }
 
 
@@ -2115,45 +2099,6 @@ void ComplexStruct::serializeKey(
         eprosima::fastcdr::Cdr& scdr) const
 {
     (void) scdr;
-    scdr << m_my_octet;
-     scdr << m_my_basic_struct;
-     scdr << (uint32_t)m_my_alias_enum;
-     scdr << (uint32_t)m_my_enum;
-     scdr << m_my_sequence_octet;
-     scdr << m_my_sequence_struct;
-     scdr << m_my_array_octet;
-
-     scdr << m_my_octet_array_500;
-
-     scdr << m_my_array_struct;
-
-     scdr << m_my_map_octet_short;
-     scdr << m_my_map_long_struct;
-     scdr << m_my_map_long_seq_octet;
-     scdr << m_my_map_long_octet_array_500;
-     scdr << m_my_map_long_lol_type;
-     scdr << m_my_small_string_8.c_str();
-     scdr << m_my_small_string_16;
-     scdr << m_my_large_string_8.c_str();
-     scdr << m_my_large_string_16;
-     for (uint32_t h = 0; h < m_my_array_string.size(); ++h)
-    {
-        for (const auto& str : m_my_array_string[h])
-        {
-            scdr << str.c_str();
-        }
-
-    }
-
-
-     scdr.serializeArray(reinterpret_cast<const uint32_t*>(m_multi_alias_array_42.data()), m_multi_alias_array_42.size());
-
-
-     scdr << m_my_array_arrays;
-
-     scdr << m_my_sequences_array;
-
-     
 }
 
 MyUnion::MyUnion()
@@ -3114,9 +3059,6 @@ void CompleteStruct::serializeKey(
         eprosima::fastcdr::Cdr& scdr) const
 {
     (void) scdr;
-    scdr << m_my_union;
-     scdr << m_my_union_2;
-     
 }
 
 KeyedStruct::KeyedStruct()
@@ -3306,6 +3248,7 @@ void KeyedStruct::serializeKey(
         eprosima::fastcdr::Cdr& scdr) const
 {
     (void) scdr;
-      scdr << m_key;
-        
+   scdr << m_key;
+   
+  
 }

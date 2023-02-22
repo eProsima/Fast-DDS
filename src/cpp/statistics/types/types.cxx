@@ -50,20 +50,20 @@ using namespace eprosima::fastcdr::exception;
 #define eprosima_fastdds_statistics_Locator2LocatorData_max_cdr_typesize 60ULL;
 #define eprosima_fastdds_statistics_detail_GUID_s_max_cdr_typesize 18ULL;
 #define eprosima_fastdds_statistics_detail_SequenceNumber_s_max_cdr_typesize 8ULL;
-#define eprosima_fastdds_statistics_DiscoveryTime_max_key_cdr_typesize 0ULL;
-#define eprosima_fastdds_statistics_PhysicalData_max_key_cdr_typesize 0ULL;
+#define eprosima_fastdds_statistics_DiscoveryTime_max_key_cdr_typesize 36ULL;
+#define eprosima_fastdds_statistics_PhysicalData_max_key_cdr_typesize 18ULL;
 
 #define eprosima_fastdds_statistics_detail_Locator_s_max_key_cdr_typesize 0ULL;
 
 #define eprosima_fastdds_statistics_detail_GuidPrefix_s_max_key_cdr_typesize 0ULL;
 #define eprosima_fastdds_statistics_detail_SampleIdentity_s_max_key_cdr_typesize 0ULL;
-#define eprosima_fastdds_statistics_EntityData_max_key_cdr_typesize 0ULL;
-#define eprosima_fastdds_statistics_Entity2LocatorTraffic_max_key_cdr_typesize 0ULL;
+#define eprosima_fastdds_statistics_EntityData_max_key_cdr_typesize 18ULL;
+#define eprosima_fastdds_statistics_Entity2LocatorTraffic_max_key_cdr_typesize 45ULL;
 #define eprosima_fastdds_statistics_detail_EntityId_s_max_key_cdr_typesize 0ULL;
-#define eprosima_fastdds_statistics_EntityCount_max_key_cdr_typesize 0ULL;
-#define eprosima_fastdds_statistics_WriterReaderData_max_key_cdr_typesize 0ULL;
-#define eprosima_fastdds_statistics_SampleIdentityCount_max_key_cdr_typesize 0ULL;
-#define eprosima_fastdds_statistics_Locator2LocatorData_max_key_cdr_typesize 0ULL;
+#define eprosima_fastdds_statistics_EntityCount_max_key_cdr_typesize 18ULL;
+#define eprosima_fastdds_statistics_WriterReaderData_max_key_cdr_typesize 36ULL;
+#define eprosima_fastdds_statistics_SampleIdentityCount_max_key_cdr_typesize 28ULL;
+#define eprosima_fastdds_statistics_Locator2LocatorData_max_key_cdr_typesize 53ULL;
 #define eprosima_fastdds_statistics_detail_GUID_s_max_key_cdr_typesize 0ULL;
 #define eprosima_fastdds_statistics_detail_SequenceNumber_s_max_key_cdr_typesize 0ULL;
 
@@ -216,9 +216,6 @@ void eprosima::fastdds::statistics::detail::EntityId_s::serializeKey(
         eprosima::fastcdr::Cdr& scdr) const
 {
     (void) scdr;
-    scdr << m_value;
-
-     
 }
 
 eprosima::fastdds::statistics::detail::GuidPrefix_s::GuidPrefix_s()
@@ -370,9 +367,6 @@ void eprosima::fastdds::statistics::detail::GuidPrefix_s::serializeKey(
         eprosima::fastcdr::Cdr& scdr) const
 {
     (void) scdr;
-    scdr << m_value;
-
-     
 }
 
 eprosima::fastdds::statistics::detail::GUID_s::GUID_s()
@@ -567,9 +561,6 @@ void eprosima::fastdds::statistics::detail::GUID_s::serializeKey(
         eprosima::fastcdr::Cdr& scdr) const
 {
     (void) scdr;
-    scdr << m_guidPrefix;
-     scdr << m_entityId;
-     
 }
 
 eprosima::fastdds::statistics::detail::SequenceNumber_s::SequenceNumber_s()
@@ -750,9 +741,6 @@ void eprosima::fastdds::statistics::detail::SequenceNumber_s::serializeKey(
         eprosima::fastcdr::Cdr& scdr) const
 {
     (void) scdr;
-    scdr << m_high;
-     scdr << m_low;
-     
 }
 
 eprosima::fastdds::statistics::detail::SampleIdentity_s::SampleIdentity_s()
@@ -947,9 +935,6 @@ void eprosima::fastdds::statistics::detail::SampleIdentity_s::serializeKey(
         eprosima::fastcdr::Cdr& scdr) const
 {
     (void) scdr;
-    scdr << m_writer_guid;
-     scdr << m_sequence_number;
-     
 }
 
 eprosima::fastdds::statistics::detail::Locator_s::Locator_s()
@@ -1183,11 +1168,6 @@ void eprosima::fastdds::statistics::detail::Locator_s::serializeKey(
         eprosima::fastcdr::Cdr& scdr) const
 {
     (void) scdr;
-    scdr << m_kind;
-     scdr << m_port;
-     scdr << m_address;
-
-     
 }
 
 
@@ -1567,7 +1547,12 @@ void eprosima::fastdds::statistics::DiscoveryTime::serializeKey(
         eprosima::fastcdr::Cdr& scdr) const
 {
     (void) scdr;
-      m_local_participant_guid.serializeKey(scdr);     m_remote_entity_guid.serializeKey(scdr);       
+    m_local_participant_guid.serialize(scdr);    
+   m_remote_entity_guid.serialize(scdr);    
+ 
+ 
+ 
+  
 }
 
 eprosima::fastdds::statistics::EntityCount::EntityCount()
@@ -1755,7 +1740,8 @@ void eprosima::fastdds::statistics::EntityCount::serializeKey(
         eprosima::fastcdr::Cdr& scdr) const
 {
     (void) scdr;
-      m_guid.serializeKey(scdr);    
+    m_guid.serialize(scdr);    
+  
 }
 
 eprosima::fastdds::statistics::SampleIdentityCount::SampleIdentityCount()
@@ -1943,7 +1929,8 @@ void eprosima::fastdds::statistics::SampleIdentityCount::serializeKey(
         eprosima::fastcdr::Cdr& scdr) const
 {
     (void) scdr;
-      m_sample_id.serializeKey(scdr);    
+    m_sample_id.serialize(scdr);    
+  
 }
 
 eprosima::fastdds::statistics::Entity2LocatorTraffic::Entity2LocatorTraffic()
@@ -2258,7 +2245,11 @@ void eprosima::fastdds::statistics::Entity2LocatorTraffic::serializeKey(
         eprosima::fastcdr::Cdr& scdr) const
 {
     (void) scdr;
-      m_src_guid.serializeKey(scdr);     m_dst_locator.serializeKey(scdr);      
+    m_src_guid.serialize(scdr);    
+   m_dst_locator.serialize(scdr);    
+ 
+ 
+  
 }
 
 eprosima::fastdds::statistics::WriterReaderData::WriterReaderData()
@@ -2493,7 +2484,9 @@ void eprosima::fastdds::statistics::WriterReaderData::serializeKey(
         eprosima::fastcdr::Cdr& scdr) const
 {
     (void) scdr;
-      m_writer_guid.serializeKey(scdr);     m_reader_guid.serializeKey(scdr);    
+    m_writer_guid.serialize(scdr);    
+   m_reader_guid.serialize(scdr);    
+  
 }
 
 eprosima::fastdds::statistics::Locator2LocatorData::Locator2LocatorData()
@@ -2728,7 +2721,9 @@ void eprosima::fastdds::statistics::Locator2LocatorData::serializeKey(
         eprosima::fastcdr::Cdr& scdr) const
 {
     (void) scdr;
-      m_src_locator.serializeKey(scdr);     m_dst_locator.serializeKey(scdr);    
+    m_src_locator.serialize(scdr);    
+   m_dst_locator.serialize(scdr);    
+  
 }
 
 eprosima::fastdds::statistics::EntityData::EntityData()
@@ -2916,7 +2911,8 @@ void eprosima::fastdds::statistics::EntityData::serializeKey(
         eprosima::fastcdr::Cdr& scdr) const
 {
     (void) scdr;
-      m_guid.serializeKey(scdr);    
+    m_guid.serialize(scdr);    
+  
 }
 
 eprosima::fastdds::statistics::PhysicalData::PhysicalData()
@@ -3208,7 +3204,10 @@ void eprosima::fastdds::statistics::PhysicalData::serializeKey(
         eprosima::fastcdr::Cdr& scdr) const
 {
     (void) scdr;
-      m_participant_guid.serializeKey(scdr);      
+    m_participant_guid.serialize(scdr);    
+ 
+ 
+  
 }
 
 

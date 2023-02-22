@@ -228,8 +228,4 @@ void BenchMarkSmall::serializeKey(
         eprosima::fastcdr::Cdr& scdr) const
 {
     (void) scdr;
-    scdr << m_array;
-
-     scdr << m_index;
-     
 }

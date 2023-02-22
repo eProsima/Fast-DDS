@@ -188,8 +188,6 @@ void MyEnumWideStruct::serializeKey(
         eprosima::fastcdr::Cdr& scdr) const
 {
     (void) scdr;
-    scdr << (uint32_t)m_my_enum_wide;
-     
 }
 
 SimpleWideUnion::SimpleWideUnion()
@@ -745,6 +743,4 @@ void SimpleWideUnionStruct::serializeKey(
         eprosima::fastcdr::Cdr& scdr) const
 {
     (void) scdr;
-    scdr << m_my_union;
-     
 }

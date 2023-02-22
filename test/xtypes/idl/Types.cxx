@@ -269,8 +269,6 @@ void MyEnumStruct::serializeKey(
         eprosima::fastcdr::Cdr& scdr) const
 {
     (void) scdr;
-    scdr << (uint32_t)m_my_enum;
-     
 }
 
 MyBadEnumStruct::MyBadEnumStruct()
@@ -416,8 +414,6 @@ void MyBadEnumStruct::serializeKey(
         eprosima::fastcdr::Cdr& scdr) const
 {
     (void) scdr;
-    scdr << (uint32_t)m_my_enum;
-     
 }
 
 
@@ -564,8 +560,6 @@ void MyAliasEnumStruct::serializeKey(
         eprosima::fastcdr::Cdr& scdr) const
 {
     (void) scdr;
-    scdr << (uint32_t)m_my_enum;
-     
 }
 
 BasicStruct::BasicStruct()
@@ -796,10 +790,6 @@ void BasicStruct::serializeKey(
         eprosima::fastcdr::Cdr& scdr) const
 {
     (void) scdr;
-    scdr << m_my_bool;
-     scdr << m_my_int32;
-     scdr << m_my_string.c_str();
-     
 }
 
 BasicNamesStruct::BasicNamesStruct()
@@ -1030,10 +1020,6 @@ void BasicNamesStruct::serializeKey(
         eprosima::fastcdr::Cdr& scdr) const
 {
     (void) scdr;
-    scdr << m_my_bool_name;
-     scdr << m_my_int32_name;
-     scdr << m_my_string_name.c_str();
-     
 }
 
 BasicBadStruct::BasicBadStruct()
@@ -1264,10 +1250,6 @@ void BasicBadStruct::serializeKey(
         eprosima::fastcdr::Cdr& scdr) const
 {
     (void) scdr;
-    scdr << m_my_bool;
-     scdr << m_my_int32;
-     scdr << m_my_string.c_str();
-     
 }
 
 BasicWideStruct::BasicWideStruct()
@@ -1586,12 +1568,6 @@ void BasicWideStruct::serializeKey(
         eprosima::fastcdr::Cdr& scdr) const
 {
     (void) scdr;
-    scdr << m_my_bool;
-     scdr << m_my_int32;
-     scdr << m_my_string.c_str();
-     scdr << m_new_int32;
-     scdr << m_new_string.c_str();
-     
 }
 
 BadBasicWideStruct::BadBasicWideStruct()
@@ -1910,12 +1886,6 @@ void BadBasicWideStruct::serializeKey(
         eprosima::fastcdr::Cdr& scdr) const
 {
     (void) scdr;
-    scdr << m_new_int32;
-     scdr << m_new_string.c_str();
-     scdr << m_my_bool;
-     scdr << m_my_int32;
-     scdr << m_my_string.c_str();
-     
 }
 
 StringStruct::StringStruct()
@@ -2063,8 +2033,6 @@ void StringStruct::serializeKey(
         eprosima::fastcdr::Cdr& scdr) const
 {
     (void) scdr;
-    scdr << m_my_string.c_str();
-     
 }
 
 LargeStringStruct::LargeStringStruct()
@@ -2216,8 +2184,6 @@ void LargeStringStruct::serializeKey(
         eprosima::fastcdr::Cdr& scdr) const
 {
     (void) scdr;
-    scdr << m_my_large_string.c_str();
-     
 }
 
 WStringStruct::WStringStruct()
@@ -2366,8 +2332,6 @@ void WStringStruct::serializeKey(
         eprosima::fastcdr::Cdr& scdr) const
 {
     (void) scdr;
-    scdr << m_my_wstring;
-     
 }
 
 LargeWStringStruct::LargeWStringStruct()
@@ -2516,8 +2480,6 @@ void LargeWStringStruct::serializeKey(
         eprosima::fastcdr::Cdr& scdr) const
 {
     (void) scdr;
-    scdr << m_my_large_wstring;
-     
 }
 
 ArrayStruct::ArrayStruct()
@@ -2671,9 +2633,6 @@ void ArrayStruct::serializeKey(
         eprosima::fastcdr::Cdr& scdr) const
 {
     (void) scdr;
-    scdr << m_my_array;
-
-     
 }
 
 ArrayStructEqual::ArrayStructEqual()
@@ -2827,9 +2786,6 @@ void ArrayStructEqual::serializeKey(
         eprosima::fastcdr::Cdr& scdr) const
 {
     (void) scdr;
-    scdr << m_my_array_equal;
-
-     
 }
 
 ArrayBadStruct::ArrayBadStruct()
@@ -2983,9 +2939,6 @@ void ArrayBadStruct::serializeKey(
         eprosima::fastcdr::Cdr& scdr) const
 {
     (void) scdr;
-    scdr << m_my_array;
-
-     
 }
 
 ArrayDimensionsStruct::ArrayDimensionsStruct()
@@ -3139,9 +3092,6 @@ void ArrayDimensionsStruct::serializeKey(
         eprosima::fastcdr::Cdr& scdr) const
 {
     (void) scdr;
-    scdr << m_my_array;
-
-     
 }
 
 ArraySizeStruct::ArraySizeStruct()
@@ -3295,9 +3245,6 @@ void ArraySizeStruct::serializeKey(
         eprosima::fastcdr::Cdr& scdr) const
 {
     (void) scdr;
-    scdr << m_my_array;
-
-     
 }
 
 SequenceStruct::SequenceStruct()
@@ -3451,8 +3398,6 @@ void SequenceStruct::serializeKey(
         eprosima::fastcdr::Cdr& scdr) const
 {
     (void) scdr;
-    scdr << m_my_sequence;
-     
 }
 
 SequenceStructEqual::SequenceStructEqual()
@@ -3606,8 +3551,6 @@ void SequenceStructEqual::serializeKey(
         eprosima::fastcdr::Cdr& scdr) const
 {
     (void) scdr;
-    scdr << m_my_sequence_equal;
-     
 }
 
 SequenceBadStruct::SequenceBadStruct()
@@ -3761,8 +3704,6 @@ void SequenceBadStruct::serializeKey(
         eprosima::fastcdr::Cdr& scdr) const
 {
     (void) scdr;
-    scdr << m_my_sequence;
-     
 }
 
 SequenceBoundsStruct::SequenceBoundsStruct()
@@ -3916,8 +3857,6 @@ void SequenceBoundsStruct::serializeKey(
         eprosima::fastcdr::Cdr& scdr) const
 {
     (void) scdr;
-    scdr << m_my_sequence;
-     
 }
 
 SequenceSequenceStruct::SequenceSequenceStruct()
@@ -4077,8 +4016,6 @@ void SequenceSequenceStruct::serializeKey(
         eprosima::fastcdr::Cdr& scdr) const
 {
     (void) scdr;
-    scdr << m_my_sequence_sequence;
-     
 }
 
 SequenceSequenceBoundsStruct::SequenceSequenceBoundsStruct()
@@ -4238,8 +4175,6 @@ void SequenceSequenceBoundsStruct::serializeKey(
         eprosima::fastcdr::Cdr& scdr) const
 {
     (void) scdr;
-    scdr << m_my_sequence_sequence;
-     
 }
 
 MapStruct::MapStruct()
@@ -4396,8 +4331,6 @@ void MapStruct::serializeKey(
         eprosima::fastcdr::Cdr& scdr) const
 {
     (void) scdr;
-    scdr << m_my_map;
-     
 }
 
 MapStructEqual::MapStructEqual()
@@ -4554,8 +4487,6 @@ void MapStructEqual::serializeKey(
         eprosima::fastcdr::Cdr& scdr) const
 {
     (void) scdr;
-    scdr << m_my_map_equal;
-     
 }
 
 MapBadKeyStruct::MapBadKeyStruct()
@@ -4712,8 +4643,6 @@ void MapBadKeyStruct::serializeKey(
         eprosima::fastcdr::Cdr& scdr) const
 {
     (void) scdr;
-    scdr << m_my_map;
-     
 }
 
 MapBadElemStruct::MapBadElemStruct()
@@ -4870,8 +4799,6 @@ void MapBadElemStruct::serializeKey(
         eprosima::fastcdr::Cdr& scdr) const
 {
     (void) scdr;
-    scdr << m_my_map;
-     
 }
 
 MapBoundsStruct::MapBoundsStruct()
@@ -5028,8 +4955,6 @@ void MapBoundsStruct::serializeKey(
         eprosima::fastcdr::Cdr& scdr) const
 {
     (void) scdr;
-    scdr << m_my_map;
-     
 }
 
 MapMapStruct::MapMapStruct()
@@ -5195,8 +5120,6 @@ void MapMapStruct::serializeKey(
         eprosima::fastcdr::Cdr& scdr) const
 {
     (void) scdr;
-    scdr << m_my_map_map;
-     
 }
 
 MapMapBoundsStruct::MapMapBoundsStruct()
@@ -5362,8 +5285,6 @@ void MapMapBoundsStruct::serializeKey(
         eprosima::fastcdr::Cdr& scdr) const
 {
     (void) scdr;
-    scdr << m_my_map_map;
-     
 }
 
 SimpleUnion::SimpleUnion()
@@ -7127,8 +7048,6 @@ void SimpleUnionStruct::serializeKey(
         eprosima::fastcdr::Cdr& scdr) const
 {
     (void) scdr;
-    scdr << m_my_union;
-     
 }
 
 SimpleUnionStructEqual::SimpleUnionStructEqual()
@@ -7277,8 +7196,6 @@ void SimpleUnionStructEqual::serializeKey(
         eprosima::fastcdr::Cdr& scdr) const
 {
     (void) scdr;
-    scdr << m_my_union_equal;
-     
 }
 
 SimpleUnionNamesStruct::SimpleUnionNamesStruct()
@@ -7427,8 +7344,6 @@ void SimpleUnionNamesStruct::serializeKey(
         eprosima::fastcdr::Cdr& scdr) const
 {
     (void) scdr;
-    scdr << m_my_union;
-     
 }
 
 SimpleTypeUnionStruct::SimpleTypeUnionStruct()
@@ -7577,8 +7492,6 @@ void SimpleTypeUnionStruct::serializeKey(
         eprosima::fastcdr::Cdr& scdr) const
 {
     (void) scdr;
-    scdr << m_my_union;
-     
 }
 
 SimpleBadUnionStruct::SimpleBadUnionStruct()
@@ -7727,8 +7640,6 @@ void SimpleBadUnionStruct::serializeKey(
         eprosima::fastcdr::Cdr& scdr) const
 {
     (void) scdr;
-    scdr << m_my_union;
-     
 }
 
 SimplBadDiscUnionStruct::SimplBadDiscUnionStruct()
@@ -7877,6 +7788,4 @@ void SimplBadDiscUnionStruct::serializeKey(
         eprosima::fastcdr::Cdr& scdr) const
 {
     (void) scdr;
-    scdr << m_my_union;
-     
 }

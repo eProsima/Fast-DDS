@@ -184,6 +184,4 @@ void StringTest::serializeKey(
         eprosima::fastcdr::Cdr& scdr) const
 {
     (void) scdr;
-    scdr << m_message.c_str();
-     
 }
