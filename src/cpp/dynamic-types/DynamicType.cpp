@@ -707,7 +707,7 @@ size_t DynamicType::getCdrSerializedSize(
         const DynamicData& data,
         size_t current_alignment /*= 0*/) const
 {
-    if (data.type_ != nullptr && get_descriptor().annotation_is_non_serialized())
+    if (data.type_ != nullptr && annotation_is_non_serialized())
     {
         return 0;
     }
@@ -922,7 +922,7 @@ size_t DynamicType::getCdrSerializedSize(
 size_t DynamicType::getEmptyCdrSerializedSize(
         size_t current_alignment /*= 0*/) const
 {
-    if (get_descriptor().annotation_is_non_serialized())
+    if (annotation_is_non_serialized())
     {
         return 0;
     }
@@ -1056,7 +1056,7 @@ size_t DynamicType::getKeyMaxCdrSerializedSize(
 size_t DynamicType::getMaxCdrSerializedSize(
         size_t current_alignment /*= 0*/) const
 {
-    if (get_descriptor().annotation_is_non_serialized())
+    if (annotation_is_non_serialized())
     {
         return 0;
     }
@@ -1637,7 +1637,7 @@ void DynamicType::serializeKey(
 void DynamicType::serialize_empty_data(
         eprosima::fastcdr::Cdr& cdr) const
 {
-    if (get_descriptor().annotation_is_non_serialized())
+    if (annotation_is_non_serialized())
     {
         return;
     }

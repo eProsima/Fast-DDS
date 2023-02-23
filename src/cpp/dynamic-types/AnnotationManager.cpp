@@ -462,8 +462,3 @@ ReturnCode_t TypeDescriptor::get_descriptor(
     descriptor = *this;
     return ReturnCode_t::RETCODE_OK;
 }
-
-const TypeDescriptor& TypeDescriptor::get_descriptor() const
-{
-    return *this;
-}
