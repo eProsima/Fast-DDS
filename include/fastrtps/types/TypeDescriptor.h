@@ -16,11 +16,12 @@
 #define TYPES_TYPE_DESCRIPTOR_H
 
 #include <fastrtps/types/DynamicTypeMember.h>
+#include <fastrtps/types/TypesBase.h>
 
+#include <limits>
 #include <list>
-#include <map>
-#include <memory>
-#include <set>
+#include <string>
+#include <vector>
 
 namespace eprosima {
 namespace fastrtps {
@@ -44,6 +45,9 @@ class TypeDescriptor
       : protected TypeDescriptorData
       , protected AnnotationManager
 {
+
+    using TypeDescriptorData::TypeDescriptorData;
+
 public:
 
     RTPS_DllAPI TypeDescriptor(
@@ -66,6 +70,9 @@ public:
 
     RTPS_DllAPI ~TypeDescriptor();
 
+    static bool is_type_name_consistent(
+            const std::string& sName);
+
 protected:
 
     bool is_key_defined_ = false;
@@ -83,9 +90,6 @@ protected:
     RTPS_DllAPI void clean();
 
     RTPS_DllAPI uint32_t get_members_count() const;
-
-    static bool is_type_name_consistent(
-            const std::string& sName);
 
     friend class DynamicTypeBuilderFactory;
     friend class TypeObjectFactory;

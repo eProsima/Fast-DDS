@@ -229,7 +229,7 @@ bool DynamicTypeBuilder::check_union_configuration(
         for (auto& m : members_ )
         {
             // Check that there isn't any member as default label and that there isn't any member with the same case.
-            if (default_union_value && m.is_default_union_value() ||
+            if ((default_union_value && m.is_default_union_value()) ||
                     !descriptor.check_union_labels(m.get_union_labels()))
             {
                 return false;

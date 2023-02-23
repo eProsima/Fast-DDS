@@ -799,7 +799,7 @@ public:
     }
 
     // Serializes and deserializes the Dynamic Data.
-    RTPS_DllAPI void DynamicData::serialize(
+    RTPS_DllAPI void serialize(
             eprosima::fastcdr::Cdr& cdr) const;
 
     RTPS_DllAPI bool deserialize(

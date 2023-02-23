@@ -106,7 +106,7 @@ bool MemberDescriptor::operator==(const MemberDescriptor& other) const
            index_ == other.index_ &&
            labels_ == other.labels_ &&
            default_label_ == other.default_label_ &&
-           (type_ == other.type_ || type_ && other.type_ && *type_ == *other.type_ );
+           (type_ == other.type_ || (type_ && other.type_ && *type_ == *other.type_ ));
 }
 
 bool MemberDescriptor::equals(
@@ -161,7 +161,7 @@ bool MemberDescriptor::is_consistent(
         return false;
     }
 
-    if (type_ && !is_type_name_consistent(type_->name_)) // Enums and bitmask don't have type
+    if (type_ && !is_type_name_consistent(type_->get_name())) // Enums and bitmask don't have type
     {
         return false;
     }

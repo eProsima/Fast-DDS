@@ -167,9 +167,6 @@ using is_primitive = std::conditional<(kind > TK_NONE)&&(kind <= TK_CHAR16), std
 template<TypeKind kind>
 using is_primitive_t = typename is_primitive<kind>::type;
 
-template<TypeKind kind>
-constexpr bool is_primitive_v = is_primitive_t<kind>::value;
-
 // The name of some element (e.g. type, type member, module)
 // Valid characters are alphanumeric plus the "_" cannot start with digit
 
