@@ -62,18 +62,11 @@ class DynamicTypeBuilder
     DynamicTypeBuilder& operator=(const DynamicTypeBuilder&) = default;
     DynamicTypeBuilder& operator=(DynamicTypeBuilder&&) = delete;
 
-    const TypeDescriptor& get_type_descriptor() const
-    {
-        return static_cast<const TypeDescriptor&>(*this);
-    }
-
-public:
-
-    // TODO Barro: remove this from public
     //! This method only adds an empty element to the members collection with the right index
     member_iterator add_empty_member(
             uint32_t index,
             const std::string& name);
+
 public:
 
     DynamicTypeBuilder(

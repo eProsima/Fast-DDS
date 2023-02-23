@@ -3970,7 +3970,6 @@ ReturnCode_t DynamicData::set_enum_value(
         }
 
         uint32_value_ = value;
-        return ReturnCode_t::RETCODE_OK;
     }
     else if (id != MEMBER_ID_INVALID)
     {
@@ -4008,7 +4007,6 @@ ReturnCode_t DynamicData::set_enum_value(
             }
 
             *((uint32_t*)itValue->second) = value;
-            return ReturnCode_t::RETCODE_OK;
         }
         else if (id != MEMBER_ID_INVALID)
         {
@@ -4030,6 +4028,8 @@ ReturnCode_t DynamicData::set_enum_value(
         return insertResult;
     }
 #endif // ifdef DYNAMIC_TYPES_CHECKING
+
+    return ReturnCode_t::RETCODE_OK;
 }
 
 ReturnCode_t DynamicData::get_enum_value(

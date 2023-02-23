@@ -1949,7 +1949,7 @@ DynamicType_ptr TypeObjectFactory::build_dynamic_type(
             const CompleteEnumeratedLiteralSeq& enumVector = object->complete().enumerated_type().literal_seq();
             for (auto member = enumVector.begin(); member != enumVector.end(); ++member)
             {
-                enum_type->add_empty_member(member->common().value(), member->detail().name());
+                enum_type->add_member(member->common().value(), member->detail().name());
                 apply_member_annotations(enum_type, member->common().value(), member->detail().ann_custom());
                 if (member->common().flags().IS_DEFAULT())
                 {
@@ -1976,7 +1976,7 @@ DynamicType_ptr TypeObjectFactory::build_dynamic_type(
             const CompleteBitflagSeq& seq = object->complete().bitmask_type().flag_seq();
             for (auto member = seq.begin(); member != seq.end(); ++member)
             {
-                bitmask_type->add_empty_member(member->common().position(), member->detail().name());
+                bitmask_type->add_member(member->common().position(), member->detail().name());
                 MemberId m_id = bitmask_type->get_member_id_by_name(member->detail().name());
                 // member->common().position() should be already an annotation
                 apply_member_annotations(bitmask_type, m_id, member->detail().ann_custom());
