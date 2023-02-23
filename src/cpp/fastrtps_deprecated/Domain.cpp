@@ -362,17 +362,11 @@ bool Domain::registerDynamicType(
     if (type_id_min == nullptr)
     {
         DynamicTypeBuilderFactory& factory = DynamicTypeBuilderFactory::get_instance();
-        std::map<MemberId, const DynamicTypeMember*> membersMap;
-        type->GetDynamicType()->get_all_members(membersMap);
-        std::vector<MemberDescriptor> members;
-        for (auto it : membersMap)
-        {
-            members.push_back(it.second->get_descriptor());
-        }
         TypeObject typeObj;
-        factory.build_type_object(type->GetDynamicType()->get_type_descriptor(), typeObj, members);
+
+        factory.build_type_object(type->GetDynamicType()->get_type_descriptor(), typeObj);
         // Minimal too
-        factory.build_type_object(type->GetDynamicType()->get_type_descriptor(), typeObj, members, false);
+        factory.build_type_object(type->GetDynamicType()->get_type_descriptor(), typeObj, false);
         const TypeIdentifier* type_id2 = typeFactory->get_type_identifier(type->getName());
         const TypeObject* type_obj = typeFactory->get_type_object(type->getName());
         if (type_id2 == nullptr)

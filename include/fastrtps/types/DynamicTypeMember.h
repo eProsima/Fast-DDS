@@ -52,6 +52,11 @@ public:
     using AnnotationManager::annotation_is_appendable;
     using AnnotationManager::annotation_is_nested;
     using AnnotationManager::key_annotation;
+    using AnnotationManager::annotation_is_default_literal;
+    using AnnotationManager::annotation_is_optional;
+    using AnnotationManager::annotation_is_must_understand;
+    using AnnotationManager::annotation_get_position;
+    using AnnotationManager::annotation_get_bit_bound;
 
 public:
 

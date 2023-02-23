@@ -325,6 +325,11 @@ void TypeDescriptor::set_name(
     name_ = std::move(name);
 }
 
+const std::list<DynamicTypeMember>& TypeDescriptor::get_all_members() const
+{
+    return members_;
+}
+
 ReturnCode_t TypeDescriptor::get_all_members_by_name(
         std::map<std::string, const DynamicTypeMember*>& members) const
 {

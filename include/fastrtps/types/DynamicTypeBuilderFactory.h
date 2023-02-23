@@ -151,37 +151,31 @@ class DynamicTypeBuilderFactory
     void build_enum_type_code(
             const TypeDescriptor& descriptor,
             TypeObject& object,
-            const std::vector<MemberDescriptor>& members,
             bool complete = true) const;
 
     void build_struct_type_code(
             const TypeDescriptor& descriptor,
             TypeObject& object,
-            const std::vector<MemberDescriptor>& members,
             bool complete = true) const;
 
     void build_union_type_code(
             const TypeDescriptor& descriptor,
             TypeObject& object,
-            const std::vector<MemberDescriptor>& members,
             bool complete = true) const;
 
     void build_bitset_type_code(
             const TypeDescriptor& descriptor,
             TypeObject& object,
-            const std::vector<MemberDescriptor>& members,
             bool complete = true) const;
 
     void build_bitmask_type_code(
             const TypeDescriptor& descriptor,
             TypeObject& object,
-            const std::vector<MemberDescriptor>& members,
             bool complete = true) const;
 
     void build_annotation_type_code(
             const TypeDescriptor& descriptor,
             TypeObject& object,
-            const std::vector<MemberDescriptor>& members,
             bool complete = true) const;
 
     void set_annotation_default_value(
@@ -415,7 +409,7 @@ public:
             uint32_t bound);
 
     RTPS_DllAPI void build_type_identifier(
-            const DynamicType_ptr type,
+            const DynamicType& type,
             TypeIdentifier& identifier,
             bool complete = true) const;
 
@@ -425,7 +419,7 @@ public:
             bool complete = true) const;
 
     RTPS_DllAPI void build_type_object(
-            const DynamicType_ptr type,
+            const DynamicType& type,
             TypeObject& object,
             bool complete = true,
             bool force = false) const;
@@ -433,7 +427,6 @@ public:
     RTPS_DllAPI void build_type_object(
             const TypeDescriptor& descriptor,
             TypeObject& object,
-            const std::vector<MemberDescriptor>& members,
             bool complete = true,
             bool force = false) const;
 

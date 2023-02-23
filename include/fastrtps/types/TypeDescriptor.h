@@ -174,6 +174,9 @@ public:
     RTPS_DllAPI uint32_t get_total_bounds() const;
 
     // TODO: doxygen
+    RTPS_DllAPI const std::list<DynamicTypeMember>& get_all_members() const;
+
+    // TODO: doxygen
     RTPS_DllAPI ReturnCode_t get_all_members(
             std::map<MemberId, const DynamicTypeMember*>& members) const;
 

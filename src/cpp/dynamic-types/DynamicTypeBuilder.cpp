@@ -263,5 +263,5 @@ bool DynamicTypeBuilder::is_discriminator_type() const
 bool DynamicTypeBuilder::equals(
         const DynamicType& other) const
 {
-    return get_type_descriptor() == other.get_type_descriptor();
+    return get_descriptor() == other.get_descriptor();
 }

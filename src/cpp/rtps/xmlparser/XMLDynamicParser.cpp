@@ -193,7 +193,7 @@ XMLP_ret XMLParser::parseXMLBitvalueDynamicType(
         return XMLP_ret::XML_ERROR;
     }
 
-    p_dynamictype->add_empty_member(field_position, memberName);
+    p_dynamictype->add_member(field_position, memberName);
     //p_dynamictype->apply_annotation_to_member(
     //    p_dynamictype->get_member_id_by_name(memberName), ANNOTATION_POSITION_ID, "value", position);
     ++field_position;
@@ -691,7 +691,7 @@ XMLP_ret XMLParser::parseXMLEnumDynamicType(
         {
             currValue = static_cast<uint32_t>(std::atoi(value));
         }
-        typeBuilder->add_empty_member(currValue++, name);
+        typeBuilder->add_member(currValue++, name);
     }
 
     XMLProfileManager::insertDynamicTypeByName(enumName, std::move(typeBuilder));
