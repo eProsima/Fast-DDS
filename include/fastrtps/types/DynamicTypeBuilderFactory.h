@@ -45,6 +45,8 @@ struct dynamic_tracker_interface
     virtual bool is_empty() noexcept { return true; }
     //! add primitive builder
     virtual void add_primitive(const DynamicTypeBuilder*) noexcept {}
+    //! add primitive types
+    virtual void add_primitive(const DynamicType*) noexcept {}
     //! add new builder
     virtual bool add(const DynamicTypeBuilder*) noexcept { return true; }
     //! remove builder
@@ -62,6 +64,7 @@ class dtypes_memory_check
     : public dynamic_tracker_interface
 {
     std::set<const DynamicTypeBuilder*> primitive_builders_list_; /*!< Collection of static builder instances */
+    std::set<const DynamicType*> primitive_types_list_; /*!< Collection of static type instances */
     std::set<const DynamicTypeBuilder*> builders_list_; /*!< Collection of active DynamicTypeBuilder instances */
     std::set<const DynamicType*> types_list_; /*!< Collection of active DynamicType instances */
     std::mutex mutex_; /*!< atomic access to the collections */
@@ -72,6 +75,7 @@ class dtypes_memory_check
     void reset() noexcept override;
     bool is_empty() noexcept override;
     void add_primitive(const DynamicTypeBuilder*) noexcept override;
+    void add_primitive(const DynamicType*) noexcept override;
     bool add(const DynamicTypeBuilder*) noexcept override;
     bool remove(const DynamicTypeBuilder*) noexcept override;
     bool add(const DynamicType*) noexcept override;
