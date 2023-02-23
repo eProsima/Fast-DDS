@@ -35,10 +35,19 @@ using namespace eprosima::fastcdr::exception;
 
 #include <utility>
 
+#define MyEnumWideStruct_max_cdr_typesize 4ULL;
+
+#define SimpleWideUnionStruct_max_cdr_typesize 16ULL;
+
+#define MyEnumWideStruct_max_key_cdr_typesize 0ULL;
+
+#define SimpleWideUnionStruct_max_key_cdr_typesize 0ULL;
+
+
 
 MyEnumWideStruct::MyEnumWideStruct()
 {
-    // m_my_enum_wide com.eprosima.idl.parser.typecode.EnumTypeCode@631330c
+    // MyEnumWide m_my_enum_wide
     m_my_enum_wide = ::A;
 
     // Just to register all known types
@@ -95,13 +104,8 @@ bool MyEnumWideStruct::operator !=(
 size_t MyEnumWideStruct::getMaxCdrSerializedSize(
         size_t current_alignment)
 {
-    size_t initial_alignment = current_alignment;
-
-
-    current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
-
-
-    return current_alignment - initial_alignment;
+    static_cast<void>(current_alignment);
+    return MyEnumWideStruct_max_cdr_typesize;
 }
 
 size_t MyEnumWideStruct::getCdrSerializedSize(
@@ -167,14 +171,12 @@ MyEnumWide& MyEnumWideStruct::my_enum_wide()
 }
 
 
+
 size_t MyEnumWideStruct::getKeyMaxCdrSerializedSize(
         size_t current_alignment)
 {
-    size_t current_align = current_alignment;
-
-
-
-    return current_align;
+    static_cast<void>(current_alignment);
+    return MyEnumWideStruct_max_key_cdr_typesize;
 }
 
 bool MyEnumWideStruct::isKeyDefined()
@@ -186,17 +188,16 @@ void MyEnumWideStruct::serializeKey(
         eprosima::fastcdr::Cdr& scdr) const
 {
     (void) scdr;
-     
 }
 
 SimpleWideUnion::SimpleWideUnion()
 {
     m__d = A;
-    // m_first com.eprosima.idl.parser.typecode.PrimitiveTypeCode@7a3d45bd
+    // long m_first
     m_first = 0;
-    // m_second com.eprosima.idl.parser.typecode.PrimitiveTypeCode@1e7c7811
+    // long long m_second
     m_second = 0;
-    // m_third com.eprosima.idl.parser.typecode.PrimitiveTypeCode@77ec78b9
+    // octet m_third
     m_third = 0;
 }
 
@@ -519,47 +520,6 @@ uint8_t& SimpleWideUnion::third()
     return m_third;
 }
 
-size_t SimpleWideUnion::getMaxCdrSerializedSize(
-        size_t current_alignment)
-{
-    size_t initial_alignment = current_alignment;
-    size_t reset_alignment = 0;
-    size_t union_max_size_serialized = 0;
-
-    current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
-
-
-        reset_alignment = current_alignment;
-
-        reset_alignment += 4 + eprosima::fastcdr::Cdr::alignment(reset_alignment, 4);
-
-
-        if(union_max_size_serialized < reset_alignment)
-            union_max_size_serialized = reset_alignment;
-
-        
-        reset_alignment = current_alignment;
-
-        reset_alignment += 8 + eprosima::fastcdr::Cdr::alignment(reset_alignment, 8);
-
-
-        if(union_max_size_serialized < reset_alignment)
-            union_max_size_serialized = reset_alignment;
-
-        
-        reset_alignment = current_alignment;
-
-        reset_alignment += 1 + eprosima::fastcdr::Cdr::alignment(reset_alignment, 1);
-
-
-        if(union_max_size_serialized < reset_alignment)
-            union_max_size_serialized = reset_alignment;
-
-        
-
-    return union_max_size_serialized - initial_alignment;
-}
-
 // TODO(Ricardo) Review
 size_t SimpleWideUnion::getCdrSerializedSize(
         const SimpleWideUnion& data,
@@ -639,7 +599,7 @@ void SimpleWideUnion::deserialize(
 
 SimpleWideUnionStruct::SimpleWideUnionStruct()
 {
-    // m_my_union com.eprosima.idl.parser.typecode.UnionTypeCode@4d3167f4
+    // SimpleWideUnion m_my_union
 
 
     // Just to register all known types
@@ -696,12 +656,8 @@ bool SimpleWideUnionStruct::operator !=(
 size_t SimpleWideUnionStruct::getMaxCdrSerializedSize(
         size_t current_alignment)
 {
-    size_t initial_alignment = current_alignment;
-
-
-    current_alignment += SimpleWideUnion::getMaxCdrSerializedSize(current_alignment);
-
-    return current_alignment - initial_alignment;
+    static_cast<void>(current_alignment);
+    return SimpleWideUnionStruct_max_cdr_typesize;
 }
 
 size_t SimpleWideUnionStruct::getCdrSerializedSize(
@@ -770,14 +726,12 @@ SimpleWideUnion& SimpleWideUnionStruct::my_union()
     return m_my_union;
 }
 
+
 size_t SimpleWideUnionStruct::getKeyMaxCdrSerializedSize(
         size_t current_alignment)
 {
-    size_t current_align = current_alignment;
-
-
-
-    return current_align;
+    static_cast<void>(current_alignment);
+    return SimpleWideUnionStruct_max_key_cdr_typesize;
 }
 
 bool SimpleWideUnionStruct::isKeyDefined()
@@ -789,5 +743,4 @@ void SimpleWideUnionStruct::serializeKey(
         eprosima::fastcdr::Cdr& scdr) const
 {
     (void) scdr;
-     
 }

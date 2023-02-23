@@ -34,11 +34,14 @@ using namespace eprosima::fastcdr::exception;
 
 #include <utility>
 
+#define FlowControlExample_max_cdr_typesize 600002ULL;
+#define FlowControlExample_max_key_cdr_typesize 0ULL;
+
 FlowControlExample::FlowControlExample()
 {
-    // m_message com.eprosima.idl.parser.typecode.ArrayTypeCode@5b87ed94
+    // char m_message
     memset(&m_message, 0, (600000) * 1);
-    // m_wasFast com.eprosima.idl.parser.typecode.PrimitiveTypeCode@5bc79255
+    // char m_wasFast
     m_wasFast = 0;
 
 }
@@ -57,7 +60,7 @@ FlowControlExample::FlowControlExample(
 }
 
 FlowControlExample::FlowControlExample(
-        FlowControlExample&& x) noexcept
+        FlowControlExample&& x) noexcept 
 {
     m_message = std::move(x.m_message);
     m_wasFast = x.m_wasFast;
@@ -99,17 +102,8 @@ bool FlowControlExample::operator !=(
 size_t FlowControlExample::getMaxCdrSerializedSize(
         size_t current_alignment)
 {
-    size_t initial_alignment = current_alignment;
-
-
-    current_alignment += ((600000) * 1) + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
-
-
-    current_alignment += 1 + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
-
-
-
-    return current_alignment - initial_alignment;
+    static_cast<void>(current_alignment);
+    return FlowControlExample_max_cdr_typesize;
 }
 
 size_t FlowControlExample::getCdrSerializedSize(
@@ -214,16 +208,12 @@ char& FlowControlExample::wasFast()
 }
 
 
+
 size_t FlowControlExample::getKeyMaxCdrSerializedSize(
         size_t current_alignment)
 {
-    size_t current_align = current_alignment;
-
-
-
-
-
-    return current_align;
+    static_cast<void>(current_alignment);
+    return FlowControlExample_max_key_cdr_typesize;
 }
 
 bool FlowControlExample::isKeyDefined()
@@ -235,5 +225,4 @@ void FlowControlExample::serializeKey(
         eprosima::fastcdr::Cdr& scdr) const
 {
     (void) scdr;
-
 }

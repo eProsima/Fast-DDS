@@ -34,13 +34,16 @@ using namespace eprosima::fastcdr::exception;
 
 #include <utility>
 
+#define ExampleMessage_max_cdr_typesize 268ULL;
+#define ExampleMessage_max_key_cdr_typesize 0ULL;
+
 ExampleMessage::ExampleMessage()
 {
-    // m_index com.eprosima.idl.parser.typecode.PrimitiveTypeCode@2b552920
+    // unsigned long m_index
     m_index = 0;
-    // m_ownershipStrength com.eprosima.idl.parser.typecode.PrimitiveTypeCode@2758fe70
+    // unsigned long m_ownershipStrength
     m_ownershipStrength = 0;
-    // m_message com.eprosima.idl.parser.typecode.StringTypeCode@1f36e637
+    // string m_message
     m_message ="";
 
 }
@@ -106,19 +109,8 @@ bool ExampleMessage::operator !=(
 size_t ExampleMessage::getMaxCdrSerializedSize(
         size_t current_alignment)
 {
-    size_t initial_alignment = current_alignment;
-
-
-    current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
-
-
-    current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
-
-
-    current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4) + 255 + 1;
-
-
-    return current_alignment - initial_alignment;
+    static_cast<void>(current_alignment);
+    return ExampleMessage_max_cdr_typesize;
 }
 
 size_t ExampleMessage::getCdrSerializedSize(
@@ -254,17 +246,12 @@ std::string& ExampleMessage::message()
     return m_message;
 }
 
+
 size_t ExampleMessage::getKeyMaxCdrSerializedSize(
         size_t current_alignment)
 {
-    size_t current_align = current_alignment;
-
-
-
-
-
-
-    return current_align;
+    static_cast<void>(current_alignment);
+    return ExampleMessage_max_key_cdr_typesize;
 }
 
 bool ExampleMessage::isKeyDefined()
@@ -276,5 +263,4 @@ void ExampleMessage::serializeKey(
         eprosima::fastcdr::Cdr& scdr) const
 {
     (void) scdr;
-       
 }

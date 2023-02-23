@@ -34,11 +34,14 @@ using namespace eprosima::fastcdr::exception;
 
 #include <utility>
 
+#define Topic_max_cdr_typesize 264ULL;
+#define Topic_max_key_cdr_typesize 0ULL;
+
 Topic::Topic()
 {
-    // m_index com.eprosima.idl.parser.typecode.PrimitiveTypeCode@627551fb
+    // unsigned long m_index
     m_index = 0;
-    // m_message com.eprosima.idl.parser.typecode.StringTypeCode@2758fe70
+    // string m_message
     m_message ="";
 
 }
@@ -99,16 +102,8 @@ bool Topic::operator !=(
 size_t Topic::getMaxCdrSerializedSize(
         size_t current_alignment)
 {
-    size_t initial_alignment = current_alignment;
-
-
-    current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
-
-
-    current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4) + 255 + 1;
-
-
-    return current_alignment - initial_alignment;
+    static_cast<void>(current_alignment);
+    return Topic_max_cdr_typesize;
 }
 
 size_t Topic::getCdrSerializedSize(
@@ -211,16 +206,12 @@ std::string& Topic::message()
     return m_message;
 }
 
+
 size_t Topic::getKeyMaxCdrSerializedSize(
         size_t current_alignment)
 {
-    size_t current_align = current_alignment;
-
-
-
-
-
-    return current_align;
+    static_cast<void>(current_alignment);
+    return Topic_max_key_cdr_typesize;
 }
 
 bool Topic::isKeyDefined()
@@ -232,5 +223,4 @@ void Topic::serializeKey(
         eprosima::fastcdr::Cdr& scdr) const
 {
     (void) scdr;
-      
 }

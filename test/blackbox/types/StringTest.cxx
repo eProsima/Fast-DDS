@@ -34,9 +34,12 @@ using namespace eprosima::fastcdr::exception;
 
 #include <utility>
 
+#define StringTest_max_cdr_typesize 10005ULL;
+#define StringTest_max_key_cdr_typesize 0ULL;
+
 StringTest::StringTest()
 {
-    // m_message com.eprosima.idl.parser.typecode.StringTypeCode@369f73a2
+    // string m_message
     m_message ="";
 
 }
@@ -91,12 +94,8 @@ bool StringTest::operator !=(
 size_t StringTest::getMaxCdrSerializedSize(
         size_t current_alignment)
 {
-    size_t initial_alignment = current_alignment;
-
-
-    current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4) + 10000 + 1;
-
-    return current_alignment - initial_alignment;
+    static_cast<void>(current_alignment);
+    return StringTest_max_cdr_typesize;
 }
 
 size_t StringTest::getCdrSerializedSize(
@@ -168,14 +167,12 @@ eprosima::fastrtps::fixed_string<10000>& StringTest::message()
     return m_message;
 }
 
+
 size_t StringTest::getKeyMaxCdrSerializedSize(
         size_t current_alignment)
 {
-    size_t current_align = current_alignment;
-
-
-
-    return current_align;
+    static_cast<void>(current_alignment);
+    return StringTest_max_key_cdr_typesize;
 }
 
 bool StringTest::isKeyDefined()
@@ -187,5 +184,4 @@ void StringTest::serializeKey(
         eprosima::fastcdr::Cdr& scdr) const
 {
     (void) scdr;
-     
 }

@@ -169,11 +169,11 @@ public:
 
 
     /*!
-     * @brief This function returns the maximum serialized size of an object
-     * depending on the buffer alignment.
-     * @param current_alignment Buffer alignment.
-     * @return Maximum serialized size.
-     */
+    * @brief This function returns the maximum serialized size of an object
+    * depending on the buffer alignment.
+    * @param current_alignment Buffer alignment.
+    * @return Maximum serialized size.
+    */
     eProsima_user_DllExport static size_t getMaxCdrSerializedSize(
             size_t current_alignment = 0);
 
@@ -229,6 +229,7 @@ private:
 
     std::array<char, 600000> m_message;
     char m_wasFast;
+
 };
 
 #endif // _FAST_DDS_GENERATED_FLOWCONTROLEXAMPLE_H_

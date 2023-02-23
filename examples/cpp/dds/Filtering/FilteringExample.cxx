@@ -34,9 +34,12 @@ using namespace eprosima::fastcdr::exception;
 
 #include <utility>
 
+#define FilteringExample_max_cdr_typesize 4ULL;
+#define FilteringExample_max_key_cdr_typesize 0ULL;
+
 FilteringExample::FilteringExample()
 {
-    // m_sampleNumber com.eprosima.idl.parser.typecode.PrimitiveTypeCode@578486a3
+    // long m_sampleNumber
     m_sampleNumber = 0;
 
 }
@@ -91,13 +94,8 @@ bool FilteringExample::operator !=(
 size_t FilteringExample::getMaxCdrSerializedSize(
         size_t current_alignment)
 {
-    size_t initial_alignment = current_alignment;
-
-
-    current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
-
-
-    return current_alignment - initial_alignment;
+    static_cast<void>(current_alignment);
+    return FilteringExample_max_cdr_typesize;
 }
 
 size_t FilteringExample::getCdrSerializedSize(
@@ -158,14 +156,12 @@ int32_t& FilteringExample::sampleNumber()
 }
 
 
+
 size_t FilteringExample::getKeyMaxCdrSerializedSize(
         size_t current_alignment)
 {
-    size_t current_align = current_alignment;
-
-
-
-    return current_align;
+    static_cast<void>(current_alignment);
+    return FilteringExample_max_key_cdr_typesize;
 }
 
 bool FilteringExample::isKeyDefined()
@@ -177,5 +173,4 @@ void FilteringExample::serializeKey(
         eprosima::fastcdr::Cdr& scdr) const
 {
     (void) scdr;
-     
 }

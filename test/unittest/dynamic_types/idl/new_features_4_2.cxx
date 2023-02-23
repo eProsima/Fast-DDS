@@ -35,25 +35,46 @@ using namespace eprosima::fastcdr::exception;
 
 #include <utility>
 
+
+
+#define bitmodule_BM2_max_cdr_typesize 24ULL;
+#define NewAliases_max_cdr_typesize 32ULL;
+
+#define StructTest_max_cdr_typesize 80ULL;
+
+
+
+#define bitmodule_BitsetBitmask_max_cdr_typesize 17ULL;
+
+
+#define bitmodule_BM2_max_key_cdr_typesize 0ULL;
+#define NewAliases_max_key_cdr_typesize 0ULL;
+
+#define StructTest_max_key_cdr_typesize 0ULL;
+
+
+
+#define bitmodule_BitsetBitmask_max_key_cdr_typesize 0ULL;
+
 NewAliases::NewAliases()
 {
-    // m_int8_ com.eprosima.idl.parser.typecode.PrimitiveTypeCode@1e7c7811
+    // int8 m_int8_
     m_int8_ = 0;
-    // m_uint8_ com.eprosima.idl.parser.typecode.PrimitiveTypeCode@77ec78b9
+    // uint8 m_uint8_
     m_uint8_ = 0;
-    // m_int16_ com.eprosima.idl.parser.typecode.PrimitiveTypeCode@1a3869f4
+    // short m_int16_
     m_int16_ = 0;
-    // m_uint16_ com.eprosima.idl.parser.typecode.PrimitiveTypeCode@a38d7a3
+    // unsigned short m_uint16_
     m_uint16_ = 0;
-    // m_int32_ com.eprosima.idl.parser.typecode.PrimitiveTypeCode@77f99a05
+    // long m_int32_
     m_int32_ = 0;
-    // m_uint32_ com.eprosima.idl.parser.typecode.PrimitiveTypeCode@63440df3
+    // unsigned long m_uint32_
     m_uint32_ = 0;
-    // m_int64_ com.eprosima.idl.parser.typecode.PrimitiveTypeCode@3aeaafa6
+    // long long m_int64_
     m_int64_ = 0;
-    // m_uint64_ com.eprosima.idl.parser.typecode.PrimitiveTypeCode@4d3167f4
+    // unsigned long long m_uint64_
     m_uint64_ = 555;
-    // m_local_string com.eprosima.idl.parser.typecode.StringTypeCode@6121c9d6
+    // string m_local_string
     m_local_string ="";
 
     // Just to register all known types
@@ -151,36 +172,8 @@ bool NewAliases::operator !=(
 size_t NewAliases::getMaxCdrSerializedSize(
         size_t current_alignment)
 {
-    size_t initial_alignment = current_alignment;
-
-
-    current_alignment += 1 + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
-
-
-    current_alignment += 1 + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
-
-
-    current_alignment += 2 + eprosima::fastcdr::Cdr::alignment(current_alignment, 2);
-
-
-    current_alignment += 2 + eprosima::fastcdr::Cdr::alignment(current_alignment, 2);
-
-
-    current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
-
-
-    current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
-
-
-    current_alignment += 8 + eprosima::fastcdr::Cdr::alignment(current_alignment, 8);
-
-
-    current_alignment += 8 + eprosima::fastcdr::Cdr::alignment(current_alignment, 8);
-
-
-
-
-    return current_alignment - initial_alignment;
+    static_cast<void>(current_alignment);
+    return NewAliases_max_cdr_typesize;
 }
 
 size_t NewAliases::getCdrSerializedSize(
@@ -512,23 +505,12 @@ std::string& NewAliases::local_string()
     return m_local_string;
 }
 
+
 size_t NewAliases::getKeyMaxCdrSerializedSize(
         size_t current_alignment)
 {
-    size_t current_align = current_alignment;
-
-
-
-
-
-
-
-
-
-
-
-
-    return current_align;
+    static_cast<void>(current_alignment);
+    return NewAliases_max_key_cdr_typesize;
 }
 
 bool NewAliases::isKeyDefined()
@@ -540,15 +522,14 @@ void NewAliases::serializeKey(
         eprosima::fastcdr::Cdr& scdr) const
 {
     (void) scdr;
-             
 }
 
 WCharUnion::WCharUnion()
 {
     m__d = 'a';
-    // m_case_zero com.eprosima.idl.parser.typecode.PrimitiveTypeCode@8e24743
+    // long m_case_zero
     m_case_zero = 0;
-    // m_case_one com.eprosima.idl.parser.typecode.PrimitiveTypeCode@74a10858
+    // long m_case_one
     m_case_one = 0;
 }
 
@@ -800,38 +781,6 @@ int32_t& WCharUnion::case_one()
     return m_case_one;
 }
 
-size_t WCharUnion::getMaxCdrSerializedSize(
-        size_t current_alignment)
-{
-    size_t initial_alignment = current_alignment;
-    size_t reset_alignment = 0;
-    size_t union_max_size_serialized = 0;
-
-    current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
-
-
-        reset_alignment = current_alignment;
-
-        reset_alignment += 4 + eprosima::fastcdr::Cdr::alignment(reset_alignment, 4);
-
-
-        if(union_max_size_serialized < reset_alignment)
-            union_max_size_serialized = reset_alignment;
-
-        
-        reset_alignment = current_alignment;
-
-        reset_alignment += 4 + eprosima::fastcdr::Cdr::alignment(reset_alignment, 4);
-
-
-        if(union_max_size_serialized < reset_alignment)
-            union_max_size_serialized = reset_alignment;
-
-        
-
-    return union_max_size_serialized - initial_alignment;
-}
-
 // TODO(Ricardo) Review
 size_t WCharUnion::getCdrSerializedSize(
         const WCharUnion& data,
@@ -901,9 +850,9 @@ void WCharUnion::deserialize(
 OctetUnion::OctetUnion()
 {
     m__d = 5;
-    // m_case_five com.eprosima.idl.parser.typecode.PrimitiveTypeCode@13eb8acf
+    // long m_case_five
     m_case_five = 0;
-    // m_case_seven com.eprosima.idl.parser.typecode.PrimitiveTypeCode@51c8530f
+    // long m_case_seven
     m_case_seven = 0;
 }
 
@@ -1155,38 +1104,6 @@ int32_t& OctetUnion::case_seven()
     return m_case_seven;
 }
 
-size_t OctetUnion::getMaxCdrSerializedSize(
-        size_t current_alignment)
-{
-    size_t initial_alignment = current_alignment;
-    size_t reset_alignment = 0;
-    size_t union_max_size_serialized = 0;
-
-    current_alignment += 1 + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
-
-
-        reset_alignment = current_alignment;
-
-        reset_alignment += 4 + eprosima::fastcdr::Cdr::alignment(reset_alignment, 4);
-
-
-        if(union_max_size_serialized < reset_alignment)
-            union_max_size_serialized = reset_alignment;
-
-        
-        reset_alignment = current_alignment;
-
-        reset_alignment += 4 + eprosima::fastcdr::Cdr::alignment(reset_alignment, 4);
-
-
-        if(union_max_size_serialized < reset_alignment)
-            union_max_size_serialized = reset_alignment;
-
-        
-
-    return union_max_size_serialized - initial_alignment;
-}
-
 // TODO(Ricardo) Review
 size_t OctetUnion::getCdrSerializedSize(
         const OctetUnion& data,
@@ -1256,9 +1173,9 @@ void OctetUnion::deserialize(
 Int8Union::Int8Union()
 {
     m__d = 3;
-    // m_case_three com.eprosima.idl.parser.typecode.PrimitiveTypeCode@1fc2b765
+    // long m_case_three
     m_case_three = 0;
-    // m_case_six com.eprosima.idl.parser.typecode.PrimitiveTypeCode@75881071
+    // long m_case_six
     m_case_six = 0;
 }
 
@@ -1510,38 +1427,6 @@ int32_t& Int8Union::case_six()
     return m_case_six;
 }
 
-size_t Int8Union::getMaxCdrSerializedSize(
-        size_t current_alignment)
-{
-    size_t initial_alignment = current_alignment;
-    size_t reset_alignment = 0;
-    size_t union_max_size_serialized = 0;
-
-    current_alignment += 1 + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
-
-
-        reset_alignment = current_alignment;
-
-        reset_alignment += 4 + eprosima::fastcdr::Cdr::alignment(reset_alignment, 4);
-
-
-        if(union_max_size_serialized < reset_alignment)
-            union_max_size_serialized = reset_alignment;
-
-        
-        reset_alignment = current_alignment;
-
-        reset_alignment += 4 + eprosima::fastcdr::Cdr::alignment(reset_alignment, 4);
-
-
-        if(union_max_size_serialized < reset_alignment)
-            union_max_size_serialized = reset_alignment;
-
-        
-
-    return union_max_size_serialized - initial_alignment;
-}
-
 // TODO(Ricardo) Review
 size_t Int8Union::getCdrSerializedSize(
         const Int8Union& data,
@@ -1661,18 +1546,6 @@ bool bitmodule::ParentBitset::operator !=(
     return !(*this == x);
 }
 
-size_t bitmodule::ParentBitset::getMaxCdrSerializedSize(
-        size_t current_alignment)
-{
-    size_t initial_alignment = current_alignment;
-
-
-    current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
-
-
-    return current_alignment - initial_alignment;
-}
-
 size_t bitmodule::ParentBitset::getCdrSerializedSize(
         const bitmodule::ParentBitset& ,
         size_t current_alignment)
@@ -1780,36 +1653,6 @@ bool bitmodule::MyBitset::operator !=(
         const MyBitset& x) const
 {
     return !(*this == x);
-}
-
-size_t bitmodule::MyBitset::getMaxCdrSerializedSize(
-        size_t current_alignment)
-{
-    size_t initial_alignment = current_alignment;
-
-    current_alignment += bitmodule::ParentBitset::getMaxCdrSerializedSize(current_alignment); 
-
-    current_alignment += 1 + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
-
-
-    current_alignment += 1 + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
-
-
-
-    current_alignment += 2 + eprosima::fastcdr::Cdr::alignment(current_alignment, 2);
-
-
-    current_alignment += 2 + eprosima::fastcdr::Cdr::alignment(current_alignment, 2);
-
-
-    current_alignment += 2 + eprosima::fastcdr::Cdr::alignment(current_alignment, 2);
-
-
-    current_alignment += 2 + eprosima::fastcdr::Cdr::alignment(current_alignment, 2);
-
-
-
-    return current_alignment - initial_alignment;
 }
 
 size_t bitmodule::MyBitset::getCdrSerializedSize(
@@ -2010,9 +1853,9 @@ int16_t bitmodule::MyBitset::f() const
 
 bitmodule::BitsetBitmask::BitsetBitmask()
 {
-    // m_mybitset com.eprosima.idl.parser.typecode.BitsetTypeCode@15bfd87
+    // bitmodule::MyBitset m_mybitset
 
-    // m_mybitmask com.eprosima.idl.parser.typecode.BitmaskTypeCode@543e710e
+    // bitmodule::MyBitMask m_mybitmask
     m_mybitmask = static_cast<bitmodule::MyBitMask>(0);
 
     // Just to register all known types
@@ -2075,15 +1918,8 @@ bool bitmodule::BitsetBitmask::operator !=(
 size_t bitmodule::BitsetBitmask::getMaxCdrSerializedSize(
         size_t current_alignment)
 {
-    size_t initial_alignment = current_alignment;
-
-
-    current_alignment += bitmodule::MyBitset::getMaxCdrSerializedSize(current_alignment);
-    current_alignment += 1 + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
-
-
-
-    return current_alignment - initial_alignment;
+    static_cast<void>(current_alignment);
+    return bitmodule_BitsetBitmask_max_cdr_typesize;
 }
 
 size_t bitmodule::BitsetBitmask::getCdrSerializedSize(
@@ -2191,16 +2027,12 @@ bitmodule::MyBitMask& bitmodule::BitsetBitmask::mybitmask()
 }
 
 
+
 size_t bitmodule::BitsetBitmask::getKeyMaxCdrSerializedSize(
         size_t current_alignment)
 {
-    size_t current_align = current_alignment;
-
-
-
-
-
-    return current_align;
+    static_cast<void>(current_alignment);
+    return bitmodule_BitsetBitmask_max_key_cdr_typesize;
 }
 
 bool bitmodule::BitsetBitmask::isKeyDefined()
@@ -2212,14 +2044,13 @@ void bitmodule::BitsetBitmask::serializeKey(
         eprosima::fastcdr::Cdr& scdr) const
 {
     (void) scdr;
-      
 }
 
 bitmodule::BM2::BM2()    : bitmodule::BitsetBitmask() 
 {
-    // m_two com.eprosima.idl.parser.typecode.BitmaskTypeCode@543e710e
+    // bitmodule::MyBitMask m_two
     m_two = static_cast<bitmodule::MyBitMask>(0);
-    // m_mylong com.eprosima.idl.parser.typecode.PrimitiveTypeCode@27fe3806
+    // long m_mylong
     m_mylong = 0;
 
     // Just to register all known types
@@ -2285,18 +2116,8 @@ bool bitmodule::BM2::operator !=(
 size_t bitmodule::BM2::getMaxCdrSerializedSize(
         size_t current_alignment)
 {
-    size_t initial_alignment = current_alignment;
-
-    current_alignment += bitmodule::BitsetBitmask::getMaxCdrSerializedSize(current_alignment); 
-
-    current_alignment += 1 + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
-
-
-    current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
-
-
-
-    return current_alignment - initial_alignment;
+    static_cast<void>(current_alignment);
+    return bitmodule_BM2_max_cdr_typesize;
 }
 
 size_t bitmodule::BM2::getCdrSerializedSize(
@@ -2400,17 +2221,12 @@ int32_t& bitmodule::BM2::mylong()
 }
 
 
+
 size_t bitmodule::BM2::getKeyMaxCdrSerializedSize(
         size_t current_alignment)
 {
-    size_t current_align = current_alignment;
-
-    current_align += bitmodule::BitsetBitmask::getKeyMaxCdrSerializedSize(current_align); 
-
-
-
-
-    return current_align;
+    static_cast<void>(current_alignment);
+    return bitmodule_BM2_max_key_cdr_typesize;
 }
 
 bool bitmodule::BM2::isKeyDefined()
@@ -2424,20 +2240,19 @@ void bitmodule::BM2::serializeKey(
         eprosima::fastcdr::Cdr& scdr) const
 {
     (void) scdr;
-    bitmodule::BitsetBitmask::serializeKey(scdr); 
-      
+ bitmodule::BitsetBitmask::serializeKey(scdr);  
 }
 
 
 StructTest::StructTest()    : NewAliases() 
 {
-    // m_charUnion com.eprosima.idl.parser.typecode.UnionTypeCode@548a102f
+    // WCharUnion m_charUnion
 
-    // m_octetUnion com.eprosima.idl.parser.typecode.UnionTypeCode@5762806e
+    // OctetUnion m_octetUnion
 
-    // m_int8Union com.eprosima.idl.parser.typecode.UnionTypeCode@17c386de
+    // Int8Union m_int8Union
 
-    // m_myStructBits com.eprosima.fastdds.idl.parser.typecode.StructTypeCode@5af97850
+    // bitmodule::BM2 m_myStructBits
 
 
     // Just to register all known types
@@ -2513,16 +2328,8 @@ bool StructTest::operator !=(
 size_t StructTest::getMaxCdrSerializedSize(
         size_t current_alignment)
 {
-    size_t initial_alignment = current_alignment;
-
-    current_alignment += NewAliases::getMaxCdrSerializedSize(current_alignment); 
-
-    current_alignment += WCharUnion::getMaxCdrSerializedSize(current_alignment);
-    current_alignment += OctetUnion::getMaxCdrSerializedSize(current_alignment);
-    current_alignment += Int8Union::getMaxCdrSerializedSize(current_alignment);
-    current_alignment += bitmodule::BM2::getMaxCdrSerializedSize(current_alignment);
-
-    return current_alignment - initial_alignment;
+    static_cast<void>(current_alignment);
+    return StructTest_max_cdr_typesize;
 }
 
 size_t StructTest::getCdrSerializedSize(
@@ -2714,19 +2521,12 @@ bitmodule::BM2& StructTest::myStructBits()
     return m_myStructBits;
 }
 
+
 size_t StructTest::getKeyMaxCdrSerializedSize(
         size_t current_alignment)
 {
-    size_t current_align = current_alignment;
-
-    current_align += NewAliases::getKeyMaxCdrSerializedSize(current_align); 
-
-
-
-
-
-
-    return current_align;
+    static_cast<void>(current_alignment);
+    return StructTest_max_key_cdr_typesize;
 }
 
 bool StructTest::isKeyDefined()
@@ -2740,6 +2540,5 @@ void StructTest::serializeKey(
         eprosima::fastcdr::Cdr& scdr) const
 {
     (void) scdr;
-    NewAliases::serializeKey(scdr); 
-        
+ NewAliases::serializeKey(scdr);  
 }

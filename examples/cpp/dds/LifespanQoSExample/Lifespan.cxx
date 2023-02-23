@@ -34,11 +34,14 @@ using namespace eprosima::fastcdr::exception;
 
 #include <utility>
 
+#define Lifespan_max_cdr_typesize 264ULL;
+#define Lifespan_max_key_cdr_typesize 0ULL;
+
 Lifespan::Lifespan()
 {
-    // m_index com.eprosima.idl.parser.typecode.PrimitiveTypeCode@627551fb
+    // unsigned long m_index
     m_index = 0;
-    // m_message com.eprosima.idl.parser.typecode.StringTypeCode@2758fe70
+    // string m_message
     m_message ="";
 
 }
@@ -99,16 +102,8 @@ bool Lifespan::operator !=(
 size_t Lifespan::getMaxCdrSerializedSize(
         size_t current_alignment)
 {
-    size_t initial_alignment = current_alignment;
-
-
-    current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
-
-
-    current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4) + 255 + 1;
-
-
-    return current_alignment - initial_alignment;
+    static_cast<void>(current_alignment);
+    return Lifespan_max_cdr_typesize;
 }
 
 size_t Lifespan::getCdrSerializedSize(
@@ -211,16 +206,12 @@ std::string& Lifespan::message()
     return m_message;
 }
 
+
 size_t Lifespan::getKeyMaxCdrSerializedSize(
         size_t current_alignment)
 {
-    size_t current_align = current_alignment;
-
-
-
-
-
-    return current_align;
+    static_cast<void>(current_alignment);
+    return Lifespan_max_key_cdr_typesize;
 }
 
 bool Lifespan::isKeyDefined()
@@ -232,5 +223,4 @@ void Lifespan::serializeKey(
         eprosima::fastcdr::Cdr& scdr) const
 {
     (void) scdr;
-      
 }

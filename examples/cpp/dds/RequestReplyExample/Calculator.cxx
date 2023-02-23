@@ -35,13 +35,20 @@ using namespace eprosima::fastcdr::exception;
 #include <utility>
 
 
+#define ReplyType_max_cdr_typesize 8ULL;
+#define RequestType_max_cdr_typesize 12ULL;
+
+#define ReplyType_max_key_cdr_typesize 0ULL;
+#define RequestType_max_key_cdr_typesize 0ULL;
+
+
 RequestType::RequestType()
 {
-    // m_operation com.eprosima.idl.parser.typecode.EnumTypeCode@24b1d79b
+    // OperationType m_operation
     m_operation = ::ADDITION;
-    // m_x com.eprosima.idl.parser.typecode.PrimitiveTypeCode@68ceda24
+    // long m_x
     m_x = 0;
-    // m_y com.eprosima.idl.parser.typecode.PrimitiveTypeCode@281e3708
+    // long m_y
     m_y = 0;
 
 }
@@ -107,20 +114,8 @@ bool RequestType::operator !=(
 size_t RequestType::getMaxCdrSerializedSize(
         size_t current_alignment)
 {
-    size_t initial_alignment = current_alignment;
-
-
-    current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
-
-
-    current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
-
-
-    current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
-
-
-
-    return current_alignment - initial_alignment;
+    static_cast<void>(current_alignment);
+    return RequestType_max_cdr_typesize;
 }
 
 size_t RequestType::getCdrSerializedSize(
@@ -253,17 +248,12 @@ int32_t& RequestType::y()
 }
 
 
+
 size_t RequestType::getKeyMaxCdrSerializedSize(
         size_t current_alignment)
 {
-    size_t current_align = current_alignment;
-
-
-
-
-
-
-    return current_align;
+    static_cast<void>(current_alignment);
+    return RequestType_max_key_cdr_typesize;
 }
 
 bool RequestType::isKeyDefined()
@@ -275,12 +265,11 @@ void RequestType::serializeKey(
         eprosima::fastcdr::Cdr& scdr) const
 {
     (void) scdr;
-       
 }
 
 ReplyType::ReplyType()
 {
-    // m_z com.eprosima.idl.parser.typecode.PrimitiveTypeCode@44a3ec6b
+    // long long m_z
     m_z = 0;
 
 }
@@ -335,13 +324,8 @@ bool ReplyType::operator !=(
 size_t ReplyType::getMaxCdrSerializedSize(
         size_t current_alignment)
 {
-    size_t initial_alignment = current_alignment;
-
-
-    current_alignment += 8 + eprosima::fastcdr::Cdr::alignment(current_alignment, 8);
-
-
-    return current_alignment - initial_alignment;
+    static_cast<void>(current_alignment);
+    return ReplyType_max_cdr_typesize;
 }
 
 size_t ReplyType::getCdrSerializedSize(
@@ -402,14 +386,12 @@ int64_t& ReplyType::z()
 }
 
 
+
 size_t ReplyType::getKeyMaxCdrSerializedSize(
         size_t current_alignment)
 {
-    size_t current_align = current_alignment;
-
-
-
-    return current_align;
+    static_cast<void>(current_alignment);
+    return ReplyType_max_key_cdr_typesize;
 }
 
 bool ReplyType::isKeyDefined()
@@ -421,5 +403,4 @@ void ReplyType::serializeKey(
         eprosima::fastcdr::Cdr& scdr) const
 {
     (void) scdr;
-     
 }

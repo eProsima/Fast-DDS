@@ -34,11 +34,14 @@ using namespace eprosima::fastcdr::exception;
 
 #include <utility>
 
+#define LoanableHelloWorld_max_cdr_typesize 261ULL;
+#define LoanableHelloWorld_max_key_cdr_typesize 0ULL;
+
 LoanableHelloWorld::LoanableHelloWorld()
 {
-    // m_index com.eprosima.idl.parser.typecode.PrimitiveTypeCode@2b552920
+    // unsigned long m_index
     m_index = 0;
-    // m_message com.eprosima.idl.parser.typecode.ArrayTypeCode@1f36e637
+    // char m_message
     memset(&m_message, 0, (256) * 1);
 
 }
@@ -57,7 +60,7 @@ LoanableHelloWorld::LoanableHelloWorld(
 }
 
 LoanableHelloWorld::LoanableHelloWorld(
-        LoanableHelloWorld&& x) noexcept
+        LoanableHelloWorld&& x) noexcept 
 {
     m_index = x.m_index;
     m_message = std::move(x.m_message);
@@ -99,17 +102,8 @@ bool LoanableHelloWorld::operator !=(
 size_t LoanableHelloWorld::getMaxCdrSerializedSize(
         size_t current_alignment)
 {
-    size_t initial_alignment = current_alignment;
-
-
-    current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
-
-
-    current_alignment += ((256) * 1) + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
-
-
-
-    return current_alignment - initial_alignment;
+    static_cast<void>(current_alignment);
+    return LoanableHelloWorld_max_cdr_typesize;
 }
 
 size_t LoanableHelloWorld::getCdrSerializedSize(
@@ -214,16 +208,12 @@ std::array<char, 256>& LoanableHelloWorld::message()
     return m_message;
 }
 
+
 size_t LoanableHelloWorld::getKeyMaxCdrSerializedSize(
         size_t current_alignment)
 {
-    size_t current_align = current_alignment;
-
-
-
-
-
-    return current_align;
+    static_cast<void>(current_alignment);
+    return LoanableHelloWorld_max_key_cdr_typesize;
 }
 
 bool LoanableHelloWorld::isKeyDefined()
@@ -235,5 +225,4 @@ void LoanableHelloWorld::serializeKey(
         eprosima::fastcdr::Cdr& scdr) const
 {
     (void) scdr;
-
 }

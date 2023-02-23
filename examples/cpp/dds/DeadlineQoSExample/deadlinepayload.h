@@ -169,11 +169,11 @@ public:
     eProsima_user_DllExport eprosima::fastrtps::fixed_string<256>& payload();
 
     /*!
-     * @brief This function returns the maximum serialized size of an object
-     * depending on the buffer alignment.
-     * @param current_alignment Buffer alignment.
-     * @return Maximum serialized size.
-     */
+    * @brief This function returns the maximum serialized size of an object
+    * depending on the buffer alignment.
+    * @param current_alignment Buffer alignment.
+    * @return Maximum serialized size.
+    */
     eProsima_user_DllExport static size_t getMaxCdrSerializedSize(
             size_t current_alignment = 0);
 
@@ -229,6 +229,7 @@ private:
 
     uint16_t m_deadlinekey;
     eprosima::fastrtps::fixed_string<256> m_payload;
+
 };
 
 #endif // _FAST_DDS_GENERATED_DEADLINEPAYLOAD_H_

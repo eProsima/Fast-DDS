@@ -35,11 +35,14 @@ using namespace eprosima::fastcdr::exception;
 
 #include <utility>
 
+#define HelloWorld_max_cdr_typesize 264ULL;
+#define HelloWorld_max_key_cdr_typesize 0ULL;
+
 HelloWorld::HelloWorld()
 {
-    // m_index com.eprosima.idl.parser.typecode.PrimitiveTypeCode@74a10858
+    // unsigned long m_index
     m_index = 0;
-    // m_message com.eprosima.idl.parser.typecode.StringTypeCode@23fe1d71
+    // string m_message
     m_message ="";
 
     // Just to register all known types
@@ -102,16 +105,8 @@ bool HelloWorld::operator !=(
 size_t HelloWorld::getMaxCdrSerializedSize(
         size_t current_alignment)
 {
-    size_t initial_alignment = current_alignment;
-
-
-    current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
-
-
-    current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4) + 255 + 1;
-
-
-    return current_alignment - initial_alignment;
+    static_cast<void>(current_alignment);
+    return HelloWorld_max_cdr_typesize;
 }
 
 size_t HelloWorld::getCdrSerializedSize(
@@ -214,16 +209,12 @@ std::string& HelloWorld::message()
     return m_message;
 }
 
+
 size_t HelloWorld::getKeyMaxCdrSerializedSize(
         size_t current_alignment)
 {
-    size_t current_align = current_alignment;
-
-
-
-
-
-    return current_align;
+    static_cast<void>(current_alignment);
+    return HelloWorld_max_key_cdr_typesize;
 }
 
 bool HelloWorld::isKeyDefined()
@@ -235,5 +226,4 @@ void HelloWorld::serializeKey(
         eprosima::fastcdr::Cdr& scdr) const
 {
     (void) scdr;
-      
 }

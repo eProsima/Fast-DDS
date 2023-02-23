@@ -34,9 +34,12 @@ using namespace eprosima::fastcdr::exception;
 
 #include <utility>
 
+#define FixedSized_max_cdr_typesize 2ULL;
+#define FixedSized_max_key_cdr_typesize 0ULL;
+
 FixedSized::FixedSized()
 {
-    // m_index com.eprosima.idl.parser.typecode.PrimitiveTypeCode@7fac631b
+    // unsigned short m_index
     m_index = 0;
 
 }
@@ -91,13 +94,8 @@ bool FixedSized::operator !=(
 size_t FixedSized::getMaxCdrSerializedSize(
         size_t current_alignment)
 {
-    size_t initial_alignment = current_alignment;
-
-
-    current_alignment += 2 + eprosima::fastcdr::Cdr::alignment(current_alignment, 2);
-
-
-    return current_alignment - initial_alignment;
+    static_cast<void>(current_alignment);
+    return FixedSized_max_cdr_typesize;
 }
 
 size_t FixedSized::getCdrSerializedSize(
@@ -158,14 +156,12 @@ uint16_t& FixedSized::index()
 }
 
 
+
 size_t FixedSized::getKeyMaxCdrSerializedSize(
         size_t current_alignment)
 {
-    size_t current_align = current_alignment;
-
-
-
-    return current_align;
+    static_cast<void>(current_alignment);
+    return FixedSized_max_key_cdr_typesize;
 }
 
 bool FixedSized::isKeyDefined()
@@ -177,5 +173,4 @@ void FixedSized::serializeKey(
         eprosima::fastcdr::Cdr& scdr) const
 {
     (void) scdr;
-     
 }

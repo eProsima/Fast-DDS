@@ -34,11 +34,14 @@ using namespace eprosima::fastcdr::exception;
 
 #include <utility>
 
+#define HelloMsg_max_cdr_typesize 265ULL;
+#define HelloMsg_max_key_cdr_typesize 2ULL;
+
 HelloMsg::HelloMsg()
 {
-    // m_deadlinekey com.eprosima.idl.parser.typecode.PrimitiveTypeCode@23d2a7e8
+    // unsigned short m_deadlinekey
     m_deadlinekey = 0;
-    // m_payload com.eprosima.idl.parser.typecode.StringTypeCode@26a7b76d
+    // string m_payload
     m_payload ="";
 
 }
@@ -99,16 +102,8 @@ bool HelloMsg::operator !=(
 size_t HelloMsg::getMaxCdrSerializedSize(
         size_t current_alignment)
 {
-    size_t initial_alignment = current_alignment;
-
-
-    current_alignment += 2 + eprosima::fastcdr::Cdr::alignment(current_alignment, 2);
-
-
-    current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4) + 256 + 1;
-
-
-    return current_alignment - initial_alignment;
+    static_cast<void>(current_alignment);
+    return HelloMsg_max_cdr_typesize;
 }
 
 size_t HelloMsg::getCdrSerializedSize(
@@ -215,18 +210,12 @@ eprosima::fastrtps::fixed_string<256>& HelloMsg::payload()
     return m_payload;
 }
 
+
 size_t HelloMsg::getKeyMaxCdrSerializedSize(
         size_t current_alignment)
 {
-    size_t current_align = current_alignment;
-
-
-     current_align += 2 + eprosima::fastcdr::Cdr::alignment(current_align, 2);
-
-     
-
-
-    return current_align;
+    static_cast<void>(current_alignment);
+    return HelloMsg_max_key_cdr_typesize;
 }
 
 bool HelloMsg::isKeyDefined()
@@ -238,6 +227,7 @@ void HelloMsg::serializeKey(
         eprosima::fastcdr::Cdr& scdr) const
 {
     (void) scdr;
-     scdr << m_deadlinekey;
-       
+   scdr << m_deadlinekey;
+   
+  
 }

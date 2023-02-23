@@ -2326,7 +2326,7 @@ const TypeObject* GetMinimalMySequenceLongObject()
     //type_object->minimal().alias_type().body().common().related_flags().IS_DEFAULT(false);
 
     // Must be defined already, if don't, may be an recursive alias
-    const TypeIdentifier *relatedType = TypeObjectFactory::get_instance()->get_type_identifier(TypeNamesGenerator::get_sequence_type_name("int32_t", 0), false);
+    const TypeIdentifier *relatedType = TypeObjectFactory::get_instance()->get_type_identifier(TypeNamesGenerator::get_sequence_type_name("int32_t", 100), false);
 
 
     if (relatedType != nullptr)
@@ -2363,7 +2363,7 @@ const TypeObject* GetMinimalMySequenceLongObject()
     }
 
     // Don't add our TypeIdentifier but our alias
-    TypeObjectFactory::get_instance()->add_alias("MySequenceLong", TypeNamesGenerator::get_sequence_type_name("int32_t", 0));
+    TypeObjectFactory::get_instance()->add_alias("MySequenceLong", TypeNamesGenerator::get_sequence_type_name("int32_t", 100));
 
     TypeObjectFactory::get_instance()->add_type_object("MySequenceLong", &identifier, type_object);
     delete type_object;
@@ -2408,7 +2408,7 @@ const TypeObject* GetCompleteMySequenceLongObject()
     //type_object->complete().alias_type().body().common().ann_custom()
 
     // Must be defined already, if don't, may be an recursive alias
-    const TypeIdentifier *relatedType = TypeObjectFactory::get_instance()->get_type_identifier_trying_complete(TypeNamesGenerator::get_sequence_type_name("int32_t", 0));
+    const TypeIdentifier *relatedType = TypeObjectFactory::get_instance()->get_type_identifier_trying_complete(TypeNamesGenerator::get_sequence_type_name("int32_t", 100));
 
 
     if (relatedType != nullptr)
@@ -2445,7 +2445,7 @@ const TypeObject* GetCompleteMySequenceLongObject()
     }
 
     // Don't add our TypeIdentifier but our alias
-    TypeObjectFactory::get_instance()->add_alias("MySequenceLong", TypeNamesGenerator::get_sequence_type_name("int32_t", 0));
+    TypeObjectFactory::get_instance()->add_alias("MySequenceLong", TypeNamesGenerator::get_sequence_type_name("int32_t", 100));
 
     TypeObjectFactory::get_instance()->add_type_object("MySequenceLong", &identifier, type_object);
     delete type_object;
@@ -2595,7 +2595,7 @@ const TypeObject* GetMinimalComplexStructObject()
     mst_my_sequence_struct.common().member_flags().IS_MUST_UNDERSTAND(false);
     mst_my_sequence_struct.common().member_flags().IS_KEY(false);
     mst_my_sequence_struct.common().member_flags().IS_DEFAULT(false); // Doesn't apply
-    mst_my_sequence_struct.common().member_type_id(*TypeObjectFactory::get_instance()->get_sequence_identifier("BasicStruct", 0, false));
+    mst_my_sequence_struct.common().member_type_id(*TypeObjectFactory::get_instance()->get_sequence_identifier("BasicStruct", 100, false));
 
 
     MD5 my_sequence_struct_hash("my_sequence_struct");
@@ -2707,7 +2707,7 @@ const TypeObject* GetMinimalComplexStructObject()
     mst_my_map_long_seq_octet.common().member_flags().IS_MUST_UNDERSTAND(false);
     mst_my_map_long_seq_octet.common().member_flags().IS_KEY(false);
     mst_my_map_long_seq_octet.common().member_flags().IS_DEFAULT(false); // Doesn't apply
-    mst_my_map_long_seq_octet.common().member_type_id(*TypeObjectFactory::get_instance()->get_map_identifier("int32_t", TypeNamesGenerator::get_sequence_type_name(TypeNamesGenerator::get_sequence_type_name("uint8_t", 0), 0), 100, false));
+    mst_my_map_long_seq_octet.common().member_type_id(*TypeObjectFactory::get_instance()->get_map_identifier("int32_t", TypeNamesGenerator::get_sequence_type_name(TypeNamesGenerator::get_sequence_type_name("uint8_t", 100), 100), 100, false));
 
 
     MD5 my_map_long_seq_octet_hash("my_map_long_seq_octet");
@@ -3039,7 +3039,7 @@ const TypeObject* GetCompleteComplexStructObject()
     cst_my_sequence_struct.common().member_flags().IS_MUST_UNDERSTAND(false);
     cst_my_sequence_struct.common().member_flags().IS_KEY(false);
     cst_my_sequence_struct.common().member_flags().IS_DEFAULT(false); // Doesn't apply
-    cst_my_sequence_struct.common().member_type_id(*TypeObjectFactory::get_instance()->get_sequence_identifier("BasicStruct", 0, true));
+    cst_my_sequence_struct.common().member_type_id(*TypeObjectFactory::get_instance()->get_sequence_identifier("BasicStruct", 100, true));
 
 
     cst_my_sequence_struct.detail().name("my_sequence_struct");
@@ -3133,7 +3133,7 @@ const TypeObject* GetCompleteComplexStructObject()
     cst_my_map_long_seq_octet.common().member_flags().IS_MUST_UNDERSTAND(false);
     cst_my_map_long_seq_octet.common().member_flags().IS_KEY(false);
     cst_my_map_long_seq_octet.common().member_flags().IS_DEFAULT(false); // Doesn't apply
-    cst_my_map_long_seq_octet.common().member_type_id(*TypeObjectFactory::get_instance()->get_map_identifier("int32_t", TypeNamesGenerator::get_sequence_type_name(TypeNamesGenerator::get_sequence_type_name("uint8_t", 0), 0), 100, true));
+    cst_my_map_long_seq_octet.common().member_type_id(*TypeObjectFactory::get_instance()->get_map_identifier("int32_t", TypeNamesGenerator::get_sequence_type_name(TypeNamesGenerator::get_sequence_type_name("uint8_t", 100), 100), 100, true));
 
 
     cst_my_map_long_seq_octet.detail().name("my_map_long_seq_octet");

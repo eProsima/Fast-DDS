@@ -34,11 +34,14 @@ using namespace eprosima::fastcdr::exception;
 
 #include <utility>
 
+#define BenchMarkSmall_max_cdr_typesize 16392ULL;
+#define BenchMarkSmall_max_key_cdr_typesize 0ULL;
+
 BenchMarkSmall::BenchMarkSmall()
 {
-    // m_array com.eprosima.idl.parser.typecode.ArrayTypeCode@2b552920
+    // char m_array
     memset(&m_array, 0, (16384) * 1);
-    // m_index com.eprosima.idl.parser.typecode.PrimitiveTypeCode@1f36e637
+    // unsigned long m_index
     m_index = 0;
 
 }
@@ -57,7 +60,7 @@ BenchMarkSmall::BenchMarkSmall(
 }
 
 BenchMarkSmall::BenchMarkSmall(
-        BenchMarkSmall&& x) noexcept
+        BenchMarkSmall&& x) noexcept 
 {
     m_array = std::move(x.m_array);
     m_index = x.m_index;
@@ -99,17 +102,8 @@ bool BenchMarkSmall::operator !=(
 size_t BenchMarkSmall::getMaxCdrSerializedSize(
         size_t current_alignment)
 {
-    size_t initial_alignment = current_alignment;
-
-
-    current_alignment += ((16384) * 1) + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
-
-
-    current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
-
-
-
-    return current_alignment - initial_alignment;
+    static_cast<void>(current_alignment);
+    return BenchMarkSmall_max_cdr_typesize;
 }
 
 size_t BenchMarkSmall::getCdrSerializedSize(
@@ -214,16 +208,12 @@ uint32_t& BenchMarkSmall::index()
 }
 
 
+
 size_t BenchMarkSmall::getKeyMaxCdrSerializedSize(
         size_t current_alignment)
 {
-    size_t current_align = current_alignment;
-
-
-
-
-
-    return current_align;
+    static_cast<void>(current_alignment);
+    return BenchMarkSmall_max_key_cdr_typesize;
 }
 
 bool BenchMarkSmall::isKeyDefined()
@@ -235,5 +225,4 @@ void BenchMarkSmall::serializeKey(
         eprosima::fastcdr::Cdr& scdr) const
 {
     (void) scdr;
-
 }
