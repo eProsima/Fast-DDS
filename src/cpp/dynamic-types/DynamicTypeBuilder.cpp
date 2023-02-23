@@ -39,12 +39,25 @@ DynamicTypeBuilder::DynamicTypeBuilder(
 
 DynamicTypeBuilder::DynamicTypeBuilder(
         use_the_create_method,
-        const TypeDescriptor& descriptor)
+        const TypeDescriptor& descriptor,
+        bool is_static)
     : TypeDescriptor(descriptor)
     , current_member_id_(0)
 {
     // the factory should only create consistent builders
     assert(is_consistent());
+
+    // if static create and register the one and only primitive type
+    if (is_static)
+    {
+        // create on heap
+        instance_ = std::make_shared<DynamicType>(
+                DynamicType::use_the_create_method{},
+                *this);
+
+        // notify the tracker
+        get_dynamic_tracker().add_primitive(instance_.get());
+    }
 }
 
 void DynamicTypeBuilder::after_construction(DynamicType* type)
@@ -189,6 +202,9 @@ ReturnCode_t DynamicTypeBuilder::add_member(
 
         // advance
         ++current_member_id_;
+
+        // invalidate type object
+        instance_.reset();
     }
     catch(std::system_error& e)
     {
@@ -201,15 +217,25 @@ ReturnCode_t DynamicTypeBuilder::add_member(
 
 DynamicType_ptr DynamicTypeBuilder::build() const
 {
+    // check if an instance is already available
+    // and is still valid
+    if (instance_ && *this == *instance_)
+    {
+        return instance_;
+    }
+
+    // otherwise, create a new one
     if (is_consistent())
     {
-        return std::allocate_shared<DynamicType>(
+        instance_ = std::allocate_shared<DynamicType>(
             builder_allocator{},
             DynamicType::use_the_create_method{},
             *this);
+        return instance_;
     }
     else
     {
+        instance_.reset();
         EPROSIMA_LOG_ERROR(DYN_TYPES, "Error building type. The current descriptor isn't consistent.");
     }
 
@@ -243,6 +269,7 @@ void DynamicTypeBuilder::clear()
 {
     TypeDescriptor::clean();
     current_member_id_ = 0;
+    instance_.reset();
 }
 
 bool DynamicTypeBuilder::is_discriminator_type() const

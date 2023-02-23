@@ -53,6 +53,12 @@ void dtypes_memory_check::add_primitive(const DynamicTypeBuilder* pBuilder) noex
     primitive_builders_list_.insert(pBuilder);
 }
 
+void dtypes_memory_check::add_primitive(const DynamicType* pType) noexcept
+{
+    std::lock_guard<std::mutex> _(mutex_);
+    primitive_types_list_.insert(pType);
+}
+
 bool dtypes_memory_check::add(const DynamicTypeBuilder* pBuilder) noexcept
 {
     std::lock_guard<std::mutex> _(mutex_);
@@ -90,7 +96,8 @@ bool dtypes_memory_check::add(const DynamicType* pType) noexcept
 bool dtypes_memory_check::remove(const DynamicType* type) noexcept
 {
     std::lock_guard<std::mutex> _(mutex_);
-    if(!types_list_.erase(type))
+    if(!types_list_.erase(type)
+        && primitive_types_list_.find(type) != primitive_types_list_.end())
     {
         EPROSIMA_LOG_ERROR(DYN_TYPES, "The given type has been already removed.");
         return false;
@@ -341,7 +348,8 @@ DynamicTypeBuilder_ptr DynamicTypeBuilderFactory::new_primitive_builder(TypeKind
     // create on heap
     DynamicTypeBuilder_ptr builder = std::make_shared<DynamicTypeBuilder>(
                 DynamicTypeBuilder::use_the_create_method{},
-                TypeDescriptor{GenerateTypeName(get_type_name(kind)), kind});
+                TypeDescriptor{GenerateTypeName(get_type_name(kind)), kind},
+                true); // will be a static object
     // notify the tracker
     get_dynamic_tracker().add_primitive(builder.get());
     return builder;

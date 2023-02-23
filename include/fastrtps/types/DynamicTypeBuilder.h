@@ -49,6 +49,8 @@ class DynamicTypeBuilder
 
     MemberId current_member_id_ = 0;
 
+    mutable DynamicType_ptr instance_; //!< Instance of the associated type object
+
     bool check_union_configuration(
             const MemberDescriptor& descriptor);
 
@@ -78,7 +80,8 @@ public:
 
     DynamicTypeBuilder(
             use_the_create_method,
-            const TypeDescriptor& descriptor);
+            const TypeDescriptor& descriptor,
+            bool is_static = false);
 
     ~DynamicTypeBuilder() = default;
 
