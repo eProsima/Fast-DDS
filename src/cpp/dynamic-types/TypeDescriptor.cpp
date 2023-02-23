@@ -19,6 +19,10 @@
 #include <fastrtps/types/TypeDescriptor.h>
 #include <fastrtps/types/TypesBase.h>
 
+#if defined(__has_include) && __has_include(<version>)
+#   include <version>
+#endif // if defined(__has_include) && __has_include(<version>)
+
 using namespace eprosima::fastrtps::types;
 
 enum FSM_INPUTS
@@ -47,12 +51,27 @@ static const int stateTable[4][6] =
     {VALID,       VALID,   VALID,   VALID,      SINGLECOLON, INVALID}
 };
 
+#ifdef __cpp_aggregate_nsdm
+
 TypeDescriptor::TypeDescriptor(
         const std::string& name,
         TypeKind kind)
     : TypeDescriptorData{name, kind}
 {
 }
+
+#else // __cpp_aggregate_nsdm
+
+TypeDescriptor::TypeDescriptor(
+        const std::string& name,
+        TypeKind kind)
+{
+    name_ = name;
+    kind_ = kind;
+}
+
+#endif // __cpp_aggregate_nsdm
+
 
 TypeDescriptor::TypeDescriptor(
         const TypeDescriptor& other)

@@ -109,7 +109,7 @@ DynamicData* DynamicDataFactory::create_data(
         {
             DynamicData* newData = nullptr;
             // ALIAS types create a DynamicData based on the base type and renames it with the name of the ALIAS.
-            if (pType->get_base_type() != nullptr)
+            if (pType->get_base_type())
             {
                 if (pType->get_kind() == TK_ALIAS)
                 {

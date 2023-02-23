@@ -30,6 +30,7 @@ namespace types {
 
 class AnnotationDescriptor;
 class TypeDescriptor;
+class DynamicData;
 class DynamicTypeMember;
 class DynamicTypeBuilder;
 class DynamicTypeBuilderFactory;
@@ -63,25 +64,9 @@ public:
 protected:
 
     friend class DynamicTypeBuilder;
-
-    friend class MemberDescriptor;
-    friend class DynamicTypeMember;
-    friend class DynamicData;
-    friend class DynamicDataFactory;
-    friend class AnnotationDescriptor;
-    friend class TypeObjectFactory;
     friend class DynamicDataHelper;
-    friend class fastdds::dds::DomainParticipantImpl;
 
     RTPS_DllAPI virtual void clear();
-
-    using TypeDescriptor::get_base_type;
-
-    using TypeDescriptor::get_discriminator_type;
-
-    using TypeDescriptor::get_element_type;
-
-    using TypeDescriptor::get_key_element_type;
 
     // Serialization ancillary
     void serialize_empty_data(
@@ -95,11 +80,11 @@ protected:
             DynamicData& data,
             eprosima::fastcdr::Cdr& cdr) const;
 
+public:
+    //! TODO:BARRO move to protected on serialization refactor
     void serializeKey(
             const DynamicData& data,
             eprosima::fastcdr::Cdr& cdr) const;
-
-public:
 
     // Serializes and deserializes the Dynamic Data.
     void serialize(
@@ -138,6 +123,11 @@ public:
     // TODO: doxigen
     RTPS_DllAPI bool equals(
             const DynamicType& other) const;
+
+    using TypeDescriptor::get_base_type;
+    using TypeDescriptor::get_discriminator_type;
+    using TypeDescriptor::get_element_type;
+    using TypeDescriptor::get_key_element_type;
 
     using TypeDescriptor::get_all_members;
     using TypeDescriptor::get_all_members_by_name;

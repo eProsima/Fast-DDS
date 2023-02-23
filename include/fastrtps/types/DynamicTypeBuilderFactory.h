@@ -217,7 +217,7 @@ public:
             DynamicType* type) noexcept;
 
     template<TypeKind kind>
-    typename std::enable_if<is_primitive_v<kind>, DynamicTypeBuilder_cptr&>::type
+    typename std::enable_if<is_primitive_t<kind>::value, DynamicTypeBuilder_cptr&>::type
     create_primitive_builder() noexcept
     {
         // C++11 compiler uses double-checked locking pattern to avoid concurrency issues

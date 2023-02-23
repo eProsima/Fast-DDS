@@ -981,7 +981,7 @@ void DynamicData::get_value(
         std::string& sOutValue,
         MemberId id /*= MEMBER_ID_INVALID*/) const
 {
-    switch (type_->kind_)
+    switch (type_->get_kind())
     {
         default:
             break;
@@ -1119,7 +1119,7 @@ void DynamicData::set_value(
         const std::string& sValue,
         MemberId id /*= MEMBER_ID_INVALID*/)
 {
-    switch (type_->kind_)
+    switch (type_->get_kind())
     {
         default:
             break;
@@ -1357,7 +1357,7 @@ void DynamicData::set_default_value(
 
     defaultValue = pM->get_default_value();
 
-    switch (type_->kind_)
+    switch (type_->get_kind())
     {
         default:
             break;
@@ -4111,8 +4111,8 @@ ReturnCode_t DynamicData::set_enum_value(
     if (get_kind() == TK_ENUM && id == MEMBER_ID_INVALID)
     {
         MemberId eid = get_member_id_by_name(value);
-        if(eid == MEMBER_ID_INVALID)
-        {
+        if (eid == MEMBER_ID_INVALID)
+        {
             return ReturnCode_t::RETCODE_BAD_PARAMETER;
         }
 
@@ -4184,7 +4184,7 @@ ReturnCode_t DynamicData::set_enum_value(
 ReturnCode_t DynamicData::set_bitmask_value(
         uint64_t value)
 {
-    if (type_->kind_ == TK_BITMASK)
+    if (type_->get_kind() == TK_BITMASK)
     {
         return set_uint64_value(value, MEMBER_ID_INVALID);
     }
@@ -4194,7 +4194,7 @@ ReturnCode_t DynamicData::set_bitmask_value(
 ReturnCode_t DynamicData::get_bitmask_value(
         uint64_t& value) const
 {
-    if (type_->kind_ == TK_BITMASK)
+    if (type_->get_kind() == TK_BITMASK)
     {
         return get_uint64_value(value, MEMBER_ID_INVALID);
     }
