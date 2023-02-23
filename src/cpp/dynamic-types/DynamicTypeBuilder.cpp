@@ -206,7 +206,7 @@ DynamicType_ptr DynamicTypeBuilder::build() const
         return std::allocate_shared<DynamicType>(
             builder_allocator{},
             DynamicType::use_the_create_method{},
-            get_descriptor());
+            *this);
     }
     else
     {
@@ -263,5 +263,5 @@ bool DynamicTypeBuilder::is_discriminator_type() const
 bool DynamicTypeBuilder::equals(
         const DynamicType& other) const
 {
-    return get_descriptor() == other.get_descriptor();
+    return *this == other;
 }

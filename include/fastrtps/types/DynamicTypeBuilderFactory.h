@@ -409,20 +409,9 @@ public:
             uint32_t bound);
 
     RTPS_DllAPI void build_type_identifier(
-            const DynamicType& type,
-            TypeIdentifier& identifier,
-            bool complete = true) const;
-
-    RTPS_DllAPI void build_type_identifier(
             const TypeDescriptor& descriptor,
             TypeIdentifier& identifier,
             bool complete = true) const;
-
-    RTPS_DllAPI void build_type_object(
-            const DynamicType& type,
-            TypeObject& object,
-            bool complete = true,
-            bool force = false) const;
 
     RTPS_DllAPI void build_type_object(
             const TypeDescriptor& descriptor,

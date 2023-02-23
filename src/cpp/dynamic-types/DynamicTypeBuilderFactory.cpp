@@ -204,13 +204,13 @@ DynamicTypeBuilder_ptr DynamicTypeBuilderFactory::create_builder(const TypeDescr
 DynamicTypeBuilder_ptr DynamicTypeBuilderFactory::create_builder_copy(const DynamicType& type) noexcept
 {
     assert(type.is_consistent());
-    return create_builder(type.get_descriptor());
+    return create_builder(type);
 }
 
 DynamicTypeBuilder_ptr DynamicTypeBuilderFactory::create_builder_copy(const DynamicTypeBuilder& builder) noexcept
 {
     assert(builder.is_consistent());
-    return create_builder(builder.get_descriptor());
+    return create_builder(builder);
 }
 
 DynamicTypeBuilder_ptr DynamicTypeBuilderFactory::create_alias_builder(
@@ -671,14 +671,6 @@ bool DynamicTypeBuilderFactory::is_empty() const
 }
 
 void DynamicTypeBuilderFactory::build_type_identifier(
-        const DynamicType& type,
-        TypeIdentifier& identifier,
-        bool complete) const
-{
-    build_type_identifier(type.get_descriptor(), identifier, complete);
-}
-
-void DynamicTypeBuilderFactory::build_type_identifier(
         const TypeDescriptor& descriptor,
         TypeIdentifier& identifier,
         bool complete) const
@@ -750,7 +742,7 @@ void DynamicTypeBuilderFactory::build_type_identifier(
                     identifier._d(TI_PLAIN_SEQUENCE_SMALL);
                     identifier.seq_sdefn().bound(static_cast<SBound>(descriptor.bound_[0]));
                     TypeIdentifier elem_id;
-                    build_type_identifier(descriptor.get_element_type()->get_descriptor(), elem_id, complete);
+                    build_type_identifier(*descriptor.get_element_type(), elem_id, complete);
                     identifier.seq_sdefn().element_identifier(&elem_id);
                 }
                 else
@@ -758,7 +750,7 @@ void DynamicTypeBuilderFactory::build_type_identifier(
                     identifier._d(TI_PLAIN_SEQUENCE_LARGE);
                     identifier.seq_ldefn().bound(descriptor.bound_[0]);
                     TypeIdentifier elem_id;
-                    build_type_identifier(descriptor.get_element_type()->get_descriptor(), elem_id, complete);
+                    build_type_identifier(*descriptor.get_element_type(), elem_id, complete);
                     identifier.seq_ldefn().element_identifier(&elem_id);
                 }
             }
@@ -779,7 +771,7 @@ void DynamicTypeBuilderFactory::build_type_identifier(
                         identifier.array_sdefn().array_bound_seq().emplace_back(static_cast<SBound>(b));
                     }
                     TypeIdentifier elem_id;
-                    build_type_identifier(descriptor.get_element_type()->get_descriptor(), elem_id, complete);
+                    build_type_identifier(*descriptor.get_element_type(), elem_id, complete);
                     identifier.array_sdefn().element_identifier(&elem_id);
                 }
                 else
@@ -787,7 +779,7 @@ void DynamicTypeBuilderFactory::build_type_identifier(
                     identifier._d(TI_PLAIN_ARRAY_LARGE);
                     identifier.array_ldefn().array_bound_seq(descriptor.bound_);
                     TypeIdentifier elem_id;
-                    build_type_identifier(descriptor.get_element_type()->get_descriptor(), elem_id, complete);
+                    build_type_identifier(*descriptor.get_element_type(), elem_id, complete);
                     identifier.array_ldefn().element_identifier(&elem_id);
                 }
             }
@@ -799,10 +791,10 @@ void DynamicTypeBuilderFactory::build_type_identifier(
                     identifier._d(TI_PLAIN_MAP_SMALL);
                     identifier.map_sdefn().bound(static_cast<SBound>(descriptor.bound_[0]));
                     TypeIdentifier elem_id;
-                    build_type_identifier(descriptor.get_element_type()->get_descriptor(), elem_id, complete);
+                    build_type_identifier(*descriptor.get_element_type(), elem_id, complete);
                     identifier.map_sdefn().element_identifier(&elem_id);
                     TypeIdentifier key_id;
-                    build_type_identifier(descriptor.get_key_element_type()->get_descriptor(), key_id, complete);
+                    build_type_identifier(*descriptor.get_key_element_type(), key_id, complete);
                     identifier.map_sdefn().key_identifier(&key_id);
                 }
                 else
@@ -810,10 +802,10 @@ void DynamicTypeBuilderFactory::build_type_identifier(
                     identifier._d(TI_PLAIN_MAP_LARGE);
                     identifier.map_ldefn().bound(static_cast<SBound>(descriptor.bound_[0]));
                     TypeIdentifier elem_id;
-                    build_type_identifier(descriptor.get_element_type()->get_descriptor(), elem_id, complete);
+                    build_type_identifier(*descriptor.get_element_type(), elem_id, complete);
                     identifier.map_ldefn().element_identifier(&elem_id);
                     TypeIdentifier key_id;
-                    build_type_identifier(descriptor.get_key_element_type()->get_descriptor(), key_id, complete);
+                    build_type_identifier(*descriptor.get_key_element_type(), key_id, complete);
                     identifier.map_ldefn().key_identifier(&key_id);
                 }
             }
@@ -838,15 +830,6 @@ void DynamicTypeBuilderFactory::build_type_identifier(
 
         TypeObjectFactory::get_instance()->add_type_identifier(descriptor.get_name(), &identifier);
     }
-}
-
-void DynamicTypeBuilderFactory::build_type_object(
-        const DynamicType& type,
-        TypeObject& object,
-        bool complete,
-        bool force) const
-{
-    build_type_object(type.get_descriptor(), object, complete, force);
 }
 
 void DynamicTypeBuilderFactory::build_type_object(
@@ -1006,7 +989,7 @@ void DynamicTypeBuilderFactory::build_sequence_type_code(
         object.complete().sequence_type().element().common().element_flags().IS_DEFAULT(false);
 
         //TypeIdentifier ident;
-        //build_type_identifier(descriptor.get_base_type()->get_descriptor(), ident);
+        //build_type_identifier(*descriptor.get_base_type(), ident);
         TypeObject obj;
         build_type_object(*descriptor.get_element_type(), obj, complete);
         TypeIdentifier ident = *TypeObjectFactory::get_instance()->get_type_identifier(
@@ -1043,7 +1026,7 @@ void DynamicTypeBuilderFactory::build_sequence_type_code(
         object.minimal().sequence_type().element().common().element_flags().IS_DEFAULT(false);
 
         //TypeIdentifier ident;
-        //build_type_identifier(descriptor.get_base_type()->get_descriptor(), ident);
+        //build_type_identifier(*descriptor.get_base_type(), ident);
         TypeObject obj;
         build_type_object(*descriptor.get_element_type(), obj);
         TypeIdentifier ident = *TypeObjectFactory::get_instance()->get_type_identifier(
@@ -1093,7 +1076,7 @@ void DynamicTypeBuilderFactory::build_array_type_code(
         object.complete().array_type().element().common().element_flags().IS_DEFAULT(false);
 
         //TypeIdentifier ident;
-        //build_type_identifier(descriptor.get_base_type()->get_descriptor(), ident);
+        //build_type_identifier(*descriptor.get_base_type(), ident);
         TypeObject obj;
         build_type_object(*descriptor.get_element_type(), obj, complete);
         TypeIdentifier ident = *TypeObjectFactory::get_instance()->get_type_identifier(
@@ -1133,7 +1116,7 @@ void DynamicTypeBuilderFactory::build_array_type_code(
         object.minimal().array_type().element().common().element_flags().IS_DEFAULT(false);
 
         //TypeIdentifier ident;
-        //build_type_identifier(descriptor.get_base_type()->get_descriptor(), ident);
+        //build_type_identifier(*descriptor.get_base_type(), ident);
         TypeObject obj;
         build_type_object(*descriptor.get_element_type(), obj);
         TypeIdentifier ident = *TypeObjectFactory::get_instance()->get_type_identifier(
@@ -1187,7 +1170,7 @@ void DynamicTypeBuilderFactory::build_map_type_code(
         object.complete().map_type().key().common().element_flags().IS_DEFAULT(false);
 
         //TypeIdentifier ident;
-        //build_type_identifier(descriptor.get_base_type()->get_descriptor(), ident);
+        //build_type_identifier(*descriptor.get_base_type(), ident);
         TypeObject obj;
         build_type_object(*descriptor.get_element_type(), obj, complete);
         TypeIdentifier ident = *TypeObjectFactory::get_instance()->get_type_identifier(
@@ -1230,7 +1213,7 @@ void DynamicTypeBuilderFactory::build_map_type_code(
         object.minimal().map_type().element().common().element_flags().IS_DEFAULT(false);
 
         //TypeIdentifier ident;
-        //build_type_identifier(descriptor.get_base_type()->get_descriptor(), ident);
+        //build_type_identifier(*descriptor.get_base_type(), ident);
         TypeObject obj;
         build_type_object(*descriptor.get_element_type(), obj);
         TypeIdentifier ident = *TypeObjectFactory::get_instance()->get_type_identifier(
@@ -1282,7 +1265,7 @@ void DynamicTypeBuilderFactory::build_alias_type_code(
         object.complete().alias_type().body().common().related_flags().IS_DEFAULT(false);
 
         //TypeIdentifier ident;
-        //build_type_identifier(descriptor.get_base_type()->get_descriptor(), ident);
+        //build_type_identifier(*descriptor.get_base_type(), ident);
         TypeObject obj;
         build_type_object(*descriptor.get_base_type(), obj, complete);
         TypeIdentifier ident = *TypeObjectFactory::get_instance()->get_type_identifier(
@@ -1336,7 +1319,7 @@ void DynamicTypeBuilderFactory::build_alias_type_code(
         object.minimal().alias_type().body().common().related_flags().IS_DEFAULT(false);
 
         //TypeIdentifier ident;
-        //build_type_identifier(descriptor.get_base_type()->get_descriptor(), ident);
+        //build_type_identifier(*descriptor.get_base_type(), ident);
         TypeObject obj;
         build_type_object(*descriptor.get_base_type(), obj);
         TypeIdentifier ident = *TypeObjectFactory::get_instance()->get_type_identifier(
@@ -1510,7 +1493,7 @@ void DynamicTypeBuilderFactory::build_struct_type_code(
             apply_type_annotations(msm.detail().ann_custom(), member_type_descriptor);
 
             TypeObject memObj;
-            build_type_object(member_type->get_descriptor(), memObj);
+            build_type_object(*member_type, memObj);
             const TypeIdentifier* typeId =
                     TypeObjectFactory::get_instance()->get_type_identifier_trying_complete(member_type->get_name());
             if (typeId == nullptr)
@@ -1591,10 +1574,10 @@ void DynamicTypeBuilderFactory::build_struct_type_code(
             msm.common().member_flags().IS_KEY(member.annotation_is_key());
             msm.common().member_flags().IS_DEFAULT(false);
             //TypeIdentifier memIdent;
-            //build_type_identifier(member.get_type()->get_descriptor(), memIdent);
+            //build_type_identifier(*member.get_type(), memIdent);
 
             TypeObject memObj;
-            build_type_object(member.get_type()->get_descriptor(), memObj, false);
+            build_type_object(*member.get_type(), memObj, false);
             const TypeIdentifier* typeId =
                     TypeObjectFactory::get_instance()->get_type_identifier(member.get_type()->get_name());
             if (typeId == nullptr)
@@ -1675,7 +1658,7 @@ void DynamicTypeBuilderFactory::build_union_type_code(
         object.complete().union_type().discriminator().common().member_flags().IS_OPTIONAL(false);
         object.complete().union_type().discriminator().common().member_flags().IS_MUST_UNDERSTAND(false);
         object.complete().union_type().discriminator().common().member_flags().IS_KEY(
-            descriptor.discriminator_type_->get_descriptor().annotation_is_key());
+            descriptor.discriminator_type_->annotation_is_key());
         object.complete().union_type().discriminator().common().member_flags().IS_DEFAULT(false);
 
         // Apply annotations
@@ -1705,7 +1688,7 @@ void DynamicTypeBuilderFactory::build_union_type_code(
             apply_type_annotations(mum.detail().ann_custom(), member_type_descriptor);
 
             TypeObject memObj;
-            build_type_object(member.get_type()->get_descriptor(), memObj);
+            build_type_object(*member.get_type(), memObj);
             const TypeIdentifier* typeId =
                     TypeObjectFactory::get_instance()->get_type_identifier_trying_complete(member.get_type()->get_name());
             if (typeId == nullptr)
@@ -1770,7 +1753,7 @@ void DynamicTypeBuilderFactory::build_union_type_code(
         object.minimal().union_type().discriminator().common().member_flags().IS_OPTIONAL(false);
         object.minimal().union_type().discriminator().common().member_flags().IS_MUST_UNDERSTAND(false);
         object.minimal().union_type().discriminator().common().member_flags().IS_KEY(
-            descriptor.discriminator_type_->get_descriptor().annotation_is_key());
+            descriptor.discriminator_type_->annotation_is_key());
         object.minimal().union_type().discriminator().common().member_flags().IS_DEFAULT(false);
 
         TypeObject discObj;
@@ -1793,10 +1776,10 @@ void DynamicTypeBuilderFactory::build_union_type_code(
             mum.common().member_flags().IS_DEFAULT(member.is_default_union_value());
 
             //TypeIdentifier memIdent;
-            //build_type_identifier(member.get_type()->get_descriptor(), memIdent);
+            //build_type_identifier(*member.get_type(), memIdent);
 
             TypeObject memObj;
-            build_type_object(member.get_type()->get_descriptor(), memObj);
+            build_type_object(*member.get_type(), memObj);
             const TypeIdentifier* typeId =
                     TypeObjectFactory::get_instance()->get_type_identifier(member.get_type()->get_name());
             if (typeId == nullptr)

@@ -78,8 +78,6 @@ protected:
     RTPS_DllAPI ReturnCode_t get_descriptor(
             TypeDescriptor& descriptor) const;
 
-    const TypeDescriptor& get_descriptor() const;
-
     using member_iterator = std::list<DynamicTypeMember>::iterator;
 
     RTPS_DllAPI void clean();
