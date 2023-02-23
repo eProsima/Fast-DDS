@@ -76,7 +76,6 @@ endif()
 if(SYSTEM_TESTS)
     add_subdirectory(system/tools/fastdds)
     add_subdirectory(system/tools/fds)
-    add_subdirectory(system/tools/xmlvalidation)
 endif()
 
 if (ANDROID)
